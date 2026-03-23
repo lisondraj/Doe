@@ -159,7 +159,10 @@ export default function Home() {
 
   return (
     <div className="relative min-h-[420vh] overflow-x-hidden">
-      <div className="fixed inset-0 overflow-hidden">
+      {/* iPhone: extend past viewport + use dvh so gradient covers safe areas / dynamic toolbar gaps */}
+      <div
+        className="fixed left-0 right-0 top-0 bottom-0 z-0 overflow-hidden max-[480px]:-top-[max(3rem,env(safe-area-inset-top,0px))] max-[480px]:-bottom-[max(3rem,env(safe-area-inset-bottom,0px))] max-[480px]:min-h-[100dvh]"
+      >
       {/* Sliding-box gradient fills the full page */}
       <div
         className="absolute inset-0"

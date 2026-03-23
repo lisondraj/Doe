@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* iOS Safari: avoid white bars; match gradient end color if anything peeks through */
+html {
+  min-height: 100%;
+  min-height: -webkit-fill-available;
+  background-color: #1e343a;
+}
+
+body {
+  min-height: 100%;
+  min-height: -webkit-fill-available;
+  background-color: #1e343a;
+}
