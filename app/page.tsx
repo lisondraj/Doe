@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
 const floatingCardClass =
-  "absolute rounded-xl bg-white p-4 shadow-[0_16px_30px_rgba(0,0,0,0.22),0_6px_14px_rgba(0,0,0,0.18)] opacity-40 hover:z-40 hover:-translate-y-2 hover:opacity-100 z-10 select-none [&_*]:pointer-events-none [&_*]:select-none max-[480px]:p-3 max-[480px]:[&_h3]:text-sm max-[480px]:[&_p]:text-xs max-[480px]:[&_span]:text-[10px] max-[480px]:[&_button]:px-2 max-[480px]:[&_button]:py-1.5 max-[480px]:[&_button]:text-[10px] max-[480px]:[&_.text-base]:text-sm";
+  "absolute rounded-xl bg-white p-4 shadow-[0_16px_30px_rgba(0,0,0,0.22),0_6px_14px_rgba(0,0,0,0.18)] opacity-40 hover:z-40 hover:-translate-y-2 hover:opacity-100 z-10 select-none [&_*]:pointer-events-none [&_*]:select-none max-[480px]:hover:!opacity-40 max-[480px]:p-3 max-[480px]:[&_h3]:text-sm max-[480px]:[&_p]:text-xs max-[480px]:[&_span]:text-[10px] max-[480px]:[&_button]:px-2 max-[480px]:[&_button]:py-1.5 max-[480px]:[&_button]:text-[10px] max-[480px]:[&_.text-base]:text-sm";
 const previewCardClass =
   "pointer-events-none absolute rounded-lg border border-white/20 bg-white/70 p-2.5 shadow-[0_8px_18px_rgba(0,0,0,0.16)] select-none max-[480px]:p-2";
 /** Center headlines — slightly larger on narrow viewports (between old 3xl and prior 6xl) */
@@ -17,6 +17,8 @@ const STORY_SCROLL_END = 0.66;
 const EXPLODE_SCROLL_START = 0.952 * STORY_SCROLL_END;
 /** How much additional scroll (in page-progress units) runs the explosion 0→1. */
 const EXPLODE_SCROLL_RANGE = 0.26;
+/** Scroll progress where explosion is finished (`explodeProgress` reaches 1). */
+const EXPLODE_END_SCROLL = EXPLODE_SCROLL_START + EXPLODE_SCROLL_RANGE;
 /** >1: same scroll advances flight more slowly (gentler explode-out). */
 const EXPLODE_MOTION_POW = 1.22;
 
@@ -91,23 +93,33 @@ export default function Home() {
   const clamp = (v: number, min = 0, max = 1) => Math.min(Math.max(v, min), max);
   const storyProgress = clamp(scrollProgress / STORY_SCROLL_END, 0, 1);
   const storyPhase = (start: number, end: number) => clamp((storyProgress - start) / (end - start));
-  const ctaProgress =
-    scrollProgress <= STORY_SCROLL_END
-      ? 0
-      : clamp((scrollProgress - STORY_SCROLL_END) / (1 - STORY_SCROLL_END), 0, 1);
   /** Linear scroll phase for explosion (gates CTA / Doe); card motion uses a slower curve below. */
   const explodeProgress = clamp((scrollProgress - EXPLODE_SCROLL_START) / EXPLODE_SCROLL_RANGE, 0, 1);
-  /** Post-explosion CTA band: copy lifts; Doe fades in (then stays); invitation stays with Doe; buttons below. */
-  const ctaTextLift = clamp(ctaProgress / 0.4, 0, 1);
-  /** Longer scroll band = slower fade-in for waitlist tiles + label. */
-  const ctaButtonsReveal = clamp((ctaProgress - 0.34) / 0.62, 0, 1);
-  /** Doe only after explosion; fades in over a longer CTA scroll segment; locked at 1. */
+  /**
+   * 0 at explosion complete, 1 at bottom — drives waitlist Doe / lift / buttons so reveals track
+   * scroll instead of progress from the story boundary (which snapped when the CTA first mounted).
+   */
+  const ctaPostExplode =
+    scrollProgress <= EXPLODE_END_SCROLL
+      ? 0
+      : clamp((scrollProgress - EXPLODE_END_SCROLL) / (1 - EXPLODE_END_SCROLL), 0, 1);
+  const smoothReveal = (t: number) => {
+    const x = clamp(t, 0, 1);
+    return x * x * (3 - 2 * x);
+  };
+  /** Headline stack eases up over most of the post-explode scroll. */
+  const ctaTextLift = smoothReveal(clamp(ctaPostExplode / 0.88, 0, 1));
+  /** Doe fades across ~full remaining scroll (slow); smoothstep keeps motion scroll-locked (no CSS transition). */
+  const ctaDoeRevealLinear = clamp(ctaPostExplode / 0.94, 0, 1);
   const ctaDoeOpacity =
     ctaDoeOpaqueLocked
       ? 1
       : explodeProgress < 1
         ? 0
-        : clamp((ctaProgress - 0.08) / 0.42, 0, 1);
+        : smoothReveal(ctaDoeRevealLinear);
+  /** Buttons trail Doe; long span so they ease in slowly with scroll. */
+  const ctaButtonsRevealLinear = clamp((ctaPostExplode - 0.32) / 0.68, 0, 1);
+  const ctaButtonsReveal = smoothReveal(ctaButtonsRevealLinear);
 
   // Very short fades + much longer holds
   // Line 1: visible at top, very long hold, quick fade out
@@ -199,11 +211,11 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const ctaP =
-      scrollProgress <= STORY_SCROLL_END
+    const post =
+      scrollProgress <= EXPLODE_END_SCROLL
         ? 0
         : Math.min(
-            Math.max((scrollProgress - STORY_SCROLL_END) / (1 - STORY_SCROLL_END), 0),
+            Math.max((scrollProgress - EXPLODE_END_SCROLL) / (1 - EXPLODE_END_SCROLL), 0),
             1,
           );
 
@@ -211,7 +223,7 @@ export default function Home() {
       setCtaDoeOpaqueLocked(false);
       return;
     }
-    if (ctaP >= 0.5) {
+    if (post >= 0.58) {
       setCtaDoeOpaqueLocked(true);
     }
   }, [scrollProgress, explodeProgress]);
@@ -427,7 +439,7 @@ export default function Home() {
           <div className="mt-2 h-1.5 w-full rounded bg-gray-500/30" />
           <div className="mt-2 h-5 w-14 rounded bg-gray-700/25" />
         </div>
-        <div className={`${previewCardClass} right-[5%] top-[80%] w-[165px] rotate-2 opacity-19`} style={explodeStyle(600, 600, 14, 0, 0.19)}>
+        <div className={`${previewCardClass} right-[5%] top-[94%] w-[165px] rotate-2 opacity-19`} style={explodeStyle(600, 600, 14, 0, 0.19)}>
           <div className="h-2 w-20 rounded bg-gray-700/35" />
           <div className="mt-2 h-1.5 w-full rounded bg-gray-500/30" />
           <div className="mt-1 h-1.5 w-4/5 rounded bg-gray-500/25" />
@@ -635,6 +647,7 @@ export default function Home() {
             className="flex max-w-lg flex-col items-center px-6 text-center"
             style={{
               transform: `translateY(${(1 - ctaTextLift) * 26 - ctaTextLift * 14}px)`,
+              transition: "none",
             }}
           >
             <h2
@@ -643,6 +656,7 @@ export default function Home() {
                 fontFamily: "var(--font-lora), serif",
                 opacity: ctaDoeOpacity,
                 textShadow: "0 8px 20px rgba(0,0,0,0.35)",
+                transition: "none",
               }}
             >
               Doe
@@ -651,8 +665,9 @@ export default function Home() {
               className="mt-10 flex flex-col items-center sm:mt-12"
               style={{
                 opacity: ctaButtonsReveal,
-                transform: `translateY(${(1 - ctaButtonsReveal) * 28 + 10}px)`,
-                pointerEvents: ctaButtonsReveal > 0.25 ? "auto" : "none",
+                transform: `translateY(${(1 - ctaButtonsReveal) * 32 + 12}px)`,
+                pointerEvents: ctaButtonsReveal > 0.18 ? "auto" : "none",
+                transition: "none",
               }}
             >
               <div className="flex flex-col gap-5 font-ui sm:flex-row sm:gap-6">
