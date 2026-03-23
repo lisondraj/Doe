@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
 const floatingCardClass =
-  "absolute rounded-xl bg-white p-4 shadow-[0_16px_30px_rgba(0,0,0,0.22),0_6px_14px_rgba(0,0,0,0.18)] opacity-40 transition-all duration-300 ease-out hover:z-40 hover:-translate-y-2 hover:opacity-100 z-10 select-none [&_*]:pointer-events-none [&_*]:select-none max-[480px]:p-3 max-[480px]:[&_h3]:text-sm max-[480px]:[&_p]:text-xs max-[480px]:[&_span]:text-[10px] max-[480px]:[&_button]:px-2 max-[480px]:[&_button]:py-1.5 max-[480px]:[&_button]:text-[10px] max-[480px]:[&_.text-base]:text-sm";
+  "absolute rounded-xl bg-white p-4 shadow-[0_16px_30px_rgba(0,0,0,0.22),0_6px_14px_rgba(0,0,0,0.18)] opacity-40 hover:z-40 hover:-translate-y-2 hover:opacity-100 z-10 select-none [&_*]:pointer-events-none [&_*]:select-none max-[480px]:p-3 max-[480px]:[&_h3]:text-sm max-[480px]:[&_p]:text-xs max-[480px]:[&_span]:text-[10px] max-[480px]:[&_button]:px-2 max-[480px]:[&_button]:py-1.5 max-[480px]:[&_button]:text-[10px] max-[480px]:[&_.text-base]:text-sm";
 const previewCardClass =
   "pointer-events-none absolute rounded-lg border border-white/20 bg-white/70 p-2.5 shadow-[0_8px_18px_rgba(0,0,0,0.16)] select-none max-[480px]:p-2";
 /** Center headlines — slightly larger on narrow viewports (between old 3xl and prior 6xl) */
@@ -11,6 +11,14 @@ const waitlistHeadlineClass =
   "bg-gradient-to-b from-white from-0% via-white via-[66%] to-gray-100 to-100% bg-clip-text text-center text-4xl font-thin leading-tight text-transparent max-[480px]:text-5xl max-[480px]:leading-snug sm:text-5xl md:text-6xl lg:text-7xl";
 const STAGE_WIDTH = 1440;
 const STAGE_HEIGHT = 900;
+/** First ~STORY_SCROLL_END of page scroll maps the headline story (0–1); remainder drives post-explosion CTA. */
+const STORY_SCROLL_END = 0.66;
+/** Page scroll progress (0–1) at which explosion begins — same band as sixth-line hold. */
+const EXPLODE_SCROLL_START = 0.952 * STORY_SCROLL_END;
+/** How much additional scroll (in page-progress units) runs the explosion 0→1. */
+const EXPLODE_SCROLL_RANGE = 0.26;
+/** >1: same scroll advances flight more slowly (gentler explode-out). */
+const EXPLODE_MOTION_POW = 1.22;
 
 type HeroCardKind = "diag" | "report" | "inbox";
 
@@ -18,6 +26,7 @@ export default function Home() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [mounted, setMounted] = useState(false);
   const [stageScale, setStageScale] = useState(1);
+  const [ctaDoeOpaqueLocked, setCtaDoeOpaqueLocked] = useState(false);
   const [heroOpen, setHeroOpen] = useState<HeroCardKind | null>(null);
   const [heroExpanded, setHeroExpanded] = useState(false);
   const [heroRect, setHeroRect] = useState<{ left: number; top: number; width: number; height: number } | null>(null);
@@ -26,7 +35,6 @@ export default function Home() {
   const diagCardRef = useRef<HTMLDivElement>(null);
   const reportCardRef = useRef<HTMLDivElement>(null);
   const inboxCardRef = useRef<HTMLDivElement>(null);
-
   const closeHero = useCallback(() => {
     setHeroExpanded(false);
     setTimeout(() => {
@@ -81,37 +89,70 @@ export default function Home() {
   });
 
   const clamp = (v: number, min = 0, max = 1) => Math.min(Math.max(v, min), max);
-  const phase = (start: number, end: number) => clamp((scrollProgress - start) / (end - start));
+  const storyProgress = clamp(scrollProgress / STORY_SCROLL_END, 0, 1);
+  const storyPhase = (start: number, end: number) => clamp((storyProgress - start) / (end - start));
+  const ctaProgress =
+    scrollProgress <= STORY_SCROLL_END
+      ? 0
+      : clamp((scrollProgress - STORY_SCROLL_END) / (1 - STORY_SCROLL_END), 0, 1);
+  /** Linear scroll phase for explosion (gates CTA / Doe); card motion uses a slower curve below. */
+  const explodeProgress = clamp((scrollProgress - EXPLODE_SCROLL_START) / EXPLODE_SCROLL_RANGE, 0, 1);
+  /** Post-explosion CTA band: copy lifts; Doe fades in (then stays); invitation stays with Doe; buttons below. */
+  const ctaTextLift = clamp(ctaProgress / 0.4, 0, 1);
+  /** Longer scroll band = slower fade-in for waitlist tiles + label. */
+  const ctaButtonsReveal = clamp((ctaProgress - 0.34) / 0.62, 0, 1);
+  /** Doe only after explosion; fades in over a longer CTA scroll segment; locked at 1. */
+  const ctaDoeOpacity =
+    ctaDoeOpaqueLocked
+      ? 1
+      : explodeProgress < 1
+        ? 0
+        : clamp((ctaProgress - 0.08) / 0.42, 0, 1);
 
   // Very short fades + much longer holds
   // Line 1: visible at top, very long hold, quick fade out
-  const firstFadeProgress = phase(0.2, 0.225);
+  const firstFadeProgress = storyPhase(0.2, 0.225);
   // Line 2: quick fade in, long hold, quick fade out
-  const secondInProgress = phase(0.24, 0.255);
-  const secondOutProgress = phase(0.39, 0.405);
+  const secondInProgress = storyPhase(0.24, 0.255);
+  const secondOutProgress = storyPhase(0.39, 0.405);
   // Line 3: quick fade in, long hold, quick fade out
-  const thirdInProgress = phase(0.42, 0.435);
-  const thirdOutProgress = phase(0.57, 0.585);
+  const thirdInProgress = storyPhase(0.42, 0.435);
+  const thirdOutProgress = storyPhase(0.57, 0.585);
   // Line 4: quick fade in, long hold, quick fade out
-  const fourthInProgress = phase(0.6, 0.615);
-  const fourthOutProgress = phase(0.75, 0.765);
+  const fourthInProgress = storyPhase(0.6, 0.615);
+  const fourthOutProgress = storyPhase(0.75, 0.765);
   // Line 5: quick fade in, long hold, quick fade out
-  const fifthInProgress = phase(0.78, 0.795);
-  const fifthOutProgress = phase(0.92, 0.935);
-  // Line 6: fade in, then stay full opacity while you scroll (hold), then UI explodes on further scroll only
-  const sixthFadeProgress = phase(0.938, 0.952);
+  const fifthInProgress = storyPhase(0.78, 0.795);
+  const fifthOutProgress = storyPhase(0.92, 0.935);
+  // Line 6: fade in, then stay full opacity while you scroll (hold).
+  const sixthFadeProgress = storyPhase(0.938, 0.952);
   const sixthLineOpacity = sixthFadeProgress; // stays 1 from ~0.952 through the hold band
-  // Explosion starts only after scroll passes this band (not while line is still “holding”)
-  const explodeProgress = phase(0.985, 1);
 
-  const explodeStyle = (dx: number, dy: number, rot = 0): React.CSSProperties => {
-    const t = explodeProgress;
-    if (t === 0) return {};
+  /**
+   * `progressDelay` staggers hero cards on linear scroll progress.
+   * `baseOpacity` caps peak opacity during explode so dim cards never jump to full opacity.
+   */
+  const explodeStyle = (
+    dx: number,
+    dy: number,
+    rot = 0,
+    progressDelay = 0,
+    baseOpacity = 1,
+  ): React.CSSProperties => {
+    if (explodeProgress === 0) return {};
+    const tLinear =
+      progressDelay > 0
+        ? clamp((explodeProgress - progressDelay) / (1 - progressDelay), 0, 1)
+        : explodeProgress;
+    if (tLinear === 0) return {};
+    const t = Math.pow(tLinear, EXPLODE_MOTION_POW);
     const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    const fade = Math.max(0, 1 - eased * 2.15);
     return {
-      transform: `translate(${dx * eased}px, ${dy * eased}px) rotate(${rot * eased}deg) scale(${Math.max(0, 1 - eased * 0.4)})`,
-      opacity: Math.max(0, 1 - eased * 2.5),
-      transition: "transform 0.55s cubic-bezier(0.55, 0, 1, 0.45), opacity 0.35s ease-out",
+      transform: `translate(${dx * eased}px, ${dy * eased}px) rotate(${rot * eased}deg) scale(${Math.max(0, 1 - eased * 0.34)})`,
+      opacity: Math.max(0, baseOpacity * fade),
+      // No CSS transition — motion follows scroll; CSS transitions made floating cards lag preview cards.
+      transition: "none",
       pointerEvents: "none" as const,
     };
   };
@@ -157,8 +198,28 @@ export default function Home() {
     };
   }, []);
 
+  useEffect(() => {
+    const ctaP =
+      scrollProgress <= STORY_SCROLL_END
+        ? 0
+        : Math.min(
+            Math.max((scrollProgress - STORY_SCROLL_END) / (1 - STORY_SCROLL_END), 0),
+            1,
+          );
+
+    if (explodeProgress < 1 || scrollProgress <= STORY_SCROLL_END) {
+      setCtaDoeOpaqueLocked(false);
+      return;
+    }
+    if (ctaP >= 0.5) {
+      setCtaDoeOpaqueLocked(true);
+    }
+  }, [scrollProgress, explodeProgress]);
+
+  const headlineReveal = reveal(1.1);
+
   return (
-    <div className="relative min-h-[420vh] overflow-x-hidden">
+    <div className="relative min-h-[460vh] overflow-x-hidden">
       {/* iPhone: extend past viewport + use dvh so gradient covers safe areas / dynamic toolbar gaps */}
       <div
         className="fixed left-0 right-0 top-0 bottom-0 z-0 overflow-hidden max-[480px]:-top-[max(3rem,env(safe-area-inset-top,0px))] max-[480px]:-bottom-[max(3rem,env(safe-area-inset-bottom,0px))] max-[480px]:min-h-[100dvh]"
@@ -203,8 +264,11 @@ export default function Home() {
       </div>
 
       <div
-        className="pointer-events-none absolute bottom-0 left-0 right-0 z-30 flex flex-col items-center justify-end pb-8"
-        style={{ opacity: firstLineOpacity * (mounted ? 1 : 0), transition: `opacity 0.9s ease 1.6s` }}
+        className="pointer-events-none absolute bottom-0 left-0 right-0 z-30 flex flex-col items-center justify-end pb-8 font-ui"
+        style={{
+          opacity: firstLineOpacity * (mounted ? 1 : 0) * (1 - Math.min(1, explodeProgress * 1.5)),
+          transition: `opacity 0.9s ease 1.6s`,
+        }}
       >
         <div
           className="absolute bottom-0 left-0 right-0 h-44"
@@ -239,7 +303,13 @@ export default function Home() {
         }}
       >
 
-      <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center" style={reveal(1.1)}>
+      <div
+        className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center"
+        style={{
+          ...headlineReveal,
+          opacity: (mounted ? 1 : 0) * (1 - Math.min(1, explodeProgress * 1.2)),
+        }}
+      >
         <div className="relative">
           <h1
             className={waitlistHeadlineClass}
@@ -307,7 +377,11 @@ export default function Home() {
             style={{
               fontFamily: "var(--font-lora), serif",
               textShadow: "0 8px 16px rgba(0, 0, 0, 0.3)",
-              opacity: sixthLineOpacity,
+              opacity:
+                sixthLineOpacity *
+                (explodeProgress >= 1
+                  ? 0
+                  : 1 - Math.min(1, explodeProgress * 2.25)),
               transform: `translateY(${24 - 24 * sixthFadeProgress}px)`,
             }}
           >
@@ -318,42 +392,42 @@ export default function Home() {
 
       {/* Background preview cards: small, faint, dispersed */}
       <div className="pointer-events-none absolute inset-0 z-[6] font-ui" style={reveal(0)}>
-        <div className={`${previewCardClass} left-[0%] top-[30%] w-[170px] -rotate-3 opacity-20`} style={explodeStyle(-800, -100, -20)}>
+        <div className={`${previewCardClass} left-[0%] top-[30%] w-[170px] -rotate-3 opacity-20`} style={explodeStyle(-800, -100, -20, 0, 0.2)}>
           <div className="h-2 w-16 rounded bg-gray-700/40" />
           <div className="mt-2 h-1.5 w-full rounded bg-gray-500/35" />
           <div className="mt-1 h-1.5 w-4/5 rounded bg-gray-500/30" />
         </div>
-        <div className={`${previewCardClass} left-[3%] top-[47%] w-[155px] rotate-2 opacity-18`} style={explodeStyle(-700, 300, 10)}>
+        <div className={`${previewCardClass} left-[3%] top-[47%] w-[155px] rotate-2 opacity-18`} style={explodeStyle(-700, 300, 10, 0, 0.18)}>
           <div className="h-2 w-12 rounded bg-gray-700/35" />
           <div className="mt-2 h-1.5 w-full rounded bg-gray-500/30" />
           <div className="mt-2 h-5 w-20 rounded bg-gray-700/25" />
         </div>
-        <div className={`${previewCardClass} left-[42%] top-[2%] w-[140px] -rotate-2 opacity-14`} style={explodeStyle(100, -800, -8)}>
+        <div className={`${previewCardClass} left-[42%] top-[2%] w-[140px] -rotate-2 opacity-14`} style={explodeStyle(100, -800, -8, 0, 0.14)}>
           <div className="h-2 w-14 rounded bg-gray-700/35" />
           <div className="mt-2 h-1.5 w-full rounded bg-gray-500/30" />
           <div className="mt-1 h-1.5 w-3/4 rounded bg-gray-500/25" />
         </div>
-        <div className={`${previewCardClass} left-[76%] top-[30%] w-[160px] rotate-3 opacity-19`} style={explodeStyle(700, -300, 15)}>
+        <div className={`${previewCardClass} left-[76%] top-[30%] w-[160px] rotate-3 opacity-19`} style={explodeStyle(700, -300, 15, 0, 0.19)}>
           <div className="h-2 w-20 rounded bg-gray-700/40" />
           <div className="mt-2 h-1.5 w-full rounded bg-gray-500/35" />
           <div className="mt-1 h-1.5 w-5/6 rounded bg-gray-500/30" />
         </div>
-        <div className={`${previewCardClass} right-[1%] top-[58%] w-[135px] -rotate-2 opacity-14`} style={explodeStyle(900, 200, -12)}>
+        <div className={`${previewCardClass} right-[1%] top-[58%] w-[135px] -rotate-2 opacity-14`} style={explodeStyle(900, 200, -12, 0, 0.14)}>
           <div className="h-2 w-10 rounded bg-gray-700/35" />
           <div className="mt-2 h-1.5 w-full rounded bg-gray-500/30" />
           <div className="mt-2 h-5 w-16 rounded bg-gray-700/25" />
         </div>
-        <div className={`${previewCardClass} left-[1%] top-[93%] w-[165px] rotate-2 opacity-17`} style={explodeStyle(-600, 700, 18)}>
+        <div className={`${previewCardClass} left-[1%] top-[93%] w-[165px] rotate-2 opacity-17`} style={explodeStyle(-600, 700, 18, 0, 0.17)}>
           <div className="h-2 w-16 rounded bg-gray-700/35" />
           <div className="mt-2 h-1.5 w-full rounded bg-gray-500/30" />
           <div className="mt-1 h-1.5 w-2/3 rounded bg-gray-500/25" />
         </div>
-        <div className={`${previewCardClass} left-[52%] top-[94%] w-[150px] -rotate-3 opacity-16`} style={explodeStyle(200, 900, -10)}>
+        <div className={`${previewCardClass} left-[52%] top-[94%] w-[150px] -rotate-3 opacity-16`} style={explodeStyle(200, 900, -10, 0, 0.16)}>
           <div className="h-2 w-14 rounded bg-gray-700/35" />
           <div className="mt-2 h-1.5 w-full rounded bg-gray-500/30" />
           <div className="mt-2 h-5 w-14 rounded bg-gray-700/25" />
         </div>
-        <div className={`${previewCardClass} right-[5%] top-[80%] w-[165px] rotate-2 opacity-19`} style={explodeStyle(600, 600, 14)}>
+        <div className={`${previewCardClass} right-[5%] top-[80%] w-[165px] rotate-2 opacity-19`} style={explodeStyle(600, 600, 14, 0, 0.19)}>
           <div className="h-2 w-20 rounded bg-gray-700/35" />
           <div className="mt-2 h-1.5 w-full rounded bg-gray-500/30" />
           <div className="mt-1 h-1.5 w-4/5 rounded bg-gray-500/25" />
@@ -365,7 +439,7 @@ export default function Home() {
         <div
           ref={inboxCardRef}
           className={`${floatingCardClass} left-[-4%] top-[2%] w-[310px] -rotate-6 max-[480px]:!pointer-events-none max-[480px]:cursor-default cursor-pointer !pointer-events-auto`}
-          style={{ ...explodeStyle(-900, -600, -18), opacity: heroOpen === "inbox" ? 0 : undefined }}
+          style={{ ...explodeStyle(-900, -600, -18, 0, 0.4), ...(heroOpen === "inbox" ? { opacity: 0 } : {}) }}
           onClick={() => openHero("inbox")}
         >
           <div className="mb-4 flex items-center justify-between">
@@ -388,7 +462,7 @@ export default function Home() {
         <div
           ref={reportCardRef}
           className={`${floatingCardClass} left-[53%] top-[1%] w-[300px] rotate-4 max-[480px]:!pointer-events-none max-[480px]:cursor-default cursor-pointer !pointer-events-auto md:left-[55%]`}
-          style={{ ...explodeStyle(700, -700, 14), opacity: heroOpen === "report" ? 0 : undefined }}
+          style={{ ...explodeStyle(700, -700, 14, 0, 0.4), ...(heroOpen === "report" ? { opacity: 0 } : {}) }}
           onClick={() => openHero("report")}
         >
           <div className="mb-4 flex items-center justify-between">
@@ -413,7 +487,7 @@ export default function Home() {
         <div
           ref={diagCardRef}
           className={`${floatingCardClass} left-[24%] top-[10%] w-[325px] -rotate-2 max-[480px]:!pointer-events-none max-[480px]:cursor-default cursor-pointer !pointer-events-auto`}
-          style={{ ...explodeStyle(-300, -800, -10), opacity: heroOpen === "diag" ? 0 : undefined }}
+          style={{ ...explodeStyle(-300, -800, -10, 0, 0.4), ...(heroOpen === "diag" ? { opacity: 0 } : {}) }}
           onClick={() => openHero("diag")}
         >
           <div className="mb-3 flex items-center justify-between">
@@ -432,7 +506,7 @@ export default function Home() {
           <div className="absolute -bottom-1 left-6 right-6 h-2 rounded-full bg-black/10 blur-sm" />
         </div>
 
-        <div className={`${floatingCardClass} left-[0%] top-[69%] w-[305px] rotate-3`} style={explodeStyle(-900, 400, -12)}>
+        <div className={`${floatingCardClass} left-[0%] top-[69%] w-[305px] rotate-3`} style={explodeStyle(-900, 400, -12, 0, 0.4)}>
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-base font-bold text-gray-900">Referral Intake</h3>
             <span className="text-xs font-semibold text-gray-500">Auto-routed</span>
@@ -448,7 +522,7 @@ export default function Home() {
           <div className="absolute -bottom-1 left-6 right-6 h-2 rounded-full bg-black/10 blur-sm" />
         </div>
 
-        <div className={`${floatingCardClass} left-[50%] top-[65%] w-[305px] -rotate-4 md:left-[52%]`} style={explodeStyle(800, 500, 15)}>
+        <div className={`${floatingCardClass} left-[50%] top-[65%] w-[305px] -rotate-4 md:left-[52%]`} style={explodeStyle(800, 500, 15, 0, 0.4)}>
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-base font-bold text-gray-900">Billing Snapshot</h3>
             <span className="text-xs font-semibold text-gray-500">Updated</span>
@@ -467,7 +541,7 @@ export default function Home() {
           <div className="absolute -bottom-1 left-6 right-6 h-2 rounded-full bg-black/10 blur-sm" />
         </div>
 
-        <div className={`${floatingCardClass} left-[28%] top-[81%] w-[325px] rotate-2`} style={explodeStyle(-100, 900, 8)}>
+        <div className={`${floatingCardClass} left-[28%] top-[81%] w-[325px] rotate-2`} style={explodeStyle(-100, 900, 8, 0, 0.4)}>
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-base font-bold text-gray-900">Schedule Changes</h3>
             <span className="text-xs font-semibold text-gray-500">Today</span>
@@ -492,7 +566,7 @@ export default function Home() {
         </div>
 
         {/* 7th card — anchors the right edge */}
-        <div className={`${floatingCardClass} right-[0%] top-[8%] w-[325px] rotate-3 max-md:right-[1%] max-md:top-[20%] max-md:w-[290px]`} style={explodeStyle(900, -500, 20)}>
+        <div className={`${floatingCardClass} right-[0%] top-[8%] w-[325px] rotate-3 max-md:right-[1%] max-md:top-[20%] max-md:w-[290px]`} style={explodeStyle(900, -500, 20, 0, 0.4)}>
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-base font-bold text-gray-900">Active Sessions</h3>
             <span className="text-xs font-semibold text-gray-500">Live</span>
@@ -524,7 +598,7 @@ export default function Home() {
         {/* 8th card — bottom right */}
         <div
           className={`${floatingCardClass} bottom-[7%] right-[2%] w-[290px] -rotate-2 max-md:bottom-[8%] max-md:right-[2%] max-md:w-[260px]`}
-          style={explodeStyle(800, 700, -16)}
+          style={explodeStyle(800, 700, -16, 0, 0.4)}
         >
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-base font-bold text-gray-900">Lab &amp; Imaging</h3>
@@ -553,7 +627,74 @@ export default function Home() {
           </div>
           <div className="absolute -bottom-1 left-6 right-6 h-2 rounded-full bg-black/10 blur-sm" />
         </div>
-      </div>
+        </div>
+
+      {explodeProgress >= 1 && (
+        <div className="pointer-events-none absolute inset-0 z-[22] flex items-center justify-center">
+          <div
+            className="flex max-w-lg flex-col items-center px-6 text-center"
+            style={{
+              transform: `translateY(${(1 - ctaTextLift) * 26 - ctaTextLift * 14}px)`,
+            }}
+          >
+            <h2
+              className={waitlistHeadlineClass}
+              style={{
+                fontFamily: "var(--font-lora), serif",
+                opacity: ctaDoeOpacity,
+                textShadow: "0 8px 20px rgba(0,0,0,0.35)",
+              }}
+            >
+              Doe
+            </h2>
+            <div
+              className="mt-10 flex flex-col items-center sm:mt-12"
+              style={{
+                opacity: ctaButtonsReveal,
+                transform: `translateY(${(1 - ctaButtonsReveal) * 28 + 10}px)`,
+                pointerEvents: ctaButtonsReveal > 0.25 ? "auto" : "none",
+              }}
+            >
+              <div className="flex flex-col gap-5 font-ui sm:flex-row sm:gap-6">
+                <div className="relative">
+                  <a
+                    href="https://form.typeform.com/to/JKpekoCE"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="pointer-events-auto relative z-[1] flex min-h-[112px] min-w-[112px] items-center justify-center rounded-2xl bg-white px-6 py-5 text-base font-semibold text-gray-900 shadow-[0_14px_32px_rgba(0,0,0,0.22)] transition hover:shadow-[0_18px_40px_rgba(0,0,0,0.28)] sm:min-h-[124px] sm:min-w-[124px]"
+                  >
+                    Provider
+                  </a>
+                  <div
+                    className="pointer-events-none absolute -bottom-2 left-1/2 z-0 h-3 w-[78%] -translate-x-1/2 rounded-full bg-black/20 blur-md"
+                    aria-hidden
+                  />
+                </div>
+                <div className="relative">
+                  <a
+                    href="https://form.typeform.com/to/PXM9TKk7"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="pointer-events-auto relative z-[1] flex min-h-[112px] min-w-[112px] items-center justify-center rounded-2xl bg-white px-6 py-5 text-base font-semibold text-gray-900 shadow-[0_14px_32px_rgba(0,0,0,0.22)] transition hover:shadow-[0_18px_40px_rgba(0,0,0,0.28)] sm:min-h-[124px] sm:min-w-[124px]"
+                  >
+                    Student
+                  </a>
+                  <div
+                    className="pointer-events-none absolute -bottom-2 left-1/2 z-0 h-3 w-[78%] -translate-x-1/2 rounded-full bg-black/20 blur-md"
+                    aria-hidden
+                  />
+                </div>
+              </div>
+              <p
+                className="mt-9 text-[11px] font-semibold uppercase tracking-[0.32em] text-white/90 sm:mt-10 sm:text-xs font-ui"
+                style={{ textShadow: "0 2px 14px rgba(0,0,0,0.35)" }}
+              >
+                Join waitlist
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
       </div>
 
       {/* Hero card modals — Diagnostic Assistant, Report Queue, Inbox Summary */}
@@ -759,7 +900,7 @@ export default function Home() {
       })()}
 
       </div>
-      <div aria-hidden="true" className="h-[180vh]" />
+      <div aria-hidden="true" className="h-[280vh]" />
     </div>
   );
 }
