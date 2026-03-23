@@ -3,7 +3,18 @@ import type { Config } from "tailwindcss";
 const config: Config = {
   content: ["./app/**/*.{js,ts,jsx,tsx,mdx}"],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        ui: [
+          "var(--font-inter)",
+          "system-ui",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "Segoe UI",
+          "sans-serif",
+        ],
+      },
+    },
   },
   plugins: [],
 };

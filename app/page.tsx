@@ -1,14 +1,14 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 const floatingCardClass =
   "absolute rounded-xl bg-white p-4 shadow-[0_16px_30px_rgba(0,0,0,0.22),0_6px_14px_rgba(0,0,0,0.18)] opacity-40 transition-all duration-300 ease-out hover:z-40 hover:-translate-y-2 hover:opacity-100 z-10 select-none [&_*]:pointer-events-none [&_*]:select-none max-[480px]:p-3 max-[480px]:[&_h3]:text-sm max-[480px]:[&_p]:text-xs max-[480px]:[&_span]:text-[10px] max-[480px]:[&_button]:px-2 max-[480px]:[&_button]:py-1.5 max-[480px]:[&_button]:text-[10px] max-[480px]:[&_.text-base]:text-sm";
 const previewCardClass =
   "pointer-events-none absolute rounded-lg border border-white/20 bg-white/70 p-2.5 shadow-[0_8px_18px_rgba(0,0,0,0.16)] select-none max-[480px]:p-2";
-/** Center headlines — larger on narrow viewports (e.g. iPhone) */
+/** Center headlines — slightly larger on narrow viewports (between old 3xl and prior 6xl) */
 const waitlistHeadlineClass =
-  "bg-gradient-to-b from-white from-0% via-white via-[66%] to-gray-100 to-100% bg-clip-text text-center text-4xl font-thin leading-tight text-transparent max-[480px]:text-6xl max-[480px]:leading-[1.08] sm:text-5xl md:text-6xl lg:text-7xl";
+  "bg-gradient-to-b from-white from-0% via-white via-[66%] to-gray-100 to-100% bg-clip-text text-center text-4xl font-thin leading-tight text-transparent max-[480px]:text-5xl max-[480px]:leading-snug sm:text-5xl md:text-6xl lg:text-7xl";
 const STAGE_WIDTH = 1440;
 const STAGE_HEIGHT = 900;
 
@@ -27,7 +27,17 @@ export default function Home() {
   const reportCardRef = useRef<HTMLDivElement>(null);
   const inboxCardRef = useRef<HTMLDivElement>(null);
 
+  const closeHero = useCallback(() => {
+    setHeroExpanded(false);
+    setTimeout(() => {
+      setHeroOpen(null);
+      setHeroRect(null);
+      setHeroLayout(null);
+    }, 550);
+  }, []);
+
   const openHero = (kind: HeroCardKind) => {
+    if (typeof window !== "undefined" && window.matchMedia("(max-width: 480px)").matches) return;
     const ref = kind === "diag" ? diagCardRef : kind === "report" ? reportCardRef : inboxCardRef;
     const el = ref.current;
     if (!el) return;
@@ -38,14 +48,14 @@ export default function Home() {
     requestAnimationFrame(() => requestAnimationFrame(() => setHeroExpanded(true)));
   };
 
-  const closeHero = () => {
-    setHeroExpanded(false);
-    setTimeout(() => {
-      setHeroOpen(null);
-      setHeroRect(null);
-      setHeroLayout(null);
-    }, 550);
-  };
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 480px)");
+    const onViewportChange = () => {
+      if (mq.matches) closeHero();
+    };
+    mq.addEventListener("change", onViewportChange);
+    return () => mq.removeEventListener("change", onViewportChange);
+  }, [closeHero]);
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 60);
@@ -304,7 +314,7 @@ export default function Home() {
       </div>
 
       {/* Background preview cards: small, faint, dispersed */}
-      <div className="pointer-events-none absolute inset-0 z-[6]" style={reveal(0)}>
+      <div className="pointer-events-none absolute inset-0 z-[6] font-ui" style={reveal(0)}>
         <div className={`${previewCardClass} left-[0%] top-[30%] w-[170px] -rotate-3 opacity-20`} style={explodeStyle(-800, -100, -20)}>
           <div className="h-2 w-16 rounded bg-gray-700/40" />
           <div className="mt-2 h-1.5 w-full rounded bg-gray-500/35" />
@@ -348,10 +358,10 @@ export default function Home() {
       </div>
 
       {/* Scattered UI cards — dim until hover, lift on hover */}
-      <div className="pointer-events-auto absolute inset-0 z-10" style={reveal(0.5)}>
+      <div className="pointer-events-auto absolute inset-0 z-10 font-ui" style={reveal(0.5)}>
         <div
           ref={inboxCardRef}
-          className={`${floatingCardClass} left-[-4%] top-[2%] w-[310px] -rotate-6 cursor-pointer !pointer-events-auto`}
+          className={`${floatingCardClass} left-[-4%] top-[2%] w-[310px] -rotate-6 max-[480px]:!pointer-events-none max-[480px]:cursor-default cursor-pointer !pointer-events-auto`}
           style={{ ...explodeStyle(-900, -600, -18), opacity: heroOpen === "inbox" ? 0 : undefined }}
           onClick={() => openHero("inbox")}
         >
@@ -374,7 +384,7 @@ export default function Home() {
 
         <div
           ref={reportCardRef}
-          className={`${floatingCardClass} left-[53%] top-[1%] w-[300px] rotate-4 cursor-pointer !pointer-events-auto md:left-[55%]`}
+          className={`${floatingCardClass} left-[53%] top-[1%] w-[300px] rotate-4 max-[480px]:!pointer-events-none max-[480px]:cursor-default cursor-pointer !pointer-events-auto md:left-[55%]`}
           style={{ ...explodeStyle(700, -700, 14), opacity: heroOpen === "report" ? 0 : undefined }}
           onClick={() => openHero("report")}
         >
@@ -399,7 +409,7 @@ export default function Home() {
 
         <div
           ref={diagCardRef}
-          className={`${floatingCardClass} left-[24%] top-[10%] w-[325px] -rotate-2 cursor-pointer !pointer-events-auto`}
+          className={`${floatingCardClass} left-[24%] top-[10%] w-[325px] -rotate-2 max-[480px]:!pointer-events-none max-[480px]:cursor-default cursor-pointer !pointer-events-auto`}
           style={{ ...explodeStyle(-300, -800, -10), opacity: heroOpen === "diag" ? 0 : undefined }}
           onClick={() => openHero("diag")}
         >
@@ -609,7 +619,7 @@ export default function Home() {
           />
 
           <div
-            className="fixed z-[100] rounded-xl bg-white shadow-[0_16px_30px_rgba(0,0,0,0.22),0_6px_14px_rgba(0,0,0,0.18)]"
+            className="fixed z-[100] rounded-xl bg-white font-ui shadow-[0_16px_30px_rgba(0,0,0,0.22),0_6px_14px_rgba(0,0,0,0.18)]"
             style={{
               width: W,
               height: H,
@@ -690,7 +700,7 @@ export default function Home() {
           </div>
 
           <div
-            className="fixed inset-y-0 right-0 z-[100] flex w-[48vw] flex-col justify-center px-16 py-14 max-[480px]:w-full max-[480px]:px-8 max-[480px]:py-10"
+            className="fixed inset-y-0 right-0 z-[100] flex w-[48vw] flex-col justify-center px-16 py-14 font-ui max-[480px]:w-full max-[480px]:px-8 max-[480px]:py-10"
             style={{
               opacity: heroExpanded ? 1 : 0,
               transform: heroExpanded ? "translateX(0)" : "translateX(32px)",
@@ -705,8 +715,8 @@ export default function Home() {
             <h3
               className={
                 heroOpen === "inbox"
-                  ? "mb-5 text-5xl font-thin leading-[1.02] tracking-tight text-white max-[480px]:mb-4 max-[480px]:text-5xl max-[480px]:leading-[1.05]"
-                  : "mb-5 text-4xl font-thin leading-snug text-white max-[480px]:mb-4 max-[480px]:text-4xl max-[480px]:leading-snug"
+                  ? "mb-5 text-5xl font-thin leading-[1.02] tracking-tight text-white max-[480px]:mb-4 max-[480px]:text-4xl max-[480px]:leading-tight"
+                  : "mb-5 text-4xl font-thin leading-snug text-white max-[480px]:mb-4 max-[480px]:text-3xl max-[480px]:leading-snug"
               }
               style={heroOpen === "inbox" ? undefined : { fontFamily: "var(--font-lora), serif" }}
             >
@@ -733,7 +743,7 @@ export default function Home() {
 
           <button
             type="button"
-            className="fixed right-6 top-6 z-[101] flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
+            className="fixed right-6 top-6 z-[101] flex h-9 w-9 items-center justify-center rounded-full bg-white/10 font-ui text-white transition hover:bg-white/20"
             style={{ opacity: heroExpanded ? 1 : 0, transition: "opacity 0.3s ease 0.4s" }}
             onClick={closeHero}
           >
