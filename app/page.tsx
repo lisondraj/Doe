@@ -14,7 +14,7 @@ const STAGE_HEIGHT = 900;
 
 type HeroCardKind = "diag" | "report" | "inbox";
 
-export default function WaitlistPage() {
+export default function Home() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [mounted, setMounted] = useState(false);
   const [stageScale, setStageScale] = useState(1);
