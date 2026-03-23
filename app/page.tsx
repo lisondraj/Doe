@@ -6,9 +6,9 @@ const floatingCardClass =
   "absolute rounded-xl bg-white p-4 shadow-[0_16px_30px_rgba(0,0,0,0.22),0_6px_14px_rgba(0,0,0,0.18)] opacity-40 transition-all duration-300 ease-out hover:z-40 hover:-translate-y-2 hover:opacity-100 z-10 select-none [&_*]:pointer-events-none [&_*]:select-none max-[480px]:p-3 max-[480px]:[&_h3]:text-sm max-[480px]:[&_p]:text-xs max-[480px]:[&_span]:text-[10px] max-[480px]:[&_button]:px-2 max-[480px]:[&_button]:py-1.5 max-[480px]:[&_button]:text-[10px] max-[480px]:[&_.text-base]:text-sm";
 const previewCardClass =
   "pointer-events-none absolute rounded-lg border border-white/20 bg-white/70 p-2.5 shadow-[0_8px_18px_rgba(0,0,0,0.16)] select-none max-[480px]:p-2";
-/** Center headlines — smaller only on narrow viewports (e.g. iPhone) */
+/** Center headlines — larger on narrow viewports (e.g. iPhone) */
 const waitlistHeadlineClass =
-  "bg-gradient-to-b from-white from-0% via-white via-[66%] to-gray-100 to-100% bg-clip-text text-center text-4xl font-thin leading-tight text-transparent sm:text-5xl md:text-6xl lg:text-7xl max-[480px]:text-3xl max-[480px]:leading-snug";
+  "bg-gradient-to-b from-white from-0% via-white via-[66%] to-gray-100 to-100% bg-clip-text text-center text-4xl font-thin leading-tight text-transparent max-[480px]:text-6xl max-[480px]:leading-[1.08] sm:text-5xl md:text-6xl lg:text-7xl";
 const STAGE_WIDTH = 1440;
 const STAGE_HEIGHT = 900;
 
@@ -705,8 +705,8 @@ export default function Home() {
             <h3
               className={
                 heroOpen === "inbox"
-                  ? "mb-5 text-5xl font-thin leading-[1.02] tracking-tight text-white max-[480px]:mb-4 max-[480px]:text-3xl max-[480px]:leading-tight"
-                  : "mb-5 text-4xl font-thin leading-snug text-white max-[480px]:mb-4 max-[480px]:text-2xl max-[480px]:leading-snug"
+                  ? "mb-5 text-5xl font-thin leading-[1.02] tracking-tight text-white max-[480px]:mb-4 max-[480px]:text-5xl max-[480px]:leading-[1.05]"
+                  : "mb-5 text-4xl font-thin leading-snug text-white max-[480px]:mb-4 max-[480px]:text-4xl max-[480px]:leading-snug"
               }
               style={heroOpen === "inbox" ? undefined : { fontFamily: "var(--font-lora), serif" }}
             >
