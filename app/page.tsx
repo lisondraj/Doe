@@ -231,7 +231,7 @@ export default function Home() {
           <h1
             className={waitlistHeadlineClass}
             style={{
-              fontFamily: "Lora, serif",
+              fontFamily: "var(--font-lora), serif",
               textShadow: "0 8px 16px rgba(0, 0, 0, 0.3)",
               opacity: firstLineOpacity,
               transform: `translateY(${-14 * firstFadeProgress}px)`,
@@ -244,7 +244,7 @@ export default function Home() {
           <h2
             className={`absolute inset-0 flex items-center justify-center ${waitlistHeadlineClass}`}
             style={{
-              fontFamily: "Lora, serif",
+              fontFamily: "var(--font-lora), serif",
               textShadow: "0 8px 16px rgba(0, 0, 0, 0.3)",
               opacity: secondLineOpacity,
               transform: `translateY(${20 - 20 * secondInProgress}px)`,
@@ -256,7 +256,7 @@ export default function Home() {
           <h2
             className={`absolute inset-0 flex items-center justify-center ${waitlistHeadlineClass}`}
             style={{
-              fontFamily: "Lora, serif",
+              fontFamily: "var(--font-lora), serif",
               textShadow: "0 8px 16px rgba(0, 0, 0, 0.3)",
               opacity: thirdLineOpacity,
               transform: `translateY(${24 - 24 * thirdInProgress}px)`,
@@ -268,7 +268,7 @@ export default function Home() {
           <h2
             className={`absolute inset-0 flex items-center justify-center ${waitlistHeadlineClass}`}
             style={{
-              fontFamily: "Lora, serif",
+              fontFamily: "var(--font-lora), serif",
               textShadow: "0 8px 16px rgba(0, 0, 0, 0.3)",
               opacity: fourthLineOpacity,
               transform: `translateY(${24 - 24 * fourthInProgress}px)`,
@@ -280,7 +280,7 @@ export default function Home() {
           <h2
             className={`absolute inset-0 flex items-center justify-center ${waitlistHeadlineClass}`}
             style={{
-              fontFamily: "Lora, serif",
+              fontFamily: "var(--font-lora), serif",
               textShadow: "0 8px 16px rgba(0, 0, 0, 0.3)",
               opacity: fifthLineOpacity,
               transform: `translateY(${24 - 24 * fifthInProgress}px)`,
@@ -292,7 +292,7 @@ export default function Home() {
           <h2
             className={`absolute inset-0 flex items-center justify-center ${waitlistHeadlineClass}`}
             style={{
-              fontFamily: "Lora, serif",
+              fontFamily: "var(--font-lora), serif",
               textShadow: "0 8px 16px rgba(0, 0, 0, 0.3)",
               opacity: sixthLineOpacity,
               transform: `translateY(${24 - 24 * sixthFadeProgress}px)`,
@@ -708,7 +708,7 @@ export default function Home() {
                   ? "mb-5 text-5xl font-thin leading-[1.02] tracking-tight text-white max-[480px]:mb-4 max-[480px]:text-3xl max-[480px]:leading-tight"
                   : "mb-5 text-4xl font-thin leading-snug text-white max-[480px]:mb-4 max-[480px]:text-2xl max-[480px]:leading-snug"
               }
-              style={heroOpen === "inbox" ? undefined : { fontFamily: "Lora, serif" }}
+              style={heroOpen === "inbox" ? undefined : { fontFamily: "var(--font-lora), serif" }}
             >
               {heroRightPanel.title}
             </h3>

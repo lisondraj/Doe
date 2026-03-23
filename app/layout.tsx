@@ -5,6 +5,7 @@ import "./globals.css";
 const lora = Lora({
   subsets: ["latin"],
   display: "swap",
+  variable: "--font-lora",
 });
 
 export const metadata: Metadata = {
@@ -18,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={lora.variable}>
       <body className={`${lora.className} antialiased`}>{children}</body>
     </html>
   );
