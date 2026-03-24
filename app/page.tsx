@@ -17,18 +17,15 @@ const STORY_SCROLL_END = 0.78;
 const SIXTH_LINE_STORY_END = 0.998;
 /** Page scroll position where explosion motion begins. */
 const EXPLODE_SCROLL_START = SIXTH_LINE_STORY_END * STORY_SCROLL_END;
-/**
- * Scroll after `EXPLODE_SCROLL_START` used for card explosion 0→1, chosen so
- * `EXPLODE_SCROLL_START + range ≤ 1 − POST_CTA_SCROLL` — otherwise `scrollProgress`
- * never reaches the end of the band and the waitlist (`explodeProgress >= 1`) never mounts.
- */
+/** Min scroll (0–1) left after explosion for Doe / buttons; must stay > 0. */
 const POST_CTA_SCROLL = 0.12;
+/** Explosion band width; if `Math.max(0.06, …)` hid a negative value, `explodeProgress` could never reach 1. */
 const EXPLODE_SCROLL_RANGE = Math.max(
-  0.06,
+  0.05,
   1 - EXPLODE_SCROLL_START - POST_CTA_SCROLL,
 );
-/** Scroll progress where explosion finishes; remainder of page drives Doe / buttons. */
-const EXPLODE_END_SCROLL = EXPLODE_SCROLL_START + EXPLODE_SCROLL_RANGE;
+/** Scroll progress where explosion finishes; clamp so layout math never exceeds page. */
+const EXPLODE_END_SCROLL = Math.min(1, EXPLODE_SCROLL_START + EXPLODE_SCROLL_RANGE);
 /** >1: same scroll advances flight more slowly (gentler explode-out). */
 const EXPLODE_MOTION_POW = 1.22;
 
@@ -103,16 +100,23 @@ export default function Home() {
   const clamp = (v: number, min = 0, max = 1) => Math.min(Math.max(v, min), max);
   const storyProgress = clamp(scrollProgress / STORY_SCROLL_END, 0, 1);
   const storyPhase = (start: number, end: number) => clamp((storyProgress - start) / (end - start));
-  /** Linear scroll phase for explosion (gates CTA / Doe); card motion uses a slower curve below. */
-  const explodeProgress = clamp((scrollProgress - EXPLODE_SCROLL_START) / EXPLODE_SCROLL_RANGE, 0, 1);
+  /** Linear explosion phase; snap to 1 once past end so float / subpixel scroll never stalls the waitlist. */
+  const explodeProgress =
+    scrollProgress <= EXPLODE_SCROLL_START
+      ? 0
+      : scrollProgress >= EXPLODE_END_SCROLL
+        ? 1
+        : clamp((scrollProgress - EXPLODE_SCROLL_START) / EXPLODE_SCROLL_RANGE, 0, 1);
   /**
    * 0 at explosion complete, 1 at bottom — drives waitlist Doe / lift / buttons so reveals track
    * scroll instead of progress from the story boundary (which snapped when the CTA first mounted).
    */
-  const ctaPostExplode =
-    scrollProgress <= EXPLODE_END_SCROLL
-      ? 0
-      : clamp((scrollProgress - EXPLODE_END_SCROLL) / (1 - EXPLODE_END_SCROLL), 0, 1);
+  const postCtaBand = 1 - EXPLODE_END_SCROLL;
+  const ctaPostExplode = (() => {
+    if (scrollProgress < EXPLODE_END_SCROLL) return 0;
+    if (postCtaBand <= 1e-5) return 1;
+    return clamp((scrollProgress - EXPLODE_END_SCROLL) / postCtaBand, 0, 1);
+  })();
   const smoothReveal = (t: number) => {
     const x = clamp(t, 0, 1);
     return x * x * (3 - 2 * x);
@@ -188,8 +192,14 @@ export default function Home() {
   useEffect(() => {
     const handleScroll = () => {
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-      const progress =
-        maxScroll <= 0 ? 0 : Math.min(Math.max(window.scrollY / maxScroll, 0), 1);
+      if (maxScroll <= 0) {
+        setScrollProgress(0);
+        return;
+      }
+      // Browsers often stop a few px short of maxScroll; treat as full progress so explosion + CTA can finish.
+      const y = window.scrollY;
+      const nearBottom = y >= maxScroll - 3;
+      const progress = nearBottom ? 1 : Math.min(Math.max(y / maxScroll, 0), 1);
       setScrollProgress(progress);
     };
 
@@ -204,13 +214,13 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    const band = 1 - EXPLODE_END_SCROLL;
     const post =
-      scrollProgress <= EXPLODE_END_SCROLL
+      scrollProgress < EXPLODE_END_SCROLL
         ? 0
-        : Math.min(
-            Math.max((scrollProgress - EXPLODE_END_SCROLL) / (1 - EXPLODE_END_SCROLL), 0),
-            1,
-          );
+        : band <= 1e-5
+          ? 1
+          : Math.min(Math.max((scrollProgress - EXPLODE_END_SCROLL) / band, 0), 1);
 
     if (explodeProgress < 1 || scrollProgress <= STORY_SCROLL_END) {
       setCtaDoeOpaqueLocked(false);
