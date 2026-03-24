@@ -176,37 +176,20 @@ export default function Home() {
   const fifthLineOpacity = fifthInProgress * (1 - fifthOutProgress);
 
   useEffect(() => {
-    let targetProgress = 0;
-    let rafId = 0;
-
-    const animate = () => {
-      setScrollProgress((prev) => {
-        const delta = targetProgress - prev;
-        const easedStep = delta * 0.06;
-        const maxStep = 0.008;
-        const clampedStep = Math.sign(easedStep) * Math.min(Math.abs(easedStep), maxStep);
-        const next = prev + clampedStep;
-        if (Math.abs(next - targetProgress) < 0.001) {
-          return targetProgress;
-        }
-        return next;
-      });
-      rafId = window.requestAnimationFrame(animate);
-    };
-
     const handleScroll = () => {
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = Math.min(Math.max(window.scrollY / maxScroll, 0), 1);
-      targetProgress = progress;
+      const progress =
+        maxScroll <= 0 ? 0 : Math.min(Math.max(window.scrollY / maxScroll, 0), 1);
+      setScrollProgress(progress);
     };
 
     handleScroll();
-    animate();
     window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      window.cancelAnimationFrame(rafId);
+      window.removeEventListener("resize", handleScroll);
     };
   }, []);
 
@@ -227,8 +210,6 @@ export default function Home() {
       setCtaDoeOpaqueLocked(true);
     }
   }, [scrollProgress, explodeProgress]);
-
-  const headlineReveal = reveal(1.1);
 
   return (
     <div className="relative min-h-[460vh] overflow-x-hidden">
@@ -279,7 +260,7 @@ export default function Home() {
         className="pointer-events-none absolute bottom-0 left-0 right-0 z-30 flex flex-col items-center justify-end pb-8 font-ui"
         style={{
           opacity: firstLineOpacity * (mounted ? 1 : 0) * (1 - Math.min(1, explodeProgress * 1.5)),
-          transition: `opacity 0.9s ease 1.6s`,
+          transition: "none",
         }}
       >
         <div
@@ -318,8 +299,9 @@ export default function Home() {
       <div
         className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center"
         style={{
-          ...headlineReveal,
           opacity: (mounted ? 1 : 0) * (1 - Math.min(1, explodeProgress * 1.2)),
+          transform: "translateY(0px)",
+          transition: "none",
         }}
       >
         <div className="relative">
