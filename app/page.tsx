@@ -11,10 +11,12 @@ const waitlistHeadlineClass =
   "bg-gradient-to-b from-white from-0% via-white via-[66%] to-gray-100 to-100% bg-clip-text text-center text-4xl font-thin leading-tight text-transparent max-[480px]:text-5xl max-[480px]:leading-snug sm:text-5xl md:text-6xl lg:text-7xl";
 const STAGE_WIDTH = 1440;
 const STAGE_HEIGHT = 900;
-/** First ~STORY_SCROLL_END of page scroll maps the headline story (0–1); remainder drives post-explosion CTA. */
-const STORY_SCROLL_END = 0.66;
-/** Page scroll progress (0–1) at which explosion begins — same band as sixth-line hold. */
-const EXPLODE_SCROLL_START = 0.952 * STORY_SCROLL_END;
+/** Fraction of page scroll over which headline story runs (0–1 internal phases); larger = more scroll time per beat. */
+const STORY_SCROLL_END = 0.78;
+/** Story-phase progress when line 6 is fully visible; explosion scrubs from here (aligned with sixth fade end). */
+const SIXTH_LINE_STORY_END = 0.998;
+/** Page scroll position where explosion motion begins. */
+const EXPLODE_SCROLL_START = SIXTH_LINE_STORY_END * STORY_SCROLL_END;
 /** How much additional scroll (in page-progress units) runs the explosion 0→1. */
 const EXPLODE_SCROLL_RANGE = 0.26;
 /** Scroll progress where explosion is finished (`explodeProgress` reaches 1). */
@@ -121,24 +123,24 @@ export default function Home() {
   const ctaButtonsRevealLinear = clamp((ctaPostExplode - 0.32) / 0.68, 0, 1);
   const ctaButtonsReveal = smoothReveal(ctaButtonsRevealLinear);
 
-  // Very short fades + much longer holds
-  // Line 1: visible at top, very long hold, quick fade out
-  const firstFadeProgress = storyPhase(0.2, 0.225);
-  // Line 2: quick fade in, long hold, quick fade out
-  const secondInProgress = storyPhase(0.24, 0.255);
-  const secondOutProgress = storyPhase(0.39, 0.405);
-  // Line 3: quick fade in, long hold, quick fade out
-  const thirdInProgress = storyPhase(0.42, 0.435);
-  const thirdOutProgress = storyPhase(0.57, 0.585);
-  // Line 4: quick fade in, long hold, quick fade out
-  const fourthInProgress = storyPhase(0.6, 0.615);
-  const fourthOutProgress = storyPhase(0.75, 0.765);
-  // Line 5: quick fade in, long hold, quick fade out
-  const fifthInProgress = storyPhase(0.78, 0.795);
-  const fifthOutProgress = storyPhase(0.92, 0.935);
-  // Line 6: fade in, then stay full opacity while you scroll (hold).
-  const sixthFadeProgress = storyPhase(0.938, 0.952);
-  const sixthLineOpacity = sixthFadeProgress; // stays 1 from ~0.952 through the hold band
+  // Longer scroll fades + longer holds between lines (storyProgress 0–1)
+  // Line 1: long hold, slower fade out
+  const firstFadeProgress = storyPhase(0.18, 0.27);
+  // Line 2
+  const secondInProgress = storyPhase(0.28, 0.39);
+  const secondOutProgress = storyPhase(0.5, 0.6);
+  // Line 3
+  const thirdInProgress = storyPhase(0.61, 0.72);
+  const thirdOutProgress = storyPhase(0.79, 0.87);
+  // Line 4
+  const fourthInProgress = storyPhase(0.88, 0.94);
+  const fourthOutProgress = storyPhase(0.945, 0.985);
+  // Line 5
+  const fifthInProgress = storyPhase(0.95, 0.978);
+  const fifthOutProgress = storyPhase(0.982, 0.996);
+  // Line 6: slower fade in, then hold through end of story phase
+  const sixthFadeProgress = storyPhase(0.96, SIXTH_LINE_STORY_END);
+  const sixthLineOpacity = sixthFadeProgress;
 
   /**
    * `progressDelay` staggers hero cards on linear scroll progress.
