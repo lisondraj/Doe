@@ -17,9 +17,17 @@ const STORY_SCROLL_END = 0.78;
 const SIXTH_LINE_STORY_END = 0.998;
 /** Page scroll position where explosion motion begins. */
 const EXPLODE_SCROLL_START = SIXTH_LINE_STORY_END * STORY_SCROLL_END;
-/** How much additional scroll (in page-progress units) runs the explosion 0→1. */
-const EXPLODE_SCROLL_RANGE = 0.26;
-/** Scroll progress where explosion is finished (`explodeProgress` reaches 1). */
+/**
+ * Scroll after `EXPLODE_SCROLL_START` used for card explosion 0→1, chosen so
+ * `EXPLODE_SCROLL_START + range ≤ 1 − POST_CTA_SCROLL` — otherwise `scrollProgress`
+ * never reaches the end of the band and the waitlist (`explodeProgress >= 1`) never mounts.
+ */
+const POST_CTA_SCROLL = 0.12;
+const EXPLODE_SCROLL_RANGE = Math.max(
+  0.06,
+  1 - EXPLODE_SCROLL_START - POST_CTA_SCROLL,
+);
+/** Scroll progress where explosion finishes; remainder of page drives Doe / buttons. */
 const EXPLODE_END_SCROLL = EXPLODE_SCROLL_START + EXPLODE_SCROLL_RANGE;
 /** >1: same scroll advances flight more slowly (gentler explode-out). */
 const EXPLODE_MOTION_POW = 1.22;
