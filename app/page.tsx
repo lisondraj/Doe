@@ -137,19 +137,19 @@ export default function Home() {
 
   // Longer scroll fades + longer holds between lines (storyProgress 0–1)
   // Line 1: long hold, slower fade out
-  const firstFadeProgress = storyPhase(0.18, 0.27);
-  // Line 2
-  const secondInProgress = storyPhase(0.28, 0.39);
-  const secondOutProgress = storyPhase(0.5, 0.6);
-  // Line 3
-  const thirdInProgress = storyPhase(0.61, 0.72);
-  const thirdOutProgress = storyPhase(0.79, 0.87);
-  // Line 4
-  const fourthInProgress = storyPhase(0.88, 0.94);
-  const fourthOutProgress = storyPhase(0.945, 0.985);
-  // Line 5
-  const fifthInProgress = storyPhase(0.95, 0.978);
-  const fifthOutProgress = storyPhase(0.982, 0.996);
+  const firstFadeProgress = storyPhase(0.12, 0.2);
+  // Line 2 — ~0.11 in / ~0.10 out
+  const secondInProgress = storyPhase(0.22, 0.33);
+  const secondOutProgress = storyPhase(0.335, 0.435);
+  // Line 3 — ~0.11 in / ~0.08 out
+  const thirdInProgress = storyPhase(0.445, 0.555);
+  const thirdOutProgress = storyPhase(0.555, 0.635);
+  // Line 4 — ~0.09 in / ~0.08 out
+  const fourthInProgress = storyPhase(0.645, 0.735);
+  const fourthOutProgress = storyPhase(0.735, 0.815);
+  // Line 5 (“millions of phone calls”) — match line 2–3: ~0.11 in, ~0.08 out
+  const fifthInProgress = storyPhase(0.825, 0.935);
+  const fifthOutProgress = storyPhase(0.935, 0.996);
   // Line 6: must start after line 5 fade-out ends (0.996) or both sit at full opacity stacked
   const sixthFadeProgress = storyPhase(0.996, SIXTH_LINE_STORY_END);
   const sixthLineOpacity = sixthFadeProgress;
