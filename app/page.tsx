@@ -157,13 +157,15 @@ export default function Home() {
   /**
    * `progressDelay` staggers hero cards on linear scroll progress.
    * `baseOpacity` caps peak opacity during explode so dim cards never jump to full opacity.
+   * `staticRotDeg` must match the card’s Tailwind `rotate-*` so inline `transform` doesn’t snap the card to 0° when the explosion starts.
    */
   const explodeStyle = (
     dx: number,
     dy: number,
-    rot = 0,
+    spinRotDeg = 0,
     progressDelay = 0,
     baseOpacity = 1,
+    staticRotDeg = 0,
   ): React.CSSProperties => {
     if (explodeProgress === 0) return {};
     const tLinear =
@@ -174,8 +176,9 @@ export default function Home() {
     const t = Math.pow(tLinear, EXPLODE_MOTION_POW);
     const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
     const fade = Math.max(0, 1 - eased * 2.15);
+    const angleDeg = staticRotDeg + spinRotDeg * eased;
     return {
-      transform: `translate(${dx * eased}px, ${dy * eased}px) rotate(${rot * eased}deg) scale(${Math.max(0, 1 - eased * 0.34)})`,
+      transform: `translate(${dx * eased}px, ${dy * eased}px) rotate(${angleDeg}deg) scale(${Math.max(0, 1 - eased * 0.34)})`,
       opacity: Math.max(0, baseOpacity * fade),
       // No CSS transition — motion follows scroll; CSS transitions made floating cards lag preview cards.
       transition: "none",
@@ -406,42 +409,42 @@ export default function Home() {
 
       {/* Background preview cards: small, faint, dispersed */}
       <div className="pointer-events-none absolute inset-0 z-[6] font-ui" style={reveal(0)}>
-        <div className={`${previewCardClass} left-[0%] top-[30%] w-[170px] -rotate-3 opacity-20`} style={explodeStyle(-800, -100, -20, 0, 0.2)}>
+        <div className={`${previewCardClass} left-[0%] top-[30%] w-[170px] -rotate-3 opacity-20`} style={explodeStyle(-800, -100, -20, 0, 0.2, -3)}>
           <div className="h-2 w-16 rounded bg-gray-700/40" />
           <div className="mt-2 h-1.5 w-full rounded bg-gray-500/35" />
           <div className="mt-1 h-1.5 w-4/5 rounded bg-gray-500/30" />
         </div>
-        <div className={`${previewCardClass} left-[3%] top-[47%] w-[155px] rotate-2 opacity-18`} style={explodeStyle(-700, 300, 10, 0, 0.18)}>
+        <div className={`${previewCardClass} left-[3%] top-[47%] w-[155px] rotate-2 opacity-18`} style={explodeStyle(-700, 300, 10, 0, 0.18, 2)}>
           <div className="h-2 w-12 rounded bg-gray-700/35" />
           <div className="mt-2 h-1.5 w-full rounded bg-gray-500/30" />
           <div className="mt-2 h-5 w-20 rounded bg-gray-700/25" />
         </div>
-        <div className={`${previewCardClass} left-[42%] top-[2%] w-[140px] -rotate-2 opacity-14`} style={explodeStyle(100, -800, -8, 0, 0.14)}>
+        <div className={`${previewCardClass} left-[42%] top-[2%] w-[140px] -rotate-2 opacity-14`} style={explodeStyle(100, -800, -8, 0, 0.14, -2)}>
           <div className="h-2 w-14 rounded bg-gray-700/35" />
           <div className="mt-2 h-1.5 w-full rounded bg-gray-500/30" />
           <div className="mt-1 h-1.5 w-3/4 rounded bg-gray-500/25" />
         </div>
-        <div className={`${previewCardClass} left-[76%] top-[30%] w-[160px] rotate-3 opacity-19`} style={explodeStyle(700, -300, 15, 0, 0.19)}>
+        <div className={`${previewCardClass} left-[76%] top-[30%] w-[160px] rotate-3 opacity-19`} style={explodeStyle(700, -300, 15, 0, 0.19, 3)}>
           <div className="h-2 w-20 rounded bg-gray-700/40" />
           <div className="mt-2 h-1.5 w-full rounded bg-gray-500/35" />
           <div className="mt-1 h-1.5 w-5/6 rounded bg-gray-500/30" />
         </div>
-        <div className={`${previewCardClass} right-[1%] top-[58%] w-[135px] -rotate-2 opacity-14`} style={explodeStyle(900, 200, -12, 0, 0.14)}>
+        <div className={`${previewCardClass} right-[1%] top-[58%] w-[135px] -rotate-2 opacity-14`} style={explodeStyle(900, 200, -12, 0, 0.14, -2)}>
           <div className="h-2 w-10 rounded bg-gray-700/35" />
           <div className="mt-2 h-1.5 w-full rounded bg-gray-500/30" />
           <div className="mt-2 h-5 w-16 rounded bg-gray-700/25" />
         </div>
-        <div className={`${previewCardClass} left-[1%] top-[93%] w-[165px] rotate-2 opacity-17`} style={explodeStyle(-600, 700, 18, 0, 0.17)}>
+        <div className={`${previewCardClass} left-[1%] top-[93%] w-[165px] rotate-2 opacity-17`} style={explodeStyle(-600, 700, 18, 0, 0.17, 2)}>
           <div className="h-2 w-16 rounded bg-gray-700/35" />
           <div className="mt-2 h-1.5 w-full rounded bg-gray-500/30" />
           <div className="mt-1 h-1.5 w-2/3 rounded bg-gray-500/25" />
         </div>
-        <div className={`${previewCardClass} left-[52%] top-[94%] w-[150px] -rotate-3 opacity-16`} style={explodeStyle(200, 900, -10, 0, 0.16)}>
+        <div className={`${previewCardClass} left-[52%] top-[94%] w-[150px] -rotate-3 opacity-16`} style={explodeStyle(200, 900, -10, 0, 0.16, -3)}>
           <div className="h-2 w-14 rounded bg-gray-700/35" />
           <div className="mt-2 h-1.5 w-full rounded bg-gray-500/30" />
           <div className="mt-2 h-5 w-14 rounded bg-gray-700/25" />
         </div>
-        <div className={`${previewCardClass} right-[5%] top-[94%] w-[165px] rotate-2 opacity-19`} style={explodeStyle(600, 600, 14, 0, 0.19)}>
+        <div className={`${previewCardClass} right-[5%] top-[94%] w-[165px] rotate-2 opacity-19`} style={explodeStyle(600, 600, 14, 0, 0.19, 2)}>
           <div className="h-2 w-20 rounded bg-gray-700/35" />
           <div className="mt-2 h-1.5 w-full rounded bg-gray-500/30" />
           <div className="mt-1 h-1.5 w-4/5 rounded bg-gray-500/25" />
@@ -453,7 +456,7 @@ export default function Home() {
         <div
           ref={inboxCardRef}
           className={`${floatingCardClass} left-[-4%] top-[2%] w-[310px] -rotate-6 max-[480px]:!pointer-events-none max-[480px]:cursor-default cursor-pointer !pointer-events-auto`}
-          style={{ ...explodeStyle(-900, -600, -18, 0, 0.4), ...(heroOpen === "inbox" ? { opacity: 0 } : {}) }}
+          style={{ ...explodeStyle(-900, -600, -18, 0, 0.4, -6), ...(heroOpen === "inbox" ? { opacity: 0 } : {}) }}
           onClick={() => openHero("inbox")}
         >
           <div className="mb-4 flex items-center justify-between">
@@ -476,7 +479,7 @@ export default function Home() {
         <div
           ref={reportCardRef}
           className={`${floatingCardClass} left-[53%] top-[1%] w-[300px] rotate-4 max-[480px]:!pointer-events-none max-[480px]:cursor-default cursor-pointer !pointer-events-auto md:left-[55%]`}
-          style={{ ...explodeStyle(700, -700, 14, 0, 0.4), ...(heroOpen === "report" ? { opacity: 0 } : {}) }}
+          style={{ ...explodeStyle(700, -700, 14, 0, 0.4, 4), ...(heroOpen === "report" ? { opacity: 0 } : {}) }}
           onClick={() => openHero("report")}
         >
           <div className="mb-4 flex items-center justify-between">
@@ -501,7 +504,7 @@ export default function Home() {
         <div
           ref={diagCardRef}
           className={`${floatingCardClass} left-[24%] top-[10%] w-[325px] -rotate-2 max-[480px]:!pointer-events-none max-[480px]:cursor-default cursor-pointer !pointer-events-auto`}
-          style={{ ...explodeStyle(-300, -800, -10, 0, 0.4), ...(heroOpen === "diag" ? { opacity: 0 } : {}) }}
+          style={{ ...explodeStyle(-300, -800, -10, 0, 0.4, -2), ...(heroOpen === "diag" ? { opacity: 0 } : {}) }}
           onClick={() => openHero("diag")}
         >
           <div className="mb-3 flex items-center justify-between">
@@ -520,7 +523,7 @@ export default function Home() {
           <div className="absolute -bottom-1 left-6 right-6 h-2 rounded-full bg-black/10 blur-sm" />
         </div>
 
-        <div className={`${floatingCardClass} left-[0%] top-[69%] w-[305px] rotate-3`} style={explodeStyle(-900, 400, -12, 0, 0.4)}>
+        <div className={`${floatingCardClass} left-[0%] top-[69%] w-[305px] rotate-3`} style={explodeStyle(-900, 400, -12, 0, 0.4, 3)}>
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-base font-bold text-gray-900">Referral Intake</h3>
             <span className="text-xs font-semibold text-gray-500">Auto-routed</span>
@@ -536,7 +539,7 @@ export default function Home() {
           <div className="absolute -bottom-1 left-6 right-6 h-2 rounded-full bg-black/10 blur-sm" />
         </div>
 
-        <div className={`${floatingCardClass} left-[50%] top-[65%] w-[305px] -rotate-4 md:left-[52%]`} style={explodeStyle(800, 500, 15, 0, 0.4)}>
+        <div className={`${floatingCardClass} left-[50%] top-[65%] w-[305px] -rotate-4 md:left-[52%]`} style={explodeStyle(800, 500, 15, 0, 0.4, -4)}>
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-base font-bold text-gray-900">Billing Snapshot</h3>
             <span className="text-xs font-semibold text-gray-500">Updated</span>
@@ -555,7 +558,7 @@ export default function Home() {
           <div className="absolute -bottom-1 left-6 right-6 h-2 rounded-full bg-black/10 blur-sm" />
         </div>
 
-        <div className={`${floatingCardClass} left-[28%] top-[81%] w-[325px] rotate-2`} style={explodeStyle(-100, 900, 8, 0, 0.4)}>
+        <div className={`${floatingCardClass} left-[28%] top-[81%] w-[325px] rotate-2`} style={explodeStyle(-100, 900, 8, 0, 0.4, 2)}>
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-base font-bold text-gray-900">Schedule Changes</h3>
             <span className="text-xs font-semibold text-gray-500">Today</span>
@@ -580,7 +583,7 @@ export default function Home() {
         </div>
 
         {/* 7th card — anchors the right edge */}
-        <div className={`${floatingCardClass} right-[0%] top-[8%] w-[325px] rotate-3 max-md:right-[1%] max-md:top-[20%] max-md:w-[290px]`} style={explodeStyle(900, -500, 20, 0, 0.4)}>
+        <div className={`${floatingCardClass} right-[0%] top-[8%] w-[325px] rotate-3 max-md:right-[1%] max-md:top-[20%] max-md:w-[290px]`} style={explodeStyle(900, -500, 20, 0, 0.4, 3)}>
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-base font-bold text-gray-900">Active Sessions</h3>
             <span className="text-xs font-semibold text-gray-500">Live</span>
@@ -612,7 +615,7 @@ export default function Home() {
         {/* 8th card — bottom right */}
         <div
           className={`${floatingCardClass} bottom-[7%] right-[2%] w-[290px] -rotate-2 max-md:bottom-[8%] max-md:right-[2%] max-md:w-[260px]`}
-          style={explodeStyle(800, 700, -16, 0, 0.4)}
+          style={explodeStyle(800, 700, -16, 0, 0.4, -2)}
         >
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-base font-bold text-gray-900">Lab &amp; Imaging</h3>
