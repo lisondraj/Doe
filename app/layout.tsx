@@ -32,7 +32,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${lora.variable}`}>
-      <body className={`${lora.className} antialiased`}>{children}</body>
+      <body className={`${lora.className} antialiased`}>
+        {children}
+        <a
+          href="https://inquisara.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="pointer-events-auto fixed bottom-4 right-4 z-[100] font-ui text-[11px] font-extralight tracking-[0.12em] text-white/80 antialiased transition-colors hover:text-white max-[480px]:bottom-3 max-[480px]:right-3 max-[480px]:text-[10px]"
+        >
+          Inquisara
+        </a>
+      </body>
     </html>
   );
 }

@@ -150,8 +150,8 @@ export default function Home() {
   // Line 5
   const fifthInProgress = storyPhase(0.95, 0.978);
   const fifthOutProgress = storyPhase(0.982, 0.996);
-  // Line 6: slower fade in, then hold through end of story phase
-  const sixthFadeProgress = storyPhase(0.96, SIXTH_LINE_STORY_END);
+  // Line 6: must start after line 5 fade-out ends (0.996) or both sit at full opacity stacked
+  const sixthFadeProgress = storyPhase(0.996, SIXTH_LINE_STORY_END);
   const sixthLineOpacity = sixthFadeProgress;
 
   /**
