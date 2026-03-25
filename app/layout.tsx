@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Lora, Roboto } from "next/font/google";
+import { Inter, Lora } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -12,12 +12,6 @@ const lora = Lora({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-lora",
-});
-
-const roboto = Roboto({
-  weight: "500",
-  subsets: ["latin"],
-  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -44,7 +38,7 @@ export default function RootLayout({
           href="https://inquisara.com/"
           target="_blank"
           rel="noopener noreferrer"
-          className={`${roboto.className} pointer-events-auto fixed bottom-4 right-4 z-[100] text-sm font-medium tracking-[0.1em] text-white/85 antialiased transition-colors hover:text-white max-[480px]:bottom-3 max-[480px]:right-3 max-[480px]:text-[13px]`}
+          className="pointer-events-auto fixed bottom-5 right-5 z-[100] font-ui text-[12px] font-normal leading-none tracking-[0.06em] text-white/80 antialiased transition-colors hover:text-white sm:bottom-6 sm:right-6 sm:text-[13px] max-[480px]:bottom-4 max-[480px]:right-4 max-[480px]:text-[11px]"
         >
           Inquisara
         </a>
