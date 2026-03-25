@@ -4,6 +4,9 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 
 const floatingCardClass =
   "absolute rounded-xl bg-white p-4 shadow-[0_16px_30px_rgba(0,0,0,0.22),0_6px_14px_rgba(0,0,0,0.18)] opacity-40 hover:z-40 hover:-translate-y-2 hover:opacity-100 z-10 select-none [&_*]:pointer-events-none [&_*]:select-none max-[480px]:hover:!translate-y-0 max-[480px]:hover:!z-10 max-[480px]:hover:!opacity-40 max-[480px]:p-3 max-[480px]:[&_h3]:text-sm max-[480px]:[&_p]:text-xs max-[480px]:[&_span]:text-[10px] max-[480px]:[&_button]:px-2 max-[480px]:[&_button]:py-1.5 max-[480px]:[&_button]:text-[10px] max-[480px]:[&_.text-base]:text-sm";
+/** iPhone: no hover lift / sticky :hover, no taps on decorative buttons (Billing + Schedule cards). */
+const iphoneFloatingCardStatic =
+  "pointer-events-none cursor-default hover:!translate-y-0 hover:!z-10 hover:!opacity-40";
 const previewCardClass =
   "pointer-events-none absolute rounded-lg border border-white/20 bg-white/70 p-2.5 shadow-[0_8px_18px_rgba(0,0,0,0.16)] select-none max-[480px]:p-2";
 /** Center headlines — slightly larger on narrow viewports (between old 3xl and prior 6xl) */
@@ -47,6 +50,7 @@ export default function Home() {
   const [ctaDoeOpaqueLocked, setCtaDoeOpaqueLocked] = useState(false);
   const [heroOpen, setHeroOpen] = useState<HeroCardKind | null>(null);
   const [heroExpanded, setHeroExpanded] = useState(false);
+  const [isIPhone, setIsIPhone] = useState(false);
   const [heroRect, setHeroRect] = useState<{ left: number; top: number; width: number; height: number } | null>(null);
   /** Layout box of the card (CSS px) — same as on-canvas so line breaks & spacing match */
   const [heroLayout, setHeroLayout] = useState<{ w: number; h: number } | null>(null);
@@ -86,6 +90,10 @@ export default function Home() {
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 60);
     return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    setIsIPhone(/iPhone/i.test(navigator.userAgent));
   }, []);
 
   useEffect(() => {
@@ -553,7 +561,10 @@ export default function Home() {
           <div className="absolute -bottom-1 left-6 right-6 h-2 rounded-full bg-black/10 blur-sm" />
         </div>
 
-        <div className={`${floatingCardClass} left-[50%] top-[65%] w-[305px] -rotate-4 md:left-[52%]`} style={explodeStyle(800, 500, 15, 0, 0.4, -4)}>
+        <div
+          className={`${floatingCardClass} left-[50%] top-[65%] w-[305px] -rotate-4 md:left-[52%] ${isIPhone ? iphoneFloatingCardStatic : ""}`}
+          style={explodeStyle(800, 500, 15, 0, 0.4, -4)}
+        >
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-base font-bold text-gray-900">Billing Snapshot</h3>
             <span className="text-xs font-semibold text-gray-500">Updated</span>
@@ -572,7 +583,10 @@ export default function Home() {
           <div className="absolute -bottom-1 left-6 right-6 h-2 rounded-full bg-black/10 blur-sm" />
         </div>
 
-        <div className={`${floatingCardClass} left-[28%] top-[81%] w-[325px] rotate-2`} style={explodeStyle(-100, 900, 8, 0, 0.4, 2)}>
+        <div
+          className={`${floatingCardClass} left-[28%] top-[81%] w-[325px] rotate-2 ${isIPhone ? iphoneFloatingCardStatic : ""}`}
+          style={explodeStyle(-100, 900, 8, 0, 0.4, 2)}
+        >
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-base font-bold text-gray-900">Schedule Changes</h3>
             <span className="text-xs font-semibold text-gray-500">Today</span>
