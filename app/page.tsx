@@ -13,10 +13,16 @@ const STAGE_WIDTH = 1440;
 const STAGE_HEIGHT = 900;
 /** Fraction of page scroll over which headline story runs (0–1 internal phases); larger = more scroll time per beat. */
 const STORY_SCROLL_END = 0.78;
-/** Story-phase progress when line 6 is fully visible; explosion scrubs from here (aligned with sixth fade end). */
+/** Story-phase progress when line 6 is fully visible (fade-in complete). */
 const SIXTH_LINE_STORY_END = 0.998;
-/** Page scroll position where explosion motion begins. */
-const EXPLODE_SCROLL_START = SIXTH_LINE_STORY_END * STORY_SCROLL_END;
+/**
+ * Extra page scroll (0–1) after line 6 is on screen before card explosion starts —
+ * hold “It’s to take care of your patients” before fly-out.
+ */
+const SIXTH_HOLD_BEFORE_EXPLODE_SCROLL = 0.048;
+/** Page scroll position where explosion motion begins (after sixth-line hold). */
+const EXPLODE_SCROLL_START =
+  SIXTH_LINE_STORY_END * STORY_SCROLL_END + SIXTH_HOLD_BEFORE_EXPLODE_SCROLL;
 /** Min scroll (0–1) left after explosion for Doe / buttons; must stay > 0. */
 const POST_CTA_SCROLL = 0.12;
 /** Explosion band width; if `Math.max(0.06, …)` hid a negative value, `explodeProgress` could never reach 1. */

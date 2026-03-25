@@ -38,7 +38,7 @@ export default function RootLayout({
           href="https://inquisara.com/"
           target="_blank"
           rel="noopener noreferrer"
-          className="pointer-events-auto fixed bottom-5 right-5 z-[100] font-ui text-[12px] font-normal leading-none tracking-[0.06em] text-white/80 antialiased transition-colors hover:text-white sm:bottom-6 sm:right-6 sm:text-[13px] max-[480px]:bottom-4 max-[480px]:right-4 max-[480px]:text-[11px]"
+          className="pointer-events-auto fixed bottom-5 right-5 z-[100] font-ui text-[13px] font-light leading-none tracking-[0.06em] text-white/80 shadow-none drop-shadow-none antialiased transition-colors hover:text-white sm:bottom-6 sm:right-6 sm:text-[14px] max-[480px]:bottom-4 max-[480px]:right-4 max-[480px]:text-[12px]"
         >
           Inquisara
         </a>
