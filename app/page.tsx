@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
 const floatingCardClass =
-  "absolute rounded-xl bg-white p-4 shadow-[0_16px_30px_rgba(0,0,0,0.22),0_6px_14px_rgba(0,0,0,0.18)] opacity-40 hover:z-40 hover:-translate-y-2 hover:opacity-100 z-10 select-none [&_*]:pointer-events-none [&_*]:select-none max-[480px]:hover:!opacity-40 max-[480px]:p-3 max-[480px]:[&_h3]:text-sm max-[480px]:[&_p]:text-xs max-[480px]:[&_span]:text-[10px] max-[480px]:[&_button]:px-2 max-[480px]:[&_button]:py-1.5 max-[480px]:[&_button]:text-[10px] max-[480px]:[&_.text-base]:text-sm";
+  "absolute rounded-xl bg-white p-4 shadow-[0_16px_30px_rgba(0,0,0,0.22),0_6px_14px_rgba(0,0,0,0.18)] opacity-40 hover:z-40 hover:-translate-y-2 hover:opacity-100 z-10 select-none [&_*]:pointer-events-none [&_*]:select-none max-[480px]:hover:!translate-y-0 max-[480px]:hover:!z-10 max-[480px]:hover:!opacity-40 max-[480px]:p-3 max-[480px]:[&_h3]:text-sm max-[480px]:[&_p]:text-xs max-[480px]:[&_span]:text-[10px] max-[480px]:[&_button]:px-2 max-[480px]:[&_button]:py-1.5 max-[480px]:[&_button]:text-[10px] max-[480px]:[&_.text-base]:text-sm";
 const previewCardClass =
   "pointer-events-none absolute rounded-lg border border-white/20 bg-white/70 p-2.5 shadow-[0_8px_18px_rgba(0,0,0,0.16)] select-none max-[480px]:p-2";
 /** Center headlines — slightly larger on narrow viewports (between old 3xl and prior 6xl) */
@@ -19,12 +19,15 @@ const SIXTH_LINE_STORY_END = 0.998;
  * Extra page scroll (0–1) after line 6 is on screen before card explosion starts —
  * hold “It’s to take care of your patients” before fly-out.
  */
-const SIXTH_HOLD_BEFORE_EXPLODE_SCROLL = 0.048;
+const SIXTH_HOLD_BEFORE_EXPLODE_SCROLL = 0.095;
 /** Page scroll position where explosion motion begins (after sixth-line hold). */
 const EXPLODE_SCROLL_START =
   SIXTH_LINE_STORY_END * STORY_SCROLL_END + SIXTH_HOLD_BEFORE_EXPLODE_SCROLL;
-/** Min scroll (0–1) left after explosion for Doe / buttons; must stay > 0. */
-const POST_CTA_SCROLL = 0.12;
+/** Min scroll (0–1) left after explosion for sixth fade-out + Doe; must stay > 0. */
+const POST_CTA_SCROLL = 0.082;
+/** After cards are gone: hold sixth headline full, then fade it out over scroll before Doe. */
+const SIXTH_HOLD_AFTER_EXPLODE_SCROLL = 0.024;
+const SIXTH_LINE_FADE_OUT_SCROLL = 0.036;
 /** Explosion band width; if `Math.max(0.06, …)` hid a negative value, `explodeProgress` could never reach 1. */
 const EXPLODE_SCROLL_RANGE = Math.max(
   0.05,
@@ -123,23 +126,40 @@ export default function Home() {
     if (postCtaBand <= 1e-5) return 1;
     return clamp((scrollProgress - EXPLODE_END_SCROLL) / postCtaBand, 0, 1);
   })();
+  /** Sixth line stays through explosion + hold, then fades out on scroll before Doe. */
+  const sixthLineHoldEndScroll = EXPLODE_END_SCROLL + SIXTH_HOLD_AFTER_EXPLODE_SCROLL;
+  const sixthTextGoneScroll = sixthLineHoldEndScroll + SIXTH_LINE_FADE_OUT_SCROLL;
+  const sixthPostExplodeOpacity =
+    scrollProgress < sixthLineHoldEndScroll
+      ? 1
+      : scrollProgress >= sixthTextGoneScroll
+        ? 0
+        : 1 -
+          (scrollProgress - sixthLineHoldEndScroll) /
+            Math.max(SIXTH_LINE_FADE_OUT_SCROLL, 1e-5);
+  /** Doe / waitlist only after sixth headline has scrolled away. */
+  const doeScrollRevealLinear = clamp(
+    (scrollProgress - sixthTextGoneScroll) / Math.max(1e-5, 1 - sixthTextGoneScroll),
+    0,
+    1,
+  );
   const smoothReveal = (t: number) => {
     const x = clamp(t, 0, 1);
     return x * x * (3 - 2 * x);
   };
-  /** Headline stack eases up over most of the post-explode scroll. */
-  const ctaTextLift = smoothReveal(clamp(ctaPostExplode / 0.88, 0, 1));
-  /** Doe fades across ~full remaining scroll (slow); smoothstep keeps motion scroll-locked (no CSS transition). */
-  const ctaDoeRevealLinear = clamp(ctaPostExplode / 0.94, 0, 1);
+  /** Headline stack eases up with Doe reveal (post–sixth line). */
+  const ctaTextLift = smoothReveal(clamp(doeScrollRevealLinear / 0.88, 0, 1));
   const ctaDoeOpacity =
     ctaDoeOpaqueLocked
       ? 1
-      : explodeProgress < 1
+      : scrollProgress < sixthTextGoneScroll
         ? 0
-        : smoothReveal(ctaDoeRevealLinear);
-  /** Buttons trail Doe; long span so they ease in slowly with scroll. */
-  const ctaButtonsRevealLinear = clamp((ctaPostExplode - 0.32) / 0.68, 0, 1);
+        : smoothReveal(doeScrollRevealLinear);
+  /** Buttons trail Doe. */
+  const ctaButtonsRevealLinear = clamp((doeScrollRevealLinear - 0.32) / 0.68, 0, 1);
   const ctaButtonsReveal = smoothReveal(ctaButtonsRevealLinear);
+  /** Lines 1–5 fade with exploding UI; line 6 uses its own scroll-out. */
+  const headlineExplodeFade = 1 - Math.min(1, explodeProgress * 1.2);
 
   // Longer scroll fades + longer holds between lines (storyProgress 0–1)
   // Line 1: long hold, slower fade out
@@ -223,22 +243,14 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const band = 1 - EXPLODE_END_SCROLL;
-    const post =
-      scrollProgress < EXPLODE_END_SCROLL
-        ? 0
-        : band <= 1e-5
-          ? 1
-          : Math.min(Math.max((scrollProgress - EXPLODE_END_SCROLL) / band, 0), 1);
-
-    if (explodeProgress < 1 || scrollProgress <= STORY_SCROLL_END) {
+    if (scrollProgress < sixthTextGoneScroll || scrollProgress <= STORY_SCROLL_END) {
       setCtaDoeOpaqueLocked(false);
       return;
     }
-    if (post >= 0.58) {
+    if (doeScrollRevealLinear >= 0.55) {
       setCtaDoeOpaqueLocked(true);
     }
-  }, [scrollProgress, explodeProgress]);
+  }, [scrollProgress, sixthTextGoneScroll, doeScrollRevealLinear]);
 
   return (
     <div className="relative min-h-[460vh] overflow-x-hidden">
@@ -328,7 +340,7 @@ export default function Home() {
       <div
         className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center"
         style={{
-          opacity: (mounted ? 1 : 0) * (1 - Math.min(1, explodeProgress * 1.2)),
+          opacity: mounted ? 1 : 0,
           transform: "translateY(0px)",
           transition: "none",
         }}
@@ -339,7 +351,7 @@ export default function Home() {
             style={{
               fontFamily: "var(--font-lora), serif",
               textShadow: "0 8px 16px rgba(0, 0, 0, 0.3)",
-              opacity: firstLineOpacity,
+              opacity: firstLineOpacity * headlineExplodeFade,
               transform: `translateY(${-14 * firstFadeProgress}px)`,
             }}
           >
@@ -352,7 +364,7 @@ export default function Home() {
             style={{
               fontFamily: "var(--font-lora), serif",
               textShadow: "0 8px 16px rgba(0, 0, 0, 0.3)",
-              opacity: secondLineOpacity,
+              opacity: secondLineOpacity * headlineExplodeFade,
               transform: `translateY(${20 - 20 * secondInProgress}px)`,
             }}
           >
@@ -364,7 +376,7 @@ export default function Home() {
             style={{
               fontFamily: "var(--font-lora), serif",
               textShadow: "0 8px 16px rgba(0, 0, 0, 0.3)",
-              opacity: thirdLineOpacity,
+              opacity: thirdLineOpacity * headlineExplodeFade,
               transform: `translateY(${24 - 24 * thirdInProgress}px)`,
             }}
           >
@@ -376,7 +388,7 @@ export default function Home() {
             style={{
               fontFamily: "var(--font-lora), serif",
               textShadow: "0 8px 16px rgba(0, 0, 0, 0.3)",
-              opacity: fourthLineOpacity,
+              opacity: fourthLineOpacity * headlineExplodeFade,
               transform: `translateY(${24 - 24 * fourthInProgress}px)`,
             }}
           >
@@ -388,7 +400,7 @@ export default function Home() {
             style={{
               fontFamily: "var(--font-lora), serif",
               textShadow: "0 8px 16px rgba(0, 0, 0, 0.3)",
-              opacity: fifthLineOpacity,
+              opacity: fifthLineOpacity * headlineExplodeFade,
               transform: `translateY(${24 - 24 * fifthInProgress}px)`,
             }}
           >
@@ -400,11 +412,7 @@ export default function Home() {
             style={{
               fontFamily: "var(--font-lora), serif",
               textShadow: "0 8px 16px rgba(0, 0, 0, 0.3)",
-              opacity:
-                sixthLineOpacity *
-                (explodeProgress >= 1
-                  ? 0
-                  : 1 - Math.min(1, explodeProgress * 2.25)),
+              opacity: sixthLineOpacity * sixthPostExplodeOpacity,
               transform: `translateY(${24 - 24 * sixthFadeProgress}px)`,
             }}
           >
