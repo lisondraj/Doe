@@ -3,24 +3,21 @@
 @tailwind utilities;
 
 /*
- * /doeforvc — iPhone layout root (.doeforvc-iphone-root) sets zoom in JS.
- * Breakpoint matches page.tsx isPhoneLayout (max-width: 480px) so large
- * iPhones (e.g. 16 Pro Max ~440 CSS px) get phone styles, not desktop.
- * Restore full rem scale here so typography stays readable after zoom.
+ * /doeforvc — .doeforvc-iphone-root is set when JS enables phone layout.
+ * Gated by class (not max-width) so large iPhones still get safe-area + bg.
+ * Beige matches page chrome (#F7F6F3) so Dynamic Island / safe-area overscroll
+ * isn’t white next to the hero.
  */
-@media (max-width: 480px) {
-  html:has(.doeforvc-iphone-root) {
-    font-size: 100%;
-  }
+html:has(.doeforvc-iphone-root) {
+  font-size: 100%;
+}
 
-  .doeforvc-iphone-root {
-    /* Prevent horizontal bleed from scaled fixed-width sections */
-    overflow-x: clip;
-    background-color: #f7f6f3;
-    padding-left: env(safe-area-inset-left, 0px);
-    padding-right: env(safe-area-inset-right, 0px);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-  }
+.doeforvc-iphone-root {
+  overflow-x: clip;
+  background-color: #f7f6f3;
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 @layer base {
@@ -28,7 +25,7 @@
      reflows proportionally, not a visual zoom/scale that “shrinks a canvas”. */
   html {
     font-size: 80%;
-    /* Match page chrome (#F7F6F3) so safe-area / overscroll by Dynamic Island isn’t white */
+    min-height: 100%;
     background-color: #f7f6f3;
   }
 
@@ -40,6 +37,7 @@
 
   body {
     @apply text-gray-900 antialiased;
+    min-height: 100%;
     background-color: #f7f6f3;
   }
 
