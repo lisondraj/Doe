@@ -63,6 +63,51 @@ const NAV_ITEMS = ["Features", "Security", "Students", "Company"] as const;
 const PHONE_LAYOUT_MEDIA =
   "(max-width: 480px), ((max-height: 500px) and (min-width: 500px) and (pointer: coarse))";
 
+const LAYOUT_FORCE_MOBILE_KEY = "doeforvc-force-mobile";
+const LAYOUT_FORCE_DESKTOP_KEY = "doeforvc-force-desktop";
+
+function readLayoutOverrideFlags(): { forceMobile: boolean; forceDesktop: boolean } {
+  if (typeof window === "undefined") return { forceMobile: false, forceDesktop: false };
+  try {
+    return {
+      forceMobile: sessionStorage.getItem(LAYOUT_FORCE_MOBILE_KEY) === "1",
+      forceDesktop: sessionStorage.getItem(LAYOUT_FORCE_DESKTOP_KEY) === "1",
+    };
+  } catch {
+    return { forceMobile: false, forceDesktop: false };
+  }
+}
+
+/** Natural phone detection + optional session overrides (preview on desktop / desktop site on iPhone). */
+function computeIsPhoneLayout(): boolean {
+  const { forceMobile, forceDesktop } = readLayoutOverrideFlags();
+  const isIPhone = /iPhone/.test(navigator.userAgent || "");
+  const narrow = window.matchMedia(PHONE_LAYOUT_MEDIA).matches;
+  const naturalPhone = isIPhone || narrow;
+  return forceMobile || (!forceDesktop && naturalPhone);
+}
+
+function persistLayoutClick(isPhoneLayoutNow: boolean) {
+  const isIPhone = /iPhone/.test(navigator.userAgent || "");
+  const naturalPhone = isIPhone || window.matchMedia(PHONE_LAYOUT_MEDIA).matches;
+  try {
+    if (isPhoneLayoutNow) {
+      if (naturalPhone) {
+        sessionStorage.setItem(LAYOUT_FORCE_DESKTOP_KEY, "1");
+        sessionStorage.removeItem(LAYOUT_FORCE_MOBILE_KEY);
+      } else {
+        sessionStorage.removeItem(LAYOUT_FORCE_MOBILE_KEY);
+        sessionStorage.removeItem(LAYOUT_FORCE_DESKTOP_KEY);
+      }
+    } else {
+      sessionStorage.setItem(LAYOUT_FORCE_MOBILE_KEY, "1");
+      sessionStorage.removeItem(LAYOUT_FORCE_DESKTOP_KEY);
+    }
+  } catch {
+    /* private / restricted storage */
+  }
+}
+
 /** Pro Max / Plus (~430–456 CSS px short edge) otherwise get a higher `zoom` and read oversized; cap basis ~ standard iPhone width. */
 const IPHONE_ZOOM_SHORT_EDGE_CAP = 404;
 const IPHONE_ZOOM_DESIGN_WIDTH = 820;
@@ -319,11 +364,12 @@ export default function DoePage() {
   /** Sliding cards on phone: logical px inside zoomed root (= visible px ÷ iphoneZoom). */
   const [phoneSlideSize, setPhoneSlideSize] = useState({ w: 850, h: 1090 });
 
+  const syncLayoutRef = useRef<() => void>(() => {});
+
   useLayoutEffect(() => {
     const phoneMql = window.matchMedia(PHONE_LAYOUT_MEDIA);
     const updateLayout = () => {
-      const isIPhone = /iPhone/.test(navigator.userAgent || "");
-      const phone = isIPhone || phoneMql.matches;
+      const phone = computeIsPhoneLayout();
       setIsPhoneLayout(phone);
       setDocumentLayout(phone);
       if (phone) {
@@ -339,6 +385,7 @@ export default function DoePage() {
         setIphoneZoom(1);
       }
     };
+    syncLayoutRef.current = updateLayout;
     updateLayout();
     phoneMql.addEventListener("change", updateLayout);
     window.addEventListener("resize", updateLayout);
@@ -1314,6 +1361,17 @@ export default function DoePage() {
       }}
       suppressHydrationWarning
     >
+      <button
+        type="button"
+        className="fixed bottom-4 right-4 z-[100] max-w-[calc(100vw-2rem)] rounded-full border border-black/10 bg-white/90 px-4 py-2 text-xs font-semibold tracking-tight text-gray-900 shadow-md backdrop-blur-sm hover:bg-white"
+        aria-label={isPhoneLayout ? "Switch to desktop layout" : "Switch to iPhone layout"}
+        onClick={() => {
+          persistLayoutClick(isPhoneLayout);
+          syncLayoutRef.current();
+        }}
+      >
+        {isPhoneLayout ? "Desktop view" : "iPhone view"}
+      </button>
       {/* Hero Section with Dynamic Gradient */}
       <div
         className="relative overflow-hidden"
