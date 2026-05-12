@@ -63,6 +63,10 @@ const NAV_ITEMS = ["Features", "Security", "Students", "Company"] as const;
 const PHONE_LAYOUT_MEDIA =
   "(max-width: 480px), ((max-height: 500px) and (min-width: 500px) and (pointer: coarse))";
 
+/** Pro Max / Plus (~430–456 CSS px short edge) otherwise get a higher `zoom` and read oversized; cap basis ~ standard iPhone width. */
+const IPHONE_ZOOM_SHORT_EDGE_CAP = 404;
+const IPHONE_ZOOM_DESIGN_WIDTH = 820;
+
 /** Keep <html data-layout> in sync with Tailwind layout-phone / layout-desktop variants. */
 function setDocumentLayout(phone: boolean) {
   if (typeof document !== "undefined") {
@@ -323,8 +327,14 @@ export default function DoePage() {
       setIsPhoneLayout(phone);
       setDocumentLayout(phone);
       if (phone) {
-        const shortEdge = Math.min(window.innerWidth, window.innerHeight);
-        setIphoneZoom(Math.min(1, Math.max(0.38, (shortEdge - 16) / 800)));
+        const vv = window.visualViewport;
+        const shortEdge = vv
+          ? Math.min(vv.width, vv.height)
+          : Math.min(window.innerWidth, window.innerHeight);
+        const zoomEdge = Math.min(shortEdge, IPHONE_ZOOM_SHORT_EDGE_CAP);
+        setIphoneZoom(
+          Math.min(1, Math.max(0.38, (zoomEdge - 16) / IPHONE_ZOOM_DESIGN_WIDTH))
+        );
       } else {
         setIphoneZoom(1);
       }
@@ -333,10 +343,13 @@ export default function DoePage() {
     phoneMql.addEventListener("change", updateLayout);
     window.addEventListener("resize", updateLayout);
     window.addEventListener("orientationchange", updateLayout);
+    const vvLayout = window.visualViewport;
+    vvLayout?.addEventListener("resize", updateLayout);
     return () => {
       phoneMql.removeEventListener("change", updateLayout);
       window.removeEventListener("resize", updateLayout);
       window.removeEventListener("orientationchange", updateLayout);
+      vvLayout?.removeEventListener("resize", updateLayout);
     };
   }, []);
 
