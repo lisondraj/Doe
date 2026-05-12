@@ -2,15 +2,178 @@
 @tailwind components;
 @tailwind utilities;
 
-/* iOS Safari: avoid white bars; match gradient end color if anything peeks through */
-html {
-  min-height: 100%;
-  min-height: -webkit-fill-available;
-  background-color: #1e343a;
+/*
+ * /doeforvc — iPhone layout root (.doeforvc-iphone-root) sets zoom in JS.
+ * Restore full rem scale here so typography stays readable after zoom.
+ */
+@media (max-width: 430px) {
+  html:has(.doeforvc-iphone-root) {
+    font-size: 100%;
+  }
+
+  .doeforvc-iphone-root {
+    /* Prevent horizontal bleed from scaled fixed-width sections */
+    overflow-x: clip;
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
 }
 
-body {
-  min-height: 100%;
-  min-height: -webkit-fill-available;
-  background-color: #1e343a;
+@layer base {
+  /* Match ~80% browser zoom at 100%: scale rem (Tailwind default) so layout
+     reflows proportionally, not a visual zoom/scale that “shrinks a canvas”. */
+  html {
+    font-size: 80%;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    @apply bg-white text-gray-900 antialiased;
+  }
+
+  /* Standard link reset - only remove underline, let Tailwind handle colors */
+  a {
+    text-decoration: none;
+  }
+
+  button {
+    @apply cursor-pointer bg-transparent border-0 p-0 m-0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+@keyframes scroll-horizontal {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll-horizontal {
+  animation: scroll-horizontal 30s linear infinite;
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-down {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes expand-sidebar {
+  from {
+    width: 4rem;
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    width: 16rem;
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes collapse-sidebar {
+  from {
+    width: 16rem;
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    width: 4rem;
+    opacity: 0;
+    transform: translateX(-12px) scale(0.95);
+  }
+}
+
+@keyframes fade-in-backdrop {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(4px);
+  }
+}
+
+@keyframes fade-out-backdrop {
+  from {
+    opacity: 1;
+    backdrop-filter: blur(2px);
+  }
+  to {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+}
+
+.animate-expand-sidebar {
+  animation: expand-sidebar 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-collapse-sidebar {
+  animation: collapse-sidebar 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-fade-in-backdrop {
+  animation: fade-in-backdrop 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-out-backdrop {
+  animation: fade-out-backdrop 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@font-face {
+  font-family: 'Copernicus New Cond';
+  src: url('/fonts/CopernicusNewCond-070.otf') format('opentype'),
+       url('/fonts/CopernicusNewCond-070.ttf') format('truetype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela Deck';
+  src: url('/fonts/CanelaDeck-Light-Trial.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
 }
