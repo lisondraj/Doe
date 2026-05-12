@@ -1,15 +1,10 @@
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
 
 const config: Config = {
   content: ["./app/**/*.{js,ts,jsx,tsx,mdx}"],
   theme: {
     extend: {
-      /* Same rules as page.tsx isPhoneLayout — portrait large iPhones + landscape phones. */
-      screens: {
-        phone: {
-          raw: "(max-width: 480px), ((max-height: 500px) and (min-width: 500px) and (pointer: coarse))",
-        },
-      },
       fontFamily: {
         ui: [
           "var(--font-inter)",
@@ -22,7 +17,13 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    plugin(({ addVariant }) => {
+      /** Set on document.documentElement from page.tsx + layout boot script (iPhone / phone layout). */
+      addVariant("layout-phone", `[data-layout="phone"] &`);
+      addVariant("layout-desktop", `[data-layout="desktop"] &`);
+    }),
+  ],
 };
 
 export default config;
