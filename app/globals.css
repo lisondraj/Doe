@@ -16,6 +16,7 @@
   .doeforvc-iphone-root {
     /* Prevent horizontal bleed from scaled fixed-width sections */
     overflow-x: clip;
+    background-color: #f7f6f3;
     padding-left: env(safe-area-inset-left, 0px);
     padding-right: env(safe-area-inset-right, 0px);
     padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -27,6 +28,8 @@
      reflows proportionally, not a visual zoom/scale that “shrinks a canvas”. */
   html {
     font-size: 80%;
+    /* Match page chrome (#F7F6F3) so safe-area / overscroll by Dynamic Island isn’t white */
+    background-color: #f7f6f3;
   }
 
   *,
@@ -36,7 +39,8 @@
   }
 
   body {
-    @apply bg-white text-gray-900 antialiased;
+    @apply text-gray-900 antialiased;
+    background-color: #f7f6f3;
   }
 
   /* Standard link reset - only remove underline, let Tailwind handle colors */
