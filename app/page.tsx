@@ -3560,38 +3560,36 @@ export default function DoePage() {
             </div>
           </div>
           </div>
-
-        {/* Vertical bento headline — desktop/tablet strip above rails; phone paints inside rail 0 */}
-        <div
-          ref={verticalBentoHeadlineRef}
-          className={`hidden md:flex flex-col justify-center shrink-0 w-full px-4 ${narrowHorizontalInset} pt-6 pb-3 iphone-page:hidden bg-[#F7F6F3]`}
-        >
-          <div className="mx-auto max-w-full text-center">
-            <div className="text-center mb-0">
-              <h1
-                className={`flex flex-col items-center gap-2 font-normal text-gray-900 tracking-tight ${lora.className}`}
-                style={{
-                  opacity: verticalBentoTitleOpacity,
-                  transform: `translateY(${verticalBentoTitleTranslateY}px)`,
-                  transition: "opacity 1.2s ease-out, transform 1.2s ease-out",
-                }}
-              >
-                <span className="block leading-[1.06] text-[clamp(2.65rem,11.5vw,4rem)]">So you can do</span>
-                <span className="block leading-[1.06] text-[clamp(2.65rem,11.5vw,4rem)]">Doctor better.</span>
-              </h1>
-            </div>
-          </div>
-        </div>
         </div>
       </div>
 
       {/* Vertical bento rails — pinned stack + scrub */}
       <div
         ref={verticalBentoSectionRef}
-        className={`relative z-10 w-full bg-[#F7F6F3] pt-5 pb-6 md:pt-5 md:pb-6 max-md:pt-8 max-md:pb-14 iphone-page:pt-10 iphone-page:pb-[4.25rem] ${VBENTO_CANVAS_PADDING}`}
+        className={`relative z-10 w-full bg-[#F7F6F3] pt-5 pb-6 md:pt-5 md:pb-6 max-md:pt-8 max-md:pb-8 iphone-page:pt-10 iphone-page:pb-10 ${VBENTO_CANVAS_PADDING}`}
         style={{ minHeight: vbMetrics.sectionMinPx }}
       >
-        <div className="sticky top-[max(5.75rem,calc(env(safe-area-inset-top,0px)+4.5rem))] z-[5] pt-6 pb-6 md:pt-6 md:pb-6 max-md:pt-10 max-md:pb-11 iphone-page:pt-[max(2.75rem,env(safe-area-inset-top,0px))] iphone-page:pb-[max(2rem,env(safe-area-inset-bottom,0px))]">
+        <div
+          ref={verticalBentoHeadlineRef}
+          className={`flex flex-col items-center w-full shrink-0 px-4 ${narrowHorizontalInset} pb-4 max-md:pb-5 iphone-page:pb-6 md:pb-5`}
+        >
+          <h2
+            className={`flex flex-col items-center gap-1 text-center text-gray-900 w-full max-w-[min(100%,42rem)] font-normal tracking-tight leading-[1.06] ${lora.className}`}
+            style={{
+              paddingTop: "clamp(0.35rem, 1.5vw, 1rem)",
+              paddingBottom: "clamp(0.45rem, 1.8vw, 1rem)",
+              overflow: "visible",
+              textWrap: "balance",
+              opacity: verticalBentoTitleOpacity,
+              transform: `translateY(${verticalBentoTitleTranslateY}px)`,
+              transition: "opacity 1.2s ease-out, transform 1.2s ease-out",
+            }}
+          >
+            <span className="block text-[clamp(2.65rem,11.5vw,4rem)]">So you can do</span>
+            <span className="block text-[clamp(2.65rem,11.5vw,4rem)]">Doctor better.</span>
+          </h2>
+        </div>
+        <div className="sticky top-[max(5.75rem,calc(env(safe-area-inset-top,0px)+4.5rem))] z-[5] pt-6 pb-6 md:pt-6 md:pb-6 max-md:pt-10 max-md:pb-10 iphone-page:pt-[max(2.75rem,env(safe-area-inset-top,0px))] iphone-page:pb-[max(2.75rem,env(safe-area-inset-bottom,0px))]">
           <div
             className="relative mx-auto w-full max-w-full shrink-0"
             style={{
@@ -3751,27 +3749,6 @@ export default function DoePage() {
                                     />
                                   </div>
                                 ) : null}
-                              </div>
-                            ) : null}
-                            {i === 0 ? (
-                              <div
-                                className="hidden max-md:flex md:hidden iphone-page:flex absolute inset-0 z-[14] flex-col items-center justify-center px-5 py-12 pointer-events-none text-center"
-                                style={{
-                                  opacity: verticalBentoRailsOpacity,
-                                  transform: `translateY(${verticalBentoRailsTranslateY}px)`,
-                                  transition: "opacity 1.2s ease-out, transform 1.2s ease-out",
-                                }}
-                              >
-                                <h1
-                                  className={`flex flex-col items-center gap-2 font-normal tracking-tight text-white [text-shadow:0_2px_28px_rgba(0,0,0,0.42)] ${lora.className}`}
-                                >
-                                  <span className="block leading-[1.06] text-[clamp(2.05rem,9.5vw,3.35rem)]">
-                                    So you can do
-                                  </span>
-                                  <span className="block leading-[1.06] text-[clamp(2.05rem,9.5vw,3.35rem)]">
-                                    Doctor better.
-                                  </span>
-                                </h1>
                               </div>
                             ) : null}
                         </div>
