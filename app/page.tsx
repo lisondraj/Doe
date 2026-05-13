@@ -356,7 +356,9 @@ export default function DoePage() {
     const navEl = navBarRowRef.current;
     if (!navEl) return;
     const update = () => {
-      setIphoneMenuTopPx(Math.floor(navEl.getBoundingClientRect().bottom));
+      const raw = navEl.getBoundingClientRect().bottom;
+      /** Pull sheet slightly under measured chrome to kill subpixel/zoom seam above list */
+      setIphoneMenuTopPx(Math.max(0, Math.floor(raw) - 6));
     };
     update();
     let raf1 = 0;
@@ -1398,7 +1400,7 @@ export default function DoePage() {
           )}
           {/* Top bar */}
           <div
-            className="px-8 py-6 iphone-page:px-6 iphone-page:py-6 iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] flex items-center relative z-10 iphone-page:gap-2 justify-end"
+            className={`px-8 py-6 iphone-page:px-6 iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] flex items-center relative z-10 iphone-page:gap-2 justify-end ${isPhoneLayout && mobileNavOpen ? "iphone-page:py-4" : "iphone-page:py-6"}`}
           >
             {/* Logo — opacity only (no width collapse) so it fades, not slides */}
             <h1
@@ -1622,20 +1624,13 @@ export default function DoePage() {
                             setMobileNavExpandedKey((k) => (k === item ? null : item))
                           }
                         >
-                          <span className="min-w-0">{item}</span>
+                          <span className="min-w-0 flex-1">{item}</span>
                           <span
-                            className="shrink-0 inline-flex items-center justify-center text-gray-500 mt-1"
+                            className={`shrink-0 inline-flex items-center justify-center text-gray-600 leading-none ${inter.className}`}
+                            style={{ fontWeight: 400, fontSize: "clamp(1.75rem, 6vw, 2.75rem)" }}
                             aria-hidden
                           >
-                            {expanded ? (
-                              <svg width={28} height={28} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M6 9l6 6 6-6" />
-                              </svg>
-                            ) : (
-                              <svg width={28} height={28} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M18 15l-6-6-6 6" />
-                              </svg>
-                            )}
+                            {expanded ? "v" : "^"}
                           </span>
                         </button>
                         <div
@@ -1648,7 +1643,7 @@ export default function DoePage() {
                                   <button
                                     key={sub.title}
                                     type="button"
-                                    className={`w-full text-left py-3 pl-[2.75rem] iphone-page:pl-12 text-base font-medium text-gray-700 active:bg-black/[0.03] transition-colors ${inter.className}`}
+                                    className={`w-full text-left py-3.5 pl-[2.75rem] iphone-page:pl-12 text-lg iphone-page:text-xl font-medium text-gray-700 active:bg-black/[0.03] transition-colors ${inter.className}`}
                                     onClick={() => setMobileNavOpen(false)}
                                   >
                                     {sub.title}
