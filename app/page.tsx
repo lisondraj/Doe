@@ -3566,7 +3566,7 @@ export default function DoePage() {
       {/* Vertical bento rails — pinned stack + scrub */}
       <div
         ref={verticalBentoSectionRef}
-        className={`relative z-10 w-full bg-[#F7F6F3] pt-5 pb-6 md:pt-5 md:pb-6 max-md:pt-8 max-md:pb-8 iphone-page:pt-10 iphone-page:pb-10 ${VBENTO_CANVAS_PADDING}`}
+        className={`relative z-10 w-full bg-[#F7F6F3] pt-4 pb-6 md:pt-4 md:pb-6 max-md:pt-7 max-md:pb-8 iphone-page:pt-9 iphone-page:pb-10 ${VBENTO_CANVAS_PADDING}`}
         style={{ minHeight: vbMetrics.sectionMinPx }}
       >
         <div
@@ -3576,7 +3576,7 @@ export default function DoePage() {
           <h2
             className={`flex flex-col items-center gap-1 text-center text-gray-900 w-full max-w-[min(100%,42rem)] font-normal tracking-tight leading-[1.06] ${lora.className}`}
             style={{
-              paddingTop: "clamp(0.35rem, 1.5vw, 1rem)",
+              paddingTop: "clamp(0.2rem, 1vw, 0.75rem)",
               paddingBottom: "clamp(0.45rem, 1.8vw, 1rem)",
               overflow: "visible",
               textWrap: "balance",
