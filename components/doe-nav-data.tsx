@@ -133,9 +133,11 @@ export function MobileNavFooterShapeIcon({
   );
 }
 
+export type DropdownNavItem = { title: string; desc: string; href?: string };
+
 export const dropdownContent: Record<
   string,
-  { items: { title: string; desc: string }[]; featured?: { title: string; desc: string } }
+  { items: DropdownNavItem[]; featured?: { title: string; desc: string } }
 > = {
   Features: {
     items: [
@@ -168,7 +170,7 @@ export const dropdownContent: Record<
     items: [
       { title: "About Us", desc: "Our mission to reimagine global healthcare." },
       { title: "Careers", desc: "Join a team building the future of medicine." },
-      { title: "Press", desc: "Latest news and media resources." },
+      { title: "Blog", desc: "Writing from the Doe team.", href: "/blog" },
       { title: "Contact", desc: "Get in touch with our team." },
     ],
     featured: { title: "Our Story", desc: "Founded to bring frontier AI to the patients who need it most." },

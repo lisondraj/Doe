@@ -116,7 +116,7 @@ export default function DoeIphoneSiteNav() {
   return (
     <nav
       ref={navBarRowRef}
-      className="fixed top-0 left-0 right-0 z-50 iphone-page:pt-[env(safe-area-inset-top,0px)]"
+      className={`fixed top-0 left-0 right-0 iphone-page:pt-[env(safe-area-inset-top,0px)] ${mobileNavOpen ? "z-[100]" : "z-50"}`}
       style={{
         backgroundColor: "#F7F6F3",
         borderBottom: "1px solid #E6E6E6",
@@ -241,16 +241,27 @@ export default function DoeIphoneSiteNav() {
                         <div className="overflow-hidden min-h-0">
                           {four.length > 0 && (
                             <div className="flex flex-col pl-5 pr-5 iphone-page:pl-[max(1.35rem,calc(env(safe-area-inset-left,0px)+12px+2.4vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))] pb-3 pt-0">
-                              {four.map((sub) => (
-                                <button
-                                  key={sub.title}
-                                  type="button"
-                                  className={`w-full text-left py-3.5 iphone-page:py-[clamp(0.72rem,0.48rem+1.1vmin,1.05rem)] pl-7 iphone-page:pl-[clamp(2.15rem,calc(env(safe-area-inset-left,0px)+32px)+1.95vmin,4.9rem)] text-[1.625rem] iphone-page:text-[clamp(1.2rem,0.72rem+1.95vmin,2.52rem)] leading-snug font-medium text-gray-600 active:bg-black/[0.03] transition-colors ${inter.className}`}
-                                  onClick={() => setMobileNavOpen(false)}
-                                >
-                                  {sub.title}
-                                </button>
-                              ))}
+                              {four.map((sub) =>
+                                sub.href ? (
+                                  <Link
+                                    key={sub.title}
+                                    href={sub.href}
+                                    className={`block w-full text-left py-3.5 iphone-page:py-[clamp(0.72rem,0.48rem+1.1vmin,1.05rem)] pl-7 iphone-page:pl-[clamp(2.15rem,calc(env(safe-area-inset-left,0px)+32px)+1.95vmin,4.9rem)] text-[1.625rem] iphone-page:text-[clamp(1.2rem,0.72rem+1.95vmin,2.52rem)] leading-snug font-medium text-gray-600 active:bg-black/[0.03] transition-colors ${inter.className}`}
+                                    onClick={() => setMobileNavOpen(false)}
+                                  >
+                                    {sub.title}
+                                  </Link>
+                                ) : (
+                                  <button
+                                    key={sub.title}
+                                    type="button"
+                                    className={`w-full text-left py-3.5 iphone-page:py-[clamp(0.72rem,0.48rem+1.1vmin,1.05rem)] pl-7 iphone-page:pl-[clamp(2.15rem,calc(env(safe-area-inset-left,0px)+32px)+1.95vmin,4.9rem)] text-[1.625rem] iphone-page:text-[clamp(1.2rem,0.72rem+1.95vmin,2.52rem)] leading-snug font-medium text-gray-600 active:bg-black/[0.03] transition-colors ${inter.className}`}
+                                    onClick={() => setMobileNavOpen(false)}
+                                  >
+                                    {sub.title}
+                                  </button>
+                                )
+                              )}
                             </div>
                           )}
                         </div>
