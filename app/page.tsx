@@ -263,8 +263,10 @@ export default function DoePage() {
     useRef<HTMLDivElement>(null),
     useRef<HTMLDivElement>(null),
   ];
-  /** Full fixed `<nav>` — menu sheet aligns to pixel bottom (no spacer gap). */
+  /** Full fixed `<nav>` — sheet position derived from visible bar bottom when menu open. */
   const navBarRowRef = useRef<HTMLElement>(null);
+  /** Top row (logo + controls); measuring its bottom aligns sheet flush under chrome (avoids phantom gap vs full `<nav>` box). */
+  const navBarTopBarRef = useRef<HTMLDivElement>(null);
   const [iphoneMenuTopPx, setIphoneMenuTopPx] = useState(88);
   const autoScrollPositionRef = useRef(0);
   const thirdSectionRef = useRef<HTMLDivElement>(null);
@@ -360,9 +362,14 @@ export default function DoePage() {
 
   useLayoutEffect(() => {
     const navEl = navBarRowRef.current;
+    const barEl = navBarTopBarRef.current;
     if (!navEl) return;
     const update = () => {
-      setIphoneMenuTopPx(Math.floor(navEl.getBoundingClientRect().bottom));
+      const bottom =
+        mobileNavOpen && barEl != null
+          ? barEl.getBoundingClientRect().bottom
+          : navEl.getBoundingClientRect().bottom;
+      setIphoneMenuTopPx(Math.floor(bottom));
     };
     update();
     let raf1 = 0;
@@ -374,6 +381,7 @@ export default function DoePage() {
     }
     const ro = new ResizeObserver(update);
     ro.observe(navEl);
+    if (barEl) ro.observe(barEl);
     window.addEventListener("resize", update);
     window.visualViewport?.addEventListener("resize", update);
     return () => {
@@ -1404,6 +1412,7 @@ export default function DoePage() {
           )}
           {/* Top bar */}
           <div
+            ref={navBarTopBarRef}
             className="px-8 py-6 iphone-page:px-6 iphone-page:py-6 iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] flex items-center relative z-10 iphone-page:gap-2 justify-end"
           >
             {/* Logo — opacity only (no width collapse) so it fades, not slides */}
@@ -1600,15 +1609,15 @@ export default function DoePage() {
               onClick={() => setMobileNavOpen(false)}
             />
             {/*
-              Sheet uses fixed top = measured nav bottom (no flex spacer). Cream matches nav when open (no bottom border on nav) so no seam/gap.
+              Sheet uses fixed top from measured bar bottom minus 1px overlap so no hairline gap under zoom/layout.
             */}
             <div
               className="fixed left-0 right-0 bottom-0 z-[45] flex flex-col pointer-events-none"
-              style={{ top: iphoneMenuTopPx }}
+              style={{ top: Math.max(0, iphoneMenuTopPx - 1) }}
               role="presentation"
             >
               <div
-                className="flex flex-col flex-1 min-h-0 bg-[#F7F6F3] shadow-[0_12px_40px_rgba(0,0,0,0.08)] pointer-events-auto overflow-hidden"
+                className="flex flex-col flex-1 min-h-0 bg-[#F7F6F3] pointer-events-auto overflow-hidden shadow-none iphone-page:shadow-[0_16px_44px_rgba(0,0,0,0.08)]"
                 role="dialog"
                 aria-modal="true"
                 aria-label="Site navigation"
@@ -1623,7 +1632,7 @@ export default function DoePage() {
                         <button
                           type="button"
                           aria-expanded={expanded}
-                          className={`w-full text-left text-xl font-semibold tracking-[-0.02em] text-gray-900 px-6 iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] py-4 active:bg-black/[0.04] transition-colors ${inter.className}`}
+                          className={`w-full text-left font-normal tracking-tight text-gray-900 px-6 iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] py-5 active:bg-black/[0.04] transition-colors ${lora.className} text-4xl iphone-page:text-6xl iphone-page:leading-none`}
                           onClick={() =>
                             setMobileNavExpandedKey((k) => (k === item ? null : item))
                           }
@@ -1640,7 +1649,7 @@ export default function DoePage() {
                                   <button
                                     key={sub.title}
                                     type="button"
-                                    className={`w-full text-left rounded-xl px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-white/70 active:bg-white transition-colors ${inter.className}`}
+                                    className={`w-full text-left rounded-xl px-4 py-4 font-normal tracking-tight text-gray-900 hover:bg-white/70 active:bg-white transition-colors ${lora.className} text-4xl iphone-page:text-6xl iphone-page:leading-snug`}
                                     onClick={() => setMobileNavOpen(false)}
                                   >
                                     {sub.title}
