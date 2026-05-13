@@ -1663,7 +1663,7 @@ export default function DoePage() {
       <div className="w-full border-t border-[#E6E6E6]" />
 
       {/* Second Section — title upper third, carousel lower two-thirds */}
-      <div ref={secondSectionRef} className="min-h-[calc(100dvh+7rem)] relative z-10 flex flex-col pt-16 pb-12 iphone-page:min-h-[calc(100dvh+6rem)] iphone-page:pt-12 iphone-page:pb-10">
+      <div ref={secondSectionRef} className="min-h-[calc(100dvh+7rem)] relative z-10 flex flex-col pt-16 pb-24 iphone-page:min-h-[calc(100dvh+6rem)] iphone-page:pt-12 iphone-page:pb-36">
         <div className="flex-1 grid grid-rows-[3fr_9fr] min-h-[85vh] iphone-page:min-h-[88dvh] w-full overflow-x-hidden">
           {/* Title band — slightly taller than 1:2 so headline has room */}
           <div
@@ -2884,17 +2884,16 @@ export default function DoePage() {
       {/* Blank Section with Grid Lines */}
       <div
         ref={carouselSectionRef}
-        className="w-full relative z-10 overflow-x-hidden"
+        className="w-full relative z-10 overflow-x-hidden iphone-page:mt-14 mt-10"
         style={{
           opacity: carouselSectionOpacity,
           transform: `translateY(${carouselSectionTranslateY}px)`,
           transition: 'opacity 1.2s ease-out, transform 1.2s ease-out',
           ...(applyRootZoom
             ? {
-                minHeight: `calc(100dvh / ${rootZoom})`,
-                height: `calc(100dvh / ${rootZoom})`,
+                minHeight: `calc((100dvh + 72dvh) / ${rootZoom})`,
               }
-            : { minHeight: "100dvh", height: "100dvh" }),
+            : { minHeight: "172dvh" }),
         }}
       >
         <div className="absolute inset-0 pointer-events-none">
@@ -2927,20 +2926,23 @@ export default function DoePage() {
             background: 'linear-gradient(to top, rgba(247, 246, 243, 1) 0%, rgba(247, 246, 243, 0.8) 30%, rgba(247, 246, 243, 0) 100%)'
           }}
         />
-        {/* Left-aligned Title and Description */}
-        <div className={`absolute top-0 left-0 right-0 z-20 ${narrowHorizontalInset}`} style={{ overflow: 'visible', paddingTop: '40vh' }}>
-          <div className="max-w-2xl">
+        {/* Doe + word carousel top-center; description beneath; orange UI panel stacks below */}
+        <div className={`relative z-20 flex flex-col items-center w-full ${narrowHorizontalInset}`}>
+          <div className="flex flex-row flex-wrap items-center justify-center gap-3 iphone-page:gap-5 pt-8 iphone-page:pt-12 pb-5 w-full max-w-4xl mx-auto">
             <h1 
-              className={`text-[clamp(2rem,7vw,3rem)] text-gray-900 mb-8 ${oldStandardTT.className}`}
+              className={`text-[clamp(2rem,7vw,3rem)] text-gray-900 ${oldStandardTT.className}`}
               style={{
                 fontStyle: 'italic',
                 fontWeight: 400,
                 position: 'relative',
                 display: 'flex',
                 alignItems: 'baseline',
-                flexWrap: 'nowrap',
+                justifyContent: 'center',
+                flexWrap: 'wrap',
+                rowGap: '0.12em',
                 width: '100%',
-                maxWidth: 'min(340px, 100%)',
+                maxWidth: 'min(420px, 92vw)',
+                margin: '0 auto',
               }}
             >
               Doe{'\u00A0'}
@@ -3018,117 +3020,109 @@ export default function DoePage() {
                   </span>
                 );
               })()}
-              {/* Arrows — anchored to the h1, never move */}
-              <div className="absolute flex flex-col gap-2 z-10" style={{ right: '7rem', top: '50%', transform: 'translateY(-50%)' }}>
-                <button
-                  onClick={() => {
-                    if (isCarouselTransitioning) return;
-                    setIsCarouselTransitioning(true);
-                    // Start transition: fade out + scale down + translate up
-                    requestAnimationFrame(() => {
-                      setUiMockupOpacity(0);
-                      setUiMockupTranslateY(10);
-                      setUiMockupScale(0.96);
-                    });
-                    // Move strip down to bring previous word up
-                    setCarouselOffset(1);
-                    setTimeout(() => {
-                      // Update index first
-                      const newIndex = (selectedWordIndex - 1 + 8) % 8;
-                      setSelectedWordIndex(newIndex);
-                      // Reset offset instantly (no transition) after index update
-                      setCarouselOffset(0);
-                      // End transition: fade in + scale back + translate to center
-                      requestAnimationFrame(() => {
-                        setUiMockupOpacity(1);
-                        setUiMockupTranslateY(0);
-                        setUiMockupScale(1);
-                      });
-                      setTimeout(() => {
-                        setIsCarouselTransitioning(false);
-                      }, 50);
-                    }, 400);
-                  }}
-                  className="p-1 hover:opacity-70 transition-opacity"
-                >
-                  <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
-                  </svg>
-                </button>
-                <button
-                  onClick={() => {
-                    if (isCarouselTransitioning) return;
-                    setIsCarouselTransitioning(true);
-                    // Start transition: fade out + scale down + translate up
-                    requestAnimationFrame(() => {
-                      setUiMockupOpacity(0);
-                      setUiMockupTranslateY(10);
-                      setUiMockupScale(0.96);
-                    });
-                    // Move strip up to bring next word down
-                    setCarouselOffset(-1);
-                    setTimeout(() => {
-                      // Update index first
-                      const newIndex = (selectedWordIndex + 1) % 8;
-                      setSelectedWordIndex(newIndex);
-                      // Reset offset instantly (no transition) after index update
-                      setCarouselOffset(0);
-                      // End transition: fade in + scale back + translate to center
-                      requestAnimationFrame(() => {
-                        setUiMockupOpacity(1);
-                        setUiMockupTranslateY(0);
-                        setUiMockupScale(1);
-                      });
-                      setTimeout(() => {
-                        setIsCarouselTransitioning(false);
-                      }, 50);
-                    }, 400);
-                  }}
-                  className="p-1 hover:opacity-70 transition-opacity"
-                >
-                  <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-              </div>
             </h1>
-          </div>
-        </div>
-        {/* Description - bottom right corner of left half */}
-        {(() => {
-          const descriptions = [
-            ["Automates tasks around you", "Learns your workflows daily", "Acts without being asked to"],
-            ["One system, every location", "Consistent brand and process", "Scale without losing control"],
-            ["Built for clinical precision", "Minimal, focused interfaces", "Every decision intentional"],
-            ["Claims submitted instantly", "Revenue tracked end to end", "No more chasing payments"],
-            ["Reach patients who need you", "Campaigns run on your data", "Growth that runs itself now"],
-            ["Full history before you ask", "Context always at your side", "Know each patient completely"],
-            ["Stay aligned across all roles", "Tasks and notes in one place", "Built for how clinics work"],
-            ["Every message, one channel", "Sorted before you open it", "Nothing falls through again"],
-          ];
-          const lines = descriptions[selectedWordIndex] ?? descriptions[0];
-          return (
-            <div className={`absolute left-0 right-0 z-20 ${narrowHorizontalInset}`} style={{ width: '100%', textAlign: 'right', bottom: '10vh' }}>
-              <div
-                key={selectedWordIndex}
-                className={`text-lg text-gray-700 ml-auto max-w-md ${inter.className}`}
-                style={{ fontWeight: 500, animation: 'fade-in 0.35s ease-out' }}
+            {/* Carousel arrows — beside headline */}
+            <div className="flex flex-col gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={() => {
+                  if (isCarouselTransitioning) return;
+                  setIsCarouselTransitioning(true);
+                  requestAnimationFrame(() => {
+                    setUiMockupOpacity(0);
+                    setUiMockupTranslateY(10);
+                    setUiMockupScale(0.96);
+                  });
+                  setCarouselOffset(1);
+                  setTimeout(() => {
+                    const newIndex = (selectedWordIndex - 1 + 8) % 8;
+                    setSelectedWordIndex(newIndex);
+                    setCarouselOffset(0);
+                    requestAnimationFrame(() => {
+                      setUiMockupOpacity(1);
+                      setUiMockupTranslateY(0);
+                      setUiMockupScale(1);
+                    });
+                    setTimeout(() => {
+                      setIsCarouselTransitioning(false);
+                    }, 50);
+                  }, 400);
+                }}
+                className="p-1 hover:opacity-70 transition-opacity"
               >
-                {lines.map((line, i) => <p key={i}>{line}</p>)}
-              </div>
+                <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (isCarouselTransitioning) return;
+                  setIsCarouselTransitioning(true);
+                  requestAnimationFrame(() => {
+                    setUiMockupOpacity(0);
+                    setUiMockupTranslateY(10);
+                    setUiMockupScale(0.96);
+                  });
+                  setCarouselOffset(-1);
+                  setTimeout(() => {
+                    const newIndex = (selectedWordIndex + 1) % 8;
+                    setSelectedWordIndex(newIndex);
+                    setCarouselOffset(0);
+                    requestAnimationFrame(() => {
+                      setUiMockupOpacity(1);
+                      setUiMockupTranslateY(0);
+                      setUiMockupScale(1);
+                    });
+                    setTimeout(() => {
+                      setIsCarouselTransitioning(false);
+                    }, 50);
+                  }, 400);
+                }}
+                className="p-1 hover:opacity-70 transition-opacity"
+              >
+                <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
             </div>
-          );
-        })()}
-        {/* Orange rounded box - right half of section, left half of box visible (full section height like hero gradient) */}
-        <div 
-          className="absolute top-0 bottom-0 z-30"
-          style={{
-            width: '100vw',
-            background: `radial-gradient(circle at center, #E7A944 0%, #D49D4F 40%, #D2774C 70%, #1E343A 100%)`,
-            borderRadius: '16px',
-            left: '50vw',
-          }}
-        >
+          </div>
+          {(() => {
+            const descriptions = [
+              ["Automates tasks around you", "Learns your workflows daily", "Acts without being asked to"],
+              ["One system, every location", "Consistent brand and process", "Scale without losing control"],
+              ["Built for clinical precision", "Minimal, focused interfaces", "Every decision intentional"],
+              ["Claims submitted instantly", "Revenue tracked end to end", "No more chasing payments"],
+              ["Reach patients who need you", "Campaigns run on your data", "Growth that runs itself now"],
+              ["Full history before you ask", "Context always at your side", "Know each patient completely"],
+              ["Stay aligned across all roles", "Tasks and notes in one place", "Built for how clinics work"],
+              ["Every message, one channel", "Sorted before you open it", "Nothing falls through again"],
+            ];
+            const lines = descriptions[selectedWordIndex] ?? descriptions[0];
+            return (
+              <div className="w-full flex justify-center pb-8 iphone-page:pb-10 px-2">
+                <div
+                  key={selectedWordIndex}
+                  className={`text-base iphone-page:text-lg text-gray-700 text-center max-w-lg ${inter.className}`}
+                  style={{ fontWeight: 500, animation: 'fade-in 0.35s ease-out' }}
+                >
+                  {lines.map((line, i) => (
+                    <p key={i}>{line}</p>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+        {/* Orange panel — word-linked UI mockups sit below headline */}
+        <div className="relative z-30 w-full flex justify-center pb-16 iphone-page:pb-20 px-3 iphone-page:px-[max(0.75rem,env(safe-area-inset-left,0px))]">
+          <div
+            className="relative w-full max-w-[min(100%,560px)] min-h-[min(560px,62dvh)] rounded-2xl overflow-hidden shadow-[0_28px_80px_rgba(0,0,0,0.18)]"
+            style={{
+              background: `radial-gradient(circle at center, #E7A944 0%, #D49D4F 40%, #D2774C 70%, #1E343A 100%)`,
+              borderRadius: '16px',
+            }}
+          >
           {/* Grain texture overlay */}
           <div
             className="absolute inset-0 pointer-events-none"
@@ -3467,20 +3461,21 @@ export default function DoePage() {
             return (
               <div
                 key={selectedWordIndex}
-                className="absolute"
+                className="absolute left-1/2 bottom-[6%] iphone-page:bottom-[8%]"
                 style={{
-                  top: '50%',
-                  left: '50%',
-                  transform: `translate(-50%, calc(-50% + ${uiMockupTranslateY}px)) scale(${uiMockupScale})`,
-                  width: '86%',
-                  height: '86%',
-                  borderRadius: '16px',
-                  boxShadow: '0 40px 100px rgba(0,0,0,0.35)',
-                  overflow: 'hidden',
-                  fontFamily: 'system-ui, -apple-system, sans-serif',
+                  top: "auto",
+                  transform: `translate(-50%, ${uiMockupTranslateY}px) scale(${uiMockupScale})`,
+                  width: "90%",
+                  height: "58%",
+                  maxHeight: "440px",
+                  borderRadius: "16px",
+                  boxShadow: "0 40px 100px rgba(0,0,0,0.35)",
+                  overflow: "hidden",
+                  fontFamily: "system-ui, -apple-system, sans-serif",
                   opacity: uiMockupOpacity,
-                  transition: 'opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                  willChange: isCarouselTransitioning ? 'opacity, transform' : 'auto',
+                  transition:
+                    "opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+                  willChange: isCarouselTransitioning ? "opacity, transform" : "auto",
                 }}
               >
                 {renderUIMockup()}
@@ -3488,6 +3483,7 @@ export default function DoePage() {
             );
           })()}
         </div>
+      </div>
       </div>
 
       {/* New Section - Hero Gradient Full Page */}
