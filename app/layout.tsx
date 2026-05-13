@@ -17,6 +17,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  /** iOS Safari chrome / safe-area gutters beside Dynamic Island */
+  themeColor: "#f7f6f3",
 };
 
 export default function RootLayout({

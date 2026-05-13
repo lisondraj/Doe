@@ -8,6 +8,12 @@
  */
 html:has(.doeforvc-iphone-root) {
   font-size: 100%;
+  /** Safe-area “ears” beside Dynamic Island / overscroll — match canvas beige */
+  background-color: #f7f6f3;
+}
+
+html:has(.doeforvc-iphone-root) body {
+  background-color: #f7f6f3;
 }
 
 .doeforvc-iphone-root {
@@ -23,6 +29,7 @@ html:has(.doeforvc-iphone-root) {
      reflows proportionally, not a visual zoom/scale that “shrinks a canvas”. */
   html {
     font-size: 80%;
+    background-color: #f7f6f3;
   }
 
   *,
@@ -32,7 +39,9 @@ html:has(.doeforvc-iphone-root) {
   }
 
   body {
-    @apply bg-white text-gray-900 antialiased;
+    @apply text-gray-900 antialiased;
+    /** Default page canvas (iphone layout overrides via html:has above when root present) */
+    background-color: #f7f6f3;
   }
 
   /* Standard link reset - only remove underline, let Tailwind handle colors */
