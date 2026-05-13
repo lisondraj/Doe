@@ -544,6 +544,8 @@ export default function DoePage() {
   const [thirdSectionTranslateY, setThirdSectionTranslateY] = useState(40);
   /** Scroll-driven vertical bento (after workflow carousel) */
   const verticalBentoSectionRef = useRef<HTMLDivElement>(null);
+  /** Tracks top of rails stack — bento timeline `u` starts when this reaches the sticky line (not section top). */
+  const verticalBentoRailsAnchorRef = useRef<HTMLDivElement>(null);
   const [verticalBentoU, setVerticalBentoU] = useState(0);
   const [vbMetrics, setVbMetrics] = useState<VerticalBentoScrollMetrics>(() => vbComputeScrollMetrics(800));
   const [verticalBentoTitleOpacity, setVerticalBentoTitleOpacity] = useState(0);
@@ -1107,7 +1109,10 @@ export default function DoePage() {
 
         const { scrollablePx, anchor } = vbMetrics;
         const sp = Math.max(scrollablePx, 1e-6);
-        const scrolled = Math.min(Math.max(-rect.top + anchor, 0), sp);
+        const railRect =
+          verticalBentoRailsAnchorRef.current?.getBoundingClientRect();
+        const uRectTop = railRect?.top ?? rect.top;
+        const scrolled = Math.min(Math.max(-uRectTop + anchor, 0), sp);
         const u = scrolled / sp;
         setVerticalBentoU((prev) => (Math.abs(prev - u) < 0.0012 ? prev : u));
       }
@@ -3471,9 +3476,9 @@ export default function DoePage() {
         style={{ minHeight: vbMetrics.sectionMinPx }}
       >
         <div className="sticky top-[max(5.75rem,calc(env(safe-area-inset-top,0px)+4.5rem))] z-[5] pb-24 pt-8 iphone-page:pb-28 iphone-page:pt-10">
-          <div className={`w-full px-4 ${narrowHorizontalInset}`}>
+          <div className={`w-full ${narrowHorizontalInset}`}>
             <div className="relative mx-auto w-full max-w-full shrink-0">
-              <div className="text-center iphone-page:mt-1 mb-8 iphone-page:mb-11">
+              <div className="text-center mb-6 iphone-page:mb-8 -translate-y-[0.45rem] iphone-page:-translate-y-2">
                 <h1
                   className={`flex flex-col items-center gap-2 font-normal text-gray-900 tracking-tight ${lora.className}`}
                   style={{
@@ -3488,17 +3493,20 @@ export default function DoePage() {
               </div>
 
               <div
-                className="flex flex-row items-start gap-5 iphone-page:gap-6 w-full"
+                ref={verticalBentoRailsAnchorRef}
+                className="relative w-full"
                 style={{
                   opacity: verticalBentoRailsOpacity,
                   transform: `translateY(${verticalBentoRailsTranslateY}px)`,
                   transition: "opacity 1.2s ease-out, transform 1.2s ease-out",
                 }}
               >
-                <div className="shrink-0 flex justify-center pt-px" style={{ height: vbMetrics.stickyColumnH }}>
+                <div
+                  className="pointer-events-none absolute left-3 iphone-page:left-3.5 top-0 z-[6] w-[3px]"
+                  style={{ height: vbMetrics.stickyColumnH }}
+                >
                   <div
-                    className="relative w-[3px] shrink-0 rounded-full bg-gray-900/[0.08]"
-                    style={{ height: vbMetrics.stickyColumnH }}
+                    className="relative mt-px h-full w-[3px] rounded-full bg-white/[0.22] shadow-[0_6px_20px_rgba(0,0,0,0.12)] ring-1 ring-black/[0.06]"
                     role="progressbar"
                     aria-valuemin={0}
                     aria-valuemax={100}
@@ -3506,12 +3514,13 @@ export default function DoePage() {
                     aria-label="Progress through stacked panels below"
                   >
                     <div
-                      className="absolute bottom-0 left-0 right-0 rounded-full bg-gray-900/45"
+                      className="absolute bottom-0 left-0 right-0 rounded-full bg-gray-950/[0.38]"
                       style={{ height: `${Math.max(0, Math.min(1, verticalBentoU)) * 100}%` }}
                     />
                   </div>
                 </div>
-                <div className="min-w-0 flex-1">
+
+                <div className="min-w-0 w-full">
                   {(() => {
                     const { expand, opacity } = vbDeriveRails(verticalBentoU, vbMetrics.milestones);
                     const gapPx = 16;
