@@ -203,11 +203,12 @@ const slideCaptionFont = { fontFamily: "system-ui, -apple-system, sans-serif" } 
 const narrowHorizontalInset =
   "iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))]";
 
-/** Vertical bento: align with carousel gutters; symmetric block padding ≈ horizontal inset on phone. */
-const VBENTO_CANVAS_PADDING =
-  "px-4 py-4 " +
-  narrowHorizontalInset +
-  " iphone-page:pt-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pb-[max(1.5rem,env(safe-area-inset-right,0px))]";
+/**
+ * Vertical bento horizontal inset — applied to scroll container so sticky element
+ * inherits the narrowed width (matching carousel gutters).
+ * Block (vertical) padding is applied directly on the sticky child, not here.
+ */
+const VBENTO_CANVAS_PADDING = "px-4 " + narrowHorizontalInset;
 
 /** Scroll-driven vertical bento (between carousel and gradient hero). */
 const VB_CLOSED_EXPAND = 0.06;
@@ -3579,7 +3580,7 @@ export default function DoePage() {
         className={`relative z-10 w-full bg-[#F7F6F3] ${VBENTO_CANVAS_PADDING}`}
         style={{ minHeight: vbMetrics.sectionMinPx }}
       >
-        <div className="sticky top-[max(5.75rem,calc(env(safe-area-inset-top,0px)+4.5rem))] z-[5]">
+        <div className="sticky top-[max(5.75rem,calc(env(safe-area-inset-top,0px)+4.5rem))] z-[5] pt-4 pb-4 iphone-page:pt-[max(1rem,env(safe-area-inset-top,0px))] iphone-page:pb-4">
           <div
             className="relative mx-auto w-full max-w-full shrink-0"
             style={{
@@ -3712,7 +3713,7 @@ export default function DoePage() {
                           </div>
                             {i === barRail ? (
                               <div
-                                className={`pointer-events-none absolute left-3 top-3 bottom-3 z-[8] w-[3px] rounded-full bg-white/30 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.2)]`}
+                                className={`pointer-events-none absolute left-5 top-7 bottom-7 z-[8] w-[3px] rounded-full bg-white/30 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.2)]`}
                                 style={{
                                   opacity: trackOpacity,
                                   transition:
