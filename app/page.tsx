@@ -252,16 +252,29 @@ function vbBuildMilestonesU(scrollablePx: number, bandPx: number[]): VerticalBen
   };
 }
 
-/** Pinned stack height vs viewport (`top-[max(5.75rem,...)]`, sticky pt-5/pt-6, slim bottom bleed). */
-function vbStickyRailsViewportPx(innerHeightPx: number): number {
-  const vh = Math.max(innerHeightPx, 320);
-  const pinnedTopPx = Math.round(5.75 * 16);
-  const stickyPadTopPx = 26;
-  const viewportBottomBleedPx = 10;
-  return Math.max(320, Math.round(vh - pinnedTopPx - stickyPadTopPx - viewportBottomBleedPx));
+/** Pinned stack height vs viewport (`top-[max(5.75rem,...)]`, sticky pt-6 on phone layout). Uses real root rem (`html font-size`). */
+function vbDocumentRootPx(): number {
+  if (typeof document === "undefined") return 12.8;
+  const n = parseFloat(getComputedStyle(document.documentElement).fontSize || "12.8");
+  return Number.isFinite(n) && n > 0 ? n : 12.8;
 }
 
-function vbComputeScrollMetrics(innerHeightPx: number): VerticalBentoScrollMetrics {
+function vbStickyRailsViewportPx(innerHeightPx: number): number {
+  const vh = Math.max(innerHeightPx, 320);
+  const rp = vbDocumentRootPx();
+  const stickyInsetTopPx = Math.round(
+    Math.max(5.75 * rp, 4.5 * rp + Math.min(Math.max(vh * 0.058, 30), 58)),
+  );
+  const stickyPtPx = Math.round(1.5 * rp);
+  return Math.max(320, Math.round(vh - stickyInsetTopPx - stickyPtPx));
+}
+
+/** Matches `gap-3.5` (0.875rem) applied via `iphone-page:` on rail stack. */
+function vbRailsInterGapPx(): number {
+  return Math.round(0.875 * vbDocumentRootPx());
+}
+
+function vbComputeScrollMetrics(innerHeightPx: number, railsLayoutHeightPx?: number): VerticalBentoScrollMetrics {
   const vh = Math.max(innerHeightPx, 320);
   const openPx = Math.round(Math.max(vh * 0.82, 400));
   const dwellPx = Math.round(Math.max(vh * 5.05, 2800));
@@ -271,7 +284,8 @@ function vbComputeScrollMetrics(innerHeightPx: number): VerticalBentoScrollMetri
   const scrollablePx = openPx + dwellPx + swapPx + dwellPx + swapPx + dwellPx + exitPx + tailPx;
   const sectionMinPx = scrollablePx + vh;
   const anchor = Math.max(72, Math.min(140, Math.round(vh * 0.095)));
-  const stickyColumnH = vbStickyRailsViewportPx(vh);
+  const railsVhIn = railsLayoutHeightPx ?? vh;
+  const stickyColumnH = vbStickyRailsViewportPx(railsVhIn);
   const milestones = vbBuildMilestonesU(scrollablePx, [
     openPx,
     dwellPx,
@@ -380,6 +394,13 @@ function doeforvcRootZoom(innerWidthPx: number): number {
     return Math.min(1, Math.max(0.38, (w - 16) / 800));
   }
   return Math.min(3, zPivot * (w / pivot));
+}
+
+/** Effective layout viewport height inside `zoom < 1` canvas (matches `100dvh / zoom` compensation). */
+function vbRailsEffectiveInnerHeight(innerWidthPx: number, innerHeightPx: number): number {
+  const rz = doeforvcRootZoom(innerWidthPx);
+  if (rz < 0.999) return innerHeightPx / rz;
+  return innerHeightPx;
 }
 
 /**
@@ -697,11 +718,16 @@ export default function DoePage() {
   }, [mobileNavOpen, viewportWidth]);
 
   useLayoutEffect(() => {
-    setVbMetrics(vbComputeScrollMetrics(window.innerHeight));
+    setVbMetrics(
+      vbComputeScrollMetrics(window.innerHeight, vbRailsEffectiveInnerHeight(window.innerWidth, window.innerHeight)),
+    );
   }, []);
 
   useEffect(() => {
-    const onResize = () => setVbMetrics(vbComputeScrollMetrics(window.innerHeight));
+    const onResize = () =>
+      setVbMetrics(
+        vbComputeScrollMetrics(window.innerHeight, vbRailsEffectiveInnerHeight(window.innerWidth, window.innerHeight)),
+      );
     window.addEventListener("resize", onResize);
     window.visualViewport?.addEventListener("resize", onResize);
     return () => {
@@ -3538,7 +3564,7 @@ export default function DoePage() {
         className="relative z-10 w-full bg-[#F7F6F3]"
         style={{ minHeight: vbMetrics.sectionMinPx }}
       >
-        <div className="sticky top-[max(5.75rem,calc(env(safe-area-inset-top,0px)+4.5rem))] z-[5] pb-6 pt-5 iphone-page:pb-8 iphone-page:pt-6">
+        <div className="sticky top-[max(5.75rem,calc(env(safe-area-inset-top,0px)+4.5rem))] z-[5] pb-0 pt-5 iphone-page:pb-0 iphone-page:pt-6">
           <div className={`w-full ${narrowHorizontalInset}`}>
             <div
               className="relative mx-auto w-full max-w-full shrink-0"
@@ -3550,7 +3576,7 @@ export default function DoePage() {
             >
               {(() => {
                 const { expand, opacity } = vbDeriveRails(verticalBentoU, vbMetrics.milestones);
-                const gapPx = 16;
+                const gapPx = vbRailsInterGapPx();
                 const railGapsPx = gapPx * 2;
                 const ms = vbMetrics.milestones;
                 let usable = Math.max(vbMetrics.stickyColumnH - railGapsPx, 220);
