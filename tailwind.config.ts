@@ -22,8 +22,8 @@ const config: Config = {
       /** Legacy hooks if html[data-layout] is set elsewhere */
       addVariant("layout-phone", `[data-layout="phone"] &`);
       addVariant("layout-desktop", `[data-layout="desktop"] &`);
-      /** Narrow viewports (< md) — real responsive mobile, not a data-attribute “force phone”. */
-      addVariant("iphone-page", "@media (max-width: 767px) { & }");
+      /** Forces phone/iPhone breakpoints even on wide viewports (see layout.tsx data-doeforvc-always-phone). */
+      addVariant("iphone-page", 'html[data-doeforvc-always-phone="true"] &');
     }),
   ],
 };
