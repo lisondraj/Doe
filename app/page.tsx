@@ -1,17 +1,11 @@
 "use client";
 
-import { Lora, Old_Standard_TT, Inter } from "next/font/google";
+import { Lora, Inter } from "next/font/google";
 import { useState, useEffect, useLayoutEffect, useRef, type HTMLAttributes } from "react";
 
 const lora = Lora({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-});
-
-const oldStandardTT = Old_Standard_TT({
-  subsets: ["latin"],
-  weight: ["400"],
-  style: ["normal"],
 });
 
 const inter = Inter({
@@ -2978,9 +2972,8 @@ export default function DoePage() {
         {/* Headline + horizontal carousel + description */}
         <div className={`relative z-20 flex flex-col items-center w-full overflow-visible ${narrowHorizontalInset} pt-4 iphone-page:pt-6 pb-1`}>
           <p
-            className={`text-center text-gray-900 w-full max-w-[min(100%,42rem)] ${oldStandardTT.className} leading-[1.05] text-[clamp(3.35rem,14vw,5.75rem)]`}
+            className={`text-center text-gray-900 w-full max-w-[min(100%,42rem)] font-normal tracking-tight leading-[1.06] text-[clamp(2.65rem,11.5vw,4rem)] ${lora.className}`}
             style={{
-              fontWeight: 400,
               paddingTop: "clamp(0.35rem, 1.5vw, 1rem)",
               paddingBottom: "clamp(0.45rem, 1.8vw, 1rem)",
               overflow: "visible",
@@ -3546,8 +3539,11 @@ export default function DoePage() {
         className="min-h-screen w-full relative z-10 p-8 flex flex-col items-center justify-center"
       >
         <div
-          className="w-full max-w-[min(100%,min(94vw,88vmin))] aspect-square rounded-2xl relative overflow-hidden flex flex-col items-center pt-14 mx-auto"
+          className="rounded-2xl relative overflow-hidden flex flex-col items-center pt-14 mx-auto shrink-0 max-w-full self-center"
           style={{
+            width: "min(100%, min(94vw, 88vmin))",
+            aspectRatio: "1",
+            height: "auto",
             /* Brighter read: lifted copper/amber, softer shadow corners (still dotted hero) */
             background: `
               radial-gradient(ellipse 125% 105% at 92% 4%, rgba(241, 186, 92, 0.55) 0%, rgba(231, 169, 68, 0.72) 18%, rgba(212, 157, 79, 0.48) 38%, rgba(210, 119, 76, 0.2) 58%, transparent 84%),
