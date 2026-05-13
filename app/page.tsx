@@ -2361,7 +2361,7 @@ export default function DoePage() {
 
           {/* Carousel band (~bottom two-thirds) */}
           <div
-            className={`flex flex-col justify-center min-h-0 overflow-x-hidden overflow-y-visible pb-10 iphone-page:pb-8 ${narrowHorizontalInset}`}
+            className={`flex flex-col justify-center min-h-0 overflow-x-hidden overflow-y-visible pb-16 iphone-page:pb-14 ${narrowHorizontalInset}`}
           >
           {/* Sliding squares container */}
           <div 
@@ -3553,7 +3553,7 @@ export default function DoePage() {
         {/* Vertical bento headline — sits between workflow carousel band and rails below */}
         <div
           ref={verticalBentoHeadlineRef}
-          className={`flex flex-col justify-center shrink-0 w-full px-4 ${narrowHorizontalInset} py-8 iphone-page:py-11 bg-[#F7F6F3]`}
+          className={`flex flex-col justify-center shrink-0 w-full px-4 ${narrowHorizontalInset} pt-6 pb-3 iphone-page:pt-7 iphone-page:pb-4 bg-[#F7F6F3]`}
         >
           <div className="mx-auto max-w-full text-center -translate-y-1 iphone-page:-translate-y-[0.28rem]">
             <div className="text-center iphone-page:mt-0 mb-0">
