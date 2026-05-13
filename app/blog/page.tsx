@@ -31,16 +31,25 @@ function appViewportPx(): { width: number; height: number } {
 }
 
 const narrowHorizontalInset =
-  "iphone-page:pl-[max(1rem,calc(env(safe-area-inset-left,0px)+0.5rem))] iphone-page:pr-[max(1rem,calc(env(safe-area-inset-right,0px)+0.5rem))]";
+  "iphone-page:pl-[max(2rem,calc(env(safe-area-inset-left,0px)+1.5rem))] iphone-page:pr-[max(2rem,calc(env(safe-area-inset-right,0px)+1.5rem))]";
 
-/** Preview blurbs aligned with each nav footer slide (outside text = post title). */
-const SLIDE_PREVIEWS: Record<string, string> = {
-  Inquisara:
-    "How we assembled a clinical and product team around one question: what would actually help at the point of care? A short look at origin stories, trade-offs, and what “Inquisara” means for Doe.",
-  "Doe Ecosystem":
-    "Hospitals, education, and startups don’t have to compete for attention on the same dashboard. Here’s how we think about wiring the future of medicine—interoperably, patiently, and with clinicians in the loop.",
-  "For Students":
-    "From pre-clinical drill to residency handoff: tools that respect how students actually study, cram, and recover. No gimmicks—just structure, spaced prompts, and feedback you can trust before you touch a patient.",
+/** Preview copy aligned with each nav footer slide (outside text = post title). */
+const SLIDE_PREVIEWS: Record<string, readonly string[]> = {
+  Inquisara: [
+    "How we assembled a clinical and product team around one question: what would actually help at the point of care? Inquisara began as a working name for an internal prototype—a place to argue about triage rules, notification policy, and what “good” looks like when an assistant drafts in Epic-adjacent workflows.",
+    "This essay traces the early trade-offs: speed versus safety, delight versus trust, and why we refused to ship a demo that couldn’t survive a nursing handoff. You’ll meet the founders’ bets on small, verifiable wins before we ever said the word platform.",
+    "If you only read one section, jump to where we describe the “inbox contract”—how Doe summarizes messages so clinicians verify instead of babysit, and why that philosophy still defines Inquisara today.",
+  ],
+  "Doe Ecosystem": [
+    "Hospitals, education, and startups don’t have to compete for attention on the same dashboard. The Future of Medicine, for us, is wiring ambient AI across those worlds without flattening them into one bland UI: each surface inherits Doe’s guardrails, but keeps its native rhythms.",
+    "We walk through three patterns we keep seeing: identity-aware handoffs, payer packets drafted with citations, and education tracks that reuse the same clinical graph the hospital trusts. None of this requires ripping out your EHR on day one.",
+    "The hard part isn’t the model—it’s orchestration. Here’s how we think about interoperability patiently: events, audit trails, and human-in-the-loop defaults that survive a Joint Commission week and a med-student cram session in the same product family.",
+  ],
+  "For Students": [
+    "From pre-clinical drill to residency handoff, students carry a different cognitive load than attendings—more context switching, less sleep, and a constant fear of missing the high-stakes signal in a haystack of PDFs.",
+    "Doe Education isn’t another Q-bank bolt-on. We focus on structure you can feel: spaced prompts tied to learning objectives, simulations that fail safely, and feedback that cites sources so you can defend your reasoning on rounds.",
+    "We close with a roadmap: how resident workflows will reconnect to the same Doe graph the hospital uses, so the habit you build in year two is the habit you’ll rely on when you’re the one signing the note.",
+  ],
 };
 
 type Slide = (typeof MOBILE_NAV_FOOTER_SLIDES)[number];
@@ -86,7 +95,7 @@ function GradientArticleVisual({
 }
 
 function ArticleBlock({ slide, isFirst }: { slide: Slide; isFirst: boolean }) {
-  const preview = SLIDE_PREVIEWS[slide.boxTitle] ?? "";
+  const previewParas = SLIDE_PREVIEWS[slide.boxTitle] ?? [];
 
   return (
     <article
@@ -119,17 +128,20 @@ function ArticleBlock({ slide, isFirst }: { slide: Slide; isFirst: boolean }) {
         >
           {slide.date}
         </p>
-        <p
-          className={`text-[clamp(1.1rem,3.9vw,1.3rem)] iphone-page:text-[clamp(1.2rem,4.25vw,1.4rem)] leading-[1.65] text-gray-800 ${inter.className}`}
-          style={{ fontWeight: 500 }}
-        >
-          {preview}
-        </p>
+        <div className={`space-y-5 iphone-page:space-y-6 text-[clamp(1.1rem,3.9vw,1.3rem)] iphone-page:text-[clamp(1.2rem,4.25vw,1.4rem)] leading-[1.65] text-gray-800 ${inter.className}`} style={{ fontWeight: 500 }}>
+          {previewParas.map((para, i) => (
+            <p key={i}>{para}</p>
+          ))}
+        </div>
         <button
           type="button"
-          className={`inline-flex items-center justify-center rounded-full bg-[#1E343A] px-10 py-4 iphone-page:px-12 iphone-page:py-[1.125rem] text-[clamp(1.05rem,3.5vw,1.2rem)] iphone-page:text-[clamp(1.1rem,3.75vw,1.25rem)] font-semibold text-white shadow-[0_8px_24px_rgba(30,52,58,0.25)] active:scale-[0.98] transition-transform ${inter.className}`}
+          className={`group inline-flex items-center gap-2 border-0 bg-transparent p-0 text-left text-[clamp(1.05rem,3.6vw,1.2rem)] iphone-page:text-[clamp(1.1rem,3.85vw,1.25rem)] font-semibold text-[#1E343A] underline decoration-[#1E343A]/30 underline-offset-[0.35em] transition-colors hover:text-[#15282d] hover:decoration-[#15282d]/50 active:opacity-80 ${inter.className}`}
+          aria-label="Read more"
         >
-          Read more
+          <span>Read more</span>
+          <span className="font-light text-[1.1em] leading-none tracking-normal text-[#1E343A]/80" aria-hidden>
+            →
+          </span>
         </button>
       </div>
     </article>
