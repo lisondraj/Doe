@@ -2926,166 +2926,154 @@ export default function DoePage() {
             background: 'linear-gradient(to top, rgba(247, 246, 243, 1) 0%, rgba(247, 246, 243, 0.8) 30%, rgba(247, 246, 243, 0) 100%)'
           }}
         />
-        {/* Doe + word carousel top-center; description beneath; orange UI panel stacks below */}
+        {/* Large Doe on top; horizontal word carousel with L/R arrows; description beneath */}
         <div className={`relative z-20 flex flex-col items-center w-full ${narrowHorizontalInset}`}>
-          <div className="flex flex-row flex-wrap items-center justify-center gap-3 iphone-page:gap-5 pt-8 iphone-page:pt-12 pb-5 w-full max-w-4xl mx-auto">
-            <h1 
-              className={`text-[clamp(2rem,7vw,3rem)] text-gray-900 ${oldStandardTT.className}`}
-              style={{
-                fontStyle: 'italic',
-                fontWeight: 400,
-                position: 'relative',
-                display: 'flex',
-                alignItems: 'baseline',
-                justifyContent: 'center',
-                flexWrap: 'wrap',
-                rowGap: '0.12em',
-                width: '100%',
-                maxWidth: 'min(420px, 92vw)',
-                margin: '0 auto',
+          <p
+            className={`text-center text-gray-900 ${oldStandardTT.className}`}
+            style={{
+              fontStyle: "italic",
+              fontWeight: 400,
+              fontSize: "clamp(3.25rem, 15vw, 6.75rem)",
+              lineHeight: 1.02,
+              paddingTop: "clamp(1.5rem, 4vw, 2.75rem)",
+              paddingBottom: "clamp(0.75rem, 2vw, 1.25rem)",
+            }}
+          >
+            Doe
+          </p>
+
+          {/* Horizontal Agents / Franchises / Design … carousel */}
+          <div className="flex flex-row items-center justify-center gap-2 iphone-page:gap-4 w-full max-w-[min(100%,540px)] px-2 pb-5">
+            <button
+              type="button"
+              aria-label="Previous category"
+              onClick={() => {
+                if (isCarouselTransitioning) return;
+                setIsCarouselTransitioning(true);
+                requestAnimationFrame(() => {
+                  setUiMockupOpacity(0);
+                  setUiMockupTranslateY(10);
+                  setUiMockupScale(0.96);
+                });
+                setCarouselOffset(1);
+                setTimeout(() => {
+                  const newIndex = (selectedWordIndex - 1 + 8) % 8;
+                  setSelectedWordIndex(newIndex);
+                  setCarouselOffset(0);
+                  requestAnimationFrame(() => {
+                    setUiMockupOpacity(1);
+                    setUiMockupTranslateY(0);
+                    setUiMockupScale(1);
+                  });
+                  setTimeout(() => {
+                    setIsCarouselTransitioning(false);
+                  }, 50);
+                }, 400);
               }}
+              className="shrink-0 p-2 rounded-full hover:bg-black/[0.04] transition-colors"
             >
-              Doe{'\u00A0'}
+              <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            <div className="relative flex-1 min-w-0 overflow-hidden py-1" style={{ maxWidth: "min(72vw, 380px)", height: "2.85rem" }}>
+              <div
+                className="pointer-events-none absolute inset-y-0 left-0 z-[2] w-10 bg-gradient-to-r from-[#F7F6F3] to-transparent"
+                aria-hidden
+              />
+              <div
+                className="pointer-events-none absolute inset-y-0 right-0 z-[2] w-10 bg-gradient-to-l from-[#F7F6F3] to-transparent"
+                aria-hidden
+              />
               {(() => {
-                const words = ['Agents', 'Franchises', 'Design', 'Billing', 'Marketing', 'Patient', 'Teams', 'Inbox'];
+                const words = ["Agents", "Franchises", "Design", "Billing", "Marketing", "Patient", "Teams", "Inbox"];
                 const n = words.length;
                 const offsets = [-3, -2, -1, 0, 1, 2, 3];
+                const slotPx = 104;
 
                 const getOpacity = (offset: number) => {
                   const abs = Math.abs(offset);
                   if (abs === 0) return 1;
-                  if (abs === 1) return 0.3;
+                  if (abs === 1) return 0.32;
                   if (abs === 2) return 0.2;
                   return 0;
                 };
 
                 return (
-                  <span
+                  <div
                     className={inter.className}
-                    style={{ position: 'relative', display: 'inline-block', verticalAlign: 'baseline', fontWeight: 300, fontSize: '0.9em', marginLeft: '0.15em' }}
+                    style={{
+                      position: "absolute",
+                      left: `calc(50% - ${(3 + carouselOffset) * slotPx}px)`,
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      transition:
+                        isCarouselTransitioning && carouselOffset !== 0
+                          ? "left 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94)"
+                          : "none",
+                      fontWeight: 300,
+                      fontSize: "clamp(1.15rem, 3.8vw, 1.7rem)",
+                      whiteSpace: "nowrap",
+                      height: "100%",
+                    }}
                   >
-                    {/* Invisible sizer — holds space for the active word, keeps layout stable */}
-                    <span style={{ opacity: 0, whiteSpace: 'nowrap', display: 'inline-block', lineHeight: '1.2em', pointerEvents: 'none' }}>
-                      {words[selectedWordIndex]}
-                    </span>
-                    {/* Single sliding strip — all words move together */}
-                    <span
-                      style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        transform: `translateY(${carouselOffset * 1.2}em)`,
-                        transition: isCarouselTransitioning && carouselOffset !== 0 ? 'transform 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94)' : 'none',
-                      }}
-                    >
-                      {offsets.map(offset => {
-                        const wordIdx = ((selectedWordIndex + offset) % n + n) % n;
-                        return (
-                          <span
-                            key={offset}
-                            style={{
-                              position: 'absolute',
-                              top: `${offset * 1.2}em`,
-                              left: 0,
-                              whiteSpace: 'nowrap',
-                              lineHeight: '1.2em',
-                              opacity: getOpacity(offset),
-                              color: offset === 0 ? '#111827' : '#6B7280',
-                            }}
-                          >
-                            {words[wordIdx]}
-                          </span>
-                        );
-                      })}
-                    </span>
-                    {/* Fixed fade overlays — stationary, words slide through them */}
-                    <span style={{
-                      position: 'absolute',
-                      top: '-4.8em',
-                      left: '-2em',
-                      right: '-2em',
-                      height: '4.8em',
-                      background: 'linear-gradient(to bottom, rgba(247,246,243,1) 0%, rgba(247,246,243,0) 100%)',
-                      pointerEvents: 'none',
-                    }} />
-                    <span style={{
-                      position: 'absolute',
-                      bottom: '-4.8em',
-                      left: '-2em',
-                      right: '-2em',
-                      height: '4.8em',
-                      background: 'linear-gradient(to top, rgba(247,246,243,1) 0%, rgba(247,246,243,0) 100%)',
-                      pointerEvents: 'none',
-                    }} />
-                  </span>
+                    {offsets.map((offset) => {
+                      const wordIdx = ((selectedWordIndex + offset) % n + n) % n;
+                      return (
+                        <span
+                          key={offset}
+                          style={{
+                            position: "absolute",
+                            left: `${(offset + 3) * slotPx}px`,
+                            top: "50%",
+                            transform: "translate(-50%, -50%)",
+                            whiteSpace: "nowrap",
+                            opacity: getOpacity(offset),
+                            color: offset === 0 ? "#111827" : "#6B7280",
+                          }}
+                        >
+                          {words[wordIdx]}
+                        </span>
+                      );
+                    })}
+                  </div>
                 );
               })()}
-            </h1>
-            {/* Carousel arrows — beside headline */}
-            <div className="flex flex-col gap-2 shrink-0">
-              <button
-                type="button"
-                onClick={() => {
-                  if (isCarouselTransitioning) return;
-                  setIsCarouselTransitioning(true);
-                  requestAnimationFrame(() => {
-                    setUiMockupOpacity(0);
-                    setUiMockupTranslateY(10);
-                    setUiMockupScale(0.96);
-                  });
-                  setCarouselOffset(1);
-                  setTimeout(() => {
-                    const newIndex = (selectedWordIndex - 1 + 8) % 8;
-                    setSelectedWordIndex(newIndex);
-                    setCarouselOffset(0);
-                    requestAnimationFrame(() => {
-                      setUiMockupOpacity(1);
-                      setUiMockupTranslateY(0);
-                      setUiMockupScale(1);
-                    });
-                    setTimeout(() => {
-                      setIsCarouselTransitioning(false);
-                    }, 50);
-                  }, 400);
-                }}
-                className="p-1 hover:opacity-70 transition-opacity"
-              >
-                <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
-                </svg>
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  if (isCarouselTransitioning) return;
-                  setIsCarouselTransitioning(true);
-                  requestAnimationFrame(() => {
-                    setUiMockupOpacity(0);
-                    setUiMockupTranslateY(10);
-                    setUiMockupScale(0.96);
-                  });
-                  setCarouselOffset(-1);
-                  setTimeout(() => {
-                    const newIndex = (selectedWordIndex + 1) % 8;
-                    setSelectedWordIndex(newIndex);
-                    setCarouselOffset(0);
-                    requestAnimationFrame(() => {
-                      setUiMockupOpacity(1);
-                      setUiMockupTranslateY(0);
-                      setUiMockupScale(1);
-                    });
-                    setTimeout(() => {
-                      setIsCarouselTransitioning(false);
-                    }, 50);
-                  }, 400);
-                }}
-                className="p-1 hover:opacity-70 transition-opacity"
-              >
-                <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
             </div>
+
+            <button
+              type="button"
+              aria-label="Next category"
+              onClick={() => {
+                if (isCarouselTransitioning) return;
+                setIsCarouselTransitioning(true);
+                requestAnimationFrame(() => {
+                  setUiMockupOpacity(0);
+                  setUiMockupTranslateY(10);
+                  setUiMockupScale(0.96);
+                });
+                setCarouselOffset(-1);
+                setTimeout(() => {
+                  const newIndex = (selectedWordIndex + 1) % 8;
+                  setSelectedWordIndex(newIndex);
+                  setCarouselOffset(0);
+                  requestAnimationFrame(() => {
+                    setUiMockupOpacity(1);
+                    setUiMockupTranslateY(0);
+                    setUiMockupScale(1);
+                  });
+                  setTimeout(() => {
+                    setIsCarouselTransitioning(false);
+                  }, 50);
+                }, 400);
+              }}
+              className="shrink-0 p-2 rounded-full hover:bg-black/[0.04] transition-colors"
+            >
+              <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
           </div>
           {(() => {
             const descriptions = [
@@ -3114,10 +3102,10 @@ export default function DoePage() {
             );
           })()}
         </div>
-        {/* Orange panel — word-linked UI mockups sit below headline */}
-        <div className="relative z-30 w-full flex justify-center pb-16 iphone-page:pb-20 px-3 iphone-page:px-[max(0.75rem,env(safe-area-inset-left,0px))]">
+        {/* Orange panel — full-width word-linked UI mockups */}
+        <div className="relative z-30 w-full pb-16 iphone-page:pb-20 pl-[max(1rem,env(safe-area-inset-left,0px))] pr-[max(1rem,env(safe-area-inset-right,0px))]">
           <div
-            className="relative w-full max-w-[min(100%,560px)] min-h-[min(560px,62dvh)] rounded-2xl overflow-hidden shadow-[0_28px_80px_rgba(0,0,0,0.18)]"
+            className="relative w-full min-h-[min(520px,58dvh)] rounded-2xl overflow-hidden shadow-[0_24px_70px_rgba(0,0,0,0.14)]"
             style={{
               background: `radial-gradient(circle at center, #E7A944 0%, #D49D4F 40%, #D2774C 70%, #1E343A 100%)`,
               borderRadius: '16px',
@@ -3461,14 +3449,17 @@ export default function DoePage() {
             return (
               <div
                 key={selectedWordIndex}
-                className="absolute left-1/2 bottom-[6%] iphone-page:bottom-[8%]"
+                className="absolute bottom-[4%] iphone-page:bottom-[5%]"
                 style={{
                   top: "auto",
-                  transform: `translate(-50%, ${uiMockupTranslateY}px) scale(${uiMockupScale})`,
-                  width: "90%",
-                  height: "58%",
-                  maxHeight: "440px",
-                  borderRadius: "16px",
+                  left: "0.85rem",
+                  right: "0.85rem",
+                  width: "auto",
+                  height: "auto",
+                  aspectRatio: "16 / 11",
+                  maxHeight: "min(54dvh, 680px)",
+                  minHeight: "min(240px, 42vw)",
+                  borderRadius: "14px",
                   boxShadow: "0 40px 100px rgba(0,0,0,0.35)",
                   overflow: "hidden",
                   fontFamily: "system-ui, -apple-system, sans-serif",
@@ -3476,6 +3467,7 @@ export default function DoePage() {
                   transition:
                     "opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
                   willChange: isCarouselTransitioning ? "opacity, transform" : "auto",
+                  transform: `translateY(${uiMockupTranslateY}px) scale(${uiMockupScale})`,
                 }}
               >
                 {renderUIMockup()}
