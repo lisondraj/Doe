@@ -1606,7 +1606,7 @@ export default function DoePage() {
                 aria-modal="true"
                 aria-label="Site navigation"
               >
-                <nav className="flex flex-col flex-1 min-h-0 overflow-y-auto pb-[env(safe-area-inset-bottom,0px)]">
+                <nav className="flex flex-col flex-1 min-h-0 overflow-y-hidden pb-[env(safe-area-inset-bottom,0px)]">
                   {NAV_ITEMS.map((item) => (
                     <button
                       key={item}
@@ -4353,10 +4353,10 @@ export default function DoePage() {
                   pointerEvents: hoveredKnowsBox === 0 ? 'auto' : 'none',
                   width: hoveredKnowsBox === 0 ? '560px' : '320px',
                   height: hoveredKnowsBox === 0 ? 'calc(100% - 64px)' : '360px',
-                  overflowY: hoveredKnowsBox === 0 ? 'auto' : 'hidden',
+                  overflowY: 'hidden',
                   userSelect: hoveredKnowsBox === 0 ? 'auto' : 'none',
                   cursor: 'default',
-                  touchAction: hoveredKnowsBox === 0 ? 'auto' : 'none',
+                  touchAction: 'none',
                   WebkitUserSelect: hoveredKnowsBox === 0 ? 'auto' : 'none',
                   MozUserSelect: hoveredKnowsBox === 0 ? 'auto' : 'none',
                   msUserSelect: hoveredKnowsBox === 0 ? 'text' : 'none',
@@ -4540,10 +4540,10 @@ export default function DoePage() {
                   height: hoveredKnowsBox === 1 ? '420px' : '300px',
                   top: hoveredKnowsBox === 1 ? 'calc(50% - 250px)' : 'calc(50% - 180px)',
                   maxHeight: 'calc(100% - 200px)',
-                  overflowY: hoveredKnowsBox === 1 ? 'auto' : 'hidden',
+                  overflowY: 'hidden',
                   userSelect: hoveredKnowsBox === 1 ? 'auto' : 'none',
                   cursor: 'default',
-                  touchAction: hoveredKnowsBox === 1 ? 'auto' : 'none',
+                  touchAction: 'none',
                   WebkitUserSelect: hoveredKnowsBox === 1 ? 'auto' : 'none',
                   MozUserSelect: hoveredKnowsBox === 1 ? 'auto' : 'none',
                   msUserSelect: hoveredKnowsBox === 1 ? 'text' : 'none',
