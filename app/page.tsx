@@ -332,6 +332,14 @@ function vbRailHeightPx(exp: number, collapsedPx: number, expandedMaxPx: number)
   return collapsedPx + t * (expandedMaxPx - collapsedPx);
 }
 
+/** Vertical bento rails — gradients + overlay motifs aligned with sliding workflow tiles (section 2). */
+const VBENTO_WORKFLOW_GRADIENTS: [string, string, string] = [
+  "linear-gradient(135deg, #E7A944 0%, #D49D4F 30%, #D2774C 60%, #1E343A 100%)",
+  "linear-gradient(180deg, #E7A944 0%, #D49D4F 25%, #D2774C 55%, #1E343A 100%)",
+  "linear-gradient(90deg, #1E343A 0%, #D2774C 38%, #D49D4F 68%, #E7A944 100%)",
+];
+const VBENTO_GRAIN_BG = `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E")`;
+
 /**
  * Root `zoom` for the phone-layout canvas: readable shrink on narrow widths, then scales up
  * proportionally as the viewport widens so the experience stays “iPhone UI” at every size.
@@ -3420,6 +3428,104 @@ export default function DoePage() {
         </div>
       </div>
 
+      {/* Vertical bento — gradient rails + tile-style line overlays (after workflow carousel, before Built for you) */}
+      <div
+        ref={verticalBentoSectionRef}
+        className="relative z-10 mt-[3.5rem] iphone-page:mt-20 w-full bg-[#F7F6F3]"
+        style={{ minHeight: vbMetrics.sectionMinPx }}
+      >
+        <div className="sticky top-[max(5.75rem,calc(env(safe-area-inset-top,0px)+4.5rem))] z-[5] pb-24 pt-8 iphone-page:pb-28 iphone-page:pt-10">
+          <div className={`w-full ${narrowHorizontalInset}`}>
+            <div className="relative mx-auto w-full max-w-full shrink-0">
+              {(() => {
+                const { expand, opacity } = vbDeriveRails(verticalBentoU, vbMetrics.milestones);
+                const gapPx = 16;
+                const usable = Math.max(vbMetrics.stickyColumnH - gapPx * 2, 220);
+                const collapsedPx = Math.max(68, Math.min(90, Math.round(usable * 0.108)));
+                const expandedMax = Math.max(collapsedPx + 88, usable - 2 * collapsedPx);
+                return (
+                  <div
+                    className="flex flex-col gap-4 iphone-page:gap-3.5"
+                    style={{ height: vbMetrics.stickyColumnH }}
+                  >
+                    {([0, 1, 2] as const).map((i) => (
+                      <div
+                        key={i}
+                        aria-hidden
+                        className="relative w-full shrink-0 overflow-hidden rounded-2xl ring-1 ring-black/[0.06]"
+                        style={{
+                          height: vbRailHeightPx(expand[i], collapsedPx, expandedMax),
+                          opacity: opacity[i],
+                        }}
+                      >
+                        <div className="absolute inset-0 rounded-2xl" style={{ background: VBENTO_WORKFLOW_GRADIENTS[i] }} />
+                        <div
+                          className="absolute inset-0 pointer-events-none rounded-2xl"
+                          style={{
+                            backgroundImage: VBENTO_GRAIN_BG,
+                            backgroundSize: "200px 200px",
+                            opacity: 1,
+                            mixBlendMode: "overlay",
+                          }}
+                        />
+                        <div className="absolute inset-0 pointer-events-none rounded-2xl overflow-hidden">
+                          {i === 0 ? (
+                            <svg className="absolute inset-0 h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 700" preserveAspectRatio="none" aria-hidden>
+                              <defs>
+                                <pattern
+                                  id="vbBentoDiag"
+                                  x="0"
+                                  y="0"
+                                  width="60"
+                                  height="60"
+                                  patternUnits="userSpaceOnUse"
+                                  patternTransform="rotate(45)"
+                                >
+                                  <path d="M 0 0 L 60 0 M 0 0 L 0 60" fill="none" stroke="rgba(255, 255, 255, 0.15)" strokeWidth="0.8" />
+                                </pattern>
+                              </defs>
+                              <rect width="100%" height="100%" fill="url(#vbBentoDiag)" />
+                            </svg>
+                          ) : null}
+                          {i === 1 ? (
+                            <svg className="absolute inset-0 h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 700" preserveAspectRatio="none" aria-hidden>
+                              <defs>
+                                <pattern id="vbBentoHex" x="0" y="0" width="80" height="69.28" patternUnits="userSpaceOnUse">
+                                  <path
+                                    d="M 40 0 L 80 17.32 L 80 51.96 L 40 69.28 L 0 51.96 L 0 17.32 Z"
+                                    fill="none"
+                                    stroke="rgba(255, 255, 255, 0.1)"
+                                    strokeWidth="0.8"
+                                  />
+                                </pattern>
+                              </defs>
+                              <rect width="100%" height="100%" fill="url(#vbBentoHex)" />
+                            </svg>
+                          ) : null}
+                          {i === 2 ? (
+                            <svg className="absolute inset-0 h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 700" preserveAspectRatio="none" aria-hidden>
+                              {Array.from({ length: 12 }, (_, w) => (
+                                <path
+                                  key={`vb-bento-wave-${w}`}
+                                  d={`M -40 ${60 + w * 58} Q 175 ${20 + w * 58} 350 ${60 + w * 58} T 740 ${60 + w * 58}`}
+                                  fill="none"
+                                  stroke="rgba(255, 255, 255, 0.12)"
+                                  strokeWidth="1"
+                                />
+                              ))}
+                            </svg>
+                          ) : null}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Blank Section with Grid Lines */}
       <div
         ref={carouselSectionRef}
@@ -4014,52 +4120,6 @@ export default function DoePage() {
           })()}
         </div>
       </div>
-      </div>
-
-      {/* Vertical bento — gradient-only rails: scroll open → ~5×viewport dwell → next */}
-      <div
-        ref={verticalBentoSectionRef}
-        className="relative z-10 w-full bg-[#F7F6F3]"
-        style={{ minHeight: vbMetrics.sectionMinPx }}
-      >
-        <div className="sticky top-[max(5.75rem,calc(env(safe-area-inset-top,0px)+4.5rem))] z-[5] pb-24 pt-8 iphone-page:pb-28 iphone-page:pt-10">
-          {/* Horizontal inset matches the orange UI mock panel directly above */}
-          <div className={`w-full ${narrowHorizontalInset}`}>
-            <div className="relative mx-auto w-full max-w-full shrink-0">
-              {(() => {
-                const { expand, opacity } = vbDeriveRails(verticalBentoU, vbMetrics.milestones);
-                const gapPx = 16;
-                const usable = Math.max(vbMetrics.stickyColumnH - gapPx * 2, 220);
-                const collapsedPx = Math.max(68, Math.min(90, Math.round(usable * 0.108)));
-                const expandedMax = Math.max(collapsedPx + 88, usable - 2 * collapsedPx);
-                const backgrounds: [string, string, string] = [
-                  "linear-gradient(164deg, #fff7eb 0%, #f4d09a 22%, #d4824a 48%, #8b3f2f 74%, #1f2329 100%)",
-                  "linear-gradient(148deg, #e4f8f8 0%, #7dbebe 42%, #1e4a52 92%)",
-                  "linear-gradient(152deg, #f8ecff 0%, #bea2e8 38%, #4a3768 100%)",
-                ];
-                return (
-                  <div
-                    className="flex flex-col gap-4 iphone-page:gap-3.5"
-                    style={{ height: vbMetrics.stickyColumnH }}
-                  >
-                    {([0, 1, 2] as const).map((i) => (
-                      <div
-                        key={i}
-                        aria-hidden
-                        className="w-full shrink-0 overflow-hidden rounded-2xl ring-1 ring-black/[0.06]"
-                        style={{
-                          height: vbRailHeightPx(expand[i], collapsedPx, expandedMax),
-                          opacity: opacity[i],
-                          background: backgrounds[i],
-                        }}
-                      />
-                    ))}
-                  </div>
-                );
-              })()}
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* New Section - Hero Gradient Full Page */}
