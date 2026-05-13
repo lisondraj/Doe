@@ -199,9 +199,9 @@ const slideCaptionBody =
   "w-full min-w-0 max-w-[min(340px,calc(100%-4px))] text-left text-[15px] font-medium leading-[1.48] tracking-[-0.012em] text-white/[0.92] break-words [overflow-wrap:anywhere]";
 const slideCaptionFont = { fontFamily: "system-ui, -apple-system, sans-serif" } as const;
 
-/** Same horizontal inset as the fixed nav — hero, headline band, carousel (forced phone layout). */
+/** Same horizontal inset as the fixed nav — hero, headline band, carousel (narrow vs desktop gutters). */
 const narrowHorizontalInset =
-  "iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))]";
+  "px-4 sm:px-8 md:px-12 lg:px-16 xl:px-20 iphone-page:px-0 iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))]";
 
 /**
  * Vertical bento horizontal inset — applied to scroll container so sticky element
@@ -453,24 +453,8 @@ const VBENTO_WORKFLOW_GRADIENTS: [string, string, string] = [
 ];
 const VBENTO_GRAIN_BG = `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E")`;
 
-/**
- * Root `zoom` for the phone-layout canvas: readable shrink on narrow widths, then scales up
- * proportionally as the viewport widens so the experience stays “iPhone UI” at every size.
- */
-function doeforvcRootZoom(innerWidthPx: number): number {
-  const w = Math.max(280, innerWidthPx);
-  const pivot = 430;
-  const zPivot = Math.min(1, Math.max(0.38, (pivot - 16) / 800));
-  if (w <= pivot) {
-    return Math.min(1, Math.max(0.38, (w - 16) / 800));
-  }
-  return Math.min(3, zPivot * (w / pivot));
-}
-
-/** Effective layout viewport height inside `zoom < 1` canvas (matches `100dvh / zoom` compensation). */
-function vbRailsEffectiveInnerHeight(innerWidthPx: number, innerHeightPx: number): number {
-  const rz = doeforvcRootZoom(innerWidthPx);
-  if (rz < 0.999) return innerHeightPx / rz;
+/** Visible viewport height for section sizing (no root-zoom compensation). */
+function vbRailsEffectiveInnerHeight(_innerWidthPx: number, innerHeightPx: number): number {
   return innerHeightPx;
 }
 
@@ -722,12 +706,12 @@ export default function DoePage() {
   const [buildBoxesOpacity, setBuildBoxesOpacity] = useState(0);
   const [buildBoxesTranslateY, setBuildBoxesTranslateY] = useState(40);
 
-  /** Phone-only UI path (nav sheet, carousel sizing); layout matches at every viewport via Tailwind `iphone-page:` + root zoom. */
-  const isPhoneLayout = true;
+  /** Narrow viewport (< md): mobile nav sheet + carousel slide sizing; desktop uses mega-nav + fixed card width. */
   const [viewportWidth, setViewportWidth] = useState(1200);
+  const isPhoneLayout = viewportWidth < 768;
   /** Visible viewport (matches `visualViewport`); drives hero sizing + `--app-vh` / `--app-vw`. */
   const [appViewport, setAppViewport] = useState({ width: 1200, height: 800 });
-  /** Sliding cards on phone: logical px inside zoomed root (= visible px ÷ root zoom). */
+  /** Sliding cards on narrow viewports — width from visible viewport with a sensible desktop cap. */
   const [phoneSlideSize, setPhoneSlideSize] = useState({ w: 850, h: 1090 });
 
   useEffect(() => {
@@ -750,12 +734,15 @@ export default function DoePage() {
         }
       }
 
-      const zoom = Math.max(0.38, doeforvcRootZoom(window.innerWidth));
       /** Inset so cards read slightly smaller than full viewport */
       const horizontalInset = 12;
       /** Slide width from viewport; height taller than width for portrait cards */
       const phoneSlideScale = 0.96;
-      const w = ((vw - horizontalInset * 2) / zoom) * phoneSlideScale;
+      const maxSlideW = 760;
+      const w = Math.min(
+        maxSlideW,
+        Math.max(280, (vw - horizontalInset * 2) * phoneSlideScale),
+      );
       /** Taller than wide — extra vertical presence in the carousel band */
       const phoneSlideHeightRatio = 1.28;
       const h = w * phoneSlideHeightRatio;
@@ -1820,15 +1807,9 @@ export default function DoePage() {
   const loginButtonShadow =
     showNavShadow && !isDropdownOpen && !hitsWhiteBox ? "0 2px 4px rgba(0, 0, 0, 0.1)" : "none";
 
-  const rootZoom = doeforvcRootZoom(viewportWidth);
-  const applyRootZoom = Math.abs(rootZoom - 1) > 0.001;
-  /** Hero fills visible viewport after CSS `zoom`; carousel band matches former `172dvh` in logical px. */
-  const heroLogicalHeightPx = Math.round(
-    applyRootZoom ? appViewport.height / rootZoom : appViewport.height,
-  );
-  const carouselSectionMinLogicalPx = Math.round(
-    applyRootZoom ? (appViewport.height * 1.72) / rootZoom : appViewport.height * 1.72,
-  );
+  /** Hero fills visible viewport; carousel band matches former ~172dvh intent in px. */
+  const heroLogicalHeightPx = Math.round(appViewport.height);
+  const carouselSectionMinLogicalPx = Math.round(appViewport.height * 1.72);
 
   return (
     <div
@@ -1836,7 +1817,6 @@ export default function DoePage() {
       data-doeforvc-view="iphone"
       style={{
         backgroundColor: "#F7F6F3",
-        ...(applyRootZoom ? { zoom: rootZoom } : {}),
       }}
       suppressHydrationWarning
     >
@@ -1979,7 +1959,7 @@ export default function DoePage() {
             </h1>
 
             {/* Desktop: center Navigation Links */}
-            <div className="hidden items-center gap-8 absolute left-1/2 -translate-x-1/2">
+            <div className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
               {NAV_ITEMS.map((item) => (
                 <button
                   key={item}
@@ -2003,7 +1983,7 @@ export default function DoePage() {
             {/* Desktop: Login */}
             <a
               href="#"
-              className="hidden text-sm font-semibold px-6 py-2.5 rounded-md hover:opacity-90 transition-all duration-300 shrink-0 items-center"
+              className="hidden md:inline-flex text-sm font-semibold px-6 py-2.5 rounded-md hover:opacity-90 transition-all duration-300 shrink-0 items-center"
               style={{
                 backgroundColor: loginButtonBg,
                 color: loginButtonText,
@@ -2013,10 +1993,10 @@ export default function DoePage() {
               Login
             </a>
 
-            {/* iPhone: menu (replaces center links + login) */}
+            {/* Mobile: menu (replaces center links + login) */}
             <button
               type="button"
-              className="flex items-center justify-center p-3 iphone-page:p-[clamp(0.625rem,0.38rem+1.35vmin,0.975rem)] rounded-xl transition-colors active:bg-white/15"
+              className="flex md:hidden items-center justify-center p-3 iphone-page:p-[clamp(0.625rem,0.38rem+1.35vmin,0.975rem)] rounded-xl transition-colors active:bg-white/15"
               style={{ color: navTextColor }}
               aria-expanded={mobileNavOpen}
               aria-label={mobileNavOpen ? "Close navigation menu" : "Open navigation menu"}
