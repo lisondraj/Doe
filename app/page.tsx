@@ -1894,13 +1894,12 @@ export default function DoePage() {
           className="absolute inset-0 iphone-page:scale-[1.22] iphone-page:origin-[50%_45%]"
           style={{
             background: `
-              radial-gradient(circle at center, #D49D4F 0%, #D2774C 18%, #BF593D 32%, #C88A5F 45%, #7B5C4B 55%, #8B6F47 65%, #6D5B41 72%, #5C4A3A 78%, #4A3D32 85%, #1E343A 95%, rgba(30, 52, 58, 0.6) 100%),
-              radial-gradient(ellipse 60% 60% at 0% 0%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
-              radial-gradient(ellipse 60% 60% at 100% 0%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
-              radial-gradient(ellipse 60% 60% at 0% 100%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
-              radial-gradient(ellipse 60% 60% at 100% 100%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%)
+              radial-gradient(ellipse 115% 100% at 50% 18%, #fff1e0 0%, #f4c47a 18%, #e09548 42%, #b86438 62%, #4a3d36 82%, #161f24 100%),
+              radial-gradient(ellipse 95% 85% at 8% 92%, rgba(22, 38, 46, 0.82) 0%, transparent 52%),
+              radial-gradient(ellipse 90% 80% at 94% 8%, rgba(255, 220, 176, 0.45) 0%, transparent 48%),
+              radial-gradient(ellipse 70% 55% at 50% 100%, rgba(18, 26, 30, 0.55) 0%, transparent 58%)
             `,
-            filter: 'saturate(1.15)',
+            filter: 'saturate(1.06)',
           }}
         >
           {/* Grain texture overlay */}
@@ -1913,48 +1912,37 @@ export default function DoePage() {
               mixBlendMode: 'overlay',
             }}
           />
-          {/* Center brightness reduction overlay */}
+          {/* Center vignette */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
-              background: 'radial-gradient(circle at center, rgba(0, 0, 0, 0.15) 0%, transparent 60%)',
+              background: 'radial-gradient(ellipse 85% 75% at 50% 45%, rgba(0, 0, 0, 0.12) 0%, transparent 62%)',
             }}
           />
-          {/* Grid lines overlay */}
-          <div className="absolute inset-0 pointer-events-none">
-            <svg className="absolute inset-0 pointer-events-none w-full h-full" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <pattern id="gridPattern" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
-                  <path d="M 0 0 L 80 0 M 0 0 L 0 80" fill="none" stroke="#999999" strokeWidth="0.5" opacity="0.15" />
-                  <circle cx="0" cy="0" r="1" fill="#999999" opacity="0.25" />
-                  <circle cx="80" cy="0" r="1" fill="#999999" opacity="0.25" />
-                  <circle cx="0" cy="80" r="1" fill="#999999" opacity="0.25" />
-                  <circle cx="80" cy="80" r="1" fill="#999999" opacity="0.25" />
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#gridPattern)" />
-            </svg>
-            <div 
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                transform: 'perspective(1200px) translateZ(-200px) rotateX(75deg)',
-                transformStyle: 'preserve-3d',
-              }}
-            >
-              <svg className="absolute inset-0 pointer-events-none w-full h-full" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <pattern id="gridPattern2" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
-                    <path d="M 0 0 L 80 0 M 0 0 L 0 80" fill="none" stroke="#999999" strokeWidth="0.5" opacity="0.15" />
-                    <circle cx="0" cy="0" r="1" fill="#999999" opacity="0.25" />
-                    <circle cx="80" cy="0" r="1" fill="#999999" opacity="0.25" />
-                    <circle cx="0" cy="80" r="1" fill="#999999" opacity="0.25" />
-                    <circle cx="80" cy="80" r="1" fill="#999999" opacity="0.25" />
-                  </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#gridPattern2)" />
-              </svg>
-            </div>
-          </div>
+          {/* Line overlay — fine diagonal hatch (replaces Cartesian grid + perspective plane) */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              mixBlendMode: 'overlay',
+              opacity: 0.92,
+              backgroundImage: `
+                repeating-linear-gradient(
+                  124deg,
+                  transparent 0px,
+                  transparent 13px,
+                  rgba(255, 250, 242, 0.11) 13px,
+                  rgba(255, 250, 242, 0.11) 14px
+                ),
+                repeating-linear-gradient(
+                  -36deg,
+                  transparent 0px,
+                  transparent 22px,
+                  rgba(22, 32, 38, 0.07) 22px,
+                  rgba(22, 32, 38, 0.07) 23px
+                )
+              `,
+            }}
+          />
         </div>
         {/* Navigation Bar */}
         <nav
@@ -2434,7 +2422,7 @@ export default function DoePage() {
               Doe
             </p>
             <p
-              className="text-2xl iphone-page:text-[clamp(0.9375rem,3.35vw,1.125rem)] font-medium text-white/90 text-center iphone-page:px-2 px-2 tracking-tight flex flex-col items-center gap-1 iphone-page:gap-1.5 iphone-page:leading-snug leading-snug"
+              className="text-[1.5625rem] iphone-page:text-[clamp(1.0625rem,3.9vw,1.3125rem)] font-medium text-white/90 text-center iphone-page:px-2 px-2 tracking-tight flex flex-col items-center gap-1 iphone-page:gap-1.5 iphone-page:leading-snug leading-snug"
               style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
             >
               <span className="block iphone-page:whitespace-nowrap iphone-page:text-center w-full">
