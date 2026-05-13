@@ -8,7 +8,7 @@ import {
 import { doeforvcRootZoom } from "@/lib/doeforvc-zoom";
 import { Inter, Lora } from "next/font/google";
 import Link from "next/link";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 
 const lora = Lora({
   subsets: ["latin"],
@@ -31,12 +31,113 @@ function appViewportPx(): { width: number; height: number } {
 }
 
 const narrowHorizontalInset =
-  "iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))]";
+  "iphone-page:pl-[max(1rem,calc(env(safe-area-inset-left,0px)+0.5rem))] iphone-page:pr-[max(1rem,calc(env(safe-area-inset-right,0px)+0.5rem))]";
+
+/** Preview blurbs aligned with each nav footer slide (outside text = post title). */
+const SLIDE_PREVIEWS: Record<string, string> = {
+  Inquisara:
+    "How we assembled a clinical and product team around one question: what would actually help at the point of care? A short look at origin stories, trade-offs, and what “Inquisara” means for Doe.",
+  "Doe Ecosystem":
+    "Hospitals, education, and startups don’t have to compete for attention on the same dashboard. Here’s how we think about wiring the future of medicine—interoperably, patiently, and with clinicians in the loop.",
+  "For Students":
+    "From pre-clinical drill to residency handoff: tools that respect how students actually study, cram, and recover. No gimmicks—just structure, spaced prompts, and feedback you can trust before you touch a patient.",
+};
+
+type Slide = (typeof MOBILE_NAV_FOOTER_SLIDES)[number];
+
+function GradientArticleVisual({
+  slide,
+  variant,
+}: {
+  slide: Slide;
+  variant: "hero" | "inline";
+}) {
+  const tall =
+    variant === "hero"
+      ? "min-h-[min(52vh,28rem)] iphone-page:min-h-[min(56dvh,30rem)]"
+      : "min-h-[min(42vh,22rem)] iphone-page:min-h-[min(48dvh,24rem)]";
+
+  return (
+    <div
+      className={`relative w-full overflow-hidden rounded-[1.5rem] iphone-page:rounded-[clamp(1.35rem,1.1rem+1.5vmin,2rem)] shadow-[0_16px_48px_rgba(0,0,0,0.14)] ${tall}`}
+    >
+      <div className="absolute inset-0" style={{ background: slide.gradient }} aria-hidden />
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          opacity: slide.lineOverlay.opacity,
+          mixBlendMode: slide.lineOverlay.mixBlendMode,
+          backgroundImage: slide.lineOverlay.backgroundImage,
+        }}
+        aria-hidden
+      />
+      <div className="absolute bottom-0 left-0 right-0 z-[3] flex items-center justify-start p-7 iphone-page:p-[clamp(1.5rem,1rem+3.5vmin,3rem)]">
+        <div
+          className={`flex items-center gap-6 iphone-page:gap-[clamp(1.35rem,1rem+3vmin,3rem)] text-white ${inter.className}`}
+        >
+          <MobileNavFooterShapeIcon shape={slide.shape} />
+          <span className="text-[clamp(2.15rem,7.5vw,4.25rem)] iphone-page:text-[clamp(2.35rem,8vw,4.5rem)] font-medium tracking-tight leading-none">
+            {slide.boxTitle}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ArticleBlock({ slide, isFirst }: { slide: Slide; isFirst: boolean }) {
+  const preview = SLIDE_PREVIEWS[slide.boxTitle] ?? "";
+
+  return (
+    <article
+      className={
+        isFirst
+          ? "w-full"
+          : "w-full pt-14 iphone-page:pt-16 mt-12 iphone-page:mt-14 border-t border-[#E6E6E6]"
+      }
+    >
+      {!isFirst && (
+        <div className="mb-8 iphone-page:mb-10">
+          <GradientArticleVisual slide={slide} variant="inline" />
+        </div>
+      )}
+
+      <div className="mt-8 iphone-page:mt-10 space-y-6 iphone-page:space-y-7">
+        <p
+          className={`text-[clamp(0.75rem,2.8vw,0.875rem)] font-semibold uppercase tracking-[0.2em] text-gray-500 ${inter.className}`}
+        >
+          {slide.boxTitle}
+        </p>
+        <h2
+          className={`text-[clamp(2rem,6.5vw,3.25rem)] iphone-page:text-[clamp(2.25rem,7.25vw,3.5rem)] text-gray-900 tracking-tight leading-[1.12] ${lora.className}`}
+        >
+          {slide.outside}
+        </h2>
+        <p
+          className={`text-[clamp(1.05rem,3.8vw,1.25rem)] iphone-page:text-[clamp(1.125rem,4.1vw,1.35rem)] text-gray-500 ${inter.className}`}
+          style={{ fontWeight: 600 }}
+        >
+          {slide.date}
+        </p>
+        <p
+          className={`text-[clamp(1.1rem,3.9vw,1.3rem)] iphone-page:text-[clamp(1.2rem,4.25vw,1.4rem)] leading-[1.65] text-gray-800 ${inter.className}`}
+          style={{ fontWeight: 500 }}
+        >
+          {preview}
+        </p>
+        <button
+          type="button"
+          className={`inline-flex items-center justify-center rounded-full bg-[#1E343A] px-10 py-4 iphone-page:px-12 iphone-page:py-[1.125rem] text-[clamp(1.05rem,3.5vw,1.2rem)] iphone-page:text-[clamp(1.1rem,3.75vw,1.25rem)] font-semibold text-white shadow-[0_8px_24px_rgba(30,52,58,0.25)] active:scale-[0.98] transition-transform ${inter.className}`}
+        >
+          Read more
+        </button>
+      </div>
+    </article>
+  );
+}
 
 export default function BlogPage() {
   const [viewportWidth, setViewportWidth] = useState(1200);
-  const [featuredSlide, setFeaturedSlide] = useState(0);
-  const featuredRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     const measure = () => {
@@ -56,23 +157,10 @@ export default function BlogPage() {
     };
   }, []);
 
-  useEffect(() => {
-    const id = window.setInterval(() => {
-      const el = featuredRef.current;
-      if (!el) return;
-      const w = el.clientWidth;
-      if (w <= 0) return;
-      const len = MOBILE_NAV_FOOTER_SLIDES.length;
-      const i = Math.min(len - 1, Math.max(0, Math.round(el.scrollLeft / w)));
-      const next = (i + 1) % len;
-      el.scrollTo({ left: next * w, behavior: "smooth" });
-      setFeaturedSlide(next);
-    }, 5000);
-    return () => window.clearInterval(id);
-  }, []);
-
   const rootZoom = doeforvcRootZoom(viewportWidth);
   const applyRootZoom = Math.abs(rootZoom - 1) > 0.001;
+
+  const [first, ...rest] = MOBILE_NAV_FOOTER_SLIDES;
 
   return (
     <div
@@ -86,156 +174,34 @@ export default function BlogPage() {
       <DoeIphoneSiteNav />
 
       <main
-        className={`relative z-10 pt-[5.75rem] iphone-page:pt-[max(5.75rem,calc(env(safe-area-inset-top,0px)+4.25rem))] pb-16 iphone-page:pb-[max(4rem,calc(env(safe-area-inset-bottom,0px)+1.25rem))] ${narrowHorizontalInset}`}
+        className={`relative z-10 w-full max-w-[min(100%,52rem)] mx-auto pt-[5.5rem] iphone-page:pt-[max(5.5rem,calc(env(safe-area-inset-top,0px)+4rem))] pb-20 iphone-page:pb-24 ${narrowHorizontalInset}`}
       >
-        <article className="mx-auto max-w-[min(100%,36rem)]">
-            <Link
-              href="/"
-              className={`inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900 mb-8 ${inter.className}`}
-            >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-              </svg>
-              Home
-            </Link>
-
-            <p className={`text-xs font-semibold uppercase tracking-[0.22em] text-gray-500 mb-4 ${inter.className}`}>
-              Field notes
-            </p>
-            <h1
-              className={`text-[clamp(1.85rem,5.85vw,2.55rem)] text-gray-900 tracking-tight leading-[1.15] mb-4 ${lora.className}`}
-            >
-              Designing Doe for the bedside, not the spreadsheet.
-            </h1>
-            <p className={`text-sm text-gray-500 mb-10 ${inter.className}`}>May 13, 2026 · 6 min read</p>
-
-            <div
-              className={`space-y-5 text-[0.9375rem] leading-[1.65] text-gray-800 ${inter.className}`}
-              style={{ fontWeight: 500 }}
-            >
-              <p>
-                When we talk about AI in medicine, the demo that wins is rarely the workflow that ships. Clinical teams
-                want signal in context: who changed, what broke, and what to do next—without re-learning a new chrome
-                every morning.
-              </p>
-              <p>
-                Doe is built as an ambient layer: it summarizes the inbox, stacks imaging and labs for review, and drafts
-                payer packets so your day returns to patients. The product mockups you see on our home page mirror how we
-                think about density—bold cards, clear hierarchy, and typography that stays legible on the smallest phones.
-              </p>
-              <p>
-                This is an editorial prototype: one post, one column, and the same beige canvas as the marketing site so
-                the story feels continuous when you open it from Safari on an iPhone. Below are the three featured stories
-                from our navigation—they use the same gradient capsules you see when the menu is expanded.
-              </p>
-            </div>
-        </article>
-
-        <section className="mx-auto max-w-[min(100%,36rem)] mt-16 pt-12 border-t border-[#E6E6E6]">
-          <h2
-            className={`text-center text-[1.0625rem] font-semibold tracking-tight text-gray-900 mb-8 ${inter.className}`}
+        <Link
+          href="/"
+          className={`inline-flex items-center gap-2.5 mb-8 iphone-page:mb-10 text-[clamp(1rem,3.5vw,1.125rem)] iphone-page:text-[clamp(1.05rem,3.65vw,1.2rem)] font-semibold text-gray-600 hover:text-gray-900 ${inter.className}`}
+        >
+          <svg
+            className="w-5 h-5 iphone-page:w-6 iphone-page:h-6 shrink-0"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            aria-hidden
           >
-            Essential reading
-          </h2>
-          <div
-            ref={featuredRef}
-            className="flex overflow-x-auto snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-            style={{ WebkitOverflowScrolling: "touch" }}
-            onScroll={(e) => {
-              const el = e.currentTarget;
-              const w = el.clientWidth;
-              if (w <= 0) return;
-              setFeaturedSlide(
-                Math.min(
-                  MOBILE_NAV_FOOTER_SLIDES.length - 1,
-                  Math.max(0, Math.round(el.scrollLeft / w))
-                )
-              );
-            }}
-            aria-label="Featured stories"
-          >
-            {MOBILE_NAV_FOOTER_SLIDES.map((slide) => (
-              <div
-                key={slide.boxTitle}
-                className="w-full min-w-full shrink-0 snap-center space-y-3 box-border px-1"
-              >
-                <div className="relative rounded-[1.375rem] iphone-page:rounded-[clamp(1.2rem,1rem+1.4vmin,2.1rem)] overflow-hidden min-h-[22rem] iphone-page:min-h-[clamp(18rem,52vmin,36rem)] shadow-[0_10px_32px_rgba(0,0,0,0.12)]">
-                  <div className="absolute inset-0" style={{ background: slide.gradient }} aria-hidden />
-                  <div
-                    className="pointer-events-none absolute inset-0"
-                    style={{
-                      opacity: slide.lineOverlay.opacity,
-                      mixBlendMode: slide.lineOverlay.mixBlendMode,
-                      backgroundImage: slide.lineOverlay.backgroundImage,
-                    }}
-                    aria-hidden
-                  />
-                  <div className="absolute left-0 right-0 top-0 z-[4] flex justify-center gap-2.5 iphone-page:gap-[clamp(0.65rem,0.45rem+1vmin,0.95rem)] px-5 pt-8 iphone-page:pt-[clamp(1.5rem,1.2rem+1.5vmin,2.75rem)] pb-1">
-                    {MOBILE_NAV_FOOTER_SLIDES.map((s, dotI) => (
-                      <button
-                        key={s.boxTitle}
-                        type="button"
-                        aria-label={`Show ${s.boxTitle}`}
-                        aria-current={featuredSlide === dotI ? "true" : undefined}
-                        className={`h-2.5 iphone-page:h-[clamp(9px,calc(6px+0.45vmin),12px)] shrink-0 rounded-full transition-[width,background-color,opacity] duration-200 shadow-sm ${
-                          featuredSlide === dotI
-                            ? "w-8 iphone-page:w-[clamp(1.95rem,calc(1.65rem+1.9vmin),2.85rem)] bg-white opacity-95"
-                            : "w-2.5 iphone-page:w-[clamp(0.625rem,calc(0.5rem+0.42vmin),0.75rem)] bg-white/45 hover:bg-white/70"
-                        }`}
-                        onClick={() => {
-                          const el = featuredRef.current;
-                          if (!el) return;
-                          const step = el.clientWidth;
-                          el.scrollTo({ left: dotI * step, behavior: "smooth" });
-                          setFeaturedSlide(dotI);
-                        }}
-                      />
-                    ))}
-                  </div>
-                  <div className="absolute bottom-0 left-0 right-0 z-[3] flex items-center justify-start p-6 iphone-page:p-[clamp(1.25rem,0.85rem+2.5vmin,2.75rem)]">
-                    <div className={`flex items-center gap-6 iphone-page:gap-[clamp(1.25rem,1rem+2.75vmin,2.5rem)] text-white ${inter.className}`}>
-                      <MobileNavFooterShapeIcon shape={slide.shape} />
-                      <span className="text-[2.5rem] iphone-page:text-[clamp(1.85rem,0.95rem+4.5vmin,3.75rem)] font-medium tracking-tight leading-none">
-                        {slide.boxTitle}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <Link
-                    href="/#build"
-                    className={`flex w-full flex-row flex-wrap items-center justify-start gap-2.5 iphone-page:gap-[clamp(0.85rem,0.55rem+1.2vmin,1rem)] text-left active:opacity-80 transition-opacity ${inter.className}`}
-                  >
-                    <span className="text-[1.35rem] iphone-page:text-[clamp(1.22rem,0.78rem+2vmin,2.25rem)] font-medium text-gray-800 tracking-tight leading-snug">
-                      {slide.outside}
-                    </span>
-                    <span
-                      className="shrink-0 inline-flex h-12 w-12 iphone-page:h-[clamp(2.65rem,10vmin,4.25rem)] iphone-page:w-[clamp(2.65rem,10vmin,4.25rem)] items-center justify-center rounded-full border-2 border-gray-300/90 bg-white text-gray-900 shadow-[0_4px_14px_rgba(0,0,0,0.08)]"
-                      aria-hidden
-                    >
-                      <svg
-                        className="w-6 h-6 iphone-page:w-[clamp(1.25rem,4.85vmin,2.1rem)] iphone-page:h-[clamp(1.25rem,4.85vmin,2.1rem)]"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M5 12h14M13 6l6 6-6 6" />
-                      </svg>
-                    </span>
-                  </Link>
-                  <p
-                    className={`mt-1.5 text-[0.98rem] iphone-page:text-[clamp(0.9rem,0.72rem+1.05vmin,1.35rem)] font-medium tracking-tight text-gray-500 ${inter.className}`}
-                  >
-                    {slide.date}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+          Home
+        </Link>
+
+        {/* Inquisara at top: image first, then title / preview / Read more */}
+        <div className="w-full">
+          <GradientArticleVisual slide={first} variant="hero" />
+          <ArticleBlock slide={first} isFirst />
+        </div>
+
+        {rest.map((slide) => (
+          <ArticleBlock key={slide.boxTitle} slide={slide} isFirst={false} />
+        ))}
       </main>
     </div>
   );
