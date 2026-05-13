@@ -257,10 +257,8 @@ export default function DoePage() {
     useRef<HTMLDivElement>(null),
     useRef<HTMLDivElement>(null),
   ];
-  /** Full fixed `<nav>` — sheet position derived from visible bar bottom when menu open. */
+  /** Full fixed `<nav>` — sheet top aligns to `<nav>` bottom (includes bar underline when menu open). */
   const navBarRowRef = useRef<HTMLElement>(null);
-  /** Top row (logo + controls); measuring its bottom aligns sheet flush under chrome (avoids phantom gap vs full `<nav>` box). */
-  const navBarTopBarRef = useRef<HTMLDivElement>(null);
   const [iphoneMenuTopPx, setIphoneMenuTopPx] = useState(88);
   const autoScrollPositionRef = useRef(0);
   const thirdSectionRef = useRef<HTMLDivElement>(null);
@@ -356,14 +354,9 @@ export default function DoePage() {
 
   useLayoutEffect(() => {
     const navEl = navBarRowRef.current;
-    const barEl = navBarTopBarRef.current;
     if (!navEl) return;
     const update = () => {
-      const bottom =
-        mobileNavOpen && barEl != null
-          ? barEl.getBoundingClientRect().bottom
-          : navEl.getBoundingClientRect().bottom;
-      setIphoneMenuTopPx(Math.floor(bottom));
+      setIphoneMenuTopPx(Math.floor(navEl.getBoundingClientRect().bottom));
     };
     update();
     let raf1 = 0;
@@ -375,7 +368,6 @@ export default function DoePage() {
     }
     const ro = new ResizeObserver(update);
     ro.observe(navEl);
-    if (barEl) ro.observe(barEl);
     window.addEventListener("resize", update);
     window.visualViewport?.addEventListener("resize", update);
     return () => {
@@ -1371,7 +1363,7 @@ export default function DoePage() {
               isPhoneLayout && mobileNavOpen ? "#F7F6F3" : "transparent",
             borderBottom:
               isPhoneLayout && mobileNavOpen
-                ? "none"
+                ? "1px solid #E6E6E6"
                 : showBackgroundBox || isDropdownOpen
                   ? "1px solid #E6E6E6"
                   : "none",
@@ -1406,7 +1398,6 @@ export default function DoePage() {
           )}
           {/* Top bar */}
           <div
-            ref={navBarTopBarRef}
             className="px-8 py-6 iphone-page:px-6 iphone-page:py-6 iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] flex items-center relative z-10 iphone-page:gap-2 justify-end"
           >
             {/* Logo — opacity only (no width collapse) so it fades, not slides */}
@@ -1603,11 +1594,11 @@ export default function DoePage() {
               onClick={() => setMobileNavOpen(false)}
             />
             {/*
-              Sheet uses fixed top from measured bar bottom minus 1px overlap so no hairline gap under zoom/layout.
+              Sheet fixed top = measured bar bottom (flush with nav chrome).
             */}
             <div
               className="fixed left-0 right-0 bottom-0 z-[45] flex flex-col pointer-events-none"
-              style={{ top: Math.max(0, iphoneMenuTopPx - 1) }}
+              style={{ top: iphoneMenuTopPx }}
               role="presentation"
             >
               <div
@@ -1616,7 +1607,7 @@ export default function DoePage() {
                 aria-modal="true"
                 aria-label="Site navigation"
               >
-                <nav className="flex flex-col flex-1 min-h-0 overflow-y-auto pb-[env(safe-area-inset-bottom,0px)]">
+                <nav className="flex flex-col flex-1 min-h-0 overflow-y-auto pb-[env(safe-area-inset-bottom,0px)] [&>div:first-child>button]:pt-0 [&>div:first-child>button]:pb-4">
                   {NAV_ITEMS.map((item) => {
                     const expanded = mobileNavExpandedKey === item;
                     const subs = dropdownContent[item]?.items ?? [];
@@ -1626,7 +1617,7 @@ export default function DoePage() {
                         <button
                           type="button"
                           aria-expanded={expanded}
-                          className={`w-full text-left font-normal tracking-tight text-gray-900 px-6 iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] py-5 active:bg-black/[0.04] transition-colors ${lora.className} text-4xl iphone-page:text-6xl iphone-page:leading-none`}
+                          className={`w-full text-left font-semibold tracking-[-0.02em] text-gray-900 px-6 iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] py-4 active:bg-black/[0.04] transition-colors ${inter.className} text-4xl iphone-page:text-6xl iphone-page:leading-none`}
                           onClick={() =>
                             setMobileNavExpandedKey((k) => (k === item ? null : item))
                           }
@@ -1643,7 +1634,7 @@ export default function DoePage() {
                                   <button
                                     key={sub.title}
                                     type="button"
-                                    className={`w-full text-left rounded-xl px-4 py-4 font-normal tracking-tight text-gray-900 hover:bg-white/70 active:bg-white transition-colors ${lora.className} text-4xl iphone-page:text-6xl iphone-page:leading-snug`}
+                                    className={`w-full text-left rounded-xl px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-white/70 active:bg-white transition-colors ${inter.className}`}
                                     onClick={() => setMobileNavOpen(false)}
                                   >
                                     {sub.title}
