@@ -542,10 +542,14 @@ export default function DoePage() {
   const thirdSectionRef = useRef<HTMLDivElement>(null);
   const [thirdSectionOpacity, setThirdSectionOpacity] = useState(0);
   const [thirdSectionTranslateY, setThirdSectionTranslateY] = useState(40);
-  /** Scroll-driven vertical bento (gradient-only rails) between carousel and third section */
+  /** Scroll-driven vertical bento (after workflow carousel) */
   const verticalBentoSectionRef = useRef<HTMLDivElement>(null);
   const [verticalBentoU, setVerticalBentoU] = useState(0);
   const [vbMetrics, setVbMetrics] = useState<VerticalBentoScrollMetrics>(() => vbComputeScrollMetrics(800));
+  const [verticalBentoTitleOpacity, setVerticalBentoTitleOpacity] = useState(0);
+  const [verticalBentoTitleTranslateY, setVerticalBentoTitleTranslateY] = useState(40);
+  const [verticalBentoRailsOpacity, setVerticalBentoRailsOpacity] = useState(0);
+  const [verticalBentoRailsTranslateY, setVerticalBentoRailsTranslateY] = useState(40);
   const secondSectionRef = useRef<HTMLDivElement>(null);
   const [secondSectionTitleOpacity, setSecondSectionTitleOpacity] = useState(0);
   const [secondSectionTitleTranslateY, setSecondSectionTitleTranslateY] = useState(40);
@@ -1065,10 +1069,42 @@ export default function DoePage() {
         }
       }
 
-      // Vertical bento: timeline open → ~5× viewport-height dwell → swap (×3) + exit tail
+      // Vertical bento: scroll timeline + headline/rails reveal (same timing as workflow section)
       if (verticalBentoSectionRef.current) {
         const el = verticalBentoSectionRef.current;
         const rect = el.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const sectionTop = rect.top;
+        const startPoint = viewportHeight * 0.85;
+        const endPoint = viewportHeight * 0.6;
+        const distance = startPoint - endPoint;
+
+        if (sectionTop <= startPoint && sectionTop >= endPoint) {
+          const progress = (startPoint - sectionTop) / distance;
+          const clampedProgress = Math.min(Math.max(progress, 0), 1);
+          setVerticalBentoTitleOpacity(clampedProgress);
+          setVerticalBentoTitleTranslateY(40 * (1 - clampedProgress));
+          if (clampedProgress >= 0.6) {
+            const railsProgress = (clampedProgress - 0.6) / 0.4;
+            const clampedRails = Math.min(Math.max(railsProgress, 0), 1);
+            setVerticalBentoRailsOpacity(clampedRails);
+            setVerticalBentoRailsTranslateY(40 * (1 - clampedRails));
+          } else {
+            setVerticalBentoRailsOpacity(0);
+            setVerticalBentoRailsTranslateY(40);
+          }
+        } else if (sectionTop < endPoint) {
+          setVerticalBentoTitleOpacity(1);
+          setVerticalBentoTitleTranslateY(0);
+          setVerticalBentoRailsOpacity(1);
+          setVerticalBentoRailsTranslateY(0);
+        } else {
+          setVerticalBentoTitleOpacity(0);
+          setVerticalBentoTitleTranslateY(40);
+          setVerticalBentoRailsOpacity(0);
+          setVerticalBentoRailsTranslateY(40);
+        }
+
         const { scrollablePx, anchor } = vbMetrics;
         const sp = Math.max(scrollablePx, 1e-6);
         const scrolled = Math.min(Math.max(-rect.top + anchor, 0), sp);
@@ -3435,92 +3471,151 @@ export default function DoePage() {
         style={{ minHeight: vbMetrics.sectionMinPx }}
       >
         <div className="sticky top-[max(5.75rem,calc(env(safe-area-inset-top,0px)+4.5rem))] z-[5] pb-24 pt-8 iphone-page:pb-28 iphone-page:pt-10">
-          <div className={`w-full ${narrowHorizontalInset}`}>
+          <div className={`w-full px-4 ${narrowHorizontalInset}`}>
             <div className="relative mx-auto w-full max-w-full shrink-0">
-              {(() => {
-                const { expand, opacity } = vbDeriveRails(verticalBentoU, vbMetrics.milestones);
-                const gapPx = 16;
-                const usable = Math.max(vbMetrics.stickyColumnH - gapPx * 2, 220);
-                const collapsedPx = Math.max(68, Math.min(90, Math.round(usable * 0.108)));
-                const expandedMax = Math.max(collapsedPx + 88, usable - 2 * collapsedPx);
-                return (
+              <div className="text-center iphone-page:mt-1 mb-8 iphone-page:mb-11">
+                <h1
+                  className={`flex flex-col items-center gap-2 font-normal text-gray-900 tracking-tight ${lora.className}`}
+                  style={{
+                    opacity: verticalBentoTitleOpacity,
+                    transform: `translateY(${verticalBentoTitleTranslateY}px)`,
+                    transition: "opacity 1.2s ease-out, transform 1.2s ease-out",
+                  }}
+                >
+                  <span className="block leading-[1.06] text-[clamp(2.65rem,11.5vw,4rem)]">So you can do</span>
+                  <span className="block leading-[1.06] text-[clamp(2.65rem,11.5vw,4rem)]">Doctor better.</span>
+                </h1>
+              </div>
+
+              <div
+                className="flex flex-row items-start gap-5 iphone-page:gap-6 w-full"
+                style={{
+                  opacity: verticalBentoRailsOpacity,
+                  transform: `translateY(${verticalBentoRailsTranslateY}px)`,
+                  transition: "opacity 1.2s ease-out, transform 1.2s ease-out",
+                }}
+              >
+                <div className="shrink-0 flex justify-center pt-px" style={{ height: vbMetrics.stickyColumnH }}>
                   <div
-                    className="flex flex-col gap-4 iphone-page:gap-3.5"
+                    className="relative w-[3px] shrink-0 rounded-full bg-gray-900/[0.08]"
                     style={{ height: vbMetrics.stickyColumnH }}
+                    role="progressbar"
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-valuenow={Math.round(verticalBentoU * 100)}
+                    aria-label="Progress through stacked panels below"
                   >
-                    {([0, 1, 2] as const).map((i) => (
-                      <div
-                        key={i}
-                        aria-hidden
-                        className="relative w-full shrink-0 overflow-hidden rounded-2xl ring-1 ring-black/[0.06]"
-                        style={{
-                          height: vbRailHeightPx(expand[i], collapsedPx, expandedMax),
-                          opacity: opacity[i],
-                        }}
-                      >
-                        <div className="absolute inset-0 rounded-2xl" style={{ background: VBENTO_WORKFLOW_GRADIENTS[i] }} />
-                        <div
-                          className="absolute inset-0 pointer-events-none rounded-2xl"
-                          style={{
-                            backgroundImage: VBENTO_GRAIN_BG,
-                            backgroundSize: "200px 200px",
-                            opacity: 1,
-                            mixBlendMode: "overlay",
-                          }}
-                        />
-                        <div className="absolute inset-0 pointer-events-none rounded-2xl overflow-hidden">
-                          {i === 0 ? (
-                            <svg className="absolute inset-0 h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 700" preserveAspectRatio="none" aria-hidden>
-                              <defs>
-                                <pattern
-                                  id="vbBentoDiag"
-                                  x="0"
-                                  y="0"
-                                  width="60"
-                                  height="60"
-                                  patternUnits="userSpaceOnUse"
-                                  patternTransform="rotate(45)"
-                                >
-                                  <path d="M 0 0 L 60 0 M 0 0 L 0 60" fill="none" stroke="rgba(255, 255, 255, 0.15)" strokeWidth="0.8" />
-                                </pattern>
-                              </defs>
-                              <rect width="100%" height="100%" fill="url(#vbBentoDiag)" />
-                            </svg>
-                          ) : null}
-                          {i === 1 ? (
-                            <svg className="absolute inset-0 h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 700" preserveAspectRatio="none" aria-hidden>
-                              <defs>
-                                <pattern id="vbBentoHex" x="0" y="0" width="80" height="69.28" patternUnits="userSpaceOnUse">
-                                  <path
-                                    d="M 40 0 L 80 17.32 L 80 51.96 L 40 69.28 L 0 51.96 L 0 17.32 Z"
-                                    fill="none"
-                                    stroke="rgba(255, 255, 255, 0.1)"
-                                    strokeWidth="0.8"
-                                  />
-                                </pattern>
-                              </defs>
-                              <rect width="100%" height="100%" fill="url(#vbBentoHex)" />
-                            </svg>
-                          ) : null}
-                          {i === 2 ? (
-                            <svg className="absolute inset-0 h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 700" preserveAspectRatio="none" aria-hidden>
-                              {Array.from({ length: 12 }, (_, w) => (
-                                <path
-                                  key={`vb-bento-wave-${w}`}
-                                  d={`M -40 ${60 + w * 58} Q 175 ${20 + w * 58} 350 ${60 + w * 58} T 740 ${60 + w * 58}`}
-                                  fill="none"
-                                  stroke="rgba(255, 255, 255, 0.12)"
-                                  strokeWidth="1"
-                                />
-                              ))}
-                            </svg>
-                          ) : null}
-                        </div>
-                      </div>
-                    ))}
+                    <div
+                      className="absolute bottom-0 left-0 right-0 rounded-full bg-gray-900/45"
+                      style={{ height: `${Math.max(0, Math.min(1, verticalBentoU)) * 100}%` }}
+                    />
                   </div>
-                );
-              })()}
+                </div>
+                <div className="min-w-0 flex-1">
+                  {(() => {
+                    const { expand, opacity } = vbDeriveRails(verticalBentoU, vbMetrics.milestones);
+                    const gapPx = 16;
+                    const usable = Math.max(vbMetrics.stickyColumnH - gapPx * 2, 220);
+                    const collapsedPx = Math.max(68, Math.min(90, Math.round(usable * 0.108)));
+                    const expandedMax = Math.max(collapsedPx + 88, usable - 2 * collapsedPx);
+                    return (
+                      <div
+                        className="flex flex-col gap-4 iphone-page:gap-3.5"
+                        style={{ height: vbMetrics.stickyColumnH }}
+                      >
+                        {([0, 1, 2] as const).map((i) => (
+                          <div
+                            key={i}
+                            aria-hidden
+                            className="relative w-full shrink-0 overflow-hidden rounded-2xl ring-1 ring-black/[0.06]"
+                            style={{
+                              height: vbRailHeightPx(expand[i], collapsedPx, expandedMax),
+                              opacity: opacity[i],
+                            }}
+                          >
+                            <div className="absolute inset-0 rounded-2xl" style={{ background: VBENTO_WORKFLOW_GRADIENTS[i] }} />
+                            <div
+                              className="absolute inset-0 pointer-events-none rounded-2xl"
+                              style={{
+                                backgroundImage: VBENTO_GRAIN_BG,
+                                backgroundSize: "200px 200px",
+                                opacity: 1,
+                                mixBlendMode: "overlay",
+                              }}
+                            />
+                            <div className="absolute inset-0 pointer-events-none rounded-2xl overflow-hidden">
+                              {i === 0 ? (
+                                <svg
+                                  className="absolute inset-0 h-full w-full"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  viewBox="0 0 700 700"
+                                  preserveAspectRatio="none"
+                                  aria-hidden
+                                >
+                                  <defs>
+                                    <pattern
+                                      id="vbBentoDiag"
+                                      x="0"
+                                      y="0"
+                                      width="60"
+                                      height="60"
+                                      patternUnits="userSpaceOnUse"
+                                      patternTransform="rotate(45)"
+                                    >
+                                      <path d="M 0 0 L 60 0 M 0 0 L 0 60" fill="none" stroke="rgba(255, 255, 255, 0.15)" strokeWidth="0.8" />
+                                    </pattern>
+                                  </defs>
+                                  <rect width="100%" height="100%" fill="url(#vbBentoDiag)" />
+                                </svg>
+                              ) : null}
+                              {i === 1 ? (
+                                <svg
+                                  className="absolute inset-0 h-full w-full"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  viewBox="0 0 700 700"
+                                  preserveAspectRatio="none"
+                                  aria-hidden
+                                >
+                                  <defs>
+                                    <pattern id="vbBentoHex" x="0" y="0" width="80" height="69.28" patternUnits="userSpaceOnUse">
+                                      <path
+                                        d="M 40 0 L 80 17.32 L 80 51.96 L 40 69.28 L 0 51.96 L 0 17.32 Z"
+                                        fill="none"
+                                        stroke="rgba(255, 255, 255, 0.1)"
+                                        strokeWidth="0.8"
+                                      />
+                                    </pattern>
+                                  </defs>
+                                  <rect width="100%" height="100%" fill="url(#vbBentoHex)" />
+                                </svg>
+                              ) : null}
+                              {i === 2 ? (
+                                <svg
+                                  className="absolute inset-0 h-full w-full"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  viewBox="0 0 700 700"
+                                  preserveAspectRatio="none"
+                                  aria-hidden
+                                >
+                                  {Array.from({ length: 12 }, (_, w) => (
+                                    <path
+                                      key={`vb-bento-wave-${w}`}
+                                      d={`M -40 ${60 + w * 58} Q 175 ${20 + w * 58} 350 ${60 + w * 58} T 740 ${60 + w * 58}`}
+                                      fill="none"
+                                      stroke="rgba(255, 255, 255, 0.12)"
+                                      strokeWidth="1"
+                                    />
+                                  ))}
+                                </svg>
+                              ) : null}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })()}
+                </div>
+              </div>
             </div>
           </div>
         </div>
