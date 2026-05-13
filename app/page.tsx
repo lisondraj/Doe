@@ -1607,7 +1607,7 @@ export default function DoePage() {
                 aria-modal="true"
                 aria-label="Site navigation"
               >
-                <nav className="flex flex-col flex-1 min-h-0 overflow-y-auto pb-[env(safe-area-inset-bottom,0px)] [&>div:first-child>button]:pt-0 [&>div:first-child>button]:pb-4">
+                <nav className="flex flex-col flex-1 min-h-0 overflow-y-auto pb-[env(safe-area-inset-bottom,0px)] [&>div:first-child>button]:pt-0 [&>div:first-child>button]:pb-3">
                   {NAV_ITEMS.map((item) => {
                     const expanded = mobileNavExpandedKey === item;
                     const subs = dropdownContent[item]?.items ?? [];
@@ -1617,24 +1617,38 @@ export default function DoePage() {
                         <button
                           type="button"
                           aria-expanded={expanded}
-                          className={`w-full text-left font-semibold tracking-[-0.02em] text-gray-900 px-6 iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] py-4 active:bg-black/[0.04] transition-colors ${inter.className} text-4xl iphone-page:text-6xl iphone-page:leading-none`}
+                          className={`flex w-full items-center justify-between gap-4 text-left font-medium tracking-[-0.02em] text-gray-900 px-6 iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] py-3.5 active:bg-black/[0.04] transition-colors ${inter.className} text-4xl iphone-page:text-6xl iphone-page:leading-none`}
                           onClick={() =>
                             setMobileNavExpandedKey((k) => (k === item ? null : item))
                           }
                         >
-                          {item}{" "}+
+                          <span className="min-w-0">{item}</span>
+                          <span
+                            className="shrink-0 inline-flex items-center justify-center text-gray-500 mt-1"
+                            aria-hidden
+                          >
+                            {expanded ? (
+                              <svg width={28} height={28} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M6 9l6 6 6-6" />
+                              </svg>
+                            ) : (
+                              <svg width={28} height={28} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M18 15l-6-6-6 6" />
+                              </svg>
+                            )}
+                          </span>
                         </button>
                         <div
                           className={`grid transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none ${expanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
                         >
                           <div className="overflow-hidden min-h-0">
                             {four.length > 0 && (
-                              <div className="border-t border-[#E6E6E6]/80 bg-black/[0.02] px-6 iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] pb-4 pt-2 flex flex-col gap-0.5">
+                              <div className="flex flex-col px-6 iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] pb-3 pt-0">
                                 {four.map((sub) => (
                                   <button
                                     key={sub.title}
                                     type="button"
-                                    className={`w-full text-left rounded-xl px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-white/70 active:bg-white transition-colors ${inter.className}`}
+                                    className={`w-full text-left py-3 pl-[2.75rem] iphone-page:pl-12 text-base font-medium text-gray-700 active:bg-black/[0.03] transition-colors ${inter.className}`}
                                     onClick={() => setMobileNavOpen(false)}
                                   >
                                     {sub.title}
