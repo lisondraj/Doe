@@ -1494,6 +1494,34 @@ export default function DoePage() {
   const visibleMargin = 22; // desired gap (in card pixels) between card edge and caption
   const captionLeft700 = Math.ceil((visibleMargin - xStart700) / slideUniformScale);
   const captionRight700 = captionLeft700; // symmetric
+  /** Horizontal/vertical extent of the 700² mock visible inside the card (design px). */
+  const slideVisibleWidth700 = Math.max(
+    148,
+    Math.min(700, Math.round(slideBoxW / slideUniformScale)),
+  );
+  const slideVisibleHeight700 = Math.max(
+    148,
+    Math.min(700, Math.round(slideBoxH / slideUniformScale)),
+  );
+  /** Inbox mock — shrink on narrowest phones so UI + captions stay inside the gradient card. */
+  const carouselInboxUiWidth700 = Math.min(
+    320,
+    Math.max(252, Math.round(slideVisibleWidth700 * 0.92)),
+  );
+  const carouselInboxUiHeight700 = Math.min(
+    380,
+    Math.max(292, Math.round(slideVisibleHeight700 * 0.515)),
+  );
+  const carouselInboxUiBottom700 = Math.min(
+    214,
+    Math.max(158, Math.round(slideVisibleHeight700 * 0.278)),
+  );
+  /** Report Results overlapping cards — scale width + drag offsets when the visible slice is tight. */
+  const reportMockCardWidth700 = Math.min(
+    280,
+    Math.max(216, Math.round(slideVisibleWidth700 * 0.42)),
+  );
+  const reportMockScale = reportMockCardWidth700 / 280;
   const totalWidth = totalBoxes * boxTotalWidth;
   
   const applySlidingBoxPositions = (scrollPos: number, shouldWrap: boolean = true) => {
@@ -2393,13 +2421,13 @@ export default function DoePage() {
               Doe
             </p>
             <p
-              className="text-2xl iphone-page:text-3xl font-medium text-white/90 text-center iphone-page:px-0 px-2 tracking-tight flex flex-col items-center gap-1 iphone-page:gap-1.5 iphone-page:leading-snug leading-snug"
+              className="text-2xl iphone-page:text-[clamp(0.9375rem,3.35vw,1.125rem)] font-medium text-white/90 text-center iphone-page:px-2 px-2 tracking-tight flex flex-col items-center gap-1 iphone-page:gap-1.5 iphone-page:leading-snug leading-snug"
               style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
             >
-              <span className="block iphone-page:max-w-[min(22ch,100%)]">
+              <span className="block iphone-page:whitespace-nowrap iphone-page:text-center w-full">
                 We&apos;re building the future of AI in
               </span>
-              <span className="block iphone-page:max-w-[min(22ch,100%)]">
+              <span className="block iphone-page:whitespace-nowrap iphone-page:text-center w-full">
                 clinical practice and education.
               </span>
             </p>
@@ -2427,10 +2455,10 @@ export default function DoePage() {
                   transition: 'opacity 1.2s ease-out, transform 1.2s ease-out'
                 }}
               >
-                <span className="block leading-[1.06] text-[clamp(2.65rem,11.5vw,4rem)]">
+                <span className="block leading-[1.06] text-[clamp(2.65rem,11.5vw,4rem)] iphone-page:text-[clamp(1.48rem,6.25vw,4rem)] iphone-page:whitespace-nowrap">
                   Agents for every
                 </span>
-                <span className="block leading-[1.06] text-[clamp(2.65rem,11.5vw,4rem)]">
+                <span className="block leading-[1.06] text-[clamp(2.65rem,11.5vw,4rem)] iphone-page:text-[clamp(1.48rem,6.25vw,4rem)] iphone-page:whitespace-nowrap">
                   workflow.
                 </span>
               </h1>
@@ -2570,12 +2598,13 @@ export default function DoePage() {
                     
                     {/* White UI Box */}
                     <div 
-                      className="absolute left-1/2 -translate-x-1/2 bg-white rounded-xl p-6"
+                      className="absolute left-1/2 -translate-x-1/2 bg-white rounded-xl"
                       style={{ 
                         opacity: 1,
                         pointerEvents: 'auto',
-                        width: '320px',
-                        height: '360px',
+                        width: `${carouselInboxUiWidth700}px`,
+                        height: `${carouselInboxUiHeight700}px`,
+                        padding: carouselInboxUiWidth700 < 296 ? '14px' : '24px',
                         overflowY: 'hidden',
                         userSelect: 'none',
                         cursor: 'default',
@@ -2583,7 +2612,7 @@ export default function DoePage() {
                         WebkitUserSelect: 'none',
                         MozUserSelect: 'none',
                         msUserSelect: 'none',
-                        bottom: '200px',
+                        bottom: `${carouselInboxUiBottom700}px`,
                       }}
                     >
                       {/* Notification Header */}
@@ -2799,11 +2828,11 @@ export default function DoePage() {
                           }
                         }}
                         style={{ 
-                          width: '280px',
+                          width: `${reportMockCardWidth700}px`,
                           height: 'fit-content',
                           position: 'relative',
                           zIndex: selectedReportBox === 0 ? 3 : 2,
-                          transform: `translateX(${reportBoxPositions[0].x}px) translateY(${reportBoxPositions[0].y}px)`,
+                          transform: `translateX(${reportBoxPositions[0].x * reportMockScale}px) translateY(${reportBoxPositions[0].y * reportMockScale}px)`,
                           opacity: 1,
                           pointerEvents: 'auto',
                           userSelect: 'none',
@@ -2853,11 +2882,11 @@ export default function DoePage() {
                           }
                         }}
                         style={{ 
-                          width: '280px',
+                          width: `${reportMockCardWidth700}px`,
                           height: 'fit-content',
                           position: 'absolute',
-                          top: `${reportBoxPositions[1].y}px`,
-                          left: `${reportBoxPositions[1].x}px`,
+                          top: `${reportBoxPositions[1].y * reportMockScale}px`,
+                          left: `${reportBoxPositions[1].x * reportMockScale}px`,
                           zIndex: selectedReportBox === 1 ? 3 : 1,
                           opacity: 1,
                           pointerEvents: 'auto',
@@ -3380,15 +3409,15 @@ export default function DoePage() {
                       style={{
                         opacity: 1,
                         pointerEvents: 'auto',
-                        width: '320px',
+                        width: `${carouselInboxUiWidth700}px`,
                         height: 'fit-content',
                         userSelect: 'none',
                         cursor: 'default',
                         touchAction: 'none',
                         top: '45%',
                         transform: 'translateX(-50%) translateY(-50%)',
-                        padding: '20px',
-                        paddingBottom: '16px',
+                        padding: carouselInboxUiWidth700 < 296 ? '14px' : '20px',
+                        paddingBottom: carouselInboxUiWidth700 < 296 ? '12px' : '16px',
                       }}
                     >
                       <div className="flex items-center justify-between mb-4">
