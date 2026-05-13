@@ -374,6 +374,14 @@ function vbRailHeightPx(exp: number, collapsedPx: number, expandedMaxPx: number)
   return collapsedPx + t * (expandedMaxPx - collapsedPx);
 }
 
+/** Which rail is visually dominant — progress track clips to its height. */
+function vbDominantRailIndex(exp: readonly [number, number, number]): 0 | 1 | 2 {
+  const [e0, e1, e2] = exp;
+  if (e0 >= e1 && e0 >= e2) return 0;
+  if (e1 >= e2) return 1;
+  return 2;
+}
+
 /** Vertical bento rails — gradients + overlay motifs aligned with sliding workflow tiles (section 2). */
 const VBENTO_WORKFLOW_GRADIENTS: [string, string, string] = [
   "linear-gradient(135deg, #E7A944 0%, #D49D4F 30%, #D2774C 60%, #1E343A 100%)",
@@ -3599,6 +3607,13 @@ export default function DoePage() {
                   h0 + gapPx + h1 / 2,
                   h0 + gapPx + h1 + gapPx + h2 / 2,
                 ];
+                const heights: [number, number, number] = [h0, h1, h2];
+                const barRail = vbDominantRailIndex(expand);
+                let barTopPx = 0;
+                for (let k = 0; k < barRail; k++) barTopPx += heights[k] + gapPx;
+                barTopPx = Math.round(barTopPx);
+                const barHResolved = Math.max(1, Math.round(heights[barRail]));
+
                 return (
                   <div className="relative w-full overflow-visible" style={{ height: vbMetrics.stickyColumnH }}>
                     <div
@@ -3619,7 +3634,14 @@ export default function DoePage() {
                         : { "aria-hidden": true })}
                     >
                       <div className="relative ml-0 h-full w-full">
-                        <div className="absolute left-[13px] top-0 bottom-0 w-[3px] rounded-full bg-gray-900/[0.12]">
+                        <div
+                          className="absolute left-[13px] w-[3px] rounded-full bg-gray-900/[0.12]"
+                          style={{
+                            top: barTopPx,
+                            height: barHResolved,
+                            transition: "top 0.35s ease, height 0.35s ease",
+                          }}
+                        >
                           <div
                             className="absolute top-0 left-0 right-0 rounded-full bg-gray-900/55"
                             style={{ height: `${Math.max(0, Math.min(1, localBar)) * 100}%` }}
@@ -3646,7 +3668,11 @@ export default function DoePage() {
                         <div
                           key={i}
                           aria-hidden
-                          className="relative w-full shrink-0 overflow-hidden rounded-2xl ring-1 ring-black/[0.06]"
+                          className={
+                            i === 1
+                              ? "relative w-full shrink-0 overflow-hidden rounded-2xl ring-1 ring-black/[0.06]"
+                              : "relative w-full shrink-0 overflow-hidden rounded-2xl py-3 iphone-page:py-3.5 ring-1 ring-black/[0.06]"
+                          }
                           style={{
                             height: vbRailHeightPx(expand[i], collapsedPx, expandedMax),
                             opacity: opacity[i],
