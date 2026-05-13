@@ -203,6 +203,12 @@ const slideCaptionFont = { fontFamily: "system-ui, -apple-system, sans-serif" } 
 const narrowHorizontalInset =
   "iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))]";
 
+/** Vertical bento: align with carousel gutters; symmetric block padding ≈ horizontal inset on phone. */
+const VBENTO_CANVAS_PADDING =
+  "px-4 py-4 " +
+  narrowHorizontalInset +
+  " iphone-page:pt-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pb-[max(1.5rem,env(safe-area-inset-right,0px))]";
+
 /** Scroll-driven vertical bento (between carousel and gradient hero). */
 const VB_CLOSED_EXPAND = 0.06;
 const VB_INACTIVE_OPACITY = 0.22;
@@ -252,7 +258,7 @@ function vbBuildMilestonesU(scrollablePx: number, bandPx: number[]): VerticalBen
   };
 }
 
-/** Pinned stack height vs viewport (`top-[max(5.75rem,...)]`, sticky pt-6 on phone layout). Uses real root rem (`html font-size`). */
+/** Pinned stack height vs viewport (`top-[max(5.75rem,...)]`) and symmetric canvas vertical padding (#F7F6F3). Uses real root rem (`html font-size`). */
 function vbDocumentRootPx(): number {
   if (typeof document === "undefined") return 12.8;
   const n = parseFloat(getComputedStyle(document.documentElement).fontSize || "12.8");
@@ -265,8 +271,9 @@ function vbStickyRailsViewportPx(innerHeightPx: number): number {
   const stickyInsetTopPx = Math.round(
     Math.max(5.75 * rp, 4.5 * rp + Math.min(Math.max(vh * 0.058, 30), 58)),
   );
-  const stickyPtPx = Math.round(1.5 * rp);
-  return Math.max(320, Math.round(vh - stickyInsetTopPx - stickyPtPx));
+  /** Vertical canvas padding (~px-4 / ~1.5rem phone) deducted top + bottom inside pin. */
+  const canvasGutterY = Math.round(1.25 * rp);
+  return Math.max(320, Math.round(vh - stickyInsetTopPx - 2 * canvasGutterY));
 }
 
 /** Matches `gap-3.5` (0.875rem) applied via `iphone-page:` on rail stack. */
@@ -3569,19 +3576,18 @@ export default function DoePage() {
       {/* Vertical bento rails — pinned stack + scrub */}
       <div
         ref={verticalBentoSectionRef}
-        className="relative z-10 w-full bg-[#F7F6F3]"
+        className={`relative z-10 w-full bg-[#F7F6F3] ${VBENTO_CANVAS_PADDING}`}
         style={{ minHeight: vbMetrics.sectionMinPx }}
       >
-        <div className="sticky top-[max(5.75rem,calc(env(safe-area-inset-top,0px)+4.5rem))] z-[5] pb-0 pt-5 iphone-page:pb-0 iphone-page:pt-6">
-          <div className={`w-full ${narrowHorizontalInset}`}>
-            <div
-              className="relative mx-auto w-full max-w-full shrink-0"
-              style={{
-                opacity: verticalBentoRailsOpacity,
-                transform: `translateY(${verticalBentoRailsTranslateY}px)`,
-                transition: "opacity 1.2s ease-out, transform 1.2s ease-out",
-              }}
-            >
+        <div className="sticky top-[max(5.75rem,calc(env(safe-area-inset-top,0px)+4.5rem))] z-[5]">
+          <div
+            className="relative mx-auto w-full max-w-full shrink-0"
+            style={{
+              opacity: verticalBentoRailsOpacity,
+              transform: `translateY(${verticalBentoRailsTranslateY}px)`,
+              transition: "opacity 1.2s ease-out, transform 1.2s ease-out",
+            }}
+          >
               {(() => {
                 const { expand, opacity } = vbDeriveRails(verticalBentoU, vbMetrics.milestones);
                 const gapPx = vbRailsInterGapPx();
@@ -3597,98 +3603,48 @@ export default function DoePage() {
                 collapsedPx = Math.max(40, collapsedPx);
                 expandedMax = Math.max(collapsedPx + 4, usable - 2 * collapsedPx);
                 const localBar = vbPhaseLocalProgress(verticalBentoU, ms);
-                const barReveal = vbSmoothstep01((verticalBentoU - ms.uOpenEnd) / 0.034);
-                const maxE = Math.max(expand[0], expand[1], expand[2]);
-                const h0 = vbRailHeightPx(expand[0], collapsedPx, expandedMax);
-                const h1 = vbRailHeightPx(expand[1], collapsedPx, expandedMax);
-                const h2 = vbRailHeightPx(expand[2], collapsedPx, expandedMax);
-                const centers: [number, number, number] = [
-                  h0 / 2,
-                  h0 + gapPx + h1 / 2,
-                  h0 + gapPx + h1 + gapPx + h2 / 2,
-                ];
-                const heights: [number, number, number] = [h0, h1, h2];
                 const barRail = vbDominantRailIndex(expand);
-                let barTopPx = 0;
-                for (let k = 0; k < barRail; k++) barTopPx += heights[k] + gapPx;
-                barTopPx = Math.round(barTopPx);
-                const barHResolved = Math.max(1, Math.round(heights[barRail]));
+                const dominantOpenT = vbSmoothstep01((expand[barRail] - 0.982) / (1 - 0.982));
+                const barGate = dominantOpenT;
+                const showProgressBar =
+                  dominantOpenT > 0.04 && verticalBentoU >= ms.uOpenEnd && verticalBentoRailsOpacity * barGate > 0.06;
 
                 return (
                   <div className="relative w-full overflow-visible" style={{ height: vbMetrics.stickyColumnH }}>
                     <div
-                      className="pointer-events-none absolute -left-[2px] top-0 z-[4] w-7 iphone-page:w-8"
-                      style={{
-                        height: vbMetrics.stickyColumnH,
-                        opacity: verticalBentoRailsOpacity * barReveal,
-                        transition: "opacity 0.45s ease",
-                      }}
-                      {...(verticalBentoU >= ms.uOpenEnd && barReveal > 0.08
-                        ? ({
-                            role: "progressbar",
-                            "aria-valuemin": 0,
-                            "aria-valuemax": 100,
-                            "aria-valuenow": Math.round(localBar * 100),
-                            "aria-label": "Progress within the current bento step",
-                          } as const)
-                        : { "aria-hidden": true })}
-                    >
-                      <div className="relative ml-0 h-full w-full">
-                        <div
-                          className="absolute left-[13px] w-[3px] rounded-full bg-gray-900/[0.12]"
-                          style={{
-                            top: barTopPx,
-                            height: barHResolved,
-                            transition: "top 0.35s ease, height 0.35s ease",
-                          }}
-                        >
-                          <div
-                            className="absolute top-0 left-0 right-0 rounded-full bg-gray-900/55"
-                            style={{ height: `${Math.max(0, Math.min(1, localBar)) * 100}%` }}
-                          />
-                        </div>
-                        {([0, 1, 2] as const).map((i) => {
-                          if (expand[i] >= maxE - 0.18) return null;
-                          return (
-                            <span
-                              key={`vb-dot-${i}`}
-                              className="absolute left-[13px] h-2 w-2 -translate-x-1/2 rounded-full border border-gray-900/28 bg-white/90 shadow-sm"
-                              style={{ top: centers[i] - 4 }}
-                            />
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    <div
-                      className="relative z-[3] flex w-full flex-col gap-4 pl-11 iphone-page:gap-3.5 iphone-page:pl-11"
+                      className="relative z-[3] flex w-full flex-col gap-4 iphone-page:gap-3.5"
                       style={{ height: vbMetrics.stickyColumnH }}
                     >
-                      {([0, 1, 2] as const).map((i) => (
-                        <div
-                          key={i}
-                          aria-hidden
-                          className={
-                            i === 1
-                              ? "relative w-full shrink-0 overflow-hidden rounded-2xl ring-1 ring-black/[0.06]"
-                              : "relative w-full shrink-0 overflow-hidden rounded-2xl py-3 iphone-page:py-3.5 ring-1 ring-black/[0.06]"
-                          }
-                          style={{
-                            height: vbRailHeightPx(expand[i], collapsedPx, expandedMax),
-                            opacity: opacity[i],
-                          }}
-                        >
-                          <div className="absolute inset-0 rounded-2xl" style={{ background: VBENTO_WORKFLOW_GRADIENTS[i] }} />
+                      {([0, 1, 2] as const).map((i) => {
+                        const h = vbRailHeightPx(expand[i], collapsedPx, expandedMax);
+                        const trackOpacity =
+                          dominantOpenT > 0.12 ? verticalBentoRailsOpacity * barGate * opacity[i] : 0;
+
+                        return (
                           <div
-                            className="absolute inset-0 pointer-events-none rounded-2xl"
+                            key={i}
+                            aria-hidden
+                            className={
+                              i === 1
+                                ? "relative w-full shrink-0 overflow-hidden rounded-2xl ring-1 ring-black/[0.06]"
+                                : "relative w-full shrink-0 overflow-hidden rounded-2xl py-3 iphone-page:py-3.5 ring-1 ring-black/[0.06]"
+                            }
                             style={{
-                              backgroundImage: VBENTO_GRAIN_BG,
-                              backgroundSize: "200px 200px",
-                              opacity: 1,
-                              mixBlendMode: "overlay",
+                              height: h,
+                              opacity: opacity[i],
                             }}
-                          />
-                          <div className="absolute inset-0 pointer-events-none rounded-2xl overflow-hidden">
+                          >
+                            <div className="absolute inset-0 z-[1] rounded-2xl" style={{ background: VBENTO_WORKFLOW_GRADIENTS[i] }} />
+                            <div
+                              className="absolute inset-0 z-[1] pointer-events-none rounded-2xl"
+                              style={{
+                                backgroundImage: VBENTO_GRAIN_BG,
+                                backgroundSize: "200px 200px",
+                                opacity: 1,
+                                mixBlendMode: "overlay",
+                              }}
+                            />
+                            <div className="absolute inset-0 z-[1] pointer-events-none rounded-2xl overflow-hidden">
                             {i === 0 ? (
                               <svg
                                 className="absolute inset-0 h-full w-full"
@@ -3754,14 +3710,44 @@ export default function DoePage() {
                               </svg>
                             ) : null}
                           </div>
+                            {i === barRail ? (
+                              <div
+                                className={`pointer-events-none absolute left-3 top-3 bottom-3 z-[8] w-[3px] rounded-full bg-white/30 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.2)]`}
+                                style={{
+                                  opacity: trackOpacity,
+                                  transition:
+                                    "opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
+                                  transform: dominantOpenT < 0.02 ? "scaleY(0.02)" : "scaleY(1)",
+                                  transformOrigin: "top center",
+                                }}
+                                {...(showProgressBar && dominantOpenT > 0.12
+                                  ? ({
+                                      role: "progressbar",
+                                      "aria-valuemin": 0,
+                                      "aria-valuemax": 100,
+                                      "aria-valuenow": Math.round(localBar * 100),
+                                      "aria-label": "Progress within the current bento step",
+                                    } as const)
+                                  : { "aria-hidden": true })}
+                              >
+                                {dominantOpenT > 0.1 ? (
+                                  <div className="absolute inset-0 overflow-hidden rounded-full">
+                                    <div
+                                      className="absolute left-0 right-0 top-0 rounded-full bg-white/75"
+                                      style={{ height: `${Math.max(0, Math.min(1, localBar)) * 100}%` }}
+                                    />
+                                  </div>
+                                ) : null}
+                              </div>
+                            ) : null}
                         </div>
-                      ))}
+                      );
+                    })}
                     </div>
                   </div>
                 );
               })()}
             </div>
-          </div>
         </div>
       </div>
 
