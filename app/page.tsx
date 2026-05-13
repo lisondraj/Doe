@@ -1596,20 +1596,28 @@ export default function DoePage() {
               onClick={() => setMobileNavOpen(false)}
             />
             {/*
-              Sheet fixed top = measured bar bottom (flush with nav chrome).
+              Sheet is full-screen (top:0) so CSS-zoom measurement errors can't
+              create a hero-peek gap. The nav (z-50) sits on top; the list is
+              padded down by iphoneMenuTopPx so content appears right below it.
             */}
             <div
-              className="fixed left-0 right-0 bottom-0 z-[45] flex flex-col pointer-events-none"
-              style={{ top: iphoneMenuTopPx }}
+              className="fixed inset-0 z-[45] pointer-events-none"
               role="presentation"
             >
+              {/* Beige fill behind the nav chrome area — no gap possible */}
               <div
-                className="flex flex-col flex-1 min-h-0 bg-[#F7F6F3] pointer-events-auto overflow-hidden shadow-none iphone-page:shadow-[0_16px_44px_rgba(0,0,0,0.08)]"
+                className="absolute inset-x-0 top-0 bg-[#F7F6F3] pointer-events-none"
+                style={{ height: iphoneMenuTopPx }}
+                aria-hidden
+              />
+              <div
+                className="absolute inset-x-0 bottom-0 bg-[#F7F6F3] flex flex-col pointer-events-auto overflow-hidden"
+                style={{ top: iphoneMenuTopPx }}
                 role="dialog"
                 aria-modal="true"
                 aria-label="Site navigation"
               >
-                <nav className="flex flex-col flex-1 min-h-0 overflow-y-auto pb-[env(safe-area-inset-bottom,0px)] [&>div:first-child>button]:pt-0 [&>div:first-child>button]:pb-3">
+                <nav className="flex flex-col flex-1 min-h-0 overflow-y-auto pb-[env(safe-area-inset-bottom,0px)]">
                   {NAV_ITEMS.map((item) => {
                     const expanded = mobileNavExpandedKey === item;
                     const subs = dropdownContent[item]?.items ?? [];
@@ -1619,15 +1627,15 @@ export default function DoePage() {
                         <button
                           type="button"
                           aria-expanded={expanded}
-                          className={`flex w-full items-center justify-between gap-4 text-left font-medium tracking-[-0.02em] text-gray-900 px-6 iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] py-3.5 active:bg-black/[0.04] transition-colors ${inter.className} text-4xl iphone-page:text-6xl iphone-page:leading-none`}
+                          className={`flex w-full items-center gap-3 text-left font-medium tracking-[-0.02em] text-gray-900 px-6 iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] py-4 active:bg-black/[0.04] transition-colors ${inter.className} text-4xl iphone-page:text-6xl iphone-page:leading-none`}
                           onClick={() =>
                             setMobileNavExpandedKey((k) => (k === item ? null : item))
                           }
                         >
-                          <span className="min-w-0 flex-1">{item}</span>
+                          <span className="min-w-0">{item}</span>
                           <span
-                            className={`shrink-0 inline-flex items-center justify-center text-gray-600 leading-none ${inter.className}`}
-                            style={{ fontWeight: 400, fontSize: "clamp(1.75rem, 6vw, 2.75rem)" }}
+                            className={`shrink-0 text-gray-500 leading-none ${inter.className}`}
+                            style={{ fontWeight: 300, fontSize: "clamp(1.4rem, 5vw, 2.25rem)", marginTop: "0.1em" }}
                             aria-hidden
                           >
                             {expanded ? "v" : "^"}
@@ -1643,7 +1651,7 @@ export default function DoePage() {
                                   <button
                                     key={sub.title}
                                     type="button"
-                                    className={`w-full text-left py-3.5 pl-[2.75rem] iphone-page:pl-12 text-lg iphone-page:text-xl font-medium text-gray-700 active:bg-black/[0.03] transition-colors ${inter.className}`}
+                                    className={`w-full text-left py-3.5 pl-8 iphone-page:pl-10 text-2xl iphone-page:text-3xl font-medium text-gray-600 active:bg-black/[0.03] transition-colors ${inter.className}`}
                                     onClick={() => setMobileNavOpen(false)}
                                   >
                                     {sub.title}
