@@ -1667,9 +1667,9 @@ export default function DoePage() {
         <div className="flex-1 grid grid-rows-[3fr_9fr] min-h-[85vh] iphone-page:min-h-[88dvh] w-full overflow-x-hidden">
           {/* Title band — slightly taller than 1:2 so headline has room */}
           <div
-            className={`flex flex-col justify-center min-h-0 px-4 py-14 iphone-page:py-11 ${narrowHorizontalInset}`}
+            className={`flex flex-col justify-center min-h-0 px-4 py-14 iphone-page:pt-16 iphone-page:pb-9 ${narrowHorizontalInset}`}
           >
-            <div className="text-center">
+            <div className="text-center iphone-page:mt-5">
               <h1 
                 className={`flex flex-col items-center gap-2 font-normal text-gray-900 tracking-tight ${lora.className}`}
                 style={{
