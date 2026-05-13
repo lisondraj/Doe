@@ -124,7 +124,7 @@ function MobileNavFooterShapeIcon({
 }) {
   const cn =
     className ??
-    "shrink-0 w-[5.5rem] h-[5.5rem] iphone-page:w-[7rem] iphone-page:h-[7rem] opacity-95 drop-shadow-sm";
+    "shrink-0 w-[5.5rem] h-[5.5rem] iphone-page:w-[clamp(4.75rem,12vmin,8.25rem)] iphone-page:h-[clamp(4.75rem,12vmin,8.25rem)] opacity-95 drop-shadow-sm";
   if (shape === "triangle") {
     /* Upward triangle inscribed in a square viewBox (same footprint as circle/square icons) */
     return (
@@ -520,7 +520,7 @@ export default function DoePage() {
       window.removeEventListener("resize", update);
       window.visualViewport?.removeEventListener("resize", update);
     };
-  }, [mobileNavOpen]);
+  }, [mobileNavOpen, viewportWidth]);
 
   useEffect(() => {
     if (!mobileNavOpen) return;
@@ -1595,11 +1595,11 @@ export default function DoePage() {
           )}
           {/* Top bar */}
           <div
-            className="px-8 py-6 iphone-page:px-6 iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] flex items-center relative z-10 iphone-page:gap-2 justify-end"
+            className="px-8 py-6 iphone-page:py-[clamp(0.8125rem,0.52rem+1.55vmin,1.9rem)] iphone-page:px-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))] flex items-center relative z-10 iphone-page:gap-[clamp(0.45rem,0.35rem+0.85vmin,0.75rem)] justify-end"
           >
             {/* Logo — opacity only (no width collapse) so it fades, not slides */}
             <h1
-              className={`absolute top-1/2 -translate-y-1/2 left-8 iphone-page:left-[max(1.5rem,env(safe-area-inset-left,0px))] font-normal z-[1] min-w-0 whitespace-nowrap transition-opacity duration-500 ease-out ${lora.className} text-4xl iphone-page:text-6xl iphone-page:leading-none ${
+              className={`absolute top-1/2 -translate-y-1/2 left-8 iphone-page:left-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))] font-normal z-[1] min-w-0 whitespace-nowrap transition-opacity duration-500 ease-out ${lora.className} text-4xl iphone-page:text-[clamp(1.85rem,1.05rem+3.55vmin,3.9rem)] iphone-page:leading-none ${
                 showNavLogo ? "opacity-100" : "opacity-0 pointer-events-none"
               }`}
               style={
@@ -1648,7 +1648,7 @@ export default function DoePage() {
             {/* iPhone: menu (replaces center links + login) */}
             <button
               type="button"
-              className="flex items-center justify-center p-3 rounded-xl transition-colors active:bg-white/15"
+              className="flex items-center justify-center p-3 iphone-page:p-[clamp(0.625rem,0.38rem+1.35vmin,0.975rem)] rounded-xl transition-colors active:bg-white/15"
               style={{ color: navTextColor }}
               aria-expanded={mobileNavOpen}
               aria-label={mobileNavOpen ? "Close navigation menu" : "Open navigation menu"}
@@ -1660,11 +1660,11 @@ export default function DoePage() {
               }}
             >
               {mobileNavOpen ? (
-                <svg className="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                <svg className="w-9 h-9 iphone-page:w-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)] iphone-page:h-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               ) : (
-                <svg className="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                <svg className="w-9 h-9 iphone-page:w-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)] iphone-page:h-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
                   <path strokeLinecap="round" strokeWidth={2} d="M4 7h16M4 12h16M4 17h16" />
                 </svg>
               )}
@@ -1822,7 +1822,7 @@ export default function DoePage() {
                         <button
                           type="button"
                           aria-expanded={expanded}
-                          className={`flex w-full items-center gap-2.5 text-left font-medium tracking-[-0.02em] text-gray-900 pl-5 pr-5 iphone-page:pl-[max(1.5rem,calc(env(safe-area-inset-left,0px)+12px))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))] py-4 active:bg-black/[0.04] transition-colors ${inter.className} text-4xl iphone-page:text-6xl iphone-page:leading-none`}
+                          className={`flex w-full items-center gap-2.5 iphone-page:gap-[clamp(0.5rem,0.35rem+0.95vmin,0.9rem)] text-left font-medium tracking-[-0.02em] text-gray-900 pl-5 pr-5 iphone-page:pl-[max(1.35rem,calc(env(safe-area-inset-left,0px)+12px+2.4vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))] py-4 iphone-page:py-[clamp(0.65rem,0.42rem+1.35vmin,1.2rem)] active:bg-black/[0.04] transition-colors ${inter.className} text-4xl iphone-page:text-[clamp(1.52rem,0.82rem+2.92vmin,3.92rem)] iphone-page:leading-none`}
                           onClick={() =>
                             setMobileNavExpandedKey((k) => (k === item ? null : item))
                           }
@@ -1831,7 +1831,7 @@ export default function DoePage() {
                           <span className="shrink-0 inline-flex items-center justify-center text-gray-400 self-center" aria-hidden>
                             {expanded ? (
                               <svg
-                                className="w-[clamp(0.9375rem,2.65vw,1.5rem)] h-[clamp(0.9375rem,2.65vw,1.5rem)] transition-transform duration-200 ease-out"
+                                className="w-[clamp(0.9375rem,0.5rem+2.85vmin+0.95vw,1.95rem)] h-[clamp(0.9375rem,0.5rem+2.85vmin+0.95vw,1.95rem)] transition-transform duration-200 ease-out"
                                 viewBox="0 0 24 24"
                                 fill="none"
                                 stroke="currentColor"
@@ -1843,7 +1843,7 @@ export default function DoePage() {
                               </svg>
                             ) : (
                               <svg
-                                className="w-[clamp(0.9375rem,2.65vw,1.5rem)] h-[clamp(0.9375rem,2.65vw,1.5rem)] transition-transform duration-200 ease-out"
+                                className="w-[clamp(0.9375rem,0.5rem+2.85vmin+0.95vw,1.95rem)] h-[clamp(0.9375rem,0.5rem+2.85vmin+0.95vw,1.95rem)] transition-transform duration-200 ease-out"
                                 viewBox="0 0 24 24"
                                 fill="none"
                                 stroke="currentColor"
@@ -1861,12 +1861,12 @@ export default function DoePage() {
                         >
                           <div className="overflow-hidden min-h-0">
                             {four.length > 0 && (
-                              <div className="flex flex-col pl-5 pr-5 iphone-page:pl-[max(1.5rem,calc(env(safe-area-inset-left,0px)+12px))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))] pb-3 pt-0">
+                              <div className="flex flex-col pl-5 pr-5 iphone-page:pl-[max(1.35rem,calc(env(safe-area-inset-left,0px)+12px+2.4vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))] pb-3 pt-0">
                                 {four.map((sub) => (
                                   <button
                                     key={sub.title}
                                     type="button"
-                                    className={`w-full text-left py-3.5 pl-7 iphone-page:pl-10 text-[1.625rem] iphone-page:text-[2.125rem] leading-snug font-medium text-gray-600 active:bg-black/[0.03] transition-colors ${inter.className}`}
+                                    className={`w-full text-left py-3.5 iphone-page:py-[clamp(0.72rem,0.48rem+1.1vmin,1.05rem)] pl-7 iphone-page:pl-[clamp(2.15rem,calc(env(safe-area-inset-left,0px)+32px)+1.95vmin,4.9rem)] text-[1.625rem] iphone-page:text-[clamp(1.2rem,0.72rem+1.95vmin,2.52rem)] leading-snug font-medium text-gray-600 active:bg-black/[0.03] transition-colors ${inter.className}`}
                                     onClick={() => setMobileNavOpen(false)}
                                   >
                                     {sub.title}
@@ -1882,7 +1882,7 @@ export default function DoePage() {
                 </nav>
                 {/* Footer — swipeable carousel: gradient capsule + outside CTA row per slide */}
                 <div
-                  className="shrink-0 pb-[max(1rem,calc(env(safe-area-inset-bottom,0px)+10px))] pt-4 border-t border-[#ECEAE6]"
+                  className="shrink-0 pb-[max(1rem,calc(env(safe-area-inset-bottom,0px)+10px))] iphone-page:pb-[max(0.9375rem,calc(env(safe-area-inset-bottom,0px)+clamp(10px,1.85vmin,20px)))] pt-4 iphone-page:pt-[clamp(0.75rem,0.52rem+1.05vmin,1.25rem)] border-t border-[#ECEAE6]"
                 >
                   <div
                     ref={mobileNavFooterCarouselRef}
@@ -1904,9 +1904,9 @@ export default function DoePage() {
                     {MOBILE_NAV_FOOTER_SLIDES.map((slide) => (
                       <div
                         key={slide.boxTitle}
-                        className="w-full min-w-full shrink-0 snap-center px-6 iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] space-y-3 box-border"
+                        className="w-full min-w-full shrink-0 snap-center px-6 iphone-page:pl-[max(1.35rem,calc(env(safe-area-inset-left,0px)+10px+2vmin))] iphone-page:pr-[max(1.35rem,calc(env(safe-area-inset-right,0px)+8px+1.25vmin))] space-y-3 box-border iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)]"
                       >
-                        <div className="relative rounded-[1.375rem] iphone-page:rounded-3xl overflow-hidden min-h-[24rem] iphone-page:min-h-[31rem] shadow-[0_10px_32px_rgba(0,0,0,0.12)]">
+                        <div className="relative rounded-[1.375rem] iphone-page:rounded-[clamp(1.2rem,1rem+1.4vmin,2.1rem)] overflow-hidden min-h-[24rem] iphone-page:min-h-[clamp(17.5rem,48vmin,40rem)] shadow-[0_10px_32px_rgba(0,0,0,0.12)]">
                           <div
                             className="absolute inset-0"
                             style={{ background: slide.gradient }}
@@ -1921,17 +1921,17 @@ export default function DoePage() {
                             }}
                             aria-hidden
                           />
-                          <div className="absolute left-0 right-0 top-0 z-[4] flex justify-center gap-2.5 px-5 pt-10 iphone-page:pt-11 pb-1">
+                          <div className="absolute left-0 right-0 top-0 z-[4] flex justify-center gap-2.5 iphone-page:gap-[clamp(0.65rem,0.45rem+1vmin,0.95rem)] px-5 pt-10 iphone-page:pt-[clamp(2rem,1.55rem+1.95vmin,3.5rem)] pb-1">
                             {MOBILE_NAV_FOOTER_SLIDES.map((s, dotI) => (
                               <button
                                 key={s.boxTitle}
                                 type="button"
                                 aria-label={`Show ${s.boxTitle}`}
                                 aria-current={mobileNavFooterSlide === dotI ? "true" : undefined}
-                                className={`h-2.5 shrink-0 rounded-full transition-[width,background-color,opacity] duration-200 shadow-sm ${
+                                className={`h-2.5 iphone-page:h-[clamp(9px,calc(6px+0.45vmin),12px)] shrink-0 rounded-full transition-[width,background-color,opacity] duration-200 shadow-sm ${
                                   mobileNavFooterSlide === dotI
-                                    ? "w-8 bg-white opacity-95"
-                                    : "w-2.5 bg-white/45 hover:bg-white/70"
+                                    ? "w-8 iphone-page:w-[clamp(1.95rem,calc(1.65rem+1.9vmin),2.85rem)] bg-white opacity-95"
+                                    : "w-2.5 iphone-page:w-[clamp(0.625rem,calc(0.5rem+0.42vmin),0.75rem)] bg-white/45 hover:bg-white/70"
                                 }`}
                                 onClick={() => {
                                   const el = mobileNavFooterCarouselRef.current;
@@ -1943,12 +1943,12 @@ export default function DoePage() {
                               />
                             ))}
                           </div>
-                          <div className="absolute bottom-0 left-0 right-0 z-[3] flex items-center justify-start p-8 iphone-page:p-12">
+                          <div className="absolute bottom-0 left-0 right-0 z-[3] flex items-center justify-start p-8 iphone-page:p-[clamp(1.35rem,0.9rem+3.1vmin,3.5rem)]">
                             <div
-                              className={`flex items-center gap-7 iphone-page:gap-9 text-white ${inter.className}`}
+                              className={`flex items-center gap-7 iphone-page:gap-[clamp(1.65rem,1.2rem+3.1vmin,3.2rem)] text-white ${inter.className}`}
                             >
                               <MobileNavFooterShapeIcon shape={slide.shape} />
-                              <span className="text-[3.25rem] iphone-page:text-[4.25rem] font-medium tracking-tight leading-none">
+                              <span className="text-[3.25rem] iphone-page:text-[clamp(2.05rem,1rem+5.5vmin,4.65rem)] font-medium tracking-tight leading-none">
                                 {slide.boxTitle}
                               </span>
                             </div>
@@ -1957,7 +1957,7 @@ export default function DoePage() {
                         <div>
                           <button
                             type="button"
-                            className={`flex w-full flex-row flex-wrap items-center justify-start gap-2.5 iphone-page:gap-3 text-left active:opacity-80 transition-opacity ${inter.className}`}
+                            className={`flex w-full flex-row flex-wrap items-center justify-start gap-2.5 iphone-page:gap-[clamp(0.85rem,0.55rem+1.2vmin,1rem)] text-left active:opacity-80 transition-opacity ${inter.className}`}
                             onClick={() => {
                               setMobileNavOpen(false);
                               requestAnimationFrame(() => {
@@ -1969,15 +1969,15 @@ export default function DoePage() {
                             }}
                             aria-label={slide.outside}
                           >
-                            <span className="text-[1.5rem] iphone-page:text-[2.125rem] font-medium text-gray-800 tracking-tight leading-snug">
+                            <span className="text-[1.5rem] iphone-page:text-[clamp(1.38rem,0.88rem+2.3vmin,2.45rem)] font-medium text-gray-800 tracking-tight leading-snug">
                               {slide.outside}
                             </span>
                             <span
-                              className="shrink-0 inline-flex h-16 w-16 iphone-page:h-[5.25rem] iphone-page:w-[5.25rem] items-center justify-center rounded-full border-2 border-gray-300/90 bg-white text-gray-900 shadow-[0_4px_14px_rgba(0,0,0,0.08)]"
+                              className="shrink-0 inline-flex h-16 w-16 iphone-page:h-[clamp(3.35rem,14vmin,5.65rem)] iphone-page:w-[clamp(3.35rem,14vmin,5.65rem)] items-center justify-center rounded-full border-2 border-gray-300/90 bg-white text-gray-900 shadow-[0_4px_14px_rgba(0,0,0,0.08)]"
                               aria-hidden
                             >
                               <svg
-                                className="w-8 h-8 iphone-page:w-11 iphone-page:h-11"
+                                className="w-8 h-8 iphone-page:w-[clamp(1.65rem,6.5vmin,2.85rem)] iphone-page:h-[clamp(1.65rem,6.5vmin,2.85rem)]"
                                 viewBox="0 0 24 24"
                                 fill="none"
                                 stroke="currentColor"
@@ -1990,7 +1990,7 @@ export default function DoePage() {
                             </span>
                           </button>
                           <p
-                            className={`mt-1.5 text-[1.0625rem] iphone-page:text-[1.25rem] font-medium tracking-tight text-gray-500 ${inter.className}`}
+                            className={`mt-1.5 text-[1.0625rem] iphone-page:text-[clamp(0.98rem,0.78rem+1.15vmin,1.45rem)] font-medium tracking-tight text-gray-500 ${inter.className}`}
                           >
                             {slide.date}
                           </p>
