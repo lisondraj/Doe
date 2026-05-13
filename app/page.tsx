@@ -3145,10 +3145,15 @@ export default function DoePage() {
         {/* Orange panel — word-linked UI mockups; horizontal inset matches second-section carousel */}
         <div className={`relative z-30 w-full pb-14 iphone-page:pb-16 ${narrowHorizontalInset} mt-10 iphone-page:mt-14`}>
           <div
-            className="relative w-full min-h-[min(520px,58dvh)] rounded-2xl overflow-hidden shadow-[0_24px_70px_rgba(0,0,0,0.14)]"
+            className="relative mx-auto w-full max-w-full shrink-0 rounded-2xl overflow-hidden shadow-[0_24px_70px_rgba(0,0,0,0.14)]"
             style={{
+              /** Outer orange canvas: square (width = height), not a wide strip */
+              width: "100%",
+              aspectRatio: "1",
+              height: "auto",
+              boxSizing: "border-box",
               background: `radial-gradient(circle at 50% 36%, #E7A944 0%, #D49D4F 40%, #D2774C 70%, #1E343A 100%)`,
-              borderRadius: '16px',
+              borderRadius: "16px",
             }}
           >
           {/* Grain texture overlay */}
