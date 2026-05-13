@@ -2971,7 +2971,6 @@ export default function DoePage() {
           <p
             className={`text-center text-gray-900 w-full max-w-[min(100%,42rem)] ${oldStandardTT.className} leading-[1.05] text-[clamp(3.35rem,14vw,5.75rem)]`}
             style={{
-              fontStyle: "italic",
               fontWeight: 400,
               paddingTop: "clamp(0.35rem, 1.5vw, 1rem)",
               paddingBottom: "clamp(0.45rem, 1.8vw, 1rem)",
@@ -2979,7 +2978,7 @@ export default function DoePage() {
               textWrap: "balance",
             }}
           >
-            Doe
+            Built for you.
           </p>
 
           {/* Horizontal Agents / Franchises / Design … carousel */}
