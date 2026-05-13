@@ -213,8 +213,7 @@ function vbDeriveRails(
   if (u <= ms.uDw1End) e2 = CLO;
   else if (u <= ms.uSwap12End) e2 = CLO + (1 - CLO) * segUp(ms.uDw1End, ms.uSwap12End);
   else if (u <= ms.uDw2End) e2 = 1;
-  else if (u <= ms.uExitEnd) e2 = CLO + (1 - CLO) * segDn(ms.uDw2End, ms.uExitEnd);
-  else e2 = CLO;
+  else e2 = 1;
 
   const op = (e: number): number => {
     const denom = Math.max(1 - CLO, 1e-6);
