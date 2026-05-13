@@ -3022,7 +3022,7 @@ export default function DoePage() {
               className="relative flex-1 min-w-0 overflow-hidden py-2"
               style={{
                 maxWidth: "min(94vw, 40rem)",
-                minHeight: "4.85rem",
+                minHeight: "5.65rem",
               }}
             >
               <div
@@ -3038,7 +3038,7 @@ export default function DoePage() {
                 const n = words.length;
                 const offsets = [-3, -2, -1, 0, 1, 2, 3];
                 /** Center-to-center spacing in `em` (carousel font-size) — avoids overlap vs fixed px */
-                const slotEm = 11;
+                const slotEm = 12;
 
                 const getOpacity = (offset: number) => {
                   const abs = Math.abs(offset);
@@ -3061,7 +3061,7 @@ export default function DoePage() {
                           ? "left 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94)"
                           : "none",
                       fontWeight: 300,
-                      fontSize: "clamp(1.55rem, 5.25vw, 2.35rem)",
+                      fontSize: "clamp(1.95rem, 6.75vw, 3rem)",
                       whiteSpace: "nowrap",
                       lineHeight: 1.15,
                       height: "auto",
@@ -3137,10 +3137,10 @@ export default function DoePage() {
             ];
             const lines = descriptions[selectedWordIndex] ?? descriptions[0];
             return (
-              <div className="w-full flex justify-center pb-6 iphone-page:pb-8">
+              <div className="w-full flex justify-center pb-4 iphone-page:pb-5">
                 <div
                   key={selectedWordIndex}
-                  className={`text-xl iphone-page:text-2xl text-gray-700 text-center max-w-2xl iphone-page:max-w-3xl leading-snug iphone-page:leading-relaxed ${inter.className}`}
+                  className={`text-2xl iphone-page:text-[clamp(1.5rem,5vw,2.125rem)] text-gray-700 text-center max-w-2xl iphone-page:max-w-3xl leading-snug iphone-page:leading-relaxed ${inter.className}`}
                   style={{ fontWeight: 500, animation: 'fade-in 0.35s ease-out' }}
                 >
                   {lines.map((line, i) => (
@@ -3152,7 +3152,7 @@ export default function DoePage() {
           })()}
         </div>
         {/* Orange panel — word-linked UI mockups; horizontal inset matches second-section carousel */}
-        <div className={`relative z-30 w-full pb-14 iphone-page:pb-16 ${narrowHorizontalInset} -mt-2 iphone-page:-mt-3`}>
+        <div className={`relative z-30 w-full pb-14 iphone-page:pb-16 ${narrowHorizontalInset} mt-10 iphone-page:mt-14`}>
           <div
             className="relative w-full min-h-[min(520px,58dvh)] rounded-2xl overflow-hidden shadow-[0_24px_70px_rgba(0,0,0,0.14)]"
             style={{
@@ -3534,9 +3534,12 @@ export default function DoePage() {
       </div>
 
       {/* New Section - Hero Gradient Full Page */}
-      <div ref={thirdSectionRef} className="min-h-screen w-full relative z-10 p-8">
-        <div 
-          className="w-full h-[85vh] rounded-2xl relative overflow-hidden flex flex-col items-center pt-14"
+      <div
+        ref={thirdSectionRef}
+        className="min-h-screen w-full relative z-10 p-8 flex flex-col items-center justify-center"
+      >
+        <div
+          className="w-full max-w-[min(100%,min(94vw,88vmin))] aspect-square rounded-2xl relative overflow-hidden flex flex-col items-center pt-14 mx-auto"
           style={{
             /* Brighter read: lifted copper/amber, softer shadow corners (still dotted hero) */
             background: `
