@@ -1693,22 +1693,22 @@ export default function DoePage() {
                   className="shrink-0 px-6 iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] pb-[max(1rem,calc(env(safe-area-inset-bottom,0px)+10px))] pt-4 space-y-4 border-t border-[#ECEAE6]"
                 >
                   <div
-                    className="relative rounded-[1.375rem] iphone-page:rounded-3xl overflow-hidden min-h-[12rem] iphone-page:min-h-[15.5rem] shadow-[0_10px_32px_rgba(0,0,0,0.12)]"
+                    className="relative rounded-[1.375rem] iphone-page:rounded-3xl overflow-hidden min-h-[24rem] iphone-page:min-h-[31rem] shadow-[0_10px_32px_rgba(0,0,0,0.12)]"
                     style={{
                       background:
                         "radial-gradient(circle at 50% 36%, #E7A944 0%, #D49D4F 40%, #D2774C 70%, #1E343A 100%)",
                     }}
                   >
-                    <div className="absolute bottom-0 left-0 right-0 p-5 iphone-page:p-7 flex items-end justify-start">
-                      <div className={`flex items-center gap-4 iphone-page:gap-5 text-white ${inter.className}`}>
+                    <div className="absolute bottom-0 left-0 right-0 p-8 iphone-page:p-12 flex items-end justify-start">
+                      <div className={`flex items-center gap-7 iphone-page:gap-9 text-white ${inter.className}`}>
                         <svg
                           viewBox="0 0 24 24"
-                          className="shrink-0 w-11 h-11 iphone-page:w-14 iphone-page:h-14 opacity-95 drop-shadow-sm"
+                          className="shrink-0 w-[5.5rem] h-[5.5rem] iphone-page:w-[7rem] iphone-page:h-[7rem] opacity-95 drop-shadow-sm"
                           aria-hidden
                         >
                           <path fill="currentColor" d="M8 5v14l11-7L8 5z" />
                         </svg>
-                        <span className="text-[1.625rem] iphone-page:text-[2.125rem] font-semibold tracking-tight leading-none">
+                        <span className="text-[3.25rem] iphone-page:text-[4.25rem] font-semibold tracking-tight leading-none">
                           Inquisara
                         </span>
                       </div>
@@ -1716,7 +1716,7 @@ export default function DoePage() {
                   </div>
                   <button
                     type="button"
-                    className={`flex w-full items-center justify-between gap-4 text-left active:opacity-80 transition-opacity ${inter.className}`}
+                    className={`flex w-full flex-row flex-wrap items-center justify-start gap-2.5 iphone-page:gap-3 text-left active:opacity-80 transition-opacity ${inter.className}`}
                     onClick={() => {
                       setMobileNavOpen(false);
                       requestAnimationFrame(() => {
@@ -1727,16 +1727,27 @@ export default function DoePage() {
                       });
                     }}
                   >
-                    <span className="text-[15px] font-medium text-gray-800 tracking-tight leading-snug min-w-0">
-                      See what we&apos;re building with
+                    <span className="text-[1.25rem] iphone-page:text-[1.75rem] font-medium text-gray-800 tracking-tight leading-snug">
+                      See what we&apos;re building
                     </span>
                     <span
-                      className="shrink-0 inline-flex h-11 w-11 items-center justify-center rounded-full border border-gray-300/90 bg-white text-gray-900 shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
+                      className="shrink-0 inline-flex h-16 w-16 iphone-page:h-[5.25rem] iphone-page:w-[5.25rem] items-center justify-center rounded-full border-2 border-gray-300/90 bg-white text-gray-900 shadow-[0_4px_14px_rgba(0,0,0,0.08)]"
                       aria-hidden
                     >
-                      <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                      <svg
+                        className="w-8 h-8 iphone-page:w-11 iphone-page:h-11"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
                         <path d="M5 12h14M13 6l6 6-6 6" />
                       </svg>
+                    </span>
+                    <span className="text-[1.25rem] iphone-page:text-[1.75rem] font-medium text-gray-800 tracking-tight leading-snug">
+                      with
                     </span>
                   </button>
                 </div>
