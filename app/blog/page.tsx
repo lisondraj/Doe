@@ -7,7 +7,6 @@ import {
 } from "@/components/doe-nav-data";
 import { doeforvcRootZoom } from "@/lib/doeforvc-zoom";
 import { Inter, Lora } from "next/font/google";
-import Link from "next/link";
 import { useLayoutEffect, useState } from "react";
 
 const lora = Lora({
@@ -174,36 +173,32 @@ export default function BlogPage() {
   const [first, ...rest] = MOBILE_NAV_FOOTER_SLIDES;
 
   return (
-    <div
-      className="relative min-h-[100dvh] overflow-x-hidden doeforvc-iphone-root"
-      style={{
-        backgroundColor: "#F7F6F3",
-        ...(applyRootZoom ? { zoom: rootZoom } : {}),
-      }}
-      suppressHydrationWarning
-    >
+    <>
+      {/* Nav must stay outside the zoomed root: `zoom` creates a containing block and breaks `position: fixed`. */}
       <DoeIphoneSiteNav />
 
-      <main
-        className={`relative z-10 w-full max-w-[min(100%,52rem)] mx-auto pt-[5.5rem] iphone-page:pt-[max(5.5rem,calc(env(safe-area-inset-top,0px)+4rem))] pb-20 iphone-page:pb-24 ${narrowHorizontalInset}`}
+      <div
+        className="relative min-h-[100dvh] overflow-x-hidden doeforvc-iphone-root"
+        style={{
+          backgroundColor: "#F7F6F3",
+          ...(applyRootZoom ? { zoom: rootZoom } : {}),
+        }}
+        suppressHydrationWarning
       >
-        <Link
-          href="/"
-          className={`inline-block mb-8 iphone-page:mb-10 font-normal text-gray-900 hover:text-gray-700 transition-colors ${lora.className} text-[clamp(1.85rem,5.5vw,2.35rem)] iphone-page:text-[clamp(1.95rem,1.15rem+3.2vmin,2.65rem)] leading-none`}
+        <main
+          className={`relative z-10 w-full max-w-[min(100%,52rem)] mx-auto pt-[5.5rem] iphone-page:pt-[max(5.5rem,calc(env(safe-area-inset-top,0px)+4rem))] pb-20 iphone-page:pb-24 ${narrowHorizontalInset}`}
         >
-          Doe
-        </Link>
+          {/* Inquisara at top: image first, then title / preview / Read more */}
+          <div className="w-full">
+            <GradientArticleVisual slide={first} variant="hero" />
+            <ArticleBlock slide={first} isFirst />
+          </div>
 
-        {/* Inquisara at top: image first, then title / preview / Read more */}
-        <div className="w-full">
-          <GradientArticleVisual slide={first} variant="hero" />
-          <ArticleBlock slide={first} isFirst />
-        </div>
-
-        {rest.map((slide) => (
-          <ArticleBlock key={slide.boxTitle} slide={slide} isFirst={false} />
-        ))}
-      </main>
-    </div>
+          {rest.map((slide) => (
+            <ArticleBlock key={slide.boxTitle} slide={slide} isFirst={false} />
+          ))}
+        </main>
+      </div>
+    </>
   );
 }
