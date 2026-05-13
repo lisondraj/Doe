@@ -1894,11 +1894,11 @@ export default function DoePage() {
           className="absolute inset-0 iphone-page:scale-[1.22] iphone-page:origin-[50%_45%]"
           style={{
             background: `
-              radial-gradient(circle at center, #D49D4F 0%, #D2774C 18%, #BF593D 32%, #C88A5F 45%, #7B5C4B 55%, #8B6F47 65%, #6D5B41 72%, #5C4A3A 78%, #4A3D32 85%, #1E343A 95%, rgba(30, 52, 58, 0.6) 100%),
-              radial-gradient(ellipse 60% 60% at 0% 0%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
-              radial-gradient(ellipse 60% 60% at 100% 0%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
-              radial-gradient(ellipse 60% 60% at 0% 100%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
-              radial-gradient(ellipse 60% 60% at 100% 100%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%)
+              radial-gradient(circle at center, #F8E8C8 0%, #E7A944 14%, #D49D4F 26%, #D2774C 38%, #BF593D 48%, #8F735F 58%, #4F6268 70%, #355a61 82%, #264349 92%, #1E343A 98%, rgba(30, 52, 58, 0.62) 100%),
+              radial-gradient(ellipse 60% 60% at 0% 0%, #264349 0%, rgba(30, 52, 58, 0.78) 48%, transparent 82%),
+              radial-gradient(ellipse 60% 60% at 100% 0%, #264349 0%, rgba(30, 52, 58, 0.78) 48%, transparent 82%),
+              radial-gradient(ellipse 60% 60% at 0% 100%, #264349 0%, rgba(30, 52, 58, 0.78) 48%, transparent 82%),
+              radial-gradient(ellipse 60% 60% at 100% 100%, #264349 0%, rgba(30, 52, 58, 0.78) 48%, transparent 82%)
             `,
             filter: 'saturate(1.15)',
           }}
