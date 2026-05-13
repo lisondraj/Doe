@@ -252,6 +252,15 @@ function vbBuildMilestonesU(scrollablePx: number, bandPx: number[]): VerticalBen
   };
 }
 
+/** Pinned stack height vs viewport (`top-[max(5.75rem,...)]`, sticky pt-5/pt-6, slim bottom bleed). */
+function vbStickyRailsViewportPx(innerHeightPx: number): number {
+  const vh = Math.max(innerHeightPx, 320);
+  const pinnedTopPx = Math.round(5.75 * 16);
+  const stickyPadTopPx = 26;
+  const viewportBottomBleedPx = 10;
+  return Math.max(320, Math.round(vh - pinnedTopPx - stickyPadTopPx - viewportBottomBleedPx));
+}
+
 function vbComputeScrollMetrics(innerHeightPx: number): VerticalBentoScrollMetrics {
   const vh = Math.max(innerHeightPx, 320);
   const openPx = Math.round(Math.max(vh * 0.82, 400));
@@ -262,8 +271,7 @@ function vbComputeScrollMetrics(innerHeightPx: number): VerticalBentoScrollMetri
   const scrollablePx = openPx + dwellPx + swapPx + dwellPx + swapPx + dwellPx + exitPx + tailPx;
   const sectionMinPx = scrollablePx + vh;
   const anchor = Math.max(72, Math.min(140, Math.round(vh * 0.095)));
-  const stickyPad = 96;
-  const stickyColumnH = Math.max(320, Math.round(vh - anchor - stickyPad));
+  const stickyColumnH = vbStickyRailsViewportPx(vh);
   const milestones = vbBuildMilestonesU(scrollablePx, [
     openPx,
     dwellPx,
@@ -3530,7 +3538,7 @@ export default function DoePage() {
         className="relative z-10 w-full bg-[#F7F6F3]"
         style={{ minHeight: vbMetrics.sectionMinPx }}
       >
-        <div className="sticky top-[max(5.75rem,calc(env(safe-area-inset-top,0px)+4.5rem))] z-[5] pb-24 pt-5 iphone-page:pb-28 iphone-page:pt-6">
+        <div className="sticky top-[max(5.75rem,calc(env(safe-area-inset-top,0px)+4.5rem))] z-[5] pb-6 pt-5 iphone-page:pb-8 iphone-page:pt-6">
           <div className={`w-full ${narrowHorizontalInset}`}>
             <div
               className="relative mx-auto w-full max-w-full shrink-0"
@@ -3543,10 +3551,17 @@ export default function DoePage() {
               {(() => {
                 const { expand, opacity } = vbDeriveRails(verticalBentoU, vbMetrics.milestones);
                 const gapPx = 16;
+                const railGapsPx = gapPx * 2;
                 const ms = vbMetrics.milestones;
-                const usable = Math.max(vbMetrics.stickyColumnH - gapPx * 2, 220);
-                const collapsedPx = Math.max(68, Math.min(90, Math.round(usable * 0.108)));
-                const expandedMax = Math.max(collapsedPx + 88, usable - 2 * collapsedPx);
+                let usable = Math.max(vbMetrics.stickyColumnH - railGapsPx, 220);
+                let collapsedPx = Math.max(48, Math.min(90, Math.round(usable * 0.108)));
+                let expandedMax = usable - 2 * collapsedPx;
+                while (expandedMax < collapsedPx + 40 && collapsedPx > 40) {
+                  collapsedPx -= 2;
+                  expandedMax = usable - 2 * collapsedPx;
+                }
+                collapsedPx = Math.max(40, collapsedPx);
+                expandedMax = Math.max(collapsedPx + 4, usable - 2 * collapsedPx);
                 const localBar = vbPhaseLocalProgress(verticalBentoU, ms);
                 const barReveal = vbSmoothstep01((verticalBentoU - ms.uOpenEnd) / 0.034);
                 const maxE = Math.max(expand[0], expand[1], expand[2]);
