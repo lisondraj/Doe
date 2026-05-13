@@ -133,12 +133,11 @@ function ArticleBlock({ slide, isFirst }: { slide: Slide; isFirst: boolean }) {
         </div>
         <button
           type="button"
-          className={`group inline-flex items-center gap-2 border-0 bg-transparent p-0 text-left text-[clamp(1.05rem,3.6vw,1.2rem)] iphone-page:text-[clamp(1.1rem,3.85vw,1.25rem)] font-semibold text-[#1E343A] underline decoration-[#1E343A]/30 underline-offset-[0.35em] transition-colors hover:text-[#15282d] hover:decoration-[#15282d]/50 active:opacity-80 ${inter.className}`}
+          className={`group inline-flex items-baseline border-0 bg-transparent p-0 text-left text-[clamp(1.05rem,3.6vw,1.2rem)] iphone-page:text-[clamp(1.1rem,3.85vw,1.25rem)] font-semibold text-[#1E343A] transition-colors hover:text-[#15282d] active:opacity-80 whitespace-nowrap ${inter.className}`}
           aria-label="Read more"
         >
-          <span>Read more</span>
-          <span className="font-light text-[1.1em] leading-none tracking-normal text-[#1E343A]/80" aria-hidden>
-            →
+          <span className="underline decoration-[#1E343A]/30 underline-offset-[0.35em] transition-[text-decoration-color] group-hover:decoration-[#15282d]/50">
+            Read more →
           </span>
         </button>
       </div>
@@ -178,7 +177,7 @@ export default function BlogPage() {
       <DoeIphoneSiteNav />
 
       <div
-        className="relative min-h-[100dvh] overflow-x-hidden doeforvc-iphone-root"
+        className="relative z-0 min-h-[100dvh] overflow-x-hidden doeforvc-iphone-root"
         style={{
           backgroundColor: "#F7F6F3",
           ...(applyRootZoom ? { zoom: rootZoom } : {}),
@@ -186,10 +185,10 @@ export default function BlogPage() {
         suppressHydrationWarning
       >
         <main
-          className={`relative z-10 w-full max-w-[min(100%,52rem)] mx-auto pt-[5.5rem] iphone-page:pt-[max(5.5rem,calc(env(safe-area-inset-top,0px)+4rem))] pb-20 iphone-page:pb-24 ${narrowHorizontalInset}`}
+          className={`relative z-0 w-full max-w-[min(100%,52rem)] mx-auto pt-[5.5rem] iphone-page:pt-[max(5.5rem,calc(env(safe-area-inset-top,0px)+4rem))] pb-20 iphone-page:pb-24 ${narrowHorizontalInset}`}
         >
           {/* Inquisara at top: image first, then title / preview / Read more */}
-          <div className="w-full">
+          <div className="w-full mt-8 iphone-page:mt-10">
             <GradientArticleVisual slide={first} variant="hero" />
             <ArticleBlock slide={first} isFirst />
           </div>
