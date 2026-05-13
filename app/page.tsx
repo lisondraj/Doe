@@ -2994,7 +2994,7 @@ export default function DoePage() {
                   setUiMockupTranslateY(10);
                   setUiMockupScale(0.96);
                 });
-                setCarouselOffset(1);
+                setCarouselOffset(-1);
                 setTimeout(() => {
                   const newIndex = (selectedWordIndex - 1 + 8) % 8;
                   setSelectedWordIndex(newIndex);
@@ -3100,7 +3100,7 @@ export default function DoePage() {
                   setUiMockupTranslateY(10);
                   setUiMockupScale(0.96);
                 });
-                setCarouselOffset(-1);
+                setCarouselOffset(1);
                 setTimeout(() => {
                   const newIndex = (selectedWordIndex + 1) % 8;
                   setSelectedWordIndex(newIndex);
