@@ -1614,13 +1614,13 @@ export default function DoePage() {
                 aria-hidden
               />
               <div
-                className="absolute inset-x-0 bottom-0 bg-[#F7F6F3] flex flex-col pointer-events-auto overflow-hidden"
+                className="absolute inset-x-0 bottom-0 bg-[#F7F6F3] flex flex-col pointer-events-auto overflow-hidden min-h-0"
                 style={{ top: iphoneMenuTopPx }}
                 role="dialog"
                 aria-modal="true"
                 aria-label="Site navigation"
               >
-                <nav className="flex flex-col flex-1 min-h-0 overflow-y-auto pb-[env(safe-area-inset-bottom,0px)]">
+                <nav className="flex flex-col flex-1 min-h-0 overflow-y-auto overscroll-contain">
                   {NAV_ITEMS.map((item) => {
                     const expanded = mobileNavExpandedKey === item;
                     const subs = dropdownContent[item]?.items ?? [];
@@ -1688,6 +1688,58 @@ export default function DoePage() {
                     );
                   })}
                 </nav>
+                {/* Footer — gradient capsule + build CTA (same palette as carousel orange panel, not hero) */}
+                <div
+                  className="shrink-0 px-6 iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] pb-[max(1rem,calc(env(safe-area-inset-bottom,0px)+10px))] pt-4 space-y-4 border-t border-[#ECEAE6]"
+                >
+                  <div
+                    className="relative rounded-2xl overflow-hidden min-h-[5.5rem] shadow-[0_10px_32px_rgba(0,0,0,0.12)]"
+                    style={{
+                      background:
+                        "radial-gradient(circle at 50% 36%, #E7A944 0%, #D49D4F 40%, #D2774C 70%, #1E343A 100%)",
+                    }}
+                  >
+                    <div className="absolute bottom-0 left-0 right-0 p-4 flex items-end justify-start">
+                      <div className={`flex items-center gap-2.5 text-white ${inter.className}`}>
+                        <svg
+                          width={13}
+                          height={13}
+                          viewBox="0 0 24 24"
+                          className="shrink-0 opacity-95 drop-shadow-sm"
+                          aria-hidden
+                        >
+                          <path fill="currentColor" d="M8 5v14l11-7L8 5z" />
+                        </svg>
+                        <span className="text-[15px] font-semibold tracking-tight">Inquisara</span>
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className={`flex w-full items-center justify-between gap-4 text-left active:opacity-80 transition-opacity ${inter.className}`}
+                    onClick={() => {
+                      setMobileNavOpen(false);
+                      requestAnimationFrame(() => {
+                        buildSectionRef.current?.scrollIntoView({
+                          behavior: "smooth",
+                          block: "start",
+                        });
+                      });
+                    }}
+                  >
+                    <span className="text-[15px] font-medium text-gray-800 tracking-tight leading-snug min-w-0">
+                      See what we&apos;re building with
+                    </span>
+                    <span
+                      className="shrink-0 inline-flex h-11 w-11 items-center justify-center rounded-full border border-gray-300/90 bg-white text-gray-900 shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
+                      aria-hidden
+                    >
+                      <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M5 12h14M13 6l6 6-6 6" />
+                      </svg>
+                    </span>
+                  </button>
+                </div>
               </div>
             </div>
           </>
