@@ -1892,35 +1892,40 @@ export default function DoePage() {
           height: `${heroLogicalHeightPx}px`,
         }}
       >
-        {/* Hero — five-layer gradient + flowing line field (gradientAngle drives slow drift) */}
+        {/* Hero — five-layer Doe palette (gold / amber / coral / browns / slate) + flowing lines */}
         <div 
           className="absolute inset-0 iphone-page:scale-[1.22] iphone-page:origin-[50%_45%]"
           style={{
             background: `
               linear-gradient(${gradientAngle}deg,
-                rgba(255, 252, 248, 0.14) 0%,
-                transparent 26%,
-                transparent 74%,
-                rgba(6, 28, 42, 0.2) 100%
+                rgba(255, 244, 218, ${0.22 * heroMeshPulse}) 0%,
+                transparent 27%,
+                transparent 73%,
+                rgba(30, 52, 58, ${0.28 * heroMeshPulse}) 100%
               ),
-              radial-gradient(ellipse 118% 92% at 50% -8%,
-                rgba(255, 214, 176, ${0.52 * heroMeshPulse}) 0%,
-                transparent 54%
+              radial-gradient(ellipse 120% 94% at 50% -10%,
+                rgba(231, 169, 68, ${0.62 * heroMeshPulse}) 0%,
+                rgba(252, 224, 168, ${0.34 * heroMeshPulse}) 40%,
+                transparent 56%
               ),
-              radial-gradient(ellipse 100% 95% at -12% 52%,
-                rgba(22, 78, 108, ${0.88 * heroMeshPulse}) 0%,
+              radial-gradient(ellipse 102% 96% at -12% 50%,
+                rgba(210, 119, 76, ${0.74 * heroMeshPulse}) 0%,
+                rgba(191, 89, 61, ${0.38 * heroMeshPulse}) 44%,
+                transparent 52%
+              ),
+              radial-gradient(ellipse 98% 90% at 112% 40%,
+                rgba(212, 157, 79, ${0.68 * heroMeshPulse}) 0%,
+                rgba(231, 169, 68, ${0.32 * heroMeshPulse}) 46%,
                 transparent 51%
               ),
-              radial-gradient(ellipse 96% 88% at 112% 38%,
-                rgba(212, 108, 72, ${0.58 * heroMeshPulse}) 0%,
+              radial-gradient(ellipse 86% 76% at 50% 118%,
+                rgba(30, 52, 58, ${0.94}) 0%,
+                rgba(109, 91, 65, ${0.52 * heroMeshPulse}) 32%,
+                rgba(92, 74, 58, ${0.28 * heroMeshPulse}) 46%,
                 transparent 49%
-              ),
-              radial-gradient(ellipse 82% 72% at 50% 112%,
-                rgba(10, 36, 52, ${0.94}) 0%,
-                transparent 46%
               )
             `,
-            filter: 'saturate(1.12)',
+            filter: 'saturate(1.18)',
           }}
         >
           {/* Grain texture overlay */}
@@ -1938,7 +1943,7 @@ export default function DoePage() {
             className="absolute inset-0 pointer-events-none"
             style={{
               background:
-                'radial-gradient(circle at 50% 48%, rgba(0, 18, 30, 0.14) 0%, transparent 58%)',
+                'radial-gradient(circle at 50% 46%, rgba(30, 52, 58, 0.13) 0%, rgba(74, 61, 50, 0.06) 42%, transparent 60%)',
             }}
           />
           {/* Flowing iso-lines + faint diagonal scaffold */}
@@ -1959,13 +1964,13 @@ export default function DoePage() {
             >
               <defs>
                 <linearGradient id="heroHeroFlowStroke" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="rgba(255,255,255,0)" />
-                  <stop offset="35%" stopColor="rgba(255,255,255,0.5)" />
-                  <stop offset="70%" stopColor="rgba(255,255,255,0.18)" />
-                  <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+                  <stop offset="0%" stopColor="rgba(255,236,214,0)" />
+                  <stop offset="35%" stopColor="rgba(255,248,235,0.45)" />
+                  <stop offset="70%" stopColor="rgba(255,236,214,0.16)" />
+                  <stop offset="100%" stopColor="rgba(255,236,214,0)" />
                 </linearGradient>
                 <pattern id="heroHeroFineDash" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform={`rotate(${28 + gradientAngle * 0.02})`}>
-                  <path d="M 0 14 L 14 0" fill="none" stroke="rgba(255,255,255,0.09)" strokeWidth="0.55" />
+                  <path d="M 0 14 L 14 0" fill="none" stroke="rgba(255,243,220,0.11)" strokeWidth="0.55" />
                 </pattern>
               </defs>
               <rect width="800" height="800" fill="url(#heroHeroFineDash)" opacity="0.85" />
@@ -1976,7 +1981,7 @@ export default function DoePage() {
                 <path d="M 820 660 Q 560 520 340 400 T -60 260" opacity="0.65" />
                 <path d="M 780 720 Q 520 580 280 460 T -80 320" opacity="0.48" />
               </g>
-              <g fill="none" stroke="rgba(255,255,255,0.14)" strokeWidth="0.45" opacity="0.85">
+              <g fill="none" stroke="rgba(255,243,220,0.15)" strokeWidth="0.45" opacity="0.85">
                 <path d="M 120 -20 Q 260 200 180 420 T 240 840" />
                 <path d="M 640 -40 Q 520 240 600 460 T 520 840" />
               </g>
