@@ -4023,8 +4023,9 @@ export default function DoePage() {
         style={{ minHeight: vbMetrics.sectionMinPx }}
       >
         <div className="sticky top-[max(5.75rem,calc(env(safe-area-inset-top,0px)+4.5rem))] z-[5] pb-24 pt-8 iphone-page:pb-28 iphone-page:pt-10">
-          <div className={`w-full px-4 ${narrowHorizontalInset}`}>
-            <div className="mx-auto w-full max-w-[min(100%,42rem)]">
+          {/* Horizontal inset matches the orange UI mock panel directly above */}
+          <div className={`w-full ${narrowHorizontalInset}`}>
+            <div className="relative mx-auto w-full max-w-full shrink-0">
               {(() => {
                 const { expand, opacity } = vbDeriveRails(verticalBentoU, vbMetrics.milestones);
                 const gapPx = 16;
