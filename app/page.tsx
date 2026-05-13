@@ -405,6 +405,9 @@ export default function DoePage() {
   const thirdSectionRef = useRef<HTMLDivElement>(null);
   const [thirdSectionOpacity, setThirdSectionOpacity] = useState(0);
   const [thirdSectionTranslateY, setThirdSectionTranslateY] = useState(40);
+  /** Scroll-scrubbed vertical bento between carousel and third (gradient) section */
+  const verticalBentoSectionRef = useRef<HTMLDivElement>(null);
+  const [verticalBentoExpandProgress, setVerticalBentoExpandProgress] = useState(0);
   const secondSectionRef = useRef<HTMLDivElement>(null);
   const [secondSectionTitleOpacity, setSecondSectionTitleOpacity] = useState(0);
   const [secondSectionTitleTranslateY, setSecondSectionTitleTranslateY] = useState(40);
@@ -908,6 +911,21 @@ export default function DoePage() {
           setBuildBoxesOpacity(0);
           setBuildBoxesTranslateY(40);
         }
+      }
+
+      // Vertical bento: first strip grows with scroll while this tall section crosses the viewport
+      if (verticalBentoSectionRef.current) {
+        const el = verticalBentoSectionRef.current;
+        const rect = el.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const scrollSpan = Math.max(el.offsetHeight - viewportHeight + 140, viewportHeight * 0.92);
+        const travel = -(rect.top) + viewportHeight * 0.12;
+        const linear = scrollSpan <= 0 ? (rect.top <= viewportHeight * 0.2 ? 1 : 0) : travel / scrollSpan;
+        let p = Math.min(Math.max(linear, 0), 1);
+        p = 1 - Math.pow(1 - p, 1.12);
+        setVerticalBentoExpandProgress((prev) =>
+          Math.abs(prev - p) < 0.004 ? prev : p
+        );
       }
     };
 
@@ -3856,6 +3874,185 @@ export default function DoePage() {
           })()}
         </div>
       </div>
+      </div>
+
+      {/* Vertical bento — three stacked rails; scrub scroll to expand the first */}
+      <div
+        ref={verticalBentoSectionRef}
+        className="relative z-10 w-full bg-[#F7F6F3]"
+        style={{ minHeight: "max(220vh, 1680px)" }}
+      >
+        <div className="sticky top-[max(5.75rem,calc(env(safe-area-inset-top,0px)+4.5rem))] z-[5] pb-24 pt-8 iphone-page:pb-28 iphone-page:pt-10">
+          <div className={`w-full px-4 ${narrowHorizontalInset}`}>
+            <div className="mx-auto flex w-full max-w-[min(100%,42rem)] flex-col gap-4 iphone-page:gap-3.5">
+              <div
+                className={`relative overflow-hidden rounded-2xl ring-1 ring-black/[0.06] shadow-[0_14px_40px_rgba(0,0,0,0.07)] transition-[min-height,box-shadow] duration-150 ease-[cubic-bezier(0.25,0.5,0.25,1)] ${lora.className}`}
+                style={{
+                  minHeight: `max(7rem, calc(${6.5 + verticalBentoExpandProgress * 61}vmin))`,
+                  background:
+                    "linear-gradient(164deg, #fff7eb 0%, #f4d09a 22%, #d4824a 48%, #8b3f2f 74%, #1f2329 100%)",
+                }}
+              >
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 rounded-2xl opacity-[0.22]"
+                  style={{
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                    backgroundSize: "180px 180px",
+                    mixBlendMode: "overlay",
+                  }}
+                />
+                <div className="relative flex flex-col gap-6 p-6 iphone-page:p-[1.375rem]" style={{ color: "#1f140d" }}>
+                  <div className="space-y-1">
+                    <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.18em]" style={{ opacity: 0.72 }}>
+                      Live canvas
+                    </p>
+                    <h2 className="text-[clamp(1.5rem,5.2vmin,2.125rem)] font-normal tracking-tight leading-[1.1]">
+                      Practice overview
+                    </h2>
+                    <p
+                      className="max-w-[36ch] text-[0.945rem] font-medium leading-snug"
+                      style={{ fontFamily: "system-ui,-apple-system,sans-serif", opacity: 0.88 }}
+                    >
+                      Placeholder runway for ward throughput, payer tasks, and day-of snapshots—expands as you scroll.
+                    </p>
+                  </div>
+                  <div
+                    className="flex flex-wrap gap-3"
+                    style={{ fontFamily: "system-ui,-apple-system,sans-serif" }}
+                  >
+                    {[
+                      { label: "32 open", muted: false },
+                      { label: "Auth queue", muted: false },
+                      { label: "+6 since 9am", muted: true },
+                    ].map((chip) => (
+                      <span
+                        key={chip.label}
+                        className="rounded-full px-4 py-1.5 text-[0.8125rem] font-semibold backdrop-blur-sm"
+                        style={{
+                          border: "1px solid rgba(255,255,255,0.42)",
+                          background: chip.muted ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.52)",
+                          color: chip.muted ? "rgba(37,29,21,0.78)" : "#1a1510",
+                        }}
+                      >
+                        {chip.label}
+                      </span>
+                    ))}
+                  </div>
+                  <div
+                    className="mt-auto hidden gap-4 rounded-xl p-5 sm:grid"
+                    style={{
+                      gridTemplateColumns: "1.1fr 1fr",
+                      background: "rgba(22,26,31,0.18)",
+                      border: "1px solid rgba(255,255,255,0.2)",
+                      fontFamily: "system-ui,-apple-system,sans-serif",
+                      opacity: 0.4 + verticalBentoExpandProgress * 0.6,
+                      transform: `translateY(${4 * (1 - verticalBentoExpandProgress)}px)`,
+                      transition: "opacity 0.2s ease, transform 0.2s ease",
+                    }}
+                  >
+                    <div className="space-y-4">
+                      <div className="h-32 rounded-xl bg-black/12" />
+                      <div className="space-y-2">
+                        <div className="h-5 w-[68%] max-w-[12rem] rounded-md bg-black/35" />
+                        <div className="h-3 w-[94%] rounded-md bg-black/28" />
+                        <div className="h-3 w-[74%] rounded-md bg-black/22" />
+                      </div>
+                    </div>
+                    <div className="flex flex-col justify-between rounded-xl bg-white/12 px-6 py-5">
+                      <div className="space-y-7">
+                        <div className="flex items-center gap-6">
+                          <div className="h-28 w-[6px] shrink-0 rounded-full bg-black/42" />
+                          <div className="flex flex-1 flex-col gap-2">
+                            {[1.1, 0.78, 0.66, 0.44].map((w, idx) => (
+                              <div
+                                key={`t-${idx}-${w}`}
+                                className="h-9 rounded-lg bg-black/38"
+                                style={{ width: `${100 * w}%` }}
+                              />
+                            ))}
+                          </div>
+                          <div className="hidden lg:block h-[7.5rem] w-[6px] shrink-0 rounded-full bg-black/28" />
+                        </div>
+                        <div className="flex items-center gap-4">
+                          <div className="h-28 w-[6px] shrink-0 rounded-full bg-black/42" />
+                          <div className="flex flex-1 flex-wrap gap-[0.875rem]" style={{ maxWidth: "100%" }}>
+                            {[0.94, 0.7, 0.58, 0.44, 0.36].map((w, idx) => (
+                              <div
+                                key={`b-${idx}-${w}`}
+                                className="h-[1.0625rem] rounded-md bg-black/26"
+                                style={{ width: `min(100%,${100 * w}%)`, minWidth: "4.75rem", maxWidth: "11rem" }}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                className={`relative overflow-hidden rounded-2xl ring-1 ring-black/[0.05] shadow-sm ${lora.className}`}
+                style={{
+                  minHeight: "6rem",
+                  opacity: 0.36,
+                  background: "linear-gradient(148deg, #e4f8f8 0%, #7dbebe 42%, #1e4a52 92%)",
+                }}
+              >
+                <div className="relative flex min-h-[6rem] flex-col justify-center gap-2 p-6 iphone-page:p-5">
+                  <p className="text-[1.0625rem] font-normal tracking-tight text-[#063239] mix-blend-multiply opacity-95">
+                    Intake pacing
+                  </p>
+                  <div className="space-y-3" style={{ fontFamily: "system-ui,-apple-system,sans-serif" }}>
+                    {[0.92, 0.74, 0.58].map((w, i) => (
+                      <div
+                        key={`intake-placeholder-${i}`}
+                        className="h-[0.6875rem] rounded-full bg-[#063239]/44"
+                        style={{ width: `${100 * w}%` }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div
+                className={`relative overflow-hidden rounded-2xl ring-1 ring-black/[0.05] shadow-sm ${lora.className}`}
+                style={{
+                  minHeight: "6rem",
+                  opacity: 0.34,
+                  background: "linear-gradient(152deg, #f8ecff 0%, #bea2e8 38%, #4a3768 100%)",
+                }}
+              >
+                <div className="relative flex min-h-[6rem] items-center gap-8 p-6 iphone-page:p-5">
+                  <div className="flex -space-x-2.5" aria-hidden style={{ opacity: 0.65 }}>
+                    {["#4b2d61", "#5c3f78", "#6d558f"].map((c) => (
+                      <span key={c} className="h-12 w-12 shrink-0 rounded-[1.375rem]" style={{ border: `2px solid rgba(248,246,253,0.55)`, background: c }} />
+                    ))}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-[1.0625rem] font-normal tracking-tight text-[#2f1f43] opacity-92">
+                      Care team pulses
+                    </p>
+                    <p
+                      className="mt-1 line-clamp-2 text-[0.84375rem] font-medium opacity-76"
+                      style={{ fontFamily: "system-ui,-apple-system,sans-serif" }}
+                    >
+                      Stub for shared threads, escalation hints, and on-call deltas—distinct from nearby sections.
+                    </p>
+                  </div>
+                  <span
+                    aria-hidden
+                    className="hidden shrink-0 rounded-full border border-[#321e45]/48 px-6 py-2 text-[0.75rem] font-semibold uppercase tracking-[0.12em] mix-blend-multiply lg:inline"
+                    style={{ fontFamily: "system-ui,-apple-system,sans-serif" }}
+                  >
+                    Later
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* New Section - Hero Gradient Full Page */}
