@@ -3530,9 +3530,8 @@ export default function DoePage() {
         className="relative z-10 w-full bg-[#F7F6F3]"
         style={{ minHeight: vbMetrics.sectionMinPx }}
       >
-        <div className="sticky top-[max(5.75rem,calc(env(safe-area-inset-top,0px)+4.5rem))] z-[5] bg-white pb-24 pt-5 iphone-page:pb-28 iphone-page:pt-7">
-          {/* White cushion below the nav divider before rails / open choreography */}
-          <div className={`w-full bg-[#F7F6F3] px-4 ${narrowHorizontalInset}`}>
+        <div className="sticky top-[max(5.75rem,calc(env(safe-area-inset-top,0px)+4.5rem))] z-[5] pb-24 pt-5 iphone-page:pb-28 iphone-page:pt-6">
+          <div className={`w-full ${narrowHorizontalInset}`}>
             <div
               className="relative mx-auto w-full max-w-full shrink-0"
               style={{
