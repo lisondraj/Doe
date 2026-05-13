@@ -2897,7 +2897,11 @@ export default function DoePage() {
         }}
       >
         <div className="absolute inset-0 pointer-events-none">
-          <svg className="absolute inset-0 pointer-events-none w-full h-full" xmlns="http://www.w3.org/2000/svg">
+          <svg
+            className="absolute inset-0 pointer-events-none w-full h-full"
+            style={{ transform: "translateY(-5%)" }}
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <defs>
               <pattern id="blankSectionGridPattern" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
                 <path d="M 0 0 L 80 0 M 0 0 L 0 80" fill="none" stroke="#999999" strokeWidth="0.5" opacity="0.28" />
@@ -2926,24 +2930,25 @@ export default function DoePage() {
             background: 'linear-gradient(to top, rgba(247, 246, 243, 1) 0%, rgba(247, 246, 243, 0.8) 30%, rgba(247, 246, 243, 0) 100%)'
           }}
         />
-        {/* Large Doe on top; horizontal word carousel with L/R arrows; description beneath */}
-        <div className={`relative z-20 flex flex-col items-center w-full ${narrowHorizontalInset}`}>
+        {/* Headline + horizontal carousel + description — shifted up */}
+        <div className={`relative z-20 flex flex-col items-center w-full ${narrowHorizontalInset} -mt-6 iphone-page:-mt-10`}>
           <p
             className={`text-center text-gray-900 ${oldStandardTT.className}`}
             style={{
               fontStyle: "italic",
               fontWeight: 400,
-              fontSize: "clamp(3.25rem, 15vw, 6.75rem)",
-              lineHeight: 1.02,
-              paddingTop: "clamp(1.5rem, 4vw, 2.75rem)",
-              paddingBottom: "clamp(0.75rem, 2vw, 1.25rem)",
+              fontSize: "clamp(2rem, 11vw, 4.35rem)",
+              lineHeight: 1.08,
+              paddingTop: "clamp(0.1rem, 0.8vw, 0.45rem)",
+              paddingBottom: "clamp(0.35rem, 1.5vw, 0.65rem)",
+              maxWidth: "min(22ch, 96vw)",
             }}
           >
-            Doe
+            It&apos;s all here.
           </p>
 
           {/* Horizontal Agents / Franchises / Design … carousel */}
-          <div className="flex flex-row items-center justify-center gap-2 iphone-page:gap-4 w-full max-w-[min(100%,540px)] px-2 pb-5">
+          <div className="flex flex-row items-center justify-center gap-3 iphone-page:gap-5 w-full max-w-[min(100%,620px)] px-2 pb-3 iphone-page:pb-4">
             <button
               type="button"
               aria-label="Previous category"
@@ -2972,12 +2977,12 @@ export default function DoePage() {
               }}
               className="shrink-0 p-2 rounded-full hover:bg-black/[0.04] transition-colors"
             >
-              <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <svg className="w-7 h-7 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
               </svg>
             </button>
 
-            <div className="relative flex-1 min-w-0 overflow-hidden py-1" style={{ maxWidth: "min(72vw, 380px)", height: "2.85rem" }}>
+            <div className="relative flex-1 min-w-0 overflow-hidden py-1" style={{ maxWidth: "min(82vw, 460px)", height: "3.35rem" }}>
               <div
                 className="pointer-events-none absolute inset-y-0 left-0 z-[2] w-10 bg-gradient-to-r from-[#F7F6F3] to-transparent"
                 aria-hidden
@@ -2990,7 +2995,7 @@ export default function DoePage() {
                 const words = ["Agents", "Franchises", "Design", "Billing", "Marketing", "Patient", "Teams", "Inbox"];
                 const n = words.length;
                 const offsets = [-3, -2, -1, 0, 1, 2, 3];
-                const slotPx = 104;
+                const slotPx = 122;
 
                 const getOpacity = (offset: number) => {
                   const abs = Math.abs(offset);
@@ -3013,7 +3018,7 @@ export default function DoePage() {
                           ? "left 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94)"
                           : "none",
                       fontWeight: 300,
-                      fontSize: "clamp(1.15rem, 3.8vw, 1.7rem)",
+                      fontSize: "clamp(1.35rem, 4.8vw, 2.05rem)",
                       whiteSpace: "nowrap",
                       height: "100%",
                     }}
@@ -3070,7 +3075,7 @@ export default function DoePage() {
               }}
               className="shrink-0 p-2 rounded-full hover:bg-black/[0.04] transition-colors"
             >
-              <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <svg className="w-7 h-7 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
               </svg>
             </button>
@@ -3088,10 +3093,10 @@ export default function DoePage() {
             ];
             const lines = descriptions[selectedWordIndex] ?? descriptions[0];
             return (
-              <div className="w-full flex justify-center pb-8 iphone-page:pb-10 px-2">
+              <div className="w-full flex justify-center pb-5 iphone-page:pb-7 px-2">
                 <div
                   key={selectedWordIndex}
-                  className={`text-base iphone-page:text-lg text-gray-700 text-center max-w-lg ${inter.className}`}
+                  className={`text-lg iphone-page:text-xl text-gray-700 text-center max-w-xl iphone-page:max-w-2xl leading-snug iphone-page:leading-relaxed ${inter.className}`}
                   style={{ fontWeight: 500, animation: 'fade-in 0.35s ease-out' }}
                 >
                   {lines.map((line, i) => (
@@ -3103,11 +3108,11 @@ export default function DoePage() {
           })()}
         </div>
         {/* Orange panel — full-width word-linked UI mockups */}
-        <div className="relative z-30 w-full pb-16 iphone-page:pb-20 pl-[max(1rem,env(safe-area-inset-left,0px))] pr-[max(1rem,env(safe-area-inset-right,0px))]">
+        <div className="relative z-30 w-full pb-14 iphone-page:pb-16 pl-[max(1rem,env(safe-area-inset-left,0px))] pr-[max(1rem,env(safe-area-inset-right,0px))] -mt-2 iphone-page:-mt-3">
           <div
-            className="relative w-full min-h-[min(520px,58dvh)] rounded-2xl overflow-hidden shadow-[0_24px_70px_rgba(0,0,0,0.14)]"
+            className="relative w-full min-h-[min(560px,62dvh)] rounded-2xl overflow-hidden shadow-[0_24px_70px_rgba(0,0,0,0.14)]"
             style={{
-              background: `radial-gradient(circle at center, #E7A944 0%, #D49D4F 40%, #D2774C 70%, #1E343A 100%)`,
+              background: `radial-gradient(circle at 50% 36%, #E7A944 0%, #D49D4F 40%, #D2774C 70%, #1E343A 100%)`,
               borderRadius: '16px',
             }}
           >
@@ -3122,9 +3127,16 @@ export default function DoePage() {
               mixBlendMode: 'overlay',
             }}
           />
-          {/* Circular grid pattern overlay */}
+          {/* Circular grid pattern overlay — shifted up behind headline/mockup */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ borderRadius: '16px' }}>
-            <svg className="absolute inset-0 pointer-events-none w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid meet">
+            <svg
+              className="absolute pointer-events-none left-1/2 -translate-x-1/2 w-[118%] max-w-none h-[118%]"
+              style={{ top: "-13%", }}
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 1000 1000"
+              preserveAspectRatio="xMidYMid meet"
+              aria-hidden
+            >
               {/* Radial lines */}
               {Array.from({ length: 8 }, (_, j) => {
                 const angle = (j * 45);
@@ -3452,13 +3464,11 @@ export default function DoePage() {
                 className="absolute bottom-[4%] iphone-page:bottom-[5%]"
                 style={{
                   top: "auto",
-                  left: "0.85rem",
-                  right: "0.85rem",
-                  width: "auto",
+                  left: "50%",
+                  right: "auto",
+                  width: "min(calc(100% - 1.75rem), min(94vw, min(72dvh, 700px)))",
                   height: "auto",
-                  aspectRatio: "16 / 11",
-                  maxHeight: "min(54dvh, 680px)",
-                  minHeight: "min(240px, 42vw)",
+                  aspectRatio: "1",
                   borderRadius: "14px",
                   boxShadow: "0 40px 100px rgba(0,0,0,0.35)",
                   overflow: "hidden",
@@ -3467,7 +3477,7 @@ export default function DoePage() {
                   transition:
                     "opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
                   willChange: isCarouselTransitioning ? "opacity, transform" : "auto",
-                  transform: `translateY(${uiMockupTranslateY}px) scale(${uiMockupScale})`,
+                  transform: `translateX(-50%) translateY(${uiMockupTranslateY}px) scale(${uiMockupScale})`,
                 }}
               >
                 {renderUIMockup()}
