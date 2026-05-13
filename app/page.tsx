@@ -88,29 +88,29 @@ const MOBILE_NAV_FOOTER_SLIDES: ReadonlyArray<{
     shape: "square",
     date: "June 3, 2026",
     gradient:
-      "linear-gradient(18deg, #d9f0ff 0%, #7ec8e8 18%, #3d8ab8 45%, #c45d2e 72%, #3a1810 100%)",
+      "linear-gradient(162deg, #fce8b4 0%, #f2b056 26%, #d87435 54%, #a84828 78%, #142026 100%)",
     lineOverlay: {
       backgroundImage: `
         repeating-linear-gradient(
-          125deg,
+          -34deg,
           transparent 0px,
-          transparent 12px,
-          rgba(255, 255, 255, 0.22) 12px,
-          rgba(255, 255, 255, 0.22) 15px,
-          transparent 15px,
-          transparent 34px
+          transparent 17px,
+          rgba(255, 246, 220, 0.2) 17px,
+          rgba(255, 246, 220, 0.2) 20px,
+          transparent 20px,
+          transparent 40px
         ),
         repeating-linear-gradient(
-          38deg,
+          52deg,
           transparent 0px,
-          transparent 15px,
-          rgba(55, 35, 26, 0.2) 15px,
-          rgba(55, 35, 26, 0.2) 18px,
-          transparent 18px,
-          transparent 40px
+          transparent 21px,
+          rgba(92, 32, 18, 0.14) 21px,
+          rgba(92, 32, 18, 0.14) 23px,
+          transparent 23px,
+          transparent 46px
         )`,
-      opacity: 0.44,
-      mixBlendMode: "multiply",
+      opacity: 0.5,
+      mixBlendMode: "overlay",
     },
   },
 ];
@@ -1906,7 +1906,7 @@ export default function DoePage() {
                         key={slide.boxTitle}
                         className="w-full min-w-full shrink-0 snap-center px-6 iphone-page:pl-[max(1.35rem,calc(env(safe-area-inset-left,0px)+10px+2vmin))] iphone-page:pr-[max(1.35rem,calc(env(safe-area-inset-right,0px)+8px+1.25vmin))] space-y-3 box-border iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)]"
                       >
-                        <div className="relative rounded-[1.375rem] iphone-page:rounded-[clamp(1.2rem,1rem+1.4vmin,2.1rem)] overflow-hidden min-h-[24rem] iphone-page:min-h-[clamp(17.5rem,48vmin,40rem)] shadow-[0_10px_32px_rgba(0,0,0,0.12)]">
+                        <div className="relative rounded-[1.375rem] iphone-page:rounded-[clamp(1.2rem,1rem+1.4vmin,2.1rem)] overflow-hidden min-h-[30rem] iphone-page:min-h-[clamp(22rem,58vmin,48rem)] shadow-[0_10px_32px_rgba(0,0,0,0.12)]">
                           <div
                             className="absolute inset-0"
                             style={{ background: slide.gradient }}
@@ -1973,11 +1973,11 @@ export default function DoePage() {
                               {slide.outside}
                             </span>
                             <span
-                              className="shrink-0 inline-flex h-16 w-16 iphone-page:h-[clamp(3.35rem,14vmin,5.65rem)] iphone-page:w-[clamp(3.35rem,14vmin,5.65rem)] items-center justify-center rounded-full border-2 border-gray-300/90 bg-white text-gray-900 shadow-[0_4px_14px_rgba(0,0,0,0.08)]"
+                              className="shrink-0 inline-flex h-14 w-14 iphone-page:h-[clamp(2.85rem,11.5vmin,4.85rem)] iphone-page:w-[clamp(2.85rem,11.5vmin,4.85rem)] items-center justify-center rounded-full border-2 border-gray-300/90 bg-white text-gray-900 shadow-[0_4px_14px_rgba(0,0,0,0.08)]"
                               aria-hidden
                             >
                               <svg
-                                className="w-8 h-8 iphone-page:w-[clamp(1.65rem,6.5vmin,2.85rem)] iphone-page:h-[clamp(1.65rem,6.5vmin,2.85rem)]"
+                                className="w-7 h-7 iphone-page:w-[clamp(1.4rem,5.35vmin,2.35rem)] iphone-page:h-[clamp(1.4rem,5.35vmin,2.35rem)]"
                                 viewBox="0 0 24 24"
                                 fill="none"
                                 stroke="currentColor"
