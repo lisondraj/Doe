@@ -1693,24 +1693,24 @@ export default function DoePage() {
                   className="shrink-0 px-6 iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] pb-[max(1rem,calc(env(safe-area-inset-bottom,0px)+10px))] pt-4 space-y-4 border-t border-[#ECEAE6]"
                 >
                   <div
-                    className="relative rounded-2xl overflow-hidden min-h-[5.5rem] shadow-[0_10px_32px_rgba(0,0,0,0.12)]"
+                    className="relative rounded-[1.375rem] iphone-page:rounded-3xl overflow-hidden min-h-[12rem] iphone-page:min-h-[15.5rem] shadow-[0_10px_32px_rgba(0,0,0,0.12)]"
                     style={{
                       background:
                         "radial-gradient(circle at 50% 36%, #E7A944 0%, #D49D4F 40%, #D2774C 70%, #1E343A 100%)",
                     }}
                   >
-                    <div className="absolute bottom-0 left-0 right-0 p-4 flex items-end justify-start">
-                      <div className={`flex items-center gap-2.5 text-white ${inter.className}`}>
+                    <div className="absolute bottom-0 left-0 right-0 p-5 iphone-page:p-7 flex items-end justify-start">
+                      <div className={`flex items-center gap-4 iphone-page:gap-5 text-white ${inter.className}`}>
                         <svg
-                          width={13}
-                          height={13}
                           viewBox="0 0 24 24"
-                          className="shrink-0 opacity-95 drop-shadow-sm"
+                          className="shrink-0 w-11 h-11 iphone-page:w-14 iphone-page:h-14 opacity-95 drop-shadow-sm"
                           aria-hidden
                         >
                           <path fill="currentColor" d="M8 5v14l11-7L8 5z" />
                         </svg>
-                        <span className="text-[15px] font-semibold tracking-tight">Inquisara</span>
+                        <span className="text-[1.625rem] iphone-page:text-[2.125rem] font-semibold tracking-tight leading-none">
+                          Inquisara
+                        </span>
                       </div>
                     </div>
                   </div>
