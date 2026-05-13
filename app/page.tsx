@@ -259,14 +259,23 @@ function vbBuildMilestonesU(scrollablePx: number, bandPx: number[]): VerticalBen
   };
 }
 
-/** Pinned stack height vs viewport (`top-[max(5.75rem,...)]`) and symmetric canvas vertical padding (#F7F6F3). Uses real root rem (`html font-size`). */
 function vbDocumentRootPx(): number {
   if (typeof document === "undefined") return 12.8;
   const n = parseFloat(getComputedStyle(document.documentElement).fontSize || "12.8");
   return Number.isFinite(n) && n > 0 ? n : 12.8;
 }
 
-function vbStickyRailsViewportPx(innerHeightPx: number): number {
+/** Visible viewport height for rail sizing (Safari excludes transient toolbar overlap better than `innerHeight`). */
+function vbResizeViewportHeightPx(): number {
+  if (typeof window === "undefined") return 800;
+  const vv = window.visualViewport;
+  const ih = window.innerHeight;
+  if (vv && vv.height >= 240 && vv.height <= ih + 12) return Math.round(vv.height);
+  return ih;
+}
+
+/** Pinned stack height vs viewport (`top-[max(5.75rem,...)]`) and symmetric canvas vertical padding (#F7F6F3). Uses real root rem (`html font-size`). */
+function vbStickyRailsViewportPx(innerHeightPx: number, innerWidthPx?: number): number {
   const vh = Math.max(innerHeightPx, 320);
   const rp = vbDocumentRootPx();
   const stickyInsetTopPx = Math.round(
@@ -274,7 +283,20 @@ function vbStickyRailsViewportPx(innerHeightPx: number): number {
   );
   /** Vertical canvas padding (~px-4 / ~1.5rem phone) deducted top + bottom inside pin. */
   const canvasGutterY = Math.round(1.25 * rp);
-  return Math.max(320, Math.round(vh - stickyInsetTopPx - 2 * canvasGutterY));
+  /** Sticky wrapper pt+pb around the rail stack (Tailwind `max-md:` vs md `pt-6`). */
+  const w = typeof innerWidthPx === "number" ? innerWidthPx : 1200;
+  const narrow = w < 768;
+  const stickyWrapPaddingPx = narrow
+    ? Math.round(Math.min(Math.max(vh * 0.096, 80), 112))
+    : Math.round(Math.min(Math.max(vh * 0.052, 44), 64));
+  /** Clears home indicator, Safari bottom chrome overlap, floating URL pill. */
+  const bottomChromePx = narrow
+    ? Math.round(Math.min(Math.max(vh * 0.048, 28), 56))
+    : Math.round(Math.min(Math.max(vh * 0.028, 16), 36));
+  return Math.max(
+    260,
+    Math.round(vh - stickyInsetTopPx - 2 * canvasGutterY - stickyWrapPaddingPx - bottomChromePx),
+  );
 }
 
 /** Matches `gap-3.5` (0.875rem) applied via `iphone-page:` on rail stack. */
@@ -282,7 +304,11 @@ function vbRailsInterGapPx(): number {
   return Math.round(0.875 * vbDocumentRootPx());
 }
 
-function vbComputeScrollMetrics(innerHeightPx: number, railsLayoutHeightPx?: number): VerticalBentoScrollMetrics {
+function vbComputeScrollMetrics(
+  innerHeightPx: number,
+  railsLayoutHeightPx?: number,
+  innerWidthPx?: number,
+): VerticalBentoScrollMetrics {
   const vh = Math.max(innerHeightPx, 320);
   const openPx = Math.round(Math.max(vh * 0.82, 400));
   const dwellPx = Math.round(Math.max(vh * 5.05, 2800));
@@ -293,7 +319,7 @@ function vbComputeScrollMetrics(innerHeightPx: number, railsLayoutHeightPx?: num
   const sectionMinPx = scrollablePx + vh;
   const anchor = Math.max(72, Math.min(140, Math.round(vh * 0.095)));
   const railsVhIn = railsLayoutHeightPx ?? vh;
-  const stickyColumnH = vbStickyRailsViewportPx(railsVhIn);
+  const stickyColumnH = vbStickyRailsViewportPx(Math.min(vh, railsVhIn), innerWidthPx);
   const milestones = vbBuildMilestonesU(scrollablePx, [
     openPx,
     dwellPx,
@@ -621,7 +647,9 @@ export default function DoePage() {
   /** Scroll-driven vertical bento (after workflow carousel) */
   const verticalBentoSectionRef = useRef<HTMLDivElement>(null);
   const [verticalBentoU, setVerticalBentoU] = useState(0);
-  const [vbMetrics, setVbMetrics] = useState<VerticalBentoScrollMetrics>(() => vbComputeScrollMetrics(800));
+  const [vbMetrics, setVbMetrics] = useState<VerticalBentoScrollMetrics>(() =>
+    vbComputeScrollMetrics(800, undefined, 1200),
+  );
   const [verticalBentoTitleOpacity, setVerticalBentoTitleOpacity] = useState(0);
   const [verticalBentoTitleTranslateY, setVerticalBentoTitleTranslateY] = useState(40);
   const [verticalBentoRailsOpacity, setVerticalBentoRailsOpacity] = useState(0);
@@ -745,21 +773,35 @@ export default function DoePage() {
   }, [mobileNavOpen, viewportWidth]);
 
   useLayoutEffect(() => {
+    const ih = typeof window !== "undefined" ? window.innerHeight : 800;
+    const vvH = typeof window !== "undefined" ? vbResizeViewportHeightPx() : 800;
     setVbMetrics(
-      vbComputeScrollMetrics(window.innerHeight, vbRailsEffectiveInnerHeight(window.innerWidth, window.innerHeight)),
+      vbComputeScrollMetrics(
+        vvH,
+        typeof window !== "undefined" ? vbRailsEffectiveInnerHeight(window.innerWidth, ih) : undefined,
+        typeof window !== "undefined" ? window.innerWidth : 1200,
+      ),
     );
   }, []);
 
   useEffect(() => {
-    const onResize = () =>
+    const onResize = () => {
+      const ih = window.innerHeight;
       setVbMetrics(
-        vbComputeScrollMetrics(window.innerHeight, vbRailsEffectiveInnerHeight(window.innerWidth, window.innerHeight)),
+        vbComputeScrollMetrics(
+          vbResizeViewportHeightPx(),
+          vbRailsEffectiveInnerHeight(window.innerWidth, ih),
+          window.innerWidth,
+        ),
       );
+    };
     window.addEventListener("resize", onResize);
     window.visualViewport?.addEventListener("resize", onResize);
+    window.visualViewport?.addEventListener("scroll", onResize);
     return () => {
       window.removeEventListener("resize", onResize);
       window.visualViewport?.removeEventListener("resize", onResize);
+      window.visualViewport?.removeEventListener("scroll", onResize);
     };
   }, []);
 
@@ -3566,7 +3608,7 @@ export default function DoePage() {
       {/* Vertical bento rails — pinned stack + scrub */}
       <div
         ref={verticalBentoSectionRef}
-        className={`relative z-10 w-full bg-[#F7F6F3] pt-4 pb-6 md:pt-4 md:pb-6 max-md:pt-7 max-md:pb-8 iphone-page:pt-9 iphone-page:pb-10 ${VBENTO_CANVAS_PADDING}`}
+        className={`relative z-10 w-full bg-[#F7F6F3] pt-4 pb-8 md:pt-4 md:pb-6 max-md:pt-7 max-md:pb-12 iphone-page:pt-9 iphone-page:pb-12 ${VBENTO_CANVAS_PADDING}`}
         style={{ minHeight: vbMetrics.sectionMinPx }}
       >
         <div
