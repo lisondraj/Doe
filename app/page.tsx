@@ -1692,23 +1692,50 @@ export default function DoePage() {
                 <div
                   className="shrink-0 px-6 iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] pb-[max(1rem,calc(env(safe-area-inset-bottom,0px)+10px))] pt-4 space-y-4 border-t border-[#ECEAE6]"
                 >
-                  <div
-                    className="relative rounded-[1.375rem] iphone-page:rounded-3xl overflow-hidden min-h-[24rem] iphone-page:min-h-[31rem] shadow-[0_10px_32px_rgba(0,0,0,0.12)]"
-                    style={{
-                      background:
-                        "radial-gradient(circle at 50% 36%, #E7A944 0%, #D49D4F 40%, #D2774C 70%, #1E343A 100%)",
-                    }}
-                  >
-                    <div className="absolute bottom-0 left-0 right-0 p-8 iphone-page:p-12 flex items-end justify-start">
+                  <div className="relative rounded-[1.375rem] iphone-page:rounded-3xl overflow-hidden min-h-[24rem] iphone-page:min-h-[31rem] shadow-[0_10px_32px_rgba(0,0,0,0.12)]">
+                    {/* Warm diagonal wash — distinct from prior radial */}
+                    <div
+                      className="absolute inset-0"
+                      style={{
+                        background:
+                          "linear-gradient(148deg, #f2c266 0%, #e39844 28%, #cf6b3f 58%, #b85238 78%, #1b353d 100%)",
+                      }}
+                      aria-hidden
+                    />
+                    {/* Fine line mesh overlay */}
+                    <div
+                      className="pointer-events-none absolute inset-0 opacity-[0.35] mix-blend-overlay"
+                      style={{
+                        backgroundImage: `
+                          repeating-linear-gradient(
+                            -36deg,
+                            rgba(255, 255, 255, 0.07) 0px,
+                            rgba(255, 255, 255, 0.07) 1px,
+                            transparent 1px,
+                            transparent 11px
+                          ),
+                          repeating-linear-gradient(
+                            54deg,
+                            rgba(14, 36, 42, 0.09) 0px,
+                            rgba(14, 36, 42, 0.09) 1px,
+                            transparent 1px,
+                            transparent 13px
+                          )
+                        `,
+                      }}
+                      aria-hidden
+                    />
+                    <div className="absolute bottom-0 left-0 right-0 z-[1] flex items-center justify-start p-8 iphone-page:p-12">
                       <div className={`flex items-center gap-7 iphone-page:gap-9 text-white ${inter.className}`}>
                         <svg
                           viewBox="0 0 24 24"
                           className="shrink-0 w-[5.5rem] h-[5.5rem] iphone-page:w-[7rem] iphone-page:h-[7rem] opacity-95 drop-shadow-sm"
                           aria-hidden
                         >
-                          <path fill="currentColor" d="M8 5v14l11-7L8 5z" />
+                          {/* Triangle: apex up, flat base along bottom */}
+                          <path fill="currentColor" d="M12 5 L22 19 L2 19 Z" />
                         </svg>
-                        <span className="text-[3.25rem] iphone-page:text-[4.25rem] font-semibold tracking-tight leading-none">
+                        <span className="text-[3.25rem] iphone-page:text-[4.25rem] font-medium tracking-tight leading-none">
                           Inquisara
                         </span>
                       </div>
@@ -1727,7 +1754,7 @@ export default function DoePage() {
                       });
                     }}
                   >
-                    <span className="text-[1.25rem] iphone-page:text-[1.75rem] font-medium text-gray-800 tracking-tight leading-snug">
+                    <span className="text-[1.375rem] iphone-page:text-[2rem] font-medium text-gray-800 tracking-tight leading-snug">
                       See what we&apos;re building
                     </span>
                     <span
@@ -1745,9 +1772,6 @@ export default function DoePage() {
                       >
                         <path d="M5 12h14M13 6l6 6-6 6" />
                       </svg>
-                    </span>
-                    <span className="text-[1.25rem] iphone-page:text-[1.75rem] font-medium text-gray-800 tracking-tight leading-snug">
-                      with
                     </span>
                   </button>
                 </div>
