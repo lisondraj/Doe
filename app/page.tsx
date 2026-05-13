@@ -265,13 +265,22 @@ function vbDocumentRootPx(): number {
   return Number.isFinite(n) && n > 0 ? n : 12.8;
 }
 
-/** Visible viewport height for rail sizing (Safari excludes transient toolbar overlap better than `innerHeight`). */
-function vbResizeViewportHeightPx(): number {
-  if (typeof window === "undefined") return 800;
+/**
+ * Visible viewport from `visualViewport` when sane (Safari toolbar / URL bar alignment across devices).
+ * Falls back to `innerWidth` / `innerHeight`. Sets logical px used for hero height + CSS vars `--app-vw` / `--app-vh`.
+ */
+function vbAppViewportPx(): { width: number; height: number } {
+  if (typeof window === "undefined") return { width: 1200, height: 800 };
   const vv = window.visualViewport;
+  const iw = window.innerWidth;
   const ih = window.innerHeight;
-  if (vv && vv.height >= 240 && vv.height <= ih + 12) return Math.round(vv.height);
-  return ih;
+  const w = vv && vv.width > 0 && vv.width <= iw + 16 ? Math.round(vv.width) : iw;
+  const h = vv && vv.height >= 240 && vv.height <= ih + 16 ? Math.round(vv.height) : ih;
+  return { width: Math.max(w, 280), height: Math.max(h, 320) };
+}
+
+function vbResizeViewportHeightPx(): number {
+  return vbAppViewportPx().height;
 }
 
 /** Pinned stack height vs viewport (`top-[max(5.75rem,...)]`) and symmetric canvas vertical padding (#F7F6F3). Uses real root rem (`html font-size`). */
@@ -716,6 +725,8 @@ export default function DoePage() {
   /** Phone-only UI path (nav sheet, carousel sizing); layout matches at every viewport via Tailwind `iphone-page:` + root zoom. */
   const isPhoneLayout = true;
   const [viewportWidth, setViewportWidth] = useState(1200);
+  /** Visible viewport (matches `visualViewport`); drives hero sizing + `--app-vh` / `--app-vw`. */
+  const [appViewport, setAppViewport] = useState({ width: 1200, height: 800 });
   /** Sliding cards on phone: logical px inside zoomed root (= visible px ÷ root zoom). */
   const [phoneSlideSize, setPhoneSlideSize] = useState({ w: 850, h: 1090 });
 
@@ -726,10 +737,19 @@ export default function DoePage() {
     return () => window.removeEventListener("resize", updateWidth);
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const measure = () => {
-      const vv = window.visualViewport;
-      const vw = vv?.width ?? window.innerWidth;
+      const { width: vw, height: vhVis } = vbAppViewportPx();
+      setAppViewport({ width: vw, height: vhVis });
+      if (typeof document !== "undefined") {
+        document.documentElement.style.setProperty("--app-vw", `${vw}px`);
+        document.documentElement.style.setProperty("--app-vh", `${vhVis}px`);
+        const vv = window.visualViewport;
+        if (vv) {
+          document.documentElement.style.setProperty("--app-vv-offset-top", `${Math.round(vv.offsetTop)}px`);
+        }
+      }
+
       const zoom = Math.max(0.38, doeforvcRootZoom(window.innerWidth));
       /** Inset so cards read slightly smaller than full viewport */
       const horizontalInset = 12;
@@ -887,11 +907,11 @@ export default function DoePage() {
   useEffect(() => {
     const handleScroll = () => {
       setScrollY(window.scrollY);
-      
+      const viewportHeight = vbAppViewportPx().height;
+
       // Calculate second section title fade-in and slide-up animation
       if (secondSectionRef.current) {
         const rect = secondSectionRef.current.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
         const sectionTop = rect.top;
         
         // Start animation when section enters viewport (when top is at 85% of viewport)
@@ -948,7 +968,6 @@ export default function DoePage() {
       // Calculate third section fade-in and slide-up animation
       if (thirdSectionRef.current) {
         const rect = thirdSectionRef.current.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
         const sectionTop = rect.top;
         
         // Start animation when section enters viewport (when top is at 80% of viewport)
@@ -980,7 +999,6 @@ export default function DoePage() {
       // Calculate carousel section fade-in and slide-up animation
       if (carouselSectionRef.current) {
         const rect = carouselSectionRef.current.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
         const sectionTop = rect.top;
         
         // Start animation when section enters viewport (when top is at 85% of viewport)
@@ -1012,7 +1030,6 @@ export default function DoePage() {
       // Calculate features section (Features built with you in mind) fade-in and slide-up animation
       if (featuresSectionRef.current) {
         const rect = featuresSectionRef.current.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
         const sectionTop = rect.top;
         
         // Start animation when section enters viewport (when top is at 85% of viewport)
@@ -1061,7 +1078,6 @@ export default function DoePage() {
       // Calculate new gradient section fade-in and slide-up animation
       if (newGradientSectionRef.current) {
         const rect = newGradientSectionRef.current.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
         const sectionTop = rect.top;
         
         // Start animation when section enters viewport (when top is at 85% of viewport)
@@ -1107,7 +1123,6 @@ export default function DoePage() {
       // Calculate knows section (Knows you before you know you) fade-in and slide-up animation
       if (knowsSectionRef.current) {
         const rect = knowsSectionRef.current.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
         const sectionTop = rect.top;
         
         // Start animation when section enters viewport (when top is at 85% of viewport)
@@ -1156,7 +1171,6 @@ export default function DoePage() {
       // Calculate build section (Build with us) fade-in and slide-up animation
       if (buildSectionRef.current) {
         const rect = buildSectionRef.current.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
         const sectionTop = rect.top;
         
         // Start animation when section enters viewport (when top is at 85% of viewport)
@@ -1205,7 +1219,6 @@ export default function DoePage() {
       // Vertical bento headline (bridge band under workflow carousel): fade/slide-in
       if (verticalBentoHeadlineRef.current) {
         const rect = verticalBentoHeadlineRef.current.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
         const sectionTop = rect.top;
         const startPoint = viewportHeight * 0.85;
         const endPoint = viewportHeight * 0.6;
@@ -1229,7 +1242,6 @@ export default function DoePage() {
       if (verticalBentoSectionRef.current) {
         const el = verticalBentoSectionRef.current;
         const rect = el.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
         const sectionTop = rect.top;
         const startPoint = viewportHeight * 0.85;
         const endPoint = viewportHeight * 0.6;
@@ -1783,7 +1795,7 @@ export default function DoePage() {
   };
 
   // Calculate if we should show shadow (in hero section, after scrolling a bit)
-  const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 1000;
+  const viewportHeight = typeof window !== "undefined" ? appViewport.height : 1000;
   const showNavShadow = scrollY > 100 && scrollY < viewportHeight * 0.9;
   const isSecondSection = scrollY >= viewportHeight * 0.9;
   const showBackgroundBox = scrollY >= viewportHeight * 0.85;
@@ -1810,6 +1822,13 @@ export default function DoePage() {
 
   const rootZoom = doeforvcRootZoom(viewportWidth);
   const applyRootZoom = Math.abs(rootZoom - 1) > 0.001;
+  /** Hero fills visible viewport after CSS `zoom`; carousel band matches former `172dvh` in logical px. */
+  const heroLogicalHeightPx = Math.round(
+    applyRootZoom ? appViewport.height / rootZoom : appViewport.height,
+  );
+  const carouselSectionMinLogicalPx = Math.round(
+    applyRootZoom ? (appViewport.height * 1.72) / rootZoom : appViewport.height * 1.72,
+  );
 
   return (
     <div
@@ -1824,14 +1843,10 @@ export default function DoePage() {
       {/* Hero Section with Dynamic Gradient */}
       <div
         className="relative overflow-hidden"
-        style={
-          applyRootZoom
-            ? {
-                minHeight: `calc(100dvh / ${rootZoom})`,
-                height: `calc(100dvh / ${rootZoom})`,
-              }
-            : { minHeight: "100dvh", height: "100dvh" }
-        }
+        style={{
+          minHeight: `${heroLogicalHeightPx}px`,
+          height: `${heroLogicalHeightPx}px`,
+        }}
       >
         {/* Hero with Gradient from Chart2 — extra scale on narrow viewports “zooms into” the gradient */}
         <div 
@@ -2397,7 +2412,7 @@ export default function DoePage() {
       <div className="w-full border-t border-[#E6E6E6]" />
 
       {/* Second Section — title upper third, carousel lower two-thirds */}
-      <div ref={secondSectionRef} className="min-h-[calc(100dvh+7rem)] relative z-10 flex flex-col pt-16 pb-28 iphone-page:min-h-[calc(100dvh+6rem)] iphone-page:pt-12 iphone-page:pb-[9.5rem]">
+      <div ref={secondSectionRef} className="min-h-[calc(var(--app-vh,100dvh)+7rem)] relative z-10 flex flex-col pt-16 pb-28 iphone-page:min-h-[calc(var(--app-vh,100dvh)+6rem)] iphone-page:pt-12 iphone-page:pb-[9.5rem]">
         <div className="flex-1 grid grid-rows-[3fr_9fr_auto] min-h-[85vh] iphone-page:min-h-[88dvh] w-full overflow-x-hidden">
           {/* Title band — slightly taller than 1:2 so headline has room */}
           <div
@@ -3821,11 +3836,7 @@ export default function DoePage() {
           opacity: carouselSectionOpacity,
           transform: `translateY(${carouselSectionTranslateY}px)`,
           transition: 'opacity 1.2s ease-out, transform 1.2s ease-out',
-          ...(applyRootZoom
-            ? {
-                minHeight: `calc((100dvh + 72dvh) / ${rootZoom})`,
-              }
-            : { minHeight: "172dvh" }),
+          minHeight: `${carouselSectionMinLogicalPx}px`,
         }}
       >
         <div className="absolute inset-0 pointer-events-none">

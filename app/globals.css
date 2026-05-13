@@ -3,6 +3,16 @@
 @tailwind utilities;
 
 /*
+ * Visible viewport vars — overridden from JS (`vbAppViewportPx`) using `visualViewport`
+ * so hero height + sections align across iPhone Safari toolbar states.
+ */
+:root {
+  --app-vw: 100vw;
+  --app-vh: 100dvh;
+  --app-vv-offset-top: 0px;
+}
+
+/*
  * /doeforvc — `.doeforvc-iphone-root` wraps the scaled phone-layout canvas (root `zoom`).
  * Restore full rem scale so typography stays readable after zoom.
  */
