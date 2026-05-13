@@ -1700,7 +1700,7 @@ export default function DoePage() {
       <div className="w-full border-t border-[#E6E6E6]" />
 
       {/* Second Section — title upper third, carousel lower two-thirds */}
-      <div ref={secondSectionRef} className="min-h-[calc(100dvh+7rem)] relative z-10 flex flex-col pt-16 pb-32 iphone-page:min-h-[calc(100dvh+6rem)] iphone-page:pt-12 iphone-page:pb-44">
+      <div ref={secondSectionRef} className="min-h-[calc(100dvh+7rem)] relative z-10 flex flex-col pt-16 pb-28 iphone-page:min-h-[calc(100dvh+6rem)] iphone-page:pt-12 iphone-page:pb-[9.5rem]">
         <div className="flex-1 grid grid-rows-[3fr_9fr] min-h-[85vh] iphone-page:min-h-[88dvh] w-full overflow-x-hidden">
           {/* Title band — slightly taller than 1:2 so headline has room */}
           <div
@@ -2921,7 +2921,7 @@ export default function DoePage() {
       {/* Blank Section with Grid Lines */}
       <div
         ref={carouselSectionRef}
-        className="w-full relative z-10 overflow-x-hidden mt-[4.75rem] iphone-page:mt-24"
+        className="w-full relative z-10 overflow-x-hidden mt-[3.5rem] iphone-page:mt-20"
         style={{
           opacity: carouselSectionOpacity,
           transform: `translateY(${carouselSectionTranslateY}px)`,
@@ -2970,21 +2970,21 @@ export default function DoePage() {
         {/* Headline + horizontal carousel + description */}
         <div className={`relative z-20 flex flex-col items-center w-full overflow-visible ${narrowHorizontalInset} pt-4 iphone-page:pt-6 pb-1`}>
           <p
-            className={`text-center text-gray-900 px-3 max-w-[min(100%,42rem)] ${oldStandardTT.className} leading-[1.06] text-[clamp(2.65rem,11.5vw,4rem)]`}
+            className={`text-center text-gray-900 w-full max-w-[min(100%,42rem)] ${oldStandardTT.className} leading-[1.05] text-[clamp(3.35rem,14vw,5.75rem)]`}
             style={{
               fontStyle: "italic",
               fontWeight: 400,
               paddingTop: "clamp(0.35rem, 1.5vw, 1rem)",
-              paddingBottom: "clamp(0.5rem, 2vw, 1.1rem)",
+              paddingBottom: "clamp(0.45rem, 1.8vw, 1rem)",
               overflow: "visible",
               textWrap: "balance",
             }}
           >
-            It&apos;s all here.
+            Doe
           </p>
 
           {/* Horizontal Agents / Franchises / Design … carousel */}
-          <div className="flex flex-row items-center justify-center gap-3 iphone-page:gap-5 w-full max-w-[min(100%,42rem)] px-3 pb-4 iphone-page:pb-5">
+          <div className="flex flex-row items-center justify-center gap-3 iphone-page:gap-5 w-full max-w-[min(100%,42rem)] pb-4 iphone-page:pb-5">
             <button
               type="button"
               aria-label="Previous category"
@@ -3137,7 +3137,7 @@ export default function DoePage() {
             ];
             const lines = descriptions[selectedWordIndex] ?? descriptions[0];
             return (
-              <div className="w-full flex justify-center pb-6 iphone-page:pb-8 px-3">
+              <div className="w-full flex justify-center pb-6 iphone-page:pb-8">
                 <div
                   key={selectedWordIndex}
                   className={`text-xl iphone-page:text-2xl text-gray-700 text-center max-w-2xl iphone-page:max-w-3xl leading-snug iphone-page:leading-relaxed ${inter.className}`}
@@ -3151,10 +3151,10 @@ export default function DoePage() {
             );
           })()}
         </div>
-        {/* Orange panel — full-width word-linked UI mockups */}
-        <div className="relative z-30 w-full pb-14 iphone-page:pb-16 pl-[max(1rem,env(safe-area-inset-left,0px))] pr-[max(1rem,env(safe-area-inset-right,0px))] -mt-2 iphone-page:-mt-3">
+        {/* Orange panel — word-linked UI mockups; horizontal inset matches second-section carousel */}
+        <div className={`relative z-30 w-full pb-14 iphone-page:pb-16 ${narrowHorizontalInset} -mt-2 iphone-page:-mt-3`}>
           <div
-            className="relative w-full min-h-[min(560px,62dvh)] rounded-2xl overflow-hidden shadow-[0_24px_70px_rgba(0,0,0,0.14)]"
+            className="relative w-full min-h-[min(520px,58dvh)] rounded-2xl overflow-hidden shadow-[0_24px_70px_rgba(0,0,0,0.14)]"
             style={{
               background: `radial-gradient(circle at 50% 36%, #E7A944 0%, #D49D4F 40%, #D2774C 70%, #1E343A 100%)`,
               borderRadius: '16px',
@@ -3510,7 +3510,8 @@ export default function DoePage() {
                   top: "auto",
                   left: "50%",
                   right: "auto",
-                  width: "min(calc(100% - 1.75rem), min(94vw, min(72dvh, 700px)))",
+                  /** Square mockup: width drives height via aspect-ratio */
+                  width: "min(100%, min(92vmin, min(72dvh, 560px)))",
                   height: "auto",
                   aspectRatio: "1",
                   borderRadius: "14px",
