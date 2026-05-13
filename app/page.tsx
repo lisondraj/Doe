@@ -263,7 +263,7 @@ export default function DoePage() {
     useRef<HTMLDivElement>(null),
     useRef<HTMLDivElement>(null),
   ];
-  /** Full fixed `<nav>` box (includes safe-area padding) — menu sheet `top` aligns to its bottom. */
+  /** Full fixed `<nav>` — menu sheet aligns to pixel bottom (no spacer gap). */
   const navBarRowRef = useRef<HTMLElement>(null);
   const [iphoneMenuTopPx, setIphoneMenuTopPx] = useState(88);
   const autoScrollPositionRef = useRef(0);
@@ -359,11 +359,10 @@ export default function DoePage() {
   }, [viewportWidth]);
 
   useLayoutEffect(() => {
-    const el = navBarRowRef.current;
-    if (!el) return;
+    const navEl = navBarRowRef.current;
+    if (!navEl) return;
     const update = () => {
-      /** Round (not ceil) so sheet sits flush under the fixed bar without a visible gap */
-      setIphoneMenuTopPx(Math.round(el.getBoundingClientRect().bottom));
+      setIphoneMenuTopPx(Math.floor(navEl.getBoundingClientRect().bottom));
     };
     update();
     let raf1 = 0;
@@ -374,7 +373,7 @@ export default function DoePage() {
       });
     }
     const ro = new ResizeObserver(update);
-    ro.observe(el);
+    ro.observe(navEl);
     window.addEventListener("resize", update);
     window.visualViewport?.addEventListener("resize", update);
     return () => {
@@ -1369,9 +1368,11 @@ export default function DoePage() {
             backgroundColor:
               isPhoneLayout && mobileNavOpen ? "#F7F6F3" : "transparent",
             borderBottom:
-              showBackgroundBox || isDropdownOpen || (isPhoneLayout && mobileNavOpen)
-                ? "1px solid #E6E6E6"
-                : "none",
+              isPhoneLayout && mobileNavOpen
+                ? "none"
+                : showBackgroundBox || isDropdownOpen
+                  ? "1px solid #E6E6E6"
+                  : "none",
             transition: "border-bottom 100ms ease-out, background-color 180ms ease-out",
           }}
           onMouseLeave={() => {
@@ -1599,20 +1600,15 @@ export default function DoePage() {
               onClick={() => setMobileNavOpen(false)}
             />
             {/*
-              Outer shell is pointer-events-none so taps hit the dim backdrop except on the
-              cream panel. Spacer under fixed nav matches measured height (no hero strip).
+              Sheet uses fixed top = measured nav bottom (no flex spacer). Cream matches nav when open (no bottom border on nav) so no seam/gap.
             */}
             <div
-              className="fixed inset-0 z-[45] flex flex-col pointer-events-none"
+              className="fixed left-0 right-0 bottom-0 z-[45] flex flex-col pointer-events-none"
+              style={{ top: iphoneMenuTopPx }}
               role="presentation"
             >
               <div
-                style={{ height: iphoneMenuTopPx, margin: 0, padding: 0 }}
-                className="shrink-0 block leading-none"
-                aria-hidden
-              />
-              <div
-                className="flex flex-col flex-1 min-h-0 bg-[#F7F6F3] shadow-[0_12px_40px_rgba(0,0,0,0.08)] pointer-events-auto"
+                className="flex flex-col flex-1 min-h-0 bg-[#F7F6F3] shadow-[0_12px_40px_rgba(0,0,0,0.08)] pointer-events-auto overflow-hidden"
                 role="dialog"
                 aria-modal="true"
                 aria-label="Site navigation"
@@ -1627,30 +1623,33 @@ export default function DoePage() {
                         <button
                           type="button"
                           aria-expanded={expanded}
-                          className={`w-full text-left font-normal tracking-tight text-gray-900 px-6 iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] py-5 active:bg-black/[0.04] transition-colors ${lora.className} text-4xl iphone-page:text-6xl iphone-page:leading-none`}
+                          className={`w-full text-left text-xl font-semibold tracking-[-0.02em] text-gray-900 px-6 iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] py-4 active:bg-black/[0.04] transition-colors ${inter.className}`}
                           onClick={() =>
                             setMobileNavExpandedKey((k) => (k === item ? null : item))
                           }
                         >
-                          {item}+
+                          {item}{" "}+
                         </button>
-                        {expanded && four.length > 0 && (
-                          <div className="border-t border-[#E6E6E6]/80 bg-black/[0.02] px-6 iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] pb-5 pt-3 space-y-1">
-                            {four.map((sub) => (
-                              <button
-                                key={sub.title}
-                                type="button"
-                                className={`w-full text-left rounded-xl px-4 py-3.5 text-[17px] font-medium text-gray-800 hover:bg-white/70 active:bg-white transition-colors ${inter.className}`}
-                                onClick={() => setMobileNavOpen(false)}
-                              >
-                                <span className="block">{sub.title}</span>
-                                <span className="block text-[13px] font-normal text-gray-500 mt-1 leading-snug">
-                                  {sub.desc}
-                                </span>
-                              </button>
-                            ))}
+                        <div
+                          className={`grid transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none ${expanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+                        >
+                          <div className="overflow-hidden min-h-0">
+                            {four.length > 0 && (
+                              <div className="border-t border-[#E6E6E6]/80 bg-black/[0.02] px-6 iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] pb-4 pt-2 flex flex-col gap-0.5">
+                                {four.map((sub) => (
+                                  <button
+                                    key={sub.title}
+                                    type="button"
+                                    className={`w-full text-left rounded-xl px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-white/70 active:bg-white transition-colors ${inter.className}`}
+                                    onClick={() => setMobileNavOpen(false)}
+                                  >
+                                    {sub.title}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
                           </div>
-                        )}
+                        </div>
                       </div>
                     );
                   })}
