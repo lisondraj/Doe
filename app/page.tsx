@@ -571,8 +571,6 @@ export default function DoePage() {
   const [verticalBentoRailsOpacity, setVerticalBentoRailsOpacity] = useState(0);
   const [verticalBentoRailsTranslateY, setVerticalBentoRailsTranslateY] = useState(40);
   const verticalBentoHeadlineRef = useRef<HTMLDivElement>(null);
-  /** Offset so bento scrub starts once stacked rails align to sticky top — headline scrolled past. */
-  const [vbHeadLeadPx, setVbHeadLeadPx] = useState(208);
   const secondSectionRef = useRef<HTMLDivElement>(null);
   const [secondSectionTitleOpacity, setSecondSectionTitleOpacity] = useState(0);
   const [secondSectionTitleTranslateY, setSecondSectionTitleTranslateY] = useState(40);
@@ -692,25 +690,6 @@ export default function DoePage() {
 
   useLayoutEffect(() => {
     setVbMetrics(vbComputeScrollMetrics(window.innerHeight));
-  }, []);
-
-  useLayoutEffect(() => {
-    const measure = () => {
-      const el = verticalBentoHeadlineRef.current;
-      if (!el) return;
-      const st = window.getComputedStyle(el);
-      const mb = parseFloat(st.marginBottom) || 0;
-      setVbHeadLeadPx(Math.max(120, Math.round(el.offsetHeight + mb + 10)));
-    };
-    measure();
-    const el = verticalBentoHeadlineRef.current;
-    const ro = new ResizeObserver(measure);
-    if (el) ro.observe(el);
-    window.addEventListener("resize", measure);
-    return () => {
-      ro.disconnect();
-      window.removeEventListener("resize", measure);
-    };
   }, []);
 
   useEffect(() => {
@@ -1111,7 +1090,30 @@ export default function DoePage() {
         }
       }
 
-      // Vertical bento: scroll timeline + headline/rails reveal (same timing as workflow section)
+      // Vertical bento headline (bridge band under workflow carousel): fade/slide-in
+      if (verticalBentoHeadlineRef.current) {
+        const rect = verticalBentoHeadlineRef.current.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const sectionTop = rect.top;
+        const startPoint = viewportHeight * 0.85;
+        const endPoint = viewportHeight * 0.6;
+        const distance = startPoint - endPoint;
+
+        if (sectionTop <= startPoint && sectionTop >= endPoint) {
+          const progress = (startPoint - sectionTop) / distance;
+          const clampedProgress = Math.min(Math.max(progress, 0), 1);
+          setVerticalBentoTitleOpacity(clampedProgress);
+          setVerticalBentoTitleTranslateY(40 * (1 - clampedProgress));
+        } else if (sectionTop < endPoint) {
+          setVerticalBentoTitleOpacity(1);
+          setVerticalBentoTitleTranslateY(0);
+        } else {
+          setVerticalBentoTitleOpacity(0);
+          setVerticalBentoTitleTranslateY(40);
+        }
+      }
+
+      // Vertical bento rails: staggered fade-in + scrub timeline (stack ref only)
       if (verticalBentoSectionRef.current) {
         const el = verticalBentoSectionRef.current;
         const rect = el.getBoundingClientRect();
@@ -1124,8 +1126,6 @@ export default function DoePage() {
         if (sectionTop <= startPoint && sectionTop >= endPoint) {
           const progress = (startPoint - sectionTop) / distance;
           const clampedProgress = Math.min(Math.max(progress, 0), 1);
-          setVerticalBentoTitleOpacity(clampedProgress);
-          setVerticalBentoTitleTranslateY(40 * (1 - clampedProgress));
           if (clampedProgress >= 0.6) {
             const railsProgress = (clampedProgress - 0.6) / 0.4;
             const clampedRails = Math.min(Math.max(railsProgress, 0), 1);
@@ -1136,20 +1136,16 @@ export default function DoePage() {
             setVerticalBentoRailsTranslateY(40);
           }
         } else if (sectionTop < endPoint) {
-          setVerticalBentoTitleOpacity(1);
-          setVerticalBentoTitleTranslateY(0);
           setVerticalBentoRailsOpacity(1);
           setVerticalBentoRailsTranslateY(0);
         } else {
-          setVerticalBentoTitleOpacity(0);
-          setVerticalBentoTitleTranslateY(40);
           setVerticalBentoRailsOpacity(0);
           setVerticalBentoRailsTranslateY(40);
         }
 
         const { scrollablePx, anchor } = vbMetrics;
         const sp = Math.max(scrollablePx, 1e-6);
-        const scrolled = Math.min(Math.max(-rect.top + anchor - vbHeadLeadPx, 0), sp);
+        const scrolled = Math.min(Math.max(-rect.top + anchor, 0), sp);
         const u = scrolled / sp;
         setVerticalBentoU((prev) => (Math.abs(prev - u) < 0.0012 ? prev : u));
       }
@@ -1160,7 +1156,7 @@ export default function DoePage() {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [vbMetrics, vbHeadLeadPx]);
+  }, [vbMetrics]);
 
   // Auto-slide using optimized requestAnimationFrame with hardware acceleration
   useEffect(() => {
@@ -2289,7 +2285,7 @@ export default function DoePage() {
 
       {/* Second Section — title upper third, carousel lower two-thirds */}
       <div ref={secondSectionRef} className="min-h-[calc(100dvh+7rem)] relative z-10 flex flex-col pt-16 pb-28 iphone-page:min-h-[calc(100dvh+6rem)] iphone-page:pt-12 iphone-page:pb-[9.5rem]">
-        <div className="flex-1 grid grid-rows-[3fr_9fr] min-h-[85vh] iphone-page:min-h-[88dvh] w-full overflow-x-hidden">
+        <div className="flex-1 grid grid-rows-[3fr_9fr_auto] min-h-[85vh] iphone-page:min-h-[88dvh] w-full overflow-x-hidden">
           {/* Title band — slightly taller than 1:2 so headline has room */}
           <div
             className={`flex flex-col justify-center min-h-0 px-4 py-14 iphone-page:pt-16 iphone-page:pb-9 ${narrowHorizontalInset}`}
@@ -3503,18 +3499,11 @@ export default function DoePage() {
             </div>
           </div>
           </div>
-        </div>
-      </div>
 
-      {/* Vertical bento — headline scrolls away; scrub starts when rails hit sticky top */}
-      <div
-        ref={verticalBentoSectionRef}
-        className="relative z-10 mt-[3.5rem] iphone-page:mt-20 w-full bg-[#F7F6F3]"
-        style={{ minHeight: vbMetrics.sectionMinPx }}
-      >
+        {/* Vertical bento headline — sits between workflow carousel band and rails below */}
         <div
           ref={verticalBentoHeadlineRef}
-          className={`w-full px-4 ${narrowHorizontalInset} pt-7 pb-3 iphone-page:pt-9 iphone-page:pb-2`}
+          className={`flex flex-col justify-center shrink-0 w-full px-4 ${narrowHorizontalInset} py-8 iphone-page:py-11 bg-[#F7F6F3]`}
         >
           <div className="mx-auto max-w-full text-center -translate-y-1 iphone-page:-translate-y-[0.28rem]">
             <div className="text-center iphone-page:mt-0 mb-0">
@@ -3532,7 +3521,15 @@ export default function DoePage() {
             </div>
           </div>
         </div>
+        </div>
+      </div>
 
+      {/* Vertical bento rails — pinned stack + scrub */}
+      <div
+        ref={verticalBentoSectionRef}
+        className="relative z-10 w-full bg-[#F7F6F3]"
+        style={{ minHeight: vbMetrics.sectionMinPx }}
+      >
         <div className="sticky top-[max(5.75rem,calc(env(safe-area-inset-top,0px)+4.5rem))] z-[5] pb-24 pt-2 iphone-page:pb-28 iphone-page:pt-3">
           <div className={`w-full ${narrowHorizontalInset}`}>
             <div
@@ -3583,7 +3580,7 @@ export default function DoePage() {
                       <div className="relative ml-0 h-full w-full">
                         <div className="absolute left-[13px] top-0 bottom-0 w-[3px] rounded-full bg-gray-900/[0.12]">
                           <div
-                            className="absolute bottom-0 left-0 right-0 rounded-full bg-gray-900/55"
+                            className="absolute top-0 left-0 right-0 rounded-full bg-gray-900/55"
                             style={{ height: `${Math.max(0, Math.min(1, localBar)) * 100}%` }}
                           />
                         </div>
