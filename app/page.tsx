@@ -64,31 +64,29 @@ const NAV_ITEMS = ["Features", "Security", "Students", "Company"] as const;
 /** Position (left/right) is applied via inline style — computed from slide scale so captions
  *  are always inside the visible card area even on portrait-phone where the inner 700px div overflows. */
 const slideCaptionWrap =
-  "absolute bottom-9 z-[5] flex flex-col items-start gap-2.5 pointer-events-auto max-[639px]:bottom-11";
+  "absolute bottom-9 z-[5] flex flex-col items-start gap-2.5 pointer-events-auto iphone-page:bottom-11";
 const slideCaptionBadge =
   "inline-flex max-w-[calc(100%-2px)] shrink-0 items-center rounded-full border border-white/95 bg-white/5 px-[14px] py-[7px] text-[17px] font-semibold leading-snug tracking-[-0.02em] text-white shadow-[0_2px_14px_rgba(0,0,0,0.14)]";
 const slideCaptionBody =
   "w-full min-w-0 max-w-[min(340px,calc(100%-4px))] text-left text-[15px] font-medium leading-[1.48] tracking-[-0.012em] text-white/[0.92] break-words [overflow-wrap:anywhere]";
 const slideCaptionFont = { fontFamily: "system-ui, -apple-system, sans-serif" } as const;
 
-/** Same horizontal inset as the fixed nav — keeps hero, headline band, and carousel on one vertical rhythm (≤639px). */
+/** Same horizontal inset as the fixed nav — hero, headline band, carousel (forced phone layout). */
 const narrowHorizontalInset =
-  "max-[639px]:pl-[max(1.5rem,env(safe-area-inset-left,0px))] max-[639px]:pr-[max(1.5rem,env(safe-area-inset-right,0px))]";
+  "iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))]";
 
 /**
- * Visual scale for the page root: keeps the legacy tight curve up to `blendFrom`, then
- * interpolates to 1 so widening the browser doesn’t snap at the phone/desktop breakpoint.
+ * Root `zoom` for the phone-layout canvas: readable shrink on narrow widths, then scales up
+ * proportionally as the viewport widens so the experience stays “iPhone UI” at every size.
  */
 function doeforvcRootZoom(innerWidthPx: number): number {
   const w = Math.max(280, innerWidthPx);
-  const curve = Math.min(1, Math.max(0.38, (w - 16) / 800));
-  const blendFrom = 639;
-  const blendEnd = 1200;
-  if (w <= blendFrom) return curve;
-  if (w >= blendEnd) return 1;
-  const z0 = Math.min(1, Math.max(0.38, (blendFrom - 16) / 800));
-  const t = (w - blendFrom) / (blendEnd - blendFrom);
-  return z0 + t * (1 - z0);
+  const pivot = 430;
+  const zPivot = Math.min(1, Math.max(0.38, (pivot - 16) / 800));
+  if (w <= pivot) {
+    return Math.min(1, Math.max(0.38, (w - 16) / 800));
+  }
+  return Math.min(3, zPivot * (w / pivot));
 }
 
 /**
@@ -319,30 +317,20 @@ export default function DoePage() {
   const [buildBoxesOpacity, setBuildBoxesOpacity] = useState(0);
   const [buildBoxesTranslateY, setBuildBoxesTranslateY] = useState(40);
 
-  /** Narrow phone layout (hamburger, portrait carousel); zoom can extend past this width. */
-  const [isPhoneLayout, setIsPhoneLayout] = useState(false);
+  /** Phone-only UI path (nav sheet, carousel sizing); layout matches at every viewport via Tailwind `iphone-page:` + root zoom. */
+  const isPhoneLayout = true;
   const [viewportWidth, setViewportWidth] = useState(1200);
   /** Sliding cards on phone: logical px inside zoomed root (= visible px ÷ root zoom). */
   const [phoneSlideSize, setPhoneSlideSize] = useState({ w: 850, h: 1090 });
 
   useEffect(() => {
-    /** Align with Tailwind `max-[639px]`. */
-    const mq = window.matchMedia("(max-width: 639px)");
-    const updateLayout = () => {
-      setViewportWidth(window.innerWidth);
-      setIsPhoneLayout(mq.matches);
-    };
-    updateLayout();
-    mq.addEventListener("change", updateLayout);
-    window.addEventListener("resize", updateLayout);
-    return () => {
-      mq.removeEventListener("change", updateLayout);
-      window.removeEventListener("resize", updateLayout);
-    };
+    const updateWidth = () => setViewportWidth(window.innerWidth);
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
   }, []);
 
   useEffect(() => {
-    if (!isPhoneLayout) return;
     const measure = () => {
       const vv = window.visualViewport;
       const vw = vv?.width ?? window.innerWidth;
@@ -366,22 +354,9 @@ export default function DoePage() {
       window.visualViewport?.removeEventListener("resize", measure);
       window.visualViewport?.removeEventListener("scroll", measure);
     };
-  }, [isPhoneLayout, viewportWidth]);
-
-  useEffect(() => {
-    if (!isPhoneLayout) return;
-    setActiveDropdown(null);
-  }, [isPhoneLayout]);
-
-  useEffect(() => {
-    if (!isPhoneLayout) return;
-    setIsEditingBox2Title(false);
-    setIsEditingBox2Description(false);
-    setSelectedReportBox(null);
-  }, [isPhoneLayout]);
+  }, [viewportWidth]);
 
   useLayoutEffect(() => {
-    if (!isPhoneLayout) return;
     const el = navBarRowRef.current;
     if (!el) return;
     const update = () => {
@@ -406,29 +381,25 @@ export default function DoePage() {
       window.removeEventListener("resize", update);
       window.visualViewport?.removeEventListener("resize", update);
     };
-  }, [isPhoneLayout, mobileNavOpen]);
+  }, [mobileNavOpen]);
 
   useEffect(() => {
-    if (!isPhoneLayout) setMobileNavOpen(false);
-  }, [isPhoneLayout]);
-
-  useEffect(() => {
-    if (!isPhoneLayout || !mobileNavOpen) return;
+    if (!mobileNavOpen) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = prev;
     };
-  }, [isPhoneLayout, mobileNavOpen]);
+  }, [mobileNavOpen]);
 
   useEffect(() => {
-    if (!isPhoneLayout || !mobileNavOpen) return;
+    if (!mobileNavOpen) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setMobileNavOpen(false);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [isPhoneLayout, mobileNavOpen]);
+  }, [mobileNavOpen]);
 
   useEffect(() => {
     let animationFrameId: number;
@@ -838,7 +809,7 @@ export default function DoePage() {
         cancelAnimationFrame(animationFrameId);
       }
     };
-  }, [isManualScroll, shouldStartSlidingAnimation, isSlidingPaused, isPhoneLayout, phoneSlideSize.w, phoneSlideSize.h]);
+  }, [isManualScroll, shouldStartSlidingAnimation, isSlidingPaused, phoneSlideSize.w, phoneSlideSize.h]);
 
   // Initialize box positions when animation starts
   useEffect(() => {
@@ -855,7 +826,7 @@ export default function DoePage() {
         boxRef.current.style.transform = `translate3d(${initialPos}px, 0, 0)`;
       }
     });
-  }, [shouldStartSlidingAnimation, isPhoneLayout, phoneSlideSize.w, phoneSlideSize.h]);
+  }, [shouldStartSlidingAnimation, phoneSlideSize.w, phoneSlideSize.h]);
 
   useEffect(() => {
     // Add bento expand and sliding animation styles
@@ -1291,12 +1262,12 @@ export default function DoePage() {
     showNavShadow && !isDropdownOpen && !hitsWhiteBox ? "0 2px 4px rgba(0, 0, 0, 0.1)" : "none";
 
   const rootZoom = doeforvcRootZoom(viewportWidth);
-  const applyRootZoom = rootZoom < 0.999;
+  const applyRootZoom = Math.abs(rootZoom - 1) > 0.001;
 
   return (
     <div
-      className={`relative overflow-x-hidden${isPhoneLayout || applyRootZoom ? " doeforvc-iphone-root" : ""}`}
-      data-doeforvc-view={isPhoneLayout ? "iphone" : "desktop"}
+      className="relative overflow-x-hidden doeforvc-iphone-root"
+      data-doeforvc-view="iphone"
       style={{
         backgroundColor: "#F7F6F3",
         ...(applyRootZoom ? { zoom: rootZoom } : {}),
@@ -1317,7 +1288,7 @@ export default function DoePage() {
       >
         {/* Hero with Gradient from Chart2 — extra scale on narrow viewports “zooms into” the gradient */}
         <div 
-          className="absolute inset-0 max-[639px]:scale-[1.22] max-[639px]:origin-[50%_45%]"
+          className="absolute inset-0 iphone-page:scale-[1.22] iphone-page:origin-[50%_45%]"
           style={{
             background: `
               radial-gradient(circle at center, #D49D4F 0%, #D2774C 18%, #BF593D 32%, #C88A5F 45%, #7B5C4B 55%, #8B6F47 65%, #6D5B41 72%, #5C4A3A 78%, #4A3D32 85%, #1E343A 95%, rgba(30, 52, 58, 0.6) 100%),
@@ -1385,7 +1356,7 @@ export default function DoePage() {
         {/* Navigation Bar */}
         <nav
           ref={navBarRowRef}
-          className="fixed top-0 left-0 right-0 z-50 max-[639px]:pt-[env(safe-area-inset-top,0px)]"
+          className="fixed top-0 left-0 right-0 z-50 iphone-page:pt-[env(safe-area-inset-top,0px)]"
           style={{ 
             /** Phone + open sheet: solid bar so safe-area + controls aren’t over transparent hero. */
             backgroundColor:
@@ -1397,7 +1368,7 @@ export default function DoePage() {
             transition: "border-bottom 100ms ease-out, background-color 180ms ease-out",
           }}
           onMouseLeave={() => {
-            if (!isPhoneLayout) setActiveDropdown(null);
+            setActiveDropdown(null);
           }}
         >
           {/* Unified background box for hover dropdown */}
@@ -1425,11 +1396,11 @@ export default function DoePage() {
           )}
           {/* Top bar */}
           <div
-            className="px-8 py-6 max-[639px]:px-6 max-[639px]:py-6 max-[639px]:pl-[max(1.5rem,env(safe-area-inset-left,0px))] max-[639px]:pr-[max(1.5rem,env(safe-area-inset-right,0px))] flex items-center relative z-10 max-[639px]:gap-2 justify-end"
+            className="px-8 py-6 iphone-page:px-6 iphone-page:py-6 iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] flex items-center relative z-10 iphone-page:gap-2 justify-end"
           >
             {/* Logo — opacity only (no width collapse) so it fades, not slides */}
             <h1
-              className={`absolute top-1/2 -translate-y-1/2 left-8 max-[639px]:left-[max(1.5rem,env(safe-area-inset-left,0px))] font-normal z-[1] min-w-0 whitespace-nowrap transition-opacity duration-500 ease-out ${lora.className} text-4xl max-[639px]:text-6xl max-[639px]:leading-none ${
+              className={`absolute top-1/2 -translate-y-1/2 left-8 iphone-page:left-[max(1.5rem,env(safe-area-inset-left,0px))] font-normal z-[1] min-w-0 whitespace-nowrap transition-opacity duration-500 ease-out ${lora.className} text-4xl iphone-page:text-6xl iphone-page:leading-none ${
                 showNavLogo ? "opacity-100" : "opacity-0 pointer-events-none"
               }`}
               style={
@@ -1441,7 +1412,7 @@ export default function DoePage() {
             </h1>
 
             {/* Desktop: center Navigation Links */}
-            <div className="hidden min-[640px]:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
+            <div className="hidden items-center gap-8 absolute left-1/2 -translate-x-1/2">
               {NAV_ITEMS.map((item) => (
                 <button
                   key={item}
@@ -1465,7 +1436,7 @@ export default function DoePage() {
             {/* Desktop: Login */}
             <a
               href="#"
-              className="hidden min-[640px]:inline-flex text-sm font-semibold px-6 py-2.5 rounded-md hover:opacity-90 transition-all duration-300 shrink-0 items-center"
+              className="hidden text-sm font-semibold px-6 py-2.5 rounded-md hover:opacity-90 transition-all duration-300 shrink-0 items-center"
               style={{
                 backgroundColor: loginButtonBg,
                 color: loginButtonText,
@@ -1478,7 +1449,7 @@ export default function DoePage() {
             {/* iPhone: menu (replaces center links + login) */}
             <button
               type="button"
-              className="min-[640px]:hidden flex items-center justify-center p-3 rounded-xl transition-colors active:bg-white/15"
+              className="flex items-center justify-center p-3 rounded-xl transition-colors active:bg-white/15"
               style={{ color: navTextColor }}
               aria-expanded={mobileNavOpen}
               aria-label={mobileNavOpen ? "Close navigation menu" : "Open navigation menu"}
@@ -1510,11 +1481,11 @@ export default function DoePage() {
             }}
           >
             {/* Top border line */}
-            <div className="mx-8 max-[639px]:mx-4 border-t border-gray-200 relative z-30" style={{ borderColor: '#E6E6E6' }} />
+            <div className="mx-8 iphone-page:mx-4 border-t border-gray-200 relative z-30" style={{ borderColor: '#E6E6E6' }} />
 
-            <div className="py-8 max-[639px]:py-4">
+            <div className="py-8 iphone-page:py-4">
               <div 
-                className={`max-w-[1400px] mx-auto px-8 max-[639px]:px-4 flex ${isPhoneLayout ? "flex-col gap-3" : ""}`}
+                className={`max-w-[1400px] mx-auto px-8 iphone-page:px-4 flex ${isPhoneLayout ? "flex-col gap-3" : ""}`}
                 style={{ gap: isPhoneLayout ? undefined : '24px', height: isPhoneLayout ? 'auto' : '144px' }}
                 onMouseLeave={() => setHoveredBox(null)}
               >
@@ -1607,7 +1578,7 @@ export default function DoePage() {
             </div>
 
             {/* Bottom border line */}
-            <div className="mx-8 max-[639px]:mx-4 border-b border-gray-200 relative z-30" style={{ borderColor: '#E6E6E6' }} />
+            <div className="mx-8 iphone-page:mx-4 border-b border-gray-200 relative z-30" style={{ borderColor: '#E6E6E6' }} />
           </div>
         </nav>
 
@@ -1654,11 +1625,11 @@ export default function DoePage() {
 
         {/* Hero Header - Centered, Contained in Gradient Circle */}
         <div
-          className={`absolute inset-0 z-20 flex items-center justify-center max-[639px]:pt-[env(safe-area-inset-top,0px)] max-[639px]:pb-[env(safe-area-inset-bottom,0px)] ${narrowHorizontalInset}`}
+          className={`absolute inset-0 z-20 flex items-center justify-center iphone-page:pt-[env(safe-area-inset-top,0px)] iphone-page:pb-[env(safe-area-inset-bottom,0px)] ${narrowHorizontalInset}`}
         >
-          <div className="max-w-[800px] mx-auto px-8 max-[639px]:px-0 text-center w-full">
+          <div className="max-w-[800px] mx-auto px-8 iphone-page:px-0 text-center w-full">
             <p
-              className={`font-normal leading-none tracking-tight mb-7 max-[639px]:mb-6 ${lora.className}`}
+              className={`font-normal leading-none tracking-tight mb-7 iphone-page:mb-6 ${lora.className}`}
               style={{
                 fontSize: "clamp(6.25rem, 28vw, 14rem)",
                 backgroundImage:
@@ -1673,13 +1644,13 @@ export default function DoePage() {
               Doe
             </p>
             <p
-              className="text-2xl max-[639px]:text-3xl font-medium text-white/90 text-center max-[639px]:px-0 px-2 tracking-tight flex flex-col items-center gap-1 max-[639px]:gap-1.5 max-[639px]:leading-snug leading-snug"
+              className="text-2xl iphone-page:text-3xl font-medium text-white/90 text-center iphone-page:px-0 px-2 tracking-tight flex flex-col items-center gap-1 iphone-page:gap-1.5 iphone-page:leading-snug leading-snug"
               style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
             >
-              <span className="block max-[639px]:max-w-[min(22ch,100%)]">
+              <span className="block iphone-page:max-w-[min(22ch,100%)]">
                 We&apos;re building the future of AI in
               </span>
-              <span className="block max-[639px]:max-w-[min(22ch,100%)]">
+              <span className="block iphone-page:max-w-[min(22ch,100%)]">
                 clinical practice and education.
               </span>
             </p>
@@ -1692,25 +1663,25 @@ export default function DoePage() {
       <div className="w-full border-t border-[#E6E6E6]" />
 
       {/* Second Section — title upper third, carousel lower two-thirds */}
-      <div ref={secondSectionRef} className="min-h-[calc(100dvh+7rem)] relative z-10 flex flex-col pt-16 pb-12 max-[639px]:min-h-[calc(100dvh+6rem)] max-[639px]:pt-12 max-[639px]:pb-10">
-        <div className="flex-1 grid grid-rows-[3fr_9fr] min-h-[85vh] max-[639px]:min-h-[88dvh] w-full overflow-x-hidden">
+      <div ref={secondSectionRef} className="min-h-[calc(100dvh+7rem)] relative z-10 flex flex-col pt-16 pb-12 iphone-page:min-h-[calc(100dvh+6rem)] iphone-page:pt-12 iphone-page:pb-10">
+        <div className="flex-1 grid grid-rows-[3fr_9fr] min-h-[85vh] iphone-page:min-h-[88dvh] w-full overflow-x-hidden">
           {/* Title band — slightly taller than 1:2 so headline has room */}
           <div
-            className={`flex flex-col justify-center min-h-0 px-4 py-14 max-[639px]:py-11 ${narrowHorizontalInset}`}
+            className={`flex flex-col justify-center min-h-0 px-4 py-14 iphone-page:py-11 ${narrowHorizontalInset}`}
           >
             <div className="text-center">
               <h1 
-                className={`flex flex-col items-center gap-2 md:gap-4 max-[639px]:gap-2 font-normal text-gray-900 tracking-tight ${lora.className}`}
+                className={`flex flex-col items-center gap-2 font-normal text-gray-900 tracking-tight ${lora.className}`}
                 style={{
                   opacity: secondSectionTitleOpacity,
                   transform: `translateY(${secondSectionTitleTranslateY}px)`,
                   transition: 'opacity 1.2s ease-out, transform 1.2s ease-out'
                 }}
               >
-                <span className="block leading-[1.04] text-7xl md:text-8xl lg:text-[8rem] xl:text-[9rem] max-[639px]:text-[clamp(2.65rem,11.5vw,4rem)] max-[639px]:leading-[1.06]">
+                <span className="block leading-[1.06] text-[clamp(2.65rem,11.5vw,4rem)]">
                   Agents for every
                 </span>
-                <span className="block leading-[1.04] text-7xl md:text-8xl lg:text-[8rem] xl:text-[9rem] max-[639px]:text-[clamp(2.65rem,11.5vw,4rem)] max-[639px]:leading-[1.06]">
+                <span className="block leading-[1.06] text-[clamp(2.65rem,11.5vw,4rem)]">
                   workflow.
                 </span>
               </h1>
@@ -1719,11 +1690,11 @@ export default function DoePage() {
 
           {/* Carousel band (~bottom two-thirds) */}
           <div
-            className={`flex flex-col justify-center min-h-0 overflow-x-hidden overflow-y-visible pb-10 max-[639px]:pb-8 ${narrowHorizontalInset}`}
+            className={`flex flex-col justify-center min-h-0 overflow-x-hidden overflow-y-visible pb-10 iphone-page:pb-8 ${narrowHorizontalInset}`}
           >
           {/* Sliding squares container */}
           <div 
-            className="relative max-[639px]:mx-auto max-[639px]:w-full" 
+            className="relative iphone-page:mx-auto iphone-page:w-full" 
             style={{ 
               height: slideBoxH, 
               display: 'flex', 
@@ -1736,7 +1707,7 @@ export default function DoePage() {
             {/* Pause button - top right corner */}
             <button
               onClick={() => setIsSlidingPaused(!isSlidingPaused)}
-              className="absolute top-4 right-4 max-[639px]:top-4 max-[639px]:right-4 z-30 p-2 rounded-full hover:bg-gray-100 transition-colors"
+              className="absolute top-4 right-4 iphone-page:top-4 iphone-page:right-4 z-30 p-2 rounded-full hover:bg-gray-100 transition-colors"
               style={{
                 opacity: slidingBoxesOpacity,
               }}
@@ -1756,7 +1727,7 @@ export default function DoePage() {
             {/* Navigation Arrows */}
             {showLeftArrow && (
               <button 
-                className="absolute left-8 max-[639px]:left-4 z-20 transition-opacity duration-200 hover:opacity-70"
+                className="absolute left-8 iphone-page:left-4 z-20 transition-opacity duration-200 hover:opacity-70"
                 onClick={handleSlideRight}
                 style={{
                   filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))'
@@ -1769,7 +1740,7 @@ export default function DoePage() {
             )}
             {showRightArrow && (
               <button 
-                className="absolute right-8 max-[639px]:right-4 z-20 transition-opacity duration-200 hover:opacity-70"
+                className="absolute right-8 iphone-page:right-4 z-20 transition-opacity duration-200 hover:opacity-70"
                 onClick={handleSlideLeft}
                 style={{
                   filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))'
@@ -1783,7 +1754,7 @@ export default function DoePage() {
             
             {/* Sliding squares container - relative positioning for absolute children */}
             <div 
-              className="relative max-[639px]:rounded-2xl"
+              className="relative iphone-page:rounded-2xl"
               style={{ 
                 width: '100%',
                 height: slideBoxH,
@@ -1798,7 +1769,7 @@ export default function DoePage() {
                   <div
                     key={`box-${i}`}
                     ref={slidingBoxRefs[i]}
-                    className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl max-[639px]:shadow-md"
+                    className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl iphone-page:shadow-md"
                     style={{
                       width: slideBoxW,
                       height: slideBoxH,
@@ -1948,7 +1919,7 @@ export default function DoePage() {
                   <div
                     key={`box-${i}`}
                     ref={slidingBoxRefs[i]}
-                    className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl max-[639px]:shadow-md"
+                    className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl iphone-page:shadow-md"
                     style={{
                       width: slideBoxW,
                       height: slideBoxH,
@@ -2020,7 +1991,7 @@ export default function DoePage() {
                     </div>
                     
                     {/* Save and Undo buttons - top right corner, styled like tab switcher */}
-                    {!isPhoneLayout && (selectedReportBox !== null || isEditingBox2Title || isEditingBox2Description) && (
+                    {(selectedReportBox !== null || isEditingBox2Title || isEditingBox2Description) && (
                       <div
                         className="absolute top-6 right-6 flex items-center z-20"
                         style={{
@@ -2179,17 +2150,7 @@ export default function DoePage() {
                     </div>
 
                     <div className={slideCaptionWrap} style={{ left: captionLeft700, right: captionRight700 }}>
-                      {isPhoneLayout ? (
-                        <>
-                          <span className={`${slideCaptionBadge} select-none`} style={slideCaptionFont}>
-                            Report Results
-                          </span>
-                          <p className={`${slideCaptionBody} select-none`} style={slideCaptionFont}>
-                            Stack imaging and labs in one view. Verify findings and route follow-ups without switching systems.
-                          </p>
-                        </>
-                      ) : (
-                        <>
+                      <>
                           {isEditingBox2Title ? (
                         <input
                           type="text"
@@ -2300,7 +2261,6 @@ export default function DoePage() {
                         </p>
                       )}
                         </>
-                      )}
                     </div>
                     </div>
                   </div>
@@ -2313,7 +2273,7 @@ export default function DoePage() {
                   <div
                     key={`box-${i}`}
                     ref={slidingBoxRefs[i]}
-                    className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl max-[639px]:shadow-md"
+                    className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl iphone-page:shadow-md"
                     style={{
                       width: slideBoxW,
                       height: slideBoxH,
@@ -2469,7 +2429,7 @@ export default function DoePage() {
                 <div
                   key={`box-${i}`}
                   ref={slidingBoxRefs[i]}
-                  className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl max-[639px]:shadow-md"
+                  className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl iphone-page:shadow-md"
                   style={{
                     width: slideBoxW,
                     height: slideBoxH,
@@ -2614,7 +2574,7 @@ export default function DoePage() {
                   <div
                     key={`box-${i}`}
                     ref={slidingBoxRefs[i]}
-                    className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl max-[639px]:shadow-md"
+                    className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl iphone-page:shadow-md"
                     style={{
                       width: slideBoxW,
                       height: slideBoxH,
@@ -2742,7 +2702,7 @@ export default function DoePage() {
                   <div
                     key={`box-${i}`}
                     ref={slidingBoxRefs[i]}
-                    className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl max-[639px]:shadow-md"
+                    className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl iphone-page:shadow-md"
                     style={{
                       width: slideBoxW,
                       height: slideBoxH,
@@ -2968,10 +2928,10 @@ export default function DoePage() {
           }}
         />
         {/* Left-aligned Title and Description */}
-        <div className="absolute top-0 left-0 z-20 px-8 md:px-16 lg:px-24" style={{ overflow: 'visible', paddingTop: '40vh' }}>
+        <div className={`absolute top-0 left-0 right-0 z-20 ${narrowHorizontalInset}`} style={{ overflow: 'visible', paddingTop: '40vh' }}>
           <div className="max-w-2xl">
             <h1 
-              className={`text-6xl md:text-7xl lg:text-8xl text-gray-900 mb-8 ${oldStandardTT.className}`}
+              className={`text-[clamp(2rem,7vw,3rem)] text-gray-900 mb-8 ${oldStandardTT.className}`}
               style={{
                 fontStyle: 'italic',
                 fontWeight: 400,
@@ -2979,7 +2939,8 @@ export default function DoePage() {
                 display: 'flex',
                 alignItems: 'baseline',
                 flexWrap: 'nowrap',
-                width: 'calc(50vw - 6rem)',
+                width: '100%',
+                maxWidth: 'min(340px, 100%)',
               }}
             >
               Doe{'\u00A0'}
@@ -3147,10 +3108,10 @@ export default function DoePage() {
           ];
           const lines = descriptions[selectedWordIndex] ?? descriptions[0];
           return (
-            <div className="absolute left-0 z-20 px-8 md:px-16 lg:px-24" style={{ width: '50%', textAlign: 'right', bottom: '10vh' }}>
+            <div className={`absolute left-0 right-0 z-20 ${narrowHorizontalInset}`} style={{ width: '100%', textAlign: 'right', bottom: '10vh' }}>
               <div
                 key={selectedWordIndex}
-                className={`text-lg md:text-xl text-gray-700 ${inter.className}`}
+                className={`text-lg text-gray-700 ml-auto max-w-md ${inter.className}`}
                 style={{ fontWeight: 500, animation: 'fade-in 0.35s ease-out' }}
               >
                 {lines.map((line, i) => <p key={i}>{line}</p>)}
@@ -3622,8 +3583,8 @@ export default function DoePage() {
             transition: 'opacity 1.2s ease-out, transform 1.2s ease-out',
           }}
         >
-          <div className="grid grid-cols-1 lg:grid-cols-[1.04fr_0.96fr] gap-0 items-stretch min-h-[78vh] w-full min-w-0">
-            <div className="min-w-0 w-full lg:order-2 px-8 md:px-16 lg:px-24 lg:pl-16 flex flex-col min-h-[78vh] relative overflow-visible">
+          <div className="grid grid-cols-1 gap-0 items-stretch min-h-[78vh] w-full min-w-0">
+            <div className={`min-w-0 w-full flex flex-col min-h-[56vh] relative overflow-visible py-10 order-1 ${narrowHorizontalInset}`}>
               {/* Carousel-matching grid overlay */}
               <div className="absolute inset-0 pointer-events-none">
                 <svg className="absolute inset-0 pointer-events-none w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -3661,7 +3622,7 @@ export default function DoePage() {
                     Clinical Decision Support
                   </div>
                   <h1
-                    className={`text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-gray-900 tracking-[-0.02em] w-full min-w-0 break-words ${inter.className}`}
+                    className={`text-[clamp(1.85rem,6vw,2.35rem)] text-gray-900 tracking-[-0.02em] w-full min-w-0 break-words ${inter.className}`}
                     style={{ fontWeight: 300, lineHeight: 1.1 }}
                   >
                     AI that helps
@@ -3672,7 +3633,7 @@ export default function DoePage() {
               </div>
 
               <p
-                className={`mt-auto w-full text-lg md:text-xl text-gray-700 text-right relative z-10 ${inter.className}`}
+                className={`mt-auto w-full text-lg text-gray-700 text-right relative z-10 ${inter.className}`}
                 style={{ fontWeight: 500, lineHeight: 1.7 }}
               >
                 Doe brings together the chart, the signal, and the next step so clinical decisions feel faster, clearer, and still fully human.
@@ -3680,7 +3641,7 @@ export default function DoePage() {
             </div>
 
             {/* Three-card fan stack - wrapped in gradient box */}
-            <div className="hidden lg:flex items-center justify-center relative lg:order-1 w-full min-h-[78vh] min-w-0">
+            <div className={`flex items-center justify-center relative order-2 w-full min-h-[52vh] min-w-0 py-8 ${narrowHorizontalInset}`}>
               <div
                 className="relative overflow-hidden z-20 w-full h-full min-h-[78vh]"
                 style={{

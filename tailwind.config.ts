@@ -19,9 +19,11 @@ const config: Config = {
   },
   plugins: [
     plugin(({ addVariant }) => {
-      /** Optional: mirrors narrow layout (≤639px) for html[data-layout]; page uses max-[639px] / min-[640px] in markup. */
+      /** Legacy hooks if html[data-layout] is set elsewhere */
       addVariant("layout-phone", `[data-layout="phone"] &`);
       addVariant("layout-desktop", `[data-layout="desktop"] &`);
+      /** Forces phone/iPhone breakpoints even on wide viewports (see layout.tsx data-doeforvc-always-phone). */
+      addVariant("iphone-page", 'html[data-doeforvc-always-phone="true"] &');
     }),
   ],
 };

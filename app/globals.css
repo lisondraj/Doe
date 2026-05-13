@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /*
- * /doeforvc — `.doeforvc-iphone-root` applies while the page uses root zoom (narrow → mid widths).
+ * /doeforvc — `.doeforvc-iphone-root` wraps the scaled phone-layout canvas (root `zoom`).
  * Restore full rem scale so typography stays readable after zoom.
  */
 html:has(.doeforvc-iphone-root) {
