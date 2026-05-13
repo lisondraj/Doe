@@ -1473,9 +1473,6 @@ export default function DoePage() {
     return `hsl(${225 + shift}, 80%, ${65 + shift * 0.3}%)`; // Deep purple-blue (lighter)
   };
 
-  /** Breathing modulation for hero multi-stop gradient (ties into existing RAF loop). */
-  const heroMeshPulse = 0.93 + Math.sin(colorShift * Math.PI / 50) * 0.07;
-
   // Sliding box scroll functions — card step uses portrait dimensions on iPhone
   const slideBoxW = isPhoneLayout ? phoneSlideSize.w : 760;
   const slideBoxH = isPhoneLayout ? phoneSlideSize.h : 760;
@@ -1892,40 +1889,18 @@ export default function DoePage() {
           height: `${heroLogicalHeightPx}px`,
         }}
       >
-        {/* Hero — five-layer Doe palette (gold / amber / coral / browns / slate) + flowing lines */}
+        {/* Hero with Gradient from Chart2 — extra scale on narrow viewports “zooms into” the gradient */}
         <div 
           className="absolute inset-0 iphone-page:scale-[1.22] iphone-page:origin-[50%_45%]"
           style={{
             background: `
-              linear-gradient(${gradientAngle}deg,
-                rgba(255, 244, 218, ${0.22 * heroMeshPulse}) 0%,
-                transparent 27%,
-                transparent 73%,
-                rgba(30, 52, 58, ${0.28 * heroMeshPulse}) 100%
-              ),
-              radial-gradient(ellipse 120% 94% at 50% -10%,
-                rgba(231, 169, 68, ${0.62 * heroMeshPulse}) 0%,
-                rgba(252, 224, 168, ${0.34 * heroMeshPulse}) 40%,
-                transparent 56%
-              ),
-              radial-gradient(ellipse 102% 96% at -12% 50%,
-                rgba(210, 119, 76, ${0.74 * heroMeshPulse}) 0%,
-                rgba(191, 89, 61, ${0.38 * heroMeshPulse}) 44%,
-                transparent 52%
-              ),
-              radial-gradient(ellipse 98% 90% at 112% 40%,
-                rgba(212, 157, 79, ${0.68 * heroMeshPulse}) 0%,
-                rgba(231, 169, 68, ${0.32 * heroMeshPulse}) 46%,
-                transparent 51%
-              ),
-              radial-gradient(ellipse 86% 76% at 50% 118%,
-                rgba(30, 52, 58, ${0.94}) 0%,
-                rgba(109, 91, 65, ${0.52 * heroMeshPulse}) 32%,
-                rgba(92, 74, 58, ${0.28 * heroMeshPulse}) 46%,
-                transparent 49%
-              )
+              radial-gradient(circle at center, #D49D4F 0%, #D2774C 18%, #BF593D 32%, #C88A5F 45%, #7B5C4B 55%, #8B6F47 65%, #6D5B41 72%, #5C4A3A 78%, #4A3D32 85%, #1E343A 95%, rgba(30, 52, 58, 0.6) 100%),
+              radial-gradient(ellipse 60% 60% at 0% 0%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
+              radial-gradient(ellipse 60% 60% at 100% 0%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
+              radial-gradient(ellipse 60% 60% at 0% 100%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
+              radial-gradient(ellipse 60% 60% at 100% 100%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%)
             `,
-            filter: 'saturate(1.18)',
+            filter: 'saturate(1.15)',
           }}
         >
           {/* Grain texture overlay */}
@@ -1934,58 +1909,51 @@ export default function DoePage() {
             style={{
               backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E")`,
               backgroundSize: '200px 200px',
-              opacity: 0.72,
+              opacity: 1,
               mixBlendMode: 'overlay',
             }}
           />
-          {/* Soft vignette — keeps typography readable */}
+          {/* Center brightness reduction overlay */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
-              background:
-                'radial-gradient(circle at 50% 46%, rgba(30, 52, 58, 0.13) 0%, rgba(74, 61, 50, 0.06) 42%, transparent 60%)',
+              background: 'radial-gradient(circle at center, rgba(0, 0, 0, 0.15) 0%, transparent 60%)',
             }}
           />
-          {/* Flowing iso-lines + faint diagonal scaffold */}
-          <div
-            className="absolute inset-0 pointer-events-none overflow-hidden"
-            style={{
-              opacity: 0.42,
-              transform: `rotate(${gradientAngle * 0.04}deg)`,
-              transformOrigin: '50% 48%',
-            }}
-          >
-            <svg
-              className="absolute inset-0 h-full w-full text-white"
-              xmlns="http://www.w3.org/2000/svg"
-              preserveAspectRatio="none"
-              viewBox="0 0 800 800"
-              aria-hidden
-            >
+          {/* Grid lines overlay */}
+          <div className="absolute inset-0 pointer-events-none">
+            <svg className="absolute inset-0 pointer-events-none w-full h-full" xmlns="http://www.w3.org/2000/svg">
               <defs>
-                <linearGradient id="heroHeroFlowStroke" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="rgba(255,236,214,0)" />
-                  <stop offset="35%" stopColor="rgba(255,248,235,0.45)" />
-                  <stop offset="70%" stopColor="rgba(255,236,214,0.16)" />
-                  <stop offset="100%" stopColor="rgba(255,236,214,0)" />
-                </linearGradient>
-                <pattern id="heroHeroFineDash" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform={`rotate(${28 + gradientAngle * 0.02})`}>
-                  <path d="M 0 14 L 14 0" fill="none" stroke="rgba(255,243,220,0.11)" strokeWidth="0.55" />
+                <pattern id="gridPattern" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
+                  <path d="M 0 0 L 80 0 M 0 0 L 0 80" fill="none" stroke="#999999" strokeWidth="0.5" opacity="0.15" />
+                  <circle cx="0" cy="0" r="1" fill="#999999" opacity="0.25" />
+                  <circle cx="80" cy="0" r="1" fill="#999999" opacity="0.25" />
+                  <circle cx="0" cy="80" r="1" fill="#999999" opacity="0.25" />
+                  <circle cx="80" cy="80" r="1" fill="#999999" opacity="0.25" />
                 </pattern>
               </defs>
-              <rect width="800" height="800" fill="url(#heroHeroFineDash)" opacity="0.85" />
-              <g fill="none" stroke="url(#heroHeroFlowStroke)" strokeWidth="0.85" strokeLinecap="round">
-                <path d="M -40 620 Q 180 520 380 420 T 840 220" opacity="0.9" />
-                <path d="M -60 680 Q 200 560 420 460 T 860 260" opacity="0.72" />
-                <path d="M -30 540 Q 220 460 440 340 T 820 140" opacity="0.55" />
-                <path d="M 820 660 Q 560 520 340 400 T -60 260" opacity="0.65" />
-                <path d="M 780 720 Q 520 580 280 460 T -80 320" opacity="0.48" />
-              </g>
-              <g fill="none" stroke="rgba(255,243,220,0.15)" strokeWidth="0.45" opacity="0.85">
-                <path d="M 120 -20 Q 260 200 180 420 T 240 840" />
-                <path d="M 640 -40 Q 520 240 600 460 T 520 840" />
-              </g>
+              <rect width="100%" height="100%" fill="url(#gridPattern)" />
             </svg>
+            <div 
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                transform: 'perspective(1200px) translateZ(-200px) rotateX(75deg)',
+                transformStyle: 'preserve-3d',
+              }}
+            >
+              <svg className="absolute inset-0 pointer-events-none w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <pattern id="gridPattern2" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
+                    <path d="M 0 0 L 80 0 M 0 0 L 0 80" fill="none" stroke="#999999" strokeWidth="0.5" opacity="0.15" />
+                    <circle cx="0" cy="0" r="1" fill="#999999" opacity="0.25" />
+                    <circle cx="80" cy="0" r="1" fill="#999999" opacity="0.25" />
+                    <circle cx="0" cy="80" r="1" fill="#999999" opacity="0.25" />
+                    <circle cx="80" cy="80" r="1" fill="#999999" opacity="0.25" />
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#gridPattern2)" />
+              </svg>
+            </div>
           </div>
         </div>
         {/* Navigation Bar */}
