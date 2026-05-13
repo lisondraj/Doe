@@ -203,6 +203,135 @@ const slideCaptionFont = { fontFamily: "system-ui, -apple-system, sans-serif" } 
 const narrowHorizontalInset =
   "iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))]";
 
+/** Scroll-driven vertical bento (between carousel and gradient hero). */
+const VB_CLOSED_EXPAND = 0.06;
+const VB_INACTIVE_OPACITY = 0.22;
+
+function vbSmoothstep01(t: number): number {
+  const x = Math.min(Math.max(t, 0), 1);
+  return x * x * (3 - 2 * x);
+}
+
+type VerticalBentoMilestonesU = {
+  uOpenEnd: number;
+  uDw0End: number;
+  uSwap01End: number;
+  uDw1End: number;
+  uSwap12End: number;
+  uDw2End: number;
+  uExitEnd: number;
+};
+
+type VerticalBentoScrollMetrics = {
+  vh: number;
+  scrollablePx: number;
+  /** Section outer min-height in px (includes one viewport of “pin” slack). */
+  sectionMinPx: number;
+  anchor: number;
+  stickyColumnH: number;
+  milestones: VerticalBentoMilestonesU;
+};
+
+function vbBuildMilestonesU(scrollablePx: number, bandPx: number[]): VerticalBentoMilestonesU {
+  let acc = 0;
+  const sp = Math.max(scrollablePx, 1e-6);
+  const parts = [...bandPx];
+  const next = () => {
+    const px = parts.shift() ?? 0;
+    acc += px;
+    return acc / sp;
+  };
+  return {
+    uOpenEnd: next(),
+    uDw0End: next(),
+    uSwap01End: next(),
+    uDw1End: next(),
+    uSwap12End: next(),
+    uDw2End: next(),
+    uExitEnd: next(),
+  };
+}
+
+function vbComputeScrollMetrics(innerHeightPx: number): VerticalBentoScrollMetrics {
+  const vh = Math.max(innerHeightPx, 320);
+  const openPx = Math.round(Math.max(vh * 0.82, 400));
+  const dwellPx = Math.round(Math.max(vh * 5.05, 2800));
+  const swapPx = Math.round(Math.max(vh * 0.5, 360));
+  const exitPx = Math.round(Math.max(vh * 0.72, 420));
+  const tailPx = Math.round(Math.max(vh * 0.22, 160));
+  const scrollablePx = openPx + dwellPx + swapPx + dwellPx + swapPx + dwellPx + exitPx + tailPx;
+  const sectionMinPx = scrollablePx + vh;
+  const anchor = Math.max(72, Math.min(140, Math.round(vh * 0.095)));
+  const stickyPad = 96;
+  const stickyColumnH = Math.max(320, Math.round(vh - anchor - stickyPad));
+  const milestones = vbBuildMilestonesU(scrollablePx, [
+    openPx,
+    dwellPx,
+    swapPx,
+    dwellPx,
+    swapPx,
+    dwellPx,
+    exitPx,
+    tailPx,
+  ]);
+  return { vh, scrollablePx, sectionMinPx, anchor, stickyColumnH, milestones };
+}
+
+function vbDeriveRails(
+  uIn: number,
+  ms: VerticalBentoMilestonesU
+): { expand: [number, number, number]; opacity: [number, number, number] } {
+  const u = Math.min(Math.max(uIn, 0), 1);
+  const CLO = VB_CLOSED_EXPAND;
+
+  const segUp = (a: number, b: number): number => {
+    if (b <= a) return 1;
+    if (u <= a) return 0;
+    if (u >= b) return 1;
+    return vbSmoothstep01((u - a) / (b - a));
+  };
+  const segDn = (a: number, b: number): number => {
+    if (b <= a) return 0;
+    if (u <= a) return 1;
+    if (u >= b) return 0;
+    return 1 - vbSmoothstep01((u - a) / (b - a));
+  };
+
+  let e0 = CLO;
+  if (u <= ms.uOpenEnd) e0 = CLO + (1 - CLO) * segUp(0, ms.uOpenEnd);
+  else if (u <= ms.uDw0End) e0 = 1;
+  else if (u <= ms.uSwap01End) e0 = CLO + (1 - CLO) * segDn(ms.uDw0End, ms.uSwap01End);
+  else e0 = CLO;
+
+  let e1 = CLO;
+  if (u <= ms.uDw0End) e1 = CLO;
+  else if (u <= ms.uSwap01End) e1 = CLO + (1 - CLO) * segUp(ms.uDw0End, ms.uSwap01End);
+  else if (u <= ms.uDw1End) e1 = 1;
+  else if (u <= ms.uSwap12End) e1 = CLO + (1 - CLO) * segDn(ms.uDw1End, ms.uSwap12End);
+  else e1 = CLO;
+
+  let e2 = CLO;
+  if (u <= ms.uDw1End) e2 = CLO;
+  else if (u <= ms.uSwap12End) e2 = CLO + (1 - CLO) * segUp(ms.uDw1End, ms.uSwap12End);
+  else if (u <= ms.uDw2End) e2 = 1;
+  else if (u <= ms.uExitEnd) e2 = CLO + (1 - CLO) * segDn(ms.uDw2End, ms.uExitEnd);
+  else e2 = CLO;
+
+  const op = (e: number): number => {
+    const denom = Math.max(1 - CLO, 1e-6);
+    const t = vbSmoothstep01((e - CLO) / denom);
+    return VB_INACTIVE_OPACITY + t * (1 - VB_INACTIVE_OPACITY);
+  };
+
+  return { expand: [e0, e1, e2], opacity: [op(e0), op(e1), op(e2)] };
+}
+
+function vbRailHeightPx(exp: number, collapsedPx: number, expandedMaxPx: number): number {
+  const denom = Math.max(1 - VB_CLOSED_EXPAND, 1e-6);
+  const t = Math.min(Math.max((exp - VB_CLOSED_EXPAND) / denom, 0), 1);
+  return collapsedPx + t * (expandedMaxPx - collapsedPx);
+}
+
 /**
  * Root `zoom` for the phone-layout canvas: readable shrink on narrow widths, then scales up
  * proportionally as the viewport widens so the experience stays “iPhone UI” at every size.
@@ -405,9 +534,10 @@ export default function DoePage() {
   const thirdSectionRef = useRef<HTMLDivElement>(null);
   const [thirdSectionOpacity, setThirdSectionOpacity] = useState(0);
   const [thirdSectionTranslateY, setThirdSectionTranslateY] = useState(40);
-  /** Scroll-scrubbed vertical bento between carousel and third (gradient) section */
+  /** Scroll-driven vertical bento (gradient-only rails) between carousel and third section */
   const verticalBentoSectionRef = useRef<HTMLDivElement>(null);
-  const [verticalBentoExpandProgress, setVerticalBentoExpandProgress] = useState(0);
+  const [verticalBentoU, setVerticalBentoU] = useState(0);
+  const [vbMetrics, setVbMetrics] = useState<VerticalBentoScrollMetrics>(() => vbComputeScrollMetrics(800));
   const secondSectionRef = useRef<HTMLDivElement>(null);
   const [secondSectionTitleOpacity, setSecondSectionTitleOpacity] = useState(0);
   const [secondSectionTitleTranslateY, setSecondSectionTitleTranslateY] = useState(40);
@@ -524,6 +654,20 @@ export default function DoePage() {
       window.visualViewport?.removeEventListener("resize", update);
     };
   }, [mobileNavOpen, viewportWidth]);
+
+  useLayoutEffect(() => {
+    setVbMetrics(vbComputeScrollMetrics(window.innerHeight));
+  }, []);
+
+  useEffect(() => {
+    const onResize = () => setVbMetrics(vbComputeScrollMetrics(window.innerHeight));
+    window.addEventListener("resize", onResize);
+    window.visualViewport?.addEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.visualViewport?.removeEventListener("resize", onResize);
+    };
+  }, []);
 
   useEffect(() => {
     if (!mobileNavOpen) return;
@@ -913,19 +1057,15 @@ export default function DoePage() {
         }
       }
 
-      // Vertical bento: first strip grows with scroll while this tall section crosses the viewport
+      // Vertical bento: timeline open → ~5× viewport-height dwell → swap (×3) + exit tail
       if (verticalBentoSectionRef.current) {
         const el = verticalBentoSectionRef.current;
         const rect = el.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
-        const scrollSpan = Math.max(el.offsetHeight - viewportHeight + 140, viewportHeight * 0.92);
-        const travel = -(rect.top) + viewportHeight * 0.12;
-        const linear = scrollSpan <= 0 ? (rect.top <= viewportHeight * 0.2 ? 1 : 0) : travel / scrollSpan;
-        let p = Math.min(Math.max(linear, 0), 1);
-        p = 1 - Math.pow(1 - p, 1.12);
-        setVerticalBentoExpandProgress((prev) =>
-          Math.abs(prev - p) < 0.004 ? prev : p
-        );
+        const { scrollablePx, anchor } = vbMetrics;
+        const sp = Math.max(scrollablePx, 1e-6);
+        const scrolled = Math.min(Math.max(-rect.top + anchor, 0), sp);
+        const u = scrolled / sp;
+        setVerticalBentoU((prev) => (Math.abs(prev - u) < 0.0012 ? prev : u));
       }
     };
 
@@ -934,7 +1074,7 @@ export default function DoePage() {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [vbMetrics]);
 
   // Auto-slide using optimized requestAnimationFrame with hardware acceleration
   useEffect(() => {
@@ -3876,180 +4016,46 @@ export default function DoePage() {
       </div>
       </div>
 
-      {/* Vertical bento — three stacked rails; scrub scroll to expand the first */}
+      {/* Vertical bento — gradient-only rails: scroll open → ~5×viewport dwell → next */}
       <div
         ref={verticalBentoSectionRef}
         className="relative z-10 w-full bg-[#F7F6F3]"
-        style={{ minHeight: "max(220vh, 1680px)" }}
+        style={{ minHeight: vbMetrics.sectionMinPx }}
       >
         <div className="sticky top-[max(5.75rem,calc(env(safe-area-inset-top,0px)+4.5rem))] z-[5] pb-24 pt-8 iphone-page:pb-28 iphone-page:pt-10">
           <div className={`w-full px-4 ${narrowHorizontalInset}`}>
-            <div className="mx-auto flex w-full max-w-[min(100%,42rem)] flex-col gap-4 iphone-page:gap-3.5">
-              <div
-                className={`relative overflow-hidden rounded-2xl ring-1 ring-black/[0.06] shadow-[0_14px_40px_rgba(0,0,0,0.07)] transition-[min-height,box-shadow] duration-150 ease-[cubic-bezier(0.25,0.5,0.25,1)] ${lora.className}`}
-                style={{
-                  minHeight: `max(7rem, calc(${6.5 + verticalBentoExpandProgress * 61}vmin))`,
-                  background:
-                    "linear-gradient(164deg, #fff7eb 0%, #f4d09a 22%, #d4824a 48%, #8b3f2f 74%, #1f2329 100%)",
-                }}
-              >
-                <div
-                  aria-hidden
-                  className="pointer-events-none absolute inset-0 rounded-2xl opacity-[0.22]"
-                  style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-                    backgroundSize: "180px 180px",
-                    mixBlendMode: "overlay",
-                  }}
-                />
-                <div className="relative flex flex-col gap-6 p-6 iphone-page:p-[1.375rem]" style={{ color: "#1f140d" }}>
-                  <div className="space-y-1">
-                    <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.18em]" style={{ opacity: 0.72 }}>
-                      Live canvas
-                    </p>
-                    <h2 className="text-[clamp(1.5rem,5.2vmin,2.125rem)] font-normal tracking-tight leading-[1.1]">
-                      Practice overview
-                    </h2>
-                    <p
-                      className="max-w-[36ch] text-[0.945rem] font-medium leading-snug"
-                      style={{ fontFamily: "system-ui,-apple-system,sans-serif", opacity: 0.88 }}
-                    >
-                      Placeholder runway for ward throughput, payer tasks, and day-of snapshots—expands as you scroll.
-                    </p>
-                  </div>
+            <div className="mx-auto w-full max-w-[min(100%,42rem)]">
+              {(() => {
+                const { expand, opacity } = vbDeriveRails(verticalBentoU, vbMetrics.milestones);
+                const gapPx = 16;
+                const usable = Math.max(vbMetrics.stickyColumnH - gapPx * 2, 220);
+                const collapsedPx = Math.max(68, Math.min(90, Math.round(usable * 0.108)));
+                const expandedMax = Math.max(collapsedPx + 88, usable - 2 * collapsedPx);
+                const backgrounds: [string, string, string] = [
+                  "linear-gradient(164deg, #fff7eb 0%, #f4d09a 22%, #d4824a 48%, #8b3f2f 74%, #1f2329 100%)",
+                  "linear-gradient(148deg, #e4f8f8 0%, #7dbebe 42%, #1e4a52 92%)",
+                  "linear-gradient(152deg, #f8ecff 0%, #bea2e8 38%, #4a3768 100%)",
+                ];
+                return (
                   <div
-                    className="flex flex-wrap gap-3"
-                    style={{ fontFamily: "system-ui,-apple-system,sans-serif" }}
+                    className="flex flex-col gap-4 iphone-page:gap-3.5"
+                    style={{ height: vbMetrics.stickyColumnH }}
                   >
-                    {[
-                      { label: "32 open", muted: false },
-                      { label: "Auth queue", muted: false },
-                      { label: "+6 since 9am", muted: true },
-                    ].map((chip) => (
-                      <span
-                        key={chip.label}
-                        className="rounded-full px-4 py-1.5 text-[0.8125rem] font-semibold backdrop-blur-sm"
-                        style={{
-                          border: "1px solid rgba(255,255,255,0.42)",
-                          background: chip.muted ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.52)",
-                          color: chip.muted ? "rgba(37,29,21,0.78)" : "#1a1510",
-                        }}
-                      >
-                        {chip.label}
-                      </span>
-                    ))}
-                  </div>
-                  <div
-                    className="mt-auto hidden gap-4 rounded-xl p-5 sm:grid"
-                    style={{
-                      gridTemplateColumns: "1.1fr 1fr",
-                      background: "rgba(22,26,31,0.18)",
-                      border: "1px solid rgba(255,255,255,0.2)",
-                      fontFamily: "system-ui,-apple-system,sans-serif",
-                      opacity: 0.4 + verticalBentoExpandProgress * 0.6,
-                      transform: `translateY(${4 * (1 - verticalBentoExpandProgress)}px)`,
-                      transition: "opacity 0.2s ease, transform 0.2s ease",
-                    }}
-                  >
-                    <div className="space-y-4">
-                      <div className="h-32 rounded-xl bg-black/12" />
-                      <div className="space-y-2">
-                        <div className="h-5 w-[68%] max-w-[12rem] rounded-md bg-black/35" />
-                        <div className="h-3 w-[94%] rounded-md bg-black/28" />
-                        <div className="h-3 w-[74%] rounded-md bg-black/22" />
-                      </div>
-                    </div>
-                    <div className="flex flex-col justify-between rounded-xl bg-white/12 px-6 py-5">
-                      <div className="space-y-7">
-                        <div className="flex items-center gap-6">
-                          <div className="h-28 w-[6px] shrink-0 rounded-full bg-black/42" />
-                          <div className="flex flex-1 flex-col gap-2">
-                            {[1.1, 0.78, 0.66, 0.44].map((w, idx) => (
-                              <div
-                                key={`t-${idx}-${w}`}
-                                className="h-9 rounded-lg bg-black/38"
-                                style={{ width: `${100 * w}%` }}
-                              />
-                            ))}
-                          </div>
-                          <div className="hidden lg:block h-[7.5rem] w-[6px] shrink-0 rounded-full bg-black/28" />
-                        </div>
-                        <div className="flex items-center gap-4">
-                          <div className="h-28 w-[6px] shrink-0 rounded-full bg-black/42" />
-                          <div className="flex flex-1 flex-wrap gap-[0.875rem]" style={{ maxWidth: "100%" }}>
-                            {[0.94, 0.7, 0.58, 0.44, 0.36].map((w, idx) => (
-                              <div
-                                key={`b-${idx}-${w}`}
-                                className="h-[1.0625rem] rounded-md bg-black/26"
-                                style={{ width: `min(100%,${100 * w}%)`, minWidth: "4.75rem", maxWidth: "11rem" }}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                className={`relative overflow-hidden rounded-2xl ring-1 ring-black/[0.05] shadow-sm ${lora.className}`}
-                style={{
-                  minHeight: "6rem",
-                  opacity: 0.36,
-                  background: "linear-gradient(148deg, #e4f8f8 0%, #7dbebe 42%, #1e4a52 92%)",
-                }}
-              >
-                <div className="relative flex min-h-[6rem] flex-col justify-center gap-2 p-6 iphone-page:p-5">
-                  <p className="text-[1.0625rem] font-normal tracking-tight text-[#063239] mix-blend-multiply opacity-95">
-                    Intake pacing
-                  </p>
-                  <div className="space-y-3" style={{ fontFamily: "system-ui,-apple-system,sans-serif" }}>
-                    {[0.92, 0.74, 0.58].map((w, i) => (
+                    {([0, 1, 2] as const).map((i) => (
                       <div
-                        key={`intake-placeholder-${i}`}
-                        className="h-[0.6875rem] rounded-full bg-[#063239]/44"
-                        style={{ width: `${100 * w}%` }}
+                        key={i}
+                        aria-hidden
+                        className="w-full shrink-0 overflow-hidden rounded-2xl ring-1 ring-black/[0.06]"
+                        style={{
+                          height: vbRailHeightPx(expand[i], collapsedPx, expandedMax),
+                          opacity: opacity[i],
+                          background: backgrounds[i],
+                        }}
                       />
                     ))}
                   </div>
-                </div>
-              </div>
-
-              <div
-                className={`relative overflow-hidden rounded-2xl ring-1 ring-black/[0.05] shadow-sm ${lora.className}`}
-                style={{
-                  minHeight: "6rem",
-                  opacity: 0.34,
-                  background: "linear-gradient(152deg, #f8ecff 0%, #bea2e8 38%, #4a3768 100%)",
-                }}
-              >
-                <div className="relative flex min-h-[6rem] items-center gap-8 p-6 iphone-page:p-5">
-                  <div className="flex -space-x-2.5" aria-hidden style={{ opacity: 0.65 }}>
-                    {["#4b2d61", "#5c3f78", "#6d558f"].map((c) => (
-                      <span key={c} className="h-12 w-12 shrink-0 rounded-[1.375rem]" style={{ border: `2px solid rgba(248,246,253,0.55)`, background: c }} />
-                    ))}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-[1.0625rem] font-normal tracking-tight text-[#2f1f43] opacity-92">
-                      Care team pulses
-                    </p>
-                    <p
-                      className="mt-1 line-clamp-2 text-[0.84375rem] font-medium opacity-76"
-                      style={{ fontFamily: "system-ui,-apple-system,sans-serif" }}
-                    >
-                      Stub for shared threads, escalation hints, and on-call deltas—distinct from nearby sections.
-                    </p>
-                  </div>
-                  <span
-                    aria-hidden
-                    className="hidden shrink-0 rounded-full border border-[#321e45]/48 px-6 py-2 text-[0.75rem] font-semibold uppercase tracking-[0.12em] mix-blend-multiply lg:inline"
-                    style={{ fontFamily: "system-ui,-apple-system,sans-serif" }}
-                  >
-                    Later
-                  </span>
-                </div>
-              </div>
+                );
+              })()}
             </div>
           </div>
         </div>
