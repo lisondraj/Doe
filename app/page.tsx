@@ -1,7 +1,7 @@
 "use client";
 
 import { Lora, Inter } from "next/font/google";
-import { useState, useEffect, useLayoutEffect, useRef, type HTMLAttributes } from "react";
+import { useState, useEffect, useLayoutEffect, useRef, type CSSProperties, type HTMLAttributes } from "react";
 
 const lora = Lora({
   subsets: ["latin"],
@@ -15,14 +15,94 @@ const inter = Inter({
 
 type MobileNavFooterShape = "triangle" | "circle" | "square";
 
+type MobileNavFooterLineOverlay = {
+  backgroundImage: string;
+  opacity: number;
+  mixBlendMode?: CSSProperties["mixBlendMode"];
+};
+
 const MOBILE_NAV_FOOTER_SLIDES: ReadonlyArray<{
   boxTitle: string;
   outside: string;
   shape: MobileNavFooterShape;
+  date: string;
+  gradient: string;
+  lineOverlay: MobileNavFooterLineOverlay;
 }> = [
-  { boxTitle: "Inquisara", outside: "Meet the Founders", shape: "triangle" },
-  { boxTitle: "Doe Ecosystem", outside: "The Future of Medicine", shape: "circle" },
-  { boxTitle: "For Students", outside: "Doe Education", shape: "square" },
+  {
+    boxTitle: "Inquisara",
+    outside: "Meet the Founders",
+    shape: "triangle",
+    date: "March 12, 2026",
+    gradient:
+      "linear-gradient(142deg, #f0b24a 0%, #e08a3c 32%, #c45a32 58%, #7a3028 82%, #132428 100%)",
+    lineOverlay: {
+      backgroundImage: `
+        repeating-linear-gradient(
+          -40deg,
+          rgba(255, 255, 255, 0.08) 0px,
+          rgba(255, 255, 255, 0.08) 1px,
+          transparent 1px,
+          transparent 14px
+        )`,
+      opacity: 0.42,
+      mixBlendMode: "overlay",
+    },
+  },
+  {
+    boxTitle: "Doe Ecosystem",
+    outside: "The Future of Medicine",
+    shape: "circle",
+    date: "April 28, 2026",
+    gradient:
+      "radial-gradient(120% 90% at 12% 8%, #facc6b 0%, #e8924a 35%, #b84a36 62%, #2d3840 92%, #0f171c 100%)",
+    lineOverlay: {
+      backgroundImage: `
+        repeating-linear-gradient(
+          0deg,
+          rgba(20, 30, 44, 0.15) 0px,
+          rgba(20, 30, 44, 0.15) 1px,
+          transparent 1px,
+          transparent 18px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.05) 0px,
+          rgba(255, 255, 255, 0.05) 1px,
+          transparent 1px,
+          transparent 22px
+        )`,
+      opacity: 0.38,
+      mixBlendMode: "soft-light",
+    },
+  },
+  {
+    boxTitle: "For Students",
+    outside: "Doe Education",
+    shape: "square",
+    date: "June 3, 2026",
+    gradient:
+      "linear-gradient(18deg, #d9f0ff 0%, #7ec8e8 18%, #3d8ab8 45%, #c45d2e 72%, #3a1810 100%)",
+    lineOverlay: {
+      backgroundImage: `
+        repeating-linear-gradient(
+          125deg,
+          rgba(255, 255, 255, 0.12) 0px,
+          rgba(255, 255, 255, 0.12) 1px,
+          transparent 1px,
+          transparent 8px
+        ),
+        repeating-linear-gradient(
+          35deg,
+          rgba(60, 40, 30, 0.11) 0px,
+          rgba(60, 40, 30, 0.11) 1px,
+          transparent 1px,
+          transparent 11px
+        )`,
+      opacity: 0.33,
+      mixBlendMode: "multiply",
+    },
+  },
 ];
 
 function MobileNavFooterShapeIcon({
@@ -36,9 +116,10 @@ function MobileNavFooterShapeIcon({
     className ??
     "shrink-0 w-[5.5rem] h-[5.5rem] iphone-page:w-[7rem] iphone-page:h-[7rem] opacity-95 drop-shadow-sm";
   if (shape === "triangle") {
+    /* Upward triangle inscribed in a square viewBox (same footprint as circle/square icons) */
     return (
       <svg viewBox="0 0 24 24" className={cn} aria-hidden>
-        <path fill="currentColor" d="M12 5 L22 19 L2 19 Z" />
+        <path fill="currentColor" d="M12 2.5 L21.5 21.5 L2.5 21.5 Z" />
       </svg>
     );
   }
@@ -451,6 +532,22 @@ export default function DoePage() {
 
   useEffect(() => {
     if (!mobileNavOpen) setMobileNavFooterSlide(0);
+  }, [mobileNavOpen]);
+
+  useEffect(() => {
+    if (!mobileNavOpen) return;
+    const id = window.setInterval(() => {
+      const el = mobileNavFooterCarouselRef.current;
+      if (!el) return;
+      const w = el.clientWidth;
+      if (w <= 0) return;
+      const len = MOBILE_NAV_FOOTER_SLIDES.length;
+      const i = Math.min(len - 1, Math.max(0, Math.round(el.scrollLeft / w)));
+      const next = (i + 1) % len;
+      el.scrollTo({ left: next * w, behavior: "smooth" });
+      setMobileNavFooterSlide(next);
+    }, 4000);
+    return () => window.clearInterval(id);
   }, [mobileNavOpen]);
 
   useEffect(() => {
@@ -1767,35 +1864,41 @@ export default function DoePage() {
                         <div className="relative rounded-[1.375rem] iphone-page:rounded-3xl overflow-hidden min-h-[24rem] iphone-page:min-h-[31rem] shadow-[0_10px_32px_rgba(0,0,0,0.12)]">
                           <div
                             className="absolute inset-0"
-                            style={{
-                              background:
-                                "linear-gradient(132deg, #f0be5a 0%, #eba256 22%, #d4723e 52%, #9d3f2f 74%, #152a31 100%)",
-                            }}
+                            style={{ background: slide.gradient }}
                             aria-hidden
                           />
                           <div
-                            className="pointer-events-none absolute inset-0 opacity-[0.32] mix-blend-soft-light"
+                            className="pointer-events-none absolute inset-0"
                             style={{
-                              backgroundImage: `
-                              repeating-linear-gradient(
-                                -28deg,
-                                rgba(255, 255, 255, 0.065) 0px,
-                                rgba(255, 255, 255, 0.065) 1px,
-                                transparent 1px,
-                                transparent 13px
-                              ),
-                              repeating-linear-gradient(
-                                62deg,
-                                rgba(255, 255, 255, 0.04) 0px,
-                                rgba(255, 255, 255, 0.04) 1px,
-                                transparent 1px,
-                                transparent 9px
-                              )
-                            `,
+                              opacity: slide.lineOverlay.opacity,
+                              mixBlendMode: slide.lineOverlay.mixBlendMode,
+                              backgroundImage: slide.lineOverlay.backgroundImage,
                             }}
                             aria-hidden
                           />
-                          <div className="absolute bottom-0 left-0 right-0 z-[1] flex items-center justify-start p-8 iphone-page:p-12">
+                          <div className="absolute left-0 right-0 top-0 z-[4] flex justify-center gap-2.5 px-5 pt-4 pb-1">
+                            {MOBILE_NAV_FOOTER_SLIDES.map((s, dotI) => (
+                              <button
+                                key={s.boxTitle}
+                                type="button"
+                                aria-label={`Show ${s.boxTitle}`}
+                                aria-current={mobileNavFooterSlide === dotI ? "true" : undefined}
+                                className={`h-2.5 shrink-0 rounded-full transition-[width,background-color,opacity] duration-200 shadow-sm ${
+                                  mobileNavFooterSlide === dotI
+                                    ? "w-8 bg-white opacity-95"
+                                    : "w-2.5 bg-white/45 hover:bg-white/70"
+                                }`}
+                                onClick={() => {
+                                  const el = mobileNavFooterCarouselRef.current;
+                                  if (!el) return;
+                                  const step = el.clientWidth;
+                                  el.scrollTo({ left: dotI * step, behavior: "smooth" });
+                                  setMobileNavFooterSlide(dotI);
+                                }}
+                              />
+                            ))}
+                          </div>
+                          <div className="absolute bottom-0 left-0 right-0 z-[3] flex items-center justify-start p-8 iphone-page:p-12">
                             <div
                               className={`flex items-center gap-7 iphone-page:gap-9 text-white ${inter.className}`}
                             >
@@ -1806,66 +1909,48 @@ export default function DoePage() {
                             </div>
                           </div>
                         </div>
-                        <button
-                          type="button"
-                          className={`flex w-full flex-row flex-wrap items-center justify-start gap-2.5 iphone-page:gap-3 text-left active:opacity-80 transition-opacity ${inter.className}`}
-                          onClick={() => {
-                            setMobileNavOpen(false);
-                            requestAnimationFrame(() => {
-                              buildSectionRef.current?.scrollIntoView({
-                                behavior: "smooth",
-                                block: "start",
+                        <div>
+                          <button
+                            type="button"
+                            className={`flex w-full flex-row flex-wrap items-center justify-start gap-2.5 iphone-page:gap-3 text-left active:opacity-80 transition-opacity ${inter.className}`}
+                            onClick={() => {
+                              setMobileNavOpen(false);
+                              requestAnimationFrame(() => {
+                                buildSectionRef.current?.scrollIntoView({
+                                  behavior: "smooth",
+                                  block: "start",
+                                });
                               });
-                            });
-                          }}
-                          aria-label={slide.outside}
-                        >
-                          <span className="text-[1.375rem] iphone-page:text-[2rem] font-medium text-gray-800 tracking-tight leading-snug">
-                            {slide.outside}
-                          </span>
-                          <span
-                            className="shrink-0 inline-flex h-16 w-16 iphone-page:h-[5.25rem] iphone-page:w-[5.25rem] items-center justify-center rounded-full border-2 border-gray-300/90 bg-white text-gray-900 shadow-[0_4px_14px_rgba(0,0,0,0.08)]"
-                            aria-hidden
+                            }}
+                            aria-label={slide.outside}
                           >
-                            <svg
-                              className="w-8 h-8 iphone-page:w-11 iphone-page:h-11"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth={2}
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
+                            <span className="text-[1.375rem] iphone-page:text-[2rem] font-medium text-gray-800 tracking-tight leading-snug">
+                              {slide.outside}
+                            </span>
+                            <span
+                              className="shrink-0 inline-flex h-16 w-16 iphone-page:h-[5.25rem] iphone-page:w-[5.25rem] items-center justify-center rounded-full border-2 border-gray-300/90 bg-white text-gray-900 shadow-[0_4px_14px_rgba(0,0,0,0.08)]"
+                              aria-hidden
                             >
-                              <path d="M5 12h14M13 6l6 6-6 6" />
-                            </svg>
-                          </span>
-                        </button>
+                              <svg
+                                className="w-8 h-8 iphone-page:w-11 iphone-page:h-11"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth={2}
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <path d="M5 12h14M13 6l6 6-6 6" />
+                              </svg>
+                            </span>
+                          </button>
+                          <p
+                            className={`mt-3 text-[0.9375rem] iphone-page:text-[1.125rem] font-medium tracking-tight text-gray-500 ${inter.className}`}
+                          >
+                            {slide.date}
+                          </p>
+                        </div>
                       </div>
-                    ))}
-                  </div>
-                  <div
-                    className="flex justify-center gap-2 pt-4 px-6"
-                    role="tablist"
-                    aria-label="Carousel position"
-                  >
-                    {MOBILE_NAV_FOOTER_SLIDES.map((slide, i) => (
-                      <button
-                        key={slide.boxTitle}
-                        type="button"
-                        role="tab"
-                        aria-selected={mobileNavFooterSlide === i}
-                        aria-label={`Slide ${i + 1}: ${slide.boxTitle}`}
-                        className={`h-2 shrink-0 rounded-full transition-[width,background-color] duration-200 ${
-                          mobileNavFooterSlide === i ? "w-7 bg-gray-900" : "w-2 bg-gray-300"
-                        }`}
-                        onClick={() => {
-                          const el = mobileNavFooterCarouselRef.current;
-                          if (!el) return;
-                          const w = el.clientWidth;
-                          el.scrollTo({ left: i * w, behavior: "smooth" });
-                          setMobileNavFooterSlide(i);
-                        }}
-                      />
                     ))}
                   </div>
                 </div>
