@@ -39,13 +39,15 @@ const MOBILE_NAV_FOOTER_SLIDES: ReadonlyArray<{
     lineOverlay: {
       backgroundImage: `
         repeating-linear-gradient(
-          -40deg,
-          rgba(255, 255, 255, 0.08) 0px,
-          rgba(255, 255, 255, 0.08) 1px,
-          transparent 1px,
-          transparent 14px
+          -38deg,
+          transparent 0px,
+          transparent 18px,
+          rgba(255, 255, 255, 0.16) 18px,
+          rgba(255, 255, 255, 0.16) 21px,
+          transparent 21px,
+          transparent 42px
         )`,
-      opacity: 0.42,
+      opacity: 0.52,
       mixBlendMode: "overlay",
     },
   },
@@ -60,19 +62,23 @@ const MOBILE_NAV_FOOTER_SLIDES: ReadonlyArray<{
       backgroundImage: `
         repeating-linear-gradient(
           0deg,
-          rgba(20, 30, 44, 0.15) 0px,
-          rgba(20, 30, 44, 0.15) 1px,
-          transparent 1px,
-          transparent 18px
+          transparent 0px,
+          transparent 26px,
+          rgba(255, 255, 255, 0.1) 26px,
+          rgba(255, 255, 255, 0.1) 29px,
+          transparent 29px,
+          transparent 54px
         ),
         repeating-linear-gradient(
           90deg,
-          rgba(255, 255, 255, 0.05) 0px,
-          rgba(255, 255, 255, 0.05) 1px,
-          transparent 1px,
-          transparent 22px
+          transparent 0px,
+          transparent 30px,
+          rgba(20, 35, 50, 0.22) 30px,
+          rgba(20, 35, 50, 0.22) 33px,
+          transparent 33px,
+          transparent 62px
         )`,
-      opacity: 0.38,
+      opacity: 0.48,
       mixBlendMode: "soft-light",
     },
   },
@@ -87,19 +93,23 @@ const MOBILE_NAV_FOOTER_SLIDES: ReadonlyArray<{
       backgroundImage: `
         repeating-linear-gradient(
           125deg,
-          rgba(255, 255, 255, 0.12) 0px,
-          rgba(255, 255, 255, 0.12) 1px,
-          transparent 1px,
-          transparent 8px
+          transparent 0px,
+          transparent 12px,
+          rgba(255, 255, 255, 0.22) 12px,
+          rgba(255, 255, 255, 0.22) 15px,
+          transparent 15px,
+          transparent 34px
         ),
         repeating-linear-gradient(
-          35deg,
-          rgba(60, 40, 30, 0.11) 0px,
-          rgba(60, 40, 30, 0.11) 1px,
-          transparent 1px,
-          transparent 11px
+          38deg,
+          transparent 0px,
+          transparent 15px,
+          rgba(55, 35, 26, 0.2) 15px,
+          rgba(55, 35, 26, 0.2) 18px,
+          transparent 18px,
+          transparent 40px
         )`,
-      opacity: 0.33,
+      opacity: 0.44,
       mixBlendMode: "multiply",
     },
   },
@@ -1777,7 +1787,7 @@ export default function DoePage() {
                         <button
                           type="button"
                           aria-expanded={expanded}
-                          className={`flex w-full items-center gap-2.5 text-left font-medium tracking-[-0.02em] text-gray-900 pl-4 pr-5 iphone-page:pl-[max(1rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))] py-4 active:bg-black/[0.04] transition-colors ${inter.className} text-4xl iphone-page:text-6xl iphone-page:leading-none`}
+                          className={`flex w-full items-center gap-2.5 text-left font-medium tracking-[-0.02em] text-gray-900 pl-5 pr-5 iphone-page:pl-[max(1.5rem,calc(env(safe-area-inset-left,0px)+12px))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))] py-4 active:bg-black/[0.04] transition-colors ${inter.className} text-4xl iphone-page:text-6xl iphone-page:leading-none`}
                           onClick={() =>
                             setMobileNavExpandedKey((k) => (k === item ? null : item))
                           }
@@ -1816,12 +1826,12 @@ export default function DoePage() {
                         >
                           <div className="overflow-hidden min-h-0">
                             {four.length > 0 && (
-                              <div className="flex flex-col pl-4 pr-5 iphone-page:pl-[max(1rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))] pb-3 pt-0">
+                              <div className="flex flex-col pl-5 pr-5 iphone-page:pl-[max(1.5rem,calc(env(safe-area-inset-left,0px)+12px))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))] pb-3 pt-0">
                                 {four.map((sub) => (
                                   <button
                                     key={sub.title}
                                     type="button"
-                                    className={`w-full text-left py-3.5 pl-6 iphone-page:pl-8 text-[1.625rem] iphone-page:text-[2.125rem] leading-snug font-medium text-gray-600 active:bg-black/[0.03] transition-colors ${inter.className}`}
+                                    className={`w-full text-left py-3.5 pl-7 iphone-page:pl-10 text-[1.625rem] iphone-page:text-[2.125rem] leading-snug font-medium text-gray-600 active:bg-black/[0.03] transition-colors ${inter.className}`}
                                     onClick={() => setMobileNavOpen(false)}
                                   >
                                     {sub.title}
@@ -1859,7 +1869,7 @@ export default function DoePage() {
                     {MOBILE_NAV_FOOTER_SLIDES.map((slide) => (
                       <div
                         key={slide.boxTitle}
-                        className="w-full min-w-full shrink-0 snap-center px-6 iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] space-y-4 box-border"
+                        className="w-full min-w-full shrink-0 snap-center px-6 iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] space-y-3 box-border"
                       >
                         <div className="relative rounded-[1.375rem] iphone-page:rounded-3xl overflow-hidden min-h-[24rem] iphone-page:min-h-[31rem] shadow-[0_10px_32px_rgba(0,0,0,0.12)]">
                           <div
@@ -1876,7 +1886,7 @@ export default function DoePage() {
                             }}
                             aria-hidden
                           />
-                          <div className="absolute left-0 right-0 top-0 z-[4] flex justify-center gap-2.5 px-5 pt-4 pb-1">
+                          <div className="absolute left-0 right-0 top-0 z-[4] flex justify-center gap-2.5 px-5 pt-10 iphone-page:pt-11 pb-1">
                             {MOBILE_NAV_FOOTER_SLIDES.map((s, dotI) => (
                               <button
                                 key={s.boxTitle}
@@ -1924,7 +1934,7 @@ export default function DoePage() {
                             }}
                             aria-label={slide.outside}
                           >
-                            <span className="text-[1.375rem] iphone-page:text-[2rem] font-medium text-gray-800 tracking-tight leading-snug">
+                            <span className="text-[1.5rem] iphone-page:text-[2.125rem] font-medium text-gray-800 tracking-tight leading-snug">
                               {slide.outside}
                             </span>
                             <span
@@ -1945,7 +1955,7 @@ export default function DoePage() {
                             </span>
                           </button>
                           <p
-                            className={`mt-3 text-[0.9375rem] iphone-page:text-[1.125rem] font-medium tracking-tight text-gray-500 ${inter.className}`}
+                            className={`mt-1.5 text-[1.0625rem] iphone-page:text-[1.25rem] font-medium tracking-tight text-gray-500 ${inter.className}`}
                           >
                             {slide.date}
                           </p>
