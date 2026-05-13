@@ -1522,6 +1522,19 @@ export default function DoePage() {
     Math.max(216, Math.round(slideVisibleWidth700 * 0.42)),
   );
   const reportMockScale = reportMockCardWidth700 / 280;
+  /** Diagnostic slide (box 3): shrink stacked panels when visible slice is tight */
+  const diagUiScale = Math.min(1, Math.max(0.72, slideVisibleWidth700 / 384));
+  const carouselDiagMainWidth700 = Math.round(300 * diagUiScale);
+  const carouselDiagConfidenceWidth700 = Math.round(240 * diagUiScale);
+  const carouselDiagYOffsetPx = Math.round(100 * diagUiScale);
+  const carouselDiagRightOffsetPx = Math.round(180 * diagUiScale);
+  /** Care timeline (box 4) */
+  const carouselCareTimelineWidth700 = Math.min(
+    340,
+    Math.max(268, Math.round(slideVisibleWidth700 * 0.94)),
+  );
+  /** Prior auth overlapping cards (box 5): scale entire composition */
+  const priorAuthComposeScale = Math.min(1, Math.max(0.62, slideVisibleWidth700 / 478));
   const totalWidth = totalBoxes * boxTotalWidth;
   
   const applySlidingBoxPositions = (scrollPos: number, shouldWrap: boolean = true) => {
@@ -3107,15 +3120,15 @@ export default function DoePage() {
                       style={{ 
                         opacity: 1,
                         pointerEvents: 'auto',
-                        width: '300px',
+                        width: `${carouselDiagMainWidth700}px`,
                         height: 'fit-content',
                         userSelect: 'none',
                         cursor: 'default',
                         touchAction: 'none',
                         top: '45%',
                         transform: 'translateX(-50%) translateY(-50%)',
-                        padding: '20px',
-                        paddingBottom: '16px',
+                        padding: `${Math.round(20 * diagUiScale)}px`,
+                        paddingBottom: `${Math.round(16 * diagUiScale)}px`,
                       }}
                     >
                       {/* Header */}
@@ -3160,13 +3173,13 @@ export default function DoePage() {
                     <div 
                       className="absolute bg-gray-100 rounded-lg shadow-lg"
                       style={{ 
-                        width: '240px',
+                        width: `${carouselDiagConfidenceWidth700}px`,
                         height: 'fit-content',
-                        top: 'calc(45% + 100px)',
-                        right: 'calc(50% - 180px)',
+                        top: `calc(45% + ${carouselDiagYOffsetPx}px)`,
+                        right: `calc(50% - ${carouselDiagRightOffsetPx}px)`,
                         transform: 'translateY(-50%)',
-                        padding: '16px',
-                        paddingBottom: '14px',
+                        padding: `${Math.round(16 * diagUiScale)}px`,
+                        paddingBottom: `${Math.round(14 * diagUiScale)}px`,
                         opacity: 1,
                         pointerEvents: 'auto',
                         userSelect: 'none',
@@ -3263,15 +3276,15 @@ export default function DoePage() {
                     style={{ 
                       opacity: 1,
                       pointerEvents: 'auto',
-                      width: '340px',
+                      width: `${carouselCareTimelineWidth700}px`,
                       height: 'fit-content',
                       userSelect: 'none',
                       cursor: 'default',
                       touchAction: 'none',
                       top: '45%',
                       transform: 'translateX(-50%) translateY(-50%)',
-                      padding: '24px',
-                      paddingBottom: '20px',
+                      padding: carouselCareTimelineWidth700 < 304 ? '18px' : '24px',
+                      paddingBottom: carouselCareTimelineWidth700 < 304 ? '16px' : '20px',
                     }}
                   >
                     {/* Header */}
@@ -3535,7 +3548,8 @@ export default function DoePage() {
                       style={{
                         left: '50%',
                         top: '50%',
-                        transform: 'translate(-50%, -50%)',
+                        transform: `translate(-50%, -50%) scale(${priorAuthComposeScale})`,
+                        transformOrigin: 'center center',
                         width: '472px',
                         height: '380px',
                         opacity: 1,
@@ -3681,8 +3695,12 @@ export default function DoePage() {
               transition: "opacity 1.2s ease-out, transform 1.2s ease-out",
             }}
           >
-            <span className="block text-[clamp(2.65rem,11.5vw,4rem)]">So you can do</span>
-            <span className="block text-[clamp(2.65rem,11.5vw,4rem)]">Doctor better.</span>
+            <span className="block text-[clamp(2.65rem,11.5vw,4rem)] iphone-page:text-[clamp(1.48rem,6.25vw,4rem)] iphone-page:whitespace-nowrap">
+              So you can do
+            </span>
+            <span className="block text-[clamp(2.65rem,11.5vw,4rem)] iphone-page:text-[clamp(1.48rem,6.25vw,4rem)] iphone-page:whitespace-nowrap">
+              Doctor better.
+            </span>
           </h2>
         </div>
         <div className="sticky top-[max(5.75rem,calc(env(safe-area-inset-top,0px)+4.5rem))] z-[5] pt-6 pb-6 md:pt-6 md:pb-6 max-md:pt-10 max-md:pb-10 iphone-page:pt-[max(2.75rem,env(safe-area-inset-top,0px))] iphone-page:pb-[max(2.75rem,env(safe-area-inset-bottom,0px))]">
@@ -3905,7 +3923,7 @@ export default function DoePage() {
         {/* Headline + horizontal carousel + description */}
         <div className={`relative z-20 flex flex-col items-center w-full overflow-visible ${narrowHorizontalInset} pt-4 iphone-page:pt-6 pb-1`}>
           <p
-            className={`text-center text-gray-900 w-full max-w-[min(100%,42rem)] font-normal tracking-tight leading-[1.06] text-[clamp(2.65rem,11.5vw,4rem)] ${lora.className}`}
+            className={`text-center text-gray-900 w-full max-w-[min(100%,42rem)] font-normal tracking-tight leading-[1.06] text-[clamp(2.65rem,11.5vw,4rem)] iphone-page:text-[clamp(1.65rem,7.25vw,4rem)] iphone-page:whitespace-nowrap ${lora.className}`}
             style={{
               paddingTop: "clamp(0.35rem, 1.5vw, 1rem)",
               paddingBottom: "clamp(0.45rem, 1.8vw, 1rem)",
@@ -3971,7 +3989,8 @@ export default function DoePage() {
                 const n = words.length;
                 const offsets = [-3, -2, -1, 0, 1, 2, 3];
                 /** Center-to-center spacing in `em` (carousel font-size) — avoids overlap vs fixed px */
-                const slotEm = 12;
+                const narrowBuiltCarousel = appViewport.width < 420;
+                const slotEm = narrowBuiltCarousel ? 10 : 12;
 
                 const getOpacity = (offset: number) => {
                   const abs = Math.abs(offset);
@@ -3994,7 +4013,9 @@ export default function DoePage() {
                           ? "left 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94)"
                           : "none",
                       fontWeight: 300,
-                      fontSize: "clamp(1.95rem, 6.75vw, 3rem)",
+                      fontSize: narrowBuiltCarousel
+                        ? "clamp(1.45rem, 5.25vw, 2.65rem)"
+                        : "clamp(1.95rem, 6.75vw, 3rem)",
                       whiteSpace: "nowrap",
                       lineHeight: 1.15,
                       height: "auto",
@@ -4452,7 +4473,7 @@ export default function DoePage() {
       {/* New Section - Hero Gradient Full Page */}
       <div
         ref={thirdSectionRef}
-        className="min-h-screen w-full relative z-10 p-8 flex flex-col items-center justify-center"
+        className="min-h-screen w-full relative z-10 p-8 iphone-page:p-4 flex flex-col items-center justify-center"
       >
         <div
           className="rounded-2xl relative overflow-hidden flex flex-col items-center pt-14 mx-auto shrink-0 max-w-full self-center"
@@ -4500,7 +4521,7 @@ export default function DoePage() {
           </div>
           {/* Tab Switcher */}
           <div
-            className="relative flex items-center mt-auto mb-8"
+            className="relative flex items-center mt-auto mb-8 iphone-page:w-full iphone-page:max-w-[min(100%,380px)] iphone-page:justify-center iphone-page:mx-auto"
             style={{
               backgroundColor: 'rgba(62, 54, 48, 0.38)',
               backdropFilter: 'blur(14px)',
@@ -4515,7 +4536,7 @@ export default function DoePage() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className="relative z-10 px-7 py-3 text-lg font-medium transition-colors duration-200"
+                className="relative z-10 px-7 py-3 text-lg iphone-page:px-4 iphone-page:py-2.5 iphone-page:text-base font-medium transition-colors duration-200 iphone-page:!min-w-0 iphone-page:flex-1 iphone-page:max-w-[33.33%]"
                 style={{
                   borderRadius: '9999px',
                   fontFamily: 'system-ui, -apple-system, sans-serif',
@@ -4587,18 +4608,17 @@ export default function DoePage() {
                     Clinical Decision Support
                   </div>
                   <h1
-                    className={`text-[clamp(1.85rem,6vw,2.35rem)] text-gray-900 tracking-[-0.02em] w-full min-w-0 break-words ${inter.className}`}
+                    className={`text-[clamp(1.85rem,6vw,2.35rem)] iphone-page:text-[clamp(1.42rem,5.15vw,2.35rem)] text-gray-900 tracking-[-0.02em] w-full min-w-0 break-words ${inter.className}`}
                     style={{ fontWeight: 300, lineHeight: 1.1 }}
                   >
-                    AI that helps
-                    <br />
-                    clinicians decide.
+                    <span className="block iphone-page:whitespace-nowrap">AI that helps</span>
+                    <span className="block iphone-page:whitespace-nowrap">clinicians decide.</span>
                   </h1>
                 </div>
               </div>
 
               <p
-                className={`mt-auto w-full text-lg text-gray-700 text-right relative z-10 ${inter.className}`}
+                className={`mt-auto w-full text-lg iphone-page:!text-[0.9375rem] iphone-page:!text-left text-gray-700 text-right relative z-10 ${inter.className}`}
                 style={{ fontWeight: 500, lineHeight: 1.7 }}
               >
                 Doe brings together the chart, the signal, and the next step so clinical decisions feel faster, clearer, and still fully human.
@@ -4606,7 +4626,7 @@ export default function DoePage() {
             </div>
 
             {/* Three-card fan stack - wrapped in gradient box */}
-            <div className={`flex items-center justify-center relative order-2 w-full min-h-[52vh] min-w-0 py-8 ${narrowHorizontalInset}`}>
+            <div className={`flex items-center justify-center relative order-2 w-full min-h-[52vh] min-w-0 py-8 iphone-page:min-h-[40vh] ${narrowHorizontalInset}`}>
               <div
                 className="relative overflow-hidden z-20 w-full h-full min-h-[78vh]"
                 style={{
@@ -4848,22 +4868,23 @@ export default function DoePage() {
 
       {/* New Section - Three Box Bento */}
       <div className="min-h-screen relative z-10 w-full">
-        <div className="max-w-[1800px] mx-auto px-8 py-16 pt-32">
+        <div className="max-w-[1800px] mx-auto px-8 py-16 pt-32 iphone-page:px-4 iphone-page:py-10 iphone-page:pt-20">
           {/* Title */}
-          <div className="text-center mb-12">
-            <h1 className={`text-4xl font-normal text-gray-900 tracking-tight ${lora.className}`}>
+          <div className="text-center mb-12 iphone-page:mb-8">
+            <h1 className={`text-4xl iphone-page:text-[clamp(1.85rem,6.75vw,2.85rem)] iphone-page:whitespace-nowrap font-normal text-gray-900 tracking-tight ${lora.className}`}>
               Build with us.
             </h1>
           </div>
           {/* Three square boxes */}
           <div 
-            className="flex gap-8"
+            className="flex gap-8 iphone-page:flex-col iphone-page:gap-6 iphone-page:!h-auto iphone-page:min-h-0"
             style={{ height: '600px' }}
             onMouseLeave={() => setHoveredBuildBox(null)}
           >
             <BuildWithUsBentoSurface
               meshId="buildStatic0"
               variant={0}
+              className="iphone-page:min-h-[260px] iphone-page:w-full"
               style={{
                 flex: hoveredBuildBox === 0 ? '10 1 0' : hoveredBuildBox !== null ? '2 1 0' : '1 1 0',
                 transition: 'flex 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 400ms ease',
@@ -4874,6 +4895,7 @@ export default function DoePage() {
             <BuildWithUsBentoSurface
               meshId="buildStatic1"
               variant={1}
+              className="iphone-page:min-h-[260px] iphone-page:w-full"
               style={{
                 flex: hoveredBuildBox === 1 ? '10 1 0' : hoveredBuildBox !== null ? '2 1 0' : '1 1 0',
                 transition: 'flex 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 400ms ease',
@@ -4884,6 +4906,7 @@ export default function DoePage() {
             <BuildWithUsBentoSurface
               meshId="buildStatic2"
               variant={2}
+              className="iphone-page:min-h-[260px] iphone-page:w-full"
               style={{
                 flex: hoveredBuildBox === 2 ? '10 1 0' : hoveredBuildBox !== null ? '2 1 0' : '1 1 0',
                 transition: 'flex 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 400ms ease',
@@ -4899,12 +4922,12 @@ export default function DoePage() {
       <div className="border-l border-r border-[#E6E6E6] max-w-[1600px] mx-auto">
 
         {/* Third Section - Bento Box Grid */}
-        <div ref={featuresSectionRef} className="min-h-screen relative z-10 w-full">
-          <div className="max-w-[1800px] mx-auto px-8 py-16 pt-32">
+        <div ref={featuresSectionRef} className="min-h-screen iphone-page:min-h-0 relative z-10 w-full">
+          <div className="max-w-[1800px] mx-auto px-8 py-16 pt-32 iphone-page:px-4 iphone-page:py-10 iphone-page:pt-20">
           {/* Title */}
-          <div className="text-center mb-12">
+          <div className="text-center mb-12 iphone-page:mb-8">
             <h1 
-              className={`text-4xl font-normal text-gray-900 tracking-tight ${lora.className}`}
+              className={`text-4xl iphone-page:text-[clamp(1.45rem,5.85vw,2.35rem)] iphone-page:whitespace-nowrap font-normal text-gray-900 tracking-tight ${lora.className}`}
               style={{
                 opacity: featuresTitleOpacity,
                 transform: `translateY(${featuresTitleTranslateY}px)`,
@@ -4914,7 +4937,7 @@ export default function DoePage() {
               Features built with
             </h1>
             <h1 
-              className={`text-4xl font-normal text-gray-900 tracking-tight ${lora.className}`}
+              className={`text-4xl iphone-page:text-[clamp(1.45rem,5.85vw,2.35rem)] iphone-page:whitespace-nowrap font-normal text-gray-900 tracking-tight ${lora.className}`}
               style={{
                 opacity: featuresTitleOpacity,
                 transform: `translateY(${featuresTitleTranslateY}px)`,
@@ -4925,7 +4948,7 @@ export default function DoePage() {
             </h1>
           </div>
           <div
-            className="flex flex-col"
+            className="flex flex-col iphone-page:!h-auto iphone-page:gap-5"
             style={{ 
               height: '700px', 
               gap: '32px',
@@ -4937,7 +4960,7 @@ export default function DoePage() {
           >
             {/* Row 1 */}
             <div
-              className="flex"
+              className="flex iphone-page:flex-col iphone-page:gap-5"
               style={{
                 gap: '32px',
                 flex: hoveredBentoBox === 0 || hoveredBentoBox === 1 ? '4 1 0' : hoveredBentoBox === 2 || hoveredBentoBox === 3 ? '1 1 0' : '1 1 0',
@@ -5087,7 +5110,7 @@ export default function DoePage() {
             </div>
             {/* Row 2 */}
             <div
-              className="flex"
+              className="flex iphone-page:flex-col iphone-page:gap-5"
               style={{
                 gap: '32px',
                 flex: hoveredBentoBox === 2 || hoveredBentoBox === 3 ? '4 1 0' : hoveredBentoBox === 0 || hoveredBentoBox === 1 ? '1 1 0' : '1 1 0',
@@ -5251,12 +5274,12 @@ export default function DoePage() {
       {/* Outer wrapper with continuous vertical borders */}
       <div className="border-l border-r border-[#E6E6E6] max-w-[1600px] mx-auto">
         {/* Fourth Section - Large Rectangle Box */}
-        <div ref={knowsSectionRef} className="min-h-screen relative z-10 w-full">
-          <div className="max-w-[1800px] mx-auto px-8 py-16 pt-32">
+        <div ref={knowsSectionRef} className="min-h-screen iphone-page:min-h-0 relative z-10 w-full">
+          <div className="max-w-[1800px] mx-auto px-8 py-16 pt-32 iphone-page:px-4 iphone-page:py-10 iphone-page:pt-20">
           {/* Title */}
-          <div className="text-left mb-12">
+          <div className="text-left mb-12 iphone-page:mb-8">
             <h1 
-              className={`text-4xl font-normal text-gray-900 tracking-tight ${lora.className}`}
+              className={`text-4xl iphone-page:text-[clamp(1.52rem,6.35vw,2.35rem)] iphone-page:whitespace-nowrap font-normal text-gray-900 tracking-tight ${lora.className}`}
               style={{
                 opacity: knowsTitleOpacity,
                 transform: `translateY(${knowsTitleTranslateY}px)`,
@@ -5266,7 +5289,7 @@ export default function DoePage() {
               Knows you before
             </h1>
             <h1 
-              className={`text-4xl font-normal text-gray-900 tracking-tight ${lora.className}`}
+              className={`text-4xl iphone-page:text-[clamp(1.52rem,6.35vw,2.35rem)] iphone-page:whitespace-nowrap font-normal text-gray-900 tracking-tight ${lora.className}`}
               style={{
                 opacity: knowsTitleOpacity,
                 transform: `translateY(${knowsTitleTranslateY}px)`,
@@ -5277,7 +5300,7 @@ export default function DoePage() {
             </h1>
           </div>
           <div 
-            className="flex gap-8"
+            className="flex gap-8 iphone-page:flex-col iphone-page:gap-6 iphone-page:!h-auto iphone-page:min-h-0"
             style={{ 
               height: '600px',
               opacity: knowsBoxesOpacity,
@@ -5287,7 +5310,7 @@ export default function DoePage() {
             onMouseLeave={() => setHoveredKnowsBox(null)}
           >
             <div
-              className="rounded-2xl cursor-pointer relative"
+              className="rounded-2xl cursor-pointer relative iphone-page:min-h-[300px] iphone-page:w-full"
               style={{
                 flex: hoveredKnowsBox === 0 ? '10 1 0' : hoveredKnowsBox !== null ? '2 1 0' : '1 1 0',
                 transition: 'flex 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 400ms ease, background 0.1s ease-out',
@@ -5316,12 +5339,12 @@ export default function DoePage() {
               />
               {/* White UI Box */}
               <div 
-                className="absolute top-8 right-8 bg-white rounded-xl p-6"
+                className="absolute top-8 right-8 iphone-page:top-5 iphone-page:right-5 bg-white rounded-xl p-6 iphone-page:p-4"
                 style={{ 
                   opacity: hoveredKnowsBox !== null && hoveredKnowsBox !== 0 ? 0 : 1,
                   pointerEvents: hoveredKnowsBox === 0 ? 'auto' : 'none',
-                  width: hoveredKnowsBox === 0 ? '560px' : '320px',
-                  height: hoveredKnowsBox === 0 ? 'calc(100% - 64px)' : '360px',
+                  width: hoveredKnowsBox === 0 ? 'min(560px, calc(100% - 3rem))' : 'min(320px, calc(100% - 3rem))',
+                  height: hoveredKnowsBox === 0 ? 'calc(100% - 64px)' : 'min(360px, calc(100% - 5rem))',
                   overflowY: 'hidden',
                   userSelect: hoveredKnowsBox === 0 ? 'auto' : 'none',
                   cursor: 'default',
@@ -5472,7 +5495,7 @@ export default function DoePage() {
               </div>
             </div>
             <div
-              className="rounded-2xl cursor-pointer relative"
+              className="rounded-2xl cursor-pointer relative iphone-page:min-h-[300px] iphone-page:w-full"
               style={{
                 flex: hoveredKnowsBox === 1 ? '10 1 0' : hoveredKnowsBox !== null ? '2 1 0' : '1 1 0',
                 transition: 'flex 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 400ms ease, background 0.1s ease-out',
@@ -5501,13 +5524,13 @@ export default function DoePage() {
               />
               {/* Centered Rectangle UI Box */}
               <div 
-                className="absolute left-1/2 -translate-x-1/2 bg-white rounded-2xl flex flex-col"
+                className="absolute left-1/2 -translate-x-1/2 bg-white rounded-2xl flex flex-col iphone-page:max-w-[calc(100%-1.5rem)]"
                 style={{ 
                   opacity: hoveredKnowsBox !== null && hoveredKnowsBox !== 1 ? 0 : 1,
                   pointerEvents: hoveredKnowsBox === 1 ? 'auto' : 'none',
-                  width: hoveredKnowsBox === 1 ? '520px' : '380px',
-                  height: hoveredKnowsBox === 1 ? '420px' : '300px',
-                  top: hoveredKnowsBox === 1 ? 'calc(50% - 250px)' : 'calc(50% - 180px)',
+                  width: hoveredKnowsBox === 1 ? 'min(520px, calc(100% - 2rem))' : 'min(380px, calc(100% - 2rem))',
+                  height: hoveredKnowsBox === 1 ? 'min(420px, calc(100% - 6rem))' : 'min(300px, calc(100% - 8rem))',
+                  top: hoveredKnowsBox === 1 ? 'calc(50% - min(250px, 46vw))' : 'calc(50% - min(180px, 38vw))',
                   maxHeight: 'calc(100% - 200px)',
                   overflowY: 'hidden',
                   userSelect: hoveredKnowsBox === 1 ? 'auto' : 'none',
@@ -5519,7 +5542,7 @@ export default function DoePage() {
                   transition: hoveredKnowsBox !== null && hoveredKnowsBox !== 1 
                     ? 'width 500ms cubic-bezier(0.4, 0, 0.2, 1), height 500ms cubic-bezier(0.4, 0, 0.2, 1), top 500ms cubic-bezier(0.4, 0, 0.2, 1), opacity 80ms ease-out'
                     : 'width 500ms cubic-bezier(0.4, 0, 0.2, 1), height 500ms cubic-bezier(0.4, 0, 0.2, 1), top 500ms cubic-bezier(0.4, 0, 0.2, 1), opacity 400ms ease-in',
-                  padding: '32px'
+                  padding: 'clamp(18px, 5vw, 32px)'
                 }}
                 onMouseDown={(e) => {
                   if (hoveredKnowsBox !== 1) {
@@ -5636,11 +5659,11 @@ export default function DoePage() {
       <div className="border-l border-r border-[#E6E6E6] max-w-[1800px] mx-auto">
         {/* Fifth Section - Three Square Boxes */}
         <div ref={buildSectionRef} className="min-h-screen relative z-10 w-full">
-          <div className="max-w-[1800px] mx-auto px-8 py-16 pt-32">
+          <div className="max-w-[1800px] mx-auto px-8 py-16 pt-32 iphone-page:px-4 iphone-page:py-10 iphone-page:pt-20">
             {/* Title */}
-            <div className="text-center mb-12">
+            <div className="text-center mb-12 iphone-page:mb-8">
               <h1 
-                className={`text-4xl font-normal text-gray-900 tracking-tight ${lora.className}`}
+                className={`text-4xl iphone-page:text-[clamp(1.85rem,6.75vw,2.85rem)] iphone-page:whitespace-nowrap font-normal text-gray-900 tracking-tight ${lora.className}`}
                 style={{
                   opacity: buildTitleOpacity,
                   transform: `translateY(${buildTitleTranslateY}px)`,
@@ -5652,7 +5675,7 @@ export default function DoePage() {
             </div>
             {/* Three square boxes */}
             <div 
-              className="flex gap-8"
+              className="flex gap-8 iphone-page:flex-col iphone-page:gap-6 iphone-page:!h-auto iphone-page:min-h-0"
               style={{ 
                 height: '600px',
                 opacity: buildBoxesOpacity,
@@ -5664,6 +5687,7 @@ export default function DoePage() {
               <BuildWithUsBentoSurface
                 meshId="buildScroll0"
                 variant={0}
+                className="iphone-page:min-h-[260px] iphone-page:w-full"
                 style={{
                   flex: hoveredBuildBox === 0 ? '10 1 0' : hoveredBuildBox !== null ? '2 1 0' : '1 1 0',
                   transition: 'flex 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 400ms ease',
@@ -5674,6 +5698,7 @@ export default function DoePage() {
               <BuildWithUsBentoSurface
                 meshId="buildScroll1"
                 variant={1}
+                className="iphone-page:min-h-[260px] iphone-page:w-full"
                 style={{
                   flex: hoveredBuildBox === 1 ? '10 1 0' : hoveredBuildBox !== null ? '2 1 0' : '1 1 0',
                   transition: 'flex 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 400ms ease',
@@ -5684,6 +5709,7 @@ export default function DoePage() {
               <BuildWithUsBentoSurface
                 meshId="buildScroll2"
                 variant={2}
+                className="iphone-page:min-h-[260px] iphone-page:w-full"
                 style={{
                   flex: hoveredBuildBox === 2 ? '10 1 0' : hoveredBuildBox !== null ? '2 1 0' : '1 1 0',
                   transition: 'flex 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 400ms ease',
@@ -5696,7 +5722,7 @@ export default function DoePage() {
         </div>
 
         {/* Footer */}
-        <div className="pb-8 w-screen left-1/2 -translate-x-1/2 relative px-8">
+        <div className="pb-8 w-screen left-1/2 -translate-x-1/2 relative px-8 iphone-page:px-4">
           <div 
             className="py-20 relative rounded-2xl overflow-hidden flex items-center"
             style={{
