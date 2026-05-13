@@ -1363,13 +1363,16 @@ export default function DoePage() {
             /** Phone + open sheet: solid bar so safe-area + controls aren’t over transparent hero. */
             backgroundColor:
               isPhoneLayout && mobileNavOpen ? "#F7F6F3" : "transparent",
+            /** Stable phone chrome height: reserve 1px border slot so opening menu doesn’t shift layout */
             borderBottom:
-              isPhoneLayout && mobileNavOpen
-                ? "1px solid #E6E6E6"
+              isPhoneLayout
+                ? mobileNavOpen || showBackgroundBox || isDropdownOpen
+                  ? "1px solid #E6E6E6"
+                  : "1px solid transparent"
                 : showBackgroundBox || isDropdownOpen
                   ? "1px solid #E6E6E6"
                   : "none",
-            transition: "border-bottom 100ms ease-out, background-color 180ms ease-out",
+            transition: "border-bottom 100ms ease-out, border-color 100ms ease-out, background-color 180ms ease-out",
           }}
           onMouseLeave={() => {
             setActiveDropdown(null);
@@ -1400,7 +1403,7 @@ export default function DoePage() {
           )}
           {/* Top bar */}
           <div
-            className={`px-8 py-6 iphone-page:px-6 iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] flex items-center relative z-10 iphone-page:gap-2 justify-end ${isPhoneLayout && mobileNavOpen ? "iphone-page:py-4" : "iphone-page:py-6"}`}
+            className="px-8 py-6 iphone-page:px-6 iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] flex items-center relative z-10 iphone-page:gap-2 justify-end"
           >
             {/* Logo — opacity only (no width collapse) so it fades, not slides */}
             <h1
