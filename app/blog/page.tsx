@@ -79,7 +79,7 @@ function GradientArticleVisual({
         }}
         aria-hidden
       />
-      <div className="absolute bottom-0 left-0 right-0 z-[3] flex items-center justify-start pt-7 pb-7 pl-5 pr-7 iphone-page:pt-[clamp(1.25rem,0.85rem+2.5vmin,2.75rem)] iphone-page:pb-[clamp(1.25rem,0.85rem+2.5vmin,2.75rem)] iphone-page:pl-[clamp(1rem,0.65rem+1.85vmin,2rem)] iphone-page:pr-[clamp(1.5rem,1rem+3.5vmin,3rem)]">
+      <div className="absolute bottom-0 left-0 right-0 z-[3] flex items-center justify-start p-7 iphone-page:p-[clamp(1.25rem,0.85rem+2.5vmin,2.75rem)]">
         <div
           className={`flex items-center gap-6 iphone-page:gap-[clamp(1.35rem,1rem+3vmin,3rem)] text-white ${inter.className}`}
         >
