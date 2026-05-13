@@ -1473,6 +1473,9 @@ export default function DoePage() {
     return `hsl(${225 + shift}, 80%, ${65 + shift * 0.3}%)`; // Deep purple-blue (lighter)
   };
 
+  /** Breathing modulation for hero multi-stop gradient (ties into existing RAF loop). */
+  const heroMeshPulse = 0.93 + Math.sin(colorShift * Math.PI / 50) * 0.07;
+
   // Sliding box scroll functions — card step uses portrait dimensions on iPhone
   const slideBoxW = isPhoneLayout ? phoneSlideSize.w : 760;
   const slideBoxH = isPhoneLayout ? phoneSlideSize.h : 760;
@@ -1889,17 +1892,35 @@ export default function DoePage() {
           height: `${heroLogicalHeightPx}px`,
         }}
       >
-        {/* Hero with Gradient from Chart2 — extra scale on narrow viewports “zooms into” the gradient */}
+        {/* Hero — five-layer gradient + flowing line field (gradientAngle drives slow drift) */}
         <div 
           className="absolute inset-0 iphone-page:scale-[1.22] iphone-page:origin-[50%_45%]"
           style={{
             background: `
-              radial-gradient(ellipse 115% 100% at 50% 18%, #fff1e0 0%, #f4c47a 18%, #e09548 42%, #b86438 62%, #4a3d36 82%, #161f24 100%),
-              radial-gradient(ellipse 95% 85% at 8% 92%, rgba(22, 38, 46, 0.82) 0%, transparent 52%),
-              radial-gradient(ellipse 90% 80% at 94% 8%, rgba(255, 220, 176, 0.45) 0%, transparent 48%),
-              radial-gradient(ellipse 70% 55% at 50% 100%, rgba(18, 26, 30, 0.55) 0%, transparent 58%)
+              linear-gradient(${gradientAngle}deg,
+                rgba(255, 252, 248, 0.14) 0%,
+                transparent 26%,
+                transparent 74%,
+                rgba(6, 28, 42, 0.2) 100%
+              ),
+              radial-gradient(ellipse 118% 92% at 50% -8%,
+                rgba(255, 214, 176, ${0.52 * heroMeshPulse}) 0%,
+                transparent 54%
+              ),
+              radial-gradient(ellipse 100% 95% at -12% 52%,
+                rgba(22, 78, 108, ${0.88 * heroMeshPulse}) 0%,
+                transparent 51%
+              ),
+              radial-gradient(ellipse 96% 88% at 112% 38%,
+                rgba(212, 108, 72, ${0.58 * heroMeshPulse}) 0%,
+                transparent 49%
+              ),
+              radial-gradient(ellipse 82% 72% at 50% 112%,
+                rgba(10, 36, 52, ${0.94}) 0%,
+                transparent 46%
+              )
             `,
-            filter: 'saturate(1.06)',
+            filter: 'saturate(1.12)',
           }}
         >
           {/* Grain texture overlay */}
@@ -1908,41 +1929,59 @@ export default function DoePage() {
             style={{
               backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E")`,
               backgroundSize: '200px 200px',
-              opacity: 1,
+              opacity: 0.72,
               mixBlendMode: 'overlay',
             }}
           />
-          {/* Center vignette */}
+          {/* Soft vignette — keeps typography readable */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
-              background: 'radial-gradient(ellipse 85% 75% at 50% 45%, rgba(0, 0, 0, 0.12) 0%, transparent 62%)',
+              background:
+                'radial-gradient(circle at 50% 48%, rgba(0, 18, 30, 0.14) 0%, transparent 58%)',
             }}
           />
-          {/* Line overlay — fine diagonal hatch (replaces Cartesian grid + perspective plane) */}
+          {/* Flowing iso-lines + faint diagonal scaffold */}
           <div
-            className="absolute inset-0 pointer-events-none"
+            className="absolute inset-0 pointer-events-none overflow-hidden"
             style={{
-              mixBlendMode: 'overlay',
-              opacity: 0.92,
-              backgroundImage: `
-                repeating-linear-gradient(
-                  124deg,
-                  transparent 0px,
-                  transparent 13px,
-                  rgba(255, 250, 242, 0.11) 13px,
-                  rgba(255, 250, 242, 0.11) 14px
-                ),
-                repeating-linear-gradient(
-                  -36deg,
-                  transparent 0px,
-                  transparent 22px,
-                  rgba(22, 32, 38, 0.07) 22px,
-                  rgba(22, 32, 38, 0.07) 23px
-                )
-              `,
+              opacity: 0.42,
+              transform: `rotate(${gradientAngle * 0.04}deg)`,
+              transformOrigin: '50% 48%',
             }}
-          />
+          >
+            <svg
+              className="absolute inset-0 h-full w-full text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              preserveAspectRatio="none"
+              viewBox="0 0 800 800"
+              aria-hidden
+            >
+              <defs>
+                <linearGradient id="heroHeroFlowStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="rgba(255,255,255,0)" />
+                  <stop offset="35%" stopColor="rgba(255,255,255,0.5)" />
+                  <stop offset="70%" stopColor="rgba(255,255,255,0.18)" />
+                  <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+                </linearGradient>
+                <pattern id="heroHeroFineDash" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform={`rotate(${28 + gradientAngle * 0.02})`}>
+                  <path d="M 0 14 L 14 0" fill="none" stroke="rgba(255,255,255,0.09)" strokeWidth="0.55" />
+                </pattern>
+              </defs>
+              <rect width="800" height="800" fill="url(#heroHeroFineDash)" opacity="0.85" />
+              <g fill="none" stroke="url(#heroHeroFlowStroke)" strokeWidth="0.85" strokeLinecap="round">
+                <path d="M -40 620 Q 180 520 380 420 T 840 220" opacity="0.9" />
+                <path d="M -60 680 Q 200 560 420 460 T 860 260" opacity="0.72" />
+                <path d="M -30 540 Q 220 460 440 340 T 820 140" opacity="0.55" />
+                <path d="M 820 660 Q 560 520 340 400 T -60 260" opacity="0.65" />
+                <path d="M 780 720 Q 520 580 280 460 T -80 320" opacity="0.48" />
+              </g>
+              <g fill="none" stroke="rgba(255,255,255,0.14)" strokeWidth="0.45" opacity="0.85">
+                <path d="M 120 -20 Q 260 200 180 420 T 240 840" />
+                <path d="M 640 -40 Q 520 240 600 460 T 520 840" />
+              </g>
+            </svg>
+          </div>
         </div>
         {/* Navigation Bar */}
         <nav
@@ -2422,7 +2461,7 @@ export default function DoePage() {
               Doe
             </p>
             <p
-              className="text-[1.5625rem] iphone-page:text-[clamp(1.0625rem,3.9vw,1.3125rem)] font-medium text-white/90 text-center iphone-page:px-2 px-2 tracking-tight flex flex-col items-center gap-1 iphone-page:gap-1.5 iphone-page:leading-snug leading-snug"
+              className="text-2xl iphone-page:text-[clamp(0.9375rem,3.35vw,1.125rem)] font-medium text-white/90 text-center iphone-page:px-2 px-2 tracking-tight flex flex-col items-center gap-1 iphone-page:gap-1.5 iphone-page:leading-snug leading-snug"
               style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
             >
               <span className="block iphone-page:whitespace-nowrap iphone-page:text-center w-full">
@@ -2441,11 +2480,11 @@ export default function DoePage() {
       <div className="w-full border-t border-[#E6E6E6]" />
 
       {/* Second Section — title upper third, carousel lower two-thirds */}
-      <div ref={secondSectionRef} className="min-h-[calc(var(--app-vh,100dvh)+7rem)] relative z-10 flex flex-col pt-16 pb-28 iphone-page:min-h-[calc(var(--app-vh,100dvh)+2rem)] iphone-page:pt-12 iphone-page:pb-6">
-        <div className="flex-1 grid grid-rows-[3fr_9fr_auto] min-h-[85vh] iphone-page:flex iphone-page:flex-col iphone-page:flex-1 iphone-page:min-h-[calc(var(--app-vh,100dvh)-10.5rem)] iphone-page:grid-rows-none w-full overflow-x-hidden">
+      <div ref={secondSectionRef} className="min-h-[calc(var(--app-vh,100dvh)+7rem)] relative z-10 flex flex-col pt-16 pb-28 iphone-page:min-h-[calc(var(--app-vh,100dvh)+6rem)] iphone-page:pt-12 iphone-page:pb-[9.5rem]">
+        <div className="flex-1 grid grid-rows-[3fr_9fr_auto] min-h-[85vh] iphone-page:min-h-[88dvh] w-full overflow-x-hidden">
           {/* Title band — slightly taller than 1:2 so headline has room */}
           <div
-            className={`flex flex-col justify-center min-h-0 shrink-0 px-4 py-14 iphone-page:pt-16 iphone-page:pb-9 ${narrowHorizontalInset}`}
+            className={`flex flex-col justify-center min-h-0 px-4 py-14 iphone-page:pt-16 iphone-page:pb-9 ${narrowHorizontalInset}`}
           >
             <div className="text-center iphone-page:mt-5">
               <h1 
@@ -2466,9 +2505,9 @@ export default function DoePage() {
             </div>
           </div>
 
-          {/* Carousel band — pinned to bottom of viewport on phone; symmetric gutter (matches L/R/B + top of band) */}
+          {/* Carousel band (~bottom two-thirds) */}
           <div
-            className={`flex flex-col justify-center min-h-0 overflow-x-hidden overflow-y-visible pb-16 iphone-page:flex-1 iphone-page:justify-end iphone-page:!p-[max(1.5rem,env(safe-area-inset-left,0px),env(safe-area-inset-right,0px),env(safe-area-inset-bottom,0px))]`}
+            className={`flex flex-col justify-center min-h-0 overflow-x-hidden overflow-y-visible pb-16 iphone-page:pb-14 ${narrowHorizontalInset}`}
           >
           {/* Sliding squares container */}
           <div 
