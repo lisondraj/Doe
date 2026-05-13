@@ -1663,7 +1663,7 @@ export default function DoePage() {
       <div className="w-full border-t border-[#E6E6E6]" />
 
       {/* Second Section — title upper third, carousel lower two-thirds */}
-      <div ref={secondSectionRef} className="min-h-[calc(100dvh+7rem)] relative z-10 flex flex-col pt-16 pb-24 iphone-page:min-h-[calc(100dvh+6rem)] iphone-page:pt-12 iphone-page:pb-36">
+      <div ref={secondSectionRef} className="min-h-[calc(100dvh+7rem)] relative z-10 flex flex-col pt-16 pb-32 iphone-page:min-h-[calc(100dvh+6rem)] iphone-page:pt-12 iphone-page:pb-44">
         <div className="flex-1 grid grid-rows-[3fr_9fr] min-h-[85vh] iphone-page:min-h-[88dvh] w-full overflow-x-hidden">
           {/* Title band — slightly taller than 1:2 so headline has room */}
           <div
@@ -2884,7 +2884,7 @@ export default function DoePage() {
       {/* Blank Section with Grid Lines */}
       <div
         ref={carouselSectionRef}
-        className="w-full relative z-10 overflow-x-hidden iphone-page:mt-14 mt-10"
+        className="w-full relative z-10 overflow-x-hidden mt-[4.75rem] iphone-page:mt-24"
         style={{
           opacity: carouselSectionOpacity,
           transform: `translateY(${carouselSectionTranslateY}px)`,
@@ -2930,25 +2930,24 @@ export default function DoePage() {
             background: 'linear-gradient(to top, rgba(247, 246, 243, 1) 0%, rgba(247, 246, 243, 0.8) 30%, rgba(247, 246, 243, 0) 100%)'
           }}
         />
-        {/* Headline + horizontal carousel + description — shifted up */}
-        <div className={`relative z-20 flex flex-col items-center w-full ${narrowHorizontalInset} -mt-6 iphone-page:-mt-10`}>
+        {/* Headline + horizontal carousel + description */}
+        <div className={`relative z-20 flex flex-col items-center w-full overflow-visible ${narrowHorizontalInset} pt-4 iphone-page:pt-6 pb-1`}>
           <p
-            className={`text-center text-gray-900 ${oldStandardTT.className}`}
+            className={`text-center text-gray-900 px-3 max-w-[min(100%,42rem)] ${oldStandardTT.className} leading-[1.06] text-[clamp(2.65rem,11.5vw,4rem)]`}
             style={{
               fontStyle: "italic",
               fontWeight: 400,
-              fontSize: "clamp(2rem, 11vw, 4.35rem)",
-              lineHeight: 1.08,
-              paddingTop: "clamp(0.1rem, 0.8vw, 0.45rem)",
-              paddingBottom: "clamp(0.35rem, 1.5vw, 0.65rem)",
-              maxWidth: "min(22ch, 96vw)",
+              paddingTop: "clamp(0.35rem, 1.5vw, 1rem)",
+              paddingBottom: "clamp(0.5rem, 2vw, 1.1rem)",
+              overflow: "visible",
+              textWrap: "balance",
             }}
           >
             It&apos;s all here.
           </p>
 
           {/* Horizontal Agents / Franchises / Design … carousel */}
-          <div className="flex flex-row items-center justify-center gap-3 iphone-page:gap-5 w-full max-w-[min(100%,620px)] px-2 pb-3 iphone-page:pb-4">
+          <div className="flex flex-row items-center justify-center gap-3 iphone-page:gap-5 w-full max-w-[min(100%,42rem)] px-3 pb-4 iphone-page:pb-5">
             <button
               type="button"
               aria-label="Previous category"
@@ -2982,20 +2981,27 @@ export default function DoePage() {
               </svg>
             </button>
 
-            <div className="relative flex-1 min-w-0 overflow-hidden py-1" style={{ maxWidth: "min(82vw, 460px)", height: "3.35rem" }}>
+            <div
+              className="relative flex-1 min-w-0 overflow-hidden py-2"
+              style={{
+                maxWidth: "min(94vw, 40rem)",
+                minHeight: "4.85rem",
+              }}
+            >
               <div
-                className="pointer-events-none absolute inset-y-0 left-0 z-[2] w-10 bg-gradient-to-r from-[#F7F6F3] to-transparent"
+                className="pointer-events-none absolute inset-y-0 left-0 z-[2] w-14 bg-gradient-to-r from-[#F7F6F3] to-transparent"
                 aria-hidden
               />
               <div
-                className="pointer-events-none absolute inset-y-0 right-0 z-[2] w-10 bg-gradient-to-l from-[#F7F6F3] to-transparent"
+                className="pointer-events-none absolute inset-y-0 right-0 z-[2] w-14 bg-gradient-to-l from-[#F7F6F3] to-transparent"
                 aria-hidden
               />
               {(() => {
                 const words = ["Agents", "Franchises", "Design", "Billing", "Marketing", "Patient", "Teams", "Inbox"];
                 const n = words.length;
                 const offsets = [-3, -2, -1, 0, 1, 2, 3];
-                const slotPx = 122;
+                /** Center-to-center spacing in `em` (carousel font-size) — avoids overlap vs fixed px */
+                const slotEm = 11;
 
                 const getOpacity = (offset: number) => {
                   const abs = Math.abs(offset);
@@ -3010,7 +3016,7 @@ export default function DoePage() {
                     className={inter.className}
                     style={{
                       position: "absolute",
-                      left: `calc(50% - ${(3 + carouselOffset) * slotPx}px)`,
+                      left: `calc(50% - ${(3 + carouselOffset) * slotEm}em)`,
                       top: "50%",
                       transform: "translateY(-50%)",
                       transition:
@@ -3018,9 +3024,10 @@ export default function DoePage() {
                           ? "left 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94)"
                           : "none",
                       fontWeight: 300,
-                      fontSize: "clamp(1.35rem, 4.8vw, 2.05rem)",
+                      fontSize: "clamp(1.55rem, 5.25vw, 2.35rem)",
                       whiteSpace: "nowrap",
-                      height: "100%",
+                      lineHeight: 1.15,
+                      height: "auto",
                     }}
                   >
                     {offsets.map((offset) => {
@@ -3030,7 +3037,7 @@ export default function DoePage() {
                           key={offset}
                           style={{
                             position: "absolute",
-                            left: `${(offset + 3) * slotPx}px`,
+                            left: `${(offset + 3) * slotEm}em`,
                             top: "50%",
                             transform: "translate(-50%, -50%)",
                             whiteSpace: "nowrap",
@@ -3093,10 +3100,10 @@ export default function DoePage() {
             ];
             const lines = descriptions[selectedWordIndex] ?? descriptions[0];
             return (
-              <div className="w-full flex justify-center pb-5 iphone-page:pb-7 px-2">
+              <div className="w-full flex justify-center pb-6 iphone-page:pb-8 px-3">
                 <div
                   key={selectedWordIndex}
-                  className={`text-lg iphone-page:text-xl text-gray-700 text-center max-w-xl iphone-page:max-w-2xl leading-snug iphone-page:leading-relaxed ${inter.className}`}
+                  className={`text-xl iphone-page:text-2xl text-gray-700 text-center max-w-2xl iphone-page:max-w-3xl leading-snug iphone-page:leading-relaxed ${inter.className}`}
                   style={{ fontWeight: 500, animation: 'fade-in 0.35s ease-out' }}
                 >
                   {lines.map((line, i) => (
