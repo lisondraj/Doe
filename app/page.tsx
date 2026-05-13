@@ -1633,12 +1633,32 @@ export default function DoePage() {
                           }
                         >
                           <span className="min-w-0">{item}</span>
-                          <span
-                            className={`shrink-0 text-gray-500 leading-none ${inter.className}`}
-                            style={{ fontWeight: 300, fontSize: "clamp(1.4rem, 5vw, 2.25rem)", marginTop: "0.1em" }}
-                            aria-hidden
-                          >
-                            {expanded ? "v" : "^"}
+                          <span className="shrink-0 inline-flex items-center justify-center text-gray-400 self-center" aria-hidden>
+                            {expanded ? (
+                              <svg
+                                className="w-[clamp(1.125rem,3.25vw,1.875rem)] h-[clamp(1.125rem,3.25vw,1.875rem)] transition-transform duration-200 ease-out"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth={1.75}
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <path d="M6 9l6 6 6-6" />
+                              </svg>
+                            ) : (
+                              <svg
+                                className="w-[clamp(1.125rem,3.25vw,1.875rem)] h-[clamp(1.125rem,3.25vw,1.875rem)] transition-transform duration-200 ease-out"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth={1.75}
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <path d="M18 15l-6-6-6 6" />
+                              </svg>
+                            )}
                           </span>
                         </button>
                         <div
@@ -1651,7 +1671,7 @@ export default function DoePage() {
                                   <button
                                     key={sub.title}
                                     type="button"
-                                    className={`w-full text-left py-3.5 pl-8 iphone-page:pl-10 text-2xl iphone-page:text-3xl font-medium text-gray-600 active:bg-black/[0.03] transition-colors ${inter.className}`}
+                                    className={`w-full text-left py-3.5 pl-8 iphone-page:pl-10 text-[1.625rem] iphone-page:text-[2.125rem] leading-snug font-medium text-gray-600 active:bg-black/[0.03] transition-colors ${inter.className}`}
                                     onClick={() => setMobileNavOpen(false)}
                                   >
                                     {sub.title}
