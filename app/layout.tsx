@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
@@ -18,7 +17,6 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#F7F6F3",
 };
 
 export default function RootLayout({
@@ -27,15 +25,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-layout="desktop">
+    <html lang="en">
       <body className={`${inter.variable} font-sans antialiased`}>
-        <Script
-          id="doeforvc-layout-detect"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var phone=window.matchMedia("(max-width: 639px)").matches;document.documentElement.setAttribute("data-layout",phone?"phone":"desktop");}catch(e){}})();`,
-          }}
-        />
         {children}
       </body>
     </html>

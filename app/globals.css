@@ -3,18 +3,16 @@
 @tailwind utilities;
 
 /*
- * /doeforvc — .doeforvc-iphone-root is set when JS enables phone layout.
- * Gated by class (not max-width) so large iPhones still get safe-area + bg.
- * Beige matches page chrome (#F7F6F3) so Dynamic Island / safe-area overscroll
- * isn’t white next to the hero.
+ * /doeforvc — `.doeforvc-iphone-root` applies while the page uses root zoom (narrow → mid widths).
+ * Restore full rem scale so typography stays readable after zoom.
  */
 html:has(.doeforvc-iphone-root) {
   font-size: 100%;
 }
 
 .doeforvc-iphone-root {
+  /* Prevent horizontal bleed from scaled fixed-width sections */
   overflow-x: clip;
-  background-color: #f7f6f3;
   padding-left: env(safe-area-inset-left, 0px);
   padding-right: env(safe-area-inset-right, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -25,8 +23,6 @@ html:has(.doeforvc-iphone-root) {
      reflows proportionally, not a visual zoom/scale that “shrinks a canvas”. */
   html {
     font-size: 80%;
-    min-height: 100%;
-    background-color: #f7f6f3;
   }
 
   *,
@@ -36,9 +32,7 @@ html:has(.doeforvc-iphone-root) {
   }
 
   body {
-    @apply text-gray-900 antialiased;
-    min-height: 100%;
-    background-color: #f7f6f3;
+    @apply bg-white text-gray-900 antialiased;
   }
 
   /* Standard link reset - only remove underline, let Tailwind handle colors */
