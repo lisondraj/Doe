@@ -21,6 +21,67 @@ const lora = Lora({
   weight: ["400", "500", "600", "700"],
 });
 
+function NavChromeStrip({
+  navTextColor,
+  mobileNavOpen,
+  toggleMenu,
+}: {
+  navTextColor: string;
+  mobileNavOpen: boolean;
+  toggleMenu: () => void;
+}) {
+  return (
+    <div className="px-8 py-6 iphone-page:py-[clamp(0.8125rem,0.52rem+1.55vmin,1.9rem)] iphone-page:px-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))] flex items-center relative z-10 iphone-page:gap-[clamp(0.45rem,0.35rem+0.85vmin,0.75rem)] justify-end">
+      <Link
+        href="/"
+        className={`absolute top-1/2 -translate-y-1/2 left-8 iphone-page:left-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))] font-normal z-[1] min-w-0 whitespace-nowrap transition-opacity duration-500 ease-out ${lora.className} text-4xl iphone-page:text-[clamp(1.85rem,1.05rem+3.55vmin,3.9rem)] iphone-page:leading-none opacity-100`}
+        style={{ color: navTextColor }}
+      >
+        Doe
+      </Link>
+
+      <div className="hidden items-center gap-8 absolute left-1/2 -translate-x-1/2">
+        {NAV_ITEMS.map((item) => (
+          <span key={item} className="text-sm">
+            {item}
+          </span>
+        ))}
+      </div>
+
+      <button
+        type="button"
+        className="flex items-center justify-center p-3 iphone-page:p-[clamp(0.625rem,0.38rem+1.35vmin,0.975rem)] rounded-xl transition-colors active:bg-black/[0.04]"
+        style={{ color: navTextColor }}
+        aria-expanded={mobileNavOpen}
+        aria-label={mobileNavOpen ? "Close navigation menu" : "Open navigation menu"}
+        onClick={toggleMenu}
+      >
+        {mobileNavOpen ? (
+          <svg
+            className="w-9 h-9 iphone-page:w-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)] iphone-page:h-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)]"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        ) : (
+          <svg
+            className="w-9 h-9 iphone-page:w-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)] iphone-page:h-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)]"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden
+          >
+            <path strokeLinecap="round" strokeWidth={2} d="M4 7h16M4 12h16M4 17h16" />
+          </svg>
+        )}
+      </button>
+    </div>
+  );
+}
+
 /**
  * Fixed Doe wordmark + hamburger, with the same full-screen iPhone nav sheet and
  * three-card featured carousel as the home page — solid beige chrome for subpages.
@@ -331,6 +392,25 @@ export default function DoeIphoneSiteNav() {
       document.body
     );
 
+  const navChromeElevated =
+    mounted &&
+    mobileNavOpen &&
+    createPortal(
+      <header
+        className="fixed top-0 left-0 right-0 z-[200] iphone-page:pt-[env(safe-area-inset-top,0px)] bg-[#F7F6F3] border-b border-[#E6E6E6]"
+        style={{
+          transition: "border-bottom 100ms ease-out, border-color 100ms ease-out, background-color 180ms ease-out",
+        }}
+      >
+        <NavChromeStrip
+          navTextColor={navTextColor}
+          mobileNavOpen={mobileNavOpen}
+          toggleMenu={() => setMobileNavOpen((o) => !o)}
+        />
+      </header>,
+      document.body
+    );
+
   return (
     <>
       <nav
@@ -342,56 +422,19 @@ export default function DoeIphoneSiteNav() {
           transition: "border-bottom 100ms ease-out, border-color 100ms ease-out, background-color 180ms ease-out",
         }}
       >
-      <div className="px-8 py-6 iphone-page:py-[clamp(0.8125rem,0.52rem+1.55vmin,1.9rem)] iphone-page:px-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))] flex items-center relative z-10 iphone-page:gap-[clamp(0.45rem,0.35rem+0.85vmin,0.75rem)] justify-end">
-        <Link
-          href="/"
-          className={`absolute top-1/2 -translate-y-1/2 left-8 iphone-page:left-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))] font-normal z-[1] min-w-0 whitespace-nowrap transition-opacity duration-500 ease-out ${lora.className} text-4xl iphone-page:text-[clamp(1.85rem,1.05rem+3.55vmin,3.9rem)] iphone-page:leading-none opacity-100`}
-          style={{ color: navTextColor }}
+        <div
+          className={mobileNavOpen ? "opacity-0 pointer-events-none select-none" : undefined}
+          aria-hidden={mobileNavOpen ? true : undefined}
         >
-          Doe
-        </Link>
-
-        <div className="hidden items-center gap-8 absolute left-1/2 -translate-x-1/2">
-          {NAV_ITEMS.map((item) => (
-            <span key={item} className="text-sm">
-              {item}
-            </span>
-          ))}
+          <NavChromeStrip
+            navTextColor={navTextColor}
+            mobileNavOpen={mobileNavOpen}
+            toggleMenu={() => setMobileNavOpen((o) => !o)}
+          />
         </div>
-
-        <button
-          type="button"
-          className="flex items-center justify-center p-3 iphone-page:p-[clamp(0.625rem,0.38rem+1.35vmin,0.975rem)] rounded-xl transition-colors active:bg-black/[0.04]"
-          style={{ color: navTextColor }}
-          aria-expanded={mobileNavOpen}
-          aria-label={mobileNavOpen ? "Close navigation menu" : "Open navigation menu"}
-          onClick={() => setMobileNavOpen((o) => !o)}
-        >
-          {mobileNavOpen ? (
-            <svg
-              className="w-9 h-9 iphone-page:w-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)] iphone-page:h-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)]"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              aria-hidden
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          ) : (
-            <svg
-              className="w-9 h-9 iphone-page:w-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)] iphone-page:h-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)]"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              aria-hidden
-            >
-              <path strokeLinecap="round" strokeWidth={2} d="M4 7h16M4 12h16M4 17h16" />
-            </svg>
-          )}
-        </button>
-      </div>
-    </nav>
-    {mobileMenuLayer}
+      </nav>
+      {mobileMenuLayer}
+      {navChromeElevated}
     </>
   );
 }
