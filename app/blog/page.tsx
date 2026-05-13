@@ -80,12 +80,12 @@ function GradientArticleVisual({
         }}
         aria-hidden
       />
-      <div className="absolute bottom-0 left-0 right-0 z-[3] flex items-center justify-start p-7 iphone-page:p-[clamp(1.5rem,1rem+3.5vmin,3rem)]">
+      <div className="absolute bottom-0 left-0 right-0 z-[3] flex items-center justify-start pt-7 pb-7 pl-5 pr-7 iphone-page:pt-[clamp(1.25rem,0.85rem+2.5vmin,2.75rem)] iphone-page:pb-[clamp(1.25rem,0.85rem+2.5vmin,2.75rem)] iphone-page:pl-[clamp(1rem,0.65rem+1.85vmin,2rem)] iphone-page:pr-[clamp(1.5rem,1rem+3.5vmin,3rem)]">
         <div
           className={`flex items-center gap-6 iphone-page:gap-[clamp(1.35rem,1rem+3vmin,3rem)] text-white ${inter.className}`}
         >
           <MobileNavFooterShapeIcon shape={slide.shape} />
-          <span className="text-[clamp(2.15rem,7.5vw,4.25rem)] iphone-page:text-[clamp(2.35rem,8vw,4.5rem)] font-medium tracking-tight leading-none">
+          <span className="text-[clamp(2.15rem,7.5vw,4.25rem)] iphone-page:text-[clamp(2.35rem,8vw,4.5rem)] font-normal tracking-tight leading-none">
             {slide.boxTitle}
           </span>
         </div>
@@ -113,7 +113,7 @@ function ArticleBlock({ slide, isFirst }: { slide: Slide; isFirst: boolean }) {
 
       <div className="mt-8 iphone-page:mt-10 space-y-6 iphone-page:space-y-7">
         <p
-          className={`text-[clamp(0.75rem,2.8vw,0.875rem)] font-semibold uppercase tracking-[0.2em] text-gray-500 ${inter.className}`}
+          className={`text-[clamp(0.75rem,2.8vw,0.875rem)] font-medium uppercase tracking-[0.2em] text-gray-500 ${inter.className}`}
         >
           {slide.boxTitle}
         </p>
@@ -123,12 +123,11 @@ function ArticleBlock({ slide, isFirst }: { slide: Slide; isFirst: boolean }) {
           {slide.outside}
         </h2>
         <p
-          className={`text-[clamp(1.05rem,3.8vw,1.25rem)] iphone-page:text-[clamp(1.125rem,4.1vw,1.35rem)] text-gray-500 ${inter.className}`}
-          style={{ fontWeight: 600 }}
+          className={`text-[clamp(1.05rem,3.8vw,1.25rem)] iphone-page:text-[clamp(1.125rem,4.1vw,1.35rem)] text-gray-500 font-medium ${inter.className}`}
         >
           {slide.date}
         </p>
-        <div className={`space-y-5 iphone-page:space-y-6 text-[clamp(1.1rem,3.9vw,1.3rem)] iphone-page:text-[clamp(1.2rem,4.25vw,1.4rem)] leading-[1.65] text-gray-800 ${inter.className}`} style={{ fontWeight: 500 }}>
+        <div className={`space-y-5 iphone-page:space-y-6 text-[clamp(1.1rem,3.9vw,1.3rem)] iphone-page:text-[clamp(1.2rem,4.25vw,1.4rem)] leading-[1.65] text-gray-800 font-normal ${inter.className}`}>
           {previewParas.map((para, i) => (
             <p key={i}>{para}</p>
           ))}
@@ -190,19 +189,9 @@ export default function BlogPage() {
       >
         <Link
           href="/"
-          className={`inline-flex items-center gap-2.5 mb-8 iphone-page:mb-10 text-[clamp(1rem,3.5vw,1.125rem)] iphone-page:text-[clamp(1.05rem,3.65vw,1.2rem)] font-semibold text-gray-600 hover:text-gray-900 ${inter.className}`}
+          className={`inline-block mb-8 iphone-page:mb-10 font-normal text-gray-900 hover:text-gray-700 transition-colors ${lora.className} text-[clamp(1.85rem,5.5vw,2.35rem)] iphone-page:text-[clamp(1.95rem,1.15rem+3.2vmin,2.65rem)] leading-none`}
         >
-          <svg
-            className="w-5 h-5 iphone-page:w-6 iphone-page:h-6 shrink-0"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-            aria-hidden
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-          </svg>
-          Home
+          Doe
         </Link>
 
         {/* Inquisara at top: image first, then title / preview / Read more */}

@@ -1831,12 +1831,19 @@ export default function DoePage() {
               className={`absolute top-1/2 -translate-y-1/2 left-8 iphone-page:left-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))] font-normal z-[1] min-w-0 whitespace-nowrap transition-opacity duration-500 ease-out ${lora.className} text-4xl iphone-page:text-[clamp(1.85rem,1.05rem+3.55vmin,3.9rem)] iphone-page:leading-none ${
                 showNavLogo ? "opacity-100" : "opacity-0 pointer-events-none"
               }`}
-              style={
-                showNavLogo ? { color: navTextColor, textShadow: navTextShadow } : undefined
-              }
               aria-hidden={!showNavLogo}
             >
-              Doe
+              <Link
+                href="/"
+                className="text-inherit no-underline"
+                style={
+                  showNavLogo
+                    ? { color: navTextColor, textShadow: navTextShadow }
+                    : undefined
+                }
+              >
+                Doe
+              </Link>
             </h1>
 
             {/* Desktop: center Navigation Links */}
@@ -5582,9 +5589,12 @@ export default function DoePage() {
             />
             <div className="max-w-[1400px] mx-auto px-8 w-full flex items-center justify-between relative z-10">
             {/* Doe Logo */}
-            <h1 className={`text-4xl font-normal text-white ${lora.className}`}>
+            <Link
+              href="/"
+              className={`text-4xl font-normal text-white no-underline hover:text-white/90 transition-colors ${lora.className}`}
+            >
               Doe
-            </h1>
+            </Link>
 
             {/* Navigation Pages 2x2 Grid */}
             <div className="grid grid-cols-2 gap-x-12 gap-y-4 ml-auto">
