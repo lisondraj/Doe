@@ -235,6 +235,8 @@ export default function DoePage() {
   const [scrollY, setScrollY] = useState(0);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  /** Which top-level nav row is expanded in the phone menu sheet (accordion). */
+  const [mobileNavExpandedKey, setMobileNavExpandedKey] = useState<string | null>(null);
   const [hoveredBox, setHoveredBox] = useState<number | null>(null);
   const [expandedBentoBox, setExpandedBentoBox] = useState<number | null>(null);
   const [hoveredBentoBox, setHoveredBentoBox] = useState<number | null>(null);
@@ -360,7 +362,8 @@ export default function DoePage() {
     const el = navBarRowRef.current;
     if (!el) return;
     const update = () => {
-      setIphoneMenuTopPx(Math.ceil(el.getBoundingClientRect().bottom));
+      /** Round (not ceil) so sheet sits flush under the fixed bar without a visible gap */
+      setIphoneMenuTopPx(Math.round(el.getBoundingClientRect().bottom));
     };
     update();
     let raf1 = 0;
@@ -399,6 +402,10 @@ export default function DoePage() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
+  }, [mobileNavOpen]);
+
+  useEffect(() => {
+    if (!mobileNavOpen) setMobileNavExpandedKey(null);
   }, [mobileNavOpen]);
 
   useEffect(() => {
@@ -1599,24 +1606,54 @@ export default function DoePage() {
               className="fixed inset-0 z-[45] flex flex-col pointer-events-none"
               role="presentation"
             >
-              <div style={{ height: iphoneMenuTopPx }} className="shrink-0" aria-hidden />
               <div
-                className="flex flex-col flex-1 min-h-0 bg-[#F7F6F3] shadow-[0_12px_40px_rgba(0,0,0,0.08)] pointer-events-auto border-t border-[#E6E6E6]"
+                style={{ height: iphoneMenuTopPx, margin: 0, padding: 0 }}
+                className="shrink-0 block leading-none"
+                aria-hidden
+              />
+              <div
+                className="flex flex-col flex-1 min-h-0 bg-[#F7F6F3] shadow-[0_12px_40px_rgba(0,0,0,0.08)] pointer-events-auto"
                 role="dialog"
                 aria-modal="true"
                 aria-label="Site navigation"
               >
-                <nav className="flex flex-col flex-1 min-h-0 overflow-y-hidden pb-[env(safe-area-inset-bottom,0px)]">
-                  {NAV_ITEMS.map((item) => (
-                    <button
-                      key={item}
-                      type="button"
-                      className="text-left text-2xl font-semibold tracking-[-0.02em] text-gray-900 px-6 py-5 border-b border-gray-200 active:bg-gray-100 transition-colors"
-                      onClick={() => setMobileNavOpen(false)}
-                    >
-                      {item}
-                    </button>
-                  ))}
+                <nav className="flex flex-col flex-1 min-h-0 overflow-y-auto pb-[env(safe-area-inset-bottom,0px)]">
+                  {NAV_ITEMS.map((item) => {
+                    const expanded = mobileNavExpandedKey === item;
+                    const subs = dropdownContent[item]?.items ?? [];
+                    const four = subs.slice(0, 4);
+                    return (
+                      <div key={item} className="border-b border-[#E6E6E6]">
+                        <button
+                          type="button"
+                          aria-expanded={expanded}
+                          className={`w-full text-left font-normal tracking-tight text-gray-900 px-6 iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] py-5 active:bg-black/[0.04] transition-colors ${lora.className} text-4xl iphone-page:text-6xl iphone-page:leading-none`}
+                          onClick={() =>
+                            setMobileNavExpandedKey((k) => (k === item ? null : item))
+                          }
+                        >
+                          {item}+
+                        </button>
+                        {expanded && four.length > 0 && (
+                          <div className="border-t border-[#E6E6E6]/80 bg-black/[0.02] px-6 iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] pb-5 pt-3 space-y-1">
+                            {four.map((sub) => (
+                              <button
+                                key={sub.title}
+                                type="button"
+                                className={`w-full text-left rounded-xl px-4 py-3.5 text-[17px] font-medium text-gray-800 hover:bg-white/70 active:bg-white transition-colors ${inter.className}`}
+                                onClick={() => setMobileNavOpen(false)}
+                              >
+                                <span className="block">{sub.title}</span>
+                                <span className="block text-[13px] font-normal text-gray-500 mt-1 leading-snug">
+                                  {sub.desc}
+                                </span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </nav>
               </div>
             </div>
