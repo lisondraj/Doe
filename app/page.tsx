@@ -376,6 +376,17 @@ function vbPhaseLocalProgress(uIn: number, m: VerticalBentoMilestonesU): number 
   return 0;
 }
 
+/** During open phase, bias timeline so rail 0 enters nearly expanded; scroll completes the last slice to fully open. */
+function vbBoostUForVerticalBentoOpenEdge(uIn: number, ms: VerticalBentoMilestonesU): number {
+  const u = Math.min(Math.max(uIn, 0), 1);
+  const openEnd = ms.uOpenEnd;
+  if (openEnd <= 1e-9 || u >= openEnd) return u;
+  const alpha = 0.82;
+  const t = u / openEnd;
+  const boostedT = alpha + (1 - alpha) * t;
+  return boostedT * openEnd;
+}
+
 function vbRailHeightPx(exp: number, collapsedPx: number, expandedMaxPx: number): number {
   const denom = Math.max(1 - VB_CLOSED_EXPAND, 1e-6);
   const t = Math.min(Math.max((exp - VB_CLOSED_EXPAND) / denom, 0), 1);
@@ -3577,10 +3588,10 @@ export default function DoePage() {
       {/* Vertical bento rails — pinned stack + scrub */}
       <div
         ref={verticalBentoSectionRef}
-        className={`relative z-10 w-full bg-[#F7F6F3] ${VBENTO_CANVAS_PADDING}`}
+        className={`relative z-10 w-full bg-[#F7F6F3] pt-5 pb-6 iphone-page:pt-6 iphone-page:pb-7 ${VBENTO_CANVAS_PADDING}`}
         style={{ minHeight: vbMetrics.sectionMinPx }}
       >
-        <div className="sticky top-[max(5.75rem,calc(env(safe-area-inset-top,0px)+4.5rem))] z-[5] pt-4 pb-4 iphone-page:pt-[max(1rem,env(safe-area-inset-top,0px))] iphone-page:pb-4">
+        <div className="sticky top-[max(5.75rem,calc(env(safe-area-inset-top,0px)+4.5rem))] z-[5] pt-6 pb-6 iphone-page:pt-[max(1.25rem,env(safe-area-inset-top,0px))] iphone-page:pb-[max(1.25rem,env(safe-area-inset-bottom,0px))]">
           <div
             className="relative mx-auto w-full max-w-full shrink-0"
             style={{
@@ -3590,10 +3601,11 @@ export default function DoePage() {
             }}
           >
               {(() => {
-                const { expand, opacity } = vbDeriveRails(verticalBentoU, vbMetrics.milestones);
+                const ms = vbMetrics.milestones;
+                const uRails = vbBoostUForVerticalBentoOpenEdge(verticalBentoU, ms);
+                const { expand, opacity } = vbDeriveRails(uRails, ms);
                 const gapPx = vbRailsInterGapPx();
                 const railGapsPx = gapPx * 2;
-                const ms = vbMetrics.milestones;
                 let usable = Math.max(vbMetrics.stickyColumnH - railGapsPx, 220);
                 let collapsedPx = Math.max(48, Math.min(90, Math.round(usable * 0.108)));
                 let expandedMax = usable - 2 * collapsedPx;
@@ -3603,12 +3615,12 @@ export default function DoePage() {
                 }
                 collapsedPx = Math.max(40, collapsedPx);
                 expandedMax = Math.max(collapsedPx + 4, usable - 2 * collapsedPx);
-                const localBar = vbPhaseLocalProgress(verticalBentoU, ms);
+                const localBar = vbPhaseLocalProgress(uRails, ms);
                 const barRail = vbDominantRailIndex(expand);
                 const dominantOpenT = vbSmoothstep01((expand[barRail] - 0.982) / (1 - 0.982));
                 const barGate = dominantOpenT;
                 const showProgressBar =
-                  dominantOpenT > 0.04 && verticalBentoU >= ms.uOpenEnd && verticalBentoRailsOpacity * barGate > 0.06;
+                  dominantOpenT > 0.04 && uRails >= ms.uOpenEnd && verticalBentoRailsOpacity * barGate > 0.06;
 
                 return (
                   <div className="relative w-full overflow-visible" style={{ height: vbMetrics.stickyColumnH }}>
