@@ -1630,7 +1630,7 @@ export default function DoePage() {
                         <button
                           type="button"
                           aria-expanded={expanded}
-                          className={`flex w-full items-center gap-3 text-left font-medium tracking-[-0.02em] text-gray-900 px-6 iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] py-4 active:bg-black/[0.04] transition-colors ${inter.className} text-4xl iphone-page:text-6xl iphone-page:leading-none`}
+                          className={`flex w-full items-center gap-2.5 text-left font-medium tracking-[-0.02em] text-gray-900 pl-4 pr-5 iphone-page:pl-[max(1rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))] py-4 active:bg-black/[0.04] transition-colors ${inter.className} text-4xl iphone-page:text-6xl iphone-page:leading-none`}
                           onClick={() =>
                             setMobileNavExpandedKey((k) => (k === item ? null : item))
                           }
@@ -1639,11 +1639,11 @@ export default function DoePage() {
                           <span className="shrink-0 inline-flex items-center justify-center text-gray-400 self-center" aria-hidden>
                             {expanded ? (
                               <svg
-                                className="w-[clamp(1.125rem,3.25vw,1.875rem)] h-[clamp(1.125rem,3.25vw,1.875rem)] transition-transform duration-200 ease-out"
+                                className="w-[clamp(0.9375rem,2.65vw,1.5rem)] h-[clamp(0.9375rem,2.65vw,1.5rem)] transition-transform duration-200 ease-out"
                                 viewBox="0 0 24 24"
                                 fill="none"
                                 stroke="currentColor"
-                                strokeWidth={1.75}
+                                strokeWidth={1.4}
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                               >
@@ -1651,11 +1651,11 @@ export default function DoePage() {
                               </svg>
                             ) : (
                               <svg
-                                className="w-[clamp(1.125rem,3.25vw,1.875rem)] h-[clamp(1.125rem,3.25vw,1.875rem)] transition-transform duration-200 ease-out"
+                                className="w-[clamp(0.9375rem,2.65vw,1.5rem)] h-[clamp(0.9375rem,2.65vw,1.5rem)] transition-transform duration-200 ease-out"
                                 viewBox="0 0 24 24"
                                 fill="none"
                                 stroke="currentColor"
-                                strokeWidth={1.75}
+                                strokeWidth={1.4}
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                               >
@@ -1669,12 +1669,12 @@ export default function DoePage() {
                         >
                           <div className="overflow-hidden min-h-0">
                             {four.length > 0 && (
-                              <div className="flex flex-col px-6 iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] pb-3 pt-0">
+                              <div className="flex flex-col pl-4 pr-5 iphone-page:pl-[max(1rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))] pb-3 pt-0">
                                 {four.map((sub) => (
                                   <button
                                     key={sub.title}
                                     type="button"
-                                    className={`w-full text-left py-3.5 pl-8 iphone-page:pl-10 text-[1.625rem] iphone-page:text-[2.125rem] leading-snug font-medium text-gray-600 active:bg-black/[0.03] transition-colors ${inter.className}`}
+                                    className={`w-full text-left py-3.5 pl-6 iphone-page:pl-8 text-[1.625rem] iphone-page:text-[2.125rem] leading-snug font-medium text-gray-600 active:bg-black/[0.03] transition-colors ${inter.className}`}
                                     onClick={() => setMobileNavOpen(false)}
                                   >
                                     {sub.title}
@@ -1688,54 +1688,77 @@ export default function DoePage() {
                     );
                   })}
                 </nav>
-                {/* Footer — gradient capsule + build CTA (same palette as carousel orange panel, not hero) */}
+                {/* Footer — gradient capsule + build CTA (cool slate wash vs carousel warm panels) */}
                 <div
                   className="shrink-0 px-6 iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] pb-[max(1rem,calc(env(safe-area-inset-bottom,0px)+10px))] pt-4 space-y-4 border-t border-[#ECEAE6]"
                 >
                   <div className="relative rounded-[1.375rem] iphone-page:rounded-3xl overflow-hidden min-h-[24rem] iphone-page:min-h-[31rem] shadow-[0_10px_32px_rgba(0,0,0,0.12)]">
-                    {/* Warm diagonal wash — distinct from prior radial */}
+                    {/* Cool moonlit wash — distinct from warm carousel panels */}
                     <div
                       className="absolute inset-0"
                       style={{
                         background:
-                          "linear-gradient(148deg, #f2c266 0%, #e39844 28%, #cf6b3f 58%, #b85238 78%, #1b353d 100%)",
+                          "linear-gradient(122deg, #c9d6f5 0%, #8fa3df 14%, #5c6eb8 36%, #3a4a7a 58%, #242f4d 78%, #12192c 100%)",
+                      }}
+                      aria-hidden
+                    />
+                    {/* Soft vignette */}
+                    <div
+                      className="pointer-events-none absolute inset-0 opacity-50"
+                      style={{
+                        background:
+                          "radial-gradient(ellipse 90% 70% at 50% 100%, rgba(8, 12, 28, 0.55) 0%, transparent 55%)",
                       }}
                       aria-hidden
                     />
                     {/* Fine line mesh overlay */}
                     <div
-                      className="pointer-events-none absolute inset-0 opacity-[0.35] mix-blend-overlay"
+                      className="pointer-events-none absolute inset-0 opacity-[0.32] mix-blend-overlay"
                       style={{
                         backgroundImage: `
                           repeating-linear-gradient(
-                            -36deg,
-                            rgba(255, 255, 255, 0.07) 0px,
-                            rgba(255, 255, 255, 0.07) 1px,
+                            -32deg,
+                            rgba(255, 255, 255, 0.08) 0px,
+                            rgba(255, 255, 255, 0.08) 1px,
                             transparent 1px,
-                            transparent 11px
+                            transparent 10px
                           ),
                           repeating-linear-gradient(
-                            54deg,
-                            rgba(14, 36, 42, 0.09) 0px,
-                            rgba(14, 36, 42, 0.09) 1px,
+                            48deg,
+                            rgba(10, 18, 40, 0.1) 0px,
+                            rgba(10, 18, 40, 0.1) 1px,
                             transparent 1px,
-                            transparent 13px
+                            transparent 12px
                           )
                         `,
                       }}
                       aria-hidden
                     />
-                    <div className="absolute bottom-0 left-0 right-0 z-[1] flex items-center justify-start p-8 iphone-page:p-12">
-                      <div className={`flex items-center gap-7 iphone-page:gap-9 text-white ${inter.className}`}>
+                    {/* Horizontal line scan overlay */}
+                    <div
+                      className="pointer-events-none absolute inset-0 opacity-[0.22]"
+                      style={{
+                        backgroundImage: `repeating-linear-gradient(
+                          180deg,
+                          rgba(255, 255, 255, 0.085) 0px,
+                          rgba(255, 255, 255, 0.085) 1px,
+                          transparent 1px,
+                          transparent 4px
+                        )`,
+                      }}
+                      aria-hidden
+                    />
+                    <div className="absolute bottom-0 left-0 right-0 z-[1] flex items-center justify-start pl-4 pr-8 pb-8 pt-8 iphone-page:pl-5 iphone-page:pr-12 iphone-page:pb-10 iphone-page:pt-10">
+                      <div className={`flex items-center gap-4 iphone-page:gap-5 text-white ${inter.className}`}>
                         <svg
                           viewBox="0 0 24 24"
-                          className="shrink-0 w-[5.5rem] h-[5.5rem] iphone-page:w-[7rem] iphone-page:h-[7rem] opacity-95 drop-shadow-sm"
+                          className="shrink-0 w-[4.25rem] h-[4.25rem] iphone-page:w-[5.5rem] iphone-page:h-[5.5rem] opacity-95 drop-shadow-sm"
                           aria-hidden
                         >
-                          {/* Triangle: apex up, flat base along bottom */}
-                          <path fill="currentColor" d="M12 5 L22 19 L2 19 Z" />
+                          {/* Isosceles triangle: square bounding box (16×16 in 24×24 viewBox) */}
+                          <path fill="currentColor" d="M12 5 L20 21 L4 21 Z" />
                         </svg>
-                        <span className="text-[3.25rem] iphone-page:text-[4.25rem] font-medium tracking-tight leading-none">
+                        <span className="text-[3.25rem] iphone-page:text-[4.25rem] font-normal tracking-tight leading-none">
                           Inquisara
                         </span>
                       </div>
