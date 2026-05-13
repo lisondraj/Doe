@@ -2929,7 +2929,7 @@ export default function DoePage() {
         <div className="absolute inset-0 pointer-events-none">
           <svg
             className="absolute inset-0 pointer-events-none w-full h-full"
-            style={{ transform: "translateY(-5%)" }}
+            style={{ transform: "translateY(-18%)" }}
             xmlns="http://www.w3.org/2000/svg"
           >
             <defs>
