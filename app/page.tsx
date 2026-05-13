@@ -2453,11 +2453,11 @@ export default function DoePage() {
       <div className="w-full border-t border-[#E6E6E6]" />
 
       {/* Second Section — title upper third, carousel lower two-thirds */}
-      <div ref={secondSectionRef} className="min-h-[calc(var(--app-vh,100dvh)+7rem)] relative z-10 flex flex-col pt-16 pb-28 iphone-page:min-h-[calc(var(--app-vh,100dvh)+6rem)] iphone-page:pt-12 iphone-page:pb-[9.5rem]">
-        <div className="flex-1 grid grid-rows-[3fr_9fr_auto] min-h-[85vh] iphone-page:min-h-[88dvh] w-full overflow-x-hidden">
+      <div ref={secondSectionRef} className="min-h-[calc(var(--app-vh,100dvh)+7rem)] relative z-10 flex flex-col pt-16 pb-28 iphone-page:min-h-[calc(var(--app-vh,100dvh)+2rem)] iphone-page:pt-12 iphone-page:pb-6">
+        <div className="flex-1 grid grid-rows-[3fr_9fr_auto] min-h-[85vh] iphone-page:flex iphone-page:flex-col iphone-page:flex-1 iphone-page:min-h-[calc(var(--app-vh,100dvh)-10.5rem)] iphone-page:grid-rows-none w-full overflow-x-hidden">
           {/* Title band — slightly taller than 1:2 so headline has room */}
           <div
-            className={`flex flex-col justify-center min-h-0 px-4 py-14 iphone-page:pt-16 iphone-page:pb-9 ${narrowHorizontalInset}`}
+            className={`flex flex-col justify-center min-h-0 shrink-0 px-4 py-14 iphone-page:pt-16 iphone-page:pb-9 ${narrowHorizontalInset}`}
           >
             <div className="text-center iphone-page:mt-5">
               <h1 
@@ -2478,9 +2478,9 @@ export default function DoePage() {
             </div>
           </div>
 
-          {/* Carousel band (~bottom two-thirds) */}
+          {/* Carousel band — pinned to bottom of viewport on phone; symmetric gutter (matches L/R/B + top of band) */}
           <div
-            className={`flex flex-col justify-center min-h-0 overflow-x-hidden overflow-y-visible pb-16 iphone-page:pb-14 ${narrowHorizontalInset}`}
+            className={`flex flex-col justify-center min-h-0 overflow-x-hidden overflow-y-visible pb-16 iphone-page:flex-1 iphone-page:justify-end iphone-page:!p-[max(1.5rem,env(safe-area-inset-left,0px),env(safe-area-inset-right,0px),env(safe-area-inset-bottom,0px))]`}
           >
           {/* Sliding squares container */}
           <div 
