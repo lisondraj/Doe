@@ -54,6 +54,38 @@ const dropdownContent: Record<string, { items: { title: string; desc: string }[]
 
 const NAV_ITEMS = ["Features", "Security", "Students", "Company"] as const;
 
+/** Phone nav sheet footer slideshow — gradients match second-section carousel boxes 1–3. */
+const MOBILE_NAV_BUILD_SLIDES = [
+  {
+    gradient:
+      "linear-gradient(135deg, #E7A944 0%, #D49D4F 30%, #D2774C 60%, #1E343A 100%)",
+    title: "1",
+    ctaLine:
+      "Scheduled summaries and inbox digests—verify once, stay caught up.",
+  },
+  {
+    gradient:
+      "radial-gradient(circle at center, #E7A944 0%, #D49D4F 40%, #D2774C 70%, #1E343A 100%)",
+    title: "2",
+    ctaLine:
+      "Imaging, labs, and reports stacked in one place—no tab hopping.",
+  },
+  {
+    gradient:
+      "linear-gradient(180deg, #E7A944 0%, #D49D4F 25%, #D2774C 55%, #1E343A 100%)",
+    title: "3",
+    ctaLine:
+      "Diagnostic assistants and bedside workflows we are piloting next.",
+  },
+] as const;
+
+const MOBILE_NAV_BUILD_GRAIN_STYLE = {
+  backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E")`,
+  backgroundSize: "200px 200px",
+  opacity: 1,
+  mixBlendMode: "overlay" as const,
+};
+
 /** Bottom title pill + description inside 700×700 slide mocks (scales with card transform). */
 /** Position (left/right) is applied via inline style — computed from slide scale so captions
  *  are always inside the visible card area even on portrait-phone where the inner 700px div overflows. */
@@ -231,6 +263,8 @@ export default function DoePage() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   /** Which top-level nav row is expanded in the phone menu sheet (accordion). */
   const [mobileNavExpandedKey, setMobileNavExpandedKey] = useState<string | null>(null);
+  /** Auto-rotating “build” capsule in the phone nav sheet footer (3 slides, 3s each). */
+  const [mobileNavBuildCarouselIndex, setMobileNavBuildCarouselIndex] = useState(0);
   const [hoveredBox, setHoveredBox] = useState<number | null>(null);
   const [expandedBentoBox, setExpandedBentoBox] = useState<number | null>(null);
   const [hoveredBentoBox, setHoveredBentoBox] = useState<number | null>(null);
@@ -402,6 +436,15 @@ export default function DoePage() {
   useEffect(() => {
     if (!mobileNavOpen) setMobileNavExpandedKey(null);
   }, [mobileNavOpen]);
+
+  useEffect(() => {
+    if (!mobileNavOpen || !isPhoneLayout) return;
+    setMobileNavBuildCarouselIndex(0);
+    const id = window.setInterval(() => {
+      setMobileNavBuildCarouselIndex((prev) => (prev + 1) % MOBILE_NAV_BUILD_SLIDES.length);
+    }, 3000);
+    return () => window.clearInterval(id);
+  }, [mobileNavOpen, isPhoneLayout]);
 
   useEffect(() => {
     let animationFrameId: number;
@@ -1688,80 +1731,100 @@ export default function DoePage() {
                     );
                   })}
                 </nav>
-                {/* Footer — gradient capsule + build CTA (cool slate wash vs carousel warm panels) */}
+                {/* Footer — rotating build capsule (matches second-section carousel) + CTA */}
                 <div
                   className="shrink-0 px-6 iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] pb-[max(1rem,calc(env(safe-area-inset-bottom,0px)+10px))] pt-4 space-y-4 border-t border-[#ECEAE6]"
                 >
-                  <div className="relative rounded-[1.375rem] iphone-page:rounded-3xl overflow-hidden min-h-[24rem] iphone-page:min-h-[31rem] shadow-[0_10px_32px_rgba(0,0,0,0.12)]">
-                    {/* Cool moonlit wash — distinct from warm carousel panels */}
-                    <div
-                      className="absolute inset-0"
-                      style={{
-                        background:
-                          "linear-gradient(122deg, #c9d6f5 0%, #8fa3df 14%, #5c6eb8 36%, #3a4a7a 58%, #242f4d 78%, #12192c 100%)",
-                      }}
-                      aria-hidden
-                    />
-                    {/* Soft vignette */}
-                    <div
-                      className="pointer-events-none absolute inset-0 opacity-50"
-                      style={{
-                        background:
-                          "radial-gradient(ellipse 90% 70% at 50% 100%, rgba(8, 12, 28, 0.55) 0%, transparent 55%)",
-                      }}
-                      aria-hidden
-                    />
-                    {/* Fine line mesh overlay */}
-                    <div
-                      className="pointer-events-none absolute inset-0 opacity-[0.32] mix-blend-overlay"
-                      style={{
-                        backgroundImage: `
-                          repeating-linear-gradient(
-                            -32deg,
-                            rgba(255, 255, 255, 0.08) 0px,
-                            rgba(255, 255, 255, 0.08) 1px,
-                            transparent 1px,
-                            transparent 10px
-                          ),
-                          repeating-linear-gradient(
-                            48deg,
-                            rgba(10, 18, 40, 0.1) 0px,
-                            rgba(10, 18, 40, 0.1) 1px,
-                            transparent 1px,
-                            transparent 12px
-                          )
-                        `,
-                      }}
-                      aria-hidden
-                    />
-                    {/* Horizontal line scan overlay */}
-                    <div
-                      className="pointer-events-none absolute inset-0 opacity-[0.22]"
-                      style={{
-                        backgroundImage: `repeating-linear-gradient(
-                          180deg,
-                          rgba(255, 255, 255, 0.085) 0px,
-                          rgba(255, 255, 255, 0.085) 1px,
-                          transparent 1px,
-                          transparent 4px
-                        )`,
-                      }}
-                      aria-hidden
-                    />
-                    <div className="absolute bottom-0 left-0 right-0 z-[1] flex items-center justify-start pl-4 pr-8 pb-8 pt-8 iphone-page:pl-5 iphone-page:pr-12 iphone-page:pb-10 iphone-page:pt-10">
-                      <div className={`flex items-center gap-4 iphone-page:gap-5 text-white ${inter.className}`}>
-                        <svg
-                          viewBox="0 0 24 24"
-                          className="shrink-0 w-[4.25rem] h-[4.25rem] iphone-page:w-[5.5rem] iphone-page:h-[5.5rem] opacity-95 drop-shadow-sm"
-                          aria-hidden
+                  <div
+                    role="region"
+                    aria-roledescription="carousel"
+                    aria-label="What we are building"
+                    className="relative rounded-[1.375rem] iphone-page:rounded-3xl overflow-hidden min-h-[24rem] iphone-page:min-h-[31rem] shadow-[0_10px_32px_rgba(0,0,0,0.12)]"
+                  >
+                    {MOBILE_NAV_BUILD_SLIDES.map((slide, slideIndex) => {
+                      const active = mobileNavBuildCarouselIndex === slideIndex;
+                      return (
+                        <div
+                          key={slide.title}
+                          className="absolute inset-0 transition-opacity duration-700 ease-in-out"
+                          style={{
+                            opacity: active ? 1 : 0,
+                            pointerEvents: active ? "auto" : "none",
+                            zIndex: active ? 1 : 0,
+                          }}
+                          aria-hidden={!active}
                         >
-                          {/* Isosceles triangle: square bounding box (16×16 in 24×24 viewBox) */}
-                          <path fill="currentColor" d="M12 5 L20 21 L4 21 Z" />
-                        </svg>
-                        <span className="text-[3.25rem] iphone-page:text-[4.25rem] font-normal tracking-tight leading-none">
-                          Inquisara
-                        </span>
-                      </div>
+                          <div
+                            className="absolute inset-0"
+                            style={{ background: slide.gradient }}
+                            aria-hidden
+                          />
+                          <div
+                            className="absolute inset-0 pointer-events-none"
+                            style={MOBILE_NAV_BUILD_GRAIN_STYLE}
+                            aria-hidden
+                          />
+                          {/* Big diagonal line grid — second-section carousel box 1 */}
+                          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                            <svg
+                              className="absolute inset-0 h-full w-full"
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 700 700"
+                              preserveAspectRatio="xMidYMid slice"
+                              aria-hidden
+                            >
+                              <defs>
+                                <pattern
+                                  id={`nav-build-diag-${slideIndex}`}
+                                  x="0"
+                                  y="0"
+                                  width="60"
+                                  height="60"
+                                  patternUnits="userSpaceOnUse"
+                                  patternTransform="rotate(45)"
+                                >
+                                  <path
+                                    d="M 0 0 L 60 0 M 0 0 L 0 60"
+                                    fill="none"
+                                    stroke="rgba(255, 255, 255, 0.15)"
+                                    strokeWidth="0.8"
+                                  />
+                                </pattern>
+                              </defs>
+                              <rect width="100%" height="100%" fill={`url(#nav-build-diag-${slideIndex})`} />
+                            </svg>
+                          </div>
+                          <div className="absolute bottom-0 left-0 right-0 z-[2] flex items-center justify-start pl-4 pr-8 pb-8 pt-8 iphone-page:pl-5 iphone-page:pr-12 iphone-page:pb-10 iphone-page:pt-10">
+                            <div className={`flex items-center gap-4 iphone-page:gap-5 text-white ${inter.className}`}>
+                              <svg
+                                viewBox="0 0 24 24"
+                                className="shrink-0 w-[4.25rem] h-[4.25rem] iphone-page:w-[5.5rem] iphone-page:h-[5.5rem] opacity-95 drop-shadow-sm"
+                                aria-hidden
+                              >
+                                <path fill="currentColor" d="M12 5 L20 21 L4 21 Z" />
+                              </svg>
+                              <span className="text-[3.25rem] iphone-page:text-[4.25rem] font-normal tracking-tight leading-none">
+                                {slide.title}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                    <div
+                      className="pointer-events-none absolute left-4 top-4 z-[4] flex items-center gap-2 iphone-page:left-5 iphone-page:top-5"
+                      aria-hidden
+                    >
+                      {MOBILE_NAV_BUILD_SLIDES.map((_, dotIndex) => (
+                        <span
+                          key={dotIndex}
+                          className={`rounded-full transition-all duration-300 ${
+                            mobileNavBuildCarouselIndex === dotIndex
+                              ? "h-2.5 w-2.5 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.25)]"
+                              : "h-2 w-2 bg-white/45"
+                          }`}
+                        />
+                      ))}
                     </div>
                   </div>
                   <button
@@ -1777,15 +1840,15 @@ export default function DoePage() {
                       });
                     }}
                   >
-                    <span className="text-[1.375rem] iphone-page:text-[2rem] font-medium text-gray-800 tracking-tight leading-snug">
-                      See what we&apos;re building
+                    <span className="min-w-0 flex-1 text-[1.375rem] iphone-page:text-[2rem] font-medium text-gray-800 tracking-tight leading-snug transition-opacity duration-500">
+                      {MOBILE_NAV_BUILD_SLIDES[mobileNavBuildCarouselIndex].ctaLine}
                     </span>
                     <span
-                      className="shrink-0 inline-flex h-16 w-16 iphone-page:h-[5.25rem] iphone-page:w-[5.25rem] items-center justify-center rounded-full border-2 border-gray-300/90 bg-white text-gray-900 shadow-[0_4px_14px_rgba(0,0,0,0.08)]"
+                      className="shrink-0 inline-flex h-14 w-14 iphone-page:h-[4.75rem] iphone-page:w-[4.75rem] items-center justify-center rounded-full border-2 border-gray-300/90 bg-white text-gray-900 shadow-[0_4px_14px_rgba(0,0,0,0.08)]"
                       aria-hidden
                     >
                       <svg
-                        className="w-8 h-8 iphone-page:w-11 iphone-page:h-11"
+                        className="w-7 h-7 iphone-page:w-10 iphone-page:h-10"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
