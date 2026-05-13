@@ -60,75 +60,36 @@ const dropdownContent: Record<string, { items: { title: string; desc: string }[]
 
 const NAV_ITEMS = ["Features", "Security", "Students", "Company"] as const;
 
-const PHONE_LAYOUT_MEDIA =
-  "(max-width: 480px), ((max-height: 500px) and (min-width: 500px) and (pointer: coarse))";
-
-const LAYOUT_FORCE_MOBILE_KEY = "doeforvc-force-mobile";
-const LAYOUT_FORCE_DESKTOP_KEY = "doeforvc-force-desktop";
-
-function readLayoutOverrideFlags(): { forceMobile: boolean; forceDesktop: boolean } {
-  if (typeof window === "undefined") return { forceMobile: false, forceDesktop: false };
-  try {
-    return {
-      forceMobile: sessionStorage.getItem(LAYOUT_FORCE_MOBILE_KEY) === "1",
-      forceDesktop: sessionStorage.getItem(LAYOUT_FORCE_DESKTOP_KEY) === "1",
-    };
-  } catch {
-    return { forceMobile: false, forceDesktop: false };
-  }
-}
-
-/** Natural phone detection + optional session overrides (preview on desktop / desktop site on iPhone). */
-function computeIsPhoneLayout(): boolean {
-  const { forceMobile, forceDesktop } = readLayoutOverrideFlags();
-  const isIPhone = /iPhone/.test(navigator.userAgent || "");
-  const narrow = window.matchMedia(PHONE_LAYOUT_MEDIA).matches;
-  const naturalPhone = isIPhone || narrow;
-  return forceMobile || (!forceDesktop && naturalPhone);
-}
-
-function persistLayoutClick(isPhoneLayoutNow: boolean) {
-  const isIPhone = /iPhone/.test(navigator.userAgent || "");
-  const naturalPhone = isIPhone || window.matchMedia(PHONE_LAYOUT_MEDIA).matches;
-  try {
-    if (isPhoneLayoutNow) {
-      if (naturalPhone) {
-        sessionStorage.setItem(LAYOUT_FORCE_DESKTOP_KEY, "1");
-        sessionStorage.removeItem(LAYOUT_FORCE_MOBILE_KEY);
-      } else {
-        sessionStorage.removeItem(LAYOUT_FORCE_MOBILE_KEY);
-        sessionStorage.removeItem(LAYOUT_FORCE_DESKTOP_KEY);
-      }
-    } else {
-      sessionStorage.setItem(LAYOUT_FORCE_MOBILE_KEY, "1");
-      sessionStorage.removeItem(LAYOUT_FORCE_DESKTOP_KEY);
-    }
-  } catch {
-    /* private / restricted storage */
-  }
-}
-
-/** Pro Max / Plus (~430–456 CSS px short edge) otherwise get a higher `zoom` and read oversized; cap basis ~ standard iPhone width. */
-const IPHONE_ZOOM_SHORT_EDGE_CAP = 404;
-const IPHONE_ZOOM_DESIGN_WIDTH = 820;
-
-/** Keep <html data-layout> in sync with Tailwind layout-phone / layout-desktop variants. */
-function setDocumentLayout(phone: boolean) {
-  if (typeof document !== "undefined") {
-    document.documentElement.setAttribute("data-layout", phone ? "phone" : "desktop");
-  }
-}
-
 /** Bottom title pill + description inside 700×700 slide mocks (scales with card transform). */
 /** Position (left/right) is applied via inline style — computed from slide scale so captions
  *  are always inside the visible card area even on portrait-phone where the inner 700px div overflows. */
 const slideCaptionWrap =
-  "absolute bottom-9 z-[5] flex flex-col items-start gap-2.5 pointer-events-auto layout-phone:bottom-11";
+  "absolute bottom-9 z-[5] flex flex-col items-start gap-2.5 pointer-events-auto max-[639px]:bottom-11";
 const slideCaptionBadge =
   "inline-flex max-w-[calc(100%-2px)] shrink-0 items-center rounded-full border border-white/95 bg-white/5 px-[14px] py-[7px] text-[17px] font-semibold leading-snug tracking-[-0.02em] text-white shadow-[0_2px_14px_rgba(0,0,0,0.14)]";
 const slideCaptionBody =
   "w-full min-w-0 max-w-[min(340px,calc(100%-4px))] text-left text-[15px] font-medium leading-[1.48] tracking-[-0.012em] text-white/[0.92] break-words [overflow-wrap:anywhere]";
 const slideCaptionFont = { fontFamily: "system-ui, -apple-system, sans-serif" } as const;
+
+/** Same horizontal inset as the fixed nav — keeps hero, headline band, and carousel on one vertical rhythm (≤639px). */
+const narrowHorizontalInset =
+  "max-[639px]:pl-[max(1.5rem,env(safe-area-inset-left,0px))] max-[639px]:pr-[max(1.5rem,env(safe-area-inset-right,0px))]";
+
+/**
+ * Visual scale for the page root: keeps the legacy tight curve up to `blendFrom`, then
+ * interpolates to 1 so widening the browser doesn’t snap at the phone/desktop breakpoint.
+ */
+function doeforvcRootZoom(innerWidthPx: number): number {
+  const w = Math.max(280, innerWidthPx);
+  const curve = Math.min(1, Math.max(0.38, (w - 16) / 800));
+  const blendFrom = 639;
+  const blendEnd = 1200;
+  if (w <= blendFrom) return curve;
+  if (w >= blendEnd) return 1;
+  const z0 = Math.min(1, Math.max(0.38, (blendFrom - 16) / 800));
+  const t = (w - blendFrom) / (blendEnd - blendFrom);
+  return z0 + t * (1 - z0);
+}
 
 /**
  * “Build with us” surfaces — same gradients as the sliding workflow boxes (modal cards).
@@ -358,45 +319,25 @@ export default function DoePage() {
   const [buildBoxesOpacity, setBuildBoxesOpacity] = useState(0);
   const [buildBoxesTranslateY, setBuildBoxesTranslateY] = useState(40);
 
-  /** Narrow phone layout (iPhone-sized); desktop keeps zoom at 1. */
+  /** Narrow phone layout (hamburger, portrait carousel); zoom can extend past this width. */
   const [isPhoneLayout, setIsPhoneLayout] = useState(false);
-  const [iphoneZoom, setIphoneZoom] = useState(1);
-  /** Sliding cards on phone: logical px inside zoomed root (= visible px ÷ iphoneZoom). */
+  const [viewportWidth, setViewportWidth] = useState(1200);
+  /** Sliding cards on phone: logical px inside zoomed root (= visible px ÷ root zoom). */
   const [phoneSlideSize, setPhoneSlideSize] = useState({ w: 850, h: 1090 });
 
-  const syncLayoutRef = useRef<() => void>(() => {});
-
-  useLayoutEffect(() => {
-    const phoneMql = window.matchMedia(PHONE_LAYOUT_MEDIA);
+  useEffect(() => {
+    /** Align with Tailwind `max-[639px]`. */
+    const mq = window.matchMedia("(max-width: 639px)");
     const updateLayout = () => {
-      const phone = computeIsPhoneLayout();
-      setIsPhoneLayout(phone);
-      setDocumentLayout(phone);
-      if (phone) {
-        const vv = window.visualViewport;
-        const shortEdge = vv
-          ? Math.min(vv.width, vv.height)
-          : Math.min(window.innerWidth, window.innerHeight);
-        const zoomEdge = Math.min(shortEdge, IPHONE_ZOOM_SHORT_EDGE_CAP);
-        setIphoneZoom(
-          Math.min(1, Math.max(0.38, (zoomEdge - 16) / IPHONE_ZOOM_DESIGN_WIDTH))
-        );
-      } else {
-        setIphoneZoom(1);
-      }
+      setViewportWidth(window.innerWidth);
+      setIsPhoneLayout(mq.matches);
     };
-    syncLayoutRef.current = updateLayout;
     updateLayout();
-    phoneMql.addEventListener("change", updateLayout);
+    mq.addEventListener("change", updateLayout);
     window.addEventListener("resize", updateLayout);
-    window.addEventListener("orientationchange", updateLayout);
-    const vvLayout = window.visualViewport;
-    vvLayout?.addEventListener("resize", updateLayout);
     return () => {
-      phoneMql.removeEventListener("change", updateLayout);
+      mq.removeEventListener("change", updateLayout);
       window.removeEventListener("resize", updateLayout);
-      window.removeEventListener("orientationchange", updateLayout);
-      vvLayout?.removeEventListener("resize", updateLayout);
     };
   }, []);
 
@@ -405,9 +346,7 @@ export default function DoePage() {
     const measure = () => {
       const vv = window.visualViewport;
       const vw = vv?.width ?? window.innerWidth;
-      /** Use iphoneZoom — logical px inside zoomed root. */
-      // Prevent division by zero, use zoom if available
-      const zoom = iphoneZoom > 0 ? iphoneZoom : 0.45;
+      const zoom = Math.max(0.38, doeforvcRootZoom(window.innerWidth));
       /** Inset so cards read slightly smaller than full viewport */
       const horizontalInset = 12;
       /** Slide width from viewport; height taller than width for portrait cards */
@@ -427,7 +366,7 @@ export default function DoePage() {
       window.visualViewport?.removeEventListener("resize", measure);
       window.visualViewport?.removeEventListener("scroll", measure);
     };
-  }, [isPhoneLayout, iphoneZoom]);
+  }, [isPhoneLayout, viewportWidth]);
 
   useEffect(() => {
     if (!isPhoneLayout) return;
@@ -1351,42 +1290,34 @@ export default function DoePage() {
   const loginButtonShadow =
     showNavShadow && !isDropdownOpen && !hitsWhiteBox ? "0 2px 4px rgba(0, 0, 0, 0.1)" : "none";
 
+  const rootZoom = doeforvcRootZoom(viewportWidth);
+  const applyRootZoom = rootZoom < 0.999;
+
   return (
     <div
-      className={`relative overflow-x-hidden${isPhoneLayout ? " doeforvc-iphone-root" : ""}`}
+      className={`relative overflow-x-hidden${isPhoneLayout || applyRootZoom ? " doeforvc-iphone-root" : ""}`}
       data-doeforvc-view={isPhoneLayout ? "iphone" : "desktop"}
       style={{
         backgroundColor: "#F7F6F3",
-        ...(isPhoneLayout ? { zoom: iphoneZoom } : {}),
+        ...(applyRootZoom ? { zoom: rootZoom } : {}),
       }}
       suppressHydrationWarning
     >
-      <button
-        type="button"
-        className="fixed bottom-4 right-4 z-[100] max-w-[calc(100vw-2rem)] rounded-full border border-black/10 bg-white/90 px-4 py-2 text-xs font-semibold tracking-tight text-gray-900 shadow-md backdrop-blur-sm hover:bg-white"
-        aria-label={isPhoneLayout ? "Switch to desktop layout" : "Switch to iPhone layout"}
-        onClick={() => {
-          persistLayoutClick(isPhoneLayout);
-          syncLayoutRef.current();
-        }}
-      >
-        {isPhoneLayout ? "Desktop view" : "iPhone view"}
-      </button>
       {/* Hero Section with Dynamic Gradient */}
       <div
         className="relative overflow-hidden"
         style={
-          isPhoneLayout
+          applyRootZoom
             ? {
-                minHeight: `calc(100dvh / ${iphoneZoom})`,
-                height: `calc(100dvh / ${iphoneZoom})`,
+                minHeight: `calc(100dvh / ${rootZoom})`,
+                height: `calc(100dvh / ${rootZoom})`,
               }
             : { minHeight: "100dvh", height: "100dvh" }
         }
       >
         {/* Hero with Gradient from Chart2 — extra scale on narrow viewports “zooms into” the gradient */}
         <div 
-          className="absolute inset-0 layout-phone:scale-[1.22] layout-phone:origin-[50%_45%]"
+          className="absolute inset-0 max-[639px]:scale-[1.22] max-[639px]:origin-[50%_45%]"
           style={{
             background: `
               radial-gradient(circle at center, #D49D4F 0%, #D2774C 18%, #BF593D 32%, #C88A5F 45%, #7B5C4B 55%, #8B6F47 65%, #6D5B41 72%, #5C4A3A 78%, #4A3D32 85%, #1E343A 95%, rgba(30, 52, 58, 0.6) 100%),
@@ -1454,7 +1385,7 @@ export default function DoePage() {
         {/* Navigation Bar */}
         <nav
           ref={navBarRowRef}
-          className="fixed top-0 left-0 right-0 z-50 layout-phone:pt-[env(safe-area-inset-top,0px)]"
+          className="fixed top-0 left-0 right-0 z-50 max-[639px]:pt-[env(safe-area-inset-top,0px)]"
           style={{ 
             /** Phone + open sheet: solid bar so safe-area + controls aren’t over transparent hero. */
             backgroundColor:
@@ -1494,11 +1425,11 @@ export default function DoePage() {
           )}
           {/* Top bar */}
           <div
-            className="px-8 py-6 layout-phone:px-6 layout-phone:py-6 layout-phone:pl-[max(1.5rem,env(safe-area-inset-left,0px))] layout-phone:pr-[max(1.5rem,env(safe-area-inset-right,0px))] flex items-center relative z-10 layout-phone:gap-2 justify-end"
+            className="px-8 py-6 max-[639px]:px-6 max-[639px]:py-6 max-[639px]:pl-[max(1.5rem,env(safe-area-inset-left,0px))] max-[639px]:pr-[max(1.5rem,env(safe-area-inset-right,0px))] flex items-center relative z-10 max-[639px]:gap-2 justify-end"
           >
             {/* Logo — opacity only (no width collapse) so it fades, not slides */}
             <h1
-              className={`absolute top-1/2 -translate-y-1/2 left-8 layout-phone:left-[max(1.5rem,env(safe-area-inset-left,0px))] font-normal z-[1] min-w-0 whitespace-nowrap transition-opacity duration-500 ease-out ${lora.className} text-4xl layout-phone:text-6xl layout-phone:leading-none ${
+              className={`absolute top-1/2 -translate-y-1/2 left-8 max-[639px]:left-[max(1.5rem,env(safe-area-inset-left,0px))] font-normal z-[1] min-w-0 whitespace-nowrap transition-opacity duration-500 ease-out ${lora.className} text-4xl max-[639px]:text-6xl max-[639px]:leading-none ${
                 showNavLogo ? "opacity-100" : "opacity-0 pointer-events-none"
               }`}
               style={
@@ -1510,7 +1441,7 @@ export default function DoePage() {
             </h1>
 
             {/* Desktop: center Navigation Links */}
-            <div className="hidden layout-desktop:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
+            <div className="hidden min-[640px]:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
               {NAV_ITEMS.map((item) => (
                 <button
                   key={item}
@@ -1534,7 +1465,7 @@ export default function DoePage() {
             {/* Desktop: Login */}
             <a
               href="#"
-              className="hidden layout-desktop:inline-flex text-sm font-semibold px-6 py-2.5 rounded-md hover:opacity-90 transition-all duration-300 shrink-0 items-center"
+              className="hidden min-[640px]:inline-flex text-sm font-semibold px-6 py-2.5 rounded-md hover:opacity-90 transition-all duration-300 shrink-0 items-center"
               style={{
                 backgroundColor: loginButtonBg,
                 color: loginButtonText,
@@ -1547,7 +1478,7 @@ export default function DoePage() {
             {/* iPhone: menu (replaces center links + login) */}
             <button
               type="button"
-              className="layout-desktop:hidden flex items-center justify-center p-3 rounded-xl transition-colors active:bg-white/15"
+              className="min-[640px]:hidden flex items-center justify-center p-3 rounded-xl transition-colors active:bg-white/15"
               style={{ color: navTextColor }}
               aria-expanded={mobileNavOpen}
               aria-label={mobileNavOpen ? "Close navigation menu" : "Open navigation menu"}
@@ -1579,11 +1510,11 @@ export default function DoePage() {
             }}
           >
             {/* Top border line */}
-            <div className="mx-8 layout-phone:mx-4 border-t border-gray-200 relative z-30" style={{ borderColor: '#E6E6E6' }} />
+            <div className="mx-8 max-[639px]:mx-4 border-t border-gray-200 relative z-30" style={{ borderColor: '#E6E6E6' }} />
 
-            <div className="py-8 layout-phone:py-4">
+            <div className="py-8 max-[639px]:py-4">
               <div 
-                className={`max-w-[1400px] mx-auto px-8 layout-phone:px-4 flex ${isPhoneLayout ? "flex-col gap-3" : ""}`}
+                className={`max-w-[1400px] mx-auto px-8 max-[639px]:px-4 flex ${isPhoneLayout ? "flex-col gap-3" : ""}`}
                 style={{ gap: isPhoneLayout ? undefined : '24px', height: isPhoneLayout ? 'auto' : '144px' }}
                 onMouseLeave={() => setHoveredBox(null)}
               >
@@ -1676,7 +1607,7 @@ export default function DoePage() {
             </div>
 
             {/* Bottom border line */}
-            <div className="mx-8 layout-phone:mx-4 border-b border-gray-200 relative z-30" style={{ borderColor: '#E6E6E6' }} />
+            <div className="mx-8 max-[639px]:mx-4 border-b border-gray-200 relative z-30" style={{ borderColor: '#E6E6E6' }} />
           </div>
         </nav>
 
@@ -1722,10 +1653,12 @@ export default function DoePage() {
         )}
 
         {/* Hero Header - Centered, Contained in Gradient Circle */}
-        <div className="absolute inset-0 z-20 flex items-center justify-center layout-phone:px-3 layout-phone:pt-[env(safe-area-inset-top,0px)] layout-phone:pb-[env(safe-area-inset-bottom,0px)]">
-          <div className="max-w-[800px] mx-auto px-8 layout-phone:px-3 text-center w-full">
+        <div
+          className={`absolute inset-0 z-20 flex items-center justify-center max-[639px]:pt-[env(safe-area-inset-top,0px)] max-[639px]:pb-[env(safe-area-inset-bottom,0px)] ${narrowHorizontalInset}`}
+        >
+          <div className="max-w-[800px] mx-auto px-8 max-[639px]:px-0 text-center w-full">
             <p
-              className={`font-normal leading-none tracking-tight mb-7 layout-phone:mb-6 ${lora.className}`}
+              className={`font-normal leading-none tracking-tight mb-7 max-[639px]:mb-6 ${lora.className}`}
               style={{
                 fontSize: "clamp(6.25rem, 28vw, 14rem)",
                 backgroundImage:
@@ -1740,13 +1673,13 @@ export default function DoePage() {
               Doe
             </p>
             <p
-              className="text-2xl layout-phone:text-3xl font-medium text-white/90 text-center px-2 tracking-tight flex flex-col items-center gap-1 layout-phone:gap-1.5 layout-phone:leading-snug leading-snug"
+              className="text-2xl max-[639px]:text-3xl font-medium text-white/90 text-center max-[639px]:px-0 px-2 tracking-tight flex flex-col items-center gap-1 max-[639px]:gap-1.5 max-[639px]:leading-snug leading-snug"
               style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
             >
-              <span className="block layout-phone:max-w-[min(22ch,100%)]">
+              <span className="block max-[639px]:max-w-[min(22ch,100%)]">
                 We&apos;re building the future of AI in
               </span>
-              <span className="block layout-phone:max-w-[min(22ch,100%)]">
+              <span className="block max-[639px]:max-w-[min(22ch,100%)]">
                 clinical practice and education.
               </span>
             </p>
@@ -1759,23 +1692,25 @@ export default function DoePage() {
       <div className="w-full border-t border-[#E6E6E6]" />
 
       {/* Second Section — title upper third, carousel lower two-thirds */}
-      <div ref={secondSectionRef} className="min-h-[calc(100dvh+7rem)] relative z-10 flex flex-col pt-16 pb-12 layout-phone:min-h-[calc(100dvh+6rem)] layout-phone:pt-12 layout-phone:pb-10">
-        <div className="flex-1 grid grid-rows-[3fr_9fr] min-h-[85vh] layout-phone:min-h-[88dvh] w-full overflow-x-hidden">
+      <div ref={secondSectionRef} className="min-h-[calc(100dvh+7rem)] relative z-10 flex flex-col pt-16 pb-12 max-[639px]:min-h-[calc(100dvh+6rem)] max-[639px]:pt-12 max-[639px]:pb-10">
+        <div className="flex-1 grid grid-rows-[3fr_9fr] min-h-[85vh] max-[639px]:min-h-[88dvh] w-full overflow-x-hidden">
           {/* Title band — slightly taller than 1:2 so headline has room */}
-          <div className="flex flex-col justify-center min-h-0 px-4 layout-phone:px-5 py-14 layout-phone:py-11">
+          <div
+            className={`flex flex-col justify-center min-h-0 px-4 py-14 max-[639px]:py-11 ${narrowHorizontalInset}`}
+          >
             <div className="text-center">
               <h1 
-                className={`flex flex-col items-center gap-2 md:gap-4 layout-phone:gap-2 font-normal text-gray-900 tracking-tight ${lora.className}`}
+                className={`flex flex-col items-center gap-2 md:gap-4 max-[639px]:gap-2 font-normal text-gray-900 tracking-tight ${lora.className}`}
                 style={{
                   opacity: secondSectionTitleOpacity,
                   transform: `translateY(${secondSectionTitleTranslateY}px)`,
                   transition: 'opacity 1.2s ease-out, transform 1.2s ease-out'
                 }}
               >
-                <span className="block leading-[1.04] text-7xl md:text-8xl lg:text-[8rem] xl:text-[9rem] layout-phone:text-[clamp(2.65rem,11.5vw,4rem)] layout-phone:leading-[1.06]">
+                <span className="block leading-[1.04] text-7xl md:text-8xl lg:text-[8rem] xl:text-[9rem] max-[639px]:text-[clamp(2.65rem,11.5vw,4rem)] max-[639px]:leading-[1.06]">
                   Agents for every
                 </span>
-                <span className="block leading-[1.04] text-7xl md:text-8xl lg:text-[8rem] xl:text-[9rem] layout-phone:text-[clamp(2.65rem,11.5vw,4rem)] layout-phone:leading-[1.06]">
+                <span className="block leading-[1.04] text-7xl md:text-8xl lg:text-[8rem] xl:text-[9rem] max-[639px]:text-[clamp(2.65rem,11.5vw,4rem)] max-[639px]:leading-[1.06]">
                   workflow.
                 </span>
               </h1>
@@ -1783,10 +1718,12 @@ export default function DoePage() {
           </div>
 
           {/* Carousel band (~bottom two-thirds) */}
-          <div className="flex flex-col justify-center min-h-0 overflow-x-hidden overflow-y-visible pb-10 layout-phone:pb-8">
+          <div
+            className={`flex flex-col justify-center min-h-0 overflow-x-hidden overflow-y-visible pb-10 max-[639px]:pb-8 ${narrowHorizontalInset}`}
+          >
           {/* Sliding squares container */}
           <div 
-            className="relative layout-phone:mx-auto layout-phone:w-full" 
+            className="relative max-[639px]:mx-auto max-[639px]:w-full" 
             style={{ 
               height: slideBoxH, 
               display: 'flex', 
@@ -1799,7 +1736,7 @@ export default function DoePage() {
             {/* Pause button - top right corner */}
             <button
               onClick={() => setIsSlidingPaused(!isSlidingPaused)}
-              className="absolute top-4 right-4 layout-phone:top-3 layout-phone:right-2 z-30 p-2 rounded-full hover:bg-gray-100 transition-colors"
+              className="absolute top-4 right-4 max-[639px]:top-4 max-[639px]:right-4 z-30 p-2 rounded-full hover:bg-gray-100 transition-colors"
               style={{
                 opacity: slidingBoxesOpacity,
               }}
@@ -1819,7 +1756,7 @@ export default function DoePage() {
             {/* Navigation Arrows */}
             {showLeftArrow && (
               <button 
-                className="absolute left-8 layout-phone:left-2 z-20 transition-opacity duration-200 hover:opacity-70"
+                className="absolute left-8 max-[639px]:left-4 z-20 transition-opacity duration-200 hover:opacity-70"
                 onClick={handleSlideRight}
                 style={{
                   filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))'
@@ -1832,7 +1769,7 @@ export default function DoePage() {
             )}
             {showRightArrow && (
               <button 
-                className="absolute right-8 layout-phone:right-2 z-20 transition-opacity duration-200 hover:opacity-70"
+                className="absolute right-8 max-[639px]:right-4 z-20 transition-opacity duration-200 hover:opacity-70"
                 onClick={handleSlideLeft}
                 style={{
                   filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))'
@@ -1846,7 +1783,7 @@ export default function DoePage() {
             
             {/* Sliding squares container - relative positioning for absolute children */}
             <div 
-              className="relative layout-phone:rounded-2xl"
+              className="relative max-[639px]:rounded-2xl"
               style={{ 
                 width: '100%',
                 height: slideBoxH,
@@ -1861,7 +1798,7 @@ export default function DoePage() {
                   <div
                     key={`box-${i}`}
                     ref={slidingBoxRefs[i]}
-                    className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl layout-phone:shadow-md"
+                    className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl max-[639px]:shadow-md"
                     style={{
                       width: slideBoxW,
                       height: slideBoxH,
@@ -2011,7 +1948,7 @@ export default function DoePage() {
                   <div
                     key={`box-${i}`}
                     ref={slidingBoxRefs[i]}
-                    className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl layout-phone:shadow-md"
+                    className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl max-[639px]:shadow-md"
                     style={{
                       width: slideBoxW,
                       height: slideBoxH,
@@ -2376,7 +2313,7 @@ export default function DoePage() {
                   <div
                     key={`box-${i}`}
                     ref={slidingBoxRefs[i]}
-                    className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl layout-phone:shadow-md"
+                    className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl max-[639px]:shadow-md"
                     style={{
                       width: slideBoxW,
                       height: slideBoxH,
@@ -2532,7 +2469,7 @@ export default function DoePage() {
                 <div
                   key={`box-${i}`}
                   ref={slidingBoxRefs[i]}
-                  className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl layout-phone:shadow-md"
+                  className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl max-[639px]:shadow-md"
                   style={{
                     width: slideBoxW,
                     height: slideBoxH,
@@ -2677,7 +2614,7 @@ export default function DoePage() {
                   <div
                     key={`box-${i}`}
                     ref={slidingBoxRefs[i]}
-                    className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl layout-phone:shadow-md"
+                    className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl max-[639px]:shadow-md"
                     style={{
                       width: slideBoxW,
                       height: slideBoxH,
@@ -2805,7 +2742,7 @@ export default function DoePage() {
                   <div
                     key={`box-${i}`}
                     ref={slidingBoxRefs[i]}
-                    className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl layout-phone:shadow-md"
+                    className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl max-[639px]:shadow-md"
                     style={{
                       width: slideBoxW,
                       height: slideBoxH,
@@ -2992,10 +2929,10 @@ export default function DoePage() {
           opacity: carouselSectionOpacity,
           transform: `translateY(${carouselSectionTranslateY}px)`,
           transition: 'opacity 1.2s ease-out, transform 1.2s ease-out',
-          ...(isPhoneLayout
+          ...(applyRootZoom
             ? {
-                minHeight: `calc(100dvh / ${iphoneZoom})`,
-                height: `calc(100dvh / ${iphoneZoom})`,
+                minHeight: `calc(100dvh / ${rootZoom})`,
+                height: `calc(100dvh / ${rootZoom})`,
               }
             : { minHeight: "100dvh", height: "100dvh" }),
         }}

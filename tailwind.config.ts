@@ -19,7 +19,7 @@ const config: Config = {
   },
   plugins: [
     plugin(({ addVariant }) => {
-      /** Set on document.documentElement from page.tsx + layout boot script (iPhone / phone layout). */
+      /** Optional: mirrors narrow layout (≤639px) for html[data-layout]; page uses max-[639px] / min-[640px] in markup. */
       addVariant("layout-phone", `[data-layout="phone"] &`);
       addVariant("layout-desktop", `[data-layout="desktop"] &`);
     }),

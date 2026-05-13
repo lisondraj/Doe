@@ -33,7 +33,7 @@ export default function RootLayout({
           id="doeforvc-layout-detect"
           strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var fm=sessionStorage.getItem("doeforvc-force-mobile")==="1";var fd=sessionStorage.getItem("doeforvc-force-desktop")==="1";var p=/iPhone/.test(navigator.userAgent||"");var m=window.matchMedia("(max-width: 480px), ((max-height: 500px) and (min-width: 500px) and (pointer: coarse))").matches;var natural=p||m;var isPhone=fm||(!fd&&natural);document.documentElement.setAttribute("data-layout",isPhone?"phone":"desktop");}catch(e){}})();`,
+            __html: `(function(){try{var phone=window.matchMedia("(max-width: 639px)").matches;document.documentElement.setAttribute("data-layout",phone?"phone":"desktop");}catch(e){}})();`,
           }}
         />
         {children}
