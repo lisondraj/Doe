@@ -381,6 +381,10 @@ export default function DoePage() {
   const [uiMockupTranslateY, setUiMockupTranslateY] = useState(0);
   const [uiMockupScale, setUiMockupScale] = useState(1);
   const carouselSectionRef = useRef<HTMLDivElement>(null);
+  /** Latest `isCarouselTransitioning` for “Built for you” autoplay ticks */
+  const builtForYouCarouselTransitioningSinkRef = useRef(false);
+  /** Advance one word right — shared by next button + 3s interval */
+  const builtForYouCarouselAdvanceRightRef = useRef<(() => void) | null>(null);
   const [carouselSectionOpacity, setCarouselSectionOpacity] = useState(0);
   const [carouselSectionTranslateY, setCarouselSectionTranslateY] = useState(40);
   const [activeWordVisible, setActiveWordVisible] = useState(true);
@@ -559,6 +563,13 @@ export default function DoePage() {
     }, 4000);
     return () => window.clearInterval(id);
   }, [mobileNavOpen]);
+
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      builtForYouCarouselAdvanceRightRef.current?.();
+    }, 3000);
+    return () => window.clearInterval(id);
+  }, []);
 
   useEffect(() => {
     let animationFrameId: number;
@@ -1392,6 +1403,30 @@ export default function DoePage() {
         alert('Failed to save undo state. Please try again.');
       }
     }
+  };
+
+  builtForYouCarouselTransitioningSinkRef.current = isCarouselTransitioning;
+  builtForYouCarouselAdvanceRightRef.current = () => {
+    if (builtForYouCarouselTransitioningSinkRef.current) return;
+    setIsCarouselTransitioning(true);
+    requestAnimationFrame(() => {
+      setUiMockupOpacity(0);
+      setUiMockupTranslateY(10);
+      setUiMockupScale(0.96);
+    });
+    setCarouselOffset(1);
+    window.setTimeout(() => {
+      setSelectedWordIndex((prev) => (prev + 1) % 8);
+      setCarouselOffset(0);
+      requestAnimationFrame(() => {
+        setUiMockupOpacity(1);
+        setUiMockupTranslateY(0);
+        setUiMockupScale(1);
+      });
+      window.setTimeout(() => {
+        setIsCarouselTransitioning(false);
+      }, 50);
+    }, 400);
   };
 
   // Calculate if we should show shadow (in hero section, after scrolling a bit)
@@ -3401,29 +3436,7 @@ export default function DoePage() {
             <button
               type="button"
               aria-label="Next category"
-              onClick={() => {
-                if (isCarouselTransitioning) return;
-                setIsCarouselTransitioning(true);
-                requestAnimationFrame(() => {
-                  setUiMockupOpacity(0);
-                  setUiMockupTranslateY(10);
-                  setUiMockupScale(0.96);
-                });
-                setCarouselOffset(1);
-                setTimeout(() => {
-                  const newIndex = (selectedWordIndex + 1) % 8;
-                  setSelectedWordIndex(newIndex);
-                  setCarouselOffset(0);
-                  requestAnimationFrame(() => {
-                    setUiMockupOpacity(1);
-                    setUiMockupTranslateY(0);
-                    setUiMockupScale(1);
-                  });
-                  setTimeout(() => {
-                    setIsCarouselTransitioning(false);
-                  }, 50);
-                }, 400);
-              }}
+              onClick={() => builtForYouCarouselAdvanceRightRef.current?.()}
               className="shrink-0 p-2 rounded-full hover:bg-black/[0.04] transition-colors"
             >
               <svg className="w-7 h-7 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
