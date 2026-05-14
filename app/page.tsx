@@ -1826,7 +1826,7 @@ export default function DoePage() {
             <p
               className={`font-normal leading-none tracking-tight mb-7 iphone-page:mb-6 ${lora.className}`}
               style={{
-                fontSize: "clamp(6.25rem, 28vw, 14rem)",
+                fontSize: "clamp(7.25rem, 36vw, 17rem)",
                 backgroundImage:
                   "linear-gradient(180deg, #ffffff 0%, #ffffff 15%, #fafafa 34%, #f5f6f8 52%, #e2e8ee 76%, #c5cdd6 100%)",
                 WebkitBackgroundClip: "text",
@@ -1839,7 +1839,7 @@ export default function DoePage() {
               Doe
             </p>
             <p
-              className="text-2xl iphone-page:text-[clamp(0.9375rem,3.35vw,1.125rem)] font-medium text-white/90 text-center iphone-page:px-2 px-2 tracking-tight flex flex-col items-center gap-1 iphone-page:gap-1.5 iphone-page:leading-snug leading-snug"
+              className="text-3xl iphone-page:text-[clamp(1.125rem,4.85vw,1.625rem)] font-medium text-white/90 text-center iphone-page:px-2 px-2 tracking-tight flex flex-col items-center gap-1.5 iphone-page:gap-2 iphone-page:leading-snug leading-snug"
               style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
             >
               <span className="block iphone-page:whitespace-nowrap iphone-page:text-center w-full">
