@@ -3974,7 +3974,7 @@ export default function DoePage() {
               style={{
                 color: "#F7F6F3",
                 /** Giant: wide enough that “d” / “e” bleed past L/R edges; milder bottom bleed. */
-                fontSize: "clamp(10rem, min(72vw, 64vmin), 28rem)",
+                fontSize: "clamp(11rem, min(76vw, 68vmin), 30rem)",
                 marginBottom: "calc(-0.06em - env(safe-area-inset-bottom, 0px))",
                 transform: "translateY(min(1vh, 0.5rem))",
               }}
