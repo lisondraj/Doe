@@ -1489,9 +1489,10 @@ export default function DoePage() {
             </button>
           </div>
 
-          {/* Dropdown Panel — desktop only (phone uses full-screen sheet; no mega panels) */}
+          {/* Dropdown Panel — desktop only (omit from DOM on phone so Safari does not paint stray rules above the sheet) */}
+          {!isPhoneLayout && (
           <div
-            className={`overflow-hidden transition-all duration-150 ease-out relative z-20 ${isPhoneLayout ? "hidden" : ""}`}
+            className="overflow-hidden transition-all duration-150 ease-out relative z-20"
             style={{
               maxHeight: activeDropdown ? "400px" : "0px",
               opacity: activeDropdown ? 1 : 0,
@@ -1597,6 +1598,7 @@ export default function DoePage() {
             {/* Bottom border line */}
             <div className="mx-8 iphone-page:mx-4 border-b border-gray-200 relative z-30" style={{ borderColor: '#E6E6E6' }} />
           </div>
+          )}
         </nav>
 
         {/* iPhone: menu panel below fixed nav (nav stays put; page dims behind) */}
