@@ -93,6 +93,8 @@ export default function DoeIphoneSiteNav() {
   const [mobileNavFooterSlide, setMobileNavFooterSlide] = useState(0);
   const mobileNavFooterCarouselRef = useRef<HTMLDivElement>(null);
   const navBarRowRef = useRef<HTMLDivElement>(null);
+  /** Visible chrome while menu open lives in this portal header (z-200); measure it for sheet top */
+  const elevatedNavRef = useRef<HTMLElement | null>(null);
   const [iphoneMenuTopPx, setIphoneMenuTopPx] = useState(88);
   const [viewportWidth, setViewportWidth] = useState(1200);
   const [mounted, setMounted] = useState(false);
@@ -109,12 +111,15 @@ export default function DoeIphoneSiteNav() {
   }, []);
 
   useLayoutEffect(() => {
-    const navEl = navBarRowRef.current;
-    if (!navEl) return;
     const update = () => {
-      const raw = navEl.getBoundingClientRect().bottom;
-      /** Flush below nav bar so zoom / visualViewport scroll cannot tuck the first row under chrome */
-      setIphoneMenuTopPx(Math.max(0, Math.ceil(raw) + 1));
+      const measureEl =
+        mobileNavOpen && elevatedNavRef.current
+          ? elevatedNavRef.current
+          : navBarRowRef.current;
+      if (!measureEl) return;
+      const raw = measureEl.getBoundingClientRect().bottom;
+      /** Flush below chrome; buffer helps pinch-zoom rounding vs portal strip */
+      setIphoneMenuTopPx(Math.max(0, Math.ceil(raw) + 4));
     };
     update();
     let raf1 = 0;
@@ -125,7 +130,10 @@ export default function DoeIphoneSiteNav() {
       });
     }
     const ro = new ResizeObserver(update);
-    ro.observe(navEl);
+    const navEl = navBarRowRef.current;
+    const elevatedEl = elevatedNavRef.current;
+    if (navEl) ro.observe(navEl);
+    if (mobileNavOpen && elevatedEl) ro.observe(elevatedEl);
     window.addEventListener("resize", update);
     window.visualViewport?.addEventListener("resize", update);
     window.visualViewport?.addEventListener("scroll", update);
@@ -308,7 +316,7 @@ export default function DoeIphoneSiteNav() {
                     key={slide.boxTitle}
                     className="w-full min-w-full shrink-0 snap-center px-6 iphone-page:pl-[max(1.35rem,calc(env(safe-area-inset-left,0px)+10px+2vmin))] iphone-page:pr-[max(1.35rem,calc(env(safe-area-inset-right,0px)+8px+1.25vmin))] space-y-3 box-border iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)]"
                   >
-                    <div className="relative rounded-[1.375rem] iphone-page:rounded-[clamp(1.2rem,1rem+1.4vmin,2.1rem)] overflow-hidden min-h-[30rem] iphone-page:min-h-0 iphone-page:h-[clamp(22rem,min(54vmin,460px),28rem)] shadow-[0_10px_32px_rgba(0,0,0,0.12)]">
+                    <div className="relative rounded-[1.375rem] iphone-page:rounded-[clamp(1.2rem,1rem+1.4vmin,2.1rem)] overflow-hidden min-h-[30rem] iphone-page:min-h-0 iphone-page:h-[clamp(22rem,min(54vmin,460px),28rem)] shadow-[0_10px_32px_rgba(0,0,0,0.12)] [container-type:size]">
                       <div className="absolute inset-0" style={{ background: slide.gradient }} aria-hidden />
                       <div
                         className="pointer-events-none absolute inset-0"
@@ -323,7 +331,8 @@ export default function DoeIphoneSiteNav() {
                       <div
                         className="absolute inset-0 z-[5]"
                         style={{
-                          fontSize: "clamp(10px, min(3.5vmin, 3.75vw), 15px)",
+                          fontSize:
+                            "clamp(11px, min(5.85cqw, 6.35cqh), 26px)",
                         }}
                       >
                         <div className="pointer-events-auto absolute left-0 right-0 top-0 z-[6] flex justify-center gap-[0.65em] px-[1.25em] pt-[2.5em] pb-[0.12em]">
@@ -411,6 +420,7 @@ export default function DoeIphoneSiteNav() {
     mobileNavOpen &&
     createPortal(
       <header
+        ref={elevatedNavRef}
         className="fixed top-0 left-0 right-0 z-[200] iphone-page:pt-[env(safe-area-inset-top,0px)] bg-[#F7F6F3] border-b border-[#E6E6E6]"
         style={{
           transition: "border-bottom 100ms ease-out, border-color 100ms ease-out, background-color 180ms ease-out",
