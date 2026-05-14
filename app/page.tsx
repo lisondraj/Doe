@@ -3152,7 +3152,12 @@ export default function DoePage() {
             </span>
           </h2>
         </div>
-        <div className="sticky top-[max(5.75rem,calc(env(safe-area-inset-top,0px)+4.5rem))] z-[5] pt-6 pb-6 md:pt-6 md:pb-6 max-md:pt-10 max-md:pb-10 iphone-page:pt-[max(2.75rem,env(safe-area-inset-top,0px))] iphone-page:pb-[max(2.75rem,env(safe-area-inset-bottom,0px))]">
+        {/* Consume space above rails so stack reads “docked”; sticky bottom pins while scrubbing */}
+        <div
+          aria-hidden
+          className="shrink-0 w-full min-h-[max(10rem,min(38svh,calc(100svh-24rem)))] md:min-h-[max(7rem,min(26svh,calc(100svh-22rem)))] lg:min-h-[max(5rem,min(14svh,10rem))]"
+        />
+        <div className="sticky bottom-0 z-[5] isolate w-full shrink-0 pb-[max(0.875rem,calc(env(safe-area-inset-bottom,0px)+10px))] pt-4 md:pb-8 md:pt-6 max-md:pb-10 max-md:pt-8 iphone-page:pb-[max(0.75rem,calc(env(safe-area-inset-bottom,0px)+12px))] iphone-page:pt-7">
           <div
             className="relative mx-auto w-full max-w-full shrink-0"
             style={{
