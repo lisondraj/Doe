@@ -14,9 +14,9 @@ const surfaceDeep = "rgba(255, 255, 255, 0.72)";
 const ok = "rgba(46, 125, 95, 0.65)";
 const mutedColor = "rgba(30, 52, 58, 0.5)";
 
-/** Square cell track — tuned for iPhone: clearly larger, still fits 3×2 + gaps */
+/** Square cell track — much larger on phone; preferred size capped so 3×2 + gaps fit width */
 const CELL =
-  "clamp(4.25rem, min(24vw, 15.5vmin), 7.75rem)";
+  "clamp(5.75rem, min(28vw, 24vmin), 11rem)";
 
 function PanelShell({
   label,
@@ -343,7 +343,7 @@ const HERO_CHART_STACK: { Panel: (p: { scanDelay: number }) => ReactElement; sca
 ];
 
 export function HeroChartPanels({ staggerMs }: { staggerMs: number[] | null }) {
-  const gap = "clamp(8px, 1.8vmin, 14px)";
+  const gap = "clamp(6px, 1.4vmin, 11px)";
   return (
     <div
       className="pointer-events-none mx-auto w-fit max-w-[100%] select-none"
