@@ -3714,6 +3714,7 @@ export default function DoePage() {
 
       {/* Blank Section with Grid Lines */}
       <div
+        id="students"
         ref={carouselSectionRef}
         className="w-full relative z-10 overflow-x-hidden mt-[3.5rem] iphone-page:mt-20"
         style={{
@@ -4395,6 +4396,7 @@ export default function DoePage() {
 
       {/* New Gradient Section - Left and right gradient boxes */}
       <div
+        id="security"
         ref={newGradientSectionRef}
         className="min-h-[78vh] w-full relative z-10 flex items-center my-[90px] pl-0 overflow-x-visible overflow-y-visible"
       >
@@ -4759,7 +4761,7 @@ export default function DoePage() {
       <div className="border-l border-r border-[#E6E6E6] max-w-[1600px] mx-auto">
 
         {/* Third Section - Bento Box Grid */}
-        <div ref={featuresSectionRef} className="min-h-screen iphone-page:min-h-0 relative z-10 w-full">
+        <div id="features" ref={featuresSectionRef} className="min-h-screen iphone-page:min-h-0 relative z-10 w-full">
           <div className="max-w-[1800px] mx-auto px-8 py-16 pt-32 iphone-page:px-4 iphone-page:py-10 iphone-page:pt-20">
           {/* Title */}
           <div className="text-center mb-12 iphone-page:mb-8">
@@ -5557,63 +5559,70 @@ export default function DoePage() {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Footer */}
-        <div className="pb-8 w-screen left-1/2 -translate-x-1/2 relative px-8 iphone-page:px-4">
-          <div 
-            className="py-20 relative rounded-2xl overflow-hidden flex items-center"
-            style={{
-              background: `
-                radial-gradient(circle at center, #D49D4F 0%, #D2774C 18%, #BF593D 32%, #C88A5F 45%, #7B5C4B 55%, #8B6F47 65%, #6D5B41 72%, #5C4A3A 78%, #4A3D32 85%, #1E343A 95%, rgba(30, 52, 58, 0.6) 100%),
-                radial-gradient(ellipse 60% 60% at 0% 0%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
-                radial-gradient(ellipse 60% 60% at 100% 0%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
-                radial-gradient(ellipse 60% 60% at 0% 100%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
-                radial-gradient(ellipse 60% 60% at 100% 100%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
-                linear-gradient(to right, #1E343A 0%, rgba(30, 52, 58, 0.8) 15%, transparent 25%),
-                linear-gradient(to left, #1E343A 0%, rgba(30, 52, 58, 0.8) 15%, transparent 25%)
-              `,
-              overflow: 'hidden',
-              minHeight: '160px'
-            }}
+      <footer
+        className="relative z-10 mt-0 flex min-h-[min(92vh,56rem)] w-screen flex-col justify-end overflow-hidden pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] iphone-page:min-h-[88vh]"
+        style={{
+          width: "100vw",
+          marginLeft: "calc(50% - 50vw)",
+          marginRight: "calc(50% - 50vw)",
+        }}
+      >
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background: `
+              radial-gradient(circle at center, #D49D4F 0%, #D2774C 18%, #BF593D 32%, #C88A5F 45%, #7B5C4B 55%, #8B6F47 65%, #6D5B41 72%, #5C4A3A 78%, #4A3D32 85%, #1E343A 95%, rgba(30, 52, 58, 0.6) 100%),
+              radial-gradient(ellipse 60% 60% at 0% 0%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
+              radial-gradient(ellipse 60% 60% at 100% 0%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
+              radial-gradient(ellipse 60% 60% at 0% 100%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
+              radial-gradient(ellipse 60% 60% at 100% 100%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
+              linear-gradient(to right, #1E343A 0%, rgba(30, 52, 58, 0.8) 15%, transparent 25%),
+              linear-gradient(to left, #1E343A 0%, rgba(30, 52, 58, 0.8) 15%, transparent 25%)
+            `,
+          }}
+        />
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E")`,
+            backgroundSize: "200px 200px",
+            opacity: 1,
+            mixBlendMode: "overlay",
+          }}
+        />
+        <div className="relative z-10 flex w-full flex-1 flex-col justify-end px-3 pt-20 md:px-6 md:pt-28 iphone-page:px-4">
+          <nav
+            className="mx-auto mb-12 flex max-w-4xl flex-wrap items-center justify-center gap-x-6 gap-y-3 text-[clamp(0.95rem,2.8vw,1.125rem)] font-medium tracking-tight md:mb-16 md:gap-x-12 md:gap-y-4 md:text-lg"
+            aria-label="Footer"
           >
-            {/* Grain texture overlay */}
-            <div
-              className="absolute inset-0 pointer-events-none rounded-2xl"
-              style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E")`,
-                backgroundSize: '200px 200px',
-                opacity: 1,
-                mixBlendMode: 'overlay',
-              }}
-            />
-            <div className="max-w-[1400px] mx-auto px-8 w-full flex items-center justify-between relative z-10">
-            {/* Doe Logo */}
+            <Link href="/#features" className="text-white no-underline transition-colors hover:text-white/85">
+              Features
+            </Link>
+            <Link href="/#security" className="text-white no-underline transition-colors hover:text-white/85">
+              Security
+            </Link>
+            <Link href="/#students" className="text-white no-underline transition-colors hover:text-white/85">
+              Students
+            </Link>
+            <Link href="/blog" className="text-white no-underline transition-colors hover:text-white/85">
+              Company
+            </Link>
+          </nav>
+          <div className="flex w-full justify-center overflow-visible pb-1">
             <Link
               href="/"
-              className={`text-4xl font-normal text-white no-underline hover:text-white/90 transition-colors ${lora.className}`}
+              className={`block w-full max-w-[100vw] text-center font-normal leading-[0.82] tracking-tight text-white no-underline transition-colors hover:text-white/92 ${lora.className}`}
+              style={{
+                fontSize: "clamp(3.75rem, 20vw, 15.5rem)",
+              }}
             >
               Doe
             </Link>
-
-            {/* Navigation Pages 2x2 Grid */}
-            <div className="grid grid-cols-2 gap-x-12 gap-y-4 ml-auto">
-              <a href="#" className="text-sm font-medium text-white hover:text-white/80 transition-colors">
-                Features
-              </a>
-              <a href="#" className="text-sm font-medium text-white hover:text-white/80 transition-colors">
-                Security
-              </a>
-              <a href="#" className="text-sm font-medium text-white hover:text-white/80 transition-colors">
-                Students
-              </a>
-              <a href="#" className="text-sm font-medium text-white hover:text-white/80 transition-colors">
-                Company
-              </a>
-            </div>
-          </div>
           </div>
         </div>
-      </div>
+      </footer>
     </div>
   );
 }
