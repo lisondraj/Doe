@@ -434,8 +434,9 @@ export default function DoePage() {
     if (!navEl) return;
     const update = () => {
       const raw = navEl.getBoundingClientRect().bottom;
-      /** Sheet starts just below nav so top rows (e.g. Features) are never hidden under the chrome. */
-      setIphoneMenuTopPx(Math.max(0, Math.ceil(raw) + 2));
+      /** Layout vs visual viewport drift (iOS URL bar / pinch) can leave a hero “dip” unless offset is folded in. */
+      const vvTop = typeof window !== "undefined" ? window.visualViewport?.offsetTop ?? 0 : 0;
+      setIphoneMenuTopPx(Math.max(0, Math.ceil(raw + vvTop) + 4));
     };
     update();
     let raf1 = 0;
@@ -449,12 +450,14 @@ export default function DoePage() {
     ro.observe(navEl);
     window.addEventListener("resize", update);
     window.visualViewport?.addEventListener("resize", update);
+    window.visualViewport?.addEventListener("scroll", update);
     return () => {
       cancelAnimationFrame(raf1);
       cancelAnimationFrame(raf2);
       ro.disconnect();
       window.removeEventListener("resize", update);
       window.visualViewport?.removeEventListener("resize", update);
+      window.visualViewport?.removeEventListener("scroll", update);
     };
   }, [mobileNavOpen, viewportWidth]);
 
@@ -1730,7 +1733,7 @@ export default function DoePage() {
                 </nav>
                 {/* Footer — swipeable carousel; max height so it can’t swallow accordion on zoom / short viewports */}
                 <div
-                  className="shrink-0 min-h-0 max-h-[min(42dvh,24rem)] iphone-page:max-h-[min(40svh,22rem)] flex flex-col overflow-x-hidden overflow-y-auto overscroll-contain pb-[max(1rem,calc(env(safe-area-inset-bottom,0px)+10px))] iphone-page:pb-[max(0.9375rem,calc(env(safe-area-inset-bottom,0px)+clamp(10px,1.85vmin,20px)))] pt-4 iphone-page:pt-[clamp(0.75rem,0.52rem+1.05vmin,1.25rem)] border-t border-[#ECEAE6]"
+                  className="shrink-0 min-h-0 max-h-[min(32dvh,18rem)] iphone-page:max-h-[min(28svh,16rem)] flex flex-col overflow-x-hidden overflow-y-auto overscroll-contain pb-[max(1rem,calc(env(safe-area-inset-bottom,0px)+10px))] iphone-page:pb-[max(0.9375rem,calc(env(safe-area-inset-bottom,0px)+clamp(10px,1.85vmin,20px)))] pt-4 iphone-page:pt-[clamp(0.75rem,0.52rem+1.05vmin,1.25rem)] border-t border-[#ECEAE6]"
                 >
                   <div
                     ref={mobileNavFooterCarouselRef}
@@ -1755,7 +1758,7 @@ export default function DoePage() {
                         className="w-full min-w-full shrink-0 snap-center px-6 iphone-page:pl-[max(1.35rem,calc(env(safe-area-inset-left,0px)+10px+2vmin))] iphone-page:pr-[max(1.35rem,calc(env(safe-area-inset-right,0px)+8px+1.25vmin))] space-y-3 box-border iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)]"
                       >
                         <div
-                          className="relative rounded-[1.375rem] iphone-page:rounded-[clamp(1.2rem,1rem+1.4vmin,2.1rem)] overflow-hidden min-h-[30rem] shadow-[0_10px_32px_rgba(0,0,0,0.12)] iphone-page:min-h-[13rem] iphone-page:max-h-[min(38svh,21rem)] iphone-page:h-[min(38svh,21rem)]"
+                          className="relative rounded-[1.375rem] iphone-page:rounded-[clamp(1.2rem,1rem+1.4vmin,2.1rem)] overflow-hidden min-h-[30rem] shadow-[0_10px_32px_rgba(0,0,0,0.12)] iphone-page:min-h-[11rem] iphone-page:max-h-[min(30svh,16rem)] iphone-page:h-[min(30svh,16rem)]"
                         >
                           <div
                             className="absolute inset-0"
@@ -3152,12 +3155,7 @@ export default function DoePage() {
             </span>
           </h2>
         </div>
-        {/* Consume space above rails so stack reads “docked”; sticky bottom pins while scrubbing */}
-        <div
-          aria-hidden
-          className="shrink-0 w-full min-h-[max(10rem,min(38svh,calc(100svh-24rem)))] md:min-h-[max(7rem,min(26svh,calc(100svh-22rem)))] lg:min-h-[max(5rem,min(14svh,10rem))]"
-        />
-        <div className="sticky bottom-0 z-[5] isolate w-full shrink-0 pb-[max(0.875rem,calc(env(safe-area-inset-bottom,0px)+10px))] pt-4 md:pb-8 md:pt-6 max-md:pb-10 max-md:pt-8 iphone-page:pb-[max(0.75rem,calc(env(safe-area-inset-bottom,0px)+12px))] iphone-page:pt-7">
+        <div className="sticky top-[max(5.75rem,calc(env(safe-area-inset-top,0px)+4.5rem))] z-[5] isolate w-full shrink-0 pb-[max(0.875rem,calc(env(safe-area-inset-bottom,0px)+10px))] pt-4 md:pb-8 md:pt-6 max-md:pb-10 max-md:pt-8 iphone-page:pb-[max(0.75rem,calc(env(safe-area-inset-bottom,0px)+12px))] iphone-page:pt-7">
           <div
             className="relative mx-auto w-full max-w-full shrink-0"
             style={{
