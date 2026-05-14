@@ -3973,10 +3973,10 @@ export default function DoePage() {
               className={`pointer-events-auto inline-block shrink-0 text-center font-normal leading-[0.65] tracking-tight no-underline transition-opacity hover:opacity-90 ${lora.className}`}
               style={{
                 color: "#F7F6F3",
-                /** Slight L/R/bottom bleed: keep type mostly in view, not 72vw (huge crop). */
-                fontSize: "clamp(5rem, min(33vw, 28vmin), 14rem)",
-                marginBottom: "calc(-0.18em - env(safe-area-inset-bottom, 0px))",
-                transform: "translateY(min(2.25vh, 1.1rem))",
+                /** Giant: wide enough that “d” / “e” bleed past L/R edges; milder bottom bleed. */
+                fontSize: "clamp(10rem, min(72vw, 64vmin), 28rem)",
+                marginBottom: "calc(-0.06em - env(safe-area-inset-bottom, 0px))",
+                transform: "translateY(min(1vh, 0.5rem))",
               }}
             >
               Doe
