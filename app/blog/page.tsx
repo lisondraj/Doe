@@ -63,10 +63,8 @@ function GradientArticleVisual({
   slide: Slide;
   variant: "hero" | "inline";
 }) {
-  const tall =
-    variant === "hero"
-      ? "min-h-[min(52vh,28rem)] iphone-page:min-h-[min(56dvh,30rem)]"
-      : "min-h-[min(42vh,22rem)] iphone-page:min-h-[min(48dvh,24rem)]";
+  // Fixed rem heights keep cards identical across all iPhone sizes (no dvh/vh that varies per device)
+  const tall = variant === "hero" ? "min-h-[30rem]" : "min-h-[24rem]";
 
   return (
     <div
@@ -186,7 +184,7 @@ export default function BlogPage() {
         suppressHydrationWarning
       >
         <main
-          className={`relative z-0 w-full max-w-[min(100%,430px)] mx-auto pt-[5.5rem] iphone-page:pt-[max(5.5rem,calc(env(safe-area-inset-top,0px)+4rem))] pb-20 iphone-page:pb-24 ${narrowHorizontalInset}`}
+          className={`relative z-0 w-full pt-[5.5rem] iphone-page:pt-[max(5.5rem,calc(env(safe-area-inset-top,0px)+4rem))] pb-20 iphone-page:pb-24 ${narrowHorizontalInset}`}
         >
           {/* Inquisara at top: image first, then title / preview / Read more */}
           <div className="w-full mt-8 iphone-page:mt-10">
