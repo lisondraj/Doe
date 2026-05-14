@@ -1306,72 +1306,42 @@ export default function DoePage() {
           height: `${heroLogicalHeightPx}px`,
         }}
       >
-        {/* Hero with Gradient from Chart2 — extra scale on narrow viewports “zooms into” the gradient */}
-        <div 
-          className="absolute inset-0 iphone-page:scale-[1.22] iphone-page:origin-[50%_45%]"
-          style={{
-            background: `
-              radial-gradient(circle at center, #D49D4F 0%, #D2774C 18%, #BF593D 32%, #C88A5F 45%, #7B5C4B 55%, #8B6F47 65%, #6D5B41 72%, #5C4A3A 78%, #4A3D32 85%, #1E343A 95%, rgba(30, 52, 58, 0.6) 100%),
-              radial-gradient(ellipse 60% 60% at 0% 0%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
-              radial-gradient(ellipse 60% 60% at 100% 0%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
-              radial-gradient(ellipse 60% 60% at 0% 100%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
-              radial-gradient(ellipse 60% 60% at 100% 100%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%)
+        {/* Footer base gradient + line mesh overlay (same as <footer>) */}
+        <div className="absolute inset-0">
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background: `
+              linear-gradient(152deg, #1a2e34 0%, #243a40 14%, #3d2f28 32%, #6b442f 48%, #a85a34 62%, #d4893f 76%, #e8b04d 88%, #f2cf7a 100%),
+              radial-gradient(ellipse 100% 80% at 50% 110%, rgba(231, 169, 68, 0.55) 0%, transparent 58%),
+              radial-gradient(ellipse 55% 45% at 12% 18%, rgba(255, 224, 180, 0.22) 0%, transparent 52%),
+              radial-gradient(ellipse 50% 40% at 88% 22%, rgba(210, 119, 76, 0.3) 0%, transparent 55%)
             `,
-            filter: 'saturate(1.15)',
-          }}
-        >
-          {/* Grain texture overlay */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E")`,
-              backgroundSize: '200px 200px',
-              opacity: 1,
-              mixBlendMode: 'overlay',
             }}
           />
-          {/* Center brightness reduction overlay */}
           <div
-            className="absolute inset-0 pointer-events-none"
+            className="pointer-events-none absolute inset-0 z-[1]"
             style={{
-              background: 'radial-gradient(circle at center, rgba(0, 0, 0, 0.15) 0%, transparent 60%)',
+              opacity: 0.55,
+              mixBlendMode: "soft-light",
+              backgroundImage: `
+              repeating-linear-gradient(
+                -32deg,
+                transparent 0px,
+                transparent 11px,
+                rgba(255, 255, 255, 0.09) 11px,
+                rgba(255, 255, 255, 0.09) 12px
+              ),
+              repeating-linear-gradient(
+                32deg,
+                transparent 0px,
+                transparent 15px,
+                rgba(30, 52, 58, 0.14) 15px,
+                rgba(30, 52, 58, 0.14) 16px
+              )
+            `,
             }}
           />
-          {/* Grid lines overlay */}
-          <div className="absolute inset-0 pointer-events-none">
-            <svg className="absolute inset-0 pointer-events-none w-full h-full" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <pattern id="gridPattern" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
-                  <path d="M 0 0 L 80 0 M 0 0 L 0 80" fill="none" stroke="#999999" strokeWidth="0.5" opacity="0.15" />
-                  <circle cx="0" cy="0" r="1" fill="#999999" opacity="0.25" />
-                  <circle cx="80" cy="0" r="1" fill="#999999" opacity="0.25" />
-                  <circle cx="0" cy="80" r="1" fill="#999999" opacity="0.25" />
-                  <circle cx="80" cy="80" r="1" fill="#999999" opacity="0.25" />
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#gridPattern)" />
-            </svg>
-            <div 
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                transform: 'perspective(1200px) translateZ(-200px) rotateX(75deg)',
-                transformStyle: 'preserve-3d',
-              }}
-            >
-              <svg className="absolute inset-0 pointer-events-none w-full h-full" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <pattern id="gridPattern2" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
-                    <path d="M 0 0 L 80 0 M 0 0 L 0 80" fill="none" stroke="#999999" strokeWidth="0.5" opacity="0.15" />
-                    <circle cx="0" cy="0" r="1" fill="#999999" opacity="0.25" />
-                    <circle cx="80" cy="0" r="1" fill="#999999" opacity="0.25" />
-                    <circle cx="0" cy="80" r="1" fill="#999999" opacity="0.25" />
-                    <circle cx="80" cy="80" r="1" fill="#999999" opacity="0.25" />
-                  </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#gridPattern2)" />
-              </svg>
-            </div>
-          </div>
         </div>
         {/* Navigation Bar */}
         <nav
@@ -3314,7 +3284,7 @@ export default function DoePage() {
       <div
         id="students"
         ref={carouselSectionRef}
-        className="w-full relative z-10 overflow-x-hidden mt-[3.5rem] iphone-page:mt-20"
+        className="w-full relative z-10 overflow-x-hidden mt-[3.5rem] iphone-page:mt-20 pb-24 iphone-page:pb-32"
         style={{
           opacity: carouselSectionOpacity,
           transform: `translateY(${carouselSectionTranslateY}px)`,
@@ -3356,7 +3326,7 @@ export default function DoePage() {
           }}
         />
         {/* Headline + horizontal carousel + description */}
-        <div className={`relative z-20 flex flex-col items-center w-full overflow-visible ${narrowHorizontalInset} pt-4 iphone-page:pt-6 pb-1`}>
+        <div className={`relative z-20 flex flex-col items-center w-full overflow-visible ${narrowHorizontalInset} pt-4 iphone-page:pt-6 pb-4`}>
           <p
             className={`text-center text-gray-900 w-full max-w-[min(100%,42rem)] font-normal tracking-tight leading-[1.06] text-[clamp(2.65rem,11.5vw,4rem)] iphone-page:text-[clamp(1.65rem,7.25vw,4rem)] iphone-page:whitespace-nowrap ${lora.className}`}
             style={{
@@ -3481,6 +3451,32 @@ export default function DoePage() {
               </svg>
             </button>
           </div>
+          {(() => {
+            const descriptions = [
+              ["Automates tasks around you", "Learns your workflows daily", "Acts without being asked to"],
+              ["One system, every location", "Consistent brand and process", "Scale without losing control"],
+              ["Built for clinical precision", "Minimal, focused interfaces", "Every decision intentional"],
+              ["Claims submitted instantly", "Revenue tracked end to end", "No more chasing payments"],
+              ["Reach patients who need you", "Campaigns run on your data", "Growth that runs itself now"],
+              ["Full history before you ask", "Context always at your side", "Know each patient completely"],
+              ["Stay aligned across all roles", "Tasks and notes in one place", "Built for how clinics work"],
+              ["Every message, one channel", "Sorted before you open it", "Nothing falls through again"],
+            ];
+            const lines = descriptions[selectedWordIndex] ?? descriptions[0];
+            return (
+              <div className="w-full flex justify-center pb-4 iphone-page:pb-5">
+                <div
+                  key={selectedWordIndex}
+                  className={`text-2xl iphone-page:text-[clamp(1.5rem,5vw,2.125rem)] text-gray-700 text-center max-w-2xl iphone-page:max-w-3xl leading-snug iphone-page:leading-relaxed ${inter.className}`}
+                  style={{ fontWeight: 500, animation: "fade-in 0.35s ease-out" }}
+                >
+                  {lines.map((line, i) => (
+                    <p key={i}>{line}</p>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
         </div>
       </div>
 
