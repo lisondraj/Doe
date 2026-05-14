@@ -432,7 +432,7 @@ export default function DoeIphoneSiteNav() {
         className={`fixed top-0 left-0 right-0 iphone-page:pt-[env(safe-area-inset-top,0px)] ${mobileNavOpen ? "z-[100]" : "z-50"}`}
         style={{
           backgroundColor: "#F7F6F3",
-          borderBottom: "1px solid #E6E6E6",
+          borderBottom: mobileNavOpen ? "1px solid transparent" : "1px solid #E6E6E6",
           transition: "border-bottom 100ms ease-out, border-color 100ms ease-out, background-color 180ms ease-out",
         }}
       >
