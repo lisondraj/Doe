@@ -1609,21 +1609,23 @@ export default function DoePage() {
               onClick={() => setMobileNavOpen(false)}
             />
             {/*
-              Single flex column keeps the measured chrome spacer and sheet as one
-              layout subtree (same as subpage nav): resize/zoom updates stay aligned.
-              Nav (z-50) stays on top; spacer height matches measured chrome bottom.
+              Sheet is full-screen (top:0) so CSS-zoom measurement errors can't
+              create a hero-peek gap. The nav (z-50) sits on top; the list is
+              padded down by iphoneMenuTopPx so content appears right below it.
             */}
             <div
-              className="fixed inset-0 z-[45] pointer-events-none flex flex-col"
+              className="fixed inset-0 z-[45] pointer-events-none"
               role="presentation"
             >
+              {/* Beige fill behind the nav chrome area — no gap possible */}
               <div
-                className="shrink-0 bg-[#F7F6F3] pointer-events-none"
+                className="absolute inset-x-0 top-0 bg-[#F7F6F3] pointer-events-none"
                 style={{ height: iphoneMenuTopPx }}
                 aria-hidden
               />
               <div
-                className="flex flex-1 flex-col min-h-0 bg-[#F7F6F3] pointer-events-auto overflow-hidden"
+                className="absolute inset-x-0 bottom-0 bg-[#F7F6F3] flex flex-col pointer-events-auto overflow-hidden min-h-0"
+                style={{ top: iphoneMenuTopPx }}
                 role="dialog"
                 aria-modal="true"
                 aria-label="Site navigation"

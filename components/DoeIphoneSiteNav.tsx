@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Inter, Lora } from "next/font/google";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
   dropdownContent,
@@ -92,11 +92,52 @@ export default function DoeIphoneSiteNav() {
   const [mobileNavExpandedKey, setMobileNavExpandedKey] = useState<string | null>(null);
   const [mobileNavFooterSlide, setMobileNavFooterSlide] = useState(0);
   const mobileNavFooterCarouselRef = useRef<HTMLDivElement>(null);
+  const navBarRowRef = useRef<HTMLDivElement>(null);
+  const [iphoneMenuTopPx, setIphoneMenuTopPx] = useState(88);
+  const [viewportWidth, setViewportWidth] = useState(1200);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    const updateWidth = () => setViewportWidth(window.innerWidth);
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
+  }, []);
+
+  useLayoutEffect(() => {
+    const navEl = navBarRowRef.current;
+    if (!navEl) return;
+    const update = () => {
+      const raw = navEl.getBoundingClientRect().bottom;
+      /** Flush below nav bar so zoom / visualViewport scroll cannot tuck the first row under chrome */
+      setIphoneMenuTopPx(Math.max(0, Math.ceil(raw) + 1));
+    };
+    update();
+    let raf1 = 0;
+    let raf2 = 0;
+    if (mobileNavOpen) {
+      raf1 = requestAnimationFrame(() => {
+        raf2 = requestAnimationFrame(update);
+      });
+    }
+    const ro = new ResizeObserver(update);
+    ro.observe(navEl);
+    window.addEventListener("resize", update);
+    window.visualViewport?.addEventListener("resize", update);
+    window.visualViewport?.addEventListener("scroll", update);
+    return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+      ro.disconnect();
+      window.removeEventListener("resize", update);
+      window.visualViewport?.removeEventListener("resize", update);
+      window.visualViewport?.removeEventListener("scroll", update);
+    };
+  }, [mobileNavOpen, viewportWidth]);
 
   useEffect(() => {
     if (!mobileNavOpen) return;
@@ -154,25 +195,15 @@ export default function DoeIphoneSiteNav() {
           aria-label="Close navigation menu"
           onClick={() => setMobileNavOpen(false)}
         />
-        <div
-          className="fixed inset-0 z-[95] flex flex-col pointer-events-none bg-[#F7F6F3]"
-          role="presentation"
-        >
-          <header
-            className="shrink-0 pointer-events-auto iphone-page:pt-[env(safe-area-inset-top,0px)] border-b border-[#E6E6E6] bg-[#F7F6F3]"
-            style={{
-              transition:
-                "border-bottom 100ms ease-out, border-color 100ms ease-out, background-color 180ms ease-out",
-            }}
-          >
-            <NavChromeStrip
-              navTextColor={navTextColor}
-              mobileNavOpen={mobileNavOpen}
-              toggleMenu={() => setMobileNavOpen((o) => !o)}
-            />
-          </header>
+        <div className="fixed inset-0 z-[95] pointer-events-none" role="presentation">
           <div
-            className="flex flex-1 flex-col min-h-0 overflow-hidden bg-[#F7F6F3] pointer-events-auto"
+            className="absolute inset-x-0 top-0 bg-[#F7F6F3] pointer-events-none"
+            style={{ height: iphoneMenuTopPx }}
+            aria-hidden
+          />
+          <div
+            className="absolute inset-x-0 bottom-0 bg-[#F7F6F3] flex flex-col pointer-events-auto overflow-hidden min-h-0"
+            style={{ top: iphoneMenuTopPx }}
             role="dialog"
             aria-modal="true"
             aria-label="Site navigation"
@@ -375,13 +406,13 @@ export default function DoeIphoneSiteNav() {
       document.body
     );
 
-  return (
-    <>
-      <nav
-        className={`fixed top-0 left-0 right-0 z-50 iphone-page:pt-[env(safe-area-inset-top,0px)] ${mobileNavOpen ? "hidden" : ""}`}
+  const navChromeElevated =
+    mounted &&
+    mobileNavOpen &&
+    createPortal(
+      <header
+        className="fixed top-0 left-0 right-0 z-[200] iphone-page:pt-[env(safe-area-inset-top,0px)] bg-[#F7F6F3] border-b border-[#E6E6E6]"
         style={{
-          backgroundColor: "#F7F6F3",
-          borderBottom: "1px solid #E6E6E6",
           transition: "border-bottom 100ms ease-out, border-color 100ms ease-out, background-color 180ms ease-out",
         }}
       >
@@ -390,8 +421,34 @@ export default function DoeIphoneSiteNav() {
           mobileNavOpen={mobileNavOpen}
           toggleMenu={() => setMobileNavOpen((o) => !o)}
         />
+      </header>,
+      document.body
+    );
+
+  return (
+    <>
+      <nav
+        ref={navBarRowRef}
+        className={`fixed top-0 left-0 right-0 iphone-page:pt-[env(safe-area-inset-top,0px)] ${mobileNavOpen ? "z-[100]" : "z-50"}`}
+        style={{
+          backgroundColor: "#F7F6F3",
+          borderBottom: "1px solid #E6E6E6",
+          transition: "border-bottom 100ms ease-out, border-color 100ms ease-out, background-color 180ms ease-out",
+        }}
+      >
+        <div
+          className={mobileNavOpen ? "opacity-0 pointer-events-none select-none" : undefined}
+          aria-hidden={mobileNavOpen ? true : undefined}
+        >
+          <NavChromeStrip
+            navTextColor={navTextColor}
+            mobileNavOpen={mobileNavOpen}
+            toggleMenu={() => setMobileNavOpen((o) => !o)}
+          />
+        </div>
       </nav>
       {mobileMenuLayer}
+      {navChromeElevated}
     </>
   );
 }
