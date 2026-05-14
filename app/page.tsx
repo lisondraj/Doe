@@ -5562,7 +5562,7 @@ export default function DoePage() {
       </div>
 
       <footer
-        className="relative z-10 mt-0 flex min-h-[min(92vh,56rem)] w-screen flex-col justify-end overflow-hidden pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] iphone-page:min-h-[88vh]"
+        className="relative z-10 mt-0 flex min-h-[min(46vh,28rem)] w-screen flex-col justify-end overflow-hidden pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] iphone-page:min-h-[44vh]"
         style={{
           width: "100vw",
           marginLeft: "calc(50% - 50vw)",
@@ -5592,9 +5592,9 @@ export default function DoePage() {
             mixBlendMode: "overlay",
           }}
         />
-        <div className="relative z-10 flex w-full flex-1 flex-col justify-end px-3 pt-20 md:px-6 md:pt-28 iphone-page:px-4">
+        <div className="relative z-10 flex w-full flex-1 flex-col justify-end px-3 pt-10 md:px-6 md:pt-16 iphone-page:px-0">
           <nav
-            className="mx-auto mb-12 flex max-w-4xl flex-wrap items-center justify-center gap-x-6 gap-y-3 text-[clamp(0.95rem,2.8vw,1.125rem)] font-medium tracking-tight md:mb-16 md:gap-x-12 md:gap-y-4 md:text-lg"
+            className="mx-auto mb-6 grid w-full max-w-md grid-cols-2 gap-x-8 gap-y-5 px-6 text-center text-[clamp(1.15rem,4.25vw,1.5rem)] font-medium tracking-tight md:mb-8 md:max-w-lg md:gap-x-12 md:gap-y-6 md:text-[clamp(1.25rem,2.8vw,1.75rem)] iphone-page:mb-5 iphone-page:max-w-none iphone-page:gap-x-6 iphone-page:gap-y-5 iphone-page:px-4 iphone-page:text-[clamp(1.2rem,4.8vmin,1.65rem)]"
             aria-label="Footer"
           >
             <Link href="/#features" className="text-white no-underline transition-colors hover:text-white/85">
@@ -5610,12 +5610,14 @@ export default function DoePage() {
               Company
             </Link>
           </nav>
-          <div className="flex w-full justify-center overflow-visible pb-1">
+          <div className="flex w-full justify-center overflow-visible pb-0.5 iphone-page:px-0">
             <Link
               href="/"
-              className={`block w-full max-w-[100vw] text-center font-normal leading-[0.82] tracking-tight text-white no-underline transition-colors hover:text-white/92 ${lora.className}`}
+              className={`block w-full max-w-none text-center font-normal leading-[0.8] tracking-tight text-white no-underline transition-colors hover:text-white/92 px-0 ${lora.className}`}
               style={{
-                fontSize: "clamp(3.75rem, 20vw, 15.5rem)",
+                fontSize: "clamp(4.5rem, min(34vw, 22rem), 24rem)",
+                paddingLeft: "max(0px, env(safe-area-inset-left, 0px))",
+                paddingRight: "max(0px, env(safe-area-inset-right, 0px))",
               }}
             >
               Doe
