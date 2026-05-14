@@ -431,8 +431,8 @@ export default function DoePage() {
     if (!navEl) return;
     const update = () => {
       const raw = navEl.getBoundingClientRect().bottom;
-      /** Start sheet right at (or 1px below) nav bottom so items never hide behind the fixed bar. */
-      setIphoneMenuTopPx(Math.max(0, Math.ceil(raw) + 1));
+      /** Pull sheet slightly under measured chrome to kill subpixel/zoom seam above list */
+      setIphoneMenuTopPx(Math.max(0, Math.floor(raw) - 6));
     };
     update();
     let raf1 = 0;
@@ -909,11 +909,7 @@ export default function DoePage() {
 
   // Sliding box scroll functions — card step uses portrait dimensions on iPhone
   const slideBoxW = isPhoneLayout ? phoneSlideSize.w : 760;
-  /** Cap carousel height so it never grows large enough to visually cover sections below,
-   *  even when the browser is zoomed in or the viewport is wide. */
-  const slideBoxH = isPhoneLayout
-    ? Math.min(phoneSlideSize.h, Math.round(appViewport.height * 0.70))
-    : 760;
+  const slideBoxH = isPhoneLayout ? phoneSlideSize.h : 760;
   const slideGap = isPhoneLayout ? 12 : 32;
   const carouselSlideCount = 6;
   /** Uniform scale only — use max(...) so the 700² design covers the portrait slot (no stretch). */
