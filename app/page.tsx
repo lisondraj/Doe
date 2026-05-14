@@ -5632,14 +5632,22 @@ export default function DoePage() {
               Company
             </Link>
           </nav>
-          <div className="flex w-full justify-center overflow-visible pb-0.5 pt-2 iphone-page:px-0">
+          <div
+            className="relative z-[11] flex justify-center overflow-hidden pt-3 pb-0"
+            style={{
+              width: "100vw",
+              marginLeft: "calc(50% - 50vw)",
+              marginRight: "calc(50% - 50vw)",
+            }}
+          >
             <Link
               href="/"
-              className={`block w-full max-w-none text-center font-normal leading-[0.76] tracking-tight text-white no-underline transition-colors hover:text-white/92 px-0 ${lora.className}`}
+              className={`pointer-events-auto inline-block shrink-0 text-center font-normal leading-[0.65] tracking-tight no-underline transition-opacity hover:opacity-90 ${lora.className}`}
               style={{
-                fontSize: "clamp(5.25rem, min(48vw, 28rem), 28rem)",
-                paddingLeft: "max(0px, env(safe-area-inset-left, 0px))",
-                paddingRight: "max(0px, env(safe-area-inset-right, 0px))",
+                color: "#F7F6F3",
+                fontSize: "clamp(8.5rem, min(72vw, 50rem), 54rem)",
+                marginBottom: "calc(-0.16em - max(0.35rem, env(safe-area-inset-bottom, 0px)))",
+                transform: "translateY(min(6.5vh, 3rem))",
               }}
             >
               Doe
