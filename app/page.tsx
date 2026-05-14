@@ -407,12 +407,14 @@ export default function DoePage() {
         }
       }
 
-      const zoom = Math.max(0.38, doeforvcRootZoom(vw));
+      /** Pair with root `zoom`: both use layout viewport width (`innerWidth`), not `visualViewport.width`. */
+      const layoutW = typeof window !== "undefined" ? window.innerWidth : vw;
+      const zoom = Math.max(0.38, doeforvcRootZoom(layoutW));
       /** Inset so cards read slightly smaller than full viewport */
       const horizontalInset = 12;
       /** Slide width from viewport; height taller than width for portrait cards */
       const phoneSlideScale = 0.96;
-      const w = ((vw - horizontalInset * 2) / zoom) * phoneSlideScale;
+      const w = ((layoutW - horizontalInset * 2) / zoom) * phoneSlideScale;
       /** Taller than wide — extra vertical presence in the carousel band */
       const phoneSlideHeightRatio = 1.28;
       const h = w * phoneSlideHeightRatio;
@@ -433,9 +435,12 @@ export default function DoePage() {
     const el = builtForYouMockSlotRef.current;
     if (!el) return;
     const update = () => {
+      const layoutW = typeof window !== "undefined" ? window.innerWidth : 430;
+      const z = Math.max(0.38, doeforvcRootZoom(layoutW));
       const r = el.getBoundingClientRect();
-      const side = Math.min(r.width, r.height);
-      setBuiltForYouMockFitScale(side > 0 ? Math.min(1, side / 700) : 1);
+      /** Rect is visual px inside zoomed root; 700×700 mockup is logical px — divide out zoom. */
+      const sideLogical = Math.min(r.width, r.height) / z;
+      setBuiltForYouMockFitScale(sideLogical > 0 ? Math.min(1, sideLogical / 700) : 1);
     };
     update();
     const ro = new ResizeObserver(update);
