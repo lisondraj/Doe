@@ -5562,7 +5562,7 @@ export default function DoePage() {
       </div>
 
       <footer
-        className="relative z-10 mt-0 flex min-h-[min(46vh,28rem)] w-screen flex-col justify-end overflow-hidden pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] iphone-page:min-h-[44vh]"
+        className="relative z-10 mt-0 flex min-h-[min(69vh,42rem)] w-screen flex-col justify-end overflow-hidden pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] iphone-page:min-h-[66vh]"
         style={{
           width: "100vw",
           marginLeft: "calc(50% - 50vw)",
