@@ -432,7 +432,7 @@ export default function DoePage() {
     const update = () => {
       const raw = navEl.getBoundingClientRect().bottom;
       /** Flush below measured nav bottom so first accordion row never tucks under chrome when zoomed */
-      setIphoneMenuTopPx(Math.max(0, Math.ceil(raw) + 4));
+      setIphoneMenuTopPx(Math.max(0, Math.ceil(raw) + 1));
     };
     update();
     let raf1 = 0;
@@ -1609,23 +1609,21 @@ export default function DoePage() {
               onClick={() => setMobileNavOpen(false)}
             />
             {/*
-              Sheet is full-screen (top:0) so CSS-zoom measurement errors can't
-              create a hero-peek gap. The nav (z-50) sits on top; the list is
-              padded down by iphoneMenuTopPx so content appears right below it.
+              Single flex column keeps the measured chrome spacer and sheet as one
+              layout subtree (same as subpage nav): resize/zoom updates stay aligned.
+              Nav (z-50) stays on top; spacer height matches measured chrome bottom.
             */}
             <div
-              className="fixed inset-0 z-[45] pointer-events-none"
+              className="fixed inset-0 z-[45] pointer-events-none flex flex-col"
               role="presentation"
             >
-              {/* Beige fill behind the nav chrome area — no gap possible */}
               <div
-                className="absolute inset-x-0 top-0 bg-[#F7F6F3] pointer-events-none"
+                className="shrink-0 bg-[#F7F6F3] pointer-events-none"
                 style={{ height: iphoneMenuTopPx }}
                 aria-hidden
               />
               <div
-                className="absolute inset-x-0 bottom-0 bg-[#F7F6F3] flex flex-col pointer-events-auto overflow-hidden min-h-0"
-                style={{ top: iphoneMenuTopPx }}
+                className="flex flex-1 flex-col min-h-0 bg-[#F7F6F3] pointer-events-auto overflow-hidden"
                 role="dialog"
                 aria-modal="true"
                 aria-label="Site navigation"
@@ -1735,7 +1733,7 @@ export default function DoePage() {
                         key={slide.boxTitle}
                         className="w-full min-w-full shrink-0 snap-center px-6 iphone-page:pl-[max(1.35rem,calc(env(safe-area-inset-left,0px)+10px+2vmin))] iphone-page:pr-[max(1.35rem,calc(env(safe-area-inset-right,0px)+8px+1.25vmin))] space-y-3 box-border iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)]"
                       >
-                        <div className="relative rounded-[1.375rem] iphone-page:rounded-[clamp(1.2rem,1rem+1.4vmin,2.1rem)] overflow-hidden min-h-[30rem] iphone-page:min-h-0 iphone-page:h-[clamp(22rem,min(54vmin,460px),28rem)] shadow-[0_10px_32px_rgba(0,0,0,0.12)] [container-type:size]">
+                        <div className="relative rounded-[1.375rem] iphone-page:rounded-[clamp(1.2rem,1rem+1.4vmin,2.1rem)] overflow-hidden min-h-[30rem] iphone-page:min-h-0 iphone-page:h-[clamp(22rem,min(54vmin,460px),28rem)] shadow-[0_10px_32px_rgba(0,0,0,0.12)]">
                           <div
                             className="absolute inset-0"
                             style={{ background: slide.gradient }}
@@ -1753,8 +1751,7 @@ export default function DoePage() {
                           <div
                             className="absolute inset-0 z-[5]"
                             style={{
-                              fontSize:
-                                "clamp(11px, min(5.85cqw, 6.35cqh), 26px)",
+                              fontSize: "clamp(10px, min(3.5vmin, 3.75vw), 15px)",
                             }}
                           >
                             <div className="pointer-events-auto absolute left-0 right-0 top-0 z-[6] flex justify-center gap-[0.65em] px-[1.25em] pt-[2.5em] pb-[0.12em]">
