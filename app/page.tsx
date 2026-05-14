@@ -3481,7 +3481,7 @@ export default function DoePage() {
       </div>
 
       <footer
-        className="relative z-10 mt-0 flex min-h-[min(69vh,42rem)] w-screen flex-col justify-end overflow-hidden pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] iphone-page:min-h-[66vh]"
+        className="relative z-10 mt-0 flex min-h-[min(69vh,42rem)] w-screen flex-col justify-end overflow-x-clip overflow-y-visible pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] iphone-page:min-h-[66vh]"
         style={{
           width: "100vw",
           marginLeft: "calc(50% - 50vw)",
@@ -3552,7 +3552,7 @@ export default function DoePage() {
             </Link>
           </nav>
           <div
-            className="relative z-[11] flex justify-center overflow-hidden pt-3 pb-0"
+            className="relative z-[11] flex justify-center overflow-x-clip overflow-y-visible pt-3 pb-0"
             style={{
               width: "100vw",
               marginLeft: "calc(50% - 50vw)",
@@ -3564,9 +3564,10 @@ export default function DoePage() {
               className={`pointer-events-auto inline-block shrink-0 text-center font-normal leading-[0.65] tracking-tight no-underline transition-opacity hover:opacity-90 ${lora.className}`}
               style={{
                 color: "#F7F6F3",
-                fontSize: "clamp(8.5rem, min(72vw, 50rem), 54rem)",
-                marginBottom: "calc(-0.16em - max(0.35rem, env(safe-area-inset-bottom, 0px)))",
-                transform: "translateY(min(6.5vh, 3rem))",
+                /** Slight L/R/bottom bleed: keep type mostly in view, not 72vw (huge crop). */
+                fontSize: "clamp(5rem, min(33vw, 28vmin), 14rem)",
+                marginBottom: "calc(-0.18em - env(safe-area-inset-bottom, 0px))",
+                transform: "translateY(min(2.25vh, 1.1rem))",
               }}
             >
               Doe
