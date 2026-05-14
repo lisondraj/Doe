@@ -20,6 +20,7 @@ import {
   MobileNavFooterShapeIcon,
   NAV_ITEMS,
 } from "@/components/doe-nav-data";
+import { HeroChartPanels } from "@/components/hero-chart-panels";
 import { doeforvcRootZoom } from "@/lib/doeforvc-zoom";
 
 /** Bottom title pill + description inside 700×700 slide mocks (scales with card transform). */
@@ -1848,36 +1849,16 @@ export default function DoePage() {
           </>
         )}
 
-        {/* Hero: upper third = large tile grid; lower two-thirds = Doe + tagline */}
+        {/* Hero: chart panels overlap Doe; column vertically centered */}
         <div
-          className={`absolute inset-0 z-20 flex flex-col iphone-page:pb-[env(safe-area-inset-bottom,0px)] ${narrowHorizontalInset}`}
+          className={`absolute inset-0 z-20 flex min-h-0 flex-col items-center justify-center px-4 iphone-page:px-[max(1rem,env(safe-area-inset-left,0px))] iphone-page:pb-[env(safe-area-inset-bottom,0px)] iphone-page:pt-[max(0.5rem,env(safe-area-inset-top,0px))] ${narrowHorizontalInset}`}
         >
-          <div className="flex min-h-0 flex-[1] flex-col items-center justify-center px-2 pb-1 pt-2 iphone-page:pt-[max(0.35rem,calc(env(safe-area-inset-top,0px)+0.25rem))]">
-            <div className="flex h-full min-h-0 w-full max-w-[min(96vw,52rem)] flex-col items-center justify-center">
-              <div
-                className="grid aspect-[3/2] h-full max-h-full w-auto max-w-full grid-cols-3 grid-rows-2 gap-[min(3vmin,1.1rem)] sm:gap-4"
-                aria-hidden
-              >
-                {[0, 1, 2, 3, 4, 5].map((i) => (
-                  <div
-                    key={i}
-                    className={`min-h-0 min-w-0 rounded-[min(18px,2.8vmin)] border border-white/35 bg-[#f1f0ef] shadow-[0_2px_8px_rgba(0,0,0,0.07)] motion-reduce:scale-100 motion-reduce:opacity-100 ${
-                      heroBoxStaggerMs
-                        ? "hero-box-pop-bounce"
-                        : "scale-[0.18] opacity-0"
-                    }`}
-                    style={
-                      heroBoxStaggerMs
-                        ? { animationDelay: `${heroBoxStaggerMs[i]}ms` }
-                        : undefined
-                    }
-                  />
-                ))}
-              </div>
+          <div className="relative flex w-full max-w-[min(94vw,38rem)] flex-col items-center justify-center">
+            <div className="relative z-30 mb-[min(0.35rem,0.8vmin)] flex w-full justify-center">
+              <HeroChartPanels staggerMs={heroBoxStaggerMs} />
             </div>
-          </div>
-          <div className="flex min-h-0 flex-[2] flex-col items-center justify-center -translate-y-2 iphone-page:-translate-y-2.5">
-            <div className="max-w-[800px] mx-auto px-8 iphone-page:px-0 text-center w-full">
+            <div className="relative z-10 -mt-[clamp(0.75rem,2.4vmin,1.45rem)] flex w-full flex-col items-center px-2 pt-[clamp(1.35rem,3.4vmin,2.35rem)]">
+              <div className="mx-auto max-w-[800px] w-full px-8 text-center iphone-page:px-0">
             <p
               className={`font-normal leading-none tracking-tight mb-7 iphone-page:mb-6 ${lora.className}`}
               style={{
@@ -1888,7 +1869,8 @@ export default function DoePage() {
                 backgroundClip: "text",
                 color: "transparent",
                 WebkitTextFillColor: "transparent",
-                filter: "drop-shadow(0 2px 28px rgba(0, 0, 0, 0.2))",
+                filter:
+                  "drop-shadow(0 2px 20px rgba(0, 0, 0, 0.28)) drop-shadow(0 6px 32px rgba(26, 46, 52, 0.35))",
               }}
             >
               Doe
@@ -1904,6 +1886,7 @@ export default function DoePage() {
                 clinical practice and education.
               </span>
             </p>
+              </div>
             </div>
           </div>
         </div>
