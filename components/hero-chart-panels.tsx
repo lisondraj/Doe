@@ -14,9 +14,9 @@ const surfaceDeep = "rgba(255, 255, 255, 0.72)";
 const ok = "rgba(46, 125, 95, 0.65)";
 const mutedColor = "rgba(30, 52, 58, 0.5)";
 
-/** Square cell track — same length for columns & rows = rounded squares */
+/** Square cell track — tuned for iPhone: clearly larger, still fits 3×2 + gaps */
 const CELL =
-  "clamp(3.4rem, min(16vw, 11vmin), 6.75rem)";
+  "clamp(4.25rem, min(24vw, 15.5vmin), 7.75rem)";
 
 function PanelShell({
   label,
