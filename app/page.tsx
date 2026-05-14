@@ -5569,22 +5569,44 @@ export default function DoePage() {
           marginRight: "calc(50% - 50vw)",
         }}
       >
+        {/* Base — warm amber / teak blend consistent with hero & bento oranges */}
         <div
           className="pointer-events-none absolute inset-0"
           style={{
             background: `
-              radial-gradient(circle at center, #D49D4F 0%, #D2774C 18%, #BF593D 32%, #C88A5F 45%, #7B5C4B 55%, #8B6F47 65%, #6D5B41 72%, #5C4A3A 78%, #4A3D32 85%, #1E343A 95%, rgba(30, 52, 58, 0.6) 100%),
-              radial-gradient(ellipse 60% 60% at 0% 0%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
-              radial-gradient(ellipse 60% 60% at 100% 0%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
-              radial-gradient(ellipse 60% 60% at 0% 100%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
-              radial-gradient(ellipse 60% 60% at 100% 100%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
-              linear-gradient(to right, #1E343A 0%, rgba(30, 52, 58, 0.8) 15%, transparent 25%),
-              linear-gradient(to left, #1E343A 0%, rgba(30, 52, 58, 0.8) 15%, transparent 25%)
+              linear-gradient(152deg, #1a2e34 0%, #243a40 14%, #3d2f28 32%, #6b442f 48%, #a85a34 62%, #d4893f 76%, #e8b04d 88%, #f2cf7a 100%),
+              radial-gradient(ellipse 100% 80% at 50% 110%, rgba(231, 169, 68, 0.55) 0%, transparent 58%),
+              radial-gradient(ellipse 55% 45% at 12% 18%, rgba(255, 224, 180, 0.22) 0%, transparent 52%),
+              radial-gradient(ellipse 50% 40% at 88% 22%, rgba(210, 119, 76, 0.3) 0%, transparent 55%)
+            `,
+          }}
+        />
+        {/* Line mesh overlay */}
+        <div
+          className="pointer-events-none absolute inset-0 z-[1]"
+          style={{
+            opacity: 0.55,
+            mixBlendMode: "soft-light",
+            backgroundImage: `
+              repeating-linear-gradient(
+                -32deg,
+                transparent 0px,
+                transparent 11px,
+                rgba(255, 255, 255, 0.09) 11px,
+                rgba(255, 255, 255, 0.09) 12px
+              ),
+              repeating-linear-gradient(
+                32deg,
+                transparent 0px,
+                transparent 15px,
+                rgba(30, 52, 58, 0.14) 15px,
+                rgba(30, 52, 58, 0.14) 16px
+              )
             `,
           }}
         />
         <div
-          className="pointer-events-none absolute inset-0"
+          className="pointer-events-none absolute inset-0 z-[2]"
           style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E")`,
             backgroundSize: "200px 200px",
@@ -5594,7 +5616,7 @@ export default function DoePage() {
         />
         <div className="relative z-10 flex w-full flex-1 flex-col justify-end px-3 pt-10 md:px-6 md:pt-16 iphone-page:px-0">
           <nav
-            className="mx-auto mb-6 grid w-full max-w-md grid-cols-2 gap-x-8 gap-y-5 px-6 text-center text-[clamp(1.15rem,4.25vw,1.5rem)] font-medium tracking-tight md:mb-8 md:max-w-lg md:gap-x-12 md:gap-y-6 md:text-[clamp(1.25rem,2.8vw,1.75rem)] iphone-page:mb-5 iphone-page:max-w-none iphone-page:gap-x-6 iphone-page:gap-y-5 iphone-page:px-4 iphone-page:text-[clamp(1.2rem,4.8vmin,1.65rem)]"
+            className="mx-auto mb-14 grid w-[min(100%,17rem)] shrink-0 grid-cols-2 justify-items-center gap-x-5 gap-y-4 text-center text-[clamp(1.15rem,4.25vw,1.5rem)] font-medium tracking-tight md:mb-16 md:w-[min(100%,22rem)] md:gap-x-8 md:gap-y-5 md:text-[clamp(1.25rem,2.8vw,1.75rem)] iphone-page:mb-12 iphone-page:max-w-[16rem] iphone-page:gap-x-4 iphone-page:gap-y-3.5 iphone-page:text-[clamp(1.2rem,4.8vmin,1.65rem)]"
             aria-label="Footer"
           >
             <Link href="/#features" className="text-white no-underline transition-colors hover:text-white/85">
@@ -5610,12 +5632,12 @@ export default function DoePage() {
               Company
             </Link>
           </nav>
-          <div className="flex w-full justify-center overflow-visible pb-0.5 iphone-page:px-0">
+          <div className="flex w-full justify-center overflow-visible pb-0.5 pt-2 iphone-page:px-0">
             <Link
               href="/"
-              className={`block w-full max-w-none text-center font-normal leading-[0.8] tracking-tight text-white no-underline transition-colors hover:text-white/92 px-0 ${lora.className}`}
+              className={`block w-full max-w-none text-center font-normal leading-[0.76] tracking-tight text-white no-underline transition-colors hover:text-white/92 px-0 ${lora.className}`}
               style={{
-                fontSize: "clamp(4.5rem, min(34vw, 22rem), 24rem)",
+                fontSize: "clamp(5.25rem, min(48vw, 28rem), 28rem)",
                 paddingLeft: "max(0px, env(safe-area-inset-left, 0px))",
                 paddingRight: "max(0px, env(safe-area-inset-right, 0px))",
               }}
