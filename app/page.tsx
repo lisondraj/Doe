@@ -434,8 +434,8 @@ export default function DoePage() {
     if (!navEl) return;
     const update = () => {
       const raw = navEl.getBoundingClientRect().bottom;
-      /** Pull sheet slightly under measured chrome to kill subpixel/zoom seam above list */
-      setIphoneMenuTopPx(Math.max(0, Math.floor(raw) - 6));
+      /** Sheet starts just below nav so top rows (e.g. Features) are never hidden under the chrome. */
+      setIphoneMenuTopPx(Math.max(0, Math.ceil(raw) + 2));
     };
     update();
     let raf1 = 0;
@@ -1646,7 +1646,10 @@ export default function DoePage() {
                 aria-modal="true"
                 aria-label="Site navigation"
               >
-                <nav className="flex flex-col flex-1 min-h-0 overflow-y-auto overscroll-contain">
+                <nav
+                  className="flex flex-col flex-1 min-h-0 overflow-y-auto overscroll-contain iphone-page:scroll-pt-1 pt-px"
+                  style={{ scrollPaddingTop: 4 }}
+                >
                   {NAV_ITEMS.map((item) => {
                     const expanded = mobileNavExpandedKey === item;
                     const subs = dropdownContent[item]?.items ?? [];
@@ -1725,9 +1728,9 @@ export default function DoePage() {
                     );
                   })}
                 </nav>
-                {/* Footer — swipeable carousel: gradient capsule + outside CTA row per slide */}
+                {/* Footer — swipeable carousel; max height so it can’t swallow accordion on zoom / short viewports */}
                 <div
-                  className="shrink-0 pb-[max(1rem,calc(env(safe-area-inset-bottom,0px)+10px))] iphone-page:pb-[max(0.9375rem,calc(env(safe-area-inset-bottom,0px)+clamp(10px,1.85vmin,20px)))] pt-4 iphone-page:pt-[clamp(0.75rem,0.52rem+1.05vmin,1.25rem)] border-t border-[#ECEAE6]"
+                  className="shrink-0 min-h-0 max-h-[min(42dvh,24rem)] iphone-page:max-h-[min(40svh,22rem)] flex flex-col overflow-x-hidden overflow-y-auto overscroll-contain pb-[max(1rem,calc(env(safe-area-inset-bottom,0px)+10px))] iphone-page:pb-[max(0.9375rem,calc(env(safe-area-inset-bottom,0px)+clamp(10px,1.85vmin,20px)))] pt-4 iphone-page:pt-[clamp(0.75rem,0.52rem+1.05vmin,1.25rem)] border-t border-[#ECEAE6]"
                 >
                   <div
                     ref={mobileNavFooterCarouselRef}
@@ -1751,7 +1754,9 @@ export default function DoePage() {
                         key={slide.boxTitle}
                         className="w-full min-w-full shrink-0 snap-center px-6 iphone-page:pl-[max(1.35rem,calc(env(safe-area-inset-left,0px)+10px+2vmin))] iphone-page:pr-[max(1.35rem,calc(env(safe-area-inset-right,0px)+8px+1.25vmin))] space-y-3 box-border iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)]"
                       >
-                        <div className="relative rounded-[1.375rem] iphone-page:rounded-[clamp(1.2rem,1rem+1.4vmin,2.1rem)] overflow-hidden min-h-[30rem] iphone-page:min-h-[clamp(22rem,58vmin,48rem)] shadow-[0_10px_32px_rgba(0,0,0,0.12)]">
+                        <div
+                          className="relative rounded-[1.375rem] iphone-page:rounded-[clamp(1.2rem,1rem+1.4vmin,2.1rem)] overflow-hidden min-h-[30rem] shadow-[0_10px_32px_rgba(0,0,0,0.12)] iphone-page:min-h-[13rem] iphone-page:max-h-[min(38svh,21rem)] iphone-page:h-[min(38svh,21rem)]"
+                        >
                           <div
                             className="absolute inset-0"
                             style={{ background: slide.gradient }}
