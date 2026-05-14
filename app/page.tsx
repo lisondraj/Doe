@@ -478,7 +478,7 @@ export default function DoePage() {
       order[i] = b;
       order[j] = a;
     }
-    const slotMs = 82;
+    const slotMs = 64;
     setHeroBoxStaggerMs(
       [0, 1, 2, 3, 4, 5].map((boxId) => order.indexOf(boxId) * slotMs),
     );
@@ -1848,26 +1848,23 @@ export default function DoePage() {
           </>
         )}
 
-        {/* Hero Header — sits in lower third of hero, nudged slightly up */}
+        {/* Hero: upper third = large tile grid; lower two-thirds = Doe + tagline */}
         <div
-          className={`absolute inset-0 z-20 flex flex-col iphone-page:pt-[env(safe-area-inset-top,0px)] iphone-page:pb-[env(safe-area-inset-bottom,0px)] ${narrowHorizontalInset}`}
+          className={`absolute inset-0 z-20 flex flex-col iphone-page:pb-[env(safe-area-inset-bottom,0px)] ${narrowHorizontalInset}`}
         >
-          <div className="min-h-0 flex-[2]" aria-hidden />
-          <div className="flex min-h-0 flex-[1] flex-col items-center justify-center -translate-y-2 iphone-page:-translate-y-2.5">
-            <div className="max-w-[800px] mx-auto px-8 iphone-page:px-0 text-center w-full">
-            <div className="mx-auto mb-5 flex justify-center iphone-page:mb-4">
+          <div className="flex min-h-0 flex-[1] flex-col items-center justify-center px-2 pb-1 pt-2 iphone-page:pt-[max(0.35rem,calc(env(safe-area-inset-top,0px)+0.25rem))]">
+            <div className="flex h-full min-h-0 w-full max-w-[min(96vw,52rem)] flex-col items-center justify-center">
               <div
-                className="grid grid-cols-3 gap-2.5 sm:gap-3"
-                style={{ width: "fit-content" }}
+                className="grid aspect-[3/2] h-full max-h-full w-auto max-w-full grid-cols-3 grid-rows-2 gap-[min(3vmin,1.1rem)] sm:gap-4"
                 aria-hidden
               >
                 {[0, 1, 2, 3, 4, 5].map((i) => (
                   <div
                     key={i}
-                    className={`aspect-square w-[clamp(2.15rem,6.2vmin,3.2rem)] rounded-[12px] border border-white/30 bg-[#f1f0ef] shadow-[0_1px_3px_rgba(0,0,0,0.055)] motion-reduce:scale-100 motion-reduce:opacity-100 ${
+                    className={`min-h-0 min-w-0 rounded-[min(18px,2.8vmin)] border border-white/35 bg-[#f1f0ef] shadow-[0_2px_8px_rgba(0,0,0,0.07)] motion-reduce:scale-100 motion-reduce:opacity-100 ${
                       heroBoxStaggerMs
                         ? "hero-box-pop-bounce"
-                        : "scale-[0.12] opacity-[0.36]"
+                        : "scale-[0.18] opacity-0"
                     }`}
                     style={
                       heroBoxStaggerMs
@@ -1878,6 +1875,9 @@ export default function DoePage() {
                 ))}
               </div>
             </div>
+          </div>
+          <div className="flex min-h-0 flex-[2] flex-col items-center justify-center -translate-y-2 iphone-page:-translate-y-2.5">
+            <div className="max-w-[800px] mx-auto px-8 iphone-page:px-0 text-center w-full">
             <p
               className={`font-normal leading-none tracking-tight mb-7 iphone-page:mb-6 ${lora.className}`}
               style={{
