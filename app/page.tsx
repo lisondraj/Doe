@@ -311,6 +311,9 @@ export default function DoePage() {
   const [selectedWordIndex, setSelectedWordIndex] = useState(2);
   const [carouselOffset, setCarouselOffset] = useState(0);
   const [isCarouselTransitioning, setIsCarouselTransitioning] = useState(false);
+  const [uiMockupOpacity, setUiMockupOpacity] = useState(1);
+  const [uiMockupTranslateY, setUiMockupTranslateY] = useState(0);
+  const [uiMockupScale, setUiMockupScale] = useState(1);
   const carouselSectionRef = useRef<HTMLDivElement>(null);
   /** Latest `isCarouselTransitioning` for “Built for you” autoplay ticks */
   const builtForYouCarouselTransitioningSinkRef = useRef(false);
@@ -1246,10 +1249,20 @@ export default function DoePage() {
   builtForYouCarouselAdvanceRightRef.current = () => {
     if (builtForYouCarouselTransitioningSinkRef.current) return;
     setIsCarouselTransitioning(true);
+    requestAnimationFrame(() => {
+      setUiMockupOpacity(0);
+      setUiMockupTranslateY(10);
+      setUiMockupScale(0.96);
+    });
     setCarouselOffset(1);
     window.setTimeout(() => {
       setSelectedWordIndex((prev) => (prev + 1) % 8);
       setCarouselOffset(0);
+      requestAnimationFrame(() => {
+        setUiMockupOpacity(1);
+        setUiMockupTranslateY(0);
+        setUiMockupScale(1);
+      });
       window.setTimeout(() => {
         setIsCarouselTransitioning(false);
       }, 50);
@@ -3347,11 +3360,21 @@ export default function DoePage() {
               onClick={() => {
                 if (isCarouselTransitioning) return;
                 setIsCarouselTransitioning(true);
+                requestAnimationFrame(() => {
+                  setUiMockupOpacity(0);
+                  setUiMockupTranslateY(10);
+                  setUiMockupScale(0.96);
+                });
                 setCarouselOffset(-1);
                 setTimeout(() => {
                   const newIndex = (selectedWordIndex - 1 + 8) % 8;
                   setSelectedWordIndex(newIndex);
                   setCarouselOffset(0);
+                  requestAnimationFrame(() => {
+                    setUiMockupOpacity(1);
+                    setUiMockupTranslateY(0);
+                    setUiMockupScale(1);
+                  });
                   setTimeout(() => {
                     setIsCarouselTransitioning(false);
                   }, 50);
@@ -3478,6 +3501,392 @@ export default function DoePage() {
             );
           })()}
         </div>
+        {/* Orange panel — word-linked UI mockups; horizontal inset matches second-section carousel */}
+        <div className={`relative z-30 w-full pb-14 iphone-page:pb-16 ${narrowHorizontalInset} mt-10 iphone-page:mt-14`}>
+          <div
+            className="relative mx-auto w-full max-w-full shrink-0 rounded-2xl overflow-hidden shadow-[0_24px_70px_rgba(0,0,0,0.14)]"
+            style={{
+              /** Outer orange canvas: square (width = height), not a wide strip */
+              width: "100%",
+              aspectRatio: "1",
+              height: "auto",
+              boxSizing: "border-box",
+              background: `radial-gradient(circle at 50% 36%, #E7A944 0%, #D49D4F 40%, #D2774C 70%, #1E343A 100%)`,
+              borderRadius: "16px",
+            }}
+          >
+          {/* Grain texture overlay */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              borderRadius: '16px',
+              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E")`,
+              backgroundSize: '200px 200px',
+              opacity: 1,
+              mixBlendMode: 'overlay',
+            }}
+          />
+          {/* Circular grid pattern overlay — shifted up behind headline/mockup */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ borderRadius: '16px' }}>
+            <svg
+              className="absolute pointer-events-none left-1/2 -translate-x-1/2 w-[118%] max-w-none h-[118%]"
+              style={{ top: "-13%", }}
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 1000 1000"
+              preserveAspectRatio="xMidYMid meet"
+              aria-hidden
+            >
+              {/* Radial lines */}
+              {Array.from({ length: 8 }, (_, j) => {
+                const angle = (j * 45);
+                const radius = 500;
+                return (
+                  <path
+                    key={`radial-${j}`}
+                    d={`M 500 500 L ${500 + Math.cos(angle * Math.PI / 180) * radius} ${500 + Math.sin(angle * Math.PI / 180) * radius}`}
+                    fill="none"
+                    stroke="rgba(255, 255, 255, 0.15)"
+                    strokeWidth="0.8"
+                  />
+                );
+              })}
+              {/* Concentric circles */}
+              {Array.from({ length: 6 }, (_, j) => {
+                const r = (j + 1) * 150;
+                return (
+                  <circle
+                    key={`circle-${j}`}
+                    cx="500"
+                    cy="500"
+                    r={r}
+                    fill="none"
+                    stroke="rgba(255, 255, 255, 0.15)"
+                    strokeWidth="0.8"
+                  />
+                );
+              })}
+            </svg>
+          </div>
+
+          {/* App UI Mockup - Dynamic based on selected word */}
+          {(() => {
+            const renderUIMockup = () => {
+              const words = ['Agents', 'Franchises', 'Design', 'Billing', 'Marketing', 'Patient', 'Teams', 'Inbox'];
+              const currentWord = words[selectedWordIndex];
+
+              // Common sidebar
+              const Sidebar = () => (
+                <div style={{
+                  width: '48px',
+                  background: '#1E343A',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  padding: '14px 0',
+                  gap: '4px',
+                  flexShrink: 0,
+                }}>
+                  <div style={{ width: 24, height: 24, borderRadius: 7, background: '#D49D4F', marginBottom: 14 }} />
+                  {[true, false, false, false, false, false].map((active, i) => (
+                    <div key={i} style={{
+                      width: 30, height: 30, borderRadius: 7,
+                      background: active ? 'rgba(255,255,255,0.12)' : 'transparent',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      <div style={{
+                        width: 13, height: 13, borderRadius: 3,
+                        background: active ? 'rgba(255,255,255,0.75)' : 'rgba(255,255,255,0.22)',
+                      }} />
+                    </div>
+                  ))}
+                  <div style={{ marginTop: 'auto', width: 26, height: 26, borderRadius: '50%', background: 'rgba(255,255,255,0.15)' }} />
+                </div>
+              );
+
+              // Agents UI - Automation workflows
+              if (currentWord === 'Agents') {
+                return (
+                  <div style={{ display: 'flex', width: '100%', height: '100%' }}>
+                    <Sidebar />
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#F7F6F3' }}>
+                      <div style={{ height: 40, borderBottom: '1px solid #E6E6E6', background: '#ffffff', display: 'flex', alignItems: 'center', padding: '0 14px' }}>
+                        <div style={{ width: 90, height: 6, borderRadius: 3, background: '#D4D4D4' }} />
+                      </div>
+                      <div style={{ flex: 1, padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                        <div style={{ display: 'flex', gap: 8 }}>
+                          <div style={{ flex: 1, height: 56, borderRadius: 10, background: '#1E343A', padding: '10px 12px' }}>
+                            <div style={{ width: '50%', height: 4, borderRadius: 3, background: 'rgba(255,255,255,0.25)', marginBottom: 6 }} />
+                            <div style={{ width: '30%', height: 12, borderRadius: 3, background: 'rgba(255,255,255,0.45)' }} />
+                          </div>
+                          <div style={{ flex: 1, height: 56, borderRadius: 10, background: 'linear-gradient(135deg, #D2774C, #E7A944)', padding: '10px 12px' }}>
+                            <div style={{ width: '50%', height: 4, borderRadius: 3, background: 'rgba(255,255,255,0.30)', marginBottom: 6 }} />
+                            <div style={{ width: '30%', height: 12, borderRadius: 3, background: 'rgba(255,255,255,0.50)' }} />
+                          </div>
+                        </div>
+                        {['Auto-scheduled', 'Running now', 'Queued'].map((label, i) => (
+                          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '8px 10px', borderRadius: 9, background: i === 0 ? '#ffffff' : 'transparent', border: i === 0 ? '1px solid #E6E6E6' : 'none', opacity: i === 0 ? 1 : i === 1 ? 0.6 : 0.35 }}>
+                            <div style={{ width: 24, height: 24, borderRadius: 6, background: i === 0 ? '#E6EFF0' : '#EBEBEB' }} />
+                            <div style={{ flex: 1, height: 5, borderRadius: 3, background: '#BEBEBE', width: `${65 - i * 8}%` }} />
+                            <div style={{ width: 28, height: 14, borderRadius: 20, background: i === 0 ? '#E6EFF0' : '#EBEBEB' }} />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              // Franchises UI - Multi-location
+              if (currentWord === 'Franchises') {
+                return (
+                  <div style={{ display: 'flex', width: '100%', height: '100%' }}>
+                    <Sidebar />
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#F7F6F3' }}>
+                      <div style={{ height: 40, borderBottom: '1px solid #E6E6E6', background: '#ffffff', display: 'flex', alignItems: 'center', padding: '0 14px' }}>
+                        <div style={{ width: 100, height: 6, borderRadius: 3, background: '#D4D4D4' }} />
+                      </div>
+                      <div style={{ flex: 1, padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                          {[1, 2, 3, 4].map((i) => (
+                            <div key={i} style={{ height: 48, borderRadius: 9, background: '#ffffff', border: '1px solid #E6E6E6', padding: '8px 10px', opacity: i === 1 ? 1 : i === 2 ? 0.7 : i === 3 ? 0.45 : 0.25 }}>
+                              <div style={{ width: '60%', height: 4, borderRadius: 3, background: '#C8C8C8', marginBottom: 6 }} />
+                              <div style={{ width: '40%', height: 3, borderRadius: 3, background: '#DCDCDC' }} />
+                            </div>
+                          ))}
+                        </div>
+                        <div style={{ flex: 1, borderRadius: 9, background: '#ffffff', border: '1px solid #E6E6E6', padding: '10px 12px' }}>
+                          <div style={{ width: '70%', height: 4, borderRadius: 3, background: '#C8C8C8', marginBottom: 8 }} />
+                          <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
+                            {[1, 2, 3].map(i => <div key={i} style={{ flex: 1, height: 32, borderRadius: 6, background: '#F0F0F0' }} />)}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              // Design UI - Clean interface elements
+              if (currentWord === 'Design') {
+                return (
+                  <div style={{ display: 'flex', width: '100%', height: '100%' }}>
+                    <Sidebar />
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#F7F6F3' }}>
+                      <div style={{ height: 40, borderBottom: '1px solid #E6E6E6', background: '#ffffff', display: 'flex', alignItems: 'center', padding: '0 14px' }}>
+                        <div style={{ width: 75, height: 6, borderRadius: 3, background: '#D4D4D4' }} />
+                      </div>
+                      <div style={{ flex: 1, padding: '16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+                        <div style={{ height: 80, borderRadius: 12, background: '#ffffff', border: '1px solid #E6E6E6', padding: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+                          <div style={{ width: '65%', height: 5, borderRadius: 3, background: '#1E343A', margin: '0 auto' }} />
+                          <div style={{ width: '45%', height: 4, borderRadius: 3, background: '#C8C8C8', margin: '0 auto' }} />
+                        </div>
+                        <div style={{ display: 'flex', gap: 8 }}>
+                          {[1, 2, 3].map(i => (
+                            <div key={i} style={{ flex: 1, height: 60, borderRadius: 10, background: '#ffffff', border: '1px solid #E6E6E6', padding: '8px', opacity: i === 1 ? 1 : i === 2 ? 0.6 : 0.35 }}>
+                              <div style={{ width: '70%', height: 4, borderRadius: 3, background: '#DCDCDC', marginBottom: 6 }} />
+                              <div style={{ width: '50%', height: 3, borderRadius: 3, background: '#EBEBEB' }} />
+                            </div>
+                          ))}
+                        </div>
+                        <div style={{ flex: 1, borderRadius: 10, background: '#ffffff', border: '1px solid #E6E6E6', padding: '10px' }}>
+                          <div style={{ width: '55%', height: 4, borderRadius: 3, background: '#C8C8C8', marginBottom: 8 }} />
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6 }}>
+                            {[1, 2, 3, 4, 5, 6, 7, 8].map(i => <div key={i} style={{ height: 24, borderRadius: 5, background: '#F0F0F0' }} />)}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              // Billing UI - Claims and revenue
+              if (currentWord === 'Billing') {
+                return (
+                  <div style={{ display: 'flex', width: '100%', height: '100%' }}>
+                    <Sidebar />
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#F7F6F3' }}>
+                      <div style={{ height: 40, borderBottom: '1px solid #E6E6E6', background: '#ffffff', display: 'flex', alignItems: 'center', padding: '0 14px' }}>
+                        <div style={{ width: 85, height: 6, borderRadius: 3, background: '#D4D4D4' }} />
+                      </div>
+                      <div style={{ flex: 1, padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                        <div style={{ display: 'flex', gap: 8 }}>
+                          <div style={{ flex: 1, height: 70, borderRadius: 10, background: '#1E343A', padding: '12px' }}>
+                            <div style={{ width: '50%', height: 4, borderRadius: 3, background: 'rgba(255,255,255,0.25)', marginBottom: 8 }} />
+                            <div style={{ width: '35%', height: 18, borderRadius: 4, background: 'rgba(255,255,255,0.45)' }} />
+                          </div>
+                          <div style={{ flex: 1, height: 70, borderRadius: 10, background: 'linear-gradient(135deg, #D2774C, #E7A944)', padding: '12px' }}>
+                            <div style={{ width: '50%', height: 4, borderRadius: 3, background: 'rgba(255,255,255,0.30)', marginBottom: 8 }} />
+                            <div style={{ width: '35%', height: 18, borderRadius: 4, background: 'rgba(255,255,255,0.50)' }} />
+                          </div>
+                        </div>
+                        {['Claim #2847', 'Claim #1923', 'Claim #4521'].map((label, i) => (
+                          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '9px 11px', borderRadius: 9, background: i === 0 ? '#ffffff' : 'transparent', border: i === 0 ? '1px solid #E6E6E6' : 'none', opacity: i === 0 ? 1 : i === 1 ? 0.6 : 0.35 }}>
+                            <div style={{ width: 50, height: 4, borderRadius: 3, background: '#BEBEBE' }} />
+                            <div style={{ flex: 1, height: 4, borderRadius: 3, background: '#D8D8D8', width: `${55 - i * 8}%` }} />
+                            <div style={{ width: 35, height: 16, borderRadius: 20, background: i === 0 ? '#E6EFF0' : '#EBEBEB' }} />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              // Marketing UI - Campaigns
+              if (currentWord === 'Marketing') {
+                return (
+                  <div style={{ display: 'flex', width: '100%', height: '100%' }}>
+                    <Sidebar />
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#F7F6F3' }}>
+                      <div style={{ height: 40, borderBottom: '1px solid #E6E6E6', background: '#ffffff', display: 'flex', alignItems: 'center', padding: '0 14px' }}>
+                        <div style={{ width: 95, height: 6, borderRadius: 3, background: '#D4D4D4' }} />
+                      </div>
+                      <div style={{ flex: 1, padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                        <div style={{ height: 100, borderRadius: 10, background: 'linear-gradient(135deg, #D2774C, #E7A944)', padding: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                          <div style={{ width: '60%', height: 5, borderRadius: 3, background: 'rgba(255,255,255,0.30)', marginBottom: 8, margin: '0 auto 8px' }} />
+                          <div style={{ width: '45%', height: 16, borderRadius: 4, background: 'rgba(255,255,255,0.50)', margin: '0 auto' }} />
+                        </div>
+                        {['Active campaign', 'Scheduled', 'Draft'].map((label, i) => (
+                          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '8px 10px', borderRadius: 9, background: i === 0 ? '#ffffff' : 'transparent', border: i === 0 ? '1px solid #E6E6E6' : 'none', opacity: i === 0 ? 1 : i === 1 ? 0.6 : 0.35 }}>
+                            <div style={{ width: 24, height: 24, borderRadius: 6, background: i === 0 ? '#E6EFF0' : '#EBEBEB' }} />
+                            <div style={{ flex: 1, height: 5, borderRadius: 3, background: '#BEBEBE', width: `${60 - i * 7}%` }} />
+                            <div style={{ width: 45, height: 16, borderRadius: 20, background: i === 0 ? '#E6EFF0' : '#EBEBEB' }} />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              // Patient UI - Profile and history
+              if (currentWord === 'Patient') {
+                return (
+                  <div style={{ display: 'flex', width: '100%', height: '100%' }}>
+                    <Sidebar />
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#F7F6F3' }}>
+                      <div style={{ height: 40, borderBottom: '1px solid #E6E6E6', background: '#ffffff', display: 'flex', alignItems: 'center', padding: '0 14px' }}>
+                        <div style={{ width: 80, height: 6, borderRadius: 3, background: '#D4D4D4' }} />
+                      </div>
+                      <div style={{ flex: 1, padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px', borderRadius: 10, background: '#ffffff', border: '1px solid #E6E6E6' }}>
+                          <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#E8E8E8' }} />
+                          <div style={{ flex: 1 }}>
+                            <div style={{ width: '45%', height: 5, borderRadius: 3, background: '#BEBEBE', marginBottom: 6 }} />
+                            <div style={{ width: '65%', height: 4, borderRadius: 3, background: '#D8D8D8' }} />
+                          </div>
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                          {[1, 2].map(i => (
+                            <div key={i} style={{ height: 48, borderRadius: 9, background: '#ffffff', border: '1px solid #E6E6E6', padding: '8px 10px', opacity: i === 1 ? 1 : 0.6 }}>
+                              <div style={{ width: '55%', height: 4, borderRadius: 3, background: '#C8C8C8', marginBottom: 6 }} />
+                              <div style={{ width: '40%', height: 3, borderRadius: 3, background: '#DCDCDC' }} />
+                            </div>
+                          ))}
+                        </div>
+                        {['Last visit', 'Medications', 'Allergies'].map((label, i) => (
+                          <div key={i} style={{ padding: '8px 10px', borderRadius: 9, background: i === 0 ? '#ffffff' : 'transparent', border: i === 0 ? '1px solid #E6E6E6' : 'none', opacity: i === 0 ? 1 : i === 1 ? 0.6 : 0.35 }}>
+                            <div style={{ width: `${50 - i * 5}%`, height: 4, borderRadius: 3, background: '#BEBEBE', marginBottom: 4 }} />
+                            <div style={{ width: `${70 - i * 5}%`, height: 3, borderRadius: 3, background: '#D8D8D8' }} />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              // Teams UI - Collaboration
+              if (currentWord === 'Teams') {
+                return (
+                  <div style={{ display: 'flex', width: '100%', height: '100%' }}>
+                    <Sidebar />
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#F7F6F3' }}>
+                      <div style={{ height: 40, borderBottom: '1px solid #E6E6E6', background: '#ffffff', display: 'flex', alignItems: 'center', padding: '0 14px' }}>
+                        <div style={{ width: 70, height: 6, borderRadius: 3, background: '#D4D4D4' }} />
+                      </div>
+                      <div style={{ flex: 1, padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                        <div style={{ display: 'flex', gap: 6, justifyContent: 'center' }}>
+                          {[1, 2, 3, 4].map(i => <div key={i} style={{ width: 32, height: 32, borderRadius: '50%', background: '#E8E8E8', opacity: i === 1 ? 1 : i === 2 ? 0.7 : i === 3 ? 0.45 : 0.25 }} />)}
+                        </div>
+                        {['Task assigned', 'Note added', 'Status updated'].map((label, i) => (
+                          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '9px 11px', borderRadius: 9, background: i === 0 ? '#ffffff' : 'transparent', border: i === 0 ? '1px solid #E6E6E6' : 'none', opacity: i === 0 ? 1 : i === 1 ? 0.6 : 0.35 }}>
+                            <div style={{ width: 26, height: 26, borderRadius: '50%', background: '#E8E8E8' }} />
+                            <div style={{ flex: 1 }}>
+                              <div style={{ width: `${58 - i * 7}%`, height: 5, borderRadius: 3, background: '#BEBEBE', marginBottom: 4 }} />
+                              <div style={{ width: `${75 - i * 5}%`, height: 4, borderRadius: 3, background: '#D8D8D8' }} />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              // Inbox UI - Messages
+              if (currentWord === 'Inbox') {
+                return (
+                  <div style={{ display: 'flex', width: '100%', height: '100%' }}>
+                    <Sidebar />
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#F7F6F3' }}>
+                      <div style={{ height: 40, borderBottom: '1px solid #E6E6E6', background: '#ffffff', display: 'flex', alignItems: 'center', padding: '0 14px' }}>
+                        <div style={{ width: 65, height: 6, borderRadius: 3, background: '#D4D4D4' }} />
+                        <div style={{ flex: 1 }} />
+                        <div style={{ width: 20, height: 20, borderRadius: '50%', background: '#E6EFF0' }} />
+                      </div>
+                      <div style={{ flex: 1, padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                        {['New message', 'Follow-up', 'Appointment', 'Lab results'].map((label, i) => (
+                          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '9px 11px', borderRadius: 9, background: i === 0 ? '#ffffff' : 'transparent', border: i === 0 ? '1px solid #E6E6E6' : 'none', opacity: i === 0 ? 1 : i === 1 ? 0.65 : i === 2 ? 0.4 : 0.2 }}>
+                            <div style={{ width: 28, height: 28, borderRadius: '50%', background: i === 0 ? '#E6EFF0' : '#EBEBEB' }} />
+                            <div style={{ flex: 1 }}>
+                              <div style={{ width: `${55 - i * 6}%`, height: 5, borderRadius: 3, background: '#BEBEBE', marginBottom: 4 }} />
+                              <div style={{ width: `${72 - i * 4}%`, height: 4, borderRadius: 3, background: '#D8D8D8' }} />
+                            </div>
+                            <div style={{ width: 24, height: 14, borderRadius: 20, background: i === 0 ? '#E6EFF0' : '#EBEBEB' }} />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              // Default fallback
+              return null;
+            };
+
+            return (
+              <div
+                key={selectedWordIndex}
+                className="absolute bottom-[4%] iphone-page:bottom-[5%]"
+                style={{
+                  top: "auto",
+                  left: "50%",
+                  right: "auto",
+                  /** Square mockup: width drives height via aspect-ratio */
+                  width: "min(100%, min(92vmin, min(72dvh, 560px)))",
+                  height: "auto",
+                  aspectRatio: "1",
+                  borderRadius: "14px",
+                  boxShadow: "0 40px 100px rgba(0,0,0,0.35)",
+                  overflow: "hidden",
+                  fontFamily: "system-ui, -apple-system, sans-serif",
+                  opacity: uiMockupOpacity,
+                  transition:
+                    "opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+                  willChange: isCarouselTransitioning ? "opacity, transform" : "auto",
+                  transform: `translateX(-50%) translateY(${uiMockupTranslateY}px) scale(${uiMockupScale})`,
+                }}
+              >
+                {renderUIMockup()}
+              </div>
+            );
+          })()}
+        </div>
+      </div>
+
       </div>
 
       <footer
