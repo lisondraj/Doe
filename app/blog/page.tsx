@@ -62,12 +62,12 @@ function GradientArticleVisual({
 }) {
   const tall =
     variant === "hero"
-      ? "min-h-[min(52vh,28rem)] iphone-page:min-h-[min(56dvh,30rem)]"
-      : "min-h-[min(42vh,22rem)] iphone-page:min-h-[min(48dvh,24rem)]";
+      ? "min-h-[28rem] iphone-page:min-h-[30rem]"
+      : "min-h-[22rem] iphone-page:min-h-[24rem]";
 
   return (
     <div
-      className={`relative w-full overflow-hidden rounded-[1.5rem] iphone-page:rounded-[clamp(1.35rem,1.1rem+1.5vmin,2rem)] shadow-[0_16px_48px_rgba(0,0,0,0.14)] ${tall}`}
+      className={`relative w-full overflow-hidden rounded-[1.5rem] iphone-page:rounded-[clamp(1.35rem,1.1rem+0.366rem,2rem)] shadow-[0_16px_48px_rgba(0,0,0,0.14)] ${tall}`}
     >
       <div className="absolute inset-0" style={{ background: slide.gradient }} aria-hidden />
       <div
@@ -79,12 +79,12 @@ function GradientArticleVisual({
         }}
         aria-hidden
       />
-      <div className="absolute bottom-0 left-0 right-0 z-[3] flex items-center justify-start p-7 iphone-page:p-[clamp(1.25rem,0.85rem+2.5vmin,2.75rem)]">
+      <div className="absolute bottom-0 left-0 right-0 z-[3] flex items-center justify-start p-7 iphone-page:p-[clamp(1.25rem,0.85rem+0.61rem,2.75rem)]">
         <div
-          className={`flex items-center gap-6 iphone-page:gap-[clamp(1.35rem,1rem+3vmin,3rem)] text-white ${inter.className}`}
+          className={`flex items-center gap-6 iphone-page:gap-[clamp(1.35rem,1rem+0.732rem,3rem)] text-white ${inter.className}`}
         >
           <MobileNavFooterShapeIcon shape={slide.shape} />
-          <span className="text-[clamp(2.15rem,7.5vw,4.25rem)] iphone-page:text-[clamp(2.35rem,8vw,4.5rem)] font-normal tracking-tight leading-none">
+          <span className="text-[clamp(2.15rem,1.83rem,4.25rem)] iphone-page:text-[clamp(2.35rem,1.952rem,4.5rem)] font-normal tracking-tight leading-none">
             {slide.boxTitle}
           </span>
         </div>
@@ -112,28 +112,28 @@ function ArticleBlock({ slide, isFirst }: { slide: Slide; isFirst: boolean }) {
 
       <div className="mt-8 iphone-page:mt-10 space-y-6 iphone-page:space-y-7">
         <p
-          className={`text-[clamp(0.75rem,2.8vw,0.875rem)] font-medium uppercase tracking-[0.2em] text-gray-500 ${inter.className}`}
+          className={`text-[clamp(0.75rem,0.683rem,0.875rem)] font-medium uppercase tracking-[0.2em] text-gray-500 ${inter.className}`}
         >
           {slide.boxTitle}
         </p>
         <h2
-          className={`text-[clamp(2rem,6.5vw,3.25rem)] iphone-page:text-[clamp(2.25rem,7.25vw,3.5rem)] text-gray-900 tracking-tight leading-[1.12] ${lora.className}`}
+          className={`text-[clamp(2rem,1.586rem,3.25rem)] iphone-page:text-[clamp(2.25rem,1.769rem,3.5rem)] text-gray-900 tracking-tight leading-[1.12] ${lora.className}`}
         >
           {slide.outside}
         </h2>
         <p
-          className={`text-[clamp(1.05rem,3.8vw,1.25rem)] iphone-page:text-[clamp(1.125rem,4.1vw,1.35rem)] text-gray-500 font-medium ${inter.className}`}
+          className={`text-[clamp(1.05rem,0.927rem,1.25rem)] iphone-page:text-[clamp(1.125rem,1rem,1.35rem)] text-gray-500 font-medium ${inter.className}`}
         >
           {slide.date}
         </p>
-        <div className={`space-y-5 iphone-page:space-y-6 text-[clamp(1.1rem,3.9vw,1.3rem)] iphone-page:text-[clamp(1.2rem,4.25vw,1.4rem)] leading-[1.65] text-gray-800 font-normal ${inter.className}`}>
+        <div className={`space-y-5 iphone-page:space-y-6 text-[clamp(1.1rem,0.952rem,1.3rem)] iphone-page:text-[clamp(1.2rem,1.037rem,1.4rem)] leading-[1.65] text-gray-800 font-normal ${inter.className}`}>
           {previewParas.map((para, i) => (
             <p key={i}>{para}</p>
           ))}
         </div>
         <button
           type="button"
-          className={`group inline-flex items-baseline border-0 bg-transparent p-0 text-left text-[clamp(1.05rem,3.6vw,1.2rem)] iphone-page:text-[clamp(1.1rem,3.85vw,1.25rem)] font-semibold text-[#1E343A] transition-colors hover:text-[#15282d] active:opacity-80 whitespace-nowrap ${inter.className}`}
+          className={`group inline-flex items-baseline border-0 bg-transparent p-0 text-left text-[clamp(1.05rem,0.878rem,1.2rem)] iphone-page:text-[clamp(1.1rem,0.939rem,1.25rem)] font-semibold text-[#1E343A] transition-colors hover:text-[#15282d] active:opacity-80 whitespace-nowrap ${inter.className}`}
           aria-label="Read more"
         >
           <span className="underline decoration-[#1E343A]/30 underline-offset-[0.35em] transition-[text-decoration-color] group-hover:decoration-[#15282d]/50">
@@ -177,7 +177,7 @@ export default function BlogPage() {
       <DoeIphoneSiteNav />
 
       <div
-        className="relative z-0 min-h-[100dvh] overflow-x-hidden doeforvc-iphone-root"
+        className="relative z-0 min-h-[var(--app-vh,800px)] overflow-x-hidden doeforvc-iphone-root"
         style={{
           backgroundColor: "#F7F6F3",
           ...(applyRootZoom ? { zoom: rootZoom } : {}),

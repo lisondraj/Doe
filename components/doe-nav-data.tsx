@@ -111,7 +111,7 @@ export function MobileNavFooterShapeIcon({
 }) {
   const cn =
     className ??
-    "shrink-0 w-[5.5rem] h-[5.5rem] iphone-page:w-[clamp(4.75rem,12vmin,8.25rem)] iphone-page:h-[clamp(4.75rem,12vmin,8.25rem)] opacity-95 drop-shadow-sm";
+    "shrink-0 w-[5.5rem] h-[5.5rem] iphone-page:w-[clamp(4.75rem,6rem,8.25rem)] iphone-page:h-[clamp(4.75rem,6rem,8.25rem)] opacity-95 drop-shadow-sm";
   if (shape === "triangle") {
     return (
       <svg viewBox="0 0 24 24" className={cn} aria-hidden>
