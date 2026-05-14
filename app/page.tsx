@@ -1831,11 +1831,13 @@ export default function DoePage() {
           </>
         )}
 
-        {/* Hero Header - Centered, Contained in Gradient Circle */}
+        {/* Hero Header — sits in lower third of hero, nudged slightly up */}
         <div
-          className={`absolute inset-0 z-20 flex items-center justify-center iphone-page:pt-[env(safe-area-inset-top,0px)] iphone-page:pb-[env(safe-area-inset-bottom,0px)] ${narrowHorizontalInset}`}
+          className={`absolute inset-0 z-20 flex flex-col iphone-page:pt-[env(safe-area-inset-top,0px)] iphone-page:pb-[env(safe-area-inset-bottom,0px)] ${narrowHorizontalInset}`}
         >
-          <div className="max-w-[800px] mx-auto px-8 iphone-page:px-0 text-center w-full">
+          <div className="min-h-0 flex-[2]" aria-hidden />
+          <div className="flex min-h-0 flex-[1] flex-col items-center justify-center -translate-y-2 iphone-page:-translate-y-2.5">
+            <div className="max-w-[800px] mx-auto px-8 iphone-page:px-0 text-center w-full">
             <p
               className={`font-normal leading-none tracking-tight mb-7 iphone-page:mb-6 ${lora.className}`}
               style={{
@@ -1852,7 +1854,7 @@ export default function DoePage() {
               Doe
             </p>
             <p
-              className="text-3xl iphone-page:text-[clamp(1.125rem,4.85vw,1.625rem)] font-medium text-white/90 text-center iphone-page:px-2 px-2 tracking-tight flex flex-col items-center gap-1.5 iphone-page:gap-2 iphone-page:leading-snug leading-snug"
+              className="text-[2.0625rem] iphone-page:text-[clamp(1.2rem,5.35vw,1.75rem)] font-medium text-white/90 text-center iphone-page:px-2 px-2 tracking-tight flex flex-col items-center gap-1.5 iphone-page:gap-2 iphone-page:leading-snug leading-snug"
               style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
             >
               <span className="block iphone-page:whitespace-nowrap iphone-page:text-center w-full">
@@ -1862,6 +1864,7 @@ export default function DoePage() {
                 clinical practice and education.
               </span>
             </p>
+            </div>
           </div>
         </div>
 
