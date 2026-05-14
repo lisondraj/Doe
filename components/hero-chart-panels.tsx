@@ -1,262 +1,336 @@
 "use client";
 
 import type { ReactElement, ReactNode } from "react";
+import { useId } from "react";
 
-/** Warm chart / hero palette — aligned with Doe hero gradients (#1a2e34 … #d4893f) */
-const ink = "rgba(30, 52, 58, 0.92)";
-const muted = "rgba(30, 52, 58, 0.48)";
-const line = "rgba(30, 52, 58, 0.12)";
+/** Hero / chart UI — warm slate + amber, matches Doe gradient hero */
+const ink = "rgba(30, 52, 58, 0.88)";
+const line = "rgba(30, 52, 58, 0.14)";
 const accent = "#c96a45";
-const accentSoft = "rgba(201, 106, 69, 0.35)";
-const surface = "rgba(255, 249, 242, 0.96)";
-const surface2 = "rgba(255, 255, 255, 0.55)";
+const accentDeep = "#9a4d32";
+const accentSoft = "rgba(201, 106, 69, 0.42)";
+const surface = "rgba(255, 249, 242, 0.97)";
+const surfaceDeep = "rgba(255, 255, 255, 0.65)";
+const ok = "rgba(46, 125, 95, 0.55)";
+const mutedColor = "rgba(30, 52, 58, 0.42)";
 
-function TinyLabel({ children }: { children: ReactNode }) {
-  return (
-    <span
-      className="block truncate font-semibold uppercase tracking-[0.06em]"
-      style={{
-        color: muted,
-        fontSize: "clamp(0.38rem, 1.05vmin, 0.52rem)",
-        fontFamily: "system-ui, -apple-system, sans-serif",
-      }}
-    >
-      {children}
-    </span>
-  );
-}
-
-function PanelChrome({
-  title,
+function PanelShell({
+  label,
   scanDelay,
   children,
 }: {
-  title: string;
+  label: string;
   scanDelay: number;
   children: ReactNode;
 }) {
   return (
     <div
-      className="relative flex h-full min-h-0 w-full min-w-0 flex-col overflow-hidden rounded-[min(9px,1.6vmin)] p-[min(5px,1.1vmin)]"
+      role="img"
+      aria-label={label}
+      className="relative flex h-full min-h-[2.5rem] min-w-0 w-full flex-col overflow-hidden rounded-[min(11px,2vmin)] p-[min(6px,1.2vmin)] shadow-[inset_0_1px_0_rgba(255,255,255,0.65),0_2px_12px_rgba(26,46,52,0.14)]"
       style={{
-        background: surface,
-        border: `1px solid ${surface2}`,
-        boxShadow: "0 2px 10px rgba(26, 46, 52, 0.12)",
+        background: `linear-gradient(165deg, ${surface} 0%, rgba(248, 242, 236, 0.99) 100%)`,
+        border: `1px solid ${surfaceDeep}`,
       }}
     >
-      <div className="mb-[0.15rem] flex items-center justify-between gap-0.5">
-        <TinyLabel>{title}</TinyLabel>
-        <span
-          className="hero-hcp-pulse-dot h-[0.28rem] w-[0.28rem] shrink-0 rounded-full"
-          style={{ background: accent }}
-          aria-hidden
-        />
-      </div>
-      <div className="relative min-h-0 flex-1">{children}</div>
       <div
-        className="hero-hcp-scan pointer-events-none absolute inset-0"
+        className="hero-hcp-scan pointer-events-none absolute inset-0 rounded-[inherit]"
         style={{ animationDelay: `${scanDelay}ms` }}
         aria-hidden
       />
+      <div className="relative z-[1] flex min-h-0 flex-1 flex-col">{children}</div>
     </div>
   );
 }
 
+/** Three radial gauges — numbers dominant, labels minimal */
 function VitalsPanel({ scanDelay }: { scanDelay: number }) {
-  const rows = [
-    { l: "BP", v: "122/78", w: 72 },
-    { l: "HR", v: "68", w: 45 },
-    { l: "SpO₂", v: "98%", w: 88 },
+  const gauges = [
+    { pct: 72, big: "122", sub: "/78", micro: "BP" },
+    { pct: 48, big: "68", sub: "", micro: "HR" },
+    { pct: 88, big: "98", sub: "%", micro: "SpO₂" },
   ];
   return (
-    <PanelChrome title="Vitals" scanDelay={scanDelay}>
-      <div className="flex h-full flex-col justify-between gap-[0.12rem]">
-        {rows.map((r) => (
-          <div key={r.l} className="flex items-center gap-1">
-            <span
-              className="w-[28%] shrink-0 truncate font-medium"
-              style={{
-                color: ink,
-                fontSize: "clamp(0.42rem, 1.15vmin, 0.58rem)",
-                fontFamily: "system-ui, -apple-system, sans-serif",
-              }}
-            >
-              {r.l}
-            </span>
-            <div className="relative h-[0.22rem] min-w-0 flex-1 overflow-hidden rounded-full" style={{ background: line }}>
+    <PanelShell label="Vitals summary" scanDelay={scanDelay}>
+      <div className="flex min-h-0 flex-1 items-center justify-between gap-[0.15rem]">
+        {gauges.map((g) => (
+          <div key={g.micro} className="flex min-w-0 flex-1 flex-col items-center justify-center">
+            <div className="relative aspect-square w-[min(42%,2.1rem)] max-w-[2.4rem]">
               <div
-                className="hero-hcp-bar-wave absolute left-0 top-0 h-full rounded-full"
-                style={{ background: accentSoft, width: `${r.w}%` }}
+                className="absolute inset-0 rounded-full"
+                style={{
+                  background: `conic-gradient(${accent} 0 ${g.pct * 3.6}deg, ${line} ${g.pct * 3.6}deg 360deg)`,
+                }}
               />
+              <div
+                className="absolute inset-[14%] flex flex-col items-center justify-center rounded-full"
+                style={{ background: surface }}
+              >
+                <span
+                  className="font-bold tabular-nums leading-none"
+                  style={{
+                    color: ink,
+                    fontSize: "clamp(0.45rem, 1.35vmin, 0.62rem)",
+                    fontFamily: "system-ui, sans-serif",
+                  }}
+                >
+                  {g.big}
+                  <span style={{ color: mutedColor, fontSize: "0.75em" }}>{g.sub}</span>
+                </span>
+              </div>
             </div>
             <span
-              className="w-[26%] shrink-0 text-right font-medium tabular-nums"
+              className="mt-[0.08rem] font-semibold uppercase tracking-wider"
               style={{
-                color: ink,
-                fontSize: "clamp(0.4rem, 1.1vmin, 0.55rem)",
-                fontFamily: "system-ui, -apple-system, sans-serif",
+                color: mutedColor,
+                fontSize: "clamp(0.28rem, 0.85vmin, 0.4rem)",
+                fontFamily: "system-ui, sans-serif",
               }}
             >
-              {r.v}
+              {g.micro}
             </span>
           </div>
         ))}
       </div>
-    </PanelChrome>
+    </PanelShell>
   );
 }
 
+/** Animated area chart — visual only */
 function LabsPanel({ scanDelay }: { scanDelay: number }) {
+  const lid = useId().replace(/:/g, "");
+  const fillId = `labsFill-${lid}`;
   return (
-    <PanelChrome title="Labs" scanDelay={scanDelay}>
-      <div className="flex h-full flex-col justify-between">
-        <div className="flex items-end gap-[0.1rem]" style={{ height: "42%" }}>
-          {[0.35, 0.55, 0.4, 0.7, 0.45, 0.6, 0.5].map((h, i) => (
-            <div
+    <PanelShell label="Lab trends" scanDelay={scanDelay}>
+      <div className="flex min-h-0 flex-1 flex-col justify-end">
+        <div className="min-h-0 flex-1">
+        <svg
+          className="hero-hcp-labs-wave h-full w-full min-h-[1.25rem]"
+          viewBox="0 0 100 36"
+          preserveAspectRatio="xMidYMid meet"
+          aria-hidden
+        >
+          <defs>
+            <linearGradient id={fillId} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={accent} stopOpacity="0.35" />
+              <stop offset="100%" stopColor={accent} stopOpacity="0.02" />
+            </linearGradient>
+          </defs>
+          <path
+            d="M0 28 L12 22 L24 26 L38 12 L52 18 L66 8 L80 14 L100 6 L100 36 L0 36 Z"
+            fill={`url(#${fillId})`}
+            stroke="none"
+          />
+          <path
+            d="M0 28 L12 22 L24 26 L38 12 L52 18 L66 8 L80 14 L100 6"
+            fill="none"
+            stroke={accentDeep}
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="hero-hcp-labs-stroke"
+          />
+        </svg>
+        </div>
+        <div className="mt-[0.1rem] flex justify-between px-[0.1rem]">
+          {[0, 1, 2, 3].map((i) => (
+            <span
               key={i}
-              className="hero-hcp-spark flex-1 rounded-t-[2px]"
+              className="h-[0.14rem] w-[0.14rem] shrink-0 rounded-full"
+              style={{ background: i === 2 ? accent : line }}
+            />
+          ))}
+        </div>
+      </div>
+    </PanelShell>
+  );
+}
+
+/** Capsule “pills” only — color + proportion, almost no text */
+function MedsPanel({ scanDelay }: { scanDelay: number }) {
+  const caps = [
+    { w: "78%", bg: `linear-gradient(90deg, ${accentSoft}, rgba(255,255,255,0.5))` },
+    { w: "62%", bg: `linear-gradient(90deg, rgba(30,52,58,0.2), rgba(255,255,255,0.45))` },
+    { w: "88%", bg: `linear-gradient(90deg, ${ok}, rgba(255,255,255,0.4))` },
+  ];
+  return (
+    <PanelShell label="Active medications" scanDelay={scanDelay}>
+      <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-[0.22rem]">
+        {caps.map((c, i) => (
+          <div
+            key={i}
+            className="hero-hcp-float flex h-[22%] max-h-[0.55rem] min-h-[0.38rem] items-center rounded-full shadow-[0_1px_2px_rgba(0,0,0,0.06)]"
+            style={{
+              width: c.w,
+              background: c.bg,
+              animationDelay: `${i * 0.18}s`,
+            }}
+          >
+            <span
+              className="mx-auto h-[0.16rem] w-[28%] rounded-full opacity-50"
+              style={{ background: ink }}
+            />
+          </div>
+        ))}
+      </div>
+    </PanelShell>
+  );
+}
+
+/** Stacked horizontal “risk” bars — icon strip */
+function ProblemsPanel({ scanDelay }: { scanDelay: number }) {
+  const bars = [0.92, 0.65, 0.4];
+  return (
+    <PanelShell label="Problem list overview" scanDelay={scanDelay}>
+      <div className="flex min-h-0 flex-1 flex-col justify-center gap-[0.2rem]">
+        <div className="mb-[0.08rem] flex justify-center gap-[0.12rem]">
+          {[0, 1, 2].map((i) => (
+            <span
+              key={i}
+              className="hero-hcp-prob-flag inline-block h-[0.26rem] w-[0.26rem] rounded-sm"
               style={{
-                height: `${h * 100}%`,
-                background: i % 2 === 0 ? accentSoft : "rgba(30, 52, 58, 0.18)",
-                animationDelay: `${i * 0.12}s`,
+                background: i === 0 ? accent : i === 1 ? accentSoft : line,
+                transform: `rotate(${45 + i * 15}deg)`,
               }}
             />
           ))}
         </div>
-        <div className="space-y-[0.12rem]">
-          <div className="h-[0.18rem] w-full rounded-full" style={{ background: line }} />
-          <div className="h-[0.18rem] w-[72%] rounded-full" style={{ background: line }} />
-        </div>
-      </div>
-    </PanelChrome>
-  );
-}
-
-function MedsPanel({ scanDelay }: { scanDelay: number }) {
-  const meds = ["Lisinopril", "Metformin", "Atorvastatin"];
-  return (
-    <PanelChrome title="Meds" scanDelay={scanDelay}>
-      <div className="flex h-full flex-col justify-center gap-[0.18rem]">
-        {meds.map((m, i) => (
+        {bars.map((w, i) => (
           <div
-            key={m}
-            className="hero-hcp-float truncate rounded-full px-[0.28rem] py-[0.1rem] font-medium"
+            key={i}
+            className="hero-hcp-line-grow h-[0.2rem] overflow-hidden rounded-full"
             style={{
-              border: `1px solid ${line}`,
-              color: ink,
-              fontSize: "clamp(0.38rem, 1.05vmin, 0.52rem)",
-              fontFamily: "system-ui, -apple-system, sans-serif",
-              animationDelay: `${i * 0.21}s`,
+              width: `${w * 100}%`,
+              marginLeft: i === 1 ? "8%" : i === 2 ? "16%" : "0",
+              background: `linear-gradient(90deg, ${accentDeep}, ${accent})`,
+              opacity: 0.55 + i * 0.12,
+              animationDelay: `${i * 0.22}s`,
             }}
-          >
-            {m}
-          </div>
+          />
         ))}
       </div>
-    </PanelChrome>
+    </PanelShell>
   );
 }
 
-function ProblemsPanel({ scanDelay }: { scanDelay: number }) {
-  const items = ["Type 2 DM", "HTN", "CKD 2"];
-  return (
-    <PanelChrome title="Problems" scanDelay={scanDelay}>
-      <ul className="flex h-full flex-col justify-center gap-[0.14rem]">
-        {items.map((t, i) => (
-          <li key={t} className="hero-hcp-float flex items-center gap-[0.2rem]" style={{ animationDelay: `${i * 0.17}s` }}>
-            <span className="w-[0.14rem] shrink-0 self-stretch rounded-full" style={{ background: accent }} />
-            <span
-              className="truncate font-medium"
-              style={{
-                color: ink,
-                fontSize: "clamp(0.4rem, 1.1vmin, 0.55rem)",
-                fontFamily: "system-ui, -apple-system, sans-serif",
-              }}
-            >
-              {t}
-            </span>
-          </li>
-        ))}
-      </ul>
-    </PanelChrome>
-  );
-}
-
+/** Vertical spine + event nodes — graphic timeline */
 function TimelinePanel({ scanDelay }: { scanDelay: number }) {
   return (
-    <PanelChrome title="Timeline" scanDelay={scanDelay}>
-      <div className="relative flex h-full flex-col justify-between pl-[0.28rem]">
-        <div className="absolute bottom-[6%] left-[0.1rem] top-[6%] w-[0.08rem] rounded-full" style={{ background: line }} />
-        {[0, 1, 2].map((i) => (
-          <div key={i} className="relative flex items-center gap-[0.22rem]">
-            <span
-              className="hero-hcp-node z-[1] h-[0.32rem] w-[0.32rem] shrink-0 rounded-full border"
-              style={{ borderColor: line, background: i === 0 ? accent : surface2 }}
-            />
-            <div className="min-w-0 flex-1">
-              <div
-                className="hero-hcp-line-grow h-[0.16rem] rounded-full"
+    <PanelShell label="Encounter timeline" scanDelay={scanDelay}>
+      <div className="relative flex min-h-0 flex-1 items-stretch justify-center gap-[0.15rem] pl-[8%] pr-[4%]">
+        <div
+          className="hero-hcp-timeline-spine absolute bottom-[8%] left-[22%] top-[8%] w-[0.1rem] rounded-full"
+          style={{ background: line }}
+        />
+        <div className="relative z-[2] flex flex-1 flex-col justify-between py-[4%]">
+          {[
+            { c: accent, r: 0.38 },
+            { c: accentSoft, r: 0.28 },
+            { c: line, r: 0.22 },
+          ].map((n, i) => (
+            <div key={i} className="flex items-center gap-[0.18rem]">
+              <span
+                className="hero-hcp-tl-node z-[3] shrink-0 rounded-full border-2"
                 style={{
-                  width: `${68 + i * 8}%`,
+                  width: "min(22%, 0.42rem)",
+                  height: "min(22%, 0.42rem)",
+                  borderColor: surfaceDeep,
+                  background: n.c,
+                  boxShadow: "0 1px 4px rgba(0,0,0,0.12)",
+                }}
+              />
+              <div
+                className="hero-hcp-spark h-[0.12rem] flex-1 rounded-full"
+                style={{
                   background: line,
-                  animationDelay: `${i * 0.25}s`,
+                  maxWidth: `${60 + i * 12}%`,
+                  animationDelay: `${i * 0.15}s`,
                 }}
               />
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </PanelChrome>
+    </PanelShell>
   );
 }
 
+/** Check glyphs + row stripes */
 function OrdersPanel({ scanDelay }: { scanDelay: number }) {
   return (
-    <PanelChrome title="Orders" scanDelay={scanDelay}>
-      <div className="flex h-full flex-col justify-center gap-[0.16rem]">
-        {[1, 0, 1].map((c, i) => (
+    <PanelShell label="Orders queue" scanDelay={scanDelay}>
+      <div className="flex min-h-0 flex-1 flex-col justify-center gap-[0.18rem] px-[0.08rem]">
+        {[1, 0, 1].map((done, i) => (
           <div key={i} className="flex items-center gap-[0.2rem]">
-            <span
-              className="hero-hcp-check h-[0.36rem] w-[0.36rem] shrink-0 rounded border"
-              style={{
-                borderColor: line,
-                background: c ? accentSoft : "transparent",
-                animationDelay: `${i * 0.2}s`,
-              }}
-            />
+            <svg
+              className="hero-hcp-check shrink-0"
+              width="14"
+              height="14"
+              viewBox="0 0 14 14"
+              aria-hidden
+              style={{ animationDelay: `${i * 0.16}s` }}
+            >
+              <rect
+                x="1.5"
+                y="1.5"
+                width="11"
+                height="11"
+                rx="2.5"
+                fill={done ? accentSoft : "transparent"}
+                stroke={line}
+                strokeWidth="1.2"
+              />
+              {done ? (
+                <path
+                  d="M3.5 7 L6 9.5 L10.5 4.5"
+                  fill="none"
+                  stroke={accentDeep}
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              ) : null}
+            </svg>
             <div
-              className="hero-hcp-line-grow h-[0.16rem] flex-1 rounded-full"
+              className="hero-hcp-bar-wave h-[0.14rem] flex-1 rounded-full"
               style={{
-                background: line,
-                animationDelay: `${i * 0.18}s`,
+                background: `linear-gradient(90deg, ${line}, rgba(30,52,58,0.08))`,
+                animationDelay: `${i * 0.12}s`,
               }}
             />
           </div>
         ))}
       </div>
-    </PanelChrome>
+    </PanelShell>
   );
 }
 
 const HERO_CHART_STACK: { Panel: (p: { scanDelay: number }) => ReactElement; scan: number }[] = [
   { Panel: VitalsPanel, scan: 0 },
-  { Panel: LabsPanel, scan: 220 },
-  { Panel: MedsPanel, scan: 110 },
-  { Panel: ProblemsPanel, scan: 330 },
-  { Panel: TimelinePanel, scan: 450 },
-  { Panel: OrdersPanel, scan: 180 },
+  { Panel: LabsPanel, scan: 200 },
+  { Panel: MedsPanel, scan: 100 },
+  { Panel: ProblemsPanel, scan: 320 },
+  { Panel: TimelinePanel, scan: 440 },
+  { Panel: OrdersPanel, scan: 160 },
 ];
 
 export function HeroChartPanels({ staggerMs }: { staggerMs: number[] | null }) {
   return (
     <div
-      className="pointer-events-none mx-auto grid aspect-[3/2] h-auto w-full max-w-[min(82vw,25.5rem)] select-none grid-cols-3 grid-rows-2 gap-[min(1.8vmin,0.55rem)] sm:max-w-[min(78vw,27rem)] sm:gap-2"
+      className="pointer-events-none mx-auto w-full max-w-[min(90vw,28rem)] select-none sm:max-w-[min(88vw,30rem)]"
       aria-hidden
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+        gridTemplateRows: "repeat(2, minmax(0, 1fr))",
+        gap: "clamp(7px, 1.6vmin, 12px)",
+        aspectRatio: "3 / 2",
+      }}
     >
       {HERO_CHART_STACK.map(({ Panel, scan }, i) => (
         <div
           key={i}
-          className={`relative z-[1] min-h-0 min-w-0 motion-reduce:translate-y-0 motion-reduce:scale-100 motion-reduce:opacity-100 ${
+          className={`relative isolate min-h-0 min-w-0 overflow-hidden motion-reduce:translate-y-0 motion-reduce:scale-100 motion-reduce:opacity-100 ${
             staggerMs ? "hero-tile-rise" : "translate-y-3 scale-[0.92] opacity-0"
           }`}
           style={staggerMs ? { animationDelay: `${staggerMs[i]}ms` } : undefined}
