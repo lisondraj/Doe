@@ -305,7 +305,7 @@ export default function DoeIphoneSiteNav() {
                     key={slide.boxTitle}
                     className="w-full min-w-full shrink-0 snap-center px-6 iphone-page:pl-[max(1.35rem,calc(env(safe-area-inset-left,0px)+10px+2vmin))] iphone-page:pr-[max(1.35rem,calc(env(safe-area-inset-right,0px)+8px+1.25vmin))] space-y-3 box-border iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)]"
                   >
-                    <div className="relative rounded-[1.375rem] iphone-page:rounded-[clamp(1.2rem,1rem+1.4vmin,2.1rem)] overflow-hidden min-h-[30rem] iphone-page:min-h-[clamp(22rem,58vmin,48rem)] shadow-[0_10px_32px_rgba(0,0,0,0.12)]">
+                    <div className="relative rounded-[1.375rem] iphone-page:rounded-[clamp(1.2rem,1rem+1.4vmin,2.1rem)] overflow-hidden min-h-[28rem] iphone-page:min-h-[clamp(17rem,min(40vmin,32svh),28rem)] iphone-page:max-h-[min(28rem,38svh)] shadow-[0_10px_32px_rgba(0,0,0,0.12)]">
                       <div className="absolute inset-0" style={{ background: slide.gradient }} aria-hidden />
                       <div
                         className="pointer-events-none absolute inset-0"
