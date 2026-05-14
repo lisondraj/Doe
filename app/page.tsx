@@ -431,8 +431,8 @@ export default function DoePage() {
     if (!navEl) return;
     const update = () => {
       const raw = navEl.getBoundingClientRect().bottom;
-      /** Flush below measured nav bottom so first accordion row never tucks under chrome when zoomed */
-      setIphoneMenuTopPx(Math.max(0, Math.ceil(raw) + 1));
+      /** Pull sheet slightly under measured chrome to kill subpixel/zoom seam above list */
+      setIphoneMenuTopPx(Math.max(0, Math.floor(raw) - 6));
     };
     update();
     let raf1 = 0;
@@ -446,14 +446,12 @@ export default function DoePage() {
     ro.observe(navEl);
     window.addEventListener("resize", update);
     window.visualViewport?.addEventListener("resize", update);
-    window.visualViewport?.addEventListener("scroll", update);
     return () => {
       cancelAnimationFrame(raf1);
       cancelAnimationFrame(raf2);
       ro.disconnect();
       window.removeEventListener("resize", update);
       window.visualViewport?.removeEventListener("resize", update);
-      window.visualViewport?.removeEventListener("scroll", update);
     };
   }, [mobileNavOpen, viewportWidth]);
 
@@ -1489,10 +1487,9 @@ export default function DoePage() {
             </button>
           </div>
 
-          {/* Dropdown Panel — desktop only (omit from DOM on phone so Safari does not paint stray rules above the sheet) */}
-          {!isPhoneLayout && (
+          {/* Dropdown Panel — desktop only (phone uses full-screen sheet; no mega panels) */}
           <div
-            className="overflow-hidden transition-all duration-150 ease-out relative z-20"
+            className={`overflow-hidden transition-all duration-150 ease-out relative z-20 ${isPhoneLayout ? "hidden" : ""}`}
             style={{
               maxHeight: activeDropdown ? "400px" : "0px",
               opacity: activeDropdown ? 1 : 0,
@@ -1598,7 +1595,6 @@ export default function DoePage() {
             {/* Bottom border line */}
             <div className="mx-8 iphone-page:mx-4 border-b border-gray-200 relative z-30" style={{ borderColor: '#E6E6E6' }} />
           </div>
-          )}
         </nav>
 
         {/* iPhone: menu panel below fixed nav (nav stays put; page dims behind) */}
@@ -1737,7 +1733,7 @@ export default function DoePage() {
                         key={slide.boxTitle}
                         className="w-full min-w-full shrink-0 snap-center px-6 iphone-page:pl-[max(1.35rem,calc(env(safe-area-inset-left,0px)+10px+2vmin))] iphone-page:pr-[max(1.35rem,calc(env(safe-area-inset-right,0px)+8px+1.25vmin))] space-y-3 box-border iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)]"
                       >
-                        <div className="relative rounded-[1.375rem] iphone-page:rounded-[clamp(1.2rem,1rem+1.4vmin,2.1rem)] overflow-hidden min-h-[30rem] iphone-page:min-h-0 iphone-page:h-[clamp(22rem,min(54vmin,460px),28rem)] shadow-[0_10px_32px_rgba(0,0,0,0.12)]">
+                        <div className="relative rounded-[1.375rem] iphone-page:rounded-[clamp(1.2rem,1rem+1.4vmin,2.1rem)] overflow-hidden min-h-[30rem] iphone-page:min-h-[clamp(22rem,58vmin,48rem)] shadow-[0_10px_32px_rgba(0,0,0,0.12)]">
                           <div
                             className="absolute inset-0"
                             style={{ background: slide.gradient }}
@@ -1752,46 +1748,36 @@ export default function DoePage() {
                             }}
                             aria-hidden
                           />
-                          <div
-                            className="absolute inset-0 z-[5]"
-                            style={{
-                              fontSize: "clamp(10px, min(3.5vmin, 3.75vw), 15px)",
-                            }}
-                          >
-                            <div className="pointer-events-auto absolute left-0 right-0 top-0 z-[6] flex justify-center gap-[0.65em] px-[1.25em] pt-[2.5em] pb-[0.12em]">
-                              {MOBILE_NAV_FOOTER_SLIDES.map((s, dotI) => (
-                                <button
-                                  key={s.boxTitle}
-                                  type="button"
-                                  aria-label={`Show ${s.boxTitle}`}
-                                  aria-current={mobileNavFooterSlide === dotI ? "true" : undefined}
-                                  className={`h-[0.625em] shrink-0 rounded-full transition-[width,background-color,opacity] duration-200 shadow-sm ${
-                                    mobileNavFooterSlide === dotI
-                                      ? "w-[2em] bg-white opacity-95"
-                                      : "w-[0.625em] bg-white/45 hover:bg-white/70"
-                                  }`}
-                                  onClick={() => {
-                                    const el = mobileNavFooterCarouselRef.current;
-                                    if (!el) return;
-                                    const step = el.clientWidth;
-                                    el.scrollTo({ left: dotI * step, behavior: "smooth" });
-                                    setMobileNavFooterSlide(dotI);
-                                  }}
-                                />
-                              ))}
-                            </div>
-                            <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-[6] flex items-center justify-start p-[2em]">
-                              <div
-                                className={`pointer-events-auto flex items-center gap-[1.75em] text-white ${inter.className}`}
-                              >
-                                <MobileNavFooterShapeIcon
-                                  shape={slide.shape}
-                                  className="shrink-0 h-[5.25em] w-[5.25em] opacity-95 drop-shadow-sm"
-                                />
-                                <span className="text-[3.25em] font-medium tracking-tight leading-none">
-                                  {slide.boxTitle}
-                                </span>
-                              </div>
+                          <div className="absolute left-0 right-0 top-0 z-[4] flex justify-center gap-2.5 iphone-page:gap-[clamp(0.65rem,0.45rem+1vmin,0.95rem)] px-5 pt-10 iphone-page:pt-[clamp(2rem,1.55rem+1.95vmin,3.5rem)] pb-1">
+                            {MOBILE_NAV_FOOTER_SLIDES.map((s, dotI) => (
+                              <button
+                                key={s.boxTitle}
+                                type="button"
+                                aria-label={`Show ${s.boxTitle}`}
+                                aria-current={mobileNavFooterSlide === dotI ? "true" : undefined}
+                                className={`h-2.5 iphone-page:h-[clamp(9px,calc(6px+0.45vmin),12px)] shrink-0 rounded-full transition-[width,background-color,opacity] duration-200 shadow-sm ${
+                                  mobileNavFooterSlide === dotI
+                                    ? "w-8 iphone-page:w-[clamp(1.95rem,calc(1.65rem+1.9vmin),2.85rem)] bg-white opacity-95"
+                                    : "w-2.5 iphone-page:w-[clamp(0.625rem,calc(0.5rem+0.42vmin),0.75rem)] bg-white/45 hover:bg-white/70"
+                                }`}
+                                onClick={() => {
+                                  const el = mobileNavFooterCarouselRef.current;
+                                  if (!el) return;
+                                  const step = el.clientWidth;
+                                  el.scrollTo({ left: dotI * step, behavior: "smooth" });
+                                  setMobileNavFooterSlide(dotI);
+                                }}
+                              />
+                            ))}
+                          </div>
+                          <div className="absolute bottom-0 left-0 right-0 z-[3] flex items-center justify-start p-8 iphone-page:p-[clamp(1.35rem,0.9rem+3.1vmin,3.5rem)]">
+                            <div
+                              className={`flex items-center gap-7 iphone-page:gap-[clamp(1.65rem,1.2rem+3.1vmin,3.2rem)] text-white ${inter.className}`}
+                            >
+                              <MobileNavFooterShapeIcon shape={slide.shape} />
+                              <span className="text-[3.25rem] iphone-page:text-[clamp(2.05rem,1rem+5.5vmin,4.65rem)] font-medium tracking-tight leading-none">
+                                {slide.boxTitle}
+                              </span>
                             </div>
                           </div>
                         </div>
