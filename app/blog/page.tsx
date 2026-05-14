@@ -7,7 +7,10 @@ import {
 } from "@/components/doe-nav-data";
 import { doeforvcRootZoom } from "@/lib/doeforvc-zoom";
 import { Inter, Lora } from "next/font/google";
-import { useLayoutEffect, useState } from "react";
+import { useLayoutEffect } from "react";
+
+/** Logical width baseline (~Plus/Pro-class iPhone CSS px) — zoom + type match SS reference across all phones */
+const BLOG_LAYOUT_WIDTH_PX = 430;
 
 const lora = Lora({
   subsets: ["latin"],
@@ -67,7 +70,7 @@ function GradientArticleVisual({
 
   return (
     <div
-      className={`relative w-full overflow-hidden rounded-[1.5rem] iphone-page:rounded-[clamp(1.35rem,1.1rem+1.5vmin,2rem)] shadow-[0_16px_48px_rgba(0,0,0,0.14)] ${tall}`}
+      className={`relative w-full overflow-hidden rounded-[clamp(1.35rem,calc(1.1rem+430px_*_0.015),2rem)] shadow-[0_16px_48px_rgba(0,0,0,0.14)] ${tall}`}
     >
       <div className="absolute inset-0" style={{ background: slide.gradient }} aria-hidden />
       <div
@@ -79,12 +82,12 @@ function GradientArticleVisual({
         }}
         aria-hidden
       />
-      <div className="absolute bottom-0 left-0 right-0 z-[3] flex items-center justify-start p-7 iphone-page:p-[clamp(1.25rem,0.85rem+2.5vmin,2.75rem)]">
+      <div className="absolute bottom-0 left-0 right-0 z-[3] flex items-center justify-start p-[clamp(1.25rem,calc(0.85rem+430px_*_0.0229),2.75rem)]">
         <div
-          className={`flex items-center gap-6 iphone-page:gap-[clamp(1.35rem,1rem+3vmin,3rem)] text-white ${inter.className}`}
+          className={`flex items-center gap-[clamp(1.35rem,calc(1rem+430px_*_0.03),3rem)] text-white ${inter.className}`}
         >
           <MobileNavFooterShapeIcon shape={slide.shape} />
-          <span className="text-[clamp(2.15rem,7.5vw,4.25rem)] iphone-page:text-[clamp(2.35rem,8vw,4.5rem)] font-normal tracking-tight leading-none">
+          <span className="font-normal tracking-tight leading-none text-[clamp(2.35rem,calc(430px_*_0.08),4.5rem)]">
             {slide.boxTitle}
           </span>
         </div>
@@ -112,28 +115,28 @@ function ArticleBlock({ slide, isFirst }: { slide: Slide; isFirst: boolean }) {
 
       <div className="mt-8 iphone-page:mt-10 space-y-6 iphone-page:space-y-7">
         <p
-          className={`text-[clamp(0.75rem,2.8vw,0.875rem)] font-medium uppercase tracking-[0.2em] text-gray-500 ${inter.className}`}
+          className={`text-[clamp(0.75rem,calc(430px_*_0.028),0.875rem)] font-medium uppercase tracking-[0.2em] text-gray-500 ${inter.className}`}
         >
           {slide.boxTitle}
         </p>
         <h2
-          className={`text-[clamp(2rem,6.5vw,3.25rem)] iphone-page:text-[clamp(2.25rem,7.25vw,3.5rem)] text-gray-900 tracking-tight leading-[1.12] ${lora.className}`}
+          className={`text-[clamp(2.25rem,calc(430px_*_0.0725),3.5rem)] text-gray-900 tracking-tight leading-[1.12] ${lora.className}`}
         >
           {slide.outside}
         </h2>
         <p
-          className={`text-[clamp(1.05rem,3.8vw,1.25rem)] iphone-page:text-[clamp(1.125rem,4.1vw,1.35rem)] text-gray-500 font-medium ${inter.className}`}
+          className={`text-[clamp(1.125rem,calc(430px_*_0.041),1.35rem)] text-gray-500 font-medium ${inter.className}`}
         >
           {slide.date}
         </p>
-        <div className={`space-y-5 iphone-page:space-y-6 text-[clamp(1.1rem,3.9vw,1.3rem)] iphone-page:text-[clamp(1.2rem,4.25vw,1.4rem)] leading-[1.65] text-gray-800 font-normal ${inter.className}`}>
+        <div className={`space-y-6 text-[clamp(1.2rem,calc(430px_*_0.0425),1.4rem)] leading-[1.65] text-gray-800 font-normal ${inter.className}`}>
           {previewParas.map((para, i) => (
             <p key={i}>{para}</p>
           ))}
         </div>
         <button
           type="button"
-          className={`group inline-flex items-baseline border-0 bg-transparent p-0 text-left text-[clamp(1.05rem,3.6vw,1.2rem)] iphone-page:text-[clamp(1.1rem,3.85vw,1.25rem)] font-semibold text-[#1E343A] transition-colors hover:text-[#15282d] active:opacity-80 whitespace-nowrap ${inter.className}`}
+          className={`group inline-flex items-baseline border-0 bg-transparent p-0 text-left text-[clamp(1.1rem,calc(430px_*_0.0385),1.25rem)] font-semibold text-[#1E343A] transition-colors hover:text-[#15282d] active:opacity-80 whitespace-nowrap ${inter.className}`}
           aria-label="Read more"
         >
           <span className="underline decoration-[#1E343A]/30 underline-offset-[0.35em] transition-[text-decoration-color] group-hover:decoration-[#15282d]/50">
@@ -146,12 +149,9 @@ function ArticleBlock({ slide, isFirst }: { slide: Slide; isFirst: boolean }) {
 }
 
 export default function BlogPage() {
-  const [viewportWidth, setViewportWidth] = useState(1200);
-
   useLayoutEffect(() => {
     const measure = () => {
       const { width, height } = appViewportPx();
-      setViewportWidth(width);
       document.documentElement.style.setProperty("--app-vw", `${width}px`);
       document.documentElement.style.setProperty("--app-vh", `${height}px`);
     };
@@ -166,8 +166,9 @@ export default function BlogPage() {
     };
   }, []);
 
-  const rootZoom = doeforvcRootZoom(viewportWidth);
-  const applyRootZoom = Math.abs(rootZoom - 1) > 0.001;
+  /** Zoom from fixed reference width so canvas scale matches design across iPhone sizes (not per-device width). */
+  const blogZoom = doeforvcRootZoom(BLOG_LAYOUT_WIDTH_PX);
+  const applyBlogZoom = Math.abs(blogZoom - 1) > 0.001;
 
   const [first, ...rest] = MOBILE_NAV_FOOTER_SLIDES;
 
@@ -180,12 +181,12 @@ export default function BlogPage() {
         className="relative z-0 min-h-[100dvh] overflow-x-hidden doeforvc-iphone-root"
         style={{
           backgroundColor: "#F7F6F3",
-          ...(applyRootZoom ? { zoom: rootZoom } : {}),
+          ...(applyBlogZoom ? { zoom: blogZoom } : {}),
         }}
         suppressHydrationWarning
       >
         <main
-          className={`relative z-0 w-full max-w-[min(100%,52rem)] mx-auto pt-[5.5rem] iphone-page:pt-[max(5.5rem,calc(env(safe-area-inset-top,0px)+4rem))] pb-20 iphone-page:pb-24 ${narrowHorizontalInset}`}
+          className={`relative z-0 w-full max-w-[min(100%,430px)] mx-auto pt-[5.5rem] iphone-page:pt-[max(5.5rem,calc(env(safe-area-inset-top,0px)+4rem))] pb-20 iphone-page:pb-24 ${narrowHorizontalInset}`}
         >
           {/* Inquisara at top: image first, then title / preview / Read more */}
           <div className="w-full mt-8 iphone-page:mt-10">
