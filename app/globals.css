@@ -178,6 +178,37 @@ html:has(.doeforvc-iphone-root) body {
   animation: fade-out-backdrop 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
+/** Hero decorative tiles above “Doe” — quick pop from a tiny square, random order per load */
+@keyframes hero-box-pop-bounce {
+  0% {
+    transform: scale(0.12);
+    opacity: 0.35;
+  }
+  54% {
+    transform: scale(1.09);
+    opacity: 1;
+  }
+  74% {
+    transform: scale(0.94);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.hero-box-pop-bounce {
+  animation: hero-box-pop-bounce 0.38s cubic-bezier(0.34, 1.48, 0.52, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-box-pop-bounce {
+    animation: none !important;
+    transform: scale(1) !important;
+    opacity: 1 !important;
+  }
+}
+
 @font-face {
   font-family: 'Copernicus New Cond';
   src: url('/fonts/CopernicusNewCond-070.otf') format('opentype'),

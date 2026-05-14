@@ -383,6 +383,8 @@ export default function DoePage() {
   const [appViewport, setAppViewport] = useState({ width: 1200, height: 800 });
   /** Sliding cards on phone: logical px inside zoomed root (= visible px ÷ root zoom). */
   const [phoneSlideSize, setPhoneSlideSize] = useState({ w: 850, h: 1090 });
+  /** Stagger delays (ms) for hero 3×2 tile bounce; order shuffled on mount (client). */
+  const [heroBoxStaggerMs, setHeroBoxStaggerMs] = useState<number[] | null>(null);
 
   useEffect(() => {
     const updateWidth = () => setViewportWidth(window.innerWidth);
@@ -464,6 +466,21 @@ export default function DoePage() {
         typeof window !== "undefined" ? vbRailsEffectiveInnerHeight(window.innerWidth, ih) : undefined,
         typeof window !== "undefined" ? window.innerWidth : 1200,
       ),
+    );
+  }, []);
+
+  useLayoutEffect(() => {
+    const order = [0, 1, 2, 3, 4, 5];
+    for (let i = order.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const a = order[i];
+      const b = order[j];
+      order[i] = b;
+      order[j] = a;
+    }
+    const slotMs = 82;
+    setHeroBoxStaggerMs(
+      [0, 1, 2, 3, 4, 5].map((boxId) => order.indexOf(boxId) * slotMs),
     );
   }, []);
 
@@ -1838,6 +1855,29 @@ export default function DoePage() {
           <div className="min-h-0 flex-[2]" aria-hidden />
           <div className="flex min-h-0 flex-[1] flex-col items-center justify-center -translate-y-2 iphone-page:-translate-y-2.5">
             <div className="max-w-[800px] mx-auto px-8 iphone-page:px-0 text-center w-full">
+            <div className="mx-auto mb-5 flex justify-center iphone-page:mb-4">
+              <div
+                className="grid grid-cols-3 gap-2.5 sm:gap-3"
+                style={{ width: "fit-content" }}
+                aria-hidden
+              >
+                {[0, 1, 2, 3, 4, 5].map((i) => (
+                  <div
+                    key={i}
+                    className={`aspect-square w-[clamp(2.15rem,6.2vmin,3.2rem)] rounded-[12px] border border-white/30 bg-[#f1f0ef] shadow-[0_1px_3px_rgba(0,0,0,0.055)] motion-reduce:scale-100 motion-reduce:opacity-100 ${
+                      heroBoxStaggerMs
+                        ? "hero-box-pop-bounce"
+                        : "scale-[0.12] opacity-[0.36]"
+                    }`}
+                    style={
+                      heroBoxStaggerMs
+                        ? { animationDelay: `${heroBoxStaggerMs[i]}ms` }
+                        : undefined
+                    }
+                  />
+                ))}
+              </div>
+            </div>
             <p
               className={`font-normal leading-none tracking-tight mb-7 iphone-page:mb-6 ${lora.className}`}
               style={{
