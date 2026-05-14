@@ -3976,7 +3976,7 @@ export default function DoePage() {
                 /** Giant: wide enough that “d” / “e” bleed past L/R edges; milder bottom bleed. */
                 fontSize: "clamp(11.35rem, min(77vw, 69vmin), 30.5rem)",
                 marginBottom: "calc(-0.06em - env(safe-area-inset-bottom, 0px))",
-                transform: "translateY(min(1vh, 0.5rem))",
+                transform: "translate(calc(-0.45rem - 0.35vw), -0.4rem)",
               }}
             >
               Doe
