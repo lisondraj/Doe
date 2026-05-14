@@ -4,15 +4,19 @@ import type { ReactElement, ReactNode } from "react";
 import { useId } from "react";
 
 /** Hero / chart UI — warm slate + amber, matches Doe gradient hero */
-const ink = "rgba(30, 52, 58, 0.88)";
-const line = "rgba(30, 52, 58, 0.14)";
+const ink = "rgba(30, 52, 58, 0.9)";
+const line = "rgba(30, 52, 58, 0.16)";
 const accent = "#c96a45";
 const accentDeep = "#9a4d32";
-const accentSoft = "rgba(201, 106, 69, 0.42)";
-const surface = "rgba(255, 249, 242, 0.97)";
-const surfaceDeep = "rgba(255, 255, 255, 0.65)";
-const ok = "rgba(46, 125, 95, 0.55)";
-const mutedColor = "rgba(30, 52, 58, 0.42)";
+const accentSoft = "rgba(201, 106, 69, 0.5)";
+const surface = "rgba(255, 249, 242, 0.98)";
+const surfaceDeep = "rgba(255, 255, 255, 0.72)";
+const ok = "rgba(46, 125, 95, 0.65)";
+const mutedColor = "rgba(30, 52, 58, 0.5)";
+
+/** Square cell track — same length for columns & rows = rounded squares */
+const CELL =
+  "clamp(3.4rem, min(16vw, 11vmin), 6.75rem)";
 
 function PanelShell({
   label,
@@ -27,35 +31,52 @@ function PanelShell({
     <div
       role="img"
       aria-label={label}
-      className="relative flex h-full min-h-[2.5rem] min-w-0 w-full flex-col overflow-hidden rounded-[min(11px,2vmin)] p-[min(6px,1.2vmin)] shadow-[inset_0_1px_0_rgba(255,255,255,0.65),0_2px_12px_rgba(26,46,52,0.14)]"
+      className="relative flex h-full w-full flex-col overflow-hidden p-[clamp(5px,12%,9px)] shadow-[inset_0_1px_0_rgba(255,255,255,0.75),0_3px_14px_rgba(26,46,52,0.16)]"
       style={{
-        background: `linear-gradient(165deg, ${surface} 0%, rgba(248, 242, 236, 0.99) 100%)`,
-        border: `1px solid ${surfaceDeep}`,
+        background: `linear-gradient(168deg, ${surface} 0%, rgba(252, 246, 238, 0.99) 55%, rgba(248, 238, 228, 0.98) 100%)`,
+        border: `1.5px solid ${surfaceDeep}`,
+        borderRadius: "clamp(14px, 22%, 26px)",
       }}
     >
       <div
-        className="hero-hcp-scan pointer-events-none absolute inset-0 rounded-[inherit]"
-        style={{ animationDelay: `${scanDelay}ms` }}
+        className="hero-hcp-scan pointer-events-none absolute inset-0"
+        style={{
+          animationDelay: `${scanDelay}ms`,
+          borderRadius: "inherit",
+        }}
         aria-hidden
       />
-      <div className="relative z-[1] flex min-h-0 flex-1 flex-col">{children}</div>
+      <div className="relative z-[1] flex min-h-0 min-w-0 flex-1 flex-col overflow-visible">{children}</div>
     </div>
   );
 }
 
-/** Three radial gauges — numbers dominant, labels minimal */
+/** Three ring gauges — clear vertical stack per column */
 function VitalsPanel({ scanDelay }: { scanDelay: number }) {
   const gauges = [
-    { pct: 72, big: "122", sub: "/78", micro: "BP" },
-    { pct: 48, big: "68", sub: "", micro: "HR" },
-    { pct: 88, big: "98", sub: "%", micro: "SpO₂" },
+    { pct: 72, line1: "122", line2: "/78", micro: "BP" },
+    { pct: 52, line1: "68", line2: "", micro: "HR" },
+    { pct: 88, line1: "98", line2: "%", micro: "SpO₂" },
   ];
   return (
     <PanelShell label="Vitals summary" scanDelay={scanDelay}>
-      <div className="flex min-h-0 flex-1 items-center justify-between gap-[0.15rem]">
+      <div className="flex min-h-0 flex-1 items-stretch justify-between gap-[0.12rem] overflow-visible">
         {gauges.map((g) => (
-          <div key={g.micro} className="flex min-w-0 flex-1 flex-col items-center justify-center">
-            <div className="relative aspect-square w-[min(42%,2.1rem)] max-w-[2.4rem]">
+          <div
+            key={g.micro}
+            className="flex min-w-0 flex-1 flex-col items-center justify-center gap-[0.12rem] overflow-visible"
+          >
+            <span
+              className="shrink-0 whitespace-nowrap text-center font-bold uppercase leading-none tracking-wide"
+              style={{
+                color: mutedColor,
+                fontSize: "clamp(0.32rem, 1.05vmin, 0.48rem)",
+                fontFamily: "system-ui, sans-serif",
+              }}
+            >
+              {g.micro}
+            </span>
+            <div className="relative aspect-square w-[min(58%,2.35rem)] shrink-0">
               <div
                 className="absolute inset-0 rounded-full"
                 style={{
@@ -63,32 +84,22 @@ function VitalsPanel({ scanDelay }: { scanDelay: number }) {
                 }}
               />
               <div
-                className="absolute inset-[14%] flex flex-col items-center justify-center rounded-full"
+                className="absolute inset-[12%] flex flex-col items-center justify-center rounded-full"
                 style={{ background: surface }}
               >
                 <span
-                  className="font-bold tabular-nums leading-none"
+                  className="whitespace-nowrap text-center font-bold tabular-nums leading-none"
                   style={{
                     color: ink,
-                    fontSize: "clamp(0.45rem, 1.35vmin, 0.62rem)",
+                    fontSize: "clamp(0.42rem, 1.25vmin, 0.68rem)",
                     fontFamily: "system-ui, sans-serif",
                   }}
                 >
-                  {g.big}
-                  <span style={{ color: mutedColor, fontSize: "0.75em" }}>{g.sub}</span>
+                  {g.line1}
+                  <span style={{ color: mutedColor, fontSize: "0.78em" }}>{g.line2}</span>
                 </span>
               </div>
             </div>
-            <span
-              className="mt-[0.08rem] font-semibold uppercase tracking-wider"
-              style={{
-                color: mutedColor,
-                fontSize: "clamp(0.28rem, 0.85vmin, 0.4rem)",
-                fontFamily: "system-ui, sans-serif",
-              }}
-            >
-              {g.micro}
-            </span>
           </div>
         ))}
       </div>
@@ -96,47 +107,56 @@ function VitalsPanel({ scanDelay }: { scanDelay: number }) {
   );
 }
 
-/** Animated area chart — visual only */
 function LabsPanel({ scanDelay }: { scanDelay: number }) {
   const lid = useId().replace(/:/g, "");
   const fillId = `labsFill-${lid}`;
   return (
     <PanelShell label="Lab trends" scanDelay={scanDelay}>
-      <div className="flex min-h-0 flex-1 flex-col justify-end">
-        <div className="min-h-0 flex-1">
+      <div className="flex min-h-0 flex-1 flex-col justify-between gap-[0.08rem]">
         <svg
-          className="hero-hcp-labs-wave h-full w-full min-h-[1.25rem]"
-          viewBox="0 0 100 36"
+          className="hero-hcp-labs-wave min-h-[40%] w-full flex-1 overflow-visible"
+          viewBox="0 0 100 44"
           preserveAspectRatio="xMidYMid meet"
           aria-hidden
         >
           <defs>
             <linearGradient id={fillId} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={accent} stopOpacity="0.35" />
-              <stop offset="100%" stopColor={accent} stopOpacity="0.02" />
+              <stop offset="0%" stopColor={accent} stopOpacity="0.42" />
+              <stop offset="100%" stopColor={accent} stopOpacity="0.04" />
             </linearGradient>
           </defs>
+          {[8, 22, 36, 50, 64, 78, 92].map((x) => (
+            <line
+              key={x}
+              x1={x}
+              y1="34"
+              x2={x}
+              y2="38"
+              stroke={line}
+              strokeWidth="1.2"
+              strokeLinecap="round"
+            />
+          ))}
           <path
-            d="M0 28 L12 22 L24 26 L38 12 L52 18 L66 8 L80 14 L100 6 L100 36 L0 36 Z"
+            d="M4 30 L16 24 L28 28 L40 14 L52 20 L64 10 L76 16 L96 8 L96 40 L4 40 Z"
             fill={`url(#${fillId})`}
             stroke="none"
           />
           <path
-            d="M0 28 L12 22 L24 26 L38 12 L52 18 L66 8 L80 14 L100 6"
+            d="M4 30 L16 24 L28 28 L40 14 L52 20 L64 10 L76 16 L96 8"
             fill="none"
             stroke={accentDeep}
-            strokeWidth="1.4"
+            strokeWidth="1.8"
             strokeLinecap="round"
             strokeLinejoin="round"
             className="hero-hcp-labs-stroke"
           />
         </svg>
-        </div>
-        <div className="mt-[0.1rem] flex justify-between px-[0.1rem]">
+        <div className="flex shrink-0 justify-between px-[0.15rem]">
           {[0, 1, 2, 3].map((i) => (
             <span
               key={i}
-              className="h-[0.14rem] w-[0.14rem] shrink-0 rounded-full"
+              className="h-[0.2rem] w-[0.2rem] shrink-0 rounded-full"
               style={{ background: i === 2 ? accent : line }}
             />
           ))}
@@ -146,30 +166,32 @@ function LabsPanel({ scanDelay }: { scanDelay: number }) {
   );
 }
 
-/** Capsule “pills” only — color + proportion, almost no text */
+/** Three bold capsules + pill icons */
 function MedsPanel({ scanDelay }: { scanDelay: number }) {
   const caps = [
-    { w: "78%", bg: `linear-gradient(90deg, ${accentSoft}, rgba(255,255,255,0.5))` },
-    { w: "62%", bg: `linear-gradient(90deg, rgba(30,52,58,0.2), rgba(255,255,255,0.45))` },
-    { w: "88%", bg: `linear-gradient(90deg, ${ok}, rgba(255,255,255,0.4))` },
+    { w: "88%", border: accentDeep, bg: `linear-gradient(135deg, ${accentSoft}, rgba(255,255,255,0.55))` },
+    { w: "72%", border: "rgba(30,52,58,0.35)", bg: `linear-gradient(135deg, rgba(30,52,58,0.12), rgba(255,255,255,0.55))` },
+    { w: "94%", border: ok, bg: `linear-gradient(135deg, rgba(46,125,95,0.35), rgba(255,255,255,0.5))` },
   ];
   return (
     <PanelShell label="Active medications" scanDelay={scanDelay}>
-      <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-[0.22rem]">
+      <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-[min(10%,0.38rem)] py-[2%]">
         {caps.map((c, i) => (
           <div
             key={i}
-            className="hero-hcp-float flex h-[22%] max-h-[0.55rem] min-h-[0.38rem] items-center rounded-full shadow-[0_1px_2px_rgba(0,0,0,0.06)]"
+            className="hero-hcp-float flex items-center justify-center rounded-full border-[1.5px] shadow-[0_1px_3px_rgba(0,0,0,0.08)]"
             style={{
               width: c.w,
+              height: "max(0.44rem, min(20%, 0.58rem))",
+              borderColor: c.border,
               background: c.bg,
               animationDelay: `${i * 0.18}s`,
             }}
           >
-            <span
-              className="mx-auto h-[0.16rem] w-[28%] rounded-full opacity-50"
-              style={{ background: ink }}
-            />
+            <span className="flex gap-[0.14rem]">
+              <span className="block h-[0.18rem] w-[0.18rem] rounded-full" style={{ background: accentDeep }} />
+              <span className="block h-[0.18rem] w-[0.32rem] rounded-full opacity-60" style={{ background: ink }} />
+            </span>
           </div>
         ))}
       </div>
@@ -177,77 +199,82 @@ function MedsPanel({ scanDelay }: { scanDelay: number }) {
   );
 }
 
-/** Stacked horizontal “risk” bars — icon strip */
+/** Heat strip + severity diamonds */
 function ProblemsPanel({ scanDelay }: { scanDelay: number }) {
-  const bars = [0.92, 0.65, 0.4];
+  const bars = [0.94, 0.7, 0.48];
   return (
     <PanelShell label="Problem list overview" scanDelay={scanDelay}>
-      <div className="flex min-h-0 flex-1 flex-col justify-center gap-[0.2rem]">
-        <div className="mb-[0.08rem] flex justify-center gap-[0.12rem]">
-          {[0, 1, 2].map((i) => (
+      <div className="flex min-h-0 flex-1 flex-col justify-center gap-[min(8%,0.28rem)] py-[2%]">
+        <div className="flex shrink-0 justify-center gap-[0.22rem]">
+          {[accent, accentSoft, line].map((bg, i) => (
             <span
               key={i}
-              className="hero-hcp-prob-flag inline-block h-[0.26rem] w-[0.26rem] rounded-sm"
+              className="hero-hcp-prob-flag inline-block h-[0.36rem] w-[0.36rem] rotate-45 rounded-[2px] shadow-sm"
+              style={{ background: bg, animationDelay: `${i * 0.12}s` }}
+            />
+          ))}
+        </div>
+        <div
+          className="flex flex-1 flex-col justify-center gap-[0.18rem]"
+          style={{
+            background: `linear-gradient(180deg, transparent, ${accentSoft})`,
+            borderRadius: "10px",
+            padding: "6% 4%",
+          }}
+        >
+          {bars.map((w, i) => (
+            <div
+              key={i}
+              className="hero-hcp-line-grow h-[min(14%,0.34rem)] min-h-[0.26rem] overflow-hidden rounded-full"
               style={{
-                background: i === 0 ? accent : i === 1 ? accentSoft : line,
-                transform: `rotate(${45 + i * 15}deg)`,
+                width: `${w * 100}%`,
+                marginLeft: i === 1 ? "6%" : i === 2 ? "12%" : "0",
+                background: `linear-gradient(90deg, ${accentDeep}, ${accent})`,
+                opacity: 0.62 + i * 0.1,
+                animationDelay: `${i * 0.2}s`,
               }}
             />
           ))}
         </div>
-        {bars.map((w, i) => (
-          <div
-            key={i}
-            className="hero-hcp-line-grow h-[0.2rem] overflow-hidden rounded-full"
-            style={{
-              width: `${w * 100}%`,
-              marginLeft: i === 1 ? "8%" : i === 2 ? "16%" : "0",
-              background: `linear-gradient(90deg, ${accentDeep}, ${accent})`,
-              opacity: 0.55 + i * 0.12,
-              animationDelay: `${i * 0.22}s`,
-            }}
-          />
-        ))}
       </div>
     </PanelShell>
   );
 }
 
-/** Vertical spine + event nodes — graphic timeline */
+/** Timeline — nodes column + gradient event bars */
 function TimelinePanel({ scanDelay }: { scanDelay: number }) {
   return (
     <PanelShell label="Encounter timeline" scanDelay={scanDelay}>
-      <div className="relative flex min-h-0 flex-1 items-stretch justify-center gap-[0.15rem] pl-[8%] pr-[4%]">
-        <div
-          className="hero-hcp-timeline-spine absolute bottom-[8%] left-[22%] top-[8%] w-[0.1rem] rounded-full"
-          style={{ background: line }}
-        />
-        <div className="relative z-[2] flex flex-1 flex-col justify-between py-[4%]">
-          {[
-            { c: accent, r: 0.38 },
-            { c: accentSoft, r: 0.28 },
-            { c: line, r: 0.22 },
-          ].map((n, i) => (
-            <div key={i} className="flex items-center gap-[0.18rem]">
-              <span
-                className="hero-hcp-tl-node z-[3] shrink-0 rounded-full border-2"
-                style={{
-                  width: "min(22%, 0.42rem)",
-                  height: "min(22%, 0.42rem)",
-                  borderColor: surfaceDeep,
-                  background: n.c,
-                  boxShadow: "0 1px 4px rgba(0,0,0,0.12)",
-                }}
-              />
-              <div
-                className="hero-hcp-spark h-[0.12rem] flex-1 rounded-full"
-                style={{
-                  background: line,
-                  maxWidth: `${60 + i * 12}%`,
-                  animationDelay: `${i * 0.15}s`,
-                }}
-              />
-            </div>
+      <div className="flex min-h-0 flex-1 items-stretch gap-[7%] px-[5%] py-[6%]">
+        <div className="flex w-[28%] flex-col items-center justify-between py-[2%]">
+          {[accent, accentSoft, line].map((c, i) => (
+            <span
+              key={i}
+              className="hero-hcp-tl-node rounded-full border-[2.5px] shadow-[0_2px_6px_rgba(0,0,0,0.12)]"
+              style={{
+                width: "clamp(0.32rem, 26%, 0.5rem)",
+                height: "clamp(0.32rem, 26%, 0.5rem)",
+                borderColor: surfaceDeep,
+                background: c,
+              }}
+            />
+          ))}
+        </div>
+        <div className="relative flex min-w-0 flex-1 flex-col justify-center gap-[14%]">
+          <div
+            className="hero-hcp-timeline-spine absolute bottom-[8%] left-0 top-[8%] w-[0.12rem] rounded-full opacity-80"
+            style={{ background: line }}
+          />
+          {[0, 1, 2].map((i) => (
+            <div
+              key={i}
+              className="hero-hcp-spark relative z-[1] ml-[12%] h-[min(16%,0.32rem)] min-h-[0.24rem] rounded-full"
+              style={{
+                width: `${58 + i * 14}%`,
+                background: `linear-gradient(90deg, ${accent}, ${accentSoft}, rgba(255,255,255,0.25))`,
+                animationDelay: `${i * 0.14}s`,
+              }}
+            />
           ))}
         </div>
       </div>
@@ -255,47 +282,48 @@ function TimelinePanel({ scanDelay }: { scanDelay: number }) {
   );
 }
 
-/** Check glyphs + row stripes */
 function OrdersPanel({ scanDelay }: { scanDelay: number }) {
   return (
     <PanelShell label="Orders queue" scanDelay={scanDelay}>
-      <div className="flex min-h-0 flex-1 flex-col justify-center gap-[0.18rem] px-[0.08rem]">
+      <div className="flex min-h-0 flex-1 flex-col justify-center gap-[min(10%,0.36rem)] px-[6%] py-[4%]">
         {[1, 0, 1].map((done, i) => (
-          <div key={i} className="flex items-center gap-[0.2rem]">
+          <div key={i} className="flex items-center gap-[0.24rem]">
             <svg
               className="hero-hcp-check shrink-0"
-              width="14"
-              height="14"
-              viewBox="0 0 14 14"
+              width="18"
+              height="18"
+              viewBox="0 0 18 18"
               aria-hidden
-              style={{ animationDelay: `${i * 0.16}s` }}
+              style={{ animationDelay: `${i * 0.14}s` }}
             >
               <rect
-                x="1.5"
-                y="1.5"
-                width="11"
-                height="11"
-                rx="2.5"
-                fill={done ? accentSoft : "transparent"}
+                x="2"
+                y="2"
+                width="14"
+                height="14"
+                rx="4"
+                fill={done ? accentSoft : "rgba(255,255,255,0.35)"}
                 stroke={line}
-                strokeWidth="1.2"
+                strokeWidth="1.4"
               />
               {done ? (
                 <path
-                  d="M3.5 7 L6 9.5 L10.5 4.5"
+                  d="M4.5 9 L8 12.5 L13.5 5.5"
                   fill="none"
                   stroke={accentDeep}
-                  strokeWidth="1.6"
+                  strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
               ) : null}
             </svg>
             <div
-              className="hero-hcp-bar-wave h-[0.14rem] flex-1 rounded-full"
+              className="hero-hcp-bar-wave h-[min(12%,0.26rem)] min-h-[0.22rem] flex-1 rounded-full"
               style={{
-                background: `linear-gradient(90deg, ${line}, rgba(30,52,58,0.08))`,
-                animationDelay: `${i * 0.12}s`,
+                background: done
+                  ? `linear-gradient(90deg, ${accentSoft}, rgba(30,52,58,0.06))`
+                  : `linear-gradient(90deg, ${line}, rgba(30,52,58,0.04))`,
+                animationDelay: `${i * 0.1}s`,
               }}
             />
           </div>
@@ -315,27 +343,29 @@ const HERO_CHART_STACK: { Panel: (p: { scanDelay: number }) => ReactElement; sca
 ];
 
 export function HeroChartPanels({ staggerMs }: { staggerMs: number[] | null }) {
+  const gap = "clamp(8px, 1.8vmin, 14px)";
   return (
     <div
-      className="pointer-events-none mx-auto w-full max-w-[min(90vw,28rem)] select-none sm:max-w-[min(88vw,30rem)]"
+      className="pointer-events-none mx-auto w-fit max-w-[100%] select-none"
       aria-hidden
       style={{
         display: "grid",
-        gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-        gridTemplateRows: "repeat(2, minmax(0, 1fr))",
-        gap: "clamp(7px, 1.6vmin, 12px)",
-        aspectRatio: "3 / 2",
+        gridTemplateColumns: `repeat(3, ${CELL})`,
+        gridTemplateRows: `repeat(2, ${CELL})`,
+        gap,
       }}
     >
       {HERO_CHART_STACK.map(({ Panel, scan }, i) => (
         <div
           key={i}
-          className={`relative isolate min-h-0 min-w-0 overflow-hidden motion-reduce:translate-y-0 motion-reduce:scale-100 motion-reduce:opacity-100 ${
+          className={`relative isolate box-border overflow-visible motion-reduce:translate-y-0 motion-reduce:scale-100 motion-reduce:opacity-100 ${
             staggerMs ? "hero-tile-rise" : "translate-y-3 scale-[0.92] opacity-0"
           }`}
           style={staggerMs ? { animationDelay: `${staggerMs[i]}ms` } : undefined}
         >
-          <Panel scanDelay={scan} />
+          <div className="h-full w-full min-h-0 min-w-0">
+            <Panel scanDelay={scan} />
+          </div>
         </div>
       ))}
     </div>
