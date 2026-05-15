@@ -327,13 +327,13 @@ const QUALITY_ORBIT_CHOREO_ACCENT_AFTER_GREY_MS = 140;
 
 function qualityOrbitMiniIcon(tileIndex: number): ReactElement {
   const svgProps = {
-    className: "h-[1.0625rem] w-[1.0625rem] shrink-0 text-white/95",
-    width: 17,
-    height: 17,
+    className: "h-[1.625rem] w-[1.625rem] shrink-0 text-white/95",
+    width: 26,
+    height: 26,
     viewBox: "0 0 24 24",
     fill: "none",
     stroke: "currentColor",
-    strokeWidth: 1.65,
+    strokeWidth: 1.45,
     strokeLinecap: "round" as const,
     strokeLinejoin: "round" as const,
     "aria-hidden": true as const,
@@ -1822,12 +1822,12 @@ export default function DoePage() {
               </p>
               <a
                 href="mailto:contact@joindoe.com"
-                className={`inline-flex items-center gap-2.5 rounded-full border border-white/25 bg-white/95 px-[1.35rem] py-[0.625rem] pl-[1.125rem] text-[0.9375rem] iphone-page:text-[clamp(0.875rem,3.85vw,0.96875rem)] font-medium tracking-tight text-gray-900 shadow-[0_2px_20px_rgba(0,0,0,0.12)] transition-[background-color,box-shadow,transform,border-color] duration-200 hover:bg-white hover:shadow-[0_6px_28px_rgba(0,0,0,0.16)] active:scale-[0.99] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white ${inter.className}`}
+                className={`inline-flex items-center gap-3 rounded-full border border-white/25 bg-white/95 px-[1.85rem] py-[0.9rem] pl-[1.65rem] text-[1.0625rem] iphone-page:text-[clamp(0.98rem,4.25vw,1.125rem)] font-medium tracking-tight text-gray-900 shadow-[0_4px_24px_rgba(0,0,0,0.14)] transition-[background-color,box-shadow,transform,border-color] duration-200 hover:bg-white hover:shadow-[0_8px_32px_rgba(0,0,0,0.18)] active:scale-[0.99] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white ${inter.className}`}
               >
                 <svg
-                  className="h-[1.15em] w-[1.15em] shrink-0 text-gray-700"
-                  width="22"
-                  height="22"
+                  className="h-[1.35em] w-[1.35em] shrink-0 text-gray-700"
+                  width="26"
+                  height="26"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -1857,7 +1857,7 @@ export default function DoePage() {
           <div
             className={`flex flex-col justify-center min-h-0 px-4 py-14 iphone-page:pt-16 iphone-page:pb-9 ${narrowHorizontalInset}`}
           >
-            <div className="text-center iphone-page:mt-5">
+            <div className="text-center iphone-page:mt-5 pl-[clamp(1rem,4.5vw,2.5rem)]">
               <h1 
                 className={`flex flex-col items-center gap-2 font-normal text-gray-900 tracking-tight ${lora.className}`}
                 style={{
@@ -2210,7 +2210,7 @@ export default function DoePage() {
                       </div>
                     )}
 
-                    {/* Smart appointments — single panel (visual system matches AI Receptionist + billing mocks) */}
+                    {/* Smart appointments — simple AI chat mock (matches receptionist / billing card language) */}
                     <div
                       className="absolute left-1/2 rounded-xl bg-white shadow-lg"
                       style={{
@@ -2224,95 +2224,44 @@ export default function DoePage() {
                         pointerEvents: 'auto',
                       }}
                     >
-                      <div className="mb-3 flex items-start justify-between gap-2">
-                        <div>
-                          <p
-                            className="mb-0.5 text-sm font-bold text-gray-900"
-                            style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
-                          >
-                            Room visit · chart-linked capture
-                          </p>
-                          <p className="text-xs text-gray-500" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                            Live utterances · matches on chart rows
-                          </p>
-                        </div>
-                        <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-gray-400" aria-hidden />
+                      <div className="mb-3 flex items-center justify-between gap-2">
+                        <p
+                          className="text-sm font-semibold tracking-tight text-gray-900"
+                          style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
+                        >
+                          Visit assistant
+                        </p>
+                        <div className="h-2 w-2 shrink-0 rounded-full bg-gray-400" aria-hidden />
                       </div>
-
-                      <div className="mb-3 rounded-lg border border-gray-100 bg-gray-50 p-3">
-                        <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wide text-gray-500">Heard now</p>
+                      <div className="mb-2 rounded-lg border border-gray-100 bg-gray-50 px-3 py-2.5">
+                        <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wide text-gray-500">Patient</p>
                         <p className="text-xs leading-snug text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                          &ldquo;The metformin gives me cramps—I skipped it twice.&rdquo;
-                        </p>
-                        <div className="mt-2 flex flex-wrap gap-1.5">
-                          <span
-                            className="rounded-md bg-white px-2 py-1 text-[10px] font-semibold text-gray-700 ring-1 ring-gray-200"
-                            style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
-                          >
-                            Meds cluster
-                          </span>
-                          <span
-                            className="rounded-md bg-white px-2 py-1 text-[10px] font-medium text-gray-600 ring-1 ring-gray-200"
-                            style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
-                          >
-                            Chart · Metformin 1000 mg BID
-                          </span>
-                          <span className="rounded-md bg-gray-100 px-2 py-1 text-[10px] text-gray-500 ring-1 ring-gray-200/80">
-                            score 0.91
-                          </span>
-                        </div>
-
-                        <div className="mt-3 border-t border-gray-200/90 pt-3">
-                          <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wide text-gray-500">Heard now</p>
-                          <p className="text-xs leading-snug text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                            &ldquo;Left knee popped again after PT.&rdquo;
-                          </p>
-                          <div className="mt-2 flex flex-wrap gap-1.5">
-                            <span
-                              className="rounded-md bg-white px-2 py-1 text-[10px] font-semibold text-gray-700 ring-1 ring-gray-200"
-                              style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
-                            >
-                              Problem · knee
-                            </span>
-                            <span
-                              className="rounded-md bg-white px-2 py-1 text-[10px] font-medium text-gray-600 ring-1 ring-gray-200"
-                              style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
-                            >
-                              OA left knee · PT note 6d ago
-                            </span>
-                            <span className="rounded-md bg-gray-100 px-2 py-1 text-[10px] text-gray-500 ring-1 ring-gray-200/80">
-                              score 0.87
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="mb-3 rounded-lg border border-dashed border-gray-200 bg-white px-3 py-2.5">
-                        <div className="mb-2 flex items-center gap-2">
-                          <span className="flex gap-1" aria-hidden>
-                            <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-gray-500 [animation-duration:1.05s]" />
-                            <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-gray-500 [animation-duration:1.05s] [animation-delay:180ms]" />
-                            <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-gray-500 [animation-duration:1.05s] [animation-delay:360ms]" />
-                          </span>
-                          <span
-                            className="text-[11px] font-semibold uppercase tracking-wide text-gray-700"
-                            style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
-                          >
-                            Retriever preview
-                          </span>
-                        </div>
-                        <p className="text-[11px] leading-snug text-gray-600" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                          Next tokens grounded on matched sections · BMP before med change · imaging if effusion on exam.
+                          &ldquo;Metformin gives me cramps—I skipped two doses.&rdquo;
                         </p>
                       </div>
-
+                      <div className="mb-2 rounded-lg border border-gray-100 bg-white px-3 py-2.5">
+                        <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wide text-gray-500">Assistant</p>
+                        <p className="text-xs leading-snug text-gray-700" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                          Noted under Medications · suggest BMP before changing dose · knee complaint tagged for exam.
+                        </p>
+                      </div>
+                      <div className="mb-3 rounded-lg border border-dashed border-gray-200 bg-gray-50 px-3 py-2.5">
+                        <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wide text-gray-500">Patient</p>
+                        <p className="text-xs leading-snug text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                          &ldquo;Left knee popped again after PT.&rdquo;
+                        </p>
+                      </div>
+                      <div className="mb-3 flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2.5">
+                        <div className="h-2 flex-1 max-w-[70%] rounded-sm bg-gray-200" aria-hidden />
+                        <span className="text-[10px] font-semibold uppercase tracking-wide text-gray-400">Send</span>
+                      </div>
                       <div className="flex gap-2">
                         <button
                           type="button"
                           className="flex-1 rounded bg-gray-600 px-3 py-2 text-xs font-semibold text-white"
                           style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
                         >
-                          Note
+                          Insert note
                         </button>
                         <button
                           type="button"
@@ -2322,9 +2271,6 @@ export default function DoePage() {
                           Tasks
                         </button>
                       </div>
-                      <p className="mt-2 text-[10px] text-gray-400" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                        Draft updates stay tied to utterance timestamps until you accept into the chart.
-                      </p>
                     </div>
 
                     <div className={slideCaptionWrap} style={{ left: captionLeft700, right: captionRight700 }}>
@@ -3167,8 +3113,8 @@ export default function DoePage() {
                 style={{
                   left: `${p.leftPct}%`,
                   top: `${p.topPct}%`,
-                  width: "clamp(6.85rem, 28.25vw, 11.75rem)",
-                  height: "clamp(4.15rem, 17.25vw, 7rem)",
+                  width: "clamp(7.5rem, 30.5vw, 12.85rem)",
+                  height: "clamp(6rem, 23vw, 10rem)",
                   boxShadow:
                     "0 18px 44px rgba(214, 119, 76, 0.34), 0 8px 20px rgba(30, 52, 58, 0.11), 0 3px 8px rgba(255, 255, 255, 0.48)",
                   opacity: qualityOrbitChoreography.diagram ? 1 : 0,
@@ -3220,14 +3166,14 @@ export default function DoePage() {
                   <rect width="100%" height="100%" fill={`url(#quality-orbit-lines-${i})`} />
                 </svg>
                 <div
-                  className={`relative z-[4] pointer-events-none flex h-full min-h-0 flex-row items-center justify-center gap-x-2 gap-y-0 px-2.5 py-1 ${inter.className}`}
+                  className={`relative z-[4] pointer-events-none flex h-full min-h-0 flex-col items-center justify-center gap-2 px-2.5 py-2 text-center ${inter.className}`}
                 >
                   {qualityOrbitMiniIcon(i)}
                   <span
-                    className={`max-w-[min(100%,9rem)] text-left font-semibold leading-snug tracking-tight text-white/95 drop-shadow-[0_1px_12px_rgba(0,0,0,0.28)] ${
+                    className={`max-w-[min(100%,11rem)] font-semibold leading-tight tracking-tight text-white/95 drop-shadow-[0_1px_12px_rgba(0,0,0,0.28)] ${
                       QUALITY_ORBIT_TILE_LABELS[i].length > 1
-                        ? "text-[clamp(0.58rem,2.05vw,0.8125rem)]"
-                        : "text-[clamp(0.66rem,2.28vw,0.875rem)]"
+                        ? "text-[clamp(0.72rem,2.65vw,0.9375rem)]"
+                        : "text-[clamp(0.82rem,2.95vw,1.0625rem)]"
                     }`}
                   >
                     {QUALITY_ORBIT_TILE_LABELS[i].map((line) => (
