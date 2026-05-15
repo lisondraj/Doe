@@ -246,6 +246,10 @@ html:has(.doeforvc-iphone-root) body {
 }
 
 .bento-bridge-caret {
+  display: block;
+  width: 3px;
+  border-radius: 2px;
+  background-color: #b08f68;
   animation: bento-bridge-caret-blink 1.05s step-end infinite;
 }
 
@@ -253,36 +257,6 @@ html:has(.doeforvc-iphone-root) body {
   .bento-bridge-caret {
     animation: none;
     opacity: 1;
-  }
-}
-
-@keyframes bento-bridge-aurora-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/** Soft orange highlight that orbits clockwise behind the bridge medallion (blur + conic wedge). */
-.bento-bridge-disk-aurora {
-  background: conic-gradient(
-    from 0deg,
-    rgba(231, 169, 68, 0) 0deg,
-    rgba(231, 169, 68, 0.72) 48deg,
-    rgba(255, 214, 150, 0.55) 96deg,
-    rgba(231, 169, 68, 0) 158deg,
-    rgba(231, 169, 68, 0) 360deg
-  );
-  filter: blur(18px);
-  opacity: 0.9;
-  animation: bento-bridge-aurora-spin 14s linear infinite;
-  will-change: transform;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .bento-bridge-disk-aurora {
-    animation: none;
-    opacity: 0.5;
-    transform: rotate(28deg);
   }
 }
 
