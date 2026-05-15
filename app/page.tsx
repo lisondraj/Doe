@@ -2830,21 +2830,56 @@ export default function DoePage() {
 
       {/* Quality orbit — between carousel (section 2) and vertical bento (section 3) */}
       <section
-        className={`relative z-10 w-full bg-[#F7F6F3] py-[clamp(4rem,11vw,7.5rem)] iphone-page:py-20 ${narrowHorizontalInset}`}
+        className={`relative z-10 w-full overflow-x-hidden bg-[#F7F6F3] py-[clamp(5.75rem,13.5vw,9.25rem)] iphone-page:py-[clamp(5.5rem,12vw,8.5rem)] mt-[clamp(1.75rem,4.5vw,3.5rem)] mb-[clamp(1.5rem,4vw,3rem)] ${narrowHorizontalInset}`}
         aria-labelledby="quality-orbit-heading"
       >
         <h2 id="quality-orbit-heading" className="sr-only">
-          Only high-quality patient care
+          Only high-quality patient care.
         </h2>
+        {/* Grid backdrop — same motif as the "Built for you" section */}
+        <div className="pointer-events-none absolute inset-0 z-0" aria-hidden>
+          <svg
+            className="absolute inset-0 h-full w-full pointer-events-none"
+            style={{ transform: "translateY(-12%)" }}
+            xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="none"
+          >
+            <defs>
+              <pattern
+                id="qualityOrbitSectionGridPattern"
+                x="0"
+                y="0"
+                width="80"
+                height="80"
+                patternUnits="userSpaceOnUse"
+              >
+                <path d="M 0 0 L 80 0 M 0 0 L 0 80" fill="none" stroke="#999999" strokeWidth="0.5" opacity="0.28" />
+                <circle cx="0" cy="0" r="1" fill="#999999" opacity="0.35" />
+                <circle cx="80" cy="0" r="1" fill="#999999" opacity="0.35" />
+                <circle cx="0" cy="80" r="1" fill="#999999" opacity="0.35" />
+                <circle cx="80" cy="80" r="1" fill="#999999" opacity="0.35" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#qualityOrbitSectionGridPattern)" />
+          </svg>
+          <div
+            className="absolute left-0 right-0 top-0 z-[1] h-[min(10rem,18vw)] bg-gradient-to-b from-[#F7F6F3] to-transparent"
+            aria-hidden
+          />
+          <div
+            className="absolute bottom-0 left-0 right-0 z-[1] h-[min(10rem,18vw)] bg-gradient-to-t from-[#F7F6F3] to-transparent"
+            aria-hidden
+          />
+        </div>
         <div
-          className="relative mx-auto w-full max-w-full"
+          className="relative z-[2] mx-auto w-full max-w-full"
           style={{
             aspectRatio: "10 / 11",
             minHeight: "clamp(32rem, 88vw, 58rem)",
           }}
         >
             <svg
-              className="absolute inset-0 h-full w-full pointer-events-none z-0"
+              className="absolute inset-0 z-0 h-full w-full pointer-events-none"
               viewBox="0 0 400 400"
               preserveAspectRatio="xMidYMid meet"
               aria-hidden
@@ -2867,8 +2902,8 @@ export default function DoePage() {
                 style={{
                   left: `${p.leftPct}%`,
                   top: `${p.topPct}%`,
-                  width: "clamp(5.75rem, 24vw, 9.75rem)",
-                  height: "clamp(4rem, 17vw, 6.75rem)",
+                  width: "clamp(6.1rem, 25.75vw, 10.35rem)",
+                  height: "clamp(3.7rem, 15.85vw, 6.35rem)",
                   boxShadow:
                     "0 18px 44px rgba(214, 119, 76, 0.34), 0 8px 20px rgba(30, 52, 58, 0.11), 0 3px 8px rgba(255, 255, 255, 0.48)",
                 }}
@@ -2915,62 +2950,26 @@ export default function DoePage() {
               </div>
             ))}
 
-            <div className="absolute inset-0 z-[3] flex items-center justify-center px-4 iphone-page:px-5 pointer-events-none">
+            <div className="pointer-events-none absolute inset-0 z-[3] flex items-center justify-center px-4 iphone-page:px-5">
               <p
                 className={`flex flex-col items-center gap-2 text-center font-normal tracking-tight text-gray-900 ${lora.className}`}
                 style={{ textWrap: "balance" }}
               >
-                <span className="block leading-[1.06] text-[clamp(2.65rem,11.5vw,4rem)] iphone-page:text-[clamp(1.48rem,6.25vw,4rem)] iphone-page:whitespace-nowrap">
+                <span className="block leading-[1.06] text-[clamp(2.3rem,9.85vw,3.58rem)] iphone-page:text-[clamp(1.32rem,5.65vw,3.58rem)] iphone-page:whitespace-nowrap">
                   Only high-quality
                 </span>
-                <span className="block leading-[1.06] text-[clamp(2.65rem,11.5vw,4rem)] iphone-page:text-[clamp(1.48rem,6.25vw,4rem)] iphone-page:whitespace-nowrap">
-                  patient care
+                <span className="block leading-[1.06] text-[clamp(2.3rem,9.85vw,3.58rem)] iphone-page:text-[clamp(1.32rem,5.65vw,3.58rem)] iphone-page:whitespace-nowrap">
+                  patient care.
                 </span>
               </p>
             </div>
-        </div>
-
-        {/* Grid field matching “Built for you” section — sits under the orbit diagram */}
-        <div
-          className="relative z-0 mt-14 min-h-[clamp(10rem, 34vw, 19rem)] overflow-hidden iphone-page:mt-16 pointer-events-none"
-          style={{
-            width: "100vw",
-            marginLeft: "calc(50% - 50vw)",
-          }}
-        >
-          <svg
-            className="absolute inset-0 h-full w-full"
-            xmlns="http://www.w3.org/2000/svg"
-            preserveAspectRatio="none"
-            aria-hidden
-          >
-            <defs>
-              <pattern
-                id="qualityOrbitBelowGridPattern"
-                x="0"
-                y="0"
-                width="80"
-                height="80"
-                patternUnits="userSpaceOnUse"
-              >
-                <path d="M 0 0 L 80 0 M 0 0 L 0 80" fill="none" stroke="#999999" strokeWidth="0.5" opacity="0.28" />
-                <circle cx="0" cy="0" r="1" fill="#999999" opacity="0.35" />
-                <circle cx="80" cy="0" r="1" fill="#999999" opacity="0.35" />
-                <circle cx="0" cy="80" r="1" fill="#999999" opacity="0.35" />
-                <circle cx="80" cy="80" r="1" fill="#999999" opacity="0.35" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#qualityOrbitBelowGridPattern)" />
-          </svg>
-          <div className="absolute left-0 right-0 top-0 z-[1] h-24 bg-gradient-to-b from-[#F7F6F3] to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 z-[1] h-20 bg-gradient-to-t from-[#F7F6F3] to-transparent" />
         </div>
       </section>
 
       {/* Vertical bento rails — pinned stack + scrub */}
       <div
         ref={verticalBentoSectionRef}
-        className={`relative z-10 w-full bg-[#F7F6F3] pt-4 pb-8 md:pt-4 md:pb-6 max-md:pt-7 max-md:pb-12 iphone-page:pt-9 iphone-page:pb-12 ${VBENTO_CANVAS_PADDING}`}
+        className={`relative z-10 w-full bg-[#F7F6F3] pt-8 pb-8 md:pt-7 md:pb-6 max-md:pt-10 max-md:pb-12 iphone-page:pt-12 iphone-page:pb-12 ${VBENTO_CANVAS_PADDING}`}
         style={{ minHeight: vbMetrics.sectionMinPx }}
       >
         <div
