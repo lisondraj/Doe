@@ -20,6 +20,17 @@ const lora = Lora({
   weight: ["400", "500", "600", "700"],
 });
 
+/** Same visible viewport logic as `app/page.tsx` / blog — drives nav sheet remeasure on resize. */
+function siteNavAppViewportPx(): { width: number; height: number } {
+  if (typeof window === "undefined") return { width: 1200, height: 800 };
+  const vv = window.visualViewport;
+  const iw = window.innerWidth;
+  const ih = window.innerHeight;
+  const w = vv && vv.width > 0 && vv.width <= iw + 16 ? Math.round(vv.width) : iw;
+  const h = vv && vv.height >= 240 && vv.height <= ih + 16 ? Math.round(vv.height) : ih;
+  return { width: Math.max(w, 280), height: Math.max(h, 320) };
+}
+
 function NavChromeStrip({
   navTextColor,
   mobileNavOpen,
@@ -91,9 +102,13 @@ export default function DoeIphoneSiteNav() {
   const [mobileNavExpandedKey, setMobileNavExpandedKey] = useState<string | null>(null);
   const [mobileNavFooterSlide, setMobileNavFooterSlide] = useState(0);
   const mobileNavFooterCarouselRef = useRef<HTMLDivElement>(null);
+  /** Carousel width when the sheet first opens — `zoom` shrinks uniformly if the window gets narrower (matches home `app/page.tsx`). */
+  const mobileNavFooterWidthBaselineRef = useRef(0);
+  const [mobileNavFooterZoom, setMobileNavFooterZoom] = useState(1);
   const navBarRowRef = useRef<HTMLDivElement>(null);
   const [iphoneMenuTopPx, setIphoneMenuTopPx] = useState(88);
   const [viewportWidth, setViewportWidth] = useState(1200);
+  const [appViewport, setAppViewport] = useState({ width: 1200, height: 800 });
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -101,10 +116,17 @@ export default function DoeIphoneSiteNav() {
   }, []);
 
   useEffect(() => {
-    const updateWidth = () => setViewportWidth(window.innerWidth);
-    updateWidth();
-    window.addEventListener("resize", updateWidth);
-    return () => window.removeEventListener("resize", updateWidth);
+    const tick = () => {
+      setViewportWidth(window.innerWidth);
+      setAppViewport(siteNavAppViewportPx());
+    };
+    tick();
+    window.addEventListener("resize", tick);
+    window.visualViewport?.addEventListener("resize", tick);
+    return () => {
+      window.removeEventListener("resize", tick);
+      window.visualViewport?.removeEventListener("resize", tick);
+    };
   }, []);
 
   useLayoutEffect(() => {
@@ -133,7 +155,42 @@ export default function DoeIphoneSiteNav() {
       window.removeEventListener("resize", update);
       window.visualViewport?.removeEventListener("resize", update);
     };
-  }, [mobileNavOpen, viewportWidth]);
+  }, [mobileNavOpen, viewportWidth, appViewport.width, appViewport.height]);
+
+  useLayoutEffect(() => {
+    if (!mobileNavOpen) return;
+    const fit = () => {
+      const el = mobileNavFooterCarouselRef.current;
+      if (!el) return;
+      const cw = el.clientWidth;
+      if (cw <= 0) return;
+      if (mobileNavFooterWidthBaselineRef.current <= 0) {
+        mobileNavFooterWidthBaselineRef.current = cw;
+      }
+      const base = mobileNavFooterWidthBaselineRef.current;
+      const z = Math.min(1, cw / base);
+      setMobileNavFooterZoom((prev) => (Math.abs(prev - z) < 0.002 ? prev : z));
+    };
+
+    fit();
+    let raf1 = 0;
+    let raf2 = 0;
+    raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(fit);
+    });
+    const el = mobileNavFooterCarouselRef.current;
+    const ro = new ResizeObserver(fit);
+    if (el) ro.observe(el);
+    window.addEventListener("resize", fit);
+    window.visualViewport?.addEventListener("resize", fit);
+    return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+      ro.disconnect();
+      window.removeEventListener("resize", fit);
+      window.visualViewport?.removeEventListener("resize", fit);
+    };
+  }, [mobileNavOpen, appViewport.width, appViewport.height]);
 
   useEffect(() => {
     if (!mobileNavOpen) return;
@@ -158,7 +215,11 @@ export default function DoeIphoneSiteNav() {
   }, [mobileNavOpen]);
 
   useEffect(() => {
-    if (!mobileNavOpen) setMobileNavFooterSlide(0);
+    if (!mobileNavOpen) {
+      setMobileNavFooterSlide(0);
+      mobileNavFooterWidthBaselineRef.current = 0;
+      setMobileNavFooterZoom(1);
+    }
   }, [mobileNavOpen]);
 
   useEffect(() => {
@@ -302,9 +363,12 @@ export default function DoeIphoneSiteNav() {
                 {MOBILE_NAV_FOOTER_SLIDES.map((slide) => (
                   <div
                     key={slide.boxTitle}
-                    className="w-full min-w-full shrink-0 snap-center box-border space-y-3 py-3 pl-[max(1rem,env(safe-area-inset-left,0px))] pr-[max(1rem,env(safe-area-inset-right,0px))] iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)] iphone-page:py-[clamp(0.75rem,0.5rem+1vmin,1.125rem)] iphone-page:pl-[max(1rem,calc(env(safe-area-inset-left,0px)+0.5rem))] iphone-page:pr-[max(1rem,calc(env(safe-area-inset-right,0px)+0.5rem))]"
+                    className="w-full min-w-full shrink-0 snap-center box-border space-y-3 py-3 px-[max(1rem,env(safe-area-inset-left,0px),env(safe-area-inset-right,0px))] iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)] iphone-page:py-[clamp(0.75rem,0.5rem+1vmin,1.125rem)] iphone-page:px-[max(1rem,calc(max(env(safe-area-inset-left,0px),env(safe-area-inset-right,0px))+0.5rem))]"
                   >
-                    <div className="w-full space-y-3 iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)]">
+                    <div
+                      className="w-full space-y-3 iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)]"
+                      style={{ zoom: mobileNavFooterZoom }}
+                    >
                     <div className="relative rounded-[1.375rem] iphone-page:rounded-[clamp(1.2rem,1rem+1.4vmin,2.1rem)] overflow-hidden min-h-[30rem] iphone-page:min-h-[clamp(22rem,58vmin,48rem)] shadow-[0_10px_32px_rgba(0,0,0,0.12)]">
                       <div className="absolute inset-0" style={{ background: slide.gradient }} aria-hidden />
                       <div
