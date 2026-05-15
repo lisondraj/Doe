@@ -80,7 +80,8 @@ type HeroTickerAdorn =
 
 type HeroTickerSegment = {
   key: string;
-  label: string;
+  /** One short line per row so each column stays readable and narrow */
+  lines: readonly [string, string] | readonly [string, string, string];
   className: string;
   adornment?: HeroTickerAdorn;
 };
@@ -88,32 +89,32 @@ type HeroTickerSegment = {
 const HERO_TICKER_BASE: HeroTickerSegment[] = [
   {
     key: "cedar-row",
-    className: `${playfairTicker.className} font-semibold tracking-tight text-[clamp(0.9rem,2.35vw,1.08rem)]`,
-    label: "Cedar Row Family Practice",
+    className: `${playfairTicker.className} font-semibold tracking-tight text-[clamp(1.35rem,4.2vw,1.85rem)]`,
+    lines: ["Cedar Row", "Family Practice"],
     adornment: "diamondBefore",
   },
   {
     key: "vantage",
-    className: `${oswaldTicker.className} font-medium uppercase tracking-[0.22em] text-[clamp(0.68rem,1.8vw,0.88rem)]`,
-    label: "Vantage Specialty Partners",
+    className: `${oswaldTicker.className} font-medium uppercase tracking-[0.16em] text-[clamp(1.02rem,3.15vw,1.38rem)]`,
+    lines: ["Vantage", "Specialty", "Partners"],
     adornment: "plusAfter",
   },
   {
     key: "harborlight",
-    className: `${outfitTicker.className} font-semibold tracking-tight text-[clamp(0.84rem,2.2vw,1rem)]`,
-    label: "Harborlight Cardiology",
+    className: `${outfitTicker.className} font-semibold tracking-tight text-[clamp(1.22rem,3.85vw,1.68rem)]`,
+    lines: ["Harborlight", "Cardiology"],
     adornment: "clinicalCross",
   },
   {
     key: "meridian",
-    className: `${dmSerifDisplayTicker.className} font-normal italic tracking-[0.03em] text-[clamp(0.86rem,2.25vw,1.04rem)]`,
-    label: "Meridian Women's Health",
+    className: `${dmSerifDisplayTicker.className} font-normal italic tracking-[0.02em] text-[clamp(1.2rem,3.75vw,1.62rem)]`,
+    lines: ["Meridian Women's", "Health"],
     adornment: "discAfter",
   },
   {
     key: "garden-court",
-    className: `${caveatTicker.className} font-bold tracking-tight text-[clamp(1rem,2.65vw,1.22rem)]`,
-    label: "Garden Court Dermatology",
+    className: `${caveatTicker.className} font-bold tracking-tight text-[clamp(1.42rem,4.5vw,1.95rem)]`,
+    lines: ["Garden Court", "Dermatology"],
     adornment: "sparkleBefore",
   },
 ];
@@ -122,17 +123,36 @@ const HERO_TICKER_STRIP: HeroTickerSegment[] = Array.from({ length: 4 }, (_, i) 
   HERO_TICKER_BASE.map((s) => ({ ...s, key: `${s.key}-${i}` })),
 ).flat();
 
-function HeroTickerAdornment({ kind }: { kind: HeroTickerAdorn }) {
+function HeroTickerAdornment({
+  kind,
+  layout = "inline",
+}: {
+  kind: HeroTickerAdorn;
+  layout?: "inline" | "above";
+}) {
+  const above = layout === "above";
   switch (kind) {
     case "diamondBefore":
       return (
-        <span className="mr-2 shrink-0 text-[1.08em] leading-none opacity-70" aria-hidden>
+        <span
+          className={
+            above
+              ? "mb-1 text-[1.2em] leading-none opacity-70"
+              : "mr-2 shrink-0 text-[1.08em] leading-none opacity-70"
+          }
+          aria-hidden
+        >
           ◆
         </span>
       );
     case "sparkleBefore":
       return (
-        <span className="mr-1.5 shrink-0 text-[0.95em] opacity-80" aria-hidden>
+        <span
+          className={
+            above ? "mb-0.5 text-[1.05em] opacity-80" : "mr-1.5 shrink-0 text-[0.95em] opacity-80"
+          }
+          aria-hidden
+        >
           ✦
         </span>
       );
@@ -151,7 +171,11 @@ function HeroTickerAdornment({ kind }: { kind: HeroTickerAdorn }) {
     case "clinicalCross":
       return (
         <svg
-          className="mr-2 h-[0.95em] w-[0.95em] shrink-0 opacity-75"
+          className={
+            above
+              ? "mb-1 h-[1.35em] w-[1.35em] shrink-0 opacity-75"
+              : "mr-2 h-[0.95em] w-[0.95em] shrink-0 opacity-75"
+          }
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -2007,31 +2031,50 @@ export default function DoePage() {
 
         {/* Decorative fake clinic / vendor wordmarks — not real partners */}
         <div
-          className="hero-partner-marquee-mask absolute bottom-0 left-0 right-0 z-[12] overflow-hidden pb-[max(0.35rem,env(safe-area-inset-bottom,0px))] pt-1 pointer-events-none select-none"
+          className="hero-partner-marquee-mask pointer-events-none absolute inset-x-0 bottom-0 z-[12] flex items-center justify-center overflow-hidden pb-[max(0.5rem,env(safe-area-inset-bottom,0px))] select-none"
+          style={{ top: "33.333%" }}
           aria-hidden
         >
           <div className="flex w-max animate-hero-logo-marquee">
             {[0, 1].map((track) => (
               <div
                 key={track}
-                className="flex shrink-0 items-center gap-x-[clamp(2.25rem,7vw,4.85rem)] pe-[clamp(2.25rem,7vw,4.85rem)] py-2 iphone-page:py-1.5"
+                className="flex shrink-0 items-center gap-x-[clamp(3.25rem,11vw,7.25rem)] pe-[clamp(3.25rem,11vw,7.25rem)] py-3 iphone-page:py-2.5"
               >
-                {HERO_TICKER_STRIP.map((seg) => (
-                  <span
-                    key={`${track}-${seg.key}`}
-                    className={`inline-flex items-center text-[rgba(248,246,243,0.22)] whitespace-nowrap ${seg.className}`}
-                  >
-                    {(seg.adornment === "diamondBefore" ||
-                      seg.adornment === "sparkleBefore" ||
-                      seg.adornment === "clinicalCross") && (
-                      <HeroTickerAdornment kind={seg.adornment} />
-                    )}
-                    {seg.label}
-                    {(seg.adornment === "plusAfter" || seg.adornment === "discAfter") && (
-                      <HeroTickerAdornment kind={seg.adornment} />
-                    )}
-                  </span>
-                ))}
+                {HERO_TICKER_STRIP.map((seg) => {
+                  const aboveGlyph =
+                    seg.adornment === "diamondBefore" ||
+                    seg.adornment === "sparkleBefore" ||
+                    seg.adornment === "clinicalCross";
+                  const lines = seg.lines;
+                  const lastIx = lines.length - 1;
+                  return (
+                    <div
+                      key={`${track}-${seg.key}`}
+                      className={`flex max-w-[min(10rem,31vw)] flex-col items-center text-center text-[rgba(248,246,243,0.26)] [text-wrap:balance] ${seg.className}`}
+                    >
+                      {aboveGlyph && seg.adornment && (
+                        <div className="flex justify-center">
+                          <HeroTickerAdornment kind={seg.adornment} layout="above" />
+                        </div>
+                      )}
+                      {lines.map((line, i) => (
+                        <span
+                          key={`${seg.key}-${i}`}
+                          className={`block max-w-[10rem] leading-[1.14] iphone-page:max-w-[9rem] ${i > 0 ? "mt-[0.3em]" : ""}`}
+                        >
+                          {line}
+                          {i === lastIx && seg.adornment === "plusAfter" && (
+                            <HeroTickerAdornment kind="plusAfter" layout="inline" />
+                          )}
+                          {i === lastIx && seg.adornment === "discAfter" && (
+                            <HeroTickerAdornment kind="discAfter" layout="inline" />
+                          )}
+                        </span>
+                      ))}
+                    </div>
+                  );
+                })}
               </div>
             ))}
           </div>
