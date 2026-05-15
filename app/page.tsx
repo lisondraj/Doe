@@ -277,6 +277,10 @@ function vbRailsInterGapPx(): number {
   return Math.round(0.875 * vbDocumentRootPx());
 }
 
+/** Vertical-bento scroll bypass hysteresis — avoids chatter when flick-scrolling past pinned rails on iOS. */
+const VB_BENTO_SCROLL_BYPASS_ENTER_BOTTOM_PX = -168;
+const VB_BENTO_SCROLL_BYPASS_EXIT_TOP_FRAC = 0.38;
+
 function vbComputeScrollMetrics(
   innerHeightPx: number,
   railsLayoutHeightPx?: number,
@@ -599,8 +603,18 @@ export default function DoePage() {
   const scrollSecondPastIntroRef = useRef(false);
   /** Skip redundant “Built for you” intro setState once past. */
   const scrollCarouselPastIntroRef = useRef(false);
-  /** After the vertical bento stack has cleared above the viewport, skip headline / rails / u updates. */
+  /** After the vertical bento stack has cleared above the viewport, skip headline / rails / u updates (hysteresis). */
   const scrollVbPastBandRef = useRef(false);
+  /** Monotonic scrub: prevents `vbGateVerticalBentoUTimeline` from briefly raising `u` while scrolling up. */
+  const vbMonotonicPrevTopRef = useRef<number | null>(null);
+  const vbMonotonicPrevURef = useRef<number>(0);
+  /** Last committed VB metrics — ignore micro `visualViewport` height jitter when width unchanged. */
+  const vbMetricsLocksRef = useRef<{ vvH: number; innerW: number } | null>(null);
+  const vbMetricsResizeTimerRef = useRef<number | null>(null);
+  /** Last VB metrics — stabilize `sectionMinPx` upward-only between commits. */
+  const vbMetricsLastFullRef = useRef<VerticalBentoScrollMetrics | null>(null);
+  /** Bypass transition — set latch effects only on edge. */
+  const vbBypassPrevRef = useRef(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   /** Which top-level nav row is expanded in the phone menu sheet (accordion). */
@@ -816,34 +830,71 @@ export default function DoePage() {
   }, [mobileNavOpen, appViewport.width, appViewport.height]);
 
   useLayoutEffect(() => {
-    const ih = typeof window !== "undefined" ? window.innerHeight : 800;
-    const vvH = typeof window !== "undefined" ? vbResizeViewportHeightPx() : 800;
-    setVbMetrics(
-      vbComputeScrollMetrics(
-        vvH,
-        typeof window !== "undefined" ? vbRailsEffectiveInnerHeight(window.innerWidth, ih) : undefined,
-        typeof window !== "undefined" ? window.innerWidth : 1200,
-      ),
-    );
+    if (typeof window === "undefined") return;
+    const ih = window.innerHeight;
+    const vvH = vbResizeViewportHeightPx();
+    const iw = window.innerWidth;
+    const fresh = vbComputeScrollMetrics(vvH, vbRailsEffectiveInnerHeight(iw, ih), iw);
+    vbMetricsLastFullRef.current = fresh;
+    vbMetricsLocksRef.current = { vvH, innerW: iw };
+    setVbMetrics(fresh);
   }, []);
 
   useEffect(() => {
-    const onResize = () => {
+    if (typeof window === "undefined") return;
+
+    const applyVbMetrics = (forceShrink: boolean) => {
       const ih = window.innerHeight;
-      setVbMetrics(
-        vbComputeScrollMetrics(
-          vbResizeViewportHeightPx(),
-          vbRailsEffectiveInnerHeight(window.innerWidth, ih),
-          window.innerWidth,
-        ),
-      );
+      const vvH = vbResizeViewportHeightPx();
+      const iw = window.innerWidth;
+      let next = vbComputeScrollMetrics(vvH, vbRailsEffectiveInnerHeight(iw, ih), iw);
+      const snap = vbMetricsLastFullRef.current;
+      if (!forceShrink && snap !== null && next.sectionMinPx < snap.sectionMinPx) {
+        next = { ...next, sectionMinPx: snap.sectionMinPx };
+      }
+      vbMetricsLastFullRef.current = next;
+      vbMetricsLocksRef.current = { vvH, innerW: iw };
+      setVbMetrics(next);
     };
+
+    const queueVbMetrics = () => {
+      const lk = vbMetricsLocksRef.current;
+      if (lk !== null) {
+        const vvHNow = vbResizeViewportHeightPx();
+        const iwNow = window.innerWidth;
+        if (Math.abs(vvHNow - lk.vvH) < 72 && iwNow === lk.innerW) return;
+      }
+      if (vbMetricsResizeTimerRef.current !== null) {
+        window.clearTimeout(vbMetricsResizeTimerRef.current);
+      }
+      vbMetricsResizeTimerRef.current = window.setTimeout(() => {
+        vbMetricsResizeTimerRef.current = null;
+        applyVbMetrics(false);
+      }, 210);
+    };
+
+    const onResize = queueVbMetrics;
+    /** `visualViewport.resize` only — avoid scroll listeners so iOS won’t churn min-heights every pan frame. */
+    const onVVResize = queueVbMetrics;
+    const onOrientation = () => {
+      if (vbMetricsResizeTimerRef.current !== null) {
+        window.clearTimeout(vbMetricsResizeTimerRef.current);
+        vbMetricsResizeTimerRef.current = null;
+      }
+      applyVbMetrics(true);
+    };
+
     window.addEventListener("resize", onResize);
-    /** `visualViewport.resize` only — avoid `scroll` here or iOS will recompute min-heights every pan frame and fight scroll position. */
-    window.visualViewport?.addEventListener("resize", onResize);
+    window.visualViewport?.addEventListener("resize", onVVResize);
+    window.addEventListener("orientationchange", onOrientation);
     return () => {
       window.removeEventListener("resize", onResize);
-      window.visualViewport?.removeEventListener("resize", onResize);
+      window.visualViewport?.removeEventListener("resize", onVVResize);
+      window.removeEventListener("orientationchange", onOrientation);
+      if (vbMetricsResizeTimerRef.current !== null) {
+        window.clearTimeout(vbMetricsResizeTimerRef.current);
+        vbMetricsResizeTimerRef.current = null;
+      }
     };
   }, []);
 
@@ -1242,20 +1293,34 @@ export default function DoePage() {
 
       const vbEl = verticalBentoSectionRef.current;
       const vbRect = vbEl?.getBoundingClientRect();
-      const vbFullyAbove = vbRect ? vbRect.bottom < -72 : false;
 
-      if (vbFullyAbove) {
-        if (!scrollVbPastBandRef.current) {
-          scrollVbPastBandRef.current = true;
+      let vbBypass = scrollVbPastBandRef.current;
+      if (vbRect) {
+        if (vbBypass) {
+          if (vbRect.top > viewportHeight * VB_BENTO_SCROLL_BYPASS_EXIT_TOP_FRAC) {
+            vbBypass = scrollVbPastBandRef.current = false;
+            vbMonotonicPrevTopRef.current = null;
+          }
+        } else if (vbRect.bottom < VB_BENTO_SCROLL_BYPASS_ENTER_BOTTOM_PX) {
+          vbBypass = scrollVbPastBandRef.current = true;
+        }
+      }
+
+      const bypassEdgeOn = vbBypass && !vbBypassPrevRef.current;
+      const bypassEdgeOff = !vbBypass && vbBypassPrevRef.current;
+      vbBypassPrevRef.current = vbBypass;
+
+      if (vbBypass) {
+        if (bypassEdgeOn) {
           setVerticalBentoTitleOpacity(1);
           setVerticalBentoTitleTranslateY(0);
           setVerticalBentoRailsOpacity(1);
           setVerticalBentoRailsTranslateY(0);
           setVerticalBentoU(1);
+          vbMonotonicPrevURef.current = 1;
+          vbMonotonicPrevTopRef.current = null;
         }
       } else {
-        scrollVbPastBandRef.current = false;
-
         // Vertical bento headline (bridge band under workflow carousel): fade/slide-in
         if (verticalBentoHeadlineRef.current) {
           const rect = verticalBentoHeadlineRef.current.getBoundingClientRect();
@@ -1311,10 +1376,31 @@ export default function DoePage() {
           const sp = Math.max(scrollablePx, 1e-6);
           const scrolled = Math.min(Math.max(-rect.top + anchor, 0), sp);
           const uRaw = scrolled / sp;
-          const u = vbGateVerticalBentoUTimeline(uRaw, milestones, sectionTop, viewportHeight);
-          /** When the bento band is fully above the viewport, u only needs coarse updates — avoids micro-jitter fighting scroll. */
+          let uMono = vbGateVerticalBentoUTimeline(uRaw, milestones, sectionTop, viewportHeight);
+          if (bypassEdgeOff) {
+            vbMonotonicPrevTopRef.current = sectionTop;
+            vbMonotonicPrevURef.current = uMono;
+          } else {
+            const prevTopMono = vbMonotonicPrevTopRef.current;
+            const prevUMono = vbMonotonicPrevURef.current;
+            if (prevTopMono !== null && Number.isFinite(prevTopMono)) {
+              const deltaTop = sectionTop - prevTopMono;
+              if (deltaTop > 0.65) {
+                uMono = Math.min(uMono, prevUMono + 1e-9);
+              } else if (deltaTop < -0.65) {
+                uMono = Math.max(uMono, prevUMono - 1e-9);
+              }
+            }
+          }
+          vbMonotonicPrevTopRef.current = sectionTop;
+
           const uEps = rect.bottom < 0 ? 0.035 : 0.0025;
-          setVerticalBentoU((prev) => (Math.abs(prev - u) < uEps ? prev : u));
+          setVerticalBentoU((prev) => {
+            let next = uMono;
+            if (Math.abs(prev - next) < uEps) next = prev;
+            vbMonotonicPrevURef.current = next;
+            return next;
+          });
         }
       }
     };
@@ -1743,7 +1829,7 @@ export default function DoePage() {
   );
   return (
     <div
-      className="relative overflow-x-hidden overflow-y-visible overscroll-y-auto doeforvc-iphone-root"
+      className="relative overflow-x-hidden overflow-y-visible overscroll-y-contain doeforvc-iphone-root"
       data-doeforvc-view="iphone"
       style={{
         backgroundColor: "#F7F6F3",
@@ -3774,7 +3860,10 @@ export default function DoePage() {
             className="relative mx-auto w-full max-w-full shrink-0"
             style={{
               opacity: verticalBentoRailsOpacity,
-              transform: `translateY(${verticalBentoRailsTranslateY}px)`,
+              transform: `translate3d(0, ${verticalBentoRailsTranslateY}px, 0)`,
+              backfaceVisibility: "hidden",
+              WebkitBackfaceVisibility: "hidden",
+              isolation: "isolate",
               transition: "opacity 1.2s ease-out, transform 1.2s ease-out",
             }}
           >
@@ -3802,11 +3891,12 @@ export default function DoePage() {
                 return (
                   <div className="relative w-full overflow-visible" style={{ height: vbMetrics.stickyColumnH }}>
                     <div
-                      className="relative z-[3] flex w-full flex-col gap-4 iphone-page:gap-3.5"
+                      className="relative z-[3] flex min-h-0 w-full flex-col gap-4 iphone-page:gap-3.5"
                       style={{ height: vbMetrics.stickyColumnH }}
                     >
                       {([0, 1, 2] as const).map((i) => {
                         const h = vbRailHeightPx(expand[i], collapsedPx, expandedMax);
+                        const flexGrow = Math.max(8, Math.round(h * 48));
                         const trackOpacity =
                           dominantOpenT > 0.12 ? verticalBentoRailsOpacity * barGate * opacity[i] : 0;
 
@@ -3816,11 +3906,14 @@ export default function DoePage() {
                             aria-hidden
                             className={
                               i === 1
-                                ? "relative w-full shrink-0 overflow-hidden rounded-2xl ring-1 ring-black/[0.06]"
-                                : "relative w-full shrink-0 overflow-hidden rounded-2xl py-3 iphone-page:py-3.5 ring-1 ring-black/[0.06]"
+                                ? "relative flex min-h-0 w-full overflow-hidden rounded-2xl ring-1 ring-black/[0.06]"
+                                : "relative flex min-h-0 w-full overflow-hidden rounded-2xl py-3 iphone-page:py-3.5 ring-1 ring-black/[0.06]"
                             }
                             style={{
-                              height: h,
+                              flexGrow,
+                              flexShrink: 1,
+                              flexBasis: 0,
+                              minHeight: 0,
                               opacity: opacity[i],
                             }}
                           >
