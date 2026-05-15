@@ -324,6 +324,8 @@ const QUALITY_ORBIT_CHOREO_DIAGRAM_DELAY_MS = 700;
 /** Grey connector finishes before orange traces — keep synced with grey arc `stroke-dashoffset` duration below (~2.35s). */
 const QUALITY_ORBIT_CHOREO_GREY_HOLD_MS = 2480;
 const QUALITY_ORBIT_CHOREO_ACCENT_AFTER_GREY_MS = 140;
+/** Brief hold after the section enters view before headline / diagram animations begin. */
+const QUALITY_ORBIT_CHOREO_ENTER_PAUSE_MS = 520;
 
 function qualityOrbitMiniIcon(tileIndex: number): ReactElement {
   const svgProps = {
@@ -680,7 +682,11 @@ export default function DoePage() {
         if (!e.isIntersecting || e.intersectionRatio < 0.025) return;
         seen = true;
         io.disconnect();
-        beginChoreography();
+        timers.push(
+          window.setTimeout(() => {
+            beginChoreography();
+          }, QUALITY_ORBIT_CHOREO_ENTER_PAUSE_MS),
+        );
       },
       { threshold: [0, 0.02, 0.06, 0.14], rootMargin: "0px 0px 22% 0px" },
     );
@@ -3039,7 +3045,7 @@ export default function DoePage() {
           />
         </div>
         <div
-          className="relative z-[2] mx-auto w-full max-w-full"
+          className="relative z-[2] mx-auto w-full max-w-full overflow-hidden overscroll-none"
           style={{
             aspectRatio: "10 / 11",
             minHeight: "clamp(32rem, 88vw, 58rem)",
