@@ -10,7 +10,7 @@ import {
   Playfair_Display,
 } from "next/font/google";
 import Link from "next/link";
-import { useState, useEffect, useLayoutEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } from "react";
 import type { ReactElement } from "react";
 
 import {
@@ -428,9 +428,45 @@ const VBENTO_WORKFLOW_GRADIENTS: [string, string, string] = [
 ];
 const VBENTO_GRAIN_BG = `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E")`;
 
-/** Bento → Built-for-you bridge testimonial (typewriter source; includes curly quotes). */
-const VBENTO_BRIDGE_TESTIMONIAL =
-  "\u201cDoe has given me back so much of my time. I can now focus on my patients rather than be my own admin.\u201d";
+/** Bento → Built-for-you bridge — three rotating testimonials (curly quotes; NBSP keeps “my own admin” on one line). */
+type BentoBridgeTestimonial = {
+  quote: string;
+  name: string;
+  meta: string;
+  initials: string;
+};
+
+const VBENTO_BRIDGE_TESTIMONIALS: readonly BentoBridgeTestimonial[] = [
+  {
+    quote:
+      "\u201cDoe has given me back so much of my time. I can now focus on my patients rather than be my\u00a0own\u00a0admin.\u201d",
+    name: "Avery Mills, MD",
+    meta: "Physician · Boston, MA",
+    initials: "AM",
+  },
+  {
+    quote:
+      "\u201cOur front desk finally keeps up with inbound messages — Doe handles the noisy bits so we stay human where it matters.\u201d",
+    name: "Jamie Chen",
+    meta: "Patient Navigator · Toronto, ON",
+    initials: "JC",
+  },
+  {
+    quote:
+      "\u201cI spend less time decoding inbox threads and more time on the floor; the routine paperwork basically disappears.\u201d",
+    name: "Jordan Okonkwo, RN",
+    meta: "Registered Nurse · Seattle, WA",
+    initials: "JO",
+  },
+] as const;
+
+function vbBridgeGraphemeLen(s: string): number {
+  return Array.from(s).length;
+}
+
+function vbBridgeSliceGraphemes(s: string, n: number): string {
+  return Array.from(s).slice(0, Math.max(0, n)).join("");
+}
 
 /** Six rounded tiles around the quality headline (percent positions; viewBox 400×400). */
 const QUALITY_ORBIT_ANCHORS_PCT: ReadonlyArray<{ leftPct: number; topPct: number }> = [
@@ -586,7 +622,7 @@ export default function DoePage() {
   const navBarRowRef = useRef<HTMLElement>(null);
   const [iphoneMenuTopPx, setIphoneMenuTopPx] = useState(88);
   /** Scroll-driven vertical bento (after workflow carousel) */
-  const verticalBentoSectionRef = useRef<HTMLDivElement>(null);
+  const verticalBentoSectionRef = useRef<HTMLElement | null>(null);
   const [verticalBentoU, setVerticalBentoU] = useState(0);
   const [vbMetrics, setVbMetrics] = useState<VerticalBentoScrollMetrics>(() =>
     vbComputeScrollMetrics(800, undefined, 1200),
@@ -603,6 +639,17 @@ export default function DoePage() {
   const [bentoBridgeStage, setBentoBridgeStage] = useState(0);
   const [bentoBridgeTypewriterOn, setBentoBridgeTypewriterOn] = useState(false);
   const [bentoBridgeTypedLen, setBentoBridgeTypedLen] = useState(0);
+  /** Latched once the third vertical-bento dwell completes — bridge motion waits for this. */
+  const [bentoBridgeVbCleared, setBentoBridgeVbCleared] = useState(false);
+  const [bentoBridgeCardIndex, setBentoBridgeCardIndex] = useState(0);
+  /** Bumps when the active card changes so the RAF typewriter restarts cleanly. */
+  const [bentoBridgeTwEpoch, setBentoBridgeTwEpoch] = useState(0);
+  /** Crossfade when auto-rotating or scrubbing testimonials (disk stays put). */
+  const [bentoBridgeContentFade, setBentoBridgeContentFade] = useState(1);
+  const bentoBridgeCard = useMemo(
+    () => VBENTO_BRIDGE_TESTIMONIALS[bentoBridgeCardIndex] ?? VBENTO_BRIDGE_TESTIMONIALS[0],
+    [bentoBridgeCardIndex],
+  );
   /** “Only high-quality patient care” orbit — staged scroll-in choreography */
   const qualityOrbitSectionRef = useRef<HTMLElement | null>(null);
   const [qualityOrbitChoreography, setQualityOrbitChoreography] = useState({
@@ -896,15 +943,20 @@ export default function DoePage() {
   }, []);
 
   useEffect(() => {
-    if (!bentoBridgeInView) return;
+    if (bentoBridgeVbCleared) return;
+    if (verticalBentoU + 1e-9 >= vbMetrics.milestones.uDw2End) setBentoBridgeVbCleared(true);
+  }, [verticalBentoU, vbMetrics.milestones.uDw2End, bentoBridgeVbCleared]);
+
+  useEffect(() => {
+    if (!bentoBridgeInView || !bentoBridgeVbCleared) return;
     let alive = true;
-    const full = VBENTO_BRIDGE_TESTIMONIAL;
+    const full = VBENTO_BRIDGE_TESTIMONIALS[0].quote;
     const mq =
       typeof window !== "undefined" ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
     if (mq?.matches) {
       setBentoBridgeStage(3);
-      setBentoBridgeTypedLen(full.length);
-      setBentoBridgeTypewriterOn(true);
+      setBentoBridgeTypedLen(vbBridgeGraphemeLen(full));
+      setBentoBridgeTypewriterOn(false);
       return;
     }
     setBentoBridgeStage(1);
@@ -923,29 +975,49 @@ export default function DoePage() {
       window.clearTimeout(tQuote);
       window.clearTimeout(tMeta);
     };
-  }, [bentoBridgeInView]);
+  }, [bentoBridgeInView, bentoBridgeVbCleared]);
 
   useEffect(() => {
     if (!bentoBridgeTypewriterOn) return;
-    const full = VBENTO_BRIDGE_TESTIMONIAL;
+    const full = bentoBridgeCard.quote;
+    const cap = vbBridgeGraphemeLen(full);
     if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setBentoBridgeTypedLen(full.length);
+      setBentoBridgeTypedLen(cap);
       return;
     }
     let acc = 0;
     let last = performance.now();
-    const cps = 34;
+    const cps = 13.5;
     let rafId = 0;
     const step = (now: number) => {
       acc += ((now - last) / 1000) * cps;
       last = now;
-      const next = Math.min(full.length, Math.floor(acc));
+      const next = Math.min(cap, Math.floor(acc));
       setBentoBridgeTypedLen((prev) => (next > prev ? next : prev));
-      if (next < full.length) rafId = requestAnimationFrame(step);
+      if (next < cap) rafId = requestAnimationFrame(step);
     };
+    setBentoBridgeTypedLen(0);
     rafId = requestAnimationFrame(step);
     return () => cancelAnimationFrame(rafId);
-  }, [bentoBridgeTypewriterOn]);
+  }, [bentoBridgeTypewriterOn, bentoBridgeCardIndex, bentoBridgeTwEpoch, bentoBridgeCard]);
+
+  useEffect(() => {
+    if (bentoBridgeStage < 3) return;
+    if (typeof window === "undefined") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const id = window.setInterval(() => {
+      setBentoBridgeContentFade(0);
+      window.setTimeout(() => {
+        setBentoBridgeCardIndex((i) => (i + 1) % VBENTO_BRIDGE_TESTIMONIALS.length);
+        setBentoBridgeTypedLen(0);
+        setBentoBridgeTwEpoch((e) => e + 1);
+        setBentoBridgeTypewriterOn(true);
+        setBentoBridgeContentFade(1);
+      }, 420);
+    }, 15500);
+    return () => window.clearInterval(id);
+  }, [bentoBridgeStage]);
 
   useEffect(() => {
     let animationFrameId: number;
@@ -3520,8 +3592,9 @@ export default function DoePage() {
       </section>
 
       {/* Vertical bento rails — pinned stack + scrub */}
-      <div
+      <section
         ref={verticalBentoSectionRef}
+        aria-label="Scroll-driven vertical bento: three workflow panels"
         className={`relative z-10 w-full bg-[#F7F6F3] mt-[clamp(3.75rem,10.5vw,7.75rem)] pt-11 pb-8 md:pt-9 md:pb-6 max-md:pt-11 max-md:pb-12 iphone-page:mt-[clamp(3.25rem,9vw,6.75rem)] iphone-page:pt-12 iphone-page:pb-12 ${VBENTO_CANVAS_PADDING}`}
         style={{ minHeight: vbMetrics.sectionMinPx }}
       >
@@ -3719,7 +3792,7 @@ export default function DoePage() {
               })()}
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Bridge between vertical bento and Built for you — tall testimonial band + patient-care grey grid */}
       <section
@@ -3836,73 +3909,128 @@ export default function DoePage() {
               bentoBridgeStage >= 2 ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"
             }`}
           >
-            <blockquote className="m-0 w-full text-pretty">
-              <span id="vbento-bridge-quote" className="sr-only">
-                {VBENTO_BRIDGE_TESTIMONIAL}
-              </span>
-              {/** Ghost reserves line breaks; overlay uses RAF typewriter to reduce paint jank */}
-              <div
-                className="relative w-full"
-                style={{ isolation: "isolate", backfaceVisibility: "hidden", contain: "layout paint" }}
-              >
-                <p
-                  className={`pointer-events-none m-0 select-none text-left font-normal tracking-[-0.02em] text-transparent opacity-0 ${lora.className}`}
-                  style={{
-                    fontSize: "clamp(2.95rem, 7.25vw, 5.35rem)",
-                    lineHeight: 1.28,
-                  }}
-                  aria-hidden
-                >
-                  {VBENTO_BRIDGE_TESTIMONIAL}
-                </p>
-                <p
-                  className={`absolute left-0 right-0 top-0 m-0 text-left font-normal tracking-[-0.02em] ${lora.className}`}
-                  style={{
-                    fontSize: "clamp(2.95rem, 7.25vw, 5.35rem)",
-                    lineHeight: 1.28,
-                    backgroundImage:
-                      "linear-gradient(168deg, #6e635e 0%, #887056 16%, #9c7d5c 34%, #b08f68 50%, #9a7b5e 68%, #7d6656 84%, #6a5c54 100%)",
-                    WebkitBackgroundClip: "text",
-                    backgroundClip: "text",
-                    color: "transparent",
-                    WebkitTextFillColor: "transparent",
-                    transform: "translateZ(0)",
-                  }}
-                  aria-hidden="true"
-                >
-                  <span className="inline [text-rendering:optimizeLegibility]">
-                    {VBENTO_BRIDGE_TESTIMONIAL.slice(0, bentoBridgeTypedLen)}
-                  </span>
-                  {bentoBridgeTypedLen < VBENTO_BRIDGE_TESTIMONIAL.length ? (
-                    <span
-                      className="bento-bridge-caret motion-reduce:animate-none ml-[0.06em] inline-block w-[0.09em] shrink-0 translate-y-[0.04em] bg-[#b08f68] align-middle"
-                      style={{ height: "0.82em", verticalAlign: "baseline" }}
-                      aria-hidden
-                    />
-                  ) : null}
-                </p>
-              </div>
-            </blockquote>
-          </div>
-
-          <div
-            className={`mt-[clamp(2.5rem,5.5vh,4.25rem)] flex w-full flex-row items-center justify-start gap-3.5 transition-[opacity,transform] duration-[780ms] ease-out motion-reduce:duration-300 ${
-              bentoBridgeStage >= 3 ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"
-            } ${inter.className}`}
-          >
             <div
-              className="flex h-[clamp(3.5rem,9vw,4.75rem)] w-[clamp(3.5rem,9vw,4.75rem)] shrink-0 items-center justify-center rounded-full bg-[#5a5a5a] text-[clamp(1rem,2.35vw,1.2rem)] font-semibold tracking-tight text-white/95"
-              aria-hidden
+              style={{
+                opacity: bentoBridgeContentFade,
+                transition: "opacity 0.42s cubic-bezier(0.4, 0, 0.2, 1)",
+              }}
             >
-              AM
-            </div>
-            <div className="min-w-0 text-left">
-              <p className="m-0 text-[clamp(1.55rem,3.55vw,2.05rem)] font-semibold leading-snug tracking-tight text-gray-900">
-                Avery Mills, MD
-              </p>
-              <p className="mt-1.5 m-0 text-[clamp(1.2rem,2.75vw,1.55rem)] font-medium leading-snug tracking-tight text-gray-600">
-                Physician · Boston, MA
-              </p>
+              <blockquote className="m-0 w-full text-pretty" aria-live="polite">
+                <span id="vbento-bridge-quote" className="sr-only">
+                  {bentoBridgeCard.quote}
+                </span>
+                {/** Ghost reserves line breaks; overlay uses RAF typewriter to reduce paint jank */}
+                <div
+                  className="relative w-full"
+                  style={{ isolation: "isolate", backfaceVisibility: "hidden", contain: "layout paint" }}
+                >
+                  <p
+                    className={`pointer-events-none m-0 select-none text-left font-normal tracking-[-0.02em] text-transparent opacity-0 ${lora.className}`}
+                    style={{
+                      fontSize: "clamp(2.95rem, 7.25vw, 5.35rem)",
+                      lineHeight: 1.28,
+                    }}
+                    aria-hidden
+                  >
+                    {bentoBridgeCard.quote}
+                  </p>
+                  <p
+                    className={`absolute left-0 right-0 top-0 m-0 text-left font-normal tracking-[-0.02em] ${lora.className}`}
+                    style={{
+                      fontSize: "clamp(2.95rem, 7.25vw, 5.35rem)",
+                      lineHeight: 1.28,
+                      backgroundImage:
+                        "linear-gradient(168deg, #6e635e 0%, #887056 16%, #9c7d5c 34%, #b08f68 50%, #9a7b5e 68%, #7d6656 84%, #6a5c54 100%)",
+                      WebkitBackgroundClip: "text",
+                      backgroundClip: "text",
+                      color: "transparent",
+                      WebkitTextFillColor: "transparent",
+                      transform: "translateZ(0)",
+                      textRendering: "geometricPrecision",
+                    }}
+                    aria-hidden="true"
+                  >
+                    <span className="inline">
+                      {vbBridgeSliceGraphemes(bentoBridgeCard.quote, bentoBridgeTypedLen)}
+                    </span>
+                    {bentoBridgeTypedLen < vbBridgeGraphemeLen(bentoBridgeCard.quote) ? (
+                      <span
+                        className="bento-bridge-caret motion-reduce:animate-none ml-[0.06em] inline-block w-[0.09em] shrink-0 translate-y-[0.04em] bg-[#b08f68] align-middle"
+                        style={{ height: "0.82em", verticalAlign: "baseline" }}
+                        aria-hidden
+                      />
+                    ) : null}
+                  </p>
+                </div>
+              </blockquote>
+
+              <div
+                className={`mt-[clamp(2.5rem,5.5vh,4.25rem)] flex w-full flex-col items-start justify-start gap-4 transition-[opacity,transform] duration-[780ms] ease-out motion-reduce:duration-300 ${
+                  bentoBridgeStage >= 3 ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"
+                } ${inter.className}`}
+              >
+                <div className="flex w-full flex-row items-center justify-start gap-3.5">
+                  <div
+                    className="flex h-[clamp(3.5rem,9vw,4.75rem)] w-[clamp(3.5rem,9vw,4.75rem)] shrink-0 items-center justify-center rounded-full bg-[#5a5a5a] text-[clamp(1rem,2.35vw,1.2rem)] font-semibold tracking-tight text-white/95"
+                    aria-hidden
+                  >
+                    {bentoBridgeCard.initials}
+                  </div>
+                  <div className="min-w-0 text-left">
+                    <p className="m-0 text-[clamp(1.55rem,3.55vw,2.05rem)] font-semibold leading-snug tracking-tight text-gray-900">
+                      {bentoBridgeCard.name}
+                    </p>
+                    <p className="mt-1.5 m-0 text-[clamp(1.2rem,2.75vw,1.55rem)] font-medium leading-snug tracking-tight text-gray-600">
+                      {bentoBridgeCard.meta}
+                    </p>
+                  </div>
+                </div>
+                <div
+                  className="flex w-full max-w-[11.25rem] gap-2.5"
+                  role="group"
+                  aria-label="Choose testimonial"
+                >
+                  {VBENTO_BRIDGE_TESTIMONIALS.map((_, i) => {
+                    const active = i === bentoBridgeCardIndex;
+                    return (
+                      <button
+                        key={i}
+                        type="button"
+                        aria-label={`Testimonial ${i + 1} of ${VBENTO_BRIDGE_TESTIMONIALS.length}`}
+                        aria-current={active ? "true" : undefined}
+                        className="h-1.5 min-w-0 flex-1 rounded-full transition-[opacity,transform,background-color] duration-500 ease-out motion-reduce:transition-none"
+                        style={{
+                          opacity: active ? 1 : bentoBridgeStage >= 3 ? 0.38 : 0,
+                          transform: active ? "scaleY(1.22)" : "scaleY(1)",
+                          background: active
+                            ? "linear-gradient(90deg, #8f7359 0%, #c9a47a 48%, #a78b6a 100%)"
+                            : "rgba(115, 108, 100, 0.42)",
+                        }}
+                        onClick={() => {
+                          if (i === bentoBridgeCardIndex) return;
+                          const prefersReduce =
+                            typeof window !== "undefined" &&
+                            window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+                          if (prefersReduce) {
+                            setBentoBridgeCardIndex(i);
+                            setBentoBridgeTypedLen(vbBridgeGraphemeLen(VBENTO_BRIDGE_TESTIMONIALS[i].quote));
+                            setBentoBridgeTypewriterOn(false);
+                            return;
+                          }
+                          setBentoBridgeContentFade(0);
+                          window.setTimeout(() => {
+                            setBentoBridgeCardIndex(i);
+                            setBentoBridgeTypedLen(0);
+                            setBentoBridgeTwEpoch((e) => e + 1);
+                            setBentoBridgeTypewriterOn(true);
+                            setBentoBridgeContentFade(1);
+                          }, 400);
+                        }}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </div>
         </div>
