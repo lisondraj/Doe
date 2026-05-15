@@ -330,6 +330,11 @@ const QUALITY_ORBIT_CHOREO_ENTER_PAUSE_MS = 900;
 const QUALITY_ORBIT_TILE_FIRST_MS = 480;
 const QUALITY_ORBIT_TILE_STEP_MS = 820;
 
+/** Orbit choreography IO: require this much of the section vertically visible (px), capped for tall viewports */
+function qualityOrbitIntersectionMinVisiblePx(viewportHeight: number): number {
+  return Math.min(200, Math.max(120, viewportHeight * 0.17));
+}
+
 function qualityOrbitMiniIcon(tileIndex: number): ReactElement {
   const svgProps = {
     className: "h-[1.375rem] w-[1.375rem] shrink-0 text-white/95",
@@ -691,7 +696,20 @@ export default function DoePage() {
       (entries) => {
         const e = entries[0];
         if (!e || seen) return;
-        if (!e.isIntersecting || e.intersectionRatio < 0.025) return;
+        if (!e.isIntersecting) return;
+
+        const vh = vbAppViewportPx().height;
+        const { top, bottom } = e.boundingClientRect;
+        const visiblePx = Math.min(bottom, vh) - Math.max(top, 0);
+        const minVisiblePx = qualityOrbitIntersectionMinVisiblePx(vh);
+
+        // Enough real overlap inside the viewport — avoids firing off eager IO slack while section 2 fills the frame
+        if (visiblePx < minVisiblePx) return;
+        if (e.intersectionRatio < 0.06) return;
+
+        // Section top must move meaningfully above the bottom edge (not just a sliver while still “in” carousel land)
+        if (top > vh * 0.82) return;
+
         seen = true;
         io.disconnect();
         timers.push(
@@ -700,7 +718,7 @@ export default function DoePage() {
           }, QUALITY_ORBIT_CHOREO_ENTER_PAUSE_MS),
         );
       },
-      { threshold: [0, 0.02, 0.06, 0.14], rootMargin: "0px 0px 22% 0px" },
+      { threshold: [0, 0.06, 0.08, 0.12, 0.18, 0.24], rootMargin: "0px" },
     );
 
     io.observe(el);
