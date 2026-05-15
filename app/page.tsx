@@ -306,6 +306,83 @@ const QUALITY_ORBIT_CONNECTOR_RY = 162;
 const QUALITY_ORBIT_TILE_FILL =
   "linear-gradient(135deg, #E7A944 0%, #D49D4F 28%, #D2774C 62%, #b84e2e 100%)";
 
+/** Ovular connector split into arcs (SVG 400² viewBox) — drawn from apex down both sides simultaneously. */
+const QUALITY_ORBIT_ARC_TOP_Y = 200 - QUALITY_ORBIT_CONNECTOR_RY;
+const QUALITY_ORBIT_ARC_BOTTOM_Y = 200 + QUALITY_ORBIT_CONNECTOR_RY;
+const QUALITY_ORBIT_ARC_RIGHT_D = `M 200 ${QUALITY_ORBIT_ARC_TOP_Y} A ${QUALITY_ORBIT_CONNECTOR_RX} ${QUALITY_ORBIT_CONNECTOR_RY} 0 0 1 200 ${QUALITY_ORBIT_ARC_BOTTOM_Y}`;
+const QUALITY_ORBIT_ARC_LEFT_D = `M 200 ${QUALITY_ORBIT_ARC_TOP_Y} A ${QUALITY_ORBIT_CONNECTOR_RX} ${QUALITY_ORBIT_CONNECTOR_RY} 0 0 0 200 ${QUALITY_ORBIT_ARC_BOTTOM_Y}`;
+
+/** Short captions inside each orbit tile (clockwise from top). */
+const QUALITY_ORBIT_TILE_LABELS = ["Inbox", "Calls", "Schedule", "Billing", "Team", "Chart"] as const;
+
+const QUALITY_ORBIT_CHOREO_HEADLINE_DELAY_MS = 90;
+const QUALITY_ORBIT_CHOREO_DIAGRAM_DELAY_MS = 700;
+/** Grey connector finish before orange traces on top — keep synced with SVG path `stroke-dashoffset` transition (~1.05s). */
+const QUALITY_ORBIT_CHOREO_GREY_HOLD_MS = 1080;
+const QUALITY_ORBIT_CHOREO_ACCENT_AFTER_GREY_MS = 140;
+
+function qualityOrbitMiniIcon(tileIndex: number): ReactElement {
+  const svgProps = {
+    className: "h-[0.8125rem] w-[0.8125rem] shrink-0 text-white/95",
+    width: 13,
+    height: 13,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.65,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    "aria-hidden": true as const,
+  };
+  switch (tileIndex) {
+    case 0:
+      return (
+        <svg {...svgProps}>
+          <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
+          <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
+        </svg>
+      );
+    case 1:
+      return (
+        <svg {...svgProps}>
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+        </svg>
+      );
+    case 2:
+      return (
+        <svg {...svgProps}>
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+          <line x1="16" y1="2" x2="16" y2="6" />
+          <line x1="8" y1="2" x2="8" y2="6" />
+          <line x1="3" y1="10" x2="21" y2="10" />
+        </svg>
+      );
+    case 3:
+      return (
+        <svg {...svgProps}>
+          <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+          <line x1="1" y1="10" x2="23" y2="10" />
+        </svg>
+      );
+    case 4:
+      return (
+        <svg {...svgProps}>
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+      );
+    default:
+      return (
+        <svg {...svgProps}>
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
+        </svg>
+      );
+  }
+}
+
 /** Effective layout viewport height inside `zoom < 1` canvas (matches `100dvh / zoom` compensation). */
 function vbRailsEffectiveInnerHeight(innerWidthPx: number, innerHeightPx: number): number {
   const rz = doeforvcRootZoom(innerWidthPx);
@@ -465,6 +542,13 @@ export default function DoePage() {
   const [verticalBentoRailsOpacity, setVerticalBentoRailsOpacity] = useState(0);
   const [verticalBentoRailsTranslateY, setVerticalBentoRailsTranslateY] = useState(40);
   const verticalBentoHeadlineRef = useRef<HTMLDivElement>(null);
+  /** “Only high-quality patient care” orbit — staged scroll-in choreography */
+  const qualityOrbitSectionRef = useRef<HTMLElement | null>(null);
+  const [qualityOrbitChoreography, setQualityOrbitChoreography] = useState({
+    headline: false,
+    diagram: false,
+    accent: false,
+  });
   const secondSectionRef = useRef<HTMLDivElement>(null);
   const [secondSectionTitleOpacity, setSecondSectionTitleOpacity] = useState(0);
   const [secondSectionTitleTranslateY, setSecondSectionTitleTranslateY] = useState(40);
@@ -648,6 +732,65 @@ export default function DoePage() {
       builtForYouCarouselAdvanceRightRef.current?.();
     }, 3000);
     return () => window.clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    const el = qualityOrbitSectionRef.current;
+    if (!el) return;
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const timers: number[] = [];
+    const clearTimers = () => {
+      timers.forEach((tid) => window.clearTimeout(tid));
+      timers.length = 0;
+    };
+
+    let seen = false;
+
+    const beginChoreography = () => {
+      clearTimers();
+      if (mq.matches) {
+        setQualityOrbitChoreography({ headline: true, diagram: true, accent: true });
+        return;
+      }
+      timers.push(
+        window.setTimeout(() => {
+          setQualityOrbitChoreography((c) => ({ ...c, headline: true }));
+        }, QUALITY_ORBIT_CHOREO_HEADLINE_DELAY_MS),
+      );
+      timers.push(
+        window.setTimeout(() => {
+          setQualityOrbitChoreography((c) => ({ ...c, diagram: true }));
+        }, QUALITY_ORBIT_CHOREO_DIAGRAM_DELAY_MS),
+      );
+      timers.push(
+        window.setTimeout(
+          () => {
+            setQualityOrbitChoreography((c) => ({ ...c, accent: true }));
+          },
+          QUALITY_ORBIT_CHOREO_DIAGRAM_DELAY_MS +
+            QUALITY_ORBIT_CHOREO_GREY_HOLD_MS +
+            QUALITY_ORBIT_CHOREO_ACCENT_AFTER_GREY_MS,
+        ),
+      );
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        const e = entries[0];
+        if (!e || seen) return;
+        if (!e.isIntersecting || e.intersectionRatio < 0.025) return;
+        seen = true;
+        io.disconnect();
+        beginChoreography();
+      },
+      { threshold: [0, 0.02, 0.06, 0.14], rootMargin: "0px 0px 22% 0px" },
+    );
+
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      clearTimers();
+    };
   }, []);
 
   useEffect(() => {
@@ -3014,7 +3157,8 @@ export default function DoePage() {
 
       {/* Quality orbit — between carousel (section 2) and vertical bento (section 3) */}
       <section
-        className={`relative z-10 w-full overflow-x-hidden bg-[#F7F6F3] py-[clamp(5.75rem,13.5vw,9.25rem)] iphone-page:py-[clamp(5.5rem,12vw,8.5rem)] mt-[clamp(1.75rem,4.5vw,3.5rem)] mb-[clamp(1.5rem,4vw,3rem)] ${narrowHorizontalInset}`}
+        ref={qualityOrbitSectionRef}
+        className={`relative z-10 w-full overflow-x-hidden bg-[#F7F6F3] py-[clamp(5.75rem,13.5vw,9.25rem)] iphone-page:py-[clamp(5.5rem,12vw,8.5rem)] mt-[clamp(1.75rem,4.5vw,3.5rem)] mb-[clamp(2.25rem,5.25vw,4rem)] ${narrowHorizontalInset}`}
         aria-labelledby="quality-orbit-heading"
       >
         <h2 id="quality-orbit-heading" className="sr-only">
@@ -3068,21 +3212,65 @@ export default function DoePage() {
               preserveAspectRatio="xMidYMid meet"
               aria-hidden
             >
-              <ellipse
-                cx={200}
-                cy={200}
-                rx={QUALITY_ORBIT_CONNECTOR_RX}
-                ry={QUALITY_ORBIT_CONNECTOR_RY}
-                fill="none"
-                stroke="#d4d4d4"
-                strokeWidth={1.35}
-              />
+              <defs>
+                <linearGradient
+                  id="qualityOrbitOrangeTraceGradient"
+                  gradientUnits="userSpaceOnUse"
+                  x1="200"
+                  y1={QUALITY_ORBIT_ARC_TOP_Y}
+                  x2="200"
+                  y2={QUALITY_ORBIT_ARC_BOTTOM_Y}
+                >
+                  <stop offset="0%" stopColor="#fff2c9" />
+                  <stop offset="42%" stopColor="#f6c056" />
+                  <stop offset="100%" stopColor="#d2663f" />
+                </linearGradient>
+              </defs>
+              {[QUALITY_ORBIT_ARC_RIGHT_D, QUALITY_ORBIT_ARC_LEFT_D].map((d, arcI) => (
+                <path
+                  key={`orbit-grey-${arcI}`}
+                  d={d}
+                  fill="none"
+                  stroke="#d4d4d4"
+                  strokeWidth={1.35}
+                  strokeLinecap="round"
+                  pathLength={1}
+                  strokeDasharray={1}
+                  strokeDashoffset={qualityOrbitChoreography.diagram ? 0 : 1}
+                  vectorEffect="nonScalingStroke"
+                  style={{
+                    transition:
+                      "stroke-dashoffset 1.06s cubic-bezier(0.45, 0, 0.2, 1)",
+                  }}
+                  className="motion-reduce:transition-none"
+                />
+              ))}
+              {[QUALITY_ORBIT_ARC_RIGHT_D, QUALITY_ORBIT_ARC_LEFT_D].map((d, arcI) => (
+                <path
+                  key={`orbit-orange-${arcI}`}
+                  d={d}
+                  fill="none"
+                  stroke="url(#qualityOrbitOrangeTraceGradient)"
+                  strokeWidth={3}
+                  strokeLinecap="round"
+                  pathLength={1}
+                  strokeDasharray={1}
+                  strokeDashoffset={qualityOrbitChoreography.accent ? 0 : 1}
+                  strokeOpacity={qualityOrbitChoreography.accent ? 1 : 0}
+                  vectorEffect="nonScalingStroke"
+                  style={{
+                    transition:
+                      "stroke-dashoffset 1.02s cubic-bezier(0.43, 0, 0.18, 1), stroke-opacity 0.35s ease-out",
+                  }}
+                  className="motion-reduce:transition-none"
+                />
+              ))}
             </svg>
 
             {QUALITY_ORBIT_ANCHORS_PCT.map((p, i) => (
               <div
                 key={i}
-                className="absolute z-[2] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl iphone-page:rounded-[0.9rem]"
+                className="absolute z-[2] overflow-hidden rounded-2xl iphone-page:rounded-[0.9rem]"
                 style={{
                   left: `${p.leftPct}%`,
                   top: `${p.topPct}%`,
@@ -3090,6 +3278,13 @@ export default function DoePage() {
                   height: "clamp(3.7rem, 15.85vw, 6.35rem)",
                   boxShadow:
                     "0 18px 44px rgba(214, 119, 76, 0.34), 0 8px 20px rgba(30, 52, 58, 0.11), 0 3px 8px rgba(255, 255, 255, 0.48)",
+                  opacity: qualityOrbitChoreography.diagram ? 1 : 0,
+                  transform: qualityOrbitChoreography.diagram
+                    ? "translate(-50%, -50%) scale(1)"
+                    : "translate(-50%, -50%) scale(0.92)",
+                  transition: qualityOrbitChoreography.diagram
+                    ? `opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1) ${70 * i}ms, transform 0.58s cubic-bezier(0.28, 0.86, 0.35, 1) ${55 * i}ms`
+                    : "opacity 0.45s ease, transform 0.45s ease",
                 }}
               >
                 <div
@@ -3131,13 +3326,27 @@ export default function DoePage() {
                   </defs>
                   <rect width="100%" height="100%" fill={`url(#quality-orbit-lines-${i})`} />
                 </svg>
+                <div
+                  className={`relative z-[4] pointer-events-none flex h-full flex-col items-center justify-center gap-1 px-1.5 text-center ${inter.className}`}
+                >
+                  {qualityOrbitMiniIcon(i)}
+                  <span className="text-[clamp(0.52rem,1.82vw,0.6875rem)] font-semibold leading-snug tracking-tight text-white/95 drop-shadow-[0_1px_12px_rgba(0,0,0,0.28)]">
+                    {QUALITY_ORBIT_TILE_LABELS[i]}
+                  </span>
+                </div>
               </div>
             ))}
 
             <div className="pointer-events-none absolute inset-0 z-[3] flex items-center justify-center px-4 iphone-page:px-5">
               <p
-                className={`flex flex-col items-center gap-2 text-center font-normal tracking-tight text-gray-900 ${lora.className}`}
-                style={{ textWrap: "balance" }}
+                className={`motion-reduce:transition-none flex flex-col items-center gap-2 text-center font-normal tracking-tight text-gray-900 ${lora.className}`}
+                style={{
+                  textWrap: "balance",
+                  opacity: qualityOrbitChoreography.headline ? 1 : 0,
+                  transform: qualityOrbitChoreography.headline ? "translateY(0)" : "translateY(13px)",
+                  transition:
+                    "opacity 0.64s cubic-bezier(0.4, 0, 0.2, 1), transform 0.64s cubic-bezier(0.4, 0, 0.2, 1)",
+                }}
               >
                 <span className="block leading-[1.06] text-[clamp(2.3rem,9.85vw,3.58rem)] iphone-page:text-[clamp(1.32rem,5.65vw,3.58rem)] iphone-page:whitespace-nowrap">
                   Only high-quality
@@ -3153,7 +3362,7 @@ export default function DoePage() {
       {/* Vertical bento rails — pinned stack + scrub */}
       <div
         ref={verticalBentoSectionRef}
-        className={`relative z-10 w-full bg-[#F7F6F3] pt-8 pb-8 md:pt-7 md:pb-6 max-md:pt-10 max-md:pb-12 iphone-page:pt-12 iphone-page:pb-12 ${VBENTO_CANVAS_PADDING}`}
+        className={`relative z-10 w-full bg-[#F7F6F3] mt-[clamp(3.75rem,10.5vw,7.75rem)] pt-11 pb-8 md:pt-9 md:pb-6 max-md:pt-11 max-md:pb-12 iphone-page:mt-[clamp(3.25rem,9vw,6.75rem)] iphone-page:pt-12 iphone-page:pb-12 ${VBENTO_CANVAS_PADDING}`}
         style={{ minHeight: vbMetrics.sectionMinPx }}
       >
         <div
