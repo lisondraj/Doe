@@ -1897,7 +1897,7 @@ export default function DoePage() {
           <div
             className={`flex flex-col justify-center min-h-0 px-4 py-14 iphone-page:pt-16 iphone-page:pb-9 ${narrowHorizontalInset}`}
           >
-            <div className="text-center iphone-page:mt-5 pl-[clamp(1.75rem,6vw,3.35rem)]">
+            <div className="mx-auto w-full max-w-full text-center iphone-page:mt-5">
               <h1 
                 className={`flex flex-col items-center gap-2 font-normal text-gray-900 tracking-tight ${lora.className}`}
                 style={{
@@ -3034,14 +3034,14 @@ export default function DoePage() {
       {/* Quality orbit — between carousel (section 2) and vertical bento (section 3) */}
       <section
         ref={qualityOrbitSectionRef}
-        className={`relative z-10 w-full overflow-x-hidden overflow-y-visible overscroll-none pointer-events-none bg-[#F7F6F3] py-[clamp(5.75rem,13.5vw,9.25rem)] iphone-page:py-[clamp(5.5rem,12vw,8.5rem)] mt-[clamp(1.75rem,4.5vw,3.5rem)] mb-[clamp(2.25rem,5.25vw,4rem)] ${narrowHorizontalInset}`}
+        className={`relative z-10 w-full overflow-visible overscroll-none pointer-events-none bg-[#F7F6F3] pt-[clamp(5.75rem,13.5vw,9.25rem)] pb-[clamp(7.25rem,17vw,12rem)] iphone-page:pt-[clamp(5.5rem,12vw,8.5rem)] iphone-page:pb-[clamp(7rem,15vw,10.5rem)] mt-[clamp(1.75rem,4.5vw,3.5rem)] mb-[clamp(3.5rem,8vw,6.25rem)] ${narrowHorizontalInset}`}
         aria-labelledby="quality-orbit-heading"
       >
         <h2 id="quality-orbit-heading" className="sr-only">
           Only high-quality patient care.
         </h2>
         {/* Grid backdrop — taller draw than section so lines read above/below the diagram */}
-        <div className="pointer-events-none absolute inset-0 z-0" aria-hidden>
+        <div className="pointer-events-none absolute inset-0 z-0 overflow-x-clip overflow-y-visible" aria-hidden>
           <svg
             className="pointer-events-none absolute left-0 w-full"
             style={{
@@ -3079,7 +3079,7 @@ export default function DoePage() {
           />
         </div>
         <div
-          className="relative z-[2] mx-auto w-full max-w-full overflow-x-hidden overflow-y-visible overscroll-none pointer-events-none pb-[clamp(1.75rem,5vw,3rem)]"
+          className="relative z-[2] mx-auto w-full max-w-full overflow-visible overscroll-none pointer-events-none pb-[clamp(3rem,10vw,5.75rem)]"
           style={{
             aspectRatio: "10 / 11",
             minHeight: "clamp(32rem, 88vw, 58rem)",
