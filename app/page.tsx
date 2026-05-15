@@ -1,7 +1,7 @@
 "use client";
 
 import { Lora, Inter } from "next/font/google";
-import { useState, useEffect, useLayoutEffect, useRef } from "react";
+import { useState, useEffect, useLayoutEffect, useRef, useCallback } from "react";
 
 const lora = Lora({
   subsets: ["latin"],
@@ -323,7 +323,6 @@ export default function DoePage() {
   const [hoveredBox, setHoveredBox] = useState<number | null>(null);
   const [expandedBentoBox, setExpandedBentoBox] = useState<number | null>(null);
   const [hoveredBentoBox, setHoveredBentoBox] = useState<number | null>(null);
-  const [slidingBoxScroll, setSlidingBoxScroll] = useState(0);
   const [selectedWordIndex, setSelectedWordIndex] = useState(2);
   const [carouselOffset, setCarouselOffset] = useState(0);
   const [isCarouselTransitioning, setIsCarouselTransitioning] = useState(false);
@@ -338,20 +337,14 @@ export default function DoePage() {
   const [carouselSectionOpacity, setCarouselSectionOpacity] = useState(0);
   const [carouselSectionTranslateY, setCarouselSectionTranslateY] = useState(40);
   const [activeWordVisible, setActiveWordVisible] = useState(true);
-  const [isManualScroll, setIsManualScroll] = useState(false);
   const [isSlidingPaused, setIsSlidingPaused] = useState(false);
-  const slidingBoxRefs = [
-    useRef<HTMLDivElement>(null),
-    useRef<HTMLDivElement>(null),
-    useRef<HTMLDivElement>(null),
-    useRef<HTMLDivElement>(null),
-    useRef<HTMLDivElement>(null),
-    useRef<HTMLDivElement>(null),
-  ];
+  /** Second-section workflow carousel: one panel at a time (index 0..5). */
+  const [workflowCarouselIndex, setWorkflowCarouselIndex] = useState(0);
+  /** When true, skip CSS transition (used on index wrap 5↔0). */
+  const [workflowCarouselSkipMotion, setWorkflowCarouselSkipMotion] = useState(false);
   /** Full fixed `<nav>` — sheet top aligns to `<nav>` bottom (includes bar underline when menu open). */
   const navBarRowRef = useRef<HTMLElement>(null);
   const [iphoneMenuTopPx, setIphoneMenuTopPx] = useState(88);
-  const autoScrollPositionRef = useRef(0);
   /** Scroll-driven vertical bento (after workflow carousel) */
   const verticalBentoSectionRef = useRef<HTMLDivElement>(null);
   const [verticalBentoU, setVerticalBentoU] = useState(0);
@@ -727,85 +720,7 @@ export default function DoePage() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [vbMetrics]);
 
-  // Auto-slide using optimized requestAnimationFrame with hardware acceleration
-  useEffect(() => {
-    // Only start sliding animation after title animation completes
-    if (!shouldStartSlidingAnimation) return;
-    
-    const boxWidth = isPhoneLayout ? phoneSlideSize.w : 760;
-    const boxGap = isPhoneLayout ? 12 : 32;
-    const boxTotalWidth = boxWidth + boxGap;
-    const totalBoxes = 6;
-    const totalWidth = totalBoxes * boxTotalWidth; // Total width of all boxes
-    
-    let animationFrameId: number;
-    let lastTime = performance.now();
-    const slideSpeed = 0.05; // pixels per millisecond
-    let lastStateUpdate = 0;
-    
-    const animate = (currentTime: number) => {
-      const deltaTime = Math.min(currentTime - lastTime, 16.67); // Cap at 60fps
-      lastTime = currentTime;
-      
-      if (!isManualScroll && !isSlidingPaused) {
-        // Let position grow positively forever (no reset)
-        autoScrollPositionRef.current += slideSpeed * deltaTime;
-        
-        // Calculate modular offset (ensures positive value)
-        const offset = ((autoScrollPositionRef.current % totalWidth) + totalWidth) % totalWidth;
-        
-        // Position each box individually using modular arithmetic
-        slidingBoxRefs.forEach((boxRef, i) => {
-          if (!boxRef.current) return;
-          
-          // Base position: i * boxTotalWidth, then subtract offset
-          let pos = i * boxTotalWidth - offset;
-          
-          // If box exits to the left, teleport it to the right seamlessly
-          if (pos < -boxTotalWidth) {
-            pos += totalWidth;
-          }
-          
-          // Use transform3d for hardware acceleration
-          boxRef.current.style.transform = `translate3d(${pos}px, 0, 0)`;
-          boxRef.current.style.willChange = 'transform';
-        });
-        
-        // Only update state occasionally for arrow visibility (every ~100ms)
-        if (currentTime - lastStateUpdate > 100) {
-          setSlidingBoxScroll(Math.round(autoScrollPositionRef.current));
-          lastStateUpdate = currentTime;
-        }
-      }
-      
-      animationFrameId = requestAnimationFrame(animate);
-    };
-    
-    animationFrameId = requestAnimationFrame(animate);
-    
-    return () => {
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-      }
-    };
-  }, [isManualScroll, shouldStartSlidingAnimation, isSlidingPaused, phoneSlideSize.w, phoneSlideSize.h]);
 
-  // Initialize box positions when animation starts
-  useEffect(() => {
-    if (!shouldStartSlidingAnimation) return;
-    
-    const boxWidth = isPhoneLayout ? phoneSlideSize.w : 760;
-    const boxGap = isPhoneLayout ? 12 : 32;
-    const boxTotalWidth = boxWidth + boxGap;
-    
-    // Set initial positions for all boxes
-    slidingBoxRefs.forEach((boxRef, i) => {
-      if (boxRef.current) {
-        const initialPos = i * boxTotalWidth;
-        boxRef.current.style.transform = `translate3d(${initialPos}px, 0, 0)`;
-      }
-    });
-  }, [shouldStartSlidingAnimation, phoneSlideSize.w, phoneSlideSize.h]);
 
   useEffect(() => {
     // Add bento expand and sliding animation styles
@@ -926,7 +841,6 @@ export default function DoePage() {
   const slideUniformScale = Math.max(slideBoxW / 700, slideBoxH / 700);
   const scaledSide = 700 * slideUniformScale;
   const boxTotalWidth = slideBoxW + slideGap;
-  const totalBoxes = carouselSlideCount;
   /**
    * The inner 700×700 design div is centred inside each card with `overflow:hidden`.
    * On portrait-phone the scaled height > card width, so the left/right edges of the
@@ -965,80 +879,54 @@ export default function DoePage() {
   );
   /** Prior auth overlapping cards (box 5): scale entire composition */
   const priorAuthComposeScale = Math.min(1, Math.max(0.62, slideVisibleWidth700 / 478));
-  const totalWidth = totalBoxes * boxTotalWidth;
-  
-  const applySlidingBoxPositions = (scrollPos: number, shouldWrap: boolean = true) => {
-    const offset = ((scrollPos % totalWidth) + totalWidth) % totalWidth;
 
-    slidingBoxRefs.forEach((boxRef, i) => {
-      if (!boxRef.current) return;
+  /** Step transition for workflow carousel (one card at a time, next from the right). */
+  const workflowCarouselTransitionMs = 480;
 
-      let pos = i * boxTotalWidth - offset;
-      if (shouldWrap && pos < -boxTotalWidth) {
-        pos += totalWidth;
-      }
-
-      boxRef.current.style.transform = `translate3d(${pos}px, 0, 0)`;
-      boxRef.current.style.willChange = 'transform';
-    });
-  };
-
-  const handleSlideLeft = () => {
-    if (isManualScroll) return;
-
-    setIsManualScroll(true);
-    const newScroll = autoScrollPositionRef.current + boxTotalWidth;
-    autoScrollPositionRef.current = newScroll;
-    setSlidingBoxScroll(newScroll);
-
-    // Move every box left by exactly one step from its current rendered position.
-    // Reading the actual transform avoids modular-arithmetic jumps when the
-    // offset wraps around (e.g. offset 2928 → 0).
-    slidingBoxRefs.forEach((boxRef, i) => {
-      if (!boxRef.current) return;
-      const match = boxRef.current.style.transform.match(/translate3d\((-?[\d.]+)px/);
-      const currentX = match ? parseFloat(match[1]) : i * boxTotalWidth;
-      boxRef.current.style.transition = 'transform 800ms cubic-bezier(0.4, 0, 0.2, 1)';
-      boxRef.current.style.transform = `translate3d(${currentX - boxTotalWidth}px, 0, 0)`;
-    });
-
-    setTimeout(() => {
-      setIsManualScroll(false);
-      slidingBoxRefs.forEach((boxRef) => {
-        if (boxRef.current) boxRef.current.style.transition = 'none';
+  const advanceWorkflowCarousel = useCallback(
+    (delta: 1 | -1) => {
+      setWorkflowCarouselIndex((i) => {
+        if (delta === 1) {
+          if (i === carouselSlideCount - 1) {
+            setWorkflowCarouselSkipMotion(true);
+            return 0;
+          }
+          return i + 1;
+        }
+        if (i === 0) {
+          setWorkflowCarouselSkipMotion(true);
+          return carouselSlideCount - 1;
+        }
+        return i - 1;
       });
-      // Silently snap to canonical (wrapped) positions now that boxes are off-screen.
-      applySlidingBoxPositions(newScroll, true);
-    }, 820);
-  };
+    },
+    [carouselSlideCount],
+  );
 
-  const handleSlideRight = () => {
-    if (isManualScroll) return;
+  const goWorkflowCarouselNext = useCallback(() => {
+    advanceWorkflowCarousel(1);
+  }, [advanceWorkflowCarousel]);
 
-    setIsManualScroll(true);
-    const newScroll = autoScrollPositionRef.current - boxTotalWidth;
-    autoScrollPositionRef.current = newScroll;
-    setSlidingBoxScroll(newScroll);
+  const goWorkflowCarouselPrev = useCallback(() => {
+    advanceWorkflowCarousel(-1);
+  }, [advanceWorkflowCarousel]);
 
-    slidingBoxRefs.forEach((boxRef, i) => {
-      if (!boxRef.current) return;
-      const match = boxRef.current.style.transform.match(/translate3d\((-?[\d.]+)px/);
-      const currentX = match ? parseFloat(match[1]) : i * boxTotalWidth;
-      boxRef.current.style.transition = 'transform 800ms cubic-bezier(0.4, 0, 0.2, 1)';
-      boxRef.current.style.transform = `translate3d(${currentX + boxTotalWidth}px, 0, 0)`;
+  useLayoutEffect(() => {
+    if (!workflowCarouselSkipMotion) return;
+    const id = requestAnimationFrame(() => {
+      setWorkflowCarouselSkipMotion(false);
     });
+    return () => cancelAnimationFrame(id);
+  }, [workflowCarouselIndex, workflowCarouselSkipMotion]);
 
-    setTimeout(() => {
-      setIsManualScroll(false);
-      slidingBoxRefs.forEach((boxRef) => {
-        if (boxRef.current) boxRef.current.style.transition = 'none';
-      });
-      applySlidingBoxPositions(newScroll, true);
-    }, 820);
-  };
+  useEffect(() => {
+    if (!shouldStartSlidingAnimation || isSlidingPaused) return;
+    const id = window.setInterval(() => {
+      advanceWorkflowCarousel(1);
+    }, 5000);
+    return () => window.clearInterval(id);
+  }, [shouldStartSlidingAnimation, isSlidingPaused, advanceWorkflowCarousel, workflowCarouselIndex]);
 
-  // Determine arrow visibility - with perpetual scroll, arrows can always be shown
-  // or we can hide them since there's no end. For now, always show them.
   const showLeftArrow = true;
   const showRightArrow = true;
 
@@ -1853,7 +1741,7 @@ export default function DoePage() {
             {showLeftArrow && (
               <button 
                 className="absolute left-8 iphone-page:left-4 z-20 transition-opacity duration-200 hover:opacity-70"
-                onClick={handleSlideRight}
+                onClick={goWorkflowCarouselPrev}
                 style={{
                   filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))'
                 }}
@@ -1866,7 +1754,7 @@ export default function DoePage() {
             {showRightArrow && (
               <button 
                 className="absolute right-8 iphone-page:right-4 z-20 transition-opacity duration-200 hover:opacity-70"
-                onClick={handleSlideLeft}
+                onClick={goWorkflowCarouselNext}
                 style={{
                   filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))'
                 }}
@@ -1877,29 +1765,36 @@ export default function DoePage() {
               </button>
             )}
             
-            {/* Sliding squares container - relative positioning for absolute children */}
+            {/* One card viewport; track translates so the next slide enters from the right */}
             <div 
-              className="relative iphone-page:rounded-2xl"
+              className="relative iphone-page:rounded-2xl mx-auto"
               style={{ 
-                width: '100%',
+                width: slideBoxW,
                 height: slideBoxH,
                 overflow: 'hidden'
               }}
             >
-            {/* Boxes - absolutely positioned for modular recycling */}
+            <div
+              className="flex h-full flex-row shrink-0"
+              style={{
+                gap: slideGap,
+                transform: `translate3d(-${workflowCarouselIndex * boxTotalWidth}px, 0, 0)`,
+                transition: workflowCarouselSkipMotion
+                  ? "none"
+                  : `transform ${workflowCarouselTransitionMs}ms cubic-bezier(0.4, 0, 0.2, 1)`,
+                willChange: "transform",
+              }}
+            >
             {([0, 1, 2, 3, 4, 5] as const).map((i) => {
               // Box 1 (index 0) - AI Receptionist
               if (i === 0) {
                 return (
                   <div
                     key={`box-${i}`}
-                    ref={slidingBoxRefs[i]}
-                    className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl iphone-page:shadow-md"
+                    className="rounded-2xl relative shrink-0 overflow-hidden shadow-xl iphone-page:shadow-md"
                     style={{
                       width: slideBoxW,
                       height: slideBoxH,
-                      transform: "translate3d(0, 0, 0)",
-                      willChange: "transform",
                     }}
                   >
                     <div
@@ -2031,13 +1926,10 @@ export default function DoePage() {
                 return (
                   <div
                     key={`box-${i}`}
-                    ref={slidingBoxRefs[i]}
-                    className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl iphone-page:shadow-md"
+                    className="rounded-2xl relative shrink-0 overflow-hidden shadow-xl iphone-page:shadow-md"
                     style={{
                       width: slideBoxW,
                       height: slideBoxH,
-                      transform: "translate3d(0, 0, 0)",
-                      willChange: "transform",
                     }}
                   >
                     <div
@@ -2342,13 +2234,10 @@ export default function DoePage() {
                 return (
                   <div
                     key={`box-${i}`}
-                    ref={slidingBoxRefs[i]}
-                    className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl iphone-page:shadow-md"
+                    className="rounded-2xl relative shrink-0 overflow-hidden shadow-xl iphone-page:shadow-md"
                     style={{
                       width: slideBoxW,
                       height: slideBoxH,
-                      transform: "translate3d(0, 0, 0)",
-                      willChange: "transform",
                     }}
                   >
                     <div
@@ -2520,13 +2409,10 @@ export default function DoePage() {
                 return (
                 <div
                   key={`box-${i}`}
-                  ref={slidingBoxRefs[i]}
-                  className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl iphone-page:shadow-md"
+                  className="rounded-2xl relative shrink-0 overflow-hidden shadow-xl iphone-page:shadow-md"
                   style={{
                     width: slideBoxW,
                     height: slideBoxH,
-                    transform: "translate3d(0, 0, 0)",
-                    willChange: "transform",
                   }}
                 >
                   <div
@@ -2638,13 +2524,10 @@ export default function DoePage() {
                 return (
                   <div
                     key={`box-${i}`}
-                    ref={slidingBoxRefs[i]}
-                    className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl iphone-page:shadow-md"
+                    className="rounded-2xl relative shrink-0 overflow-hidden shadow-xl iphone-page:shadow-md"
                     style={{
                       width: slideBoxW,
                       height: slideBoxH,
-                      transform: "translate3d(0, 0, 0)",
-                      willChange: "transform",
                     }}
                   >
                     <div
@@ -2766,13 +2649,10 @@ export default function DoePage() {
                 return (
                   <div
                     key={`box-${i}`}
-                    ref={slidingBoxRefs[i]}
-                    className="rounded-2xl absolute top-0 left-0 overflow-hidden shadow-xl iphone-page:shadow-md"
+                    className="rounded-2xl relative shrink-0 overflow-hidden shadow-xl iphone-page:shadow-md"
                     style={{
                       width: slideBoxW,
                       height: slideBoxH,
-                      transform: "translate3d(0, 0, 0)",
-                      willChange: "transform",
                     }}
                   >
                     <div
@@ -2941,6 +2821,7 @@ export default function DoePage() {
 
               return null;
             })}
+            </div>
             </div>
           </div>
           </div>
