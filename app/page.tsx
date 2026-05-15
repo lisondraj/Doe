@@ -154,12 +154,12 @@ function vbComputeScrollMetrics(
 ): VerticalBentoScrollMetrics {
   const vh = Math.max(innerHeightPx, 320);
   const openPx = Math.round(Math.max(vh * 0.82, 400));
-  /** Long dwell on first two rails; third rail only needs a short pass before exit. */
   const dwellLongPx = Math.round(Math.max(vh * 5.05, 2800));
-  const dwellThirdPx = Math.round(Math.max(vh * 0.48, 280));
+  /** Rail 3: short dwell + tight exit/tail so the page can scroll into the spacer before the skinny bar completes the third phase. */
+  const dwellThirdPx = Math.round(Math.max(vh * 0.16, 88));
   const swapPx = Math.round(Math.max(vh * 0.5, 360));
-  const exitPx = Math.round(Math.max(vh * 0.52, 320));
-  const tailPx = Math.round(Math.max(vh * 0.1, 96));
+  const exitPx = Math.round(Math.max(vh * 0.3, 180));
+  const tailPx = Math.round(Math.max(vh * 0.06, 72));
   const scrollablePx =
     openPx + dwellLongPx + swapPx + dwellLongPx + swapPx + dwellThirdPx + exitPx + tailPx;
   const sectionMinPx = scrollablePx + vh;
@@ -4056,7 +4056,7 @@ export default function DoePage() {
 
       </div>
 
-      {/* Inquisara — matches first workflow slide: 135° gold→teak gradient, grain + diagonal grid (no drop shadow) */}
+      {/* Inquisara — Prior-auth slide shell: 90° teal→gold gradient, grain + wave lines (distinct from other slides); no heading shadow */}
       <div className={`relative z-10 w-full pb-[clamp(0.85rem,2.75vw,1.35rem)] ${VBENTO_CANVAS_PADDING}`}>
         <section
           aria-labelledby="inquisara-teaser-heading"
@@ -4067,7 +4067,7 @@ export default function DoePage() {
             className="pointer-events-none absolute inset-0 rounded-[inherit]"
             style={{
               background:
-                "linear-gradient(135deg, #E7A944 0%, #D49D4F 30%, #D2774C 60%, #1E343A 100%)",
+                "linear-gradient(90deg, #1E343A 0%, #D2774C 38%, #D49D4F 68%, #E7A944 100%)",
             }}
           />
           <div
@@ -4087,32 +4087,22 @@ export default function DoePage() {
               preserveAspectRatio="none"
               aria-hidden
             >
-              <defs>
-                <pattern
-                  id="inquisaraWorkflowDiagGrid"
-                  x="0"
-                  y="0"
-                  width="60"
-                  height="60"
-                  patternUnits="userSpaceOnUse"
-                  patternTransform="rotate(45)"
-                >
-                  <path
-                    d="M 0 0 L 60 0 M 0 0 L 0 60"
-                    fill="none"
-                    stroke="rgba(255, 255, 255, 0.15)"
-                    strokeWidth="0.8"
-                  />
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#inquisaraWorkflowDiagGrid)" />
+              {Array.from({ length: 12 }, (_, w) => (
+                <path
+                  key={`inquisara-wave-${w}`}
+                  d={`M -40 ${60 + w * 58} Q 175 ${20 + w * 58} 350 ${60 + w * 58} T 740 ${60 + w * 58}`}
+                  fill="none"
+                  stroke="rgba(255, 255, 255, 0.12)"
+                  strokeWidth="1"
+                />
+              ))}
             </svg>
           </div>
         </div>
         <div className="relative z-10 mx-auto flex min-h-[min(41vw,17rem)] w-full max-w-full flex-col items-center justify-center px-4 py-[clamp(2rem,5.65vw,3.95rem)] text-center md:min-h-[min(37vw,15.75rem)] md:px-6 iphone-page:px-4 iphone-page:py-[clamp(1.85rem,7.25vw,3.65rem)]">
           <h2
             id="inquisara-teaser-heading"
-            className={`font-normal tracking-tight text-white drop-shadow-[0_2px_14px_rgba(0,0,0,0.2)] ${inter.className}`}
+            className={`font-normal tracking-tight text-white ${inter.className}`}
             style={{
               fontSize: "clamp(2rem, min(8.5vw, 9.5vmin), 3.85rem)",
               lineHeight: 1.06,
