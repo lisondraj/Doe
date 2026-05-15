@@ -23,19 +23,25 @@ export const MOBILE_NAV_FOOTER_SLIDES: ReadonlyArray<{
     date: "March 12, 2026",
     gradient:
       "linear-gradient(142deg, #f0b24a 0%, #e08a3c 32%, #c45a32 58%, #7a3028 82%, #132428 100%)",
+    /** Same dual-line mesh as hero + page footer (app/page.tsx) */
     lineOverlay: {
       backgroundImage: `
         repeating-linear-gradient(
-          -38deg,
+          -32deg,
           transparent 0px,
-          transparent 18px,
-          rgba(255, 255, 255, 0.16) 18px,
-          rgba(255, 255, 255, 0.16) 21px,
-          transparent 21px,
-          transparent 42px
+          transparent 11px,
+          rgba(255, 255, 255, 0.09) 11px,
+          rgba(255, 255, 255, 0.09) 12px
+        ),
+        repeating-linear-gradient(
+          32deg,
+          transparent 0px,
+          transparent 15px,
+          rgba(30, 52, 58, 0.14) 15px,
+          rgba(30, 52, 58, 0.14) 16px
         )`,
-      opacity: 0.52,
-      mixBlendMode: "overlay",
+      opacity: 0.55,
+      mixBlendMode: "soft-light",
     },
   },
   {

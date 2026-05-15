@@ -18,7 +18,6 @@ import Link from "next/link";
 import {
   dropdownContent,
   MOBILE_NAV_FOOTER_SLIDES,
-  MobileNavFooterShapeIcon,
   NAV_ITEMS,
 } from "@/components/doe-nav-data";
 import { doeforvcRootZoom } from "@/lib/doeforvc-zoom";
@@ -155,26 +154,25 @@ function vbComputeScrollMetrics(
 ): VerticalBentoScrollMetrics {
   const vh = Math.max(innerHeightPx, 320);
   const openPx = Math.round(Math.max(vh * 0.82, 400));
-  const dwellPx = Math.round(Math.max(vh * 5.05, 2800));
-  /** Third rail dwell — long scrub while expanded; rail stays open through exit/tail */
-  const dwellLastPx = Math.max(Math.round(dwellPx * 0.92), Math.round(vh * 4.25));
-  const swapPx = Math.round(Math.max(vh * 0.62, 420));
-  /** Scroll slack after rail 3 dwell while stack stays pinned (rail 3 no longer collapses) */
+  /** Long dwell on first two rails; third rail only needs a short pass before exit. */
+  const dwellLongPx = Math.round(Math.max(vh * 5.05, 2800));
+  const dwellThirdPx = Math.round(Math.max(vh * 0.48, 280));
+  const swapPx = Math.round(Math.max(vh * 0.5, 360));
   const exitPx = Math.round(Math.max(vh * 0.52, 320));
-  const tailPx = Math.round(Math.max(vh * 0.42, 260));
+  const tailPx = Math.round(Math.max(vh * 0.1, 96));
   const scrollablePx =
-    openPx + dwellPx + swapPx + dwellPx + swapPx + dwellLastPx + exitPx + tailPx;
+    openPx + dwellLongPx + swapPx + dwellLongPx + swapPx + dwellThirdPx + exitPx + tailPx;
   const sectionMinPx = scrollablePx + vh;
   const anchor = Math.max(72, Math.min(140, Math.round(vh * 0.095)));
   const railsVhIn = railsLayoutHeightPx ?? vh;
   const stickyColumnH = vbStickyRailsViewportPx(Math.min(vh, railsVhIn), innerWidthPx);
   const milestones = vbBuildMilestonesU(scrollablePx, [
     openPx,
-    dwellPx,
+    dwellLongPx,
     swapPx,
-    dwellPx,
+    dwellLongPx,
     swapPx,
-    dwellLastPx,
+    dwellThirdPx,
     exitPx,
     tailPx,
   ]);
@@ -1736,8 +1734,9 @@ export default function DoePage() {
                     {MOBILE_NAV_FOOTER_SLIDES.map((slide) => (
                       <div
                         key={slide.boxTitle}
-                        className="w-full min-w-full shrink-0 snap-center px-6 iphone-page:pl-[max(1.35rem,calc(env(safe-area-inset-left,0px)+10px+2vmin))] iphone-page:pr-[max(1.35rem,calc(env(safe-area-inset-right,0px)+8px+1.25vmin))] space-y-3 box-border iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)]"
+                        className={`w-full min-w-full shrink-0 snap-center box-border px-4 ${narrowHorizontalInset} iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)] space-y-3`}
                       >
+                        <div className="mx-auto w-full max-w-[min(100%,42rem)] space-y-3 iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)]">
                         <div className="relative rounded-[1.375rem] iphone-page:rounded-[clamp(1.2rem,1rem+1.4vmin,2.1rem)] overflow-hidden min-h-[30rem] iphone-page:min-h-[clamp(22rem,58vmin,48rem)] shadow-[0_10px_32px_rgba(0,0,0,0.12)]">
                           <div
                             className="absolute inset-0"
@@ -1776,20 +1775,24 @@ export default function DoePage() {
                             ))}
                           </div>
                           <div className="absolute bottom-0 left-0 right-0 z-[3] flex items-center justify-start p-8 iphone-page:p-[clamp(1.35rem,0.9rem+3.1vmin,3.5rem)]">
-                            <div
-                              className={`flex items-center gap-7 iphone-page:gap-[clamp(1.65rem,1.2rem+3.1vmin,3.2rem)] text-white ${inter.className}`}
-                            >
-                              <MobileNavFooterShapeIcon shape={slide.shape} />
-                              <span className="text-[3.25rem] iphone-page:text-[clamp(2.05rem,1rem+5.5vmin,4.65rem)] font-medium tracking-tight leading-none">
-                                {slide.boxTitle}
-                              </span>
+                            <div className={`text-white ${inter.className}`}>
+                              {slide.boxTitle === "Inquisara" ? (
+                                <span className="text-[3.25rem] iphone-page:text-[clamp(2.05rem,1rem+5.5vmin,4.65rem)] tracking-tight leading-none">
+                                  <span className="font-medium">In</span>
+                                  <span className="font-light">quisara</span>
+                                </span>
+                              ) : (
+                                <span className="text-[3.25rem] iphone-page:text-[clamp(2.05rem,1rem+5.5vmin,4.65rem)] font-medium tracking-tight leading-none">
+                                  {slide.boxTitle}
+                                </span>
+                              )}
                             </div>
                           </div>
                         </div>
                         <div>
                           <button
                             type="button"
-                            className={`flex w-full flex-row flex-wrap items-center justify-start gap-2.5 iphone-page:gap-[clamp(0.85rem,0.55rem+1.2vmin,1rem)] text-left active:opacity-80 transition-opacity ${inter.className}`}
+                            className={`w-full text-left active:opacity-80 transition-opacity ${inter.className}`}
                             onClick={() => {
                               setMobileNavOpen(false);
                               requestAnimationFrame(() => {
@@ -1799,26 +1802,10 @@ export default function DoePage() {
                                 });
                               });
                             }}
-                            aria-label={slide.outside}
+                            aria-label="See what we are building"
                           >
-                            <span className="text-[1.5rem] iphone-page:text-[clamp(1.38rem,0.88rem+2.3vmin,2.45rem)] font-medium text-gray-800 tracking-tight leading-snug">
-                              {slide.outside}
-                            </span>
-                            <span
-                              className="shrink-0 inline-flex h-14 w-14 iphone-page:h-[clamp(2.85rem,11.5vmin,4.85rem)] iphone-page:w-[clamp(2.85rem,11.5vmin,4.85rem)] items-center justify-center rounded-full border-2 border-gray-300/90 bg-white text-gray-900 shadow-[0_4px_14px_rgba(0,0,0,0.08)]"
-                              aria-hidden
-                            >
-                              <svg
-                                className="w-7 h-7 iphone-page:w-[clamp(1.4rem,5.35vmin,2.35rem)] iphone-page:h-[clamp(1.4rem,5.35vmin,2.35rem)]"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth={2}
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <path d="M5 12h14M13 6l6 6-6 6" />
-                              </svg>
+                            <span className="text-[1.5rem] iphone-page:text-[clamp(1.38rem,0.88rem+2.3vmin,2.45rem)] font-medium text-gray-800 tracking-tight leading-snug underline decoration-gray-800/80 decoration-[2.5px] underline-offset-[5px]">
+                              See what we&apos;re building&nbsp;→
                             </span>
                           </button>
                           <p
@@ -1826,6 +1813,7 @@ export default function DoePage() {
                           >
                             {slide.date}
                           </p>
+                        </div>
                         </div>
                       </div>
                     ))}
