@@ -319,16 +319,16 @@ const QUALITY_ORBIT_TILE_LABELS = [
   ["Patient Facing"],
 ] as const;
 
-const QUALITY_ORBIT_CHOREO_HEADLINE_DELAY_MS = 90;
-const QUALITY_ORBIT_CHOREO_DIAGRAM_DELAY_MS = 700;
-/** Grey connector finishes before orange traces — keep synced with grey arc `stroke-dashoffset` duration below (~2.35s). */
-const QUALITY_ORBIT_CHOREO_GREY_HOLD_MS = 2480;
-const QUALITY_ORBIT_CHOREO_ACCENT_AFTER_GREY_MS = 140;
+const QUALITY_ORBIT_CHOREO_HEADLINE_DELAY_MS = 180;
+const QUALITY_ORBIT_CHOREO_DIAGRAM_DELAY_MS = 1280;
+/** Grey connector finishes before orange traces — keep ≥ grey arc CSS duration (~4.5s) + slack. */
+const QUALITY_ORBIT_CHOREO_GREY_HOLD_MS = 4600;
+const QUALITY_ORBIT_CHOREO_ACCENT_AFTER_GREY_MS = 220;
 /** Brief hold after the section enters view before headline / diagram animations begin. */
-const QUALITY_ORBIT_CHOREO_ENTER_PAUSE_MS = 520;
+const QUALITY_ORBIT_CHOREO_ENTER_PAUSE_MS = 900;
 /** Tiles appear clockwise from top (index 0); gap between each tile reveal. */
-const QUALITY_ORBIT_TILE_FIRST_MS = 260;
-const QUALITY_ORBIT_TILE_STEP_MS = 440;
+const QUALITY_ORBIT_TILE_FIRST_MS = 480;
+const QUALITY_ORBIT_TILE_STEP_MS = 820;
 
 function qualityOrbitMiniIcon(tileIndex: number): ReactElement {
   const svgProps = {
@@ -687,7 +687,7 @@ export default function DoePage() {
         (nTiles - 1) * QUALITY_ORBIT_TILE_STEP_MS;
       const greyDoneMs = QUALITY_ORBIT_CHOREO_DIAGRAM_DELAY_MS + QUALITY_ORBIT_CHOREO_GREY_HOLD_MS;
       const accentAfterDiagramMs =
-        Math.max(lastTileMs + 320, greyDoneMs) + QUALITY_ORBIT_CHOREO_ACCENT_AFTER_GREY_MS;
+        Math.max(lastTileMs + 580, greyDoneMs) + QUALITY_ORBIT_CHOREO_ACCENT_AFTER_GREY_MS;
       timers.push(
         window.setTimeout(() => {
           setQualityOrbitChoreography((c) => ({ ...c, accent: true }));
@@ -3024,7 +3024,7 @@ export default function DoePage() {
       {/* Quality orbit — between carousel (section 2) and vertical bento (section 3) */}
       <section
         ref={qualityOrbitSectionRef}
-        className={`relative z-10 w-full overflow-hidden overscroll-none pointer-events-none bg-[#F7F6F3] py-[clamp(5.75rem,13.5vw,9.25rem)] iphone-page:py-[clamp(5.5rem,12vw,8.5rem)] mt-[clamp(1.75rem,4.5vw,3.5rem)] mb-[clamp(2.25rem,5.25vw,4rem)] ${narrowHorizontalInset}`}
+        className={`relative z-10 w-full overflow-x-hidden overflow-y-visible overscroll-none pointer-events-none bg-[#F7F6F3] py-[clamp(5.75rem,13.5vw,9.25rem)] iphone-page:py-[clamp(5.5rem,12vw,8.5rem)] mt-[clamp(1.75rem,4.5vw,3.5rem)] mb-[clamp(2.25rem,5.25vw,4rem)] ${narrowHorizontalInset}`}
         aria-labelledby="quality-orbit-heading"
       >
         <h2 id="quality-orbit-heading" className="sr-only">
@@ -3069,7 +3069,7 @@ export default function DoePage() {
           />
         </div>
         <div
-          className="relative z-[2] mx-auto w-full max-w-full overflow-hidden overscroll-none pointer-events-none"
+          className="relative z-[2] mx-auto w-full max-w-full overflow-x-hidden overflow-y-visible overscroll-none pointer-events-none pb-[clamp(1.75rem,5vw,3rem)]"
           style={{
             aspectRatio: "10 / 11",
             minHeight: "clamp(32rem, 88vw, 58rem)",
@@ -3109,7 +3109,7 @@ export default function DoePage() {
                   vectorEffect="nonScalingStroke"
                   style={{
                     transition:
-                      "stroke-dashoffset 2.35s cubic-bezier(0.45, 0, 0.2, 1)",
+                      "stroke-dashoffset 4.5s cubic-bezier(0.45, 0, 0.2, 1)",
                   }}
                   className="motion-reduce:transition-none"
                 />
@@ -3129,7 +3129,7 @@ export default function DoePage() {
                   vectorEffect="nonScalingStroke"
                   style={{
                     transition:
-                      "stroke-dashoffset 2.28s cubic-bezier(0.43, 0, 0.18, 1), stroke-opacity 0.55s ease-out",
+                      "stroke-dashoffset 4.35s cubic-bezier(0.43, 0, 0.18, 1), stroke-opacity 0.95s ease-out",
                   }}
                   className="motion-reduce:transition-none"
                 />
@@ -3141,7 +3141,7 @@ export default function DoePage() {
               return (
               <div
                 key={i}
-                className="absolute z-[2] overflow-hidden rounded-2xl iphone-page:rounded-[0.9rem] pointer-events-none"
+                className="absolute z-[2] rounded-2xl iphone-page:rounded-[0.9rem] pointer-events-none overflow-visible"
                 style={{
                   left: `${p.leftPct}%`,
                   top: `${p.topPct}%`,
@@ -3154,10 +3154,11 @@ export default function DoePage() {
                     ? "translate(-50%, -50%) scale(1)"
                     : "translate(-50%, -50%) scale(0.92)",
                   transition: tileVisible
-                    ? "opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.58s cubic-bezier(0.28, 0.86, 0.35, 1)"
-                    : "opacity 0.45s ease, transform 0.45s ease",
+                    ? "opacity 0.92s cubic-bezier(0.4, 0, 0.2, 1), transform 1.05s cubic-bezier(0.28, 0.86, 0.35, 1)"
+                    : "opacity 0.65s ease, transform 0.65s ease",
                 }}
               >
+                <div className="absolute inset-0 overflow-hidden rounded-2xl iphone-page:rounded-[0.9rem]">
                 <div
                   className="absolute inset-0"
                   style={{
@@ -3165,7 +3166,7 @@ export default function DoePage() {
                   }}
                 />
                 <div
-                  className="absolute inset-0 pointer-events-none rounded-2xl"
+                  className="absolute inset-0 pointer-events-none rounded-2xl iphone-page:rounded-[0.9rem]"
                   style={{
                     backgroundImage: VBENTO_GRAIN_BG,
                     backgroundSize: "200px 200px",
@@ -3174,7 +3175,7 @@ export default function DoePage() {
                   }}
                 />
                 <svg
-                  className="absolute inset-0 h-full w-full pointer-events-none rounded-2xl"
+                  className="absolute inset-0 h-full w-full pointer-events-none rounded-2xl iphone-page:rounded-[0.9rem]"
                   xmlns="http://www.w3.org/2000/svg"
                   preserveAspectRatio="none"
                   aria-hidden
@@ -3215,6 +3216,7 @@ export default function DoePage() {
                     ))}
                   </span>
                 </div>
+                </div>
               </div>
             );
             })}
@@ -3227,7 +3229,7 @@ export default function DoePage() {
                   opacity: qualityOrbitChoreography.headline ? 1 : 0,
                   transform: qualityOrbitChoreography.headline ? "translateY(0)" : "translateY(13px)",
                   transition:
-                    "opacity 0.64s cubic-bezier(0.4, 0, 0.2, 1), transform 0.64s cubic-bezier(0.4, 0, 0.2, 1)",
+                    "opacity 1.12s cubic-bezier(0.4, 0, 0.2, 1), transform 1.12s cubic-bezier(0.4, 0, 0.2, 1)",
                 }}
               >
                 <span className="block leading-[1.06] text-[clamp(2.3rem,9.85vw,3.58rem)] iphone-page:text-[clamp(1.32rem,5.65vw,3.58rem)] iphone-page:whitespace-nowrap">
