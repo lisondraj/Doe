@@ -1846,7 +1846,7 @@ export default function DoePage() {
             </p>
             <div className="flex flex-col items-center gap-[1.625rem] iphone-page:gap-7 px-2">
               <p
-                className="animate-hero-tagline-float text-[clamp(1.75rem,4.15vw,2.75rem)] iphone-page:text-[clamp(1.2rem,4.85vw,1.9375rem)] font-medium text-white/90 text-center iphone-page:px-2 tracking-tight iphone-page:whitespace-nowrap leading-snug"
+                className="animate-hero-tagline-float whitespace-nowrap text-[clamp(1.75rem,4.15vw,2.75rem)] iphone-page:text-[clamp(1.2rem,4.85vw,1.9375rem)] font-medium text-white/90 text-center iphone-page:px-2 tracking-tight leading-snug"
                 style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
               >
                 AI Inbox. Built for Clinicians.
