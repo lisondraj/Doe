@@ -593,7 +593,8 @@ export default function DoePage() {
   const scrollEffectsRafRef = useRef<number | null>(null);
   /** True while the user is actively scrolling — pauses global palette RAF so the page tree is not re-rendered in parallel. */
   const scrollWheelBusyRef = useRef(false);
-  const scrollQuietTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /** Browser timer id (`window.setTimeout`); avoid `NodeJS.Timeout` from `ReturnType<typeof setTimeout>`. */
+  const scrollQuietTimerRef = useRef<number | null>(null);
   /** Skip redundant second-section intro setState once the band is fully past. */
   const scrollSecondPastIntroRef = useRef(false);
   /** Skip redundant “Built for you” intro setState once past. */
@@ -1028,7 +1029,7 @@ export default function DoePage() {
     if (bentoBridgeTypedLen < cap) return;
 
     let cancelled = false;
-    let innerId: ReturnType<typeof setTimeout> | null = null;
+    let innerId: number | null = null;
     const holdMs = 2000;
     const swapMs = 420;
     const holdId = window.setTimeout(() => {
