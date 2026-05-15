@@ -1849,7 +1849,7 @@ export default function DoePage() {
                 className="animate-hero-tagline-float whitespace-nowrap text-[clamp(1.75rem,4.15vw,2.75rem)] iphone-page:text-[clamp(1.2rem,4.85vw,1.9375rem)] font-medium text-white/90 text-center iphone-page:px-2 tracking-tight leading-snug"
                 style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
               >
-                AI Inbox. Built for Clinicians.
+                An AI inbox built for clinicians.
               </p>
               <a
                 href="mailto:contact@joindoe.com"
