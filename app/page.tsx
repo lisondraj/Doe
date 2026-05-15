@@ -29,9 +29,9 @@ import { doeforvcRootZoom } from "@/lib/doeforvc-zoom";
 const slideCaptionWrap =
   "absolute bottom-9 z-[5] flex flex-col items-start gap-2.5 pointer-events-auto iphone-page:bottom-11";
 const slideCaptionBadge =
-  "inline-flex max-w-[calc(100%-2px)] shrink-0 items-center rounded-full border border-white/95 bg-white/5 px-[14px] py-[7px] text-[17px] font-semibold leading-snug tracking-[-0.02em] text-white shadow-[0_2px_14px_rgba(0,0,0,0.14)]";
+  "inline-flex max-w-[calc(100%-2px)] shrink-0 items-center rounded-full border border-white/95 bg-white/5 px-[15px] py-[8px] text-[20px] font-semibold leading-snug tracking-[-0.02em] text-white shadow-[0_2px_14px_rgba(0,0,0,0.14)]";
 const slideCaptionBody =
-  "w-full min-w-0 max-w-[min(340px,calc(100%-4px))] text-left text-[15px] font-medium leading-[1.48] tracking-[-0.012em] text-white/[0.92] break-words [overflow-wrap:anywhere]";
+  "w-full min-w-0 max-w-[min(340px,calc(100%-4px))] text-left text-[18px] font-medium leading-[1.48] tracking-[-0.012em] text-white/[0.92] break-words [overflow-wrap:anywhere]";
 const slideCaptionFont = { fontFamily: "system-ui, -apple-system, sans-serif" } as const;
 
 /** Same horizontal inset as the fixed nav — hero, headline band, carousel (forced phone layout). */
@@ -1816,21 +1816,45 @@ export default function DoePage() {
             className={`flex flex-col justify-center min-h-0 overflow-x-hidden overflow-y-visible pb-16 iphone-page:pb-14 ${narrowHorizontalInset}`}
           >
           {/* Sliding squares container — width matches Built for you carousel strip */}
-          <div 
-            className="relative mx-auto w-full max-w-[min(100%,42rem)]" 
-            style={{ 
-              height: slideBoxH, 
-              display: 'flex', 
-              alignItems: 'center',
+          <div
+            className="relative mx-auto flex w-full max-w-[min(100%,42rem)] flex-col justify-center"
+            style={{
               opacity: slidingBoxesOpacity,
               transform: `translateY(${slidingBoxesTranslateY}px)`,
-              transition: 'opacity 1.2s ease-out, transform 1.2s ease-out'
+              transition: 'opacity 1.2s ease-out, transform 1.2s ease-out',
             }}
           >
+            {/* Slide picker — same pill pattern as expanded nav footer carousel */}
+            <div
+              className="relative z-[28] mx-auto flex w-full shrink-0 justify-center gap-2.5 px-4 pb-3 pt-1 iphone-page:gap-[clamp(0.65rem,0.45rem+1vmin,0.95rem)]"
+              aria-hidden={false}
+            >
+              {Array.from({ length: carouselSlideCount }, (_, dotI) => (
+                <button
+                  key={`wf-dot-${dotI}`}
+                  type="button"
+                  aria-label={`Workflow slide ${dotI + 1}`}
+                  aria-current={workflowCarouselIndex === dotI ? 'true' : undefined}
+                  className={`h-2.5 shrink-0 rounded-full transition-[width,background-color,opacity] duration-200 shadow-sm iphone-page:h-[clamp(9px,calc(6px+0.45vmin),12px)] ${
+                    workflowCarouselIndex === dotI
+                      ? 'w-8 bg-gray-800 opacity-95 iphone-page:w-[clamp(1.95rem,calc(1.65rem+1.9vmin),2.85rem)]'
+                      : 'w-2.5 bg-gray-400/50 hover:bg-gray-500/70 iphone-page:w-[clamp(0.625rem,calc(0.5rem+0.42vmin),0.75rem)]'
+                  }`}
+                  onClick={() => {
+                    setWorkflowCarouselIndex(dotI as 0 | 1 | 2 | 3 | 4 | 5);
+                  }}
+                />
+              ))}
+            </div>
+
+            <div
+              className="relative flex min-h-0 w-full flex-1 items-center justify-center"
+              style={{ minHeight: slideBoxH }}
+            >
             {/* Pause button - top right corner */}
             <button
               onClick={() => setIsSlidingPaused(!isSlidingPaused)}
-              className="absolute top-4 right-4 iphone-page:top-4 iphone-page:right-4 z-30 p-2 rounded-full hover:bg-gray-100 transition-colors"
+              className="absolute top-2 right-4 iphone-page:top-2 iphone-page:right-4 z-30 p-2 rounded-full hover:bg-gray-100 transition-colors"
               style={{
                 opacity: slidingBoxesOpacity,
               }}
@@ -1951,13 +1975,13 @@ export default function DoePage() {
                     
                     <WorkflowCarouselSlideCenterChrome slideIndex={0} />
 
-                    {/* AI Receptionist — one centered panel: inbound call + thinking stream */}
+                    {/* AI Receptionist — caller line left + heard stream + thinking */}
                     <div
                       className="absolute left-1/2 rounded-xl bg-white shadow-lg"
                       style={{
                         width: `${carouselReceptionThinkingWidth700}px`,
                         top: '47%',
-                        transform: `translate(-50%, -50%) scale(${priorAuthComposeScale})`,
+                        transform: `translate(calc(-50% - 18px), -50%) scale(${priorAuthComposeScale})`,
                         transformOrigin: 'center center',
                         padding: carouselReceptionThinkingWidth700 < 288 ? '16px' : '20px',
                         paddingBottom: '16px',
@@ -1965,21 +1989,13 @@ export default function DoePage() {
                         pointerEvents: 'auto',
                       }}
                     >
-                      <div className="mb-3 flex items-start justify-between gap-2">
-                        <div>
-                          <h3 className="font-bold text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '14px' }}>
-                            Inbound call
-                          </h3>
-                          <p className="text-xs text-gray-500" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                            Primary line · (555) 310-4412
-                          </p>
-                        </div>
-                        <span
-                          className="shrink-0 rounded-full bg-gray-200 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-gray-700"
+                      <div className="mb-3 flex items-center justify-start">
+                        <p
+                          className="text-sm font-semibold tracking-tight text-gray-900"
                           style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
                         >
-                          AI
-                        </span>
+                          (555) 310-4412
+                        </p>
                       </div>
                       <div className="mb-3 rounded-lg border border-gray-100 bg-gray-50 px-3 py-2.5">
                         <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wide text-gray-500">Heard now</p>
@@ -2172,39 +2188,61 @@ export default function DoePage() {
                       <div className="mb-2 flex items-start justify-between gap-2">
                         <div>
                           <p className="mb-0.5 text-sm font-bold text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                            Exam room transcript
+                            Patient chat · chart-linked retrieval
                           </p>
                           <p className="text-xs text-gray-500" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                            Patient #2847 · Room 12 · syncing to chart
+                            Utterances · embedding matches on live chart rows
                           </p>
                         </div>
-                        <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-gray-400" aria-hidden />
+                        <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-emerald-500" aria-hidden />
                       </div>
                       <div
-                        className="mb-3 max-h-[218px] space-y-2 overflow-hidden rounded-lg border border-gray-100 bg-gray-50/60 p-2.5"
+                        className="mb-3 max-h-[218px] space-y-2.5 overflow-hidden rounded-xl border border-gray-100 bg-gradient-to-b from-gray-50 to-white p-2.5"
                         style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
                       >
-                        <div className="rounded-md bg-white p-2 ring-1 ring-gray-100/90">
-                          <p className="mb-1 text-[9px] font-bold uppercase tracking-wide text-gray-500">Patient</p>
-                          <p className="text-[11px] leading-snug text-gray-800">
-                            &ldquo;The metformin gives me cramps—I skipped it twice.&rdquo;
-                          </p>
+                        <div className="flex flex-col items-start gap-1">
+                          <div className="max-w-[92%] rounded-2xl rounded-bl-md bg-gray-900 px-3 py-2 shadow-sm ring-1 ring-black/10">
+                            <p className="mb-0.5 text-[9px] font-bold uppercase tracking-wide text-white/60">Patient</p>
+                            <p className="text-[11px] leading-snug text-white/[0.95]">
+                              &ldquo;The metformin gives me cramps—I skipped it twice.&rdquo;
+                            </p>
+                          </div>
+                          <div className="ml-0.5 flex flex-wrap gap-1.5">
+                            <span className="rounded-md bg-indigo-50 px-2 py-1 text-[9px] font-semibold uppercase tracking-wide text-indigo-900 ring-1 ring-indigo-100">
+                              Embedding · meds-cluster
+                            </span>
+                            <span className="rounded-md bg-white px-2 py-1 text-[9px] font-medium text-gray-700 ring-1 ring-gray-200">
+                              → Chart · Medications · Metformin 1000 mg BID
+                            </span>
+                            <span className="rounded-md bg-gray-50 px-2 py-1 text-[9px] text-gray-600 ring-1 ring-gray-100">
+                              cosine 0.91
+                            </span>
+                          </div>
                         </div>
-                        <p className="border-l-2 border-gray-300 py-0.5 pl-2 text-[10px] leading-snug text-gray-600">
-                          Found · Medications — Metformin 1000 mg BID · refill gap surfaced for clinician.
-                        </p>
-                        <div className="rounded-md bg-white p-2 ring-1 ring-gray-100/90">
-                          <p className="mb-1 text-[9px] font-bold uppercase tracking-wide text-gray-500">Patient</p>
-                          <p className="text-[11px] leading-snug text-gray-800">&ldquo;Left knee popped again after PT.&rdquo;</p>
+                        <div className="flex flex-col items-start gap-1 pt-1">
+                          <div className="max-w-[92%] rounded-2xl rounded-bl-md bg-gray-900 px-3 py-2 shadow-sm ring-1 ring-black/10">
+                            <p className="mb-0.5 text-[9px] font-bold uppercase tracking-wide text-white/60">Patient</p>
+                            <p className="text-[11px] leading-snug text-white/[0.95]">
+                              &ldquo;Left knee popped again after PT.&rdquo;
+                            </p>
+                          </div>
+                          <div className="ml-0.5 flex flex-wrap gap-1.5">
+                            <span className="rounded-md bg-indigo-50 px-2 py-1 text-[9px] font-semibold uppercase tracking-wide text-indigo-900 ring-1 ring-indigo-100">
+                              Embedding · problem-knee
+                            </span>
+                            <span className="rounded-md bg-white px-2 py-1 text-[9px] font-medium text-gray-700 ring-1 ring-gray-200">
+                              → Problems · OA left knee · PT note 6d ago
+                            </span>
+                            <span className="rounded-md bg-gray-50 px-2 py-1 text-[9px] text-gray-600 ring-1 ring-gray-100">
+                              cosine 0.87
+                            </span>
+                          </div>
                         </div>
-                        <p className="border-l-2 border-gray-300 py-0.5 pl-2 text-[10px] leading-snug text-gray-600">
-                          Found · Problems — OA left knee · last documented PT six days ago; ROM stable in chart.
-                        </p>
                       </div>
                       <div className="rounded-lg border border-gray-100 bg-white px-2.5 py-2">
-                        <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-500">Suggested next prompts</p>
+                        <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-500">Retriever preview</p>
                         <p className="mt-1 text-[11px] leading-snug text-gray-700" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                          BMP before med change · consider films if effusion reported on exam today.
+                          Next tokens grounded on matched chart sections · BMP before med change · imaging if effusion on exam.
                         </p>
                       </div>
                       <div className="mt-2.5 flex gap-2">
@@ -2404,7 +2442,7 @@ export default function DoePage() {
                       style={{
                         left: '50%',
                         top: '50%',
-                        transform: `translate(-50%, -50%) scale(${priorAuthComposeScale})`,
+                        transform: `translate(calc(-50% - 28px), -50%) scale(${priorAuthComposeScale})`,
                         transformOrigin: 'center center',
                         width: '472px',
                         height: '380px',
@@ -2943,6 +2981,7 @@ export default function DoePage() {
 
               return null;
             })}
+            </div>
             </div>
             </div>
           </div>
