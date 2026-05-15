@@ -156,12 +156,12 @@ function vbComputeScrollMetrics(
   const vh = Math.max(innerHeightPx, 320);
   const openPx = Math.round(Math.max(vh * 0.82, 400));
   const dwellPx = Math.round(Math.max(vh * 5.05, 2800));
-  /** Match rail 1–2 dwell scale so users can scroll well past pin before rail 3 begins collapsing */
+  /** Third rail dwell — long scrub while expanded; rail stays open through exit/tail */
   const dwellLastPx = Math.max(Math.round(dwellPx * 0.92), Math.round(vh * 4.25));
   const swapPx = Math.round(Math.max(vh * 0.62, 420));
-  /** Long band so document scroll reaches spacer / Built-for-you while rail 3 is still collapsing */
-  const exitPx = Math.round(Math.max(vh * 1.28, 560));
-  const tailPx = Math.round(Math.max(vh * 0.34, 220));
+  /** Scroll slack after rail 3 dwell while stack stays pinned (rail 3 no longer collapses) */
+  const exitPx = Math.round(Math.max(vh * 0.52, 320));
+  const tailPx = Math.round(Math.max(vh * 0.42, 260));
   const scrollablePx =
     openPx + dwellPx + swapPx + dwellPx + swapPx + dwellLastPx + exitPx + tailPx;
   const sectionMinPx = scrollablePx + vh;
@@ -217,9 +217,7 @@ function vbDeriveRails(
   let e2 = CLO;
   if (u <= ms.uDw1End) e2 = CLO;
   else if (u <= ms.uSwap12End) e2 = CLO + (1 - CLO) * segUp(ms.uDw1End, ms.uSwap12End);
-  else if (u <= ms.uDw2End) e2 = 1;
-  else if (u <= ms.uExitEnd) e2 = CLO + (1 - CLO) * segDn(ms.uDw2End, ms.uExitEnd);
-  else e2 = CLO;
+  else e2 = 1;
 
   const op = (e: number): number => {
     const denom = Math.max(1 - CLO, 1e-6);
@@ -4070,41 +4068,32 @@ export default function DoePage() {
 
       </div>
 
-      {/* Inquisara — rounded band aligned with Built-for-you carousel column */}
-      <div
-        className={`relative z-10 w-full pb-[clamp(1rem,3vw,1.75rem)] ${narrowHorizontalInset}`}
-      >
+      {/* Inquisara — width matches Built-for-you inner column (narrowHorizontalInset only) */}
+      <div className={`relative z-10 w-full pb-[clamp(1rem,3vw,1.75rem)] ${narrowHorizontalInset}`}>
         <section
           aria-labelledby="inquisara-teaser-heading"
-          className="relative mx-auto w-full max-w-[min(100%,42rem)] overflow-hidden rounded-[clamp(1.15rem,2.75vw,1.875rem)] shadow-[0_18px_48px_rgba(30,52,58,0.14)] ring-1 ring-black/[0.07]"
+          className="relative mx-auto w-full max-w-[min(100%,42rem)] overflow-hidden rounded-[clamp(1.15rem,2.75vw,1.875rem)] shadow-[0_16px_44px_rgba(180,72,24,0.22)] ring-1 ring-orange-950/15"
         >
         <div className="pointer-events-none absolute inset-0 rounded-[inherit]">
           <div
             className="pointer-events-none absolute inset-0 rounded-[inherit]"
             style={{
               background: `
-              radial-gradient(circle farthest-corner at 42% 58%,
-                #1a2e34 0%,
-                #243a40 14%,
-                #3d2f28 28%,
-                #6b442f 43%,
-                #a85a34 58%,
-                #d4893f 74%,
-                #e8b04d 89%,
-                #f2cf7a 100%
+              radial-gradient(ellipse 115% 95% at 50% -8%,
+                #fff7ee 0%,
+                #ffd7b8 18%,
+                #ffb06a 38%,
+                #f07828 58%,
+                #d94e14 78%,
+                #a8320c 100%
               ),
-              radial-gradient(circle 85% at 92% 12%,
-                rgba(242, 207, 122, 0.52) 0%,
-                rgba(212, 137, 63, 0.22) 42%,
-                transparent 68%
+              radial-gradient(circle at 78% 92%,
+                rgba(255, 186, 102, 0.55) 0%,
+                transparent 52%
               ),
-              radial-gradient(circle 65% at 8% 78%,
-                rgba(210, 119, 76, 0.38) 0%,
-                transparent 62%
-              ),
-              radial-gradient(circle closest-side at 50% 102%,
-                rgba(231, 169, 68, 0.26) 0%,
-                transparent 100%
+              radial-gradient(circle at 12% 68%,
+                rgba(255, 138, 72, 0.35) 0%,
+                transparent 48%
               )
             `,
             }}
@@ -4116,25 +4105,18 @@ export default function DoePage() {
               mixBlendMode: "overlay",
               backgroundImage: `
               repeating-linear-gradient(
-                118deg,
+                128deg,
                 transparent 0px,
-                transparent 10px,
-                rgba(255, 236, 210, 0.085) 10px,
-                rgba(255, 236, 210, 0.085) 11px
+                transparent 13px,
+                rgba(255, 255, 255, 0.085) 13px,
+                rgba(255, 255, 255, 0.085) 14px
               ),
               repeating-linear-gradient(
-                -54deg,
+                -128deg,
                 transparent 0px,
-                transparent 14px,
-                rgba(36, 58, 64, 0.11) 14px,
-                rgba(36, 58, 64, 0.11) 15px
-              ),
-              repeating-linear-gradient(
-                0deg,
-                transparent 0px,
-                transparent 23px,
-                rgba(232, 176, 77, 0.045) 23px,
-                rgba(232, 176, 77, 0.045) 24px
+                transparent 17px,
+                rgba(120, 38, 12, 0.1) 17px,
+                rgba(120, 38, 12, 0.1) 18px
               )
             `,
             }}
@@ -4144,15 +4126,15 @@ export default function DoePage() {
             style={{
               backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E")`,
               backgroundSize: "200px 200px",
-              opacity: 0.85,
-              mixBlendMode: "overlay",
+              opacity: 0.65,
+              mixBlendMode: "soft-light",
             }}
           />
         </div>
         <div className="relative z-10 mx-auto flex min-h-[min(52vw,22rem)] w-full max-w-full flex-col items-center justify-center px-6 py-[clamp(3.25rem,9vw,6.75rem)] text-center md:min-h-[min(44vw,20rem)] md:px-10 iphone-page:px-5 iphone-page:py-[clamp(3rem,11vw,6rem)]">
           <h2
             id="inquisara-teaser-heading"
-            className={`font-medium tracking-tight text-white drop-shadow-[0_2px_28px_rgba(0,0,0,0.28)] ${inter.className}`}
+            className={`font-medium tracking-tight text-white drop-shadow-[0_2px_20px_rgba(88,28,8,0.45)] ${inter.className}`}
             style={{
               fontSize: "clamp(2.85rem, min(11vw, 12vmin), 5.75rem)",
               lineHeight: 1.02,
