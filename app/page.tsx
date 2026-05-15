@@ -608,6 +608,9 @@ export default function DoePage() {
   /** Featured strip carousel at bottom of the phone nav sheet */
   const [mobileNavFooterSlide, setMobileNavFooterSlide] = useState(0);
   const mobileNavFooterCarouselRef = useRef<HTMLDivElement>(null);
+  /** Carousel width when the sheet first opens — `zoom` shrinks uniformly if the window gets narrower. */
+  const mobileNavFooterWidthBaselineRef = useRef(0);
+  const [mobileNavFooterZoom, setMobileNavFooterZoom] = useState(1);
   /** Body portal for the phone menu — keeps footer carousel out of the CSS-zoom root (matches blog / DoeIphoneSiteNav). */
   const [navPortalMounted, setNavPortalMounted] = useState(false);
   const [hoveredBox, setHoveredBox] = useState<number | null>(null);
@@ -773,7 +776,42 @@ export default function DoePage() {
       window.removeEventListener("resize", update);
       window.visualViewport?.removeEventListener("resize", update);
     };
-  }, [mobileNavOpen, viewportWidth]);
+  }, [mobileNavOpen, viewportWidth, appViewport.width, appViewport.height]);
+
+  useLayoutEffect(() => {
+    if (!mobileNavOpen) return;
+    const fit = () => {
+      const el = mobileNavFooterCarouselRef.current;
+      if (!el) return;
+      const cw = el.clientWidth;
+      if (cw <= 0) return;
+      if (mobileNavFooterWidthBaselineRef.current <= 0) {
+        mobileNavFooterWidthBaselineRef.current = cw;
+      }
+      const base = mobileNavFooterWidthBaselineRef.current;
+      const z = Math.min(1, cw / base);
+      setMobileNavFooterZoom((prev) => (Math.abs(prev - z) < 0.002 ? prev : z));
+    };
+
+    fit();
+    let raf1 = 0;
+    let raf2 = 0;
+    raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(fit);
+    });
+    const el = mobileNavFooterCarouselRef.current;
+    const ro = new ResizeObserver(fit);
+    if (el) ro.observe(el);
+    window.addEventListener("resize", fit);
+    window.visualViewport?.addEventListener("resize", fit);
+    return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+      ro.disconnect();
+      window.removeEventListener("resize", fit);
+      window.visualViewport?.removeEventListener("resize", fit);
+    };
+  }, [mobileNavOpen, appViewport.width, appViewport.height]);
 
   useLayoutEffect(() => {
     const ih = typeof window !== "undefined" ? window.innerHeight : 800;
@@ -830,7 +868,11 @@ export default function DoePage() {
   }, [mobileNavOpen]);
 
   useEffect(() => {
-    if (!mobileNavOpen) setMobileNavFooterSlide(0);
+    if (!mobileNavOpen) {
+      setMobileNavFooterSlide(0);
+      mobileNavFooterWidthBaselineRef.current = 0;
+      setMobileNavFooterZoom(1);
+    }
   }, [mobileNavOpen]);
 
   useEffect(() => {
@@ -2130,9 +2172,12 @@ export default function DoePage() {
                     {MOBILE_NAV_FOOTER_SLIDES.map((slide) => (
                       <div
                         key={slide.boxTitle}
-                        className="w-full min-w-full shrink-0 snap-center box-border space-y-3 py-3 pl-[max(1rem,env(safe-area-inset-left,0px))] pr-[max(1rem,env(safe-area-inset-right,0px))] iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)] iphone-page:py-[clamp(0.75rem,0.5rem+1vmin,1.125rem)] iphone-page:pl-[max(1rem,calc(env(safe-area-inset-left,0px)+0.5rem))] iphone-page:pr-[max(1rem,calc(env(safe-area-inset-right,0px)+0.5rem))]"
+                        className="w-full min-w-full shrink-0 snap-center box-border space-y-3 py-3 px-[max(1rem,env(safe-area-inset-left,0px),env(safe-area-inset-right,0px))] iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)] iphone-page:py-[clamp(0.75rem,0.5rem+1vmin,1.125rem)] iphone-page:px-[max(1rem,calc(max(env(safe-area-inset-left,0px),env(safe-area-inset-right,0px))+0.5rem))]"
                       >
-                        <div className="w-full space-y-3 iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)]">
+                        <div
+                          className="w-full space-y-3 iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)]"
+                          style={{ zoom: mobileNavFooterZoom }}
+                        >
                         <div className="relative rounded-[1.375rem] iphone-page:rounded-[clamp(1.2rem,1rem+1.4vmin,2.1rem)] overflow-hidden min-h-[30rem] iphone-page:min-h-[clamp(22rem,58vmin,48rem)] shadow-[0_10px_32px_rgba(0,0,0,0.12)]">
                           <div
                             className="absolute inset-0"
