@@ -3054,11 +3054,14 @@ export default function DoePage() {
         <h2 id="quality-orbit-heading" className="sr-only">
           Only high-quality patient care.
         </h2>
-        {/* Grid backdrop — same motif as the "Built for you" section */}
+        {/* Grid backdrop — taller draw than section so lines read above/below the diagram */}
         <div className="pointer-events-none absolute inset-0 z-0" aria-hidden>
           <svg
-            className="absolute inset-0 h-full w-full pointer-events-none"
-            style={{ transform: "translateY(-12%)" }}
+            className="pointer-events-none absolute left-0 w-full"
+            style={{
+              top: "-26%",
+              height: "152%",
+            }}
             xmlns="http://www.w3.org/2000/svg"
             preserveAspectRatio="none"
           >
@@ -3081,11 +3084,11 @@ export default function DoePage() {
             <rect width="100%" height="100%" fill="url(#qualityOrbitSectionGridPattern)" />
           </svg>
           <div
-            className="absolute left-0 right-0 top-0 z-[1] h-[min(10rem,18vw)] bg-gradient-to-b from-[#F7F6F3] to-transparent"
+            className="absolute left-0 right-0 top-0 z-[1] h-[min(6.5rem,13vw)] bg-gradient-to-b from-[#F7F6F3] to-transparent"
             aria-hidden
           />
           <div
-            className="absolute bottom-0 left-0 right-0 z-[1] h-[min(10rem,18vw)] bg-gradient-to-t from-[#F7F6F3] to-transparent"
+            className="absolute bottom-0 left-0 right-0 z-[1] h-[min(6.5rem,13vw)] bg-gradient-to-t from-[#F7F6F3] to-transparent"
             aria-hidden
           />
         </div>
