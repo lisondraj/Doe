@@ -61,6 +61,8 @@ type VerticalBentoMilestonesU = {
   uDw1End: number;
   uSwap12End: number;
   uDw2End: number;
+  /** Extra scroll while rail 3 stays fully expanded — timeline advances before collapse begins */
+  uRail2HoldEnd: number;
   uExitEnd: number;
 };
 
@@ -90,6 +92,7 @@ function vbBuildMilestonesU(scrollablePx: number, bandPx: number[]): VerticalBen
     uDw1End: next(),
     uSwap12End: next(),
     uDw2End: next(),
+    uRail2HoldEnd: next(),
     uExitEnd: next(),
   };
 }
@@ -156,13 +159,23 @@ function vbComputeScrollMetrics(
   const vh = Math.max(innerHeightPx, 320);
   const openPx = Math.round(Math.max(vh * 0.82, 400));
   const dwellPx = Math.round(Math.max(vh * 5.05, 2800));
-  /** Match rail 1–2 dwell scale so users can scroll well past pin before rail 3 begins collapsing */
+  /** Match rail 1–2 dwell scale while rail 3 stays open */
   const dwellLastPx = Math.max(Math.round(dwellPx * 0.92), Math.round(vh * 4.25));
+  /** Scroll consumed with rail 3 still expanded — page advances toward spacer/footer before collapse */
+  const rail2HoldPx = Math.round(Math.max(vh * 0.5, 300));
   const swapPx = Math.round(Math.max(vh * 0.62, 420));
   const exitPx = Math.round(Math.max(vh * 0.88, 480));
   const tailPx = Math.round(Math.max(vh * 0.34, 220));
   const scrollablePx =
-    openPx + dwellPx + swapPx + dwellPx + swapPx + dwellLastPx + exitPx + tailPx;
+    openPx +
+    dwellPx +
+    swapPx +
+    dwellPx +
+    swapPx +
+    dwellLastPx +
+    rail2HoldPx +
+    exitPx +
+    tailPx;
   const sectionMinPx = scrollablePx + vh;
   const anchor = Math.max(72, Math.min(140, Math.round(vh * 0.095)));
   const railsVhIn = railsLayoutHeightPx ?? vh;
@@ -174,6 +187,7 @@ function vbComputeScrollMetrics(
     dwellPx,
     swapPx,
     dwellLastPx,
+    rail2HoldPx,
     exitPx,
     tailPx,
   ]);
@@ -216,8 +230,8 @@ function vbDeriveRails(
   let e2 = CLO;
   if (u <= ms.uDw1End) e2 = CLO;
   else if (u <= ms.uSwap12End) e2 = CLO + (1 - CLO) * segUp(ms.uDw1End, ms.uSwap12End);
-  else if (u <= ms.uDw2End) e2 = 1;
-  else if (u <= ms.uExitEnd) e2 = CLO + (1 - CLO) * segDn(ms.uDw2End, ms.uExitEnd);
+  else if (u <= ms.uRail2HoldEnd) e2 = 1;
+  else if (u <= ms.uExitEnd) e2 = CLO + (1 - CLO) * segDn(ms.uRail2HoldEnd, ms.uExitEnd);
   else e2 = CLO;
 
   const op = (e: number): number => {
@@ -239,7 +253,8 @@ function vbPhaseLocalProgress(uIn: number, m: VerticalBentoMilestonesU): number 
     [m.uSwap01End, m.uDw1End],
     [m.uDw1End, m.uSwap12End],
     [m.uSwap12End, m.uDw2End],
-    [m.uDw2End, m.uExitEnd],
+    [m.uDw2End, m.uRail2HoldEnd],
+    [m.uRail2HoldEnd, m.uExitEnd],
   ];
   for (const [a, b] of segs) {
     if (b <= a) continue;
@@ -4082,27 +4097,27 @@ export default function DoePage() {
             className="pointer-events-none absolute inset-0 rounded-[inherit]"
             style={{
               background: `
-              radial-gradient(circle farthest-corner at 50% 42%,
-                #1a2e34 0%,
-                #243a40 13%,
-                #3d2f28 26%,
-                #6b442f 41%,
-                #a85a34 55%,
-                #d4893f 71%,
-                #e8b04d 87%,
-                #f2cf7a 100%
+              radial-gradient(circle at 50% 45%,
+                #121c20 0%,
+                #1a2e34 22%,
+                #24363c 38%,
+                #3d322a 54%,
+                #6e4a30 69%,
+                #b87330 82%,
+                #deb453 93%,
+                #f2dc98 100%
               ),
-              radial-gradient(circle farthest-side at 50% 118%,
-                rgba(231, 169, 68, 0.42) 0%,
-                transparent 62%
+              radial-gradient(circle 85% at 50% 112%,
+                rgba(231, 169, 68, 0.38) 0%,
+                transparent 58%
               ),
-              radial-gradient(circle closest-side at 14% 22%,
-                rgba(255, 224, 180, 0.28) 0%,
-                transparent 100%
+              radial-gradient(circle 48% at 10% 24%,
+                rgba(255, 235, 200, 0.24) 0%,
+                transparent 72%
               ),
-              radial-gradient(circle closest-side at 86% 24%,
-                rgba(210, 119, 76, 0.34) 0%,
-                transparent 100%
+              radial-gradient(circle 46% at 90% 26%,
+                rgba(214, 133, 88, 0.26) 0%,
+                transparent 72%
               )
             `,
             }}
@@ -4143,7 +4158,7 @@ export default function DoePage() {
         <div className="relative z-10 mx-auto flex min-h-[min(52vw,22rem)] w-full max-w-full flex-col items-center justify-center px-6 py-[clamp(3.25rem,9vw,6.75rem)] text-center md:min-h-[min(44vw,20rem)] md:px-10 iphone-page:px-5 iphone-page:py-[clamp(3rem,11vw,6rem)]">
           <h2
             id="inquisara-teaser-heading"
-            className={`font-semibold tracking-tight text-white drop-shadow-[0_2px_28px_rgba(0,0,0,0.28)] ${inter.className}`}
+            className={`font-light tracking-tight text-white drop-shadow-[0_2px_24px_rgba(0,0,0,0.22)] ${inter.className}`}
             style={{
               fontSize: "clamp(2.85rem, min(11vw, 12vmin), 5.75rem)",
               lineHeight: 1.02,
