@@ -4067,7 +4067,7 @@ export default function DoePage() {
       {/* Insquiara — gradient band above footer */}
       <section
         aria-labelledby="insquiara-teaser-heading"
-        className="relative z-10 w-full overflow-hidden border-t border-white/[0.08]"
+        className="relative z-10 w-full overflow-hidden"
         style={{
           width: "100vw",
           marginLeft: "calc(50% - 50vw)",
@@ -4079,10 +4079,28 @@ export default function DoePage() {
             className="pointer-events-none absolute inset-0"
             style={{
               background: `
-              linear-gradient(152deg, #1a2e34 0%, #243a40 14%, #3d2f28 32%, #6b442f 48%, #a85a34 62%, #d4893f 76%, #e8b04d 88%, #f2cf7a 100%),
-              radial-gradient(ellipse 100% 80% at 50% 110%, rgba(231, 169, 68, 0.55) 0%, transparent 58%),
-              radial-gradient(ellipse 55% 45% at 12% 18%, rgba(255, 224, 180, 0.22) 0%, transparent 52%),
-              radial-gradient(ellipse 50% 40% at 88% 22%, rgba(210, 119, 76, 0.3) 0%, transparent 55%)
+              radial-gradient(circle farthest-corner at 50% 42%,
+                #f2cf7a 0%,
+                #e8b04d 11%,
+                #d4893f 24%,
+                #a85a34 38%,
+                #6b442f 54%,
+                #3d2f28 71%,
+                #243a40 87%,
+                #1a2e34 100%
+              ),
+              radial-gradient(circle farthest-side at 50% 118%,
+                rgba(231, 169, 68, 0.52) 0%,
+                transparent 62%
+              ),
+              radial-gradient(circle closest-side at 14% 22%,
+                rgba(255, 224, 180, 0.22) 0%,
+                transparent 100%
+              ),
+              radial-gradient(circle closest-side at 86% 24%,
+                rgba(210, 119, 76, 0.3) 0%,
+                transparent 100%
+              )
             `,
             }}
           />
