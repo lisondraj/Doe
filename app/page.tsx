@@ -38,6 +38,9 @@ const slideCaptionFont = { fontFamily: "system-ui, -apple-system, sans-serif" } 
 const narrowHorizontalInset =
   "iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))]";
 
+/** Same outer width cap as the “Built for you” carousel row (`max-w-[min(100%,42rem)]`). */
+const BUILD_CAROUSEL_MAX_REM = 42;
+
 /**
  * Vertical bento horizontal inset — applied to scroll container so sticky element
  * inherits the narrowed width (matching carousel gutters).
@@ -518,7 +521,8 @@ export default function DoePage() {
       const horizontalInset = 12;
       /** Slide width from viewport; height taller than width for portrait cards */
       const phoneSlideScale = 0.96;
-      const w = ((vw - horizontalInset * 2) / zoom) * phoneSlideScale;
+      const stripMaxPx = BUILD_CAROUSEL_MAX_REM * vbDocumentRootPx();
+      const w = Math.min(((vw - horizontalInset * 2) / zoom) * phoneSlideScale, stripMaxPx);
       /** Taller than wide — extra vertical presence in the carousel band */
       const phoneSlideHeightRatio = 1.28;
       const h = w * phoneSlideHeightRatio;
@@ -1811,9 +1815,9 @@ export default function DoePage() {
           <div
             className={`flex flex-col justify-center min-h-0 overflow-x-hidden overflow-y-visible pb-16 iphone-page:pb-14 ${narrowHorizontalInset}`}
           >
-          {/* Sliding squares container */}
+          {/* Sliding squares container — width matches Built for you carousel strip */}
           <div 
-            className="relative iphone-page:mx-auto iphone-page:w-full" 
+            className="relative mx-auto w-full max-w-[min(100%,42rem)]" 
             style={{ 
               height: slideBoxH, 
               display: 'flex', 
