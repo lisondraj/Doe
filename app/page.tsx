@@ -2,6 +2,7 @@
 
 import { Lora, Inter } from "next/font/google";
 import { useState, useEffect, useLayoutEffect, useRef, useCallback } from "react";
+import type { ReactElement, ReactNode } from "react";
 
 const lora = Lora({
   subsets: ["latin"],
@@ -307,6 +308,111 @@ function vbRailsEffectiveInnerHeight(innerWidthPx: number, innerHeightPx: number
   const rz = doeforvcRootZoom(innerWidthPx);
   if (rz < 0.999) return innerHeightPx / rz;
   return innerHeightPx;
+}
+
+/** Icon strokes derived from Feather (MIT); scaled for the 700² slide canvas. */
+function WorkflowCarouselSlideCenterSvg(props: { children: ReactNode }): ReactElement {
+  return (
+    <svg
+      className="h-[1.45rem] w-[1.45rem] shrink-0"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      {props.children}
+    </svg>
+  );
+}
+
+/** Left label + right icon centered on workflow carousel mocks (700² design space; scales with card). */
+function WorkflowCarouselSlideCenterChrome(props: { slideIndex: 0 | 1 | 2 | 3 | 4 | 5 }): ReactElement {
+  const { slideIndex } = props;
+  const iconWrap =
+    "flex h-[3.125rem] w-[3.125rem] shrink-0 items-center justify-center rounded-[0.875rem] border border-white/30 bg-white/12 text-white shadow-md backdrop-blur-[4px]";
+  let lines: readonly string[];
+  let Icon: ReactNode;
+  switch (slideIndex) {
+    case 0:
+      lines = ["AI Inbox"];
+      Icon = (
+        <WorkflowCarouselSlideCenterSvg>
+          <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
+          <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
+        </WorkflowCarouselSlideCenterSvg>
+      );
+      break;
+    case 1:
+      lines = ["Receptionist"];
+      Icon = (
+        <WorkflowCarouselSlideCenterSvg>
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+        </WorkflowCarouselSlideCenterSvg>
+      );
+      break;
+    case 2:
+      lines = ["Appointment", "Assist"];
+      Icon = (
+        <WorkflowCarouselSlideCenterSvg>
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+          <line x1="16" y1="2" x2="16" y2="6" />
+          <line x1="8" y1="2" x2="8" y2="6" />
+          <line x1="3" y1="10" x2="21" y2="10" />
+        </WorkflowCarouselSlideCenterSvg>
+      );
+      break;
+    case 3:
+      lines = ["Auto-Billing"];
+      Icon = (
+        <WorkflowCarouselSlideCenterSvg>
+          <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+          <line x1="1" y1="10" x2="23" y2="10" />
+        </WorkflowCarouselSlideCenterSvg>
+      );
+      break;
+    case 4:
+      lines = ["Multi-Specialty"];
+      Icon = (
+        <WorkflowCarouselSlideCenterSvg>
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </WorkflowCarouselSlideCenterSvg>
+      );
+      break;
+    case 5:
+      lines = ["Patient Facing"];
+      Icon = (
+        <WorkflowCarouselSlideCenterSvg>
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </WorkflowCarouselSlideCenterSvg>
+      );
+      break;
+  }
+  const textPx = slideIndex === 2 ? "0.95rem" : "1.2rem";
+  return (
+    <div
+      className="pointer-events-none absolute left-1/2 top-[46%] z-[26] flex max-w-[min(94%,21rem)] -translate-x-1/2 -translate-y-1/2 flex-row items-center gap-[0.85rem] rounded-[1.125rem] border border-white/22 bg-black/22 px-[1rem] py-[0.625rem] shadow-[0_12px_40px_rgba(0,0,0,0.18)] backdrop-blur-[5px]"
+      role="presentation"
+    >
+      <div
+        className={`flex min-w-0 flex-col gap-px text-left ${inter.className} font-light leading-[1.17] tracking-[-0.02em] text-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.35)]`}
+        style={{ fontSize: textPx }}
+      >
+        {lines.map((line) => (
+          <span key={line} className="block whitespace-nowrap">
+            {line}
+          </span>
+        ))}
+      </div>
+      <div className={iconWrap}>{Icon}</div>
+    </div>
+  );
 }
 
 export default function DoePage() {
@@ -1839,6 +1945,8 @@ export default function DoePage() {
                       </span>
                     </div>
                     
+                    <WorkflowCarouselSlideCenterChrome slideIndex={0} />
+
                     {/* AI Receptionist — one centered panel: inbound call + thinking stream */}
                     <div
                       className="absolute left-1/2 rounded-xl bg-white shadow-lg"
@@ -1995,6 +2103,8 @@ export default function DoePage() {
                       </span>
                     </div>
                     
+                    <WorkflowCarouselSlideCenterChrome slideIndex={1} />
+
                     {/* Save and Undo when editing Smart Appointments caption */}
                     {(isEditingBox2Title || isEditingBox2Description) && (
                       <div
@@ -2282,6 +2392,8 @@ export default function DoePage() {
                       </span>
                     </div>
                     
+                    <WorkflowCarouselSlideCenterChrome slideIndex={2} />
+
                     {/* Billing — overlapping ERA + outbound packet */}
                     <div
                       className="absolute"
@@ -2457,6 +2569,8 @@ export default function DoePage() {
                     </span>
                   </div>
                   
+                  <WorkflowCarouselSlideCenterChrome slideIndex={3} />
+
                   {/* Multi-disciplinary — single horizontal ribbon, centered */}
                   <div
                     className="absolute left-1/2 flex flex-col justify-center rounded-xl bg-white shadow-lg"
@@ -2572,6 +2686,8 @@ export default function DoePage() {
                         {i + 1}
                       </span>
                     </div>
+
+                    <WorkflowCarouselSlideCenterChrome slideIndex={4} />
 
                     {/* Different UI - Referral Intake */}
                     <div
@@ -2696,6 +2812,8 @@ export default function DoePage() {
                         {i + 1}
                       </span>
                     </div>
+
+                    <WorkflowCarouselSlideCenterChrome slideIndex={5} />
 
                     <div
                       className="absolute"
