@@ -2,7 +2,7 @@
 
 import { Lora, Inter } from "next/font/google";
 import { useState, useEffect, useLayoutEffect, useRef, useCallback } from "react";
-import type { ReactElement, ReactNode } from "react";
+import type { ReactElement } from "react";
 
 const lora = Lora({
   subsets: ["latin"],
@@ -37,9 +37,6 @@ const slideCaptionFont = { fontFamily: "system-ui, -apple-system, sans-serif" } 
 /** Same horizontal inset as the fixed nav — hero, headline band, carousel (forced phone layout). */
 const narrowHorizontalInset =
   "iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))]";
-
-/** Same outer width cap as the “Built for you” carousel row (`max-w-[min(100%,42rem)]`). */
-const BUILD_CAROUSEL_MAX_REM = 42;
 
 /**
  * Vertical bento horizontal inset — applied to scroll container so sticky element
@@ -330,9 +327,9 @@ const QUALITY_ORBIT_CHOREO_ACCENT_AFTER_GREY_MS = 140;
 
 function qualityOrbitMiniIcon(tileIndex: number): ReactElement {
   const svgProps = {
-    className: "h-[0.8125rem] w-[0.8125rem] shrink-0 text-white/95",
-    width: 13,
-    height: 13,
+    className: "h-[1.0625rem] w-[1.0625rem] shrink-0 text-white/95",
+    width: 17,
+    height: 17,
     viewBox: "0 0 24 24",
     fill: "none",
     stroke: "currentColor",
@@ -395,111 +392,6 @@ function vbRailsEffectiveInnerHeight(innerWidthPx: number, innerHeightPx: number
   const rz = doeforvcRootZoom(innerWidthPx);
   if (rz < 0.999) return innerHeightPx / rz;
   return innerHeightPx;
-}
-
-/** Icon strokes derived from Feather (MIT); scaled for the 700² slide canvas. */
-function WorkflowCarouselSlideCenterSvg(props: { children: ReactNode }): ReactElement {
-  return (
-    <svg
-      className="h-[1.45rem] w-[1.45rem] shrink-0"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={1.5}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      {props.children}
-    </svg>
-  );
-}
-
-/** Icon + label centered on workflow carousel mocks (700² design space; scales with card). */
-function WorkflowCarouselSlideCenterChrome(props: { slideIndex: 0 | 1 | 2 | 3 | 4 | 5 }): ReactElement {
-  const { slideIndex } = props;
-  const iconWrap =
-    "flex h-[3.125rem] w-[3.125rem] shrink-0 items-center justify-center rounded-[0.875rem] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]";
-  let lines: readonly string[];
-  let Icon: ReactNode;
-  switch (slideIndex) {
-    case 0:
-      lines = ["AI Inbox"];
-      Icon = (
-        <WorkflowCarouselSlideCenterSvg>
-          <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
-          <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
-        </WorkflowCarouselSlideCenterSvg>
-      );
-      break;
-    case 1:
-      lines = ["Receptionist"];
-      Icon = (
-        <WorkflowCarouselSlideCenterSvg>
-          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-        </WorkflowCarouselSlideCenterSvg>
-      );
-      break;
-    case 2:
-      lines = ["Appointment", "Assist"];
-      Icon = (
-        <WorkflowCarouselSlideCenterSvg>
-          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-          <line x1="16" y1="2" x2="16" y2="6" />
-          <line x1="8" y1="2" x2="8" y2="6" />
-          <line x1="3" y1="10" x2="21" y2="10" />
-        </WorkflowCarouselSlideCenterSvg>
-      );
-      break;
-    case 3:
-      lines = ["Auto-Billing"];
-      Icon = (
-        <WorkflowCarouselSlideCenterSvg>
-          <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
-          <line x1="1" y1="10" x2="23" y2="10" />
-        </WorkflowCarouselSlideCenterSvg>
-      );
-      break;
-    case 4:
-      lines = ["Multi-Specialty"];
-      Icon = (
-        <WorkflowCarouselSlideCenterSvg>
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-          <circle cx="9" cy="7" r="4" />
-          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-        </WorkflowCarouselSlideCenterSvg>
-      );
-      break;
-    case 5:
-      lines = ["Patient Facing"];
-      Icon = (
-        <WorkflowCarouselSlideCenterSvg>
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-          <circle cx="12" cy="7" r="4" />
-        </WorkflowCarouselSlideCenterSvg>
-      );
-      break;
-  }
-  const textPx = slideIndex === 2 ? "0.95rem" : "1.2rem";
-  return (
-    <div
-      className="pointer-events-none absolute left-1/2 top-[46%] z-[26] flex max-w-[min(94%,21rem)] -translate-x-1/2 -translate-y-1/2 flex-row items-center gap-[0.85rem]"
-      role="presentation"
-    >
-      <div className={iconWrap}>{Icon}</div>
-      <div
-        className={`flex min-w-0 flex-col gap-px text-left ${inter.className} font-light leading-[1.17] tracking-[-0.02em] text-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.35)]`}
-        style={{ fontSize: textPx }}
-      >
-        {lines.map((line) => (
-          <span key={line} className="block whitespace-nowrap">
-            {line}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
 }
 
 export default function DoePage() {
@@ -608,12 +500,12 @@ export default function DoePage() {
       }
 
       const zoom = Math.max(0.38, doeforvcRootZoom(window.innerWidth));
-      /** Inset so cards read slightly smaller than full viewport */
-      const horizontalInset = 12;
       /** Slide width from viewport; height taller than width for portrait cards */
       const phoneSlideScale = 1;
-      const stripMaxPx = BUILD_CAROUSEL_MAX_REM * vbDocumentRootPx();
-      const w = Math.min(((vw - horizontalInset * 2) / zoom) * phoneSlideScale, stripMaxPx);
+      /** Match `narrowHorizontalInset`: max(1.5rem, safe-area) per side — safe-area not available in JS; 1.5rem tracks typical gutters and aligns with the Built-for-you orange panel. */
+      const rootPx = vbDocumentRootPx();
+      const sidePadPx = Math.max(1.5 * rootPx, 0);
+      const w = Math.max(200, ((vw - 2 * sidePadPx) / zoom) * phoneSlideScale);
       /** Taller than wide — extra vertical presence in the carousel band */
       const phoneSlideHeightRatio = 1.28;
       const h = w * phoneSlideHeightRatio;
@@ -1988,9 +1880,9 @@ export default function DoePage() {
           <div
             className={`flex flex-col justify-center min-h-0 overflow-x-hidden overflow-y-visible pb-16 iphone-page:pb-14 ${narrowHorizontalInset}`}
           >
-          {/* Sliding squares container — width matches Built for you carousel strip */}
+          {/* Sliding squares container — width matches Built-for-you orange panel (`w-full` inside narrowHorizontalInset) */}
           <div
-            className="relative mx-auto flex w-full max-w-[min(100%,42rem)] flex-col justify-center"
+            className="relative mx-auto flex w-full max-w-full flex-col justify-center"
             style={{
               opacity: slidingBoxesOpacity,
               transform: `translateY(${slidingBoxesTranslateY}px)`,
@@ -2145,8 +2037,6 @@ export default function DoePage() {
                       </span>
                     </div>
                     
-                    <WorkflowCarouselSlideCenterChrome slideIndex={0} />
-
                     {/* AI Receptionist — caller line left + heard stream + thinking */}
                     <div
                       className="absolute left-1/2 rounded-xl bg-white shadow-lg"
@@ -2274,8 +2164,6 @@ export default function DoePage() {
                       </span>
                     </div>
                     
-                    <WorkflowCarouselSlideCenterChrome slideIndex={1} />
-
                     {/* Save and Undo when editing Smart Appointments caption */}
                     {(isEditingBox2Title || isEditingBox2Description) && (
                       <div
@@ -2585,8 +2473,6 @@ export default function DoePage() {
                       </span>
                     </div>
                     
-                    <WorkflowCarouselSlideCenterChrome slideIndex={2} />
-
                     {/* Billing — overlapping ERA + outbound packet */}
                     <div
                       className="absolute"
@@ -2762,8 +2648,6 @@ export default function DoePage() {
                     </span>
                   </div>
                   
-                  <WorkflowCarouselSlideCenterChrome slideIndex={3} />
-
                   {/* Multi-disciplinary — single horizontal ribbon, centered */}
                   <div
                     className="absolute left-1/2 flex flex-col justify-center rounded-xl bg-white shadow-lg"
@@ -2879,8 +2763,6 @@ export default function DoePage() {
                         {i + 1}
                       </span>
                     </div>
-
-                    <WorkflowCarouselSlideCenterChrome slideIndex={4} />
 
                     {/* Different UI - Referral Intake */}
                     <div
@@ -3005,8 +2887,6 @@ export default function DoePage() {
                         {i + 1}
                       </span>
                     </div>
-
-                    <WorkflowCarouselSlideCenterChrome slideIndex={5} />
 
                     <div
                       className="absolute"
@@ -3259,8 +3139,8 @@ export default function DoePage() {
                 style={{
                   left: `${p.leftPct}%`,
                   top: `${p.topPct}%`,
-                  width: "clamp(6.1rem, 25.75vw, 10.35rem)",
-                  height: "clamp(3.7rem, 15.85vw, 6.35rem)",
+                  width: "clamp(6.85rem, 28.25vw, 11.75rem)",
+                  height: "clamp(4.15rem, 17.25vw, 7rem)",
                   boxShadow:
                     "0 18px 44px rgba(214, 119, 76, 0.34), 0 8px 20px rgba(30, 52, 58, 0.11), 0 3px 8px rgba(255, 255, 255, 0.48)",
                   opacity: qualityOrbitChoreography.diagram ? 1 : 0,
@@ -3312,14 +3192,14 @@ export default function DoePage() {
                   <rect width="100%" height="100%" fill={`url(#quality-orbit-lines-${i})`} />
                 </svg>
                 <div
-                  className={`relative z-[4] pointer-events-none flex h-full min-h-0 flex-row items-center justify-center gap-x-1.5 gap-y-0 px-2 py-1 ${inter.className}`}
+                  className={`relative z-[4] pointer-events-none flex h-full min-h-0 flex-row items-center justify-center gap-x-2 gap-y-0 px-2.5 py-1 ${inter.className}`}
                 >
                   {qualityOrbitMiniIcon(i)}
                   <span
-                    className={`max-w-[min(100%,7.25rem)] text-left font-semibold leading-snug tracking-tight text-white/95 drop-shadow-[0_1px_12px_rgba(0,0,0,0.28)] ${
+                    className={`max-w-[min(100%,9rem)] text-left font-semibold leading-snug tracking-tight text-white/95 drop-shadow-[0_1px_12px_rgba(0,0,0,0.28)] ${
                       QUALITY_ORBIT_TILE_LABELS[i].length > 1
-                        ? "text-[clamp(0.46rem,1.62vw,0.625rem)]"
-                        : "text-[clamp(0.52rem,1.82vw,0.6875rem)]"
+                        ? "text-[clamp(0.58rem,2.05vw,0.8125rem)]"
+                        : "text-[clamp(0.66rem,2.28vw,0.875rem)]"
                     }`}
                   >
                     {QUALITY_ORBIT_TILE_LABELS[i].map((line) => (
