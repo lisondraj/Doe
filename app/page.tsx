@@ -984,6 +984,21 @@ export default function DoePage() {
     320,
     Math.max(252, Math.round(slideVisibleWidth700 * 0.92)),
   );
+  /** AI Receptionist single “thinking” panel */
+  const carouselReceptionThinkingWidth700 = Math.min(
+    310,
+    Math.max(258, Math.round(slideVisibleWidth700 * 0.84)),
+  );
+  /** Smart Appointments unified panel */
+  const carouselSmartApptPanelWidth700 = Math.min(
+    356,
+    Math.max(276, Math.round(slideVisibleWidth700 * 0.9)),
+  );
+  /** Multi-disciplinary horizontal ribbon */
+  const carouselMultidiscRibbonWidth700 = Math.min(
+    438,
+    Math.max(304, Math.round(slideVisibleWidth700 * 0.96)),
+  );
   /** Prior auth overlapping cards (box 5): scale entire composition */
   const priorAuthComposeScale = Math.min(1, Math.max(0.62, slideVisibleWidth700 / 478));
   const totalWidth = totalBoxes * boxTotalWidth;
@@ -1965,123 +1980,73 @@ export default function DoePage() {
                       </span>
                     </div>
                     
-                    {/* Reception — overlapping mock (prior-auth styling) */}
+                    {/* AI Receptionist — one centered panel: inbound call + thinking stream */}
                     <div
-                      className="absolute"
+                      className="absolute left-1/2 rounded-xl bg-white shadow-lg"
                       style={{
-                        left: '50%',
-                        top: '50%',
+                        width: `${carouselReceptionThinkingWidth700}px`,
+                        top: '47%',
                         transform: `translate(-50%, -50%) scale(${priorAuthComposeScale})`,
                         transformOrigin: 'center center',
-                        width: '472px',
-                        height: '380px',
-                        opacity: 1,
-                        pointerEvents: 'auto',
+                        padding: carouselReceptionThinkingWidth700 < 288 ? '16px' : '20px',
+                        paddingBottom: '16px',
                         userSelect: 'none',
-                        cursor: 'default',
-                        touchAction: 'none',
+                        pointerEvents: 'auto',
                       }}
                     >
-                      <div className="relative h-full w-full">
-                        {/* Rear */}
-                        <div
-                          className="absolute rounded-xl bg-white shadow-lg"
-                          style={{
-                            width: '258px',
-                            left: '12px',
-                            top: '84px',
-                            zIndex: 1,
-                            padding: '17px',
-                            paddingBottom: '15px',
-                          }}
-                        >
-                          <div className="mb-3 flex items-center justify-between">
-                            <h3 className="font-bold text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '14px' }}>
-                              Call activity
-                            </h3>
-                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-200">
-                              <span className="text-[11px] font-bold text-gray-600" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                                4
-                              </span>
-                            </div>
-                          </div>
-                          <p className={`text-gray-500 text-xs mb-3`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                            Oak Hill Clinic · Primary line answered today
+                      <div className="mb-3 flex items-start justify-between gap-2">
+                        <div>
+                          <h3 className="font-bold text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '14px' }}>
+                            Inbound call
+                          </h3>
+                          <p className="text-xs text-gray-500" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                            Primary line · (555) 310-4412
                           </p>
-                          <div className="flex items-start gap-3 rounded-lg border border-gray-100 p-2.5">
-                            <div className="h-8 w-8 shrink-0 rounded-full bg-gray-600" />
-                            <div className="min-w-0 flex-1 pt-0.5">
-                              <p className="text-xs font-bold text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                                Inbound · scheduling
-                              </p>
-                              <p className="text-[11px] text-gray-600" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                                Follow-up booked with consent on file.
-                              </p>
-                            </div>
-                          </div>
-                          <div className="mt-2 flex items-start gap-3 rounded-lg border border-gray-100 p-2.5">
-                            <div className="h-8 w-8 shrink-0 rounded-full bg-gray-600" />
-                            <div className="min-w-0 flex-1 pt-0.5">
-                              <p className="text-xs font-bold text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                                Portal · questionnaires
-                              </p>
-                              <p className="text-[11px] text-gray-600" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                                PHQ-2 + demographics packet delivered.
-                              </p>
-                            </div>
-                          </div>
                         </div>
-                        {/* Front */}
-                        <div
-                          className="absolute rounded-xl bg-white shadow-lg"
-                          style={{
-                            width: '282px',
-                            left: '198px',
-                            top: '14px',
-                            zIndex: 2,
-                            padding: '15px',
-                            paddingBottom: '13px',
-                          }}
+                        <span
+                          className="shrink-0 rounded-full bg-gray-200 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-gray-700"
+                          style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
                         >
-                          <div className="mb-2 flex items-start justify-between gap-2">
-                            <div>
-                              <p className={`mb-0.5 text-gray-900 text-sm font-bold`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                                Visit preparation
-                              </p>
-                              <p className={`text-gray-500 text-xs`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                                Thu · 10:40 · Dr. Patel · Exam 3
-                              </p>
-                            </div>
-                            <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-gray-400" />
-                          </div>
-                          <p className={`mb-3 text-gray-600 text-xs`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                            Intake summarized for the clinician. Appointment holds and forms are synced before arrival.
-                          </p>
-                          <div className="flex gap-2">
-                            <button
-                              type="button"
-                              className="flex-1 rounded bg-gray-600 px-3 py-2 text-xs font-semibold text-white"
-                              style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
-                            >
-                              Forms
-                            </button>
-                            <button
-                              type="button"
-                              className="flex-1 rounded bg-gray-600 px-3 py-2 text-xs font-semibold text-white"
-                              style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
-                            >
-                              Calendar
-                            </button>
-                            <button
-                              type="button"
-                              className="flex-1 rounded bg-gray-600 px-3 py-2 text-xs font-semibold text-white"
-                              style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
-                            >
-                              Close
-                            </button>
-                          </div>
-                        </div>
+                          AI
+                        </span>
                       </div>
+                      <div className="mb-3 rounded-lg border border-gray-100 bg-gray-50 px-3 py-2.5">
+                        <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wide text-gray-500">Heard now</p>
+                        <p className="text-xs leading-snug text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                          “I&apos;m dizzy after my new meds—need to bump my cardio follow-up.”
+                        </p>
+                      </div>
+                      <div className="rounded-lg border border-dashed border-gray-200 bg-white px-3 py-2.5">
+                        <div className="mb-2 flex items-center gap-2">
+                          <span className="flex gap-1" aria-hidden>
+                            <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-gray-500 [animation-duration:1.05s]" />
+                            <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-gray-500 [animation-duration:1.05s] [animation-delay:180ms]" />
+                            <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-gray-500 [animation-duration:1.05s] [animation-delay:360ms]" />
+                          </span>
+                          <span
+                            className="text-[11px] font-semibold uppercase tracking-wide text-gray-700"
+                            style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
+                          >
+                            Thinking
+                          </span>
+                        </div>
+                        <ul className="space-y-2 text-[11px] leading-snug text-gray-600" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                          {[
+                            'Intent · side-effect plus reschedule request',
+                            'Cross-check meds + dizziness cues in chart',
+                            'Selecting next cardio NP openings Tue · Thu AM',
+                            'Preparing scripted hold / warm transfer script',
+                          ].map((line) => (
+                            <li key={line} className="flex gap-2">
+                              <span className="mt-1 h-2 w-2 shrink-0 rounded-sm bg-gray-400" aria-hidden />
+                              <span>{line}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <p className="mt-2 text-[10px] text-gray-400" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                        Hold music until confidence threshold met—then announces slot or escalates triage.
+                      </p>
                     </div>
 
                     <div className={slideCaptionWrap} style={{ left: captionLeft700, right: captionRight700 }}>
@@ -2220,139 +2185,73 @@ export default function DoePage() {
                       </div>
                     )}
 
-                    {/* Smart appointments — overlapping transcript + chart (prior-auth spacing) */}
+                    {/* Smart appointments — single panel */}
                     <div
-                      className="absolute"
+                      className="absolute left-1/2 rounded-xl bg-white shadow-lg"
                       style={{
-                        left: '50%',
-                        top: '50%',
+                        width: `${carouselSmartApptPanelWidth700}px`,
+                        top: '47%',
                         transform: `translate(-50%, -50%) scale(${priorAuthComposeScale})`,
                         transformOrigin: 'center center',
-                        width: '472px',
-                        height: '392px',
-                        opacity: 1,
-                        pointerEvents: 'auto',
+                        padding: carouselSmartApptPanelWidth700 < 304 ? '15px' : '18px',
+                        paddingBottom: '16px',
                         userSelect: 'none',
-                        cursor: 'default',
-                        touchAction: 'none',
+                        pointerEvents: 'auto',
                       }}
                     >
-                      <div className="relative h-full w-full">
-                        {/* Rear — chart excerpts */}
-                        <div
-                          className="absolute rounded-xl bg-white shadow-lg"
-                          style={{
-                            width: '256px',
-                            left: '10px',
-                            top: '94px',
-                            zIndex: 1,
-                            padding: '17px',
-                            paddingBottom: '15px',
-                          }}
-                        >
-                          <div className="mb-3 flex items-center justify-between">
-                            <h3 className="font-bold text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '14px' }}>
-                              Chart excerpts
-                            </h3>
-                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-200">
-                              <span className="text-[10px] font-bold text-gray-600" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                                Rx
-                              </span>
-                            </div>
-                          </div>
-                          <p className={`text-gray-500 text-xs mb-3`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                            Updates from today&apos;s transcript · synced to record
+                      <div className="mb-2 flex items-start justify-between gap-2">
+                        <div>
+                          <p className="mb-0.5 text-sm font-bold text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                            Exam room transcript
                           </p>
-                          <div className="flex items-start gap-3 rounded-lg border border-gray-100 p-2.5">
-                            <div className="h-8 w-8 shrink-0 rounded-full bg-gray-600" />
-                            <div className="min-w-0 flex-1 pt-0.5">
-                              <div className="mb-1 flex items-center justify-between gap-2">
-                                <span className="text-xs font-bold text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                                  Medications
-                                </span>
-                                <span className="text-[10px] font-semibold text-gray-500">Flagged</span>
-                              </div>
-                              <p className="text-[11px] text-gray-600" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                                Metformin adherence note added from visit audio.
-                              </p>
-                            </div>
-                          </div>
-                          <div className="mt-2 flex items-start gap-3 rounded-lg border border-gray-100 p-2.5">
-                            <div className="h-8 w-8 shrink-0 rounded-full bg-gray-600" />
-                            <div className="min-w-0 flex-1 pt-0.5">
-                              <div className="mb-1 flex items-center justify-between gap-2">
-                                <span className="text-xs font-bold text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                                  Problems · knee
-                                </span>
-                                <span className="text-[10px] font-semibold text-gray-500">Trend</span>
-                              </div>
-                              <p className="text-[11px] text-gray-600" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                                Osteoarthritis flare linked to PT visit last week.
-                              </p>
-                            </div>
-                          </div>
+                          <p className="text-xs text-gray-500" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                            Patient #2847 · Room 12 · syncing to chart
+                          </p>
                         </div>
-                        {/* Front — transcript + matched rows (chat-like) */}
-                        <div
-                          className="absolute rounded-xl bg-white shadow-lg"
-                          style={{
-                            width: '286px',
-                            left: '186px',
-                            top: '8px',
-                            zIndex: 2,
-                            padding: '14px',
-                            paddingBottom: '13px',
-                          }}
+                        <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-gray-400" aria-hidden />
+                      </div>
+                      <div
+                        className="mb-3 max-h-[218px] space-y-2 overflow-hidden rounded-lg border border-gray-100 bg-gray-50/60 p-2.5"
+                        style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
+                      >
+                        <div className="rounded-md bg-white p-2 ring-1 ring-gray-100/90">
+                          <p className="mb-1 text-[9px] font-bold uppercase tracking-wide text-gray-500">Patient</p>
+                          <p className="text-[11px] leading-snug text-gray-800">
+                            &ldquo;The metformin gives me cramps—I skipped it twice.&rdquo;
+                          </p>
+                        </div>
+                        <p className="border-l-2 border-gray-300 py-0.5 pl-2 text-[10px] leading-snug text-gray-600">
+                          Found · Medications — Metformin 1000 mg BID · refill gap surfaced for clinician.
+                        </p>
+                        <div className="rounded-md bg-white p-2 ring-1 ring-gray-100/90">
+                          <p className="mb-1 text-[9px] font-bold uppercase tracking-wide text-gray-500">Patient</p>
+                          <p className="text-[11px] leading-snug text-gray-800">&ldquo;Left knee popped again after PT.&rdquo;</p>
+                        </div>
+                        <p className="border-l-2 border-gray-300 py-0.5 pl-2 text-[10px] leading-snug text-gray-600">
+                          Found · Problems — OA left knee · last documented PT six days ago; ROM stable in chart.
+                        </p>
+                      </div>
+                      <div className="rounded-lg border border-gray-100 bg-white px-2.5 py-2">
+                        <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-500">Suggested next prompts</p>
+                        <p className="mt-1 text-[11px] leading-snug text-gray-700" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                          BMP before med change · consider films if effusion reported on exam today.
+                        </p>
+                      </div>
+                      <div className="mt-2.5 flex gap-2">
+                        <button
+                          type="button"
+                          className="flex-1 rounded bg-gray-600 px-2.5 py-2 text-[11px] font-semibold text-white"
+                          style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
                         >
-                          <div className="mb-2 flex items-start justify-between gap-2">
-                            <div>
-                              <p className={`mb-0.5 text-gray-900 text-sm font-bold`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                                Exam room transcript
-                              </p>
-                              <p className={`text-gray-500 text-xs`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                                Patient #2847 · Room 12
-                              </p>
-                            </div>
-                            <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-gray-400" />
-                          </div>
-                          <div
-                            className="mb-2 max-h-[210px] space-y-2 overflow-hidden rounded-lg border border-gray-100 bg-gray-50/50 p-2"
-                            style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
-                          >
-                            <div className="rounded-md bg-white p-2 ring-1 ring-gray-100/90">
-                              <p className="mb-1 text-[9px] font-bold uppercase tracking-wide text-gray-500">Patient</p>
-                              <p className="text-[11px] leading-snug text-gray-800">
-                                &ldquo;The metformin gives me cramps—I skipped it twice.&rdquo;
-                              </p>
-                            </div>
-                            <p className="border-l-2 border-gray-300 py-0.5 pl-2 text-[10px] leading-snug text-gray-600">
-                              Found · Medications — Metformin 1000 mg BID · gap in refill pattern highlighted for review.
-                            </p>
-                            <div className="rounded-md bg-white p-2 ring-1 ring-gray-100/90">
-                              <p className="mb-1 text-[9px] font-bold uppercase tracking-wide text-gray-500">Patient</p>
-                              <p className="text-[11px] leading-snug text-gray-800">&ldquo;Left knee popped again after PT.&rdquo;</p>
-                            </div>
-                            <p className="border-l-2 border-gray-300 py-0.5 pl-2 text-[10px] leading-snug text-gray-600">
-                              Found · Problems — OA left knee · last documented PT six days ago; ROM unchanged in June.
-                            </p>
-                          </div>
-                          <div className="flex gap-2">
-                            <button
-                              type="button"
-                              className="flex-1 rounded bg-gray-600 px-2.5 py-2 text-[11px] font-semibold text-white"
-                              style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
-                            >
-                              Note
-                            </button>
-                            <button
-                              type="button"
-                              className="flex-1 rounded bg-gray-600 px-2.5 py-2 text-[11px] font-semibold text-white"
-                              style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
-                            >
-                              Tasks
-                            </button>
-                          </div>
-                        </div>
+                          Note
+                        </button>
+                        <button
+                          type="button"
+                          className="flex-1 rounded bg-gray-600 px-2.5 py-2 text-[11px] font-semibold text-white"
+                          style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
+                        >
+                          Tasks
+                        </button>
                       </div>
                     </div>
 
@@ -2708,134 +2607,52 @@ export default function DoePage() {
                     </span>
                   </div>
                   
-                  {/* Multi-disciplinary — overlapping rationale + queues */}
+                  {/* Multi-disciplinary — single horizontal ribbon, centered */}
                   <div
-                    className="absolute"
+                    className="absolute left-1/2 flex flex-col justify-center rounded-xl bg-white shadow-lg"
                     style={{
-                      left: '50%',
-                      top: '50%',
+                      width: `${carouselMultidiscRibbonWidth700}px`,
+                      top: '47%',
                       transform: `translate(-50%, -50%) scale(${priorAuthComposeScale})`,
                       transformOrigin: 'center center',
-                      width: '472px',
-                      height: '380px',
-                      opacity: 1,
-                      pointerEvents: 'auto',
+                      minHeight: Math.min(124, Math.max(104, Math.round(slideVisibleWidth700 * 0.28))),
+                      padding: carouselMultidiscRibbonWidth700 < 340 ? '12px 14px' : '14px 18px',
                       userSelect: 'none',
-                      cursor: 'default',
-                      touchAction: 'none',
+                      pointerEvents: 'auto',
                     }}
                   >
-                    <div className="relative h-full w-full">
-                      <div
-                        className="absolute rounded-xl bg-white shadow-lg"
-                        style={{
-                          width: '258px',
-                          left: '12px',
-                          top: '82px',
-                          zIndex: 1,
-                          padding: '17px',
-                          paddingBottom: '15px',
-                        }}
-                      >
-                        <div className="mb-3 flex items-center justify-between">
-                          <h3 className="font-bold text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '14px' }}>
-                            Visit synopsis
-                          </h3>
-                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-200">
-                            <span className="text-[11px] font-bold text-gray-600" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                              3
-                            </span>
-                          </div>
-                        </div>
-                        <p className={`text-gray-500 text-xs mb-3`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                          Pulled forward for coordinators · Patient #4421
+                    <div className="mb-2 flex items-center justify-between gap-3">
+                      <div>
+                        <p className="text-sm font-bold text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                          Care routing
                         </p>
-                        <div className="mb-2 flex items-center justify-between">
-                          <span className={`text-gray-700 text-xs font-semibold`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                            Handoffs drafted
-                          </span>
-                          <span className={`text-gray-600 text-xs font-bold`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                            Done
-                          </span>
-                        </div>
-                        <div className="mb-3 h-2 w-full rounded-full bg-gray-200">
-                          <div className="h-2 rounded-full bg-gray-600" style={{ width: '70%' }} />
-                        </div>
-                        <div className="rounded-lg border border-gray-100 bg-gray-50/80 p-2.5">
-                          <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-500">Chief concern</p>
-                          <p className="mt-1 text-[11px] text-gray-800" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                            Dyspnea on exertion · peripheral edema · new systolic murmur on exam today.
+                        <p className="text-[11px] text-gray-500" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                          One synopsis · duplicate referrals suppressed
+                        </p>
+                      </div>
+                      <span
+                        className="shrink-0 rounded-full bg-gray-200 px-2 py-1 text-[10px] font-bold text-gray-600"
+                        style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
+                      >
+                        Draft
+                      </span>
+                    </div>
+                    <div className="flex min-h-[4.75rem] w-full divide-x divide-gray-100 rounded-lg border border-gray-100 bg-gray-50/70">
+                      {[
+                        { label: 'Cardiology', lane: 'Echo request', eta: '48h slot hold' },
+                        { label: 'Nephrology', lane: 'BMP curve', eta: 'Shared today' },
+                        { label: 'Rehab', lane: 'Edema protocol', eta: 'Outpatient coach' },
+                      ].map((col) => (
+                        <div key={col.label} className="flex min-w-0 flex-1 flex-col px-3 py-2.5 first:rounded-l-[7px] last:rounded-r-[7px]">
+                          <p className="text-[10px] font-bold uppercase tracking-wide text-gray-500">{col.label}</p>
+                          <p className="mt-1 text-[11px] font-semibold text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                            {col.lane}
+                          </p>
+                          <p className="mt-0.5 text-[10px] text-gray-500" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                            {col.eta}
                           </p>
                         </div>
-                      </div>
-
-                      <div
-                        className="absolute rounded-xl bg-white shadow-lg"
-                        style={{
-                          width: '282px',
-                          left: '196px',
-                          top: '12px',
-                          zIndex: 2,
-                          padding: '15px',
-                          paddingBottom: '13px',
-                        }}
-                      >
-                        <div className="mb-2 flex items-start justify-between gap-2">
-                          <div>
-                            <p className={`mb-0.5 text-gray-900 text-sm font-bold`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                              Specialty threads
-                            </p>
-                            <p className={`text-gray-500 text-xs`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                              Ready to release without duplicate referrals
-                            </p>
-                          </div>
-                          <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-gray-400" />
-                        </div>
-                        <div className="space-y-2">
-                          <div className="flex items-start gap-3 rounded-lg border border-gray-100 p-2.5">
-                            <div className="h-8 w-8 shrink-0 rounded-full bg-gray-600" />
-                            <div className="min-w-0 pt-0.5">
-                              <div className="mb-1 flex items-center justify-between gap-2">
-                                <span className="text-xs font-bold text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                                  Cardiology
-                                </span>
-                                <span className="text-[10px] font-semibold text-gray-500">Urgent</span>
-                              </div>
-                              <p className="text-[11px] text-gray-600" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                                Echo request packet attached · slot hold forty-eight hours.
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex items-start gap-3 rounded-lg border border-gray-100 p-2.5">
-                            <div className="h-8 w-8 shrink-0 rounded-full bg-gray-600" />
-                            <div className="min-w-0 pt-0.5">
-                              <div className="mb-1 flex items-center justify-between gap-2">
-                                <span className="text-xs font-bold text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                                  Nephrology
-                                </span>
-                                <span className="text-[10px] font-semibold text-gray-500">Today</span>
-                              </div>
-                              <p className="text-[11px] text-gray-600" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                                BMP trend + fluid exam shared for renal review lane.
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex items-start gap-3 rounded-lg border border-gray-100 p-2.5">
-                            <div className="h-8 w-8 shrink-0 rounded-full bg-gray-600" />
-                            <div className="min-w-0 pt-0.5">
-                              <div className="mb-1 flex items-center justify-between gap-2">
-                                <span className="text-xs font-bold text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                                  Pulmonary rehab
-                                </span>
-                                <span className="text-[10px] font-semibold text-gray-500">Queued</span>
-                              </div>
-                              <p className="text-[11px] text-gray-600" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                                Edema-management protocol suggested for outpatient coach.
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                      ))}
                     </div>
                   </div>
 
