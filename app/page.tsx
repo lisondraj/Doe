@@ -4069,19 +4069,17 @@ export default function DoePage() {
 
       </div>
 
-      {/* Inquisara — gradient band above footer */}
-      <section
-        aria-labelledby="inquisara-teaser-heading"
-        className="relative z-10 w-full overflow-hidden"
-        style={{
-          width: "100vw",
-          marginLeft: "calc(50% - 50vw)",
-          marginRight: "calc(50% - 50vw)",
-        }}
+      {/* Inquisara — rounded band aligned with Built-for-you carousel column */}
+      <div
+        className={`relative z-10 w-full px-4 pb-[clamp(1rem,3vw,1.75rem)] ${narrowHorizontalInset}`}
       >
-        <div className="pointer-events-none absolute inset-0">
+        <section
+          aria-labelledby="inquisara-teaser-heading"
+          className="relative mx-auto w-full max-w-[min(100%,42rem)] overflow-hidden rounded-[clamp(1.15rem,2.75vw,1.875rem)] shadow-[0_18px_48px_rgba(30,52,58,0.14)] ring-1 ring-black/[0.07]"
+        >
+        <div className="pointer-events-none absolute inset-0 rounded-[inherit]">
           <div
-            className="pointer-events-none absolute inset-0"
+            className="pointer-events-none absolute inset-0 rounded-[inherit]"
             style={{
               background: `
               radial-gradient(circle farthest-corner at 50% 42%,
@@ -4110,7 +4108,7 @@ export default function DoePage() {
             }}
           />
           <div
-            className="pointer-events-none absolute inset-0 z-[1]"
+            className="pointer-events-none absolute inset-0 z-[1] rounded-[inherit]"
             style={{
               opacity: 0.55,
               mixBlendMode: "soft-light",
@@ -4133,7 +4131,7 @@ export default function DoePage() {
             }}
           />
           <div
-            className="pointer-events-none absolute inset-0 z-[2]"
+            className="pointer-events-none absolute inset-0 z-[2] rounded-[inherit]"
             style={{
               backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E")`,
               backgroundSize: "200px 200px",
@@ -4142,7 +4140,7 @@ export default function DoePage() {
             }}
           />
         </div>
-        <div className="relative z-10 mx-auto flex min-h-[min(52vw,22rem)] max-w-full flex-col items-center justify-center px-6 py-[clamp(3.25rem,9vw,6.75rem)] text-center md:min-h-[min(44vw,20rem)] md:px-10 iphone-page:px-5 iphone-page:py-[clamp(3rem,11vw,6rem)]">
+        <div className="relative z-10 mx-auto flex min-h-[min(52vw,22rem)] w-full max-w-full flex-col items-center justify-center px-6 py-[clamp(3.25rem,9vw,6.75rem)] text-center md:min-h-[min(44vw,20rem)] md:px-10 iphone-page:px-5 iphone-page:py-[clamp(3rem,11vw,6rem)]">
           <h2
             id="inquisara-teaser-heading"
             className={`font-semibold tracking-tight text-white drop-shadow-[0_2px_28px_rgba(0,0,0,0.28)] ${inter.className}`}
@@ -4183,6 +4181,7 @@ export default function DoePage() {
           </a>
         </div>
       </section>
+      </div>
 
       <footer
         className="relative z-10 mt-0 flex min-h-[min(69vh,42rem)] w-screen flex-col justify-end overflow-x-clip overflow-y-visible pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] iphone-page:min-h-[66vh]"
