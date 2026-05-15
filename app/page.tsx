@@ -2129,9 +2129,9 @@ export default function DoePage() {
                     {MOBILE_NAV_FOOTER_SLIDES.map((slide) => (
                       <div
                         key={slide.boxTitle}
-                        className={`w-full min-w-full shrink-0 snap-center box-border px-4 ${narrowHorizontalInset} iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)] space-y-3`}
+                        className="w-full min-w-full shrink-0 snap-center box-border space-y-3 py-3 pl-[max(1rem,env(safe-area-inset-left,0px))] pr-[max(1rem,env(safe-area-inset-right,0px))] iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)] iphone-page:py-[clamp(0.75rem,0.5rem+1vmin,1.125rem)] iphone-page:pl-[max(1rem,calc(env(safe-area-inset-left,0px)+0.5rem))] iphone-page:pr-[max(1rem,calc(env(safe-area-inset-right,0px)+0.5rem))]"
                       >
-                        <div className="mx-auto w-full max-w-[min(100%,42rem)] space-y-3 iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)]">
+                        <div className="w-full space-y-3 iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)]">
                         <div className="relative rounded-[1.375rem] iphone-page:rounded-[clamp(1.2rem,1rem+1.4vmin,2.1rem)] overflow-hidden min-h-[30rem] iphone-page:min-h-[clamp(22rem,58vmin,48rem)] shadow-[0_10px_32px_rgba(0,0,0,0.12)]">
                           <div
                             className="absolute inset-0"
@@ -2171,16 +2171,9 @@ export default function DoePage() {
                           </div>
                           <div className="absolute bottom-0 left-0 right-0 z-[3] flex items-center justify-start p-8 iphone-page:p-[clamp(1.35rem,0.9rem+3.1vmin,3.5rem)]">
                             <div className={`text-white ${inter.className}`}>
-                              {slide.boxTitle === "Inquisara" ? (
-                                <span className="text-[3.25rem] iphone-page:text-[clamp(2.05rem,1rem+5.5vmin,4.65rem)] tracking-tight leading-none">
-                                  <span className="font-medium">In</span>
-                                  <span className="font-light">quisara</span>
-                                </span>
-                              ) : (
-                                <span className="text-[3.25rem] iphone-page:text-[clamp(2.05rem,1rem+5.5vmin,4.65rem)] font-medium tracking-tight leading-none">
-                                  {slide.boxTitle}
-                                </span>
-                              )}
+                              <span className="text-[3.25rem] iphone-page:text-[clamp(2.05rem,1rem+5.5vmin,4.65rem)] font-medium tracking-tight leading-none">
+                                {slide.boxTitle}
+                              </span>
                             </div>
                           </div>
                         </div>
@@ -2191,7 +2184,7 @@ export default function DoePage() {
                             onClick={() => setMobileNavOpen(false)}
                             aria-label="See what we are building"
                           >
-                            <span className="text-[1.5rem] iphone-page:text-[clamp(1.38rem,0.88rem+2.3vmin,2.45rem)] font-medium text-gray-800 tracking-tight leading-snug underline decoration-gray-800/80 decoration-[2.5px] underline-offset-[5px]">
+                            <span className="text-[1.5rem] iphone-page:text-[clamp(1.38rem,0.88rem+2.3vmin,2.45rem)] font-medium text-gray-800 tracking-tight leading-snug no-underline">
                               See what we&apos;re building&nbsp;→
                             </span>
                           </Link>

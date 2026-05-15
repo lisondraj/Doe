@@ -46,7 +46,7 @@ export const MOBILE_NAV_FOOTER_SLIDES: ReadonlyArray<{
   },
   {
     boxTitle: "Doe Ecosystem",
-    outside: "The Future of Medicine",
+    outside: "Orchestration Over Rip-and-Replace",
     shape: "circle",
     date: "April 28, 2026",
     gradient:
@@ -77,7 +77,7 @@ export const MOBILE_NAV_FOOTER_SLIDES: ReadonlyArray<{
   },
   {
     boxTitle: "For Students",
-    outside: "Doe Education",
+    outside: "Spaced Practice With Bedside Citations",
     shape: "square",
     date: "June 3, 2026",
     gradient:
