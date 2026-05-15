@@ -3725,7 +3725,7 @@ export default function DoePage() {
           />
         </div>
         <div
-          className={`relative z-[2] mx-auto flex w-full max-w-[min(100%,52rem)] flex-col items-start justify-center px-4 py-[clamp(4.5rem,12vh,9rem)] iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] md:py-[clamp(5.5rem,14vh,11rem)] ${narrowHorizontalInset}`}
+          className={`relative z-[2] mx-auto flex w-full max-w-[min(100%,52rem)] flex-col items-center justify-center px-4 py-[clamp(4.5rem,12vh,9rem)] iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] md:py-[clamp(5.5rem,14vh,11rem)] ${narrowHorizontalInset}`}
           style={{
             minHeight: "clamp(56rem, 132vh, 112rem)",
             opacity: bentoBridgeEntered ? 1 : 0,
@@ -3733,38 +3733,51 @@ export default function DoePage() {
             transition: "opacity 1s ease-out, transform 1s cubic-bezier(0.22, 1, 0.36, 1)",
           }}
         >
-          <blockquote className="m-0 w-full max-w-[min(100%,26rem)] text-pretty sm:max-w-[min(100%,28rem)]">
+          <blockquote className="m-0 w-full max-w-[min(100%,42rem)] text-pretty">
             <span id="vbento-bridge-quote" className="sr-only">
               {VBENTO_BRIDGE_TESTIMONIAL}
             </span>
-            <p
-              className={`m-0 text-left font-normal tracking-[-0.02em] ${lora.className}`}
-              style={{
-                fontSize: "clamp(2.1rem, 5.1vw, 3.85rem)",
-                lineHeight: 1.28,
-                backgroundImage:
-                  "linear-gradient(168deg, #4a3f3a 0%, #6a4f3a 18%, #8a5c38 38%, #9d6a3d 52%, #7d5534 72%, #524038 100%)",
-                WebkitBackgroundClip: "text",
-                backgroundClip: "text",
-                color: "transparent",
-                WebkitTextFillColor: "transparent",
-              }}
-              aria-hidden="true"
-            >
-              <span className="[display:inline]">
-                {VBENTO_BRIDGE_TESTIMONIAL.slice(0, bentoBridgeTypedLen)}
-              </span>
-              {bentoBridgeTypedLen < VBENTO_BRIDGE_TESTIMONIAL.length ? (
-                <span
-                  className="bento-bridge-caret motion-reduce:animate-none ml-[0.06em] inline-block w-[0.09em] shrink-0 translate-y-[0.04em] bg-[#8a5c38] align-middle"
-                  style={{ height: "0.82em" }}
-                  aria-hidden
-                />
-              ) : null}
-            </p>
+            {/** Invisible full quote reserves final line breaks so the typewriter does not reflow upward. */}
+            <div className="relative mx-auto w-full max-w-[min(100%,42rem)]">
+              <p
+                className={`invisible m-0 select-none text-center font-normal tracking-[-0.02em] ${lora.className}`}
+                style={{
+                  fontSize: "clamp(2.55rem, 6.25vw, 4.65rem)",
+                  lineHeight: 1.3,
+                }}
+                aria-hidden
+              >
+                {VBENTO_BRIDGE_TESTIMONIAL}
+              </p>
+              <p
+                className={`absolute left-0 right-0 top-0 m-0 text-center font-normal tracking-[-0.02em] ${lora.className}`}
+                style={{
+                  fontSize: "clamp(2.55rem, 6.25vw, 4.65rem)",
+                  lineHeight: 1.3,
+                  backgroundImage:
+                    "linear-gradient(168deg, #6e635e 0%, #887056 16%, #9c7d5c 34%, #b08f68 50%, #9a7b5e 68%, #7d6656 84%, #6a5c54 100%)",
+                  WebkitBackgroundClip: "text",
+                  backgroundClip: "text",
+                  color: "transparent",
+                  WebkitTextFillColor: "transparent",
+                }}
+                aria-hidden="true"
+              >
+                <span className="inline">
+                  {VBENTO_BRIDGE_TESTIMONIAL.slice(0, bentoBridgeTypedLen)}
+                </span>
+                {bentoBridgeTypedLen < VBENTO_BRIDGE_TESTIMONIAL.length ? (
+                  <span
+                    className="bento-bridge-caret motion-reduce:animate-none ml-[0.06em] inline-block w-[0.09em] shrink-0 translate-y-[0.04em] bg-[#b08f68] align-middle"
+                    style={{ height: "0.82em" }}
+                    aria-hidden
+                  />
+                ) : null}
+              </p>
+            </div>
           </blockquote>
           <div
-            className={`mt-[clamp(2.25rem,5vh,4rem)] flex w-full max-w-[min(100%,26rem)] flex-row items-center justify-start gap-3.5 text-left sm:max-w-[min(100%,28rem)] ${inter.className}`}
+            className={`mt-[clamp(2.25rem,5vh,4rem)] flex w-full max-w-[min(100%,42rem)] flex-row items-center justify-center gap-3.5 text-center ${inter.className}`}
           >
             <div
               className="flex h-[clamp(3.5rem,9vw,4.75rem)] w-[clamp(3.5rem,9vw,4.75rem)] shrink-0 items-center justify-center rounded-full bg-[#5a5a5a] text-[clamp(1rem,2.35vw,1.2rem)] font-semibold tracking-tight text-white/95"
@@ -3772,11 +3785,11 @@ export default function DoePage() {
             >
               AM
             </div>
-            <div className="min-w-0">
-              <p className="m-0 text-[clamp(1.125rem,2.45vw,1.45rem)] font-semibold leading-snug tracking-tight text-gray-900">
+            <div className="min-w-0 text-left">
+              <p className="m-0 text-[clamp(1.35rem,3.1vw,1.75rem)] font-semibold leading-snug tracking-tight text-gray-900">
                 Avery Mills, MD
               </p>
-              <p className="mt-1.5 m-0 text-[clamp(0.9375rem,1.95vw,1.125rem)] font-medium leading-snug tracking-tight text-gray-600">
+              <p className="mt-1 m-0 text-[clamp(1.05rem,2.35vw,1.35rem)] font-medium leading-snug tracking-tight text-gray-600">
                 Physician · Boston, MA
               </p>
             </div>
