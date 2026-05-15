@@ -288,16 +288,46 @@ const VBENTO_GRAIN_BG = `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xm
 
 /** Six rounded tiles around the quality headline (percent positions; viewBox 400×400). */
 const QUALITY_ORBIT_ANCHORS_PCT: ReadonlyArray<{ leftPct: number; topPct: number }> = [
-  { leftPct: 50, topPct: 9.5 },
-  { leftPct: 79.5, topPct: 28.75 },
-  { leftPct: 79.5, topPct: 71.25 },
-  { leftPct: 50, topPct: 90.5 },
-  { leftPct: 20.5, topPct: 71.25 },
-  { leftPct: 20.5, topPct: 28.75 },
+  { leftPct: 50, topPct: 7 },
+  { leftPct: 86.5, topPct: 27 },
+  { leftPct: 86.5, topPct: 73 },
+  { leftPct: 50, topPct: 93 },
+  { leftPct: 13.5, topPct: 73 },
+  { leftPct: 13.5, topPct: 27 },
 ];
-/** Closed smooth loop through the six anchors (light grey connector). */
-const QUALITY_ORBIT_CONNECTOR_D =
-  "M 200 38 C 260 52 300 82 318 115 C 332 148 332 252 318 285 C 302 328 260 356 200 362 C 140 356 98 328 82 285 C 68 252 68 148 82 115 C 98 82 140 52 200 38 Z";
+/** Half-width / half-height of each tile in viewBox units (pair with anchors & CSS box size). */
+const QUALITY_ORBIT_BOX_HW = 58;
+const QUALITY_ORBIT_BOX_HH = 40;
+/** Curved connectors: left column → right column (from box sides into tops of targets) + hub bridges. */
+const QUALITY_ORBIT_LINK_PATHS: readonly string[] = (() => {
+  const X = (pct: number) => (pct / 100) * 400;
+  const Y = (pct: number) => (pct / 100) * 400;
+  const [top, rt, rb, bot, lb, lt] = QUALITY_ORBIT_ANCHORS_PCT;
+  const cx = (p: { leftPct: number; topPct: number }) => X(p.leftPct);
+  const cy = (p: { leftPct: number; topPct: number }) => Y(p.topPct);
+  const hw = QUALITY_ORBIT_BOX_HW;
+  const hh = QUALITY_ORBIT_BOX_HH;
+  const exitLtR = { x: cx(lt) + hw, y: cy(lt) };
+  const exitLbR = { x: cx(lb) + hw, y: cy(lb) };
+  const entryRtT = { x: cx(rt), y: cy(rt) - hh };
+  const entryRbT = { x: cx(rb), y: cy(rb) - hh };
+  const topBottom = cy(top) + hh;
+  const botTop = cy(bot) - hh;
+  const ltTop = { x: cx(lt), y: cy(lt) - hh };
+  const rtTop = entryRtT;
+  const lbBot = { x: cx(lb), y: cy(lb) + hh };
+  const rbBot = { x: cx(rb), y: cy(rb) + hh };
+  const midTop = { x: cx(top), y: topBottom };
+  const midBot = { x: cx(bot), y: botTop };
+  return [
+    `M ${exitLtR.x} ${exitLtR.y} C ${(exitLtR.x + entryRtT.x) * 0.48} ${exitLtR.y - 6} ${(exitLtR.x + entryRtT.x) * 0.52} ${entryRtT.y + 14} ${entryRtT.x} ${entryRtT.y}`,
+    `M ${exitLbR.x} ${exitLbR.y} C ${(exitLbR.x + entryRbT.x) * 0.48} ${exitLbR.y + 6} ${(exitLbR.x + entryRbT.x) * 0.52} ${entryRbT.y - 14} ${entryRbT.x} ${entryRbT.y}`,
+    `M ${midTop.x} ${midTop.y} C ${cx(top) - 58} ${midTop.y + 28} ${cx(lt) + 35} ${ltTop.y + 8} ${ltTop.x} ${ltTop.y}`,
+    `M ${midTop.x} ${midTop.y} C ${cx(top) + 58} ${midTop.y + 28} ${cx(rt) - 35} ${rtTop.y + 8} ${rtTop.x} ${rtTop.y}`,
+    `M ${lbBot.x} ${lbBot.y} C ${cx(bot) - 52} ${lbBot.y - 14} ${cx(bot) - 28} ${midBot.y + 6} ${midBot.x} ${midBot.y}`,
+    `M ${rbBot.x} ${rbBot.y} C ${cx(bot) + 52} ${rbBot.y - 14} ${cx(bot) + 28} ${midBot.y + 6} ${midBot.x} ${midBot.y}`,
+  ];
+})();
 
 /** Effective layout viewport height inside `zoom < 1` canvas (matches `100dvh / zoom` compensation). */
 function vbRailsEffectiveInnerHeight(innerWidthPx: number, innerHeightPx: number): number {
@@ -3129,44 +3159,60 @@ export default function DoePage() {
 
       {/* Quality orbit — between carousel (section 2) and vertical bento (section 3) */}
       <section
-        className="relative z-10 w-full bg-[#F7F6F3] px-4 py-[clamp(3.5rem,10vw,6.5rem)] iphone-page:py-16"
+        className={`relative z-10 w-full bg-[#F7F6F3] py-[clamp(4rem,11vw,7.5rem)] iphone-page:py-20 ${narrowHorizontalInset}`}
         aria-labelledby="quality-orbit-heading"
       >
         <h2 id="quality-orbit-heading" className="sr-only">
           Only high-quality patient care
         </h2>
         <div
-          className={`relative mx-auto w-full max-w-[min(100%,36rem)] md:max-w-[min(100%,44rem)] ${narrowHorizontalInset}`}
-          style={{ minHeight: "clamp(22rem, 62vw, 34rem)" }}
+          className="relative mx-auto w-full max-w-full"
+          style={{
+            aspectRatio: "10 / 11",
+            minHeight: "clamp(32rem, 88vw, 58rem)",
+          }}
         >
-          <div className="relative mx-auto aspect-[10/12] w-full max-w-[28rem] md:max-w-[36rem]">
             <svg
               className="absolute inset-0 h-full w-full pointer-events-none z-0"
               viewBox="0 0 400 400"
               preserveAspectRatio="xMidYMid meet"
               aria-hidden
             >
-              <path
-                fill="none"
-                stroke="#d4d4d4"
-                strokeWidth={1.35}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d={QUALITY_ORBIT_CONNECTOR_D}
-              />
+              <g opacity={0.55}>
+                {Array.from({ length: 11 }, (_, w) => (
+                  <path
+                    key={`quality-orbit-field-${w}`}
+                    d={`M -48 ${28 + w * 34} Q 200 ${4 + w * 34} 448 ${28 + w * 34}`}
+                    fill="none"
+                    stroke="#d0d0d0"
+                    strokeWidth={0.85}
+                  />
+                ))}
+              </g>
+              {QUALITY_ORBIT_LINK_PATHS.map((d, i) => (
+                <path
+                  key={`quality-orbit-link-${i}`}
+                  fill="none"
+                  stroke="#bdbdbd"
+                  strokeWidth={1.55}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d={d}
+                />
+              ))}
             </svg>
 
             {QUALITY_ORBIT_ANCHORS_PCT.map((p, i) => (
               <div
                 key={i}
-                className="absolute z-[2] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl iphone-page:rounded-[0.85rem]"
+                className="absolute z-[2] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl iphone-page:rounded-[0.9rem]"
                 style={{
                   left: `${p.leftPct}%`,
                   top: `${p.topPct}%`,
-                  width: "clamp(4.25rem, 19vw, 7.25rem)",
-                  height: "clamp(3rem, 13.5vw, 5rem)",
+                  width: "clamp(6.5rem, 26vw, 11.5rem)",
+                  height: "clamp(4.5rem, 19vw, 8rem)",
                   boxShadow:
-                    "0 14px 38px rgba(214, 119, 76, 0.32), 0 6px 16px rgba(30, 52, 58, 0.1), 0 2px 6px rgba(255, 255, 255, 0.45)",
+                    "0 16px 44px rgba(214, 119, 76, 0.34), 0 8px 20px rgba(30, 52, 58, 0.12), 0 2px 8px rgba(255, 255, 255, 0.5)",
                 }}
               >
                 <div
@@ -3181,7 +3227,7 @@ export default function DoePage() {
                   style={{
                     backgroundImage: VBENTO_GRAIN_BG,
                     backgroundSize: "200px 200px",
-                    opacity: 0.9,
+                    opacity: 0.88,
                     mixBlendMode: "overlay",
                   }}
                 />
@@ -3195,15 +3241,16 @@ export default function DoePage() {
                     <pattern
                       id={`quality-orbit-lines-${i}`}
                       patternUnits="userSpaceOnUse"
-                      width={28}
-                      height={28}
-                      patternTransform="rotate(42)"
+                      width={22}
+                      height={22}
+                      patternTransform="rotate(33)"
                     >
+                      <circle cx={3} cy={3} r={1.05} fill="rgba(255,255,255,0.26)" />
                       <path
-                        d="M 0 0 L 28 0 M 0 0 L 0 28"
+                        d="M 0 0 L 22 0 M 0 0 L 0 22"
                         fill="none"
-                        stroke="rgba(255, 255, 255, 0.22)"
-                        strokeWidth={0.75}
+                        stroke="rgba(255, 255, 255, 0.14)"
+                        strokeWidth={0.65}
                       />
                     </pattern>
                   </defs>
@@ -3212,20 +3259,19 @@ export default function DoePage() {
               </div>
             ))}
 
-            <div className="absolute inset-0 z-[3] flex items-center justify-center px-10 pointer-events-none">
+            <div className="absolute inset-0 z-[3] flex items-center justify-center px-[min(14%,5rem)] pointer-events-none">
               <p
                 className={`text-center font-normal tracking-tight text-gray-900 leading-[1.12] ${lora.className}`}
                 style={{ textWrap: "balance" }}
               >
-                <span className="block text-[clamp(1.35rem,4.8vw,1.95rem)] md:text-[clamp(1.55rem,2.8vw,2.15rem)]">
+                <span className="block text-[clamp(1.5rem,5.8vw,2.35rem)] md:text-[clamp(1.75rem,3.25vw,2.55rem)]">
                   Only high-quality
                 </span>
-                <span className="mt-1 block text-[clamp(1.35rem,4.8vw,1.95rem)] md:text-[clamp(1.55rem,2.8vw,2.15rem)]">
+                <span className="mt-1 block text-[clamp(1.5rem,5.8vw,2.35rem)] md:text-[clamp(1.75rem,3.25vw,2.55rem)]">
                   patient care
                 </span>
               </p>
             </div>
-          </div>
         </div>
       </section>
 
