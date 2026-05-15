@@ -4056,71 +4056,66 @@ export default function DoePage() {
 
       </div>
 
-      {/* Inquisara — same horizontal gutters as vertical bento (VBENTO_CANVAS_PADDING); distinct orange gradient vs hero/footer */}
+      {/* Inquisara — matches first workflow slide: 135° gold→teak gradient, grain + diagonal grid (no drop shadow) */}
       <div className={`relative z-10 w-full pb-[clamp(0.85rem,2.75vw,1.35rem)] ${VBENTO_CANVAS_PADDING}`}>
         <section
           aria-labelledby="inquisara-teaser-heading"
-          className="relative mx-auto w-full max-w-full overflow-hidden rounded-[clamp(0.9rem,2.1vw,1.35rem)] shadow-[0_10px_32px_rgba(154,62,22,0.2)] ring-1 ring-orange-950/14"
+          className="relative mx-auto w-full max-w-full overflow-hidden rounded-[clamp(0.9rem,2.1vw,1.35rem)] ring-1 ring-white/15"
         >
         <div className="pointer-events-none absolute inset-0 rounded-[inherit]">
           <div
             className="pointer-events-none absolute inset-0 rounded-[inherit]"
             style={{
-              background: `
-              radial-gradient(ellipse 105% 100% at 50% 0%, #fff5e8 0%, #ffc98a 24%, #f48c25 52%, #c2410c 78%, #7c2510 100%),
-              radial-gradient(circle at 12% 75%, rgba(255, 200, 150, 0.55) 0%, transparent 50%),
-              radial-gradient(circle at 94% 18%, rgba(255, 240, 220, 0.5) 0%, transparent 44%),
-              linear-gradient(198deg, rgba(90, 30, 10, 0.35) 0%, transparent 55%)
-            `,
+              background:
+                "linear-gradient(135deg, #E7A944 0%, #D49D4F 30%, #D2774C 60%, #1E343A 100%)",
             }}
           />
           <div
-            className="pointer-events-none absolute inset-0 z-[1] rounded-[inherit]"
+            className="pointer-events-none absolute inset-0 rounded-[inherit]"
             style={{
-              opacity: 0.42,
-              mixBlendMode: "multiply",
-              backgroundImage: `
-              repeating-linear-gradient(
-                0deg,
-                transparent 0px,
-                transparent 6px,
-                rgba(255, 255, 255, 0.09) 6px,
-                rgba(255, 255, 255, 0.09) 7px
-              ),
-              repeating-linear-gradient(
-                90deg,
-                transparent 0px,
-                transparent 19px,
-                rgba(122, 44, 16, 0.12) 19px,
-                rgba(122, 44, 16, 0.12) 20px
-              ),
-              repeating-linear-gradient(
-                115deg,
-                transparent 0px,
-                transparent 22px,
-                rgba(255, 248, 240, 0.06) 22px,
-                rgba(255, 248, 240, 0.06) 23px
-              )
-            `,
-            }}
-          />
-          <div
-            className="pointer-events-none absolute inset-0 z-[2] rounded-[inherit]"
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.45'/%3E%3C/svg%3E")`,
-              backgroundSize: "160px 160px",
-              opacity: 0.55,
+              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E")`,
+              backgroundSize: "200px 200px",
+              opacity: 1,
               mixBlendMode: "overlay",
             }}
           />
+          <div className="pointer-events-none absolute inset-0 z-[1] overflow-hidden rounded-[inherit]">
+            <svg
+              className="pointer-events-none absolute inset-0 h-full w-full"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 700 700"
+              preserveAspectRatio="none"
+              aria-hidden
+            >
+              <defs>
+                <pattern
+                  id="inquisaraWorkflowDiagGrid"
+                  x="0"
+                  y="0"
+                  width="60"
+                  height="60"
+                  patternUnits="userSpaceOnUse"
+                  patternTransform="rotate(45)"
+                >
+                  <path
+                    d="M 0 0 L 60 0 M 0 0 L 0 60"
+                    fill="none"
+                    stroke="rgba(255, 255, 255, 0.15)"
+                    strokeWidth="0.8"
+                  />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#inquisaraWorkflowDiagGrid)" />
+            </svg>
+          </div>
         </div>
-        <div className="relative z-10 mx-auto flex min-h-[min(34vw,14rem)] w-full max-w-full flex-col items-center justify-center px-4 py-[clamp(1.65rem,4.75vw,3.35rem)] text-center md:min-h-[min(30vw,12.75rem)] md:px-6 iphone-page:px-4 iphone-page:py-[clamp(1.5rem,6vw,3rem)]">
+        <div className="relative z-10 mx-auto flex min-h-[min(41vw,17rem)] w-full max-w-full flex-col items-center justify-center px-4 py-[clamp(2rem,5.65vw,3.95rem)] text-center md:min-h-[min(37vw,15.75rem)] md:px-6 iphone-page:px-4 iphone-page:py-[clamp(1.85rem,7.25vw,3.65rem)]">
           <h2
             id="inquisara-teaser-heading"
-            className={`font-medium tracking-tight text-white drop-shadow-[0_2px_18px_rgba(60,22,10,0.35)] ${inter.className}`}
+            className={`font-normal tracking-tight text-white drop-shadow-[0_2px_14px_rgba(0,0,0,0.2)] ${inter.className}`}
             style={{
-              fontSize: "clamp(2.05rem, min(9vw, 10vmin), 4rem)",
-              lineHeight: 1.05,
+              fontSize: "clamp(2rem, min(8.5vw, 9.5vmin), 3.85rem)",
+              lineHeight: 1.06,
             }}
           >
             Inquisara
@@ -4130,12 +4125,12 @@ export default function DoePage() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="See what we are building (opens in new tab)"
-            className={`mt-[clamp(0.55rem,1.85vw,1rem)] inline-flex items-center gap-2 text-[clamp(0.85rem,2.45vw,1rem)] font-medium tracking-tight text-white underline decoration-white/75 underline-offset-[0.26em] transition-[opacity,decoration-color] hover:decoration-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/90 ${inter.className}`}
+            className={`mt-[clamp(0.65rem,2vw,1.05rem)] inline-flex items-center gap-2.5 text-[clamp(1.02rem,2.95vw,1.325rem)] font-medium tracking-tight text-white underline decoration-white/75 underline-offset-[0.26em] transition-[opacity,decoration-color] hover:decoration-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/90 ${inter.className}`}
           >
             <span className="text-white">See what we&apos;re building</span>
             <svg
-              width={16}
-              height={16}
+              width={18}
+              height={18}
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
