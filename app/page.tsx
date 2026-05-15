@@ -4056,43 +4056,50 @@ export default function DoePage() {
 
       </div>
 
-      {/* Inquisara — hero/footer gradient; width matches Built-for-you carousel row (42rem band) */}
-      <div className={`relative z-10 w-full pb-[clamp(1rem,3vw,1.75rem)] ${narrowHorizontalInset}`}>
+      {/* Inquisara — same horizontal gutters as vertical bento (VBENTO_CANVAS_PADDING); distinct orange gradient vs hero/footer */}
+      <div className={`relative z-10 w-full pb-[clamp(0.85rem,2.75vw,1.35rem)] ${VBENTO_CANVAS_PADDING}`}>
         <section
           aria-labelledby="inquisara-teaser-heading"
-          className="relative mx-auto w-full max-w-[min(100%,42rem)] overflow-hidden rounded-[clamp(1.05rem,2.5vw,1.65rem)] shadow-[0_14px_40px_rgba(30,52,58,0.18)] ring-1 ring-black/[0.06]"
+          className="relative mx-auto w-full max-w-full overflow-hidden rounded-[clamp(0.9rem,2.1vw,1.35rem)] shadow-[0_10px_32px_rgba(154,62,22,0.2)] ring-1 ring-orange-950/14"
         >
         <div className="pointer-events-none absolute inset-0 rounded-[inherit]">
           <div
             className="pointer-events-none absolute inset-0 rounded-[inherit]"
             style={{
               background: `
-              linear-gradient(152deg, #1a2e34 0%, #243a40 14%, #3d2f28 32%, #6b442f 48%, #a85a34 62%, #d4893f 76%, #e8b04d 88%, #f2cf7a 100%),
-              radial-gradient(ellipse 100% 80% at 50% 110%, rgba(231, 169, 68, 0.55) 0%, transparent 58%),
-              radial-gradient(ellipse 55% 45% at 12% 18%, rgba(255, 224, 180, 0.22) 0%, transparent 52%),
-              radial-gradient(ellipse 50% 40% at 88% 22%, rgba(210, 119, 76, 0.3) 0%, transparent 55%)
+              radial-gradient(ellipse 105% 100% at 50% 0%, #fff5e8 0%, #ffc98a 24%, #f48c25 52%, #c2410c 78%, #7c2510 100%),
+              radial-gradient(circle at 12% 75%, rgba(255, 200, 150, 0.55) 0%, transparent 50%),
+              radial-gradient(circle at 94% 18%, rgba(255, 240, 220, 0.5) 0%, transparent 44%),
+              linear-gradient(198deg, rgba(90, 30, 10, 0.35) 0%, transparent 55%)
             `,
             }}
           />
           <div
             className="pointer-events-none absolute inset-0 z-[1] rounded-[inherit]"
             style={{
-              opacity: 0.55,
-              mixBlendMode: "soft-light",
+              opacity: 0.42,
+              mixBlendMode: "multiply",
               backgroundImage: `
               repeating-linear-gradient(
-                -32deg,
+                0deg,
                 transparent 0px,
-                transparent 11px,
-                rgba(255, 255, 255, 0.09) 11px,
-                rgba(255, 255, 255, 0.09) 12px
+                transparent 6px,
+                rgba(255, 255, 255, 0.09) 6px,
+                rgba(255, 255, 255, 0.09) 7px
               ),
               repeating-linear-gradient(
-                32deg,
+                90deg,
                 transparent 0px,
-                transparent 15px,
-                rgba(30, 52, 58, 0.14) 15px,
-                rgba(30, 52, 58, 0.14) 16px
+                transparent 19px,
+                rgba(122, 44, 16, 0.12) 19px,
+                rgba(122, 44, 16, 0.12) 20px
+              ),
+              repeating-linear-gradient(
+                115deg,
+                transparent 0px,
+                transparent 22px,
+                rgba(255, 248, 240, 0.06) 22px,
+                rgba(255, 248, 240, 0.06) 23px
               )
             `,
             }}
@@ -4100,20 +4107,20 @@ export default function DoePage() {
           <div
             className="pointer-events-none absolute inset-0 z-[2] rounded-[inherit]"
             style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E")`,
-              backgroundSize: "200px 200px",
-              opacity: 1,
+              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.45'/%3E%3C/svg%3E")`,
+              backgroundSize: "160px 160px",
+              opacity: 0.55,
               mixBlendMode: "overlay",
             }}
           />
         </div>
-        <div className="relative z-10 mx-auto flex min-h-[min(40vw,17rem)] w-full max-w-full flex-col items-center justify-center px-5 py-[clamp(2.25rem,6vw,4.75rem)] text-center md:min-h-[min(36vw,15.5rem)] md:px-8 iphone-page:px-5 iphone-page:py-[clamp(2rem,7vw,4.25rem)]">
+        <div className="relative z-10 mx-auto flex min-h-[min(34vw,14rem)] w-full max-w-full flex-col items-center justify-center px-4 py-[clamp(1.65rem,4.75vw,3.35rem)] text-center md:min-h-[min(30vw,12.75rem)] md:px-6 iphone-page:px-4 iphone-page:py-[clamp(1.5rem,6vw,3rem)]">
           <h2
             id="inquisara-teaser-heading"
-            className={`font-medium tracking-tight text-white drop-shadow-[0_2px_24px_rgba(0,0,0,0.22)] ${inter.className}`}
+            className={`font-medium tracking-tight text-white drop-shadow-[0_2px_18px_rgba(60,22,10,0.35)] ${inter.className}`}
             style={{
-              fontSize: "clamp(2.5rem, min(10vw, 11vmin), 4.85rem)",
-              lineHeight: 1.03,
+              fontSize: "clamp(2.05rem, min(9vw, 10vmin), 4rem)",
+              lineHeight: 1.05,
             }}
           >
             Inquisara
@@ -4123,19 +4130,19 @@ export default function DoePage() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="See what we are building (opens in new tab)"
-            className={`mt-[clamp(0.65rem,2.2vw,1.25rem)] inline-flex items-center gap-2 text-[clamp(0.9rem,2.65vw,1.0625rem)] font-medium tracking-tight text-white/92 underline decoration-white/65 underline-offset-[0.26em] transition-[opacity,color,decoration-color] hover:text-white hover:decoration-white/95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/90 ${inter.className}`}
+            className={`mt-[clamp(0.55rem,1.85vw,1rem)] inline-flex items-center gap-2 text-[clamp(0.85rem,2.45vw,1rem)] font-medium tracking-tight text-white underline decoration-white/75 underline-offset-[0.26em] transition-[opacity,decoration-color] hover:decoration-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/90 ${inter.className}`}
           >
-            <span>See what we&apos;re building</span>
+            <span className="text-white">See what we&apos;re building</span>
             <svg
-              width={17}
-              height={17}
+              width={16}
+              height={16}
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
               strokeWidth={2.25}
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="shrink-0 text-white/90 translate-y-[0.5px]"
+              className="shrink-0 text-white translate-y-[0.5px]"
               aria-hidden
             >
               <path d="M5 12h14M13 6l6 6-6 6" />
