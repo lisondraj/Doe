@@ -326,6 +326,9 @@ const QUALITY_ORBIT_CHOREO_GREY_HOLD_MS = 2480;
 const QUALITY_ORBIT_CHOREO_ACCENT_AFTER_GREY_MS = 140;
 /** Brief hold after the section enters view before headline / diagram animations begin. */
 const QUALITY_ORBIT_CHOREO_ENTER_PAUSE_MS = 520;
+/** Tiles appear clockwise from top (index 0); gap between each tile reveal. */
+const QUALITY_ORBIT_TILE_FIRST_MS = 260;
+const QUALITY_ORBIT_TILE_STEP_MS = 440;
 
 function qualityOrbitMiniIcon(tileIndex: number): ReactElement {
   const svgProps = {
@@ -449,6 +452,8 @@ export default function DoePage() {
     headline: false,
     diagram: false,
     accent: false,
+    /** Orbit pills revealed clockwise from top; 0..6 */
+    tilesShown: 0,
   });
   const secondSectionRef = useRef<HTMLDivElement>(null);
   const [secondSectionTitleOpacity, setSecondSectionTitleOpacity] = useState(0);
@@ -650,7 +655,12 @@ export default function DoePage() {
     const beginChoreography = () => {
       clearTimers();
       if (mq.matches) {
-        setQualityOrbitChoreography({ headline: true, diagram: true, accent: true });
+        setQualityOrbitChoreography({
+          headline: true,
+          diagram: true,
+          accent: true,
+          tilesShown: QUALITY_ORBIT_TILE_LABELS.length,
+        });
         return;
       }
       timers.push(
@@ -660,18 +670,28 @@ export default function DoePage() {
       );
       timers.push(
         window.setTimeout(() => {
-          setQualityOrbitChoreography((c) => ({ ...c, diagram: true }));
+          setQualityOrbitChoreography((c) => ({ ...c, diagram: true, tilesShown: 0 }));
         }, QUALITY_ORBIT_CHOREO_DIAGRAM_DELAY_MS),
       );
+      const nTiles = QUALITY_ORBIT_TILE_LABELS.length;
+      for (let i = 0; i < nTiles; i++) {
+        timers.push(
+          window.setTimeout(() => {
+            setQualityOrbitChoreography((c) => ({ ...c, tilesShown: Math.max(c.tilesShown, i + 1) }));
+          }, QUALITY_ORBIT_CHOREO_DIAGRAM_DELAY_MS + QUALITY_ORBIT_TILE_FIRST_MS + i * QUALITY_ORBIT_TILE_STEP_MS),
+        );
+      }
+      const lastTileMs =
+        QUALITY_ORBIT_CHOREO_DIAGRAM_DELAY_MS +
+        QUALITY_ORBIT_TILE_FIRST_MS +
+        (nTiles - 1) * QUALITY_ORBIT_TILE_STEP_MS;
+      const greyDoneMs = QUALITY_ORBIT_CHOREO_DIAGRAM_DELAY_MS + QUALITY_ORBIT_CHOREO_GREY_HOLD_MS;
+      const accentAfterDiagramMs =
+        Math.max(lastTileMs + 320, greyDoneMs) + QUALITY_ORBIT_CHOREO_ACCENT_AFTER_GREY_MS;
       timers.push(
-        window.setTimeout(
-          () => {
-            setQualityOrbitChoreography((c) => ({ ...c, accent: true }));
-          },
-          QUALITY_ORBIT_CHOREO_DIAGRAM_DELAY_MS +
-            QUALITY_ORBIT_CHOREO_GREY_HOLD_MS +
-            QUALITY_ORBIT_CHOREO_ACCENT_AFTER_GREY_MS,
-        ),
+        window.setTimeout(() => {
+          setQualityOrbitChoreography((c) => ({ ...c, accent: true }));
+        }, accentAfterDiagramMs),
       );
     };
 
@@ -1270,7 +1290,7 @@ export default function DoePage() {
   );
   return (
     <div
-      className="relative overflow-x-hidden doeforvc-iphone-root"
+      className="relative overflow-x-hidden overflow-y-visible overscroll-none doeforvc-iphone-root"
       data-doeforvc-view="iphone"
       style={{
         backgroundColor: "#F7F6F3",
@@ -1832,12 +1852,12 @@ export default function DoePage() {
               </p>
               <a
                 href="mailto:contact@joindoe.com"
-                className={`inline-flex items-center gap-3 rounded-full border border-white/25 bg-white/95 px-[1.85rem] py-[0.9rem] pl-[1.65rem] text-[1.0625rem] iphone-page:text-[clamp(0.98rem,4.25vw,1.125rem)] font-medium tracking-tight text-gray-900 shadow-[0_4px_24px_rgba(0,0,0,0.14)] transition-[background-color,box-shadow,transform,border-color] duration-200 hover:bg-white hover:shadow-[0_8px_32px_rgba(0,0,0,0.18)] active:scale-[0.99] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white ${inter.className}`}
+                className={`inline-flex items-center gap-[0.95rem] rounded-full border border-white/25 bg-white/95 px-[2.35rem] py-[1.1rem] pl-[2.1rem] text-[1.1875rem] iphone-page:text-[clamp(1.05rem,4.65vw,1.25rem)] font-semibold tracking-tight text-gray-900 shadow-[0_6px_28px_rgba(0,0,0,0.16)] transition-[background-color,box-shadow,transform,border-color] duration-200 hover:bg-white hover:shadow-[0_10px_36px_rgba(0,0,0,0.2)] active:scale-[0.99] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white ${inter.className}`}
               >
                 <svg
-                  className="h-[1.35em] w-[1.35em] shrink-0 text-gray-700"
-                  width="26"
-                  height="26"
+                  className="h-[1.5em] w-[1.5em] shrink-0 text-gray-700"
+                  width="30"
+                  height="30"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -1861,7 +1881,7 @@ export default function DoePage() {
       <div className="w-full border-t border-[#E6E6E6]" />
 
       {/* Second Section — title upper third, carousel lower two-thirds */}
-      <div ref={secondSectionRef} className="min-h-[calc(var(--app-vh,100dvh)+7rem)] relative z-10 flex flex-col pt-16 pb-28 iphone-page:min-h-[calc(var(--app-vh,100dvh)+6rem)] iphone-page:pt-12 iphone-page:pb-[9.5rem] overscroll-none">
+      <div ref={secondSectionRef} className="min-h-[calc(var(--app-vh,100dvh)+7rem)] relative z-10 flex flex-col pt-16 pb-28 iphone-page:min-h-[calc(var(--app-vh,100dvh)+6rem)] iphone-page:pt-12 iphone-page:pb-[9.5rem] overscroll-none overflow-hidden">
         <div className="flex-1 grid grid-rows-[3fr_9fr_auto] min-h-[85vh] iphone-page:min-h-[88dvh] w-full overflow-x-hidden overscroll-none">
           {/* Title band — slightly taller than 1:2 so headline has room */}
           <div
@@ -3004,7 +3024,7 @@ export default function DoePage() {
       {/* Quality orbit — between carousel (section 2) and vertical bento (section 3) */}
       <section
         ref={qualityOrbitSectionRef}
-        className={`relative z-10 w-full overflow-x-hidden overscroll-none bg-[#F7F6F3] py-[clamp(5.75rem,13.5vw,9.25rem)] iphone-page:py-[clamp(5.5rem,12vw,8.5rem)] mt-[clamp(1.75rem,4.5vw,3.5rem)] mb-[clamp(2.25rem,5.25vw,4rem)] ${narrowHorizontalInset}`}
+        className={`relative z-10 w-full overflow-hidden overscroll-none pointer-events-none bg-[#F7F6F3] py-[clamp(5.75rem,13.5vw,9.25rem)] iphone-page:py-[clamp(5.5rem,12vw,8.5rem)] mt-[clamp(1.75rem,4.5vw,3.5rem)] mb-[clamp(2.25rem,5.25vw,4rem)] ${narrowHorizontalInset}`}
         aria-labelledby="quality-orbit-heading"
       >
         <h2 id="quality-orbit-heading" className="sr-only">
@@ -3049,7 +3069,7 @@ export default function DoePage() {
           />
         </div>
         <div
-          className="relative z-[2] mx-auto w-full max-w-full overflow-hidden overscroll-none"
+          className="relative z-[2] mx-auto w-full max-w-full overflow-hidden overscroll-none pointer-events-none"
           style={{
             aspectRatio: "10 / 11",
             minHeight: "clamp(32rem, 88vw, 58rem)",
@@ -3116,10 +3136,12 @@ export default function DoePage() {
               ))}
             </svg>
 
-            {QUALITY_ORBIT_ANCHORS_PCT.map((p, i) => (
+            {QUALITY_ORBIT_ANCHORS_PCT.map((p, i) => {
+              const tileVisible = qualityOrbitChoreography.tilesShown > i;
+              return (
               <div
                 key={i}
-                className="absolute z-[2] overflow-hidden rounded-2xl iphone-page:rounded-[0.9rem]"
+                className="absolute z-[2] overflow-hidden rounded-2xl iphone-page:rounded-[0.9rem] pointer-events-none"
                 style={{
                   left: `${p.leftPct}%`,
                   top: `${p.topPct}%`,
@@ -3127,12 +3149,12 @@ export default function DoePage() {
                   height: "clamp(4.35rem, 16vw, 7.25rem)",
                   boxShadow:
                     "0 18px 44px rgba(214, 119, 76, 0.34), 0 8px 20px rgba(30, 52, 58, 0.11), 0 3px 8px rgba(255, 255, 255, 0.48)",
-                  opacity: qualityOrbitChoreography.diagram ? 1 : 0,
-                  transform: qualityOrbitChoreography.diagram
+                  opacity: tileVisible ? 1 : 0,
+                  transform: tileVisible
                     ? "translate(-50%, -50%) scale(1)"
                     : "translate(-50%, -50%) scale(0.92)",
-                  transition: qualityOrbitChoreography.diagram
-                    ? `opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1) ${70 * i}ms, transform 0.58s cubic-bezier(0.28, 0.86, 0.35, 1) ${55 * i}ms`
+                  transition: tileVisible
+                    ? "opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.58s cubic-bezier(0.28, 0.86, 0.35, 1)"
                     : "opacity 0.45s ease, transform 0.45s ease",
                 }}
               >
@@ -3194,7 +3216,8 @@ export default function DoePage() {
                   </span>
                 </div>
               </div>
-            ))}
+            );
+            })}
 
             <div className="pointer-events-none absolute inset-0 z-[3] flex items-center justify-center px-4 iphone-page:px-5">
               <p
