@@ -328,6 +328,15 @@ const QUALITY_ORBIT_LINK_PATHS: readonly string[] = (() => {
     `M ${rbBot.x} ${rbBot.y} C ${cx(bot) + 52} ${rbBot.y - 14} ${cx(bot) + 28} ${midBot.y + 6} ${midBot.x} ${midBot.y}`,
   ];
 })();
+/** Darker amber → teal-orange gradients — one variant per orbit tile order (top → … clockwise from anchor array). */
+const QUALITY_ORBIT_TILE_GRADIENTS: readonly string[] = [
+  "linear-gradient(135deg, #c98928 0%, #a97130 26%, #b85632 60%, #123038 98%)",
+  "linear-gradient(135deg, #c27f22 0%, #9f6828 26%, #a84828 62%, #162f36 98%)",
+  "linear-gradient(135deg, #b8781e 0%, #945e24 26%, #9e4024 62%, #142a30 98%)",
+  "linear-gradient(135deg, #ad701a 0%, #8a551e 26%, #943a22 62%, #12262c 98%)",
+  "linear-gradient(135deg, #bc7c22 0%, #9a6226 26%, #a24428 62%, #143038 98%)",
+  "linear-gradient(135deg, #c68426 0%, #a46a2c 26%, #aa4c2a 62%, #17343c 98%)",
+];
 
 /** Effective layout viewport height inside `zoom < 1` canvas (matches `100dvh / zoom` compensation). */
 function vbRailsEffectiveInnerHeight(innerWidthPx: number, innerHeightPx: number): number {
@@ -3218,8 +3227,7 @@ export default function DoePage() {
                 <div
                   className="absolute inset-0"
                   style={{
-                    background:
-                      "linear-gradient(135deg, #E7A944 0%, #D49D4F 28%, #D2774C 62%, #b84e2e 100%)",
+                    background: QUALITY_ORBIT_TILE_GRADIENTS[i] ?? QUALITY_ORBIT_TILE_GRADIENTS[0],
                   }}
                 />
                 <div
@@ -3272,6 +3280,42 @@ export default function DoePage() {
                 </span>
               </p>
             </div>
+        </div>
+
+        {/* Grid field matching “Built for you” section — sits under the orbit diagram */}
+        <div
+          className="relative z-0 mt-14 min-h-[clamp(10rem, 34vw, 19rem)] overflow-hidden iphone-page:mt-16 pointer-events-none"
+          style={{
+            width: "100vw",
+            marginLeft: "calc(50% - 50vw)",
+          }}
+        >
+          <svg
+            className="absolute inset-0 h-full w-full"
+            xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="none"
+            aria-hidden
+          >
+            <defs>
+              <pattern
+                id="qualityOrbitBelowGridPattern"
+                x="0"
+                y="0"
+                width="80"
+                height="80"
+                patternUnits="userSpaceOnUse"
+              >
+                <path d="M 0 0 L 80 0 M 0 0 L 0 80" fill="none" stroke="#999999" strokeWidth="0.5" opacity="0.28" />
+                <circle cx="0" cy="0" r="1" fill="#999999" opacity="0.35" />
+                <circle cx="80" cy="0" r="1" fill="#999999" opacity="0.35" />
+                <circle cx="0" cy="80" r="1" fill="#999999" opacity="0.35" />
+                <circle cx="80" cy="80" r="1" fill="#999999" opacity="0.35" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#qualityOrbitBelowGridPattern)" />
+          </svg>
+          <div className="absolute left-0 right-0 top-0 z-[1] h-24 bg-gradient-to-b from-[#F7F6F3] to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 z-[1] h-20 bg-gradient-to-t from-[#F7F6F3] to-transparent" />
         </div>
       </section>
 
