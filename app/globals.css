@@ -246,7 +246,8 @@ html:has(.doeforvc-iphone-root) body {
 }
 
 .bento-bridge-caret {
-  display: block;
+  display: inline-block;
+  vertical-align: baseline;
   width: 3px;
   border-radius: 2px;
   background-color: #b08f68;

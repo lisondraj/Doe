@@ -428,7 +428,7 @@ const VBENTO_WORKFLOW_GRADIENTS: [string, string, string] = [
 ];
 const VBENTO_GRAIN_BG = `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E")`;
 
-/** Bento → Built-for-you bridge — three rotating testimonials (four `pre-wrap` lines each). */
+/** Bento → Built-for-you bridge — three short testimonials (natural wrap, ~5 lines max on phone). */
 type BentoBridgeTestimonial = {
   quote: string;
   name: string;
@@ -439,21 +439,21 @@ type BentoBridgeTestimonial = {
 const VBENTO_BRIDGE_TESTIMONIALS: readonly BentoBridgeTestimonial[] = [
   {
     quote:
-      "\u201cDoe gave me back hours I did not know I was losing.\nI stay with my patients instead of fighting the inbox.\nThe small tasks still happen, but they do not pile up.\nI end most days lighter than when I started.\u201d",
+      "\u201cDoe keeps the busywork from stealing my clinic hours, so patient time stays patient time.\u201d",
     name: "Avery Mills, MD",
     meta: "Physician · Boston, MA",
     initials: "AM",
   },
   {
     quote:
-      "\u201cOur desk keeps up with every message the clinic receives.\nDoe holds the busy work so we can stay genuinely kind.\nPeople meet a steady team instead of a rushed one.\nThat steadiness shows in how visits actually feel.\u201d",
+      "\u201cOur front desk keeps up with messages without sounding rushed\u2014Doe holds the noisy parts.\u201d",
     name: "Jamie Chen",
     meta: "Patient Navigator · Toronto, ON",
     initials: "JC",
   },
   {
     quote:
-      "\u201cI spend less time decoding charts during the rush of rounds.\nThe paperwork fades into something the software owns.\nI still work hard, but with fewer frantic pivots.\nThe floor feels a little more together now.\u201d",
+      "\u201cI read fewer frantic threads on the unit and still know what changed before rounds move on.\u201d",
     name: "Jordan Okonkwo, RN",
     meta: "Registered Nurse · Seattle, WA",
     initials: "JO",
@@ -3932,53 +3932,54 @@ export default function DoePage() {
                 <span id="vbento-bridge-quote" className="sr-only">
                   {bentoBridgeCard.quote}
                 </span>
-                {/** Ghost + gradient share `pre-wrap` and identical line breaks so layout stays stable while typing. */}
-                <div className="flex w-full items-start gap-2.5">
-                  <div
-                    className="relative min-w-0 flex-1"
-                    style={{ isolation: "isolate", backfaceVisibility: "hidden", contain: "layout paint" }}
+                {/** Ghost reserves height; gradient applies only to typed span so the caret can sit inline at the insertion point. */}
+                <div
+                  className="relative w-full"
+                  style={{ isolation: "isolate", backfaceVisibility: "hidden", contain: "layout paint" }}
+                >
+                  <p
+                    className={`pointer-events-none m-0 select-none text-left font-normal tracking-[-0.02em] invisible ${lora.className}`}
+                    style={{
+                      fontSize: "clamp(2.55rem, 6.35vw, 4.85rem)",
+                      lineHeight: 1.26,
+                    }}
+                    aria-hidden
                   >
-                    <p
-                      className={`pointer-events-none m-0 select-none text-left font-normal tracking-[-0.02em] invisible ${lora.className}`}
+                    {bentoBridgeCard.quote}
+                  </p>
+                  <p
+                    className={`absolute inset-0 m-0 text-left font-normal tracking-[-0.02em] ${lora.className}`}
+                    style={{
+                      fontSize: "clamp(2.55rem, 6.35vw, 4.85rem)",
+                      lineHeight: 1.26,
+                      textRendering: "geometricPrecision",
+                    }}
+                    aria-hidden="true"
+                  >
+                    <span
                       style={{
-                        fontSize: "clamp(2.95rem, 7.25vw, 5.35rem)",
-                        lineHeight: 1.28,
-                        whiteSpace: "pre-wrap",
-                      }}
-                      aria-hidden
-                    >
-                      {bentoBridgeCard.quote}
-                    </p>
-                    <p
-                      className={`absolute inset-0 m-0 text-left font-normal tracking-[-0.02em] ${lora.className}`}
-                      style={{
-                        fontSize: "clamp(2.95rem, 7.25vw, 5.35rem)",
-                        lineHeight: 1.28,
-                        whiteSpace: "pre-wrap",
                         backgroundImage:
                           "linear-gradient(168deg, #6e635e 0%, #887056 16%, #9c7d5c 34%, #b08f68 50%, #9a7b5e 68%, #7d6656 84%, #6a5c54 100%)",
                         WebkitBackgroundClip: "text",
                         backgroundClip: "text",
                         color: "transparent",
                         WebkitTextFillColor: "transparent",
-                        transform: "translateZ(0)",
-                        textRendering: "geometricPrecision",
                       }}
-                      aria-hidden="true"
                     >
                       {vbBridgeSliceGraphemes(bentoBridgeCard.quote, bentoBridgeTypedLen)}
-                    </p>
-                  </div>
-                  <div className="pointer-events-none flex shrink-0 flex-col self-start pt-[0.12em]" aria-hidden>
-                    <span
-                      className={
-                        bentoBridgeTypedLen < vbBridgeGraphemeLen(bentoBridgeCard.quote)
-                          ? "bento-bridge-caret motion-reduce:animate-none"
-                          : "block w-[3px] shrink-0 opacity-0"
-                      }
-                      style={{ height: "0.72em" }}
-                    />
-                  </div>
+                    </span>
+                    {bentoBridgeTypedLen < vbBridgeGraphemeLen(bentoBridgeCard.quote) ? (
+                      <span
+                        className="bento-bridge-caret motion-reduce:animate-none inline-block align-baseline"
+                        style={{
+                          width: 3,
+                          height: "0.68em",
+                          marginLeft: "0.04em",
+                          verticalAlign: "-0.07em",
+                        }}
+                      />
+                    ) : null}
+                  </p>
                 </div>
               </blockquote>
             </div>
@@ -4004,7 +4005,11 @@ export default function DoePage() {
                   </p>
                 </div>
               </div>
-              <div className="flex w-full items-center justify-start gap-4 pt-1" role="group" aria-label="Choose testimonial">
+              <div
+                className="mt-2.5 flex w-full items-center justify-start gap-5 pt-1.5"
+                role="group"
+                aria-label="Choose testimonial"
+              >
                 {VBENTO_BRIDGE_TESTIMONIALS.map((_, i) => {
                   const active = i === bentoBridgeCardIndex;
                   return (
@@ -4013,7 +4018,7 @@ export default function DoePage() {
                       type="button"
                       aria-label={`Testimonial ${i + 1} of ${VBENTO_BRIDGE_TESTIMONIALS.length}`}
                       aria-current={active ? "true" : undefined}
-                      className={`h-3.5 w-3.5 shrink-0 touch-manipulation rounded-full border-0 p-0 outline-none transition-opacity duration-300 ease-out motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-amber-600/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[#F7F6F3] ${
+                      className={`h-4 w-4 shrink-0 touch-manipulation rounded-full border-0 p-0 outline-none transition-opacity duration-300 ease-out motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-amber-600/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[#F7F6F3] ${
                         active ? "opacity-100" : "opacity-45 hover:opacity-80"
                       }`}
                       style={{
