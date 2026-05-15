@@ -234,6 +234,28 @@ html:has(.doeforvc-iphone-root) body {
   animation: fade-out-backdrop 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
+@keyframes bento-bridge-caret-blink {
+  0%,
+  45% {
+    opacity: 1;
+  }
+  55%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.bento-bridge-caret {
+  animation: bento-bridge-caret-blink 1.05s step-end infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bento-bridge-caret {
+    animation: none;
+    opacity: 1;
+  }
+}
+
 @font-face {
   font-family: 'Copernicus New Cond';
   src: url('/fonts/CopernicusNewCond-070.otf') format('opentype'),

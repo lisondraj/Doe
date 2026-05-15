@@ -427,6 +427,10 @@ const VBENTO_WORKFLOW_GRADIENTS: [string, string, string] = [
 ];
 const VBENTO_GRAIN_BG = `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E")`;
 
+/** Bento → Built-for-you bridge testimonial (typewriter source; includes curly quotes). */
+const VBENTO_BRIDGE_TESTIMONIAL =
+  "\u201cDoe has given me back so much of my time. I can now focus on my patients rather than be my own admin.\u201d";
+
 /** Six rounded tiles around the quality headline (percent positions; viewBox 400×400). */
 const QUALITY_ORBIT_ANCHORS_PCT: ReadonlyArray<{ leftPct: number; topPct: number }> = [
   { leftPct: 50, topPct: 9 },
@@ -591,6 +595,10 @@ export default function DoePage() {
   const [verticalBentoRailsOpacity, setVerticalBentoRailsOpacity] = useState(0);
   const [verticalBentoRailsTranslateY, setVerticalBentoRailsTranslateY] = useState(40);
   const verticalBentoHeadlineRef = useRef<HTMLDivElement>(null);
+  const bentoBridgeSectionRef = useRef<HTMLElement | null>(null);
+  /** Fade + typewriter once the bridge band enters view */
+  const [bentoBridgeEntered, setBentoBridgeEntered] = useState(false);
+  const [bentoBridgeTypedLen, setBentoBridgeTypedLen] = useState(0);
   /** “Only high-quality patient care” orbit — staged scroll-in choreography */
   const qualityOrbitSectionRef = useRef<HTMLElement | null>(null);
   const [qualityOrbitChoreography, setQualityOrbitChoreography] = useState({
@@ -867,6 +875,40 @@ export default function DoePage() {
       clearTimers();
     };
   }, []);
+
+  useEffect(() => {
+    const el = bentoBridgeSectionRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        const e = entries[0];
+        if (!e?.isIntersecting) return;
+        if (e.intersectionRatio < 0.08) return;
+        setBentoBridgeEntered(true);
+      },
+      { rootMargin: "0px 0px -8% 0px", threshold: [0, 0.08, 0.14, 0.22] },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!bentoBridgeEntered) return;
+    const full = VBENTO_BRIDGE_TESTIMONIAL;
+    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setBentoBridgeTypedLen(full.length);
+      return;
+    }
+    const id = window.setInterval(() => {
+      setBentoBridgeTypedLen((n) => {
+        if (n >= full.length) return n;
+        const next = n + 1;
+        if (next >= full.length) window.clearInterval(id);
+        return next;
+      });
+    }, 34);
+    return () => window.clearInterval(id);
+  }, [bentoBridgeEntered]);
 
   useEffect(() => {
     let animationFrameId: number;
@@ -3644,6 +3686,7 @@ export default function DoePage() {
 
       {/* Bridge between vertical bento and Built for you — tall testimonial band + patient-care grey grid */}
       <section
+        ref={bentoBridgeSectionRef}
         className="relative z-10 w-full shrink-0 overflow-hidden bg-[#F7F6F3]"
         aria-labelledby="vbento-bridge-quote"
         style={{ minHeight: "clamp(56rem, 132vh, 112rem)" }}
@@ -3682,46 +3725,60 @@ export default function DoePage() {
           />
         </div>
         <div
-          className={`relative z-[2] mx-auto flex w-full max-w-[min(100%,52rem)] flex-col items-end justify-center px-4 py-[clamp(4.5rem,12vh,9rem)] iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] md:py-[clamp(5.5rem,14vh,11rem)] ${narrowHorizontalInset}`}
-          style={{ minHeight: "clamp(56rem, 132vh, 112rem)" }}
+          className={`relative z-[2] mx-auto flex w-full max-w-[min(100%,52rem)] flex-col items-start justify-center px-4 py-[clamp(4.5rem,12vh,9rem)] iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] md:py-[clamp(5.5rem,14vh,11rem)] ${narrowHorizontalInset}`}
+          style={{
+            minHeight: "clamp(56rem, 132vh, 112rem)",
+            opacity: bentoBridgeEntered ? 1 : 0,
+            transform: bentoBridgeEntered ? "translateY(0)" : "translateY(22px)",
+            transition: "opacity 1s ease-out, transform 1s cubic-bezier(0.22, 1, 0.36, 1)",
+          }}
         >
-          <blockquote className="m-0 max-w-[min(100%,46rem)] text-pretty">
+          <blockquote className="m-0 w-full max-w-[min(100%,26rem)] text-pretty sm:max-w-[min(100%,28rem)]">
+            <span id="vbento-bridge-quote" className="sr-only">
+              {VBENTO_BRIDGE_TESTIMONIAL}
+            </span>
             <p
-              id="vbento-bridge-quote"
-              className={`m-0 text-right font-normal tracking-[-0.02em] ${lora.className}`}
+              className={`m-0 text-left font-normal tracking-[-0.02em] ${lora.className}`}
               style={{
-                fontSize: "clamp(2.35rem, 5.75vw, 4.5rem)",
-                lineHeight: 1.2,
+                fontSize: "clamp(2.1rem, 5.1vw, 3.85rem)",
+                lineHeight: 1.28,
                 backgroundImage:
-                  "linear-gradient(168deg, #3f1d0d 0%, #7c2d12 18%, #c2410c 42%, #ea580c 58%, #9a3412 82%, #431407 100%)",
+                  "linear-gradient(168deg, #4a3f3a 0%, #6a4f3a 18%, #8a5c38 38%, #9d6a3d 52%, #7d5534 72%, #524038 100%)",
                 WebkitBackgroundClip: "text",
                 backgroundClip: "text",
                 color: "transparent",
                 WebkitTextFillColor: "transparent",
               }}
+              aria-hidden="true"
             >
-              {"\u201c"}Doe has given me back so much of my time. I can now focus on my patients rather than be my own admin.
-              {"\u201d"}
+              <span className="[display:inline]">
+                {VBENTO_BRIDGE_TESTIMONIAL.slice(0, bentoBridgeTypedLen)}
+              </span>
+              {bentoBridgeTypedLen < VBENTO_BRIDGE_TESTIMONIAL.length ? (
+                <span
+                  className="bento-bridge-caret motion-reduce:animate-none ml-[0.06em] inline-block w-[0.09em] shrink-0 translate-y-[0.04em] bg-[#8a5c38] align-middle"
+                  style={{ height: "0.82em" }}
+                  aria-hidden
+                />
+              ) : null}
             </p>
           </blockquote>
           <div
-            className={`mt-[clamp(2.25rem,5vh,4rem)] flex max-w-[min(100%,46rem)] flex-row items-center justify-end gap-4 self-end text-right ${inter.className}`}
+            className={`mt-[clamp(2.25rem,5vh,4rem)] flex w-full max-w-[min(100%,26rem)] flex-row items-center justify-start gap-3.5 text-left sm:max-w-[min(100%,28rem)] ${inter.className}`}
           >
-            <div className="min-w-0 text-right">
-              <p className="m-0 text-[clamp(0.8125rem,1.35vw,0.9375rem)] font-semibold leading-snug tracking-tight text-gray-900">
-                Avery Mills, MD
-              </p>
-              <p className="mt-1 m-0 text-[clamp(0.6875rem,1.15vw,0.8125rem)] font-medium leading-snug tracking-tight text-gray-600">
-                Physician · Boston, MA
-              </p>
-            </div>
             <div
-              className="relative flex h-[clamp(3.25rem,8.5vw,4.5rem)] w-[clamp(3.25rem,8.5vw,4.5rem)] shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-gray-200 to-gray-400 ring-2 ring-white/90 shadow-[0_6px_22px_rgba(30,52,58,0.14)]"
+              className="flex h-[clamp(3.5rem,9vw,4.75rem)] w-[clamp(3.5rem,9vw,4.75rem)] shrink-0 items-center justify-center rounded-full bg-[#5a5a5a] text-[clamp(1rem,2.35vw,1.2rem)] font-semibold tracking-tight text-white/95"
               aria-hidden
             >
-              <span className="text-[clamp(0.95rem,2.1vw,1.2rem)] font-semibold tracking-tight text-gray-800">
-                AM
-              </span>
+              AM
+            </div>
+            <div className="min-w-0">
+              <p className="m-0 text-[clamp(1.125rem,2.45vw,1.45rem)] font-semibold leading-snug tracking-tight text-gray-900">
+                Avery Mills, MD
+              </p>
+              <p className="mt-1.5 m-0 text-[clamp(0.9375rem,1.95vw,1.125rem)] font-medium leading-snug tracking-tight text-gray-600">
+                Physician · Boston, MA
+              </p>
             </div>
           </div>
         </div>
