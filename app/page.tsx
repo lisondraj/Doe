@@ -313,12 +313,19 @@ const QUALITY_ORBIT_ARC_RIGHT_D = `M 200 ${QUALITY_ORBIT_ARC_TOP_Y} A ${QUALITY_
 const QUALITY_ORBIT_ARC_LEFT_D = `M 200 ${QUALITY_ORBIT_ARC_TOP_Y} A ${QUALITY_ORBIT_CONNECTOR_RX} ${QUALITY_ORBIT_CONNECTOR_RY} 0 0 0 200 ${QUALITY_ORBIT_ARC_BOTTOM_Y}`;
 
 /** Short captions inside each orbit tile (clockwise from top). */
-const QUALITY_ORBIT_TILE_LABELS = ["Inbox", "Calls", "Schedule", "Billing", "Team", "Chart"] as const;
+const QUALITY_ORBIT_TILE_LABELS = [
+  ["AI Inbox"],
+  ["Receptionist"],
+  ["Appointment", "Assist"],
+  ["Auto-Billing"],
+  ["Multi-Specialty"],
+  ["Patient Facing"],
+] as const;
 
 const QUALITY_ORBIT_CHOREO_HEADLINE_DELAY_MS = 90;
 const QUALITY_ORBIT_CHOREO_DIAGRAM_DELAY_MS = 700;
-/** Grey connector finish before orange traces on top — keep synced with SVG path `stroke-dashoffset` transition (~1.05s). */
-const QUALITY_ORBIT_CHOREO_GREY_HOLD_MS = 1080;
+/** Grey connector finishes before orange traces — keep synced with grey arc `stroke-dashoffset` duration below (~2.35s). */
+const QUALITY_ORBIT_CHOREO_GREY_HOLD_MS = 2480;
 const QUALITY_ORBIT_CHOREO_ACCENT_AFTER_GREY_MS = 140;
 
 function qualityOrbitMiniIcon(tileIndex: number): ReactElement {
@@ -376,8 +383,8 @@ function qualityOrbitMiniIcon(tileIndex: number): ReactElement {
     default:
       return (
         <svg {...svgProps}>
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-          <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
         </svg>
       );
   }
@@ -408,11 +415,11 @@ function WorkflowCarouselSlideCenterSvg(props: { children: ReactNode }): ReactEl
   );
 }
 
-/** Left label + right icon centered on workflow carousel mocks (700² design space; scales with card). */
+/** Icon + label centered on workflow carousel mocks (700² design space; scales with card). */
 function WorkflowCarouselSlideCenterChrome(props: { slideIndex: 0 | 1 | 2 | 3 | 4 | 5 }): ReactElement {
   const { slideIndex } = props;
   const iconWrap =
-    "flex h-[3.125rem] w-[3.125rem] shrink-0 items-center justify-center rounded-[0.875rem] border border-white/30 bg-white/12 text-white shadow-md backdrop-blur-[4px]";
+    "flex h-[3.125rem] w-[3.125rem] shrink-0 items-center justify-center rounded-[0.875rem] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]";
   let lines: readonly string[];
   let Icon: ReactNode;
   switch (slideIndex) {
@@ -477,9 +484,10 @@ function WorkflowCarouselSlideCenterChrome(props: { slideIndex: 0 | 1 | 2 | 3 | 
   const textPx = slideIndex === 2 ? "0.95rem" : "1.2rem";
   return (
     <div
-      className="pointer-events-none absolute left-1/2 top-[46%] z-[26] flex max-w-[min(94%,21rem)] -translate-x-1/2 -translate-y-1/2 flex-row items-center gap-[0.85rem] rounded-[1.125rem] border border-white/22 bg-black/22 px-[1rem] py-[0.625rem] shadow-[0_12px_40px_rgba(0,0,0,0.18)] backdrop-blur-[5px]"
+      className="pointer-events-none absolute left-1/2 top-[46%] z-[26] flex max-w-[min(94%,21rem)] -translate-x-1/2 -translate-y-1/2 flex-row items-center gap-[0.85rem]"
       role="presentation"
     >
+      <div className={iconWrap}>{Icon}</div>
       <div
         className={`flex min-w-0 flex-col gap-px text-left ${inter.className} font-light leading-[1.17] tracking-[-0.02em] text-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.35)]`}
         style={{ fontSize: textPx }}
@@ -490,7 +498,6 @@ function WorkflowCarouselSlideCenterChrome(props: { slideIndex: 0 | 1 | 2 | 3 | 
           </span>
         ))}
       </div>
-      <div className={iconWrap}>{Icon}</div>
     </div>
   );
 }
@@ -604,7 +611,7 @@ export default function DoePage() {
       /** Inset so cards read slightly smaller than full viewport */
       const horizontalInset = 12;
       /** Slide width from viewport; height taller than width for portrait cards */
-      const phoneSlideScale = 0.96;
+      const phoneSlideScale = 1;
       const stripMaxPx = BUILD_CAROUSEL_MAX_REM * vbDocumentRootPx();
       const w = Math.min(((vw - horizontalInset * 2) / zoom) * phoneSlideScale, stripMaxPx);
       /** Taller than wide — extra vertical presence in the carousel band */
@@ -1990,29 +1997,6 @@ export default function DoePage() {
               transition: 'opacity 1.2s ease-out, transform 1.2s ease-out',
             }}
           >
-            {/* Slide picker — same pill pattern as expanded nav footer carousel */}
-            <div
-              className="relative z-[28] mx-auto flex w-full shrink-0 justify-center gap-2.5 px-4 pb-3 pt-1 iphone-page:gap-[clamp(0.65rem,0.45rem+1vmin,0.95rem)]"
-              aria-hidden={false}
-            >
-              {Array.from({ length: carouselSlideCount }, (_, dotI) => (
-                <button
-                  key={`wf-dot-${dotI}`}
-                  type="button"
-                  aria-label={`Workflow slide ${dotI + 1}`}
-                  aria-current={workflowCarouselIndex === dotI ? 'true' : undefined}
-                  className={`h-2.5 shrink-0 rounded-full transition-[width,background-color,opacity] duration-200 shadow-sm iphone-page:h-[clamp(9px,calc(6px+0.45vmin),12px)] ${
-                    workflowCarouselIndex === dotI
-                      ? 'w-8 bg-gray-800 opacity-95 iphone-page:w-[clamp(1.95rem,calc(1.65rem+1.9vmin),2.85rem)]'
-                      : 'w-2.5 bg-gray-400/50 hover:bg-gray-500/70 iphone-page:w-[clamp(0.625rem,calc(0.5rem+0.42vmin),0.75rem)]'
-                  }`}
-                  onClick={() => {
-                    setWorkflowCarouselIndex(dotI as 0 | 1 | 2 | 3 | 4 | 5);
-                  }}
-                />
-              ))}
-            </div>
-
             <div
               className="relative flex min-h-0 w-full flex-1 items-center justify-center"
               style={{ minHeight: slideBoxH }}
@@ -2074,6 +2058,28 @@ export default function DoePage() {
                 overflow: 'hidden'
               }}
             >
+            {/* Slide picker — inside card, same pill pattern as expanded nav footer carousel */}
+            <div
+              className="pointer-events-auto absolute left-0 right-0 top-0 z-[28] flex justify-center gap-2.5 px-5 pb-2 pt-[clamp(1.35rem,4vmin,2.65rem)] iphone-page:gap-[clamp(0.65rem,0.45rem+1vmin,0.95rem)]"
+              aria-hidden={false}
+            >
+              {Array.from({ length: carouselSlideCount }, (_, dotI) => (
+                <button
+                  key={`wf-dot-${dotI}`}
+                  type="button"
+                  aria-label={`Workflow slide ${dotI + 1}`}
+                  aria-current={workflowCarouselIndex === dotI ? 'true' : undefined}
+                  className={`h-2.5 shrink-0 rounded-full transition-[width,background-color,opacity] duration-200 shadow-sm iphone-page:h-[clamp(9px,calc(6px+0.45vmin),12px)] ${
+                    workflowCarouselIndex === dotI
+                      ? 'w-8 bg-white opacity-95 iphone-page:w-[clamp(1.95rem,calc(1.65rem+1.9vmin),2.85rem)]'
+                      : 'w-2.5 bg-white/45 hover:bg-white/70 iphone-page:w-[clamp(0.625rem,calc(0.5rem+0.42vmin),0.75rem)]'
+                  }`}
+                  onClick={() => {
+                    setWorkflowCarouselIndex(dotI as 0 | 1 | 2 | 3 | 4 | 5);
+                  }}
+                />
+              ))}
+            </div>
             <div
               className="flex h-full flex-row shrink-0"
               style={{
@@ -2237,7 +2243,7 @@ export default function DoePage() {
                         transform: `scale(${slideUniformScale})`,
                         transformOrigin: "top left",
                         background:
-                          "radial-gradient(circle at center, #E7A944 0%, #D49D4F 40%, #D2774C 70%, #1E343A 100%)",
+                          "linear-gradient(135deg, #E7A944 0%, #D49D4F 30%, #D2774C 60%, #1E343A 100%)",
                       }}
                     >
                     {/* Grain texture overlay */}
@@ -2250,36 +2256,15 @@ export default function DoePage() {
                         mixBlendMode: 'overlay',
                       }}
                     />
-                    {/* Grid pattern overlay - Box 2: Curved radial grid */}
+                    {/* Grid pattern overlay — match slide 1 (diagonal grid) */}
                     <div className="absolute inset-0 pointer-events-none rounded-2xl overflow-hidden">
                       <svg className="absolute inset-0 pointer-events-none w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 700">
-                        {Array.from({ length: 8 }, (_, j) => {
-                          const angle = (j * 45);
-                          const radius = 350;
-                          return (
-                            <path
-                              key={`radial-${j}`}
-                              d={`M 350 350 L ${350 + Math.cos(angle * Math.PI / 180) * radius} ${350 + Math.sin(angle * Math.PI / 180) * radius}`}
-                              fill="none"
-                              stroke="rgba(255, 255, 255, 0.15)"
-                              strokeWidth="0.8"
-                            />
-                          );
-                        })}
-                        {Array.from({ length: 6 }, (_, j) => {
-                          const r = (j + 1) * 100;
-                          return (
-                            <circle
-                              key={`circle-${j}`}
-                              cx="350"
-                              cy="350"
-                              r={r}
-                              fill="none"
-                              stroke="rgba(255, 255, 255, 0.15)"
-                              strokeWidth="0.8"
-                            />
-                          );
-                        })}
+                        <defs>
+                          <pattern id="gridSmartAppt" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                            <path d="M 0 0 L 60 0 M 0 0 L 0 60" fill="none" stroke="rgba(255, 255, 255, 0.15)" strokeWidth="0.8" />
+                          </pattern>
+                        </defs>
+                        <rect width="100%" height="100%" fill="url(#gridSmartAppt)" />
                       </svg>
                     </div>
                     {/* Number indicator */}
@@ -3240,7 +3225,7 @@ export default function DoePage() {
                   vectorEffect="nonScalingStroke"
                   style={{
                     transition:
-                      "stroke-dashoffset 1.06s cubic-bezier(0.45, 0, 0.2, 1)",
+                      "stroke-dashoffset 2.35s cubic-bezier(0.45, 0, 0.2, 1)",
                   }}
                   className="motion-reduce:transition-none"
                 />
@@ -3260,7 +3245,7 @@ export default function DoePage() {
                   vectorEffect="nonScalingStroke"
                   style={{
                     transition:
-                      "stroke-dashoffset 1.02s cubic-bezier(0.43, 0, 0.18, 1), stroke-opacity 0.35s ease-out",
+                      "stroke-dashoffset 2.28s cubic-bezier(0.43, 0, 0.18, 1), stroke-opacity 0.55s ease-out",
                   }}
                   className="motion-reduce:transition-none"
                 />
@@ -3327,11 +3312,21 @@ export default function DoePage() {
                   <rect width="100%" height="100%" fill={`url(#quality-orbit-lines-${i})`} />
                 </svg>
                 <div
-                  className={`relative z-[4] pointer-events-none flex h-full flex-col items-center justify-center gap-1 px-1.5 text-center ${inter.className}`}
+                  className={`relative z-[4] pointer-events-none flex h-full min-h-0 flex-row items-center justify-center gap-x-1.5 gap-y-0 px-2 py-1 ${inter.className}`}
                 >
                   {qualityOrbitMiniIcon(i)}
-                  <span className="text-[clamp(0.52rem,1.82vw,0.6875rem)] font-semibold leading-snug tracking-tight text-white/95 drop-shadow-[0_1px_12px_rgba(0,0,0,0.28)]">
-                    {QUALITY_ORBIT_TILE_LABELS[i]}
+                  <span
+                    className={`max-w-[min(100%,7.25rem)] text-left font-semibold leading-snug tracking-tight text-white/95 drop-shadow-[0_1px_12px_rgba(0,0,0,0.28)] ${
+                      QUALITY_ORBIT_TILE_LABELS[i].length > 1
+                        ? "text-[clamp(0.46rem,1.62vw,0.625rem)]"
+                        : "text-[clamp(0.52rem,1.82vw,0.6875rem)]"
+                    }`}
+                  >
+                    {QUALITY_ORBIT_TILE_LABELS[i].map((line) => (
+                      <span key={line} className="block">
+                        {line}
+                      </span>
+                    ))}
                   </span>
                 </div>
               </div>
