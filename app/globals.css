@@ -92,7 +92,7 @@ html:has(.doeforvc-iphone-root) body {
   animation: scroll-horizontal 30s linear infinite;
 }
 
-@keyframes hero-tagline-float {
+@keyframes hero-cta-float {
   0%,
   100% {
     transform: translateY(0);
@@ -102,12 +102,12 @@ html:has(.doeforvc-iphone-root) body {
   }
 }
 
-.animate-hero-tagline-float {
-  animation: hero-tagline-float 7s ease-in-out infinite;
+.animate-hero-cta-float {
+  animation: hero-cta-float 7s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-hero-tagline-float {
+  .animate-hero-cta-float {
     animation: none;
   }
 }

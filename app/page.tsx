@@ -1975,32 +1975,34 @@ export default function DoePage() {
             </p>
             <div className="flex flex-col items-center gap-[1.625rem] iphone-page:gap-7 px-2">
               <p
-                className="animate-hero-tagline-float whitespace-nowrap text-[clamp(1.75rem,4.15vw,2.75rem)] iphone-page:text-[clamp(1.2rem,4.85vw,1.9375rem)] font-medium text-white/90 text-center iphone-page:px-2 tracking-tight leading-snug"
+                className="whitespace-nowrap text-[clamp(1.75rem,4.15vw,2.75rem)] iphone-page:text-[clamp(1.2rem,4.85vw,1.9375rem)] font-medium text-white/90 text-center iphone-page:px-2 tracking-tight leading-snug"
                 style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
               >
                 An AI inbox built for clinicians.
               </p>
-              <a
-                href="mailto:contact@joindoe.com"
-                className={`inline-flex items-center gap-[1.05rem] rounded-full border border-white/25 bg-white/95 px-[2.65rem] py-[1.25rem] pl-[2.35rem] text-[1.3125rem] iphone-page:text-[clamp(1.12rem,4.85vw,1.375rem)] font-semibold tracking-tight text-gray-900 shadow-[0_6px_28px_rgba(0,0,0,0.16)] transition-[background-color,box-shadow,transform,border-color] duration-200 hover:bg-white hover:shadow-[0_10px_36px_rgba(0,0,0,0.2)] active:scale-[0.99] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white ${inter.className}`}
-              >
-                <svg
-                  className="h-[1.55em] w-[1.55em] shrink-0 text-gray-700"
-                  width="33"
-                  height="33"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.75"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden
+              <span className="animate-hero-cta-float inline-flex">
+                <a
+                  href="mailto:contact@joindoe.com"
+                  className={`inline-flex items-center gap-[1.05rem] rounded-full border border-white/25 bg-white/95 px-[2.65rem] py-[1.25rem] pl-[2.35rem] text-[1.3125rem] iphone-page:text-[clamp(1.12rem,4.85vw,1.375rem)] font-semibold tracking-tight text-gray-900 shadow-[0_6px_28px_rgba(0,0,0,0.16)] transition-[background-color,box-shadow,transform,border-color] duration-200 hover:bg-white hover:shadow-[0_10px_36px_rgba(0,0,0,0.2)] active:scale-[0.99] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white ${inter.className}`}
                 >
-                  <rect x="3" y="5" width="18" height="14" rx="2" ry="2" />
-                  <path d="M3 7l9 6 9-6" />
-                </svg>
-                Contact us
-              </a>
+                  <svg
+                    className="h-[1.55em] w-[1.55em] shrink-0 text-gray-700"
+                    width="33"
+                    height="33"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.75"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden
+                  >
+                    <rect x="3" y="5" width="18" height="14" rx="2" ry="2" />
+                    <path d="M3 7l9 6 9-6" />
+                  </svg>
+                  Contact us
+                </a>
+              </span>
             </div>
           </div>
         </div>
