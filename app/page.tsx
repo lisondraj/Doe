@@ -355,10 +355,9 @@ export default function DoePage() {
   const [shouldStartSlidingAnimation, setShouldStartSlidingAnimation] = useState(false);
   const [activeTab, setActiveTab] = useState<'Inbox' | 'Calls' | 'Workflow'>('Inbox');
   const [hoveredDecisionCard, setHoveredDecisionCard] = useState<'context' | 'timeline' | 'decision' | null>(null);
-  const [selectedReportBox, setSelectedReportBox] = useState<number | null>(null);
-  const [box2Title, setBox2Title] = useState('Report Results');
+  const [box2Title, setBox2Title] = useState('Smart Appointments');
   const [box2Description, setBox2Description] = useState(
-    'Stack imaging and labs in one view. Verify findings and route follow-ups without switching systems.'
+    'Charts update live from what patients say in the room—medications, history, and visit goals surface before your next question.'
   );
   const [isEditingBox2Title, setIsEditingBox2Title] = useState(false);
   const [isEditingBox2Description, setIsEditingBox2Description] = useState(false);
@@ -368,11 +367,6 @@ export default function DoePage() {
     { x: 76, y: 79 }     // Second box initial position (relative to first)
   ]);
   const [positionHistory, setPositionHistory] = useState<Array<Array<{ x: number; y: number }>>>([]);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(null);
-  const [dragBoxIndex, setDragBoxIndex] = useState<number | null>(null);
-  const [wasDragging, setWasDragging] = useState(false);
-  const initialBoxPositionRef = useRef<{ x: number; y: number } | null>(null);
   const latestPositionsRef = useRef<Array<{ x: number; y: number }>>(reportBoxPositions);
   const descriptionEditRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -950,20 +944,18 @@ export default function DoePage() {
     214,
     Math.max(158, Math.round(slideVisibleHeight700 * 0.278)),
   );
-  /** Report Results overlapping cards — scale width + drag offsets when the visible slice is tight. */
-  const reportMockCardWidth700 = Math.min(
-    280,
-    Math.max(216, Math.round(slideVisibleWidth700 * 0.42)),
+  /** Smart Appointments twin panels — fit beside each other inside the visible band */
+  const smartApptRowWidth700 = Math.min(
+    404,
+    Math.max(296, Math.round(slideVisibleWidth700 * 0.9)),
   );
-  const reportMockScale = reportMockCardWidth700 / 280;
-  /** Diagnostic slide (box 3): shrink stacked panels when visible slice is tight */
-  const diagUiScale = Math.min(1, Math.max(0.72, slideVisibleWidth700 / 384));
-  const carouselDiagMainWidth700 = Math.round(300 * diagUiScale);
-  const carouselDiagConfidenceWidth700 = Math.round(240 * diagUiScale);
-  const carouselDiagYOffsetPx = Math.round(100 * diagUiScale);
-  const carouselDiagRightOffsetPx = Math.round(180 * diagUiScale);
-  /** Care timeline (box 4) */
-  const carouselCareTimelineWidth700 = Math.min(
+  /** Billing & finances slide — single stacked mock */
+  const carouselBillingUiWidth700 = Math.min(
+    336,
+    Math.max(264, Math.round(slideVisibleWidth700 * 0.92)),
+  );
+  /** Multi-disciplinary routing mock */
+  const carouselMultidiscWidth700 = Math.min(
     340,
     Math.max(268, Math.round(slideVisibleWidth700 * 0.94)),
   );
@@ -1046,84 +1038,6 @@ export default function DoePage() {
   const showLeftArrow = true;
   const showRightArrow = true;
 
-  // Drag and drop handlers for report boxes
-  const handleBoxMouseDown = (e: React.MouseEvent, boxIndex: number) => {
-    if (isPhoneLayout) return;
-    const target = e.target as HTMLElement;
-    if (target.tagName === 'BUTTON' || target.closest('button')) {
-      return;
-    }
-    
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(true);
-    setDragBoxIndex(boxIndex);
-    setDragStart({ x: e.clientX, y: e.clientY });
-    setSelectedReportBox(boxIndex);
-    
-    // Store initial position for this drag session
-    initialBoxPositionRef.current = { ...reportBoxPositions[boxIndex] };
-    
-    // Save current state to history before dragging
-    setPositionHistory(prev => [...prev, JSON.parse(JSON.stringify(reportBoxPositions))]);
-  };
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!isDragging || dragBoxIndex === null || !dragStart || !initialBoxPositionRef.current) return;
-
-      const deltaX = e.clientX - dragStart.x;
-      const deltaY = e.clientY - dragStart.y;
-      
-      setReportBoxPositions(prev => {
-        const newPositions = [...prev];
-        if (dragBoxIndex === 0) {
-          // First box: update its position directly
-          newPositions[0] = {
-            x: initialBoxPositionRef.current!.x + deltaX,
-            y: initialBoxPositionRef.current!.y + deltaY
-          };
-        } else {
-          // Second box: update relative to first box
-          newPositions[1] = {
-            x: initialBoxPositionRef.current!.x + deltaX,
-            y: initialBoxPositionRef.current!.y + deltaY
-          };
-        }
-        // Update ref with latest positions
-        latestPositionsRef.current = newPositions;
-        return newPositions;
-      });
-    };
-
-    const handleMouseUp = () => {
-      const hadDrag = isDragging;
-      setIsDragging(false);
-      setDragBoxIndex(null);
-      setDragStart(null);
-      initialBoxPositionRef.current = null;
-      
-      // Note: Auto-save removed - positions only save when user clicks Save button
-      // This ensures the codebase is only updated intentionally
-      
-      // Prevent click event immediately after drag
-      if (hadDrag) {
-        setWasDragging(true);
-        setTimeout(() => setWasDragging(false), 100);
-      }
-    };
-
-    if (isDragging) {
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseup', handleMouseUp);
-    }
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [isDragging, dragBoxIndex, dragStart]);
-
   // Load positions, history, and box 2 text from API on mount
   useEffect(() => {
     const loadData = async () => {
@@ -1201,7 +1115,6 @@ export default function DoePage() {
       // Close editing modes
       setIsEditingBox2Title(false);
       setIsEditingBox2Description(false);
-      setSelectedReportBox(null);
     } catch (e) {
       alert('Failed to save. Please try again.');
     }
@@ -1971,7 +1884,7 @@ export default function DoePage() {
             >
             {/* Boxes - absolutely positioned for modular recycling */}
             {([0, 1, 2, 3, 4, 5] as const).map((i) => {
-              // Box 1 (index 0) - Scheduled Updates
+              // Box 1 (index 0) - AI Receptionist
               if (i === 0) {
                 return (
                   <div
@@ -2046,75 +1959,87 @@ export default function DoePage() {
                         bottom: `${carouselInboxUiBottom700}px`,
                       }}
                     >
-                      {/* Notification Header */}
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className={`font-bold text-gray-900`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '14px' }}>
-                          Inbox Summary
+                      {/* AI Receptionist live call flow */}
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="font-bold text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '14px' }}>
+                          AI Receptionist
                         </h3>
-                        <div className="flex items-center gap-2">
-                          <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
-                          <span className="text-xs font-semibold text-gray-600" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>3 new</span>
+                        <div className="flex items-center gap-1.5 rounded-full bg-emerald-50 px-2 py-0.5 border border-emerald-200/80">
+                          <span className="relative flex h-2 w-2">
+                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" aria-hidden />
+                            <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" aria-hidden />
+                          </span>
+                          <span className="text-[11px] font-semibold text-emerald-800" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                            On call
+                          </span>
                         </div>
                       </div>
-
-                      {/* Email Item */}
-                      <div className="mb-4 pb-4 border-b border-gray-100">
-                        <div className="flex items-start gap-3">
-                          <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center flex-shrink-0">
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1 flex-wrap">
-                              <span className={`font-bold text-gray-900`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '12px', wordBreak: 'break-word' }}>Dr. Sarah Chen</span>
-                              <span className={`text-gray-500 flex-shrink-0 font-medium`} style={{ fontSize: '12px' }}>2h ago</span>
+                      <div className="space-y-3">
+                        {[
+                          {
+                            step: '1',
+                            title: 'Incoming call',
+                            subtitle: 'Oak Hill Clinic · (555) 310-4412',
+                            tag: 'Ringing',
+                          },
+                          {
+                            step: '2',
+                            title: 'Answered by AI',
+                            subtitle: 'Tone + natural language · recording + consent on file',
+                            tag: 'Voice',
+                          },
+                          {
+                            step: '3',
+                            title: 'Appointment booked',
+                            subtitle: 'Thu · 10:40 AM · Dr. Patel · Exam 3',
+                            tag: 'Schedule',
+                          },
+                          {
+                            step: '4',
+                            title: 'Pre-visit questionnaire',
+                            subtitle: 'SMS sent · PHQ-2 + forms · auto chart prep',
+                            tag: 'Forms',
+                          },
+                        ].map((row) => (
+                          <div
+                            key={row.step}
+                            className="flex gap-2.5 rounded-lg border border-gray-100 bg-gray-50/70 p-2.5"
+                          >
+                            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-gray-800 text-[10px] font-bold text-white" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                              {row.step}
                             </div>
-                            <p className={`text-gray-600 mb-2 break-words line-clamp-2 font-medium`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '12px', wordWrap: 'break-word', overflowWrap: 'break-word' }}>
-                              Patient follow-up request for post-op consultation
-                            </p>
+                            <div className="min-w-0 flex-1">
+                              <div className="mb-0.5 flex flex-wrap items-center gap-1.5">
+                                <span className="font-bold text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '12px' }}>
+                                  {row.title}
+                                </span>
+                                <span className="rounded bg-white px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-gray-500 ring-1 ring-gray-200">
+                                  {row.tag}
+                                </span>
+                              </div>
+                              <p className="text-gray-600" style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '11px', lineHeight: 1.45 }}>
+                                {row.subtitle}
+                              </p>
+                            </div>
                           </div>
-                        </div>
+                        ))}
                       </div>
-
-                      {/* Call Item */}
-                      <div className="mb-4 pb-4 border-b border-gray-100">
-                        <div className="flex items-start gap-3">
-                          <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center flex-shrink-0">
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1 flex-wrap">
-                              <span className={`font-bold text-gray-900`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '12px', wordBreak: 'break-word' }}>Hospital Admin</span>
-                              <span className={`text-gray-500 flex-shrink-0 font-medium`} style={{ fontSize: '12px' }}>4h ago</span>
-                            </div>
-                            <p className={`text-gray-600 mb-2 break-words line-clamp-2 font-medium`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '12px', wordWrap: 'break-word', overflowWrap: 'break-word' }}>
-                              Urgent: Schedule change for tomorrow&apos;s surgery
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Email Item */}
-                      <div className="mb-3">
-                        <div className="flex items-start gap-3">
-                          <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center flex-shrink-0">
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1 flex-wrap">
-                              <span className={`font-bold text-gray-900`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '12px', wordBreak: 'break-word' }}>Lab Results</span>
-                              <span className={`text-gray-500 flex-shrink-0 font-medium`} style={{ fontSize: '12px' }}>6h ago</span>
-                            </div>
-                            <p className={`text-gray-600 break-words mb-0 line-clamp-2 font-medium`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '12px', wordWrap: 'break-word', overflowWrap: 'break-word' }}>
-                              New test results available for review - Patient ID: 2847
-                            </p>
-                          </div>
-                        </div>
+                      <div className="mt-3 flex items-center justify-between rounded-md border border-dashed border-gray-200 bg-white px-2 py-1.5">
+                        <span className="text-[10px] font-medium text-gray-500" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                          Next: route to triage if chief complaint = urgent
+                        </span>
+                        <span className="text-[10px] font-bold text-gray-700" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                          AI · 0.4s
+                        </span>
                       </div>
                     </div>
 
                     <div className={slideCaptionWrap} style={{ left: captionLeft700, right: captionRight700 }}>
                       <span className={slideCaptionBadge} style={slideCaptionFont}>
-                        Scheduled Updates
+                        AI Receptionist
                       </span>
                       <p className={slideCaptionBody} style={slideCaptionFont}>
-                        Doe summarizes your incoming messages and emails at a specific time so all you have to do it verify.
+                        Answers every line, confirms intent, fills the schedule, then ships questionnaires so the visit starts ready—not on hold.
                       </p>
                     </div>
                     </div>
@@ -2122,7 +2047,7 @@ export default function DoePage() {
                 );
               }
               
-              // Box 2 (index 1) - Report Results
+              // Box 2 (index 1) - Smart Appointments
               if (i === 1) {
                 return (
                   <div
@@ -2199,8 +2124,8 @@ export default function DoePage() {
                       </span>
                     </div>
                     
-                    {/* Save and Undo buttons - top right corner, styled like tab switcher */}
-                    {(selectedReportBox !== null || isEditingBox2Title || isEditingBox2Description) && (
+                    {/* Save and Undo when editing Smart Appointments caption */}
+                    {(isEditingBox2Title || isEditingBox2Description) && (
                       <div
                         className="absolute top-6 right-6 flex items-center z-20"
                         style={{
@@ -2244,116 +2169,107 @@ export default function DoePage() {
                         </button>
                       </div>
                     )}
-                    
-                    {/* Two overlapping rectangle boxes */}
-                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2" style={{ transform: 'translateX(-50%) translateY(-60%)' }}>
-                      
-                      {/* First Rectangle Box */}
-                      <div 
-                        className="bg-white rounded-lg shadow-lg"
-                        onMouseDown={(e) => handleBoxMouseDown(e, 0)}
-                        onClick={(e) => {
-                          if (isPhoneLayout) return;
-                          if (!isDragging && !wasDragging) {
-                            setSelectedReportBox(0);
-                          }
-                        }}
-                        style={{ 
-                          width: `${reportMockCardWidth700}px`,
-                          height: 'fit-content',
-                          position: 'relative',
-                          zIndex: selectedReportBox === 0 ? 3 : 2,
-                          transform: `translateX(${reportBoxPositions[0].x * reportMockScale}px) translateY(${reportBoxPositions[0].y * reportMockScale}px)`,
-                          opacity: 1,
-                          pointerEvents: 'auto',
+
+                    {/* Live visit: room transcript + chart context (twin panels) */}
+                    <div
+                      className="absolute left-1/2 flex gap-2"
+                      style={{
+                        width: `${smartApptRowWidth700}px`,
+                        top: '40%',
+                        transform: 'translate(-50%, -50%)',
+                      }}
+                    >
+                      <div
+                        className="min-w-0 flex-1 rounded-xl border border-gray-100 bg-white p-3 shadow-lg"
+                        style={{
                           userSelect: 'none',
-                          cursor: isPhoneLayout ? 'default' : isDragging && dragBoxIndex === 0 ? 'grabbing' : 'grab',
-                          touchAction: 'none',
-                          padding: '16px',
-                          paddingBottom: '12px',
-                          border: selectedReportBox === 0 ? '2px solid #2563eb' : 'none',
-                          transition: isDragging && dragBoxIndex === 0 ? 'none' : 'border 0.2s ease',
+                          pointerEvents: 'auto',
                         }}
                       >
-                        <div className="flex items-center justify-between mb-2">
-                          <div>
-                            <p className={`text-gray-900 text-sm font-bold mb-1`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                              Patient #2847
-                            </p>
-                            <p className={`text-gray-500 text-xs`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                              CT Scan - Chest
-                            </p>
-                          </div>
-                          <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                        <div className="mb-2 flex items-center justify-between gap-2">
+                          <h3
+                            className="font-bold text-gray-900"
+                            style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '12px' }}
+                          >
+                            Exam room · live
+                          </h3>
+                          <span
+                            className="shrink-0 rounded-full bg-amber-50 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-amber-900 ring-1 ring-amber-200/80"
+                            style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
+                          >
+                            Listening
+                          </span>
                         </div>
-                        <p className={`text-gray-600 text-xs mb-3`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                          Report ready for review • 2h ago
-                        </p>
-                        <div className="flex gap-2">
-                          <button className="flex-1 px-3 py-2 bg-gray-600 text-white rounded text-xs font-semibold" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                            Verify
-                          </button>
-                          <button className="flex-1 px-3 py-2 bg-gray-600 text-white rounded text-xs font-semibold" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                            Refer
-                          </button>
-                          <button className="flex-1 px-3 py-2 bg-gray-600 text-white rounded text-xs font-semibold" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                            Contact
-                          </button>
+                        <div className="space-y-2">
+                          {[
+                            { who: 'Patient', line: '“The metformin gives me cramps—skipped it twice.”' },
+                            { who: 'Patient', line: '“Left knee popped again after PT last week.”' },
+                            { who: 'Clinician', line: '“Any chest tightness when you climb stairs?”' },
+                          ].map((t, idx) => (
+                            <div
+                              key={idx}
+                              className={`rounded-lg px-2.5 py-2 ${t.who === 'Patient' ? 'bg-gray-50' : 'bg-slate-50'}`}
+                            >
+                              <p
+                                className="mb-0.5 text-[9px] font-bold uppercase tracking-wide text-gray-500"
+                                style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
+                              >
+                                {t.who}
+                              </p>
+                              <p className="text-gray-800" style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '10px', lineHeight: 1.45 }}>
+                                {t.line}
+                              </p>
+                            </div>
+                          ))}
                         </div>
                       </div>
-
-                      {/* Second Rectangle Box - overlapping */}
-                      <div 
-                        className="bg-white rounded-lg shadow-lg"
-                        onMouseDown={(e) => handleBoxMouseDown(e, 1)}
-                        onClick={(e) => {
-                          if (isPhoneLayout) return;
-                          if (!isDragging && !wasDragging) {
-                            setSelectedReportBox(1);
-                          }
-                        }}
-                        style={{ 
-                          width: `${reportMockCardWidth700}px`,
-                          height: 'fit-content',
-                          position: 'absolute',
-                          top: `${reportBoxPositions[1].y * reportMockScale}px`,
-                          left: `${reportBoxPositions[1].x * reportMockScale}px`,
-                          zIndex: selectedReportBox === 1 ? 3 : 1,
-                          opacity: 1,
-                          pointerEvents: 'auto',
+                      <div
+                        className="min-w-0 flex-1 rounded-xl border border-gray-100 bg-white p-3 shadow-lg"
+                        style={{
                           userSelect: 'none',
-                          cursor: isPhoneLayout ? 'default' : isDragging && dragBoxIndex === 1 ? 'grabbing' : 'grab',
-                          touchAction: 'none',
-                          padding: '16px',
-                          paddingBottom: '12px',
-                          border: selectedReportBox === 1 ? '2px solid #2563eb' : 'none',
-                          transition: isDragging && dragBoxIndex === 1 ? 'none' : 'border 0.2s ease',
+                          pointerEvents: 'auto',
                         }}
                       >
-                        <div className="flex items-center justify-between mb-2">
-                          <div>
-                            <p className={`text-gray-900 text-sm font-bold mb-1`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                              Patient #1923
+                        <div className="mb-2 flex items-center justify-between gap-2">
+                          <h3
+                            className="font-bold text-gray-900"
+                            style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '12px' }}
+                          >
+                            Chart · pulled forward
+                          </h3>
+                          <span
+                            className="shrink-0 text-[10px] font-bold text-emerald-700"
+                            style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
+                          >
+                            Ready
+                          </span>
+                        </div>
+                        <div className="space-y-2">
+                          <div className="rounded-lg border border-dashed border-gray-200 bg-gray-50/80 p-2">
+                            <p
+                              className="mb-1 text-[9px] font-bold uppercase tracking-wide text-gray-500"
+                              style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
+                            >
+                              Meds · from speech
                             </p>
-                            <p className={`text-gray-500 text-xs`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                              Lab Results - Blood
+                            <p className="text-gray-800" style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '10px', lineHeight: 1.4 }}>
+                              Metformin 1000 mg · adherence concern noted
                             </p>
                           </div>
-                          <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-                        </div>
-                        <p className={`text-gray-600 text-xs mb-3`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                          Report ready for review • 4h ago
-                        </p>
-                        <div className="flex gap-2">
-                          <button className="flex-1 px-3 py-2 bg-gray-600 text-white rounded text-xs font-semibold" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                            Verify
-                          </button>
-                          <button className="flex-1 px-3 py-2 bg-gray-600 text-white rounded text-xs font-semibold" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                            Refer
-                          </button>
-                          <button className="flex-1 px-3 py-2 bg-gray-600 text-white rounded text-xs font-semibold" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                            Contact
-                          </button>
+                          <div className="rounded-lg border border-dashed border-gray-200 bg-gray-50/80 p-2">
+                            <p
+                              className="mb-1 text-[9px] font-bold uppercase tracking-wide text-gray-500"
+                              style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
+                            >
+                              Problem list
+                            </p>
+                            <p className="text-gray-800" style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '10px', lineHeight: 1.4 }}>
+                              OA left knee · last PT 6 days ago · ROM trend stable
+                            </p>
+                          </div>
+                          <div className="rounded-md bg-gray-900 px-2 py-1.5 text-[9px] font-semibold text-white" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                            Suggested asks: BMP before metformin change · films if effusion?
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -2476,7 +2392,7 @@ export default function DoePage() {
                 );
               }
               
-              // Box 3 (index 2) - Diagnostic Assistant
+              // Box 3 (index 2) - Billing & Finances
               if (i === 2) {
                 return (
                   <div
@@ -2532,99 +2448,101 @@ export default function DoePage() {
                       </span>
                     </div>
                     
-                    {/* Different UI - Diagnostic Assistant */}
-                    <div 
+                    {/* Billing & practice finances */}
+                    <div
                       className="absolute left-1/2 bg-white rounded-xl"
-                      style={{ 
+                      style={{
                         opacity: 1,
                         pointerEvents: 'auto',
-                        width: `${carouselDiagMainWidth700}px`,
+                        width: `${carouselBillingUiWidth700}px`,
                         height: 'fit-content',
                         userSelect: 'none',
                         cursor: 'default',
                         touchAction: 'none',
-                        top: '45%',
+                        top: '43%',
                         transform: 'translateX(-50%) translateY(-50%)',
-                        padding: `${Math.round(20 * diagUiScale)}px`,
-                        paddingBottom: `${Math.round(16 * diagUiScale)}px`,
+                        padding: carouselBillingUiWidth700 < 300 ? '16px' : '22px',
+                        paddingBottom: '18px',
                       }}
                     >
-                      {/* Header */}
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className={`font-bold text-gray-900`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '14px' }}>
-                          Diagnostic AI
-                        </h3>
-                        <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                          <span className="text-gray-600 text-xs font-bold">AI</span>
+                      <div className="mb-3 flex items-start justify-between gap-2">
+                        <div>
+                          <h3
+                            className="mb-0.5 font-bold text-gray-900"
+                            style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '14px' }}
+                          >
+                            Billing & finance desk
+                          </h3>
+                          <p className="text-gray-500" style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '11px' }}>
+                            Autopilot posting · AR · payer packets
+                          </p>
+                        </div>
+                        <span
+                          className="shrink-0 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-800 ring-1 ring-emerald-200/80"
+                          style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
+                        >
+                          Synced
+                        </span>
+                      </div>
+
+                      <div className="mb-3 rounded-lg border border-gray-100 bg-gray-50/80 p-2.5">
+                        <div className="mb-2 flex items-center justify-between">
+                          <span
+                            className="text-[10px] font-bold uppercase tracking-wide text-gray-600"
+                            style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
+                          >
+                            ERA posting
+                          </span>
+                          <span className="text-[10px] font-semibold text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                            Today · BlueCross
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5">
+                          <span className="rounded-md bg-white px-2 py-1 text-[9px] font-semibold text-gray-700 ring-1 ring-gray-200/90">$182k matched</span>
+                          <span className="rounded-md bg-amber-50 px-2 py-1 text-[9px] font-semibold text-amber-950 ring-1 ring-amber-200">4 carve-outs</span>
+                          <span className="rounded-md bg-white px-2 py-1 text-[9px] font-semibold text-gray-700 ring-1 ring-gray-200/90">1 denial → appeal draft</span>
                         </div>
                       </div>
 
-                      {/* Analysis Section */}
-                      <div className="pb-4 border-b border-gray-100">
-                        <p className={`text-gray-600 text-xs mb-2`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                          Analyzing symptoms...
+                      <div className="mb-3 rounded-lg border border-dashed border-gray-200 p-2.5">
+                        <div className="mb-2 flex items-center justify-between">
+                          <span
+                            className="text-[10px] font-bold uppercase tracking-wide text-gray-600"
+                            style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
+                          >
+                            Prior authorization
+                          </span>
+                          <span className="text-[9px] font-bold uppercase text-indigo-700" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                            Auto-filed
+                          </span>
+                        </div>
+                        <p className="text-gray-800" style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '11px', lineHeight: 1.45 }}>
+                          MRI lumbar · Clinical packet + attachments staged · tracking ID BC-90841 · SLA 2d
                         </p>
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-                            <span className={`text-gray-700 text-xs font-medium`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                              Fever pattern detected
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-                            <span className={`text-gray-700 text-xs font-medium`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                              Lab correlation found
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-                            <span className={`text-gray-700 text-xs font-medium`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                              Treatment suggested
-                            </span>
-                          </div>
-                        </div>
                       </div>
-                    </div>
 
-                    {/* Confidence Score - overlapping at corner */}
-                    <div 
-                      className="absolute bg-gray-100 rounded-lg shadow-lg"
-                      style={{ 
-                        width: `${carouselDiagConfidenceWidth700}px`,
-                        height: 'fit-content',
-                        top: `calc(45% + ${carouselDiagYOffsetPx}px)`,
-                        right: `calc(50% - ${carouselDiagRightOffsetPx}px)`,
-                        transform: 'translateY(-50%)',
-                        padding: `${Math.round(16 * diagUiScale)}px`,
-                        paddingBottom: `${Math.round(14 * diagUiScale)}px`,
-                        opacity: 1,
-                        pointerEvents: 'auto',
-                        userSelect: 'none',
-                        cursor: 'default',
-                        touchAction: 'none',
-                        zIndex: 10,
-                      }}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <span className={`text-gray-700 text-sm font-semibold`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                          Confidence
-                        </span>
-                        <span className={`text-gray-600 text-sm font-bold`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                          87%
-                        </span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2.5">
-                        <div className="bg-gray-600 h-2.5 rounded-full" style={{ width: '87%' }}></div>
+                      <div className="grid grid-cols-3 gap-2">
+                        <div className="rounded-md bg-gray-900 px-2 py-2 text-center text-white">
+                          <p className="mb-0.5 text-[8px] font-semibold uppercase tracking-wide opacity-70">Collections 30d</p>
+                          <p className="text-sm font-bold" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>$312k</p>
+                        </div>
+                        <div className="rounded-md border border-gray-200 px-2 py-2 text-center">
+                          <p className="mb-0.5 text-[8px] font-semibold uppercase tracking-wide text-gray-500">AR &gt;90</p>
+                          <p className="text-sm font-bold text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>8.4%</p>
+                        </div>
+                        <div className="rounded-md border border-gray-200 px-2 py-2 text-center">
+                          <p className="mb-0.5 text-[8px] font-semibold uppercase tracking-wide text-gray-500">Net (MTD)</p>
+                          <p className="text-sm font-bold text-emerald-700" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>+12%</p>
+                        </div>
                       </div>
                     </div>
 
                     <div className={slideCaptionWrap} style={{ left: captionLeft700, right: captionRight700 }}>
                       <span className={slideCaptionBadge} style={slideCaptionFont}>
-                        Diagnostic Assistant
+                        Billing &amp; finances
                       </span>
                       <p className={slideCaptionBody} style={slideCaptionFont}>
-                        AI analyzes symptoms, lab results, and patient history to suggest potential diagnoses with confidence scores.
+                        ERAs reconcile quietly, routine prior auths ship with evidence, and a live ledger keeps cash, AR, and risk in one glance.
                       </p>
                     </div>
                     </div>
@@ -2632,7 +2550,7 @@ export default function DoePage() {
                 );
               }
               
-              // Box 4 (index 3) - Care Coordination
+              // Box 4 (index 3) - Multi-disciplinary care
               if (i === 3) {
                 return (
                 <div
@@ -2688,88 +2606,94 @@ export default function DoePage() {
                     </span>
                   </div>
                   
-                  {/* Different UI - Care Coordination Timeline */}
-                  <div 
+                  {/* Multi-specialty routing hub */}
+                  <div
                     className="absolute left-1/2 bg-white rounded-xl"
-                    style={{ 
+                    style={{
                       opacity: 1,
                       pointerEvents: 'auto',
-                      width: `${carouselCareTimelineWidth700}px`,
+                      width: `${carouselMultidiscWidth700}px`,
                       height: 'fit-content',
                       userSelect: 'none',
                       cursor: 'default',
                       touchAction: 'none',
-                      top: '45%',
+                      top: '43%',
                       transform: 'translateX(-50%) translateY(-50%)',
-                      padding: carouselCareTimelineWidth700 < 304 ? '18px' : '24px',
-                      paddingBottom: carouselCareTimelineWidth700 < 304 ? '16px' : '20px',
+                      padding: carouselMultidiscWidth700 < 304 ? '16px' : '22px',
+                      paddingBottom: '18px',
                     }}
                   >
-                    {/* Header */}
-                    <div className="flex items-center justify-between mb-5">
-                      <h3 className={`font-bold text-gray-900`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '14px' }}>
-                        Care Timeline
-                      </h3>
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
-                        <span className="text-xs font-semibold text-gray-600" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>5 tasks</span>
+                    <div className="mb-3 flex items-start justify-between gap-2">
+                      <div>
+                        <h3
+                          className="mb-0.5 font-bold text-gray-900"
+                          style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '14px' }}
+                        >
+                          Specialty mesh
+                        </h3>
+                        <p className="text-gray-500" style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '11px' }}>
+                          One intake · AI proposes the right handoffs
+                        </p>
+                      </div>
+                      <div
+                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-900 text-[10px] font-bold text-white"
+                        style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
+                      >
+                        AI
                       </div>
                     </div>
 
-                    {/* Timeline */}
-                    <div className="space-y-4">
-                      <div className="flex gap-3">
-                        <div className="flex flex-col items-center">
-                          <div className="w-3 h-3 bg-gray-600 rounded-full"></div>
-                          <div className="w-0.5 h-12 bg-gray-300 mt-1"></div>
-                        </div>
-                        <div className="flex-1">
-                          <p className={`text-gray-800 text-xs font-semibold mb-1`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                            Follow-up scheduled
+                    <div className="relative mb-3 rounded-xl border border-gray-100 bg-gray-50/90 p-3">
+                      <div className="mb-3 flex justify-center">
+                        <div className="rounded-lg bg-white px-3 py-2 text-center shadow-sm ring-1 ring-gray-200/80">
+                          <p className="text-[9px] font-bold uppercase tracking-wide text-gray-500" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                            PCP encounter
                           </p>
-                          <p className={`text-gray-500 text-xs`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                            Patient #2847 • Tomorrow 2:00 PM
+                          <p className="text-xs font-semibold text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                            SOB · edema ↑ · new murmur?
                           </p>
                         </div>
                       </div>
-                      
-                      <div className="flex gap-3">
-                        <div className="flex flex-col items-center">
-                          <div className="w-3 h-3 bg-gray-600 rounded-full"></div>
-                          <div className="w-0.5 h-12 bg-gray-300 mt-1"></div>
+                      <div className="flex items-stretch justify-between gap-1 text-[9px] font-semibold text-gray-600" aria-hidden style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                        <span className="flex flex-1 items-center justify-center border-t border-dashed border-gray-300 pt-2">route</span>
+                        <span className="flex flex-1 items-center justify-center border-t border-dashed border-gray-300 pt-2">share note</span>
+                        <span className="flex flex-1 items-center justify-center border-t border-dashed border-gray-300 pt-2">schedule</span>
+                      </div>
+                      <div className="mt-3 grid grid-cols-3 gap-2">
+                        <div className="rounded-lg bg-white px-2 py-2 text-center shadow-sm ring-1 ring-blue-100">
+                          <p className="mb-1 text-[8px] font-bold uppercase tracking-wide text-blue-700">Cardiology</p>
+                          <p className="text-[10px] font-semibold text-gray-800">Echo urgent</p>
+                          <p className="mt-1 text-[8px] text-gray-500">Slot hold 48h</p>
                         </div>
-                        <div className="flex-1">
-                          <p className={`text-gray-800 text-xs font-semibold mb-1`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                            Lab review pending
-                          </p>
-                          <p className={`text-gray-500 text-xs`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                            Blood Panel #4521 • Due today
-                          </p>
+                        <div className="rounded-lg bg-white px-2 py-2 text-center shadow-sm ring-1 ring-violet-100">
+                          <p className="mb-1 text-[8px] font-bold uppercase tracking-wide text-violet-700">Nephrology</p>
+                          <p className="text-[10px] font-semibold text-gray-800">Cr bump review</p>
+                          <p className="mt-1 text-[8px] text-gray-500">Shared labs</p>
+                        </div>
+                        <div className="rounded-lg bg-white px-2 py-2 text-center shadow-sm ring-1 ring-teal-100">
+                          <p className="mb-1 text-[8px] font-bold uppercase tracking-wide text-teal-700">PT</p>
+                          <p className="text-[10px] font-semibold text-gray-800">Edema mgmt plan</p>
+                          <p className="mt-1 text-[8px] text-gray-500">Home program</p>
                         </div>
                       </div>
-                      
-                      <div className="flex gap-3">
-                        <div className="flex flex-col items-center">
-                          <div className="w-3 h-3 bg-gray-600 rounded-full"></div>
-                        </div>
-                        <div className="flex-1">
-                          <p className={`text-gray-800 text-xs font-semibold mb-1`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                            Prescription refill
-                          </p>
-                          <p className={`text-gray-500 text-xs`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                            Metformin • Patient #1923
-                          </p>
-                        </div>
-                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between rounded-md bg-gray-900 px-2.5 py-2 text-white">
+                      <span className="text-[10px] font-medium opacity-90" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                        Coordinators pinged · no duplicate referrals
+                      </span>
+                      <span className="text-[10px] font-bold" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                        Done
+                      </span>
                     </div>
                   </div>
 
                   <div className={slideCaptionWrap} style={{ left: captionLeft700, right: captionRight700 }}>
                     <span className={slideCaptionBadge} style={slideCaptionFont}>
-                      Care Coordination
+                      Multi-disciplinary
                     </span>
                     <p className={slideCaptionBody} style={slideCaptionFont}>
-                      Track and manage patient care tasks, follow-ups, and coordination across your entire practice seamlessly.
+                      Doe reads the narrative once, drafts parallel specialty paths, passes clean context, and keeps everyone off duplicate phone tag.
                     </p>
                   </div>
                   </div>
