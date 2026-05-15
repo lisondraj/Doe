@@ -1766,17 +1766,40 @@ export default function DoePage() {
             >
               Doe
             </p>
-            <p
-              className="text-3xl iphone-page:text-[clamp(1.125rem,4.85vw,1.625rem)] font-medium text-white/90 text-center iphone-page:px-2 px-2 tracking-tight flex flex-col items-center gap-1.5 iphone-page:gap-2 iphone-page:leading-snug leading-snug"
-              style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
-            >
-              <span className="block iphone-page:whitespace-nowrap iphone-page:text-center w-full">
-                We&apos;re building the future of AI in
-              </span>
-              <span className="block iphone-page:whitespace-nowrap iphone-page:text-center w-full">
-                clinical practice and education.
-              </span>
-            </p>
+            <div className="flex flex-col items-center gap-[1.625rem] iphone-page:gap-7 px-2">
+              <p
+                className="text-[clamp(1.75rem,4.15vw,2.75rem)] iphone-page:text-[clamp(1.2rem,4.85vw,1.9375rem)] font-medium text-white/90 text-center iphone-page:px-2 tracking-tight flex flex-col items-center gap-1.5 iphone-page:gap-2 iphone-page:leading-snug leading-snug"
+                style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
+              >
+                <span className="block iphone-page:whitespace-nowrap iphone-page:text-center w-full">
+                  We&apos;re building the future of AI in
+                </span>
+                <span className="block iphone-page:whitespace-nowrap iphone-page:text-center w-full">
+                  clinical practice and education.
+                </span>
+              </p>
+              <a
+                href="mailto:contact@joindoe.com"
+                className={`inline-flex items-center gap-2.5 rounded-full border border-white/25 bg-white/95 px-[1.35rem] py-[0.625rem] pl-[1.125rem] text-[0.9375rem] iphone-page:text-[clamp(0.875rem,3.85vw,0.96875rem)] font-medium tracking-tight text-gray-900 shadow-[0_2px_20px_rgba(0,0,0,0.12)] transition-[background-color,box-shadow,transform,border-color] duration-200 hover:bg-white hover:shadow-[0_6px_28px_rgba(0,0,0,0.16)] active:scale-[0.99] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white ${inter.className}`}
+              >
+                <svg
+                  className="h-[1.15em] w-[1.15em] shrink-0 text-gray-700"
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.75"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden
+                >
+                  <rect x="3" y="5" width="18" height="14" rx="2" ry="2" />
+                  <path d="M3 7l9 6 9-6" />
+                </svg>
+                Contact us
+              </a>
+            </div>
           </div>
         </div>
 
