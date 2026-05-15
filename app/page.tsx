@@ -155,12 +155,13 @@ function vbComputeScrollMetrics(
 ): VerticalBentoScrollMetrics {
   const vh = Math.max(innerHeightPx, 320);
   const openPx = Math.round(Math.max(vh * 0.82, 400));
-  const dwellPx = Math.round(Math.max(vh * 5.05, 2800));
+  const dwellPx = Math.round(Math.max(vh * 4.35, 2500));
   /** Shorter than rail 0/1 dwell so scroll reaches the spacer / Built-for-you band before finishing the third dwell scrub */
   const dwellLastPx = Math.max(Math.round(dwellPx * 0.42), Math.round(vh * 2.15));
-  const swapPx = Math.round(Math.max(vh * 0.5, 360));
-  const exitPx = Math.round(Math.max(vh * 0.72, 420));
-  const tailPx = Math.round(Math.max(vh * 0.22, 160));
+  const swapPx = Math.round(Math.max(vh * 0.46, 340));
+  /** Longer ease-out collapse + tail slack so scrolling past rail 3 hands off more smoothly */
+  const exitPx = Math.round(Math.max(vh * 0.84, 460));
+  const tailPx = Math.round(Math.max(vh * 0.38, 240));
   const scrollablePx =
     openPx + dwellPx + swapPx + dwellPx + swapPx + dwellLastPx + exitPx + tailPx;
   const sectionMinPx = scrollablePx + vh;
@@ -303,9 +304,9 @@ const QUALITY_ORBIT_ANCHORS_PCT: ReadonlyArray<{ leftPct: number; topPct: number
 /** Ovular connector (ellipse in 400×400 viewBox) — hugs the wider tile ring. */
 const QUALITY_ORBIT_CONNECTOR_RX = 134;
 const QUALITY_ORBIT_CONNECTOR_RY = 162;
-/** Gradient fill applied to each orbit tile (lighter original palette). */
+/** Gradient fill — warmer at outer edge, deeper toward ring interior */
 const QUALITY_ORBIT_TILE_FILL =
-  "linear-gradient(135deg, #E7A944 0%, #D49D4F 28%, #D2774C 62%, #b84e2e 100%)";
+  "radial-gradient(circle at 38% 36%, #6b3d26 0%, #a85a34 32%, #d2774c 58%, #e8b04d 88%)";
 
 /** Ovular connector split into arcs (SVG 400² viewBox) — drawn from apex down both sides simultaneously. */
 const QUALITY_ORBIT_ARC_TOP_Y = 200 - QUALITY_ORBIT_CONNECTOR_RY;
@@ -323,16 +324,16 @@ const QUALITY_ORBIT_TILE_LABELS = [
   ["Patient Facing"],
 ] as const;
 
-const QUALITY_ORBIT_CHOREO_HEADLINE_DELAY_MS = 180;
-const QUALITY_ORBIT_CHOREO_DIAGRAM_DELAY_MS = 1280;
+const QUALITY_ORBIT_CHOREO_HEADLINE_DELAY_MS = 160;
+const QUALITY_ORBIT_CHOREO_DIAGRAM_DELAY_MS = 1040;
 /** Grey connector stroke-dash animation duration — keep in sync with SVG transition below */
-const QUALITY_ORBIT_GREY_ARC_DRAW_MS = 4500;
+const QUALITY_ORBIT_GREY_ARC_DRAW_MS = 3800;
 const QUALITY_ORBIT_CHOREO_ACCENT_AFTER_GREY_MS = 220;
 /** Brief hold after the section enters view before headline / diagram animations begin. */
-const QUALITY_ORBIT_CHOREO_ENTER_PAUSE_MS = 900;
+const QUALITY_ORBIT_CHOREO_ENTER_PAUSE_MS = 720;
 /** Tiles appear clockwise from top (index 0); gap between each tile reveal. */
-const QUALITY_ORBIT_TILE_FIRST_MS = 480;
-const QUALITY_ORBIT_TILE_STEP_MS = 820;
+const QUALITY_ORBIT_TILE_FIRST_MS = 400;
+const QUALITY_ORBIT_TILE_STEP_MS = 680;
 
 /** Orbit choreography IO: require this much of the section vertically visible (px), capped for tall viewports */
 function qualityOrbitIntersectionMinVisiblePx(viewportHeight: number): number {
@@ -3038,7 +3039,7 @@ export default function DoePage() {
       {/* Quality orbit — between carousel (section 2) and vertical bento (section 3) */}
       <section
         ref={qualityOrbitSectionRef}
-        className={`relative z-10 w-full overflow-visible overscroll-none pointer-events-none bg-[#F7F6F3] pt-[clamp(5.75rem,13.5vw,9.25rem)] pb-[clamp(7.25rem,17vw,12rem)] iphone-page:pt-[clamp(5.5rem,12vw,8.5rem)] iphone-page:pb-[clamp(7rem,15vw,10.5rem)] mt-[clamp(1.75rem,4.5vw,3.5rem)] mb-[clamp(3.5rem,8vw,6.25rem)] ${narrowHorizontalInset}`}
+        className={`relative z-10 w-full overflow-visible overscroll-none pointer-events-none bg-[#F7F6F3] pt-[clamp(5.75rem,13.5vw,9.25rem)] pb-[clamp(8.75rem,19vw,14rem)] iphone-page:pt-[clamp(5.5rem,12vw,8.5rem)] iphone-page:pb-[clamp(8.25rem,17vw,12.5rem)] mt-[clamp(1.75rem,4.5vw,3.5rem)] mb-[clamp(4.25rem,9vw,7.25rem)] ${narrowHorizontalInset}`}
         aria-labelledby="quality-orbit-heading"
       >
         <h2 id="quality-orbit-heading" className="sr-only">
@@ -3083,7 +3084,7 @@ export default function DoePage() {
           />
         </div>
         <div
-          className="relative z-[2] mx-auto w-full max-w-full overflow-visible overscroll-none pointer-events-none pb-[clamp(3rem,10vw,5.75rem)]"
+          className="relative z-[2] mx-auto w-full max-w-full overflow-visible overscroll-none pointer-events-none pb-[clamp(4rem,11vw,6.75rem)]"
           style={{
             aspectRatio: "10 / 11",
             minHeight: "clamp(32rem, 88vw, 58rem)",
@@ -3104,9 +3105,9 @@ export default function DoePage() {
                   x2="200"
                   y2={QUALITY_ORBIT_ARC_BOTTOM_Y}
                 >
-                  <stop offset="0%" stopColor="#fff2c9" />
-                  <stop offset="42%" stopColor="#f6c056" />
-                  <stop offset="100%" stopColor="#d2663f" />
+                  <stop offset="0%" stopColor="#c97848" />
+                  <stop offset="44%" stopColor="#e19a52" />
+                  <stop offset="100%" stopColor="#fdecc4" />
                 </linearGradient>
               </defs>
               {[QUALITY_ORBIT_ARC_RIGHT_D, QUALITY_ORBIT_ARC_LEFT_D].map((d, arcI) => (
@@ -3125,7 +3126,7 @@ export default function DoePage() {
                   vectorEffect="nonScalingStroke"
                   style={{
                     transition:
-                      "stroke-dashoffset 4.5s cubic-bezier(0.45, 0, 0.2, 1)",
+                      "stroke-dashoffset 3.8s cubic-bezier(0.45, 0, 0.2, 1)",
                   }}
                   className="motion-reduce:transition-none"
                 />
@@ -3145,12 +3146,24 @@ export default function DoePage() {
                   vectorEffect="nonScalingStroke"
                   style={{
                     transition:
-                      "stroke-dashoffset 4.35s cubic-bezier(0.43, 0, 0.18, 1), stroke-opacity 0.95s ease-out",
+                      "stroke-dashoffset 3.65s cubic-bezier(0.43, 0, 0.18, 1), stroke-opacity 0.85s ease-out",
                   }}
                   className="motion-reduce:transition-none"
                 />
               ))}
             </svg>
+
+            {/* Dark radial core inside the ring — arcs/tiles stay bright at perimeter */}
+            <div
+              className="pointer-events-none absolute left-1/2 top-1/2 z-[1] -translate-x-1/2 -translate-y-1/2 rounded-full"
+              style={{
+                width: "min(74%, min(56vmin, 21rem))",
+                height: "min(74%, min(56vmin, 21rem))",
+                background:
+                  "radial-gradient(circle at 50% 48%, rgba(14, 26, 30, 0.97) 0%, rgba(22, 38, 42, 0.82) 28%, rgba(30, 52, 58, 0.42) 54%, rgba(247, 246, 243, 0.06) 76%, transparent 88%)",
+              }}
+              aria-hidden
+            />
 
             {QUALITY_ORBIT_ANCHORS_PCT.map((p, i) => {
               const tileVisible = qualityOrbitChoreography.tilesShown > i;
@@ -3170,8 +3183,8 @@ export default function DoePage() {
                     ? "translate(-50%, -50%) scale(1)"
                     : "translate(-50%, -50%) scale(0.92)",
                   transition: tileVisible
-                    ? "opacity 0.92s cubic-bezier(0.4, 0, 0.2, 1), transform 1.05s cubic-bezier(0.28, 0.86, 0.35, 1)"
-                    : "opacity 0.65s ease, transform 0.65s ease",
+                    ? "opacity 0.78s cubic-bezier(0.4, 0, 0.2, 1), transform 0.92s cubic-bezier(0.28, 0.86, 0.35, 1)"
+                    : "opacity 0.55s ease, transform 0.55s ease",
                 }}
               >
                 <div className="absolute inset-0 overflow-hidden rounded-2xl iphone-page:rounded-[0.9rem]">
@@ -3239,13 +3252,13 @@ export default function DoePage() {
 
             <div className="pointer-events-none absolute inset-0 z-[3] flex items-center justify-center px-4 iphone-page:px-5">
               <p
-                className={`motion-reduce:transition-none flex flex-col items-center gap-2 text-center font-normal tracking-tight text-gray-900 ${lora.className}`}
+                className={`motion-reduce:transition-none flex flex-col items-center gap-2 text-center font-normal tracking-tight text-[#faf8f5] drop-shadow-[0_3px_28px_rgba(0,0,0,0.55)] ${lora.className}`}
                 style={{
                   textWrap: "balance",
                   opacity: qualityOrbitChoreography.headline ? 1 : 0,
                   transform: qualityOrbitChoreography.headline ? "translateY(0)" : "translateY(13px)",
                   transition:
-                    "opacity 1.12s cubic-bezier(0.4, 0, 0.2, 1), transform 1.12s cubic-bezier(0.4, 0, 0.2, 1)",
+                    "opacity 0.95s cubic-bezier(0.4, 0, 0.2, 1), transform 0.95s cubic-bezier(0.4, 0, 0.2, 1)",
                 }}
               >
                 <span className="block leading-[1.06] text-[clamp(2.3rem,9.85vw,3.58rem)] iphone-page:text-[clamp(1.32rem,5.65vw,3.58rem)] iphone-page:whitespace-nowrap">
@@ -3278,7 +3291,7 @@ export default function DoePage() {
               textWrap: "balance",
               opacity: verticalBentoTitleOpacity,
               transform: `translateY(${verticalBentoTitleTranslateY}px)`,
-              transition: "opacity 1.2s ease-out, transform 1.2s ease-out",
+              transition: "opacity 1s ease-out, transform 1s ease-out",
             }}
           >
             <span className="block text-[clamp(2.65rem,11.5vw,4rem)] iphone-page:text-[clamp(1.48rem,6.25vw,4rem)] iphone-page:whitespace-nowrap">
@@ -3295,7 +3308,7 @@ export default function DoePage() {
             style={{
               opacity: verticalBentoRailsOpacity,
               transform: `translateY(${verticalBentoRailsTranslateY}px)`,
-              transition: "opacity 1.2s ease-out, transform 1.2s ease-out",
+              transition: "opacity 1s ease-out, transform 1s ease-out",
             }}
           >
               {(() => {
@@ -4064,9 +4077,9 @@ export default function DoePage() {
 
       </div>
 
-      {/* Insquiara — gradient band above footer */}
+      {/* Inquisara — gradient band above footer */}
       <section
-        aria-labelledby="insquiara-teaser-heading"
+        aria-labelledby="inquisara-teaser-heading"
         className="relative z-10 w-full overflow-hidden"
         style={{
           width: "100vw",
@@ -4139,20 +4152,20 @@ export default function DoePage() {
         </div>
         <div className="relative z-10 mx-auto flex min-h-[min(52vw,22rem)] max-w-full flex-col items-center justify-center px-6 py-[clamp(3.25rem,9vw,6.75rem)] text-center md:min-h-[min(44vw,20rem)] md:px-10 iphone-page:px-5 iphone-page:py-[clamp(3rem,11vw,6rem)]">
           <h2
-            id="insquiara-teaser-heading"
+            id="inquisara-teaser-heading"
             className={`font-normal tracking-tight text-white drop-shadow-[0_2px_28px_rgba(0,0,0,0.28)] ${lora.className}`}
             style={{
               fontSize: "clamp(2.85rem, min(11vw, 12vmin), 5.75rem)",
               lineHeight: 1.02,
             }}
           >
-            Insquiara
+            Inquisara
           </h2>
           <a
-            href="https://insquiara.com"
+            href="https://inquisara.com"
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Insquiara — see what we're building (opens in new tab)"
+            aria-label="Inquisara — see what we're building (opens in new tab)"
             className={`group mt-[clamp(1rem,3vw,1.75rem)] flex flex-col items-center gap-[clamp(0.65rem,2vw,1rem)] text-white no-underline transition-opacity hover:opacity-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/90 ${inter.className}`}
           >
             <span className="text-[clamp(0.9375rem,2.85vw,1.1875rem)] font-medium tracking-tight text-white/[0.88]">
