@@ -1,8 +1,24 @@
 "use client";
 
-import { Lora, Inter } from "next/font/google";
+import {
+  Caveat,
+  DM_Serif_Display,
+  Inter,
+  Lora,
+  Outfit,
+  Oswald,
+  Playfair_Display,
+} from "next/font/google";
+import Link from "next/link";
 import { useState, useEffect, useLayoutEffect, useRef, useCallback } from "react";
 import type { ReactElement } from "react";
+
+import {
+  dropdownContent,
+  MOBILE_NAV_FOOTER_SLIDES,
+  NAV_ITEMS,
+} from "@/components/doe-nav-data";
+import { doeforvcRootZoom } from "@/lib/doeforvc-zoom";
 
 const lora = Lora({
   subsets: ["latin"],
@@ -14,13 +30,30 @@ const inter = Inter({
   weight: ["300", "400", "500", "600", "700"],
 });
 
-import Link from "next/link";
-import {
-  dropdownContent,
-  MOBILE_NAV_FOOTER_SLIDES,
-  NAV_ITEMS,
-} from "@/components/doe-nav-data";
-import { doeforvcRootZoom } from "@/lib/doeforvc-zoom";
+const playfairTicker = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["500", "600"],
+});
+
+const oswaldTicker = Oswald({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+});
+
+const outfitTicker = Outfit({
+  subsets: ["latin"],
+  weight: ["500", "700"],
+});
+
+const dmSerifDisplayTicker = DM_Serif_Display({
+  subsets: ["latin"],
+  weight: ["400"],
+});
+
+const caveatTicker = Caveat({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
 
 /** Bottom title pill + description inside 700×700 slide mocks (scales with card transform). */
 /** Position (left/right) is applied via inline style — computed from slide scale so captions
@@ -36,6 +69,102 @@ const slideCaptionFont = { fontFamily: "system-ui, -apple-system, sans-serif" } 
 /** Same horizontal inset as the fixed nav — hero, headline band, carousel (forced phone layout). */
 const narrowHorizontalInset =
   "iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))]";
+
+/** Fake practice / vendor names for hero marquee only — decorative, not real partners. */
+type HeroTickerAdorn =
+  | "diamondBefore"
+  | "plusAfter"
+  | "discAfter"
+  | "sparkleBefore"
+  | "clinicalCross";
+
+type HeroTickerSegment = {
+  key: string;
+  label: string;
+  className: string;
+  adornment?: HeroTickerAdorn;
+};
+
+const HERO_TICKER_BASE: HeroTickerSegment[] = [
+  {
+    key: "cedar-row",
+    className: `${playfairTicker.className} font-semibold tracking-tight text-[clamp(0.9rem,2.35vw,1.08rem)]`,
+    label: "Cedar Row Family Practice",
+    adornment: "diamondBefore",
+  },
+  {
+    key: "vantage",
+    className: `${oswaldTicker.className} font-medium uppercase tracking-[0.22em] text-[clamp(0.68rem,1.8vw,0.88rem)]`,
+    label: "Vantage Specialty Partners",
+    adornment: "plusAfter",
+  },
+  {
+    key: "harborlight",
+    className: `${outfitTicker.className} font-semibold tracking-tight text-[clamp(0.84rem,2.2vw,1rem)]`,
+    label: "Harborlight Cardiology",
+    adornment: "clinicalCross",
+  },
+  {
+    key: "meridian",
+    className: `${dmSerifDisplayTicker.className} font-normal italic tracking-[0.03em] text-[clamp(0.86rem,2.25vw,1.04rem)]`,
+    label: "Meridian Women's Health",
+    adornment: "discAfter",
+  },
+  {
+    key: "garden-court",
+    className: `${caveatTicker.className} font-bold tracking-tight text-[clamp(1rem,2.65vw,1.22rem)]`,
+    label: "Garden Court Dermatology",
+    adornment: "sparkleBefore",
+  },
+];
+
+const HERO_TICKER_STRIP: HeroTickerSegment[] = Array.from({ length: 4 }, (_, i) =>
+  HERO_TICKER_BASE.map((s) => ({ ...s, key: `${s.key}-${i}` })),
+).flat();
+
+function HeroTickerAdornment({ kind }: { kind: HeroTickerAdorn }) {
+  switch (kind) {
+    case "diamondBefore":
+      return (
+        <span className="mr-2 shrink-0 text-[1.08em] leading-none opacity-70" aria-hidden>
+          ◆
+        </span>
+      );
+    case "sparkleBefore":
+      return (
+        <span className="mr-1.5 shrink-0 text-[0.95em] opacity-80" aria-hidden>
+          ✦
+        </span>
+      );
+    case "plusAfter":
+      return (
+        <span className="ml-2 shrink-0 font-sans text-[0.78em] font-medium tracking-normal opacity-75" aria-hidden>
+          +
+        </span>
+      );
+    case "discAfter":
+      return (
+        <span className="ml-1.5 shrink-0 text-[0.72em] opacity-70" aria-hidden>
+          ●
+        </span>
+      );
+    case "clinicalCross":
+      return (
+        <svg
+          className="mr-2 h-[0.95em] w-[0.95em] shrink-0 opacity-75"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.65"
+          strokeLinecap="round"
+          aria-hidden
+        >
+          <circle cx="12" cy="12" r="8.5" opacity="0.45" />
+          <path d="M12 8.5v7M8.5 12h7" />
+        </svg>
+      );
+  }
+}
 
 /**
  * Vertical bento horizontal inset — applied to scroll container so sticky element
@@ -1873,6 +2002,38 @@ export default function DoePage() {
                 Contact us
               </a>
             </div>
+          </div>
+        </div>
+
+        {/* Decorative fake clinic / vendor wordmarks — not real partners */}
+        <div
+          className="hero-partner-marquee-mask absolute bottom-0 left-0 right-0 z-[12] overflow-hidden pb-[max(0.35rem,env(safe-area-inset-bottom,0px))] pt-1 pointer-events-none select-none"
+          aria-hidden
+        >
+          <div className="flex w-max animate-hero-logo-marquee">
+            {[0, 1].map((track) => (
+              <div
+                key={track}
+                className="flex shrink-0 items-center gap-x-[clamp(2.25rem,7vw,4.85rem)] pe-[clamp(2.25rem,7vw,4.85rem)] py-2 iphone-page:py-1.5"
+              >
+                {HERO_TICKER_STRIP.map((seg) => (
+                  <span
+                    key={`${track}-${seg.key}`}
+                    className={`inline-flex items-center text-[rgba(248,246,243,0.22)] whitespace-nowrap ${seg.className}`}
+                  >
+                    {(seg.adornment === "diamondBefore" ||
+                      seg.adornment === "sparkleBefore" ||
+                      seg.adornment === "clinicalCross") && (
+                      <HeroTickerAdornment kind={seg.adornment} />
+                    )}
+                    {seg.label}
+                    {(seg.adornment === "plusAfter" || seg.adornment === "discAfter") && (
+                      <HeroTickerAdornment kind={seg.adornment} />
+                    )}
+                  </span>
+                ))}
+              </div>
+            ))}
           </div>
         </div>
 

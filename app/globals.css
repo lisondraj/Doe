@@ -112,6 +112,42 @@ html:has(.doeforvc-iphone-root) body {
   }
 }
 
+@keyframes hero-logo-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-hero-logo-marquee {
+  animation: hero-logo-marquee 46s linear infinite;
+}
+
+.hero-partner-marquee-mask {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    rgb(0 0 0) 12%,
+    rgb(0 0 0) 88%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    rgb(0 0 0) 12%,
+    rgb(0 0 0) 88%,
+    transparent 100%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-hero-logo-marquee {
+    animation: none;
+  }
+}
+
 @keyframes slide-up {
   from {
     transform: translateY(100%);
