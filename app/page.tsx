@@ -1,10 +1,10 @@
 "use client";
 
 import {
-  Caveat,
   DM_Serif_Display,
   Inter,
   Lora,
+  Manrope,
   Outfit,
   Oswald,
   Playfair_Display,
@@ -50,9 +50,9 @@ const dmSerifDisplayTicker = DM_Serif_Display({
   weight: ["400"],
 });
 
-const caveatTicker = Caveat({
+const manropeTicker = Manrope({
   subsets: ["latin"],
-  weight: ["400", "700"],
+  weight: ["500", "600", "700"],
 });
 
 /** Bottom title pill + description inside 700×700 slide mocks (scales with card transform). */
@@ -80,8 +80,7 @@ type HeroTickerAdorn =
 
 type HeroTickerSegment = {
   key: string;
-  /** One short line per row so each column stays readable and narrow */
-  lines: readonly [string, string] | readonly [string, string, string];
+  lines: readonly [string, string];
   className: string;
   adornment?: HeroTickerAdorn;
 };
@@ -96,7 +95,7 @@ const HERO_TICKER_BASE: HeroTickerSegment[] = [
   {
     key: "vantage",
     className: `${oswaldTicker.className} font-medium uppercase tracking-[0.16em] text-[clamp(1.02rem,3.15vw,1.38rem)]`,
-    lines: ["Vantage", "Specialty", "Partners"],
+    lines: ["Vantage Specialty", "Partners"],
     adornment: "plusAfter",
   },
   {
@@ -113,7 +112,7 @@ const HERO_TICKER_BASE: HeroTickerSegment[] = [
   },
   {
     key: "garden-court",
-    className: `${caveatTicker.className} font-bold tracking-tight text-[clamp(1.42rem,4.5vw,1.95rem)]`,
+    className: `${manropeTicker.className} font-semibold tracking-tight text-[clamp(1.22rem,3.9vw,1.72rem)]`,
     lines: ["Garden Court", "Dermatology"],
     adornment: "sparkleBefore",
   },
