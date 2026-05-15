@@ -596,8 +596,11 @@ export default function DoePage() {
   const [verticalBentoRailsTranslateY, setVerticalBentoRailsTranslateY] = useState(40);
   const verticalBentoHeadlineRef = useRef<HTMLDivElement>(null);
   const bentoBridgeSectionRef = useRef<HTMLElement | null>(null);
-  /** Fade + typewriter once the bridge band enters view */
-  const [bentoBridgeEntered, setBentoBridgeEntered] = useState(false);
+  /** Bridge testimonial: in-view triggers staged reveal (disk → quote → meta) + typewriter */
+  const [bentoBridgeInView, setBentoBridgeInView] = useState(false);
+  /** 0 idle, 1 disk, 2 quote (+ typewriter), 3 attribution */
+  const [bentoBridgeStage, setBentoBridgeStage] = useState(0);
+  const [bentoBridgeTypewriterOn, setBentoBridgeTypewriterOn] = useState(false);
   const [bentoBridgeTypedLen, setBentoBridgeTypedLen] = useState(0);
   /** “Only high-quality patient care” orbit — staged scroll-in choreography */
   const qualityOrbitSectionRef = useRef<HTMLElement | null>(null);
@@ -884,7 +887,7 @@ export default function DoePage() {
         const e = entries[0];
         if (!e?.isIntersecting) return;
         if (e.intersectionRatio < 0.08) return;
-        setBentoBridgeEntered(true);
+        setBentoBridgeInView(true);
       },
       { rootMargin: "0px 0px -8% 0px", threshold: [0, 0.08, 0.14, 0.22] },
     );
@@ -893,22 +896,56 @@ export default function DoePage() {
   }, []);
 
   useEffect(() => {
-    if (!bentoBridgeEntered) return;
+    if (!bentoBridgeInView) return;
+    let alive = true;
+    const full = VBENTO_BRIDGE_TESTIMONIAL;
+    const mq =
+      typeof window !== "undefined" ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
+    if (mq?.matches) {
+      setBentoBridgeStage(3);
+      setBentoBridgeTypedLen(full.length);
+      setBentoBridgeTypewriterOn(true);
+      return;
+    }
+    setBentoBridgeStage(1);
+    const tQuote = window.setTimeout(() => {
+      if (!alive) return;
+      setBentoBridgeTypedLen(0);
+      setBentoBridgeStage(2);
+      setBentoBridgeTypewriterOn(true);
+    }, 460);
+    const tMeta = window.setTimeout(() => {
+      if (!alive) return;
+      setBentoBridgeStage(3);
+    }, 1180);
+    return () => {
+      alive = false;
+      window.clearTimeout(tQuote);
+      window.clearTimeout(tMeta);
+    };
+  }, [bentoBridgeInView]);
+
+  useEffect(() => {
+    if (!bentoBridgeTypewriterOn) return;
     const full = VBENTO_BRIDGE_TESTIMONIAL;
     if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setBentoBridgeTypedLen(full.length);
       return;
     }
-    const id = window.setInterval(() => {
-      setBentoBridgeTypedLen((n) => {
-        if (n >= full.length) return n;
-        const next = n + 1;
-        if (next >= full.length) window.clearInterval(id);
-        return next;
-      });
-    }, 34);
-    return () => window.clearInterval(id);
-  }, [bentoBridgeEntered]);
+    let acc = 0;
+    let last = performance.now();
+    const cps = 34;
+    let rafId = 0;
+    const step = (now: number) => {
+      acc += ((now - last) / 1000) * cps;
+      last = now;
+      const next = Math.min(full.length, Math.floor(acc));
+      setBentoBridgeTypedLen((prev) => (next > prev ? next : prev));
+      if (next < full.length) rafId = requestAnimationFrame(step);
+    };
+    rafId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(rafId);
+  }, [bentoBridgeTypewriterOn]);
 
   useEffect(() => {
     let animationFrameId: number;
@@ -3725,18 +3762,20 @@ export default function DoePage() {
           />
         </div>
         <div
-          className={`relative z-[2] mx-auto flex w-full max-w-[min(100%,52rem)] flex-col items-center justify-center px-4 pt-[clamp(4.25rem,11vh,7rem)] pb-[clamp(4.5rem,12vh,9rem)] iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] md:pt-[clamp(5.25rem,12vh,8rem)] md:pb-[clamp(5.5rem,14vh,11rem)] ${narrowHorizontalInset}`}
-          style={{
-            minHeight: "clamp(56rem, 132vh, 112rem)",
-            opacity: bentoBridgeEntered ? 1 : 0,
-            transform: bentoBridgeEntered ? "translateY(0)" : "translateY(22px)",
-            transition: "opacity 1s ease-out, transform 1s cubic-bezier(0.22, 1, 0.36, 1)",
-          }}
+          className={`relative z-[2] mx-auto flex w-full max-w-[min(100%,40rem)] flex-col items-start justify-center px-4 pt-[clamp(4.25rem,11vh,7rem)] pb-[clamp(4.5rem,12vh,9rem)] iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] md:pt-[clamp(5.25rem,12vh,8rem)] md:pb-[clamp(5.5rem,14vh,11rem)] ${narrowHorizontalInset}`}
+          style={{ minHeight: "clamp(56rem, 132vh, 112rem)" }}
         >
-          {/** Medallion — same radial + grain + polar grid language as the orange “Built for you” panel above */}
-          <div className="mb-[clamp(2.75rem,6.5vh,4.75rem)] flex w-full justify-center" aria-hidden>
+          {/** Medallion — same radial + grain + polar grid as orange “Built for you” panel */}
+          <div
+            className={`mb-[clamp(2.75rem,6.5vh,4.75rem)] flex w-full justify-start transition-[opacity,transform] duration-[780ms] ease-out motion-reduce:duration-300 ${
+              bentoBridgeStage >= 1 ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"
+            }`}
+            aria-hidden
+          >
             <div
-              className="relative shrink-0 overflow-hidden rounded-full shadow-[0_20px_56px_rgba(0,0,0,0.14)] ring-1 ring-black/[0.06]"
+              className={`bento-bridge-disk relative shrink-0 overflow-hidden rounded-full shadow-[0_20px_56px_rgba(0,0,0,0.14)] ring-1 ring-black/[0.06] motion-reduce:animate-none pointer-events-auto ${
+                bentoBridgeStage < 1 ? "[animation-play-state:paused]" : ""
+              }`}
               style={{
                 width: "clamp(13.5rem, 36vmin, 22.5rem)",
                 height: "clamp(13.5rem, 36vmin, 22.5rem)",
@@ -3792,51 +3831,64 @@ export default function DoePage() {
             </div>
           </div>
 
-          <blockquote className="m-0 w-full max-w-[min(100%,40rem)] text-pretty">
-            <span id="vbento-bridge-quote" className="sr-only">
-              {VBENTO_BRIDGE_TESTIMONIAL}
-            </span>
-            {/** Invisible full quote reserves final line breaks so the typewriter does not reflow upward. */}
-            <div className="relative mx-auto w-full max-w-[min(100%,40rem)]">
-              <p
-                className={`invisible m-0 select-none text-left font-normal tracking-[-0.02em] ${lora.className}`}
-                style={{
-                  fontSize: "clamp(2.95rem, 7.25vw, 5.35rem)",
-                  lineHeight: 1.28,
-                }}
-                aria-hidden
-              >
-                {VBENTO_BRIDGE_TESTIMONIAL}
-              </p>
-              <p
-                className={`absolute left-0 right-0 top-0 m-0 text-left font-normal tracking-[-0.02em] ${lora.className}`}
-                style={{
-                  fontSize: "clamp(2.95rem, 7.25vw, 5.35rem)",
-                  lineHeight: 1.28,
-                  backgroundImage:
-                    "linear-gradient(168deg, #6e635e 0%, #887056 16%, #9c7d5c 34%, #b08f68 50%, #9a7b5e 68%, #7d6656 84%, #6a5c54 100%)",
-                  WebkitBackgroundClip: "text",
-                  backgroundClip: "text",
-                  color: "transparent",
-                  WebkitTextFillColor: "transparent",
-                }}
-                aria-hidden="true"
-              >
-                <span className="inline">
-                  {VBENTO_BRIDGE_TESTIMONIAL.slice(0, bentoBridgeTypedLen)}
-                </span>
-                {bentoBridgeTypedLen < VBENTO_BRIDGE_TESTIMONIAL.length ? (
-                  <span
-                    className="bento-bridge-caret motion-reduce:animate-none ml-[0.06em] inline-block w-[0.09em] shrink-0 translate-y-[0.04em] bg-[#b08f68] align-middle"
-                    style={{ height: "0.82em" }}
-                    aria-hidden
-                  />
-                ) : null}
-              </p>
-            </div>
-          </blockquote>
           <div
-            className={`mt-[clamp(2.5rem,5.5vh,4.25rem)] flex w-full max-w-[min(100%,40rem)] flex-row items-center justify-center gap-3.5 ${inter.className}`}
+            className={`w-full transition-[opacity,transform] duration-[780ms] ease-out motion-reduce:duration-300 ${
+              bentoBridgeStage >= 2 ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"
+            }`}
+          >
+            <blockquote className="m-0 w-full text-pretty">
+              <span id="vbento-bridge-quote" className="sr-only">
+                {VBENTO_BRIDGE_TESTIMONIAL}
+              </span>
+              {/** Ghost reserves line breaks; overlay uses RAF typewriter to reduce paint jank */}
+              <div
+                className="relative w-full"
+                style={{ isolation: "isolate", backfaceVisibility: "hidden", contain: "layout paint" }}
+              >
+                <p
+                  className={`pointer-events-none m-0 select-none text-left font-normal tracking-[-0.02em] text-transparent opacity-0 ${lora.className}`}
+                  style={{
+                    fontSize: "clamp(2.95rem, 7.25vw, 5.35rem)",
+                    lineHeight: 1.28,
+                  }}
+                  aria-hidden
+                >
+                  {VBENTO_BRIDGE_TESTIMONIAL}
+                </p>
+                <p
+                  className={`absolute left-0 right-0 top-0 m-0 text-left font-normal tracking-[-0.02em] ${lora.className}`}
+                  style={{
+                    fontSize: "clamp(2.95rem, 7.25vw, 5.35rem)",
+                    lineHeight: 1.28,
+                    backgroundImage:
+                      "linear-gradient(168deg, #6e635e 0%, #887056 16%, #9c7d5c 34%, #b08f68 50%, #9a7b5e 68%, #7d6656 84%, #6a5c54 100%)",
+                    WebkitBackgroundClip: "text",
+                    backgroundClip: "text",
+                    color: "transparent",
+                    WebkitTextFillColor: "transparent",
+                    transform: "translateZ(0)",
+                  }}
+                  aria-hidden="true"
+                >
+                  <span className="inline [text-rendering:optimizeLegibility]">
+                    {VBENTO_BRIDGE_TESTIMONIAL.slice(0, bentoBridgeTypedLen)}
+                  </span>
+                  {bentoBridgeTypedLen < VBENTO_BRIDGE_TESTIMONIAL.length ? (
+                    <span
+                      className="bento-bridge-caret motion-reduce:animate-none ml-[0.06em] inline-block w-[0.09em] shrink-0 translate-y-[0.04em] bg-[#b08f68] align-middle"
+                      style={{ height: "0.82em", verticalAlign: "baseline" }}
+                      aria-hidden
+                    />
+                  ) : null}
+                </p>
+              </div>
+            </blockquote>
+          </div>
+
+          <div
+            className={`mt-[clamp(2.5rem,5.5vh,4.25rem)] flex w-full flex-row items-center justify-start gap-3.5 transition-[opacity,transform] duration-[780ms] ease-out motion-reduce:duration-300 ${
+              bentoBridgeStage >= 3 ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"
+            } ${inter.className}`}
           >
             <div
               className="flex h-[clamp(3.5rem,9vw,4.75rem)] w-[clamp(3.5rem,9vw,4.75rem)] shrink-0 items-center justify-center rounded-full bg-[#5a5a5a] text-[clamp(1rem,2.35vw,1.2rem)] font-semibold tracking-tight text-white/95"

@@ -256,6 +256,30 @@ html:has(.doeforvc-iphone-root) body {
   }
 }
 
+@keyframes bento-bridge-disk-idle {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0, -7px, 0) scale(1.018);
+  }
+}
+
+.bento-bridge-disk {
+  animation: bento-bridge-disk-idle 16s ease-in-out infinite;
+}
+
+.bento-bridge-disk:hover {
+  animation-duration: 28s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bento-bridge-disk {
+    animation: none;
+  }
+}
+
 @font-face {
   font-family: 'Copernicus New Cond';
   src: url('/fonts/CopernicusNewCond-070.otf') format('opentype'),
