@@ -1010,6 +1010,10 @@ export default function DoePage() {
   const visibleMargin = 22; // desired gap (in card pixels) between card edge and caption
   const captionLeft700 = Math.ceil((visibleMargin - xStart700) / slideUniformScale);
   const captionRight700 = captionLeft700; // symmetric
+  /** Shift workflow slide captions slightly right (design px on 700² canvas). */
+  const WF_CAPTION_NUDGE_RIGHT_PX = 22;
+  const captionLeftWorkflow = captionLeft700 + WF_CAPTION_NUDGE_RIGHT_PX;
+  const captionRightWorkflow = Math.max(8, captionRight700 - WF_CAPTION_NUDGE_RIGHT_PX);
   /** Visible width slice of the 700² mock inside each slide card (design px). */
   const slideVisibleWidth700 = Math.max(
     148,
@@ -1025,10 +1029,10 @@ export default function DoePage() {
     310,
     Math.max(258, Math.round(slideVisibleWidth700 * 0.84)),
   );
-  /** Smart Appointments unified panel */
+  /** Smart Appointments — wider strip; interior spacing/type tightened below */
   const carouselSmartApptPanelWidth700 = Math.min(
-    356,
-    Math.max(276, Math.round(slideVisibleWidth700 * 0.9)),
+    448,
+    Math.max(296, Math.round(slideVisibleWidth700 * 0.985)),
   );
   /** Multi-disciplinary horizontal ribbon */
   const carouselMultidiscRibbonWidth700 = Math.min(
@@ -1857,13 +1861,13 @@ export default function DoePage() {
       <div className="w-full border-t border-[#E6E6E6]" />
 
       {/* Second Section — title upper third, carousel lower two-thirds */}
-      <div ref={secondSectionRef} className="min-h-[calc(var(--app-vh,100dvh)+7rem)] relative z-10 flex flex-col pt-16 pb-28 iphone-page:min-h-[calc(var(--app-vh,100dvh)+6rem)] iphone-page:pt-12 iphone-page:pb-[9.5rem]">
-        <div className="flex-1 grid grid-rows-[3fr_9fr_auto] min-h-[85vh] iphone-page:min-h-[88dvh] w-full overflow-x-hidden">
+      <div ref={secondSectionRef} className="min-h-[calc(var(--app-vh,100dvh)+7rem)] relative z-10 flex flex-col pt-16 pb-28 iphone-page:min-h-[calc(var(--app-vh,100dvh)+6rem)] iphone-page:pt-12 iphone-page:pb-[9.5rem] overscroll-none">
+        <div className="flex-1 grid grid-rows-[3fr_9fr_auto] min-h-[85vh] iphone-page:min-h-[88dvh] w-full overflow-x-hidden overscroll-none">
           {/* Title band — slightly taller than 1:2 so headline has room */}
           <div
             className={`flex flex-col justify-center min-h-0 px-4 py-14 iphone-page:pt-16 iphone-page:pb-9 ${narrowHorizontalInset}`}
           >
-            <div className="text-center iphone-page:mt-5 pl-[clamp(1rem,4.5vw,2.5rem)]">
+            <div className="text-center iphone-page:mt-5 pl-[clamp(1.75rem,6vw,3.35rem)]">
               <h1 
                 className={`flex flex-col items-center gap-2 font-normal text-gray-900 tracking-tight ${lora.className}`}
                 style={{
@@ -1884,11 +1888,11 @@ export default function DoePage() {
 
           {/* Carousel band (~bottom two-thirds) */}
           <div
-            className={`flex flex-col justify-center min-h-0 overflow-x-hidden overflow-y-visible pb-16 iphone-page:pb-14 ${narrowHorizontalInset}`}
+            className={`flex flex-col justify-center min-h-0 overflow-x-hidden overflow-y-visible pb-16 iphone-page:pb-14 overscroll-none ${narrowHorizontalInset}`}
           >
           {/* Sliding squares container — width matches Built-for-you orange panel (`w-full` inside narrowHorizontalInset) */}
           <div
-            className="relative mx-auto flex w-full max-w-full flex-col justify-center"
+            className="relative mx-auto flex w-full max-w-full flex-col justify-center overscroll-none"
             style={{
               opacity: slidingBoxesOpacity,
               transform: `translateY(${slidingBoxesTranslateY}px)`,
@@ -1896,7 +1900,7 @@ export default function DoePage() {
             }}
           >
             <div
-              className="relative flex min-h-0 w-full flex-1 items-center justify-center"
+              className="relative flex min-h-0 w-full flex-1 items-center justify-center overscroll-none"
               style={{ minHeight: slideBoxH }}
             >
             {/* Pause button - top right corner */}
@@ -1949,7 +1953,7 @@ export default function DoePage() {
             
             {/* One card viewport; track translates so the next slide enters from the right */}
             <div 
-              className="relative iphone-page:rounded-2xl mx-auto"
+              className="relative iphone-page:rounded-2xl mx-auto overscroll-none"
               style={{ 
                 width: slideBoxW,
                 height: slideBoxH,
@@ -2104,7 +2108,7 @@ export default function DoePage() {
                       </p>
                     </div>
 
-                    <div className={slideCaptionWrap} style={{ left: captionLeft700, right: captionRight700 }}>
+                    <div className={slideCaptionWrap} style={{ left: captionLeftWorkflow, right: captionRightWorkflow }}>
                       <span className={slideCaptionBadge} style={slideCaptionFont}>
                         AI Receptionist
                       </span>
@@ -2216,62 +2220,62 @@ export default function DoePage() {
                       </div>
                     )}
 
-                    {/* Smart appointments — simple AI chat mock (matches receptionist / billing card language) */}
+                    {/* Smart appointments — wider panel, compact chat density */}
                     <div
                       className="absolute left-1/2 rounded-xl bg-white shadow-lg"
                       style={{
                         width: `${carouselSmartApptPanelWidth700}px`,
                         top: '47%',
-                        transform: `translate(calc(-50% - 18px), -50%) scale(${priorAuthComposeScale})`,
+                        transform: `translate(calc(-50% - 10px), -50%) scale(${priorAuthComposeScale})`,
                         transformOrigin: 'center center',
-                        padding: carouselSmartApptPanelWidth700 < 288 ? '16px' : '20px',
-                        paddingBottom: '16px',
+                        padding: carouselSmartApptPanelWidth700 < 300 ? '11px 13px' : '13px 15px',
+                        paddingBottom: '12px',
                         userSelect: 'none',
                         pointerEvents: 'auto',
                       }}
                     >
-                      <div className="mb-3 flex items-center justify-between gap-2">
+                      <div className="mb-2 flex items-center justify-between gap-2">
                         <p
-                          className="text-sm font-semibold tracking-tight text-gray-900"
+                          className="text-[13px] font-semibold leading-tight tracking-tight text-gray-900"
                           style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
                         >
                           Visit assistant
                         </p>
-                        <div className="h-2 w-2 shrink-0 rounded-full bg-gray-400" aria-hidden />
+                        <div className="h-1.5 w-1.5 shrink-0 rounded-full bg-gray-400" aria-hidden />
                       </div>
-                      <div className="mb-2 rounded-lg border border-gray-100 bg-gray-50 px-3 py-2.5">
-                        <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wide text-gray-500">Patient</p>
-                        <p className="text-xs leading-snug text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                      <div className="mb-1.5 rounded-lg border border-gray-100 bg-gray-50 px-2.5 py-2">
+                        <p className="mb-1 text-[9px] font-bold uppercase tracking-wide text-gray-500">Patient</p>
+                        <p className="text-[11px] leading-snug text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
                           &ldquo;Metformin gives me cramps—I skipped two doses.&rdquo;
                         </p>
                       </div>
-                      <div className="mb-2 rounded-lg border border-gray-100 bg-white px-3 py-2.5">
-                        <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wide text-gray-500">Assistant</p>
-                        <p className="text-xs leading-snug text-gray-700" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                          Noted under Medications · suggest BMP before changing dose · knee complaint tagged for exam.
+                      <div className="mb-1.5 rounded-lg border border-gray-100 bg-white px-2.5 py-2">
+                        <p className="mb-1 text-[9px] font-bold uppercase tracking-wide text-gray-500">Assistant</p>
+                        <p className="text-[11px] leading-snug text-gray-700" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                          Noted under Medications · BMP before change · knee tagged for exam.
                         </p>
                       </div>
-                      <div className="mb-3 rounded-lg border border-dashed border-gray-200 bg-gray-50 px-3 py-2.5">
-                        <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wide text-gray-500">Patient</p>
-                        <p className="text-xs leading-snug text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                      <div className="mb-2 rounded-lg border border-dashed border-gray-200 bg-gray-50 px-2.5 py-2">
+                        <p className="mb-1 text-[9px] font-bold uppercase tracking-wide text-gray-500">Patient</p>
+                        <p className="text-[11px] leading-snug text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
                           &ldquo;Left knee popped again after PT.&rdquo;
                         </p>
                       </div>
-                      <div className="mb-3 flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2.5">
-                        <div className="h-2 flex-1 max-w-[70%] rounded-sm bg-gray-200" aria-hidden />
-                        <span className="text-[10px] font-semibold uppercase tracking-wide text-gray-400">Send</span>
+                      <div className="mb-2 flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-2.5 py-1.5">
+                        <div className="h-1.5 flex-1 max-w-[72%] rounded-sm bg-gray-200" aria-hidden />
+                        <span className="text-[9px] font-semibold uppercase tracking-wide text-gray-400">Send</span>
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex gap-1.5">
                         <button
                           type="button"
-                          className="flex-1 rounded bg-gray-600 px-3 py-2 text-xs font-semibold text-white"
+                          className="flex-1 rounded bg-gray-600 px-2 py-1.5 text-[11px] font-semibold text-white"
                           style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
                         >
                           Insert note
                         </button>
                         <button
                           type="button"
-                          className="flex-1 rounded bg-gray-600 px-3 py-2 text-xs font-semibold text-white"
+                          className="flex-1 rounded bg-gray-600 px-2 py-1.5 text-[11px] font-semibold text-white"
                           style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
                         >
                           Tasks
@@ -2279,7 +2283,7 @@ export default function DoePage() {
                       </div>
                     </div>
 
-                    <div className={slideCaptionWrap} style={{ left: captionLeft700, right: captionRight700 }}>
+                    <div className={slideCaptionWrap} style={{ left: captionLeftWorkflow, right: captionRightWorkflow }}>
                         <>
                           {isEditingBox2Title ? (
                         <input
@@ -2559,7 +2563,7 @@ export default function DoePage() {
                       </div>
                     </div>
 
-                    <div className={slideCaptionWrap} style={{ left: captionLeft700, right: captionRight700 }}>
+                    <div className={slideCaptionWrap} style={{ left: captionLeftWorkflow, right: captionRightWorkflow }}>
                       <span className={slideCaptionBadge} style={slideCaptionFont}>
                         Billing &amp; finances
                       </span>
@@ -2674,7 +2678,7 @@ export default function DoePage() {
                     </div>
                   </div>
 
-                  <div className={slideCaptionWrap} style={{ left: captionLeft700, right: captionRight700 }}>
+                  <div className={slideCaptionWrap} style={{ left: captionLeftWorkflow, right: captionRightWorkflow }}>
                     <span className={slideCaptionBadge} style={slideCaptionFont}>
                       Multi-disciplinary
                     </span>
@@ -2799,7 +2803,7 @@ export default function DoePage() {
                       </div>
                     </div>
 
-                    <div className={slideCaptionWrap} style={{ left: captionLeft700, right: captionRight700 }}>
+                    <div className={slideCaptionWrap} style={{ left: captionLeftWorkflow, right: captionRightWorkflow }}>
                       <span className={slideCaptionBadge} style={slideCaptionFont}>
                         Referral Intake
                       </span>
@@ -2974,7 +2978,7 @@ export default function DoePage() {
                       </div>
                     </div>
 
-                    <div className={slideCaptionWrap} style={{ left: captionLeft700, right: captionRight700 }}>
+                    <div className={slideCaptionWrap} style={{ left: captionLeftWorkflow, right: captionRightWorkflow }}>
                       <span className={slideCaptionBadge} style={slideCaptionFont}>
                         Prior authorization
                       </span>
@@ -3000,7 +3004,7 @@ export default function DoePage() {
       {/* Quality orbit — between carousel (section 2) and vertical bento (section 3) */}
       <section
         ref={qualityOrbitSectionRef}
-        className={`relative z-10 w-full overflow-x-hidden bg-[#F7F6F3] py-[clamp(5.75rem,13.5vw,9.25rem)] iphone-page:py-[clamp(5.5rem,12vw,8.5rem)] mt-[clamp(1.75rem,4.5vw,3.5rem)] mb-[clamp(2.25rem,5.25vw,4rem)] ${narrowHorizontalInset}`}
+        className={`relative z-10 w-full overflow-x-hidden overscroll-none bg-[#F7F6F3] py-[clamp(5.75rem,13.5vw,9.25rem)] iphone-page:py-[clamp(5.5rem,12vw,8.5rem)] mt-[clamp(1.75rem,4.5vw,3.5rem)] mb-[clamp(2.25rem,5.25vw,4rem)] ${narrowHorizontalInset}`}
         aria-labelledby="quality-orbit-heading"
       >
         <h2 id="quality-orbit-heading" className="sr-only">
