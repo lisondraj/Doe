@@ -156,8 +156,8 @@ function vbComputeScrollMetrics(
   const vh = Math.max(innerHeightPx, 320);
   const openPx = Math.round(Math.max(vh * 0.82, 400));
   const dwellPx = Math.round(Math.max(vh * 5.05, 2800));
-  /** Shorter than rail 0/1 dwell so scroll reaches the spacer / Built-for-you band before finishing the third dwell scrub */
-  const dwellLastPx = Math.max(Math.round(dwellPx * 0.42), Math.round(vh * 2.15));
+  /** Match rail 1–2 dwell scale so users can scroll well past pin before rail 3 begins collapsing */
+  const dwellLastPx = Math.max(Math.round(dwellPx * 0.92), Math.round(vh * 4.25));
   const swapPx = Math.round(Math.max(vh * 0.62, 420));
   const exitPx = Math.round(Math.max(vh * 0.88, 480));
   const tailPx = Math.round(Math.max(vh * 0.34, 220));
@@ -4145,7 +4145,7 @@ export default function DoePage() {
         <div className="relative z-10 mx-auto flex min-h-[min(52vw,22rem)] max-w-full flex-col items-center justify-center px-6 py-[clamp(3.25rem,9vw,6.75rem)] text-center md:min-h-[min(44vw,20rem)] md:px-10 iphone-page:px-5 iphone-page:py-[clamp(3rem,11vw,6rem)]">
           <h2
             id="inquisara-teaser-heading"
-            className={`font-normal tracking-tight text-white drop-shadow-[0_2px_28px_rgba(0,0,0,0.28)] ${lora.className}`}
+            className={`font-semibold tracking-tight text-white drop-shadow-[0_2px_28px_rgba(0,0,0,0.28)] ${inter.className}`}
             style={{
               fontSize: "clamp(2.85rem, min(11vw, 12vmin), 5.75rem)",
               lineHeight: 1.02,
