@@ -288,16 +288,16 @@ const VBENTO_GRAIN_BG = `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xm
 
 /** Six rounded tiles around the quality headline (percent positions; viewBox 400×400). */
 const QUALITY_ORBIT_ANCHORS_PCT: ReadonlyArray<{ leftPct: number; topPct: number }> = [
-  { leftPct: 50, topPct: 9.5 },
-  { leftPct: 79.5, topPct: 28.75 },
-  { leftPct: 79.5, topPct: 71.25 },
-  { leftPct: 50, topPct: 90.5 },
-  { leftPct: 20.5, topPct: 71.25 },
-  { leftPct: 20.5, topPct: 28.75 },
+  { leftPct: 50, topPct: 9 },
+  { leftPct: 81, topPct: 28.75 },
+  { leftPct: 81, topPct: 71.25 },
+  { leftPct: 50, topPct: 91 },
+  { leftPct: 19, topPct: 71.25 },
+  { leftPct: 19, topPct: 28.75 },
 ];
-/** Closed smooth loop through the six anchors (light grey connector). */
-const QUALITY_ORBIT_CONNECTOR_D =
-  "M 200 38 C 260 52 300 82 318 115 C 332 148 332 252 318 285 C 302 328 260 356 200 362 C 140 356 98 328 82 285 C 68 252 68 148 82 115 C 98 82 140 52 200 38 Z";
+/** Ovular connector (ellipse in 400×400 viewBox) — hugs the wider tile ring. */
+const QUALITY_ORBIT_CONNECTOR_RX = 134;
+const QUALITY_ORBIT_CONNECTOR_RY = 162;
 /** Gradient fill applied to each orbit tile (lighter original palette). */
 const QUALITY_ORBIT_TILE_FILL =
   "linear-gradient(135deg, #E7A944 0%, #D49D4F 28%, #D2774C 62%, #b84e2e 100%)";
@@ -2968,27 +2968,28 @@ export default function DoePage() {
               preserveAspectRatio="xMidYMid meet"
               aria-hidden
             >
-              <path
+              <ellipse
+                cx={200}
+                cy={200}
+                rx={QUALITY_ORBIT_CONNECTOR_RX}
+                ry={QUALITY_ORBIT_CONNECTOR_RY}
                 fill="none"
                 stroke="#d4d4d4"
                 strokeWidth={1.35}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d={QUALITY_ORBIT_CONNECTOR_D}
               />
             </svg>
 
             {QUALITY_ORBIT_ANCHORS_PCT.map((p, i) => (
               <div
                 key={i}
-                className="absolute z-[2] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl iphone-page:rounded-[0.85rem]"
+                className="absolute z-[2] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl iphone-page:rounded-[0.9rem]"
                 style={{
                   left: `${p.leftPct}%`,
                   top: `${p.topPct}%`,
-                  width: "clamp(4.25rem, 19vw, 7.25rem)",
-                  height: "clamp(3rem, 13.5vw, 5rem)",
+                  width: "clamp(5.75rem, 24vw, 9.75rem)",
+                  height: "clamp(4rem, 17vw, 6.75rem)",
                   boxShadow:
-                    "0 14px 38px rgba(214, 119, 76, 0.32), 0 6px 16px rgba(30, 52, 58, 0.1), 0 2px 6px rgba(255, 255, 255, 0.45)",
+                    "0 18px 44px rgba(214, 119, 76, 0.34), 0 8px 20px rgba(30, 52, 58, 0.11), 0 3px 8px rgba(255, 255, 255, 0.48)",
                 }}
               >
                 <div
@@ -3033,15 +3034,15 @@ export default function DoePage() {
               </div>
             ))}
 
-            <div className="absolute inset-0 z-[3] flex items-center justify-center px-10 pointer-events-none">
+            <div className="absolute inset-0 z-[3] flex items-center justify-center px-4 iphone-page:px-5 pointer-events-none">
               <p
-                className={`text-center font-normal tracking-tight text-gray-900 leading-[1.12] ${lora.className}`}
+                className={`flex flex-col items-center gap-2 text-center font-normal tracking-tight text-gray-900 ${lora.className}`}
                 style={{ textWrap: "balance" }}
               >
-                <span className="block text-[clamp(1.35rem,4.8vw,1.95rem)] md:text-[clamp(1.55rem,2.8vw,2.15rem)]">
+                <span className="block leading-[1.06] text-[clamp(2.65rem,11.5vw,4rem)] iphone-page:text-[clamp(1.48rem,6.25vw,4rem)] iphone-page:whitespace-nowrap">
                   Only high-quality
                 </span>
-                <span className="mt-1 block text-[clamp(1.35rem,4.8vw,1.95rem)] md:text-[clamp(1.55rem,2.8vw,2.15rem)]">
+                <span className="block leading-[1.06] text-[clamp(2.65rem,11.5vw,4rem)] iphone-page:text-[clamp(1.48rem,6.25vw,4rem)] iphone-page:whitespace-nowrap">
                   patient care
                 </span>
               </p>
