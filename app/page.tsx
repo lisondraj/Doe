@@ -439,21 +439,21 @@ type BentoBridgeTestimonial = {
 const VBENTO_BRIDGE_TESTIMONIALS: readonly BentoBridgeTestimonial[] = [
   {
     quote:
-      "\u201cDoe has given me back so much of my time. I can now focus on my patients rather than be my\u00a0own\u00a0admin.\u201d",
+      "\u201cDoe has given me back so much of my time.\nI can now focus on my patients rather than be my\u00a0own\u00a0admin.\u201d",
     name: "Avery Mills, MD",
     meta: "Physician · Boston, MA",
     initials: "AM",
   },
   {
     quote:
-      "\u201cOur front desk finally keeps up with inbound messages — Doe handles the noisy bits so we stay human where it matters.\u201d",
+      "\u201cOur front desk finally keeps up with inbound messages —\nDoe handles the noisy bits so we stay human where it matters.\u201d",
     name: "Jamie Chen",
     meta: "Patient Navigator · Toronto, ON",
     initials: "JC",
   },
   {
     quote:
-      "\u201cI spend less time decoding inbox threads and more time on the floor; the routine paperwork basically disappears.\u201d",
+      "\u201cI spend less time decoding inbox threads and more time on the floor;\nthe routine paperwork basically disappears.\u201d",
     name: "Jordan Okonkwo, RN",
     meta: "Registered Nurse · Seattle, WA",
     initials: "JO",
@@ -589,6 +589,8 @@ export default function DoePage() {
   const [gradientAngle, setGradientAngle] = useState(135);
   const [colorShift, setColorShift] = useState(0);
   const [scrollY, setScrollY] = useState(0);
+  /** Coalesce scroll-driven reads + setState to one rAF per frame (smoother momentum scroll). */
+  const scrollEffectsRafRef = useRef<number | null>(null);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   /** Which top-level nav row is expanded in the phone menu sheet (accordion). */
@@ -724,11 +726,11 @@ export default function DoePage() {
     measure();
     window.addEventListener("resize", measure);
     window.visualViewport?.addEventListener("resize", measure);
-    window.visualViewport?.addEventListener("scroll", measure);
+    /** Do not listen to `visualViewport` scroll: iOS updates height/offset every pan frame, which
+     *  reflows `--app-vh` / slide metrics and fights native scroll (snap/jump when scrolling quickly). */
     return () => {
       window.removeEventListener("resize", measure);
       window.visualViewport?.removeEventListener("resize", measure);
-      window.visualViewport?.removeEventListener("scroll", measure);
     };
   }, [viewportWidth]);
 
@@ -1041,40 +1043,41 @@ export default function DoePage() {
   }, []);
 
   useEffect(() => {
-    const handleScroll = () => {
+    const runScrollEffects = () => {
+      scrollEffectsRafRef.current = null;
       setScrollY(window.scrollY);
       const viewportHeight = vbAppViewportPx().height;
-      
+
       // Calculate second section title fade-in and slide-up animation
       if (secondSectionRef.current) {
         const rect = secondSectionRef.current.getBoundingClientRect();
         const sectionTop = rect.top;
-        
+
         // Start animation when section enters viewport (when top is at 85% of viewport)
         // Complete animation when section is at 60% from top of viewport
         const startPoint = viewportHeight * 0.85;
         const endPoint = viewportHeight * 0.6;
         const distance = startPoint - endPoint;
-        
+
         if (sectionTop <= startPoint && sectionTop >= endPoint) {
           // Section is in animation range
           const progress = (startPoint - sectionTop) / distance;
           const clampedProgress = Math.min(Math.max(progress, 0), 1);
-          
+
           // Fade in: 0 to 1
           setSecondSectionTitleOpacity(clampedProgress);
           // Slide up: 40px to 0px
           setSecondSectionTitleTranslateY(40 * (1 - clampedProgress));
-          
+
           // Sliding boxes animation starts after title animation (at 60% progress)
           // Sliding boxes animation range: 60% to 100% of title animation progress
           if (clampedProgress >= 0.6) {
             const slidingBoxesProgress = (clampedProgress - 0.6) / 0.4; // 0 to 1 when title is 60% to 100%
             const clampedSlidingProgress = Math.min(Math.max(slidingBoxesProgress, 0), 1);
-            
+
             setSlidingBoxesOpacity(clampedSlidingProgress);
             setSlidingBoxesTranslateY(40 * (1 - clampedSlidingProgress));
-            
+
             // Start sliding animation after title animation completes (at 80% progress)
             if (clampedProgress >= 0.8) {
               setShouldStartSlidingAnimation(true);
@@ -1100,23 +1103,23 @@ export default function DoePage() {
           setShouldStartSlidingAnimation(false);
         }
       }
-      
+
       // Calculate carousel section fade-in and slide-up animation
       if (carouselSectionRef.current) {
         const rect = carouselSectionRef.current.getBoundingClientRect();
         const sectionTop = rect.top;
-        
+
         // Start animation when section enters viewport (when top is at 85% of viewport)
         // Complete animation when section is at 60% from top of viewport
         const startPoint = viewportHeight * 0.85;
         const endPoint = viewportHeight * 0.6;
         const distance = startPoint - endPoint;
-        
+
         if (sectionTop <= startPoint && sectionTop >= endPoint) {
           // Section is in animation range
           const progress = (startPoint - sectionTop) / distance;
           const clampedProgress = Math.min(Math.max(progress, 0), 1);
-          
+
           // Fade in: 0 to 1
           setCarouselSectionOpacity(clampedProgress);
           // Slide up: 40px to 0px
@@ -1131,7 +1134,7 @@ export default function DoePage() {
           setCarouselSectionTranslateY(40);
         }
       }
-      
+
       // Vertical bento headline (bridge band under workflow carousel): fade/slide-in
       if (verticalBentoHeadlineRef.current) {
         const rect = verticalBentoHeadlineRef.current.getBoundingClientRect();
@@ -1139,7 +1142,7 @@ export default function DoePage() {
         const startPoint = viewportHeight * 0.85;
         const endPoint = viewportHeight * 0.6;
         const distance = startPoint - endPoint;
-        
+
         if (sectionTop <= startPoint && sectionTop >= endPoint) {
           const progress = (startPoint - sectionTop) / distance;
           const clampedProgress = Math.min(Math.max(progress, 0), 1);
@@ -1162,7 +1165,7 @@ export default function DoePage() {
         const startPoint = viewportHeight * 0.85;
         const endPoint = viewportHeight * 0.6;
         const distance = startPoint - endPoint;
-        
+
         if (sectionTop <= startPoint && sectionTop >= endPoint) {
           const progress = (startPoint - sectionTop) / distance;
           const clampedProgress = Math.min(Math.max(progress, 0), 1);
@@ -1188,15 +1191,25 @@ export default function DoePage() {
         const scrolled = Math.min(Math.max(-rect.top + anchor, 0), sp);
         const uRaw = scrolled / sp;
         const u = vbGateVerticalBentoUTimeline(uRaw, milestones, sectionTop, viewportHeight);
-        setVerticalBentoU((prev) => (Math.abs(prev - u) < 0.0012 ? prev : u));
+        setVerticalBentoU((prev) => (Math.abs(prev - u) < 0.0025 ? prev : u));
       }
     };
 
-    // Set initial scroll position on mount
-    handleScroll();
+    const onScroll = () => {
+      if (scrollEffectsRafRef.current != null) return;
+      scrollEffectsRafRef.current = requestAnimationFrame(runScrollEffects);
+    };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    runScrollEffects();
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (scrollEffectsRafRef.current != null) {
+        cancelAnimationFrame(scrollEffectsRafRef.current);
+        scrollEffectsRafRef.current = null;
+      }
+    };
   }, [vbMetrics]);
 
 
@@ -3846,16 +3859,27 @@ export default function DoePage() {
             aria-hidden
           >
             <div
-              className={`bento-bridge-disk relative shrink-0 overflow-hidden rounded-full shadow-[0_20px_56px_rgba(0,0,0,0.14)] ring-1 ring-black/[0.06] motion-reduce:animate-none pointer-events-auto ${
-                bentoBridgeStage < 1 ? "[animation-play-state:paused]" : ""
-              }`}
+              className="relative shrink-0"
               style={{
                 width: "clamp(13.5rem, 36vmin, 22.5rem)",
                 height: "clamp(13.5rem, 36vmin, 22.5rem)",
-                background:
-                  "radial-gradient(circle at 50% 36%, #E7A944 0%, #D49D4F 40%, #D2774C 70%, #1E343A 100%)",
               }}
             >
+              <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center overflow-visible">
+                <div
+                  className="bento-bridge-disk-aurora h-[132%] w-[132%] shrink-0 rounded-full motion-reduce:animate-none"
+                  aria-hidden
+                />
+              </div>
+              <div
+                className={`bento-bridge-disk relative z-[1] h-full w-full overflow-hidden rounded-full shadow-[0_20px_56px_rgba(0,0,0,0.14)] ring-1 ring-black/[0.06] motion-reduce:animate-none pointer-events-auto ${
+                  bentoBridgeStage < 1 ? "[animation-play-state:paused]" : ""
+                }`}
+                style={{
+                  background:
+                    "radial-gradient(circle at 50% 36%, #E7A944 0%, #D49D4F 40%, #D2774C 70%, #1E343A 100%)",
+                }}
+              >
               <div
                 className="pointer-events-none absolute inset-0"
                 style={{
@@ -3902,6 +3926,7 @@ export default function DoePage() {
                 })}
               </svg>
             </div>
+            </div>
           </div>
 
           <div
@@ -3915,30 +3940,32 @@ export default function DoePage() {
                 transition: "opacity 0.42s cubic-bezier(0.4, 0, 0.2, 1)",
               }}
             >
-              <blockquote className="m-0 w-full text-pretty" aria-live="polite">
+              <blockquote className="m-0 w-full text-left" aria-live="polite">
                 <span id="vbento-bridge-quote" className="sr-only">
                   {bentoBridgeCard.quote}
                 </span>
-                {/** Ghost reserves line breaks; overlay uses RAF typewriter to reduce paint jank */}
+                {/** Ghost reserves final line breaks; typed layer uses the same `pre-wrap` breaks so lines do not reflow while typing. */}
                 <div
                   className="relative w-full"
                   style={{ isolation: "isolate", backfaceVisibility: "hidden", contain: "layout paint" }}
                 >
                   <p
-                    className={`pointer-events-none m-0 select-none text-left font-normal tracking-[-0.02em] text-transparent opacity-0 ${lora.className}`}
+                    className={`pointer-events-none m-0 select-none text-left font-normal tracking-[-0.02em] invisible ${lora.className}`}
                     style={{
                       fontSize: "clamp(2.95rem, 7.25vw, 5.35rem)",
                       lineHeight: 1.28,
+                      whiteSpace: "pre-wrap",
                     }}
                     aria-hidden
                   >
                     {bentoBridgeCard.quote}
                   </p>
                   <p
-                    className={`absolute left-0 right-0 top-0 m-0 text-left font-normal tracking-[-0.02em] ${lora.className}`}
+                    className={`absolute inset-0 m-0 text-left font-normal tracking-[-0.02em] ${lora.className}`}
                     style={{
                       fontSize: "clamp(2.95rem, 7.25vw, 5.35rem)",
                       lineHeight: 1.28,
+                      whiteSpace: "pre-wrap",
                       backgroundImage:
                         "linear-gradient(168deg, #6e635e 0%, #887056 16%, #9c7d5c 34%, #b08f68 50%, #9a7b5e 68%, #7d6656 84%, #6a5c54 100%)",
                       WebkitBackgroundClip: "text",
@@ -3950,16 +3977,21 @@ export default function DoePage() {
                     }}
                     aria-hidden="true"
                   >
-                    <span className="inline">
+                    <span className="inline align-top">
                       {vbBridgeSliceGraphemes(bentoBridgeCard.quote, bentoBridgeTypedLen)}
                     </span>
-                    {bentoBridgeTypedLen < vbBridgeGraphemeLen(bentoBridgeCard.quote) ? (
-                      <span
-                        className="bento-bridge-caret motion-reduce:animate-none ml-[0.06em] inline-block w-[0.09em] shrink-0 translate-y-[0.04em] bg-[#b08f68] align-middle"
-                        style={{ height: "0.82em", verticalAlign: "baseline" }}
-                        aria-hidden
-                      />
-                    ) : null}
+                    <span
+                      className="inline-block w-[0.11em] shrink-0 translate-y-[0.04em] align-middle text-left"
+                      style={{ height: "0.82em" }}
+                      aria-hidden
+                    >
+                      {bentoBridgeTypedLen < vbBridgeGraphemeLen(bentoBridgeCard.quote) ? (
+                        <span
+                          className="bento-bridge-caret motion-reduce:animate-none inline-block h-full w-full bg-[#b08f68]"
+                          style={{ maxWidth: "0.09em" }}
+                        />
+                      ) : null}
+                    </span>
                   </p>
                 </div>
               </blockquote>
@@ -3986,7 +4018,7 @@ export default function DoePage() {
                   </div>
                 </div>
                 <div
-                  className="flex w-full max-w-[11.25rem] gap-2.5"
+                  className="flex w-full items-center justify-start gap-3.5 pb-1 pt-0.5"
                   role="group"
                   aria-label="Choose testimonial"
                 >
@@ -3998,14 +4030,19 @@ export default function DoePage() {
                         type="button"
                         aria-label={`Testimonial ${i + 1} of ${VBENTO_BRIDGE_TESTIMONIALS.length}`}
                         aria-current={active ? "true" : undefined}
-                        className="h-1.5 min-w-0 flex-1 rounded-full transition-[opacity,transform,background-color] duration-500 ease-out motion-reduce:transition-none"
-                        style={{
-                          opacity: active ? 1 : bentoBridgeStage >= 3 ? 0.38 : 0,
-                          transform: active ? "scaleY(1.22)" : "scaleY(1)",
-                          background: active
-                            ? "linear-gradient(90deg, #8f7359 0%, #c9a47a 48%, #a78b6a 100%)"
-                            : "rgba(115, 108, 100, 0.42)",
-                        }}
+                        className={`relative flex h-11 w-11 shrink-0 touch-manipulation items-center justify-center rounded-full border transition-[transform,box-shadow,opacity,border-color] duration-300 ease-out motion-reduce:transition-none ${
+                          active
+                            ? "border-amber-400/55 shadow-[0_0_22px_rgba(231,169,68,0.55),0_0_42px_rgba(210,119,76,0.28)]"
+                            : "border-stone-400/45 bg-[#ebe8e4]/90 shadow-none hover:border-stone-500/55"
+                        }`}
+                        style={
+                          active
+                            ? {
+                                background:
+                                  "linear-gradient(145deg, #E7A944 0%, #D49D4F 38%, #D2774C 72%, #c46a3a 100%)",
+                              }
+                            : undefined
+                        }
                         onClick={() => {
                           if (i === bentoBridgeCardIndex) return;
                           const prefersReduce =
@@ -4026,7 +4063,14 @@ export default function DoePage() {
                             setBentoBridgeContentFade(1);
                           }, 400);
                         }}
-                      />
+                      >
+                        <span
+                          className={`block rounded-full transition-transform duration-300 ease-out motion-reduce:transition-none ${
+                            active ? "h-3 w-3 scale-100 bg-white/35 ring-2 ring-white/25" : "h-2.5 w-2.5 scale-100 bg-stone-500/35"
+                          }`}
+                          aria-hidden
+                        />
+                      </button>
                     );
                   })}
                 </div>
