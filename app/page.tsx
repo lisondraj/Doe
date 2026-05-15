@@ -1846,15 +1846,10 @@ export default function DoePage() {
             </p>
             <div className="flex flex-col items-center gap-[1.625rem] iphone-page:gap-7 px-2">
               <p
-                className="text-[clamp(1.75rem,4.15vw,2.75rem)] iphone-page:text-[clamp(1.2rem,4.85vw,1.9375rem)] font-medium text-white/90 text-center iphone-page:px-2 tracking-tight flex flex-col items-center gap-1.5 iphone-page:gap-2 iphone-page:leading-snug leading-snug"
+                className="animate-hero-tagline-float text-[clamp(1.75rem,4.15vw,2.75rem)] iphone-page:text-[clamp(1.2rem,4.85vw,1.9375rem)] font-medium text-white/90 text-center iphone-page:px-2 tracking-tight iphone-page:whitespace-nowrap leading-snug"
                 style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
               >
-                <span className="block iphone-page:whitespace-nowrap iphone-page:text-center w-full">
-                  AI Inbox.
-                </span>
-                <span className="block iphone-page:whitespace-nowrap iphone-page:text-center w-full">
-                  Built for Clinicians.
-                </span>
+                AI Inbox. Built for Clinicians.
               </p>
               <a
                 href="mailto:contact@joindoe.com"
