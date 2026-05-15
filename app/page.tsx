@@ -590,6 +590,15 @@ export default function DoePage() {
   const [scrollY, setScrollY] = useState(0);
   /** Coalesce scroll-driven reads + setState to one rAF per frame (smoother momentum scroll). */
   const scrollEffectsRafRef = useRef<number | null>(null);
+  /** True while the user is actively scrolling — pauses global palette RAF so the page tree is not re-rendered in parallel. */
+  const scrollWheelBusyRef = useRef(false);
+  const scrollQuietTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /** Skip redundant second-section intro setState once the band is fully past. */
+  const scrollSecondPastIntroRef = useRef(false);
+  /** Skip redundant “Built for you” intro setState once past. */
+  const scrollCarouselPastIntroRef = useRef(false);
+  /** After the vertical bento stack has cleared above the viewport, skip headline / rails / u updates. */
+  const scrollVbPastBandRef = useRef(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   /** Which top-level nav row is expanded in the phone menu sheet (accordion). */
@@ -1031,7 +1040,7 @@ export default function DoePage() {
       const deltaTime = currentTime - lastTime;
       lastTime = currentTime;
 
-      if (document.visibilityState === "visible") {
+      if (document.visibilityState === "visible" && !scrollWheelBusyRef.current) {
         colorAccumMs += deltaTime;
         if (colorAccumMs >= colorStepMs) {
           const steps = Math.floor(colorAccumMs / colorStepMs);
@@ -1065,48 +1074,58 @@ export default function DoePage() {
         const endPoint = viewportHeight * 0.6;
         const distance = startPoint - endPoint;
 
-        if (sectionTop <= startPoint && sectionTop >= endPoint) {
-          // Section is in animation range
-          const progress = (startPoint - sectionTop) / distance;
-          const clampedProgress = Math.min(Math.max(progress, 0), 1);
+        if (sectionTop > startPoint + 6) {
+          scrollSecondPastIntroRef.current = false;
+        }
 
-          // Fade in: 0 to 1
-          setSecondSectionTitleOpacity(clampedProgress);
-          // Slide up: 40px to 0px
-          setSecondSectionTitleTranslateY(40 * (1 - clampedProgress));
+        if (sectionTop < endPoint - 2 && scrollSecondPastIntroRef.current) {
+          // Past intro: state is already at rest — avoid setState every scroll frame below the bento.
+        } else {
+          if (sectionTop <= startPoint && sectionTop >= endPoint) {
+            scrollSecondPastIntroRef.current = false;
+            // Section is in animation range
+            const progress = (startPoint - sectionTop) / distance;
+            const clampedProgress = Math.min(Math.max(progress, 0), 1);
 
-          // Sliding boxes animation starts after title animation (at 60% progress)
-          // Sliding boxes animation range: 60% to 100% of title animation progress
-          if (clampedProgress >= 0.6) {
-            const slidingBoxesProgress = (clampedProgress - 0.6) / 0.4; // 0 to 1 when title is 60% to 100%
-            const clampedSlidingProgress = Math.min(Math.max(slidingBoxesProgress, 0), 1);
+            // Fade in: 0 to 1
+            setSecondSectionTitleOpacity(clampedProgress);
+            // Slide up: 40px to 0px
+            setSecondSectionTitleTranslateY(40 * (1 - clampedProgress));
 
-            setSlidingBoxesOpacity(clampedSlidingProgress);
-            setSlidingBoxesTranslateY(40 * (1 - clampedSlidingProgress));
+            // Sliding boxes animation starts after title animation (at 60% progress)
+            // Sliding boxes animation range: 60% to 100% of title animation progress
+            if (clampedProgress >= 0.6) {
+              const slidingBoxesProgress = (clampedProgress - 0.6) / 0.4; // 0 to 1 when title is 60% to 100%
+              const clampedSlidingProgress = Math.min(Math.max(slidingBoxesProgress, 0), 1);
 
-            // Start sliding animation after title animation completes (at 80% progress)
-            if (clampedProgress >= 0.8) {
-              setShouldStartSlidingAnimation(true);
+              setSlidingBoxesOpacity(clampedSlidingProgress);
+              setSlidingBoxesTranslateY(40 * (1 - clampedSlidingProgress));
+
+              // Start sliding animation after title animation completes (at 80% progress)
+              if (clampedProgress >= 0.8) {
+                setShouldStartSlidingAnimation(true);
+              }
+            } else {
+              setSlidingBoxesOpacity(0);
+              setSlidingBoxesTranslateY(40);
+              setShouldStartSlidingAnimation(false);
             }
+          } else if (sectionTop < endPoint) {
+            scrollSecondPastIntroRef.current = true;
+            // Section is past animation point - fully visible
+            setSecondSectionTitleOpacity(1);
+            setSecondSectionTitleTranslateY(0);
+            setSlidingBoxesOpacity(1);
+            setSlidingBoxesTranslateY(0);
+            setShouldStartSlidingAnimation(true);
           } else {
+            // Section hasn't reached animation point yet
+            setSecondSectionTitleOpacity(0);
+            setSecondSectionTitleTranslateY(40);
             setSlidingBoxesOpacity(0);
             setSlidingBoxesTranslateY(40);
             setShouldStartSlidingAnimation(false);
           }
-        } else if (sectionTop < endPoint) {
-          // Section is past animation point - fully visible
-          setSecondSectionTitleOpacity(1);
-          setSecondSectionTitleTranslateY(0);
-          setSlidingBoxesOpacity(1);
-          setSlidingBoxesTranslateY(0);
-          setShouldStartSlidingAnimation(true);
-        } else {
-          // Section hasn't reached animation point yet
-          setSecondSectionTitleOpacity(0);
-          setSecondSectionTitleTranslateY(40);
-          setSlidingBoxesOpacity(0);
-          setSlidingBoxesTranslateY(40);
-          setShouldStartSlidingAnimation(false);
         }
       }
 
@@ -1121,98 +1140,140 @@ export default function DoePage() {
         const endPoint = viewportHeight * 0.6;
         const distance = startPoint - endPoint;
 
-        if (sectionTop <= startPoint && sectionTop >= endPoint) {
-          // Section is in animation range
-          const progress = (startPoint - sectionTop) / distance;
-          const clampedProgress = Math.min(Math.max(progress, 0), 1);
+        if (sectionTop > startPoint + 6) {
+          scrollCarouselPastIntroRef.current = false;
+        }
 
-          // Fade in: 0 to 1
-          setCarouselSectionOpacity(clampedProgress);
-          // Slide up: 40px to 0px
-          setCarouselSectionTranslateY(40 * (1 - clampedProgress));
-        } else if (sectionTop < endPoint) {
-          // Section is past animation point - fully visible
-          setCarouselSectionOpacity(1);
-          setCarouselSectionTranslateY(0);
+        if (sectionTop < endPoint - 2 && scrollCarouselPastIntroRef.current) {
+          // Past intro — idle
         } else {
-          // Section hasn't reached animation point yet
-          setCarouselSectionOpacity(0);
-          setCarouselSectionTranslateY(40);
+          if (sectionTop <= startPoint && sectionTop >= endPoint) {
+            scrollCarouselPastIntroRef.current = false;
+            // Section is in animation range
+            const progress = (startPoint - sectionTop) / distance;
+            const clampedProgress = Math.min(Math.max(progress, 0), 1);
+
+            // Fade in: 0 to 1
+            setCarouselSectionOpacity(clampedProgress);
+            // Slide up: 40px to 0px
+            setCarouselSectionTranslateY(40 * (1 - clampedProgress));
+          } else if (sectionTop < endPoint) {
+            scrollCarouselPastIntroRef.current = true;
+            // Section is past animation point - fully visible
+            setCarouselSectionOpacity(1);
+            setCarouselSectionTranslateY(0);
+          } else {
+            // Section hasn't reached animation point yet
+            setCarouselSectionOpacity(0);
+            setCarouselSectionTranslateY(40);
+          }
         }
       }
 
-      // Vertical bento headline (bridge band under workflow carousel): fade/slide-in
-      if (verticalBentoHeadlineRef.current) {
-        const rect = verticalBentoHeadlineRef.current.getBoundingClientRect();
-        const sectionTop = rect.top;
-        const startPoint = viewportHeight * 0.85;
-        const endPoint = viewportHeight * 0.6;
-        const distance = startPoint - endPoint;
+      const vbEl = verticalBentoSectionRef.current;
+      const vbRect = vbEl?.getBoundingClientRect();
+      const vbFullyAbove = vbRect ? vbRect.bottom < -72 : false;
 
-        if (sectionTop <= startPoint && sectionTop >= endPoint) {
-          const progress = (startPoint - sectionTop) / distance;
-          const clampedProgress = Math.min(Math.max(progress, 0), 1);
-          setVerticalBentoTitleOpacity(clampedProgress);
-          setVerticalBentoTitleTranslateY(40 * (1 - clampedProgress));
-        } else if (sectionTop < endPoint) {
+      if (vbFullyAbove) {
+        if (!scrollVbPastBandRef.current) {
+          scrollVbPastBandRef.current = true;
           setVerticalBentoTitleOpacity(1);
           setVerticalBentoTitleTranslateY(0);
-        } else {
-          setVerticalBentoTitleOpacity(0);
-          setVerticalBentoTitleTranslateY(40);
+          setVerticalBentoRailsOpacity(1);
+          setVerticalBentoRailsTranslateY(0);
+          setVerticalBentoU(1);
         }
-      }
+      } else {
+        scrollVbPastBandRef.current = false;
 
-      // Vertical bento rails: staggered fade-in + scrub timeline (stack ref only)
-      if (verticalBentoSectionRef.current) {
-        const el = verticalBentoSectionRef.current;
-        const rect = el.getBoundingClientRect();
-        const sectionTop = rect.top;
-        const startPoint = viewportHeight * 0.85;
-        const endPoint = viewportHeight * 0.6;
-        const distance = startPoint - endPoint;
+        // Vertical bento headline (bridge band under workflow carousel): fade/slide-in
+        if (verticalBentoHeadlineRef.current) {
+          const rect = verticalBentoHeadlineRef.current.getBoundingClientRect();
+          const sectionTop = rect.top;
+          const startPoint = viewportHeight * 0.85;
+          const endPoint = viewportHeight * 0.6;
+          const distance = startPoint - endPoint;
 
-        if (sectionTop <= startPoint && sectionTop >= endPoint) {
-          const progress = (startPoint - sectionTop) / distance;
-          const clampedProgress = Math.min(Math.max(progress, 0), 1);
-          if (clampedProgress >= 0.6) {
-            const railsProgress = (clampedProgress - 0.6) / 0.4;
-            const clampedRails = Math.min(Math.max(railsProgress, 0), 1);
-            setVerticalBentoRailsOpacity(clampedRails);
-            setVerticalBentoRailsTranslateY(40 * (1 - clampedRails));
+          if (sectionTop <= startPoint && sectionTop >= endPoint) {
+            const progress = (startPoint - sectionTop) / distance;
+            const clampedProgress = Math.min(Math.max(progress, 0), 1);
+            setVerticalBentoTitleOpacity(clampedProgress);
+            setVerticalBentoTitleTranslateY(40 * (1 - clampedProgress));
+          } else if (sectionTop < endPoint) {
+            setVerticalBentoTitleOpacity(1);
+            setVerticalBentoTitleTranslateY(0);
+          } else {
+            setVerticalBentoTitleOpacity(0);
+            setVerticalBentoTitleTranslateY(40);
+          }
+        }
+
+        // Vertical bento rails: staggered fade-in + scrub timeline (stack ref only)
+        if (verticalBentoSectionRef.current) {
+          const el = verticalBentoSectionRef.current;
+          const rect = el.getBoundingClientRect();
+          const sectionTop = rect.top;
+          const startPoint = viewportHeight * 0.85;
+          const endPoint = viewportHeight * 0.6;
+          const distance = startPoint - endPoint;
+
+          if (sectionTop <= startPoint && sectionTop >= endPoint) {
+            const progress = (startPoint - sectionTop) / distance;
+            const clampedProgress = Math.min(Math.max(progress, 0), 1);
+            if (clampedProgress >= 0.6) {
+              const railsProgress = (clampedProgress - 0.6) / 0.4;
+              const clampedRails = Math.min(Math.max(railsProgress, 0), 1);
+              setVerticalBentoRailsOpacity(clampedRails);
+              setVerticalBentoRailsTranslateY(40 * (1 - clampedRails));
+            } else {
+              setVerticalBentoRailsOpacity(0);
+              setVerticalBentoRailsTranslateY(40);
+            }
+          } else if (sectionTop < endPoint) {
+            setVerticalBentoRailsOpacity(1);
+            setVerticalBentoRailsTranslateY(0);
           } else {
             setVerticalBentoRailsOpacity(0);
             setVerticalBentoRailsTranslateY(40);
           }
-        } else if (sectionTop < endPoint) {
-          setVerticalBentoRailsOpacity(1);
-          setVerticalBentoRailsTranslateY(0);
-        } else {
-          setVerticalBentoRailsOpacity(0);
-          setVerticalBentoRailsTranslateY(40);
-        }
 
-        const { scrollablePx, anchor, milestones } = vbMetrics;
-        const sp = Math.max(scrollablePx, 1e-6);
-        const scrolled = Math.min(Math.max(-rect.top + anchor, 0), sp);
-        const uRaw = scrolled / sp;
-        const u = vbGateVerticalBentoUTimeline(uRaw, milestones, sectionTop, viewportHeight);
-        /** When the bento band is fully above the viewport, u only needs coarse updates — avoids micro-jitter fighting scroll. */
-        const uEps = rect.bottom < 0 ? 0.035 : 0.0025;
-        setVerticalBentoU((prev) => (Math.abs(prev - u) < uEps ? prev : u));
+          const { scrollablePx, anchor, milestones } = vbMetrics;
+          const sp = Math.max(scrollablePx, 1e-6);
+          const scrolled = Math.min(Math.max(-rect.top + anchor, 0), sp);
+          const uRaw = scrolled / sp;
+          const u = vbGateVerticalBentoUTimeline(uRaw, milestones, sectionTop, viewportHeight);
+          /** When the bento band is fully above the viewport, u only needs coarse updates — avoids micro-jitter fighting scroll. */
+          const uEps = rect.bottom < 0 ? 0.035 : 0.0025;
+          setVerticalBentoU((prev) => (Math.abs(prev - u) < uEps ? prev : u));
+        }
       }
     };
 
-    const onScroll = () => {
+    const onScrollOrWheel = () => {
+      scrollWheelBusyRef.current = true;
+      if (scrollQuietTimerRef.current != null) {
+        clearTimeout(scrollQuietTimerRef.current);
+      }
+      scrollQuietTimerRef.current = window.setTimeout(() => {
+        scrollQuietTimerRef.current = null;
+        scrollWheelBusyRef.current = false;
+      }, 110);
+
       if (scrollEffectsRafRef.current != null) return;
       scrollEffectsRafRef.current = requestAnimationFrame(runScrollEffects);
     };
 
     runScrollEffects();
 
-    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("scroll", onScrollOrWheel, { passive: true });
+    window.addEventListener("wheel", onScrollOrWheel, { passive: true });
     return () => {
-      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("scroll", onScrollOrWheel);
+      window.removeEventListener("wheel", onScrollOrWheel);
+      if (scrollQuietTimerRef.current != null) {
+        clearTimeout(scrollQuietTimerRef.current);
+        scrollQuietTimerRef.current = null;
+      }
       if (scrollEffectsRafRef.current != null) {
         cancelAnimationFrame(scrollEffectsRafRef.current);
         scrollEffectsRafRef.current = null;
