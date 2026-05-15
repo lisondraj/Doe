@@ -4061,6 +4061,103 @@ export default function DoePage() {
 
       </div>
 
+      {/* Insquiara — gradient band above footer */}
+      <section
+        aria-labelledby="insquiara-teaser-heading"
+        className="relative z-10 w-full overflow-hidden border-t border-white/[0.08]"
+        style={{
+          width: "100vw",
+          marginLeft: "calc(50% - 50vw)",
+          marginRight: "calc(50% - 50vw)",
+        }}
+      >
+        <div className="pointer-events-none absolute inset-0">
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background: `
+              linear-gradient(152deg, #1a2e34 0%, #243a40 14%, #3d2f28 32%, #6b442f 48%, #a85a34 62%, #d4893f 76%, #e8b04d 88%, #f2cf7a 100%),
+              radial-gradient(ellipse 100% 80% at 50% 110%, rgba(231, 169, 68, 0.55) 0%, transparent 58%),
+              radial-gradient(ellipse 55% 45% at 12% 18%, rgba(255, 224, 180, 0.22) 0%, transparent 52%),
+              radial-gradient(ellipse 50% 40% at 88% 22%, rgba(210, 119, 76, 0.3) 0%, transparent 55%)
+            `,
+            }}
+          />
+          <div
+            className="pointer-events-none absolute inset-0 z-[1]"
+            style={{
+              opacity: 0.55,
+              mixBlendMode: "soft-light",
+              backgroundImage: `
+              repeating-linear-gradient(
+                -32deg,
+                transparent 0px,
+                transparent 11px,
+                rgba(255, 255, 255, 0.09) 11px,
+                rgba(255, 255, 255, 0.09) 12px
+              ),
+              repeating-linear-gradient(
+                32deg,
+                transparent 0px,
+                transparent 15px,
+                rgba(30, 52, 58, 0.14) 15px,
+                rgba(30, 52, 58, 0.14) 16px
+              )
+            `,
+            }}
+          />
+          <div
+            className="pointer-events-none absolute inset-0 z-[2]"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E")`,
+              backgroundSize: "200px 200px",
+              opacity: 0.85,
+              mixBlendMode: "overlay",
+            }}
+          />
+        </div>
+        <div className="relative z-10 mx-auto flex min-h-[min(52vw,22rem)] max-w-full flex-col items-center justify-center px-6 py-[clamp(3.25rem,9vw,6.75rem)] text-center md:min-h-[min(44vw,20rem)] md:px-10 iphone-page:px-5 iphone-page:py-[clamp(3rem,11vw,6rem)]">
+          <h2
+            id="insquiara-teaser-heading"
+            className={`font-normal tracking-tight text-white drop-shadow-[0_2px_28px_rgba(0,0,0,0.28)] ${lora.className}`}
+            style={{
+              fontSize: "clamp(2.85rem, min(11vw, 12vmin), 5.75rem)",
+              lineHeight: 1.02,
+            }}
+          >
+            Insquiara
+          </h2>
+          <a
+            href="https://insquiara.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Insquiara — see what we're building (opens in new tab)"
+            className={`group mt-[clamp(1rem,3vw,1.75rem)] flex flex-col items-center gap-[clamp(0.65rem,2vw,1rem)] text-white no-underline transition-opacity hover:opacity-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/90 ${inter.className}`}
+          >
+            <span className="text-[clamp(0.9375rem,2.85vw,1.1875rem)] font-medium tracking-tight text-white/[0.88]">
+              See what we&apos;re building
+            </span>
+            <span className="flex h-[clamp(3rem,9vmin,3.75rem)] w-[clamp(3rem,9vmin,3.75rem)] shrink-0 items-center justify-center rounded-full border border-white/[0.42] bg-white/[0.08] shadow-[0_12px_40px_rgba(0,0,0,0.2)] backdrop-blur-[2px] transition-[transform,background-color,border-color] duration-200 group-hover:border-white/55 group-hover:bg-white/[0.14] group-active:scale-[0.98]">
+              <svg
+                width={26}
+                height={26}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.65}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-white/95 translate-x-[0.5px] translate-y-[0.5px]"
+                aria-hidden
+              >
+                <circle cx="12" cy="12" r="10" fill="none" />
+                <path d="M8 16L16 8M16 8H11M16 8v5" fill="none" />
+              </svg>
+            </span>
+          </a>
+        </div>
+      </section>
+
       <footer
         className="relative z-10 mt-0 flex min-h-[min(69vh,42rem)] w-screen flex-col justify-end overflow-x-clip overflow-y-visible pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] iphone-page:min-h-[66vh]"
           style={{
