@@ -3642,15 +3642,15 @@ export default function DoePage() {
         </div>
       </div>
 
-      {/* Bridge between vertical bento and Built for you — same grey grid as patient-care orbit */}
+      {/* Bridge between vertical bento and Built for you — tall testimonial band + patient-care grey grid */}
       <section
         className="relative z-10 w-full shrink-0 overflow-hidden bg-[#F7F6F3]"
-        aria-labelledby="vbento-bridge-doe"
-        style={{ minHeight: "clamp(22rem, 52vh, 38rem)" }}
+        aria-labelledby="vbento-bridge-quote"
+        style={{ minHeight: "clamp(56rem, 132vh, 112rem)" }}
       >
-        <div className="pointer-events-none absolute inset-0 z-0" aria-hidden>
+        <div className="pointer-events-none absolute inset-0 z-0 min-h-full" aria-hidden>
           <svg
-            className="pointer-events-none absolute inset-0 h-full w-full"
+            className="pointer-events-none absolute inset-0 h-full min-h-full w-full"
             xmlns="http://www.w3.org/2000/svg"
             preserveAspectRatio="none"
           >
@@ -3673,22 +3673,57 @@ export default function DoePage() {
             <rect width="100%" height="100%" fill="url(#vbentoBuiltBridgeGrid)" />
           </svg>
           <div
-            className="absolute inset-x-0 top-0 z-[1] h-[min(5rem,12vw)] bg-gradient-to-b from-[#F7F6F3] to-transparent"
+            className="absolute inset-x-0 top-0 z-[1] h-[min(6rem,14vw)] bg-gradient-to-b from-[#F7F6F3] to-transparent"
             aria-hidden
           />
           <div
-            className="absolute inset-x-0 bottom-0 z-[1] h-[min(5rem,12vw)] bg-gradient-to-t from-[#F7F6F3] to-transparent"
+            className="absolute inset-x-0 bottom-0 z-[1] h-[min(6rem,14vw)] bg-gradient-to-t from-[#F7F6F3] to-transparent"
             aria-hidden
           />
         </div>
-        <div className="relative z-[2] flex min-h-[clamp(22rem,52vh,38rem)] items-center justify-center px-4 py-14 iphone-page:py-16">
-          <p
-            id="vbento-bridge-doe"
-            className={`text-center font-normal tracking-tight text-gray-900 ${lora.className}`}
-            style={{ fontSize: "clamp(3.25rem, 14vw, 6.75rem)", lineHeight: 1 }}
+        <div
+          className={`relative z-[2] mx-auto flex w-full max-w-[min(100%,52rem)] flex-col items-end justify-center px-4 py-[clamp(4.5rem,12vh,9rem)] iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] md:py-[clamp(5.5rem,14vh,11rem)] ${narrowHorizontalInset}`}
+          style={{ minHeight: "clamp(56rem, 132vh, 112rem)" }}
+        >
+          <blockquote className="m-0 max-w-[min(100%,46rem)] text-pretty">
+            <p
+              id="vbento-bridge-quote"
+              className={`m-0 text-right font-normal tracking-[-0.02em] ${lora.className}`}
+              style={{
+                fontSize: "clamp(2.35rem, 5.75vw, 4.5rem)",
+                lineHeight: 1.2,
+                backgroundImage:
+                  "linear-gradient(168deg, #3f1d0d 0%, #7c2d12 18%, #c2410c 42%, #ea580c 58%, #9a3412 82%, #431407 100%)",
+                WebkitBackgroundClip: "text",
+                backgroundClip: "text",
+                color: "transparent",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
+              {"\u201c"}Doe has given me back so much of my time. I can now focus on my patients rather than be my own admin.
+              {"\u201d"}
+            </p>
+          </blockquote>
+          <div
+            className={`mt-[clamp(2.25rem,5vh,4rem)] flex max-w-[min(100%,46rem)] flex-row items-center justify-end gap-4 self-end text-right ${inter.className}`}
           >
-            Doe
-          </p>
+            <div className="min-w-0 text-right">
+              <p className="m-0 text-[clamp(0.8125rem,1.35vw,0.9375rem)] font-semibold leading-snug tracking-tight text-gray-900">
+                Avery Mills, MD
+              </p>
+              <p className="mt-1 m-0 text-[clamp(0.6875rem,1.15vw,0.8125rem)] font-medium leading-snug tracking-tight text-gray-600">
+                Physician · Boston, MA
+              </p>
+            </div>
+            <div
+              className="relative flex h-[clamp(3.25rem,8.5vw,4.5rem)] w-[clamp(3.25rem,8.5vw,4.5rem)] shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-gray-200 to-gray-400 ring-2 ring-white/90 shadow-[0_6px_22px_rgba(30,52,58,0.14)]"
+              aria-hidden
+            >
+              <span className="text-[clamp(0.95rem,2.1vw,1.2rem)] font-semibold tracking-tight text-gray-800">
+                AM
+              </span>
+            </div>
+          </div>
         </div>
       </section>
 
