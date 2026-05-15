@@ -1850,20 +1850,20 @@ export default function DoePage() {
                 style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
               >
                 <span className="block iphone-page:whitespace-nowrap iphone-page:text-center w-full">
-                  We&apos;re building the future of AI in
+                  AI Inbox.
                 </span>
                 <span className="block iphone-page:whitespace-nowrap iphone-page:text-center w-full">
-                  clinical practice and education.
+                  Built for Clinicians.
                 </span>
               </p>
               <a
                 href="mailto:contact@joindoe.com"
-                className={`inline-flex items-center gap-[0.95rem] rounded-full border border-white/25 bg-white/95 px-[2.35rem] py-[1.1rem] pl-[2.1rem] text-[1.1875rem] iphone-page:text-[clamp(1.05rem,4.65vw,1.25rem)] font-semibold tracking-tight text-gray-900 shadow-[0_6px_28px_rgba(0,0,0,0.16)] transition-[background-color,box-shadow,transform,border-color] duration-200 hover:bg-white hover:shadow-[0_10px_36px_rgba(0,0,0,0.2)] active:scale-[0.99] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white ${inter.className}`}
+                className={`inline-flex items-center gap-[1.05rem] rounded-full border border-white/25 bg-white/95 px-[2.65rem] py-[1.25rem] pl-[2.35rem] text-[1.3125rem] iphone-page:text-[clamp(1.12rem,4.85vw,1.375rem)] font-semibold tracking-tight text-gray-900 shadow-[0_6px_28px_rgba(0,0,0,0.16)] transition-[background-color,box-shadow,transform,border-color] duration-200 hover:bg-white hover:shadow-[0_10px_36px_rgba(0,0,0,0.2)] active:scale-[0.99] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white ${inter.className}`}
               >
                 <svg
-                  className="h-[1.5em] w-[1.5em] shrink-0 text-gray-700"
-                  width="30"
-                  height="30"
+                  className="h-[1.55em] w-[1.55em] shrink-0 text-gray-700"
+                  width="33"
+                  height="33"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
