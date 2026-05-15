@@ -94,8 +94,8 @@ const HERO_TICKER_BASE: HeroTickerSegment[] = [
   },
   {
     key: "vantage",
-    className: `${oswaldTicker.className} font-medium uppercase tracking-[0.16em] text-[clamp(1.02rem,3.15vw,1.38rem)]`,
-    lines: ["Vantage Specialty", "Partners"],
+    className: `${oswaldTicker.className} font-medium uppercase tracking-[0.12em] text-[clamp(1.02rem,3.15vw,1.38rem)]`,
+    lines: ["Vantage", "Specialty Partners"],
     adornment: "plusAfter",
   },
   {
@@ -107,7 +107,7 @@ const HERO_TICKER_BASE: HeroTickerSegment[] = [
   {
     key: "meridian",
     className: `${dmSerifDisplayTicker.className} font-normal italic tracking-[0.02em] text-[clamp(1.2rem,3.75vw,1.62rem)]`,
-    lines: ["Meridian Women's", "Health"],
+    lines: ["Meridian", "Women's Health"],
     adornment: "discAfter",
   },
   {
@@ -122,42 +122,23 @@ const HERO_TICKER_STRIP: HeroTickerSegment[] = Array.from({ length: 4 }, (_, i) 
   HERO_TICKER_BASE.map((s) => ({ ...s, key: `${s.key}-${i}` })),
 ).flat();
 
-function HeroTickerAdornment({
-  kind,
-  layout = "inline",
-}: {
-  kind: HeroTickerAdorn;
-  layout?: "inline" | "above";
-}) {
-  const above = layout === "above";
+function HeroTickerAdornment({ kind }: { kind: HeroTickerAdorn }) {
   switch (kind) {
     case "diamondBefore":
       return (
-        <span
-          className={
-            above
-              ? "mb-1 text-[1.2em] leading-none opacity-70"
-              : "mr-2 shrink-0 text-[1.08em] leading-none opacity-70"
-          }
-          aria-hidden
-        >
+        <span className="mr-1.5 shrink-0 text-[1.06em] leading-none opacity-70" aria-hidden>
           ◆
         </span>
       );
     case "sparkleBefore":
       return (
-        <span
-          className={
-            above ? "mb-0.5 text-[1.05em] opacity-80" : "mr-1.5 shrink-0 text-[0.95em] opacity-80"
-          }
-          aria-hidden
-        >
+        <span className="mr-1.5 shrink-0 text-[0.94em] leading-none opacity-80" aria-hidden>
           ✦
         </span>
       );
     case "plusAfter":
       return (
-        <span className="ml-2 shrink-0 font-sans text-[0.78em] font-medium tracking-normal opacity-75" aria-hidden>
+        <span className="ml-1.5 shrink-0 font-sans text-[0.78em] font-medium tracking-normal opacity-75" aria-hidden>
           +
         </span>
       );
@@ -170,11 +151,7 @@ function HeroTickerAdornment({
     case "clinicalCross":
       return (
         <svg
-          className={
-            above
-              ? "mb-1 h-[1.35em] w-[1.35em] shrink-0 opacity-75"
-              : "mr-2 h-[0.95em] w-[0.95em] shrink-0 opacity-75"
-          }
+          className="mr-1.5 h-[1em] w-[1em] shrink-0 opacity-75"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -2038,39 +2015,46 @@ export default function DoePage() {
             {[0, 1].map((track) => (
               <div
                 key={track}
-                className="flex shrink-0 items-center gap-x-[clamp(3.25rem,11vw,7.25rem)] pe-[clamp(3.25rem,11vw,7.25rem)] py-3 iphone-page:py-2.5"
+                className="flex shrink-0 items-start gap-x-[clamp(3.25rem,11vw,7.25rem)] pe-[clamp(3.25rem,11vw,7.25rem)] py-3 iphone-page:py-2.5"
               >
                 {HERO_TICKER_STRIP.map((seg) => {
-                  const aboveGlyph =
+                  const [line0, line1] = seg.lines;
+
+                  const row1Glyph =
                     seg.adornment === "diamondBefore" ||
                     seg.adornment === "sparkleBefore" ||
-                    seg.adornment === "clinicalCross";
-                  const lines = seg.lines;
-                  const lastIx = lines.length - 1;
+                    seg.adornment === "clinicalCross" ? (
+                      <HeroTickerAdornment kind={seg.adornment} />
+                    ) : null;
+
+                  const lineSuffix =
+                    seg.adornment === "plusAfter" ? (
+                      <HeroTickerAdornment kind="plusAfter" />
+                    ) : seg.adornment === "discAfter" ? (
+                      <HeroTickerAdornment kind="discAfter" />
+                    ) : null;
+
                   return (
                     <div
                       key={`${track}-${seg.key}`}
-                      className={`flex max-w-[min(10rem,31vw)] flex-col items-center text-center text-[rgba(248,246,243,0.26)] [text-wrap:balance] ${seg.className}`}
+                      className={`flex w-[11.75rem] shrink-0 flex-col items-center gap-2 leading-none text-[rgba(248,246,243,0.26)] ${seg.className}`}
                     >
-                      {aboveGlyph && seg.adornment && (
-                        <div className="flex justify-center">
-                          <HeroTickerAdornment kind={seg.adornment} layout="above" />
-                        </div>
-                      )}
-                      {lines.map((line, i) => (
-                        <span
-                          key={`${seg.key}-${i}`}
-                          className={`block max-w-[10rem] leading-[1.14] iphone-page:max-w-[9rem] ${i > 0 ? "mt-[0.3em]" : ""}`}
-                        >
-                          {line}
-                          {i === lastIx && seg.adornment === "plusAfter" && (
-                            <HeroTickerAdornment kind="plusAfter" layout="inline" />
-                          )}
-                          {i === lastIx && seg.adornment === "discAfter" && (
-                            <HeroTickerAdornment kind="discAfter" layout="inline" />
-                          )}
-                        </span>
-                      ))}
+                      <div className="grid min-h-[1.9rem] w-full grid-cols-1 whitespace-nowrap">
+                        {row1Glyph ? (
+                          <div className="grid grid-cols-[minmax(0,1.6rem)_1fr] items-center gap-x-[0.2rem] leading-none">
+                            <span className="flex h-full shrink-0 items-center justify-center">{row1Glyph}</span>
+                            <span className="min-w-0 text-center leading-none">{line0}</span>
+                          </div>
+                        ) : (
+                          <span className="flex min-h-[1.9rem] w-full items-center justify-center whitespace-nowrap text-center leading-none">
+                            {line0}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex min-h-[1.9rem] w-full flex-row flex-nowrap items-center justify-center gap-1 whitespace-nowrap leading-none">
+                        <span>{line1}</span>
+                        {lineSuffix}
+                      </div>
                     </div>
                   );
                 })}
