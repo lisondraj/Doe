@@ -329,9 +329,9 @@ const QUALITY_ORBIT_CHOREO_ENTER_PAUSE_MS = 520;
 
 function qualityOrbitMiniIcon(tileIndex: number): ReactElement {
   const svgProps = {
-    className: "h-[1.625rem] w-[1.625rem] shrink-0 text-white/95",
-    width: 26,
-    height: 26,
+    className: "h-[1.375rem] w-[1.375rem] shrink-0 text-white/95",
+    width: 22,
+    height: 22,
     viewBox: "0 0 24 24",
     fill: "none",
     stroke: "currentColor",
@@ -3011,8 +3011,8 @@ export default function DoePage() {
           <svg
             className="pointer-events-none absolute left-0 w-full"
             style={{
-              top: "-26%",
-              height: "152%",
+              top: "-40%",
+              height: "165%",
             }}
             xmlns="http://www.w3.org/2000/svg"
             preserveAspectRatio="none"
@@ -3120,7 +3120,7 @@ export default function DoePage() {
                   left: `${p.leftPct}%`,
                   top: `${p.topPct}%`,
                   width: "clamp(7.5rem, 30.5vw, 12.85rem)",
-                  height: "clamp(6rem, 23vw, 10rem)",
+                  height: "clamp(4.35rem, 16vw, 7.25rem)",
                   boxShadow:
                     "0 18px 44px rgba(214, 119, 76, 0.34), 0 8px 20px rgba(30, 52, 58, 0.11), 0 3px 8px rgba(255, 255, 255, 0.48)",
                   opacity: qualityOrbitChoreography.diagram ? 1 : 0,
@@ -3172,14 +3172,14 @@ export default function DoePage() {
                   <rect width="100%" height="100%" fill={`url(#quality-orbit-lines-${i})`} />
                 </svg>
                 <div
-                  className={`relative z-[4] pointer-events-none flex h-full min-h-0 flex-col items-center justify-center gap-2 px-2.5 py-2 text-center ${inter.className}`}
+                  className={`relative z-[4] pointer-events-none flex h-full min-h-0 flex-col items-center justify-center gap-1 px-2 py-1 text-center ${inter.className}`}
                 >
                   {qualityOrbitMiniIcon(i)}
                   <span
-                    className={`max-w-[min(100%,11rem)] font-semibold leading-tight tracking-tight text-white/95 drop-shadow-[0_1px_12px_rgba(0,0,0,0.28)] ${
+                    className={`max-w-[min(100%,11rem)] font-semibold leading-snug tracking-tight text-white/95 drop-shadow-[0_1px_12px_rgba(0,0,0,0.28)] ${
                       QUALITY_ORBIT_TILE_LABELS[i].length > 1
-                        ? "text-[clamp(0.72rem,2.65vw,0.9375rem)]"
-                        : "text-[clamp(0.82rem,2.95vw,1.0625rem)]"
+                        ? "text-[clamp(0.78rem,2.95vw,1.0625rem)]"
+                        : "text-[clamp(0.9rem,3.25vw,1.1875rem)]"
                     }`}
                   >
                     {QUALITY_ORBIT_TILE_LABELS[i].map((line) => (
