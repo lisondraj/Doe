@@ -283,12 +283,13 @@ function vbComputeScrollMetrics(
 ): VerticalBentoScrollMetrics {
   const vh = Math.max(innerHeightPx, 320);
   const openPx = Math.round(Math.max(vh * 0.82, 400));
-  /** Long dwell on first two rails; third rail gets a full vertical read (≈1 viewport) so the scrub bar hits 100% once. */
-  const dwellLongPx = Math.round(Math.max(vh * 5.05, 2800));
+  /** Dwell on first two rails — shorter than before so momentum scroll isn’t “trapped” in a huge sticky band. */
+  const dwellLongPx = Math.round(Math.max(vh * 2.2, 1040));
+  /** Third rail: ~1 viewport so the progress bar still completes one full pass. */
   const dwellThirdPx = Math.round(Math.max(vh * 1.02, 600));
   const swapPx = Math.round(Math.max(vh * 0.5, 360));
   const exitPx = Math.round(Math.max(vh * 0.52, 340));
-  const tailPx = Math.round(Math.max(vh * 0.2, 160));
+  const tailPx = Math.round(Math.max(vh * 0.22, 180));
   const scrollablePx =
     openPx + dwellLongPx + swapPx + dwellLongPx + swapPx + dwellThirdPx + exitPx + tailPx;
   const sectionMinPx = scrollablePx + vh;
@@ -737,12 +738,11 @@ export default function DoePage() {
       );
     };
     window.addEventListener("resize", onResize);
+    /** `visualViewport.resize` only — avoid `scroll` here or iOS will recompute min-heights every pan frame and fight scroll position. */
     window.visualViewport?.addEventListener("resize", onResize);
-    window.visualViewport?.addEventListener("scroll", onResize);
     return () => {
       window.removeEventListener("resize", onResize);
       window.visualViewport?.removeEventListener("resize", onResize);
-      window.visualViewport?.removeEventListener("scroll", onResize);
     };
   }, []);
 
@@ -1519,7 +1519,7 @@ export default function DoePage() {
   );
   return (
     <div
-      className="relative overflow-x-hidden overflow-y-visible overscroll-none doeforvc-iphone-root"
+      className="relative overflow-x-hidden overflow-y-visible overscroll-y-auto doeforvc-iphone-root"
       data-doeforvc-view="iphone"
       style={{
         backgroundColor: "#F7F6F3",
