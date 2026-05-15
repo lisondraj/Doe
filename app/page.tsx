@@ -156,10 +156,13 @@ function vbComputeScrollMetrics(
   const vh = Math.max(innerHeightPx, 320);
   const openPx = Math.round(Math.max(vh * 0.82, 400));
   const dwellPx = Math.round(Math.max(vh * 5.05, 2800));
+  /** Shorter than rail 0/1 dwell so scroll reaches the spacer / Built-for-you band before finishing the third dwell scrub */
+  const dwellLastPx = Math.max(Math.round(dwellPx * 0.42), Math.round(vh * 2.15));
   const swapPx = Math.round(Math.max(vh * 0.5, 360));
   const exitPx = Math.round(Math.max(vh * 0.72, 420));
   const tailPx = Math.round(Math.max(vh * 0.22, 160));
-  const scrollablePx = openPx + dwellPx + swapPx + dwellPx + swapPx + dwellPx + exitPx + tailPx;
+  const scrollablePx =
+    openPx + dwellPx + swapPx + dwellPx + swapPx + dwellLastPx + exitPx + tailPx;
   const sectionMinPx = scrollablePx + vh;
   const anchor = Math.max(72, Math.min(140, Math.round(vh * 0.095)));
   const railsVhIn = railsLayoutHeightPx ?? vh;
@@ -170,7 +173,7 @@ function vbComputeScrollMetrics(
     swapPx,
     dwellPx,
     swapPx,
-    dwellPx,
+    dwellLastPx,
     exitPx,
     tailPx,
   ]);
