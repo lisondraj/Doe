@@ -586,7 +586,6 @@ function vbRailsEffectiveInnerHeight(innerWidthPx: number, innerHeightPx: number
 }
 
 export default function DoePage() {
-  const [gradientAngle, setGradientAngle] = useState(135);
   const [colorShift, setColorShift] = useState(0);
   const [scrollY, setScrollY] = useState(0);
   /** Coalesce scroll-driven reads + setState to one rAF per frame (smoother momentum scroll). */
@@ -1024,16 +1023,23 @@ export default function DoePage() {
   useEffect(() => {
     let animationFrameId: number;
     let lastTime = performance.now();
+    /** Throttle palette drift so we do not re-render the whole page at display refresh while scrolling. */
+    let colorAccumMs = 0;
+    const colorStepMs = 200;
 
     const animate = (currentTime: number) => {
       const deltaTime = currentTime - lastTime;
       lastTime = currentTime;
 
-      // Slowly rotate gradient angle
-      setGradientAngle((prev) => (prev + (deltaTime * 0.01)) % 360);
-      
-      // Shift colors subtly
-      setColorShift((prev) => (prev + (deltaTime * 0.02)) % 100);
+      if (document.visibilityState === "visible") {
+        colorAccumMs += deltaTime;
+        if (colorAccumMs >= colorStepMs) {
+          const steps = Math.floor(colorAccumMs / colorStepMs);
+          colorAccumMs -= steps * colorStepMs;
+          const delta = steps * colorStepMs * 0.02;
+          setColorShift((prev) => (prev + delta) % 100);
+        }
+      }
 
       animationFrameId = requestAnimationFrame(animate);
     };
@@ -1191,7 +1197,9 @@ export default function DoePage() {
         const scrolled = Math.min(Math.max(-rect.top + anchor, 0), sp);
         const uRaw = scrolled / sp;
         const u = vbGateVerticalBentoUTimeline(uRaw, milestones, sectionTop, viewportHeight);
-        setVerticalBentoU((prev) => (Math.abs(prev - u) < 0.0025 ? prev : u));
+        /** When the bento band is fully above the viewport, u only needs coarse updates — avoids micro-jitter fighting scroll. */
+        const uEps = rect.bottom < 0 ? 0.035 : 0.0025;
+        setVerticalBentoU((prev) => (Math.abs(prev - u) < uEps ? prev : u));
       }
     };
 
