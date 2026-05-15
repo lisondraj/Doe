@@ -286,6 +286,19 @@ const VBENTO_WORKFLOW_GRADIENTS: [string, string, string] = [
 ];
 const VBENTO_GRAIN_BG = `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E")`;
 
+/** Six rounded tiles around the quality headline (percent positions; viewBox 400×400). */
+const QUALITY_ORBIT_ANCHORS_PCT: ReadonlyArray<{ leftPct: number; topPct: number }> = [
+  { leftPct: 50, topPct: 9.5 },
+  { leftPct: 79.5, topPct: 28.75 },
+  { leftPct: 79.5, topPct: 71.25 },
+  { leftPct: 50, topPct: 90.5 },
+  { leftPct: 20.5, topPct: 71.25 },
+  { leftPct: 20.5, topPct: 28.75 },
+];
+/** Closed smooth loop through the six anchors (light grey connector). */
+const QUALITY_ORBIT_CONNECTOR_D =
+  "M 200 38 C 260 52 300 82 318 115 C 332 148 332 252 318 285 C 302 328 260 356 200 362 C 140 356 98 328 82 285 C 68 252 68 148 82 115 C 98 82 140 52 200 38 Z";
+
 /** Effective layout viewport height inside `zoom < 1` canvas (matches `100dvh / zoom` compensation). */
 function vbRailsEffectiveInnerHeight(innerWidthPx: number, innerHeightPx: number): number {
   const rz = doeforvcRootZoom(innerWidthPx);
@@ -3014,6 +3027,108 @@ export default function DoePage() {
           </div>
         </div>
       </div>
+
+      {/* Quality orbit — between carousel (section 2) and vertical bento (section 3) */}
+      <section
+        className="relative z-10 w-full bg-[#F7F6F3] px-4 py-[clamp(3.5rem,10vw,6.5rem)] iphone-page:py-16"
+        aria-labelledby="quality-orbit-heading"
+      >
+        <h2 id="quality-orbit-heading" className="sr-only">
+          Only high-quality patient care
+        </h2>
+        <div
+          className={`relative mx-auto w-full max-w-[min(100%,36rem)] md:max-w-[min(100%,44rem)] ${narrowHorizontalInset}`}
+          style={{ minHeight: "clamp(22rem, 62vw, 34rem)" }}
+        >
+          <div className="relative mx-auto aspect-[10/12] w-full max-w-[28rem] md:max-w-[36rem]">
+            <svg
+              className="absolute inset-0 h-full w-full pointer-events-none z-0"
+              viewBox="0 0 400 400"
+              preserveAspectRatio="xMidYMid meet"
+              aria-hidden
+            >
+              <path
+                fill="none"
+                stroke="#d4d4d4"
+                strokeWidth={1.35}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d={QUALITY_ORBIT_CONNECTOR_D}
+              />
+            </svg>
+
+            {QUALITY_ORBIT_ANCHORS_PCT.map((p, i) => (
+              <div
+                key={i}
+                className="absolute z-[2] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl iphone-page:rounded-[0.85rem]"
+                style={{
+                  left: `${p.leftPct}%`,
+                  top: `${p.topPct}%`,
+                  width: "clamp(4.25rem, 19vw, 7.25rem)",
+                  height: "clamp(3rem, 13.5vw, 5rem)",
+                  boxShadow:
+                    "0 14px 38px rgba(214, 119, 76, 0.32), 0 6px 16px rgba(30, 52, 58, 0.1), 0 2px 6px rgba(255, 255, 255, 0.45)",
+                }}
+              >
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, #E7A944 0%, #D49D4F 28%, #D2774C 62%, #b84e2e 100%)",
+                  }}
+                />
+                <div
+                  className="absolute inset-0 pointer-events-none rounded-2xl"
+                  style={{
+                    backgroundImage: VBENTO_GRAIN_BG,
+                    backgroundSize: "200px 200px",
+                    opacity: 0.9,
+                    mixBlendMode: "overlay",
+                  }}
+                />
+                <svg
+                  className="absolute inset-0 h-full w-full pointer-events-none rounded-2xl"
+                  xmlns="http://www.w3.org/2000/svg"
+                  preserveAspectRatio="none"
+                  aria-hidden
+                >
+                  <defs>
+                    <pattern
+                      id={`quality-orbit-lines-${i}`}
+                      patternUnits="userSpaceOnUse"
+                      width={28}
+                      height={28}
+                      patternTransform="rotate(42)"
+                    >
+                      <path
+                        d="M 0 0 L 28 0 M 0 0 L 0 28"
+                        fill="none"
+                        stroke="rgba(255, 255, 255, 0.22)"
+                        strokeWidth={0.75}
+                      />
+                    </pattern>
+                  </defs>
+                  <rect width="100%" height="100%" fill={`url(#quality-orbit-lines-${i})`} />
+                </svg>
+              </div>
+            ))}
+
+            <div className="absolute inset-0 z-[3] flex items-center justify-center px-10 pointer-events-none">
+              <p
+                className={`text-center font-normal tracking-tight text-gray-900 leading-[1.12] ${lora.className}`}
+                style={{ textWrap: "balance" }}
+              >
+                <span className="block text-[clamp(1.35rem,4.8vw,1.95rem)] md:text-[clamp(1.55rem,2.8vw,2.15rem)]">
+                  Only high-quality
+                </span>
+                <span className="mt-1 block text-[clamp(1.35rem,4.8vw,1.95rem)] md:text-[clamp(1.55rem,2.8vw,2.15rem)]">
+                  patient care
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Vertical bento rails — pinned stack + scrub */}
       <div
