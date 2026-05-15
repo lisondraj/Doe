@@ -652,6 +652,8 @@ export default function DoePage() {
   const bentoBridgeSectionRef = useRef<HTMLElement | null>(null);
   /** Bridge testimonial: in-view triggers staged reveal (disk → quote → meta) + typewriter */
   const [bentoBridgeInView, setBentoBridgeInView] = useState(false);
+  /** Whole testimonial column fades/slides in once the bridge is allowed to animate (after vb cleared + in view). */
+  const [bentoBridgeSectionEntered, setBentoBridgeSectionEntered] = useState(false);
   /** 0 idle, 1 disk, 2 quote (+ typewriter), 3 attribution */
   const [bentoBridgeStage, setBentoBridgeStage] = useState(0);
   const [bentoBridgeTypewriterOn, setBentoBridgeTypewriterOn] = useState(false);
@@ -1014,22 +1016,25 @@ export default function DoePage() {
     const mq =
       typeof window !== "undefined" ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
     if (mq?.matches) {
+      setBentoBridgeSectionEntered(true);
       setBentoBridgeStage(3);
       setBentoBridgeTypedLen(vbBridgeGraphemeLen(full));
       setBentoBridgeTypewriterOn(false);
       return;
     }
+    setBentoBridgeSectionEntered(true);
+    /** Medallion is stage 1 immediately so it leads the column fade; quote and meta follow. */
     setBentoBridgeStage(1);
     const tQuote = window.setTimeout(() => {
       if (!alive) return;
       setBentoBridgeTypedLen(0);
       setBentoBridgeStage(2);
       setBentoBridgeTypewriterOn(true);
-    }, 460);
+    }, 580);
     const tMeta = window.setTimeout(() => {
       if (!alive) return;
       setBentoBridgeStage(3);
-    }, 1180);
+    }, 1280);
     return () => {
       alive = false;
       window.clearTimeout(tQuote);
@@ -3977,13 +3982,15 @@ export default function DoePage() {
           />
         </div>
         <div
-          className={`relative z-[2] mx-auto flex w-full max-w-[min(100%,40rem)] flex-col items-start justify-center px-4 pt-[clamp(4.25rem,11vh,7rem)] pb-[clamp(4.5rem,12vh,9rem)] iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] md:pt-[clamp(5.25rem,12vh,8rem)] md:pb-[clamp(5.5rem,14vh,11rem)] ${narrowHorizontalInset}`}
+          className={`relative z-[2] mx-auto flex w-full max-w-[min(100%,40rem)] flex-col items-start justify-center px-4 pt-[clamp(4.25rem,11vh,7rem)] pb-[clamp(4.5rem,12vh,9rem)] iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] md:pt-[clamp(5.25rem,12vh,8rem)] md:pb-[clamp(5.5rem,14vh,11rem)] ${narrowHorizontalInset} transition-[opacity,transform] duration-[820ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:duration-300 ${
+            bentoBridgeSectionEntered ? "translate-y-0 opacity-100" : "translate-y-7 opacity-0"
+          }`}
           style={{ minHeight: "clamp(56rem, 132vh, 112rem)" }}
         >
           {/** Medallion — same radial + grain + polar grid as orange “Built for you” panel */}
           <div
-            className={`mb-[clamp(2.75rem,6.5vh,4.75rem)] flex w-full justify-start transition-[opacity,transform] duration-[780ms] ease-out motion-reduce:duration-300 ${
-              bentoBridgeStage >= 1 ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"
+            className={`mb-[clamp(2.75rem,6.5vh,4.75rem)] flex w-full justify-start transition-[opacity,transform] duration-[920ms] ease-out motion-reduce:duration-300 ${
+              bentoBridgeStage >= 1 ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
             }`}
             aria-hidden
           >
@@ -4047,8 +4054,8 @@ export default function DoePage() {
           </div>
 
           <div
-            className={`w-full transition-[opacity,transform] duration-[780ms] ease-out motion-reduce:duration-300 ${
-              bentoBridgeStage >= 2 ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"
+            className={`w-full transition-[opacity,transform] duration-[820ms] ease-out motion-reduce:duration-300 ${
+              bentoBridgeStage >= 2 ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
             }`}
           >
             <div
@@ -4114,8 +4121,8 @@ export default function DoePage() {
             </div>
 
             <div
-              className={`mt-[clamp(2.5rem,5.5vh,4.25rem)] flex w-full flex-col items-start justify-start gap-5 transition-[opacity,transform] duration-[780ms] ease-out motion-reduce:duration-300 ${
-                bentoBridgeStage >= 3 ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"
+              className={`mt-[clamp(2.5rem,5.5vh,4.25rem)] flex w-full flex-col items-start justify-start gap-5 transition-[opacity,transform] duration-[820ms] ease-out motion-reduce:duration-300 ${
+                bentoBridgeStage >= 3 ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
               } ${inter.className}`}
             >
               <div
