@@ -11,6 +11,7 @@ import {
 } from "next/font/google";
 import Link from "next/link";
 import { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } from "react";
+import { createPortal } from "react-dom";
 import type { ReactElement } from "react";
 
 import {
@@ -606,6 +607,8 @@ export default function DoePage() {
   /** Featured strip carousel at bottom of the phone nav sheet */
   const [mobileNavFooterSlide, setMobileNavFooterSlide] = useState(0);
   const mobileNavFooterCarouselRef = useRef<HTMLDivElement>(null);
+  /** Body portal for the phone menu — keeps footer carousel out of the CSS-zoom root (matches blog / DoeIphoneSiteNav). */
+  const [navPortalMounted, setNavPortalMounted] = useState(false);
   const [hoveredBox, setHoveredBox] = useState<number | null>(null);
   const [expandedBentoBox, setExpandedBentoBox] = useState<number | null>(null);
   const [hoveredBentoBox, setHoveredBentoBox] = useState<number | null>(null);
@@ -844,6 +847,10 @@ export default function DoePage() {
     }, 4000);
     return () => window.clearInterval(id);
   }, [mobileNavOpen]);
+
+  useEffect(() => {
+    setNavPortalMounted(true);
+  }, []);
 
   useEffect(() => {
     const id = window.setInterval(() => {
@@ -1744,7 +1751,9 @@ export default function DoePage() {
         {/* Navigation Bar */}
         <nav
           ref={navBarRowRef}
-          className="fixed top-0 left-0 right-0 z-50 iphone-page:pt-[env(safe-area-inset-top,0px)]"
+          className={`fixed top-0 left-0 right-0 iphone-page:pt-[env(safe-area-inset-top,0px)] ${
+            isPhoneLayout && mobileNavOpen ? "z-[100]" : "z-50"
+          }`}
           style={{ 
             /** Phone + open sheet: solid bar so safe-area + controls aren’t over transparent hero. */
             backgroundColor:
@@ -1982,22 +1991,26 @@ export default function DoePage() {
           </div>
         </nav>
 
-        {/* iPhone: menu panel below fixed nav (nav stays put; page dims behind) */}
-        {isPhoneLayout && mobileNavOpen && (
-          <>
+        {/* iPhone: menu panel — portaled to body so it is not inside the root CSS `zoom` canvas (carousel snap + widths match blog / DoeIphoneSiteNav). */}
+        {navPortalMounted &&
+          isPhoneLayout &&
+          mobileNavOpen &&
+          createPortal(
+            <>
             <button
               type="button"
-              className="fixed inset-0 z-[40] cursor-pointer bg-black/25 transition-opacity duration-300 ease-out"
+              className="fixed inset-0 z-[90] cursor-pointer bg-black/25 transition-opacity duration-300 ease-out"
               aria-label="Close navigation menu"
               onClick={() => setMobileNavOpen(false)}
             />
             {/*
               Sheet is full-screen (top:0) so CSS-zoom measurement errors can't
-              create a hero-peek gap. The nav (z-50) sits on top; the list is
-              padded down by iphoneMenuTopPx so content appears right below it.
+              create a hero-peek gap. The fixed nav (z-100 while open) sits above
+              this layer; the list is padded down by iphoneMenuTopPx so content
+              appears right below it.
             */}
             <div
-              className="fixed inset-0 z-[45] pointer-events-none"
+              className="fixed inset-0 z-[95] pointer-events-none"
               role="presentation"
             >
               {/* Beige fill behind the nav chrome area — no gap possible */}
@@ -2172,24 +2185,16 @@ export default function DoePage() {
                           </div>
                         </div>
                         <div>
-                          <button
-                            type="button"
-                            className={`w-full text-left active:opacity-80 transition-opacity ${inter.className}`}
-                            onClick={() => {
-                              setMobileNavOpen(false);
-                              requestAnimationFrame(() => {
-                                carouselSectionRef.current?.scrollIntoView({
-                                  behavior: "smooth",
-                                  block: "start",
-                                });
-                              });
-                            }}
+                          <Link
+                            href="/#students"
+                            className={`block w-full text-left active:opacity-80 transition-opacity ${inter.className}`}
+                            onClick={() => setMobileNavOpen(false)}
                             aria-label="See what we are building"
                           >
                             <span className="text-[1.5rem] iphone-page:text-[clamp(1.38rem,0.88rem+2.3vmin,2.45rem)] font-medium text-gray-800 tracking-tight leading-snug underline decoration-gray-800/80 decoration-[2.5px] underline-offset-[5px]">
                               See what we&apos;re building&nbsp;→
                             </span>
-                          </button>
+                          </Link>
                           <p
                             className={`mt-1.5 text-[1.0625rem] iphone-page:text-[clamp(0.98rem,0.78rem+1.15vmin,1.45rem)] font-medium tracking-tight text-gray-500 ${inter.className}`}
                           >
@@ -2203,8 +2208,9 @@ export default function DoePage() {
                 </div>
               </div>
             </div>
-          </>
-        )}
+          </>,
+            document.body,
+          )}
 
         {/* Hero Header - Centered, Contained in Gradient Circle */}
         <div
