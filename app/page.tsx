@@ -71,12 +71,6 @@ const slideCaptionFont = { fontFamily: "system-ui, -apple-system, sans-serif" } 
 const narrowHorizontalInset =
   "iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))]";
 
-/** Expanded-nav footer carousel: fixed “artboard” size; `scale` shrinks it like a bitmap when the sheet is tight. */
-const MOBILE_NAV_FOOTER_DESIGN_W_PX = 390;
-const MOBILE_NAV_FOOTER_DESIGN_H_PX = 728;
-/** Minimum vertical space left for the accordion list above the footer. */
-const MOBILE_NAV_FOOTER_RESERVED_NAV_PX = 212;
-
 /** Fake practice / vendor names for hero marquee only — decorative, not real partners. */
 type HeroTickerAdorn =
   | "diamondBefore"
@@ -614,8 +608,6 @@ export default function DoePage() {
   /** Featured strip carousel at bottom of the phone nav sheet */
   const [mobileNavFooterSlide, setMobileNavFooterSlide] = useState(0);
   const mobileNavFooterCarouselRef = useRef<HTMLDivElement>(null);
-  /** Uniform scale for the nav-footer carousel artboard (1 = unchanged vs prior layout). */
-  const [mobileNavFooterFitScale, setMobileNavFooterFitScale] = useState(1);
   /** Body portal for the phone menu — keeps footer carousel out of the CSS-zoom root (matches blog / DoeIphoneSiteNav). */
   const [navPortalMounted, setNavPortalMounted] = useState(false);
   const [hoveredBox, setHoveredBox] = useState<number | null>(null);
@@ -759,8 +751,8 @@ export default function DoePage() {
     if (!navEl) return;
     const update = () => {
       const raw = navEl.getBoundingClientRect().bottom;
-      /** Align sheet under measured chrome; ceil + small nudge so list titles never tuck under the fixed Doe bar on resize. */
-      setIphoneMenuTopPx(Math.max(0, Math.ceil(raw) - 5));
+      /** Pull sheet slightly under measured chrome to kill subpixel/zoom seam above list */
+      setIphoneMenuTopPx(Math.max(0, Math.floor(raw) - 6));
     };
     update();
     let raf1 = 0;
@@ -781,45 +773,7 @@ export default function DoePage() {
       window.removeEventListener("resize", update);
       window.visualViewport?.removeEventListener("resize", update);
     };
-  }, [mobileNavOpen, viewportWidth, appViewport.width, appViewport.height]);
-
-  useLayoutEffect(() => {
-    if (!mobileNavOpen) {
-      setMobileNavFooterFitScale(1);
-      return;
-    }
-    const fit = () => {
-      const carousel = mobileNavFooterCarouselRef.current;
-      const dialog = carousel?.closest('[role="dialog"]') as HTMLElement | null;
-      if (!carousel || !dialog) return;
-      const cw = carousel.clientWidth;
-      const dialogH = dialog.clientHeight;
-      if (cw <= 0 || dialogH <= 0) return;
-      const sW = cw / MOBILE_NAV_FOOTER_DESIGN_W_PX;
-      /** Only height-bind when the sheet is very short (e.g. resized devtools); otherwise keep scale driven by width so default phones stay at 1. */
-      const crampedVertical = dialogH < 660;
-      const sH = crampedVertical
-        ? (dialogH - MOBILE_NAV_FOOTER_RESERVED_NAV_PX) / MOBILE_NAV_FOOTER_DESIGN_H_PX
-        : 1.25;
-      const next = Math.min(1, sW, sH);
-      const clamped = Math.max(0.5, next);
-      setMobileNavFooterFitScale((prev) => (Math.abs(prev - clamped) < 0.006 ? prev : clamped));
-    };
-
-    fit();
-    const carousel = mobileNavFooterCarouselRef.current;
-    const dialog = carousel?.closest('[role="dialog"]') as HTMLElement | null;
-    const ro = new ResizeObserver(fit);
-    if (carousel) ro.observe(carousel);
-    if (dialog) ro.observe(dialog);
-    window.addEventListener("resize", fit);
-    window.visualViewport?.addEventListener("resize", fit);
-    return () => {
-      ro.disconnect();
-      window.removeEventListener("resize", fit);
-      window.visualViewport?.removeEventListener("resize", fit);
-    };
-  }, [mobileNavOpen, appViewport.width, appViewport.height]);
+  }, [mobileNavOpen, viewportWidth]);
 
   useLayoutEffect(() => {
     const ih = typeof window !== "undefined" ? window.innerHeight : 800;
@@ -2154,7 +2108,7 @@ export default function DoePage() {
                 </nav>
                 {/* Footer — swipeable carousel: gradient capsule + outside CTA row per slide */}
                 <div
-                  className="shrink-0 min-h-0 pb-[max(1rem,calc(env(safe-area-inset-bottom,0px)+10px))] iphone-page:pb-[max(0.9375rem,calc(env(safe-area-inset-bottom,0px)+clamp(10px,1.85vmin,20px)))] pt-4 iphone-page:pt-[clamp(0.75rem,0.52rem+1.05vmin,1.25rem)] border-t border-[#ECEAE6]"
+                  className="shrink-0 pb-[max(1rem,calc(env(safe-area-inset-bottom,0px)+10px))] iphone-page:pb-[max(0.9375rem,calc(env(safe-area-inset-bottom,0px)+clamp(10px,1.85vmin,20px)))] pt-4 iphone-page:pt-[clamp(0.75rem,0.52rem+1.05vmin,1.25rem)] border-t border-[#ECEAE6]"
                 >
                   <div
                     ref={mobileNavFooterCarouselRef}
@@ -2176,21 +2130,9 @@ export default function DoePage() {
                     {MOBILE_NAV_FOOTER_SLIDES.map((slide) => (
                       <div
                         key={slide.boxTitle}
-                        className="flex w-full min-w-full shrink-0 snap-center flex-col box-border py-3 pl-[max(1rem,env(safe-area-inset-left,0px))] pr-[max(1rem,env(safe-area-inset-right,0px))] iphone-page:py-[clamp(0.75rem,0.5rem+1vmin,1.125rem)] iphone-page:pl-[max(1rem,calc(env(safe-area-inset-left,0px)+0.5rem))] iphone-page:pr-[max(1rem,calc(env(safe-area-inset-right,0px)+0.5rem))]"
+                        className="w-full min-w-full shrink-0 snap-center box-border space-y-3 py-3 pl-[max(1rem,env(safe-area-inset-left,0px))] pr-[max(1rem,env(safe-area-inset-right,0px))] iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)] iphone-page:py-[clamp(0.75rem,0.5rem+1vmin,1.125rem)] iphone-page:pl-[max(1rem,calc(env(safe-area-inset-left,0px)+0.5rem))] iphone-page:pr-[max(1rem,calc(env(safe-area-inset-right,0px)+0.5rem))]"
                       >
-                        <div
-                          className="flex w-full shrink-0 justify-center overflow-x-clip"
-                          style={{ height: MOBILE_NAV_FOOTER_DESIGN_H_PX * mobileNavFooterFitScale }}
-                        >
-                          <div
-                            className="relative shrink-0 space-y-3 iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)]"
-                            style={{
-                              width: MOBILE_NAV_FOOTER_DESIGN_W_PX,
-                              height: MOBILE_NAV_FOOTER_DESIGN_H_PX,
-                              transform: `scale(${mobileNavFooterFitScale})`,
-                              transformOrigin: "top center",
-                            }}
-                          >
+                        <div className="w-full space-y-3 iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)]">
                         <div className="relative rounded-[1.375rem] iphone-page:rounded-[clamp(1.2rem,1rem+1.4vmin,2.1rem)] overflow-hidden min-h-[30rem] iphone-page:min-h-[clamp(22rem,58vmin,48rem)] shadow-[0_10px_32px_rgba(0,0,0,0.12)]">
                           <div
                             className="absolute inset-0"
@@ -2253,7 +2195,6 @@ export default function DoePage() {
                             {slide.date}
                           </p>
                         </div>
-                          </div>
                         </div>
                       </div>
                     ))}
