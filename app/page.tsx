@@ -283,12 +283,12 @@ function vbComputeScrollMetrics(
 ): VerticalBentoScrollMetrics {
   const vh = Math.max(innerHeightPx, 320);
   const openPx = Math.round(Math.max(vh * 0.82, 400));
+  /** Long dwell on first two rails; third rail gets a full vertical read (≈1 viewport) so the scrub bar hits 100% once. */
   const dwellLongPx = Math.round(Math.max(vh * 5.05, 2800));
-  /** Rail 3: short dwell + tight exit/tail so the page can scroll into the spacer before the skinny bar completes the third phase. */
-  const dwellThirdPx = Math.round(Math.max(vh * 0.16, 88));
+  const dwellThirdPx = Math.round(Math.max(vh * 1.02, 600));
   const swapPx = Math.round(Math.max(vh * 0.5, 360));
-  const exitPx = Math.round(Math.max(vh * 0.3, 180));
-  const tailPx = Math.round(Math.max(vh * 0.06, 72));
+  const exitPx = Math.round(Math.max(vh * 0.52, 340));
+  const tailPx = Math.round(Math.max(vh * 0.2, 160));
   const scrollablePx =
     openPx + dwellLongPx + swapPx + dwellLongPx + swapPx + dwellThirdPx + exitPx + tailPx;
   const sectionMinPx = scrollablePx + vh;
@@ -358,20 +358,25 @@ function vbDeriveRails(
 /** Normalized scroll progress inside the active milestone slice (fills the skinny bar “within” one phase). */
 function vbPhaseLocalProgress(uIn: number, m: VerticalBentoMilestonesU): number {
   const u = Math.min(Math.max(uIn, 0), 1);
+  /** Third-rail dwell only: 0→1 across full scroll of that band (inclusive end at uDw2End). */
+  if (m.uDw2End > m.uSwap12End && u >= m.uSwap12End && u <= m.uDw2End) {
+    const span = m.uDw2End - m.uSwap12End;
+    return span > 1e-9 ? (u - m.uSwap12End) / span : 0;
+  }
+  /** After third dwell completes, keep the bar full through exit + tail so it does not “unfill”. */
+  if (u > m.uDw2End) return 1;
+
   const segs: readonly [number, number][] = [
     [0, m.uOpenEnd],
     [m.uOpenEnd, m.uDw0End],
     [m.uDw0End, m.uSwap01End],
     [m.uSwap01End, m.uDw1End],
     [m.uDw1End, m.uSwap12End],
-    [m.uSwap12End, m.uDw2End],
-    [m.uDw2End, m.uExitEnd],
   ];
   for (const [a, b] of segs) {
     if (b <= a) continue;
     if (u >= a && u < b) return (u - a) / (b - a);
   }
-  if (u >= m.uExitEnd) return 1;
   return 0;
 }
 
@@ -3637,12 +3642,55 @@ export default function DoePage() {
         </div>
       </div>
 
-      {/* Visual pause between scrubbed bento and Built for you carousel */}
-      <div
-        className="relative z-10 w-full shrink-0 bg-[#F7F6F3]"
-        aria-hidden
-        style={{ minHeight: "clamp(4rem, 11vw, 8rem)" }}
-      />
+      {/* Bridge between vertical bento and Built for you — same grey grid as patient-care orbit */}
+      <section
+        className="relative z-10 w-full shrink-0 overflow-hidden bg-[#F7F6F3]"
+        aria-labelledby="vbento-bridge-doe"
+        style={{ minHeight: "clamp(22rem, 52vh, 38rem)" }}
+      >
+        <div className="pointer-events-none absolute inset-0 z-0" aria-hidden>
+          <svg
+            className="pointer-events-none absolute inset-0 h-full w-full"
+            xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="none"
+          >
+            <defs>
+              <pattern
+                id="vbentoBuiltBridgeGrid"
+                x="0"
+                y="0"
+                width="80"
+                height="80"
+                patternUnits="userSpaceOnUse"
+              >
+                <path d="M 0 0 L 80 0 M 0 0 L 0 80" fill="none" stroke="#999999" strokeWidth="0.5" opacity="0.28" />
+                <circle cx="0" cy="0" r="1" fill="#999999" opacity="0.35" />
+                <circle cx="80" cy="0" r="1" fill="#999999" opacity="0.35" />
+                <circle cx="0" cy="80" r="1" fill="#999999" opacity="0.35" />
+                <circle cx="80" cy="80" r="1" fill="#999999" opacity="0.35" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#vbentoBuiltBridgeGrid)" />
+          </svg>
+          <div
+            className="absolute inset-x-0 top-0 z-[1] h-[min(5rem,12vw)] bg-gradient-to-b from-[#F7F6F3] to-transparent"
+            aria-hidden
+          />
+          <div
+            className="absolute inset-x-0 bottom-0 z-[1] h-[min(5rem,12vw)] bg-gradient-to-t from-[#F7F6F3] to-transparent"
+            aria-hidden
+          />
+        </div>
+        <div className="relative z-[2] flex min-h-[clamp(22rem,52vh,38rem)] items-center justify-center px-4 py-14 iphone-page:py-16">
+          <p
+            id="vbento-bridge-doe"
+            className={`text-center font-normal tracking-tight text-gray-900 ${lora.className}`}
+            style={{ fontSize: "clamp(3.25rem, 14vw, 6.75rem)", lineHeight: 1 }}
+          >
+            Doe
+          </p>
+        </div>
+      </section>
 
       {/* Blank Section with Grid Lines */}
       <div
