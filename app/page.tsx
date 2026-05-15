@@ -321,8 +321,8 @@ const QUALITY_ORBIT_TILE_LABELS = [
 
 const QUALITY_ORBIT_CHOREO_HEADLINE_DELAY_MS = 180;
 const QUALITY_ORBIT_CHOREO_DIAGRAM_DELAY_MS = 1280;
-/** Grey connector finishes before orange traces — keep ≥ grey arc CSS duration (~4.5s) + slack. */
-const QUALITY_ORBIT_CHOREO_GREY_HOLD_MS = 4600;
+/** Grey connector stroke-dash animation duration — keep in sync with SVG transition below */
+const QUALITY_ORBIT_GREY_ARC_DRAW_MS = 4500;
 const QUALITY_ORBIT_CHOREO_ACCENT_AFTER_GREY_MS = 220;
 /** Brief hold after the section enters view before headline / diagram animations begin. */
 const QUALITY_ORBIT_CHOREO_ENTER_PAUSE_MS = 900;
@@ -450,7 +450,6 @@ export default function DoePage() {
   const qualityOrbitSectionRef = useRef<HTMLElement | null>(null);
   const [qualityOrbitChoreography, setQualityOrbitChoreography] = useState({
     headline: false,
-    diagram: false,
     accent: false,
     /** Orbit pills revealed clockwise from top; 0..6 */
     tilesShown: 0,
@@ -657,7 +656,6 @@ export default function DoePage() {
       if (mq.matches) {
         setQualityOrbitChoreography({
           headline: true,
-          diagram: true,
           accent: true,
           tilesShown: QUALITY_ORBIT_TILE_LABELS.length,
         });
@@ -667,11 +665,6 @@ export default function DoePage() {
         window.setTimeout(() => {
           setQualityOrbitChoreography((c) => ({ ...c, headline: true }));
         }, QUALITY_ORBIT_CHOREO_HEADLINE_DELAY_MS),
-      );
-      timers.push(
-        window.setTimeout(() => {
-          setQualityOrbitChoreography((c) => ({ ...c, diagram: true, tilesShown: 0 }));
-        }, QUALITY_ORBIT_CHOREO_DIAGRAM_DELAY_MS),
       );
       const nTiles = QUALITY_ORBIT_TILE_LABELS.length;
       for (let i = 0; i < nTiles; i++) {
@@ -685,9 +678,8 @@ export default function DoePage() {
         QUALITY_ORBIT_CHOREO_DIAGRAM_DELAY_MS +
         QUALITY_ORBIT_TILE_FIRST_MS +
         (nTiles - 1) * QUALITY_ORBIT_TILE_STEP_MS;
-      const greyDoneMs = QUALITY_ORBIT_CHOREO_DIAGRAM_DELAY_MS + QUALITY_ORBIT_CHOREO_GREY_HOLD_MS;
       const accentAfterDiagramMs =
-        Math.max(lastTileMs + 580, greyDoneMs) + QUALITY_ORBIT_CHOREO_ACCENT_AFTER_GREY_MS;
+        lastTileMs + QUALITY_ORBIT_GREY_ARC_DRAW_MS + QUALITY_ORBIT_CHOREO_ACCENT_AFTER_GREY_MS;
       timers.push(
         window.setTimeout(() => {
           setQualityOrbitChoreography((c) => ({ ...c, accent: true }));
@@ -3105,7 +3097,9 @@ export default function DoePage() {
                   strokeLinecap="round"
                   pathLength={1}
                   strokeDasharray={1}
-                  strokeDashoffset={qualityOrbitChoreography.diagram ? 0 : 1}
+                  strokeDashoffset={
+                    qualityOrbitChoreography.tilesShown >= QUALITY_ORBIT_TILE_LABELS.length ? 0 : 1
+                  }
                   vectorEffect="nonScalingStroke"
                   style={{
                     transition:
