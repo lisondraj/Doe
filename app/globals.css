@@ -267,12 +267,12 @@ html:has(.doeforvc-iphone-root) body {
     transform: translate3d(0, 0, 0) scale(1);
   }
   50% {
-    transform: translate3d(0, -16px, 0) scale(1.045);
+    transform: translate3d(0, -22px, 0) scale(1.06);
   }
 }
 
 .bento-bridge-disk {
-  animation: bento-bridge-disk-idle 11s ease-in-out infinite;
+  animation: bento-bridge-disk-idle 10s ease-in-out infinite;
 }
 
 .bento-bridge-disk:hover {

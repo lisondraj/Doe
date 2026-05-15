@@ -1011,23 +1011,38 @@ export default function DoePage() {
     return () => cancelAnimationFrame(rafId);
   }, [bentoBridgeTypewriterOn, bentoBridgeCardIndex, bentoBridgeTwEpoch, bentoBridgeCard]);
 
+  /** After a testimonial finishes typing, hold 2s, then crossfade to the next card (no fixed interval while typing). */
   useEffect(() => {
     if (bentoBridgeStage < 3) return;
     if (typeof window === "undefined") return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const id = window.setInterval(() => {
+    const cap = vbBridgeGraphemeLen(VBENTO_BRIDGE_TESTIMONIALS[bentoBridgeCardIndex].quote);
+    if (bentoBridgeTypedLen < cap) return;
+
+    let cancelled = false;
+    let innerId: ReturnType<typeof setTimeout> | null = null;
+    const holdMs = 2000;
+    const swapMs = 420;
+    const holdId = window.setTimeout(() => {
+      if (cancelled) return;
       setBentoBridgeContentFade(0);
-      window.setTimeout(() => {
+      innerId = window.setTimeout(() => {
+        if (cancelled) return;
         setBentoBridgeCardIndex((i) => (i + 1) % VBENTO_BRIDGE_TESTIMONIALS.length);
         setBentoBridgeTypedLen(0);
         setBentoBridgeTwEpoch((e) => e + 1);
         setBentoBridgeTypewriterOn(true);
         setBentoBridgeContentFade(1);
-      }, 420);
-    }, 15500);
-    return () => window.clearInterval(id);
-  }, [bentoBridgeStage]);
+      }, swapMs);
+    }, holdMs);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(holdId);
+      if (innerId != null) window.clearTimeout(innerId);
+    };
+  }, [bentoBridgeStage, bentoBridgeTypedLen, bentoBridgeCardIndex]);
 
   useEffect(() => {
     let animationFrameId: number;
@@ -3993,8 +4008,8 @@ export default function DoePage() {
           >
             <div
               style={{
-                opacity: bentoBridgeContentFade,
-                transition: "opacity 0.42s cubic-bezier(0.4, 0, 0.2, 1)",
+                opacity: bentoBridgeStage >= 2 ? bentoBridgeContentFade : 0,
+                transition: "opacity 0.48s cubic-bezier(0.4, 0, 0.2, 1)",
               }}
             >
               <blockquote className="m-0 w-full text-left" aria-live="polite">
@@ -4009,7 +4024,7 @@ export default function DoePage() {
                   <p
                     className={`pointer-events-none m-0 select-none text-left font-normal tracking-[-0.02em] invisible ${lora.className}`}
                     style={{
-                      fontSize: "clamp(2.55rem, 6.35vw, 4.85rem)",
+                      fontSize: "clamp(2.72rem, 6.75vw, 5.2rem)",
                       lineHeight: 1.26,
                     }}
                     aria-hidden
@@ -4019,7 +4034,7 @@ export default function DoePage() {
                   <p
                     className={`absolute inset-0 m-0 text-left font-normal tracking-[-0.02em] ${lora.className}`}
                     style={{
-                      fontSize: "clamp(2.55rem, 6.35vw, 4.85rem)",
+                      fontSize: "clamp(2.72rem, 6.75vw, 5.2rem)",
                       lineHeight: 1.26,
                       textRendering: "geometricPrecision",
                     }}
@@ -4058,20 +4073,27 @@ export default function DoePage() {
                 bentoBridgeStage >= 3 ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"
               } ${inter.className}`}
             >
-              <div className="flex w-full max-w-full flex-row items-start justify-start gap-5">
-                <div
-                  className="flex h-[clamp(3.5rem,9vw,4.75rem)] w-[clamp(3.5rem,9vw,4.75rem)] shrink-0 items-center justify-center rounded-full bg-[#5a5a5a] text-[clamp(1rem,2.35vw,1.2rem)] font-semibold tracking-tight text-white/95"
-                  aria-hidden
-                >
-                  {bentoBridgeCard.initials}
-                </div>
-                <div className="min-w-0 flex-1 pl-0.5 text-left">
-                  <p className="m-0 text-[clamp(1.55rem,3.55vw,2.05rem)] font-semibold leading-snug tracking-tight text-gray-900">
-                    {bentoBridgeCard.name}
-                  </p>
-                  <p className="mt-2 m-0 text-[clamp(1.2rem,2.75vw,1.55rem)] font-medium leading-snug tracking-tight text-gray-600">
-                    {bentoBridgeCard.meta}
-                  </p>
+              <div
+                style={{
+                  opacity: bentoBridgeStage >= 3 ? bentoBridgeContentFade : 0,
+                  transition: "opacity 0.48s cubic-bezier(0.4, 0, 0.2, 1)",
+                }}
+              >
+                <div className="flex w-full max-w-full flex-row items-start justify-start gap-5">
+                  <div
+                    className="flex h-[clamp(3.5rem,9vw,4.75rem)] w-[clamp(3.5rem,9vw,4.75rem)] shrink-0 items-center justify-center rounded-full bg-[#5a5a5a] text-[clamp(1rem,2.35vw,1.2rem)] font-semibold tracking-tight text-white/95"
+                    aria-hidden
+                  >
+                    {bentoBridgeCard.initials}
+                  </div>
+                  <div className="min-h-[5.5rem] min-w-0 flex-1 pl-0.5 text-left">
+                    <p className="m-0 text-[clamp(1.55rem,3.55vw,2.05rem)] font-semibold leading-snug tracking-tight text-gray-900">
+                      {bentoBridgeCard.name}
+                    </p>
+                    <p className="mt-2 m-0 text-[clamp(1.2rem,2.75vw,1.55rem)] font-medium leading-snug tracking-tight text-gray-600">
+                      {bentoBridgeCard.meta}
+                    </p>
+                  </div>
                 </div>
               </div>
               <div
