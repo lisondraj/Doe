@@ -2210,96 +2210,121 @@ export default function DoePage() {
                       </div>
                     )}
 
-                    {/* Smart appointments — single panel */}
+                    {/* Smart appointments — single panel (visual system matches AI Receptionist + billing mocks) */}
                     <div
                       className="absolute left-1/2 rounded-xl bg-white shadow-lg"
                       style={{
                         width: `${carouselSmartApptPanelWidth700}px`,
                         top: '47%',
-                        transform: `translate(-50%, -50%) scale(${priorAuthComposeScale})`,
+                        transform: `translate(calc(-50% - 18px), -50%) scale(${priorAuthComposeScale})`,
                         transformOrigin: 'center center',
-                        padding: carouselSmartApptPanelWidth700 < 304 ? '15px' : '18px',
+                        padding: carouselSmartApptPanelWidth700 < 288 ? '16px' : '20px',
                         paddingBottom: '16px',
                         userSelect: 'none',
                         pointerEvents: 'auto',
                       }}
                     >
-                      <div className="mb-2 flex items-start justify-between gap-2">
+                      <div className="mb-3 flex items-start justify-between gap-2">
                         <div>
-                          <p className="mb-0.5 text-sm font-bold text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                            Patient chat · chart-linked retrieval
+                          <p
+                            className="mb-0.5 text-sm font-bold text-gray-900"
+                            style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
+                          >
+                            Room visit · chart-linked capture
                           </p>
                           <p className="text-xs text-gray-500" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                            Utterances · embedding matches on live chart rows
+                            Live utterances · matches on chart rows
                           </p>
                         </div>
-                        <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-emerald-500" aria-hidden />
+                        <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-gray-400" aria-hidden />
                       </div>
-                      <div
-                        className="mb-3 max-h-[218px] space-y-2.5 overflow-hidden rounded-xl border border-gray-100 bg-gradient-to-b from-gray-50 to-white p-2.5"
-                        style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
-                      >
-                        <div className="flex flex-col items-start gap-1">
-                          <div className="max-w-[92%] rounded-2xl rounded-bl-md bg-gray-900 px-3 py-2 shadow-sm ring-1 ring-black/10">
-                            <p className="mb-0.5 text-[9px] font-bold uppercase tracking-wide text-white/60">Patient</p>
-                            <p className="text-[11px] leading-snug text-white/[0.95]">
-                              &ldquo;The metformin gives me cramps—I skipped it twice.&rdquo;
-                            </p>
-                          </div>
-                          <div className="ml-0.5 flex flex-wrap gap-1.5">
-                            <span className="rounded-md bg-indigo-50 px-2 py-1 text-[9px] font-semibold uppercase tracking-wide text-indigo-900 ring-1 ring-indigo-100">
-                              Embedding · meds-cluster
+
+                      <div className="mb-3 rounded-lg border border-gray-100 bg-gray-50 p-3">
+                        <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wide text-gray-500">Heard now</p>
+                        <p className="text-xs leading-snug text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                          &ldquo;The metformin gives me cramps—I skipped it twice.&rdquo;
+                        </p>
+                        <div className="mt-2 flex flex-wrap gap-1.5">
+                          <span
+                            className="rounded-md bg-white px-2 py-1 text-[10px] font-semibold text-gray-700 ring-1 ring-gray-200"
+                            style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
+                          >
+                            Meds cluster
+                          </span>
+                          <span
+                            className="rounded-md bg-white px-2 py-1 text-[10px] font-medium text-gray-600 ring-1 ring-gray-200"
+                            style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
+                          >
+                            Chart · Metformin 1000 mg BID
+                          </span>
+                          <span className="rounded-md bg-gray-100 px-2 py-1 text-[10px] text-gray-500 ring-1 ring-gray-200/80">
+                            score 0.91
+                          </span>
+                        </div>
+
+                        <div className="mt-3 border-t border-gray-200/90 pt-3">
+                          <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wide text-gray-500">Heard now</p>
+                          <p className="text-xs leading-snug text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                            &ldquo;Left knee popped again after PT.&rdquo;
+                          </p>
+                          <div className="mt-2 flex flex-wrap gap-1.5">
+                            <span
+                              className="rounded-md bg-white px-2 py-1 text-[10px] font-semibold text-gray-700 ring-1 ring-gray-200"
+                              style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
+                            >
+                              Problem · knee
                             </span>
-                            <span className="rounded-md bg-white px-2 py-1 text-[9px] font-medium text-gray-700 ring-1 ring-gray-200">
-                              → Chart · Medications · Metformin 1000 mg BID
+                            <span
+                              className="rounded-md bg-white px-2 py-1 text-[10px] font-medium text-gray-600 ring-1 ring-gray-200"
+                              style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
+                            >
+                              OA left knee · PT note 6d ago
                             </span>
-                            <span className="rounded-md bg-gray-50 px-2 py-1 text-[9px] text-gray-600 ring-1 ring-gray-100">
-                              cosine 0.91
+                            <span className="rounded-md bg-gray-100 px-2 py-1 text-[10px] text-gray-500 ring-1 ring-gray-200/80">
+                              score 0.87
                             </span>
                           </div>
                         </div>
-                        <div className="flex flex-col items-start gap-1 pt-1">
-                          <div className="max-w-[92%] rounded-2xl rounded-bl-md bg-gray-900 px-3 py-2 shadow-sm ring-1 ring-black/10">
-                            <p className="mb-0.5 text-[9px] font-bold uppercase tracking-wide text-white/60">Patient</p>
-                            <p className="text-[11px] leading-snug text-white/[0.95]">
-                              &ldquo;Left knee popped again after PT.&rdquo;
-                            </p>
-                          </div>
-                          <div className="ml-0.5 flex flex-wrap gap-1.5">
-                            <span className="rounded-md bg-indigo-50 px-2 py-1 text-[9px] font-semibold uppercase tracking-wide text-indigo-900 ring-1 ring-indigo-100">
-                              Embedding · problem-knee
-                            </span>
-                            <span className="rounded-md bg-white px-2 py-1 text-[9px] font-medium text-gray-700 ring-1 ring-gray-200">
-                              → Problems · OA left knee · PT note 6d ago
-                            </span>
-                            <span className="rounded-md bg-gray-50 px-2 py-1 text-[9px] text-gray-600 ring-1 ring-gray-100">
-                              cosine 0.87
-                            </span>
-                          </div>
-                        </div>
                       </div>
-                      <div className="rounded-lg border border-gray-100 bg-white px-2.5 py-2">
-                        <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-500">Retriever preview</p>
-                        <p className="mt-1 text-[11px] leading-snug text-gray-700" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                          Next tokens grounded on matched chart sections · BMP before med change · imaging if effusion on exam.
+
+                      <div className="mb-3 rounded-lg border border-dashed border-gray-200 bg-white px-3 py-2.5">
+                        <div className="mb-2 flex items-center gap-2">
+                          <span className="flex gap-1" aria-hidden>
+                            <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-gray-500 [animation-duration:1.05s]" />
+                            <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-gray-500 [animation-duration:1.05s] [animation-delay:180ms]" />
+                            <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-gray-500 [animation-duration:1.05s] [animation-delay:360ms]" />
+                          </span>
+                          <span
+                            className="text-[11px] font-semibold uppercase tracking-wide text-gray-700"
+                            style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
+                          >
+                            Retriever preview
+                          </span>
+                        </div>
+                        <p className="text-[11px] leading-snug text-gray-600" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                          Next tokens grounded on matched sections · BMP before med change · imaging if effusion on exam.
                         </p>
                       </div>
-                      <div className="mt-2.5 flex gap-2">
+
+                      <div className="flex gap-2">
                         <button
                           type="button"
-                          className="flex-1 rounded bg-gray-600 px-2.5 py-2 text-[11px] font-semibold text-white"
+                          className="flex-1 rounded bg-gray-600 px-3 py-2 text-xs font-semibold text-white"
                           style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
                         >
                           Note
                         </button>
                         <button
                           type="button"
-                          className="flex-1 rounded bg-gray-600 px-2.5 py-2 text-[11px] font-semibold text-white"
+                          className="flex-1 rounded bg-gray-600 px-3 py-2 text-xs font-semibold text-white"
                           style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
                         >
                           Tasks
                         </button>
                       </div>
+                      <p className="mt-2 text-[10px] text-gray-400" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                        Draft updates stay tied to utterance timestamps until you accept into the chart.
+                      </p>
                     </div>
 
                     <div className={slideCaptionWrap} style={{ left: captionLeft700, right: captionRight700 }}>
