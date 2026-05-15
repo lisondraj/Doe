@@ -20,6 +20,10 @@ const lora = Lora({
   weight: ["400", "500", "600", "700"],
 });
 
+/** Matches second-section workflow carousel band (`app/page.tsx`). */
+const narrowHorizontalInset =
+  "iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))]";
+
 /** Same visible viewport logic as `app/page.tsx` / blog — drives nav sheet remeasure on resize. */
 function siteNavAppViewportPx(): { width: number; height: number } {
   if (typeof window === "undefined") return { width: 1200, height: 800 };
@@ -363,7 +367,7 @@ export default function DoeIphoneSiteNav() {
                 {MOBILE_NAV_FOOTER_SLIDES.map((slide) => (
                   <div
                     key={slide.boxTitle}
-                    className="w-full min-w-full shrink-0 snap-center box-border space-y-3 py-3 px-[max(1rem,env(safe-area-inset-left,0px),env(safe-area-inset-right,0px))] iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)] iphone-page:py-[clamp(0.75rem,0.5rem+1vmin,1.125rem)] iphone-page:px-[max(1rem,calc(max(env(safe-area-inset-left,0px),env(safe-area-inset-right,0px))+0.5rem))]"
+                    className={`w-full min-w-full shrink-0 snap-center box-border space-y-3 py-3 px-4 ${narrowHorizontalInset} iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)] iphone-page:py-[clamp(0.75rem,0.5rem+1vmin,1.125rem)]`}
                   >
                     <div
                       className="w-full space-y-3 iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)]"
