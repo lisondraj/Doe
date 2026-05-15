@@ -214,7 +214,8 @@ function vbDeriveRails(
   if (u <= ms.uDw1End) e2 = CLO;
   else if (u <= ms.uSwap12End) e2 = CLO + (1 - CLO) * segUp(ms.uDw1End, ms.uSwap12End);
   else if (u <= ms.uDw2End) e2 = 1;
-  else e2 = 1;
+  else if (u <= ms.uExitEnd) e2 = CLO + (1 - CLO) * segDn(ms.uDw2End, ms.uExitEnd);
+  else e2 = CLO;
 
   const op = (e: number): number => {
     const denom = Math.max(1 - CLO, 1e-6);
@@ -3457,11 +3458,18 @@ export default function DoePage() {
         </div>
       </div>
 
+      {/* Visual pause between scrubbed bento and Built for you carousel */}
+      <div
+        className="relative z-10 w-full shrink-0 bg-[#F7F6F3]"
+        aria-hidden
+        style={{ minHeight: "clamp(4rem, 11vw, 8rem)" }}
+      />
+
       {/* Blank Section with Grid Lines */}
       <div
         id="students"
         ref={carouselSectionRef}
-        className="w-full relative z-10 overflow-x-hidden mt-[3.5rem] iphone-page:mt-20 pb-24 iphone-page:pb-32"
+        className="w-full relative z-10 overflow-x-hidden mt-[clamp(1rem,3vw,2rem)] iphone-page:mt-10 pb-24 iphone-page:pb-32"
         style={{
           opacity: carouselSectionOpacity,
           transform: `translateY(${carouselSectionTranslateY}px)`,
