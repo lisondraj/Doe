@@ -3725,7 +3725,7 @@ export default function DoePage() {
           />
         </div>
         <div
-          className={`relative z-[2] mx-auto flex w-full max-w-[min(100%,52rem)] flex-col items-center justify-center px-4 py-[clamp(4.5rem,12vh,9rem)] iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] md:py-[clamp(5.5rem,14vh,11rem)] ${narrowHorizontalInset}`}
+          className={`relative z-[2] mx-auto flex w-full max-w-[min(100%,52rem)] flex-col items-center justify-center px-4 pt-[clamp(4.25rem,11vh,7rem)] pb-[clamp(4.5rem,12vh,9rem)] iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))] md:pt-[clamp(5.25rem,12vh,8rem)] md:pb-[clamp(5.5rem,14vh,11rem)] ${narrowHorizontalInset}`}
           style={{
             minHeight: "clamp(56rem, 132vh, 112rem)",
             opacity: bentoBridgeEntered ? 1 : 0,
@@ -3733,27 +3733,86 @@ export default function DoePage() {
             transition: "opacity 1s ease-out, transform 1s cubic-bezier(0.22, 1, 0.36, 1)",
           }}
         >
-          <blockquote className="m-0 w-full max-w-[min(100%,42rem)] text-pretty">
+          {/** Medallion — same radial + grain + polar grid language as the orange “Built for you” panel above */}
+          <div className="mb-[clamp(2.75rem,6.5vh,4.75rem)] flex w-full justify-center" aria-hidden>
+            <div
+              className="relative shrink-0 overflow-hidden rounded-full shadow-[0_20px_56px_rgba(0,0,0,0.14)] ring-1 ring-black/[0.06]"
+              style={{
+                width: "clamp(13.5rem, 36vmin, 22.5rem)",
+                height: "clamp(13.5rem, 36vmin, 22.5rem)",
+                background:
+                  "radial-gradient(circle at 50% 36%, #E7A944 0%, #D49D4F 40%, #D2774C 70%, #1E343A 100%)",
+              }}
+            >
+              <div
+                className="pointer-events-none absolute inset-0"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E")`,
+                  backgroundSize: "200px 200px",
+                  opacity: 1,
+                  mixBlendMode: "overlay",
+                }}
+              />
+              <svg
+                className="pointer-events-none absolute left-1/2 top-1/2 h-[118%] w-[118%] max-w-none -translate-x-1/2 -translate-y-1/2"
+                style={{ marginTop: "-4%" }}
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 1000 1000"
+                preserveAspectRatio="xMidYMid meet"
+                aria-hidden
+              >
+                {Array.from({ length: 8 }, (_, j) => {
+                  const angle = j * 45;
+                  const radius = 500;
+                  return (
+                    <path
+                      key={`vb-bridge-rad-${j}`}
+                      d={`M 500 500 L ${500 + Math.cos((angle * Math.PI) / 180) * radius} ${500 + Math.sin((angle * Math.PI) / 180) * radius}`}
+                      fill="none"
+                      stroke="rgba(255, 255, 255, 0.16)"
+                      strokeWidth="0.85"
+                    />
+                  );
+                })}
+                {Array.from({ length: 6 }, (_, j) => {
+                  const r = (j + 1) * 150;
+                  return (
+                    <circle
+                      key={`vb-bridge-con-${j}`}
+                      cx="500"
+                      cy="500"
+                      r={r}
+                      fill="none"
+                      stroke="rgba(255, 255, 255, 0.14)"
+                      strokeWidth="0.85"
+                    />
+                  );
+                })}
+              </svg>
+            </div>
+          </div>
+
+          <blockquote className="m-0 w-full max-w-[min(100%,40rem)] text-pretty">
             <span id="vbento-bridge-quote" className="sr-only">
               {VBENTO_BRIDGE_TESTIMONIAL}
             </span>
             {/** Invisible full quote reserves final line breaks so the typewriter does not reflow upward. */}
-            <div className="relative mx-auto w-full max-w-[min(100%,42rem)]">
+            <div className="relative mx-auto w-full max-w-[min(100%,40rem)]">
               <p
-                className={`invisible m-0 select-none text-center font-normal tracking-[-0.02em] ${lora.className}`}
+                className={`invisible m-0 select-none text-left font-normal tracking-[-0.02em] ${lora.className}`}
                 style={{
-                  fontSize: "clamp(2.55rem, 6.25vw, 4.65rem)",
-                  lineHeight: 1.3,
+                  fontSize: "clamp(2.95rem, 7.25vw, 5.35rem)",
+                  lineHeight: 1.28,
                 }}
                 aria-hidden
               >
                 {VBENTO_BRIDGE_TESTIMONIAL}
               </p>
               <p
-                className={`absolute left-0 right-0 top-0 m-0 text-center font-normal tracking-[-0.02em] ${lora.className}`}
+                className={`absolute left-0 right-0 top-0 m-0 text-left font-normal tracking-[-0.02em] ${lora.className}`}
                 style={{
-                  fontSize: "clamp(2.55rem, 6.25vw, 4.65rem)",
-                  lineHeight: 1.3,
+                  fontSize: "clamp(2.95rem, 7.25vw, 5.35rem)",
+                  lineHeight: 1.28,
                   backgroundImage:
                     "linear-gradient(168deg, #6e635e 0%, #887056 16%, #9c7d5c 34%, #b08f68 50%, #9a7b5e 68%, #7d6656 84%, #6a5c54 100%)",
                   WebkitBackgroundClip: "text",
@@ -3777,7 +3836,7 @@ export default function DoePage() {
             </div>
           </blockquote>
           <div
-            className={`mt-[clamp(2.25rem,5vh,4rem)] flex w-full max-w-[min(100%,42rem)] flex-row items-center justify-center gap-3.5 text-center ${inter.className}`}
+            className={`mt-[clamp(2.5rem,5.5vh,4.25rem)] flex w-full max-w-[min(100%,40rem)] flex-row items-center justify-center gap-3.5 ${inter.className}`}
           >
             <div
               className="flex h-[clamp(3.5rem,9vw,4.75rem)] w-[clamp(3.5rem,9vw,4.75rem)] shrink-0 items-center justify-center rounded-full bg-[#5a5a5a] text-[clamp(1rem,2.35vw,1.2rem)] font-semibold tracking-tight text-white/95"
@@ -3786,10 +3845,10 @@ export default function DoePage() {
               AM
             </div>
             <div className="min-w-0 text-left">
-              <p className="m-0 text-[clamp(1.35rem,3.1vw,1.75rem)] font-semibold leading-snug tracking-tight text-gray-900">
+              <p className="m-0 text-[clamp(1.55rem,3.55vw,2.05rem)] font-semibold leading-snug tracking-tight text-gray-900">
                 Avery Mills, MD
               </p>
-              <p className="mt-1 m-0 text-[clamp(1.05rem,2.35vw,1.35rem)] font-medium leading-snug tracking-tight text-gray-600">
+              <p className="mt-1.5 m-0 text-[clamp(1.2rem,2.75vw,1.55rem)] font-medium leading-snug tracking-tight text-gray-600">
                 Physician · Boston, MA
               </p>
             </div>
