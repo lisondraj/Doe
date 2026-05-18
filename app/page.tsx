@@ -9,6 +9,7 @@ import {
   Oswald,
   Playfair_Display,
 } from "next/font/google";
+import localFont from "next/font/local";
 import Link from "next/link";
 import { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
@@ -55,6 +56,14 @@ const manropeTicker = Manrope({
   subsets: ["latin"],
   weight: ["500", "600", "700"],
 });
+
+/** Second-section workflow carousel — white in-card UI mocks only (not slide captions). */
+const suisseScreenLight = localFont({
+  src: "../fonts/suisse/SuisseScreenTrial-Light.otf",
+  display: "swap",
+  weight: "300",
+});
+const WORKFLOW_CAROUSEL_UI_PANEL = `${suisseScreenLight.className} workflow-carousel-ui`;
 
 /** Bottom title pill + description inside 700×700 slide mocks (scales with card transform). */
 /** Position (left/right) is applied via inline style — computed from slide scale so captions
@@ -2648,7 +2657,7 @@ export default function DoePage() {
                     
                     {/* AI Receptionist — caller line left + heard stream + thinking */}
                     <div
-                      className="absolute left-1/2 rounded-xl bg-white shadow-lg"
+                      className={`${WORKFLOW_CAROUSEL_UI_PANEL} absolute left-1/2 rounded-xl bg-white shadow-lg`}
                       style={{
                         width: `${carouselReceptionThinkingWidth700}px`,
                         top: '47%',
@@ -2821,7 +2830,7 @@ export default function DoePage() {
 
                     {/* Smart appointments — wider panel, compact chat density */}
                     <div
-                      className="absolute left-1/2 rounded-xl bg-white shadow-lg"
+                      className={`${WORKFLOW_CAROUSEL_UI_PANEL} absolute left-1/2 rounded-xl bg-white shadow-lg`}
                       style={{
                         width: `${carouselSmartApptPanelWidth700}px`,
                         top: '47%',
@@ -3055,7 +3064,7 @@ export default function DoePage() {
                     
                     {/* Billing — overlapping ERA + outbound packet */}
                     <div
-                      className="absolute"
+                      className={`${WORKFLOW_CAROUSEL_UI_PANEL} absolute`}
                       style={{
                         left: '50%',
                         top: '50%',
@@ -3230,7 +3239,7 @@ export default function DoePage() {
                   
                   {/* Multi-disciplinary — single horizontal ribbon, centered */}
                   <div
-                    className="absolute left-1/2 flex flex-col justify-center rounded-xl bg-white shadow-lg"
+                    className={`${WORKFLOW_CAROUSEL_UI_PANEL} absolute left-1/2 flex flex-col justify-center rounded-xl bg-white shadow-lg`}
                     style={{
                       width: `${carouselMultidiscRibbonWidth700}px`,
                       top: '47%',
@@ -3346,7 +3355,7 @@ export default function DoePage() {
 
                     {/* Different UI - Referral Intake */}
                     <div
-                      className="absolute left-1/2 bg-white rounded-xl"
+                      className={`${WORKFLOW_CAROUSEL_UI_PANEL} absolute left-1/2 bg-white rounded-xl`}
                       style={{
                         opacity: 1,
                         pointerEvents: 'auto',
@@ -3469,7 +3478,7 @@ export default function DoePage() {
                     </div>
 
                     <div
-                      className="absolute"
+                      className={`${WORKFLOW_CAROUSEL_UI_PANEL} absolute`}
                       style={{
                         left: '50%',
                         top: '50%',

@@ -301,3 +301,8 @@ html:has(.doeforvc-iphone-root) body {
   font-style: normal;
   font-display: swap;
 }
+
+/** Workflow carousel UI mocks — inherit Suisse Screen Trial Light from panel root (next/font/local). */
+.workflow-carousel-ui * {
+  font-family: inherit !important;
+}
