@@ -29,11 +29,11 @@ function HeroSchedulesMockScaled() {
 export function DoeHeroScheduleShowcase() {
   return (
     <div
-      className="relative mx-auto box-border flex w-fit max-w-[min(100%,68rem)] items-end justify-center overflow-hidden rounded-[clamp(1rem,2.4vw,1.5rem)] p-[clamp(0.35rem,0.9vw,0.55rem)] ring-1 ring-neutral-900/[0.07] shadow-none"
+      className="relative mx-auto box-border flex w-full max-w-[min(100%,68rem)] items-end justify-center overflow-hidden rounded-[clamp(1rem,2.4vw,1.5rem)] p-[clamp(0.35rem,0.9vw,0.55rem)] ring-1 ring-neutral-900/[0.07] shadow-none"
       style={{ backgroundColor: MOCK_FRAME_BG }}
     >
       <div
-        className="w-full min-w-0 overflow-hidden rounded-[clamp(0.72rem,1.9vw,1.1rem)]"
+        className="w-full overflow-hidden rounded-[clamp(0.72rem,1.9vw,1.1rem)]"
         style={{ backgroundColor: MOCK_FRAME_BG }}
       >
         <HeroSchedulesMockScaled />
