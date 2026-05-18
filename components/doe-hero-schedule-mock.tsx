@@ -59,7 +59,15 @@ export function DoeHeroScheduleShowcase() {
   return (
     <div
       ref={hostRef}
-      className="relative h-full min-h-0 w-full min-w-0 overflow-hidden bg-transparent"
+      className="relative h-full min-h-0 w-full min-w-0 bg-transparent"
+      style={{
+        /**
+         * clip-path: inset() clips in visual/paint space (after CSS transforms), unlike
+         * overflow:hidden which on Safari clips in layout space — squaring off rounded corners
+         * on transformed children whose layout box is wider than the parent.
+         */
+        clipPath: "inset(0 0 0 0)",
+      }}
     >
       <div className="flex h-full w-full min-h-0 items-end justify-start pb-0">
         <div
