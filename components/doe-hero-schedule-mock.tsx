@@ -4,6 +4,8 @@ import { useLayoutEffect, useRef, useState } from "react";
 import { DoeSchedulesAppMock } from "@/components/doe-schedules-app-mock";
 
 const BASE_H = 580;
+/** Fixed design width of the shell + mock (px); used to cap scale so the shell never overflows its host horizontally */
+const ARTBOARD_W = 920;
 
 /**
  * Design width (px) mapped to viewport.
@@ -13,9 +15,6 @@ const HERO_CROP_DESIGN_WIDTH = 686;
 
 /** Multiplier on width-based scale; tuned with CROP so the Wed column crop stays similar but the shell reads a bit smaller */
 const HERO_SCALE_SHRINK = 0.855;
-
-/** Keep this much space on the right so top/bottom rounded corners aren’t clipped by the hero overflow */
-const HERO_RIGHT_EDGE_RESERVE_PX = 18;
 
 /**
  * Hero schedule: zoom/crop; bottom-clipped by hero; non-interactive inside mock.
@@ -30,10 +29,17 @@ export function DoeHeroScheduleShowcase() {
 
     const update = () => {
       const r = host.getBoundingClientRect();
-      const w = Math.max(r.width - HERO_RIGHT_EDGE_RESERVE_PX, 8);
+      const hostWidth = Math.max(r.width, 8);
       const h = r.height;
       if (h < 8) return;
-      const sWidth = (w / HERO_CROP_DESIGN_WIDTH) * HERO_SCALE_SHRINK;
+      /** Crop/zoom intent */
+      const cropScale = (hostWidth / HERO_CROP_DESIGN_WIDTH) * HERO_SCALE_SHRINK;
+      /**
+       * Never let the scaled shell extend past the host: rect overflow clips a straight edge
+       * and squares off the top-right (and bottom-right) rounded corners.
+       */
+      const fitScale = hostWidth / ARTBOARD_W;
+      const sWidth = Math.min(cropScale, fitScale);
       setScale(Math.min(Math.max(sWidth, 0.28), 2.85));
     };
 
@@ -52,7 +58,7 @@ export function DoeHeroScheduleShowcase() {
         <div
           className="pointer-events-none shrink-0 select-none overflow-hidden rounded-tl-[clamp(0.45rem,1.1vw,0.65rem)] rounded-tr-[clamp(0.45rem,1.1vw,0.65rem)] rounded-br-[clamp(0.95rem,2.3vw,1.4rem)] rounded-bl-none bg-white shadow-[0_1px_3px_rgba(0,0,0,0.07)]"
           style={{
-            width: 920,
+            width: ARTBOARD_W,
             height: BASE_H,
             marginBottom: -2,
             backfaceVisibility: "hidden",
