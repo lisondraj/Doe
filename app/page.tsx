@@ -12,7 +12,7 @@ import {
   MOBILE_NAV_FOOTER_SLIDES,
   NAV_ITEMS,
 } from "@/components/doe-nav-data";
-import { DoeHeroScheduleMock } from "@/components/doe-hero-schedule-mock";
+import { DoeHeroScheduleShowcase } from "@/components/doe-hero-schedule-mock";
 import { doeforvcRootZoom } from "@/lib/doeforvc-zoom";
 
 const lora = Lora({
@@ -2231,17 +2231,12 @@ export default function DoePage() {
             document.body,
           )}
 
-        {/* Hero schedule UI mock — bottom two-thirds, gradient frame matching hero */}
+        {/* Hero schedule UI mock — bottom two-thirds; rounded frame + live mock (`/doebuildnew`) */}
         <div
           className={`pointer-events-none absolute inset-x-0 bottom-0 z-[11] flex h-[66.666%] items-end justify-center pb-[max(0.35rem,env(safe-area-inset-bottom,0px))] ${narrowHorizontalInset}`}
           aria-hidden
         >
-          <div
-            className="relative flex w-full max-w-[min(100%,56rem)] items-end justify-center overflow-hidden rounded-[clamp(1.15rem,3.25vw,1.85rem)] ring-1 ring-white/10"
-            style={{ background: HERO_BACKDROP_GRADIENT }}
-          >
-            <DoeHeroScheduleMock />
-          </div>
+          <DoeHeroScheduleShowcase backdropGradient={HERO_BACKDROP_GRADIENT} />
         </div>
 
         {/* Hero copy — left-aligned */}

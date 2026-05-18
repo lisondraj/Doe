@@ -3,9 +3,9 @@
 import { DoeSchedulesAppMock } from "@/components/doe-schedules-app-mock";
 
 /**
- * Marketing hero: same interactive Schedule UI mock as `/doebuildnew`, scaled to the hero frame.
+ * Scaled schedule grid + sidebar — same UI as `/doebuildnew` (`DoeSchedulesAppMock`), tuned for the marketing hero.
  */
-export function DoeHeroScheduleMock() {
+function HeroSchedulesMockScaled() {
   return (
     <div className="relative h-[min(280px,36vh)] w-full overflow-hidden iphone-page:h-[min(300px,38vh)] sm:h-[min(380px,42vh)] md:h-[min(460px,48vh)] lg:h-[min(540px,52vh)] xl:h-[min(580px,56vh)]">
       <div className="absolute inset-x-0 bottom-0 flex justify-center px-0">
@@ -16,6 +16,20 @@ export function DoeHeroScheduleMock() {
           <DoeSchedulesAppMock variant="hero" />
         </div>
       </div>
+    </div>
+  );
+}
+
+/**
+ * Hero: rounded frame (matches hero backdrop) + live schedule mock from `/doebuildnew`.
+ */
+export function DoeHeroScheduleShowcase({ backdropGradient }: { backdropGradient: string }) {
+  return (
+    <div
+      className="relative flex w-full max-w-[min(100%,56rem)] items-end justify-center overflow-hidden rounded-[clamp(1.15rem,3.25vw,1.85rem)] ring-1 ring-white/10"
+      style={{ background: backdropGradient }}
+    >
+      <HeroSchedulesMockScaled />
     </div>
   );
 }
