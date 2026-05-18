@@ -1,35 +1,56 @@
 "use client";
 
+import { useLayoutEffect, useRef, useState } from "react";
 import { DoeSchedulesAppMock } from "@/components/doe-schedules-app-mock";
 
+const BASE_W = 920;
+/** Baseline height of hero mock artboard (920×580) */
+const BASE_H = 580;
+
 /**
- * Scaled schedule grid + sidebar — same UI as `/doebuildnew` (`DoeSchedulesAppMock`), tuned for the marketing hero.
+ * Hero schedule: one white shell with rounded corners only — scale grows with the hero band
+ * so the UI fills horizontal space (width-first; excess height clips from the top).
  */
-function HeroSchedulesMockScaled() {
+export function DoeHeroScheduleShowcase() {
+  const hostRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(0.5);
+
+  useLayoutEffect(() => {
+    const host = hostRef.current;
+    if (!host) return;
+
+    const update = () => {
+      const r = host.getBoundingClientRect();
+      const w = r.width;
+      if (w < 8) return;
+      // Fill left/right of the hero band; vertical overflow is clipped (mock anchored to bottom)
+      const s = Math.min(w / BASE_W, 2.6);
+      setScale(Math.max(s, 0.28));
+    };
+
+    update();
+    const ro = new ResizeObserver(() => update());
+    ro.observe(host);
+    return () => ro.disconnect();
+  }, []);
+
   return (
-    <div className="relative h-[min(440px,52vh)] w-full overflow-visible iphone-page:h-[min(460px,54vh)] sm:h-[min(520px,58vh)] md:h-[min(620px,62vh)] lg:h-[min(720px,68vh)] xl:h-[min(800px,71vh)] 2xl:h-[min(860px,73vh)]">
-      <div className="absolute inset-x-0 bottom-0 flex justify-center px-0">
+    <div
+      ref={hostRef}
+      className="relative h-full min-h-0 w-full min-w-0 overflow-hidden rounded-[clamp(0.7rem,1.75vw,1.1rem)] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.07)]"
+    >
+      <div className="flex h-full w-full items-end justify-center overflow-hidden">
         <div
-          className="max-w-full origin-bottom scale-[0.58] iphone-page:scale-[0.64] sm:scale-[0.78] md:scale-[0.98] lg:scale-[1.14] xl:scale-[1.26] 2xl:scale-[1.34]"
-          style={{ width: 920, height: 580 }}
+          className="shrink-0"
+          style={{
+            width: BASE_W,
+            height: BASE_H,
+            transform: `scale(${scale})`,
+            transformOrigin: "bottom center",
+          }}
         >
           <DoeSchedulesAppMock variant="hero" />
         </div>
-      </div>
-    </div>
-  );
-}
-
-/**
- * Hero: white frame (matches mock), generous corner radius, minimal inset — live schedule mock from `/doebuildnew`.
- */
-export function DoeHeroScheduleShowcase() {
-  return (
-    <div
-      className="relative mx-auto box-border flex w-full max-w-[min(100%,80rem)] items-end justify-center overflow-hidden rounded-[clamp(1.35rem,3.2vw,2.45rem)] border border-neutral-900/[0.06] bg-white p-[3px] shadow-[0_1px_2px_rgba(0,0,0,0.05)] sm:p-1"
-    >
-      <div className="w-full overflow-hidden rounded-[clamp(1.05rem,2.55vw,2.05rem)] bg-white">
-        <HeroSchedulesMockScaled />
       </div>
     </div>
   );
