@@ -3,13 +3,15 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { DoeSchedulesAppMock } from "@/components/doe-schedules-app-mock";
 
-const MOCK_WIDTH = 1100;
-const MOCK_HEIGHT = 640;
+/** Design canvas: sidebar (220) + week grid (min 980) — matches /doebuildnew schedule view. */
+const MOCK_WIDTH = 1200;
+/** Cropped height: header, toolbar, and top of week grid (8 AM–11 AM band in reference). */
+const MOCK_HEIGHT = 560;
 
 /** Schedules product mock for the marketing hero — white rounded frame matching app chrome. */
 export function HeroSchedulesMock() {
   const viewportRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(0.48);
+  const [scale, setScale] = useState(0.5);
 
   useLayoutEffect(() => {
     const el = viewportRef.current;
@@ -34,7 +36,7 @@ export function HeroSchedulesMock() {
     <div
       ref={viewportRef}
       className="relative w-full max-w-[min(100%,56rem)] shrink-0 overflow-hidden rounded-[clamp(1.15rem,3.25vw,1.85rem)] bg-white ring-1 ring-black/[0.06]"
-      style={{ height: Math.max(scaledHeight, 200) }}
+      style={{ height: Math.max(scaledHeight, 220) }}
       aria-hidden
     >
       <div

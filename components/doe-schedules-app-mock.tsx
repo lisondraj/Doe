@@ -1219,13 +1219,13 @@ export function DoeSchedulesAppMock({
           }`}
         >
           <div
-            className={`flex h-full max-w-none ${hero ? "min-h-[640px]" : "min-h-[520px]"} ${
-              workspaceView === "inbox" ? "w-full" : "w-[200%]"
+            className={`flex h-full max-w-none ${hero ? "min-h-[580px]" : "min-h-[520px]"} ${
+              hero || workspaceView === "inbox" ? "w-full" : "w-[200%]"
             }`}
           >
             <div
               className={`flex h-full shrink-0 border-r border-[#EBEBEB] ${
-                workspaceView === "inbox" ? "w-full min-w-0" : "w-1/2"
+                hero || workspaceView === "inbox" ? "w-full min-w-0" : "w-1/2"
               }`}
             >
               <aside className="flex h-full w-[220px] shrink-0 flex-col border-r border-[#EFEFEF] bg-white">
@@ -1630,7 +1630,9 @@ export function DoeSchedulesAppMock({
                     </div>
                   </div>
                 </div>
-                <div className="flex min-h-0 flex-1 flex-col overflow-auto px-4 py-3">
+                <div
+                  className={`flex min-h-0 flex-1 flex-col px-4 py-3 ${hero ? "overflow-hidden" : "overflow-auto"}`}
+                >
                   {timeView === "Month" ? (
                     <div className="flex min-h-0 min-w-[980px] flex-1 flex-col overflow-hidden rounded-xl border border-[#EAEAEA] bg-white">
                       <div className="grid shrink-0 grid-cols-7 border-b border-[#EAEAEA] bg-[#FAFAFA]">
@@ -3678,7 +3680,7 @@ export function DoeSchedulesAppMock({
               </div>
             </div>
 
-            {workspaceView !== "inbox" ? (
+            {workspaceView !== "inbox" && !hero ? (
               <div
                 className={`flex h-full w-1/2 shrink-0 flex-col border-l border-[#EFEFEF] ${
                   workspaceView === "patients" ? "bg-white" : "bg-[#FAFAFA]"
