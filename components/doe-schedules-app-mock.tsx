@@ -1219,7 +1219,7 @@ export function DoeSchedulesAppMock({
           }`}
         >
           <div
-            className={`flex h-full max-w-none ${hero ? "min-h-0" : "min-h-[520px]"} ${
+            className={`flex h-full max-w-none ${hero ? "min-h-[640px]" : "min-h-[520px]"} ${
               workspaceView === "inbox" ? "w-full" : "w-[200%]"
             }`}
           >

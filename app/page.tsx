@@ -2233,7 +2233,7 @@ export default function DoePage() {
 
         {/* Hero schedules UI mock — bottom two-thirds, white rounded frame */}
         <div
-          className={`pointer-events-none absolute inset-x-0 bottom-0 z-[11] flex h-[66.666%] items-end justify-center pb-[max(0.35rem,env(safe-area-inset-bottom,0px))] ${narrowHorizontalInset}`}
+          className={`pointer-events-none absolute inset-x-0 bottom-0 z-[18] flex h-[66.666%] w-full min-w-0 items-end justify-center px-4 pb-[max(0.35rem,env(safe-area-inset-bottom,0px))] iphone-page:px-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))]`}
         >
           <HeroSchedulesMock />
         </div>
