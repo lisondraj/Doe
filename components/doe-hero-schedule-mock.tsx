@@ -29,7 +29,10 @@ export function DoeHeroScheduleShowcase() {
       const h = r.height;
       if (w < 8 || h < 8) return;
       const sWidth = w / HERO_CROP_DESIGN_WIDTH;
-      setScale(Math.min(Math.max(sWidth, 0.32), 3.2));
+      const sHeight = h / BASE_H;
+      // Fill both width (Wed crop) and height so there’s no empty white band above the UI
+      const s = Math.min(Math.max(Math.max(sWidth, sHeight), 0.32), 3.2);
+      setScale(s);
     };
 
     update();
@@ -41,7 +44,7 @@ export function DoeHeroScheduleShowcase() {
   return (
     <div
       ref={hostRef}
-      className="relative h-full min-h-0 w-full min-w-0 overflow-hidden rounded-[clamp(0.65rem,1.5vw,1rem)] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.07)]"
+      className="relative h-full min-h-0 w-full min-w-0 overflow-hidden rounded-t-[clamp(0.65rem,1.5vw,1rem)] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.07)]"
     >
       <div className="flex h-full w-full items-end justify-start overflow-hidden">
         <div
