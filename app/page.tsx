@@ -1,15 +1,8 @@
 "use client";
 
-import {
-  DM_Serif_Display,
-  Inter,
-  Lora,
-  Manrope,
-  Outfit,
-  Oswald,
-  Playfair_Display,
-} from "next/font/google";
+import { Inter, Lora } from "next/font/google";
 import localFont from "next/font/local";
+import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
@@ -32,30 +25,13 @@ const inter = Inter({
   weight: ["300", "400", "500", "600", "700"],
 });
 
-const playfairTicker = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["500", "600"],
-});
-
-const oswaldTicker = Oswald({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-});
-
-const outfitTicker = Outfit({
-  subsets: ["latin"],
-  weight: ["500", "700"],
-});
-
-const dmSerifDisplayTicker = DM_Serif_Display({
-  subsets: ["latin"],
-  weight: ["400"],
-});
-
-const manropeTicker = Manrope({
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-});
+/** Hero + UI showcase panel — matches footer/hero gradient stack. */
+const HERO_BACKDROP_GRADIENT = `
+  linear-gradient(152deg, #1a2e34 0%, #243a40 14%, #3d2f28 32%, #6b442f 48%, #a85a34 62%, #d4893f 76%, #e8b04d 88%, #f2cf7a 100%),
+  radial-gradient(ellipse 100% 80% at 50% 110%, rgba(231, 169, 68, 0.55) 0%, transparent 58%),
+  radial-gradient(ellipse 55% 45% at 12% 18%, rgba(255, 224, 180, 0.22) 0%, transparent 52%),
+  radial-gradient(ellipse 50% 40% at 88% 22%, rgba(210, 119, 76, 0.3) 0%, transparent 55%)
+`;
 
 /** Second-section workflow carousel — white in-card UI mocks only (not slide captions). */
 const suisseIntl = localFont({
@@ -84,102 +60,6 @@ const slideCaptionFont = { fontFamily: "system-ui, -apple-system, sans-serif" } 
 /** Same horizontal inset as the fixed nav — hero, headline band, carousel (forced phone layout). */
 const narrowHorizontalInset =
   "iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))]";
-
-/** Fake practice / vendor names for hero marquee only — decorative, not real partners. */
-type HeroTickerAdorn =
-  | "diamondBefore"
-  | "plusAfter"
-  | "discAfter"
-  | "sparkleBefore"
-  | "clinicalCross";
-
-type HeroTickerSegment = {
-  key: string;
-  lines: readonly [string, string];
-  className: string;
-  adornment?: HeroTickerAdorn;
-};
-
-const HERO_TICKER_BASE: HeroTickerSegment[] = [
-  {
-    key: "cedar-row",
-    className: `${playfairTicker.className} font-semibold tracking-tight text-[clamp(1.35rem,4.2vw,1.85rem)]`,
-    lines: ["Cedar Row", "Family Practice"],
-    adornment: "diamondBefore",
-  },
-  {
-    key: "vantage",
-    className: `${oswaldTicker.className} font-medium uppercase tracking-[0.12em] text-[clamp(1.02rem,3.15vw,1.38rem)]`,
-    lines: ["Vantage", "Specialty Partners"],
-    adornment: "plusAfter",
-  },
-  {
-    key: "harborlight",
-    className: `${outfitTicker.className} font-semibold tracking-tight text-[clamp(1.22rem,3.85vw,1.68rem)]`,
-    lines: ["Harborlight", "Cardiology"],
-    adornment: "clinicalCross",
-  },
-  {
-    key: "meridian",
-    className: `${dmSerifDisplayTicker.className} font-normal italic tracking-[0.02em] text-[clamp(1.2rem,3.75vw,1.62rem)]`,
-    lines: ["Meridian", "Women's Health"],
-    adornment: "discAfter",
-  },
-  {
-    key: "garden-court",
-    className: `${manropeTicker.className} font-semibold tracking-tight text-[clamp(1.22rem,3.9vw,1.72rem)]`,
-    lines: ["Garden Court", "Dermatology"],
-    adornment: "sparkleBefore",
-  },
-];
-
-const HERO_TICKER_STRIP: HeroTickerSegment[] = Array.from({ length: 4 }, (_, i) =>
-  HERO_TICKER_BASE.map((s) => ({ ...s, key: `${s.key}-${i}` })),
-).flat();
-
-function HeroTickerAdornment({ kind }: { kind: HeroTickerAdorn }) {
-  switch (kind) {
-    case "diamondBefore":
-      return (
-        <span className="mr-1.5 shrink-0 text-[1.06em] leading-none opacity-70" aria-hidden>
-          ◆
-        </span>
-      );
-    case "sparkleBefore":
-      return (
-        <span className="mr-1.5 shrink-0 text-[0.94em] leading-none opacity-80" aria-hidden>
-          ✦
-        </span>
-      );
-    case "plusAfter":
-      return (
-        <span className="ml-1.5 shrink-0 font-sans text-[0.78em] font-medium tracking-normal opacity-75" aria-hidden>
-          +
-        </span>
-      );
-    case "discAfter":
-      return (
-        <span className="ml-1.5 shrink-0 text-[0.72em] opacity-70" aria-hidden>
-          ●
-        </span>
-      );
-    case "clinicalCross":
-      return (
-        <svg
-          className="mr-1.5 h-[1em] w-[1em] shrink-0 opacity-75"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.65"
-          strokeLinecap="round"
-          aria-hidden
-        >
-          <circle cx="12" cy="12" r="8.5" opacity="0.45" />
-          <path d="M12 8.5v7M8.5 12h7" />
-        </svg>
-      );
-  }
-}
 
 /**
  * Vertical bento horizontal inset — applied to scroll container so sticky element
@@ -1864,12 +1744,7 @@ export default function DoePage() {
           <div
             className="pointer-events-none absolute inset-0"
           style={{
-            background: `
-              linear-gradient(152deg, #1a2e34 0%, #243a40 14%, #3d2f28 32%, #6b442f 48%, #a85a34 62%, #d4893f 76%, #e8b04d 88%, #f2cf7a 100%),
-              radial-gradient(ellipse 100% 80% at 50% 110%, rgba(231, 169, 68, 0.55) 0%, transparent 58%),
-              radial-gradient(ellipse 55% 45% at 12% 18%, rgba(255, 224, 180, 0.22) 0%, transparent 52%),
-              radial-gradient(ellipse 50% 40% at 88% 22%, rgba(210, 119, 76, 0.3) 0%, transparent 55%)
-            `,
+            background: HERO_BACKDROP_GRADIENT,
             }}
           />
           <div
@@ -2356,13 +2231,34 @@ export default function DoePage() {
             document.body,
           )}
 
-        {/* Hero Header - Centered, Contained in Gradient Circle */}
+        {/* Hero UI screenshot — bottom two-thirds, gradient frame matching hero */}
         <div
-          className={`absolute inset-0 z-20 flex items-center justify-center iphone-page:pt-[env(safe-area-inset-top,0px)] iphone-page:pb-[env(safe-area-inset-bottom,0px)] ${narrowHorizontalInset}`}
+          className={`pointer-events-none absolute inset-x-0 bottom-0 z-[11] flex h-[66.666%] items-end justify-center pb-[max(0.35rem,env(safe-area-inset-bottom,0px))] ${narrowHorizontalInset}`}
+          aria-hidden
         >
-          <div className="max-w-[800px] mx-auto px-8 iphone-page:px-0 text-center w-full">
+          <div
+            className="relative flex w-full max-w-[min(100%,56rem)] items-end justify-center overflow-hidden rounded-[clamp(1.15rem,3.25vw,1.85rem)] ring-1 ring-white/10"
+            style={{ background: HERO_BACKDROP_GRADIENT }}
+          >
+            <Image
+              src="/images/ui.png"
+              alt=""
+              width={2012}
+              height={1452}
+              priority
+              className="h-auto w-full max-w-full object-contain object-bottom shadow-none"
+              sizes="(max-width: 896px) 100vw, 896px"
+            />
+          </div>
+        </div>
+
+        {/* Hero copy — left-aligned */}
+        <div
+          className={`absolute inset-0 z-20 flex flex-col items-start justify-start pt-[max(5.5rem,calc(env(safe-area-inset-top,0px)+4.25rem))] iphone-page:pt-[max(5rem,calc(env(safe-area-inset-top,0px)+3.75rem))] pb-[max(1rem,env(safe-area-inset-bottom,0px))] ${narrowHorizontalInset}`}
+        >
+          <div className="w-full max-w-[min(100%,44rem)] px-0 text-left">
             <p
-              className={`font-normal leading-none tracking-tight mb-7 iphone-page:mb-6 ${lora.className}`}
+              className={`font-normal leading-none tracking-tight mb-6 iphone-page:mb-5 ${lora.className}`}
               style={{
                 fontSize: "clamp(7.25rem, 36vw, 17rem)",
                 backgroundImage:
@@ -2376,13 +2272,13 @@ export default function DoePage() {
             >
               Doe
             </p>
-            <div className="flex flex-col items-center gap-[1.625rem] iphone-page:gap-7 px-2">
+            <div className="flex flex-col items-start gap-[1.625rem] iphone-page:gap-7">
               <p
-                className="flex flex-col items-center gap-0.5 iphone-page:gap-1 text-[clamp(1.75rem,4.15vw,2.75rem)] iphone-page:text-[clamp(1.2rem,4.85vw,1.9375rem)] font-medium text-white/90 text-center iphone-page:px-2 tracking-tight leading-[1.12]"
-                style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
+                className="flex flex-col items-start gap-0.5 iphone-page:gap-1 text-[clamp(1.75rem,4.15vw,2.75rem)] iphone-page:text-[clamp(1.2rem,4.85vw,1.9375rem)] font-medium text-white/90 text-left tracking-tight leading-[1.12]"
+                style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
               >
-                <span className="block iphone-page:whitespace-nowrap">We&apos;re building the future</span>
-                <span className="block iphone-page:whitespace-nowrap">of AI in healthcare.</span>
+                <span className="block">We&apos;re building the future</span>
+                <span className="block">of AI in healthcare.</span>
               </p>
               <span className="animate-hero-cta-float inline-flex">
                 <a
@@ -2411,63 +2307,6 @@ export default function DoePage() {
           </div>
         </div>
 
-        {/* Decorative fake clinic / vendor wordmarks — not real partners */}
-        <div
-          className="hero-partner-marquee-mask pointer-events-none absolute inset-x-0 bottom-0 z-[12] flex items-center justify-center overflow-hidden pb-[max(0.5rem,env(safe-area-inset-bottom,0px))] select-none"
-          style={{ top: "33.333%" }}
-          aria-hidden
-        >
-          <div className="flex w-max animate-hero-logo-marquee">
-            {[0, 1].map((track) => (
-              <div
-                key={track}
-                className="flex shrink-0 items-start gap-x-[clamp(3.25rem,11vw,7.25rem)] pe-[clamp(3.25rem,11vw,7.25rem)] py-3 iphone-page:py-2.5"
-              >
-                {HERO_TICKER_STRIP.map((seg) => {
-                  const [line0, line1] = seg.lines;
-
-                  const row1Glyph =
-                    seg.adornment === "diamondBefore" ||
-                    seg.adornment === "sparkleBefore" ||
-                    seg.adornment === "clinicalCross" ? (
-                      <HeroTickerAdornment kind={seg.adornment} />
-                    ) : null;
-
-                  const lineSuffix =
-                    seg.adornment === "plusAfter" ? (
-                      <HeroTickerAdornment kind="plusAfter" />
-                    ) : seg.adornment === "discAfter" ? (
-                      <HeroTickerAdornment kind="discAfter" />
-                    ) : null;
-
-                  return (
-                    <div
-                      key={`${track}-${seg.key}`}
-                      className={`flex w-[11.75rem] shrink-0 flex-col items-center gap-2 leading-none text-[rgba(248,246,243,0.26)] ${seg.className}`}
-                    >
-                      <div className="grid min-h-[1.9rem] w-full grid-cols-1 whitespace-nowrap">
-                        {row1Glyph ? (
-                          <div className="grid grid-cols-[minmax(0,1.6rem)_1fr] items-center gap-x-[0.2rem] leading-none">
-                            <span className="flex h-full shrink-0 items-center justify-center">{row1Glyph}</span>
-                            <span className="min-w-0 text-center leading-none">{line0}</span>
-                          </div>
-                        ) : (
-                          <span className="flex min-h-[1.9rem] w-full items-center justify-center whitespace-nowrap text-center leading-none">
-                            {line0}
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex min-h-[1.9rem] w-full flex-row flex-nowrap items-center justify-center gap-1 whitespace-nowrap leading-none">
-                        <span>{line1}</span>
-                        {lineSuffix}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ))}
-          </div>
-        </div>
 
       </div>
 
