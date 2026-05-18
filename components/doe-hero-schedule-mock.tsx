@@ -6,12 +6,13 @@ import { DoeSchedulesAppMock } from "@/components/doe-schedules-app-mock";
 const BASE_H = 580;
 
 /**
- * Design width (px) mapped to viewport — lower = tighter crop (ends before Thu column).
+ * Design width (px) mapped to viewport.
+ * On-screen width scales as `~920 * vw / (CROP/SHRINK)`; larger `CROP/SHRINK` = slightly smaller mock + calmer right edge.
  */
-const HERO_CROP_DESIGN_WIDTH = 684;
+const HERO_CROP_DESIGN_WIDTH = 686;
 
-/** Slightly smaller than full width-fill zoom */
-const HERO_SCALE_SHRINK = 0.9;
+/** Multiplier on width-based scale; tuned with CROP so the Wed column crop stays similar but the shell reads a bit smaller */
+const HERO_SCALE_SHRINK = 0.855;
 
 /**
  * Hero schedule: zoom/crop; bottom-clipped by hero; non-interactive inside mock.
@@ -44,13 +45,14 @@ export function DoeHeroScheduleShowcase() {
       ref={hostRef}
       className="relative h-full min-h-0 w-full min-w-0 overflow-hidden bg-transparent"
     >
-      <div className="flex h-full w-full min-h-0 items-end justify-start overflow-hidden">
+      <div className="flex h-full w-full min-h-0 items-end justify-start overflow-hidden pb-0">
         <div
           className="pointer-events-none shrink-0 select-none overflow-hidden rounded-t-[clamp(0.45rem,1.1vw,0.65rem)] rounded-b-[clamp(0.95rem,2.3vw,1.4rem)] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.07)]"
           style={{
             width: 920,
             height: BASE_H,
-            transform: `translateY(1px) scale(${scale})`,
+            marginBottom: -2,
+            transform: `translateY(2px) scale(${scale})`,
             transformOrigin: "bottom left",
           }}
         >
