@@ -6,6 +6,13 @@ import { DoeSchedulesAppMock } from "@/components/doe-schedules-app-mock";
 const BASE_H = 580;
 /** Fixed design width of the shell + mock (px); used to cap scale so the shell never overflows its host horizontally */
 const ARTBOARD_W = 920;
+/**
+ * Gap (px) left between the card's right edge and the host clip boundary.
+ * Without this, the card's right edge coincides exactly with the rectangular
+ * overflow-hidden clip, shearing through the border-radius curve on both
+ * top-right and bottom-right corners.
+ */
+const CORNER_RESERVE_PX = 10;
 
 /**
  * Design width (px) mapped to viewport.
@@ -38,7 +45,7 @@ export function DoeHeroScheduleShowcase() {
        * Never let the scaled shell extend past the host: rect overflow clips a straight edge
        * and squares off the top-right (and bottom-right) rounded corners.
        */
-      const fitScale = hostWidth / ARTBOARD_W;
+      const fitScale = (hostWidth - CORNER_RESERVE_PX) / ARTBOARD_W;
       const sWidth = Math.min(cropScale, fitScale);
       setScale(Math.min(Math.max(sWidth, 0.28), 2.85));
     };
