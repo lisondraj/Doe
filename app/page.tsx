@@ -2233,7 +2233,7 @@ export default function DoePage() {
 
         {/* Hero UI screenshot — bottom two-thirds, gradient frame matching hero */}
         <div
-          className={`pointer-events-none absolute inset-x-0 bottom-0 z-[11] -mt-[clamp(1.25rem,3.5vh,2.5rem)] flex h-[66.666%] items-end justify-center pb-[max(0.35rem,env(safe-area-inset-bottom,0px))] ${narrowHorizontalInset}`}
+          className={`pointer-events-none absolute inset-x-0 bottom-0 z-[11] flex h-[66.666%] items-end justify-center pb-[max(0.35rem,env(safe-area-inset-bottom,0px))] ${narrowHorizontalInset}`}
           aria-hidden
         >
           <div
@@ -2246,8 +2246,8 @@ export default function DoePage() {
               width={2012}
               height={1452}
               priority
-              className="mx-auto h-auto w-[86%] max-w-[86%] object-contain object-bottom shadow-none"
-              sizes="(max-width: 896px) 88vw, 790px"
+              className="h-auto w-full max-w-full object-contain object-bottom shadow-none"
+              sizes="(max-width: 896px) 100vw, 896px"
             />
           </div>
         </div>
@@ -2256,9 +2256,9 @@ export default function DoePage() {
         <div
           className={`absolute inset-0 z-20 flex flex-col items-start justify-start pt-[max(5.5rem,calc(env(safe-area-inset-top,0px)+4.25rem))] iphone-page:pt-[max(5rem,calc(env(safe-area-inset-top,0px)+3.75rem))] pb-[max(1rem,env(safe-area-inset-bottom,0px))] ${narrowHorizontalInset}`}
         >
-          <div className="w-full max-w-[min(100%,44rem)] pl-[clamp(0.65rem,2vw,1.15rem)] pr-0 text-left">
+          <div className="w-full max-w-[min(100%,44rem)] px-0 text-left">
             <p
-              className={`font-normal leading-none tracking-tight mb-4 iphone-page:mb-3.5 ${lora.className}`}
+              className={`font-normal leading-none tracking-tight mb-6 iphone-page:mb-5 ${lora.className}`}
               style={{
                 fontSize: "clamp(7.25rem, 36vw, 17rem)",
                 backgroundImage:
@@ -2272,9 +2272,9 @@ export default function DoePage() {
             >
               Doe
             </p>
-            <div className="flex flex-col items-start gap-4 iphone-page:gap-5">
+            <div className="flex flex-col items-start gap-[1.625rem] iphone-page:gap-7">
               <p
-                className="flex flex-col items-start gap-0.5 iphone-page:gap-1 pl-[clamp(0.5rem,1.35vw,0.9rem)] text-[clamp(1.75rem,4.15vw,2.75rem)] iphone-page:text-[clamp(1.2rem,4.85vw,1.9375rem)] font-medium text-white/90 text-left tracking-tight leading-[1.12]"
+                className="flex flex-col items-start gap-0.5 iphone-page:gap-1 text-[clamp(1.75rem,4.15vw,2.75rem)] iphone-page:text-[clamp(1.2rem,4.85vw,1.9375rem)] font-medium text-white/90 text-left tracking-tight leading-[1.12]"
                 style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
               >
                 <span className="block">We&apos;re building the future</span>
