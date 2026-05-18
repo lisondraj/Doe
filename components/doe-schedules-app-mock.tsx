@@ -1199,10 +1199,11 @@ export function DoeSchedulesAppMock({
   return (
     <div
       className={
-        full || hero
+        (full || hero
           ? "flex h-full min-h-0 w-full flex-col"
-          : "flex h-full min-h-0 w-full flex-col p-4 sm:p-5"
+          : "flex h-full min-h-0 w-full flex-col p-4 sm:p-5") + (hero ? " pointer-events-none select-none touch-none" : "")
       }
+      aria-hidden={hero ? true : undefined}
     >
       <div
         className={`flex min-h-0 flex-1 flex-col overflow-hidden ${
@@ -1743,7 +1744,13 @@ export function DoeSchedulesAppMock({
                                 {day.day}
                               </p>
                               {day.date === TODAY_DATE_LABEL ? (
-                                <span className="rounded-full border border-[#E8D4B5] bg-white px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#9B6A3F]">
+                                <span
+                                  className={
+                                    hero
+                                      ? "shrink-0 rounded-md bg-[#B07A4A] px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-white shadow-sm ring-1 ring-black/10"
+                                      : "rounded-full border border-[#E8D4B5] bg-white px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#9B6A3F]"
+                                  }
+                                >
                                   Today
                                 </span>
                               ) : null}
@@ -1760,6 +1767,7 @@ export function DoeSchedulesAppMock({
                       </div>
 
                       <div className="min-h-0 flex-1 overflow-auto">
+                        {!hero ? (
                         <div className="grid shrink-0 grid-cols-[72px_repeat(7,minmax(120px,1fr))] border-b border-[#F1F1F1] bg-[#FCFCFC]">
                           <div className="border-r border-[#EAEAEA]" aria-hidden />
                           <div className="col-span-7 flex items-center justify-center px-3 py-2">
@@ -1769,6 +1777,7 @@ export function DoeSchedulesAppMock({
                             </div>
                           </div>
                         </div>
+                        ) : null}
                         <div
                           className="grid grid-cols-[72px_repeat(7,minmax(120px,1fr))]"
                           style={{ height: WEEK_VISIBLE_SLOT_COUNT * SLOT_HEIGHT + WEEK_TOP_BUFFER }}
@@ -1807,7 +1816,7 @@ export function DoeSchedulesAppMock({
                                 isTodayCol
                                   ? "border-[#E8D4B5] bg-[#FFF9F1]"
                                   : "border-[#EAEAEA] bg-white"
-                              }`}
+                              } ${hero ? "overflow-hidden" : ""}`}
                             >
                               <div
                                 className="pointer-events-none absolute inset-x-0 bottom-0"
@@ -1845,7 +1854,7 @@ export function DoeSchedulesAppMock({
                                 return (
                                   <div
                                     key={`${day.day}-${event.time}-${event.label}`}
-                                    className={`absolute left-1.5 right-1.5 overflow-hidden rounded-[10px] px-2 py-1.5 shadow-[0_1px_3px_rgba(0,0,0,0.1)] ${eventCardGradientClass(event.tone)}`}
+                                    className={`absolute left-1.5 right-1.5 ${hero ? "overflow-visible" : "overflow-hidden"} rounded-[10px] px-2 py-1.5 shadow-[0_1px_3px_rgba(0,0,0,0.1)] ${eventCardGradientClass(event.tone)}`}
                                     style={{ top, height }}
                                   >
                                     <div className="flex min-h-0 flex-col gap-0.5">
@@ -1878,7 +1887,13 @@ export function DoeSchedulesAppMock({
                         <div className="border-[#E8D4B5] bg-[#FFF9F1] px-3 py-2">
                           <div className="flex flex-wrap items-center gap-2">
                             <p className="text-[13px] font-semibold text-[#9B6A3F]">{todayScheduleDay.day}</p>
-                            <span className="rounded-full border border-[#E8D4B5] bg-white px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#9B6A3F]">
+                            <span
+                              className={
+                                hero
+                                  ? "rounded-md bg-[#B07A4A] px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-white shadow-sm ring-1 ring-black/10"
+                                  : "rounded-full border border-[#E8D4B5] bg-white px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#9B6A3F]"
+                              }
+                            >
                               Today
                             </span>
                             <span className="text-[12px] text-[#9B6A3F]/90">{todayScheduleDay.date}</span>
@@ -1891,12 +1906,14 @@ export function DoeSchedulesAppMock({
                       </div>
 
                       <div className="min-h-0 flex-1 overflow-auto">
+                        {!hero ? (
                         <div className="border-b border-[#F1F1F1] bg-[#FCFCFC] px-3 py-2">
                           <div className="flex items-center justify-center gap-1.5 text-[10px] font-medium text-neutral-400">
                             <span aria-hidden>↑</span>
                             <span>{earlyTodayCount} events before 8:00 AM</span>
                           </div>
                         </div>
+                        ) : null}
                         <div
                           className="grid grid-cols-[72px_minmax(0,1fr)]"
                           style={{ height: WEEK_VISIBLE_SLOT_COUNT * SLOT_HEIGHT + WEEK_TOP_BUFFER }}

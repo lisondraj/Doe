@@ -2233,7 +2233,7 @@ export default function DoePage() {
 
         {/* Hero schedule UI — lower 2/3 of hero, full content width; rounded shell only */}
         <div
-          className={`pointer-events-none absolute inset-x-0 bottom-0 top-1/3 z-[12] min-h-0 w-full max-w-none overflow-hidden pb-[env(safe-area-inset-bottom,0px)] ${narrowHorizontalInset}`}
+          className={`pointer-events-none absolute inset-x-0 bottom-0 top-1/3 z-[12] min-h-0 w-full max-w-none overflow-hidden ${narrowHorizontalInset}`}
           aria-hidden
         >
           <DoeHeroScheduleShowcase />

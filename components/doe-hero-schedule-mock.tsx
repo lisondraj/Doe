@@ -6,14 +6,15 @@ import { DoeSchedulesAppMock } from "@/components/doe-schedules-app-mock";
 const BASE_H = 580;
 
 /**
- * Design-space width from left edge of artboard to the right edge of the Wed column
- * (Harper Scott / Apr 1): sidebar 220 + main `px-4` 16 + time 72 + 3×day cols in 980px week grid.
+ * Design width (px) to map to viewport — tune so Wed column / right crop looks correct.
  */
-const HERO_CROP_DESIGN_WIDTH = 698;
+const HERO_CROP_DESIGN_WIDTH = 706;
+
+/** Slightly smaller than full width-fill zoom */
+const HERO_SCALE_SHRINK = 0.9;
 
 /**
- * Hero schedule: zoom/crop so the viewport spans sidebar → Wed column (clips Thu–Sun);
- * anchored bottom-left so the UI fills the band without a void above.
+ * Hero schedule: zoom/crop sidebar → past Wed; bottom-clipped by hero; non-interactive inside mock.
  */
 export function DoeHeroScheduleShowcase() {
   const hostRef = useRef<HTMLDivElement>(null);
@@ -28,8 +29,8 @@ export function DoeHeroScheduleShowcase() {
       const w = r.width;
       const h = r.height;
       if (w < 8 || h < 8) return;
-      const sWidth = w / HERO_CROP_DESIGN_WIDTH;
-      setScale(Math.min(Math.max(sWidth, 0.32), 3.2));
+      const sWidth = (w / HERO_CROP_DESIGN_WIDTH) * HERO_SCALE_SHRINK;
+      setScale(Math.min(Math.max(sWidth, 0.28), 2.85));
     };
 
     update();
@@ -41,11 +42,11 @@ export function DoeHeroScheduleShowcase() {
   return (
     <div
       ref={hostRef}
-      className="relative h-full min-h-0 w-full min-w-0 bg-transparent"
+      className="relative h-full min-h-0 w-full min-w-0 overflow-hidden bg-transparent"
     >
-      <div className="flex h-full w-full items-end justify-start overflow-hidden">
+      <div className="flex h-full w-full min-h-0 items-end justify-start overflow-hidden">
         <div
-          className="shrink-0 overflow-hidden rounded-[clamp(0.65rem,1.5vw,1rem)] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.07)]"
+          className="pointer-events-none shrink-0 select-none overflow-hidden rounded-[clamp(0.65rem,1.5vw,1rem)] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.07)]"
           style={{
             width: 920,
             height: BASE_H,
