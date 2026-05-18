@@ -8,11 +8,17 @@ const BASE_H = 580;
 const ARTBOARD_W = 920;
 /**
  * Gap (px) left between the card's right edge and the host clip boundary.
- * Without this, the card's right edge coincides exactly with the rectangular
- * overflow-hidden clip, shearing through the border-radius curve on both
- * top-right and bottom-right corners.
+ * Must be > visual corner radius (CARD_CORNER_PX * scale) so the curve is
+ * fully within the clip, not sheared.
  */
-const CORNER_RESERVE_PX = 10;
+const CORNER_RESERVE_PX = 18;
+
+/**
+ * Border-radius applied to the card at artboard scale (920 px).
+ * Visual radius on screen = CARD_CORNER_PX * scale.
+ * At scale ≈ 0.35 (mobile): ~10px visual — clearly rounded.
+ */
+const CARD_CORNER_PX = 28;
 
 /**
  * Design width (px) mapped to viewport.
@@ -71,11 +77,19 @@ export function DoeHeroScheduleShowcase() {
     >
       <div className="flex h-full w-full min-h-0 items-end justify-start pb-0">
         <div
-          className="pointer-events-none shrink-0 select-none overflow-hidden rounded-tl-[clamp(0.45rem,1.1vw,0.65rem)] rounded-tr-[clamp(0.45rem,1.1vw,0.65rem)] rounded-br-[clamp(0.95rem,2.3vw,1.4rem)] rounded-bl-none bg-white shadow-[0_1px_3px_rgba(0,0,0,0.07)]"
+          className="pointer-events-none shrink-0 select-none overflow-hidden rounded-bl-none bg-white shadow-[0_1px_3px_rgba(0,0,0,0.07)]"
           style={{
             width: ARTBOARD_W,
             height: BASE_H,
             marginBottom: -2,
+            /**
+             * Set border-radius in artboard-px so it scales with the transform.
+             * TL = TR = CARD_CORNER_PX. BR matches original intent (larger).
+             * BL = 0 (square bottom-left, flush with hero edge).
+             */
+            borderTopLeftRadius: CARD_CORNER_PX,
+            borderTopRightRadius: CARD_CORNER_PX,
+            borderBottomRightRadius: CARD_CORNER_PX * 1.5,
             backfaceVisibility: "hidden",
             transform: `translate3d(0, 2px, 0) scale(${scale})`,
             transformOrigin: "bottom left",
