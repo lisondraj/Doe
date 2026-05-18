@@ -14,8 +14,8 @@ const HERO_CROP_DESIGN_WIDTH = 686;
 /** Multiplier on width-based scale; tuned with CROP so the Wed column crop stays similar but the shell reads a bit smaller */
 const HERO_SCALE_SHRINK = 0.855;
 
-/** Minimum gap from the host’s right edge so radii (esp. top-right) stay inside the overflow clip */
-const HERO_RIGHT_EDGE_RESERVE_PX = 20;
+/** Keep this much space on the right so top/bottom rounded corners aren’t clipped by the hero overflow */
+const HERO_RIGHT_EDGE_RESERVE_PX = 18;
 
 /**
  * Hero schedule: zoom/crop; bottom-clipped by hero; non-interactive inside mock.
@@ -30,18 +30,10 @@ export function DoeHeroScheduleShowcase() {
 
     const update = () => {
       const r = host.getBoundingClientRect();
-      const hostW = r.width;
+      const w = Math.max(r.width - HERO_RIGHT_EDGE_RESERVE_PX, 8);
       const h = r.height;
-      if (hostW < 8 || h < 8) return;
-      const w = Math.max(hostW - HERO_RIGHT_EDGE_RESERVE_PX, 8);
-      /** Zoom/crop level from design width (content framing) */
-      const cropScale = (w / HERO_CROP_DESIGN_WIDTH) * HERO_SCALE_SHRINK;
-      /**
-       * Hard cap: scaled shell is 920 CSS px wide — without this, `cropScale` can make
-       * `920 * scale` wider than the host and the right rounded corners get clipped flush.
-       */
-      const fitScale = w / 920;
-      const sWidth = Math.min(cropScale, fitScale);
+      if (h < 8) return;
+      const sWidth = (w / HERO_CROP_DESIGN_WIDTH) * HERO_SCALE_SHRINK;
       setScale(Math.min(Math.max(sWidth, 0.28), 2.85));
     };
 
@@ -54,9 +46,9 @@ export function DoeHeroScheduleShowcase() {
   return (
     <div
       ref={hostRef}
-      className="relative h-full min-h-0 w-full min-w-0 overflow-hidden bg-transparent"
+      className="relative h-full min-h-0 w-full min-w-0 bg-transparent"
     >
-      <div className="flex h-full w-full min-h-0 items-end justify-start overflow-hidden pb-0">
+      <div className="flex h-full w-full min-h-0 items-end justify-start pb-0">
         <div
           className="pointer-events-none shrink-0 select-none overflow-hidden rounded-tl-[clamp(0.45rem,1.1vw,0.65rem)] rounded-tr-[clamp(0.45rem,1.1vw,0.65rem)] rounded-br-[clamp(0.95rem,2.3vw,1.4rem)] rounded-bl-none bg-white shadow-[0_1px_3px_rgba(0,0,0,0.07)]"
           style={{
