@@ -2378,10 +2378,11 @@ export default function DoePage() {
             </p>
             <div className="flex flex-col items-center gap-[1.625rem] iphone-page:gap-7 px-2">
               <p
-                className="whitespace-nowrap text-[clamp(1.75rem,4.15vw,2.75rem)] iphone-page:text-[clamp(1.2rem,4.85vw,1.9375rem)] font-medium text-white/90 text-center iphone-page:px-2 tracking-tight leading-snug"
+                className="flex flex-col items-center gap-1.5 iphone-page:gap-2 text-[clamp(1.75rem,4.15vw,2.75rem)] iphone-page:text-[clamp(1.2rem,4.85vw,1.9375rem)] font-medium text-white/90 text-center iphone-page:px-2 tracking-tight leading-snug"
                 style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
               >
-                An AI inbox built for clinicians.
+                <span className="block iphone-page:whitespace-nowrap">We&apos;re building the future</span>
+                <span className="block iphone-page:whitespace-nowrap">of AI in healthcare.</span>
               </p>
               <span className="animate-hero-cta-float inline-flex">
                 <a
