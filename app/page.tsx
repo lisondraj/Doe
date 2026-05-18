@@ -58,12 +58,17 @@ const manropeTicker = Manrope({
 });
 
 /** Second-section workflow carousel — white in-card UI mocks only (not slide captions). */
-const suisseScreenLight = localFont({
-  src: "../fonts/suisse/SuisseScreenTrial-Light.otf",
+const suisseIntl = localFont({
+  src: [
+    { path: "../fonts/suisse/SuisseIntlTrial-Light.otf", weight: "300", style: "normal" },
+    { path: "../fonts/suisse/SuisseIntlTrial-Regular.otf", weight: "400", style: "normal" },
+    { path: "../fonts/suisse/SuisseIntlTrial-Medium.otf", weight: "500", style: "normal" },
+    { path: "../fonts/suisse/SuisseIntlTrial-Semibold.otf", weight: "600", style: "normal" },
+  ],
   display: "swap",
   weight: "300",
 });
-const WORKFLOW_CAROUSEL_UI_PANEL = `${suisseScreenLight.className} workflow-carousel-ui`;
+const WORKFLOW_CAROUSEL_UI_PANEL = `${suisseIntl.className} workflow-carousel-ui`;
 
 /** Bottom title pill + description inside 700×700 slide mocks (scales with card transform). */
 /** Position (left/right) is applied via inline style — computed from slide scale so captions
