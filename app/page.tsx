@@ -2247,7 +2247,7 @@ export default function DoePage() {
             <p
               className={`font-normal leading-none tracking-tight mb-6 iphone-page:mb-5 ${lora.className}`}
               style={{
-                fontSize: "clamp(7.25rem, 36vw, 17rem)",
+                fontSize: "clamp(8.25rem, 39vw, 18.5rem)",
                 backgroundImage:
                   "linear-gradient(180deg, #ffffff 0%, #ffffff 15%, #fafafa 34%, #f5f6f8 52%, #e2e8ee 76%, #c5cdd6 100%)",
                 WebkitBackgroundClip: "text",
@@ -2259,7 +2259,7 @@ export default function DoePage() {
             >
               Doe
             </p>
-            <div className="flex flex-col items-start gap-[1.625rem] iphone-page:gap-7">
+            <div className="flex flex-col items-start gap-[1.625rem] iphone-page:gap-7 pl-5 sm:pl-7 md:pl-9">
               <p
                 className="flex flex-col items-start gap-0.5 iphone-page:gap-1 text-[clamp(1.75rem,4.15vw,2.75rem)] iphone-page:text-[clamp(1.2rem,4.85vw,1.9375rem)] font-medium text-white/90 text-left tracking-tight leading-[1.12]"
                 style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
@@ -2301,7 +2301,7 @@ export default function DoePage() {
       <div className="w-full border-t border-[#E6E6E6]" />
 
       {/* Second Section — title upper third, carousel lower two-thirds */}
-      <div ref={secondSectionRef} className="min-h-[calc(var(--app-vh,100dvh)+7rem)] relative z-10 flex flex-col pt-16 pb-28 iphone-page:min-h-[calc(var(--app-vh,100dvh)+6rem)] iphone-page:pt-12 iphone-page:pb-[9.5rem] overscroll-none overflow-hidden">
+      <div ref={secondSectionRef} className="min-h-[calc(var(--app-vh,100dvh)+7rem)] relative z-10 flex flex-col pt-24 pb-28 iphone-page:min-h-[calc(var(--app-vh,100dvh)+6rem)] iphone-page:pt-16 iphone-page:pb-[9.5rem] overscroll-none overflow-hidden">
         <div className="flex-1 grid grid-rows-[3fr_9fr_auto] min-h-[85vh] iphone-page:min-h-[88dvh] w-full overflow-x-hidden overscroll-none">
           {/* Title band — slightly taller than 1:2 so headline has room */}
           <div
