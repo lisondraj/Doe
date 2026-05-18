@@ -1548,8 +1548,14 @@ export function DoeSchedulesAppMock({
                   </h1>
                 </header>
                 <div className="border-b border-dashed border-[#E8E8E8] px-4 py-2">
-                  <div className="flex w-full min-w-0 flex-wrap items-center justify-between gap-3">
-                    <div className="flex min-w-0 flex-wrap items-center gap-3">
+                  <div
+                    className={`flex w-full min-w-0 flex-wrap items-center gap-3 ${
+                      hero ? "justify-start" : "justify-between"
+                    }`}
+                  >
+                    <div
+                      className={`flex min-w-0 flex-wrap items-center gap-3 ${hero ? "order-2" : ""}`}
+                    >
                       <div className="inline-flex h-[38px] min-w-0 max-w-[min(100%,280px)] items-center gap-1 rounded-[14px] border border-[#E2E2E2] bg-white px-1 sm:max-w-[320px]">
                         <button
                           type="button"
@@ -1620,7 +1626,11 @@ export function DoeSchedulesAppMock({
                         ) : null}
                       </div>
                     </div>
-                    <div className="relative ml-auto grid w-[min(100%,360px)] shrink-0 grid-cols-4 rounded-[22px] border border-[#E2E2E2] bg-[#F7F7F7] p-1 sm:w-[360px]">
+                    <div
+                      className={`relative grid w-[min(100%,360px)] shrink-0 grid-cols-4 rounded-[22px] border border-[#E2E2E2] bg-[#F7F7F7] p-1 sm:w-[360px] ${
+                        hero ? "order-1" : "ml-auto"
+                      }`}
+                    >
                       <span
                         className="pointer-events-none absolute top-1 h-[30px] rounded-[16px] border border-[#E6E6E6] bg-white shadow-[0_1px_0_rgba(0,0,0,0.03)] transition-[left] duration-200"
                         style={{
@@ -1691,7 +1701,7 @@ export function DoeSchedulesAppMock({
                                   >
                                     {day.day}
                                   </span>
-                                  {isToday ? (
+                                  {isToday && !hero ? (
                                     <span className="shrink-0 rounded-full bg-white/80 px-1.5 py-0.5 text-[8px] font-semibold uppercase tracking-wide text-[#9B6A3F] ring-1 ring-[#E8D4B5]/80">
                                       Today
                                     </span>
@@ -1757,7 +1767,7 @@ export function DoeSchedulesAppMock({
                               >
                                 {day.day}
                               </p>
-                              {day.date === TODAY_DATE_LABEL ? (
+                              {day.date === TODAY_DATE_LABEL && !hero ? (
                                 <span className="shrink-0 rounded-full border border-[#E8D4B5] bg-white px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#9B6A3F]">
                                   Today
                                 </span>
@@ -1895,9 +1905,11 @@ export function DoeSchedulesAppMock({
                         <div className="border-[#E8D4B5] bg-[#FFF9F1] px-3 py-2">
                           <div className="flex flex-wrap items-center gap-2">
                             <p className="text-[13px] font-semibold text-[#9B6A3F]">{todayScheduleDay.day}</p>
-                            <span className="rounded-full border border-[#E8D4B5] bg-white px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#9B6A3F]">
-                              Today
-                            </span>
+                            {!hero ? (
+                              <span className="rounded-full border border-[#E8D4B5] bg-white px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#9B6A3F]">
+                                Today
+                              </span>
+                            ) : null}
                             <span className="text-[12px] text-[#9B6A3F]/90">{todayScheduleDay.date}</span>
                           </div>
                           <p className="mt-0.5 text-[11px] text-neutral-500">
