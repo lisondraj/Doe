@@ -2233,15 +2233,15 @@ export default function DoePage() {
 
         {/* Hero schedule UI mock — bottom two-thirds; rounded frame + live mock (`/doebuildnew`) */}
         <div
-          className={`pointer-events-none absolute inset-x-0 bottom-0 z-[11] flex h-[66.666%] items-end justify-center pb-[max(0.35rem,env(safe-area-inset-bottom,0px))] ${narrowHorizontalInset}`}
+          className={`pointer-events-none absolute inset-x-0 bottom-0 z-[12] flex min-h-0 h-[66.666%] w-full max-w-none items-end justify-center pb-[max(0.35rem,env(safe-area-inset-bottom,0px))] ${narrowHorizontalInset}`}
           aria-hidden
         >
           <DoeHeroScheduleShowcase backdropGradient={HERO_BACKDROP_GRADIENT} />
         </div>
 
-        {/* Hero copy — left-aligned */}
+        {/* Hero copy — left-aligned (no inset-0: full-bleed z-20 layer was painting over the z-[11] schedule mock) */}
         <div
-          className={`absolute inset-0 z-20 flex flex-col items-start justify-start pt-[max(5.5rem,calc(env(safe-area-inset-top,0px)+4.25rem))] iphone-page:pt-[max(5rem,calc(env(safe-area-inset-top,0px)+3.75rem))] pb-[max(1rem,env(safe-area-inset-bottom,0px))] ${narrowHorizontalInset}`}
+          className={`absolute top-0 left-0 right-0 z-20 flex flex-col items-start justify-start pt-[max(5.5rem,calc(env(safe-area-inset-top,0px)+4.25rem))] iphone-page:pt-[max(5rem,calc(env(safe-area-inset-top,0px)+3.75rem))] ${narrowHorizontalInset}`}
         >
           <div className="w-full max-w-[min(100%,44rem)] px-0 text-left">
             <p
