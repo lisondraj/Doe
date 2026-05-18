@@ -14,8 +14,8 @@ const HERO_CROP_DESIGN_WIDTH = 686;
 /** Multiplier on width-based scale; tuned with CROP so the Wed column crop stays similar but the shell reads a bit smaller */
 const HERO_SCALE_SHRINK = 0.855;
 
-/** Keep this much space on the right so top/bottom rounded corners aren’t clipped by the hero overflow */
-const HERO_RIGHT_EDGE_RESERVE_PX = 18;
+/** Minimum gap from the host’s right edge so radii (esp. top-right) stay inside the overflow clip */
+const HERO_RIGHT_EDGE_RESERVE_PX = 20;
 
 /**
  * Hero schedule: zoom/crop; bottom-clipped by hero; non-interactive inside mock.
@@ -30,10 +30,18 @@ export function DoeHeroScheduleShowcase() {
 
     const update = () => {
       const r = host.getBoundingClientRect();
-      const w = Math.max(r.width - HERO_RIGHT_EDGE_RESERVE_PX, 8);
+      const hostW = r.width;
       const h = r.height;
-      if (h < 8) return;
-      const sWidth = (w / HERO_CROP_DESIGN_WIDTH) * HERO_SCALE_SHRINK;
+      if (hostW < 8 || h < 8) return;
+      const w = Math.max(hostW - HERO_RIGHT_EDGE_RESERVE_PX, 8);
+      /** Zoom/crop level from design width (content framing) */
+      const cropScale = (w / HERO_CROP_DESIGN_WIDTH) * HERO_SCALE_SHRINK;
+      /**
+       * Hard cap: scaled shell is 920 CSS px wide — without this, `cropScale` can make
+       * `920 * scale` wider than the host and the right rounded corners get clipped flush.
+       */
+      const fitScale = w / 920;
+      const sWidth = Math.min(cropScale, fitScale);
       setScale(Math.min(Math.max(sWidth, 0.28), 2.85));
     };
 
