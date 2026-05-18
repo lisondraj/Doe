@@ -3,17 +3,21 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { DoeSchedulesAppMock } from "@/components/doe-schedules-app-mock";
 
-const BASE_W = 920;
-/** Baseline height of hero mock artboard (920×580) */
 const BASE_H = 580;
 
 /**
- * Hero schedule: one white shell with rounded corners only — scale grows with the hero band
- * so the UI fills horizontal space (width-first; excess height clips from the top).
+ * Design-space width from left edge of artboard to the right edge of the Wed column
+ * (Harper Scott / Apr 1): sidebar 220 + main `px-4` 16 + time 72 + 3×day cols in 980px week grid.
+ */
+const HERO_CROP_DESIGN_WIDTH = 698;
+
+/**
+ * Hero schedule: zoom/crop so the viewport spans sidebar → Wed column (clips Thu–Sun);
+ * anchored bottom-left so the UI fills the band without a void above.
  */
 export function DoeHeroScheduleShowcase() {
   const hostRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(0.5);
+  const [scale, setScale] = useState(0.85);
 
   useLayoutEffect(() => {
     const host = hostRef.current;
@@ -22,10 +26,10 @@ export function DoeHeroScheduleShowcase() {
     const update = () => {
       const r = host.getBoundingClientRect();
       const w = r.width;
-      if (w < 8) return;
-      // Fill left/right of the hero band; vertical overflow is clipped (mock anchored to bottom)
-      const s = Math.min(w / BASE_W, 2.6);
-      setScale(Math.max(s, 0.28));
+      const h = r.height;
+      if (w < 8 || h < 8) return;
+      const sWidth = w / HERO_CROP_DESIGN_WIDTH;
+      setScale(Math.min(Math.max(sWidth, 0.32), 3.2));
     };
 
     update();
@@ -37,16 +41,16 @@ export function DoeHeroScheduleShowcase() {
   return (
     <div
       ref={hostRef}
-      className="relative h-full min-h-0 w-full min-w-0 overflow-hidden rounded-[clamp(0.7rem,1.75vw,1.1rem)] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.07)]"
+      className="relative h-full min-h-0 w-full min-w-0 overflow-hidden rounded-[clamp(0.65rem,1.5vw,1rem)] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.07)]"
     >
-      <div className="flex h-full w-full items-end justify-center overflow-hidden">
+      <div className="flex h-full w-full items-end justify-start overflow-hidden">
         <div
           className="shrink-0"
           style={{
-            width: BASE_W,
+            width: 920,
             height: BASE_H,
             transform: `scale(${scale})`,
-            transformOrigin: "bottom center",
+            transformOrigin: "bottom left",
           }}
         >
           <DoeSchedulesAppMock variant="hero" />
