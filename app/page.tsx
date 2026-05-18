@@ -2,8 +2,8 @@
 
 import { Inter, Lora } from "next/font/google";
 import localFont from "next/font/local";
-import Image from "next/image";
 import Link from "next/link";
+import { HeroSchedulesMock } from "@/components/hero-schedules-mock";
 import { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
 import type { ReactElement } from "react";
@@ -2231,25 +2231,11 @@ export default function DoePage() {
             document.body,
           )}
 
-        {/* Hero UI screenshot — bottom two-thirds, gradient frame matching hero */}
+        {/* Hero schedules UI mock — bottom two-thirds, white rounded frame */}
         <div
           className={`pointer-events-none absolute inset-x-0 bottom-0 z-[11] flex h-[66.666%] items-end justify-center pb-[max(0.35rem,env(safe-area-inset-bottom,0px))] ${narrowHorizontalInset}`}
-          aria-hidden
         >
-          <div
-            className="relative flex w-full max-w-[min(100%,56rem)] items-end justify-center overflow-hidden rounded-[clamp(1.15rem,3.25vw,1.85rem)] ring-1 ring-white/10"
-            style={{ background: HERO_BACKDROP_GRADIENT }}
-          >
-            <Image
-              src="/images/ui.png"
-              alt=""
-              width={2012}
-              height={1452}
-              priority
-              className="h-auto w-full max-w-full object-contain object-bottom shadow-none"
-              sizes="(max-width: 896px) 100vw, 896px"
-            />
-          </div>
+          <HeroSchedulesMock />
         </div>
 
         {/* Hero copy — left-aligned */}
