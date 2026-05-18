@@ -2378,7 +2378,7 @@ export default function DoePage() {
             </p>
             <div className="flex flex-col items-center gap-[1.625rem] iphone-page:gap-7 px-2">
               <p
-                className="flex flex-col items-center gap-1.5 iphone-page:gap-2 text-[clamp(1.75rem,4.15vw,2.75rem)] iphone-page:text-[clamp(1.2rem,4.85vw,1.9375rem)] font-medium text-white/90 text-center iphone-page:px-2 tracking-tight leading-snug"
+                className="flex flex-col items-center gap-0.5 iphone-page:gap-1 text-[clamp(1.75rem,4.15vw,2.75rem)] iphone-page:text-[clamp(1.2rem,4.85vw,1.9375rem)] font-medium text-white/90 text-center iphone-page:px-2 tracking-tight leading-[1.12]"
                 style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
               >
                 <span className="block iphone-page:whitespace-nowrap">We&apos;re building the future</span>
@@ -2676,16 +2676,13 @@ export default function DoePage() {
                       }}
                     >
                       <div className="mb-3 flex items-center justify-start">
-                        <p
-                          className="text-sm font-semibold tracking-tight text-gray-900"
-                          style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
-                        >
+                        <p className="text-sm font-medium tabular-nums tracking-tight text-gray-900">
                           (555) 310-4412
                         </p>
                       </div>
                       <div className="mb-3 rounded-lg border border-gray-100 bg-gray-50 px-3 py-2.5">
-                        <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wide text-gray-500">Heard now</p>
-                        <p className="text-xs leading-snug text-gray-900" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                        <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wide text-gray-500">Heard now</p>
+                        <p className="text-xs font-light leading-snug text-gray-900">
                           “I&apos;m dizzy after my new meds—need to bump my cardio follow-up.”
                         </p>
                       </div>
@@ -2696,14 +2693,11 @@ export default function DoePage() {
                             <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-gray-500 [animation-duration:1.05s] [animation-delay:180ms]" />
                             <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-gray-500 [animation-duration:1.05s] [animation-delay:360ms]" />
                           </span>
-                          <span
-                            className="text-[11px] font-semibold uppercase tracking-wide text-gray-700"
-                            style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
-                          >
+                          <span className="text-[11px] font-medium uppercase tracking-wide text-gray-700">
                             Thinking
                           </span>
                         </div>
-                        <ul className="space-y-2 text-[11px] leading-snug text-gray-600" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                        <ul className="space-y-2 text-[11px] font-light leading-snug text-gray-600">
                           {[
                             'Intent · side-effect plus reschedule request',
                             'Cross-check meds + dizziness cues in chart',
@@ -2717,7 +2711,7 @@ export default function DoePage() {
                           ))}
                         </ul>
                       </div>
-                      <p className="mt-2 text-[10px] text-gray-400" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                      <p className="mt-2 text-[10px] font-light text-gray-400">
                         Hold music until confidence threshold met—then announces slot or escalates triage.
                       </p>
                     </div>

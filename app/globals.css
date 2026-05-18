@@ -303,6 +303,16 @@ html:has(.doeforvc-iphone-root) body {
 }
 
 /** Workflow carousel UI mocks — inherit Suisse Intl Trial from panel root (next/font/local). */
+.workflow-carousel-ui {
+  font-weight: 300;
+  font-synthesis: none;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
 .workflow-carousel-ui * {
   font-family: inherit !important;
+}
+
+.workflow-carousel-ui :where(.font-bold, .font-semibold) {
+  font-weight: 500 !important;
 }
