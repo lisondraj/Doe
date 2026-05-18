@@ -46,7 +46,7 @@ export function DoeHeroScheduleShowcase() {
   return (
     <div
       ref={hostRef}
-      className="relative h-full min-h-0 w-full min-w-0 bg-transparent"
+      className="relative h-full min-h-0 w-full min-w-0 overflow-hidden bg-transparent"
     >
       <div className="flex h-full w-full min-h-0 items-end justify-start pb-0">
         <div
