@@ -2231,12 +2231,12 @@ export default function DoePage() {
             document.body,
           )}
 
-        {/* Hero schedule UI mock — bottom two-thirds; rounded frame + live mock (`/doebuildnew`) */}
+        {/* Hero schedule UI mock — lower ~70% of hero; off-white frame + live mock (`/doebuildnew`) */}
         <div
-          className={`pointer-events-none absolute inset-x-0 bottom-0 z-[12] flex min-h-0 h-[66.666%] w-full max-w-none items-end justify-center pb-[max(0.35rem,env(safe-area-inset-bottom,0px))] ${narrowHorizontalInset}`}
+          className={`pointer-events-none absolute inset-x-0 bottom-0 top-[28%] z-[12] flex min-h-0 w-full max-w-none items-end justify-center pb-[max(0.2rem,env(safe-area-inset-bottom,0px))] ${narrowHorizontalInset}`}
           aria-hidden
         >
-          <DoeHeroScheduleShowcase backdropGradient={HERO_BACKDROP_GRADIENT} />
+          <DoeHeroScheduleShowcase />
         </div>
 
         {/* Hero copy — left-aligned (no inset-0: full-bleed z-20 layer was painting over the z-[11] schedule mock) */}
