@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { Inter, Lora } from "next/font/google";
+import localFont from "next/font/local";
 
 export const weekSchedule = [
   {
@@ -692,6 +693,18 @@ const inter = Inter({
   weight: ["400", "500", "600", "700"],
 });
 
+/** Hero marketing mock: UI sans (sidebar “Doe” keeps `lora` on its own span). */
+const suisseIntlUi = localFont({
+  src: [
+    { path: "../fonts/suisse/SuisseIntlTrial-Light.otf", weight: "300", style: "normal" },
+    { path: "../fonts/suisse/SuisseIntlTrial-Regular.otf", weight: "400", style: "normal" },
+    { path: "../fonts/suisse/SuisseIntlTrial-Medium.otf", weight: "500", style: "normal" },
+    { path: "../fonts/suisse/SuisseIntlTrial-Semibold.otf", weight: "600", style: "normal" },
+  ],
+  display: "swap",
+  weight: "300",
+});
+
 const monthWeekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
 
 const monthGrid = [
@@ -1201,7 +1214,8 @@ export function DoeSchedulesAppMock({
       className={
         (full || hero
           ? "flex h-full min-h-0 w-full flex-col"
-          : "flex h-full min-h-0 w-full flex-col p-4 sm:p-5") + (hero ? " pointer-events-none select-none touch-none" : "")
+          : "flex h-full min-h-0 w-full flex-col p-4 sm:p-5") +
+        (hero ? ` pointer-events-none select-none touch-none ${suisseIntlUi.className}` : "")
       }
       aria-hidden={hero ? true : undefined}
     >
@@ -1744,13 +1758,7 @@ export function DoeSchedulesAppMock({
                                 {day.day}
                               </p>
                               {day.date === TODAY_DATE_LABEL ? (
-                                <span
-                                  className={
-                                    hero
-                                      ? "shrink-0 rounded-md bg-[#B07A4A] px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-white shadow-sm ring-1 ring-black/10"
-                                      : "rounded-full border border-[#E8D4B5] bg-white px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#9B6A3F]"
-                                  }
-                                >
+                                <span className="shrink-0 rounded-full border border-[#E8D4B5] bg-white px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#9B6A3F]">
                                   Today
                                 </span>
                               ) : null}
@@ -1887,13 +1895,7 @@ export function DoeSchedulesAppMock({
                         <div className="border-[#E8D4B5] bg-[#FFF9F1] px-3 py-2">
                           <div className="flex flex-wrap items-center gap-2">
                             <p className="text-[13px] font-semibold text-[#9B6A3F]">{todayScheduleDay.day}</p>
-                            <span
-                              className={
-                                hero
-                                  ? "rounded-md bg-[#B07A4A] px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-white shadow-sm ring-1 ring-black/10"
-                                  : "rounded-full border border-[#E8D4B5] bg-white px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#9B6A3F]"
-                              }
-                            >
+                            <span className="rounded-full border border-[#E8D4B5] bg-white px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#9B6A3F]">
                               Today
                             </span>
                             <span className="text-[12px] text-[#9B6A3F]/90">{todayScheduleDay.date}</span>

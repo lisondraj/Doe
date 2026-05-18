@@ -6,15 +6,15 @@ import { DoeSchedulesAppMock } from "@/components/doe-schedules-app-mock";
 const BASE_H = 580;
 
 /**
- * Design width (px) to map to viewport — tune so Wed column / right crop looks correct.
+ * Design width (px) mapped to viewport — lower = tighter crop (ends before Thu column).
  */
-const HERO_CROP_DESIGN_WIDTH = 706;
+const HERO_CROP_DESIGN_WIDTH = 684;
 
 /** Slightly smaller than full width-fill zoom */
 const HERO_SCALE_SHRINK = 0.9;
 
 /**
- * Hero schedule: zoom/crop sidebar → past Wed; bottom-clipped by hero; non-interactive inside mock.
+ * Hero schedule: zoom/crop; bottom-clipped by hero; non-interactive inside mock.
  */
 export function DoeHeroScheduleShowcase() {
   const hostRef = useRef<HTMLDivElement>(null);
@@ -46,11 +46,11 @@ export function DoeHeroScheduleShowcase() {
     >
       <div className="flex h-full w-full min-h-0 items-end justify-start overflow-hidden">
         <div
-          className="pointer-events-none shrink-0 select-none overflow-hidden rounded-[clamp(0.65rem,1.5vw,1rem)] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.07)]"
+          className="pointer-events-none shrink-0 select-none overflow-hidden rounded-t-[clamp(0.45rem,1.1vw,0.65rem)] rounded-b-[clamp(0.95rem,2.3vw,1.4rem)] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.07)]"
           style={{
             width: 920,
             height: BASE_H,
-            transform: `scale(${scale})`,
+            transform: `translateY(1px) scale(${scale})`,
             transformOrigin: "bottom left",
           }}
         >
