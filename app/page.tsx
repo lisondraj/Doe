@@ -527,6 +527,34 @@ function wfScrollProgressFromUnitT(t: number, slideCount: number, holdFrac: numb
   return Math.min(last, seg + trans);
 }
 
+function wfSmoothstep01(t: number): number {
+  const x = Math.min(Math.max(t, 0), 1);
+  return x * x * (3 - 2 * x);
+}
+
+/** Scroll-linked fade + rise for workflow carousel slides (progress 0..slideCount-1). */
+function wfSlideScrollMotion(
+  displayPos: number,
+  progress: number,
+  risePx: number,
+): { opacity: number; translateY: number; zIndex: number } {
+  const delta = displayPos - progress;
+  const absD = Math.abs(delta);
+  if (absD >= 1) {
+    return {
+      opacity: 0,
+      translateY: Math.sign(delta) * risePx,
+      zIndex: 0,
+    };
+  }
+  const fade = 1 - wfSmoothstep01(absD);
+  return {
+    opacity: fade,
+    translateY: delta * risePx,
+    zIndex: Math.round(fade * 20),
+  };
+}
+
 /** Hero body copy — tagline, founders, and CTA share one scale. */
 const HERO_BODY_COPY =
   "text-[clamp(1.38rem,4.65vw,2.15rem)] iphone-page:text-[clamp(1.32rem,5vw,2.05rem)] font-medium text-white/[0.88] tracking-tight leading-[1.22]";
@@ -1741,6 +1769,8 @@ export default function DoePage() {
   );
   /** Prior auth overlapping cards (box 5): scale entire composition */
   const priorAuthComposeScale = Math.min(1, Math.max(0.62, slideVisibleWidth700 / 478));
+  /** Fade + rise distance for scroll-driven workflow slide crossfade (px). */
+  const wfCarouselRisePx = isPhoneLayout ? 32 : 44;
 
   /** Step transition for workflow carousel (one card at a time, next from the right). */
   const workflowCarouselTransitionMs = 480;
@@ -2586,10 +2616,18 @@ export default function DoePage() {
             {/* Vertical slide track — each slide is absolutely positioned */}
             <div className="relative h-full w-full">
             {WORKFLOW_SLIDE_DISPLAY_ORDER.map((i, displayPos) => {
+              const slideMotion = wfSlideScrollMotion(
+                displayPos,
+                workflowCarouselProgress,
+                wfCarouselRisePx,
+              );
               const slideStyle = {
-                transform: `translateY(${(displayPos - workflowCarouselProgress) * 100}%)`,
-                transition: 'none',
-                willChange: 'transform' as const,
+                opacity: slideMotion.opacity,
+                transform: `translate3d(0, ${slideMotion.translateY}px, 0)`,
+                zIndex: slideMotion.zIndex,
+                transition: "none",
+                willChange: "opacity, transform" as const,
+                pointerEvents: slideMotion.opacity > 0.06 ? ("auto" as const) : ("none" as const),
               };
               // Box 1 (index 0) - AI Receptionist
               if (i === 0) {
