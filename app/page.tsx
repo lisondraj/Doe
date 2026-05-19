@@ -498,9 +498,9 @@ function vbRailsEffectiveInnerHeight(innerWidthPx: number, innerHeightPx: number
 }
 
 /** Fraction of each slide's scroll segment spent dwelling on that card before advancing. */
-const WF_CAROUSEL_SCROLL_HOLD_FRAC = 0.54;
+const WF_CAROUSEL_SCROLL_HOLD_FRAC = 0.48;
 /** Extra scroll driver height — higher = slower, smoother progression through slides. */
-const WF_CAROUSEL_SCROLL_STRETCH = 2.1;
+const WF_CAROUSEL_SCROLL_STRETCH = 1.85;
 /** Crossfade width in slide-index units (slightly >1 softens enter/exit). */
 const WF_SLIDE_CROSSFADE_SPAN = 1.1;
 
@@ -567,26 +567,37 @@ function wfSlideScrollMotion(
 }
 
 const WF_UI_RISE_PX = 18;
-/** Within dwell: card stays full while UI is hidden (fraction of dwell 0..1). */
-const WF_UI_DWELL_HOLD_FRAC = 0.44;
-/** Within dwell: UI fades in over this span after the hold. */
-const WF_UI_DWELL_REVEAL_FRAC = 0.46;
+/** Card crossfade must reach this before UI can appear. */
+const WF_UI_CARD_READY_MIN = 0.96;
+/** During on-slide dwell scroll, fraction spent card-only before UI reveals (0–1 of dwell). */
+const WF_UI_DWELL_HOLD_FRAC = 0.62;
 
-function wfCarouselSegmentFromUnitT(t: number, slideCount: number): { index: number; local: number } {
-  const last = Math.max(0, slideCount - 1);
-  if (slideCount <= 1) return { index: 0, local: 0 };
-  const scaled = Math.min(last, Math.max(0, t * slideCount));
-  const index = Math.min(last, Math.floor(scaled));
-  return { index, local: scaled - index };
+/** 0..1 position within the dwell portion of a slide's scroll segment, or null if transitioning. */
+function wfDwellLocal01(
+  driverT: number,
+  displayPos: number,
+  slideCount: number,
+  holdFrac: number,
+): number | null {
+  const scaled = driverT * slideCount;
+  const seg = Math.min(slideCount - 1, Math.max(0, Math.floor(scaled)));
+  const local = scaled - seg;
+  if (seg === displayPos && local < holdFrac) {
+    return local / Math.max(1e-6, holdFrac);
+  }
+  return null;
 }
 
-/** Scroll-linked UI reveal — slides 2+ show UI only after card is full and dwell hold completes. */
+/**
+ * Scroll-linked UI reveal — slides after the first: card (gradient, grain, caption shell)
+ * reaches full opacity, dwells card-only, then mock UI fades in with further scroll.
+ */
 function wfSlideUiScrollMotion(
   displayPos: number,
   progress: number,
   slideOpacity: number,
-  segmentIndex: number,
-  segmentLocal: number,
+  driverT: number,
+  slideCount: number,
   holdFrac: number,
 ): { opacity: number; translateY: number; pointerEvents: "auto" | "none" } {
   if (displayPos === 0) {
@@ -597,57 +608,45 @@ function wfSlideUiScrollMotion(
     };
   }
 
-  const hidden = {
-    opacity: 0,
-    translateY: WF_UI_RISE_PX,
-    pointerEvents: "none" as const,
-  };
-
   const delta = displayPos - progress;
   const absD = Math.abs(delta);
-  if (absD >= WF_SLIDE_CROSSFADE_SPAN) {
-    return hidden;
+  if (absD >= WF_SLIDE_CROSSFADE_SPAN || slideOpacity < 0.04) {
+    return { opacity: 0, translateY: WF_UI_RISE_PX, pointerEvents: "none" };
   }
 
   const cardReady = 1 - wfSmootherstep01(absD / WF_SLIDE_CROSSFADE_SPAN);
+  if (cardReady < WF_UI_CARD_READY_MIN) {
+    return { opacity: 0, translateY: WF_UI_RISE_PX, pointerEvents: "none" };
+  }
 
-  // Dwell on this slide: card is full; UI waits, then reveals on further scroll.
-  if (segmentIndex === displayPos && segmentLocal < holdFrac) {
-    const dwellU = segmentLocal / Math.max(holdFrac, 1e-6);
-    const holdEnd = WF_UI_DWELL_HOLD_FRAC;
-    const revealEnd = holdEnd + WF_UI_DWELL_REVEAL_FRAC;
-    let uiFade = 0;
-    if (dwellU >= revealEnd) {
-      uiFade = 1;
-    } else if (dwellU > holdEnd) {
-      uiFade = wfSmootherstep01((dwellU - holdEnd) / Math.max(revealEnd - holdEnd, 1e-6));
+  const dwellLocal = wfDwellLocal01(driverT, displayPos, slideCount, holdFrac);
+  let uiFade = 0;
+
+  if (dwellLocal !== null) {
+    if (dwellLocal > WF_UI_DWELL_HOLD_FRAC) {
+      const revealT =
+        (dwellLocal - WF_UI_DWELL_HOLD_FRAC) /
+        Math.max(1e-6, 1 - WF_UI_DWELL_HOLD_FRAC);
+      uiFade = wfSmootherstep01(revealT);
     }
-    const opacity = uiFade * slideOpacity;
-    return {
-      opacity,
-      translateY: (1 - uiFade) * WF_UI_RISE_PX,
-      pointerEvents: opacity > 0.08 ? "auto" : "none",
-    };
+  } else if (delta > 0.04) {
+    // Entering this slide from prior — card may be visible; keep UI hidden until dwell
+    uiFade = 0;
+  } else if (delta < -0.04) {
+    // Leaving toward next slide — UI exits with the card
+    uiFade = wfSmootherstep01(cardReady);
+  } else {
+    // Settled on slide between dwell windows
+    uiFade = 1;
   }
 
-  // Transitioning away: UI fades with the card.
-  if (segmentIndex === displayPos && segmentLocal >= holdFrac) {
-    const transU = (segmentLocal - holdFrac) / Math.max(1 - holdFrac, 1e-6);
-    const uiFade = 1 - wfSmootherstep01(transU);
-    const opacity = uiFade * cardReady * slideOpacity;
-    return {
-      opacity,
-      translateY: (1 - uiFade) * WF_UI_RISE_PX,
-      pointerEvents: opacity > 0.08 ? "auto" : "none",
-    };
-  }
+  const opacity = uiFade * slideOpacity;
 
-  // Approaching or between slides: keep UI hidden until card is nearly full on this slide.
-  if (cardReady < 0.94) {
-    return hidden;
-  }
-
-  return hidden;
+  return {
+    opacity,
+    translateY: (1 - uiFade) * WF_UI_RISE_PX,
+    pointerEvents: opacity > 0.08 ? "auto" : "none",
+  };
 }
 
 function WfCarouselUiLayer({
@@ -775,8 +774,8 @@ export default function DoePage() {
   const [isSlidingPaused, setIsSlidingPaused] = useState(false);
   /** Second-section workflow carousel: continuous scroll progress 0..(slideCount-1). */
   const [workflowCarouselProgress, setWorkflowCarouselProgress] = useState(0);
-  const [wfCarouselSegmentIndex, setWfCarouselSegmentIndex] = useState(0);
-  const [wfCarouselSegmentLocal, setWfCarouselSegmentLocal] = useState(0);
+  /** Raw 0..1 position in carousel scroll driver (for dwell-timed UI reveal). */
+  const [workflowCarouselDriverT, setWorkflowCarouselDriverT] = useState(0);
   /** When true, skip CSS transition (used on index wrap 5↔0). */
   const [workflowCarouselSkipMotion, setWorkflowCarouselSkipMotion] = useState(false);
   /** Full fixed `<nav>` — sheet top aligns to `<nav>` bottom (includes bar underline when menu open). */
@@ -1529,15 +1528,12 @@ export default function DoePage() {
         const scrollableInDriver = driverRect.height - viewportHeight;
         if (scrollableInDriver > 0) {
           const t = Math.min(1, Math.max(0, scrolledIntoDriver / scrollableInDriver));
-          const seg = wfCarouselSegmentFromUnitT(t, carouselSlideCount);
-          setWfCarouselSegmentIndex(seg.index);
-          setWfCarouselSegmentLocal(seg.local);
+          setWorkflowCarouselDriverT(t);
           setWorkflowCarouselProgress(
             wfScrollProgressFromUnitT(t, carouselSlideCount, WF_CAROUSEL_SCROLL_HOLD_FRAC),
           );
         } else {
-          setWfCarouselSegmentIndex(0);
-          setWfCarouselSegmentLocal(0);
+          setWorkflowCarouselDriverT(0);
           setWorkflowCarouselProgress(0);
         }
       }
@@ -2741,8 +2737,8 @@ export default function DoePage() {
                       displayPos,
                       workflowCarouselProgress,
                       slideMotion.opacity,
-                      wfCarouselSegmentIndex,
-                      wfCarouselSegmentLocal,
+                      workflowCarouselDriverT,
+                      carouselSlideCount,
                       WF_CAROUSEL_SCROLL_HOLD_FRAC,
                     )
                   : null;
@@ -2851,6 +2847,7 @@ export default function DoePage() {
                         Hold music until confidence threshold met—then announces slot or escalates triage.
                       </p>
                     </div>
+                    </WfCarouselUiLayer>
 
                     <div className={slideCaptionWrap} style={{ left: captionLeftWorkflow, right: captionRightWorkflow }}>
                       <span className={slideCaptionBadge} style={slideCaptionFont}>
@@ -2860,7 +2857,6 @@ export default function DoePage() {
                         Answers every line, confirms intent, fills the schedule, then ships questionnaires so the visit starts ready—not on hold.
                       </p>
                     </div>
-                    </WfCarouselUiLayer>
                     </div>
                   </div>
                 );
@@ -3025,6 +3021,7 @@ export default function DoePage() {
                         </button>
                       </div>
                     </div>
+                    </WfCarouselUiLayer>
 
                     <div className={slideCaptionWrap} style={{ left: captionLeftWorkflow, right: captionRightWorkflow }}>
                         <>
@@ -3139,7 +3136,6 @@ export default function DoePage() {
                       )}
                         </>
                     </div>
-                    </WfCarouselUiLayer>
                     </div>
                   </div>
                 );
@@ -3305,6 +3301,7 @@ export default function DoePage() {
                       </div>
                     </div>
 
+                    </WfCarouselUiLayer>
                     <div className={slideCaptionWrap} style={{ left: captionLeftWorkflow, right: captionRightWorkflow }}>
                       <span className={slideCaptionBadge} style={slideCaptionFont}>
                         Billing &amp; finances
@@ -3313,7 +3310,6 @@ export default function DoePage() {
                         ERAs reconcile quietly, routine prior auths ship with evidence, and a live ledger keeps cash, AR, and risk in one glance.
                       </p>
                     </div>
-                    </WfCarouselUiLayer>
                     </div>
                   </div>
                 );
@@ -3541,6 +3537,7 @@ export default function DoePage() {
                       </div>
                     </div>
 
+                    </WfCarouselUiLayer>
                     <div className={slideCaptionWrap} style={{ left: captionLeftWorkflow, right: captionRightWorkflow }}>
                       <span className={slideCaptionBadge} style={slideCaptionFont}>
                         Referral Intake
@@ -3549,7 +3546,6 @@ export default function DoePage() {
                         Doe captures new referrals, sorts urgency, and routes each case to the right team automatically.
                       </p>
                     </div>
-                    </WfCarouselUiLayer>
                     </div>
                   </div>
                 );
@@ -3715,6 +3711,7 @@ export default function DoePage() {
                       </div>
                     </div>
 
+                    </WfCarouselUiLayer>
                     <div className={slideCaptionWrap} style={{ left: captionLeftWorkflow, right: captionRightWorkflow }}>
                       <span className={slideCaptionBadge} style={slideCaptionFont}>
                         Prior authorization
@@ -3723,7 +3720,6 @@ export default function DoePage() {
                         Doe drafts payer packets, tracks status, and surfaces denials so nothing blocks the schedule.
                       </p>
                     </div>
-                    </WfCarouselUiLayer>
                     </div>
                   </div>
                 );
