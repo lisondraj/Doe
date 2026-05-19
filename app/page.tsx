@@ -483,6 +483,29 @@ function vbRailsEffectiveInnerHeight(innerWidthPx: number, innerHeightPx: number
   return innerHeightPx;
 }
 
+/** Fraction of each slide's scroll segment spent dwelling on that card before advancing. */
+const WF_CAROUSEL_SCROLL_HOLD_FRAC = 0.58;
+/** Extra scroll driver height so dwell + transition spans feel unhurried. */
+const WF_CAROUSEL_SCROLL_STRETCH = 1.5;
+
+/** Map normalized scroll through driver (0..1) to carousel progress with per-slide holds. */
+function wfScrollProgressFromUnitT(t: number, slideCount: number, holdFrac: number): number {
+  const last = Math.max(0, slideCount - 1);
+  if (slideCount <= 1) return 0;
+  if (t <= 0) return 0;
+  if (t >= 1) return last;
+
+  const scaled = t * slideCount;
+  const seg = Math.min(last, Math.floor(scaled));
+  const local = scaled - seg;
+
+  if (seg >= last || local < holdFrac) {
+    return seg;
+  }
+  const trans = (local - holdFrac) / Math.max(1e-6, 1 - holdFrac);
+  return Math.min(last, seg + trans);
+}
+
 /** Hero body copy — tagline, founders, and CTA share one scale. */
 const HERO_BODY_COPY =
   "text-[clamp(1.38rem,4.65vw,2.15rem)] iphone-page:text-[clamp(1.32rem,5vw,2.05rem)] font-medium text-white/[0.88] tracking-tight leading-[1.22]";
@@ -1232,12 +1255,14 @@ export default function DoePage() {
           setSlidingBoxesTranslateY(20);
         }
 
-        // Scroll-linked carousel — progress tracks scroll 1:1 (no floor → no snap-skipping on fast flick)
+        // Scroll-linked carousel — each slide dwells, then transitions (stretched driver height)
         const scrolledIntoDriver = -driverRect.top;
         const scrollableInDriver = driverRect.height - viewportHeight;
         if (scrollableInDriver > 0) {
           const t = Math.min(1, Math.max(0, scrolledIntoDriver / scrollableInDriver));
-          setWorkflowCarouselProgress(t * (carouselSlideCount - 1));
+          setWorkflowCarouselProgress(
+            wfScrollProgressFromUnitT(t, carouselSlideCount, WF_CAROUSEL_SCROLL_HOLD_FRAC),
+          );
         } else {
           setWorkflowCarouselProgress(0);
         }
@@ -2430,7 +2455,7 @@ export default function DoePage() {
       {/* Second Section — scroll-driven sticky workflow carousel */}
       <div
         ref={secondSectionScrollDriverRef}
-        style={{ height: `${heroLogicalHeightPx * carouselSlideCount}px` }}
+        style={{ height: `${heroLogicalHeightPx * carouselSlideCount * WF_CAROUSEL_SCROLL_STRETCH}px` }}
         className="relative z-10"
       >
         <div
@@ -2443,7 +2468,7 @@ export default function DoePage() {
         >
           {/* Title band */}
           <div
-            className={`flex flex-col justify-center shrink-0 px-4 pt-10 pb-3 iphone-page:pt-14 iphone-page:pb-2 ${narrowHorizontalInset}`}
+            className={`flex flex-col justify-center shrink-0 px-4 pt-14 pb-3 iphone-page:pt-[4.25rem] iphone-page:pb-2 ${narrowHorizontalInset}`}
           >
             <div className="mx-auto w-full max-w-full text-center">
               <h1 
