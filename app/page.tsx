@@ -13,6 +13,7 @@ import {
   NAV_ITEMS,
 } from "@/components/doe-nav-data";
 import { doeforvcRootZoom } from "@/lib/doeforvc-zoom";
+import { useVisualViewportPinchSnapBack } from "@/lib/useVisualViewportPinchSnapBack";
 
 const lora = Lora({
   subsets: ["latin"],
@@ -1054,6 +1055,8 @@ export default function DoePage() {
       }
     };
   }, []);
+
+  useVisualViewportPinchSnapBack();
 
   useEffect(() => {
     if (!mobileNavOpen) return;
