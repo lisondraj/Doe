@@ -538,8 +538,8 @@ export default function DoePage() {
   const [carouselSectionTranslateY, setCarouselSectionTranslateY] = useState(40);
   const [activeWordVisible, setActiveWordVisible] = useState(true);
   const [isSlidingPaused, setIsSlidingPaused] = useState(false);
-  /** Second-section workflow carousel: one panel at a time (index 0..5). */
-  const [workflowCarouselIndex, setWorkflowCarouselIndex] = useState(0);
+  /** Second-section workflow carousel: continuous scroll progress 0..(slideCount-1). */
+  const [workflowCarouselProgress, setWorkflowCarouselProgress] = useState(0);
   /** When true, skip CSS transition (used on index wrap 5↔0). */
   const [workflowCarouselSkipMotion, setWorkflowCarouselSkipMotion] = useState(false);
   /** Full fixed `<nav>` — sheet top aligns to `<nav>` bottom (includes bar underline when menu open). */
@@ -1189,14 +1189,14 @@ export default function DoePage() {
           setSlidingBoxesTranslateY(20);
         }
 
-        // Scroll-driven slide index — runs on every frame while driver is in DOM
+        // Scroll-linked carousel — progress tracks scroll 1:1 (no floor → no snap-skipping on fast flick)
         const scrolledIntoDriver = -driverRect.top;
         const scrollableInDriver = driverRect.height - viewportHeight;
-        if (scrollableInDriver > 0 && scrolledIntoDriver > 0) {
-          const rawIndex = Math.floor((scrolledIntoDriver / scrollableInDriver) * carouselSlideCount);
-          setWorkflowCarouselIndex(Math.max(0, Math.min(carouselSlideCount - 1, rawIndex)));
-        } else if (scrolledIntoDriver <= 0) {
-          setWorkflowCarouselIndex(0);
+        if (scrollableInDriver > 0) {
+          const t = Math.min(1, Math.max(0, scrolledIntoDriver / scrollableInDriver));
+          setWorkflowCarouselProgress(t * (carouselSlideCount - 1));
+        } else {
+          setWorkflowCarouselProgress(0);
         }
       }
 
@@ -1504,6 +1504,9 @@ export default function DoePage() {
   const slideBoxH = isPhoneLayout ? phoneSlideSize.h : 760;
   const slideGap = isPhoneLayout ? 12 : 32;
   const carouselSlideCount = 6;
+  /** Display order: care routing → referral intake → remaining workflow boxes. */
+  const WORKFLOW_SLIDE_DISPLAY_ORDER = [3, 4, 0, 1, 2, 5] as const;
+  const workflowCarouselActiveIndex = Math.round(workflowCarouselProgress);
   /** Uniform scale only — use max(...) so the 700² design covers the portrait slot (no stretch). */
   const slideUniformScale = Math.max(slideBoxW / 700, slideBoxH / 700);
   const scaledSide = 700 * slideUniformScale;
@@ -1556,19 +1559,10 @@ export default function DoePage() {
 
   const advanceWorkflowCarousel = useCallback(
     (delta: 1 | -1) => {
-      setWorkflowCarouselIndex((i) => {
-        if (delta === 1) {
-          if (i === carouselSlideCount - 1) {
-            setWorkflowCarouselSkipMotion(true);
-            return 0;
-          }
-          return i + 1;
-        }
-        if (i === 0) {
-          setWorkflowCarouselSkipMotion(true);
-          return carouselSlideCount - 1;
-        }
-        return i - 1;
+      setWorkflowCarouselProgress((p) => {
+        const i = Math.round(p);
+        if (delta === 1) return Math.min(carouselSlideCount - 1, i + 1);
+        return Math.max(0, i - 1);
       });
     },
     [carouselSlideCount],
@@ -1588,7 +1582,7 @@ export default function DoePage() {
       setWorkflowCarouselSkipMotion(false);
     });
     return () => cancelAnimationFrame(id);
-  }, [workflowCarouselIndex, workflowCarouselSkipMotion]);
+  }, [workflowCarouselProgress, workflowCarouselSkipMotion]);
 
   // Auto-advance removed — carousel is now driven by scroll position
 
@@ -2385,7 +2379,7 @@ export default function DoePage() {
         >
           {/* Title band */}
           <div
-            className={`flex flex-col justify-center shrink-0 px-4 pt-4 pb-4 ${narrowHorizontalInset}`}
+            className={`flex flex-col justify-center shrink-0 px-4 pt-10 pb-3 iphone-page:pt-14 iphone-page:pb-2 ${narrowHorizontalInset}`}
           >
             <div className="mx-auto w-full max-w-full text-center">
               <h1 
@@ -2426,7 +2420,7 @@ export default function DoePage() {
                 <div
                   key={`wf-vdot-${dotI}`}
                   className={`rounded-full transition-all duration-300 ${
-                    workflowCarouselIndex === dotI
+                    workflowCarouselActiveIndex === dotI
                       ? 'h-6 w-2 bg-white/90'
                       : 'h-2 w-2 bg-white/40'
                   }`}
@@ -2435,10 +2429,10 @@ export default function DoePage() {
             </div>
             {/* Vertical slide track — each slide is absolutely positioned */}
             <div className="relative h-full w-full">
-            {([3, 0, 1, 2, 4, 5] as const).map((i, displayPos) => {
+            {WORKFLOW_SLIDE_DISPLAY_ORDER.map((i, displayPos) => {
               const slideStyle = {
-                transform: `translateY(${(displayPos - workflowCarouselIndex) * 100}%)`,
-                transition: `transform ${workflowCarouselTransitionMs}ms cubic-bezier(0.4, 0, 0.2, 1)`,
+                transform: `translateY(${(displayPos - workflowCarouselProgress) * 100}%)`,
+                transition: 'none',
                 willChange: 'transform' as const,
               };
               // Box 1 (index 0) - AI Receptionist
