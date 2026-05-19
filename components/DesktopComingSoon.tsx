@@ -20,7 +20,7 @@ export function DesktopComingSoon({
         Doe
       </p>
       <p
-        className={`mt-10 flex max-w-[44rem] flex-col items-center gap-0.5 text-[clamp(1.05rem,1.6vw,1.5rem)] font-medium leading-[1.22] tracking-tight text-neutral-700 ${interClassName}`}
+        className={`mt-10 flex max-w-[52rem] flex-col items-center gap-1 text-[clamp(1.35rem,2.4vw,2.1rem)] font-medium leading-[1.22] tracking-tight text-neutral-700 ${interClassName}`}
       >
         <span className="block">We&apos;re still building our desktop site.</span>
         <span className="block">Head to your phone to learn more about Doe.</span>
