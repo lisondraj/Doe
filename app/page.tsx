@@ -12,7 +12,6 @@ import {
   MOBILE_NAV_FOOTER_SLIDES,
   NAV_ITEMS,
 } from "@/components/doe-nav-data";
-import { DoeHeroScheduleShowcase } from "@/components/doe-hero-schedule-mock";
 import { doeforvcRootZoom } from "@/lib/doeforvc-zoom";
 
 const lora = Lora({
@@ -25,7 +24,7 @@ const inter = Inter({
   weight: ["300", "400", "500", "600", "700"],
 });
 
-/** Hero + UI showcase panel — matches footer/hero gradient stack. */
+/** Hero backdrop gradient — matches footer/hero gradient stack. */
 const HERO_BACKDROP_GRADIENT = `
   linear-gradient(152deg, #1a2e34 0%, #243a40 14%, #3d2f28 32%, #6b442f 48%, #a85a34 62%, #d4893f 76%, #e8b04d 88%, #f2cf7a 100%),
   radial-gradient(ellipse 100% 80% at 50% 110%, rgba(231, 169, 68, 0.55) 0%, transparent 58%),
@@ -608,6 +607,84 @@ export default function DoePage() {
   const [positionHistory, setPositionHistory] = useState<Array<Array<{ x: number; y: number }>>>([]);
   const latestPositionsRef = useRef<Array<{ x: number; y: number }>>(reportBoxPositions);
   const descriptionEditRef = useRef<HTMLTextAreaElement | null>(null);
+
+  /** Hero intro choreography: phases 1–5 staged on hover (fine pointer) or on scroll-into-view (coarse); runs once */
+  const [heroIntroPhase, setHeroIntroPhase] = useState(0); // 0 idle, 1 logo … 5 CTA visible
+  const heroIntroLatchRef = useRef(false);
+  const heroIntroTimeoutsRef = useRef<number[]>([]);
+  const heroRevealShellRef = useRef<HTMLDivElement>(null);
+  /** Fine pointer prefers hover-trigger; coarse/touch uses intersection observer */
+  const [heroIntroTriggerFineHover, setHeroIntroTriggerFineHover] = useState(false);
+  const [prefersReducedMotionHero, setPrefersReducedMotionHero] = useState(false);
+
+  const runHeroIntroSequence = useCallback(() => {
+    if (heroIntroLatchRef.current) return;
+    heroIntroLatchRef.current = true;
+
+    heroIntroTimeoutsRef.current.forEach((id) => window.clearTimeout(id));
+    heroIntroTimeoutsRef.current = [];
+
+    if (prefersReducedMotionHero) {
+      setHeroIntroPhase(5);
+      return;
+    }
+
+    const gaps = [360, 360, 360, 400];
+    let when = gaps[0]!;
+    setHeroIntroPhase(1);
+    for (let p = 2; p <= 5; p++) {
+      const next = p as 2 | 3 | 4 | 5;
+      heroIntroTimeoutsRef.current.push(window.setTimeout(() => setHeroIntroPhase(next), when));
+      when += gaps[p - 1] ?? gaps[gaps.length - 1]!;
+    }
+  }, [prefersReducedMotionHero]);
+
+  useEffect(() => {
+    return () => {
+      heroIntroTimeoutsRef.current.forEach((id) => window.clearTimeout(id));
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const syncMotion = () => {
+      const red = mq.matches;
+      setPrefersReducedMotionHero(red);
+      if (red) {
+        heroIntroLatchRef.current = true;
+        setHeroIntroPhase(5);
+      }
+    };
+    syncMotion();
+    mq.addEventListener("change", syncMotion);
+    return () => mq.removeEventListener("change", syncMotion);
+  }, []);
+
+  useLayoutEffect(() => {
+    const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const syncHover = () => setHeroIntroTriggerFineHover(mq.matches);
+    syncHover();
+    mq.addEventListener("change", syncHover);
+    return () => mq.removeEventListener("change", syncHover);
+  }, []);
+
+  useEffect(() => {
+    if (heroIntroTriggerFineHover || prefersReducedMotionHero) return;
+    const el = heroRevealShellRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.22) {
+            runHeroIntroSequence();
+          }
+        }
+      },
+      { threshold: [0, 0.22, 0.4] },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [heroIntroTriggerFineHover, prefersReducedMotionHero, runHeroIntroSequence]);
 
   /** Phone-only UI path (nav sheet, carousel sizing); layout matches at every viewport via Tailwind `iphone-page:` + root zoom. */
   const isPhoneLayout = true;
@@ -1706,10 +1783,14 @@ export default function DoePage() {
     >
       {/* Hero Section with Dynamic Gradient */}
       <div
+        ref={heroRevealShellRef}
         className="relative overflow-hidden"
         style={{
           minHeight: `${heroLogicalHeightPx}px`,
           height: `${heroLogicalHeightPx}px`,
+        }}
+        onPointerEnter={() => {
+          if (heroIntroTriggerFineHover) runHeroIntroSequence();
         }}
       >
         {/* Footer base gradient + line mesh overlay (same as <footer>) */}
@@ -2204,21 +2285,15 @@ export default function DoePage() {
             document.body,
           )}
 
-        {/* Hero schedule UI — lower 2/3 of hero, full content width; rounded shell only */}
+        {/* Hero copy — left-aligned stack (logo, story, underlined CTA) */}
         <div
-          className={`pointer-events-none absolute inset-x-0 bottom-0 top-1/3 z-[12] min-h-0 w-full max-w-none overflow-hidden ${narrowHorizontalInset}`}
-          aria-hidden
+          className={`absolute top-0 bottom-0 left-0 right-0 z-20 flex flex-col items-start justify-center pt-[max(5.5rem,calc(env(safe-area-inset-top,0px)+4.25rem))] iphone-page:pt-[max(5rem,calc(env(safe-area-inset-top,0px)+3.75rem))] pb-10 ${narrowHorizontalInset}`}
         >
-          <DoeHeroScheduleShowcase />
-        </div>
-
-        {/* Hero copy — left-aligned (no inset-0: full-bleed z-20 layer was painting over the z-[11] schedule mock) */}
-        <div
-          className={`absolute top-0 left-0 right-0 z-20 flex flex-col items-start justify-start pt-[max(5.5rem,calc(env(safe-area-inset-top,0px)+4.25rem))] iphone-page:pt-[max(5rem,calc(env(safe-area-inset-top,0px)+3.75rem))] ${narrowHorizontalInset}`}
-        >
-          <div className="w-full max-w-[min(100%,44rem)] px-0 text-left">
+          <div className="flex w-full max-w-[min(100%,46rem)] flex-col items-start px-0 text-left">
             <p
-              className={`font-normal leading-none tracking-tight mb-6 iphone-page:mb-5 ${lora.className}`}
+              className={`font-normal leading-none tracking-tight mb-5 iphone-page:mb-4 transition-[opacity,transform] duration-[520ms] ease-out will-change-transform ${lora.className} ${
+                prefersReducedMotionHero || heroIntroPhase >= 1 ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
+              }`}
               style={{
                 fontSize: "clamp(8.25rem, 39vw, 18.5rem)",
                 backgroundImage:
@@ -2232,37 +2307,58 @@ export default function DoePage() {
             >
               Doe
             </p>
-            <div className="flex flex-col items-start gap-[1.625rem] iphone-page:gap-7 pl-5 sm:pl-7 md:pl-9">
+
+            <div className="flex w-full flex-col items-start gap-[1.15rem] iphone-page:gap-5">
               <p
-                className="flex flex-col items-start gap-0.5 iphone-page:gap-1 text-[clamp(1.75rem,4.15vw,2.75rem)] iphone-page:text-[clamp(1.2rem,4.85vw,1.9375rem)] font-medium text-white/90 text-left tracking-tight leading-[1.12]"
+                className={`flex max-w-full flex-col items-start gap-0.5 text-[clamp(1.75rem,4.15vw,2.75rem)] iphone-page:text-[clamp(1.2rem,4.85vw,1.9375rem)] font-medium text-white/90 tracking-tight leading-[1.12] transition-[opacity,transform] duration-[520ms] ease-out ${
+                  prefersReducedMotionHero || heroIntroPhase >= 2 ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
+                }`}
                 style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
               >
                 <span className="block">We&apos;re building the future</span>
                 <span className="block">of AI in healthcare.</span>
               </p>
-              <span className="animate-hero-cta-float inline-flex">
-                <a
-                  href="mailto:contact@joindoe.com"
-                  className={`inline-flex items-center gap-[1.05rem] rounded-full border border-white/25 bg-white/95 px-[2.65rem] py-[1.25rem] pl-[2.35rem] text-[1.3125rem] iphone-page:text-[clamp(1.12rem,4.85vw,1.375rem)] font-semibold tracking-tight text-gray-900 shadow-[0_6px_28px_rgba(0,0,0,0.16)] transition-[background-color,box-shadow,transform,border-color] duration-200 hover:bg-white hover:shadow-[0_10px_36px_rgba(0,0,0,0.2)] active:scale-[0.99] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white ${inter.className}`}
+
+              <p
+                className={`max-w-full text-[clamp(1.125rem,3.2vw,1.375rem)] iphone-page:text-[clamp(1.02rem,3.6vw,1.25rem)] font-medium text-white/80 tracking-tight leading-snug transition-[opacity,transform] duration-[520ms] ease-out ${
+                  prefersReducedMotionHero || heroIntroPhase >= 3 ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
+                }`}
+                style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
+              >
+                Meet two brothers,
+              </p>
+
+              <p
+                className={`-mt-1 max-w-full text-[clamp(1.125rem,3.2vw,1.375rem)] iphone-page:text-[clamp(1.02rem,3.6vw,1.25rem)] font-medium text-white/80 tracking-tight leading-snug transition-[opacity,transform] duration-[520ms] ease-out ${
+                  prefersReducedMotionHero || heroIntroPhase >= 4 ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
+                }`}
+                style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
+              >
+                James & Matthew Lisondra.
+              </p>
+
+              <a
+                href="mailto:contact@joindoe.com"
+                className={`group mt-1 inline-flex items-center gap-2 border-0 bg-transparent p-0 text-left text-[clamp(1.05rem,3vw,1.2rem)] iphone-page:text-[clamp(0.98rem,3.4vw,1.125rem)] font-semibold tracking-tight text-white underline decoration-white/70 decoration-2 underline-offset-[0.35em] transition-[opacity,transform,decoration-color,color] duration-[520ms] ease-out hover:text-white hover:decoration-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-white ${
+                  prefersReducedMotionHero || heroIntroPhase >= 5 ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
+                }`}
+                style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
+              >
+                <span>Build with us</span>
+                <svg
+                  className="h-[1.1em] w-[1.1em] shrink-0 transition-transform duration-200 group-hover:translate-x-0.5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden
                 >
-                  <svg
-                    className="h-[1.55em] w-[1.55em] shrink-0 text-gray-700"
-                    width="33"
-                    height="33"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.75"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden
-                  >
-                    <rect x="3" y="5" width="18" height="14" rx="2" ry="2" />
-                    <path d="M3 7l9 6 9-6" />
-                  </svg>
-                  Contact us
-                </a>
-              </span>
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+                <span className="sr-only">Opens email composer</span>
+              </a>
             </div>
           </div>
         </div>
