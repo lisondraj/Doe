@@ -20,6 +20,8 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
   viewportFit: "cover",
   /** iOS Safari chrome / safe-area gutters beside Dynamic Island */
   themeColor: "#f7f6f3",
