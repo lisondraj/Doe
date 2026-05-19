@@ -498,9 +498,9 @@ function vbRailsEffectiveInnerHeight(innerWidthPx: number, innerHeightPx: number
 }
 
 /** Fraction of each slide's scroll segment spent dwelling on that card before advancing. */
-const WF_CAROUSEL_SCROLL_HOLD_FRAC = 0.4;
+const WF_CAROUSEL_SCROLL_HOLD_FRAC = 0.54;
 /** Extra scroll driver height — higher = slower, smoother progression through slides. */
-const WF_CAROUSEL_SCROLL_STRETCH = 1.85;
+const WF_CAROUSEL_SCROLL_STRETCH = 2.1;
 /** Crossfade width in slide-index units (slightly >1 softens enter/exit). */
 const WF_SLIDE_CROSSFADE_SPAN = 1.1;
 
@@ -564,6 +564,114 @@ function wfSlideScrollMotion(
     translateY: Math.sign(delta) * travel,
     zIndex: Math.round(fade * 20),
   };
+}
+
+const WF_UI_RISE_PX = 18;
+/** Within dwell: card stays full while UI is hidden (fraction of dwell 0..1). */
+const WF_UI_DWELL_HOLD_FRAC = 0.44;
+/** Within dwell: UI fades in over this span after the hold. */
+const WF_UI_DWELL_REVEAL_FRAC = 0.46;
+
+function wfCarouselSegmentFromUnitT(t: number, slideCount: number): { index: number; local: number } {
+  const last = Math.max(0, slideCount - 1);
+  if (slideCount <= 1) return { index: 0, local: 0 };
+  const scaled = Math.min(last, Math.max(0, t * slideCount));
+  const index = Math.min(last, Math.floor(scaled));
+  return { index, local: scaled - index };
+}
+
+/** Scroll-linked UI reveal — slides 2+ show UI only after card is full and dwell hold completes. */
+function wfSlideUiScrollMotion(
+  displayPos: number,
+  progress: number,
+  slideOpacity: number,
+  segmentIndex: number,
+  segmentLocal: number,
+  holdFrac: number,
+): { opacity: number; translateY: number; pointerEvents: "auto" | "none" } {
+  if (displayPos === 0) {
+    return {
+      opacity: slideOpacity,
+      translateY: 0,
+      pointerEvents: slideOpacity > 0.06 ? "auto" : "none",
+    };
+  }
+
+  const hidden = {
+    opacity: 0,
+    translateY: WF_UI_RISE_PX,
+    pointerEvents: "none" as const,
+  };
+
+  const delta = displayPos - progress;
+  const absD = Math.abs(delta);
+  if (absD >= WF_SLIDE_CROSSFADE_SPAN) {
+    return hidden;
+  }
+
+  const cardReady = 1 - wfSmootherstep01(absD / WF_SLIDE_CROSSFADE_SPAN);
+
+  // Dwell on this slide: card is full; UI waits, then reveals on further scroll.
+  if (segmentIndex === displayPos && segmentLocal < holdFrac) {
+    const dwellU = segmentLocal / Math.max(holdFrac, 1e-6);
+    const holdEnd = WF_UI_DWELL_HOLD_FRAC;
+    const revealEnd = holdEnd + WF_UI_DWELL_REVEAL_FRAC;
+    let uiFade = 0;
+    if (dwellU >= revealEnd) {
+      uiFade = 1;
+    } else if (dwellU > holdEnd) {
+      uiFade = wfSmootherstep01((dwellU - holdEnd) / Math.max(revealEnd - holdEnd, 1e-6));
+    }
+    const opacity = uiFade * slideOpacity;
+    return {
+      opacity,
+      translateY: (1 - uiFade) * WF_UI_RISE_PX,
+      pointerEvents: opacity > 0.08 ? "auto" : "none",
+    };
+  }
+
+  // Transitioning away: UI fades with the card.
+  if (segmentIndex === displayPos && segmentLocal >= holdFrac) {
+    const transU = (segmentLocal - holdFrac) / Math.max(1 - holdFrac, 1e-6);
+    const uiFade = 1 - wfSmootherstep01(transU);
+    const opacity = uiFade * cardReady * slideOpacity;
+    return {
+      opacity,
+      translateY: (1 - uiFade) * WF_UI_RISE_PX,
+      pointerEvents: opacity > 0.08 ? "auto" : "none",
+    };
+  }
+
+  // Approaching or between slides: keep UI hidden until card is nearly full on this slide.
+  if (cardReady < 0.94) {
+    return hidden;
+  }
+
+  return hidden;
+}
+
+function WfCarouselUiLayer({
+  reveal,
+  children,
+}: {
+  reveal: { opacity: number; translateY: number; pointerEvents: "auto" | "none" } | null;
+  children: React.ReactNode;
+}) {
+  if (!reveal) return <>{children}</>;
+  return (
+    <div
+      className="absolute inset-0 z-[10]"
+      style={{
+        opacity: reveal.opacity,
+        transform: `translate3d(0, ${reveal.translateY}px, 0)`,
+        transition: "none",
+        pointerEvents: reveal.pointerEvents,
+        willChange: "opacity, transform",
+      }}
+    >
+      {children}
+    </div>
+  );
 }
 
 /** Hero body copy — tagline, founders, and CTA share one scale. */
@@ -667,6 +775,8 @@ export default function DoePage() {
   const [isSlidingPaused, setIsSlidingPaused] = useState(false);
   /** Second-section workflow carousel: continuous scroll progress 0..(slideCount-1). */
   const [workflowCarouselProgress, setWorkflowCarouselProgress] = useState(0);
+  const [wfCarouselSegmentIndex, setWfCarouselSegmentIndex] = useState(0);
+  const [wfCarouselSegmentLocal, setWfCarouselSegmentLocal] = useState(0);
   /** When true, skip CSS transition (used on index wrap 5↔0). */
   const [workflowCarouselSkipMotion, setWorkflowCarouselSkipMotion] = useState(false);
   /** Full fixed `<nav>` — sheet top aligns to `<nav>` bottom (includes bar underline when menu open). */
@@ -1419,10 +1529,15 @@ export default function DoePage() {
         const scrollableInDriver = driverRect.height - viewportHeight;
         if (scrollableInDriver > 0) {
           const t = Math.min(1, Math.max(0, scrolledIntoDriver / scrollableInDriver));
+          const seg = wfCarouselSegmentFromUnitT(t, carouselSlideCount);
+          setWfCarouselSegmentIndex(seg.index);
+          setWfCarouselSegmentLocal(seg.local);
           setWorkflowCarouselProgress(
             wfScrollProgressFromUnitT(t, carouselSlideCount, WF_CAROUSEL_SCROLL_HOLD_FRAC),
           );
         } else {
+          setWfCarouselSegmentIndex(0);
+          setWfCarouselSegmentLocal(0);
           setWorkflowCarouselProgress(0);
         }
       }
@@ -2620,6 +2735,17 @@ export default function DoePage() {
                 willChange: "opacity, transform" as const,
                 pointerEvents: slideMotion.opacity > 0.06 ? ("auto" as const) : ("none" as const),
               };
+              const wfUiReveal =
+                displayPos >= 1
+                  ? wfSlideUiScrollMotion(
+                      displayPos,
+                      workflowCarouselProgress,
+                      slideMotion.opacity,
+                      wfCarouselSegmentIndex,
+                      wfCarouselSegmentLocal,
+                      WF_CAROUSEL_SCROLL_HOLD_FRAC,
+                    )
+                  : null;
               // Box 1 (index 0) - AI Receptionist
               if (i === 0) {
                 return (
@@ -2669,7 +2795,8 @@ export default function DoePage() {
                         {i + 1}
                       </span>
                     </div>
-                    
+
+                    <WfCarouselUiLayer reveal={wfUiReveal}>
                     {/* AI Receptionist — caller line left + heard stream + thinking */}
                     <div
                       className={`${WORKFLOW_CAROUSEL_UI_PANEL} absolute left-1/2 rounded-xl bg-white shadow-lg`}
@@ -2733,6 +2860,7 @@ export default function DoePage() {
                         Answers every line, confirms intent, fills the schedule, then ships questionnaires so the visit starts ready—not on hold.
                       </p>
                     </div>
+                    </WfCarouselUiLayer>
                     </div>
                   </div>
                 );
@@ -2787,7 +2915,8 @@ export default function DoePage() {
                         {i + 1}
                       </span>
                     </div>
-                    
+
+                    <WfCarouselUiLayer reveal={wfUiReveal}>
                     {/* Save and Undo when editing Smart Appointments caption */}
                     {(isEditingBox2Title || isEditingBox2Description) && (
                       <div
@@ -3010,6 +3139,7 @@ export default function DoePage() {
                       )}
                         </>
                     </div>
+                    </WfCarouselUiLayer>
                     </div>
                   </div>
                 );
@@ -3065,6 +3195,7 @@ export default function DoePage() {
                       </span>
                     </div>
                     
+                    <WfCarouselUiLayer reveal={wfUiReveal}>
                     {/* Billing — overlapping ERA + outbound packet */}
                     <div
                       className={`${WORKFLOW_CAROUSEL_UI_PANEL} absolute`}
@@ -3182,6 +3313,7 @@ export default function DoePage() {
                         ERAs reconcile quietly, routine prior auths ship with evidence, and a live ledger keeps cash, AR, and risk in one glance.
                       </p>
                     </div>
+                    </WfCarouselUiLayer>
                     </div>
                   </div>
                 );
@@ -3350,6 +3482,7 @@ export default function DoePage() {
                       </span>
                     </div>
 
+                    <WfCarouselUiLayer reveal={wfUiReveal}>
                     {/* Different UI - Referral Intake */}
                     <div
                       className={`${WORKFLOW_CAROUSEL_UI_PANEL} absolute left-1/2 bg-white rounded-xl`}
@@ -3416,6 +3549,7 @@ export default function DoePage() {
                         Doe captures new referrals, sorts urgency, and routes each case to the right team automatically.
                       </p>
                     </div>
+                    </WfCarouselUiLayer>
                     </div>
                   </div>
                 );
@@ -3471,6 +3605,7 @@ export default function DoePage() {
                       </span>
                     </div>
 
+                    <WfCarouselUiLayer reveal={wfUiReveal}>
                     <div
                       className={`${WORKFLOW_CAROUSEL_UI_PANEL} absolute`}
                       style={{
@@ -3588,6 +3723,7 @@ export default function DoePage() {
                         Doe drafts payer packets, tracks status, and surfaces denials so nothing blocks the schedule.
                       </p>
                     </div>
+                    </WfCarouselUiLayer>
                     </div>
                   </div>
                 );
