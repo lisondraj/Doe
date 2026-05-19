@@ -13,6 +13,7 @@ import {
   NAV_ITEMS,
 } from "@/components/doe-nav-data";
 import { doeforvcRootZoom } from "@/lib/doeforvc-zoom";
+import { useDisablePinchGestures } from "@/lib/useDisablePinchGestures";
 
 const lora = Lora({
   subsets: ["latin"],
@@ -570,6 +571,8 @@ function HeroLinkedInIcon() {
 }
 
 export default function DoePage() {
+  useDisablePinchGestures();
+
   const [colorShift, setColorShift] = useState(0);
   const [scrollY, setScrollY] = useState(0);
   /** Coalesce scroll-driven reads + setState to one rAF per frame (smoother momentum scroll). */

@@ -40,6 +40,7 @@ html:has(.doeforvc-iphone-root) body {
   html {
     font-size: 80%;
     background-color: #f7f6f3;
+    touch-action: pan-x pan-y;
   }
 
   *,
@@ -52,6 +53,7 @@ html:has(.doeforvc-iphone-root) body {
     @apply text-gray-900 antialiased;
     /** Default page canvas (iphone layout overrides via html:has above when root present) */
     background-color: #f7f6f3;
+    touch-action: pan-x pan-y;
   }
 
   /* Standard link reset - only remove underline, let Tailwind handle colors */

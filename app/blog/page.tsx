@@ -6,6 +6,7 @@ import {
   MobileNavFooterShapeIcon,
 } from "@/components/doe-nav-data";
 import { doeforvcRootZoom } from "@/lib/doeforvc-zoom";
+import { useDisablePinchGestures } from "@/lib/useDisablePinchGestures";
 import { Inter, Lora } from "next/font/google";
 import { useLayoutEffect, useState } from "react";
 
@@ -146,6 +147,8 @@ function ArticleBlock({ slide, isFirst }: { slide: Slide; isFirst: boolean }) {
 }
 
 export default function BlogPage() {
+  useDisablePinchGestures();
+
   const [viewportWidth, setViewportWidth] = useState(1200);
 
   useLayoutEffect(() => {
