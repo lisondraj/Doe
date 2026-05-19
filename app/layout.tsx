@@ -11,6 +11,10 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Doe AI",
   description: "Doe marketing and app prototypes",
+  icons: {
+    icon: "/images/Favicon.png",
+    apple: "/images/Favicon.png",
+  },
 };
 
 export const viewport: Viewport = {
