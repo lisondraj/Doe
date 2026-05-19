@@ -4,8 +4,50 @@ export type MobileNavFooterShape = "triangle" | "circle" | "square";
 
 export type MobileNavFooterLineOverlay = {
   backgroundImage: string;
+  backgroundSize?: string;
+  backgroundPosition?: string;
   opacity: number;
   mixBlendMode?: CSSProperties["mixBlendMode"];
+};
+
+/** Second-section carousel slide 1 — Care routing (dotted grid). */
+const WF_NAV_SLIDE_1_OVERLAY: MobileNavFooterLineOverlay = {
+  backgroundImage: `radial-gradient(circle, rgba(255, 255, 255, 0.25) 1.5px, transparent 1.5px)`,
+  backgroundSize: "50px 50px",
+  opacity: 1,
+};
+
+/** Second-section carousel slide 2 — Referral Intake (crosshatch + center dot). */
+const WF_NAV_SLIDE_2_OVERLAY: MobileNavFooterLineOverlay = {
+  backgroundImage: [
+    `radial-gradient(circle, rgba(255, 255, 255, 0.18) 1px, transparent 1px)`,
+    `repeating-linear-gradient(0deg, transparent 0, transparent calc(56px - 0.8px), rgba(255, 255, 255, 0.12) calc(56px - 0.8px), rgba(255, 255, 255, 0.12) 56px)`,
+    `repeating-linear-gradient(90deg, transparent 0, transparent calc(56px - 0.8px), rgba(255, 255, 255, 0.12) calc(56px - 0.8px), rgba(255, 255, 255, 0.12) 56px)`,
+  ].join(", "),
+  backgroundSize: "56px 56px",
+  backgroundPosition: "28px 28px, 0 0, 0 0",
+  opacity: 1,
+};
+
+/** Second-section carousel slide 3 — AI Receptionist (diagonal grid). */
+const WF_NAV_SLIDE_3_OVERLAY: MobileNavFooterLineOverlay = {
+  backgroundImage: `
+    repeating-linear-gradient(
+      45deg,
+      transparent 0,
+      transparent calc(60px - 0.8px),
+      rgba(255, 255, 255, 0.15) calc(60px - 0.8px),
+      rgba(255, 255, 255, 0.15) 60px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent 0,
+      transparent calc(60px - 0.8px),
+      rgba(255, 255, 255, 0.15) calc(60px - 0.8px),
+      rgba(255, 255, 255, 0.15) 60px
+    )`,
+  backgroundSize: "60px 60px",
+  opacity: 1,
 };
 
 export const MOBILE_NAV_FOOTER_SLIDES: ReadonlyArray<{
@@ -21,28 +63,8 @@ export const MOBILE_NAV_FOOTER_SLIDES: ReadonlyArray<{
     outside: "Meet the Founders",
     shape: "triangle",
     date: "March 12, 2026",
-    gradient:
-      "linear-gradient(142deg, #f0b24a 0%, #e08a3c 32%, #c45a32 58%, #7a3028 82%, #132428 100%)",
-    /** Same dual-line mesh as hero + page footer (app/page.tsx) */
-    lineOverlay: {
-      backgroundImage: `
-        repeating-linear-gradient(
-          -32deg,
-          transparent 0px,
-          transparent 11px,
-          rgba(255, 255, 255, 0.09) 11px,
-          rgba(255, 255, 255, 0.09) 12px
-        ),
-        repeating-linear-gradient(
-          32deg,
-          transparent 0px,
-          transparent 15px,
-          rgba(30, 52, 58, 0.14) 15px,
-          rgba(30, 52, 58, 0.14) 16px
-        )`,
-      opacity: 0.55,
-      mixBlendMode: "soft-light",
-    },
+    gradient: "radial-gradient(circle at center, #1E343A 0%, #D2774C 60%, #E7A944 100%)",
+    lineOverlay: WF_NAV_SLIDE_1_OVERLAY,
   },
   {
     boxTitle: "Doe Ecosystem",
@@ -50,30 +72,8 @@ export const MOBILE_NAV_FOOTER_SLIDES: ReadonlyArray<{
     shape: "circle",
     date: "April 28, 2026",
     gradient:
-      "radial-gradient(120% 90% at 12% 8%, #facc6b 0%, #e8924a 35%, #b84a36 62%, #2d3840 92%, #0f171c 100%)",
-    lineOverlay: {
-      backgroundImage: `
-        repeating-linear-gradient(
-          0deg,
-          transparent 0px,
-          transparent 26px,
-          rgba(255, 255, 255, 0.1) 26px,
-          rgba(255, 255, 255, 0.1) 29px,
-          transparent 29px,
-          transparent 54px
-        ),
-        repeating-linear-gradient(
-          90deg,
-          transparent 0px,
-          transparent 30px,
-          rgba(20, 35, 50, 0.22) 30px,
-          rgba(20, 35, 50, 0.22) 33px,
-          transparent 33px,
-          transparent 62px
-        )`,
-      opacity: 0.48,
-      mixBlendMode: "soft-light",
-    },
+      "linear-gradient(135deg, #1E343A 0%, #4A3D32 18%, #5C4A3A 30%, #D2774C 60%, #D49D4F 82%, #E7A944 100%)",
+    lineOverlay: WF_NAV_SLIDE_2_OVERLAY,
   },
   {
     boxTitle: "For Students",
@@ -81,30 +81,8 @@ export const MOBILE_NAV_FOOTER_SLIDES: ReadonlyArray<{
     shape: "square",
     date: "June 3, 2026",
     gradient:
-      "linear-gradient(162deg, #fce8b4 0%, #f2b056 26%, #d87435 54%, #a84828 78%, #142026 100%)",
-    lineOverlay: {
-      backgroundImage: `
-        repeating-linear-gradient(
-          -34deg,
-          transparent 0px,
-          transparent 17px,
-          rgba(255, 246, 220, 0.2) 17px,
-          rgba(255, 246, 220, 0.2) 20px,
-          transparent 20px,
-          transparent 40px
-        ),
-        repeating-linear-gradient(
-          52deg,
-          transparent 0px,
-          transparent 21px,
-          rgba(92, 32, 18, 0.14) 21px,
-          rgba(92, 32, 18, 0.14) 23px,
-          transparent 23px,
-          transparent 46px
-        )`,
-      opacity: 0.5,
-      mixBlendMode: "overlay",
-    },
+      "linear-gradient(135deg, #E7A944 0%, #D49D4F 30%, #D2774C 60%, #1E343A 100%)",
+    lineOverlay: WF_NAV_SLIDE_3_OVERLAY,
   },
 ];
 

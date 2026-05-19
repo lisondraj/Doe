@@ -1781,7 +1781,7 @@ export default function DoePage() {
   /** Prior auth overlapping cards (box 5): scale entire composition */
   const priorAuthComposeScale = Math.min(1, Math.max(0.62, slideVisibleWidth700 / 478));
   /** Fade + rise distance for scroll-driven workflow slide crossfade (px). */
-  const wfCarouselRisePx = isPhoneLayout ? 32 : 44;
+  const wfCarouselRisePx = isPhoneLayout ? 26 : 36;
 
   /** Step transition for workflow carousel (one card at a time, next from the right). */
   const workflowCarouselTransitionMs = 480;
@@ -2351,6 +2351,8 @@ export default function DoePage() {
                               opacity: slide.lineOverlay.opacity,
                               mixBlendMode: slide.lineOverlay.mixBlendMode,
                               backgroundImage: slide.lineOverlay.backgroundImage,
+                              backgroundSize: slide.lineOverlay.backgroundSize,
+                              backgroundPosition: slide.lineOverlay.backgroundPosition,
                             }}
                             aria-hidden
                           />

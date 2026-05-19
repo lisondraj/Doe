@@ -315,6 +315,8 @@ export default function DoeIphoneSiteNav() {
                           opacity: slide.lineOverlay.opacity,
                           mixBlendMode: slide.lineOverlay.mixBlendMode,
                           backgroundImage: slide.lineOverlay.backgroundImage,
+                          backgroundSize: slide.lineOverlay.backgroundSize,
+                          backgroundPosition: slide.lineOverlay.backgroundPosition,
                         }}
                         aria-hidden
                       />
