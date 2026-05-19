@@ -2408,7 +2408,7 @@ export default function DoePage() {
                     <span className="text-[clamp(2.15rem,6.8vw,3.4rem)] iphone-page:text-[clamp(2rem,7vw,3.1rem)] font-medium leading-none tracking-tight text-white/[0.92]">
                       James
                     </span>
-                    <span className="inline-flex items-center gap-2.5">
+                    <span className={`inline-flex items-center gap-2 ${HERO_BODY_COPY}`}>
                       <HeroSocialIcon href="https://x.com/joindoe" label="James on X">
                         <HeroXIcon />
                       </HeroSocialIcon>
@@ -2426,7 +2426,7 @@ export default function DoePage() {
                     <span className="text-[clamp(2.15rem,6.8vw,3.4rem)] iphone-page:text-[clamp(2rem,7vw,3.1rem)] font-medium leading-none tracking-tight text-white/[0.92]">
                       Matt
                     </span>
-                    <span className="inline-flex items-center gap-2.5">
+                    <span className={`inline-flex items-center gap-2 ${HERO_BODY_COPY}`}>
                       <HeroSocialIcon href="https://x.com/joindoe" label="Matt on X">
                         <HeroXIcon />
                       </HeroSocialIcon>
