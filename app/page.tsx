@@ -7,6 +7,7 @@ import { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } fr
 import { createPortal } from "react-dom";
 import type { ReactElement } from "react";
 
+import { HeroCarouselTextureOverlay } from "@/components/hero-carousel-texture";
 import {
   MOBILE_NAV_FOOTER_SLIDES,
   NAV_HREFS,
@@ -2013,29 +2014,7 @@ export default function DoePage() {
             background: HERO_BACKDROP_GRADIENT,
             }}
           />
-          <div
-            className="pointer-events-none absolute inset-0 z-[1]"
-            style={{
-              opacity: 0.55,
-              mixBlendMode: "soft-light",
-              backgroundImage: `
-              repeating-linear-gradient(
-                -32deg,
-                transparent 0px,
-                transparent 11px,
-                rgba(255, 255, 255, 0.09) 11px,
-                rgba(255, 255, 255, 0.09) 12px
-              ),
-              repeating-linear-gradient(
-                32deg,
-                transparent 0px,
-                transparent 15px,
-                rgba(30, 52, 58, 0.14) 15px,
-                rgba(30, 52, 58, 0.14) 16px
-              )
-            `,
-            }}
-          />
+          <HeroCarouselTextureOverlay />
         </div>
         {/* Navigation Bar */}
         <nav
