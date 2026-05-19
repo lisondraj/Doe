@@ -765,6 +765,11 @@ export default function DoePage() {
   const [viewportWidth, setViewportWidth] = useState(1200);
   /** Visible viewport (matches `visualViewport`); drives hero sizing + `--app-vh` / `--app-vw`. */
   const [appViewport, setAppViewport] = useState({ width: 1200, height: 800 });
+  /** Last committed app viewport — hysteresis so hero / workflow driver heights don't shrink mid-scroll on iOS. */
+  const appViewportStableRef = useRef<{ width: number; height: number } | null>(null);
+  const appViewportSettleTimerRef = useRef<number | null>(null);
+  const appViewportScrollActiveRef = useRef(false);
+  const appViewportScrollQuietTimerRef = useRef<number | null>(null);
   /** Sliding cards on phone: logical px inside zoomed root (= visible px ÷ root zoom). */
   const [phoneSlideSize, setPhoneSlideSize] = useState({ w: 850, h: 1090 });
 
@@ -776,18 +781,15 @@ export default function DoePage() {
   }, []);
 
   useLayoutEffect(() => {
-    const measure = () => {
-      const { width: vw, height: vhVis } = vbAppViewportPx();
-      setAppViewport({ width: vw, height: vhVis });
-      if (typeof document !== "undefined") {
-        document.documentElement.style.setProperty("--app-vw", `${vw}px`);
-        document.documentElement.style.setProperty("--app-vh", `${vhVis}px`);
-      const vv = window.visualViewport;
-        if (vv) {
-          document.documentElement.style.setProperty("--app-vv-offset-top", `${Math.round(vv.offsetTop)}px`);
-        }
-      }
+    const APP_VIEWPORT_SHRINK_DEFER_PX = 120;
+    const APP_VIEWPORT_SETTLE_MS = 220;
 
+    const commitAppViewport = (next: { width: number; height: number }) => {
+      appViewportStableRef.current = next;
+      setAppViewport(next);
+    };
+
+    const updatePhoneSlideSize = (vw: number) => {
       const zoom = Math.max(0.38, doeforvcRootZoom(window.innerWidth));
       /** Slide width from viewport; height taller than width for portrait cards */
       const phoneSlideScale = 1;
@@ -800,14 +802,96 @@ export default function DoePage() {
       const h = w * phoneSlideHeightRatio;
       setPhoneSlideSize({ w, h });
     };
-    measure();
-    window.addEventListener("resize", measure);
-    window.visualViewport?.addEventListener("resize", measure);
+
+    const measure = (force = false) => {
+      const { width: vw, height: vhVis } = vbAppViewportPx();
+      if (typeof document !== "undefined") {
+        document.documentElement.style.setProperty("--app-vw", `${vw}px`);
+        document.documentElement.style.setProperty("--app-vh", `${vhVis}px`);
+        const vv = window.visualViewport;
+        if (vv) {
+          document.documentElement.style.setProperty("--app-vv-offset-top", `${Math.round(vv.offsetTop)}px`);
+        }
+      }
+
+      if (force) {
+        commitAppViewport({ width: vw, height: vhVis });
+      } else {
+        const stable = appViewportStableRef.current;
+        if (stable === null) {
+          commitAppViewport({ width: vw, height: vhVis });
+        } else if (vw !== stable.width) {
+          commitAppViewport({ width: vw, height: vhVis });
+        } else if (vhVis >= stable.height) {
+          commitAppViewport({ width: vw, height: vhVis });
+        } else {
+          const shrinkPx = stable.height - vhVis;
+          if (appViewportScrollActiveRef.current || shrinkPx < APP_VIEWPORT_SHRINK_DEFER_PX) {
+            if (appViewportSettleTimerRef.current !== null) {
+              window.clearTimeout(appViewportSettleTimerRef.current);
+            }
+            appViewportSettleTimerRef.current = window.setTimeout(() => {
+              appViewportSettleTimerRef.current = null;
+              if (appViewportScrollActiveRef.current) {
+                measure(false);
+                return;
+              }
+              const remeasure = vbAppViewportPx();
+              const curStable = appViewportStableRef.current;
+              if (curStable !== null && remeasure.height < curStable.height) {
+                commitAppViewport({ width: remeasure.width, height: remeasure.height });
+              }
+            }, APP_VIEWPORT_SETTLE_MS);
+          } else {
+            commitAppViewport({ width: vw, height: vhVis });
+          }
+        }
+      }
+
+      updatePhoneSlideSize(vw);
+    };
+
+    const onScrollForViewport = () => {
+      appViewportScrollActiveRef.current = true;
+      if (appViewportScrollQuietTimerRef.current !== null) {
+        window.clearTimeout(appViewportScrollQuietTimerRef.current);
+      }
+      appViewportScrollQuietTimerRef.current = window.setTimeout(() => {
+        appViewportScrollQuietTimerRef.current = null;
+        appViewportScrollActiveRef.current = false;
+        measure(false);
+      }, APP_VIEWPORT_SETTLE_MS);
+    };
+
+    const onOrientation = () => {
+      if (appViewportSettleTimerRef.current !== null) {
+        window.clearTimeout(appViewportSettleTimerRef.current);
+        appViewportSettleTimerRef.current = null;
+      }
+      measure(true);
+    };
+
+    measure(true);
+    const onResize = () => measure(false);
+    window.addEventListener("resize", onResize);
+    window.visualViewport?.addEventListener("resize", onResize);
+    window.addEventListener("scroll", onScrollForViewport, { passive: true });
+    window.addEventListener("orientationchange", onOrientation);
     /** Do not listen to `visualViewport` scroll: iOS updates height/offset every pan frame, which
      *  reflows `--app-vh` / slide metrics and fights native scroll (snap/jump when scrolling quickly). */
     return () => {
-      window.removeEventListener("resize", measure);
-      window.visualViewport?.removeEventListener("resize", measure);
+      window.removeEventListener("resize", onResize);
+      window.visualViewport?.removeEventListener("resize", onResize);
+      window.removeEventListener("scroll", onScrollForViewport);
+      window.removeEventListener("orientationchange", onOrientation);
+      if (appViewportSettleTimerRef.current !== null) {
+        window.clearTimeout(appViewportSettleTimerRef.current);
+        appViewportSettleTimerRef.current = null;
+      }
+      if (appViewportScrollQuietTimerRef.current !== null) {
+        window.clearTimeout(appViewportScrollQuietTimerRef.current);
+        appViewportScrollQuietTimerRef.current = null;
+      }
     };
   }, [viewportWidth]);
 
