@@ -125,12 +125,24 @@ function vbDocumentRootPx(): number {
 /**
  * Visible viewport from `visualViewport` when sane (Safari toolbar / URL bar alignment across devices).
  * Falls back to `innerWidth` / `innerHeight`. Sets logical px used for hero height + CSS vars `--app-vw` / `--app-vh`.
+ * During pinch-zoom (`visualViewport.scale > 1`), keep the layout viewport so Safari scales visually without reflow.
  */
+const VB_VISUAL_VIEWPORT_PINCH_SCALE = 1.005;
+
+function vbIsVisualViewportPinching(): boolean {
+  if (typeof window === "undefined") return false;
+  const vv = window.visualViewport;
+  return vv ? vv.scale > VB_VISUAL_VIEWPORT_PINCH_SCALE : false;
+}
+
 function vbAppViewportPx(): { width: number; height: number } {
   if (typeof window === "undefined") return { width: 1200, height: 800 };
   const vv = window.visualViewport;
   const iw = window.innerWidth;
   const ih = window.innerHeight;
+  if (vbIsVisualViewportPinching()) {
+    return { width: Math.max(iw, 280), height: Math.max(ih, 320) };
+  }
   const w = vv && vv.width > 0 && vv.width <= iw + 16 ? Math.round(vv.width) : iw;
   const h = vv && vv.height >= 240 && vv.height <= ih + 16 ? Math.round(vv.height) : ih;
   return { width: Math.max(w, 280), height: Math.max(h, 320) };
@@ -872,16 +884,20 @@ export default function DoePage() {
     };
 
     measure(true);
-    const onResize = () => measure(false);
-    window.addEventListener("resize", onResize);
-    window.visualViewport?.addEventListener("resize", onResize);
+    const onWindowResize = () => measure(false);
+    const onVVResize = () => {
+      if (vbIsVisualViewportPinching()) return;
+      measure(false);
+    };
+    window.addEventListener("resize", onWindowResize);
+    window.visualViewport?.addEventListener("resize", onVVResize);
     window.addEventListener("scroll", onScrollForViewport, { passive: true });
     window.addEventListener("orientationchange", onOrientation);
     /** Do not listen to `visualViewport` scroll: iOS updates height/offset every pan frame, which
      *  reflows `--app-vh` / slide metrics and fights native scroll (snap/jump when scrolling quickly). */
     return () => {
-      window.removeEventListener("resize", onResize);
-      window.visualViewport?.removeEventListener("resize", onResize);
+      window.removeEventListener("resize", onWindowResize);
+      window.visualViewport?.removeEventListener("resize", onVVResize);
       window.removeEventListener("scroll", onScrollForViewport);
       window.removeEventListener("orientationchange", onOrientation);
       if (appViewportSettleTimerRef.current !== null) {
@@ -903,6 +919,10 @@ export default function DoePage() {
       /** Pull sheet slightly under measured chrome to kill subpixel/zoom seam above list */
       setIphoneMenuTopPx(Math.max(0, Math.floor(raw) - 6));
     };
+    const onVVResize = () => {
+      if (vbIsVisualViewportPinching()) return;
+      update();
+    };
     update();
     let raf1 = 0;
     let raf2 = 0;
@@ -914,13 +934,13 @@ export default function DoePage() {
     const ro = new ResizeObserver(update);
     ro.observe(navEl);
     window.addEventListener("resize", update);
-    window.visualViewport?.addEventListener("resize", update);
+    window.visualViewport?.addEventListener("resize", onVVResize);
     return () => {
       cancelAnimationFrame(raf1);
       cancelAnimationFrame(raf2);
       ro.disconnect();
       window.removeEventListener("resize", update);
-      window.visualViewport?.removeEventListener("resize", update);
+      window.visualViewport?.removeEventListener("resize", onVVResize);
     };
   }, [mobileNavOpen, viewportWidth, appViewport.width, appViewport.height]);
 
@@ -938,6 +958,10 @@ export default function DoePage() {
       const z = Math.min(1, cw / base);
       setMobileNavFooterZoom((prev) => (Math.abs(prev - z) < 0.002 ? prev : z));
     };
+    const onVVResize = () => {
+      if (vbIsVisualViewportPinching()) return;
+      fit();
+    };
 
     fit();
     let raf1 = 0;
@@ -949,13 +973,13 @@ export default function DoePage() {
     const ro = new ResizeObserver(fit);
     if (el) ro.observe(el);
     window.addEventListener("resize", fit);
-    window.visualViewport?.addEventListener("resize", fit);
+    window.visualViewport?.addEventListener("resize", onVVResize);
     return () => {
       cancelAnimationFrame(raf1);
       cancelAnimationFrame(raf2);
       ro.disconnect();
       window.removeEventListener("resize", fit);
-      window.visualViewport?.removeEventListener("resize", fit);
+      window.visualViewport?.removeEventListener("resize", onVVResize);
     };
   }, [mobileNavOpen, appViewport.width, appViewport.height]);
 
@@ -1005,7 +1029,10 @@ export default function DoePage() {
 
     const onResize = queueVbMetrics;
     /** `visualViewport.resize` only — avoid scroll listeners so iOS won’t churn min-heights every pan frame. */
-    const onVVResize = queueVbMetrics;
+    const onVVResize = () => {
+      if (vbIsVisualViewportPinching()) return;
+      queueVbMetrics();
+    };
     const onOrientation = () => {
       if (vbMetricsResizeTimerRef.current !== null) {
         window.clearTimeout(vbMetricsResizeTimerRef.current);
