@@ -15,12 +15,12 @@ export function DesktopComingSoon({
     >
       <p
         className={`${loraClassName} font-normal leading-none tracking-tight text-neutral-900`}
-        style={{ fontSize: "clamp(7rem, 18vw, 14rem)" }}
+        style={{ fontSize: "clamp(3rem, 5.25vw, 5.5rem)" }}
       >
         Doe
       </p>
       <p
-        className={`mt-10 flex max-w-[52rem] flex-col items-center gap-1 text-[clamp(1.35rem,2.4vw,2.1rem)] font-medium leading-[1.22] tracking-tight text-neutral-700 ${interClassName}`}
+        className={`mt-7 flex max-w-[36rem] flex-col items-center gap-0.5 text-[clamp(0.9375rem,0.95vw,1.0625rem)] font-medium leading-[1.35] tracking-tight text-neutral-700 ${interClassName}`}
       >
         <span className="block">We&apos;re still building our desktop site.</span>
         <span className="block">Head to your phone to learn more about Doe.</span>
