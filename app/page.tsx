@@ -1079,43 +1079,40 @@ export default function DoePage() {
       setScrollY(window.scrollY);
       const viewportHeight = vbAppViewportPx().height;
 
-      // Calculate second section title fade-in and slide-up animation
+      // Calculate second section title fade-in and scroll-driven slide index
       if (secondSectionScrollDriverRef.current) {
         const driverRect = secondSectionScrollDriverRef.current.getBoundingClientRect();
-        const sectionTop = driverRect.top;
-        const fadeStart = viewportHeight * 0.85;
-        const fadeEnd = viewportHeight * 0.55;
+        const driverTop = driverRect.top;
+        const fadeStart = viewportHeight * 0.9;  // driver top enters viewport
+        const fadeEnd = viewportHeight * 0.1;    // driver top near viewport top (just before sticky)
 
-        if (sectionTop > fadeStart + 6) {
+        if (driverTop > fadeStart + 6) {
           scrollSecondPastIntroRef.current = false;
         }
 
-        if (sectionTop < fadeEnd - 2 && scrollSecondPastIntroRef.current) {
-          // already past intro — no-op to avoid thrashing state on every frame
-        } else if (sectionTop <= fadeStart && sectionTop >= fadeEnd) {
+        if (driverTop < fadeEnd - 2 && scrollSecondPastIntroRef.current) {
+          // already fully visible — skip redundant setState
+        } else if (driverTop <= fadeStart && driverTop >= fadeEnd) {
           scrollSecondPastIntroRef.current = false;
-          const progress = Math.min(1, Math.max(0, (fadeStart - sectionTop) / (fadeStart - fadeEnd)));
+          const progress = Math.min(1, Math.max(0, (fadeStart - driverTop) / (fadeStart - fadeEnd)));
           setSecondSectionTitleOpacity(progress);
-          setSecondSectionTitleTranslateY(40 * (1 - progress));
+          setSecondSectionTitleTranslateY(20 * (1 - progress));
           setSlidingBoxesOpacity(progress);
-          setSlidingBoxesTranslateY(40 * (1 - progress));
-          setShouldStartSlidingAnimation(false);
-        } else if (sectionTop < fadeEnd) {
+          setSlidingBoxesTranslateY(20 * (1 - progress));
+        } else if (driverTop < fadeEnd) {
           scrollSecondPastIntroRef.current = true;
           setSecondSectionTitleOpacity(1);
           setSecondSectionTitleTranslateY(0);
           setSlidingBoxesOpacity(1);
           setSlidingBoxesTranslateY(0);
-          setShouldStartSlidingAnimation(false);
         } else {
           setSecondSectionTitleOpacity(0);
-          setSecondSectionTitleTranslateY(40);
+          setSecondSectionTitleTranslateY(20);
           setSlidingBoxesOpacity(0);
-          setSlidingBoxesTranslateY(40);
-          setShouldStartSlidingAnimation(false);
+          setSlidingBoxesTranslateY(20);
         }
 
-        // Scroll-driven slide index: each viewport-height of scroll = one slide
+        // Scroll-driven slide index — runs on every frame while driver is in DOM
         const scrolledIntoDriver = -driverRect.top;
         const scrollableInDriver = driverRect.height - viewportHeight;
         if (scrollableInDriver > 0 && scrolledIntoDriver > 0) {
@@ -2279,25 +2276,28 @@ export default function DoePage() {
       {/* Second Section — scroll-driven sticky workflow carousel */}
       <div
         ref={secondSectionScrollDriverRef}
-        style={{ height: `calc(${carouselSlideCount} * var(--app-vh, 100dvh))` }}
+        style={{ height: `${heroLogicalHeightPx * carouselSlideCount}px` }}
         className="relative z-10"
       >
         <div
           ref={secondSectionRef}
           className="sticky top-0 flex flex-col overflow-hidden bg-[#F7F6F3]"
-          style={{ height: 'var(--app-vh, 100dvh)' }}
+          style={{
+            height: `${heroLogicalHeightPx}px`,
+            paddingTop: Math.ceil(iphoneMenuTopPx / rootZoom),
+          }}
         >
           {/* Title band */}
           <div
-            className={`flex flex-col justify-center shrink-0 px-4 pt-16 pb-6 iphone-page:pt-12 iphone-page:pb-4 ${narrowHorizontalInset}`}
+            className={`flex flex-col justify-center shrink-0 px-4 pt-4 pb-4 ${narrowHorizontalInset}`}
           >
-            <div className="mx-auto w-full max-w-full text-center iphone-page:mt-5">
+            <div className="mx-auto w-full max-w-full text-center">
               <h1 
                 className={`flex flex-col items-center gap-2 font-normal text-gray-900 tracking-tight ${lora.className}`}
                 style={{
                   opacity: secondSectionTitleOpacity,
                   transform: `translateY(${secondSectionTitleTranslateY}px)`,
-                  transition: 'opacity 1.2s ease-out, transform 1.2s ease-out'
+                  transition: 'opacity 0.8s ease-out, transform 0.8s ease-out'
                 }}
               >
                 <span className="block leading-[1.06] text-[clamp(2.65rem,11.5vw,4rem)] iphone-page:text-[clamp(1.48rem,6.25vw,4rem)] iphone-page:whitespace-nowrap">
