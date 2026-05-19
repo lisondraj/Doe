@@ -509,7 +509,7 @@ function wfScrollProgressFromUnitT(t: number, slideCount: number, holdFrac: numb
 /** Hero body copy — tagline, founders, and CTA share one scale. */
 const HERO_BODY_COPY =
   "text-[clamp(1.38rem,4.65vw,2.15rem)] iphone-page:text-[clamp(1.32rem,5vw,2.05rem)] font-medium text-white/[0.88] tracking-tight leading-[1.22]";
-const HERO_INTRO_REVEAL = "transition-[opacity,transform] duration-[780ms] ease-out";
+const HERO_INTRO_REVEAL = "transition-[opacity,transform] duration-[1050ms] ease-out";
 
 function HeroSocialIcon({
   href,
@@ -535,7 +535,7 @@ function HeroSocialIcon({
 
 function HeroXIcon() {
   return (
-    <svg className="h-[0.92em] w-[0.92em]" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+    <svg className="h-[0.7em] w-[0.7em]" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
       <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
     </svg>
   );
@@ -543,7 +543,7 @@ function HeroXIcon() {
 
 function HeroLinkedInIcon() {
   return (
-    <svg className="h-[0.92em] w-[0.92em]" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+    <svg className="h-[0.7em] w-[0.7em]" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
       <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
     </svg>
   );
@@ -695,7 +695,7 @@ export default function DoePage() {
       return;
     }
 
-    const gaps = [620, 640, 640, 680];
+    const gaps = [920, 960, 960, 1000];
     let when = gaps[0]!;
     setHeroIntroPhase(1);
     for (let p = 2; p <= 5; p++) {
@@ -2387,9 +2387,9 @@ export default function DoePage() {
                 style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
               >
                 <span className="inline">Meet the founders, </span>
-                <span className="inline-flex flex-wrap items-center gap-x-1 gap-y-0.5 align-baseline">
+                <span className="inline-flex flex-wrap items-center gap-x-2.5 gap-y-1 align-baseline">
                   <span>James</span>
-                  <span className="inline-flex items-center gap-0.5">
+                  <span className="inline-flex items-center gap-2">
                     <HeroSocialIcon href="https://x.com/joindoe" label="James on X">
                       <HeroXIcon />
                     </HeroSocialIcon>
@@ -2397,8 +2397,8 @@ export default function DoePage() {
                       <HeroLinkedInIcon />
                     </HeroSocialIcon>
                   </span>
-                  <span className="mx-0.5">&amp; Matt</span>
-                  <span className="inline-flex items-center gap-0.5">
+                  <span className="mx-1">&amp; Matt</span>
+                  <span className="inline-flex items-center gap-2">
                     <HeroSocialIcon href="https://x.com/joindoe" label="Matt on X">
                       <HeroXIcon />
                     </HeroSocialIcon>
@@ -2420,26 +2420,32 @@ export default function DoePage() {
 
               <a
                 href="mailto:contact@joindoe.com"
-                className={`group mt-1 inline-flex items-center gap-2 border-0 bg-transparent p-0 text-left ${HERO_BODY_COPY} font-semibold text-white underline decoration-white/70 decoration-2 underline-offset-[0.35em] ${HERO_INTRO_REVEAL} hover:text-white hover:decoration-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-white ${
+                className={`group mt-1 inline-flex border-0 bg-transparent p-0 text-left ${HERO_BODY_COPY} font-semibold text-white ${HERO_INTRO_REVEAL} hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-white ${
                   prefersReducedMotionHero || heroIntroPhase >= 5
                     ? "translate-y-0 opacity-100"
                     : "pointer-events-none translate-y-3 opacity-0"
-                } ${!prefersReducedMotionHero && heroIntroPhase >= 5 ? "animate-hero-cta-bounce-once" : ""}`}
+                }`}
                 style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
               >
-                <span>Build with us</span>
-                <svg
-                  className="h-[1.1em] w-[1.1em] shrink-0 transition-transform duration-200 group-hover:translate-x-0.5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden
+                <span
+                  className={`inline-flex items-center gap-2 underline decoration-white/70 decoration-2 underline-offset-[0.35em] group-hover:decoration-white ${
+                    !prefersReducedMotionHero && heroIntroPhase >= 5 ? "animate-hero-cta-float" : ""
+                  }`}
                 >
-                  <path d="M5 12h14M13 6l6 6-6 6" />
-                </svg>
+                  <span>Build with us</span>
+                  <svg
+                    className="h-[1.1em] w-[1.1em] shrink-0 transition-transform duration-200 group-hover:translate-x-0.5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden
+                  >
+                    <path d="M5 12h14M13 6l6 6-6 6" />
+                  </svg>
+                </span>
                 <span className="sr-only">Opens email composer</span>
               </a>
             </div>
