@@ -585,6 +585,7 @@ export default function DoePage() {
     /** Orbit pills revealed clockwise from top; 0..6 */
     tilesShown: 0,
   });
+  const secondSectionScrollDriverRef = useRef<HTMLDivElement>(null);
   const secondSectionRef = useRef<HTMLDivElement>(null);
   const [secondSectionTitleOpacity, setSecondSectionTitleOpacity] = useState(0);
   const [secondSectionTitleTranslateY, setSecondSectionTitleTranslateY] = useState(40);
@@ -1079,68 +1080,49 @@ export default function DoePage() {
       const viewportHeight = vbAppViewportPx().height;
 
       // Calculate second section title fade-in and slide-up animation
-      if (secondSectionRef.current) {
-        const rect = secondSectionRef.current.getBoundingClientRect();
-        const sectionTop = rect.top;
+      if (secondSectionScrollDriverRef.current) {
+        const driverRect = secondSectionScrollDriverRef.current.getBoundingClientRect();
+        const sectionTop = driverRect.top;
+        const fadeStart = viewportHeight * 0.85;
+        const fadeEnd = viewportHeight * 0.55;
 
-        // Start animation when section enters viewport (when top is at 85% of viewport)
-        // Complete animation when section is at 60% from top of viewport
-        const startPoint = viewportHeight * 0.85;
-        const endPoint = viewportHeight * 0.6;
-        const distance = startPoint - endPoint;
-
-        if (sectionTop > startPoint + 6) {
+        if (sectionTop > fadeStart + 6) {
           scrollSecondPastIntroRef.current = false;
         }
 
-        if (sectionTop < endPoint - 2 && scrollSecondPastIntroRef.current) {
-          // Past intro: state is already at rest — avoid setState every scroll frame below the bento.
+        if (sectionTop < fadeEnd - 2 && scrollSecondPastIntroRef.current) {
+          // already past intro — no-op to avoid thrashing state on every frame
+        } else if (sectionTop <= fadeStart && sectionTop >= fadeEnd) {
+          scrollSecondPastIntroRef.current = false;
+          const progress = Math.min(1, Math.max(0, (fadeStart - sectionTop) / (fadeStart - fadeEnd)));
+          setSecondSectionTitleOpacity(progress);
+          setSecondSectionTitleTranslateY(40 * (1 - progress));
+          setSlidingBoxesOpacity(progress);
+          setSlidingBoxesTranslateY(40 * (1 - progress));
+          setShouldStartSlidingAnimation(false);
+        } else if (sectionTop < fadeEnd) {
+          scrollSecondPastIntroRef.current = true;
+          setSecondSectionTitleOpacity(1);
+          setSecondSectionTitleTranslateY(0);
+          setSlidingBoxesOpacity(1);
+          setSlidingBoxesTranslateY(0);
+          setShouldStartSlidingAnimation(false);
         } else {
-          if (sectionTop <= startPoint && sectionTop >= endPoint) {
-            scrollSecondPastIntroRef.current = false;
-            // Section is in animation range
-            const progress = (startPoint - sectionTop) / distance;
-            const clampedProgress = Math.min(Math.max(progress, 0), 1);
+          setSecondSectionTitleOpacity(0);
+          setSecondSectionTitleTranslateY(40);
+          setSlidingBoxesOpacity(0);
+          setSlidingBoxesTranslateY(40);
+          setShouldStartSlidingAnimation(false);
+        }
 
-            // Fade in: 0 to 1
-            setSecondSectionTitleOpacity(clampedProgress);
-            // Slide up: 40px to 0px
-            setSecondSectionTitleTranslateY(40 * (1 - clampedProgress));
-
-            // Sliding boxes animation starts after title animation (at 60% progress)
-            // Sliding boxes animation range: 60% to 100% of title animation progress
-            if (clampedProgress >= 0.6) {
-              const slidingBoxesProgress = (clampedProgress - 0.6) / 0.4; // 0 to 1 when title is 60% to 100%
-              const clampedSlidingProgress = Math.min(Math.max(slidingBoxesProgress, 0), 1);
-
-              setSlidingBoxesOpacity(clampedSlidingProgress);
-              setSlidingBoxesTranslateY(40 * (1 - clampedSlidingProgress));
-
-              // Start sliding animation after title animation completes (at 80% progress)
-              if (clampedProgress >= 0.8) {
-                setShouldStartSlidingAnimation(true);
-              }
-            } else {
-              setSlidingBoxesOpacity(0);
-              setSlidingBoxesTranslateY(40);
-              setShouldStartSlidingAnimation(false);
-            }
-          } else if (sectionTop < endPoint) {
-            scrollSecondPastIntroRef.current = true;
-            // Section is past animation point - fully visible
-            setSecondSectionTitleOpacity(1);
-            setSecondSectionTitleTranslateY(0);
-            setSlidingBoxesOpacity(1);
-            setSlidingBoxesTranslateY(0);
-            setShouldStartSlidingAnimation(true);
-          } else {
-            // Section hasn't reached animation point yet
-            setSecondSectionTitleOpacity(0);
-            setSecondSectionTitleTranslateY(40);
-            setSlidingBoxesOpacity(0);
-            setSlidingBoxesTranslateY(40);
-            setShouldStartSlidingAnimation(false);
-          }
+        // Scroll-driven slide index: each viewport-height of scroll = one slide
+        const scrolledIntoDriver = -driverRect.top;
+        const scrollableInDriver = driverRect.height - viewportHeight;
+        if (scrollableInDriver > 0 && scrolledIntoDriver > 0) {
+          const rawIndex = Math.floor((scrolledIntoDriver / scrollableInDriver) * carouselSlideCount);
+          setWorkflowCarouselIndex(Math.max(0, Math.min(carouselSlideCount - 1, rawIndex)));
+        } else if (scrolledIntoDriver <= 0) {
+          setWorkflowCarouselIndex(0);
         }
       }
 
@@ -1534,13 +1516,7 @@ export default function DoePage() {
     return () => cancelAnimationFrame(id);
   }, [workflowCarouselIndex, workflowCarouselSkipMotion]);
 
-  useEffect(() => {
-    if (!shouldStartSlidingAnimation || isSlidingPaused) return;
-    const id = window.setInterval(() => {
-      advanceWorkflowCarousel(1);
-    }, 5000);
-    return () => window.clearInterval(id);
-  }, [shouldStartSlidingAnimation, isSlidingPaused, advanceWorkflowCarousel, workflowCarouselIndex]);
+  // Auto-advance removed — carousel is now driven by scroll position
 
   const showLeftArrow = true;
   const showRightArrow = true;
@@ -2300,12 +2276,20 @@ export default function DoePage() {
       {/* Horizontal line at bottom of hero section */}
       <div className="w-full border-t border-[#E6E6E6]" />
 
-      {/* Second Section — title upper third, carousel lower two-thirds */}
-      <div ref={secondSectionRef} className="min-h-[calc(var(--app-vh,100dvh)+7rem)] relative z-10 flex flex-col pt-24 pb-28 iphone-page:min-h-[calc(var(--app-vh,100dvh)+6rem)] iphone-page:pt-16 iphone-page:pb-[9.5rem] overscroll-none overflow-hidden">
-        <div className="flex-1 grid grid-rows-[3fr_9fr_auto] min-h-[85vh] iphone-page:min-h-[88dvh] w-full overflow-x-hidden overscroll-none">
-          {/* Title band — slightly taller than 1:2 so headline has room */}
+      {/* Second Section — scroll-driven sticky workflow carousel */}
+      <div
+        ref={secondSectionScrollDriverRef}
+        style={{ height: `calc(${carouselSlideCount} * var(--app-vh, 100dvh))` }}
+        className="relative z-10"
+      >
+        <div
+          ref={secondSectionRef}
+          className="sticky top-0 flex flex-col overflow-hidden bg-[#F7F6F3]"
+          style={{ height: 'var(--app-vh, 100dvh)' }}
+        >
+          {/* Title band */}
           <div
-            className={`flex flex-col justify-center min-h-0 px-4 py-14 iphone-page:pt-16 iphone-page:pb-9 ${narrowHorizontalInset}`}
+            className={`flex flex-col justify-center shrink-0 px-4 pt-16 pb-6 iphone-page:pt-12 iphone-page:pb-4 ${narrowHorizontalInset}`}
           >
             <div className="mx-auto w-full max-w-full text-center iphone-page:mt-5">
               <h1 
@@ -2326,124 +2310,48 @@ export default function DoePage() {
             </div>
           </div>
 
-          {/* Carousel band (~bottom two-thirds) */}
+          {/* Carousel band — fills remaining height */}
           <div
-            className={`flex flex-col justify-center min-h-0 overflow-x-hidden overflow-y-visible pb-16 iphone-page:pb-14 overscroll-none ${narrowHorizontalInset}`}
-          >
-          {/* Sliding squares container — width matches Built-for-you orange panel (`w-full` inside narrowHorizontalInset) */}
-          <div
-            className="relative mx-auto flex w-full max-w-full flex-col justify-center overscroll-none"
+            className={`flex-1 flex flex-col items-center justify-center min-h-0 overflow-hidden pb-8 iphone-page:pb-4 ${narrowHorizontalInset}`}
             style={{
               opacity: slidingBoxesOpacity,
               transform: `translateY(${slidingBoxesTranslateY}px)`,
               transition: 'opacity 1.2s ease-out, transform 1.2s ease-out',
             }}
           >
+            {/* Card viewport — contains vertically-stacked slides */}
             <div
-              className="relative flex min-h-0 w-full flex-1 items-center justify-center overscroll-none"
-              style={{ minHeight: slideBoxH }}
+              className="relative rounded-2xl mx-auto overflow-hidden"
+              style={{ width: slideBoxW, height: slideBoxH }}
             >
-            {/* Pause button - top right corner */}
-            <button
-              onClick={() => setIsSlidingPaused(!isSlidingPaused)}
-              className="absolute top-2 right-4 iphone-page:top-2 iphone-page:right-4 z-30 p-2 rounded-full hover:bg-gray-100 transition-colors"
-              style={{
-                opacity: slidingBoxesOpacity,
-              }}
-            >
-              {isSlidingPaused ? (
-                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              ) : (
-                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              )}
-            </button>
-            
-            {/* Navigation Arrows */}
-            {showLeftArrow && (
-              <button 
-                className="absolute left-8 iphone-page:left-4 z-20 transition-opacity duration-200 hover:opacity-70"
-                onClick={goWorkflowCarouselPrev}
-                style={{
-                  filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))'
-                }}
-              >
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                </svg>
-              </button>
-            )}
-            {showRightArrow && (
-              <button 
-                className="absolute right-8 iphone-page:right-4 z-20 transition-opacity duration-200 hover:opacity-70"
-                onClick={goWorkflowCarouselNext}
-                style={{
-                  filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))'
-                }}
-              >
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                </svg>
-              </button>
-            )}
-            
-            {/* One card viewport; track translates so the next slide enters from the right */}
-            <div 
-              className="relative iphone-page:rounded-2xl mx-auto overscroll-none"
-              style={{ 
-                width: slideBoxW,
-                height: slideBoxH,
-                overflow: 'hidden'
-              }}
-            >
-            {/* Slide picker — inside card, same pill pattern as expanded nav footer carousel */}
-            <div
-              className="pointer-events-auto absolute left-0 right-0 top-0 z-[28] flex justify-center gap-2.5 px-5 pb-2 pt-[clamp(1.35rem,4vmin,2.65rem)] iphone-page:gap-[clamp(0.65rem,0.45rem+1vmin,0.95rem)]"
-              aria-hidden={false}
-            >
+            {/* Vertical slide progression dots — bottom-right corner */}
+            <div className="pointer-events-none absolute bottom-5 right-4 z-[30] flex flex-col gap-[7px] items-center">
               {Array.from({ length: carouselSlideCount }, (_, dotI) => (
-                <button
-                  key={`wf-dot-${dotI}`}
-                  type="button"
-                  aria-label={`Workflow slide ${dotI + 1}`}
-                  aria-current={workflowCarouselIndex === dotI ? 'true' : undefined}
-                  className={`h-2.5 shrink-0 rounded-full transition-[width,background-color,opacity] duration-200 shadow-sm iphone-page:h-[clamp(9px,calc(6px+0.45vmin),12px)] ${
+                <div
+                  key={`wf-vdot-${dotI}`}
+                  className={`rounded-full transition-all duration-300 ${
                     workflowCarouselIndex === dotI
-                      ? 'w-8 bg-white opacity-95 iphone-page:w-[clamp(1.95rem,calc(1.65rem+1.9vmin),2.85rem)]'
-                      : 'w-2.5 bg-white/45 hover:bg-white/70 iphone-page:w-[clamp(0.625rem,calc(0.5rem+0.42vmin),0.75rem)]'
+                      ? 'h-6 w-2 bg-white/90'
+                      : 'h-2 w-2 bg-white/40'
                   }`}
-                  onClick={() => {
-                    setWorkflowCarouselIndex(dotI as 0 | 1 | 2 | 3 | 4 | 5);
-                  }}
                 />
               ))}
             </div>
-            <div
-              className="flex h-full flex-row shrink-0"
-              style={{
-                gap: slideGap,
-                transform: `translate3d(-${workflowCarouselIndex * boxTotalWidth}px, 0, 0)`,
-                transition: workflowCarouselSkipMotion
-                  ? "none"
-                  : `transform ${workflowCarouselTransitionMs}ms cubic-bezier(0.4, 0, 0.2, 1)`,
-                willChange: "transform",
-              }}
-            >
-            {([0, 1, 2, 3, 4, 5] as const).map((i) => {
+            {/* Vertical slide track — each slide is absolutely positioned */}
+            <div className="relative h-full w-full">
+            {([3, 0, 1, 2, 4, 5] as const).map((i, displayPos) => {
+              const slideStyle = {
+                transform: `translateY(${(displayPos - workflowCarouselIndex) * 100}%)`,
+                transition: `transform ${workflowCarouselTransitionMs}ms cubic-bezier(0.4, 0, 0.2, 1)`,
+                willChange: 'transform' as const,
+              };
               // Box 1 (index 0) - AI Receptionist
               if (i === 0) {
                 return (
                   <div
                     key={`box-${i}`}
-                    className="rounded-2xl relative shrink-0 overflow-hidden shadow-xl iphone-page:shadow-md"
-                    style={{
-                      width: slideBoxW,
-                      height: slideBoxH,
-                    }}
+                    className="rounded-2xl absolute inset-0 overflow-hidden"
+                    style={slideStyle}
                   >
                     <div
                       className="rounded-2xl"
@@ -2560,11 +2468,8 @@ export default function DoePage() {
                 return (
                   <div
                     key={`box-${i}`}
-                    className="rounded-2xl relative shrink-0 overflow-hidden shadow-xl iphone-page:shadow-md"
-                    style={{
-                      width: slideBoxW,
-                      height: slideBoxH,
-                    }}
+                    className="rounded-2xl absolute inset-0 overflow-hidden"
+                    style={slideStyle}
                   >
                     <div
                       className="rounded-2xl"
@@ -2840,11 +2745,8 @@ export default function DoePage() {
                 return (
                   <div
                     key={`box-${i}`}
-                    className="rounded-2xl relative shrink-0 overflow-hidden shadow-xl iphone-page:shadow-md"
-                    style={{
-                      width: slideBoxW,
-                      height: slideBoxH,
-                    }}
+                    className="rounded-2xl absolute inset-0 overflow-hidden"
+                    style={slideStyle}
                   >
                     <div
                       className="rounded-2xl"
@@ -3015,11 +2917,8 @@ export default function DoePage() {
                 return (
                 <div
                   key={`box-${i}`}
-                  className="rounded-2xl relative shrink-0 overflow-hidden shadow-xl iphone-page:shadow-md"
-                  style={{
-                    width: slideBoxW,
-                    height: slideBoxH,
-                  }}
+                  className="rounded-2xl absolute inset-0 overflow-hidden"
+                  style={slideStyle}
                 >
                   <div
                     className="rounded-2xl"
@@ -3130,11 +3029,8 @@ export default function DoePage() {
                 return (
                   <div
                     key={`box-${i}`}
-                    className="rounded-2xl relative shrink-0 overflow-hidden shadow-xl iphone-page:shadow-md"
-                    style={{
-                      width: slideBoxW,
-                      height: slideBoxH,
-                    }}
+                    className="rounded-2xl absolute inset-0 overflow-hidden"
+                    style={slideStyle}
                   >
                     <div
                       className="rounded-2xl"
@@ -3255,11 +3151,8 @@ export default function DoePage() {
                 return (
                   <div
                     key={`box-${i}`}
-                    className="rounded-2xl relative shrink-0 overflow-hidden shadow-xl iphone-page:shadow-md"
-                    style={{
-                      width: slideBoxW,
-                      height: slideBoxH,
-                    }}
+                    className="rounded-2xl absolute inset-0 overflow-hidden"
+                    style={slideStyle}
                   >
                     <div
                       className="rounded-2xl"
@@ -3429,8 +3322,6 @@ export default function DoePage() {
             })}
             </div>
             </div>
-            </div>
-          </div>
           </div>
         </div>
       </div>
