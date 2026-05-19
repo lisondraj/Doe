@@ -2394,25 +2394,43 @@ export default function DoePage() {
                 }`}
                 style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
               >
-                <span className="inline">Meet the founders, </span>
-                <span className="inline-flex flex-wrap items-center gap-x-2.5 gap-y-1 align-baseline">
-                  <span>James</span>
-                  <span className="inline-flex items-center gap-2">
-                    <HeroSocialIcon href="https://x.com/joindoe" label="James on X">
-                      <HeroXIcon />
-                    </HeroSocialIcon>
-                    <HeroSocialIcon href="https://www.linkedin.com/company/joindoe" label="James on LinkedIn">
-                      <HeroLinkedInIcon />
-                    </HeroSocialIcon>
+                <span className="block">Meet the founders,</span>
+                <span className="mt-3 iphone-page:mt-2.5 flex flex-wrap items-start gap-x-10 gap-y-4 sm:gap-x-14">
+                  <span className="inline-flex flex-col items-start gap-1">
+                    <span className="inline-flex items-center gap-2.5">
+                      <span className="text-[clamp(1.75rem,5.5vw,2.75rem)] iphone-page:text-[clamp(1.65rem,5.8vw,2.55rem)] font-medium leading-none tracking-tight text-white/[0.92]">
+                        James
+                      </span>
+                      <span className="inline-flex items-center gap-2">
+                        <HeroSocialIcon href="https://x.com/joindoe" label="James on X">
+                          <HeroXIcon />
+                        </HeroSocialIcon>
+                        <HeroSocialIcon href="https://www.linkedin.com/company/joindoe" label="James on LinkedIn">
+                          <HeroLinkedInIcon />
+                        </HeroSocialIcon>
+                      </span>
+                    </span>
+                    <span className="text-[clamp(0.95rem,2.6vw,1.2rem)] iphone-page:text-[clamp(0.9rem,2.8vw,1.1rem)] font-normal leading-none tracking-tight text-white/65">
+                      Medicine
+                    </span>
                   </span>
-                  <span className="mx-1">&amp; Matt</span>
-                  <span className="inline-flex items-center gap-2">
-                    <HeroSocialIcon href="https://x.com/joindoe" label="Matt on X">
-                      <HeroXIcon />
-                    </HeroSocialIcon>
-                    <HeroSocialIcon href="https://www.linkedin.com/company/joindoe" label="Matt on LinkedIn">
-                      <HeroLinkedInIcon />
-                    </HeroSocialIcon>
+                  <span className="inline-flex flex-col items-start gap-1">
+                    <span className="inline-flex items-center gap-2.5">
+                      <span className="text-[clamp(1.75rem,5.5vw,2.75rem)] iphone-page:text-[clamp(1.65rem,5.8vw,2.55rem)] font-medium leading-none tracking-tight text-white/[0.92]">
+                        Matt
+                      </span>
+                      <span className="inline-flex items-center gap-2">
+                        <HeroSocialIcon href="https://x.com/joindoe" label="Matt on X">
+                          <HeroXIcon />
+                        </HeroSocialIcon>
+                        <HeroSocialIcon href="https://www.linkedin.com/company/joindoe" label="Matt on LinkedIn">
+                          <HeroLinkedInIcon />
+                        </HeroSocialIcon>
+                      </span>
+                    </span>
+                    <span className="text-[clamp(0.95rem,2.6vw,1.2rem)] iphone-page:text-[clamp(0.9rem,2.8vw,1.1rem)] font-normal leading-none tracking-tight text-white/65">
+                      Engineering
+                    </span>
                   </span>
                 </span>
               </p>
