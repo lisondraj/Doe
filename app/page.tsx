@@ -682,8 +682,8 @@ export default function DoePage() {
   const latestPositionsRef = useRef<Array<{ x: number; y: number }>>(reportBoxPositions);
   const descriptionEditRef = useRef<HTMLTextAreaElement | null>(null);
 
-  /** Hero intro choreography: phases 1–6 staged on hover (fine pointer) or on scroll-into-view (coarse); runs once */
-  const [heroIntroPhase, setHeroIntroPhase] = useState(0); // 0 idle, 1 logo … 6 CTA visible
+  /** Hero intro choreography: phases 1–5 staged on hover (fine pointer) or on scroll-into-view (coarse); runs once */
+  const [heroIntroPhase, setHeroIntroPhase] = useState(0); // 0 idle, 1 logo … 5 CTA visible
   const heroIntroLatchRef = useRef(false);
   const heroIntroTimeoutsRef = useRef<number[]>([]);
   const heroRevealShellRef = useRef<HTMLDivElement>(null);
@@ -699,15 +699,15 @@ export default function DoePage() {
     heroIntroTimeoutsRef.current = [];
 
     if (prefersReducedMotionHero) {
-      setHeroIntroPhase(6);
+      setHeroIntroPhase(5);
       return;
     }
 
-    const gaps = [920, 960, 960, 960, 1000];
+    const gaps = [920, 960, 960, 1000];
     let when = gaps[0]!;
     setHeroIntroPhase(1);
-    for (let p = 2; p <= 6; p++) {
-      const next = p as 2 | 3 | 4 | 5 | 6;
+    for (let p = 2; p <= 5; p++) {
+      const next = p as 2 | 3 | 4 | 5;
       heroIntroTimeoutsRef.current.push(window.setTimeout(() => setHeroIntroPhase(next), when));
       when += gaps[p - 1] ?? gaps[gaps.length - 1]!;
     }
@@ -726,7 +726,7 @@ export default function DoePage() {
       setPrefersReducedMotionHero(red);
       if (red) {
         heroIntroLatchRef.current = true;
-        setHeroIntroPhase(6);
+        setHeroIntroPhase(5);
       }
     };
     syncMotion();
@@ -2357,11 +2357,11 @@ export default function DoePage() {
 
         {/* Hero copy — left-aligned stack (logo, story, underlined CTA) */}
         <div
-          className={`absolute top-0 bottom-0 left-0 right-0 z-20 flex flex-col items-start justify-center pt-[max(5.5rem,calc(env(safe-area-inset-top,0px)+4.25rem))] iphone-page:pt-[max(5rem,calc(env(safe-area-inset-top,0px)+3.75rem))] pb-10 ${narrowHorizontalInset}`}
+          className={`absolute top-0 bottom-0 left-0 right-0 z-20 flex flex-col items-start justify-center pt-[max(5.25rem,calc(env(safe-area-inset-top,0px)+4rem))] iphone-page:pt-[max(4.75rem,calc(env(safe-area-inset-top,0px)+3.5rem))] pb-6 iphone-page:pb-5 ${narrowHorizontalInset}`}
         >
-          <div className="flex w-full max-w-[min(100%,46rem)] flex-col items-start pl-5 sm:pl-8 md:pl-10 text-left">
+          <div className="flex w-full max-w-[min(100%,46rem)] translate-y-3 iphone-page:translate-y-2 flex-col items-start pl-5 sm:pl-8 md:pl-10 text-left">
             <p
-              className={`font-normal leading-none tracking-tight mb-5 iphone-page:mb-4 ${HERO_INTRO_REVEAL} will-change-transform ${lora.className} ${
+              className={`font-normal leading-none tracking-tight mb-4 iphone-page:mb-3.5 ${HERO_INTRO_REVEAL} will-change-transform ${lora.className} ${
                 prefersReducedMotionHero || heroIntroPhase >= 1 ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
               }`}
               style={{
@@ -2377,7 +2377,7 @@ export default function DoePage() {
               Doe
             </p>
 
-            <div className="flex w-full flex-col items-start gap-[1.15rem] iphone-page:gap-5">
+            <div className="flex w-full flex-col items-start gap-[1.1rem] iphone-page:gap-[1.15rem]">
               <p
                 className={`flex max-w-full flex-col items-start gap-0.5 ${HERO_BODY_COPY} ${HERO_INTRO_REVEAL} ${
                   prefersReducedMotionHero || heroIntroPhase >= 2 ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
@@ -2398,17 +2398,17 @@ export default function DoePage() {
               </p>
 
               <div
-                className={`mt-4 iphone-page:mt-3.5 flex flex-wrap items-start gap-x-10 gap-y-4 sm:gap-x-14 ${HERO_INTRO_REVEAL} ${
+                className={`mt-5 iphone-page:mt-4 flex flex-wrap items-start gap-x-12 gap-y-5 sm:gap-x-16 ${HERO_INTRO_REVEAL} ${
                   prefersReducedMotionHero || heroIntroPhase >= 4 ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
                 }`}
                 style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
               >
-                <span className="inline-flex flex-col items-start gap-1">
-                  <span className="inline-flex items-center gap-2.5">
-                    <span className="text-[clamp(1.75rem,5.5vw,2.75rem)] iphone-page:text-[clamp(1.65rem,5.8vw,2.55rem)] font-medium leading-none tracking-tight text-white/[0.92]">
+                <span className="inline-flex flex-col items-start gap-1.5">
+                  <span className="inline-flex items-center gap-3">
+                    <span className="text-[clamp(2.15rem,6.8vw,3.4rem)] iphone-page:text-[clamp(2rem,7vw,3.1rem)] font-medium leading-none tracking-tight text-white/[0.92]">
                       James
                     </span>
-                    <span className="inline-flex items-center gap-2">
+                    <span className="inline-flex items-center gap-2.5">
                       <HeroSocialIcon href="https://x.com/joindoe" label="James on X">
                         <HeroXIcon />
                       </HeroSocialIcon>
@@ -2417,16 +2417,16 @@ export default function DoePage() {
                       </HeroSocialIcon>
                     </span>
                   </span>
-                  <span className="text-[clamp(0.95rem,2.6vw,1.2rem)] iphone-page:text-[clamp(0.9rem,2.8vw,1.1rem)] font-normal leading-none tracking-tight text-white/65">
+                  <span className="text-[clamp(1.05rem,3.1vw,1.35rem)] iphone-page:text-[clamp(1rem,3.2vw,1.25rem)] font-normal leading-none tracking-tight text-white/65">
                     Medicine
                   </span>
                 </span>
-                <span className="inline-flex flex-col items-start gap-1">
-                  <span className="inline-flex items-center gap-2.5">
-                    <span className="text-[clamp(1.75rem,5.5vw,2.75rem)] iphone-page:text-[clamp(1.65rem,5.8vw,2.55rem)] font-medium leading-none tracking-tight text-white/[0.92]">
+                <span className="inline-flex flex-col items-start gap-1.5">
+                  <span className="inline-flex items-center gap-3">
+                    <span className="text-[clamp(2.15rem,6.8vw,3.4rem)] iphone-page:text-[clamp(2rem,7vw,3.1rem)] font-medium leading-none tracking-tight text-white/[0.92]">
                       Matt
                     </span>
-                    <span className="inline-flex items-center gap-2">
+                    <span className="inline-flex items-center gap-2.5">
                       <HeroSocialIcon href="https://x.com/joindoe" label="Matt on X">
                         <HeroXIcon />
                       </HeroSocialIcon>
@@ -2435,25 +2435,16 @@ export default function DoePage() {
                       </HeroSocialIcon>
                     </span>
                   </span>
-                  <span className="text-[clamp(0.95rem,2.6vw,1.2rem)] iphone-page:text-[clamp(0.9rem,2.8vw,1.1rem)] font-normal leading-none tracking-tight text-white/65">
+                  <span className="text-[clamp(1.05rem,3.1vw,1.35rem)] iphone-page:text-[clamp(1rem,3.2vw,1.25rem)] font-normal leading-none tracking-tight text-white/65">
                     Engineering
                   </span>
                 </span>
               </div>
 
-              <p
-                className={`max-w-full ${HERO_BODY_COPY} ${HERO_INTRO_REVEAL} ${
-                  prefersReducedMotionHero || heroIntroPhase >= 5 ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
-                }`}
-                style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
-              >
-                Two brothers whose background intersects between medicine, engineering, and artificial intelligence.
-              </p>
-
               <a
                 href="mailto:contact@joindoe.com"
-                className={`group mt-5 iphone-page:mt-6 inline-flex border-0 bg-transparent p-0 text-left ${HERO_BODY_COPY} font-semibold text-white ${HERO_INTRO_REVEAL} hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-white ${
-                  prefersReducedMotionHero || heroIntroPhase >= 6
+                className={`group mt-6 iphone-page:mt-5 inline-flex border-0 bg-transparent p-0 text-left ${HERO_BODY_COPY} font-semibold text-white ${HERO_INTRO_REVEAL} hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-white ${
+                  prefersReducedMotionHero || heroIntroPhase >= 5
                     ? "translate-y-0 opacity-100"
                     : "pointer-events-none translate-y-3 opacity-0"
                 }`}
@@ -2461,7 +2452,7 @@ export default function DoePage() {
               >
                 <span
                   className={`inline-flex items-center gap-2 underline decoration-white/70 decoration-2 underline-offset-[0.35em] group-hover:decoration-white ${
-                    !prefersReducedMotionHero && heroIntroPhase >= 6 ? "animate-hero-cta-float" : ""
+                    !prefersReducedMotionHero && heroIntroPhase >= 5 ? "animate-hero-cta-float" : ""
                   }`}
                 >
                   <span>Build with us</span>
@@ -2506,7 +2497,7 @@ export default function DoePage() {
         >
           {/* Title band */}
           <div
-            className={`flex flex-col justify-center shrink-0 px-4 pt-[5.25rem] pb-3 iphone-page:pt-[5.5rem] iphone-page:pb-2 ${narrowHorizontalInset}`}
+            className={`flex flex-col justify-center shrink-0 px-4 pt-[6rem] pb-3 iphone-page:pt-[6.25rem] iphone-page:pb-2 ${narrowHorizontalInset}`}
           >
             <div className="mx-auto w-full max-w-full text-center">
               <h1 
