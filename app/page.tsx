@@ -498,9 +498,11 @@ function vbRailsEffectiveInnerHeight(innerWidthPx: number, innerHeightPx: number
 }
 
 /** Fraction of each slide's scroll segment spent dwelling on that card before advancing. */
-const WF_CAROUSEL_SCROLL_HOLD_FRAC = 0.38;
-/** Extra scroll driver height so dwell + transition spans feel unhurried. */
-const WF_CAROUSEL_SCROLL_STRETCH = 1.5;
+const WF_CAROUSEL_SCROLL_HOLD_FRAC = 0.4;
+/** Extra scroll driver height — higher = slower, smoother progression through slides. */
+const WF_CAROUSEL_SCROLL_STRETCH = 1.85;
+/** Crossfade width in slide-index units (slightly >1 softens enter/exit). */
+const WF_SLIDE_CROSSFADE_SPAN = 1.1;
 
 /** Map normalized scroll through driver (0..1) to carousel progress; dwell on middle slides only. */
 function wfScrollProgressFromUnitT(t: number, slideCount: number, holdFrac: number): number {
@@ -513,24 +515,30 @@ function wfScrollProgressFromUnitT(t: number, slideCount: number, holdFrac: numb
   const seg = Math.min(last, Math.floor(scaled));
   const local = scaled - seg;
 
-  // First slide: no dwell — scroll immediately advances toward slide 1
+  // First slide: ease into slide 1 (no hard linear ramp)
   if (seg === 0) {
-    return Math.min(last, local);
+    return Math.min(last, wfSmoothstep01(local));
   }
-  // Last slide: no dwell — lock progress at final slide without extra hold span
+  // Last slide: lock at final index
   if (seg >= last) {
     return last;
   }
   if (local < holdFrac) {
     return seg;
   }
-  const trans = (local - holdFrac) / Math.max(1e-6, 1 - holdFrac);
-  return Math.min(last, seg + trans);
+  const rawTrans = (local - holdFrac) / Math.max(1e-6, 1 - holdFrac);
+  return Math.min(last, seg + wfSmoothstep01(rawTrans));
 }
 
 function wfSmoothstep01(t: number): number {
   const x = Math.min(Math.max(t, 0), 1);
   return x * x * (3 - 2 * x);
+}
+
+/** Smoother than smoothstep — used for slide opacity / travel. */
+function wfSmootherstep01(t: number): number {
+  const x = Math.min(Math.max(t, 0), 1);
+  return x * x * x * (x * (x * 6 - 15) + 10);
 }
 
 /** Scroll-linked fade + rise for workflow carousel slides (progress 0..slideCount-1). */
@@ -541,17 +549,19 @@ function wfSlideScrollMotion(
 ): { opacity: number; translateY: number; zIndex: number } {
   const delta = displayPos - progress;
   const absD = Math.abs(delta);
-  if (absD >= 1) {
+  if (absD >= WF_SLIDE_CROSSFADE_SPAN) {
     return {
       opacity: 0,
-      translateY: Math.sign(delta) * risePx,
+      translateY: Math.sign(delta) * risePx * 0.9,
       zIndex: 0,
     };
   }
-  const fade = 1 - wfSmoothstep01(absD);
+  const u = absD / WF_SLIDE_CROSSFADE_SPAN;
+  const fade = 1 - wfSmootherstep01(u);
+  const travel = wfSmootherstep01(u) * risePx;
   return {
     opacity: fade,
-    translateY: delta * risePx,
+    translateY: Math.sign(delta) * travel,
     zIndex: Math.round(fade * 20),
   };
 }
