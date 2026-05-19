@@ -8,23 +8,17 @@ export const HERO_CAROUSEL_GRAIN_BG = `url("data:image/svg+xml,%3Csvg viewBox='0
 
 /** 56×56px cell — matches Referral Intake SVG pattern in carousel slides. */
 const GRID_CELL_PX = 56;
-const GRID_LINE = "rgba(255, 255, 255, 0.12)";
-const GRID_DOT = "rgba(255, 255, 255, 0.18)";
-const GRID_HALF = GRID_CELL_PX / 2;
+const GRID_LINE = "rgba(255, 255, 255, 0.10)";
+const GRID_DOT = "rgba(255, 255, 255, 0.15)";
 
-/** Square line grid only (fixed tile size). */
-const HERO_CAROUSEL_SQUARE_GRID_LINES: CSSProperties = {
+export const HERO_CAROUSEL_SQUARE_GRID_STYLE: CSSProperties = {
   backgroundImage: [
+    `radial-gradient(circle, ${GRID_DOT} 1px, transparent 1px)`,
     `repeating-linear-gradient(0deg, transparent 0, transparent calc(${GRID_CELL_PX}px - 0.8px), ${GRID_LINE} calc(${GRID_CELL_PX}px - 0.8px), ${GRID_LINE} ${GRID_CELL_PX}px)`,
     `repeating-linear-gradient(90deg, transparent 0, transparent calc(${GRID_CELL_PX}px - 0.8px), ${GRID_LINE} calc(${GRID_CELL_PX}px - 0.8px), ${GRID_LINE} ${GRID_CELL_PX}px)`,
   ].join(", "),
   backgroundSize: `${GRID_CELL_PX}px ${GRID_CELL_PX}px`,
-};
-
-/** Dot centered in each grid cell (fixed tile size). */
-const HERO_CAROUSEL_SQUARE_GRID_DOTS: CSSProperties = {
-  backgroundImage: `radial-gradient(circle at ${GRID_HALF}px ${GRID_HALF}px, ${GRID_DOT} 1px, transparent 1.5px)`,
-  backgroundSize: `${GRID_CELL_PX}px ${GRID_CELL_PX}px`,
+  backgroundPosition: `${GRID_CELL_PX / 2}px ${GRID_CELL_PX / 2}px, 0 0, 0 0`,
 };
 
 export function HeroCarouselTextureOverlay({
@@ -47,12 +41,7 @@ export function HeroCarouselTextureOverlay({
       />
       <div
         className="pointer-events-none absolute inset-0 z-[2]"
-        style={HERO_CAROUSEL_SQUARE_GRID_LINES}
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute inset-0 z-[3]"
-        style={HERO_CAROUSEL_SQUARE_GRID_DOTS}
+        style={HERO_CAROUSEL_SQUARE_GRID_STYLE}
         aria-hidden
       />
     </>
