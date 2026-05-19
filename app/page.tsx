@@ -488,7 +488,7 @@ const WF_CAROUSEL_SCROLL_HOLD_FRAC = 0.58;
 /** Extra scroll driver height so dwell + transition spans feel unhurried. */
 const WF_CAROUSEL_SCROLL_STRETCH = 1.5;
 
-/** Map normalized scroll through driver (0..1) to carousel progress with per-slide holds. */
+/** Map normalized scroll through driver (0..1) to carousel progress; dwell on middle slides only. */
 function wfScrollProgressFromUnitT(t: number, slideCount: number, holdFrac: number): number {
   const last = Math.max(0, slideCount - 1);
   if (slideCount <= 1) return 0;
@@ -499,7 +499,15 @@ function wfScrollProgressFromUnitT(t: number, slideCount: number, holdFrac: numb
   const seg = Math.min(last, Math.floor(scaled));
   const local = scaled - seg;
 
-  if (seg >= last || local < holdFrac) {
+  // First slide: no dwell — scroll immediately advances toward slide 1
+  if (seg === 0) {
+    return Math.min(last, local);
+  }
+  // Last slide: no dwell — lock progress at final slide without extra hold span
+  if (seg >= last) {
+    return last;
+  }
+  if (local < holdFrac) {
     return seg;
   }
   const trans = (local - holdFrac) / Math.max(1e-6, 1 - holdFrac);
@@ -2420,7 +2428,7 @@ export default function DoePage() {
 
               <a
                 href="mailto:contact@joindoe.com"
-                className={`group mt-1 inline-flex border-0 bg-transparent p-0 text-left ${HERO_BODY_COPY} font-semibold text-white ${HERO_INTRO_REVEAL} hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-white ${
+                className={`group mt-5 iphone-page:mt-6 inline-flex border-0 bg-transparent p-0 text-left ${HERO_BODY_COPY} font-semibold text-white ${HERO_INTRO_REVEAL} hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-white ${
                   prefersReducedMotionHero || heroIntroPhase >= 5
                     ? "translate-y-0 opacity-100"
                     : "pointer-events-none translate-y-3 opacity-0"
@@ -2474,7 +2482,7 @@ export default function DoePage() {
         >
           {/* Title band */}
           <div
-            className={`flex flex-col justify-center shrink-0 px-4 pt-14 pb-3 iphone-page:pt-[4.25rem] iphone-page:pb-2 ${narrowHorizontalInset}`}
+            className={`flex flex-col justify-center shrink-0 px-4 pt-16 pb-3 iphone-page:pt-[4.75rem] iphone-page:pb-2 ${narrowHorizontalInset}`}
           >
             <div className="mx-auto w-full max-w-full text-center">
               <h1 
