@@ -27,6 +27,14 @@ const config: Config = {
       addVariant("layout-desktop", `[data-layout="desktop"] &`);
       /** Forces phone/iPhone breakpoints even on wide viewports (see layout.tsx data-doeforvc-always-phone). */
       addVariant("iphone-page", 'html[data-doeforvc-always-phone="true"] &');
+      /**
+       * True desktop/laptop — wide viewport + mouse/trackpad.
+       * Excludes phones in landscape (e.g. iPhone 16 Pro Max ~932px) and touch tablets.
+       */
+      addVariant(
+        "wide-desktop",
+        "@media (min-width: 1280px) and (hover: hover) and (pointer: fine)"
+      );
     }),
   ],
 };

@@ -1,6 +1,6 @@
 /**
- * Full-viewport placeholder shown only on desktop (md and up). Phone/tablet routes render below
- * but are visually covered. Server component — no client hooks.
+ * Full-viewport placeholder on wide-desktop only (1280px+ with fine pointer).
+ * Phone routes render below but are visually covered on real desktops. Server component.
  */
 export function DesktopComingSoon({
   loraClassName,
@@ -11,7 +11,7 @@ export function DesktopComingSoon({
 }) {
   return (
     <div
-      className="hidden md:flex fixed inset-0 z-[1000] flex-col items-center justify-center bg-[#F7F6F3] px-10 text-center"
+      className="hidden wide-desktop:flex fixed inset-0 z-[1000] flex-col items-center justify-center bg-[#F7F6F3] px-10 text-center"
     >
       <p
         className={`${loraClassName} font-normal leading-none tracking-tight text-neutral-900`}
