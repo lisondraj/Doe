@@ -8,8 +8,8 @@ import { createPortal } from "react-dom";
 import type { ReactElement } from "react";
 
 import {
-  dropdownContent,
   MOBILE_NAV_FOOTER_SLIDES,
+  NAV_HREFS,
   NAV_ITEMS,
 } from "@/components/doe-nav-data";
 import { doeforvcRootZoom } from "@/lib/doeforvc-zoom";
@@ -600,7 +600,6 @@ export default function DoePage() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   /** Which top-level nav row is expanded in the phone menu sheet (accordion). */
-  const [mobileNavExpandedKey, setMobileNavExpandedKey] = useState<string | null>(null);
   /** Featured strip carousel at bottom of the phone nav sheet */
   const [mobileNavFooterSlide, setMobileNavFooterSlide] = useState(0);
   const mobileNavFooterCarouselRef = useRef<HTMLDivElement>(null);
@@ -1077,7 +1076,6 @@ export default function DoePage() {
   }, [mobileNavOpen]);
 
   useEffect(() => {
-    if (!mobileNavOpen) setMobileNavExpandedKey(null);
   }, [mobileNavOpen]);
 
   useEffect(() => {
@@ -2084,22 +2082,14 @@ export default function DoePage() {
             {/* Desktop: center Navigation Links */}
             <div className="hidden items-center gap-8 absolute left-1/2 -translate-x-1/2">
               {NAV_ITEMS.map((item) => (
-                <button
+                <Link
                   key={item}
-                  type="button"
-                  className="text-sm font-medium transition-all duration-300 flex items-center gap-1 bg-transparent border-none cursor-pointer hover:opacity-70 shrink-0"
+                  href={NAV_HREFS[item]}
+                  className="text-sm font-medium transition-all duration-300 bg-transparent border-none cursor-pointer hover:opacity-70 shrink-0 no-underline"
                   style={{ color: navTextColor, textShadow: navTextShadow }}
-                  onMouseEnter={() => setActiveDropdown(item)}
                 >
                   {item}
-                  <svg
-                    className="w-4 h-4 transition-transform duration-200"
-                    style={{ transform: activeDropdown === item ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
+                </Link>
               ))}
             </div>
 
@@ -2288,83 +2278,17 @@ export default function DoePage() {
                 aria-label="Site navigation"
               >
                 <nav className="relative z-[2] flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto overscroll-contain bg-[#F7F6F3]">
-                  {NAV_ITEMS.map((item) => {
-                    const expanded = mobileNavExpandedKey === item;
-                    const subs = dropdownContent[item]?.items ?? [];
-                    const four = subs.slice(0, 4);
-                    return (
-                      <div key={item} className="relative border-b border-[#E6E6E6] bg-[#F7F6F3]">
-                    <button
-                      type="button"
-                          aria-expanded={expanded}
-                          className={`flex w-full min-w-0 items-center gap-2.5 iphone-page:gap-[clamp(0.5rem,0.35rem+0.95vmin,0.9rem)] text-left font-medium tracking-[-0.02em] text-gray-900 pl-5 pr-5 iphone-page:pl-[max(1.35rem,calc(env(safe-area-inset-left,0px)+12px+2.4vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))] py-4 iphone-page:py-[clamp(0.65rem,0.42rem+1.35vmin,1.2rem)] active:bg-black/[0.04] transition-colors ${inter.className} text-4xl iphone-page:text-[clamp(1.52rem,0.82rem+2.92vmin,3.92rem)] iphone-page:leading-none`}
-                          onClick={() =>
-                            setMobileNavExpandedKey((k) => (k === item ? null : item))
-                          }
-                        >
-                          <span className="min-w-0">{item}</span>
-                          <span className="shrink-0 inline-flex items-center justify-center text-gray-400 self-center" aria-hidden>
-                            {expanded ? (
-                              <svg
-                                className="w-[clamp(0.9375rem,0.5rem+2.85vmin+0.95vw,1.95rem)] h-[clamp(0.9375rem,0.5rem+2.85vmin+0.95vw,1.95rem)] transition-transform duration-200 ease-out"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth={1.4}
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <path d="M6 9l6 6 6-6" />
-                              </svg>
-                            ) : (
-                              <svg
-                                className="w-[clamp(0.9375rem,0.5rem+2.85vmin+0.95vw,1.95rem)] h-[clamp(0.9375rem,0.5rem+2.85vmin+0.95vw,1.95rem)] transition-transform duration-200 ease-out"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth={1.4}
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <path d="M18 15l-6-6-6 6" />
-                              </svg>
-                            )}
-                          </span>
-                        </button>
-                        <div
-                          className={`grid transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none ${expanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
-                        >
-                          <div className="overflow-hidden min-h-0">
-                            {four.length > 0 && (
-                              <div className="flex min-w-0 flex-col overflow-x-hidden pl-5 pr-5 iphone-page:pl-[max(1.35rem,calc(env(safe-area-inset-left,0px)+12px+2.4vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))] pb-3 pt-0">
-                                {four.map((sub) =>
-                                  sub.href ? (
-                                    <Link
-                                      key={sub.title}
-                                      href={sub.href}
-                                      className={`block w-full min-w-0 max-w-full text-left py-3.5 iphone-page:py-[clamp(0.72rem,0.48rem+1.1vmin,1.05rem)] pl-7 iphone-page:pl-[clamp(2.15rem,calc(env(safe-area-inset-left,0px)+32px)+1.95vmin,4.9rem)] text-[1.625rem] iphone-page:text-[clamp(1.2rem,0.72rem+1.95vmin,2.52rem)] leading-snug font-medium text-gray-600 active:bg-black/[0.03] transition-colors ${inter.className}`}
-                      onClick={() => setMobileNavOpen(false)}
-                    >
-                                      {sub.title}
-                                    </Link>
-                                  ) : (
-                                    <button
-                                      key={sub.title}
-                                      type="button"
-                                      className={`w-full min-w-0 max-w-full text-left py-3.5 iphone-page:py-[clamp(0.72rem,0.48rem+1.1vmin,1.05rem)] pl-7 iphone-page:pl-[clamp(2.15rem,calc(env(safe-area-inset-left,0px)+32px)+1.95vmin,4.9rem)] text-[1.625rem] iphone-page:text-[clamp(1.2rem,0.72rem+1.95vmin,2.52rem)] leading-snug font-medium text-gray-600 active:bg-black/[0.03] transition-colors ${inter.className}`}
-                                      onClick={() => setMobileNavOpen(false)}
-                                    >
-                                      {sub.title}
-                    </button>
-                                  )
-                                )}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                  {NAV_ITEMS.map((item) => (
+                    <div key={item} className="relative border-b border-[#E6E6E6] bg-[#F7F6F3]">
+                      <Link
+                        href={NAV_HREFS[item]}
+                        className={`flex w-full min-w-0 items-center text-left font-medium tracking-[-0.02em] text-gray-900 pl-5 pr-5 iphone-page:pl-[max(1.35rem,calc(env(safe-area-inset-left,0px)+12px+2.4vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))] py-4 iphone-page:py-[clamp(0.65rem,0.42rem+1.35vmin,1.2rem)] active:bg-black/[0.04] transition-colors no-underline ${inter.className} text-4xl iphone-page:text-[clamp(1.52rem,0.82rem+2.92vmin,3.92rem)] iphone-page:leading-none`}
+                        onClick={() => setMobileNavOpen(false)}
+                      >
+                        <span className="min-w-0">{item}</span>
+                      </Link>
+                    </div>
+                  ))}
                 </nav>
                 {/* Footer — fixed-height band so the carousel never grows into Company subpages above. */}
                 <div
@@ -5074,17 +4998,17 @@ export default function DoePage() {
             className="mx-auto mb-14 grid w-[min(100%,17rem)] shrink-0 grid-cols-2 justify-items-center gap-x-5 gap-y-4 text-center text-[clamp(1.15rem,4.25vw,1.5rem)] font-medium tracking-tight md:mb-16 md:w-[min(100%,22rem)] md:gap-x-8 md:gap-y-5 md:text-[clamp(1.25rem,2.8vw,1.75rem)] iphone-page:mb-12 iphone-page:max-w-[16rem] iphone-page:gap-x-4 iphone-page:gap-y-3.5 iphone-page:text-[clamp(1.2rem,4.8vmin,1.65rem)]"
             aria-label="Footer"
           >
-            <Link href="/" className="text-white no-underline transition-colors hover:text-white/85">
+            <Link href="/features" className="text-white no-underline transition-colors hover:text-white/85">
               Features
             </Link>
-            <Link href="/" className="text-white no-underline transition-colors hover:text-white/85">
-              Security
-            </Link>
-            <Link href="/#students" className="text-white no-underline transition-colors hover:text-white/85">
-              Students
-            </Link>
             <Link href="/blog" className="text-white no-underline transition-colors hover:text-white/85">
-              Company
+              Blog
+            </Link>
+            <Link href="/" className="text-white no-underline transition-colors hover:text-white/85">
+              Team
+            </Link>
+            <Link href="/" className="text-white no-underline transition-colors hover:text-white/85">
+              Our Vision
             </Link>
           </nav>
           <div

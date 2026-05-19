@@ -141,46 +141,67 @@ export function MobileNavFooterShapeIcon({
 
 export type DropdownNavItem = { title: string; desc: string; href?: string };
 
+/** Subpages disabled for now — kept for future mega-menu. */
 export const dropdownContent: Record<
   string,
   { items: DropdownNavItem[]; featured?: { title: string; desc: string } }
 > = {
   Features: {
     items: [
-      { title: "AI Diagnosis", desc: "Frontier models to assist clinical decision-making." },
-      { title: "Patient Records", desc: "Unified health records accessible anywhere." },
-      { title: "Care Pathways", desc: "Automated, evidence-based care planning." },
-      { title: "Telemedicine", desc: "Connect patients and providers instantly." },
+      { title: "Clinical Inbox", desc: "Summaries clinicians verify—not babysit." },
+      { title: "Finance", desc: "Payer packets drafted with citations." },
+      { title: "Brain", desc: "Frontier models at the point of care." },
+      { title: "Academics", desc: "Education tracks on the same clinical graph." },
     ],
     featured: { title: "Doe Platform", desc: "The end-to-end AI layer for modern healthcare delivery." },
   },
-  Security: {
-    items: [
-      { title: "HIPAA Compliance", desc: "Built from the ground up for healthcare data laws." },
-      { title: "End-to-End Encryption", desc: "All data encrypted in transit and at rest." },
-      { title: "Access Controls", desc: "Role-based permissions for every team." },
-      { title: "Audit Logs", desc: "Full traceability of every action taken." },
-    ],
-    featured: { title: "Trust Center", desc: "Our commitment to the highest security standards in healthcare." },
-  },
-  Students: {
-    items: [
-      { title: "Med School Prep", desc: "AI-guided study plans tailored to your timeline." },
-      { title: "Clinical Simulations", desc: "Practice real scenarios with AI patients." },
-      { title: "Mentorship", desc: "Connect with experienced physicians worldwide." },
-      { title: "Residency Tools", desc: "Resources to navigate your residency journey." },
-    ],
-    featured: { title: "Doe for Students", desc: "Empowering the next generation of healthcare professionals." },
-  },
-  Company: {
-    items: [
-      { title: "About Us", desc: "Our mission to reimagine global healthcare." },
-      { title: "Careers", desc: "Join a team building the future of medicine." },
-      { title: "Blog", desc: "Writing from the Doe team.", href: "/blog" },
-      { title: "Contact", desc: "Get in touch with our team." },
-    ],
-    featured: { title: "Our Story", desc: "Founded to bring frontier AI to the patients who need it most." },
-  },
+  Blog: { items: [] },
+  Team: { items: [] },
+  "Our Vision": { items: [] },
 };
 
-export const NAV_ITEMS = ["Features", "Security", "Students", "Company"] as const;
+export const NAV_ITEMS = ["Features", "Blog", "Team", "Our Vision"] as const;
+export type NavItem = (typeof NAV_ITEMS)[number];
+
+export const NAV_HREFS: Record<NavItem, string> = {
+  Features: "/features",
+  Blog: "/blog",
+  Team: "/",
+  "Our Vision": "/",
+};
+
+export const FEATURE_PAGE_SECTIONS: ReadonlyArray<{
+  label: string;
+  title: string;
+  body: string;
+  gradient: string;
+}> = [
+  {
+    label: "Inbox",
+    title: "Clinical Inbox",
+    body: "Doe drafts summaries and routing suggestions so clinicians verify instead of babysit. Every message inherits your identity, audit trail, and escalation rules.",
+    gradient:
+      "linear-gradient(152deg, #1a2e34 0%, #3d5a62 38%, #6b8f94 62%, #c9dde0 88%, #f0f4f5 100%)",
+  },
+  {
+    label: "Finance",
+    title: "Finance",
+    body: "Payer packets and prior-auth drafts ship with citations back to the chart. Finance teams review structured outputs—not another blank PDF hunt.",
+    gradient:
+      "linear-gradient(148deg, #2a2418 0%, #6b442f 42%, #d4893f 72%, #f2cf7a 100%)",
+  },
+  {
+    label: "Brain",
+    title: "Brain",
+    body: "Frontier models tuned for bedside reasoning, with guardrails that survive nursing handoffs and attending sign-off—not demo-day prompts.",
+    gradient:
+      "radial-gradient(120% 100% at 20% 0%, #e8b04d 0%, #a85a34 45%, #3d2f28 78%, #1a2e34 100%)",
+  },
+  {
+    label: "Academics",
+    title: "Academics",
+    body: "Spaced practice, simulations, and feedback that cite sources—wired to the same graph your hospital trusts when students become residents.",
+    gradient:
+      "linear-gradient(162deg, #fce8b4 0%, #f2b056 30%, #d87435 58%, #142026 100%)",
+  },
+];

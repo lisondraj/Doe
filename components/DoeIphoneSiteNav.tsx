@@ -5,8 +5,8 @@ import { Inter, Lora } from "next/font/google";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
-  dropdownContent,
   MOBILE_NAV_FOOTER_SLIDES,
+  NAV_HREFS,
   NAV_ITEMS,
 } from "@/components/doe-nav-data";
 
@@ -103,7 +103,6 @@ function NavChromeStrip({
 export default function DoeIphoneSiteNav() {
   const isPhoneLayout = true;
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const [mobileNavExpandedKey, setMobileNavExpandedKey] = useState<string | null>(null);
   const [mobileNavFooterSlide, setMobileNavFooterSlide] = useState(0);
   const mobileNavFooterCarouselRef = useRef<HTMLDivElement>(null);
   /** Carousel width when the sheet first opens — `zoom` shrinks uniformly if the window gets narrower (matches home `app/page.tsx`). */
@@ -215,7 +214,6 @@ export default function DoeIphoneSiteNav() {
   }, [mobileNavOpen]);
 
   useEffect(() => {
-    if (!mobileNavOpen) setMobileNavExpandedKey(null);
   }, [mobileNavOpen]);
 
   useEffect(() => {
@@ -270,81 +268,17 @@ export default function DoeIphoneSiteNav() {
             aria-label="Site navigation"
           >
             <nav className="flex flex-col flex-1 min-h-0 overflow-y-auto overscroll-contain">
-              {NAV_ITEMS.map((item) => {
-                const expanded = mobileNavExpandedKey === item;
-                const subs = dropdownContent[item]?.items ?? [];
-                const four = subs.slice(0, 4);
-                return (
+              {NAV_ITEMS.map((item) => (
                   <div key={item} className="border-b border-[#E6E6E6]">
-                    <button
-                      type="button"
-                      aria-expanded={expanded}
-                      className={`flex w-full items-center gap-2.5 iphone-page:gap-[clamp(0.5rem,0.35rem+0.95vmin,0.9rem)] text-left font-medium tracking-[-0.02em] text-gray-900 pl-5 pr-5 iphone-page:pl-[max(1.35rem,calc(env(safe-area-inset-left,0px)+12px+2.4vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))] py-4 iphone-page:py-[clamp(0.65rem,0.42rem+1.35vmin,1.2rem)] active:bg-black/[0.04] transition-colors ${inter.className} text-4xl iphone-page:text-[clamp(1.52rem,0.82rem+2.92vmin,3.92rem)] iphone-page:leading-none`}
-                      onClick={() => setMobileNavExpandedKey((k) => (k === item ? null : item))}
+                    <Link
+                      href={NAV_HREFS[item]}
+                      className={`flex w-full items-center text-left font-medium tracking-[-0.02em] text-gray-900 pl-5 pr-5 iphone-page:pl-[max(1.35rem,calc(env(safe-area-inset-left,0px)+12px+2.4vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))] py-4 iphone-page:py-[clamp(0.65rem,0.42rem+1.35vmin,1.2rem)] active:bg-black/[0.04] transition-colors no-underline ${inter.className} text-4xl iphone-page:text-[clamp(1.52rem,0.82rem+2.92vmin,3.92rem)] iphone-page:leading-none`}
+                      onClick={() => setMobileNavOpen(false)}
                     >
                       <span className="min-w-0">{item}</span>
-                      <span className="shrink-0 inline-flex items-center justify-center text-gray-400 self-center" aria-hidden>
-                        {expanded ? (
-                          <svg
-                            className="w-[clamp(0.9375rem,0.5rem+2.85vmin+0.95vw,1.95rem)] h-[clamp(0.9375rem,0.5rem+2.85vmin+0.95vw,1.95rem)] transition-transform duration-200 ease-out"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={1.4}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path d="M6 9l6 6 6-6" />
-                          </svg>
-                        ) : (
-                          <svg
-                            className="w-[clamp(0.9375rem,0.5rem+2.85vmin+0.95vw,1.95rem)] h-[clamp(0.9375rem,0.5rem+2.85vmin+0.95vw,1.95rem)] transition-transform duration-200 ease-out"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={1.4}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path d="M18 15l-6-6-6 6" />
-                          </svg>
-                        )}
-                      </span>
-                    </button>
-                    <div
-                      className={`grid transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none ${expanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
-                    >
-                      <div className="overflow-hidden min-h-0">
-                        {four.length > 0 && (
-                          <div className="flex flex-col pl-5 pr-5 iphone-page:pl-[max(1.35rem,calc(env(safe-area-inset-left,0px)+12px+2.4vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))] pb-3 pt-0">
-                            {four.map((sub) =>
-                              sub.href ? (
-                                <Link
-                                  key={sub.title}
-                                  href={sub.href}
-                                  className={`block w-full text-left py-3.5 iphone-page:py-[clamp(0.72rem,0.48rem+1.1vmin,1.05rem)] pl-7 iphone-page:pl-[clamp(2.15rem,calc(env(safe-area-inset-left,0px)+32px)+1.95vmin,4.9rem)] text-[1.625rem] iphone-page:text-[clamp(1.2rem,0.72rem+1.95vmin,2.52rem)] leading-snug font-medium text-gray-600 active:bg-black/[0.03] transition-colors ${inter.className}`}
-                                  onClick={() => setMobileNavOpen(false)}
-                                >
-                                  {sub.title}
-                                </Link>
-                              ) : (
-                                <button
-                                  key={sub.title}
-                                  type="button"
-                                  className={`w-full text-left py-3.5 iphone-page:py-[clamp(0.72rem,0.48rem+1.1vmin,1.05rem)] pl-7 iphone-page:pl-[clamp(2.15rem,calc(env(safe-area-inset-left,0px)+32px)+1.95vmin,4.9rem)] text-[1.625rem] iphone-page:text-[clamp(1.2rem,0.72rem+1.95vmin,2.52rem)] leading-snug font-medium text-gray-600 active:bg-black/[0.03] transition-colors ${inter.className}`}
-                                  onClick={() => setMobileNavOpen(false)}
-                                >
-                                  {sub.title}
-                                </button>
-                              )
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    </div>
+                    </Link>
                   </div>
-                );
-              })}
+                ))}
             </nav>
             <div className="shrink-0 pb-[max(1rem,calc(env(safe-area-inset-bottom,0px)+10px))] iphone-page:pb-[max(0.9375rem,calc(env(safe-area-inset-bottom,0px)+clamp(10px,1.85vmin,20px)))] pt-4 iphone-page:pt-[clamp(0.75rem,0.52rem+1.05vmin,1.25rem)] border-t border-[#ECEAE6]">
               <div
