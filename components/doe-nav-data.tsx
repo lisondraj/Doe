@@ -169,39 +169,3 @@ export const NAV_HREFS: Record<NavItem, string> = {
   Team: "/",
   "Our Vision": "/",
 };
-
-export const FEATURE_PAGE_SECTIONS: ReadonlyArray<{
-  label: string;
-  title: string;
-  body: string;
-  gradient: string;
-}> = [
-  {
-    label: "Inbox",
-    title: "Clinical Inbox",
-    body: "Doe drafts summaries and routing suggestions so clinicians verify instead of babysit. Every message inherits your identity, audit trail, and escalation rules.",
-    gradient:
-      "linear-gradient(152deg, #1a2e34 0%, #3d5a62 38%, #6b8f94 62%, #c9dde0 88%, #f0f4f5 100%)",
-  },
-  {
-    label: "Finance",
-    title: "Finance",
-    body: "Payer packets and prior-auth drafts ship with citations back to the chart. Finance teams review structured outputs—not another blank PDF hunt.",
-    gradient:
-      "linear-gradient(148deg, #2a2418 0%, #6b442f 42%, #d4893f 72%, #f2cf7a 100%)",
-  },
-  {
-    label: "Brain",
-    title: "Brain",
-    body: "Frontier models tuned for bedside reasoning, with guardrails that survive nursing handoffs and attending sign-off—not demo-day prompts.",
-    gradient:
-      "radial-gradient(120% 100% at 20% 0%, #e8b04d 0%, #a85a34 45%, #3d2f28 78%, #1a2e34 100%)",
-  },
-  {
-    label: "Academics",
-    title: "Academics",
-    body: "Spaced practice, simulations, and feedback that cite sources—wired to the same graph your hospital trusts when students become residents.",
-    gradient:
-      "linear-gradient(162deg, #fce8b4 0%, #f2b056 30%, #d87435 58%, #142026 100%)",
-  },
-];
