@@ -41,7 +41,7 @@ export default function RootLayout({
   return (
     <html lang="en" data-doeforvc-always-phone="true">
       <body className={`${inter.variable} font-sans antialiased md:overflow-hidden`}>
-        <DesktopComingSoon loraClassName={lora.className} />
+        <DesktopComingSoon loraClassName={lora.className} interClassName={inter.className} />
         {children}
       </body>
     </html>

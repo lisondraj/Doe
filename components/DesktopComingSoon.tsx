@@ -2,7 +2,13 @@
  * Full-viewport placeholder shown only on desktop (md and up). Phone/tablet routes render below
  * but are visually covered. Server component — no client hooks.
  */
-export function DesktopComingSoon({ loraClassName }: { loraClassName: string }) {
+export function DesktopComingSoon({
+  loraClassName,
+  interClassName,
+}: {
+  loraClassName: string;
+  interClassName: string;
+}) {
   return (
     <div
       className="hidden md:flex fixed inset-0 z-[1000] flex-col items-center justify-center bg-[#F7F6F3] px-10 text-center"
@@ -13,17 +19,12 @@ export function DesktopComingSoon({ loraClassName }: { loraClassName: string }) 
       >
         Doe
       </p>
-      <div
-        className="mt-10 max-w-[44rem] font-medium tracking-tight text-neutral-700"
-        style={{
-          fontFamily: "system-ui, -apple-system, sans-serif",
-          fontSize: "clamp(1.05rem, 1.6vw, 1.5rem)",
-          lineHeight: 1.4,
-        }}
+      <p
+        className={`mt-10 flex max-w-[44rem] flex-col items-center gap-0.5 text-[clamp(1.05rem,1.6vw,1.5rem)] font-medium leading-[1.22] tracking-tight text-neutral-700 ${interClassName}`}
       >
-        <p>We&apos;re still building our desktop site.</p>
-        <p>Head to your phone to learn more about Doe.</p>
-      </div>
+        <span className="block">We&apos;re still building our desktop site.</span>
+        <span className="block">Head to your phone to learn more about Doe.</span>
+      </p>
     </div>
   );
 }
