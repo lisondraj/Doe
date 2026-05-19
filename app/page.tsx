@@ -483,6 +483,49 @@ function vbRailsEffectiveInnerHeight(innerWidthPx: number, innerHeightPx: number
   return innerHeightPx;
 }
 
+/** Hero body copy — tagline, founders, and CTA share one scale. */
+const HERO_BODY_COPY =
+  "text-[clamp(1.38rem,4.65vw,2.15rem)] iphone-page:text-[clamp(1.32rem,5vw,2.05rem)] font-medium text-white/[0.88] tracking-tight leading-[1.22]";
+const HERO_INTRO_REVEAL = "transition-[opacity,transform] duration-[780ms] ease-out";
+
+function HeroSocialIcon({
+  href,
+  label,
+  children,
+}: {
+  href: string;
+  label: string;
+  children: ReactElement;
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={label}
+      className="inline-flex shrink-0 items-center justify-center rounded-sm text-white/75 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+    >
+      {children}
+    </a>
+  );
+}
+
+function HeroXIcon() {
+  return (
+    <svg className="h-[0.92em] w-[0.92em]" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  );
+}
+
+function HeroLinkedInIcon() {
+  return (
+    <svg className="h-[0.92em] w-[0.92em]" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+    </svg>
+  );
+}
+
 export default function DoePage() {
   const [colorShift, setColorShift] = useState(0);
   const [scrollY, setScrollY] = useState(0);
@@ -629,7 +672,7 @@ export default function DoePage() {
       return;
     }
 
-    const gaps = [360, 360, 360, 400];
+    const gaps = [620, 640, 640, 680];
     let when = gaps[0]!;
     setHeroIntroPhase(1);
     for (let p = 2; p <= 5; p++) {
@@ -2283,9 +2326,9 @@ export default function DoePage() {
         <div
           className={`absolute top-0 bottom-0 left-0 right-0 z-20 flex flex-col items-start justify-center pt-[max(5.5rem,calc(env(safe-area-inset-top,0px)+4.25rem))] iphone-page:pt-[max(5rem,calc(env(safe-area-inset-top,0px)+3.75rem))] pb-10 ${narrowHorizontalInset}`}
         >
-          <div className="flex w-full max-w-[min(100%,46rem)] flex-col items-start px-0 text-left">
+          <div className="flex w-full max-w-[min(100%,46rem)] flex-col items-start pl-5 sm:pl-8 md:pl-10 text-left">
             <p
-              className={`font-normal leading-none tracking-tight mb-5 iphone-page:mb-4 transition-[opacity,transform] duration-[520ms] ease-out will-change-transform ${lora.className} ${
+              className={`font-normal leading-none tracking-tight mb-5 iphone-page:mb-4 ${HERO_INTRO_REVEAL} will-change-transform ${lora.className} ${
                 prefersReducedMotionHero || heroIntroPhase >= 1 ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
               }`}
               style={{
@@ -2296,7 +2339,6 @@ export default function DoePage() {
                 backgroundClip: "text",
                 color: "transparent",
                 WebkitTextFillColor: "transparent",
-                filter: "drop-shadow(0 2px 28px rgba(0, 0, 0, 0.2))",
               }}
             >
               Doe
@@ -2304,7 +2346,7 @@ export default function DoePage() {
 
             <div className="flex w-full flex-col items-start gap-[1.15rem] iphone-page:gap-5">
               <p
-                className={`flex max-w-full flex-col items-start gap-0.5 text-[clamp(1.75rem,4.15vw,2.75rem)] iphone-page:text-[clamp(1.2rem,4.85vw,1.9375rem)] font-medium text-white/90 tracking-tight leading-[1.12] transition-[opacity,transform] duration-[520ms] ease-out ${
+                className={`flex max-w-full flex-col items-start gap-0.5 ${HERO_BODY_COPY} ${HERO_INTRO_REVEAL} ${
                   prefersReducedMotionHero || heroIntroPhase >= 2 ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
                 }`}
                 style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
@@ -2314,28 +2356,50 @@ export default function DoePage() {
               </p>
 
               <p
-                className={`max-w-full text-[clamp(1.125rem,3.2vw,1.375rem)] iphone-page:text-[clamp(1.02rem,3.6vw,1.25rem)] font-medium text-white/80 tracking-tight leading-snug transition-[opacity,transform] duration-[520ms] ease-out ${
+                className={`max-w-full ${HERO_BODY_COPY} ${HERO_INTRO_REVEAL} ${
                   prefersReducedMotionHero || heroIntroPhase >= 3 ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
                 }`}
                 style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
               >
-                Meet two brothers,
+                <span className="inline">Meet the founders, </span>
+                <span className="inline-flex flex-wrap items-center gap-x-1 gap-y-0.5 align-baseline">
+                  <span>James</span>
+                  <span className="inline-flex items-center gap-0.5">
+                    <HeroSocialIcon href="https://x.com/joindoe" label="James on X">
+                      <HeroXIcon />
+                    </HeroSocialIcon>
+                    <HeroSocialIcon href="https://www.linkedin.com/company/joindoe" label="James on LinkedIn">
+                      <HeroLinkedInIcon />
+                    </HeroSocialIcon>
+                  </span>
+                  <span className="mx-0.5">&amp; Matt</span>
+                  <span className="inline-flex items-center gap-0.5">
+                    <HeroSocialIcon href="https://x.com/joindoe" label="Matt on X">
+                      <HeroXIcon />
+                    </HeroSocialIcon>
+                    <HeroSocialIcon href="https://www.linkedin.com/company/joindoe" label="Matt on LinkedIn">
+                      <HeroLinkedInIcon />
+                    </HeroSocialIcon>
+                  </span>
+                </span>
               </p>
 
               <p
-                className={`-mt-1 max-w-full text-[clamp(1.125rem,3.2vw,1.375rem)] iphone-page:text-[clamp(1.02rem,3.6vw,1.25rem)] font-medium text-white/80 tracking-tight leading-snug transition-[opacity,transform] duration-[520ms] ease-out ${
+                className={`max-w-full ${HERO_BODY_COPY} ${HERO_INTRO_REVEAL} ${
                   prefersReducedMotionHero || heroIntroPhase >= 4 ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
                 }`}
                 style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
               >
-                James & Matthew Lisondra.
+                Two brothers whose background intersects between medicine, engineering, and artificial intelligence.
               </p>
 
               <a
                 href="mailto:contact@joindoe.com"
-                className={`group mt-1 inline-flex items-center gap-2 border-0 bg-transparent p-0 text-left text-[clamp(1.05rem,3vw,1.2rem)] iphone-page:text-[clamp(0.98rem,3.4vw,1.125rem)] font-semibold tracking-tight text-white underline decoration-white/70 decoration-2 underline-offset-[0.35em] transition-[opacity,transform,decoration-color,color] duration-[520ms] ease-out hover:text-white hover:decoration-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-white ${
-                  prefersReducedMotionHero || heroIntroPhase >= 5 ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
-                }`}
+                className={`group mt-1 inline-flex items-center gap-2 border-0 bg-transparent p-0 text-left ${HERO_BODY_COPY} font-semibold text-white underline decoration-white/70 decoration-2 underline-offset-[0.35em] ${HERO_INTRO_REVEAL} hover:text-white hover:decoration-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-white ${
+                  prefersReducedMotionHero || heroIntroPhase >= 5
+                    ? "translate-y-0 opacity-100"
+                    : "pointer-events-none translate-y-3 opacity-0"
+                } ${!prefersReducedMotionHero && heroIntroPhase >= 5 ? "animate-hero-cta-bounce-once" : ""}`}
                 style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
               >
                 <span>Build with us</span>

@@ -106,8 +106,26 @@ html:has(.doeforvc-iphone-root) body {
   animation: hero-cta-float 7s ease-in-out infinite;
 }
 
+@keyframes hero-cta-bounce-once {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-9px);
+  }
+  70% {
+    transform: translateY(2px);
+  }
+}
+
+.animate-hero-cta-bounce-once {
+  animation: hero-cta-bounce-once 1.4s ease-in-out 1 both;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .animate-hero-cta-float {
+  .animate-hero-cta-float,
+  .animate-hero-cta-bounce-once {
     animation: none;
   }
 }
