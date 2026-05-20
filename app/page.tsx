@@ -498,9 +498,9 @@ function vbRailsEffectiveInnerHeight(innerWidthPx: number, innerHeightPx: number
 }
 
 /** Fraction of each slide's scroll segment spent dwelling on that card before advancing. */
-const WF_CAROUSEL_SCROLL_HOLD_FRAC = 0.48;
+const WF_CAROUSEL_SCROLL_HOLD_FRAC = 0.52;
 /** Extra scroll driver height — higher = slower, smoother progression through slides. */
-const WF_CAROUSEL_SCROLL_STRETCH = 1.85;
+const WF_CAROUSEL_SCROLL_STRETCH = 2.05;
 /** Crossfade width in slide-index units (slightly >1 softens enter/exit). */
 const WF_SLIDE_CROSSFADE_SPAN = 1.1;
 
@@ -567,30 +567,15 @@ function wfSlideScrollMotion(
 }
 
 const WF_UI_RISE_PX = 18;
-/** Card crossfade must reach this before UI can appear. */
-const WF_UI_CARD_READY_MIN = 0.96;
-/** During on-slide dwell scroll, fraction spent card-only before UI reveals (0–1 of dwell). */
-const WF_UI_DWELL_HOLD_FRAC = 0.62;
-
-/** 0..1 position within the dwell portion of a slide's scroll segment, or null if transitioning. */
-function wfDwellLocal01(
-  driverT: number,
-  displayPos: number,
-  slideCount: number,
-  holdFrac: number,
-): number | null {
-  const scaled = driverT * slideCount;
-  const seg = Math.min(slideCount - 1, Math.max(0, Math.floor(scaled)));
-  const local = scaled - seg;
-  if (seg === displayPos && local < holdFrac) {
-    return local / Math.max(1e-6, holdFrac);
-  }
-  return null;
-}
+/**
+ * Fraction of on-slide dwell scroll (0–1) with full card visible and UI hidden.
+ * Remaining dwell scroll linearly reveals UI; exit scroll linearly hides it.
+ */
+const WF_UI_CARD_ONLY_FRAC = 0.7;
 
 /**
- * Scroll-linked UI reveal — slides after the first: card (gradient, grain, caption shell)
- * reaches full opacity, dwells card-only, then mock UI fades in with further scroll.
+ * Scroll-linked UI for slides 2+: card reaches full opacity during dwell, then further
+ * dwell scroll reveals mock UI linearly; exit scroll fades UI out in 1:1 sync with scroll.
  */
 function wfSlideUiScrollMotion(
   displayPos: number,
@@ -610,42 +595,37 @@ function wfSlideUiScrollMotion(
 
   const delta = displayPos - progress;
   const absD = Math.abs(delta);
-  if (absD >= WF_SLIDE_CROSSFADE_SPAN || slideOpacity < 0.04) {
+  if (absD >= WF_SLIDE_CROSSFADE_SPAN || slideOpacity < 0.02) {
     return { opacity: 0, translateY: WF_UI_RISE_PX, pointerEvents: "none" };
   }
 
-  const cardReady = 1 - wfSmootherstep01(absD / WF_SLIDE_CROSSFADE_SPAN);
-  if (cardReady < WF_UI_CARD_READY_MIN) {
-    return { opacity: 0, translateY: WF_UI_RISE_PX, pointerEvents: "none" };
-  }
+  const scaled = driverT * slideCount;
+  const seg = Math.min(slideCount - 1, Math.max(0, Math.floor(scaled)));
+  const local = scaled - seg;
+  const hold = Math.max(1e-6, holdFrac);
 
-  const dwellLocal = wfDwellLocal01(driverT, displayPos, slideCount, holdFrac);
-  let uiFade = 0;
+  let uiLinear = 0;
 
-  if (dwellLocal !== null) {
-    if (dwellLocal > WF_UI_DWELL_HOLD_FRAC) {
-      const revealT =
-        (dwellLocal - WF_UI_DWELL_HOLD_FRAC) /
-        Math.max(1e-6, 1 - WF_UI_DWELL_HOLD_FRAC);
-      uiFade = wfSmootherstep01(revealT);
+  if (seg === displayPos) {
+    if (local < hold) {
+      const dwellT = local / hold;
+      if (dwellT > WF_UI_CARD_ONLY_FRAC) {
+        uiLinear =
+          (dwellT - WF_UI_CARD_ONLY_FRAC) / Math.max(1e-6, 1 - WF_UI_CARD_ONLY_FRAC);
+      }
+    } else {
+      const exitT = (local - hold) / Math.max(1e-6, 1 - hold);
+      uiLinear = 1 - exitT;
     }
-  } else if (delta > 0.04) {
-    // Entering this slide from prior — card may be visible; keep UI hidden until dwell
-    uiFade = 0;
-  } else if (delta < -0.04) {
-    // Leaving toward next slide — UI exits with the card
-    uiFade = wfSmootherstep01(cardReady);
-  } else {
-    // Settled on slide between dwell windows
-    uiFade = 1;
   }
 
-  const opacity = uiFade * slideOpacity;
+  uiLinear = Math.min(1, Math.max(0, uiLinear));
+  const opacity = uiLinear * slideOpacity;
 
   return {
     opacity,
-    translateY: (1 - uiFade) * WF_UI_RISE_PX,
-    pointerEvents: opacity > 0.08 ? "auto" : "none",
+    translateY: (1 - uiLinear) * WF_UI_RISE_PX,
+    pointerEvents: opacity > 0.06 ? "auto" : "none",
   };
 }
 
