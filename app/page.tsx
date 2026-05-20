@@ -498,9 +498,9 @@ function vbRailsEffectiveInnerHeight(innerWidthPx: number, innerHeightPx: number
 }
 
 /** Fraction of each slide's scroll segment spent dwelling on that card before advancing. */
-const WF_CAROUSEL_SCROLL_HOLD_FRAC = 0.4;
-/** Extra scroll driver height — higher = slower, smoother progression through slides. */
-const WF_CAROUSEL_SCROLL_STRETCH = 1.85;
+const WF_CAROUSEL_SCROLL_HOLD_FRAC = 0.28;
+/** Extra scroll driver height — higher = more scroll per slide; lower = faster through cards. */
+const WF_CAROUSEL_SCROLL_STRETCH = 1.35;
 /** Crossfade width in slide-index units — 1:1 with scroll through the full fade. */
 const WF_SLIDE_CROSSFADE_SPAN = 1;
 
@@ -526,41 +526,21 @@ function wfScrollProgressFromUnitT(t: number, slideCount: number, holdFrac: numb
     return seg;
   }
   const rawTrans = (local - holdFrac) / Math.max(1e-6, 1 - holdFrac);
-  return Math.min(last, seg + wfSmoothstep01(rawTrans));
+  return Math.min(last, seg + rawTrans);
 }
 
-function wfSmoothstep01(t: number): number {
-  const x = Math.min(Math.max(t, 0), 1);
-  return x * x * (3 - 2 * x);
-}
-
-/** Smoother than smoothstep — used for slide opacity / travel. */
-function wfSmootherstep01(t: number): number {
-  const x = Math.min(Math.max(t, 0), 1);
-  return x * x * x * (x * (x * 6 - 15) + 10);
-}
-
-/** Scroll-linked fade + rise for workflow carousel slides (progress 0..slideCount-1). */
+/** Scroll-linked opacity only — linear crossfade tied 1:1 to carousel progress. */
 function wfSlideScrollMotion(
   displayPos: number,
   progress: number,
-  risePx: number,
-): { opacity: number; translateY: number; zIndex: number } {
-  const delta = displayPos - progress;
-  const absD = Math.abs(delta);
+): { opacity: number; zIndex: number } {
+  const absD = Math.abs(displayPos - progress);
   if (absD >= WF_SLIDE_CROSSFADE_SPAN) {
-    return {
-      opacity: 0,
-      translateY: Math.sign(delta) * risePx * 0.9,
-      zIndex: 0,
-    };
+    return { opacity: 0, zIndex: 0 };
   }
-  const u = absD / WF_SLIDE_CROSSFADE_SPAN;
-  const fade = 1 - wfSmootherstep01(u);
-  const travel = wfSmootherstep01(u) * risePx;
+  const fade = 1 - absD / WF_SLIDE_CROSSFADE_SPAN;
   return {
     opacity: fade,
-    translateY: Math.sign(delta) * travel,
     zIndex: Math.round(fade * 20),
   };
 }
@@ -1779,9 +1759,6 @@ export default function DoePage() {
   );
   /** Prior auth overlapping cards (box 5): scale entire composition */
   const priorAuthComposeScale = Math.min(1, Math.max(0.62, slideVisibleWidth700 / 478));
-  /** Fade + rise distance for scroll-driven workflow slide crossfade (px). */
-  const wfCarouselRisePx = isPhoneLayout ? 26 : 36;
-
   /** Step transition for workflow carousel (one card at a time, next from the right). */
   const workflowCarouselTransitionMs = 480;
 
@@ -2606,17 +2583,12 @@ export default function DoePage() {
             {/* Vertical slide track — each slide is absolutely positioned */}
             <div className="relative h-full w-full">
             {WORKFLOW_SLIDE_DISPLAY_ORDER.map((i, displayPos) => {
-              const slideMotion = wfSlideScrollMotion(
-                displayPos,
-                workflowCarouselProgress,
-                wfCarouselRisePx,
-              );
+              const slideMotion = wfSlideScrollMotion(displayPos, workflowCarouselProgress);
               const slideStyle = {
                 opacity: slideMotion.opacity,
-                transform: `translate3d(0, ${slideMotion.translateY}px, 0)`,
                 zIndex: slideMotion.zIndex,
                 transition: "none",
-                willChange: "opacity, transform" as const,
+                willChange: "opacity" as const,
                 pointerEvents: slideMotion.opacity > 0.06 ? ("auto" as const) : ("none" as const),
               };
               // Box 1 (index 0) - AI Receptionist
