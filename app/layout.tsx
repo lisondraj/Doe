@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Lora } from "next/font/google";
 import "./globals.css";
-import { DesktopComingSoon } from "@/components/DesktopComingSoon";
+import { RootChrome } from "@/components/RootChrome";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -41,8 +41,9 @@ export default function RootLayout({
   return (
     <html lang="en" data-doeforvc-always-phone="true">
       <body className={`${inter.variable} font-sans antialiased wide-desktop:overflow-hidden`}>
-        <DesktopComingSoon loraClassName={lora.className} interClassName={inter.className} />
-        {children}
+        <RootChrome loraClassName={lora.className} interClassName={inter.className}>
+          {children}
+        </RootChrome>
       </body>
     </html>
   );
