@@ -13,7 +13,12 @@ export function RootChrome({
   interClassName: string;
 }) {
   const pathname = usePathname();
-  const hideDesktopComingSoon = pathname === "/design";
+  const hideDesktopComingSoon =
+    pathname === "/design" ||
+    pathname === "/design2" ||
+    pathname === "/design3" ||
+    pathname === "/design4" ||
+    pathname === "/design5";
 
   return (
     <>
