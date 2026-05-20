@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 
 import { HERO_CAROUSEL_GRAIN_BG } from "@/components/hero-carousel-texture";
 
-export type WorkflowCarouselGridKind = "dot" | "crosshatch" | "diagonal" | "hex" | "wave";
+export type WorkflowCarouselGridKind = "dot" | "crosshatch" | "diagonal" | "hex" | "polar" | "wave";
 
 export type WorkflowCarouselDesignBackdrop = {
   /** Carousel box index in `app/page.tsx` (0–5). */
@@ -22,10 +22,10 @@ export const WORKFLOW_CAROUSEL_DESIGN_BACKDROPS: readonly WorkflowCarouselDesign
   },
   {
     slideIndex: 4,
-    label: "Referral Intake",
+    label: "Built for you",
     gradient:
-      "linear-gradient(135deg, #1E343A 0%, #4A3D32 18%, #5C4A3A 30%, #D2774C 60%, #D49D4F 82%, #E7A944 100%)",
-    grid: "crosshatch",
+      "radial-gradient(circle at 50% 36%, #E7A944 0%, #D49D4F 40%, #D2774C 70%, #1E343A 100%)",
+    grid: "polar",
   },
   {
     slideIndex: 0,
@@ -115,24 +115,7 @@ export const WORKFLOW_HEX_GRID_STYLE: CSSProperties = {
   backgroundSize: `${HEX_CELL_W_PX}px ${HEX_CELL_H_PX}px`,
 };
 
-/** 700×700 tile — matches carousel box 6 wave paths at native scale. */
-const WAVE_TILE_PX = 700;
-const wavePaths = Array.from(
-  { length: 12 },
-  (_, w) =>
-    `<path d="M -40 ${60 + w * 58} Q 175 ${20 + w * 58} 350 ${60 + w * 58} T 740 ${60 + w * 58}" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>`,
-).join("");
-
-const waveGridSvg = encodeURIComponent(
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 700">${wavePaths}</svg>`,
-);
-
-export const WORKFLOW_WAVE_GRID_STYLE: CSSProperties = {
-  backgroundImage: `url("data:image/svg+xml,${waveGridSvg}")`,
-  backgroundSize: `${WAVE_TILE_PX}px ${WAVE_TILE_PX}px`,
-};
-
-export function getWorkflowGridOverlayStyle(kind: WorkflowCarouselGridKind): CSSProperties {
+export function getWorkflowGridOverlayStyle(kind: WorkflowCarouselGridKind): CSSProperties | null {
   switch (kind) {
     case "dot":
       return WORKFLOW_DOT_GRID_STYLE;
@@ -142,7 +125,8 @@ export function getWorkflowGridOverlayStyle(kind: WorkflowCarouselGridKind): CSS
       return WORKFLOW_DIAGONAL_GRID_STYLE;
     case "hex":
       return WORKFLOW_HEX_GRID_STYLE;
+    case "polar":
     case "wave":
-      return WORKFLOW_WAVE_GRID_STYLE;
+      return null;
   }
 }
