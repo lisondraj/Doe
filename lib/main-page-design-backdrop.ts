@@ -14,3 +14,7 @@ export const PATIENT_CARE_GREY_GRID_STYLE: CSSProperties = {
   backgroundImage: `url("data:image/svg+xml,${patientCareGreyGridSvg}")`,
   backgroundSize: `${GREY_GRID_CELL_PX}px ${GREY_GRID_CELL_PX}px`,
 };
+
+/** Testimonial bridge medallion (`bento-bridge-disk`). */
+export const TESTIMONIAL_MEDALLION_GRADIENT =
+  "radial-gradient(circle at 50% 36%, #E7A944 0%, #D49D4F 40%, #D2774C 70%, #1E343A 100%)";
