@@ -14,10 +14,5 @@ const DESIGN_ROUTE_BACKDROP_INDEX: Record<2 | 3 | 4 | 5, number> = {
 
 export function WorkflowCarouselDesignPage({ routeNumber }: { routeNumber: 2 | 3 | 4 | 5 }) {
   const backdrop = WORKFLOW_CAROUSEL_DESIGN_BACKDROPS[DESIGN_ROUTE_BACKDROP_INDEX[routeNumber]];
-  return (
-    <WorkflowCarouselDesignBackdrop
-      backdrop={backdrop}
-      patternIdPrefix={`design${routeNumber}`}
-    />
-  );
+  return <WorkflowCarouselDesignBackdrop backdrop={backdrop} />;
 }

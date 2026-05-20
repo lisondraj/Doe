@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 
 import { HERO_CAROUSEL_GRAIN_BG } from "@/components/hero-carousel-texture";
 
-export type WorkflowCarouselGridKind = "dot" | "crosshatch" | "diagonal" | "hex";
+export type WorkflowCarouselGridKind = "dot" | "crosshatch" | "diagonal" | "hex" | "wave";
 
 export type WorkflowCarouselDesignBackdrop = {
   /** Carousel box index in `app/page.tsx` (0–5). */
@@ -50,6 +50,14 @@ export const WORKFLOW_CAROUSEL_DESIGN_BACKDROPS: readonly WorkflowCarouselDesign
   },
 ] as const;
 
+/** Last workflow carousel card (index 5) — Prior authorization copilot. */
+export const WORKFLOW_CAROUSEL_LAST_BACKDROP: WorkflowCarouselDesignBackdrop = {
+  slideIndex: 5,
+  label: "Prior authorization",
+  gradient: "linear-gradient(90deg, #1E343A 0%, #D2774C 38%, #D49D4F 68%, #E7A944 100%)",
+  grid: "wave",
+};
+
 export const WORKFLOW_CAROUSEL_GRAIN_STYLE: CSSProperties = {
   backgroundImage: HERO_CAROUSEL_GRAIN_BG,
   backgroundSize: "200px 200px",
@@ -94,3 +102,47 @@ export const WORKFLOW_DIAGONAL_GRID_STYLE: CSSProperties = {
     )`,
   backgroundSize: "60px 60px",
 };
+
+const HEX_CELL_W_PX = 80;
+const HEX_CELL_H_PX = 69.28;
+
+const hexGridSvg = encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" width="${HEX_CELL_W_PX}" height="${HEX_CELL_H_PX}"><defs><pattern id="hex" width="${HEX_CELL_W_PX}" height="${HEX_CELL_H_PX}" patternUnits="userSpaceOnUse"><path d="M 40 0 L 80 17.32 L 80 51.96 L 40 69.28 L 0 51.96 L 0 17.32 Z" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.8"/></pattern></defs><rect width="100%" height="100%" fill="url(#hex)"/></svg>`,
+);
+
+export const WORKFLOW_HEX_GRID_STYLE: CSSProperties = {
+  backgroundImage: `url("data:image/svg+xml,${hexGridSvg}")`,
+  backgroundSize: `${HEX_CELL_W_PX}px ${HEX_CELL_H_PX}px`,
+};
+
+/** 700×700 tile — matches carousel box 6 wave paths at native scale. */
+const WAVE_TILE_PX = 700;
+const wavePaths = Array.from(
+  { length: 12 },
+  (_, w) =>
+    `<path d="M -40 ${60 + w * 58} Q 175 ${20 + w * 58} 350 ${60 + w * 58} T 740 ${60 + w * 58}" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>`,
+).join("");
+
+const waveGridSvg = encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 700">${wavePaths}</svg>`,
+);
+
+export const WORKFLOW_WAVE_GRID_STYLE: CSSProperties = {
+  backgroundImage: `url("data:image/svg+xml,${waveGridSvg}")`,
+  backgroundSize: `${WAVE_TILE_PX}px ${WAVE_TILE_PX}px`,
+};
+
+export function getWorkflowGridOverlayStyle(kind: WorkflowCarouselGridKind): CSSProperties {
+  switch (kind) {
+    case "dot":
+      return WORKFLOW_DOT_GRID_STYLE;
+    case "crosshatch":
+      return WORKFLOW_CROSSHATCH_GRID_STYLE;
+    case "diagonal":
+      return WORKFLOW_DIAGONAL_GRID_STYLE;
+    case "hex":
+      return WORKFLOW_HEX_GRID_STYLE;
+    case "wave":
+      return WORKFLOW_WAVE_GRID_STYLE;
+  }
+}
