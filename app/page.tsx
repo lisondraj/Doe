@@ -498,11 +498,11 @@ function vbRailsEffectiveInnerHeight(innerWidthPx: number, innerHeightPx: number
 }
 
 /** Fraction of each slide's scroll segment spent dwelling on that card before advancing. */
-const WF_CAROUSEL_SCROLL_HOLD_FRAC = 0.52;
+const WF_CAROUSEL_SCROLL_HOLD_FRAC = 0.4;
 /** Extra scroll driver height — higher = slower, smoother progression through slides. */
-const WF_CAROUSEL_SCROLL_STRETCH = 2.05;
-/** Crossfade width in slide-index units (slightly >1 softens enter/exit). */
-const WF_SLIDE_CROSSFADE_SPAN = 1.1;
+const WF_CAROUSEL_SCROLL_STRETCH = 1.85;
+/** Crossfade width in slide-index units — 1:1 with scroll through the full fade. */
+const WF_SLIDE_CROSSFADE_SPAN = 1;
 
 /** Map normalized scroll through driver (0..1) to carousel progress; dwell on middle slides only. */
 function wfScrollProgressFromUnitT(t: number, slideCount: number, holdFrac: number): number {
@@ -515,9 +515,8 @@ function wfScrollProgressFromUnitT(t: number, slideCount: number, holdFrac: numb
   const seg = Math.min(last, Math.floor(scaled));
   const local = scaled - seg;
 
-  // First slide: ease into slide 1 (no hard linear ramp)
   if (seg === 0) {
-    return Math.min(last, wfSmoothstep01(local));
+    return Math.min(last, local);
   }
   // Last slide: lock at final index
   if (seg >= last) {
@@ -564,93 +563,6 @@ function wfSlideScrollMotion(
     translateY: Math.sign(delta) * travel,
     zIndex: Math.round(fade * 20),
   };
-}
-
-const WF_UI_RISE_PX = 18;
-/**
- * Fraction of on-slide dwell scroll (0–1) with full card visible and UI hidden.
- * Remaining dwell scroll linearly reveals UI; exit scroll linearly hides it.
- */
-const WF_UI_CARD_ONLY_FRAC = 0.7;
-
-/**
- * Scroll-linked UI for slides 2+: card reaches full opacity during dwell, then further
- * dwell scroll reveals mock UI linearly; exit scroll fades UI out in 1:1 sync with scroll.
- */
-function wfSlideUiScrollMotion(
-  displayPos: number,
-  progress: number,
-  slideOpacity: number,
-  driverT: number,
-  slideCount: number,
-  holdFrac: number,
-): { opacity: number; translateY: number; pointerEvents: "auto" | "none" } {
-  if (displayPos === 0) {
-    return {
-      opacity: slideOpacity,
-      translateY: 0,
-      pointerEvents: slideOpacity > 0.06 ? "auto" : "none",
-    };
-  }
-
-  const delta = displayPos - progress;
-  const absD = Math.abs(delta);
-  if (absD >= WF_SLIDE_CROSSFADE_SPAN || slideOpacity < 0.02) {
-    return { opacity: 0, translateY: WF_UI_RISE_PX, pointerEvents: "none" };
-  }
-
-  const scaled = driverT * slideCount;
-  const seg = Math.min(slideCount - 1, Math.max(0, Math.floor(scaled)));
-  const local = scaled - seg;
-  const hold = Math.max(1e-6, holdFrac);
-
-  let uiLinear = 0;
-
-  if (seg === displayPos) {
-    if (local < hold) {
-      const dwellT = local / hold;
-      if (dwellT > WF_UI_CARD_ONLY_FRAC) {
-        uiLinear =
-          (dwellT - WF_UI_CARD_ONLY_FRAC) / Math.max(1e-6, 1 - WF_UI_CARD_ONLY_FRAC);
-      }
-    } else {
-      const exitT = (local - hold) / Math.max(1e-6, 1 - hold);
-      uiLinear = 1 - exitT;
-    }
-  }
-
-  uiLinear = Math.min(1, Math.max(0, uiLinear));
-  const opacity = uiLinear * slideOpacity;
-
-  return {
-    opacity,
-    translateY: (1 - uiLinear) * WF_UI_RISE_PX,
-    pointerEvents: opacity > 0.06 ? "auto" : "none",
-  };
-}
-
-function WfCarouselUiLayer({
-  reveal,
-  children,
-}: {
-  reveal: { opacity: number; translateY: number; pointerEvents: "auto" | "none" } | null;
-  children: React.ReactNode;
-}) {
-  if (!reveal) return <>{children}</>;
-  return (
-    <div
-      className="absolute inset-0 z-[10]"
-      style={{
-        opacity: reveal.opacity,
-        transform: `translate3d(0, ${reveal.translateY}px, 0)`,
-        transition: "none",
-        pointerEvents: reveal.pointerEvents,
-        willChange: "opacity, transform",
-      }}
-    >
-      {children}
-    </div>
-  );
 }
 
 /** Hero body copy — tagline, founders, and CTA share one scale. */
@@ -754,8 +666,6 @@ export default function DoePage() {
   const [isSlidingPaused, setIsSlidingPaused] = useState(false);
   /** Second-section workflow carousel: continuous scroll progress 0..(slideCount-1). */
   const [workflowCarouselProgress, setWorkflowCarouselProgress] = useState(0);
-  /** Raw 0..1 position in carousel scroll driver (for dwell-timed UI reveal). */
-  const [workflowCarouselDriverT, setWorkflowCarouselDriverT] = useState(0);
   /** When true, skip CSS transition (used on index wrap 5↔0). */
   const [workflowCarouselSkipMotion, setWorkflowCarouselSkipMotion] = useState(false);
   /** Full fixed `<nav>` — sheet top aligns to `<nav>` bottom (includes bar underline when menu open). */
@@ -1508,12 +1418,10 @@ export default function DoePage() {
         const scrollableInDriver = driverRect.height - viewportHeight;
         if (scrollableInDriver > 0) {
           const t = Math.min(1, Math.max(0, scrolledIntoDriver / scrollableInDriver));
-          setWorkflowCarouselDriverT(t);
           setWorkflowCarouselProgress(
             wfScrollProgressFromUnitT(t, carouselSlideCount, WF_CAROUSEL_SCROLL_HOLD_FRAC),
           );
         } else {
-          setWorkflowCarouselDriverT(0);
           setWorkflowCarouselProgress(0);
         }
       }
@@ -2711,17 +2619,6 @@ export default function DoePage() {
                 willChange: "opacity, transform" as const,
                 pointerEvents: slideMotion.opacity > 0.06 ? ("auto" as const) : ("none" as const),
               };
-              const wfUiReveal =
-                displayPos >= 1
-                  ? wfSlideUiScrollMotion(
-                      displayPos,
-                      workflowCarouselProgress,
-                      slideMotion.opacity,
-                      workflowCarouselDriverT,
-                      carouselSlideCount,
-                      WF_CAROUSEL_SCROLL_HOLD_FRAC,
-                    )
-                  : null;
               // Box 1 (index 0) - AI Receptionist
               if (i === 0) {
                 return (
@@ -2771,8 +2668,7 @@ export default function DoePage() {
                         {i + 1}
                       </span>
                     </div>
-
-                    <WfCarouselUiLayer reveal={wfUiReveal}>
+                    
                     {/* AI Receptionist — caller line left + heard stream + thinking */}
                     <div
                       className={`${WORKFLOW_CAROUSEL_UI_PANEL} absolute left-1/2 rounded-xl bg-white shadow-lg`}
@@ -2827,7 +2723,6 @@ export default function DoePage() {
                         Hold music until confidence threshold met—then announces slot or escalates triage.
                       </p>
                     </div>
-                    </WfCarouselUiLayer>
 
                     <div className={slideCaptionWrap} style={{ left: captionLeftWorkflow, right: captionRightWorkflow }}>
                       <span className={slideCaptionBadge} style={slideCaptionFont}>
@@ -2891,8 +2786,7 @@ export default function DoePage() {
                         {i + 1}
                       </span>
                     </div>
-
-                    <WfCarouselUiLayer reveal={wfUiReveal}>
+                    
                     {/* Save and Undo when editing Smart Appointments caption */}
                     {(isEditingBox2Title || isEditingBox2Description) && (
                       <div
@@ -3001,7 +2895,6 @@ export default function DoePage() {
                         </button>
                       </div>
                     </div>
-                    </WfCarouselUiLayer>
 
                     <div className={slideCaptionWrap} style={{ left: captionLeftWorkflow, right: captionRightWorkflow }}>
                         <>
@@ -3171,7 +3064,6 @@ export default function DoePage() {
                       </span>
                     </div>
                     
-                    <WfCarouselUiLayer reveal={wfUiReveal}>
                     {/* Billing — overlapping ERA + outbound packet */}
                     <div
                       className={`${WORKFLOW_CAROUSEL_UI_PANEL} absolute`}
@@ -3281,7 +3173,6 @@ export default function DoePage() {
                       </div>
                     </div>
 
-                    </WfCarouselUiLayer>
                     <div className={slideCaptionWrap} style={{ left: captionLeftWorkflow, right: captionRightWorkflow }}>
                       <span className={slideCaptionBadge} style={slideCaptionFont}>
                         Billing &amp; finances
@@ -3458,7 +3349,6 @@ export default function DoePage() {
                       </span>
                     </div>
 
-                    <WfCarouselUiLayer reveal={wfUiReveal}>
                     {/* Different UI - Referral Intake */}
                     <div
                       className={`${WORKFLOW_CAROUSEL_UI_PANEL} absolute left-1/2 bg-white rounded-xl`}
@@ -3517,7 +3407,6 @@ export default function DoePage() {
                       </div>
                     </div>
 
-                    </WfCarouselUiLayer>
                     <div className={slideCaptionWrap} style={{ left: captionLeftWorkflow, right: captionRightWorkflow }}>
                       <span className={slideCaptionBadge} style={slideCaptionFont}>
                         Referral Intake
@@ -3581,7 +3470,6 @@ export default function DoePage() {
                       </span>
                     </div>
 
-                    <WfCarouselUiLayer reveal={wfUiReveal}>
                     <div
                       className={`${WORKFLOW_CAROUSEL_UI_PANEL} absolute`}
                       style={{
@@ -3691,7 +3579,6 @@ export default function DoePage() {
                       </div>
                     </div>
 
-                    </WfCarouselUiLayer>
                     <div className={slideCaptionWrap} style={{ left: captionLeftWorkflow, right: captionRightWorkflow }}>
                       <span className={slideCaptionBadge} style={slideCaptionFont}>
                         Prior authorization
