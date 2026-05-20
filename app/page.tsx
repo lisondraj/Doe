@@ -15,6 +15,8 @@ import {
 } from "@/components/doe-nav-data";
 import { doeforvcRootZoom } from "@/lib/doeforvc-zoom";
 import { useDisablePinchGestures } from "@/lib/useDisablePinchGestures";
+import { WIDE_DESKTOP_MEDIA_QUERY } from "@/lib/wide-desktop-media";
+import { usePathname } from "next/navigation";
 
 const lora = Lora({
   subsets: ["latin"],
@@ -775,8 +777,11 @@ export default function DoePage() {
     return () => obs.disconnect();
   }, [heroIntroTriggerFineHover, prefersReducedMotionHero, runHeroIntroSequence]);
 
-  /** Phone-only UI path (nav sheet, carousel sizing); layout matches at every viewport via Tailwind `iphone-page:` + root zoom. */
-  const isPhoneLayout = true;
+  const pathname = usePathname();
+  const isMainpageRoute = pathname === "/mainpage";
+  /** Phone canvas on `/`; full desktop layout on `/mainpage` (wide screens only). */
+  const isPhoneLayout = !isMainpageRoute;
+  const [isWideDesktop, setIsWideDesktop] = useState(false);
   const [viewportWidth, setViewportWidth] = useState(1200);
   /** Visible viewport (matches `visualViewport`); drives hero sizing + `--app-vh` / `--app-vw`. */
   const [appViewport, setAppViewport] = useState({ width: 1200, height: 800 });
@@ -794,6 +799,15 @@ export default function DoePage() {
     window.addEventListener("resize", updateWidth);
     return () => window.removeEventListener("resize", updateWidth);
   }, []);
+
+  useEffect(() => {
+    if (!isMainpageRoute) return;
+    const mq = window.matchMedia(WIDE_DESKTOP_MEDIA_QUERY);
+    const update = () => setIsWideDesktop(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, [isMainpageRoute]);
 
   useLayoutEffect(() => {
     const APP_VIEWPORT_SHRINK_DEFER_PX = 120;
@@ -1948,15 +1962,27 @@ export default function DoePage() {
     showNavShadow && !isDropdownOpen && !hitsWhiteBox ? "0 2px 4px rgba(0, 0, 0, 0.1)" : "none";
 
   const rootZoom = doeforvcRootZoom(viewportWidth);
-  const applyRootZoom = Math.abs(rootZoom - 1) > 0.001;
+  const applyRootZoom =
+    isPhoneLayout && Math.abs(rootZoom - 1) > 0.001;
   /** Hero fills visible viewport after CSS `zoom`. */
   const heroLogicalHeightPx = Math.round(
     applyRootZoom ? appViewport.height / rootZoom : appViewport.height,
   );
+
+  if (isMainpageRoute && !isWideDesktop) {
+    return (
+      <div
+        className="min-h-[100dvh] w-full bg-[#F7F6F3]"
+        aria-hidden
+        suppressHydrationWarning
+      />
+    );
+  }
+
   return (
     <div
-      className="relative overflow-x-hidden overflow-y-visible overscroll-y-contain doeforvc-iphone-root"
-      data-doeforvc-view="iphone"
+      className={`relative overflow-x-hidden overflow-y-visible overscroll-y-contain${isPhoneLayout ? " doeforvc-iphone-root" : ""}`}
+      data-doeforvc-view={isPhoneLayout ? "iphone" : "desktop"}
       style={{
         backgroundColor: "#F7F6F3",
         ...(applyRootZoom ? { zoom: rootZoom } : {}),
