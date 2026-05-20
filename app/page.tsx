@@ -2566,18 +2566,10 @@ export default function DoePage() {
             {/* Vertical slide track — each slide is absolutely positioned */}
             <div className="relative h-full w-full">
             {WORKFLOW_SLIDE_DISPLAY_ORDER.map((i, displayPos) => {
-              const slideMotion = wfSlideScrollMotion(
-                displayPos,
-                workflowCarouselProgress,
-                wfCarouselRisePx,
-              );
               const slideStyle = {
-                opacity: slideMotion.opacity,
-                transform: `translate3d(0, ${slideMotion.translateY}px, 0)`,
-                zIndex: slideMotion.zIndex,
+                transform: `translateY(${(displayPos - workflowCarouselProgress) * 100}%)`,
                 transition: "none",
-                willChange: "opacity, transform" as const,
-                pointerEvents: slideMotion.opacity > 0.06 ? ("auto" as const) : ("none" as const),
+                willChange: "transform" as const,
               };
               // Box 1 (index 0) - AI Receptionist
               if (i === 0) {
