@@ -529,19 +529,32 @@ function wfScrollProgressFromUnitT(t: number, slideCount: number, holdFrac: numb
   return Math.min(last, seg + rawTrans);
 }
 
-/** Scroll-linked opacity only — linear crossfade tied 1:1 to carousel progress. */
+/**
+ * Vertical reel: slides move on translateY(%) with linear opacity crossfade — all 1:1 with scroll.
+ * Outgoing slides exit upward; incoming slides rise from below.
+ */
 function wfSlideScrollMotion(
   displayPos: number,
   progress: number,
-): { opacity: number; zIndex: number } {
-  const absD = Math.abs(displayPos - progress);
+): { opacity: number; translateYPercent: number; scale: number; zIndex: number } {
+  const offset = displayPos - progress;
+  const absD = Math.abs(offset);
+
   if (absD >= WF_SLIDE_CROSSFADE_SPAN) {
-    return { opacity: 0, zIndex: 0 };
+    return {
+      opacity: 0,
+      translateYPercent: Math.sign(offset) * 100,
+      scale: 0.965,
+      zIndex: 0,
+    };
   }
-  const fade = 1 - absD / WF_SLIDE_CROSSFADE_SPAN;
+
+  const blend = 1 - absD / WF_SLIDE_CROSSFADE_SPAN;
   return {
-    opacity: fade,
-    zIndex: Math.round(fade * 20),
+    opacity: blend,
+    translateYPercent: offset * 100,
+    scale: 0.965 + 0.035 * blend,
+    zIndex: Math.round(blend * 20),
   };
 }
 
