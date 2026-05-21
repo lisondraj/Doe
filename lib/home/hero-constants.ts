@@ -19,7 +19,12 @@ export const narrowHorizontalInset =
  */
 export const VBENTO_CANVAS_PADDING = "px-4 " + narrowHorizontalInset;
 
-/** Hero body copy — tagline, founders, and CTA share one scale (not the large founder given names). */
+/** Hero body copy — tagline, founders, and CTA share one scale. */
+/** @remarks Duplicate as `HERO_BODY_COPY_TW` in `HeroSection.tsx` so Tailwind JIT emits these arbitrary classes. */
 export const HERO_BODY_COPY =
-  "text-[clamp(2rem,6.85vw,3.25rem)] iphone-page:text-[clamp(1.9rem,7.35vw,2.95rem)] font-medium text-white tracking-tight leading-[1.22]";
+  "text-[clamp(1.38rem,4.65vw,2.15rem)] iphone-page:text-[clamp(1.32rem,5vw,2.05rem)] font-medium text-white/[0.88] tracking-tight leading-[1.22]";
+/**
+ * Choreographed fade/slide utility classes for hero headline + founders + CTA.
+ * @remarks Mirror string in HeroSection.tsx as `HERO_INTRO_REVEAL_TW` for Tailwind JIT.
+ */
 export const HERO_INTRO_REVEAL = "transition-[opacity,transform] duration-[1050ms] ease-out";
