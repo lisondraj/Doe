@@ -2,7 +2,7 @@
 
 /** Workflow carousel slide mocks — canonical location; used by `app/desktop/page.tsx`. */
 
-import type { Dispatch, MouseEvent, RefObject, SetStateAction } from "react";
+import type { RefObject } from "react";
 
 /** Bottom title pill + description inside 700×700 slide mocks (scales with card transform). */
 export const slideCaptionWrap =
@@ -21,25 +21,6 @@ export type WorkflowCarouselSlidesProps = {
   scaledSide: number;
   captionLeft700: number;
   captionRight700: number;
-  isPhoneLayout: boolean;
-  selectedReportBox: number | null;
-  setSelectedReportBox: Dispatch<SetStateAction<number | null>>;
-  isEditingBox2Title: boolean;
-  setIsEditingBox2Title: Dispatch<SetStateAction<boolean>>;
-  isEditingBox2Description: boolean;
-  setIsEditingBox2Description: Dispatch<SetStateAction<boolean>>;
-  box2Title: string;
-  setBox2Title: Dispatch<SetStateAction<string>>;
-  box2Description: string;
-  setBox2Description: Dispatch<SetStateAction<string>>;
-  reportBoxPositions: Array<{ x: number; y: number }>;
-  isDragging: boolean;
-  dragBoxIndex: number | null;
-  wasDragging: boolean;
-  handleSave: () => void;
-  handleUndo: () => void;
-  handleBoxMouseDown: (e: MouseEvent, boxIndex: number) => void;
-  descriptionEditRef: RefObject<HTMLTextAreaElement>;
 };
 
 export function WorkflowCarouselSlides({
@@ -50,25 +31,6 @@ export function WorkflowCarouselSlides({
   scaledSide,
   captionLeft700,
   captionRight700,
-  isPhoneLayout,
-  selectedReportBox,
-  setSelectedReportBox,
-  isEditingBox2Title,
-  setIsEditingBox2Title,
-  isEditingBox2Description,
-  setIsEditingBox2Description,
-  box2Title,
-  setBox2Title,
-  box2Description,
-  setBox2Description,
-  reportBoxPositions,
-  isDragging,
-  dragBoxIndex,
-  wasDragging,
-  handleSave,
-  handleUndo,
-  handleBoxMouseDown,
-  descriptionEditRef,
 }: WorkflowCarouselSlidesProps) {
   return (
     <>
@@ -299,81 +261,17 @@ export function WorkflowCarouselSlides({
                   {i + 1}
                 </span>
               </div>
-              
-              {/* Save and Undo buttons - top right corner, styled like tab switcher */}
-              {!isPhoneLayout && (selectedReportBox !== null || isEditingBox2Title || isEditingBox2Description) && (
-                <div
-                  className="absolute top-6 right-6 flex items-center z-20"
-                  style={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.25)',
-                    borderRadius: '9999px',
-                    padding: '5px',
-                    gap: '3px',
-                  }}
-                >
-                  <button
-                    onClick={handleSave}
-                    className="px-5 py-2 text-sm font-medium transition-colors duration-200"
-                    style={{
-                      borderRadius: '9999px',
-                      fontFamily: 'system-ui, -apple-system, sans-serif',
-                      color: '#ffffff',
-                      backgroundColor: 'transparent',
-                      transition: 'background-color 250ms ease, color 250ms ease',
-                      cursor: 'pointer',
-                      border: 'none',
-                      outline: 'none',
-                    }}
-                  >
-                    Save
-                  </button>
-                  <button
-                    onClick={handleUndo}
-                    className="px-5 py-2 text-sm font-medium transition-colors duration-200"
-                    style={{
-                      borderRadius: '9999px',
-                      fontFamily: 'system-ui, -apple-system, sans-serif',
-                      color: '#ffffff',
-                      backgroundColor: 'transparent',
-                      transition: 'background-color 250ms ease, color 250ms ease',
-                      cursor: 'pointer',
-                      border: 'none',
-                      outline: 'none',
-                    }}
-                  >
-                    Undo
-                  </button>
-                </div>
-              )}
-              
-              {/* Two overlapping rectangle boxes */}
+
+              {/* Two overlapping cards — static mock (no drag / edit) */}
               <div className="absolute left-1/2 top-1/2 -translate-x-1/2" style={{ transform: 'translateX(-50%) translateY(-60%)' }}>
-                
-                {/* First Rectangle Box */}
-                <div 
-                  className="bg-white rounded-lg shadow-lg"
-                  onMouseDown={(e) => handleBoxMouseDown(e, 0)}
-                  onClick={(e) => {
-                    if (isPhoneLayout) return;
-                    if (!isDragging && !wasDragging) {
-                      setSelectedReportBox(0);
-                    }
-                  }}
-                  style={{ 
+                <div
+                  className="relative z-[2] bg-white rounded-lg shadow-lg"
+                  style={{
                     width: '280px',
                     height: 'fit-content',
-                    position: 'relative',
-                    zIndex: selectedReportBox === 0 ? 3 : 2,
-                    transform: `translateX(${reportBoxPositions[0].x}px) translateY(${reportBoxPositions[0].y}px)`,
-                    opacity: 1,
-                    pointerEvents: 'auto',
-                    userSelect: 'none',
-                    cursor: isPhoneLayout ? 'default' : isDragging && dragBoxIndex === 0 ? 'grabbing' : 'grab',
-                    touchAction: 'none',
+                    transform: 'translateX(-85px) translateY(-95px)',
                     padding: '16px',
                     paddingBottom: '12px',
-                    border: selectedReportBox === 0 ? '2px solid #2563eb' : 'none',
-                    transition: isDragging && dragBoxIndex === 0 ? 'none' : 'border 0.2s ease',
                   }}
                 >
                   <div className="flex items-center justify-between mb-2">
@@ -385,50 +283,33 @@ export function WorkflowCarouselSlides({
                         CT Scan - Chest
                       </p>
                     </div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full" />
                   </div>
                   <p className={`text-gray-600 text-xs mb-3`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
                     Report ready for review • 2h ago
                   </p>
                   <div className="flex gap-2">
-                    <button className="flex-1 px-3 py-2 bg-gray-600 text-white rounded text-xs font-semibold" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                    <button type="button" className="flex-1 px-3 py-2 bg-gray-600 text-white rounded text-xs font-semibold" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
                       Verify
                     </button>
-                    <button className="flex-1 px-3 py-2 bg-gray-600 text-white rounded text-xs font-semibold" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                    <button type="button" className="flex-1 px-3 py-2 bg-gray-600 text-white rounded text-xs font-semibold" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
                       Refer
                     </button>
-                    <button className="flex-1 px-3 py-2 bg-gray-600 text-white rounded text-xs font-semibold" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                    <button type="button" className="flex-1 px-3 py-2 bg-gray-600 text-white rounded text-xs font-semibold" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
                       Contact
                     </button>
                   </div>
                 </div>
 
-                {/* Second Rectangle Box - overlapping */}
-                <div 
-                  className="bg-white rounded-lg shadow-lg"
-                  onMouseDown={(e) => handleBoxMouseDown(e, 1)}
-                  onClick={(e) => {
-                    if (isPhoneLayout) return;
-                    if (!isDragging && !wasDragging) {
-                      setSelectedReportBox(1);
-                    }
-                  }}
-                  style={{ 
+                <div
+                  className="absolute z-[1] bg-white rounded-lg shadow-lg"
+                  style={{
                     width: '280px',
                     height: 'fit-content',
-                    position: 'absolute',
-                    top: `${reportBoxPositions[1].y}px`,
-                    left: `${reportBoxPositions[1].x}px`,
-                    zIndex: selectedReportBox === 1 ? 3 : 1,
-                    opacity: 1,
-                    pointerEvents: 'auto',
-                    userSelect: 'none',
-                    cursor: isPhoneLayout ? 'default' : isDragging && dragBoxIndex === 1 ? 'grabbing' : 'grab',
-                    touchAction: 'none',
+                    left: '76px',
+                    top: '79px',
                     padding: '16px',
                     paddingBottom: '12px',
-                    border: selectedReportBox === 1 ? '2px solid #2563eb' : 'none',
-                    transition: isDragging && dragBoxIndex === 1 ? 'none' : 'border 0.2s ease',
                   }}
                 >
                   <div className="flex items-center justify-between mb-2">
@@ -440,19 +321,19 @@ export function WorkflowCarouselSlides({
                         Lab Results - Blood
                       </p>
                     </div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full" />
                   </div>
                   <p className={`text-gray-600 text-xs mb-3`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
                     Report ready for review • 4h ago
                   </p>
                   <div className="flex gap-2">
-                    <button className="flex-1 px-3 py-2 bg-gray-600 text-white rounded text-xs font-semibold" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                    <button type="button" className="flex-1 px-3 py-2 bg-gray-600 text-white rounded text-xs font-semibold" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
                       Verify
                     </button>
-                    <button className="flex-1 px-3 py-2 bg-gray-600 text-white rounded text-xs font-semibold" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                    <button type="button" className="flex-1 px-3 py-2 bg-gray-600 text-white rounded text-xs font-semibold" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
                       Refer
                     </button>
-                    <button className="flex-1 px-3 py-2 bg-gray-600 text-white rounded text-xs font-semibold" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                    <button type="button" className="flex-1 px-3 py-2 bg-gray-600 text-white rounded text-xs font-semibold" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
                       Contact
                     </button>
                   </div>
@@ -460,128 +341,12 @@ export function WorkflowCarouselSlides({
               </div>
 
               <div className={slideCaptionWrap} style={{ left: captionLeft700, right: captionRight700 }}>
-                {isPhoneLayout ? (
-                  <>
-                    <span className={`${slideCaptionBadge} select-none`} style={slideCaptionFont}>
-                      Report Results
-                    </span>
-                    <p className={`${slideCaptionBody} select-none`} style={slideCaptionFont}>
-                      Stack imaging and labs in one view. Verify findings and route follow-ups without switching systems.
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    {isEditingBox2Title ? (
-                  <input
-                    type="text"
-                    value={box2Title}
-                    onChange={(e) => {
-                      setBox2Title(e.target.value);
-                    }}
-                    onBlur={() => {
-                      setIsEditingBox2Title(false);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        setIsEditingBox2Title(false);
-                      }
-                      if (e.key === 'Escape') {
-                        setIsEditingBox2Title(false);
-                      }
-                    }}
-                    className={`${slideCaptionBadge} border-2 border-white bg-white/15 outline-none min-w-[12rem]`}
-                    style={slideCaptionFont}
-                    autoFocus
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                ) : (
-                  <span 
-                    className={`${slideCaptionBadge} cursor-text hover:bg-white/12 transition-colors`}
-                    style={slideCaptionFont}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsEditingBox2Title(true);
-                    }}
-                  >
-                    {box2Title}
-                  </span>
-                )}
-                {isEditingBox2Description ? (
-                  <textarea
-                    ref={descriptionEditRef}
-                    value={box2Description}
-                    onChange={(e) => {
-                      setBox2Description(e.target.value);
-                    }}
-                    onBlur={() => {
-                      setIsEditingBox2Description(false);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Escape') {
-                        setIsEditingBox2Description(false);
-                      }
-                    }}
-                    className={`${slideCaptionBody} outline-none resize-none overflow-hidden rounded-md border border-white/40 bg-transparent`}
-                    style={{ 
-                      ...slideCaptionFont,
-                      margin: 0,
-                      padding: '8px 10px',
-                      lineHeight: 1.48,
-                      whiteSpace: 'pre-wrap',
-                      wordWrap: 'break-word',
-                      display: 'block',
-                      outline: 'none',
-                      border: '1px solid rgba(255, 255, 255, 0.4)',
-                      borderRadius: '4px',
-                      backgroundColor: 'transparent',
-                      background: 'transparent',
-                      backgroundImage: 'none',
-                      minHeight: 'fit-content',
-                      maxHeight: 'none',
-                      overflow: 'hidden',
-                      direction: 'ltr',
-                      textAlign: 'left',
-                      color: 'rgba(255, 255, 255, 0.9)',
-                      boxShadow: 'none',
-                      WebkitAppearance: 'none',
-                      MozAppearance: 'none',
-                      appearance: 'none'
-                    }}
-                    rows={2}
-                    wrap="soft"
-                    autoFocus
-                    onClick={(e) => e.stopPropagation()}
-                    onInput={(e) => {
-                      const target = e.target as HTMLTextAreaElement;
-                      target.style.height = 'auto';
-                      const scrollHeight = target.scrollHeight;
-                      const lineHeight = parseFloat(getComputedStyle(target).lineHeight);
-                      const maxHeight = lineHeight * 2;
-                      target.style.height = Math.min(scrollHeight, maxHeight) + 'px';
-                    }}
-                  />
-                ) : (
-                  <p 
-                    className={`${slideCaptionBody} cursor-text hover:bg-white/6 rounded-md transition-colors`}
-                    style={{ 
-                      ...slideCaptionFont,
-                      margin: 0,
-                      padding: '6px 8px',
-                      lineHeight: 1.48,
-                      whiteSpace: 'pre-wrap',
-                      wordWrap: 'break-word',
-                      display: 'block'
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsEditingBox2Description(true);
-                    }}
-                  >
-                    {box2Description}
-                  </p>
-                )}
-                  </>
-                )}
+                <span className={`${slideCaptionBadge} select-none`} style={slideCaptionFont}>
+                  HEY
+                </span>
+                <p className={`${slideCaptionBody} select-none`} style={slideCaptionFont}>
+                  AI determines which results are worth mentioning.
+                </p>
               </div>
               </div>
             </div>

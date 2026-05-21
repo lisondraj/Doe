@@ -50,6 +50,12 @@ export const WORKFLOW_CAROUSEL_DESIGN_BACKDROPS: readonly WorkflowCarouselDesign
   },
 ] as const;
 
+/** `/design3` — Built for you (polar). */
+export const DESIGN3_BACKDROP = WORKFLOW_CAROUSEL_DESIGN_BACKDROPS[1];
+
+/** `/design5` — Billing & Finances (hex). */
+export const DESIGN5_BACKDROP = WORKFLOW_CAROUSEL_DESIGN_BACKDROPS[4];
+
 /** Last workflow carousel card (index 5) — Prior authorization copilot. */
 export const WORKFLOW_CAROUSEL_LAST_BACKDROP: WorkflowCarouselDesignBackdrop = {
   slideIndex: 5,
@@ -57,6 +63,9 @@ export const WORKFLOW_CAROUSEL_LAST_BACKDROP: WorkflowCarouselDesignBackdrop = {
   gradient: "linear-gradient(90deg, #1E343A 0%, #D2774C 38%, #D49D4F 68%, #E7A944 100%)",
   grid: "wave",
 };
+
+/** `/design6` — same as last carousel slide. */
+export const DESIGN6_BACKDROP = WORKFLOW_CAROUSEL_LAST_BACKDROP;
 
 export const WORKFLOW_CAROUSEL_GRAIN_STYLE: CSSProperties = {
   backgroundImage: HERO_CAROUSEL_GRAIN_BG,
@@ -115,16 +124,35 @@ export const WORKFLOW_HEX_GRID_STYLE: CSSProperties = {
   backgroundSize: `${HEX_CELL_W_PX}px ${HEX_CELL_H_PX}px`,
 };
 
-export function getWorkflowGridOverlayStyle(kind: WorkflowCarouselGridKind): CSSProperties | null {
+/** Scale > 1 zooms patterns out (larger cell spacing). */
+export function getWorkflowGridOverlayStyle(
+  kind: WorkflowCarouselGridKind,
+  patternScale = 1,
+): CSSProperties | null {
+  const scaleSize = (px: number) => `${Math.round(px * patternScale)}px`;
+
   switch (kind) {
     case "dot":
-      return WORKFLOW_DOT_GRID_STYLE;
+      return {
+        ...WORKFLOW_DOT_GRID_STYLE,
+        backgroundSize: `${scaleSize(50)} ${scaleSize(50)}`,
+      };
     case "crosshatch":
-      return WORKFLOW_CROSSHATCH_GRID_STYLE;
+      return {
+        ...WORKFLOW_CROSSHATCH_GRID_STYLE,
+        backgroundSize: `${scaleSize(CROSSHATCH_CELL_PX)} ${scaleSize(CROSSHATCH_CELL_PX)}`,
+        backgroundPosition: `${(CROSSHATCH_CELL_PX * patternScale) / 2}px ${(CROSSHATCH_CELL_PX * patternScale) / 2}px, 0 0, 0 0`,
+      };
     case "diagonal":
-      return WORKFLOW_DIAGONAL_GRID_STYLE;
+      return {
+        ...WORKFLOW_DIAGONAL_GRID_STYLE,
+        backgroundSize: `${scaleSize(60)} ${scaleSize(60)}`,
+      };
     case "hex":
-      return WORKFLOW_HEX_GRID_STYLE;
+      return {
+        ...WORKFLOW_HEX_GRID_STYLE,
+        backgroundSize: `${scaleSize(HEX_CELL_W_PX)} ${scaleSize(HEX_CELL_H_PX)}`,
+      };
     case "polar":
     case "wave":
       return null;

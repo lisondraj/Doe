@@ -1,16 +1,10 @@
-import { HERO_BACKDROP_GRADIENT } from "@/lib/hero-backdrop";
-import { HeroCarouselTextureOverlay } from "@/components/hero-carousel-texture";
+import { DesignHeroBackdropSection } from "@/components/design-hero-backdrop-section";
 
 /** Hero gradient + Referral Intake crosshatch (original /design). */
 export default function DesignPage() {
   return (
     <main className="fixed inset-0 min-h-[100dvh] min-w-full overflow-hidden">
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{ background: HERO_BACKDROP_GRADIENT }}
-        aria-hidden
-      />
-      <HeroCarouselTextureOverlay patternId="designCrosshatchGrid" />
+      <DesignHeroBackdropSection className="min-h-[100dvh]" />
     </main>
   );
 }

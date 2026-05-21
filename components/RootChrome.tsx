@@ -14,6 +14,7 @@ export function RootChrome({
 }) {
   const pathname = usePathname();
   const hideDesktopComingSoon =
+    pathname === "/" ||
     pathname === "/desktop" ||
     pathname === "/mainpage" ||
     (pathname?.startsWith("/design") ?? false);

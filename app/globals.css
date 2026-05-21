@@ -275,6 +275,26 @@ body.mainpage-route {
   }
 }
 
+@keyframes cds-medallion-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -20px, 0);
+  }
+}
+
+.cds-medallion-float {
+  animation: cds-medallion-float 8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cds-medallion-float {
+    animation: none;
+  }
+}
+
 @font-face {
   font-family: 'Copernicus New Cond';
   src: url('/fonts/CopernicusNewCond-070.otf') format('opentype'),
