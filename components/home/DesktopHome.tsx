@@ -296,6 +296,39 @@ export function DesktopHome() {
     setDesktopHeroScrollReleased(true);
   };
 
+  /**
+   * Mid-page reload / scroll restoration: hero state resets but the window may already be
+   * scrolled, so the wheel gate never opens and `documentElement` stays overflow hidden.
+   */
+  useLayoutEffect(() => {
+    const mqPhone = window.matchMedia("(max-width: 639px)");
+    const mqReduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const unlockIfDocumentAlreadyScrolled = () => {
+      if (mqPhone.matches || mqReduce.matches) return;
+      if (desktopHeroScrollReleasedRef.current) return;
+      const y = window.scrollY || document.documentElement.scrollTop;
+      if (y <= 8) return;
+      desktopHeroWheelLinearRef.current = 1;
+      setDesktopHeroZoomProgress(1);
+      releaseDesktopHeroScroll();
+    };
+
+    unlockIfDocumentAlreadyScrolled();
+    const t0 = window.setTimeout(unlockIfDocumentAlreadyScrolled, 0);
+    const t1 = window.setTimeout(unlockIfDocumentAlreadyScrolled, 100);
+    window.addEventListener("load", unlockIfDocumentAlreadyScrolled);
+    window.addEventListener("pageshow", unlockIfDocumentAlreadyScrolled);
+    window.addEventListener("scroll", unlockIfDocumentAlreadyScrolled, { passive: true });
+    return () => {
+      window.clearTimeout(t0);
+      window.clearTimeout(t1);
+      window.removeEventListener("load", unlockIfDocumentAlreadyScrolled);
+      window.removeEventListener("pageshow", unlockIfDocumentAlreadyScrolled);
+      window.removeEventListener("scroll", unlockIfDocumentAlreadyScrolled);
+    };
+  }, []);
+
   /** Breakpoint synced with carousel/phone UX — declare before hero intro hooks that read it */
   const [isPhoneLayout, setIsPhoneLayout] = useState(false);
 
