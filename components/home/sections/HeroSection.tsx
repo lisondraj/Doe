@@ -13,6 +13,7 @@ import type { HeroSectionProps } from "@/components/home/PhoneHomeTypes";
 import {
   HERO_BACKDROP_GRADIENT,
   HERO_BODY_COPY,
+  HERO_INTRO_LINES_COPY,
   HERO_INTRO_REVEAL,
   narrowHorizontalInset,
 } from "@/lib/home/hero-constants";
@@ -489,7 +490,7 @@ export function HeroSection(props: HeroSectionProps) {
 
             <div className="flex w-full flex-col items-start gap-[1.1rem] iphone-page:gap-[1.15rem]">
               <p
-                className={`flex max-w-full flex-col items-start gap-0.5 ${HERO_BODY_COPY} ${HERO_INTRO_REVEAL} ${
+                className={`flex max-w-full flex-col items-start gap-0.5 ${HERO_INTRO_LINES_COPY} ${HERO_INTRO_REVEAL} ${
                   prefersReducedMotionHero || heroIntroPhase >= 2 ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
                 }`}
                 style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
@@ -499,7 +500,7 @@ export function HeroSection(props: HeroSectionProps) {
               </p>
 
               <p
-                className={`max-w-full ${HERO_BODY_COPY} ${HERO_INTRO_REVEAL} ${
+                className={`max-w-full ${HERO_INTRO_LINES_COPY} ${HERO_INTRO_REVEAL} ${
                   prefersReducedMotionHero || heroIntroPhase >= 3 ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
                 }`}
                 style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
