@@ -1012,7 +1012,7 @@ export function DesktopHome() {
   })();
   const desktopHeroForegroundOpacity = isPhoneLayout
     ? 1
-    : Math.max(0, 1 - desktopHeroZoomProgress * 0.95);
+    : Math.max(0, 1 - desktopHeroZoomProgress);
 
   return (
     <div className="relative overflow-x-hidden" style={{ backgroundColor: '#F7F6F3' }}>
@@ -1304,7 +1304,28 @@ export function DesktopHome() {
           </>
         </nav>
 
-        {/* Hero Header — centered Doe wordmark */}
+        {/* Hero — left mission copy + centered wordmark (same fade as zoom completes) */}
+        {!isPhoneLayout && (
+          <div
+            className="pointer-events-none absolute left-0 top-1/2 z-20 max-w-[min(26rem,calc(100vw-8rem))] -translate-y-1/2 px-8 md:px-16 lg:pl-24 lg:pr-8"
+            style={{ opacity: desktopHeroForegroundOpacity }}
+          >
+            <p
+              className={`text-left text-white ${inter.className}`}
+              style={{
+                fontWeight: 300,
+                fontSize: "clamp(1.5rem, 3.5vw, 2.75rem)",
+                lineHeight: 1.18,
+                letterSpacing: "-0.03em",
+              }}
+            >
+              We&apos;re building the future of AI
+              <br />
+              in healthcare.
+            </p>
+          </div>
+        )}
+
         <div
           className="absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2"
           style={{ opacity: desktopHeroForegroundOpacity }}
@@ -1317,19 +1338,10 @@ export function DesktopHome() {
               Doe
             </h1>
             <p
-              className={`mx-auto mb-8 max-w-[min(40rem,calc(100vw-4rem))] px-4 text-center text-lg font-medium leading-snug text-white/90 sm:text-xl ${inter.className}`}
+              className={`mx-auto max-w-[min(40rem,calc(100vw-4rem))] px-4 text-center text-lg font-medium leading-snug text-white/90 sm:text-xl ${inter.className}`}
             >
-              We&apos;re building the AI
-              <br />
-              communication layer for healthcare.
+              More than an inbox.
             </p>
-            <a
-              href="#"
-              className="inline-block rounded-md bg-white px-6 py-2.5 text-sm font-medium text-[#1a1a1a] no-underline transition-all duration-300 hover:opacity-90"
-              style={{ boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)" }}
-            >
-              Join Waitlist
-            </a>
           </div>
         </div>
       </div>
