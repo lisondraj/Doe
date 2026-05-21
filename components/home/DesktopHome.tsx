@@ -296,6 +296,30 @@ export function DesktopHome() {
     setDesktopHeroScrollReleased(true);
   };
 
+  /** Breakpoint synced with carousel/phone UX — declare before hero intro hooks that read it */
+  const [isPhoneLayout, setIsPhoneLayout] = useState(false);
+
+  /** Desktop hero stagger: Doe fades/up first, then subtitle (no simultaneous pop). */
+  const [desktopHeroIntroDoe, setDesktopHeroIntroDoe] = useState(isPhoneLayout);
+  const [desktopHeroIntroSubtitle, setDesktopHeroIntroSubtitle] = useState(isPhoneLayout);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || isPhoneLayout) {
+      setDesktopHeroIntroDoe(true);
+      setDesktopHeroIntroSubtitle(true);
+      return;
+    }
+    const revealDoeMs = 90;
+    const revealSubMs = 720;
+    const t0 = window.setTimeout(() => setDesktopHeroIntroDoe(true), revealDoeMs);
+    const t1 = window.setTimeout(() => setDesktopHeroIntroSubtitle(true), revealSubMs);
+    return () => {
+      window.clearTimeout(t0);
+      window.clearTimeout(t1);
+    };
+  }, [isPhoneLayout]);
+
   const buildSectionRef = useRef<HTMLDivElement>(null);
   const [buildTitleOpacity, setBuildTitleOpacity] = useState(0);
   const [buildTitleTranslateY, setBuildTitleTranslateY] = useState(40);
@@ -308,8 +332,6 @@ export function DesktopHome() {
     Calls: DESIGN6_BACKDROP,
     Workflow: DESIGN3_BACKDROP,
   } as const;
-
-  const [isPhoneLayout, setIsPhoneLayout] = useState(false);
 
   const [viewportWidth, setViewportWidth] = useState(1200);
   const [phoneSlideSize, setPhoneSlideSize] = useState({ w: 850, h: 1090 });
@@ -1010,9 +1032,24 @@ export function DesktopHome() {
     const pct = `${desktopHeroBackdropZoom * 100}% ${desktopHeroBackdropZoom * 100}%`;
     return `${pct}, ${pct}, ${pct}, ${pct}, ${pct}`;
   })();
+  /** Center wordmark + tagline fade with hero zoom */
   const desktopHeroForegroundOpacity = isPhoneLayout
     ? 1
     : Math.max(0, 1 - desktopHeroZoomProgress);
+  /** Mission line — only fades in once zoom scrubs Doe/subtitle fully out */
+  const smoothstepMz = (t: number) => {
+    const u = Math.min(1, Math.max(0, t));
+    return u * u * (3 - 2 * u);
+  };
+  const desktopHeroMissionZoomStart = 0.96;
+  const desktopHeroMissionOpacity =
+    isPhoneLayout || prefersReducedMotion
+      ? 0
+      : desktopHeroZoomProgress <= desktopHeroMissionZoomStart
+        ? 0
+        : smoothstepMz(
+            (desktopHeroZoomProgress - desktopHeroMissionZoomStart) / (1 - desktopHeroMissionZoomStart),
+          );
 
   return (
     <div className="relative overflow-x-hidden" style={{ backgroundColor: '#F7F6F3' }}>
@@ -1304,19 +1341,24 @@ export function DesktopHome() {
           </>
         </nav>
 
-        {/* Hero — left mission copy + centered wordmark (same fade as zoom completes) */}
+        {/* Left mission — enters only after Doe + subtitle have fully faded (zoom completes) */}
         {!isPhoneLayout && (
           <div
-            className="pointer-events-none absolute left-0 top-1/2 z-20 max-w-[min(26rem,calc(100vw-8rem))] -translate-y-1/2 px-8 md:px-16 lg:pl-24 lg:pr-8"
-            style={{ opacity: desktopHeroForegroundOpacity }}
+            className="pointer-events-none absolute left-0 top-[40%] z-[21] max-w-[min(36rem,calc(100vw-9rem))] -translate-y-1/2 pl-10 md:left-14 md:pl-20 lg:left-28 lg:pl-32 xl:left-36"
+            style={{
+              opacity: desktopHeroMissionOpacity,
+              transition: prefersReducedMotion
+                ? "none"
+                : "opacity 0.85s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+            }}
           >
             <p
               className={`text-left text-white ${inter.className}`}
               style={{
-                fontWeight: 300,
-                fontSize: "clamp(1.5rem, 3.5vw, 2.75rem)",
-                lineHeight: 1.18,
-                letterSpacing: "-0.03em",
+                fontWeight: 500,
+                fontSize: "clamp(2.1rem, 5vw, 4rem)",
+                lineHeight: 1.14,
+                letterSpacing: "-0.035em",
               }}
             >
               We&apos;re building the future of AI
@@ -1326,19 +1368,35 @@ export function DesktopHome() {
           </div>
         )}
 
-        <div
-          className="absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2"
-          style={{ opacity: desktopHeroForegroundOpacity }}
-        >
+        <div className="absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
           <div className="mx-auto max-w-[900px] px-8 text-center">
             <h1
-              className={`mb-6 font-normal leading-[0.88] tracking-tight text-white ${lora.className}`}
-              style={{ fontSize: "clamp(4.5rem, 14vw, 10rem)" }}
+              className={`mb-6 font-normal leading-[0.88] tracking-tight text-white transition-[opacity,transform] duration-[850ms] ease-out will-change-[opacity] md:hover:-translate-y-1 md:hover:text-white ${lora.className}`}
+              style={{
+                fontSize: "clamp(4.5rem, 14vw, 10rem)",
+                opacity: desktopHeroForegroundOpacity * (desktopHeroIntroDoe ? 1 : 0),
+                transform:
+                  prefersReducedMotion || isPhoneLayout
+                    ? undefined
+                    : desktopHeroIntroDoe
+                      ? "translateY(0) scale(1)"
+                      : "translateY(12px) scale(0.98)",
+              }}
             >
               Doe
             </h1>
             <p
-              className={`mx-auto max-w-[min(40rem,calc(100vw-4rem))] px-4 text-center text-lg font-medium leading-snug text-white/90 sm:text-xl ${inter.className}`}
+              className={`mx-auto max-w-[min(40rem,calc(100vw-4rem))] px-4 text-center text-lg font-medium leading-snug text-white/90 transition-[opacity,transform] duration-[800ms] ease-out sm:text-xl ${inter.className}`}
+              style={{
+                opacity: desktopHeroForegroundOpacity * (desktopHeroIntroSubtitle ? 1 : 0),
+                transform:
+                  prefersReducedMotion || isPhoneLayout
+                    ? undefined
+                    : desktopHeroIntroSubtitle
+                      ? "translateY(0)"
+                      : "translateY(10px)",
+                transitionDelay: prefersReducedMotion || isPhoneLayout ? "0ms" : "90ms",
+              }}
             >
               More than an inbox.
             </p>
