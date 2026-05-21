@@ -1,5 +1,7 @@
 "use client";
 
+/** Workflow carousel slide mocks — canonical location; used by `app/desktop/page.tsx`. */
+
 import type { Dispatch, MouseEvent, RefObject, SetStateAction } from "react";
 
 /** Bottom title pill + description inside 700×700 slide mocks (scales with card transform). */
