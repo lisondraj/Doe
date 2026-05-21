@@ -199,7 +199,7 @@ function BuildWithUsBentoSurface({
   );
 }
 
-export default function DoePage() {
+export default function DesktopPage() {
   const [gradientAngle, setGradientAngle] = useState(135);
   const [colorShift, setColorShift] = useState(0);
   const [scrollY, setScrollY] = useState(0);

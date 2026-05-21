@@ -26,7 +26,8 @@ html:has(.doeforvc-iphone-root) body {
   background-color: #f7f6f3;
 }
 
-/** /mainpage — full desktop scroll; root layout uses wide-desktop:overflow-hidden on body */
+/** /desktop — full desktop scroll; root layout uses wide-desktop:overflow-hidden on body */
+body.desktop-route,
 body.mainpage-route {
   overflow: auto;
 }
