@@ -2,7 +2,7 @@
 
 import { Lora, Old_Standard_TT, Inter } from "next/font/google";
 import Link from "next/link";
-import { useState, useEffect, useRef, type HTMLAttributes } from "react";
+import { useState, useEffect, useLayoutEffect, useRef, type HTMLAttributes } from "react";
 import { NAV_HREFS } from "@/components/doe-nav-data";
 import { HERO_CAROUSEL_GRAIN_BG } from "@/components/hero-carousel-texture";
 import { DesignHeroBackdropSection } from "@/components/design-hero-backdrop-section";
@@ -20,6 +20,9 @@ import {
 
 /** Set true to restore mega-menu hover panels (kept in codebase). */
 const DESKTOP_NAV_DROPDOWN_ENABLED = false;
+
+/** Desktop hero: wheel delta budgets this much × viewport height to complete zoom (~same range as legacy 280vh driver minus one screen). */
+const DESKTOP_HERO_WHEEL_ZOOM_RATIO = 1.8;
 
 const DESKTOP_NAV_ITEMS = [
   { label: "Features", href: NAV_HREFS.Features },
@@ -266,6 +269,17 @@ export function DesktopHome() {
   const [newGradientSectionTranslateY, setNewGradientSectionTranslateY] = useState(40);
   const [newGradientTitleOpacity, setNewGradientTitleOpacity] = useState(0);
   const [newGradientTitleTranslateY, setNewGradientTitleTranslateY] = useState(40);
+  /** Smooth 0→1 desktop hero backdrop zoom — driven by wheel until gate releases (no page scroll yet). */
+  const [desktopHeroZoomProgress, setDesktopHeroZoomProgress] = useState(0);
+  const desktopHeroWheelLinearRef = useRef(0);
+  const desktopHeroScrollReleasedRef = useRef(false);
+  const [desktopHeroScrollReleased, setDesktopHeroScrollReleased] = useState(false);
+
+  const releaseDesktopHeroScroll = () => {
+    desktopHeroScrollReleasedRef.current = true;
+    setDesktopHeroScrollReleased(true);
+  };
+
   const buildSectionRef = useRef<HTMLDivElement>(null);
   const [buildTitleOpacity, setBuildTitleOpacity] = useState(0);
   const [buildTitleTranslateY, setBuildTitleTranslateY] = useState(40);
@@ -335,6 +349,81 @@ export function DesktopHome() {
   const slideBoxH = isPhoneLayout ? phoneSlideSize.h : desktopCarouselH;
   const carouselViewportW = isPhoneLayout ? slideBoxW : viewportWidth;
 
+  /** Lock page scroll until desktop hero zoom finishes (wheel drives zoom without advancing layout). */
+  useLayoutEffect(() => {
+    const mqPhone = window.matchMedia("(max-width: 639px)");
+    const mqReduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const applyScrollLockOverlay = () => {
+      const noLock = mqPhone.matches || mqReduce.matches || desktopHeroScrollReleasedRef.current;
+      document.documentElement.style.overflow = noLock ? "" : "hidden";
+    };
+
+    const syncMediaOpensGate = () => {
+      if (mqPhone.matches || mqReduce.matches) {
+        releaseDesktopHeroScroll();
+      }
+      applyScrollLockOverlay();
+    };
+
+    syncMediaOpensGate();
+
+    mqPhone.addEventListener("change", syncMediaOpensGate);
+    mqReduce.addEventListener("change", syncMediaOpensGate);
+    return () => {
+      mqPhone.removeEventListener("change", syncMediaOpensGate);
+      mqReduce.removeEventListener("change", syncMediaOpensGate);
+      document.documentElement.style.overflow = "";
+    };
+  }, [desktopHeroScrollReleased]);
+
+  /** Wheel deltas advance hero zoom linearly until release; prevents scrolling into section 2 early. */
+  useLayoutEffect(() => {
+    if (desktopHeroScrollReleasedRef.current) return undefined;
+
+    const mqPhone = window.matchMedia("(max-width: 639px)");
+    const mqReduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const smoothstep = (t: number) => t * t * (3 - 2 * t);
+    const budgetPx = () => DESKTOP_HERO_WHEEL_ZOOM_RATIO * Math.max(1, window.innerHeight);
+
+    const applyWheelLinear = (linear: number) => {
+      const clampedLinear = Math.min(1, Math.max(0, linear));
+      desktopHeroWheelLinearRef.current = clampedLinear;
+      setDesktopHeroZoomProgress(smoothstep(clampedLinear));
+      if (clampedLinear >= 1 - 1e-5) {
+        releaseDesktopHeroScroll();
+      }
+    };
+
+    const onWheel = (e: WheelEvent) => {
+      if (desktopHeroScrollReleasedRef.current || mqPhone.matches || mqReduce.matches) {
+        return;
+      }
+
+      const b = budgetPx();
+      const sy = window.scrollY;
+      const lin = desktopHeroWheelLinearRef.current;
+
+      // Rewind zoom with wheel-up while pinned to top of document
+      if (e.deltaY < 0 && sy < 3 && lin > 0) {
+        e.preventDefault();
+        applyWheelLinear(lin + e.deltaY / b);
+        return;
+      }
+
+      // Complete zoom without moving scroll position
+      if (e.deltaY > 0 && sy < 3 && lin < 1 - 1e-5) {
+        e.preventDefault();
+        applyWheelLinear(lin + e.deltaY / b);
+      }
+    };
+
+    window.addEventListener("wheel", onWheel, { passive: false, capture: true });
+    return () => {
+      window.removeEventListener("wheel", onWheel, { capture: true } as AddEventListenerOptions);
+    };
+  }, [desktopHeroScrollReleased]);
+
   useEffect(() => {
     let animationFrameId: number;
     let lastTime = performance.now();
@@ -359,7 +448,7 @@ export function DesktopHome() {
   useEffect(() => {
     const handleScroll = () => {
       setScrollY(window.scrollY);
-      
+
       // Calculate second section title fade-in and slide-up animation
       if (secondSectionRef.current) {
         const rect = secondSectionRef.current.getBoundingClientRect();
@@ -571,8 +660,12 @@ export function DesktopHome() {
     handleScroll();
 
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    window.addEventListener("resize", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
+  }, [isPhoneLayout]);
 
   // Auto-slide using optimized requestAnimationFrame with hardware acceleration
   useEffect(() => {
@@ -886,77 +979,130 @@ export function DesktopHome() {
   const loginButtonText = navOnWhiteBar ? "#fff" : "#000";
   const loginButtonShadow = showNavShadow && isOnHero ? "0 2px 4px rgba(0, 0, 0, 0.1)" : "none";
 
-  return (
-    <div className="relative overflow-x-hidden" style={{ backgroundColor: '#F7F6F3' }}>
-      {/* Hero Section with Dynamic Gradient */}
-      <div className="min-h-screen relative overflow-hidden">
-        {/* Hero with Gradient from Chart2 */}
-        <div 
-          className="absolute inset-0"
-          style={{
-            background: `
-              radial-gradient(circle at center, #D49D4F 0%, #D2774C 18%, #BF593D 32%, #C88A5F 45%, #7B5C4B 55%, #8B6F47 65%, #6D5B41 72%, #5C4A3A 78%, #4A3D32 85%, #1E343A 95%, rgba(30, 52, 58, 0.6) 100%),
+  const prefersReducedMotion =
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  /** Scrubs with scroll (~3.6×); applied via `background-size` zoom instead of transform so layers stay crisp. */
+  const desktopHeroBackdropZoom =
+    prefersReducedMotion || isPhoneLayout ? 1 : 1 + desktopHeroZoomProgress * 3.65;
+  const desktopHeroBackdropBgLayers = `radial-gradient(circle at center, #D49D4F 0%, #D2774C 18%, #BF593D 32%, #C88A5F 45%, #7B5C4B 55%, #8B6F47 65%, #6D5B41 72%, #5C4A3A 78%, #4A3D32 85%, #1E343A 95%, rgba(30, 52, 58, 0.6) 100%),
               radial-gradient(ellipse 60% 60% at 0% 0%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
               radial-gradient(ellipse 60% 60% at 100% 0%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
               radial-gradient(ellipse 60% 60% at 0% 100%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
-              radial-gradient(ellipse 60% 60% at 100% 100%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%)
-            `,
-            filter: 'saturate(1.15)',
-          }}
+              radial-gradient(ellipse 60% 60% at 100% 100%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%)`;
+  const desktopHeroBackdropBgSizing = (() => {
+    const pct = `${desktopHeroBackdropZoom * 100}% ${desktopHeroBackdropZoom * 100}%`;
+    return `${pct}, ${pct}, ${pct}, ${pct}, ${pct}`;
+  })();
+  const desktopHeroForegroundOpacity = isPhoneLayout
+    ? 1
+    : Math.max(0, 1 - desktopHeroZoomProgress * 0.95);
+
+  return (
+    <div className="relative overflow-x-hidden" style={{ backgroundColor: '#F7F6F3' }}>
+      {/* Hero — desktop: wheel-zoom backdrop while document scroll stays locked until zoom completes */}
+      <div className="relative min-h-screen overflow-hidden">
+        <div
+          className={
+            isPhoneLayout
+              ? "relative min-h-screen overflow-hidden"
+              : "sticky top-0 z-0 flex min-h-[100dvh] h-[100dvh] overflow-hidden relative"
+          }
         >
-          {/* Grain texture overlay */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E")`,
-              backgroundSize: '200px 200px',
-              opacity: 1,
-              mixBlendMode: 'overlay',
-            }}
-          />
-          {/* Center brightness reduction overlay */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background: 'radial-gradient(circle at center, rgba(0, 0, 0, 0.15) 0%, transparent 60%)',
-            }}
-          />
-          {/* Grid lines overlay */}
-          <div className="absolute inset-0 pointer-events-none">
-            <svg className="absolute inset-0 pointer-events-none w-full h-full" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <pattern id="gridPattern" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
-                  <path d="M 0 0 L 80 0 M 0 0 L 0 80" fill="none" stroke="#999999" strokeWidth="0.5" opacity="0.15" />
-                  <circle cx="0" cy="0" r="1" fill="#999999" opacity="0.25" />
-                  <circle cx="80" cy="0" r="1" fill="#999999" opacity="0.25" />
-                  <circle cx="0" cy="80" r="1" fill="#999999" opacity="0.25" />
-                  <circle cx="80" cy="80" r="1" fill="#999999" opacity="0.25" />
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#gridPattern)" />
-            </svg>
-            <div 
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                transform: 'perspective(1200px) translateZ(-200px) rotateX(75deg)',
-                transformStyle: 'preserve-3d',
-              }}
-            >
-              <svg className="absolute inset-0 pointer-events-none w-full h-full" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <pattern id="gridPattern2" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
-                    <path d="M 0 0 L 80 0 M 0 0 L 0 80" fill="none" stroke="#999999" strokeWidth="0.5" opacity="0.15" />
-                    <circle cx="0" cy="0" r="1" fill="#999999" opacity="0.25" />
-                    <circle cx="80" cy="0" r="1" fill="#999999" opacity="0.25" />
-                    <circle cx="0" cy="80" r="1" fill="#999999" opacity="0.25" />
-                    <circle cx="80" cy="80" r="1" fill="#999999" opacity="0.25" />
-                  </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#gridPattern2)" />
-              </svg>
-            </div>
+          {/* Zoomed gradient canvas — background-size zoom (not transform) keeps edges sharp. */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              {/* Hero with Gradient from Chart2 */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  backgroundImage: desktopHeroBackdropBgLayers,
+                  backgroundSize: desktopHeroBackdropBgSizing,
+                  backgroundPosition: "center, center, center, center, center",
+                  backgroundRepeat: "no-repeat, no-repeat, no-repeat, no-repeat, no-repeat",
+                  filter: "saturate(1.15)",
+                  ...(prefersReducedMotion || isPhoneLayout
+                    ? {}
+                    : desktopHeroZoomProgress > 0.02
+                      ? { willChange: "background-size" }
+                      : {}),
+                }}
+              >
+                {/* Grain texture overlay */}
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E")`,
+                    backgroundSize: "200px 200px",
+                    opacity: 1,
+                    mixBlendMode: "overlay",
+                  }}
+                />
+                {/* Center brightness reduction overlay — match gradient zoom so it stays aligned */}
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    backgroundImage:
+                      "radial-gradient(circle at center, rgba(0, 0, 0, 0.15) 0%, transparent 60%)",
+                    backgroundSize: `${desktopHeroBackdropZoom * 100}% ${desktopHeroBackdropZoom * 100}%`,
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                  }}
+                />
+                {/* Grid lines overlay */}
+                <div className="absolute inset-0 pointer-events-none">
+                  <svg
+                    className="absolute inset-0 pointer-events-none w-full h-full"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <defs>
+                      <pattern id="gridPattern" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
+                        <path
+                          d="M 0 0 L 80 0 M 0 0 L 0 80"
+                          fill="none"
+                          stroke="#999999"
+                          strokeWidth="0.5"
+                          opacity="0.15"
+                        />
+                        <circle cx="0" cy="0" r="1" fill="#999999" opacity="0.25" />
+                        <circle cx="80" cy="0" r="1" fill="#999999" opacity="0.25" />
+                        <circle cx="0" cy="80" r="1" fill="#999999" opacity="0.25" />
+                        <circle cx="80" cy="80" r="1" fill="#999999" opacity="0.25" />
+                      </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#gridPattern)" />
+                  </svg>
+                  <div
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                      transform: "perspective(1200px) translateZ(-200px) rotateX(75deg)",
+                      transformStyle: "preserve-3d",
+                    }}
+                  >
+                    <svg
+                      className="absolute inset-0 pointer-events-none w-full h-full"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <defs>
+                        <pattern id="gridPattern2" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
+                          <path
+                            d="M 0 0 L 80 0 M 0 0 L 0 80"
+                            fill="none"
+                            stroke="#999999"
+                            strokeWidth="0.5"
+                            opacity="0.15"
+                          />
+                          <circle cx="0" cy="0" r="1" fill="#999999" opacity="0.25" />
+                          <circle cx="80" cy="0" r="1" fill="#999999" opacity="0.25" />
+                          <circle cx="0" cy="80" r="1" fill="#999999" opacity="0.25" />
+                          <circle cx="80" cy="80" r="1" fill="#999999" opacity="0.25" />
+                        </pattern>
+                      </defs>
+                      <rect width="100%" height="100%" fill="url(#gridPattern2)" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
           </div>
-        </div>
         {/* Navigation Bar */}
         <nav
           className={`fixed top-0 left-0 right-0 z-30 transition-opacity duration-300 ease-out ${
@@ -1142,7 +1288,10 @@ export function DesktopHome() {
         </nav>
 
         {/* Hero Header — centered Doe wordmark */}
-        <div className="absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
+        <div
+          className="absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2"
+          style={{ opacity: desktopHeroForegroundOpacity }}
+        >
           <div className="mx-auto max-w-[900px] px-8 text-center">
             <h1
               className={`mb-6 font-normal leading-[0.88] tracking-tight text-white ${lora.className}`}
@@ -1166,7 +1315,7 @@ export function DesktopHome() {
             </a>
           </div>
         </div>
-
+      </div>
       </div>
 
       {/* Horizontal line at bottom of hero section */}
