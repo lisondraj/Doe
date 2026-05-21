@@ -17,7 +17,7 @@ export function HeroSocialIcon({
       target="_blank"
       rel="noopener noreferrer"
       aria-label={label}
-      className="inline-flex shrink-0 items-center justify-center rounded-sm text-white/75 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+      className="inline-flex shrink-0 items-center justify-center rounded-sm text-white transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
     >
       {children}
     </a>

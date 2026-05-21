@@ -527,7 +527,9 @@ export function HeroSection(props: HeroSectionProps) {
                       </HeroSocialIcon>
                     </span>
                   </span>
-                  <span className={HERO_BODY_COPY}>Medicine</span>
+                  <span className="text-[clamp(1.28rem,4.05vw,1.75rem)] iphone-page:text-[clamp(1.22rem,4.35vw,1.65rem)] font-normal leading-none tracking-tight text-white">
+                    Medicine
+                  </span>
                 </span>
                 <span className="inline-flex flex-col items-start gap-1.5">
                   <span className="inline-flex items-center gap-3">
@@ -543,13 +545,15 @@ export function HeroSection(props: HeroSectionProps) {
                       </HeroSocialIcon>
                     </span>
                   </span>
-                  <span className={HERO_BODY_COPY}>Engineering</span>
+                  <span className="text-[clamp(1.28rem,4.05vw,1.75rem)] iphone-page:text-[clamp(1.22rem,4.35vw,1.65rem)] font-normal leading-none tracking-tight text-white">
+                    Engineering
+                  </span>
                 </span>
               </div>
 
               <a
                 href="mailto:james@doe.care"
-                className={`group mt-6 iphone-page:mt-5 inline-flex border-0 bg-transparent p-0 text-left ${HERO_BODY_COPY} font-semibold ${HERO_INTRO_REVEAL} hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-white ${
+                className={`group mt-6 iphone-page:mt-5 inline-flex border-0 bg-transparent p-0 text-left ${HERO_BODY_COPY} font-semibold text-white ${HERO_INTRO_REVEAL} hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-white ${
                   prefersReducedMotionHero || heroIntroPhase >= 5
                     ? "translate-y-0 opacity-100"
                     : "pointer-events-none translate-y-3 opacity-0"
