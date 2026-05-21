@@ -13,7 +13,6 @@ import type { HeroSectionProps } from "@/components/home/PhoneHomeTypes";
 import {
   HERO_BACKDROP_GRADIENT,
   HERO_BODY_COPY,
-  HERO_INTRO_LINES_COPY,
   HERO_INTRO_REVEAL,
   narrowHorizontalInset,
 } from "@/lib/home/hero-constants";
@@ -490,7 +489,7 @@ export function HeroSection(props: HeroSectionProps) {
 
             <div className="flex w-full flex-col items-start gap-[1.1rem] iphone-page:gap-[1.15rem]">
               <p
-                className={`flex max-w-full flex-col items-start gap-0.5 ${HERO_INTRO_LINES_COPY} ${HERO_INTRO_REVEAL} ${
+                className={`flex max-w-full flex-col items-start gap-0.5 ${HERO_BODY_COPY} ${HERO_INTRO_REVEAL} ${
                   prefersReducedMotionHero || heroIntroPhase >= 2 ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
                 }`}
                 style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
@@ -500,7 +499,7 @@ export function HeroSection(props: HeroSectionProps) {
               </p>
 
               <p
-                className={`max-w-full ${HERO_INTRO_LINES_COPY} ${HERO_INTRO_REVEAL} ${
+                className={`max-w-full ${HERO_BODY_COPY} ${HERO_INTRO_REVEAL} ${
                   prefersReducedMotionHero || heroIntroPhase >= 3 ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
                 }`}
                 style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
@@ -528,9 +527,7 @@ export function HeroSection(props: HeroSectionProps) {
                       </HeroSocialIcon>
                     </span>
                   </span>
-                  <span className="text-[clamp(1.05rem,3.1vw,1.35rem)] iphone-page:text-[clamp(1rem,3.2vw,1.25rem)] font-normal leading-none tracking-tight text-white/65">
-                    Medicine
-                  </span>
+                  <span className={HERO_BODY_COPY}>Medicine</span>
                 </span>
                 <span className="inline-flex flex-col items-start gap-1.5">
                   <span className="inline-flex items-center gap-3">
@@ -546,15 +543,13 @@ export function HeroSection(props: HeroSectionProps) {
                       </HeroSocialIcon>
                     </span>
                   </span>
-                  <span className="text-[clamp(1.05rem,3.1vw,1.35rem)] iphone-page:text-[clamp(1rem,3.2vw,1.25rem)] font-normal leading-none tracking-tight text-white/65">
-                    Engineering
-                  </span>
+                  <span className={HERO_BODY_COPY}>Engineering</span>
                 </span>
               </div>
 
               <a
                 href="mailto:james@doe.care"
-                className={`group mt-6 iphone-page:mt-5 inline-flex border-0 bg-transparent p-0 text-left ${HERO_BODY_COPY} font-semibold text-white ${HERO_INTRO_REVEAL} hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-white ${
+                className={`group mt-6 iphone-page:mt-5 inline-flex border-0 bg-transparent p-0 text-left ${HERO_BODY_COPY} font-semibold ${HERO_INTRO_REVEAL} hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-white ${
                   prefersReducedMotionHero || heroIntroPhase >= 5
                     ? "translate-y-0 opacity-100"
                     : "pointer-events-none translate-y-3 opacity-0"

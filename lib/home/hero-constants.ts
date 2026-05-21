@@ -19,10 +19,7 @@ export const narrowHorizontalInset =
  */
 export const VBENTO_CANVAS_PADDING = "px-4 " + narrowHorizontalInset;
 
-/** Hero body copy — founders social row etc. Keeps softer white so icon hits read clearly. */
+/** Hero body copy — tagline, founders intro, roles, CTA shared scale (founder names use their own size in HeroSection). */
 export const HERO_BODY_COPY =
-  "text-[clamp(1.38rem,4.65vw,2.15rem)] iphone-page:text-[clamp(1.32rem,5vw,2.05rem)] font-medium text-white/[0.88] tracking-tight leading-[1.22]";
-/** We are building… + Meet the founders lines — full white and larger than nearby body chrome. */
-export const HERO_INTRO_LINES_COPY =
-  "text-[clamp(1.55rem,5.35vw,2.55rem)] iphone-page:text-[clamp(1.5rem,5.95vw,2.45rem)] font-medium text-white tracking-tight leading-[1.2]";
+  "text-[clamp(1.55rem,5.35vw,2.5rem)] iphone-page:text-[clamp(1.48rem,5.85vw,2.4rem)] font-medium text-white tracking-tight leading-[1.22]";
 export const HERO_INTRO_REVEAL = "transition-[opacity,transform] duration-[1050ms] ease-out";
