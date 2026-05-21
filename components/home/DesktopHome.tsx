@@ -31,6 +31,22 @@ const DESKTOP_NAV_ITEMS = [
   { label: "Vision", href: NAV_HREFS["Our Vision"] },
 ] as const;
 
+/** Doe … [word] carousel — order matches descriptions + orange UI mock branches */
+const CAROUSEL_CATEGORY_WORDS = [
+  "Inbox",
+  "Agent",
+  "Ambient",
+  "Front Desk",
+  "Labs",
+  "Referrals",
+  "Patient",
+  "Schedule",
+  "Billing",
+] as const;
+
+/** Widest label at carousel typography — invisible reserve keeps ↑↓ column fixed */
+const CAROUSEL_CATEGORY_WORD_WIDTH_ANCHOR = "Front Desk";
+
 const lora = Lora({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
@@ -1001,7 +1017,8 @@ export function DesktopHome() {
   return (
     <div className="relative overflow-x-hidden" style={{ backgroundColor: '#F7F6F3' }}>
       {/* Hero — desktop: wheel-zoom backdrop while document scroll stays locked until zoom completes */}
-      <div className="relative min-h-screen overflow-hidden">
+      {/* z-[40]: stack above later sections (z-10) so fixed nav isn’t painted under carousel / gradients */}
+      <div className="relative z-[40] min-h-screen overflow-hidden">
         <div
           className={
             isPhoneLayout
@@ -1105,7 +1122,7 @@ export function DesktopHome() {
           </div>
         {/* Navigation Bar */}
         <nav
-          className={`fixed top-0 left-0 right-0 z-30 transition-opacity duration-300 ease-out ${
+          className={`fixed top-0 left-0 right-0 z-[50] transition-opacity duration-300 ease-out ${
             !heroNavInteractable ? 'pointer-events-none' : ''
           }`}
           style={{ 
@@ -1474,7 +1491,7 @@ export function DesktopHome() {
             >
               Doe{'\u00A0'}
               {(() => {
-                const words = ['Agents', 'Franchises', 'Design', 'Billing', 'Marketing', 'Patient', 'Teams', 'Inbox'];
+                const words = [...CAROUSEL_CATEGORY_WORDS];
                 const n = words.length;
                 const offsets = [-3, -2, -1, 0, 1, 2, 3];
 
@@ -1486,164 +1503,227 @@ export function DesktopHome() {
                   return 0;
                 };
 
+                /** Keeps ↑↓ anchored — reserve width for widest phrase */
+                const longestWord = CAROUSEL_CATEGORY_WORD_WIDTH_ANCHOR;
+
+                const arrowButtons = (
+                  <div
+                    className="pointer-events-auto absolute z-[3] flex flex-col gap-2"
+                    style={{
+                      left: "100%",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      marginLeft: "clamp(14px, 1.75vw, 28px)",
+                    }}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (isCarouselTransitioning) return;
+                        setIsCarouselTransitioning(true);
+                        requestAnimationFrame(() => {
+                          setUiMockupOpacity(0);
+                          setUiMockupTranslateY(10);
+                          setUiMockupScale(0.96);
+                        });
+                        setCarouselOffset(1);
+                        setTimeout(() => {
+                          const newIndex = (selectedWordIndex - 1 + n) % n;
+                          setSelectedWordIndex(newIndex);
+                          setCarouselOffset(0);
+                          requestAnimationFrame(() => {
+                            setUiMockupOpacity(1);
+                            setUiMockupTranslateY(0);
+                            setUiMockupScale(1);
+                          });
+                          setTimeout(() => {
+                            setIsCarouselTransitioning(false);
+                          }, 50);
+                        }, 400);
+                      }}
+                      className="p-1 transition-opacity hover:opacity-70"
+                      aria-label="Previous category"
+                    >
+                      <svg className="h-4 w-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
+                      </svg>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (isCarouselTransitioning) return;
+                        setIsCarouselTransitioning(true);
+                        requestAnimationFrame(() => {
+                          setUiMockupOpacity(0);
+                          setUiMockupTranslateY(10);
+                          setUiMockupScale(0.96);
+                        });
+                        setCarouselOffset(-1);
+                        setTimeout(() => {
+                          const newIndex = (selectedWordIndex + 1) % n;
+                          setSelectedWordIndex(newIndex);
+                          setCarouselOffset(0);
+                          requestAnimationFrame(() => {
+                            setUiMockupOpacity(1);
+                            setUiMockupTranslateY(0);
+                            setUiMockupScale(1);
+                          });
+                          setTimeout(() => {
+                            setIsCarouselTransitioning(false);
+                          }, 50);
+                        }, 400);
+                      }}
+                      className="p-1 transition-opacity hover:opacity-70"
+                      aria-label="Next category"
+                    >
+                      <svg className="h-4 w-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                  </div>
+                );
+
                 return (
                   <span
                     className={inter.className}
-                    style={{ position: 'relative', display: 'inline-block', verticalAlign: 'baseline', fontWeight: 300, fontSize: '0.9em', marginLeft: '0.15em' }}
+                    style={{
+                      position: "relative",
+                      display: "inline-block",
+                      verticalAlign: "baseline",
+                      marginLeft: "0.15em",
+                      fontWeight: 300,
+                      fontSize: "0.9em",
+                    }}
                   >
-                    {/* Invisible sizer — holds space for the active word, keeps layout stable */}
-                    <span style={{ opacity: 0, whiteSpace: 'nowrap', display: 'inline-block', lineHeight: '1.2em', pointerEvents: 'none' }}>
-                      {words[selectedWordIndex]}
-                    </span>
-                    {/* Single sliding strip — all words move together */}
-                    <span
-                      style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        transform: `translateY(${carouselOffset * 1.2}em)`,
-                        transition: isCarouselTransitioning && carouselOffset !== 0 ? 'transform 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94)' : 'none',
-                      }}
-                    >
-                      {offsets.map(offset => {
-                        const wordIdx = ((selectedWordIndex + offset) % n + n) % n;
-                        return (
-                          <span
-                            key={offset}
-                            style={{
-                              position: 'absolute',
-                              top: `${offset * 1.2}em`,
-                              left: 0,
-                              whiteSpace: 'nowrap',
-                              lineHeight: '1.2em',
-                              opacity: getOpacity(offset),
-                              color: offset === 0 ? '#111827' : '#6B7280',
-                            }}
-                          >
-                            {words[wordIdx]}
-                          </span>
-                        );
-                      })}
-                    </span>
-                    {/* Fixed fade overlays — stationary, words slide through them */}
-                    <span style={{
-                      position: 'absolute',
-                      top: '-4.8em',
-                      left: '-2em',
-                      right: '-2em',
-                      height: '4.8em',
-                      background: 'linear-gradient(to bottom, rgba(247,246,243,1) 0%, rgba(247,246,243,0) 100%)',
-                      pointerEvents: 'none',
-                    }} />
-                    <span style={{
-                      position: 'absolute',
-                      bottom: '-4.8em',
-                      left: '-2em',
-                      right: '-2em',
-                      height: '4.8em',
-                      background: 'linear-gradient(to top, rgba(247,246,243,1) 0%, rgba(247,246,243,0) 100%)',
-                      pointerEvents: 'none',
-                    }} />
+                      {/* Invisible sizer — always longest word so layout / arrows stay fixed */}
+                      <span style={{ opacity: 0, whiteSpace: "nowrap", display: "inline-block", lineHeight: "1.2em", pointerEvents: "none" }}>
+                        {longestWord}
+                      </span>
+                      {/* Single sliding strip — all words move together */}
+                      <span
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          transform: `translateY(${carouselOffset * 1.2}em)`,
+                          transition: isCarouselTransitioning && carouselOffset !== 0 ? "transform 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94)" : "none",
+                        }}
+                      >
+                        {offsets.map((offset) => {
+                          const wordIdx = ((selectedWordIndex + offset) % n + n) % n;
+                          return (
+                            <span
+                              key={offset}
+                              style={{
+                                position: "absolute",
+                                top: `${offset * 1.2}em`,
+                                left: 0,
+                                whiteSpace: "nowrap",
+                                lineHeight: "1.2em",
+                                opacity: getOpacity(offset),
+                                color: offset === 0 ? "#111827" : "#6B7280",
+                              }}
+                            >
+                              {words[wordIdx]}
+                            </span>
+                          );
+                        })}
+                      </span>
+                      {/* Fixed fade overlays — stationary, words slide through them */}
+                      <span
+                        style={{
+                          position: "absolute",
+                          top: "-4.8em",
+                          left: "-2em",
+                          right: "-2em",
+                          height: "4.8em",
+                          background: "linear-gradient(to bottom, rgba(247,246,243,1) 0%, rgba(247,246,243,0) 100%)",
+                          pointerEvents: "none",
+                        }}
+                      />
+                      <span
+                        style={{
+                          position: "absolute",
+                          bottom: "-4.8em",
+                          left: "-2em",
+                          right: "-2em",
+                          height: "4.8em",
+                          background: "linear-gradient(to top, rgba(247,246,243,1) 0%, rgba(247,246,243,0) 100%)",
+                          pointerEvents: "none",
+                        }}
+                      />
+                    {arrowButtons}
                   </span>
                 );
               })()}
-              {/* Arrows — anchored to the h1, never move */}
-              <div className="absolute flex flex-col gap-2 z-10" style={{ right: '7rem', top: '50%', transform: 'translateY(-50%)' }}>
-                <button
-                  onClick={() => {
-                    if (isCarouselTransitioning) return;
-                    setIsCarouselTransitioning(true);
-                    // Start transition: fade out + scale down + translate up
-                    requestAnimationFrame(() => {
-                      setUiMockupOpacity(0);
-                      setUiMockupTranslateY(10);
-                      setUiMockupScale(0.96);
-                    });
-                    // Move strip down to bring previous word up
-                    setCarouselOffset(1);
-                    setTimeout(() => {
-                      // Update index first
-                      const newIndex = (selectedWordIndex - 1 + 8) % 8;
-                      setSelectedWordIndex(newIndex);
-                      // Reset offset instantly (no transition) after index update
-                      setCarouselOffset(0);
-                      // End transition: fade in + scale back + translate to center
-                      requestAnimationFrame(() => {
-                        setUiMockupOpacity(1);
-                        setUiMockupTranslateY(0);
-                        setUiMockupScale(1);
-                      });
-                      setTimeout(() => {
-                        setIsCarouselTransitioning(false);
-                      }, 50);
-                    }, 400);
-                  }}
-                  className="p-1 hover:opacity-70 transition-opacity"
-                >
-                  <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
-                  </svg>
-                </button>
-                <button
-                  onClick={() => {
-                    if (isCarouselTransitioning) return;
-                    setIsCarouselTransitioning(true);
-                    // Start transition: fade out + scale down + translate up
-                    requestAnimationFrame(() => {
-                      setUiMockupOpacity(0);
-                      setUiMockupTranslateY(10);
-                      setUiMockupScale(0.96);
-                    });
-                    // Move strip up to bring next word down
-                    setCarouselOffset(-1);
-                    setTimeout(() => {
-                      // Update index first
-                      const newIndex = (selectedWordIndex + 1) % 8;
-                      setSelectedWordIndex(newIndex);
-                      // Reset offset instantly (no transition) after index update
-                      setCarouselOffset(0);
-                      // End transition: fade in + scale back + translate to center
-                      requestAnimationFrame(() => {
-                        setUiMockupOpacity(1);
-                        setUiMockupTranslateY(0);
-                        setUiMockupScale(1);
-                      });
-                      setTimeout(() => {
-                        setIsCarouselTransitioning(false);
-                      }, 50);
-                    }, 400);
-                  }}
-                  className="p-1 hover:opacity-70 transition-opacity"
-                >
-                  <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-              </div>
             </h1>
           </div>
         </div>
         {/* Description - bottom right corner of left half */}
         {(() => {
           const descriptions = [
-            ["Automates tasks around you", "Learns your workflows daily", "Acts without being asked to"],
-            ["One system, every location", "Consistent brand and process", "Scale without losing control"],
-            ["Built for clinical precision", "Minimal, focused interfaces", "Every decision intentional"],
-            ["Claims submitted instantly", "Revenue tracked end to end", "No more chasing payments"],
-            ["Reach patients who need you", "Campaigns run on your data", "Growth that runs itself now"],
-            ["Full history before you ask", "Context always at your side", "Know each patient completely"],
-            ["Stay aligned across all roles", "Tasks and notes in one place", "Built for how clinics work"],
-            ["Every message, one channel", "Sorted before you open it", "Nothing falls through again"],
+            [
+              "Full inbox with AI on triage, drafts, and routing across fax, portal, chat, and mail,",
+              "so threads stay coherent instead of scattered screenshots.",
+              "Anyone asking ‘what happened?’ learns faster.",
+            ],
+            [
+              "Agents run follow-ups inside that same inbox—updates, callbacks, chasing paperwork—",
+              "while you stay in clinic.",
+              "Approvals shrink to what actually needs eyes.",
+            ],
+            [
+              "Ambient listens during visits and pulls chart detail plus guideline-grounded web evidence",
+              "as the chief complaint evolves.",
+              "Sources stick around so documentation stays explainable.",
+            ],
+            [
+              "Voice AI answers clinic calls when reception is saturated,",
+              "captures intent, and lands structured tasks in the EMR.",
+              "A teammate stays one tap away when empathy matters.",
+            ],
+            [
+              "Labs arrive sorted by urgency with an AI digest baked in;",
+              "you verify fast before anything locks into the chart.",
+              "Sorting stays medicine-led, not mystery-led.",
+            ],
+            [
+              "Outgoing referrals draft with attachments; incoming packets unpack cleanly",
+              "so specialty nuance survives handoffs.",
+              "Both sides get nudged until someone's booked—or declines—with less phone tag.",
+            ],
+            [
+              "Patient-facing mobile keeps people oriented between visits:",
+              "after-visit summaries arrive while memory is fresh,",
+              "and intake forms finish before they reach the lobby.",
+            ],
+            [
+              "Schedule ties clinic templates to personal commitments honestly,",
+              "so swaps weigh coverage and real life together.",
+              "Double-books surface before patients see invites.",
+            ],
+            [
+              "Prior auth pulls justification from chart facts you've already documented;",
+              "claims scrub against payer quirks before they drop.",
+              "Revenue ops stay readable—what moved, what's stuck, why.",
+            ],
           ];
           const lines = descriptions[selectedWordIndex] ?? descriptions[0];
           return (
-            <div className="absolute left-0 z-20 w-full max-w-lg px-8 text-left md:max-w-xl md:text-right lg:px-24" style={{ bottom: '10vh' }}>
+            <div
+              className="absolute bottom-[10vh] left-0 right-1/2 z-20 px-8 text-right md:px-16 lg:px-24"
+              style={{ paddingRight: "clamp(1rem, 4vw, 2.75rem)" }}
+            >
               <div
                 key={selectedWordIndex}
-                className={`text-lg md:text-xl text-gray-700 ${inter.className}`}
-                style={{ fontWeight: 500, animation: 'fade-in 0.35s ease-out' }}
+                className={`text-lg text-gray-700 md:text-xl ${inter.className}`}
+                style={{ fontWeight: 500, animation: "fade-in 0.35s ease-out" }}
               >
-                {lines.map((line, i) => <p key={i}>{line}</p>)}
+                {lines.map((line, i) => (
+                  <p key={i} className="text-right">
+                    {line}
+                  </p>
+                ))}
               </div>
             </div>
           );
@@ -1708,7 +1788,7 @@ export function DesktopHome() {
           {/* App UI Mockup - Dynamic based on selected word */}
           {(() => {
             const renderUIMockup = () => {
-              const words = ['Agents', 'Franchises', 'Design', 'Billing', 'Marketing', 'Patient', 'Teams', 'Inbox'];
+              const words = [...CAROUSEL_CATEGORY_WORDS];
               const currentWord = words[selectedWordIndex];
 
               // Common sidebar
@@ -1740,8 +1820,8 @@ export function DesktopHome() {
                 </div>
               );
 
-              // Agents UI - Automation workflows
-              if (currentWord === 'Agents') {
+              // Agent UI — automation / assistant workflows
+              if (currentWord === 'Agent') {
                 return (
                   <div style={{ display: 'flex', width: '100%', height: '100%' }}>
                     <Sidebar />
@@ -1773,8 +1853,8 @@ export function DesktopHome() {
                 );
               }
 
-              // Franchises UI - Multi-location
-              if (currentWord === 'Franchises') {
+              // Front Desk UI — intake / reception
+              if (currentWord === 'Front Desk') {
                 return (
                   <div style={{ display: 'flex', width: '100%', height: '100%' }}>
                     <Sidebar />
@@ -1803,8 +1883,8 @@ export function DesktopHome() {
                 );
               }
 
-              // Design UI - Clean interface elements
-              if (currentWord === 'Design') {
+              // Ambient UI — passive capture / calm chrome
+              if (currentWord === 'Ambient') {
                 return (
                   <div style={{ display: 'flex', width: '100%', height: '100%' }}>
                     <Sidebar />
@@ -1831,6 +1911,65 @@ export function DesktopHome() {
                             {[1, 2, 3, 4, 5, 6, 7, 8].map(i => <div key={i} style={{ height: 24, borderRadius: 5, background: '#F0F0F0' }} />)}
                           </div>
                         </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              // Schedule UI — unified calendars
+              if (currentWord === "Schedule") {
+                return (
+                  <div style={{ display: "flex", width: "100%", height: "100%" }}>
+                    <Sidebar />
+                    <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "#F7F6F3" }}>
+                      <div
+                        style={{
+                          height: 40,
+                          borderBottom: "1px solid #E6E6E6",
+                          background: "#ffffff",
+                          display: "flex",
+                          alignItems: "center",
+                          padding: "0 14px",
+                          gap: 8,
+                        }}
+                      >
+                        <div style={{ width: 88, height: 6, borderRadius: 3, background: "#D4D4D4" }} />
+                        <div style={{ flex: 1 }} />
+                        <div style={{ width: 52, height: 22, borderRadius: 6, background: "#E6EFF0" }} />
+                      </div>
+                      <div style={{ flex: 1, padding: "12px 14px", display: "flex", flexDirection: "column", gap: 8 }}>
+                        <div style={{ display: "flex", gap: 6 }}>
+                          {[1, 2, 3, 4, 5].map((i) => (
+                            <div
+                              key={i}
+                              style={{
+                                flex: 1,
+                                height: 28,
+                                borderRadius: 8,
+                                background: "#ffffff",
+                                border: "1px solid #E6E6E6",
+                                opacity: i === 3 ? 1 : 0.35 + i * 0.06,
+                              }}
+                            />
+                          ))}
+                        </div>
+                        {[0, 1, 2].map((row) => (
+                          <div key={row} style={{ display: "flex", gap: 6, flex: 1, minHeight: 0 }}>
+                            {[1, 2, 3, 4, 5].map((col) => (
+                              <div
+                                key={col}
+                                style={{
+                                  flex: 1,
+                                  borderRadius: 8,
+                                  background: row === 1 && col === 3 ? "#1E343A" : "#ffffff",
+                                  border: row === 1 && col === 3 ? "none" : "1px solid #E6E6E6",
+                                  opacity: row === 1 && col === 3 ? 1 : 0.28 + row * 0.12 + col * 0.03,
+                                }}
+                              />
+                            ))}
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -1870,8 +2009,8 @@ export function DesktopHome() {
                 );
               }
 
-              // Marketing UI - Campaigns
-              if (currentWord === 'Marketing') {
+              // Referrals UI — outbound coordination / campaigns-adjacent
+              if (currentWord === 'Referrals') {
                 return (
                   <div style={{ display: 'flex', width: '100%', height: '100%' }}>
                     <Sidebar />
@@ -1934,8 +2073,8 @@ export function DesktopHome() {
                 );
               }
 
-              // Teams UI - Collaboration
-              if (currentWord === 'Teams') {
+              // Labs UI — orders / results lane
+              if (currentWord === 'Labs') {
                 return (
                   <div style={{ display: 'flex', width: '100%', height: '100%' }}>
                     <Sidebar />
