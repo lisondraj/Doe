@@ -527,7 +527,7 @@ export function HeroSection(props: HeroSectionProps) {
                       </HeroSocialIcon>
                     </span>
                   </span>
-                  <span className="text-[clamp(1.05rem,3.1vw,1.35rem)] iphone-page:text-[clamp(1rem,3.2vw,1.25rem)] font-normal leading-none tracking-tight text-white">
+                  <span className="text-[clamp(1.05rem,3.1vw,1.35rem)] iphone-page:text-[clamp(1rem,3.2vw,1.25rem)] font-normal leading-none tracking-tight text-white/65">
                     Medicine
                   </span>
                 </span>
@@ -545,7 +545,7 @@ export function HeroSection(props: HeroSectionProps) {
                       </HeroSocialIcon>
                     </span>
                   </span>
-                  <span className="text-[clamp(1.05rem,3.1vw,1.35rem)] iphone-page:text-[clamp(1rem,3.2vw,1.25rem)] font-normal leading-none tracking-tight text-white">
+                  <span className="text-[clamp(1.05rem,3.1vw,1.35rem)] iphone-page:text-[clamp(1rem,3.2vw,1.25rem)] font-normal leading-none tracking-tight text-white/65">
                     Engineering
                   </span>
                 </span>
