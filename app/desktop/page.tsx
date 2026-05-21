@@ -274,7 +274,7 @@ export default function DesktopPage() {
   const [wasDragging, setWasDragging] = useState(false);
   const initialBoxPositionRef = useRef<{ x: number; y: number } | null>(null);
   const latestPositionsRef = useRef<Array<{ x: number; y: number }>>(reportBoxPositions);
-  const descriptionEditRef = useRef<HTMLTextAreaElement | null>(null);
+  const descriptionEditRef = useRef<HTMLTextAreaElement>(null);
   const buildSectionRef = useRef<HTMLDivElement>(null);
   const [buildTitleOpacity, setBuildTitleOpacity] = useState(0);
   const [buildTitleTranslateY, setBuildTitleTranslateY] = useState(40);

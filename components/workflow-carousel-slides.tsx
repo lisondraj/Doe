@@ -14,7 +14,7 @@ export const slideCaptionBody =
 export const slideCaptionFont = { fontFamily: "system-ui, -apple-system, sans-serif" } as const;
 
 export type WorkflowCarouselSlidesProps = {
-  slidingBoxRefs: RefObject<HTMLDivElement | null>[];
+  slidingBoxRefs: RefObject<HTMLDivElement>[];
   slideBoxW: number;
   slideBoxH: number;
   slideUniformScale: number;
@@ -39,7 +39,7 @@ export type WorkflowCarouselSlidesProps = {
   handleSave: () => void;
   handleUndo: () => void;
   handleBoxMouseDown: (e: MouseEvent, boxIndex: number) => void;
-  descriptionEditRef: RefObject<HTMLTextAreaElement | null>;
+  descriptionEditRef: RefObject<HTMLTextAreaElement>;
 };
 
 export function WorkflowCarouselSlides({
