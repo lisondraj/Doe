@@ -21,5 +21,5 @@ export const VBENTO_CANVAS_PADDING = "px-4 " + narrowHorizontalInset;
 
 /** Hero body copy — tagline, founders intro, roles, CTA shared scale (founder names use their own size in HeroSection). */
 export const HERO_BODY_COPY =
-  "text-[clamp(2rem,7.25vw,3.4rem)] iphone-page:text-[clamp(1.95rem,8.35vw,3.1rem)] font-medium text-white tracking-tight leading-[1.2]";
+  "text-[clamp(2.45rem,9.5vw,4.35rem)] iphone-page:text-[clamp(2.2rem,10.85vw,3.95rem)] font-medium text-white tracking-tight leading-[1.15]";
 export const HERO_INTRO_REVEAL = "transition-[opacity,transform] duration-[1050ms] ease-out";
