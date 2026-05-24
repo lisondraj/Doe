@@ -131,10 +131,99 @@ body.mainpage-route {
   animation: hero-cta-bounce-once 1.4s ease-in-out 1 both;
 }
 
+/* Wheel-driven mission caret — uses transform so inline opacity stays 1∶1 with scroll deltas */
+.hero-mission-scroll-caret-blink {
+  transform-origin: bottom;
+  animation: hero-mission-scroll-caret-blink-transform 1s ease-in-out infinite;
+}
+
+@keyframes hero-mission-scroll-caret-blink-transform {
+  0%,
+  45% {
+    transform: scaleY(1);
+  }
+
+  50%,
+  95% {
+    transform: scaleY(0.16);
+  }
+
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+/* Desktop home — typed caret after left mission line (blink + ease-in appearance) — legacy fallback */
+.hero-mission-caret-wrap {
+  display: inline-block;
+  vertical-align: -0.12em;
+  height: 0.82em;
+  width: 2px;
+  margin-left: 0.09em;
+  transform-origin: bottom;
+  opacity: 0;
+  animation: hero-mission-caret-wrap-in 0.45s ease-out 0.35s forwards;
+}
+
+.hero-mission-caret-bar {
+  display: block;
+  height: 100%;
+  width: 100%;
+  border-radius: 1px;
+  background: rgb(255 255 255 / 0.92);
+  animation: hero-mission-caret-blink 1.05s ease-in-out infinite 0.75s;
+}
+
+@keyframes hero-mission-caret-wrap-in {
+  from {
+    opacity: 0;
+    transform: scaleY(0.25);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+@keyframes hero-mission-caret-blink {
+  0%,
+  45% {
+    opacity: 1;
+  }
+
+  50%,
+  95% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-hero-cta-float,
   .animate-hero-cta-bounce-once {
     animation: none;
+  }
+
+  .hero-mission-scroll-caret-blink {
+    animation: none !important;
+    transform: scaleY(1);
+  }
+
+  .hero-mission-caret-wrap,
+  .hero-mission-caret-bar {
+    animation: none !important;
+  }
+
+  .hero-mission-caret-wrap {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+
+  .hero-mission-caret-bar {
+    opacity: 1;
   }
 }
 

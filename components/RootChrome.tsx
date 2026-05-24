@@ -1,30 +1,6 @@
 "use client";
 
-import { DesktopComingSoon } from "@/components/DesktopComingSoon";
-import { usePathname } from "next/navigation";
-
-export function RootChrome({
-  children,
-  loraClassName,
-  interClassName,
-}: {
-  children: React.ReactNode;
-  loraClassName: string;
-  interClassName: string;
-}) {
-  const pathname = usePathname();
-  const hideDesktopComingSoon =
-    pathname === "/" ||
-    pathname === "/desktop" ||
-    pathname === "/mainpage" ||
-    (pathname?.startsWith("/design") ?? false);
-
-  return (
-    <>
-      {!hideDesktopComingSoon && (
-        <DesktopComingSoon loraClassName={loraClassName} interClassName={interClassName} />
-      )}
-      {children}
-    </>
-  );
+/** Global shell placeholder — wraps app children (no overlays). */
+export function RootChrome({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
 }

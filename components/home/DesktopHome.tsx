@@ -1,8 +1,18 @@
 "use client";
 
 import { Lora, Old_Standard_TT, Inter } from "next/font/google";
+import localFont from "next/font/local";
 import Link from "next/link";
-import { useState, useEffect, useLayoutEffect, useRef, type HTMLAttributes } from "react";
+import {
+  Fragment,
+  useState,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  type HTMLAttributes,
+  type Ref,
+} from "react";
+import { ClinicWorkflowDiagram } from "@/components/herodesign/ClinicWorkflowDiagram";
 import { NAV_HREFS } from "@/components/doe-nav-data";
 import { HERO_CAROUSEL_GRAIN_BG } from "@/components/hero-carousel-texture";
 import { DesignHeroBackdropSection } from "@/components/design-hero-backdrop-section";
@@ -23,6 +33,180 @@ const DESKTOP_NAV_DROPDOWN_ENABLED = false;
 
 /** Desktop hero: wheel delta budgets this much × viewport height to complete zoom (~same range as legacy 280vh driver minus one screen). */
 const DESKTOP_HERO_WHEEL_ZOOM_RATIO = 1.8;
+
+/**
+ * Desktop hero wheel normalization 0→3: backdrop zoom+Doe scrub [0,1]; mission type [1,2]; AI prompt card
+ * reveal (+ typed placeholder) [2,3]. Page scroll stays locked until the full 3.0 is reached.
+ */
+const DESKTOP_HERO_SCROLL_LINEAR_COMPLETE = 3;
+
+/** Share of wheel segment [2,3]: card chrome fully on-screen before typed prompt begins (remainder scrubs glyphs). */
+const DESKTOP_HERO_AI_CHROME_BEFORE_PROMPT_RATIO = 0.42;
+
+/** Local Suisse Intl trial faces — scoped to hero AI teaser card typography. */
+const suisseIntl = localFont({
+  src: [
+    { path: "../../fonts/suisse/SuisseIntlTrial-Regular.otf", weight: "400", style: "normal" },
+    { path: "../../fonts/suisse/SuisseIntlTrial-Medium.otf", weight: "500", style: "normal" },
+    { path: "../../fonts/suisse/SuisseIntlTrial-Semibold.otf", weight: "600", style: "normal" },
+  ],
+  display: "swap",
+});
+
+const DESKTOP_MISSION_L1_TEXT = "We're building the future ";
+const DESKTOP_MISSION_L2_TEXT = "of AI in healthcare.";
+const DESKTOP_MISSION_FULL = DESKTOP_MISSION_L1_TEXT + DESKTOP_MISSION_L2_TEXT;
+const DESKTOP_MISSION_CHAR_COUNT = DESKTOP_MISSION_FULL.length;
+const DESKTOP_MISSION_L1_LEN = DESKTOP_MISSION_L1_TEXT.length;
+
+function DesktopHeroMissionScrollText({
+  interClassName,
+  typeLinear,
+  line1SpanRef,
+}: {
+  interClassName: string;
+  typeLinear: number;
+  /** Ref on the line-1 inline-block span — getBCR on it gives true ink width regardless of parent clip. */
+  line1SpanRef?: Ref<HTMLSpanElement>;
+}) {
+  const clampedT = Math.min(1, Math.max(0, typeLinear));
+  const R = clampedT * DESKTOP_MISSION_CHAR_COUNT;
+  const typingDone = clampedT >= 1 - 1e-5;
+
+  const charOpacityAt = (idx: number) => {
+    if (R <= idx) return 0;
+    if (R >= idx + 1) return 1;
+    return R - idx;
+  };
+
+  // kFocus: the character currently being faded in (its opacity is 0→1 as R advances)
+  const kFocus = Math.min(Math.floor(R + 1e-9), DESKTOP_MISSION_CHAR_COUNT - 1);
+
+  // Caret opacity mirrors the active character's fade progress so bar + letter arrive together
+  const caretOpacity = typingDone ? 0 : charOpacityAt(kFocus);
+
+  // Caret element — sits to the RIGHT of the active character, disappears when typing done
+  const caret = (
+    <span
+      key="caret"
+      aria-hidden
+      style={{
+        display: typingDone ? "none" : "inline-block",
+        width: "2px",
+        /* ~cap-height ↔ ascender span for clamped headline Inter (~0.9em reads true next to glyphs) */
+        height: "0.9em",
+        verticalAlign: "-0.1em",
+        marginLeft: "0.04em",
+        borderRadius: "1px",
+        background: "rgb(255 255 255 / 0.92)",
+        opacity: caretOpacity,
+        transition: "opacity 100ms linear",
+      }}
+    />
+  );
+
+  // Render all characters with their current opacity so layout is stable from the start —
+  // invisible future characters preserve line width and prevent the first line from shifting.
+  const renderLine = (start: number, end: number) =>
+    DESKTOP_MISSION_FULL.slice(start, end)
+      .split("")
+      .map((ch, rel) => {
+        const idx = start + rel;
+        const op = charOpacityAt(idx);
+        return (
+          <Fragment key={idx}>
+            <span
+              style={{ opacity: op }}
+              className="inline-block whitespace-pre"
+            >
+              {ch === " " ? "\u00A0" : ch}
+            </span>
+            {/* Place caret immediately after the active character */}
+            {!typingDone && idx === kFocus ? caret : null}
+          </Fragment>
+        );
+      });
+
+  const lineStyle: React.CSSProperties = {
+    display: "inline-block",
+    minHeight: "1.22em",
+    whiteSpace: "nowrap",
+    lineHeight: 1.22,
+    verticalAlign: "top",
+  };
+
+  return (
+    <p
+      className={`flex w-max max-w-full flex-col items-start gap-0 text-left text-white ${interClassName}`}
+      style={{
+        fontWeight: 400,
+        fontSize: "clamp(2.6rem, 5.8vw, 5rem)",
+        lineHeight: 1.12,
+        letterSpacing: "-0.038em",
+      }}
+    >
+      <span ref={line1SpanRef} style={lineStyle}>
+        {renderLine(0, DESKTOP_MISSION_L1_LEN)}
+      </span>
+      <span style={lineStyle}>{renderLine(DESKTOP_MISSION_L1_LEN, DESKTOP_MISSION_CHAR_COUNT)}</span>
+    </p>
+  );
+}
+
+/** Demo identity for hero PATIENT embedding strip (production would come from routing/context). */
+const DESKTOP_HERO_DEMO_PATIENT_LINE1 = "Jordan Elias";
+const DESKTOP_HERO_DEMO_PATIENT_LINE2 = "Mercer";
+const DESKTOP_HERO_DEMO_PATIENT_DISPLAY = `${DESKTOP_HERO_DEMO_PATIENT_LINE1} ${DESKTOP_HERO_DEMO_PATIENT_LINE2}`;
+/** Embedding strip — saturated orange hues only */
+const DESKTOP_HERO_EMBED_ORANGE_HEX = [
+  "#FFF5E9",
+  "#FFEAD0",
+  "#FFD096",
+  "#FFB554",
+  "#FF9F2E",
+  "#F0841A",
+  "#E06912",
+  "#C9570C",
+  "#A94308",
+  "#853208",
+] as const;
+
+const DESKTOP_HERO_AI_PROMPT_TEXT =
+  "Show me everything I need to know for this patient's appointment today.";
+
+function DesktopHeroAiPromptScrollText({ typeLinear }: { typeLinear: number }) {
+  const n = DESKTOP_HERO_AI_PROMPT_TEXT.length;
+  const clampedT = Math.min(1, Math.max(0, typeLinear));
+  const R = clampedT * n;
+  const typingDone = clampedT >= 1 - 1e-5;
+
+  const charOpacityAt = (idx: number) => {
+    if (R <= idx) return 0;
+    if (R >= idx + 1) return 1;
+    return R - idx;
+  };
+
+  return (
+    <p
+      className="flex-1 min-w-0 text-left leading-snug text-neutral-900"
+      style={{
+        fontWeight: 400,
+        fontSize: "1.0625rem",
+        letterSpacing: "-0.02em",
+        lineHeight: 1.45,
+      }}
+    >
+      {DESKTOP_HERO_AI_PROMPT_TEXT.split("").map((ch, idx) => {
+        const op = typingDone ? 1 : charOpacityAt(idx);
+        return (
+          <span key={idx} style={{ opacity: op }}>
+            {ch}
+          </span>
+        );
+      })}
+    </p>
+  );
+}
 
 const DESKTOP_NAV_ITEMS = [
   { label: "Features", href: NAV_HREFS.Features },
@@ -285,11 +469,19 @@ export function DesktopHome() {
   const [newGradientSectionTranslateY, setNewGradientSectionTranslateY] = useState(40);
   const [newGradientTitleOpacity, setNewGradientTitleOpacity] = useState(0);
   const [newGradientTitleTranslateY, setNewGradientTitleTranslateY] = useState(40);
-  /** Smooth 0→1 desktop hero backdrop zoom — driven by wheel until gate releases (no page scroll yet). */
-  const [desktopHeroZoomProgress, setDesktopHeroZoomProgress] = useState(0);
+  /**
+   * Desktop hero wheel normalization 0→3: backdrop zoom+Doe scrub on [0,1], typed mission on [1,2],
+   * AI prompt card on [2,3].
+   * Page scroll unlocks only once this reaches DESKTOP_HERO_SCROLL_LINEAR_COMPLETE.
+   */
+  const [desktopHeroScrollLinear, setDesktopHeroScrollLinear] = useState(0);
   const desktopHeroWheelLinearRef = useRef(0);
   const desktopHeroScrollReleasedRef = useRef(false);
   const [desktopHeroScrollReleased, setDesktopHeroScrollReleased] = useState(false);
+
+  /** Line-1 span ref — getBCR gives true ink width even if the paragraph parent is max-w clamped. */
+  const desktopHeroMissionLine1SpanRef = useRef<HTMLSpanElement>(null);
+  const [desktopHeroMissionLine1PxWidth, setDesktopHeroMissionLine1PxWidth] = useState<number | null>(null);
 
   const releaseDesktopHeroScroll = () => {
     desktopHeroScrollReleasedRef.current = true;
@@ -309,8 +501,8 @@ export function DesktopHome() {
       if (desktopHeroScrollReleasedRef.current) return;
       const y = window.scrollY || document.documentElement.scrollTop;
       if (y <= 8) return;
-      desktopHeroWheelLinearRef.current = 1;
-      setDesktopHeroZoomProgress(1);
+      desktopHeroWheelLinearRef.current = DESKTOP_HERO_SCROLL_LINEAR_COMPLETE;
+      setDesktopHeroScrollLinear(DESKTOP_HERO_SCROLL_LINEAR_COMPLETE);
       releaseDesktopHeroScroll();
     };
 
@@ -332,25 +524,18 @@ export function DesktopHome() {
   /** Breakpoint synced with carousel/phone UX — declare before hero intro hooks that read it */
   const [isPhoneLayout, setIsPhoneLayout] = useState(false);
 
-  /** Desktop hero stagger: Doe fades/up first, then subtitle (no simultaneous pop). */
+  /** Desktop hero intro: Doe + tagline share the same fade (no subtitle lag). */
   const [desktopHeroIntroDoe, setDesktopHeroIntroDoe] = useState(isPhoneLayout);
-  const [desktopHeroIntroSubtitle, setDesktopHeroIntroSubtitle] = useState(isPhoneLayout);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || isPhoneLayout) {
       setDesktopHeroIntroDoe(true);
-      setDesktopHeroIntroSubtitle(true);
       return;
     }
     const revealDoeMs = 90;
-    const revealSubMs = 720;
     const t0 = window.setTimeout(() => setDesktopHeroIntroDoe(true), revealDoeMs);
-    const t1 = window.setTimeout(() => setDesktopHeroIntroSubtitle(true), revealSubMs);
-    return () => {
-      window.clearTimeout(t0);
-      window.clearTimeout(t1);
-    };
+    return () => window.clearTimeout(t0);
   }, [isPhoneLayout]);
 
   const buildSectionRef = useRef<HTMLDivElement>(null);
@@ -420,6 +605,29 @@ export function DesktopHome() {
   const slideBoxH = isPhoneLayout ? phoneSlideSize.h : desktopCarouselH;
   const carouselViewportW = isPhoneLayout ? slideBoxW : viewportWidth;
 
+  useLayoutEffect(() => {
+    if (typeof window === "undefined" || isPhoneLayout) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    /* Measure the LINE-1 span directly — whitespace:nowrap inline-block so its BCR width
+       is the true ink width of "We're building the future" regardless of parent max-w clip. */
+    const el = desktopHeroMissionLine1SpanRef.current;
+    if (!el) {
+      setDesktopHeroMissionLine1PxWidth(null);
+      return;
+    }
+    const flush = () => {
+      const w = el.getBoundingClientRect().width;
+      if (w > 0) setDesktopHeroMissionLine1PxWidth(Math.ceil(w));
+    };
+    void document.fonts.ready.then(flush).catch(() => flush());
+    flush();
+    requestAnimationFrame(flush);
+    const ro = new ResizeObserver(flush);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [isPhoneLayout, viewportWidth, desktopHeroScrollLinear]);
+
   /** Lock page scroll until desktop hero zoom finishes (wheel drives zoom without advancing layout). */
   useLayoutEffect(() => {
     const mqPhone = window.matchMedia("(max-width: 639px)");
@@ -454,14 +662,15 @@ export function DesktopHome() {
 
     const mqPhone = window.matchMedia("(max-width: 639px)");
     const mqReduce = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const smoothstep = (t: number) => t * t * (3 - 2 * t);
-    const budgetPx = () => DESKTOP_HERO_WHEEL_ZOOM_RATIO * Math.max(1, window.innerHeight);
+    const budgetPx = () =>
+      DESKTOP_HERO_SCROLL_LINEAR_COMPLETE * DESKTOP_HERO_WHEEL_ZOOM_RATIO * Math.max(1, window.innerHeight);
 
     const applyWheelLinear = (linear: number) => {
-      const clampedLinear = Math.min(1, Math.max(0, linear));
+      const maxLin = DESKTOP_HERO_SCROLL_LINEAR_COMPLETE;
+      const clampedLinear = Math.min(maxLin, Math.max(0, linear));
       desktopHeroWheelLinearRef.current = clampedLinear;
-      setDesktopHeroZoomProgress(smoothstep(clampedLinear));
-      if (clampedLinear >= 1 - 1e-5) {
+      setDesktopHeroScrollLinear(clampedLinear);
+      if (clampedLinear >= maxLin - 1e-5) {
         releaseDesktopHeroScroll();
       }
     };
@@ -482,8 +691,8 @@ export function DesktopHome() {
         return;
       }
 
-      // Complete zoom without moving scroll position
-      if (e.deltaY > 0 && sy < 3 && lin < 1 - 1e-5) {
+      // Consume wheel through zoom phase + typed mission phase (same budget length as legacy single phase)
+      if (e.deltaY > 0 && sy < 3 && lin < DESKTOP_HERO_SCROLL_LINEAR_COMPLETE - 1e-5) {
         e.preventDefault();
         applyWheelLinear(lin + e.deltaY / b);
       }
@@ -1043,7 +1252,6 @@ export function DesktopHome() {
   const isOnHero = scrollY < viewportHeight * HERO_NAV_FADE_START_RATIO;
   const isDropdownOpen = DESKTOP_NAV_DROPDOWN_ENABLED && activeDropdown !== null;
   const navOnWhiteBar = scrollY >= viewportHeight * HERO_NAV_FADE_START_RATIO;
-  const heroNavInteractable = heroNavReveal >= 0.04;
   const navTextColor = navOnWhiteBar ? "#000" : "#fff";
   const navTextShadow = showNavShadow && isOnHero ? "0 2px 4px rgba(0, 0, 0, 0.1)" : "none";
   const loginButtonBg = navOnWhiteBar ? "#000" : "#fff";
@@ -1053,6 +1261,41 @@ export function DesktopHome() {
   const prefersReducedMotion =
     typeof window !== "undefined" &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const heroZoomLin =
+    prefersReducedMotion || isPhoneLayout ? 1 : Math.min(1, Math.max(0, desktopHeroScrollLinear));
+  /** Same smooth easing as legacy single-phase zoom (applied only while linear ∈ [0,1]). */
+  const desktopHeroZoomProgress =
+    prefersReducedMotion || isPhoneLayout ? 1 : heroZoomLin * heroZoomLin * (3 - 2 * heroZoomLin);
+  /** Second wheel phase [1,2] drives mission glyphs; capped at 1 once past 2 while [2,3] runs the AI card. */
+  const desktopHeroMissionTypeLinear =
+    prefersReducedMotion || isPhoneLayout
+      ? 0
+      : desktopHeroScrollLinear <= 1
+        ? 0
+        : desktopHeroScrollLinear >= 2
+          ? 1
+          : desktopHeroScrollLinear - 1;
+
+  /** Third wheel phase [2,3]: fade / lift AI prompt strip + typed suggestion (1∶1 scroll). */
+  const desktopHeroAiInputRevealLinear =
+    prefersReducedMotion || isPhoneLayout
+      ? 0
+      : desktopHeroScrollLinear <= 2
+        ? 0
+        : desktopHeroScrollLinear >= 3
+          ? 1
+          : desktopHeroScrollLinear - 2;
+
+  /** After chrome + layout read as “loaded”, remap remaining scroll scrub to typed prompt only. */
+  const desktopHeroAiPromptTypeLinear =
+    prefersReducedMotion || isPhoneLayout
+      ? 0
+      : (() => {
+          const chrome = DESKTOP_HERO_AI_CHROME_BEFORE_PROMPT_RATIO;
+          const ai = desktopHeroAiInputRevealLinear;
+          if (ai <= chrome + 1e-9) return 0;
+          return Math.min(1, (ai - chrome) / (1 - chrome));
+        })();
   /** Scrubs with scroll (~3.6×); applied via `background-size` zoom instead of transform so layers stay crisp. */
   const desktopHeroBackdropZoom =
     prefersReducedMotion || isPhoneLayout ? 1 : 1 + desktopHeroZoomProgress * 3.65;
@@ -1069,24 +1312,45 @@ export function DesktopHome() {
   const desktopHeroForegroundOpacity = isPhoneLayout
     ? 1
     : Math.max(0, 1 - desktopHeroZoomProgress);
-  /** Mission line — only fades in once zoom scrubs Doe/subtitle fully out */
-  const smoothstepMz = (t: number) => {
-    const u = Math.min(1, Math.max(0, t));
-    return u * u * (3 - 2 * u);
-  };
-  const desktopHeroMissionZoomStart = 0.96;
-  const desktopHeroMissionOpacity =
+
+  /** Show mission surface only once zoom+Doe scrubbing has finished — still scroll-locked until type phase completes */
+  const desktopHeroMissionBlockOpacity =
     isPhoneLayout || prefersReducedMotion
       ? 0
-      : desktopHeroZoomProgress <= desktopHeroMissionZoomStart
-        ? 0
-        : smoothstepMz(
-            (desktopHeroZoomProgress - desktopHeroMissionZoomStart) / (1 - desktopHeroMissionZoomStart),
-          );
+      : heroZoomLin >= 1 - 1e-4
+        ? 1
+        : 0;
+
+  /**
+   * White hero nav persists through mission typing AND initial scroll beneath the sticky hero —
+   * until `navOnWhiteBar` (cream “non-hero” bar threshold), then vanilla scroll-linked nav styling takes over.
+   */
+  const desktopHeroMissionNavChrome =
+    !isPhoneLayout &&
+    !prefersReducedMotion &&
+    heroZoomLin >= 1 - 1e-4 &&
+    !navOnWhiteBar;
+
+  const heroNavRevealPainted = Math.max(
+    heroNavReveal,
+    desktopHeroMissionNavChrome ? 1 : 0,
+  );
+
+  const heroNavPointerOk =
+    desktopHeroMissionNavChrome || heroNavReveal >= 0.04;
+  const heroNavInk = desktopHeroMissionNavChrome ? "#ffffff" : navTextColor;
+  const heroNavShadowResolved = desktopHeroMissionNavChrome
+    ? "0 1px 3px rgba(0, 0, 0, 0.28)"
+    : navTextShadow;
+  const heroWaitlistBg = desktopHeroMissionNavChrome ? "#ffffff" : loginButtonBg;
+  const heroWaitlistFg = desktopHeroMissionNavChrome ? "#000000" : loginButtonText;
+  const heroWaitlistShadow = desktopHeroMissionNavChrome
+    ? "0 2px 6px rgba(0, 0, 0, 0.12)"
+    : loginButtonShadow;
 
   return (
     <div className="relative overflow-x-hidden" style={{ backgroundColor: '#F7F6F3' }}>
-      {/* Hero — desktop: wheel-zoom backdrop while document scroll stays locked until zoom completes */}
+      {/* Hero — desktop: wheel zoom, typed mission, then AI prompt teaser; scroll locks until all wheel phases finish */}
       {/* z-[40]: stack above later sections (z-10) so fixed nav isn’t painted under carousel / gradients */}
       <div className="relative z-[40] min-h-screen overflow-hidden">
         <div
@@ -1193,13 +1457,17 @@ export function DesktopHome() {
         {/* Navigation Bar */}
         <nav
           className={`fixed top-0 left-0 right-0 z-[50] transition-opacity duration-300 ease-out ${
-            !heroNavInteractable ? 'pointer-events-none' : ''
+            !heroNavPointerOk ? 'pointer-events-none' : ''
           }`}
-          style={{ 
-            opacity: DESKTOP_NAV_DROPDOWN_ENABLED && isDropdownOpen ? 1 : heroNavReveal,
+          style={{
+            opacity: DESKTOP_NAV_DROPDOWN_ENABLED && isDropdownOpen ? 1 : heroNavRevealPainted,
             backgroundColor: 'transparent',
             borderBottom:
-              navOnWhiteBar && (showBackgroundBox || isDropdownOpen) ? '1px solid #E6E6E6' : 'none',
+              !desktopHeroMissionNavChrome &&
+              navOnWhiteBar &&
+              (showBackgroundBox || isDropdownOpen)
+                ? '1px solid #E6E6E6'
+                : 'none',
             transition: 'opacity 280ms ease-out, border-bottom 100ms ease-out',
           }}
           onMouseLeave={DESKTOP_NAV_DROPDOWN_ENABLED ? () => setActiveDropdown(null) : undefined}
@@ -1216,8 +1484,8 @@ export function DesktopHome() {
               }}
             />
           )}
-          {/* Background box when close to second section */}
-          {showBackgroundBox && !isDropdownOpen && (
+          {/* Background box when close to second section — hide during mission-type nav */}
+          {showBackgroundBox && !isDropdownOpen && !desktopHeroMissionNavChrome && (
             <div 
               className="absolute inset-0 pointer-events-none"
               style={{ 
@@ -1229,7 +1497,10 @@ export function DesktopHome() {
           <div className="relative z-10 flex items-center justify-between px-8 py-6">
             <h1
               className={`text-4xl font-normal transition-all duration-300 ${lora.className}`}
-              style={{ color: navTextColor, textShadow: navTextShadow }}
+              style={{
+                color: heroNavInk,
+                textShadow: heroNavShadowResolved,
+              }}
             >
               Doe
             </h1>
@@ -1241,7 +1512,7 @@ export function DesktopHome() {
                     key={item.label}
                     type="button"
                     className="flex cursor-pointer items-center gap-1 border-none bg-transparent text-[13.5px] font-medium leading-tight transition-all duration-300 hover:opacity-70"
-                  style={{ color: navTextColor, textShadow: navTextShadow }}
+                  style={{ color: heroNavInk, textShadow: heroNavShadowResolved }}
                     onMouseEnter={() => setActiveDropdown(item.label)}
                   >
                     {item.label}
@@ -1251,7 +1522,7 @@ export function DesktopHome() {
                     key={item.label}
                     href={item.href}
                     className="text-[13.5px] font-medium leading-tight no-underline transition-all duration-300 hover:opacity-70"
-                    style={{ color: navTextColor, textShadow: navTextShadow }}
+                    style={{ color: heroNavInk, textShadow: heroNavShadowResolved }}
                   >
                     {item.label}
                   </Link>
@@ -1263,9 +1534,9 @@ export function DesktopHome() {
               href="#"
               className="rounded-md px-6 py-2.5 text-sm font-medium transition-all duration-300 hover:opacity-90"
               style={{
-              backgroundColor: loginButtonBg,
-              color: loginButtonText,
-                boxShadow: loginButtonShadow,
+                backgroundColor: heroWaitlistBg,
+                color: heroWaitlistFg,
+                boxShadow: heroWaitlistShadow,
               }}
             >
               Waitlist
@@ -1374,30 +1645,78 @@ export function DesktopHome() {
           </>
         </nav>
 
-        {/* Left mission — enters only after Doe + subtitle have fully faded (zoom completes) */}
-        {!isPhoneLayout && (
+        {/* Left mission + post-mission AI prompt (wheel phases 2→3) */}
+        {!isPhoneLayout && !prefersReducedMotion && desktopHeroMissionBlockOpacity > 0 && (
           <div
-            className="pointer-events-none absolute left-0 top-[40%] z-[21] max-w-[min(36rem,calc(100vw-9rem))] -translate-y-1/2 pl-10 md:left-14 md:pl-20 lg:left-28 lg:pl-32 xl:left-36"
-            style={{
-              opacity: desktopHeroMissionOpacity,
-              transition: prefersReducedMotion
-                ? "none"
-                : "opacity 0.85s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-            }}
+            className="absolute left-0 top-[40%] z-[21] flex max-w-[min(72rem,calc(100vw-6rem))] -translate-y-1/2 flex-col items-start gap-8 pl-10 md:left-14 md:pl-20 lg:left-28 lg:pl-32 xl:left-36"
           >
-            <p
-              className={`text-left text-white ${inter.className}`}
-              style={{
-                fontWeight: 500,
-                fontSize: "clamp(2.1rem, 5vw, 4rem)",
-                lineHeight: 1.14,
-                letterSpacing: "-0.035em",
-              }}
-            >
-              We&apos;re building the future of AI
-              <br />
-              in healthcare.
-            </p>
+            <DesktopHeroMissionScrollText
+              interClassName={inter.className}
+              typeLinear={desktopHeroMissionTypeLinear}
+              line1SpanRef={desktopHeroMissionLine1SpanRef}
+            />
+            {(() => {
+              const r = desktopHeroAiInputRevealLinear;
+              const fade = r * r * (3 - 2 * r);
+              const glidePx = (1 - fade) * 26;
+              const hidden = fade < 1e-4 ? "pointer-events-none" : "";
+              return (
+                <div
+                  className={`self-start ${hidden}`}
+                  style={{
+                    width: "min(32rem, calc(100vw - 14rem))",
+                    opacity: fade,
+                    transform: `translate3d(0, ${glidePx}px, 0)`,
+                    transition: "opacity 0.14s linear, transform 0.14s linear",
+                  }}
+                  aria-hidden={fade < 0.98}
+                >
+                  <div className={`min-w-0 rounded-2xl bg-white/95 px-5 pb-4 pt-4 ${suisseIntl.className}`}
+                    style={{ boxShadow: "0 1px 0 0 rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.07)" }}
+                  >
+                    {/* Patient chip */}
+                    <div className="mb-3 flex items-center gap-2">
+                      <span
+                        className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[0.6rem] font-semibold text-white"
+                        style={{ background: "#C9570C" }}
+                        aria-hidden
+                      >
+                        {DESKTOP_HERO_DEMO_PATIENT_LINE2[0]}
+                      </span>
+                      <span
+                        className="text-[0.8rem] font-medium tracking-tight text-neutral-500"
+                      >
+                        {DESKTOP_HERO_DEMO_PATIENT_DISPLAY}
+                      </span>
+                    </div>
+
+                    {/* Prompt + actions row */}
+                    <div className="flex min-w-0 items-end gap-3">
+                      <DesktopHeroAiPromptScrollText typeLinear={desktopHeroAiPromptTypeLinear} />
+                      <div className="flex shrink-0 items-center gap-2.5 pb-0.5">
+                        <span className="pointer-events-none inline-flex text-neutral-300" aria-hidden>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.4}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 19v4M8 23h8" />
+                          </svg>
+                        </span>
+                        <button
+                          type="button"
+                          aria-label="Send prompt"
+                          tabIndex={-1}
+                          className="pointer-events-none flex h-8 w-8 items-center justify-center rounded-full bg-neutral-900 text-white"
+                        >
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 19V5m0 0l-7 7m7-7l7 7" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         )}
 
@@ -1419,19 +1738,18 @@ export function DesktopHome() {
               Doe
             </h1>
             <p
-              className={`mx-auto max-w-[min(40rem,calc(100vw-4rem))] px-4 text-center text-lg font-medium leading-snug text-white/90 transition-[opacity,transform] duration-[800ms] ease-out sm:text-xl ${inter.className}`}
+              className={`mx-auto max-w-[min(40rem,calc(100vw-4rem))] px-4 text-center text-lg font-medium leading-snug text-white/90 transition-[opacity,transform] duration-[850ms] ease-out sm:text-xl ${inter.className}`}
               style={{
-                opacity: desktopHeroForegroundOpacity * (desktopHeroIntroSubtitle ? 1 : 0),
+                opacity: desktopHeroForegroundOpacity * (desktopHeroIntroDoe ? 1 : 0),
                 transform:
                   prefersReducedMotion || isPhoneLayout
                     ? undefined
-                    : desktopHeroIntroSubtitle
-                      ? "translateY(0)"
-                      : "translateY(10px)",
-                transitionDelay: prefersReducedMotion || isPhoneLayout ? "0ms" : "90ms",
+                    : desktopHeroIntroDoe
+                      ? "translateY(0) scale(1)"
+                      : "translateY(12px) scale(0.985)",
               }}
             >
-              More than an inbox.
+              More than an AI inbox.
             </p>
           </div>
         </div>
@@ -1541,13 +1859,17 @@ export function DesktopHome() {
         </div>
       </div>
 
-      {/* /design — hero gradient + crosshatch (before Doe word carousel / billing) */}
+      {/* Third section — full-screen hero gradient + animated dot wave */}
       <DesignHeroBackdropSection
         className="relative z-10"
-        overlay="dots"
-        dotPatternCellPx={36}
-        dotOverlayOpacity={0.45}
-      />
+        overlay="dot-wave"
+      >
+        <div className="flex min-h-[100dvh] min-h-screen w-full items-center justify-center px-4 py-12">
+          <div className="relative h-[min(82vh,680px)] w-full">
+            <ClinicWorkflowDiagram layout="light" onDarkSurface animated />
+          </div>
+        </div>
+      </DesignHeroBackdropSection>
 
       {/* Blank Section with Grid Lines */}
       <div ref={carouselSectionRef} className="h-screen w-full relative z-10 overflow-x-hidden" style={{
