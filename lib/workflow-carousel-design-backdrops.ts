@@ -56,9 +56,9 @@ export const CARE_COORDINATION_BACKDROP = WORKFLOW_CAROUSEL_DESIGN_BACKDROPS[0];
 /** Diagnostic assistant carousel card (slide index 2) — linear 180° gradient, hex grid, grain. */
 export const DIAGNOSTIC_ASSISTANT_BACKDROP = WORKFLOW_CAROUSEL_DESIGN_BACKDROPS[4];
 
-/** /doephone — larger radial bloom; less light yellow at the outer edge (gradient only). */
-export const CARE_COORDINATION_GRADIENT_DOEPHONE =
-  "radial-gradient(circle 158% at 50% 50%, #1E343A 0%, #D2774C 58%, #D2774C 90%, #E7A944 100%)";
+/** /doephone section 5 — same hex grid; softer top (less bright yellow). */
+export const DOEPHONE_DIAGNOSTIC_ASSISTANT_GRADIENT =
+  "linear-gradient(180deg, #D2774C 0%, #D49D4F 20%, #D2774C 52%, #1E343A 100%)";
 
 /** `/design3` — Built for you (polar). */
 export const DESIGN3_BACKDROP = WORKFLOW_CAROUSEL_DESIGN_BACKDROPS[1];

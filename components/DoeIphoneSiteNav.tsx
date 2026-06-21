@@ -55,10 +55,10 @@ function NavChromeStrip({
   pinchSafe?: boolean;
 }) {
   const navInsetX = pinchSafe
-    ? "px-10 iphone-page:px-[max(1.5rem,calc(env(safe-area-inset-left,0px)+3.45vmin))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))]"
+    ? "px-11 iphone-page:px-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))] iphone-page:pr-[max(1.65rem,env(safe-area-inset-right,0px))]"
     : "px-8 iphone-page:px-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))]";
   const doeLeft = pinchSafe
-    ? "left-10 iphone-page:left-[max(1.5rem,calc(env(safe-area-inset-left,0px)+3.45vmin))]"
+    ? "left-11 iphone-page:left-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))]"
     : "left-8 iphone-page:left-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))]";
 
   return (
