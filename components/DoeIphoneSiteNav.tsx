@@ -24,6 +24,9 @@ const lora = Lora({
 const narrowHorizontalInset =
   "iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))]";
 
+const NAV_SHEET_MS = 320;
+const NAV_SHEET_EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
+
 /** Same visible viewport logic as `app/page.tsx` / blog — drives nav sheet remeasure on resize. */
 function siteNavAppViewportPx(): { width: number; height: number } {
   if (typeof window === "undefined") return { width: 1200, height: 800 };
@@ -103,6 +106,10 @@ function NavChromeStrip({
 export default function DoeIphoneSiteNav() {
   const isPhoneLayout = true;
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  /** Keeps the sheet mounted through the close animation. */
+  const [navSheetLive, setNavSheetLive] = useState(false);
+  /** Drives enter/exit opacity + slide on the sheet layer. */
+  const [navSheetVisualOpen, setNavSheetVisualOpen] = useState(false);
   const [mobileNavFooterSlide, setMobileNavFooterSlide] = useState(0);
   const mobileNavFooterCarouselRef = useRef<HTMLDivElement>(null);
   /** Carousel width when the sheet first opens — `zoom` shrinks uniformly if the window gets narrower (matches home `app/page.tsx`). */
@@ -117,6 +124,24 @@ export default function DoeIphoneSiteNav() {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (mobileNavOpen) {
+      setNavSheetLive(true);
+      let raf2 = 0;
+      const raf1 = requestAnimationFrame(() => {
+        raf2 = requestAnimationFrame(() => setNavSheetVisualOpen(true));
+      });
+      return () => {
+        cancelAnimationFrame(raf1);
+        cancelAnimationFrame(raf2);
+      };
+    }
+
+    setNavSheetVisualOpen(false);
+    const t = window.setTimeout(() => setNavSheetLive(false), NAV_SHEET_MS);
+    return () => window.clearTimeout(t);
+  }, [mobileNavOpen]);
 
   useEffect(() => {
     const tick = () => {
@@ -196,25 +221,22 @@ export default function DoeIphoneSiteNav() {
   }, [mobileNavOpen, appViewport.width, appViewport.height]);
 
   useEffect(() => {
-    if (!mobileNavOpen) return;
+    if (!navSheetLive) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = prev;
     };
-  }, [mobileNavOpen]);
+  }, [navSheetLive]);
 
   useEffect(() => {
-    if (!mobileNavOpen) return;
+    if (!navSheetLive) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setMobileNavOpen(false);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [mobileNavOpen]);
-
-  useEffect(() => {
-  }, [mobileNavOpen]);
+  }, [navSheetLive]);
 
   useEffect(() => {
     if (!mobileNavOpen) {
@@ -241,16 +263,22 @@ export default function DoeIphoneSiteNav() {
   }, [mobileNavOpen]);
 
   const navTextColor = "#000";
+  const navSheetTransition = `opacity ${NAV_SHEET_MS}ms ${NAV_SHEET_EASE}, transform ${NAV_SHEET_MS}ms ${NAV_SHEET_EASE}`;
 
   const mobileMenuLayer =
     mounted &&
     isPhoneLayout &&
-    mobileNavOpen &&
+    navSheetLive &&
     createPortal(
       <>
         <button
           type="button"
-          className="fixed inset-0 z-[90] cursor-pointer bg-black/25 transition-opacity duration-300 ease-out"
+          className="fixed inset-0 z-[90] cursor-pointer bg-black/25"
+          style={{
+            opacity: navSheetVisualOpen ? 1 : 0,
+            transition: `opacity ${NAV_SHEET_MS}ms ${NAV_SHEET_EASE}`,
+            pointerEvents: navSheetVisualOpen ? "auto" : "none",
+          }}
           aria-label="Close navigation menu"
           onClick={() => setMobileNavOpen(false)}
         />
@@ -262,7 +290,13 @@ export default function DoeIphoneSiteNav() {
           />
           <div
             className="absolute inset-x-0 bottom-0 bg-[#F7F6F3] flex flex-col pointer-events-auto overflow-hidden min-h-0"
-            style={{ top: iphoneMenuTopPx }}
+            style={{
+              top: iphoneMenuTopPx,
+              opacity: navSheetVisualOpen ? 1 : 0,
+              transform: navSheetVisualOpen ? "translateY(0)" : "translateY(-10px)",
+              transition: navSheetTransition,
+              pointerEvents: navSheetVisualOpen ? "auto" : "none",
+            }}
             role="dialog"
             aria-modal="true"
             aria-label="Site navigation"
@@ -380,17 +414,18 @@ export default function DoeIphoneSiteNav() {
 
   const navChromeElevated =
     mounted &&
-    mobileNavOpen &&
+    navSheetLive &&
     createPortal(
       <header
         className="fixed top-0 left-0 right-0 z-[200] iphone-page:pt-[env(safe-area-inset-top,0px)] bg-[#F7F6F3] border-b border-[#E6E6E6]"
         style={{
-          transition: "border-bottom 100ms ease-out, border-color 100ms ease-out, background-color 180ms ease-out",
+          opacity: navSheetVisualOpen ? 1 : 0.98,
+          transition: navSheetTransition,
         }}
       >
         <NavChromeStrip
           navTextColor={navTextColor}
-          mobileNavOpen={mobileNavOpen}
+          mobileNavOpen={navSheetLive}
           toggleMenu={() => setMobileNavOpen((o) => !o)}
         />
       </header>,
@@ -401,7 +436,7 @@ export default function DoeIphoneSiteNav() {
     <>
       <nav
         ref={navBarRowRef}
-        className={`fixed top-0 left-0 right-0 iphone-page:pt-[env(safe-area-inset-top,0px)] ${mobileNavOpen ? "z-[100]" : "z-50"}`}
+        className={`fixed top-0 left-0 right-0 iphone-page:pt-[env(safe-area-inset-top,0px)] ${navSheetLive ? "z-[100]" : "z-50"}`}
         style={{
           backgroundColor: "#F7F6F3",
           borderBottom: "1px solid #E6E6E6",
@@ -409,8 +444,12 @@ export default function DoeIphoneSiteNav() {
         }}
       >
         <div
-          className={mobileNavOpen ? "opacity-0 pointer-events-none select-none" : undefined}
-          aria-hidden={mobileNavOpen ? true : undefined}
+          className="transition-opacity duration-[320ms] ease-[cubic-bezier(0.32,0.72,0,1)]"
+          style={{
+            opacity: navSheetLive ? 0 : 1,
+            pointerEvents: navSheetLive ? "none" : "auto",
+          }}
+          aria-hidden={navSheetLive ? true : undefined}
         >
           <NavChromeStrip
             navTextColor={navTextColor}

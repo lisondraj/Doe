@@ -6,7 +6,6 @@ import { HomeFooter } from "@/components/home/sections/HomeFooter";
 import { doeforvcRootZoom } from "@/lib/doeforvc-zoom";
 import { inter, lora } from "@/lib/home/fonts";
 import { HERO_BACKDROP_GRADIENT, narrowHorizontalInset } from "@/lib/home/hero-constants";
-import { useDisablePinchGestures } from "@/lib/useDisablePinchGestures";
 import { useLayoutEffect, useState } from "react";
 
 function appViewportPx(): { width: number; height: number } {
@@ -20,8 +19,6 @@ function appViewportPx(): { width: number; height: number } {
 }
 
 export function DoePhoneMobileView() {
-  useDisablePinchGestures();
-
   const [viewportWidth, setViewportWidth] = useState(1200);
   const [heroHeightPx, setHeroHeightPx] = useState(800);
 
