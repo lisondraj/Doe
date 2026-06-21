@@ -8,14 +8,13 @@ import {
   DOEPHONE_SECTION_COPY_TW,
 } from "@/lib/doephone/section-styles";
 
-export function DoePhoneSectionText({
+export function DoePhoneSectionTitle({
   line1,
   line2,
   color = "text-[#1E343A]",
 }: {
   line1: ReactNode;
   line2?: ReactNode;
-  /** Tailwind text-color class. Use `text-white` on gradient sections. */
   color?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -44,17 +43,32 @@ export function DoePhoneSectionText({
   }, []);
 
   return (
+    <div ref={ref}>
+      <p
+        className={`doephone-section-copy ${DOEPHONE_SECTION_COPY_TW} ${color} ${suisseIntl.className} ${
+          visible ? "doephone-section-copy-visible" : ""
+        }`.trim()}
+      >
+        <span className="block">{line1}</span>
+        {line2 ? <span className="block">{line2}</span> : null}
+      </p>
+    </div>
+  );
+}
+
+export function DoePhoneSectionText({
+  line1,
+  line2,
+  color = "text-[#1E343A]",
+}: {
+  line1: ReactNode;
+  line2?: ReactNode;
+  /** Tailwind text-color class. Use `text-white` on gradient sections. */
+  color?: string;
+}) {
+  return (
     <div className={`${DOEPHONE_SECTION_COPY_POSITION} ${DOEPHONE_SECTION_COPY_INSET}`}>
-      <div ref={ref}>
-        <p
-          className={`doephone-section-copy ${DOEPHONE_SECTION_COPY_TW} ${color} ${suisseIntl.className} ${
-            visible ? "doephone-section-copy-visible" : ""
-          }`.trim()}
-        >
-          <span className="block">{line1}</span>
-          {line2 ? <span className="block">{line2}</span> : null}
-        </p>
-      </div>
+      <DoePhoneSectionTitle line1={line1} line2={line2} color={color} />
     </div>
   );
 }

@@ -13,3 +13,7 @@ export const DOEPHONE_SECTION_COPY_TW =
 /** Full iPhone viewport band below hero. */
 export const DOEPHONE_VIEWPORT_SECTION =
   "relative z-10 w-full min-h-[100svh] h-[100svh] iphone-page:min-h-[100dvh] iphone-page:h-[100dvh]";
+
+/** Equal inset on all sides around section 2 content (title + carousel). */
+export const DOEPHONE_SECTION_CAROUSEL_PAD =
+  "p-[clamp(1.25rem,1rem+1.15vmin,1.75rem)] iphone-page:p-[clamp(1.35rem,1.05rem+1.2vmin,1.85rem)]";

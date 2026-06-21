@@ -1,8 +1,9 @@
 "use client";
 
 import DoeIphoneSiteNav from "@/components/DoeIphoneSiteNav";
+import { DoePhoneCommunicationSection } from "@/components/doephone/DoePhoneCommunicationSection";
 import { DoePhoneHeroSection } from "@/components/doephone/DoePhoneHeroSection";
-import { DoePhoneSectionPlus, DoePhoneSectionText } from "@/components/doephone/DoePhoneSectionText";
+import { DoePhoneSectionText } from "@/components/doephone/DoePhoneSectionText";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
 import {
@@ -36,16 +37,8 @@ export function DoePhoneMobileView() {
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 
-      <section className={`${DOEPHONE_VIEWPORT_SECTION} bg-[#F7F6F3]`} aria-label="Communication">
-        <DoePhoneSectionText
-          line1="Communication"
-          line2={
-            <>
-              <DoePhoneSectionPlus />
-              intelligence.
-            </>
-          }
-        />
+      <section className={`${DOEPHONE_VIEWPORT_SECTION} flex flex-col bg-[#F7F6F3]`} aria-label="Communication">
+        <DoePhoneCommunicationSection />
       </section>
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
