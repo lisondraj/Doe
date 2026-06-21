@@ -63,7 +63,7 @@ export function DoePhoneMobileView() {
           className={`absolute inset-0 z-[3] flex flex-col items-start justify-start pt-[max(10rem,calc(env(safe-area-inset-top,0px)+35svh))] pb-8 ${DOEPHONE_HERO_HEADLINE_INSET}`}
         >
           <h1
-            className={`doephone-hero-headline-line text-left italic font-normal leading-[1.02] tracking-[-0.02em] text-white text-[clamp(3.45rem,14vw,6rem)] iphone-page:text-[clamp(3.25rem,13.25vw,5.65rem)] ${lora.className}`}
+            className={`doephone-hero-headline-line text-left italic font-medium leading-[1.02] tracking-[-0.02em] text-white [text-shadow:none] text-[clamp(3.45rem,14vw,6rem)] iphone-page:text-[clamp(3.25rem,13.25vw,5.65rem)] ${lora.className}`}
           >
             <span className="block">An AI inbox</span>
             <span className="flex flex-wrap items-baseline">
