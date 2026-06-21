@@ -6,7 +6,7 @@ import { DoePhoneSectionPlus, DoePhoneSectionText } from "@/components/doephone/
 import { HeroCarouselTextureOverlay } from "@/components/hero-carousel-texture";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
-import { HERO_BACKDROP_GRADIENT } from "@/lib/home/hero-constants";
+import { DOEPHONE_HERO_BACKDROP_GRADIENT } from "@/lib/doephone/hero-gradient";
 import {
   DOEPHONE_SECTION_COPY_INSET,
   DOEPHONE_VIEWPORT_SECTION,
@@ -52,7 +52,7 @@ export function DoePhoneMobileView() {
         <div className="absolute inset-0">
           <div
             className="pointer-events-none absolute inset-0"
-            style={{ background: HERO_BACKDROP_GRADIENT }}
+            style={{ background: DOEPHONE_HERO_BACKDROP_GRADIENT }}
             aria-hidden
           />
           <HeroCarouselTextureOverlay introOnLoad />
