@@ -10,7 +10,7 @@ export const HERO_BACKDROP_GRADIENT = `
 
 /** @deprecated Use `DOEPHONE_HERO_BACKDROP` from workflow-carousel-design-backdrops. */
 export const DOEPHONE_HERO_BACKDROP_GRADIENT =
-  "radial-gradient(circle at center, #E7A944 0%, #D49D4F 40%, #D2774C 70%, #1E343A 100%)";
+  "radial-gradient(circle at center, #D4893f 0%, #D2774C 34%, #BF593D 54%, #8b4f38 72%, #1E343A 100%)";
 
 /** Same horizontal inset as the fixed nav — hero, headline band, carousel (forced phone layout). */
 export const narrowHorizontalInset =

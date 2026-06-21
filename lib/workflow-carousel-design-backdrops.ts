@@ -74,8 +74,14 @@ export const HEY_CAROUSEL_BACKDROP: WorkflowCarouselDesignBackdrop = {
   polarCenterY: "50%",
 };
 
-/** `/doephone` hero — same gradient + polar grid as the HEY carousel slide. */
-export const DOEPHONE_HERO_BACKDROP = HEY_CAROUSEL_BACKDROP;
+/** `/doephone` hero — HEY polar grid; center shifted to copper (less bright yellow). */
+export const DOEPHONE_HERO_BACKDROP: WorkflowCarouselDesignBackdrop = {
+  slideIndex: 1,
+  label: "Report Results",
+  gradient: "radial-gradient(circle at center, #D4893f 0%, #D2774C 34%, #BF593D 54%, #8b4f38 72%, #1E343A 100%)",
+  grid: "polar",
+  polarCenterY: "50%",
+};
 
 /** `/design5` — Billing & Finances (hex). */
 export const DESIGN5_BACKDROP = WORKFLOW_CAROUSEL_DESIGN_BACKDROPS[4];
