@@ -217,38 +217,41 @@ body.mainpage-route {
   }
 }
 
-/* /doephone hero polar lines — staggered segment fade on load. */
-.doephone-hero-polar-segment {
+/* /doephone hero polar overlay — full grid fades in, then single regions pulse. */
+.doephone-hero-polar-overlay--intro {
   opacity: 0;
-  animation: doephone-hero-polar-segment-in 0.85s cubic-bezier(0.22, 1, 0.36, 1) var(--polar-intro-delay, 0s) forwards;
+  animation: doephone-hero-polar-overlay-in 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-.doephone-hero-polar-segment--live {
-  opacity: 0.3;
-  animation: none;
-  transition: opacity 0.58s ease-in-out;
-}
-
-.doephone-hero-polar-segment--live.doephone-hero-polar-segment--active {
-  opacity: 0.92;
-}
-
-@keyframes doephone-hero-polar-segment-in {
+@keyframes doephone-hero-polar-overlay-in {
   0% {
     opacity: 0;
   }
 
   100% {
-    opacity: 0.3;
+    opacity: 1;
   }
 }
 
-/* /doephone hero headline — deblur + rise after polar lines finish. */
+.doephone-hero-polar-segment {
+  stroke: rgba(255, 255, 255, 0.15);
+  opacity: 1;
+}
+
+.doephone-hero-polar-segment--pulse {
+  transition: stroke 0.58s ease-in-out;
+}
+
+.doephone-hero-polar-segment--pulse.doephone-hero-polar-segment--active {
+  stroke: rgba(255, 255, 255, 0.58);
+}
+
+/* /doephone hero headline — deblur + rise after polar overlay finishes. */
 .doephone-hero-headline-line {
   opacity: 0;
   filter: blur(16px);
   transform: translateY(1.75rem);
-  animation: doephone-hero-headline-in 1.45s cubic-bezier(0.22, 1, 0.36, 1) 2.05s forwards;
+  animation: doephone-hero-headline-in 1.45s cubic-bezier(0.22, 1, 0.36, 1) 1.55s forwards;
   will-change: opacity, filter, transform;
   text-shadow: none;
 }
@@ -410,9 +413,14 @@ body.mainpage-route {
     mask-size: auto;
   }
 
-  .doephone-hero-polar-segment {
+  .doephone-hero-polar-overlay--intro {
     animation: none !important;
-    opacity: 0.3;
+    opacity: 1;
+  }
+
+  .doephone-hero-polar-segment {
+    stroke: rgba(255, 255, 255, 0.15);
+    opacity: 1;
   }
 
   .doephone-hero-headline-line {

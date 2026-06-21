@@ -6,10 +6,10 @@ import {
   type WorkflowCarouselDesignBackdrop,
   type WorkflowCarouselGridKind,
 } from "@/lib/workflow-carousel-design-backdrops";
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useState } from "react";
 
 const POLAR_SEGMENT_COUNT = 14;
-const POLAR_INTRO_END_MS = 3350;
+const POLAR_OVERLAY_INTRO_MS = 1400;
 const POLAR_FADE_MS = 580;
 const POLAR_HOLD_MS = 420;
 const POLAR_GAP_MS = 300;
@@ -37,7 +37,7 @@ function PolarGridOverlay({
       return;
     }
 
-    const introTimer = window.setTimeout(() => setLiveReady(true), POLAR_INTRO_END_MS);
+    const introTimer = window.setTimeout(() => setLiveReady(true), POLAR_OVERLAY_INTRO_MS);
     return () => window.clearTimeout(introTimer);
   }, [introOnLoad]);
 
@@ -78,19 +78,21 @@ function PolarGridOverlay({
   }, [introOnLoad, liveReady]);
 
   const segmentClass = (liveIndex: number) => {
-    if (!introOnLoad) return undefined;
-
     const classes = ["doephone-hero-polar-segment"];
-    if (liveReady) classes.push("doephone-hero-polar-segment--live");
+    if (!introOnLoad) return classes.join(" ");
+
+    if (liveReady) classes.push("doephone-hero-polar-segment--pulse");
     if (liveReady && activeIndex === liveIndex) classes.push("doephone-hero-polar-segment--active");
     return classes.join(" ");
   };
 
-  const segmentStyle = (introDelay: string): CSSProperties | undefined =>
-    introOnLoad ? ({ ["--polar-intro-delay" as string]: introDelay } as CSSProperties) : undefined;
-
   return (
-    <div className="pointer-events-none absolute inset-0 z-[2] overflow-hidden" aria-hidden>
+    <div
+      className={`pointer-events-none absolute inset-0 z-[2] overflow-hidden${
+        introOnLoad ? " doephone-hero-polar-overlay doephone-hero-polar-overlay--intro" : ""
+      }`}
+      aria-hidden
+    >
       <svg
         className="pointer-events-none absolute left-1/2 max-w-none"
         style={{
@@ -110,10 +112,8 @@ function PolarGridOverlay({
             <path
               key={`polar-radial-${j}`}
               className={segmentClass(j)}
-              style={segmentStyle(`${0.12 + j * 0.09}s`)}
               d={`M 500 500 L ${500 + Math.cos((angle * Math.PI) / 180) * radius} ${500 + Math.sin((angle * Math.PI) / 180) * radius}`}
               fill="none"
-              stroke="rgba(255, 255, 255, 0.15)"
               strokeWidth="0.8"
             />
           );
@@ -124,12 +124,10 @@ function PolarGridOverlay({
             <circle
               key={`polar-ring-${j}`}
               className={segmentClass(8 + j)}
-              style={segmentStyle(`${0.84 + j * 0.1}s`)}
               cx="500"
               cy="500"
               r={r}
               fill="none"
-              stroke="rgba(255, 255, 255, 0.15)"
               strokeWidth="0.8"
             />
           );
