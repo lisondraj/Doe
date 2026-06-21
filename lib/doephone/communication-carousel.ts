@@ -46,8 +46,9 @@ export const DOEPHONE_COMMUNICATION_SLIDES: readonly DoePhoneCommunicationSlide[
     backdrop: {
       slideIndex: 0,
       label: "Virtual Reception",
-      gradient: "linear-gradient(135deg, #D49D4F 0%, #D2774C 42%, #C47A5A 100%)",
-      grid: "diagonal",
+      gradient:
+        "radial-gradient(ellipse 100% 88% at 22% 18%, #D49D4F 0%, #D2774C 52%, #B87862 100%)",
+      grid: "hex",
     },
   },
   {
@@ -56,7 +57,8 @@ export const DOEPHONE_COMMUNICATION_SLIDES: readonly DoePhoneCommunicationSlide[
     backdrop: {
       slideIndex: 1,
       label: "Calendar Booking",
-      gradient: "linear-gradient(225deg, #D49D4F 0%, #D2774C 38%, #C47A5A 100%)",
+      gradient:
+        "linear-gradient(180deg, #B87862 0%, #C47A5A 20%, #D2774C 55%, #D49D4F 100%)",
       grid: "diagonal",
     },
   },
