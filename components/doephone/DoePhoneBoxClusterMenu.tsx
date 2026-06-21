@@ -27,7 +27,7 @@ export function DoePhoneBoxClusterMenu({
             role="tab"
             aria-selected={active}
             aria-controls={`doephone-box-cluster-${preset.id}`}
-            className={`relative flex min-h-[clamp(4.35rem,3.65rem+2.85vmin,5.65rem)] flex-col items-center justify-center overflow-hidden rounded-[clamp(0.42rem,0.35rem+0.28vmin,0.55rem)] px-[clamp(0.32rem,0.24rem+0.38vmin,0.48rem)] py-[clamp(0.58rem,0.46rem+0.45vmin,0.78rem)] pb-[clamp(0.82rem,0.66rem+0.58vmin,1.05rem)] text-center transition-[background-color,color] duration-200 ${suisseIntl.className} font-medium tracking-[-0.02em] ${
+            className={`relative flex min-h-[clamp(4.35rem,3.65rem+2.85vmin,5.65rem)] flex-col items-center justify-center overflow-hidden rounded-[clamp(0.42rem,0.35rem+0.28vmin,0.55rem)] px-[clamp(0.32rem,0.24rem+0.38vmin,0.48rem)] py-[clamp(0.58rem,0.46rem+0.45vmin,0.78rem)] pb-[clamp(0.82rem,0.66rem+0.58vmin,1.05rem)] text-center transition-[background-color,color] duration-200 ${suisseIntl.className} font-normal tracking-[-0.02em] ${
               active
                 ? "bg-[#E3E1DB] text-[#1E343A]"
                 : "bg-[#1E343A]/[0.06] text-[#1E343A]/35"

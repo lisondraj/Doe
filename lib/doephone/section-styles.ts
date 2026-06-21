@@ -1,3 +1,5 @@
+import { inter } from "@/lib/home/fonts";
+
 /** Shared horizontal inset for /doephone section copy — matches hero. */
 export const DOEPHONE_SECTION_COPY_INSET =
   "pl-14 pr-6 iphone-page:pl-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))] iphone-page:pr-[max(1.65rem,env(safe-area-inset-right,0px))]";
@@ -63,3 +65,10 @@ export const DOEPHONE_BOX_CLUSTER_STAGE_HEIGHT =
 /** Rounded corners shared by section 2 carousel cards + embedded backdrop clip. */
 export const DOEPHONE_SECTION_CAROUSEL_RADIUS =
   "rounded-[clamp(1.1rem,0.95rem+0.75vmin,1.45rem)]";
+
+/** Customization section footer carousel — taller than nav default. */
+export const DOEPHONE_SECTION_FOOTER_CAROUSEL_HEIGHT =
+  "min-h-[clamp(19.5rem,52vmin,29rem)] h-[clamp(19.5rem,52vmin,29rem)] iphone-page:min-h-[clamp(18.25rem,49vmin,27rem)] iphone-page:h-[clamp(18.25rem,49vmin,27rem)]";
+
+/** Below-carousel caption — slightly lighter than nav footer outside copy. */
+export const DOEPHONE_SECTION_FOOTER_OUTSIDE_CAPTION_TW = `text-[1.5rem] iphone-page:text-[clamp(1.38rem,0.88rem+2.3vmin,2.45rem)] font-normal leading-snug tracking-tight text-gray-700 ${inter.className}`;

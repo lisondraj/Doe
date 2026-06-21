@@ -1,8 +1,11 @@
 "use client";
 
 import { MOBILE_NAV_FOOTER_SLIDES } from "@/components/doe-nav-data";
-import { NAV_FOOTER_OUTSIDE_TITLE_TW } from "@/lib/home/nav-footer-carousel-styles";
-import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
+import {
+  DOEPHONE_SECTION_CAROUSEL_RADIUS,
+  DOEPHONE_SECTION_FOOTER_OUTSIDE_CAPTION_TW,
+  DOEPHONE_SECTION_FOOTER_CAROUSEL_HEIGHT,
+} from "@/lib/doephone/section-styles";
 import { useRef, useState } from "react";
 
 /** Nav-style gradient carousel — blank card, dots, outside caption only. */
@@ -34,7 +37,7 @@ export function DoePhoneSectionFooterCarousel() {
           className="box-border w-full min-w-full shrink-0 snap-center space-y-3 iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)]"
         >
           <div
-            className={`relative min-h-[clamp(16rem,44vmin,24rem)] overflow-hidden iphone-page:min-h-[clamp(15rem,42vmin,22.5rem)] ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
+            className={`relative overflow-hidden ${DOEPHONE_SECTION_FOOTER_CAROUSEL_HEIGHT} ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
           >
             <div className="absolute inset-0" style={{ background: slide.gradient }} aria-hidden />
             <div
@@ -72,7 +75,7 @@ export function DoePhoneSectionFooterCarousel() {
           </div>
 
           <p
-            className={`text-left ${NAV_FOOTER_OUTSIDE_TITLE_TW}`}
+            className={`text-left ${DOEPHONE_SECTION_FOOTER_OUTSIDE_CAPTION_TW}`}
             aria-live={activeSlide === slideIndex ? "polite" : undefined}
           >
             {slide.outside}

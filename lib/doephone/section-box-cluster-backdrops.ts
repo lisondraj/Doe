@@ -4,6 +4,8 @@ export type DoePhoneBoxClusterLayout = {
   left: string;
   right: string;
   center: string;
+  /** Optional rear UI panel — sits above gradients, behind main center. */
+  centerBack?: string;
 };
 
 export type DoePhoneBoxClusterPreset = {
@@ -20,10 +22,11 @@ export const DOEPHONE_BOX_CLUSTER_PRESETS: readonly DoePhoneBoxClusterPreset[] =
     id: "routing",
     menuLabel: "Routing",
     layout: {
-      left: "absolute left-0 top-1/2 z-[1] h-[98%] w-[28%] -translate-y-1/2 iphone-page:w-[27%]",
-      right: "absolute bottom-[4%] right-0 z-[1] aspect-square w-[42%] iphone-page:bottom-[3%] iphone-page:w-[40%]",
+      left: "absolute left-0 top-[6%] z-[1] h-[58%] w-[22%] iphone-page:w-[21%]",
+      right:
+        "absolute bottom-[5%] right-0 z-[1] h-[24%] w-[56%] iphone-page:bottom-[4%] iphone-page:w-[54%]",
       center:
-        "absolute left-1/2 top-1/2 z-[2] h-[clamp(19rem,52vmin,26rem)] w-[94%] max-w-[min(100%,32rem)] -translate-x-1/2 -translate-y-1/2 bg-white iphone-page:h-[clamp(18.25rem,50vmin,24.5rem)] iphone-page:w-[92%]",
+        "absolute left-1/2 top-1/2 z-[2] h-[clamp(18.5rem,50vmin,25rem)] w-[88%] max-w-[min(100%,30rem)] -translate-x-1/2 -translate-y-1/2 bg-white iphone-page:h-[clamp(17.75rem,48vmin,24rem)] iphone-page:w-[86%]",
     },
     left: {
       slideIndex: 0,
@@ -43,11 +46,11 @@ export const DOEPHONE_BOX_CLUSTER_PRESETS: readonly DoePhoneBoxClusterPreset[] =
     id: "intake",
     menuLabel: "Intake",
     layout: {
-      left: "absolute left-0 top-[5%] z-[1] h-[68%] w-[38%] iphone-page:top-[4%] iphone-page:w-[37%]",
+      left: "absolute left-0 top-[4%] z-[1] h-[26%] w-[50%] iphone-page:w-[48%]",
       right:
-        "absolute bottom-[7%] right-0 z-[1] aspect-[1.28] w-[50%] iphone-page:bottom-[6%] iphone-page:w-[48%]",
+        "absolute bottom-[6%] right-0 z-[1] h-[72%] w-[19%] iphone-page:bottom-[5%] iphone-page:w-[18%]",
       center:
-        "absolute left-1/2 top-1/2 z-[2] h-[clamp(20.5rem,56vmin,27.5rem)] w-[84%] max-w-[min(100%,28rem)] -translate-x-1/2 -translate-y-1/2 bg-white iphone-page:h-[clamp(19.5rem,53vmin,26rem)] iphone-page:w-[82%]",
+        "absolute left-1/2 top-1/2 z-[2] h-[clamp(15.5rem,42vmin,21rem)] w-[97%] max-w-[min(100%,36rem)] -translate-x-1/2 -translate-y-1/2 bg-white iphone-page:h-[clamp(14.75rem,40vmin,20rem)] iphone-page:w-[95%]",
     },
     left: {
       slideIndex: 3,
@@ -66,10 +69,13 @@ export const DOEPHONE_BOX_CLUSTER_PRESETS: readonly DoePhoneBoxClusterPreset[] =
     id: "labs",
     menuLabel: "Labs",
     layout: {
-      left: "absolute top-1/2 left-0 z-[1] h-[98%] w-[25%] -translate-y-1/2 iphone-page:w-[24%]",
-      right: "absolute bottom-[2%] right-0 z-[1] aspect-square w-[46%] iphone-page:bottom-[1%] iphone-page:w-[44%]",
+      left: "absolute left-0 top-1/2 z-[1] h-[88%] w-[15%] -translate-y-1/2 iphone-page:w-[14%]",
+      right:
+        "absolute bottom-[3%] right-0 z-[1] h-[32%] w-[46%] iphone-page:bottom-[2%] iphone-page:w-[44%]",
+      centerBack:
+        "absolute left-[53%] top-[51%] z-[2] h-[clamp(18.5rem,50vmin,25rem)] w-[82%] max-w-[min(100%,29rem)] -translate-x-1/2 -translate-y-1/2 bg-white iphone-page:h-[clamp(17.75rem,48vmin,24rem)] iphone-page:w-[80%]",
       center:
-        "absolute left-1/2 top-1/2 z-[2] h-[clamp(21.5rem,58vmin,29rem)] w-[96%] max-w-[min(100%,34rem)] -translate-x-1/2 -translate-y-1/2 bg-white iphone-page:h-[clamp(20.5rem,55vmin,27.5rem)] iphone-page:w-[94%]",
+        "absolute left-1/2 top-[47%] z-[3] h-[clamp(18.5rem,50vmin,25rem)] w-[82%] max-w-[min(100%,29rem)] -translate-x-1/2 -translate-y-1/2 bg-white iphone-page:h-[clamp(17.75rem,48vmin,24rem)] iphone-page:w-[80%]",
     },
     left: {
       slideIndex: 4,
@@ -89,10 +95,11 @@ export const DOEPHONE_BOX_CLUSTER_PRESETS: readonly DoePhoneBoxClusterPreset[] =
     id: "sync",
     menuLabel: "Sync",
     layout: {
-      left: "absolute left-0 top-[8%] z-[1] h-[84%] w-[35%] iphone-page:top-[7%] iphone-page:w-[34%]",
-      right: "absolute bottom-[9%] right-[1%] z-[1] aspect-square w-[36%] iphone-page:bottom-[8%] iphone-page:w-[34%]",
+      left: "absolute left-0 top-[10%] z-[1] h-[52%] w-[28%] iphone-page:top-[9%] iphone-page:w-[27%]",
+      right:
+        "absolute bottom-[8%] right-0 z-[1] h-[48%] w-[17%] iphone-page:bottom-[7%] iphone-page:w-[16%]",
       center:
-        "absolute left-1/2 top-1/2 z-[2] h-[clamp(18.5rem,50vmin,25rem)] w-[90%] max-w-[min(100%,31rem)] -translate-x-1/2 -translate-y-1/2 bg-white iphone-page:h-[clamp(17.75rem,48vmin,24rem)] iphone-page:w-[88%]",
+        "absolute left-1/2 top-1/2 z-[2] h-[clamp(21rem,56vmin,28rem)] w-[76%] max-w-[min(100%,26rem)] -translate-x-1/2 -translate-y-1/2 bg-white iphone-page:h-[clamp(20rem,53vmin,26.5rem)] iphone-page:w-[74%]",
     },
     left: {
       slideIndex: 4,

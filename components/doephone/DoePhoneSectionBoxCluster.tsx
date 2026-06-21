@@ -63,6 +63,13 @@ export function DoePhoneSectionBoxCluster({ activeIndex }: { activeIndex: number
         className={layout.right}
       />
 
+      {layout.centerBack ? (
+        <div
+          className={`${layout.centerBack} ${DOEPHONE_SECTION_CAROUSEL_RADIUS} ${BOX_MORPH_TW}`}
+          aria-hidden
+        />
+      ) : null}
+
       <div
         className={`${layout.center} ${DOEPHONE_SECTION_CAROUSEL_RADIUS} ${BOX_MORPH_TW}`}
         aria-label="Feature preview"
