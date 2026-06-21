@@ -53,6 +53,13 @@ export const WORKFLOW_CAROUSEL_DESIGN_BACKDROPS: readonly WorkflowCarouselDesign
 /** Care coordination carousel card (slide index 3) — radial gradient, dot grid, grain. */
 export const CARE_COORDINATION_BACKDROP = WORKFLOW_CAROUSEL_DESIGN_BACKDROPS[0];
 
+/** /doephone — larger radial, tighter yellow ring at the edge. */
+export const DOEPHONE_CARE_COORDINATION_BACKDROP: WorkflowCarouselDesignBackdrop = {
+  ...CARE_COORDINATION_BACKDROP,
+  gradient:
+    "radial-gradient(circle 98% at 50% 50%, #1E343A 0%, #D2774C 50%, #D49D4F 78%, #E7A944 100%)",
+};
+
 /** Diagnostic assistant carousel card (slide index 2) — linear 180° gradient, hex grid, grain. */
 export const DIAGNOSTIC_ASSISTANT_BACKDROP = WORKFLOW_CAROUSEL_DESIGN_BACKDROPS[4];
 
