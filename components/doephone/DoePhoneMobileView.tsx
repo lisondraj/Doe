@@ -3,16 +3,11 @@
 import DoeIphoneSiteNav from "@/components/DoeIphoneSiteNav";
 import { DoePhoneClosingSection } from "@/components/doephone/DoePhoneClosingSection";
 import { DoePhoneCommunicationIntelligenceSection } from "@/components/doephone/DoePhoneCommunicationIntelligenceSection";
+import { DoePhoneIntegrationsSection } from "@/components/doephone/DoePhoneIntegrationsSection";
 import { DoePhoneCommunicationSection } from "@/components/doephone/DoePhoneCommunicationSection";
 import { DoePhoneCustomizationSection } from "@/components/doephone/DoePhoneCustomizationSection";
 import { DoePhoneHeroSection } from "@/components/doephone/DoePhoneHeroSection";
-import { DoePhoneSectionText } from "@/components/doephone/DoePhoneSectionText";
-import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
-import {
-  DIAGNOSTIC_ASSISTANT_BACKDROP,
-} from "@/lib/workflow-carousel-design-backdrops";
-import { DOEPHONE_VIEWPORT_SECTION } from "@/lib/doephone/section-styles";
 import { useLayoutEffect } from "react";
 
 export function DoePhoneMobileView() {
@@ -55,12 +50,7 @@ export function DoePhoneMobileView() {
         <DoePhoneCustomizationSection />
       </section>
 
-      <section className={`${DOEPHONE_VIEWPORT_SECTION} overflow-hidden bg-[#1E343A]`} aria-label="Integrations">
-        <div className="pointer-events-none absolute -inset-[3%] overflow-hidden" aria-hidden>
-          <WorkflowCarouselDesignBackdrop backdrop={DIAGNOSTIC_ASSISTANT_BACKDROP} embedded gradientScale={1.12} />
-        </div>
-        <DoePhoneSectionText line1="Intelligence built." line2="into your stack." color="text-white" />
-      </section>
+      <DoePhoneIntegrationsSection />
 
       <section
         className="relative z-10 flex min-h-[100svh] w-full flex-col bg-[#F7F6F3] iphone-page:min-h-[100dvh]"

@@ -1,6 +1,6 @@
 "use client";
 
-import { DoePhoneCommunicationGlassPanels } from "@/components/doephone/DoePhoneCommunicationGlassPanels";
+import { DoePhoneCommunicationInnerGlassPanel } from "@/components/doephone/DoePhoneCommunicationGlassPanels";
 import { DoePhoneSectionPlus, DoePhoneSectionTitle } from "@/components/doephone/DoePhoneSectionText";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import {
@@ -12,7 +12,7 @@ import {
 } from "@/lib/doephone/section-styles";
 import { CARE_COORDINATION_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 
-/** Gradient viewport — Communication + Intelligence title and glass panels. */
+/** Gradient viewport — Communication + Intelligence title and inner glass panel. */
 export function DoePhoneCommunicationIntelligenceSection() {
   return (
     <section className={`${DOEPHONE_VIEWPORT_SECTION} overflow-hidden bg-[#D2774C]`} aria-label="Communication">
@@ -41,7 +41,7 @@ export function DoePhoneCommunicationIntelligenceSection() {
         <div
           className={`shrink-0 overflow-hidden ${DOEPHONE_SECTION_TITLE_CAROUSEL_GAP} ${DOEPHONE_SECTION_TITLE_PB}`}
         >
-          <DoePhoneCommunicationGlassPanels />
+          <DoePhoneCommunicationInnerGlassPanel />
         </div>
       </div>
     </section>
