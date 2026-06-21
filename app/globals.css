@@ -62,6 +62,12 @@ body.mainpage-route {
     touch-action: pan-x pan-y;
   }
 
+  /** /doephone — allow native pinch zoom (root layout disables it globally). */
+  html[data-doephone-pinching="true"],
+  html[data-doephone-pinching="true"] body {
+    touch-action: auto;
+  }
+
   /* Standard link reset - only remove underline, let Tailwind handle colors */
   a {
     text-decoration: none;
