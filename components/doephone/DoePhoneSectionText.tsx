@@ -62,7 +62,7 @@ export function DoePhoneSectionText({
 /** Thin-stroke + for section 2 — lighter than the hairline glyph, opacity unchanged. */
 export function DoePhoneSectionPlus() {
   return (
-    <span className="doephone-section-plus text-black" aria-hidden>
+    <span className="doephone-section-plus text-black">
       <svg
         className="doephone-section-plus-icon"
         viewBox="0 0 24 24"
