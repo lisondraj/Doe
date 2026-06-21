@@ -34,10 +34,37 @@ function scrollPositionPx(scrollRef: RefObject<HTMLDivElement>, position: number
   el.scrollTo({ left: position * w, behavior: "auto" });
 }
 
+function forwardSteps(from: number, to: number): number {
+  if (from === to) return 0;
+  return (to - from + DOEPHONE_COMMUNICATION_SLIDE_COUNT) % DOEPHONE_COMMUNICATION_SLIDE_COUNT;
+}
+
+function waitCarouselScrollEnd(el: HTMLDivElement): Promise<void> {
+  return new Promise((resolve) => {
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      el.removeEventListener("scrollend", onScrollEnd);
+      window.clearTimeout(fallback);
+      resolve();
+    };
+    const onScrollEnd = () => finish();
+    const fallback = window.setTimeout(finish, 480);
+    el.addEventListener("scrollend", onScrollEnd);
+  });
+}
+
 export function useDoePhoneSectionCarousel(activeIndex: number, onActiveIndexChange: (index: number) => void) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const loopingRef = useRef(false);
+  const menuAnimatingRef = useRef(false);
+  const activeIndexRef = useRef(activeIndex);
   const scrollEndTimerRef = useRef<number | undefined>(undefined);
+
+  useEffect(() => {
+    activeIndexRef.current = activeIndex;
+  }, [activeIndex]);
 
   const loopSlides = useMemo(
     () => [...DOEPHONE_COMMUNICATION_SLIDES, LOOP_TAIL_CLONE],
@@ -56,7 +83,7 @@ export function useDoePhoneSectionCarousel(activeIndex: number, onActiveIndexCha
   );
 
   const settleScrollPosition = useCallback(() => {
-    if (loopingRef.current) return;
+    if (loopingRef.current || menuAnimatingRef.current) return;
     const el = scrollRef.current;
     if (!el) return;
     const w = el.clientWidth;
@@ -80,22 +107,52 @@ export function useDoePhoneSectionCarousel(activeIndex: number, onActiveIndexCha
   }, [onActiveIndexChange]);
 
   const selectSlide = useCallback(
-    (targetIndex: number) => {
-      if (targetIndex === activeIndex) return;
+    async (targetIndex: number) => {
+      if (menuAnimatingRef.current) return;
       if (targetIndex < 0 || targetIndex >= DOEPHONE_COMMUNICATION_SLIDE_COUNT) return;
 
-      if (activeIndex === DOEPHONE_COMMUNICATION_SLIDE_COUNT - 1 && targetIndex === 0) {
-        scrollToPosition(DOEPHONE_COMMUNICATION_SLIDE_COUNT, "smooth");
-        return;
-      }
+      const startIndex = activeIndexRef.current;
+      const steps = forwardSteps(startIndex, targetIndex);
+      if (steps === 0) return;
 
-      scrollToPosition(targetIndex, "smooth");
+      const el = scrollRef.current;
+      if (!el) return;
+
+      menuAnimatingRef.current = true;
+      let current = startIndex;
+
+      try {
+        for (let step = 0; step < steps; step += 1) {
+          if (current === DOEPHONE_COMMUNICATION_SLIDE_COUNT - 1) {
+            scrollToPosition(DOEPHONE_COMMUNICATION_SLIDE_COUNT, "smooth");
+            await waitCarouselScrollEnd(el);
+            loopingRef.current = true;
+            onActiveIndexChange(0);
+            scrollPositionPx(scrollRef, 0);
+            await new Promise<void>((resolve) => {
+              requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+            });
+            loopingRef.current = false;
+            current = 0;
+            continue;
+          }
+
+          const next = current + 1;
+          scrollToPosition(next, "smooth");
+          await waitCarouselScrollEnd(el);
+          onActiveIndexChange(next);
+          current = next;
+        }
+      } finally {
+        menuAnimatingRef.current = false;
+        activeIndexRef.current = targetIndex;
+      }
     },
-    [activeIndex, scrollToPosition],
+    [onActiveIndexChange, scrollToPosition],
   );
 
   const handleScroll = useCallback(() => {
-    if (loopingRef.current) return;
+    if (loopingRef.current || menuAnimatingRef.current) return;
     window.clearTimeout(scrollEndTimerRef.current);
     scrollEndTimerRef.current = window.setTimeout(settleScrollPosition, 90);
   }, [settleScrollPosition]);
