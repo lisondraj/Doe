@@ -44,6 +44,14 @@ html:has(.doephone-mobile-root) body {
   padding-right: env(safe-area-inset-right, 0px);
 }
 
+html[data-doephone-pinching="true"] .doephone-mobile-root {
+  overscroll-behavior-y: none;
+}
+
+html[data-doephone-pinching="true"] body {
+  overflow-anchor: none;
+}
+
 /** /desktop — full desktop scroll; root layout uses wide-desktop:overflow-hidden on body */
 body.desktop-route,
 body.mainpage-route {

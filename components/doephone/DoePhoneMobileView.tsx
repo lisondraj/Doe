@@ -12,20 +12,23 @@ import { useLayoutEffect } from "react";
 const DOEPHONE_BAND_SECTION =
   "relative z-10 w-full min-h-[min(152vh,86rem)] iphone-page:min-h-[min(144dvh,82rem)]";
 
-/** Extra hero depth at the bottom so gradient fills the screen below the fixed nav. */
+/**
+ * Full first-screen hero — extra depth below the fold so beige never peeks on load.
+ * CSS-only (no JS resize) so pinch zoom does not reflow layout.
+ */
 const DOEPHONE_HERO_HEIGHT =
-  "calc(var(--app-vh, 100dvh) + max(4.75rem, calc(env(safe-area-inset-top, 0px) + 1.25rem)))";
+  "calc(100svh + max(8rem, calc(env(safe-area-inset-top, 0px) + 3.5rem)) + 12vh)";
 
 export function DoePhoneMobileView() {
-  /** Layout viewport only — ignore visualViewport shrink during pinch so layout stays stable. */
+  /** Set viewport vars once + on orientation change only — avoids pinch-zoom layout jumps. */
   useLayoutEffect(() => {
     const measure = () => {
       document.documentElement.style.setProperty("--app-vw", `${window.innerWidth}px`);
       document.documentElement.style.setProperty("--app-vh", `${window.innerHeight}px`);
     };
     measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
+    window.addEventListener("orientationchange", measure);
+    return () => window.removeEventListener("orientationchange", measure);
   }, []);
 
   return (

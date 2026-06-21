@@ -27,6 +27,11 @@ const narrowHorizontalInset =
 const NAV_SHEET_MS = 320;
 const NAV_SHEET_EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
 
+function isViewportPinching(): boolean {
+  const vv = window.visualViewport;
+  return vv != null && vv.scale > 1.02;
+}
+
 /** Same visible viewport logic as `app/page.tsx` / blog — drives nav sheet remeasure on resize. */
 function siteNavAppViewportPx(): { width: number; height: number } {
   if (typeof window === "undefined") return { width: 1200, height: 800 };
@@ -50,10 +55,10 @@ function NavChromeStrip({
   pinchSafe?: boolean;
 }) {
   const navInsetX = pinchSafe
-    ? "px-9 iphone-page:px-[max(1.35rem,calc(env(safe-area-inset-left,0px)+3.1vmin))] iphone-page:pr-[max(1.35rem,env(safe-area-inset-right,0px))]"
+    ? "px-10 iphone-page:px-[max(1.5rem,calc(env(safe-area-inset-left,0px)+3.45vmin))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))]"
     : "px-8 iphone-page:px-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))]";
   const doeLeft = pinchSafe
-    ? "left-9 iphone-page:left-[max(1.35rem,calc(env(safe-area-inset-left,0px)+3.1vmin))]"
+    ? "left-10 iphone-page:left-[max(1.5rem,calc(env(safe-area-inset-left,0px)+3.45vmin))]"
     : "left-8 iphone-page:left-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))]";
 
   return (
@@ -154,6 +159,7 @@ export default function DoeIphoneSiteNav({ pinchSafe = false }: { pinchSafe?: bo
 
   useEffect(() => {
     const tick = () => {
+      if (pinchSafe && isViewportPinching()) return;
       setViewportWidth(window.innerWidth);
       if (pinchSafe) {
         setAppViewport({ width: window.innerWidth, height: window.innerHeight });
@@ -163,11 +169,13 @@ export default function DoeIphoneSiteNav({ pinchSafe = false }: { pinchSafe?: bo
     };
     tick();
     window.addEventListener("resize", tick);
+    window.addEventListener("orientationchange", tick);
     if (!pinchSafe) {
       window.visualViewport?.addEventListener("resize", tick);
     }
     return () => {
       window.removeEventListener("resize", tick);
+      window.removeEventListener("orientationchange", tick);
       window.visualViewport?.removeEventListener("resize", tick);
     };
   }, [pinchSafe]);
@@ -176,6 +184,7 @@ export default function DoeIphoneSiteNav({ pinchSafe = false }: { pinchSafe?: bo
     const navEl = navBarRowRef.current;
     if (!navEl) return;
     const update = () => {
+      if (pinchSafe && isViewportPinching()) return;
       const raw = navEl.getBoundingClientRect().bottom;
       setIphoneMenuTopPx(Math.max(0, Math.floor(raw) - (pinchSafe ? 0 : 6)));
     };
@@ -485,6 +494,7 @@ export default function DoeIphoneSiteNav({ pinchSafe = false }: { pinchSafe?: bo
             navTextColor={navTextColor}
             mobileNavOpen={mobileNavOpen}
             toggleMenu={() => setMobileNavOpen((o) => !o)}
+            pinchSafe={pinchSafe}
           />
         </div>
       </nav>
