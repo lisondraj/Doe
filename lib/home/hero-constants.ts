@@ -8,6 +8,14 @@ export const HERO_BACKDROP_GRADIENT = `
   radial-gradient(ellipse 50% 40% at 88% 22%, rgba(210, 119, 76, 0.3) 0%, transparent 55%)
 `;
 
+/** /doephone hero — radial base using the same palette as `HERO_BACKDROP_GRADIENT`. */
+export const DOEPHONE_HERO_BACKDROP_GRADIENT = `
+  radial-gradient(circle at 50% 42%, #1a2e34 0%, #243a40 12%, #3d2f28 28%, #6b442f 42%, #a85a34 54%, #d4893f 68%, #e8b04d 82%, #f2cf7a 100%),
+  radial-gradient(ellipse 100% 80% at 50% 110%, rgba(231, 169, 68, 0.55) 0%, transparent 58%),
+  radial-gradient(ellipse 55% 45% at 12% 18%, rgba(255, 224, 180, 0.22) 0%, transparent 52%),
+  radial-gradient(ellipse 50% 40% at 88% 22%, rgba(210, 119, 76, 0.3) 0%, transparent 55%)
+`;
+
 /** Same horizontal inset as the fixed nav — hero, headline band, carousel (forced phone layout). */
 export const narrowHorizontalInset =
   "iphone-page:pl-[max(1.5rem,env(safe-area-inset-left,0px))] iphone-page:pr-[max(1.5rem,env(safe-area-inset-right,0px))]";

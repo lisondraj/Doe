@@ -1,5 +1,7 @@
 import type { CSSProperties } from "react";
 
+import { WORKFLOW_DOT_GRID_STYLE } from "@/lib/workflow-carousel-design-backdrops";
+
 /**
  * Grain + fine square grid from workflow carousel “Referral Intake” slide (box 5).
  * CSS tiling keeps cells square when the hero viewport width changes.
@@ -24,12 +26,18 @@ export const HERO_CAROUSEL_SQUARE_GRID_STYLE: CSSProperties = {
 export function HeroCarouselTextureOverlay({
   patternId: _patternId,
   introOnLoad = false,
+  grid = "square",
 }: {
   /** @deprecated Grid is CSS-tiled; id ignored. */
   patternId?: string;
   /** Fade + expand grid lines from top-left on first paint. */
   introOnLoad?: boolean;
+  /** `dot` matches care-coordination section; default is square crosshatch grid. */
+  grid?: "square" | "dot";
 }) {
+  const gridStyle: CSSProperties =
+    grid === "dot" ? WORKFLOW_DOT_GRID_STYLE : HERO_CAROUSEL_SQUARE_GRID_STYLE;
+
   return (
     <>
       <div
@@ -44,7 +52,7 @@ export function HeroCarouselTextureOverlay({
       />
       <div
         className={`pointer-events-none absolute inset-0 z-[2]${introOnLoad ? " hero-carousel-grid-intro" : ""}`}
-        style={HERO_CAROUSEL_SQUARE_GRID_STYLE}
+        style={gridStyle}
         aria-hidden
       />
     </>

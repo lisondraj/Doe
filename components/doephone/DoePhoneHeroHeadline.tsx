@@ -1,6 +1,6 @@
 "use client";
 
-import { suisseIntl } from "@/lib/home/fonts";
+import { loraItalicLight, suisseIntl } from "@/lib/home/fonts";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 const DOEPHONE_HERO_CAREERS = [
@@ -17,7 +17,7 @@ const DOEPHONE_HERO_CAREERS = [
 ] as const;
 
 /** Longest label — sets carousel slot width. */
-const DOEPHONE_HERO_CAREER_WIDTH_SAMPLE = "optometrists";
+const DOEPHONE_HERO_CAREER_WIDTH_SAMPLE = "optometrists.";
 
 /** Hold each career on screen before advancing. */
 const CAREER_ROTATE_MS = 3800;
@@ -62,7 +62,10 @@ export function DoePhoneHeroHeadline() {
       <span className="block">inbox built for</span>
       <span className="block min-w-0">
         <span className="relative inline-grid align-baseline leading-none">
-          <span aria-hidden className="invisible col-start-1 row-start-1 select-none font-ui font-light">
+          <span
+            aria-hidden
+            className={`invisible col-start-1 row-start-1 select-none italic ${loraItalicLight.className}`}
+          >
             {DOEPHONE_HERO_CAREER_WIDTH_SAMPLE}
           </span>
           <span className="doephone-hero-career-clip col-start-1 row-start-1">
@@ -75,10 +78,10 @@ export function DoePhoneHeroHeadline() {
               {slideItems.map((career, i) => (
                 <span
                   key={`${career}-${i}`}
-                  className="doephone-hero-career-word font-ui font-light"
+                  className={`doephone-hero-career-word italic ${loraItalicLight.className}`}
                   aria-hidden={i === slideItems.length - 1 || career !== activeCareer}
                 >
-                  {career}
+                  {career}.
                 </span>
               ))}
             </span>

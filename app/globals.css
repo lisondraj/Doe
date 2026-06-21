@@ -250,8 +250,8 @@ body.mainpage-route {
   display: block;
   height: var(--doephone-career-slot);
   line-height: 1;
-  font-weight: 300;
-  font-style: normal;
+  font-weight: 400;
+  font-style: italic;
 }
 
 @keyframes doephone-hero-headline-in {
