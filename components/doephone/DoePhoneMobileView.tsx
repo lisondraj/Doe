@@ -14,8 +14,9 @@ import {
 import { CARE_COORDINATION_BACKDROP, DIAGNOSTIC_ASSISTANT_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 import { useLayoutEffect } from "react";
 
-/** Hero headline sits inset from nav — extra left padding vs chrome. */
-const DOEPHONE_HERO_HEADLINE_INSET = DOEPHONE_SECTION_COPY_INSET;
+/** Hero headline — symmetric inset for centered copy. */
+const DOEPHONE_HERO_HEADLINE_INSET =
+  "px-6 iphone-page:px-[max(1.65rem,calc(env(safe-area-inset-left,0px)+1rem))]";
 
 /**
  * Full first-screen hero — extra depth below the fold so beige never peeks on load.
@@ -59,7 +60,7 @@ export function DoePhoneMobileView() {
         </div>
 
         <div
-          className={`absolute inset-0 z-[3] flex flex-col items-start justify-start pt-[max(10rem,calc(env(safe-area-inset-top,0px)+35svh))] pb-8 ${DOEPHONE_HERO_HEADLINE_INSET}`}
+          className={`absolute inset-0 z-[3] flex flex-col items-center justify-center ${DOEPHONE_HERO_HEADLINE_INSET}`}
         >
           <DoePhoneHeroHeadline />
         </div>

@@ -56,12 +56,12 @@ export function DoePhoneHeroHeadline() {
 
   return (
     <h1
-      className={`doephone-hero-headline-line text-left font-light leading-[1.02] tracking-[-0.03em] text-white text-[clamp(3.85rem,15.5vw,6.85rem)] iphone-page:text-[clamp(3.65rem,14.75vw,6.35rem)] ${suisseIntl.className}`}
+      className={`doephone-hero-headline-line mx-auto w-full max-w-[min(100%,22rem)] text-center font-light leading-[1.02] tracking-[-0.03em] text-white text-[clamp(3.85rem,15.5vw,6.85rem)] iphone-page:text-[clamp(3.65rem,14.75vw,6.35rem)] ${suisseIntl.className}`}
     >
       <span className="block">An intelligent</span>
       <span className="block">inbox built for</span>
-      <span className="block min-w-0">
-        <span className="relative inline-grid align-baseline leading-none">
+      <span className="block min-w-0 text-center">
+        <span className="relative mx-auto inline-grid align-baseline leading-none">
           <span aria-hidden className="invisible col-start-1 row-start-1 select-none font-ui font-light">
             {DOEPHONE_HERO_CAREER_WIDTH_SAMPLE}
           </span>
