@@ -87,7 +87,7 @@ export function DoePhoneSectionPlus() {
         <path
           d="M12 5v14M5 12h14"
           stroke="currentColor"
-          strokeWidth="1.65"
+          strokeWidth="1.85"
           strokeLinecap="round"
         />
       </svg>
