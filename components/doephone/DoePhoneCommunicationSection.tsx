@@ -39,7 +39,7 @@ export function DoePhoneCommunicationSection() {
       </div>
 
       <div
-        className={`mt-[clamp(1.1rem,0.85rem+1.05vmin,1.55rem)] shrink-0 ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${DOEPHONE_SECTION_TITLE_PB}`}
+        className={`shrink-0 ${DOEPHONE_SECTION_CAROUSEL_MENU_GAP} ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${DOEPHONE_SECTION_TITLE_PB}`}
       >
         <div className={`w-full ${DOEPHONE_SECTION_CAROUSEL_HEIGHT}`}>
           <DoePhoneSectionCarousel
