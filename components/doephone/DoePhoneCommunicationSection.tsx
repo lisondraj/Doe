@@ -15,6 +15,10 @@ import {
   DOEPHONE_SECTION_TITLE_PB,
   DOEPHONE_SECTION_TITLE_PT,
 } from "@/lib/doephone/section-styles";
+import {
+  doePhoneSectionRevealSegmentClass,
+  useDoePhoneSectionReveal,
+} from "@/lib/doephone/use-doe-phone-section-reveal";
 import { useState } from "react";
 
 /** Section 2 — Communication title, carousel, and feature menu. */
@@ -24,11 +28,14 @@ export function DoePhoneCommunicationSection() {
     activeSlide,
     setActiveSlide,
   );
+  const { ref: sectionRef, revealed } = useDoePhoneSectionReveal();
 
   return (
-    <div className="flex h-full min-h-0 flex-col">
+    <div ref={sectionRef} className="flex h-full min-h-0 flex-col">
       <div className={`shrink-0 ${DOEPHONE_SECTION_CONTENT_INSET} ${DOEPHONE_SECTION_TITLE_PT}`}>
         <DoePhoneSectionTitle
+          segmentedReveal
+          revealed={revealed}
           line1="Communication"
           line2={
             <>
@@ -42,7 +49,9 @@ export function DoePhoneCommunicationSection() {
       <div
         className={`shrink-0 ${DOEPHONE_SECTION_TITLE_CAROUSEL_GAP} ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${DOEPHONE_SECTION_TITLE_PB}`}
       >
-        <div className={`w-full ${DOEPHONE_SECTION_CAROUSEL_HEIGHT}`}>
+        <div
+          className={`w-full ${DOEPHONE_SECTION_CAROUSEL_HEIGHT} ${doePhoneSectionRevealSegmentClass("carousel", revealed)}`}
+        >
           <DoePhoneSectionCarousel
             scrollRef={scrollRef}
             loopScrollIndices={loopScrollIndices}
@@ -52,7 +61,7 @@ export function DoePhoneCommunicationSection() {
           />
         </div>
 
-        <div className={DOEPHONE_SECTION_CAROUSEL_MENU_GAP}>
+        <div className={`${DOEPHONE_SECTION_CAROUSEL_MENU_GAP} ${doePhoneSectionRevealSegmentClass("menu", revealed)}`}>
           <DoePhoneCarouselMenu activeIndex={activeSlide} onSelect={selectSlide} />
         </div>
       </div>

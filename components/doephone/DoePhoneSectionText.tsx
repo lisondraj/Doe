@@ -12,15 +12,22 @@ export function DoePhoneSectionTitle({
   line1,
   line2,
   color = "text-[#1E343A]",
+  segmentedReveal = false,
+  revealed = false,
 }: {
   line1: ReactNode;
   line2?: ReactNode;
   color?: string;
+  /** Section 2 — parent drives staggered title → carousel → menu reveal. */
+  segmentedReveal?: boolean;
+  revealed?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    if (segmentedReveal) return;
+
     const el = ref.current;
     if (!el) return;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -40,14 +47,18 @@ export function DoePhoneSectionTitle({
     );
     obs.observe(el);
     return () => obs.disconnect();
-  }, []);
+  }, [segmentedReveal]);
+
+  const showCopy = segmentedReveal ? revealed : visible;
 
   return (
     <div ref={ref}>
       <p
-        className={`doephone-section-copy ${DOEPHONE_SECTION_COPY_TW} ${color} ${suisseIntl.className} ${
-          visible ? "doephone-section-copy-visible" : ""
-        }`.trim()}
+        className={`${
+          segmentedReveal
+            ? `doephone-section-reveal doephone-section-reveal--title${showCopy ? " doephone-section-reveal--in" : ""}`
+            : `doephone-section-copy${showCopy ? " doephone-section-copy-visible" : ""}`
+        } ${DOEPHONE_SECTION_COPY_TW} ${color} ${suisseIntl.className}`.trim()}
       >
         <span className="block">{line1}</span>
         {line2 ? <span className="block">{line2}</span> : null}

@@ -341,6 +341,29 @@ body.mainpage-route {
   animation: doephone-hero-headline-in 1.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
+/* /doephone section 2 — segmented scroll reveal: title → carousel → menu. */
+.doephone-section-reveal {
+  opacity: 0;
+  filter: blur(16px);
+  transform: translateY(1.75rem);
+  will-change: opacity, filter, transform;
+}
+
+.doephone-section-reveal--in.doephone-section-reveal--title {
+  animation: doephone-hero-headline-in 1.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: 0ms;
+}
+
+.doephone-section-reveal--in.doephone-section-reveal--carousel {
+  animation: doephone-hero-headline-in 1.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: 0.45s;
+}
+
+.doephone-section-reveal--in.doephone-section-reveal--menu {
+  animation: doephone-hero-headline-in 1.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: 0.9s;
+}
+
 .doephone-section-plus {
   display: inline-block;
   vertical-align: baseline;
@@ -470,6 +493,14 @@ body.mainpage-route {
 
   .doephone-section-copy,
   .doephone-section-copy-visible {
+    animation: none !important;
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+
+  .doephone-section-reveal,
+  .doephone-section-reveal--in {
     animation: none !important;
     opacity: 1;
     filter: none;
