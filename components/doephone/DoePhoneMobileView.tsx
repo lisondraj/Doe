@@ -5,12 +5,16 @@ import { HeroCarouselTextureOverlay } from "@/components/hero-carousel-texture";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { HERO_BACKDROP_GRADIENT } from "@/lib/home/hero-constants";
-import { CARE_COORDINATION_BACKDROP, CARE_COORDINATION_GRADIENT_DOEPHONE, DIAGNOSTIC_ASSISTANT_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
+import { CARE_COORDINATION_BACKDROP, DIAGNOSTIC_ASSISTANT_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 import { useLayoutEffect } from "react";
 
 /** Shared band height for /doephone sections 2+. */
 const DOEPHONE_BAND_SECTION =
   "relative z-10 w-full min-h-[min(152vh,86rem)] iphone-page:min-h-[min(144dvh,82rem)]";
+
+/** Extra hero depth at the bottom so gradient fills the screen below the fixed nav. */
+const DOEPHONE_HERO_HEIGHT =
+  "calc(var(--app-vh, 100dvh) + max(4.75rem, calc(env(safe-area-inset-top, 0px) + 1.25rem)))";
 
 export function DoePhoneMobileView() {
   /** Layout viewport only — ignore visualViewport shrink during pinch so layout stays stable. */
@@ -34,12 +38,7 @@ export function DoePhoneMobileView() {
 
       <section
         className="relative w-full overflow-hidden"
-        style={{
-          minHeight:
-            "calc(var(--app-vh, 100dvh) + env(safe-area-inset-bottom, 0px) + clamp(2.5rem, 8vmin, 4.5rem))",
-          height:
-            "calc(var(--app-vh, 100dvh) + env(safe-area-inset-bottom, 0px) + clamp(2.5rem, 8vmin, 4.5rem))",
-        }}
+        style={{ minHeight: DOEPHONE_HERO_HEIGHT, height: DOEPHONE_HERO_HEIGHT }}
         aria-label="Hero"
       >
         <div className="absolute inset-0">
@@ -62,8 +61,8 @@ export function DoePhoneMobileView() {
         <div className="pointer-events-none absolute inset-0" aria-hidden>
           <WorkflowCarouselDesignBackdrop
             backdrop={CARE_COORDINATION_BACKDROP}
-            gradientOverride={CARE_COORDINATION_GRADIENT_DOEPHONE}
             embedded
+            gradientScale={1.38}
           />
         </div>
       </section>

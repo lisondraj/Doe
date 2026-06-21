@@ -106,6 +106,7 @@ export function WorkflowCarouselDesignBackdrop({
   embedded = false,
   patternScale = 1,
   gradientOverride,
+  gradientScale = 1,
 }: {
   backdrop: WorkflowCarouselDesignBackdrop;
   className?: string;
@@ -115,6 +116,8 @@ export function WorkflowCarouselDesignBackdrop({
   patternScale?: number;
   /** Replaces only the gradient layer — grid + grain unchanged. */
   gradientOverride?: string;
+  /** Scales only the gradient layer (>1 pushes outer stops past edges). */
+  gradientScale?: number;
 }) {
   const rootClass = embedded
     ? `absolute inset-0 overflow-hidden ${className}`.trim()
@@ -126,7 +129,12 @@ export function WorkflowCarouselDesignBackdrop({
     <Root className={rootClass}>
       <div
         className="pointer-events-none absolute inset-0"
-        style={{ background: gradientOverride ?? backdrop.gradient }}
+        style={{
+          background: gradientOverride ?? backdrop.gradient,
+          ...(gradientScale !== 1
+            ? { transform: `scale(${gradientScale})`, transformOrigin: "center center" }
+            : {}),
+        }}
         aria-hidden
       />
       <div className="pointer-events-none absolute inset-0 z-[1]" style={WORKFLOW_CAROUSEL_GRAIN_STYLE} aria-hidden />
