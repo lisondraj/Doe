@@ -219,15 +219,15 @@ body.mainpage-route {
 
 /* /doephone hero polar overlay — constant low opacity; one-time build animation. */
 .doephone-hero-polar-segment {
-  stroke: rgba(255, 255, 255, 0.32);
+  stroke: rgba(255, 255, 255, 0.18);
   stroke-width: 0.8;
   opacity: 1;
 }
 
-/* Straight lines grow inward from both outer edges until they meet at center. */
+/* Each half-spoke draws from outer edge toward center so lines converge at the hub. */
 .doephone-hero-polar-radial--intro {
-  stroke-dasharray: 0.5 0.5;
-  stroke-dashoffset: 0.5;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
   animation: doephone-hero-polar-radial-in 1.35s cubic-bezier(0.33, 1, 0.36, 1) forwards;
 }
 
@@ -438,7 +438,7 @@ body.mainpage-route {
   }
 
   .doephone-hero-polar-segment {
-    stroke: rgba(255, 255, 255, 0.32);
+    stroke: rgba(255, 255, 255, 0.18);
     opacity: 1;
   }
 

@@ -6,11 +6,16 @@ import {
 } from "@/lib/workflow-carousel-design-backdrops";
 import type { CSSProperties } from "react";
 
-function polarRadialPathD(angleDeg: number, radius = 500): string {
+function polarRadialHalfPathD(angleDeg: number, half: "a" | "b", radius = 500): string {
   const rad = (angleDeg * Math.PI) / 180;
   const x = Math.cos(rad) * radius;
   const y = Math.sin(rad) * radius;
-  return `M ${500 - x} ${500 - y} L ${500 + x} ${500 + y}`;
+  const cx = 500;
+  const cy = 500;
+  if (half === "a") {
+    return `M ${cx - x} ${cy - y} L ${cx} ${cy}`;
+  }
+  return `M ${cx + x} ${cy + y} L ${cx} ${cy}`;
 }
 
 /** Built for you orange panel — radial spokes + concentric rings. */
@@ -48,19 +53,20 @@ function PolarGridOverlay({
       >
         {Array.from({ length: 8 }, (_, j) => {
           const angle = j * 45;
-          return (
+          return (["a", "b"] as const).map((half) => (
             <path
-              key={`polar-radial-${j}`}
+              key={`polar-radial-${j}-${half}`}
               pathLength={1}
               className={`doephone-hero-polar-segment doephone-hero-polar-radial${
                 introOnLoad ? " doephone-hero-polar-radial--intro" : ""
               }`}
-              d={polarRadialPathD(angle)}
+              d={polarRadialHalfPathD(angle, half)}
               fill="none"
               strokeWidth="0.8"
+              strokeLinecap="round"
               vectorEffect="non-scaling-stroke"
             />
-          );
+          ));
         })}
         {Array.from({ length: 6 }, (_, j) => {
           const r = (j + 1) * 150;
