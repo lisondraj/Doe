@@ -13,8 +13,12 @@ const COPY_TW =
   `text-[clamp(3.45rem,14vw,6rem)] iphone-page:text-[clamp(3.25rem,13.25vw,5.65rem)]`;
 
 export function DoePhoneSectionText({
+  line1,
+  line2,
   color = "text-[#1E343A]",
 }: {
+  line1: string;
+  line2?: string;
   /** Tailwind text-color class. Use `text-white` on gradient sections. */
   color?: string;
 }) {
@@ -51,8 +55,8 @@ export function DoePhoneSectionText({
             textShadow: "none",
           }}
         >
-          <span className="block">The future of AI</span>
-          <span className="block">is in your hands.</span>
+          <span className="block">{line1}</span>
+          {line2 ? <span className="block">{line2}</span> : null}
         </p>
       </div>
     </div>

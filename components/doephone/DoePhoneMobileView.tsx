@@ -67,8 +67,8 @@ export function DoePhoneMobileView() {
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 
-      <section className={`${DOEPHONE_VIEWPORT_SECTION} bg-[#F7F6F3]`} aria-label="Mission">
-        <DoePhoneSectionText />
+      <section className={`${DOEPHONE_VIEWPORT_SECTION} bg-[#F7F6F3]`} aria-label="Automation">
+        <DoePhoneSectionText line1="Labs in." line2="Referrals out." />
       </section>
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
@@ -81,28 +81,28 @@ export function DoePhoneMobileView() {
             gradientScale={1.38}
           />
         </div>
-        <DoePhoneSectionText color="text-white" />
+        <DoePhoneSectionText line1="Communication + Intelligence." color="text-white" />
       </section>
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 
-      <section className={`${DOEPHONE_VIEWPORT_SECTION} bg-[#F7F6F3]`} aria-label="Mission 2">
-        <DoePhoneSectionText />
+      <section className={`${DOEPHONE_VIEWPORT_SECTION} bg-[#F7F6F3]`} aria-label="Customization">
+        <DoePhoneSectionText line1="Shape what you see." line2="Match how you practice." />
       </section>
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 
-      <section className={`${DOEPHONE_VIEWPORT_SECTION} overflow-hidden bg-[#F7F6F3]`} aria-label="Diagnostic assistant">
+      <section className={`${DOEPHONE_VIEWPORT_SECTION} overflow-hidden bg-[#F7F6F3]`} aria-label="Integrations">
         <div className="pointer-events-none absolute inset-0" aria-hidden>
           <WorkflowCarouselDesignBackdrop backdrop={DIAGNOSTIC_ASSISTANT_BACKDROP} embedded />
         </div>
-        <DoePhoneSectionText color="text-white" />
+        <DoePhoneSectionText line1="Your stack stays." line2="Doe connects quietly." color="text-white" />
       </section>
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 
-      <section className={`${DOEPHONE_VIEWPORT_SECTION} bg-[#F7F6F3]`} aria-label="Mission 3">
-        <DoePhoneSectionText />
+      <section className={`${DOEPHONE_VIEWPORT_SECTION} bg-[#F7F6F3]`} aria-label="Closing">
+        <DoePhoneSectionText line1="One provider at a time." line2="Starting with you." />
       </section>
 
       <HomeFooter />
