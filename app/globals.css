@@ -250,9 +250,8 @@ body.mainpage-route {
   display: block;
   height: var(--doephone-career-slot);
   line-height: 1;
-  font-weight: 400;
+  font-weight: 300;
   font-style: italic;
-  opacity: 0.76;
 }
 
 @keyframes doephone-hero-headline-in {
@@ -285,11 +284,9 @@ body.mainpage-route {
 .doephone-section-plus {
   display: inline-block;
   vertical-align: baseline;
-  font-weight: 100;
+  color: #000;
+  opacity: 1;
   letter-spacing: -0.03em;
-  opacity: 0.58;
-  transform: scale(0.8);
-  transform-origin: 0% 88%;
   -webkit-font-smoothing: antialiased;
 }
 

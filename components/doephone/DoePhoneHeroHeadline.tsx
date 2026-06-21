@@ -1,6 +1,6 @@
 "use client";
 
-import { loraItalicLight, suisseIntl } from "@/lib/home/fonts";
+import { heroCarouselSerif, suisseIntl } from "@/lib/home/fonts";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 const DOEPHONE_HERO_CAREERS = [
@@ -67,7 +67,7 @@ export function DoePhoneHeroHeadline() {
             <span className="relative inline-grid align-baseline leading-none">
               <span
                 aria-hidden
-                className={`invisible col-start-1 row-start-1 select-none ${loraItalicLight.className} italic`}
+                className={`invisible col-start-1 row-start-1 select-none ${heroCarouselSerif.className}`}
               >
                 {DOEPHONE_HERO_CAREER_WIDTH_SAMPLE}
               </span>
@@ -81,7 +81,7 @@ export function DoePhoneHeroHeadline() {
                   {slideItems.map((career, i) => (
                     <span
                       key={`${career}-${i}`}
-                      className={`doephone-hero-career-word ${loraItalicLight.className}`}
+                      className={`doephone-hero-career-word ${heroCarouselSerif.className}`}
                       aria-hidden={i === slideItems.length - 1 || career !== activeCareer}
                     >
                       {career}
