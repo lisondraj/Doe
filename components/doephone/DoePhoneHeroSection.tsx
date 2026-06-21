@@ -2,10 +2,15 @@
 
 import { DoePhoneHeroHeadline } from "@/components/doephone/DoePhoneHeroHeadline";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
+import {
+  DOEPHONE_HERO_INTRO_GRADIENT_MS,
+  DOEPHONE_HERO_INTRO_GRADIENT_START,
+  doephoneHeroIntroStyleVars,
+} from "@/lib/doephone/hero-intro-timing";
 import { DOEPHONE_SECTION_COPY_INSET } from "@/lib/doephone/section-styles";
 import { DOEPHONE_HERO_WAITLIST_CLASS } from "@/lib/doephone/waitlist-button";
 import { DOEPHONE_HERO_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 
 /** Full first-screen hero — extra depth below the fold so beige never peeks on load. */
 export const DOEPHONE_HERO_HEIGHT =
@@ -29,7 +34,9 @@ function gradientZoomFromScroll(scrolledPx: number, heroHeightPx: number): numbe
 
 export function DoePhoneHeroSection() {
   const heroRef = useRef<HTMLElement>(null);
-  const [gradientZoom, setGradientZoom] = useState(1);
+  const [introZoom, setIntroZoom] = useState(DOEPHONE_HERO_INTRO_GRADIENT_START);
+  const [introDone, setIntroDone] = useState(false);
+  const [scrollZoom, setScrollZoom] = useState(1);
 
   const updateZoom = useCallback(() => {
     const hero = heroRef.current;
@@ -38,10 +45,42 @@ export function DoePhoneHeroSection() {
     const heroTop = hero.offsetTop;
     const heroHeight = hero.offsetHeight;
     const scrolledIntoHero = Math.max(0, window.scrollY - heroTop);
-    setGradientZoom(gradientZoomFromScroll(scrolledIntoHero, heroHeight));
+    setScrollZoom(gradientZoomFromScroll(scrolledIntoHero, heroHeight));
   }, []);
 
   useEffect(() => {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedMotion) {
+      setIntroZoom(1);
+      setIntroDone(true);
+      return;
+    }
+
+    const start = performance.now();
+    let raf = 0;
+
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / DOEPHONE_HERO_INTRO_GRADIENT_MS);
+      const eased = t * t * (3 - 2 * t);
+      setIntroZoom(
+        DOEPHONE_HERO_INTRO_GRADIENT_START +
+          (1 - DOEPHONE_HERO_INTRO_GRADIENT_START) * eased,
+      );
+      if (t < 1) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        setIntroZoom(1);
+        setIntroDone(true);
+      }
+    };
+
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  useEffect(() => {
+    if (!introDone) return;
+
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reducedMotion) return;
 
@@ -52,13 +91,21 @@ export function DoePhoneHeroSection() {
       window.removeEventListener("scroll", updateZoom);
       window.removeEventListener("resize", updateZoom);
     };
-  }, [updateZoom]);
+  }, [introDone, updateZoom]);
+
+  const gradientZoom = introDone ? scrollZoom : introZoom;
 
   return (
     <section
       ref={heroRef}
-      className="relative w-full overflow-hidden"
-      style={{ minHeight: DOEPHONE_HERO_HEIGHT, height: DOEPHONE_HERO_HEIGHT }}
+      className="doephone-hero-section relative w-full overflow-hidden"
+      style={
+        {
+          minHeight: DOEPHONE_HERO_HEIGHT,
+          height: DOEPHONE_HERO_HEIGHT,
+          ...doephoneHeroIntroStyleVars(),
+        } as CSSProperties
+      }
       aria-label="Hero"
     >
       <WorkflowCarouselDesignBackdrop

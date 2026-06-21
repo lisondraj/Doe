@@ -4,6 +4,10 @@ import {
   type WorkflowCarouselDesignBackdrop,
   type WorkflowCarouselGridKind,
 } from "@/lib/workflow-carousel-design-backdrops";
+import {
+  doephoneHeroIntroRingDelayMs,
+  DOEPHONE_HERO_INTRO_RING_MS,
+} from "@/lib/doephone/hero-intro-timing";
 import type { CSSProperties } from "react";
 
 function polarRadialPathD(angleDeg: number, radius = 500): string {
@@ -25,7 +29,12 @@ function PolarGridOverlay({
 }) {
   const size = `${118 * patternScale}vmax`;
   const ringStyle = (index: number): CSSProperties | undefined =>
-    introOnLoad ? { animationDelay: `${1.35 + index * 0.16}s` } : undefined;
+    introOnLoad
+      ? {
+          animationDelay: `${doephoneHeroIntroRingDelayMs(index)}ms`,
+          animationDuration: `${DOEPHONE_HERO_INTRO_RING_MS}ms`,
+        }
+      : undefined;
 
   return (
     <div
@@ -58,7 +67,7 @@ function PolarGridOverlay({
               d={polarRadialPathD(angle)}
               fill="none"
               strokeWidth="0.8"
-              strokeLinecap="butt"
+              strokeLinecap="round"
               vectorEffect="non-scaling-stroke"
             />
           );
