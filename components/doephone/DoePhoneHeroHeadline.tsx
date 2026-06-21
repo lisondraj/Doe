@@ -56,13 +56,13 @@ export function DoePhoneHeroHeadline() {
 
   return (
     <h1
-      className={`doephone-hero-headline-line w-full text-center font-light leading-[1.02] tracking-[-0.03em] text-white text-[clamp(3.35rem,13.25vw,5.85rem)] iphone-page:text-[clamp(3.15rem,12.5vw,5.45rem)] ${suisseIntl.className}`}
+      className={`doephone-hero-headline-line flex w-full flex-col items-center font-light leading-[1.02] tracking-[-0.03em] text-white text-[clamp(3.35rem,13.25vw,5.85rem)] iphone-page:text-[clamp(3.15rem,12.5vw,5.45rem)] ${suisseIntl.className}`}
     >
       <span className="block">Intelligence</span>
-      <span className="block whitespace-nowrap">
-        built for{" "}
+      <span className="doephone-hero-second-line flex max-w-full items-baseline justify-center whitespace-nowrap">
+        <span className="shrink-0">built for</span>
         <span className="relative inline-grid align-baseline leading-none">
-          <span aria-hidden className="invisible col-start-1 row-start-1 select-none font-ui font-light">
+          <span aria-hidden className="invisible col-start-1 row-start-1 select-none font-light">
             {DOEPHONE_HERO_CAREER_WIDTH_SAMPLE}
           </span>
           <span className="doephone-hero-career-clip col-start-1 row-start-1">
@@ -75,7 +75,7 @@ export function DoePhoneHeroHeadline() {
               {slideItems.map((career, i) => (
                 <span
                   key={`${career}-${i}`}
-                  className="doephone-hero-career-word font-ui font-light"
+                  className="doephone-hero-career-word font-light"
                   aria-hidden={i === slideItems.length - 1 || career !== activeCareer}
                 >
                   {career}.

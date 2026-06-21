@@ -227,12 +227,15 @@ body.mainpage-route {
   text-shadow: none;
 }
 
+.doephone-hero-second-line {
+  gap: 0.3em;
+}
+
 .doephone-hero-career-clip {
   --doephone-career-slot: 1.22em;
   height: var(--doephone-career-slot);
   overflow: hidden;
   isolation: isolate;
-  transform: translateY(0.02em);
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 18%, #000 82%, transparent 100%);
   mask-image: linear-gradient(to bottom, transparent 0%, #000 18%, #000 82%, transparent 100%);
 }
