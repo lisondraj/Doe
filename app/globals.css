@@ -42,14 +42,17 @@ html:has(.doephone-mobile-root) body {
   overflow-x: clip;
   padding-left: env(safe-area-inset-left, 0px);
   padding-right: env(safe-area-inset-right, 0px);
+  -webkit-overflow-scrolling: touch;
+}
+
+.doephone-site-nav {
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 html[data-doephone-pinching="true"] .doephone-mobile-root {
-  overscroll-behavior-y: none;
-}
-
-html[data-doephone-pinching="true"] body {
-  overflow-anchor: none;
+  overscroll-behavior-y: auto;
 }
 
 /** /desktop — full desktop scroll; root layout uses wide-desktop:overflow-hidden on body */

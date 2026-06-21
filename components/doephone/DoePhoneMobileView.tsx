@@ -17,7 +17,7 @@ const DOEPHONE_BAND_SECTION =
  * CSS-only (no JS resize) so pinch zoom does not reflow layout.
  */
 const DOEPHONE_HERO_HEIGHT =
-  "calc(100svh + max(8rem, calc(env(safe-area-inset-top, 0px) + 3.5rem)) + 12vh)";
+  "calc(112svh + max(8rem, calc(env(safe-area-inset-top, 0px) + 3.5rem)))";
 
 export function DoePhoneMobileView() {
   /** Set viewport vars once + on orientation change only — avoids pinch-zoom layout jumps. */

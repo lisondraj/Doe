@@ -158,21 +158,26 @@ export default function DoeIphoneSiteNav({ pinchSafe = false }: { pinchSafe?: bo
   }, [mobileNavOpen]);
 
   useEffect(() => {
-    const tick = () => {
-      if (pinchSafe && isViewportPinching()) return;
+    if (pinchSafe) {
       setViewportWidth(window.innerWidth);
-      if (pinchSafe) {
+      setAppViewport({ width: window.innerWidth, height: window.innerHeight });
+      const onOrientation = () => {
+        setViewportWidth(window.innerWidth);
         setAppViewport({ width: window.innerWidth, height: window.innerHeight });
-      } else {
-        setAppViewport(siteNavAppViewportPx());
-      }
+      };
+      window.addEventListener("orientationchange", onOrientation);
+      return () => window.removeEventListener("orientationchange", onOrientation);
+    }
+
+    const tick = () => {
+      if (isViewportPinching()) return;
+      setViewportWidth(window.innerWidth);
+      setAppViewport(siteNavAppViewportPx());
     };
     tick();
     window.addEventListener("resize", tick);
     window.addEventListener("orientationchange", tick);
-    if (!pinchSafe) {
-      window.visualViewport?.addEventListener("resize", tick);
-    }
+    window.visualViewport?.addEventListener("resize", tick);
     return () => {
       window.removeEventListener("resize", tick);
       window.removeEventListener("orientationchange", tick);
@@ -183,33 +188,47 @@ export default function DoeIphoneSiteNav({ pinchSafe = false }: { pinchSafe?: bo
   useLayoutEffect(() => {
     const navEl = navBarRowRef.current;
     if (!navEl) return;
-    const update = () => {
-      if (pinchSafe && isViewportPinching()) return;
+
+    const measure = () => {
       const raw = navEl.getBoundingClientRect().bottom;
-      setIphoneMenuTopPx(Math.max(0, Math.floor(raw) - (pinchSafe ? 0 : 6)));
+      const px = Math.max(0, Math.floor(raw) - (pinchSafe ? 0 : 6));
+      setIphoneMenuTopPx((prev) => (prev === px ? prev : px));
     };
-    update();
+
+    measure();
+
+    if (pinchSafe) {
+      let raf = 0;
+      if (mobileNavOpen) {
+        raf = requestAnimationFrame(measure);
+      }
+      const onOrientation = () => measure();
+      window.addEventListener("orientationchange", onOrientation);
+      return () => {
+        cancelAnimationFrame(raf);
+        window.removeEventListener("orientationchange", onOrientation);
+      };
+    }
+
     let raf1 = 0;
     let raf2 = 0;
     if (mobileNavOpen) {
       raf1 = requestAnimationFrame(() => {
-        raf2 = requestAnimationFrame(update);
+        raf2 = requestAnimationFrame(measure);
       });
     }
-    const ro = new ResizeObserver(update);
+    const ro = new ResizeObserver(measure);
     ro.observe(navEl);
-    window.addEventListener("resize", update);
-    if (!pinchSafe) {
-      window.visualViewport?.addEventListener("resize", update);
-    }
+    window.addEventListener("resize", measure);
+    window.visualViewport?.addEventListener("resize", measure);
     return () => {
       cancelAnimationFrame(raf1);
       cancelAnimationFrame(raf2);
       ro.disconnect();
-      window.removeEventListener("resize", update);
-      window.visualViewport?.removeEventListener("resize", update);
+      window.removeEventListener("resize", measure);
+      window.visualViewport?.removeEventListener("resize", measure);
     };
-  }, [mobileNavOpen, viewportWidth, appViewport.width, appViewport.height, pinchSafe]);
+  }, [mobileNavOpen, pinchSafe, ...(pinchSafe ? [] : [viewportWidth, appViewport.width, appViewport.height])]);
 
   useLayoutEffect(() => {
     if (!mobileNavOpen || pinchSafe) return;
@@ -469,9 +488,9 @@ export default function DoeIphoneSiteNav({ pinchSafe = false }: { pinchSafe?: bo
     <>
       <nav
         ref={navBarRowRef}
-        className={`fixed top-0 left-0 right-0 iphone-page:pt-[env(safe-area-inset-top,0px)] ${
+        className={`${pinchSafe ? "doephone-site-nav " : ""}fixed top-0 left-0 right-0 iphone-page:pt-[env(safe-area-inset-top,0px)] ${
           navSheetLive ? "z-[200]" : "z-50"
-        } ${pinchSafe ? "shadow-[0_-120px_0_120px_#F7F6F3]" : ""}`}
+        } ${pinchSafe ? "shadow-[0_-120px_0_120px_#F7F6F3] translate-z-0" : ""}`}
         style={{
           backgroundColor: "#F7F6F3",
           borderBottom: "1px solid #E6E6E6",
