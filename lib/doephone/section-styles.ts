@@ -4,7 +4,7 @@ export const DOEPHONE_SECTION_COPY_INSET =
 
 /** Upper-mid placement for section titles (sections 2+). */
 export const DOEPHONE_SECTION_COPY_POSITION =
-  "absolute inset-0 z-[3] flex flex-col items-start justify-start pt-[max(7.5rem,calc(env(safe-area-inset-top,0px)+28svh))] pb-8";
+  "absolute inset-0 z-[3] flex flex-col items-start justify-start pt-[max(3.75rem,calc(env(safe-area-inset-top,0px)+14svh))] pb-8";
 
 /** Suisse Intl light — between hero and prior section scale. */
 export const DOEPHONE_SECTION_COPY_TW =
