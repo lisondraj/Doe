@@ -6,7 +6,13 @@ import {
 } from "@/lib/workflow-carousel-design-backdrops";
 
 /** Built for you orange panel — radial spokes + concentric rings. */
-function PolarGridOverlay({ patternScale = 1 }: { patternScale?: number }) {
+function PolarGridOverlay({
+  patternScale = 1,
+  centerY = "36%",
+}: {
+  patternScale?: number;
+  centerY?: string;
+}) {
   const size = `${118 * patternScale}vmax`;
 
   return (
@@ -14,7 +20,7 @@ function PolarGridOverlay({ patternScale = 1 }: { patternScale?: number }) {
       <svg
         className="pointer-events-none absolute left-1/2 max-w-none"
         style={{
-          top: "36%",
+          top: centerY,
           width: size,
           height: size,
           transform: "translate(-50%, -50%)",
@@ -87,11 +93,13 @@ function WaveGridOverlay({ patternScale = 1 }: { patternScale?: number }) {
 function GridOverlay({
   kind,
   patternScale = 1,
+  polarCenterY = "36%",
 }: {
   kind: WorkflowCarouselGridKind;
   patternScale?: number;
+  polarCenterY?: string;
 }) {
-  if (kind === "polar") return <PolarGridOverlay patternScale={patternScale} />;
+  if (kind === "polar") return <PolarGridOverlay patternScale={patternScale} centerY={polarCenterY} />;
   if (kind === "wave") return <WaveGridOverlay patternScale={patternScale} />;
 
   const style = getWorkflowGridOverlayStyle(kind, patternScale);
@@ -138,7 +146,7 @@ export function WorkflowCarouselDesignBackdrop({
         aria-hidden
       />
       <div className="pointer-events-none absolute inset-0 z-[1]" style={WORKFLOW_CAROUSEL_GRAIN_STYLE} aria-hidden />
-      <GridOverlay kind={backdrop.grid} patternScale={patternScale} />
+      <GridOverlay kind={backdrop.grid} patternScale={patternScale} polarCenterY={backdrop.polarCenterY} />
     </Root>
   );
 }

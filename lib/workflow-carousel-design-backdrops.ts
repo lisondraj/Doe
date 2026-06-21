@@ -10,6 +10,8 @@ export type WorkflowCarouselDesignBackdrop = {
   label: string;
   gradient: string;
   grid: WorkflowCarouselGridKind;
+  /** Polar grid anchor Y as CSS % (defaults to 36% for built-for-you layout). */
+  polarCenterY?: string;
 };
 
 /** First five workflow carousel cards in scroll order (`WORKFLOW_SLIDE_DISPLAY_ORDER`). */
@@ -62,6 +64,18 @@ export const DOEPHONE_DIAGNOSTIC_ASSISTANT_GRADIENT =
 
 /** `/design3` — Built for you (polar). */
 export const DESIGN3_BACKDROP = WORKFLOW_CAROUSEL_DESIGN_BACKDROPS[1];
+
+/** Main-page “HEY” / Report Results carousel card — radial + polar spokes. */
+export const HEY_CAROUSEL_BACKDROP: WorkflowCarouselDesignBackdrop = {
+  slideIndex: 1,
+  label: "Report Results",
+  gradient: "radial-gradient(circle at center, #E7A944 0%, #D49D4F 40%, #D2774C 70%, #1E343A 100%)",
+  grid: "polar",
+  polarCenterY: "50%",
+};
+
+/** `/doephone` hero — same gradient + polar grid as the HEY carousel slide. */
+export const DOEPHONE_HERO_BACKDROP = HEY_CAROUSEL_BACKDROP;
 
 /** `/design5` — Billing & Finances (hex). */
 export const DESIGN5_BACKDROP = WORKFLOW_CAROUSEL_DESIGN_BACKDROPS[4];

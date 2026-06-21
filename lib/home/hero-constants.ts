@@ -8,11 +8,9 @@ export const HERO_BACKDROP_GRADIENT = `
   radial-gradient(ellipse 50% 40% at 88% 22%, rgba(210, 119, 76, 0.3) 0%, transparent 55%)
 `;
 
-/** /doephone hero — warm copper sweep; darker center, no pale yellow. */
-export const DOEPHONE_HERO_BACKDROP_GRADIENT = `
-  radial-gradient(ellipse 105% 92% at 50% 42%, #1a2e34 0%, #243a40 16%, #3d2f28 30%, #5c4030 44%, #8b4f38 56%, #a85a34 68%, #c97a42 80%, #b86a38 92%),
-  radial-gradient(ellipse 65% 38% at 50% 102%, rgba(139, 79, 56, 0.22) 0%, transparent 68%)
-`;
+/** @deprecated Use `DOEPHONE_HERO_BACKDROP` from workflow-carousel-design-backdrops. */
+export const DOEPHONE_HERO_BACKDROP_GRADIENT =
+  "radial-gradient(circle at center, #E7A944 0%, #D49D4F 40%, #D2774C 70%, #1E343A 100%)";
 
 /** Same horizontal inset as the fixed nav — hero, headline band, carousel (forced phone layout). */
 export const narrowHorizontalInset =

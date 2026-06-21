@@ -3,15 +3,17 @@
 import DoeIphoneSiteNav from "@/components/DoeIphoneSiteNav";
 import { DoePhoneHeroHeadline } from "@/components/doephone/DoePhoneHeroHeadline";
 import { DoePhoneSectionPlus, DoePhoneSectionText } from "@/components/doephone/DoePhoneSectionText";
-import { HeroCarouselTextureOverlay } from "@/components/hero-carousel-texture";
-import { HomeFooter } from "@/components/home/sections/HomeFooter";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
-import { DOEPHONE_HERO_BACKDROP_GRADIENT } from "@/lib/home/hero-constants";
+import { HomeFooter } from "@/components/home/sections/HomeFooter";
+import {
+  CARE_COORDINATION_BACKDROP,
+  DIAGNOSTIC_ASSISTANT_BACKDROP,
+  DOEPHONE_HERO_BACKDROP,
+} from "@/lib/workflow-carousel-design-backdrops";
 import {
   DOEPHONE_SECTION_COPY_INSET,
   DOEPHONE_VIEWPORT_SECTION,
 } from "@/lib/doephone/section-styles";
-import { CARE_COORDINATION_BACKDROP, DIAGNOSTIC_ASSISTANT_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 import { useLayoutEffect } from "react";
 
 /** Hero headline — symmetric inset for centered copy. */
@@ -50,14 +52,7 @@ export function DoePhoneMobileView() {
         style={{ minHeight: DOEPHONE_HERO_HEIGHT, height: DOEPHONE_HERO_HEIGHT }}
         aria-label="Hero"
       >
-        <div className="absolute inset-0">
-          <div
-            className="pointer-events-none absolute inset-0"
-            style={{ background: DOEPHONE_HERO_BACKDROP_GRADIENT }}
-            aria-hidden
-          />
-          <HeroCarouselTextureOverlay introOnLoad grid="dot" />
-        </div>
+        <WorkflowCarouselDesignBackdrop backdrop={DOEPHONE_HERO_BACKDROP} embedded />
 
         <div
           className={`absolute inset-0 z-[3] flex flex-col items-center justify-start pt-[max(9rem,calc(env(safe-area-inset-top,0px)+31svh))] pb-8 ${DOEPHONE_HERO_HEADLINE_INSET}`}
