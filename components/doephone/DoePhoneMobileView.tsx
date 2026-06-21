@@ -1,31 +1,16 @@
 "use client";
 
 import DoeIphoneSiteNav from "@/components/DoeIphoneSiteNav";
-import { DoePhoneHeroHeadline } from "@/components/doephone/DoePhoneHeroHeadline";
+import { DoePhoneHeroSection } from "@/components/doephone/DoePhoneHeroSection";
 import { DoePhoneSectionPlus, DoePhoneSectionText } from "@/components/doephone/DoePhoneSectionText";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
 import {
   CARE_COORDINATION_BACKDROP,
   DIAGNOSTIC_ASSISTANT_BACKDROP,
-  DOEPHONE_HERO_BACKDROP,
 } from "@/lib/workflow-carousel-design-backdrops";
-import {
-  DOEPHONE_SECTION_COPY_INSET,
-  DOEPHONE_VIEWPORT_SECTION,
-} from "@/lib/doephone/section-styles";
+import { DOEPHONE_VIEWPORT_SECTION } from "@/lib/doephone/section-styles";
 import { useLayoutEffect } from "react";
-
-/** Hero headline — symmetric inset for centered copy. */
-const DOEPHONE_HERO_HEADLINE_INSET =
-  "px-6 iphone-page:px-[max(1.65rem,calc(env(safe-area-inset-left,0px)+1rem))]";
-
-/**
- * Full first-screen hero — extra depth below the fold so beige never peeks on load.
- * CSS-only (no JS resize) so pinch zoom does not reflow layout.
- */
-const DOEPHONE_HERO_HEIGHT =
-  "calc(112svh + max(8rem, calc(env(safe-area-inset-top, 0px) + 3.5rem)))";
 
 export function DoePhoneMobileView() {
   /** Set viewport vars once + on orientation change only — avoids pinch-zoom layout jumps. */
@@ -47,19 +32,7 @@ export function DoePhoneMobileView() {
     >
       <DoeIphoneSiteNav pinchSafe />
 
-      <section
-        className="relative w-full overflow-hidden"
-        style={{ minHeight: DOEPHONE_HERO_HEIGHT, height: DOEPHONE_HERO_HEIGHT }}
-        aria-label="Hero"
-      >
-        <WorkflowCarouselDesignBackdrop backdrop={DOEPHONE_HERO_BACKDROP} embedded />
-
-        <div
-          className={`absolute inset-0 z-[3] flex flex-col items-center justify-start pt-[max(9rem,calc(env(safe-area-inset-top,0px)+31svh))] pb-8 ${DOEPHONE_HERO_HEADLINE_INSET}`}
-        >
-          <DoePhoneHeroHeadline />
-        </div>
-      </section>
+      <DoePhoneHeroSection />
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 

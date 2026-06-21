@@ -217,12 +217,28 @@ body.mainpage-route {
   }
 }
 
-/* /doephone hero headline — deblur + rise on load. */
+/* /doephone hero polar lines — staggered segment fade on load. */
+.doephone-hero-polar-segment {
+  opacity: 0;
+  animation: doephone-hero-polar-segment-in 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes doephone-hero-polar-segment-in {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+/* /doephone hero headline — deblur + rise after polar lines finish. */
 .doephone-hero-headline-line {
   opacity: 0;
   filter: blur(16px);
   transform: translateY(1.75rem);
-  animation: doephone-hero-headline-in 1.45s cubic-bezier(0.22, 1, 0.36, 1) 0.55s forwards;
+  animation: doephone-hero-headline-in 1.45s cubic-bezier(0.22, 1, 0.36, 1) 2.05s forwards;
   will-change: opacity, filter, transform;
   text-shadow: none;
 }
@@ -382,6 +398,11 @@ body.mainpage-route {
     mask-image: none;
     -webkit-mask-size: auto;
     mask-size: auto;
+  }
+
+  .doephone-hero-polar-segment {
+    animation: none !important;
+    opacity: 1;
   }
 
   .doephone-hero-headline-line {

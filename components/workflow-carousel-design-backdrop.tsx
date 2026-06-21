@@ -9,11 +9,14 @@ import {
 function PolarGridOverlay({
   patternScale = 1,
   centerY = "36%",
+  introOnLoad = false,
 }: {
   patternScale?: number;
   centerY?: string;
+  introOnLoad?: boolean;
 }) {
   const size = `${118 * patternScale}vmax`;
+  const segmentClass = introOnLoad ? "doephone-hero-polar-segment" : undefined;
 
   return (
     <div className="pointer-events-none absolute inset-0 z-[2] overflow-hidden" aria-hidden>
@@ -35,6 +38,8 @@ function PolarGridOverlay({
           return (
             <path
               key={`polar-radial-${j}`}
+              className={segmentClass}
+              style={introOnLoad ? { animationDelay: `${0.12 + j * 0.09}s` } : undefined}
               d={`M 500 500 L ${500 + Math.cos((angle * Math.PI) / 180) * radius} ${500 + Math.sin((angle * Math.PI) / 180) * radius}`}
               fill="none"
               stroke="rgba(255, 255, 255, 0.15)"
@@ -47,6 +52,8 @@ function PolarGridOverlay({
           return (
             <circle
               key={`polar-ring-${j}`}
+              className={segmentClass}
+              style={introOnLoad ? { animationDelay: `${0.84 + j * 0.1}s` } : undefined}
               cx="500"
               cy="500"
               r={r}
@@ -94,12 +101,22 @@ function GridOverlay({
   kind,
   patternScale = 1,
   polarCenterY = "36%",
+  introOnLoad = false,
 }: {
   kind: WorkflowCarouselGridKind;
   patternScale?: number;
   polarCenterY?: string;
+  introOnLoad?: boolean;
 }) {
-  if (kind === "polar") return <PolarGridOverlay patternScale={patternScale} centerY={polarCenterY} />;
+  if (kind === "polar") {
+    return (
+      <PolarGridOverlay
+        patternScale={patternScale}
+        centerY={polarCenterY}
+        introOnLoad={introOnLoad}
+      />
+    );
+  }
   if (kind === "wave") return <WaveGridOverlay patternScale={patternScale} />;
 
   const style = getWorkflowGridOverlayStyle(kind, patternScale);
@@ -115,6 +132,7 @@ export function WorkflowCarouselDesignBackdrop({
   patternScale = 1,
   gradientOverride,
   gradientScale = 1,
+  introOnLoad = false,
 }: {
   backdrop: WorkflowCarouselDesignBackdrop;
   className?: string;
@@ -126,6 +144,8 @@ export function WorkflowCarouselDesignBackdrop({
   gradientOverride?: string;
   /** Scales only the gradient layer (>1 pushes outer stops past edges). */
   gradientScale?: number;
+  /** Staggered fade-in for polar line overlay on load. */
+  introOnLoad?: boolean;
 }) {
   const rootClass = embedded
     ? `absolute inset-0 overflow-hidden ${className}`.trim()
@@ -139,14 +159,19 @@ export function WorkflowCarouselDesignBackdrop({
         className="pointer-events-none absolute inset-0"
         style={{
           background: gradientOverride ?? backdrop.gradient,
-          ...(gradientScale !== 1
-            ? { transform: `scale(${gradientScale})`, transformOrigin: "center center" }
-            : {}),
+          backgroundSize: gradientScale !== 1 ? `${gradientScale * 100}% ${gradientScale * 100}%` : undefined,
+          backgroundPosition: gradientScale !== 1 ? "center center" : undefined,
+          backgroundRepeat: gradientScale !== 1 ? "no-repeat" : undefined,
         }}
         aria-hidden
       />
       <div className="pointer-events-none absolute inset-0 z-[1]" style={WORKFLOW_CAROUSEL_GRAIN_STYLE} aria-hidden />
-      <GridOverlay kind={backdrop.grid} patternScale={patternScale} polarCenterY={backdrop.polarCenterY} />
+      <GridOverlay
+        kind={backdrop.grid}
+        patternScale={patternScale}
+        polarCenterY={backdrop.polarCenterY}
+        introOnLoad={introOnLoad}
+      />
     </Root>
   );
 }
