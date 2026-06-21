@@ -3,7 +3,7 @@
 import DoeIphoneSiteNav from "@/components/DoeIphoneSiteNav";
 import { DoePhoneCommunicationSection } from "@/components/doephone/DoePhoneCommunicationSection";
 import { DoePhoneHeroSection } from "@/components/doephone/DoePhoneHeroSection";
-import { DoePhoneSectionText } from "@/components/doephone/DoePhoneSectionText";
+import { DoePhoneSectionPlus, DoePhoneSectionText } from "@/components/doephone/DoePhoneSectionText";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
 import {
@@ -39,14 +39,14 @@ export function DoePhoneMobileView() {
 
       <section
         className="relative z-10 flex min-h-[100svh] w-full flex-col bg-[#F7F6F3] iphone-page:min-h-[100dvh]"
-        aria-label="Communication"
+        aria-label="Labs"
       >
         <DoePhoneCommunicationSection />
       </section>
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 
-      <section className={`${DOEPHONE_VIEWPORT_SECTION} overflow-hidden bg-[#F7F6F3]`} aria-label="Automation">
+      <section className={`${DOEPHONE_VIEWPORT_SECTION} overflow-hidden bg-[#F7F6F3]`} aria-label="Communication">
         <div className="pointer-events-none absolute inset-0" aria-hidden>
           <WorkflowCarouselDesignBackdrop
             backdrop={CARE_COORDINATION_BACKDROP}
@@ -54,7 +54,16 @@ export function DoePhoneMobileView() {
             gradientScale={1.38}
           />
         </div>
-        <DoePhoneSectionText line1="Labs in." line2="Referrals in." color="text-white" />
+        <DoePhoneSectionText
+          line1="Communication"
+          line2={
+            <>
+              <DoePhoneSectionPlus />
+              Intelligence.
+            </>
+          }
+          color="text-white"
+        />
       </section>
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
