@@ -226,10 +226,6 @@ body.mainpage-route {
   will-change: opacity, filter, transform;
 }
 
-.doephone-hero-headline-line--second {
-  animation-delay: 0.82s;
-}
-
 @keyframes doephone-hero-headline-in {
   0% {
     opacity: 0;

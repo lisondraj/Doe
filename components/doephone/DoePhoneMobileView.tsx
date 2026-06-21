@@ -60,11 +60,9 @@ export function DoePhoneMobileView() {
         <div
           className={`absolute inset-0 z-[3] flex flex-col items-start justify-center pt-[max(5rem,calc(env(safe-area-inset-top,0px)+3.75rem))] pb-8 ${DOEPHONE_HERO_INSET_X}`}
         >
-          <h1 className="font-ui text-left font-thin leading-[1.02] tracking-[-0.025em] text-white text-[clamp(3rem,12vw,5rem)] iphone-page:text-[clamp(2.85rem,11.5vw,4.75rem)]">
-            <span className="doephone-hero-headline-line block">An inbox</span>
-            <span className="doephone-hero-headline-line doephone-hero-headline-line--second block">
-              built for you.
-            </span>
+          <h1 className="doephone-hero-headline-line font-ui text-left font-thin leading-[1.02] tracking-[-0.025em] text-white text-[clamp(3rem,12vw,5rem)] iphone-page:text-[clamp(2.85rem,11.5vw,4.75rem)]">
+            <span className="block">An inbox</span>
+            <span className="block">built for you.</span>
           </h1>
         </div>
       </section>
