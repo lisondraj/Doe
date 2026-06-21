@@ -15,6 +15,13 @@ import {
   narrowHorizontalInset,
 } from "@/lib/home/hero-constants";
 import { DOEPHONE_NAV_WAITLIST_CLASS } from "@/lib/doephone/waitlist-button";
+import {
+  NAV_FOOTER_BOX_TITLE_TW,
+  NAV_FOOTER_CARD_INSET,
+  NAV_FOOTER_DATE_TW,
+  NAV_FOOTER_OUTSIDE_INSET,
+  NAV_FOOTER_OUTSIDE_TITLE_TW,
+} from "@/lib/home/nav-footer-carousel-styles";
 
 /** Body copy typography + choreographed reveal — literals here so Tailwind JIT emits them (`${CONST}` imported from `@/lib/home/hero-constants` is not reliably scanned). Sync with lib/home/hero-constants.ts. */
 const HERO_BODY_COPY_TW =
@@ -439,28 +446,24 @@ export function HeroSection(props: HeroSectionProps) {
                               />
                             ))}
                           </div>
-                          <div className="absolute bottom-0 left-0 right-0 z-[3] flex items-center justify-start p-8 iphone-page:p-[clamp(1.35rem,0.9rem+3.1vmin,3.5rem)]">
-                            <div className={`text-white ${inter.className}`}>
-                              <span className="text-[3.25rem] iphone-page:text-[clamp(2.05rem,1rem+5.5vmin,4.65rem)] font-medium tracking-tight leading-none">
-                                {slide.boxTitle}
-                              </span>
+                          <div className={`absolute bottom-0 left-0 right-0 z-[3] flex items-center justify-start ${NAV_FOOTER_CARD_INSET}`}>
+                            <div className={`text-white ${NAV_FOOTER_BOX_TITLE_TW}`}>
+                              <span>{slide.boxTitle}</span>
                             </div>
                           </div>
                         </div>
-                        <div>
+                        <div className={NAV_FOOTER_OUTSIDE_INSET}>
                           <Link
                             href="/#students"
-                            className={`block w-full text-left active:opacity-80 transition-opacity ${inter.className}`}
+                            className="block w-full text-left active:opacity-80 transition-opacity no-underline"
                             onClick={() => setMobileNavOpen(false)}
                             aria-label="See what we are building"
                           >
-                            <span className="text-[1.5rem] iphone-page:text-[clamp(1.38rem,0.88rem+2.3vmin,2.45rem)] font-medium text-gray-800 tracking-tight leading-snug no-underline">
+                            <span className={NAV_FOOTER_OUTSIDE_TITLE_TW}>
                               See what we&apos;re building&nbsp;→
                             </span>
                           </Link>
-                          <p
-                            className={`mt-1.5 text-[1.0625rem] iphone-page:text-[clamp(0.98rem,0.78rem+1.15vmin,1.45rem)] font-medium tracking-tight text-gray-500 ${inter.className}`}
-                          >
+                          <p className={NAV_FOOTER_DATE_TW}>
                             {slide.date}
                           </p>
                         </div>
