@@ -8,6 +8,10 @@ import { HERO_BACKDROP_GRADIENT } from "@/lib/home/hero-constants";
 import { CARE_COORDINATION_BACKDROP, DIAGNOSTIC_ASSISTANT_BACKDROP, DOEPHONE_DIAGNOSTIC_ASSISTANT_GRADIENT } from "@/lib/workflow-carousel-design-backdrops";
 import { useLayoutEffect } from "react";
 
+/** Matches pinchSafe nav horizontal inset in `DoeIphoneSiteNav`. */
+const DOEPHONE_HERO_INSET_X =
+  "pl-11 pr-6 iphone-page:pl-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))] iphone-page:pr-[max(1.65rem,env(safe-area-inset-right,0px))]";
+
 /** Shared band height for /doephone sections 2+. */
 const DOEPHONE_BAND_SECTION =
   "relative z-10 w-full min-h-[min(152vh,86rem)] iphone-page:min-h-[min(144dvh,82rem)]";
@@ -51,6 +55,15 @@ export function DoePhoneMobileView() {
             aria-hidden
           />
           <HeroCarouselTextureOverlay introOnLoad />
+        </div>
+
+        <div
+          className={`absolute inset-0 z-[3] flex flex-col items-start justify-center pt-[max(5rem,calc(env(safe-area-inset-top,0px)+3.75rem))] pb-8 ${DOEPHONE_HERO_INSET_X}`}
+        >
+          <h1 className="font-ui text-left font-thin leading-[1.02] tracking-[-0.025em] text-white text-[clamp(3rem,12vw,5rem)] iphone-page:text-[clamp(2.85rem,11.5vw,4.75rem)]">
+            <span className="block">An inbox</span>
+            <span className="block">built for you</span>
+          </h1>
         </div>
       </section>
 
