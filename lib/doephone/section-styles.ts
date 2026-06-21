@@ -5,6 +5,13 @@ export const DOEPHONE_SECTION_COPY_INSET =
 /** Standard content gutter for all sections (same left edge as hero headline). */
 export const DOEPHONE_SECTION_CONTENT_INSET = DOEPHONE_SECTION_COPY_INSET;
 
+/** Uniform section gutter — same value as hero/section left inset on all four sides. */
+export const DOEPHONE_SECTION_UNIFORM_PAD =
+  "p-14 iphone-page:p-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
+
+/** Carousel band in section 2 — equal padding on all sides (matches hero left inset). */
+export const DOEPHONE_SECTION_CAROUSEL_UNIFORM_PAD = DOEPHONE_SECTION_UNIFORM_PAD;
+
 /** Top offset for section titles (~52% of prior padding — just under half removed). */
 export const DOEPHONE_SECTION_TITLE_PT =
   "pt-[max(1.95rem,calc(env(safe-area-inset-top,0px)+7.25svh))]";
@@ -20,7 +27,3 @@ export const DOEPHONE_SECTION_COPY_TW =
 /** Full iPhone viewport band below hero. */
 export const DOEPHONE_VIEWPORT_SECTION =
   "relative z-10 w-full min-h-[100svh] h-[100svh] iphone-page:min-h-[100dvh] iphone-page:h-[100dvh]";
-
-/** Top offset when the title shares a section with the carousel (section 2). */
-export const DOEPHONE_SECTION_TITLE_PT_STACKED =
-  "pt-[max(0.25rem,calc(env(safe-area-inset-top,0px)+2.6svh))]";

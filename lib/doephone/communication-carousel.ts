@@ -90,3 +90,5 @@ export const DOEPHONE_COMMUNICATION_SLIDES: readonly DoePhoneCommunicationSlide[
     },
   },
 ] as const;
+
+export const DOEPHONE_COMMUNICATION_SLIDE_COUNT = DOEPHONE_COMMUNICATION_SLIDES.length;
