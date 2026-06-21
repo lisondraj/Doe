@@ -56,36 +56,31 @@ export function DoePhoneHeroHeadline() {
 
   return (
     <h1
-      className={`doephone-hero-headline-line text-left font-light leading-[1.02] tracking-[-0.03em] text-white text-[clamp(3.45rem,14vw,6rem)] iphone-page:text-[clamp(3.25rem,13.25vw,5.65rem)] ${suisseIntl.className}`}
+      className={`doephone-hero-headline-line text-left font-light leading-[1.02] tracking-[-0.03em] text-white text-[clamp(3.85rem,15.5vw,6.85rem)] iphone-page:text-[clamp(3.65rem,14.75vw,6.35rem)] ${suisseIntl.className}`}
     >
-      <span className="block">An AI inbox</span>
+      <span className="block">An intelligent</span>
+      <span className="block">inbox built for</span>
       <span className="block min-w-0">
-        <span className="inline-flex max-w-full flex-nowrap items-baseline whitespace-nowrap">
-          <span className="shrink-0">built&nbsp;</span>
-          <span className="inline-flex shrink-0 flex-nowrap items-baseline whitespace-nowrap">
-            <span>for&nbsp;</span>
-            <span className="relative inline-grid align-baseline leading-none">
-              <span aria-hidden className="invisible col-start-1 row-start-1 select-none font-ui font-light">
-                {DOEPHONE_HERO_CAREER_WIDTH_SAMPLE}
-              </span>
-              <span className="doephone-hero-career-clip col-start-1 row-start-1">
+        <span className="relative inline-grid align-baseline leading-none">
+          <span aria-hidden className="invisible col-start-1 row-start-1 select-none font-ui font-light">
+            {DOEPHONE_HERO_CAREER_WIDTH_SAMPLE}
+          </span>
+          <span className="doephone-hero-career-clip col-start-1 row-start-1">
+            <span
+              className={`doephone-hero-career-track block${slideTransition ? "" : " doephone-hero-career-track--instant"}`}
+              style={{ transform: `translateY(calc(var(--doephone-career-slot) * -${index}))` }}
+              onTransitionEnd={handleTrackTransitionEnd}
+              aria-live="polite"
+            >
+              {slideItems.map((career, i) => (
                 <span
-                  className={`doephone-hero-career-track block${slideTransition ? "" : " doephone-hero-career-track--instant"}`}
-                  style={{ transform: `translateY(calc(var(--doephone-career-slot) * -${index}))` }}
-                  onTransitionEnd={handleTrackTransitionEnd}
-                  aria-live="polite"
+                  key={`${career}-${i}`}
+                  className="doephone-hero-career-word font-ui font-light"
+                  aria-hidden={i === slideItems.length - 1 || career !== activeCareer}
                 >
-                  {slideItems.map((career, i) => (
-                    <span
-                      key={`${career}-${i}`}
-                      className="doephone-hero-career-word font-ui font-light"
-                      aria-hidden={i === slideItems.length - 1 || career !== activeCareer}
-                    >
-                      {career}
-                    </span>
-                  ))}
+                  {career}
                 </span>
-              </span>
+              ))}
             </span>
           </span>
         </span>
