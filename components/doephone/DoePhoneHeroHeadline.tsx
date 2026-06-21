@@ -58,8 +58,9 @@ export function DoePhoneHeroHeadline() {
     <h1
       className={`doephone-hero-headline-line w-full text-center font-light leading-[1.02] tracking-[-0.03em] text-white text-[clamp(3.35rem,13.25vw,5.85rem)] iphone-page:text-[clamp(3.15rem,12.5vw,5.45rem)] ${suisseIntl.className}`}
     >
-      <span className="block whitespace-nowrap">An AI inbox built for</span>
-      <span className="block">
+      <span className="block">Intelligence</span>
+      <span className="block whitespace-nowrap">
+        built for{" "}
         <span className="relative inline-grid align-baseline leading-none">
           <span aria-hidden className="invisible col-start-1 row-start-1 select-none font-ui font-light">
             {DOEPHONE_HERO_CAREER_WIDTH_SAMPLE}
