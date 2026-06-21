@@ -217,16 +217,20 @@ body.mainpage-route {
   }
 }
 
-/* /doephone hero polar lines — staggered segment fade on load, then live pulse. */
+/* /doephone hero polar lines — staggered segment fade on load. */
 .doephone-hero-polar-segment {
-  --polar-live-slot: 1.75s;
-  --polar-live-cycle: 24.5s;
-  --polar-live-start: 3.35s;
   opacity: 0;
-  animation:
-    doephone-hero-polar-segment-in 0.85s cubic-bezier(0.22, 1, 0.36, 1) var(--polar-intro-delay, 0s) forwards,
-    doephone-hero-polar-live-pulse var(--polar-live-cycle) ease-in-out
-      calc(var(--polar-live-start) + var(--polar-live-index, 0) * var(--polar-live-slot)) infinite;
+  animation: doephone-hero-polar-segment-in 0.85s cubic-bezier(0.22, 1, 0.36, 1) var(--polar-intro-delay, 0s) forwards;
+}
+
+.doephone-hero-polar-segment--live {
+  opacity: 0.3;
+  animation: none;
+  transition: opacity 0.58s ease-in-out;
+}
+
+.doephone-hero-polar-segment--live.doephone-hero-polar-segment--active {
+  opacity: 0.92;
 }
 
 @keyframes doephone-hero-polar-segment-in {
@@ -236,18 +240,6 @@ body.mainpage-route {
 
   100% {
     opacity: 0.3;
-  }
-}
-
-@keyframes doephone-hero-polar-live-pulse {
-  0%,
-  7.2%,
-  100% {
-    opacity: 0.3;
-  }
-
-  3.6% {
-    opacity: 0.92;
   }
 }
 

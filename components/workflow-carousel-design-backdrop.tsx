@@ -1,10 +1,18 @@
+"use client";
+
 import {
   WORKFLOW_CAROUSEL_GRAIN_STYLE,
   getWorkflowGridOverlayStyle,
   type WorkflowCarouselDesignBackdrop,
   type WorkflowCarouselGridKind,
 } from "@/lib/workflow-carousel-design-backdrops";
-import type { CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
+
+const POLAR_SEGMENT_COUNT = 14;
+const POLAR_INTRO_END_MS = 3350;
+const POLAR_FADE_MS = 580;
+const POLAR_HOLD_MS = 420;
+const POLAR_GAP_MS = 300;
 
 /** Built for you orange panel — radial spokes + concentric rings. */
 function PolarGridOverlay({
@@ -16,15 +24,70 @@ function PolarGridOverlay({
   centerY?: string;
   introOnLoad?: boolean;
 }) {
+  const [liveReady, setLiveReady] = useState(!introOnLoad);
+  const [activeIndex, setActiveIndex] = useState(-1);
   const size = `${118 * patternScale}vmax`;
-  const segmentClass = introOnLoad ? "doephone-hero-polar-segment" : undefined;
-  const segmentStyle = (introDelay: string, liveIndex: number): CSSProperties | undefined =>
-    introOnLoad
-      ? ({
-          ["--polar-intro-delay" as string]: introDelay,
-          ["--polar-live-index" as string]: String(liveIndex),
-        } as React.CSSProperties)
-      : undefined;
+
+  useEffect(() => {
+    if (!introOnLoad) return;
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedMotion) {
+      setLiveReady(true);
+      return;
+    }
+
+    const introTimer = window.setTimeout(() => setLiveReady(true), POLAR_INTRO_END_MS);
+    return () => window.clearTimeout(introTimer);
+  }, [introOnLoad]);
+
+  useEffect(() => {
+    if (!introOnLoad || !liveReady) return;
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedMotion) return;
+
+    let cancelled = false;
+    let index = 0;
+
+    const sleep = (ms: number) =>
+      new Promise<void>((resolve) => {
+        window.setTimeout(resolve, ms);
+      });
+
+    const runPulse = async () => {
+      while (!cancelled) {
+        setActiveIndex(index);
+        await sleep(POLAR_FADE_MS + POLAR_HOLD_MS);
+        if (cancelled) break;
+
+        setActiveIndex(-1);
+        await sleep(POLAR_FADE_MS + POLAR_GAP_MS);
+        if (cancelled) break;
+
+        index = (index + 1) % POLAR_SEGMENT_COUNT;
+      }
+    };
+
+    void runPulse();
+
+    return () => {
+      cancelled = true;
+      setActiveIndex(-1);
+    };
+  }, [introOnLoad, liveReady]);
+
+  const segmentClass = (liveIndex: number) => {
+    if (!introOnLoad) return undefined;
+
+    const classes = ["doephone-hero-polar-segment"];
+    if (liveReady) classes.push("doephone-hero-polar-segment--live");
+    if (liveReady && activeIndex === liveIndex) classes.push("doephone-hero-polar-segment--active");
+    return classes.join(" ");
+  };
+
+  const segmentStyle = (introDelay: string): CSSProperties | undefined =>
+    introOnLoad ? ({ ["--polar-intro-delay" as string]: introDelay } as CSSProperties) : undefined;
 
   return (
     <div className="pointer-events-none absolute inset-0 z-[2] overflow-hidden" aria-hidden>
@@ -46,8 +109,8 @@ function PolarGridOverlay({
           return (
             <path
               key={`polar-radial-${j}`}
-              className={segmentClass}
-              style={segmentStyle(`${0.12 + j * 0.09}s`, j)}
+              className={segmentClass(j)}
+              style={segmentStyle(`${0.12 + j * 0.09}s`)}
               d={`M 500 500 L ${500 + Math.cos((angle * Math.PI) / 180) * radius} ${500 + Math.sin((angle * Math.PI) / 180) * radius}`}
               fill="none"
               stroke="rgba(255, 255, 255, 0.15)"
@@ -60,8 +123,8 @@ function PolarGridOverlay({
           return (
             <circle
               key={`polar-ring-${j}`}
-              className={segmentClass}
-              style={segmentStyle(`${0.84 + j * 0.1}s`, 8 + j)}
+              className={segmentClass(8 + j)}
+              style={segmentStyle(`${0.84 + j * 0.1}s`)}
               cx="500"
               cy="500"
               r={r}
