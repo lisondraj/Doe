@@ -6,9 +6,9 @@ export const DOEPHONE_SECTION_COPY_INSET =
 export const DOEPHONE_SECTION_COPY_POSITION =
   "absolute inset-0 z-[3] flex flex-col items-start justify-start pt-[max(10rem,calc(env(safe-area-inset-top,0px)+35svh))] pb-8";
 
-/** Thin Inter, hero scale + load transition (`doephone-hero-headline-line`). */
+/** Suisse Intl light — smaller than hero, shared across sections 2+. */
 export const DOEPHONE_SECTION_COPY_TW =
-  "doephone-hero-headline-line font-ui text-left font-thin leading-[1.02] tracking-[-0.03em] text-[clamp(3.45rem,14vw,6rem)] iphone-page:text-[clamp(3.25rem,13.25vw,5.65rem)]";
+  "text-left font-light leading-[1.02] tracking-[-0.03em] text-[clamp(2.65rem,10.5vw,4.5rem)] iphone-page:text-[clamp(2.5rem,9.75vw,4.15rem)]";
 
 /** Full iPhone viewport band below hero. */
 export const DOEPHONE_VIEWPORT_SECTION =

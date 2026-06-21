@@ -1,24 +1,20 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { suisseIntl } from "@/lib/home/fonts";
 import {
   DOEPHONE_SECTION_COPY_INSET,
   DOEPHONE_SECTION_COPY_POSITION,
+  DOEPHONE_SECTION_COPY_TW,
 } from "@/lib/doephone/section-styles";
-
-/** Text style — Suisse Intl light, same scale as hero. */
-const COPY_TW =
-  `text-left font-light leading-[1.02] tracking-[-0.03em] ` +
-  `text-[clamp(3.45rem,14vw,6rem)] iphone-page:text-[clamp(3.25rem,13.25vw,5.65rem)]`;
 
 export function DoePhoneSectionText({
   line1,
   line2,
   color = "text-[#1E343A]",
 }: {
-  line1: string;
-  line2?: string;
+  line1: ReactNode;
+  line2?: ReactNode;
   /** Tailwind text-color class. Use `text-white` on gradient sections. */
   color?: string;
 }) {
@@ -43,7 +39,7 @@ export function DoePhoneSectionText({
     <div className={`${DOEPHONE_SECTION_COPY_POSITION} ${DOEPHONE_SECTION_COPY_INSET}`}>
       <div ref={ref}>
         <p
-          className={`${COPY_TW} ${color} ${suisseIntl.className}`}
+          className={`${DOEPHONE_SECTION_COPY_TW} ${color} ${suisseIntl.className}`}
           style={{
             opacity: visible ? 1 : 0,
             filter: visible ? "blur(0)" : "blur(16px)",
