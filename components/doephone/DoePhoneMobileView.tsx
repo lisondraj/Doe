@@ -6,16 +6,17 @@ import { HeroCarouselTextureOverlay } from "@/components/hero-carousel-texture";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { HERO_BACKDROP_GRADIENT } from "@/lib/home/hero-constants";
+import {
+  DOEPHONE_SECTION_COPY_INSET,
+  DOEPHONE_SECTION_COPY_POSITION,
+  DOEPHONE_SECTION_COPY_TW,
+  DOEPHONE_VIEWPORT_SECTION,
+} from "@/lib/doephone/section-styles";
 import { CARE_COORDINATION_BACKDROP, DIAGNOSTIC_ASSISTANT_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 import { useLayoutEffect } from "react";
 
 /** Hero headline sits inset from nav — extra left padding vs chrome. */
-const DOEPHONE_HERO_HEADLINE_INSET =
-  "pl-14 pr-6 iphone-page:pl-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))] iphone-page:pr-[max(1.65rem,env(safe-area-inset-right,0px))]";
-
-/** Shared band height for /doephone sections 2+. */
-const DOEPHONE_BAND_SECTION =
-  "relative z-10 w-full min-h-[min(152vh,86rem)] iphone-page:min-h-[min(144dvh,82rem)]";
+const DOEPHONE_HERO_HEADLINE_INSET = DOEPHONE_SECTION_COPY_INSET;
 
 /**
  * Full first-screen hero — extra depth below the fold so beige never peeks on load.
@@ -67,11 +68,18 @@ export function DoePhoneMobileView() {
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 
-      <section className={`${DOEPHONE_BAND_SECTION} bg-[#F7F6F3]`} aria-hidden />
+      <section className={`${DOEPHONE_VIEWPORT_SECTION} bg-[#F7F6F3]`} aria-label="Mission">
+        <div className={`${DOEPHONE_SECTION_COPY_POSITION} ${DOEPHONE_SECTION_COPY_INSET}`}>
+          <h2 className={`${DOEPHONE_SECTION_COPY_TW} text-[#1E343A]`}>
+            <span className="block">The future of AI</span>
+            <span className="block">is in your hands.</span>
+          </h2>
+        </div>
+      </section>
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 
-      <section className={`${DOEPHONE_BAND_SECTION} overflow-hidden bg-[#F7F6F3]`} aria-label="Care coordination">
+      <section className={`${DOEPHONE_VIEWPORT_SECTION} overflow-hidden bg-[#F7F6F3]`} aria-label="Care coordination">
         <div className="pointer-events-none absolute inset-0" aria-hidden>
           <WorkflowCarouselDesignBackdrop
             backdrop={CARE_COORDINATION_BACKDROP}
@@ -83,11 +91,11 @@ export function DoePhoneMobileView() {
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 
-      <section className={`${DOEPHONE_BAND_SECTION} bg-[#F7F6F3]`} aria-hidden />
+      <section className={`${DOEPHONE_VIEWPORT_SECTION} bg-[#F7F6F3]`} aria-hidden />
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 
-      <section className={`${DOEPHONE_BAND_SECTION} overflow-hidden bg-[#F7F6F3]`} aria-label="Diagnostic assistant">
+      <section className={`${DOEPHONE_VIEWPORT_SECTION} overflow-hidden bg-[#F7F6F3]`} aria-label="Diagnostic assistant">
         <div className="pointer-events-none absolute inset-0" aria-hidden>
           <WorkflowCarouselDesignBackdrop backdrop={DIAGNOSTIC_ASSISTANT_BACKDROP} embedded />
         </div>
@@ -95,7 +103,7 @@ export function DoePhoneMobileView() {
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 
-      <section className={`${DOEPHONE_BAND_SECTION} bg-[#F7F6F3]`} aria-hidden />
+      <section className={`${DOEPHONE_VIEWPORT_SECTION} bg-[#F7F6F3]`} aria-hidden />
 
       <HomeFooter />
     </div>
