@@ -14,6 +14,13 @@ const POLAR_FADE_MS = 580;
 const POLAR_HOLD_MS = 420;
 const POLAR_GAP_MS = 300;
 
+function polarRadialPathD(angleDeg: number, radius = 500): string {
+  const rad = (angleDeg * Math.PI) / 180;
+  const x = Math.cos(rad) * radius;
+  const y = Math.sin(rad) * radius;
+  return `M ${500 - x} ${500 - y} L ${500 + x} ${500 + y}`;
+}
+
 /** Built for you orange panel — radial spokes + concentric rings. */
 function PolarGridOverlay({
   patternScale = 1,
@@ -107,12 +114,11 @@ function PolarGridOverlay({
       >
         {Array.from({ length: 8 }, (_, j) => {
           const angle = j * 45;
-          const radius = 500;
           return (
             <path
               key={`polar-radial-${j}`}
               className={segmentClass(j)}
-              d={`M 500 500 L ${500 + Math.cos((angle * Math.PI) / 180) * radius} ${500 + Math.sin((angle * Math.PI) / 180) * radius}`}
+              d={polarRadialPathD(angle)}
               fill="none"
               strokeWidth="0.8"
             />

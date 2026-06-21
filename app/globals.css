@@ -242,8 +242,9 @@ body.mainpage-route {
   transition: stroke 0.58s ease-in-out;
 }
 
+/* Subtle lift above rest — inactive segments keep rest stroke unchanged. */
 .doephone-hero-polar-segment--pulse.doephone-hero-polar-segment--active {
-  stroke: rgba(255, 255, 255, 0.58);
+  stroke: rgba(255, 255, 255, 0.27);
 }
 
 /* /doephone hero headline — deblur + rise after polar overlay finishes. */
