@@ -284,10 +284,11 @@ body.mainpage-route {
 .doephone-section-plus {
   display: inline-block;
   vertical-align: baseline;
+  margin-right: 0.22em;
   font-weight: 100;
   letter-spacing: -0.03em;
   color: #000;
-  opacity: 1;
+  opacity: 0.86;
   -webkit-font-smoothing: antialiased;
 }
 

@@ -61,5 +61,5 @@ export function DoePhoneSectionText({
 
 /** Hairline + for section 2 — matches Suisse light wordforms. */
 export function DoePhoneSectionPlus() {
-  return <span className={`doephone-section-plus text-black ${suisseIntlHairline.className}`}>+ </span>;
+  return <span className={`doephone-section-plus text-black ${suisseIntlHairline.className}`}>+</span>;
 }
