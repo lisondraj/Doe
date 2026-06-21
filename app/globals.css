@@ -268,6 +268,26 @@ body.mainpage-route {
   }
 }
 
+/* /doephone section titles — scroll-triggered unblur + rise (matches hero). */
+.doephone-section-copy {
+  opacity: 0;
+  filter: blur(16px);
+  transform: translateY(1.75rem);
+  will-change: opacity, filter, transform;
+  text-shadow: none;
+}
+
+.doephone-section-copy-visible {
+  animation: doephone-hero-headline-in 1.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.doephone-section-plus {
+  font-family: var(--font-suisse-hairline), var(--font-inter), system-ui, sans-serif;
+  font-weight: 100;
+  letter-spacing: -0.03em;
+  -webkit-font-smoothing: antialiased;
+}
+
 /* Wheel-driven mission caret — uses transform so inline opacity stays 1∶1 with scroll deltas */
 .hero-mission-scroll-caret-blink {
   transform-origin: bottom;
@@ -354,6 +374,14 @@ body.mainpage-route {
   }
 
   .doephone-hero-headline-line {
+    animation: none !important;
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+
+  .doephone-section-copy,
+  .doephone-section-copy-visible {
     animation: none !important;
     opacity: 1;
     filter: none;

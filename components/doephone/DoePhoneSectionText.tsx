@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { suisseIntl } from "@/lib/home/fonts";
+import { suisseIntl, suisseIntlHairline } from "@/lib/home/fonts";
 import {
   DOEPHONE_SECTION_COPY_INSET,
   DOEPHONE_SECTION_COPY_POSITION,
@@ -25,10 +25,18 @@ export function DoePhoneSectionText({
     const el = ref.current;
     if (!el) return;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reducedMotion) { setVisible(true); return; }
+    if (reducedMotion) {
+      setVisible(true);
+      return;
+    }
 
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect(); } },
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          obs.disconnect();
+        }
+      },
       { threshold: 0.18 },
     );
     obs.observe(el);
@@ -39,17 +47,9 @@ export function DoePhoneSectionText({
     <div className={`${DOEPHONE_SECTION_COPY_POSITION} ${DOEPHONE_SECTION_COPY_INSET}`}>
       <div ref={ref}>
         <p
-          className={`${DOEPHONE_SECTION_COPY_TW} ${color} ${suisseIntl.className}`}
-          style={{
-            opacity: visible ? 1 : 0,
-            filter: visible ? "blur(0)" : "blur(16px)",
-            transform: visible ? "translateY(0)" : "translateY(1.75rem)",
-            transition: visible
-              ? "opacity 1.45s cubic-bezier(0.22, 1, 0.36, 1), filter 1.45s cubic-bezier(0.22, 1, 0.36, 1), transform 1.45s cubic-bezier(0.22, 1, 0.36, 1)"
-              : "none",
-            willChange: "opacity, filter, transform",
-            textShadow: "none",
-          }}
+          className={`doephone-section-copy ${DOEPHONE_SECTION_COPY_TW} ${color} ${suisseIntl.className} ${
+            visible ? "doephone-section-copy-visible" : ""
+          }`.trim()}
         >
           <span className="block">{line1}</span>
           {line2 ? <span className="block">{line2}</span> : null}
@@ -57,4 +57,9 @@ export function DoePhoneSectionText({
       </div>
     </div>
   );
+}
+
+/** Hairline + for section 2 — matches Suisse light wordforms. */
+export function DoePhoneSectionPlus() {
+  return <span className={`doephone-section-plus ${suisseIntlHairline.className}`}>+ </span>;
 }

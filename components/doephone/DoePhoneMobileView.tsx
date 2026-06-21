@@ -2,7 +2,7 @@
 
 import DoeIphoneSiteNav from "@/components/DoeIphoneSiteNav";
 import { DoePhoneHeroHeadline } from "@/components/doephone/DoePhoneHeroHeadline";
-import { DoePhoneSectionText } from "@/components/doephone/DoePhoneSectionText";
+import { DoePhoneSectionPlus, DoePhoneSectionText } from "@/components/doephone/DoePhoneSectionText";
 import { HeroCarouselTextureOverlay } from "@/components/hero-carousel-texture";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
@@ -72,7 +72,7 @@ export function DoePhoneMobileView() {
           line1="Communication"
           line2={
             <>
-              <span className="font-light tracking-[-0.03em]">+ </span>
+              <DoePhoneSectionPlus />
               Intelligence.
             </>
           }
@@ -104,7 +104,7 @@ export function DoePhoneMobileView() {
         <div className="pointer-events-none absolute inset-0" aria-hidden>
           <WorkflowCarouselDesignBackdrop backdrop={DIAGNOSTIC_ASSISTANT_BACKDROP} embedded />
         </div>
-        <DoePhoneSectionText line1="Your stack." color="text-white" />
+        <DoePhoneSectionText line1="Intelligence built." line2="into your stack." color="text-white" />
       </section>
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />

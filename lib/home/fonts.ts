@@ -30,4 +30,12 @@ export const suisseIntl = localFont({
   display: "swap",
   weight: "300",
 });
+
+/** Hairline face — thin symbols (e.g. +) that match Suisse light body copy. */
+export const suisseIntlHairline = localFont({
+  src: [{ path: "../../fonts/suisse/SuisseIntlTrial-Hairline.otf", weight: "100", style: "normal" }],
+  display: "swap",
+  weight: "100",
+  variable: "--font-suisse-hairline",
+});
 export const WORKFLOW_CAROUSEL_UI_PANEL = `${suisseIntl.className} workflow-carousel-ui`;
