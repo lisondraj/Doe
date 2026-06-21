@@ -25,20 +25,18 @@ export function DoePhoneMobileView() {
       suppressHydrationWarning
       data-doeforvc-view="iphone"
     >
-      <div className="relative min-h-[100dvh] w-full">
-        <section className="absolute inset-0 overflow-hidden" aria-label="Hero">
-          <div className="absolute inset-0">
-            <div
-              className="pointer-events-none absolute inset-0"
-              style={{ background: HERO_BACKDROP_GRADIENT }}
-              aria-hidden
-            />
-            <HeroCarouselTextureOverlay />
-          </div>
-        </section>
+      <DoeIphoneSiteNav pinchSafe />
 
-        <DoeIphoneSiteNav pinchSafe />
-      </div>
+      <section className="relative min-h-[100dvh] w-full overflow-hidden" aria-label="Hero">
+        <div className="absolute inset-0">
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{ background: HERO_BACKDROP_GRADIENT }}
+            aria-hidden
+          />
+          <HeroCarouselTextureOverlay />
+        </div>
+      </section>
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 

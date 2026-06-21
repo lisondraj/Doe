@@ -168,7 +168,7 @@ export default function DoeIphoneSiteNav({ pinchSafe = false }: { pinchSafe?: bo
     if (!navEl) return;
     const update = () => {
       const raw = navEl.getBoundingClientRect().bottom;
-      setIphoneMenuTopPx(Math.max(0, Math.floor(raw) - 6));
+      setIphoneMenuTopPx(Math.max(0, Math.floor(raw) - (pinchSafe ? 0 : 6)));
     };
     update();
     let raf1 = 0;
@@ -288,11 +288,13 @@ export default function DoeIphoneSiteNav({ pinchSafe = false }: { pinchSafe?: bo
         onClick={() => setMobileNavOpen(false)}
       />
       <div className="fixed inset-0 z-[95] pointer-events-none" role="presentation">
-        <div
-          className="absolute inset-x-0 top-0 bg-[#F7F6F3] pointer-events-none"
-          style={{ height: iphoneMenuTopPx }}
-          aria-hidden
-        />
+        {!pinchSafe ? (
+          <div
+            className="absolute inset-x-0 top-0 bg-[#F7F6F3] pointer-events-none"
+            style={{ height: iphoneMenuTopPx }}
+            aria-hidden
+          />
+        ) : null}
         <div
           className="absolute inset-x-0 bottom-0 bg-[#F7F6F3] flex flex-col pointer-events-auto overflow-hidden min-h-0"
           style={{
@@ -448,7 +450,9 @@ export default function DoeIphoneSiteNav({ pinchSafe = false }: { pinchSafe?: bo
     <>
       <nav
         ref={navBarRowRef}
-        className={`${pinchSafe ? "sticky" : "fixed"} top-0 left-0 right-0 iphone-page:pt-[env(safe-area-inset-top,0px)] ${navSheetLive && !pinchSafe ? "z-[100]" : "z-50"}`}
+        className={`fixed top-0 left-0 right-0 iphone-page:pt-[env(safe-area-inset-top,0px)] ${
+          navSheetLive ? "z-[200]" : "z-50"
+        } ${pinchSafe ? "shadow-[0_-120px_0_120px_#F7F6F3]" : ""}`}
         style={{
           backgroundColor: "#F7F6F3",
           borderBottom: "1px solid #E6E6E6",
