@@ -3,7 +3,9 @@
 import DoeIphoneSiteNav from "@/components/DoeIphoneSiteNav";
 import { HeroCarouselTextureOverlay } from "@/components/hero-carousel-texture";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
+import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { HERO_BACKDROP_GRADIENT } from "@/lib/home/hero-constants";
+import { CARE_COORDINATION_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 import { useLayoutEffect } from "react";
 
 export function DoePhoneMobileView() {
@@ -43,6 +45,15 @@ export function DoePhoneMobileView() {
         className="relative z-10 w-full min-h-[min(144vh,80rem)] iphone-page:min-h-[min(136dvh,76rem)] bg-[#F7F6F3]"
         aria-hidden
       />
+
+      <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
+
+      <section
+        className="relative z-10 w-full min-h-[100dvh] overflow-hidden"
+        aria-label="Care coordination"
+      >
+        <WorkflowCarouselDesignBackdrop backdrop={CARE_COORDINATION_BACKDROP} embedded />
+      </section>
 
       <HomeFooter />
     </div>
