@@ -3,8 +3,7 @@
 import DoeIphoneSiteNav from "@/components/DoeIphoneSiteNav";
 import { HeroCarouselTextureOverlay } from "@/components/hero-carousel-texture";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
-import { inter, lora } from "@/lib/home/fonts";
-import { HERO_BACKDROP_GRADIENT, narrowHorizontalInset } from "@/lib/home/hero-constants";
+import { HERO_BACKDROP_GRADIENT } from "@/lib/home/hero-constants";
 import { useLayoutEffect } from "react";
 
 export function DoePhoneMobileView() {
@@ -41,23 +40,9 @@ export function DoePhoneMobileView() {
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 
       <section
-        className={`relative z-10 w-full bg-[#F7F6F3] px-4 py-16 iphone-page:py-20 ${narrowHorizontalInset}`}
-      >
-        <div className="mx-auto w-full max-w-full text-center">
-          <h1
-            className={`flex flex-col items-center gap-2 font-normal text-gray-900 tracking-tight ${lora.className}`}
-          >
-            <span className="block leading-[1.06] text-[clamp(2.65rem,11.5vw,4rem)] iphone-page:text-[clamp(1.48rem,6.25vw,4rem)] iphone-page:whitespace-nowrap">
-              Doe Phone
-            </span>
-          </h1>
-          <p
-            className={`mx-auto mt-5 max-w-[20rem] text-[clamp(1.05rem,3.8vw,1.2rem)] font-medium leading-[1.45] tracking-tight text-gray-600 ${inter.className}`}
-          >
-            Mobile-first experience — more coming soon.
-          </p>
-        </div>
-      </section>
+        className="relative z-10 w-full min-h-[min(72vh,40rem)] iphone-page:min-h-[min(68dvh,38rem)] bg-[#F7F6F3]"
+        aria-hidden
+      />
 
       <HomeFooter />
     </div>
