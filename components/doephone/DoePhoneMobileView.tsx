@@ -5,7 +5,7 @@ import { HeroCarouselTextureOverlay } from "@/components/hero-carousel-texture";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { HERO_BACKDROP_GRADIENT } from "@/lib/home/hero-constants";
-import { CARE_COORDINATION_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
+import { CARE_COORDINATION_BACKDROP, DIAGNOSTIC_ASSISTANT_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 import { useLayoutEffect } from "react";
 
 /** Shared band height for /doephone sections 2–4. */
@@ -62,6 +62,14 @@ export function DoePhoneMobileView() {
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 
       <section className={`${DOEPHONE_BAND_SECTION} bg-[#F7F6F3]`} aria-hidden />
+
+      <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
+
+      <section className={`${DOEPHONE_BAND_SECTION} overflow-hidden bg-[#F7F6F3]`} aria-label="Diagnostic assistant">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-[100dvh]" aria-hidden>
+          <WorkflowCarouselDesignBackdrop backdrop={DIAGNOSTIC_ASSISTANT_BACKDROP} embedded />
+        </div>
+      </section>
 
       <HomeFooter />
     </div>

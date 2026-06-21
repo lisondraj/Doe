@@ -53,6 +53,9 @@ export const WORKFLOW_CAROUSEL_DESIGN_BACKDROPS: readonly WorkflowCarouselDesign
 /** Care coordination carousel card (slide index 3) — radial gradient, dot grid, grain. */
 export const CARE_COORDINATION_BACKDROP = WORKFLOW_CAROUSEL_DESIGN_BACKDROPS[0];
 
+/** Diagnostic assistant carousel card (slide index 2) — linear 180° gradient, hex grid, grain. */
+export const DIAGNOSTIC_ASSISTANT_BACKDROP = WORKFLOW_CAROUSEL_DESIGN_BACKDROPS[4];
+
 /** `/design3` — Built for you (polar). */
 export const DESIGN3_BACKDROP = WORKFLOW_CAROUSEL_DESIGN_BACKDROPS[1];
 
