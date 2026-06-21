@@ -7,6 +7,7 @@ import {
 } from "@/components/doephone/DoePhoneSectionCarousel";
 import { DoePhoneSectionPlus, DoePhoneSectionTitle } from "@/components/doephone/DoePhoneSectionText";
 import {
+  DOEPHONE_SECTION_CAROUSEL_HEIGHT,
   DOEPHONE_SECTION_CAROUSEL_UNIFORM_PAD,
   DOEPHONE_SECTION_CONTENT_INSET,
   DOEPHONE_SECTION_TITLE_PT,
@@ -36,9 +37,9 @@ export function DoePhoneCommunicationSection() {
       </div>
 
       <div
-        className={`mt-[clamp(1.1rem,0.85rem+1.05vmin,1.55rem)] flex min-h-0 flex-1 flex-col ${DOEPHONE_SECTION_CAROUSEL_UNIFORM_PAD}`}
+        className={`mt-[clamp(1.1rem,0.85rem+1.05vmin,1.55rem)] shrink-0 ${DOEPHONE_SECTION_CAROUSEL_UNIFORM_PAD}`}
       >
-        <div className="h-2/3 min-h-0 shrink-0">
+        <div className={`w-full ${DOEPHONE_SECTION_CAROUSEL_HEIGHT}`}>
           <DoePhoneSectionCarousel
             scrollRef={scrollRef}
             loopSlides={loopSlides}
@@ -47,7 +48,7 @@ export function DoePhoneCommunicationSection() {
           />
         </div>
 
-        <div className="mt-[clamp(0.75rem,0.58rem+0.65vmin,1rem)] shrink-0">
+        <div className="mt-[clamp(0.75rem,0.58rem+0.65vmin,1rem)]">
           <DoePhoneCarouselMenu activeIndex={activeSlide} onSelect={selectSlide} />
         </div>
       </div>

@@ -166,7 +166,7 @@ export function WorkflowCarouselDesignBackdrop({
   introOnLoad?: boolean;
 }) {
   const rootClass = embedded
-    ? `absolute inset-0 overflow-hidden ${className}`.trim()
+    ? `absolute inset-0 overflow-hidden [transform:translateZ(0)] ${className}`.trim()
     : `fixed inset-0 min-h-[100dvh] min-w-full overflow-hidden ${className}`.trim();
 
   const Root = embedded ? "div" : "main";

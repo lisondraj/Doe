@@ -27,3 +27,11 @@ export const DOEPHONE_SECTION_COPY_TW =
 /** Full iPhone viewport band below hero. */
 export const DOEPHONE_VIEWPORT_SECTION =
   "relative z-10 w-full min-h-[100svh] h-[100svh] iphone-page:min-h-[100dvh] iphone-page:h-[100dvh]";
+
+/** Section 2 carousel — fixed height so mobile scroll / dvh changes do not shrink the card. */
+export const DOEPHONE_SECTION_CAROUSEL_HEIGHT =
+  "h-[clamp(23rem,52svh,34.5rem)] min-h-[clamp(23rem,52svh,34.5rem)] max-h-[clamp(23rem,52svh,34.5rem)] shrink-0";
+
+/** Rounded corners shared by section 2 carousel cards + embedded backdrop clip. */
+export const DOEPHONE_SECTION_CAROUSEL_RADIUS =
+  "rounded-[clamp(1.1rem,0.95rem+0.75vmin,1.45rem)]";

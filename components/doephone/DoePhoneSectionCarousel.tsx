@@ -5,6 +5,7 @@ import {
   DOEPHONE_COMMUNICATION_SLIDES,
   DOEPHONE_COMMUNICATION_SLIDE_COUNT,
 } from "@/lib/doephone/communication-carousel";
+import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
 import type { WorkflowCarouselDesignBackdrop as WorkflowCarouselDesignBackdropType } from "@/lib/workflow-carousel-design-backdrops";
 import { useCallback, useEffect, useMemo, useRef, type RefObject } from "react";
 
@@ -13,10 +14,14 @@ const LOOP_TAIL_CLONE = DOEPHONE_COMMUNICATION_SLIDES[0];
 function DoePhoneCarouselCard({ backdrop }: { backdrop: WorkflowCarouselDesignBackdropType }) {
   return (
     <div
-      className="relative h-full w-full overflow-hidden rounded-[clamp(1.1rem,0.95rem+0.75vmin,1.45rem)] shadow-[0_10px_32px_rgba(0,0,0,0.1)]"
+      className={`relative isolate h-full w-full overflow-hidden shadow-[0_10px_32px_rgba(0,0,0,0.1)] [contain:layout_paint] ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
       aria-hidden
     >
-      <WorkflowCarouselDesignBackdrop backdrop={backdrop} embedded />
+      <WorkflowCarouselDesignBackdrop
+        backdrop={backdrop}
+        embedded
+        className={DOEPHONE_SECTION_CAROUSEL_RADIUS}
+      />
     </div>
   );
 }
@@ -128,7 +133,7 @@ export function DoePhoneSectionCarousel({
   return (
     <div
       ref={scrollRef}
-      className="flex h-full min-h-0 w-full touch-pan-x snap-x snap-mandatory flex-row overflow-x-auto overflow-y-hidden overscroll-y-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+      className="flex h-full w-full shrink-0 touch-pan-x snap-x snap-mandatory flex-row overflow-x-auto overflow-y-hidden overscroll-y-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
       style={{ WebkitOverflowScrolling: "touch" }}
       aria-label="Communication features"
       onScroll={onScroll}
