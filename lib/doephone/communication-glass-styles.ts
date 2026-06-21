@@ -4,7 +4,7 @@ export const DOEPHONE_SHORTCUT_PILL_GRADIENT =
 
 /** Translucent warm glass — inner panel fill. */
 export const DOEPHONE_SHORTCUT_KEY_GRADIENT =
-  "linear-gradient(145deg, rgba(255,255,255,0.34) 0%, rgba(255,236,205,0.22) 52%, rgba(232,169,68,0.14) 100%)";
+  "linear-gradient(145deg, rgba(255,255,255,0.3) 0%, rgba(255,236,205,0.19) 52%, rgba(232,169,68,0.11) 100%)";
 
 /** Outer keyboard chip glass — corners, blur, shadow. */
 export const DOEPHONE_COMMUNICATION_OUTER_GLASS_TW =
@@ -12,4 +12,4 @@ export const DOEPHONE_COMMUNICATION_OUTER_GLASS_TW =
 
 /** Inner key-badge glass — corners, blur, shadow. */
 export const DOEPHONE_COMMUNICATION_INNER_GLASS_TW =
-  "rounded-[0.24rem] shadow-[inset_0_1px_0_rgba(255,255,255,0.28)] backdrop-blur-[4px] [transform:translateZ(0)] iphone-page:rounded-[0.3rem] iphone-page:backdrop-blur-[3px]";
+  "rounded-[0.24rem] shadow-[inset_0_1px_0_rgba(255,255,255,0.24)] backdrop-blur-[3px] [transform:translateZ(0)] iphone-page:rounded-[0.3rem] iphone-page:backdrop-blur-[2px]";
