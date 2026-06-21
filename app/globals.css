@@ -170,19 +170,50 @@ body.mainpage-route {
 .hero-carousel-grid-intro {
   opacity: 0;
   transform-origin: top left;
-  animation: hero-carousel-grid-intro 1.45s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards;
-  will-change: opacity, transform;
+  -webkit-mask-image: radial-gradient(
+    ellipse 130% 130% at 0% 0%,
+    #000 0%,
+    #000 38%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    ellipse 130% 130% at 0% 0%,
+    #000 0%,
+    #000 38%,
+    transparent 100%
+  );
+  -webkit-mask-size: 10% 10%;
+  mask-size: 10% 10%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: 0 0;
+  mask-position: 0 0;
+  animation: hero-carousel-grid-intro 3.4s cubic-bezier(0.19, 1, 0.22, 1) 0.45s forwards;
 }
 
 @keyframes hero-carousel-grid-intro {
-  from {
+  0% {
     opacity: 0;
-    transform: translate(-4%, -4%) scale(1.1);
+    -webkit-mask-size: 10% 10%;
+    mask-size: 10% 10%;
   }
 
-  to {
+  28% {
+    opacity: 0.28;
+    -webkit-mask-size: 95% 95%;
+    mask-size: 95% 95%;
+  }
+
+  62% {
+    opacity: 0.68;
+    -webkit-mask-size: 210% 210%;
+    mask-size: 210% 210%;
+  }
+
+  100% {
     opacity: 1;
-    transform: translate(0, 0) scale(1);
+    -webkit-mask-size: 360% 360%;
+    mask-size: 360% 360%;
   }
 }
 
@@ -265,7 +296,10 @@ body.mainpage-route {
   .hero-carousel-grid-intro {
     animation: none !important;
     opacity: 1;
-    transform: none;
+    -webkit-mask-image: none;
+    mask-image: none;
+    -webkit-mask-size: auto;
+    mask-size: auto;
   }
 
   .hero-mission-scroll-caret-blink {
