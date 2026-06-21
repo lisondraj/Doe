@@ -1,5 +1,6 @@
 "use client";
 
+import { DoePhoneBoxClusterDescription } from "@/components/doephone/DoePhoneBoxClusterDescription";
 import { DoePhoneBoxClusterMenu } from "@/components/doephone/DoePhoneBoxClusterMenu";
 import { DoePhoneSectionBoxCluster } from "@/components/doephone/DoePhoneSectionBoxCluster";
 import { DoePhoneSectionFooterCarousel } from "@/components/doephone/DoePhoneSectionFooterCarousel";
@@ -22,6 +23,7 @@ export function DoePhoneCustomizationSection() {
     <div className="flex h-full min-h-0 flex-col">
       <div className={`shrink-0 ${DOEPHONE_SECTION_CONTENT_INSET} ${DOEPHONE_SECTION_TITLE_PT}`}>
         <DoePhoneSectionTitle line1="Your practice," line2="your rules." />
+        <DoePhoneBoxClusterDescription activeIndex={activePreset} />
       </div>
 
       <div className={`shrink-0 ${DOEPHONE_SECTION_TITLE_CAROUSEL_GAP} ${DOEPHONE_SECTION_CAROUSEL_INSET_X}`}>

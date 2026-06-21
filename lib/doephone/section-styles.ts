@@ -72,3 +72,6 @@ export const DOEPHONE_SECTION_FOOTER_CAROUSEL_HEIGHT =
 
 /** Below-carousel caption — slightly lighter than nav footer outside copy. */
 export const DOEPHONE_SECTION_FOOTER_OUTSIDE_CAPTION_TW = `text-[1.5rem] iphone-page:text-[clamp(1.38rem,0.88rem+2.3vmin,2.45rem)] font-normal leading-snug tracking-tight text-gray-700 ${inter.className}`;
+
+/** Customization section — right-aligned preset description under title. */
+export const DOEPHONE_SECTION_MENU_DESCRIPTION_TW = `mt-[clamp(0.85rem,0.55rem+1.1vmin,1.35rem)] text-[clamp(0.98rem,0.82rem+0.75vmin,1.22rem)] iphone-page:text-[clamp(0.94rem,0.78rem+0.7vmin,1.16rem)] font-normal leading-[1.38] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
