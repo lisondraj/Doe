@@ -247,7 +247,7 @@ export function DoePhoneSectionCarousel({
   return (
     <div
       ref={scrollRef}
-      className="flex h-full w-full shrink-0 touch-pan-x snap-x snap-mandatory flex-row overflow-x-auto overflow-y-hidden overscroll-y-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+      className="doephone-section-carousel flex h-full w-full shrink-0 snap-x snap-mandatory flex-row overflow-x-auto overflow-y-visible [scrollbar-width:none] [-ms-overflow-style:none] [touch-action:pan-y_pinch-zoom] [&::-webkit-scrollbar]:hidden"
       style={{ WebkitOverflowScrolling: "touch" }}
       aria-label="Communication features"
       onScroll={onScroll}

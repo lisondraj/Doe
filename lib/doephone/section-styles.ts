@@ -13,9 +13,13 @@ export const DOEPHONE_SECTION_UNIFORM_PAD =
 export const DOEPHONE_SECTION_CAROUSEL_INSET_X =
   "px-14 iphone-page:px-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
 
-/** Vertical gap — title→carousel and carousel→menu (matches carousel horizontal inset). */
+/** Vertical gap — carousel→menu (matches carousel horizontal inset). */
 export const DOEPHONE_SECTION_CAROUSEL_MENU_GAP =
   "mt-14 iphone-page:mt-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
+
+/** Title→carousel gap — double the carousel→menu inset. */
+export const DOEPHONE_SECTION_TITLE_CAROUSEL_GAP =
+  "mt-28 iphone-page:mt-[max(4.7rem,calc(env(safe-area-inset-left,0px)+10.5vmin))]";
 
 /** Carousel band in section 2 — equal padding on all sides (matches hero left inset). */
 export const DOEPHONE_SECTION_CAROUSEL_UNIFORM_PAD = DOEPHONE_SECTION_UNIFORM_PAD;

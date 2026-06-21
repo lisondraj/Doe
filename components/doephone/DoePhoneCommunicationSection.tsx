@@ -11,6 +11,7 @@ import {
   DOEPHONE_SECTION_CAROUSEL_INSET_X,
   DOEPHONE_SECTION_CAROUSEL_MENU_GAP,
   DOEPHONE_SECTION_CONTENT_INSET,
+  DOEPHONE_SECTION_TITLE_CAROUSEL_GAP,
   DOEPHONE_SECTION_TITLE_PB,
   DOEPHONE_SECTION_TITLE_PT,
 } from "@/lib/doephone/section-styles";
@@ -32,14 +33,14 @@ export function DoePhoneCommunicationSection() {
           line2={
             <>
               <DoePhoneSectionPlus />
-              intelligence.
+              Intelligence.
             </>
           }
         />
       </div>
 
       <div
-        className={`shrink-0 ${DOEPHONE_SECTION_CAROUSEL_MENU_GAP} ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${DOEPHONE_SECTION_TITLE_PB}`}
+        className={`shrink-0 ${DOEPHONE_SECTION_TITLE_CAROUSEL_GAP} ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${DOEPHONE_SECTION_TITLE_PB}`}
       >
         <div className={`w-full ${DOEPHONE_SECTION_CAROUSEL_HEIGHT}`}>
           <DoePhoneSectionCarousel
