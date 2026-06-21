@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 export const lora = Lora({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
 });
 
 export const inter = Inter({

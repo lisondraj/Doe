@@ -3,9 +3,10 @@
 import DoeIphoneSiteNav from "@/components/DoeIphoneSiteNav";
 import { HeroCarouselTextureOverlay } from "@/components/hero-carousel-texture";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
+import { DoePhoneHeroCareerCarousel } from "@/components/doephone/DoePhoneHeroCareerCarousel";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { HERO_BACKDROP_GRADIENT } from "@/lib/home/hero-constants";
-import { suisseIntl } from "@/lib/home/fonts";
+import { lora } from "@/lib/home/fonts";
 import { CARE_COORDINATION_BACKDROP, DIAGNOSTIC_ASSISTANT_BACKDROP, DOEPHONE_DIAGNOSTIC_ASSISTANT_GRADIENT } from "@/lib/workflow-carousel-design-backdrops";
 import { useLayoutEffect } from "react";
 
@@ -62,10 +63,13 @@ export function DoePhoneMobileView() {
           className={`absolute inset-0 z-[3] flex flex-col items-start justify-start pt-[max(10rem,calc(env(safe-area-inset-top,0px)+35svh))] pb-8 ${DOEPHONE_HERO_HEADLINE_INSET}`}
         >
           <h1
-            className={`doephone-hero-headline-line text-left font-light leading-[1.02] tracking-[-0.03em] text-white text-[clamp(3.45rem,14vw,6rem)] iphone-page:text-[clamp(3.25rem,13.25vw,5.65rem)] ${suisseIntl.className}`}
+            className={`doephone-hero-headline-line text-left italic font-normal leading-[1.02] tracking-[-0.02em] text-white text-[clamp(3.45rem,14vw,6rem)] iphone-page:text-[clamp(3.25rem,13.25vw,5.65rem)] ${lora.className}`}
           >
-            <span className="block">An inbox</span>
-            <span className="block">built for you.</span>
+            <span className="block">An AI inbox</span>
+            <span className="flex flex-wrap items-baseline">
+              <span>built for</span>
+              <DoePhoneHeroCareerCarousel />
+            </span>
           </h1>
         </div>
       </section>
