@@ -289,7 +289,7 @@ body.mainpage-route {
   letter-spacing: -0.03em;
   opacity: 0.58;
   transform: scale(0.8);
-  transform-origin: left baseline;
+  transform-origin: 0% 88%;
   -webkit-font-smoothing: antialiased;
 }
 
