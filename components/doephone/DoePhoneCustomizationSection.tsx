@@ -29,7 +29,7 @@ export function DoePhoneCustomizationSection() {
       >
         <DoePhoneSectionBoxCluster activeIndex={activePreset} />
 
-        <div className={DOEPHONE_SECTION_CAROUSEL_MENU_GAP}>
+        <div className={DOEPHONE_SECTION_TITLE_CAROUSEL_GAP}>
           <DoePhoneBoxClusterDescription activeIndex={activePreset} />
         </div>
 

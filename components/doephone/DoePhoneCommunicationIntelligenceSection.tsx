@@ -5,6 +5,8 @@ import { DoePhoneSectionPlus, DoePhoneSectionTitle } from "@/components/doephone
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import {
   DOEPHONE_SECTION_CONTENT_INSET,
+  DOEPHONE_SECTION_TITLE_CAROUSEL_GAP,
+  DOEPHONE_SECTION_TITLE_PB,
   DOEPHONE_SECTION_TITLE_PT,
   DOEPHONE_VIEWPORT_SECTION,
 } from "@/lib/doephone/section-styles";
@@ -36,7 +38,9 @@ export function DoePhoneCommunicationIntelligenceSection() {
           />
         </div>
 
-        <div className="relative flex min-h-0 flex-1 items-center overflow-hidden pb-[max(1.95rem,calc(env(safe-area-inset-bottom,0px)+7.25svh))] pt-[clamp(1.5rem,1rem+2.5vmin,3rem)]">
+        <div
+          className={`shrink-0 overflow-hidden ${DOEPHONE_SECTION_TITLE_CAROUSEL_GAP} ${DOEPHONE_SECTION_TITLE_PB}`}
+        >
           <DoePhoneCommunicationShortcuts />
         </div>
       </div>
