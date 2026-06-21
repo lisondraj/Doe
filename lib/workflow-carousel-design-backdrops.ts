@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 
-import { HERO_CAROUSEL_GRAIN_BG } from "@/components/hero-carousel-texture";
+import { HERO_CAROUSEL_GRAIN_BG } from "@/lib/hero-carousel-grain";
 
 export type WorkflowCarouselGridKind = "dot" | "crosshatch" | "diagonal" | "hex" | "polar" | "wave";
 

@@ -1,12 +1,14 @@
 import type { CSSProperties } from "react";
 
+import { HERO_CAROUSEL_GRAIN_BG } from "@/lib/hero-carousel-grain";
 import { WORKFLOW_DOT_GRID_STYLE } from "@/lib/workflow-carousel-design-backdrops";
+
+export { HERO_CAROUSEL_GRAIN_BG };
 
 /**
  * Grain + fine square grid from workflow carousel “Referral Intake” slide (box 5).
  * CSS tiling keeps cells square when the hero viewport width changes.
  */
-export const HERO_CAROUSEL_GRAIN_BG = `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E")`;
 
 /** 56×56px cell — matches Referral Intake SVG pattern in carousel slides. */
 const GRID_CELL_PX = 56;
