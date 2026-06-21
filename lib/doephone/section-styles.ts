@@ -2,6 +2,9 @@
 export const DOEPHONE_SECTION_COPY_INSET =
   "pl-14 pr-6 iphone-page:pl-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))] iphone-page:pr-[max(1.65rem,env(safe-area-inset-right,0px))]";
 
+/** Standard content gutter for all sections (same left edge as hero headline). */
+export const DOEPHONE_SECTION_CONTENT_INSET = DOEPHONE_SECTION_COPY_INSET;
+
 /** Top offset for section titles (~52% of prior padding — just under half removed). */
 export const DOEPHONE_SECTION_TITLE_PT =
   "pt-[max(1.95rem,calc(env(safe-area-inset-top,0px)+7.25svh))]";
@@ -21,7 +24,3 @@ export const DOEPHONE_VIEWPORT_SECTION =
 /** Top offset when the title shares a section with the carousel (section 2). */
 export const DOEPHONE_SECTION_TITLE_PT_STACKED =
   "pt-[max(0.25rem,calc(env(safe-area-inset-top,0px)+2.6svh))]";
-
-/** Equal inset on all sides around section 2 content (title + carousel). */
-export const DOEPHONE_SECTION_CAROUSEL_PAD =
-  "p-[clamp(1.25rem,1rem+1.15vmin,1.75rem)] iphone-page:p-[clamp(1.35rem,1.05rem+1.2vmin,1.85rem)]";

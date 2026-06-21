@@ -177,9 +177,9 @@ export function WorkflowCarouselDesignBackdrop({
         className="pointer-events-none absolute inset-0"
         style={{
           background: gradientOverride ?? backdrop.gradient,
-          backgroundSize: gradientScale !== 1 ? `${gradientScale * 100}% ${gradientScale * 100}%` : undefined,
-          backgroundPosition: gradientScale !== 1 ? "center center" : undefined,
-          backgroundRepeat: gradientScale !== 1 ? "no-repeat" : undefined,
+          backgroundPosition: embedded || gradientScale !== 1 ? "center center" : undefined,
+          backgroundSize: embedded ? "cover" : gradientScale !== 1 ? `${gradientScale * 100}% ${gradientScale * 100}%` : undefined,
+          backgroundRepeat: embedded || gradientScale !== 1 ? "no-repeat" : undefined,
         }}
         aria-hidden
       />

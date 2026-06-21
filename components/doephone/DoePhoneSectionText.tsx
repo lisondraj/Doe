@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { suisseIntl } from "@/lib/home/fonts";
 import {
-  DOEPHONE_SECTION_COPY_INSET,
+  DOEPHONE_SECTION_CONTENT_INSET,
   DOEPHONE_SECTION_COPY_POSITION,
   DOEPHONE_SECTION_COPY_TW,
 } from "@/lib/doephone/section-styles";
@@ -67,7 +67,7 @@ export function DoePhoneSectionText({
   color?: string;
 }) {
   return (
-    <div className={`${DOEPHONE_SECTION_COPY_POSITION} ${DOEPHONE_SECTION_COPY_INSET}`}>
+    <div className={`${DOEPHONE_SECTION_COPY_POSITION} ${DOEPHONE_SECTION_CONTENT_INSET}`}>
       <DoePhoneSectionTitle line1={line1} line2={line2} color={color} />
     </div>
   );
