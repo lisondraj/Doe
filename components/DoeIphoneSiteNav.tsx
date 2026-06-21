@@ -42,16 +42,25 @@ function NavChromeStrip({
   navTextColor,
   mobileNavOpen,
   toggleMenu,
+  pinchSafe = false,
 }: {
   navTextColor: string;
   mobileNavOpen: boolean;
   toggleMenu: () => void;
+  pinchSafe?: boolean;
 }) {
+  const navInsetX = pinchSafe
+    ? "px-9 iphone-page:px-[max(1.35rem,calc(env(safe-area-inset-left,0px)+3.1vmin))] iphone-page:pr-[max(1.35rem,env(safe-area-inset-right,0px))]"
+    : "px-8 iphone-page:px-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))]";
+  const doeLeft = pinchSafe
+    ? "left-9 iphone-page:left-[max(1.35rem,calc(env(safe-area-inset-left,0px)+3.1vmin))]"
+    : "left-8 iphone-page:left-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))]";
+
   return (
-    <div className="px-8 py-6 iphone-page:py-[clamp(0.8125rem,0.52rem+1.55vmin,1.9rem)] iphone-page:px-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))] flex items-center relative z-10 iphone-page:gap-[clamp(0.45rem,0.35rem+0.85vmin,0.75rem)] justify-end">
+    <div className={`${navInsetX} py-6 iphone-page:py-[clamp(0.8125rem,0.52rem+1.55vmin,1.9rem)] flex items-center relative z-10 iphone-page:gap-[clamp(0.45rem,0.35rem+0.85vmin,0.75rem)] justify-end`}>
       <Link
         href="/"
-        className={`absolute top-1/2 -translate-y-1/2 left-8 iphone-page:left-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))] font-normal z-[1] min-w-0 whitespace-nowrap transition-opacity duration-500 ease-out ${lora.className} text-4xl iphone-page:text-[clamp(1.85rem,1.05rem+3.55vmin,3.9rem)] iphone-page:leading-none opacity-100`}
+        className={`absolute top-1/2 -translate-y-1/2 ${doeLeft} font-normal z-[1] min-w-0 whitespace-nowrap transition-opacity duration-500 ease-out ${lora.className} text-4xl iphone-page:text-[clamp(1.85rem,1.05rem+3.55vmin,3.9rem)] iphone-page:leading-none opacity-100`}
         style={{ color: navTextColor }}
       >
         Doe
@@ -441,6 +450,7 @@ export default function DoeIphoneSiteNav({ pinchSafe = false }: { pinchSafe?: bo
           navTextColor={navTextColor}
           mobileNavOpen={navSheetLive}
           toggleMenu={() => setMobileNavOpen((o) => !o)}
+          pinchSafe={pinchSafe}
         />
       </header>,
       document.body
