@@ -9,10 +9,10 @@ import {
 import { useEffect, useState } from "react";
 
 const POLAR_SEGMENT_COUNT = 14;
-const POLAR_OVERLAY_INTRO_MS = 1400;
-const POLAR_FADE_MS = 580;
-const POLAR_HOLD_MS = 420;
-const POLAR_GAP_MS = 300;
+const POLAR_OVERLAY_INTRO_MS = 1950;
+const POLAR_FADE_MS = 720;
+const POLAR_HOLD_MS = 620;
+const POLAR_GAP_MS = 380;
 
 function polarRadialPathD(angleDeg: number, radius = 500): string {
   const rad = (angleDeg * Math.PI) / 180;
