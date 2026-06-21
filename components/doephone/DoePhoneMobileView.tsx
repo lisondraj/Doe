@@ -1,9 +1,9 @@
 "use client";
 
 import DoeIphoneSiteNav from "@/components/DoeIphoneSiteNav";
-import { DoePhoneFooter } from "@/components/doephone/DoePhoneFooter";
 import { DoePhoneHeroHeadline } from "@/components/doephone/DoePhoneHeroHeadline";
 import { HeroCarouselTextureOverlay } from "@/components/hero-carousel-texture";
+import { HomeFooter } from "@/components/home/sections/HomeFooter";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { HERO_BACKDROP_GRADIENT } from "@/lib/home/hero-constants";
 import { CARE_COORDINATION_BACKDROP, DIAGNOSTIC_ASSISTANT_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
@@ -95,7 +95,9 @@ export function DoePhoneMobileView() {
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 
-      <DoePhoneFooter />
+      <section className={`${DOEPHONE_BAND_SECTION} bg-[#F7F6F3]`} aria-hidden />
+
+      <HomeFooter />
     </div>
   );
 }
