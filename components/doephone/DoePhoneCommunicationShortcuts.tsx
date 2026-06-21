@@ -10,7 +10,7 @@ import { inter } from "@/lib/home/fonts";
 function ShortcutPill({ shortcut }: { shortcut: DoePhoneCommunicationShortcut }) {
   return (
     <div
-      className={`inline-flex shrink-0 items-center rounded-[clamp(0.55rem,0.44rem+0.48vmin,0.78rem)] bg-white/[0.21] shadow-[inset_0_1px_0_rgba(255,255,255,0.16)] backdrop-blur-[14px] iphone-page:rounded-[clamp(0.68rem,0.52rem+0.62vmin,0.92rem)] iphone-page:bg-white/[0.23] ${
+      className={`inline-flex shrink-0 items-center rounded-[clamp(0.55rem,0.44rem+0.48vmin,0.78rem)] bg-white/[0.24] shadow-[inset_0_1px_0_rgba(255,255,255,0.16)] backdrop-blur-[7px] [transform:translateZ(0)] iphone-page:rounded-[clamp(0.68rem,0.52rem+0.62vmin,0.92rem)] iphone-page:bg-white/[0.26] iphone-page:backdrop-blur-[6px] ${
         shortcut.key
           ? "gap-[clamp(0.55rem,0.4rem+0.75vmin,0.85rem)] py-[clamp(0.38rem,0.28rem+0.5vmin,0.58rem)] pl-[clamp(0.38rem,0.28rem+0.5vmin,0.58rem)] pr-[clamp(1.05rem,0.8rem+1.25vmin,1.45rem)] iphone-page:gap-[clamp(0.72rem,0.5rem+1.1vmin,1.05rem)] iphone-page:py-[clamp(0.52rem,0.36rem+0.75vmin,0.78rem)] iphone-page:pl-[clamp(0.52rem,0.36rem+0.75vmin,0.78rem)] iphone-page:pr-[clamp(1.35rem,0.95rem+1.65vmin,1.85rem)]"
           : "px-[clamp(1.05rem,0.8rem+1.25vmin,1.45rem)] py-[clamp(0.62rem,0.45rem+0.8vmin,0.88rem)] iphone-page:px-[clamp(1.35rem,0.95rem+1.65vmin,1.85rem)] iphone-page:py-[clamp(0.78rem,0.55rem+1.05vmin,1.08rem)]"

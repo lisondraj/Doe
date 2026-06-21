@@ -46,11 +46,7 @@ export function DoePhoneMobileView() {
         <DoePhoneCommunicationSection />
       </section>
 
-      <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
-
       <DoePhoneCommunicationIntelligenceSection />
-
-      <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 
       <section
         className="relative z-10 flex min-h-[100svh] w-full flex-col bg-[#F7F6F3] iphone-page:min-h-[100dvh]"
@@ -59,16 +55,12 @@ export function DoePhoneMobileView() {
         <DoePhoneCustomizationSection />
       </section>
 
-      <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
-
-      <section className={`${DOEPHONE_VIEWPORT_SECTION} overflow-hidden bg-[#F7F6F3]`} aria-label="Integrations">
-        <div className="pointer-events-none absolute inset-0" aria-hidden>
-          <WorkflowCarouselDesignBackdrop backdrop={DIAGNOSTIC_ASSISTANT_BACKDROP} embedded />
+      <section className={`${DOEPHONE_VIEWPORT_SECTION} overflow-hidden bg-[#1E343A]`} aria-label="Integrations">
+        <div className="pointer-events-none absolute -inset-[3%] overflow-hidden" aria-hidden>
+          <WorkflowCarouselDesignBackdrop backdrop={DIAGNOSTIC_ASSISTANT_BACKDROP} embedded gradientScale={1.12} />
         </div>
         <DoePhoneSectionText line1="Intelligence built." line2="into your stack." color="text-white" />
       </section>
-
-      <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 
       <section
         className="relative z-10 flex min-h-[100svh] w-full flex-col bg-[#F7F6F3] iphone-page:min-h-[100dvh]"

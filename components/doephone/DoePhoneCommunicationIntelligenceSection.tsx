@@ -15,12 +15,12 @@ import { CARE_COORDINATION_BACKDROP } from "@/lib/workflow-carousel-design-backd
 /** Gradient viewport — Communication + Intelligence title and shortcut array. */
 export function DoePhoneCommunicationIntelligenceSection() {
   return (
-    <section className={`${DOEPHONE_VIEWPORT_SECTION} overflow-hidden bg-[#F7F6F3]`} aria-label="Communication">
-      <div className="pointer-events-none absolute inset-0" aria-hidden>
+    <section className={`${DOEPHONE_VIEWPORT_SECTION} overflow-hidden bg-[#D2774C]`} aria-label="Communication">
+      <div className="pointer-events-none absolute -inset-[3%] overflow-hidden" aria-hidden>
         <WorkflowCarouselDesignBackdrop
           backdrop={CARE_COORDINATION_BACKDROP}
           embedded
-          gradientScale={1.38}
+          gradientScale={1.52}
         />
       </div>
 
