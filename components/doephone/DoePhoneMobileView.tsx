@@ -8,9 +8,9 @@ import { HERO_BACKDROP_GRADIENT } from "@/lib/home/hero-constants";
 import { CARE_COORDINATION_BACKDROP, DIAGNOSTIC_ASSISTANT_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 import { useLayoutEffect } from "react";
 
-/** Shared band height for /doephone sections 2–4. */
+/** Shared band height for /doephone sections 2+. */
 const DOEPHONE_BAND_SECTION =
-  "relative z-10 w-full min-h-[min(144vh,80rem)] iphone-page:min-h-[min(136dvh,76rem)]";
+  "relative z-10 w-full min-h-[min(152vh,86rem)] iphone-page:min-h-[min(144dvh,82rem)]";
 
 export function DoePhoneMobileView() {
   /** Layout viewport only — ignore visualViewport shrink during pinch so layout stays stable. */
@@ -54,7 +54,7 @@ export function DoePhoneMobileView() {
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 
       <section className={`${DOEPHONE_BAND_SECTION} overflow-hidden bg-[#F7F6F3]`} aria-label="Care coordination">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-[100dvh]" aria-hidden>
+        <div className="pointer-events-none absolute inset-0" aria-hidden>
           <WorkflowCarouselDesignBackdrop backdrop={CARE_COORDINATION_BACKDROP} embedded />
         </div>
       </section>
@@ -66,10 +66,18 @@ export function DoePhoneMobileView() {
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 
       <section className={`${DOEPHONE_BAND_SECTION} overflow-hidden bg-[#F7F6F3]`} aria-label="Diagnostic assistant">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-[100dvh]" aria-hidden>
+        <div className="pointer-events-none absolute inset-0" aria-hidden>
           <WorkflowCarouselDesignBackdrop backdrop={DIAGNOSTIC_ASSISTANT_BACKDROP} embedded />
         </div>
+        <div
+          className="pointer-events-none absolute inset-0 z-[3] bg-[#1E343A]/[0.14]"
+          aria-hidden
+        />
       </section>
+
+      <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
+
+      <section className={`${DOEPHONE_BAND_SECTION} bg-[#F7F6F3]`} aria-hidden />
 
       <HomeFooter />
     </div>
