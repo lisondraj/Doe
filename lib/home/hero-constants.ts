@@ -8,10 +8,10 @@ export const HERO_BACKDROP_GRADIENT = `
   radial-gradient(ellipse 50% 40% at 88% 22%, rgba(210, 119, 76, 0.3) 0%, transparent 55%)
 `;
 
-/** /doephone hero — smooth centered radial using the shared warm palette. */
+/** /doephone hero — warm copper sweep; darker center, no pale yellow. */
 export const DOEPHONE_HERO_BACKDROP_GRADIENT = `
-  radial-gradient(ellipse 100% 88% at 50% 46%, #f2cf7a 0%, #e8b04d 16%, #d4893f 34%, #a85a34 52%, #6b442f 68%, #3d2f28 80%, #243a40 92%, #1a2e34 100%),
-  radial-gradient(ellipse 75% 42% at 50% 108%, rgba(231, 169, 68, 0.38) 0%, transparent 68%)
+  radial-gradient(ellipse 105% 92% at 50% 42%, #1a2e34 0%, #243a40 16%, #3d2f28 30%, #5c4030 44%, #8b4f38 56%, #a85a34 68%, #c97a42 80%, #b86a38 92%),
+  radial-gradient(ellipse 65% 38% at 50% 102%, rgba(139, 79, 56, 0.22) 0%, transparent 68%)
 `;
 
 /** Same horizontal inset as the fixed nav — hero, headline band, carousel (forced phone layout). */

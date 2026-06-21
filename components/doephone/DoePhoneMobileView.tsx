@@ -60,7 +60,7 @@ export function DoePhoneMobileView() {
         </div>
 
         <div
-          className={`absolute inset-0 z-[3] flex flex-col items-center justify-center ${DOEPHONE_HERO_HEADLINE_INSET}`}
+          className={`absolute inset-0 z-[3] flex flex-col items-center justify-start pt-[max(9rem,calc(env(safe-area-inset-top,0px)+31svh))] pb-8 ${DOEPHONE_HERO_HEADLINE_INSET}`}
         >
           <DoePhoneHeroHeadline />
         </div>
