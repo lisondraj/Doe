@@ -217,6 +217,33 @@ body.mainpage-route {
   }
 }
 
+/* /doephone hero headline — deblur + rise on load. */
+.doephone-hero-headline-line {
+  opacity: 0;
+  filter: blur(16px);
+  transform: translateY(1.75rem);
+  animation: doephone-hero-headline-in 1.45s cubic-bezier(0.22, 1, 0.36, 1) 0.55s forwards;
+  will-change: opacity, filter, transform;
+}
+
+.doephone-hero-headline-line--second {
+  animation-delay: 0.82s;
+}
+
+@keyframes doephone-hero-headline-in {
+  0% {
+    opacity: 0;
+    filter: blur(16px);
+    transform: translateY(1.75rem);
+  }
+
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
 /* Wheel-driven mission caret — uses transform so inline opacity stays 1∶1 with scroll deltas */
 .hero-mission-scroll-caret-blink {
   transform-origin: bottom;
@@ -300,6 +327,13 @@ body.mainpage-route {
     mask-image: none;
     -webkit-mask-size: auto;
     mask-size: auto;
+  }
+
+  .doephone-hero-headline-line {
+    animation: none !important;
+    opacity: 1;
+    filter: none;
+    transform: none;
   }
 
   .hero-mission-scroll-caret-blink {
