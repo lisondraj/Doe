@@ -352,26 +352,40 @@ body.mainpage-route {
 }
 
 /* /doephone section 2 — segmented scroll reveal: title → carousel → menu. */
+@keyframes doephone-section-reveal-in {
+  0% {
+    opacity: 0;
+    filter: blur(24px);
+    transform: translateY(2.75rem);
+  }
+
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
 .doephone-section-reveal {
   opacity: 0;
-  filter: blur(16px);
-  transform: translateY(1.75rem);
+  filter: blur(24px);
+  transform: translateY(2.75rem);
   will-change: opacity, filter, transform;
 }
 
 .doephone-section-reveal--in.doephone-section-reveal--title {
-  animation: doephone-hero-headline-in 1.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  animation-delay: 0ms;
+  animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 1.75s)
+    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-title-delay, 0ms) both;
 }
 
 .doephone-section-reveal--in.doephone-section-reveal--carousel {
-  animation: doephone-hero-headline-in 1.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  animation-delay: 0.45s;
+  animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 1.75s)
+    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-carousel-delay, 700ms) both;
 }
 
 .doephone-section-reveal--in.doephone-section-reveal--menu {
-  animation: doephone-hero-headline-in 1.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  animation-delay: 0.9s;
+  animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 1.75s)
+    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-menu-delay, 2.85s) both;
 }
 
 .doephone-section-plus {

@@ -19,7 +19,8 @@ import {
   doePhoneSectionRevealSegmentClass,
   useDoePhoneSectionReveal,
 } from "@/lib/doephone/use-doe-phone-section-reveal";
-import { useState } from "react";
+import { doephoneSectionRevealStyleVars } from "@/lib/doephone/section-reveal-timing";
+import { useState, type CSSProperties } from "react";
 
 /** Section 2 — Communication title, carousel, and feature menu. */
 export function DoePhoneCommunicationSection() {
@@ -31,7 +32,11 @@ export function DoePhoneCommunicationSection() {
   const { ref: sectionRef, revealed } = useDoePhoneSectionReveal();
 
   return (
-    <div ref={sectionRef} className="flex h-full min-h-0 flex-col">
+    <div
+      ref={sectionRef}
+      className="flex h-full min-h-0 flex-col"
+      style={doephoneSectionRevealStyleVars() as CSSProperties}
+    >
       <div className={`shrink-0 ${DOEPHONE_SECTION_CONTENT_INSET} ${DOEPHONE_SECTION_TITLE_PT}`}>
         <DoePhoneSectionTitle
           segmentedReveal
