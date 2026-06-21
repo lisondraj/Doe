@@ -59,12 +59,23 @@ export function DoePhoneSectionText({
   );
 }
 
-/** Thin-stroke + for section 2 — weight controlled via SVG, not opacity. */
+/** Thin-stroke + for section 2 — lighter than the hairline glyph, opacity unchanged. */
 export function DoePhoneSectionPlus() {
   return (
-    <span className="doephone-section-plus" aria-hidden>
-      <svg className="doephone-section-plus-icon" viewBox="0 0 12 12" aria-hidden>
-        <path d="M6 1v10M1 6h10" stroke="currentColor" strokeWidth="0.65" strokeLinecap="round" />
+    <span className="doephone-section-plus text-black" aria-hidden>
+      <svg
+        className="doephone-section-plus-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden
+      >
+        <path
+          d="M12 5v14M5 12h14"
+          stroke="currentColor"
+          strokeWidth="1.15"
+          strokeLinecap="round"
+        />
       </svg>
     </span>
   );

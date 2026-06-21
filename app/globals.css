@@ -250,8 +250,8 @@ body.mainpage-route {
   display: block;
   height: var(--doephone-career-slot);
   line-height: 1;
-  font-weight: 400;
-  font-style: italic;
+  font-weight: 300;
+  font-style: normal;
 }
 
 @keyframes doephone-hero-headline-in {
@@ -286,14 +286,15 @@ body.mainpage-route {
   vertical-align: baseline;
   margin-right: 0.22em;
   color: #000;
+  opacity: 0.86;
   line-height: 1;
 }
 
 .doephone-section-plus-icon {
   display: inline-block;
-  width: 0.62em;
-  height: 0.62em;
-  vertical-align: 0.06em;
+  width: 0.56em;
+  height: 0.56em;
+  vertical-align: -0.05em;
 }
 
 /* Wheel-driven mission caret — uses transform so inline opacity stays 1∶1 with scroll deltas */
