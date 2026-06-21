@@ -219,7 +219,7 @@ body.mainpage-route {
 
 /* /doephone hero polar overlay — constant low opacity; one-time build animation. */
 .doephone-hero-polar-segment {
-  stroke: rgba(255, 255, 255, 0.18);
+  stroke: rgba(255, 255, 255, 0.32);
   stroke-width: 0.8;
   opacity: 1;
 }
@@ -426,7 +426,7 @@ body.mainpage-route {
   }
 
   .doephone-hero-polar-segment {
-    stroke: rgba(255, 255, 255, 0.09);
+    stroke: rgba(255, 255, 255, 0.32);
     opacity: 1;
   }
 
