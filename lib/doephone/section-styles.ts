@@ -32,11 +32,11 @@ export const DOEPHONE_SECTION_CAROUSEL_UNIFORM_PAD = DOEPHONE_SECTION_UNIFORM_PA
 
 /** Top offset for section titles (~52% of prior padding — just under half removed). */
 export const DOEPHONE_SECTION_TITLE_PT =
-  "pt-[max(1.95rem,calc(env(safe-area-inset-top,0px)+7.25svh))]";
+  "pt-[max(1.95rem,calc(env(safe-area-inset-top,0px)+calc(var(--app-vh,100lvh)*0.0725)))]";
 
 /** Section 2 bottom close — mirrors title top padding above Communication. */
 export const DOEPHONE_SECTION_TITLE_PB =
-  "pb-[max(1.95rem,calc(env(safe-area-inset-bottom,0px)+7.25svh))]";
+  "pb-[max(1.95rem,calc(env(safe-area-inset-bottom,0px)+calc(var(--app-vh,100lvh)*0.0725)))]";
 
 /** Doe brand gradient — menu active rule (warm coral → amber, no dark teal). */
 export const DOE_BRAND_GRADIENT_LINE =
@@ -50,13 +50,17 @@ export const DOEPHONE_SECTION_COPY_POSITION =
 export const DOEPHONE_SECTION_COPY_TW =
   "text-left font-light leading-[1.02] tracking-[-0.03em] text-[clamp(3.05rem,11.75vw,5.15rem)] iphone-page:text-[clamp(2.9rem,11vw,4.85rem)]";
 
-/** Full iPhone viewport band below hero. */
+/** Full iPhone viewport band — locked to `--app-vh` (stable vs Safari chrome). */
 export const DOEPHONE_VIEWPORT_SECTION =
-  "relative z-10 w-full min-h-[100svh] h-[100svh] iphone-page:min-h-[100dvh] iphone-page:h-[100dvh]";
+  "relative z-10 w-full min-h-[var(--app-vh,100lvh)] h-[var(--app-vh,100lvh)]";
 
-/** Section 2 carousel — fixed height so mobile scroll / dvh changes do not shrink the card. */
+/** Beige section shell — at least one stable viewport tall; grows with content. */
+export const DOEPHONE_BEIGE_SECTION =
+  "relative z-10 flex min-h-[var(--app-vh,100lvh)] w-full flex-col bg-[#F7F6F3]";
+
+/** Section 2 carousel — fixed height; tied to stable viewport, not dynamic svh. */
 export const DOEPHONE_SECTION_CAROUSEL_HEIGHT =
-  "h-[clamp(46rem,104svh,69rem)] min-h-[clamp(46rem,104svh,69rem)] max-h-[clamp(46rem,104svh,69rem)] shrink-0";
+  "h-[clamp(46rem,calc(var(--app-vh,100lvh)*1.04),69rem)] min-h-[clamp(46rem,calc(var(--app-vh,100lvh)*1.04),69rem)] max-h-[clamp(46rem,calc(var(--app-vh,100lvh)*1.04),69rem)] shrink-0";
 
 /** Fixed stage — tallest preset layout so menu below does not shift on tab change. */
 export const DOEPHONE_BOX_CLUSTER_STAGE_HEIGHT =
