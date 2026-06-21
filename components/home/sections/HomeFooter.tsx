@@ -2,7 +2,15 @@
 
 import Link from "next/link";
 
-import { lora } from "@/lib/home/fonts";
+import { DOEPHONE_SECTION_CONTENT_INSET } from "@/lib/doephone/section-styles";
+import { inter, lora } from "@/lib/home/fonts";
+
+const FOOTER_LINKS = [
+  { href: "/features", label: "Features" },
+  { href: "/blog", label: "Blog" },
+  { href: "/", label: "Team" },
+  { href: "/", label: "Our Vision" },
+] as const;
 
 export function HomeFooter() {
   return (
@@ -60,24 +68,36 @@ export function HomeFooter() {
             mixBlendMode: "overlay",
           }}
         />
-        <div className="relative z-10 flex w-full flex-1 flex-col justify-end px-3 pt-10 md:px-6 md:pt-16 iphone-page:px-0">
-          <nav
-            className="mx-auto mb-14 grid w-[min(100%,17rem)] shrink-0 grid-cols-2 justify-items-center gap-x-5 gap-y-4 text-center text-[clamp(1.15rem,4.25vw,1.5rem)] font-medium tracking-tight md:mb-16 md:w-[min(100%,22rem)] md:gap-x-8 md:gap-y-5 md:text-[clamp(1.25rem,2.8vw,1.75rem)] iphone-page:mb-12 iphone-page:max-w-[16rem] iphone-page:gap-x-4 iphone-page:gap-y-3.5 iphone-page:text-[clamp(1.2rem,4.8vmin,1.65rem)]"
-            aria-label="Footer"
-          >
-            <Link href="/features" className="text-white no-underline transition-colors hover:text-white/85">
-              Features
-            </Link>
-            <Link href="/blog" className="text-white no-underline transition-colors hover:text-white/85">
-              Blog
-            </Link>
-            <Link href="/" className="text-white no-underline transition-colors hover:text-white/85">
-              Team
-            </Link>
-            <Link href="/" className="text-white no-underline transition-colors hover:text-white/85">
-              Our Vision
-            </Link>
-          </nav>
+        <div className={`relative z-10 flex w-full flex-1 flex-col justify-end pt-10 md:pt-16 ${DOEPHONE_SECTION_CONTENT_INSET}`}>
+          <div className="mb-14 flex w-full items-end justify-between gap-8 md:mb-16 iphone-page:mb-12 iphone-page:gap-6">
+            <div
+              className={`min-w-0 shrink text-left text-white ${inter.className} text-[clamp(0.9rem,0.82rem+0.45vmin,1.05rem)] font-normal leading-[1.45] tracking-[-0.01em] iphone-page:text-[clamp(0.88rem,0.8rem+0.42vmin,1rem)]`}
+            >
+              <p className="font-medium">Doe Corporation</p>
+              <p className="mt-1 text-white/88">New York, NY 10013</p>
+              <a
+                href="mailto:contact@doe.care"
+                className="mt-1 inline-block text-white/88 no-underline transition-colors hover:text-white"
+              >
+                contact@doe.care
+              </a>
+            </div>
+
+            <nav
+              className="flex shrink-0 flex-col items-end gap-3 text-right text-[clamp(1.05rem,3.8vw,1.45rem)] font-medium tracking-tight md:gap-3.5 md:text-[clamp(1.15rem,2.4vw,1.65rem)] iphone-page:gap-2.5 iphone-page:text-[clamp(1rem,3.6vmin,1.35rem)]"
+              aria-label="Footer"
+            >
+              {FOOTER_LINKS.map((item) => (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className="text-white no-underline transition-colors hover:text-white/85"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
           <div
             className="relative z-[11] flex justify-center overflow-x-clip overflow-y-visible pt-3 pb-0"
             style={{
