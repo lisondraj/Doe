@@ -2,14 +2,14 @@
 
 import DoeIphoneSiteNav from "@/components/DoeIphoneSiteNav";
 import { DoePhoneClosingSection } from "@/components/doephone/DoePhoneClosingSection";
+import { DoePhoneCommunicationIntelligenceSection } from "@/components/doephone/DoePhoneCommunicationIntelligenceSection";
 import { DoePhoneCommunicationSection } from "@/components/doephone/DoePhoneCommunicationSection";
 import { DoePhoneCustomizationSection } from "@/components/doephone/DoePhoneCustomizationSection";
 import { DoePhoneHeroSection } from "@/components/doephone/DoePhoneHeroSection";
-import { DoePhoneSectionPlus, DoePhoneSectionText } from "@/components/doephone/DoePhoneSectionText";
+import { DoePhoneSectionText } from "@/components/doephone/DoePhoneSectionText";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
 import {
-  CARE_COORDINATION_BACKDROP,
   DIAGNOSTIC_ASSISTANT_BACKDROP,
 } from "@/lib/workflow-carousel-design-backdrops";
 import { DOEPHONE_VIEWPORT_SECTION } from "@/lib/doephone/section-styles";
@@ -48,25 +48,7 @@ export function DoePhoneMobileView() {
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 
-      <section className={`${DOEPHONE_VIEWPORT_SECTION} overflow-hidden bg-[#F7F6F3]`} aria-label="Communication">
-        <div className="pointer-events-none absolute inset-0" aria-hidden>
-          <WorkflowCarouselDesignBackdrop
-            backdrop={CARE_COORDINATION_BACKDROP}
-            embedded
-            gradientScale={1.38}
-          />
-        </div>
-        <DoePhoneSectionText
-          line1="Communication"
-          line2={
-            <>
-              <DoePhoneSectionPlus />
-              Intelligence.
-            </>
-          }
-          color="text-white"
-        />
-      </section>
+      <DoePhoneCommunicationIntelligenceSection />
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 
