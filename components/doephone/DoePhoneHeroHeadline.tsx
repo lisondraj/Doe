@@ -6,18 +6,21 @@ import { useEffect, useState } from "react";
 const DOEPHONE_HERO_CAREERS = [
   "doctors",
   "nurses",
-  "physiotherapists",
   "pharmacists",
   "therapists",
   "surgeons",
-  "pediatricians",
-  "radiologists",
   "paramedics",
   "dentists",
+  "optometrists",
+  "midwives",
+  "GPs",
 ] as const;
 
+/** Longest label — sets carousel slot width. */
+const DOEPHONE_HERO_CAREER_WIDTH_SAMPLE = "optometrists";
+
 /** Hold each career on screen before advancing. */
-const CAREER_ROTATE_MS = 2800;
+const CAREER_ROTATE_MS = 3800;
 
 export function DoePhoneHeroHeadline() {
   const [index, setIndex] = useState(0);
@@ -45,19 +48,16 @@ export function DoePhoneHeroHeadline() {
             <span>for&nbsp;</span>
             <span className="relative inline-grid align-baseline">
               <span aria-hidden className="invisible col-start-1 row-start-1 select-none">
-                physiotherapists
+                {DOEPHONE_HERO_CAREER_WIDTH_SAMPLE}
               </span>
-              <span className="col-start-1 row-start-1 h-[1.02em] overflow-hidden">
+              <span className="doephone-hero-career-clip col-start-1 row-start-1">
                 <span
                   className="doephone-hero-career-track block"
-                  style={{ transform: `translateY(calc(-1.02em * ${index}))` }}
+                  style={{ transform: `translateY(calc(-1em * ${index}))` }}
                   aria-live="polite"
                 >
                   {DOEPHONE_HERO_CAREERS.map((career) => (
-                    <span
-                      key={career}
-                      className={`doephone-hero-career-word block h-[1.02em] leading-[1.02] ${loraItalicLight.className}`}
-                    >
+                    <span key={career} className={`doephone-hero-career-word ${loraItalicLight.className}`}>
                       {career}
                     </span>
                   ))}
