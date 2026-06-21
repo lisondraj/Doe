@@ -232,6 +232,7 @@ body.mainpage-route {
   height: var(--doephone-career-slot);
   overflow: hidden;
   isolation: isolate;
+  transform: translateY(-0.07em);
 }
 
 .doephone-hero-career-track {
@@ -244,10 +245,9 @@ body.mainpage-route {
 }
 
 .doephone-hero-career-word {
-  display: flex;
-  align-items: center;
+  display: block;
   height: var(--doephone-career-slot);
-  line-height: 1.08;
+  line-height: 1;
   font-weight: 400;
   font-style: italic;
 }

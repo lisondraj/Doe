@@ -64,8 +64,11 @@ export function DoePhoneHeroHeadline() {
           <span className="shrink-0">built&nbsp;</span>
           <span className="inline-flex shrink-0 flex-nowrap items-baseline whitespace-nowrap">
             <span>for&nbsp;</span>
-            <span className="relative inline-grid align-baseline">
-              <span aria-hidden className="invisible col-start-1 row-start-1 select-none">
+            <span className="relative inline-grid align-baseline leading-none">
+              <span
+                aria-hidden
+                className={`invisible col-start-1 row-start-1 select-none ${loraItalicLight.className} italic`}
+              >
                 {DOEPHONE_HERO_CAREER_WIDTH_SAMPLE}
               </span>
               <span className="doephone-hero-career-clip col-start-1 row-start-1">
