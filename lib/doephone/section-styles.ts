@@ -30,7 +30,7 @@ export const DOEPHONE_VIEWPORT_SECTION =
 
 /** Section 2 carousel — fixed height so mobile scroll / dvh changes do not shrink the card. */
 export const DOEPHONE_SECTION_CAROUSEL_HEIGHT =
-  "h-[clamp(23rem,52svh,34.5rem)] min-h-[clamp(23rem,52svh,34.5rem)] max-h-[clamp(23rem,52svh,34.5rem)] shrink-0";
+  "h-[clamp(46rem,104svh,69rem)] min-h-[clamp(46rem,104svh,69rem)] max-h-[clamp(46rem,104svh,69rem)] shrink-0";
 
 /** Rounded corners shared by section 2 carousel cards + embedded backdrop clip. */
 export const DOEPHONE_SECTION_CAROUSEL_RADIUS =

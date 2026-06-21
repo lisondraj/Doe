@@ -37,7 +37,10 @@ export function DoePhoneMobileView() {
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 
-      <section className={`${DOEPHONE_VIEWPORT_SECTION} flex flex-col bg-[#F7F6F3]`} aria-label="Communication">
+      <section
+        className="relative z-10 flex min-h-[100svh] w-full flex-col bg-[#F7F6F3] iphone-page:min-h-[100dvh]"
+        aria-label="Communication"
+      >
         <DoePhoneCommunicationSection />
       </section>
 

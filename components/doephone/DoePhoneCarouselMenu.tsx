@@ -33,10 +33,10 @@ export function DoePhoneCarouselMenu({
             role="tab"
             aria-selected={active}
             aria-controls={`doephone-comm-slide-${slide.id}`}
-            className={`flex min-h-[clamp(3.85rem,3.25rem+2.65vmin,5rem)] items-center justify-center rounded-[clamp(0.5rem,0.42rem+0.35vmin,0.65rem)] border px-[clamp(0.22rem,0.16rem+0.28vmin,0.38rem)] py-[clamp(0.35rem,0.28rem+0.35vmin,0.5rem)] text-center transition-colors active:opacity-80 ${suisseIntl.className} font-light tracking-[-0.02em] ${
+            className={`relative flex min-h-[clamp(3.85rem,3.25rem+2.65vmin,5rem)] flex-col items-center justify-center rounded-[clamp(0.35rem,0.3rem+0.22vmin,0.45rem)] px-[clamp(0.22rem,0.16rem+0.28vmin,0.38rem)] py-[clamp(0.42rem,0.34rem+0.38vmin,0.58rem)] pb-[clamp(0.62rem,0.5rem+0.48vmin,0.82rem)] text-center transition-[background-color,color] duration-200 ${suisseIntl.className} font-light tracking-[-0.02em] ${
               active
-                ? "border-[#1E343A] bg-[#1E343A] text-white"
-                : "border-[#E0DDD6] bg-white text-[#1E343A] hover:border-[#C8C4BC]"
+                ? "bg-[#E3E1DB] text-[#1E343A]"
+                : "bg-[#1E343A]/[0.06] text-[#1E343A]/35"
             }`}
             onClick={() => onSelect(index)}
           >
@@ -44,6 +44,12 @@ export function DoePhoneCarouselMenu({
               <span>{lines[0]}</span>
               {lines[1] ? <span>{lines[1]}</span> : null}
             </span>
+            <span
+              aria-hidden
+              className={`pointer-events-none absolute inset-x-[12%] bottom-[clamp(0.34rem,0.28rem+0.32vmin,0.46rem)] h-px bg-[#1E343A] transition-opacity duration-200 ${
+                active ? "opacity-100" : "opacity-0"
+              }`}
+            />
           </button>
         );
       })}
