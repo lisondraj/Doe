@@ -32,7 +32,7 @@ export function HeroCarouselTextureOverlay({
   patternId?: string;
   /** Fade + expand grid lines from top-left on first paint. */
   introOnLoad?: boolean;
-  /** `dot` — care-coordination-style dots only; default square grid + grain. */
+  /** `dot` matches care coordination carousel (section 3). */
   grid?: "square" | "dot";
 }) {
   const gridStyle = grid === "dot" ? WORKFLOW_DOT_GRID_STYLE : HERO_CAROUSEL_SQUARE_GRID_STYLE;
