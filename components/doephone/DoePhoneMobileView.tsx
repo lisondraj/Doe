@@ -2,6 +2,7 @@
 
 import DoeIphoneSiteNav from "@/components/DoeIphoneSiteNav";
 import { DoePhoneCommunicationSection } from "@/components/doephone/DoePhoneCommunicationSection";
+import { DoePhoneCustomizationSection } from "@/components/doephone/DoePhoneCustomizationSection";
 import { DoePhoneHeroSection } from "@/components/doephone/DoePhoneHeroSection";
 import { DoePhoneSectionPlus, DoePhoneSectionText } from "@/components/doephone/DoePhoneSectionText";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
@@ -68,8 +69,11 @@ export function DoePhoneMobileView() {
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 
-      <section className={`${DOEPHONE_VIEWPORT_SECTION} bg-[#F7F6F3]`} aria-label="Customization">
-        <DoePhoneSectionText line1="Your practice," line2="your rules." />
+      <section
+        className="relative z-10 flex min-h-[100svh] w-full flex-col bg-[#F7F6F3] iphone-page:min-h-[100dvh]"
+        aria-label="Customization"
+      >
+        <DoePhoneCustomizationSection />
       </section>
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
