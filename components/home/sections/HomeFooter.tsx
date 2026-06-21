@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import { DOEPHONE_SECTION_CONTENT_INSET } from "@/lib/doephone/section-styles";
+import { DOEPHONE_FOOTER_CONTENT_INSET } from "@/lib/doephone/section-styles";
 import { inter, lora } from "@/lib/home/fonts";
 
 const FOOTER_LINKS = [
@@ -68,23 +68,32 @@ export function HomeFooter() {
             mixBlendMode: "overlay",
           }}
         />
-        <div className={`relative z-10 flex w-full flex-1 flex-col justify-end pt-10 md:pt-16 ${DOEPHONE_SECTION_CONTENT_INSET}`}>
-          <div className="mb-14 flex w-full items-end justify-between gap-8 md:mb-16 iphone-page:mb-12 iphone-page:gap-6">
+
+        <div className="relative z-10 flex w-full flex-1 flex-col justify-end pt-10 md:pt-16">
+          <div
+            className={`mb-14 flex w-full items-end justify-between gap-8 md:mb-16 iphone-page:mb-12 iphone-page:gap-6 ${DOEPHONE_FOOTER_CONTENT_INSET}`}
+          >
             <div
-              className={`min-w-0 shrink text-left text-white ${inter.className} text-[clamp(0.9rem,0.82rem+0.45vmin,1.05rem)] font-normal leading-[1.45] tracking-[-0.01em] iphone-page:text-[clamp(0.88rem,0.8rem+0.42vmin,1rem)]`}
+              className={`min-w-0 shrink text-left text-white ${inter.className} text-[clamp(1.02rem,0.92rem+0.52vmin,1.22rem)] font-normal leading-[1.42] tracking-[-0.01em] iphone-page:text-[clamp(0.98rem,0.88rem+0.48vmin,1.14rem)]`}
             >
-              <p className="font-medium">Doe Corporation</p>
-              <p className="mt-1 text-white/88">New York, NY 10013</p>
+              <p className="text-[clamp(1.12rem,1rem+0.58vmin,1.32rem)] font-semibold leading-[1.2] iphone-page:text-[clamp(1.06rem,0.96rem+0.52vmin,1.24rem)]">
+                Doe Corporation
+              </p>
+              <address className="mt-2 space-y-0.5 not-italic text-white/88">
+                <span className="block">75 Varick Street</span>
+                <span className="block">New York, NY 10013</span>
+                <span className="block">United States</span>
+              </address>
               <a
                 href="mailto:contact@doe.care"
-                className="mt-1 inline-block text-white/88 no-underline transition-colors hover:text-white"
+                className="mt-2 inline-block text-white/88 no-underline transition-colors hover:text-white"
               >
                 contact@doe.care
               </a>
             </div>
 
             <nav
-              className="flex shrink-0 flex-col items-end gap-3 text-right text-[clamp(1.05rem,3.8vw,1.45rem)] font-medium tracking-tight md:gap-3.5 md:text-[clamp(1.15rem,2.4vw,1.65rem)] iphone-page:gap-2.5 iphone-page:text-[clamp(1rem,3.6vmin,1.35rem)]"
+              className="flex shrink-0 flex-col items-end gap-3.5 text-right text-[clamp(1.18rem,4.2vw,1.62rem)] font-medium leading-[1.15] tracking-tight md:gap-4 md:text-[clamp(1.28rem,2.6vw,1.82rem)] iphone-page:gap-3 iphone-page:text-[clamp(1.12rem,4.2vmin,1.48rem)]"
               aria-label="Footer"
             >
               {FOOTER_LINKS.map((item) => (
@@ -98,6 +107,7 @@ export function HomeFooter() {
               ))}
             </nav>
           </div>
+
           <div
             className="relative z-[11] flex justify-center overflow-x-clip overflow-y-visible pt-3 pb-0"
             style={{

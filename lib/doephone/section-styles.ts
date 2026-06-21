@@ -2,6 +2,10 @@
 export const DOEPHONE_SECTION_COPY_INSET =
   "pl-14 pr-6 iphone-page:pl-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))] iphone-page:pr-[max(1.65rem,env(safe-area-inset-right,0px))]";
 
+/** Footer copy row — section left inset + matching right gutter (Doe wordmark sits outside). */
+export const DOEPHONE_FOOTER_CONTENT_INSET =
+  "pl-14 pr-14 iphone-page:pl-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))] iphone-page:pr-[max(2.35rem,calc(env(safe-area-inset-right,0px)+5.25vmin))]";
+
 /** Standard content gutter for all sections (same left edge as hero headline). */
 export const DOEPHONE_SECTION_CONTENT_INSET = DOEPHONE_SECTION_COPY_INSET;
 
