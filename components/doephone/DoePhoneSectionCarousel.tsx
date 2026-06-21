@@ -4,12 +4,13 @@ import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-d
 import {
   DOEPHONE_COMMUNICATION_SLIDES,
   DOEPHONE_COMMUNICATION_SLIDE_COUNT,
+  type DoePhoneCommunicationSlide,
 } from "@/lib/doephone/communication-carousel";
 import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
 import type { WorkflowCarouselDesignBackdrop as WorkflowCarouselDesignBackdropType } from "@/lib/workflow-carousel-design-backdrops";
-import { useCallback, useEffect, useMemo, useRef, type RefObject } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from "react";
 
-const LOOP_TAIL_CLONE = DOEPHONE_COMMUNICATION_SLIDES[0];
+type MenuInject = { scrollIndex: number; slideIndex: number };
 
 function DoePhoneCarouselCard({ backdrop }: { backdrop: WorkflowCarouselDesignBackdropType }) {
   return (
@@ -26,12 +27,16 @@ function DoePhoneCarouselCard({ backdrop }: { backdrop: WorkflowCarouselDesignBa
   );
 }
 
-function scrollPositionPx(scrollRef: RefObject<HTMLDivElement>, position: number) {
+function scrollPositionPx(
+  scrollRef: RefObject<HTMLDivElement>,
+  position: number,
+  behavior: ScrollBehavior = "auto",
+) {
   const el = scrollRef.current;
   if (!el) return;
   const w = el.clientWidth;
   if (w <= 0) return;
-  el.scrollTo({ left: position * w, behavior: "auto" });
+  el.scrollTo({ left: position * w, behavior });
 }
 
 function forwardSteps(from: number, to: number): number {
@@ -50,9 +55,31 @@ function waitCarouselScrollEnd(el: HTMLDivElement): Promise<void> {
       resolve();
     };
     const onScrollEnd = () => finish();
-    const fallback = window.setTimeout(finish, 480);
+    const fallback = window.setTimeout(finish, 520);
     el.addEventListener("scrollend", onScrollEnd);
   });
+}
+
+function slideForScrollIndex(
+  scrollIndex: number,
+  menuInject: MenuInject | null,
+): DoePhoneCommunicationSlide {
+  if (menuInject && menuInject.scrollIndex === scrollIndex) {
+    return DOEPHONE_COMMUNICATION_SLIDES[menuInject.slideIndex];
+  }
+  return DOEPHONE_COMMUNICATION_SLIDES[scrollIndex % DOEPHONE_COMMUNICATION_SLIDE_COUNT];
+}
+
+function logicalIndexForScrollPosition(position: number, menuInject: MenuInject | null): number {
+  if (menuInject && position === menuInject.scrollIndex) {
+    return menuInject.slideIndex;
+  }
+  return position % DOEPHONE_COMMUNICATION_SLIDE_COUNT;
+}
+
+/** Two full sets + tail clone for seamless manual wrap at slide 8→0. */
+function buildLoopScrollCount() {
+  return DOEPHONE_COMMUNICATION_SLIDE_COUNT * 2 + 1;
 }
 
 export function useDoePhoneSectionCarousel(activeIndex: number, onActiveIndexChange: (index: number) => void) {
@@ -60,26 +87,42 @@ export function useDoePhoneSectionCarousel(activeIndex: number, onActiveIndexCha
   const loopingRef = useRef(false);
   const menuAnimatingRef = useRef(false);
   const activeIndexRef = useRef(activeIndex);
+  const menuInjectRef = useRef<MenuInject | null>(null);
   const scrollEndTimerRef = useRef<number | undefined>(undefined);
+  const [menuInject, setMenuInject] = useState<MenuInject | null>(null);
+
+  const loopScrollCount = useMemo(() => buildLoopScrollCount(), []);
+  const loopScrollIndices = useMemo(
+    () => Array.from({ length: loopScrollCount }, (_, i) => i),
+    [loopScrollCount],
+  );
 
   useEffect(() => {
     activeIndexRef.current = activeIndex;
   }, [activeIndex]);
 
-  const loopSlides = useMemo(
-    () => [...DOEPHONE_COMMUNICATION_SLIDES, LOOP_TAIL_CLONE],
-    [],
-  );
+  useEffect(() => {
+    menuInjectRef.current = menuInject;
+  }, [menuInject]);
 
   const scrollToPosition = useCallback(
     (position: number, behavior: ScrollBehavior = "smooth") => {
-      const el = scrollRef.current;
-      if (!el) return;
-      const w = el.clientWidth;
-      if (w <= 0) return;
-      el.scrollTo({ left: position * w, behavior });
+      scrollPositionPx(scrollRef, position, behavior);
     },
     [],
+  );
+
+  const normalizeToFirstCopy = useCallback(
+    (logicalIndex: number) => {
+      loopingRef.current = true;
+      onActiveIndexChange(logicalIndex);
+      activeIndexRef.current = logicalIndex;
+      scrollPositionPx(scrollRef, logicalIndex, "auto");
+      requestAnimationFrame(() => {
+        loopingRef.current = false;
+      });
+    },
+    [onActiveIndexChange],
   );
 
   const settleScrollPosition = useCallback(() => {
@@ -90,21 +133,22 @@ export function useDoePhoneSectionCarousel(activeIndex: number, onActiveIndexCha
     if (w <= 0) return;
 
     const position = Math.round(el.scrollLeft / w);
+    const inject = menuInjectRef.current;
 
-    if (position === DOEPHONE_COMMUNICATION_SLIDE_COUNT) {
-      loopingRef.current = true;
-      onActiveIndexChange(0);
-      scrollPositionPx(scrollRef, 0);
-      requestAnimationFrame(() => {
-        loopingRef.current = false;
-      });
+    if (position === DOEPHONE_COMMUNICATION_SLIDE_COUNT * 2) {
+      normalizeToFirstCopy(0);
+      return;
+    }
+
+    if (position >= DOEPHONE_COMMUNICATION_SLIDE_COUNT) {
+      normalizeToFirstCopy(logicalIndexForScrollPosition(position, inject));
       return;
     }
 
     if (position >= 0 && position < DOEPHONE_COMMUNICATION_SLIDE_COUNT) {
-      onActiveIndexChange(position);
+      onActiveIndexChange(logicalIndexForScrollPosition(position, inject));
     }
-  }, [onActiveIndexChange]);
+  }, [normalizeToFirstCopy, onActiveIndexChange]);
 
   const selectSlide = useCallback(
     async (targetIndex: number) => {
@@ -119,36 +163,46 @@ export function useDoePhoneSectionCarousel(activeIndex: number, onActiveIndexCha
       if (!el) return;
 
       menuAnimatingRef.current = true;
-      let current = startIndex;
 
       try {
-        for (let step = 0; step < steps; step += 1) {
-          if (current === DOEPHONE_COMMUNICATION_SLIDE_COUNT - 1) {
-            scrollToPosition(DOEPHONE_COMMUNICATION_SLIDE_COUNT, "smooth");
-            await waitCarouselScrollEnd(el);
-            loopingRef.current = true;
-            onActiveIndexChange(0);
-            scrollPositionPx(scrollRef, 0);
-            await new Promise<void>((resolve) => {
-              requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
-            });
-            loopingRef.current = false;
-            current = 0;
-            continue;
-          }
+        const jumpPos = DOEPHONE_COMMUNICATION_SLIDE_COUNT + startIndex;
+        const nextPos = jumpPos + 1;
 
-          const next = current + 1;
-          scrollToPosition(next, "smooth");
+        if (steps > 1) {
+          const inject: MenuInject = { scrollIndex: nextPos, slideIndex: targetIndex };
+          menuInjectRef.current = inject;
+          setMenuInject(inject);
+          scrollPositionPx(scrollRef, jumpPos, "auto");
+          await new Promise<void>((resolve) => {
+            requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+          });
+          scrollToPosition(nextPos, "smooth");
           await waitCarouselScrollEnd(el);
-          onActiveIndexChange(next);
-          current = next;
+          setMenuInject(null);
+          menuInjectRef.current = null;
+          normalizeToFirstCopy(targetIndex);
+          return;
+        }
+
+        scrollToPosition(
+          startIndex === DOEPHONE_COMMUNICATION_SLIDE_COUNT - 1
+            ? DOEPHONE_COMMUNICATION_SLIDE_COUNT
+            : startIndex + 1,
+          "smooth",
+        );
+        await waitCarouselScrollEnd(el);
+
+        if (startIndex === DOEPHONE_COMMUNICATION_SLIDE_COUNT - 1) {
+          normalizeToFirstCopy(0);
+        } else {
+          onActiveIndexChange(targetIndex);
+          activeIndexRef.current = targetIndex;
         }
       } finally {
         menuAnimatingRef.current = false;
-        activeIndexRef.current = targetIndex;
       }
     },
-    [onActiveIndexChange, scrollToPosition],
+    [normalizeToFirstCopy, onActiveIndexChange, scrollToPosition],
   );
 
   const handleScroll = useCallback(() => {
@@ -170,7 +224,8 @@ export function useDoePhoneSectionCarousel(activeIndex: number, onActiveIndexCha
 
   return {
     scrollRef,
-    loopSlides,
+    loopScrollIndices,
+    menuInject,
     selectSlide,
     handleScroll,
   };
@@ -179,12 +234,14 @@ export function useDoePhoneSectionCarousel(activeIndex: number, onActiveIndexCha
 export function DoePhoneSectionCarousel({
   activeIndex,
   scrollRef,
-  loopSlides,
+  loopScrollIndices,
+  menuInject,
   onScroll,
 }: {
   activeIndex: number;
   scrollRef: RefObject<HTMLDivElement>;
-  loopSlides: typeof DOEPHONE_COMMUNICATION_SLIDES;
+  loopScrollIndices: number[];
+  menuInject: MenuInject | null;
   onScroll: () => void;
 }) {
   return (
@@ -195,15 +252,16 @@ export function DoePhoneSectionCarousel({
       aria-label="Communication features"
       onScroll={onScroll}
     >
-      {loopSlides.map((slide, index) => {
-        const logicalIndex =
-          index === DOEPHONE_COMMUNICATION_SLIDE_COUNT ? 0 : index;
+      {loopScrollIndices.map((scrollIndex) => {
+        const slide = slideForScrollIndex(scrollIndex, menuInject);
+        const logicalIndex = logicalIndexForScrollPosition(scrollIndex, menuInject);
         const isActive = logicalIndex === activeIndex;
+        const isPrimaryPanel = scrollIndex < DOEPHONE_COMMUNICATION_SLIDE_COUNT;
 
         return (
           <div
-            key={`${slide.id}-${index}`}
-            id={index < DOEPHONE_COMMUNICATION_SLIDE_COUNT ? `doephone-comm-slide-${slide.id}` : undefined}
+            key={`comm-scroll-${scrollIndex}`}
+            id={isPrimaryPanel ? `doephone-comm-slide-${slide.id}` : undefined}
             className="box-border h-full w-full min-w-full shrink-0 snap-center snap-always"
             role="tabpanel"
             aria-hidden={!isActive}

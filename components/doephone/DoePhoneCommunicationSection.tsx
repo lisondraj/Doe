@@ -17,7 +17,7 @@ import { useState } from "react";
 /** Section 2 — Communication title, carousel, and feature menu. */
 export function DoePhoneCommunicationSection() {
   const [activeSlide, setActiveSlide] = useState(0);
-  const { scrollRef, loopSlides, selectSlide, handleScroll } = useDoePhoneSectionCarousel(
+  const { scrollRef, loopScrollIndices, menuInject, selectSlide, handleScroll } = useDoePhoneSectionCarousel(
     activeSlide,
     setActiveSlide,
   );
@@ -42,7 +42,8 @@ export function DoePhoneCommunicationSection() {
         <div className={`w-full ${DOEPHONE_SECTION_CAROUSEL_HEIGHT}`}>
           <DoePhoneSectionCarousel
             scrollRef={scrollRef}
-            loopSlides={loopSlides}
+            loopScrollIndices={loopScrollIndices}
+            menuInject={menuInject}
             activeIndex={activeSlide}
             onScroll={handleScroll}
           />
