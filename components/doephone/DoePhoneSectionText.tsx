@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { suisseIntl, suisseIntlHairline } from "@/lib/home/fonts";
+import { suisseIntl } from "@/lib/home/fonts";
 import {
   DOEPHONE_SECTION_COPY_INSET,
   DOEPHONE_SECTION_COPY_POSITION,
@@ -59,7 +59,13 @@ export function DoePhoneSectionText({
   );
 }
 
-/** Hairline + for section 2 — matches Suisse light wordforms. */
+/** Thin-stroke + for section 2 — weight controlled via SVG, not opacity. */
 export function DoePhoneSectionPlus() {
-  return <span className={`doephone-section-plus text-black ${suisseIntlHairline.className}`}>+</span>;
+  return (
+    <span className="doephone-section-plus" aria-hidden>
+      <svg className="doephone-section-plus-icon" viewBox="0 0 12 12" aria-hidden>
+        <path d="M6 1v10M1 6h10" stroke="currentColor" strokeWidth="0.65" strokeLinecap="round" />
+      </svg>
+    </span>
+  );
 }

@@ -285,11 +285,15 @@ body.mainpage-route {
   display: inline-block;
   vertical-align: baseline;
   margin-right: 0.22em;
-  font-weight: 100;
-  letter-spacing: -0.03em;
   color: #000;
-  opacity: 0.86;
-  -webkit-font-smoothing: antialiased;
+  line-height: 1;
+}
+
+.doephone-section-plus-icon {
+  display: inline-block;
+  width: 0.62em;
+  height: 0.62em;
+  vertical-align: 0.06em;
 }
 
 /* Wheel-driven mission caret — uses transform so inline opacity stays 1∶1 with scroll deltas */
