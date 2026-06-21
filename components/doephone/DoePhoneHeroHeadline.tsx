@@ -1,7 +1,7 @@
 "use client";
 
 import { loraItalicLight, suisseIntl } from "@/lib/home/fonts";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 const DOEPHONE_HERO_CAREERS = [
   "doctors",
@@ -13,7 +13,7 @@ const DOEPHONE_HERO_CAREERS = [
   "dentists",
   "optometrists",
   "midwives",
-  "GPs",
+  "doulas",
 ] as const;
 
 /** Longest label — sets carousel slot width. */
@@ -24,13 +24,31 @@ const CAREER_ROTATE_MS = 3800;
 
 export function DoePhoneHeroHeadline() {
   const [index, setIndex] = useState(0);
+  const [slideTransition, setSlideTransition] = useState(true);
+
+  const slideItems = useMemo(
+    () => [...DOEPHONE_HERO_CAREERS, DOEPHONE_HERO_CAREERS[0]],
+    [],
+  );
+
+  const activeCareer = DOEPHONE_HERO_CAREERS[index % DOEPHONE_HERO_CAREERS.length];
+
+  const handleTrackTransitionEnd = useCallback(() => {
+    if (index !== DOEPHONE_HERO_CAREERS.length) return;
+
+    setSlideTransition(false);
+    setIndex(0);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => setSlideTransition(true));
+    });
+  }, [index]);
 
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reducedMotion) return;
 
     const id = window.setInterval(() => {
-      setIndex((i) => (i + 1) % DOEPHONE_HERO_CAREERS.length);
+      setIndex((i) => (i >= DOEPHONE_HERO_CAREERS.length ? 0 : i + 1));
     }, CAREER_ROTATE_MS);
 
     return () => window.clearInterval(id);
@@ -52,12 +70,17 @@ export function DoePhoneHeroHeadline() {
               </span>
               <span className="doephone-hero-career-clip col-start-1 row-start-1">
                 <span
-                  className="doephone-hero-career-track block"
+                  className={`doephone-hero-career-track block${slideTransition ? "" : " doephone-hero-career-track--instant"}`}
                   style={{ transform: `translateY(calc(-1em * ${index}))` }}
+                  onTransitionEnd={handleTrackTransitionEnd}
                   aria-live="polite"
                 >
-                  {DOEPHONE_HERO_CAREERS.map((career) => (
-                    <span key={career} className={`doephone-hero-career-word ${loraItalicLight.className}`}>
+                  {slideItems.map((career, i) => (
+                    <span
+                      key={`${career}-${i}`}
+                      className={`doephone-hero-career-word ${loraItalicLight.className}`}
+                      aria-hidden={i === slideItems.length - 1 || career !== activeCareer}
+                    >
                       {career}
                     </span>
                   ))}

@@ -241,6 +241,10 @@ body.mainpage-route {
   will-change: transform;
 }
 
+.doephone-hero-career-track--instant {
+  transition: none !important;
+}
+
 .doephone-hero-career-word {
   display: block;
   height: 1em;
