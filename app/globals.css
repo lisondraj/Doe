@@ -217,23 +217,30 @@ body.mainpage-route {
   }
 }
 
-/* /doephone hero headline — fade + rise on load (no blur). */
+/* /doephone hero headline — deblur + rise on load. */
 .doephone-hero-headline-line {
   opacity: 0;
+  filter: blur(16px);
   transform: translateY(1.75rem);
-  text-shadow: none;
   animation: doephone-hero-headline-in 1.45s cubic-bezier(0.22, 1, 0.36, 1) 0.55s forwards;
-  will-change: opacity, transform;
+  will-change: opacity, filter, transform;
+  text-shadow: none;
+}
+
+.doephone-hero-career-track {
+  transition: transform 420ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 @keyframes doephone-hero-headline-in {
   0% {
     opacity: 0;
+    filter: blur(16px);
     transform: translateY(1.75rem);
   }
 
   100% {
     opacity: 1;
+    filter: blur(0);
     transform: translateY(0);
   }
 }
@@ -326,7 +333,12 @@ body.mainpage-route {
   .doephone-hero-headline-line {
     animation: none !important;
     opacity: 1;
+    filter: none;
     transform: none;
+  }
+
+  .doephone-hero-career-track {
+    transition: none;
   }
 
   .hero-mission-scroll-caret-blink {
