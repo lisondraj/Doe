@@ -74,7 +74,7 @@ export const DOEPHONE_SECTION_FOOTER_CAROUSEL_HEIGHT =
 export const DOEPHONE_SECTION_FOOTER_OUTSIDE_CAPTION_TW = `text-[1.5rem] iphone-page:text-[clamp(1.38rem,0.88rem+2.3vmin,2.45rem)] font-normal leading-snug tracking-tight text-gray-700 ${inter.className}`;
 
 /** Customization section — preset heading above description below box cluster. */
-export const DOEPHONE_SECTION_MENU_DESCRIPTION_HEADING_TW = `text-[clamp(1.42rem,1.18rem+1vmin,1.8rem)] iphone-page:text-[clamp(1.72rem,1.4rem+1.45vmin,2.25rem)] font-normal leading-[1.1] tracking-[-0.025em] text-[#1E343A] ${suisseIntl.className}`;
+export const DOEPHONE_SECTION_MENU_DESCRIPTION_HEADING_TW = `text-[clamp(1.72rem,1.42rem+1.2vmin,2.2rem)] iphone-page:text-[clamp(2.05rem,1.68rem+1.75vmin,2.7rem)] font-normal leading-[1.1] tracking-[-0.025em] text-[#1E343A] ${suisseIntl.className}`;
 
 /** Customization section — three-line preset copy below heading. */
-export const DOEPHONE_SECTION_MENU_DESCRIPTION_TW = `mt-[clamp(0.5rem,0.38rem+0.55vmin,0.8rem)] text-[clamp(1rem,0.86rem+0.65vmin,1.18rem)] iphone-page:text-[clamp(1.14rem,0.96rem+0.9vmin,1.42rem)] font-normal leading-[1.44] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
+export const DOEPHONE_SECTION_MENU_DESCRIPTION_TW = `mt-[clamp(0.55rem,0.42rem+0.6vmin,0.9rem)] text-[clamp(1.18rem,1rem+0.78vmin,1.42rem)] iphone-page:text-[clamp(1.38rem,1.14rem+1.05vmin,1.72rem)] font-normal leading-[1.44] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
