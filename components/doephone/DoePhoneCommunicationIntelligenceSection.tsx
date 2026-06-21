@@ -36,7 +36,7 @@ export function DoePhoneCommunicationIntelligenceSection() {
           />
         </div>
 
-        <div className="flex flex-1 items-center justify-center px-6 pb-[max(1.95rem,calc(env(safe-area-inset-bottom,0px)+7.25svh))] iphone-page:px-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]">
+        <div className="relative flex min-h-0 flex-1 items-center overflow-hidden pb-[max(1.95rem,calc(env(safe-area-inset-bottom,0px)+7.25svh))] pt-[clamp(1.5rem,1rem+2.5vmin,3rem)]">
           <DoePhoneCommunicationShortcuts />
         </div>
       </div>
