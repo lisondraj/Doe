@@ -22,7 +22,7 @@ import {
 import { doephoneSectionRevealStyleVars } from "@/lib/doephone/section-reveal-timing";
 import { useState, type CSSProperties } from "react";
 
-/** Section 2 — Communication title, carousel, and feature menu. */
+/** Section 3 — Communication title, carousel, and feature menu. */
 export function DoePhoneCommunicationSection() {
   const [activeSlide, setActiveSlide] = useState(0);
   const { scrollRef, loopScrollIndices, menuInject, selectSlide, handleScroll } = useDoePhoneSectionCarousel(
