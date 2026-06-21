@@ -2,6 +2,7 @@
 
 import { DoePhoneBoxClusterMenu } from "@/components/doephone/DoePhoneBoxClusterMenu";
 import { DoePhoneSectionBoxCluster } from "@/components/doephone/DoePhoneSectionBoxCluster";
+import { DoePhoneSectionFooterCarousel } from "@/components/doephone/DoePhoneSectionFooterCarousel";
 import { DoePhoneSectionTitle } from "@/components/doephone/DoePhoneSectionText";
 import {
   DOEPHONE_SECTION_CAROUSEL_INSET_X,
@@ -13,7 +14,7 @@ import {
 } from "@/lib/doephone/section-styles";
 import { useState } from "react";
 
-/** Second beige section — title, three-box cluster, feature menu below. */
+/** Second beige section — title, box cluster, menu, footer carousel. */
 export function DoePhoneCustomizationSection() {
   const [activePreset, setActivePreset] = useState(0);
 
@@ -27,10 +28,14 @@ export function DoePhoneCustomizationSection() {
         <DoePhoneSectionBoxCluster activeIndex={activePreset} />
       </div>
 
+      <div className={`shrink-0 ${DOEPHONE_SECTION_CAROUSEL_MENU_GAP} ${DOEPHONE_SECTION_CAROUSEL_INSET_X}`}>
+        <DoePhoneBoxClusterMenu activeIndex={activePreset} onSelect={setActivePreset} />
+      </div>
+
       <div
         className={`shrink-0 ${DOEPHONE_SECTION_CAROUSEL_MENU_GAP} ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${DOEPHONE_SECTION_TITLE_PB}`}
       >
-        <DoePhoneBoxClusterMenu activeIndex={activePreset} onSelect={setActivePreset} />
+        <DoePhoneSectionFooterCarousel />
       </div>
     </div>
   );
