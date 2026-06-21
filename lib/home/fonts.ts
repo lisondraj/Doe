@@ -1,4 +1,4 @@
-import { Cormorant_Garamond, Inter, Lora } from "next/font/google";
+import { Inter, Lora } from "next/font/google";
 import localFont from "next/font/local";
 
 export const lora = Lora({
@@ -7,10 +7,10 @@ export const lora = Lora({
   style: ["normal", "italic"],
 });
 
-/** Lora-like serif for hero carousel — lighter italic than Lora allows. */
-export const heroCarouselSerif = Cormorant_Garamond({
+/** Hero career carousel — lightest available Lora italic. */
+export const loraItalicLight = Lora({
   subsets: ["latin"],
-  weight: ["300"],
+  weight: ["400"],
   style: ["italic"],
 });
 
