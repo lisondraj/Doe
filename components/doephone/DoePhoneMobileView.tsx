@@ -2,14 +2,13 @@
 
 import DoeIphoneSiteNav from "@/components/DoeIphoneSiteNav";
 import { DoePhoneHeroHeadline } from "@/components/doephone/DoePhoneHeroHeadline";
+import { DoePhoneSectionText } from "@/components/doephone/DoePhoneSectionText";
 import { HeroCarouselTextureOverlay } from "@/components/hero-carousel-texture";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { HERO_BACKDROP_GRADIENT } from "@/lib/home/hero-constants";
 import {
   DOEPHONE_SECTION_COPY_INSET,
-  DOEPHONE_SECTION_COPY_POSITION,
-  DOEPHONE_SECTION_COPY_TW,
   DOEPHONE_VIEWPORT_SECTION,
 } from "@/lib/doephone/section-styles";
 import { CARE_COORDINATION_BACKDROP, DIAGNOSTIC_ASSISTANT_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
@@ -69,12 +68,7 @@ export function DoePhoneMobileView() {
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 
       <section className={`${DOEPHONE_VIEWPORT_SECTION} bg-[#F7F6F3]`} aria-label="Mission">
-        <div className={`${DOEPHONE_SECTION_COPY_POSITION} ${DOEPHONE_SECTION_COPY_INSET}`}>
-          <h2 className={`${DOEPHONE_SECTION_COPY_TW} text-[#1E343A]`}>
-            <span className="block">The future of AI</span>
-            <span className="block">is in your hands.</span>
-          </h2>
-        </div>
+        <DoePhoneSectionText />
       </section>
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
@@ -87,11 +81,14 @@ export function DoePhoneMobileView() {
             gradientScale={1.38}
           />
         </div>
+        <DoePhoneSectionText color="text-white" />
       </section>
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 
-      <section className={`${DOEPHONE_VIEWPORT_SECTION} bg-[#F7F6F3]`} aria-hidden />
+      <section className={`${DOEPHONE_VIEWPORT_SECTION} bg-[#F7F6F3]`} aria-label="Mission 2">
+        <DoePhoneSectionText />
+      </section>
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 
@@ -99,11 +96,14 @@ export function DoePhoneMobileView() {
         <div className="pointer-events-none absolute inset-0" aria-hidden>
           <WorkflowCarouselDesignBackdrop backdrop={DIAGNOSTIC_ASSISTANT_BACKDROP} embedded />
         </div>
+        <DoePhoneSectionText color="text-white" />
       </section>
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 
-      <section className={`${DOEPHONE_VIEWPORT_SECTION} bg-[#F7F6F3]`} aria-hidden />
+      <section className={`${DOEPHONE_VIEWPORT_SECTION} bg-[#F7F6F3]`} aria-label="Mission 3">
+        <DoePhoneSectionText />
+      </section>
 
       <HomeFooter />
     </div>
