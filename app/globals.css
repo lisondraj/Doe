@@ -261,6 +261,18 @@ body.mainpage-route {
   text-shadow: none;
 }
 
+.doephone-hero-headline-line--second {
+  animation-delay: 3.53s;
+}
+
+.doephone-hero-waitlist-cta {
+  opacity: 0;
+  filter: blur(16px);
+  transform: translateY(1.75rem);
+  animation: doephone-hero-headline-in 1.45s cubic-bezier(0.22, 1, 0.36, 1) 4.98s forwards;
+  will-change: opacity, filter, transform;
+}
+
 .doephone-hero-second-line {
   gap: 0.3em;
 }
@@ -431,6 +443,13 @@ body.mainpage-route {
   }
 
   .doephone-hero-headline-line {
+    animation: none !important;
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+
+  .doephone-hero-waitlist-cta {
     animation: none !important;
     opacity: 1;
     filter: none;

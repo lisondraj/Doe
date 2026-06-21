@@ -9,6 +9,7 @@ import {
   NAV_HREFS,
   NAV_ITEMS,
 } from "@/components/doe-nav-data";
+import { DOEPHONE_NAV_WAITLIST_CLASS } from "@/lib/doephone/waitlist-button";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -79,11 +80,8 @@ function NavChromeStrip({
         ))}
       </div>
 
-      <div className="flex shrink-0 items-center gap-2 iphone-page:gap-[clamp(0.35rem,0.28rem+0.55vmin,0.55rem)]">
-        <a
-          href="#"
-          className={`inline-flex items-center justify-center rounded-full bg-black px-3.5 py-2 text-xs font-semibold text-white transition-opacity hover:opacity-90 active:opacity-80 iphone-page:px-[clamp(0.72rem,0.55rem+0.85vmin,0.95rem)] iphone-page:py-[clamp(0.42rem,0.32rem+0.45vmin,0.58rem)] iphone-page:text-[clamp(0.68rem,0.58rem+0.42vmin,0.78rem)] ${inter.className}`}
-        >
+      <div className="flex shrink-0 items-center gap-2.5 iphone-page:gap-[clamp(0.45rem,0.35rem+0.65vmin,0.7rem)]">
+        <a href="#" className={DOEPHONE_NAV_WAITLIST_CLASS}>
           Join Waitlist
         </a>
 

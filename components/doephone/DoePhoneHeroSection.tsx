@@ -3,6 +3,7 @@
 import { DoePhoneHeroHeadline } from "@/components/doephone/DoePhoneHeroHeadline";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { DOEPHONE_SECTION_COPY_INSET } from "@/lib/doephone/section-styles";
+import { DOEPHONE_HERO_WAITLIST_CLASS } from "@/lib/doephone/waitlist-button";
 import { DOEPHONE_HERO_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -71,6 +72,9 @@ export function DoePhoneHeroSection() {
         className={`absolute inset-0 z-[3] flex flex-col items-start justify-start pt-[max(9rem,calc(env(safe-area-inset-top,0px)+31svh))] pb-8 ${DOEPHONE_SECTION_COPY_INSET}`}
       >
         <DoePhoneHeroHeadline />
+        <a href="#" className={DOEPHONE_HERO_WAITLIST_CLASS}>
+          Join Waitlist
+        </a>
       </div>
     </section>
   );
