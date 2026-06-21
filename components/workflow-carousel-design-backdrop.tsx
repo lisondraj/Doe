@@ -4,6 +4,7 @@ import {
   type WorkflowCarouselDesignBackdrop,
   type WorkflowCarouselGridKind,
 } from "@/lib/workflow-carousel-design-backdrops";
+import type { CSSProperties } from "react";
 
 /** Built for you orange panel — radial spokes + concentric rings. */
 function PolarGridOverlay({
@@ -17,6 +18,13 @@ function PolarGridOverlay({
 }) {
   const size = `${118 * patternScale}vmax`;
   const segmentClass = introOnLoad ? "doephone-hero-polar-segment" : undefined;
+  const segmentStyle = (introDelay: string, liveIndex: number): CSSProperties | undefined =>
+    introOnLoad
+      ? ({
+          ["--polar-intro-delay" as string]: introDelay,
+          ["--polar-live-index" as string]: String(liveIndex),
+        } as React.CSSProperties)
+      : undefined;
 
   return (
     <div className="pointer-events-none absolute inset-0 z-[2] overflow-hidden" aria-hidden>
@@ -39,7 +47,7 @@ function PolarGridOverlay({
             <path
               key={`polar-radial-${j}`}
               className={segmentClass}
-              style={introOnLoad ? { animationDelay: `${0.12 + j * 0.09}s` } : undefined}
+              style={segmentStyle(`${0.12 + j * 0.09}s`, j)}
               d={`M 500 500 L ${500 + Math.cos((angle * Math.PI) / 180) * radius} ${500 + Math.sin((angle * Math.PI) / 180) * radius}`}
               fill="none"
               stroke="rgba(255, 255, 255, 0.15)"
@@ -53,7 +61,7 @@ function PolarGridOverlay({
             <circle
               key={`polar-ring-${j}`}
               className={segmentClass}
-              style={introOnLoad ? { animationDelay: `${0.84 + j * 0.1}s` } : undefined}
+              style={segmentStyle(`${0.84 + j * 0.1}s`, 8 + j)}
               cx="500"
               cy="500"
               r={r}
