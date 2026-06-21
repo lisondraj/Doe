@@ -1,6 +1,6 @@
 "use client";
 
-import { DoePhoneSectionFooterCarousel } from "@/components/doephone/DoePhoneSectionFooterCarousel";
+import { DoePhoneClosingFeatureStack } from "@/components/doephone/DoePhoneClosingFeatureStack";
 import { DoePhoneSectionTitle } from "@/components/doephone/DoePhoneSectionText";
 import {
   DOEPHONE_SECTION_CAROUSEL_INSET_X,
@@ -10,7 +10,7 @@ import {
   DOEPHONE_SECTION_TITLE_PT,
 } from "@/lib/doephone/section-styles";
 
-/** Closing beige section — title and featured carousel. */
+/** Closing beige section — title and stacked feature cards. */
 export function DoePhoneClosingSection() {
   return (
     <div className="flex h-full min-h-0 flex-col">
@@ -21,7 +21,7 @@ export function DoePhoneClosingSection() {
       <div
         className={`shrink-0 ${DOEPHONE_SECTION_TITLE_CAROUSEL_GAP} ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${DOEPHONE_SECTION_TITLE_PB}`}
       >
-        <DoePhoneSectionFooterCarousel />
+        <DoePhoneClosingFeatureStack />
       </div>
     </div>
   );
