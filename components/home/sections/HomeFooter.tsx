@@ -74,26 +74,26 @@ export function HomeFooter() {
             className={`mb-14 flex w-full items-end justify-between gap-8 md:mb-16 iphone-page:mb-12 iphone-page:gap-6 ${DOEPHONE_FOOTER_CONTENT_INSET}`}
           >
             <div
-              className={`min-w-0 shrink text-left text-white ${inter.className} text-[clamp(1.02rem,0.92rem+0.52vmin,1.22rem)] font-normal leading-[1.42] tracking-[-0.01em] iphone-page:text-[clamp(0.98rem,0.88rem+0.48vmin,1.14rem)]`}
+              className={`min-w-0 shrink text-left text-white ${inter.className} text-[clamp(1.14rem,1rem+0.62vmin,1.38rem)] font-normal leading-[1.4] tracking-[-0.01em] iphone-page:text-[clamp(1.08rem,0.96rem+0.55vmin,1.28rem)]`}
             >
-              <p className="text-[clamp(1.12rem,1rem+0.58vmin,1.32rem)] font-semibold leading-[1.2] iphone-page:text-[clamp(1.06rem,0.96rem+0.52vmin,1.24rem)]">
+              <p className="text-[clamp(1.28rem,1.1rem+0.72vmin,1.52rem)] font-semibold leading-[1.18] iphone-page:text-[clamp(1.2rem,1.05rem+0.65vmin,1.42rem)]">
                 Doe Corporation
               </p>
-              <address className="mt-2 space-y-0.5 not-italic text-white/88">
-                <span className="block">75 Varick Street</span>
+              <address className="mt-2.5 space-y-0.5 not-italic text-white/88">
+                <span className="block">250 Hudson Street</span>
                 <span className="block">New York, NY 10013</span>
                 <span className="block">United States</span>
               </address>
               <a
                 href="mailto:contact@doe.care"
-                className="mt-2 inline-block text-white/88 no-underline transition-colors hover:text-white"
+                className="mt-2.5 inline-block text-white/88 no-underline transition-colors hover:text-white"
               >
                 contact@doe.care
               </a>
             </div>
 
             <nav
-              className="flex shrink-0 flex-col items-end gap-3.5 text-right text-[clamp(1.18rem,4.2vw,1.62rem)] font-medium leading-[1.15] tracking-tight md:gap-4 md:text-[clamp(1.28rem,2.6vw,1.82rem)] iphone-page:gap-3 iphone-page:text-[clamp(1.12rem,4.2vmin,1.48rem)]"
+              className="flex shrink-0 flex-col items-end gap-4 text-right text-[clamp(1.32rem,4.6vw,1.85rem)] font-medium leading-[1.12] tracking-tight md:gap-4.5 md:text-[clamp(1.42rem,2.8vw,2rem)] iphone-page:gap-3.5 iphone-page:text-[clamp(1.24rem,4.5vmin,1.62rem)]"
               aria-label="Footer"
             >
               {FOOTER_LINKS.map((item) => (
