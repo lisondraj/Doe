@@ -105,6 +105,7 @@ export function WorkflowCarouselDesignBackdrop({
   className = "",
   embedded = false,
   patternScale = 1,
+  gradientOverride,
 }: {
   backdrop: WorkflowCarouselDesignBackdrop;
   className?: string;
@@ -112,6 +113,8 @@ export function WorkflowCarouselDesignBackdrop({
   embedded?: boolean;
   /** > 1 spreads grid overlays (e.g. tab panel). */
   patternScale?: number;
+  /** Replaces only the gradient layer — grid + grain unchanged. */
+  gradientOverride?: string;
 }) {
   const rootClass = embedded
     ? `absolute inset-0 overflow-hidden ${className}`.trim()
@@ -123,7 +126,7 @@ export function WorkflowCarouselDesignBackdrop({
     <Root className={rootClass}>
       <div
         className="pointer-events-none absolute inset-0"
-        style={{ background: backdrop.gradient }}
+        style={{ background: gradientOverride ?? backdrop.gradient }}
         aria-hidden
       />
       <div className="pointer-events-none absolute inset-0 z-[1]" style={WORKFLOW_CAROUSEL_GRAIN_STYLE} aria-hidden />

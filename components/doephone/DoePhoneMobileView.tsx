@@ -5,7 +5,7 @@ import { HeroCarouselTextureOverlay } from "@/components/hero-carousel-texture";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { HERO_BACKDROP_GRADIENT } from "@/lib/home/hero-constants";
-import { DIAGNOSTIC_ASSISTANT_BACKDROP, DOEPHONE_CARE_COORDINATION_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
+import { CARE_COORDINATION_BACKDROP, CARE_COORDINATION_GRADIENT_DOEPHONE, DIAGNOSTIC_ASSISTANT_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 import { useLayoutEffect } from "react";
 
 /** Shared band height for /doephone sections 2+. */
@@ -16,14 +16,8 @@ export function DoePhoneMobileView() {
   /** Layout viewport only — ignore visualViewport shrink during pinch so layout stays stable. */
   useLayoutEffect(() => {
     const measure = () => {
-      const h = window.innerHeight;
       document.documentElement.style.setProperty("--app-vw", `${window.innerWidth}px`);
-      document.documentElement.style.setProperty("--app-vh", `${h}px`);
-      /** Extra bottom fill so hero covers the full iPhone screen (safe area + nav bleed). */
-      document.documentElement.style.setProperty(
-        "--doephone-hero-h",
-        `${h + Math.max(48, Math.round(h * 0.06))}px`,
-      );
+      document.documentElement.style.setProperty("--app-vh", `${window.innerHeight}px`);
     };
     measure();
     window.addEventListener("resize", measure);
@@ -41,8 +35,10 @@ export function DoePhoneMobileView() {
       <section
         className="relative w-full overflow-hidden"
         style={{
-          minHeight: "var(--doephone-hero-h, var(--app-vh, 100dvh))",
-          height: "var(--doephone-hero-h, var(--app-vh, 100dvh))",
+          minHeight:
+            "calc(var(--app-vh, 100dvh) + env(safe-area-inset-bottom, 0px) + clamp(2.5rem, 8vmin, 4.5rem))",
+          height:
+            "calc(var(--app-vh, 100dvh) + env(safe-area-inset-bottom, 0px) + clamp(2.5rem, 8vmin, 4.5rem))",
         }}
         aria-label="Hero"
       >
@@ -64,7 +60,11 @@ export function DoePhoneMobileView() {
 
       <section className={`${DOEPHONE_BAND_SECTION} overflow-hidden bg-[#F7F6F3]`} aria-label="Care coordination">
         <div className="pointer-events-none absolute inset-0" aria-hidden>
-          <WorkflowCarouselDesignBackdrop backdrop={DOEPHONE_CARE_COORDINATION_BACKDROP} embedded />
+          <WorkflowCarouselDesignBackdrop
+            backdrop={CARE_COORDINATION_BACKDROP}
+            gradientOverride={CARE_COORDINATION_GRADIENT_DOEPHONE}
+            embedded
+          />
         </div>
       </section>
 
