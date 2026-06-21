@@ -37,7 +37,16 @@ export function DoePhoneMobileView() {
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 
-      <section className={`${DOEPHONE_VIEWPORT_SECTION} overflow-hidden bg-[#F7F6F3]`} aria-label="Labs">
+      <section
+        className="relative z-10 flex min-h-[100svh] w-full flex-col bg-[#F7F6F3] iphone-page:min-h-[100dvh]"
+        aria-label="Communication"
+      >
+        <DoePhoneCommunicationSection />
+      </section>
+
+      <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
+
+      <section className={`${DOEPHONE_VIEWPORT_SECTION} overflow-hidden bg-[#F7F6F3]`} aria-label="Automation">
         <div className="pointer-events-none absolute inset-0" aria-hidden>
           <WorkflowCarouselDesignBackdrop
             backdrop={CARE_COORDINATION_BACKDROP}
@@ -45,16 +54,7 @@ export function DoePhoneMobileView() {
             gradientScale={1.38}
           />
         </div>
-        <DoePhoneSectionText line1="Labs in." line2="Referrals out." color="text-white" />
-      </section>
-
-      <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
-
-      <section
-        className="relative z-10 flex min-h-[100svh] w-full flex-col bg-[#F7F6F3] iphone-page:min-h-[100dvh]"
-        aria-label="Communication"
-      >
-        <DoePhoneCommunicationSection />
+        <DoePhoneSectionText line1="Labs in." line2="Referrals in." color="text-white" />
       </section>
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
