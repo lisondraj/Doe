@@ -232,7 +232,7 @@ body.mainpage-route {
   height: var(--doephone-career-slot);
   overflow: hidden;
   isolation: isolate;
-  transform: translateY(-0.07em);
+  transform: translateY(0.02em);
 }
 
 .doephone-hero-career-track {
