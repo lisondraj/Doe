@@ -59,10 +59,10 @@ export function DoePhoneSectionText({
   );
 }
 
-/** Thin-stroke + for section 2 — lighter than the hairline glyph, opacity unchanged. */
+/** SVG + for section 2 — stroke weight matched to Suisse Intl Light body copy. */
 export function DoePhoneSectionPlus() {
   return (
-    <span className="doephone-section-plus text-black">
+    <span className="doephone-section-plus">
       <svg
         className="doephone-section-plus-icon"
         viewBox="0 0 24 24"
@@ -73,7 +73,7 @@ export function DoePhoneSectionPlus() {
         <path
           d="M12 5v14M5 12h14"
           stroke="currentColor"
-          strokeWidth="1.15"
+          strokeWidth="1.65"
           strokeLinecap="round"
         />
       </svg>

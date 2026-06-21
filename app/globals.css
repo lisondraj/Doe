@@ -285,8 +285,7 @@ body.mainpage-route {
   display: inline-block;
   vertical-align: baseline;
   margin-right: 0.22em;
-  color: #000;
-  opacity: 0.86;
+  color: currentColor;
   line-height: 1;
 }
 
