@@ -103,7 +103,7 @@ function NavChromeStrip({
  * Fixed Doe wordmark + hamburger, with the same full-screen iPhone nav sheet and
  * three-card featured carousel as the home page — solid beige chrome for subpages.
  */
-export default function DoeIphoneSiteNav() {
+export default function DoeIphoneSiteNav({ pinchSafe = false }: { pinchSafe?: boolean }) {
   const isPhoneLayout = true;
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   /** Keeps the sheet mounted through the close animation. */
@@ -146,16 +146,22 @@ export default function DoeIphoneSiteNav() {
   useEffect(() => {
     const tick = () => {
       setViewportWidth(window.innerWidth);
-      setAppViewport(siteNavAppViewportPx());
+      if (pinchSafe) {
+        setAppViewport({ width: window.innerWidth, height: window.innerHeight });
+      } else {
+        setAppViewport(siteNavAppViewportPx());
+      }
     };
     tick();
     window.addEventListener("resize", tick);
-    window.visualViewport?.addEventListener("resize", tick);
+    if (!pinchSafe) {
+      window.visualViewport?.addEventListener("resize", tick);
+    }
     return () => {
       window.removeEventListener("resize", tick);
       window.visualViewport?.removeEventListener("resize", tick);
     };
-  }, []);
+  }, [pinchSafe]);
 
   useLayoutEffect(() => {
     const navEl = navBarRowRef.current;
@@ -175,7 +181,9 @@ export default function DoeIphoneSiteNav() {
     const ro = new ResizeObserver(update);
     ro.observe(navEl);
     window.addEventListener("resize", update);
-    window.visualViewport?.addEventListener("resize", update);
+    if (!pinchSafe) {
+      window.visualViewport?.addEventListener("resize", update);
+    }
     return () => {
       cancelAnimationFrame(raf1);
       cancelAnimationFrame(raf2);
@@ -183,10 +191,10 @@ export default function DoeIphoneSiteNav() {
       window.removeEventListener("resize", update);
       window.visualViewport?.removeEventListener("resize", update);
     };
-  }, [mobileNavOpen, viewportWidth, appViewport.width, appViewport.height]);
+  }, [mobileNavOpen, viewportWidth, appViewport.width, appViewport.height, pinchSafe]);
 
   useLayoutEffect(() => {
-    if (!mobileNavOpen) return;
+    if (!mobileNavOpen || pinchSafe) return;
     const fit = () => {
       const el = mobileNavFooterCarouselRef.current;
       if (!el) return;
@@ -218,7 +226,7 @@ export default function DoeIphoneSiteNav() {
       window.removeEventListener("resize", fit);
       window.visualViewport?.removeEventListener("resize", fit);
     };
-  }, [mobileNavOpen, appViewport.width, appViewport.height]);
+  }, [mobileNavOpen, appViewport.width, appViewport.height, pinchSafe]);
 
   useEffect(() => {
     if (!navSheetLive) return;
@@ -264,83 +272,80 @@ export default function DoeIphoneSiteNav() {
 
   const navTextColor = "#000";
   const navSheetTransition = `opacity ${NAV_SHEET_MS}ms ${NAV_SHEET_EASE}, transform ${NAV_SHEET_MS}ms ${NAV_SHEET_EASE}`;
+  const navFooterCarouselZoom = pinchSafe ? 1 : mobileNavFooterZoom;
 
-  const mobileMenuLayer =
-    mounted &&
-    isPhoneLayout &&
-    navSheetLive &&
-    createPortal(
-      <>
-        <button
-          type="button"
-          className="fixed inset-0 z-[90] cursor-pointer bg-black/25"
+  const mobileMenuLayerContent = navSheetLive ? (
+    <>
+      <button
+        type="button"
+        className="fixed inset-0 z-[90] cursor-pointer bg-black/25"
+        style={{
+          opacity: navSheetVisualOpen ? 1 : 0,
+          transition: `opacity ${NAV_SHEET_MS}ms ${NAV_SHEET_EASE}`,
+          pointerEvents: navSheetVisualOpen ? "auto" : "none",
+        }}
+        aria-label="Close navigation menu"
+        onClick={() => setMobileNavOpen(false)}
+      />
+      <div className="fixed inset-0 z-[95] pointer-events-none" role="presentation">
+        <div
+          className="absolute inset-x-0 top-0 bg-[#F7F6F3] pointer-events-none"
+          style={{ height: iphoneMenuTopPx }}
+          aria-hidden
+        />
+        <div
+          className="absolute inset-x-0 bottom-0 bg-[#F7F6F3] flex flex-col pointer-events-auto overflow-hidden min-h-0"
           style={{
+            top: iphoneMenuTopPx,
             opacity: navSheetVisualOpen ? 1 : 0,
-            transition: `opacity ${NAV_SHEET_MS}ms ${NAV_SHEET_EASE}`,
+            transform: navSheetVisualOpen ? "translateY(0)" : "translateY(-10px)",
+            transition: navSheetTransition,
             pointerEvents: navSheetVisualOpen ? "auto" : "none",
           }}
-          aria-label="Close navigation menu"
-          onClick={() => setMobileNavOpen(false)}
-        />
-        <div className="fixed inset-0 z-[95] pointer-events-none" role="presentation">
-          <div
-            className="absolute inset-x-0 top-0 bg-[#F7F6F3] pointer-events-none"
-            style={{ height: iphoneMenuTopPx }}
-            aria-hidden
-          />
-          <div
-            className="absolute inset-x-0 bottom-0 bg-[#F7F6F3] flex flex-col pointer-events-auto overflow-hidden min-h-0"
-            style={{
-              top: iphoneMenuTopPx,
-              opacity: navSheetVisualOpen ? 1 : 0,
-              transform: navSheetVisualOpen ? "translateY(0)" : "translateY(-10px)",
-              transition: navSheetTransition,
-              pointerEvents: navSheetVisualOpen ? "auto" : "none",
-            }}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Site navigation"
-          >
-            <nav className="flex flex-col flex-1 min-h-0 overflow-y-auto overscroll-contain">
-              {NAV_ITEMS.map((item) => (
-                  <div key={item} className="border-b border-[#E6E6E6]">
-                    <Link
-                      href={NAV_HREFS[item]}
-                      className={`flex w-full items-center text-left font-medium tracking-[-0.02em] text-gray-900 pl-5 pr-5 iphone-page:pl-[max(1.35rem,calc(env(safe-area-inset-left,0px)+12px+2.4vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))] py-4 iphone-page:py-[clamp(0.65rem,0.42rem+1.35vmin,1.2rem)] active:bg-black/[0.04] transition-colors no-underline ${inter.className} text-4xl iphone-page:text-[clamp(1.52rem,0.82rem+2.92vmin,3.92rem)] iphone-page:leading-none`}
-                      onClick={() => setMobileNavOpen(false)}
-                    >
-                      <span className="min-w-0">{item}</span>
-                    </Link>
-                  </div>
-                ))}
-            </nav>
-            <div className="shrink-0 pb-[max(1rem,calc(env(safe-area-inset-bottom,0px)+10px))] iphone-page:pb-[max(0.9375rem,calc(env(safe-area-inset-bottom,0px)+clamp(10px,1.85vmin,20px)))] pt-4 iphone-page:pt-[clamp(0.75rem,0.52rem+1.05vmin,1.25rem)] border-t border-[#ECEAE6]">
-              <div
-                ref={mobileNavFooterCarouselRef}
-                className="flex overflow-x-auto snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-                style={{ WebkitOverflowScrolling: "touch" }}
-                onScroll={(e) => {
-                  const el = e.currentTarget;
-                  const w = el.clientWidth;
-                  if (w <= 0) return;
-                  setMobileNavFooterSlide(
-                    Math.min(
-                      MOBILE_NAV_FOOTER_SLIDES.length - 1,
-                      Math.max(0, Math.round(el.scrollLeft / w))
-                    )
-                  );
-                }}
-                aria-label="Featured"
-              >
-                {MOBILE_NAV_FOOTER_SLIDES.map((slide) => (
+          role="dialog"
+          aria-modal="true"
+          aria-label="Site navigation"
+        >
+          <nav className="flex flex-col flex-1 min-h-0 overflow-y-auto overscroll-contain">
+            {NAV_ITEMS.map((item) => (
+              <div key={item} className="border-b border-[#E6E6E6]">
+                <Link
+                  href={NAV_HREFS[item]}
+                  className={`flex w-full items-center text-left font-medium tracking-[-0.02em] text-gray-900 pl-5 pr-5 iphone-page:pl-[max(1.35rem,calc(env(safe-area-inset-left,0px)+12px+2.4vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))] py-4 iphone-page:py-[clamp(0.65rem,0.42rem+1.35vmin,1.2rem)] active:bg-black/[0.04] transition-colors no-underline ${inter.className} text-4xl iphone-page:text-[clamp(1.52rem,0.82rem+2.92vmin,3.92rem)] iphone-page:leading-none`}
+                  onClick={() => setMobileNavOpen(false)}
+                >
+                  <span className="min-w-0">{item}</span>
+                </Link>
+              </div>
+            ))}
+          </nav>
+          <div className="shrink-0 pb-[max(1rem,calc(env(safe-area-inset-bottom,0px)+10px))] iphone-page:pb-[max(0.9375rem,calc(env(safe-area-inset-bottom,0px)+clamp(10px,1.85vmin,20px)))] pt-4 iphone-page:pt-[clamp(0.75rem,0.52rem+1.05vmin,1.25rem)] border-t border-[#ECEAE6]">
+            <div
+              ref={mobileNavFooterCarouselRef}
+              className="flex overflow-x-auto snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+              style={{ WebkitOverflowScrolling: "touch" }}
+              onScroll={(e) => {
+                const el = e.currentTarget;
+                const w = el.clientWidth;
+                if (w <= 0) return;
+                setMobileNavFooterSlide(
+                  Math.min(
+                    MOBILE_NAV_FOOTER_SLIDES.length - 1,
+                    Math.max(0, Math.round(el.scrollLeft / w))
+                  )
+                );
+              }}
+              aria-label="Featured"
+            >
+              {MOBILE_NAV_FOOTER_SLIDES.map((slide) => (
+                <div
+                  key={slide.boxTitle}
+                  className={`w-full min-w-full shrink-0 snap-center box-border space-y-3 py-3 px-4 ${narrowHorizontalInset} iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)] iphone-page:py-[clamp(0.75rem,0.5rem+1vmin,1.125rem)]`}
+                >
                   <div
-                    key={slide.boxTitle}
-                    className={`w-full min-w-full shrink-0 snap-center box-border space-y-3 py-3 px-4 ${narrowHorizontalInset} iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)] iphone-page:py-[clamp(0.75rem,0.5rem+1vmin,1.125rem)]`}
+                    className="w-full space-y-3 iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)]"
+                    style={{ zoom: navFooterCarouselZoom }}
                   >
-                    <div
-                      className="w-full space-y-3 iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)]"
-                      style={{ zoom: mobileNavFooterZoom }}
-                    >
                     <div className="relative rounded-[1.375rem] iphone-page:rounded-[clamp(1.2rem,1rem+1.4vmin,2.1rem)] overflow-hidden min-h-[30rem] iphone-page:min-h-[clamp(22rem,58vmin,48rem)] shadow-[0_10px_32px_rgba(0,0,0,0.12)]">
                       <div className="absolute inset-0" style={{ background: slide.gradient }} aria-hidden />
                       <div
@@ -401,18 +406,25 @@ export default function DoeIphoneSiteNav() {
                         {slide.date}
                       </p>
                     </div>
-                    </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
-      </>,
-      document.body
-    );
+      </div>
+    </>
+  ) : null;
+
+  const mobileMenuLayer =
+    !pinchSafe &&
+    mounted &&
+    isPhoneLayout &&
+    navSheetLive &&
+    createPortal(mobileMenuLayerContent, document.body);
 
   const navChromeElevated =
+    !pinchSafe &&
     mounted &&
     navSheetLive &&
     createPortal(
@@ -436,7 +448,7 @@ export default function DoeIphoneSiteNav() {
     <>
       <nav
         ref={navBarRowRef}
-        className={`fixed top-0 left-0 right-0 iphone-page:pt-[env(safe-area-inset-top,0px)] ${navSheetLive ? "z-[100]" : "z-50"}`}
+        className={`${pinchSafe ? "sticky" : "fixed"} top-0 left-0 right-0 iphone-page:pt-[env(safe-area-inset-top,0px)] ${navSheetLive && !pinchSafe ? "z-[100]" : "z-50"}`}
         style={{
           backgroundColor: "#F7F6F3",
           borderBottom: "1px solid #E6E6E6",
@@ -444,12 +456,16 @@ export default function DoeIphoneSiteNav() {
         }}
       >
         <div
-          className="transition-opacity duration-[320ms] ease-[cubic-bezier(0.32,0.72,0,1)]"
-          style={{
-            opacity: navSheetLive ? 0 : 1,
-            pointerEvents: navSheetLive ? "none" : "auto",
-          }}
-          aria-hidden={navSheetLive ? true : undefined}
+          className={pinchSafe ? undefined : "transition-opacity duration-[320ms] ease-[cubic-bezier(0.32,0.72,0,1)]"}
+          style={
+            pinchSafe
+              ? undefined
+              : {
+                  opacity: navSheetLive ? 0 : 1,
+                  pointerEvents: navSheetLive ? "none" : "auto",
+                }
+          }
+          aria-hidden={pinchSafe ? undefined : navSheetLive ? true : undefined}
         >
           <NavChromeStrip
             navTextColor={navTextColor}
@@ -458,6 +474,7 @@ export default function DoeIphoneSiteNav() {
           />
         </div>
       </nav>
+      {pinchSafe ? mobileMenuLayerContent : null}
       {mobileMenuLayer}
       {navChromeElevated}
     </>

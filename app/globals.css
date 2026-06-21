@@ -26,6 +26,24 @@ html:has(.doeforvc-iphone-root) body {
   background-color: #f7f6f3;
 }
 
+/*
+ * /doephone — native pinch zoom; no CSS `zoom` canvas. Full rem scale + safe-area gutters.
+ */
+html:has(.doephone-mobile-root) {
+  font-size: 100%;
+  background-color: #f7f6f3;
+}
+
+html:has(.doephone-mobile-root) body {
+  background-color: #f7f6f3;
+}
+
+.doephone-mobile-root {
+  overflow-x: clip;
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
 /** /desktop — full desktop scroll; root layout uses wide-desktop:overflow-hidden on body */
 body.desktop-route,
 body.mainpage-route {
