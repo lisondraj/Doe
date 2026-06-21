@@ -7,6 +7,13 @@ export const lora = Lora({
   style: ["normal", "italic"],
 });
 
+/** Hero career carousel — lightest available Lora italic. */
+export const loraItalicLight = Lora({
+  subsets: ["latin"],
+  weight: ["400"],
+  style: ["italic"],
+});
+
 export const inter = Inter({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],

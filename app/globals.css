@@ -228,7 +228,12 @@ body.mainpage-route {
 }
 
 .doephone-hero-career-track {
-  transition: transform 420ms cubic-bezier(0.32, 0.72, 0, 1);
+  transition: transform 680ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.doephone-hero-career-word {
+  font-weight: 400;
+  font-style: italic;
 }
 
 @keyframes doephone-hero-headline-in {
