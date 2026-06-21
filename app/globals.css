@@ -217,47 +217,46 @@ body.mainpage-route {
   }
 }
 
-/* /doephone hero polar overlay — full grid strokes reveal from zero, then region pulse. */
-.doephone-hero-polar-overlay--intro .doephone-hero-polar-segment {
-  stroke: rgba(255, 255, 255, 0);
-  stroke-width: 0.8;
-  animation: doephone-hero-polar-segment-reveal 1.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-@keyframes doephone-hero-polar-segment-reveal {
-  0% {
-    stroke: rgba(255, 255, 255, 0);
-  }
-
-  100% {
-    stroke: rgba(255, 255, 255, 0.12);
-  }
-}
-
+/* /doephone hero polar overlay — constant low opacity; one-time build animation. */
 .doephone-hero-polar-segment {
-  stroke: rgba(255, 255, 255, 0.12);
+  stroke: rgba(255, 255, 255, 0.09);
   stroke-width: 0.8;
   opacity: 1;
 }
 
-.doephone-hero-polar-segment--pulse {
-  transition:
-    stroke 0.72s ease-in-out,
-    stroke-width 0.72s ease-in-out;
+/* Straight lines grow inward from both outer edges until they meet at center. */
+.doephone-hero-polar-radial--intro {
+  stroke-dasharray: 0.5 0.5;
+  stroke-dashoffset: 0.5;
+  animation: doephone-hero-polar-radial-in 1.35s cubic-bezier(0.33, 1, 0.36, 1) forwards;
 }
 
-/* Low overall opacity — wider rest→active gap so the moving region reads clearly. */
-.doephone-hero-polar-segment--pulse.doephone-hero-polar-segment--active {
-  stroke: rgba(255, 255, 255, 0.36);
-  stroke-width: 1.05;
+@keyframes doephone-hero-polar-radial-in {
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
-/* /doephone hero headline — deblur + rise after polar overlay finishes. */
+/* Rings scale out from center after radials finish (inner → outer). */
+.doephone-hero-polar-ring--intro {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(0);
+  animation: doephone-hero-polar-ring-in 0.82s cubic-bezier(0.33, 1, 0.36, 1) forwards;
+}
+
+@keyframes doephone-hero-polar-ring-in {
+  to {
+    transform: scale(1);
+  }
+}
+
+/* /doephone hero headline — deblur + rise after polar overlay build completes. */
 .doephone-hero-headline-line {
   opacity: 0;
   filter: blur(16px);
   transform: translateY(1.75rem);
-  animation: doephone-hero-headline-in 1.45s cubic-bezier(0.22, 1, 0.36, 1) 1.9s forwards;
+  animation: doephone-hero-headline-in 1.45s cubic-bezier(0.22, 1, 0.36, 1) 3.05s forwards;
   will-change: opacity, filter, transform;
   text-shadow: none;
 }
@@ -419,13 +418,15 @@ body.mainpage-route {
     mask-size: auto;
   }
 
-  .doephone-hero-polar-overlay--intro .doephone-hero-polar-segment {
+  .doephone-hero-polar-radial--intro,
+  .doephone-hero-polar-ring--intro {
     animation: none !important;
-    stroke: rgba(255, 255, 255, 0.12);
+    stroke-dashoffset: 0;
+    transform: none;
   }
 
   .doephone-hero-polar-segment {
-    stroke: rgba(255, 255, 255, 0.12);
+    stroke: rgba(255, 255, 255, 0.09);
     opacity: 1;
   }
 

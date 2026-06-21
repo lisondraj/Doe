@@ -1,18 +1,10 @@
-"use client";
-
 import {
   WORKFLOW_CAROUSEL_GRAIN_STYLE,
   getWorkflowGridOverlayStyle,
   type WorkflowCarouselDesignBackdrop,
   type WorkflowCarouselGridKind,
 } from "@/lib/workflow-carousel-design-backdrops";
-import { useEffect, useState } from "react";
-
-const POLAR_SEGMENT_COUNT = 14;
-const POLAR_OVERLAY_INTRO_MS = 1950;
-const POLAR_FADE_MS = 720;
-const POLAR_HOLD_MS = 620;
-const POLAR_GAP_MS = 380;
+import type { CSSProperties } from "react";
 
 function polarRadialPathD(angleDeg: number, radius = 500): string {
   const rad = (angleDeg * Math.PI) / 180;
@@ -31,67 +23,9 @@ function PolarGridOverlay({
   centerY?: string;
   introOnLoad?: boolean;
 }) {
-  const [liveReady, setLiveReady] = useState(!introOnLoad);
-  const [activeIndex, setActiveIndex] = useState(-1);
   const size = `${118 * patternScale}vmax`;
-
-  useEffect(() => {
-    if (!introOnLoad) return;
-
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reducedMotion) {
-      setLiveReady(true);
-      return;
-    }
-
-    const introTimer = window.setTimeout(() => setLiveReady(true), POLAR_OVERLAY_INTRO_MS);
-    return () => window.clearTimeout(introTimer);
-  }, [introOnLoad]);
-
-  useEffect(() => {
-    if (!introOnLoad || !liveReady) return;
-
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reducedMotion) return;
-
-    let cancelled = false;
-    let index = 0;
-
-    const sleep = (ms: number) =>
-      new Promise<void>((resolve) => {
-        window.setTimeout(resolve, ms);
-      });
-
-    const runPulse = async () => {
-      while (!cancelled) {
-        setActiveIndex(index);
-        await sleep(POLAR_FADE_MS + POLAR_HOLD_MS);
-        if (cancelled) break;
-
-        setActiveIndex(-1);
-        await sleep(POLAR_FADE_MS + POLAR_GAP_MS);
-        if (cancelled) break;
-
-        index = (index + 1) % POLAR_SEGMENT_COUNT;
-      }
-    };
-
-    void runPulse();
-
-    return () => {
-      cancelled = true;
-      setActiveIndex(-1);
-    };
-  }, [introOnLoad, liveReady]);
-
-  const segmentClass = (liveIndex: number) => {
-    const classes = ["doephone-hero-polar-segment"];
-    if (!introOnLoad) return classes.join(" ");
-
-    if (liveReady) classes.push("doephone-hero-polar-segment--pulse");
-    if (liveReady && activeIndex === liveIndex) classes.push("doephone-hero-polar-segment--active");
-    return classes.join(" ");
-  };
+  const ringStyle = (index: number): CSSProperties | undefined =>
+    introOnLoad ? { animationDelay: `${1.35 + index * 0.16}s` } : undefined;
 
   return (
     <div
@@ -117,10 +51,14 @@ function PolarGridOverlay({
           return (
             <path
               key={`polar-radial-${j}`}
-              className={segmentClass(j)}
+              pathLength={1}
+              className={`doephone-hero-polar-segment doephone-hero-polar-radial${
+                introOnLoad ? " doephone-hero-polar-radial--intro" : ""
+              }`}
               d={polarRadialPathD(angle)}
               fill="none"
               strokeWidth="0.8"
+              vectorEffect="non-scaling-stroke"
             />
           );
         })}
@@ -129,12 +67,16 @@ function PolarGridOverlay({
           return (
             <circle
               key={`polar-ring-${j}`}
-              className={segmentClass(8 + j)}
+              className={`doephone-hero-polar-segment doephone-hero-polar-ring${
+                introOnLoad ? " doephone-hero-polar-ring--intro" : ""
+              }`}
+              style={ringStyle(j)}
               cx="500"
               cy="500"
               r={r}
               fill="none"
               strokeWidth="0.8"
+              vectorEffect="non-scaling-stroke"
             />
           );
         })}
