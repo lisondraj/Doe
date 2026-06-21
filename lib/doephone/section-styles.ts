@@ -9,12 +9,28 @@ export const DOEPHONE_SECTION_CONTENT_INSET = DOEPHONE_SECTION_COPY_INSET;
 export const DOEPHONE_SECTION_UNIFORM_PAD =
   "p-14 iphone-page:p-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
 
+/** Carousel band in section 2 — horizontal inset (matches hero left / uniform pad). */
+export const DOEPHONE_SECTION_CAROUSEL_INSET_X =
+  "px-14 iphone-page:px-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
+
+/** Vertical gap between section 2 carousel and menu — matches carousel horizontal inset. */
+export const DOEPHONE_SECTION_CAROUSEL_MENU_GAP =
+  "mt-14 iphone-page:mt-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
+
 /** Carousel band in section 2 — equal padding on all sides (matches hero left inset). */
 export const DOEPHONE_SECTION_CAROUSEL_UNIFORM_PAD = DOEPHONE_SECTION_UNIFORM_PAD;
 
 /** Top offset for section titles (~52% of prior padding — just under half removed). */
 export const DOEPHONE_SECTION_TITLE_PT =
   "pt-[max(1.95rem,calc(env(safe-area-inset-top,0px)+7.25svh))]";
+
+/** Section 2 bottom close — mirrors title top padding above Communication. */
+export const DOEPHONE_SECTION_TITLE_PB =
+  "pb-[max(1.95rem,calc(env(safe-area-inset-bottom,0px)+7.25svh))]";
+
+/** Doe brand gradient — menu active rule, accents. */
+export const DOE_BRAND_GRADIENT_LINE =
+  "linear-gradient(90deg, #1E343A 0%, #D2774C 46%, #E7A944 100%)";
 
 /** Upper-mid placement for section titles (sections 2+). */
 export const DOEPHONE_SECTION_COPY_POSITION =
