@@ -26,10 +26,10 @@ export const DOEPHONE_BOX_CLUSTER_PRESETS: readonly DoePhoneBoxClusterPreset[] =
       "No manual triage or lost messages.",
     ],
     layout: {
-      left: "absolute left-0 top-1/2 z-[1] h-[98%] w-[28%] -translate-y-1/2 iphone-page:w-[27%]",
-      right: "absolute bottom-[4%] right-0 z-[1] aspect-square w-[42%] iphone-page:bottom-[3%] iphone-page:w-[40%]",
+      left: "absolute left-0 top-1/2 z-[1] h-[100%] w-[30%] -translate-y-1/2 iphone-page:w-[29%]",
+      right: "absolute bottom-[3%] right-0 z-[1] aspect-square w-[45%] iphone-page:bottom-[2%] iphone-page:w-[43%]",
       center:
-        "absolute left-1/2 top-1/2 z-[2] h-[clamp(19rem,52vmin,26rem)] w-[94%] max-w-[min(100%,32rem)] -translate-x-1/2 -translate-y-1/2 bg-white iphone-page:h-[clamp(18.25rem,50vmin,24.5rem)] iphone-page:w-[92%]",
+        "absolute left-1/2 top-1/2 z-[2] h-[clamp(20.5rem,56vmin,28rem)] w-[96%] max-w-[min(100%,34rem)] -translate-x-1/2 -translate-y-1/2 bg-white iphone-page:h-[clamp(19.75rem,54vmin,26.5rem)] iphone-page:w-[94%]",
     },
     left: {
       slideIndex: 0,
@@ -54,11 +54,11 @@ export const DOEPHONE_BOX_CLUSTER_PRESETS: readonly DoePhoneBoxClusterPreset[] =
       "Everything lands in one chart-ready record.",
     ],
     layout: {
-      left: "absolute left-0 top-[5%] z-[1] h-[68%] w-[38%] iphone-page:top-[4%] iphone-page:w-[37%]",
+      left: "absolute left-0 top-[4%] z-[1] h-[72%] w-[40%] iphone-page:top-[3%] iphone-page:w-[39%]",
       right:
-        "absolute bottom-[7%] right-0 z-[1] aspect-[1.28] w-[50%] iphone-page:bottom-[6%] iphone-page:w-[48%]",
+        "absolute bottom-[6%] right-0 z-[1] aspect-[1.28] w-[53%] iphone-page:bottom-[5%] iphone-page:w-[51%]",
       center:
-        "absolute left-1/2 top-1/2 z-[2] h-[clamp(20.5rem,56vmin,27.5rem)] w-[84%] max-w-[min(100%,28rem)] -translate-x-1/2 -translate-y-1/2 bg-white iphone-page:h-[clamp(19.5rem,53vmin,26rem)] iphone-page:w-[82%]",
+        "absolute left-1/2 top-1/2 z-[2] h-[clamp(22rem,60vmin,30rem)] w-[88%] max-w-[min(100%,30rem)] -translate-x-1/2 -translate-y-1/2 bg-white iphone-page:h-[clamp(21rem,57vmin,28rem)] iphone-page:w-[86%]",
     },
     left: {
       slideIndex: 3,
@@ -82,10 +82,10 @@ export const DOEPHONE_BOX_CLUSTER_PRESETS: readonly DoePhoneBoxClusterPreset[] =
       "Patients and staff stay in sync.",
     ],
     layout: {
-      left: "absolute top-1/2 left-0 z-[1] h-[98%] w-[25%] -translate-y-1/2 iphone-page:w-[24%]",
-      right: "absolute bottom-[2%] right-0 z-[1] aspect-square w-[46%] iphone-page:bottom-[1%] iphone-page:w-[44%]",
+      left: "absolute top-1/2 left-0 z-[1] h-[100%] w-[27%] -translate-y-1/2 iphone-page:w-[26%]",
+      right: "absolute bottom-[1%] right-0 z-[1] aspect-square w-[49%] iphone-page:w-[47%]",
       center:
-        "absolute left-1/2 top-1/2 z-[2] h-[clamp(21.5rem,58vmin,29rem)] w-[96%] max-w-[min(100%,34rem)] -translate-x-1/2 -translate-y-1/2 bg-white iphone-page:h-[clamp(20.5rem,55vmin,27.5rem)] iphone-page:w-[94%]",
+        "absolute left-1/2 top-1/2 z-[2] h-[clamp(23rem,63vmin,31.5rem)] w-[98%] max-w-[min(100%,36rem)] -translate-x-1/2 -translate-y-1/2 bg-white iphone-page:h-[clamp(22rem,59vmin,29.5rem)] iphone-page:w-[96%]",
     },
     left: {
       slideIndex: 4,
@@ -110,10 +110,10 @@ export const DOEPHONE_BOX_CLUSTER_PRESETS: readonly DoePhoneBoxClusterPreset[] =
       "One source of truth for your whole practice.",
     ],
     layout: {
-      left: "absolute left-0 top-[8%] z-[1] h-[84%] w-[35%] iphone-page:top-[7%] iphone-page:w-[34%]",
-      right: "absolute bottom-[9%] right-[1%] z-[1] aspect-square w-[36%] iphone-page:bottom-[8%] iphone-page:w-[34%]",
+      left: "absolute left-0 top-[7%] z-[1] h-[88%] w-[37%] iphone-page:top-[6%] iphone-page:w-[36%]",
+      right: "absolute bottom-[8%] right-[1%] z-[1] aspect-square w-[39%] iphone-page:bottom-[7%] iphone-page:w-[37%]",
       center:
-        "absolute left-1/2 top-1/2 z-[2] h-[clamp(18.5rem,50vmin,25rem)] w-[90%] max-w-[min(100%,31rem)] -translate-x-1/2 -translate-y-1/2 bg-white iphone-page:h-[clamp(17.75rem,48vmin,24rem)] iphone-page:w-[88%]",
+        "absolute left-1/2 top-1/2 z-[2] h-[clamp(20rem,54vmin,27rem)] w-[93%] max-w-[min(100%,33rem)] -translate-x-1/2 -translate-y-1/2 bg-white iphone-page:h-[clamp(19.25rem,52vmin,26rem)] iphone-page:w-[91%]",
     },
     left: {
       slideIndex: 4,
