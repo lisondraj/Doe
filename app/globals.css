@@ -166,6 +166,26 @@ body.mainpage-route {
   animation: hero-cta-bounce-once 1.4s ease-in-out 1 both;
 }
 
+/* Hero square grid — page-load reveal from top-left (/doephone). */
+.hero-carousel-grid-intro {
+  opacity: 0;
+  transform-origin: top left;
+  animation: hero-carousel-grid-intro 1.45s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards;
+  will-change: opacity, transform;
+}
+
+@keyframes hero-carousel-grid-intro {
+  from {
+    opacity: 0;
+    transform: translate(-4%, -4%) scale(1.1);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+}
+
 /* Wheel-driven mission caret — uses transform so inline opacity stays 1∶1 with scroll deltas */
 .hero-mission-scroll-caret-blink {
   transform-origin: bottom;
@@ -240,6 +260,12 @@ body.mainpage-route {
   .animate-hero-cta-float,
   .animate-hero-cta-bounce-once {
     animation: none;
+  }
+
+  .hero-carousel-grid-intro {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
   }
 
   .hero-mission-scroll-caret-blink {

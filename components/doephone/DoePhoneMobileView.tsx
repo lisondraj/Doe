@@ -50,7 +50,7 @@ export function DoePhoneMobileView() {
             style={{ background: HERO_BACKDROP_GRADIENT }}
             aria-hidden
           />
-          <HeroCarouselTextureOverlay />
+          <HeroCarouselTextureOverlay introOnLoad />
         </div>
       </section>
 

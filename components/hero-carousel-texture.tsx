@@ -23,9 +23,12 @@ export const HERO_CAROUSEL_SQUARE_GRID_STYLE: CSSProperties = {
 
 export function HeroCarouselTextureOverlay({
   patternId: _patternId,
+  introOnLoad = false,
 }: {
   /** @deprecated Grid is CSS-tiled; id ignored. */
   patternId?: string;
+  /** Fade + expand grid lines from top-left on first paint. */
+  introOnLoad?: boolean;
 }) {
   return (
     <>
@@ -40,7 +43,7 @@ export function HeroCarouselTextureOverlay({
         aria-hidden
       />
       <div
-        className="pointer-events-none absolute inset-0 z-[2]"
+        className={`pointer-events-none absolute inset-0 z-[2]${introOnLoad ? " hero-carousel-grid-intro" : ""}`}
         style={HERO_CAROUSEL_SQUARE_GRID_STYLE}
         aria-hidden
       />
