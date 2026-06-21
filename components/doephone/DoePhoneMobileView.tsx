@@ -40,7 +40,7 @@ export function DoePhoneMobileView() {
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 
       <section
-        className="relative z-10 w-full min-h-[min(72vh,40rem)] iphone-page:min-h-[min(68dvh,38rem)] bg-[#F7F6F3]"
+        className="relative z-10 w-full min-h-[min(144vh,80rem)] iphone-page:min-h-[min(136dvh,76rem)] bg-[#F7F6F3]"
         aria-hidden
       />
 
