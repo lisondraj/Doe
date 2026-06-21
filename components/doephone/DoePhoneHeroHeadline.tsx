@@ -71,7 +71,7 @@ export function DoePhoneHeroHeadline() {
               <span className="doephone-hero-career-clip col-start-1 row-start-1">
                 <span
                   className={`doephone-hero-career-track block${slideTransition ? "" : " doephone-hero-career-track--instant"}`}
-                  style={{ transform: `translateY(calc(-1em * ${index}))` }}
+                  style={{ transform: `translateY(calc(var(--doephone-career-slot) * -${index}))` }}
                   onTransitionEnd={handleTrackTransitionEnd}
                   aria-live="polite"
                 >

@@ -228,12 +228,10 @@ body.mainpage-route {
 }
 
 .doephone-hero-career-clip {
-  height: 1em;
-  line-height: 1;
+  --doephone-career-slot: 1.22em;
+  height: var(--doephone-career-slot);
   overflow: hidden;
   isolation: isolate;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%);
-  mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%);
 }
 
 .doephone-hero-career-track {
@@ -246,12 +244,12 @@ body.mainpage-route {
 }
 
 .doephone-hero-career-word {
-  display: block;
-  height: 1em;
-  line-height: 1;
+  display: flex;
+  align-items: center;
+  height: var(--doephone-career-slot);
+  line-height: 1.08;
   font-weight: 400;
   font-style: italic;
-  overflow: hidden;
 }
 
 @keyframes doephone-hero-headline-in {
