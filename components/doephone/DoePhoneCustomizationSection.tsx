@@ -13,7 +13,7 @@ import {
 } from "@/lib/doephone/section-styles";
 import { useState } from "react";
 
-/** Second beige section — title, feature menu, three-box cluster. */
+/** Second beige section — title, three-box cluster, feature menu below. */
 export function DoePhoneCustomizationSection() {
   const [activePreset, setActivePreset] = useState(0);
 
@@ -24,13 +24,13 @@ export function DoePhoneCustomizationSection() {
       </div>
 
       <div className={`shrink-0 ${DOEPHONE_SECTION_TITLE_CAROUSEL_GAP} ${DOEPHONE_SECTION_CAROUSEL_INSET_X}`}>
-        <DoePhoneBoxClusterMenu activeIndex={activePreset} onSelect={setActivePreset} />
+        <DoePhoneSectionBoxCluster activeIndex={activePreset} />
       </div>
 
       <div
         className={`shrink-0 ${DOEPHONE_SECTION_CAROUSEL_MENU_GAP} ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${DOEPHONE_SECTION_TITLE_PB}`}
       >
-        <DoePhoneSectionBoxCluster activeIndex={activePreset} />
+        <DoePhoneBoxClusterMenu activeIndex={activePreset} onSelect={setActivePreset} />
       </div>
     </div>
   );
