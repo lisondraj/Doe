@@ -1,6 +1,7 @@
 "use client";
 
 import DoeIphoneSiteNav from "@/components/DoeIphoneSiteNav";
+import { DoePhoneClosingSection } from "@/components/doephone/DoePhoneClosingSection";
 import { DoePhoneCommunicationSection } from "@/components/doephone/DoePhoneCommunicationSection";
 import { DoePhoneCustomizationSection } from "@/components/doephone/DoePhoneCustomizationSection";
 import { DoePhoneHeroSection } from "@/components/doephone/DoePhoneHeroSection";
@@ -87,8 +88,11 @@ export function DoePhoneMobileView() {
 
       <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
 
-      <section className={`${DOEPHONE_VIEWPORT_SECTION} bg-[#F7F6F3]`} aria-label="Closing">
-        <DoePhoneSectionText line1="One provider," line2="one patient at a time." />
+      <section
+        className="relative z-10 flex min-h-[100svh] w-full flex-col bg-[#F7F6F3] iphone-page:min-h-[100dvh]"
+        aria-label="Closing"
+      >
+        <DoePhoneClosingSection />
       </section>
 
       <HomeFooter />

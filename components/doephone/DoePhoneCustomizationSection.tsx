@@ -3,7 +3,6 @@
 import { DoePhoneBoxClusterDescription } from "@/components/doephone/DoePhoneBoxClusterDescription";
 import { DoePhoneBoxClusterMenu } from "@/components/doephone/DoePhoneBoxClusterMenu";
 import { DoePhoneSectionBoxCluster } from "@/components/doephone/DoePhoneSectionBoxCluster";
-import { DoePhoneSectionFooterCarousel } from "@/components/doephone/DoePhoneSectionFooterCarousel";
 import { DoePhoneSectionTitle } from "@/components/doephone/DoePhoneSectionText";
 import {
   DOEPHONE_SECTION_CAROUSEL_INSET_X,
@@ -15,7 +14,7 @@ import {
 } from "@/lib/doephone/section-styles";
 import { useState } from "react";
 
-/** Second beige section — title, box cluster, menu, footer carousel. */
+/** Second beige section — title, box cluster, description, and feature menu. */
 export function DoePhoneCustomizationSection() {
   const [activePreset, setActivePreset] = useState(0);
 
@@ -23,21 +22,20 @@ export function DoePhoneCustomizationSection() {
     <div className="flex h-full min-h-0 flex-col">
       <div className={`shrink-0 ${DOEPHONE_SECTION_CONTENT_INSET} ${DOEPHONE_SECTION_TITLE_PT}`}>
         <DoePhoneSectionTitle line1="Your practice," line2="your rules." />
-        <DoePhoneBoxClusterDescription activeIndex={activePreset} />
-      </div>
-
-      <div className={`shrink-0 ${DOEPHONE_SECTION_TITLE_CAROUSEL_GAP} ${DOEPHONE_SECTION_CAROUSEL_INSET_X}`}>
-        <DoePhoneSectionBoxCluster activeIndex={activePreset} />
-      </div>
-
-      <div className={`shrink-0 ${DOEPHONE_SECTION_CAROUSEL_MENU_GAP} ${DOEPHONE_SECTION_CAROUSEL_INSET_X}`}>
-        <DoePhoneBoxClusterMenu activeIndex={activePreset} onSelect={setActivePreset} />
       </div>
 
       <div
-        className={`shrink-0 ${DOEPHONE_SECTION_CAROUSEL_MENU_GAP} ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${DOEPHONE_SECTION_TITLE_PB}`}
+        className={`shrink-0 ${DOEPHONE_SECTION_TITLE_CAROUSEL_GAP} ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${DOEPHONE_SECTION_TITLE_PB}`}
       >
-        <DoePhoneSectionFooterCarousel />
+        <DoePhoneSectionBoxCluster activeIndex={activePreset} />
+
+        <div className={DOEPHONE_SECTION_CAROUSEL_MENU_GAP}>
+          <DoePhoneBoxClusterDescription activeIndex={activePreset} />
+        </div>
+
+        <div className={DOEPHONE_SECTION_CAROUSEL_MENU_GAP}>
+          <DoePhoneBoxClusterMenu activeIndex={activePreset} onSelect={setActivePreset} />
+        </div>
       </div>
     </div>
   );
