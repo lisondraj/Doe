@@ -23,21 +23,21 @@ function GradientBox({ backdrop }: { backdrop: WorkflowCarouselDesignBackdropTyp
 export function DoePhoneSectionBoxCluster() {
   return (
     <div
-      className="relative mx-auto w-full h-[clamp(22rem,56vmin,31rem)] iphone-page:h-[clamp(21rem,52vmin,29rem)]"
+      className="relative mx-auto w-full h-[clamp(28rem,68vmin,38rem)] iphone-page:h-[clamp(26rem,64vmin,36rem)]"
       aria-hidden
     >
-      {/* Left — tall vertical tile; height extends past the center rectangle. */}
-      <div className="absolute -top-[3%] bottom-[-2%] left-0 z-[1] w-[38%] iphone-page:w-[37%]">
+      {/* Left — vertical strip; top/bottom extend past the larger center rectangle. */}
+      <div className="absolute left-0 top-[-2%] z-[1] h-[104%] w-[32%] iphone-page:w-[31%]">
         <GradientBox backdrop={DOEPHONE_SECTION_BOX_LEFT_BACKDROP} />
       </div>
 
-      {/* Right — larger tile tucked behind the center box bottom-right corner. */}
-      <div className="absolute bottom-[-1%] right-0 z-[1] h-[92%] w-[48%] iphone-page:w-[47%]">
+      {/* Right — larger tile behind the center box bottom-right corner. */}
+      <div className="absolute bottom-0 right-0 z-[1] h-[78%] w-[44%] iphone-page:w-[43%]">
         <GradientBox backdrop={DOEPHONE_SECTION_BOX_RIGHT_BACKDROP} />
       </div>
 
       <div
-        className={`absolute left-1/2 top-[9%] z-[2] h-[clamp(9.25rem,27vmin,13.25rem)] w-[78%] max-w-[min(100%,24rem)] -translate-x-1/2 bg-white iphone-page:top-[8%] iphone-page:h-[clamp(8.75rem,25vmin,12.5rem)] iphone-page:w-[76%] ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
+        className={`absolute left-1/2 top-[3%] z-[2] h-[clamp(14.5rem,40vmin,19.5rem)] w-[88%] max-w-[min(100%,28rem)] -translate-x-1/2 bg-white iphone-page:top-[2.5%] iphone-page:h-[clamp(13.75rem,38vmin,18.25rem)] iphone-page:w-[86%] ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
       />
     </div>
   );
