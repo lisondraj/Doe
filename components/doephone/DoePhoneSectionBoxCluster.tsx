@@ -2,7 +2,10 @@
 
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { DOEPHONE_BOX_CLUSTER_PRESETS } from "@/lib/doephone/section-box-cluster-backdrops";
-import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
+import {
+  DOEPHONE_BOX_CLUSTER_STAGE_HEIGHT,
+  DOEPHONE_SECTION_CAROUSEL_RADIUS,
+} from "@/lib/doephone/section-styles";
 import type { WorkflowCarouselDesignBackdrop as WorkflowCarouselDesignBackdropType } from "@/lib/workflow-carousel-design-backdrops";
 
 const BOX_MORPH_TW =
@@ -41,7 +44,7 @@ export function DoePhoneSectionBoxCluster({ activeIndex }: { activeIndex: number
 
   return (
     <div
-      className={`relative mx-auto w-full ${layout.stage} ${BOX_MORPH_TW}`}
+      className={`relative mx-auto w-full overflow-hidden ${DOEPHONE_BOX_CLUSTER_STAGE_HEIGHT}`}
       role="tabpanel"
       id={`doephone-box-cluster-${preset.id}`}
       aria-label={preset.menuLabel}

@@ -1,7 +1,6 @@
 import type { WorkflowCarouselDesignBackdrop } from "@/lib/workflow-carousel-design-backdrops";
 
 export type DoePhoneBoxClusterLayout = {
-  stage: string;
   left: string;
   right: string;
   center: string;
@@ -21,7 +20,6 @@ export const DOEPHONE_BOX_CLUSTER_PRESETS: readonly DoePhoneBoxClusterPreset[] =
     id: "routing",
     menuLabel: "Routing",
     layout: {
-      stage: "h-[clamp(32rem,76vmin,44rem)] iphone-page:h-[clamp(30rem,72vmin,42rem)]",
       left: "absolute left-0 top-1/2 z-[1] h-[98%] w-[28%] -translate-y-1/2 iphone-page:w-[27%]",
       right: "absolute bottom-[4%] right-0 z-[1] aspect-square w-[42%] iphone-page:bottom-[3%] iphone-page:w-[40%]",
       center:
@@ -45,7 +43,6 @@ export const DOEPHONE_BOX_CLUSTER_PRESETS: readonly DoePhoneBoxClusterPreset[] =
     id: "intake",
     menuLabel: "Intake",
     layout: {
-      stage: "h-[clamp(33rem,78vmin,45rem)] iphone-page:h-[clamp(31rem,74vmin,43rem)]",
       left: "absolute left-0 top-[5%] z-[1] h-[68%] w-[38%] iphone-page:top-[4%] iphone-page:w-[37%]",
       right:
         "absolute bottom-[7%] right-0 z-[1] aspect-[1.28] w-[50%] iphone-page:bottom-[6%] iphone-page:w-[48%]",
@@ -69,8 +66,7 @@ export const DOEPHONE_BOX_CLUSTER_PRESETS: readonly DoePhoneBoxClusterPreset[] =
     id: "labs",
     menuLabel: "Labs",
     layout: {
-      stage: "h-[clamp(34rem,80vmin,46rem)] iphone-page:h-[clamp(32rem,76vmin,44rem)]",
-      left: "absolute -top-[1%] left-0 z-[1] h-[106%] w-[25%] iphone-page:w-[24%]",
+      left: "absolute top-1/2 left-0 z-[1] h-[98%] w-[25%] -translate-y-1/2 iphone-page:w-[24%]",
       right: "absolute bottom-[2%] right-0 z-[1] aspect-square w-[46%] iphone-page:bottom-[1%] iphone-page:w-[44%]",
       center:
         "absolute left-1/2 top-1/2 z-[2] h-[clamp(21.5rem,58vmin,29rem)] w-[96%] max-w-[min(100%,34rem)] -translate-x-1/2 -translate-y-1/2 bg-white iphone-page:h-[clamp(20.5rem,55vmin,27.5rem)] iphone-page:w-[94%]",
@@ -93,7 +89,6 @@ export const DOEPHONE_BOX_CLUSTER_PRESETS: readonly DoePhoneBoxClusterPreset[] =
     id: "sync",
     menuLabel: "Sync",
     layout: {
-      stage: "h-[clamp(31rem,74vmin,43rem)] iphone-page:h-[clamp(29rem,70vmin,41rem)]",
       left: "absolute left-0 top-[8%] z-[1] h-[84%] w-[35%] iphone-page:top-[7%] iphone-page:w-[34%]",
       right: "absolute bottom-[9%] right-[1%] z-[1] aspect-square w-[36%] iphone-page:bottom-[8%] iphone-page:w-[34%]",
       center:

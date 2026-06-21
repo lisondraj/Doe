@@ -56,6 +56,10 @@ export const DOEPHONE_VIEWPORT_SECTION =
 export const DOEPHONE_SECTION_CAROUSEL_HEIGHT =
   "h-[clamp(46rem,104svh,69rem)] min-h-[clamp(46rem,104svh,69rem)] max-h-[clamp(46rem,104svh,69rem)] shrink-0";
 
+/** Fixed stage — tallest preset layout so menu below does not shift on tab change. */
+export const DOEPHONE_BOX_CLUSTER_STAGE_HEIGHT =
+  "h-[clamp(34rem,80vmin,46rem)] min-h-[clamp(34rem,80vmin,46rem)] max-h-[clamp(34rem,80vmin,46rem)] shrink-0 iphone-page:h-[clamp(32rem,76vmin,44rem)] iphone-page:min-h-[clamp(32rem,76vmin,44rem)] iphone-page:max-h-[clamp(32rem,76vmin,44rem)]";
+
 /** Rounded corners shared by section 2 carousel cards + embedded backdrop clip. */
 export const DOEPHONE_SECTION_CAROUSEL_RADIUS =
   "rounded-[clamp(1.1rem,0.95rem+0.75vmin,1.45rem)]";
