@@ -32,11 +32,10 @@ export function HeroCarouselTextureOverlay({
   patternId?: string;
   /** Fade + expand grid lines from top-left on first paint. */
   introOnLoad?: boolean;
-  /** `dot` matches care-coordination section; default is square crosshatch grid. */
+  /** `dot` — care-coordination-style dots only; default square grid + grain. */
   grid?: "square" | "dot";
 }) {
-  const gridStyle: CSSProperties =
-    grid === "dot" ? WORKFLOW_DOT_GRID_STYLE : HERO_CAROUSEL_SQUARE_GRID_STYLE;
+  const gridStyle = grid === "dot" ? WORKFLOW_DOT_GRID_STYLE : HERO_CAROUSEL_SQUARE_GRID_STYLE;
 
   return (
     <>
