@@ -1,7 +1,7 @@
 import { inter, suisseIntl } from "@/lib/home/fonts";
 
-/** Nav bar — black pill, taller than the hamburger icon. */
-export const DOEPHONE_NAV_WAITLIST_CLASS = `inline-flex shrink-0 items-center justify-center rounded-full bg-black font-semibold text-white transition-opacity hover:opacity-90 active:opacity-80 min-h-[clamp(2.45rem,2.05rem+1.95vmin,3rem)] px-[clamp(1rem,0.78rem+1vmin,1.2rem)] py-[clamp(0.5rem,0.38rem+0.55vmin,0.68rem)] text-[clamp(0.78rem,0.66rem+0.52vmin,0.9rem)] leading-none ${inter.className}`;
+/** Nav bar — black rounded-rect, scales up on iPhone above the hamburger icon. */
+export const DOEPHONE_NAV_WAITLIST_CLASS = `inline-flex shrink-0 items-center justify-center rounded-[10px] bg-black font-semibold text-white transition-opacity hover:opacity-90 active:opacity-80 min-h-[2.75rem] px-4 py-2.5 text-sm leading-none iphone-page:min-h-[clamp(2.9rem,2.4rem+2.45vmin,3.55rem)] iphone-page:px-[clamp(1.2rem,0.95rem+1.2vmin,1.55rem)] iphone-page:py-[clamp(0.68rem,0.52rem+0.75vmin,0.92rem)] iphone-page:text-[clamp(0.94rem,0.8rem+0.75vmin,1.08rem)] iphone-page:rounded-[clamp(0.58rem,0.48rem+0.38vmin,0.72rem)] ${inter.className}`;
 
-/** Hero — white pill under headline, scales with viewport. */
-export const DOEPHONE_HERO_WAITLIST_CLASS = `doephone-hero-waitlist-cta inline-flex items-center justify-center rounded-full bg-white font-medium text-black transition-opacity hover:opacity-90 active:opacity-80 mt-[clamp(1.35rem,1rem+1.55vmin,2.05rem)] px-[clamp(1.4rem,1.1rem+1.15vmin,1.85rem)] py-[clamp(0.72rem,0.55rem+0.7vmin,0.98rem)] text-[clamp(0.95rem,0.84rem+0.52vmin,1.08rem)] leading-none ${suisseIntl.className}`;
+/** Hero — white rounded-rect under headline, prominent on iPhone. */
+export const DOEPHONE_HERO_WAITLIST_CLASS = `doephone-hero-waitlist-cta inline-flex items-center justify-center rounded-[10px] bg-white font-medium text-black transition-opacity hover:opacity-90 active:opacity-80 mt-6 min-h-[3rem] px-6 py-3 text-base leading-none iphone-page:mt-[clamp(1.5rem,1.1rem+1.65vmin,2.3rem)] iphone-page:min-h-[clamp(3.15rem,2.6rem+2.55vmin,3.9rem)] iphone-page:px-[clamp(1.8rem,1.4rem+1.5vmin,2.3rem)] iphone-page:py-[clamp(0.88rem,0.68rem+0.95vmin,1.18rem)] iphone-page:text-[clamp(1.1rem,0.96rem+0.75vmin,1.24rem)] iphone-page:rounded-[clamp(0.62rem,0.5rem+0.42vmin,0.8rem)] ${suisseIntl.className}`;
