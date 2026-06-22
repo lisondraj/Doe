@@ -7,7 +7,7 @@ import {
   DOEPHONE_HERO_INTRO_GRADIENT_START,
   doephoneHeroIntroStyleVars,
 } from "@/lib/doephone/hero-intro-timing";
-import { DOEPHONE_SECTION_COPY_INSET } from "@/lib/doephone/section-styles";
+import { DOEPHONE_HERO_COPY_INSET } from "@/lib/doephone/section-styles";
 import { DOEPHONE_HERO_WAITLIST_CLASS } from "@/lib/doephone/waitlist-button";
 import { DOEPHONE_HERO_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
@@ -116,7 +116,7 @@ export function DoePhoneHeroSection() {
       />
 
       <div
-        className={`absolute inset-0 z-[3] flex flex-col items-start justify-start pt-[max(9rem,calc(env(safe-area-inset-top,0px)+calc(var(--app-vh,100lvh)*0.31)))] pb-8 ${DOEPHONE_SECTION_COPY_INSET}`}
+        className={`doephone-hero-copy absolute inset-0 z-[3] flex min-w-0 flex-col items-start justify-start pt-[max(9rem,calc(env(safe-area-inset-top,0px)+calc(var(--app-vh,100lvh)*0.31)))] pb-8 ${DOEPHONE_HERO_COPY_INSET}`}
       >
         <DoePhoneHeroHeadline />
         <a href="#" className={DOEPHONE_HERO_WAITLIST_CLASS}>

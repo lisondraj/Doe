@@ -301,6 +301,26 @@ body.mainpage-route {
   gap: 0.3em;
 }
 
+/** Hero copy band — container for width-aware headline sizing. */
+.doephone-hero-copy {
+  container-type: inline-size;
+  container-name: hero-copy;
+}
+
+.doephone-hero-headline {
+  font-size: clamp(3.35rem, min(13.25vw, 14.5cqi), 5.85rem);
+}
+
+html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
+  font-size: clamp(2.35rem, min(12.5vw, 13.25cqi), 5.45rem);
+}
+
+@container hero-copy (max-width: 22rem) {
+  .doephone-hero-headline {
+    font-size: clamp(2.2rem, min(10.8vw, 11.25cqi), 4.85rem);
+  }
+}
+
 .doephone-hero-career-clip {
   --doephone-career-slot: 1.22em;
   height: var(--doephone-career-slot);

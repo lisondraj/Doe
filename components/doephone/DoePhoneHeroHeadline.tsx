@@ -56,10 +56,10 @@ export function DoePhoneHeroHeadline() {
 
   return (
     <h1
-      className={`flex w-full flex-col items-start font-light leading-[1.02] tracking-[-0.03em] text-white text-[clamp(3.35rem,13.25vw,5.85rem)] iphone-page:text-[clamp(3.15rem,12.5vw,5.45rem)] ${suisseIntl.className}`}
+      className={`doephone-hero-headline flex w-full min-w-0 max-w-full flex-col items-start font-light leading-[1.02] tracking-[-0.03em] text-white ${suisseIntl.className}`}
     >
       <span className="doephone-hero-headline-line block">Intelligence</span>
-      <span className="doephone-hero-headline-line doephone-hero-headline-line--second doephone-hero-second-line flex max-w-full items-baseline justify-start whitespace-nowrap">
+      <span className="doephone-hero-headline-line doephone-hero-headline-line--second doephone-hero-second-line flex min-w-0 max-w-full items-baseline justify-start whitespace-nowrap">
         <span className="shrink-0">built for</span>
         <span className="relative inline-grid align-baseline leading-none">
           <span aria-hidden className="invisible col-start-1 row-start-1 select-none font-light">
