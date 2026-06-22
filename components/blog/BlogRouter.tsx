@@ -1,14 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
-import { BlogMobileView } from "./BlogMobileView";
 import { DoeDesktopUnderConstruction } from "@/components/doephone/DoeDesktopUnderConstruction";
 
 type Variant = "phone" | "desktop";
 const QUERY = "(min-width: 1024px)";
 
-export function BlogRouter({ initialVariant }: { initialVariant: Variant }) {
+export function BlogRouter({
+  initialVariant,
+  children,
+}: {
+  initialVariant: Variant;
+  children: ReactNode;
+}) {
   const [variant, setVariant] = useState<Variant>(initialVariant);
 
   useEffect(() => {
@@ -61,5 +66,5 @@ export function BlogRouter({ initialVariant }: { initialVariant: Variant }) {
     };
   }, [variant]);
 
-  return variant === "desktop" ? <DoeDesktopUnderConstruction /> : <BlogMobileView />;
+  return variant === "desktop" ? <DoeDesktopUnderConstruction /> : children;
 }
