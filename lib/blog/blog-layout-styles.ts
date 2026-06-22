@@ -21,8 +21,11 @@ export const BLOG_FOOTER_GAP =
 export const BLOG_CONTENT_PT =
   "pt-[max(11.25rem,calc(env(safe-area-inset-top,0px)+7.75rem))]";
 
-/** Large section title — "One provider, one patient at a time." scale. */
+/** Large section title — used on landing page (Suisse Intl, left-aligned). */
 export const BLOG_PAGE_TITLE_TW = `${DOEPHONE_SECTION_COPY_TW} text-[#1E343A] ${suisseIntl.className}`;
+
+/** Article page title — Lora, centered. */
+export const BLOG_ARTICLE_TITLE_TW = `text-center font-normal leading-[1.06] tracking-[-0.03em] text-[#1E343A] text-[clamp(2.85rem,10.5vw,4.65rem)] ${lora.className}`;
 
 /** Intro / body copy under titles. */
 export const BLOG_BODY_COPY_TW = DOEPHONE_SECTION_MENU_DESCRIPTION_TW;
