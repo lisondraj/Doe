@@ -17,10 +17,14 @@ const CATEGORY_OPTIONS: DropdownOption[] = [
 ];
 
 /* ── Chevron ─────────────────────────────────────────────────── */
-function Chevron({ open }: { open: boolean }) {
+function Chevron({ open, heroVariant }: { open: boolean; heroVariant?: boolean }) {
   return (
     <svg
-      className={`h-[0.7em] w-[0.7em] shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+      className={`shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""} ${
+        heroVariant
+          ? "h-[0.62em] w-[0.62em]"
+          : "h-[0.7em] w-[0.7em]"
+      }`}
       viewBox="0 0 16 16"
       fill="none"
       aria-hidden
@@ -62,11 +66,13 @@ function FilterPill({
   options,
   selected,
   onSelect,
+  heroVariant = false,
 }: {
   label: string;
   options: DropdownOption[];
   selected: string;
   onSelect: (v: string) => void;
+  heroVariant?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -84,13 +90,17 @@ function FilterPill({
     ? options.find((o) => o.value === selected)?.label ?? label
     : label;
 
-  /* Trigger font size — large display label */
-  const triggerSize =
-    `text-[clamp(1.75rem,6.5vw,2.6rem)] iphone-page:text-[clamp(2rem,1.55rem+2.85vmin,3.15rem)]`;
+  const triggerSize = heroVariant
+    ? `text-[clamp(1.38rem,5vw,2rem)] iphone-page:text-[clamp(1.55rem,1.28rem+1.3vmin,2.1rem)]`
+    : `text-[clamp(1.75rem,6.5vw,2.6rem)] iphone-page:text-[clamp(2rem,1.55rem+2.85vmin,3.15rem)]`;
 
-  /* Dropdown item font size */
   const itemSize =
     `text-[clamp(1.22rem,1.08rem+0.68vmin,1.45rem)] iphone-page:text-[clamp(1.38rem,1.15rem+1.05vmin,1.72rem)]`;
+
+  /* Hero variant: panel opens upward and aligns to the right edge of the button */
+  const panelPosition = heroVariant
+    ? "right-0 bottom-[calc(100%+0.45rem)]"
+    : "left-0 top-[calc(100%+0.55rem)]";
 
   return (
     <div ref={ref} className="relative">
@@ -103,13 +113,13 @@ function FilterPill({
         aria-expanded={open}
       >
         {displayLabel}
-        <Chevron open={open} />
+        <Chevron open={open} heroVariant={heroVariant} />
       </button>
 
       {/* Dropdown panel */}
       {open && (
         <div
-          className={`blog-dropdown-menu absolute left-0 top-[calc(100%+0.55rem)] z-50 min-w-[8.5rem] overflow-hidden rounded-[1rem] border border-[#D9D4CC] bg-[#F5F2EE] shadow-[0_10px_32px_rgba(0,0,0,0.09),0_2px_6px_rgba(0,0,0,0.04)]`}
+          className={`blog-dropdown-menu absolute z-50 min-w-[8.5rem] overflow-hidden rounded-[1rem] border border-[#D9D4CC] bg-[#F5F2EE] shadow-[0_10px_32px_rgba(0,0,0,0.09),0_2px_6px_rgba(0,0,0,0.04)] ${panelPosition}`}
           role="listbox"
         >
           {options.map((opt, i) => {
@@ -153,9 +163,30 @@ function FilterPill({
 }
 
 /* ── Bar ─────────────────────────────────────────────────────── */
-export function BlogFilterBar() {
+export function BlogFilterBar({ variant = "standalone" }: { variant?: "standalone" | "hero" }) {
   const [year, setYear]         = useState("");
   const [category, setCategory] = useState("");
+
+  if (variant === "hero") {
+    return (
+      <div className="flex flex-col items-end gap-[clamp(0.45rem,0.3rem+0.65vmin,0.75rem)] iphone-page:gap-[clamp(0.5rem,0.38rem+0.6vmin,0.8rem)]">
+        <FilterPill
+          label="2026"
+          options={YEAR_OPTIONS}
+          selected={year}
+          onSelect={setYear}
+          heroVariant
+        />
+        <FilterPill
+          label="All Articles"
+          options={CATEGORY_OPTIONS}
+          selected={category}
+          onSelect={setCategory}
+          heroVariant
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="flex w-full items-baseline justify-center gap-8 iphone-page:gap-[clamp(1.8rem,1.4rem+2vmin,2.8rem)]">

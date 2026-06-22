@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 
-import { BlogFilterBar } from "@/components/blog/BlogFilterBar";
 import { BlogLandingHero } from "@/components/blog/BlogLandingHero";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
@@ -45,11 +44,7 @@ export function BlogIndexMobileView() {
       <main className={`w-full ${BLOG_CONTENT_PT}`}>
         <BlogLandingHero />
 
-        <div className="mt-12 iphone-page:mt-[clamp(2.5rem,2rem+2.5vmin,4rem)] mb-12 iphone-page:mb-[clamp(2.5rem,2rem+2.5vmin,4rem)]">
-          <BlogFilterBar />
-        </div>
-
-        <ul className="flex w-full flex-col">
+        <ul className="mt-12 iphone-page:mt-[clamp(2.5rem,2rem+2.5vmin,4rem)] flex w-full flex-col">
           {BLOG_ARTICLES.slice(0, 3).map((article, index) => (
             <li key={article.slug}>
               {index > 0 ? (

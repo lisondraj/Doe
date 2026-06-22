@@ -79,27 +79,30 @@ function renderBlock(block: ArticleBlock, index: number) {
         </div>
       );
 
-    case "quote":
+    case "quote": {
+      const parts = block.text.split(/\.\s+/);
+      const [firstSentence, ...rest] = parts;
+      const restText = rest.join(". ");
       return (
-        <figure
-          key={index}
-          className={`${VISUAL_GAP} w-full rounded-[clamp(1.1rem,0.95rem+0.75vmin,1.45rem)] border border-[#D9D4CC] bg-[#EBE7E0] px-[clamp(1.6rem,1.35rem+1.15vmin,2.2rem)] py-[clamp(1.8rem,1.5rem+1.35vmin,2.6rem)]`}
-          role="blockquote"
-        >
-          <blockquote
-            className={`font-normal leading-[1.18] tracking-[-0.025em] text-[#1E343A] text-[clamp(1.62rem,1.3rem+1.45vmin,2.1rem)] iphone-page:text-[clamp(1.85rem,1.45rem+2vmin,2.6rem)] ${lora.className}`}
-          >
-            &ldquo;{block.text}&rdquo;
-          </blockquote>
-          {block.attribution && (
-            <figcaption
-              className={`mt-5 iphone-page:mt-6 font-medium text-[#9A8F82] text-[clamp(1.08rem,0.95rem+0.55vmin,1.28rem)] iphone-page:text-[clamp(1.22rem,1.05rem+0.8vmin,1.48rem)] ${dmSans.className}`}
+        <div key={index} className={`${VISUAL_GAP} flex w-full justify-center`}>
+          <div className="text-left">
+            <blockquote
+              className={`font-normal leading-[1.22] tracking-[-0.025em] text-[#1E343A] text-[clamp(1.62rem,1.3rem+1.45vmin,2.1rem)] iphone-page:text-[clamp(1.85rem,1.45rem+2vmin,2.6rem)] ${lora.className}`}
             >
-              — {block.attribution}
-            </figcaption>
-          )}
-        </figure>
+              <span className="block">&ldquo;{firstSentence}.</span>
+              {restText && <span className="block">{restText}&rdquo;</span>}
+            </blockquote>
+            {block.attribution && (
+              <p
+                className={`mt-4 iphone-page:mt-5 font-medium text-[#9A8F82] text-[clamp(1.08rem,0.95rem+0.55vmin,1.28rem)] iphone-page:text-[clamp(1.22rem,1.05rem+0.8vmin,1.48rem)] ${dmSans.className}`}
+              >
+                &mdash;&thinsp;{block.attribution}
+              </p>
+            )}
+          </div>
+        </div>
       );
+    }
 
     default:
       return null;

@@ -65,8 +65,12 @@ export const BLOG_LANDING_HERO_HEIGHT = "h-[66.667svh] min-h-[66.667svh]";
 
 export const BLOG_LANDING_HERO_BOX_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} border border-[#D9D4CC] bg-[#EBE7E0]`;
 
+/** Shared bottom padding/inset used by both the headline (left) and filter (right). */
+export const BLOG_LANDING_HERO_CORNER_PAD =
+  "px-8 pb-8 iphone-page:px-[clamp(2rem,1.65rem+1.45vmin,2.6rem)] iphone-page:pb-[clamp(2rem,1.65rem+1.45vmin,2.6rem)]";
+
 /** Lora headline anchored bottom-left inside the landing hero box. */
-export const BLOG_LANDING_HERO_HEADLINE_TW = `absolute bottom-0 left-0 z-[2] px-8 pb-8 pt-0 text-left font-normal leading-[1.06] tracking-[-0.03em] text-[#1E343A] text-[clamp(2.65rem,9.5vw,4.2rem)] iphone-page:px-[clamp(2rem,1.65rem+1.45vmin,2.6rem)] iphone-page:pb-[clamp(2rem,1.65rem+1.45vmin,2.6rem)] iphone-page:text-[clamp(2.95rem,2.2rem+4.2vmin,5rem)] ${lora.className}`;
+export const BLOG_LANDING_HERO_HEADLINE_TW = `absolute bottom-0 left-0 z-[2] pt-0 text-left font-normal leading-[1.06] tracking-[-0.03em] text-[#1E343A] text-[clamp(2.2rem,8vw,3.5rem)] iphone-page:text-[clamp(2.45rem,1.85rem+3.5vmin,4.3rem)] ${BLOG_LANDING_HERO_CORNER_PAD} ${lora.className}`;
 
 /** Gap between landing hero and article list. */
 export const BLOG_LANDING_HERO_GAP = DOEPHONE_SECTION_CAROUSEL_MENU_GAP;
