@@ -221,6 +221,11 @@ body.mainpage-route {
 }
 
 /* /doephone hero polar overlay — constant low opacity; one-time build animation. */
+.doephone-hero-polar-overlay--intro .doephone-hero-polar-radial-half--intro,
+.doephone-hero-polar-overlay--intro .doephone-hero-polar-ring--intro {
+  opacity: 0;
+}
+
 .doephone-hero-polar-segment {
   stroke: rgba(255, 255, 255, 0.24);
   stroke-width: 0.8;
@@ -236,18 +241,24 @@ body.mainpage-route {
 }
 
 @keyframes doephone-hero-polar-radial-half-in {
-  from {
+  0% {
+    opacity: 0;
     stroke-dasharray: 1;
     stroke-dashoffset: 1;
   }
 
-  to {
+  6% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
     stroke-dasharray: 1;
     stroke-dashoffset: 0;
   }
 }
 
-/* Rings scale out from center after radials finish (inner → outer). */
+/* Three rings pulse out from center after radials finish (inner → outer). */
 .doephone-hero-polar-ring--intro {
   transform-box: fill-box;
   transform-origin: center;
@@ -263,8 +274,12 @@ body.mainpage-route {
     transform: scale(0.001);
   }
 
-  12% {
+  18% {
     opacity: 1;
+  }
+
+  70% {
+    transform: scale(1.05);
   }
 
   100% {

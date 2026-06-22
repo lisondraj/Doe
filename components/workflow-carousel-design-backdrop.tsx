@@ -6,13 +6,13 @@ import {
 } from "@/lib/workflow-carousel-design-backdrops";
 import {
   doephoneHeroIntroRingDelayMs,
+  DOEPHONE_HERO_INTRO_RING_COUNT,
   DOEPHONE_HERO_INTRO_RING_MS,
 } from "@/lib/doephone/hero-intro-timing";
 import type { CSSProperties } from "react";
 
 const POLAR_VIEW = 1000;
 const POLAR_CX = POLAR_VIEW / 2;
-const POLAR_RING_COUNT = 3;
 const POLAR_RING_STEP = 150;
 
 function polarCenterYUnits(centerY = "36%"): number {
@@ -70,6 +70,7 @@ function PolarGridOverlay({
   introOnLoad?: boolean;
 }) {
   const polarCy = polarCenterYUnits(centerY);
+  const ringCount = introOnLoad ? DOEPHONE_HERO_INTRO_RING_COUNT : 6;
   const ringStyle = (index: number): CSSProperties | undefined =>
     introOnLoad
       ? {
@@ -117,12 +118,12 @@ function PolarGridOverlay({
               d={polarSpokePathD(POLAR_CX, polarCy, angle)}
               fill="none"
               strokeWidth="0.8"
-              strokeLinecap="round"
+              strokeLinecap="butt"
               vectorEffect="non-scaling-stroke"
             />
           );
         }).flat()}
-        {Array.from({ length: introOnLoad ? POLAR_RING_COUNT : 6 }, (_, j) => {
+        {Array.from({ length: ringCount }, (_, j) => {
           const r = (j + 1) * POLAR_RING_STEP;
           return (
             <circle
@@ -136,6 +137,7 @@ function PolarGridOverlay({
               r={r}
               fill="none"
               strokeWidth="0.8"
+              strokeLinecap="round"
               vectorEffect="non-scaling-stroke"
             />
           );
