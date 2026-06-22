@@ -41,7 +41,7 @@ export function DoePhoneCommunicationSection() {
         <DoePhoneSectionTitle
           segmentedReveal
           revealed={revealed}
-          line1="Labs in.."
+          line1="Labs in."
           line2="Referrals out."
         />
       </div>
