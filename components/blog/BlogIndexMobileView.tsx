@@ -45,9 +45,17 @@ export function BlogIndexMobileView() {
       <main className={`w-full ${BLOG_CONTENT_PT}`}>
         <BlogLandingHero />
 
-        <div className="mt-14 iphone-page:mt-[clamp(3rem,2.5rem+2.5vmin,4.5rem)] mb-14 iphone-page:mb-[clamp(3rem,2.5rem+2.5vmin,4.5rem)]">
+        <div
+          aria-hidden
+          className="mt-12 iphone-page:mt-[clamp(2.5rem,2rem+2.5vmin,4rem)] h-px w-full bg-[#9A8F82]"
+        />
+        <div className="py-6 iphone-page:py-[clamp(1.25rem,1rem+1.25vmin,2rem)]">
           <BlogFilterBar />
         </div>
+        <div
+          aria-hidden
+          className="mb-12 iphone-page:mb-[clamp(2.5rem,2rem+2.5vmin,4rem)] h-px w-full bg-[#9A8F82]"
+        />
 
         <ul className="flex w-full flex-col">
           {BLOG_ARTICLES.slice(0, 3).map((article, index) => (
