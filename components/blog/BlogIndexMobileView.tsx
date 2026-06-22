@@ -11,7 +11,7 @@ export function BlogIndexMobileView() {
   return (
     <BlogMobileShell>
       <main
-        className={`mx-auto w-full max-w-[min(100%,42rem)] pb-8 pt-[max(11.25rem,calc(env(safe-area-inset-top,0px)+7.75rem))] ${suisseIntl.className}`}
+        className={`mx-auto w-full max-w-[min(100%,42rem)] pb-4 pt-[max(11.25rem,calc(env(safe-area-inset-top,0px)+7.75rem))] ${suisseIntl.className}`}
       >
         <h1
           className={`text-center text-[clamp(2.85rem,10.5vw,4.65rem)] font-normal leading-[1.06] tracking-[-0.03em] text-[#111827] ${lora.className}`}

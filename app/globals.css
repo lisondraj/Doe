@@ -42,11 +42,11 @@ html:has(.doephone-mobile-root) body {
 
 html:has(.blog-mobile-root) {
   font-size: 100%;
-  background-color: #d4893f;
+  background-color: #f7f6f3;
 }
 
 html:has(.blog-mobile-root) body {
-  background-color: #d4893f;
+  background-color: #f7f6f3;
 }
 
 .blog-mobile-root {
