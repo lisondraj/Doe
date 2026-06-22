@@ -12,11 +12,15 @@ const FOOTER_LINKS = [
   { href: "/", label: "Our Vision" },
 ] as const;
 
-export function HomeFooter() {
+export function HomeFooter({ compact = false }: { compact?: boolean }) {
   return (
     <>
       <footer
-        className="relative z-10 mt-0 flex min-h-[min(69vh,42rem)] w-screen flex-col justify-end overflow-x-clip overflow-y-hidden pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] iphone-page:min-h-[66vh]"
+        className={`relative z-10 mt-0 flex w-screen flex-col justify-end overflow-x-clip overflow-y-hidden pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] ${
+          compact
+            ? "min-h-0"
+            : "min-h-[min(69vh,42rem)] iphone-page:min-h-[66vh]"
+        }`}
         style={{
           width: "100vw",
           marginLeft: "calc(50% - 50vw)",
@@ -69,7 +73,11 @@ export function HomeFooter() {
           }}
         />
 
-        <div className="relative z-10 flex w-full flex-1 flex-col justify-end pt-10 md:pt-16">
+        <div
+          className={`relative z-10 flex w-full flex-col justify-end ${
+            compact ? "pt-6 iphone-page:pt-7" : "flex-1 pt-10 md:pt-16"
+          }`}
+        >
           <div
             className={`mb-14 flex w-full items-end justify-between gap-8 md:mb-16 iphone-page:mb-12 iphone-page:gap-6 ${DOEPHONE_FOOTER_CONTENT_INSET}`}
           >

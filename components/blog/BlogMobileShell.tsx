@@ -16,7 +16,7 @@ export function BlogMobileShell({ children }: { children: ReactNode }) {
       <div className="blog-page-root relative z-0 px-[max(1.5rem,env(safe-area-inset-left,0px))] pr-[max(1.5rem,env(safe-area-inset-right,0px))]">
         {children}
       </div>
-      <HomeFooter />
+      <HomeFooter compact />
     </div>
   );
 }
