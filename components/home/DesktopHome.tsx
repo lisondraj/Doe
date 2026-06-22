@@ -220,7 +220,6 @@ const CAROUSEL_CATEGORY_WORDS = [
   "Inbox",
   "Agent",
   "Ambient",
-  "Front Desk",
   "Labs",
   "Referrals",
   "Patient",
@@ -229,7 +228,7 @@ const CAROUSEL_CATEGORY_WORDS = [
 ] as const;
 
 /** Widest label at carousel typography — invisible reserve keeps ↑↓ column fixed */
-const CAROUSEL_CATEGORY_WORD_WIDTH_ANCHOR = "Front Desk";
+const CAROUSEL_CATEGORY_WORD_WIDTH_ANCHOR = "Referrals";
 
 const lora = Lora({
   subsets: ["latin"],
@@ -474,10 +473,10 @@ export function DesktopHome() {
    * AI prompt card on [2,3].
    * Page scroll unlocks only once this reaches DESKTOP_HERO_SCROLL_LINEAR_COMPLETE.
    */
-  const [desktopHeroScrollLinear, setDesktopHeroScrollLinear] = useState(0);
-  const desktopHeroWheelLinearRef = useRef(0);
-  const desktopHeroScrollReleasedRef = useRef(false);
-  const [desktopHeroScrollReleased, setDesktopHeroScrollReleased] = useState(false);
+  const [desktopHeroScrollLinear, setDesktopHeroScrollLinear] = useState(1);
+  const desktopHeroWheelLinearRef = useRef(1);
+  const desktopHeroScrollReleasedRef = useRef(true);
+  const [desktopHeroScrollReleased, setDesktopHeroScrollReleased] = useState(true);
 
   /** Line-1 span ref — getBCR gives true ink width even if the paragraph parent is max-w clamped. */
   const desktopHeroMissionLine1SpanRef = useRef<HTMLSpanElement>(null);
@@ -521,22 +520,8 @@ export function DesktopHome() {
     };
   }, []);
 
-  /** Breakpoint synced with carousel/phone UX — declare before hero intro hooks that read it */
+  /** Breakpoint synced with carousel/phone UX — declare before hero hooks that read it */
   const [isPhoneLayout, setIsPhoneLayout] = useState(false);
-
-  /** Desktop hero intro: Doe + tagline share the same fade (no subtitle lag). */
-  const [desktopHeroIntroDoe, setDesktopHeroIntroDoe] = useState(isPhoneLayout);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || isPhoneLayout) {
-      setDesktopHeroIntroDoe(true);
-      return;
-    }
-    const revealDoeMs = 90;
-    const t0 = window.setTimeout(() => setDesktopHeroIntroDoe(true), revealDoeMs);
-    return () => window.clearTimeout(t0);
-  }, [isPhoneLayout]);
 
   const buildSectionRef = useRef<HTMLDivElement>(null);
   const [buildTitleOpacity, setBuildTitleOpacity] = useState(0);
@@ -1308,12 +1293,8 @@ export function DesktopHome() {
     const pct = `${desktopHeroBackdropZoom * 100}% ${desktopHeroBackdropZoom * 100}%`;
     return `${pct}, ${pct}, ${pct}, ${pct}, ${pct}`;
   })();
-  /** Center wordmark + tagline fade with hero zoom */
-  const desktopHeroForegroundOpacity = isPhoneLayout
-    ? 1
-    : Math.max(0, 1 - desktopHeroZoomProgress);
 
-  /** Show mission surface only once zoom+Doe scrubbing has finished — still scroll-locked until type phase completes */
+  /** Show mission surface once the hero opens on the orange gradient (zoom phase skipped). */
   const desktopHeroMissionBlockOpacity =
     isPhoneLayout || prefersReducedMotion
       ? 0
@@ -1720,39 +1701,6 @@ export function DesktopHome() {
           </div>
         )}
 
-        <div className="absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
-          <div className="mx-auto max-w-[900px] px-8 text-center">
-            <h1
-              className={`mb-6 font-normal leading-[0.88] tracking-tight text-white transition-[opacity,transform] duration-[850ms] ease-out will-change-[opacity] md:hover:-translate-y-1 md:hover:text-white ${lora.className}`}
-              style={{
-                fontSize: "clamp(4.5rem, 14vw, 10rem)",
-                opacity: desktopHeroForegroundOpacity * (desktopHeroIntroDoe ? 1 : 0),
-                transform:
-                  prefersReducedMotion || isPhoneLayout
-                    ? undefined
-                    : desktopHeroIntroDoe
-                      ? "translateY(0) scale(1)"
-                      : "translateY(12px) scale(0.98)",
-              }}
-            >
-              Doe
-            </h1>
-            <p
-              className={`mx-auto max-w-[min(40rem,calc(100vw-4rem))] px-4 text-center text-lg font-medium leading-snug text-white/90 transition-[opacity,transform] duration-[850ms] ease-out sm:text-xl ${inter.className}`}
-              style={{
-                opacity: desktopHeroForegroundOpacity * (desktopHeroIntroDoe ? 1 : 0),
-                transform:
-                  prefersReducedMotion || isPhoneLayout
-                    ? undefined
-                    : desktopHeroIntroDoe
-                      ? "translateY(0) scale(1)"
-                      : "translateY(12px) scale(0.985)",
-              }}
-            >
-              More than an AI inbox.
-            </p>
-          </div>
-        </div>
       </div>
       </div>
 
@@ -2103,11 +2051,6 @@ export function DesktopHome() {
               "Citations ride along for the note",
             ],
             [
-              "Voice AI when reception is underwater",
-              "Turns calls into structured EMR tasks",
-              "Humans stay one escalation away",
-            ],
-            [
               "Incoming labs sorted by urgency",
               "AI synopsis first—you verify fast",
               "Sign once; chart sync follows",
@@ -2272,36 +2215,6 @@ export function DesktopHome() {
                             <div style={{ width: 28, height: 14, borderRadius: 20, background: i === 0 ? '#E6EFF0' : '#EBEBEB' }} />
                           </div>
                         ))}
-                      </div>
-                    </div>
-                  </div>
-                );
-              }
-
-              // Front Desk UI — intake / reception
-              if (currentWord === 'Front Desk') {
-                return (
-                  <div style={{ display: 'flex', width: '100%', height: '100%' }}>
-                    <Sidebar />
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#F7F6F3' }}>
-                      <div style={{ height: 40, borderBottom: '1px solid #E6E6E6', background: '#ffffff', display: 'flex', alignItems: 'center', padding: '0 14px' }}>
-                        <div style={{ width: 100, height: 6, borderRadius: 3, background: '#D4D4D4' }} />
-                      </div>
-                      <div style={{ flex: 1, padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-                          {[1, 2, 3, 4].map((i) => (
-                            <div key={i} style={{ height: 48, borderRadius: 9, background: '#ffffff', border: '1px solid #E6E6E6', padding: '8px 10px', opacity: i === 1 ? 1 : i === 2 ? 0.7 : i === 3 ? 0.45 : 0.25 }}>
-                              <div style={{ width: '60%', height: 4, borderRadius: 3, background: '#C8C8C8', marginBottom: 6 }} />
-                              <div style={{ width: '40%', height: 3, borderRadius: 3, background: '#DCDCDC' }} />
-                            </div>
-                          ))}
-                        </div>
-                        <div style={{ flex: 1, borderRadius: 9, background: '#ffffff', border: '1px solid #E6E6E6', padding: '10px 12px' }}>
-                          <div style={{ width: '70%', height: 4, borderRadius: 3, background: '#C8C8C8', marginBottom: 8 }} />
-                          <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
-                            {[1, 2, 3].map(i => <div key={i} style={{ flex: 1, height: 32, borderRadius: 6, background: '#F0F0F0' }} />)}
-                          </div>
-                        </div>
                       </div>
                     </div>
                   </div>
