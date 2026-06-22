@@ -307,12 +307,18 @@ body.mainpage-route {
   container-name: hero-copy;
 }
 
+/* /doephone mobile — symmetric safe-area gutters (not gated on iphone-page variant). */
+.doephone-mobile-root .doephone-hero-copy-inset {
+  padding-left: max(2.35rem, calc(env(safe-area-inset-left, 0px) + 5.25vmin));
+  padding-right: max(2.35rem, calc(env(safe-area-inset-right, 0px) + 5.25vmin));
+}
+
 .doephone-hero-headline {
-  font-size: clamp(3.35rem, min(13.25vw, 14.5cqi), 5.85rem);
+  font-size: clamp(2rem, 10.75cqi, 5.85rem);
 }
 
 html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
-  font-size: clamp(2.35rem, min(12.5vw, 13.25cqi), 5.45rem);
+  font-size: clamp(1.85rem, 10.25cqi, 5.45rem);
 }
 
 .doephone-hero-career-slot {
