@@ -60,8 +60,8 @@ export const BLOG_EYEBROW_TW = `text-[clamp(1.18rem,1rem+0.78vmin,1.42rem)] ipho
 /** Closing-section feature card box. */
 export const BLOG_FEATURE_BOX_TW = `${DOEPHONE_SECTION_CLOSING_FEATURE_HEIGHT} ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`;
 
-/** Landing hero graphic box — two-thirds iPhone viewport, deeper beige with inset border. */
-export const BLOG_LANDING_HERO_HEIGHT = "h-[66.667dvh] min-h-[66.667dvh]";
+/** Landing hero graphic box — two-thirds stable viewport height (svh never changes on scroll). */
+export const BLOG_LANDING_HERO_HEIGHT = "h-[66.667svh] min-h-[66.667svh]";
 
 export const BLOG_LANDING_HERO_BOX_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} border border-[#D9D4CC] bg-[#EBE7E0]`;
 

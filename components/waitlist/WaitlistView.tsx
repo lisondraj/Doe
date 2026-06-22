@@ -8,7 +8,7 @@ import { BLOG_CONTENT_PT } from "@/lib/blog/blog-layout-styles";
 export function WaitlistView() {
   return (
     <div
-      className="relative z-0 min-h-[100dvh] overflow-x-hidden bg-[#F7F6F3]"
+      className="relative z-0 min-h-[100svh] overflow-x-hidden bg-[#F7F6F3]"
       suppressHydrationWarning
       data-doeforvc-view="iphone"
     >
@@ -17,7 +17,7 @@ export function WaitlistView() {
       <div className={`relative z-0 ${BLOG_PAGE_INSET_X} ${BLOG_FOOTER_GAP}`}>
         <main className={`w-full ${BLOG_CONTENT_PT}`}>
           {/* Beige hero section — placeholder for waitlist content */}
-          <div className="w-full rounded-[clamp(1.1rem,0.95rem+0.75vmin,1.45rem)] border border-[#D9D4CC] bg-[#EBE7E0] min-h-[70dvh]" />
+          <div className="w-full rounded-[clamp(1.1rem,0.95rem+0.75vmin,1.45rem)] border border-[#D9D4CC] bg-[#EBE7E0] min-h-[70svh]" />
         </main>
       </div>
 

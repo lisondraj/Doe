@@ -9,7 +9,7 @@ import { BLOG_FOOTER_GAP, BLOG_PAGE_INSET_X } from "@/lib/blog/blog-layout-style
 export function BlogMobileShell({ children }: { children: ReactNode }) {
   return (
     <div
-      className="blog-mobile-root relative z-0 min-h-[100dvh] overflow-x-hidden bg-[#F7F6F3]"
+      className="blog-mobile-root relative z-0 min-h-[100svh] overflow-x-hidden bg-[#F7F6F3]"
       suppressHydrationWarning
       data-doeforvc-view="iphone"
     >
