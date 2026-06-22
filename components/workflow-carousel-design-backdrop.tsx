@@ -10,22 +10,53 @@ import {
 } from "@/lib/doephone/hero-intro-timing";
 import type { CSSProperties } from "react";
 
-const POLAR_CX = 500;
-/** Long enough to reach viewport edges under xMidYMid slice. */
-const POLAR_SPOKE_RADIUS = 780;
+const POLAR_VIEW = 1000;
+const POLAR_CX = POLAR_VIEW / 2;
 const POLAR_RING_COUNT = 3;
 const POLAR_RING_STEP = 150;
 
 function polarCenterYUnits(centerY = "36%"): number {
   const pct = centerY.endsWith("%") ? parseFloat(centerY) : 36;
-  return (pct / 100) * 1000;
+  return (pct / 100) * POLAR_VIEW;
 }
 
-function polarRadialPathD(angleDeg: number, centerYUnits: number): string {
+/** Ray from center through viewBox — endpoints always sit on the 1000×1000 bounds. */
+function polarSpokeEndpoints(cx: number, cy: number, angleDeg: number) {
   const rad = (angleDeg * Math.PI) / 180;
-  const x = Math.cos(rad) * POLAR_SPOKE_RADIUS;
-  const y = Math.sin(rad) * POLAR_SPOKE_RADIUS;
-  return `M ${POLAR_CX - x} ${centerYUnits - y} L ${POLAR_CX + x} ${centerYUnits + y}`;
+  const dx = Math.cos(rad);
+  const dy = Math.sin(rad);
+  const ts: number[] = [];
+
+  if (Math.abs(dx) > 1e-9) {
+    ts.push(-cx / dx, (POLAR_VIEW - cx) / dx);
+  }
+  if (Math.abs(dy) > 1e-9) {
+    ts.push(-cy / dy, (POLAR_VIEW - cy) / dy);
+  }
+
+  const negative = ts.filter((t) => t < 0);
+  const positive = ts.filter((t) => t > 0);
+  const tNeg = Math.min(...negative);
+  const tPos = Math.max(...positive);
+
+  return {
+    x1: cx + tNeg * dx,
+    y1: cy + tNeg * dy,
+    x2: cx + tPos * dx,
+    y2: cy + tPos * dy,
+  };
+}
+
+function polarSpokePathD(
+  cx: number,
+  cy: number,
+  angleDeg: number,
+  half?: "a" | "b",
+): string {
+  const { x1, y1, x2, y2 } = polarSpokeEndpoints(cx, cy, angleDeg);
+  if (half === "a") return `M ${x1} ${y1} L ${cx} ${cy}`;
+  if (half === "b") return `M ${x2} ${y2} L ${cx} ${cy}`;
+  return `M ${x1} ${y1} L ${x2} ${y2}`;
 }
 
 /** Built for you orange panel — radial spokes + concentric rings. */
@@ -56,28 +87,41 @@ function PolarGridOverlay({
     >
       <svg
         className="pointer-events-none absolute inset-0 h-full w-full"
-        viewBox="0 0 1000 1000"
+        viewBox={`0 0 ${POLAR_VIEW} ${POLAR_VIEW}`}
         preserveAspectRatio="xMidYMid slice"
         style={patternScale !== 1 ? { transform: `scale(${patternScale})`, transformOrigin: "center" } : undefined}
         xmlns="http://www.w3.org/2000/svg"
       >
         {Array.from({ length: 8 }, (_, j) => {
           const angle = j * 45;
+
+          if (introOnLoad) {
+            return (["a", "b"] as const).map((half) => (
+              <path
+                key={`polar-radial-${j}-${half}`}
+                pathLength={1}
+                className="doephone-hero-polar-segment doephone-hero-polar-radial-half doephone-hero-polar-radial-half--intro"
+                d={polarSpokePathD(POLAR_CX, polarCy, angle, half)}
+                fill="none"
+                strokeWidth="0.8"
+                strokeLinecap="round"
+                vectorEffect="non-scaling-stroke"
+              />
+            ));
+          }
+
           return (
             <path
               key={`polar-radial-${j}`}
-              pathLength={1}
-              className={`doephone-hero-polar-segment doephone-hero-polar-radial${
-                introOnLoad ? " doephone-hero-polar-radial--intro" : ""
-              }`}
-              d={polarRadialPathD(angle, polarCy)}
+              className="doephone-hero-polar-segment doephone-hero-polar-radial"
+              d={polarSpokePathD(POLAR_CX, polarCy, angle)}
               fill="none"
               strokeWidth="0.8"
               strokeLinecap="round"
               vectorEffect="non-scaling-stroke"
             />
           );
-        })}
+        }).flat()}
         {Array.from({ length: introOnLoad ? POLAR_RING_COUNT : 6 }, (_, j) => {
           const r = (j + 1) * POLAR_RING_STEP;
           return (

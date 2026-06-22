@@ -39,6 +39,8 @@ export function doephoneHeroIntroHeadlineDelayMs(line: 1 | 2 | "cta"): number {
 export function doephoneHeroIntroStyleVars(): Record<string, string> {
   return {
     "--doephone-hero-polar-start": `${DOEPHONE_HERO_INTRO_POLAR_START_MS}ms`,
+    "--doephone-hero-polar-radial-duration": `${DOEPHONE_HERO_INTRO_RADIAL_MS}ms`,
+    "--doephone-hero-polar-ring-duration": `${DOEPHONE_HERO_INTRO_RING_MS}ms`,
     "--doephone-hero-headline-1": `${doephoneHeroIntroHeadlineDelayMs(1)}ms`,
     "--doephone-hero-headline-2": `${doephoneHeroIntroHeadlineDelayMs(2)}ms`,
     "--doephone-hero-headline-cta": `${doephoneHeroIntroHeadlineDelayMs("cta")}ms`,

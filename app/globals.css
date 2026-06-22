@@ -227,23 +227,23 @@ body.mainpage-route {
   opacity: 1;
 }
 
-/* Radials grow inward from both edges and meet at center — no dasharray snap at end. */
-.doephone-hero-polar-radial--intro {
-  stroke-dasharray: 0.5 0.5;
+/* Each half-spoke is hidden on load, then draws from the viewport edge inward to center. */
+.doephone-hero-polar-overlay--intro .doephone-hero-polar-radial-half--intro {
+  stroke-dasharray: 1;
   stroke-dashoffset: 1;
-  animation: doephone-hero-polar-radial-in var(--doephone-hero-polar-radial-duration, 1.35s)
+  animation: doephone-hero-polar-radial-half-in var(--doephone-hero-polar-radial-duration, 1.35s)
     cubic-bezier(0.33, 1, 0.36, 1) var(--doephone-hero-polar-start, 0ms) both;
 }
 
-@keyframes doephone-hero-polar-radial-in {
-  0% {
-    stroke-dasharray: 0.5 0.5;
+@keyframes doephone-hero-polar-radial-half-in {
+  from {
+    stroke-dasharray: 1;
     stroke-dashoffset: 1;
   }
 
-  100% {
-    stroke-dasharray: 0.5 0.5;
-    stroke-dashoffset: 0.5;
+  to {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
   }
 }
 
@@ -508,11 +508,11 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
     mask-size: auto;
   }
 
-  .doephone-hero-polar-radial--intro,
+  .doephone-hero-polar-radial-half--intro,
   .doephone-hero-polar-ring--intro {
     animation: none !important;
-    stroke-dasharray: 0.5 0.5;
-    stroke-dashoffset: 0.5;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
     opacity: 1;
     transform: none;
   }
