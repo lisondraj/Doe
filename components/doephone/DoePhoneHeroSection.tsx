@@ -119,7 +119,7 @@ export function DoePhoneHeroSection() {
         className={`doephone-hero-copy absolute inset-0 z-[3] flex min-w-0 flex-col items-start justify-start pt-[max(9rem,calc(env(safe-area-inset-top,0px)+calc(var(--app-vh,100lvh)*0.31)))] pb-8 ${DOEPHONE_HERO_COPY_INSET}`}
       >
         <DoePhoneHeroHeadline />
-        <a href="#" className={DOEPHONE_HERO_WAITLIST_CLASS}>
+        <a href="/waitlist" className={DOEPHONE_HERO_WAITLIST_CLASS}>
           Join Waitlist
         </a>
       </div>

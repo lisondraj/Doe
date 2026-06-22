@@ -88,7 +88,7 @@ function NavChromeStrip({
       </div>
 
       <div className="flex shrink-0 items-center gap-2.5 iphone-page:gap-[clamp(0.45rem,0.35rem+0.65vmin,0.7rem)]">
-        <a href="#" className={DOEPHONE_NAV_WAITLIST_CLASS}>
+        <a href="/waitlist" className={DOEPHONE_NAV_WAITLIST_CLASS}>
           Join Waitlist
         </a>
 
