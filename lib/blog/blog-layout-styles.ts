@@ -30,11 +30,14 @@ export const BLOG_ARTICLE_TITLE_TW = `text-center font-normal leading-[1.06] tra
 /** Intro / body copy under titles. */
 export const BLOG_BODY_COPY_TW = DOEPHONE_SECTION_MENU_DESCRIPTION_TW;
 
+/** Landing card excerpt — slightly larger than body copy for readability at card scale. */
+export const BLOG_LANDING_EXCERPT_TW = `text-[clamp(1.32rem,1.12rem+0.9vmin,1.58rem)] iphone-page:text-[clamp(1.52rem,1.26rem+1.18vmin,1.92rem)] font-normal leading-[1.44] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
+
 /** Card caption under feature visuals — closing section outside copy. */
 export const BLOG_CARD_TITLE_TW = `${DOEPHONE_SECTION_FOOTER_OUTSIDE_CAPTION_TW} text-left text-gray-700`;
 
 /** Landing list card title — DM Sans, close to Inter/Suisse with full weight range. */
-export const BLOG_LANDING_CARD_TITLE_TW = `text-[1.65rem] iphone-page:text-[clamp(1.5rem,0.92rem+2.55vmin,2.65rem)] font-normal leading-snug tracking-tight text-gray-700 ${dmSans.className}`;
+export const BLOG_LANDING_CARD_TITLE_TW = `text-[2rem] iphone-page:text-[clamp(1.85rem,1.12rem+3.1vmin,3.05rem)] font-normal leading-snug tracking-tight text-gray-700 ${dmSans.className}`;
 
 /** Tight gap between landing card title and author/date. */
 export const BLOG_LANDING_TITLE_META_GAP = "mt-1 iphone-page:mt-[clamp(0.2rem,0.12rem+0.35vmin,0.35rem)]";
@@ -49,7 +52,7 @@ export const BLOG_LIST_DIVIDER_LINE = "h-px w-full bg-[#9A8F82]";
 export const BLOG_READ_MORE_TW = `inline-flex items-center gap-2 text-[clamp(1.08rem,0.98rem+0.52vmin,1.22rem)] iphone-page:text-[clamp(1.15rem,1.02rem+0.65vmin,1.3rem)] font-medium text-[#6B7280] transition-colors group-hover:text-[#1E343A] ${dmSans.className}`;
 
 /** Author · date line under card/article titles. */
-export const BLOG_META_TW = `text-[clamp(1.18rem,1rem+0.78vmin,1.42rem)] iphone-page:text-[clamp(1.38rem,1.14rem+1.05vmin,1.72rem)] font-medium text-[#6B7280] ${dmSans.className}`;
+export const BLOG_META_TW = `text-[clamp(1.32rem,1.12rem+0.9vmin,1.58rem)] iphone-page:text-[clamp(1.52rem,1.26rem+1.18vmin,1.92rem)] font-medium text-[#6B7280] ${dmSans.className}`;
 
 /** Article eyebrow / back link. */
 export const BLOG_EYEBROW_TW = `text-[clamp(1.18rem,1rem+0.78vmin,1.42rem)] iphone-page:text-[clamp(1.38rem,1.14rem+1.05vmin,1.72rem)] font-medium tracking-[0.02em] text-[#6B7280] ${dmSans.className}`;

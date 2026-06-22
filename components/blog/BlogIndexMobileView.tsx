@@ -7,10 +7,10 @@ import { BlogLandingHero } from "@/components/blog/BlogLandingHero";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
 import {
-  BLOG_BODY_COPY_TW,
   BLOG_CARD_STACK,
   BLOG_CONTENT_PT,
   BLOG_LANDING_CARD_TITLE_TW,
+  BLOG_LANDING_EXCERPT_TW,
   BLOG_LANDING_TITLE_META_GAP,
   BLOG_LIST_DIVIDER_LINE,
   BLOG_LIST_DIVIDER_WRAP,
@@ -45,11 +45,11 @@ export function BlogIndexMobileView() {
       <main className={`w-full ${BLOG_CONTENT_PT}`}>
         <BlogLandingHero />
 
-        <div className="mt-10 iphone-page:mt-[clamp(2.35rem,1.85rem+2.35vmin,3.25rem)]">
+        <div className="mt-14 iphone-page:mt-[clamp(3rem,2.5rem+2.5vmin,4.5rem)] mb-14 iphone-page:mb-[clamp(3rem,2.5rem+2.5vmin,4.5rem)]">
           <BlogFilterBar />
         </div>
 
-        <ul className={`flex w-full flex-col ${BLOG_TITLE_VISUAL_GAP}`}>
+        <ul className="flex w-full flex-col">
           {BLOG_ARTICLES.slice(0, 3).map((article, index) => (
             <li key={article.slug}>
               {index > 0 ? (
@@ -73,7 +73,7 @@ export function BlogIndexMobileView() {
                       </span>
                       {article.date}
                     </p>
-                    <p className={`${BLOG_BODY_COPY_TW} !mt-3 line-clamp-2`}>
+                    <p className={`${BLOG_LANDING_EXCERPT_TW} !mt-3 line-clamp-2`}>
                       {article.body[0].type === "p" || article.body[0].type === "p-link" ? article.body[0].text : ""}
                     </p>
                     <span className={`${BLOG_READ_MORE_TW} mt-2.5`}>

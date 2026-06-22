@@ -120,7 +120,7 @@ export function BlogFilterBar() {
   const [category, setCategory] = useState("");
 
   return (
-    <div className="flex w-full items-baseline gap-8 iphone-page:gap-[clamp(1.8rem,1.4rem+2vmin,2.8rem)]">
+    <div className="flex w-full items-baseline justify-center gap-8 iphone-page:gap-[clamp(1.8rem,1.4rem+2vmin,2.8rem)]">
       <FilterPill
         label="2026"
         options={YEAR_OPTIONS}
