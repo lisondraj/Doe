@@ -88,9 +88,9 @@ function FilterPill({
   const triggerSize =
     `text-[clamp(1.75rem,6.5vw,2.6rem)] iphone-page:text-[clamp(2rem,1.55rem+2.85vmin,3.15rem)]`;
 
-  /* Dropdown item font size — smaller, comfortable for a menu */
+  /* Dropdown item font size */
   const itemSize =
-    `text-[clamp(1.08rem,0.95rem+0.65vmin,1.28rem)] iphone-page:text-[clamp(1.22rem,1.02rem+0.95vmin,1.5rem)]`;
+    `text-[clamp(1.22rem,1.08rem+0.68vmin,1.45rem)] iphone-page:text-[clamp(1.38rem,1.15rem+1.05vmin,1.72rem)]`;
 
   return (
     <div ref={ref} className="relative">
