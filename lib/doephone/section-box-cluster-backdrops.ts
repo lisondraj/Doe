@@ -82,8 +82,8 @@ export const DOEPHONE_BOX_CLUSTER_PRESETS: readonly DoePhoneBoxClusterPreset[] =
       "Patients and staff stay in sync.",
     ],
     layout: {
-      left: "absolute top-1/2 left-0 z-[1] h-[100%] w-[27%] -translate-y-1/2 iphone-page:w-[26%]",
-      right: "absolute bottom-[1%] right-0 z-[1] aspect-square w-[49%] iphone-page:w-[47%]",
+      left: "absolute left-0 bottom-[5%] z-[1] h-[42%] w-[48%] iphone-page:bottom-[4%] iphone-page:w-[46%]",
+      right: "absolute right-0 top-[8%] z-[1] h-[56%] w-[26%] iphone-page:top-[7%] iphone-page:w-[24%]",
       center:
         "absolute left-1/2 top-1/2 z-[2] h-[clamp(23rem,63vmin,31.5rem)] w-[98%] max-w-[min(100%,36rem)] -translate-x-1/2 -translate-y-1/2 bg-white iphone-page:h-[clamp(22rem,59vmin,29.5rem)] iphone-page:w-[96%]",
     },
