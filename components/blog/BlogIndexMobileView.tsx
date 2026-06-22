@@ -50,7 +50,7 @@ export function BlogIndexMobileView() {
         </div>
 
         <ul className={`flex w-full flex-col ${BLOG_TITLE_VISUAL_GAP}`}>
-          {BLOG_ARTICLES.map((article, index) => (
+          {BLOG_ARTICLES.slice(0, 3).map((article, index) => (
             <li key={article.slug}>
               {index > 0 ? (
                 <div className={BLOG_LIST_DIVIDER_WRAP} aria-hidden>
@@ -84,6 +84,13 @@ export function BlogIndexMobileView() {
             </li>
           ))}
         </ul>
+
+        <div className="mt-12 iphone-page:mt-14">
+          <a href="#" className={BLOG_READ_MORE_TW}>
+            See more
+            <BlogReadMoreArrow />
+          </a>
+        </div>
       </main>
     </BlogMobileShell>
   );
