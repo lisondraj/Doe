@@ -131,7 +131,10 @@ function PolarGridOverlay({
               className={`doephone-hero-polar-segment doephone-hero-polar-ring${
                 introOnLoad ? " doephone-hero-polar-ring--intro" : ""
               }`}
-              style={ringStyle(j)}
+              style={{
+                ...ringStyle(j),
+                transformOrigin: introOnLoad ? `${POLAR_CX}px ${polarCy}px` : undefined,
+              }}
               cx={POLAR_CX}
               cy={polarCy}
               r={r}
@@ -239,10 +242,10 @@ export function WorkflowCarouselDesignBackdrop({
         style={{
           background: gradientOverride ?? backdrop.gradient,
           backgroundPosition: "center center",
-          backgroundSize: embedded ? "cover" : gradientScale !== 1 ? `${gradientScale * 100}% ${gradientScale * 100}%` : undefined,
-          backgroundRepeat: embedded ? "no-repeat" : gradientScale !== 1 ? "no-repeat" : undefined,
-          transform: embedded && gradientScale !== 1 ? `scale(${gradientScale})` : undefined,
-          willChange: embedded && gradientScale !== 1 ? "transform" : undefined,
+          backgroundSize: gradientScale !== 1
+            ? `${gradientScale * 100}% ${gradientScale * 100}%`
+            : embedded ? "cover" : undefined,
+          backgroundRepeat: embedded || gradientScale !== 1 ? "no-repeat" : undefined,
         }}
         aria-hidden
       />

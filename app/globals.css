@@ -273,10 +273,9 @@ body.mainpage-route {
   }
 }
 
-/* Three rings pulse out from center after radials finish (inner → outer). */
+/* Three rings pulse out from polar center after radials finish (inner → outer).
+   transform-origin is set inline per-ring with exact SVG coordinates for Safari. */
 .doephone-hero-polar-ring--intro {
-  transform-box: fill-box;
-  transform-origin: center;
   opacity: 0;
   transform: scale(0.001);
   animation: doephone-hero-polar-ring-in var(--doephone-hero-polar-ring-duration, 0.82s)
