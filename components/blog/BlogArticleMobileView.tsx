@@ -40,9 +40,16 @@ export function BlogArticleMobileView({ article }: { article: BlogArticle }) {
           {article.date}
         </p>
 
-        <p className="article-body mt-12 max-w-[min(100%,36rem)] text-left text-[clamp(1.45rem,5vw,1.95rem)] font-light leading-[1.55] tracking-[-0.01em] text-[#1F2937]">
-          {article.intro}
-        </p>
+        <div className="article-body mt-12 max-w-[min(100%,36rem)] space-y-10 text-left">
+          {article.body.map((paragraph, index) => (
+            <p
+              key={index}
+              className="text-[clamp(1.45rem,5vw,1.95rem)] font-light leading-[1.55] tracking-[-0.01em] text-[#1F2937]"
+            >
+              {paragraph}
+            </p>
+          ))}
+        </div>
 
         <p className="article-body mt-10 max-w-[min(100%,36rem)] text-left text-[clamp(1.15rem,3.9vw,1.45rem)] font-light leading-[1.5] text-[#374151]">
           Learn more on the{" "}
