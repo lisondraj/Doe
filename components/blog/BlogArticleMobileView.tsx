@@ -30,15 +30,15 @@ export function BlogArticleMobileView({ article }: { article: BlogArticle }) {
           {article.title}
         </h1>
 
-        <BlogHeroVisual backdrop={article.backdrop} />
-
-        <p className="mx-auto mt-10 max-w-[min(100%,34rem)] text-center text-[clamp(1.05rem,3.6vw,1.3rem)] font-semibold text-[#6B7280]">
+        <p className="mx-auto mt-4 max-w-[min(100%,34rem)] text-center text-[clamp(1.05rem,3.6vw,1.3rem)] font-semibold text-[#6B7280]">
           {article.author}
           <span className="mx-2 text-[#9CA3AF]" aria-hidden>
             ·
           </span>
           {article.date}
         </p>
+
+        <BlogHeroVisual backdrop={article.backdrop} />
 
         <div className="article-body mt-12 max-w-[min(100%,36rem)] space-y-10 text-left">
           {article.body.map((paragraph, index) => (

@@ -30,28 +30,22 @@ export function BlogIndexMobileView() {
             >
               <Link
                 href={`/blog/${article.slug}`}
-                className="group block text-left no-underline"
+                className="group block text-center no-underline"
               >
-                <div className="flex items-start gap-5 iphone-page:gap-6">
-                  <BlogHeroVisual backdrop={article.backdrop} compact />
-                  <div className="min-w-0 flex-1 pt-1">
-                    <p className="text-[clamp(0.95rem,3.2vw,1.1rem)] font-medium tracking-[0.02em] text-[#6B7280]">
-                      {article.eyebrow}
-                    </p>
-                    <h2
-                      className={`mt-2 text-[clamp(1.65rem,5.5vw,2.35rem)] font-normal leading-[1.08] tracking-[-0.03em] text-[#111827] transition-colors group-hover:text-[#1E343A] ${lora.className}`}
-                    >
-                      {article.title}
-                    </h2>
-                    <p className="mt-3 text-[clamp(1rem,3.4vw,1.15rem)] font-semibold text-[#6B7280]">
-                      {article.author}
-                      <span className="mx-2 text-[#9CA3AF]" aria-hidden>
-                        ·
-                      </span>
-                      {article.date}
-                    </p>
-                  </div>
-                </div>
+                <BlogHeroVisual backdrop={article.backdrop} variant="list" />
+                <h2 className="mx-auto mt-6 max-w-[min(100%,34rem)] text-[clamp(1.65rem,5.5vw,2.35rem)] font-normal leading-[1.08] tracking-[-0.03em] text-[#111827] transition-colors group-hover:text-[#1E343A]">
+                  {article.title}
+                </h2>
+                <p className="mx-auto mt-3 max-w-[min(100%,34rem)] text-[clamp(1rem,3.4vw,1.15rem)] font-semibold text-[#6B7280]">
+                  {article.author}
+                  <span className="mx-2 text-[#9CA3AF]" aria-hidden>
+                    ·
+                  </span>
+                  {article.date}
+                </p>
+                <p className="mx-auto mt-4 max-w-[min(100%,34rem)] line-clamp-4 text-[clamp(1.05rem,3.6vw,1.25rem)] font-light leading-[1.55] text-[#374151]">
+                  {article.body[0]}
+                </p>
               </Link>
             </li>
           ))}
