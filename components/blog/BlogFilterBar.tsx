@@ -94,7 +94,7 @@ function FilterPill({
                 onSelect(opt.value === selected ? "" : opt.value);
                 setOpen(false);
               }}
-              className={`flex w-full items-center justify-between px-5 py-3.5 text-left transition-colors hover:bg-[#EBE7E0] active:bg-[#E0DBD3] text-[1.05rem] iphone-page:text-[clamp(1.05rem,0.9rem+0.75vmin,1.2rem)] ${dmSans.className} ${
+              className={`flex w-full items-center justify-between px-5 py-4 text-left transition-colors hover:bg-[#EBE7E0] active:bg-[#E0DBD3] text-[clamp(1.75rem,6.5vw,2.6rem)] iphone-page:text-[clamp(2rem,1.55rem+2.85vmin,3.15rem)] ${dmSans.className} ${
                 selected === opt.value
                   ? "font-semibold text-[#1E343A]"
                   : "font-normal text-[#374151]"
@@ -102,7 +102,7 @@ function FilterPill({
             >
               {opt.label}
               {selected === opt.value && (
-                <svg className="ml-3 h-3.5 w-3.5 shrink-0 text-[#C47A5A]" viewBox="0 0 16 16" fill="none" aria-hidden>
+                <svg className="ml-3 h-[0.7em] w-[0.7em] shrink-0 text-[#C47A5A]" viewBox="0 0 16 16" fill="none" aria-hidden>
                   <path d="M3 8l3.5 3.5L13 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               )}
