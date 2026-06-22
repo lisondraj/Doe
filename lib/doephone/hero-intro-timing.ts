@@ -1,7 +1,13 @@
 /** Hero load sequence — gradient zoom in → polar build → headline. */
 
-/** Gradient starts as a tight glow (20 % of final size) and expands to fill the viewport. */
-export const DOEPHONE_HERO_INTRO_GRADIENT_START = 0.20;
+/**
+ * Gradient starts fully covering the viewport at the scroll-max zoom (1.72×),
+ * showing warm copper across the entire screen. It then "zooms out" to 1.0×
+ * over DOEPHONE_HERO_INTRO_GRADIENT_MS ms, revealing the dark-teal outer edge
+ * of the gradient. Because scale stays ≥ 1.0 throughout, the screen is never
+ * covered by a plain background-color (no visible box artifact).
+ */
+export const DOEPHONE_HERO_INTRO_GRADIENT_START = 1.72;
 export const DOEPHONE_HERO_INTRO_GRADIENT_MS = 1200;
 
 /** Polar radials begin once the gradient zoom is fully settled. */
