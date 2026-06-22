@@ -73,7 +73,9 @@ export function BlogIndexMobileView() {
                       </span>
                       {article.date}
                     </p>
-                    <p className={`${BLOG_BODY_COPY_TW} !mt-3 line-clamp-2`}>{article.body[0]}</p>
+                    <p className={`${BLOG_BODY_COPY_TW} !mt-3 line-clamp-2`}>
+                      {article.body[0].type === "p" || article.body[0].type === "p-link" ? article.body[0].text : ""}
+                    </p>
                     <span className={`${BLOG_READ_MORE_TW} mt-2.5`}>
                       Read more
                       <BlogReadMoreArrow />
