@@ -10,12 +10,10 @@ import {
   BLOG_CARD_STACK,
   BLOG_CONTENT_PT,
   BLOG_LANDING_CARD_TITLE_TW,
-  BLOG_LANDING_HERO_GAP,
   BLOG_LANDING_TITLE_META_GAP,
   BLOG_LIST_DIVIDER_LINE,
   BLOG_LIST_DIVIDER_WRAP,
   BLOG_META_TW,
-  BLOG_PAGE_TITLE_TW,
   BLOG_READ_MORE_TW,
   BLOG_TITLE_VISUAL_GAP,
 } from "@/lib/blog/blog-layout-styles";
@@ -44,14 +42,7 @@ export function BlogIndexMobileView() {
   return (
     <BlogMobileShell>
       <main className={`w-full ${BLOG_CONTENT_PT}`}>
-        <h1 className={BLOG_PAGE_TITLE_TW}>
-          <span className="block">Blog</span>
-        </h1>
-        <p className={BLOG_BODY_COPY_TW}>
-          Notes on building AI for healthcare teams.
-        </p>
-
-        <BlogLandingHero className={BLOG_LANDING_HERO_GAP} />
+        <BlogLandingHero />
 
         <ul className={`flex w-full flex-col ${BLOG_TITLE_VISUAL_GAP}`}>
           {BLOG_ARTICLES.map((article, index) => (
