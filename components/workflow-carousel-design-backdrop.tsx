@@ -242,9 +242,18 @@ export function WorkflowCarouselDesignBackdrop({
         style={{
           background: gradientOverride ?? backdrop.gradient,
           backgroundPosition: "center center",
-          backgroundSize: gradientScale !== 1
+          /*
+           * Always use a percentage-based background-size for the embedded hero gradient.
+           * This prevents a jump when switching between percentage and "cover" — "cover"
+           * on a non-square container would produce a differently-sized circle than 100%.
+           * At gradientScale=1 we use 100%, which fills the div exactly (no distortion
+           * artifact because the gradient outer stops are #1E343A, same as section bg).
+           * gradientScale > 1 (scroll zoom) enlarges the tile so only the center orange
+           * is visible. gradientScale < 1 (intro) starts as a tiny centered glow.
+           */
+          backgroundSize: embedded
             ? `${gradientScale * 100}% ${gradientScale * 100}%`
-            : embedded ? "cover" : undefined,
+            : gradientScale !== 1 ? `${gradientScale * 100}% ${gradientScale * 100}%` : undefined,
           backgroundRepeat: embedded || gradientScale !== 1 ? "no-repeat" : undefined,
         }}
         aria-hidden
