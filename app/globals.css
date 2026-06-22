@@ -315,19 +315,15 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
   font-size: clamp(2.35rem, min(12.5vw, 13.25cqi), 5.45rem);
 }
 
-@container hero-copy (max-width: 22rem) {
-  .doephone-hero-headline {
-    font-size: clamp(2.2rem, min(10.8vw, 11.25cqi), 4.85rem);
-  }
+.doephone-hero-career-slot {
+  min-width: 0;
 }
 
 .doephone-hero-career-clip {
-  --doephone-career-slot: 1.22em;
-  height: var(--doephone-career-slot);
+  --doephone-career-slot: 1em;
+  height: 1em;
   overflow: hidden;
   isolation: isolate;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 18%, #000 82%, transparent 100%);
-  mask-image: linear-gradient(to bottom, transparent 0%, #000 18%, #000 82%, transparent 100%);
 }
 
 .doephone-hero-career-track {
@@ -345,6 +341,7 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
   line-height: 1;
   font-weight: 300;
   font-style: normal;
+  overflow: hidden;
 }
 
 @keyframes doephone-hero-headline-in {

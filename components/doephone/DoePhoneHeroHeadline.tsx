@@ -1,7 +1,7 @@
 "use client";
 
 import { suisseIntl } from "@/lib/home/fonts";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 const DOEPHONE_HERO_CAREERS = [
   "doctors",
@@ -22,7 +22,25 @@ const DOEPHONE_HERO_CAREER_WIDTH_SAMPLE = "optometrists.";
 /** Hold each career on screen before advancing. */
 const CAREER_ROTATE_MS = 3800;
 
+const MIN_FIT_SCALE = 0.68;
+
+function fitHeadlineFontSize(headline: HTMLElement, container: HTMLElement) {
+  headline.style.fontSize = "";
+  const available = container.clientWidth;
+  if (available <= 0) return;
+
+  const needed = headline.scrollWidth;
+  if (needed <= available) return;
+
+  const computed = parseFloat(getComputedStyle(headline).fontSize);
+  if (!Number.isFinite(computed) || computed <= 0) return;
+
+  const next = Math.max(computed * MIN_FIT_SCALE, computed * (available / needed) * 0.985);
+  headline.style.fontSize = `${next}px`;
+}
+
 export function DoePhoneHeroHeadline() {
+  const headlineRef = useRef<HTMLHeadingElement>(null);
   const [index, setIndex] = useState(0);
   const [slideTransition, setSlideTransition] = useState(true);
 
@@ -43,6 +61,30 @@ export function DoePhoneHeroHeadline() {
     });
   }, [index]);
 
+  useLayoutEffect(() => {
+    const headline = headlineRef.current;
+    const container = headline?.parentElement;
+    if (!headline || !container) return;
+
+    const measure = () => fitHeadlineFontSize(headline, container);
+
+    measure();
+    const raf = requestAnimationFrame(measure);
+
+    const ro = new ResizeObserver(measure);
+    ro.observe(headline);
+    ro.observe(container);
+    window.addEventListener("resize", measure);
+    window.visualViewport?.addEventListener("resize", measure);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", measure);
+      window.visualViewport?.removeEventListener("resize", measure);
+    };
+  }, [index, slideTransition]);
+
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reducedMotion) return;
@@ -56,12 +98,13 @@ export function DoePhoneHeroHeadline() {
 
   return (
     <h1
+      ref={headlineRef}
       className={`doephone-hero-headline flex w-full min-w-0 max-w-full flex-col items-start font-light leading-[1.02] tracking-[-0.03em] text-white ${suisseIntl.className}`}
     >
       <span className="doephone-hero-headline-line block">Intelligence</span>
       <span className="doephone-hero-headline-line doephone-hero-headline-line--second doephone-hero-second-line flex min-w-0 max-w-full items-baseline justify-start whitespace-nowrap">
         <span className="shrink-0">built for</span>
-        <span className="relative inline-grid align-baseline leading-none">
+        <span className="doephone-hero-career-slot relative inline-grid align-baseline leading-none">
           <span aria-hidden className="invisible col-start-1 row-start-1 select-none font-light">
             {DOEPHONE_HERO_CAREER_WIDTH_SAMPLE}
           </span>

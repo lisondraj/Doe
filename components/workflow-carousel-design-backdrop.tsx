@@ -10,11 +10,22 @@ import {
 } from "@/lib/doephone/hero-intro-timing";
 import type { CSSProperties } from "react";
 
-function polarRadialPathD(angleDeg: number, radius = 500): string {
+const POLAR_CX = 500;
+/** Long enough to reach viewport edges under xMidYMid slice. */
+const POLAR_SPOKE_RADIUS = 780;
+const POLAR_RING_COUNT = 3;
+const POLAR_RING_STEP = 150;
+
+function polarCenterYUnits(centerY = "36%"): number {
+  const pct = centerY.endsWith("%") ? parseFloat(centerY) : 36;
+  return (pct / 100) * 1000;
+}
+
+function polarRadialPathD(angleDeg: number, centerYUnits: number): string {
   const rad = (angleDeg * Math.PI) / 180;
-  const x = Math.cos(rad) * radius;
-  const y = Math.sin(rad) * radius;
-  return `M ${500 - x} ${500 - y} L ${500 + x} ${500 + y}`;
+  const x = Math.cos(rad) * POLAR_SPOKE_RADIUS;
+  const y = Math.sin(rad) * POLAR_SPOKE_RADIUS;
+  return `M ${POLAR_CX - x} ${centerYUnits - y} L ${POLAR_CX + x} ${centerYUnits + y}`;
 }
 
 /** Built for you orange panel — radial spokes + concentric rings. */
@@ -27,7 +38,7 @@ function PolarGridOverlay({
   centerY?: string;
   introOnLoad?: boolean;
 }) {
-  const size = `${118 * patternScale}vmax`;
+  const polarCy = polarCenterYUnits(centerY);
   const ringStyle = (index: number): CSSProperties | undefined =>
     introOnLoad
       ? {
@@ -44,16 +55,11 @@ function PolarGridOverlay({
       aria-hidden
     >
       <svg
-        className="pointer-events-none absolute left-1/2 max-w-none"
-        style={{
-          top: centerY,
-          width: size,
-          height: size,
-          transform: "translate(-50%, -50%)",
-        }}
-        xmlns="http://www.w3.org/2000/svg"
+        className="pointer-events-none absolute inset-0 h-full w-full"
         viewBox="0 0 1000 1000"
-        preserveAspectRatio="xMidYMid meet"
+        preserveAspectRatio="xMidYMid slice"
+        style={patternScale !== 1 ? { transform: `scale(${patternScale})`, transformOrigin: "center" } : undefined}
+        xmlns="http://www.w3.org/2000/svg"
       >
         {Array.from({ length: 8 }, (_, j) => {
           const angle = j * 45;
@@ -64,7 +70,7 @@ function PolarGridOverlay({
               className={`doephone-hero-polar-segment doephone-hero-polar-radial${
                 introOnLoad ? " doephone-hero-polar-radial--intro" : ""
               }`}
-              d={polarRadialPathD(angle)}
+              d={polarRadialPathD(angle, polarCy)}
               fill="none"
               strokeWidth="0.8"
               strokeLinecap="round"
@@ -72,8 +78,8 @@ function PolarGridOverlay({
             />
           );
         })}
-        {Array.from({ length: 6 }, (_, j) => {
-          const r = (j + 1) * 150;
+        {Array.from({ length: introOnLoad ? POLAR_RING_COUNT : 6 }, (_, j) => {
+          const r = (j + 1) * POLAR_RING_STEP;
           return (
             <circle
               key={`polar-ring-${j}`}
@@ -81,8 +87,8 @@ function PolarGridOverlay({
                 introOnLoad ? " doephone-hero-polar-ring--intro" : ""
               }`}
               style={ringStyle(j)}
-              cx="500"
-              cy="500"
+              cx={POLAR_CX}
+              cy={polarCy}
               r={r}
               fill="none"
               strokeWidth="0.8"
