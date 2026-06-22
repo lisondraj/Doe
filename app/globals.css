@@ -40,13 +40,19 @@ html:has(.doephone-mobile-root) body {
   background-color: #f7f6f3;
 }
 
-html:has(.blog-page-root) {
+html:has(.blog-mobile-root) {
   font-size: 100%;
-  background-color: #f7f6f3;
+  background-color: #d4893f;
 }
 
-html:has(.blog-page-root) body {
-  background-color: #f7f6f3;
+html:has(.blog-mobile-root) body {
+  background-color: #d4893f;
+}
+
+.blog-mobile-root {
+  overflow-x: clip;
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
 }
 
 .doephone-mobile-root {

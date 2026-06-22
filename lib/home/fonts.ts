@@ -23,7 +23,9 @@ export const inter = Inter({
 export const suisseIntl = localFont({
   src: [
     { path: "../../fonts/suisse/SuisseIntlTrial-Light.otf", weight: "300", style: "normal" },
+    { path: "../../fonts/suisse/SuisseIntlTrial-LightIt.otf", weight: "300", style: "italic" },
     { path: "../../fonts/suisse/SuisseIntlTrial-Regular.otf", weight: "400", style: "normal" },
+    { path: "../../fonts/suisse/SuisseIntlTrial-RegularIt.otf", weight: "400", style: "italic" },
     { path: "../../fonts/suisse/SuisseIntlTrial-Medium.otf", weight: "500", style: "normal" },
     { path: "../../fonts/suisse/SuisseIntlTrial-Semibold.otf", weight: "600", style: "normal" },
   ],

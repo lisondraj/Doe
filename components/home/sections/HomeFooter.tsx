@@ -16,7 +16,7 @@ export function HomeFooter() {
   return (
     <>
       <footer
-        className="relative z-10 mt-0 flex min-h-[min(69vh,42rem)] w-screen flex-col justify-end overflow-x-clip overflow-y-visible pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] iphone-page:min-h-[66vh]"
+        className="relative z-10 mt-0 flex min-h-[min(69vh,42rem)] w-screen flex-col justify-end overflow-x-clip overflow-y-hidden pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] iphone-page:min-h-[66vh]"
         style={{
           width: "100vw",
           marginLeft: "calc(50% - 50vw)",
@@ -124,7 +124,6 @@ export function HomeFooter() {
                 /** Giant: wide enough that “d” / “e” bleed past L/R edges; milder bottom bleed. */
                 fontSize: "clamp(11rem, min(76vw, 68vmin), 30rem)",
                 marginBottom: "calc(-0.06em - env(safe-area-inset-bottom, 0px))",
-                transform: "translateY(min(1vh, 0.5rem))",
               }}
             >
               Doe
