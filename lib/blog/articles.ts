@@ -19,7 +19,7 @@ export type BlogArticle = {
 export const BLOG_ARTICLES: readonly BlogArticle[] = [
   {
     slug: "code-intelligence-for-doe-agent",
-    eyebrow: "Now / AI",
+    eyebrow: "2026 / Engineering",
     title: "Code Intelligence for Doe Agent",
     author: "Karri Saarinen",
     date: "May 14, 2026",
@@ -36,7 +36,7 @@ export const BLOG_ARTICLES: readonly BlogArticle[] = [
   },
   {
     slug: "ambient-documentation-at-the-bedside",
-    eyebrow: "Product / Clinical",
+    eyebrow: "2026 / Clinical",
     title: "Ambient Documentation at the Bedside",
     author: "Maya Chen",
     date: "April 28, 2026",
@@ -53,7 +53,7 @@ export const BLOG_ARTICLES: readonly BlogArticle[] = [
   },
   {
     slug: "prior-auth-grounded-in-chart-facts",
-    eyebrow: "Workflow / Revenue",
+    eyebrow: "2026 / Revenue Cycle",
     title: "Prior Auth Grounded in Chart Facts",
     author: "James Okonkwo",
     date: "April 3, 2026",
@@ -70,7 +70,7 @@ export const BLOG_ARTICLES: readonly BlogArticle[] = [
   },
   {
     slug: "one-inbox-for-every-channel",
-    eyebrow: "Now / Inbox",
+    eyebrow: "2026 / Messaging",
     title: "One Inbox for Every Channel",
     author: "Elena Vasquez",
     date: "March 12, 2026",

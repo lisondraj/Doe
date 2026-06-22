@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
 import {
@@ -19,14 +17,7 @@ export function BlogArticleMobileView({ article }: { article: BlogArticle }) {
   return (
     <BlogMobileShell>
       <main className={`w-full ${BLOG_CONTENT_PT}`}>
-        <Link
-          href="/blog"
-          className={`inline-block transition-colors hover:text-[#374151] ${BLOG_EYEBROW_TW}`}
-        >
-          Blog
-        </Link>
-
-        <p className={`mt-6 text-center ${BLOG_EYEBROW_TW}`}>{article.eyebrow}</p>
+        <p className={`text-center ${BLOG_EYEBROW_TW}`}>{article.eyebrow}</p>
 
         <h1 className={`${BLOG_ARTICLE_TITLE_TW} mt-6`}>
           {article.title}
