@@ -12,8 +12,8 @@ export function BlogLandingHero({ className = "" }: { className?: string }) {
     >
       <BlogLandingHeroGraphic />
       <p className={BLOG_LANDING_HERO_HEADLINE_TW}>
-        <span className="block">Doe is</span>
-        <span className="block">redefining healthcare.</span>
+        <span className="block">Let&rsquo;s rebuild</span>
+        <span className="block">healthcare.</span>
       </p>
     </div>
   );

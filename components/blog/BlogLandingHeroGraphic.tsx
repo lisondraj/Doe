@@ -3,8 +3,19 @@ import { BLOG_LANDING_HERO } from "@/lib/blog/blog-landing-hero-colors";
 const { lineSoft, line, lineStrong, accent, accentWarm, focal } = BLOG_LANDING_HERO;
 
 /**
- * Healthcare abstract — three overlapping cellular circles (upper) + precise
- * cardiac EKG trace (lower). Suggests biology + vital monitoring in Doe beige.
+ * Three large overlapping circles filling the hero card.
+ * Dots sit at exact circle-circumference intersections and extreme arc positions.
+ * No EKG — pure geometric / cellular abstraction in Doe beige.
+ *
+ * Circle geometry (viewBox 400×520, preserveAspectRatio slice):
+ *   A  cx=155  cy=180  r=118
+ *   B  cx=262  cy=148  r=105
+ *   C  cx=285  cy=310  r=82
+ *
+ * Intersection points (mathematically exact to 1 decimal):
+ *   A∩B  upper  (194, 68)    lower  (248, 252)
+ *   A∩C  upper  (261, 232)   lower  (207, 286)
+ *   B∩C  right  (320, 236)   left   (231, 248)
  */
 export function BlogLandingHeroGraphic() {
   return (
@@ -12,90 +23,45 @@ export function BlogLandingHeroGraphic() {
       className="absolute inset-0 h-full w-full"
       viewBox="0 0 400 520"
       fill="none"
-      preserveAspectRatio="xMidYMid meet"
+      preserveAspectRatio="xMidYMid slice"
       aria-hidden
     >
-      {/* ── UPPER: three large overlapping circles ─────────────────── */}
+      {/* ── Three circles ─────────────────────────────────────────────── */}
+      <circle cx="155" cy="180" r="118" stroke={lineSoft} strokeWidth="1"   />
+      <circle cx="262" cy="148" r="105" stroke={line}     strokeWidth="1"   />
+      <circle cx="285" cy="310" r="82"  stroke={lineStrong} strokeWidth="1" />
 
-      {/* Large left circle */}
-      <circle cx="136" cy="172" r="114" stroke={lineSoft} strokeWidth="1" />
-      {/* Large right circle */}
-      <circle cx="266" cy="148" r="102" stroke={line} strokeWidth="1" />
-      {/* Smaller lower-right circle */}
-      <circle cx="330" cy="242" r="66" stroke={lineStrong} strokeWidth="1" />
+      {/* ── Dots along circle lines ───────────────────────────────────── */}
 
-      {/* Geometric anchor dots — top of each arc */}
-      <circle cx="136" cy="58" r="2.5" fill={lineSoft} />
-      <circle cx="266" cy="46" r="2.5" fill={line} />
-      <circle cx="330" cy="176" r="2"   fill={lineStrong} />
+      {/* Extreme arc positions — top of each circle */}
+      <circle cx="155" cy="62"  r="2"   fill={lineSoft}  />   {/* top of A */}
+      <circle cx="262" cy="43"  r="2"   fill={line}      />   {/* top of B */}
+      <circle cx="285" cy="228" r="2"   fill={lineStrong}/>   {/* top of C */}
 
-      {/* Edge tangent dots */}
-      <circle cx="22"  cy="172" r="2.5" fill={lineSoft} />
-      <circle cx="368" cy="148" r="2.5" fill={accent} />
-      <circle cx="396" cy="242" r="2"   fill={lineStrong} />
+      {/* Left tangent of A (partially clipped by slice — intentional bleed) */}
+      <circle cx="37"  cy="180" r="2"   fill={lineSoft}  />
 
-      {/* Tick mark extensions at anchor dots */}
-      <line x1="136" y1="54"  x2="136" y2="49"  stroke={lineSoft}  strokeWidth="0.9" strokeLinecap="round" />
-      <line x1="266" y1="42"  x2="266" y2="37"  stroke={line}      strokeWidth="0.9" strokeLinecap="round" />
-      <line x1="368" y1="148" x2="374" y2="148" stroke={accent}    strokeWidth="0.9" strokeLinecap="round" />
-      <line x1="22"  y1="172" x2="16"  y2="172" stroke={lineSoft}  strokeWidth="0.9" strokeLinecap="round" />
+      {/* A∩B intersections */}
+      <circle cx="194" cy="68"  r="3"   fill={accentWarm}/>   {/* A∩B upper */}
+      <circle cx="248" cy="252" r="2.5" fill={line}      />   {/* A∩B lower */}
 
-      {/* Circle–circle intersection accent dot (where left and right circles cross) */}
-      <circle cx="204" cy="116" r="3"   fill={accentWarm} />
-      <circle cx="204" cy="212" r="2.5" fill={focal} />
+      {/* A∩C intersections */}
+      <circle cx="261" cy="232" r="2"   fill={lineStrong}/>   {/* A∩C upper */}
+      <circle cx="207" cy="286" r="2"   fill={focal}     />   {/* A∩C lower */}
 
-      {/* ── DIVIDER: reference baseline ─────────────────────────────── */}
-      <line x1="28" y1="318" x2="372" y2="318" stroke={lineSoft} strokeWidth="0.75" opacity="0.55" />
+      {/* B∩C intersections */}
+      <circle cx="320" cy="236" r="2.5" fill={accent}    />   {/* B∩C right */}
+      <circle cx="231" cy="248" r="2"   fill={focal}     />   {/* B∩C left  */}
 
-      {/* Interval tick marks above baseline */}
-      {[62, 106, 150, 200, 250, 296, 340].map((x) => (
-        <line
-          key={x}
-          x1={x} y1="313"
-          x2={x} y2="318"
-          stroke={lineSoft}
-          strokeWidth="0.85"
-          strokeLinecap="round"
-        />
-      ))}
-
-      {/* ── LOWER: cardiac EKG trace ─────────────────────────────────── */}
-
-      {/* Full PQRST waveform */}
-      <path
-        d={[
-          "M 28,338",
-          "H 118",
-          // P wave — smooth small positive bump
-          "C 124,338 128,330 134,325 C 140,320 144,327 149,334 L 154,338",
-          // PR segment flat
-          "H 172",
-          // QRS complex — sharp spike
-          "L 180,345 L 197,291 L 214,347 L 223,338",
-          // ST segment flat
-          "H 236",
-          // T wave — broad rounded positive bump
-          "C 244,338 252,338 260,338 C 267,338 274,322 280,319 C 286,316 290,324 295,333 L 299,338",
-          // Return to flat
-          "H 372",
-        ].join(" ")}
-        stroke={line}
-        strokeWidth="1.25"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-
-      {/* R-peak accent dot — the heartbeat moment */}
-      <circle cx="197" cy="291" r="3" fill={accent} />
-
-      {/* Faint sub-baseline */}
-      <line x1="28" y1="358" x2="372" y2="358" stroke={lineSoft} strokeWidth="0.6" opacity="0.35" />
-
-      {/* Baseline landmark dots */}
-      <circle cx="80"  cy="358" r="2"   fill={lineSoft} />
-      <circle cx="197" cy="358" r="2.5" fill={accent} />
-      <circle cx="290" cy="358" r="2"   fill={line} />
-      <circle cx="348" cy="358" r="2"   fill={accentWarm} />
+      {/* ── Tick extensions at extreme positions ─────────────────────── */}
+      {/* Top of A */}
+      <line x1="155" y1="58"  x2="155" y2="53"  stroke={lineSoft}  strokeWidth="0.9" strokeLinecap="round" />
+      {/* Top of B */}
+      <line x1="262" y1="39"  x2="262" y2="34"  stroke={line}      strokeWidth="0.9" strokeLinecap="round" />
+      {/* Left tangent of A */}
+      <line x1="33"  y1="180" x2="28"  y2="180" stroke={lineSoft}  strokeWidth="0.9" strokeLinecap="round" />
+      {/* A∩B upper — small cross-hair */}
+      <line x1="194" y1="64"  x2="194" y2="59"  stroke={accentWarm} strokeWidth="0.9" strokeLinecap="round" />
     </svg>
   );
 }
