@@ -1,10 +1,11 @@
 /** Hero load sequence — gradient zoom in → polar build → headline. */
 
-export const DOEPHONE_HERO_INTRO_GRADIENT_START = 1.72;
+/** Gradient starts zoomed out (0.65 × normal) and eases in to full size before polars appear. */
+export const DOEPHONE_HERO_INTRO_GRADIENT_START = 0.65;
 export const DOEPHONE_HERO_INTRO_GRADIENT_MS = 1100;
 
-/** Polar radials begin after gradient zoom finishes. */
-export const DOEPHONE_HERO_INTRO_POLAR_START_MS = 1050;
+/** Polar radials begin once the gradient zoom is fully settled. */
+export const DOEPHONE_HERO_INTRO_POLAR_START_MS = 1150;
 export const DOEPHONE_HERO_INTRO_RADIAL_MS = 1350;
 export const DOEPHONE_HERO_INTRO_RING_MS = 820;
 export const DOEPHONE_HERO_INTRO_RING_STAGGER_MS = 180;

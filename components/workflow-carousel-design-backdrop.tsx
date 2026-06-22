@@ -238,9 +238,11 @@ export function WorkflowCarouselDesignBackdrop({
         className="pointer-events-none absolute inset-0"
         style={{
           background: gradientOverride ?? backdrop.gradient,
-          backgroundPosition: embedded || gradientScale !== 1 ? "center center" : undefined,
+          backgroundPosition: "center center",
           backgroundSize: embedded ? "cover" : gradientScale !== 1 ? `${gradientScale * 100}% ${gradientScale * 100}%` : undefined,
-          backgroundRepeat: embedded || gradientScale !== 1 ? "no-repeat" : undefined,
+          backgroundRepeat: embedded ? "no-repeat" : gradientScale !== 1 ? "no-repeat" : undefined,
+          transform: embedded && gradientScale !== 1 ? `scale(${gradientScale})` : undefined,
+          willChange: embedded && gradientScale !== 1 ? "transform" : undefined,
         }}
         aria-hidden
       />
