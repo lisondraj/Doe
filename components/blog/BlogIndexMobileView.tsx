@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import { BlogLandingHero } from "@/components/blog/BlogLandingHero";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
 import {
@@ -9,6 +10,7 @@ import {
   BLOG_CARD_STACK,
   BLOG_CONTENT_PT,
   BLOG_LANDING_CARD_TITLE_TW,
+  BLOG_LANDING_HERO_GAP,
   BLOG_LANDING_TITLE_META_GAP,
   BLOG_LIST_DIVIDER,
   BLOG_META_TW,
@@ -47,6 +49,8 @@ export function BlogIndexMobileView() {
         <p className={BLOG_BODY_COPY_TW}>
           Notes on building AI for healthcare teams.
         </p>
+
+        <BlogLandingHero className={BLOG_LANDING_HERO_GAP} />
 
         <ul className={`flex w-full flex-col ${BLOG_TITLE_VISUAL_GAP}`}>
           {BLOG_ARTICLES.map((article, index) => (
