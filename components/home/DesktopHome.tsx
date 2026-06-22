@@ -12,8 +12,10 @@ import {
   type HTMLAttributes,
   type Ref,
 } from "react";
+import { ClinicWorkflowDiagram } from "@/components/herodesign/ClinicWorkflowDiagram";
 import { NAV_HREFS } from "@/components/doe-nav-data";
 import { HERO_CAROUSEL_GRAIN_BG } from "@/components/hero-carousel-texture";
+import { DesignHeroBackdropSection } from "@/components/design-hero-backdrop-section";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { WorkflowCarouselSlides } from "@/components/workflow-carousel-slides";
 import {
@@ -1804,6 +1806,12 @@ export function DesktopHome() {
           </div>
         </div>
       </div>
+
+      {/* Third section — full-screen hero gradient + animated dot wave */}
+      <DesignHeroBackdropSection
+        className="relative z-10"
+        overlay="dot-wave"
+      />
 
       {/* Blank Section with Grid Lines */}
       <div ref={carouselSectionRef} className="h-screen w-full relative z-10 overflow-x-hidden" style={{
