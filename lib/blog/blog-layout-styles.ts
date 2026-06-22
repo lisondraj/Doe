@@ -8,7 +8,7 @@ import {
   DOEPHONE_SECTION_MENU_DESCRIPTION_TW,
   DOEPHONE_SECTION_TITLE_CAROUSEL_GAP,
 } from "@/lib/doephone/section-styles";
-import { inter, suisseIntl } from "@/lib/home/fonts";
+import { inter, lora, suisseIntl } from "@/lib/home/fonts";
 
 /** Horizontal gutters — matches closing section carousel band. */
 export const BLOG_PAGE_INSET_X = DOEPHONE_SECTION_CAROUSEL_INSET_X;
@@ -58,6 +58,9 @@ export const BLOG_FEATURE_BOX_TW = `${DOEPHONE_SECTION_CLOSING_FEATURE_HEIGHT} $
 export const BLOG_LANDING_HERO_HEIGHT = "h-[66.667dvh] min-h-[66.667dvh]";
 
 export const BLOG_LANDING_HERO_BOX_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} border border-[#D9D4CC] bg-[#EBE7E0]`;
+
+/** Lora headline anchored bottom-left inside the landing hero box. */
+export const BLOG_LANDING_HERO_HEADLINE_TW = `absolute bottom-0 left-0 z-[2] p-6 text-left font-normal leading-[1.06] tracking-[-0.03em] text-[#1E343A] text-[clamp(2.15rem,7.8vw,3.35rem)] iphone-page:p-[clamp(1.35rem,1rem+1.35vmin,1.85rem)] iphone-page:text-[clamp(2.35rem,1.85rem+3.15vmin,3.85rem)] ${lora.className}`;
 
 /** Gap between landing hero and article list. */
 export const BLOG_LANDING_HERO_GAP = DOEPHONE_SECTION_CAROUSEL_MENU_GAP;
