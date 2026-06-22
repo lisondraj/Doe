@@ -12,7 +12,8 @@ import {
   BLOG_LANDING_CARD_TITLE_TW,
   BLOG_LANDING_HERO_GAP,
   BLOG_LANDING_TITLE_META_GAP,
-  BLOG_LIST_DIVIDER,
+  BLOG_LIST_DIVIDER_LINE,
+  BLOG_LIST_DIVIDER_WRAP,
   BLOG_META_TW,
   BLOG_PAGE_TITLE_TW,
   BLOG_READ_MORE_TW,
@@ -54,7 +55,12 @@ export function BlogIndexMobileView() {
 
         <ul className={`flex w-full flex-col ${BLOG_TITLE_VISUAL_GAP}`}>
           {BLOG_ARTICLES.map((article, index) => (
-            <li key={article.slug} className={index > 0 ? BLOG_LIST_DIVIDER : ""}>
+            <li key={article.slug}>
+              {index > 0 ? (
+                <div className={BLOG_LIST_DIVIDER_WRAP} aria-hidden>
+                  <hr className={BLOG_LIST_DIVIDER_LINE} />
+                </div>
+              ) : null}
               <Link href={`/blog/${article.slug}`} className="group block no-underline">
                 <div className={BLOG_CARD_STACK}>
                   <BlogHeroVisual backdrop={article.backdrop} variant="list" />
