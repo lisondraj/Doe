@@ -30,6 +30,19 @@ export const BLOG_BODY_COPY_TW = DOEPHONE_SECTION_MENU_DESCRIPTION_TW;
 /** Card caption under feature visuals — closing section outside copy. */
 export const BLOG_CARD_TITLE_TW = `${DOEPHONE_SECTION_FOOTER_OUTSIDE_CAPTION_TW} text-left text-gray-700`;
 
+/** Landing list card title — slightly larger than footer caption. */
+export const BLOG_LANDING_CARD_TITLE_TW = `text-[1.65rem] iphone-page:text-[clamp(1.5rem,0.92rem+2.55vmin,2.65rem)] font-normal leading-snug tracking-tight text-gray-700 ${inter.className}`;
+
+/** Tight gap between landing card title and author/date. */
+export const BLOG_LANDING_TITLE_META_GAP = "mt-1 iphone-page:mt-[clamp(0.2rem,0.12rem+0.35vmin,0.35rem)]";
+
+/** Divider between landing list articles. */
+export const BLOG_LIST_DIVIDER =
+  "border-t border-[#E6E6E6] pt-10 mt-10 iphone-page:pt-[clamp(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))] iphone-page:mt-[clamp(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
+
+/** Small read-more label on landing cards. */
+export const BLOG_READ_MORE_TW = `inline-flex items-center gap-1.5 text-[clamp(0.95rem,0.86rem+0.42vmin,1.08rem)] iphone-page:text-[clamp(1.02rem,0.9rem+0.55vmin,1.14rem)] font-medium text-[#6B7280] transition-colors group-hover:text-[#1E343A] ${suisseIntl.className}`;
+
 /** Author · date line under card/article titles. */
 export const BLOG_META_TW = `text-[clamp(1.18rem,1rem+0.78vmin,1.42rem)] iphone-page:text-[clamp(1.38rem,1.14rem+1.05vmin,1.72rem)] font-semibold text-[#6B7280] ${suisseIntl.className}`;
 
