@@ -95,37 +95,14 @@ export function BlogIndexMobileView() {
           ))}
         </ul>
 
-        {/* ── See all footer ───────────────────────────────────── */}
-        <div
-          aria-hidden
-          className="mt-12 iphone-page:mt-[clamp(2.5rem,2rem+2.5vmin,4rem)] h-px w-full bg-[#9A8F82]"
-        />
-        <div className="flex w-full items-baseline justify-center py-6 iphone-page:py-[clamp(1.25rem,1rem+1.25vmin,2rem)]">
+        <div className="mt-12 iphone-page:mt-[clamp(2.5rem,2rem+2.5vmin,4rem)] flex w-full justify-center">
           <a
             href="#"
-            className={`inline-flex items-center gap-[0.3em] font-medium leading-none text-[#1E343A] transition-opacity active:opacity-60 text-[clamp(1.75rem,6.5vw,2.6rem)] iphone-page:text-[clamp(2rem,1.55rem+2.85vmin,3.15rem)] ${dmSans.className}`}
+            className={`font-medium leading-none text-[#1E343A] transition-opacity active:opacity-60 text-[clamp(1.75rem,6.5vw,2.6rem)] iphone-page:text-[clamp(2rem,1.55rem+2.85vmin,3.15rem)] ${dmSans.className}`}
           >
-            {BLOG_ARTICLES.length} articles
-            <svg
-              className="h-[0.7em] w-[0.7em] shrink-0"
-              viewBox="0 0 16 16"
-              fill="none"
-              aria-hidden
-            >
-              <path
-                d="M3 8h9M9 4l4 4-4 4"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            See more ({BLOG_ARTICLES.length})
           </a>
         </div>
-        <div
-          aria-hidden
-          className="h-px w-full bg-[#9A8F82]"
-        />
       </main>
     </BlogMobileShell>
   );
