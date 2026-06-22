@@ -54,8 +54,19 @@ function polarSpokePathD(
   half?: "a" | "b",
 ): string {
   const { x1, y1, x2, y2 } = polarSpokeEndpoints(cx, cy, angleDeg);
-  if (half === "a") return `M ${x1} ${y1} L ${cx} ${cy}`;
-  if (half === "b") return `M ${x2} ${y2} L ${cx} ${cy}`;
+  /*
+   * For the intro animation (stroke-dashoffset 1 → 0 with pathLength=1):
+   *   visible region = [dashoffset, 1]  — always includes the PATH END (position 1).
+   *
+   * To draw edge → center (the "converge from screen edges" effect) the path
+   * must START at center and END at the edge.  That way position-1 (the edge)
+   * is always anchored on-screen and the growing front sweeps from there toward
+   * position-0 (center).
+   *
+   * Reversed from the previous M edge L center which drew center → edge.
+   */
+  if (half === "a") return `M ${cx} ${cy} L ${x1} ${y1}`;
+  if (half === "b") return `M ${cx} ${cy} L ${x2} ${y2}`;
   return `M ${x1} ${y1} L ${x2} ${y2}`;
 }
 

@@ -257,13 +257,9 @@ body.mainpage-route {
 
 @keyframes doephone-hero-polar-radial-half-in {
   0% {
-    opacity: 0;
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-  }
-
-  6% {
     opacity: 1;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1; /* dash sits off-path → invisible; no need for opacity:0 */
   }
 
   100% {
