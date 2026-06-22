@@ -800,3 +800,13 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
 .workflow-carousel-ui :where(.font-bold, .font-semibold) {
   font-weight: 500 !important;
 }
+
+/* ── Blog filter dropdown entrance ──────────────────────────── */
+@keyframes blog-dropdown-in {
+  0%   { opacity: 0; transform: translateY(-5px) scale(0.975); }
+  100% { opacity: 1; transform: translateY(0)    scale(1);     }
+}
+.blog-dropdown-menu {
+  animation: blog-dropdown-in 150ms cubic-bezier(0.33, 1, 0.36, 1) both;
+  transform-origin: top center;
+}

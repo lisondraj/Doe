@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { dmSans } from "@/lib/home/fonts";
 
-/* ── shared types ────────────────────────────────────────────── */
 type DropdownOption = { label: string; value: string };
 
 const YEAR_OPTIONS: DropdownOption[] = [
@@ -17,11 +16,11 @@ const CATEGORY_OPTIONS: DropdownOption[] = [
   { label: "Founders", value: "founders" },
 ];
 
-/* ── ChevronDown SVG ─────────────────────────────────────────── */
-function ChevronDown({ open }: { open: boolean }) {
+/* ── Chevron ─────────────────────────────────────────────────── */
+function Chevron({ open }: { open: boolean }) {
   return (
     <svg
-      className={`h-[0.85em] w-[0.85em] shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+      className={`h-[0.7em] w-[0.7em] shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
       viewBox="0 0 16 16"
       fill="none"
       aria-hidden
@@ -29,7 +28,7 @@ function ChevronDown({ open }: { open: boolean }) {
       <path
         d="M4 6l4 4 4-4"
         stroke="currentColor"
-        strokeWidth="1.6"
+        strokeWidth="1.8"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -37,7 +36,27 @@ function ChevronDown({ open }: { open: boolean }) {
   );
 }
 
-/* ── individual filter pill + dropdown ──────────────────────── */
+/* ── Checkmark ───────────────────────────────────────────────── */
+function Check() {
+  return (
+    <svg
+      className="h-[0.68em] w-[0.68em] shrink-0 text-[#C47A5A]"
+      viewBox="0 0 16 16"
+      fill="none"
+      aria-hidden
+    >
+      <path
+        d="M3 8l3.5 3.5L13 5"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+/* ── Filter pill ─────────────────────────────────────────────── */
 function FilterPill({
   label,
   options,
@@ -52,7 +71,6 @@ function FilterPill({
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  /* close on outside click */
   useEffect(() => {
     if (!open) return;
     function handle(e: MouseEvent) {
@@ -66,55 +84,75 @@ function FilterPill({
     ? options.find((o) => o.value === selected)?.label ?? label
     : label;
 
+  /* Trigger font size — large display label */
+  const triggerSize =
+    `text-[clamp(1.75rem,6.5vw,2.6rem)] iphone-page:text-[clamp(2rem,1.55rem+2.85vmin,3.15rem)]`;
+
+  /* Dropdown item font size — smaller, comfortable for a menu */
+  const itemSize =
+    `text-[clamp(1.08rem,0.95rem+0.65vmin,1.28rem)] iphone-page:text-[clamp(1.22rem,1.02rem+0.95vmin,1.5rem)]`;
+
   return (
     <div ref={ref} className="relative">
+      {/* Trigger */}
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className={`inline-flex items-center gap-[0.35em] text-left font-medium leading-none text-[#1E343A] transition-opacity active:opacity-70 text-[clamp(1.75rem,6.5vw,2.6rem)] iphone-page:text-[clamp(2rem,1.55rem+2.85vmin,3.15rem)] ${dmSans.className}`}
+        className={`inline-flex items-center gap-[0.3em] text-left font-medium leading-none text-[#1E343A] transition-opacity active:opacity-60 ${triggerSize} ${dmSans.className}`}
         aria-haspopup="listbox"
         aria-expanded={open}
       >
         {displayLabel}
-        <ChevronDown open={open} />
+        <Chevron open={open} />
       </button>
 
+      {/* Dropdown panel */}
       {open && (
         <div
-          className="absolute left-0 top-[calc(100%+0.5rem)] z-50 min-w-[10rem] overflow-hidden rounded-[0.75rem] border border-[#D9D4CC] bg-[#F7F6F3] shadow-[0_8px_28px_rgba(0,0,0,0.08)]"
+          className={`blog-dropdown-menu absolute left-0 top-[calc(100%+0.55rem)] z-50 min-w-[8.5rem] overflow-hidden rounded-[1rem] border border-[#D9D4CC] bg-[#F5F2EE] shadow-[0_10px_32px_rgba(0,0,0,0.09),0_2px_6px_rgba(0,0,0,0.04)]`}
           role="listbox"
         >
-          {options.map((opt) => (
-            <button
-              key={opt.value}
-              role="option"
-              aria-selected={selected === opt.value}
-              type="button"
-              onClick={() => {
-                onSelect(opt.value === selected ? "" : opt.value);
-                setOpen(false);
-              }}
-              className={`flex w-full items-center justify-between px-5 py-4 text-left transition-colors hover:bg-[#EBE7E0] active:bg-[#E0DBD3] text-[clamp(1.75rem,6.5vw,2.6rem)] iphone-page:text-[clamp(2rem,1.55rem+2.85vmin,3.15rem)] ${dmSans.className} ${
-                selected === opt.value
-                  ? "font-semibold text-[#1E343A]"
-                  : "font-normal text-[#374151]"
-              }`}
-            >
-              {opt.label}
-              {selected === opt.value && (
-                <svg className="ml-3 h-[0.7em] w-[0.7em] shrink-0 text-[#C47A5A]" viewBox="0 0 16 16" fill="none" aria-hidden>
-                  <path d="M3 8l3.5 3.5L13 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              )}
-            </button>
-          ))}
+          {options.map((opt, i) => {
+            const isSelected = selected === opt.value;
+            return (
+              <button
+                key={opt.value}
+                role="option"
+                aria-selected={isSelected}
+                type="button"
+                onClick={() => {
+                  onSelect(isSelected ? "" : opt.value);
+                  setOpen(false);
+                }}
+                className={[
+                  "flex w-full items-center justify-between gap-5",
+                  "px-5 py-[0.85rem]",
+                  "text-left transition-colors",
+                  i > 0 ? "border-t border-[#E8E4DD]" : "",
+                  isSelected
+                    ? "bg-[#EBE7E0]"
+                    : "hover:bg-[#EDEAE4] active:bg-[#E5E1DA]",
+                  itemSize,
+                  dmSans.className,
+                  isSelected
+                    ? "font-semibold text-[#1E343A]"
+                    : "font-normal text-[#4B5563]",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+              >
+                <span>{opt.label}</span>
+                {isSelected && <Check />}
+              </button>
+            );
+          })}
         </div>
       )}
     </div>
   );
 }
 
-/* ── exported bar ────────────────────────────────────────────── */
+/* ── Bar ─────────────────────────────────────────────────────── */
 export function BlogFilterBar() {
   const [year, setYear]         = useState("");
   const [category, setCategory] = useState("");
