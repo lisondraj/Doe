@@ -4,33 +4,35 @@ import Link from "next/link";
 
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
-import { lora, suisseIntl } from "@/lib/home/fonts";
+import {
+  BLOG_ARTICLE_BODY_TW,
+  BLOG_BODY_COPY_TW,
+  BLOG_CONTENT_PT,
+  BLOG_EYEBROW_TW,
+  BLOG_META_TW,
+  BLOG_PAGE_TITLE_TW,
+  BLOG_TITLE_VISUAL_GAP,
+} from "@/lib/blog/blog-layout-styles";
 import type { BlogArticle } from "@/lib/blog/articles";
 
 export function BlogArticleMobileView({ article }: { article: BlogArticle }) {
   return (
     <BlogMobileShell>
-      <main
-        className={`mx-auto w-full max-w-[min(100%,42rem)] pt-[max(11.25rem,calc(env(safe-area-inset-top,0px)+7.75rem))] ${suisseIntl.className}`}
-      >
+      <main className={`w-full ${BLOG_CONTENT_PT}`}>
         <Link
           href="/blog"
-          className="inline-block text-[clamp(1rem,3.4vw,1.15rem)] font-medium tracking-[0.02em] text-[#6B7280] transition-colors hover:text-[#374151]"
+          className={`inline-block transition-colors hover:text-[#374151] ${BLOG_EYEBROW_TW}`}
         >
           Blog
         </Link>
 
-        <p className="mt-6 text-center text-[clamp(1rem,3.4vw,1.2rem)] font-medium tracking-[0.02em] text-[#6B7280]">
-          {article.eyebrow}
-        </p>
+        <p className={`mt-6 text-left ${BLOG_EYEBROW_TW}`}>{article.eyebrow}</p>
 
-        <h1
-          className={`mx-auto mt-6 max-w-[min(100%,36rem)] text-center text-[clamp(2.85rem,10.5vw,4.65rem)] font-normal leading-[1.06] tracking-[-0.03em] text-[#111827] ${lora.className}`}
-        >
-          {article.title}
+        <h1 className={`${BLOG_PAGE_TITLE_TW} mt-6`}>
+          <span className="block">{article.title}</span>
         </h1>
 
-        <p className="mx-auto mt-4 max-w-[min(100%,34rem)] text-center text-[clamp(1.05rem,3.6vw,1.3rem)] font-semibold text-[#6B7280]">
+        <p className={`mt-4 text-left ${BLOG_META_TW}`}>
           {article.author}
           <span className="mx-2 text-[#9CA3AF]" aria-hidden>
             ·
@@ -38,24 +40,21 @@ export function BlogArticleMobileView({ article }: { article: BlogArticle }) {
           {article.date}
         </p>
 
-        <BlogHeroVisual backdrop={article.backdrop} />
+        <BlogHeroVisual backdrop={article.backdrop} variant="hero" />
 
-        <div className="article-body mt-12 max-w-[min(100%,36rem)] space-y-10 text-left">
+        <div className={`article-body ${BLOG_TITLE_VISUAL_GAP} space-y-[clamp(0.85rem,0.65rem+0.9vmin,1.35rem)] iphone-page:space-y-[clamp(1rem,0.75rem+1.05vmin,1.55rem)] text-left`}>
           {article.body.map((paragraph, index) => (
-            <p
-              key={index}
-              className="text-[clamp(1.45rem,5vw,1.95rem)] font-light leading-[1.55] tracking-[-0.01em] text-[#1F2937]"
-            >
+            <p key={index} className={BLOG_ARTICLE_BODY_TW}>
               {paragraph}
             </p>
           ))}
         </div>
 
-        <p className="article-body mt-10 max-w-[min(100%,36rem)] text-left text-[clamp(1.15rem,3.9vw,1.45rem)] font-light leading-[1.5] text-[#374151]">
+        <p className={`article-body mt-[clamp(0.85rem,0.65rem+0.9vmin,1.35rem)] text-left ${BLOG_BODY_COPY_TW}`}>
           Learn more on the{" "}
           <a
             href="#"
-            className="font-medium text-[#111827] underline decoration-[#111827]/35 underline-offset-[0.28em] transition-colors hover:decoration-[#111827]/60"
+            className="font-medium text-[#1E343A] underline decoration-[#1E343A]/35 underline-offset-[0.28em] transition-colors hover:decoration-[#1E343A]/60"
           >
             changelog
           </a>

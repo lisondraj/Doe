@@ -4,10 +4,7 @@ import type { ReactNode } from "react";
 
 import DoeIphoneSiteNav from "@/components/DoeIphoneSiteNav";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
-
-/** Space between blog copy and the footer gradient — keeps content off the footer edge. */
-const BLOG_FOOTER_GAP =
-  "pb-[max(3.5rem,calc(env(safe-area-inset-bottom,0px)+2.75rem))] iphone-page:pb-[max(4rem,calc(env(safe-area-inset-bottom,0px)+3rem))]";
+import { BLOG_FOOTER_GAP, BLOG_PAGE_INSET_X } from "@/lib/blog/blog-layout-styles";
 
 export function BlogMobileShell({ children }: { children: ReactNode }) {
   return (
@@ -17,9 +14,7 @@ export function BlogMobileShell({ children }: { children: ReactNode }) {
       data-doeforvc-view="iphone"
     >
       <DoeIphoneSiteNav pinchSafe />
-      <div
-        className={`blog-page-root relative z-0 px-[max(1.5rem,env(safe-area-inset-left,0px))] pr-[max(1.5rem,env(safe-area-inset-right,0px))] ${BLOG_FOOTER_GAP}`}
-      >
+      <div className={`blog-page-root relative z-0 ${BLOG_PAGE_INSET_X} ${BLOG_FOOTER_GAP}`}>
         {children}
       </div>
       <HomeFooter />

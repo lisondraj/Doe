@@ -1,5 +1,6 @@
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import type { WorkflowCarouselDesignBackdrop as WorkflowCarouselDesignBackdropType } from "@/lib/workflow-carousel-design-backdrops";
+import { BLOG_FEATURE_BOX_TW, BLOG_TITLE_VISUAL_GAP } from "@/lib/blog/blog-layout-styles";
 
 export function BlogHeroVisual({
   backdrop,
@@ -10,10 +11,8 @@ export function BlogHeroVisual({
 }) {
   return (
     <div
-      className={`relative mx-auto w-full overflow-hidden rounded-[1.35rem] shadow-[0_18px_56px_rgba(0,0,0,0.12)] iphone-page:rounded-[clamp(1.25rem,1rem+1.4vmin,1.75rem)] ${
-        variant === "list"
-          ? "aspect-[4/3]"
-          : "mt-10 max-w-[min(100%,38rem)] aspect-[4/3] iphone-page:mt-12"
+      className={`relative w-full overflow-hidden ${BLOG_FEATURE_BOX_TW} ${
+        variant === "hero" ? BLOG_TITLE_VISUAL_GAP : ""
       }`}
       aria-hidden
     >
