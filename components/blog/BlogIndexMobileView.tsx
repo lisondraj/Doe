@@ -85,7 +85,7 @@ export function BlogIndexMobileView() {
         <div className="mt-12 iphone-page:mt-[clamp(2.5rem,2rem+2.5vmin,4rem)] flex w-full justify-center">
           <a
             href="#"
-            className={`font-medium leading-none text-[#1E343A] transition-opacity active:opacity-60 text-[clamp(1.75rem,6.5vw,2.6rem)] iphone-page:text-[clamp(2rem,1.55rem+2.85vmin,3.15rem)] ${dmSans.className}`}
+            className={`font-medium leading-none text-[#1E343A] transition-opacity active:opacity-60 text-[clamp(1.32rem,4.8vw,1.95rem)] iphone-page:text-[clamp(1.52rem,1.22rem+1.45vmin,2.1rem)] ${dmSans.className}`}
           >
             See more ({BLOG_ARTICLES.length})
           </a>
