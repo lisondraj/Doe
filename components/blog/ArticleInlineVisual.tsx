@@ -5,64 +5,57 @@ const { lineSoft, line, lineStrong, accent, accentWarm, focal } = BLOG_LANDING_H
 
 /* ──────────────────────────────────────────────────────────────
    Design 0 — Engineering / Code Intelligence
-   Radiating spokes from a focal point, dense on one side —
-   suggests a technical knowledge graph.
+   Clean node-edge network graph: 9 nodes in a deliberate layout
+   connected by edges. Suggests a dependency graph or knowledge map.
 ────────────────────────────────────────────────────────────── */
 function Design0() {
-  const cx = 285;
-  const cy = 210;
-  const spokes = [
-    { dx: -1,    dy: -1.4, len: 195 },
-    { dx: -0.7,  dy: -1,   len: 185 },
-    { dx: -0.3,  dy: -1,   len: 170 },
-    { dx:  0.1,  dy: -1,   len: 160 },
-    { dx:  0.55, dy: -1,   len: 150 },
-    { dx:  1,    dy: -0.8, len: 145 },
-    { dx:  1,    dy: -0.25,len: 140 },
-    { dx:  1,    dy:  0.3, len: 135 },
-    { dx:  1,    dy:  0.8, len: 140 },
-    { dx:  0.6,  dy:  1,   len: 145 },
-    { dx:  0.1,  dy:  1,   len: 155 },
-    { dx: -0.3,  dy:  1,   len: 165 },
-    { dx: -0.75, dy:  1,   len: 175 },
-    { dx: -1,    dy:  0.75,len: 185 },
-    { dx: -1,    dy:  0.25,len: 195 },
-    { dx: -1,    dy: -0.4, len: 200 },
+  // Node positions — hub at center, 6 outer, 2 mid-tier
+  const nodes: [number, number][] = [
+    [200, 200], // 0 hub (center)
+    [200,  88], // 1 top
+    [306, 144], // 2 top-right
+    [306, 256], // 3 bottom-right
+    [200, 312], // 4 bottom
+    [ 94, 256], // 5 bottom-left
+    [ 94, 144], // 6 top-left
+    [200, 152], // 7 inner-top (between hub and 1)
+    [200, 248], // 8 inner-bottom
   ];
-  const norm = ({ dx, dy }: { dx: number; dy: number }) => {
-    const m = Math.hypot(dx, dy);
-    return { dx: dx / m, dy: dy / m };
-  };
+
+  // Edges: pairs of node indices
+  const edges: [number, number][] = [
+    [0, 7], [7, 1],        // hub → inner-top → top
+    [0, 8], [8, 4],        // hub → inner-bottom → bottom
+    [0, 2], [0, 3],        // hub → right cluster
+    [0, 5], [0, 6],        // hub → left cluster
+    [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 1], // outer ring
+    [7, 2], [7, 6],        // inner-top connects laterally
+    [8, 3], [8, 5],        // inner-bottom connects laterally
+  ];
+
   return (
     <svg viewBox="0 0 400 400" fill="none" preserveAspectRatio="xMidYMid meet" aria-hidden className="absolute inset-0 h-full w-full">
-      {spokes.map((s, i) => {
-        const { dx, dy } = norm(s);
-        return (
-          <line
-            key={i}
-            x1={cx} y1={cy}
-            x2={cx + dx * s.len} y2={cy + dy * s.len}
-            stroke={i % 4 === 0 ? line : i % 3 === 0 ? lineStrong : lineSoft}
-            strokeWidth={i % 5 === 0 ? "0.85" : "0.65"}
-            opacity={0.7 + (i % 3) * 0.1}
-          />
-        );
-      })}
-      {/* Dot ring around focal */}
-      {[0, 45, 90, 135, 180, 225, 270, 315].map((deg, i) => {
-        const r = 28;
-        const a = (deg * Math.PI) / 180;
-        return (
-          <circle
-            key={`ring-${i}`}
-            cx={cx + Math.cos(a) * r} cy={cy + Math.sin(a) * r}
-            r={i % 2 === 0 ? "2" : "1.5"}
-            fill={i % 3 === 0 ? accentWarm : lineSoft}
-          />
-        );
-      })}
-      <circle cx={cx} cy={cy} r="4" fill={focal} />
-      <circle cx={cx} cy={cy} r="8" stroke={lineStrong} strokeWidth="0.75" />
+      {/* Edges */}
+      {edges.map(([a, b], i) => (
+        <line
+          key={`e-${i}`}
+          x1={nodes[a][0]} y1={nodes[a][1]}
+          x2={nodes[b][0]} y2={nodes[b][1]}
+          stroke={a === 0 || b === 0 ? line : lineSoft}
+          strokeWidth={a === 0 || b === 0 ? "0.85" : "0.65"}
+        />
+      ))}
+      {/* Outer nodes */}
+      {[1, 2, 3, 4, 5, 6].map((i) => (
+        <circle key={`n-${i}`} cx={nodes[i][0]} cy={nodes[i][1]} r="5" stroke={lineStrong} strokeWidth="0.75" fill="transparent" />
+      ))}
+      {/* Inner-tier nodes */}
+      {[7, 8].map((i) => (
+        <circle key={`n-${i}`} cx={nodes[i][0]} cy={nodes[i][1]} r="3.5" fill={line} />
+      ))}
+      {/* Hub */}
+      <circle cx={nodes[0][0]} cy={nodes[0][1]} r="9"   stroke={lineStrong} strokeWidth="0.9" fill={`${accentWarm}22`} />
+      <circle cx={nodes[0][0]} cy={nodes[0][1]} r="3.5" fill={accentWarm} />
     </svg>
   );
 }
@@ -106,41 +99,61 @@ function Design1() {
 
 /* ──────────────────────────────────────────────────────────────
    Design 2 — Revenue Cycle / Prior Auth
-   A horizontal process-flow: nodes connected by lines with
-   status markers — suggests an approval pipeline.
+   Concentric rounded rectangles expanding outward from center —
+   like a scan, target, or review process closing in. Clean, precise.
 ────────────────────────────────────────────────────────────── */
 function Design2() {
-  const nodes = [52, 140, 200, 260, 348];
+  const cx = 200;
   const cy = 200;
+
+  // Each level: [half-width, half-height, rx, stroke-color, stroke-width]
+  const levels: [number, number, number, string, string][] = [
+    [ 22,  16,  5, focal,      "0.9"],
+    [ 50,  38,  8, lineStrong, "0.8"],
+    [ 90,  67, 12, line,       "0.75"],
+    [132,  98, 16, line,       "0.7"],
+    [174, 128, 20, lineSoft,   "0.65"],
+    [216, 158, 24, lineSoft,   "0.55"],
+  ];
+
+  // Corner dots on outermost rect
+  const [ow, oh] = [216, 158];
+  const cornerDots = [
+    { x: cx - ow, y: cy - oh },
+    { x: cx + ow, y: cy - oh },
+    { x: cx + ow, y: cy + oh },
+    { x: cx - ow, y: cy + oh },
+  ];
+
+  // Mid-side ticks on outermost rect (short perpendicular lines inside the edge)
+  const midTicks = [
+    { x1: cx,      y1: cy - oh, x2: cx,      y2: cy - oh + 10 }, // top
+    { x1: cx,      y1: cy + oh, x2: cx,      y2: cy + oh - 10 }, // bottom
+    { x1: cx - ow, y1: cy,      x2: cx - ow + 10, y2: cy },      // left
+    { x1: cx + ow, y1: cy,      x2: cx + ow - 10, y2: cy },      // right
+  ];
+
   return (
     <svg viewBox="0 0 400 400" fill="none" preserveAspectRatio="xMidYMid meet" aria-hidden className="absolute inset-0 h-full w-full">
-      {/* Horizontal connector */}
-      <line x1="52" y1={cy} x2="348" y2={cy} stroke={lineSoft} strokeWidth="0.8" />
-
-      {/* Vertical tick marks above / below */}
-      {[80, 120, 160, 200, 240, 280, 320].map((x) => (
-        <line key={x} x1={x} y1={cy - 6} x2={x} y2={cy + 6} stroke={lineSoft} strokeWidth="0.65" />
+      {levels.map(([hw, hh, rx, stroke, sw], i) => (
+        <rect
+          key={i}
+          x={cx - hw} y={cy - hh}
+          width={hw * 2} height={hh * 2}
+          rx={rx}
+          stroke={stroke} strokeWidth={sw}
+        />
       ))}
-
-      {/* Secondary guide rails */}
-      <line x1="52" y1={cy - 36} x2="348" y2={cy - 36} stroke={lineSoft} strokeWidth="0.5" opacity="0.5" />
-      <line x1="52" y1={cy + 36} x2="348" y2={cy + 36} stroke={lineSoft} strokeWidth="0.5" opacity="0.5" />
-
-      {/* Nodes */}
-      {nodes.map((x, i) => (
-        <g key={i}>
-          <circle cx={x} cy={cy} r="12" stroke={i === 2 ? accent : lineStrong} strokeWidth={i === 2 ? "1" : "0.75"} fill={i === 2 ? `${accent}18` : "transparent"} />
-          <circle cx={x} cy={cy} r="3.5" fill={i === 2 ? accent : i < 2 ? accentWarm : lineStrong} />
-        </g>
+      {/* Corner dots */}
+      {cornerDots.map(({ x, y }, i) => (
+        <circle key={`cd-${i}`} cx={x} cy={y} r="2.5" fill={lineSoft} />
       ))}
-
-      {/* Labels above nodes */}
-      {nodes.slice(0, 4).map((x, i) => (
-        <line key={`tick-${i}`} x1={x} y1={cy - 12} x2={x} y2={cy - 22} stroke={i === 2 ? accent : lineSoft} strokeWidth="0.8" strokeLinecap="round" />
+      {/* Mid-side ticks */}
+      {midTicks.map((t, i) => (
+        <line key={`mt-${i}`} {...t} stroke={lineStrong} strokeWidth="0.75" strokeLinecap="round" />
       ))}
-
-      {/* Decorative bounding box hint */}
-      <rect x="28" y={cy - 72} width="344" height="144" rx="10" stroke={lineSoft} strokeWidth="0.5" opacity="0.35" />
+      {/* Center dot */}
+      <circle cx={cx} cy={cy} r="3.5" fill={focal} />
     </svg>
   );
 }

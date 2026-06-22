@@ -1,23 +1,54 @@
 import { BLOG_LANDING_HERO } from "@/lib/blog/blog-landing-hero-colors";
 
-const { lineSoft, line, lineStrong, accent, accentWarm, focal } = BLOG_LANDING_HERO;
+const { lineSoft, line, lineStrong, accentWarm, focal } = BLOG_LANDING_HERO;
 
 /**
- * Three large overlapping circles filling the hero card.
- * Dots sit at exact circle-circumference intersections and extreme arc positions.
- * No EKG — pure geometric / cellular abstraction in Doe beige.
+ * Hero graphic — precision instrument / calibration target.
+ * A large circle with an inner ring, two axes running edge to edge,
+ * evenly-spaced tick marks, and accent dots at 45° positions.
+ * Reads as a scientific readout: precise, clinical, calm.
  *
- * Circle geometry (viewBox 400×520, preserveAspectRatio slice):
- *   A  cx=155  cy=180  r=118
- *   B  cx=262  cy=148  r=105
- *   C  cx=285  cy=310  r=82
- *
- * Intersection points (mathematically exact to 1 decimal):
- *   A∩B  upper  (194, 68)    lower  (248, 252)
- *   A∩C  upper  (261, 232)   lower  (207, 286)
- *   B∩C  right  (320, 236)   left   (231, 248)
+ * ViewBox 400×520. Center at (200, 210). Outer r=155, inner r=77.
  */
 export function BlogLandingHeroGraphic() {
+  const cx = 200;
+  const cy = 210;
+  const ro = 155; // outer radius
+  const ri = 77;  // inner radius
+
+  // Axis endpoints — extend to outer circle perimeter
+  const axH = { x1: cx - ro, y1: cy, x2: cx + ro, y2: cy };
+  const axV = { x1: cx, y1: cy - ro, x2: cx, y2: cy + ro };
+
+  // Tick marks on horizontal axis (every 38px from center, skip center)
+  const hTicks = [-76, -38, 38, 76].map((dx) => ({
+    x: cx + dx,
+    len: Math.abs(dx) === 76 ? 10 : 14,
+  }));
+
+  // Tick marks on vertical axis
+  const vTicks = [-76, -38, 38, 76].map((dy) => ({
+    y: cy + dy,
+    len: Math.abs(dy) === 76 ? 10 : 14,
+  }));
+
+  // Accent dots at 45° positions on the outer circle
+  const r45 = ro * Math.SQRT1_2; // ro / √2 ≈ 110
+  const accentDots = [
+    { x: cx + r45, y: cy - r45, fill: accentWarm, r: 3 },   // NE
+    { x: cx - r45, y: cy - r45, fill: lineSoft,   r: 2.5 }, // NW
+    { x: cx + r45, y: cy + r45, fill: lineSoft,   r: 2.5 }, // SE
+    { x: cx - r45, y: cy + r45, fill: line,       r: 2.5 }, // SW
+  ];
+
+  // Small ticks at the 4 cardinal points on the outer circle perimeter
+  const cardinalTicks = [
+    { x1: cx + ro - 1, y1: cy - 7, x2: cx + ro - 1, y2: cy + 7 }, // right
+    { x1: cx - ro + 1, y1: cy - 7, x2: cx - ro + 1, y2: cy + 7 }, // left
+    { x1: cx - 7, y1: cy - ro + 1, x2: cx + 7, y2: cy - ro + 1 }, // top
+    { x1: cx - 7, y1: cy + ro - 1, x2: cx + 7, y2: cy + ro - 1 }, // bottom
+  ];
+
   return (
     <svg
       className="absolute inset-0 h-full w-full"
@@ -26,42 +57,49 @@ export function BlogLandingHeroGraphic() {
       preserveAspectRatio="xMidYMid slice"
       aria-hidden
     >
-      {/* ── Three circles ─────────────────────────────────────────────── */}
-      <circle cx="155" cy="180" r="118" stroke={lineSoft} strokeWidth="1"   />
-      <circle cx="262" cy="148" r="105" stroke={line}     strokeWidth="1"   />
-      <circle cx="285" cy="310" r="82"  stroke={lineStrong} strokeWidth="1" />
+      {/* Outer circle */}
+      <circle cx={cx} cy={cy} r={ro} stroke={line} strokeWidth="0.9" />
 
-      {/* ── Dots along circle lines ───────────────────────────────────── */}
+      {/* Inner ring */}
+      <circle cx={cx} cy={cy} r={ri} stroke={lineSoft} strokeWidth="0.65" />
 
-      {/* Extreme arc positions — top of each circle */}
-      <circle cx="155" cy="62"  r="2"   fill={lineSoft}  />   {/* top of A */}
-      <circle cx="262" cy="43"  r="2"   fill={line}      />   {/* top of B */}
-      <circle cx="285" cy="228" r="2"   fill={lineStrong}/>   {/* top of C */}
+      {/* Axes */}
+      <line {...axH} stroke={lineSoft} strokeWidth="0.75" />
+      <line {...axV} stroke={lineSoft} strokeWidth="0.75" />
 
-      {/* Left tangent of A (partially clipped by slice — intentional bleed) */}
-      <circle cx="37"  cy="180" r="2"   fill={lineSoft}  />
+      {/* Horizontal axis tick marks */}
+      {hTicks.map(({ x, len }) => (
+        <line
+          key={`ht-${x}`}
+          x1={x} y1={cy - len / 2}
+          x2={x} y2={cy + len / 2}
+          stroke={lineStrong} strokeWidth="0.8" strokeLinecap="round"
+        />
+      ))}
 
-      {/* A∩B intersections */}
-      <circle cx="194" cy="68"  r="3"   fill={accentWarm}/>   {/* A∩B upper */}
-      <circle cx="248" cy="252" r="2.5" fill={line}      />   {/* A∩B lower */}
+      {/* Vertical axis tick marks */}
+      {vTicks.map(({ y, len }) => (
+        <line
+          key={`vt-${y}`}
+          x1={cx - len / 2} y1={y}
+          x2={cx + len / 2} y2={y}
+          stroke={lineStrong} strokeWidth="0.8" strokeLinecap="round"
+        />
+      ))}
 
-      {/* A∩C intersections */}
-      <circle cx="261" cy="232" r="2"   fill={lineStrong}/>   {/* A∩C upper */}
-      <circle cx="207" cy="286" r="2"   fill={focal}     />   {/* A∩C lower */}
+      {/* Cardinal perimeter ticks */}
+      {cardinalTicks.map((t, i) => (
+        <line key={`ct-${i}`} {...t} stroke={lineSoft} strokeWidth="0.65" strokeLinecap="round" />
+      ))}
 
-      {/* B∩C intersections */}
-      <circle cx="320" cy="236" r="2.5" fill={accent}    />   {/* B∩C right */}
-      <circle cx="231" cy="248" r="2"   fill={focal}     />   {/* B∩C left  */}
+      {/* Accent dots at 45° positions */}
+      {accentDots.map(({ x, y, fill, r }, i) => (
+        <circle key={`ad-${i}`} cx={x} cy={y} r={r} fill={fill} />
+      ))}
 
-      {/* ── Tick extensions at extreme positions ─────────────────────── */}
-      {/* Top of A */}
-      <line x1="155" y1="58"  x2="155" y2="53"  stroke={lineSoft}  strokeWidth="0.9" strokeLinecap="round" />
-      {/* Top of B */}
-      <line x1="262" y1="39"  x2="262" y2="34"  stroke={line}      strokeWidth="0.9" strokeLinecap="round" />
-      {/* Left tangent of A */}
-      <line x1="33"  y1="180" x2="28"  y2="180" stroke={lineSoft}  strokeWidth="0.9" strokeLinecap="round" />
-      {/* A∩B upper — small cross-hair */}
-      <line x1="194" y1="64"  x2="194" y2="59"  stroke={accentWarm} strokeWidth="0.9" strokeLinecap="round" />
+      {/* Center dot */}
+      <circle cx={cx} cy={cy} r="3.5" fill={focal} />
+      <circle cx={cx} cy={cy} r="8" stroke={lineStrong} strokeWidth="0.7" />
     </svg>
   );
 }
