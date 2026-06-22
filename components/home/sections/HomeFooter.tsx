@@ -12,15 +12,11 @@ const FOOTER_LINKS = [
   { href: "/", label: "Our Vision" },
 ] as const;
 
-export function HomeFooter({ compact = false }: { compact?: boolean }) {
+export function HomeFooter() {
   return (
     <>
       <footer
-        className={`relative z-10 mt-0 flex w-screen flex-col overflow-x-clip overflow-y-hidden pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] ${
-          compact
-            ? "min-h-0 justify-start"
-            : "min-h-[min(69vh,42rem)] justify-end iphone-page:min-h-[66vh]"
-        }`}
+        className="relative z-10 mt-0 flex min-h-[min(69vh,42rem)] w-screen flex-col justify-end overflow-x-clip overflow-y-hidden pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] iphone-page:min-h-[66vh]"
         style={{
           width: "100vw",
           marginLeft: "calc(50% - 50vw)",
@@ -73,17 +69,9 @@ export function HomeFooter({ compact = false }: { compact?: boolean }) {
           }}
         />
 
-        <div
-          className={`relative z-10 flex w-full flex-col ${
-            compact ? "justify-start pt-0" : "flex-1 justify-end pt-10 md:pt-16"
-          }`}
-        >
+        <div className="relative z-10 flex w-full flex-1 flex-col justify-end pt-10 md:pt-16">
           <div
-            className={`flex w-full items-end justify-between gap-8 md:gap-8 ${
-              compact
-                ? "mb-8 iphone-page:mb-6"
-                : "mb-14 md:mb-16 iphone-page:mb-12 iphone-page:gap-6"
-            } ${DOEPHONE_FOOTER_CONTENT_INSET}`}
+            className={`mb-14 flex w-full items-end justify-between gap-8 md:mb-16 iphone-page:mb-12 iphone-page:gap-6 ${DOEPHONE_FOOTER_CONTENT_INSET}`}
           >
             <div
               className={`min-w-0 shrink text-left text-white ${inter.className} text-[clamp(1.28rem,1.1rem+0.75vmin,1.55rem)] font-normal leading-[1.38] tracking-[-0.01em] iphone-page:text-[clamp(1.2rem,1.05rem+0.68vmin,1.45rem)]`}
@@ -121,9 +109,7 @@ export function HomeFooter({ compact = false }: { compact?: boolean }) {
           </div>
 
           <div
-            className={`relative z-[11] flex justify-center overflow-x-clip overflow-y-visible pb-0 ${
-              compact ? "pt-0" : "pt-3"
-            }`}
+            className="relative z-[11] flex justify-center overflow-x-clip overflow-y-visible pt-3 pb-0"
             style={{
               width: "100vw",
               marginLeft: "calc(50% - 50vw)",

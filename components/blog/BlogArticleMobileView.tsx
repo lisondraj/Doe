@@ -11,7 +11,7 @@ export function BlogArticleMobileView({ article }: { article: BlogArticle }) {
   return (
     <BlogMobileShell>
       <main
-        className={`mx-auto w-full max-w-[min(100%,42rem)] pb-4 pt-[max(11.25rem,calc(env(safe-area-inset-top,0px)+7.75rem))] ${suisseIntl.className}`}
+        className={`mx-auto w-full max-w-[min(100%,42rem)] pt-[max(11.25rem,calc(env(safe-area-inset-top,0px)+7.75rem))] ${suisseIntl.className}`}
       >
         <Link
           href="/blog"
