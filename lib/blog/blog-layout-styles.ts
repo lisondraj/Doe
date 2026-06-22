@@ -80,5 +80,5 @@ export const BLOG_STACK_GAP = DOEPHONE_SECTION_CAROUSEL_MENU_GAP;
 /** Visual → caption stack (closing section card→outside copy). */
 export const BLOG_CARD_STACK = "space-y-3 iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)]";
 
-/** Article body paragraphs — same scale as section menu descriptions. */
-export const BLOG_ARTICLE_BODY_TW = `text-[clamp(1.18rem,1rem+0.78vmin,1.42rem)] iphone-page:text-[clamp(1.38rem,1.14rem+1.05vmin,1.72rem)] font-normal leading-[1.44] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
+/** Article body paragraphs. */
+export const BLOG_ARTICLE_BODY_TW = `text-[clamp(1.32rem,1.12rem+0.9vmin,1.58rem)] iphone-page:text-[clamp(1.55rem,1.28rem+1.22vmin,1.95rem)] font-normal leading-[1.48] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
