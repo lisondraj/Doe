@@ -22,7 +22,7 @@ import { BLOG_ARTICLES } from "@/lib/blog/articles";
 function BlogReadMoreArrow() {
   return (
     <svg
-      className="h-3.5 w-3.5 shrink-0 iphone-page:h-[clamp(0.82rem,0.72rem+0.45vmin,0.95rem)] iphone-page:w-[clamp(0.82rem,0.72rem+0.45vmin,0.95rem)]"
+      className="h-4 w-4 shrink-0 iphone-page:h-[clamp(0.9rem,0.8rem+0.5vmin,1.05rem)] iphone-page:w-[clamp(0.9rem,0.8rem+0.5vmin,1.05rem)]"
       viewBox="0 0 16 16"
       fill="none"
       aria-hidden

@@ -46,7 +46,7 @@ export const BLOG_LIST_DIVIDER_WRAP = "py-12 iphone-page:py-14";
 export const BLOG_LIST_DIVIDER_LINE = "h-px w-full bg-[#9A8F82]";
 
 /** Small read-more label on landing cards. */
-export const BLOG_READ_MORE_TW = `inline-flex items-center gap-1.5 text-[clamp(0.95rem,0.86rem+0.42vmin,1.08rem)] iphone-page:text-[clamp(1.02rem,0.9rem+0.55vmin,1.14rem)] font-medium text-[#6B7280] transition-colors group-hover:text-[#1E343A] ${suisseIntl.className}`;
+export const BLOG_READ_MORE_TW = `inline-flex items-center gap-2 text-[clamp(1.08rem,0.98rem+0.52vmin,1.22rem)] iphone-page:text-[clamp(1.15rem,1.02rem+0.65vmin,1.3rem)] font-medium text-[#6B7280] transition-colors group-hover:text-[#1E343A] ${dmSans.className}`;
 
 /** Author · date line under card/article titles. */
 export const BLOG_META_TW = `text-[clamp(1.18rem,1rem+0.78vmin,1.42rem)] iphone-page:text-[clamp(1.38rem,1.14rem+1.05vmin,1.72rem)] font-medium text-[#6B7280] ${dmSans.className}`;
