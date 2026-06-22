@@ -36,11 +36,11 @@ export const BLOG_LANDING_CARD_TITLE_TW = `text-[1.65rem] iphone-page:text-[clam
 /** Tight gap between landing card title and author/date. */
 export const BLOG_LANDING_TITLE_META_GAP = "mt-1 iphone-page:mt-[clamp(0.2rem,0.12rem+0.35vmin,0.35rem)]";
 
-/** Divider between landing list articles — visible rule with padding above and below. */
-export const BLOG_LIST_DIVIDER_WRAP =
-  "py-10 iphone-page:py-[clamp(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
+/** Divider between landing list articles — padding above and below the rule. */
+export const BLOG_LIST_DIVIDER_WRAP = "py-12 iphone-page:py-14";
 
-export const BLOG_LIST_DIVIDER_LINE = "m-0 w-full border-0 border-t border-[#CFC9BF]";
+/** Divider line — explicit div so border fallbacks can't hide it. */
+export const BLOG_LIST_DIVIDER_LINE = "h-px w-full bg-[#9A8F82]";
 
 /** Small read-more label on landing cards. */
 export const BLOG_READ_MORE_TW = `inline-flex items-center gap-1.5 text-[clamp(0.95rem,0.86rem+0.42vmin,1.08rem)] iphone-page:text-[clamp(1.02rem,0.9rem+0.55vmin,1.14rem)] font-medium text-[#6B7280] transition-colors group-hover:text-[#1E343A] ${suisseIntl.className}`;

@@ -58,7 +58,7 @@ export function BlogIndexMobileView() {
             <li key={article.slug}>
               {index > 0 ? (
                 <div className={BLOG_LIST_DIVIDER_WRAP} aria-hidden>
-                  <hr className={BLOG_LIST_DIVIDER_LINE} />
+                  <div className={BLOG_LIST_DIVIDER_LINE} />
                 </div>
               ) : null}
               <Link href={`/blog/${article.slug}`} className="group block no-underline">
