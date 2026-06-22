@@ -48,8 +48,8 @@ export const BLOG_LIST_DIVIDER_WRAP = "py-12 iphone-page:py-14";
 /** Divider line — explicit div so border fallbacks can't hide it. */
 export const BLOG_LIST_DIVIDER_LINE = "h-px w-full bg-[#9A8F82]";
 
-/** Small read-more label on landing cards. */
-export const BLOG_READ_MORE_TW = `inline-flex items-center gap-2 text-[clamp(1.08rem,0.98rem+0.52vmin,1.22rem)] iphone-page:text-[clamp(1.15rem,1.02rem+0.65vmin,1.3rem)] font-medium text-[#6B7280] transition-colors group-hover:text-[#1E343A] ${dmSans.className}`;
+/** Read-more label on landing cards. */
+export const BLOG_READ_MORE_TW = `inline-flex items-center gap-2 text-[clamp(1.22rem,1.08rem+0.65vmin,1.42rem)] iphone-page:text-[clamp(1.38rem,1.18rem+0.95vmin,1.68rem)] font-medium text-[#6B7280] transition-colors group-hover:text-[#1E343A] ${dmSans.className}`;
 
 /** Author · date line under card/article titles. */
 export const BLOG_META_TW = `text-[clamp(1.32rem,1.12rem+0.9vmin,1.58rem)] iphone-page:text-[clamp(1.52rem,1.26rem+1.18vmin,1.92rem)] font-medium text-[#6B7280] ${dmSans.className}`;
