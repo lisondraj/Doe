@@ -8,7 +8,7 @@ import {
   DOEPHONE_SECTION_MENU_DESCRIPTION_TW,
   DOEPHONE_SECTION_TITLE_CAROUSEL_GAP,
 } from "@/lib/doephone/section-styles";
-import { inter, lora, suisseIntl } from "@/lib/home/fonts";
+import { dmSans, inter, lora, suisseIntl } from "@/lib/home/fonts";
 
 /** Horizontal gutters — matches closing section carousel band. */
 export const BLOG_PAGE_INSET_X = DOEPHONE_SECTION_CAROUSEL_INSET_X;
@@ -33,8 +33,8 @@ export const BLOG_BODY_COPY_TW = DOEPHONE_SECTION_MENU_DESCRIPTION_TW;
 /** Card caption under feature visuals — closing section outside copy. */
 export const BLOG_CARD_TITLE_TW = `${DOEPHONE_SECTION_FOOTER_OUTSIDE_CAPTION_TW} text-left text-gray-700`;
 
-/** Landing list card title — slightly larger than footer caption. */
-export const BLOG_LANDING_CARD_TITLE_TW = `text-[1.65rem] iphone-page:text-[clamp(1.5rem,0.92rem+2.55vmin,2.65rem)] font-normal leading-snug tracking-tight text-gray-700 ${inter.className}`;
+/** Landing list card title — DM Sans, close to Inter/Suisse with full weight range. */
+export const BLOG_LANDING_CARD_TITLE_TW = `text-[1.65rem] iphone-page:text-[clamp(1.5rem,0.92rem+2.55vmin,2.65rem)] font-normal leading-snug tracking-tight text-gray-700 ${dmSans.className}`;
 
 /** Tight gap between landing card title and author/date. */
 export const BLOG_LANDING_TITLE_META_GAP = "mt-1 iphone-page:mt-[clamp(0.2rem,0.12rem+0.35vmin,0.35rem)]";
@@ -49,10 +49,10 @@ export const BLOG_LIST_DIVIDER_LINE = "h-px w-full bg-[#9A8F82]";
 export const BLOG_READ_MORE_TW = `inline-flex items-center gap-1.5 text-[clamp(0.95rem,0.86rem+0.42vmin,1.08rem)] iphone-page:text-[clamp(1.02rem,0.9rem+0.55vmin,1.14rem)] font-medium text-[#6B7280] transition-colors group-hover:text-[#1E343A] ${suisseIntl.className}`;
 
 /** Author · date line under card/article titles. */
-export const BLOG_META_TW = `text-[clamp(1.18rem,1rem+0.78vmin,1.42rem)] iphone-page:text-[clamp(1.38rem,1.14rem+1.05vmin,1.72rem)] font-medium text-[#6B7280] ${suisseIntl.className}`;
+export const BLOG_META_TW = `text-[clamp(1.18rem,1rem+0.78vmin,1.42rem)] iphone-page:text-[clamp(1.38rem,1.14rem+1.05vmin,1.72rem)] font-medium text-[#6B7280] ${dmSans.className}`;
 
 /** Article eyebrow / back link. */
-export const BLOG_EYEBROW_TW = `text-[clamp(1.18rem,1rem+0.78vmin,1.42rem)] iphone-page:text-[clamp(1.38rem,1.14rem+1.05vmin,1.72rem)] font-medium tracking-[0.02em] text-[#6B7280] ${suisseIntl.className}`;
+export const BLOG_EYEBROW_TW = `text-[clamp(1.18rem,1rem+0.78vmin,1.42rem)] iphone-page:text-[clamp(1.38rem,1.14rem+1.05vmin,1.72rem)] font-medium tracking-[0.02em] text-[#6B7280] ${dmSans.className}`;
 
 /** Closing-section feature card box. */
 export const BLOG_FEATURE_BOX_TW = `${DOEPHONE_SECTION_CLOSING_FEATURE_HEIGHT} ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`;

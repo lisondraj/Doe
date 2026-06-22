@@ -1,4 +1,4 @@
-import { Inter, Lora } from "next/font/google";
+import { DM_Sans, Inter, Lora } from "next/font/google";
 import localFont from "next/font/local";
 
 export const lora = Lora({
@@ -17,6 +17,13 @@ export const loraItalicLight = Lora({
 export const inter = Inter({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
+});
+
+/** Blog meta, eyebrows, and landing card titles — neutral grotesque close to Inter/Suisse Intl with full weight support. */
+export const dmSans = DM_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
 });
 
 /** Second-section workflow carousel — white in-card UI mocks only (not slide captions). */
