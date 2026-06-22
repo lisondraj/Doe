@@ -1,11 +1,11 @@
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
-import type { WorkflowCarouselDesignBackdrop } from "@/lib/workflow-carousel-design-backdrops";
+import type { WorkflowCarouselDesignBackdrop as WorkflowCarouselDesignBackdropType } from "@/lib/workflow-carousel-design-backdrops";
 
 export function BlogHeroVisual({
   backdrop,
   compact = false,
 }: {
-  backdrop: WorkflowCarouselDesignBackdrop;
+  backdrop: WorkflowCarouselDesignBackdropType;
   compact?: boolean;
 }) {
   return (
