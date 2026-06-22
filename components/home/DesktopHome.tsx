@@ -12,7 +12,6 @@ import {
   type HTMLAttributes,
   type Ref,
 } from "react";
-import { ClinicWorkflowDiagram } from "@/components/herodesign/ClinicWorkflowDiagram";
 import { NAV_HREFS } from "@/components/doe-nav-data";
 import { HERO_CAROUSEL_GRAIN_BG } from "@/components/hero-carousel-texture";
 import { DesignHeroBackdropSection } from "@/components/design-hero-backdrop-section";
