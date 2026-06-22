@@ -99,61 +99,65 @@ function Design1() {
 
 /* ──────────────────────────────────────────────────────────────
    Design 2 — Revenue Cycle / Prior Auth
-   Concentric rounded rectangles expanding outward from center —
-   like a scan, target, or review process closing in. Clean, precise.
+   Diagonal parallel lines sweeping bottom-left to top-right —
+   evenly spaced, varying weight and indent, with small terminal
+   dots. Same modern/boho language as the landing hero.
 ────────────────────────────────────────────────────────────── */
 function Design2() {
-  const cx = 200;
-  const cy = 200;
+  // Lines defined as [y-at-left-edge, y-at-right-edge, leftX, rightX, color, strokeWidth, opacity]
+  // All lines run from (leftX, y_left) to (rightX, y_right)
+  // Gentle diagonal: each line rises ~80px from left to right across 400px
+  type DiagLine = [number, number, number, number, string, number, number];
 
-  // Each level: [half-width, half-height, rx, stroke-color, stroke-width]
-  const levels: [number, number, number, string, string][] = [
-    [ 22,  16,  5, focal,      "0.9"],
-    [ 50,  38,  8, lineStrong, "0.8"],
-    [ 90,  67, 12, line,       "0.75"],
-    [132,  98, 16, line,       "0.7"],
-    [174, 128, 20, lineSoft,   "0.65"],
-    [216, 158, 24, lineSoft,   "0.55"],
+  const rise = 80; // px rise across the full width
+  const spacing = 22; // vertical spacing between lines at left edge
+  const baseY = 330; // bottom-most line left-edge y
+
+  const rows: { leftY: number; leftX: number; rightX: number; col: string; sw: number; op: number }[] = [
+    { leftY: baseY -  0, leftX:  0,  rightX: 400, col: lineSoft,   sw: 0.55, op: 0.55 },
+    { leftY: baseY - 22, leftX:  0,  rightX: 400, col: lineSoft,   sw: 0.6,  op: 0.62 },
+    { leftY: baseY - 44, leftX: 18,  rightX: 400, col: line,       sw: 0.7,  op: 0.7  },
+    { leftY: baseY - 66, leftX:  0,  rightX: 382, col: line,       sw: 0.75, op: 0.75 },
+    { leftY: baseY - 88, leftX:  0,  rightX: 400, col: lineStrong, sw: 0.8,  op: 0.82 },
+    { leftY: baseY -110, leftX: 32,  rightX: 400, col: lineStrong, sw: 0.85, op: 0.88 },
+    { leftY: baseY -132, leftX:  0,  rightX: 400, col: lineStrong, sw: 0.85, op: 0.85 },
+    { leftY: baseY -154, leftX:  0,  rightX: 368, col: line,       sw: 0.8,  op: 0.78 },
+    { leftY: baseY -176, leftX: 20,  rightX: 400, col: line,       sw: 0.7,  op: 0.72 },
+    { leftY: baseY -198, leftX:  0,  rightX: 400, col: lineSoft,   sw: 0.65, op: 0.65 },
+    { leftY: baseY -220, leftX:  0,  rightX: 390, col: lineSoft,   sw: 0.6,  op: 0.58 },
+    { leftY: baseY -242, leftX: 14,  rightX: 400, col: lineSoft,   sw: 0.55, op: 0.52 },
+    { leftY: baseY -264, leftX:  0,  rightX: 400, col: lineSoft,   sw: 0.5,  op: 0.45 },
+    { leftY: baseY -286, leftX:  0,  rightX: 376, col: lineSoft,   sw: 0.5,  op: 0.38 },
+    { leftY: baseY -308, leftX: 22,  rightX: 400, col: lineSoft,   sw: 0.45, op: 0.32 },
+    // Accent overlay lines — same diagonals, very light
+    { leftY: baseY - 88, leftX:  0,  rightX: 400, col: accentWarm, sw: 0.4,  op: 0.2  },
+    { leftY: baseY -176, leftX: 20,  rightX: 400, col: accentWarm, sw: 0.35, op: 0.15 },
   ];
 
-  // Corner dots on outermost rect
-  const [ow, oh] = [216, 158];
-  const cornerDots = [
-    { x: cx - ow, y: cy - oh },
-    { x: cx + ow, y: cy - oh },
-    { x: cx + ow, y: cy + oh },
-    { x: cx - ow, y: cy + oh },
-  ];
-
-  // Mid-side ticks on outermost rect (short perpendicular lines inside the edge)
-  const midTicks = [
-    { x1: cx,      y1: cy - oh, x2: cx,      y2: cy - oh + 10 }, // top
-    { x1: cx,      y1: cy + oh, x2: cx,      y2: cy + oh - 10 }, // bottom
-    { x1: cx - ow, y1: cy,      x2: cx - ow + 10, y2: cy },      // left
-    { x1: cx + ow, y1: cy,      x2: cx + ow - 10, y2: cy },      // right
+  const dots: { x: number; y: number; r: number; col: string }[] = [
+    { x: 18,  y: rows[2].leftY  + 0,           r: 1.8, col: line      },
+    { x: 382, y: rows[3].leftY  - rise * 382/400, r: 1.8, col: line    },
+    { x: 32,  y: rows[5].leftY  + 0,           r: 2.2, col: lineStrong },
+    { x: 368, y: rows[7].leftY  - rise * 368/400, r: 2,  col: lineStrong },
+    { x: 20,  y: rows[8].leftY  + 0,           r: 2,   col: line       },
+    { x: 200, y: rows[6].leftY  - rise * 0.5,  r: 2.5, col: accentWarm },
+    { x: 390, y: rows[10].leftY - rise * 390/400, r: 1.8, col: lineSoft },
+    { x: 14,  y: rows[11].leftY + 0,           r: 1.8, col: lineSoft   },
   ];
 
   return (
     <svg viewBox="0 0 400 400" fill="none" preserveAspectRatio="xMidYMid meet" aria-hidden className="absolute inset-0 h-full w-full">
-      {levels.map(([hw, hh, rx, stroke, sw], i) => (
-        <rect
+      {rows.map(({ leftY, leftX, rightX, col, sw, op }, i) => (
+        <line
           key={i}
-          x={cx - hw} y={cy - hh}
-          width={hw * 2} height={hh * 2}
-          rx={rx}
-          stroke={stroke} strokeWidth={sw}
+          x1={leftX}  y1={leftY}
+          x2={rightX} y2={leftY - rise * (rightX - leftX) / 400}
+          stroke={col} strokeWidth={sw} opacity={op} strokeLinecap="round"
         />
       ))}
-      {/* Corner dots */}
-      {cornerDots.map(({ x, y }, i) => (
-        <circle key={`cd-${i}`} cx={x} cy={y} r="2.5" fill={lineSoft} />
+      {dots.map(({ x, y, r, col }, i) => (
+        <circle key={`d${i}`} cx={x} cy={y} r={r} fill={col} opacity={0.8} />
       ))}
-      {/* Mid-side ticks */}
-      {midTicks.map((t, i) => (
-        <line key={`mt-${i}`} {...t} stroke={lineStrong} strokeWidth="0.75" strokeLinecap="round" />
-      ))}
-      {/* Center dot */}
-      <circle cx={cx} cy={cy} r="3.5" fill={focal} />
     </svg>
   );
 }

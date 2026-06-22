@@ -11,7 +11,8 @@ export type ArticleBlock =
   | { type: "p-link"; text: string; linkAnchor: string; linkHref: string }
   | { type: "h2"; text: string }
   | { type: "ul"; items: readonly string[] }
-  | { type: "image"; design: number };
+  | { type: "image"; design: number }
+  | { type: "quote"; text: string; attribution?: string };
 
 export type BlogArticle = {
   slug: string;
@@ -71,6 +72,7 @@ export const BLOG_ARTICLES: readonly BlogArticle[] = [
       ]},
       { type: "image", design: 1 },
       { type: "p", text: "Every practice has a different rhythm. A family medicine visit runs differently than a hospitalist consult or an ED triage. Ambient documentation adapts to each context—the length, the tone, the sections that matter—because the note is trained on how your practice already writes, not on a generic template built in a conference room somewhere." },
+      { type: "quote", text: "The note is not the goal. The patient is the goal.", attribution: "Doe Clinical Advisory Group" },
       { type: "p", text: "Trust is the harder problem. Clinicians have been burned by autofill that missed the nuance, by voice recognition that mangled medication names, by AI that hallucinated a finding that was never said. Doe addresses this by making every sentence traceable. Each claim in the draft links to the moment in the conversation that supports it. You review evidence, not output." },
       { type: "p", text: "We piloted ambient documentation with three primary care groups and two specialty practices over six months. On average, clinicians recovered forty-five minutes per day previously spent on after-hours charting. Patient interaction time in the room increased. Burnout scores on the MBI-HWB survey dropped meaningfully across all five sites." },
       { type: "p-link", text: "Ambient documentation is available in early access for primary care, internal medicine, and urgent care. Specialty configurations for cardiology, endocrinology, and behavioral health are in active development. Read more about our approach to clinical safety.", linkAnchor: "clinical safety", linkHref: "#" },
