@@ -40,6 +40,15 @@ html:has(.doephone-mobile-root) body {
   background-color: #f7f6f3;
 }
 
+html:has(.blog-page-root) {
+  font-size: 100%;
+  background-color: #f7f6f3;
+}
+
+html:has(.blog-page-root) body {
+  background-color: #f7f6f3;
+}
+
 .doephone-mobile-root {
   overflow-x: clip;
   padding-left: env(safe-area-inset-left, 0px);
