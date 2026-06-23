@@ -42,7 +42,7 @@ export function DoePhoneCommunicationSection() {
           segmentedReveal
           revealed={revealed}
           line1="Labs in."
-          line2="Referrals out."
+          line2="Referrals out.."
         />
       </div>
 
