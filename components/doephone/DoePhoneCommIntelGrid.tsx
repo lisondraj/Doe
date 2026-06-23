@@ -4,13 +4,10 @@ import { BLOG_LANDING_HERO } from "@/lib/blog/blog-landing-hero-colors";
 
 const B = BLOG_LANDING_HERO;
 
-/*
- * Landscape cells — width is the long edge.
- * With the grid extending 10vw beyond each viewport edge, each cell is
- * ~150px wide. Height ~120px gives a clear ~1.25:1 landscape ratio.
- */
-const CELL_H = "h-[clamp(7rem,31vmin,11.5rem)] min-h-[clamp(7rem,31vmin,11.5rem)]";
-/* Subtler radius */
+/* Normal row height (~148px at 390px with 20vw extra bleed = 171px wide → 1.15:1 landscape) */
+const CELL_H      = "h-[clamp(8.5rem,38vmin,14rem)] min-h-[clamp(8.5rem,38vmin,14rem)]";
+/* Top-row cells taller so the fade-in has more physical height to look smooth */
+const CELL_H_TALL = "h-[clamp(10.5rem,47vmin,17rem)] min-h-[clamp(10.5rem,47vmin,17rem)]";
 const CELL_RADIUS = "rounded-[0.38rem]";
 
 /* ─── Gradient cell definitions ─── */
@@ -42,17 +39,17 @@ const GRADIENT_DESIGNS = [
   },
 ] as const;
 
-/* ─── Grid order: 0,2,4,6,8 → gradient; 1,3,5,7 → beige ─── */
+/* ─── Grid order: 0,2,4,6,8 → gradient; 1,3,5,7 → beige; row 0 = tall ─── */
 const GRID_META = [
-  { kind: "gradient" as const, design: 0 },
-  { kind: "beige" as const,    design: 0 },
-  { kind: "gradient" as const, design: 1 },
-  { kind: "beige" as const,    design: 1 },
-  { kind: "gradient" as const, design: 2 },
-  { kind: "beige" as const,    design: 2 },
-  { kind: "gradient" as const, design: 3 },
-  { kind: "beige" as const,    design: 3 },
-  { kind: "gradient" as const, design: 4 },
+  { kind: "gradient" as const, design: 0, tall: true  },
+  { kind: "beige"    as const, design: 0, tall: true  },
+  { kind: "gradient" as const, design: 1, tall: true  },
+  { kind: "beige"    as const, design: 1, tall: false },
+  { kind: "gradient" as const, design: 2, tall: false },
+  { kind: "beige"    as const, design: 2, tall: false },
+  { kind: "gradient" as const, design: 3, tall: false },
+  { kind: "beige"    as const, design: 3, tall: false },
+  { kind: "gradient" as const, design: 4, tall: false },
 ];
 
 /* ─── SVG overlays for gradient cells ─── */
@@ -180,11 +177,12 @@ function BeigeLineArt({ design }: { design: number }) {
 }
 
 /* ─── Individual cell components ─── */
-function GradientCell({ designIdx }: { designIdx: number }) {
+function GradientCell({ designIdx, tall }: { designIdx: number; tall: boolean }) {
   const d = GRADIENT_DESIGNS[designIdx];
+  const h = tall ? CELL_H_TALL : CELL_H;
   return (
     <div
-      className={`relative ${CELL_H} overflow-hidden ${CELL_RADIUS}`}
+      className={`relative ${h} overflow-hidden ${CELL_RADIUS}`}
       style={{ background: d.gradient }}
     >
       <GradientOverlay kind={d.overlay} />
@@ -192,10 +190,11 @@ function GradientCell({ designIdx }: { designIdx: number }) {
   );
 }
 
-function BeigeCell({ designIdx }: { designIdx: number }) {
+function BeigeCell({ designIdx, tall }: { designIdx: number; tall: boolean }) {
+  const h = tall ? CELL_H_TALL : CELL_H;
   return (
     <div
-      className={`relative ${CELL_H} overflow-hidden ${CELL_RADIUS}`}
+      className={`relative ${h} overflow-hidden ${CELL_RADIUS}`}
       style={{ background: B.fill, border: `1px solid ${B.border}` }}
     >
       <BeigeLineArt design={designIdx} />
@@ -207,46 +206,29 @@ function BeigeCell({ designIdx }: { designIdx: number }) {
 export function DoePhoneCommIntelGrid() {
   return (
     /*
-     * Mask-image fades the grid at top and bottom — completely transparent,
-     * so the section backdrop shows through perfectly regardless of its color.
-     * Pure rotateX tilt (no Y/Z) so the grid recedes straight back like the SS.
-     */
-    /*
-     * Mask and 3D transform are on the SAME element so the mask is applied
-     * to the flat grid in local space BEFORE the rotation. This ensures the
-     * top fade (which fades the first 22% of the grid's rows) is visible
-     * in the 3D view — the faded top rows appear small and distant at the
-     * top of the perspective tilt, exactly like the reference screenshot.
-     *
-     * Two-axis mask: vertical top/bottom × horizontal left/right → corners
-     * are transparent (same vignette at top and bottom).
+     * Mask and 3D transform on the same element → mask applied to the flat
+     * grid BEFORE rotation, so the top fade covers the taller top-row cells
+     * smoothly. Vertical-only mask — left/right edges are hard-cut by the
+     * section's overflow-hidden, so top corners are cleanly cropped.
      */
     <div
       style={{
-        marginLeft: "-10vw",
-        marginRight: "-10vw",
-        width: "calc(100% + 20vw)",
+        marginLeft: "-20vw",
+        marginRight: "-20vw",
+        width: "calc(100% + 40vw)",
         transform: "perspective(540px) rotateX(46deg)",
         transformOrigin: "50% 50%",
         transformStyle: "preserve-3d",
-        WebkitMaskImage: [
-          "linear-gradient(to bottom, transparent 0%, black 34%, black 82%, transparent 100%)",
-          "linear-gradient(to right,  transparent 0%, black 10%, black 90%, transparent 100%)",
-        ].join(", "),
-        WebkitMaskComposite: "source-in",
-        maskImage: [
-          "linear-gradient(to bottom, transparent 0%, black 34%, black 82%, transparent 100%)",
-          "linear-gradient(to right,  transparent 0%, black 10%, black 90%, transparent 100%)",
-        ].join(", "),
-        maskComposite: "intersect",
+        WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 30%, black 80%, transparent 100%)",
+        maskImage: "linear-gradient(to bottom, transparent 0%, black 30%, black 80%, transparent 100%)",
       }}
     >
       <div className="grid w-full grid-cols-3 gap-[clamp(0.45rem,1.2vmin,0.75rem)]">
         {GRID_META.map((cell, i) =>
           cell.kind === "gradient" ? (
-            <GradientCell key={i} designIdx={cell.design} />
+            <GradientCell key={i} designIdx={cell.design} tall={cell.tall} />
           ) : (
-            <BeigeCell key={i} designIdx={cell.design} />
+            <BeigeCell key={i} designIdx={cell.design} tall={cell.tall} />
           ),
         )}
       </div>
