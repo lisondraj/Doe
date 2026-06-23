@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useRef, type CSSProperties, type ReactNode } from "react";
 
 import DoeIphoneSiteNav from "@/components/DoeIphoneSiteNav";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
@@ -8,19 +8,31 @@ import { BLOG_FOOTER_GAP, BLOG_PAGE_INSET_X } from "@/lib/blog/blog-layout-style
 import { useBlogPhoneScale } from "@/lib/blog/use-blog-phone-scale";
 
 export function BlogMobileShell({ children }: { children: ReactNode }) {
-  useBlogPhoneScale();
+  const rootRef = useRef<HTMLDivElement>(null);
+  const scale = useBlogPhoneScale(rootRef);
+
+  const canvasStyle = {
+    transform: `scale(${scale})`,
+    transformOrigin: "top left",
+    width: `${100 / scale}%`,
+    minHeight: `${100 / scale}svh`,
+  } as CSSProperties;
 
   return (
     <div
+      ref={rootRef}
       className="blog-mobile-root relative z-0 min-h-[100svh] overflow-x-hidden bg-[#F7F6F3]"
       suppressHydrationWarning
       data-doeforvc-view="iphone"
     >
-      <DoeIphoneSiteNav pinchSafe />
-      <div className={`blog-page-root relative z-0 ${BLOG_PAGE_INSET_X} ${BLOG_FOOTER_GAP}`}>
-        {children}
+      {/* transform scale (inline) — zoom:var() is ignored in many iOS WebViews */}
+      <div className="blog-mobile-canvas" style={canvasStyle}>
+        <DoeIphoneSiteNav pinchSafe />
+        <div className={`blog-page-root relative z-0 ${BLOG_PAGE_INSET_X} ${BLOG_FOOTER_GAP}`}>
+          {children}
+        </div>
+        <HomeFooter />
       </div>
-      <HomeFooter />
     </div>
   );
 }
