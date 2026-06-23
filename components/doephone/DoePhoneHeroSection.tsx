@@ -73,7 +73,7 @@ export function DoePhoneHeroSection() {
       />
 
       <div
-        className={`doephone-hero-copy absolute inset-0 z-[3] flex min-w-0 flex-col items-start justify-start overflow-visible pt-[max(7rem,calc(env(safe-area-inset-top,0px)+calc(var(--app-vh,100lvh)*0.22)))] pb-[clamp(1.5rem,5vmin,2.5rem)] ${DOEPHONE_HERO_COPY_INSET}`}
+        className={`doephone-hero-copy absolute inset-0 z-[3] flex min-w-0 flex-col items-start justify-start overflow-visible pt-[max(6.25rem,calc(env(safe-area-inset-top,0px)+calc(var(--app-vh,100lvh)*0.19)))] pb-[clamp(1.5rem,5vmin,2.5rem)] ${DOEPHONE_HERO_COPY_INSET}`}
       >
         <DoePhoneHeroHeadline />
       </div>

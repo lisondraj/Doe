@@ -6,23 +6,23 @@ import {
 
 /** Hero inbox — outer shell (warm, low-luminance frosted). */
 export const HERO_TRIAGE_SHELL_GRADIENT =
-  "linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(255,228,196,0.05) 38%, rgba(210,119,76,0.04) 100%)";
+  "linear-gradient(135deg, rgba(255,236,205,0.08) 0%, rgba(231,169,68,0.06) 38%, rgba(210,119,76,0.05) 100%)";
 
-/** Hero inbox — second inner layer (subtle depth, not bright grey). */
+/** Hero inbox — second inner layer (subtle depth, warm Doe depth). */
 export const HERO_TRIAGE_INNER_GRADIENT =
-  "linear-gradient(145deg, rgba(255,255,255,0.04) 0%, rgba(255,236,205,0.025) 52%, rgba(232,169,68,0.015) 100%)";
+  "linear-gradient(145deg, rgba(255,228,196,0.05) 0%, rgba(212,157,79,0.035) 52%, rgba(210,119,76,0.025) 100%)";
 
 /** Hero inbox — column / pane surfaces. */
 export const HERO_TRIAGE_PANE_GRADIENT =
-  "linear-gradient(180deg, rgba(255,255,255,0.035) 0%, rgba(255,255,255,0.015) 100%)";
+  "linear-gradient(180deg, rgba(255,236,205,0.045) 0%, rgba(210,119,76,0.025) 55%, rgba(255,255,255,0.012) 100%)";
 
 /** Hero inbox — chips, rows, compose fields. */
 export const HERO_TRIAGE_CHIP_GRADIENT =
-  "linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)";
+  "linear-gradient(135deg, rgba(255,228,196,0.09) 0%, rgba(231,169,68,0.045) 52%, rgba(255,255,255,0.02) 100%)";
 
-/** Hero inbox — selected row glass. */
+/** Hero inbox — selected row glass (Doe gold / amber). */
 export const HERO_TRIAGE_SELECTED_GRADIENT =
-  "linear-gradient(135deg, rgba(37,99,235,0.55) 0%, rgba(37,99,235,0.38) 100%)";
+  "linear-gradient(135deg, rgba(231,169,68,0.55) 0%, rgba(210,119,76,0.48) 52%, rgba(196,122,90,0.4) 100%)";
 
 /** Re-exports for hero inbox glass shell. */
 export {
@@ -94,7 +94,7 @@ export const HERO_TRIAGE_GLASS = {
 
 /** Outer card — warm frosted glass; no backdrop-blur on phone (keeps UI sharp at scale). */
 export const HERO_TRIAGE_OUTER_GLASS_TW =
-  `${DOEPHONE_COMMUNICATION_GLASS_RADIUS_TW} shadow-[inset_0_1px_0_rgba(255,255,255,0.13)] [transform:translateZ(0)] backdrop-blur-[12px] iphone-page:backdrop-blur-none`;
+  `${DOEPHONE_COMMUNICATION_GLASS_RADIUS_TW} shadow-[inset_0_1px_0_rgba(255,228,196,0.14)] [transform:translateZ(0)] backdrop-blur-[12px] iphone-page:backdrop-blur-none`;
 
 export const HERO_TRIAGE_INNER_GLASS_TW =
   "backdrop-blur-[6px] iphone-page:backdrop-blur-none [transform:translateZ(0)]";

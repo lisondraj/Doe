@@ -18,24 +18,24 @@ import {
 } from "@/lib/home/hero-triage-preview-styles";
 import type { CSSProperties, ReactNode } from "react";
 
-const GLASS_INSET = "inset 0 1px 0 rgba(255,255,255,0.07)";
+const GLASS_INSET = "inset 0 1px 0 rgba(255,228,196,0.08)";
 
-/* ─── Frosted glass inbox tokens ─── */
+/* ─── Frosted glass inbox tokens — warm Doe palette ─── */
 const C = {
-  shellBorder: "rgba(255,255,255,0.10)",
-  glassBorder: "rgba(255,255,255,0.07)",
-  navIcon: "rgba(255,255,255,0.34)",
-  navActive: "rgba(255,255,255,0.88)",
-  navActiveBg: "rgba(255,255,255,0.06)",
-  pillText: "rgba(255,255,255,0.78)",
-  rowText: "rgba(255,255,255,0.52)",
-  rowMuted: "rgba(255,255,255,0.36)",
-  rowTime: "rgba(255,255,255,0.32)",
-  divider: "rgba(255,255,255,0.06)",
-  selectedMuted: "rgba(255,255,255,0.68)",
-  badgeText: "rgba(255,255,255,0.52)",
-  detailBody: "rgba(255,255,255,0.66)",
-  detailMuted: "rgba(255,255,255,0.42)",
+  shellBorder: "rgba(255,210,170,0.12)",
+  glassBorder: "rgba(255,200,160,0.08)",
+  navIcon: "rgba(255,236,205,0.42)",
+  navActive: "rgba(255,248,240,0.92)",
+  navActiveBg: "rgba(231,169,68,0.08)",
+  pillText: "rgba(255,240,220,0.82)",
+  rowText: "rgba(255,236,205,0.56)",
+  rowMuted: "rgba(255,228,196,0.38)",
+  rowTime: "rgba(255,220,190,0.34)",
+  divider: "rgba(255,200,160,0.07)",
+  selectedMuted: "rgba(255,248,240,0.72)",
+  badgeText: "rgba(255,236,205,0.56)",
+  detailBody: "rgba(255,240,225,0.68)",
+  detailMuted: "rgba(255,220,190,0.44)",
 } as const;
 
 function glassPaneStyle(extra?: CSSProperties): CSSProperties {
@@ -76,8 +76,8 @@ const INBOX_ROWS: InboxRow[] = [
     subject: "Refill request",
     preview: "Metformin 500mg for J. Martinez",
     time: "8:12",
-    iconBg: "rgba(58,122,85,0.16)",
-    iconColor: "rgba(190,220,200,0.88)",
+    iconBg: "rgba(210,119,76,0.18)",
+    iconColor: "rgba(255,236,205,0.88)",
   },
   {
     id: "labcorp",
@@ -86,8 +86,8 @@ const INBOX_ROWS: InboxRow[] = [
     subject: "Critical result",
     preview: "K+ 6.2 mEq/L, patient A. Chen",
     time: "7:48",
-    iconBg: "rgba(184,58,50,0.16)",
-    iconColor: "rgba(240,200,195,0.88)",
+    iconBg: "rgba(191,89,61,0.18)",
+    iconColor: "rgba(255,210,195,0.88)",
   },
   {
     id: "nurse",
@@ -96,8 +96,8 @@ const INBOX_ROWS: InboxRow[] = [
     subject: "Post-op update",
     preview: "Room 308 stable, discharge timeline requested",
     time: "Yesterday",
-    iconBg: "rgba(58,111,168,0.16)",
-    iconColor: "rgba(195,215,235,0.88)",
+    iconBg: "rgba(231,169,68,0.17)",
+    iconColor: "rgba(255,240,215,0.88)",
   },
   {
     id: "patient",
@@ -106,8 +106,8 @@ const INBOX_ROWS: InboxRow[] = [
     subject: "Follow-up visit",
     preview: "Need to schedule a visit this week",
     time: "9:14",
-    iconBg: "rgba(74,86,184,0.18)",
-    iconColor: "rgba(200,205,240,0.90)",
+    iconBg: "rgba(210,119,76,0.22)",
+    iconColor: "rgba(255,248,235,0.90)",
     selected: true,
   },
   {
@@ -117,8 +117,8 @@ const INBOX_ROWS: InboxRow[] = [
     subject: "Pre-authorization",
     preview: "Approved for PT #8821",
     time: "Mon",
-    iconBg: "rgba(138,104,64,0.16)",
-    iconColor: "rgba(230,215,195,0.88)",
+    iconBg: "rgba(196,122,90,0.17)",
+    iconColor: "rgba(255,230,210,0.88)",
   },
   {
     id: "specialist",
@@ -127,8 +127,8 @@ const INBOX_ROWS: InboxRow[] = [
     subject: "Referral accepted",
     preview: "Cardiology consult Tue 2 PM",
     time: "Mon",
-    iconBg: "rgba(107,63,160,0.16)",
-    iconColor: "rgba(215,200,235,0.88)",
+    iconBg: "rgba(184,106,40,0.17)",
+    iconColor: "rgba(255,225,195,0.88)",
   },
   {
     id: "quest",
@@ -137,8 +137,8 @@ const INBOX_ROWS: InboxRow[] = [
     subject: "Panel results",
     preview: "Lipid + HbA1c ready for T. Brooks",
     time: "Sun",
-    iconBg: "rgba(184,106,40,0.16)",
-    iconColor: "rgba(240,215,190,0.88)",
+    iconBg: "rgba(212,157,79,0.17)",
+    iconColor: "rgba(255,236,210,0.88)",
   },
   {
     id: "patient2",
@@ -147,8 +147,8 @@ const INBOX_ROWS: InboxRow[] = [
     subject: "Medication side effects",
     preview: "Dizziness since Monday morning",
     time: "Sun",
-    iconBg: "rgba(26,110,154,0.16)",
-    iconColor: "rgba(190,220,240,0.88)",
+    iconBg: "rgba(168,106,64,0.17)",
+    iconColor: "rgba(255,228,200,0.88)",
   },
   {
     id: "bcbs",
@@ -157,8 +157,8 @@ const INBOX_ROWS: InboxRow[] = [
     subject: "Claim processed",
     preview: "EOB attached for claim #44821",
     time: "Sat",
-    iconBg: "rgba(43,79,168,0.16)",
-    iconColor: "rgba(195,210,240,0.88)",
+    iconBg: "rgba(139,111,71,0.17)",
+    iconColor: "rgba(255,225,200,0.88)",
   },
   {
     id: "frontdesk",
@@ -167,8 +167,8 @@ const INBOX_ROWS: InboxRow[] = [
     subject: "Patient arrival",
     preview: "Room 4 ready for vitals",
     time: "Sat",
-    iconBg: "rgba(74,107,66,0.16)",
-    iconColor: "rgba(200,220,195,0.88)",
+    iconBg: "rgba(180,130,70,0.16)",
+    iconColor: "rgba(255,236,210,0.88)",
   },
   {
     id: "imaging",
@@ -177,8 +177,8 @@ const INBOX_ROWS: InboxRow[] = [
     subject: "MRI report",
     preview: "Lumbar spine for R. Walsh",
     time: "Fri",
-    iconBg: "rgba(122,74,154,0.16)",
-    iconColor: "rgba(220,200,235,0.88)",
+    iconBg: "rgba(200,140,80,0.16)",
+    iconColor: "rgba(255,240,220,0.88)",
   },
   {
     id: "priorauth",
@@ -187,8 +187,8 @@ const INBOX_ROWS: InboxRow[] = [
     subject: "Prior auth approved",
     preview: "12 PT sessions authorized",
     time: "Fri",
-    iconBg: "rgba(42,122,82,0.16)",
-    iconColor: "rgba(195,230,210,0.88)",
+    iconBg: "rgba(210,119,76,0.16)",
+    iconColor: "rgba(255,236,205,0.88)",
   },
 ];
 
@@ -283,7 +283,7 @@ function InboxListRow({ row, mobile }: { row: InboxRow; mobile: boolean }) {
           padding: pad,
           borderRadius: mobile ? "0.85rem" : "0.55rem",
           background: HERO_TRIAGE_SELECTED_GRADIENT,
-          border: `1px solid rgba(255,255,255,0.12)`,
+          border: `1px solid rgba(255,220,180,0.14)`,
           boxShadow: GLASS_INSET,
           display: "flex",
           alignItems: "flex-start",
@@ -462,8 +462,8 @@ function OpenEmailPane({ mobile }: { mobile: boolean }) {
                 row={{
                   ...SELECTED,
                   initials: msg.from === "Dr. Singh" ? "DS" : "MR",
-                  iconBg: msg.from === "Dr. Singh" ? "rgba(58,111,168,0.16)" : SELECTED.iconBg,
-                  iconColor: msg.from === "Dr. Singh" ? "rgba(195,215,235,0.88)" : SELECTED.iconColor,
+                  iconBg: msg.from === "Dr. Singh" ? "rgba(231,169,68,0.17)" : SELECTED.iconBg,
+                  iconColor: msg.from === "Dr. Singh" ? "rgba(255,240,215,0.88)" : SELECTED.iconColor,
                 }}
                 mobile={mobile}
               />
@@ -535,7 +535,7 @@ function OpenEmailPane({ mobile }: { mobile: boolean }) {
               padding: mobile ? "0.32rem 0.75rem" : "0.2rem 0.5rem",
               flexShrink: 0,
               background: HERO_TRIAGE_SELECTED_GRADIENT,
-              border: `1px solid rgba(255,255,255,0.12)`,
+              border: `1px solid rgba(255,220,180,0.14)`,
               boxShadow: GLASS_INSET,
             }}
           >
@@ -597,7 +597,7 @@ export function HeroTriagePreview({
             borderRadius: isMobile ? "1.35rem" : "1.1rem",
             background: HERO_TRIAGE_SHELL_GRADIENT,
             border: `1px solid ${C.shellBorder}`,
-            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
+            boxShadow: "inset 0 1px 0 rgba(255,228,196,0.1)",
             height: isMobile ? HERO_TRIAGE_MOBILE_MIN_HEIGHT.outer : undefined,
             minHeight: isMobile ? undefined : "16rem",
           }}
