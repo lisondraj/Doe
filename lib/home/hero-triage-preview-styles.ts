@@ -56,12 +56,12 @@ export const HERO_TRIAGE_WIDGET_WIDTH = {
 } as const;
 
 /**
- * 3D tilt — perspective(900px) gives strong depth on mobile.
- * Mobile uses a slightly reduced rotateY so the larger card doesn't
- * compress the left-edge content.
+ * 3D tilt — matches the Linear-style reference: card tilts backward
+ * (top away from viewer, rotateX dominant) with a very slight right-side
+ * lean (rotateY negative, right goes back). No heavy side tilt.
  */
 export const HERO_TRIAGE_TILT = {
-  mobile: "perspective(900px) rotateX(7deg) rotateY(18deg)",
+  mobile: "perspective(900px) rotateX(20deg) rotateY(-8deg)",
   desktop: "perspective(1400px) rotateX(8deg) rotateY(18deg)",
 } as const;
 

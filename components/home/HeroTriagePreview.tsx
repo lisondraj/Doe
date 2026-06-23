@@ -178,7 +178,7 @@ export function HeroTriagePreview({
             borderRadius: isMobile ? "1.6rem" : "1.1rem",
             background: HERO_TRIAGE_PANEL_GRADIENT,
             border: `1px solid ${HERO_TRIAGE_GLASS.panelBorder}`,
-            boxShadow: HERO_TRIAGE_GLASS.panelShadow,
+            boxShadow: isMobile ? "none" : HERO_TRIAGE_GLASS.panelShadow,
             padding: isMobile ? "3.0rem 3.3rem 3.5rem" : "1.45rem 1.55rem 1.65rem",
           }}
         >
