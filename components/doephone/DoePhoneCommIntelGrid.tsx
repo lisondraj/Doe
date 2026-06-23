@@ -209,9 +209,9 @@ export function DoePhoneCommIntelGrid() {
         transformOrigin: "50% 50%",
         transformStyle: "preserve-3d",
         WebkitMaskImage:
-          "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.08) 12%, rgba(0,0,0,0.35) 24%, rgba(0,0,0,0.72) 38%, black 52%, black 80%, transparent 100%)",
+          "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.55) 6%, rgba(0,0,0,0.88) 14%, black 22%, black 80%, transparent 100%)",
         maskImage:
-          "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.08) 12%, rgba(0,0,0,0.35) 24%, rgba(0,0,0,0.72) 38%, black 52%, black 80%, transparent 100%)",
+          "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.55) 6%, rgba(0,0,0,0.88) 14%, black 22%, black 80%, transparent 100%)",
       }}
     >
       {/*
@@ -222,7 +222,7 @@ export function DoePhoneCommIntelGrid() {
         className="grid w-full grid-cols-3"
         style={{
           gap: GAP,
-          height: `calc(2 * ${CELL_H} + ${GAP})`,
+          height: `calc(2.35 * ${CELL_H} + 2 * ${GAP})`,
           overflow: "hidden",
         }}
       >
