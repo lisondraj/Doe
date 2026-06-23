@@ -27,22 +27,16 @@ export {
 };
 
 /**
- * Card width — wider than the hero; right and bottom edges clip at section overflow.
+ * Card width — wider than the hero; right edge clips at section overflow.
  */
 export const HERO_TRIAGE_PANEL_WIDTH = {
   mobile: "220vw",
   desktop: "min(108rem, 138vw)",
 } as const;
 
-/** Viewport gutter before visible UI; paired with left clip below. */
-export const HERO_TRIAGE_MOBILE_LEFT_PADDING = "33vw";
-
-/** Mobile — bottom anchor, lifted above hero floor; left offset clips ~⅓ of panel + padding. */
+/** Mobile — starts 1/3 across the viewport, extends below hero so both right and bottom clip. */
 export const HERO_TRIAGE_PANEL_ANCHOR = {
-  mobile: {
-    left: `calc(${HERO_TRIAGE_MOBILE_LEFT_PADDING} - ${HERO_TRIAGE_PANEL_WIDTH.mobile} / 3)`,
-    bottom: "18%",
-  },
+  mobile: { left: "33vw", bottom: "-6rem" },
 } as const;
 
 /** Mobile scale — applied from bottom-left so the card reads larger in the hero. */
@@ -51,10 +45,10 @@ export const HERO_TRIAGE_MOBILE_SCALE = 1.22;
 /** Mobile inbox list column — narrow so email pane dominates the visible frame. */
 export const HERO_TRIAGE_MOBILE_LIST_WIDTH = "20%";
 
-/** Mobile card heights — tall enough that bottom edge clips at hero overflow. */
+/** Mobile card heights — tall enough that bottom clips at hero overflow. */
 export const HERO_TRIAGE_MOBILE_MIN_HEIGHT = {
-  outer: "52rem",
-  inner: "58rem",
+  outer: "48rem",
+  inner: "54rem",
 } as const;
 
 export const HERO_TRIAGE_PANEL_LEFT = {
