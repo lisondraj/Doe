@@ -41,15 +41,14 @@ html:has(.doephone-mobile-root) body {
 }
 
 /*
- * /blog — measured scale via --blog-scale (useBlogPhoneScale on documentElement).
- * zoom on .blog-mobile-root scales the ENTIRE blog surface uniformly — nav, footer,
- * article previews, vmin/vw clamps, and rem — not just rem-based tokens.
+ * /blog — html font-size set inline by useBlogPhoneScale (scales all rem tokens).
+ * Nav/footer use blogChrome rem-only classes; LinkedIn in-app gets a scale cap.
  */
-html:has(.blog-mobile-root) {
-  font-size: 100%;
+html:has(.blog-mobile-root),
+html[data-blog-route] {
   background-color: #f7f6f3;
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
 }
 
 html:has(.blog-mobile-root) body {
@@ -62,8 +61,8 @@ html:has(.blog-mobile-root) body {
   padding-right: env(safe-area-inset-right, 0px);
 }
 
-/** Scaled surface — transform applied inline from useBlogPhoneScale. */
-.blog-mobile-canvas {
+.blog-mobile-canvas,
+.blog-mobile-canvas * {
   -webkit-text-size-adjust: none;
   text-size-adjust: none;
 }

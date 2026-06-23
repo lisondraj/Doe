@@ -1,6 +1,6 @@
+import { BLOG_CONTENT_PT_REM, BLOG_FOOTER_GAP_REM, BLOG_PAGE_INSET_X_REM } from "@/lib/blog/blog-chrome-styles";
 import { DOEPHONE_SECTION_CLOSING_FEATURE_HEIGHT } from "@/lib/doephone/closing-section-styles";
 import {
-  DOEPHONE_SECTION_CAROUSEL_INSET_X,
   DOEPHONE_SECTION_CAROUSEL_MENU_GAP,
   DOEPHONE_SECTION_CAROUSEL_RADIUS,
   DOEPHONE_SECTION_COPY_TW,
@@ -10,16 +10,14 @@ import {
 } from "@/lib/doephone/section-styles";
 import { dmSans, inter, lora, suisseIntl } from "@/lib/home/fonts";
 
-/** Horizontal gutters — matches closing section carousel band. */
-export const BLOG_PAGE_INSET_X = DOEPHONE_SECTION_CAROUSEL_INSET_X;
+/** Horizontal gutters — rem-only so html font-size scaling applies in in-app WebViews. */
+export const BLOG_PAGE_INSET_X = BLOG_PAGE_INSET_X_REM;
 
 /** Space between blog copy and the footer gradient. */
-export const BLOG_FOOTER_GAP =
-  "pb-[max(3.5rem,calc(env(safe-area-inset-bottom,0px)+2.75rem))] iphone-page:pb-[max(4rem,calc(env(safe-area-inset-bottom,0px)+3rem))]";
+export const BLOG_FOOTER_GAP = BLOG_FOOTER_GAP_REM;
 
 /** Clears fixed iPhone nav above blog content. */
-export const BLOG_CONTENT_PT =
-  "pt-[max(11.25rem,calc(env(safe-area-inset-top,0px)+7.75rem))]";
+export const BLOG_CONTENT_PT = BLOG_CONTENT_PT_REM;
 
 /** Large section title — used on landing page (Suisse Intl, left-aligned). */
 export const BLOG_PAGE_TITLE_TW = `${DOEPHONE_SECTION_COPY_TW} text-[#1E343A] ${suisseIntl.className}`;
@@ -40,7 +38,7 @@ export const BLOG_CARD_TITLE_TW = `${DOEPHONE_SECTION_FOOTER_OUTSIDE_CAPTION_TW}
 export const BLOG_LANDING_CARD_TITLE_TW = `text-[1.85rem] iphone-page:text-[2.05rem] font-normal leading-snug tracking-tight text-gray-700 ${dmSans.className}`;
 
 /** Tight gap between landing card title and author/date. */
-export const BLOG_LANDING_TITLE_META_GAP = "mt-1 iphone-page:mt-[clamp(0.2rem,0.12rem+0.35vmin,0.35rem)]";
+export const BLOG_LANDING_TITLE_META_GAP = "mt-1 iphone-page:mt-1";
 
 /** Divider between landing list articles — padding above and below the rule. */
 export const BLOG_LIST_DIVIDER_WRAP = "py-12 iphone-page:py-14";
@@ -70,7 +68,7 @@ export const BLOG_LANDING_HERO_CONTAINER_TW = "blog-landing-hero @container/hero
 
 /** Shared bottom padding/inset for the hero footer row (headline + filters). */
 export const BLOG_LANDING_HERO_CORNER_PAD =
-  "px-8 pb-8 iphone-page:px-[clamp(2rem,1.65rem+1.45vmin,2.6rem)] iphone-page:pb-[clamp(2rem,1.65rem+1.45vmin,2.6rem)]";
+  "px-8 pb-8 iphone-page:px-[2.35rem] iphone-page:pb-[2.35rem]";
 
 /** Bottom row — CSS grid keeps headline and filters in separate columns. */
 export const BLOG_LANDING_HERO_FOOTER_TW = `blog-landing-hero-footer absolute inset-x-0 bottom-0 z-[2] iphone-page:gap-4 ${BLOG_LANDING_HERO_CORNER_PAD}`;
@@ -88,7 +86,7 @@ export const BLOG_TITLE_VISUAL_GAP = DOEPHONE_SECTION_TITLE_CAROUSEL_GAP;
 export const BLOG_STACK_GAP = DOEPHONE_SECTION_CAROUSEL_MENU_GAP;
 
 /** Visual → caption stack (closing section card→outside copy). */
-export const BLOG_CARD_STACK = "space-y-3 iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)]";
+export const BLOG_CARD_STACK = "space-y-3 iphone-page:space-y-4";
 
 /** Article body paragraphs. */
 export const BLOG_ARTICLE_BODY_TW = `text-[1.32rem] iphone-page:text-[1.55rem] font-normal leading-[1.48] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
