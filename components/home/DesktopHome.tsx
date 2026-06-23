@@ -14,7 +14,6 @@ import {
 } from "react";
 import { NAV_HREFS } from "@/components/doe-nav-data";
 import { HERO_CAROUSEL_GRAIN_BG } from "@/components/hero-carousel-texture";
-import { HeroTriagePreview } from "@/components/home/HeroTriagePreview";
 import { DesignHeroBackdropSection } from "@/components/design-hero-backdrop-section";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { WorkflowCarouselSlides } from "@/components/workflow-carousel-slides";
@@ -1253,7 +1252,7 @@ export function DesktopHome() {
 
   return (
     <div className="relative overflow-x-hidden" style={{ backgroundColor: '#F7F6F3' }}>
-      {/* Hero — desktop: wheel zoom, typed mission, tilted triage preview; scroll locks until wheel phases finish */}
+      {/* Hero — desktop: wheel zoom, typed mission; scroll locks until wheel phases finish */}
       {/* z-[40]: stack above later sections (z-10) so fixed nav isn’t painted under carousel / gradients */}
       <div className="relative z-[40] min-h-screen overflow-x-clip overflow-y-visible">
         <div
@@ -1562,15 +1561,6 @@ export function DesktopHome() {
         )}
 
       </div>
-
-        {/* Triage glass panel — sits outside sticky clip; half bleeds off right, extends below hero */}
-        {!isPhoneLayout && desktopHeroMissionBlockOpacity > 0 && (
-          <HeroTriagePreview
-            fontClassName={suisseIntl.className}
-            size="desktop"
-            className="z-[25]"
-          />
-        )}
       </div>
 
       {/* Horizontal line at bottom of hero section */}
