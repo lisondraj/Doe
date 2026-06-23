@@ -231,12 +231,14 @@ function OpenEmailPane({ mobile }: { mobile: boolean }) {
   const bodyFs = mobile ? "1.05rem" : "0.64rem";
   const metaFs = mobile ? "0.88rem" : "0.54rem";
   const pad = mobile ? "1.35rem 1.5rem" : "0.85rem 0.95rem";
+  const smallFs = mobile ? "0.92rem" : "0.56rem";
 
   return (
     <div
       className="flex h-full min-w-0 flex-col border-l"
-      style={{ borderColor: C.divider, background: C.detailBg, padding: pad }}
+      style={{ borderColor: C.divider, background: C.detailBg, padding: pad, gap: mobile ? "1rem" : "0.6rem" }}
     >
+      {/* Header */}
       <div className="flex items-center gap-[0.55em]">
         <SenderMark row={SELECTED} mobile={mobile} />
         <div className="min-w-0">
@@ -249,37 +251,106 @@ function OpenEmailPane({ mobile }: { mobile: boolean }) {
         </div>
       </div>
 
-      <p
-        style={{
-          fontSize: titleFs,
-          fontWeight: 500,
-          color: C.navActive,
-          marginTop: mobile ? "1.1rem" : "0.65rem",
-          letterSpacing: "-0.02em",
-        }}
-      >
+      {/* Subject */}
+      <p style={{ fontSize: titleFs, fontWeight: 500, color: C.navActive, letterSpacing: "-0.02em" }}>
         Follow-up visit scheduling
       </p>
 
-      <div style={{ marginTop: mobile ? "0.85rem" : "0.5rem", display: "flex", flexDirection: "column", gap: mobile ? "0.55rem" : "0.32rem" }}>
+      {/* Body */}
+      <div style={{ display: "flex", flexDirection: "column", gap: mobile ? "0.55rem" : "0.32rem" }}>
         {[
           "Hi Dr. Singh,",
           "I wanted to follow up on my chest tightness from last week. Symptoms have improved but I'd like to schedule a visit this week if possible.",
-          "Please let me know what times work on your calendar.",
+          "Please let me know what times work.",
           "Thank you,",
           "Maria Rodriguez",
         ].map((line) => (
-          <p
-            key={line}
-            style={{
-              fontSize: bodyFs,
-              fontWeight: 400,
-              lineHeight: 1.48,
-              color: line.startsWith("Hi") || line.startsWith("Thank") ? C.detailBody : C.detailBody,
-            }}
-          >
+          <p key={line} style={{ fontSize: bodyFs, fontWeight: 400, lineHeight: 1.48, color: C.detailBody }}>
             {line}
           </p>
+        ))}
+      </div>
+
+      {/* Divider */}
+      <div style={{ height: 1, background: C.divider, margin: mobile ? "0.25rem 0" : "0.15rem 0" }} />
+
+      {/* AI draft chip */}
+      <div
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "0.45em",
+          background: "rgba(43,111,232,0.07)",
+          borderRadius: "999px",
+          padding: mobile ? "0.38rem 0.85rem" : "0.22rem 0.52rem",
+          border: "1px solid rgba(43,111,232,0.16)",
+          alignSelf: "flex-start",
+        }}
+      >
+        <svg width={mobile ? 14 : 9} height={mobile ? 14 : 9} viewBox="0 0 16 16" fill="none" aria-hidden>
+          <path d="M8 2l1.5 4.5H14L10 9l1.5 4.5L8 11l-3.5 2.5L6 9 2 6.5h4.5z" fill="#2B6FE8" />
+        </svg>
+        <span style={{ fontSize: smallFs, fontWeight: 500, color: "#2B6FE8", letterSpacing: "-0.01em" }}>
+          Draft a reply
+        </span>
+      </div>
+
+      {/* Reply compose area */}
+      <div
+        style={{
+          flex: 1,
+          borderRadius: mobile ? "0.85rem" : "0.52rem",
+          border: `1px solid ${C.divider}`,
+          background: "#FAFAFA",
+          padding: mobile ? "0.85rem 1rem" : "0.52rem 0.62rem",
+          display: "flex",
+          flexDirection: "column",
+          gap: mobile ? "0.75rem" : "0.45rem",
+          minHeight: mobile ? "8rem" : "5rem",
+        }}
+      >
+        <p style={{ fontSize: bodyFs, fontWeight: 400, color: C.rowMuted, lineHeight: 1.45 }}>
+          Happy to get you in — how does Thursday at 10 AM work?
+        </p>
+        {/* Action row */}
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5em", marginTop: "auto" }}>
+          <div
+            style={{
+              borderRadius: "999px",
+              background: C.selected,
+              padding: mobile ? "0.38rem 1rem" : "0.22rem 0.6rem",
+              display: "flex", alignItems: "center",
+            }}
+          >
+            <span style={{ fontSize: smallFs, fontWeight: 500, color: "#fff", letterSpacing: "-0.01em" }}>Send</span>
+          </div>
+          <div
+            style={{
+              borderRadius: "999px",
+              background: C.pillBg,
+              padding: mobile ? "0.38rem 1rem" : "0.22rem 0.6rem",
+              display: "flex", alignItems: "center",
+            }}
+          >
+            <span style={{ fontSize: smallFs, fontWeight: 500, color: C.pillText, letterSpacing: "-0.01em" }}>Discard</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Suggested times row */}
+      <div style={{ display: "flex", gap: "0.5em", flexWrap: "wrap" }}>
+        {["Thu 10 AM", "Fri 2 PM", "Mon 9 AM"].map((t) => (
+          <div
+            key={t}
+            style={{
+              borderRadius: "999px",
+              border: `1px solid ${C.divider}`,
+              background: "#fff",
+              padding: mobile ? "0.32rem 0.85rem" : "0.18rem 0.5rem",
+            }}
+          >
+            <span style={{ fontSize: smallFs, fontWeight: 400, color: C.rowText }}>{t}</span>
+          </div>
         ))}
       </div>
     </div>
@@ -331,11 +402,11 @@ export function HeroTriagePreview({
         <div
           className={`${HERO_TRIAGE_OUTER_GLASS_TW} ${fontClassName} overflow-hidden`}
           style={{
-            borderRadius: isMobile ? "0 1.35rem 0 0" : "1.1rem",
+            borderRadius: isMobile ? "1.35rem" : "1.1rem",
             background: C.shell,
             border: `1px solid ${C.shellBorder}`,
             boxShadow: isMobile
-              ? "0 12px 48px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.95)"
+              ? "none"
               : "0 24px 64px rgba(0,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.95)",
             minHeight: isMobile ? HERO_TRIAGE_MOBILE_MIN_HEIGHT.outer : "16rem",
           }}
