@@ -1255,12 +1255,12 @@ export function DesktopHome() {
     <div className="relative overflow-x-hidden" style={{ backgroundColor: '#F7F6F3' }}>
       {/* Hero — desktop: wheel zoom, typed mission, tilted triage preview; scroll locks until wheel phases finish */}
       {/* z-[40]: stack above later sections (z-10) so fixed nav isn’t painted under carousel / gradients */}
-      <div className="relative z-[40] min-h-screen overflow-hidden">
+      <div className="relative z-[40] min-h-screen overflow-x-clip overflow-y-visible">
         <div
           className={
             isPhoneLayout
-              ? "relative min-h-screen overflow-hidden"
-              : "sticky top-0 z-0 flex min-h-[100dvh] h-[100dvh] overflow-hidden relative"
+              ? "relative min-h-screen overflow-x-clip overflow-y-visible"
+              : "sticky top-0 z-0 flex min-h-[100dvh] h-[100dvh] overflow-x-clip overflow-y-visible relative"
           }
         >
           {/* Zoomed gradient canvas — background-size zoom (not transform) keeps edges sharp. */}
@@ -1561,17 +1561,16 @@ export function DesktopHome() {
           </div>
         )}
 
-        {/* Triage glass panel — large, half bleeds off right edge */}
+      </div>
+
+        {/* Triage glass panel — sits outside sticky clip; half bleeds off right, extends below hero */}
         {!isPhoneLayout && desktopHeroMissionBlockOpacity > 0 && (
           <HeroTriagePreview
             fontClassName={suisseIntl.className}
             size="desktop"
-            className="z-[20]"
-            style={{ bottom: "8%" }}
+            className="z-[25]"
           />
         )}
-
-      </div>
       </div>
 
       {/* Horizontal line at bottom of hero section */}

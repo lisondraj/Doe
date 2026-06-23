@@ -1,42 +1,37 @@
 import {
-  DOEPHONE_COMMUNICATION_INNER_GLASS_TW,
-  DOEPHONE_COMMUNICATION_OUTER_GLASS_TW,
   DOEPHONE_SHORTCUT_KEY_GRADIENT,
   DOEPHONE_SHORTCUT_PILL_GRADIENT,
   HERO_TRIAGE_GLASS,
+  HERO_TRIAGE_INNER_GLASS_TW,
+  HERO_TRIAGE_OUTER_GLASS_TW,
   HERO_TRIAGE_PANEL_RIGHT,
   HERO_TRIAGE_PANEL_WIDTH,
+  HERO_TRIAGE_TILT,
 } from "@/lib/home/hero-triage-preview-styles";
 import type { CSSProperties } from "react";
 
 const TRIAGE = {
   breadcrumbParent: "Engineering",
   breadcrumbLeaf: "Triage",
-  issueId: "ENG-2841",
   title: "App freezes on splash screen",
   description:
     "After launch, the splash screen remains visible indefinitely with no cha… The app does not progress to the primary dashboard or menus.",
   widgetTitle: "Triage Intelligence",
   widgetStatus: "Looking for labels…",
-  chips: ["Mobile", "P0", "Regression"] as const,
-  activity: [
-    { who: "M", line: "Assigned to Engineering", time: "2m ago" },
-    { who: "A", line: "Similar issue linked", time: "5m ago" },
-  ] as const,
 } as const;
 
 function TriageStatusIcon() {
   return (
     <span
-      className="inline-flex h-[1.45em] w-[1.45em] shrink-0 items-center justify-center rounded-full shadow-[inset_0_1px_0_rgba(255,255,255,0.28)]"
-      style={{ background: `linear-gradient(145deg, ${HERO_TRIAGE_GLASS.accent} 0%, ${HERO_TRIAGE_GLASS.accentDeep} 100%)` }}
+      className="inline-flex h-[1.15em] w-[1.15em] shrink-0 items-center justify-center rounded-full"
+      style={{ background: HERO_TRIAGE_GLASS.accent }}
       aria-hidden
     >
-      <svg width="56%" height="56%" viewBox="0 0 16 16" fill="none">
+      <svg width="58%" height="58%" viewBox="0 0 16 16" fill="none">
         <path
           d="M4.25 8h7.5M6.5 5.75 4.25 8l2.25 2.25M9.5 5.75 11.75 8 9.5 10.25"
-          stroke="rgba(20, 36, 42, 0.92)"
-          strokeWidth="1.45"
+          stroke="#141416"
+          strokeWidth="1.4"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
@@ -47,9 +42,9 @@ function TriageStatusIcon() {
 
 function TriageSparkleIcon() {
   return (
-    <svg width="1em" height="1em" viewBox="0 0 16 16" fill="none" aria-hidden>
+    <svg width="0.92em" height="0.92em" viewBox="0 0 16 16" fill="none" aria-hidden>
       <path
-        d="M8 1.2v2.15M8 12.65v2.15M1.2 8h2.15M12.65 8h2.15M3.35 3.35l1.52 1.52M11.13 11.13l1.52 1.52M3.35 12.65l1.52-1.52M11.13 4.87l1.52-1.52"
+        d="M8 1.35v2M8 12.65v2M1.35 8h2M12.65 8h2M3.4 3.4l1.45 1.45M11.15 11.15l1.45 1.45M3.4 12.6l1.45-1.45M11.15 4.85l1.45-1.45"
         stroke="currentColor"
         strokeWidth="1.1"
         strokeLinecap="round"
@@ -58,66 +53,19 @@ function TriageSparkleIcon() {
   );
 }
 
-function MetaChip({ label }: { label: string }) {
+function ActivityBlurRow({ width }: { width: string }) {
   return (
-    <span
-      className={`inline-flex items-center px-[0.72em] py-[0.34em] text-[0.78em] font-medium tracking-[-0.01em] ${DOEPHONE_COMMUNICATION_INNER_GLASS_TW}`}
-      style={{
-        background: DOEPHONE_SHORTCUT_KEY_GRADIENT,
-        color: HERO_TRIAGE_GLASS.chipText,
-      }}
-    >
-      {label}
-    </span>
-  );
-}
-
-function ActivityRow({
-  who,
-  line,
-  time,
-  compact,
-}: {
-  who: string;
-  line: string;
-  time: string;
-  compact?: boolean;
-}) {
-  return (
-    <div className="flex items-center gap-[0.85em]">
-      <span
-        className={`inline-flex shrink-0 items-center justify-center rounded-full font-semibold ${DOEPHONE_COMMUNICATION_INNER_GLASS_TW}`}
-        style={{
-          width: compact ? "2.15rem" : "2.45rem",
-          height: compact ? "2.15rem" : "2.45rem",
-          fontSize: compact ? "0.78rem" : "0.86rem",
-          background: DOEPHONE_SHORTCUT_KEY_GRADIENT,
-          color: HERO_TRIAGE_GLASS.title,
-        }}
+    <div className="flex items-center gap-3">
+      <div
+        className="h-[1.65rem] w-[1.65rem] shrink-0 rounded-full"
+        style={{ background: "rgba(255,255,255,0.11)", filter: "blur(5px)" }}
         aria-hidden
-      >
-        {who}
-      </span>
-      <div className="min-w-0 flex-1">
-        <p
-          className="truncate font-medium tracking-[-0.015em]"
-          style={{
-            color: HERO_TRIAGE_GLASS.body,
-            fontSize: compact ? "0.84rem" : "clamp(0.92rem, 1.05vw, 1.02rem)",
-          }}
-        >
-          {line}
-        </p>
-        <p
-          className="mt-[0.2em] font-normal tracking-[-0.01em]"
-          style={{
-            color: HERO_TRIAGE_GLASS.muted,
-            fontSize: compact ? "0.74rem" : "clamp(0.78rem, 0.88vw, 0.86rem)",
-          }}
-        >
-          {time}
-        </p>
-      </div>
+      />
+      <div
+        className="h-[0.72rem] rounded-full"
+        style={{ width, background: "rgba(255,255,255,0.09)", filter: "blur(5px)" }}
+        aria-hidden
+      />
     </div>
   );
 }
@@ -129,7 +77,10 @@ export type HeroTriagePreviewProps = {
   className?: string;
 };
 
-/** Large warm-glass triage card — right-facing tilt, half bleeds off the right edge. */
+/**
+ * Linear-style triage card — warm Doe glass, single 3D tilt, half bleeds off the right edge.
+ * Intro fade is applied on the outer shell via `.doephone-hero-triage-preview` (opacity only).
+ */
 export function HeroTriagePreview({
   fontClassName,
   size = "desktop",
@@ -137,143 +88,121 @@ export function HeroTriagePreview({
   className = "",
 }: HeroTriagePreviewProps) {
   const isMobile = size === "mobile";
-  const panelWidth = isMobile ? HERO_TRIAGE_PANEL_WIDTH.mobile : HERO_TRIAGE_PANEL_WIDTH.desktop;
-  const panelRight = isMobile ? HERO_TRIAGE_PANEL_RIGHT.mobile : HERO_TRIAGE_PANEL_RIGHT.desktop;
 
   return (
     <div
-      className={`pointer-events-none absolute bottom-[5%] select-none iphone-page:bottom-[4%] ${className}`}
+      className={`pointer-events-none absolute select-none ${className}`}
       style={{
-        right: panelRight,
-        width: panelWidth,
-        perspective: isMobile ? "1050px" : "1350px",
-        perspectiveOrigin: "22% 54%",
+        top: isMobile ? "34%" : "30%",
+        right: isMobile ? HERO_TRIAGE_PANEL_RIGHT.mobile : HERO_TRIAGE_PANEL_RIGHT.desktop,
+        width: isMobile ? HERO_TRIAGE_PANEL_WIDTH.mobile : HERO_TRIAGE_PANEL_WIDTH.desktop,
         ...style,
       }}
       aria-hidden
     >
       <div
         style={{
-          transform: isMobile
-            ? "rotateX(14deg) rotateY(19deg) rotateZ(0.4deg)"
-            : "rotateX(13deg) rotateY(21deg) rotateZ(0.55deg)",
-          transformOrigin: "left center",
+          transform: isMobile ? HERO_TRIAGE_TILT.mobile : HERO_TRIAGE_TILT.desktop,
+          transformOrigin: "18% 6%",
           transformStyle: "preserve-3d",
         }}
       >
         <div
-          className={`relative overflow-hidden backdrop-blur-[6px] iphone-page:backdrop-blur-[4px] [transform:translateZ(0)] ${DOEPHONE_COMMUNICATION_OUTER_GLASS_TW} ${fontClassName}`}
+          className={`${HERO_TRIAGE_OUTER_GLASS_TW} ${fontClassName}`}
           style={{
-            borderRadius: isMobile ? "1.2rem" : "clamp(1.15rem, 1.4vw, 1.55rem)",
+            borderRadius: isMobile ? "1rem" : "1.1rem",
             background: DOEPHONE_SHORTCUT_PILL_GRADIENT,
-            border: "1px solid rgba(255, 255, 255, 0.14)",
+            border: `1px solid ${HERO_TRIAGE_GLASS.panelBorder}`,
             boxShadow: HERO_TRIAGE_GLASS.panelShadow,
-            padding: isMobile
-              ? "1.35rem 1.35rem 1.5rem"
-              : "clamp(1.75rem, 2.4vw, 2.35rem) clamp(1.85rem, 2.5vw, 2.5rem) clamp(2rem, 2.8vw, 2.65rem)",
+            padding: isMobile ? "1.1rem 1.15rem 1.25rem" : "1.45rem 1.55rem 1.65rem",
           }}
         >
-          <div className="flex items-start justify-between gap-4">
-            <div
-              className="flex min-w-0 items-center gap-[0.58em] font-medium tracking-[-0.015em]"
-              style={{
-                color: HERO_TRIAGE_GLASS.breadcrumb,
-                fontSize: isMobile ? "0.9rem" : "clamp(0.95rem, 1.1vw, 1.08rem)",
-              }}
+          <div
+            className="flex items-center gap-[0.5em] font-medium tracking-[-0.015em]"
+            style={{
+              color: HERO_TRIAGE_GLASS.breadcrumb,
+              fontSize: isMobile ? "0.8rem" : "0.88rem",
+            }}
+          >
+            <TriageStatusIcon />
+            <span>{TRIAGE.breadcrumbParent}</span>
+            <svg
+              className="h-[0.62em] w-[0.62em] shrink-0 opacity-60"
+              viewBox="0 0 16 16"
+              fill="none"
+              aria-hidden
             >
-              <TriageStatusIcon />
-              <span>{TRIAGE.breadcrumbParent}</span>
-              <svg
-                className="h-[0.68em] w-[0.68em] shrink-0 opacity-65"
-                viewBox="0 0 16 16"
-                fill="none"
-                aria-hidden
-              >
-                <path
-                  d="M6.25 4.5 9.75 8l-3.5 3.5"
-                  stroke="currentColor"
-                  strokeWidth="1.35"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              <span>{TRIAGE.breadcrumbLeaf}</span>
-            </div>
-            <span
-              className="shrink-0 font-medium tracking-[-0.02em]"
-              style={{
-                color: HERO_TRIAGE_GLASS.muted,
-                fontSize: isMobile ? "0.78rem" : "clamp(0.82rem, 0.92vw, 0.9rem)",
-              }}
-            >
-              {TRIAGE.issueId}
-            </span>
+              <path
+                d="M6.25 4.5 9.75 8l-3.5 3.5"
+                stroke="currentColor"
+                strokeWidth="1.35"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span>{TRIAGE.breadcrumbLeaf}</span>
           </div>
 
-          <div className="relative mt-[1.05em]">
+          <div className="relative mt-[0.85rem]">
             <h2
-              className="max-w-[12.5ch] text-left font-semibold tracking-[-0.045em]"
+              className="relative z-[1] max-w-[13ch] text-left font-semibold tracking-[-0.04em]"
               style={{
                 color: HERO_TRIAGE_GLASS.title,
-                fontSize: isMobile ? "clamp(2.15rem, 9.2vw, 3.35rem)" : "clamp(2.85rem, 4.8vw, 4.65rem)",
-                lineHeight: 1.02,
-                textShadow: "0 2px 24px rgba(18, 32, 38, 0.18)",
+                fontSize: isMobile ? "clamp(1.65rem, 7.4vw, 2.35rem)" : "clamp(2.05rem, 3.2vw, 3.15rem)",
+                lineHeight: 1.08,
               }}
             >
               {TRIAGE.title}
             </h2>
 
-            <div
-              className="mt-[0.95em] flex flex-wrap gap-[0.45em]"
-              style={{ maxWidth: isMobile ? "88%" : "72%" }}
+            <p
+              className="relative z-[1] mt-[0.85rem] max-w-[32ch] text-left font-normal tracking-[-0.015em]"
+              style={{
+                color: HERO_TRIAGE_GLASS.body,
+                fontSize: isMobile ? "0.84rem" : "0.94rem",
+                lineHeight: 1.55,
+              }}
             >
-              {TRIAGE.chips.map((chip) => (
-                <MetaChip key={chip} label={chip} />
-              ))}
-            </div>
+              {TRIAGE.description}
+            </p>
 
             <div
-              className={`absolute z-[2] overflow-hidden backdrop-blur-[3px] iphone-page:backdrop-blur-[2px] [transform:translateZ(0)] ${DOEPHONE_COMMUNICATION_INNER_GLASS_TW}`}
+              className={`absolute z-[2] ${HERO_TRIAGE_INNER_GLASS_TW}`}
               style={{
-                left: isMobile ? "0.15rem" : "0.35rem",
-                top: isMobile ? "clamp(5.5rem, 24vw, 7.25rem)" : "clamp(6.5rem, 9vw, 8.75rem)",
-                width: isMobile ? "min(19.5rem, 92%)" : "min(24rem, 74%)",
-                borderRadius: isMobile ? "0.95rem" : "clamp(0.9rem, 1vw, 1.05rem)",
+                left: 0,
+                top: isMobile ? "1.55rem" : "1.85rem",
+                width: isMobile ? "min(16.5rem, 88%)" : "min(19.5rem, 68%)",
+                borderRadius: "0.82rem",
                 background: DOEPHONE_SHORTCUT_KEY_GRADIENT,
-                border: "1px solid rgba(255, 255, 255, 0.16)",
+                border: `1px solid ${HERO_TRIAGE_GLASS.widgetBorder}`,
                 boxShadow: HERO_TRIAGE_GLASS.widgetShadow,
+                overflow: "hidden",
               }}
             >
               <div
-                className="flex items-center justify-between gap-3 px-[1em] pb-[0.42em] pt-[0.82em]"
+                className="flex items-center gap-[0.48em] px-[0.9em] pb-[0.35em] pt-[0.68em] font-medium tracking-[-0.015em]"
+                style={{
+                  color: "rgba(255,255,255,0.88)",
+                  fontSize: isMobile ? "0.78rem" : "0.84rem",
+                }}
               >
-                <div
-                  className="flex min-w-0 items-center gap-[0.52em] font-medium tracking-[-0.015em]"
-                  style={{
-                    color: HERO_TRIAGE_GLASS.title,
-                    fontSize: isMobile ? "0.86rem" : "clamp(0.9rem, 1vw, 1rem)",
-                  }}
-                >
-                  <span className="text-white/92">
-                    <TriageSparkleIcon />
-                  </span>
-                  <span>{TRIAGE.widgetTitle}</span>
-                </div>
-                <span
-                  className="inline-flex h-[0.42rem] w-[0.42rem] shrink-0 animate-pulse rounded-full"
-                  style={{ background: HERO_TRIAGE_GLASS.accent }}
-                  aria-hidden
-                />
+                <span className="text-white/90">
+                  <TriageSparkleIcon />
+                </span>
+                <span>{TRIAGE.widgetTitle}</span>
               </div>
               <div
-                className={`mx-[0.78em] mb-[0.78em] px-[0.92em] py-[0.72em] font-medium tracking-[-0.01em] ${DOEPHONE_COMMUNICATION_INNER_GLASS_TW}`}
+                className={HERO_TRIAGE_INNER_GLASS_TW}
                 style={{
-                  borderRadius: isMobile ? "0.68rem" : "0.72rem",
+                  margin: "0 0.68em 0.68em",
+                  padding: "0.58em 0.78em",
+                  borderRadius: "0.58rem",
                   background:
-                    "linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(210,119,76,0.06) 100%)",
+                    "linear-gradient(145deg, rgba(255,255,255,0.07) 0%, rgba(210,119,76,0.05) 100%)",
                   color: HERO_TRIAGE_GLASS.status,
-                  fontSize: isMobile ? "0.82rem" : "clamp(0.86rem, 0.95vw, 0.94rem)",
-                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06)",
+                  fontSize: isMobile ? "0.76rem" : "0.82rem",
+                  fontWeight: 500,
+                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
                 }}
               >
                 {TRIAGE.widgetStatus}
@@ -281,38 +210,19 @@ export function HeroTriagePreview({
             </div>
           </div>
 
-          <p
-            className="relative z-[1] max-w-[36ch] text-left font-normal tracking-[-0.018em]"
-            style={{
-              color: HERO_TRIAGE_GLASS.body,
-              fontSize: isMobile ? "0.94rem" : "clamp(1rem, 1.15vw, 1.12rem)",
-              lineHeight: 1.58,
-              paddingTop: isMobile ? "3.65rem" : "clamp(4.25rem, 5.5vw, 5.15rem)",
-            }}
-          >
-            {TRIAGE.description}
-          </p>
-
-          <div
-            className="my-[1.25em] h-px w-full"
-            style={{ background: HERO_TRIAGE_GLASS.divider }}
-            aria-hidden
-          />
-
-          <div>
+          <div className="mt-[1.35rem]">
             <p
-              className="mb-[0.95em] text-left font-medium tracking-[-0.015em]"
+              className="mb-[0.72rem] text-left font-medium tracking-[-0.015em]"
               style={{
-                color: HERO_TRIAGE_GLASS.muted,
-                fontSize: isMobile ? "0.82rem" : "clamp(0.86rem, 0.95vw, 0.94rem)",
+                color: HERO_TRIAGE_GLASS.activity,
+                fontSize: isMobile ? "0.76rem" : "0.82rem",
               }}
             >
               Activity
             </p>
-            <div className="flex flex-col gap-[0.95em]">
-              {TRIAGE.activity.map((row) => (
-                <ActivityRow key={row.line} {...row} compact={isMobile} />
-              ))}
+            <div className="flex flex-col gap-[0.72rem]">
+              <ActivityBlurRow width="54%" />
+              <ActivityBlurRow width="40%" />
             </div>
           </div>
         </div>
