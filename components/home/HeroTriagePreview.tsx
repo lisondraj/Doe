@@ -1,4 +1,6 @@
 import {
+  HERO_TRIAGE_MOBILE_LIST_WIDTH,
+  HERO_TRIAGE_MOBILE_MIN_HEIGHT,
   HERO_TRIAGE_MOBILE_SCALE,
   HERO_TRIAGE_OUTER_GLASS_TW,
   HERO_TRIAGE_PANEL_ANCHOR,
@@ -303,7 +305,7 @@ export function HeroTriagePreview({
 }: HeroTriagePreviewProps) {
   const isMobile = size === "mobile";
   const navW = isMobile ? "5.1rem" : "2.85rem";
-  const listW = isMobile ? "28%" : "38%";
+  const listW = isMobile ? HERO_TRIAGE_MOBILE_LIST_WIDTH : "38%";
 
   return (
     <div
@@ -335,10 +337,10 @@ export function HeroTriagePreview({
             boxShadow: isMobile
               ? "0 12px 48px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.95)"
               : "0 24px 64px rgba(0,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.95)",
-            minHeight: isMobile ? "38rem" : "16rem",
+            minHeight: isMobile ? HERO_TRIAGE_MOBILE_MIN_HEIGHT.outer : "16rem",
           }}
         >
-          <div className="flex" style={{ minHeight: isMobile ? "44rem" : "18rem" }}>
+          <div className="flex" style={{ minHeight: isMobile ? HERO_TRIAGE_MOBILE_MIN_HEIGHT.inner : "18rem" }}>
             {/* Collapsed vertical nav — icons only */}
             <nav
               className="flex shrink-0 flex-col items-center"
