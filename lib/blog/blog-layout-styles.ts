@@ -65,12 +65,15 @@ export const BLOG_LANDING_HERO_HEIGHT = "h-[66.667svh] min-h-[66.667svh]";
 
 export const BLOG_LANDING_HERO_BOX_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} border border-[#D9D4CC] bg-[#EBE7E0]`;
 
-/** Shared bottom padding/inset used by both the headline (left) and filter (right). */
+/** Shared bottom padding/inset for the hero footer row (headline + filters). */
 export const BLOG_LANDING_HERO_CORNER_PAD =
   "px-8 pb-8 iphone-page:px-[clamp(2rem,1.65rem+1.45vmin,2.6rem)] iphone-page:pb-[clamp(2rem,1.65rem+1.45vmin,2.6rem)]";
 
-/** Lora headline anchored bottom-left inside the landing hero box. */
-export const BLOG_LANDING_HERO_HEADLINE_TW = `absolute bottom-0 left-0 z-[2] pt-0 text-left font-normal leading-[1.06] tracking-[-0.03em] text-[#1E343A] text-[clamp(2.2rem,8vw,3.5rem)] iphone-page:text-[clamp(2.45rem,1.85rem+3.5vmin,4.3rem)] ${BLOG_LANDING_HERO_CORNER_PAD} ${lora.className}`;
+/** Bottom row — flex keeps headline and filters in separate columns (no overlap). */
+export const BLOG_LANDING_HERO_FOOTER_TW = `absolute inset-x-0 bottom-0 z-[2] flex items-end justify-between gap-3 iphone-page:gap-4 ${BLOG_LANDING_HERO_CORNER_PAD}`;
+
+/** Lora headline — lives inside the flex footer; min-w-0 so text wraps within its column. */
+export const BLOG_LANDING_HERO_HEADLINE_TW = `blog-landing-hero-headline min-w-0 flex-1 pt-0 text-left font-normal leading-[1.06] tracking-[-0.03em] text-[#1E343A] text-[clamp(2.2rem,8vw,3.5rem)] iphone-page:text-[clamp(2.45rem,1.85rem+3.5vmin,4.3rem)] ${lora.className}`;
 
 /** Gap between landing hero and article list. */
 export const BLOG_LANDING_HERO_GAP = DOEPHONE_SECTION_CAROUSEL_MENU_GAP;

@@ -40,9 +40,15 @@ html:has(.doephone-mobile-root) body {
   background-color: #f7f6f3;
 }
 
+/*
+ * /blog — same 430px-reference rem scale as /doephone so Pro Max stays the
+ * design pivot and narrower in-app browsers (LinkedIn, etc.) shrink evenly.
+ */
 html:has(.blog-mobile-root) {
-  font-size: 100%;
+  font-size: min(16px, 3.7209vw);
   background-color: #f7f6f3;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 html:has(.blog-mobile-root) body {
@@ -53,6 +59,14 @@ html:has(.blog-mobile-root) body {
   overflow-x: clip;
   padding-left: env(safe-area-inset-left, 0px);
   padding-right: env(safe-area-inset-right, 0px);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/** Landing hero — lock text metrics so in-app browsers cannot inflate headline into filters. */
+.blog-landing-hero-headline {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 .doephone-mobile-root {

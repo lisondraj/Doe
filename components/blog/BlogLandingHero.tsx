@@ -2,7 +2,7 @@ import { BlogFilterBar } from "@/components/blog/BlogFilterBar";
 import { BlogLandingHeroGraphic } from "@/components/blog/BlogLandingHeroGraphic";
 import {
   BLOG_LANDING_HERO_BOX_TW,
-  BLOG_LANDING_HERO_CORNER_PAD,
+  BLOG_LANDING_HERO_FOOTER_TW,
   BLOG_LANDING_HERO_HEADLINE_TW,
   BLOG_LANDING_HERO_HEIGHT,
 } from "@/lib/blog/blog-layout-styles";
@@ -14,15 +14,16 @@ export function BlogLandingHero({ className = "" }: { className?: string }) {
     >
       <BlogLandingHeroGraphic />
 
-      {/* Headline — bottom-left */}
-      <p className={BLOG_LANDING_HERO_HEADLINE_TW}>
-        <span className="block">Let&rsquo;s rebuild</span>
-        <span className="block">healthcare.</span>
-      </p>
+      {/* Bottom row — flex columns prevent headline / filter overlap in in-app browsers */}
+      <div className={BLOG_LANDING_HERO_FOOTER_TW}>
+        <p className={BLOG_LANDING_HERO_HEADLINE_TW}>
+          <span className="block">Let&rsquo;s rebuild</span>
+          <span className="block">healthcare.</span>
+        </p>
 
-      {/* Filter column — bottom-right, same corner padding as headline */}
-      <div className={`absolute bottom-0 right-0 z-[2] ${BLOG_LANDING_HERO_CORNER_PAD}`}>
-        <BlogFilterBar variant="hero" />
+        <div className="shrink-0 self-end">
+          <BlogFilterBar variant="hero" />
+        </div>
       </div>
     </div>
   );
