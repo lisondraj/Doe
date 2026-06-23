@@ -328,9 +328,8 @@ body.mainpage-route {
 .doephone-hero-triage-preview {
   opacity: 0;
   filter: blur(18px);
-  transform: translateY(2.25rem);
-  animation: doephone-hero-triage-in 1.35s cubic-bezier(0.22, 1, 0.36, 1) 4.1s both;
-  will-change: opacity, filter, transform;
+  transform: translate3d(0, 2.25rem, 0);
+  animation: doephone-hero-triage-in 1.35s cubic-bezier(0.22, 1, 0.36, 1) 4.1s forwards;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
@@ -339,13 +338,13 @@ body.mainpage-route {
   from {
     opacity: 0;
     filter: blur(18px);
-    transform: translateY(2.25rem);
+    transform: translate3d(0, 2.25rem, 0);
   }
 
   to {
     opacity: 1;
-    filter: blur(0);
-    transform: translateY(0);
+    filter: none;
+    transform: translate3d(0, 0, 0);
   }
 }
 

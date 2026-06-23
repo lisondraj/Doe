@@ -222,10 +222,25 @@ function NavIcon({
   );
 }
 
-function InboxIcon({ d, mobile }: { d: string; mobile: boolean }) {
+function InboxIcon({
+  d,
+  mobile,
+  color = C.navIcon,
+}: {
+  d: string;
+  mobile: boolean;
+  color?: string;
+}) {
   const s = mobile ? 22 : 14;
   return (
-    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" aria-hidden>
+    <svg
+      width={s}
+      height={s}
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden
+      style={{ color, display: "block", flexShrink: 0 }}
+    >
       <path d={d} stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
@@ -572,6 +587,8 @@ export function HeroTriagePreview({
         style={{
           transform: isMobile ? `scale(${HERO_TRIAGE_MOBILE_SCALE})` : HERO_TRIAGE_TILT.desktop,
           transformOrigin: isMobile ? "bottom left" : undefined,
+          WebkitFontSmoothing: "antialiased",
+          MozOsxFontSmoothing: "grayscale",
         }}
       >
         <div
@@ -643,6 +660,7 @@ export function HeroTriagePreview({
                 style={{
                   padding: isMobile ? "0.85rem 0.95rem" : "0.52rem 0.58rem",
                   borderBottom: `1px solid ${C.divider}`,
+                  color: C.navIcon,
                   ...glassPaneStyle({ borderRadius: 0, borderTop: "none", borderLeft: "none", borderRight: "none" }),
                 }}
               >
@@ -654,7 +672,7 @@ export function HeroTriagePreview({
                     ...glassChipStyle(),
                   }}
                 >
-                  <InboxIcon mobile={isMobile} d="M4 6h16v12H4V6zm0 0 8 7 8-7" />
+                  <InboxIcon mobile={isMobile} d="M4 6h16v12H4V6zm0 0 8 7 8-7" color={C.pillText} />
                   <span style={{ fontSize: isMobile ? "0.95rem" : "0.58rem", fontWeight: 500, color: C.pillText }}>
                     Inbox
                   </span>

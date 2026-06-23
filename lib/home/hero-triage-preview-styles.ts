@@ -1,6 +1,5 @@
 import {
   DOEPHONE_COMMUNICATION_GLASS_RADIUS_TW,
-  DOEPHONE_COMMUNICATION_OUTER_GLASS_TW,
   DOEPHONE_SHORTCUT_KEY_GRADIENT,
   DOEPHONE_SHORTCUT_PILL_GRADIENT,
 } from "@/lib/doephone/communication-glass-styles";
@@ -93,13 +92,13 @@ export const HERO_TRIAGE_GLASS = {
   widgetShadow: "0 12px 36px rgba(0, 0, 0, 0.40), inset 0 1px 0 rgba(255, 255, 255, 0.08)",
 } as const;
 
-/** Outer card — warm frosted glass matching Integrations section panel. */
+/** Outer card — warm frosted glass; no backdrop-blur on phone (keeps UI sharp at scale). */
 export const HERO_TRIAGE_OUTER_GLASS_TW =
-  `${DOEPHONE_COMMUNICATION_OUTER_GLASS_TW} backdrop-blur-[20px] iphone-page:backdrop-blur-[16px]`;
+  `${DOEPHONE_COMMUNICATION_GLASS_RADIUS_TW} shadow-[inset_0_1px_0_rgba(255,255,255,0.13)] [transform:translateZ(0)] backdrop-blur-[12px] iphone-page:backdrop-blur-none`;
 
 export const HERO_TRIAGE_INNER_GLASS_TW =
-  "backdrop-blur-[10px] iphone-page:backdrop-blur-[7px] [transform:translateZ(0)]";
+  "backdrop-blur-[6px] iphone-page:backdrop-blur-none [transform:translateZ(0)]";
 
 /** Per-pane frosted surface — nav, list, detail columns and chips. */
 export const HERO_TRIAGE_PANE_GLASS_TW =
-  "backdrop-blur-[8px] iphone-page:backdrop-blur-[5px] [transform:translateZ(0)]";
+  "backdrop-blur-[4px] iphone-page:backdrop-blur-none [transform:translateZ(0)]";
