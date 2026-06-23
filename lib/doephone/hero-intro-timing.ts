@@ -1,4 +1,4 @@
-/** Hero load sequence — gradient zoom in → polar build → headline. */
+/** Hero load sequence — gradient zoom in → three rings → headline. */
 
 /**
  * Gradient starts fully covering the viewport at the scroll-max zoom (1.72×),
@@ -10,9 +10,8 @@
 export const DOEPHONE_HERO_INTRO_GRADIENT_START = 1.72;
 export const DOEPHONE_HERO_INTRO_GRADIENT_MS = 1200;
 
-/** Polar radials begin once the gradient zoom is fully settled. */
+/** Three rings begin once the gradient zoom is fully settled. */
 export const DOEPHONE_HERO_INTRO_POLAR_START_MS = 1250;
-export const DOEPHONE_HERO_INTRO_RADIAL_MS = 1350;
 export const DOEPHONE_HERO_INTRO_RING_MS = 820;
 export const DOEPHONE_HERO_INTRO_RING_STAGGER_MS = 180;
 export const DOEPHONE_HERO_INTRO_RING_COUNT = 3;
@@ -24,7 +23,6 @@ const HEADLINE_TO_CTA_MS = 1100;
 export function doephoneHeroIntroRingDelayMs(ringIndex: number): number {
   return (
     DOEPHONE_HERO_INTRO_POLAR_START_MS +
-    DOEPHONE_HERO_INTRO_RADIAL_MS +
     ringIndex * DOEPHONE_HERO_INTRO_RING_STAGGER_MS
   );
 }
@@ -46,7 +44,6 @@ export function doephoneHeroIntroHeadlineDelayMs(line: 1 | 2 | "cta"): number {
 export function doephoneHeroIntroStyleVars(): Record<string, string> {
   return {
     "--doephone-hero-polar-start": `${DOEPHONE_HERO_INTRO_POLAR_START_MS}ms`,
-    "--doephone-hero-polar-radial-duration": `${DOEPHONE_HERO_INTRO_RADIAL_MS}ms`,
     "--doephone-hero-polar-ring-duration": `${DOEPHONE_HERO_INTRO_RING_MS}ms`,
     "--doephone-hero-headline-1": `${doephoneHeroIntroHeadlineDelayMs(1)}ms`,
     "--doephone-hero-headline-2": `${doephoneHeroIntroHeadlineDelayMs(2)}ms`,

@@ -104,36 +104,21 @@ function PolarGridOverlay({
         style={patternScale !== 1 ? { transform: `scale(${patternScale})`, transformOrigin: "center" } : undefined}
         xmlns="http://www.w3.org/2000/svg"
       >
-        {Array.from({ length: 8 }, (_, j) => {
-          const angle = j * 45;
-
-          if (introOnLoad) {
-            return (["a", "b"] as const).map((half) => (
+        {!introOnLoad &&
+          Array.from({ length: 8 }, (_, j) => {
+            const angle = j * 45;
+            return (
               <path
-                key={`polar-radial-${j}-${half}`}
-                pathLength={1}
-                className="doephone-hero-polar-segment doephone-hero-polar-radial-half doephone-hero-polar-radial-half--intro"
-                d={polarSpokePathD(POLAR_CX, polarCy, angle, half)}
+                key={`polar-radial-${j}`}
+                className="doephone-hero-polar-segment doephone-hero-polar-radial"
+                d={polarSpokePathD(POLAR_CX, polarCy, angle)}
                 fill="none"
                 strokeWidth="0.8"
-                strokeLinecap="round"
+                strokeLinecap="butt"
                 vectorEffect="non-scaling-stroke"
               />
-            ));
-          }
-
-          return (
-            <path
-              key={`polar-radial-${j}`}
-              className="doephone-hero-polar-segment doephone-hero-polar-radial"
-              d={polarSpokePathD(POLAR_CX, polarCy, angle)}
-              fill="none"
-              strokeWidth="0.8"
-              strokeLinecap="butt"
-              vectorEffect="non-scaling-stroke"
-            />
-          );
-        }).flat()}
+            );
+          })}
         {Array.from({ length: ringCount }, (_, j) => {
           const r = (j + 1) * POLAR_RING_STEP;
           return (

@@ -235,8 +235,7 @@ body.mainpage-route {
   }
 }
 
-/* /doephone hero polar overlay — constant low opacity; one-time build animation. */
-.doephone-hero-polar-overlay--intro .doephone-hero-polar-radial-half--intro,
+/* /doephone hero polar overlay — rings only on load; one-time build animation. */
 .doephone-hero-polar-overlay--intro .doephone-hero-polar-ring--intro {
   opacity: 0;
 }
@@ -247,29 +246,7 @@ body.mainpage-route {
   opacity: 1;
 }
 
-/* Each half-spoke is hidden on load, then draws from the viewport edge inward to center. */
-.doephone-hero-polar-overlay--intro .doephone-hero-polar-radial-half--intro {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  animation: doephone-hero-polar-radial-half-in var(--doephone-hero-polar-radial-duration, 1.35s)
-    cubic-bezier(0.33, 1, 0.36, 1) var(--doephone-hero-polar-start, 0ms) both;
-}
-
-@keyframes doephone-hero-polar-radial-half-in {
-  0% {
-    opacity: 1;
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1; /* dash sits off-path → invisible; no need for opacity:0 */
-  }
-
-  100% {
-    opacity: 1;
-    stroke-dasharray: 1;
-    stroke-dashoffset: 0;
-  }
-}
-
-/* Three rings pulse out from polar center after radials finish (inner → outer).
+/* Three rings pulse out from polar center after gradient settles (inner → outer).
    transform-origin is set inline per-ring with exact SVG coordinates for Safari. */
 .doephone-hero-polar-ring--intro {
   opacity: 0;
@@ -539,11 +516,8 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
     mask-size: auto;
   }
 
-  .doephone-hero-polar-radial-half--intro,
   .doephone-hero-polar-ring--intro {
     animation: none !important;
-    stroke-dasharray: 1;
-    stroke-dashoffset: 0;
     opacity: 1;
     transform: none;
   }
