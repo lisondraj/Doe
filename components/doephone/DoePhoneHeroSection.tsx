@@ -11,43 +11,15 @@ import {
 import { DOEPHONE_HERO_COPY_INSET } from "@/lib/doephone/section-styles";
 import { suisseIntl } from "@/lib/home/fonts";
 import { DOEPHONE_HERO_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 
 /** Hero — modest height band; inbox UI anchors to bottom of this section. */
 export const DOEPHONE_HERO_HEIGHT =
   "calc(var(--app-vh,100lvh)*0.94 + max(8rem, calc(env(safe-area-inset-top, 0px) + 3.5rem)))";
 
-/** No gradient zoom until this share of hero scroll travel. */
-const GRADIENT_ZOOM_FREEZE_RATIO = 0.16;
-/** Gradient zoom completes over this share of hero scroll after freeze. */
-const GRADIENT_ZOOM_RANGE_RATIO = 0.58;
-const GRADIENT_ZOOM_MAX = 1.72;
-
-function gradientZoomFromScroll(scrolledPx: number, heroHeightPx: number): number {
-  if (heroHeightPx <= 0) return 1;
-  const freezePx = heroHeightPx * GRADIENT_ZOOM_FREEZE_RATIO;
-  const rangePx = heroHeightPx * GRADIENT_ZOOM_RANGE_RATIO;
-  if (scrolledPx <= freezePx) return 1;
-  const t = Math.min(1, (scrolledPx - freezePx) / rangePx);
-  const eased = t * t * (3 - 2 * t);
-  return 1 + eased * (GRADIENT_ZOOM_MAX - 1);
-}
-
 export function DoePhoneHeroSection() {
-  const heroRef = useRef<HTMLElement>(null);
   const [introZoom, setIntroZoom] = useState(DOEPHONE_HERO_INTRO_GRADIENT_START);
   const [introDone, setIntroDone] = useState(false);
-  const [scrollZoom, setScrollZoom] = useState(1);
-
-  const updateZoom = useCallback(() => {
-    const hero = heroRef.current;
-    if (!hero) return;
-
-    const heroTop = hero.offsetTop;
-    const heroHeight = hero.offsetHeight;
-    const scrolledIntoHero = Math.max(0, window.scrollY - heroTop);
-    setScrollZoom(gradientZoomFromScroll(scrolledIntoHero, heroHeight));
-  }, []);
 
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -79,26 +51,10 @@ export function DoePhoneHeroSection() {
     return () => cancelAnimationFrame(raf);
   }, []);
 
-  useEffect(() => {
-    if (!introDone) return;
-
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reducedMotion) return;
-
-    updateZoom();
-    window.addEventListener("scroll", updateZoom, { passive: true });
-    window.addEventListener("resize", updateZoom);
-    return () => {
-      window.removeEventListener("scroll", updateZoom);
-      window.removeEventListener("resize", updateZoom);
-    };
-  }, [introDone, updateZoom]);
-
-  const gradientZoom = introDone ? scrollZoom : introZoom;
+  const gradientZoom = introDone ? 1 : introZoom;
 
   return (
     <section
-      ref={heroRef}
       className="doephone-hero-section relative w-full overflow-hidden bg-[#1E343A]"
       style={
         {

@@ -34,6 +34,8 @@ export function useDoePhoneStableViewport() {
     };
 
     const commit = (next: { width: number; height: number }, force = false) => {
+      if (!force && scrollActive) return;
+
       if (force || stable.height === 0) {
         stable.width = next.width;
         stable.height = next.height;

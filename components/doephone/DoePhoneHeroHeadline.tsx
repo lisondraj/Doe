@@ -117,7 +117,6 @@ export function DoePhoneHeroHeadline() {
     const onViewportChange = () => measure();
     window.addEventListener("resize", onViewportChange);
     window.visualViewport?.addEventListener("resize", onViewportChange);
-    window.visualViewport?.addEventListener("scroll", onViewportChange);
 
     let cancelled = false;
     void document.fonts.ready.then(() => {
@@ -130,7 +129,6 @@ export function DoePhoneHeroHeadline() {
       ro.disconnect();
       window.removeEventListener("resize", onViewportChange);
       window.visualViewport?.removeEventListener("resize", onViewportChange);
-      window.visualViewport?.removeEventListener("scroll", onViewportChange);
     };
   }, [index, slideTransition]);
 
