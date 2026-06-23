@@ -348,17 +348,17 @@ export function HeroTriagePreview({
                 <InboxIcon mobile={isMobile} d="M4 6h16v12H4V6zm0 0 8 7 8-7" />
               </NavIcon>
               <NavIcon mobile={isMobile}>
-                <InboxIcon mobile={mobile} d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z" />
+                <InboxIcon mobile={isMobile} d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z" />
               </NavIcon>
               <NavIcon mobile={isMobile}>
-                <InboxIcon mobile={mobile} d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7M3 7l9 6 9-6M3 7h18" />
+                <InboxIcon mobile={isMobile} d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7M3 7l9 6 9-6M3 7h18" />
               </NavIcon>
               <NavIcon mobile={isMobile}>
-                <InboxIcon mobile={mobile} d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2z" />
+                <InboxIcon mobile={isMobile} d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2z" />
               </NavIcon>
               <div className="flex-1" />
               <NavIcon mobile={isMobile}>
-                <InboxIcon mobile={mobile} d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7.5-9.5a8.38 8.38 0 0 1 0 11M4.5 5.5a8.38 8.38 0 0 0 0 11" />
+                <InboxIcon mobile={isMobile} d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7.5-9.5a8.38 8.38 0 0 1 0 11M4.5 5.5a8.38 8.38 0 0 0 0 11" />
               </NavIcon>
             </nav>
 
@@ -383,7 +383,7 @@ export function HeroTriagePreview({
                     padding: isMobile ? "0.38rem 0.75rem" : "0.24rem 0.48rem",
                   }}
                 >
-                  <InboxIcon mobile={mobile} d="M4 6h16v12H4V6zm0 0 8 7 8-7" />
+                  <InboxIcon mobile={isMobile} d="M4 6h16v12H4V6zm0 0 8 7 8-7" />
                   <span style={{ fontSize: isMobile ? "0.95rem" : "0.58rem", fontWeight: 500, color: C.pillText }}>
                     Inbox
                   </span>
@@ -402,9 +402,9 @@ export function HeroTriagePreview({
                     11
                   </span>
                 </div>
-                <InboxIcon mobile={mobile} d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z" />
-                <InboxIcon mobile={mobile} d="M12 6v6l4 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
-                <InboxIcon mobile={mobile} d="M12 6h.01M12 12h.01M12 18h.01" />
+                <InboxIcon mobile={isMobile} d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z" />
+                <InboxIcon mobile={isMobile} d="M12 6v6l4 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
+                <InboxIcon mobile={isMobile} d="M12 6h.01M12 12h.01M12 18h.01" />
               </div>
 
               {/* Message list */}
