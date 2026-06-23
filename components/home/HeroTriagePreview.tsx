@@ -1,41 +1,60 @@
 import {
+  HERO_TRIAGE_CHIP_GRADIENT,
   HERO_TRIAGE_INNER_GLASS_TW,
+  HERO_TRIAGE_INNER_GRADIENT,
   HERO_TRIAGE_MOBILE_LIST_WIDTH,
   HERO_TRIAGE_MOBILE_MIN_HEIGHT,
   HERO_TRIAGE_MOBILE_SCALE,
   HERO_TRIAGE_OUTER_GLASS_TW,
+  HERO_TRIAGE_PANE_GLASS_TW,
+  HERO_TRIAGE_PANE_GRADIENT,
   HERO_TRIAGE_PANEL_ANCHOR,
   HERO_TRIAGE_PANEL_LEFT,
   HERO_TRIAGE_PANEL_RIGHT,
   HERO_TRIAGE_PANEL_WIDTH,
+  HERO_TRIAGE_SELECTED_GRADIENT,
+  HERO_TRIAGE_SHELL_GRADIENT,
   HERO_TRIAGE_TILT,
-  DOEPHONE_SHORTCUT_KEY_GRADIENT,
-  DOEPHONE_SHORTCUT_PILL_GRADIENT,
 } from "@/lib/home/hero-triage-preview-styles";
 import type { CSSProperties, ReactNode } from "react";
 
-/* ─── Frosted glass inbox tokens (Integrations panel aesthetic) ─── */
+const GLASS_INSET = "inset 0 1px 0 rgba(255,255,255,0.07)";
+
+/* ─── Frosted glass inbox tokens ─── */
 const C = {
-  shellBorder: "rgba(255,255,255,0.13)",
-  navBg: "rgba(255,255,255,0.05)",
-  navIcon: "rgba(255,255,255,0.38)",
-  navActive: "rgba(255,255,255,0.92)",
-  navActiveBg: "rgba(255,255,255,0.08)",
-  pillBg: "rgba(255,255,255,0.10)",
-  pillText: "rgba(255,255,255,0.85)",
-  rowText: "rgba(255,255,255,0.58)",
-  rowMuted: "rgba(255,255,255,0.40)",
-  rowTime: "rgba(255,255,255,0.36)",
-  divider: "rgba(255,255,255,0.08)",
-  selected: "rgba(37,99,235,0.82)",
-  selectedMuted: "rgba(255,255,255,0.72)",
-  badgeBg: "rgba(255,255,255,0.10)",
-  badgeText: "rgba(255,255,255,0.58)",
-  detailBody: "rgba(255,255,255,0.72)",
-  detailMuted: "rgba(255,255,255,0.48)",
-  composeBg: "rgba(255,255,255,0.06)",
-  composeField: "rgba(255,255,255,0.08)",
+  shellBorder: "rgba(255,255,255,0.10)",
+  glassBorder: "rgba(255,255,255,0.07)",
+  navIcon: "rgba(255,255,255,0.34)",
+  navActive: "rgba(255,255,255,0.88)",
+  navActiveBg: "rgba(255,255,255,0.06)",
+  pillText: "rgba(255,255,255,0.78)",
+  rowText: "rgba(255,255,255,0.52)",
+  rowMuted: "rgba(255,255,255,0.36)",
+  rowTime: "rgba(255,255,255,0.32)",
+  divider: "rgba(255,255,255,0.06)",
+  selectedMuted: "rgba(255,255,255,0.68)",
+  badgeText: "rgba(255,255,255,0.52)",
+  detailBody: "rgba(255,255,255,0.66)",
+  detailMuted: "rgba(255,255,255,0.42)",
 } as const;
+
+function glassPaneStyle(extra?: CSSProperties): CSSProperties {
+  return {
+    background: HERO_TRIAGE_PANE_GRADIENT,
+    border: `1px solid ${C.glassBorder}`,
+    boxShadow: GLASS_INSET,
+    ...extra,
+  };
+}
+
+function glassChipStyle(extra?: CSSProperties): CSSProperties {
+  return {
+    background: HERO_TRIAGE_CHIP_GRADIENT,
+    border: `1px solid ${C.glassBorder}`,
+    boxShadow: GLASS_INSET,
+    ...extra,
+  };
+}
 
 type InboxRow = {
   id: string;
@@ -57,8 +76,8 @@ const INBOX_ROWS: InboxRow[] = [
     subject: "Refill request",
     preview: "Metformin 500mg for J. Martinez",
     time: "8:12",
-    iconBg: "#EEF6F0",
-    iconColor: "#3A7A55",
+    iconBg: "rgba(58,122,85,0.16)",
+    iconColor: "rgba(190,220,200,0.88)",
   },
   {
     id: "labcorp",
@@ -67,8 +86,8 @@ const INBOX_ROWS: InboxRow[] = [
     subject: "Critical result",
     preview: "K+ 6.2 mEq/L, patient A. Chen",
     time: "7:48",
-    iconBg: "#FDF2F1",
-    iconColor: "#B83A32",
+    iconBg: "rgba(184,58,50,0.16)",
+    iconColor: "rgba(240,200,195,0.88)",
   },
   {
     id: "nurse",
@@ -77,8 +96,8 @@ const INBOX_ROWS: InboxRow[] = [
     subject: "Post-op update",
     preview: "Room 308 stable, discharge timeline requested",
     time: "Yesterday",
-    iconBg: "#F0F5FA",
-    iconColor: "#3A6FA8",
+    iconBg: "rgba(58,111,168,0.16)",
+    iconColor: "rgba(195,215,235,0.88)",
   },
   {
     id: "patient",
@@ -87,8 +106,8 @@ const INBOX_ROWS: InboxRow[] = [
     subject: "Follow-up visit",
     preview: "Need to schedule a visit this week",
     time: "9:14",
-    iconBg: "#F2F3FA",
-    iconColor: "#4A56B8",
+    iconBg: "rgba(74,86,184,0.18)",
+    iconColor: "rgba(200,205,240,0.90)",
     selected: true,
   },
   {
@@ -98,8 +117,8 @@ const INBOX_ROWS: InboxRow[] = [
     subject: "Pre-authorization",
     preview: "Approved for PT #8821",
     time: "Mon",
-    iconBg: "#F7F4EF",
-    iconColor: "#8A6840",
+    iconBg: "rgba(138,104,64,0.16)",
+    iconColor: "rgba(230,215,195,0.88)",
   },
   {
     id: "specialist",
@@ -108,8 +127,8 @@ const INBOX_ROWS: InboxRow[] = [
     subject: "Referral accepted",
     preview: "Cardiology consult Tue 2 PM",
     time: "Mon",
-    iconBg: "#F4F0FA",
-    iconColor: "#6B3FA0",
+    iconBg: "rgba(107,63,160,0.16)",
+    iconColor: "rgba(215,200,235,0.88)",
   },
   {
     id: "quest",
@@ -118,8 +137,8 @@ const INBOX_ROWS: InboxRow[] = [
     subject: "Panel results",
     preview: "Lipid + HbA1c ready for T. Brooks",
     time: "Sun",
-    iconBg: "#FFF6EE",
-    iconColor: "#B86A28",
+    iconBg: "rgba(184,106,40,0.16)",
+    iconColor: "rgba(240,215,190,0.88)",
   },
   {
     id: "patient2",
@@ -128,8 +147,8 @@ const INBOX_ROWS: InboxRow[] = [
     subject: "Medication side effects",
     preview: "Dizziness since Monday morning",
     time: "Sun",
-    iconBg: "#EDF6FB",
-    iconColor: "#1A6E9A",
+    iconBg: "rgba(26,110,154,0.16)",
+    iconColor: "rgba(190,220,240,0.88)",
   },
   {
     id: "bcbs",
@@ -138,8 +157,8 @@ const INBOX_ROWS: InboxRow[] = [
     subject: "Claim processed",
     preview: "EOB attached for claim #44821",
     time: "Sat",
-    iconBg: "#EDF1F9",
-    iconColor: "#2B4FA8",
+    iconBg: "rgba(43,79,168,0.16)",
+    iconColor: "rgba(195,210,240,0.88)",
   },
   {
     id: "frontdesk",
@@ -148,8 +167,8 @@ const INBOX_ROWS: InboxRow[] = [
     subject: "Patient arrival",
     preview: "Room 4 ready for vitals",
     time: "Sat",
-    iconBg: "#F3F5F2",
-    iconColor: "#4A6B42",
+    iconBg: "rgba(74,107,66,0.16)",
+    iconColor: "rgba(200,220,195,0.88)",
   },
   {
     id: "imaging",
@@ -158,8 +177,8 @@ const INBOX_ROWS: InboxRow[] = [
     subject: "MRI report",
     preview: "Lumbar spine for R. Walsh",
     time: "Fri",
-    iconBg: "#F6F0FA",
-    iconColor: "#7A4A9A",
+    iconBg: "rgba(122,74,154,0.16)",
+    iconColor: "rgba(220,200,235,0.88)",
   },
   {
     id: "priorauth",
@@ -168,8 +187,8 @@ const INBOX_ROWS: InboxRow[] = [
     subject: "Prior auth approved",
     preview: "12 PT sessions authorized",
     time: "Fri",
-    iconBg: "#EDF7F2",
-    iconColor: "#2A7A52",
+    iconBg: "rgba(42,122,82,0.16)",
+    iconColor: "rgba(195,230,210,0.88)",
   },
 ];
 
@@ -187,13 +206,15 @@ function NavIcon({
   const sz = mobile ? "3.1rem" : "2rem";
   return (
     <div
-      className="flex items-center justify-center"
+      className={`flex items-center justify-center${active ? ` ${HERO_TRIAGE_PANE_GLASS_TW}` : ""}`}
       style={{
         width: sz,
         height: sz,
         borderRadius: mobile ? "0.85rem" : "0.55rem",
         color: active ? C.navActive : C.navIcon,
-        background: active ? C.navActiveBg : "transparent",
+        ...(active
+          ? glassChipStyle({ background: HERO_TRIAGE_CHIP_GRADIENT })
+          : { background: "transparent" }),
       }}
     >
       {children}
@@ -214,7 +235,7 @@ function SenderMark({ row, mobile }: { row: InboxRow; mobile: boolean }) {
   const sz = mobile ? "2.35rem" : "1.45rem";
   return (
     <div
-      className="flex shrink-0 items-center justify-center font-medium"
+      className={`flex shrink-0 items-center justify-center font-medium ${HERO_TRIAGE_PANE_GLASS_TW}`}
       style={{
         width: sz,
         height: sz,
@@ -222,6 +243,8 @@ function SenderMark({ row, mobile }: { row: InboxRow; mobile: boolean }) {
         background: row.iconBg,
         color: row.iconColor,
         fontSize: mobile ? "0.82rem" : "0.52rem",
+        border: `1px solid ${C.glassBorder}`,
+        boxShadow: GLASS_INSET,
       }}
     >
       {row.initials}
@@ -239,11 +262,14 @@ function InboxListRow({ row, mobile }: { row: InboxRow; mobile: boolean }) {
   if (row.selected) {
     return (
       <div
+        className={HERO_TRIAGE_PANE_GLASS_TW}
         style={{
           margin: mobile ? "0 0.5rem" : "0 0.32rem",
           padding: pad,
           borderRadius: mobile ? "0.85rem" : "0.55rem",
-          background: C.selected,
+          background: HERO_TRIAGE_SELECTED_GRADIENT,
+          border: `1px solid rgba(255,255,255,0.12)`,
+          boxShadow: GLASS_INSET,
           display: "flex",
           alignItems: "flex-start",
           gap,
@@ -278,8 +304,14 @@ function InboxListRow({ row, mobile }: { row: InboxRow; mobile: boolean }) {
 
   return (
     <div
-      className="flex items-start"
-      style={{ gap, padding: mobile ? "0.52rem 0.9rem" : "0.38rem 0.52rem" }}
+      className={`flex items-start ${HERO_TRIAGE_PANE_GLASS_TW}`}
+      style={{
+        gap,
+        margin: mobile ? "0 0.5rem" : "0 0.32rem",
+        padding: pad,
+        borderRadius: mobile ? "0.65rem" : "0.45rem",
+        ...glassChipStyle(),
+      }}
     >
       <SenderMark row={row} mobile={mobile} />
       <div className="min-w-0 flex-1">
@@ -377,10 +409,16 @@ function OpenEmailPane({ mobile }: { mobile: boolean }) {
     >
       {/* Thread header */}
       <div
+        className={HERO_TRIAGE_PANE_GLASS_TW}
         style={{
           padding: pad,
           paddingBottom: mobile ? "0.85rem" : "0.55rem",
           borderBottom: `1px solid ${C.divider}`,
+          ...glassPaneStyle(),
+          borderRadius: 0,
+          borderTop: "none",
+          borderLeft: "none",
+          borderRight: "none",
         }}
       >
         <p style={{ fontSize: titleFs, fontWeight: 500, color: C.navActive, letterSpacing: "-0.02em" }}>
@@ -396,9 +434,12 @@ function OpenEmailPane({ mobile }: { mobile: boolean }) {
         {EMAIL_THREAD.map((msg, i) => (
           <div
             key={msg.id}
+            className={HERO_TRIAGE_PANE_GLASS_TW}
             style={{
-              padding: mobile ? "0.85rem 1.3rem" : "0.55rem 0.95rem",
-              borderTop: i > 0 ? `1px solid ${C.divider}` : undefined,
+              margin: mobile ? "0.45rem 0.85rem" : "0.3rem 0.6rem",
+              padding: mobile ? "0.75rem 0.95rem" : "0.5rem 0.65rem",
+              borderRadius: mobile ? "0.75rem" : "0.5rem",
+              ...glassChipStyle(),
             }}
           >
             <div className="flex items-start gap-[0.5em]">
@@ -406,8 +447,8 @@ function OpenEmailPane({ mobile }: { mobile: boolean }) {
                 row={{
                   ...SELECTED,
                   initials: msg.from === "Dr. Singh" ? "DS" : "MR",
-                  iconBg: msg.from === "Dr. Singh" ? "#EDF2FA" : SELECTED.iconBg,
-                  iconColor: msg.from === "Dr. Singh" ? "#3A6FA8" : SELECTED.iconColor,
+                  iconBg: msg.from === "Dr. Singh" ? "rgba(58,111,168,0.16)" : SELECTED.iconBg,
+                  iconColor: msg.from === "Dr. Singh" ? "rgba(195,215,235,0.88)" : SELECTED.iconColor,
                 }}
                 mobile={mobile}
               />
@@ -447,36 +488,40 @@ function OpenEmailPane({ mobile }: { mobile: boolean }) {
 
       {/* Reply compose */}
       <div
+        className={HERO_TRIAGE_PANE_GLASS_TW}
         style={{
           borderTop: `1px solid ${C.divider}`,
           padding: mobile ? "0.85rem 1.3rem" : "0.55rem 0.95rem",
-          background: C.composeBg,
           flexShrink: 0,
+          ...glassPaneStyle({ borderRadius: 0, borderBottom: "none", borderLeft: "none", borderRight: "none" }),
         }}
       >
         <p style={{ fontSize: labelFs, fontWeight: 500, color: C.detailMuted, marginBottom: "0.45em" }}>
           Reply to Maria Rodriguez
         </p>
         <div
+          className={HERO_TRIAGE_PANE_GLASS_TW}
           style={{
             borderRadius: mobile ? "0.65rem" : "0.45rem",
-            border: `1px solid ${C.shellBorder}`,
-            background: C.composeField,
             padding: mobile ? "0.65rem 0.85rem" : "0.45rem 0.55rem",
             display: "flex",
             alignItems: "center",
             gap: "0.55em",
+            ...glassChipStyle(),
           }}
         >
           <p style={{ flex: 1, fontSize: bodyFs, fontWeight: 400, color: C.rowMuted, lineHeight: 1.4 }}>
             Thursday at 10 AM works. See you then.
           </p>
           <div
+            className={HERO_TRIAGE_PANE_GLASS_TW}
             style={{
               borderRadius: "0.45rem",
-              background: C.selected,
               padding: mobile ? "0.32rem 0.75rem" : "0.2rem 0.5rem",
               flexShrink: 0,
+              background: HERO_TRIAGE_SELECTED_GRADIENT,
+              border: `1px solid rgba(255,255,255,0.12)`,
+              boxShadow: GLASS_INSET,
             }}
           >
             <span style={{ fontSize: labelFs, fontWeight: 500, color: "#fff" }}>Send</span>
@@ -533,9 +578,9 @@ export function HeroTriagePreview({
           className={`${HERO_TRIAGE_OUTER_GLASS_TW} ${fontClassName} overflow-hidden`}
           style={{
             borderRadius: isMobile ? "1.35rem" : "1.1rem",
-            background: DOEPHONE_SHORTCUT_PILL_GRADIENT,
+            background: HERO_TRIAGE_SHELL_GRADIENT,
             border: `1px solid ${C.shellBorder}`,
-            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.13)",
+            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
             height: isMobile ? HERO_TRIAGE_MOBILE_MIN_HEIGHT.outer : undefined,
             minHeight: isMobile ? undefined : "16rem",
           }}
@@ -544,18 +589,22 @@ export function HeroTriagePreview({
             className={`flex h-full ${HERO_TRIAGE_INNER_GLASS_TW}`}
             style={{
               minHeight: isMobile ? HERO_TRIAGE_MOBILE_MIN_HEIGHT.inner : "18rem",
-              background: DOEPHONE_SHORTCUT_KEY_GRADIENT,
+              background: HERO_TRIAGE_INNER_GRADIENT,
             }}
           >
             {/* Collapsed vertical nav — icons only */}
             <nav
-              className="flex shrink-0 flex-col items-center"
+              className={`flex shrink-0 flex-col items-center ${HERO_TRIAGE_PANE_GLASS_TW}`}
               style={{
                 width: navW,
-                background: C.navBg,
                 borderRight: `1px solid ${C.divider}`,
                 padding: isMobile ? "1.1rem 0.55rem" : "0.65rem 0.32rem",
                 gap: isMobile ? "0.35rem" : "0.2rem",
+                ...glassPaneStyle(),
+                borderRadius: 0,
+                borderTop: "none",
+                borderBottom: "none",
+                borderLeft: "none",
               }}
             >
               <NavIcon active mobile={isMobile}>
@@ -578,23 +627,31 @@ export function HeroTriagePreview({
 
             {/* Inbox preview column */}
             <div
-              className="flex h-full min-w-0 shrink-0 flex-col"
-              style={{ width: listW, borderRight: `1px solid ${C.divider}` }}
+              className={`flex h-full min-w-0 shrink-0 flex-col ${HERO_TRIAGE_PANE_GLASS_TW}`}
+              style={{
+                width: listW,
+                borderRight: `1px solid ${C.divider}`,
+                ...glassPaneStyle(),
+                borderRadius: 0,
+                borderTop: "none",
+                borderBottom: "none",
+              }}
             >
               {/* Toolbar */}
               <div
-                className="flex items-center gap-[0.45em]"
+                className={`flex items-center gap-[0.45em] ${HERO_TRIAGE_PANE_GLASS_TW}`}
                 style={{
                   padding: isMobile ? "0.85rem 0.95rem" : "0.52rem 0.58rem",
                   borderBottom: `1px solid ${C.divider}`,
+                  ...glassPaneStyle({ borderRadius: 0, borderTop: "none", borderLeft: "none", borderRight: "none" }),
                 }}
               >
                 <div
-                  className="flex items-center gap-[0.35em]"
+                  className={`flex items-center gap-[0.35em] ${HERO_TRIAGE_PANE_GLASS_TW}`}
                   style={{
-                    background: C.pillBg,
                     borderRadius: "999px",
                     padding: isMobile ? "0.38rem 0.75rem" : "0.24rem 0.48rem",
+                    ...glassChipStyle(),
                   }}
                 >
                   <InboxIcon mobile={isMobile} d="M4 6h16v12H4V6zm0 0 8 7 8-7" />
@@ -602,15 +659,16 @@ export function HeroTriagePreview({
                     Inbox
                   </span>
                   <span
+                    className={HERO_TRIAGE_PANE_GLASS_TW}
                     style={{
                       fontSize: isMobile ? "0.78rem" : "0.48rem",
                       fontWeight: 500,
                       color: C.badgeText,
-                      background: C.badgeBg,
                       borderRadius: "999px",
                       padding: "0.12em 0.45em",
                       minWidth: "1.4em",
                       textAlign: "center",
+                      ...glassChipStyle({ background: HERO_TRIAGE_CHIP_GRADIENT }),
                     }}
                   >
                     12
@@ -622,27 +680,20 @@ export function HeroTriagePreview({
               </div>
 
               {/* Message list */}
-              <div className="min-h-0 flex-1 overflow-hidden" style={{ padding: isMobile ? "0.35rem 0" : "0.28rem 0" }}>
-                {INBOX_ROWS.map((row, i) => (
+              <div
+                className="min-h-0 flex-1 overflow-hidden"
+                style={{ padding: isMobile ? "0.45rem 0.35rem" : "0.28rem 0.2rem", gap: isMobile ? "0.28rem" : "0.18rem" }}
+              >
+                {INBOX_ROWS.map((row) => (
                   <div key={row.id}>
                     <InboxListRow row={row} mobile={isMobile} />
-                    {i < INBOX_ROWS.length - 1 && !row.selected && !INBOX_ROWS[i + 1]?.selected && (
-                      <div
-                        style={{
-                          height: 1,
-                          background: C.divider,
-                          marginLeft: isMobile ? "3.85rem" : "2.35rem",
-                          marginRight: isMobile ? "0.85rem" : "0.52rem",
-                        }}
-                      />
-                    )}
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Open email — partial column, clipped by hero overflow */}
-            <div className="min-w-0 flex-1">
+            <div className={`min-w-0 flex-1 ${HERO_TRIAGE_PANE_GLASS_TW}`} style={glassPaneStyle({ borderRadius: 0, borderTop: "none", borderBottom: "none", borderRight: "none" })}>
               <OpenEmailPane mobile={isMobile} />
             </div>
           </div>

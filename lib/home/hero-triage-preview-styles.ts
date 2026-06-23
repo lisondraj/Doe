@@ -5,6 +5,26 @@ import {
   DOEPHONE_SHORTCUT_PILL_GRADIENT,
 } from "@/lib/doephone/communication-glass-styles";
 
+/** Hero inbox — outer shell (warm, low-luminance frosted). */
+export const HERO_TRIAGE_SHELL_GRADIENT =
+  "linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(255,228,196,0.05) 38%, rgba(210,119,76,0.04) 100%)";
+
+/** Hero inbox — second inner layer (subtle depth, not bright grey). */
+export const HERO_TRIAGE_INNER_GRADIENT =
+  "linear-gradient(145deg, rgba(255,255,255,0.04) 0%, rgba(255,236,205,0.025) 52%, rgba(232,169,68,0.015) 100%)";
+
+/** Hero inbox — column / pane surfaces. */
+export const HERO_TRIAGE_PANE_GRADIENT =
+  "linear-gradient(180deg, rgba(255,255,255,0.035) 0%, rgba(255,255,255,0.015) 100%)";
+
+/** Hero inbox — chips, rows, compose fields. */
+export const HERO_TRIAGE_CHIP_GRADIENT =
+  "linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)";
+
+/** Hero inbox — selected row glass. */
+export const HERO_TRIAGE_SELECTED_GRADIENT =
+  "linear-gradient(135deg, rgba(37,99,235,0.55) 0%, rgba(37,99,235,0.38) 100%)";
+
 /** Re-exports for hero inbox glass shell. */
 export {
   DOEPHONE_COMMUNICATION_GLASS_RADIUS_TW,
@@ -79,3 +99,7 @@ export const HERO_TRIAGE_OUTER_GLASS_TW =
 
 export const HERO_TRIAGE_INNER_GLASS_TW =
   "backdrop-blur-[10px] iphone-page:backdrop-blur-[7px] [transform:translateZ(0)]";
+
+/** Per-pane frosted surface — nav, list, detail columns and chips. */
+export const HERO_TRIAGE_PANE_GLASS_TW =
+  "backdrop-blur-[8px] iphone-page:backdrop-blur-[5px] [transform:translateZ(0)]";
