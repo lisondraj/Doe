@@ -99,7 +99,7 @@ export function DoePhoneHeroSection() {
   return (
     <section
       ref={heroRef}
-      className="doephone-hero-section relative w-full overflow-x-clip overflow-y-visible bg-[#1E343A]"
+      className="doephone-hero-section relative w-full overflow-hidden bg-[#1E343A]"
       style={
         {
           minHeight: DOEPHONE_HERO_HEIGHT,

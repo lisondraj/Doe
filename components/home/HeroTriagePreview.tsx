@@ -1,5 +1,6 @@
 import {
   HERO_TRIAGE_OUTER_GLASS_TW,
+  HERO_TRIAGE_PANEL_ANCHOR,
   HERO_TRIAGE_PANEL_LEFT,
   HERO_TRIAGE_PANEL_RIGHT,
   HERO_TRIAGE_PANEL_WIDTH,
@@ -241,8 +242,8 @@ export type HeroTriagePreviewProps = {
 };
 
 /**
- * Doctor's inbox card — light frosted glass, single 3D tilt, right side
- * bleeds off screen. Intro fade applied via `.doephone-hero-triage-preview`.
+ * Doctor's inbox card — light frosted glass, flat layout; bottom-right anchors
+ * to the hero and is clipped by section overflow.
  */
 export function HeroTriagePreview({
   fontClassName,
@@ -256,10 +257,12 @@ export function HeroTriagePreview({
     <div
       className={`pointer-events-none absolute select-none ${className}`}
       style={{
-        top: isMobile ? "45%" : "30%",
         ...(isMobile
+          ? HERO_TRIAGE_PANEL_ANCHOR.mobile
+          : { top: "30%", right: HERO_TRIAGE_PANEL_RIGHT.desktop }),
+        ...(isMobile && HERO_TRIAGE_PANEL_LEFT.mobile != null
           ? { left: HERO_TRIAGE_PANEL_LEFT.mobile }
-          : { right: HERO_TRIAGE_PANEL_RIGHT.desktop }),
+          : {}),
         width: isMobile ? HERO_TRIAGE_PANEL_WIDTH.mobile : HERO_TRIAGE_PANEL_WIDTH.desktop,
         ...style,
       }}
@@ -267,21 +270,19 @@ export function HeroTriagePreview({
     >
       <div
         style={{
-          transform: isMobile ? HERO_TRIAGE_TILT.mobile : HERO_TRIAGE_TILT.desktop,
-          transformOrigin: isMobile ? "5% 6%" : "18% 6%",
-          transformStyle: "preserve-3d",
+          transform: HERO_TRIAGE_TILT[isMobile ? "mobile" : "desktop"],
         }}
       >
         <div
           className={`${HERO_TRIAGE_OUTER_GLASS_TW} ${fontClassName}`}
           style={{
-            borderRadius: isMobile ? "1.6rem" : "1.1rem",
+            borderRadius: isMobile ? "1.6rem 0 0 0" : "1.1rem",
             background: L.bg,
             border: `1px solid ${L.border}`,
             boxShadow: isMobile
               ? "0 8px 32px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.9)"
               : "0 24px 64px rgba(0,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.9)",
-            padding: isMobile ? "3.0rem 3.3rem 3.5rem" : "1.45rem 1.55rem 1.65rem",
+            padding: isMobile ? "3.35rem 3.6rem 3.85rem" : "1.45rem 1.55rem 1.65rem",
           }}
         >
           {/* Inbox header */}
@@ -292,7 +293,7 @@ export function HeroTriagePreview({
             <div className="flex items-center gap-[0.45em]">
               <span
                 className="font-semibold tracking-[-0.025em]"
-                style={{ fontSize: isMobile ? "1.9rem" : "1.02rem", color: L.header }}
+                style={{ fontSize: isMobile ? "2.1rem" : "1.02rem", color: L.header }}
               >
                 Inbox
               </span>

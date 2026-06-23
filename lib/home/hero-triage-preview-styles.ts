@@ -27,21 +27,21 @@ export {
 };
 
 /**
- * Card width — left portion is the visual focus, right portion bleeds
- * past the viewport edge and is intentionally not shown.
+ * Card width — extends past the hero’s right edge; bottom-right corner anchors
+ * to the hero and is clipped by overflow hidden on the section.
  */
 export const HERO_TRIAGE_PANEL_WIDTH = {
-  mobile: "178vw",
+  mobile: "215vw",
   desktop: "min(108rem, 138vw)",
 } as const;
 
-/**
- * Left offset for mobile — shifted right so the blank trailing area of the
- * card runs off the right edge of the viewport and is not seen.
- * Desktop still uses right-based offset.
- */
+/** Mobile — flush to hero bottom-right; left/top bleed is clipped. */
+export const HERO_TRIAGE_PANEL_ANCHOR = {
+  mobile: { right: 0, bottom: 0 },
+} as const;
+
 export const HERO_TRIAGE_PANEL_LEFT = {
-  mobile: "14vw",
+  mobile: undefined,
 } as const;
 
 export const HERO_TRIAGE_PANEL_RIGHT = {
@@ -55,17 +55,10 @@ export const HERO_TRIAGE_WIDGET_WIDTH = {
   desktop: "min(22rem, 68%)",
 } as const;
 
-/**
- * 3D tilt — per ChatGPT analysis of the Linear reference screenshot:
- *   Z: -14° CCW (the dominant visible angle)
- *   X:  65° pitch back (top edge recedes into screen)
- *   Y:   2° yaw (almost none)
- *   perspective: 1300px (strong foreshortening)
- * Order: rotateZ first (2D CCW angle), then rotateX (pitch), then rotateY.
- */
+/** No 3D tilt — card sits flat; hero overflow clips right/bottom edges. */
 export const HERO_TRIAGE_TILT = {
-  mobile: "perspective(1600px) rotateX(50deg) rotateZ(-13deg)",
-  desktop: "perspective(1400px) rotateX(8deg) rotateY(18deg)",
+  mobile: "none",
+  desktop: "none",
 } as const;
 
 export const HERO_TRIAGE_GLASS = {
