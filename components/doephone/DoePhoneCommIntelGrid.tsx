@@ -209,9 +209,9 @@ export function DoePhoneCommIntelGrid() {
         transformOrigin: "50% 50%",
         transformStyle: "preserve-3d",
         WebkitMaskImage:
-          "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.18) 5%, rgba(0,0,0,0.46) 10%, rgba(0,0,0,0.74) 16%, black 23%, black 80%, transparent 100%)",
+          "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.06) 4%, rgba(0,0,0,0.16) 9%, rgba(0,0,0,0.32) 15%, rgba(0,0,0,0.54) 22%, rgba(0,0,0,0.76) 30%, rgba(0,0,0,0.92) 38%, black 46%, black 80%, transparent 100%)",
         maskImage:
-          "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.18) 5%, rgba(0,0,0,0.46) 10%, rgba(0,0,0,0.74) 16%, black 23%, black 80%, transparent 100%)",
+          "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.06) 4%, rgba(0,0,0,0.16) 9%, rgba(0,0,0,0.32) 15%, rgba(0,0,0,0.54) 22%, rgba(0,0,0,0.76) 30%, rgba(0,0,0,0.92) 38%, black 46%, black 80%, transparent 100%)",
       }}
     >
       {/*
