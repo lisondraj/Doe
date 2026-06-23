@@ -105,3 +105,23 @@ export function DoePhoneSectionPlus() {
     </span>
   );
 }
+
+/** SVG apostrophe — matches Suisse Intl Light display stroke weight (avoids system-font fallback). */
+export function DoePhoneSectionApostrophe() {
+  return (
+    <span className="doephone-section-apostrophe">
+      <svg
+        className="doephone-section-apostrophe-icon"
+        viewBox="0 0 8 14"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden
+      >
+        <path
+          d="M4.35 0.75c1.65 0 2.85 1.15 2.65 2.75-.15 1.05-.95 1.75-1.55 2.45-.45.52-.75.95-.85 1.45l-.25 2.05c-.1.75-.65 1.25-1.35 1.05-.6-.18-.65-.85-.5-1.45l.3-1.95c-.85-.65-1.85-1.45-1.65-2.85.2-1.15 1.15-2.5 2.55-2.5z"
+          fill="currentColor"
+        />
+      </svg>
+    </span>
+  );
+}

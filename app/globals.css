@@ -454,6 +454,21 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
   vertical-align: -0.05em;
 }
 
+.doephone-section-apostrophe {
+  display: inline-block;
+  vertical-align: baseline;
+  margin-inline: -0.04em;
+  color: currentColor;
+  line-height: 1;
+}
+
+.doephone-section-apostrophe-icon {
+  display: inline-block;
+  width: 0.24em;
+  height: 0.36em;
+  vertical-align: 0.02em;
+}
+
 /* Wheel-driven mission caret — uses transform so inline opacity stays 1∶1 with scroll deltas */
 .hero-mission-scroll-caret-blink {
   transform-origin: bottom;
