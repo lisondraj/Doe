@@ -30,14 +30,17 @@ export {
  * Card width — wider than the hero; right and bottom edges clip at section overflow.
  */
 export const HERO_TRIAGE_PANEL_WIDTH = {
-  mobile: "175vw",
+  mobile: "215vw",
   desktop: "min(108rem, 138vw)",
 } as const;
 
-/** Mobile — flush to hero bottom-left so the collapsed nav is visible; right bleeds off. */
+/** Mobile — bottom-left anchor, lifted above hero floor. */
 export const HERO_TRIAGE_PANEL_ANCHOR = {
-  mobile: { left: 0, bottom: 0 },
+  mobile: { left: 0, bottom: "18%" },
 } as const;
+
+/** Mobile scale — applied from bottom-left so the card reads larger in the hero. */
+export const HERO_TRIAGE_MOBILE_SCALE = 1.22;
 
 export const HERO_TRIAGE_PANEL_LEFT = {
   mobile: undefined,

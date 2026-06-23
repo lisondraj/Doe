@@ -1,4 +1,5 @@
 import {
+  HERO_TRIAGE_MOBILE_SCALE,
   HERO_TRIAGE_OUTER_GLASS_TW,
   HERO_TRIAGE_PANEL_ANCHOR,
   HERO_TRIAGE_PANEL_LEFT,
@@ -301,8 +302,8 @@ export function HeroTriagePreview({
   className = "",
 }: HeroTriagePreviewProps) {
   const isMobile = size === "mobile";
-  const navW = isMobile ? "4.6rem" : "2.85rem";
-  const listW = isMobile ? "42%" : "38%";
+  const navW = isMobile ? "5.1rem" : "2.85rem";
+  const listW = isMobile ? "28%" : "38%";
 
   return (
     <div
@@ -319,7 +320,12 @@ export function HeroTriagePreview({
       }}
       aria-hidden
     >
-      <div style={{ transform: HERO_TRIAGE_TILT[isMobile ? "mobile" : "desktop"] }}>
+      <div
+        style={{
+          transform: isMobile ? `scale(${HERO_TRIAGE_MOBILE_SCALE})` : HERO_TRIAGE_TILT.desktop,
+          transformOrigin: isMobile ? "bottom left" : undefined,
+        }}
+      >
         <div
           className={`${HERO_TRIAGE_OUTER_GLASS_TW} ${fontClassName} overflow-hidden`}
           style={{
@@ -329,10 +335,10 @@ export function HeroTriagePreview({
             boxShadow: isMobile
               ? "0 12px 48px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.95)"
               : "0 24px 64px rgba(0,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.95)",
-            minHeight: isMobile ? "28rem" : "16rem",
+            minHeight: isMobile ? "38rem" : "16rem",
           }}
         >
-          <div className="flex" style={{ minHeight: isMobile ? "32rem" : "18rem" }}>
+          <div className="flex" style={{ minHeight: isMobile ? "44rem" : "18rem" }}>
             {/* Collapsed vertical nav — icons only */}
             <nav
               className="flex shrink-0 flex-col items-center"
