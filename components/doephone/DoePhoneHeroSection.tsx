@@ -13,9 +13,9 @@ import { suisseIntl } from "@/lib/home/fonts";
 import { DOEPHONE_HERO_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 
-/** Hero — slightly shorter so inbox UI appears proportionally higher on screen. */
+/** Hero — modest height band; inbox UI anchors to bottom of this section. */
 export const DOEPHONE_HERO_HEIGHT =
-  "calc(var(--app-vh,100lvh)*0.88 + max(8rem, calc(env(safe-area-inset-top, 0px) + 3.5rem)))";
+  "calc(var(--app-vh,100lvh)*0.94 + max(8rem, calc(env(safe-area-inset-top, 0px) + 3.5rem)))";
 
 /** No gradient zoom until this share of hero scroll travel. */
 const GRADIENT_ZOOM_FREEZE_RATIO = 0.16;
@@ -117,7 +117,7 @@ export function DoePhoneHeroSection() {
       />
 
       <div
-        className={`doephone-hero-copy absolute inset-0 z-[3] flex min-w-0 flex-col items-start justify-start overflow-visible pt-[max(6.5rem,calc(env(safe-area-inset-top,0px)+calc(var(--app-vh,100lvh)*0.19)))] pb-[clamp(1.5rem,5vmin,2.5rem)] ${DOEPHONE_HERO_COPY_INSET}`}
+        className={`doephone-hero-copy absolute inset-0 z-[3] flex min-w-0 flex-col items-start justify-start overflow-visible pt-[max(7rem,calc(env(safe-area-inset-top,0px)+calc(var(--app-vh,100lvh)*0.22)))] pb-[clamp(1.5rem,5vmin,2.5rem)] ${DOEPHONE_HERO_COPY_INSET}`}
       >
         <DoePhoneHeroHeadline />
       </div>
