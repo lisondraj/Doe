@@ -325,17 +325,17 @@ body.mainpage-route {
 
 .doephone-hero-triage-preview {
   opacity: 0;
-  filter: blur(16px);
-  transform: translateY(1.75rem);
-  animation: doephone-hero-triage-in 1.45s cubic-bezier(0.22, 1, 0.36, 1) 4.1s both;
+  filter: blur(18px);
+  transform: translateY(2.25rem);
+  animation: doephone-hero-triage-in 1.35s cubic-bezier(0.22, 1, 0.36, 1) 4.1s both;
   will-change: opacity, filter, transform;
 }
 
 @keyframes doephone-hero-triage-in {
   from {
     opacity: 0;
-    filter: blur(16px);
-    transform: translateY(1.75rem);
+    filter: blur(18px);
+    transform: translateY(2.25rem);
   }
 
   to {

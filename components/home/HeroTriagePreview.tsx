@@ -1,4 +1,5 @@
 import {
+  HERO_TRIAGE_INNER_GLASS_TW,
   HERO_TRIAGE_MOBILE_LIST_WIDTH,
   HERO_TRIAGE_MOBILE_MIN_HEIGHT,
   HERO_TRIAGE_MOBILE_SCALE,
@@ -7,35 +8,33 @@ import {
   HERO_TRIAGE_PANEL_LEFT,
   HERO_TRIAGE_PANEL_RIGHT,
   HERO_TRIAGE_PANEL_WIDTH,
-  HERO_TRIAGE_SHELL_GLASS,
   HERO_TRIAGE_TILT,
+  DOEPHONE_SHORTCUT_KEY_GRADIENT,
+  DOEPHONE_SHORTCUT_PILL_GRADIENT,
 } from "@/lib/home/hero-triage-preview-styles";
 import type { CSSProperties, ReactNode } from "react";
 
-/* ─── Frosted glass inbox tokens ─── */
+/* ─── Frosted glass inbox tokens (Integrations panel aesthetic) ─── */
 const C = {
-  shell: HERO_TRIAGE_SHELL_GLASS.background,
-  shellBorder: HERO_TRIAGE_SHELL_GLASS.border,
-  shellShadow: HERO_TRIAGE_SHELL_GLASS.shadow,
-  navBg: "rgba(255,255,255,0.22)",
-  navIcon: "rgba(0,0,0,0.34)",
-  navActive: "rgba(0,0,0,0.86)",
-  navActiveBg: "rgba(255,255,255,0.38)",
-  pillBg: "rgba(255,255,255,0.42)",
-  pillText: "rgba(0,0,0,0.68)",
-  rowText: "rgba(0,0,0,0.52)",
-  rowMuted: "rgba(0,0,0,0.36)",
-  rowTime: "rgba(0,0,0,0.34)",
-  divider: "rgba(255,255,255,0.42)",
-  selected: "rgba(37,99,235,0.78)",
-  selectedMuted: "rgba(255,255,255,0.76)",
-  badgeBg: "rgba(255,255,255,0.36)",
-  badgeText: "rgba(0,0,0,0.52)",
-  detailBg: "rgba(255,255,255,0.14)",
-  detailBody: "rgba(0,0,0,0.60)",
-  detailMuted: "rgba(0,0,0,0.40)",
-  glassReply: "rgba(255,255,255,0.30)",
-  glassInput: "rgba(255,255,255,0.52)",
+  shellBorder: "rgba(255,255,255,0.13)",
+  navBg: "rgba(255,255,255,0.05)",
+  navIcon: "rgba(255,255,255,0.38)",
+  navActive: "rgba(255,255,255,0.92)",
+  navActiveBg: "rgba(255,255,255,0.08)",
+  pillBg: "rgba(255,255,255,0.10)",
+  pillText: "rgba(255,255,255,0.85)",
+  rowText: "rgba(255,255,255,0.58)",
+  rowMuted: "rgba(255,255,255,0.40)",
+  rowTime: "rgba(255,255,255,0.36)",
+  divider: "rgba(255,255,255,0.08)",
+  selected: "rgba(37,99,235,0.82)",
+  selectedMuted: "rgba(255,255,255,0.72)",
+  badgeBg: "rgba(255,255,255,0.10)",
+  badgeText: "rgba(255,255,255,0.58)",
+  detailBody: "rgba(255,255,255,0.72)",
+  detailMuted: "rgba(255,255,255,0.48)",
+  composeBg: "rgba(255,255,255,0.06)",
+  composeField: "rgba(255,255,255,0.08)",
 } as const;
 
 type InboxRow = {
@@ -245,8 +244,6 @@ function InboxListRow({ row, mobile }: { row: InboxRow; mobile: boolean }) {
           padding: pad,
           borderRadius: mobile ? "0.85rem" : "0.55rem",
           background: C.selected,
-          backdropFilter: "blur(10px)",
-          WebkitBackdropFilter: "blur(10px)",
           display: "flex",
           alignItems: "flex-start",
           gap,
@@ -375,8 +372,8 @@ function OpenEmailPane({ mobile }: { mobile: boolean }) {
 
   return (
     <div
-      className="flex h-full min-w-0 flex-col border-l backdrop-blur-[6px]"
-      style={{ borderColor: C.divider, background: C.detailBg }}
+      className="flex h-full min-w-0 flex-col border-l"
+      style={{ borderColor: C.divider, background: "transparent" }}
     >
       {/* Thread header */}
       <div
@@ -453,9 +450,7 @@ function OpenEmailPane({ mobile }: { mobile: boolean }) {
         style={{
           borderTop: `1px solid ${C.divider}`,
           padding: mobile ? "0.85rem 1.3rem" : "0.55rem 0.95rem",
-          background: C.glassReply,
-          backdropFilter: "blur(8px)",
-          WebkitBackdropFilter: "blur(8px)",
+          background: C.composeBg,
           flexShrink: 0,
         }}
       >
@@ -465,10 +460,8 @@ function OpenEmailPane({ mobile }: { mobile: boolean }) {
         <div
           style={{
             borderRadius: mobile ? "0.65rem" : "0.45rem",
-            border: `1px solid ${C.divider}`,
-            background: C.glassInput,
-            backdropFilter: "blur(6px)",
-            WebkitBackdropFilter: "blur(6px)",
+            border: `1px solid ${C.shellBorder}`,
+            background: C.composeField,
             padding: mobile ? "0.65rem 0.85rem" : "0.45rem 0.55rem",
             display: "flex",
             alignItems: "center",
@@ -540,17 +533,23 @@ export function HeroTriagePreview({
           className={`${HERO_TRIAGE_OUTER_GLASS_TW} ${fontClassName} overflow-hidden`}
           style={{
             borderRadius: isMobile ? "1.35rem" : "1.1rem",
-            background: C.shell,
+            background: DOEPHONE_SHORTCUT_PILL_GRADIENT,
             border: `1px solid ${C.shellBorder}`,
-            boxShadow: C.shellShadow,
+            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.13)",
             height: isMobile ? HERO_TRIAGE_MOBILE_MIN_HEIGHT.outer : undefined,
             minHeight: isMobile ? undefined : "16rem",
           }}
         >
-          <div className="flex h-full" style={{ minHeight: isMobile ? HERO_TRIAGE_MOBILE_MIN_HEIGHT.inner : "18rem" }}>
+          <div
+            className={`flex h-full ${HERO_TRIAGE_INNER_GLASS_TW}`}
+            style={{
+              minHeight: isMobile ? HERO_TRIAGE_MOBILE_MIN_HEIGHT.inner : "18rem",
+              background: DOEPHONE_SHORTCUT_KEY_GRADIENT,
+            }}
+          >
             {/* Collapsed vertical nav — icons only */}
             <nav
-              className="flex shrink-0 flex-col items-center backdrop-blur-[6px]"
+              className="flex shrink-0 flex-col items-center"
               style={{
                 width: navW,
                 background: C.navBg,
@@ -579,8 +578,8 @@ export function HeroTriagePreview({
 
             {/* Inbox preview column */}
             <div
-              className="flex h-full min-w-0 shrink-0 flex-col backdrop-blur-[6px]"
-              style={{ width: listW, borderRight: `1px solid ${C.divider}`, background: "rgba(255,255,255,0.08)" }}
+              className="flex h-full min-w-0 shrink-0 flex-col"
+              style={{ width: listW, borderRight: `1px solid ${C.divider}` }}
             >
               {/* Toolbar */}
               <div

@@ -1,29 +1,15 @@
 import {
   DOEPHONE_COMMUNICATION_GLASS_RADIUS_TW,
+  DOEPHONE_COMMUNICATION_OUTER_GLASS_TW,
+  DOEPHONE_SHORTCUT_KEY_GRADIENT,
+  DOEPHONE_SHORTCUT_PILL_GRADIENT,
 } from "@/lib/doephone/communication-glass-styles";
 
-/**
- * Dark frosted-glass outer panel gradient — matches the reference screenshots
- * where the card reads as a clearly dark element against the warm backdrop.
- */
-export const HERO_TRIAGE_PANEL_GRADIENT =
-  "linear-gradient(145deg, rgba(10,16,22,0.88) 0%, rgba(8,13,20,0.85) 60%, rgba(12,18,26,0.84) 100%)";
-
-/**
- * Dark frosted-glass inner widget area (header strip of Triage Intelligence).
- */
-export const HERO_TRIAGE_WIDGET_HEADER_GRADIENT =
-  "linear-gradient(145deg, rgba(16,24,32,0.94) 0%, rgba(10,16,24,0.92) 100%)";
-
-/**
- * Dark frosted-glass body for suggestion / relation rows inside the widget.
- */
-export const HERO_TRIAGE_WIDGET_BODY_GRADIENT =
-  "linear-gradient(145deg, rgba(14,20,28,0.90) 0%, rgba(9,14,20,0.88) 100%)";
-
-/** Re-exports kept for legacy callers. */
+/** Re-exports for hero inbox glass shell. */
 export {
   DOEPHONE_COMMUNICATION_GLASS_RADIUS_TW,
+  DOEPHONE_SHORTCUT_KEY_GRADIENT,
+  DOEPHONE_SHORTCUT_PILL_GRADIENT,
 };
 
 /**
@@ -87,16 +73,9 @@ export const HERO_TRIAGE_GLASS = {
   widgetShadow: "0 12px 36px rgba(0, 0, 0, 0.40), inset 0 1px 0 rgba(255, 255, 255, 0.08)",
 } as const;
 
-/** Outer card — frosted glass over the hero gradient. */
+/** Outer card — warm frosted glass matching Integrations section panel. */
 export const HERO_TRIAGE_OUTER_GLASS_TW =
-  `${DOEPHONE_COMMUNICATION_GLASS_RADIUS_TW} backdrop-blur-[24px] iphone-page:backdrop-blur-[20px] [transform:translateZ(0)] isolate`;
-
-export const HERO_TRIAGE_SHELL_GLASS = {
-  background:
-    "linear-gradient(145deg, rgba(255,255,255,0.84) 0%, rgba(255,255,255,0.72) 45%, rgba(255,250,245,0.62) 100%)",
-  border: "rgba(255,255,255,0.58)",
-  shadow: "0 24px 64px rgba(0,0,0,0.07), inset 0 1px 0 rgba(255,255,255,0.88)",
-} as const;
+  `${DOEPHONE_COMMUNICATION_OUTER_GLASS_TW} backdrop-blur-[20px] iphone-page:backdrop-blur-[16px]`;
 
 export const HERO_TRIAGE_INNER_GLASS_TW =
-  `${DOEPHONE_COMMUNICATION_GLASS_RADIUS_TW} backdrop-blur-[8px] iphone-page:backdrop-blur-[6px]`;
+  "backdrop-blur-[10px] iphone-page:backdrop-blur-[7px] [transform:translateZ(0)]";
