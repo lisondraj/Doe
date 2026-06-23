@@ -36,15 +36,8 @@ export function DoePhoneCommunicationIntelligenceSection() {
           />
         </div>
 
-        {/*
-          * Grid pushed to the bottom of the section via mt-auto.
-          * translateY(22%) nudges it past the section's bottom edge so
-          * the lower rows are cut off by overflow-hidden on the section.
-          */}
-        <div
-          className="mt-auto shrink-0"
-          style={{ transform: "translateY(22%)" }}
-        >
+        {/* Grid pushed to section bottom, all rows visible, no bottom gap. */}
+        <div className="mt-auto shrink-0">
           <DoePhoneCommIntelGrid />
         </div>
       </div>

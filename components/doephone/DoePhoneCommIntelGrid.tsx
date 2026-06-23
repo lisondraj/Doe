@@ -7,9 +7,9 @@ const B = BLOG_LANDING_HERO;
 /*
  * Landscape cells — width is the long edge.
  * With the grid extending 10vw beyond each viewport edge, each cell is
- * ~150px wide. Height ~98px gives a clear ~1.5:1 landscape ratio.
+ * ~150px wide. Height ~120px gives a clear ~1.25:1 landscape ratio.
  */
-const CELL_H = "h-[clamp(5.5rem,25vmin,9rem)] min-h-[clamp(5.5rem,25vmin,9rem)]";
+const CELL_H = "h-[clamp(7rem,31vmin,11.5rem)] min-h-[clamp(7rem,31vmin,11.5rem)]";
 /* Subtler radius */
 const CELL_RADIUS = "rounded-[0.38rem]";
 
@@ -223,9 +223,9 @@ export function DoePhoneCommIntelGrid() {
         marginRight: "-10vw",
         width: "calc(100% + 20vw)",
         WebkitMaskImage:
-          "linear-gradient(to bottom, transparent 0%, black 22%, black 74%, transparent 100%)",
+          "linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)",
         maskImage:
-          "linear-gradient(to bottom, transparent 0%, black 22%, black 74%, transparent 100%)",
+          "linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)",
       }}
     >
       <div
