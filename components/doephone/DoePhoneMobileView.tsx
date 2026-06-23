@@ -24,8 +24,6 @@ export function DoePhoneMobileView() {
 
       <DoePhoneHeroSection />
 
-      <div className="w-full border-t border-[#E6E6E6]" aria-hidden />
-
       <section className={DOEPHONE_BEIGE_SECTION} aria-label="Labs">
         <DoePhoneCommunicationSection />
       </section>

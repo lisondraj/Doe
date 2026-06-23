@@ -5,10 +5,7 @@ import {
   DoePhoneSectionCarousel,
   useDoePhoneSectionCarousel,
 } from "@/components/doephone/DoePhoneSectionCarousel";
-import {
-  DoePhoneSectionApostrophe,
-  DoePhoneSectionTitle,
-} from "@/components/doephone/DoePhoneSectionText";
+import { DoePhoneSectionTitle } from "@/components/doephone/DoePhoneSectionText";
 import {
   DOEPHONE_SECTION_CAROUSEL_HEIGHT,
   DOEPHONE_SECTION_CAROUSEL_INSET_X,
@@ -44,14 +41,8 @@ export function DoePhoneCommunicationSection() {
         <DoePhoneSectionTitle
           segmentedReveal
           revealed={revealed}
-          line1={
-            <>
-              The inbox you
-              <DoePhoneSectionApostrophe />
-              ve
-            </>
-          }
-          line2="always wanted."
+          line1="Your inbox should"
+          line2="be built for you."
         />
       </div>
 
