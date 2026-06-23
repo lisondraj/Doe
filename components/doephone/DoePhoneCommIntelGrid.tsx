@@ -212,49 +212,43 @@ export function DoePhoneCommIntelGrid() {
      * Pure rotateX tilt (no Y/Z) so the grid recedes straight back like the SS.
      */
     /*
-     * Negative horizontal margins extend the grid 10vw beyond each viewport
-     * edge — the section's overflow-hidden clips the sides naturally.
-     * Top/bottom mask fades the grid into the section bg; no left/right fade
-     * so cards appear to bleed off-screen like the reference screenshot.
+     * Mask and 3D transform are on the SAME element so the mask is applied
+     * to the flat grid in local space BEFORE the rotation. This ensures the
+     * top fade (which fades the first 22% of the grid's rows) is visible
+     * in the 3D view — the faded top rows appear small and distant at the
+     * top of the perspective tilt, exactly like the reference screenshot.
+     *
+     * Two-axis mask: vertical top/bottom × horizontal left/right → corners
+     * are transparent (same vignette at top and bottom).
      */
     <div
       style={{
         marginLeft: "-10vw",
         marginRight: "-10vw",
         width: "calc(100% + 20vw)",
-        /*
-         * Two-axis mask — vertical top/bottom fade intersected with
-         * horizontal left/right fade so all four corners are transparent.
-         * Creates the same corner-vignette effect at top as at bottom.
-         */
+        transform: "perspective(540px) rotateX(46deg)",
+        transformOrigin: "50% 50%",
+        transformStyle: "preserve-3d",
         WebkitMaskImage: [
           "linear-gradient(to bottom, transparent 0%, black 22%, black 82%, transparent 100%)",
-          "linear-gradient(to right,  transparent 0%, black 12%, black 88%, transparent 100%)",
+          "linear-gradient(to right,  transparent 0%, black 10%, black 90%, transparent 100%)",
         ].join(", "),
         WebkitMaskComposite: "source-in",
         maskImage: [
           "linear-gradient(to bottom, transparent 0%, black 22%, black 82%, transparent 100%)",
-          "linear-gradient(to right,  transparent 0%, black 12%, black 88%, transparent 100%)",
+          "linear-gradient(to right,  transparent 0%, black 10%, black 90%, transparent 100%)",
         ].join(", "),
         maskComposite: "intersect",
       }}
     >
-      <div
-        style={{
-          transform: "perspective(540px) rotateX(46deg)",
-          transformOrigin: "50% 50%",
-          transformStyle: "preserve-3d",
-        }}
-      >
-        <div className="grid w-full grid-cols-3 gap-[clamp(0.45rem,1.2vmin,0.75rem)]">
-          {GRID_META.map((cell, i) =>
-            cell.kind === "gradient" ? (
-              <GradientCell key={i} designIdx={cell.design} />
-            ) : (
-              <BeigeCell key={i} designIdx={cell.design} />
-            ),
-          )}
-        </div>
+      <div className="grid w-full grid-cols-3 gap-[clamp(0.45rem,1.2vmin,0.75rem)]">
+        {GRID_META.map((cell, i) =>
+          cell.kind === "gradient" ? (
+            <GradientCell key={i} designIdx={cell.design} />
+          ) : (
+            <BeigeCell key={i} designIdx={cell.design} />
+          ),
+        )}
       </div>
     </div>
   );
