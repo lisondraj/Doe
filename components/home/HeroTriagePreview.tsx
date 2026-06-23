@@ -11,35 +11,37 @@ import {
 } from "@/lib/home/hero-triage-preview-styles";
 import type { CSSProperties, ReactNode } from "react";
 
-/* ─── Reference-style tokens (Linear / modern inbox) ─── */
+/* ─── Premium inbox tokens (Linear / Superhuman) ─── */
 const C = {
   shell: "#FFFFFF",
-  shellBorder: "rgba(0,0,0,0.06)",
-  navBg: "#FAFAFA",
-  navIcon: "rgba(0,0,0,0.38)",
-  navActive: "rgba(0,0,0,0.88)",
-  navActiveBg: "rgba(0,0,0,0.05)",
+  shellBorder: "rgba(0,0,0,0.05)",
+  navBg: "#F8F8F8",
+  navIcon: "rgba(0,0,0,0.32)",
+  navActive: "rgba(0,0,0,0.86)",
+  navActiveBg: "rgba(0,0,0,0.04)",
   toolbarBg: "#FFFFFF",
-  pillBg: "rgba(0,0,0,0.06)",
-  pillText: "rgba(0,0,0,0.72)",
-  rowText: "rgba(0,0,0,0.55)",
-  rowMuted: "rgba(0,0,0,0.38)",
-  divider: "rgba(0,0,0,0.06)",
-  selected: "#2B6FE8",
-  selectedPill: "rgba(255,255,255,0.22)",
-  selectedText: "#FFFFFF",
-  badgeBg: "rgba(0,0,0,0.08)",
-  badgeText: "rgba(0,0,0,0.55)",
+  pillBg: "rgba(0,0,0,0.05)",
+  pillText: "rgba(0,0,0,0.68)",
+  rowText: "rgba(0,0,0,0.50)",
+  rowMuted: "rgba(0,0,0,0.34)",
+  rowTime: "rgba(0,0,0,0.32)",
+  divider: "rgba(0,0,0,0.05)",
+  selected: "#2563EB",
+  selectedMuted: "rgba(255,255,255,0.72)",
+  badgeBg: "rgba(0,0,0,0.06)",
+  badgeText: "rgba(0,0,0,0.50)",
   detailBg: "#FFFFFF",
-  detailBody: "rgba(0,0,0,0.62)",
-  detailMuted: "rgba(0,0,0,0.42)",
+  detailBody: "rgba(0,0,0,0.58)",
+  detailMuted: "rgba(0,0,0,0.38)",
 } as const;
 
 type InboxRow = {
   id: string;
   sender: string;
   initials: string;
+  subject: string;
   preview: string;
+  time: string;
   iconBg: string;
   iconColor: string;
   selected?: boolean;
@@ -50,32 +52,40 @@ const INBOX_ROWS: InboxRow[] = [
     id: "pharmacy",
     sender: "Pharmacy",
     initials: "Rx",
-    preview: "Refill request — Metformin 500mg for J. Martinez",
-    iconBg: "#E8F4EC",
-    iconColor: "#3D8B5F",
+    subject: "Refill request",
+    preview: "Metformin 500mg for J. Martinez",
+    time: "8:12",
+    iconBg: "#EEF6F0",
+    iconColor: "#3A7A55",
   },
   {
     id: "labcorp",
     sender: "LabCorp",
     initials: "LC",
-    preview: "Critical result: K⁺ 6.2 mEq/L — patient A. Chen",
-    iconBg: "#FDEDEC",
-    iconColor: "#C0392B",
+    subject: "Critical result",
+    preview: "K+ 6.2 mEq/L, patient A. Chen",
+    time: "7:48",
+    iconBg: "#FDF2F1",
+    iconColor: "#B83A32",
   },
   {
     id: "nurse",
     sender: "Nurse Patel",
     initials: "NP",
-    preview: "Room 308 post-op stable — discharge timeline requested",
-    iconBg: "#EBF2FA",
+    subject: "Post-op update",
+    preview: "Room 308 stable, discharge timeline requested",
+    time: "Yesterday",
+    iconBg: "#F0F5FA",
     iconColor: "#3A6FA8",
   },
   {
     id: "patient",
     sender: "M. Rodriguez",
     initials: "MR",
-    preview: "Need to schedule a follow-up visit this week",
-    iconBg: "#EEF0FF",
+    subject: "Follow-up visit",
+    preview: "Need to schedule a visit this week",
+    time: "9:14",
+    iconBg: "#F2F3FA",
     iconColor: "#4A56B8",
     selected: true,
   },
@@ -83,64 +93,80 @@ const INBOX_ROWS: InboxRow[] = [
     id: "aetna",
     sender: "Aetna",
     initials: "AE",
-    preview: "Pre-authorization approved for PT #8821",
-    iconBg: "#F5F0EA",
-    iconColor: "#9A7344",
+    subject: "Pre-authorization",
+    preview: "Approved for PT #8821",
+    time: "Mon",
+    iconBg: "#F7F4EF",
+    iconColor: "#8A6840",
   },
   {
     id: "specialist",
     sender: "Dr. Okafor",
     initials: "DO",
-    preview: "Referral accepted — cardiology consult Tue 2 PM",
-    iconBg: "#F0EBF8",
+    subject: "Referral accepted",
+    preview: "Cardiology consult Tue 2 PM",
+    time: "Mon",
+    iconBg: "#F4F0FA",
     iconColor: "#6B3FA0",
   },
   {
     id: "quest",
     sender: "Quest Diagnostics",
     initials: "QD",
-    preview: "Panel results ready — lipid + HbA1c for T. Brooks",
-    iconBg: "#FFF3E8",
-    iconColor: "#C06820",
+    subject: "Panel results",
+    preview: "Lipid + HbA1c ready for T. Brooks",
+    time: "Sun",
+    iconBg: "#FFF6EE",
+    iconColor: "#B86A28",
   },
   {
     id: "patient2",
     sender: "D. Kim",
     initials: "DK",
-    preview: "Medication side effects — dizziness since Monday",
-    iconBg: "#E8F3FB",
+    subject: "Medication side effects",
+    preview: "Dizziness since Monday morning",
+    time: "Sun",
+    iconBg: "#EDF6FB",
     iconColor: "#1A6E9A",
   },
   {
     id: "bcbs",
     sender: "BlueCross",
     initials: "BC",
-    preview: "Claim #44821 processed — EOB attached",
-    iconBg: "#E8EEF8",
+    subject: "Claim processed",
+    preview: "EOB attached for claim #44821",
+    time: "Sat",
+    iconBg: "#EDF1F9",
     iconColor: "#2B4FA8",
   },
   {
     id: "frontdesk",
     sender: "Front Desk",
     initials: "FD",
-    preview: "Patient arrived early — Room 4 ready for vitals",
-    iconBg: "#F2F4F0",
+    subject: "Patient arrival",
+    preview: "Room 4 ready for vitals",
+    time: "Sat",
+    iconBg: "#F3F5F2",
     iconColor: "#4A6B42",
   },
   {
     id: "imaging",
     sender: "Metro Imaging",
     initials: "MI",
-    preview: "MRI report uploaded — lumbar spine for R. Walsh",
-    iconBg: "#F5EEF8",
+    subject: "MRI report",
+    preview: "Lumbar spine for R. Walsh",
+    time: "Fri",
+    iconBg: "#F6F0FA",
     iconColor: "#7A4A9A",
   },
   {
     id: "priorauth",
     sender: "Humana",
     initials: "HU",
-    preview: "Prior auth #99201 approved — 12 PT sessions",
-    iconBg: "#E8F5F0",
+    subject: "Prior auth approved",
+    preview: "12 PT sessions authorized",
+    time: "Fri",
+    iconBg: "#EDF7F2",
     iconColor: "#2A7A52",
   },
 ];
@@ -202,18 +228,19 @@ function SenderMark({ row, mobile }: { row: InboxRow; mobile: boolean }) {
 }
 
 function InboxListRow({ row, mobile }: { row: InboxRow; mobile: boolean }) {
-  const fs = mobile ? "1.02rem" : "0.66rem";
-  const pillFs = mobile ? "0.92rem" : "0.58rem";
-  const pad = mobile ? "0.58rem 0.85rem" : "0.42rem 0.52rem";
-  const gap = mobile ? "0.65rem" : "0.38rem";
+  const nameFs = mobile ? "0.96rem" : "0.62rem";
+  const subFs = mobile ? "0.88rem" : "0.56rem";
+  const timeFs = mobile ? "0.78rem" : "0.48rem";
+  const pad = mobile ? "0.62rem 0.9rem" : "0.42rem 0.52rem";
+  const gap = mobile ? "0.62rem" : "0.38rem";
 
   if (row.selected) {
     return (
       <div
         style={{
-          margin: mobile ? "0 0.55rem" : "0 0.32rem",
+          margin: mobile ? "0 0.5rem" : "0 0.32rem",
           padding: pad,
-          borderRadius: mobile ? "1rem" : "0.62rem",
+          borderRadius: mobile ? "0.85rem" : "0.55rem",
           background: C.selected,
           display: "flex",
           alignItems: "flex-start",
@@ -222,27 +249,23 @@ function InboxListRow({ row, mobile }: { row: InboxRow; mobile: boolean }) {
       >
         <SenderMark row={row} mobile={mobile} />
         <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-[0.35em]">
-            <span
-              style={{
-                fontSize: pillFs,
-                fontWeight: 500,
-                color: C.selectedText,
-                background: C.selectedPill,
-                borderRadius: "999px",
-                padding: mobile ? "0.22em 0.65em" : "0.18em 0.48em",
-              }}
-            >
+          <div className="flex items-baseline justify-between gap-[0.4em]">
+            <span style={{ fontSize: nameFs, fontWeight: 500, color: "#fff", letterSpacing: "-0.01em" }}>
               {row.sender}
             </span>
-            <InboxIcon
-              mobile={mobile}
-              d="M3 10h10l4 4V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v4z"
-            />
+            <span style={{ fontSize: timeFs, fontWeight: 400, color: C.selectedMuted, flexShrink: 0 }}>
+              {row.time}
+            </span>
           </div>
           <p
-            className="mt-[0.28em] truncate"
-            style={{ fontSize: fs, fontWeight: 400, color: "rgba(255,255,255,0.92)" }}
+            className="truncate"
+            style={{ fontSize: subFs, fontWeight: 500, color: "rgba(255,255,255,0.92)", marginTop: "0.15em" }}
+          >
+            {row.subject}
+          </p>
+          <p
+            className="mt-[0.12em] truncate"
+            style={{ fontSize: subFs, fontWeight: 400, color: "rgba(255,255,255,0.75)" }}
           >
             {row.preview}
           </p>
@@ -254,26 +277,27 @@ function InboxListRow({ row, mobile }: { row: InboxRow; mobile: boolean }) {
   return (
     <div
       className="flex items-start"
-      style={{ gap, padding: mobile ? "0.48rem 0.85rem" : "0.38rem 0.52rem" }}
+      style={{ gap, padding: mobile ? "0.52rem 0.9rem" : "0.38rem 0.52rem" }}
     >
       <SenderMark row={row} mobile={mobile} />
       <div className="min-w-0 flex-1">
-        <span
-          style={{
-            fontSize: pillFs,
-            fontWeight: 500,
-            color: C.pillText,
-            background: C.pillBg,
-            borderRadius: "999px",
-            padding: mobile ? "0.2em 0.62em" : "0.16em 0.42em",
-            display: "inline-block",
-          }}
-        >
-          {row.sender}
-        </span>
+        <div className="flex items-baseline justify-between gap-[0.4em]">
+          <span style={{ fontSize: nameFs, fontWeight: 500, color: C.navActive, letterSpacing: "-0.01em" }}>
+            {row.sender}
+          </span>
+          <span style={{ fontSize: timeFs, fontWeight: 400, color: C.rowTime, flexShrink: 0 }}>
+            {row.time}
+          </span>
+        </div>
         <p
-          className="mt-[0.32em] truncate"
-          style={{ fontSize: fs, fontWeight: 400, color: C.rowText }}
+          className="truncate"
+          style={{ fontSize: subFs, fontWeight: 500, color: C.pillText, marginTop: "0.15em" }}
+        >
+          {row.subject}
+        </p>
+        <p
+          className="mt-[0.1em] truncate"
+          style={{ fontSize: subFs, fontWeight: 400, color: C.rowText }}
         >
           {row.preview}
         </p>
@@ -282,129 +306,179 @@ function InboxListRow({ row, mobile }: { row: InboxRow; mobile: boolean }) {
   );
 }
 
-const THREAD_MESSAGES = [
+type EmailThreadMessage = {
+  id: string;
+  from: string;
+  to: string;
+  time: string;
+  lines: string[];
+};
+
+const EMAIL_THREAD: EmailThreadMessage[] = [
   {
-    id: "p1",
-    from: "patient" as const,
-    text: "Hi Dr. Singh — I wanted to follow up on my chest tightness from last week. Symptoms have improved but I still feel it in the mornings.",
+    id: "e1",
+    from: "Maria Rodriguez",
+    to: "Dr. Singh",
+    time: "Jun 21, 9:02 AM",
+    lines: [
+      "Hi Dr. Singh,",
+      "I wanted to follow up on my chest tightness from last week. Symptoms have improved but I still notice mild tightness in the mornings.",
+      "Would it be possible to schedule a visit this week?",
+      "Thank you,",
+      "Maria",
+    ],
   },
   {
-    id: "d1",
-    from: "doctor" as const,
-    text: "Thanks for checking in, Maria. Glad things are better — any shortness of breath with walking or stairs?",
+    id: "e2",
+    from: "Dr. Singh",
+    to: "Maria Rodriguez",
+    time: "Jun 21, 2:18 PM",
+    lines: [
+      "Hi Maria,",
+      "Thanks for the update. Glad to hear things are improving.",
+      "Any shortness of breath with walking or stairs?",
+    ],
   },
   {
-    id: "p2",
-    from: "patient" as const,
-    text: "No shortness of breath, just mild tightness when I wake up. I'd like to schedule a visit this week if possible.",
+    id: "e3",
+    from: "Maria Rodriguez",
+    to: "Dr. Singh",
+    time: "Jun 22, 8:41 AM",
+    lines: [
+      "No shortness of breath, just the morning tightness.",
+      "Thursday or Friday would work well on my end.",
+    ],
   },
   {
-    id: "d2",
-    from: "doctor" as const,
-    text: "Happy to get you in. I have Thursday at 10 AM or Friday at 2 PM — either work for you?",
-  },
-  {
-    id: "p3",
-    from: "patient" as const,
-    text: "Thursday at 10 AM works perfectly. Thank you!",
+    id: "e4",
+    from: "Dr. Singh",
+    to: "Maria Rodriguez",
+    time: "Jun 22, 9:14 AM",
+    lines: [
+      "I have Thursday at 10 AM or Friday at 2 PM open.",
+      "Let me know which you prefer and I will confirm.",
+    ],
   },
 ];
 
 function OpenEmailPane({ mobile }: { mobile: boolean }) {
-  const titleFs = mobile ? "1.35rem" : "0.82rem";
-  const bodyFs = mobile ? "0.98rem" : "0.64rem";
-  const metaFs = mobile ? "0.88rem" : "0.54rem";
-  const pad = mobile ? "1.2rem 1.35rem" : "0.85rem 0.95rem";
-  const smallFs = mobile ? "0.88rem" : "0.56rem";
+  const titleFs = mobile ? "1.22rem" : "0.82rem";
+  const bodyFs = mobile ? "0.94rem" : "0.64rem";
+  const metaFs = mobile ? "0.82rem" : "0.54rem";
+  const labelFs = mobile ? "0.78rem" : "0.50rem";
+  const pad = mobile ? "1.15rem 1.3rem" : "0.85rem 0.95rem";
 
   return (
     <div
       className="flex h-full min-w-0 flex-col border-l"
-      style={{ borderColor: C.divider, background: C.detailBg, padding: pad, gap: mobile ? "0.85rem" : "0.55rem" }}
+      style={{ borderColor: C.divider, background: C.detailBg }}
     >
-      {/* Header */}
-      <div className="flex items-center gap-[0.55em]">
-        <SenderMark row={SELECTED} mobile={mobile} />
-        <div className="min-w-0">
-          <p style={{ fontSize: titleFs, fontWeight: 500, color: C.navActive, letterSpacing: "-0.02em" }}>
-            {SELECTED.sender}
-          </p>
-          <p style={{ fontSize: metaFs, fontWeight: 400, color: C.detailMuted, marginTop: "0.12em" }}>
-            Follow-up visit scheduling · Today
-          </p>
-        </div>
+      {/* Thread header */}
+      <div
+        style={{
+          padding: pad,
+          paddingBottom: mobile ? "0.85rem" : "0.55rem",
+          borderBottom: `1px solid ${C.divider}`,
+        }}
+      >
+        <p style={{ fontSize: titleFs, fontWeight: 500, color: C.navActive, letterSpacing: "-0.02em" }}>
+          Follow-up visit scheduling
+        </p>
+        <p style={{ fontSize: metaFs, fontWeight: 400, color: C.detailMuted, marginTop: "0.28em" }}>
+          Maria Rodriguez · Patient message
+        </p>
       </div>
 
-      {/* Thread */}
-      <div
-        className="flex min-h-0 flex-1 flex-col"
-        style={{ gap: mobile ? "0.65rem" : "0.4rem", overflow: "hidden" }}
-      >
-        {THREAD_MESSAGES.map((msg) => {
-          const isDoctor = msg.from === "doctor";
-          return (
-            <div
-              key={msg.id}
-              style={{
-                display: "flex",
-                justifyContent: isDoctor ? "flex-end" : "flex-start",
-              }}
-            >
-              <div
-                style={{
-                  maxWidth: "92%",
-                  borderRadius: mobile ? "1rem" : "0.62rem",
-                  padding: mobile ? "0.72rem 0.95rem" : "0.45rem 0.62rem",
-                  background: isDoctor ? C.selected : "#F3F3F3",
-                  color: isDoctor ? "#fff" : C.detailBody,
+      {/* Email thread */}
+      <div className="min-h-0 flex-1 overflow-hidden" style={{ padding: mobile ? "0.35rem 0" : "0.25rem 0" }}>
+        {EMAIL_THREAD.map((msg, i) => (
+          <div
+            key={msg.id}
+            style={{
+              padding: mobile ? "0.85rem 1.3rem" : "0.55rem 0.95rem",
+              borderTop: i > 0 ? `1px solid ${C.divider}` : undefined,
+            }}
+          >
+            <div className="flex items-start gap-[0.5em]">
+              <SenderMark
+                row={{
+                  ...SELECTED,
+                  initials: msg.from === "Dr. Singh" ? "DS" : "MR",
+                  iconBg: msg.from === "Dr. Singh" ? "#EDF2FA" : SELECTED.iconBg,
+                  iconColor: msg.from === "Dr. Singh" ? "#3A6FA8" : SELECTED.iconColor,
                 }}
-              >
-                {!isDoctor && (
-                  <p
-                    style={{
-                      fontSize: smallFs,
-                      fontWeight: 500,
-                      color: C.pillText,
-                      marginBottom: "0.28em",
-                    }}
-                  >
-                    Maria Rodriguez
-                  </p>
-                )}
-                <p style={{ fontSize: bodyFs, fontWeight: 400, lineHeight: 1.45 }}>
-                  {msg.text}
+                mobile={mobile}
+              />
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-baseline gap-x-[0.35em] gap-y-[0.1em]">
+                  <span style={{ fontSize: metaFs, fontWeight: 500, color: C.navActive }}>
+                    {msg.from}
+                  </span>
+                  <span style={{ fontSize: labelFs, fontWeight: 400, color: C.detailMuted }}>
+                    to {msg.to}
+                  </span>
+                </div>
+                <p style={{ fontSize: labelFs, fontWeight: 400, color: C.rowTime, marginTop: "0.12em" }}>
+                  {msg.time}
                 </p>
               </div>
             </div>
-          );
-        })}
+            <div style={{ marginTop: mobile ? "0.65rem" : "0.4rem", paddingLeft: mobile ? "2.95rem" : "1.85rem" }}>
+              {msg.lines.map((line) => (
+                <p
+                  key={line}
+                  style={{
+                    fontSize: bodyFs,
+                    fontWeight: 400,
+                    lineHeight: 1.5,
+                    color: C.detailBody,
+                    marginBottom: line.startsWith("Hi") || line === "Maria" || line === "Thank you," ? "0.45em" : "0.2em",
+                  }}
+                >
+                  {line}
+                </p>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
 
-      {/* Compact reply bar */}
+      {/* Reply compose */}
       <div
         style={{
-          borderRadius: mobile ? "0.85rem" : "0.52rem",
-          border: `1px solid ${C.divider}`,
+          borderTop: `1px solid ${C.divider}`,
+          padding: mobile ? "0.85rem 1.3rem" : "0.55rem 0.95rem",
           background: "#FAFAFA",
-          padding: mobile ? "0.65rem 0.85rem" : "0.45rem 0.55rem",
-          display: "flex",
-          alignItems: "center",
-          gap: "0.55em",
           flexShrink: 0,
         }}
       >
-        <p style={{ flex: 1, fontSize: bodyFs, fontWeight: 400, color: C.rowMuted }}>
-          Sounds good — see you Thursday at 10.
+        <p style={{ fontSize: labelFs, fontWeight: 500, color: C.detailMuted, marginBottom: "0.45em" }}>
+          Reply to Maria Rodriguez
         </p>
         <div
           style={{
-            borderRadius: "999px",
-            background: C.selected,
-            padding: mobile ? "0.32rem 0.85rem" : "0.2rem 0.55rem",
-            flexShrink: 0,
+            borderRadius: mobile ? "0.65rem" : "0.45rem",
+            border: `1px solid ${C.divider}`,
+            background: "#fff",
+            padding: mobile ? "0.65rem 0.85rem" : "0.45rem 0.55rem",
+            display: "flex",
+            alignItems: "center",
+            gap: "0.55em",
           }}
         >
-          <span style={{ fontSize: smallFs, fontWeight: 500, color: "#fff" }}>Send</span>
+          <p style={{ flex: 1, fontSize: bodyFs, fontWeight: 400, color: C.rowMuted, lineHeight: 1.4 }}>
+            Thursday at 10 AM works. See you then.
+          </p>
+          <div
+            style={{
+              borderRadius: "0.45rem",
+              background: C.selected,
+              padding: mobile ? "0.32rem 0.75rem" : "0.2rem 0.5rem",
+              flexShrink: 0,
+            }}
+          >
+            <span style={{ fontSize: labelFs, fontWeight: 500, color: "#fff" }}>Send</span>
+          </div>
         </div>
       </div>
     </div>
