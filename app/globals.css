@@ -456,17 +456,17 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
 
 .doephone-section-apostrophe {
   display: inline-block;
-  vertical-align: baseline;
-  margin-inline: -0.04em;
+  vertical-align: 0.52em;
+  margin-inline: -0.01em 0.01em;
   color: currentColor;
   line-height: 1;
 }
 
 .doephone-section-apostrophe-icon {
   display: inline-block;
-  width: 0.24em;
-  height: 0.36em;
-  vertical-align: 0.02em;
+  width: 0.21em;
+  height: 0.34em;
+  vertical-align: 0;
 }
 
 /* Wheel-driven mission caret — uses transform so inline opacity stays 1∶1 with scroll deltas */
