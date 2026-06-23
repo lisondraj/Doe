@@ -24,7 +24,7 @@ const DOEPHONE_HERO_CAREER_WIDTH_SAMPLE = "optometrists.";
 const CAREER_ROTATE_MS = 3600;
 
 /** Exit animation duration — outgoing word clears before next arrives. */
-const CAREER_EXIT_MS = 360;
+const CAREER_EXIT_MS = 290;
 
 const MIN_FIT_SCALE = 0.68;
 const MIN_FIT_PX = 17;
