@@ -41,11 +41,12 @@ html:has(.doephone-mobile-root) body {
 }
 
 /*
- * /blog — measured scale via --blog-scale (set by useBlogPhoneScale on .blog-mobile-root).
- * Pro Max (430px) = scale 1; narrower in-app WebViews shrink evenly.
+ * /blog — measured scale via --blog-scale (useBlogPhoneScale on documentElement).
+ * zoom on .blog-mobile-root scales the ENTIRE blog surface uniformly — nav, footer,
+ * article previews, vmin/vw clamps, and rem — not just rem-based tokens.
  */
 html:has(.blog-mobile-root) {
-  font-size: calc(16px * var(--blog-scale, 1));
+  font-size: 100%;
   background-color: #f7f6f3;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
@@ -61,6 +62,10 @@ html:has(.blog-mobile-root) body {
   padding-right: env(safe-area-inset-right, 0px);
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  zoom: var(--blog-scale, 1);
+  /* Fill the visual viewport after zoom shrink */
+  width: calc(100% / var(--blog-scale, 1));
+  min-height: calc(100svh / var(--blog-scale, 1));
 }
 
 /** Landing hero — container queries + overflow guard. */
@@ -97,6 +102,13 @@ html:has(.blog-mobile-root) body {
 }
 
 .blog-landing-hero-filters {
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
+
+/** Nav + footer inherit blog zoom; lock text metrics in in-app browsers. */
+html[data-blog-route="true"] .doephone-site-nav,
+html[data-blog-route="true"] footer {
   -webkit-text-size-adjust: none;
   text-size-adjust: none;
 }

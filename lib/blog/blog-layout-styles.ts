@@ -25,13 +25,13 @@ export const BLOG_CONTENT_PT =
 export const BLOG_PAGE_TITLE_TW = `${DOEPHONE_SECTION_COPY_TW} text-[#1E343A] ${suisseIntl.className}`;
 
 /** Article page title — Lora, centered. */
-export const BLOG_ARTICLE_TITLE_TW = `text-center font-normal leading-[1.06] tracking-[-0.03em] text-[#1E343A] text-[clamp(2.85rem,10.5vw,4.65rem)] ${lora.className}`;
+export const BLOG_ARTICLE_TITLE_TW = `text-center font-normal leading-[1.06] tracking-[-0.03em] text-[#1E343A] text-[2.85rem] iphone-page:text-[3.65rem] ${lora.className}`;
 
 /** Intro / body copy under titles. */
 export const BLOG_BODY_COPY_TW = DOEPHONE_SECTION_MENU_DESCRIPTION_TW;
 
-/** Landing card excerpt — slightly larger than body copy for readability at card scale. */
-export const BLOG_LANDING_EXCERPT_TW = `text-[clamp(1.32rem,1.12rem+0.9vmin,1.58rem)] iphone-page:text-[clamp(1.52rem,1.26rem+1.18vmin,1.92rem)] font-normal leading-[1.44] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
+/** Landing card excerpt — scales with blog zoom surface. */
+export const BLOG_LANDING_EXCERPT_TW = `text-[1.32rem] iphone-page:text-[1.52rem] font-normal leading-[1.44] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
 
 /** Card caption under feature visuals — closing section outside copy. */
 export const BLOG_CARD_TITLE_TW = `${DOEPHONE_SECTION_FOOTER_OUTSIDE_CAPTION_TW} text-left text-gray-700`;
@@ -49,13 +49,13 @@ export const BLOG_LIST_DIVIDER_WRAP = "py-12 iphone-page:py-14";
 export const BLOG_LIST_DIVIDER_LINE = "h-px w-full bg-[#9A8F82]";
 
 /** Read-more label on landing cards. */
-export const BLOG_READ_MORE_TW = `inline-flex items-center gap-2 text-[clamp(1.22rem,1.08rem+0.65vmin,1.42rem)] iphone-page:text-[clamp(1.38rem,1.18rem+0.95vmin,1.68rem)] font-medium text-[#6B7280] transition-colors group-hover:text-[#1E343A] ${dmSans.className}`;
+export const BLOG_READ_MORE_TW = `inline-flex items-center gap-2 text-[1.22rem] iphone-page:text-[1.38rem] font-medium text-[#6B7280] transition-colors group-hover:text-[#1E343A] ${dmSans.className}`;
 
 /** Author · date line under card/article titles. */
-export const BLOG_META_TW = `text-[clamp(1.32rem,1.12rem+0.9vmin,1.58rem)] iphone-page:text-[clamp(1.52rem,1.26rem+1.18vmin,1.92rem)] font-medium text-[#6B7280] ${dmSans.className}`;
+export const BLOG_META_TW = `text-[1.32rem] iphone-page:text-[1.52rem] font-medium text-[#6B7280] ${dmSans.className}`;
 
 /** Article eyebrow / back link. */
-export const BLOG_EYEBROW_TW = `text-[clamp(1.18rem,1rem+0.78vmin,1.42rem)] iphone-page:text-[clamp(1.38rem,1.14rem+1.05vmin,1.72rem)] font-medium tracking-[0.02em] text-[#6B7280] ${dmSans.className}`;
+export const BLOG_EYEBROW_TW = `text-[1.18rem] iphone-page:text-[1.38rem] font-medium tracking-[0.02em] text-[#6B7280] ${dmSans.className}`;
 
 /** Closing-section feature card box. */
 export const BLOG_FEATURE_BOX_TW = `${DOEPHONE_SECTION_CLOSING_FEATURE_HEIGHT} ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`;
@@ -91,4 +91,4 @@ export const BLOG_STACK_GAP = DOEPHONE_SECTION_CAROUSEL_MENU_GAP;
 export const BLOG_CARD_STACK = "space-y-3 iphone-page:space-y-[clamp(0.65rem,0.42rem+0.85vmin,1rem)]";
 
 /** Article body paragraphs. */
-export const BLOG_ARTICLE_BODY_TW = `text-[clamp(1.32rem,1.12rem+0.9vmin,1.58rem)] iphone-page:text-[clamp(1.55rem,1.28rem+1.22vmin,1.95rem)] font-normal leading-[1.48] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
+export const BLOG_ARTICLE_BODY_TW = `text-[1.32rem] iphone-page:text-[1.55rem] font-normal leading-[1.48] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;

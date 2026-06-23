@@ -37,6 +37,7 @@ export function useBlogPhoneScale() {
       const scale = blogPhoneScaleFromWidth(width);
       html.style.setProperty("--blog-scale", String(scale));
       html.style.setProperty("--blog-vw", `${width}px`);
+      html.setAttribute("data-blog-route", "true");
     };
 
     apply();
@@ -50,6 +51,7 @@ export function useBlogPhoneScale() {
       window.visualViewport?.removeEventListener("scroll", apply);
       html.style.removeProperty("--blog-scale");
       html.style.removeProperty("--blog-vw");
+      html.removeAttribute("data-blog-route");
     };
   }, []);
 }
