@@ -5,8 +5,11 @@ import { DOEPHONE_SECTION_CAROUSEL_INSET_X } from "@/lib/doephone/section-styles
 
 const B = BLOG_LANDING_HERO;
 
-/* Tall portrait ratio — clearly vertical rectangles even after perspective foreshortening */
-const CELL_ASPECT = "aspect-[3/5]";
+/*
+ * Explicit height — avoids iOS Safari aspect-ratio quirks inside 3D transforms.
+ * At 390px viewport: ~43vmin ≈ 168px tall × ~100px wide = clearly portrait.
+ */
+const CELL_H = "h-[clamp(9rem,43vmin,14.5rem)] min-h-[clamp(9rem,43vmin,14.5rem)]";
 /* Subtler radius */
 const CELL_RADIUS = "rounded-[0.38rem]";
 
@@ -181,7 +184,7 @@ function GradientCell({ designIdx }: { designIdx: number }) {
   const d = GRADIENT_DESIGNS[designIdx];
   return (
     <div
-      className={`relative ${CELL_ASPECT} overflow-hidden ${CELL_RADIUS}`}
+      className={`relative ${CELL_H} overflow-hidden ${CELL_RADIUS}`}
       style={{ background: d.gradient }}
     >
       <GradientOverlay kind={d.overlay} />
@@ -192,7 +195,7 @@ function GradientCell({ designIdx }: { designIdx: number }) {
 function BeigeCell({ designIdx }: { designIdx: number }) {
   return (
     <div
-      className={`relative ${CELL_ASPECT} overflow-hidden ${CELL_RADIUS}`}
+      className={`relative ${CELL_H} overflow-hidden ${CELL_RADIUS}`}
       style={{ background: B.fill, border: `1px solid ${B.border}` }}
     >
       <BeigeLineArt design={designIdx} />
@@ -211,10 +214,21 @@ export function DoePhoneCommIntelGrid() {
     <div
       className={`${DOEPHONE_SECTION_CAROUSEL_INSET_X}`}
       style={{
-        WebkitMaskImage:
-          "linear-gradient(to bottom, transparent 0%, black 22%, black 74%, transparent 100%)",
-        maskImage:
-          "linear-gradient(to bottom, transparent 0%, black 22%, black 74%, transparent 100%)",
+        /*
+         * Two-axis mask — fades at top/bottom (card grid recedes into bg)
+         * and subtly at left/right edges (cards bleed off the sides).
+         * Uses mask-composite: intersect so both axes apply simultaneously.
+         */
+        WebkitMaskImage: [
+          "linear-gradient(to bottom, transparent 0%, black 24%, black 72%, transparent 100%)",
+          "linear-gradient(to right,  transparent 0%, black 8%,  black 92%, transparent 100%)",
+        ].join(", "),
+        WebkitMaskComposite: "source-in",
+        maskImage: [
+          "linear-gradient(to bottom, transparent 0%, black 24%, black 72%, transparent 100%)",
+          "linear-gradient(to right,  transparent 0%, black 8%,  black 92%, transparent 100%)",
+        ].join(", "),
+        maskComposite: "intersect",
       }}
     >
       <div
