@@ -36,7 +36,7 @@ export const HERO_TRIAGE_PANEL_WIDTH = {
 
 /** Mobile — starts ~1/4 across the viewport, lifted above hero floor so top clips. */
 export const HERO_TRIAGE_PANEL_ANCHOR = {
-  mobile: { left: "18vw", bottom: "12%" },
+  mobile: { left: "18vw", bottom: "-2rem" },
 } as const;
 
 /** Mobile scale — applied from bottom-left so the card reads larger in the hero. */

@@ -87,6 +87,38 @@ const INBOX_ROWS: InboxRow[] = [
     iconBg: "#F5F0EA",
     iconColor: "#9A7344",
   },
+  {
+    id: "specialist",
+    sender: "Dr. Okafor",
+    initials: "DO",
+    preview: "Referral accepted — cardiology consult Tue 2 PM",
+    iconBg: "#F0EBF8",
+    iconColor: "#6B3FA0",
+  },
+  {
+    id: "quest",
+    sender: "Quest Diagnostics",
+    initials: "QD",
+    preview: "Panel results ready — lipid + HbA1c for T. Brooks",
+    iconBg: "#FFF3E8",
+    iconColor: "#C06820",
+  },
+  {
+    id: "patient2",
+    sender: "D. Kim",
+    initials: "DK",
+    preview: "Medication side effects — dizziness since Monday",
+    iconBg: "#E8F3FB",
+    iconColor: "#1A6E9A",
+  },
+  {
+    id: "bcbs",
+    sender: "BlueCross",
+    initials: "BC",
+    preview: "Claim #44821 processed — EOB attached",
+    iconBg: "#E8EEF8",
+    iconColor: "#2B4FA8",
+  },
 ];
 
 const SELECTED = INBOX_ROWS.find((r) => r.selected)!;
