@@ -1,15 +1,15 @@
 "use client";
 
 import { BLOG_LANDING_HERO } from "@/lib/blog/blog-landing-hero-colors";
-import { DOEPHONE_SECTION_CAROUSEL_INSET_X } from "@/lib/doephone/section-styles";
 
 const B = BLOG_LANDING_HERO;
 
 /*
- * Explicit height — avoids iOS Safari aspect-ratio quirks inside 3D transforms.
- * At 390px viewport: ~43vmin ≈ 168px tall × ~100px wide = clearly portrait.
+ * Landscape cells — width is the long edge.
+ * With the grid extending 10vw beyond each viewport edge, each cell is
+ * ~150px wide. Height ~98px gives a clear ~1.5:1 landscape ratio.
  */
-const CELL_H = "h-[clamp(9rem,43vmin,14.5rem)] min-h-[clamp(9rem,43vmin,14.5rem)]";
+const CELL_H = "h-[clamp(5.5rem,25vmin,9rem)] min-h-[clamp(5.5rem,25vmin,9rem)]";
 /* Subtler radius */
 const CELL_RADIUS = "rounded-[0.38rem]";
 
@@ -211,24 +211,21 @@ export function DoePhoneCommIntelGrid() {
      * so the section backdrop shows through perfectly regardless of its color.
      * Pure rotateX tilt (no Y/Z) so the grid recedes straight back like the SS.
      */
+    /*
+     * Negative horizontal margins extend the grid 10vw beyond each viewport
+     * edge — the section's overflow-hidden clips the sides naturally.
+     * Top/bottom mask fades the grid into the section bg; no left/right fade
+     * so cards appear to bleed off-screen like the reference screenshot.
+     */
     <div
-      className={`${DOEPHONE_SECTION_CAROUSEL_INSET_X}`}
       style={{
-        /*
-         * Two-axis mask — fades at top/bottom (card grid recedes into bg)
-         * and subtly at left/right edges (cards bleed off the sides).
-         * Uses mask-composite: intersect so both axes apply simultaneously.
-         */
-        WebkitMaskImage: [
-          "linear-gradient(to bottom, transparent 0%, black 24%, black 72%, transparent 100%)",
-          "linear-gradient(to right,  transparent 0%, black 8%,  black 92%, transparent 100%)",
-        ].join(", "),
-        WebkitMaskComposite: "source-in",
-        maskImage: [
-          "linear-gradient(to bottom, transparent 0%, black 24%, black 72%, transparent 100%)",
-          "linear-gradient(to right,  transparent 0%, black 8%,  black 92%, transparent 100%)",
-        ].join(", "),
-        maskComposite: "intersect",
+        marginLeft: "-10vw",
+        marginRight: "-10vw",
+        width: "calc(100% + 20vw)",
+        WebkitMaskImage:
+          "linear-gradient(to bottom, transparent 0%, black 22%, black 74%, transparent 100%)",
+        maskImage:
+          "linear-gradient(to bottom, transparent 0%, black 22%, black 74%, transparent 100%)",
       }}
     >
       <div

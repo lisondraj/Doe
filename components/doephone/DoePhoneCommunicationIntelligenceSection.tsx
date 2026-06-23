@@ -5,8 +5,6 @@ import { DoePhoneSectionPlus, DoePhoneSectionTitle } from "@/components/doephone
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import {
   DOEPHONE_SECTION_CONTENT_INSET,
-  DOEPHONE_SECTION_TITLE_CAROUSEL_GAP,
-  DOEPHONE_SECTION_TITLE_PB,
   DOEPHONE_SECTION_TITLE_PT,
   DOEPHONE_VIEWPORT_SECTION,
 } from "@/lib/doephone/section-styles";
@@ -38,8 +36,14 @@ export function DoePhoneCommunicationIntelligenceSection() {
           />
         </div>
 
+        {/*
+          * Grid pushed to the bottom of the section via mt-auto.
+          * translateY(22%) nudges it past the section's bottom edge so
+          * the lower rows are cut off by overflow-hidden on the section.
+          */}
         <div
-          className={`shrink-0 ${DOEPHONE_SECTION_TITLE_CAROUSEL_GAP} ${DOEPHONE_SECTION_TITLE_PB}`}
+          className="mt-auto shrink-0"
+          style={{ transform: "translateY(22%)" }}
         >
           <DoePhoneCommIntelGrid />
         </div>
