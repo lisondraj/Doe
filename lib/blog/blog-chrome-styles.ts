@@ -1,4 +1,4 @@
-import { inter, lora } from "@/lib/home/fonts";
+import { dmSans, inter, lora } from "@/lib/home/fonts";
 
 /** Blog nav — rem-only (no vmin/vw) so html font-size scaling applies everywhere. */
 export const BLOG_NAV_INSET_X =
@@ -31,6 +31,22 @@ export const BLOG_FOOTER_NAV_TW =
   "flex shrink-0 flex-col items-end gap-4 text-right text-[1.48rem] font-medium leading-[1.1] tracking-tight iphone-page:gap-3.5 iphone-page:text-[1.38rem]";
 
 export const BLOG_FOOTER_WORDMARK_SIZE = "11rem";
+
+/** Feature card height — rem-only (vmin boxes ignore html font-size scaling). */
+export const BLOG_FEATURE_BOX_HEIGHT =
+  "min-h-[21rem] h-[21rem] iphone-page:min-h-[22.5rem] iphone-page:h-[22.5rem]";
+
+/** Section vertical gaps — rem-only. */
+export const BLOG_SECTION_GAP = "mt-10 iphone-page:mt-12";
+export const BLOG_LIST_SECTION_GAP = "mt-12 iphone-page:mt-16";
+export const BLOG_LANDING_HERO_GAP = "mt-14 iphone-page:mt-[2.35rem]";
+export const BLOG_TITLE_VISUAL_GAP = "mt-28 iphone-page:mt-[4.7rem]";
+export const BLOG_STACK_GAP = BLOG_LANDING_HERO_GAP;
+
+/** Article h2 / quote — rem-only. */
+export const BLOG_ARTICLE_H2_TW = `text-left font-semibold leading-[1.15] tracking-[-0.01em] text-[#1E343A] text-[1.52rem] iphone-page:text-[1.72rem] ${dmSans.className}`;
+export const BLOG_ARTICLE_QUOTE_TW = `font-normal leading-[1.22] tracking-[-0.025em] text-[#1E343A] text-[1.85rem] iphone-page:text-[2.1rem] ${lora.className}`;
+export const BLOG_ARTICLE_QUOTE_ATTR_TW = `font-medium text-[#9A8F82] text-[1.08rem] iphone-page:text-[1.22rem] ${dmSans.className}`;
 
 /** Blog page horizontal gutter — rem-only. */
 export const BLOG_PAGE_INSET_X_REM =

@@ -9,7 +9,8 @@ import { useBlogPhoneScale } from "@/lib/blog/use-blog-phone-scale";
 
 export function BlogMobileShell({ children }: { children: ReactNode }) {
   const rootRef = useRef<HTMLDivElement>(null);
-  useBlogPhoneScale(rootRef);
+  const canvasRef = useRef<HTMLDivElement>(null);
+  useBlogPhoneScale(rootRef, canvasRef);
 
   return (
     <div
@@ -18,7 +19,7 @@ export function BlogMobileShell({ children }: { children: ReactNode }) {
       suppressHydrationWarning
       data-doeforvc-view="iphone"
     >
-      <div className="blog-mobile-canvas">
+      <div ref={canvasRef} className="blog-mobile-canvas">
         <DoeIphoneSiteNav blogChrome />
         <div className={`blog-page-root relative z-0 ${BLOG_PAGE_INSET_X} ${BLOG_FOOTER_GAP}`}>
           {children}

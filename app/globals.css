@@ -67,6 +67,10 @@ html:has(.blog-mobile-root) body {
   text-size-adjust: none;
 }
 
+html[data-blog-in-app] .blog-mobile-root {
+  overflow-x: hidden;
+}
+
 /** Landing hero — container queries + overflow guard. */
 .blog-landing-hero {
   container-type: inline-size;

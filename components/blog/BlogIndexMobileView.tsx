@@ -13,6 +13,7 @@ import {
   BLOG_LANDING_TITLE_META_GAP,
   BLOG_LIST_DIVIDER_LINE,
   BLOG_LIST_DIVIDER_WRAP,
+  BLOG_LIST_SECTION_GAP,
   BLOG_META_TW,
   BLOG_READ_MORE_TW,
 } from "@/lib/blog/blog-layout-styles";
@@ -44,7 +45,7 @@ export function BlogIndexMobileView() {
       <main className={`w-full ${BLOG_CONTENT_PT}`}>
         <BlogLandingHero />
 
-        <ul className="mt-12 iphone-page:mt-[clamp(2.5rem,2rem+2.5vmin,4rem)] flex w-full flex-col">
+        <ul className={`${BLOG_LIST_SECTION_GAP} flex w-full flex-col`}>
           {BLOG_ARTICLES.slice(0, 3).map((article, index) => (
             <li key={article.slug}>
               {index > 0 ? (
@@ -82,7 +83,7 @@ export function BlogIndexMobileView() {
           ))}
         </ul>
 
-        <div className="mt-12 iphone-page:mt-[clamp(2.5rem,2rem+2.5vmin,4rem)] flex w-full justify-center">
+        <div className={`${BLOG_LIST_SECTION_GAP} flex w-full justify-center`}>
           <a
             href="#"
             className={`font-medium leading-none text-[#1E343A] transition-opacity active:opacity-60 text-[1.32rem] iphone-page:text-[1.52rem] ${dmSans.className}`}
