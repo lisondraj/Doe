@@ -1,138 +1,200 @@
 import {
-  HERO_TRIAGE_GLASS,
-  HERO_TRIAGE_INNER_GLASS_TW,
   HERO_TRIAGE_OUTER_GLASS_TW,
-  HERO_TRIAGE_PANEL_GRADIENT,
   HERO_TRIAGE_PANEL_LEFT,
   HERO_TRIAGE_PANEL_RIGHT,
   HERO_TRIAGE_PANEL_WIDTH,
   HERO_TRIAGE_TILT,
-  HERO_TRIAGE_WIDGET_BODY_GRADIENT,
-  HERO_TRIAGE_WIDGET_HEADER_GRADIENT,
-  HERO_TRIAGE_WIDGET_WIDTH,
 } from "@/lib/home/hero-triage-preview-styles";
 import type { CSSProperties } from "react";
 
-const TRIAGE = {
-  breadcrumbParent: "Engineering",
-  breadcrumbLeaf: "Triage",
-  title: "App freezes on splash screen",
-  description:
-    "After launch, the splash screen remains visible indefinitely with no cha… The app does not progress to the primary dashboard or menus.",
-  widgetTitle: "Triage Intelligence",
+/* ─── Light theme tokens ─── */
+const L = {
+  bg: "linear-gradient(145deg, rgba(252,250,248,0.97) 0%, rgba(247,244,241,0.96) 100%)",
+  border: "rgba(0,0,0,0.08)",
+  header: "rgba(22,18,14,0.95)",
+  headerSub: "rgba(80,68,58,0.55)",
+  badgeBg: "rgba(196,122,90,0.13)",
+  badgeText: "#C47A5A",
+  senderUnread: "rgba(22,18,14,0.92)",
+  senderRead: "rgba(60,52,44,0.62)",
+  subject: "rgba(22,18,14,0.80)",
+  subjectRead: "rgba(80,68,58,0.52)",
+  preview: "rgba(100,88,76,0.55)",
+  time: "rgba(110,95,82,0.52)",
+  divider: "rgba(0,0,0,0.055)",
+  dot: "#C47A5A",
+  tagBg: "rgba(196,122,90,0.10)",
+  tagText: "#A8623E",
 } as const;
 
-const TRIAGE_SUGGESTIONS = [
-  { label: "nan", dot: null, dotShape: null },
-  { label: "Mobile App Refactor", dot: "rgba(75,142,232,1)", dotShape: "square" as const },
-  { label: "Slack", dot: "rgba(224,30,90,1)", dotShape: "circle" as const },
+/* ─── Inbox data ─── */
+const EMAILS = [
+  {
+    sender: "Pharmacy",
+    subject: "Refill — Metformin 500mg",
+    preview: "Patient J. Martinez requested a 90-day refill.",
+    time: "9:41 AM",
+    unread: true,
+    tag: "Rx",
+  },
+  {
+    sender: "LabCorp",
+    subject: "Critical: K⁺ 6.2 mEq/L",
+    preview: "Patient A. Chen. Immediate review required.",
+    time: "8:55 AM",
+    unread: true,
+    tag: "Lab",
+  },
+  {
+    sender: "Nurse Patel",
+    subject: "Room 308 — post-op stable",
+    preview: "BP 122/76, HR 68. Patient requesting discharge timeline.",
+    time: "8:12 AM",
+    unread: false,
+    tag: null,
+  },
+  {
+    sender: "Patient Portal",
+    subject: "Re: chest tightness follow-up",
+    preview: "Dr. Singh, symptoms have persisted since Tuesday.",
+    time: "Yesterday",
+    unread: false,
+    tag: null,
+  },
+  {
+    sender: "Aetna",
+    subject: "Pre-auth approved — PT #8821",
+    preview: "12 sessions of physical therapy authorized.",
+    time: "Yesterday",
+    unread: false,
+    tag: null,
+  },
 ] as const;
 
-const TRIAGE_RELATIONS = [
-  { kind: "Duplicate of", id: "ENG-1419", title: "Loading spinner keeps running on startup" },
-  { kind: "Related to", id: "ENG-1828", title: "Mobile app takes a long time to open" },
-] as const;
-
-function TriageStatusIcon() {
+/* ─── Small icons ─── */
+function InboxIcon({ size }: { size: string }) {
   return (
-    <span
-      className="inline-flex h-[1.15em] w-[1.15em] shrink-0 items-center justify-center rounded-full"
-      style={{ background: HERO_TRIAGE_GLASS.accent }}
-      aria-hidden
-    >
-      <svg width="58%" height="58%" viewBox="0 0 16 16" fill="none">
-        <path
-          d="M4.25 8h7.5M6.5 5.75 4.25 8l2.25 2.25M9.5 5.75 11.75 8 9.5 10.25"
-          stroke="#141416"
-          strokeWidth="1.4"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </span>
-  );
-}
-
-function TriageSparkleIcon() {
-  return (
-    <svg width="0.92em" height="0.92em" viewBox="0 0 16 16" fill="none" aria-hidden>
+    <svg width={size} height={size} viewBox="0 0 16 16" fill="none" aria-hidden>
       <path
-        d="M8 1.35v2M8 12.65v2M1.35 8h2M12.65 8h2M3.4 3.4l1.45 1.45M11.15 11.15l1.45 1.45M3.4 12.6l1.45-1.45M11.15 4.85l1.45-1.45"
-        stroke="currentColor"
+        d="M2 5.5h12M2 5.5l2 6h8l2-6M2 5.5 5 2h6l3 3.5"
+        stroke={L.header}
         strokeWidth="1.1"
         strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity="0.7"
       />
     </svg>
   );
 }
 
-function IssueCircleIcon() {
+function ComposeIcon({ size }: { size: string }) {
   return (
-    <svg width="0.72em" height="0.72em" viewBox="0 0 14 14" fill="none" className="shrink-0" aria-hidden>
-      <circle cx="7" cy="7" r="5.6" stroke="rgba(255,255,255,0.35)" strokeWidth="1.2" />
+    <svg width={size} height={size} viewBox="0 0 16 16" fill="none" aria-hidden>
+      <path
+        d="M11.5 2.5 13.5 4.5l-7 7H4.5v-2l7-7Z"
+        stroke={L.headerSub}
+        strokeWidth="1.1"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
 
-type DotShape = "circle" | "square" | null;
-
-function SuggestionChip({
-  label,
-  dot,
-  dotShape,
+/* ─── Email row ─── */
+function EmailRow({
+  email,
+  last,
+  mobile,
 }: {
-  label: string;
-  dot: string | null;
-  dotShape: DotShape;
+  email: typeof EMAILS[number];
+  last: boolean;
+  mobile: boolean;
 }) {
+  const fs = mobile
+    ? { sender: "1.28rem", subject: "1.12rem", preview: "0.98rem", time: "0.98rem", tag: "0.82rem" }
+    : { sender: "0.82rem", subject: "0.74rem", preview: "0.68rem", time: "0.68rem", tag: "0.6rem" };
+
   return (
-    <span
-      className="inline-flex shrink-0 items-center gap-[0.28em] rounded-[0.28em] px-[0.44em] py-[0.15em]"
-      style={{
-        background: dot
-          ? dot.replace("1)", "0.20)")
-          : "rgba(255,255,255,0.10)",
-        color: "rgba(255,255,255,0.78)",
-        fontSize: "inherit",
-        fontWeight: 500,
-        lineHeight: 1.25,
-        whiteSpace: "nowrap",
-        border: `1px solid ${dot ? dot.replace("1)", "0.18)") : "rgba(255,255,255,0.10)"}`,
-      }}
-    >
-      {dot && (
-        <span
+    <div>
+      <div
+        className="flex items-start"
+        style={{ gap: mobile ? "0.75rem" : "0.5rem", padding: mobile ? "0.9rem 0" : "0.52rem 0" }}
+      >
+        {/* Unread dot */}
+        <div
+          className="shrink-0"
           style={{
-            width: "0.46em",
-            height: "0.46em",
-            borderRadius: dotShape === "circle" ? "50%" : "0.1em",
-            background: dot,
+            width: mobile ? "0.55rem" : "0.38rem",
+            height: mobile ? "0.55rem" : "0.38rem",
+            borderRadius: "50%",
+            marginTop: "0.28em",
+            background: email.unread ? L.dot : "transparent",
             flexShrink: 0,
           }}
         />
+        <div className="min-w-0 flex-1">
+          {/* Row 1 — sender + time */}
+          <div className="flex items-center justify-between gap-2">
+            <span
+              className="truncate font-semibold"
+              style={{
+                fontSize: fs.sender,
+                color: email.unread ? L.senderUnread : L.senderRead,
+                letterSpacing: "-0.01em",
+              }}
+            >
+              {email.sender}
+            </span>
+            <div className="flex shrink-0 items-center gap-[0.4em]">
+              {email.tag && (
+                <span
+                  style={{
+                    fontSize: fs.tag,
+                    fontWeight: 600,
+                    letterSpacing: "0.04em",
+                    color: L.tagText,
+                    background: L.tagBg,
+                    borderRadius: "0.22em",
+                    padding: "0.1em 0.38em",
+                  }}
+                >
+                  {email.tag}
+                </span>
+              )}
+              <span style={{ fontSize: fs.time, color: L.time, fontWeight: 400 }}>
+                {email.time}
+              </span>
+            </div>
+          </div>
+          {/* Row 2 — subject */}
+          <p
+            className="mt-[0.18em] truncate font-medium"
+            style={{
+              fontSize: fs.subject,
+              color: email.unread ? L.subject : L.subjectRead,
+              letterSpacing: "-0.01em",
+            }}
+          >
+            {email.subject}
+          </p>
+          {/* Row 3 — preview */}
+          <p
+            className="mt-[0.12em] truncate font-normal"
+            style={{ fontSize: fs.preview, color: L.preview }}
+          >
+            {email.preview}
+          </p>
+        </div>
+      </div>
+      {!last && (
+        <div style={{ height: "1px", background: L.divider }} />
       )}
-      {label}
-    </span>
-  );
-}
-
-function ActivityBlurRow({ width }: { width: string }) {
-  return (
-    <div className="flex items-center gap-3">
-      <div
-        className="h-[1.5rem] w-[1.5rem] shrink-0 rounded-full"
-        style={{ background: "rgba(255,255,255,0.09)", filter: "blur(4px)" }}
-        aria-hidden
-      />
-      <div
-        className="h-[0.65rem] rounded-full"
-        style={{ width, background: "rgba(255,255,255,0.07)", filter: "blur(4px)" }}
-        aria-hidden
-      />
     </div>
   );
 }
 
+/* ─── Public component ─── */
 export type HeroTriagePreviewProps = {
   fontClassName: string;
   size?: "desktop" | "mobile";
@@ -141,7 +203,7 @@ export type HeroTriagePreviewProps = {
 };
 
 /**
- * Linear-style triage card — dark frosted glass, single 3D tilt, right side
+ * Doctor's inbox card — light frosted glass, single 3D tilt, right side
  * bleeds off screen. Intro fade applied via `.doephone-hero-triage-preview`.
  */
 export function HeroTriagePreview({
@@ -176,171 +238,53 @@ export function HeroTriagePreview({
           className={`${HERO_TRIAGE_OUTER_GLASS_TW} ${fontClassName}`}
           style={{
             borderRadius: isMobile ? "1.6rem" : "1.1rem",
-            background: HERO_TRIAGE_PANEL_GRADIENT,
-            border: `1px solid ${HERO_TRIAGE_GLASS.panelBorder}`,
-            boxShadow: isMobile ? "none" : HERO_TRIAGE_GLASS.panelShadow,
+            background: L.bg,
+            border: `1px solid ${L.border}`,
+            boxShadow: isMobile
+              ? "0 8px 32px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.9)"
+              : "0 24px 64px rgba(0,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.9)",
             padding: isMobile ? "3.0rem 3.3rem 3.5rem" : "1.45rem 1.55rem 1.65rem",
           }}
         >
-          {/* Breadcrumb */}
+          {/* Inbox header */}
           <div
-            className="flex items-center gap-[0.5em] font-medium tracking-[-0.015em]"
-            style={{
-              color: HERO_TRIAGE_GLASS.breadcrumb,
-              fontSize: isMobile ? "1.78rem" : "0.88rem",
-            }}
+            className="flex items-center justify-between"
+            style={{ marginBottom: isMobile ? "1.1rem" : "0.62rem" }}
           >
-            <TriageStatusIcon />
-            <span>{TRIAGE.breadcrumbParent}</span>
-            <svg
-              className="h-[0.62em] w-[0.62em] shrink-0 opacity-55"
-              viewBox="0 0 16 16"
-              fill="none"
-              aria-hidden
-            >
-              <path
-                d="M6.25 4.5 9.75 8l-3.5 3.5"
-                stroke="currentColor"
-                strokeWidth="1.35"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+            <div className="flex items-center gap-[0.5em]">
+              <InboxIcon size={isMobile ? "1.55rem" : "0.95rem"} />
+              <span
+                className="font-semibold tracking-[-0.02em]"
+                style={{ fontSize: isMobile ? "1.78rem" : "0.96rem", color: L.header }}
+              >
+                Inbox
+              </span>
+              <span
+                style={{
+                  fontSize: isMobile ? "1.1rem" : "0.64rem",
+                  fontWeight: 600,
+                  color: L.badgeText,
+                  background: L.badgeBg,
+                  borderRadius: "0.6em",
+                  padding: "0.12em 0.5em",
+                }}
+              >
+                2
+              </span>
+            </div>
+            <ComposeIcon size={isMobile ? "1.55rem" : "0.95rem"} />
+          </div>
+
+          {/* Email list */}
+          <div>
+            {EMAILS.map((email, i) => (
+              <EmailRow
+                key={email.subject}
+                email={email}
+                last={i === EMAILS.length - 1}
+                mobile={isMobile}
               />
-            </svg>
-            <span>{TRIAGE.breadcrumbLeaf}</span>
-          </div>
-
-          {/* Title + widget + description */}
-          <div className="relative mt-[0.82rem]">
-            <h2
-              className="relative z-[1] max-w-[13ch] text-left font-semibold tracking-[-0.04em]"
-              style={{
-                color: HERO_TRIAGE_GLASS.title,
-                fontSize: isMobile ? "clamp(4.3rem, 18.5vw, 6.2rem)" : "clamp(2.05rem, 3.2vw, 3.15rem)",
-                lineHeight: 1.08,
-              }}
-            >
-              {TRIAGE.title}
-            </h2>
-
-            <p
-              className="relative z-[1] mt-[0.82rem] max-w-[32ch] text-left font-normal tracking-[-0.015em]"
-              style={{
-                color: HERO_TRIAGE_GLASS.body,
-                fontSize: isMobile ? "1.9rem" : "0.94rem",
-                lineHeight: 1.55,
-              }}
-            >
-              {TRIAGE.description}
-            </p>
-
-            {/* Triage Intelligence floating widget */}
-            <div
-              className={`absolute z-[2] ${HERO_TRIAGE_INNER_GLASS_TW}`}
-              style={{
-                left: 0,
-                top: isMobile ? "2.4rem" : "1.85rem",
-                width: isMobile ? HERO_TRIAGE_WIDGET_WIDTH.mobile : HERO_TRIAGE_WIDGET_WIDTH.desktop,
-                borderRadius: "1.2rem",
-                background: HERO_TRIAGE_WIDGET_HEADER_GRADIENT,
-                border: `1px solid ${HERO_TRIAGE_GLASS.widgetBorder}`,
-                boxShadow: HERO_TRIAGE_GLASS.widgetShadow,
-                overflow: "hidden",
-              }}
-            >
-              {/* Widget header */}
-              <div
-                className="flex items-center gap-[0.46em] px-[0.88em] pb-[0.3em] pt-[0.65em] font-medium tracking-[-0.015em]"
-                style={{
-                  color: "rgba(255,255,255,0.86)",
-                  fontSize: isMobile ? "1.7rem" : "0.84rem",
-                }}
-              >
-                <span className="text-white/85">
-                  <TriageSparkleIcon />
-                </span>
-                <span>{TRIAGE.widgetTitle}</span>
-              </div>
-
-              {/* Suggestions + relations rows */}
-              <div
-                style={{
-                  margin: "0 0.65em 0.65em",
-                  borderRadius: "0.7rem",
-                  background: HERO_TRIAGE_WIDGET_BODY_GRADIENT,
-                  border: "1px solid rgba(255,255,255,0.06)",
-                  padding: isMobile ? "0.88em 1.1em" : "0.58em 0.78em",
-                  fontSize: isMobile ? "1.48rem" : "0.72rem",
-                  fontWeight: 500,
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "0.44em",
-                }}
-              >
-                {/* Suggestions */}
-                <div className="flex items-start gap-[0.5em]">
-                  <span
-                    className="shrink-0 pt-[0.08em]"
-                    style={{
-                      color: HERO_TRIAGE_GLASS.activity,
-                      minWidth: "4.7em",
-                    }}
-                  >
-                    Suggestions
-                  </span>
-                  <div className="flex flex-wrap gap-[0.28em]">
-                    {TRIAGE_SUGGESTIONS.map((s) => (
-                      <SuggestionChip
-                        key={s.label}
-                        label={s.label}
-                        dot={s.dot}
-                        dotShape={s.dotShape}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                {/* Duplicate of / Related to */}
-                {TRIAGE_RELATIONS.map((rel) => (
-                  <div key={rel.id} className="flex min-w-0 items-center gap-[0.5em]">
-                    <span
-                      className="shrink-0"
-                      style={{
-                        color: HERO_TRIAGE_GLASS.activity,
-                        minWidth: "4.7em",
-                      }}
-                    >
-                      {rel.kind}
-                    </span>
-                    <div className="flex min-w-0 items-center gap-[0.36em]">
-                      <IssueCircleIcon />
-                      <span className="shrink-0" style={{ color: "rgba(255,255,255,0.44)", fontWeight: 600 }}>
-                        {rel.id}
-                      </span>
-                      <span className="truncate" style={{ color: "rgba(255,255,255,0.64)" }}>
-                        {rel.title}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Activity */}
-          <div className="mt-[1.3rem]">
-            <p
-              className="mb-[0.68rem] text-left font-medium tracking-[-0.015em]"
-              style={{
-                color: HERO_TRIAGE_GLASS.activity,
-                fontSize: isMobile ? "1.7rem" : "0.82rem",
-              }}
-            >
-              Activity
-            </p>
-            <div className="flex flex-col gap-[0.68rem]">
-              <ActivityBlurRow width="54%" />
-              <ActivityBlurRow width="40%" />
-            </div>
+            ))}
           </div>
         </div>
       </div>
