@@ -435,11 +435,11 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
 }
 
 .intel-col-up {
-  animation: intel-col-scroll-up 26s linear infinite;
+  animation: intel-col-scroll-up 36s linear infinite;
 }
 
 .intel-col-down {
-  animation: intel-col-scroll-down 20s linear infinite;
+  animation: intel-col-scroll-down 28s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
