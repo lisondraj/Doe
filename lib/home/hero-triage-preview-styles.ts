@@ -27,40 +27,42 @@ export {
 };
 
 /**
- * Card width — right portion bleeds significantly past the viewport edge.
- * 220 vw gives a large canvas; the CSS left edge lands at 0 vw so the
- * content-bearing left section dominates the viewport while the right
- * ~55 % of the card disappears off screen.
+ * Card width — left portion is the visual focus, right portion bleeds
+ * past the viewport edge and is intentionally not shown.
  */
 export const HERO_TRIAGE_PANEL_WIDTH = {
-  mobile: "220vw",
+  mobile: "148vw",
   desktop: "min(108rem, 138vw)",
 } as const;
 
 /**
- * Negative right offset — moves the card far off the right edge so the
- * left content area is the sole visual focus.
- * With width 220 vw and right -120 vw the CSS left edge sits at 0 vw;
- * after the rotateY perspective transform the visual left edge lands
- * ~5 vw from the viewport edge.
+ * Left offset for mobile — anchors the card's left edge near the viewport
+ * left so the content-heavy side is always visible. Right overflow is
+ * intentional (bleeds ~48 vw off screen).
+ * Desktop still uses right-based offset.
  */
+export const HERO_TRIAGE_PANEL_LEFT = {
+  mobile: "3vw",
+} as const;
+
 export const HERO_TRIAGE_PANEL_RIGHT = {
-  mobile: "-120vw",
+  mobile: undefined,
   desktop: "calc(min(108rem, 138vw) / -2)",
 } as const;
 
 /** Triage Intelligence floating widget width inside the card. */
 export const HERO_TRIAGE_WIDGET_WIDTH = {
-  mobile: "min(26rem, 96%)",
+  mobile: "min(36rem, 92%)",
   desktop: "min(22rem, 68%)",
 } as const;
 
 /**
- * 3D tilt — perspective(900px) gives strong depth on mobile;
- * the larger card width makes the rotateY lean visually dramatic.
+ * 3D tilt — perspective(900px) gives strong depth on mobile.
+ * Mobile uses a slightly reduced rotateY so the larger card doesn't
+ * compress the left-edge content.
  */
 export const HERO_TRIAGE_TILT = {
-  mobile: "perspective(900px) rotateX(8deg) rotateY(22deg)",
+  mobile: "perspective(900px) rotateX(7deg) rotateY(18deg)",
   desktop: "perspective(1400px) rotateX(8deg) rotateY(18deg)",
 } as const;
 
