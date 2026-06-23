@@ -14,7 +14,7 @@ import {
 } from "react";
 import { NAV_HREFS } from "@/components/doe-nav-data";
 import { HERO_CAROUSEL_GRAIN_BG } from "@/components/hero-carousel-texture";
-import { DesktopHeroTriagePreview } from "@/components/home/DesktopHeroTriagePreview";
+import { HeroTriagePreview } from "@/components/home/HeroTriagePreview";
 import { DesignHeroBackdropSection } from "@/components/design-hero-backdrop-section";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { WorkflowCarouselSlides } from "@/components/workflow-carousel-slides";
@@ -1549,16 +1549,16 @@ export function DesktopHome() {
         </nav>
 
         {/* Left mission + tilted triage issue preview under headline */}
-        {!isPhoneLayout && !prefersReducedMotion && desktopHeroMissionBlockOpacity > 0 && (
+        {!isPhoneLayout && desktopHeroMissionBlockOpacity > 0 && (
           <div
-            className="absolute inset-x-0 bottom-0 top-0 z-[21] flex flex-col items-start justify-center gap-[clamp(1.75rem,3.2vw,2.75rem)] overflow-visible pb-[clamp(2rem,4vh,3.5rem)] pl-10 pt-[max(6.5rem,calc(env(safe-area-inset-top,0px)+5rem))] md:pl-20 lg:pl-28 xl:pl-36"
+            className="absolute inset-x-0 bottom-0 top-0 z-[21] flex flex-col items-start justify-center gap-[clamp(1.5rem,2.8vw,2.35rem)] overflow-visible pb-[clamp(1.5rem,3.5vh,3rem)] pl-10 pt-[max(6rem,calc(env(safe-area-inset-top,0px)+4.75rem))] md:pl-20 lg:pl-28 xl:pl-36"
           >
             <DesktopHeroMissionScrollText
               interClassName={inter.className}
               typeLinear={desktopHeroMissionTypeLinear}
               line1SpanRef={desktopHeroMissionLine1SpanRef}
             />
-            <DesktopHeroTriagePreview fontClassName={suisseIntl.className} />
+            <HeroTriagePreview fontClassName={suisseIntl.className} size="desktop" />
           </div>
         )}
 

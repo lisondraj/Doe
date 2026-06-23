@@ -323,6 +323,14 @@ body.mainpage-route {
   font-size: clamp(2rem, 10.75cqi, 5.85rem);
 }
 
+.doephone-hero-triage-preview {
+  opacity: 0;
+  filter: blur(12px);
+  transform: translateY(1.15rem);
+  animation: doephone-hero-headline-in 1.2s cubic-bezier(0.22, 1, 0.36, 1) 4.1s both;
+  will-change: opacity, filter, transform;
+}
+
 html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
   font-size: clamp(1.85rem, 10.25cqi, 5.45rem);
 }
@@ -532,6 +540,13 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
   }
 
   .doephone-hero-headline-line {
+    animation: none !important;
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+
+  .doephone-hero-triage-preview {
     animation: none !important;
     opacity: 1;
     filter: none;

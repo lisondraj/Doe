@@ -1,6 +1,7 @@
 "use client";
 
 import { DoePhoneHeroHeadline } from "@/components/doephone/DoePhoneHeroHeadline";
+import { HeroTriagePreview } from "@/components/home/HeroTriagePreview";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import {
   DOEPHONE_HERO_INTRO_GRADIENT_MS,
@@ -8,6 +9,7 @@ import {
   doephoneHeroIntroStyleVars,
 } from "@/lib/doephone/hero-intro-timing";
 import { DOEPHONE_HERO_COPY_INSET } from "@/lib/doephone/section-styles";
+import { suisseIntl } from "@/lib/home/fonts";
 import { DOEPHONE_HERO_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 
@@ -97,7 +99,7 @@ export function DoePhoneHeroSection() {
   return (
     <section
       ref={heroRef}
-      className="doephone-hero-section relative w-full overflow-hidden bg-[#1E343A]"
+      className="doephone-hero-section relative w-full overflow-x-clip overflow-y-visible bg-[#1E343A]"
       style={
         {
           minHeight: DOEPHONE_HERO_HEIGHT,
@@ -115,9 +117,14 @@ export function DoePhoneHeroSection() {
       />
 
       <div
-        className={`doephone-hero-copy absolute inset-0 z-[3] flex min-w-0 flex-col items-start justify-start pt-[max(9rem,calc(env(safe-area-inset-top,0px)+calc(var(--app-vh,100lvh)*0.31)))] pb-8 ${DOEPHONE_HERO_COPY_INSET}`}
+        className={`doephone-hero-copy absolute inset-0 z-[3] flex min-w-0 flex-col items-start justify-start gap-[clamp(1.25rem,4.5vmin,2rem)] overflow-visible pt-[max(9rem,calc(env(safe-area-inset-top,0px)+calc(var(--app-vh,100lvh)*0.31)))] pb-[clamp(1.5rem,5vmin,2.5rem)] ${DOEPHONE_HERO_COPY_INSET}`}
       >
         <DoePhoneHeroHeadline />
+        <HeroTriagePreview
+          fontClassName={suisseIntl.className}
+          size="mobile"
+          className="doephone-hero-triage-preview w-full max-w-full shrink-0"
+        />
       </div>
     </section>
   );
