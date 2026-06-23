@@ -50,6 +50,9 @@ export const DOE_BRAND_GRADIENT_LINE =
 export const DOEPHONE_SECTION_COPY_POSITION =
   `absolute inset-0 z-[3] flex flex-col items-start justify-start ${DOEPHONE_SECTION_TITLE_PT} pb-8`;
 
+/** Suisse display weight — between light (300) and regular (400); hero + carousel menus. */
+export const DOEPHONE_DISPLAY_WEIGHT_TW = "font-[350]";
+
 /** Suisse Intl light — between hero and prior section scale. */
 export const DOEPHONE_SECTION_COPY_TW =
   "text-left font-light leading-[1.02] tracking-[-0.03em] text-[clamp(3.05rem,11.75vw,5.15rem)] iphone-page:text-[clamp(2.9rem,11vw,4.85rem)]";

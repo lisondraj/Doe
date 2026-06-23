@@ -1,5 +1,6 @@
 "use client";
 
+import { DOEPHONE_DISPLAY_WEIGHT_TW } from "@/lib/doephone/section-styles";
 import { suisseIntl } from "@/lib/home/fonts";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
@@ -147,13 +148,13 @@ export function DoePhoneHeroHeadline() {
   return (
     <h1
       ref={headlineRef}
-      className={`doephone-hero-headline flex w-full min-w-0 max-w-full flex-col items-start font-normal leading-[1.02] tracking-[-0.03em] text-white ${suisseIntl.className}`}
+      className={`doephone-hero-headline flex w-full min-w-0 max-w-full flex-col items-start ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] text-white ${suisseIntl.className}`}
     >
       <span className="doephone-hero-headline-line block">Intelligence</span>
       <span className="doephone-hero-headline-line doephone-hero-headline-line--second doephone-hero-second-line flex min-w-0 max-w-full items-baseline justify-start whitespace-nowrap">
         <span className="shrink-0">built for</span>
         <span className="doephone-hero-career-slot relative inline-grid align-baseline leading-none">
-          <span aria-hidden className="invisible col-start-1 row-start-1 select-none font-normal">
+          <span aria-hidden className={`invisible col-start-1 row-start-1 select-none ${DOEPHONE_DISPLAY_WEIGHT_TW}`}>
             {DOEPHONE_HERO_CAREER_WIDTH_SAMPLE}
           </span>
           <span className="doephone-hero-career-clip col-start-1 row-start-1">
@@ -166,7 +167,7 @@ export function DoePhoneHeroHeadline() {
               {slideItems.map((career, i) => (
                 <span
                   key={`${career}-${i}`}
-                  className="doephone-hero-career-word font-normal"
+                  className={`doephone-hero-career-word ${DOEPHONE_DISPLAY_WEIGHT_TW}`}
                   aria-hidden={i === slideItems.length - 1 || career !== activeCareer}
                 >
                   {career}.

@@ -1,7 +1,7 @@
 "use client";
 
 import { DOEPHONE_COMMUNICATION_SLIDES } from "@/lib/doephone/communication-carousel";
-import { DOE_BRAND_GRADIENT_LINE } from "@/lib/doephone/section-styles";
+import { DOE_BRAND_GRADIENT_LINE, DOEPHONE_DISPLAY_WEIGHT_TW } from "@/lib/doephone/section-styles";
 import { suisseIntl } from "@/lib/home/fonts";
 
 function menuLabelLines(label: string): [string] | [string, string] {
@@ -34,7 +34,7 @@ export function DoePhoneCarouselMenu({
             role="tab"
             aria-selected={active}
             aria-controls={`doephone-comm-slide-${slide.id}`}
-            className={`relative flex min-h-[clamp(5.15rem,4.35rem+3.35vmin,6.85rem)] flex-col items-center justify-center overflow-hidden rounded-[clamp(0.42rem,0.35rem+0.28vmin,0.55rem)] px-[clamp(0.38rem,0.28rem+0.42vmin,0.55rem)] py-[clamp(0.62rem,0.5rem+0.48vmin,0.82rem)] pb-[clamp(0.88rem,0.72rem+0.62vmin,1.12rem)] text-center transition-[background-color,color] duration-200 ${suisseIntl.className} font-normal tracking-[-0.02em] ${
+            className={`relative flex min-h-[clamp(5.15rem,4.35rem+3.35vmin,6.85rem)] flex-col items-center justify-center overflow-hidden rounded-[clamp(0.42rem,0.35rem+0.28vmin,0.55rem)] px-[clamp(0.38rem,0.28rem+0.42vmin,0.55rem)] py-[clamp(0.62rem,0.5rem+0.48vmin,0.82rem)] pb-[clamp(0.88rem,0.72rem+0.62vmin,1.12rem)] text-center transition-[background-color,color] duration-200 ${suisseIntl.className} ${DOEPHONE_DISPLAY_WEIGHT_TW} tracking-[-0.02em] ${
               active
                 ? "bg-[#E3E1DB] text-[#1E343A]"
                 : "bg-[#1E343A]/[0.06] text-[#1E343A]/35"
