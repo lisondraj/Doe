@@ -5,9 +5,9 @@ import { DOEPHONE_SECTION_CAROUSEL_INSET_X } from "@/lib/doephone/section-styles
 
 const B = BLOG_LANDING_HERO;
 
-/* Portrait aspect ratio — taller than wide, matching the screenshot cards */
-const CELL_ASPECT = "aspect-[5/8]";
-/* Subtler radius — keep square-ish feel without heavy pill corners */
+/* Tall portrait ratio — clearly vertical rectangles even after perspective foreshortening */
+const CELL_ASPECT = "aspect-[3/5]";
+/* Subtler radius */
 const CELL_RADIUS = "rounded-[0.38rem]";
 
 /* ─── Gradient cell definitions ─── */
@@ -203,13 +203,24 @@ function BeigeCell({ designIdx }: { designIdx: number }) {
 /* ─── Public grid component ─── */
 export function DoePhoneCommIntelGrid() {
   return (
-    /* Outer shell clips the 3D overflow and hosts the fade overlays */
-    <div className={`${DOEPHONE_SECTION_CAROUSEL_INSET_X} relative overflow-hidden`}>
-      {/* 3D perspective tilt — grid recedes upward like the screenshot */}
+    /*
+     * Mask-image fades the grid at top and bottom — completely transparent,
+     * so the section backdrop shows through perfectly regardless of its color.
+     * Pure rotateX tilt (no Y/Z) so the grid recedes straight back like the SS.
+     */
+    <div
+      className={`${DOEPHONE_SECTION_CAROUSEL_INSET_X}`}
+      style={{
+        WebkitMaskImage:
+          "linear-gradient(to bottom, transparent 0%, black 22%, black 74%, transparent 100%)",
+        maskImage:
+          "linear-gradient(to bottom, transparent 0%, black 22%, black 74%, transparent 100%)",
+      }}
+    >
       <div
         style={{
-          transform: "perspective(520px) rotateX(36deg) rotateY(-7deg) rotateZ(-1.5deg)",
-          transformOrigin: "50% 45%",
+          transform: "perspective(540px) rotateX(46deg)",
+          transformOrigin: "50% 50%",
           transformStyle: "preserve-3d",
         }}
       >
@@ -223,28 +234,6 @@ export function DoePhoneCommIntelGrid() {
           )}
         </div>
       </div>
-
-      {/* Top fade — blends into the section background */}
-      <div
-        className="pointer-events-none absolute inset-x-0 top-0 z-10"
-        style={{
-          height: "32%",
-          background:
-            "linear-gradient(to bottom, #C47A5A 0%, rgba(196,122,90,0.7) 55%, transparent 100%)",
-        }}
-        aria-hidden
-      />
-
-      {/* Bottom fade */}
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-10"
-        style={{
-          height: "28%",
-          background:
-            "linear-gradient(to top, #D2774C 0%, rgba(210,119,76,0.65) 55%, transparent 100%)",
-        }}
-        aria-hidden
-      />
     </div>
   );
 }
