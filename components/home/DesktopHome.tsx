@@ -14,6 +14,7 @@ import {
 } from "react";
 import { NAV_HREFS } from "@/components/doe-nav-data";
 import { HERO_CAROUSEL_GRAIN_BG } from "@/components/hero-carousel-texture";
+import { DesktopHeroTriagePreview } from "@/components/home/DesktopHeroTriagePreview";
 import { DesignHeroBackdropSection } from "@/components/design-hero-backdrop-section";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { WorkflowCarouselSlides } from "@/components/workflow-carousel-slides";
@@ -34,15 +35,12 @@ const DESKTOP_NAV_DROPDOWN_ENABLED = false;
 const DESKTOP_HERO_WHEEL_ZOOM_RATIO = 1.8;
 
 /**
- * Desktop hero wheel normalization 0→3: backdrop zoom+Doe scrub [0,1]; mission type [1,2]; AI prompt card
- * reveal (+ typed placeholder) [2,3]. Page scroll stays locked until the full 3.0 is reached.
+ * Desktop hero wheel normalization 0→3: backdrop zoom+Doe scrub [0,1]; mission type [1,2];
+ * reserved scroll budget [2,3] before page unlock.
  */
 const DESKTOP_HERO_SCROLL_LINEAR_COMPLETE = 3;
 
-/** Share of wheel segment [2,3]: card chrome fully on-screen before typed prompt begins (remainder scrubs glyphs). */
-const DESKTOP_HERO_AI_CHROME_BEFORE_PROMPT_RATIO = 0.42;
-
-/** Local Suisse Intl trial faces — scoped to hero AI teaser card typography. */
+/** Local Suisse Intl trial faces — scoped to hero triage preview typography. */
 const suisseIntl = localFont({
   src: [
     { path: "../../fonts/suisse/SuisseIntlTrial-Regular.otf", weight: "400", style: "normal" },
@@ -148,61 +146,6 @@ function DesktopHeroMissionScrollText({
         {renderLine(0, DESKTOP_MISSION_L1_LEN)}
       </span>
       <span style={lineStyle}>{renderLine(DESKTOP_MISSION_L1_LEN, DESKTOP_MISSION_CHAR_COUNT)}</span>
-    </p>
-  );
-}
-
-/** Demo identity for hero PATIENT embedding strip (production would come from routing/context). */
-const DESKTOP_HERO_DEMO_PATIENT_LINE1 = "Jordan Elias";
-const DESKTOP_HERO_DEMO_PATIENT_LINE2 = "Mercer";
-const DESKTOP_HERO_DEMO_PATIENT_DISPLAY = `${DESKTOP_HERO_DEMO_PATIENT_LINE1} ${DESKTOP_HERO_DEMO_PATIENT_LINE2}`;
-/** Embedding strip — saturated orange hues only */
-const DESKTOP_HERO_EMBED_ORANGE_HEX = [
-  "#FFF5E9",
-  "#FFEAD0",
-  "#FFD096",
-  "#FFB554",
-  "#FF9F2E",
-  "#F0841A",
-  "#E06912",
-  "#C9570C",
-  "#A94308",
-  "#853208",
-] as const;
-
-const DESKTOP_HERO_AI_PROMPT_TEXT =
-  "Show me everything I need to know for this patient's appointment today.";
-
-function DesktopHeroAiPromptScrollText({ typeLinear }: { typeLinear: number }) {
-  const n = DESKTOP_HERO_AI_PROMPT_TEXT.length;
-  const clampedT = Math.min(1, Math.max(0, typeLinear));
-  const R = clampedT * n;
-  const typingDone = clampedT >= 1 - 1e-5;
-
-  const charOpacityAt = (idx: number) => {
-    if (R <= idx) return 0;
-    if (R >= idx + 1) return 1;
-    return R - idx;
-  };
-
-  return (
-    <p
-      className="flex-1 min-w-0 text-left leading-snug text-neutral-900"
-      style={{
-        fontWeight: 400,
-        fontSize: "1.0625rem",
-        letterSpacing: "-0.02em",
-        lineHeight: 1.45,
-      }}
-    >
-      {DESKTOP_HERO_AI_PROMPT_TEXT.split("").map((ch, idx) => {
-        const op = typingDone ? 1 : charOpacityAt(idx);
-        return (
-          <span key={idx} style={{ opacity: op }}>
-            {ch}
-          </span>
-        );
-      })}
     </p>
   );
 }
@@ -1260,26 +1203,6 @@ export function DesktopHome() {
           ? 1
           : desktopHeroScrollLinear - 1;
 
-  /** Third wheel phase [2,3]: fade / lift AI prompt strip + typed suggestion (1∶1 scroll). */
-  const desktopHeroAiInputRevealLinear =
-    prefersReducedMotion || isPhoneLayout
-      ? 0
-      : desktopHeroScrollLinear <= 2
-        ? 0
-        : desktopHeroScrollLinear >= 3
-          ? 1
-          : desktopHeroScrollLinear - 2;
-
-  /** After chrome + layout read as “loaded”, remap remaining scroll scrub to typed prompt only. */
-  const desktopHeroAiPromptTypeLinear =
-    prefersReducedMotion || isPhoneLayout
-      ? 0
-      : (() => {
-          const chrome = DESKTOP_HERO_AI_CHROME_BEFORE_PROMPT_RATIO;
-          const ai = desktopHeroAiInputRevealLinear;
-          if (ai <= chrome + 1e-9) return 0;
-          return Math.min(1, (ai - chrome) / (1 - chrome));
-        })();
   /** Scrubs with scroll (~3.6×); applied via `background-size` zoom instead of transform so layers stay crisp. */
   const desktopHeroBackdropZoom =
     prefersReducedMotion || isPhoneLayout ? 1 : 1 + desktopHeroZoomProgress * 3.65;
@@ -1330,7 +1253,7 @@ export function DesktopHome() {
 
   return (
     <div className="relative overflow-x-hidden" style={{ backgroundColor: '#F7F6F3' }}>
-      {/* Hero — desktop: wheel zoom, typed mission, then AI prompt teaser; scroll locks until all wheel phases finish */}
+      {/* Hero — desktop: wheel zoom, typed mission, tilted triage preview; scroll locks until wheel phases finish */}
       {/* z-[40]: stack above later sections (z-10) so fixed nav isn’t painted under carousel / gradients */}
       <div className="relative z-[40] min-h-screen overflow-hidden">
         <div
@@ -1625,78 +1548,17 @@ export function DesktopHome() {
           </>
         </nav>
 
-        {/* Left mission + post-mission AI prompt (wheel phases 2→3) */}
+        {/* Left mission + tilted triage issue preview under headline */}
         {!isPhoneLayout && !prefersReducedMotion && desktopHeroMissionBlockOpacity > 0 && (
           <div
-            className="absolute left-0 top-[40%] z-[21] flex max-w-[min(72rem,calc(100vw-6rem))] -translate-y-1/2 flex-col items-start gap-8 pl-10 md:left-14 md:pl-20 lg:left-28 lg:pl-32 xl:left-36"
+            className="absolute inset-x-0 bottom-0 top-0 z-[21] flex flex-col items-start justify-center gap-[clamp(1.75rem,3.2vw,2.75rem)] overflow-visible pb-[clamp(2rem,4vh,3.5rem)] pl-10 pt-[max(6.5rem,calc(env(safe-area-inset-top,0px)+5rem))] md:pl-20 lg:pl-28 xl:pl-36"
           >
             <DesktopHeroMissionScrollText
               interClassName={inter.className}
               typeLinear={desktopHeroMissionTypeLinear}
               line1SpanRef={desktopHeroMissionLine1SpanRef}
             />
-            {(() => {
-              const r = desktopHeroAiInputRevealLinear;
-              const fade = r * r * (3 - 2 * r);
-              const glidePx = (1 - fade) * 26;
-              const hidden = fade < 1e-4 ? "pointer-events-none" : "";
-              return (
-                <div
-                  className={`self-start ${hidden}`}
-                  style={{
-                    width: "min(32rem, calc(100vw - 14rem))",
-                    opacity: fade,
-                    transform: `translate3d(0, ${glidePx}px, 0)`,
-                    transition: "opacity 0.14s linear, transform 0.14s linear",
-                  }}
-                  aria-hidden={fade < 0.98}
-                >
-                  <div className={`min-w-0 rounded-2xl bg-white/95 px-5 pb-4 pt-4 ${suisseIntl.className}`}
-                    style={{ boxShadow: "0 1px 0 0 rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.07)" }}
-                  >
-                    {/* Patient chip */}
-                    <div className="mb-3 flex items-center gap-2">
-                      <span
-                        className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[0.6rem] font-semibold text-white"
-                        style={{ background: "#C9570C" }}
-                        aria-hidden
-                      >
-                        {DESKTOP_HERO_DEMO_PATIENT_LINE2[0]}
-                      </span>
-                      <span
-                        className="text-[0.8rem] font-medium tracking-tight text-neutral-500"
-                      >
-                        {DESKTOP_HERO_DEMO_PATIENT_DISPLAY}
-                      </span>
-                    </div>
-
-                    {/* Prompt + actions row */}
-                    <div className="flex min-w-0 items-end gap-3">
-                      <DesktopHeroAiPromptScrollText typeLinear={desktopHeroAiPromptTypeLinear} />
-                      <div className="flex shrink-0 items-center gap-2.5 pb-0.5">
-                        <span className="pointer-events-none inline-flex text-neutral-300" aria-hidden>
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.4}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 19v4M8 23h8" />
-                          </svg>
-                        </span>
-                        <button
-                          type="button"
-                          aria-label="Send prompt"
-                          tabIndex={-1}
-                          className="pointer-events-none flex h-8 w-8 items-center justify-center rounded-full bg-neutral-900 text-white"
-                        >
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 19V5m0 0l-7 7m7-7l7 7" />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })()}
+            <DesktopHeroTriagePreview fontClassName={suisseIntl.className} />
           </div>
         )}
 
