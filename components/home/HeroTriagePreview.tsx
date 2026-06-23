@@ -9,84 +9,85 @@ import type { CSSProperties } from "react";
 
 /* ─── Light theme tokens ─── */
 const L = {
-  bg: "linear-gradient(145deg, rgba(252,250,248,0.97) 0%, rgba(247,244,241,0.96) 100%)",
-  border: "rgba(0,0,0,0.08)",
-  header: "rgba(22,18,14,0.95)",
-  headerSub: "rgba(80,68,58,0.55)",
-  badgeBg: "rgba(196,122,90,0.13)",
-  badgeText: "#C47A5A",
-  senderUnread: "rgba(22,18,14,0.92)",
-  senderRead: "rgba(60,52,44,0.62)",
-  subject: "rgba(22,18,14,0.80)",
-  subjectRead: "rgba(80,68,58,0.52)",
-  preview: "rgba(100,88,76,0.55)",
-  time: "rgba(110,95,82,0.52)",
-  divider: "rgba(0,0,0,0.055)",
+  bg: "linear-gradient(160deg, rgba(253,251,249,0.98) 0%, rgba(247,244,240,0.97) 100%)",
+  border: "rgba(0,0,0,0.07)",
+  header: "rgba(20,16,12,0.95)",
+  headerSub: "rgba(80,68,58,0.50)",
+  badgeBg: "rgba(196,122,90,0.14)",
+  badgeText: "#B8673C",
+  senderUnread: "rgba(18,14,10,0.93)",
+  senderRead: "rgba(58,48,40,0.58)",
+  subject: "rgba(22,18,14,0.78)",
+  subjectRead: "rgba(80,68,58,0.48)",
+  preview: "rgba(100,88,76,0.52)",
+  time: "rgba(120,105,90,0.50)",
+  divider: "rgba(0,0,0,0.05)",
   dot: "#C47A5A",
   tagBg: "rgba(196,122,90,0.10)",
   tagText: "#A8623E",
+  avatarBg: "rgba(196,122,90,0.12)",
+  avatarText: "#A86040",
+  searchBg: "rgba(0,0,0,0.04)",
+  searchBorder: "rgba(0,0,0,0.07)",
+  searchText: "rgba(100,88,76,0.50)",
+  sectionLabel: "rgba(110,95,82,0.45)",
 } as const;
 
 /* ─── Inbox data ─── */
 const EMAILS = [
   {
     sender: "Pharmacy",
+    initials: "Rx",
     subject: "Refill — Metformin 500mg",
     preview: "Patient J. Martinez requested a 90-day refill.",
     time: "9:41 AM",
     unread: true,
     tag: "Rx",
+    today: true,
   },
   {
     sender: "LabCorp",
+    initials: "LC",
     subject: "Critical: K⁺ 6.2 mEq/L",
     preview: "Patient A. Chen. Immediate review required.",
     time: "8:55 AM",
     unread: true,
     tag: "Lab",
+    today: true,
   },
   {
     sender: "Nurse Patel",
+    initials: "NP",
     subject: "Room 308 — post-op stable",
     preview: "BP 122/76, HR 68. Patient requesting discharge timeline.",
     time: "8:12 AM",
     unread: false,
     tag: null,
+    today: true,
   },
   {
     sender: "Patient Portal",
+    initials: "PP",
     subject: "Re: chest tightness follow-up",
     preview: "Dr. Singh, symptoms have persisted since Tuesday.",
     time: "Yesterday",
     unread: false,
     tag: null,
+    today: false,
   },
   {
     sender: "Aetna",
+    initials: "AE",
     subject: "Pre-auth approved — PT #8821",
     preview: "12 sessions of physical therapy authorized.",
     time: "Yesterday",
     unread: false,
     tag: null,
+    today: false,
   },
 ] as const;
 
-/* ─── Small icons ─── */
-function InboxIcon({ size }: { size: string }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 16 16" fill="none" aria-hidden>
-      <path
-        d="M2 5.5h12M2 5.5l2 6h8l2-6M2 5.5 5 2h6l3 3.5"
-        stroke={L.header}
-        strokeWidth="1.1"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        opacity="0.7"
-      />
-    </svg>
-  );
-}
-
+/* ─── Icons ─── */
 function ComposeIcon({ size }: { size: string }) {
   return (
     <svg width={size} height={size} viewBox="0 0 16 16" fill="none" aria-hidden>
@@ -101,6 +102,36 @@ function ComposeIcon({ size }: { size: string }) {
   );
 }
 
+function SearchIcon({ size, color }: { size: string; color: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 14 14" fill="none" aria-hidden>
+      <circle cx="6" cy="6" r="4" stroke={color} strokeWidth="1.2" />
+      <path d="M9 9 12 12" stroke={color} strokeWidth="1.2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/* ─── Avatar ─── */
+function Avatar({ initials, size }: { initials: string; size: string }) {
+  return (
+    <div
+      className="shrink-0 flex items-center justify-center"
+      style={{
+        width: size,
+        height: size,
+        borderRadius: "50%",
+        background: L.avatarBg,
+        color: L.avatarText,
+        fontWeight: 600,
+        fontSize: `calc(${size} * 0.38)`,
+        letterSpacing: "0.01em",
+      }}
+    >
+      {initials}
+    </div>
+  );
+}
+
 /* ─── Email row ─── */
 function EmailRow({
   email,
@@ -112,40 +143,46 @@ function EmailRow({
   mobile: boolean;
 }) {
   const fs = mobile
-    ? { sender: "1.28rem", subject: "1.12rem", preview: "0.98rem", time: "0.98rem", tag: "0.82rem" }
-    : { sender: "0.82rem", subject: "0.74rem", preview: "0.68rem", time: "0.68rem", tag: "0.6rem" };
+    ? { sender: "1.24rem", subject: "1.08rem", preview: "0.94rem", time: "0.94rem", tag: "0.80rem" }
+    : { sender: "0.80rem", subject: "0.72rem", preview: "0.66rem", time: "0.66rem", tag: "0.58rem" };
+  const avatarSize = mobile ? "2.5rem" : "1.6rem";
 
   return (
     <div>
       <div
         className="flex items-start"
-        style={{ gap: mobile ? "0.75rem" : "0.5rem", padding: mobile ? "0.9rem 0" : "0.52rem 0" }}
+        style={{ gap: mobile ? "0.8rem" : "0.52rem", padding: mobile ? "0.85rem 0" : "0.50rem 0" }}
       >
-        {/* Unread dot */}
-        <div
-          className="shrink-0"
-          style={{
-            width: mobile ? "0.55rem" : "0.38rem",
-            height: mobile ? "0.55rem" : "0.38rem",
-            borderRadius: "50%",
-            marginTop: "0.28em",
-            background: email.unread ? L.dot : "transparent",
-            flexShrink: 0,
-          }}
-        />
+        {/* Avatar circle */}
+        <Avatar initials={email.initials} size={avatarSize} />
+
         <div className="min-w-0 flex-1">
           {/* Row 1 — sender + time */}
           <div className="flex items-center justify-between gap-2">
-            <span
-              className="truncate font-semibold"
-              style={{
-                fontSize: fs.sender,
-                color: email.unread ? L.senderUnread : L.senderRead,
-                letterSpacing: "-0.01em",
-              }}
-            >
-              {email.sender}
-            </span>
+            <div className="flex min-w-0 items-center gap-[0.45em]">
+              {email.unread && (
+                <div
+                  style={{
+                    width: mobile ? "0.44rem" : "0.3rem",
+                    height: mobile ? "0.44rem" : "0.3rem",
+                    borderRadius: "50%",
+                    background: L.dot,
+                    flexShrink: 0,
+                  }}
+                />
+              )}
+              <span
+                className="truncate"
+                style={{
+                  fontSize: fs.sender,
+                  fontWeight: email.unread ? 600 : 500,
+                  color: email.unread ? L.senderUnread : L.senderRead,
+                  letterSpacing: "-0.01em",
+                }}
+              >
+                {email.sender}
+              </span>
+            </div>
             <div className="flex shrink-0 items-center gap-[0.4em]">
               {email.tag && (
                 <span
@@ -155,8 +192,8 @@ function EmailRow({
                     letterSpacing: "0.04em",
                     color: L.tagText,
                     background: L.tagBg,
-                    borderRadius: "0.22em",
-                    padding: "0.1em 0.38em",
+                    borderRadius: "0.25em",
+                    padding: "0.1em 0.4em",
                   }}
                 >
                   {email.tag}
@@ -169,9 +206,10 @@ function EmailRow({
           </div>
           {/* Row 2 — subject */}
           <p
-            className="mt-[0.18em] truncate font-medium"
+            className="mt-[0.16em] truncate"
             style={{
               fontSize: fs.subject,
+              fontWeight: email.unread ? 500 : 400,
               color: email.unread ? L.subject : L.subjectRead,
               letterSpacing: "-0.01em",
             }}
@@ -180,15 +218,15 @@ function EmailRow({
           </p>
           {/* Row 3 — preview */}
           <p
-            className="mt-[0.12em] truncate font-normal"
-            style={{ fontSize: fs.preview, color: L.preview }}
+            className="mt-[0.10em] truncate"
+            style={{ fontSize: fs.preview, fontWeight: 400, color: L.preview }}
           >
             {email.preview}
           </p>
         </div>
       </div>
       {!last && (
-        <div style={{ height: "1px", background: L.divider }} />
+        <div style={{ height: "1px", background: L.divider, marginLeft: mobile ? "3.3rem" : "2.12rem" }} />
       )}
     </div>
   );
@@ -249,24 +287,23 @@ export function HeroTriagePreview({
           {/* Inbox header */}
           <div
             className="flex items-center justify-between"
-            style={{ marginBottom: isMobile ? "1.1rem" : "0.62rem" }}
+            style={{ marginBottom: isMobile ? "0.85rem" : "0.50rem" }}
           >
-            <div className="flex items-center gap-[0.5em]">
-              <InboxIcon size={isMobile ? "1.55rem" : "0.95rem"} />
+            <div className="flex items-center gap-[0.45em]">
               <span
-                className="font-semibold tracking-[-0.02em]"
-                style={{ fontSize: isMobile ? "1.78rem" : "0.96rem", color: L.header }}
+                className="font-semibold tracking-[-0.025em]"
+                style={{ fontSize: isMobile ? "1.9rem" : "1.02rem", color: L.header }}
               >
                 Inbox
               </span>
               <span
                 style={{
-                  fontSize: isMobile ? "1.1rem" : "0.64rem",
-                  fontWeight: 600,
+                  fontSize: isMobile ? "1.05rem" : "0.60rem",
+                  fontWeight: 700,
                   color: L.badgeText,
                   background: L.badgeBg,
                   borderRadius: "0.6em",
-                  padding: "0.12em 0.5em",
+                  padding: "0.14em 0.52em",
                 }}
               >
                 2
@@ -274,6 +311,40 @@ export function HeroTriagePreview({
             </div>
             <ComposeIcon size={isMobile ? "1.55rem" : "0.95rem"} />
           </div>
+
+          {/* Search bar */}
+          <div
+            className="flex items-center gap-[0.5em]"
+            style={{
+              background: L.searchBg,
+              border: `1px solid ${L.searchBorder}`,
+              borderRadius: isMobile ? "0.75rem" : "0.42rem",
+              padding: isMobile ? "0.7rem 0.9rem" : "0.38rem 0.52rem",
+              marginBottom: isMobile ? "0.9rem" : "0.52rem",
+            }}
+          >
+            <SearchIcon
+              size={isMobile ? "1.15rem" : "0.70rem"}
+              color={L.searchText}
+            />
+            <span style={{ fontSize: isMobile ? "1.05rem" : "0.62rem", color: L.searchText }}>
+              Search messages…
+            </span>
+          </div>
+
+          {/* Section label */}
+          <p
+            style={{
+              fontSize: isMobile ? "0.88rem" : "0.54rem",
+              fontWeight: 600,
+              letterSpacing: "0.06em",
+              textTransform: "uppercase" as const,
+              color: L.sectionLabel,
+              marginBottom: isMobile ? "0.35rem" : "0.18rem",
+            }}
+          >
+            Today
+          </p>
 
           {/* Email list */}
           <div>
