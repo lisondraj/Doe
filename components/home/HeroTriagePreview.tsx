@@ -119,6 +119,30 @@ const INBOX_ROWS: InboxRow[] = [
     iconBg: "#E8EEF8",
     iconColor: "#2B4FA8",
   },
+  {
+    id: "frontdesk",
+    sender: "Front Desk",
+    initials: "FD",
+    preview: "Patient arrived early — Room 4 ready for vitals",
+    iconBg: "#F2F4F0",
+    iconColor: "#4A6B42",
+  },
+  {
+    id: "imaging",
+    sender: "Metro Imaging",
+    initials: "MI",
+    preview: "MRI report uploaded — lumbar spine for R. Walsh",
+    iconBg: "#F5EEF8",
+    iconColor: "#7A4A9A",
+  },
+  {
+    id: "priorauth",
+    sender: "Humana",
+    initials: "HU",
+    preview: "Prior auth #99201 approved — 12 PT sessions",
+    iconBg: "#E8F5F0",
+    iconColor: "#2A7A52",
+  },
 ];
 
 const SELECTED = INBOX_ROWS.find((r) => r.selected)!;
@@ -180,7 +204,7 @@ function SenderMark({ row, mobile }: { row: InboxRow; mobile: boolean }) {
 function InboxListRow({ row, mobile }: { row: InboxRow; mobile: boolean }) {
   const fs = mobile ? "1.02rem" : "0.66rem";
   const pillFs = mobile ? "0.92rem" : "0.58rem";
-  const pad = mobile ? "0.72rem 0.85rem" : "0.42rem 0.52rem";
+  const pad = mobile ? "0.58rem 0.85rem" : "0.42rem 0.52rem";
   const gap = mobile ? "0.65rem" : "0.38rem";
 
   if (row.selected) {
@@ -230,7 +254,7 @@ function InboxListRow({ row, mobile }: { row: InboxRow; mobile: boolean }) {
   return (
     <div
       className="flex items-start"
-      style={{ gap, padding: mobile ? "0.62rem 0.85rem" : "0.38rem 0.52rem" }}
+      style={{ gap, padding: mobile ? "0.48rem 0.85rem" : "0.38rem 0.52rem" }}
     >
       <SenderMark row={row} mobile={mobile} />
       <div className="min-w-0 flex-1">
@@ -258,17 +282,45 @@ function InboxListRow({ row, mobile }: { row: InboxRow; mobile: boolean }) {
   );
 }
 
+const THREAD_MESSAGES = [
+  {
+    id: "p1",
+    from: "patient" as const,
+    text: "Hi Dr. Singh — I wanted to follow up on my chest tightness from last week. Symptoms have improved but I still feel it in the mornings.",
+  },
+  {
+    id: "d1",
+    from: "doctor" as const,
+    text: "Thanks for checking in, Maria. Glad things are better — any shortness of breath with walking or stairs?",
+  },
+  {
+    id: "p2",
+    from: "patient" as const,
+    text: "No shortness of breath, just mild tightness when I wake up. I'd like to schedule a visit this week if possible.",
+  },
+  {
+    id: "d2",
+    from: "doctor" as const,
+    text: "Happy to get you in. I have Thursday at 10 AM or Friday at 2 PM — either work for you?",
+  },
+  {
+    id: "p3",
+    from: "patient" as const,
+    text: "Thursday at 10 AM works perfectly. Thank you!",
+  },
+];
+
 function OpenEmailPane({ mobile }: { mobile: boolean }) {
   const titleFs = mobile ? "1.35rem" : "0.82rem";
-  const bodyFs = mobile ? "1.05rem" : "0.64rem";
+  const bodyFs = mobile ? "0.98rem" : "0.64rem";
   const metaFs = mobile ? "0.88rem" : "0.54rem";
-  const pad = mobile ? "1.35rem 1.5rem" : "0.85rem 0.95rem";
-  const smallFs = mobile ? "0.92rem" : "0.56rem";
+  const pad = mobile ? "1.2rem 1.35rem" : "0.85rem 0.95rem";
+  const smallFs = mobile ? "0.88rem" : "0.56rem";
 
   return (
     <div
       className="flex h-full min-w-0 flex-col border-l"
-      style={{ borderColor: C.divider, background: C.detailBg, padding: pad, gap: mobile ? "1rem" : "0.6rem" }}
+      style={{ borderColor: C.divider, background: C.detailBg, padding: pad, gap: mobile ? "0.85rem" : "0.55rem" }}
     >
       {/* Header */}
       <div className="flex items-center gap-[0.55em]">
@@ -278,112 +330,82 @@ function OpenEmailPane({ mobile }: { mobile: boolean }) {
             {SELECTED.sender}
           </p>
           <p style={{ fontSize: metaFs, fontWeight: 400, color: C.detailMuted, marginTop: "0.12em" }}>
-            To: Dr. Singh · Today 9:14 AM
+            Follow-up visit scheduling · Today
           </p>
         </div>
       </div>
 
-      {/* Subject */}
-      <p style={{ fontSize: titleFs, fontWeight: 500, color: C.navActive, letterSpacing: "-0.02em" }}>
-        Follow-up visit scheduling
-      </p>
-
-      {/* Body */}
-      <div style={{ display: "flex", flexDirection: "column", gap: mobile ? "0.55rem" : "0.32rem" }}>
-        {[
-          "Hi Dr. Singh,",
-          "I wanted to follow up on my chest tightness from last week. Symptoms have improved but I'd like to schedule a visit this week if possible.",
-          "Please let me know what times work.",
-          "Thank you,",
-          "Maria Rodriguez",
-        ].map((line) => (
-          <p key={line} style={{ fontSize: bodyFs, fontWeight: 400, lineHeight: 1.48, color: C.detailBody }}>
-            {line}
-          </p>
-        ))}
-      </div>
-
-      {/* Divider */}
-      <div style={{ height: 1, background: C.divider, margin: mobile ? "0.25rem 0" : "0.15rem 0" }} />
-
-      {/* AI draft chip */}
+      {/* Thread */}
       <div
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: "0.45em",
-          background: "rgba(43,111,232,0.07)",
-          borderRadius: "999px",
-          padding: mobile ? "0.38rem 0.85rem" : "0.22rem 0.52rem",
-          border: "1px solid rgba(43,111,232,0.16)",
-          alignSelf: "flex-start",
-        }}
+        className="flex min-h-0 flex-1 flex-col"
+        style={{ gap: mobile ? "0.65rem" : "0.4rem", overflow: "hidden" }}
       >
-        <svg width={mobile ? 14 : 9} height={mobile ? 14 : 9} viewBox="0 0 16 16" fill="none" aria-hidden>
-          <path d="M8 2l1.5 4.5H14L10 9l1.5 4.5L8 11l-3.5 2.5L6 9 2 6.5h4.5z" fill="#2B6FE8" />
-        </svg>
-        <span style={{ fontSize: smallFs, fontWeight: 500, color: "#2B6FE8", letterSpacing: "-0.01em" }}>
-          Draft a reply
-        </span>
+        {THREAD_MESSAGES.map((msg) => {
+          const isDoctor = msg.from === "doctor";
+          return (
+            <div
+              key={msg.id}
+              style={{
+                display: "flex",
+                justifyContent: isDoctor ? "flex-end" : "flex-start",
+              }}
+            >
+              <div
+                style={{
+                  maxWidth: "92%",
+                  borderRadius: mobile ? "1rem" : "0.62rem",
+                  padding: mobile ? "0.72rem 0.95rem" : "0.45rem 0.62rem",
+                  background: isDoctor ? C.selected : "#F3F3F3",
+                  color: isDoctor ? "#fff" : C.detailBody,
+                }}
+              >
+                {!isDoctor && (
+                  <p
+                    style={{
+                      fontSize: smallFs,
+                      fontWeight: 500,
+                      color: C.pillText,
+                      marginBottom: "0.28em",
+                    }}
+                  >
+                    Maria Rodriguez
+                  </p>
+                )}
+                <p style={{ fontSize: bodyFs, fontWeight: 400, lineHeight: 1.45 }}>
+                  {msg.text}
+                </p>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
-      {/* Reply compose area */}
+      {/* Compact reply bar */}
       <div
         style={{
-          flex: 1,
           borderRadius: mobile ? "0.85rem" : "0.52rem",
           border: `1px solid ${C.divider}`,
           background: "#FAFAFA",
-          padding: mobile ? "0.85rem 1rem" : "0.52rem 0.62rem",
+          padding: mobile ? "0.65rem 0.85rem" : "0.45rem 0.55rem",
           display: "flex",
-          flexDirection: "column",
-          gap: mobile ? "0.75rem" : "0.45rem",
-          minHeight: mobile ? "8rem" : "5rem",
+          alignItems: "center",
+          gap: "0.55em",
+          flexShrink: 0,
         }}
       >
-        <p style={{ fontSize: bodyFs, fontWeight: 400, color: C.rowMuted, lineHeight: 1.45 }}>
-          Happy to get you in — how does Thursday at 10 AM work?
+        <p style={{ flex: 1, fontSize: bodyFs, fontWeight: 400, color: C.rowMuted }}>
+          Sounds good — see you Thursday at 10.
         </p>
-        {/* Action row */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5em", marginTop: "auto" }}>
-          <div
-            style={{
-              borderRadius: "999px",
-              background: C.selected,
-              padding: mobile ? "0.38rem 1rem" : "0.22rem 0.6rem",
-              display: "flex", alignItems: "center",
-            }}
-          >
-            <span style={{ fontSize: smallFs, fontWeight: 500, color: "#fff", letterSpacing: "-0.01em" }}>Send</span>
-          </div>
-          <div
-            style={{
-              borderRadius: "999px",
-              background: C.pillBg,
-              padding: mobile ? "0.38rem 1rem" : "0.22rem 0.6rem",
-              display: "flex", alignItems: "center",
-            }}
-          >
-            <span style={{ fontSize: smallFs, fontWeight: 500, color: C.pillText, letterSpacing: "-0.01em" }}>Discard</span>
-          </div>
+        <div
+          style={{
+            borderRadius: "999px",
+            background: C.selected,
+            padding: mobile ? "0.32rem 0.85rem" : "0.2rem 0.55rem",
+            flexShrink: 0,
+          }}
+        >
+          <span style={{ fontSize: smallFs, fontWeight: 500, color: "#fff" }}>Send</span>
         </div>
-      </div>
-
-      {/* Suggested times row */}
-      <div style={{ display: "flex", gap: "0.5em", flexWrap: "wrap" }}>
-        {["Thu 10 AM", "Fri 2 PM", "Mon 9 AM"].map((t) => (
-          <div
-            key={t}
-            style={{
-              borderRadius: "999px",
-              border: `1px solid ${C.divider}`,
-              background: "#fff",
-              padding: mobile ? "0.32rem 0.85rem" : "0.18rem 0.5rem",
-            }}
-          >
-            <span style={{ fontSize: smallFs, fontWeight: 400, color: C.rowText }}>{t}</span>
-          </div>
-        ))}
       </div>
     </div>
   );
@@ -476,7 +498,7 @@ export function HeroTriagePreview({
 
             {/* Inbox preview column */}
             <div
-              className="flex min-w-0 shrink-0 flex-col"
+              className="flex h-full min-w-0 shrink-0 flex-col"
               style={{ width: listW, borderRight: `1px solid ${C.divider}` }}
             >
               {/* Toolbar */}
@@ -511,7 +533,7 @@ export function HeroTriagePreview({
                       textAlign: "center",
                     }}
                   >
-                    11
+                    12
                   </span>
                 </div>
                 <InboxIcon mobile={isMobile} d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z" />
@@ -520,7 +542,7 @@ export function HeroTriagePreview({
               </div>
 
               {/* Message list */}
-              <div style={{ padding: isMobile ? "0.45rem 0" : "0.28rem 0" }}>
+              <div className="min-h-0 flex-1 overflow-hidden" style={{ padding: isMobile ? "0.35rem 0" : "0.28rem 0" }}>
                 {INBOX_ROWS.map((row, i) => (
                   <div key={row.id}>
                     <InboxListRow row={row} mobile={isMobile} />
