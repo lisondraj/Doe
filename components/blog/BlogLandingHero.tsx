@@ -16,7 +16,7 @@ export function BlogLandingHero({ className = "" }: { className?: string }) {
       <BlogLandingHeroGraphic />
 
       {/* Label — top-left */}
-      <p className={BLOG_LANDING_HERO_LABEL_TW}>Blog</p>
+      <p className={BLOG_LANDING_HERO_LABEL_TW}>BLOG</p>
 
       {/* Headline — bottom-left */}
       <p className={BLOG_LANDING_HERO_HEADLINE_TW}>

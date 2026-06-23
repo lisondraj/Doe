@@ -91,7 +91,7 @@ function FilterPill({
     : label;
 
   const triggerSize = heroVariant
-    ? `text-[clamp(1.38rem,5vw,2rem)] iphone-page:text-[clamp(1.55rem,1.28rem+1.3vmin,2.1rem)]`
+    ? `text-[clamp(1.55rem,5.6vw,2.2rem)] iphone-page:text-[clamp(1.78rem,1.42rem+1.5vmin,2.4rem)]`
     : `text-[clamp(1.75rem,6.5vw,2.6rem)] iphone-page:text-[clamp(2rem,1.55rem+2.85vmin,3.15rem)]`;
 
   const itemSize =
