@@ -56,12 +56,15 @@ export const HERO_TRIAGE_WIDGET_WIDTH = {
 } as const;
 
 /**
- * 3D tilt — matches the Linear-style reference: card tilts backward
- * (top away from viewer, rotateX dominant) with a very slight right-side
- * lean (rotateY negative, right goes back). No heavy side tilt.
+ * 3D tilt — per ChatGPT analysis of the Linear reference screenshot:
+ *   Z: -14° CCW (the dominant visible angle)
+ *   X:  65° pitch back (top edge recedes into screen)
+ *   Y:   2° yaw (almost none)
+ *   perspective: 1300px (strong foreshortening)
+ * Order: rotateZ first (2D CCW angle), then rotateX (pitch), then rotateY.
  */
 export const HERO_TRIAGE_TILT = {
-  mobile: "perspective(900px) rotateX(20deg) rotateY(-8deg)",
+  mobile: "perspective(1300px) rotateZ(-14deg) rotateX(65deg) rotateY(2deg)",
   desktop: "perspective(1400px) rotateX(8deg) rotateY(18deg)",
 } as const;
 
