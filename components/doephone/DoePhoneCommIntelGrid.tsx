@@ -219,8 +219,8 @@ export function DoePhoneCommIntelGrid() {
         transform: "perspective(540px) rotateX(46deg)",
         transformOrigin: "50% 50%",
         transformStyle: "preserve-3d",
-        WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 30%, black 80%, transparent 100%)",
-        maskImage: "linear-gradient(to bottom, transparent 0%, black 30%, black 80%, transparent 100%)",
+        WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.08) 12%, rgba(0,0,0,0.35) 24%, rgba(0,0,0,0.72) 38%, black 52%, black 80%, transparent 100%)",
+        maskImage: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.08) 12%, rgba(0,0,0,0.35) 24%, rgba(0,0,0,0.72) 38%, black 52%, black 80%, transparent 100%)",
       }}
     >
       <div className="grid w-full grid-cols-3 gap-[clamp(0.45rem,1.2vmin,0.75rem)]">
