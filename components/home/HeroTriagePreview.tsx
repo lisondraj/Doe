@@ -7,6 +7,7 @@ import {
   HERO_TRIAGE_PANEL_RIGHT,
   HERO_TRIAGE_PANEL_WIDTH,
   HERO_TRIAGE_TILT,
+  HERO_TRIAGE_WIDGET_WIDTH,
 } from "@/lib/home/hero-triage-preview-styles";
 import type { CSSProperties } from "react";
 
@@ -17,8 +18,18 @@ const TRIAGE = {
   description:
     "After launch, the splash screen remains visible indefinitely with no cha… The app does not progress to the primary dashboard or menus.",
   widgetTitle: "Triage Intelligence",
-  widgetStatus: "Looking for labels…",
 } as const;
+
+const TRIAGE_SUGGESTIONS = [
+  { label: "nan", dot: null, dotShape: null },
+  { label: "Mobile App Refactor", dot: "#4B8EE8", dotShape: "square" as const },
+  { label: "Slack", dot: "#E01E5A", dotShape: "circle" as const },
+] as const;
+
+const TRIAGE_RELATIONS = [
+  { kind: "Duplicate of", id: "ENG-1419", title: "Loading spinner keeps running on startup" },
+  { kind: "Related to", id: "ENG-1828", title: "Mobile app takes a long time to open" },
+] as const;
 
 function TriageStatusIcon() {
   return (
@@ -50,6 +61,53 @@ function TriageSparkleIcon() {
         strokeLinecap="round"
       />
     </svg>
+  );
+}
+
+function IssueCircleIcon() {
+  return (
+    <svg width="0.72em" height="0.72em" viewBox="0 0 14 14" fill="none" className="shrink-0" aria-hidden>
+      <circle cx="7" cy="7" r="5.6" stroke="rgba(255,255,255,0.35)" strokeWidth="1.2" />
+    </svg>
+  );
+}
+
+function SuggestionChip({
+  label,
+  dot,
+  dotShape,
+}: {
+  label: string;
+  dot: string | null;
+  dotShape: "circle" | "square" | null;
+}) {
+  return (
+    <span
+      className="inline-flex shrink-0 items-center gap-[0.28em] rounded-[0.3em] px-[0.42em] py-[0.14em]"
+      style={{
+        background: dot
+          ? `color-mix(in srgb, ${dot} 20%, rgba(255,255,255,0.08))`
+          : "rgba(255,255,255,0.12)",
+        color: "rgba(255,255,255,0.76)",
+        fontSize: "inherit",
+        fontWeight: 500,
+        lineHeight: 1.25,
+        whiteSpace: "nowrap",
+      }}
+    >
+      {dot && (
+        <span
+          style={{
+            width: "0.46em",
+            height: "0.46em",
+            borderRadius: dotShape === "circle" ? "50%" : "0.1em",
+            background: dot,
+            flexShrink: 0,
+          }}
+        />
+      )}
+      {label}
+    </span>
   );
 }
 
@@ -93,7 +151,7 @@ export function HeroTriagePreview({
     <div
       className={`pointer-events-none absolute select-none ${className}`}
       style={{
-        top: isMobile ? "34%" : "30%",
+        top: isMobile ? "32%" : "30%",
         right: isMobile ? HERO_TRIAGE_PANEL_RIGHT.mobile : HERO_TRIAGE_PANEL_RIGHT.desktop,
         width: isMobile ? HERO_TRIAGE_PANEL_WIDTH.mobile : HERO_TRIAGE_PANEL_WIDTH.desktop,
         ...style,
@@ -117,6 +175,7 @@ export function HeroTriagePreview({
             padding: isMobile ? "1.1rem 1.15rem 1.25rem" : "1.45rem 1.55rem 1.65rem",
           }}
         >
+          {/* Breadcrumb */}
           <div
             className="flex items-center gap-[0.5em] font-medium tracking-[-0.015em]"
             style={{
@@ -143,6 +202,7 @@ export function HeroTriagePreview({
             <span>{TRIAGE.breadcrumbLeaf}</span>
           </div>
 
+          {/* Title + widget + description stack */}
           <div className="relative mt-[0.85rem]">
             <h2
               className="relative z-[1] max-w-[13ch] text-left font-semibold tracking-[-0.04em]"
@@ -166,12 +226,13 @@ export function HeroTriagePreview({
               {TRIAGE.description}
             </p>
 
+            {/* Triage Intelligence floating widget */}
             <div
               className={`absolute z-[2] ${HERO_TRIAGE_INNER_GLASS_TW}`}
               style={{
                 left: 0,
-                top: isMobile ? "1.55rem" : "1.85rem",
-                width: isMobile ? "min(16.5rem, 88%)" : "min(19.5rem, 68%)",
+                top: isMobile ? "1.45rem" : "1.85rem",
+                width: isMobile ? HERO_TRIAGE_WIDGET_WIDTH.mobile : HERO_TRIAGE_WIDGET_WIDTH.desktop,
                 borderRadius: "0.82rem",
                 background: DOEPHONE_SHORTCUT_KEY_GRADIENT,
                 border: `1px solid ${HERO_TRIAGE_GLASS.widgetBorder}`,
@@ -179,8 +240,9 @@ export function HeroTriagePreview({
                 overflow: "hidden",
               }}
             >
+              {/* Widget header */}
               <div
-                className="flex items-center gap-[0.48em] px-[0.9em] pb-[0.35em] pt-[0.68em] font-medium tracking-[-0.015em]"
+                className="flex items-center gap-[0.48em] px-[0.9em] pb-[0.32em] pt-[0.68em] font-medium tracking-[-0.015em]"
                 style={{
                   color: "rgba(255,255,255,0.88)",
                   fontSize: isMobile ? "0.78rem" : "0.84rem",
@@ -191,25 +253,80 @@ export function HeroTriagePreview({
                 </span>
                 <span>{TRIAGE.widgetTitle}</span>
               </div>
+
+              {/* Widget body rows */}
               <div
-                className={HERO_TRIAGE_INNER_GLASS_TW}
                 style={{
                   margin: "0 0.68em 0.68em",
-                  padding: "0.58em 0.78em",
                   borderRadius: "0.58rem",
                   background:
                     "linear-gradient(145deg, rgba(255,255,255,0.07) 0%, rgba(210,119,76,0.05) 100%)",
-                  color: HERO_TRIAGE_GLASS.status,
-                  fontSize: isMobile ? "0.76rem" : "0.82rem",
-                  fontWeight: 500,
                   boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
+                  padding: isMobile ? "0.52em 0.72em" : "0.58em 0.78em",
+                  fontSize: isMobile ? "0.68rem" : "0.73rem",
+                  fontWeight: 500,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.46em",
                 }}
               >
-                {TRIAGE.widgetStatus}
+                {/* Suggestions row */}
+                <div className="flex items-start gap-[0.52em]">
+                  <span
+                    className="shrink-0 pt-[0.1em]"
+                    style={{
+                      color: HERO_TRIAGE_GLASS.activity,
+                      minWidth: isMobile ? "4.8em" : "5.2em",
+                    }}
+                  >
+                    Suggestions
+                  </span>
+                  <div className="flex flex-wrap gap-[0.28em]">
+                    {TRIAGE_SUGGESTIONS.map((s) => (
+                      <SuggestionChip
+                        key={s.label}
+                        label={s.label}
+                        dot={s.dot}
+                        dotShape={s.dotShape}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Duplicate of / Related to rows */}
+                {TRIAGE_RELATIONS.map((rel) => (
+                  <div key={rel.id} className="flex items-center gap-[0.52em] min-w-0">
+                    <span
+                      className="shrink-0"
+                      style={{
+                        color: HERO_TRIAGE_GLASS.activity,
+                        minWidth: isMobile ? "4.8em" : "5.2em",
+                      }}
+                    >
+                      {rel.kind}
+                    </span>
+                    <div className="flex min-w-0 items-center gap-[0.38em]">
+                      <IssueCircleIcon />
+                      <span
+                        className="shrink-0"
+                        style={{ color: "rgba(255,255,255,0.46)", fontWeight: 600 }}
+                      >
+                        {rel.id}
+                      </span>
+                      <span
+                        className="truncate"
+                        style={{ color: "rgba(255,255,255,0.66)" }}
+                      >
+                        {rel.title}
+                      </span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
 
+          {/* Activity section */}
           <div className="mt-[1.35rem]">
             <p
               className="mb-[0.72rem] text-left font-medium tracking-[-0.015em]"

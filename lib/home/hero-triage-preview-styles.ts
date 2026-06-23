@@ -9,20 +9,39 @@ export {
   DOEPHONE_SHORTCUT_PILL_GRADIENT,
 };
 
-/** Card width — half bleeds past the right viewport edge. */
+/**
+ * Card width — right side bleeds past the viewport edge.
+ * Mobile: card is wide enough that ~50% is visible; the 3D tilt pulls the left
+ * portion forward so the breadcrumb / title land close to the left viewport edge.
+ */
 export const HERO_TRIAGE_PANEL_WIDTH = {
-  mobile: "168vw",
+  mobile: "162vw",
   desktop: "min(108rem, 138vw)",
 } as const;
 
+/**
+ * Negative right offset — controls how far the card bleeds past the right edge.
+ * Mobile value puts the card's CSS left edge at ~8vw so the 3D perspective
+ * transform leaves the breadcrumb/title fully in frame.
+ */
 export const HERO_TRIAGE_PANEL_RIGHT = {
-  mobile: "-84vw",
+  mobile: "-70vw",
   desktop: "calc(min(108rem, 138vw) / -2)",
 } as const;
 
-/** Shared 3D tilt — one transform on the card shell; inner content stays flat in the same plane. */
+/** Triage Intelligence floating widget width inside the card. */
+export const HERO_TRIAGE_WIDGET_WIDTH = {
+  mobile: "min(22rem, 94%)",
+  desktop: "min(22rem, 68%)",
+} as const;
+
+/**
+ * 3D tilt — single transform on the card shell; inner content stays flat in
+ * the same plane. Mobile has slightly stronger perspective to match the
+ * oblique camera angle shown in the reference screenshots.
+ */
 export const HERO_TRIAGE_TILT = {
-  mobile: "perspective(1200px) rotateX(9deg) rotateY(17deg)",
+  mobile: "perspective(1050px) rotateX(10deg) rotateY(20deg)",
   desktop: "perspective(1400px) rotateX(8deg) rotateY(18deg)",
 } as const;
 
