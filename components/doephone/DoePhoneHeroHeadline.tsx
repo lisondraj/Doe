@@ -151,8 +151,11 @@ export function DoePhoneHeroHeadline() {
       <span className="doephone-hero-headline-line block">Intelligence</span>
       <span className="doephone-hero-headline-line doephone-hero-headline-line--second doephone-hero-second-line flex min-w-0 max-w-full items-baseline justify-start whitespace-nowrap">
         <span className="shrink-0">built for</span>
-        <span className="doephone-hero-career-slot relative inline-grid align-baseline leading-none">
-          <span aria-hidden className={`invisible col-start-1 row-start-1 select-none ${DOEPHONE_DISPLAY_WEIGHT_TW}`}>
+        <span className="doephone-hero-career-slot relative inline-grid align-baseline">
+          <span
+            aria-hidden
+            className={`invisible col-start-1 row-start-1 block select-none ${DOEPHONE_DISPLAY_WEIGHT_TW}`}
+          >
             {DOEPHONE_HERO_CAREER_WIDTH_SAMPLE}
           </span>
           <span className="doephone-hero-career-clip col-start-1 row-start-1">

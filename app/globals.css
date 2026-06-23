@@ -354,11 +354,12 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
 
 .doephone-hero-career-slot {
   min-width: 0;
+  line-height: 1.1;
 }
 
 .doephone-hero-career-clip {
-  --doephone-career-slot: 1em;
-  height: 1em;
+  --doephone-career-slot: 1lh;
+  height: var(--doephone-career-slot);
   overflow: hidden;
   isolation: isolate;
 }
@@ -373,12 +374,12 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
 }
 
 .doephone-hero-career-word {
-  display: block;
+  display: flex;
+  align-items: center;
   height: var(--doephone-career-slot);
-  line-height: 1;
-  font-weight: 300;
+  line-height: var(--doephone-career-slot);
+  font-weight: 350;
   font-style: normal;
-  overflow: hidden;
 }
 
 @keyframes doephone-hero-headline-in {
