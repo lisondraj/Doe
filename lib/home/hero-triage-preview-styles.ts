@@ -31,7 +31,7 @@ export {
  * past the viewport edge and is intentionally not shown.
  */
 export const HERO_TRIAGE_PANEL_WIDTH = {
-  mobile: "168vw",
+  mobile: "178vw",
   desktop: "min(108rem, 138vw)",
 } as const;
 
@@ -41,7 +41,7 @@ export const HERO_TRIAGE_PANEL_WIDTH = {
  * Desktop still uses right-based offset.
  */
 export const HERO_TRIAGE_PANEL_LEFT = {
-  mobile: "9vw",
+  mobile: "14vw",
 } as const;
 
 export const HERO_TRIAGE_PANEL_RIGHT = {

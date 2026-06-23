@@ -156,7 +156,7 @@ export function HeroTriagePreview({
     <div
       className={`pointer-events-none absolute select-none ${className}`}
       style={{
-        top: isMobile ? "55%" : "30%",
+        top: isMobile ? "45%" : "30%",
         ...(isMobile
           ? { left: HERO_TRIAGE_PANEL_LEFT.mobile }
           : { right: HERO_TRIAGE_PANEL_RIGHT.desktop }),
@@ -179,7 +179,7 @@ export function HeroTriagePreview({
             background: HERO_TRIAGE_PANEL_GRADIENT,
             border: `1px solid ${HERO_TRIAGE_GLASS.panelBorder}`,
             boxShadow: HERO_TRIAGE_GLASS.panelShadow,
-            padding: isMobile ? "2.7rem 3.0rem 3.2rem" : "1.45rem 1.55rem 1.65rem",
+            padding: isMobile ? "3.0rem 3.3rem 3.5rem" : "1.45rem 1.55rem 1.65rem",
           }}
         >
           {/* Breadcrumb */}
@@ -187,7 +187,7 @@ export function HeroTriagePreview({
             className="flex items-center gap-[0.5em] font-medium tracking-[-0.015em]"
             style={{
               color: HERO_TRIAGE_GLASS.breadcrumb,
-              fontSize: isMobile ? "1.6rem" : "0.88rem",
+              fontSize: isMobile ? "1.78rem" : "0.88rem",
             }}
           >
             <TriageStatusIcon />
@@ -215,7 +215,7 @@ export function HeroTriagePreview({
               className="relative z-[1] max-w-[13ch] text-left font-semibold tracking-[-0.04em]"
               style={{
                 color: HERO_TRIAGE_GLASS.title,
-                fontSize: isMobile ? "clamp(3.8rem, 16.5vw, 5.6rem)" : "clamp(2.05rem, 3.2vw, 3.15rem)",
+                fontSize: isMobile ? "clamp(4.3rem, 18.5vw, 6.2rem)" : "clamp(2.05rem, 3.2vw, 3.15rem)",
                 lineHeight: 1.08,
               }}
             >
@@ -226,7 +226,7 @@ export function HeroTriagePreview({
               className="relative z-[1] mt-[0.82rem] max-w-[32ch] text-left font-normal tracking-[-0.015em]"
               style={{
                 color: HERO_TRIAGE_GLASS.body,
-                fontSize: isMobile ? "1.7rem" : "0.94rem",
+                fontSize: isMobile ? "1.9rem" : "0.94rem",
                 lineHeight: 1.55,
               }}
             >
@@ -252,7 +252,7 @@ export function HeroTriagePreview({
                 className="flex items-center gap-[0.46em] px-[0.88em] pb-[0.3em] pt-[0.65em] font-medium tracking-[-0.015em]"
                 style={{
                   color: "rgba(255,255,255,0.86)",
-                  fontSize: isMobile ? "1.52rem" : "0.84rem",
+                  fontSize: isMobile ? "1.7rem" : "0.84rem",
                 }}
               >
                 <span className="text-white/85">
@@ -268,8 +268,8 @@ export function HeroTriagePreview({
                   borderRadius: "0.7rem",
                   background: HERO_TRIAGE_WIDGET_BODY_GRADIENT,
                   border: "1px solid rgba(255,255,255,0.06)",
-                  padding: isMobile ? "0.8em 1.0em" : "0.58em 0.78em",
-                  fontSize: isMobile ? "1.32rem" : "0.72rem",
+                  padding: isMobile ? "0.88em 1.1em" : "0.58em 0.78em",
+                  fontSize: isMobile ? "1.48rem" : "0.72rem",
                   fontWeight: 500,
                   display: "flex",
                   flexDirection: "column",
@@ -332,7 +332,7 @@ export function HeroTriagePreview({
               className="mb-[0.68rem] text-left font-medium tracking-[-0.015em]"
               style={{
                 color: HERO_TRIAGE_GLASS.activity,
-                fontSize: isMobile ? "1.52rem" : "0.82rem",
+                fontSize: isMobile ? "1.7rem" : "0.82rem",
               }}
             >
               Activity
