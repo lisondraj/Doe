@@ -34,10 +34,12 @@ html:has(.doephone-mobile-root) {
   background-color: #f7f6f3;
   --app-vw: 100vw;
   --app-vh: 100lvh;
+  overscroll-behavior-y: none;
 }
 
 html:has(.doephone-mobile-root) body {
   background-color: #f7f6f3;
+  overscroll-behavior-y: none;
 }
 
 html:has(.blog-mobile-root) {
@@ -329,6 +331,8 @@ body.mainpage-route {
   transform: translateY(2.25rem);
   animation: doephone-hero-triage-in 1.35s cubic-bezier(0.22, 1, 0.36, 1) 4.1s both;
   will-change: opacity, filter, transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 @keyframes doephone-hero-triage-in {

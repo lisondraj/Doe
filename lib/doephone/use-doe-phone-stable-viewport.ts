@@ -1,13 +1,15 @@
 "use client";
 
+import { vbIsVisualViewportPinching } from "@/lib/home/vertical-bento";
 import { useLayoutEffect } from "react";
 
 const SHRINK_DEFER_PX = 120;
 const SETTLE_MS = 220;
 
 /**
- * Locks `--app-vh` / `--app-vw` so iOS Safari URL-bar show/hide does not reflow /doephone.
- * Height only shrinks after scroll settles or when the shrink exceeds a threshold.
+ * Locks `--app-vh` / `--app-vw` so iOS Safari URL-bar show/hide and rubber-band
+ * overscroll do not reflow /doephone. Height never grows after the first commit
+ * except on orientation change; it only shrinks after scroll settles.
  */
 export function useDoePhoneStableViewport() {
   useLayoutEffect(() => {
@@ -25,8 +27,21 @@ export function useDoePhoneStableViewport() {
       const vv = window.visualViewport;
       const innerW = window.innerWidth;
       const innerH = window.innerHeight;
-      const width = vv && vv.width > 0 ? Math.round(vv.width) : innerW;
-      const height = Math.round(Math.max(innerH, vv?.height ?? 0));
+
+      if (vbIsVisualViewportPinching()) {
+        return {
+          width: Math.max(innerW, 280),
+          height: Math.max(innerH, 320),
+        };
+      }
+
+      const width =
+        vv && vv.width > 0 && vv.width <= innerW + 16 ? Math.round(vv.width) : innerW;
+      const height =
+        vv && vv.height >= 240 && vv.height <= innerH + 16
+          ? Math.round(vv.height)
+          : innerH;
+
       return {
         width: Math.max(width, 280),
         height: Math.max(height, 320),
@@ -45,16 +60,11 @@ export function useDoePhoneStableViewport() {
 
       if (next.width !== stable.width) {
         stable.width = next.width;
-        stable.height = Math.max(stable.height, next.height);
         apply(stable.width, stable.height);
         return;
       }
 
-      if (next.height >= stable.height) {
-        stable.height = next.height;
-        apply(stable.width, stable.height);
-        return;
-      }
+      if (next.height >= stable.height) return;
 
       const shrinkPx = stable.height - next.height;
       if (scrollActive || shrinkPx < SHRINK_DEFER_PX) return;
@@ -67,7 +77,7 @@ export function useDoePhoneStableViewport() {
       commit(read(), force);
     };
 
-    const onScroll = () => {
+    const markScrollActive = () => {
       scrollActive = true;
       if (scrollQuietTimer !== null) window.clearTimeout(scrollQuietTimer);
       scrollQuietTimer = window.setTimeout(() => {
@@ -87,19 +97,24 @@ export function useDoePhoneStableViewport() {
       measure(true);
     };
 
-    const onViewportResize = () => measure(false);
+    const onViewportResize = () => {
+      if (vbIsVisualViewportPinching()) return;
+      measure(false);
+    };
 
     measure(true);
     window.addEventListener("orientationchange", onOrientation);
     window.addEventListener("resize", onViewportResize);
     window.visualViewport?.addEventListener("resize", onViewportResize);
-    window.addEventListener("scroll", onScroll, { passive: true });
+    window.visualViewport?.addEventListener("scroll", markScrollActive);
+    window.addEventListener("scroll", markScrollActive, { passive: true });
 
     return () => {
       window.removeEventListener("orientationchange", onOrientation);
       window.removeEventListener("resize", onViewportResize);
       window.visualViewport?.removeEventListener("resize", onViewportResize);
-      window.removeEventListener("scroll", onScroll);
+      window.visualViewport?.removeEventListener("scroll", markScrollActive);
+      window.removeEventListener("scroll", markScrollActive);
       if (settleTimer !== null) window.clearTimeout(settleTimer);
       if (scrollQuietTimer !== null) window.clearTimeout(scrollQuietTimer);
     };
