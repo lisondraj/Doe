@@ -69,6 +69,13 @@ export const BLOG_LANDING_HERO_BOX_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} bor
 export const BLOG_LANDING_HERO_CORNER_PAD =
   "px-8 pb-8 iphone-page:px-[clamp(2rem,1.65rem+1.45vmin,2.6rem)] iphone-page:pb-[clamp(2rem,1.65rem+1.45vmin,2.6rem)]";
 
+/** Top-left inset inside the landing hero box (matches horizontal corner padding). */
+export const BLOG_LANDING_HERO_TOP_CORNER_PAD =
+  "px-8 pt-8 iphone-page:px-[clamp(2rem,1.65rem+1.45vmin,2.6rem)] iphone-page:pt-[clamp(2rem,1.65rem+1.45vmin,2.6rem)]";
+
+/** Small “BLOG” label — top-left inside the landing hero box. */
+export const BLOG_LANDING_HERO_LABEL_TW = `absolute top-0 left-0 z-[2] text-left font-light uppercase leading-none tracking-[0.3em] text-[#1E343A]/65 text-[clamp(0.68rem,0.58rem+0.42vmin,0.8rem)] iphone-page:text-[clamp(0.74rem,0.62rem+0.48vmin,0.88rem)] ${BLOG_LANDING_HERO_TOP_CORNER_PAD} ${dmSans.className}`;
+
 /** Lora headline anchored bottom-left inside the landing hero box. */
 export const BLOG_LANDING_HERO_HEADLINE_TW = `absolute bottom-0 left-0 z-[2] pt-0 text-left font-normal leading-[1.06] tracking-[-0.03em] text-[#1E343A] text-[clamp(2.2rem,8vw,3.5rem)] iphone-page:text-[clamp(2.45rem,1.85rem+3.5vmin,4.3rem)] ${BLOG_LANDING_HERO_CORNER_PAD} ${lora.className}`;
 
