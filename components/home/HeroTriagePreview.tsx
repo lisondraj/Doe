@@ -155,7 +155,7 @@ export function HeroTriagePreview({
     <div
       className={`pointer-events-none absolute select-none ${className}`}
       style={{
-        top: isMobile ? "26%" : "30%",
+        top: isMobile ? "58%" : "30%",
         right: isMobile ? HERO_TRIAGE_PANEL_RIGHT.mobile : HERO_TRIAGE_PANEL_RIGHT.desktop,
         width: isMobile ? HERO_TRIAGE_PANEL_WIDTH.mobile : HERO_TRIAGE_PANEL_WIDTH.desktop,
         ...style,
