@@ -41,11 +41,11 @@ html:has(.doephone-mobile-root) body {
 }
 
 /*
- * /blog — same 430px-reference rem scale as /doephone so Pro Max stays the
- * design pivot and narrower in-app browsers (LinkedIn, etc.) shrink evenly.
+ * /blog — measured scale via --blog-scale (set by useBlogPhoneScale on .blog-mobile-root).
+ * Pro Max (430px) = scale 1; narrower in-app WebViews shrink evenly.
  */
 html:has(.blog-mobile-root) {
-  font-size: min(16px, 3.7209vw);
+  font-size: calc(16px * var(--blog-scale, 1));
   background-color: #f7f6f3;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
@@ -63,10 +63,42 @@ html:has(.blog-mobile-root) body {
   text-size-adjust: 100%;
 }
 
-/** Landing hero — lock text metrics so in-app browsers cannot inflate headline into filters. */
+/** Landing hero — container queries + overflow guard. */
+.blog-landing-hero {
+  container-type: inline-size;
+  container-name: hero;
+}
+
+.blog-landing-hero-footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 0.75rem;
+}
+
+@container hero (max-width: 22rem) {
+  .blog-landing-hero-footer {
+    grid-template-columns: 1fr;
+  }
+
+  .blog-landing-hero-filters {
+    justify-self: end;
+    order: -1;
+  }
+
+  .blog-landing-hero-headline {
+    max-width: 100%;
+  }
+}
+
 .blog-landing-hero-headline {
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
+
+.blog-landing-hero-filters {
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
 }
 
 .doephone-mobile-root {

@@ -36,8 +36,8 @@ export const BLOG_LANDING_EXCERPT_TW = `text-[clamp(1.32rem,1.12rem+0.9vmin,1.58
 /** Card caption under feature visuals — closing section outside copy. */
 export const BLOG_CARD_TITLE_TW = `${DOEPHONE_SECTION_FOOTER_OUTSIDE_CAPTION_TW} text-left text-gray-700`;
 
-/** Landing list card title — DM Sans, close to Inter/Suisse with full weight range. */
-export const BLOG_LANDING_CARD_TITLE_TW = `text-[2rem] iphone-page:text-[clamp(1.85rem,1.12rem+3.1vmin,3.05rem)] font-normal leading-snug tracking-tight text-gray-700 ${dmSans.className}`;
+/** Landing list card title — DM Sans, scales with blog root rem. */
+export const BLOG_LANDING_CARD_TITLE_TW = `text-[1.85rem] iphone-page:text-[2.05rem] font-normal leading-snug tracking-tight text-gray-700 ${dmSans.className}`;
 
 /** Tight gap between landing card title and author/date. */
 export const BLOG_LANDING_TITLE_META_GAP = "mt-1 iphone-page:mt-[clamp(0.2rem,0.12rem+0.35vmin,0.35rem)]";
@@ -65,15 +65,18 @@ export const BLOG_LANDING_HERO_HEIGHT = "h-[66.667svh] min-h-[66.667svh]";
 
 export const BLOG_LANDING_HERO_BOX_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} border border-[#D9D4CC] bg-[#EBE7E0]`;
 
+/** Container for hero inline-size queries (stack footer when tight). */
+export const BLOG_LANDING_HERO_CONTAINER_TW = "blog-landing-hero @container/hero [container-type:inline-size]";
+
 /** Shared bottom padding/inset for the hero footer row (headline + filters). */
 export const BLOG_LANDING_HERO_CORNER_PAD =
   "px-8 pb-8 iphone-page:px-[clamp(2rem,1.65rem+1.45vmin,2.6rem)] iphone-page:pb-[clamp(2rem,1.65rem+1.45vmin,2.6rem)]";
 
-/** Bottom row — flex keeps headline and filters in separate columns (no overlap). */
-export const BLOG_LANDING_HERO_FOOTER_TW = `absolute inset-x-0 bottom-0 z-[2] flex items-end justify-between gap-3 iphone-page:gap-4 ${BLOG_LANDING_HERO_CORNER_PAD}`;
+/** Bottom row — CSS grid keeps headline and filters in separate columns. */
+export const BLOG_LANDING_HERO_FOOTER_TW = `blog-landing-hero-footer absolute inset-x-0 bottom-0 z-[2] iphone-page:gap-4 ${BLOG_LANDING_HERO_CORNER_PAD}`;
 
-/** Lora headline — lives inside the flex footer; min-w-0 so text wraps within its column. */
-export const BLOG_LANDING_HERO_HEADLINE_TW = `blog-landing-hero-headline min-w-0 flex-1 pt-0 text-left font-normal leading-[1.06] tracking-[-0.03em] text-[#1E343A] text-[clamp(2.2rem,8vw,3.5rem)] iphone-page:text-[clamp(2.45rem,1.85rem+3.5vmin,4.3rem)] ${lora.className}`;
+/** Lora headline — rem-only base size; JS fit shrinks to grid cell width. */
+export const BLOG_LANDING_HERO_HEADLINE_TW = `blog-landing-hero-headline min-w-0 overflow-hidden pt-0 text-left font-normal leading-[1.06] tracking-[-0.03em] text-[#1E343A] text-[2.2rem] iphone-page:text-[2.85rem] ${lora.className}`;
 
 /** Gap between landing hero and article list. */
 export const BLOG_LANDING_HERO_GAP = DOEPHONE_SECTION_CAROUSEL_MENU_GAP;
