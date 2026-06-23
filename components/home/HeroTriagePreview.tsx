@@ -6,234 +6,283 @@ import {
   HERO_TRIAGE_PANEL_WIDTH,
   HERO_TRIAGE_TILT,
 } from "@/lib/home/hero-triage-preview-styles";
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
-/* ─── Light theme tokens ─── */
-const L = {
-  bg: "linear-gradient(160deg, rgba(253,251,249,0.98) 0%, rgba(247,244,240,0.97) 100%)",
-  border: "rgba(0,0,0,0.07)",
-  header: "rgba(20,16,12,0.95)",
-  headerSub: "rgba(80,68,58,0.50)",
-  badgeBg: "rgba(196,122,90,0.14)",
-  badgeText: "#B8673C",
-  senderUnread: "rgba(18,14,10,0.93)",
-  senderRead: "rgba(58,48,40,0.58)",
-  subject: "rgba(22,18,14,0.78)",
-  subjectRead: "rgba(80,68,58,0.48)",
-  preview: "rgba(100,88,76,0.52)",
-  time: "rgba(120,105,90,0.50)",
-  divider: "rgba(0,0,0,0.05)",
-  dot: "#C47A5A",
-  tagBg: "rgba(196,122,90,0.10)",
-  tagText: "#A8623E",
-  avatarBg: "rgba(196,122,90,0.12)",
-  avatarText: "#A86040",
-  searchBg: "rgba(0,0,0,0.04)",
-  searchBorder: "rgba(0,0,0,0.07)",
-  searchText: "rgba(100,88,76,0.50)",
-  sectionLabel: "rgba(110,95,82,0.45)",
+/* ─── Reference-style tokens (Linear / modern inbox) ─── */
+const C = {
+  shell: "#FFFFFF",
+  shellBorder: "rgba(0,0,0,0.06)",
+  navBg: "#FAFAFA",
+  navIcon: "rgba(0,0,0,0.38)",
+  navActive: "rgba(0,0,0,0.88)",
+  navActiveBg: "rgba(0,0,0,0.05)",
+  toolbarBg: "#FFFFFF",
+  pillBg: "rgba(0,0,0,0.06)",
+  pillText: "rgba(0,0,0,0.72)",
+  rowText: "rgba(0,0,0,0.55)",
+  rowMuted: "rgba(0,0,0,0.38)",
+  divider: "rgba(0,0,0,0.06)",
+  selected: "#2B6FE8",
+  selectedPill: "rgba(255,255,255,0.22)",
+  selectedText: "#FFFFFF",
+  badgeBg: "rgba(0,0,0,0.08)",
+  badgeText: "rgba(0,0,0,0.55)",
+  detailBg: "#FFFFFF",
+  detailBody: "rgba(0,0,0,0.62)",
+  detailMuted: "rgba(0,0,0,0.42)",
 } as const;
 
-/* ─── Inbox data ─── */
-const EMAILS = [
+type InboxRow = {
+  id: string;
+  sender: string;
+  initials: string;
+  preview: string;
+  iconBg: string;
+  iconColor: string;
+  selected?: boolean;
+};
+
+const INBOX_ROWS: InboxRow[] = [
   {
+    id: "pharmacy",
     sender: "Pharmacy",
     initials: "Rx",
-    subject: "Refill — Metformin 500mg",
-    preview: "Patient J. Martinez requested a 90-day refill.",
-    time: "9:41 AM",
-    unread: true,
-    tag: "Rx",
-    today: true,
+    preview: "Refill request — Metformin 500mg for J. Martinez",
+    iconBg: "#E8F4EC",
+    iconColor: "#3D8B5F",
   },
   {
+    id: "labcorp",
     sender: "LabCorp",
     initials: "LC",
-    subject: "Critical: K⁺ 6.2 mEq/L",
-    preview: "Patient A. Chen. Immediate review required.",
-    time: "8:55 AM",
-    unread: true,
-    tag: "Lab",
-    today: true,
+    preview: "Critical result: K⁺ 6.2 mEq/L — patient A. Chen",
+    iconBg: "#FDEDEC",
+    iconColor: "#C0392B",
   },
   {
+    id: "nurse",
     sender: "Nurse Patel",
     initials: "NP",
-    subject: "Room 308 — post-op stable",
-    preview: "BP 122/76, HR 68. Patient requesting discharge timeline.",
-    time: "8:12 AM",
-    unread: false,
-    tag: null,
-    today: true,
+    preview: "Room 308 post-op stable — discharge timeline requested",
+    iconBg: "#EBF2FA",
+    iconColor: "#3A6FA8",
   },
   {
-    sender: "Patient Portal",
-    initials: "PP",
-    subject: "Re: chest tightness follow-up",
-    preview: "Dr. Singh, symptoms have persisted since Tuesday.",
-    time: "Yesterday",
-    unread: false,
-    tag: null,
-    today: false,
+    id: "patient",
+    sender: "M. Rodriguez",
+    initials: "MR",
+    preview: "Need to schedule a follow-up visit this week",
+    iconBg: "#EEF0FF",
+    iconColor: "#4A56B8",
+    selected: true,
   },
   {
+    id: "aetna",
     sender: "Aetna",
     initials: "AE",
-    subject: "Pre-auth approved — PT #8821",
-    preview: "12 sessions of physical therapy authorized.",
-    time: "Yesterday",
-    unread: false,
-    tag: null,
-    today: false,
+    preview: "Pre-authorization approved for PT #8821",
+    iconBg: "#F5F0EA",
+    iconColor: "#9A7344",
   },
-] as const;
+];
 
-/* ─── Icons ─── */
-function ComposeIcon({ size }: { size: string }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 16 16" fill="none" aria-hidden>
-      <path
-        d="M11.5 2.5 13.5 4.5l-7 7H4.5v-2l7-7Z"
-        stroke={L.headerSub}
-        strokeWidth="1.1"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
+const SELECTED = INBOX_ROWS.find((r) => r.selected)!;
 
-function SearchIcon({ size, color }: { size: string; color: string }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 14 14" fill="none" aria-hidden>
-      <circle cx="6" cy="6" r="4" stroke={color} strokeWidth="1.2" />
-      <path d="M9 9 12 12" stroke={color} strokeWidth="1.2" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-/* ─── Avatar ─── */
-function Avatar({ initials, size }: { initials: string; size: string }) {
+function NavIcon({
+  children,
+  active = false,
+  mobile,
+}: {
+  children: ReactNode;
+  active?: boolean;
+  mobile: boolean;
+}) {
+  const sz = mobile ? "3.1rem" : "2rem";
   return (
     <div
-      className="shrink-0 flex items-center justify-center"
+      className="flex items-center justify-center"
       style={{
-        width: size,
-        height: size,
-        borderRadius: "50%",
-        background: L.avatarBg,
-        color: L.avatarText,
-        fontWeight: 600,
-        fontSize: `calc(${size} * 0.38)`,
-        letterSpacing: "0.01em",
+        width: sz,
+        height: sz,
+        borderRadius: mobile ? "0.85rem" : "0.55rem",
+        color: active ? C.navActive : C.navIcon,
+        background: active ? C.navActiveBg : "transparent",
       }}
     >
-      {initials}
+      {children}
     </div>
   );
 }
 
-/* ─── Email row ─── */
-function EmailRow({
-  email,
-  last,
-  mobile,
-}: {
-  email: typeof EMAILS[number];
-  last: boolean;
-  mobile: boolean;
-}) {
-  const fs = mobile
-    ? { sender: "1.24rem", subject: "1.08rem", preview: "0.94rem", time: "0.94rem", tag: "0.80rem" }
-    : { sender: "0.80rem", subject: "0.72rem", preview: "0.66rem", time: "0.66rem", tag: "0.58rem" };
-  const avatarSize = mobile ? "2.5rem" : "1.6rem";
-
+function InboxIcon({ d, mobile }: { d: string; mobile: boolean }) {
+  const s = mobile ? 22 : 14;
   return (
-    <div>
-      <div
-        className="flex items-start"
-        style={{ gap: mobile ? "0.8rem" : "0.52rem", padding: mobile ? "0.85rem 0" : "0.50rem 0" }}
-      >
-        {/* Avatar circle */}
-        <Avatar initials={email.initials} size={avatarSize} />
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path d={d} stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
 
+function SenderMark({ row, mobile }: { row: InboxRow; mobile: boolean }) {
+  const sz = mobile ? "2.35rem" : "1.45rem";
+  return (
+    <div
+      className="flex shrink-0 items-center justify-center font-medium"
+      style={{
+        width: sz,
+        height: sz,
+        borderRadius: "50%",
+        background: row.iconBg,
+        color: row.iconColor,
+        fontSize: mobile ? "0.82rem" : "0.52rem",
+      }}
+    >
+      {row.initials}
+    </div>
+  );
+}
+
+function InboxListRow({ row, mobile }: { row: InboxRow; mobile: boolean }) {
+  const fs = mobile ? "1.02rem" : "0.66rem";
+  const pillFs = mobile ? "0.92rem" : "0.58rem";
+  const pad = mobile ? "0.72rem 0.85rem" : "0.42rem 0.52rem";
+  const gap = mobile ? "0.65rem" : "0.38rem";
+
+  if (row.selected) {
+    return (
+      <div
+        style={{
+          margin: mobile ? "0 0.55rem" : "0 0.32rem",
+          padding: pad,
+          borderRadius: mobile ? "1rem" : "0.62rem",
+          background: C.selected,
+          display: "flex",
+          alignItems: "flex-start",
+          gap,
+        }}
+      >
+        <SenderMark row={row} mobile={mobile} />
         <div className="min-w-0 flex-1">
-          {/* Row 1 — sender + time */}
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex min-w-0 items-center gap-[0.45em]">
-              {email.unread && (
-                <div
-                  style={{
-                    width: mobile ? "0.44rem" : "0.3rem",
-                    height: mobile ? "0.44rem" : "0.3rem",
-                    borderRadius: "50%",
-                    background: L.dot,
-                    flexShrink: 0,
-                  }}
-                />
-              )}
-              <span
-                className="truncate"
-                style={{
-                  fontSize: fs.sender,
-                  fontWeight: email.unread ? 600 : 500,
-                  color: email.unread ? L.senderUnread : L.senderRead,
-                  letterSpacing: "-0.01em",
-                }}
-              >
-                {email.sender}
-              </span>
-            </div>
-            <div className="flex shrink-0 items-center gap-[0.4em]">
-              {email.tag && (
-                <span
-                  style={{
-                    fontSize: fs.tag,
-                    fontWeight: 600,
-                    letterSpacing: "0.04em",
-                    color: L.tagText,
-                    background: L.tagBg,
-                    borderRadius: "0.25em",
-                    padding: "0.1em 0.4em",
-                  }}
-                >
-                  {email.tag}
-                </span>
-              )}
-              <span style={{ fontSize: fs.time, color: L.time, fontWeight: 400 }}>
-                {email.time}
-              </span>
-            </div>
+          <div className="flex flex-wrap items-center gap-[0.35em]">
+            <span
+              style={{
+                fontSize: pillFs,
+                fontWeight: 500,
+                color: C.selectedText,
+                background: C.selectedPill,
+                borderRadius: "999px",
+                padding: mobile ? "0.22em 0.65em" : "0.18em 0.48em",
+              }}
+            >
+              {row.sender}
+            </span>
+            <InboxIcon
+              mobile={mobile}
+              d="M3 10h10l4 4V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v4z"
+            />
           </div>
-          {/* Row 2 — subject */}
           <p
-            className="mt-[0.16em] truncate"
-            style={{
-              fontSize: fs.subject,
-              fontWeight: email.unread ? 500 : 400,
-              color: email.unread ? L.subject : L.subjectRead,
-              letterSpacing: "-0.01em",
-            }}
+            className="mt-[0.28em] truncate"
+            style={{ fontSize: fs, fontWeight: 400, color: "rgba(255,255,255,0.92)" }}
           >
-            {email.subject}
-          </p>
-          {/* Row 3 — preview */}
-          <p
-            className="mt-[0.10em] truncate"
-            style={{ fontSize: fs.preview, fontWeight: 400, color: L.preview }}
-          >
-            {email.preview}
+            {row.preview}
           </p>
         </div>
       </div>
-      {!last && (
-        <div style={{ height: "1px", background: L.divider, marginLeft: mobile ? "3.3rem" : "2.12rem" }} />
-      )}
+    );
+  }
+
+  return (
+    <div
+      className="flex items-start"
+      style={{ gap, padding: mobile ? "0.62rem 0.85rem" : "0.38rem 0.52rem" }}
+    >
+      <SenderMark row={row} mobile={mobile} />
+      <div className="min-w-0 flex-1">
+        <span
+          style={{
+            fontSize: pillFs,
+            fontWeight: 500,
+            color: C.pillText,
+            background: C.pillBg,
+            borderRadius: "999px",
+            padding: mobile ? "0.2em 0.62em" : "0.16em 0.42em",
+            display: "inline-block",
+          }}
+        >
+          {row.sender}
+        </span>
+        <p
+          className="mt-[0.32em] truncate"
+          style={{ fontSize: fs, fontWeight: 400, color: C.rowText }}
+        >
+          {row.preview}
+        </p>
+      </div>
     </div>
   );
 }
 
-/* ─── Public component ─── */
+function OpenEmailPane({ mobile }: { mobile: boolean }) {
+  const titleFs = mobile ? "1.35rem" : "0.82rem";
+  const bodyFs = mobile ? "1.05rem" : "0.64rem";
+  const metaFs = mobile ? "0.88rem" : "0.54rem";
+  const pad = mobile ? "1.35rem 1.5rem" : "0.85rem 0.95rem";
+
+  return (
+    <div
+      className="flex h-full min-w-0 flex-col border-l"
+      style={{ borderColor: C.divider, background: C.detailBg, padding: pad }}
+    >
+      <div className="flex items-center gap-[0.55em]">
+        <SenderMark row={SELECTED} mobile={mobile} />
+        <div className="min-w-0">
+          <p style={{ fontSize: titleFs, fontWeight: 500, color: C.navActive, letterSpacing: "-0.02em" }}>
+            {SELECTED.sender}
+          </p>
+          <p style={{ fontSize: metaFs, fontWeight: 400, color: C.detailMuted, marginTop: "0.12em" }}>
+            To: Dr. Singh · Today 9:14 AM
+          </p>
+        </div>
+      </div>
+
+      <p
+        style={{
+          fontSize: titleFs,
+          fontWeight: 500,
+          color: C.navActive,
+          marginTop: mobile ? "1.1rem" : "0.65rem",
+          letterSpacing: "-0.02em",
+        }}
+      >
+        Follow-up visit scheduling
+      </p>
+
+      <div style={{ marginTop: mobile ? "0.85rem" : "0.5rem", display: "flex", flexDirection: "column", gap: mobile ? "0.55rem" : "0.32rem" }}>
+        {[
+          "Hi Dr. Singh,",
+          "I wanted to follow up on my chest tightness from last week. Symptoms have improved but I'd like to schedule a visit this week if possible.",
+          "Please let me know what times work on your calendar.",
+          "Thank you,",
+          "Maria Rodriguez",
+        ].map((line) => (
+          <p
+            key={line}
+            style={{
+              fontSize: bodyFs,
+              fontWeight: 400,
+              lineHeight: 1.48,
+              color: line.startsWith("Hi") || line.startsWith("Thank") ? C.detailBody : C.detailBody,
+            }}
+          >
+            {line}
+          </p>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export type HeroTriagePreviewProps = {
   fontClassName: string;
   size?: "desktop" | "mobile";
@@ -242,8 +291,8 @@ export type HeroTriagePreviewProps = {
 };
 
 /**
- * Doctor's inbox card — light frosted glass, flat layout; bottom-right anchors
- * to the hero and is clipped by section overflow.
+ * Doctor inbox — three-column UI (collapsed nav · inbox list · open message),
+ * styled after modern inbox references. Flat layout; hero overflow clips edges.
  */
 export function HeroTriagePreview({
   fontClassName,
@@ -252,6 +301,8 @@ export function HeroTriagePreview({
   className = "",
 }: HeroTriagePreviewProps) {
   const isMobile = size === "mobile";
+  const navW = isMobile ? "4.6rem" : "2.85rem";
+  const listW = isMobile ? "42%" : "38%";
 
   return (
     <div
@@ -268,95 +319,118 @@ export function HeroTriagePreview({
       }}
       aria-hidden
     >
-      <div
-        style={{
-          transform: HERO_TRIAGE_TILT[isMobile ? "mobile" : "desktop"],
-        }}
-      >
+      <div style={{ transform: HERO_TRIAGE_TILT[isMobile ? "mobile" : "desktop"] }}>
         <div
-          className={`${HERO_TRIAGE_OUTER_GLASS_TW} ${fontClassName}`}
+          className={`${HERO_TRIAGE_OUTER_GLASS_TW} ${fontClassName} overflow-hidden`}
           style={{
-            borderRadius: isMobile ? "1.6rem 0 0 0" : "1.1rem",
-            background: L.bg,
-            border: `1px solid ${L.border}`,
+            borderRadius: isMobile ? "1.35rem 0 0 0" : "1.1rem",
+            background: C.shell,
+            border: `1px solid ${C.shellBorder}`,
             boxShadow: isMobile
-              ? "0 8px 32px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.9)"
-              : "0 24px 64px rgba(0,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.9)",
-            padding: isMobile ? "3.35rem 3.6rem 3.85rem" : "1.45rem 1.55rem 1.65rem",
+              ? "0 12px 48px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.95)"
+              : "0 24px 64px rgba(0,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.95)",
+            minHeight: isMobile ? "28rem" : "16rem",
           }}
         >
-          {/* Inbox header */}
-          <div
-            className="flex items-center justify-between"
-            style={{ marginBottom: isMobile ? "0.85rem" : "0.50rem" }}
-          >
-            <div className="flex items-center gap-[0.45em]">
-              <span
-                className="font-semibold tracking-[-0.025em]"
-                style={{ fontSize: isMobile ? "2.1rem" : "1.02rem", color: L.header }}
-              >
-                Inbox
-              </span>
-              <span
+          <div className="flex" style={{ minHeight: isMobile ? "32rem" : "18rem" }}>
+            {/* Collapsed vertical nav — icons only */}
+            <nav
+              className="flex shrink-0 flex-col items-center"
+              style={{
+                width: navW,
+                background: C.navBg,
+                borderRight: `1px solid ${C.divider}`,
+                padding: isMobile ? "1.1rem 0.55rem" : "0.65rem 0.32rem",
+                gap: isMobile ? "0.35rem" : "0.2rem",
+              }}
+            >
+              <NavIcon active mobile={isMobile}>
+                <InboxIcon mobile={isMobile} d="M4 6h16v12H4V6zm0 0 8 7 8-7" />
+              </NavIcon>
+              <NavIcon mobile={isMobile}>
+                <InboxIcon mobile={mobile} d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z" />
+              </NavIcon>
+              <NavIcon mobile={isMobile}>
+                <InboxIcon mobile={mobile} d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7M3 7l9 6 9-6M3 7h18" />
+              </NavIcon>
+              <NavIcon mobile={isMobile}>
+                <InboxIcon mobile={mobile} d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2z" />
+              </NavIcon>
+              <div className="flex-1" />
+              <NavIcon mobile={isMobile}>
+                <InboxIcon mobile={mobile} d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7.5-9.5a8.38 8.38 0 0 1 0 11M4.5 5.5a8.38 8.38 0 0 0 0 11" />
+              </NavIcon>
+            </nav>
+
+            {/* Inbox preview column */}
+            <div
+              className="flex min-w-0 shrink-0 flex-col"
+              style={{ width: listW, borderRight: `1px solid ${C.divider}` }}
+            >
+              {/* Toolbar */}
+              <div
+                className="flex items-center gap-[0.45em]"
                 style={{
-                  fontSize: isMobile ? "1.05rem" : "0.60rem",
-                  fontWeight: 700,
-                  color: L.badgeText,
-                  background: L.badgeBg,
-                  borderRadius: "0.6em",
-                  padding: "0.14em 0.52em",
+                  padding: isMobile ? "0.85rem 0.95rem" : "0.52rem 0.58rem",
+                  borderBottom: `1px solid ${C.divider}`,
                 }}
               >
-                2
-              </span>
+                <div
+                  className="flex items-center gap-[0.35em]"
+                  style={{
+                    background: C.pillBg,
+                    borderRadius: "999px",
+                    padding: isMobile ? "0.38rem 0.75rem" : "0.24rem 0.48rem",
+                  }}
+                >
+                  <InboxIcon mobile={mobile} d="M4 6h16v12H4V6zm0 0 8 7 8-7" />
+                  <span style={{ fontSize: isMobile ? "0.95rem" : "0.58rem", fontWeight: 500, color: C.pillText }}>
+                    Inbox
+                  </span>
+                  <span
+                    style={{
+                      fontSize: isMobile ? "0.78rem" : "0.48rem",
+                      fontWeight: 500,
+                      color: C.badgeText,
+                      background: C.badgeBg,
+                      borderRadius: "999px",
+                      padding: "0.12em 0.45em",
+                      minWidth: "1.4em",
+                      textAlign: "center",
+                    }}
+                  >
+                    11
+                  </span>
+                </div>
+                <InboxIcon mobile={mobile} d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z" />
+                <InboxIcon mobile={mobile} d="M12 6v6l4 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
+                <InboxIcon mobile={mobile} d="M12 6h.01M12 12h.01M12 18h.01" />
+              </div>
+
+              {/* Message list */}
+              <div style={{ padding: isMobile ? "0.45rem 0" : "0.28rem 0" }}>
+                {INBOX_ROWS.map((row, i) => (
+                  <div key={row.id}>
+                    <InboxListRow row={row} mobile={isMobile} />
+                    {i < INBOX_ROWS.length - 1 && !row.selected && !INBOX_ROWS[i + 1]?.selected && (
+                      <div
+                        style={{
+                          height: 1,
+                          background: C.divider,
+                          marginLeft: isMobile ? "3.85rem" : "2.35rem",
+                          marginRight: isMobile ? "0.85rem" : "0.52rem",
+                        }}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
-            <ComposeIcon size={isMobile ? "1.55rem" : "0.95rem"} />
-          </div>
 
-          {/* Search bar */}
-          <div
-            className="flex items-center gap-[0.5em]"
-            style={{
-              background: L.searchBg,
-              border: `1px solid ${L.searchBorder}`,
-              borderRadius: isMobile ? "0.75rem" : "0.42rem",
-              padding: isMobile ? "0.7rem 0.9rem" : "0.38rem 0.52rem",
-              marginBottom: isMobile ? "0.9rem" : "0.52rem",
-            }}
-          >
-            <SearchIcon
-              size={isMobile ? "1.15rem" : "0.70rem"}
-              color={L.searchText}
-            />
-            <span style={{ fontSize: isMobile ? "1.05rem" : "0.62rem", color: L.searchText }}>
-              Search messages…
-            </span>
-          </div>
-
-          {/* Section label */}
-          <p
-            style={{
-              fontSize: isMobile ? "0.88rem" : "0.54rem",
-              fontWeight: 600,
-              letterSpacing: "0.06em",
-              textTransform: "uppercase" as const,
-              color: L.sectionLabel,
-              marginBottom: isMobile ? "0.35rem" : "0.18rem",
-            }}
-          >
-            Today
-          </p>
-
-          {/* Email list */}
-          <div>
-            {EMAILS.map((email, i) => (
-              <EmailRow
-                key={email.subject}
-                email={email}
-                last={i === EMAILS.length - 1}
-                mobile={isMobile}
-              />
-            ))}
+            {/* Open email — partial column, clipped by hero overflow */}
+            <div className="min-w-0 flex-1">
+              <OpenEmailPane mobile={isMobile} />
+            </div>
           </div>
         </div>
       </div>

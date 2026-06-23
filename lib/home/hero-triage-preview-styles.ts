@@ -31,7 +31,7 @@ export {
  * to the hero and is clipped by overflow hidden on the section.
  */
 export const HERO_TRIAGE_PANEL_WIDTH = {
-  mobile: "215vw",
+  mobile: "240vw",
   desktop: "min(108rem, 138vw)",
 } as const;
 
