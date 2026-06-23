@@ -27,17 +27,16 @@ export {
 };
 
 /**
- * Card width — extends past the hero’s right edge; bottom-right corner anchors
- * to the hero and is clipped by overflow hidden on the section.
+ * Card width — wider than the hero; right and bottom edges clip at section overflow.
  */
 export const HERO_TRIAGE_PANEL_WIDTH = {
-  mobile: "240vw",
+  mobile: "175vw",
   desktop: "min(108rem, 138vw)",
 } as const;
 
-/** Mobile — flush to hero bottom-right; left/top bleed is clipped. */
+/** Mobile — flush to hero bottom-left so the collapsed nav is visible; right bleeds off. */
 export const HERO_TRIAGE_PANEL_ANCHOR = {
-  mobile: { right: 0, bottom: 0 },
+  mobile: { left: 0, bottom: 0 },
 } as const;
 
 export const HERO_TRIAGE_PANEL_LEFT = {

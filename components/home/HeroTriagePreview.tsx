@@ -323,7 +323,7 @@ export function HeroTriagePreview({
         <div
           className={`${HERO_TRIAGE_OUTER_GLASS_TW} ${fontClassName} overflow-hidden`}
           style={{
-            borderRadius: isMobile ? "1.35rem 0 0 0" : "1.1rem",
+            borderRadius: isMobile ? "0 1.35rem 0 0" : "1.1rem",
             background: C.shell,
             border: `1px solid ${C.shellBorder}`,
             boxShadow: isMobile
