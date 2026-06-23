@@ -27,36 +27,37 @@ export {
 };
 
 /**
- * Card width — right portion bleeds past the viewport edge.
- * At 140 vw the visible left half shows all content proportionally;
- * the right side simply disappears off screen to imply a larger canvas.
+ * Card width — right portion bleeds significantly past the viewport edge.
+ * 220 vw gives a large canvas; the CSS left edge lands at 0 vw so the
+ * content-bearing left section dominates the viewport while the right
+ * ~55 % of the card disappears off screen.
  */
 export const HERO_TRIAGE_PANEL_WIDTH = {
-  mobile: "140vw",
+  mobile: "220vw",
   desktop: "min(108rem, 138vw)",
 } as const;
 
 /**
- * Negative right offset.
- * With width 140 vw and right -37 vw the CSS left edge sits at ~3 vw.
- * After the rotateY perspective transform that moves the near-left corner
- * rightward, the visual left edge lands approximately 0–5 vw from the
- * viewport edge — matching the reference screenshots.
+ * Negative right offset — moves the card far off the right edge so the
+ * left content area is the sole visual focus.
+ * With width 220 vw and right -120 vw the CSS left edge sits at 0 vw;
+ * after the rotateY perspective transform the visual left edge lands
+ * ~5 vw from the viewport edge.
  */
 export const HERO_TRIAGE_PANEL_RIGHT = {
-  mobile: "-37vw",
+  mobile: "-120vw",
   desktop: "calc(min(108rem, 138vw) / -2)",
 } as const;
 
 /** Triage Intelligence floating widget width inside the card. */
 export const HERO_TRIAGE_WIDGET_WIDTH = {
-  mobile: "min(22rem, 94%)",
+  mobile: "min(26rem, 96%)",
   desktop: "min(22rem, 68%)",
 } as const;
 
 /**
- * 3D tilt — perspective(900px) gives a notably stronger depth cue on mobile,
- * matching the oblique camera angle in the reference screenshots.
+ * 3D tilt — perspective(900px) gives strong depth on mobile;
+ * the larger card width makes the rotateY lean visually dramatic.
  */
 export const HERO_TRIAGE_TILT = {
   mobile: "perspective(900px) rotateX(8deg) rotateY(22deg)",

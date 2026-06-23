@@ -155,7 +155,7 @@ export function HeroTriagePreview({
     <div
       className={`pointer-events-none absolute select-none ${className}`}
       style={{
-        top: isMobile ? "40%" : "30%",
+        top: isMobile ? "26%" : "30%",
         right: isMobile ? HERO_TRIAGE_PANEL_RIGHT.mobile : HERO_TRIAGE_PANEL_RIGHT.desktop,
         width: isMobile ? HERO_TRIAGE_PANEL_WIDTH.mobile : HERO_TRIAGE_PANEL_WIDTH.desktop,
         ...style,
@@ -176,7 +176,7 @@ export function HeroTriagePreview({
             background: HERO_TRIAGE_PANEL_GRADIENT,
             border: `1px solid ${HERO_TRIAGE_GLASS.panelBorder}`,
             boxShadow: HERO_TRIAGE_GLASS.panelShadow,
-            padding: isMobile ? "1.1rem 1.2rem 1.3rem" : "1.45rem 1.55rem 1.65rem",
+            padding: isMobile ? "1.5rem 1.6rem 1.75rem" : "1.45rem 1.55rem 1.65rem",
           }}
         >
           {/* Breadcrumb */}
@@ -184,7 +184,7 @@ export function HeroTriagePreview({
             className="flex items-center gap-[0.5em] font-medium tracking-[-0.015em]"
             style={{
               color: HERO_TRIAGE_GLASS.breadcrumb,
-              fontSize: isMobile ? "0.79rem" : "0.88rem",
+              fontSize: isMobile ? "0.92rem" : "0.88rem",
             }}
           >
             <TriageStatusIcon />
@@ -212,7 +212,7 @@ export function HeroTriagePreview({
               className="relative z-[1] max-w-[13ch] text-left font-semibold tracking-[-0.04em]"
               style={{
                 color: HERO_TRIAGE_GLASS.title,
-                fontSize: isMobile ? "clamp(1.6rem, 7.2vw, 2.25rem)" : "clamp(2.05rem, 3.2vw, 3.15rem)",
+                fontSize: isMobile ? "clamp(2.2rem, 10vw, 3.1rem)" : "clamp(2.05rem, 3.2vw, 3.15rem)",
                 lineHeight: 1.08,
               }}
             >
@@ -223,7 +223,7 @@ export function HeroTriagePreview({
               className="relative z-[1] mt-[0.82rem] max-w-[32ch] text-left font-normal tracking-[-0.015em]"
               style={{
                 color: HERO_TRIAGE_GLASS.body,
-                fontSize: isMobile ? "0.82rem" : "0.94rem",
+                fontSize: isMobile ? "0.97rem" : "0.94rem",
                 lineHeight: 1.55,
               }}
             >
@@ -235,7 +235,7 @@ export function HeroTriagePreview({
               className={`absolute z-[2] ${HERO_TRIAGE_INNER_GLASS_TW}`}
               style={{
                 left: 0,
-                top: isMobile ? "1.4rem" : "1.85rem",
+                top: isMobile ? "1.7rem" : "1.85rem",
                 width: isMobile ? HERO_TRIAGE_WIDGET_WIDTH.mobile : HERO_TRIAGE_WIDGET_WIDTH.desktop,
                 borderRadius: "0.78rem",
                 background: HERO_TRIAGE_WIDGET_HEADER_GRADIENT,
@@ -249,7 +249,7 @@ export function HeroTriagePreview({
                 className="flex items-center gap-[0.46em] px-[0.88em] pb-[0.3em] pt-[0.65em] font-medium tracking-[-0.015em]"
                 style={{
                   color: "rgba(255,255,255,0.86)",
-                  fontSize: isMobile ? "0.77rem" : "0.84rem",
+                  fontSize: isMobile ? "0.88rem" : "0.84rem",
                 }}
               >
                 <span className="text-white/85">
@@ -265,8 +265,8 @@ export function HeroTriagePreview({
                   borderRadius: "0.55rem",
                   background: HERO_TRIAGE_WIDGET_BODY_GRADIENT,
                   border: "1px solid rgba(255,255,255,0.06)",
-                  padding: isMobile ? "0.5em 0.7em" : "0.58em 0.78em",
-                  fontSize: isMobile ? "0.67rem" : "0.72rem",
+                  padding: isMobile ? "0.58em 0.78em" : "0.58em 0.78em",
+                  fontSize: isMobile ? "0.78rem" : "0.72rem",
                   fontWeight: 500,
                   display: "flex",
                   flexDirection: "column",
@@ -329,7 +329,7 @@ export function HeroTriagePreview({
               className="mb-[0.68rem] text-left font-medium tracking-[-0.015em]"
               style={{
                 color: HERO_TRIAGE_GLASS.activity,
-                fontSize: isMobile ? "0.75rem" : "0.82rem",
+                fontSize: isMobile ? "0.88rem" : "0.82rem",
               }}
             >
               Activity
