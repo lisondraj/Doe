@@ -1,7 +1,7 @@
 "use client";
 
-import { DoeDesktopUnderConstruction } from "./DoeDesktopUnderConstruction";
+import { DesktopHome } from "@/components/home/DesktopHome";
 
 export function DoePhoneDesktopView() {
-  return <DoeDesktopUnderConstruction />;
+  return <DesktopHome />;
 }
