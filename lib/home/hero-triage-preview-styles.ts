@@ -31,18 +31,17 @@ export {
  * past the viewport edge and is intentionally not shown.
  */
 export const HERO_TRIAGE_PANEL_WIDTH = {
-  mobile: "148vw",
+  mobile: "168vw",
   desktop: "min(108rem, 138vw)",
 } as const;
 
 /**
- * Left offset for mobile — anchors the card's left edge near the viewport
- * left so the content-heavy side is always visible. Right overflow is
- * intentional (bleeds ~48 vw off screen).
+ * Left offset for mobile — shifted right so the blank trailing area of the
+ * card runs off the right edge of the viewport and is not seen.
  * Desktop still uses right-based offset.
  */
 export const HERO_TRIAGE_PANEL_LEFT = {
-  mobile: "3vw",
+  mobile: "9vw",
 } as const;
 
 export const HERO_TRIAGE_PANEL_RIGHT = {
