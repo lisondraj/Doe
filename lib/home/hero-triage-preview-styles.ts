@@ -87,9 +87,16 @@ export const HERO_TRIAGE_GLASS = {
   widgetShadow: "0 12px 36px rgba(0, 0, 0, 0.40), inset 0 1px 0 rgba(255, 255, 255, 0.08)",
 } as const;
 
-/** Outer card — increased blur gives a stronger frosted-glass depth on coloured backgrounds. */
+/** Outer card — frosted glass over the hero gradient. */
 export const HERO_TRIAGE_OUTER_GLASS_TW =
-  `${DOEPHONE_COMMUNICATION_GLASS_RADIUS_TW} backdrop-blur-[18px] iphone-page:backdrop-blur-[14px]`;
+  `${DOEPHONE_COMMUNICATION_GLASS_RADIUS_TW} backdrop-blur-[24px] iphone-page:backdrop-blur-[20px] [transform:translateZ(0)] isolate`;
+
+export const HERO_TRIAGE_SHELL_GLASS = {
+  background:
+    "linear-gradient(145deg, rgba(255,255,255,0.84) 0%, rgba(255,255,255,0.72) 45%, rgba(255,250,245,0.62) 100%)",
+  border: "rgba(255,255,255,0.58)",
+  shadow: "0 24px 64px rgba(0,0,0,0.07), inset 0 1px 0 rgba(255,255,255,0.88)",
+} as const;
 
 export const HERO_TRIAGE_INNER_GLASS_TW =
   `${DOEPHONE_COMMUNICATION_GLASS_RADIUS_TW} backdrop-blur-[8px] iphone-page:backdrop-blur-[6px]`;

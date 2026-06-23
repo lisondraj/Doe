@@ -325,20 +325,23 @@ body.mainpage-route {
 
 .doephone-hero-triage-preview {
   opacity: 0;
-  filter: blur(12px);
-  animation: doephone-hero-triage-in 1.2s cubic-bezier(0.22, 1, 0.36, 1) 4.1s both;
-  will-change: opacity, filter;
+  filter: blur(16px);
+  transform: translateY(1.75rem);
+  animation: doephone-hero-triage-in 1.45s cubic-bezier(0.22, 1, 0.36, 1) 4.1s both;
+  will-change: opacity, filter, transform;
 }
 
 @keyframes doephone-hero-triage-in {
   from {
     opacity: 0;
-    filter: blur(12px);
+    filter: blur(16px);
+    transform: translateY(1.75rem);
   }
 
   to {
     opacity: 1;
     filter: blur(0);
+    transform: translateY(0);
   }
 }
 
@@ -576,6 +579,7 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
     animation: none !important;
     opacity: 1;
     filter: none;
+    transform: none;
   }
 
   .doephone-hero-waitlist-cta {
