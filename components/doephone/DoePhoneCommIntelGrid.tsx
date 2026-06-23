@@ -222,10 +222,21 @@ export function DoePhoneCommIntelGrid() {
         marginLeft: "-10vw",
         marginRight: "-10vw",
         width: "calc(100% + 20vw)",
-        WebkitMaskImage:
-          "linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)",
-        maskImage:
-          "linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)",
+        /*
+         * Two-axis mask — vertical top/bottom fade intersected with
+         * horizontal left/right fade so all four corners are transparent.
+         * Creates the same corner-vignette effect at top as at bottom.
+         */
+        WebkitMaskImage: [
+          "linear-gradient(to bottom, transparent 0%, black 22%, black 82%, transparent 100%)",
+          "linear-gradient(to right,  transparent 0%, black 12%, black 88%, transparent 100%)",
+        ].join(", "),
+        WebkitMaskComposite: "source-in",
+        maskImage: [
+          "linear-gradient(to bottom, transparent 0%, black 22%, black 82%, transparent 100%)",
+          "linear-gradient(to right,  transparent 0%, black 12%, black 88%, transparent 100%)",
+        ].join(", "),
+        maskComposite: "intersect",
       }}
     >
       <div
