@@ -246,6 +246,10 @@ body.mainpage-route {
   opacity: 1;
 }
 
+.doephone-hero-polar-overlay--intro .doephone-hero-polar-ring {
+  stroke: rgba(255, 255, 255, 0.17);
+}
+
 /* Three rings pulse out from polar center after gradient settles (inner → outer).
    transform-origin is set inline per-ring with exact SVG coordinates for Safari. */
 .doephone-hero-polar-ring--intro {

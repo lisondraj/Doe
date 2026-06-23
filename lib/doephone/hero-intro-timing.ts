@@ -11,7 +11,7 @@ export const DOEPHONE_HERO_INTRO_GRADIENT_START = 1.72;
 export const DOEPHONE_HERO_INTRO_GRADIENT_MS = 1200;
 
 /** Three rings begin once the gradient zoom is fully settled. */
-export const DOEPHONE_HERO_INTRO_POLAR_START_MS = 1250;
+export const DOEPHONE_HERO_INTRO_POLAR_START_MS = 1180;
 export const DOEPHONE_HERO_INTRO_RING_MS = 820;
 export const DOEPHONE_HERO_INTRO_RING_STAGGER_MS = 180;
 export const DOEPHONE_HERO_INTRO_RING_COUNT = 3;
