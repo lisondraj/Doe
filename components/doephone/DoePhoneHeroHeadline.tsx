@@ -2,7 +2,7 @@
 
 import { DOEPHONE_DISPLAY_WEIGHT_TW } from "@/lib/doephone/section-styles";
 import { suisseIntl } from "@/lib/home/fonts";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 const DOEPHONE_HERO_CAREERS = [
   "doctors",
@@ -17,11 +17,14 @@ const DOEPHONE_HERO_CAREERS = [
   "doulas",
 ] as const;
 
-/** Longest label — sets carousel slot width. */
+/** Longest label — reserves width so layout never shifts. */
 const DOEPHONE_HERO_CAREER_WIDTH_SAMPLE = "optometrists.";
 
-/** Hold each career on screen before advancing. */
-const CAREER_ROTATE_MS = 3800;
+/** Hold each profession on screen before advancing. */
+const CAREER_ROTATE_MS = 3600;
+
+/** Exit animation duration — outgoing word clears before next arrives. */
+const CAREER_EXIT_MS = 360;
 
 const MIN_FIT_SCALE = 0.68;
 const MIN_FIT_PX = 17;
@@ -33,15 +36,15 @@ function measureHeadlineContentWidth(headline: HTMLElement): number {
   const secondLine = headline.querySelector<HTMLElement>(".doephone-hero-second-line");
   if (!firstLine || !secondLine) return headline.scrollWidth;
 
-  const prevHeadlineWidth = headline.style.width;
-  const prevSecondMax = secondLine.style.maxWidth;
+  const prevW = headline.style.width;
+  const prevMax = secondLine.style.maxWidth;
   headline.style.width = "max-content";
   secondLine.style.maxWidth = "max-content";
 
   const width = Math.max(firstLine.scrollWidth, secondLine.scrollWidth);
 
-  headline.style.width = prevHeadlineWidth;
-  secondLine.style.maxWidth = prevSecondMax;
+  headline.style.width = prevW;
+  secondLine.style.maxWidth = prevMax;
 
   return width;
 }
@@ -80,25 +83,33 @@ function fitHeadlineFontSize(headline: HTMLElement, container: HTMLElement) {
 
 export function DoePhoneHeroHeadline() {
   const headlineRef = useRef<HTMLHeadingElement>(null);
-  const [index, setIndex] = useState(0);
-  const [slideTransition, setSlideTransition] = useState(true);
+  const currRef = useRef(0);
+  const [curr, setCurr] = useState(0);
+  const [prev, setPrev] = useState<number | null>(null);
+  const exitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const slideItems = useMemo(
-    () => [...DOEPHONE_HERO_CAREERS, DOEPHONE_HERO_CAREERS[0]],
-    [],
-  );
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (mq.matches) return;
 
-  const activeCareer = DOEPHONE_HERO_CAREERS[index % DOEPHONE_HERO_CAREERS.length];
+    const advance = () => {
+      const from = currRef.current;
+      const to = (from + 1) % DOEPHONE_HERO_CAREERS.length;
+      currRef.current = to;
 
-  const handleTrackTransitionEnd = useCallback(() => {
-    if (index !== DOEPHONE_HERO_CAREERS.length) return;
+      setPrev(from);
+      setCurr(to);
 
-    setSlideTransition(false);
-    setIndex(0);
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => setSlideTransition(true));
-    });
-  }, [index]);
+      if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
+      exitTimerRef.current = setTimeout(() => setPrev(null), CAREER_EXIT_MS + 60);
+    };
+
+    const id = setInterval(advance, CAREER_ROTATE_MS);
+    return () => {
+      clearInterval(id);
+      if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
+    };
+  }, []);
 
   useLayoutEffect(() => {
     const headline = headlineRef.current;
@@ -114,9 +125,9 @@ export function DoePhoneHeroHeadline() {
     ro.observe(headline);
     ro.observe(container);
 
-    const onViewportChange = () => measure();
-    window.addEventListener("resize", onViewportChange);
-    window.visualViewport?.addEventListener("resize", onViewportChange);
+    const onResize = () => measure();
+    window.addEventListener("resize", onResize);
+    window.visualViewport?.addEventListener("resize", onResize);
 
     let cancelled = false;
     void document.fonts.ready.then(() => {
@@ -127,21 +138,10 @@ export function DoePhoneHeroHeadline() {
       cancelled = true;
       cancelAnimationFrame(raf);
       ro.disconnect();
-      window.removeEventListener("resize", onViewportChange);
-      window.visualViewport?.removeEventListener("resize", onViewportChange);
+      window.removeEventListener("resize", onResize);
+      window.visualViewport?.removeEventListener("resize", onResize);
     };
-  }, [index, slideTransition]);
-
-  useEffect(() => {
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reducedMotion) return;
-
-    const id = window.setInterval(() => {
-      setIndex((i) => (i >= DOEPHONE_HERO_CAREERS.length ? 0 : i + 1));
-    }, CAREER_ROTATE_MS);
-
-    return () => window.clearInterval(id);
-  }, []);
+  }, [curr]);
 
   return (
     <h1
@@ -152,28 +152,34 @@ export function DoePhoneHeroHeadline() {
       <span className="doephone-hero-headline-line doephone-hero-headline-line--second doephone-hero-second-line flex min-w-0 max-w-full items-baseline justify-start whitespace-nowrap">
         <span className="shrink-0">built for</span>
         <span className="doephone-hero-career-slot relative inline-grid align-baseline">
+          {/* Invisible sizer — keeps slot width = longest word, no layout shift */}
           <span
             aria-hidden
             className={`invisible col-start-1 row-start-1 block select-none ${DOEPHONE_DISPLAY_WEIGHT_TW}`}
           >
             {DOEPHONE_HERO_CAREER_WIDTH_SAMPLE}
           </span>
+
+          {/* Clip window */}
           <span className="doephone-hero-career-clip col-start-1 row-start-1">
+            {/* Outgoing word — exits upward */}
+            {prev !== null && (
+              <span
+                key={`out-${prev}`}
+                className={`doephone-hero-career-word doephone-hero-career-word--exit ${DOEPHONE_DISPLAY_WEIGHT_TW}`}
+                aria-hidden
+              >
+                {DOEPHONE_HERO_CAREERS[prev]}.
+              </span>
+            )}
+
+            {/* Incoming word — enters from below */}
             <span
-              className={`doephone-hero-career-track block${slideTransition ? "" : " doephone-hero-career-track--instant"}`}
-              style={{ transform: `translateY(calc(var(--doephone-career-slot) * -${index}))` }}
-              onTransitionEnd={handleTrackTransitionEnd}
+              key={`in-${curr}`}
+              className={`doephone-hero-career-word doephone-hero-career-word--enter ${DOEPHONE_DISPLAY_WEIGHT_TW}`}
               aria-live="polite"
             >
-              {slideItems.map((career, i) => (
-                <span
-                  key={`${career}-${i}`}
-                  className={`doephone-hero-career-word ${DOEPHONE_DISPLAY_WEIGHT_TW}`}
-                  aria-hidden={i === slideItems.length - 1 || career !== activeCareer}
-                >
-                  {career}.
-                </span>
-              ))}
+              {DOEPHONE_HERO_CAREERS[curr]}.
             </span>
           </span>
         </span>
