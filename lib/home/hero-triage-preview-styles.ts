@@ -64,7 +64,7 @@ export const HERO_TRIAGE_WIDGET_WIDTH = {
  * Order: rotateZ first (2D CCW angle), then rotateX (pitch), then rotateY.
  */
 export const HERO_TRIAGE_TILT = {
-  mobile: "perspective(1600px) rotateX(69deg) rotateZ(-13deg)",
+  mobile: "perspective(1600px) rotateX(58deg) rotateZ(-13deg)",
   desktop: "perspective(1400px) rotateX(8deg) rotateY(18deg)",
 } as const;
 
