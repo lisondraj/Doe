@@ -13,9 +13,9 @@ import { suisseIntl } from "@/lib/home/fonts";
 import { DOEPHONE_HERO_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 
-/** Full first-screen hero — extra depth below the fold so beige never peeks on load. */
+/** Hero — slightly shorter so inbox UI appears proportionally higher on screen. */
 export const DOEPHONE_HERO_HEIGHT =
-  "calc(var(--app-vh,100lvh)*1.12 + max(8rem, calc(env(safe-area-inset-top, 0px) + 3.5rem)))";
+  "calc(var(--app-vh,100lvh)*0.88 + max(8rem, calc(env(safe-area-inset-top, 0px) + 3.5rem)))";
 
 /** No gradient zoom until this share of hero scroll travel. */
 const GRADIENT_ZOOM_FREEZE_RATIO = 0.16;

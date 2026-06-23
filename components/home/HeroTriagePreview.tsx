@@ -408,10 +408,11 @@ export function HeroTriagePreview({
             boxShadow: isMobile
               ? "none"
               : "0 24px 64px rgba(0,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.95)",
-            minHeight: isMobile ? HERO_TRIAGE_MOBILE_MIN_HEIGHT.outer : "16rem",
+            height: isMobile ? HERO_TRIAGE_MOBILE_MIN_HEIGHT.outer : undefined,
+            minHeight: isMobile ? undefined : "16rem",
           }}
         >
-          <div className="flex" style={{ minHeight: isMobile ? HERO_TRIAGE_MOBILE_MIN_HEIGHT.inner : "18rem" }}>
+          <div className="flex h-full" style={{ minHeight: isMobile ? HERO_TRIAGE_MOBILE_MIN_HEIGHT.inner : "18rem" }}>
             {/* Collapsed vertical nav — icons only */}
             <nav
               className="flex shrink-0 flex-col items-center"

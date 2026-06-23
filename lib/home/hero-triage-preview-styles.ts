@@ -34,9 +34,9 @@ export const HERO_TRIAGE_PANEL_WIDTH = {
   desktop: "min(108rem, 138vw)",
 } as const;
 
-/** Mobile — starts ~1/3 across the viewport, extends below hero so bottom clips. */
+/** Mobile — starts ~1/4 across the viewport, lifted above hero floor so top clips. */
 export const HERO_TRIAGE_PANEL_ANCHOR = {
-  mobile: { left: "26vw", bottom: "-4rem" },
+  mobile: { left: "18vw", bottom: "12%" },
 } as const;
 
 /** Mobile scale — applied from bottom-left so the card reads larger in the hero. */
@@ -45,10 +45,10 @@ export const HERO_TRIAGE_MOBILE_SCALE = 1.22;
 /** Mobile inbox list column — narrow so email pane dominates the visible frame. */
 export const HERO_TRIAGE_MOBILE_LIST_WIDTH = "20%";
 
-/** Mobile card heights — tall enough that bottom clips at hero overflow. */
+/** Mobile card heights — fixed height so email pane's flex:1 compose area fills to bottom. */
 export const HERO_TRIAGE_MOBILE_MIN_HEIGHT = {
-  outer: "48rem",
-  inner: "54rem",
+  outer: "56rem",
+  inner: "60rem",
 } as const;
 
 export const HERO_TRIAGE_PANEL_LEFT = {
