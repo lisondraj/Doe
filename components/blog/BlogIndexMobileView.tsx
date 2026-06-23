@@ -13,7 +13,6 @@ import {
   BLOG_LANDING_TITLE_META_GAP,
   BLOG_LIST_DIVIDER_LINE,
   BLOG_LIST_DIVIDER_WRAP,
-  BLOG_LIST_SECTION_GAP,
   BLOG_META_TW,
   BLOG_READ_MORE_TW,
 } from "@/lib/blog/blog-layout-styles";
@@ -23,7 +22,7 @@ import { BLOG_ARTICLES } from "@/lib/blog/articles";
 function BlogReadMoreArrow() {
   return (
     <svg
-      className="h-4 w-4 shrink-0 iphone-page:h-[0.95rem] iphone-page:w-[0.95rem]"
+      className="h-4 w-4 shrink-0 iphone-page:h-[clamp(0.9rem,0.8rem+0.5vmin,1.05rem)] iphone-page:w-[clamp(0.9rem,0.8rem+0.5vmin,1.05rem)]"
       viewBox="0 0 16 16"
       fill="none"
       aria-hidden
@@ -45,7 +44,7 @@ export function BlogIndexMobileView() {
       <main className={`w-full ${BLOG_CONTENT_PT}`}>
         <BlogLandingHero />
 
-        <ul className={`${BLOG_LIST_SECTION_GAP} flex w-full flex-col`}>
+        <ul className="mt-12 iphone-page:mt-[clamp(2.5rem,2rem+2.5vmin,4rem)] flex w-full flex-col">
           {BLOG_ARTICLES.slice(0, 3).map((article, index) => (
             <li key={article.slug}>
               {index > 0 ? (
@@ -83,10 +82,10 @@ export function BlogIndexMobileView() {
           ))}
         </ul>
 
-        <div className={`${BLOG_LIST_SECTION_GAP} flex w-full justify-center`}>
+        <div className="mt-12 iphone-page:mt-[clamp(2.5rem,2rem+2.5vmin,4rem)] flex w-full justify-center">
           <a
             href="#"
-            className={`font-medium leading-none text-[#1E343A] transition-opacity active:opacity-60 text-[1.32rem] iphone-page:text-[1.52rem] ${dmSans.className}`}
+            className={`font-medium leading-none text-[#1E343A] transition-opacity active:opacity-60 text-[clamp(1.32rem,4.8vw,1.95rem)] iphone-page:text-[clamp(1.52rem,1.22rem+1.45vmin,2.1rem)] ${dmSans.className}`}
           >
             See more ({BLOG_ARTICLES.length})
           </a>

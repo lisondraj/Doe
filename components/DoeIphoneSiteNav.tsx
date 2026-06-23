@@ -9,15 +9,6 @@ import {
   NAV_HREFS,
   NAV_ITEMS,
 } from "@/components/doe-nav-data";
-import {
-  BLOG_NAV_DOE_LEFT,
-  BLOG_NAV_INSET_X,
-  BLOG_NAV_LOGO_TW,
-  BLOG_NAV_MENU_BTN_TW,
-  BLOG_NAV_MENU_ICON_TW,
-  BLOG_NAV_STRIP_TW,
-  BLOG_NAV_WAITLIST_TW,
-} from "@/lib/blog/blog-chrome-styles";
 import { DOEPHONE_NAV_WAITLIST_CLASS } from "@/lib/doephone/waitlist-button";
 import {
   NAV_FOOTER_BOX_TITLE_TW,
@@ -65,41 +56,26 @@ function NavChromeStrip({
   mobileNavOpen,
   toggleMenu,
   pinchSafe = false,
-  blogChrome = false,
 }: {
   navTextColor: string;
   mobileNavOpen: boolean;
   toggleMenu: () => void;
   pinchSafe?: boolean;
-  blogChrome?: boolean;
 }) {
-  const navInsetX = blogChrome
-    ? BLOG_NAV_INSET_X
-    : pinchSafe
-      ? "px-11 iphone-page:px-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))] iphone-page:pr-[max(1.65rem,env(safe-area-inset-right,0px))]"
-      : "px-8 iphone-page:px-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))]";
-  const doeLeft = blogChrome
-    ? BLOG_NAV_DOE_LEFT
-    : pinchSafe
-      ? "left-11 iphone-page:left-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))]"
-      : "left-8 iphone-page:left-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))]";
-  const stripClass = blogChrome
-    ? BLOG_NAV_STRIP_TW
-    : `${navInsetX} py-6 iphone-page:py-[clamp(0.8125rem,0.52rem+1.55vmin,1.9rem)] flex items-center relative z-10 iphone-page:gap-[clamp(0.45rem,0.35rem+0.85vmin,0.75rem)] justify-end`;
-  const logoClass = blogChrome
-    ? `${BLOG_NAV_LOGO_TW} ${BLOG_NAV_DOE_LEFT}`
-    : `absolute top-1/2 -translate-y-1/2 ${doeLeft} font-normal z-[1] min-w-0 whitespace-nowrap transition-opacity duration-500 ease-out ${lora.className} text-4xl iphone-page:text-[clamp(1.85rem,1.05rem+3.55vmin,3.9rem)] iphone-page:leading-none opacity-100`;
-  const waitlistClass = blogChrome ? BLOG_NAV_WAITLIST_TW : DOEPHONE_NAV_WAITLIST_CLASS;
-  const menuBtnClass = blogChrome
-    ? BLOG_NAV_MENU_BTN_TW
-    : "flex items-center justify-center p-3 iphone-page:p-[clamp(0.625rem,0.38rem+1.35vmin,0.975rem)] rounded-xl transition-colors active:bg-black/[0.04]";
-  const menuIconClass = blogChrome
-    ? BLOG_NAV_MENU_ICON_TW
-    : "w-9 h-9 iphone-page:w-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)] iphone-page:h-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)]";
+  const navInsetX = pinchSafe
+    ? "px-11 iphone-page:px-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))] iphone-page:pr-[max(1.65rem,env(safe-area-inset-right,0px))]"
+    : "px-8 iphone-page:px-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))]";
+  const doeLeft = pinchSafe
+    ? "left-11 iphone-page:left-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))]"
+    : "left-8 iphone-page:left-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))]";
 
   return (
-    <div className={stripClass}>
-      <Link href="/" className={logoClass} style={{ color: navTextColor }}>
+    <div className={`${navInsetX} py-6 iphone-page:py-[clamp(0.8125rem,0.52rem+1.55vmin,1.9rem)] flex items-center relative z-10 iphone-page:gap-[clamp(0.45rem,0.35rem+0.85vmin,0.75rem)] justify-end`}>
+      <Link
+        href="/"
+        className={`absolute top-1/2 -translate-y-1/2 ${doeLeft} font-normal z-[1] min-w-0 whitespace-nowrap transition-opacity duration-500 ease-out ${lora.className} text-4xl iphone-page:text-[clamp(1.85rem,1.05rem+3.55vmin,3.9rem)] iphone-page:leading-none opacity-100`}
+        style={{ color: navTextColor }}
+      >
         Doe
       </Link>
 
@@ -111,14 +87,14 @@ function NavChromeStrip({
         ))}
       </div>
 
-      <div className={`flex shrink-0 items-center gap-2.5 ${blogChrome ? "iphone-page:gap-3" : "iphone-page:gap-[clamp(0.45rem,0.35rem+0.65vmin,0.7rem)]"}`}>
-        <a href="/waitlist" className={waitlistClass}>
+      <div className="flex shrink-0 items-center gap-2.5 iphone-page:gap-[clamp(0.45rem,0.35rem+0.65vmin,0.7rem)]">
+        <a href="/waitlist" className={DOEPHONE_NAV_WAITLIST_CLASS}>
           Join Waitlist
         </a>
 
         <button
           type="button"
-          className={menuBtnClass}
+          className="flex items-center justify-center p-3 iphone-page:p-[clamp(0.625rem,0.38rem+1.35vmin,0.975rem)] rounded-xl transition-colors active:bg-black/[0.04]"
           style={{ color: navTextColor }}
           aria-expanded={mobileNavOpen}
           aria-label={mobileNavOpen ? "Close navigation menu" : "Open navigation menu"}
@@ -126,7 +102,7 @@ function NavChromeStrip({
         >
         {mobileNavOpen ? (
           <svg
-            className={menuIconClass}
+            className="w-9 h-9 iphone-page:w-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)] iphone-page:h-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)]"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -136,7 +112,7 @@ function NavChromeStrip({
           </svg>
         ) : (
           <svg
-            className={menuIconClass}
+            className="w-9 h-9 iphone-page:w-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)] iphone-page:h-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)]"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -155,14 +131,7 @@ function NavChromeStrip({
  * Fixed Doe wordmark + hamburger, with the same full-screen iPhone nav sheet and
  * three-card featured carousel as the home page — solid beige chrome for subpages.
  */
-export default function DoeIphoneSiteNav({
-  pinchSafe = false,
-  blogChrome = false,
-}: {
-  pinchSafe?: boolean;
-  blogChrome?: boolean;
-}) {
-  const webSafe = pinchSafe || blogChrome;
+export default function DoeIphoneSiteNav({ pinchSafe = false }: { pinchSafe?: boolean }) {
   const isPhoneLayout = true;
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   /** Keeps the sheet mounted through the close animation. */
@@ -203,7 +172,7 @@ export default function DoeIphoneSiteNav({
   }, [mobileNavOpen]);
 
   useEffect(() => {
-    if (webSafe) {
+    if (pinchSafe) {
       setViewportWidth(window.innerWidth);
       setAppViewport({ width: window.innerWidth, height: window.innerHeight });
       const onOrientation = () => {
@@ -228,7 +197,7 @@ export default function DoeIphoneSiteNav({
       window.removeEventListener("orientationchange", tick);
       window.visualViewport?.removeEventListener("resize", tick);
     };
-  }, [webSafe]);
+  }, [pinchSafe]);
 
   useLayoutEffect(() => {
     const navEl = navBarRowRef.current;
@@ -236,13 +205,13 @@ export default function DoeIphoneSiteNav({
 
     const measure = () => {
       const raw = navEl.getBoundingClientRect().bottom;
-      const px = Math.max(0, Math.floor(raw) - (webSafe ? 0 : 6));
+      const px = Math.max(0, Math.floor(raw) - (pinchSafe ? 0 : 6));
       setIphoneMenuTopPx((prev) => (prev === px ? prev : px));
     };
 
     measure();
 
-    if (webSafe) {
+    if (pinchSafe) {
       let raf = 0;
       if (mobileNavOpen) {
         raf = requestAnimationFrame(measure);
@@ -273,10 +242,10 @@ export default function DoeIphoneSiteNav({
       window.removeEventListener("resize", measure);
       window.visualViewport?.removeEventListener("resize", measure);
     };
-  }, [mobileNavOpen, webSafe, ...(webSafe ? [] : [viewportWidth, appViewport.width, appViewport.height])]);
+  }, [mobileNavOpen, pinchSafe, ...(pinchSafe ? [] : [viewportWidth, appViewport.width, appViewport.height])]);
 
   useLayoutEffect(() => {
-    if (!mobileNavOpen || webSafe) return;
+    if (!mobileNavOpen || pinchSafe) return;
     const fit = () => {
       const el = mobileNavFooterCarouselRef.current;
       if (!el) return;
@@ -308,7 +277,7 @@ export default function DoeIphoneSiteNav({
       window.removeEventListener("resize", fit);
       window.visualViewport?.removeEventListener("resize", fit);
     };
-  }, [mobileNavOpen, appViewport.width, appViewport.height, webSafe]);
+  }, [mobileNavOpen, appViewport.width, appViewport.height, pinchSafe]);
 
   useEffect(() => {
     if (!navSheetLive) return;
@@ -360,7 +329,7 @@ export default function DoeIphoneSiteNav({
 
   const navTextColor = "#000";
   const navSheetTransition = `opacity ${NAV_SHEET_MS}ms ${NAV_SHEET_EASE}, transform ${NAV_SHEET_MS}ms ${NAV_SHEET_EASE}`;
-  const navFooterCarouselZoom = webSafe ? 1 : mobileNavFooterZoom;
+  const navFooterCarouselZoom = pinchSafe ? 1 : mobileNavFooterZoom;
 
   const mobileMenuLayerContent = navSheetLive ? (
     <>
@@ -376,7 +345,7 @@ export default function DoeIphoneSiteNav({
         onClick={() => setMobileNavOpen(false)}
       />
       <div className="fixed inset-0 z-[95] pointer-events-none" role="presentation">
-        {!webSafe ? (
+        {!pinchSafe ? (
           <div
             className="absolute inset-x-0 top-0 bg-[#F7F6F3] pointer-events-none"
             style={{ height: iphoneMenuTopPx }}
@@ -503,14 +472,14 @@ export default function DoeIphoneSiteNav({
   ) : null;
 
   const mobileMenuLayer =
-    !webSafe &&
+    !pinchSafe &&
     mounted &&
     isPhoneLayout &&
     navSheetLive &&
     createPortal(mobileMenuLayerContent, document.body);
 
   const navChromeElevated =
-    !webSafe &&
+    !pinchSafe &&
     mounted &&
     navSheetLive &&
     createPortal(
@@ -526,7 +495,6 @@ export default function DoeIphoneSiteNav({
           mobileNavOpen={navSheetLive}
           toggleMenu={() => setMobileNavOpen((o) => !o)}
           pinchSafe={pinchSafe}
-          blogChrome={blogChrome}
         />
       </header>,
       document.body
@@ -536,9 +504,9 @@ export default function DoeIphoneSiteNav({
     <>
       <nav
         ref={navBarRowRef}
-        className={`${webSafe ? "doephone-site-nav " : ""}fixed top-0 left-0 right-0 iphone-page:pt-[env(safe-area-inset-top,0px)] ${
+        className={`${pinchSafe ? "doephone-site-nav " : ""}fixed top-0 left-0 right-0 iphone-page:pt-[env(safe-area-inset-top,0px)] ${
           navSheetLive ? "z-[200]" : "z-50"
-        } ${webSafe ? "shadow-[0_-120px_0_120px_#F7F6F3] translate-z-0" : ""}`}
+        } ${pinchSafe ? "shadow-[0_-120px_0_120px_#F7F6F3] translate-z-0" : ""}`}
         style={{
           backgroundColor: "#F7F6F3",
           borderBottom: "1px solid #E6E6E6",
@@ -546,27 +514,26 @@ export default function DoeIphoneSiteNav({
         }}
       >
         <div
-          className={webSafe ? undefined : "transition-opacity duration-[320ms] ease-[cubic-bezier(0.32,0.72,0,1)]"}
+          className={pinchSafe ? undefined : "transition-opacity duration-[320ms] ease-[cubic-bezier(0.32,0.72,0,1)]"}
           style={
-            webSafe
+            pinchSafe
               ? undefined
               : {
                   opacity: navSheetLive ? 0 : 1,
                   pointerEvents: navSheetLive ? "none" : "auto",
                 }
           }
-          aria-hidden={webSafe ? undefined : navSheetLive ? true : undefined}
+          aria-hidden={pinchSafe ? undefined : navSheetLive ? true : undefined}
         >
           <NavChromeStrip
             navTextColor={navTextColor}
             mobileNavOpen={mobileNavOpen}
             toggleMenu={() => setMobileNavOpen((o) => !o)}
             pinchSafe={pinchSafe}
-            blogChrome={blogChrome}
           />
         </div>
       </nav>
-      {webSafe ? mobileMenuLayerContent : null}
+      {pinchSafe ? mobileMenuLayerContent : null}
       {mobileMenuLayer}
       {navChromeElevated}
     </>

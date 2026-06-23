@@ -91,7 +91,7 @@ function FilterPill({
     : label;
 
   const triggerSize = heroVariant
-    ? `text-[1.38rem] iphone-page:text-[1.55rem]`
+    ? `text-[clamp(1.38rem,5vw,2rem)] iphone-page:text-[clamp(1.55rem,1.28rem+1.3vmin,2.1rem)]`
     : `text-[clamp(1.75rem,6.5vw,2.6rem)] iphone-page:text-[clamp(2rem,1.55rem+2.85vmin,3.15rem)]`;
 
   const itemSize =
@@ -169,7 +169,7 @@ export function BlogFilterBar({ variant = "standalone" }: { variant?: "standalon
 
   if (variant === "hero") {
     return (
-      <div className="blog-landing-hero-filters flex flex-col items-end gap-[0.45rem] iphone-page:gap-[0.5rem]">
+      <div className="flex flex-col items-end gap-[clamp(0.45rem,0.3rem+0.65vmin,0.75rem)] iphone-page:gap-[clamp(0.5rem,0.38rem+0.6vmin,0.8rem)]">
         <FilterPill
           label="2026"
           options={YEAR_OPTIONS}

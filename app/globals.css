@@ -40,15 +40,9 @@ html:has(.doephone-mobile-root) body {
   background-color: #f7f6f3;
 }
 
-/*
- * /blog — html font-size set inline by useBlogPhoneScale (scales all rem tokens).
- * Nav/footer use blogChrome rem-only classes; LinkedIn in-app gets a scale cap.
- */
-html:has(.blog-mobile-root),
-html[data-blog-route] {
+html:has(.blog-mobile-root) {
+  font-size: 100%;
   background-color: #f7f6f3;
-  -webkit-text-size-adjust: none;
-  text-size-adjust: none;
 }
 
 html:has(.blog-mobile-root) body {
@@ -59,61 +53,6 @@ html:has(.blog-mobile-root) body {
   overflow-x: clip;
   padding-left: env(safe-area-inset-left, 0px);
   padding-right: env(safe-area-inset-right, 0px);
-}
-
-.blog-mobile-canvas,
-.blog-mobile-canvas * {
-  -webkit-text-size-adjust: none;
-  text-size-adjust: none;
-}
-
-html[data-blog-in-app] .blog-mobile-root {
-  overflow-x: hidden;
-}
-
-/** Landing hero — container queries + overflow guard. */
-.blog-landing-hero {
-  container-type: inline-size;
-  container-name: hero;
-}
-
-.blog-landing-hero-footer {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: end;
-  gap: 0.75rem;
-}
-
-@container hero (max-width: 22rem) {
-  .blog-landing-hero-footer {
-    grid-template-columns: 1fr;
-  }
-
-  .blog-landing-hero-filters {
-    justify-self: end;
-    order: -1;
-  }
-
-  .blog-landing-hero-headline {
-    max-width: 100%;
-  }
-}
-
-.blog-landing-hero-headline {
-  -webkit-text-size-adjust: none;
-  text-size-adjust: none;
-}
-
-.blog-landing-hero-filters {
-  -webkit-text-size-adjust: none;
-  text-size-adjust: none;
-}
-
-/** Nav + footer inherit blog zoom; lock text metrics in in-app browsers. */
-html[data-blog-route="true"] .doephone-site-nav,
-html[data-blog-route="true"] footer {
-  -webkit-text-size-adjust: none;
-  text-size-adjust: none;
 }
 
 .doephone-mobile-root {

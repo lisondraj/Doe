@@ -5,24 +5,24 @@ import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
 import {
   BLOG_ARTICLE_BODY_TW,
-  BLOG_ARTICLE_H2_TW,
-  BLOG_ARTICLE_QUOTE_ATTR_TW,
-  BLOG_ARTICLE_QUOTE_TW,
   BLOG_ARTICLE_TITLE_TW,
   BLOG_BODY_COPY_TW,
   BLOG_CONTENT_PT,
   BLOG_EYEBROW_TW,
   BLOG_META_TW,
-  BLOG_SECTION_GAP,
   BLOG_TITLE_VISUAL_GAP,
 } from "@/lib/blog/blog-layout-styles";
+import { dmSans, lora } from "@/lib/home/fonts";
 import type { ArticleBlock, BlogArticle } from "@/lib/blog/articles";
+
+const SECTION_GAP = "mt-10 iphone-page:mt-12";
+const VISUAL_GAP  = "mt-10 iphone-page:mt-12";
 
 function renderBlock(block: ArticleBlock, index: number) {
   switch (block.type) {
     case "p":
       return (
-        <p key={index} className={`${BLOG_ARTICLE_BODY_TW} ${index === 0 ? "" : BLOG_SECTION_GAP}`}>
+        <p key={index} className={`${BLOG_ARTICLE_BODY_TW} ${index === 0 ? "" : SECTION_GAP}`}>
           {block.text}
         </p>
       );
@@ -31,7 +31,7 @@ function renderBlock(block: ArticleBlock, index: number) {
       const before = block.text.slice(0, block.text.indexOf(block.linkAnchor));
       const after  = block.text.slice(block.text.indexOf(block.linkAnchor) + block.linkAnchor.length);
       return (
-        <p key={index} className={`${BLOG_ARTICLE_BODY_TW} ${BLOG_SECTION_GAP}`}>
+        <p key={index} className={`${BLOG_ARTICLE_BODY_TW} ${SECTION_GAP}`}>
           {before}
           <a
             href={block.linkHref}
@@ -48,7 +48,7 @@ function renderBlock(block: ArticleBlock, index: number) {
       return (
         <h2
           key={index}
-          className={`${BLOG_SECTION_GAP} ${BLOG_ARTICLE_H2_TW}`}
+          className={`${SECTION_GAP} text-left font-semibold leading-[1.15] tracking-[-0.01em] text-[#1E343A] text-[clamp(1.35rem,1.1rem+1.1vmin,1.72rem)] iphone-page:text-[clamp(1.52rem,1.25rem+1.35vmin,1.95rem)] ${dmSans.className}`}
         >
           {block.text}
         </h2>
@@ -58,7 +58,7 @@ function renderBlock(block: ArticleBlock, index: number) {
       return (
         <ul
           key={index}
-          className={`${BLOG_SECTION_GAP} space-y-2.5 iphone-page:space-y-3 pl-0 list-none`}
+          className={`${SECTION_GAP} space-y-2.5 iphone-page:space-y-3 pl-0 list-none`}
         >
           {block.items.map((item, i) => (
             <li
@@ -74,7 +74,7 @@ function renderBlock(block: ArticleBlock, index: number) {
 
     case "image":
       return (
-        <div key={index} className={BLOG_SECTION_GAP}>
+        <div key={index} className={VISUAL_GAP}>
           <ArticleInlineVisual design={block.design} />
         </div>
       );
@@ -84,14 +84,18 @@ function renderBlock(block: ArticleBlock, index: number) {
       const [firstSentence, ...rest] = parts;
       const restText = rest.join(". ");
       return (
-        <div key={index} className={`${BLOG_SECTION_GAP} flex w-full justify-center`}>
+        <div key={index} className={`${VISUAL_GAP} flex w-full justify-center`}>
           <div className="text-left">
-            <blockquote className={BLOG_ARTICLE_QUOTE_TW}>
+            <blockquote
+              className={`font-normal leading-[1.22] tracking-[-0.025em] text-[#1E343A] text-[clamp(1.62rem,1.3rem+1.45vmin,2.1rem)] iphone-page:text-[clamp(1.85rem,1.45rem+2vmin,2.6rem)] ${lora.className}`}
+            >
               <span className="block">&ldquo;{firstSentence}.</span>
               {restText && <span className="block">{restText}&rdquo;</span>}
             </blockquote>
             {block.attribution && (
-              <p className={`mt-4 iphone-page:mt-5 ${BLOG_ARTICLE_QUOTE_ATTR_TW}`}>
+              <p
+                className={`mt-4 iphone-page:mt-5 font-medium text-[#9A8F82] text-[clamp(1.08rem,0.95rem+0.55vmin,1.28rem)] iphone-page:text-[clamp(1.22rem,1.05rem+0.8vmin,1.48rem)] ${dmSans.className}`}
+              >
                 &mdash;&thinsp;{block.attribution}
               </p>
             )}

@@ -2,13 +2,6 @@
 
 import Link from "next/link";
 
-import {
-  BLOG_FOOTER_BODY_TW,
-  BLOG_FOOTER_CONTENT_INSET,
-  BLOG_FOOTER_NAV_TW,
-  BLOG_FOOTER_TITLE_TW,
-  BLOG_FOOTER_WORDMARK_SIZE,
-} from "@/lib/blog/blog-chrome-styles";
 import { DOEPHONE_FOOTER_CONTENT_INSET } from "@/lib/doephone/section-styles";
 import { inter, lora } from "@/lib/home/fonts";
 
@@ -19,19 +12,7 @@ const FOOTER_LINKS = [
   { href: "/", label: "Our Vision" },
 ] as const;
 
-export function HomeFooter({ blogChrome = false }: { blogChrome?: boolean }) {
-  const contentInset = blogChrome ? BLOG_FOOTER_CONTENT_INSET : DOEPHONE_FOOTER_CONTENT_INSET;
-  const bodyClass = blogChrome
-    ? BLOG_FOOTER_BODY_TW
-    : `min-w-0 shrink text-left text-white ${inter.className} text-[clamp(1.28rem,1.1rem+0.75vmin,1.55rem)] font-normal leading-[1.38] tracking-[-0.01em] iphone-page:text-[clamp(1.2rem,1.05rem+0.68vmin,1.45rem)]`;
-  const titleClass = blogChrome
-    ? BLOG_FOOTER_TITLE_TW
-    : "text-[clamp(1.45rem,1.22rem+0.85vmin,1.75rem)] font-semibold leading-[1.16] iphone-page:text-[clamp(1.35rem,1.15rem+0.78vmin,1.62rem)]";
-  const navClass = blogChrome
-    ? BLOG_FOOTER_NAV_TW
-    : "flex shrink-0 flex-col items-end gap-4 text-right text-[clamp(1.48rem,5vw,2.1rem)] font-medium leading-[1.1] tracking-tight md:gap-4.5 md:text-[clamp(1.58rem,3vw,2.25rem)] iphone-page:gap-3.5 iphone-page:text-[clamp(1.38rem,4.8vmin,1.82rem)]";
-  const wordmarkSize = blogChrome ? BLOG_FOOTER_WORDMARK_SIZE : "clamp(11rem, min(76vw, 68vmin), 30rem)";
-
+export function HomeFooter() {
   return (
     <>
       <footer
@@ -90,10 +71,12 @@ export function HomeFooter({ blogChrome = false }: { blogChrome?: boolean }) {
 
         <div className="relative z-10 flex w-full flex-1 flex-col justify-end pt-10 md:pt-16">
           <div
-            className={`mb-14 flex w-full items-end justify-between gap-8 md:mb-16 iphone-page:mb-12 iphone-page:gap-6 ${contentInset}`}
+            className={`mb-14 flex w-full items-end justify-between gap-8 md:mb-16 iphone-page:mb-12 iphone-page:gap-6 ${DOEPHONE_FOOTER_CONTENT_INSET}`}
           >
-            <div className={bodyClass}>
-              <p className={titleClass}>
+            <div
+              className={`min-w-0 shrink text-left text-white ${inter.className} text-[clamp(1.28rem,1.1rem+0.75vmin,1.55rem)] font-normal leading-[1.38] tracking-[-0.01em] iphone-page:text-[clamp(1.2rem,1.05rem+0.68vmin,1.45rem)]`}
+            >
+              <p className="text-[clamp(1.45rem,1.22rem+0.85vmin,1.75rem)] font-semibold leading-[1.16] iphone-page:text-[clamp(1.35rem,1.15rem+0.78vmin,1.62rem)]">
                 Doe Corporation
               </p>
               <address className="mt-2.5 space-y-0.5 not-italic text-white/88">
@@ -109,7 +92,10 @@ export function HomeFooter({ blogChrome = false }: { blogChrome?: boolean }) {
               </a>
             </div>
 
-            <nav className={navClass} aria-label="Footer">
+            <nav
+              className="flex shrink-0 flex-col items-end gap-4 text-right text-[clamp(1.48rem,5vw,2.1rem)] font-medium leading-[1.1] tracking-tight md:gap-4.5 md:text-[clamp(1.58rem,3vw,2.25rem)] iphone-page:gap-3.5 iphone-page:text-[clamp(1.38rem,4.8vmin,1.82rem)]"
+              aria-label="Footer"
+            >
               {FOOTER_LINKS.map((item) => (
                 <Link
                   key={item.label}
@@ -136,7 +122,7 @@ export function HomeFooter({ blogChrome = false }: { blogChrome?: boolean }) {
               style={{
                 color: "#F7F6F3",
                 /** Giant: wide enough that “d” / “e” bleed past L/R edges; milder bottom bleed. */
-                fontSize: wordmarkSize,
+                fontSize: "clamp(11rem, min(76vw, 68vmin), 30rem)",
                 marginBottom: "calc(-0.06em - env(safe-area-inset-bottom, 0px))",
               }}
             >
