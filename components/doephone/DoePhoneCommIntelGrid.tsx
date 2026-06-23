@@ -4,10 +4,11 @@ import { BLOG_LANDING_HERO } from "@/lib/blog/blog-landing-hero-colors";
 
 const B = BLOG_LANDING_HERO;
 
-/* Cell dimensions — same tokens as before */
-const CELL_H_TALL = "clamp(10.5rem,47vmin,17rem)";
+/* Cell dimensions — uniform height for clean 3×2 grid */
 const CELL_H      = "clamp(8.5rem,38vmin,14rem)";
 const CELL_RADIUS = "0.38rem";
+/* Gap between tiles — must match the CSS variable used for container math */
+const GAP         = "clamp(0.45rem,1.2vmin,0.75rem)";
 
 /* ─── Gradient cell definitions ─── */
 const GRADIENT_DESIGNS = [
@@ -33,41 +34,44 @@ const GRADIENT_DESIGNS = [
   },
 ] as const;
 
-/* ─── Column tile sequences — 5 tiles each, first tile tall ─── */
-type TileSpec = { kind: "gradient" | "beige"; design: number; tall: boolean };
+/* ─── Column tile sequences — 6 tiles each, all same height ─── */
+type TileSpec = { kind: "gradient" | "beige"; design: number };
 
 const COL_TILES: TileSpec[][] = [
   /* Left — recedes (scrolls up) */
   [
-    { kind: "gradient", design: 0, tall: true  },
-    { kind: "beige",    design: 0, tall: false },
-    { kind: "gradient", design: 2, tall: false },
-    { kind: "beige",    design: 2, tall: false },
-    { kind: "gradient", design: 4, tall: false },
+    { kind: "gradient", design: 0 },
+    { kind: "beige",    design: 0 },
+    { kind: "gradient", design: 2 },
+    { kind: "beige",    design: 2 },
+    { kind: "gradient", design: 4 },
+    { kind: "beige",    design: 3 },
   ],
-  /* Center — advances (scrolls down) */
+  /* Center — advances (scrolls down, opposite) */
   [
-    { kind: "beige",    design: 1, tall: true  },
-    { kind: "gradient", design: 1, tall: false },
-    { kind: "beige",    design: 3, tall: false },
-    { kind: "gradient", design: 3, tall: false },
-    { kind: "beige",    design: 2, tall: false },
+    { kind: "beige",    design: 1 },
+    { kind: "gradient", design: 1 },
+    { kind: "beige",    design: 3 },
+    { kind: "gradient", design: 3 },
+    { kind: "beige",    design: 2 },
+    { kind: "gradient", design: 0 },
   ],
-  /* Right — recedes (scrolls up, offset) */
+  /* Right — recedes (scrolls up, same phase as left) */
   [
-    { kind: "gradient", design: 3, tall: true  },
-    { kind: "beige",    design: 2, tall: false },
-    { kind: "gradient", design: 1, tall: false },
-    { kind: "beige",    design: 0, tall: false },
-    { kind: "gradient", design: 2, tall: false },
+    { kind: "gradient", design: 3 },
+    { kind: "beige",    design: 2 },
+    { kind: "gradient", design: 1 },
+    { kind: "beige",    design: 0 },
+    { kind: "gradient", design: 2 },
+    { kind: "beige",    design: 1 },
   ],
 ];
 
-/* Animation config per column */
+/* Animation config per column — left and right in sync (same delay) */
 const COL_ANIM = [
   { animClass: "intel-col-up",   delay: "0s"    }, // left — recede
-  { animClass: "intel-col-down", delay: "-4.2s" }, // center — advance
-  { animClass: "intel-col-up",   delay: "-2.1s" }, // right — recede (staggered)
+  { animClass: "intel-col-down", delay: "0s"    }, // center — advance
+  { animClass: "intel-col-up",   delay: "0s"    }, // right — recede, same phase as left
 ];
 
 /* ─── SVG overlays ─── */
@@ -162,13 +166,12 @@ function BeigeLineArt({ design }: { design: number }) {
 }
 
 function GridCell({ tile }: { tile: TileSpec }) {
-  const h = tile.tall ? CELL_H_TALL : CELL_H;
   if (tile.kind === "gradient") {
     const d = GRADIENT_DESIGNS[tile.design];
     return (
       <div
         className="relative shrink-0 overflow-hidden"
-        style={{ height: h, minHeight: h, borderRadius: CELL_RADIUS, background: d.gradient }}
+        style={{ height: CELL_H, minHeight: CELL_H, borderRadius: CELL_RADIUS, background: d.gradient }}
       >
         <GradientOverlay kind={d.overlay} />
       </div>
@@ -177,7 +180,7 @@ function GridCell({ tile }: { tile: TileSpec }) {
   return (
     <div
       className="relative shrink-0 overflow-hidden"
-      style={{ height: h, minHeight: h, borderRadius: CELL_RADIUS, background: B.fill, border: `1px solid ${B.border}` }}
+      style={{ height: CELL_H, minHeight: CELL_H, borderRadius: CELL_RADIUS, background: B.fill, border: `1px solid ${B.border}` }}
     >
       <BeigeLineArt design={tile.design} />
     </div>
@@ -186,15 +189,17 @@ function GridCell({ tile }: { tile: TileSpec }) {
 
 /* ─── Public grid component ─── */
 export function DoePhoneCommIntelGrid() {
-  const gap = "clamp(0.45rem,1.2vmin,0.75rem)";
-
+  /*
+   * Seamless-loop math:
+   *   strip = 3 copies of N tiles (flex-col with gap)
+   *   strip total height = 3N·h + (3N−1)·g  [flex gaps between every pair]
+   *   Adding paddingBottom=g makes total = 3N·h + 3N·g = 3·(N·h + N·g)
+   *   → translateY(33.333%) = exactly 1 copy height = N·(h+g). Loop is perfect.
+   *
+   * Outer columns (up):   0 → −33.333%  (recede into screen, same phase left & right)
+   * Center column (down): −66.666% → −33.333%  (advance toward viewer, no empty gap)
+   */
   return (
-    /*
-     * Same outer tilt as before — perspective(540px) rotateX(46deg).
-     * Inner columns scroll independently: outer two recede (up), center advances (down).
-     * Each strip renders 3× the tile list — translateY(±33.333%) = exactly 1 copy
-     * height, making the loop seamless.
-     */
     <div
       style={{
         marginLeft: "-20vw",
@@ -209,18 +214,21 @@ export function DoePhoneCommIntelGrid() {
           "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.08) 12%, rgba(0,0,0,0.35) 24%, rgba(0,0,0,0.72) 38%, black 52%, black 80%, transparent 100%)",
       }}
     >
-      {/* Fixed-height row — columns clip their tall strips here */}
+      {/*
+       * Container height = exactly 2 tiles + 1 gap → 3×2 spotlight.
+       * overflow:hidden clips each strip to this window.
+       */}
       <div
         className="grid w-full grid-cols-3"
         style={{
-          gap,
-          height: "clamp(38rem,105vmin,62rem)",
+          gap: GAP,
+          height: `calc(2 * ${CELL_H} + ${GAP})`,
           overflow: "hidden",
         }}
       >
         {COL_TILES.map((tiles, colIdx) => {
           const { animClass, delay } = COL_ANIM[colIdx];
-          /* Three copies of the tile list → seamless 33.333% loop */
+          /* 3 copies → 33.333% = exactly 1 copy height (seamless loop) */
           const strip = [...tiles, ...tiles, ...tiles];
 
           return (
@@ -228,7 +236,9 @@ export function DoePhoneCommIntelGrid() {
               key={colIdx}
               className={`flex flex-col will-change-transform ${animClass}`}
               style={{
-                gap,
+                gap: GAP,
+                /* Extra bottom padding = 1 gap so total height is divisible by 3 */
+                paddingBottom: GAP,
                 animationDelay: delay,
               }}
             >

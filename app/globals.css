@@ -419,19 +419,27 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
 
 /* ─── Communication + Intelligence grid — infinite column scrolls ─── */
 @keyframes intel-col-scroll-up {
-  to { transform: translateY(-33.333%); }
+  from { transform: translateY(0); }
+  to   { transform: translateY(-33.333%); }
 }
 
+/*
+ * Center column scrolls DOWN (opposite of outer).
+ * Stays negative so the strip always fills the container — no empty-space gap.
+ * from -66.666% → -33.333%: strip drifts downward, then snaps back seamlessly
+ * (copy 3 at -66.666% is identical to copy 2 at -33.333%).
+ */
 @keyframes intel-col-scroll-down {
-  to { transform: translateY(33.333%); }
+  from { transform: translateY(-66.666%); }
+  to   { transform: translateY(-33.333%); }
 }
 
 .intel-col-up {
-  animation: intel-col-scroll-up 20s linear infinite;
+  animation: intel-col-scroll-up 26s linear infinite;
 }
 
 .intel-col-down {
-  animation: intel-col-scroll-down 15s linear infinite;
+  animation: intel-col-scroll-down 20s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
