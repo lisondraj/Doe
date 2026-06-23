@@ -1548,18 +1548,27 @@ export function DesktopHome() {
           </>
         </nav>
 
-        {/* Left mission + tilted triage issue preview under headline */}
+        {/* Mission copy — left */}
         {!isPhoneLayout && desktopHeroMissionBlockOpacity > 0 && (
           <div
-            className="absolute inset-x-0 bottom-0 top-0 z-[21] flex flex-col items-start justify-center gap-[clamp(1.5rem,2.8vw,2.35rem)] overflow-visible pb-[clamp(1.5rem,3.5vh,3rem)] pl-10 pt-[max(6rem,calc(env(safe-area-inset-top,0px)+4.75rem))] md:pl-20 lg:pl-28 xl:pl-36"
+            className="absolute inset-x-0 bottom-0 top-0 z-[21] flex flex-col items-start justify-center overflow-visible pb-[clamp(1.5rem,3.5vh,3rem)] pl-10 pt-[max(6rem,calc(env(safe-area-inset-top,0px)+4.75rem))] md:pl-20 lg:pl-28 xl:pl-36"
           >
             <DesktopHeroMissionScrollText
               interClassName={inter.className}
               typeLinear={desktopHeroMissionTypeLinear}
               line1SpanRef={desktopHeroMissionLine1SpanRef}
             />
-            <HeroTriagePreview fontClassName={suisseIntl.className} size="desktop" />
           </div>
+        )}
+
+        {/* Triage glass panel — large, half bleeds off right edge */}
+        {!isPhoneLayout && desktopHeroMissionBlockOpacity > 0 && (
+          <HeroTriagePreview
+            fontClassName={suisseIntl.className}
+            size="desktop"
+            className="z-[20]"
+            style={{ bottom: "8%" }}
+          />
         )}
 
       </div>

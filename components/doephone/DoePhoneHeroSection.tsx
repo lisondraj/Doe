@@ -117,15 +117,16 @@ export function DoePhoneHeroSection() {
       />
 
       <div
-        className={`doephone-hero-copy absolute inset-0 z-[3] flex min-w-0 flex-col items-start justify-start gap-[clamp(1.25rem,4.5vmin,2rem)] overflow-visible pt-[max(9rem,calc(env(safe-area-inset-top,0px)+calc(var(--app-vh,100lvh)*0.31)))] pb-[clamp(1.5rem,5vmin,2.5rem)] ${DOEPHONE_HERO_COPY_INSET}`}
+        className={`doephone-hero-copy absolute inset-0 z-[3] flex min-w-0 flex-col items-start justify-start overflow-visible pt-[max(9rem,calc(env(safe-area-inset-top,0px)+calc(var(--app-vh,100lvh)*0.31)))] pb-[clamp(1.5rem,5vmin,2.5rem)] ${DOEPHONE_HERO_COPY_INSET}`}
       >
         <DoePhoneHeroHeadline />
-        <HeroTriagePreview
-          fontClassName={suisseIntl.className}
-          size="mobile"
-          className="doephone-hero-triage-preview w-full max-w-full shrink-0"
-        />
       </div>
+
+      <HeroTriagePreview
+        fontClassName={suisseIntl.className}
+        size="mobile"
+        className="doephone-hero-triage-preview z-[2]"
+      />
     </section>
   );
 }
