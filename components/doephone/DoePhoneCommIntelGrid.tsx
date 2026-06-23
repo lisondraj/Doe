@@ -230,12 +230,12 @@ export function DoePhoneCommIntelGrid() {
         transformOrigin: "50% 50%",
         transformStyle: "preserve-3d",
         WebkitMaskImage: [
-          "linear-gradient(to bottom, transparent 0%, black 22%, black 82%, transparent 100%)",
+          "linear-gradient(to bottom, transparent 0%, black 34%, black 82%, transparent 100%)",
           "linear-gradient(to right,  transparent 0%, black 10%, black 90%, transparent 100%)",
         ].join(", "),
         WebkitMaskComposite: "source-in",
         maskImage: [
-          "linear-gradient(to bottom, transparent 0%, black 22%, black 82%, transparent 100%)",
+          "linear-gradient(to bottom, transparent 0%, black 34%, black 82%, transparent 100%)",
           "linear-gradient(to right,  transparent 0%, black 10%, black 90%, transparent 100%)",
         ].join(", "),
         maskComposite: "intersect",
