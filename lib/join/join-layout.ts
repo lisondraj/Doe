@@ -4,13 +4,13 @@ export const JOIN_DESKTOP_CONTENT_PAD = "px-8";
 export const JOIN_DESKTOP_CONTENT =
   `mx-auto w-full ${JOIN_DESKTOP_CONTENT_MAX} ${JOIN_DESKTOP_CONTENT_PAD}`;
 
-/** Bottom inset below join mobile hero — matches carousel horizontal gutter. */
-export const JOIN_MOBILE_HERO_BOTTOM_PAD =
-  "iphone-page:pb-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
+/** Inset around join mobile hero card — matches carousel horizontal gutter on all sides. */
+export const JOIN_MOBILE_HERO_INSET =
+  "iphone-page:py-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
 
-/** First iPhone screen — hero fills viewport below nav with uniform bottom pad. */
+/** First iPhone screen — hero fills viewport below nav with uniform inset. */
 export const JOIN_MOBILE_HERO_VIEWPORT_SECTION =
-  `flex flex-col iphone-page:min-h-[calc(var(--app-vh,100lvh)-max(11.25rem,calc(env(safe-area-inset-top,0px)+7.75rem)))] ${JOIN_MOBILE_HERO_BOTTOM_PAD}`;
+  `flex flex-col iphone-page:min-h-[calc(var(--app-vh,100lvh)-max(11.25rem,calc(env(safe-area-inset-top,0px)+7.75rem)))] ${JOIN_MOBILE_HERO_INSET}`;
 
 /** Hero card fills remaining space inside the viewport section. */
 export const JOIN_MOBILE_HERO_FILL = "h-full min-h-0 w-full flex-1";
