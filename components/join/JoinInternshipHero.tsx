@@ -1,4 +1,5 @@
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
+import { BLOG_LANDING_HERO_CORNER_PAD } from "@/lib/blog/blog-layout-styles";
 import { DOEPHONE_COMMUNICATION_SLIDES } from "@/lib/doephone/communication-carousel";
 import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
 import {
@@ -9,12 +10,15 @@ import { lora } from "@/lib/home/fonts";
 
 const AGENTS_CAROUSEL_BACKDROP = DOEPHONE_COMMUNICATION_SLIDES[0].backdrop;
 
+const JOIN_HERO_HEADLINE_MOBILE =
+  "text-[clamp(2.35rem,8vw,3.55rem)] iphone-page:text-[clamp(2.5rem,1.9rem+3.4vmin,4.15rem)]";
+
+const JOIN_HERO_HEADLINE_DESKTOP = "text-[clamp(2.85rem,4.8vw,4.35rem)]";
+
+/** Join hero — Agents fill, blog-style bottom-left headline. */
 export function JoinInternshipHero({ variant }: { variant: "mobile" | "desktop" }) {
   const heightClass = variant === "mobile" ? JOIN_MOBILE_HERO_HEIGHT : JOIN_DESKTOP_HERO_HEIGHT;
-  const titleClass =
-    variant === "mobile"
-      ? "text-[clamp(2.35rem,1.75rem+3.2vmin,3.35rem)] iphone-page:text-[clamp(2.65rem,1.95rem+3.8vmin,3.75rem)]"
-      : "text-[clamp(2.75rem,4.5vw,4.25rem)]";
+  const titleClass = variant === "mobile" ? JOIN_HERO_HEADLINE_MOBILE : JOIN_HERO_HEADLINE_DESKTOP;
 
   return (
     <div
@@ -26,13 +30,12 @@ export function JoinInternshipHero({ variant }: { variant: "mobile" | "desktop" 
         className={DOEPHONE_SECTION_CAROUSEL_RADIUS}
       />
 
-      <div className="absolute inset-0 z-[3] flex flex-col items-center justify-center px-6 text-center">
-        <p
-          className={`font-normal leading-[1.06] tracking-[-0.03em] text-white [text-shadow:0_2px_18px_rgba(0,0,0,0.22)] ${titleClass} ${lora.className}`}
-        >
-          Doe Internship
-        </p>
-      </div>
+      <p
+        className={`absolute bottom-0 left-0 z-[3] max-w-[min(100%,20em)] text-left font-normal leading-[1.04] tracking-[-0.035em] text-white [text-shadow:0_2px_24px_rgba(0,0,0,0.32)] ${BLOG_LANDING_HERO_CORNER_PAD} ${titleClass} ${lora.className}`}
+      >
+        <span className="block">Rebuild healthcare</span>
+        <span className="block text-white/[0.92]">with us.</span>
+      </p>
     </div>
   );
 }
