@@ -85,10 +85,10 @@ export function HomeFooter({ linksDisabled = false }: { linksDisabled?: boolean 
                 <span className="block">United States</span>
               </address>
               <a
-                href="mailto:contact@doe.care"
+                href="mailto:ask@doehealth.care"
                 className="mt-2.5 inline-block text-white/88 no-underline transition-colors hover:text-white"
               >
-                contact@doe.care
+                ask@doehealth.care
               </a>
             </div>
 
