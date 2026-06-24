@@ -476,6 +476,21 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
   animation: doephone-hero-headline-in 1.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
+/* /join apply card — individual answered field animates in from the right. */
+@keyframes join-card-field-in {
+  from {
+    opacity: 0;
+    transform: translateX(0.5rem);
+    filter: blur(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+    filter: blur(0);
+  }
+}
+
 /* /join apply form — step content enters from below (forward) or above (back). */
 @keyframes join-step-enter-down {
   from {

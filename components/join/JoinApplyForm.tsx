@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 
+import { JoinApplyCard } from "@/components/join/JoinApplyCard";
 import { renderJoinApplyStep } from "@/components/join/join-apply-form-steps";
 import {
   joinFormFieldClass,
@@ -37,14 +38,6 @@ const JOIN_APPLY_STEP_PROMPTS = [
   "Anything you'd like to add?",
 ] as const;
 
-const MOBILE_PREVIEW_SLOT = "h-36 iphone-page:h-40";
-// Active slot tall enough for areas (step 5) and textarea (step 8) without scroll
-const MOBILE_ACTIVE_SLOT = "h-64 iphone-page:h-[18.5rem]";
-// Fixed carousel container: 2×preview + 2×gap + active
-// non-iphone: 144 + 10 + 256 + 10 + 144 = 564px
-// iphone:     160 + 12 + 296 + 12 + 160 = 640px
-const MOBILE_CAROUSEL_HEIGHT = "h-[564px] iphone-page:h-[640px]";
-
 function toggleArea(areas: JoinApplyArea[], area: JoinApplyArea): JoinApplyArea[] {
   return areas.includes(area) ? areas.filter((a) => a !== area) : [...areas, area];
 }
@@ -56,164 +49,90 @@ function fieldStyle() {
   };
 }
 
-type JoinApplyMobileCarouselProps = {
+// ─── Mobile: card + single question layout ──────────────────────────────────
+
+type JoinApplyMobileFormProps = {
   step: number;
   data: JoinApplyFormState;
   patch: (partial: Partial<JoinApplyFormState>) => void;
-  goBack: () => void;
   goNext: () => void;
+  setStep: (s: number) => void;
   submit: () => void;
   canProceed: boolean;
   isLastStep: boolean;
   resumeInputRef: RefObject<HTMLInputElement>;
 };
 
-function JoinApplyMobileCarousel({
+function JoinApplyMobileForm({
   step,
   data,
   patch,
-  goBack,
   goNext,
+  setStep,
   submit,
   canProceed,
   isLastStep,
   resumeInputRef,
-}: JoinApplyMobileCarouselProps) {
-  const [direction, setDirection] = useState<"down" | "up">("down");
-  // prevStep drives the exit animation — cleared after the exit duration
-  const [prevStep, setPrevStep] = useState<number | null>(null);
-  const stepRef = useRef(step);
-
-  useEffect(() => {
-    if (step === stepRef.current) return;
-    const prev = stepRef.current;
-    stepRef.current = step;
-    setPrevStep(prev);
-    const t = setTimeout(() => setPrevStep(null), 340);
-    return () => clearTimeout(t);
-  }, [step]);
-
-  const handleDown = useCallback(() => {
-    if (isLastStep) {
-      if (canProceed) submit();
-      return;
-    }
-    if (canProceed) {
-      setDirection("down");
-      goNext();
-    }
+}: JoinApplyMobileFormProps) {
+  const handleAdvance = useCallback(() => {
+    if (isLastStep) { if (canProceed) submit(); }
+    else if (canProceed) goNext();
   }, [canProceed, goNext, isLastStep, submit]);
 
-  const handleUp = useCallback(() => {
-    setDirection("up");
-    goBack();
-  }, [goBack]);
-
+  // Global Enter key advances the form (except on textareas)
   useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
+    const onKey = (e: KeyboardEvent) => {
       if (e.key !== "Enter" || e.shiftKey || e.metaKey || e.ctrlKey || e.altKey) return;
-      const target = e.target as HTMLElement;
-      if (target.tagName === "TEXTAREA") return;
+      if ((e.target as HTMLElement).tagName === "TEXTAREA") return;
       if (!canProceed) return;
       e.preventDefault();
-      handleDown();
+      handleAdvance();
     };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [canProceed, handleDown]);
-
-  const enterAnim =
-    direction === "down"
-      ? "[animation:join-step-enter-down_0.38s_cubic-bezier(0.22,1,0.36,1)_both]"
-      : "[animation:join-step-enter-up_0.38s_cubic-bezier(0.22,1,0.36,1)_both]";
-
-  const exitAnim =
-    direction === "down"
-      ? "[animation:join-step-exit-down_0.26s_ease-in_both]"
-      : "[animation:join-step-exit-up_0.26s_ease-in_both]";
-
-  const aboveStep = step > 0 ? step - 1 : null;
-  const belowStep = step < JOIN_APPLY_STEP_COUNT - 1 ? step + 1 : null;
-  const enterLabel = isLastStep ? "Submit" : "Next";
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [canProceed, handleAdvance]);
 
   return (
-    <div className="flex w-full flex-col items-center">
-      {step > 0 ? (
-        <JoinFormNavArrow direction="up" onClick={handleUp} label="Previous question" />
-      ) : (
-        <div className="h-9 shrink-0 iphone-page:h-10" aria-hidden />
-      )}
+    <div className={joinFormShellClass("mobile")}>
+      {/* Big beige card — shows answers as they accumulate */}
+      <JoinApplyCard data={data} onEdit={(s) => setStep(s)} />
 
-      {/* Fixed-height container prevents any layout shift during step changes */}
+      {/* Single active question, animates in on each step change */}
       <div
-        className={`my-2 flex w-full flex-col gap-2.5 overflow-hidden iphone-page:my-2.5 iphone-page:gap-3 ${MOBILE_CAROUSEL_HEIGHT}`}
+        className="mt-4 iphone-page:mt-5"
         aria-live="polite"
-        aria-label={`Application step ${step + 1} of ${JOIN_APPLY_STEP_COUNT}`}
+        aria-label={`Question ${step + 1} of ${JOIN_APPLY_STEP_COUNT}`}
       >
-        {/* Above preview */}
         <div
-          className={`${MOBILE_PREVIEW_SLOT} w-full shrink-0 overflow-hidden rounded-[1.35rem] iphone-page:rounded-[1.45rem] ${
-            aboveStep !== null ? "pointer-events-none opacity-[0.48]" : ""
-          }`}
-          aria-hidden
+          key={step}
+          className="[animation:join-step-enter-down_0.38s_cubic-bezier(0.22,1,0.36,1)_both]"
         >
-          {aboveStep !== null
-            ? renderJoinApplyStep({ step: aboveStep, data, patch, variant: "mobile", interactive: false })
-            : null}
-        </div>
-
-        {/* Active — cross-fade between exiting and entering content */}
-        <div
-          className={`${MOBILE_ACTIVE_SLOT} relative w-full shrink-0 overflow-hidden rounded-[1.35rem] iphone-page:rounded-[1.45rem]`}
-        >
-          {/* Exiting content */}
-          {prevStep !== null ? (
-            <div
-              key={`exit-${prevStep}`}
-              className={`absolute inset-0 flex flex-col justify-center ${exitAnim}`}
-            >
-              {renderJoinApplyStep({ step: prevStep, data, patch, variant: "mobile", interactive: false })}
-            </div>
-          ) : null}
-          {/* Entering content */}
-          <div
-            key={`enter-${step}`}
-            className={`absolute inset-0 flex flex-col justify-center ${enterAnim}`}
-          >
-            {renderJoinApplyStep({
-              step,
-              data,
-              patch,
-              variant: "mobile",
-              interactive: true,
-              resumeInputRef,
-              onEnter: handleDown,
-            })}
-          </div>
-        </div>
-
-        {/* Below preview */}
-        <div
-          className={`${MOBILE_PREVIEW_SLOT} w-full shrink-0 overflow-hidden rounded-[1.35rem] iphone-page:rounded-[1.45rem] ${
-            belowStep !== null ? "pointer-events-none opacity-[0.48]" : ""
-          }`}
-          aria-hidden
-        >
-          {belowStep !== null
-            ? renderJoinApplyStep({ step: belowStep, data, patch, variant: "mobile", interactive: false })
-            : null}
+          {renderJoinApplyStep({
+            step,
+            data,
+            patch,
+            variant: "mobile",
+            interactive: true,
+            resumeInputRef,
+            onEnter: handleAdvance,
+          })}
         </div>
       </div>
 
-      <JoinFormNavArrow
-        direction="down"
-        disabled={!canProceed}
-        onClick={handleDown}
-        label={enterLabel}
-      />
+      {/* Down arrow — advances or submits */}
+      <div className="mt-3 flex justify-center iphone-page:mt-4">
+        <JoinFormNavArrow
+          direction="down"
+          disabled={!canProceed}
+          onClick={handleAdvance}
+          label={isLastStep ? "Submit application" : "Next question"}
+        />
+      </div>
     </div>
   );
 }
+
+// ─── Shared form shell ───────────────────────────────────────────────────────
 
 export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "desktop" }) {
   const [step, setStep] = useState(0);
@@ -239,9 +158,7 @@ export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "d
     setStep((s) => Math.min(s + 1, JOIN_APPLY_STEP_COUNT - 1));
   };
 
-  const goBack = () => {
-    setStep((s) => Math.max(s - 1, 0));
-  };
+  const goBack = () => setStep((s) => Math.max(s - 1, 0));
 
   const submit = () => {
     if (!canProceed) return;
@@ -251,92 +168,71 @@ export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "d
   if (submitted) {
     return (
       <div className={joinFormShellClass(variant)}>
-        <p
-          className={`font-normal leading-snug tracking-[-0.02em] text-[#1E343A] ${
-            variant === "mobile"
-              ? "text-[1.875rem] iphone-page:text-[2.125rem]"
-              : "text-[1.375rem]"
-          } ${suisseIntl.className}`}
-        >
-          Thank you — we&apos;ll be in touch.
-        </p>
-        <p
-          className={`mt-3 text-[#1E343A]/60 ${inter.className} ${
-            variant === "mobile" ? "text-[1.25rem] iphone-page:text-[1.375rem]" : "text-[1rem]"
-          }`}
-        >
-          Your application has been received.
-        </p>
+        {variant === "mobile" ? (
+          <>
+            <JoinApplyCard data={data} onEdit={() => {}} />
+            <p className={`mt-6 font-normal leading-snug tracking-[-0.02em] text-[#1E343A] text-[1.875rem] iphone-page:mt-8 iphone-page:text-[2.125rem] ${suisseIntl.className}`}>
+              Thank you — we&apos;ll be in touch.
+            </p>
+            <p className={`mt-2 text-[#1E343A]/55 text-[1.125rem] iphone-page:text-[1.25rem] ${inter.className}`}>
+              Your application has been received.
+            </p>
+          </>
+        ) : (
+          <>
+            <p className={`font-normal leading-snug tracking-[-0.02em] text-[#1E343A] text-[1.375rem] ${suisseIntl.className}`}>
+              Thank you — we&apos;ll be in touch.
+            </p>
+            <p className={`mt-3 text-[#1E343A]/60 text-[1rem] ${inter.className}`}>
+              Your application has been received.
+            </p>
+          </>
+        )}
       </div>
     );
   }
 
   if (variant === "mobile") {
     return (
-      <div className={joinFormShellClass(variant)}>
-        <JoinApplyMobileCarousel
-          step={step}
-          data={data}
-          patch={patch}
-          goBack={goBack}
-          goNext={goNext}
-          submit={submit}
-          canProceed={canProceed}
-          isLastStep={isLastStep}
-          resumeInputRef={resumeInputRef}
-        />
-      </div>
+      <JoinApplyMobileForm
+        step={step}
+        data={data}
+        patch={patch}
+        goNext={goNext}
+        setStep={setStep}
+        submit={submit}
+        canProceed={canProceed}
+        isLastStep={isLastStep}
+        resumeInputRef={resumeInputRef}
+      />
     );
   }
+
+  // ── Desktop layout (unchanged) ──────────────────────────────────────────────
 
   const stepContent = (() => {
     switch (step) {
       case 0:
         return (
-          <input
-            type="text"
-            value={data.name}
-            onChange={(e) => patch({ name: e.target.value })}
-            placeholder={prompt}
-            autoComplete="name"
-            aria-label={prompt}
-            className={fieldClass}
-            style={fieldStyle()}
-          />
+          <input type="text" value={data.name} onChange={(e) => patch({ name: e.target.value })}
+            placeholder={prompt} autoComplete="name" aria-label={prompt}
+            className={fieldClass} style={fieldStyle()} />
         );
       case 1:
         return (
-          <input
-            type="email"
-            value={data.email}
-            onChange={(e) => patch({ email: e.target.value })}
-            placeholder={prompt}
-            autoComplete="email"
-            aria-label={prompt}
-            className={fieldClass}
-            style={fieldStyle()}
-          />
+          <input type="email" value={data.email} onChange={(e) => patch({ email: e.target.value })}
+            placeholder={prompt} autoComplete="email" aria-label={prompt}
+            className={fieldClass} style={fieldStyle()} />
         );
       case 2:
-        return (
-          <JoinCountrySlider variant={variant} value={data.country} onChange={(country) => patch({ country })} prompt={prompt} />
-        );
+        return <JoinCountrySlider variant={variant} value={data.country} onChange={(country) => patch({ country })} prompt={prompt} />;
       case 3:
-        return (
-          <JoinEducationSlider variant={variant} value={data.education} onChange={(education) => patch({ education })} prompt={prompt} />
-        );
+        return <JoinEducationSlider variant={variant} value={data.education} onChange={(education) => patch({ education })} prompt={prompt} />;
       case 4:
         return (
-          <input
-            type="text"
-            value={data.schoolName}
-            onChange={(e) => patch({ schoolName: e.target.value })}
-            placeholder={prompt}
-            autoComplete="organization"
-            aria-label={prompt}
-            className={fieldClass}
-            style={fieldStyle()}
-          />
+          <input type="text" value={data.schoolName} onChange={(e) => patch({ schoolName: e.target.value })}
+            placeholder={prompt} autoComplete="organization" aria-label={prompt}
+            className={fieldClass} style={fieldStyle()} />
         );
       case 5:
         return (
@@ -346,18 +242,10 @@ export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "d
               {JOIN_APPLY_AREAS.map((area) => {
                 const active = data.areas.includes(area);
                 return (
-                  <button
-                    key={area}
-                    type="button"
-                    aria-pressed={active}
+                  <button key={area} type="button" aria-pressed={active}
                     onClick={() => patch({ areas: toggleArea(data.areas, area) })}
                     className={`rounded-xl text-center font-medium leading-tight tracking-[-0.01em] transition-colors ${areaLabelSize} ${inter.className}`}
-                    style={
-                      active
-                        ? { backgroundColor: JOIN_FORM_BEIGE.meter, color: JOIN_FORM_BEIGE.page }
-                        : { backgroundColor: JOIN_FORM_BEIGE.fieldMuted, color: "rgba(30, 52, 58, 0.58)" }
-                    }
-                  >
+                    style={active ? { backgroundColor: JOIN_FORM_BEIGE.meter, color: JOIN_FORM_BEIGE.page } : { backgroundColor: JOIN_FORM_BEIGE.fieldMuted, color: "rgba(30,52,58,0.58)" }}>
                     {area}
                   </button>
                 );
@@ -368,20 +256,11 @@ export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "d
       case 6:
         return (
           <>
-            <input
-              ref={resumeInputRef}
-              type="file"
+            <input ref={resumeInputRef} type="file"
               accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-              className="sr-only"
-              onChange={(e) => patch({ resume: e.target.files?.[0] ?? null })}
-            />
-            <button
-              type="button"
-              onClick={() => resumeInputRef.current?.click()}
-              aria-label={prompt}
-              className={`${fieldClass} flex items-center justify-between gap-3 text-left`}
-              style={fieldStyle()}
-            >
+              className="sr-only" onChange={(e) => patch({ resume: e.target.files?.[0] ?? null })} />
+            <button type="button" onClick={() => resumeInputRef.current?.click()} aria-label={prompt}
+              className={`${fieldClass} flex items-center justify-between gap-3 text-left`} style={fieldStyle()}>
               <span className={data.resume ? "text-[#1E343A]" : "text-[#1E343A]/38"}>
                 {data.resume ? data.resume.name : prompt}
               </span>
@@ -393,26 +272,15 @@ export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "d
         return (
           <div className={joinFormPanelClass(variant)} style={fieldStyle()}>
             <p className={joinFormPromptClass(variant)}>{prompt}</p>
-            <JoinLinkedInInput
-              variant={variant}
-              value={data.linkedinUsername}
-              onChange={(linkedinUsername) => patch({ linkedinUsername })}
-              placeholder="username"
-              nested
-            />
+            <JoinLinkedInInput variant={variant} value={data.linkedinUsername}
+              onChange={(linkedinUsername) => patch({ linkedinUsername })} placeholder="username" nested />
           </div>
         );
       case 8:
         return (
-          <textarea
-            value={data.notes}
-            onChange={(e) => patch({ notes: e.target.value })}
-            placeholder={prompt}
-            aria-label={prompt}
-            rows={4}
-            className={`${fieldClass} min-h-[7.5rem] resize-none`}
-            style={fieldStyle()}
-          />
+          <textarea value={data.notes} onChange={(e) => patch({ notes: e.target.value })}
+            placeholder={prompt} aria-label={prompt} rows={4}
+            className={`${fieldClass} min-h-[7.5rem] resize-none`} style={fieldStyle()} />
         );
       default:
         return null;
@@ -422,23 +290,15 @@ export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "d
   return (
     <div className={joinFormShellClass(variant)}>
       {step > 0 ? (
-        <button
-          type="button"
-          onClick={goBack}
-          className={`mb-4 font-medium text-[#1E343A]/45 transition-colors hover:text-[#1E343A]/70 text-[0.9375rem] ${inter.className}`}
-        >
+        <button type="button" onClick={goBack}
+          className={`mb-4 font-medium text-[#1E343A]/45 transition-colors hover:text-[#1E343A]/70 text-[0.9375rem] ${inter.className}`}>
           Back
         </button>
       ) : null}
-
       <div className="flex items-stretch gap-3">
         <div className="min-w-0 flex-1">{stepContent}</div>
-        <JoinFormAdvanceButton
-          variant={variant}
-          disabled={!canProceed}
-          onClick={isLastStep ? submit : goNext}
-          label={isLastStep ? "Submit application" : "Next step"}
-        />
+        <JoinFormAdvanceButton variant={variant} disabled={!canProceed}
+          onClick={isLastStep ? submit : goNext} label={isLastStep ? "Submit application" : "Next step"} />
       </div>
     </div>
   );
