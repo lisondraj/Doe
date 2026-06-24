@@ -2,6 +2,8 @@ export type JoinInternTrack = {
   title: string;
   description: readonly [string, string, string];
   graphic: 0 | 1 | 2 | 3;
+  /** Agents radial gradient (line art only — no dot grid). */
+  cardFill?: "beige" | "agents";
 };
 
 export const JOIN_INTERN_TRACKS: readonly JoinInternTrack[] = [
@@ -22,6 +24,7 @@ export const JOIN_INTERN_TRACKS: readonly JoinInternTrack[] = [
       "Learn how healthcare software actually ships.",
     ],
     graphic: 1,
+    cardFill: "agents",
   },
   {
     title: "Research",
@@ -40,5 +43,6 @@ export const JOIN_INTERN_TRACKS: readonly JoinInternTrack[] = [
       "Understand the business of care delivery.",
     ],
     graphic: 3,
+    cardFill: "agents",
   },
 ] as const;

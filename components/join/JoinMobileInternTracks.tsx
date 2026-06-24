@@ -1,6 +1,7 @@
 import { JoinInternLineGraphic } from "@/components/join/JoinInternLineGraphic";
 import { JOIN_INTERN_TRACKS } from "@/components/join/join-intern-tracks";
 import { BLOG_CARD_STACK } from "@/lib/blog/blog-layout-styles";
+import { JOIN_AGENTS_GRADIENT } from "@/lib/join/join-agents-gradient";
 import { JOIN_MOBILE_CARD_HEIGHT } from "@/lib/join/join-mobile-layout";
 import {
   DOEPHONE_SECTION_CAROUSEL_MENU_GAP,
@@ -15,28 +16,41 @@ export function JoinMobileInternTracks() {
       className={`flex flex-col ${DOEPHONE_SECTION_CAROUSEL_MENU_GAP}`}
       aria-label="Internship tracks"
     >
-      {JOIN_INTERN_TRACKS.map((track, index) => (
-        <article key={track.title} className={index > 0 ? DOEPHONE_SECTION_CAROUSEL_MENU_GAP : undefined}>
-          <div className={BLOG_CARD_STACK}>
-            <div
-              className={`relative w-full overflow-hidden ${JOIN_MOBILE_CARD_HEIGHT} ${DOEPHONE_SECTION_CAROUSEL_RADIUS} border border-[#D9D4CC] bg-[#EBE7E0]`}
-            >
-              <JoinInternLineGraphic variant={track.graphic} />
-            </div>
+      {JOIN_INTERN_TRACKS.map((track, index) => {
+        const isAgentsFill = track.cardFill === "agents";
 
-            <div>
-              <h3 className={DOEPHONE_SECTION_MENU_DESCRIPTION_HEADING_TW}>{track.title}</h3>
-              <p className={DOEPHONE_SECTION_MENU_DESCRIPTION_TW}>
-                {track.description.map((line) => (
-                  <span key={line} className="block">
-                    {line}
-                  </span>
-                ))}
-              </p>
+        return (
+          <article key={track.title} className={index > 0 ? DOEPHONE_SECTION_CAROUSEL_MENU_GAP : undefined}>
+            <div className={BLOG_CARD_STACK}>
+              <div
+                className={`relative w-full overflow-hidden ${JOIN_MOBILE_CARD_HEIGHT} ${DOEPHONE_SECTION_CAROUSEL_RADIUS} ${
+                  isAgentsFill ? "" : "border border-[#D9D4CC] bg-[#EBE7E0]"
+                }`}
+              >
+                {isAgentsFill ? (
+                  <div
+                    className="pointer-events-none absolute inset-0"
+                    style={{ background: JOIN_AGENTS_GRADIENT }}
+                    aria-hidden
+                  />
+                ) : null}
+                <JoinInternLineGraphic variant={track.graphic} onOrange={isAgentsFill} />
+              </div>
+
+              <div>
+                <h3 className={DOEPHONE_SECTION_MENU_DESCRIPTION_HEADING_TW}>{track.title}</h3>
+                <p className={DOEPHONE_SECTION_MENU_DESCRIPTION_TW}>
+                  {track.description.map((line) => (
+                    <span key={line} className="block">
+                      {line}
+                    </span>
+                  ))}
+                </p>
+              </div>
             </div>
-          </div>
-        </article>
-      ))}
+          </article>
+        );
+      })}
     </div>
   );
 }

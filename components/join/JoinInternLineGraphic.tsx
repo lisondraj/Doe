@@ -1,11 +1,34 @@
 import { BLOG_LANDING_HERO } from "@/lib/blog/blog-landing-hero-colors";
 
-const { lineSoft, line, lineStrong, accent, accentWarm } = BLOG_LANDING_HERO;
+type LinePalette = {
+  lineSoft: string;
+  line: string;
+  lineStrong: string;
+  accent: string;
+  accentWarm: string;
+};
+
+const BEIGE_PALETTE: LinePalette = {
+  lineSoft: BLOG_LANDING_HERO.lineSoft,
+  line: BLOG_LANDING_HERO.line,
+  lineStrong: BLOG_LANDING_HERO.lineStrong,
+  accent: BLOG_LANDING_HERO.accent,
+  accentWarm: BLOG_LANDING_HERO.accentWarm,
+};
+
+const ORANGE_PALETTE: LinePalette = {
+  lineSoft: "rgba(255, 255, 255, 0.34)",
+  line: "rgba(255, 255, 255, 0.52)",
+  lineStrong: "rgba(255, 255, 255, 0.68)",
+  accent: "rgba(255, 255, 255, 0.84)",
+  accentWarm: "rgba(255, 255, 255, 0.44)",
+};
 
 const SVG_CLASS = "absolute inset-0 h-full w-full";
 
 /** Horizontal wave lines — compact, centered. */
-function WaveLinesGraphic() {
+function WaveLinesGraphic({ palette }: { palette: LinePalette }) {
+  const { lineSoft, line, lineStrong, accentWarm } = palette;
   const waves = [
     { y: 118, amp: 10, cycles: 1.5, phase: 1 as const, col: lineSoft, sw: 0.55, op: 0.55 },
     { y: 148, amp: 16, cycles: 1, phase: -1 as const, col: line, sw: 0.68, op: 0.72 },
@@ -47,7 +70,8 @@ function WaveLinesGraphic() {
 }
 
 /** Diagonal parallel lines — bottom-left to top-right. */
-function DiagonalLinesGraphic() {
+function DiagonalLinesGraphic({ palette }: { palette: LinePalette }) {
+  const { lineSoft, line, lineStrong, accentWarm } = palette;
   const rise = 72;
   const rows = [
     { leftY: 318, leftX: 0, rightX: 400, col: lineSoft, sw: 0.55, op: 0.52 },
@@ -81,7 +105,8 @@ function DiagonalLinesGraphic() {
 }
 
 /** Converging channel lines — many paths meeting at center. */
-function ConvergingLinesGraphic() {
+function ConvergingLinesGraphic({ palette }: { palette: LinePalette }) {
+  const { lineSoft, line, lineStrong, accent } = palette;
   const cy = 200;
   const offsets = [-52, -40, -28, -18, -9, -3, 0, 3, 9, 18, 28, 40, 52];
 
@@ -107,7 +132,8 @@ function ConvergingLinesGraphic() {
 }
 
 /** Soft crosshatch — balanced diagonal grid. */
-function CrosshatchLinesGraphic() {
+function CrosshatchLinesGraphic({ palette }: { palette: LinePalette }) {
+  const { lineSoft, line, lineStrong, accentWarm } = palette;
   const spacing = 28;
   const lines: { x1: number; y1: number; x2: number; y2: number; col: string; sw: number; op: number }[] = [];
 
@@ -161,7 +187,14 @@ const JOIN_LINE_GRAPHICS = [
   CrosshatchLinesGraphic,
 ] as const;
 
-export function JoinInternLineGraphic({ variant }: { variant: 0 | 1 | 2 | 3 }) {
+export function JoinInternLineGraphic({
+  variant,
+  onOrange = false,
+}: {
+  variant: 0 | 1 | 2 | 3;
+  onOrange?: boolean;
+}) {
+  const palette = onOrange ? ORANGE_PALETTE : BEIGE_PALETTE;
   const Graphic = JOIN_LINE_GRAPHICS[variant];
-  return <Graphic />;
+  return <Graphic palette={palette} />;
 }
