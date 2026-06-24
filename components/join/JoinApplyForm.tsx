@@ -93,7 +93,7 @@ function JoinApplyMobileForm({
   }, [canProceed, handleAdvance]);
 
   return (
-    <div className={joinFormShellClass("mobile")}>
+    <div className={`${joinFormShellClass("mobile")} flex w-full flex-col items-center`}>
       {/* Big beige card — shows answers as they accumulate */}
       <JoinApplyCard data={data} onEdit={(s) => setStep(s)} />
 
