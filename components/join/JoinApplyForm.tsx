@@ -31,7 +31,7 @@ const STEP_PROMPTS = [
   "What's your education level?",
   "What school do you attend?",
   "Which areas would you like to help with?",
-  "Upload your resume",
+  "Upload your resume (optional)",
   "Your LinkedIn profile",
   "Anything you'd like to add?",
 ] as const;

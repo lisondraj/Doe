@@ -67,7 +67,7 @@ export function isJoinApplyStepValid(step: number, data: JoinApplyFormState): bo
     case 5:
       return data.areas.length > 0;
     case 6:
-      return data.resume !== null;
+      return true;
     case 7:
       return data.linkedinUsername.trim().length > 0;
     case 8:
