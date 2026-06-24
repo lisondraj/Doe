@@ -1,6 +1,6 @@
 "use client";
 
-import type { RefObject } from "react";
+import type { ReactNode, RefObject } from "react";
 
 import { JoinFormEnterButton } from "@/components/join/JoinFormEnterButton";
 import {
@@ -46,7 +46,31 @@ type RenderJoinApplyStepOptions = {
   interactive: boolean;
   resumeInputRef?: RefObject<HTMLInputElement>;
   onEnter?: () => void;
+  enterDisabled?: boolean;
+  enterLabel?: string;
 };
+
+function StepEnterWrap({
+  onEnter,
+  enterDisabled,
+  enterLabel,
+  children,
+  className = "",
+}: {
+  onEnter?: () => void;
+  enterDisabled?: boolean;
+  enterLabel?: string;
+  children: ReactNode;
+  className?: string;
+}) {
+  if (!onEnter) return <>{children}</>;
+  return (
+    <div className={`relative w-full ${className}`.trim()}>
+      {children}
+      <JoinFormEnterButton onClick={onEnter} disabled={enterDisabled} label={enterLabel} />
+    </div>
+  );
+}
 
 export function renderJoinApplyStep({
   step,
@@ -56,13 +80,14 @@ export function renderJoinApplyStep({
   interactive,
   resumeInputRef,
   onEnter,
+  enterDisabled,
+  enterLabel,
 }: RenderJoinApplyStepOptions) {
   const prompt = JOIN_APPLY_STEP_PROMPTS[step];
   const fieldClass = joinFormFieldClass(variant);
   const readOnly = !interactive;
-  // Extra right padding to make room for the ↵ enter button inside text fields
   const fieldWithEnterClass = onEnter
-    ? `${fieldClass} pr-[3.75rem] iphone-page:pr-[4.25rem]`
+    ? `${fieldClass} pr-[4.75rem] iphone-page:pr-[5.25rem]`
     : fieldClass;
   const areaLabelSize =
     variant === "mobile"
@@ -86,7 +111,9 @@ export function renderJoinApplyStep({
             style={fieldStyle()}
             onKeyDown={onEnter ? (e) => { if (e.key === "Enter") { e.preventDefault(); onEnter(); } } : undefined}
           />
-          {onEnter ? <JoinFormEnterButton onClick={onEnter} /> : null}
+          {onEnter ? (
+            <JoinFormEnterButton onClick={onEnter} disabled={enterDisabled} label={enterLabel} />
+          ) : null}
         </div>
       );
     case 1:
@@ -105,28 +132,34 @@ export function renderJoinApplyStep({
             style={fieldStyle()}
             onKeyDown={onEnter ? (e) => { if (e.key === "Enter") { e.preventDefault(); onEnter(); } } : undefined}
           />
-          {onEnter ? <JoinFormEnterButton onClick={onEnter} /> : null}
+          {onEnter ? (
+            <JoinFormEnterButton onClick={onEnter} disabled={enterDisabled} label={enterLabel} />
+          ) : null}
         </div>
       );
     case 2:
       return (
-        <JoinCountrySlider
-          variant={variant}
-          value={data.country}
-          onChange={(country) => patch({ country })}
-          prompt={prompt}
-          disabled={readOnly}
-        />
+        <StepEnterWrap onEnter={onEnter} enterDisabled={enterDisabled} enterLabel={enterLabel}>
+          <JoinCountrySlider
+            variant={variant}
+            value={data.country}
+            onChange={(country) => patch({ country })}
+            prompt={prompt}
+            disabled={readOnly}
+          />
+        </StepEnterWrap>
       );
     case 3:
       return (
-        <JoinEducationSlider
-          variant={variant}
-          value={data.education}
-          onChange={(education) => patch({ education })}
-          prompt={prompt}
-          disabled={readOnly}
-        />
+        <StepEnterWrap onEnter={onEnter} enterDisabled={enterDisabled} enterLabel={enterLabel}>
+          <JoinEducationSlider
+            variant={variant}
+            value={data.education}
+            onChange={(education) => patch({ education })}
+            prompt={prompt}
+            disabled={readOnly}
+          />
+        </StepEnterWrap>
       );
     case 4:
       return (
@@ -144,47 +177,54 @@ export function renderJoinApplyStep({
             style={fieldStyle()}
             onKeyDown={onEnter ? (e) => { if (e.key === "Enter") { e.preventDefault(); onEnter(); } } : undefined}
           />
-          {onEnter ? <JoinFormEnterButton onClick={onEnter} /> : null}
+          {onEnter ? (
+            <JoinFormEnterButton onClick={onEnter} disabled={enterDisabled} label={enterLabel} />
+          ) : null}
         </div>
       );
     case 5:
       return (
-        <div className={`${joinFormPanelClass(variant)} h-full`} style={fieldStyle()}>
-          <p className={joinFormPromptClass(variant)}>{prompt}</p>
-          <div className={`grid grid-cols-2 ${variant === "mobile" ? "gap-2.5 iphone-page:gap-3" : "gap-2"}`}>
-            {JOIN_APPLY_AREAS.map((area) => {
-              const active = data.areas.includes(area);
-              return (
-                <button
-                  key={area}
-                  type="button"
-                  aria-pressed={active}
-                  disabled={readOnly}
-                  tabIndex={interactive ? 0 : -1}
-                  onClick={() => patch({ areas: toggleArea(data.areas, area) })}
-                  className={`rounded-xl text-center font-medium leading-tight tracking-[-0.01em] transition-colors ${areaLabelSize} ${inter.className}`}
-                  style={
-                    active
-                      ? {
-                          backgroundColor: JOIN_FORM_BEIGE.meter,
-                          color: JOIN_FORM_BEIGE.page,
-                        }
-                      : {
-                          backgroundColor: JOIN_FORM_BEIGE.fieldMuted,
-                          color: "rgba(30, 52, 58, 0.58)",
-                        }
-                  }
-                >
-                  {area}
-                </button>
-              );
-            })}
+        <StepEnterWrap onEnter={onEnter} enterDisabled={enterDisabled} enterLabel={enterLabel}>
+          <div
+            className={`${joinFormPanelClass(variant)} h-full${onEnter ? " pr-[4.75rem] iphone-page:pr-[5.25rem]" : ""}`}
+            style={fieldStyle()}
+          >
+            <p className={joinFormPromptClass(variant)}>{prompt}</p>
+            <div className={`grid grid-cols-2 ${variant === "mobile" ? "gap-2.5 iphone-page:gap-3" : "gap-2"}`}>
+              {JOIN_APPLY_AREAS.map((area) => {
+                const active = data.areas.includes(area);
+                return (
+                  <button
+                    key={area}
+                    type="button"
+                    aria-pressed={active}
+                    disabled={readOnly}
+                    tabIndex={interactive ? 0 : -1}
+                    onClick={() => patch({ areas: toggleArea(data.areas, area) })}
+                    className={`rounded-xl text-center font-medium leading-tight tracking-[-0.01em] transition-colors ${areaLabelSize} ${inter.className}`}
+                    style={
+                      active
+                        ? {
+                            backgroundColor: JOIN_FORM_BEIGE.meter,
+                            color: JOIN_FORM_BEIGE.page,
+                          }
+                        : {
+                            backgroundColor: JOIN_FORM_BEIGE.fieldMuted,
+                            color: "rgba(30, 52, 58, 0.58)",
+                          }
+                    }
+                  >
+                    {area}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        </StepEnterWrap>
       );
     case 6:
       return (
-        <>
+        <StepEnterWrap onEnter={onEnter} enterDisabled={enterDisabled} enterLabel={enterLabel}>
           {interactive && resumeInputRef ? (
             <input
               ref={resumeInputRef}
@@ -200,43 +240,50 @@ export function renderJoinApplyStep({
             tabIndex={interactive ? 0 : -1}
             onClick={() => interactive && resumeInputRef?.current?.click()}
             aria-label={prompt}
-            className={`${fieldClass} flex h-full min-h-0 items-center text-left`}
+            className={`${fieldWithEnterClass} flex h-full min-h-0 items-center text-left`}
             style={fieldStyle()}
           >
             <span className={`min-w-0 flex-1 truncate ${data.resume ? "text-[#1E343A]" : "text-[#1E343A]/38"}`}>
               {data.resume ? data.resume.name : prompt}
             </span>
           </button>
-        </>
+        </StepEnterWrap>
       );
     case 7:
       return (
-        <div className={`${joinFormPanelClass(variant)} h-full`} style={fieldStyle()}>
-          <p className={joinFormPromptClass(variant)}>{prompt}</p>
-          <JoinLinkedInInput
-            variant={variant}
-            value={data.linkedinUsername}
-            onChange={(linkedinUsername) => patch({ linkedinUsername })}
-            placeholder="username"
-            nested
-            readOnly={readOnly}
-            onEnter={onEnter}
-          />
-        </div>
+        <StepEnterWrap onEnter={onEnter} enterDisabled={enterDisabled} enterLabel={enterLabel}>
+          <div
+            className={`${joinFormPanelClass(variant)} h-full${onEnter ? " pr-[4.75rem] iphone-page:pr-[5.25rem]" : ""}`}
+            style={fieldStyle()}
+          >
+            <p className={joinFormPromptClass(variant)}>{prompt}</p>
+            <JoinLinkedInInput
+              variant={variant}
+              value={data.linkedinUsername}
+              onChange={(linkedinUsername) => patch({ linkedinUsername })}
+              placeholder="username"
+              nested
+              readOnly={readOnly}
+              onEnter={onEnter}
+            />
+          </div>
+        </StepEnterWrap>
       );
     case 8:
       return (
-        <textarea
-          value={data.notes}
-          onChange={(e) => patch({ notes: e.target.value })}
-          placeholder={prompt}
-          aria-label={prompt}
-          readOnly={readOnly}
-          tabIndex={interactive ? 0 : -1}
-          rows={4}
-          className={`${fieldClass} h-full min-h-0 resize-none`}
-          style={fieldStyle()}
-        />
+        <StepEnterWrap onEnter={onEnter} enterDisabled={enterDisabled} enterLabel={enterLabel}>
+          <textarea
+            value={data.notes}
+            onChange={(e) => patch({ notes: e.target.value })}
+            placeholder={prompt}
+            aria-label={prompt}
+            readOnly={readOnly}
+            tabIndex={interactive ? 0 : -1}
+            rows={4}
+            className={`${fieldWithEnterClass} h-full min-h-0 resize-none`}
+            style={fieldStyle()}
+          />
+        </StepEnterWrap>
       );
     default:
       return null;

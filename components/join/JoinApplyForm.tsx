@@ -14,7 +14,6 @@ import {
   JoinFormAdvanceButton,
   JoinLinkedInInput,
 } from "@/components/join/JoinFormControls";
-import { JoinFormNavArrow } from "@/components/join/JoinFormNavArrow";
 import {
   JOIN_APPLY_AREAS,
   JOIN_APPLY_INITIAL_STATE,
@@ -113,18 +112,10 @@ function JoinApplyMobileForm({
             interactive: true,
             resumeInputRef,
             onEnter: handleAdvance,
+            enterDisabled: !canProceed,
+            enterLabel: isLastStep ? "Submit application" : "Next question",
           })}
         </div>
-      </div>
-
-      {/* Down arrow — advances or submits */}
-      <div className="mt-3 flex justify-center iphone-page:mt-4">
-        <JoinFormNavArrow
-          direction="down"
-          disabled={!canProceed}
-          onClick={handleAdvance}
-          label={isLastStep ? "Submit application" : "Next question"}
-        />
       </div>
     </div>
   );
