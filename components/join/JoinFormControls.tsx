@@ -6,14 +6,14 @@ import { inter } from "@/lib/home/fonts";
 
 export function joinFormShellClass(variant: "mobile" | "desktop") {
   return variant === "mobile"
-    ? "mx-auto w-full max-w-[min(100%,26rem)] iphone-page:max-w-[min(100%,20.25rem)]"
+    ? "mx-auto w-full max-w-none"
     : "mx-auto w-full max-w-[20.5rem]";
 }
 
 export function joinFormFieldClass(variant: "mobile" | "desktop") {
   const size =
     variant === "mobile"
-      ? "rounded-[1.05rem] px-4 py-[1.25rem] text-[1.125rem] iphone-page:rounded-[1.1rem] iphone-page:px-[1.15rem] iphone-page:py-[1.35rem] iphone-page:text-[1.25rem]"
+      ? "rounded-[1.2rem] px-5 py-[1.55rem] text-[1.375rem] iphone-page:rounded-[1.3rem] iphone-page:px-6 iphone-page:py-[1.75rem] iphone-page:text-[1.5rem]"
       : "rounded-2xl px-5 py-[1.15rem] text-[1.0625rem]";
 
   return [
@@ -29,7 +29,7 @@ export function joinFormFieldClass(variant: "mobile" | "desktop") {
 export function joinFormPanelClass(variant: "mobile" | "desktop") {
   const size =
     variant === "mobile"
-      ? "rounded-[1.05rem] px-4 py-[1.25rem] iphone-page:rounded-[1.1rem] iphone-page:px-[1.15rem] iphone-page:py-[1.35rem]"
+      ? "rounded-[1.2rem] px-5 py-[1.55rem] iphone-page:rounded-[1.3rem] iphone-page:px-6 iphone-page:py-[1.75rem]"
       : "rounded-2xl px-5 py-[1.15rem]";
 
   return `w-full border ${size}`;
@@ -38,7 +38,7 @@ export function joinFormPanelClass(variant: "mobile" | "desktop") {
 export function joinFormPromptClass(variant: "mobile" | "desktop") {
   const size =
     variant === "mobile"
-      ? "mb-4 text-[1.125rem] iphone-page:mb-[1.15rem] iphone-page:text-[1.25rem]"
+      ? "mb-4 text-[1.25rem] iphone-page:mb-[1.15rem] iphone-page:text-[1.375rem]"
       : "mb-4 text-[1.0625rem]";
 
   return `${size} leading-snug text-[#1E343A]/40 ${inter.className}`;
@@ -132,6 +132,7 @@ type JoinSegmentSliderProps<T extends string> = {
   onChange: (value: T) => void;
   ariaLabel: string;
   variant: "mobile" | "desktop";
+  disabled?: boolean;
 };
 
 export function JoinSegmentSlider<T extends string>({
@@ -140,11 +141,12 @@ export function JoinSegmentSlider<T extends string>({
   onChange,
   ariaLabel,
   variant,
+  disabled = false,
 }: JoinSegmentSliderProps<T>) {
   const activeIndex = options.findIndex((o) => o.value === value);
   const labelSize =
     variant === "mobile"
-      ? "py-[1.05rem] text-[1rem] iphone-page:py-[1.15rem] iphone-page:text-[1.0625rem]"
+      ? "py-[1.15rem] text-[1.0625rem] iphone-page:py-[1.3rem] iphone-page:text-[1.125rem]"
       : "py-[0.9rem] text-[0.9375rem]";
 
   return (
@@ -175,6 +177,7 @@ export function JoinSegmentSlider<T extends string>({
               key={option.value}
               type="button"
               aria-pressed={active}
+              disabled={disabled}
               onClick={() => onChange(option.value)}
               className={`relative z-[1] px-2 text-center font-medium leading-tight tracking-[-0.01em] transition-colors ${labelSize} ${inter.className} ${
                 active ? "text-[#1E343A]" : "text-[#1E343A]/42 hover:text-[#1E343A]/65"
@@ -195,17 +198,19 @@ export function JoinLinkedInInput({
   placeholder,
   nested = false,
   variant = "desktop",
+  readOnly = false,
 }: {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
   nested?: boolean;
   variant?: "mobile" | "desktop";
+  readOnly?: boolean;
 }) {
   const prefix = "linkedin.com/in/";
-  const textSize = variant === "mobile" ? "text-[1.1875rem] iphone-page:text-[1.3125rem]" : "text-[1.0625rem]";
+  const textSize = variant === "mobile" ? "text-[1.375rem] iphone-page:text-[1.5rem]" : "text-[1.0625rem]";
   const shellClass = nested
-    ? `flex items-center overflow-hidden rounded-xl px-4 py-[0.9rem] iphone-page:rounded-[0.85rem] iphone-page:px-5 iphone-page:py-[1.05rem]`
+    ? `flex items-center overflow-hidden rounded-xl px-4 py-[1rem] iphone-page:rounded-[0.95rem] iphone-page:px-5 iphone-page:py-[1.15rem]`
     : `flex items-center overflow-hidden ${joinFormFieldClass(variant)} py-0`;
 
   return (
@@ -222,6 +227,8 @@ export function JoinLinkedInInput({
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value.replace(/\s/g, ""))}
+        readOnly={readOnly}
+        tabIndex={readOnly ? -1 : 0}
         onKeyDown={(e) => {
           const input = e.currentTarget;
           const atStart = input.selectionStart === 0 && input.selectionEnd === 0;
@@ -243,11 +250,13 @@ export function JoinCountrySlider({
   onChange,
   prompt,
   variant,
+  disabled = false,
 }: {
   value: JoinApplyCountry;
   onChange: (value: JoinApplyCountry) => void;
   prompt: string;
   variant: "mobile" | "desktop";
+  disabled?: boolean;
 }) {
   return (
     <div
@@ -260,6 +269,7 @@ export function JoinCountrySlider({
         ariaLabel="Country"
         value={value}
         onChange={onChange}
+        disabled={disabled}
         options={[
           { value: "canada", label: "Canada" },
           { value: "us", label: "United States" },
@@ -274,11 +284,13 @@ export function JoinEducationSlider({
   onChange,
   prompt,
   variant,
+  disabled = false,
 }: {
   value: JoinApplyEducation;
   onChange: (value: JoinApplyEducation) => void;
   prompt: string;
   variant: "mobile" | "desktop";
+  disabled?: boolean;
 }) {
   return (
     <div
@@ -291,6 +303,7 @@ export function JoinEducationSlider({
         ariaLabel="Education level"
         value={value}
         onChange={onChange}
+        disabled={disabled}
         options={[
           { value: "highschool", label: "Highschool" },
           { value: "university", label: "University/College" },
