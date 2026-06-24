@@ -1,8 +1,9 @@
 "use client";
 
+import { JOIN_DESKTOP_CONTENT } from "@/lib/join/join-layout";
 import { lora } from "@/lib/home/fonts";
 
-/** Beige post-hero desktop nav — Doe left, Apply right, no center links. */
+/** Beige desktop nav — Doe left, Apply right, edges aligned to content column. */
 export function JoinDesktopNav() {
   return (
     <nav
@@ -10,7 +11,7 @@ export function JoinDesktopNav() {
       style={{ backgroundColor: "#F7F6F3" }}
       aria-label="Site"
     >
-      <div className="relative flex items-center justify-between px-8 py-6">
+      <div className={`${JOIN_DESKTOP_CONTENT} flex items-center justify-between py-6`}>
         <h1 className={`text-4xl font-normal text-black ${lora.className}`}>Doe</h1>
 
         <a

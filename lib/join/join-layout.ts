@@ -1,0 +1,22 @@
+/** Shared desktop content column — nav, main, and footer inner edges align here. */
+export const JOIN_DESKTOP_CONTENT_MAX = "max-w-[1400px]";
+export const JOIN_DESKTOP_CONTENT_PAD = "px-8";
+export const JOIN_DESKTOP_CONTENT =
+  `mx-auto w-full ${JOIN_DESKTOP_CONTENT_MAX} ${JOIN_DESKTOP_CONTENT_PAD}`;
+
+/** Join mobile hero — tall band matching Agents carousel card styling. */
+export const JOIN_MOBILE_HERO_HEIGHT =
+  "min-h-[clamp(52rem,calc(var(--app-vh,100lvh)*1.12),76rem)] h-[clamp(52rem,calc(var(--app-vh,100lvh)*1.12),76rem)] iphone-page:min-h-[clamp(50rem,calc(var(--app-vh,100lvh)*1.08),72rem)] iphone-page:h-[clamp(50rem,calc(var(--app-vh,100lvh)*1.08),72rem)]";
+
+/** Half of join mobile hero height — intern track cards. */
+export const JOIN_MOBILE_CARD_HEIGHT =
+  "min-h-[clamp(26rem,calc(var(--app-vh,100lvh)*0.56),38rem)] h-[clamp(26rem,calc(var(--app-vh,100lvh)*0.56),38rem)] iphone-page:min-h-[clamp(25rem,calc(var(--app-vh,100lvh)*0.54),36rem)] iphone-page:h-[clamp(25rem,calc(var(--app-vh,100lvh)*0.54),36rem)]";
+
+/** Desktop hero — same proportions as mobile, capped for wide screens. */
+export const JOIN_DESKTOP_HERO_HEIGHT = "min-h-[min(72vh,44rem)] h-[min(72vh,44rem)]";
+
+/** Half of join desktop hero height. */
+export const JOIN_DESKTOP_CARD_HEIGHT = "min-h-[min(36vh,22rem)] h-[min(36vh,22rem)]";
+
+export const JOIN_DESKTOP_TRACK_GAP = "mt-14";
+export const JOIN_DESKTOP_VIEWPORT_SPACER = "min-h-[100dvh] h-[100dvh]";

@@ -1,28 +1,20 @@
 "use client";
 
-import { JoinMobileHero } from "@/components/join/JoinMobileHero";
-import { JoinMobileInternTracks } from "@/components/join/JoinMobileInternTracks";
 import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
+import { JoinInternshipHero } from "@/components/join/JoinInternshipHero";
+import { JoinInternTracks } from "@/components/join/JoinInternTracks";
+import { JoinViewportSpacer } from "@/components/join/JoinViewportSpacer";
 import { BLOG_CONTENT_PT } from "@/lib/blog/blog-layout-styles";
-import { DOEPHONE_VIEWPORT_SECTION } from "@/lib/doephone/section-styles";
 
 export function JoinMobileView() {
   return (
     <BlogMobileShell showJoinCta={false} logoLink={false} footerLinksDisabled showMenu={false}>
       <main className={`w-full ${BLOG_CONTENT_PT}`}>
-        <JoinMobileHero />
-        <JoinMobileInternTracks />
+        <JoinInternshipHero variant="mobile" />
+        <JoinInternTracks variant="mobile" />
       </main>
 
-      <section
-        className={`${DOEPHONE_VIEWPORT_SECTION} bg-[#F7F6F3]`}
-        style={{
-          width: "100vw",
-          marginLeft: "calc(50% - 50vw)",
-          marginRight: "calc(50% - 50vw)",
-        }}
-        aria-hidden
-      />
+      <JoinViewportSpacer variant="mobile" />
     </BlogMobileShell>
   );
 }
