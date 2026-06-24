@@ -2,6 +2,7 @@
 
 import type { RefObject } from "react";
 
+import { JoinFormEnterButton } from "@/components/join/JoinFormEnterButton";
 import {
   joinFormFieldClass,
   joinFormPanelClass,
@@ -59,6 +60,10 @@ export function renderJoinApplyStep({
   const prompt = JOIN_APPLY_STEP_PROMPTS[step];
   const fieldClass = joinFormFieldClass(variant);
   const readOnly = !interactive;
+  // Extra right padding to make room for the ↵ enter button inside text fields
+  const fieldWithEnterClass = onEnter
+    ? `${fieldClass} pr-[3.75rem] iphone-page:pr-[4.25rem]`
+    : fieldClass;
   const areaLabelSize =
     variant === "mobile"
       ? "px-4 py-[1.35rem] text-[1.1875rem] iphone-page:px-4 iphone-page:py-[1.5rem] iphone-page:text-[1.3125rem]"
@@ -67,35 +72,41 @@ export function renderJoinApplyStep({
   switch (step) {
     case 0:
       return (
-        <input
-          type="text"
-          value={data.name}
-          onChange={(e) => patch({ name: e.target.value })}
-          placeholder={prompt}
-          autoComplete="name"
-          aria-label={prompt}
-          readOnly={readOnly}
-          tabIndex={interactive ? 0 : -1}
-          className={fieldClass}
-          style={fieldStyle()}
-          onKeyDown={onEnter ? (e) => { if (e.key === "Enter") { e.preventDefault(); onEnter(); } } : undefined}
-        />
+        <div className="relative">
+          <input
+            type="text"
+            value={data.name}
+            onChange={(e) => patch({ name: e.target.value })}
+            placeholder={prompt}
+            autoComplete="name"
+            aria-label={prompt}
+            readOnly={readOnly}
+            tabIndex={interactive ? 0 : -1}
+            className={fieldWithEnterClass}
+            style={fieldStyle()}
+            onKeyDown={onEnter ? (e) => { if (e.key === "Enter") { e.preventDefault(); onEnter(); } } : undefined}
+          />
+          {onEnter ? <JoinFormEnterButton onClick={onEnter} /> : null}
+        </div>
       );
     case 1:
       return (
-        <input
-          type="email"
-          value={data.email}
-          onChange={(e) => patch({ email: e.target.value })}
-          placeholder={prompt}
-          autoComplete="email"
-          aria-label={prompt}
-          readOnly={readOnly}
-          tabIndex={interactive ? 0 : -1}
-          className={fieldClass}
-          style={fieldStyle()}
-          onKeyDown={onEnter ? (e) => { if (e.key === "Enter") { e.preventDefault(); onEnter(); } } : undefined}
-        />
+        <div className="relative">
+          <input
+            type="email"
+            value={data.email}
+            onChange={(e) => patch({ email: e.target.value })}
+            placeholder={prompt}
+            autoComplete="email"
+            aria-label={prompt}
+            readOnly={readOnly}
+            tabIndex={interactive ? 0 : -1}
+            className={fieldWithEnterClass}
+            style={fieldStyle()}
+            onKeyDown={onEnter ? (e) => { if (e.key === "Enter") { e.preventDefault(); onEnter(); } } : undefined}
+          />
+          {onEnter ? <JoinFormEnterButton onClick={onEnter} /> : null}
+        </div>
       );
     case 2:
       return (
@@ -119,19 +130,22 @@ export function renderJoinApplyStep({
       );
     case 4:
       return (
-        <input
-          type="text"
-          value={data.schoolName}
-          onChange={(e) => patch({ schoolName: e.target.value })}
-          placeholder={prompt}
-          autoComplete="organization"
-          aria-label={prompt}
-          readOnly={readOnly}
-          tabIndex={interactive ? 0 : -1}
-          className={fieldClass}
-          style={fieldStyle()}
-          onKeyDown={onEnter ? (e) => { if (e.key === "Enter") { e.preventDefault(); onEnter(); } } : undefined}
-        />
+        <div className="relative">
+          <input
+            type="text"
+            value={data.schoolName}
+            onChange={(e) => patch({ schoolName: e.target.value })}
+            placeholder={prompt}
+            autoComplete="organization"
+            aria-label={prompt}
+            readOnly={readOnly}
+            tabIndex={interactive ? 0 : -1}
+            className={fieldWithEnterClass}
+            style={fieldStyle()}
+            onKeyDown={onEnter ? (e) => { if (e.key === "Enter") { e.preventDefault(); onEnter(); } } : undefined}
+          />
+          {onEnter ? <JoinFormEnterButton onClick={onEnter} /> : null}
+        </div>
       );
     case 5:
       return (

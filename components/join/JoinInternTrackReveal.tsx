@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, useTransition, type ReactNode } from "react";
 
 type JoinInternTrackRevealProps = {
   variant: "mobile" | "desktop";
@@ -16,6 +16,7 @@ export function JoinInternTrackReveal({
 }: JoinInternTrackRevealProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(variant === "desktop");
+  const [, startTransition] = useTransition();
 
   useEffect(() => {
     if (variant === "desktop") return;
@@ -32,7 +33,8 @@ export function JoinInternTrackReveal({
     const obs = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setVisible(true);
+          // Low-priority update: won't block the scroll thread
+          startTransition(() => setVisible(true));
           obs.disconnect();
         }
       },
@@ -47,8 +49,13 @@ export function JoinInternTrackReveal({
       ? `doephone-section-copy${visible ? " doephone-section-copy-visible" : ""}`
       : "";
 
+  // After the reveal animation finishes, release the GPU composite layer
+  const onAnimationEnd = () => {
+    if (ref.current) ref.current.style.willChange = "auto";
+  };
+
   return (
-    <div ref={ref} className={`${className} ${revealClass}`.trim()}>
+    <div ref={ref} className={`${className} ${revealClass}`.trim()} onAnimationEnd={onAnimationEnd}>
       {children}
     </div>
   );

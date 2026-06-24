@@ -38,7 +38,12 @@ const JOIN_APPLY_STEP_PROMPTS = [
 ] as const;
 
 const MOBILE_PREVIEW_SLOT = "h-36 iphone-page:h-40";
-const MOBILE_ACTIVE_SLOT = "h-56 iphone-page:h-64";
+// Active slot tall enough for areas (step 5) and textarea (step 8) without scroll
+const MOBILE_ACTIVE_SLOT = "h-64 iphone-page:h-[18.5rem]";
+// Fixed carousel container: 2×preview + 2×gap + active
+// non-iphone: 144 + 10 + 256 + 10 + 144 = 564px
+// iphone:     160 + 12 + 296 + 12 + 160 = 640px
+const MOBILE_CAROUSEL_HEIGHT = "h-[564px] iphone-page:h-[640px]";
 
 function toggleArea(areas: JoinApplyArea[], area: JoinApplyArea): JoinApplyArea[] {
   return areas.includes(area) ? areas.filter((a) => a !== area) : [...areas, area];
@@ -75,6 +80,18 @@ function JoinApplyMobileCarousel({
   resumeInputRef,
 }: JoinApplyMobileCarouselProps) {
   const [direction, setDirection] = useState<"down" | "up">("down");
+  // prevStep drives the exit animation — cleared after the exit duration
+  const [prevStep, setPrevStep] = useState<number | null>(null);
+  const stepRef = useRef(step);
+
+  useEffect(() => {
+    if (step === stepRef.current) return;
+    const prev = stepRef.current;
+    stepRef.current = step;
+    setPrevStep(prev);
+    const t = setTimeout(() => setPrevStep(null), 340);
+    return () => clearTimeout(t);
+  }, [step]);
 
   const handleDown = useCallback(() => {
     if (isLastStep) {
@@ -105,33 +122,38 @@ function JoinApplyMobileCarousel({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [canProceed, handleDown]);
 
-  const animClass =
+  const enterAnim =
     direction === "down"
-      ? "[animation:join-step-enter-down_0.3s_cubic-bezier(0.22,1,0.36,1)_both]"
-      : "[animation:join-step-enter-up_0.3s_cubic-bezier(0.22,1,0.36,1)_both]";
+      ? "[animation:join-step-enter-down_0.38s_cubic-bezier(0.22,1,0.36,1)_both]"
+      : "[animation:join-step-enter-up_0.38s_cubic-bezier(0.22,1,0.36,1)_both]";
+
+  const exitAnim =
+    direction === "down"
+      ? "[animation:join-step-exit-down_0.26s_ease-in_both]"
+      : "[animation:join-step-exit-up_0.26s_ease-in_both]";
 
   const aboveStep = step > 0 ? step - 1 : null;
   const belowStep = step < JOIN_APPLY_STEP_COUNT - 1 ? step + 1 : null;
   const enterLabel = isLastStep ? "Submit" : "Next";
 
   return (
-    <div className="flex w-full flex-col items-center gap-2 iphone-page:gap-2.5">
+    <div className="flex w-full flex-col items-center">
       {step > 0 ? (
         <JoinFormNavArrow direction="up" onClick={handleUp} label="Previous question" />
       ) : (
         <div className="h-9 shrink-0 iphone-page:h-10" aria-hidden />
       )}
 
+      {/* Fixed-height container prevents any layout shift during step changes */}
       <div
-        className="flex w-full flex-col gap-2.5 iphone-page:gap-3"
+        className={`my-2 flex w-full flex-col gap-2.5 overflow-hidden iphone-page:my-2.5 iphone-page:gap-3 ${MOBILE_CAROUSEL_HEIGHT}`}
         aria-live="polite"
         aria-label={`Application step ${step + 1} of ${JOIN_APPLY_STEP_COUNT}`}
       >
         {/* Above preview */}
         <div
-          key="slot-above"
           className={`${MOBILE_PREVIEW_SLOT} w-full shrink-0 overflow-hidden rounded-[1.35rem] iphone-page:rounded-[1.45rem] ${
-            aboveStep !== null ? "pointer-events-none opacity-50" : ""
+            aboveStep !== null ? "pointer-events-none opacity-[0.48]" : ""
           }`}
           aria-hidden
         >
@@ -140,12 +162,24 @@ function JoinApplyMobileCarousel({
             : null}
         </div>
 
-        {/* Active center */}
+        {/* Active — cross-fade between exiting and entering content */}
         <div
-          key="slot-center"
-          className={`${MOBILE_ACTIVE_SLOT} w-full shrink-0 overflow-hidden rounded-[1.35rem] iphone-page:rounded-[1.45rem]`}
+          className={`${MOBILE_ACTIVE_SLOT} relative w-full shrink-0 overflow-hidden rounded-[1.35rem] iphone-page:rounded-[1.45rem]`}
         >
-          <div key={step} className={`flex h-full min-h-0 flex-col justify-center ${animClass}`}>
+          {/* Exiting content */}
+          {prevStep !== null ? (
+            <div
+              key={`exit-${prevStep}`}
+              className={`absolute inset-0 flex flex-col justify-center ${exitAnim}`}
+            >
+              {renderJoinApplyStep({ step: prevStep, data, patch, variant: "mobile", interactive: false })}
+            </div>
+          ) : null}
+          {/* Entering content */}
+          <div
+            key={`enter-${step}`}
+            className={`absolute inset-0 flex flex-col justify-center ${enterAnim}`}
+          >
             {renderJoinApplyStep({
               step,
               data,
@@ -160,9 +194,8 @@ function JoinApplyMobileCarousel({
 
         {/* Below preview */}
         <div
-          key="slot-below"
           className={`${MOBILE_PREVIEW_SLOT} w-full shrink-0 overflow-hidden rounded-[1.35rem] iphone-page:rounded-[1.45rem] ${
-            belowStep !== null ? "pointer-events-none opacity-50" : ""
+            belowStep !== null ? "pointer-events-none opacity-[0.48]" : ""
           }`}
           aria-hidden
         >

@@ -480,11 +480,13 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
 @keyframes join-step-enter-down {
   from {
     opacity: 0;
-    transform: translateY(0.6rem);
+    filter: blur(10px);
+    transform: translateY(0.65rem);
   }
 
   to {
     opacity: 1;
+    filter: blur(0);
     transform: translateY(0);
   }
 }
@@ -492,12 +494,42 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
 @keyframes join-step-enter-up {
   from {
     opacity: 0;
-    transform: translateY(-0.6rem);
+    filter: blur(10px);
+    transform: translateY(-0.65rem);
   }
 
   to {
     opacity: 1;
+    filter: blur(0);
     transform: translateY(0);
+  }
+}
+
+@keyframes join-step-exit-down {
+  from {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(-0.5rem);
+  }
+}
+
+@keyframes join-step-exit-up {
+  from {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(0.5rem);
   }
 }
 
