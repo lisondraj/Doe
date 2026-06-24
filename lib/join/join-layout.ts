@@ -8,9 +8,13 @@ export const JOIN_DESKTOP_CONTENT =
 export const JOIN_MOBILE_HERO_HEIGHT =
   "min-h-[clamp(52rem,calc(var(--app-vh,100lvh)*1.12),76rem)] h-[clamp(52rem,calc(var(--app-vh,100lvh)*1.12),76rem)] iphone-page:min-h-[clamp(50rem,calc(var(--app-vh,100lvh)*1.08),72rem)] iphone-page:h-[clamp(50rem,calc(var(--app-vh,100lvh)*1.08),72rem)]";
 
-/** Half of join mobile hero height — intern track cards. */
+/** Half of join mobile hero height — intern track graphic boxes (taller on iPhone). */
 export const JOIN_MOBILE_CARD_HEIGHT =
-  "min-h-[clamp(26rem,calc(var(--app-vh,100lvh)*0.56),38rem)] h-[clamp(26rem,calc(var(--app-vh,100lvh)*0.56),38rem)] iphone-page:min-h-[clamp(25rem,calc(var(--app-vh,100lvh)*0.54),36rem)] iphone-page:h-[clamp(25rem,calc(var(--app-vh,100lvh)*0.54),36rem)]";
+  "min-h-[calc(var(--app-vh,100lvh)*0.58)] h-[calc(var(--app-vh,100lvh)*0.58)] iphone-page:min-h-[calc(var(--app-vh,100lvh)*0.56)] iphone-page:h-[calc(var(--app-vh,100lvh)*0.56)]";
+
+/** Each intern track block on iPhone — nearly one full viewport tall. */
+export const JOIN_MOBILE_TRACK_SECTION =
+  "min-h-[calc(var(--app-vh,100lvh)*0.92)] iphone-page:min-h-[calc(var(--app-vh,100lvh)*0.9)]";
 
 /** Desktop hero — same proportions as mobile, capped for wide screens. */
 export const JOIN_DESKTOP_HERO_HEIGHT = "min-h-[min(72vh,44rem)] h-[min(72vh,44rem)]";
