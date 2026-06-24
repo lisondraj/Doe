@@ -23,7 +23,6 @@ import {
   type JoinApplyFormState,
 } from "@/lib/join/join-apply-form";
 import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
-import { JOIN_MOBILE_APPLY_QUESTION_SLOT } from "@/lib/join/join-layout";
 import { inter, suisseIntl } from "@/lib/home/fonts";
 
 const JOIN_APPLY_STEP_PROMPTS = [
@@ -97,13 +96,13 @@ function JoinApplyMobileForm({
       <JoinApplyCard data={data} onEdit={(s) => setStep(s)} />
 
       <div
-        className={`mt-4 iphone-page:mt-5 ${JOIN_MOBILE_APPLY_QUESTION_SLOT}`}
+        className="mt-4 w-full iphone-page:mt-5"
         aria-live="polite"
         aria-label={`Question ${step + 1} of ${JOIN_APPLY_STEP_COUNT}`}
       >
         <div
           key={step}
-          className="h-full w-full [animation:join-step-enter-down_0.38s_cubic-bezier(0.22,1,0.36,1)_both]"
+          className="w-full [animation:join-step-enter-down_0.38s_cubic-bezier(0.22,1,0.36,1)_both]"
         >
           {renderJoinApplyStep({
             step,
@@ -115,7 +114,6 @@ function JoinApplyMobileForm({
             onEnter: handleAdvance,
             enterDisabled: !canProceed,
             enterLabel: isLastStep ? "Submit application" : "Next question",
-            fillSlot: true,
           })}
         </div>
       </div>
