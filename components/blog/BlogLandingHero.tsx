@@ -7,7 +7,15 @@ import {
   BLOG_LANDING_HERO_HEIGHT,
 } from "@/lib/blog/blog-layout-styles";
 
-export function BlogLandingHero({ className = "" }: { className?: string }) {
+export function BlogLandingHero({
+  className = "",
+  line1 = "Let\u2019s rebuild",
+  line2 = "healthcare.",
+}: {
+  className?: string;
+  line1?: string;
+  line2?: string;
+}) {
   return (
     <div
       className={`relative w-full overflow-hidden ${BLOG_LANDING_HERO_BOX_TW} ${BLOG_LANDING_HERO_HEIGHT} ${className}`.trim()}
@@ -16,8 +24,8 @@ export function BlogLandingHero({ className = "" }: { className?: string }) {
 
       {/* Headline — bottom-left */}
       <p className={BLOG_LANDING_HERO_HEADLINE_TW}>
-        <span className="block">Let&rsquo;s rebuild</span>
-        <span className="block">healthcare.</span>
+        <span className="block">{line1}</span>
+        <span className="block">{line2}</span>
       </p>
 
       {/* Filter column — bottom-right, same corner padding as headline */}
