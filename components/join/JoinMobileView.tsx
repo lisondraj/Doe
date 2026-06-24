@@ -3,7 +3,7 @@
 import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
 import { JoinInternshipHero } from "@/components/join/JoinInternshipHero";
 import { JoinInternTracks } from "@/components/join/JoinInternTracks";
-import { JoinViewportSpacer } from "@/components/join/JoinViewportSpacer";
+import { JoinApplyFormSection } from "@/components/join/JoinApplyFormSection";
 import { BLOG_CONTENT_PT } from "@/lib/blog/blog-layout-styles";
 
 export function JoinMobileView() {
@@ -14,7 +14,7 @@ export function JoinMobileView() {
         <JoinInternTracks variant="mobile" />
       </main>
 
-      <JoinViewportSpacer variant="mobile" />
+      <JoinApplyFormSection variant="mobile" />
     </BlogMobileShell>
   );
 }

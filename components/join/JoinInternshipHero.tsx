@@ -1,4 +1,3 @@
-import { JoinApplyBelowHint } from "@/components/join/JoinApplyBelowHint";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { DOEPHONE_COMMUNICATION_SLIDES } from "@/lib/doephone/communication-carousel";
 import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
@@ -33,7 +32,6 @@ export function JoinInternshipHero({ variant }: { variant: "mobile" | "desktop" 
         >
           Doe Internship
         </p>
-        <JoinApplyBelowHint variant={variant} />
       </div>
     </div>
   );

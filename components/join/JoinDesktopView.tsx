@@ -5,7 +5,7 @@ import { DesktopSiteFooter } from "@/components/home/DesktopSiteFooter";
 import { JoinDesktopNav } from "@/components/join/JoinDesktopNav";
 import { JoinInternshipHero } from "@/components/join/JoinInternshipHero";
 import { JoinInternTracks } from "@/components/join/JoinInternTracks";
-import { JoinViewportSpacer } from "@/components/join/JoinViewportSpacer";
+import { JoinApplyFormSection } from "@/components/join/JoinApplyFormSection";
 import { JOIN_DESKTOP_CONTENT } from "@/lib/join/join-layout";
 
 export function JoinDesktopView() {
@@ -22,7 +22,7 @@ export function JoinDesktopView() {
             <JoinInternshipHero variant="desktop" />
             <JoinInternTracks variant="desktop" />
           </div>
-          <JoinViewportSpacer variant="desktop" />
+          <JoinApplyFormSection variant="desktop" />
         </main>
 
         <DesktopSiteFooter linksDisabled />
