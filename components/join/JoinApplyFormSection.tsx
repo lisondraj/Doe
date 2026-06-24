@@ -17,7 +17,7 @@ export function JoinApplyFormSection({ variant }: { variant: "mobile" | "desktop
         aria-label="Internship application"
       >
         <div className={BLOG_PAGE_INSET_X}>
-          <JoinApplyForm />
+          <JoinApplyForm variant="mobile" />
         </div>
       </section>
     );
@@ -26,7 +26,7 @@ export function JoinApplyFormSection({ variant }: { variant: "mobile" | "desktop
   return (
     <section className="w-full bg-[#F7F6F3] py-14" aria-label="Internship application">
       <div className={JOIN_DESKTOP_CONTENT}>
-        <JoinApplyForm />
+        <JoinApplyForm variant="desktop" />
       </div>
     </section>
   );

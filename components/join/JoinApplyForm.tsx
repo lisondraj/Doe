@@ -3,12 +3,14 @@
 import { useRef, useState } from "react";
 
 import {
-  JOIN_FORM_FIELD_TW,
-  JOIN_FORM_PANEL_TW,
-  JOIN_FORM_PROMPT_INSET_TW,
-  JOIN_FORM_SHELL_TW,
+  joinFormFieldClass,
+  joinFormPanelClass,
+  joinFormPromptClass,
+  joinFormShellClass,
   JoinCountrySlider,
   JoinEducationSlider,
+  JoinFormAdvanceButton,
+  JoinFormProgressBar,
   JoinLinkedInInput,
 } from "@/components/join/JoinFormControls";
 import {
@@ -19,6 +21,7 @@ import {
   type JoinApplyArea,
   type JoinApplyFormState,
 } from "@/lib/join/join-apply-form";
+import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
 import { inter, suisseIntl } from "@/lib/home/fonts";
 
 const STEP_PROMPTS = [
@@ -37,7 +40,14 @@ function toggleArea(areas: JoinApplyArea[], area: JoinApplyArea): JoinApplyArea[
   return areas.includes(area) ? areas.filter((a) => a !== area) : [...areas, area];
 }
 
-export function JoinApplyForm() {
+function fieldStyle() {
+  return {
+    backgroundColor: JOIN_FORM_BEIGE.field,
+    borderColor: JOIN_FORM_BEIGE.border,
+  };
+}
+
+export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "desktop" }) {
   const [step, setStep] = useState(0);
   const [data, setData] = useState<JoinApplyFormState>(JOIN_APPLY_INITIAL_STATE);
   const [submitted, setSubmitted] = useState(false);
@@ -46,6 +56,11 @@ export function JoinApplyForm() {
   const canProceed = isJoinApplyStepValid(step, data);
   const isLastStep = step === JOIN_APPLY_STEP_COUNT - 1;
   const prompt = STEP_PROMPTS[step];
+  const fieldClass = joinFormFieldClass(variant);
+  const areaLabelSize =
+    variant === "mobile"
+      ? "px-3 py-[1.05rem] text-[1rem] iphone-page:px-3.5 iphone-page:py-[1.2rem] iphone-page:text-[1.0625rem]"
+      : "px-2.5 py-3 text-[0.875rem]";
 
   const patch = (partial: Partial<JoinApplyFormState>) => {
     setData((prev) => ({ ...prev, ...partial }));
@@ -66,25 +81,31 @@ export function JoinApplyForm() {
 
   if (submitted) {
     return (
-      <div className={JOIN_FORM_SHELL_TW}>
-        <p className={`text-[1.375rem] font-normal leading-snug tracking-[-0.02em] text-[#1E343A] ${suisseIntl.className}`}>
+      <div className={joinFormShellClass(variant)}>
+        <p
+          className={`font-normal leading-snug tracking-[-0.02em] text-[#1E343A] ${
+            variant === "mobile"
+              ? "text-[1.625rem] iphone-page:text-[1.875rem]"
+              : "text-[1.375rem]"
+          } ${suisseIntl.className}`}
+        >
           Thank you — we&apos;ll be in touch.
         </p>
-        <p className={`mt-2.5 text-[1rem] text-[#1E343A]/55 ${inter.className}`}>
+        <p
+          className={`mt-3 text-[#1E343A]/60 ${inter.className} ${
+            variant === "mobile" ? "text-[1.125rem] iphone-page:text-[1.25rem]" : "text-[1rem]"
+          }`}
+        >
           Your application has been received.
         </p>
       </div>
     );
   }
 
-  return (
-    <div className={JOIN_FORM_SHELL_TW}>
-      <p className={`mb-5 text-right text-[0.75rem] tabular-nums tracking-wide text-[#1E343A]/32 ${inter.className}`}>
-        {step + 1} / {JOIN_APPLY_STEP_COUNT}
-      </p>
-
-      <div>
-        {step === 0 && (
+  const stepContent = (() => {
+    switch (step) {
+      case 0:
+        return (
           <input
             type="text"
             value={data.name}
@@ -92,11 +113,12 @@ export function JoinApplyForm() {
             placeholder={prompt}
             autoComplete="name"
             aria-label={prompt}
-            className={JOIN_FORM_FIELD_TW}
+            className={fieldClass}
+            style={fieldStyle()}
           />
-        )}
-
-        {step === 1 && (
+        );
+      case 1:
+        return (
           <input
             type="email"
             value={data.email}
@@ -104,23 +126,30 @@ export function JoinApplyForm() {
             placeholder={prompt}
             autoComplete="email"
             aria-label={prompt}
-            className={JOIN_FORM_FIELD_TW}
+            className={fieldClass}
+            style={fieldStyle()}
           />
-        )}
-
-        {step === 2 && (
-          <JoinCountrySlider value={data.country} onChange={(country) => patch({ country })} prompt={prompt} />
-        )}
-
-        {step === 3 && (
+        );
+      case 2:
+        return (
+          <JoinCountrySlider
+            variant={variant}
+            value={data.country}
+            onChange={(country) => patch({ country })}
+            prompt={prompt}
+          />
+        );
+      case 3:
+        return (
           <JoinEducationSlider
+            variant={variant}
             value={data.education}
             onChange={(education) => patch({ education })}
             prompt={prompt}
           />
-        )}
-
-        {step === 4 && (
+        );
+      case 4:
+        return (
           <input
             type="text"
             value={data.schoolName}
@@ -128,14 +157,15 @@ export function JoinApplyForm() {
             placeholder={prompt}
             autoComplete="organization"
             aria-label={prompt}
-            className={JOIN_FORM_FIELD_TW}
+            className={fieldClass}
+            style={fieldStyle()}
           />
-        )}
-
-        {step === 5 && (
-          <div className={JOIN_FORM_PANEL_TW}>
-            <p className={JOIN_FORM_PROMPT_INSET_TW}>{prompt}</p>
-            <div className="grid grid-cols-2 gap-2">
+        );
+      case 5:
+        return (
+          <div className={joinFormPanelClass(variant)} style={fieldStyle()}>
+            <p className={joinFormPromptClass(variant)}>{prompt}</p>
+            <div className={`grid grid-cols-2 ${variant === "mobile" ? "gap-2.5 iphone-page:gap-3" : "gap-2"}`}>
               {JOIN_APPLY_AREAS.map((area) => {
                 const active = data.areas.includes(area);
                 return (
@@ -144,11 +174,18 @@ export function JoinApplyForm() {
                     type="button"
                     aria-pressed={active}
                     onClick={() => patch({ areas: toggleArea(data.areas, area) })}
-                    className={`rounded-xl px-2.5 py-3 text-center text-[0.875rem] font-medium leading-tight tracking-[-0.01em] transition-colors ${inter.className} ${
+                    className={`rounded-xl text-center font-medium leading-tight tracking-[-0.01em] transition-colors ${areaLabelSize} ${inter.className}`}
+                    style={
                       active
-                        ? "bg-[#1E343A] text-white"
-                        : "bg-[#F0EEEA] text-[#1E343A]/55 hover:bg-[#E8E6E1] hover:text-[#1E343A]/80"
-                    }`}
+                        ? {
+                            backgroundColor: JOIN_FORM_BEIGE.meter,
+                            color: JOIN_FORM_BEIGE.page,
+                          }
+                        : {
+                            backgroundColor: JOIN_FORM_BEIGE.fieldMuted,
+                            color: "rgba(30, 52, 58, 0.58)",
+                          }
+                    }
                   >
                     {area}
                   </button>
@@ -156,10 +193,10 @@ export function JoinApplyForm() {
               })}
             </div>
           </div>
-        )}
-
-        {step === 6 && (
-          <div>
+        );
+      case 6:
+        return (
+          <>
             <input
               ref={resumeInputRef}
               type="file"
@@ -171,63 +208,77 @@ export function JoinApplyForm() {
               type="button"
               onClick={() => resumeInputRef.current?.click()}
               aria-label={prompt}
-              className={`${JOIN_FORM_FIELD_TW} flex items-center justify-between gap-3 text-left`}
+              className={`${fieldClass} flex items-center justify-between gap-3 text-left`}
+              style={fieldStyle()}
             >
-              <span className={data.resume ? "text-[#1E343A]" : "text-[#1E343A]/36"}>
+              <span className={data.resume ? "text-[#1E343A]" : "text-[#1E343A]/38"}>
                 {data.resume ? data.resume.name : prompt}
               </span>
-              <span className="shrink-0 text-[0.875rem] font-medium text-[#1E343A]/50">Browse</span>
+              <span
+                className={`shrink-0 font-medium text-[#1E343A]/50 ${inter.className} ${
+                  variant === "mobile" ? "text-[1rem] iphone-page:text-[1.0625rem]" : "text-[0.875rem]"
+                }`}
+              >
+                Browse
+              </span>
             </button>
-          </div>
-        )}
-
-        {step === 7 && (
-          <div className={JOIN_FORM_PANEL_TW}>
-            <p className={JOIN_FORM_PROMPT_INSET_TW}>{prompt}</p>
+          </>
+        );
+      case 7:
+        return (
+          <div className={joinFormPanelClass(variant)} style={fieldStyle()}>
+            <p className={joinFormPromptClass(variant)}>{prompt}</p>
             <JoinLinkedInInput
+              variant={variant}
               value={data.linkedinUsername}
               onChange={(linkedinUsername) => patch({ linkedinUsername })}
               placeholder="username"
               nested
             />
           </div>
-        )}
-
-        {step === 8 && (
+        );
+      case 8:
+        return (
           <textarea
             value={data.notes}
             onChange={(e) => patch({ notes: e.target.value })}
             placeholder={prompt}
             aria-label={prompt}
-            rows={4}
-            className={`${JOIN_FORM_FIELD_TW} min-h-[7.5rem] resize-none`}
+            rows={variant === "mobile" ? 5 : 4}
+            className={`${fieldClass} resize-none ${variant === "mobile" ? "min-h-[9rem] iphone-page:min-h-[10rem]" : "min-h-[7.5rem]"}`}
+            style={fieldStyle()}
           />
-        )}
-      </div>
+        );
+      default:
+        return null;
+    }
+  })();
 
-      <div className="mt-7 flex items-center gap-2.5">
-        {step > 0 ? (
-          <button
-            type="button"
-            onClick={goBack}
-            className={`rounded-2xl px-5 py-3.5 text-[0.9375rem] font-medium text-[#1E343A]/50 transition-colors hover:text-[#1E343A] ${inter.className}`}
-          >
-            Back
-          </button>
-        ) : null}
-
+  return (
+    <div className={joinFormShellClass(variant)}>
+      {step > 0 ? (
         <button
           type="button"
-          onClick={goNext}
-          disabled={!canProceed}
-          className={`${step > 0 ? "ml-auto" : "w-full"} rounded-2xl px-6 py-3.5 text-[0.9375rem] font-medium transition-all ${inter.className} ${
-            canProceed
-              ? "bg-[#1E343A] text-white hover:opacity-90"
-              : "cursor-not-allowed bg-[#1E343A]/12 text-[#1E343A]/30"
+          onClick={goBack}
+          className={`mb-5 font-medium text-[#1E343A]/45 transition-colors hover:text-[#1E343A]/70 ${inter.className} ${
+            variant === "mobile" ? "text-[1rem] iphone-page:text-[1.0625rem]" : "text-[0.9375rem]"
           }`}
         >
-          {isLastStep ? "Submit" : "Next"}
+          Back
         </button>
+      ) : null}
+
+      <div className={`flex items-stretch ${variant === "mobile" ? "gap-3 iphone-page:gap-3.5" : "gap-3"}`}>
+        <div className="min-w-0 flex-1">{stepContent}</div>
+        <JoinFormAdvanceButton
+          disabled={!canProceed}
+          onClick={goNext}
+          label={isLastStep ? "Submit application" : "Next step"}
+        />
+      </div>
+
+      <div className={`${variant === "mobile" ? "mt-4 iphone-page:mt-5" : "mt-3"}`}>
+        <JoinFormProgressBar step={step} total={JOIN_APPLY_STEP_COUNT} />
       </div>
     </div>
   );
