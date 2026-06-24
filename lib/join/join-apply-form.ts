@@ -4,7 +4,7 @@ export const JOIN_APPLY_AREAS = [
   "Operations",
   "Marketing",
   "Sales",
-  "GTM",
+  "Market Research",
 ] as const;
 
 export type JoinApplyArea = (typeof JOIN_APPLY_AREAS)[number];

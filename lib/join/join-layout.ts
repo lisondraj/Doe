@@ -4,9 +4,24 @@ export const JOIN_DESKTOP_CONTENT_PAD = "px-8";
 export const JOIN_DESKTOP_CONTENT =
   `mx-auto w-full ${JOIN_DESKTOP_CONTENT_MAX} ${JOIN_DESKTOP_CONTENT_PAD}`;
 
+/** Shared vertical/horizontal gutter for join iPhone sections — matches carousel inset. */
+export const JOIN_MOBILE_SECTION_GUTTER =
+  "max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))";
+
+/** Top inset above join mobile hero card. */
+export const JOIN_MOBILE_HERO_TOP_PAD =
+  "pt-14 iphone-page:pt-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
+
+/** Bottom inset below join mobile hero card. */
+export const JOIN_MOBILE_HERO_BOTTOM_PAD =
+  "pb-14 iphone-page:pb-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
+
 /** Inset around join mobile hero card — matches carousel horizontal gutter on all sides. */
-export const JOIN_MOBILE_HERO_INSET =
-  "iphone-page:py-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
+export const JOIN_MOBILE_HERO_INSET = `${JOIN_MOBILE_HERO_TOP_PAD} ${JOIN_MOBILE_HERO_BOTTOM_PAD}`;
+
+/** Gap above first track section (Clinical) — matches hero top inset. */
+export const JOIN_MOBILE_TRACK_TOP_GAP =
+  "mt-14 iphone-page:mt-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
 
 /** First iPhone screen — hero fills viewport below nav with uniform inset. */
 export const JOIN_MOBILE_HERO_VIEWPORT_SECTION =
