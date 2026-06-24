@@ -9,7 +9,6 @@ import {
   JOIN_DESKTOP_TRACK_GAP,
   JOIN_MOBILE_CARD_HEIGHT,
   JOIN_MOBILE_TRACK_SECTION,
-  JOIN_MOBILE_TRACK_TOP_GAP,
 } from "@/lib/join/join-layout";
 import {
   DOEPHONE_SECTION_CAROUSEL_MENU_GAP,
@@ -42,7 +41,7 @@ export function JoinInternTracks({ variant }: { variant: "mobile" | "desktop" })
         return (
           <article
             key={track.title}
-            className={`${index === 0 ? (variant === "mobile" ? JOIN_MOBILE_TRACK_TOP_GAP : "") : stackGap} ${variant === "mobile" ? `${JOIN_MOBILE_TRACK_SECTION} flex flex-col` : ""}`.trim()}
+            className={`${variant === "mobile" || index > 0 ? stackGap : ""} ${variant === "mobile" ? `${JOIN_MOBILE_TRACK_SECTION} flex flex-col` : ""}`.trim()}
           >
             <div className={`${cardStackClass} ${variant === "mobile" ? "flex min-h-0 flex-1 flex-col" : ""}`}>
               <JoinInternTrackReveal
