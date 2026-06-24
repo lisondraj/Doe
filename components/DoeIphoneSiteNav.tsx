@@ -101,48 +101,64 @@ function NavChromeStrip({
         ))}
       </div>
 
-      {(showJoinCta || showMenu) ? (
       <div className="flex shrink-0 items-center gap-2.5 iphone-page:gap-[clamp(0.45rem,0.35rem+0.65vmin,0.7rem)]">
         {showJoinCta ? (
           <a href={joinHref} className={DOEPHONE_NAV_WAITLIST_CLASS}>
             Join Waitlist
           </a>
-        ) : null}
+        ) : (
+          <span
+            className={`${DOEPHONE_NAV_WAITLIST_CLASS} invisible pointer-events-none select-none`}
+            aria-hidden
+          >
+            Join Waitlist
+          </span>
+        )}
 
         {showMenu ? (
-        <button
-          type="button"
-          className="flex items-center justify-center p-3 iphone-page:p-[clamp(0.625rem,0.38rem+1.35vmin,0.975rem)] rounded-xl transition-colors active:bg-black/[0.04]"
-          style={{ color: navTextColor }}
-          aria-expanded={mobileNavOpen}
-          aria-label={mobileNavOpen ? "Close navigation menu" : "Open navigation menu"}
-          onClick={toggleMenu}
-        >
-        {mobileNavOpen ? (
-          <svg
-            className="w-9 h-9 iphone-page:w-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)] iphone-page:h-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)]"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            aria-hidden
+          <button
+            type="button"
+            className="flex items-center justify-center p-3 iphone-page:p-[clamp(0.625rem,0.38rem+1.35vmin,0.975rem)] rounded-xl transition-colors active:bg-black/[0.04]"
+            style={{ color: navTextColor }}
+            aria-expanded={mobileNavOpen}
+            aria-label={mobileNavOpen ? "Close navigation menu" : "Open navigation menu"}
+            onClick={toggleMenu}
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
+            {mobileNavOpen ? (
+              <svg
+                className="w-9 h-9 iphone-page:w-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)] iphone-page:h-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg
+                className="w-9 h-9 iphone-page:w-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)] iphone-page:h-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden
+              >
+                <path strokeLinecap="round" strokeWidth={2} d="M4 7h16M4 12h16M4 17h16" />
+              </svg>
+            )}
+          </button>
         ) : (
-          <svg
-            className="w-9 h-9 iphone-page:w-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)] iphone-page:h-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)]"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+          <span
+            className="invisible pointer-events-none flex items-center justify-center p-3 iphone-page:p-[clamp(0.625rem,0.38rem+1.35vmin,0.975rem)]"
             aria-hidden
           >
-            <path strokeLinecap="round" strokeWidth={2} d="M4 7h16M4 12h16M4 17h16" />
-          </svg>
+            <svg
+              className="w-9 h-9 iphone-page:w-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)] iphone-page:h-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)]"
+              viewBox="0 0 24 24"
+              aria-hidden
+            />
+          </span>
         )}
-        </button>
-        ) : null}
       </div>
-      ) : null}
     </div>
   );
 }
