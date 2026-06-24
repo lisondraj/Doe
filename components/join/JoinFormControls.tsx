@@ -13,7 +13,7 @@ export function joinFormShellClass(variant: "mobile" | "desktop") {
 export function joinFormFieldClass(variant: "mobile" | "desktop") {
   const size =
     variant === "mobile"
-      ? "rounded-[1.2rem] px-5 py-[1.55rem] text-[1.375rem] iphone-page:rounded-[1.3rem] iphone-page:px-6 iphone-page:py-[1.75rem] iphone-page:text-[1.5rem]"
+      ? "rounded-[1.35rem] px-6 py-[2rem] text-[1.875rem] iphone-page:rounded-[1.45rem] iphone-page:px-7 iphone-page:py-[2.15rem] iphone-page:text-[2.125rem]"
       : "rounded-2xl px-5 py-[1.15rem] text-[1.0625rem]";
 
   return [
@@ -26,10 +26,15 @@ export function joinFormFieldClass(variant: "mobile" | "desktop") {
   ].join(" ");
 }
 
+/** Extra right inset when enter affordance sits inside the field. */
+export function joinFormFieldEnterPadClass(variant: "mobile" | "desktop") {
+  return variant === "mobile" ? "pr-[4.75rem] iphone-page:pr-[5.25rem]" : "pr-14";
+}
+
 export function joinFormPanelClass(variant: "mobile" | "desktop") {
   const size =
     variant === "mobile"
-      ? "rounded-[1.2rem] px-5 py-[1.55rem] iphone-page:rounded-[1.3rem] iphone-page:px-6 iphone-page:py-[1.75rem]"
+      ? "rounded-[1.35rem] px-6 py-[1.85rem] iphone-page:rounded-[1.45rem] iphone-page:px-7 iphone-page:py-[2rem]"
       : "rounded-2xl px-5 py-[1.15rem]";
 
   return `w-full border ${size}`;
@@ -38,7 +43,7 @@ export function joinFormPanelClass(variant: "mobile" | "desktop") {
 export function joinFormPromptClass(variant: "mobile" | "desktop") {
   const size =
     variant === "mobile"
-      ? "mb-4 text-[1.25rem] iphone-page:mb-[1.15rem] iphone-page:text-[1.375rem]"
+      ? "mb-4 text-[1.5rem] iphone-page:mb-5 iphone-page:text-[1.625rem]"
       : "mb-4 text-[1.0625rem]";
 
   return `${size} leading-snug text-[#1E343A]/40 ${inter.className}`;
@@ -146,7 +151,7 @@ export function JoinSegmentSlider<T extends string>({
   const activeIndex = options.findIndex((o) => o.value === value);
   const labelSize =
     variant === "mobile"
-      ? "py-[1.15rem] text-[1.0625rem] iphone-page:py-[1.3rem] iphone-page:text-[1.125rem]"
+      ? "py-[1.35rem] text-[1.25rem] iphone-page:py-[1.5rem] iphone-page:text-[1.375rem]"
       : "py-[0.9rem] text-[0.9375rem]";
 
   return (
@@ -199,6 +204,7 @@ export function JoinLinkedInInput({
   nested = false,
   variant = "desktop",
   readOnly = false,
+  onEnter,
 }: {
   value: string;
   onChange: (value: string) => void;
@@ -206,11 +212,12 @@ export function JoinLinkedInInput({
   nested?: boolean;
   variant?: "mobile" | "desktop";
   readOnly?: boolean;
+  onEnter?: () => void;
 }) {
   const prefix = "linkedin.com/in/";
-  const textSize = variant === "mobile" ? "text-[1.375rem] iphone-page:text-[1.5rem]" : "text-[1.0625rem]";
+  const textSize = variant === "mobile" ? "text-[1.875rem] iphone-page:text-[2.125rem]" : "text-[1.0625rem]";
   const shellClass = nested
-    ? `flex items-center overflow-hidden rounded-xl px-4 py-[1rem] iphone-page:rounded-[0.95rem] iphone-page:px-5 iphone-page:py-[1.15rem]`
+    ? `flex items-center overflow-hidden rounded-xl px-5 py-[1.15rem] iphone-page:rounded-[0.95rem] iphone-page:px-6 iphone-page:py-[1.35rem]`
     : `flex items-center overflow-hidden ${joinFormFieldClass(variant)} py-0`;
 
   return (
@@ -234,6 +241,11 @@ export function JoinLinkedInInput({
           const atStart = input.selectionStart === 0 && input.selectionEnd === 0;
           if (atStart && (e.key === "Backspace" || e.key === "Delete")) {
             e.preventDefault();
+            return;
+          }
+          if (e.key === "Enter" && onEnter) {
+            e.preventDefault();
+            onEnter();
           }
         }}
         placeholder={placeholder ?? "username"}
@@ -251,16 +263,18 @@ export function JoinCountrySlider({
   prompt,
   variant,
   disabled = false,
+  className,
 }: {
   value: JoinApplyCountry;
   onChange: (value: JoinApplyCountry) => void;
   prompt: string;
   variant: "mobile" | "desktop";
   disabled?: boolean;
+  className?: string;
 }) {
   return (
     <div
-      className={joinFormPanelClass(variant)}
+      className={`${joinFormPanelClass(variant)}${className ? ` ${className}` : ""}`}
       style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
     >
       <p className={joinFormPromptClass(variant)}>{prompt}</p>
@@ -285,16 +299,18 @@ export function JoinEducationSlider({
   prompt,
   variant,
   disabled = false,
+  className,
 }: {
   value: JoinApplyEducation;
   onChange: (value: JoinApplyEducation) => void;
   prompt: string;
   variant: "mobile" | "desktop";
   disabled?: boolean;
+  className?: string;
 }) {
   return (
     <div
-      className={joinFormPanelClass(variant)}
+      className={`${joinFormPanelClass(variant)}${className ? ` ${className}` : ""}`}
       style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
     >
       <p className={joinFormPromptClass(variant)}>{prompt}</p>

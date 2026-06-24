@@ -1,9 +1,10 @@
 "use client";
 
-import type { RefObject } from "react";
+import type { KeyboardEvent, RefObject } from "react";
 
 import {
   joinFormFieldClass,
+  joinFormFieldEnterPadClass,
   joinFormPanelClass,
   joinFormPromptClass,
   JoinCountrySlider,
@@ -44,7 +45,21 @@ type RenderJoinApplyStepOptions = {
   variant: "mobile" | "desktop";
   interactive: boolean;
   resumeInputRef?: RefObject<HTMLInputElement>;
+  withEnterPad?: boolean;
+  onEnter?: () => void;
 };
+
+function enterKeyProps(onEnter?: () => void) {
+  if (!onEnter) return {};
+  return {
+    onKeyDown: (e: KeyboardEvent) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        onEnter();
+      }
+    },
+  };
+}
 
 export function renderJoinApplyStep({
   step,
@@ -53,13 +68,15 @@ export function renderJoinApplyStep({
   variant,
   interactive,
   resumeInputRef,
+  withEnterPad = false,
+  onEnter,
 }: RenderJoinApplyStepOptions) {
   const prompt = JOIN_APPLY_STEP_PROMPTS[step];
-  const fieldClass = joinFormFieldClass(variant);
+  const fieldClass = `${joinFormFieldClass(variant)}${withEnterPad ? ` ${joinFormFieldEnterPadClass(variant)}` : ""}`;
   const readOnly = !interactive;
   const areaLabelSize =
     variant === "mobile"
-      ? "px-3.5 py-[1.2rem] text-[1.0625rem] iphone-page:px-4 iphone-page:py-[1.35rem] iphone-page:text-[1.125rem]"
+      ? "px-4 py-[1.35rem] text-[1.1875rem] iphone-page:px-4 iphone-page:py-[1.5rem] iphone-page:text-[1.3125rem]"
       : "px-2.5 py-3 text-[0.875rem]";
 
   switch (step) {
@@ -76,6 +93,7 @@ export function renderJoinApplyStep({
           tabIndex={interactive ? 0 : -1}
           className={fieldClass}
           style={fieldStyle()}
+          {...enterKeyProps(onEnter)}
         />
       );
     case 1:
@@ -91,6 +109,7 @@ export function renderJoinApplyStep({
           tabIndex={interactive ? 0 : -1}
           className={fieldClass}
           style={fieldStyle()}
+          {...enterKeyProps(onEnter)}
         />
       );
     case 2:
@@ -101,6 +120,7 @@ export function renderJoinApplyStep({
           onChange={(country) => patch({ country })}
           prompt={prompt}
           disabled={readOnly}
+          className={withEnterPad ? joinFormFieldEnterPadClass(variant) : undefined}
         />
       );
     case 3:
@@ -111,6 +131,7 @@ export function renderJoinApplyStep({
           onChange={(education) => patch({ education })}
           prompt={prompt}
           disabled={readOnly}
+          className={withEnterPad ? joinFormFieldEnterPadClass(variant) : undefined}
         />
       );
     case 4:
@@ -126,11 +147,15 @@ export function renderJoinApplyStep({
           tabIndex={interactive ? 0 : -1}
           className={fieldClass}
           style={fieldStyle()}
+          {...enterKeyProps(onEnter)}
         />
       );
     case 5:
       return (
-        <div className={`${joinFormPanelClass(variant)} h-full`} style={fieldStyle()}>
+        <div
+          className={`${joinFormPanelClass(variant)} h-full${withEnterPad ? ` ${joinFormFieldEnterPadClass(variant)}` : ""}`}
+          style={fieldStyle()}
+        >
           <p className={joinFormPromptClass(variant)}>{prompt}</p>
           <div className={`grid grid-cols-2 ${variant === "mobile" ? "gap-2.5 iphone-page:gap-3" : "gap-2"}`}>
             {JOIN_APPLY_AREAS.map((area) => {
@@ -181,27 +206,21 @@ export function renderJoinApplyStep({
             tabIndex={interactive ? 0 : -1}
             onClick={() => interactive && resumeInputRef?.current?.click()}
             aria-label={prompt}
-            className={`${fieldClass} flex h-full min-h-0 items-center justify-between gap-3 text-left`}
+            className={`${fieldClass} flex h-full min-h-0 items-center text-left`}
             style={fieldStyle()}
           >
-            <span className={`min-w-0 truncate ${data.resume ? "text-[#1E343A]" : "text-[#1E343A]/38"}`}>
+            <span className={`min-w-0 flex-1 truncate ${data.resume ? "text-[#1E343A]" : "text-[#1E343A]/38"}`}>
               {data.resume ? data.resume.name : prompt}
             </span>
-            {interactive ? (
-              <span
-                className={`shrink-0 font-medium text-[#1E343A]/50 ${inter.className} ${
-                  variant === "mobile" ? "text-[1.0625rem] iphone-page:text-[1.125rem]" : "text-[0.875rem]"
-                }`}
-              >
-                Browse
-              </span>
-            ) : null}
           </button>
         </>
       );
     case 7:
       return (
-        <div className={`${joinFormPanelClass(variant)} h-full`} style={fieldStyle()}>
+        <div
+          className={`${joinFormPanelClass(variant)} h-full${withEnterPad ? ` ${joinFormFieldEnterPadClass(variant)}` : ""}`}
+          style={fieldStyle()}
+        >
           <p className={joinFormPromptClass(variant)}>{prompt}</p>
           <JoinLinkedInInput
             variant={variant}
@@ -210,6 +229,7 @@ export function renderJoinApplyStep({
             placeholder="username"
             nested
             readOnly={readOnly}
+            onEnter={onEnter}
           />
         </div>
       );

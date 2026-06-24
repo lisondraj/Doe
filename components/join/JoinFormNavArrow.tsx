@@ -2,6 +2,7 @@
 
 import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
 
+/** Minimal beige chevron — scroll between apply steps. */
 export function JoinFormNavArrow({
   direction,
   disabled,
@@ -19,35 +20,29 @@ export function JoinFormNavArrow({
       onClick={onClick}
       disabled={disabled}
       aria-label={label}
-      className={`mx-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-full border transition-all iphone-page:h-[3.35rem] iphone-page:w-[3.35rem] ${
-        disabled
-          ? "cursor-not-allowed opacity-25"
-          : "hover:border-[#B5AA9C] active:scale-[0.96]"
+      className={`flex h-10 shrink-0 items-center justify-center px-2 transition-opacity iphone-page:h-11 ${
+        disabled ? "cursor-not-allowed opacity-20" : "opacity-70 hover:opacity-100 active:opacity-90"
       }`}
-      style={{
-        backgroundColor: JOIN_FORM_BEIGE.field,
-        borderColor: JOIN_FORM_BEIGE.border,
-      }}
     >
       <svg
-        className="h-[1.35rem] w-[1.35rem] iphone-page:h-6 iphone-page:w-6"
+        className="h-7 w-7 iphone-page:h-8 iphone-page:w-8"
         viewBox="0 0 24 24"
         fill="none"
         aria-hidden
       >
         {direction === "up" ? (
           <path
-            d="M7.5 15l4.5-4.5L16.5 15"
-            stroke={JOIN_FORM_BEIGE.ink}
-            strokeWidth="2"
+            d="M6 14l6-6 6 6"
+            stroke={JOIN_FORM_BEIGE.meter}
+            strokeWidth="2.25"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
         ) : (
           <path
-            d="M7.5 9l4.5 4.5L16.5 9"
-            stroke={JOIN_FORM_BEIGE.ink}
-            strokeWidth="2"
+            d="M6 10l6 6 6-6"
+            stroke={JOIN_FORM_BEIGE.meter}
+            strokeWidth="2.25"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
