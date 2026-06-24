@@ -12,7 +12,7 @@ const FOOTER_LINKS = [
   { href: "/", label: "Our Vision" },
 ] as const;
 
-export function HomeFooter() {
+export function HomeFooter({ linksDisabled = false }: { linksDisabled?: boolean }) {
   return (
     <>
       <footer
@@ -96,15 +96,21 @@ export function HomeFooter() {
               className="flex shrink-0 flex-col items-end gap-4 text-right text-[clamp(1.48rem,5vw,2.1rem)] font-medium leading-[1.1] tracking-tight md:gap-4.5 md:text-[clamp(1.58rem,3vw,2.25rem)] iphone-page:gap-3.5 iphone-page:text-[clamp(1.38rem,4.8vmin,1.82rem)]"
               aria-label="Footer"
             >
-              {FOOTER_LINKS.map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  className="text-white no-underline transition-colors hover:text-white/85"
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {FOOTER_LINKS.map((item) =>
+                linksDisabled ? (
+                  <span key={item.label} className="text-white">
+                    {item.label}
+                  </span>
+                ) : (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    className="text-white no-underline transition-colors hover:text-white/85"
+                  >
+                    {item.label}
+                  </Link>
+                ),
+              )}
             </nav>
           </div>
 

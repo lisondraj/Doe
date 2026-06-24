@@ -10,6 +10,7 @@ import {
   NAV_ITEMS,
 } from "@/components/doe-nav-data";
 import { DOEPHONE_NAV_WAITLIST_CLASS } from "@/lib/doephone/waitlist-button";
+import { JOIN_PAGE_HREF } from "@/lib/site-domains";
 import {
   NAV_FOOTER_BOX_TITLE_TW,
   NAV_FOOTER_CARD_INSET,
@@ -56,11 +57,19 @@ function NavChromeStrip({
   mobileNavOpen,
   toggleMenu,
   pinchSafe = false,
+  homeHref = "/",
+  joinHref = JOIN_PAGE_HREF,
+  showJoinCta = true,
+  logoLink = true,
 }: {
   navTextColor: string;
   mobileNavOpen: boolean;
   toggleMenu: () => void;
   pinchSafe?: boolean;
+  homeHref?: string;
+  joinHref?: string;
+  showJoinCta?: boolean;
+  logoLink?: boolean;
 }) {
   const navInsetX = pinchSafe
     ? "px-11 iphone-page:px-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))] iphone-page:pr-[max(1.65rem,env(safe-area-inset-right,0px))]"
@@ -68,16 +77,19 @@ function NavChromeStrip({
   const doeLeft = pinchSafe
     ? "left-11 iphone-page:left-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))]"
     : "left-8 iphone-page:left-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))]";
+  const doeClassName = `absolute top-1/2 -translate-y-1/2 ${doeLeft} font-normal z-[1] min-w-0 whitespace-nowrap ${lora.className} text-4xl iphone-page:text-[clamp(1.85rem,1.05rem+3.55vmin,3.9rem)] iphone-page:leading-none`;
 
   return (
     <div className={`${navInsetX} py-6 iphone-page:py-[clamp(0.8125rem,0.52rem+1.55vmin,1.9rem)] flex items-center relative z-10 iphone-page:gap-[clamp(0.45rem,0.35rem+0.85vmin,0.75rem)] justify-end`}>
-      <Link
-        href="/"
-        className={`absolute top-1/2 -translate-y-1/2 ${doeLeft} font-normal z-[1] min-w-0 whitespace-nowrap transition-opacity duration-500 ease-out ${lora.className} text-4xl iphone-page:text-[clamp(1.85rem,1.05rem+3.55vmin,3.9rem)] iphone-page:leading-none opacity-100`}
-        style={{ color: navTextColor }}
-      >
-        Doe
-      </Link>
+      {logoLink ? (
+        <Link href={homeHref} className={`${doeClassName} transition-opacity duration-500 ease-out opacity-100`} style={{ color: navTextColor }}>
+          Doe
+        </Link>
+      ) : (
+        <span className={doeClassName} style={{ color: navTextColor }}>
+          Doe
+        </span>
+      )}
 
       <div className="hidden items-center gap-8 absolute left-1/2 -translate-x-1/2">
         {NAV_ITEMS.map((item) => (
@@ -88,9 +100,11 @@ function NavChromeStrip({
       </div>
 
       <div className="flex shrink-0 items-center gap-2.5 iphone-page:gap-[clamp(0.45rem,0.35rem+0.65vmin,0.7rem)]">
-        <a href="/waitlist" className={DOEPHONE_NAV_WAITLIST_CLASS}>
-          Join Waitlist
-        </a>
+        {showJoinCta ? (
+          <a href={joinHref} className={DOEPHONE_NAV_WAITLIST_CLASS}>
+            Join Waitlist
+          </a>
+        ) : null}
 
         <button
           type="button"
@@ -131,7 +145,19 @@ function NavChromeStrip({
  * Fixed Doe wordmark + hamburger, with the same full-screen iPhone nav sheet and
  * three-card featured carousel as the home page — solid beige chrome for subpages.
  */
-export default function DoeIphoneSiteNav({ pinchSafe = false }: { pinchSafe?: boolean }) {
+export default function DoeIphoneSiteNav({
+  pinchSafe = false,
+  homeHref = "/",
+  joinHref = JOIN_PAGE_HREF,
+  showJoinCta = true,
+  logoLink = true,
+}: {
+  pinchSafe?: boolean;
+  homeHref?: string;
+  joinHref?: string;
+  showJoinCta?: boolean;
+  logoLink?: boolean;
+}) {
   const isPhoneLayout = true;
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   /** Keeps the sheet mounted through the close animation. */
@@ -495,6 +521,10 @@ export default function DoeIphoneSiteNav({ pinchSafe = false }: { pinchSafe?: bo
           mobileNavOpen={navSheetLive}
           toggleMenu={() => setMobileNavOpen((o) => !o)}
           pinchSafe={pinchSafe}
+          homeHref={homeHref}
+          joinHref={joinHref}
+          showJoinCta={showJoinCta}
+          logoLink={logoLink}
         />
       </header>,
       document.body
@@ -530,6 +560,10 @@ export default function DoeIphoneSiteNav({ pinchSafe = false }: { pinchSafe?: bo
             mobileNavOpen={mobileNavOpen}
             toggleMenu={() => setMobileNavOpen((o) => !o)}
             pinchSafe={pinchSafe}
+            homeHref={homeHref}
+            joinHref={joinHref}
+            showJoinCta={showJoinCta}
+            logoLink={logoLink}
           />
         </div>
       </nav>

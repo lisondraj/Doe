@@ -15,6 +15,7 @@ import {
   narrowHorizontalInset,
 } from "@/lib/home/hero-constants";
 import { DOEPHONE_NAV_WAITLIST_CLASS } from "@/lib/doephone/waitlist-button";
+import { JOIN_PAGE_HREF } from "@/lib/site-domains";
 import {
   NAV_FOOTER_BOX_TITLE_TW,
   NAV_FOOTER_CARD_INSET,
@@ -189,7 +190,7 @@ export function HeroSection(props: HeroSectionProps) {
 
             {/* iPhone: waitlist + menu */}
             <div className="flex shrink-0 items-center gap-2.5 iphone-page:gap-[clamp(0.45rem,0.35rem+0.65vmin,0.7rem)]">
-              <a href="/waitlist" className={DOEPHONE_NAV_WAITLIST_CLASS}>
+              <a href={JOIN_PAGE_HREF} className={DOEPHONE_NAV_WAITLIST_CLASS}>
                 Join Waitlist
               </a>
 
