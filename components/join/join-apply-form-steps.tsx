@@ -72,7 +72,7 @@ export function renderJoinApplyStep({
   switch (step) {
     case 0:
       return (
-        <div className="relative">
+        <div className="relative w-full">
           <input
             type="text"
             value={data.name}
@@ -91,7 +91,7 @@ export function renderJoinApplyStep({
       );
     case 1:
       return (
-        <div className="relative">
+        <div className="relative w-full">
           <input
             type="email"
             value={data.email}
@@ -130,7 +130,7 @@ export function renderJoinApplyStep({
       );
     case 4:
       return (
-        <div className="relative">
+        <div className="relative w-full">
           <input
             type="text"
             value={data.schoolName}
