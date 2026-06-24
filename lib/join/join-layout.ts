@@ -38,6 +38,10 @@ export const JOIN_MOBILE_TRACK_SECTION =
 export const JOIN_MOBILE_APPLY_SECTION =
   "min-h-[100svh] iphone-page:min-h-[100svh]";
 
+/** Fixed question slot below apply card — prevents layout shift between steps. */
+export const JOIN_MOBILE_APPLY_QUESTION_SLOT =
+  "h-[22rem] w-full shrink-0 iphone-page:h-[25rem]";
+
 /** Desktop hero — same proportions as mobile, capped for wide screens. */
 export const JOIN_DESKTOP_HERO_HEIGHT = "min-h-[min(72vh,44rem)] h-[min(72vh,44rem)]";
 

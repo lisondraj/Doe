@@ -48,6 +48,8 @@ type RenderJoinApplyStepOptions = {
   onEnter?: () => void;
   enterDisabled?: boolean;
   enterLabel?: string;
+  /** Mobile apply — stretch step UI to the fixed question slot height. */
+  fillSlot?: boolean;
 };
 
 function StepEnterWrap({
@@ -56,16 +58,20 @@ function StepEnterWrap({
   enterLabel,
   children,
   className = "",
+  fillSlot = false,
 }: {
   onEnter?: () => void;
   enterDisabled?: boolean;
   enterLabel?: string;
   children: ReactNode;
   className?: string;
+  fillSlot?: boolean;
 }) {
-  if (!onEnter) return <>{children}</>;
+  if (!onEnter) {
+    return fillSlot ? <div className={`h-full w-full ${className}`.trim()}>{children}</div> : <>{children}</>;
+  }
   return (
-    <div className={`relative w-full ${className}`.trim()}>
+    <div className={`relative w-full ${fillSlot ? "h-full" : ""} ${className}`.trim()}>
       {children}
       <JoinFormEnterButton onClick={onEnter} disabled={enterDisabled} label={enterLabel} />
     </div>
@@ -82,13 +88,17 @@ export function renderJoinApplyStep({
   onEnter,
   enterDisabled,
   enterLabel,
+  fillSlot = false,
 }: RenderJoinApplyStepOptions) {
   const prompt = JOIN_APPLY_STEP_PROMPTS[step];
   const fieldClass = joinFormFieldClass(variant);
   const readOnly = !interactive;
+  const slotFill = fillSlot ? " h-full min-h-0 box-border" : "";
   const fieldWithEnterClass = onEnter
-    ? `${fieldClass} pr-[4.75rem] iphone-page:pr-[5.25rem]`
-    : fieldClass;
+    ? `${fieldClass} pr-[4.75rem] iphone-page:pr-[5.25rem]${slotFill}`
+    : `${fieldClass}${slotFill}`;
+  const panelFillClass = fillSlot ? " flex h-full min-h-0 flex-col" : "";
+  const enterPad = onEnter ? " pr-[4.75rem] iphone-page:pr-[5.25rem]" : "";
   const areaLabelSize =
     variant === "mobile"
       ? "px-4 py-[1.35rem] text-[1.1875rem] iphone-page:px-4 iphone-page:py-[1.5rem] iphone-page:text-[1.3125rem]"
@@ -97,7 +107,7 @@ export function renderJoinApplyStep({
   switch (step) {
     case 0:
       return (
-        <div className="relative w-full">
+        <div className={`relative w-full${fillSlot ? " h-full" : ""}`}>
           <input
             type="text"
             value={data.name}
@@ -118,7 +128,7 @@ export function renderJoinApplyStep({
       );
     case 1:
       return (
-        <div className="relative w-full">
+        <div className={`relative w-full${fillSlot ? " h-full" : ""}`}>
           <input
             type="email"
             value={data.email}
@@ -139,31 +149,33 @@ export function renderJoinApplyStep({
       );
     case 2:
       return (
-        <StepEnterWrap onEnter={onEnter} enterDisabled={enterDisabled} enterLabel={enterLabel}>
+        <StepEnterWrap onEnter={onEnter} enterDisabled={enterDisabled} enterLabel={enterLabel} fillSlot={fillSlot}>
           <JoinCountrySlider
             variant={variant}
             value={data.country}
             onChange={(country) => patch({ country })}
             prompt={prompt}
             disabled={readOnly}
+            className={panelFillClass || undefined}
           />
         </StepEnterWrap>
       );
     case 3:
       return (
-        <StepEnterWrap onEnter={onEnter} enterDisabled={enterDisabled} enterLabel={enterLabel}>
+        <StepEnterWrap onEnter={onEnter} enterDisabled={enterDisabled} enterLabel={enterLabel} fillSlot={fillSlot}>
           <JoinEducationSlider
             variant={variant}
             value={data.education}
             onChange={(education) => patch({ education })}
             prompt={prompt}
             disabled={readOnly}
+            className={panelFillClass || undefined}
           />
         </StepEnterWrap>
       );
     case 4:
       return (
-        <div className="relative w-full">
+        <div className={`relative w-full${fillSlot ? " h-full" : ""}`}>
           <input
             type="text"
             value={data.schoolName}
@@ -184,13 +196,15 @@ export function renderJoinApplyStep({
       );
     case 5:
       return (
-        <StepEnterWrap onEnter={onEnter} enterDisabled={enterDisabled} enterLabel={enterLabel}>
+        <StepEnterWrap onEnter={onEnter} enterDisabled={enterDisabled} enterLabel={enterLabel} fillSlot={fillSlot}>
           <div
-            className={`${joinFormPanelClass(variant)} h-full${onEnter ? " pr-[4.75rem] iphone-page:pr-[5.25rem]" : ""}`}
+            className={`${joinFormPanelClass(variant)}${panelFillClass}${enterPad}`}
             style={fieldStyle()}
           >
-            <p className={joinFormPromptClass(variant)}>{prompt}</p>
-            <div className={`grid grid-cols-2 ${variant === "mobile" ? "gap-2.5 iphone-page:gap-3" : "gap-2"}`}>
+            <p className={`${joinFormPromptClass(variant)} shrink-0`}>{prompt}</p>
+            <div
+              className={`grid min-h-0 flex-1 grid-cols-2 content-start ${variant === "mobile" ? "gap-2.5 overflow-y-auto iphone-page:gap-3" : "gap-2"}`}
+            >
               {JOIN_APPLY_AREAS.map((area) => {
                 const active = data.areas.includes(area);
                 return (
@@ -224,7 +238,7 @@ export function renderJoinApplyStep({
       );
     case 6:
       return (
-        <StepEnterWrap onEnter={onEnter} enterDisabled={enterDisabled} enterLabel={enterLabel}>
+        <StepEnterWrap onEnter={onEnter} enterDisabled={enterDisabled} enterLabel={enterLabel} fillSlot={fillSlot}>
           {interactive && resumeInputRef ? (
             <input
               ref={resumeInputRef}
@@ -251,12 +265,12 @@ export function renderJoinApplyStep({
       );
     case 7:
       return (
-        <StepEnterWrap onEnter={onEnter} enterDisabled={enterDisabled} enterLabel={enterLabel}>
+        <StepEnterWrap onEnter={onEnter} enterDisabled={enterDisabled} enterLabel={enterLabel} fillSlot={fillSlot}>
           <div
-            className={`${joinFormPanelClass(variant)} h-full${onEnter ? " pr-[4.75rem] iphone-page:pr-[5.25rem]" : ""}`}
+            className={`${joinFormPanelClass(variant)}${panelFillClass}${enterPad}`}
             style={fieldStyle()}
           >
-            <p className={joinFormPromptClass(variant)}>{prompt}</p>
+            <p className={`${joinFormPromptClass(variant)} shrink-0`}>{prompt}</p>
             <JoinLinkedInInput
               variant={variant}
               value={data.linkedinUsername}
@@ -271,7 +285,7 @@ export function renderJoinApplyStep({
       );
     case 8:
       return (
-        <StepEnterWrap onEnter={onEnter} enterDisabled={enterDisabled} enterLabel={enterLabel}>
+        <StepEnterWrap onEnter={onEnter} enterDisabled={enterDisabled} enterLabel={enterLabel} fillSlot={fillSlot}>
           <textarea
             value={data.notes}
             onChange={(e) => patch({ notes: e.target.value })}
