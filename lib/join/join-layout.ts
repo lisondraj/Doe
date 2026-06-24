@@ -34,8 +34,8 @@ export const JOIN_MOBILE_CARD_HEIGHT =
 export const JOIN_MOBILE_TRACK_SECTION =
   "min-h-[calc(var(--app-vh,100lvh)*0.92)] iphone-page:min-h-[calc(var(--app-vh,100lvh)*0.9)]";
 
-/** Apply form band on iPhone — same viewport scale as track sections. */
-export const JOIN_MOBILE_APPLY_SECTION = JOIN_MOBILE_TRACK_SECTION;
+/** Apply form band on iPhone — stable height, not viewport-reactive (avoids keyboard reflow). */
+export const JOIN_MOBILE_APPLY_SECTION = "min-h-[42rem] iphone-page:min-h-[50rem]";
 
 /** Desktop hero — same proportions as mobile, capped for wide screens. */
 export const JOIN_DESKTOP_HERO_HEIGHT = "min-h-[min(72vh,44rem)] h-[min(72vh,44rem)]";

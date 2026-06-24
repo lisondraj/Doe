@@ -26,10 +26,6 @@ export function joinFormFieldClass(variant: "mobile" | "desktop") {
   ].join(" ");
 }
 
-/** Extra right inset when enter affordance sits inside the field. */
-export function joinFormFieldEnterPadClass(variant: "mobile" | "desktop") {
-  return variant === "mobile" ? "pr-[4.75rem] iphone-page:pr-[5.25rem]" : "pr-14";
-}
 
 export function joinFormPanelClass(variant: "mobile" | "desktop") {
   const size =

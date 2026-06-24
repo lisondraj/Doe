@@ -13,7 +13,6 @@ import {
   JoinFormAdvanceButton,
   JoinLinkedInInput,
 } from "@/components/join/JoinFormControls";
-import { JoinFormEnterButton } from "@/components/join/JoinFormEnterButton";
 import { JoinFormNavArrow } from "@/components/join/JoinFormNavArrow";
 import {
   JOIN_APPLY_AREAS,
@@ -38,11 +37,8 @@ const JOIN_APPLY_STEP_PROMPTS = [
   "Anything you'd like to add?",
 ] as const;
 
-const MOBILE_PREVIEW_SLOT =
-  "h-[clamp(8rem,calc(var(--app-vh,100lvh)*0.165),10.5rem)] iphone-page:h-[clamp(8.75rem,calc(var(--app-vh,100lvh)*0.175),11.25rem)]";
-
-const MOBILE_ACTIVE_SLOT =
-  "h-[clamp(14.5rem,calc(var(--app-vh,100lvh)*0.3),18.5rem)] iphone-page:h-[clamp(15.5rem,calc(var(--app-vh,100lvh)*0.32),19.5rem)]";
+const MOBILE_PREVIEW_SLOT = "h-36 iphone-page:h-40";
+const MOBILE_ACTIVE_SLOT = "h-56 iphone-page:h-64";
 
 function toggleArea(areas: JoinApplyArea[], area: JoinApplyArea): JoinApplyArea[] {
   return areas.includes(area) ? areas.filter((a) => a !== area) : [...areas, area];
@@ -78,23 +74,23 @@ function JoinApplyMobileCarousel({
   isLastStep,
   resumeInputRef,
 }: JoinApplyMobileCarouselProps) {
-  const slots: { stepIndex: number | null; role: "preview" | "active" | "empty"; position: "above" | "center" | "below" }[] = [
-    { stepIndex: step > 0 ? step - 1 : null, role: step > 0 ? "preview" : "empty", position: "above" },
-    { stepIndex: step, role: "active", position: "center" },
-    {
-      stepIndex: step < JOIN_APPLY_STEP_COUNT - 1 ? step + 1 : null,
-      role: step < JOIN_APPLY_STEP_COUNT - 1 ? "preview" : "empty",
-      position: "below",
-    },
-  ];
+  const [direction, setDirection] = useState<"down" | "up">("down");
 
   const handleDown = useCallback(() => {
     if (isLastStep) {
       if (canProceed) submit();
       return;
     }
-    if (canProceed) goNext();
+    if (canProceed) {
+      setDirection("down");
+      goNext();
+    }
   }, [canProceed, goNext, isLastStep, submit]);
+
+  const handleUp = useCallback(() => {
+    setDirection("up");
+    goBack();
+  }, [goBack]);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -105,74 +101,75 @@ function JoinApplyMobileCarousel({
       e.preventDefault();
       handleDown();
     };
-
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [canProceed, handleDown]);
 
-  const enterLabel = isLastStep ? "Submit application" : "Next question";
+  const animClass =
+    direction === "down"
+      ? "[animation:join-step-enter-down_0.3s_cubic-bezier(0.22,1,0.36,1)_both]"
+      : "[animation:join-step-enter-up_0.3s_cubic-bezier(0.22,1,0.36,1)_both]";
+
+  const aboveStep = step > 0 ? step - 1 : null;
+  const belowStep = step < JOIN_APPLY_STEP_COUNT - 1 ? step + 1 : null;
+  const enterLabel = isLastStep ? "Submit" : "Next";
 
   return (
-    <div className="flex w-full flex-col items-center">
+    <div className="flex w-full flex-col items-center gap-2 iphone-page:gap-2.5">
       {step > 0 ? (
-        <JoinFormNavArrow direction="up" onClick={goBack} label="Previous question" />
+        <JoinFormNavArrow direction="up" onClick={handleUp} label="Previous question" />
       ) : (
-        <div className="h-10 shrink-0 iphone-page:h-11" aria-hidden />
+        <div className="h-9 shrink-0 iphone-page:h-10" aria-hidden />
       )}
 
       <div
-        className="my-3 flex w-full flex-col gap-3 iphone-page:my-4 iphone-page:gap-3.5"
+        className="flex w-full flex-col gap-2.5 iphone-page:gap-3"
         aria-live="polite"
         aria-label={`Application step ${step + 1} of ${JOIN_APPLY_STEP_COUNT}`}
       >
-        {slots.map(({ stepIndex, role, position }, index) => {
-          const isActive = role === "active";
-          const heightClass = isActive ? MOBILE_ACTIVE_SLOT : MOBILE_PREVIEW_SLOT;
+        {/* Above preview */}
+        <div
+          key="slot-above"
+          className={`${MOBILE_PREVIEW_SLOT} w-full shrink-0 overflow-hidden rounded-[1.35rem] iphone-page:rounded-[1.45rem] ${
+            aboveStep !== null ? "pointer-events-none opacity-50" : ""
+          }`}
+          aria-hidden
+        >
+          {aboveStep !== null
+            ? renderJoinApplyStep({ step: aboveStep, data, patch, variant: "mobile", interactive: false })
+            : null}
+        </div>
 
-          if (role === "empty" || stepIndex === null) {
-            return (
-              <div
-                key={`slot-empty-${index}`}
-                className={`${heightClass} w-full shrink-0 rounded-[1.35rem] iphone-page:rounded-[1.45rem]`}
-                aria-hidden
-              />
-            );
-          }
+        {/* Active center */}
+        <div
+          key="slot-center"
+          className={`${MOBILE_ACTIVE_SLOT} w-full shrink-0 overflow-hidden rounded-[1.35rem] iphone-page:rounded-[1.45rem]`}
+        >
+          <div key={step} className={`flex h-full min-h-0 flex-col justify-center ${animClass}`}>
+            {renderJoinApplyStep({
+              step,
+              data,
+              patch,
+              variant: "mobile",
+              interactive: true,
+              resumeInputRef,
+              onEnter: handleDown,
+            })}
+          </div>
+        </div>
 
-          const previewClass =
-            position === "above"
-              ? "pointer-events-none opacity-[0.62] blur-[4px] translate-y-1"
-              : position === "below"
-                ? "pointer-events-none opacity-[0.62] blur-[4px] -translate-y-1"
-                : "opacity-100 blur-0 translate-y-0";
-
-          return (
-            <div
-              key={`slot-${stepIndex}`}
-              className={`${heightClass} w-full shrink-0 overflow-hidden transition-[opacity,filter,transform] duration-500 ease-out ${previewClass}`}
-            >
-              <div
-                className={`relative flex h-full min-h-0 flex-col justify-center ${
-                  isActive && stepIndex === 5 ? "overflow-y-auto" : "overflow-hidden"
-                }`}
-              >
-                {renderJoinApplyStep({
-                  step: stepIndex,
-                  data,
-                  patch,
-                  variant: "mobile",
-                  interactive: isActive,
-                  resumeInputRef: isActive ? resumeInputRef : undefined,
-                  withEnterPad: isActive,
-                  onEnter: isActive ? handleDown : undefined,
-                })}
-                {isActive ? (
-                  <JoinFormEnterButton disabled={!canProceed} onClick={handleDown} label={enterLabel} />
-                ) : null}
-              </div>
-            </div>
-          );
-        })}
+        {/* Below preview */}
+        <div
+          key="slot-below"
+          className={`${MOBILE_PREVIEW_SLOT} w-full shrink-0 overflow-hidden rounded-[1.35rem] iphone-page:rounded-[1.45rem] ${
+            belowStep !== null ? "pointer-events-none opacity-50" : ""
+          }`}
+          aria-hidden
+        >
+          {belowStep !== null
+            ? renderJoinApplyStep({ step: belowStep, data, patch, variant: "mobile", interactive: false })
+            : null}
+        </div>
       </div>
 
       <JoinFormNavArrow
@@ -244,12 +241,6 @@ export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "d
   if (variant === "mobile") {
     return (
       <div className={joinFormShellClass(variant)}>
-        <p
-          className={`mb-7 text-center font-normal leading-[1.08] tracking-[-0.028em] text-[#1E343A] text-[clamp(2rem,1.65rem+1.55vmin,2.55rem)] iphone-page:mb-8 iphone-page:text-[clamp(2.35rem,1.92rem+2.1vmin,3.05rem)] ${suisseIntl.className}`}
-        >
-          Apply
-        </p>
-
         <JoinApplyMobileCarousel
           step={step}
           data={data}

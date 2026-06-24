@@ -9,15 +9,10 @@ export function JoinApplyFormSection({ variant }: { variant: "mobile" | "desktop
   if (variant === "mobile") {
     return (
       <section
-        className={`flex w-full flex-col justify-center bg-[#F7F6F3] ${DOEPHONE_SECTION_CAROUSEL_MENU_GAP} ${JOIN_MOBILE_APPLY_SECTION}`}
-        style={{
-          width: "100vw",
-          marginLeft: "calc(50% - 50vw)",
-          marginRight: "calc(50% - 50vw)",
-        }}
+        className={`flex w-full flex-col justify-center ${DOEPHONE_SECTION_CAROUSEL_MENU_GAP} ${JOIN_MOBILE_APPLY_SECTION}`}
         aria-label="Internship application"
       >
-        <div className={`${BLOG_PAGE_INSET_X} flex w-full flex-1 flex-col justify-center py-10 iphone-page:py-12`}>
+        <div className="flex w-full flex-1 flex-col justify-center py-6 iphone-page:py-8">
           <JoinApplyForm variant="mobile" />
         </div>
       </section>

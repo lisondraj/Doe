@@ -476,6 +476,31 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
   animation: doephone-hero-headline-in 1.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
+/* /join apply form — step content enters from below (forward) or above (back). */
+@keyframes join-step-enter-down {
+  from {
+    opacity: 0;
+    transform: translateY(0.6rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes join-step-enter-up {
+  from {
+    opacity: 0;
+    transform: translateY(-0.6rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* /doephone section 2 — segmented scroll reveal: title → carousel → menu. */
 @keyframes doephone-section-reveal-in {
   0% {
