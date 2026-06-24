@@ -204,13 +204,17 @@ function Design3() {
 
 const DESIGNS = [Design0, Design1, Design2, Design3];
 
-export function ArticleInlineVisual({ design }: { design: number }) {
+export function ArticleGraphicDesign({ design }: { design: number }) {
   const Graphic = DESIGNS[design % DESIGNS.length];
+  return <Graphic />;
+}
+
+export function ArticleInlineVisual({ design }: { design: number }) {
   return (
     <div
       className={`relative w-full overflow-hidden ${BLOG_FEATURE_BOX_TW} border border-[#D9D4CC] bg-[#EBE7E0]`}
     >
-      <Graphic />
+      <ArticleGraphicDesign design={design} />
     </div>
   );
 }
