@@ -93,19 +93,17 @@ function JoinApplyMobileForm({
   }, [canProceed, handleAdvance]);
 
   return (
-    <div className={`${joinFormShellClass("mobile")} flex w-full flex-col items-center`}>
-      {/* Big beige card — shows answers as they accumulate */}
+    <div className={`${joinFormShellClass("mobile")} flex w-full flex-col`}>
       <JoinApplyCard data={data} onEdit={(s) => setStep(s)} />
 
-      {/* Single active question, animates in on each step change */}
       <div
-        className="mt-4 iphone-page:mt-5"
+        className="mt-4 w-full iphone-page:mt-5"
         aria-live="polite"
         aria-label={`Question ${step + 1} of ${JOIN_APPLY_STEP_COUNT}`}
       >
         <div
           key={step}
-          className="[animation:join-step-enter-down_0.38s_cubic-bezier(0.22,1,0.36,1)_both]"
+          className="w-full [animation:join-step-enter-down_0.38s_cubic-bezier(0.22,1,0.36,1)_both]"
         >
           {renderJoinApplyStep({
             step,
