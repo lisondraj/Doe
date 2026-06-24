@@ -31,10 +31,10 @@ export function JoinInternshipHero({ variant }: { variant: "mobile" | "desktop" 
       />
 
       <p
-        className={`absolute bottom-0 left-0 z-[3] max-w-[min(100%,20em)] text-left font-normal leading-[1.04] tracking-[-0.035em] text-white [text-shadow:0_2px_24px_rgba(0,0,0,0.32)] ${BLOG_LANDING_HERO_CORNER_PAD} ${titleClass} ${lora.className}`}
+        className={`absolute bottom-0 left-0 z-[3] max-w-[min(100%,20em)] text-left font-normal leading-[1.04] tracking-[-0.035em] text-white ${BLOG_LANDING_HERO_CORNER_PAD} ${titleClass} ${lora.className}`}
       >
-        <span className="block">Rebuild healthcare</span>
-        <span className="block text-white/[0.92]">with us.</span>
+        <span className="block">Let&apos;s rebuild</span>
+        <span className="block">healthcare.</span>
       </p>
     </div>
   );
