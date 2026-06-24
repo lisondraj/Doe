@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { JoinInternTrackReveal } from "@/components/join/JoinInternTrackReveal";
 
 type JoinInternTrackCopyProps = {
   title: string;
@@ -18,44 +18,8 @@ export function JoinInternTrackCopy({
   descClass,
   variant,
 }: JoinInternTrackCopyProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(variant === "desktop");
-
-  useEffect(() => {
-    if (variant === "desktop") return;
-
-    const el = ref.current;
-    if (!el) return;
-
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reducedMotion) {
-      setVisible(true);
-      return;
-    }
-
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          obs.disconnect();
-        }
-      },
-      { threshold: 0.18 },
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [variant]);
-
-  const revealClass =
-    variant === "mobile"
-      ? `doephone-section-copy${visible ? " doephone-section-copy-visible" : ""}`
-      : "";
-
   return (
-    <div
-      ref={ref}
-      className={`${variant === "mobile" ? "shrink-0" : ""} ${revealClass}`.trim()}
-    >
+    <JoinInternTrackReveal variant={variant} className={variant === "mobile" ? "shrink-0" : ""}>
       <h3 className={titleClass}>{title}</h3>
       <p className={descClass}>
         {description.map((line) => (
@@ -64,6 +28,6 @@ export function JoinInternTrackCopy({
           </span>
         ))}
       </p>
-    </div>
+    </JoinInternTrackReveal>
   );
 }

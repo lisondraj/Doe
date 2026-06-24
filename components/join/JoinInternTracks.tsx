@@ -1,5 +1,6 @@
 import { JoinInternLineGraphic } from "@/components/join/JoinInternLineGraphic";
 import { JoinInternTrackCopy } from "@/components/join/JoinInternTrackCopy";
+import { JoinInternTrackReveal } from "@/components/join/JoinInternTrackReveal";
 import { JOIN_INTERN_TRACKS } from "@/components/join/join-intern-tracks";
 import { BLOG_CARD_STACK } from "@/lib/blog/blog-layout-styles";
 import { JOIN_AGENTS_GRADIENT } from "@/lib/join/join-agents-gradient";
@@ -25,8 +26,7 @@ const JOIN_MOBILE_CARD_STACK = "space-y-5 iphone-page:space-y-[clamp(1.35rem,1.0
 
 export function JoinInternTracks({ variant }: { variant: "mobile" | "desktop" }) {
   const cardHeight = variant === "mobile" ? JOIN_MOBILE_CARD_HEIGHT : JOIN_DESKTOP_CARD_HEIGHT;
-  const sectionGap = variant === "mobile" ? DOEPHONE_SECTION_CAROUSEL_MENU_GAP : JOIN_DESKTOP_TRACK_GAP;
-  const stackGap = variant === "mobile" ? sectionGap : JOIN_DESKTOP_TRACK_GAP;
+  const stackGap = variant === "mobile" ? DOEPHONE_SECTION_CAROUSEL_MENU_GAP : JOIN_DESKTOP_TRACK_GAP;
   const cardStackClass = variant === "mobile" ? JOIN_MOBILE_CARD_STACK : BLOG_CARD_STACK;
   const titleClass =
     variant === "mobile" ? JOIN_MOBILE_TRACK_TITLE_TW : DOEPHONE_SECTION_MENU_DESCRIPTION_HEADING_TW;
@@ -34,17 +34,18 @@ export function JoinInternTracks({ variant }: { variant: "mobile" | "desktop" })
     variant === "mobile" ? JOIN_MOBILE_TRACK_DESC_TW : DOEPHONE_SECTION_MENU_DESCRIPTION_TW;
 
   return (
-    <div className={`flex flex-col ${sectionGap}`} aria-label="Internship tracks">
+    <div className="flex flex-col" aria-label="Internship tracks">
       {JOIN_INTERN_TRACKS.map((track, index) => {
         const isAgentsFill = track.cardFill === "agents";
 
         return (
           <article
             key={track.title}
-            className={`${index > 0 ? stackGap : ""} ${variant === "mobile" ? `${JOIN_MOBILE_TRACK_SECTION} flex flex-col` : ""}`.trim()}
+            className={`${stackGap} ${variant === "mobile" ? `${JOIN_MOBILE_TRACK_SECTION} flex flex-col` : ""}`.trim()}
           >
             <div className={`${cardStackClass} ${variant === "mobile" ? "flex min-h-0 flex-1 flex-col" : ""}`}>
-              <div
+              <JoinInternTrackReveal
+                variant={variant}
                 className={`relative w-full overflow-hidden ${cardHeight} ${DOEPHONE_SECTION_CAROUSEL_RADIUS} ${
                   variant === "mobile" ? "shrink-0" : ""
                 } ${isAgentsFill ? "" : "border border-[#D9D4CC] bg-[#EBE7E0]"}`}
@@ -57,7 +58,7 @@ export function JoinInternTracks({ variant }: { variant: "mobile" | "desktop" })
                   />
                 ) : null}
                 <JoinInternLineGraphic variant={track.graphic} onOrange={isAgentsFill} />
-              </div>
+              </JoinInternTrackReveal>
 
               <JoinInternTrackCopy
                 variant={variant}
