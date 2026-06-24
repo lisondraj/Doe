@@ -6,14 +6,14 @@ import { inter } from "@/lib/home/fonts";
 
 export function joinFormShellClass(variant: "mobile" | "desktop") {
   return variant === "mobile"
-    ? "mx-auto w-full max-w-[min(100%,30rem)] iphone-page:max-w-none"
-    : "mx-auto w-full max-w-[22.5rem]";
+    ? "mx-auto w-full max-w-[min(100%,26rem)] iphone-page:max-w-[min(100%,20.25rem)]"
+    : "mx-auto w-full max-w-[20.5rem]";
 }
 
 export function joinFormFieldClass(variant: "mobile" | "desktop") {
   const size =
     variant === "mobile"
-      ? "rounded-[1.1rem] px-5 py-[1.35rem] text-[1.1875rem] iphone-page:px-6 iphone-page:py-[1.5rem] iphone-page:text-[1.3125rem]"
+      ? "rounded-[1.05rem] px-4 py-[1.25rem] text-[1.125rem] iphone-page:rounded-[1.1rem] iphone-page:px-[1.15rem] iphone-page:py-[1.35rem] iphone-page:text-[1.25rem]"
       : "rounded-2xl px-5 py-[1.15rem] text-[1.0625rem]";
 
   return [
@@ -29,7 +29,7 @@ export function joinFormFieldClass(variant: "mobile" | "desktop") {
 export function joinFormPanelClass(variant: "mobile" | "desktop") {
   const size =
     variant === "mobile"
-      ? "rounded-[1.1rem] px-5 py-[1.35rem] iphone-page:px-6 iphone-page:py-[1.5rem]"
+      ? "rounded-[1.05rem] px-4 py-[1.25rem] iphone-page:rounded-[1.1rem] iphone-page:px-[1.15rem] iphone-page:py-[1.35rem]"
       : "rounded-2xl px-5 py-[1.15rem]";
 
   return `w-full border ${size}`;
@@ -38,7 +38,7 @@ export function joinFormPanelClass(variant: "mobile" | "desktop") {
 export function joinFormPromptClass(variant: "mobile" | "desktop") {
   const size =
     variant === "mobile"
-      ? "mb-5 text-[1.1875rem] iphone-page:mb-5 iphone-page:text-[1.3125rem]"
+      ? "mb-4 text-[1.125rem] iphone-page:mb-[1.15rem] iphone-page:text-[1.25rem]"
       : "mb-4 text-[1.0625rem]";
 
   return `${size} leading-snug text-[#1E343A]/40 ${inter.className}`;
@@ -72,10 +72,12 @@ export function JoinFormProgressBar({
 }
 
 export function JoinFormAdvanceButton({
+  variant = "desktop",
   disabled,
   onClick,
   label,
 }: {
+  variant?: "mobile" | "desktop";
   disabled: boolean;
   onClick: () => void;
   label: string;
@@ -86,7 +88,11 @@ export function JoinFormAdvanceButton({
       onClick={onClick}
       disabled={disabled}
       aria-label={label}
-      className={`flex shrink-0 items-center justify-center rounded-[1.1rem] border px-[1.15rem] iphone-page:rounded-[1.15rem] iphone-page:px-5 transition-all ${
+      className={`flex shrink-0 items-center justify-center rounded-[1.1rem] border transition-all ${
+        variant === "mobile"
+          ? "px-4 iphone-page:rounded-[1.15rem] iphone-page:px-[1.15rem]"
+          : "px-[1.15rem]"
+      } ${
         disabled
           ? "cursor-not-allowed opacity-40"
           : "hover:border-[#B5AA9C] active:scale-[0.98]"
@@ -95,11 +101,15 @@ export function JoinFormAdvanceButton({
         backgroundColor: JOIN_FORM_BEIGE.field,
         borderColor: JOIN_FORM_BEIGE.border,
         alignSelf: "stretch",
-        minHeight: "3.25rem",
+        minHeight: variant === "mobile" ? "3.1rem" : "3.25rem",
       }}
     >
       <svg
-        className="h-[1.35rem] w-[1.35rem] iphone-page:h-6 iphone-page:w-6"
+        className={
+          variant === "mobile"
+            ? "h-[1.25rem] w-[1.25rem] iphone-page:h-[1.35rem] iphone-page:w-[1.35rem]"
+            : "h-[1.35rem] w-[1.35rem] iphone-page:h-6 iphone-page:w-6"
+        }
         viewBox="0 0 24 24"
         fill="none"
         aria-hidden

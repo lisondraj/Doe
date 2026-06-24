@@ -256,28 +256,44 @@ export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "d
 
   return (
     <div className={joinFormShellClass(variant)}>
+      {variant === "mobile" ? (
+        <p
+          className={`mb-6 font-normal leading-[1.08] tracking-[-0.028em] text-[#1E343A] text-[clamp(1.75rem,1.45rem+1.2vmin,2.15rem)] iphone-page:mb-7 iphone-page:text-[clamp(2rem,1.65rem+1.55vmin,2.55rem)] ${suisseIntl.className}`}
+        >
+          Apply
+        </p>
+      ) : null}
+
       {step > 0 ? (
         <button
           type="button"
           onClick={goBack}
-          className={`mb-5 font-medium text-[#1E343A]/45 transition-colors hover:text-[#1E343A]/70 ${inter.className} ${
-            variant === "mobile" ? "text-[1rem] iphone-page:text-[1.0625rem]" : "text-[0.9375rem]"
+          className={`mb-4 font-medium text-[#1E343A]/45 transition-colors hover:text-[#1E343A]/70 ${inter.className} ${
+            variant === "mobile" ? "text-[0.9375rem] iphone-page:text-[1rem]" : "text-[0.9375rem]"
           }`}
         >
           Back
         </button>
       ) : null}
 
-      <div className={`flex items-stretch ${variant === "mobile" ? "gap-3 iphone-page:gap-3.5" : "gap-3"}`}>
+      <div className={`flex items-stretch ${variant === "mobile" ? "gap-2.5 iphone-page:gap-3" : "gap-3"}`}>
         <div className="min-w-0 flex-1">{stepContent}</div>
         <JoinFormAdvanceButton
+          variant={variant}
           disabled={!canProceed}
           onClick={goNext}
           label={isLastStep ? "Submit application" : "Next step"}
         />
       </div>
 
-      <div className={`${variant === "mobile" ? "mt-4 iphone-page:mt-5" : "mt-3"}`}>
+      <div
+        className={`border-t ${
+          variant === "mobile"
+            ? "mt-7 pt-6 iphone-page:mt-8 iphone-page:pt-7"
+            : "mt-5 pt-4"
+        }`}
+        style={{ borderColor: JOIN_FORM_BEIGE.line }}
+      >
         <JoinFormProgressBar step={step} total={JOIN_APPLY_STEP_COUNT} />
       </div>
     </div>
