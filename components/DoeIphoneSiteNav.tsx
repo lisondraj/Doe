@@ -61,6 +61,7 @@ function NavChromeStrip({
   joinHref = JOIN_PAGE_HREF,
   showJoinCta = true,
   logoLink = true,
+  showMenu = true,
 }: {
   navTextColor: string;
   mobileNavOpen: boolean;
@@ -70,6 +71,7 @@ function NavChromeStrip({
   joinHref?: string;
   showJoinCta?: boolean;
   logoLink?: boolean;
+  showMenu?: boolean;
 }) {
   const navInsetX = pinchSafe
     ? "px-11 iphone-page:px-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))] iphone-page:pr-[max(1.65rem,env(safe-area-inset-right,0px))]"
@@ -99,6 +101,7 @@ function NavChromeStrip({
         ))}
       </div>
 
+      {(showJoinCta || showMenu) ? (
       <div className="flex shrink-0 items-center gap-2.5 iphone-page:gap-[clamp(0.45rem,0.35rem+0.65vmin,0.7rem)]">
         {showJoinCta ? (
           <a href={joinHref} className={DOEPHONE_NAV_WAITLIST_CLASS}>
@@ -106,6 +109,7 @@ function NavChromeStrip({
           </a>
         ) : null}
 
+        {showMenu ? (
         <button
           type="button"
           className="flex items-center justify-center p-3 iphone-page:p-[clamp(0.625rem,0.38rem+1.35vmin,0.975rem)] rounded-xl transition-colors active:bg-black/[0.04]"
@@ -136,7 +140,9 @@ function NavChromeStrip({
           </svg>
         )}
         </button>
+        ) : null}
       </div>
+      ) : null}
     </div>
   );
 }
@@ -151,12 +157,14 @@ export default function DoeIphoneSiteNav({
   joinHref = JOIN_PAGE_HREF,
   showJoinCta = true,
   logoLink = true,
+  showMenu = true,
 }: {
   pinchSafe?: boolean;
   homeHref?: string;
   joinHref?: string;
   showJoinCta?: boolean;
   logoLink?: boolean;
+  showMenu?: boolean;
 }) {
   const isPhoneLayout = true;
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -498,6 +506,7 @@ export default function DoeIphoneSiteNav({
   ) : null;
 
   const mobileMenuLayer =
+    showMenu &&
     !pinchSafe &&
     mounted &&
     isPhoneLayout &&
@@ -505,6 +514,7 @@ export default function DoeIphoneSiteNav({
     createPortal(mobileMenuLayerContent, document.body);
 
   const navChromeElevated =
+    showMenu &&
     !pinchSafe &&
     mounted &&
     navSheetLive &&
@@ -525,6 +535,7 @@ export default function DoeIphoneSiteNav({
           joinHref={joinHref}
           showJoinCta={showJoinCta}
           logoLink={logoLink}
+          showMenu={showMenu}
         />
       </header>,
       document.body
@@ -564,10 +575,11 @@ export default function DoeIphoneSiteNav({
             joinHref={joinHref}
             showJoinCta={showJoinCta}
             logoLink={logoLink}
+            showMenu={showMenu}
           />
         </div>
       </nav>
-      {pinchSafe ? mobileMenuLayerContent : null}
+      {pinchSafe && showMenu ? mobileMenuLayerContent : null}
       {mobileMenuLayer}
       {navChromeElevated}
     </>

@@ -13,6 +13,7 @@ type BlogMobileShellProps = {
   showJoinCta?: boolean;
   logoLink?: boolean;
   footerLinksDisabled?: boolean;
+  showMenu?: boolean;
 };
 
 export function BlogMobileShell({
@@ -22,6 +23,7 @@ export function BlogMobileShell({
   showJoinCta = true,
   logoLink = true,
   footerLinksDisabled = false,
+  showMenu = true,
 }: BlogMobileShellProps) {
   return (
     <div
@@ -35,6 +37,7 @@ export function BlogMobileShell({
         joinHref={joinHref}
         showJoinCta={showJoinCta}
         logoLink={logoLink}
+        showMenu={showMenu}
       />
       <div className={`blog-page-root relative z-0 ${BLOG_PAGE_INSET_X} ${BLOG_FOOTER_GAP}`}>
         {children}
