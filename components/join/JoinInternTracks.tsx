@@ -1,4 +1,5 @@
 import { JoinInternLineGraphic } from "@/components/join/JoinInternLineGraphic";
+import { JoinInternTrackCopy } from "@/components/join/JoinInternTrackCopy";
 import { JOIN_INTERN_TRACKS } from "@/components/join/join-intern-tracks";
 import { BLOG_CARD_STACK } from "@/lib/blog/blog-layout-styles";
 import { JOIN_AGENTS_GRADIENT } from "@/lib/join/join-agents-gradient";
@@ -58,16 +59,13 @@ export function JoinInternTracks({ variant }: { variant: "mobile" | "desktop" })
                 <JoinInternLineGraphic variant={track.graphic} onOrange={isAgentsFill} />
               </div>
 
-              <div className={variant === "mobile" ? "shrink-0" : undefined}>
-                <h3 className={titleClass}>{track.title}</h3>
-                <p className={descClass}>
-                  {track.description.map((line) => (
-                    <span key={line} className="block">
-                      {line}
-                    </span>
-                  ))}
-                </p>
-              </div>
+              <JoinInternTrackCopy
+                variant={variant}
+                title={track.title}
+                description={track.description}
+                titleClass={titleClass}
+                descClass={descClass}
+              />
             </div>
           </article>
         );
