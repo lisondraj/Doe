@@ -14,6 +14,8 @@ type BlogMobileShellProps = {
   logoLink?: boolean;
   footerLinksDisabled?: boolean;
   showMenu?: boolean;
+  /** Override shell min-height — join uses locked `--app-vh`. */
+  shellMinHeightClass?: string;
 };
 
 export function BlogMobileShell({
@@ -24,10 +26,11 @@ export function BlogMobileShell({
   logoLink = true,
   footerLinksDisabled = false,
   showMenu = true,
+  shellMinHeightClass = "min-h-[100svh]",
 }: BlogMobileShellProps) {
   return (
     <div
-      className="blog-mobile-root relative z-0 min-h-[100svh] overflow-x-hidden bg-[#F7F6F3]"
+      className={`blog-mobile-root relative z-0 overflow-x-hidden bg-[#F7F6F3] ${shellMinHeightClass}`}
       suppressHydrationWarning
       data-doeforvc-view="iphone"
     >

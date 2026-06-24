@@ -51,6 +51,11 @@ html:has(.blog-mobile-root) body {
   background-color: #f7f6f3;
 }
 
+html[data-doeforvc-always-phone="true"]:has(.blog-mobile-root),
+html[data-doeforvc-always-phone="true"]:has(.blog-mobile-root) body {
+  overscroll-behavior-y: none;
+}
+
 .blog-mobile-root {
   overflow-x: clip;
   padding-left: env(safe-area-inset-left, 0px);
