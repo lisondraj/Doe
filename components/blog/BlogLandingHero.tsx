@@ -11,10 +11,12 @@ export function BlogLandingHero({
   className = "",
   line1 = "Let\u2019s rebuild",
   line2 = "healthcare.",
+  showFilter = true,
 }: {
   className?: string;
   line1?: string;
   line2?: string;
+  showFilter?: boolean;
 }) {
   return (
     <div
@@ -28,10 +30,11 @@ export function BlogLandingHero({
         <span className="block">{line2}</span>
       </p>
 
-      {/* Filter column — bottom-right, same corner padding as headline */}
-      <div className={`absolute bottom-0 right-0 z-[2] ${BLOG_LANDING_HERO_CORNER_PAD}`}>
-        <BlogFilterBar variant="hero" />
-      </div>
+      {showFilter ? (
+        <div className={`absolute bottom-0 right-0 z-[2] ${BLOG_LANDING_HERO_CORNER_PAD}`}>
+          <BlogFilterBar variant="hero" />
+        </div>
+      ) : null}
     </div>
   );
 }

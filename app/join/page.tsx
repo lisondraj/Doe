@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 
-import { BlogRouter } from "@/components/blog/BlogRouter";
-import { JoinMobileView } from "@/components/join/JoinMobileView";
+import { JoinRouter } from "@/components/join/JoinRouter";
 import { joinPageUrl } from "@/lib/site-domains";
 
 export const dynamic = "force-dynamic";
@@ -22,9 +21,5 @@ export default function JoinPage() {
   const ua = headers().get("user-agent") ?? "";
   const initialVariant = MOBILE_UA.test(ua) ? "phone" : "desktop";
 
-  return (
-    <BlogRouter initialVariant={initialVariant}>
-      <JoinMobileView />
-    </BlogRouter>
-  );
+  return <JoinRouter initialVariant={initialVariant} />;
 }
