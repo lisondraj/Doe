@@ -44,9 +44,9 @@ const CARD_STYLES = {
     resetSlot: "pt-12 iphone-page:pt-14",
     resetBtn: "gap-3.5 text-[1.5rem] iphone-page:text-[1.625rem]",
     resetIcon: "h-7 w-7 iphone-page:h-8 iphone-page:w-8",
-    confirmTitle: "text-[1.625rem] iphone-page:text-[1.75rem]",
-    confirmBody: "text-[1.125rem] iphone-page:text-[1.1875rem]",
-    confirmBtn: "rounded-xl px-5 py-3 text-[1.125rem] iphone-page:rounded-[0.95rem] iphone-page:px-6 iphone-page:py-3.5 iphone-page:text-[1.1875rem]",
+    confirmTitle: "text-[1.75rem] leading-snug iphone-page:text-[1.9375rem]",
+    confirmBtnSize: "w-full rounded-xl text-center font-medium leading-snug tracking-[-0.01em] px-5 py-[1.65rem] text-[1.375rem] iphone-page:rounded-[0.85rem] iphone-page:px-5 iphone-page:py-[1.85rem] iphone-page:text-[1.5rem]",
+    confirmBtnGap: "mt-5 flex flex-col gap-3 iphone-page:gap-3.5",
     modalCloseBtn: "left-0 top-0",
     modalCloseIcon: "h-7 w-7 iphone-page:h-8 iphone-page:w-8",
   },
@@ -73,9 +73,9 @@ const CARD_STYLES = {
     resetSlot: "pt-12",
     resetBtn: "gap-3.5 text-[1.4375rem]",
     resetIcon: "h-7 w-7",
-    confirmTitle: "text-[1.5rem]",
-    confirmBody: "text-[1.125rem]",
-    confirmBtn: "rounded-lg px-4 py-2.5 text-[1.0625rem]",
+    confirmTitle: "text-[1.3125rem] leading-snug",
+    confirmBtnSize: "w-full rounded-xl text-center font-medium leading-snug tracking-[-0.01em] px-4 py-3.5 text-[1.0625rem]",
+    confirmBtnGap: "mt-5 flex flex-col gap-2.5",
     modalCloseBtn: "left-0 top-0",
     modalCloseIcon: "h-6 w-6",
   },
@@ -537,29 +537,31 @@ export function JoinApplyCard({
                 className={`w-full ${styles.editorMaxW} [animation:join-step-enter-down_0.38s_cubic-bezier(0.22,1,0.36,1)_both]`}
                 onClick={(e) => e.stopPropagation()}
               >
-                <p className={`font-normal leading-snug tracking-[-0.02em] text-[#1E343A] ${styles.confirmTitle} ${lora.className}`}>
+                <p className={`font-medium tracking-[-0.02em] text-[#1E343A] ${styles.confirmTitle} ${inter.className}`}>
                   Are you sure?
                 </p>
-                <p className={`mt-2 text-[#1E343A]/60 ${styles.confirmBody} ${inter.className}`}>
-                  This will clear everything on your applicant card.
-                </p>
-                <div className="mt-5 flex items-center justify-end gap-2.5">
-                  <button
-                    type="button"
-                    onClick={onResetCancel}
-                    className={`font-medium text-[#1E343A]/55 transition-colors hover:text-[#1E343A]/75 ${styles.confirmBtn} ${inter.className}`}
-                  >
-                    Cancel
-                  </button>
+                <div className={styles.confirmBtnGap}>
                   <button
                     type="button"
                     onClick={onResetConfirm}
-                    className={`font-medium text-[#1E343A] transition-colors hover:opacity-90 ${styles.confirmBtn} ${inter.className}`}
+                    className={`transition-colors hover:opacity-90 active:scale-[0.98] ${styles.confirmBtnSize} ${inter.className}`}
                     style={{
-                      backgroundColor: JOIN_FORM_BEIGE.fieldMuted,
+                      backgroundColor: JOIN_FORM_BEIGE.meter,
+                      color: JOIN_FORM_BEIGE.page,
                     }}
                   >
                     Reset card
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onResetCancel}
+                    className={`transition-colors hover:opacity-90 active:scale-[0.98] ${styles.confirmBtnSize} ${inter.className}`}
+                    style={{
+                      backgroundColor: JOIN_FORM_BEIGE.fieldMuted,
+                      color: "rgba(30, 52, 58, 0.58)",
+                    }}
+                  >
+                    Cancel
                   </button>
                 </div>
               </div>

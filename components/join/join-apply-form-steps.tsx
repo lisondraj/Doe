@@ -8,7 +8,6 @@ import {
   joinFormPromptClass,
   JoinCountrySlider,
   JoinEducationSlider,
-  JoinLinkedInInput,
 } from "@/components/join/JoinFormControls";
 import { JOIN_APPLY_AREAS, type JoinApplyArea, type JoinApplyFormState } from "@/lib/join/join-apply-form";
 import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
@@ -207,20 +206,43 @@ export function renderJoinApplyStep({
           </div>
         </>
       );
-    case 7:
+    case 7: {
+      const liPrefixSize =
+        variant === "mobile"
+          ? "text-[1.35rem] iphone-page:text-[1.5rem]"
+          : "text-[1rem]";
       return (
-        <div className={`${joinFormPanelClass(variant)} h-full`}>
-          <JoinLinkedInInput
-            variant={variant}
+        <div>
+          <p
+            className={`mb-3 font-medium tracking-[0.01em] text-[#1E343A]/45 ${liPrefixSize} ${inter.className}`}
+          >
+            linkedin.com/in/
+          </p>
+          <input
+            type="text"
             value={data.linkedinUsername}
-            onChange={(linkedinUsername) => patch({ linkedinUsername })}
+            onChange={(e) => patch({ linkedinUsername: e.target.value.replace(/\s/g, "") })}
             placeholder="username"
-            nested
+            autoComplete="off"
+            spellCheck={false}
+            aria-label="LinkedIn username"
             readOnly={readOnly}
-            onEnter={onEnter}
+            tabIndex={interactive ? 0 : -1}
+            className={fieldClass}
+            onKeyDown={
+              onEnter
+                ? (e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      onEnter();
+                    }
+                  }
+                : undefined
+            }
           />
         </div>
       );
+    }
     default:
       return null;
   }
