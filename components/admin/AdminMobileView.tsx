@@ -16,6 +16,8 @@ import {
   ADMIN_MOBILE_SUBTITLE_TW,
   ADMIN_MOBILE_TAB_BAR_INSET,
   ADMIN_MOBILE_TAB_BAR_RESERVE,
+  ADMIN_MOBILE_TAB_BUTTON_TW,
+  ADMIN_MOBILE_TAB_ICON_TW,
 } from "@/lib/admin/admin-layout";
 import { useAdminData } from "@/lib/admin/use-admin-data";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
@@ -93,18 +95,18 @@ export function AdminMobileView({
 
       <nav
         className={`fixed inset-x-0 bottom-0 z-[80] border-t border-[#E8E8E8] bg-[#F7F6F3]/95 backdrop-blur-md ${ADMIN_MOBILE_TAB_BAR_INSET}`}
-        style={{ paddingBottom: "max(0.9rem, env(safe-area-inset-bottom, 0px))" }}
+        style={{ paddingBottom: "max(1.15rem, env(safe-area-inset-bottom, 0px))" }}
         aria-label="Admin sections"
       >
-        <div className="flex gap-2.5 iphone-page:gap-3">
+        <div className="flex gap-3 iphone-page:gap-3.5">
           <button
             type="button"
             onClick={() => setActiveTab("signups")}
-            className={`flex min-h-[3.75rem] flex-1 items-center justify-center gap-2.5 rounded-2xl px-3 py-2.5 text-[1rem] font-medium iphone-page:min-h-[4rem] iphone-page:gap-3 iphone-page:text-[1.0625rem] ${
+            className={`${ADMIN_MOBILE_TAB_BUTTON_TW} ${
               activeTab === "signups" ? "bg-white text-neutral-900 shadow-sm" : "text-neutral-500"
             }`}
           >
-            <DoeBuildIcon className="h-6 w-6 shrink-0 iphone-page:h-[1.65rem] iphone-page:w-[1.65rem]">
+            <DoeBuildIcon className={ADMIN_MOBILE_TAB_ICON_TW}>
               <>
                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                 <circle cx="9" cy="7" r="4" />
@@ -113,7 +115,7 @@ export function AdminMobileView({
               </>
             </DoeBuildIcon>
             <span className="truncate">Signups</span>
-            <span className="shrink-0 rounded-full bg-neutral-100 px-2 py-0.5 text-[0.8rem] font-semibold tabular-nums text-neutral-600 iphone-page:text-[0.86rem]">
+            <span className="shrink-0 rounded-full bg-neutral-100 px-2.5 py-1 text-[0.86rem] font-semibold tabular-nums text-neutral-600 iphone-page:text-[0.92rem]">
               {stats.total}
             </span>
           </button>
@@ -121,11 +123,11 @@ export function AdminMobileView({
           <button
             type="button"
             onClick={() => setActiveTab("analytics")}
-            className={`flex min-h-[3.75rem] flex-1 items-center justify-center gap-2.5 rounded-2xl px-3 py-2.5 text-[1rem] font-medium iphone-page:min-h-[4rem] iphone-page:gap-3 iphone-page:text-[1.0625rem] ${
+            className={`${ADMIN_MOBILE_TAB_BUTTON_TW} ${
               activeTab === "analytics" ? "bg-white text-neutral-900 shadow-sm" : "text-neutral-500"
             }`}
           >
-            <DoeBuildIcon className="h-6 w-6 shrink-0 iphone-page:h-[1.65rem] iphone-page:w-[1.65rem]">
+            <DoeBuildIcon className={ADMIN_MOBILE_TAB_ICON_TW}>
               <>
                 <path d="M3 3v18h18" />
                 <path d="M7 16l4-4 4 4 5-6" />

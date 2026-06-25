@@ -24,6 +24,7 @@ import {
   ADMIN_MOBILE_LABEL_TW,
   ADMIN_MOBILE_LIST_NAME_TW,
   ADMIN_MOBILE_META_TW,
+  ADMIN_MOBILE_PANEL_STACK,
   ADMIN_MOBILE_SECTION_TITLE_TW,
   ADMIN_MOBILE_STAT_GRID,
   ADMIN_MOBILE_STAT_TILE,
@@ -523,7 +524,11 @@ export function InternshipSignupsPanel({
       : "min-w-0 flex-1 bg-transparent text-[13px] text-neutral-800 outline-none placeholder:text-neutral-400";
 
   return (
-    <div className={`flex h-full min-h-0 flex-col ${inter.className}`}>
+    <div
+      className={`flex h-full min-h-0 flex-col ${inter.className} ${
+        variant === "mobile" ? ADMIN_MOBILE_PANEL_STACK : ""
+      }`}
+    >
       {variant === "desktop" ? (
         <header className="flex items-center gap-2 border-b border-[#EFEFEF] px-4 py-3">
           <DoeBuildIcon className="h-5 w-5 text-neutral-500">
@@ -547,7 +552,7 @@ export function InternshipSignupsPanel({
           </div>
         </header>
       ) : (
-        <h2 className={`shrink-0 pb-3 ${ADMIN_MOBILE_SECTION_TITLE_TW}`}>Signups</h2>
+        <h2 className={`shrink-0 ${ADMIN_MOBILE_SECTION_TITLE_TW}`}>Signups</h2>
       )}
 
       <div className={variant === "mobile" ? statsGrid : "border-b border-[#EFEFEF] px-4 py-3"}>

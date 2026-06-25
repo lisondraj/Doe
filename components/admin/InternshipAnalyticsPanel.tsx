@@ -8,6 +8,7 @@ import type { AdminInternshipApplication } from "@/lib/admin/internship-applicat
 import { buildInternshipAnalytics } from "@/lib/admin/internship-analytics";
 import {
   ADMIN_MOBILE_CHART_STACK,
+  ADMIN_MOBILE_PANEL_STACK,
   ADMIN_MOBILE_SECTION_TITLE_TW,
   ADMIN_MOBILE_STAT_GRID,
   ADMIN_MOBILE_STAT_TILE,
@@ -98,7 +99,11 @@ export function InternshipAnalyticsPanel({
   );
 
   return (
-    <div className={`flex h-full min-h-0 flex-col ${inter.className}`}>
+    <div
+      className={`flex h-full min-h-0 flex-col ${inter.className} ${
+        variant === "mobile" ? ADMIN_MOBILE_PANEL_STACK : ""
+      }`}
+    >
       {variant === "desktop" ? (
         <header className="flex items-center gap-2 border-b border-[#EFEFEF] px-4 py-3">
           <DoeBuildIcon className="h-5 w-5 text-neutral-500">
@@ -120,15 +125,15 @@ export function InternshipAnalyticsPanel({
           </div>
         </header>
       ) : (
-        <h2 className={`shrink-0 pb-3 ${ADMIN_MOBILE_SECTION_TITLE_TW}`}>Analytics</h2>
+        <h2 className={`shrink-0 ${ADMIN_MOBILE_SECTION_TITLE_TW}`}>Analytics</h2>
       )}
 
       <div className={`min-h-0 flex-1 overflow-y-auto ${variant === "mobile" ? "" : "px-4 py-4"}`}>
         {variant === "mobile" ? (
-          <>
+          <div className={ADMIN_MOBILE_PANEL_STACK}>
             <div className={ADMIN_MOBILE_STAT_GRID}>{summaryTiles}</div>
             <div className={ADMIN_MOBILE_CHART_STACK}>{charts}</div>
-          </>
+          </div>
         ) : (
           <>
             <div className="grid grid-cols-4 gap-3">{summaryTiles}</div>

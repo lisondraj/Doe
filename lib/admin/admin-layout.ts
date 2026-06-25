@@ -10,11 +10,15 @@ export const ADMIN_MOBILE_NAV_CLEARANCE =
 
 /** Fixed bottom tab bar height reserve — matches tab row + safe area. */
 export const ADMIN_MOBILE_TAB_BAR_RESERVE =
-  "pb-[max(5.75rem,calc(env(safe-area-inset-bottom,0px)+5.25rem))] iphone-page:pb-[max(6.25rem,calc(env(safe-area-inset-bottom,0px)+5.5rem))]";
+  "pb-[max(7rem,calc(env(safe-area-inset-bottom,0px)+6.5rem))] iphone-page:pb-[max(7.75rem,calc(env(safe-area-inset-bottom,0px)+7rem))]";
 
 /** Vertical rhythm between major mobile admin blocks. */
 export const ADMIN_MOBILE_CONTENT_STACK =
-  "flex flex-col gap-5 iphone-page:gap-[max(1.35rem,1.05rem+1.1vmin,2rem)]";
+  "flex flex-col gap-5 iphone-page:gap-6";
+
+/** Vertical rhythm inside signups/analytics panels on iPhone. */
+export const ADMIN_MOBILE_PANEL_STACK =
+  "flex flex-col gap-4 iphone-page:gap-5";
 
 export const ADMIN_MOBILE_SECTION_TITLE_TW = `text-[clamp(1.65rem,1.35rem+1.15vmin,2.15rem)] iphone-page:text-[clamp(2rem,1.62rem+1.75vmin,2.65rem)] font-normal leading-[1.08] tracking-[-0.028em] text-[#1E343A] ${suisseIntl.className}`;
 
@@ -53,14 +57,20 @@ export const ADMIN_MOBILE_INPUT_H =
 export const ADMIN_MOBILE_BUTTON_TW = `inline-flex items-center justify-center rounded-xl border border-[#E2E2E2] bg-white px-4 text-[clamp(1rem,0.9rem+0.45vmin,1.1rem)] iphone-page:px-5 iphone-page:text-[1.0625rem] font-medium text-neutral-700 transition-colors hover:bg-neutral-50 disabled:opacity-60 ${inter.className}`;
 
 export const ADMIN_MOBILE_STACK_GAP =
-  "gap-3 iphone-page:gap-4";
+  "gap-3.5 iphone-page:gap-4";
 
 export const ADMIN_MOBILE_SECTION_GAP =
   "space-y-4 iphone-page:space-y-5";
 
 export const ADMIN_MOBILE_CHART_STACK =
-  "mt-5 flex flex-col gap-4 iphone-page:mt-6 iphone-page:gap-5";
+  "flex flex-col gap-4 iphone-page:gap-5";
 
 /** Bottom tab bar inner padding — mirrors page horizontal inset. */
 export const ADMIN_MOBILE_TAB_BAR_INSET =
-  "px-14 pt-2.5 iphone-page:px-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))] iphone-page:pt-3";
+  "px-14 pt-3.5 iphone-page:px-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))] iphone-page:pt-4";
+
+export const ADMIN_MOBILE_TAB_BUTTON_TW =
+  "flex min-h-[4.75rem] flex-1 items-center justify-center gap-3 rounded-[1.15rem] px-4 py-3.5 text-[1.0625rem] font-medium iphone-page:min-h-[5.15rem] iphone-page:gap-3.5 iphone-page:rounded-2xl iphone-page:px-5 iphone-page:py-4 iphone-page:text-[1.125rem]";
+
+export const ADMIN_MOBILE_TAB_ICON_TW =
+  "h-[1.65rem] w-[1.65rem] shrink-0 iphone-page:h-[1.85rem] iphone-page:w-[1.85rem]";
