@@ -44,6 +44,14 @@ export const JOIN_MOBILE_APPLY_SECTION_PAD =
 export const JOIN_MOBILE_APPLY_TITLE_CARD_GAP =
   "mt-8 iphone-page:mt-[max(2rem,calc(env(safe-area-inset-left,0px)+4.25vmin))]";
 
+/** Anchor id for nav Apply buttons — scroll target for applicant card section. */
+export const JOIN_APPLY_SECTION_ID = "join-apply";
+
+export const JOIN_MOBILE_APPLY_SCROLL_MARGIN =
+  "scroll-mt-[calc(env(safe-area-inset-top,0px)+clamp(4.25rem,3.5rem+2.5vmin,5.25rem))]";
+
+export const JOIN_DESKTOP_APPLY_SCROLL_MARGIN = "scroll-mt-[5.5rem]";
+
 /** Desktop hero — same proportions as mobile, capped for wide screens. */
 export const JOIN_DESKTOP_HERO_HEIGHT = "min-h-[min(72vh,44rem)] h-[min(72vh,44rem)]";
 

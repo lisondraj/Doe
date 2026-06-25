@@ -4,12 +4,15 @@ import { DoePhoneSectionTitle } from "@/components/doephone/DoePhoneSectionText"
 import { JoinApplyForm } from "@/components/join/JoinApplyForm";
 import { JoinInternTrackReveal } from "@/components/join/JoinInternTrackReveal";
 import {
+  JOIN_APPLY_SECTION_ID,
   JOIN_DESKTOP_APPLY_FOOTER_PAD,
+  JOIN_DESKTOP_APPLY_SCROLL_MARGIN,
   JOIN_DESKTOP_APPLY_SECTION_MIN,
   JOIN_DESKTOP_APPLY_TITLE_CARD_GAP,
   JOIN_DESKTOP_APPLY_TITLE_TOP_PAD,
   JOIN_DESKTOP_CONTENT,
   JOIN_DESKTOP_TRACK_ROW_GAP,
+  JOIN_MOBILE_APPLY_SCROLL_MARGIN,
   JOIN_MOBILE_APPLY_SECTION,
   JOIN_MOBILE_APPLY_SECTION_PAD,
   JOIN_MOBILE_APPLY_TITLE_CARD_GAP,
@@ -19,7 +22,8 @@ export function JoinApplyFormSection({ variant }: { variant: "mobile" | "desktop
   if (variant === "mobile") {
     return (
       <section
-        className={`flex w-full flex-col justify-center ${JOIN_MOBILE_APPLY_SECTION} ${JOIN_MOBILE_APPLY_SECTION_PAD}`}
+        id={JOIN_APPLY_SECTION_ID}
+        className={`flex w-full flex-col justify-center ${JOIN_MOBILE_APPLY_SECTION} ${JOIN_MOBILE_APPLY_SECTION_PAD} ${JOIN_MOBILE_APPLY_SCROLL_MARGIN}`}
         aria-label="Internship application"
       >
         <JoinInternTrackReveal
@@ -37,7 +41,8 @@ export function JoinApplyFormSection({ variant }: { variant: "mobile" | "desktop
 
   return (
     <section
-      className={`flex w-full flex-col justify-center ${JOIN_DESKTOP_TRACK_ROW_GAP} ${JOIN_DESKTOP_APPLY_SECTION_MIN} ${JOIN_DESKTOP_APPLY_FOOTER_PAD}`}
+      id={JOIN_APPLY_SECTION_ID}
+      className={`flex w-full flex-col justify-center ${JOIN_DESKTOP_TRACK_ROW_GAP} ${JOIN_DESKTOP_APPLY_SECTION_MIN} ${JOIN_DESKTOP_APPLY_FOOTER_PAD} ${JOIN_DESKTOP_APPLY_SCROLL_MARGIN}`}
       aria-label="Internship application"
     >
       <div className={`${JOIN_DESKTOP_CONTENT} ${JOIN_DESKTOP_APPLY_TITLE_TOP_PAD}`}>

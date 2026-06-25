@@ -11,6 +11,7 @@ type BlogMobileShellProps = {
   homeHref?: string;
   joinHref?: string;
   showJoinCta?: boolean;
+  showApplyScrollCta?: boolean;
   logoLink?: boolean;
   footerLinksDisabled?: boolean;
   showMenu?: boolean;
@@ -23,6 +24,7 @@ export function BlogMobileShell({
   homeHref = "/",
   joinHref,
   showJoinCta = true,
+  showApplyScrollCta = false,
   logoLink = true,
   footerLinksDisabled = false,
   showMenu = true,
@@ -39,6 +41,7 @@ export function BlogMobileShell({
         homeHref={homeHref}
         joinHref={joinHref}
         showJoinCta={showJoinCta}
+        showApplyScrollCta={showApplyScrollCta}
         logoLink={logoLink}
         showMenu={showMenu}
       />

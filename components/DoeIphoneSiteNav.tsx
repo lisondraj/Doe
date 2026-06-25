@@ -11,6 +11,7 @@ import {
 } from "@/components/doe-nav-data";
 import { DOEPHONE_NAV_WAITLIST_CLASS } from "@/lib/doephone/waitlist-button";
 import { JOIN_PAGE_HREF } from "@/lib/site-domains";
+import { scrollToJoinApplySection } from "@/lib/join/join-apply-scroll";
 import {
   NAV_FOOTER_BOX_TITLE_TW,
   NAV_FOOTER_CARD_INSET,
@@ -60,6 +61,7 @@ function NavChromeStrip({
   homeHref = "/",
   joinHref = JOIN_PAGE_HREF,
   showJoinCta = true,
+  showApplyScrollCta = false,
   logoLink = true,
   showMenu = true,
 }: {
@@ -70,6 +72,7 @@ function NavChromeStrip({
   homeHref?: string;
   joinHref?: string;
   showJoinCta?: boolean;
+  showApplyScrollCta?: boolean;
   logoLink?: boolean;
   showMenu?: boolean;
 }) {
@@ -102,7 +105,11 @@ function NavChromeStrip({
       </div>
 
       <div className="flex shrink-0 items-center gap-2.5 iphone-page:gap-[clamp(0.45rem,0.35rem+0.65vmin,0.7rem)]">
-        {showJoinCta ? (
+        {showApplyScrollCta ? (
+          <button type="button" onClick={scrollToJoinApplySection} className={DOEPHONE_NAV_WAITLIST_CLASS}>
+            Apply
+          </button>
+        ) : showJoinCta ? (
           <a href={joinHref} className={DOEPHONE_NAV_WAITLIST_CLASS}>
             Join Waitlist
           </a>
@@ -172,6 +179,7 @@ export default function DoeIphoneSiteNav({
   homeHref = "/",
   joinHref = JOIN_PAGE_HREF,
   showJoinCta = true,
+  showApplyScrollCta = false,
   logoLink = true,
   showMenu = true,
 }: {
@@ -179,6 +187,7 @@ export default function DoeIphoneSiteNav({
   homeHref?: string;
   joinHref?: string;
   showJoinCta?: boolean;
+  showApplyScrollCta?: boolean;
   logoLink?: boolean;
   showMenu?: boolean;
 }) {
@@ -550,6 +559,7 @@ export default function DoeIphoneSiteNav({
           homeHref={homeHref}
           joinHref={joinHref}
           showJoinCta={showJoinCta}
+          showApplyScrollCta={showApplyScrollCta}
           logoLink={logoLink}
           showMenu={showMenu}
         />
@@ -590,6 +600,7 @@ export default function DoeIphoneSiteNav({
             homeHref={homeHref}
             joinHref={joinHref}
             showJoinCta={showJoinCta}
+            showApplyScrollCta={showApplyScrollCta}
             logoLink={logoLink}
             showMenu={showMenu}
           />
