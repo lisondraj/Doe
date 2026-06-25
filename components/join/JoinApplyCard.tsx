@@ -1,9 +1,10 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useRef } from "react";
 
 import { JoinInternLineGraphic } from "@/components/join/JoinInternLineGraphic";
+import { BLOG_LANDING_HERO_CORNER_PAD } from "@/lib/blog/blog-layout-styles";
 import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
 import { inter, lora } from "@/lib/home/fonts";
 import type { JoinApplyFormState } from "@/lib/join/join-apply-form";
@@ -20,16 +21,13 @@ const CARD_STYLES = {
   mobile: {
     height: JOIN_APPLY_CARD_HEIGHT,
     placeholderLabel:
-      "text-[clamp(0.95rem,3vw,1.2rem)] font-medium uppercase tracking-[0.26em] text-[#C8C0B4] iphone-page:text-[clamp(1rem,0.85rem+0.8vmin,1.3rem)] iphone-page:tracking-[0.28em]",
-    namePlaceholder:
-      "text-[clamp(2.55rem,7.5vw,3.85rem)] leading-[1.04] text-[#C8C0B4] iphone-page:text-[clamp(2.85rem,2.35rem+2.9vmin,4.25rem)]",
-    nameText:
-      "text-[clamp(2.55rem,7.5vw,3.85rem)] leading-[1.04] iphone-page:text-[clamp(2.85rem,2.35rem+2.9vmin,4.25rem)]",
+      "text-[clamp(1.05rem,3.2vw,1.35rem)] font-medium uppercase tracking-[0.22em] text-[#C8C0B4] iphone-page:text-[clamp(1.15rem,0.95rem+0.9vmin,1.45rem)] iphone-page:tracking-[0.24em]",
+    namePlaceholder: "",
+    nameText: "",
     topPad: "p-8 iphone-page:p-9",
     topLeftMaxW: "max-w-[44%] iphone-page:max-w-[42%]",
-    topRightMaxW: "max-w-[52%] iphone-page:max-w-[54%]",
-    topGap: "gap-5 iphone-page:gap-6",
-    nameWidth: "w-[11.25rem] iphone-page:w-[12.5rem]",
+    topRightMaxW: "max-w-[56%] iphone-page:max-w-[58%]",
+    topGap: "gap-7 iphone-page:gap-8",
     nameLeading: 1.04,
     lineBand:
       "absolute inset-x-0 top-[54%] bottom-[10.25rem] origin-bottom scale-[1.52] iphone-page:top-[52%] iphone-page:bottom-[11rem] iphone-page:scale-[1.58]",
@@ -37,10 +35,10 @@ const CARD_STYLES = {
       "w-fit max-w-full shrink-0 rounded-xl px-2.5 py-1.5 text-left font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[clamp(1.2rem,4vw,1.55rem)] iphone-page:px-3 iphone-page:py-2 iphone-page:text-[clamp(1.3rem,1.1rem+1.2vmin,1.7rem)]",
     roleGap: "gap-y-2 iphone-page:gap-y-2.5",
     filledFieldText:
-      "text-right font-medium leading-tight tracking-[-0.01em] text-[#9A8F82] text-[clamp(1.2rem,4vw,1.55rem)] iphone-page:text-[clamp(1.3rem,1.1rem+1.2vmin,1.7rem)]",
+      "text-right font-medium leading-tight tracking-[-0.01em] text-[#9A8F82] text-[clamp(1.35rem,4.2vw,1.75rem)] iphone-page:text-[clamp(1.45rem,1.2rem+1.4vmin,1.85rem)]",
     editorPad: "px-8 py-12 iphone-page:px-10 iphone-page:py-14",
     editorMaxW: "max-w-[min(100%,34rem)]",
-    cornerPad: "pl-10 pb-11 pr-8 pt-0 iphone-page:pl-11 iphone-page:pb-12 iphone-page:pr-9",
+    cornerPad: BLOG_LANDING_HERO_CORNER_PAD,
     resetSlot: "pt-12 iphone-page:pt-14",
     resetBtn: "gap-3.5 text-[1.5rem] iphone-page:text-[1.625rem]",
     resetIcon: "h-7 w-7 iphone-page:h-8 iphone-page:w-8",
@@ -52,24 +50,23 @@ const CARD_STYLES = {
   },
   desktop: {
     height: JOIN_DESKTOP_APPLY_CARD_HEIGHT,
-    placeholderLabel: "text-[0.9375rem] font-medium uppercase tracking-[0.24em] text-[#C8C0B4]",
-    namePlaceholder: "text-[2.35rem] leading-[1.04] text-[#C8C0B4]",
-    nameText: "text-[2.35rem] leading-[1.04]",
+    placeholderLabel: "text-[1.0625rem] font-medium uppercase tracking-[0.22em] text-[#C8C0B4]",
+    namePlaceholder: "",
+    nameText: "",
     topPad: "p-7",
     topLeftMaxW: "max-w-[42%]",
-    topRightMaxW: "max-w-[54%]",
-    topGap: "gap-4",
-    nameWidth: "w-[9.75rem]",
+    topRightMaxW: "max-w-[56%]",
+    topGap: "gap-6",
     nameLeading: 1.04,
     lineBand: "absolute inset-x-0 top-[52%] bottom-[8.75rem] origin-bottom scale-[1.54]",
     roleChip:
       "w-fit max-w-full shrink-0 rounded-lg px-2.5 py-1.5 text-left font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[1.125rem]",
     roleGap: "gap-y-1.5",
     filledFieldText:
-      "text-right font-medium leading-tight tracking-[-0.01em] text-[#9A8F82] text-[1.125rem]",
+      "text-right font-medium leading-tight tracking-[-0.01em] text-[#9A8F82] text-[1.3125rem]",
     editorPad: "px-11 py-10",
     editorMaxW: "max-w-[min(100%,32rem)]",
-    cornerPad: "pl-9 pb-10 pr-7 pt-0",
+    cornerPad: BLOG_LANDING_HERO_CORNER_PAD,
     resetSlot: "pt-12",
     resetBtn: "gap-3.5 text-[1.4375rem]",
     resetIcon: "h-7 w-7",
@@ -84,16 +81,22 @@ const CARD_STYLES = {
 const MODAL_SCRIM = "bg-[#EFECE7]/62 backdrop-blur-[10px]";
 const CARD_BLUR = "blur-[12px]";
 
+const NAME_LORA_MOBILE =
+  "text-[clamp(2.35rem,8vw,3.55rem)] iphone-page:text-[clamp(2.5rem,1.9rem+3.4vmin,4.15rem)]";
+
+const NAME_LORA_DESKTOP = "text-[clamp(2.2rem,4.8vw,3.35rem)]";
+
 const NAME_SIZE = {
-  mobile: { max: 3.85, min: 1.45, refChars: 9 },
-  desktop: { max: 2.35, min: 1.15, refChars: 9 },
+  mobile: { max: 4.15, min: 1.75, shrinkAfter: 20 },
+  desktop: { max: 2.35, min: 1.25, shrinkAfter: 20 },
 } as const;
 
-function nameFontSizeRem(first: string, last: string, variant: "mobile" | "desktop"): number {
-  const { max, min, refChars } = NAME_SIZE[variant];
-  const longest = Math.max(first.length, last.length, 1);
-  if (longest <= refChars) return max;
-  return Math.max(min, max * (refChars / longest) ** 0.88);
+/** Shrink font only after 20 total characters; padding and slot stay fixed. */
+function nameFontSizeRem(fullName: string, variant: "mobile" | "desktop"): number {
+  const { max, min, shrinkAfter } = NAME_SIZE[variant];
+  const totalLen = fullName.trim().length;
+  if (totalLen <= shrinkAfter) return max;
+  return Math.max(min, max * (shrinkAfter / totalLen) ** 0.82);
 }
 
 const BOTTOM_LEFT_NAME_LINE =
@@ -119,50 +122,33 @@ function JoinApplyCardNameField({
   name,
   readOnly,
   onNameChange,
-  placeholderClass,
   cornerPad,
-  nameWidth,
   leading,
 }: {
   variant: "mobile" | "desktop";
   name: string;
   readOnly: boolean;
   onNameChange: (name: string) => void;
-  placeholderClass: string;
   cornerPad: string;
-  nameWidth: string;
   leading: number;
 }) {
+  const firstInputRef = useRef<HTMLInputElement>(null);
   const lastInputRef = useRef<HTMLInputElement>(null);
-  const measureRef = useRef<HTMLSpanElement>(null);
   const { first, last } = splitNameLines(name);
   const hasName = name.trim().length > 0;
-  const fontSizeRem = nameFontSizeRem(first, last, variant);
-  const [fitSizeRem, setFitSizeRem] = useState(fontSizeRem);
-  const displayFontRem = hasName || readOnly ? fitSizeRem : NAME_SIZE[variant].max;
+  const fontSizeRem = nameFontSizeRem(name, variant);
+  const loraSizeClass = variant === "mobile" ? NAME_LORA_MOBILE : NAME_LORA_DESKTOP;
 
-  useLayoutEffect(() => {
-    const measure = measureRef.current;
-    if (!measure) {
-      setFitSizeRem(fontSizeRem);
-      return;
-    }
-
-    const maxPx = fontSizeRem * 16;
-    const minPx = NAME_SIZE[variant].min * 16;
-    const longest = Math.max(first.length, last.length, 1);
-    measure.style.fontSize = `${maxPx}px`;
-    measure.textContent = "M".repeat(longest);
-    const available = measure.parentElement?.clientWidth ?? maxPx * longest * 0.62;
-    let next = fontSizeRem;
-    if (measure.scrollWidth > available && available > 0) {
-      next = Math.max(NAME_SIZE[variant].min, (maxPx * available) / measure.scrollWidth / 16);
-    }
-    setFitSizeRem(next);
-  }, [first, last, fontSizeRem, variant]);
-
-  const rowStyle = { height: `${leading}em`, lineHeight: leading, fontSize: `${displayFontRem}rem` };
-  const blockStyle = { fontSize: `${displayFontRem}rem`, lineHeight: leading };
+  const rowStyle = {
+    height: `${leading}em`,
+    lineHeight: leading,
+    fontSize: `${fontSizeRem}rem`,
+  };
+  const blockStyle = {
+    fontSize: `${fontSizeRem}rem`,
+    lineHeight: leading,
+    height: `${leading * 2}em`,
+  };
 
   const handleFirstChange = (value: string) => {
     const space = value.indexOf(" ");
@@ -176,45 +162,60 @@ function JoinApplyCardNameField({
     onNameChange(joinNameLines(value, last));
   };
 
+  const focusName = () => {
+    if (readOnly) return;
+    if (!first.trim()) firstInputRef.current?.focus();
+    else lastInputRef.current?.focus();
+  };
+
   return (
-    <div className={`${nameWidth} ${cornerPad}`} style={blockStyle}>
-      <div className="relative w-full" style={{ height: `${leading * 2}em` }}>
-        <span
-          ref={measureRef}
-          aria-hidden
-          className={`invisible absolute left-0 top-0 whitespace-nowrap ${lora.className}`}
-        />
+    <div
+      className={`w-[min(100%,19em)] ${cornerPad} pt-0 ${lora.className} ${loraSizeClass}`}
+      style={blockStyle}
+      onClick={focusName}
+      onKeyDown={(e) => {
+        if (readOnly) return;
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          focusName();
+        }
+      }}
+      role={readOnly ? undefined : "group"}
+      aria-label={readOnly ? undefined : "Your name"}
+    >
+      <div className="relative w-full" style={blockStyle}>
         {!hasName && !readOnly ? (
-          <div className="pointer-events-none absolute inset-0" aria-hidden>
-            <div className={`${placeholderClass} text-[#C8C0B4] ${lora.className}`} style={rowStyle}>
-              Enter your
-            </div>
-            <div className={`${placeholderClass} text-[#C8C0B4] ${lora.className}`} style={rowStyle}>
-              name here
-            </div>
+          <div className="pointer-events-none absolute inset-0 text-[#C8C0B4]" aria-hidden>
+            <div style={rowStyle}>Enter your</div>
+            <div style={rowStyle}>name here</div>
           </div>
         ) : null}
         {readOnly ? (
           <>
-            <div className={`text-[#1E343A] ${lora.className}`} style={rowStyle}>
+            <div className="overflow-hidden text-ellipsis whitespace-nowrap text-[#1E343A]" style={rowStyle}>
               {first}
             </div>
-            <div className={`text-[#1E343A] ${lora.className}`} style={rowStyle}>
+            <div className="overflow-hidden text-ellipsis whitespace-nowrap text-[#1E343A]" style={rowStyle}>
               {last}
             </div>
           </>
         ) : (
           <>
             <input
+              ref={firstInputRef}
               type="text"
               value={first}
               onChange={(e) => handleFirstChange(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === " " && !first.trim()) e.preventDefault();
+                if (e.key === "Backspace" && !first && last) {
+                  e.preventDefault();
+                  lastInputRef.current?.focus();
+                }
               }}
               autoComplete="given-name"
               aria-label="First name"
-              className={`text-[#1E343A] ${lora.className} ${BOTTOM_LEFT_NAME_LINE}`}
+              className={`${BOTTOM_LEFT_NAME_LINE} text-[#1E343A]`}
               style={rowStyle}
             />
             <input
@@ -224,7 +225,7 @@ function JoinApplyCardNameField({
               onChange={(e) => onNameChange(joinNameLines(first, e.target.value))}
               autoComplete="family-name"
               aria-label="Last name"
-              className={`text-[#1E343A] ${lora.className} ${BOTTOM_LEFT_NAME_LINE}`}
+              className={`${BOTTOM_LEFT_NAME_LINE} text-[#1E343A]`}
               style={rowStyle}
             />
           </>
@@ -492,9 +493,7 @@ export function JoinApplyCard({
             name={name}
             readOnly={readOnly}
             onNameChange={onNameChange}
-            placeholderClass={styles.namePlaceholder}
             cornerPad={styles.cornerPad}
-            nameWidth={styles.nameWidth}
             leading={styles.nameLeading}
           />
         </div>
