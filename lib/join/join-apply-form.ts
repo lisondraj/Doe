@@ -88,6 +88,11 @@ export function isJoinApplyMandatoryComplete(data: JoinApplyFormState): boolean 
   return JOIN_APPLY_MANDATORY_STEPS.every((step) => isJoinApplyStepValid(step, data));
 }
 
+/** Server-side submission — all mandatory fields must be valid. */
+export function isJoinApplySubmissionValid(data: JoinApplyFormState): boolean {
+  return isJoinApplyMandatoryComplete(data);
+}
+
 /** True when the user has entered or saved anything on the card. */
 export function hasJoinApplyCardInput(
   data: JoinApplyFormState,

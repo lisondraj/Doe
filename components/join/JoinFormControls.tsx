@@ -472,7 +472,7 @@ export function JoinFormBorderedResumeField({
 }: {
   variant: "mobile" | "desktop";
   resumeFileName: string | null;
-  onChange: (fileName: string | null) => void;
+  onChange: (fileName: string | null, file?: File | null) => void;
   readOnly?: boolean;
   interactive?: boolean;
   inputRef?: RefObject<HTMLInputElement>;
@@ -516,8 +516,8 @@ export function JoinFormBorderedResumeField({
           accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
           className="sr-only"
           onChange={(e) => {
-            const file = e.target.files?.[0];
-            onChange(file?.name ?? null);
+            const file = e.target.files?.[0] ?? null;
+            onChange(file?.name ?? null, file);
           }}
         />
       ) : null}

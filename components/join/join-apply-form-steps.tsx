@@ -25,6 +25,7 @@ type RenderJoinApplyStepOptions = {
   variant: "mobile" | "desktop";
   interactive: boolean;
   resumeInputRef?: RefObject<HTMLInputElement>;
+  onResumeFileChange?: (file: File | null) => void;
   onEnter?: () => void;
   enterDisabled?: boolean;
   enterLabel?: string;
@@ -37,6 +38,7 @@ export function renderJoinApplyStep({
   variant,
   interactive,
   resumeInputRef,
+  onResumeFileChange,
   onEnter,
 }: RenderJoinApplyStepOptions) {
   const readOnly = !interactive;
@@ -152,7 +154,10 @@ export function renderJoinApplyStep({
         <JoinFormBorderedResumeField
           variant={variant}
           resumeFileName={data.resumeFileName}
-          onChange={(resumeFileName) => patch({ resumeFileName })}
+          onChange={(resumeFileName, file) => {
+            patch({ resumeFileName });
+            onResumeFileChange?.(file ?? null);
+          }}
           readOnly={readOnly}
           interactive={interactive}
           inputRef={resumeInputRef}

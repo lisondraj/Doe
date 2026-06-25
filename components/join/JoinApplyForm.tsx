@@ -23,9 +23,12 @@ type JoinApplyCardFormProps = {
   touchedSteps: ReadonlySet<number>;
   markStepTouched: (step: number) => void;
   resetForm: () => void;
-  submit: () => void;
+  submit: () => Promise<boolean>;
   submitted: boolean;
+  submitting: boolean;
+  submitError: string | null;
   resumeInputRef: RefObject<HTMLInputElement>;
+  onResumeFileChange: (file: File | null) => void;
 };
 
 function JoinApplyCardForm({
@@ -39,7 +42,10 @@ function JoinApplyCardForm({
   resetForm,
   submit,
   submitted,
+  submitting,
+  submitError,
   resumeInputRef,
+  onResumeFileChange,
 }: JoinApplyCardFormProps) {
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showSubmitReview, setShowSubmitReview] = useState(false);
@@ -118,6 +124,7 @@ function JoinApplyCardForm({
           variant,
           interactive: true,
           resumeInputRef,
+          onResumeFileChange,
           onEnter: handleAdvance,
           enterDisabled: !canProceed,
           enterLabel: "Save answer",
@@ -145,9 +152,9 @@ function JoinApplyCardForm({
     setShowSubmitReview(true);
   }, [setActiveStep]);
 
-  const handleConfirmSubmit = useCallback(() => {
-    submit();
-    setShowSubmitReview(false);
+  const handleConfirmSubmit = useCallback(async () => {
+    const success = await submit();
+    if (success) setShowSubmitReview(false);
   }, [submit]);
 
   if (submitted) {
@@ -219,13 +226,19 @@ function JoinApplyCardForm({
       ) : null}
 
       {showSubmitReview ? (
-        <button
-          type="button"
-          onClick={handleConfirmSubmit}
-          className={`${submitBtnWrapClass} ${submitBtnClass}`}
-        >
-          Confirm submission
-        </button>
+        <>
+          {submitError ? (
+            <p className={`${submitBtnWrapClass} text-[#BF593D] ${thankYouBody} ${inter.className}`}>{submitError}</p>
+          ) : null}
+          <button
+            type="button"
+            onClick={() => void handleConfirmSubmit()}
+            disabled={submitting}
+            className={`${submitBtnWrapClass} ${submitBtnClass} disabled:cursor-not-allowed disabled:opacity-60`}
+          >
+            {submitting ? "Submitting…" : "Confirm submission"}
+          </button>
+        </>
       ) : null}
     </div>
   );
@@ -234,9 +247,12 @@ function JoinApplyCardForm({
 export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "desktop" }) {
   const [data, setData] = useState<JoinApplyFormState>(JOIN_APPLY_INITIAL_STATE);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [activeStep, setActiveStep] = useState<number | null>(null);
   const [touchedSteps, setTouchedSteps] = useState<Set<number>>(() => new Set());
   const resumeInputRef = useRef<HTMLInputElement>(null);
+  const resumeFileRef = useRef<File | null>(null);
 
   const markStepTouched = useCallback((s: number) => {
     setTouchedSteps((prev) => {
@@ -255,14 +271,54 @@ export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "d
     setData(JOIN_APPLY_INITIAL_STATE);
     setTouchedSteps(new Set());
     setActiveStep(null);
+    setSubmitError(null);
+    resumeFileRef.current = null;
     if (resumeInputRef.current) resumeInputRef.current.value = "";
   }, []);
 
-  const submit = () => {
-    if (!isJoinApplyCardMandatoryComplete(data, touchedSteps)) return;
-    setSubmitted(true);
-    setActiveStep(null);
-  };
+  const submit = useCallback(async (): Promise<boolean> => {
+    if (!isJoinApplyCardMandatoryComplete(data, touchedSteps)) return false;
+
+    setSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const formData = new FormData();
+      formData.append("name", data.name.trim());
+      formData.append("email", data.email.trim());
+      formData.append("country", data.country);
+      formData.append("education", data.education);
+      formData.append("schoolName", data.schoolName.trim());
+      formData.append("programOfStudy", data.programOfStudy.trim());
+      formData.append("areas", JSON.stringify(data.areas));
+      formData.append("linkedinUsername", data.linkedinUsername.trim());
+      formData.append("additionalNotes", data.additionalNotes.trim());
+      if (resumeFileRef.current) formData.append("resume", resumeFileRef.current);
+
+      const response = await fetch("/api/join/apply", {
+        method: "POST",
+        body: formData,
+      });
+
+      const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+      if (!response.ok) {
+        throw new Error(payload?.error || "Could not submit your application.");
+      }
+
+      setSubmitted(true);
+      setActiveStep(null);
+      return true;
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "Could not submit your application.");
+      return false;
+    } finally {
+      setSubmitting(false);
+    }
+  }, [data, touchedSteps]);
+
+  const onResumeFileChange = useCallback((file: File | null) => {
+    resumeFileRef.current = file;
+  }, []);
 
   return (
     <JoinApplyCardForm
@@ -276,7 +332,10 @@ export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "d
       resetForm={resetForm}
       submit={submit}
       submitted={submitted}
+      submitting={submitting}
+      submitError={submitError}
       resumeInputRef={resumeInputRef}
+      onResumeFileChange={onResumeFileChange}
     />
   );
 }
