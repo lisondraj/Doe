@@ -42,7 +42,7 @@ export function DoePhoneCommunicationSection() {
           segmentedReveal
           revealed={revealed}
           line1="Your inbox should"
-          line2="be built for you."
+          line2="be built for you.."
         />
       </div>
 
