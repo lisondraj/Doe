@@ -16,16 +16,21 @@ import {
   type InternshipGroupMode,
 } from "@/lib/admin/internship-grouping";
 import {
+  ADMIN_MOBILE_BACK_BUTTON_TW,
+  ADMIN_MOBILE_BACK_ICON_TW,
   ADMIN_MOBILE_BODY_TW,
   ADMIN_MOBILE_BUTTON_TW,
-  ADMIN_MOBILE_CARD_RADIUS,
+  ADMIN_MOBILE_CONTROL_SURFACE,
   ADMIN_MOBILE_DETAIL_TITLE_TW,
   ADMIN_MOBILE_INPUT_H,
+  ADMIN_MOBILE_INPUT_TEXT_TW,
   ADMIN_MOBILE_LABEL_TW,
   ADMIN_MOBILE_LIST_NAME_TW,
   ADMIN_MOBILE_META_TW,
   ADMIN_MOBILE_PANEL_STACK,
+  ADMIN_MOBILE_FIELD_TEXT_TW,
   ADMIN_MOBILE_SECTION_TITLE_TW,
+  ADMIN_MOBILE_SELECT_CHEVRON_TW,
   ADMIN_MOBILE_STAT_GRID,
   ADMIN_MOBILE_STAT_TILE,
   ADMIN_MOBILE_STAT_VALUE_TW,
@@ -35,6 +40,67 @@ import {
 import { inter, lora } from "@/lib/home/fonts";
 
 type PanelVariant = "mobile" | "desktop";
+
+function AdminMobileSearchBar({
+  value,
+  onChange,
+  resultCount,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  resultCount: number;
+}) {
+  return (
+    <label className={`flex ${ADMIN_MOBILE_CONTROL_SURFACE} ${ADMIN_MOBILE_INPUT_H} items-center gap-3 px-4 iphone-page:gap-3.5 iphone-page:px-5`}>
+      <DoeBuildIcon className="h-5 w-5 shrink-0 text-neutral-400 iphone-page:h-[1.35rem] iphone-page:w-[1.35rem]">
+        <>
+          <circle cx="11" cy="11" r="7" />
+          <path d="m21 21-4.35-4.35" />
+        </>
+      </DoeBuildIcon>
+      <input
+        type="search"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder="Search name, email, school, areas…"
+        className={ADMIN_MOBILE_INPUT_TEXT_TW}
+      />
+      <span className="shrink-0 rounded-full bg-neutral-100 px-2.5 py-1 text-[0.86rem] font-semibold tabular-nums text-neutral-600 iphone-page:px-3 iphone-page:py-1.5 iphone-page:text-[0.92rem]">
+        {resultCount}
+      </span>
+    </label>
+  );
+}
+
+function AdminMobileGroupSelect({
+  value,
+  onChange,
+}: {
+  value: InternshipGroupMode;
+  onChange: (value: InternshipGroupMode) => void;
+}) {
+  return (
+    <div className="flex flex-col gap-2 iphone-page:gap-2.5">
+      <p className={ADMIN_MOBILE_LABEL_TW}>Group by</p>
+      <div className={`relative ${ADMIN_MOBILE_CONTROL_SURFACE}`}>
+        <select
+          value={value}
+          onChange={(event) => onChange(event.target.value as InternshipGroupMode)}
+          className={`w-full appearance-none bg-transparent ${ADMIN_MOBILE_INPUT_H} pl-4 pr-12 outline-none iphone-page:pl-5 iphone-page:pr-14 ${ADMIN_MOBILE_FIELD_TEXT_TW}`}
+        >
+          {INTERNSHIP_GROUP_MODE_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        <DoeBuildIcon className={ADMIN_MOBILE_SELECT_CHEVRON_TW}>
+          <path d="m6 9 6 6 6-6" />
+        </DoeBuildIcon>
+      </div>
+    </div>
+  );
+}
 
 function StatCard({
   label,
@@ -493,16 +559,12 @@ export function InternshipSignupsPanel({
 
   if (variant === "mobile" && mobileDetailOpen && selected) {
     return (
-      <div className={`flex h-full min-h-0 flex-col ${inter.className}`}>
-        <button
-          type="button"
-          onClick={() => setMobileDetailOpen(false)}
-          className={`${ADMIN_MOBILE_BUTTON_TW} -ml-1 mb-3 w-fit gap-2 border-0 bg-transparent px-2 text-neutral-600 hover:bg-neutral-100`}
-        >
-          <DoeBuildIcon className="h-5 w-5 shrink-0">
+      <div className={`flex h-full min-h-0 flex-col ${ADMIN_MOBILE_PANEL_STACK} ${inter.className}`}>
+        <button type="button" onClick={() => setMobileDetailOpen(false)} className={ADMIN_MOBILE_BACK_BUTTON_TW}>
+          <DoeBuildIcon className={ADMIN_MOBILE_BACK_ICON_TW}>
             <path d="m15 18-6-6 6-6" />
           </DoeBuildIcon>
-          Back
+          Back to signups
         </button>
         <div className={`${ADMIN_MOBILE_SURFACE} min-h-0 flex-1 overflow-hidden`}>
           <ApplicationDetail
@@ -519,9 +581,7 @@ export function InternshipSignupsPanel({
 
   const statsGrid = variant === "mobile" ? ADMIN_MOBILE_STAT_GRID : "grid grid-cols-4 gap-3";
   const inputTextClass =
-    variant === "mobile"
-      ? "min-w-0 flex-1 bg-transparent text-[clamp(1.02rem,0.9rem+0.5vmin,1.12rem)] iphone-page:text-[1.0625rem] text-neutral-800 outline-none placeholder:text-neutral-400"
-      : "min-w-0 flex-1 bg-transparent text-[13px] text-neutral-800 outline-none placeholder:text-neutral-400";
+    "min-w-0 flex-1 bg-transparent text-[13px] text-neutral-800 outline-none placeholder:text-neutral-400";
 
   return (
     <div
@@ -574,56 +634,47 @@ export function InternshipSignupsPanel({
       </div>
 
       <div className={variant === "mobile" ? `flex flex-col ${ADMIN_MOBILE_STACK_GAP}` : "border-b border-[#EFEFEF] px-4 py-3"}>
-        <div className={`flex gap-3 ${variant === "mobile" ? "flex-col" : "flex-wrap items-center"}`}>
-          <div
-            className={`flex min-w-0 flex-1 items-center gap-3 border border-[#ECECEC] bg-[#FAFAFA] px-4 ${
-              variant === "mobile" ? `${ADMIN_MOBILE_INPUT_H} ${ADMIN_MOBILE_CARD_RADIUS}` : "h-9 rounded-lg px-2.5"
-            }`}
-          >
-            <DoeBuildIcon className={`shrink-0 text-neutral-400 ${variant === "mobile" ? "h-5 w-5" : "h-4 w-4"}`}>
-              <>
-                <circle cx="11" cy="11" r="7" />
-                <path d="m21 21-4.35-4.35" />
-              </>
-            </DoeBuildIcon>
-            <input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search name, email, school, areas…"
-              className={inputTextClass}
-            />
-            <span
-              className={`rounded border border-[#E5E5E5] bg-white font-medium text-neutral-500 ${
-                variant === "mobile" ? "px-2 py-1 text-[0.82rem] iphone-page:text-[0.88rem]" : "px-1.5 py-0.5 text-[10px]"
-              }`}
-            >
-              {filtered.length}
-            </span>
-          </div>
+        {variant === "mobile" ? (
+          <>
+            <AdminMobileSearchBar value={query} onChange={setQuery} resultCount={filtered.length} />
+            <AdminMobileGroupSelect value={groupMode} onChange={setGroupMode} />
+          </>
+        ) : (
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex h-9 min-w-0 flex-1 items-center gap-3 rounded-lg border border-[#ECECEC] bg-[#FAFAFA] px-2.5">
+              <DoeBuildIcon className="h-4 w-4 shrink-0 text-neutral-400">
+                <>
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="m21 21-4.35-4.35" />
+                </>
+              </DoeBuildIcon>
+              <input
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Search name, email, school, areas…"
+                className={inputTextClass}
+              />
+              <span className="rounded border border-[#E5E5E5] bg-white px-1.5 py-0.5 text-[10px] font-medium text-neutral-500">
+                {filtered.length}
+              </span>
+            </div>
 
-          <label
-            className={`flex w-full items-center gap-3 border border-[#ECECEC] bg-white px-4 ${
-              variant === "mobile" ? `${ADMIN_MOBILE_INPUT_H} ${ADMIN_MOBILE_CARD_RADIUS}` : "h-9 rounded-lg px-2.5"
-            }`}
-          >
-            <span className={variant === "mobile" ? `${ADMIN_MOBILE_LABEL_TW} shrink-0` : "text-[11px] font-semibold uppercase tracking-wider text-neutral-400"}>
-              Group by
-            </span>
-            <select
-              value={groupMode}
-              onChange={(event) => setGroupMode(event.target.value as InternshipGroupMode)}
-              className={`min-w-0 flex-1 bg-transparent font-medium text-neutral-800 outline-none ${
-                variant === "mobile" ? "text-[1.02rem] iphone-page:text-[1.0625rem]" : "text-[12px]"
-              }`}
-            >
-              {INTERNSHIP_GROUP_MODE_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
+            <label className="flex h-9 w-full items-center gap-3 rounded-lg border border-[#ECECEC] bg-white px-2.5 sm:w-auto">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">Group by</span>
+              <select
+                value={groupMode}
+                onChange={(event) => setGroupMode(event.target.value as InternshipGroupMode)}
+                className="min-w-0 flex-1 bg-transparent text-[12px] font-medium text-neutral-800 outline-none"
+              >
+                {INTERNSHIP_GROUP_MODE_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+        )}
         {error ? (
           <p className={`font-medium text-[#BF593D] ${variant === "mobile" ? ADMIN_MOBILE_META_TW : "text-[12px]"}`}>
             {error}

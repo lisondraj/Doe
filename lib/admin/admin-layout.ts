@@ -52,7 +52,22 @@ export const ADMIN_MOBILE_STAT_TILE =
   "flex min-h-[5.25rem] flex-col justify-center p-4 iphone-page:min-h-[5.5rem] iphone-page:p-[1.125rem]";
 
 export const ADMIN_MOBILE_INPUT_H =
-  "h-12 iphone-page:h-[3.35rem]";
+  "h-[3.25rem] iphone-page:h-[3.65rem]";
+
+export const ADMIN_MOBILE_FIELD_TEXT_TW = `text-[clamp(1.05rem,0.92rem+0.5vmin,1.15rem)] iphone-page:text-[1.125rem] font-medium text-neutral-800 ${inter.className}`;
+
+export const ADMIN_MOBILE_INPUT_TEXT_TW = `min-w-0 flex-1 bg-transparent outline-none placeholder:font-normal placeholder:text-neutral-400 ${ADMIN_MOBILE_FIELD_TEXT_TW}`;
+
+export const ADMIN_MOBILE_CONTROL_SURFACE =
+  `${ADMIN_MOBILE_SURFACE} overflow-hidden`;
+
+export const ADMIN_MOBILE_BACK_BUTTON_TW = `inline-flex w-full items-center gap-3 ${ADMIN_MOBILE_INPUT_H} rounded-2xl border border-[#E8E8E8] bg-white px-4 text-[clamp(1.05rem,0.92rem+0.5vmin,1.15rem)] iphone-page:gap-3.5 iphone-page:rounded-[1.35rem] iphone-page:px-5 iphone-page:text-[1.125rem] font-semibold text-neutral-800 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-colors hover:bg-neutral-50 active:bg-neutral-100 ${inter.className}`;
+
+export const ADMIN_MOBILE_BACK_ICON_TW =
+  "h-5 w-5 shrink-0 text-neutral-500 iphone-page:h-[1.35rem] iphone-page:w-[1.35rem]";
+
+export const ADMIN_MOBILE_SELECT_CHEVRON_TW =
+  "pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-400 iphone-page:right-5 iphone-page:h-[1.35rem] iphone-page:w-[1.35rem]";
 
 export const ADMIN_MOBILE_BUTTON_TW = `inline-flex items-center justify-center rounded-xl border border-[#E2E2E2] bg-white px-4 text-[clamp(1rem,0.9rem+0.45vmin,1.1rem)] iphone-page:px-5 iphone-page:text-[1.0625rem] font-medium text-neutral-700 transition-colors hover:bg-neutral-50 disabled:opacity-60 ${inter.className}`;
 
