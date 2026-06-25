@@ -25,6 +25,7 @@ export type JoinApplyFormState = {
   areas: JoinApplyArea[];
   resume: File | null;
   linkedinUsername: string;
+  additionalNotes: string;
 };
 
 export const JOIN_APPLY_INITIAL_STATE: JoinApplyFormState = {
@@ -37,6 +38,7 @@ export const JOIN_APPLY_INITIAL_STATE: JoinApplyFormState = {
   areas: [],
   resume: null,
   linkedinUsername: "",
+  additionalNotes: "",
 };
 
 export const JOIN_APPLY_COUNTRY_LABELS: Record<JoinApplyCountry, string> = {

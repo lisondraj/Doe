@@ -62,6 +62,69 @@ function joinFormBorderedPromptClass(variant: "mobile" | "desktop") {
   return `${size} font-medium leading-snug tracking-[0.01em] text-[#1E343A]/45`;
 }
 
+export function JoinFormBorderedStep({
+  variant,
+  prompt,
+  children,
+}: {
+  variant: "mobile" | "desktop";
+  prompt: string;
+  children: ReactNode;
+}) {
+  return (
+    <div
+      className={joinFormBorderedBoxClass(variant)}
+      style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
+    >
+      <p className={joinFormBorderedPromptClass(variant)}>{prompt}</p>
+      {children}
+    </div>
+  );
+}
+
+export function JoinFormBorderedTextarea({
+  variant,
+  prompt,
+  value,
+  onChange,
+  placeholder,
+  readOnly = false,
+  interactive = true,
+}: {
+  variant: "mobile" | "desktop";
+  prompt: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  readOnly?: boolean;
+  interactive?: boolean;
+}) {
+  const textSize =
+    variant === "mobile"
+      ? "text-[1.35rem] leading-snug iphone-page:text-[1.5rem]"
+      : "text-[1rem] leading-snug";
+
+  return (
+    <div
+      className={joinFormBorderedBoxClass(variant)}
+      style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
+    >
+      <p className={joinFormBorderedPromptClass(variant)}>{prompt}</p>
+      <textarea
+        data-join-apply-interactive
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        aria-label={prompt}
+        readOnly={readOnly}
+        tabIndex={interactive ? 0 : -1}
+        rows={variant === "mobile" ? 4 : 3}
+        className={`block w-full resize-none appearance-none border-0 bg-transparent p-0 font-medium tracking-[-0.01em] text-[#1E343A] outline-none placeholder:font-normal placeholder:text-[#1E343A]/38 ${textSize}`}
+      />
+    </div>
+  );
+}
+
 const BORDERED_INPUT_SIZE = {
   mobile: { max: 2.125, min: 1.05, shell: "min-h-[3.75rem] iphone-page:min-h-[4rem]" },
   desktop: { max: 1.375, min: 0.8125, shell: "min-h-[2.75rem]" },
@@ -548,6 +611,7 @@ export function JoinCountrySlider({
   prompt,
   variant,
   disabled = false,
+  hidePrompt = false,
   className,
 }: {
   value: JoinApplyCountry;
@@ -555,6 +619,7 @@ export function JoinCountrySlider({
   prompt: string;
   variant: "mobile" | "desktop";
   disabled?: boolean;
+  hidePrompt?: boolean;
   className?: string;
 }) {
   const optionSize =
@@ -568,8 +633,8 @@ export function JoinCountrySlider({
   ];
 
   return (
-    <div className={`${joinFormPanelClass(variant)}${className ? ` ${className}` : ""}`}>
-      <p className={joinFormPromptClass(variant)}>{prompt}</p>
+    <div className={hidePrompt ? className ?? "" : `${joinFormPanelClass(variant)}${className ? ` ${className}` : ""}`}>
+      {hidePrompt ? null : <p className={joinFormPromptClass(variant)}>{prompt}</p>}
       <div className={`flex flex-col ${variant === "mobile" ? "gap-3 iphone-page:gap-3.5" : "gap-2.5"}`}>
         {options.map((option) => {
           const active = option.value === value;
@@ -609,6 +674,7 @@ export function JoinEducationSlider({
   prompt,
   variant,
   disabled = false,
+  hidePrompt = false,
   className,
 }: {
   value: JoinApplyEducationValue;
@@ -616,6 +682,7 @@ export function JoinEducationSlider({
   prompt: string;
   variant: "mobile" | "desktop";
   disabled?: boolean;
+  hidePrompt?: boolean;
   className?: string;
 }) {
   const optionSize =
@@ -630,8 +697,8 @@ export function JoinEducationSlider({
   ];
 
   return (
-    <div className={`${joinFormPanelClass(variant)}${className ? ` ${className}` : ""}`}>
-      <p className={joinFormPromptClass(variant)}>{prompt}</p>
+    <div className={hidePrompt ? className ?? "" : `${joinFormPanelClass(variant)}${className ? ` ${className}` : ""}`}>
+      {hidePrompt ? null : <p className={joinFormPromptClass(variant)}>{prompt}</p>}
       <div className={`flex flex-col ${variant === "mobile" ? "gap-3 iphone-page:gap-3.5" : "gap-2.5"}`}>
         {options.map((option) => {
           const active = option.value === value;

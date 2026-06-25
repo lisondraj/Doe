@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState, type RefObject } from "react"
 
 import { JoinApplyCard } from "@/components/join/JoinApplyCard";
 import { renderJoinApplyStep } from "@/components/join/join-apply-form-steps";
-import { joinFormShellClass } from "@/components/join/JoinFormControls";
+import { joinFormShellClass, JoinFormBorderedTextarea } from "@/components/join/JoinFormControls";
 import {
   JOIN_APPLY_INITIAL_STATE,
   isJoinApplyCardMandatoryComplete,
@@ -41,6 +41,7 @@ function JoinApplyCardForm({
   resumeInputRef,
 }: JoinApplyCardFormProps) {
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [showSubmitReview, setShowSubmitReview] = useState(false);
   const canProceed = activeStep !== null && activeStep !== 0 && isJoinApplyStepValid(activeStep, data);
   const mandatoryComplete = isJoinApplyCardMandatoryComplete(data, touchedSteps);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -121,8 +122,22 @@ function JoinApplyCardForm({
     variant === "mobile" ? "text-[1.125rem] iphone-page:text-[1.25rem]" : "text-[1rem]";
   const submitBtnClass =
     variant === "mobile"
-      ? `mt-5 w-full inline-flex items-center justify-center rounded-2xl bg-black font-semibold text-white leading-none transition-opacity hover:opacity-90 active:scale-[0.99] active:opacity-80 text-[1.4375rem] py-[1.5rem] iphone-page:mt-6 iphone-page:text-[clamp(1.5rem,1.28rem+1.1vmin,1.75rem)] iphone-page:py-[clamp(1.45rem,1.18rem+1.25vmin,1.68rem)] iphone-page:rounded-[clamp(1rem,0.85rem+0.72vmin,1.2rem)] ${inter.className}`
-      : `mt-4 w-full inline-flex items-center justify-center rounded-2xl bg-black font-semibold text-white leading-none transition-opacity hover:opacity-90 active:scale-[0.99] active:opacity-80 text-[1.0625rem] py-[1.1rem] ${inter.className}`;
+      ? `w-full inline-flex items-center justify-center rounded-2xl bg-black font-semibold text-white leading-none transition-opacity hover:opacity-90 active:scale-[0.99] active:opacity-80 text-[1.4375rem] py-[1.5rem] iphone-page:text-[clamp(1.5rem,1.28rem+1.1vmin,1.75rem)] iphone-page:py-[clamp(1.45rem,1.18rem+1.25vmin,1.68rem)] iphone-page:rounded-[clamp(1rem,0.85rem+0.72vmin,1.2rem)] ${inter.className}`
+      : `w-full inline-flex items-center justify-center rounded-2xl bg-black font-semibold text-white leading-none transition-opacity hover:opacity-90 active:scale-[0.99] active:opacity-80 text-[1.0625rem] py-[1.1rem] ${inter.className}`;
+  const submitBtnWrapClass =
+    variant === "mobile" ? "mt-5 iphone-page:mt-6" : "mt-4";
+  const submitReviewGap =
+    variant === "mobile" ? "mt-5 space-y-5 iphone-page:mt-6 iphone-page:space-y-6" : "mt-4 space-y-4";
+
+  const handleSubmitRequest = useCallback(() => {
+    setActiveStep(null);
+    setShowSubmitReview(true);
+  }, [setActiveStep]);
+
+  const handleConfirmSubmit = useCallback(() => {
+    submit();
+    setShowSubmitReview(false);
+  }, [submit]);
 
   if (submitted) {
     return (
@@ -165,18 +180,38 @@ function JoinApplyCardForm({
         onResetConfirm={() => {
           resetForm();
           setShowResetConfirm(false);
+          setShowSubmitReview(false);
         }}
         onResetCancel={() => setShowResetConfirm(false)}
       />
 
-      {mandatoryComplete ? (
+      {mandatoryComplete && !showSubmitReview ? (
         <button
           type="button"
-          onClick={submit}
-          className={submitBtnClass}
+          onClick={handleSubmitRequest}
+          className={`${submitBtnWrapClass} ${submitBtnClass}`}
         >
           Submit
         </button>
+      ) : null}
+
+      {showSubmitReview ? (
+        <div className={submitReviewGap}>
+          <JoinFormBorderedTextarea
+            variant={variant}
+            prompt="Anything else you'd like to add?"
+            value={data.additionalNotes}
+            onChange={(additionalNotes) => patch({ additionalNotes })}
+            placeholder="Optional notes"
+          />
+          <button
+            type="button"
+            onClick={handleConfirmSubmit}
+            className={submitBtnClass}
+          >
+            Confirm submission
+          </button>
+        </div>
       ) : null}
     </div>
   );

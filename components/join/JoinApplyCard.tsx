@@ -412,15 +412,17 @@ export function JoinApplyCard({
           {/* Top-left: preferred roles */}
           <div className={`absolute left-0 top-0 z-[2] ${styles.topLeftMaxW} ${styles.topPad}`}>
             <div className={`flex flex-col items-start ${styles.roleGap} ${inter.className}`}>
-              <button
-                type="button"
-                disabled={readOnly}
-                onClick={() => onEdit(5)}
-                className={`transition-opacity hover:opacity-90 active:scale-[0.98] ${styles.roleChip}`}
-                style={{ backgroundColor: JOIN_FORM_BEIGE.fieldMuted }}
-              >
-                Preferred Roles
-              </button>
+              {data.areas.length === 0 ? (
+                <button
+                  type="button"
+                  disabled={readOnly}
+                  onClick={() => onEdit(5)}
+                  className={`transition-opacity hover:opacity-90 active:scale-[0.98] ${styles.roleChip}`}
+                  style={{ backgroundColor: JOIN_FORM_BEIGE.fieldMuted }}
+                >
+                  Preferred Roles
+                </button>
+              ) : null}
               {data.areas.map((area) => (
                 <button
                   key={area}

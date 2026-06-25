@@ -3,14 +3,12 @@
 import type { RefObject } from "react";
 
 import {
-  joinFormFieldClass,
-  joinFormPanelClass,
-  joinFormPromptClass,
   JoinCountrySlider,
   JoinEducationSlider,
   JoinFormBorderedField,
   JoinFormBorderedLinkedInField,
   JoinFormBorderedSchoolFields,
+  JoinFormBorderedStep,
 } from "@/components/join/JoinFormControls";
 import { JOIN_APPLY_AREAS, type JoinApplyArea, type JoinApplyFormState } from "@/lib/join/join-apply-form";
 import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
@@ -43,16 +41,6 @@ type RenderJoinApplyStepOptions = {
   enterLabel?: string;
 };
 
-function StepPrompt({
-  variant,
-  children,
-}: {
-  variant: "mobile" | "desktop";
-  children: string;
-}) {
-  return <p className={joinFormPromptClass(variant)}>{children}</p>;
-}
-
 export function renderJoinApplyStep({
   step,
   data,
@@ -63,32 +51,30 @@ export function renderJoinApplyStep({
   onEnter,
 }: RenderJoinApplyStepOptions) {
   const prompt = JOIN_APPLY_STEP_PROMPTS[step];
-  const fieldClass = joinFormFieldClass(variant);
   const readOnly = !interactive;
   const areaLabelSize =
     variant === "mobile"
       ? "px-5 py-[1.65rem] text-[1.375rem] iphone-page:px-5 iphone-page:py-[1.85rem] iphone-page:text-[1.5rem]"
       : "px-4 py-3.5 text-[1.0625rem]";
+  const resumeTextSize =
+    variant === "mobile"
+      ? "text-[1.35rem] iphone-page:text-[1.5rem]"
+      : "text-[1rem]";
 
   switch (step) {
     case 0:
       return (
-        <div>
-          <StepPrompt variant={variant}>{prompt}</StepPrompt>
-          <input
-            type="text"
-            data-join-apply-interactive
-            value={data.name}
-            onChange={(e) => patch({ name: e.target.value })}
-            placeholder="Your name"
-            autoComplete="name"
-            aria-label={prompt}
-            readOnly={readOnly}
-            tabIndex={interactive ? 0 : -1}
-            className={fieldClass}
-            onKeyDown={onEnter ? (e) => { if (e.key === "Enter") { e.preventDefault(); onEnter(); } } : undefined}
-          />
-        </div>
+        <JoinFormBorderedField
+          variant={variant}
+          prompt={prompt}
+          value={data.name}
+          onChange={(name) => patch({ name })}
+          placeholder="Your name"
+          autoComplete="name"
+          readOnly={readOnly}
+          interactive={interactive}
+          onEnter={onEnter}
+        />
       );
     case 1:
       return (
@@ -107,23 +93,29 @@ export function renderJoinApplyStep({
       );
     case 2:
       return (
-        <JoinCountrySlider
-          variant={variant}
-          value={data.country}
-          onChange={(country) => patch({ country })}
-          prompt={prompt}
-          disabled={readOnly}
-        />
+        <JoinFormBorderedStep variant={variant} prompt={prompt}>
+          <JoinCountrySlider
+            variant={variant}
+            value={data.country}
+            onChange={(country) => patch({ country })}
+            prompt={prompt}
+            disabled={readOnly}
+            hidePrompt
+          />
+        </JoinFormBorderedStep>
       );
     case 3:
       return (
-        <JoinEducationSlider
-          variant={variant}
-          value={data.education}
-          onChange={(education) => patch({ education })}
-          prompt={prompt}
-          disabled={readOnly}
-        />
+        <JoinFormBorderedStep variant={variant} prompt={prompt}>
+          <JoinEducationSlider
+            variant={variant}
+            value={data.education}
+            onChange={(education) => patch({ education })}
+            prompt={prompt}
+            disabled={readOnly}
+            hidePrompt
+          />
+        </JoinFormBorderedStep>
       );
     case 4:
       return (
@@ -140,8 +132,7 @@ export function renderJoinApplyStep({
       );
     case 5:
       return (
-        <div className={`${joinFormPanelClass(variant)} h-full`}>
-          <p className={joinFormPromptClass(variant)}>{prompt}</p>
+        <JoinFormBorderedStep variant={variant} prompt={prompt}>
           <div className={`grid grid-cols-2 ${variant === "mobile" ? "gap-3 iphone-page:gap-3.5" : "gap-2.5"}`}>
             {JOIN_APPLY_AREAS.map((area) => {
               const active = data.areas.includes(area);
@@ -172,7 +163,7 @@ export function renderJoinApplyStep({
               );
             })}
           </div>
-        </div>
+        </JoinFormBorderedStep>
       );
     case 6:
       return (
@@ -186,8 +177,7 @@ export function renderJoinApplyStep({
               onChange={(e) => patch({ resume: e.target.files?.[0] ?? null })}
             />
           ) : null}
-          <div>
-            <StepPrompt variant={variant}>{prompt}</StepPrompt>
+          <JoinFormBorderedStep variant={variant} prompt={prompt}>
             <button
               type="button"
               data-join-apply-interactive
@@ -195,13 +185,13 @@ export function renderJoinApplyStep({
               tabIndex={interactive ? 0 : -1}
               onClick={() => interactive && resumeInputRef?.current?.click()}
               aria-label={prompt}
-              className={`${fieldClass} flex h-full min-h-0 items-center text-left`}
+              className={`min-h-[3.75rem] w-full text-left font-medium leading-snug tracking-[-0.01em] iphone-page:min-h-[4rem] ${resumeTextSize} ${inter.className}`}
             >
-              <span className={`min-w-0 flex-1 whitespace-normal break-words text-left ${data.resume ? "text-[#1E343A]" : "text-[#1E343A]/38"}`}>
+              <span className={`whitespace-normal break-words ${data.resume ? "text-[#1E343A]" : "text-[#1E343A]/38"}`}>
                 {data.resume ? data.resume.name : "Choose a file"}
               </span>
             </button>
-          </div>
+          </JoinFormBorderedStep>
         </>
       );
     case 7:
