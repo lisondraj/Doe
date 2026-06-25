@@ -81,7 +81,7 @@ export function JoinInternTracks({ variant }: { variant: "mobile" | "desktop" })
 
   if (variant === "desktop") {
     return (
-      <div className={`grid grid-cols-2 ${JOIN_DESKTOP_TRACK_ROW_COL_GAP}`} aria-label="Internship tracks">
+      <div className={`grid grid-cols-2 ${JOIN_DESKTOP_TRACK_ROW_COL_GAP}`} aria-label="Why join Doe">
         {JOIN_INTERN_TRACKS.map((track) => (
           <article key={track.title} className="min-w-0">
             <JoinInternTrackBlock
@@ -101,13 +101,13 @@ export function JoinInternTracks({ variant }: { variant: "mobile" | "desktop" })
   return (
     <div
       className={`flex flex-col ${JOIN_MOBILE_SECTION_STACK_GAP}`}
-      aria-label="Internship tracks"
+      aria-label="Why join Doe"
     >
       {JOIN_INTERN_TRACKS.map((track) => (
         <section
           key={track.title}
           className={`${JOIN_MOBILE_TRACK_SECTION} flex flex-col`}
-          aria-label={`${track.title} track`}
+          aria-label={`${track.title}`}
         >
           <JoinInternTrackBlock
             track={track}

@@ -8,39 +8,39 @@ export type JoinInternTrack = {
 
 export const JOIN_INTERN_TRACKS: readonly JoinInternTrack[] = [
   {
-    title: "Clinical",
+    title: "Experience",
     description: [
-      "Rotate alongside practicing clinicians.",
-      "See how care decisions happen at the bedside.",
-      "Build context for everything you ship.",
+      "Build your resume in a high-growth, fast-paced startup.",
+      "Take real ownership and ship meaningful work from day one.",
+      "Learn how a lean team moves quickly without cutting corners.",
     ],
     graphic: 0,
   },
   {
-    title: "Engineering",
+    title: "Network",
     description: [
-      "Ship features used in real clinics.",
-      "Work across product, infra, and clinical AI.",
-      "Learn how healthcare software actually ships.",
+      "Connect with industry leaders and technical peers.",
+      "Learn from clinicians, engineers, and operators in the field.",
+      "Build relationships that outlast the internship.",
     ],
     graphic: 1,
     cardFill: "agents",
   },
   {
-    title: "Research",
+    title: "The Mission",
     description: [
-      "Study how systems deliver care at scale.",
-      "Partner with clinical and ops teams on pilots.",
-      "Turn observations into measurable outcomes.",
+      "Support Doe's mission to rebuild healthcare.",
+      "Contribute to technical innovation across the US and Canada.",
+      "Work on problems that touch real patients and providers.",
     ],
     graphic: 2,
   },
   {
-    title: "Operations",
+    title: "Opportunity",
     description: [
-      "See how a modern practice runs day to day.",
-      "Support intake, routing, and patient comms.",
-      "Understand the business of care delivery.",
+      "A path to join the founding team after your internship.",
+      "Equity opportunity for interns who grow with Doe.",
+      "Shape what we build as an early contributor.",
     ],
     graphic: 3,
     cardFill: "agents",
