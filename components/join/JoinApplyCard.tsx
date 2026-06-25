@@ -235,13 +235,12 @@ function JoinApplyCardNameField({
 }
 
 const TOP_RIGHT_FIELDS = [
-  { step: 1, placeholder: "Email" },
-  { step: 2, placeholder: "Country" },
-  { step: 3, placeholder: "Education" },
-  { step: 4, placeholder: "School" },
-  { step: 7, placeholder: "LinkedIn" },
-  { step: 6, placeholder: "Resume" },
-  { step: 8, placeholder: "Notes" },
+  { step: 1, placeholder: "Email", singleLine: true },
+  { step: 2, placeholder: "Country", singleLine: false },
+  { step: 3, placeholder: "Education", singleLine: false },
+  { step: 4, placeholder: "School", singleLine: false },
+  { step: 7, placeholder: "LinkedIn", singleLine: false },
+  { step: 6, placeholder: "Resume", singleLine: false },
 ] as const;
 
 function spacedCapsLabel(label: string): string {
@@ -281,13 +280,28 @@ function ResetIcon({ className }: { className: string }) {
   );
 }
 
+function LinkedInIcon({ className }: { className: string }) {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" aria-hidden className={className}>
+      <rect width="16" height="16" rx="2.5" fill="currentColor" />
+      <path
+        d="M4.5 6.5v5M4.5 4.5v.25M8 11.5V9a1.5 1.5 0 0 1 3 0v2.5M8 6.5v5"
+        stroke="white"
+        strokeWidth="1.35"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 function capitalizeFirst(value: string): string {
   if (!value) return value;
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
 function formatCardValue(step: number, raw: string): string {
-  if (step === 1) return raw;
+  if (step === 1 || step === 7) return raw;
   return capitalizeFirst(raw);
 }
 
@@ -311,8 +325,6 @@ function getTopRightDisplayValue(
       return data.resume?.name ?? null;
     case 7:
       return data.linkedinUsername.trim() || null;
-    case 8:
-      return data.notes.trim() || null;
     default:
       return null;
   }
@@ -430,8 +442,14 @@ export function JoinApplyCard({
           {/* Top-right: other fields */}
           <div className={`absolute right-0 top-0 z-[2] ${styles.topRightMaxW} ${styles.topPad}`}>
             <div className={`flex flex-col items-end ${styles.topGap}`}>
-              {TOP_RIGHT_FIELDS.map(({ step, placeholder }) => {
+              {TOP_RIGHT_FIELDS.map(({ step, placeholder, singleLine }) => {
                 const value = getTopRightDisplayValue(step, data, touchedSteps);
+                const isLinkedIn = step === 7;
+                const displayText = value
+                  ? isLinkedIn
+                    ? `/${formatCardValue(step, value)}`
+                    : formatCardValue(step, value)
+                  : spacedCapsLabel(placeholder);
 
                 return (
                   <button
@@ -439,13 +457,25 @@ export function JoinApplyCard({
                     type="button"
                     disabled={readOnly}
                     onClick={() => onEdit(step)}
-                    className={`max-w-full whitespace-normal break-words text-right transition-opacity hover:opacity-90 active:scale-[0.98] ${
+                    className={`max-w-full text-right transition-opacity hover:opacity-90 active:scale-[0.98] ${
+                      singleLine ? "block overflow-hidden text-ellipsis whitespace-nowrap" : "whitespace-normal break-words"
+                    } ${
                       value
                         ? `${styles.filledFieldText} [animation:join-card-field-in_0.45s_cubic-bezier(0.22,1,0.36,1)_both]`
                         : styles.placeholderLabel
-                    } ${inter.className}`}
+                    } ${isLinkedIn && value ? "flex items-center gap-1.5 justify-end" : ""} ${inter.className}`}
                   >
-                    {value ? formatCardValue(step, value) : spacedCapsLabel(placeholder)}
+                    {isLinkedIn && value ? (
+                      <>
+                        <LinkedInIcon className={variant === "mobile"
+                          ? "h-[1.15em] w-[1.15em] shrink-0 iphone-page:h-[1.12em] iphone-page:w-[1.12em]"
+                          : "h-[1.1em] w-[1.1em] shrink-0"
+                        } />
+                        <span className="min-w-0 overflow-hidden text-ellipsis whitespace-nowrap">{displayText}</span>
+                      </>
+                    ) : (
+                      displayText
+                    )}
                   </button>
                 );
               })}

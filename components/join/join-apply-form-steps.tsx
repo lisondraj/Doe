@@ -22,8 +22,7 @@ export const JOIN_APPLY_STEP_PROMPTS = [
   "What school do you attend?",
   "Which areas would you like to help with?",
   "Upload your resume (optional)",
-  "Your LinkedIn profile",
-  "Anything you'd like to add?",
+  "LinkedIn (optional)",
 ] as const;
 
 function toggleArea(areas: JoinApplyArea[], area: JoinApplyArea): JoinApplyArea[] {
@@ -211,7 +210,6 @@ export function renderJoinApplyStep({
     case 7:
       return (
         <div className={`${joinFormPanelClass(variant)} h-full`}>
-          <p className={joinFormPromptClass(variant)}>{prompt}</p>
           <JoinLinkedInInput
             variant={variant}
             value={data.linkedinUsername}
@@ -220,22 +218,6 @@ export function renderJoinApplyStep({
             nested
             readOnly={readOnly}
             onEnter={onEnter}
-          />
-        </div>
-      );
-    case 8:
-      return (
-        <div>
-          <StepPrompt variant={variant}>{prompt}</StepPrompt>
-          <textarea
-            value={data.notes}
-            onChange={(e) => patch({ notes: e.target.value })}
-            placeholder="Optional notes"
-            aria-label={prompt}
-            readOnly={readOnly}
-            tabIndex={interactive ? 0 : -1}
-            rows={4}
-            className={`${fieldClass} h-full min-h-0 resize-none`}
           />
         </div>
       );

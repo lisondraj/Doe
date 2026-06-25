@@ -267,22 +267,47 @@ export function JoinCountrySlider({
   disabled?: boolean;
   className?: string;
 }) {
+  const optionSize =
+    variant === "mobile"
+      ? "px-5 py-[1.65rem] text-[1.375rem] iphone-page:px-5 iphone-page:py-[1.85rem] iphone-page:text-[1.5rem]"
+      : "px-4 py-3.5 text-[1.0625rem]";
+
+  const options: { value: JoinApplyCountry; label: string }[] = [
+    { value: "canada", label: "Canada" },
+    { value: "us", label: "United States" },
+  ];
+
   return (
-    <div
-      className={`${joinFormPanelClass(variant)}${className ? ` ${className}` : ""}`}
-    >
+    <div className={`${joinFormPanelClass(variant)}${className ? ` ${className}` : ""}`}>
       <p className={joinFormPromptClass(variant)}>{prompt}</p>
-      <JoinSegmentSlider
-        variant={variant}
-        ariaLabel="Country"
-        value={value}
-        onChange={onChange}
-        disabled={disabled}
-        options={[
-          { value: "canada", label: "Canada" },
-          { value: "us", label: "United States" },
-        ]}
-      />
+      <div className={`flex flex-col ${variant === "mobile" ? "gap-3 iphone-page:gap-3.5" : "gap-2.5"}`}>
+        {options.map((option) => {
+          const active = option.value === value;
+          return (
+            <button
+              key={option.value}
+              type="button"
+              aria-pressed={active}
+              disabled={disabled}
+              onClick={() => onChange(option.value)}
+              className={`w-full rounded-xl text-left font-medium leading-snug tracking-[-0.01em] transition-colors ${optionSize} ${inter.className}`}
+              style={
+                active
+                  ? {
+                      backgroundColor: JOIN_FORM_BEIGE.meter,
+                      color: JOIN_FORM_BEIGE.page,
+                    }
+                  : {
+                      backgroundColor: JOIN_FORM_BEIGE.fieldMuted,
+                      color: "rgba(30, 52, 58, 0.58)",
+                    }
+              }
+            >
+              {option.label}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
