@@ -151,8 +151,8 @@ export function renderJoinApplyStep({
       return (
         <JoinFormBorderedResumeField
           variant={variant}
-          resume={data.resume}
-          onChange={(resume) => patch({ resume })}
+          resumeFileName={data.resumeFileName}
+          onChange={(resumeFileName) => patch({ resumeFileName })}
           readOnly={readOnly}
           interactive={interactive}
           inputRef={resumeInputRef}

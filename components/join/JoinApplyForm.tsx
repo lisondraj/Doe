@@ -97,6 +97,15 @@ function JoinApplyCardForm({
     return () => window.removeEventListener("keydown", onKey);
   }, [activeStep, canProceed, handleAdvance]);
 
+  useEffect(() => {
+    if (!showSubmitReview) return;
+    const frame = requestAnimationFrame(() => {
+      const textarea = containerRef.current?.querySelector<HTMLTextAreaElement>("textarea[data-join-apply-interactive]");
+      textarea?.focus();
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [showSubmitReview]);
+
   const editor =
     activeStep !== null && activeStep !== 0 ? (
       <div data-join-apply-editor>
@@ -128,8 +137,6 @@ function JoinApplyCardForm({
       : `w-full inline-flex items-center justify-center rounded-2xl bg-black font-semibold text-white leading-none transition-opacity hover:opacity-90 active:scale-[0.99] active:opacity-80 text-[1.0625rem] py-[1.1rem] ${inter.className}`;
   const submitBtnWrapClass =
     variant === "mobile" ? "mt-5 iphone-page:mt-6" : "mt-4";
-  const submitReviewGap =
-    variant === "mobile" ? "mt-5 space-y-5 iphone-page:mt-6 iphone-page:space-y-6" : "mt-4 space-y-4";
 
   const handleSubmitRequest = useCallback(() => {
     setActiveStep(null);
@@ -179,6 +186,17 @@ function JoinApplyCardForm({
         onNameChange={(name) => patch({ name })}
         editor={editor}
         showResetConfirm={showResetConfirm}
+        showSubmitReview={showSubmitReview}
+        submitReviewEditor={
+          showSubmitReview ? (
+            <JoinFormBorderedTextarea
+              variant={variant}
+              value={data.additionalNotes}
+              onChange={(additionalNotes) => patch({ additionalNotes })}
+              placeholder="Anything else you'd like to add?"
+            />
+          ) : null
+        }
         onResetRequest={() => setShowResetConfirm(true)}
         onResetConfirm={() => {
           resetForm();
@@ -199,21 +217,13 @@ function JoinApplyCardForm({
       ) : null}
 
       {showSubmitReview ? (
-        <div className={submitReviewGap}>
-          <JoinFormBorderedTextarea
-            variant={variant}
-            value={data.additionalNotes}
-            onChange={(additionalNotes) => patch({ additionalNotes })}
-            placeholder="Anything else you'd like to add?"
-          />
-          <button
-            type="button"
-            onClick={handleConfirmSubmit}
-            className={submitBtnClass}
-          >
-            Confirm submission
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={handleConfirmSubmit}
+          className={`${submitBtnWrapClass} ${submitBtnClass}`}
+        >
+          Confirm submission
+        </button>
       ) : null}
     </div>
   );

@@ -464,15 +464,15 @@ function ResumeFileIcon({ className }: { className: string }) {
 
 export function JoinFormBorderedResumeField({
   variant,
-  resume,
+  resumeFileName,
   onChange,
   readOnly = false,
   interactive = true,
   inputRef,
 }: {
   variant: "mobile" | "desktop";
-  resume: File | null;
-  onChange: (file: File | null) => void;
+  resumeFileName: string | null;
+  onChange: (fileName: string | null) => void;
   readOnly?: boolean;
   interactive?: boolean;
   inputRef?: RefObject<HTMLInputElement>;
@@ -501,11 +501,11 @@ export function JoinFormBorderedResumeField({
     input.click();
   };
 
-  const label = resume ? resume.name : "Choose a file";
+  const label = resumeFileName ?? "Choose a file";
   const optionalClass =
     variant === "mobile"
-      ? "mt-2 text-[0.8125rem] leading-snug iphone-page:text-[0.875rem]"
-      : "mt-1.5 text-[0.75rem] leading-snug";
+      ? "mt-3 text-[1rem] leading-snug iphone-page:text-[1.0625rem]"
+      : "mt-2 text-[0.9375rem] leading-snug";
 
   return (
     <div className="w-full">
@@ -519,7 +519,10 @@ export function JoinFormBorderedResumeField({
           type="file"
           accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
           className="sr-only"
-          onChange={(e) => onChange(e.target.files?.[0] ?? null)}
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            onChange(file?.name ?? null);
+          }}
         />
       ) : null}
 
@@ -527,7 +530,7 @@ export function JoinFormBorderedResumeField({
         className={`border ${innerPad}`}
         style={{ backgroundColor: JOIN_FORM_BEIGE.fieldMuted, borderColor: JOIN_FORM_BEIGE.border }}
       >
-        {resume ? (
+        {resumeFileName ? (
           <div
             className={`flex min-w-0 items-center gap-3 ${shell} ${textSize} font-medium leading-snug tracking-[-0.01em] text-[#1E343A]`}
           >
@@ -550,7 +553,7 @@ export function JoinFormBorderedResumeField({
         )}
       </div>
 
-      {resume && interactive && !readOnly ? (
+      {resumeFileName && interactive && !readOnly ? (
         <button
           type="button"
           data-join-apply-interactive

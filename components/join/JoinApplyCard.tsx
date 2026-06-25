@@ -303,7 +303,7 @@ function capitalizeFirst(value: string): string {
 }
 
 function formatCardValue(step: number, raw: string): string {
-  if (step === 1 || step === 7) return raw;
+  if (step === 1 || step === 6 || step === 7) return raw;
   return capitalizeFirst(raw);
 }
 
@@ -326,7 +326,7 @@ function getTopRightDisplayValue(
     case 8:
       return data.programOfStudy.trim() || null;
     case 6:
-      return data.resume?.name ?? null;
+      return data.resumeFileName?.trim() || null;
     case 7:
       return data.linkedinUsername.trim() || null;
     default:
@@ -368,6 +368,8 @@ export function JoinApplyCard({
   readOnly = false,
   editor,
   showResetConfirm = false,
+  showSubmitReview = false,
+  submitReviewEditor,
   onResetRequest,
   onResetConfirm,
   onResetCancel,
@@ -382,12 +384,16 @@ export function JoinApplyCard({
   readOnly?: boolean;
   editor?: ReactNode;
   showResetConfirm?: boolean;
+  showSubmitReview?: boolean;
+  submitReviewEditor?: ReactNode;
   onResetRequest?: () => void;
   onResetConfirm?: () => void;
   onResetCancel?: () => void;
 }) {
   const styles = CARD_STYLES[variant];
   const isEditing = activeStep !== null && activeStep !== 0;
+  const isSubmitReviewing = showSubmitReview && Boolean(submitReviewEditor);
+  const isModalOpen = isEditing || showResetConfirm || isSubmitReviewing;
   const name = data.name;
 
   return (
@@ -408,7 +414,7 @@ export function JoinApplyCard({
         style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
       >
         <div
-          className={`absolute inset-0 transition-[filter] duration-300 ${isEditing || showResetConfirm ? `pointer-events-none ${CARD_BLUR}` : ""}`}
+          className={`absolute inset-0 transition-[filter] duration-300 ${isModalOpen ? `pointer-events-none ${CARD_BLUR}` : ""}`}
         >
           <div className={`pointer-events-none ${styles.lineBand}`}>
             {variant === "desktop" ? (
@@ -502,7 +508,7 @@ export function JoinApplyCard({
 
         {/* Bottom-left: inline name — outside blur layer so it stays fixed when editing */}
         <div
-          className={`absolute bottom-0 left-0 z-[3] ${isEditing || showResetConfirm ? "pointer-events-none" : ""}`}
+          className={`absolute bottom-0 left-0 z-[3] ${isModalOpen ? "pointer-events-none" : ""}`}
         >
           <JoinApplyCardNameField
             variant={variant}
@@ -539,6 +545,21 @@ export function JoinApplyCard({
                 className={`w-full ${styles.editorMaxW} [animation:join-step-enter-down_0.38s_cubic-bezier(0.22,1,0.36,1)_both]`}
               >
                 {editor}
+              </div>
+            </div>
+          </>
+        ) : null}
+
+        {isSubmitReviewing ? (
+          <>
+            <div className={`absolute inset-0 z-[4] ${MODAL_SCRIM}`} aria-hidden />
+            <div
+              className={`absolute inset-0 z-[5] flex items-center justify-center ${styles.editorPad}`}
+            >
+              <div
+                className={`w-full ${styles.editorMaxW} [animation:join-step-enter-down_0.38s_cubic-bezier(0.22,1,0.36,1)_both]`}
+              >
+                {submitReviewEditor}
               </div>
             </div>
           </>
