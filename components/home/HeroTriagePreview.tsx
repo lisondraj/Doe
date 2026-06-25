@@ -254,7 +254,7 @@ function InboxListRow({
   const nameFs = joinCompact ? "0.58rem" : mobile ? "0.96rem" : "0.62rem";
   const subFs = joinCompact ? "0.52rem" : mobile ? "0.88rem" : "0.56rem";
   const timeFs = joinCompact ? "0.46rem" : mobile ? "0.78rem" : "0.48rem";
-  const pad = joinCompact ? "0.52rem 0.46rem" : mobile ? "0.62rem 0.9rem" : "0.42rem 0.52rem";
+  const pad = joinCompact ? "0.85rem 0.46rem" : mobile ? "0.62rem 0.9rem" : "0.42rem 0.52rem";
   const gap = joinCompact ? "0.38rem" : mobile ? "0.62rem" : "0.38rem";
   const rowMargin = joinCompact ? "0 0.24rem" : mobile ? "0 0.5rem" : "0 0.32rem";
   const rowRadius = joinCompact ? "0.42rem" : mobile ? "0.85rem" : "0.55rem";

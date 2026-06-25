@@ -178,12 +178,12 @@ export const JOIN_MOBILE_HERO_TRIAGE_PANEL = {
   left: "32%",
   top: "7%",
   panelWidth: "min(42rem, 150vw)",
-  /** Tall enough that scaled top clears hero top while bottom-left anchor stays fixed. */
-  outerHeight: "62rem",
-  innerMinHeight: "64rem",
+  /** Shorter panel so the bottom exits the hero card, eliminating the white void below rows. */
+  outerHeight: "38rem",
+  innerMinHeight: "40rem",
 } as const;
 
-export const JOIN_MOBILE_HERO_TRIAGE_SCALE = 1.48;
+export const JOIN_MOBILE_HERO_TRIAGE_SCALE = 1.75;
 
 export type JoinHeroAiFeatureCardId = "brain" | "agents";
 
