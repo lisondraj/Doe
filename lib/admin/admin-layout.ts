@@ -38,16 +38,28 @@ export const ADMIN_MOBILE_DETAIL_TITLE_TW = `text-[clamp(1.85rem,1.5rem+1.35vmin
 
 export const ADMIN_MOBILE_CARD_RADIUS = "rounded-2xl iphone-page:rounded-[1.35rem]";
 
+export const ADMIN_MOBILE_SURFACE =
+  `border border-[#E8E8E8] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)] ${ADMIN_MOBILE_CARD_RADIUS}`;
+
+export const ADMIN_MOBILE_STAT_GRID =
+  "grid grid-cols-2 gap-3 iphone-page:gap-4";
+
+export const ADMIN_MOBILE_STAT_TILE =
+  "flex min-h-[5.25rem] flex-col justify-center p-4 iphone-page:min-h-[5.5rem] iphone-page:p-[1.125rem]";
+
 export const ADMIN_MOBILE_INPUT_H =
   "h-12 iphone-page:h-[3.35rem]";
 
 export const ADMIN_MOBILE_BUTTON_TW = `inline-flex items-center justify-center rounded-xl border border-[#E2E2E2] bg-white px-4 text-[clamp(1rem,0.9rem+0.45vmin,1.1rem)] iphone-page:px-5 iphone-page:text-[1.0625rem] font-medium text-neutral-700 transition-colors hover:bg-neutral-50 disabled:opacity-60 ${inter.className}`;
 
 export const ADMIN_MOBILE_STACK_GAP =
-  "gap-4 iphone-page:gap-[max(1.35rem,1.05rem+1.1vmin,2rem)]";
+  "gap-3 iphone-page:gap-4";
 
 export const ADMIN_MOBILE_SECTION_GAP =
-  "space-y-5 iphone-page:space-y-[clamp(1.35rem,1.05rem+1.1vmin,2rem)]";
+  "space-y-4 iphone-page:space-y-5";
+
+export const ADMIN_MOBILE_CHART_STACK =
+  "mt-5 flex flex-col gap-4 iphone-page:mt-6 iphone-page:gap-5";
 
 /** Bottom tab bar inner padding — mirrors page horizontal inset. */
 export const ADMIN_MOBILE_TAB_BAR_INSET =
