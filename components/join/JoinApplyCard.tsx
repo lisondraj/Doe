@@ -26,12 +26,12 @@ const CARD_STYLES = {
     topPad: "p-8 iphone-page:p-9",
     topLeftMaxW: "max-w-[44%] iphone-page:max-w-[42%]",
     topRightMaxW: "max-w-[56%] iphone-page:max-w-[58%]",
-    topGap: "gap-7 iphone-page:gap-8",
+    topGap: "gap-9 iphone-page:gap-10",
     nameLeading: 1.04,
     nameCornerPad:
-      "px-8 pb-10 pt-0 iphone-page:px-[clamp(2rem,1.65rem+1.45vmin,2.6rem)] iphone-page:pb-[clamp(2.35rem,1.9rem+1.6vmin,2.85rem)]",
+      "px-8 pb-14 pt-0 iphone-page:px-[clamp(2rem,1.65rem+1.45vmin,2.6rem)] iphone-page:pb-[clamp(3rem,2.5rem+1.8vmin,3.75rem)]",
     lineBand:
-      "absolute inset-x-0 z-[1] bottom-[12.5rem] h-[26rem] iphone-page:bottom-[13.25rem] iphone-page:h-[28rem]",
+      "absolute inset-x-0 z-[1] bottom-[11.75rem] h-[10rem] iphone-page:bottom-[12.5rem] iphone-page:h-[11rem]",
     roleChip:
       "w-fit max-w-full shrink-0 rounded-xl px-2.5 py-1.5 text-left font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[clamp(1.2rem,4vw,1.55rem)] iphone-page:px-3 iphone-page:py-2 iphone-page:text-[clamp(1.3rem,1.1rem+1.2vmin,1.7rem)]",
     roleGap: "gap-y-2 iphone-page:gap-y-2.5",
@@ -56,10 +56,10 @@ const CARD_STYLES = {
     topPad: "p-7",
     topLeftMaxW: "max-w-[42%]",
     topRightMaxW: "max-w-[56%]",
-    topGap: "gap-6",
+    topGap: "gap-8",
     nameLeading: 1.04,
-    nameCornerPad: "px-7 pb-8 pt-0",
-    lineBand: "absolute inset-x-0 z-[1] bottom-[9.75rem] h-[16.5rem]",
+    nameCornerPad: "px-7 pb-10 pt-0",
+    lineBand: "absolute inset-x-0 z-[1] bottom-[8.25rem] h-[8.5rem]",
     roleChip:
       "w-fit max-w-full shrink-0 rounded-lg px-2.5 py-1.5 text-left font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[1.125rem]",
     roleGap: "gap-y-1.5",
@@ -170,7 +170,6 @@ function JoinApplyCardNameField({
   return (
     <div
       className={`w-[min(100%,19em)] ${cornerPad} pt-0 ${lora.className} ${loraSizeClass}`}
-      style={blockStyle}
       onClick={focusName}
       onKeyDown={(e) => {
         if (readOnly) return;
