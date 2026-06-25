@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { NAV_HREFS } from "@/components/doe-nav-data";
 import { lora } from "@/lib/home/fonts";
+import { JOIN_DESKTOP_CONTENT } from "@/lib/join/join-layout";
 
 const DESKTOP_FOOTER_LINKS = [
   { label: "Features", href: NAV_HREFS.Features },
@@ -24,7 +25,7 @@ const FOOTER_GRADIENT = `
 
 export function DesktopSiteFooter({ linksDisabled = false }: { linksDisabled?: boolean }) {
   return (
-    <div className="relative left-1/2 w-screen -translate-x-1/2 px-8 pb-8">
+    <div className={`${JOIN_DESKTOP_CONTENT} pb-8`}>
       <div
         className="relative flex min-h-[160px] items-center overflow-hidden rounded-2xl py-20"
         style={{ background: FOOTER_GRADIENT }}
@@ -38,7 +39,7 @@ export function DesktopSiteFooter({ linksDisabled = false }: { linksDisabled?: b
             mixBlendMode: "overlay",
           }}
         />
-        <div className="relative z-10 mx-auto flex w-full max-w-[1400px] items-center justify-between px-8">
+        <div className="relative z-10 flex w-full items-center justify-between">
           {linksDisabled ? (
             <h2 className={`text-4xl font-normal text-white ${lora.className}`}>Doe</h2>
           ) : (

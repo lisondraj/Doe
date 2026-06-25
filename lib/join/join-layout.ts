@@ -12,21 +12,17 @@ export const JOIN_MOBILE_SECTION_GUTTER =
 export const JOIN_MOBILE_NAV_CLEARANCE =
   "pt-[calc(env(safe-area-inset-top,0px)+clamp(4.25rem,3.5rem+2.5vmin,5.25rem))]";
 
-/** Hero band — top gutter only; gap before tracks is a spacer sibling below. */
+/** Hero band — top gutter; gap before tracks comes from main flex gap below. */
 export const JOIN_MOBILE_HERO_SECTION =
-  "flex flex-col pt-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
+  "flex shrink-0 flex-col pt-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
 
-/** Vertical stack gap between intern track sections. */
+/** Vertical stack gap — hero→Clinical and between track sections. */
 export const JOIN_MOBILE_SECTION_STACK_GAP =
   "gap-14 iphone-page:gap-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
 
-/** Beige band between hero and first track — matches inter-track gap. */
-export const JOIN_MOBILE_HERO_TO_TRACK_SPACER =
-  "min-h-14 shrink-0 iphone-page:min-h-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
-
-/** Hero card — proportional height so the track spacer stays visible on screen. */
+/** Hero card — first screen minus nav, top gutter, and hero→track gap. */
 export const JOIN_MOBILE_HERO_CARD_HEIGHT =
-  "h-[calc(var(--app-vh,100lvh)*0.52)] min-h-0 w-full shrink-0 iphone-page:h-[calc(var(--app-vh,100lvh)*0.5)] iphone-page:min-h-0";
+  "h-[calc(var(--app-vh,100lvh)-env(safe-area-inset-top,0px)-clamp(4.25rem,3.5rem+2.5vmin,5.25rem)-3*max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin)))] min-h-0 w-full shrink-0";
 
 /** Half of join mobile hero height — intern track graphic boxes (taller on iPhone). */
 export const JOIN_MOBILE_CARD_HEIGHT =
