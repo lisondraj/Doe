@@ -4,10 +4,8 @@ import type { JoinApplyCountry, JoinApplyEducation } from "@/lib/join/join-apply
 import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
 import { inter } from "@/lib/home/fonts";
 
-export function joinFormShellClass(variant: "mobile" | "desktop") {
-  return variant === "mobile"
-    ? "mx-auto w-full max-w-none"
-    : "mx-auto w-full max-w-[20.5rem]";
+export function joinFormShellClass(_variant: "mobile" | "desktop") {
+  return "mx-auto w-full max-w-none";
 }
 
 export function joinFormFieldClass(variant: "mobile" | "desktop") {

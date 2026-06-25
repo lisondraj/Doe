@@ -20,6 +20,8 @@ export function JoinDesktopView() {
         <main className="pt-[5.5rem]">
           <div className={JOIN_DESKTOP_CONTENT}>
             <JoinInternshipHero variant="desktop" />
+          </div>
+          <div className={JOIN_DESKTOP_CONTENT}>
             <JoinInternTracks variant="desktop" />
           </div>
           <JoinApplyFormSection variant="desktop" />

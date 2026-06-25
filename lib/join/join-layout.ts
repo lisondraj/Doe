@@ -41,8 +41,16 @@ export const JOIN_MOBILE_APPLY_SECTION =
 /** Desktop hero — same proportions as mobile, capped for wide screens. */
 export const JOIN_DESKTOP_HERO_HEIGHT = "min-h-[min(72vh,44rem)] h-[min(72vh,44rem)]";
 
-/** Half of join desktop hero height. */
+/** Legacy stacked desktop track card height. */
 export const JOIN_DESKTOP_CARD_HEIGHT = "min-h-[min(36vh,22rem)] h-[min(36vh,22rem)]";
+
+/** Desktop intern track row — four compact cards in one line. */
+export const JOIN_DESKTOP_TRACK_ROW_CARD_HEIGHT = "min-h-[11rem] h-[11rem]";
+export const JOIN_DESKTOP_TRACK_ROW_GAP = "mt-12";
+export const JOIN_DESKTOP_TRACK_ROW_COL_GAP = "gap-5";
+
+/** Desktop applicant card — scaled from iPhone inline editor card. */
+export const JOIN_DESKTOP_APPLY_CARD_HEIGHT = "h-[28rem]";
 
 export const JOIN_DESKTOP_TRACK_GAP = "mt-14";
 export const JOIN_DESKTOP_VIEWPORT_SPACER = "min-h-[100dvh] h-[100dvh]";

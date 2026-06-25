@@ -7,7 +7,7 @@ import {
   DOEPHONE_SECTION_CAROUSEL_MENU_GAP,
   DOEPHONE_SECTION_TITLE_CAROUSEL_GAP,
 } from "@/lib/doephone/section-styles";
-import { JOIN_DESKTOP_CONTENT, JOIN_MOBILE_APPLY_SECTION } from "@/lib/join/join-layout";
+import { JOIN_DESKTOP_CONTENT, JOIN_DESKTOP_TRACK_ROW_GAP, JOIN_MOBILE_APPLY_SECTION } from "@/lib/join/join-layout";
 
 export function JoinApplyFormSection({ variant }: { variant: "mobile" | "desktop" }) {
   if (variant === "mobile") {
@@ -27,9 +27,14 @@ export function JoinApplyFormSection({ variant }: { variant: "mobile" | "desktop
   }
 
   return (
-    <section className="w-full bg-[#F7F6F3] py-14" aria-label="Internship application">
+    <section className={`w-full ${JOIN_DESKTOP_TRACK_ROW_GAP} pb-20`} aria-label="Internship application">
       <div className={JOIN_DESKTOP_CONTENT}>
-        <JoinApplyForm variant="desktop" />
+        <JoinInternTrackReveal variant="desktop" className="flex w-full flex-col">
+          <DoePhoneSectionTitle line1="Build your" line2="applicant card" />
+          <div className={`${DOEPHONE_SECTION_TITLE_CAROUSEL_GAP} w-full`}>
+            <JoinApplyForm variant="desktop" />
+          </div>
+        </JoinInternTrackReveal>
       </div>
     </section>
   );
