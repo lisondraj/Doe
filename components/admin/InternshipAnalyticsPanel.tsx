@@ -7,11 +7,11 @@ import { DoeBuildIcon } from "@/components/admin/doe-build-icon";
 import type { AdminInternshipApplication } from "@/lib/admin/internship-applications";
 import { buildInternshipAnalytics } from "@/lib/admin/internship-analytics";
 import {
-  ADMIN_MOBILE_CHART_STACK,
-  ADMIN_MOBILE_STAT_GRID,
+  ADMIN_MOBILE_CARD_RADIUS,
+  ADMIN_MOBILE_SECTION_GAP,
+  ADMIN_MOBILE_SECTION_TITLE_TW,
   ADMIN_MOBILE_STAT_VALUE_TW,
   ADMIN_MOBILE_LABEL_TW,
-  ADMIN_MOBILE_SURFACE,
 } from "@/lib/admin/admin-layout";
 import { inter } from "@/lib/home/fonts";
 
@@ -28,9 +28,9 @@ function SummaryTile({
 }) {
   if (variant === "mobile") {
     return (
-      <div className={`${ADMIN_MOBILE_SURFACE} flex min-h-[5.25rem] flex-col justify-center p-4 iphone-page:min-h-[5.5rem] iphone-page:p-[1.125rem]`}>
+      <div className={`border border-[#E8E8E8] bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] ${ADMIN_MOBILE_CARD_RADIUS}`}>
         <p className={ADMIN_MOBILE_LABEL_TW}>{label}</p>
-        <p className={`mt-1.5 ${ADMIN_MOBILE_STAT_VALUE_TW}`}>{value}</p>
+        <p className={`mt-2 ${ADMIN_MOBILE_STAT_VALUE_TW}`}>{value}</p>
       </div>
     );
   }
@@ -56,44 +56,11 @@ export function InternshipAnalyticsPanel({
 }) {
   const analytics = useMemo(() => buildInternshipAnalytics(applications), [applications]);
   const chartLayout = variant === "mobile" ? "stack" : "row";
+  const summaryGrid = variant === "mobile" ? "grid-cols-2" : "grid-cols-4";
+  const chartGrid = variant === "mobile" ? "grid-cols-1" : "grid-cols-2";
   const chartVariant = variant;
 
   const resumePlusLinkedIn = analytics.byResumeLinkedIn.find((item) => item.label === "Resume + LinkedIn")?.value ?? 0;
-
-  const summaryTiles = (
-    <>
-      <SummaryTile variant={variant} label="Total signups" value={analytics.total} />
-      <SummaryTile
-        variant={variant}
-        label="With resume"
-        value={analytics.byResumeStatus.find((item) => item.label === "With resume")?.value ?? 0}
-      />
-      <SummaryTile variant={variant} label="Resume + LinkedIn" value={resumePlusLinkedIn} />
-      <SummaryTile
-        variant={variant}
-        label="Role selections"
-        value={analytics.byRole.reduce((sum, item) => sum + item.value, 0)}
-      />
-    </>
-  );
-
-  const charts = (
-    <>
-      <AdminDonutChart variant={chartVariant} title="By country" items={analytics.byCountry} layout={chartLayout} />
-      <AdminDonutChart variant={chartVariant} title="By education level" items={analytics.byEducation} layout={chartLayout} />
-      <AdminBarChart variant={chartVariant} title="Top universities" items={analytics.byUniversity} />
-      <AdminBarChart variant={chartVariant} title="Top fields of study" items={analytics.byProgram} />
-      <AdminBarChart variant={chartVariant} title="Resume submissions" items={analytics.byResumeStatus} />
-      <AdminBarChart variant={chartVariant} title="Resume + LinkedIn breakdown" items={analytics.byResumeLinkedIn} />
-      <AdminBarChart variant={chartVariant} title="Roles selected" items={analytics.byRole} />
-      <AdminBarChart
-        variant={chartVariant}
-        title="Signups by month"
-        items={analytics.byMonth}
-        emptyLabel="No timeline data yet."
-      />
-    </>
-  );
 
   return (
     <div className={`flex h-full min-h-0 flex-col ${inter.className}`}>
@@ -117,44 +84,50 @@ export function InternshipAnalyticsPanel({
             </button>
           </div>
         </header>
-      ) : null}
+      ) : (
+        <h2 className={`shrink-0 pb-4 ${ADMIN_MOBILE_SECTION_TITLE_TW}`}>Analytics</h2>
+      )}
 
       <div className={`min-h-0 flex-1 overflow-y-auto ${variant === "mobile" ? "" : "px-4 py-4"}`}>
-        {variant === "mobile" ? (
-          <>
-            <div className={ADMIN_MOBILE_STAT_GRID}>{summaryTiles}</div>
-            <div className={ADMIN_MOBILE_CHART_STACK}>{charts}</div>
-          </>
-        ) : (
-          <>
-            <div className="grid grid-cols-4 gap-3">{summaryTiles}</div>
+        <div className={`grid gap-3 ${summaryGrid} ${variant === "mobile" ? ADMIN_MOBILE_SECTION_GAP : ""}`}>
+          <SummaryTile variant={variant} label="Total signups" value={analytics.total} />
+          <SummaryTile
+            variant={variant}
+            label="With resume"
+            value={analytics.byResumeStatus.find((item) => item.label === "With resume")?.value ?? 0}
+          />
+          <SummaryTile variant={variant} label="Resume + LinkedIn" value={resumePlusLinkedIn} />
+          <SummaryTile
+            variant={variant}
+            label="Role selections"
+            value={analytics.byRole.reduce((sum, item) => sum + item.value, 0)}
+          />
+        </div>
 
-            <div className="mt-4 grid grid-cols-2 gap-4">
-              <AdminDonutChart variant={chartVariant} title="By country" items={analytics.byCountry} layout={chartLayout} />
-              <AdminDonutChart variant={chartVariant} title="By education level" items={analytics.byEducation} layout={chartLayout} />
-            </div>
+        <div className={`grid gap-4 ${chartGrid} ${variant === "mobile" ? "mt-5 iphone-page:mt-6" : "mt-4"}`}>
+          <AdminDonutChart variant={chartVariant} title="By country" items={analytics.byCountry} layout={chartLayout} />
+          <AdminDonutChart variant={chartVariant} title="By education level" items={analytics.byEducation} layout={chartLayout} />
+        </div>
 
-            <div className="mt-4 grid grid-cols-2 gap-4">
-              <AdminBarChart variant={chartVariant} title="Top universities" items={analytics.byUniversity} />
-              <AdminBarChart variant={chartVariant} title="Top fields of study" items={analytics.byProgram} />
-            </div>
+        <div className={`grid gap-4 ${chartGrid} mt-4`}>
+          <AdminBarChart variant={chartVariant} title="Top universities" items={analytics.byUniversity} />
+          <AdminBarChart variant={chartVariant} title="Top fields of study" items={analytics.byProgram} />
+        </div>
 
-            <div className="mt-4 grid grid-cols-2 gap-4">
-              <AdminBarChart variant={chartVariant} title="Resume submissions" items={analytics.byResumeStatus} />
-              <AdminBarChart variant={chartVariant} title="Resume + LinkedIn breakdown" items={analytics.byResumeLinkedIn} />
-            </div>
+        <div className={`grid gap-4 ${chartGrid} mt-4`}>
+          <AdminBarChart variant={chartVariant} title="Resume submissions" items={analytics.byResumeStatus} />
+          <AdminBarChart variant={chartVariant} title="Resume + LinkedIn breakdown" items={analytics.byResumeLinkedIn} />
+        </div>
 
-            <div className="mt-4 grid grid-cols-2 gap-4 pb-2">
-              <AdminBarChart variant={chartVariant} title="Roles selected" items={analytics.byRole} />
-              <AdminBarChart
-                variant={chartVariant}
-                title="Signups by month"
-                items={analytics.byMonth}
-                emptyLabel="No timeline data yet."
-              />
-            </div>
-          </>
-        )}
+        <div className={`grid gap-4 pb-2 ${chartGrid} mt-4`}>
+          <AdminBarChart variant={chartVariant} title="Roles selected" items={analytics.byRole} />
+          <AdminBarChart
+            variant={chartVariant}
+            title="Signups by month"
+            items={analytics.byMonth}
+            emptyLabel="No timeline data yet."
+          />
+        </div>
       </div>
     </div>
   );

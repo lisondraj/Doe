@@ -24,10 +24,10 @@ import {
   ADMIN_MOBILE_LABEL_TW,
   ADMIN_MOBILE_LIST_NAME_TW,
   ADMIN_MOBILE_META_TW,
-  ADMIN_MOBILE_STAT_GRID,
+  ADMIN_MOBILE_SECTION_GAP,
+  ADMIN_MOBILE_SECTION_TITLE_TW,
   ADMIN_MOBILE_STAT_VALUE_TW,
   ADMIN_MOBILE_STACK_GAP,
-  ADMIN_MOBILE_SURFACE,
 } from "@/lib/admin/admin-layout";
 import { inter, lora } from "@/lib/home/fonts";
 
@@ -44,9 +44,9 @@ function StatCard({
 }) {
   if (variant === "mobile") {
     return (
-      <div className={`${ADMIN_MOBILE_SURFACE} flex min-h-[5.25rem] flex-col justify-center p-4 iphone-page:min-h-[5.5rem] iphone-page:p-[1.125rem]`}>
+      <div className={`border border-[#E8E8E8] bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] ${ADMIN_MOBILE_CARD_RADIUS}`}>
         <p className={ADMIN_MOBILE_LABEL_TW}>{label}</p>
-        <p className={`mt-1.5 ${ADMIN_MOBILE_STAT_VALUE_TW}`}>{value}</p>
+        <p className={`mt-2 ${ADMIN_MOBILE_STAT_VALUE_TW}`}>{value}</p>
       </div>
     );
   }
@@ -109,7 +109,7 @@ function ApplicationListItem({
       <button
         type="button"
         onClick={onSelect}
-        className={`flex w-full items-start gap-4 border-b border-[#F0F0F0] px-4 py-4 text-left transition-colors iphone-page:gap-5 iphone-page:px-5 iphone-page:py-5 ${
+        className={`flex w-full items-start gap-4 border-b border-[#F0F0F0] py-4 text-left transition-colors iphone-page:gap-5 iphone-page:py-5 ${
           selected ? "bg-white" : "bg-transparent active:bg-white/80"
         }`}
       >
@@ -200,7 +200,7 @@ function ApplicationDetail({
 
   return (
     <div className={`flex h-full min-h-0 flex-col bg-white ${variant === "mobile" ? "" : ""}`}>
-      <header className={`border-b border-[#EFEFEF] ${variant === "mobile" ? "px-5 py-5 iphone-page:px-6 iphone-page:py-6" : "px-5 py-4"}`}>
+      <header className={`border-b border-[#EFEFEF] ${variant === "mobile" ? "px-0 py-5 iphone-page:py-6" : "px-5 py-4"}`}>
         <p className={variant === "mobile" ? ADMIN_MOBILE_LABEL_TW : "text-[10px] font-semibold uppercase tracking-wider text-neutral-400"}>
           Applicant card
         </p>
@@ -212,7 +212,7 @@ function ApplicationDetail({
         </p>
       </header>
 
-      <div className={`min-h-0 flex-1 overflow-y-auto ${variant === "mobile" ? "px-5 py-1 iphone-page:px-6" : "px-5 py-2"}`}>
+      <div className={`min-h-0 flex-1 overflow-y-auto ${variant === "mobile" ? "px-0 py-1" : "px-5 py-2"}`}>
         <DetailField variant={variant} label="Email" value={application.email} />
         <DetailField variant={variant} label="Country" value={formatCountry(application.country)} />
         <DetailField variant={variant} label="Education" value={formatEducation(application.education)} />
@@ -306,7 +306,7 @@ function ApplicationDetail({
 function GroupHeader({ label, count, variant }: { label: string; count: number; variant: PanelVariant }) {
   if (variant === "mobile") {
     return (
-      <div className="sticky top-0 z-[1] border-b border-[#ECECEC] bg-[#FAFAFA] px-4 py-3 iphone-page:px-5 iphone-page:py-3.5">
+      <div className="sticky top-0 z-[1] border-b border-[#ECECEC] bg-[#FAFAFA] py-3">
         <div className="flex items-center justify-between gap-3">
           <p className={`truncate ${ADMIN_MOBILE_LABEL_TW} text-neutral-600`}>{label}</p>
           <span className="shrink-0 rounded-full bg-white px-2.5 py-0.5 text-[0.82rem] font-semibold tabular-nums text-neutral-500 iphone-page:text-[0.88rem]">
@@ -348,7 +348,7 @@ function ApplicationList({
 }) {
   const emptyClass =
     variant === "mobile"
-      ? `px-4 py-12 text-center ${ADMIN_MOBILE_META_TW} iphone-page:px-5`
+      ? `py-12 text-center ${ADMIN_MOBILE_META_TW}`
       : "px-4 py-10 text-center text-[13px] text-neutral-500";
 
   if (visibleApplications.length === 0) {
@@ -491,17 +491,19 @@ export function InternshipSignupsPanel({
   if (variant === "mobile" && mobileDetailOpen && selected) {
     return (
       <div className={`flex h-full min-h-0 flex-col ${inter.className}`}>
-        <button
-          type="button"
-          onClick={() => setMobileDetailOpen(false)}
-          className={`${ADMIN_MOBILE_BUTTON_TW} -ml-1 mb-4 w-fit gap-2 border-0 bg-transparent px-2 text-neutral-600 hover:bg-neutral-100`}
-        >
-          <DoeBuildIcon className="h-5 w-5 shrink-0">
-            <path d="m15 18-6-6 6-6" />
-          </DoeBuildIcon>
-          Back
-        </button>
-        <div className={`${ADMIN_MOBILE_SURFACE} min-h-0 flex-1 overflow-hidden`}>
+        <header className="shrink-0 pb-4">
+          <button
+            type="button"
+            onClick={() => setMobileDetailOpen(false)}
+            className={`${ADMIN_MOBILE_BUTTON_TW} ${ADMIN_MOBILE_INPUT_H} gap-2 px-4`}
+          >
+            <DoeBuildIcon className="h-5 w-5">
+              <path d="m15 18-6-6 6-6" />
+            </DoeBuildIcon>
+            Back to signups
+          </button>
+        </header>
+        <div className="min-h-0 flex-1 overflow-hidden">
           <ApplicationDetail
             application={selected}
             resendingConfirmation={resendingConfirmation}
@@ -514,7 +516,7 @@ export function InternshipSignupsPanel({
     );
   }
 
-  const statsGrid = variant === "mobile" ? ADMIN_MOBILE_STAT_GRID : "grid grid-cols-4 gap-3";
+  const statsGrid = variant === "mobile" ? "grid-cols-2" : "grid-cols-4";
   const inputTextClass =
     variant === "mobile"
       ? "min-w-0 flex-1 bg-transparent text-[clamp(1.02rem,0.9rem+0.5vmin,1.12rem)] iphone-page:text-[1.0625rem] text-neutral-800 outline-none placeholder:text-neutral-400"
@@ -544,27 +546,20 @@ export function InternshipSignupsPanel({
             </button>
           </div>
         </header>
-      ) : null}
+      ) : (
+        <h2 className={`shrink-0 pb-4 ${ADMIN_MOBILE_SECTION_TITLE_TW}`}>Signups</h2>
+      )}
 
-      <div className={variant === "mobile" ? statsGrid : "border-b border-[#EFEFEF] px-4 py-3"}>
-        {variant === "desktop" ? (
-          <div className="grid grid-cols-4 gap-3">
-            <StatCard variant={variant} label="Total signups" value={stats.total} />
-            <StatCard variant={variant} label="With resume" value={stats.withResume} />
-            <StatCard variant={variant} label="With LinkedIn" value={stats.withLinkedIn} />
-            <StatCard variant={variant} label="With notes" value={stats.withNotes} />
-          </div>
-        ) : (
-          <>
-            <StatCard variant={variant} label="Total signups" value={stats.total} />
-            <StatCard variant={variant} label="With resume" value={stats.withResume} />
-            <StatCard variant={variant} label="With LinkedIn" value={stats.withLinkedIn} />
-            <StatCard variant={variant} label="With notes" value={stats.withNotes} />
-          </>
-        )}
+      <div className={variant === "mobile" ? ADMIN_MOBILE_SECTION_GAP : "border-b border-[#EFEFEF] px-4 py-3"}>
+        <div className={`grid gap-3 ${statsGrid}`}>
+          <StatCard variant={variant} label="Total signups" value={stats.total} />
+          <StatCard variant={variant} label="With resume" value={stats.withResume} />
+          <StatCard variant={variant} label="With LinkedIn" value={stats.withLinkedIn} />
+          <StatCard variant={variant} label="With notes" value={stats.withNotes} />
+        </div>
       </div>
 
-      <div className={variant === "mobile" ? `flex flex-col ${ADMIN_MOBILE_STACK_GAP}` : "border-b border-[#EFEFEF] px-4 py-3"}>
+      <div className={variant === "mobile" ? `pb-4 ${ADMIN_MOBILE_STACK_GAP} flex flex-col` : "border-b border-[#EFEFEF] px-4 py-3"}>
         <div className={`flex gap-3 ${variant === "mobile" ? "flex-col" : "flex-wrap items-center"}`}>
           <div
             className={`flex min-w-0 flex-1 items-center gap-3 border border-[#ECECEC] bg-[#FAFAFA] px-4 ${
@@ -623,7 +618,7 @@ export function InternshipSignupsPanel({
       </div>
 
       {variant === "mobile" ? (
-        <div className={`${ADMIN_MOBILE_SURFACE} min-h-0 flex-1 overflow-y-auto`}>
+        <div className="min-h-0 flex-1 overflow-y-auto">
           <ApplicationList
             visibleApplications={visibleApplications}
             filtered={filtered}

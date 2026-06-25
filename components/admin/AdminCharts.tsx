@@ -3,8 +3,8 @@
 import type { AnalyticsBarItem } from "@/lib/admin/internship-analytics";
 import {
   ADMIN_MOBILE_BODY_TW,
+  ADMIN_MOBILE_CARD_RADIUS,
   ADMIN_MOBILE_META_TW,
-  ADMIN_MOBILE_SURFACE,
 } from "@/lib/admin/admin-layout";
 import { inter } from "@/lib/home/fonts";
 
@@ -21,7 +21,7 @@ type ChartVariant = "mobile" | "desktop";
 
 function chartShellClass(variant: ChartVariant) {
   return variant === "mobile"
-    ? `${ADMIN_MOBILE_SURFACE} p-5 iphone-page:p-6 ${inter.className}`
+    ? `border border-[#E8E8E8] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)] iphone-page:p-6 ${ADMIN_MOBILE_CARD_RADIUS} ${inter.className}`
     : "rounded-xl border border-[#E8E8E8] bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)]";
 }
 
