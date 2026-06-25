@@ -24,13 +24,15 @@ const CARD_STYLES = {
     placeholderLabel:
       "text-[0.625rem] font-medium uppercase tracking-[0.34em] text-[#C8C0B4] iphone-page:text-[0.6875rem] iphone-page:tracking-[0.36em]",
     namePlaceholder:
-      "text-[clamp(1.35rem,4.2vw,2rem)] leading-[1.12] text-[#C8C0B4] iphone-page:text-[clamp(1.5rem,1.2rem+1.8vmin,2.2rem)]",
+      "text-[clamp(1.85rem,5.5vw,2.75rem)] leading-[1.08] text-[#C8C0B4] iphone-page:text-[clamp(2.1rem,1.7rem+2.4vmin,3.15rem)]",
+    nameText:
+      "text-[clamp(1.85rem,5.5vw,2.75rem)] leading-[1.08] iphone-page:text-[clamp(2.1rem,1.7rem+2.4vmin,3.15rem)]",
     topPad: "p-6 iphone-page:p-7",
     topMaxW: "max-w-[88%] iphone-page:max-w-[90%]",
     topGap: "gap-3 iphone-page:gap-3.5",
-    nameMinH: "min-h-[4.5rem] iphone-page:min-h-[5rem]",
+    nameMinH: "min-h-[5.25rem] iphone-page:min-h-[5.75rem]",
     nameWidth: "w-[min(100%,88%)]",
-    lineBand: "bottom-[8.75rem] h-[19%] iphone-page:bottom-[9.75rem] iphone-page:h-[17%]",
+    lineBand: "bottom-[9.5rem] h-[17%] iphone-page:bottom-[10.5rem] iphone-page:h-[15%]",
     editBtn: "h-10 w-10 iphone-page:h-11 iphone-page:w-11 iphone-page:rounded-[0.85rem]",
     pencil: "iphone-page:h-[22px] iphone-page:w-[22px]",
     roleChip:
@@ -52,11 +54,12 @@ const CARD_STYLES = {
     height: JOIN_DESKTOP_APPLY_CARD_HEIGHT,
     fieldText: "text-[0.9375rem] leading-[1.2]",
     placeholderLabel: "text-[0.5625rem] font-medium uppercase tracking-[0.32em] text-[#C8C0B4]",
-    namePlaceholder: "text-[0.9375rem] leading-[1.2] text-[#C8C0B4]",
+    namePlaceholder: "text-[1.375rem] leading-[1.1] text-[#C8C0B4]",
+    nameText: "text-[1.375rem] leading-[1.1]",
     topPad: "p-4",
     topMaxW: "max-w-[86%]",
     topGap: "gap-2",
-    nameMinH: "min-h-[3.25rem]",
+    nameMinH: "min-h-[3.75rem]",
     nameWidth: "w-[min(100%,86%)]",
     lineBand: "bottom-[5.5rem] h-[18%]",
     editBtn: "h-8 w-8 rounded-lg",
@@ -385,7 +388,7 @@ export function JoinApplyCard({
               ) : null}
               {readOnly ? (
                 <p
-                  className={`text-[#1E343A] ${styles.fieldText} ${lora.className} ${BOTTOM_LEFT_NAME_TEXT}`}
+                  className={`text-[#1E343A] ${styles.nameText} ${lora.className} ${BOTTOM_LEFT_NAME_TEXT}`}
                 >
                   {name.trim()}
                 </p>
@@ -396,7 +399,7 @@ export function JoinApplyCard({
                   onChange={(e) => onNameChange(e.target.value)}
                   autoComplete="name"
                   aria-label="Enter your name"
-                  className={`text-[#1E343A] ${styles.fieldText} ${lora.className} ${BOTTOM_LEFT_NAME_TEXT}`}
+                  className={`text-[#1E343A] ${styles.nameText} ${lora.className} ${BOTTOM_LEFT_NAME_TEXT}`}
                 />
               )}
             </div>

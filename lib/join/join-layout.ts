@@ -51,6 +51,15 @@ export const JOIN_MOBILE_TRACK_SECTION =
 export const JOIN_MOBILE_APPLY_SECTION =
   "min-h-[var(--app-vh,100lvh)] iphone-page:min-h-[var(--app-vh,100lvh)]";
 
+/** Bottom breathing room above join mobile footer. */
+export const JOIN_MOBILE_APPLY_FOOTER_PAD =
+  "pb-[max(3.5rem,calc(env(safe-area-inset-bottom,0px)+2.75rem))] iphone-page:pb-[max(4rem,calc(env(safe-area-inset-bottom,0px)+3rem))]";
+
+/** Desktop apply section — vertical band + footer pad. */
+export const JOIN_DESKTOP_APPLY_SECTION_MIN =
+  "min-h-[min(88vh,52rem)]";
+export const JOIN_DESKTOP_APPLY_FOOTER_PAD = "pb-24";
+
 /** Desktop hero — same proportions as mobile, capped for wide screens. */
 export const JOIN_DESKTOP_HERO_HEIGHT = "min-h-[min(72vh,44rem)] h-[min(72vh,44rem)]";
 
