@@ -1,5 +1,11 @@
 import { inter } from "@/lib/home/fonts";
-import { JOIN_HERO_AI_FEATURE_CARDS, type JoinHeroAiFeatureCardId } from "@/lib/home/hero-triage-theme";
+import {
+  JOIN_HERO_AI_CARD_INVERSE_SCALE,
+  JOIN_HERO_AI_FEATURE_CARDS,
+  JOIN_HERO_TRIAGE_PANEL,
+  JOIN_HERO_TRIAGE_SCALE,
+  type JoinHeroAiFeatureCardId,
+} from "@/lib/home/hero-triage-theme";
 import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
 
 const PANEL_SHELL =
@@ -149,20 +155,30 @@ const PANELS: Record<JoinHeroAiFeatureCardId, () => JSX.Element> = {
   agents: JoinHeroAgentsPanel,
 };
 
-function JoinHeroAiFeatureCard({ id }: { id: JoinHeroAiFeatureCardId }) {
-  const config = JOIN_HERO_AI_FEATURE_CARDS.find((card) => card.id === id);
-  if (!config) return null;
+const CARD_ANCHOR: Record<
+  JoinHeroAiFeatureCardId,
+  { className: string; transform: string }
+> = {
+  brain: {
+    className: "left-0 top-1/2",
+    transform: `translate(-50%, -50%) scale(${JOIN_HERO_AI_CARD_INVERSE_SCALE})`,
+  },
+  agents: {
+    className: "left-1/2 top-full",
+    transform: `translate(-50%, -50%) scale(${JOIN_HERO_AI_CARD_INVERSE_SCALE})`,
+  },
+};
 
+function JoinHeroAiFeatureCard({ id, zIndex }: { id: JoinHeroAiFeatureCardId; zIndex: number }) {
   const Panel = PANELS[id];
+  const anchor = CARD_ANCHOR[id];
 
   return (
     <div
-      className={`pointer-events-none absolute select-none ${inter.className}`}
+      className={`absolute ${anchor.className} ${inter.className}`}
       style={{
-        top: config.placement.top,
-        right: config.placement.right,
-        zIndex: config.placement.zIndex,
-        transformOrigin: "top right",
+        zIndex,
+        transform: anchor.transform,
       }}
       aria-hidden
     >
@@ -171,13 +187,30 @@ function JoinHeroAiFeatureCard({ id }: { id: JoinHeroAiFeatureCardId }) {
   );
 }
 
-/** Desktop join hero — AI feature panels overlapping the inbox preview. */
+/** Desktop join hero — AI panels locked to inbox preview edge midpoints. */
 export function JoinHeroAiFeatureCards({ className = "" }: { className?: string }) {
   return (
-    <div className={`pointer-events-none absolute inset-0 ${className}`} aria-hidden>
-      {JOIN_HERO_AI_FEATURE_CARDS.map((config) => (
-        <JoinHeroAiFeatureCard key={config.id} id={config.id} />
-      ))}
+    <div
+      className={`pointer-events-none absolute select-none ${className}`}
+      style={{
+        top: JOIN_HERO_TRIAGE_PANEL.top,
+        right: JOIN_HERO_TRIAGE_PANEL.right,
+        bottom: JOIN_HERO_TRIAGE_PANEL.bottom,
+        width: JOIN_HERO_TRIAGE_PANEL.width,
+      }}
+      aria-hidden
+    >
+      <div
+        className="relative h-full w-full"
+        style={{
+          transform: `scale(${JOIN_HERO_TRIAGE_SCALE})`,
+          transformOrigin: "bottom right",
+        }}
+      >
+        {JOIN_HERO_AI_FEATURE_CARDS.map((config) => (
+          <JoinHeroAiFeatureCard key={config.id} id={config.id} zIndex={config.zIndex} />
+        ))}
+      </div>
     </div>
   );
 }

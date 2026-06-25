@@ -198,30 +198,15 @@ export type JoinHeroAiFeatureCardId = "brain" | "agents";
 
 export type JoinHeroAiFeatureCardConfig = {
   id: JoinHeroAiFeatureCardId;
-  placement: {
-    top: string;
-    right: string;
-    zIndex: number;
-  };
+  zIndex: number;
 };
 
-/** Join desktop hero — two AI panels overlapping the upper-right of the inbox preview. */
+/** Join desktop hero — AI panels anchored to the inbox preview edges. */
 export const JOIN_HERO_AI_FEATURE_CARDS: readonly JoinHeroAiFeatureCardConfig[] = [
-  {
-    id: "brain",
-    placement: {
-      top: "5%",
-      right: "24%",
-      zIndex: 3,
-    },
-  },
-  {
-    id: "agents",
-    placement: {
-      top: "28%",
-      right: "3%",
-      zIndex: 4,
-    },
-  },
+  { id: "brain", zIndex: 3 },
+  { id: "agents", zIndex: 4 },
 ] as const;
+
+/** Counter-scale so AI panels stay natural size inside the inbox scale wrapper. */
+export const JOIN_HERO_AI_CARD_INVERSE_SCALE = 1 / JOIN_HERO_TRIAGE_SCALE;
 
