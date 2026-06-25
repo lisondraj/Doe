@@ -22,6 +22,7 @@ type JoinApplyCardFormProps = {
   setActiveStep: (step: number | null) => void;
   touchedSteps: ReadonlySet<number>;
   markStepTouched: (step: number) => void;
+  resetForm: () => void;
   submit: () => void;
   submitted: boolean;
   resumeInputRef: RefObject<HTMLInputElement>;
@@ -35,15 +36,17 @@ function JoinApplyCardForm({
   setActiveStep,
   touchedSteps,
   markStepTouched,
+  resetForm,
   submit,
   submitted,
   resumeInputRef,
 }: JoinApplyCardFormProps) {
-  const canProceed = activeStep !== null && isJoinApplyStepValid(activeStep, data);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const canProceed = activeStep !== null && activeStep !== 0 && isJoinApplyStepValid(activeStep, data);
   const mandatoryComplete = isJoinApplyCardMandatoryComplete(data, touchedSteps);
 
   const closeEditor = useCallback(() => {
-    if (activeStep !== null && isJoinApplyStepValid(activeStep, data)) {
+    if (activeStep !== null && activeStep !== 0 && isJoinApplyStepValid(activeStep, data)) {
       markStepTouched(activeStep);
     }
     setActiveStep(null);
@@ -56,7 +59,7 @@ function JoinApplyCardForm({
   }, [activeStep, canProceed, markStepTouched, setActiveStep]);
 
   useEffect(() => {
-    if (activeStep === null) return;
+    if (activeStep === null || activeStep === 0) return;
     const frame = requestAnimationFrame(() => {
       const root = document.querySelector<HTMLElement>("[data-join-apply-editor]");
       const focusable = root?.querySelector<HTMLElement>(
@@ -68,7 +71,7 @@ function JoinApplyCardForm({
   }, [activeStep]);
 
   useEffect(() => {
-    if (activeStep === null) return;
+    if (activeStep === null || activeStep === 0) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "Enter" || e.shiftKey || e.metaKey || e.ctrlKey || e.altKey) return;
       if ((e.target as HTMLElement).tagName === "TEXTAREA") return;
@@ -81,7 +84,7 @@ function JoinApplyCardForm({
   }, [activeStep, canProceed, handleAdvance]);
 
   const editor =
-    activeStep !== null ? (
+    activeStep !== null && activeStep !== 0 ? (
       <div data-join-apply-editor>
         {renderJoinApplyStep({
           step: activeStep,
@@ -118,6 +121,7 @@ function JoinApplyCardForm({
           touchedSteps={touchedSteps}
           onEdit={() => {}}
           onCloseEditor={() => {}}
+          onNameChange={() => {}}
           readOnly
         />
         <p
@@ -133,7 +137,7 @@ function JoinApplyCardForm({
   }
 
   return (
-    <div className={`${joinFormShellClass(variant)} flex w-full flex-col`}>
+    <div className={`${joinFormShellClass(variant)} flex w-full flex-col ${variant === "mobile" ? "pt-8 iphone-page:pt-9" : "pt-7"}`}>
       <JoinApplyCard
         variant={variant}
         data={data}
@@ -141,7 +145,15 @@ function JoinApplyCardForm({
         touchedSteps={touchedSteps}
         onEdit={setActiveStep}
         onCloseEditor={closeEditor}
+        onNameChange={(name) => patch({ name })}
         editor={editor}
+        showResetConfirm={showResetConfirm}
+        onResetRequest={() => setShowResetConfirm(true)}
+        onResetConfirm={() => {
+          resetForm();
+          setShowResetConfirm(false);
+        }}
+        onResetCancel={() => setShowResetConfirm(false)}
       />
 
       {mandatoryComplete ? (
@@ -181,6 +193,13 @@ export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "d
     setData((prev) => ({ ...prev, ...partial }));
   };
 
+  const resetForm = useCallback(() => {
+    setData(JOIN_APPLY_INITIAL_STATE);
+    setTouchedSteps(new Set());
+    setActiveStep(null);
+    if (resumeInputRef.current) resumeInputRef.current.value = "";
+  }, []);
+
   const submit = () => {
     if (!isJoinApplyCardMandatoryComplete(data, touchedSteps)) return;
     setSubmitted(true);
@@ -196,6 +215,7 @@ export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "d
       setActiveStep={setActiveStep}
       touchedSteps={touchedSteps}
       markStepTouched={markStepTouched}
+      resetForm={resetForm}
       submit={submit}
       submitted={submitted}
       resumeInputRef={resumeInputRef}

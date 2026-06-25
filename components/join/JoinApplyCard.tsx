@@ -21,13 +21,16 @@ const CARD_STYLES = {
     height: JOIN_APPLY_CARD_HEIGHT,
     fieldText:
       "text-[clamp(1.35rem,4.2vw,2rem)] leading-[1.12] iphone-page:text-[clamp(1.5rem,1.2rem+1.8vmin,2.2rem)]",
+    placeholderLabel:
+      "text-[0.625rem] font-medium uppercase tracking-[0.34em] text-[#C8C0B4] iphone-page:text-[0.6875rem] iphone-page:tracking-[0.36em]",
+    namePlaceholder:
+      "text-[clamp(1.35rem,4.2vw,2rem)] leading-[1.12] text-[#C8C0B4] iphone-page:text-[clamp(1.5rem,1.2rem+1.8vmin,2.2rem)]",
     topPad: "p-6 iphone-page:p-7",
     topMaxW: "max-w-[88%] iphone-page:max-w-[90%]",
     topGap: "gap-3 iphone-page:gap-3.5",
     nameMinH: "min-h-[4.5rem] iphone-page:min-h-[5rem]",
     nameWidth: "w-[min(100%,88%)]",
-    lineTop: "top-[36%]",
-    lineBottom: "bottom-[6.75rem] iphone-page:bottom-[7.75rem]",
+    lineBand: "bottom-[8.75rem] h-[19%] iphone-page:bottom-[9.75rem] iphone-page:h-[17%]",
     editBtn: "h-10 w-10 iphone-page:h-11 iphone-page:w-11 iphone-page:rounded-[0.85rem]",
     pencil: "iphone-page:h-[22px] iphone-page:w-[22px]",
     roleChip:
@@ -36,17 +39,23 @@ const CARD_STYLES = {
     editorPad: "px-6 py-10 iphone-page:px-8",
     editorMaxW: "max-w-[min(100%,26rem)]",
     cornerPad: BLOG_LANDING_HERO_CORNER_PAD,
+    resetBtn: "gap-1.5 text-[0.8125rem] iphone-page:text-[0.875rem]",
+    resetIcon: "h-4 w-4 iphone-page:h-[1.125rem] iphone-page:w-[1.125rem]",
+    confirmTitle: "text-[1.25rem] iphone-page:text-[1.375rem]",
+    confirmBody: "text-[0.9375rem] iphone-page:text-[1rem]",
+    confirmBtn: "rounded-xl px-4 py-2.5 text-[0.9375rem] iphone-page:rounded-[0.85rem] iphone-page:px-5 iphone-page:py-3 iphone-page:text-[1rem]",
   },
   desktop: {
     height: JOIN_DESKTOP_APPLY_CARD_HEIGHT,
     fieldText: "text-[0.9375rem] leading-[1.2]",
+    placeholderLabel: "text-[0.5625rem] font-medium uppercase tracking-[0.32em] text-[#C8C0B4]",
+    namePlaceholder: "text-[0.9375rem] leading-[1.2] text-[#C8C0B4]",
     topPad: "p-4",
     topMaxW: "max-w-[86%]",
     topGap: "gap-2",
     nameMinH: "min-h-[3.25rem]",
     nameWidth: "w-[min(100%,86%)]",
-    lineTop: "top-[34%]",
-    lineBottom: "bottom-[4.25rem]",
+    lineBand: "bottom-[5.5rem] h-[18%]",
     editBtn: "h-8 w-8 rounded-lg",
     pencil: "h-4 w-4",
     roleChip: "rounded-lg px-2 py-1 text-[0.75rem]",
@@ -54,22 +63,30 @@ const CARD_STYLES = {
     editorPad: "px-8 py-6",
     editorMaxW: "max-w-[min(100%,22rem)]",
     cornerPad: "px-5 pb-5",
+    resetBtn: "gap-1.5 text-[0.8125rem]",
+    resetIcon: "h-3.5 w-3.5",
+    confirmTitle: "text-[1.0625rem]",
+    confirmBody: "text-[0.875rem]",
+    confirmBtn: "rounded-lg px-3.5 py-2 text-[0.875rem]",
   },
 } as const;
 
 const BOTTOM_LEFT_NAME_TEXT =
-  "whitespace-normal break-words font-normal tracking-[-0.03em] leading-[1.12]";
+  "w-full whitespace-normal break-words bg-transparent font-normal tracking-[-0.03em] leading-[1.12] outline-none";
 
 const TOP_RIGHT_FIELDS = [
   { step: 1, placeholder: "Email" },
   { step: 2, placeholder: "Country" },
   { step: 3, placeholder: "Education" },
   { step: 4, placeholder: "School" },
-  { step: 5, placeholder: "Roles" },
   { step: 7, placeholder: "LinkedIn" },
   { step: 6, placeholder: "Resume" },
   { step: 8, placeholder: "Notes" },
 ] as const;
+
+function spacedCapsLabel(label: string): string {
+  return label.toUpperCase().split("").join(" ");
+}
 
 function PencilIcon({ className }: { className: string }) {
   return (
@@ -78,6 +95,26 @@ function PencilIcon({ className }: { className: string }) {
         d="M11.5 2.5l2 2M2 14l.75-3.25L11.5 2.5l2 2L4.25 13.25 2 14z"
         stroke="currentColor"
         strokeWidth="1.35"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function ResetIcon({ className }: { className: string }) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" aria-hidden className={className}>
+      <path
+        d="M4.25 4.25A7.25 7.25 0 1 1 3.2 8.75"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+      <path
+        d="M3.5 3.5v3.25h3.25"
+        stroke="currentColor"
+        strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -109,8 +146,6 @@ function getTopRightDisplayValue(
       return touchedSteps.has(3) ? JOIN_APPLY_EDUCATION_LABELS[data.education] : null;
     case 4:
       return data.schoolName.trim() || null;
-    case 5:
-      return null;
     case 6:
       return data.resume?.name ?? null;
     case 7:
@@ -167,8 +202,13 @@ export function JoinApplyCard({
   touchedSteps,
   onEdit,
   onCloseEditor,
+  onNameChange,
   readOnly = false,
   editor,
+  showResetConfirm = false,
+  onResetRequest,
+  onResetConfirm,
+  onResetCancel,
 }: {
   variant?: "mobile" | "desktop";
   data: JoinApplyFormState;
@@ -176,62 +216,104 @@ export function JoinApplyCard({
   touchedSteps: ReadonlySet<number>;
   onEdit: (step: number) => void;
   onCloseEditor: () => void;
+  onNameChange: (name: string) => void;
   readOnly?: boolean;
   editor?: ReactNode;
+  showResetConfirm?: boolean;
+  onResetRequest?: () => void;
+  onResetConfirm?: () => void;
+  onResetCancel?: () => void;
 }) {
   const styles = CARD_STYLES[variant];
-  const isEditing = activeStep !== null;
-  const name = data.name.trim();
-  const hasName = name.length > 0;
+  const isEditing = activeStep !== null && activeStep !== 0;
+  const name = data.name;
+  const hasName = name.trim().length > 0;
 
   return (
-    <div
-      className={`relative w-full overflow-hidden border ${styles.height} ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
-      style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
-    >
+    <div className="relative w-full">
+      {!readOnly && onResetRequest ? (
+        <button
+          type="button"
+          onClick={onResetRequest}
+          className={`absolute -top-1 right-0 z-[6] flex translate-y-[-100%] items-center font-medium leading-none tracking-[-0.01em] text-[#9A8F82] transition-colors hover:text-[#1E343A]/70 ${styles.resetBtn} ${inter.className}`}
+          style={{ marginTop: variant === "mobile" ? "-0.35rem" : "-0.25rem" }}
+        >
+          <ResetIcon className={styles.resetIcon} />
+          Reset
+        </button>
+      ) : null}
+
       <div
-        className={`absolute inset-0 transition-[filter] duration-300 ${isEditing ? "pointer-events-none blur-[7px]" : ""}`}
+        className={`relative w-full overflow-hidden border ${styles.height} ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
+        style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
       >
         <div
-          className={`pointer-events-none absolute inset-x-0 ${styles.lineTop} ${styles.lineBottom}`}
+          className={`absolute inset-0 transition-[filter] duration-300 ${isEditing || showResetConfirm ? "pointer-events-none blur-[7px]" : ""}`}
         >
-          <div className="relative h-full w-full">
-            <JoinInternLineGraphic variant={2} fullBleed />
+          <div className={`pointer-events-none absolute inset-x-0 ${styles.lineBand}`}>
+            <div className="relative h-full w-full">
+              <JoinInternLineGraphic variant={2} fullBleed />
+            </div>
           </div>
-        </div>
 
-        <div className={`absolute right-0 top-0 z-[2] ${styles.topMaxW} ${styles.topPad}`}>
-          <div className={`flex flex-col items-end ${styles.topGap}`}>
-            {TOP_RIGHT_FIELDS.map(({ step, placeholder }) => {
-              if (step === 5) {
-                const hasAreas = data.areas.length > 0;
+          {/* Top-left: roles */}
+          <div className={`absolute left-0 top-0 z-[2] ${styles.topMaxW} ${styles.topPad}`}>
+            <div className={`flex max-w-full items-start gap-2 ${inter.className}`}>
+              {data.areas.length > 0 ? (
+                <div className={`flex max-w-full flex-wrap ${styles.roleGap}`}>
+                  {data.areas.map((area) => (
+                    <span
+                      key={area}
+                      className={`font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 ${styles.roleChip}`}
+                      style={{ backgroundColor: JOIN_FORM_BEIGE.fieldMuted }}
+                    >
+                      {area}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  disabled={readOnly}
+                  onClick={() => onEdit(5)}
+                  className={`text-left ${styles.placeholderLabel}`}
+                >
+                  {spacedCapsLabel("Roles")}
+                </button>
+              )}
+              {!readOnly ? (
+                <EditButton
+                  onClick={() => onEdit(5)}
+                  label="Edit roles"
+                  className={styles.editBtn}
+                  pencilClass={styles.pencil}
+                />
+              ) : null}
+            </div>
+          </div>
+
+          {/* Top-right: other fields */}
+          <div className={`absolute right-0 top-0 z-[2] ${styles.topMaxW} ${styles.topPad}`}>
+            <div className={`flex flex-col items-end ${styles.topGap}`}>
+              {TOP_RIGHT_FIELDS.map(({ step, placeholder }) => {
+                const value = getTopRightDisplayValue(step, data, touchedSteps);
+                const textClass = value
+                  ? `text-[#1E343A]/72 ${styles.fieldText}`
+                  : styles.placeholderLabel;
+
                 return (
                   <div
                     key={step}
-                    className={`flex max-w-full items-center gap-2 ${inter.className}`}
+                    className={`flex max-w-full items-start justify-end gap-2 ${value ? "[animation:join-card-field-in_0.45s_cubic-bezier(0.22,1,0.36,1)_both]" : ""} ${inter.className}`}
                   >
-                    {hasAreas ? (
-                      <div className={`flex max-w-full flex-wrap justify-end ${styles.roleGap}`}>
-                        {data.areas.map((area) => (
-                          <span
-                            key={area}
-                            className={`text-right font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 ${styles.roleChip}`}
-                            style={{ backgroundColor: JOIN_FORM_BEIGE.fieldMuted }}
-                          >
-                            {area}
-                          </span>
-                        ))}
-                      </div>
-                    ) : (
-                      <button
-                        type="button"
-                        disabled={readOnly}
-                        onClick={() => onEdit(step)}
-                        className={`text-right text-[#1E343A]/38 ${styles.fieldText}`}
-                      >
-                        {placeholder}
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      disabled={readOnly}
+                      onClick={() => onEdit(step)}
+                      className={`min-w-0 flex-1 text-right whitespace-normal break-words ${textClass}`}
+                    >
+                      {value ? formatCardValue(step, value) : spacedCapsLabel(placeholder)}
+                    </button>
                     {!readOnly ? (
                       <EditButton
                         onClick={() => onEdit(step)}
@@ -242,101 +324,108 @@ export function JoinApplyCard({
                     ) : null}
                   </div>
                 );
-              }
-
-              const value = getTopRightDisplayValue(step, data, touchedSteps);
-              const textClass = value
-                ? `text-[#1E343A]/72 ${styles.fieldText}`
-                : `text-[#1E343A]/38 ${styles.fieldText}`;
-
-              return (
-                <div
-                  key={step}
-                  className={`flex max-w-full items-start justify-end gap-2 ${value ? "[animation:join-card-field-in_0.45s_cubic-bezier(0.22,1,0.36,1)_both]" : ""} ${inter.className}`}
-                >
-                  <button
-                    type="button"
-                    disabled={readOnly}
-                    onClick={() => onEdit(step)}
-                    className={`min-w-0 flex-1 text-right whitespace-normal break-words ${textClass}`}
-                  >
-                    {value ? formatCardValue(step, value) : placeholder}
-                  </button>
-                  {!readOnly ? (
-                    <EditButton
-                      onClick={() => onEdit(step)}
-                      label={`Edit ${placeholder.toLowerCase()}`}
-                      className={styles.editBtn}
-                      pencilClass={styles.pencil}
-                    />
-                  ) : null}
-                </div>
-              );
-            })}
+              })}
+            </div>
           </div>
-        </div>
 
-        <div className={`absolute bottom-0 left-0 z-[2] ${styles.nameWidth} ${styles.cornerPad}`}>
-          <div className={`relative ${styles.nameMinH}`}>
-            {hasName ? (
-              <div className="flex items-start gap-2">
-                <p
-                  className={`min-w-0 flex-1 text-[#1E343A] ${styles.fieldText} ${lora.className} ${BOTTOM_LEFT_NAME_TEXT}`}
-                >
-                  {name}
-                </p>
-                {!readOnly ? (
-                  <EditButton
-                    onClick={() => onEdit(0)}
-                    label="Edit name"
-                    className={styles.editBtn}
-                    pencilClass={styles.pencil}
-                  />
-                ) : null}
-              </div>
-            ) : (
-              <div className="flex items-start gap-2">
-                <button
-                  type="button"
-                  disabled={readOnly}
-                  onClick={() => onEdit(0)}
-                  className={`min-w-0 flex-1 text-left text-[#1E343A]/38 ${styles.fieldText} ${lora.className} ${BOTTOM_LEFT_NAME_TEXT}`}
+          {/* Bottom-left: inline name input */}
+          <div className={`absolute bottom-0 left-0 z-[2] ${styles.nameWidth} ${styles.cornerPad}`}>
+            <div className={`relative ${styles.nameMinH}`}>
+              {!hasName && !readOnly ? (
+                <div
+                  className={`pointer-events-none absolute inset-0 text-left ${styles.namePlaceholder} ${lora.className}`}
+                  aria-hidden
                 >
                   <span className="block">Enter your</span>
                   <span className="block">name here</span>
-                </button>
-                {!readOnly ? (
-                  <EditButton
-                    onClick={() => onEdit(0)}
-                    label="Enter name"
-                    className={styles.editBtn}
-                    pencilClass={styles.pencil}
-                  />
-                ) : null}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {isEditing && editor ? (
-        <>
-          <button
-            type="button"
-            aria-label="Close editor"
-            className="absolute inset-0 z-[4] bg-[#EFECE7]/55 backdrop-blur-[2px]"
-            onClick={onCloseEditor}
-          />
-          <div className={`absolute inset-0 z-[5] flex items-center justify-center ${styles.editorPad}`}>
-            <div
-              className={`relative w-full ${styles.editorMaxW} [animation:join-step-enter-down_0.38s_cubic-bezier(0.22,1,0.36,1)_both]`}
-              onClick={(e) => e.stopPropagation()}
-            >
-              {editor}
+                </div>
+              ) : null}
+              {readOnly ? (
+                <p
+                  className={`text-[#1E343A] ${styles.fieldText} ${lora.className} ${BOTTOM_LEFT_NAME_TEXT}`}
+                >
+                  {name.trim()}
+                </p>
+              ) : (
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => onNameChange(e.target.value)}
+                  autoComplete="name"
+                  aria-label="Enter your name"
+                  className={`text-[#1E343A] ${styles.fieldText} ${lora.className} ${BOTTOM_LEFT_NAME_TEXT}`}
+                />
+              )}
             </div>
           </div>
-        </>
-      ) : null}
+        </div>
+
+        {isEditing && editor ? (
+          <>
+            <button
+              type="button"
+              aria-label="Close editor"
+              className="absolute inset-0 z-[4] bg-[#EFECE7]/55 backdrop-blur-[2px]"
+              onClick={onCloseEditor}
+            />
+            <div className={`absolute inset-0 z-[5] flex items-center justify-center ${styles.editorPad}`}>
+              <div
+                className={`relative w-full ${styles.editorMaxW} [animation:join-step-enter-down_0.38s_cubic-bezier(0.22,1,0.36,1)_both]`}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {editor}
+              </div>
+            </div>
+          </>
+        ) : null}
+
+        {showResetConfirm ? (
+          <>
+            <button
+              type="button"
+              aria-label="Cancel reset"
+              className="absolute inset-0 z-[4] bg-[#EFECE7]/55 backdrop-blur-[2px]"
+              onClick={onResetCancel}
+            />
+            <div className={`absolute inset-0 z-[5] flex items-center justify-center ${styles.editorPad}`}>
+              <div
+                className={`w-full ${styles.editorMaxW} rounded-[1.25rem] border p-6 [animation:join-step-enter-down_0.38s_cubic-bezier(0.22,1,0.36,1)_both] iphone-page:rounded-[1.35rem] iphone-page:p-7`}
+                style={{
+                  backgroundColor: JOIN_FORM_BEIGE.field,
+                  borderColor: JOIN_FORM_BEIGE.border,
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <p className={`font-normal leading-snug tracking-[-0.02em] text-[#1E343A] ${styles.confirmTitle} ${lora.className}`}>
+                  Are you sure?
+                </p>
+                <p className={`mt-2 text-[#1E343A]/60 ${styles.confirmBody} ${inter.className}`}>
+                  This will clear everything on your applicant card.
+                </p>
+                <div className="mt-5 flex items-center justify-end gap-2.5">
+                  <button
+                    type="button"
+                    onClick={onResetCancel}
+                    className={`font-medium text-[#1E343A]/55 transition-colors hover:text-[#1E343A]/75 ${styles.confirmBtn} ${inter.className}`}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onResetConfirm}
+                    className={`font-medium text-[#1E343A] transition-colors hover:opacity-90 ${styles.confirmBtn} ${inter.className}`}
+                    style={{
+                      backgroundColor: JOIN_FORM_BEIGE.fieldMuted,
+                    }}
+                  >
+                    Reset card
+                  </button>
+                </div>
+              </div>
+            </div>
+          </>
+        ) : null}
+      </div>
     </div>
   );
 }
