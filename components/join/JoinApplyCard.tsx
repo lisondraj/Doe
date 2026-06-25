@@ -14,6 +14,7 @@ import {
 import { splitResumeDisplay } from "@/lib/join/resume-file";
 import { JOIN_DESKTOP_APPLY_CARD_HEIGHT } from "@/lib/join/join-layout";
 import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
+import { useJoinApplySectionInView } from "@/lib/join/use-join-apply-section-in-view";
 import { useJoinCardIdleHint } from "@/lib/join/use-join-card-idle-hint";
 
 export const JOIN_APPLY_CARD_HEIGHT = "h-[56rem] iphone-page:h-[62rem]";
@@ -404,9 +405,11 @@ export function JoinApplyCard({
   const isEditing = activeStep !== null && activeStep !== 0;
   const isSubmitReviewing = showSubmitReview && Boolean(submitReviewEditor);
   const isModalOpen = isEditing || showResetConfirm || isSubmitReviewing;
+  const sectionInView = useJoinApplySectionInView();
   const { showIdleHint, registerContact } = useJoinCardIdleHint({
     enabled: !readOnly && !isModalOpen,
     resetEpoch: idleHintResetEpoch,
+    sectionInView,
   });
   const name = data.name;
 

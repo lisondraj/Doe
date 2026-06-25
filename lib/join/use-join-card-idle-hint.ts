@@ -2,15 +2,17 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-/** Wait this long without clicking a field before the hint fades in. */
+/** Wait this long without clicking a field after reaching the card section. */
 const IDLE_MS = 10000;
 
 export function useJoinCardIdleHint({
   enabled,
   resetEpoch,
+  sectionInView,
 }: {
   enabled: boolean;
   resetEpoch: number;
+  sectionInView: boolean;
 }) {
   const [hasContacted, setHasContacted] = useState(false);
   const [hintReady, setHintReady] = useState(false);
@@ -21,10 +23,16 @@ export function useJoinCardIdleHint({
     hasContactedRef.current = false;
     setHasContacted(false);
     setHintReady(false);
+  }, [resetEpoch]);
 
+  useEffect(() => {
     if (idleTimerRef.current !== null) {
       window.clearTimeout(idleTimerRef.current);
+      idleTimerRef.current = null;
     }
+    setHintReady(false);
+
+    if (!sectionInView || hasContactedRef.current) return;
 
     idleTimerRef.current = window.setTimeout(() => {
       if (!hasContactedRef.current) {
@@ -39,7 +47,7 @@ export function useJoinCardIdleHint({
         idleTimerRef.current = null;
       }
     };
-  }, [resetEpoch]);
+  }, [resetEpoch, sectionInView]);
 
   const registerContact = useCallback(() => {
     if (hasContactedRef.current) return;
@@ -48,7 +56,7 @@ export function useJoinCardIdleHint({
     setHintReady(false);
   }, []);
 
-  const showIdleHint = enabled && !hasContacted && hintReady;
+  const showIdleHint = enabled && sectionInView && !hasContacted && hintReady;
 
   return { showIdleHint, registerContact };
 }
