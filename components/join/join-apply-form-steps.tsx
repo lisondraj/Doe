@@ -8,7 +8,6 @@ import {
   joinFormPromptClass,
   JoinCountrySlider,
   JoinEducationSlider,
-  JoinLinkedInInput,
 } from "@/components/join/JoinFormControls";
 import { JOIN_APPLY_AREAS, type JoinApplyArea, type JoinApplyFormState } from "@/lib/join/join-apply-form";
 import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
@@ -22,8 +21,7 @@ export const JOIN_APPLY_STEP_PROMPTS = [
   "What school do you attend?",
   "Which areas would you like to help with?",
   "Upload your resume (optional)",
-  "Your LinkedIn profile",
-  "Anything you'd like to add?",
+  "LinkedIn (optional)",
 ] as const;
 
 function toggleArea(areas: JoinApplyArea[], area: JoinApplyArea): JoinApplyArea[] {
@@ -208,37 +206,43 @@ export function renderJoinApplyStep({
           </div>
         </>
       );
-    case 7:
-      return (
-        <div className={`${joinFormPanelClass(variant)} h-full`}>
-          <p className={joinFormPromptClass(variant)}>{prompt}</p>
-          <JoinLinkedInInput
-            variant={variant}
-            value={data.linkedinUsername}
-            onChange={(linkedinUsername) => patch({ linkedinUsername })}
-            placeholder="username"
-            nested
-            readOnly={readOnly}
-            onEnter={onEnter}
-          />
-        </div>
-      );
-    case 8:
+    case 7: {
+      const liPrefixSize =
+        variant === "mobile"
+          ? "text-[1.35rem] iphone-page:text-[1.5rem]"
+          : "text-[1rem]";
       return (
         <div>
-          <StepPrompt variant={variant}>{prompt}</StepPrompt>
-          <textarea
-            value={data.notes}
-            onChange={(e) => patch({ notes: e.target.value })}
-            placeholder="Optional notes"
-            aria-label={prompt}
+          <p
+            className={`mb-3 font-medium tracking-[0.01em] text-[#1E343A]/45 ${liPrefixSize} ${inter.className}`}
+          >
+            linkedin.com/in/
+          </p>
+          <input
+            type="text"
+            value={data.linkedinUsername}
+            onChange={(e) => patch({ linkedinUsername: e.target.value.replace(/\s/g, "") })}
+            placeholder="username"
+            autoComplete="off"
+            spellCheck={false}
+            aria-label="LinkedIn username"
             readOnly={readOnly}
             tabIndex={interactive ? 0 : -1}
-            rows={4}
-            className={`${fieldClass} h-full min-h-0 resize-none`}
+            className={fieldClass}
+            onKeyDown={
+              onEnter
+                ? (e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      onEnter();
+                    }
+                  }
+                : undefined
+            }
           />
         </div>
       );
+    }
     default:
       return null;
   }

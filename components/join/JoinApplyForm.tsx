@@ -11,7 +11,6 @@ import {
   isJoinApplyStepValid,
   type JoinApplyFormState,
 } from "@/lib/join/join-apply-form";
-import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
 import { inter, suisseIntl } from "@/lib/home/fonts";
 
 type JoinApplyCardFormProps = {
@@ -44,6 +43,7 @@ function JoinApplyCardForm({
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const canProceed = activeStep !== null && activeStep !== 0 && isJoinApplyStepValid(activeStep, data);
   const mandatoryComplete = isJoinApplyCardMandatoryComplete(data, touchedSteps);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const closeEditor = useCallback(() => {
     if (activeStep !== null && activeStep !== 0 && isJoinApplyStepValid(activeStep, data)) {
@@ -57,6 +57,19 @@ function JoinApplyCardForm({
     markStepTouched(activeStep);
     setActiveStep(null);
   }, [activeStep, canProceed, markStepTouched, setActiveStep]);
+
+  useEffect(() => {
+    const isModalOpen = (activeStep !== null && activeStep !== 0) || showResetConfirm;
+    if (!isModalOpen) return;
+    const onPointerDown = (e: PointerEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setActiveStep(null);
+        setShowResetConfirm(false);
+      }
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [activeStep, showResetConfirm, setActiveStep]);
 
   useEffect(() => {
     if (activeStep === null || activeStep === 0) return;
@@ -106,14 +119,14 @@ function JoinApplyCardForm({
       : "text-[1.5rem]";
   const thankYouBody =
     variant === "mobile" ? "text-[1.125rem] iphone-page:text-[1.25rem]" : "text-[1rem]";
-  const submitBtn =
+  const submitBtnClass =
     variant === "mobile"
-      ? "mt-5 rounded-[1.35rem] py-[1.35rem] iphone-page:mt-6 iphone-page:rounded-[1.45rem] iphone-page:py-[1.5rem] iphone-page:text-[1.3125rem]"
-      : "mt-4 rounded-2xl py-3.5 text-[0.9375rem]";
+      ? `mt-5 w-full inline-flex items-center justify-center rounded-2xl bg-black font-semibold text-white leading-none transition-opacity hover:opacity-90 active:scale-[0.99] active:opacity-80 text-[1.4375rem] py-[1.5rem] iphone-page:mt-6 iphone-page:text-[clamp(1.5rem,1.28rem+1.1vmin,1.75rem)] iphone-page:py-[clamp(1.45rem,1.18rem+1.25vmin,1.68rem)] iphone-page:rounded-[clamp(1rem,0.85rem+0.72vmin,1.2rem)] ${inter.className}`
+      : `mt-4 w-full inline-flex items-center justify-center rounded-2xl bg-black font-semibold text-white leading-none transition-opacity hover:opacity-90 active:scale-[0.99] active:opacity-80 text-[1.0625rem] py-[1.1rem] ${inter.className}`;
 
   if (submitted) {
     return (
-      <div className={`${joinFormShellClass(variant)} flex w-full flex-col`}>
+      <div ref={containerRef} className={`${joinFormShellClass(variant)} flex w-full flex-col`}>
         <JoinApplyCard
           variant={variant}
           data={data}
@@ -137,7 +150,7 @@ function JoinApplyCardForm({
   }
 
   return (
-    <div className={`${joinFormShellClass(variant)} flex w-full flex-col`}>
+    <div ref={containerRef} className={`${joinFormShellClass(variant)} flex w-full flex-col`}>
       <JoinApplyCard
         variant={variant}
         data={data}
@@ -160,13 +173,9 @@ function JoinApplyCardForm({
         <button
           type="button"
           onClick={submit}
-          className={`w-full border text-center font-medium leading-snug tracking-[-0.02em] text-[#1E343A] transition-all active:scale-[0.99] hover:border-[#B5AA9C] ${submitBtn} ${inter.className}`}
-          style={{
-            backgroundColor: JOIN_FORM_BEIGE.field,
-            borderColor: JOIN_FORM_BEIGE.border,
-          }}
+          className={submitBtnClass}
         >
-          Submit application
+          Submit
         </button>
       ) : null}
     </div>
