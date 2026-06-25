@@ -20,12 +20,15 @@ import {
   ADMIN_MOBILE_BACK_ICON_TW,
   ADMIN_MOBILE_BODY_TW,
   ADMIN_MOBILE_BUTTON_TW,
+  ADMIN_MOBILE_CONTROL_ICON_TW,
   ADMIN_MOBILE_CONTROL_SURFACE,
   ADMIN_MOBILE_DETAIL_TITLE_TW,
   ADMIN_MOBILE_INPUT_H,
   ADMIN_MOBILE_INPUT_TEXT_TW,
   ADMIN_MOBILE_LABEL_TW,
+  ADMIN_MOBILE_LIST_AVATAR_TW,
   ADMIN_MOBILE_LIST_NAME_TW,
+  ADMIN_MOBILE_LIST_ROW_PAD,
   ADMIN_MOBILE_META_TW,
   ADMIN_MOBILE_PANEL_STACK,
   ADMIN_MOBILE_FIELD_TEXT_TW,
@@ -51,8 +54,8 @@ function AdminMobileSearchBar({
   resultCount: number;
 }) {
   return (
-    <label className={`flex ${ADMIN_MOBILE_CONTROL_SURFACE} ${ADMIN_MOBILE_INPUT_H} items-center gap-3 px-4 iphone-page:gap-3.5 iphone-page:px-5`}>
-      <DoeBuildIcon className="h-5 w-5 shrink-0 text-neutral-400 iphone-page:h-[1.35rem] iphone-page:w-[1.35rem]">
+    <label className={`flex ${ADMIN_MOBILE_CONTROL_SURFACE} ${ADMIN_MOBILE_INPUT_H} items-center gap-3.5 px-5 iphone-page:gap-4 iphone-page:px-6`}>
+      <DoeBuildIcon className={ADMIN_MOBILE_CONTROL_ICON_TW}>
         <>
           <circle cx="11" cy="11" r="7" />
           <path d="m21 21-4.35-4.35" />
@@ -65,7 +68,7 @@ function AdminMobileSearchBar({
         placeholder="Search name, email, school, areas…"
         className={ADMIN_MOBILE_INPUT_TEXT_TW}
       />
-      <span className="shrink-0 rounded-full bg-neutral-100 px-2.5 py-1 text-[0.86rem] font-semibold tabular-nums text-neutral-600 iphone-page:px-3 iphone-page:py-1.5 iphone-page:text-[0.92rem]">
+      <span className="shrink-0 rounded-full bg-neutral-100 px-3 py-1.5 text-[0.95rem] font-semibold tabular-nums text-neutral-600 iphone-page:px-3.5 iphone-page:py-2 iphone-page:text-[1rem]">
         {resultCount}
       </span>
     </label>
@@ -80,13 +83,13 @@ function AdminMobileGroupSelect({
   onChange: (value: InternshipGroupMode) => void;
 }) {
   return (
-    <div className="flex flex-col gap-2 iphone-page:gap-2.5">
+    <div className="flex flex-col gap-2.5 iphone-page:gap-3">
       <p className={ADMIN_MOBILE_LABEL_TW}>Group by</p>
       <div className={`relative ${ADMIN_MOBILE_CONTROL_SURFACE}`}>
         <select
           value={value}
           onChange={(event) => onChange(event.target.value as InternshipGroupMode)}
-          className={`w-full appearance-none bg-transparent ${ADMIN_MOBILE_INPUT_H} pl-4 pr-12 outline-none iphone-page:pl-5 iphone-page:pr-14 ${ADMIN_MOBILE_FIELD_TEXT_TW}`}
+          className={`w-full appearance-none bg-transparent ${ADMIN_MOBILE_INPUT_H} pl-5 pr-14 outline-none iphone-page:pl-6 iphone-page:pr-16 ${ADMIN_MOBILE_FIELD_TEXT_TW}`}
         >
           {INTERNSHIP_GROUP_MODE_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
@@ -141,9 +144,9 @@ function DetailField({
 }) {
   if (variant === "mobile") {
     return (
-      <div className="border-b border-[#F0F0F0] py-4 last:border-b-0 iphone-page:py-5">
+      <div className="border-b border-[#F0F0F0] py-5 last:border-b-0 iphone-page:py-6">
         <p className={ADMIN_MOBILE_LABEL_TW}>{label}</p>
-        <div className={`mt-2 ${ADMIN_MOBILE_BODY_TW}`}>{value}</div>
+        <div className={`mt-2.5 ${ADMIN_MOBILE_BODY_TW}`}>{value}</div>
       </div>
     );
   }
@@ -178,11 +181,11 @@ function ApplicationListItem({
       <button
         type="button"
         onClick={onSelect}
-        className={`flex w-full items-start gap-4 border-b border-[#F0F0F0] px-4 py-4 text-left transition-colors last:border-b-0 iphone-page:gap-5 iphone-page:px-5 iphone-page:py-[1.125rem] ${
+        className={`flex w-full items-start gap-4 border-b border-[#F0F0F0] text-left transition-colors last:border-b-0 iphone-page:gap-5 ${ADMIN_MOBILE_LIST_ROW_PAD} ${
           selected ? "bg-white" : "bg-transparent active:bg-white/80"
         }`}
       >
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#E7A944] via-[#D2774C] to-[#1E343A] text-[0.82rem] font-semibold text-white iphone-page:h-14 iphone-page:w-14 iphone-page:text-[0.9rem]">
+        <div className={ADMIN_MOBILE_LIST_AVATAR_TW}>
           {initials || "?"}
         </div>
         <div className="min-w-0 flex-1">
@@ -248,9 +251,9 @@ function ApplicationDetail({
       {application.areas.map((area) => (
         <span
           key={area}
-          className={`rounded-xl bg-neutral-100 px-3 py-1.5 font-medium text-neutral-700 ${
+          className={`rounded-xl bg-neutral-100 px-3.5 py-2 font-medium text-neutral-700 ${
             variant === "mobile"
-              ? "text-[clamp(0.95rem,0.84rem+0.45vmin,1.05rem)] iphone-page:text-[1.02rem]"
+              ? "text-[clamp(1.02rem,0.9rem+0.5vmin,1.15rem)] iphone-page:text-[1.15rem]"
               : "text-[11px]"
           }`}
         >
@@ -269,7 +272,7 @@ function ApplicationDetail({
 
   return (
     <div className={`flex h-full min-h-0 flex-col bg-white ${variant === "mobile" ? "" : ""}`}>
-      <header className={`border-b border-[#EFEFEF] ${variant === "mobile" ? "px-5 py-5 iphone-page:px-6 iphone-page:py-6" : "px-5 py-4"}`}>
+      <header className={`border-b border-[#EFEFEF] ${variant === "mobile" ? "px-6 py-6 iphone-page:px-7 iphone-page:py-7" : "px-5 py-4"}`}>
         <p className={variant === "mobile" ? ADMIN_MOBILE_LABEL_TW : "text-[10px] font-semibold uppercase tracking-wider text-neutral-400"}>
           Applicant card
         </p>
@@ -281,7 +284,7 @@ function ApplicationDetail({
         </p>
       </header>
 
-      <div className={`min-h-0 flex-1 overflow-y-auto ${variant === "mobile" ? "px-5 py-1 iphone-page:px-6" : "px-5 py-2"}`}>
+      <div className={`min-h-0 flex-1 overflow-y-auto ${variant === "mobile" ? "px-6 py-2 iphone-page:px-7" : "px-5 py-2"}`}>
         <DetailField variant={variant} label="Email" value={application.email} />
         <DetailField variant={variant} label="Country" value={formatCountry(application.country)} />
         <DetailField variant={variant} label="Education" value={formatEducation(application.education)} />
@@ -365,7 +368,7 @@ function ApplicationDetail({
         <DetailField
           variant={variant}
           label="Application ID"
-          value={<span className={`font-mono ${variant === "mobile" ? "text-[0.95rem] iphone-page:text-[1rem]" : "text-[11px]"}`}>{application.id}</span>}
+          value={<span className={`font-mono ${variant === "mobile" ? "text-[1.05rem] iphone-page:text-[1.12rem]" : "text-[11px]"}`}>{application.id}</span>}
         />
       </div>
     </div>
@@ -375,10 +378,10 @@ function ApplicationDetail({
 function GroupHeader({ label, count, variant }: { label: string; count: number; variant: PanelVariant }) {
   if (variant === "mobile") {
     return (
-      <div className="sticky top-0 z-[1] border-b border-[#ECECEC] bg-[#FAFAFA] px-4 py-3 iphone-page:px-5 iphone-page:py-3.5">
+      <div className={`sticky top-0 z-[1] border-b border-[#ECECEC] bg-[#FAFAFA] px-5 py-3.5 iphone-page:px-6 iphone-page:py-4`}>
         <div className="flex items-center justify-between gap-3">
           <p className={`truncate ${ADMIN_MOBILE_LABEL_TW} text-neutral-600`}>{label}</p>
-          <span className="shrink-0 rounded-full bg-white px-2.5 py-0.5 text-[0.82rem] font-semibold tabular-nums text-neutral-500 iphone-page:text-[0.88rem]">
+          <span className="shrink-0 rounded-full bg-white px-3 py-1 text-[0.95rem] font-semibold tabular-nums text-neutral-500 iphone-page:text-[1rem]">
             {count}
           </span>
         </div>
@@ -417,7 +420,7 @@ function ApplicationList({
 }) {
   const emptyClass =
     variant === "mobile"
-      ? `px-4 py-12 text-center ${ADMIN_MOBILE_META_TW} iphone-page:px-5`
+      ? `px-5 py-14 text-center ${ADMIN_MOBILE_META_TW} iphone-page:px-6`
       : "px-4 py-10 text-center text-[13px] text-neutral-500";
 
   if (visibleApplications.length === 0) {

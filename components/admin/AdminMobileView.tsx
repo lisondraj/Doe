@@ -11,9 +11,11 @@ import {
   ADMIN_MOBILE_BUTTON_TW,
   ADMIN_MOBILE_CONTENT_STACK,
   ADMIN_MOBILE_INPUT_H,
+  ADMIN_MOBILE_HEADER_LOGO_TW,
   ADMIN_MOBILE_NAV_CLEARANCE,
   ADMIN_MOBILE_PAGE_TITLE_TW,
   ADMIN_MOBILE_SUBTITLE_TW,
+  ADMIN_MOBILE_TAB_BADGE_TW,
   ADMIN_MOBILE_TAB_BAR_INSET,
   ADMIN_MOBILE_TAB_BAR_RESERVE,
   ADMIN_MOBILE_TAB_BUTTON_TW,
@@ -55,10 +57,10 @@ export function AdminMobileView({
       >
         <header className="shrink-0">
           <div className="flex items-center gap-4 iphone-page:gap-5">
-            <div className="h-12 w-12 shrink-0 rounded-2xl bg-gradient-to-br from-[#E7A944] via-[#D2774C] to-[#1E343A] shadow-sm iphone-page:h-14 iphone-page:w-14 iphone-page:rounded-[1.1rem]" />
+            <div className={ADMIN_MOBILE_HEADER_LOGO_TW} />
             <div className="min-w-0 flex-1">
               <h1 className={ADMIN_MOBILE_PAGE_TITLE_TW}>Doe Admin</h1>
-              <p className={`mt-1.5 iphone-page:mt-2 ${ADMIN_MOBILE_SUBTITLE_TW}`}>{tabLabel}</p>
+              <p className={`mt-2 iphone-page:mt-2.5 ${ADMIN_MOBILE_SUBTITLE_TW}`}>{tabLabel}</p>
             </div>
             <button
               type="button"
@@ -71,7 +73,7 @@ export function AdminMobileView({
           </div>
         </header>
 
-        <div className={`min-h-0 flex-1 ${ADMIN_MOBILE_CONTENT_STACK} pt-5 iphone-page:pt-6`}>
+        <div className={`min-h-0 flex-1 ${ADMIN_MOBILE_CONTENT_STACK} pt-6 iphone-page:pt-7`}>
           {activeTab === "signups" ? (
             <InternshipSignupsPanel
               variant="mobile"
@@ -95,7 +97,7 @@ export function AdminMobileView({
 
       <nav
         className={`fixed inset-x-0 bottom-0 z-[80] border-t border-[#E8E8E8] bg-[#F7F6F3]/95 backdrop-blur-md ${ADMIN_MOBILE_TAB_BAR_INSET}`}
-        style={{ paddingBottom: "max(1.15rem, env(safe-area-inset-bottom, 0px))" }}
+        style={{ paddingBottom: "max(1.25rem, env(safe-area-inset-bottom, 0px))" }}
         aria-label="Admin sections"
       >
         <div className="flex gap-3 iphone-page:gap-3.5">
@@ -115,7 +117,7 @@ export function AdminMobileView({
               </>
             </DoeBuildIcon>
             <span className="truncate">Signups</span>
-            <span className="shrink-0 rounded-full bg-neutral-100 px-2.5 py-1 text-[0.86rem] font-semibold tabular-nums text-neutral-600 iphone-page:text-[0.92rem]">
+            <span className={ADMIN_MOBILE_TAB_BADGE_TW}>
               {stats.total}
             </span>
           </button>
