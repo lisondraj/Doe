@@ -2,9 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const IDLE_MS = 5000;
+/** Show the hint only during the first 10s without card interaction. */
+const INITIAL_HINT_MS = 10000;
 /** Matches `join-card-idle-blur-pulse` duration — two blur cycles. */
 const PULSE_MS = 1500;
+const PULSE_INTERVAL_MS = 3200;
 
 export function useJoinCardIdleHint({
   enabled,
@@ -14,63 +16,88 @@ export function useJoinCardIdleHint({
   resetEpoch: number;
 }) {
   const [hasContacted, setHasContacted] = useState(false);
+  const [initialWindowExpired, setInitialWindowExpired] = useState(false);
   const [isPulsing, setIsPulsing] = useState(false);
-  const lastActivityRef = useRef(Date.now());
+  const mountTimeRef = useRef(Date.now());
   const pulseEndTimerRef = useRef<number | null>(null);
+  const pulseIntervalRef = useRef<number | null>(null);
+  const initialWindowTimerRef = useRef<number | null>(null);
+
+  const clearPulseTimers = useCallback(() => {
+    if (pulseEndTimerRef.current !== null) {
+      window.clearTimeout(pulseEndTimerRef.current);
+      pulseEndTimerRef.current = null;
+    }
+    if (pulseIntervalRef.current !== null) {
+      window.clearInterval(pulseIntervalRef.current);
+      pulseIntervalRef.current = null;
+    }
+  }, []);
 
   useEffect(() => {
     setHasContacted(false);
+    setInitialWindowExpired(false);
     setIsPulsing(false);
-    lastActivityRef.current = Date.now();
-  }, [resetEpoch]);
+    mountTimeRef.current = Date.now();
+    clearPulseTimers();
+
+    if (initialWindowTimerRef.current !== null) {
+      window.clearTimeout(initialWindowTimerRef.current);
+    }
+    initialWindowTimerRef.current = window.setTimeout(() => {
+      setInitialWindowExpired(true);
+      setIsPulsing(false);
+      clearPulseTimers();
+      initialWindowTimerRef.current = null;
+    }, INITIAL_HINT_MS);
+
+    return () => {
+      if (initialWindowTimerRef.current !== null) {
+        window.clearTimeout(initialWindowTimerRef.current);
+        initialWindowTimerRef.current = null;
+      }
+      clearPulseTimers();
+    };
+  }, [resetEpoch, clearPulseTimers]);
 
   const registerContact = useCallback(() => {
     setHasContacted(true);
     setIsPulsing(false);
-    if (pulseEndTimerRef.current !== null) {
-      window.clearTimeout(pulseEndTimerRef.current);
-      pulseEndTimerRef.current = null;
-    }
-  }, []);
+    clearPulseTimers();
+  }, [clearPulseTimers]);
 
   const bumpActivity = useCallback(() => {
-    lastActivityRef.current = Date.now();
-    if (isPulsing) setIsPulsing(false);
-    if (pulseEndTimerRef.current !== null) {
-      window.clearTimeout(pulseEndTimerRef.current);
-      pulseEndTimerRef.current = null;
-    }
-  }, [isPulsing]);
+    // Pointer/focus on the card counts as interaction for dismissing the hint.
+  }, []);
 
-  const showIdleHint = enabled && !hasContacted;
+  const showIdleHint = enabled && !hasContacted && !initialWindowExpired;
 
   useEffect(() => {
     if (!showIdleHint) {
       setIsPulsing(false);
+      clearPulseTimers();
       return;
     }
 
-    const tick = () => {
-      if (isPulsing) return;
-      if (Date.now() - lastActivityRef.current >= IDLE_MS) {
-        setIsPulsing(true);
-        pulseEndTimerRef.current = window.setTimeout(() => {
-          setIsPulsing(false);
-          lastActivityRef.current = Date.now();
-          pulseEndTimerRef.current = null;
-        }, PULSE_MS);
-      }
-    };
-
-    const interval = window.setInterval(tick, 200);
-    return () => {
-      window.clearInterval(interval);
+    const triggerPulse = () => {
+      if (Date.now() - mountTimeRef.current >= INITIAL_HINT_MS) return;
+      setIsPulsing(true);
       if (pulseEndTimerRef.current !== null) {
         window.clearTimeout(pulseEndTimerRef.current);
-        pulseEndTimerRef.current = null;
       }
+      pulseEndTimerRef.current = window.setTimeout(() => {
+        setIsPulsing(false);
+        pulseEndTimerRef.current = null;
+      }, PULSE_MS);
     };
-  }, [showIdleHint, isPulsing]);
+
+    triggerPulse();
+    pulseIntervalRef.current = window.setInterval(triggerPulse, PULSE_INTERVAL_MS);
+
+    return () => {
+      clearPulseTimers();
+    };
+  }, [showIdleHint, clearPulseTimers]);
 
   return { showIdleHint, isPulsing, registerContact, bumpActivity };
 }

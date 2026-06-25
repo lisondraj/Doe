@@ -69,7 +69,6 @@ export function AdminMobileView({
         <div className={`min-h-0 flex-1 ${ADMIN_MOBILE_CONTENT_STACK}`}>
           {activeTab === "signups" ? (
             <InternshipSignupsPanel
-              variant="mobile"
               applications={applications}
               stats={stats}
               loading={loading}
@@ -79,7 +78,6 @@ export function AdminMobileView({
             />
           ) : (
             <InternshipAnalyticsPanel
-              variant="mobile"
               applications={applications}
               loading={loading}
               onRefresh={() => void refresh()}

@@ -50,22 +50,6 @@ export function summarizeInternshipApplications(
   };
 }
 
-export function joinFormStateFromApplicationRow(row: InternshipApplicationRow): JoinApplyFormState {
-  return {
-    name: row.name,
-    email: row.email,
-    country: row.country,
-    education: row.education,
-    schoolName: row.school_name,
-    programOfStudy: row.program_of_study,
-    areas: row.areas as JoinApplyFormState["areas"],
-    resumeFileName: row.resume_file_name,
-    resumeFileType: row.resume_file_type,
-    linkedinUsername: row.linkedin_username ?? "",
-    additionalNotes: row.additional_notes ?? "",
-  };
-}
-
 export async function enrichInternshipApplicationRow(
   row: InternshipApplicationRow,
 ): Promise<AdminInternshipApplication> {
@@ -83,6 +67,22 @@ export async function enrichInternshipApplicationRow(
   }
 
   return { ...row, resume_download_url: signed?.signedUrl ?? null };
+}
+
+export function joinFormStateFromApplicationRow(row: InternshipApplicationRow): JoinApplyFormState {
+  return {
+    name: row.name,
+    email: row.email,
+    country: row.country,
+    education: row.education,
+    schoolName: row.school_name,
+    programOfStudy: row.program_of_study,
+    areas: row.areas as JoinApplyFormState["areas"],
+    resumeFileName: row.resume_file_name,
+    resumeFileType: row.resume_file_type,
+    linkedinUsername: row.linkedin_username ?? "",
+    additionalNotes: row.additional_notes ?? "",
+  };
 }
 
 export async function fetchInternshipApplications(): Promise<AdminInternshipApplication[]> {

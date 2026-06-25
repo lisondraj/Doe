@@ -1,6 +1,3 @@
-import type { Metadata } from "next";
-import { headers } from "next/headers";
-
 import { AdminRouter } from "@/components/admin/AdminRouter";
 import {
   fetchInternshipApplications,
@@ -11,18 +8,7 @@ import {
 
 export const dynamic = "force-dynamic";
 
-const MOBILE_UA =
-  /iPhone|iPod|Android.*Mobile|webOS|BlackBerry|IEMobile|Opera Mini/i;
-
-export const metadata: Metadata = {
-  title: "Admin · Doe",
-  description: "Doe admin workspace",
-};
-
 export default async function AdminPage() {
-  const ua = headers().get("user-agent") ?? "";
-  const initialVariant = MOBILE_UA.test(ua) ? "phone" : "desktop";
-
   let initialApplications: AdminInternshipApplication[] = [];
   let initialStats: InternshipSignupStats = {
     total: 0,
@@ -41,7 +27,6 @@ export default async function AdminPage() {
 
   return (
     <AdminRouter
-      initialVariant={initialVariant}
       initialApplications={initialApplications}
       initialStats={initialStats}
       initialError={initialError}

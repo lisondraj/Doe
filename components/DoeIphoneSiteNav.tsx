@@ -76,9 +76,15 @@ function NavChromeStrip({
   logoLink?: boolean;
   showMenu?: boolean;
 }) {
-  const navInsetX = pinchSafe
-    ? "px-11 iphone-page:px-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))] iphone-page:pr-[max(1.65rem,env(safe-area-inset-right,0px))]"
-    : "px-8 iphone-page:px-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))]";
+  const pageRightInset =
+    "pr-14 iphone-page:pr-[max(2.35rem,calc(env(safe-area-inset-right,0px)+5.25vmin))]";
+  const navInsetX = showApplyScrollCta
+    ? pinchSafe
+      ? `pl-11 ${pageRightInset} iphone-page:pl-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))]`
+      : `pl-8 ${pageRightInset} iphone-page:pl-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))]`
+    : pinchSafe
+      ? "px-11 iphone-page:px-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))] iphone-page:pr-[max(1.65rem,env(safe-area-inset-right,0px))]"
+      : "px-8 iphone-page:px-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))]";
   const doeLeft = pinchSafe
     ? "left-11 iphone-page:left-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))]"
     : "left-8 iphone-page:left-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))]";

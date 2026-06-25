@@ -53,7 +53,7 @@ const CARD_STYLES = {
     modalCloseBtn: "left-0 top-0",
     modalCloseIcon: "h-7 w-7 iphone-page:h-8 iphone-page:w-8",
     inviteText:
-      "text-[1.25rem] leading-snug tracking-[-0.02em] iphone-page:text-[1.375rem]",
+      "text-[1.5rem] leading-snug tracking-[-0.02em] iphone-page:text-[1.6875rem]",
   },
   desktop: {
     height: JOIN_DESKTOP_APPLY_CARD_HEIGHT,
@@ -84,11 +84,13 @@ const CARD_STYLES = {
     confirmBtnGap: "mt-5 flex flex-col gap-2.5",
     modalCloseBtn: "left-0 top-0",
     modalCloseIcon: "h-6 w-6",
-    inviteText: "text-[1.0625rem] leading-snug tracking-[-0.02em]",
+    inviteText: "text-[1.3125rem] leading-snug tracking-[-0.02em]",
   },
 } as const;
 
 const MODAL_SCRIM = "bg-[#EFECE7]/58 backdrop-blur-[12px]";
+const MODAL_DISMISS_TOP = "absolute inset-x-0 top-0 bottom-[52%] z-[4]";
+const MODAL_SCRIM_BOTTOM = "absolute inset-x-0 bottom-0 top-[48%] z-[4]";
 const CARD_BLUR = "blur-[10px]";
 
 const NAME_LORA_MOBILE =
@@ -486,7 +488,7 @@ export function JoinApplyCard({
 
         {/* Top-left: preferred roles — in front of idle blur */}
         <div
-          className={`absolute left-0 top-0 z-[3] ${styles.topLeftMaxW} ${styles.topPad} transition-[filter] duration-300 ${isModalOpen ? `pointer-events-none ${CARD_BLUR}` : ""}`}
+          className={`absolute left-0 top-0 z-[3] ${styles.topLeftMaxW} ${styles.topPad} transition-[filter] duration-300 ${isModalOpen ? "pointer-events-none" : ""}`}
         >
           <div className={`flex flex-col items-start ${styles.roleGap} ${inter.className}`}>
             {data.areas.length === 0 ? (
@@ -517,7 +519,7 @@ export function JoinApplyCard({
 
         {/* Top-right: other fields — in front of idle blur */}
         <div
-          className={`absolute right-0 top-0 z-[3] ${styles.topRightMaxW} ${styles.topPad} transition-[filter] duration-300 ${isModalOpen ? `pointer-events-none ${CARD_BLUR}` : ""}`}
+          className={`absolute right-0 top-0 z-[3] ${styles.topRightMaxW} ${styles.topPad} transition-[filter] duration-300 ${isModalOpen ? "pointer-events-none" : ""}`}
         >
           <div className={`flex flex-col items-end ${styles.topGap}`}>
             {TOP_RIGHT_FIELDS.map(({ step, placeholder, singleLine }) => {
@@ -596,7 +598,13 @@ export function JoinApplyCard({
             <button
               type="button"
               aria-label="Close editor"
-              className={`absolute inset-0 z-[4] ${MODAL_SCRIM}`}
+              className={MODAL_DISMISS_TOP}
+              onClick={onCloseEditor}
+            />
+            <button
+              type="button"
+              aria-label="Close editor"
+              className={`${MODAL_SCRIM_BOTTOM} ${MODAL_SCRIM}`}
               onClick={onCloseEditor}
             />
             <ModalCloseButton
@@ -623,7 +631,7 @@ export function JoinApplyCard({
 
         {isSubmitReviewing ? (
           <>
-            <div className={`absolute inset-0 z-[4] ${MODAL_SCRIM}`} aria-hidden />
+            <div className={`${MODAL_SCRIM_BOTTOM} ${MODAL_SCRIM}`} aria-hidden />
             <div
               className={`absolute inset-0 z-[5] flex items-center justify-center ${styles.editorPad}`}
             >
@@ -641,7 +649,13 @@ export function JoinApplyCard({
             <button
               type="button"
               aria-label="Cancel reset"
-              className={`absolute inset-0 z-[4] ${MODAL_SCRIM}`}
+              className={MODAL_DISMISS_TOP}
+              onClick={onResetCancel}
+            />
+            <button
+              type="button"
+              aria-label="Cancel reset"
+              className={`${MODAL_SCRIM_BOTTOM} ${MODAL_SCRIM}`}
               onClick={onResetCancel}
             />
             <div
