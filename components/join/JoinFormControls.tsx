@@ -12,7 +12,7 @@ export function joinFormFieldClass(variant: "mobile" | "desktop") {
   const size =
     variant === "mobile"
       ? "rounded-[1.35rem] px-6 py-[2rem] text-[1.875rem] iphone-page:rounded-[1.45rem] iphone-page:px-7 iphone-page:py-[2.15rem] iphone-page:text-[2.125rem]"
-      : "rounded-2xl px-5 py-[1.15rem] text-[1.0625rem]";
+      : "rounded-2xl px-6 py-[1.35rem] text-[1.1875rem]";
 
   return [
     "w-full border outline-none transition-[border-color,box-shadow]",

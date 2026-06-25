@@ -137,7 +137,7 @@ function JoinApplyCardForm({
   }
 
   return (
-    <div className={`${joinFormShellClass(variant)} flex w-full flex-col ${variant === "mobile" ? "pt-8 iphone-page:pt-9" : "pt-7"}`}>
+    <div className={`${joinFormShellClass(variant)} flex w-full flex-col`}>
       <JoinApplyCard
         variant={variant}
         data={data}

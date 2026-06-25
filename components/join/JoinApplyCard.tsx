@@ -3,7 +3,6 @@
 import type { ReactNode } from "react";
 
 import { JoinInternLineGraphic } from "@/components/join/JoinInternLineGraphic";
-import { BLOG_LANDING_HERO_CORNER_PAD } from "@/lib/blog/blog-layout-styles";
 import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
 import { inter, lora } from "@/lib/home/fonts";
 import type { JoinApplyFormState } from "@/lib/join/join-apply-form";
@@ -14,69 +13,71 @@ import {
 import { JOIN_DESKTOP_APPLY_CARD_HEIGHT } from "@/lib/join/join-layout";
 import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
 
-export const JOIN_APPLY_CARD_HEIGHT = "h-[46.67rem] iphone-page:h-[52.89rem]";
+export const JOIN_APPLY_CARD_HEIGHT = "h-[52rem] iphone-page:h-[58rem]";
 
 const CARD_STYLES = {
   mobile: {
     height: JOIN_APPLY_CARD_HEIGHT,
     fieldText:
-      "text-[clamp(1.35rem,4.2vw,2rem)] leading-[1.12] iphone-page:text-[clamp(1.5rem,1.2rem+1.8vmin,2.2rem)]",
+      "text-[clamp(1.65rem,5vw,2.45rem)] leading-[1.1] iphone-page:text-[clamp(1.85rem,1.55rem+2.1vmin,2.65rem)]",
     placeholderLabel:
-      "text-[0.625rem] font-medium uppercase tracking-[0.34em] text-[#C8C0B4] iphone-page:text-[0.6875rem] iphone-page:tracking-[0.36em]",
+      "text-[0.75rem] font-medium uppercase tracking-[0.36em] text-[#C8C0B4] iphone-page:text-[0.8125rem] iphone-page:tracking-[0.38em]",
     namePlaceholder:
-      "text-[clamp(1.85rem,5.5vw,2.75rem)] leading-[1.08] text-[#C8C0B4] iphone-page:text-[clamp(2.1rem,1.7rem+2.4vmin,3.15rem)]",
+      "text-[clamp(2.2rem,6.5vw,3.35rem)] leading-[1.06] text-[#C8C0B4] iphone-page:text-[clamp(2.45rem,2rem+2.6vmin,3.75rem)]",
     nameText:
-      "text-[clamp(1.85rem,5.5vw,2.75rem)] leading-[1.08] iphone-page:text-[clamp(2.1rem,1.7rem+2.4vmin,3.15rem)]",
-    topPad: "p-6 iphone-page:p-7",
-    topMaxW: "max-w-[88%] iphone-page:max-w-[90%]",
-    topGap: "gap-3 iphone-page:gap-3.5",
-    nameMinH: "min-h-[5.25rem] iphone-page:min-h-[5.75rem]",
-    nameWidth: "w-[min(100%,88%)]",
-    lineBand: "bottom-[9.5rem] h-[17%] iphone-page:bottom-[10.5rem] iphone-page:h-[15%]",
-    editBtn: "h-10 w-10 iphone-page:h-11 iphone-page:w-11 iphone-page:rounded-[0.85rem]",
-    pencil: "iphone-page:h-[22px] iphone-page:w-[22px]",
+      "text-[clamp(2.2rem,6.5vw,3.35rem)] leading-[1.06] iphone-page:text-[clamp(2.45rem,2rem+2.6vmin,3.75rem)]",
+    topPad: "p-7 iphone-page:p-8",
+    topMaxW: "max-w-[94%]",
+    topGap: "gap-4 iphone-page:gap-[1.15rem]",
+    nameMinH: "min-h-[6.25rem] iphone-page:min-h-[6.75rem]",
+    nameWidth: "w-full",
+    lineBand: "inset-0 scale-[1.22] iphone-page:scale-[1.28]",
+    editBtn: "h-12 w-12 iphone-page:h-[3.35rem] iphone-page:w-[3.35rem] iphone-page:rounded-[0.95rem]",
+    pencil: "h-[1.35rem] w-[1.35rem] iphone-page:h-6 iphone-page:w-6",
     roleChip:
-      "rounded-xl px-3 py-1.5 text-[clamp(0.95rem,3.2vw,1.2rem)] iphone-page:px-3.5 iphone-page:py-2 iphone-page:text-[clamp(1.05rem,0.9rem+1vmin,1.35rem)]",
-    roleGap: "gap-2 iphone-page:gap-2.5",
-    editorPad: "px-6 py-10 iphone-page:px-8",
-    editorMaxW: "max-w-[min(100%,26rem)]",
-    cornerPad: BLOG_LANDING_HERO_CORNER_PAD,
-    resetBtn: "gap-1.5 text-[0.8125rem] iphone-page:text-[0.875rem]",
-    resetIcon: "h-4 w-4 iphone-page:h-[1.125rem] iphone-page:w-[1.125rem]",
-    confirmTitle: "text-[1.25rem] iphone-page:text-[1.375rem]",
-    confirmBody: "text-[0.9375rem] iphone-page:text-[1rem]",
-    confirmBtn: "rounded-xl px-4 py-2.5 text-[0.9375rem] iphone-page:rounded-[0.85rem] iphone-page:px-5 iphone-page:py-3 iphone-page:text-[1rem]",
-    modalCloseBtn: "left-0 top-0 h-10 w-10 iphone-page:h-11 iphone-page:w-11 iphone-page:rounded-[0.85rem]",
-    modalCloseIcon: "h-[1.125rem] w-[1.125rem] iphone-page:h-5 iphone-page:w-5",
-    modalEditorLead: "pt-12 iphone-page:pt-14",
+      "rounded-xl px-3.5 py-2 text-[clamp(1.05rem,3.5vw,1.35rem)] iphone-page:px-4 iphone-page:py-2.5 iphone-page:text-[clamp(1.15rem,1rem+1.1vmin,1.5rem)]",
+    roleGap: "gap-2.5 iphone-page:gap-3",
+    editorPad: "px-7 py-11 iphone-page:px-9 iphone-page:py-12",
+    editorMaxW: "max-w-[min(100%,30rem)]",
+    cornerPad: "px-7 pb-7 iphone-page:px-8 iphone-page:pb-8",
+    fieldsTopPadWithReset: "px-7 pt-[4.5rem] iphone-page:px-8 iphone-page:pt-[5rem]",
+    resetBtn: "gap-2 text-[0.9375rem] iphone-page:text-[1.0625rem]",
+    resetIcon: "h-5 w-5 iphone-page:h-[1.35rem] iphone-page:w-[1.35rem]",
+    confirmTitle: "text-[1.5rem] iphone-page:text-[1.625rem]",
+    confirmBody: "text-[1.0625rem] iphone-page:text-[1.125rem]",
+    confirmBtn: "rounded-xl px-5 py-3 text-[1.0625rem] iphone-page:rounded-[0.95rem] iphone-page:px-6 iphone-page:py-3.5 iphone-page:text-[1.125rem]",
+    modalCloseBtn: "left-0 top-0 h-12 w-12 iphone-page:h-[3.35rem] iphone-page:w-[3.35rem] iphone-page:rounded-[0.95rem]",
+    modalCloseIcon: "h-[1.35rem] w-[1.35rem] iphone-page:h-6 iphone-page:w-6",
+    modalEditorLead: "pt-14 iphone-page:pt-16",
   },
   desktop: {
     height: JOIN_DESKTOP_APPLY_CARD_HEIGHT,
-    fieldText: "text-[0.9375rem] leading-[1.2]",
-    placeholderLabel: "text-[0.5625rem] font-medium uppercase tracking-[0.32em] text-[#C8C0B4]",
-    namePlaceholder: "text-[1.375rem] leading-[1.1] text-[#C8C0B4]",
-    nameText: "text-[1.375rem] leading-[1.1]",
-    topPad: "p-4",
-    topMaxW: "max-w-[86%]",
-    topGap: "gap-2",
-    nameMinH: "min-h-[3.75rem]",
-    nameWidth: "w-[min(100%,86%)]",
-    lineBand: "bottom-[5.5rem] h-[18%]",
-    editBtn: "h-8 w-8 rounded-lg",
-    pencil: "h-4 w-4",
-    roleChip: "rounded-lg px-2 py-1 text-[0.75rem]",
-    roleGap: "gap-1.5",
-    editorPad: "px-8 py-6",
-    editorMaxW: "max-w-[min(100%,22rem)]",
-    cornerPad: "px-5 pb-5",
-    resetBtn: "gap-1.5 text-[0.8125rem]",
-    resetIcon: "h-3.5 w-3.5",
-    confirmTitle: "text-[1.0625rem]",
-    confirmBody: "text-[0.875rem]",
-    confirmBtn: "rounded-lg px-3.5 py-2 text-[0.875rem]",
-    modalCloseBtn: "left-0 top-0 h-8 w-8 rounded-lg",
-    modalCloseIcon: "h-3.5 w-3.5",
-    modalEditorLead: "pt-10",
+    fieldText: "text-[1.3125rem] leading-[1.16]",
+    placeholderLabel: "text-[0.75rem] font-medium uppercase tracking-[0.34em] text-[#C8C0B4]",
+    namePlaceholder: "text-[2rem] leading-[1.06] text-[#C8C0B4]",
+    nameText: "text-[2rem] leading-[1.06]",
+    topPad: "p-6",
+    topMaxW: "max-w-[94%]",
+    topGap: "gap-3",
+    nameMinH: "min-h-[5.25rem]",
+    nameWidth: "w-full",
+    lineBand: "inset-0 scale-[1.24]",
+    editBtn: "h-11 w-11 rounded-lg",
+    pencil: "h-[1.25rem] w-[1.25rem]",
+    roleChip: "rounded-lg px-3 py-1.5 text-[1rem]",
+    roleGap: "gap-2",
+    editorPad: "px-10 py-9",
+    editorMaxW: "max-w-[min(100%,28rem)]",
+    cornerPad: "px-6 pb-6",
+    fieldsTopPadWithReset: "px-6 pt-[3.75rem]",
+    resetBtn: "gap-2 text-[1rem]",
+    resetIcon: "h-[1.125rem] w-[1.125rem]",
+    confirmTitle: "text-[1.375rem]",
+    confirmBody: "text-[1.0625rem]",
+    confirmBtn: "rounded-lg px-4 py-2.5 text-[1rem]",
+    modalCloseBtn: "left-0 top-0 h-11 w-11 rounded-lg",
+    modalCloseIcon: "h-[1.125rem] w-[1.125rem]",
+    modalEditorLead: "pt-14",
   },
 } as const;
 
@@ -277,26 +278,25 @@ export function JoinApplyCard({
 
   return (
     <div className="relative w-full">
-      {!readOnly && onResetRequest ? (
-        <button
-          type="button"
-          onClick={onResetRequest}
-          className={`absolute -top-1 right-0 z-[6] flex translate-y-[-100%] items-center font-medium leading-none tracking-[-0.01em] text-[#9A8F82] transition-colors hover:text-[#1E343A]/70 ${styles.resetBtn} ${inter.className}`}
-          style={{ marginTop: variant === "mobile" ? "-0.35rem" : "-0.25rem" }}
-        >
-          <ResetIcon className={styles.resetIcon} />
-          Reset
-        </button>
-      ) : null}
-
       <div
         className={`relative w-full overflow-hidden border ${styles.height} ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
         style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
       >
+        {!readOnly && onResetRequest ? (
+          <button
+            type="button"
+            onClick={onResetRequest}
+            className={`absolute right-0 top-0 z-[6] flex items-center font-medium leading-none tracking-[-0.01em] text-[#9A8F82] transition-colors hover:text-[#1E343A]/70 ${styles.topPad} ${styles.resetBtn} ${inter.className}`}
+          >
+            <ResetIcon className={styles.resetIcon} />
+            Reset
+          </button>
+        ) : null}
+
         <div
           className={`absolute inset-0 transition-[filter] duration-300 ${isEditing || showResetConfirm ? "pointer-events-none blur-[7px]" : ""}`}
         >
-          <div className={`pointer-events-none absolute inset-x-0 ${styles.lineBand}`}>
+          <div className={`pointer-events-none absolute origin-center ${styles.lineBand}`}>
             <div className="relative h-full w-full">
               <JoinInternLineGraphic variant={2} fullBleed />
             </div>
@@ -339,7 +339,9 @@ export function JoinApplyCard({
           </div>
 
           {/* Top-right: other fields */}
-          <div className={`absolute right-0 top-0 z-[2] ${styles.topMaxW} ${styles.topPad}`}>
+          <div
+            className={`absolute right-0 top-0 z-[2] ${styles.topMaxW} ${!readOnly && onResetRequest ? styles.fieldsTopPadWithReset : styles.topPad}`}
+          >
             <div className={`flex flex-col items-end ${styles.topGap}`}>
               {TOP_RIGHT_FIELDS.map(({ step, placeholder }) => {
                 const value = getTopRightDisplayValue(step, data, touchedSteps);

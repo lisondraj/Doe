@@ -8,7 +8,6 @@ import {
   JOIN_DESKTOP_TRACK_ROW_CARD_HEIGHT,
   JOIN_DESKTOP_TRACK_ROW_COL_GAP,
   JOIN_MOBILE_CARD_HEIGHT,
-  JOIN_MOBILE_PAGE_INSET_X,
   JOIN_MOBILE_SECTION_STACK_GAP,
   JOIN_MOBILE_TRACK_SECTION,
   JOIN_MOBILE_TRACKS_LEAD_GAP,
@@ -78,7 +77,7 @@ export function JoinInternTracks({ variant }: { variant: "mobile" | "desktop" })
 
   return (
     <div
-      className={`flex flex-col ${JOIN_MOBILE_PAGE_INSET_X} ${JOIN_MOBILE_TRACKS_LEAD_GAP} ${JOIN_MOBILE_SECTION_STACK_GAP}`}
+      className={`flex flex-col ${JOIN_MOBILE_TRACKS_LEAD_GAP} ${JOIN_MOBILE_SECTION_STACK_GAP}`}
       aria-label="Internship tracks"
     >
       {JOIN_INTERN_TRACKS.map((track) => {
