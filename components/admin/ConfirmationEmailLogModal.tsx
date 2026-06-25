@@ -173,14 +173,14 @@ export function ConfirmationEmailLogModal({
       <button
         type="button"
         aria-label="Close confirmation email log"
-        className="absolute inset-0 bg-black/30"
+        className="absolute inset-0 z-0 bg-black/30"
         onClick={onClose}
       />
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="confirmation-email-log-title"
-        className={panelClass}
+        className={`relative z-10 ${panelClass}`}
       >
         <header
           className={`flex items-start justify-between gap-3 border-b border-[#EFEFEF] ${
