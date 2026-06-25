@@ -5,11 +5,10 @@ import {
   type JoinApplyArea,
   type JoinApplyFormState,
 } from "@/lib/join/join-apply-form";
-import { ALLOWED_RESUME_MIME_TYPES, getResumeFileTypeLabel } from "@/lib/join/resume-file";
+import { getResumeContentType, getResumeFileTypeLabel, isAllowedResumeFile } from "@/lib/join/resume-file";
 import { createSupabaseAdmin, RESUME_BUCKET } from "@/lib/supabase/admin";
 
 const MAX_RESUME_BYTES = 10 * 1024 * 1024;
-const ALLOWED_RESUME_TYPES = ALLOWED_RESUME_MIME_TYPES;
 
 function sanitizeFileName(name: string): string {
   return name.replace(/[^\w.\-()+ ]+/g, "_").slice(0, 180);
@@ -65,11 +64,8 @@ function getResumeFile(formData: FormData): File | null {
   const resume = formData.get("resume");
   if (!(resume instanceof File) || resume.size === 0) return null;
   if (resume.size > MAX_RESUME_BYTES) throw new Error("Resume must be 10 MB or smaller.");
-  if (!ALLOWED_RESUME_TYPES.has(resume.type)) {
-    const ext = resume.name.split(".").pop()?.toLowerCase() ?? "";
-    if (!["pdf", "doc", "docx"].includes(ext)) {
-      throw new Error("Resume must be a PDF or Word document.");
-    }
+  if (!isAllowedResumeFile(resume)) {
+    throw new Error("Resume must be a PDF, Word document, or photo.");
   }
   return resume;
 }
@@ -115,7 +111,7 @@ export async function submitJoinApplication(formData: FormData): Promise<{ id: s
     const { error: uploadError } = await supabase.storage
       .from(RESUME_BUCKET)
       .upload(storagePath, fileBuffer, {
-        contentType: resumeFile.type,
+        contentType: getResumeContentType(resumeFile),
         upsert: false,
       });
 

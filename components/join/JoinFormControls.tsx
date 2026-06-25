@@ -4,7 +4,7 @@ import { useLayoutEffect, useRef, useState, type ReactNode, type RefObject } fro
 
 import type { JoinApplyCountry, JoinApplyEducation, JoinApplyEducationValue } from "@/lib/join/join-apply-form";
 import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
-import { getResumeFileTypeLabel, isAllowedResumeFile } from "@/lib/join/resume-file";
+import { ALLOWED_RESUME_ACCEPT, ALLOWED_RESUME_UPLOAD_MESSAGE, getResumeFileTypeLabel, isAllowedResumeFile } from "@/lib/join/resume-file";
 import { inter } from "@/lib/home/fonts";
 
 export function joinFormShellClass(_variant: "mobile" | "desktop") {
@@ -521,7 +521,7 @@ export function JoinFormBorderedResumeField({
         <input
           ref={fileInputRef}
           type="file"
-          accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+          accept={ALLOWED_RESUME_ACCEPT}
           className="sr-only"
           onChange={(e) => {
             const file = e.target.files?.[0] ?? null;
@@ -531,7 +531,7 @@ export function JoinFormBorderedResumeField({
               return;
             }
             if (!isAllowedResumeFile(file)) {
-              setUploadError("Upload a PDF or Word document.");
+              setUploadError(ALLOWED_RESUME_UPLOAD_MESSAGE);
               e.target.value = "";
               return;
             }
