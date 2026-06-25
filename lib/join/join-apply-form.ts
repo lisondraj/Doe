@@ -58,12 +58,16 @@ export const JOIN_APPLY_STEP_COUNT = 9;
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+export function isJoinApplyEmailValid(email: string): boolean {
+  return EMAIL_RE.test(email.trim());
+}
+
 export function isJoinApplyStepValid(step: number, data: JoinApplyFormState): boolean {
   switch (step) {
     case 0:
       return data.name.trim().length > 0;
     case 1:
-      return EMAIL_RE.test(data.email.trim());
+      return isJoinApplyEmailValid(data.email);
     case 2:
       return data.country === "canada" || data.country === "us";
     case 3:

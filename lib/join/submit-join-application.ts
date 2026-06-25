@@ -1,4 +1,5 @@
-import { isApplicantCardEmailConfigured, sendApplicantCardEmail } from "@/lib/join/applicant-card-email";
+import { sendAndLogInternshipConfirmationEmail } from "@/lib/admin/send-internship-confirmation-email";
+import { isApplicantCardEmailConfigured } from "@/lib/join/applicant-card-email";
 import {
   JOIN_APPLY_AREAS,
   isJoinApplySubmissionValid,
@@ -137,24 +138,17 @@ export async function submitJoinApplication(formData: FormData): Promise<{ id: s
 
   if (isApplicantCardEmailConfigured()) {
     try {
-      await sendApplicantCardEmail(data);
+      await sendAndLogInternshipConfirmationEmail({
+        applicationId,
+        formState: data,
+        trigger: "initial",
+      });
       emailSent = true;
     } catch (error) {
       console.error("[join/apply] confirmation email failed:", error);
     }
   } else {
     console.warn("[join/apply] RESEND_API_KEY is not configured; skipping confirmation email.");
-  }
-
-  if (emailSent) {
-    const { error: emailSentError } = await supabase
-      .from("internship_applications")
-      .update({ email_sent_at: new Date().toISOString() })
-      .eq("id", applicationId);
-
-    if (emailSentError) {
-      console.error("[join/apply] could not record email_sent_at:", emailSentError);
-    }
   }
 
   return { id: applicationId, emailSent };

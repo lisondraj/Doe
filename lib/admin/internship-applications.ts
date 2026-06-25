@@ -66,6 +66,25 @@ export function joinFormStateFromApplicationRow(row: InternshipApplicationRow): 
   };
 }
 
+export async function enrichInternshipApplicationRow(
+  row: InternshipApplicationRow,
+): Promise<AdminInternshipApplication> {
+  if (!row.resume_storage_path) {
+    return { ...row, resume_download_url: null };
+  }
+
+  const supabase = createSupabaseAdmin();
+  const { data: signed, error: signedError } = await supabase.storage
+    .from(RESUME_BUCKET)
+    .createSignedUrl(row.resume_storage_path, RESUME_URL_TTL_SECONDS);
+
+  if (signedError) {
+    return { ...row, resume_download_url: null };
+  }
+
+  return { ...row, resume_download_url: signed?.signedUrl ?? null };
+}
+
 export async function fetchInternshipApplications(): Promise<AdminInternshipApplication[]> {
   const supabase = createSupabaseAdmin();
 
@@ -78,21 +97,5 @@ export async function fetchInternshipApplications(): Promise<AdminInternshipAppl
 
   const rows = (data ?? []) as InternshipApplicationRow[];
 
-  return Promise.all(
-    rows.map(async (row) => {
-      if (!row.resume_storage_path) {
-        return { ...row, resume_download_url: null };
-      }
-
-      const { data: signed, error: signedError } = await supabase.storage
-        .from(RESUME_BUCKET)
-        .createSignedUrl(row.resume_storage_path, RESUME_URL_TTL_SECONDS);
-
-      if (signedError) {
-        return { ...row, resume_download_url: null };
-      }
-
-      return { ...row, resume_download_url: signed?.signedUrl ?? null };
-    }),
-  );
+  return Promise.all(rows.map((row) => enrichInternshipApplicationRow(row)));
 }

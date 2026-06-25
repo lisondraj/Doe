@@ -125,13 +125,13 @@ export function isApplicantCardEmailConfigured(): boolean {
   return Boolean(process.env.RESEND_API_KEY?.trim());
 }
 
-export async function sendApplicantCardEmail(data: JoinApplyFormState): Promise<void> {
+export async function sendApplicantCardEmail(data: JoinApplyFormState): Promise<{ messageId: string | null }> {
   if (!process.env.RESEND_API_KEY?.trim()) {
     throw new Error("Email service is not configured.");
   }
 
   const resend = getResendClient();
-  const { error } = await resend.emails.send({
+  const { data: result, error } = await resend.emails.send({
     from: getApplicantCardFromEmail(),
     to: data.email.trim(),
     subject: "Your Doe applicant card",
@@ -141,4 +141,6 @@ export async function sendApplicantCardEmail(data: JoinApplyFormState): Promise<
   if (error) {
     throw new Error(error.message || "Failed to send confirmation email.");
   }
+
+  return { messageId: result?.id ?? null };
 }

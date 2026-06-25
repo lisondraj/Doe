@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useEffect, type ReactNode } from "react";
 
+import { ConfirmationEmailLogModal } from "@/components/admin/ConfirmationEmailLogModal";
 import { DoeBuildIcon } from "@/components/admin/doe-build-icon";
 import { AdminMobileSectionHeader } from "@/components/admin/AdminMobileSectionHeader";
 import {
@@ -41,6 +42,7 @@ import {
   ADMIN_MOBILE_STACK_GAP,
   ADMIN_MOBILE_SURFACE,
 } from "@/lib/admin/admin-layout";
+import { isJoinApplyEmailValid } from "@/lib/join/join-apply-form";
 import { inter, lora } from "@/lib/home/fonts";
 
 type PanelVariant = "mobile" | "desktop";
@@ -232,15 +234,21 @@ function ApplicationListItem({
 
 function ApplicationDetail({
   application,
-  resendingConfirmation,
-  resendError,
-  onResendConfirmationEmail,
+  emailDraft,
+  savingEmail,
+  emailSaveError,
+  onEmailDraftChange,
+  onSaveEmail,
+  onOpenEmailLog,
   variant,
 }: {
   application: AdminInternshipApplication;
-  resendingConfirmation: boolean;
-  resendError: string | null;
-  onResendConfirmationEmail: () => void;
+  emailDraft: string;
+  savingEmail: boolean;
+  emailSaveError: string | null;
+  onEmailDraftChange: (value: string) => void;
+  onSaveEmail: () => void;
+  onOpenEmailLog: () => void;
   variant: PanelVariant;
 }) {
   const linkedin = application.linkedin_username?.trim()
@@ -266,7 +274,15 @@ function ApplicationDetail({
     "—"
   );
 
-  const resendButtonClass =
+  const emailChanged = emailDraft.trim() !== application.email.trim();
+  const emailValid = isJoinApplyEmailValid(emailDraft);
+
+  const emailInputClass =
+    variant === "mobile"
+      ? `w-full rounded-xl border border-[#E8E8E8] bg-white px-4 ${ADMIN_MOBILE_INPUT_H} outline-none focus:border-[#D2774C] ${ADMIN_MOBILE_FIELD_TEXT_TW}`
+      : "w-full rounded-lg border border-[#E8E8E8] bg-white px-3 py-2 text-[13px] font-medium text-neutral-800 outline-none focus:border-[#D2774C]";
+
+  const actionButtonClass =
     variant === "mobile"
       ? `${ADMIN_MOBILE_BUTTON_TW} ${ADMIN_MOBILE_INPUT_H}`
       : "inline-flex h-8 items-center rounded-lg border border-[#E2E2E2] bg-white px-3 text-[12px] font-medium text-neutral-700 transition-colors hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-60";
@@ -286,7 +302,36 @@ function ApplicationDetail({
       </header>
 
       <div className={`min-h-0 flex-1 overflow-y-auto ${variant === "mobile" ? "px-6 py-2 iphone-page:px-7" : "px-5 py-2"}`}>
-        <DetailField variant={variant} label="Email" value={application.email} />
+        <DetailField
+          variant={variant}
+          label="Email"
+          value={
+            <div className="flex flex-col items-start gap-3">
+              <input
+                type="email"
+                value={emailDraft}
+                onChange={(event) => onEmailDraftChange(event.target.value)}
+                className={emailInputClass}
+                autoComplete="email"
+              />
+              {emailChanged ? (
+                <button
+                  type="button"
+                  onClick={onSaveEmail}
+                  disabled={savingEmail || !emailValid}
+                  className={actionButtonClass}
+                >
+                  {savingEmail ? "Saving…" : "Save email"}
+                </button>
+              ) : null}
+              {emailSaveError ? (
+                <span className={`font-medium text-[#BF593D] ${variant === "mobile" ? ADMIN_MOBILE_META_TW : "text-[12px]"}`}>
+                  {emailSaveError}
+                </span>
+              ) : null}
+            </div>
+          }
+        />
         <DetailField variant={variant} label="Country" value={formatCountry(application.country)} />
         <DetailField variant={variant} label="Education" value={formatEducation(application.education)} />
         <DetailField variant={variant} label="School" value={application.school_name} />
@@ -350,19 +395,9 @@ function ApplicationDetail({
           value={
             <div className="flex flex-col items-start gap-3">
               <span>{formatAdminDate(application.email_sent_at)}</span>
-              <button
-                type="button"
-                onClick={onResendConfirmationEmail}
-                disabled={resendingConfirmation}
-                className={resendButtonClass}
-              >
-                {resendingConfirmation ? "Sending…" : "Re-send confirmation email"}
+              <button type="button" onClick={onOpenEmailLog} className={actionButtonClass}>
+                View confirmation email log
               </button>
-              {resendError ? (
-                <span className={`font-medium text-[#BF593D] ${variant === "mobile" ? ADMIN_MOBILE_META_TW : "text-[12px]"}`}>
-                  {resendError}
-                </span>
-              ) : null}
             </div>
           }
         />
@@ -485,8 +520,10 @@ export function InternshipSignupsPanel({
   const [groupMode, setGroupMode] = useState<InternshipGroupMode>("none");
   const [selectedId, setSelectedId] = useState<string | null>(applications[0]?.id ?? null);
   const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
-  const [resendingConfirmation, setResendingConfirmation] = useState(false);
-  const [resendError, setResendError] = useState<string | null>(null);
+  const [emailDraft, setEmailDraft] = useState("");
+  const [savingEmail, setSavingEmail] = useState(false);
+  const [emailSaveError, setEmailSaveError] = useState<string | null>(null);
+  const [emailLogOpen, setEmailLogOpen] = useState(false);
 
   useEffect(() => {
     if (!applications.some((row) => row.id === selectedId)) {
@@ -495,28 +532,35 @@ export function InternshipSignupsPanel({
     }
   }, [applications, selectedId]);
 
-  useEffect(() => {
-    setResendError(null);
-  }, [selectedId]);
+  const handleSaveEmail = async (application: AdminInternshipApplication) => {
+    const trimmed = emailDraft.trim();
+    if (!isJoinApplyEmailValid(trimmed)) {
+      setEmailSaveError("Enter a valid email address.");
+      return;
+    }
 
-  const handleResendConfirmationEmail = async (application: AdminInternshipApplication) => {
-    setResendingConfirmation(true);
-    setResendError(null);
+    setSavingEmail(true);
+    setEmailSaveError(null);
     try {
-      const response = await fetch(`/api/admin/internship-applications/${application.id}/resend-email`, {
-        method: "POST",
+      const response = await fetch(`/api/admin/internship-applications/${application.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: trimmed }),
       });
-      const payload = (await response.json()) as { ok?: boolean; emailSentAt?: string; error?: string };
-      if (!response.ok || !payload.ok || !payload.emailSentAt) {
-        throw new Error(payload.error || "Could not resend confirmation email.");
+      const payload = (await response.json()) as {
+        ok?: boolean;
+        application?: AdminInternshipApplication;
+        error?: string;
+      };
+      if (!response.ok || !payload.ok || !payload.application) {
+        throw new Error(payload.error || "Could not update applicant email.");
       }
-      onApplicationUpdated({ ...application, email_sent_at: payload.emailSentAt });
-    } catch (resendFailure) {
-      setResendError(
-        resendFailure instanceof Error ? resendFailure.message : "Could not resend confirmation email.",
-      );
+      onApplicationUpdated(payload.application);
+      setEmailDraft(payload.application.email);
+    } catch (saveFailure) {
+      setEmailSaveError(saveFailure instanceof Error ? saveFailure.message : "Could not update applicant email.");
     } finally {
-      setResendingConfirmation(false);
+      setSavingEmail(false);
     }
   };
 
@@ -556,30 +600,57 @@ export function InternshipSignupsPanel({
     [visibleApplications, selectedId],
   );
 
+  useEffect(() => {
+    setEmailDraft(selected?.email ?? "");
+    setEmailSaveError(null);
+    setEmailLogOpen(false);
+  }, [selected?.id, selected?.email]);
+
   const handleSelect = (id: string) => {
     setSelectedId(id);
     if (variant === "mobile") setMobileDetailOpen(true);
   };
 
-  if (variant === "mobile" && mobileDetailOpen && selected) {
+  const applicationDetailProps = selected
+    ? {
+        application: selected,
+        emailDraft,
+        savingEmail,
+        emailSaveError,
+        onEmailDraftChange: setEmailDraft,
+        onSaveEmail: () => void handleSaveEmail(selected),
+        onOpenEmailLog: () => setEmailLogOpen(true),
+        variant,
+      }
+    : null;
+
+  const emailLogModal =
+    selected && emailLogOpen ? (
+      <ConfirmationEmailLogModal
+        open={emailLogOpen}
+        application={selected}
+        variant={variant}
+        onClose={() => setEmailLogOpen(false)}
+        onApplicationUpdated={onApplicationUpdated}
+      />
+    ) : null;
+
+  if (variant === "mobile" && mobileDetailOpen && selected && applicationDetailProps) {
     return (
-      <div className={`flex h-full min-h-0 flex-col ${ADMIN_MOBILE_PANEL_STACK} ${inter.className}`}>
-        <button type="button" onClick={() => setMobileDetailOpen(false)} className={ADMIN_MOBILE_BACK_BUTTON_TW}>
-          <DoeBuildIcon className={ADMIN_MOBILE_BACK_ICON_TW}>
-            <path d="m15 18-6-6 6-6" />
-          </DoeBuildIcon>
-          Back to signups
-        </button>
-        <div className={`${ADMIN_MOBILE_SURFACE} min-h-0 flex-1 overflow-hidden`}>
-          <ApplicationDetail
-            application={selected}
-            resendingConfirmation={resendingConfirmation}
-            resendError={resendError}
-            onResendConfirmationEmail={() => void handleResendConfirmationEmail(selected)}
-            variant="mobile"
-          />
+      <>
+        <div className={`flex h-full min-h-0 flex-col ${ADMIN_MOBILE_PANEL_STACK} ${inter.className}`}>
+          <button type="button" onClick={() => setMobileDetailOpen(false)} className={ADMIN_MOBILE_BACK_BUTTON_TW}>
+            <DoeBuildIcon className={ADMIN_MOBILE_BACK_ICON_TW}>
+              <path d="m15 18-6-6 6-6" />
+            </DoeBuildIcon>
+            Back to signups
+          </button>
+          <div className={`${ADMIN_MOBILE_SURFACE} min-h-0 flex-1 overflow-hidden`}>
+            <ApplicationDetail {...applicationDetailProps} variant="mobile" />
+          </div>
         </div>
-      </div>
+        {emailLogModal}
+      </>
     );
   }
 
@@ -713,14 +784,8 @@ export function InternshipSignupsPanel({
           </div>
 
           <div className="min-h-0 bg-white">
-            {selected ? (
-              <ApplicationDetail
-                application={selected}
-                resendingConfirmation={resendingConfirmation}
-                resendError={resendError}
-                onResendConfirmationEmail={() => void handleResendConfirmationEmail(selected)}
-                variant="desktop"
-              />
+            {applicationDetailProps ? (
+              <ApplicationDetail {...applicationDetailProps} variant="desktop" />
             ) : (
               <div className="flex h-full items-center justify-center px-6 text-center text-[13px] text-neutral-500">
                 Select a signup to view the full applicant card.
@@ -729,6 +794,7 @@ export function InternshipSignupsPanel({
           </div>
         </div>
       )}
+      {emailLogModal}
     </div>
   );
 }
