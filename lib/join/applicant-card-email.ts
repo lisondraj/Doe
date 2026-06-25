@@ -84,9 +84,13 @@ export function buildApplicantCardEmailHtml(data: JoinApplyFormState): string {
 </html>`;
 }
 
+export function isApplicantCardEmailConfigured(): boolean {
+  return Boolean(process.env.RESEND_API_KEY?.trim() && process.env.RESEND_FROM_EMAIL?.trim());
+}
+
 export async function sendApplicantCardEmail(data: JoinApplyFormState): Promise<void> {
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM_EMAIL;
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  const from = process.env.RESEND_FROM_EMAIL?.trim();
 
   if (!apiKey || !from) {
     throw new Error("Email service is not configured.");

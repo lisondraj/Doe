@@ -1,4 +1,4 @@
-import { sendApplicantCardEmail } from "@/lib/join/applicant-card-email";
+import { isApplicantCardEmailConfigured, sendApplicantCardEmail } from "@/lib/join/applicant-card-email";
 import {
   JOIN_APPLY_AREAS,
   isJoinApplySubmissionValid,
@@ -70,7 +70,7 @@ function getResumeFile(formData: FormData): File | null {
   return resume;
 }
 
-export async function submitJoinApplication(formData: FormData): Promise<{ id: string }> {
+export async function submitJoinApplication(formData: FormData): Promise<{ id: string; emailSent: boolean }> {
   const data = joinApplyFormStateFromFormData(formData);
   if (!isJoinApplySubmissionValid(data)) {
     throw new Error("Please complete all required fields before submitting.");
@@ -133,24 +133,29 @@ export async function submitJoinApplication(formData: FormData): Promise<{ id: s
     }
   }
 
-  try {
-    await sendApplicantCardEmail(data);
-  } catch (error) {
-    if (resumeStoragePath) {
-      await supabase.storage.from(RESUME_BUCKET).remove([resumeStoragePath]);
+  let emailSent = false;
+
+  if (isApplicantCardEmailConfigured()) {
+    try {
+      await sendApplicantCardEmail(data);
+      emailSent = true;
+    } catch (error) {
+      console.error("[join/apply] confirmation email failed:", error);
     }
-    await supabase.from("internship_applications").delete().eq("id", applicationId);
-    throw error instanceof Error ? error : new Error("Could not send confirmation email.");
+  } else {
+    console.warn("[join/apply] RESEND_API_KEY or RESEND_FROM_EMAIL is not configured; skipping confirmation email.");
   }
 
-  const { error: emailSentError } = await supabase
-    .from("internship_applications")
-    .update({ email_sent_at: new Date().toISOString() })
-    .eq("id", applicationId);
+  if (emailSent) {
+    const { error: emailSentError } = await supabase
+      .from("internship_applications")
+      .update({ email_sent_at: new Date().toISOString() })
+      .eq("id", applicationId);
 
-  if (emailSentError) {
-    throw new Error(emailSentError.message || "Could not finalize submission.");
+    if (emailSentError) {
+      console.error("[join/apply] could not record email_sent_at:", emailSentError);
+    }
   }
 
-  return { id: applicationId };
+  return { id: applicationId, emailSent };
 }

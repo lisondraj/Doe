@@ -6,7 +6,7 @@ export async function POST(request: Request) {
   try {
     const formData = await request.formData();
     const result = await submitJoinApplication(formData);
-    return NextResponse.json({ ok: true, id: result.id });
+    return NextResponse.json({ ok: true, id: result.id, emailSent: result.emailSent });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Submission failed.";
     const status = message.includes("not configured") ? 503 : 400;

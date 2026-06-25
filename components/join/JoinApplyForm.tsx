@@ -32,8 +32,9 @@ type JoinApplyCardFormProps = {
   touchedSteps: ReadonlySet<number>;
   markStepTouched: (step: number) => void;
   resetForm: () => void;
-  submit: () => Promise<boolean>;
+  submit: () => Promise<{ success: boolean; emailSent: boolean }>;
   submitted: boolean;
+  confirmationEmailSent: boolean;
   submitting: boolean;
   submitError: string | null;
   blockEditorCloseRef: MutableRefObject<boolean>;
@@ -52,6 +53,7 @@ function JoinApplyCardForm({
   resetForm,
   submit,
   submitted,
+  confirmationEmailSent,
   submitting,
   submitError,
   blockEditorCloseRef,
@@ -167,8 +169,8 @@ function JoinApplyCardForm({
   }, [setActiveStep]);
 
   const handleConfirmSubmit = useCallback(async () => {
-    const success = await submit();
-    if (success) setShowSubmitReview(false);
+    const result = await submit();
+    if (result.success) setShowSubmitReview(false);
   }, [submit]);
 
   if (submitted) {
@@ -190,8 +192,14 @@ function JoinApplyCardForm({
           Thank you! We will be in touch.
         </p>
         <p className={`mt-2 text-[#1E343A]/55 ${thankYouBody} ${inter.className}`}>
-          <span className="block">A copy of your applicant card</span>
-          <span className="block">has been emailed to you.</span>
+          {confirmationEmailSent ? (
+            <>
+              <span className="block">A copy of your applicant card</span>
+              <span className="block">has been emailed to you.</span>
+            </>
+          ) : (
+            <span className="block">We received your application.</span>
+          )}
         </p>
       </div>
     );
@@ -261,6 +269,7 @@ function JoinApplyCardForm({
 export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "desktop" }) {
   const [data, setData] = useState<JoinApplyFormState>(JOIN_APPLY_INITIAL_STATE);
   const [submitted, setSubmitted] = useState(false);
+  const [confirmationEmailSent, setConfirmationEmailSent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [resumeUploadError, setResumeUploadError] = useState<string | null>(null);
@@ -349,12 +358,15 @@ export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "d
     setActiveStep(null);
     setSubmitError(null);
     setResumeUploadError(null);
+    setConfirmationEmailSent(false);
     resumeFileRef.current = null;
     if (resumeInputRef.current) resumeInputRef.current.value = "";
   }, []);
 
-  const submit = useCallback(async (): Promise<boolean> => {
-    if (!isJoinApplyCardMandatoryComplete(data, touchedSteps)) return false;
+  const submit = useCallback(async (): Promise<{ success: boolean; emailSent: boolean }> => {
+    if (!isJoinApplyCardMandatoryComplete(data, touchedSteps)) {
+      return { success: false, emailSent: false };
+    }
 
     setSubmitting(true);
     setSubmitError(null);
@@ -377,17 +389,21 @@ export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "d
         body: formData,
       });
 
-      const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+      const payload = (await response.json().catch(() => null)) as {
+        error?: string;
+        emailSent?: boolean;
+      } | null;
       if (!response.ok) {
         throw new Error(payload?.error || "Could not submit your application.");
       }
 
       setSubmitted(true);
+      setConfirmationEmailSent(Boolean(payload?.emailSent));
       setActiveStep(null);
-      return true;
+      return { success: true, emailSent: Boolean(payload?.emailSent) };
     } catch (error) {
       setSubmitError(error instanceof Error ? error.message : "Could not submit your application.");
-      return false;
+      return { success: false, emailSent: false };
     } finally {
       setSubmitting(false);
     }
@@ -415,6 +431,7 @@ export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "d
         resetForm={resetForm}
         submit={submit}
         submitted={submitted}
+        confirmationEmailSent={confirmationEmailSent}
         submitting={submitting}
         submitError={submitError}
         blockEditorCloseRef={blockEditorCloseRef}
