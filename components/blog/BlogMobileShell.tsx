@@ -17,6 +17,7 @@ type BlogMobileShellProps = {
   showMenu?: boolean;
   /** Override shell min-height — join uses locked `--app-vh`. */
   shellMinHeightClass?: string;
+  showFooter?: boolean;
 };
 
 export function BlogMobileShell({
@@ -29,6 +30,7 @@ export function BlogMobileShell({
   footerLinksDisabled = false,
   showMenu = true,
   shellMinHeightClass = "min-h-[100svh]",
+  showFooter = true,
 }: BlogMobileShellProps) {
   return (
     <div
@@ -45,10 +47,10 @@ export function BlogMobileShell({
         logoLink={logoLink}
         showMenu={showMenu}
       />
-      <div className={`blog-page-root relative z-0 ${BLOG_PAGE_INSET_X} ${BLOG_FOOTER_GAP}`}>
+      <div className={`blog-page-root relative z-0 ${BLOG_PAGE_INSET_X} ${showFooter ? BLOG_FOOTER_GAP : ""}`}>
         {children}
       </div>
-      <HomeFooter linksDisabled={footerLinksDisabled} />
+      {showFooter ? <HomeFooter linksDisabled={footerLinksDisabled} /> : null}
     </div>
   );
 }
