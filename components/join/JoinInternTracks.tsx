@@ -1,8 +1,7 @@
 import { JoinInternLineGraphic } from "@/components/join/JoinInternLineGraphic";
 import { JoinInternTrackCopy } from "@/components/join/JoinInternTrackCopy";
 import { JoinInternTrackReveal } from "@/components/join/JoinInternTrackReveal";
-import { JOIN_INTERN_TRACKS } from "@/components/join/join-intern-tracks";
-import { BLOG_CARD_STACK } from "@/lib/blog/blog-layout-styles";
+import { JOIN_INTERN_TRACKS, type JoinInternTrack } from "@/components/join/join-intern-tracks";
 import { JOIN_AGENTS_GRADIENT } from "@/lib/join/join-agents-gradient";
 import {
   JOIN_DESKTOP_TRACK_ROW_CARD_HEIGHT,
@@ -10,7 +9,6 @@ import {
   JOIN_MOBILE_CARD_HEIGHT,
   JOIN_MOBILE_SECTION_STACK_GAP,
   JOIN_MOBILE_TRACK_SECTION,
-  JOIN_MOBILE_TRACKS_LEAD_GAP,
 } from "@/lib/join/join-layout";
 import {
   DOEPHONE_SECTION_CAROUSEL_RADIUS,
@@ -29,6 +27,52 @@ const JOIN_MOBILE_CARD_STACK = "space-y-5 iphone-page:space-y-[clamp(1.35rem,1.0
 
 const JOIN_DESKTOP_CARD_STACK = "space-y-3";
 
+function JoinInternTrackBlock({
+  track,
+  variant,
+  cardHeight,
+  cardStackClass,
+  titleClass,
+  descClass,
+}: {
+  track: JoinInternTrack;
+  variant: "mobile" | "desktop";
+  cardHeight: string;
+  cardStackClass: string;
+  titleClass: string;
+  descClass: string;
+}) {
+  const isAgentsFill = track.cardFill === "agents";
+
+  return (
+    <div className={`${cardStackClass} ${variant === "mobile" ? "flex min-h-0 flex-1 flex-col" : ""}`}>
+      <JoinInternTrackReveal
+        variant={variant}
+        className={`relative w-full overflow-hidden ${variant === "mobile" ? "shrink-0" : ""} ${cardHeight} ${DOEPHONE_SECTION_CAROUSEL_RADIUS} ${
+          isAgentsFill ? "" : "border border-[#D9D4CC] bg-[#EBE7E0]"
+        }`}
+      >
+        {isAgentsFill ? (
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{ background: JOIN_AGENTS_GRADIENT }}
+            aria-hidden
+          />
+        ) : null}
+        <JoinInternLineGraphic variant={track.graphic} onOrange={isAgentsFill} />
+      </JoinInternTrackReveal>
+
+      <JoinInternTrackCopy
+        variant={variant}
+        title={track.title}
+        description={track.description}
+        titleClass={titleClass}
+        descClass={descClass}
+      />
+    </div>
+  );
+}
+
 export function JoinInternTracks({ variant }: { variant: "mobile" | "desktop" }) {
   const cardHeight = variant === "mobile" ? JOIN_MOBILE_CARD_HEIGHT : JOIN_DESKTOP_TRACK_ROW_CARD_HEIGHT;
   const cardStackClass = variant === "mobile" ? JOIN_MOBILE_CARD_STACK : JOIN_DESKTOP_CARD_STACK;
@@ -38,84 +82,61 @@ export function JoinInternTracks({ variant }: { variant: "mobile" | "desktop" })
   if (variant === "desktop") {
     return (
       <div className={`grid grid-cols-4 ${JOIN_DESKTOP_TRACK_ROW_COL_GAP}`} aria-label="Internship tracks">
-        {JOIN_INTERN_TRACKS.map((track) => {
-          const isAgentsFill = track.cardFill === "agents";
-
-          return (
-            <article key={track.title} className="min-w-0">
-              <div className={cardStackClass}>
-                <JoinInternTrackReveal
-                  variant={variant}
-                  className={`relative w-full overflow-hidden ${cardHeight} ${DOEPHONE_SECTION_CAROUSEL_RADIUS} ${
-                    isAgentsFill ? "" : "border border-[#D9D4CC] bg-[#EBE7E0]"
-                  }`}
-                >
-                  {isAgentsFill ? (
-                    <div
-                      className="pointer-events-none absolute inset-0"
-                      style={{ background: JOIN_AGENTS_GRADIENT }}
-                      aria-hidden
-                    />
-                  ) : null}
-                  <JoinInternLineGraphic variant={track.graphic} onOrange={isAgentsFill} />
-                </JoinInternTrackReveal>
-
-                <JoinInternTrackCopy
-                  variant={variant}
-                  title={track.title}
-                  description={track.description}
-                  titleClass={titleClass}
-                  descClass={descClass}
-                />
-              </div>
-            </article>
-          );
-        })}
+        {JOIN_INTERN_TRACKS.map((track) => (
+          <article key={track.title} className="min-w-0">
+            <JoinInternTrackBlock
+              track={track}
+              variant={variant}
+              cardHeight={cardHeight}
+              cardStackClass={cardStackClass}
+              titleClass={titleClass}
+              descClass={descClass}
+            />
+          </article>
+        ))}
       </div>
     );
   }
 
+  const [clinicalTrack, ...remainingTracks] = JOIN_INTERN_TRACKS;
+
   return (
-    <div
-      className={`flex flex-col ${JOIN_MOBILE_TRACKS_LEAD_GAP} ${JOIN_MOBILE_SECTION_STACK_GAP}`}
-      aria-label="Internship tracks"
-    >
-      {JOIN_INTERN_TRACKS.map((track) => {
-        const isAgentsFill = track.cardFill === "agents";
+    <>
+      <section
+        className={`${JOIN_MOBILE_TRACK_SECTION} flex flex-col`}
+        aria-label={`${clinicalTrack.title} track`}
+      >
+        <JoinInternTrackBlock
+          track={clinicalTrack}
+          variant={variant}
+          cardHeight={cardHeight}
+          cardStackClass={cardStackClass}
+          titleClass={titleClass}
+          descClass={descClass}
+        />
+      </section>
 
-        return (
-          <article
+      <div
+        className={`flex flex-col ${JOIN_MOBILE_SECTION_STACK_GAP}`}
+        aria-label="Internship tracks"
+      >
+        {remainingTracks.map((track) => (
+          <section
             key={track.title}
-            className={`${JOIN_MOBILE_TRACK_SECTION} flex flex-col`.trim()}
+            className={`${JOIN_MOBILE_TRACK_SECTION} flex flex-col`}
+            aria-label={`${track.title} track`}
           >
-            <div className={`${cardStackClass} flex min-h-0 flex-1 flex-col`}>
-              <JoinInternTrackReveal
-                variant={variant}
-                className={`relative w-full shrink-0 overflow-hidden ${cardHeight} ${DOEPHONE_SECTION_CAROUSEL_RADIUS} ${
-                  isAgentsFill ? "" : "border border-[#D9D4CC] bg-[#EBE7E0]"
-                }`}
-              >
-                {isAgentsFill ? (
-                  <div
-                    className="pointer-events-none absolute inset-0"
-                    style={{ background: JOIN_AGENTS_GRADIENT }}
-                    aria-hidden
-                  />
-                ) : null}
-                <JoinInternLineGraphic variant={track.graphic} onOrange={isAgentsFill} />
-              </JoinInternTrackReveal>
-
-              <JoinInternTrackCopy
-                variant={variant}
-                title={track.title}
-                description={track.description}
-                titleClass={titleClass}
-                descClass={descClass}
-              />
-            </div>
-          </article>
-        );
-      })}
-    </div>
+            <JoinInternTrackBlock
+              track={track}
+              variant={variant}
+              cardHeight={cardHeight}
+              cardStackClass={cardStackClass}
+              titleClass={titleClass}
+              descClass={descClass}
+            />
+          </section>
+        ))}
+      </div>
+    </>
   );
 }

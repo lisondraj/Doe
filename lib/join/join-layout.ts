@@ -8,31 +8,21 @@ export const JOIN_DESKTOP_CONTENT =
 export const JOIN_MOBILE_SECTION_GUTTER =
   "max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))";
 
-/** Top inset above join mobile hero card — tight under nav. */
-export const JOIN_MOBILE_HERO_TOP_PAD =
-  "pt-5 iphone-page:pt-[max(1rem,calc(env(safe-area-inset-left,0px)+2.15vmin))]";
+/** Clears pinchSafe nav strip — no extra band above hero. */
+export const JOIN_MOBILE_NAV_CLEARANCE =
+  "pt-[calc(env(safe-area-inset-top,0px)+clamp(4.25rem,3.5rem+2.5vmin,5.25rem))]";
 
-/** Hero viewport section — top gutter only; bottom gap on tracks wrapper. */
-export const JOIN_MOBILE_HERO_INSET = JOIN_MOBILE_HERO_TOP_PAD;
+/** Hero band — symmetric gutters above/below card (matches horizontal inset). */
+export const JOIN_MOBILE_HERO_SECTION =
+  "flex flex-col pt-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))] pb-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
 
-/** Vertical stack gap between hero and intern track sections (flex gap + lead padding). */
+/** Hero card — first screen minus nav and symmetric section gutters. */
+export const JOIN_MOBILE_HERO_CARD_HEIGHT =
+  "h-[calc(var(--app-vh,100lvh)-env(safe-area-inset-top,0px)-clamp(4.25rem,3.5rem+2.5vmin,5.25rem)-2*max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin)))] min-h-0 w-full shrink-0";
+
+/** Vertical stack gap between intern track sections. */
 export const JOIN_MOBILE_SECTION_STACK_GAP =
   "gap-14 iphone-page:gap-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
-
-/** Space between hero band and first intern track — padding avoids margin collapse. */
-export const JOIN_MOBILE_TRACKS_LEAD_GAP =
-  "pt-14 iphone-page:pt-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
-
-/** First iPhone screen — hero fills viewport below nav. */
-export const JOIN_MOBILE_HERO_VIEWPORT_SECTION =
-  `flex flex-col iphone-page:min-h-[calc(var(--app-vh,100lvh)-max(11.25rem,calc(env(safe-area-inset-top,0px)+7.75rem)))] ${JOIN_MOBILE_HERO_INSET}`;
-
-/** Hero card fills remaining space inside the viewport section. */
-export const JOIN_MOBILE_HERO_FILL = "h-full min-h-0 w-full flex-1";
-
-/** Join mobile hero — tall band matching Agents carousel card styling (non-fill fallback). */
-export const JOIN_MOBILE_HERO_HEIGHT =
-  "min-h-[clamp(52rem,calc(var(--app-vh,100lvh)*1.12),76rem)] h-[clamp(52rem,calc(var(--app-vh,100lvh)*1.12),76rem)] iphone-page:min-h-[clamp(50rem,calc(var(--app-vh,100lvh)*1.08),72rem)] iphone-page:h-[clamp(50rem,calc(var(--app-vh,100lvh)*1.08),72rem)]";
 
 /** Half of join mobile hero height — intern track graphic boxes (taller on iPhone). */
 export const JOIN_MOBILE_CARD_HEIGHT =

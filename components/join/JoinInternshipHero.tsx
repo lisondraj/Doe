@@ -4,8 +4,7 @@ import { DOEPHONE_COMMUNICATION_SLIDES } from "@/lib/doephone/communication-caro
 import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
 import {
   JOIN_DESKTOP_HERO_HEIGHT,
-  JOIN_MOBILE_HERO_FILL,
-  JOIN_MOBILE_HERO_HEIGHT,
+  JOIN_MOBILE_HERO_CARD_HEIGHT,
 } from "@/lib/join/join-layout";
 import { lora } from "@/lib/home/fonts";
 
@@ -17,20 +16,8 @@ const JOIN_HERO_HEADLINE_MOBILE =
 const JOIN_HERO_HEADLINE_DESKTOP = "text-[clamp(2.85rem,4.8vw,4.35rem)]";
 
 /** Join hero — Agents fill, blog-style bottom-left headline. */
-export function JoinInternshipHero({
-  variant,
-  fillViewport = false,
-}: {
-  variant: "mobile" | "desktop";
-  /** iPhone — stretch gradient card to bottom of first viewport (with outer section pad). */
-  fillViewport?: boolean;
-}) {
-  const heightClass =
-    variant === "mobile" && fillViewport
-      ? JOIN_MOBILE_HERO_FILL
-      : variant === "mobile"
-        ? JOIN_MOBILE_HERO_HEIGHT
-        : JOIN_DESKTOP_HERO_HEIGHT;
+export function JoinInternshipHero({ variant }: { variant: "mobile" | "desktop" }) {
+  const heightClass = variant === "mobile" ? JOIN_MOBILE_HERO_CARD_HEIGHT : JOIN_DESKTOP_HERO_HEIGHT;
   const titleClass = variant === "mobile" ? JOIN_HERO_HEADLINE_MOBILE : JOIN_HERO_HEADLINE_DESKTOP;
 
   return (
