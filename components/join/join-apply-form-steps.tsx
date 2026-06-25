@@ -9,6 +9,8 @@ import {
   JoinCountrySlider,
   JoinEducationSlider,
   JoinFormBorderedField,
+  JoinFormBorderedLinkedInField,
+  JoinFormBorderedSchoolFields,
 } from "@/components/join/JoinFormControls";
 import { JOIN_APPLY_AREAS, type JoinApplyArea, type JoinApplyFormState } from "@/lib/join/join-apply-form";
 import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
@@ -19,10 +21,10 @@ export const JOIN_APPLY_STEP_PROMPTS = [
   "What's your email?",
   "Where are you based?",
   "What's your education level?",
-  "What school do you attend?",
+  "What school do/did you attend?",
   "Which areas would you like to help with?",
   "Upload your resume (optional)",
-  "LinkedIn (optional)",
+  "LinkedIn",
 ] as const;
 
 function toggleArea(areas: JoinApplyArea[], area: JoinApplyArea): JoinApplyArea[] {
@@ -125,13 +127,12 @@ export function renderJoinApplyStep({
       );
     case 4:
       return (
-        <JoinFormBorderedField
+        <JoinFormBorderedSchoolFields
           variant={variant}
-          prompt={prompt}
-          value={data.schoolName}
-          onChange={(schoolName) => patch({ schoolName })}
-          placeholder="School name"
-          autoComplete="organization"
+          schoolName={data.schoolName}
+          programOfStudy={data.programOfStudy}
+          onSchoolChange={(schoolName) => patch({ schoolName })}
+          onProgramChange={(programOfStudy) => patch({ programOfStudy })}
           readOnly={readOnly}
           interactive={interactive}
           onEnter={onEnter}
@@ -205,15 +206,10 @@ export function renderJoinApplyStep({
       );
     case 7:
       return (
-        <JoinFormBorderedField
+        <JoinFormBorderedLinkedInField
           variant={variant}
-          prompt={prompt}
           value={data.linkedinUsername}
           onChange={(linkedinUsername) => patch({ linkedinUsername: linkedinUsername.replace(/\s/g, "") })}
-          placeholder="username"
-          autoComplete="off"
-          spellCheck={false}
-          prefix="linkedin.com/in/"
           readOnly={readOnly}
           interactive={interactive}
           onEnter={onEnter}

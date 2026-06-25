@@ -21,6 +21,7 @@ export type JoinApplyFormState = {
   country: JoinApplyCountry;
   education: JoinApplyEducationValue;
   schoolName: string;
+  programOfStudy: string;
   areas: JoinApplyArea[];
   resume: File | null;
   linkedinUsername: string;
@@ -32,6 +33,7 @@ export const JOIN_APPLY_INITIAL_STATE: JoinApplyFormState = {
   country: "canada",
   education: "",
   schoolName: "",
+  programOfStudy: "",
   areas: [],
   resume: null,
   linkedinUsername: "",
@@ -63,7 +65,7 @@ export function isJoinApplyStepValid(step: number, data: JoinApplyFormState): bo
     case 3:
       return data.education === "highschool" || data.education === "university" || data.education === "graduated";
     case 4:
-      return data.schoolName.trim().length > 0;
+      return data.schoolName.trim().length > 0 && data.programOfStudy.trim().length > 0;
     case 5:
       return data.areas.length > 0;
     case 6:

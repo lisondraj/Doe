@@ -443,7 +443,9 @@ export function JoinApplyCard({
                 const value = getTopRightDisplayValue(step, data, touchedSteps);
                 const isLinkedIn = step === 7;
                 const isEmail = step === 1;
+                const isSchool = step === 4;
                 const emailLines = isEmail && value ? splitEmailLines(value) : null;
+                const programValue = isSchool ? data.programOfStudy.trim() : "";
                 const displayText = value
                   ? isLinkedIn
                     ? `/${formatCardValue(step, value)}`
@@ -468,6 +470,11 @@ export function JoinApplyCard({
                       <span className="flex flex-col items-end leading-tight">
                         <span>{emailLines.local}</span>
                         <span>{emailLines.domain}</span>
+                      </span>
+                    ) : isSchool && value ? (
+                      <span className="flex flex-col items-end leading-tight">
+                        <span>{formatCardValue(step, value)}</span>
+                        {programValue ? <span>{capitalizeFirst(programValue)}</span> : null}
                       </span>
                     ) : isLinkedIn && value ? (
                       <>

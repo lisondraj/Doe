@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState, type RefObject } from "react";
+import { useLayoutEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 
 import type { JoinApplyCountry, JoinApplyEducation, JoinApplyEducationValue } from "@/lib/join/join-apply-form";
 import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
@@ -100,6 +100,82 @@ function useFitInputFontRem(
   return fontRem;
 }
 
+const BORDERED_INPUT_CLASS =
+  "block w-full min-w-0 appearance-none border-0 bg-transparent p-0 font-medium leading-snug tracking-[-0.01em] text-[#1E343A] outline-none placeholder:font-normal placeholder:text-[#1E343A]/38 whitespace-nowrap";
+
+function JoinFormBorderedInput({
+  variant,
+  value,
+  onChange,
+  placeholder,
+  ariaLabel,
+  readOnly,
+  interactive,
+  onEnter,
+  autoComplete,
+  spellCheck,
+  prefix,
+  prefixMatchSize = false,
+  type = "text",
+}: {
+  variant: "mobile" | "desktop";
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  ariaLabel: string;
+  readOnly?: boolean;
+  interactive?: boolean;
+  onEnter?: () => void;
+  autoComplete?: string;
+  spellCheck?: boolean;
+  prefix?: ReactNode;
+  prefixMatchSize?: boolean;
+  type?: "text" | "email";
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const { max, min, shell } = BORDERED_INPUT_SIZE[variant];
+  const fontRem = useFitInputFontRem(inputRef, value, max, min);
+  const prefixRem = prefixMatchSize ? fontRem : Math.max(min, fontRem * 0.72);
+
+  return (
+    <div className={`flex min-w-0 items-center ${shell}`}>
+      {prefix ? (
+        <span
+          className="mr-0 shrink-0 select-none font-medium leading-snug tracking-[-0.015em]"
+          style={{ fontSize: `${prefixRem}rem` }}
+        >
+          {prefix}
+        </span>
+      ) : null}
+      <input
+        ref={inputRef}
+        type={type}
+        data-join-apply-interactive
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        autoComplete={autoComplete}
+        spellCheck={spellCheck}
+        aria-label={ariaLabel}
+        readOnly={readOnly}
+        tabIndex={interactive ? 0 : -1}
+        className={BORDERED_INPUT_CLASS}
+        style={{ fontSize: `${fontRem}rem` }}
+        onKeyDown={
+          onEnter
+            ? (e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  onEnter();
+                }
+              }
+            : undefined
+        }
+      />
+    </div>
+  );
+}
+
 export function JoinFormBorderedField({
   variant,
   prompt,
@@ -127,52 +203,130 @@ export function JoinFormBorderedField({
   spellCheck?: boolean;
   prefix?: string;
 }) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const { max, min, shell } = BORDERED_INPUT_SIZE[variant];
-  const fontRem = useFitInputFontRem(inputRef, value, max, min);
-  const prefixRem = Math.max(min, fontRem * 0.72);
-
   return (
     <div
       className={joinFormBorderedBoxClass(variant)}
       style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
     >
       <p className={joinFormBorderedPromptClass(variant)}>{prompt}</p>
-      <div className={`flex min-w-0 items-center ${shell}`}>
-        {prefix ? (
-          <span
-            className="mr-0.5 shrink-0 select-none font-medium leading-snug text-[#1E343A]/45"
-            style={{ fontSize: `${prefixRem}rem` }}
-          >
-            {prefix}
-          </span>
-        ) : null}
-        <input
-          ref={inputRef}
-          type={type}
-          data-join-apply-interactive
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          autoComplete={autoComplete}
-          spellCheck={spellCheck}
-          aria-label={prompt}
-          readOnly={readOnly}
-          tabIndex={interactive ? 0 : -1}
-          className="block w-full min-w-0 appearance-none border-0 bg-transparent p-0 font-medium leading-snug tracking-[-0.01em] text-[#1E343A] outline-none placeholder:font-normal placeholder:text-[#1E343A]/38 whitespace-nowrap"
-          style={{ fontSize: `${fontRem}rem` }}
-          onKeyDown={
-            onEnter
-              ? (e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    onEnter();
-                  }
-                }
-              : undefined
-          }
-        />
-      </div>
+      <JoinFormBorderedInput
+        variant={variant}
+        type={type}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        ariaLabel={prompt}
+        readOnly={readOnly}
+        interactive={interactive}
+        onEnter={onEnter}
+        autoComplete={autoComplete}
+        spellCheck={spellCheck}
+        prefix={prefix}
+      />
+    </div>
+  );
+}
+
+export function JoinFormBorderedSchoolFields({
+  variant,
+  schoolName,
+  programOfStudy,
+  onSchoolChange,
+  onProgramChange,
+  readOnly = false,
+  interactive = true,
+  onEnter,
+}: {
+  variant: "mobile" | "desktop";
+  schoolName: string;
+  programOfStudy: string;
+  onSchoolChange: (value: string) => void;
+  onProgramChange: (value: string) => void;
+  readOnly?: boolean;
+  interactive?: boolean;
+  onEnter?: () => void;
+}) {
+  const programPromptClass =
+    variant === "mobile"
+      ? "mb-4 mt-6 text-[1.35rem] iphone-page:mb-5 iphone-page:mt-7 iphone-page:text-[1.5rem]"
+      : "mb-3 mt-5 text-[1rem]";
+
+  return (
+    <div
+      className={joinFormBorderedBoxClass(variant)}
+      style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
+    >
+      <p className={joinFormBorderedPromptClass(variant)}>What school do/did you attend?</p>
+      <JoinFormBorderedInput
+        variant={variant}
+        value={schoolName}
+        onChange={onSchoolChange}
+        placeholder="School name"
+        autoComplete="organization"
+        ariaLabel="What school do/did you attend?"
+        readOnly={readOnly}
+        interactive={interactive}
+        onEnter={onEnter}
+      />
+      <p className={`${programPromptClass} font-medium leading-snug tracking-[0.01em] text-[#1E343A]/45`}>
+        What is/was your program of study?
+      </p>
+      <JoinFormBorderedInput
+        variant={variant}
+        value={programOfStudy}
+        onChange={onProgramChange}
+        placeholder="Program of study"
+        autoComplete="organization-title"
+        ariaLabel="What is/was your program of study?"
+        readOnly={readOnly}
+        interactive={interactive}
+        onEnter={onEnter}
+      />
+    </div>
+  );
+}
+
+export function JoinFormBorderedLinkedInField({
+  variant,
+  value,
+  onChange,
+  readOnly = false,
+  interactive = true,
+  onEnter,
+}: {
+  variant: "mobile" | "desktop";
+  value: string;
+  onChange: (value: string) => void;
+  readOnly?: boolean;
+  interactive?: boolean;
+  onEnter?: () => void;
+}) {
+  const linkedInPrefix = (
+    <>
+      <span className="text-[#1E343A]/45">linkedin.com</span>
+      <span className="text-[#1E343A]/38">/in/</span>
+    </>
+  );
+
+  return (
+    <div
+      className={joinFormBorderedBoxClass(variant)}
+      style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
+    >
+      <JoinFormBorderedInput
+        variant={variant}
+        value={value}
+        onChange={onChange}
+        placeholder="username"
+        autoComplete="off"
+        spellCheck={false}
+        ariaLabel="LinkedIn username"
+        readOnly={readOnly}
+        interactive={interactive}
+        onEnter={onEnter}
+        prefix={linkedInPrefix}
+        prefixMatchSize
+      />
     </div>
   );
 }
