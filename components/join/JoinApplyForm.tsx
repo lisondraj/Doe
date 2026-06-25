@@ -18,6 +18,8 @@ import {
   JOIN_APPLY_AREAS,
   JOIN_APPLY_INITIAL_STATE,
   JOIN_APPLY_STEP_COUNT,
+  isJoinApplyCardMandatoryComplete,
+  isJoinApplyMandatoryComplete,
   isJoinApplyStepValid,
   type JoinApplyArea,
   type JoinApplyFormState,
@@ -48,40 +50,61 @@ function fieldStyle() {
   };
 }
 
-// ─── Mobile: card + single question layout ──────────────────────────────────
+// ─── Mobile: inline card fields + in-card editor overlay ───────────────────
 
 type JoinApplyMobileFormProps = {
-  step: number;
   data: JoinApplyFormState;
   patch: (partial: Partial<JoinApplyFormState>) => void;
-  goNext: () => void;
-  setStep: (s: number) => void;
+  activeStep: number | null;
+  setActiveStep: (step: number | null) => void;
+  touchedSteps: ReadonlySet<number>;
+  markStepTouched: (step: number) => void;
   submit: () => void;
-  canProceed: boolean;
-  isLastStep: boolean;
-  maxCommittedStep: number;
+  submitted: boolean;
   resumeInputRef: RefObject<HTMLInputElement>;
 };
 
 function JoinApplyMobileForm({
-  step,
   data,
   patch,
-  goNext,
-  setStep,
+  activeStep,
+  setActiveStep,
+  touchedSteps,
+  markStepTouched,
   submit,
-  canProceed,
-  isLastStep,
-  maxCommittedStep,
+  submitted,
   resumeInputRef,
 }: JoinApplyMobileFormProps) {
-  const handleAdvance = useCallback(() => {
-    if (isLastStep) { if (canProceed) submit(); }
-    else if (canProceed) goNext();
-  }, [canProceed, goNext, isLastStep, submit]);
+  const canProceed = activeStep !== null && isJoinApplyStepValid(activeStep, data);
+  const mandatoryComplete = isJoinApplyCardMandatoryComplete(data, touchedSteps);
 
-  // Global Enter key advances the form (except on textareas)
+  const closeEditor = useCallback(() => {
+    if (activeStep !== null && isJoinApplyStepValid(activeStep, data)) {
+      markStepTouched(activeStep);
+    }
+    setActiveStep(null);
+  }, [activeStep, data, markStepTouched, setActiveStep]);
+
+  const handleAdvance = useCallback(() => {
+    if (!canProceed || activeStep === null) return;
+    markStepTouched(activeStep);
+    setActiveStep(null);
+  }, [activeStep, canProceed, markStepTouched, setActiveStep]);
+
   useEffect(() => {
+    if (activeStep === null) return;
+    const frame = requestAnimationFrame(() => {
+      const root = document.querySelector<HTMLElement>("[data-join-apply-editor]");
+      const focusable = root?.querySelector<HTMLElement>(
+        "input:not([type=file]):not([readonly]), textarea:not([readonly]), button:not([disabled])",
+      );
+      focusable?.focus();
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [activeStep]);
+
+  useEffect(() => {
+    if (activeStep === null) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "Enter" || e.shiftKey || e.metaKey || e.ctrlKey || e.altKey) return;
       if ((e.target as HTMLElement).tagName === "TEXTAREA") return;
@@ -91,34 +114,70 @@ function JoinApplyMobileForm({
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [canProceed, handleAdvance]);
+  }, [activeStep, canProceed, handleAdvance]);
+
+  const editor =
+    activeStep !== null ? (
+      <div data-join-apply-editor>
+        {renderJoinApplyStep({
+          step: activeStep,
+          data,
+          patch,
+          variant: "mobile",
+          interactive: true,
+          resumeInputRef,
+          onEnter: handleAdvance,
+          enterDisabled: !canProceed,
+          enterLabel: "Save answer",
+        })}
+      </div>
+    ) : null;
+
+  if (submitted) {
+    return (
+      <div className={`${joinFormShellClass("mobile")} flex w-full flex-col`}>
+        <JoinApplyCard
+          data={data}
+          activeStep={null}
+          touchedSteps={touchedSteps}
+          onEdit={() => {}}
+          onCloseEditor={() => {}}
+          readOnly
+        />
+        <p className={`mt-6 font-normal leading-snug tracking-[-0.02em] text-[#1E343A] text-[1.875rem] iphone-page:mt-8 iphone-page:text-[2.125rem] ${suisseIntl.className}`}>
+          Thank you — we&apos;ll be in touch.
+        </p>
+        <p className={`mt-2 text-[#1E343A]/55 text-[1.125rem] iphone-page:text-[1.25rem] ${inter.className}`}>
+          Your application has been received.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className={`${joinFormShellClass("mobile")} flex w-full flex-col`}>
-      <JoinApplyCard data={data} onEdit={(s) => setStep(s)} maxCommittedStep={maxCommittedStep} />
+      <JoinApplyCard
+        data={data}
+        activeStep={activeStep}
+        touchedSteps={touchedSteps}
+        onEdit={setActiveStep}
+        onCloseEditor={closeEditor}
+        editor={editor}
+      />
 
-      <div
-        className="mt-4 w-full iphone-page:mt-5"
-        aria-live="polite"
-        aria-label={`Question ${step + 1} of ${JOIN_APPLY_STEP_COUNT}`}
-      >
-        <div
-          key={step}
-          className="w-full [animation:join-step-enter-down_0.38s_cubic-bezier(0.22,1,0.36,1)_both]"
+      {mandatoryComplete ? (
+        <button
+          type="button"
+          onClick={submit}
+          className={`mt-5 w-full rounded-[1.35rem] border py-[1.35rem] text-center font-medium leading-snug tracking-[-0.02em] text-[#1E343A] transition-all active:scale-[0.99] iphone-page:mt-6 iphone-page:rounded-[1.45rem] iphone-page:py-[1.5rem] iphone-page:text-[1.3125rem] ${inter.className}`}
+          style={{
+            backgroundColor: JOIN_FORM_BEIGE.field,
+            borderColor: JOIN_FORM_BEIGE.border,
+          }}
         >
-          {renderJoinApplyStep({
-            step,
-            data,
-            patch,
-            variant: "mobile",
-            interactive: true,
-            resumeInputRef,
-            onEnter: handleAdvance,
-            enterDisabled: !canProceed,
-            enterLabel: isLastStep ? "Submit application" : "Next question",
-          })}
-        </div>
-      </div>
+          Submit application
+        </button>
+      ) : null}
     </div>
   );
 }
@@ -129,8 +188,18 @@ export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "d
   const [step, setStep] = useState(0);
   const [data, setData] = useState<JoinApplyFormState>(JOIN_APPLY_INITIAL_STATE);
   const [submitted, setSubmitted] = useState(false);
-  const [maxCommittedStep, setMaxCommittedStep] = useState(-1);
+  const [activeStep, setActiveStep] = useState<number | null>(null);
+  const [touchedSteps, setTouchedSteps] = useState<Set<number>>(() => new Set());
   const resumeInputRef = useRef<HTMLInputElement>(null);
+
+  const markStepTouched = useCallback((s: number) => {
+    setTouchedSteps((prev) => {
+      if (prev.has(s)) return prev;
+      const next = new Set(prev);
+      next.add(s);
+      return next;
+    });
+  }, []);
 
   const canProceed = isJoinApplyStepValid(step, data);
   const isLastStep = step === JOIN_APPLY_STEP_COUNT - 1;
@@ -147,41 +216,30 @@ export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "d
 
   const goNext = () => {
     if (!canProceed) return;
-    setMaxCommittedStep((m) => Math.max(m, step));
     setStep((s) => Math.min(s + 1, JOIN_APPLY_STEP_COUNT - 1));
   };
 
   const goBack = () => setStep((s) => Math.max(s - 1, 0));
 
   const submit = () => {
-    if (!canProceed) return;
-    setMaxCommittedStep((m) => Math.max(m, step));
+    const complete =
+      variant === "mobile"
+        ? isJoinApplyCardMandatoryComplete(data, touchedSteps)
+        : isJoinApplyMandatoryComplete(data);
+    if (!complete) return;
     setSubmitted(true);
+    setActiveStep(null);
   };
 
-  if (submitted) {
+  if (submitted && variant !== "mobile") {
     return (
       <div className={joinFormShellClass(variant)}>
-        {variant === "mobile" ? (
-          <>
-            <JoinApplyCard data={data} onEdit={() => {}} maxCommittedStep={maxCommittedStep} />
-            <p className={`mt-6 font-normal leading-snug tracking-[-0.02em] text-[#1E343A] text-[1.875rem] iphone-page:mt-8 iphone-page:text-[2.125rem] ${suisseIntl.className}`}>
-              Thank you — we&apos;ll be in touch.
-            </p>
-            <p className={`mt-2 text-[#1E343A]/55 text-[1.125rem] iphone-page:text-[1.25rem] ${inter.className}`}>
-              Your application has been received.
-            </p>
-          </>
-        ) : (
-          <>
-            <p className={`font-normal leading-snug tracking-[-0.02em] text-[#1E343A] text-[1.375rem] ${suisseIntl.className}`}>
-              Thank you — we&apos;ll be in touch.
-            </p>
-            <p className={`mt-3 text-[#1E343A]/60 text-[1rem] ${inter.className}`}>
-              Your application has been received.
-            </p>
-          </>
-        )}
+        <p className={`font-normal leading-snug tracking-[-0.02em] text-[#1E343A] text-[1.375rem] ${suisseIntl.className}`}>
+          Thank you — we&apos;ll be in touch.
+        </p>
+        <p className={`mt-3 text-[#1E343A]/60 text-[1rem] ${inter.className}`}>
+          Your application has been received.
+        </p>
       </div>
     );
   }
@@ -189,15 +247,14 @@ export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "d
   if (variant === "mobile") {
     return (
       <JoinApplyMobileForm
-        step={step}
         data={data}
         patch={patch}
-        goNext={goNext}
-        setStep={setStep}
+        activeStep={activeStep}
+        setActiveStep={setActiveStep}
+        touchedSteps={touchedSteps}
+        markStepTouched={markStepTouched}
         submit={submit}
-        canProceed={canProceed}
-        isLastStep={isLastStep}
-        maxCommittedStep={maxCommittedStep}
+        submitted={submitted}
         resumeInputRef={resumeInputRef}
       />
     );

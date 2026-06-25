@@ -76,3 +76,26 @@ export function isJoinApplyStepValid(step: number, data: JoinApplyFormState): bo
       return false;
   }
 }
+
+/** Mandatory steps — resume (6) and notes (8) are optional. */
+export const JOIN_APPLY_MANDATORY_STEPS = [0, 1, 2, 3, 4, 5, 7] as const;
+
+export function isJoinApplyMandatoryComplete(data: JoinApplyFormState): boolean {
+  return JOIN_APPLY_MANDATORY_STEPS.every((step) => isJoinApplyStepValid(step, data));
+}
+
+/** Mobile card — country/education must be explicitly saved, not just defaulted. */
+export function isJoinApplyCardMandatoryComplete(
+  data: JoinApplyFormState,
+  touchedSteps: ReadonlySet<number>,
+): boolean {
+  return (
+    isJoinApplyStepValid(0, data) &&
+    isJoinApplyStepValid(1, data) &&
+    touchedSteps.has(2) &&
+    touchedSteps.has(3) &&
+    isJoinApplyStepValid(4, data) &&
+    isJoinApplyStepValid(5, data) &&
+    isJoinApplyStepValid(7, data)
+  );
+}

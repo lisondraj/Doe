@@ -1,5 +1,7 @@
 "use client";
 
+import type { ReactNode } from "react";
+
 import { JoinInternLineGraphic } from "@/components/join/JoinInternLineGraphic";
 import { BLOG_LANDING_HERO_CORNER_PAD } from "@/lib/blog/blog-layout-styles";
 import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
@@ -11,7 +13,6 @@ import {
 } from "@/lib/join/join-apply-form";
 import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
 
-// Card height +1/6 vs prior (40rem → ~46.67rem, 45.33rem → ~52.89rem)
 export const JOIN_APPLY_CARD_HEIGHT = "h-[46.67rem] iphone-page:h-[52.89rem]";
 
 const LORA_SIZE =
@@ -26,9 +27,22 @@ const LORA_SIZE_SMALL =
 const CARD_FIELD_TEXT =
   "text-[clamp(1.35rem,4.2vw,2rem)] leading-[1.12] iphone-page:text-[clamp(1.5rem,1.2rem+1.8vmin,2.2rem)]";
 
-/** Fixed two-line block — tagline and name share the same slot. */
+const CARD_PLACEHOLDER_TEXT =
+  "text-[clamp(1.35rem,4.2vw,2rem)] leading-[1.12] iphone-page:text-[clamp(1.5rem,1.2rem+1.8vmin,2.2rem)]";
+
 const BOTTOM_LEFT_TWO_LINE =
   "line-clamp-2 max-h-[calc(2*1.04em)] overflow-hidden leading-[1.04]";
+
+const TOP_RIGHT_FIELDS = [
+  { step: 1, placeholder: "Email" },
+  { step: 2, placeholder: "Country" },
+  { step: 3, placeholder: "Education" },
+  { step: 4, placeholder: "School" },
+  { step: 5, placeholder: "Roles" },
+  { step: 7, placeholder: "LinkedIn" },
+  { step: 6, placeholder: "Resume" },
+  { step: 8, placeholder: "Notes" },
+] as const;
 
 function PencilIcon() {
   return (
@@ -67,39 +81,6 @@ function cardFieldTextClass(step: number, value: string): string {
   return CARD_FIELD_TEXT;
 }
 
-function isCardFieldVisible(
-  fieldStep: number,
-  value: string | null,
-  maxCommittedStep: number,
-  data: JoinApplyFormState,
-): boolean {
-  if (!value) return false;
-  if (fieldStep === 2) return maxCommittedStep >= 2;
-  if (fieldStep === 4) return data.schoolName.trim().length > 0;
-  return true;
-}
-
-function getFieldValue(step: number, data: JoinApplyFormState): string | null {
-  switch (step) {
-    case 1:
-      return data.email || null;
-    case 2:
-      return data.country ? JOIN_APPLY_COUNTRY_LABELS[data.country] : null;
-    case 3:
-      return data.education ? JOIN_APPLY_EDUCATION_LABELS[data.education] : null;
-    case 4:
-      return data.schoolName.trim() || null;
-    case 5:
-      return null;
-    case 6:
-      return data.resume?.name ?? null;
-    case 7:
-      return data.linkedinUsername || null;
-    default:
-      return null;
-  }
-}
-
 function nameSizeClass(name: string): string {
   const len = name.trim().length;
   if (len <= 18) return LORA_SIZE;
@@ -107,122 +88,216 @@ function nameSizeClass(name: string): string {
   return LORA_SIZE_SMALL;
 }
 
-const CARD_FIELD_STEPS = [1, 2, 3, 4, 5, 6, 7] as const;
+function getTopRightDisplayValue(
+  step: number,
+  data: JoinApplyFormState,
+  touchedSteps: ReadonlySet<number>,
+): string | null {
+  switch (step) {
+    case 1:
+      return data.email.trim() || null;
+    case 2:
+      return touchedSteps.has(2) ? JOIN_APPLY_COUNTRY_LABELS[data.country] : null;
+    case 3:
+      return touchedSteps.has(3) ? JOIN_APPLY_EDUCATION_LABELS[data.education] : null;
+    case 4:
+      return data.schoolName.trim() || null;
+    case 5:
+      return null;
+    case 6:
+      return data.resume?.name ?? null;
+    case 7:
+      return data.linkedinUsername.trim() || null;
+    case 8:
+      return data.notes.trim() ? data.notes.trim().slice(0, 48) + (data.notes.trim().length > 48 ? "…" : "") : null;
+    default:
+      return null;
+  }
+}
+
+function EditButton({ onClick, label }: { onClick: () => void; label: string }) {
+  return (
+    <span
+      role="button"
+      tabIndex={0}
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick();
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          e.stopPropagation();
+          onClick();
+        }
+      }}
+      aria-label={label}
+      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all active:scale-95 iphone-page:h-11 iphone-page:w-11 iphone-page:rounded-[0.85rem]"
+      style={{
+        backgroundColor: JOIN_FORM_BEIGE.fieldMuted,
+        color: JOIN_FORM_BEIGE.meter,
+      }}
+    >
+      <PencilIcon />
+    </span>
+  );
+}
 
 export function JoinApplyCard({
   data,
+  activeStep,
+  touchedSteps,
   onEdit,
-  maxCommittedStep = -1,
+  onCloseEditor,
+  readOnly = false,
+  editor,
 }: {
   data: JoinApplyFormState;
+  activeStep: number | null;
+  touchedSteps: ReadonlySet<number>;
   onEdit: (step: number) => void;
-  /** Highest apply step the user has advanced past — gates country on the card. */
-  maxCommittedStep?: number;
+  onCloseEditor: () => void;
+  readOnly?: boolean;
+  editor?: ReactNode;
 }) {
-  const hasName = !!data.name.trim();
-
-  const answeredFields = CARD_FIELD_STEPS.map((step) => ({
-    step: step as number,
-    value: getFieldValue(step, data),
-  })).filter(
-    (f): f is { step: number; value: string } =>
-      f.value !== null && isCardFieldVisible(f.step, f.value, maxCommittedStep, data),
-  );
+  const isEditing = activeStep !== null;
+  const name = data.name.trim();
+  const hasName = name.length > 0;
 
   return (
     <div
       className={`relative w-full overflow-hidden border ${JOIN_APPLY_CARD_HEIGHT} ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
       style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
     >
-      {/* Research track converging lines — edge to edge */}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-        <div className="relative h-full w-full">
-          <JoinInternLineGraphic variant={2} fullBleed />
-        </div>
-      </div>
-
-      {/* Top-right: answered fields */}
-      {answeredFields.length > 0 || data.areas.length > 0 ? (
-        <div className="absolute right-0 top-0 z-[2] max-w-[72%] p-6 iphone-page:p-7">
-          <div className="flex flex-col items-end gap-3 iphone-page:gap-3.5">
-            {answeredFields.map(({ step, value }) => (
-              <div
-                key={step}
-                className={`flex max-w-full items-center gap-2.5 [animation:join-card-field-in_0.45s_cubic-bezier(0.22,1,0.36,1)_both] ${inter.className}`}
-              >
-                <span
-                  className={`min-w-0 max-w-[min(13rem,calc(100vw-8rem))] truncate text-right text-[#1E343A]/72 iphone-page:max-w-[min(15rem,calc(100vw-9rem))] ${cardFieldTextClass(step, value)}`}
-                >
-                  {formatCardValue(step, value)}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => onEdit(step)}
-                  aria-label={`Edit answer for field ${step}`}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all active:scale-95 iphone-page:h-11 iphone-page:w-11 iphone-page:rounded-[0.85rem]"
-                  style={{
-                    backgroundColor: JOIN_FORM_BEIGE.fieldMuted,
-                    color: JOIN_FORM_BEIGE.meter,
-                  }}
-                >
-                  <PencilIcon />
-                </button>
-              </div>
-            ))}
-            {data.areas.length > 0 ? (
-              <div
-                className={`flex max-w-full flex-col items-end gap-2 [animation:join-card-field-in_0.45s_cubic-bezier(0.22,1,0.36,1)_both] ${inter.className}`}
-              >
-                <div className="flex max-w-full flex-wrap justify-end gap-2 iphone-page:gap-2.5">
-                  {data.areas.map((area) => (
-                    <span
-                      key={area}
-                      className="rounded-xl px-3 py-1.5 text-right font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[clamp(0.95rem,3.2vw,1.2rem)] iphone-page:px-3.5 iphone-page:py-2 iphone-page:text-[clamp(1.05rem,0.9rem+1vmin,1.35rem)]"
-                      style={{ backgroundColor: JOIN_FORM_BEIGE.fieldMuted }}
-                    >
-                      {area}
-                    </span>
-                  ))}
-                </div>
-                <button
-                  type="button"
-                  onClick={() => onEdit(5)}
-                  aria-label="Edit selected teams"
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all active:scale-95 iphone-page:h-11 iphone-page:w-11 iphone-page:rounded-[0.85rem]"
-                  style={{
-                    backgroundColor: JOIN_FORM_BEIGE.fieldMuted,
-                    color: JOIN_FORM_BEIGE.meter,
-                  }}
-                >
-                  <PencilIcon />
-                </button>
-              </div>
-            ) : null}
+      <div
+        className={`absolute inset-0 transition-[filter] duration-300 ${isEditing ? "pointer-events-none blur-[7px]" : ""}`}
+      >
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <div className="relative h-full w-full">
+            <JoinInternLineGraphic variant={2} fullBleed />
           </div>
         </div>
-      ) : null}
 
-      {/* Bottom-left: two-line slot — tagline ↔ name */}
-      <div className={`absolute bottom-0 left-0 z-[2] w-[min(100%,19em)] ${BLOG_LANDING_HERO_CORNER_PAD}`}>
-        <div className="relative min-h-[6.25rem] iphone-page:min-h-[7.3rem]">
-          <p
-            className={`font-normal tracking-[-0.035em] text-[#1E343A] transition-[opacity,filter] duration-500 ease-in-out ${LORA_SIZE} ${lora.className} ${BOTTOM_LEFT_TWO_LINE} ${
-              hasName ? "pointer-events-none opacity-0 [filter:blur(7px)]" : "opacity-100 [filter:blur(0)]"
-            }`}
-            aria-hidden={hasName}
-          >
-            <span className="block">Redefine care</span>
-            <span className="block">with us.</span>
-          </p>
-          <p
-            className={`absolute inset-0 font-normal tracking-[-0.03em] text-[#1E343A] transition-[opacity,filter] duration-500 ease-in-out ${nameSizeClass(data.name)} ${lora.className} ${BOTTOM_LEFT_TWO_LINE} ${
-              hasName ? "opacity-100 [filter:blur(0)]" : "pointer-events-none opacity-0 [filter:blur(7px)]"
-            }`}
-          >
-            {data.name.trim()}
-          </p>
+        {/* Top-right: field placeholders and values */}
+        <div className="absolute right-0 top-0 z-[2] max-w-[78%] p-6 iphone-page:p-7">
+          <div className="flex flex-col items-end gap-3 iphone-page:gap-3.5">
+            {TOP_RIGHT_FIELDS.map(({ step, placeholder }) => {
+              if (step === 5) {
+                const hasAreas = data.areas.length > 0;
+                return (
+                  <div
+                    key={step}
+                    className={`flex max-w-full items-center gap-2.5 ${inter.className}`}
+                  >
+                    {hasAreas ? (
+                      <div className="flex max-w-full flex-wrap justify-end gap-2 iphone-page:gap-2.5">
+                        {data.areas.map((area) => (
+                          <span
+                            key={area}
+                            className="rounded-xl px-3 py-1.5 text-right font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[clamp(0.95rem,3.2vw,1.2rem)] iphone-page:px-3.5 iphone-page:py-2 iphone-page:text-[clamp(1.05rem,0.9rem+1vmin,1.35rem)]"
+                            style={{ backgroundColor: JOIN_FORM_BEIGE.fieldMuted }}
+                          >
+                            {area}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        disabled={readOnly}
+                        onClick={() => onEdit(step)}
+                        className={`text-right text-[#1E343A]/38 ${CARD_PLACEHOLDER_TEXT}`}
+                      >
+                        {placeholder}
+                      </button>
+                    )}
+                    {!readOnly ? (
+                      <EditButton onClick={() => onEdit(step)} label={`Edit ${placeholder.toLowerCase()}`} />
+                    ) : null}
+                  </div>
+                );
+              }
+
+              const value = getTopRightDisplayValue(step, data, touchedSteps);
+              const textClass = value
+                ? `text-[#1E343A]/72 ${cardFieldTextClass(step, value)}`
+                : `text-[#1E343A]/38 ${CARD_PLACEHOLDER_TEXT}`;
+
+              return (
+                <div
+                  key={step}
+                  className={`flex max-w-full items-center gap-2.5 ${value ? "[animation:join-card-field-in_0.45s_cubic-bezier(0.22,1,0.36,1)_both]" : ""} ${inter.className}`}
+                >
+                  <button
+                    type="button"
+                    disabled={readOnly}
+                    onClick={() => onEdit(step)}
+                    className={`min-w-0 max-w-[min(13rem,calc(100vw-8rem))] truncate text-right iphone-page:max-w-[min(15rem,calc(100vw-9rem))] ${textClass}`}
+                  >
+                    {value ? formatCardValue(step, value) : placeholder}
+                  </button>
+                  {!readOnly ? (
+                    <EditButton onClick={() => onEdit(step)} label={`Edit ${placeholder.toLowerCase()}`} />
+                  ) : null}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Bottom-left: name placeholder or value */}
+        <div className={`absolute bottom-0 left-0 z-[2] w-[min(100%,19em)] ${BLOG_LANDING_HERO_CORNER_PAD}`}>
+          <div className="relative min-h-[6.25rem] iphone-page:min-h-[7.3rem]">
+            {hasName ? (
+              <div className="flex items-end gap-2.5">
+                <p
+                  className={`min-w-0 flex-1 font-normal tracking-[-0.03em] text-[#1E343A] ${nameSizeClass(name)} ${lora.className} ${BOTTOM_LEFT_TWO_LINE}`}
+                >
+                  {name}
+                </p>
+                {!readOnly ? (
+                  <EditButton onClick={() => onEdit(0)} label="Edit name" />
+                ) : null}
+              </div>
+            ) : (
+              <div className="flex items-end gap-2.5">
+                <button
+                  type="button"
+                  disabled={readOnly}
+                  onClick={() => onEdit(0)}
+                  className={`min-w-0 flex-1 text-left font-normal tracking-[-0.035em] text-[#1E343A]/38 ${LORA_SIZE} ${lora.className} ${BOTTOM_LEFT_TWO_LINE}`}
+                >
+                  <span className="block">Enter your</span>
+                  <span className="block">name here</span>
+                </button>
+                {!readOnly ? (
+                  <EditButton onClick={() => onEdit(0)} label="Enter name" />
+                ) : null}
+              </div>
+            )}
+          </div>
         </div>
       </div>
+
+      {/* In-card editor overlay */}
+      {isEditing && editor ? (
+        <>
+          <button
+            type="button"
+            aria-label="Close editor"
+            className="absolute inset-0 z-[4] bg-[#EFECE7]/55 backdrop-blur-[2px]"
+            onClick={onCloseEditor}
+          />
+          <div className="absolute inset-0 z-[5] flex items-center justify-center px-6 py-10 iphone-page:px-8">
+            <div
+              className="relative w-full max-w-[min(100%,26rem)] [animation:join-step-enter-down_0.38s_cubic-bezier(0.22,1,0.36,1)_both]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {editor}
+            </div>
+          </div>
+        </>
+      ) : null}
     </div>
   );
 }
