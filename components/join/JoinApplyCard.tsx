@@ -10,6 +10,7 @@ import type { JoinApplyFormState } from "@/lib/join/join-apply-form";
 import {
   JOIN_APPLY_COUNTRY_LABELS,
   JOIN_APPLY_EDUCATION_LABELS,
+  hasJoinApplyCardInput,
 } from "@/lib/join/join-apply-form";
 import { splitResumeDisplay } from "@/lib/join/resume-file";
 import { JOIN_DESKTOP_APPLY_CARD_HEIGHT } from "@/lib/join/join-layout";
@@ -49,6 +50,8 @@ const CARD_STYLES = {
     confirmBtnGap: "mt-5 flex flex-col gap-3 iphone-page:gap-3.5",
     modalCloseBtn: "left-0 top-0",
     modalCloseIcon: "h-7 w-7 iphone-page:h-8 iphone-page:w-8",
+    inviteText:
+      "text-[1.25rem] leading-snug tracking-[-0.02em] iphone-page:text-[1.375rem]",
   },
   desktop: {
     height: JOIN_DESKTOP_APPLY_CARD_HEIGHT,
@@ -78,6 +81,7 @@ const CARD_STYLES = {
     confirmBtnGap: "mt-5 flex flex-col gap-2.5",
     modalCloseBtn: "left-0 top-0",
     modalCloseIcon: "h-6 w-6",
+    inviteText: "text-[1.0625rem] leading-snug tracking-[-0.02em]",
   },
 } as const;
 
@@ -395,6 +399,8 @@ export function JoinApplyCard({
   const isEditing = activeStep !== null && activeStep !== 0;
   const isSubmitReviewing = showSubmitReview && Boolean(submitReviewEditor);
   const isModalOpen = isEditing || showResetConfirm || isSubmitReviewing;
+  const showInviteOverlay =
+    !readOnly && !isModalOpen && !hasJoinApplyCardInput(data, touchedSteps);
   const name = data.name;
 
   return (
@@ -530,6 +536,20 @@ export function JoinApplyCard({
             leading={styles.nameLeading}
           />
         </div>
+
+        {showInviteOverlay ? (
+          <div
+            className="join-card-invite-overlay absolute inset-0 z-[4] flex items-center justify-center px-8 pointer-events-none iphone-page:px-10"
+            aria-hidden
+          >
+            <div className="join-card-invite-pulse absolute inset-0 bg-[#EFECE7]/52 backdrop-blur-[10px]" />
+            <p
+              className={`relative z-[1] max-w-[16rem] text-center font-medium text-[#1E343A]/72 ${styles.inviteText} ${inter.className}`}
+            >
+              Click any field to begin editing
+            </p>
+          </div>
+        ) : null}
 
         {isEditing && editor ? (
           <>

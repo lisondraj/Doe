@@ -496,6 +496,28 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
   }
 }
 
+@keyframes join-card-invite-pulse {
+  0%,
+  100% {
+    opacity: 0.42;
+  }
+
+  50% {
+    opacity: 0.78;
+  }
+}
+
+.join-card-invite-pulse {
+  animation: join-card-invite-pulse 3.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .join-card-invite-pulse {
+    animation: none;
+    opacity: 0.62;
+  }
+}
+
 /* /join apply form — step content enters from below (forward) or above (back). */
 @keyframes join-step-enter-down {
   from {
