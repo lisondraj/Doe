@@ -403,7 +403,7 @@ export function JoinApplyCard({
         <button
           type="button"
           onClick={onResetRequest}
-          className={`absolute left-0 top-0 z-[6] flex items-center font-medium leading-none tracking-[-0.01em] text-[#9A8F82] transition-colors hover:text-[#1E343A]/70 ${styles.resetBtn} ${inter.className}`}
+          className={`absolute right-0 top-0 z-[6] flex items-center font-medium leading-none tracking-[-0.01em] text-[#9A8F82] transition-colors hover:text-[#1E343A]/70 ${styles.resetBtn} ${inter.className}`}
         >
           <ResetIcon className={styles.resetIcon} />
           Reset
