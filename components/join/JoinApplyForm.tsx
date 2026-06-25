@@ -59,7 +59,8 @@ function JoinApplyCardForm({
   blockEditorCloseRef,
   onOpenResumePicker,
   resumeUploadError,
-}: JoinApplyCardFormProps) {
+  idleHintResetEpoch,
+}: JoinApplyCardFormProps & { idleHintResetEpoch: number }) {
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showSubmitReview, setShowSubmitReview] = useState(false);
   const canProceed = activeStep !== null && activeStep !== 0 && isJoinApplyStepValid(activeStep, data);
@@ -235,6 +236,7 @@ function JoinApplyCardForm({
           setShowSubmitReview(false);
         }}
         onResetCancel={() => setShowResetConfirm(false)}
+        idleHintResetEpoch={idleHintResetEpoch}
       />
 
       {mandatoryComplete && !showSubmitReview ? (
@@ -275,6 +277,7 @@ export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "d
   const [resumeUploadError, setResumeUploadError] = useState<string | null>(null);
   const [activeStep, setActiveStep] = useState<number | null>(null);
   const [touchedSteps, setTouchedSteps] = useState<Set<number>>(() => new Set());
+  const [idleHintResetEpoch, setIdleHintResetEpoch] = useState(0);
   const resumeInputRef = useRef<HTMLInputElement>(null);
   const resumeFileRef = useRef<File | null>(null);
   const blockEditorCloseRef = useRef(false);
@@ -359,6 +362,7 @@ export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "d
     setSubmitError(null);
     setResumeUploadError(null);
     setConfirmationEmailSent(false);
+    setIdleHintResetEpoch((epoch) => epoch + 1);
     resumeFileRef.current = null;
     if (resumeInputRef.current) resumeInputRef.current.value = "";
   }, []);
@@ -437,6 +441,7 @@ export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "d
         blockEditorCloseRef={blockEditorCloseRef}
         onOpenResumePicker={openResumePicker}
         resumeUploadError={resumeUploadError}
+        idleHintResetEpoch={idleHintResetEpoch}
       />
     </>
   );

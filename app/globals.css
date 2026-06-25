@@ -496,25 +496,57 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
   }
 }
 
-@keyframes join-card-invite-pulse {
+@keyframes join-card-idle-blur-pulse {
   0%,
+  24%,
+  50%,
+  74%,
   100% {
-    opacity: 0.42;
+    opacity: 0;
+    backdrop-filter: blur(0);
+    -webkit-backdrop-filter: blur(0);
   }
 
-  50% {
-    opacity: 0.78;
+  12%,
+  62% {
+    opacity: 1;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
 }
 
-.join-card-invite-pulse {
-  animation: join-card-invite-pulse 3.8s ease-in-out infinite;
+@keyframes join-card-idle-line-blur-pulse {
+  0%,
+  24%,
+  50%,
+  74%,
+  100% {
+    filter: blur(0);
+  }
+
+  12%,
+  62% {
+    filter: blur(10px);
+  }
+}
+
+.join-card-idle-scrim-pulse {
+  animation: join-card-idle-blur-pulse 1.5s ease-in-out both;
+  background-color: rgba(239, 236, 231, 0.52);
+}
+
+.join-card-idle-line-blur-pulse {
+  animation: join-card-idle-line-blur-pulse 1.5s ease-in-out both;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .join-card-invite-pulse {
+  .join-card-idle-scrim-pulse,
+  .join-card-idle-line-blur-pulse {
     animation: none;
-    opacity: 0.62;
+    opacity: 0;
+    filter: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 }
 

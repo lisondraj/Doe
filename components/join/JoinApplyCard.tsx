@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import type { PointerEvent, ReactNode } from "react";
 import { useRef } from "react";
 
 import { JoinApplyCardDesktopLineGraphic, JoinInternLineGraphic } from "@/components/join/JoinInternLineGraphic";
@@ -10,11 +10,11 @@ import type { JoinApplyFormState } from "@/lib/join/join-apply-form";
 import {
   JOIN_APPLY_COUNTRY_LABELS,
   JOIN_APPLY_EDUCATION_LABELS,
-  hasJoinApplyCardInput,
 } from "@/lib/join/join-apply-form";
 import { splitResumeDisplay } from "@/lib/join/resume-file";
 import { JOIN_DESKTOP_APPLY_CARD_HEIGHT } from "@/lib/join/join-layout";
 import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
+import { useJoinCardIdleHint } from "@/lib/join/use-join-card-idle-hint";
 
 export const JOIN_APPLY_CARD_HEIGHT = "h-[56rem] iphone-page:h-[62rem]";
 
@@ -34,6 +34,8 @@ const CARD_STYLES = {
       "px-8 pb-14 pt-0 iphone-page:px-[clamp(2rem,1.65rem+1.45vmin,2.6rem)] iphone-page:pb-[clamp(3rem,2.5rem+1.8vmin,3.75rem)]",
     lineBand:
       "absolute inset-x-0 z-[1] bottom-[10.25rem] h-[18rem] overflow-hidden iphone-page:bottom-[11rem] iphone-page:h-[20rem]",
+    idleBlurBand:
+      "top-[24%] bottom-[16%] iphone-page:top-[23%] iphone-page:bottom-[15%]",
     lineGraphicSize: "",
     roleChip:
       "w-fit max-w-full shrink-0 rounded-xl px-3 py-1.75 text-left font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[clamp(1.35rem,4.4vw,1.7rem)] iphone-page:px-3.5 iphone-page:py-2.25 iphone-page:text-[clamp(1.45rem,1.2rem+1.35vmin,1.875rem)]",
@@ -65,6 +67,7 @@ const CARD_STYLES = {
     nameLeading: 1.04,
     nameCornerPad: "px-7 pb-10 pt-0",
     lineBand: "absolute inset-0 z-[1] flex items-center justify-center overflow-hidden",
+    idleBlurBand: "top-[18%] bottom-[16%]",
     lineGraphicSize: "h-[27rem] w-[27rem] shrink-0",
     roleChip:
       "w-fit max-w-full shrink-0 rounded-lg px-3 py-2 text-left font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[1.25rem]",
@@ -378,6 +381,7 @@ export function JoinApplyCard({
   onResetRequest,
   onResetConfirm,
   onResetCancel,
+  idleHintResetEpoch = 0,
 }: {
   variant?: "mobile" | "desktop";
   data: JoinApplyFormState;
@@ -394,14 +398,42 @@ export function JoinApplyCard({
   onResetRequest?: () => void;
   onResetConfirm?: () => void;
   onResetCancel?: () => void;
+  idleHintResetEpoch?: number;
 }) {
   const styles = CARD_STYLES[variant];
   const isEditing = activeStep !== null && activeStep !== 0;
   const isSubmitReviewing = showSubmitReview && Boolean(submitReviewEditor);
   const isModalOpen = isEditing || showResetConfirm || isSubmitReviewing;
-  const showInviteOverlay =
-    !readOnly && !isModalOpen && !hasJoinApplyCardInput(data, touchedSteps);
+  const { showIdleHint, isPulsing, registerContact, bumpActivity } = useJoinCardIdleHint({
+    enabled: !readOnly && !isModalOpen,
+    resetEpoch: idleHintResetEpoch,
+  });
   const name = data.name;
+
+  const handleEdit = (step: number) => {
+    registerContact();
+    onEdit(step);
+  };
+
+  const handleNameChange = (nextName: string) => {
+    registerContact();
+    onNameChange(nextName);
+  };
+
+  const handleCardPointerDownCapture = (event: PointerEvent<HTMLDivElement>) => {
+    if (readOnly) return;
+    const target = event.target as HTMLElement;
+    if (target.closest("button, input, [role='group']")) {
+      registerContact();
+    }
+    bumpActivity();
+  };
+
+  const handleCardFocusCapture = () => {
+    if (readOnly) return;
+    registerContact();
+    bumpActivity();
+  };
 
   return (
     <div className={`relative w-full ${!readOnly && onResetRequest ? styles.resetSlot : ""}`}>
@@ -419,137 +451,145 @@ export function JoinApplyCard({
       <div
         className={`relative w-full overflow-hidden border ${styles.height} ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
         style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
+        onPointerDownCapture={handleCardPointerDownCapture}
+        onFocusCapture={handleCardFocusCapture}
       >
+        <div className={`pointer-events-none ${styles.lineBand} ${isModalOpen ? CARD_BLUR : ""} ${isPulsing ? "join-card-idle-line-blur-pulse" : ""}`}>
+          {variant === "desktop" ? (
+            <div className={`relative ${styles.lineGraphicSize}`}>
+              <JoinApplyCardDesktopLineGraphic />
+            </div>
+          ) : (
+            <JoinInternLineGraphic variant={2} fullBleed />
+          )}
+        </div>
+
+        {showIdleHint ? (
+          <>
+            <div
+              className={`absolute inset-x-0 z-[2] ${styles.idleBlurBand} pointer-events-none opacity-0 ${isPulsing ? "join-card-idle-scrim-pulse" : ""}`}
+              aria-hidden
+            />
+            <div
+              className="pointer-events-none absolute inset-0 z-[2] flex items-center justify-center px-8 iphone-page:px-10"
+              aria-hidden
+            >
+              <p
+                className={`max-w-[16rem] text-center font-medium text-[#1E343A]/72 ${styles.inviteText} ${inter.className}`}
+              >
+                <span className="block">Click on any field</span>
+                <span className="block">to begin editing</span>
+              </p>
+            </div>
+          </>
+        ) : null}
+
+        {/* Top-left: preferred roles — in front of idle blur */}
         <div
-          className={`absolute inset-0 transition-[filter] duration-300 ${isModalOpen ? `pointer-events-none ${CARD_BLUR}` : ""}`}
+          className={`absolute left-0 top-0 z-[3] ${styles.topLeftMaxW} ${styles.topPad} transition-[filter] duration-300 ${isModalOpen ? `pointer-events-none ${CARD_BLUR}` : ""}`}
         >
-          <div className={`pointer-events-none ${styles.lineBand}`}>
-            {variant === "desktop" ? (
-              <div className={`relative ${styles.lineGraphicSize}`}>
-                <JoinApplyCardDesktopLineGraphic />
-              </div>
-            ) : (
-              <JoinInternLineGraphic variant={2} fullBleed />
-            )}
-          </div>
-
-          {/* Top-left: preferred roles */}
-          <div className={`absolute left-0 top-0 z-[2] ${styles.topLeftMaxW} ${styles.topPad}`}>
-            <div className={`flex flex-col items-start ${styles.roleGap} ${inter.className}`}>
-              {data.areas.length === 0 ? (
-                <button
-                  type="button"
-                  disabled={readOnly}
-                  onClick={() => onEdit(5)}
-                  className={`transition-opacity hover:opacity-90 active:scale-[0.98] ${styles.roleChip}`}
-                  style={{ backgroundColor: JOIN_FORM_BEIGE.fieldMuted }}
-                >
-                  Preferred Roles
-                </button>
-              ) : null}
-              {data.areas.map((area) => (
-                <button
-                  key={area}
-                  type="button"
-                  disabled={readOnly}
-                  onClick={() => onEdit(5)}
-                  className={`transition-opacity hover:opacity-90 active:scale-[0.98] ${styles.roleChip} ${data.areas.length > 0 ? "[animation:join-card-field-in_0.45s_cubic-bezier(0.22,1,0.36,1)_both]" : ""}`}
-                  style={{ backgroundColor: JOIN_FORM_BEIGE.fieldMuted }}
-                >
-                  {area}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Top-right: other fields */}
-          <div className={`absolute right-0 top-0 z-[2] ${styles.topRightMaxW} ${styles.topPad}`}>
-            <div className={`flex flex-col items-end ${styles.topGap}`}>
-              {TOP_RIGHT_FIELDS.map(({ step, placeholder, singleLine }) => {
-                const value = getTopRightDisplayValue(step, data, touchedSteps);
-                const isLinkedIn = step === 7;
-                const isEmail = step === 1;
-                const isResume = step === 6;
-                const emailLines = isEmail && value ? splitEmailLines(value) : null;
-                const resumeLines =
-                  isResume && data.resumeFileName
-                    ? splitResumeDisplay(data.resumeFileName, data.resumeFileType)
-                    : null;
-                const displayText = value
-                  ? isLinkedIn
-                    ? `/${formatCardValue(step, value)}`
-                    : formatCardValue(step, value)
-                  : spacedCapsLabel(placeholder);
-
-                return (
-                  <button
-                    key={step}
-                    type="button"
-                    disabled={readOnly}
-                    onClick={() => onEdit(step)}
-                    className={`max-w-full text-right transition-opacity hover:opacity-90 active:scale-[0.98] ${
-                      singleLine ? "block overflow-hidden text-ellipsis whitespace-nowrap" : "whitespace-normal break-words"
-                    } ${
-                      value
-                        ? `${styles.filledFieldText} [animation:join-card-field-in_0.45s_cubic-bezier(0.22,1,0.36,1)_both]`
-                        : styles.placeholderLabel
-                    } ${isLinkedIn && value ? "flex items-center gap-1.5 justify-end" : ""} ${inter.className}`}
-                  >
-                    {isEmail && emailLines ? (
-                      <span className="flex flex-col items-end leading-tight">
-                        <span>{emailLines.local}</span>
-                        <span>{emailLines.domain}</span>
-                      </span>
-                    ) : isResume && resumeLines ? (
-                      <span className="flex max-w-full flex-col items-end leading-tight">
-                        <span className="max-w-full truncate">{resumeLines.name}</span>
-                        <span className="text-[0.82em] font-medium text-[#9A8F82]/80">{resumeLines.type}</span>
-                      </span>
-                    ) : isLinkedIn && value ? (
-                      <>
-                        <LinkedInIcon className={variant === "mobile"
-                          ? "h-[1.15em] w-[1.15em] shrink-0 iphone-page:h-[1.12em] iphone-page:w-[1.12em]"
-                          : "h-[1.1em] w-[1.1em] shrink-0"
-                        } />
-                        <span className="min-w-0 break-words">{displayText}</span>
-                      </>
-                    ) : (
-                      displayText
-                    )}
-                  </button>
-                );
-              })}
-            </div>
+          <div className={`flex flex-col items-start ${styles.roleGap} ${inter.className}`}>
+            {data.areas.length === 0 ? (
+              <button
+                type="button"
+                disabled={readOnly}
+                onClick={() => handleEdit(5)}
+                className={`transition-opacity hover:opacity-90 active:scale-[0.98] ${styles.roleChip}`}
+                style={{ backgroundColor: JOIN_FORM_BEIGE.fieldMuted }}
+              >
+                Preferred Roles
+              </button>
+            ) : null}
+            {data.areas.map((area) => (
+              <button
+                key={area}
+                type="button"
+                disabled={readOnly}
+                onClick={() => handleEdit(5)}
+                className={`transition-opacity hover:opacity-90 active:scale-[0.98] ${styles.roleChip} ${data.areas.length > 0 ? "[animation:join-card-field-in_0.45s_cubic-bezier(0.22,1,0.36,1)_both]" : ""}`}
+                style={{ backgroundColor: JOIN_FORM_BEIGE.fieldMuted }}
+              >
+                {area}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* Bottom-left: inline name — outside blur layer so it stays fixed when editing */}
+        {/* Top-right: other fields — in front of idle blur */}
         <div
-          className={`absolute bottom-0 left-0 z-[3] ${isModalOpen ? "pointer-events-none" : ""}`}
+          className={`absolute right-0 top-0 z-[3] ${styles.topRightMaxW} ${styles.topPad} transition-[filter] duration-300 ${isModalOpen ? `pointer-events-none ${CARD_BLUR}` : ""}`}
+        >
+          <div className={`flex flex-col items-end ${styles.topGap}`}>
+            {TOP_RIGHT_FIELDS.map(({ step, placeholder, singleLine }) => {
+              const value = getTopRightDisplayValue(step, data, touchedSteps);
+              const isLinkedIn = step === 7;
+              const isEmail = step === 1;
+              const isResume = step === 6;
+              const emailLines = isEmail && value ? splitEmailLines(value) : null;
+              const resumeLines =
+                isResume && data.resumeFileName
+                  ? splitResumeDisplay(data.resumeFileName, data.resumeFileType)
+                  : null;
+              const displayText = value
+                ? isLinkedIn
+                  ? `/${formatCardValue(step, value)}`
+                  : formatCardValue(step, value)
+                : spacedCapsLabel(placeholder);
+
+              return (
+                <button
+                  key={step}
+                  type="button"
+                  disabled={readOnly}
+                  onClick={() => handleEdit(step)}
+                  className={`max-w-full text-right transition-opacity hover:opacity-90 active:scale-[0.98] ${
+                    singleLine ? "block overflow-hidden text-ellipsis whitespace-nowrap" : "whitespace-normal break-words"
+                  } ${
+                    value
+                      ? `${styles.filledFieldText} [animation:join-card-field-in_0.45s_cubic-bezier(0.22,1,0.36,1)_both]`
+                      : styles.placeholderLabel
+                  } ${isLinkedIn && value ? "flex items-center gap-1.5 justify-end" : ""} ${inter.className}`}
+                >
+                  {isEmail && emailLines ? (
+                    <span className="flex flex-col items-end leading-tight">
+                      <span>{emailLines.local}</span>
+                      <span>{emailLines.domain}</span>
+                    </span>
+                  ) : isResume && resumeLines ? (
+                    <span className="flex max-w-full flex-col items-end leading-tight">
+                      <span className="max-w-full truncate">{resumeLines.name}</span>
+                      <span className="text-[0.82em] font-medium text-[#9A8F82]/80">{resumeLines.type}</span>
+                    </span>
+                  ) : isLinkedIn && value ? (
+                    <>
+                      <LinkedInIcon className={variant === "mobile"
+                        ? "h-[1.15em] w-[1.15em] shrink-0 iphone-page:h-[1.12em] iphone-page:w-[1.12em]"
+                        : "h-[1.1em] w-[1.1em] shrink-0"
+                      } />
+                      <span className="min-w-0 break-words">{displayText}</span>
+                    </>
+                  ) : (
+                    displayText
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Bottom-left: inline name — in front of idle blur */}
+        <div
+          className={`absolute bottom-0 left-0 z-[3] transition-[filter] duration-300 ${isModalOpen ? "pointer-events-none" : ""}`}
         >
           <JoinApplyCardNameField
             variant={variant}
             name={name}
             readOnly={readOnly}
-            onNameChange={onNameChange}
+            onNameChange={handleNameChange}
             cornerPad={styles.nameCornerPad}
             leading={styles.nameLeading}
           />
         </div>
-
-        {showInviteOverlay ? (
-          <div
-            className="join-card-invite-overlay absolute inset-0 z-[4] flex items-center justify-center px-8 pointer-events-none iphone-page:px-10"
-            aria-hidden
-          >
-            <div className="join-card-invite-pulse absolute inset-0 bg-[#EFECE7]/52 backdrop-blur-[10px]" />
-            <p
-              className={`relative z-[1] max-w-[16rem] text-center font-medium text-[#1E343A]/72 ${styles.inviteText} ${inter.className}`}
-            >
-              Click any field to begin editing
-            </p>
-          </div>
-        ) : null}
 
         {isEditing && editor ? (
           <>
