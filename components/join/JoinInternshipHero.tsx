@@ -57,7 +57,9 @@ export function JoinInternshipHero({ variant }: { variant: "mobile" | "desktop" 
           style={{
             left: JOIN_MOBILE_HERO_TRIAGE_PANEL.left,
             top: JOIN_MOBILE_HERO_TRIAGE_PANEL.top,
-            width: JOIN_MOBILE_HERO_TRIAGE_PANEL.width,
+            width: 0,
+            height: 0,
+            overflow: "visible",
           }}
         />
       ) : variant === "desktop" ? (

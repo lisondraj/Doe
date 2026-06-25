@@ -173,11 +173,11 @@ export const JOIN_HERO_TRIAGE_PANEL = {
 
 export const JOIN_HERO_TRIAGE_SCALE = 1.58;
 
-/** Join iPhone hero — inbox UI; bottom-left anchored to top-left of orange box, scales down/right. */
+/** Join iPhone hero — bottom-left pinned to top-left of orange box via zero-size anchor. */
 export const JOIN_MOBILE_HERO_TRIAGE_PANEL = {
-  left: "max(1.15rem, calc(env(safe-area-inset-left, 0px) + 1.1rem))",
+  left: "max(1.5rem, calc(env(safe-area-inset-left, 0px) + 1.25rem))",
   top: 0,
-  width: "112%",
+  panelWidth: "min(28rem, calc(100vw - 2 * max(1.5rem, calc(env(safe-area-inset-left, 0px) + 1.25rem))))",
   outerHeight: "24rem",
   innerMinHeight: "26rem",
 } as const;

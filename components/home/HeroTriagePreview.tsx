@@ -612,6 +612,7 @@ export function HeroTriagePreview({
           style={{
             borderRadius: theme === "light" ? "1rem" : isMobile ? "1.35rem" : "1.1rem",
             background: config.shellGradient,
+            ...(isJoinMobile ? { width: JOIN_MOBILE_HERO_TRIAGE_PANEL.panelWidth } : {}),
             ...(theme === "light"
               ? {}
               : {
