@@ -88,9 +88,7 @@ const CARD_STYLES = {
   },
 } as const;
 
-const MODAL_SCRIM = "bg-[#EFECE7]/58 backdrop-blur-[12px]";
-const MODAL_DISMISS_TOP = "absolute inset-x-0 top-0 bottom-[52%] z-[4]";
-const MODAL_SCRIM_BOTTOM = "absolute inset-x-0 bottom-0 top-[48%] z-[4]";
+const MODAL_SCRIM_LAYER = "join-card-modal-scrim absolute inset-0 z-[4]";
 const CARD_BLUR = "blur-[10px]";
 
 const NAME_LORA_MOBILE =
@@ -601,13 +599,7 @@ export function JoinApplyCard({
             <button
               type="button"
               aria-label="Close editor"
-              className={MODAL_DISMISS_TOP}
-              onClick={onCloseEditor}
-            />
-            <button
-              type="button"
-              aria-label="Close editor"
-              className={`${MODAL_SCRIM_BOTTOM} ${MODAL_SCRIM}`}
+              className={MODAL_SCRIM_LAYER}
               onClick={onCloseEditor}
             />
             <ModalCloseButton
@@ -634,7 +626,7 @@ export function JoinApplyCard({
 
         {isSubmitReviewing ? (
           <>
-            <div className={`${MODAL_SCRIM_BOTTOM} ${MODAL_SCRIM}`} aria-hidden />
+            <div className={MODAL_SCRIM_LAYER} aria-hidden />
             <div
               className={`absolute inset-0 z-[5] flex items-center justify-center ${styles.editorPad}`}
             >
@@ -652,13 +644,7 @@ export function JoinApplyCard({
             <button
               type="button"
               aria-label="Cancel reset"
-              className={MODAL_DISMISS_TOP}
-              onClick={onResetCancel}
-            />
-            <button
-              type="button"
-              aria-label="Cancel reset"
-              className={`${MODAL_SCRIM_BOTTOM} ${MODAL_SCRIM}`}
+              className={MODAL_SCRIM_LAYER}
               onClick={onResetCancel}
             />
             <div

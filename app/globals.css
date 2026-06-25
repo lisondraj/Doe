@@ -514,6 +514,13 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
   animation: join-card-idle-hint-fade-in 0.65s ease-out forwards;
 }
 
+.join-card-modal-scrim {
+  background-color: rgba(239, 236, 231, 0.58);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transform: translateZ(0);
+}
+
 .join-card-idle-hint-copy {
   opacity: 0;
   animation: join-card-idle-hint-fade-in 0.65s ease-out forwards;
