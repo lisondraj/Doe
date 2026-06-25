@@ -163,6 +163,52 @@ function useFitInputFontRem(
   return fontRem;
 }
 
+function useFitRowFontRem(
+  containerRef: RefObject<HTMLDivElement | null>,
+  measureText: string,
+  maxRem: number,
+  minRem: number,
+) {
+  const [fontRem, setFontRem] = useState(maxRem);
+
+  useLayoutEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const measure = document.createElement("span");
+    measure.setAttribute("aria-hidden", "true");
+    measure.className = `pointer-events-none absolute left-0 top-0 whitespace-nowrap opacity-0 ${inter.className}`;
+    container.appendChild(measure);
+
+    const fit = () => {
+      const available = container.clientWidth;
+      if (available <= 0) return;
+
+      let sizeRem = maxRem;
+      while (sizeRem >= minRem) {
+        measure.style.fontSize = `${sizeRem}rem`;
+        measure.textContent = measureText;
+        if (measure.scrollWidth <= available) {
+          setFontRem(sizeRem);
+          return;
+        }
+        sizeRem -= 0.0625;
+      }
+      setFontRem(minRem);
+    };
+
+    fit();
+    const observer = new ResizeObserver(fit);
+    observer.observe(container);
+    return () => {
+      observer.disconnect();
+      measure.remove();
+    };
+  }, [measureText, maxRem, minRem]);
+
+  return fontRem;
+}
+
 const BORDERED_INPUT_CLASS =
   "block w-full min-w-0 appearance-none border-0 bg-transparent p-0 font-medium leading-snug tracking-[-0.01em] text-[#1E343A] outline-none placeholder:font-normal placeholder:text-[#1E343A]/38 whitespace-nowrap";
 
@@ -364,32 +410,49 @@ export function JoinFormBorderedLinkedInField({
   interactive?: boolean;
   onEnter?: () => void;
 }) {
-  const linkedInPrefix = (
-    <>
-      <span className="text-[#1E343A]/45">linkedin.com</span>
-      <span className="text-[#1E343A]/38">/in/</span>
-    </>
-  );
+  const rowRef = useRef<HTMLDivElement>(null);
+  const { max, min, shell } = BORDERED_INPUT_SIZE[variant];
+  const measureText = `linkedin.com/in/${value || "username"}`;
+  const fontRem = useFitRowFontRem(rowRef, measureText, max, min);
+  const rowStyle = { fontSize: `${fontRem}rem` };
 
   return (
     <div
       className={joinFormBorderedBoxClass(variant)}
       style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
     >
-      <JoinFormBorderedInput
-        variant={variant}
-        value={value}
-        onChange={onChange}
-        placeholder="username"
-        autoComplete="off"
-        spellCheck={false}
-        ariaLabel="LinkedIn username"
-        readOnly={readOnly}
-        interactive={interactive}
-        onEnter={onEnter}
-        prefix={linkedInPrefix}
-        prefixMatchSize
-      />
+      <div ref={rowRef} className={`relative flex min-w-0 items-center ${shell}`}>
+        <span
+          className="mr-0 shrink-0 select-none font-medium leading-snug tracking-[-0.015em] text-[#1E343A]/45"
+          style={rowStyle}
+        >
+          linkedin.com/in/
+        </span>
+        <input
+          type="text"
+          data-join-apply-interactive
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="username"
+          autoComplete="off"
+          spellCheck={false}
+          aria-label="LinkedIn username"
+          readOnly={readOnly}
+          tabIndex={interactive ? 0 : -1}
+          className={BORDERED_INPUT_CLASS}
+          style={rowStyle}
+          onKeyDown={
+            onEnter
+              ? (e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    onEnter();
+                  }
+                }
+              : undefined
+          }
+        />
+      </div>
     </div>
   );
 }
