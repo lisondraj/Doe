@@ -41,7 +41,7 @@ const CARD_STYLES = {
     editorPad: "px-8 py-12 iphone-page:px-10 iphone-page:py-14",
     editorMaxW: "max-w-[min(100%,34rem)]",
     cornerPad: "pl-9 pb-10 pr-8 iphone-page:pl-10 iphone-page:pb-12 iphone-page:pr-9",
-    fieldsTopPadWithReset: "px-8 pt-[5.5rem] iphone-page:px-9 iphone-page:pt-[6rem]",
+    resetSlot: "pt-9 iphone-page:pt-10",
     resetBtn: "gap-2.5 text-[1.0625rem] iphone-page:text-[1.1875rem]",
     resetIcon: "h-[1.35rem] w-[1.35rem] iphone-page:h-6 iphone-page:w-6",
     confirmTitle: "text-[1.625rem] iphone-page:text-[1.75rem]",
@@ -70,7 +70,7 @@ const CARD_STYLES = {
     editorPad: "px-11 py-10",
     editorMaxW: "max-w-[min(100%,32rem)]",
     cornerPad: "pl-8 pb-9 pr-7",
-    fieldsTopPadWithReset: "px-7 pt-[4.75rem]",
+    resetSlot: "pt-8",
     resetBtn: "gap-2.5 text-[1.0625rem]",
     resetIcon: "h-5 w-5",
     confirmTitle: "text-[1.5rem]",
@@ -276,22 +276,22 @@ export function JoinApplyCard({
   const hasName = name.trim().length > 0;
 
   return (
-    <div className="relative w-full">
+    <div className={`relative w-full ${!readOnly && onResetRequest ? styles.resetSlot : ""}`}>
+      {!readOnly && onResetRequest ? (
+        <button
+          type="button"
+          onClick={onResetRequest}
+          className={`absolute right-0 top-0 z-[6] flex items-center font-medium leading-none tracking-[-0.01em] text-[#9A8F82] transition-colors hover:text-[#1E343A]/70 ${styles.resetBtn} ${inter.className}`}
+        >
+          <ResetIcon className={styles.resetIcon} />
+          Reset
+        </button>
+      ) : null}
+
       <div
         className={`relative w-full overflow-hidden border ${styles.height} ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
         style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
       >
-        {!readOnly && onResetRequest ? (
-          <button
-            type="button"
-            onClick={onResetRequest}
-            className={`absolute right-0 top-0 z-[6] flex items-center font-medium leading-none tracking-[-0.01em] text-[#9A8F82] transition-colors hover:text-[#1E343A]/70 ${styles.topPad} ${styles.resetBtn} ${inter.className}`}
-          >
-            <ResetIcon className={styles.resetIcon} />
-            Reset
-          </button>
-        ) : null}
-
         <div
           className={`absolute inset-0 transition-[filter] duration-300 ${isEditing || showResetConfirm ? "pointer-events-none blur-[7px]" : ""}`}
         >
@@ -338,9 +338,7 @@ export function JoinApplyCard({
           </div>
 
           {/* Top-right: other fields */}
-          <div
-            className={`absolute right-0 top-0 z-[2] ${styles.topMaxW} ${!readOnly && onResetRequest ? styles.fieldsTopPadWithReset : styles.topPad}`}
-          >
+          <div className={`absolute right-0 top-0 z-[2] ${styles.topMaxW} ${styles.topPad}`}>
             <div className={`flex flex-col items-end ${styles.topGap}`}>
               {TOP_RIGHT_FIELDS.map(({ step, placeholder }) => {
                 const value = getTopRightDisplayValue(step, data, touchedSteps);
