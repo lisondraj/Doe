@@ -8,6 +8,7 @@ import {
   joinFormPromptClass,
   JoinCountrySlider,
   JoinEducationSlider,
+  JoinFormBorderedField,
 } from "@/components/join/JoinFormControls";
 import { JOIN_APPLY_AREAS, type JoinApplyArea, type JoinApplyFormState } from "@/lib/join/join-apply-form";
 import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
@@ -89,22 +90,18 @@ export function renderJoinApplyStep({
       );
     case 1:
       return (
-        <div>
-          <StepPrompt variant={variant}>{prompt}</StepPrompt>
-          <input
-            type="email"
-            data-join-apply-interactive
-            value={data.email}
-            onChange={(e) => patch({ email: e.target.value })}
-            placeholder="you@email.com"
-            autoComplete="email"
-            aria-label={prompt}
-            readOnly={readOnly}
-            tabIndex={interactive ? 0 : -1}
-            className={fieldClass}
-            onKeyDown={onEnter ? (e) => { if (e.key === "Enter") { e.preventDefault(); onEnter(); } } : undefined}
-          />
-        </div>
+        <JoinFormBorderedField
+          variant={variant}
+          prompt={prompt}
+          type="email"
+          value={data.email}
+          onChange={(email) => patch({ email })}
+          placeholder="you@email.com"
+          autoComplete="email"
+          readOnly={readOnly}
+          interactive={interactive}
+          onEnter={onEnter}
+        />
       );
     case 2:
       return (
@@ -128,22 +125,17 @@ export function renderJoinApplyStep({
       );
     case 4:
       return (
-        <div>
-          <StepPrompt variant={variant}>{prompt}</StepPrompt>
-          <input
-            type="text"
-            data-join-apply-interactive
-            value={data.schoolName}
-            onChange={(e) => patch({ schoolName: e.target.value })}
-            placeholder="School name"
-            autoComplete="organization"
-            aria-label={prompt}
-            readOnly={readOnly}
-            tabIndex={interactive ? 0 : -1}
-            className={fieldClass}
-            onKeyDown={onEnter ? (e) => { if (e.key === "Enter") { e.preventDefault(); onEnter(); } } : undefined}
-          />
-        </div>
+        <JoinFormBorderedField
+          variant={variant}
+          prompt={prompt}
+          value={data.schoolName}
+          onChange={(schoolName) => patch({ schoolName })}
+          placeholder="School name"
+          autoComplete="organization"
+          readOnly={readOnly}
+          interactive={interactive}
+          onEnter={onEnter}
+        />
       );
     case 5:
       return (
@@ -211,44 +203,22 @@ export function renderJoinApplyStep({
           </div>
         </>
       );
-    case 7: {
-      const liPrefixSize =
-        variant === "mobile"
-          ? "text-[1.35rem] iphone-page:text-[1.5rem]"
-          : "text-[1rem]";
+    case 7:
       return (
-        <div>
-          <p
-            className={`mb-3 font-medium tracking-[0.01em] text-[#1E343A]/45 ${liPrefixSize} ${inter.className}`}
-          >
-            linkedin.com/in/
-          </p>
-          <input
-            type="text"
-            data-join-apply-interactive
-            value={data.linkedinUsername}
-            onChange={(e) => patch({ linkedinUsername: e.target.value.replace(/\s/g, "") })}
-            placeholder="username"
-            autoComplete="off"
-            spellCheck={false}
-            aria-label="LinkedIn username"
-            readOnly={readOnly}
-            tabIndex={interactive ? 0 : -1}
-            className={fieldClass}
-            onKeyDown={
-              onEnter
-                ? (e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      onEnter();
-                    }
-                  }
-                : undefined
-            }
-          />
-        </div>
+        <JoinFormBorderedField
+          variant={variant}
+          prompt={prompt}
+          value={data.linkedinUsername}
+          onChange={(linkedinUsername) => patch({ linkedinUsername: linkedinUsername.replace(/\s/g, "") })}
+          placeholder="username"
+          autoComplete="off"
+          spellCheck={false}
+          prefix="linkedin.com/in/"
+          readOnly={readOnly}
+          interactive={interactive}
+          onEnter={onEnter}
+        />
       );
-    }
     default:
       return null;
   }

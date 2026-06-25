@@ -1,5 +1,7 @@
 "use client";
 
+import { useLayoutEffect, useRef, useState, type RefObject } from "react";
+
 import type { JoinApplyCountry, JoinApplyEducation, JoinApplyEducationValue } from "@/lib/join/join-apply-form";
 import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
 import { inter } from "@/lib/home/fonts";
@@ -40,6 +42,139 @@ export function joinFormPromptClass(variant: "mobile" | "desktop") {
       : "mb-5 text-[1.3125rem]";
 
   return `${size} leading-snug text-[#1E343A]/45 ${inter.className}`;
+}
+
+function joinFormBorderedBoxClass(variant: "mobile" | "desktop") {
+  const size =
+    variant === "mobile"
+      ? "rounded-xl px-6 py-5 iphone-page:px-7 iphone-page:py-6"
+      : "rounded-xl px-5 py-4";
+
+  return `w-full border ${size} ${inter.className}`;
+}
+
+function joinFormBorderedPromptClass(variant: "mobile" | "desktop") {
+  const size =
+    variant === "mobile"
+      ? "mb-4 text-[1.35rem] iphone-page:mb-5 iphone-page:text-[1.5rem]"
+      : "mb-3 text-[1rem]";
+
+  return `${size} font-medium leading-snug tracking-[0.01em] text-[#1E343A]/45`;
+}
+
+const BORDERED_INPUT_SIZE = {
+  mobile: { max: 2.125, min: 1.05, shell: "min-h-[3.75rem] iphone-page:min-h-[4rem]" },
+  desktop: { max: 1.375, min: 0.8125, shell: "min-h-[2.75rem]" },
+} as const;
+
+function useFitInputFontRem(
+  inputRef: RefObject<HTMLInputElement | null>,
+  value: string,
+  maxRem: number,
+  minRem: number,
+) {
+  const [fontRem, setFontRem] = useState(maxRem);
+
+  useLayoutEffect(() => {
+    const input = inputRef.current;
+    if (!input) return;
+
+    const fit = () => {
+      let sizeRem = maxRem;
+      input.style.fontSize = `${sizeRem}rem`;
+      let guard = 0;
+      while (input.scrollWidth > input.clientWidth && sizeRem > minRem && guard < 60) {
+        sizeRem -= 0.0625;
+        input.style.fontSize = `${sizeRem}rem`;
+        guard += 1;
+      }
+      setFontRem(sizeRem);
+    };
+
+    fit();
+    const observer = new ResizeObserver(fit);
+    observer.observe(input);
+    return () => observer.disconnect();
+  }, [value, maxRem, minRem]);
+
+  return fontRem;
+}
+
+export function JoinFormBorderedField({
+  variant,
+  prompt,
+  value,
+  onChange,
+  placeholder,
+  type = "text",
+  readOnly = false,
+  interactive = true,
+  onEnter,
+  autoComplete,
+  spellCheck,
+  prefix,
+}: {
+  variant: "mobile" | "desktop";
+  prompt: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  type?: "text" | "email";
+  readOnly?: boolean;
+  interactive?: boolean;
+  onEnter?: () => void;
+  autoComplete?: string;
+  spellCheck?: boolean;
+  prefix?: string;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const { max, min, shell } = BORDERED_INPUT_SIZE[variant];
+  const fontRem = useFitInputFontRem(inputRef, value, max, min);
+  const prefixRem = Math.max(min, fontRem * 0.72);
+
+  return (
+    <div
+      className={joinFormBorderedBoxClass(variant)}
+      style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
+    >
+      <p className={joinFormBorderedPromptClass(variant)}>{prompt}</p>
+      <div className={`flex min-w-0 items-center ${shell}`}>
+        {prefix ? (
+          <span
+            className="mr-0.5 shrink-0 select-none font-medium leading-snug text-[#1E343A]/45"
+            style={{ fontSize: `${prefixRem}rem` }}
+          >
+            {prefix}
+          </span>
+        ) : null}
+        <input
+          ref={inputRef}
+          type={type}
+          data-join-apply-interactive
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          autoComplete={autoComplete}
+          spellCheck={spellCheck}
+          aria-label={prompt}
+          readOnly={readOnly}
+          tabIndex={interactive ? 0 : -1}
+          className="block w-full min-w-0 appearance-none border-0 bg-transparent p-0 font-medium leading-snug tracking-[-0.01em] text-[#1E343A] outline-none placeholder:font-normal placeholder:text-[#1E343A]/38 whitespace-nowrap"
+          style={{ fontSize: `${fontRem}rem` }}
+          onKeyDown={
+            onEnter
+              ? (e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    onEnter();
+                  }
+                }
+              : undefined
+          }
+        />
+      </div>
+    </div>
+  );
 }
 
 export function JoinFormProgressBar({
