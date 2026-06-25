@@ -173,25 +173,15 @@ export const JOIN_HERO_TRIAGE_PANEL = {
 
 export const JOIN_HERO_TRIAGE_SCALE = 1.58;
 
-/** Join iPhone hero — platform workflow preview inset from left, pulled down, scaled up. */
-export const JOIN_MOBILE_HERO_PREVIEW = {
-  left: "max(1.15rem, calc(env(safe-area-inset-left, 0px) + 1.1rem))",
-  top: "14%",
-  right: "-1.25rem",
-  bottom: "-1.5rem",
-  scale: 1.52,
-} as const;
-
-/** @deprecated Join mobile uses JoinMobileHeroPreview instead of inbox triage. */
+/** Join iPhone hero — inbox UI; bottom-left anchored to top-left of orange box, scales down/right. */
 export const JOIN_MOBILE_HERO_TRIAGE_PANEL = {
-  left: 0,
+  left: "max(1.15rem, calc(env(safe-area-inset-left, 0px) + 1.1rem))",
   top: 0,
-  width: "100%",
-  outerHeight: "28rem",
-  innerMinHeight: "30rem",
+  width: "112%",
+  outerHeight: "24rem",
+  innerMinHeight: "26rem",
 } as const;
 
-/** @deprecated */
 export const JOIN_MOBILE_HERO_TRIAGE_SCALE = 1.32;
 
 export type JoinHeroAiFeatureCardId = "brain" | "agents";

@@ -602,7 +602,7 @@ export function HeroTriagePreview({
       <div
         style={{
           transform: isMobile ? `scale(${mobileScaleValue})` : desktopTransform,
-          transformOrigin: isJoinMobile ? "top left" : isMobile ? "bottom left" : "bottom right",
+          transformOrigin: isJoinMobile ? "bottom left" : isMobile ? "bottom left" : "bottom right",
           WebkitFontSmoothing: "antialiased",
           MozOsxFontSmoothing: "grayscale",
         }}
