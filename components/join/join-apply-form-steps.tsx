@@ -1,7 +1,5 @@
 "use client";
 
-import type { RefObject } from "react";
-
 import {
   JoinCountrySlider,
   JoinEducationSlider,
@@ -24,8 +22,8 @@ type RenderJoinApplyStepOptions = {
   patch: (partial: Partial<JoinApplyFormState>) => void;
   variant: "mobile" | "desktop";
   interactive: boolean;
-  resumeInputRef?: RefObject<HTMLInputElement>;
-  onResumeFileChange?: (file: File | null) => void;
+  onOpenResumePicker?: () => void;
+  resumeUploadError?: string | null;
   markStepTouched?: (step: number) => void;
   onEnter?: () => void;
   enterDisabled?: boolean;
@@ -38,8 +36,8 @@ export function renderJoinApplyStep({
   patch,
   variant,
   interactive,
-  resumeInputRef,
-  onResumeFileChange,
+  onOpenResumePicker,
+  resumeUploadError,
   markStepTouched,
   onEnter,
 }: RenderJoinApplyStepOptions) {
@@ -157,14 +155,10 @@ export function renderJoinApplyStep({
           variant={variant}
           resumeFileName={data.resumeFileName}
           resumeFileType={data.resumeFileType}
-          onChange={(resumeFileName, file, resumeFileType) => {
-            patch({ resumeFileName, resumeFileType: resumeFileType ?? null });
-            onResumeFileChange?.(file ?? null);
-            if (file) markStepTouched?.(6);
-          }}
+          onOpenPicker={() => onOpenResumePicker?.()}
+          uploadError={resumeUploadError}
           readOnly={readOnly}
           interactive={interactive}
-          inputRef={resumeInputRef}
         />
       );
     case 7:

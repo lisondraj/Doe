@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
+import { useCallback, useEffect, useRef, useState, type ChangeEvent, type MutableRefObject } from "react";
 
 import { JoinApplyCard } from "@/components/join/JoinApplyCard";
 import { renderJoinApplyStep } from "@/components/join/join-apply-form-steps";
@@ -12,7 +12,16 @@ import {
   isJoinApplyStepValid,
   type JoinApplyFormState,
 } from "@/lib/join/join-apply-form";
+import {
+  ALLOWED_RESUME_ACCEPT,
+  ALLOWED_RESUME_UPLOAD_MESSAGE,
+  getResumeFileDisplayName,
+  getResumeFileTypeLabel,
+  isAllowedResumeFile,
+} from "@/lib/join/resume-file";
 import { inter, suisseIntl } from "@/lib/home/fonts";
+
+const RESUME_PICKER_CLOSE_DELAY_MS = 500;
 
 type JoinApplyCardFormProps = {
   variant: "mobile" | "desktop";
@@ -27,8 +36,9 @@ type JoinApplyCardFormProps = {
   submitted: boolean;
   submitting: boolean;
   submitError: string | null;
-  resumeInputRef: RefObject<HTMLInputElement>;
-  onResumeFileChange: (file: File | null) => void;
+  blockEditorCloseRef: MutableRefObject<boolean>;
+  onOpenResumePicker: () => void;
+  resumeUploadError: string | null;
 };
 
 function JoinApplyCardForm({
@@ -44,8 +54,9 @@ function JoinApplyCardForm({
   submitted,
   submitting,
   submitError,
-  resumeInputRef,
-  onResumeFileChange,
+  blockEditorCloseRef,
+  onOpenResumePicker,
+  resumeUploadError,
 }: JoinApplyCardFormProps) {
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showSubmitReview, setShowSubmitReview] = useState(false);
@@ -55,11 +66,12 @@ function JoinApplyCardForm({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const closeEditor = useCallback(() => {
+    if (blockEditorCloseRef.current) return;
     if (activeStep !== null && activeStep !== 0 && isJoinApplyStepValid(activeStep, data)) {
       markStepTouched(activeStep);
     }
     setActiveStep(null);
-  }, [activeStep, data, markStepTouched, setActiveStep]);
+  }, [activeStep, blockEditorCloseRef, data, markStepTouched, setActiveStep]);
 
   const handleAdvance = useCallback(() => {
     if (!canProceed || activeStep === null) return;
@@ -71,6 +83,7 @@ function JoinApplyCardForm({
     const isModalOpen = (activeStep !== null && activeStep !== 0) || showResetConfirm;
     if (!isModalOpen) return;
     const onPointerDown = (e: PointerEvent) => {
+      if (blockEditorCloseRef.current) return;
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setActiveStep(null);
         setShowResetConfirm(false);
@@ -78,7 +91,7 @@ function JoinApplyCardForm({
     };
     document.addEventListener("pointerdown", onPointerDown);
     return () => document.removeEventListener("pointerdown", onPointerDown);
-  }, [activeStep, showResetConfirm, setActiveStep]);
+  }, [activeStep, blockEditorCloseRef, showResetConfirm, setActiveStep]);
 
   useEffect(() => {
     if (activeStep === null || activeStep === 0) return;
@@ -123,8 +136,8 @@ function JoinApplyCardForm({
           patch,
           variant,
           interactive: true,
-          resumeInputRef,
-          onResumeFileChange,
+          onOpenResumePicker,
+          resumeUploadError,
           markStepTouched,
           onEnter: handleAdvance,
           enterDisabled: !canProceed,
@@ -250,10 +263,72 @@ export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "d
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [resumeUploadError, setResumeUploadError] = useState<string | null>(null);
   const [activeStep, setActiveStep] = useState<number | null>(null);
   const [touchedSteps, setTouchedSteps] = useState<Set<number>>(() => new Set());
   const resumeInputRef = useRef<HTMLInputElement>(null);
   const resumeFileRef = useRef<File | null>(null);
+  const blockEditorCloseRef = useRef(false);
+  const resumePickerCloseTimerRef = useRef<number | null>(null);
+
+  const releaseResumePickerCloseBlock = useCallback(() => {
+    if (resumePickerCloseTimerRef.current !== null) {
+      window.clearTimeout(resumePickerCloseTimerRef.current);
+    }
+    resumePickerCloseTimerRef.current = window.setTimeout(() => {
+      blockEditorCloseRef.current = false;
+      resumePickerCloseTimerRef.current = null;
+    }, RESUME_PICKER_CLOSE_DELAY_MS);
+  }, []);
+
+  const openResumePicker = useCallback(() => {
+    const input = resumeInputRef.current;
+    if (!input) return;
+
+    blockEditorCloseRef.current = true;
+    input.value = "";
+
+    const onWindowFocus = () => {
+      window.removeEventListener("focus", onWindowFocus);
+      releaseResumePickerCloseBlock();
+    };
+    window.addEventListener("focus", onWindowFocus, { once: true });
+
+    input.click();
+  }, [releaseResumePickerCloseBlock]);
+
+  const handleResumeInputChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      releaseResumePickerCloseBlock();
+
+      const file = event.target.files?.[0] ?? null;
+      if (!file) {
+        setResumeUploadError(null);
+        resumeFileRef.current = null;
+        setData((prev) => ({ ...prev, resumeFileName: null, resumeFileType: null }));
+        return;
+      }
+
+      if (!isAllowedResumeFile(file)) {
+        setResumeUploadError(ALLOWED_RESUME_UPLOAD_MESSAGE);
+        event.target.value = "";
+        return;
+      }
+
+      setResumeUploadError(null);
+      resumeFileRef.current = file;
+      const resumeFileName = getResumeFileDisplayName(file);
+      const resumeFileType = getResumeFileTypeLabel(file);
+      setData((prev) => ({ ...prev, resumeFileName, resumeFileType }));
+      setTouchedSteps((prev) => {
+        if (prev.has(6)) return prev;
+        const next = new Set(prev);
+        next.add(6);
+        return next;
+      });
+    },
+    [releaseResumePickerCloseBlock],
+  );
 
   const markStepTouched = useCallback((s: number) => {
     setTouchedSteps((prev) => {
@@ -273,6 +348,7 @@ export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "d
     setTouchedSteps(new Set());
     setActiveStep(null);
     setSubmitError(null);
+    setResumeUploadError(null);
     resumeFileRef.current = null;
     if (resumeInputRef.current) resumeInputRef.current.value = "";
   }, []);
@@ -317,26 +393,34 @@ export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "d
     }
   }, [data, touchedSteps]);
 
-  const onResumeFileChange = useCallback((file: File | null) => {
-    resumeFileRef.current = file;
-  }, []);
-
   return (
-    <JoinApplyCardForm
-      variant={variant}
-      data={data}
-      patch={patch}
-      activeStep={activeStep}
-      setActiveStep={setActiveStep}
-      touchedSteps={touchedSteps}
-      markStepTouched={markStepTouched}
-      resetForm={resetForm}
-      submit={submit}
-      submitted={submitted}
-      submitting={submitting}
-      submitError={submitError}
-      resumeInputRef={resumeInputRef}
-      onResumeFileChange={onResumeFileChange}
-    />
+    <>
+      <input
+        ref={resumeInputRef}
+        type="file"
+        accept={ALLOWED_RESUME_ACCEPT}
+        className="sr-only"
+        tabIndex={-1}
+        aria-hidden
+        onChange={handleResumeInputChange}
+      />
+      <JoinApplyCardForm
+        variant={variant}
+        data={data}
+        patch={patch}
+        activeStep={activeStep}
+        setActiveStep={setActiveStep}
+        touchedSteps={touchedSteps}
+        markStepTouched={markStepTouched}
+        resetForm={resetForm}
+        submit={submit}
+        submitted={submitted}
+        submitting={submitting}
+        submitError={submitError}
+        blockEditorCloseRef={blockEditorCloseRef}
+        onOpenResumePicker={openResumePicker}
+        resumeUploadError={resumeUploadError}
+      />
+    </>
   );
 }

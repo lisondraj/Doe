@@ -35,12 +35,21 @@ const EXTENSION_TO_MIME: Record<string, string> = {
 
 export const ALLOWED_RESUME_MIME_TYPES = new Set(Object.keys(RESUME_MIME_LABELS));
 
-export const ALLOWED_RESUME_ACCEPT = [
-  ...Object.keys(RESUME_EXTENSION_LABELS).map((ext) => `.${ext}`),
-  ...Object.keys(RESUME_MIME_LABELS),
-].join(",");
+export const ALLOWED_RESUME_ACCEPT = Object.keys(RESUME_EXTENSION_LABELS)
+  .map((ext) => `.${ext}`)
+  .join(",");
 
 export const ALLOWED_RESUME_UPLOAD_MESSAGE = "Upload a PDF, Word document, or photo.";
+
+export function getResumeFileDisplayName(file: File): string {
+  const trimmed = file.name.trim();
+  if (trimmed) return trimmed;
+  if (file.type) {
+    const fromMime = Object.entries(EXTENSION_TO_MIME).find(([, mime]) => mime === file.type)?.[0];
+    if (fromMime) return `resume.${fromMime}`;
+  }
+  return "resume";
+}
 
 export function getResumeFileTypeLabel(file: File): string {
   if (file.type && RESUME_MIME_LABELS[file.type]) return RESUME_MIME_LABELS[file.type];

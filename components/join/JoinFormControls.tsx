@@ -4,7 +4,6 @@ import { useLayoutEffect, useRef, useState, type ReactNode, type RefObject } fro
 
 import type { JoinApplyCountry, JoinApplyEducation, JoinApplyEducationValue } from "@/lib/join/join-apply-form";
 import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
-import { ALLOWED_RESUME_ACCEPT, ALLOWED_RESUME_UPLOAD_MESSAGE, getResumeFileTypeLabel, isAllowedResumeFile } from "@/lib/join/resume-file";
 import { inter } from "@/lib/home/fonts";
 
 export function joinFormShellClass(_variant: "mobile" | "desktop") {
@@ -467,22 +466,19 @@ export function JoinFormBorderedResumeField({
   variant,
   resumeFileName,
   resumeFileType,
-  onChange,
+  onOpenPicker,
+  uploadError = null,
   readOnly = false,
   interactive = true,
-  inputRef,
 }: {
   variant: "mobile" | "desktop";
   resumeFileName: string | null;
   resumeFileType: string | null;
-  onChange: (fileName: string | null, file?: File | null, fileType?: string | null) => void;
+  onOpenPicker: () => void;
+  uploadError?: string | null;
   readOnly?: boolean;
   interactive?: boolean;
-  inputRef?: RefObject<HTMLInputElement>;
 }) {
-  const localInputRef = useRef<HTMLInputElement>(null);
-  const fileInputRef = inputRef ?? localInputRef;
-  const [uploadError, setUploadError] = useState<string | null>(null);
   const { shell } = BORDERED_INPUT_SIZE[variant];
   const textSize =
     variant === "mobile"
@@ -499,10 +495,7 @@ export function JoinFormBorderedResumeField({
 
   const openPicker = () => {
     if (!interactive || readOnly) return;
-    const input = fileInputRef.current;
-    if (!input) return;
-    input.value = "";
-    input.click();
+    onOpenPicker();
   };
 
   const optionalClass =
@@ -516,31 +509,7 @@ export function JoinFormBorderedResumeField({
       : "text-[0.9375rem] font-medium text-[#1E343A]/45";
 
   return (
-    <div className="w-full">
-      {interactive ? (
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept={ALLOWED_RESUME_ACCEPT}
-          className="sr-only"
-          onChange={(e) => {
-            const file = e.target.files?.[0] ?? null;
-            if (!file) {
-              setUploadError(null);
-              onChange(null, null, null);
-              return;
-            }
-            if (!isAllowedResumeFile(file)) {
-              setUploadError(ALLOWED_RESUME_UPLOAD_MESSAGE);
-              e.target.value = "";
-              return;
-            }
-            setUploadError(null);
-            onChange(file.name, file, getResumeFileTypeLabel(file));
-          }}
-        />
-      ) : null}
-
+    <div className="w-full" data-join-apply-interactive>
       <div
         className={`border ${innerPad}`}
         style={{ backgroundColor: JOIN_FORM_BEIGE.fieldMuted, borderColor: JOIN_FORM_BEIGE.border }}
