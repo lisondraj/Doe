@@ -5,6 +5,10 @@ import { BLOG_LANDING_HERO_CORNER_PAD } from "@/lib/blog/blog-layout-styles";
 import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
 import { inter, lora } from "@/lib/home/fonts";
 import type { JoinApplyFormState } from "@/lib/join/join-apply-form";
+import {
+  JOIN_APPLY_COUNTRY_LABELS,
+  JOIN_APPLY_EDUCATION_LABELS,
+} from "@/lib/join/join-apply-form";
 import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
 
 // Card height +1/6 vs prior (40rem → ~46.67rem, 45.33rem → ~52.89rem)
@@ -45,8 +49,22 @@ function capitalizeFirst(value: string): string {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
-function formatCardValue(_step: number, raw: string): string {
+function formatCardValue(step: number, raw: string): string {
+  if (step === 1) return raw;
   return capitalizeFirst(raw);
+}
+
+function cardFieldTextClass(step: number, value: string): string {
+  if (step === 1) {
+    const len = value.length;
+    if (len > 32) {
+      return "text-[clamp(0.95rem,3.2vw,1.35rem)] leading-[1.15] iphone-page:text-[clamp(1.05rem,0.9rem+1.1vmin,1.5rem)]";
+    }
+    if (len > 22) {
+      return "text-[clamp(1.1rem,3.6vw,1.55rem)] leading-[1.12] iphone-page:text-[clamp(1.2rem,1rem+1.3vmin,1.7rem)]";
+    }
+  }
+  return CARD_FIELD_TEXT;
 }
 
 function getFieldValue(step: number, data: JoinApplyFormState): string | null {
@@ -54,13 +72,13 @@ function getFieldValue(step: number, data: JoinApplyFormState): string | null {
     case 1:
       return data.email || null;
     case 2:
-      return data.country || null;
+      return data.country ? JOIN_APPLY_COUNTRY_LABELS[data.country] : null;
     case 3:
-      return data.education || null;
+      return data.education ? JOIN_APPLY_EDUCATION_LABELS[data.education] : null;
     case 4:
       return data.schoolName || null;
     case 5:
-      return data.areas.length > 0 ? data.areas.join(", ") : null;
+      return null;
     case 6:
       return data.resume?.name ?? null;
     case 7:
@@ -98,24 +116,24 @@ export function JoinApplyCard({
       className={`relative w-full overflow-hidden border ${JOIN_APPLY_CARD_HEIGHT} ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
       style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
     >
-      {/* Research track converging lines — centered */}
+      {/* Research track converging lines — edge to edge */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-        <div className="relative aspect-square h-[58%] w-[88%] max-h-[26rem] max-w-full">
-          <JoinInternLineGraphic variant={2} />
+        <div className="relative h-full w-full">
+          <JoinInternLineGraphic variant={2} fullBleed />
         </div>
       </div>
 
       {/* Top-right: answered fields */}
-      {answeredFields.length > 0 ? (
-        <div className="absolute right-0 top-0 z-[2] max-w-[68%] p-6 iphone-page:p-7">
+      {answeredFields.length > 0 || data.areas.length > 0 ? (
+        <div className="absolute right-0 top-0 z-[2] max-w-[72%] p-6 iphone-page:p-7">
           <div className="flex flex-col items-end gap-3 iphone-page:gap-3.5">
             {answeredFields.map(({ step, value }) => (
               <div
                 key={step}
-                className={`flex items-center gap-2.5 [animation:join-card-field-in_0.45s_cubic-bezier(0.22,1,0.36,1)_both] ${inter.className}`}
+                className={`flex max-w-full items-center gap-2.5 [animation:join-card-field-in_0.45s_cubic-bezier(0.22,1,0.36,1)_both] ${inter.className}`}
               >
                 <span
-                  className={`max-w-[13rem] text-right text-[#1E343A]/72 iphone-page:max-w-[15rem] ${CARD_FIELD_TEXT}`}
+                  className={`min-w-0 max-w-[min(13rem,calc(100vw-8rem))] truncate text-right text-[#1E343A]/72 iphone-page:max-w-[min(15rem,calc(100vw-9rem))] ${cardFieldTextClass(step, value)}`}
                 >
                   {formatCardValue(step, value)}
                 </span>
@@ -133,6 +151,35 @@ export function JoinApplyCard({
                 </button>
               </div>
             ))}
+            {data.areas.length > 0 ? (
+              <div
+                className={`flex max-w-full flex-col items-end gap-2 [animation:join-card-field-in_0.45s_cubic-bezier(0.22,1,0.36,1)_both] ${inter.className}`}
+              >
+                <div className="flex max-w-full flex-wrap justify-end gap-2 iphone-page:gap-2.5">
+                  {data.areas.map((area) => (
+                    <span
+                      key={area}
+                      className="rounded-xl px-3 py-1.5 text-right font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[clamp(0.95rem,3.2vw,1.2rem)] iphone-page:px-3.5 iphone-page:py-2 iphone-page:text-[clamp(1.05rem,0.9rem+1vmin,1.35rem)]"
+                      style={{ backgroundColor: JOIN_FORM_BEIGE.fieldMuted }}
+                    >
+                      {area}
+                    </span>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => onEdit(5)}
+                  aria-label="Edit selected teams"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all active:scale-95 iphone-page:h-11 iphone-page:w-11 iphone-page:rounded-[0.85rem]"
+                  style={{
+                    backgroundColor: JOIN_FORM_BEIGE.fieldMuted,
+                    color: JOIN_FORM_BEIGE.meter,
+                  }}
+                >
+                  <PencilIcon />
+                </button>
+              </div>
+            ) : null}
           </div>
         </div>
       ) : null}

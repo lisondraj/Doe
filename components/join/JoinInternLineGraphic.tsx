@@ -105,10 +105,20 @@ function DiagonalLinesGraphic({ palette }: { palette: LinePalette }) {
 }
 
 /** Converging channel lines — many paths meeting at center. */
-function ConvergingLinesGraphic({ palette }: { palette: LinePalette }) {
+function ConvergingLinesGraphic({
+  palette,
+  fullBleed = false,
+}: {
+  palette: LinePalette;
+  fullBleed?: boolean;
+}) {
   const { lineSoft, line, lineStrong, accent } = palette;
   const cy = 200;
   const offsets = [-52, -40, -28, -18, -9, -3, 0, 3, 9, 18, 28, 40, 52];
+  const edgeX = fullBleed ? 0 : 32;
+  const farX = fullBleed ? 400 : 368;
+  const cpNear = fullBleed ? 96 : 128;
+  const cpFar = fullBleed ? 304 : 272;
 
   return (
     <svg viewBox="0 0 400 400" fill="none" preserveAspectRatio="xMidYMid meet" aria-hidden className={SVG_CLASS}>
@@ -117,11 +127,11 @@ function ConvergingLinesGraphic({ palette }: { palette: LinePalette }) {
         const yAtCenter = cy + (offset > 0 ? 5 : offset < 0 ? -5 : 0) * (Math.abs(offset) / 52);
         const isCenter = i === 6;
         const col = isCenter ? accent : Math.abs(offset) > 36 ? lineSoft : i % 3 === 0 ? lineStrong : line;
-        const sw = isCenter ? "0.95" : Math.abs(offset) > 40 ? "0.58" : "0.72";
+        const sw = isCenter ? (fullBleed ? "1.35" : "0.95") : Math.abs(offset) > 40 ? "0.58" : "0.72";
         return (
           <path
             key={i}
-            d={`M 32,${yAtEdge} C 128,${yAtEdge} 168,${yAtCenter} 200,${yAtCenter} C 232,${yAtCenter} 272,${yAtEdge} 368,${yAtEdge}`}
+            d={`M ${edgeX},${yAtEdge} C ${cpNear},${yAtEdge} 168,${yAtCenter} 200,${yAtCenter} C 232,${yAtCenter} ${cpFar},${yAtEdge} ${farX},${yAtEdge}`}
             stroke={col}
             strokeWidth={sw}
           />
@@ -190,11 +200,17 @@ const JOIN_LINE_GRAPHICS = [
 export function JoinInternLineGraphic({
   variant,
   onOrange = false,
+  fullBleed = false,
 }: {
   variant: 0 | 1 | 2 | 3;
   onOrange?: boolean;
+  /** Converging lines extend to the SVG edges (apply card). */
+  fullBleed?: boolean;
 }) {
   const palette = onOrange ? ORANGE_PALETTE : BEIGE_PALETTE;
+  if (variant === 2) {
+    return <ConvergingLinesGraphic palette={palette} fullBleed={fullBleed} />;
+  }
   const Graphic = JOIN_LINE_GRAPHICS[variant];
   return <Graphic palette={palette} />;
 }
