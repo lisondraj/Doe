@@ -184,57 +184,33 @@ export const JOIN_MOBILE_HERO_TRIAGE_PANEL = {
 
 export const JOIN_MOBILE_HERO_TRIAGE_SCALE = 1.32;
 
+export type JoinHeroAiFeatureCardId = "brain" | "agents";
+
 export type JoinHeroAiFeatureCardConfig = {
-  label: string;
-  title: string;
-  rows: readonly string[];
-  status?: string;
+  id: JoinHeroAiFeatureCardId;
   placement: {
     top: string;
     right: string;
-    scale: number;
-    rotate: number;
     zIndex: number;
-    transformOrigin?: string;
   };
 };
 
-/** Join desktop hero — two smaller AI feature panels overlapping the inbox preview. */
+/** Join desktop hero — two AI panels overlapping the upper-right of the inbox preview. */
 export const JOIN_HERO_AI_FEATURE_CARDS: readonly JoinHeroAiFeatureCardConfig[] = [
   {
-    label: "Brain",
-    title: "Bedside reasoning",
-    status: "Live",
-    rows: [
-      "Cross-check meds and dizziness cues",
-      "Flag orthostatic risk · low confidence",
-      "Suggest cardio follow-up window",
-    ],
+    id: "brain",
     placement: {
-      top: "11%",
-      right: "36%",
-      scale: 0.94,
-      rotate: -2.5,
+      top: "5%",
+      right: "24%",
       zIndex: 3,
-      transformOrigin: "bottom right",
     },
   },
   {
-    label: "Finance",
-    title: "Prior auth draft",
-    status: "Draft ready",
-    rows: [
-      "Medical necessity — metformin titration",
-      "Lab 03/12 · cited from chart",
-      "Payer policy §4.2 · matched",
-    ],
+    id: "agents",
     placement: {
-      top: "44%",
-      right: "10%",
-      scale: 0.9,
-      rotate: 2,
+      top: "28%",
+      right: "3%",
       zIndex: 4,
-      transformOrigin: "bottom right",
     },
   },
 ] as const;
