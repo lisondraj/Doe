@@ -173,17 +173,17 @@ export const JOIN_HERO_TRIAGE_PANEL = {
 
 export const JOIN_HERO_TRIAGE_SCALE = 1.58;
 
-/** Join iPhone hero — bottom-left anchored at 42% from left, 12% from top so the scaled top clips at the hero edge. */
+/** Join iPhone hero — anchored top-left; scale from bottom-left clips top and right inside hero overflow. */
 export const JOIN_MOBILE_HERO_TRIAGE_PANEL = {
-  left: "42%",
-  top: "12%",
-  panelWidth: "min(40rem, 145vw)",
+  left: "32%",
+  top: "7%",
+  panelWidth: "min(42rem, 150vw)",
   /** Tall enough that scaled top clears hero top while bottom-left anchor stays fixed. */
   outerHeight: "62rem",
   innerMinHeight: "64rem",
 } as const;
 
-export const JOIN_MOBILE_HERO_TRIAGE_SCALE = 1.32;
+export const JOIN_MOBILE_HERO_TRIAGE_SCALE = 1.48;
 
 export type JoinHeroAiFeatureCardId = "brain" | "agents";
 
