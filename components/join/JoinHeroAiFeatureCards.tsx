@@ -314,49 +314,45 @@ function JoinHeroBrainCard({ zIndex }: { zIndex: number }) {
 
 function JoinHeroAgentsCard({ zIndex }: { zIndex: number }) {
   return (
-    <div className="absolute left-0 top-0 h-0 w-0" style={{ zIndex }} aria-hidden>
-      <div
-        style={{
-          transform: `scale(${AGENTS_SCALE})`,
-          transformOrigin: "bottom left",
-        }}
-      >
-        <JoinHeroAgentsPanel />
-      </div>
+    <div
+      className="absolute left-1/2 top-full"
+      style={{
+        zIndex,
+        transform: `translate(-50%, -50%) scale(${AGENTS_SCALE})`,
+      }}
+      aria-hidden
+    >
+      <JoinHeroAgentsPanel />
     </div>
   );
 }
 
-/** Desktop join hero — Brain on inbox left edge; Agents from hero top-left. */
+/** Desktop join hero — Brain on inbox left edge; Agents on inbox bottom edge center. */
 export function JoinHeroAiFeatureCards({ className = "" }: { className?: string }) {
   const brainConfig = JOIN_HERO_AI_FEATURE_CARDS.find((card) => card.id === "brain");
   const agentsConfig = JOIN_HERO_AI_FEATURE_CARDS.find((card) => card.id === "agents");
 
   return (
-    <div className={`pointer-events-none absolute inset-0 select-none ${className}`} aria-hidden>
-      {brainConfig ? (
-        <div
-          className="absolute"
-          style={{
-            top: JOIN_HERO_TRIAGE_PANEL.top,
-            right: JOIN_HERO_TRIAGE_PANEL.right,
-            bottom: JOIN_HERO_TRIAGE_PANEL.bottom,
-            width: JOIN_HERO_TRIAGE_PANEL.width,
-          }}
-        >
-          <div
-            className="relative h-full w-full"
-            style={{
-              transform: `scale(${JOIN_HERO_TRIAGE_SCALE})`,
-              transformOrigin: "bottom right",
-            }}
-          >
-            <JoinHeroBrainCard zIndex={brainConfig.zIndex} />
-          </div>
-        </div>
-      ) : null}
-
-      {agentsConfig ? <JoinHeroAgentsCard zIndex={agentsConfig.zIndex} /> : null}
+    <div
+      className={`pointer-events-none absolute select-none ${className}`}
+      style={{
+        top: JOIN_HERO_TRIAGE_PANEL.top,
+        right: JOIN_HERO_TRIAGE_PANEL.right,
+        bottom: JOIN_HERO_TRIAGE_PANEL.bottom,
+        width: JOIN_HERO_TRIAGE_PANEL.width,
+      }}
+      aria-hidden
+    >
+      <div
+        className="relative h-full w-full"
+        style={{
+          transform: `scale(${JOIN_HERO_TRIAGE_SCALE})`,
+          transformOrigin: "bottom right",
+        }}
+      >
+        {brainConfig ? <JoinHeroBrainCard zIndex={brainConfig.zIndex} /> : null}
+        {agentsConfig ? <JoinHeroAgentsCard zIndex={agentsConfig.zIndex} /> : null}
+      </div>
     </div>
   );
 }
