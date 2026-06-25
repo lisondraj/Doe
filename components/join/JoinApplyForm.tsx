@@ -59,6 +59,7 @@ type JoinApplyMobileFormProps = {
   submit: () => void;
   canProceed: boolean;
   isLastStep: boolean;
+  maxCommittedStep: number;
   resumeInputRef: RefObject<HTMLInputElement>;
 };
 
@@ -71,6 +72,7 @@ function JoinApplyMobileForm({
   submit,
   canProceed,
   isLastStep,
+  maxCommittedStep,
   resumeInputRef,
 }: JoinApplyMobileFormProps) {
   const handleAdvance = useCallback(() => {
@@ -93,7 +95,7 @@ function JoinApplyMobileForm({
 
   return (
     <div className={`${joinFormShellClass("mobile")} flex w-full flex-col`}>
-      <JoinApplyCard data={data} onEdit={(s) => setStep(s)} />
+      <JoinApplyCard data={data} onEdit={(s) => setStep(s)} maxCommittedStep={maxCommittedStep} />
 
       <div
         className="mt-4 w-full iphone-page:mt-5"
@@ -127,6 +129,7 @@ export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "d
   const [step, setStep] = useState(0);
   const [data, setData] = useState<JoinApplyFormState>(JOIN_APPLY_INITIAL_STATE);
   const [submitted, setSubmitted] = useState(false);
+  const [maxCommittedStep, setMaxCommittedStep] = useState(-1);
   const resumeInputRef = useRef<HTMLInputElement>(null);
 
   const canProceed = isJoinApplyStepValid(step, data);
@@ -144,6 +147,7 @@ export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "d
 
   const goNext = () => {
     if (!canProceed) return;
+    setMaxCommittedStep((m) => Math.max(m, step));
     setStep((s) => Math.min(s + 1, JOIN_APPLY_STEP_COUNT - 1));
   };
 
@@ -151,6 +155,7 @@ export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "d
 
   const submit = () => {
     if (!canProceed) return;
+    setMaxCommittedStep((m) => Math.max(m, step));
     setSubmitted(true);
   };
 
@@ -159,7 +164,7 @@ export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "d
       <div className={joinFormShellClass(variant)}>
         {variant === "mobile" ? (
           <>
-            <JoinApplyCard data={data} onEdit={() => {}} />
+            <JoinApplyCard data={data} onEdit={() => {}} maxCommittedStep={maxCommittedStep} />
             <p className={`mt-6 font-normal leading-snug tracking-[-0.02em] text-[#1E343A] text-[1.875rem] iphone-page:mt-8 iphone-page:text-[2.125rem] ${suisseIntl.className}`}>
               Thank you — we&apos;ll be in touch.
             </p>
@@ -192,6 +197,7 @@ export function JoinApplyForm({ variant = "desktop" }: { variant?: "mobile" | "d
         submit={submit}
         canProceed={canProceed}
         isLastStep={isLastStep}
+        maxCommittedStep={maxCommittedStep}
         resumeInputRef={resumeInputRef}
       />
     );

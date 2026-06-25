@@ -67,6 +67,18 @@ function cardFieldTextClass(step: number, value: string): string {
   return CARD_FIELD_TEXT;
 }
 
+function isCardFieldVisible(
+  fieldStep: number,
+  value: string | null,
+  maxCommittedStep: number,
+  data: JoinApplyFormState,
+): boolean {
+  if (!value) return false;
+  if (fieldStep === 2) return maxCommittedStep >= 2;
+  if (fieldStep === 4) return data.schoolName.trim().length > 0;
+  return true;
+}
+
 function getFieldValue(step: number, data: JoinApplyFormState): string | null {
   switch (step) {
     case 1:
@@ -76,7 +88,7 @@ function getFieldValue(step: number, data: JoinApplyFormState): string | null {
     case 3:
       return data.education ? JOIN_APPLY_EDUCATION_LABELS[data.education] : null;
     case 4:
-      return data.schoolName || null;
+      return data.schoolName.trim() || null;
     case 5:
       return null;
     case 6:
@@ -100,16 +112,22 @@ const CARD_FIELD_STEPS = [1, 2, 3, 4, 5, 6, 7] as const;
 export function JoinApplyCard({
   data,
   onEdit,
+  maxCommittedStep = -1,
 }: {
   data: JoinApplyFormState;
   onEdit: (step: number) => void;
+  /** Highest apply step the user has advanced past — gates country on the card. */
+  maxCommittedStep?: number;
 }) {
   const hasName = !!data.name.trim();
 
   const answeredFields = CARD_FIELD_STEPS.map((step) => ({
     step: step as number,
     value: getFieldValue(step, data),
-  })).filter((f): f is { step: number; value: string } => f.value !== null);
+  })).filter(
+    (f): f is { step: number; value: string } =>
+      f.value !== null && isCardFieldVisible(f.step, f.value, maxCommittedStep, data),
+  );
 
   return (
     <div
