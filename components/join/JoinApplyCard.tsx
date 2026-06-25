@@ -36,6 +36,7 @@ const CARD_STYLES = {
     pencil: "h-[1.35rem] w-[1.35rem] iphone-page:h-6 iphone-page:w-6",
     roleChip:
       "rounded-xl px-3.5 py-2 text-[clamp(1.05rem,3.5vw,1.35rem)] iphone-page:px-4 iphone-page:py-2.5 iphone-page:text-[clamp(1.15rem,1rem+1.1vmin,1.5rem)]",
+    roleGrid: "grid w-max max-w-full grid-cols-2",
     roleGap: "gap-2.5 iphone-page:gap-3",
     editorPad: "px-7 py-11 iphone-page:px-9 iphone-page:py-12",
     editorMaxW: "max-w-[min(100%,30rem)]",
@@ -65,6 +66,7 @@ const CARD_STYLES = {
     editBtn: "h-11 w-11 rounded-lg",
     pencil: "h-[1.25rem] w-[1.25rem]",
     roleChip: "rounded-lg px-3 py-1.5 text-[1rem]",
+    roleGrid: "grid w-max max-w-full grid-cols-2",
     roleGap: "gap-2",
     editorPad: "px-10 py-9",
     editorMaxW: "max-w-[min(100%,28rem)]",
@@ -306,7 +308,7 @@ export function JoinApplyCard({
           <div className={`absolute left-0 top-0 z-[2] ${styles.topMaxW} ${styles.topPad}`}>
             <div className={`flex max-w-full items-start gap-2 ${inter.className}`}>
               {data.areas.length > 0 ? (
-                <div className={`flex max-w-full flex-wrap ${styles.roleGap}`}>
+                <div className={`${styles.roleGrid} ${styles.roleGap}`}>
                   {data.areas.map((area) => (
                     <span
                       key={area}
