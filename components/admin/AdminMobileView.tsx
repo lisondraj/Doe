@@ -14,6 +14,7 @@ import {
   ADMIN_MOBILE_CONTENT_TOP_PAD,
   ADMIN_MOBILE_INPUT_H,
   ADMIN_MOBILE_NAV_CLEARANCE,
+  ADMIN_MOBILE_REFRESH_ROW_GAP,
   ADMIN_MOBILE_TAB_BADGE_TW,
   ADMIN_MOBILE_TAB_BAR_INSET,
   ADMIN_MOBILE_TAB_BAR_RESERVE,
@@ -53,14 +54,15 @@ export function AdminMobileView({
       <div
         className={`flex min-h-[var(--app-vh,100lvh)] flex-col ${ADMIN_MOBILE_NAV_CLEARANCE} ${ADMIN_MOBILE_CONTENT_TOP_PAD} ${ADMIN_MOBILE_CONTENT_BOTTOM_PAD} ${ADMIN_MOBILE_TAB_BAR_RESERVE} ${inter.className}`}
       >
-        <header className="flex shrink-0 justify-end pb-5 iphone-page:pb-6">
+        <header className={`flex shrink-0 justify-end ${ADMIN_MOBILE_REFRESH_ROW_GAP}`}>
           <button
             type="button"
             onClick={() => void refresh()}
             disabled={loading}
-            className={`${ADMIN_MOBILE_BUTTON_TW} ${ADMIN_MOBILE_INPUT_H}`}
+            aria-label="Refresh admin data"
+            className={`${ADMIN_MOBILE_BUTTON_TW} ${ADMIN_MOBILE_INPUT_H} min-w-[8.5rem] iphone-page:min-w-[9.25rem]`}
           >
-            {loading ? "…" : "Refresh"}
+            {loading ? "Refreshing…" : "Refresh"}
           </button>
         </header>
 
