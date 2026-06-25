@@ -24,7 +24,6 @@ export const JOIN_INTERN_TRACKS: readonly JoinInternTrack[] = [
       "Build relationships that outlast the internship.",
     ],
     graphic: 1,
-    cardFill: "agents",
   },
   {
     title: "The Mission",
@@ -43,6 +42,5 @@ export const JOIN_INTERN_TRACKS: readonly JoinInternTrack[] = [
       "Shape what we build as an early contributor.",
     ],
     graphic: 3,
-    cardFill: "agents",
   },
 ] as const;
