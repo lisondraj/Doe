@@ -5,7 +5,6 @@ import { JoinApplyForm } from "@/components/join/JoinApplyForm";
 import { JoinInternTrackReveal } from "@/components/join/JoinInternTrackReveal";
 import {
   DOEPHONE_SECTION_CAROUSEL_MENU_GAP,
-  DOEPHONE_SECTION_CONTENT_INSET,
   DOEPHONE_SECTION_TITLE_CAROUSEL_GAP,
 } from "@/lib/doephone/section-styles";
 import { JOIN_DESKTOP_CONTENT, JOIN_MOBILE_APPLY_SECTION } from "@/lib/join/join-layout";
@@ -18,9 +17,7 @@ export function JoinApplyFormSection({ variant }: { variant: "mobile" | "desktop
         aria-label="Internship application"
       >
         <JoinInternTrackReveal variant="mobile" className="flex w-full flex-col py-10 iphone-page:py-12">
-          <div className={DOEPHONE_SECTION_CONTENT_INSET}>
-            <DoePhoneSectionTitle line1="Build your" line2="applicant card" />
-          </div>
+          <DoePhoneSectionTitle line1="Build your" line2="applicant card" />
           <div className={`${DOEPHONE_SECTION_TITLE_CAROUSEL_GAP} w-full`}>
             <JoinApplyForm variant="mobile" />
           </div>

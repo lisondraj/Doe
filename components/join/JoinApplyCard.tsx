@@ -15,23 +15,13 @@ import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
 
 export const JOIN_APPLY_CARD_HEIGHT = "h-[46.67rem] iphone-page:h-[52.89rem]";
 
-const LORA_SIZE =
-  "text-[clamp(2rem,6.5vw,3rem)] iphone-page:text-[clamp(2.25rem,1.8rem+2.8vmin,3.5rem)]";
-
-const LORA_SIZE_MEDIUM =
-  "text-[clamp(1.65rem,5vw,2.35rem)] iphone-page:text-[clamp(1.85rem,1.5rem+2vmin,2.75rem)]";
-
-const LORA_SIZE_SMALL =
-  "text-[clamp(1.35rem,4vw,1.95rem)] iphone-page:text-[clamp(1.5rem,1.2rem+1.5vmin,2.25rem)]";
-
 const CARD_FIELD_TEXT =
   "text-[clamp(1.35rem,4.2vw,2rem)] leading-[1.12] iphone-page:text-[clamp(1.5rem,1.2rem+1.8vmin,2.2rem)]";
 
-const CARD_PLACEHOLDER_TEXT =
-  "text-[clamp(1.35rem,4.2vw,2rem)] leading-[1.12] iphone-page:text-[clamp(1.5rem,1.2rem+1.8vmin,2.2rem)]";
+const CARD_PLACEHOLDER_TEXT = CARD_FIELD_TEXT;
 
-const BOTTOM_LEFT_TWO_LINE =
-  "line-clamp-2 max-h-[calc(2*1.04em)] overflow-hidden leading-[1.04]";
+const BOTTOM_LEFT_NAME_TEXT =
+  "whitespace-normal break-words font-normal tracking-[-0.03em] leading-[1.12]";
 
 const TOP_RIGHT_FIELDS = [
   { step: 1, placeholder: "Email" },
@@ -68,26 +58,6 @@ function formatCardValue(step: number, raw: string): string {
   return capitalizeFirst(raw);
 }
 
-function cardFieldTextClass(step: number, value: string): string {
-  if (step === 1) {
-    const len = value.length;
-    if (len > 32) {
-      return "text-[clamp(0.95rem,3.2vw,1.35rem)] leading-[1.15] iphone-page:text-[clamp(1.05rem,0.9rem+1.1vmin,1.5rem)]";
-    }
-    if (len > 22) {
-      return "text-[clamp(1.1rem,3.6vw,1.55rem)] leading-[1.12] iphone-page:text-[clamp(1.2rem,1rem+1.3vmin,1.7rem)]";
-    }
-  }
-  return CARD_FIELD_TEXT;
-}
-
-function nameSizeClass(name: string): string {
-  const len = name.trim().length;
-  if (len <= 18) return LORA_SIZE;
-  if (len <= 32) return LORA_SIZE_MEDIUM;
-  return LORA_SIZE_SMALL;
-}
-
 function getTopRightDisplayValue(
   step: number,
   data: JoinApplyFormState,
@@ -109,7 +79,7 @@ function getTopRightDisplayValue(
     case 7:
       return data.linkedinUsername.trim() || null;
     case 8:
-      return data.notes.trim() ? data.notes.trim().slice(0, 48) + (data.notes.trim().length > 48 ? "…" : "") : null;
+      return data.notes.trim() || null;
     default:
       return null;
   }
@@ -172,14 +142,14 @@ export function JoinApplyCard({
       <div
         className={`absolute inset-0 transition-[filter] duration-300 ${isEditing ? "pointer-events-none blur-[7px]" : ""}`}
       >
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+        <div className="pointer-events-none absolute inset-x-0 bottom-[6.75rem] top-[36%] iphone-page:bottom-[7.75rem]">
           <div className="relative h-full w-full">
             <JoinInternLineGraphic variant={2} fullBleed />
           </div>
         </div>
 
         {/* Top-right: field placeholders and values */}
-        <div className="absolute right-0 top-0 z-[2] max-w-[78%] p-6 iphone-page:p-7">
+        <div className="absolute right-0 top-0 z-[2] max-w-[88%] p-6 iphone-page:max-w-[90%] iphone-page:p-7">
           <div className="flex flex-col items-end gap-3 iphone-page:gap-3.5">
             {TOP_RIGHT_FIELDS.map(({ step, placeholder }) => {
               if (step === 5) {
@@ -220,19 +190,19 @@ export function JoinApplyCard({
 
               const value = getTopRightDisplayValue(step, data, touchedSteps);
               const textClass = value
-                ? `text-[#1E343A]/72 ${cardFieldTextClass(step, value)}`
+                ? `text-[#1E343A]/72 ${CARD_FIELD_TEXT}`
                 : `text-[#1E343A]/38 ${CARD_PLACEHOLDER_TEXT}`;
 
               return (
                 <div
                   key={step}
-                  className={`flex max-w-full items-center gap-2.5 ${value ? "[animation:join-card-field-in_0.45s_cubic-bezier(0.22,1,0.36,1)_both]" : ""} ${inter.className}`}
+                  className={`flex max-w-full items-start justify-end gap-2.5 ${value ? "[animation:join-card-field-in_0.45s_cubic-bezier(0.22,1,0.36,1)_both]" : ""} ${inter.className}`}
                 >
                   <button
                     type="button"
                     disabled={readOnly}
                     onClick={() => onEdit(step)}
-                    className={`min-w-0 max-w-[min(13rem,calc(100vw-8rem))] truncate text-right iphone-page:max-w-[min(15rem,calc(100vw-9rem))] ${textClass}`}
+                    className={`min-w-0 flex-1 text-right whitespace-normal break-words ${textClass}`}
                   >
                     {value ? formatCardValue(step, value) : placeholder}
                   </button>
@@ -246,12 +216,12 @@ export function JoinApplyCard({
         </div>
 
         {/* Bottom-left: name placeholder or value */}
-        <div className={`absolute bottom-0 left-0 z-[2] w-[min(100%,19em)] ${BLOG_LANDING_HERO_CORNER_PAD}`}>
-          <div className="relative min-h-[6.25rem] iphone-page:min-h-[7.3rem]">
+        <div className={`absolute bottom-0 left-0 z-[2] w-[min(100%,88%)] ${BLOG_LANDING_HERO_CORNER_PAD}`}>
+          <div className="relative min-h-[4.5rem] iphone-page:min-h-[5rem]">
             {hasName ? (
-              <div className="flex items-end gap-2.5">
+              <div className="flex items-start gap-2.5">
                 <p
-                  className={`min-w-0 flex-1 font-normal tracking-[-0.03em] text-[#1E343A] ${nameSizeClass(name)} ${lora.className} ${BOTTOM_LEFT_TWO_LINE}`}
+                  className={`min-w-0 flex-1 text-[#1E343A] ${CARD_FIELD_TEXT} ${lora.className} ${BOTTOM_LEFT_NAME_TEXT}`}
                 >
                   {name}
                 </p>
@@ -260,12 +230,12 @@ export function JoinApplyCard({
                 ) : null}
               </div>
             ) : (
-              <div className="flex items-end gap-2.5">
+              <div className="flex items-start gap-2.5">
                 <button
                   type="button"
                   disabled={readOnly}
                   onClick={() => onEdit(0)}
-                  className={`min-w-0 flex-1 text-left font-normal tracking-[-0.035em] text-[#1E343A]/38 ${LORA_SIZE} ${lora.className} ${BOTTOM_LEFT_TWO_LINE}`}
+                  className={`min-w-0 flex-1 text-left text-[#1E343A]/38 ${CARD_FIELD_TEXT} ${lora.className} ${BOTTOM_LEFT_NAME_TEXT}`}
                 >
                   <span className="block">Enter your</span>
                   <span className="block">name here</span>
