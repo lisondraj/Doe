@@ -254,8 +254,8 @@ function InboxListRow({
   const nameFs = joinCompact ? "0.58rem" : mobile ? "0.96rem" : "0.62rem";
   const subFs = joinCompact ? "0.52rem" : mobile ? "0.88rem" : "0.56rem";
   const timeFs = joinCompact ? "0.46rem" : mobile ? "0.78rem" : "0.48rem";
-  const pad = joinCompact ? "0.34rem 0.46rem" : mobile ? "0.62rem 0.9rem" : "0.42rem 0.52rem";
-  const gap = joinCompact ? "0.32rem" : mobile ? "0.62rem" : "0.38rem";
+  const pad = joinCompact ? "0.52rem 0.46rem" : mobile ? "0.62rem 0.9rem" : "0.42rem 0.52rem";
+  const gap = joinCompact ? "0.38rem" : mobile ? "0.62rem" : "0.38rem";
   const rowMargin = joinCompact ? "0 0.24rem" : mobile ? "0 0.5rem" : "0 0.32rem";
   const rowRadius = joinCompact ? "0.42rem" : mobile ? "0.85rem" : "0.55rem";
   const rowRadiusDefault = joinCompact ? "0.38rem" : mobile ? "0.65rem" : "0.45rem";
@@ -576,7 +576,7 @@ export function HeroTriagePreview({
   const { colors } = config;
   const navW = isJoinMobile ? "3.15rem" : isMobile ? "5.1rem" : isSimple ? "3.25rem" : "2.85rem";
   const listW = isMobile && !isSimple ? HERO_TRIAGE_MOBILE_LIST_WIDTH : isSimple ? undefined : "38%";
-  const inboxRows = isJoinMobile ? INBOX_ROWS.slice(0, 9) : isSimple ? INBOX_ROWS.slice(0, 5) : INBOX_ROWS;
+  const inboxRows = isJoinMobile ? INBOX_ROWS : isSimple ? INBOX_ROWS.slice(0, 5) : INBOX_ROWS;
   const listRowMobile = (isMobile || isSimple) && !isJoinMobile;
   const navIconMobile = isMobile && !isJoinMobile;
   const mobileScaleValue = mobileScale ?? HERO_TRIAGE_MOBILE_SCALE;
@@ -754,7 +754,7 @@ export function HeroTriagePreview({
               {/* Message list */}
               <div
                 className="min-h-0 flex-1 overflow-hidden"
-                style={{ padding: isJoinMobile ? "0.24rem 0.22rem" : isMobile ? "0.45rem 0.35rem" : isSimple ? "0.55rem 0.45rem" : "0.28rem 0.2rem", gap: isMobile ? "0.28rem" : "0.18rem" }}
+                style={{ padding: isJoinMobile ? "0.35rem 0.22rem" : isMobile ? "0.45rem 0.35rem" : isSimple ? "0.55rem 0.45rem" : "0.28rem 0.2rem", gap: isJoinMobile ? "0.32rem" : isMobile ? "0.28rem" : "0.18rem" }}
               >
                 {inboxRows.map((row) => (
                   <div key={row.id}>
