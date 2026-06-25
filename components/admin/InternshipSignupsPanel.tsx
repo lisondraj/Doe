@@ -3,6 +3,7 @@
 import { useMemo, useState, useEffect, type ReactNode } from "react";
 
 import { DoeBuildIcon } from "@/components/admin/doe-build-icon";
+import { AdminMobileSectionHeader } from "@/components/admin/AdminMobileSectionHeader";
 import {
   formatAdminDate,
   formatCountry,
@@ -32,7 +33,6 @@ import {
   ADMIN_MOBILE_META_TW,
   ADMIN_MOBILE_PANEL_STACK,
   ADMIN_MOBILE_FIELD_TEXT_TW,
-  ADMIN_MOBILE_SECTION_TITLE_TW,
   ADMIN_MOBILE_SELECT_CHEVRON_TW,
   ADMIN_MOBILE_STAT_GRID,
   ADMIN_MOBILE_STAT_TILE,
@@ -68,7 +68,7 @@ function AdminMobileSearchBar({
         placeholder="Search name, email, school, areas…"
         className={ADMIN_MOBILE_INPUT_TEXT_TW}
       />
-      <span className="shrink-0 rounded-full bg-neutral-100 px-3 py-1.5 text-[0.95rem] font-semibold tabular-nums text-neutral-600 iphone-page:px-3.5 iphone-page:py-2 iphone-page:text-[1rem]">
+      <span className="shrink-0 rounded-full bg-neutral-100 px-3.5 py-1.5 text-[1rem] font-semibold tabular-nums text-neutral-600 iphone-page:px-4 iphone-page:py-2 iphone-page:text-[1.06rem]">
         {resultCount}
       </span>
     </label>
@@ -253,7 +253,7 @@ function ApplicationDetail({
           key={area}
           className={`rounded-xl bg-neutral-100 px-3.5 py-2 font-medium text-neutral-700 ${
             variant === "mobile"
-              ? "text-[clamp(1.02rem,0.9rem+0.5vmin,1.15rem)] iphone-page:text-[1.15rem]"
+              ? "text-[clamp(1.1rem,0.96rem+0.55vmin,1.25rem)] iphone-page:text-[1.25rem]"
               : "text-[11px]"
           }`}
         >
@@ -368,7 +368,7 @@ function ApplicationDetail({
         <DetailField
           variant={variant}
           label="Application ID"
-          value={<span className={`font-mono ${variant === "mobile" ? "text-[1.05rem] iphone-page:text-[1.12rem]" : "text-[11px]"}`}>{application.id}</span>}
+          value={<span className={`font-mono ${variant === "mobile" ? "text-[1.12rem] iphone-page:text-[1.2rem]" : "text-[11px]"}`}>{application.id}</span>}
         />
       </div>
     </div>
@@ -615,7 +615,7 @@ export function InternshipSignupsPanel({
           </div>
         </header>
       ) : (
-        <h2 className={`shrink-0 ${ADMIN_MOBILE_SECTION_TITLE_TW}`}>Signups</h2>
+        <AdminMobileSectionHeader title="Signups" loading={loading} onRefresh={onRefresh} />
       )}
 
       <div className={variant === "mobile" ? statsGrid : "border-b border-[#EFEFEF] px-4 py-3"}>

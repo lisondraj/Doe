@@ -3,13 +3,13 @@
 import { useMemo } from "react";
 
 import { AdminBarChart, AdminDonutChart } from "@/components/admin/AdminCharts";
+import { AdminMobileSectionHeader } from "@/components/admin/AdminMobileSectionHeader";
 import { DoeBuildIcon } from "@/components/admin/doe-build-icon";
 import type { AdminInternshipApplication } from "@/lib/admin/internship-applications";
 import { buildInternshipAnalytics } from "@/lib/admin/internship-analytics";
 import {
   ADMIN_MOBILE_CHART_STACK,
   ADMIN_MOBILE_PANEL_STACK,
-  ADMIN_MOBILE_SECTION_TITLE_TW,
   ADMIN_MOBILE_STAT_GRID,
   ADMIN_MOBILE_STAT_TILE,
   ADMIN_MOBILE_STAT_VALUE_TW,
@@ -125,7 +125,7 @@ export function InternshipAnalyticsPanel({
           </div>
         </header>
       ) : (
-        <h2 className={`shrink-0 ${ADMIN_MOBILE_SECTION_TITLE_TW}`}>Analytics</h2>
+        <AdminMobileSectionHeader title="Analytics" loading={loading} onRefresh={onRefresh} />
       )}
 
       <div className={`min-h-0 flex-1 overflow-y-auto ${variant === "mobile" ? "" : "px-4 py-4"}`}>

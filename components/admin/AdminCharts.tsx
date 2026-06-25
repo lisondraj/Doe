@@ -48,7 +48,7 @@ export function AdminBarChart({
     variant === "mobile"
       ? `shrink-0 tabular-nums ${ADMIN_MOBILE_META_TW} text-neutral-500`
       : "shrink-0 text-[11px] font-semibold tabular-nums text-neutral-500";
-  const barHeight = variant === "mobile" ? "h-4 iphone-page:h-[1.125rem]" : "h-2.5";
+  const barHeight = variant === "mobile" ? "h-[1.125rem] iphone-page:h-5" : "h-2.5";
 
   return (
     <section className={chartShellClass(variant)}>
@@ -123,8 +123,8 @@ export function AdminDonutChart({
   const donutSize =
     variant === "mobile"
       ? layout === "stack"
-        ? "mx-auto h-48 w-48 iphone-page:h-52 iphone-page:w-52"
-        : "h-36 w-36 shrink-0 iphone-page:h-40 iphone-page:w-40"
+        ? "mx-auto h-52 w-52 iphone-page:h-56 iphone-page:w-56"
+        : "h-40 w-40 shrink-0 iphone-page:h-44 iphone-page:w-44"
       : layout === "stack"
         ? "mx-auto h-36 w-36"
         : "h-28 w-28 shrink-0";
@@ -147,7 +147,7 @@ export function AdminDonutChart({
             {segments.map((segment) => (
               <div key={segment.label} className="flex items-center gap-3.5">
                 <span
-                  className={`shrink-0 rounded-full ${variant === "mobile" ? "h-3.5 w-3.5 iphone-page:h-4 iphone-page:w-4" : "h-2.5 w-2.5"}`}
+                  className={`shrink-0 rounded-full ${variant === "mobile" ? "h-4 w-4 iphone-page:h-[1.125rem] iphone-page:w-[1.125rem]" : "h-2.5 w-2.5"}`}
                   style={{ backgroundColor: segment.color }}
                 />
                 <span className={`min-w-0 flex-1 truncate ${variant === "mobile" ? ADMIN_MOBILE_BODY_TW : "text-[12px] text-neutral-700"}`}>

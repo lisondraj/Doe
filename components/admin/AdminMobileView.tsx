@@ -8,16 +8,13 @@ import { DoeBuildIcon } from "@/components/admin/doe-build-icon";
 import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
 import type { AdminInternshipApplication, InternshipSignupStats } from "@/lib/admin/internship-applications";
 import {
-  ADMIN_MOBILE_BUTTON_TW,
   ADMIN_MOBILE_CONTENT_STACK,
-  ADMIN_MOBILE_INPUT_H,
-  ADMIN_MOBILE_HEADER_LOGO_TW,
+  ADMIN_MOBILE_CONTENT_TOP_PAD,
   ADMIN_MOBILE_NAV_CLEARANCE,
-  ADMIN_MOBILE_PAGE_TITLE_TW,
-  ADMIN_MOBILE_SUBTITLE_TW,
   ADMIN_MOBILE_TAB_BADGE_TW,
   ADMIN_MOBILE_TAB_BAR_INSET,
   ADMIN_MOBILE_TAB_BAR_RESERVE,
+  ADMIN_MOBILE_TAB_BAR_SAFE_BOTTOM,
   ADMIN_MOBILE_TAB_BUTTON_TW,
   ADMIN_MOBILE_TAB_ICON_TW,
 } from "@/lib/admin/admin-layout";
@@ -41,8 +38,6 @@ export function AdminMobileView({
     initialStats,
   );
 
-  const tabLabel = activeTab === "signups" ? "Internship signups" : "Signup analytics";
-
   return (
     <BlogMobileShell
       showJoinCta={false}
@@ -53,27 +48,9 @@ export function AdminMobileView({
       shellMinHeightClass="min-h-[var(--app-vh,100lvh)]"
     >
       <div
-        className={`flex min-h-[var(--app-vh,100lvh)] flex-col ${ADMIN_MOBILE_NAV_CLEARANCE} ${ADMIN_MOBILE_TAB_BAR_RESERVE} ${inter.className}`}
+        className={`flex min-h-[var(--app-vh,100lvh)] flex-col ${ADMIN_MOBILE_NAV_CLEARANCE} ${ADMIN_MOBILE_CONTENT_TOP_PAD} ${ADMIN_MOBILE_TAB_BAR_RESERVE} ${inter.className}`}
       >
-        <header className="shrink-0">
-          <div className="flex items-center gap-4 iphone-page:gap-5">
-            <div className={ADMIN_MOBILE_HEADER_LOGO_TW} />
-            <div className="min-w-0 flex-1">
-              <h1 className={ADMIN_MOBILE_PAGE_TITLE_TW}>Doe Admin</h1>
-              <p className={`mt-2 iphone-page:mt-2.5 ${ADMIN_MOBILE_SUBTITLE_TW}`}>{tabLabel}</p>
-            </div>
-            <button
-              type="button"
-              onClick={() => void refresh()}
-              disabled={loading}
-              className={`${ADMIN_MOBILE_BUTTON_TW} ${ADMIN_MOBILE_INPUT_H} shrink-0 self-center`}
-            >
-              {loading ? "…" : "Refresh"}
-            </button>
-          </div>
-        </header>
-
-        <div className={`min-h-0 flex-1 ${ADMIN_MOBILE_CONTENT_STACK} pt-6 iphone-page:pt-7`}>
+        <div className={`min-h-0 flex-1 ${ADMIN_MOBILE_CONTENT_STACK}`}>
           {activeTab === "signups" ? (
             <InternshipSignupsPanel
               variant="mobile"
@@ -96,8 +73,7 @@ export function AdminMobileView({
       </div>
 
       <nav
-        className={`fixed inset-x-0 bottom-0 z-[80] border-t border-[#E8E8E8] bg-[#F7F6F3]/95 backdrop-blur-md ${ADMIN_MOBILE_TAB_BAR_INSET}`}
-        style={{ paddingBottom: "max(1.25rem, env(safe-area-inset-bottom, 0px))" }}
+        className={`fixed inset-x-0 bottom-0 z-[80] border-t border-[#E8E8E8] bg-[#F7F6F3]/95 backdrop-blur-md ${ADMIN_MOBILE_TAB_BAR_INSET} ${ADMIN_MOBILE_TAB_BAR_SAFE_BOTTOM}`}
         aria-label="Admin sections"
       >
         <div className="flex gap-3 iphone-page:gap-3.5">
@@ -117,9 +93,7 @@ export function AdminMobileView({
               </>
             </DoeBuildIcon>
             <span className="truncate">Signups</span>
-            <span className={ADMIN_MOBILE_TAB_BADGE_TW}>
-              {stats.total}
-            </span>
+            <span className={ADMIN_MOBILE_TAB_BADGE_TW}>{stats.total}</span>
           </button>
 
           <button
