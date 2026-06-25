@@ -1,6 +1,7 @@
 /** Shared desktop content column — nav, main, and footer inner edges align here. */
 export const JOIN_DESKTOP_CONTENT_MAX = "max-w-[1400px]";
 export const JOIN_DESKTOP_CONTENT_PAD = "px-8";
+export const JOIN_DESKTOP_HERO_TOP_PAD = "pt-8";
 export const JOIN_DESKTOP_CONTENT =
   `mx-auto w-full ${JOIN_DESKTOP_CONTENT_MAX} ${JOIN_DESKTOP_CONTENT_PAD}`;
 
@@ -8,12 +9,24 @@ export const JOIN_DESKTOP_CONTENT =
 export const JOIN_MOBILE_SECTION_GUTTER =
   "max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))";
 
-/** Top inset above join mobile hero card — tight under nav. */
-export const JOIN_MOBILE_HERO_TOP_PAD =
-  "pt-5 iphone-page:pt-[max(1rem,calc(env(safe-area-inset-left,0px)+2.15vmin))]";
+/** Join iPhone horizontal inset — matches carousel band. */
+export const JOIN_MOBILE_PAGE_INSET_X =
+  "px-14 iphone-page:px-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
 
-/** Hero viewport section — top gutter only; bottom gap comes from first track margin. */
-export const JOIN_MOBILE_HERO_INSET = JOIN_MOBILE_HERO_TOP_PAD;
+/** Top inset above join mobile hero card — matches horizontal gutter. */
+export const JOIN_MOBILE_HERO_TOP_PAD =
+  "pt-14 iphone-page:pt-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
+
+/** Hero viewport section — uniform top + horizontal gutter; bottom gap on tracks wrapper. */
+export const JOIN_MOBILE_HERO_INSET = `${JOIN_MOBILE_HERO_TOP_PAD} ${JOIN_MOBILE_PAGE_INSET_X}`;
+
+/** Vertical stack gap between hero and intern track sections (flex gap + lead padding). */
+export const JOIN_MOBILE_SECTION_STACK_GAP =
+  "gap-14 iphone-page:gap-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
+
+/** Space between hero band and first intern track — padding avoids margin collapse. */
+export const JOIN_MOBILE_TRACKS_LEAD_GAP =
+  "pt-14 iphone-page:pt-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
 
 /** First iPhone screen — hero fills viewport below nav. */
 export const JOIN_MOBILE_HERO_VIEWPORT_SECTION =
