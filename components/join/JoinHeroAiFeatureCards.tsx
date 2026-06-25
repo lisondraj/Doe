@@ -512,7 +512,6 @@ function JoinHeroAgentsCard({ zIndex }: { zIndex: number }) {
 
 /** Desktop join hero — Brain on inbox left edge; Agents on inbox bottom edge center. */
 export function JoinHeroAiFeatureCards({ className = "" }: { className?: string }) {
-  const brainConfig = JOIN_HERO_AI_FEATURE_CARDS.find((card) => card.id === "brain");
   const agentsConfig = JOIN_HERO_AI_FEATURE_CARDS.find((card) => card.id === "agents");
 
   return (
@@ -533,7 +532,6 @@ export function JoinHeroAiFeatureCards({ className = "" }: { className?: string 
           transformOrigin: "bottom right",
         }}
       >
-        {brainConfig ? <JoinHeroBrainCard zIndex={brainConfig.zIndex} /> : null}
         {agentsConfig ? <JoinHeroAgentsCard zIndex={agentsConfig.zIndex} /> : null}
       </div>
     </div>
