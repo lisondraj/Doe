@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 import { JoinInternLineGraphic } from "@/components/join/JoinInternLineGraphic";
 import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
@@ -27,18 +28,16 @@ const CARD_STYLES = {
     topPad: "p-8 iphone-page:p-9",
     topLeftMaxW: "max-w-[44%] iphone-page:max-w-[42%]",
     topRightMaxW: "max-w-[52%] iphone-page:max-w-[54%]",
-    topGap: "gap-3 iphone-page:gap-3.5",
-    nameWidth: "w-full max-w-[min(100%,18rem)] iphone-page:max-w-[min(100%,20rem)]",
-    nameBlockH: "h-[calc(2*1.04em)]",
-    nameRowH: "h-[1.04em] min-h-[1.04em] max-h-[1.04em] overflow-hidden py-0",
-    nameLineGap: "gap-0",
+    topGap: "gap-5 iphone-page:gap-6",
+    nameWidth: "w-[11.25rem] iphone-page:w-[12.5rem]",
+    nameLeading: 1.04,
     lineBand:
-      "absolute inset-x-0 top-[40%] bottom-[11rem] origin-center scale-[1.34] iphone-page:top-[38%] iphone-page:bottom-[12rem] iphone-page:scale-[1.4]",
+      "absolute inset-x-0 top-[54%] bottom-[10.25rem] origin-bottom scale-[1.52] iphone-page:top-[52%] iphone-page:bottom-[11rem] iphone-page:scale-[1.58]",
     roleChip:
       "w-fit max-w-full shrink-0 rounded-xl px-2.5 py-1.5 text-left font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[clamp(1.2rem,4vw,1.55rem)] iphone-page:px-3 iphone-page:py-2 iphone-page:text-[clamp(1.3rem,1.1rem+1.2vmin,1.7rem)]",
     roleGap: "gap-y-2 iphone-page:gap-y-2.5",
-    filledChip:
-      "w-fit max-w-full shrink-0 rounded-xl px-2.5 py-1.5 text-right font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[clamp(1.2rem,4vw,1.55rem)] iphone-page:px-3 iphone-page:py-2 iphone-page:text-[clamp(1.3rem,1.1rem+1.2vmin,1.7rem)]",
+    filledFieldText:
+      "text-right font-medium leading-tight tracking-[-0.01em] text-[#9A8F82] text-[clamp(1.2rem,4vw,1.55rem)] iphone-page:text-[clamp(1.3rem,1.1rem+1.2vmin,1.7rem)]",
     editorPad: "px-8 py-12 iphone-page:px-10 iphone-page:py-14",
     editorMaxW: "max-w-[min(100%,34rem)]",
     cornerPad: "pl-10 pb-11 pr-8 pt-0 iphone-page:pl-11 iphone-page:pb-12 iphone-page:pr-9",
@@ -59,17 +58,15 @@ const CARD_STYLES = {
     topPad: "p-7",
     topLeftMaxW: "max-w-[42%]",
     topRightMaxW: "max-w-[54%]",
-    topGap: "gap-2.5",
-    nameWidth: "w-full max-w-[16rem]",
-    nameBlockH: "h-[calc(2*1.04em)]",
-    nameRowH: "h-[1.04em] min-h-[1.04em] max-h-[1.04em] overflow-hidden py-0",
-    nameLineGap: "gap-0",
-    lineBand: "absolute inset-x-0 top-[38%] bottom-[9.5rem] origin-center scale-[1.36]",
+    topGap: "gap-4",
+    nameWidth: "w-[9.75rem]",
+    nameLeading: 1.04,
+    lineBand: "absolute inset-x-0 top-[52%] bottom-[8.75rem] origin-bottom scale-[1.54]",
     roleChip:
       "w-fit max-w-full shrink-0 rounded-lg px-2.5 py-1.5 text-left font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[1.125rem]",
     roleGap: "gap-y-1.5",
-    filledChip:
-      "w-fit max-w-full shrink-0 rounded-lg px-2.5 py-1.5 text-right font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[1.125rem]",
+    filledFieldText:
+      "text-right font-medium leading-tight tracking-[-0.01em] text-[#9A8F82] text-[1.125rem]",
     editorPad: "px-11 py-10",
     editorMaxW: "max-w-[min(100%,32rem)]",
     cornerPad: "pl-9 pb-10 pr-7 pt-0",
@@ -87,8 +84,20 @@ const CARD_STYLES = {
 const MODAL_SCRIM = "bg-[#EFECE7]/62 backdrop-blur-[10px]";
 const CARD_BLUR = "blur-[12px]";
 
+const NAME_SIZE = {
+  mobile: { max: 3.85, min: 1.45, refChars: 9 },
+  desktop: { max: 2.35, min: 1.15, refChars: 9 },
+} as const;
+
+function nameFontSizeRem(first: string, last: string, variant: "mobile" | "desktop"): number {
+  const { max, min, refChars } = NAME_SIZE[variant];
+  const longest = Math.max(first.length, last.length, 1);
+  if (longest <= refChars) return max;
+  return Math.max(min, max * (refChars / longest) ** 0.88);
+}
+
 const BOTTOM_LEFT_NAME_LINE =
-  "block w-full appearance-none border-0 bg-transparent font-normal tracking-[-0.03em] leading-[1.04] outline-none";
+  "block w-full min-w-0 appearance-none border-0 bg-transparent p-0 font-normal tracking-[-0.03em] outline-none whitespace-nowrap overflow-hidden text-ellipsis";
 
 function splitNameLines(name: string): { first: string; last: string } {
   const trimmed = name.trimStart();
@@ -103,6 +112,126 @@ function joinNameLines(first: string, last: string): string {
   if (!f) return l;
   if (!l) return f;
   return `${f} ${l}`;
+}
+
+function JoinApplyCardNameField({
+  variant,
+  name,
+  readOnly,
+  onNameChange,
+  placeholderClass,
+  cornerPad,
+  nameWidth,
+  leading,
+}: {
+  variant: "mobile" | "desktop";
+  name: string;
+  readOnly: boolean;
+  onNameChange: (name: string) => void;
+  placeholderClass: string;
+  cornerPad: string;
+  nameWidth: string;
+  leading: number;
+}) {
+  const lastInputRef = useRef<HTMLInputElement>(null);
+  const measureRef = useRef<HTMLSpanElement>(null);
+  const { first, last } = splitNameLines(name);
+  const hasName = name.trim().length > 0;
+  const fontSizeRem = nameFontSizeRem(first, last, variant);
+  const [fitSizeRem, setFitSizeRem] = useState(fontSizeRem);
+  const displayFontRem = hasName || readOnly ? fitSizeRem : NAME_SIZE[variant].max;
+
+  useLayoutEffect(() => {
+    const measure = measureRef.current;
+    if (!measure) {
+      setFitSizeRem(fontSizeRem);
+      return;
+    }
+
+    const maxPx = fontSizeRem * 16;
+    const minPx = NAME_SIZE[variant].min * 16;
+    const longest = Math.max(first.length, last.length, 1);
+    measure.style.fontSize = `${maxPx}px`;
+    measure.textContent = "M".repeat(longest);
+    const available = measure.parentElement?.clientWidth ?? maxPx * longest * 0.62;
+    let next = fontSizeRem;
+    if (measure.scrollWidth > available && available > 0) {
+      next = Math.max(NAME_SIZE[variant].min, (maxPx * available) / measure.scrollWidth / 16);
+    }
+    setFitSizeRem(next);
+  }, [first, last, fontSizeRem, variant]);
+
+  const rowStyle = { height: `${leading}em`, lineHeight: leading, fontSize: `${displayFontRem}rem` };
+  const blockStyle = { fontSize: `${displayFontRem}rem`, lineHeight: leading };
+
+  const handleFirstChange = (value: string) => {
+    const space = value.indexOf(" ");
+    if (space >= 0) {
+      const newFirst = value.slice(0, space);
+      const rest = value.slice(space + 1);
+      onNameChange(joinNameLines(newFirst, rest ? `${rest}${last ? ` ${last}` : ""}` : last));
+      lastInputRef.current?.focus();
+      return;
+    }
+    onNameChange(joinNameLines(value, last));
+  };
+
+  return (
+    <div className={`${nameWidth} ${cornerPad}`} style={blockStyle}>
+      <div className="relative w-full" style={{ height: `${leading * 2}em` }}>
+        <span
+          ref={measureRef}
+          aria-hidden
+          className={`invisible absolute left-0 top-0 whitespace-nowrap ${lora.className}`}
+        />
+        {!hasName && !readOnly ? (
+          <div className="pointer-events-none absolute inset-0" aria-hidden>
+            <div className={`${placeholderClass} text-[#C8C0B4] ${lora.className}`} style={rowStyle}>
+              Enter your
+            </div>
+            <div className={`${placeholderClass} text-[#C8C0B4] ${lora.className}`} style={rowStyle}>
+              name here
+            </div>
+          </div>
+        ) : null}
+        {readOnly ? (
+          <>
+            <div className={`text-[#1E343A] ${lora.className}`} style={rowStyle}>
+              {first}
+            </div>
+            <div className={`text-[#1E343A] ${lora.className}`} style={rowStyle}>
+              {last}
+            </div>
+          </>
+        ) : (
+          <>
+            <input
+              type="text"
+              value={first}
+              onChange={(e) => handleFirstChange(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === " " && !first.trim()) e.preventDefault();
+              }}
+              autoComplete="given-name"
+              aria-label="First name"
+              className={`text-[#1E343A] ${lora.className} ${BOTTOM_LEFT_NAME_LINE}`}
+              style={rowStyle}
+            />
+            <input
+              ref={lastInputRef}
+              type="text"
+              value={last}
+              onChange={(e) => onNameChange(joinNameLines(first, e.target.value))}
+              autoComplete="family-name"
+              aria-label="Last name"
+              className={`text-[#1E343A] ${lora.className} ${BOTTOM_LEFT_NAME_LINE}`}
+              style={rowStyle}
+            />
+          </>
+        )}
+      </div>
+    </div>
+  );
 }
 
 const TOP_RIGHT_FIELDS = [
@@ -244,7 +373,6 @@ export function JoinApplyCard({
   const styles = CARD_STYLES[variant];
   const isEditing = activeStep !== null && activeStep !== 0;
   const name = data.name;
-  const hasName = name.trim().length > 0;
 
   return (
     <div className={`relative w-full ${!readOnly && onResetRequest ? styles.resetSlot : ""}`}>
@@ -311,12 +439,11 @@ export function JoinApplyCard({
                     type="button"
                     disabled={readOnly}
                     onClick={() => onEdit(step)}
-                    className={`max-w-full whitespace-normal break-words transition-opacity hover:opacity-90 active:scale-[0.98] ${
+                    className={`max-w-full whitespace-normal break-words text-right transition-opacity hover:opacity-90 active:scale-[0.98] ${
                       value
-                        ? `${styles.filledChip} [animation:join-card-field-in_0.45s_cubic-bezier(0.22,1,0.36,1)_both]`
-                        : `text-right ${styles.placeholderLabel}`
+                        ? `${styles.filledFieldText} [animation:join-card-field-in_0.45s_cubic-bezier(0.22,1,0.36,1)_both]`
+                        : styles.placeholderLabel
                     } ${inter.className}`}
-                    style={value ? { backgroundColor: JOIN_FORM_BEIGE.fieldMuted } : undefined}
                   >
                     {value ? formatCardValue(step, value) : spacedCapsLabel(placeholder)}
                   </button>
@@ -328,52 +455,18 @@ export function JoinApplyCard({
 
         {/* Bottom-left: inline name — outside blur layer so it stays fixed when editing */}
         <div
-          className={`absolute bottom-0 left-0 z-[3] ${styles.nameWidth} ${styles.cornerPad} ${isEditing || showResetConfirm ? "pointer-events-none" : ""}`}
+          className={`absolute bottom-0 left-0 z-[3] ${isEditing || showResetConfirm ? "pointer-events-none" : ""}`}
         >
-          <div className={`relative grid grid-rows-2 ${styles.nameBlockH} ${styles.nameLineGap}`}>
-            {!hasName && !readOnly ? (
-              <div
-                className={`pointer-events-none absolute inset-0 grid grid-rows-2 ${styles.nameBlockH} ${lora.className}`}
-                aria-hidden
-              >
-                <span className={`${styles.nameRowH} text-left ${styles.namePlaceholder}`}>Enter your</span>
-                <span className={`${styles.nameRowH} text-left ${styles.namePlaceholder}`}>name here</span>
-              </div>
-            ) : null}
-            {readOnly ? (
-              <>
-                <span className={`text-[#1E343A] ${styles.nameText} ${lora.className} ${BOTTOM_LEFT_NAME_LINE} ${styles.nameRowH}`}>
-                  {splitNameLines(name).first}
-                </span>
-                <span className={`text-[#1E343A] ${styles.nameText} ${lora.className} ${BOTTOM_LEFT_NAME_LINE} ${styles.nameRowH}`}>
-                  {splitNameLines(name).last}
-                </span>
-              </>
-            ) : (
-              <>
-                <input
-                  type="text"
-                  value={splitNameLines(name).first}
-                  onChange={(e) =>
-                    onNameChange(joinNameLines(e.target.value, splitNameLines(name).last))
-                  }
-                  autoComplete="given-name"
-                  aria-label="First name"
-                  className={`text-[#1E343A] ${styles.nameText} ${lora.className} ${BOTTOM_LEFT_NAME_LINE} ${styles.nameRowH}`}
-                />
-                <input
-                  type="text"
-                  value={splitNameLines(name).last}
-                  onChange={(e) =>
-                    onNameChange(joinNameLines(splitNameLines(name).first, e.target.value))
-                  }
-                  autoComplete="family-name"
-                  aria-label="Last name"
-                  className={`text-[#1E343A] ${styles.nameText} ${lora.className} ${BOTTOM_LEFT_NAME_LINE} ${styles.nameRowH}`}
-                />
-              </>
-            )}
-          </div>
+          <JoinApplyCardNameField
+            variant={variant}
+            name={name}
+            readOnly={readOnly}
+            onNameChange={onNameChange}
+            placeholderClass={styles.namePlaceholder}
+            cornerPad={styles.cornerPad}
+            nameWidth={styles.nameWidth}
+            leading={styles.nameLeading}
+          />
         </div>
 
         {isEditing && editor ? (
