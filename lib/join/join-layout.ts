@@ -42,13 +42,17 @@ export const JOIN_MOBILE_CARD_HEIGHT =
 export const JOIN_MOBILE_TRACK_SECTION =
   "min-h-[calc(var(--app-vh,100lvh)*0.92)] iphone-page:min-h-[calc(var(--app-vh,100lvh)*0.9)]";
 
-/** Apply form band on iPhone — locked `--app-vh` (same stable unit as track sections). */
+/** Apply form band on iPhone — one locked viewport tall. */
 export const JOIN_MOBILE_APPLY_SECTION =
-  "min-h-[var(--app-vh,100lvh)] iphone-page:min-h-[var(--app-vh,100lvh)]";
+  "box-border h-[var(--app-vh,100lvh)] min-h-[var(--app-vh,100lvh)]";
 
-/** Bottom breathing room above join mobile footer. */
-export const JOIN_MOBILE_APPLY_FOOTER_PAD =
-  "pb-[max(3.5rem,calc(env(safe-area-inset-bottom,0px)+2.75rem))] iphone-page:pb-[max(4rem,calc(env(safe-area-inset-bottom,0px)+3rem))]";
+/** Top/bottom breathing room outside the centered title + card block. */
+export const JOIN_MOBILE_APPLY_SECTION_PAD =
+  "pt-[max(1.95rem,calc(env(safe-area-inset-top,0px)+calc(var(--app-vh,100lvh)*0.0725)))] pb-[max(1.95rem,calc(env(safe-area-inset-bottom,0px)+calc(var(--app-vh,100lvh)*0.0725)))] iphone-page:pt-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))] iphone-page:pb-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
+
+/** Gap between apply section title and applicant card. */
+export const JOIN_MOBILE_APPLY_TITLE_CARD_GAP =
+  "mt-8 iphone-page:mt-[max(2rem,calc(env(safe-area-inset-left,0px)+4.25vmin))]";
 
 /** Desktop apply section — vertical band + footer pad. */
 export const JOIN_DESKTOP_APPLY_SECTION_MIN =
