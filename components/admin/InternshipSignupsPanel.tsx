@@ -118,18 +118,23 @@ function ApplicationDetail({ application }: { application: AdminInternshipApplic
           label="Resume"
           value={
             application.resume_file_name ? (
-              application.resume_download_url ? (
-                <a
-                  href={application.resume_download_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[#BF593D] underline-offset-2 hover:underline"
-                >
-                  {application.resume_file_name}
-                </a>
-              ) : (
-                application.resume_file_name
-              )
+              <div className="flex flex-col gap-0.5">
+                {application.resume_download_url ? (
+                  <a
+                    href={application.resume_download_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#BF593D] underline-offset-2 hover:underline"
+                  >
+                    {application.resume_file_name}
+                  </a>
+                ) : (
+                  application.resume_file_name
+                )}
+                {application.resume_file_type ? (
+                  <span className="text-[11px] font-medium text-neutral-500">{application.resume_file_type}</span>
+                ) : null}
+              </div>
             ) : (
               "Not provided"
             )

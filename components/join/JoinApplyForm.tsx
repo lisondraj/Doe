@@ -125,6 +125,7 @@ function JoinApplyCardForm({
           interactive: true,
           resumeInputRef,
           onResumeFileChange,
+          markStepTouched,
           onEnter: handleAdvance,
           enterDisabled: !canProceed,
           enterLabel: "Save answer",

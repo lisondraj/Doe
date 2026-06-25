@@ -11,6 +11,7 @@ import {
   JOIN_APPLY_COUNTRY_LABELS,
   JOIN_APPLY_EDUCATION_LABELS,
 } from "@/lib/join/join-apply-form";
+import { splitResumeDisplay } from "@/lib/join/resume-file";
 import { JOIN_DESKTOP_APPLY_CARD_HEIGHT } from "@/lib/join/join-layout";
 import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
 
@@ -462,7 +463,12 @@ export function JoinApplyCard({
                 const value = getTopRightDisplayValue(step, data, touchedSteps);
                 const isLinkedIn = step === 7;
                 const isEmail = step === 1;
+                const isResume = step === 6;
                 const emailLines = isEmail && value ? splitEmailLines(value) : null;
+                const resumeLines =
+                  isResume && data.resumeFileName
+                    ? splitResumeDisplay(data.resumeFileName, data.resumeFileType)
+                    : null;
                 const displayText = value
                   ? isLinkedIn
                     ? `/${formatCardValue(step, value)}`
@@ -487,6 +493,11 @@ export function JoinApplyCard({
                       <span className="flex flex-col items-end leading-tight">
                         <span>{emailLines.local}</span>
                         <span>{emailLines.domain}</span>
+                      </span>
+                    ) : isResume && resumeLines ? (
+                      <span className="flex max-w-full flex-col items-end leading-tight">
+                        <span className="max-w-full truncate">{resumeLines.name}</span>
+                        <span className="text-[0.82em] font-medium text-[#9A8F82]/80">{resumeLines.type}</span>
                       </span>
                     ) : isLinkedIn && value ? (
                       <>

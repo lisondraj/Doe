@@ -24,6 +24,7 @@ export type JoinApplyFormState = {
   programOfStudy: string;
   areas: JoinApplyArea[];
   resumeFileName: string | null;
+  resumeFileType: string | null;
   linkedinUsername: string;
   additionalNotes: string;
 };
@@ -37,6 +38,7 @@ export const JOIN_APPLY_INITIAL_STATE: JoinApplyFormState = {
   programOfStudy: "",
   areas: [],
   resumeFileName: null,
+  resumeFileType: null,
   linkedinUsername: "",
   additionalNotes: "",
 };

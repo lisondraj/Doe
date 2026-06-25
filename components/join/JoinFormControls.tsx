@@ -4,6 +4,7 @@ import { useLayoutEffect, useRef, useState, type ReactNode, type RefObject } fro
 
 import type { JoinApplyCountry, JoinApplyEducation, JoinApplyEducationValue } from "@/lib/join/join-apply-form";
 import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
+import { getResumeFileTypeLabel, isAllowedResumeFile } from "@/lib/join/resume-file";
 import { inter } from "@/lib/home/fonts";
 
 export function joinFormShellClass(_variant: "mobile" | "desktop") {
@@ -465,6 +466,7 @@ function ResumeFileIcon({ className }: { className: string }) {
 export function JoinFormBorderedResumeField({
   variant,
   resumeFileName,
+  resumeFileType,
   onChange,
   readOnly = false,
   interactive = true,
@@ -472,13 +474,15 @@ export function JoinFormBorderedResumeField({
 }: {
   variant: "mobile" | "desktop";
   resumeFileName: string | null;
-  onChange: (fileName: string | null, file?: File | null) => void;
+  resumeFileType: string | null;
+  onChange: (fileName: string | null, file?: File | null, fileType?: string | null) => void;
   readOnly?: boolean;
   interactive?: boolean;
   inputRef?: RefObject<HTMLInputElement>;
 }) {
   const localInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = inputRef ?? localInputRef;
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const { shell } = BORDERED_INPUT_SIZE[variant];
   const textSize =
     variant === "mobile"
@@ -501,11 +505,15 @@ export function JoinFormBorderedResumeField({
     input.click();
   };
 
-  const label = resumeFileName ?? "Choose a file";
   const optionalClass =
     variant === "mobile"
       ? "mt-4 text-[1.3125rem] leading-snug iphone-page:mt-5 iphone-page:text-[1.4375rem]"
       : "mt-3 text-[1.125rem] leading-snug";
+
+  const typeLabelClass =
+    variant === "mobile"
+      ? "text-[1.0625rem] font-medium text-[#1E343A]/45 iphone-page:text-[1.125rem]"
+      : "text-[0.9375rem] font-medium text-[#1E343A]/45";
 
   return (
     <div className="w-full">
@@ -517,7 +525,18 @@ export function JoinFormBorderedResumeField({
           className="sr-only"
           onChange={(e) => {
             const file = e.target.files?.[0] ?? null;
-            onChange(file?.name ?? null, file);
+            if (!file) {
+              setUploadError(null);
+              onChange(null, null, null);
+              return;
+            }
+            if (!isAllowedResumeFile(file)) {
+              setUploadError("Upload a PDF or Word document.");
+              e.target.value = "";
+              return;
+            }
+            setUploadError(null);
+            onChange(file.name, file, getResumeFileTypeLabel(file));
           }}
         />
       ) : null}
@@ -528,10 +547,15 @@ export function JoinFormBorderedResumeField({
       >
         {resumeFileName ? (
           <div
-            className={`flex min-w-0 items-center gap-3 ${shell} ${textSize} font-medium leading-snug tracking-[-0.01em] text-[#1E343A]`}
+            className={`flex min-w-0 items-center gap-3 ${shell} font-medium leading-snug tracking-[-0.01em] text-[#1E343A]`}
           >
             <ResumeFileIcon className={iconSize} />
-            <span className="min-w-0 truncate">{label}</span>
+            <span className="min-w-0 flex-1">
+              <span className={`block truncate ${textSize}`}>{resumeFileName}</span>
+              {resumeFileType ? (
+                <span className={`mt-0.5 block ${typeLabelClass}`}>{resumeFileType}</span>
+              ) : null}
+            </span>
           </div>
         ) : (
           <button
@@ -560,6 +584,9 @@ export function JoinFormBorderedResumeField({
         >
           Reupload
         </button>
+      ) : null}
+      {uploadError ? (
+        <p className={`mt-2 text-[#BF593D] ${typeLabelClass} ${inter.className}`}>{uploadError}</p>
       ) : null}
       <p className={`text-right font-medium tracking-[-0.01em] text-[#1E343A]/45 ${optionalClass} ${inter.className}`}>
         Optional

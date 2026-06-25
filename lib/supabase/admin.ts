@@ -16,6 +16,7 @@ export type InternshipApplicationRow = {
   areas: string[];
   resume_storage_path: string | null;
   resume_file_name: string | null;
+  resume_file_type: string | null;
   linkedin_username: string | null;
   additional_notes: string | null;
   email_sent_at: string | null;

@@ -41,7 +41,14 @@ export function buildApplicantCardEmailHtml(data: JoinApplyFormState): string {
     fieldRow("School", data.schoolName),
     fieldRow("Program", data.programOfStudy),
     fieldRow("Areas", areas),
-    fieldRow("Resume", data.resumeFileName),
+    fieldRow(
+      "Resume",
+      data.resumeFileName
+        ? data.resumeFileType
+          ? `${data.resumeFileName} (${data.resumeFileType})`
+          : data.resumeFileName
+        : null,
+    ),
     fieldRow("LinkedIn", linkedin),
     fieldRow("Notes", data.additionalNotes),
   ]

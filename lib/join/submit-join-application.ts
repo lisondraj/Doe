@@ -5,14 +5,11 @@ import {
   type JoinApplyArea,
   type JoinApplyFormState,
 } from "@/lib/join/join-apply-form";
+import { ALLOWED_RESUME_MIME_TYPES, getResumeFileTypeLabel } from "@/lib/join/resume-file";
 import { createSupabaseAdmin, RESUME_BUCKET } from "@/lib/supabase/admin";
 
 const MAX_RESUME_BYTES = 10 * 1024 * 1024;
-const ALLOWED_RESUME_TYPES = new Set([
-  "application/pdf",
-  "application/msword",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-]);
+const ALLOWED_RESUME_TYPES = ALLOWED_RESUME_MIME_TYPES;
 
 function sanitizeFileName(name: string): string {
   return name.replace(/[^\w.\-()+ ]+/g, "_").slice(0, 180);
@@ -46,6 +43,8 @@ export function joinApplyFormStateFromFormData(formData: FormData): JoinApplyFor
   const resumeFile = formData.get("resume");
   const resumeFileName =
     resumeFile instanceof File && resumeFile.size > 0 ? resumeFile.name : null;
+  const resumeFileType =
+    resumeFile instanceof File && resumeFile.size > 0 ? getResumeFileTypeLabel(resumeFile) : null;
 
   return {
     name: String(formData.get("name") ?? "").trim(),
@@ -56,6 +55,7 @@ export function joinApplyFormStateFromFormData(formData: FormData): JoinApplyFor
     programOfStudy: String(formData.get("programOfStudy") ?? "").trim(),
     areas: parseAreas(areasRaw),
     resumeFileName,
+    resumeFileType,
     linkedinUsername: String(formData.get("linkedinUsername") ?? "").trim(),
     additionalNotes: String(formData.get("additionalNotes") ?? "").trim(),
   };
@@ -66,7 +66,10 @@ function getResumeFile(formData: FormData): File | null {
   if (!(resume instanceof File) || resume.size === 0) return null;
   if (resume.size > MAX_RESUME_BYTES) throw new Error("Resume must be 10 MB or smaller.");
   if (!ALLOWED_RESUME_TYPES.has(resume.type)) {
-    throw new Error("Resume must be a PDF or Word document.");
+    const ext = resume.name.split(".").pop()?.toLowerCase() ?? "";
+    if (!["pdf", "doc", "docx"].includes(ext)) {
+      throw new Error("Resume must be a PDF or Word document.");
+    }
   }
   return resume;
 }
@@ -91,6 +94,7 @@ export async function submitJoinApplication(formData: FormData): Promise<{ id: s
       program_of_study: data.programOfStudy,
       areas: data.areas,
       resume_file_name: data.resumeFileName,
+      resume_file_type: data.resumeFileType,
       linkedin_username: data.linkedinUsername || null,
       additional_notes: data.additionalNotes || null,
     })
