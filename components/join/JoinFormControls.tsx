@@ -11,15 +11,14 @@ export function joinFormShellClass(_variant: "mobile" | "desktop") {
 export function joinFormFieldClass(variant: "mobile" | "desktop") {
   const size =
     variant === "mobile"
-      ? "rounded-[1.35rem] px-6 py-[2rem] text-[1.875rem] iphone-page:rounded-[1.45rem] iphone-page:px-7 iphone-page:py-[2.15rem] iphone-page:text-[2.125rem]"
-      : "rounded-2xl px-6 py-[1.35rem] text-[1.1875rem]";
+      ? "rounded-[1.35rem] px-7 py-[2.35rem] text-[2.125rem] iphone-page:rounded-[1.45rem] iphone-page:px-8 iphone-page:py-[2.6rem] iphone-page:text-[2.375rem]"
+      : "rounded-2xl px-7 py-[1.65rem] text-[1.375rem]";
 
   return [
-    "w-full border outline-none transition-[border-color,box-shadow]",
+    "w-full outline-none",
     size,
     "leading-snug text-[#1E343A]",
     "placeholder:text-[#1E343A]/38 placeholder:font-normal",
-    "focus:border-[#B5AA9C] focus:ring-[3px] focus:ring-[#9A8F82]/20",
     inter.className,
   ].join(" ");
 }
@@ -28,19 +27,19 @@ export function joinFormFieldClass(variant: "mobile" | "desktop") {
 export function joinFormPanelClass(variant: "mobile" | "desktop") {
   const size =
     variant === "mobile"
-      ? "rounded-[1.35rem] px-6 py-[1.85rem] iphone-page:rounded-[1.45rem] iphone-page:px-7 iphone-page:py-[2rem]"
-      : "rounded-2xl px-5 py-[1.15rem]";
+      ? "rounded-[1.35rem] px-7 py-[2.15rem] iphone-page:rounded-[1.45rem] iphone-page:px-8 iphone-page:py-[2.35rem]"
+      : "rounded-2xl px-7 py-[1.5rem]";
 
-  return `w-full border ${size}`;
+  return `w-full ${size}`;
 }
 
 export function joinFormPromptClass(variant: "mobile" | "desktop") {
   const size =
     variant === "mobile"
-      ? "mb-4 text-[1.5rem] iphone-page:mb-5 iphone-page:text-[1.625rem]"
-      : "mb-4 text-[1.0625rem]";
+      ? "mb-5 text-[1.75rem] iphone-page:mb-6 iphone-page:text-[1.9375rem]"
+      : "mb-5 text-[1.3125rem]";
 
-  return `${size} leading-snug text-[#1E343A]/40 ${inter.className}`;
+  return `${size} leading-snug text-[#1E343A]/45 ${inter.className}`;
 }
 
 export function JoinFormProgressBar({
@@ -145,8 +144,8 @@ export function JoinSegmentSlider<T extends string>({
   const activeIndex = options.findIndex((o) => o.value === value);
   const labelSize =
     variant === "mobile"
-      ? "py-[1.35rem] text-[1.25rem] iphone-page:py-[1.5rem] iphone-page:text-[1.375rem]"
-      : "py-[0.9rem] text-[0.9375rem]";
+      ? "py-[1.65rem] text-[1.5rem] iphone-page:py-[1.85rem] iphone-page:text-[1.625rem]"
+      : "py-[1.1rem] text-[1.125rem]";
 
   return (
     <div
@@ -209,18 +208,18 @@ export function JoinLinkedInInput({
   onEnter?: () => void;
 }) {
   const prefix = "linkedin.com/in/";
-  const textSize = variant === "mobile" ? "text-[1.875rem] iphone-page:text-[2.125rem]" : "text-[1.0625rem]";
+  const textSize = variant === "mobile" ? "text-[2.125rem] iphone-page:text-[2.375rem]" : "text-[1.375rem]";
   const shellClass = nested
-    ? `flex items-center overflow-hidden rounded-xl px-5 py-[1.15rem] iphone-page:rounded-[0.95rem] iphone-page:px-6 iphone-page:py-[1.35rem]`
+    ? `flex items-center overflow-hidden rounded-xl px-6 py-[1.45rem] iphone-page:rounded-[0.95rem] iphone-page:px-7 iphone-page:py-[1.65rem]`
     : `flex items-center overflow-hidden ${joinFormFieldClass(variant)} py-0`;
 
   return (
     <div
       className={shellClass}
-      style={nested ? { backgroundColor: JOIN_FORM_BEIGE.fieldMuted } : { backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
+      style={nested ? { backgroundColor: JOIN_FORM_BEIGE.fieldMuted } : undefined}
     >
       <span
-        className={`shrink-0 select-none text-[#1E343A]/45 ${textSize} ${nested ? "" : variant === "mobile" ? "py-[1.35rem] pl-5 iphone-page:py-[1.5rem] iphone-page:pl-6" : "py-[1.15rem] pl-5"} ${inter.className}`}
+        className={`shrink-0 select-none text-[#1E343A]/45 ${textSize} ${nested ? "" : variant === "mobile" ? "py-[1.65rem] pl-7 iphone-page:py-[1.85rem] iphone-page:pl-8" : "py-[1.45rem] pl-7"} ${inter.className}`}
       >
         {prefix}
       </span>
@@ -245,7 +244,7 @@ export function JoinLinkedInInput({
         placeholder={placeholder ?? "username"}
         autoComplete="off"
         spellCheck={false}
-        className={`min-w-0 flex-1 bg-transparent text-[#1E343A] outline-none placeholder:text-[#1E343A]/38 ${textSize} ${nested ? "py-0" : variant === "mobile" ? "py-[1.35rem] pr-5 iphone-page:py-[1.5rem] iphone-page:pr-6" : "py-[1.15rem] pr-5"} ${inter.className}`}
+        className={`min-w-0 flex-1 bg-transparent text-[#1E343A] outline-none placeholder:text-[#1E343A]/38 ${textSize} ${nested ? "py-0" : variant === "mobile" ? "py-[1.65rem] pr-7 iphone-page:py-[1.85rem] iphone-page:pr-8" : "py-[1.45rem] pr-7"} ${inter.className}`}
       />
     </div>
   );
@@ -269,7 +268,6 @@ export function JoinCountrySlider({
   return (
     <div
       className={`${joinFormPanelClass(variant)}${className ? ` ${className}` : ""}`}
-      style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
     >
       <p className={joinFormPromptClass(variant)}>{prompt}</p>
       <JoinSegmentSlider
@@ -305,7 +303,6 @@ export function JoinEducationSlider({
   return (
     <div
       className={`${joinFormPanelClass(variant)}${className ? ` ${className}` : ""}`}
-      style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
     >
       <p className={joinFormPromptClass(variant)}>{prompt}</p>
       <JoinSegmentSlider

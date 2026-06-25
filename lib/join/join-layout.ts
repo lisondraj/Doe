@@ -67,7 +67,7 @@ export const JOIN_DESKTOP_TRACK_ROW_GAP = "mt-12";
 export const JOIN_DESKTOP_TRACK_ROW_COL_GAP = "gap-5";
 
 /** Desktop applicant card — scaled from iPhone inline editor card. */
-export const JOIN_DESKTOP_APPLY_CARD_HEIGHT = "h-[34rem]";
+export const JOIN_DESKTOP_APPLY_CARD_HEIGHT = "h-[38rem]";
 
 export const JOIN_DESKTOP_TRACK_GAP = "mt-14";
 export const JOIN_DESKTOP_VIEWPORT_SPACER = "min-h-[100dvh] h-[100dvh]";
