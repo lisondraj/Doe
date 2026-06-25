@@ -183,3 +183,59 @@ export const JOIN_MOBILE_HERO_TRIAGE_PANEL = {
 } as const;
 
 export const JOIN_MOBILE_HERO_TRIAGE_SCALE = 1.14;
+
+export type JoinHeroAiFeatureCardConfig = {
+  label: string;
+  title: string;
+  rows: readonly string[];
+  status?: string;
+  placement: {
+    top: string;
+    right: string;
+    scale: number;
+    rotate: number;
+    zIndex: number;
+    transformOrigin?: string;
+  };
+};
+
+/** Join desktop hero — two smaller AI feature panels overlapping the inbox preview. */
+export const JOIN_HERO_AI_FEATURE_CARDS: readonly JoinHeroAiFeatureCardConfig[] = [
+  {
+    label: "Brain",
+    title: "Bedside reasoning",
+    status: "Live",
+    rows: [
+      "Cross-check meds and dizziness cues",
+      "Flag orthostatic risk · low confidence",
+      "Suggest cardio follow-up window",
+    ],
+    placement: {
+      top: "11%",
+      right: "36%",
+      scale: 0.94,
+      rotate: -2.5,
+      zIndex: 3,
+      transformOrigin: "bottom right",
+    },
+  },
+  {
+    label: "Finance",
+    title: "Prior auth draft",
+    status: "Draft ready",
+    rows: [
+      "Medical necessity — metformin titration",
+      "Lab 03/12 · cited from chart",
+      "Payer policy §4.2 · matched",
+    ],
+    placement: {
+      top: "44%",
+      right: "10%",
+      scale: 0.9,
+      rotate: 2,
+      zIndex: 4,
+      transformOrigin: "bottom right",
+    },
+  },
+] as const;
+
