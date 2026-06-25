@@ -1,11 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 
 import { InternshipAnalyticsPanel } from "@/components/admin/InternshipAnalyticsPanel";
 import { InternshipSignupsPanel } from "@/components/admin/InternshipSignupsPanel";
 import { DoeBuildIcon } from "@/components/admin/doe-build-icon";
 import type { AdminInternshipApplication, InternshipSignupStats } from "@/lib/admin/internship-applications";
+import { useAdminData } from "@/lib/admin/use-admin-data";
 import { inter, lora } from "@/lib/home/fonts";
 
 type AdminTab = "signups" | "analytics";
@@ -18,33 +19,7 @@ export function DoeAdminApp({
   initialStats: InternshipSignupStats;
 }) {
   const [activeTab, setActiveTab] = useState<AdminTab>("signups");
-  const [applications, setApplications] = useState(initialApplications);
-  const [stats, setStats] = useState(initialStats);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const refresh = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch("/api/admin/internship-applications");
-      const payload = (await response.json()) as {
-        ok?: boolean;
-        applications?: AdminInternshipApplication[];
-        stats?: InternshipSignupStats;
-        error?: string;
-      };
-      if (!response.ok || !payload.ok || !payload.applications || !payload.stats) {
-        throw new Error(payload.error || "Could not refresh applications.");
-      }
-      setApplications(payload.applications);
-      setStats(payload.stats);
-    } catch (refreshError) {
-      setError(refreshError instanceof Error ? refreshError.message : "Could not refresh applications.");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const { applications, stats, loading, error, refresh } = useAdminData(initialApplications, initialStats);
 
   return (
     <main className={`h-dvh min-h-0 w-full overflow-hidden bg-white ${inter.className}`}>
@@ -141,7 +116,6 @@ export function DoeAdminApp({
                   <div className="rounded-lg border border-[#E6E6E6] bg-white px-2 py-2">
                     <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">Workspace</p>
                     <p className="mt-1 text-[12px] font-medium text-neutral-700">Doe Admin</p>
-                    <p className="mt-0.5 text-[10px] text-neutral-500">Desktop only</p>
                   </div>
                 </div>
               </aside>
@@ -149,6 +123,7 @@ export function DoeAdminApp({
               <div className="flex min-h-0 min-w-0 flex-1 flex-col bg-white">
                 {activeTab === "signups" ? (
                   <InternshipSignupsPanel
+                    variant="desktop"
                     applications={applications}
                     stats={stats}
                     loading={loading}
@@ -157,6 +132,7 @@ export function DoeAdminApp({
                   />
                 ) : (
                   <InternshipAnalyticsPanel
+                    variant="desktop"
                     applications={applications}
                     loading={loading}
                     onRefresh={() => void refresh()}

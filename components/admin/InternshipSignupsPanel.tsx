@@ -17,11 +17,15 @@ import {
 } from "@/lib/admin/internship-grouping";
 import { inter, lora } from "@/lib/home/fonts";
 
-function StatCard({ label, value }: { label: string; value: number }) {
+function StatCard({ label, value, compact }: { label: string; value: number; compact?: boolean }) {
   return (
     <div className="rounded-xl border border-[#E8E8E8] bg-white p-3 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
       <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">{label}</p>
-      <p className="mt-1.5 text-[28px] font-medium leading-none tabular-nums tracking-tight text-neutral-900">
+      <p
+        className={`mt-1.5 font-medium leading-none tabular-nums tracking-tight text-neutral-900 ${
+          compact ? "text-[24px]" : "text-[28px]"
+        }`}
+      >
         {value}
       </p>
     </div>
@@ -78,13 +82,13 @@ function ApplicationListItem({
   );
 }
 
-function ApplicationDetail({ application }: { application: AdminInternshipApplication }) {
+export function ApplicationDetail({ application }: { application: AdminInternshipApplication }) {
   const linkedin = application.linkedin_username?.trim()
     ? `linkedin.com/in/${application.linkedin_username.trim()}`
     : null;
 
   return (
-    <div className="flex h-full min-h-0 flex-col">
+    <div className="flex h-full min-h-0 flex-col bg-white">
       <header className="border-b border-[#EFEFEF] px-5 py-4">
         <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">Applicant card</p>
         <h2 className={`mt-1 text-[22px] font-normal tracking-tight text-neutral-900 ${lora.className}`}>
@@ -185,13 +189,68 @@ function GroupHeader({ label, count }: { label: string; count: number }) {
   );
 }
 
+function ApplicationList({
+  visibleApplications,
+  filtered,
+  groups,
+  groupMode,
+  selectedId,
+  onSelect,
+}: {
+  visibleApplications: AdminInternshipApplication[];
+  filtered: AdminInternshipApplication[];
+  groups: ReturnType<typeof groupInternshipApplications>;
+  groupMode: InternshipGroupMode;
+  selectedId: string | null;
+  onSelect: (id: string) => void;
+}) {
+  if (visibleApplications.length === 0) {
+    return <div className="px-4 py-10 text-center text-[13px] text-neutral-500">No internship signups yet.</div>;
+  }
+
+  if (groupMode === "none") {
+    return (
+      <>
+        {filtered.map((application) => (
+          <ApplicationListItem
+            key={application.id}
+            application={application}
+            selected={selectedId === application.id}
+            onSelect={() => onSelect(application.id)}
+          />
+        ))}
+      </>
+    );
+  }
+
+  return (
+    <>
+      {groups.map((group) => (
+        <div key={group.key}>
+          <GroupHeader label={group.label} count={group.count} />
+          {group.applications.map((application) => (
+            <ApplicationListItem
+              key={`${group.key}-${application.id}`}
+              application={application}
+              selected={selectedId === application.id}
+              onSelect={() => onSelect(application.id)}
+            />
+          ))}
+        </div>
+      ))}
+    </>
+  );
+}
+
 export function InternshipSignupsPanel({
+  variant = "desktop",
   applications,
   stats,
   loading,
   error,
   onRefresh,
 }: {
+  variant?: "mobile" | "desktop";
   applications: AdminInternshipApplication[];
   stats: InternshipSignupStats;
   loading: boolean;
@@ -201,10 +260,12 @@ export function InternshipSignupsPanel({
   const [query, setQuery] = useState("");
   const [groupMode, setGroupMode] = useState<InternshipGroupMode>("none");
   const [selectedId, setSelectedId] = useState<string | null>(applications[0]?.id ?? null);
+  const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
 
   useEffect(() => {
     if (!applications.some((row) => row.id === selectedId)) {
       setSelectedId(applications[0]?.id ?? null);
+      setMobileDetailOpen(false);
     }
   }, [applications, selectedId]);
 
@@ -244,42 +305,73 @@ export function InternshipSignupsPanel({
     [visibleApplications, selectedId],
   );
 
-  return (
-    <div className={`flex h-full min-h-0 flex-col ${inter.className}`}>
-      <header className="flex items-center gap-2 border-b border-[#EFEFEF] px-4 py-3">
-        <DoeBuildIcon className="h-5 w-5 text-neutral-500">
-          <>
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-          </>
-        </DoeBuildIcon>
-        <h1 className="text-[15px] font-semibold tracking-tight text-neutral-900">Internship signups</h1>
-        <div className="ml-auto flex items-center gap-2">
+  const handleSelect = (id: string) => {
+    setSelectedId(id);
+    if (variant === "mobile") {
+      setMobileDetailOpen(true);
+    }
+  };
+
+  if (variant === "mobile" && mobileDetailOpen && selected) {
+    return (
+      <div className={`flex h-full min-h-0 flex-col ${inter.className}`}>
+        <header className="flex shrink-0 items-center gap-2 border-b border-[#EFEFEF] bg-white px-3 py-3">
           <button
             type="button"
-            onClick={onRefresh}
-            disabled={loading}
-            className="inline-flex h-8 items-center rounded-lg border border-[#E2E2E2] bg-white px-3 text-[12px] font-medium text-neutral-700 hover:bg-neutral-50 disabled:opacity-60"
+            onClick={() => setMobileDetailOpen(false)}
+            className="inline-flex h-9 items-center gap-1 rounded-xl px-2 text-[13px] font-medium text-neutral-700 hover:bg-neutral-50"
           >
-            {loading ? "Refreshing…" : "Refresh"}
+            <DoeBuildIcon className="h-4 w-4">
+              <path d="m15 18-6-6 6-6" />
+            </DoeBuildIcon>
+            Back
           </button>
+        </header>
+        <div className="min-h-0 flex-1 overflow-hidden">
+          <ApplicationDetail application={selected} />
         </div>
-      </header>
+      </div>
+    );
+  }
 
-      <div className="border-b border-[#EFEFEF] px-4 py-3">
-        <div className="grid grid-cols-4 gap-3">
-          <StatCard label="Total signups" value={stats.total} />
-          <StatCard label="With resume" value={stats.withResume} />
-          <StatCard label="With LinkedIn" value={stats.withLinkedIn} />
-          <StatCard label="With notes" value={stats.withNotes} />
+  return (
+    <div className={`flex h-full min-h-0 flex-col ${inter.className}`}>
+      {variant === "desktop" ? (
+        <header className="flex items-center gap-2 border-b border-[#EFEFEF] px-4 py-3">
+          <DoeBuildIcon className="h-5 w-5 text-neutral-500">
+            <>
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </>
+          </DoeBuildIcon>
+          <h1 className="text-[15px] font-semibold tracking-tight text-neutral-900">Internship signups</h1>
+          <div className="ml-auto flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onRefresh}
+              disabled={loading}
+              className="inline-flex h-8 items-center rounded-lg border border-[#E2E2E2] bg-white px-3 text-[12px] font-medium text-neutral-700 hover:bg-neutral-50 disabled:opacity-60"
+            >
+              {loading ? "Refreshing…" : "Refresh"}
+            </button>
+          </div>
+        </header>
+      ) : null}
+
+      <div className={`border-b border-[#EFEFEF] ${variant === "mobile" ? "px-3 py-3" : "px-4 py-3"}`}>
+        <div className={`grid gap-3 ${variant === "mobile" ? "grid-cols-2" : "grid-cols-4"}`}>
+          <StatCard label="Total signups" value={stats.total} compact={variant === "mobile"} />
+          <StatCard label="With resume" value={stats.withResume} compact={variant === "mobile"} />
+          <StatCard label="With LinkedIn" value={stats.withLinkedIn} compact={variant === "mobile"} />
+          <StatCard label="With notes" value={stats.withNotes} compact={variant === "mobile"} />
         </div>
       </div>
 
-      <div className="border-b border-[#EFEFEF] px-4 py-3">
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="flex h-9 min-w-0 flex-1 items-center gap-2 rounded-lg border border-[#ECECEC] bg-[#FAFAFA] px-2.5">
+      <div className={`border-b border-[#EFEFEF] ${variant === "mobile" ? "px-3 py-3" : "px-4 py-3"}`}>
+        <div className={`flex gap-2 ${variant === "mobile" ? "flex-col" : "flex-wrap items-center"}`}>
+          <div className="flex h-10 min-w-0 flex-1 items-center gap-2 rounded-xl border border-[#ECECEC] bg-[#FAFAFA] px-3">
             <DoeBuildIcon className="h-4 w-4 shrink-0 text-neutral-400">
               <>
                 <circle cx="11" cy="11" r="7" />
@@ -297,12 +389,14 @@ export function InternshipSignupsPanel({
             </span>
           </div>
 
-          <label className="flex h-9 items-center gap-2 rounded-lg border border-[#ECECEC] bg-white px-2.5">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">Group by</span>
+          <label className="flex h-10 w-full items-center gap-2 rounded-xl border border-[#ECECEC] bg-white px-3">
+            <span className="shrink-0 text-[11px] font-semibold uppercase tracking-wider text-neutral-400">
+              Group by
+            </span>
             <select
               value={groupMode}
               onChange={(event) => setGroupMode(event.target.value as InternshipGroupMode)}
-              className="bg-transparent text-[12px] font-medium text-neutral-800 outline-none"
+              className="min-w-0 flex-1 bg-transparent text-[12px] font-medium text-neutral-800 outline-none"
             >
               {INTERNSHIP_GROUP_MODE_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -315,46 +409,41 @@ export function InternshipSignupsPanel({
         {error ? <p className="mt-2 text-[12px] font-medium text-[#BF593D]">{error}</p> : null}
       </div>
 
-      <div className="grid min-h-0 flex-1 grid-cols-[minmax(280px,360px)_minmax(0,1fr)]">
-        <div className="min-h-0 overflow-y-auto border-r border-[#EFEFEF] bg-white">
-          {visibleApplications.length === 0 ? (
-            <div className="px-4 py-10 text-center text-[13px] text-neutral-500">No internship signups yet.</div>
-          ) : groupMode === "none" ? (
-            filtered.map((application) => (
-              <ApplicationListItem
-                key={application.id}
-                application={application}
-                selected={selected?.id === application.id}
-                onSelect={() => setSelectedId(application.id)}
-              />
-            ))
-          ) : (
-            groups.map((group) => (
-              <div key={group.key}>
-                <GroupHeader label={group.label} count={group.count} />
-                {group.applications.map((application) => (
-                  <ApplicationListItem
-                    key={`${group.key}-${application.id}`}
-                    application={application}
-                    selected={selected?.id === application.id}
-                    onSelect={() => setSelectedId(application.id)}
-                  />
-                ))}
-              </div>
-            ))
-          )}
+      {variant === "mobile" ? (
+        <div className="min-h-0 flex-1 overflow-y-auto bg-white">
+          <ApplicationList
+            visibleApplications={visibleApplications}
+            filtered={filtered}
+            groups={groups}
+            groupMode={groupMode}
+            selectedId={selected?.id ?? null}
+            onSelect={handleSelect}
+          />
         </div>
+      ) : (
+        <div className="grid min-h-0 flex-1 grid-cols-[minmax(280px,360px)_minmax(0,1fr)]">
+          <div className="min-h-0 overflow-y-auto border-r border-[#EFEFEF] bg-white">
+            <ApplicationList
+              visibleApplications={visibleApplications}
+              filtered={filtered}
+              groups={groups}
+              groupMode={groupMode}
+              selectedId={selected?.id ?? null}
+              onSelect={handleSelect}
+            />
+          </div>
 
-        <div className="min-h-0 bg-white">
-          {selected ? (
-            <ApplicationDetail application={selected} />
-          ) : (
-            <div className="flex h-full items-center justify-center px-6 text-center text-[13px] text-neutral-500">
-              Select a signup to view the full applicant card.
-            </div>
-          )}
+          <div className="min-h-0 bg-white">
+            {selected ? (
+              <ApplicationDetail application={selected} />
+            ) : (
+              <div className="flex h-full items-center justify-center px-6 text-center text-[13px] text-neutral-500">
+                Select a signup to view the full applicant card.
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

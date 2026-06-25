@@ -64,9 +64,11 @@ export function AdminBarChart({
 export function AdminDonutChart({
   title,
   items,
+  layout = "row",
 }: {
   title: string;
   items: AnalyticsBarItem[];
+  layout?: "row" | "stack";
 }) {
   const total = items.reduce((sum, item) => sum + item.value, 0);
   const segments = items.map((item, index) => ({
@@ -90,13 +92,13 @@ export function AdminDonutChart({
       {items.length === 0 ? (
         <p className="py-8 text-center text-[12px] text-neutral-500">No data yet.</p>
       ) : (
-        <div className="flex items-center gap-5">
+        <div className={layout === "stack" ? "space-y-4" : "flex items-center gap-5"}>
           <div
-            className="h-28 w-28 shrink-0 rounded-full"
+            className={`rounded-full ${layout === "stack" ? "mx-auto h-36 w-36" : "h-28 w-28 shrink-0"}`}
             style={{ background: total > 0 ? `conic-gradient(${gradientStops})` : "#F3F3F3" }}
             aria-hidden
           />
-          <div className="min-w-0 flex-1 space-y-2">
+          <div className={`min-w-0 space-y-2 ${layout === "stack" ? "w-full" : "flex-1"}`}>
             {segments.map((segment) => (
               <div key={segment.label} className="flex items-center gap-2">
                 <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: segment.color }} />
