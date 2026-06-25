@@ -83,11 +83,13 @@ function ApplicationDetail({
   resendingConfirmation,
   resendError,
   onResendConfirmationEmail,
+  onBack,
 }: {
   application: AdminInternshipApplication;
   resendingConfirmation: boolean;
   resendError: string | null;
   onResendConfirmationEmail: () => void;
+  onBack?: () => void;
 }) {
   const linkedin = application.linkedin_username?.trim()
     ? `linkedin.com/in/${application.linkedin_username.trim()}`
@@ -96,6 +98,15 @@ function ApplicationDetail({
   return (
     <div className="flex h-full min-h-0 flex-col">
       <header className="border-b border-[#EFEFEF] px-5 py-4">
+        {onBack ? (
+          <button
+            type="button"
+            onClick={onBack}
+            className="mb-3 inline-flex items-center gap-1 text-[13px] font-medium text-[#BF593D] lg:hidden"
+          >
+            ← Back to list
+          </button>
+        ) : null}
         <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">Applicant card</p>
         <h2 className={`mt-1 text-[22px] font-normal tracking-tight text-neutral-900 ${lora.className}`}>
           {application.name}
@@ -229,12 +240,14 @@ export function InternshipSignupsPanel({
   const [query, setQuery] = useState("");
   const [groupMode, setGroupMode] = useState<InternshipGroupMode>("none");
   const [selectedId, setSelectedId] = useState<string | null>(applications[0]?.id ?? null);
+  const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
   const [resendingConfirmation, setResendingConfirmation] = useState(false);
   const [resendError, setResendError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!applications.some((row) => row.id === selectedId)) {
       setSelectedId(applications[0]?.id ?? null);
+      setMobileDetailOpen(false);
     }
   }, [applications, selectedId]);
 
@@ -294,7 +307,12 @@ export function InternshipSignupsPanel({
     [filtered, groupMode, groups],
   );
 
-  const selected = useMemo(
+  const selected = useMemo(() => {
+    if (!selectedId) return null;
+    return visibleApplications.find((row) => row.id === selectedId) ?? null;
+  }, [visibleApplications, selectedId]);
+
+  const desktopSelected = useMemo(
     () => visibleApplications.find((row) => row.id === selectedId) ?? visibleApplications[0] ?? null,
     [visibleApplications, selectedId],
   );
@@ -324,7 +342,7 @@ export function InternshipSignupsPanel({
       </header>
 
       <div className="border-b border-[#EFEFEF] px-4 py-3">
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           <StatCard label="Total signups" value={stats.total} />
           <StatCard label="With resume" value={stats.withResume} />
           <StatCard label="With LinkedIn" value={stats.withLinkedIn} />
@@ -370,8 +388,12 @@ export function InternshipSignupsPanel({
         {error ? <p className="mt-2 text-[12px] font-medium text-[#BF593D]">{error}</p> : null}
       </div>
 
-      <div className="grid min-h-0 flex-1 grid-cols-[minmax(280px,360px)_minmax(0,1fr)]">
-        <div className="min-h-0 overflow-y-auto border-r border-[#EFEFEF] bg-white">
+      <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)]">
+        <div
+          className={`min-h-0 overflow-y-auto bg-white lg:border-r lg:border-[#EFEFEF] ${
+            mobileDetailOpen ? "hidden lg:block" : "block"
+          }`}
+        >
           {visibleApplications.length === 0 ? (
             <div className="px-4 py-10 text-center text-[13px] text-neutral-500">No internship signups yet.</div>
           ) : groupMode === "none" ? (
@@ -379,8 +401,11 @@ export function InternshipSignupsPanel({
               <ApplicationListItem
                 key={application.id}
                 application={application}
-                selected={selected?.id === application.id}
-                onSelect={() => setSelectedId(application.id)}
+                selected={desktopSelected?.id === application.id}
+                onSelect={() => {
+                  setSelectedId(application.id);
+                  setMobileDetailOpen(true);
+                }}
               />
             ))
           ) : (
@@ -392,7 +417,10 @@ export function InternshipSignupsPanel({
                     key={`${group.key}-${application.id}`}
                     application={application}
                     selected={selected?.id === application.id}
-                    onSelect={() => setSelectedId(application.id)}
+                    onSelect={() => {
+                      setSelectedId(application.id);
+                      setMobileDetailOpen(true);
+                    }}
                   />
                 ))}
               </div>
@@ -400,13 +428,19 @@ export function InternshipSignupsPanel({
           )}
         </div>
 
-        <div className="min-h-0 bg-white">
-          {selected ? (
+        <div className={`min-h-0 bg-white ${mobileDetailOpen ? "block" : "hidden lg:block"}`}>
+          {(mobileDetailOpen ? selected : desktopSelected) ? (
             <ApplicationDetail
-              application={selected}
+              application={(mobileDetailOpen ? selected : desktopSelected)!}
               resendingConfirmation={resendingConfirmation}
               resendError={resendError}
-              onResendConfirmationEmail={() => void handleResendConfirmationEmail(selected)}
+              onResendConfirmationEmail={() =>
+                void handleResendConfirmationEmail((mobileDetailOpen ? selected : desktopSelected)!)
+              }
+              onBack={() => {
+                setMobileDetailOpen(false);
+                setSelectedId(null);
+              }}
             />
           ) : (
             <div className="flex h-full items-center justify-center px-6 text-center text-[13px] text-neutral-500">

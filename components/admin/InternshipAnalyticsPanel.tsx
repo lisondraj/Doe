@@ -53,7 +53,7 @@ export function InternshipAnalyticsPanel({
       </header>
 
       <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           <SummaryTile label="Total signups" value={analytics.total} />
           <SummaryTile
             label="With resume"
@@ -63,22 +63,22 @@ export function InternshipAnalyticsPanel({
           <SummaryTile label="Role selections" value={analytics.byRole.reduce((sum, item) => sum + item.value, 0)} />
         </div>
 
-        <div className="mt-4 grid grid-cols-2 gap-4">
+        <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
           <AdminDonutChart title="By country" items={analytics.byCountry} />
           <AdminDonutChart title="By education level" items={analytics.byEducation} />
         </div>
 
-        <div className="mt-4 grid grid-cols-2 gap-4">
+        <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
           <AdminBarChart title="Top universities" items={analytics.byUniversity} />
           <AdminBarChart title="Top fields of study" items={analytics.byProgram} />
         </div>
 
-        <div className="mt-4 grid grid-cols-2 gap-4">
+        <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
           <AdminBarChart title="Resume submissions" items={analytics.byResumeStatus} />
           <AdminBarChart title="Resume + LinkedIn breakdown" items={analytics.byResumeLinkedIn} />
         </div>
 
-        <div className="mt-4 grid grid-cols-2 gap-4">
+        <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
           <AdminBarChart title="Roles selected" items={analytics.byRole} />
           <AdminBarChart title="Signups by month" items={analytics.byMonth} emptyLabel="No timeline data yet." />
         </div>
