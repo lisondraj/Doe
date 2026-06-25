@@ -44,6 +44,9 @@ const CARD_STYLES = {
     confirmTitle: "text-[1.25rem] iphone-page:text-[1.375rem]",
     confirmBody: "text-[0.9375rem] iphone-page:text-[1rem]",
     confirmBtn: "rounded-xl px-4 py-2.5 text-[0.9375rem] iphone-page:rounded-[0.85rem] iphone-page:px-5 iphone-page:py-3 iphone-page:text-[1rem]",
+    modalCloseBtn: "left-0 top-0 h-10 w-10 iphone-page:h-11 iphone-page:w-11 iphone-page:rounded-[0.85rem]",
+    modalCloseIcon: "h-[1.125rem] w-[1.125rem] iphone-page:h-5 iphone-page:w-5",
+    modalEditorLead: "pt-12 iphone-page:pt-14",
   },
   desktop: {
     height: JOIN_DESKTOP_APPLY_CARD_HEIGHT,
@@ -68,6 +71,9 @@ const CARD_STYLES = {
     confirmTitle: "text-[1.0625rem]",
     confirmBody: "text-[0.875rem]",
     confirmBtn: "rounded-lg px-3.5 py-2 text-[0.875rem]",
+    modalCloseBtn: "left-0 top-0 h-8 w-8 rounded-lg",
+    modalCloseIcon: "h-3.5 w-3.5",
+    modalEditorLead: "pt-10",
   },
 } as const;
 
@@ -97,6 +103,19 @@ function PencilIcon({ className }: { className: string }) {
         strokeWidth="1.35"
         strokeLinecap="round"
         strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function CloseIcon({ className }: { className: string }) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" aria-hidden className={className}>
+      <path
+        d="M5.25 5.25l9.5 9.5M14.75 5.25l-9.5 9.5"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
       />
     </svg>
   );
@@ -155,6 +174,30 @@ function getTopRightDisplayValue(
     default:
       return null;
   }
+}
+
+function ModalCloseButton({
+  onClick,
+  className,
+  iconClass,
+}: {
+  onClick: () => void;
+  className: string;
+  iconClass: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label="Close"
+      className={`absolute z-[2] flex items-center justify-center rounded-xl text-[#9A8F82] transition-all hover:text-[#1E343A]/70 active:scale-95 ${className}`}
+      style={{
+        backgroundColor: JOIN_FORM_BEIGE.fieldMuted,
+      }}
+    >
+      <CloseIcon className={iconClass} />
+    </button>
+  );
 }
 
 function EditButton({
@@ -370,9 +413,14 @@ export function JoinApplyCard({
             />
             <div className={`absolute inset-0 z-[5] flex items-center justify-center ${styles.editorPad}`}>
               <div
-                className={`relative w-full ${styles.editorMaxW} [animation:join-step-enter-down_0.38s_cubic-bezier(0.22,1,0.36,1)_both]`}
+                className={`relative w-full ${styles.editorMaxW} ${styles.modalEditorLead} [animation:join-step-enter-down_0.38s_cubic-bezier(0.22,1,0.36,1)_both]`}
                 onClick={(e) => e.stopPropagation()}
               >
+                <ModalCloseButton
+                  onClick={onCloseEditor}
+                  className={styles.modalCloseBtn}
+                  iconClass={styles.modalCloseIcon}
+                />
                 {editor}
               </div>
             </div>
