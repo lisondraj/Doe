@@ -19,13 +19,13 @@ const JOIN_MOBILE_TRACK_TITLE_TW = `font-normal leading-[1.08] tracking-[-0.028e
 
 const JOIN_MOBILE_TRACK_DESC_TW = `mt-[clamp(0.75rem,0.55rem+0.75vmin,1.1rem)] text-[clamp(1.32rem,1.1rem+0.95vmin,1.62rem)] iphone-page:text-[clamp(1.55rem,1.28rem+1.18vmin,1.95rem)] font-normal leading-[1.46] tracking-[-0.012em] text-[#1E343A]/72 ${inter.className}`;
 
-const JOIN_DESKTOP_TRACK_TITLE_TW = `font-normal leading-[1.1] tracking-[-0.025em] text-[#1E343A] text-[1.3125rem] ${suisseIntl.className}`;
+const JOIN_DESKTOP_TRACK_TITLE_TW = `font-normal leading-[1.08] tracking-[-0.025em] text-[#1E343A] text-[1.75rem] ${suisseIntl.className}`;
 
-const JOIN_DESKTOP_TRACK_DESC_TW = `mt-2.5 text-[1rem] font-normal leading-[1.48] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
+const JOIN_DESKTOP_TRACK_DESC_TW = `mt-3.5 text-[1.125rem] font-normal leading-[1.5] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
 
 const JOIN_MOBILE_CARD_STACK = "space-y-5 iphone-page:space-y-[clamp(1.35rem,1.05rem+1.1vmin,2rem)]";
 
-const JOIN_DESKTOP_CARD_STACK = "space-y-3";
+const JOIN_DESKTOP_CARD_STACK = "space-y-4";
 
 function JoinInternTrackBlock({
   track,
@@ -81,7 +81,7 @@ export function JoinInternTracks({ variant }: { variant: "mobile" | "desktop" })
 
   if (variant === "desktop") {
     return (
-      <div className={`grid grid-cols-4 ${JOIN_DESKTOP_TRACK_ROW_COL_GAP}`} aria-label="Internship tracks">
+      <div className={`grid grid-cols-2 ${JOIN_DESKTOP_TRACK_ROW_COL_GAP}`} aria-label="Internship tracks">
         {JOIN_INTERN_TRACKS.map((track) => (
           <article key={track.title} className="min-w-0">
             <JoinInternTrackBlock

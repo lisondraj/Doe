@@ -1,60 +1,15 @@
 import {
-  HERO_TRIAGE_CHIP_GRADIENT,
-  HERO_TRIAGE_INNER_GLASS_TW,
-  HERO_TRIAGE_INNER_GRADIENT,
   HERO_TRIAGE_MOBILE_LIST_WIDTH,
   HERO_TRIAGE_MOBILE_MIN_HEIGHT,
   HERO_TRIAGE_MOBILE_SCALE,
-  HERO_TRIAGE_OUTER_GLASS_TW,
-  HERO_TRIAGE_PANE_GLASS_TW,
-  HERO_TRIAGE_PANE_GRADIENT,
   HERO_TRIAGE_PANEL_ANCHOR,
   HERO_TRIAGE_PANEL_LEFT,
   HERO_TRIAGE_PANEL_RIGHT,
   HERO_TRIAGE_PANEL_WIDTH,
-  HERO_TRIAGE_SELECTED_GRADIENT,
-  HERO_TRIAGE_SHELL_GRADIENT,
   HERO_TRIAGE_TILT,
 } from "@/lib/home/hero-triage-preview-styles";
+import { getHeroTriageThemeConfig, type HeroTriageTheme, type HeroTriageThemeConfig } from "@/lib/home/hero-triage-theme";
 import type { CSSProperties, ReactNode } from "react";
-
-const GLASS_INSET = "inset 0 1px 0 rgba(255,228,196,0.08)";
-
-/* ─── Frosted glass inbox tokens — warm Doe palette ─── */
-const C = {
-  shellBorder: "rgba(255,210,170,0.12)",
-  glassBorder: "rgba(255,200,160,0.08)",
-  navIcon: "rgba(255,236,205,0.42)",
-  navActive: "rgba(255,248,240,0.92)",
-  navActiveBg: "rgba(231,169,68,0.08)",
-  pillText: "rgba(255,240,220,0.82)",
-  rowText: "rgba(255,236,205,0.56)",
-  rowMuted: "rgba(255,228,196,0.38)",
-  rowTime: "rgba(255,220,190,0.34)",
-  divider: "rgba(255,200,160,0.07)",
-  selectedMuted: "rgba(255,248,240,0.72)",
-  badgeText: "rgba(255,236,205,0.56)",
-  detailBody: "rgba(255,240,225,0.68)",
-  detailMuted: "rgba(255,220,190,0.44)",
-} as const;
-
-function glassPaneStyle(extra?: CSSProperties): CSSProperties {
-  return {
-    background: HERO_TRIAGE_PANE_GRADIENT,
-    border: `1px solid ${C.glassBorder}`,
-    boxShadow: GLASS_INSET,
-    ...extra,
-  };
-}
-
-function glassChipStyle(extra?: CSSProperties): CSSProperties {
-  return {
-    background: HERO_TRIAGE_CHIP_GRADIENT,
-    border: `1px solid ${C.glassBorder}`,
-    boxShadow: GLASS_INSET,
-    ...extra,
-  };
-}
 
 type InboxRow = {
   id: string;
@@ -198,22 +153,25 @@ function NavIcon({
   children,
   active = false,
   mobile,
+  config,
 }: {
   children: ReactNode;
   active?: boolean;
   mobile: boolean;
+  config: HeroTriageThemeConfig;
 }) {
+  const { colors } = config;
   const sz = mobile ? "3.1rem" : "2rem";
   return (
     <div
-      className={`flex items-center justify-center${active ? ` ${HERO_TRIAGE_PANE_GLASS_TW}` : ""}`}
+      className={`flex items-center justify-center${active ? ` ${config.paneGlassTw}` : ""}`}
       style={{
         width: sz,
         height: sz,
         borderRadius: mobile ? "0.85rem" : "0.55rem",
-        color: active ? C.navActive : C.navIcon,
+        color: active ? colors.navActive : colors.navIcon,
         ...(active
-          ? glassChipStyle({ background: HERO_TRIAGE_CHIP_GRADIENT })
+          ? config.chipStyle({ background: config.chipGradient })
           : { background: "transparent" }),
       }}
     >
@@ -225,7 +183,7 @@ function NavIcon({
 function InboxIcon({
   d,
   mobile,
-  color = C.navIcon,
+  color,
 }: {
   d: string;
   mobile: boolean;
@@ -246,11 +204,12 @@ function InboxIcon({
   );
 }
 
-function SenderMark({ row, mobile }: { row: InboxRow; mobile: boolean }) {
+function SenderMark({ row, mobile, config }: { row: InboxRow; mobile: boolean; config: HeroTriageThemeConfig }) {
+  const { colors } = config;
   const sz = mobile ? "2.35rem" : "1.45rem";
   return (
     <div
-      className={`flex shrink-0 items-center justify-center font-medium ${HERO_TRIAGE_PANE_GLASS_TW}`}
+      className={`flex shrink-0 items-center justify-center font-medium ${config.paneGlassTw}`}
       style={{
         width: sz,
         height: sz,
@@ -258,8 +217,8 @@ function SenderMark({ row, mobile }: { row: InboxRow; mobile: boolean }) {
         background: row.iconBg,
         color: row.iconColor,
         fontSize: mobile ? "0.82rem" : "0.52rem",
-        border: `1px solid ${C.glassBorder}`,
-        boxShadow: GLASS_INSET,
+        border: `1px solid ${colors.glassBorder}`,
+        boxShadow: config.insetShadow,
       }}
     >
       {row.initials}
@@ -267,7 +226,16 @@ function SenderMark({ row, mobile }: { row: InboxRow; mobile: boolean }) {
   );
 }
 
-function InboxListRow({ row, mobile }: { row: InboxRow; mobile: boolean }) {
+function InboxListRow({
+  row,
+  mobile,
+  config,
+}: {
+  row: InboxRow;
+  mobile: boolean;
+  config: HeroTriageThemeConfig;
+}) {
+  const { colors } = config;
   const nameFs = mobile ? "0.96rem" : "0.62rem";
   const subFs = mobile ? "0.88rem" : "0.56rem";
   const timeFs = mobile ? "0.78rem" : "0.48rem";
@@ -277,38 +245,38 @@ function InboxListRow({ row, mobile }: { row: InboxRow; mobile: boolean }) {
   if (row.selected) {
     return (
       <div
-        className={HERO_TRIAGE_PANE_GLASS_TW}
+        className={config.paneGlassTw}
         style={{
           margin: mobile ? "0 0.5rem" : "0 0.32rem",
           padding: pad,
           borderRadius: mobile ? "0.85rem" : "0.55rem",
-          background: HERO_TRIAGE_SELECTED_GRADIENT,
+          background: config.selectedGradient,
           border: `1px solid rgba(255,220,180,0.14)`,
-          boxShadow: GLASS_INSET,
+          boxShadow: config.insetShadow,
           display: "flex",
           alignItems: "flex-start",
           gap,
         }}
       >
-        <SenderMark row={row} mobile={mobile} />
+        <SenderMark row={row} mobile={mobile} config={config} />
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline justify-between gap-[0.4em]">
             <span style={{ fontSize: nameFs, fontWeight: 500, color: "#fff", letterSpacing: "-0.01em" }}>
               {row.sender}
             </span>
-            <span style={{ fontSize: timeFs, fontWeight: 400, color: C.selectedMuted, flexShrink: 0 }}>
+            <span style={{ fontSize: timeFs, fontWeight: 400, color: colors.selectedMuted, flexShrink: 0 }}>
               {row.time}
             </span>
           </div>
           <p
             className="truncate"
-            style={{ fontSize: subFs, fontWeight: 500, color: "rgba(255,255,255,0.92)", marginTop: "0.15em" }}
+            style={{ fontSize: subFs, fontWeight: 500, color: colors.selectedSubject, marginTop: "0.15em" }}
           >
             {row.subject}
           </p>
           <p
             className="mt-[0.12em] truncate"
-            style={{ fontSize: subFs, fontWeight: 400, color: "rgba(255,255,255,0.75)" }}
+            style={{ fontSize: subFs, fontWeight: 400, color: colors.selectedPreview }}
           >
             {row.preview}
           </p>
@@ -319,34 +287,34 @@ function InboxListRow({ row, mobile }: { row: InboxRow; mobile: boolean }) {
 
   return (
     <div
-      className={`flex items-start ${HERO_TRIAGE_PANE_GLASS_TW}`}
+      className={`flex items-start ${config.paneGlassTw}`}
       style={{
         gap,
         margin: mobile ? "0 0.5rem" : "0 0.32rem",
         padding: pad,
         borderRadius: mobile ? "0.65rem" : "0.45rem",
-        ...glassChipStyle(),
+        ...config.chipStyle(),
       }}
     >
-      <SenderMark row={row} mobile={mobile} />
+      <SenderMark row={row} mobile={mobile} config={config} />
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline justify-between gap-[0.4em]">
-          <span style={{ fontSize: nameFs, fontWeight: 500, color: C.navActive, letterSpacing: "-0.01em" }}>
+          <span style={{ fontSize: nameFs, fontWeight: 500, color: colors.navActive, letterSpacing: "-0.01em" }}>
             {row.sender}
           </span>
-          <span style={{ fontSize: timeFs, fontWeight: 400, color: C.rowTime, flexShrink: 0 }}>
+          <span style={{ fontSize: timeFs, fontWeight: 400, color: colors.rowTime, flexShrink: 0 }}>
             {row.time}
           </span>
         </div>
         <p
           className="truncate"
-          style={{ fontSize: subFs, fontWeight: 500, color: C.pillText, marginTop: "0.15em" }}
+          style={{ fontSize: subFs, fontWeight: 500, color: colors.pillText, marginTop: "0.15em" }}
         >
           {row.subject}
         </p>
         <p
           className="mt-[0.1em] truncate"
-          style={{ fontSize: subFs, fontWeight: 400, color: C.rowText }}
+          style={{ fontSize: subFs, fontWeight: 400, color: colors.rowText }}
         >
           {row.preview}
         </p>
@@ -410,7 +378,8 @@ const EMAIL_THREAD: EmailThreadMessage[] = [
   },
 ];
 
-function OpenEmailPane({ mobile }: { mobile: boolean }) {
+function OpenEmailPane({ mobile, config }: { mobile: boolean; config: HeroTriageThemeConfig }) {
+  const { colors } = config;
   const titleFs = mobile ? "1.22rem" : "0.82rem";
   const bodyFs = mobile ? "0.94rem" : "0.64rem";
   const metaFs = mobile ? "0.82rem" : "0.54rem";
@@ -420,41 +389,41 @@ function OpenEmailPane({ mobile }: { mobile: boolean }) {
   return (
     <div
       className="flex h-full min-w-0 flex-col border-l"
-      style={{ borderColor: C.divider, background: "transparent" }}
+      style={{ borderColor: colors.divider, background: "transparent" }}
     >
       {/* Thread header */}
       <div
-        className={HERO_TRIAGE_PANE_GLASS_TW}
+        className={config.paneGlassTw}
         style={{
           padding: pad,
           paddingBottom: mobile ? "0.85rem" : "0.55rem",
-          borderBottom: `1px solid ${C.divider}`,
-          ...glassPaneStyle(),
+          borderBottom: `1px solid ${colors.divider}`,
+          ...config.paneStyle(),
           borderRadius: 0,
           borderTop: "none",
           borderLeft: "none",
           borderRight: "none",
         }}
       >
-        <p style={{ fontSize: titleFs, fontWeight: 500, color: C.navActive, letterSpacing: "-0.02em" }}>
+        <p style={{ fontSize: titleFs, fontWeight: 500, color: colors.navActive, letterSpacing: "-0.02em" }}>
           Follow-up visit scheduling
         </p>
-        <p style={{ fontSize: metaFs, fontWeight: 400, color: C.detailMuted, marginTop: "0.28em" }}>
+        <p style={{ fontSize: metaFs, fontWeight: 400, color: colors.detailMuted, marginTop: "0.28em" }}>
           Maria Rodriguez · Patient message
         </p>
       </div>
 
       {/* Email thread */}
       <div className="min-h-0 flex-1 overflow-hidden" style={{ padding: mobile ? "0.35rem 0" : "0.25rem 0" }}>
-        {EMAIL_THREAD.map((msg, i) => (
+        {EMAIL_THREAD.map((msg) => (
           <div
             key={msg.id}
-            className={HERO_TRIAGE_PANE_GLASS_TW}
+            className={config.paneGlassTw}
             style={{
               margin: mobile ? "0.45rem 0.85rem" : "0.3rem 0.6rem",
               padding: mobile ? "0.75rem 0.95rem" : "0.5rem 0.65rem",
               borderRadius: mobile ? "0.75rem" : "0.5rem",
-              ...glassChipStyle(),
+              ...config.chipStyle(),
             }}
           >
             <div className="flex items-start gap-[0.5em]">
@@ -466,17 +435,18 @@ function OpenEmailPane({ mobile }: { mobile: boolean }) {
                   iconColor: msg.from === "Dr. Singh" ? "rgba(255,240,215,0.88)" : SELECTED.iconColor,
                 }}
                 mobile={mobile}
+                config={config}
               />
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-baseline gap-x-[0.35em] gap-y-[0.1em]">
-                  <span style={{ fontSize: metaFs, fontWeight: 500, color: C.navActive }}>
+                  <span style={{ fontSize: metaFs, fontWeight: 500, color: colors.navActive }}>
                     {msg.from}
                   </span>
-                  <span style={{ fontSize: labelFs, fontWeight: 400, color: C.detailMuted }}>
+                  <span style={{ fontSize: labelFs, fontWeight: 400, color: colors.detailMuted }}>
                     to {msg.to}
                   </span>
                 </div>
-                <p style={{ fontSize: labelFs, fontWeight: 400, color: C.rowTime, marginTop: "0.12em" }}>
+                <p style={{ fontSize: labelFs, fontWeight: 400, color: colors.rowTime, marginTop: "0.12em" }}>
                   {msg.time}
                 </p>
               </div>
@@ -489,7 +459,7 @@ function OpenEmailPane({ mobile }: { mobile: boolean }) {
                     fontSize: bodyFs,
                     fontWeight: 400,
                     lineHeight: 1.5,
-                    color: C.detailBody,
+                    color: colors.detailBody,
                     marginBottom: line.startsWith("Hi") || line === "Maria" || line === "Thank you," ? "0.45em" : "0.2em",
                   }}
                 >
@@ -503,40 +473,40 @@ function OpenEmailPane({ mobile }: { mobile: boolean }) {
 
       {/* Reply compose */}
       <div
-        className={HERO_TRIAGE_PANE_GLASS_TW}
+        className={config.paneGlassTw}
         style={{
-          borderTop: `1px solid ${C.divider}`,
+          borderTop: `1px solid ${colors.divider}`,
           padding: mobile ? "0.85rem 1.3rem" : "0.55rem 0.95rem",
           flexShrink: 0,
-          ...glassPaneStyle({ borderRadius: 0, borderBottom: "none", borderLeft: "none", borderRight: "none" }),
+          ...config.paneStyle({ borderRadius: 0, borderBottom: "none", borderLeft: "none", borderRight: "none" }),
         }}
       >
-        <p style={{ fontSize: labelFs, fontWeight: 500, color: C.detailMuted, marginBottom: "0.45em" }}>
+        <p style={{ fontSize: labelFs, fontWeight: 500, color: colors.detailMuted, marginBottom: "0.45em" }}>
           Reply to Maria Rodriguez
         </p>
         <div
-          className={HERO_TRIAGE_PANE_GLASS_TW}
+          className={config.paneGlassTw}
           style={{
             borderRadius: mobile ? "0.65rem" : "0.45rem",
             padding: mobile ? "0.65rem 0.85rem" : "0.45rem 0.55rem",
             display: "flex",
             alignItems: "center",
             gap: "0.55em",
-            ...glassChipStyle(),
+            ...config.chipStyle(),
           }}
         >
-          <p style={{ flex: 1, fontSize: bodyFs, fontWeight: 400, color: C.rowMuted, lineHeight: 1.4 }}>
+          <p style={{ flex: 1, fontSize: bodyFs, fontWeight: 400, color: colors.rowMuted, lineHeight: 1.4 }}>
             Thursday at 10 AM works. See you then.
           </p>
           <div
-            className={HERO_TRIAGE_PANE_GLASS_TW}
+            className={config.paneGlassTw}
             style={{
               borderRadius: "0.45rem",
               padding: mobile ? "0.32rem 0.75rem" : "0.2rem 0.5rem",
               flexShrink: 0,
-              background: HERO_TRIAGE_SELECTED_GRADIENT,
+              background: config.selectedGradient,
               border: `1px solid rgba(255,220,180,0.14)`,
-              boxShadow: GLASS_INSET,
+              boxShadow: config.insetShadow,
             }}
           >
             <span style={{ fontSize: labelFs, fontWeight: 500, color: "#fff" }}>Send</span>
@@ -550,6 +520,7 @@ function OpenEmailPane({ mobile }: { mobile: boolean }) {
 export type HeroTriagePreviewProps = {
   fontClassName: string;
   size?: "desktop" | "mobile";
+  theme?: HeroTriageTheme;
   style?: CSSProperties;
   className?: string;
 };
@@ -561,10 +532,13 @@ export type HeroTriagePreviewProps = {
 export function HeroTriagePreview({
   fontClassName,
   size = "desktop",
+  theme = "dark",
   style,
   className = "",
 }: HeroTriagePreviewProps) {
   const isMobile = size === "mobile";
+  const config = getHeroTriageThemeConfig(theme);
+  const { colors } = config;
   const navW = isMobile ? "5.1rem" : "2.85rem";
   const listW = isMobile ? HERO_TRIAGE_MOBILE_LIST_WIDTH : "38%";
 
@@ -592,63 +566,63 @@ export function HeroTriagePreview({
         }}
       >
         <div
-          className={`${HERO_TRIAGE_OUTER_GLASS_TW} ${fontClassName} overflow-hidden`}
+          className={`${config.outerGlassTw} ${fontClassName} overflow-hidden`}
           style={{
             borderRadius: isMobile ? "1.35rem" : "1.1rem",
-            background: HERO_TRIAGE_SHELL_GRADIENT,
-            border: `1px solid ${C.shellBorder}`,
-            boxShadow: "inset 0 1px 0 rgba(255,228,196,0.1)",
+            background: config.shellGradient,
+            border: `1px solid ${colors.shellBorder}`,
+            boxShadow: theme === "light" ? undefined : "inset 0 1px 0 rgba(255,228,196,0.1)",
             height: isMobile ? HERO_TRIAGE_MOBILE_MIN_HEIGHT.outer : undefined,
             minHeight: isMobile ? undefined : "16rem",
           }}
         >
           <div
-            className={`flex h-full ${HERO_TRIAGE_INNER_GLASS_TW}`}
+            className={`flex h-full ${config.innerGlassTw}`}
             style={{
               minHeight: isMobile ? HERO_TRIAGE_MOBILE_MIN_HEIGHT.inner : "18rem",
-              background: HERO_TRIAGE_INNER_GRADIENT,
+              background: config.innerGradient,
             }}
           >
             {/* Collapsed vertical nav — icons only */}
             <nav
-              className={`flex shrink-0 flex-col items-center ${HERO_TRIAGE_PANE_GLASS_TW}`}
+              className={`flex shrink-0 flex-col items-center ${config.paneGlassTw}`}
               style={{
                 width: navW,
-                borderRight: `1px solid ${C.divider}`,
+                borderRight: `1px solid ${colors.divider}`,
                 padding: isMobile ? "1.1rem 0.55rem" : "0.65rem 0.32rem",
                 gap: isMobile ? "0.35rem" : "0.2rem",
-                ...glassPaneStyle(),
+                ...config.paneStyle(),
                 borderRadius: 0,
                 borderTop: "none",
                 borderBottom: "none",
                 borderLeft: "none",
               }}
             >
-              <NavIcon active mobile={isMobile}>
-                <InboxIcon mobile={isMobile} d="M4 6h16v12H4V6zm0 0 8 7 8-7" />
+              <NavIcon active mobile={isMobile} config={config}>
+                <InboxIcon mobile={isMobile} d="M4 6h16v12H4V6zm0 0 8 7 8-7" color={colors.navIcon} />
               </NavIcon>
-              <NavIcon mobile={isMobile}>
-                <InboxIcon mobile={isMobile} d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z" />
+              <NavIcon mobile={isMobile} config={config}>
+                <InboxIcon mobile={isMobile} d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z" color={colors.navIcon} />
               </NavIcon>
-              <NavIcon mobile={isMobile}>
-                <InboxIcon mobile={isMobile} d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7M3 7l9 6 9-6M3 7h18" />
+              <NavIcon mobile={isMobile} config={config}>
+                <InboxIcon mobile={isMobile} d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7M3 7l9 6 9-6M3 7h18" color={colors.navIcon} />
               </NavIcon>
-              <NavIcon mobile={isMobile}>
-                <InboxIcon mobile={isMobile} d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2z" />
+              <NavIcon mobile={isMobile} config={config}>
+                <InboxIcon mobile={isMobile} d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2z" color={colors.navIcon} />
               </NavIcon>
               <div className="flex-1" />
-              <NavIcon mobile={isMobile}>
-                <InboxIcon mobile={isMobile} d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7.5-9.5a8.38 8.38 0 0 1 0 11M4.5 5.5a8.38 8.38 0 0 0 0 11" />
+              <NavIcon mobile={isMobile} config={config}>
+                <InboxIcon mobile={isMobile} d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7.5-9.5a8.38 8.38 0 0 1 0 11M4.5 5.5a8.38 8.38 0 0 0 0 11" color={colors.navIcon} />
               </NavIcon>
             </nav>
 
             {/* Inbox preview column */}
             <div
-              className={`flex h-full min-w-0 shrink-0 flex-col ${HERO_TRIAGE_PANE_GLASS_TW}`}
+              className={`flex h-full min-w-0 shrink-0 flex-col ${config.paneGlassTw}`}
               style={{
                 width: listW,
-                borderRight: `1px solid ${C.divider}`,
-                ...glassPaneStyle(),
+                borderRight: `1px solid ${colors.divider}`,
+                ...config.paneStyle(),
                 borderRadius: 0,
                 borderTop: "none",
                 borderBottom: "none",
@@ -656,45 +630,45 @@ export function HeroTriagePreview({
             >
               {/* Toolbar */}
               <div
-                className={`flex items-center gap-[0.45em] ${HERO_TRIAGE_PANE_GLASS_TW}`}
+                className={`flex items-center gap-[0.45em] ${config.paneGlassTw}`}
                 style={{
                   padding: isMobile ? "0.85rem 0.95rem" : "0.52rem 0.58rem",
-                  borderBottom: `1px solid ${C.divider}`,
-                  color: C.navIcon,
-                  ...glassPaneStyle({ borderRadius: 0, borderTop: "none", borderLeft: "none", borderRight: "none" }),
+                  borderBottom: `1px solid ${colors.divider}`,
+                  color: colors.navIcon,
+                  ...config.paneStyle({ borderRadius: 0, borderTop: "none", borderLeft: "none", borderRight: "none" }),
                 }}
               >
                 <div
-                  className={`flex items-center gap-[0.35em] ${HERO_TRIAGE_PANE_GLASS_TW}`}
+                  className={`flex items-center gap-[0.35em] ${config.paneGlassTw}`}
                   style={{
                     borderRadius: "999px",
                     padding: isMobile ? "0.38rem 0.75rem" : "0.24rem 0.48rem",
-                    ...glassChipStyle(),
+                    ...config.chipStyle(),
                   }}
                 >
-                  <InboxIcon mobile={isMobile} d="M4 6h16v12H4V6zm0 0 8 7 8-7" color={C.pillText} />
-                  <span style={{ fontSize: isMobile ? "0.95rem" : "0.58rem", fontWeight: 500, color: C.pillText }}>
+                  <InboxIcon mobile={isMobile} d="M4 6h16v12H4V6zm0 0 8 7 8-7" color={colors.pillText} />
+                  <span style={{ fontSize: isMobile ? "0.95rem" : "0.58rem", fontWeight: 500, color: colors.pillText }}>
                     Inbox
                   </span>
                   <span
-                    className={HERO_TRIAGE_PANE_GLASS_TW}
+                    className={config.paneGlassTw}
                     style={{
                       fontSize: isMobile ? "0.78rem" : "0.48rem",
                       fontWeight: 500,
-                      color: C.badgeText,
+                      color: colors.badgeText,
                       borderRadius: "999px",
                       padding: "0.12em 0.45em",
                       minWidth: "1.4em",
                       textAlign: "center",
-                      ...glassChipStyle({ background: HERO_TRIAGE_CHIP_GRADIENT }),
+                      ...config.chipStyle({ background: config.chipGradient }),
                     }}
                   >
                     12
                   </span>
                 </div>
-                <InboxIcon mobile={isMobile} d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z" />
-                <InboxIcon mobile={isMobile} d="M12 6v6l4 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
-                <InboxIcon mobile={isMobile} d="M12 6h.01M12 12h.01M12 18h.01" />
+                <InboxIcon mobile={isMobile} d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z" color={colors.navIcon} />
+                <InboxIcon mobile={isMobile} d="M12 6v6l4 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" color={colors.navIcon} />
+                <InboxIcon mobile={isMobile} d="M12 6h.01M12 12h.01M12 18h.01" color={colors.navIcon} />
               </div>
 
               {/* Message list */}
@@ -704,15 +678,18 @@ export function HeroTriagePreview({
               >
                 {INBOX_ROWS.map((row) => (
                   <div key={row.id}>
-                    <InboxListRow row={row} mobile={isMobile} />
+                    <InboxListRow row={row} mobile={isMobile} config={config} />
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Open email — partial column, clipped by hero overflow */}
-            <div className={`min-w-0 flex-1 ${HERO_TRIAGE_PANE_GLASS_TW}`} style={glassPaneStyle({ borderRadius: 0, borderTop: "none", borderBottom: "none", borderRight: "none" })}>
-              <OpenEmailPane mobile={isMobile} />
+            <div
+              className={`min-w-0 flex-1 ${config.paneGlassTw}`}
+              style={config.paneStyle({ borderRadius: 0, borderTop: "none", borderBottom: "none", borderRight: "none" })}
+            >
+              <OpenEmailPane mobile={isMobile} config={config} />
             </div>
           </div>
         </div>

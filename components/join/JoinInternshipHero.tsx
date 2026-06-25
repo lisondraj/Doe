@@ -1,12 +1,14 @@
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
+import { HeroTriagePreview } from "@/components/home/HeroTriagePreview";
 import { BLOG_LANDING_HERO_CORNER_PAD } from "@/lib/blog/blog-layout-styles";
 import { DOEPHONE_COMMUNICATION_SLIDES } from "@/lib/doephone/communication-carousel";
 import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
+import { JOIN_HERO_TRIAGE_PANEL } from "@/lib/home/hero-triage-theme";
 import {
   JOIN_DESKTOP_HERO_HEIGHT,
   JOIN_MOBILE_HERO_CARD_HEIGHT,
 } from "@/lib/join/join-layout";
-import { lora } from "@/lib/home/fonts";
+import { lora, suisseIntl } from "@/lib/home/fonts";
 
 const AGENTS_CAROUSEL_BACKDROP = DOEPHONE_COMMUNICATION_SLIDES[0].backdrop;
 
@@ -36,6 +38,21 @@ export function JoinInternshipHero({ variant }: { variant: "mobile" | "desktop" 
         <span className="block">Let&apos;s rebuild</span>
         <span className="block">healthcare.</span>
       </p>
+
+      {variant === "desktop" ? (
+        <HeroTriagePreview
+          fontClassName={suisseIntl.className}
+          size="desktop"
+          theme="light"
+          className="z-[2]"
+          style={{
+            top: JOIN_HERO_TRIAGE_PANEL.top,
+            right: JOIN_HERO_TRIAGE_PANEL.right,
+            bottom: JOIN_HERO_TRIAGE_PANEL.bottom,
+            width: JOIN_HERO_TRIAGE_PANEL.width,
+          }}
+        />
+      ) : null}
     </div>
   );
 }

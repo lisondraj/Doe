@@ -1,0 +1,154 @@
+import type { CSSProperties } from "react";
+
+import {
+  HERO_TRIAGE_CHIP_GRADIENT,
+  HERO_TRIAGE_INNER_GLASS_TW,
+  HERO_TRIAGE_INNER_GRADIENT,
+  HERO_TRIAGE_OUTER_GLASS_TW,
+  HERO_TRIAGE_PANE_GLASS_TW,
+  HERO_TRIAGE_PANE_GRADIENT,
+  HERO_TRIAGE_SELECTED_GRADIENT,
+  HERO_TRIAGE_SHELL_GRADIENT,
+} from "@/lib/home/hero-triage-preview-styles";
+import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
+
+export type HeroTriageTheme = "dark" | "light";
+
+export type HeroTriageThemeConfig = {
+  colors: {
+    shellBorder: string;
+    glassBorder: string;
+    navIcon: string;
+    navActive: string;
+    pillText: string;
+    rowText: string;
+    rowMuted: string;
+    rowTime: string;
+    divider: string;
+    selectedMuted: string;
+    badgeText: string;
+    detailBody: string;
+    detailMuted: string;
+    selectedSubject: string;
+    selectedPreview: string;
+  };
+  shellGradient: string;
+  innerGradient: string;
+  paneGradient: string;
+  chipGradient: string;
+  selectedGradient: string;
+  outerGlassTw: string;
+  innerGlassTw: string;
+  paneGlassTw: string;
+  insetShadow: string;
+  paneStyle: (extra?: CSSProperties) => CSSProperties;
+  chipStyle: (extra?: CSSProperties) => CSSProperties;
+};
+
+const DARK_INSET = "inset 0 1px 0 rgba(255,228,196,0.08)";
+
+const DARK_COLORS = {
+  shellBorder: "rgba(255,210,170,0.12)",
+  glassBorder: "rgba(255,200,160,0.08)",
+  navIcon: "rgba(255,236,205,0.42)",
+  navActive: "rgba(255,248,240,0.92)",
+  pillText: "rgba(255,240,220,0.82)",
+  rowText: "rgba(255,236,205,0.56)",
+  rowMuted: "rgba(255,228,196,0.38)",
+  rowTime: "rgba(255,220,190,0.34)",
+  divider: "rgba(255,200,160,0.07)",
+  selectedMuted: "rgba(255,248,240,0.72)",
+  badgeText: "rgba(255,236,205,0.56)",
+  detailBody: "rgba(255,240,225,0.68)",
+  detailMuted: "rgba(255,220,190,0.44)",
+  selectedSubject: "rgba(255,255,255,0.92)",
+  selectedPreview: "rgba(255,255,255,0.75)",
+} as const;
+
+const LIGHT_COLORS = {
+  shellBorder: "#D9D4CC",
+  glassBorder: JOIN_FORM_BEIGE.border,
+  navIcon: "rgba(30, 52, 58, 0.38)",
+  navActive: JOIN_FORM_BEIGE.ink,
+  pillText: "rgba(30, 52, 58, 0.78)",
+  rowText: "rgba(30, 52, 58, 0.58)",
+  rowMuted: "rgba(30, 52, 58, 0.42)",
+  rowTime: "rgba(154, 143, 130, 0.82)",
+  divider: JOIN_FORM_BEIGE.border,
+  selectedMuted: "rgba(255, 248, 240, 0.88)",
+  badgeText: "rgba(30, 52, 58, 0.55)",
+  detailBody: "rgba(30, 52, 58, 0.72)",
+  detailMuted: "rgba(154, 143, 130, 0.92)",
+  selectedSubject: "#FFFFFF",
+  selectedPreview: "rgba(255, 255, 255, 0.86)",
+} as const;
+
+export function getHeroTriageThemeConfig(theme: HeroTriageTheme): HeroTriageThemeConfig {
+  if (theme === "light") {
+    return {
+      colors: LIGHT_COLORS,
+      shellGradient: JOIN_FORM_BEIGE.page,
+      innerGradient: "#FFFFFF",
+      paneGradient: JOIN_FORM_BEIGE.field,
+      chipGradient: JOIN_FORM_BEIGE.fieldMuted,
+      selectedGradient: "linear-gradient(135deg, #E7A944 0%, #D2774C 52%, #C47A5A 100%)",
+      outerGlassTw: "shadow-[0_18px_48px_rgba(30,52,58,0.08)]",
+      innerGlassTw: "",
+      paneGlassTw: "",
+      insetShadow: "inset 0 1px 0 rgba(255,255,255,0.72)",
+      paneStyle(extra) {
+        return {
+          background: JOIN_FORM_BEIGE.field,
+          border: `1px solid ${LIGHT_COLORS.glassBorder}`,
+          boxShadow: this.insetShadow,
+          ...extra,
+        };
+      },
+      chipStyle(extra) {
+        return {
+          background: JOIN_FORM_BEIGE.fieldMuted,
+          border: `1px solid ${LIGHT_COLORS.glassBorder}`,
+          boxShadow: this.insetShadow,
+          ...extra,
+        };
+      },
+    };
+  }
+
+  return {
+    colors: DARK_COLORS,
+    shellGradient: HERO_TRIAGE_SHELL_GRADIENT,
+    innerGradient: HERO_TRIAGE_INNER_GRADIENT,
+    paneGradient: HERO_TRIAGE_PANE_GRADIENT,
+    chipGradient: HERO_TRIAGE_CHIP_GRADIENT,
+    selectedGradient: HERO_TRIAGE_SELECTED_GRADIENT,
+    outerGlassTw: HERO_TRIAGE_OUTER_GLASS_TW,
+    innerGlassTw: HERO_TRIAGE_INNER_GLASS_TW,
+    paneGlassTw: HERO_TRIAGE_PANE_GLASS_TW,
+    insetShadow: DARK_INSET,
+    paneStyle(extra) {
+      return {
+        background: HERO_TRIAGE_PANE_GRADIENT,
+        border: `1px solid ${DARK_COLORS.glassBorder}`,
+        boxShadow: DARK_INSET,
+        ...extra,
+      };
+    },
+    chipStyle(extra) {
+      return {
+        background: HERO_TRIAGE_CHIP_GRADIENT,
+        border: `1px solid ${DARK_COLORS.glassBorder}`,
+        boxShadow: DARK_INSET,
+        ...extra,
+      };
+    },
+  };
+}
+
+/** Join hero — wide panel clipped on right and bottom inside the orange box. */
+export const JOIN_HERO_TRIAGE_PANEL = {
+  top: "14%",
+  right: "calc(min(68rem, 118%) / -2)",
+  bottom: "-1.25rem",
+  width: "min(68rem, 118%)",
+} as const;

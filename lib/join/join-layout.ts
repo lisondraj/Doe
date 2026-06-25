@@ -48,8 +48,8 @@ export const JOIN_MOBILE_APPLY_SCROLL_MARGIN =
 
 export const JOIN_DESKTOP_APPLY_SCROLL_MARGIN = "scroll-mt-[5.5rem]";
 
-/** Desktop hero — same proportions as mobile, capped for wide screens. */
-export const JOIN_DESKTOP_HERO_HEIGHT = "min-h-[min(72vh,44rem)] h-[min(72vh,44rem)]";
+/** Desktop hero — taller band for headline + clipped inbox preview. */
+export const JOIN_DESKTOP_HERO_HEIGHT = "min-h-[min(88vh,56rem)] h-[min(88vh,56rem)]";
 
 /** Extra top padding above desktop hero card (below nav). */
 export const JOIN_DESKTOP_HERO_TOP_PAD = "pt-10";
@@ -57,10 +57,10 @@ export const JOIN_DESKTOP_HERO_TOP_PAD = "pt-10";
 /** Legacy stacked desktop track card height. */
 export const JOIN_DESKTOP_CARD_HEIGHT = "min-h-[min(36vh,22rem)] h-[min(36vh,22rem)]";
 
-/** Desktop intern track row — four compact cards in one line. */
-export const JOIN_DESKTOP_TRACK_ROW_CARD_HEIGHT = "min-h-[13.5rem] h-[13.5rem]";
-export const JOIN_DESKTOP_TRACK_ROW_GAP = "mt-12";
-export const JOIN_DESKTOP_TRACK_ROW_COL_GAP = "gap-5";
+/** Desktop intern track grid — 2×2 cards with larger boxes. */
+export const JOIN_DESKTOP_TRACK_ROW_CARD_HEIGHT = "min-h-[19.5rem] h-[19.5rem]";
+export const JOIN_DESKTOP_TRACK_ROW_GAP = "mt-14";
+export const JOIN_DESKTOP_TRACK_ROW_COL_GAP = "gap-x-8 gap-y-12";
 
 /** Desktop apply section — vertical band + footer pad. */
 export const JOIN_DESKTOP_APPLY_SECTION_MIN =
