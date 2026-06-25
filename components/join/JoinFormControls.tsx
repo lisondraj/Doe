@@ -482,12 +482,12 @@ export function JoinFormBorderedResumeField({
   const { shell } = BORDERED_INPUT_SIZE[variant];
   const textSize =
     variant === "mobile"
-      ? "text-[1.35rem] iphone-page:text-[1.5rem]"
-      : "text-[1rem]";
+      ? "text-[1.75rem] iphone-page:text-[1.9375rem]"
+      : "text-[1.3125rem]";
   const iconSize =
     variant === "mobile"
-      ? "h-[1.35rem] w-[1.35rem] shrink-0 iphone-page:h-[1.5rem] iphone-page:w-[1.5rem]"
-      : "h-[1.125rem] w-[1.125rem] shrink-0";
+      ? "h-[1.75rem] w-[1.75rem] shrink-0 iphone-page:h-[1.9375rem] iphone-page:w-[1.9375rem]"
+      : "h-[1.3125rem] w-[1.3125rem] shrink-0";
   const innerPad =
     variant === "mobile"
       ? "rounded-lg px-5 py-4 iphone-page:rounded-[0.85rem] iphone-page:px-6 iphone-page:py-[1.15rem]"
@@ -504,15 +504,11 @@ export function JoinFormBorderedResumeField({
   const label = resumeFileName ?? "Choose a file";
   const optionalClass =
     variant === "mobile"
-      ? "mt-3 text-[1rem] leading-snug iphone-page:text-[1.0625rem]"
-      : "mt-2 text-[0.9375rem] leading-snug";
+      ? "mt-4 text-[1.3125rem] leading-snug iphone-page:mt-5 iphone-page:text-[1.4375rem]"
+      : "mt-3 text-[1.125rem] leading-snug";
 
   return (
     <div className="w-full">
-      <div
-        className={joinFormBorderedBoxClass(variant)}
-        style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
-      >
       {interactive ? (
         <input
           ref={fileInputRef}
@@ -565,7 +561,6 @@ export function JoinFormBorderedResumeField({
           Reupload
         </button>
       ) : null}
-      </div>
       <p className={`text-right font-medium tracking-[-0.01em] text-[#1E343A]/45 ${optionalClass} ${inter.className}`}>
         Optional
       </p>

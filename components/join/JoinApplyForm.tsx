@@ -8,6 +8,7 @@ import { joinFormShellClass, JoinFormBorderedTextarea } from "@/components/join/
 import {
   JOIN_APPLY_INITIAL_STATE,
   isJoinApplyCardMandatoryComplete,
+  hasJoinApplyCardInput,
   isJoinApplyStepValid,
   type JoinApplyFormState,
 } from "@/lib/join/join-apply-form";
@@ -44,6 +45,7 @@ function JoinApplyCardForm({
   const [showSubmitReview, setShowSubmitReview] = useState(false);
   const canProceed = activeStep !== null && activeStep !== 0 && isJoinApplyStepValid(activeStep, data);
   const mandatoryComplete = isJoinApplyCardMandatoryComplete(data, touchedSteps);
+  const hasCardInput = hasJoinApplyCardInput(data, touchedSteps);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const closeEditor = useCallback(() => {
@@ -197,7 +199,7 @@ function JoinApplyCardForm({
             />
           ) : null
         }
-        onResetRequest={() => setShowResetConfirm(true)}
+        onResetRequest={hasCardInput ? () => setShowResetConfirm(true) : undefined}
         onResetConfirm={() => {
           resetForm();
           setShowResetConfirm(false);

@@ -88,6 +88,23 @@ export function isJoinApplyMandatoryComplete(data: JoinApplyFormState): boolean 
   return JOIN_APPLY_MANDATORY_STEPS.every((step) => isJoinApplyStepValid(step, data));
 }
 
+/** True when the user has entered or saved anything on the card. */
+export function hasJoinApplyCardInput(
+  data: JoinApplyFormState,
+  touchedSteps: ReadonlySet<number>,
+): boolean {
+  if (data.name.trim()) return true;
+  if (data.email.trim()) return true;
+  if (touchedSteps.has(2) || touchedSteps.has(3)) return true;
+  if (data.schoolName.trim()) return true;
+  if (data.programOfStudy.trim()) return true;
+  if (data.areas.length > 0) return true;
+  if (data.resumeFileName) return true;
+  if (data.linkedinUsername.trim()) return true;
+  if (data.additionalNotes.trim()) return true;
+  return false;
+}
+
 /** Mobile card — country/education must be explicitly saved, not just defaulted. */
 export function isJoinApplyCardMandatoryComplete(
   data: JoinApplyFormState,
