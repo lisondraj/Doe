@@ -7,10 +7,14 @@ import {
   JOIN_HERO_TRIAGE_SCALE,
 } from "@/lib/home/hero-triage-theme";
 import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
+import type { ReactNode } from "react";
 
 const SHELL = "overflow-hidden rounded-[1rem] border border-[#EBE7E0] bg-white";
 const DIVIDER = "#EEEAE3";
 const NAV_W = "3.25rem";
+const BRAIN_ACCENT = "#D2774C";
+const BRAIN_INK = JOIN_FORM_BEIGE.ink;
+const BRAIN_MUTED = "rgba(30, 52, 58, 0.52)";
 
 type MiniRow = {
   id: string;
@@ -137,6 +141,7 @@ function MiniInboxShell({
   toolbarIcon,
   badge,
   rows,
+  body,
   footer,
   large = false,
 }: {
@@ -146,7 +151,8 @@ function MiniInboxShell({
   toolbarLabel: string;
   toolbarIcon: string;
   badge?: string;
-  rows: readonly MiniRow[];
+  rows?: readonly MiniRow[];
+  body?: ReactNode;
   footer?: string;
   large?: boolean;
 }) {
@@ -202,12 +208,14 @@ function MiniInboxShell({
           </div>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-hidden" style={{ padding: large ? "0.65rem 0.55rem" : "0.55rem 0.45rem" }}>
-          <div className={`flex flex-col ${large ? "gap-[0.24rem]" : "gap-[0.18rem]"}`}>
-            {rows.map((row) => (
-              <MiniListRow key={row.id} row={row} large={large} />
-            ))}
-          </div>
+        <div className="min-h-0 flex-1 overflow-hidden" style={{ padding: body ? 0 : large ? "0.65rem 0.55rem" : "0.55rem 0.45rem" }}>
+          {body ?? (
+            <div className={`flex flex-col ${large ? "gap-[0.24rem]" : "gap-[0.18rem]"}`}>
+              {rows?.map((row) => (
+                <MiniListRow key={row.id} row={row} large={large} />
+              ))}
+            </div>
+          )}
         </div>
 
         {footer ? (
@@ -229,33 +237,197 @@ function MiniInboxShell({
   );
 }
 
-const BRAIN_ROWS: readonly MiniRow[] = [
-  {
-    id: "chart",
-    sender: "Chart",
-    initials: "CH",
-    subject: "Patient context loaded",
-    preview: "Dizziness after metformin · A1c 8.2%",
-    time: "Now",
-  },
-  {
-    id: "risk",
-    sender: "Reasoning",
-    initials: "Rx",
-    subject: "Orthostatic risk flagged",
-    preview: "Cross-check new Rx against symptoms",
-    time: "Live",
-    selected: true,
-  },
-  {
-    id: "plan",
-    sender: "Plan",
-    initials: "PL",
-    subject: "Follow-up suggested",
-    preview: "Cardio window within 5 days",
-    time: "Draft",
-  },
-];
+const BRAIN_GRAPH_NODES = [
+  { id: "rx", label: "Metformin", sub: "Rx change", tone: "beige" as const },
+  { id: "sym", label: "Dizziness", sub: "New symptom", tone: "beige" as const },
+  { id: "risk", label: "Orthostatic", sub: "Risk flagged", tone: "accent" as const },
+  { id: "plan", label: "Cardio", sub: "5-day window", tone: "ink" as const },
+] as const;
+
+function BrainMetricBar({
+  label,
+  value,
+  fill,
+  track = JOIN_FORM_BEIGE.page,
+}: {
+  label: string;
+  value: string;
+  fill: string;
+  track?: string;
+}) {
+  return (
+    <div className="min-w-0 flex-1">
+      <div className="mb-[0.35rem] flex items-baseline justify-between gap-2">
+        <span style={{ fontSize: "0.58rem", fontWeight: 500, color: BRAIN_MUTED }}>{label}</span>
+        <span style={{ fontSize: "0.62rem", fontWeight: 500, color: BRAIN_INK }}>{value}</span>
+      </div>
+      <div className="h-[0.42rem] overflow-hidden rounded-full" style={{ background: track }}>
+        <div className="h-full rounded-full" style={{ width: fill, background: BRAIN_ACCENT }} />
+      </div>
+    </div>
+  );
+}
+
+function BrainGraphNode({
+  label,
+  sub,
+  tone,
+}: {
+  label: string;
+  sub: string;
+  tone: "beige" | "accent" | "ink";
+}) {
+  const isAccent = tone === "accent";
+  const isInk = tone === "ink";
+
+  return (
+    <div
+      className="flex flex-col items-center justify-center rounded-[0.72rem] border text-center"
+      style={{
+        width: "5.6rem",
+        height: "3.55rem",
+        background: isAccent ? BRAIN_ACCENT : isInk ? BRAIN_INK : JOIN_FORM_BEIGE.page,
+        borderColor: isAccent ? BRAIN_ACCENT : isInk ? BRAIN_INK : "#ECE8E1",
+        color: isAccent || isInk ? "#FFFFFF" : BRAIN_INK,
+        boxShadow: isAccent ? "0 10px 24px rgba(210, 119, 76, 0.22)" : "none",
+      }}
+    >
+      <span style={{ fontSize: "0.68rem", fontWeight: 600, letterSpacing: "-0.02em" }}>{label}</span>
+      <span
+        style={{
+          fontSize: "0.52rem",
+          fontWeight: 400,
+          marginTop: "0.12rem",
+          color: isAccent || isInk ? "rgba(255,255,255,0.78)" : BRAIN_MUTED,
+        }}
+      >
+        {sub}
+      </span>
+    </div>
+  );
+}
+
+function JoinHeroBrainVisualBody() {
+  return (
+    <div className="flex h-full flex-col" style={{ background: "#FFFFFF" }}>
+      <div
+        className="flex items-center gap-3 border-b px-[1.15rem] py-[0.9rem]"
+        style={{ borderColor: DIVIDER, background: "#FAFAF8" }}
+      >
+        <div
+          className="flex h-[2.35rem] w-[2.35rem] shrink-0 items-center justify-center rounded-full font-medium"
+          style={{
+            background: "rgba(210,119,76,0.14)",
+            color: BRAIN_INK,
+            border: "1px solid #ECE8E1",
+            fontSize: "0.62rem",
+          }}
+        >
+          DK
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <span style={{ fontSize: "0.78rem", fontWeight: 600, color: BRAIN_INK, letterSpacing: "-0.02em" }}>
+              D. Kim · 68F
+            </span>
+            <span
+              className="inline-flex items-center gap-1 rounded-full px-2 py-[0.18rem]"
+              style={{ background: "rgba(210,119,76,0.12)", color: BRAIN_ACCENT, fontSize: "0.5rem", fontWeight: 600 }}
+            >
+              <span className="h-1.5 w-1.5 rounded-full" style={{ background: BRAIN_ACCENT }} aria-hidden />
+              Live
+            </span>
+          </div>
+          <p style={{ fontSize: "0.56rem", color: BRAIN_MUTED, marginTop: "0.18rem" }}>Chart + inbox context merged</p>
+        </div>
+        <div className="flex shrink-0 items-end gap-[0.18rem]" aria-hidden>
+          {[38, 52, 44, 68, 58, 72, 64].map((h, i) => (
+            <span
+              key={i}
+              className="w-[0.34rem] rounded-full"
+              style={{
+                height: `${h * 0.08}rem`,
+                background: i === 4 ? BRAIN_ACCENT : "rgba(30, 52, 58, 0.12)",
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="relative min-h-0 flex-1 px-[1rem] py-[0.85rem]">
+        <svg className="pointer-events-none absolute inset-0 h-full w-full" viewBox="0 0 396 210" preserveAspectRatio="none" aria-hidden>
+          <path
+            d="M108 78 C 142 78, 152 102, 170 102"
+            fill="none"
+            stroke="rgba(30, 52, 58, 0.12)"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+          <path
+            d="M108 168 C 142 168, 152 102, 170 102"
+            fill="none"
+            stroke="rgba(30, 52, 58, 0.12)"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+          <path
+            d="M254 102 H 308"
+            fill="none"
+            stroke={BRAIN_ACCENT}
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            opacity="0.55"
+          />
+        </svg>
+
+        <div className="relative grid h-full grid-cols-[1fr_auto_1fr] items-center gap-3">
+          <div className="flex flex-col items-end gap-3">
+            {BRAIN_GRAPH_NODES.slice(0, 2).map((node) => (
+              <BrainGraphNode key={node.id} label={node.label} sub={node.sub} tone={node.tone} />
+            ))}
+          </div>
+
+          <div className="flex flex-col items-center gap-2 px-1">
+            <div
+              className="flex h-[3.15rem] w-[3.15rem] items-center justify-center rounded-full border-4"
+              style={{
+                borderColor: "rgba(210,119,76,0.18)",
+                background: "#FFFFFF",
+                boxShadow: "inset 0 0 0 1px rgba(210,119,76,0.08)",
+              }}
+            >
+              <div
+                className="flex h-[2rem] w-[2rem] items-center justify-center rounded-full"
+                style={{ background: BRAIN_ACCENT }}
+              >
+                <MiniIcon
+                  d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2"
+                  color="#FFFFFF"
+                  size={15}
+                />
+              </div>
+            </div>
+            <span style={{ fontSize: "0.52rem", fontWeight: 500, color: BRAIN_MUTED }}>Reasoning</span>
+          </div>
+
+          <div className="flex flex-col items-start gap-3">
+            {BRAIN_GRAPH_NODES.slice(2).map((node) => (
+              <BrainGraphNode key={node.id} label={node.label} sub={node.sub} tone={node.tone} />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div
+        className="grid grid-cols-2 gap-3 border-t px-[1.15rem] py-[0.9rem]"
+        style={{ borderColor: DIVIDER, background: "#FAFAF8" }}
+      >
+        <BrainMetricBar label="A1c trend" value="8.2%" fill="72%" />
+        <BrainMetricBar label="Confidence" value="Low" fill="34%" track="rgba(210,119,76,0.12)" />
+      </div>
+    </div>
+  );
+}
 
 const AGENT_ROWS: readonly MiniRow[] = [
   {
@@ -294,7 +466,7 @@ function JoinHeroBrainPanel() {
       navIcon="M12 3v2M12 19v2M5 12H3M21 12h-2M7.05 7.05 5.636 5.636M18.364 18.364l-1.414-1.414M16.95 7.05l1.414-1.414M7.05 16.95l-1.414 1.414"
       toolbarLabel="Brain"
       toolbarIcon="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
-      rows={BRAIN_ROWS}
+      body={<JoinHeroBrainVisualBody />}
       footer="Guardrailed reasoning · needs sign-off before note"
     />
   );
