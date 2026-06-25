@@ -205,9 +205,19 @@ function InboxIcon({
   );
 }
 
-function SenderMark({ row, mobile, config }: { row: InboxRow; mobile: boolean; config: HeroTriageThemeConfig }) {
+function SenderMark({
+  row,
+  mobile,
+  joinCompact = false,
+  config,
+}: {
+  row: InboxRow;
+  mobile: boolean;
+  joinCompact?: boolean;
+  config: HeroTriageThemeConfig;
+}) {
   const { colors } = config;
-  const sz = mobile ? "2.35rem" : "1.45rem";
+  const sz = joinCompact ? "1.28rem" : mobile ? "2.35rem" : "1.45rem";
   const onSelectedRow = Boolean(row.selected);
   const useFlatSelectedMark = onSelectedRow && config.flat;
   return (
@@ -219,7 +229,7 @@ function SenderMark({ row, mobile, config }: { row: InboxRow; mobile: boolean; c
         borderRadius: "50%",
         background: useFlatSelectedMark ? "rgba(255,255,255,0.14)" : row.iconBg,
         color: useFlatSelectedMark ? "#FFFFFF" : row.iconColor,
-        fontSize: mobile ? "0.82rem" : "0.52rem",
+        fontSize: joinCompact ? "0.48rem" : mobile ? "0.82rem" : "0.52rem",
         border: `1px solid ${useFlatSelectedMark ? "rgba(255,255,255,0.12)" : colors.glassBorder}`,
         boxShadow: config.flat ? "none" : config.insetShadow,
       }}
@@ -232,27 +242,32 @@ function SenderMark({ row, mobile, config }: { row: InboxRow; mobile: boolean; c
 function InboxListRow({
   row,
   mobile,
+  joinCompact = false,
   config,
 }: {
   row: InboxRow;
   mobile: boolean;
+  joinCompact?: boolean;
   config: HeroTriageThemeConfig;
 }) {
   const { colors } = config;
-  const nameFs = mobile ? "0.96rem" : "0.62rem";
-  const subFs = mobile ? "0.88rem" : "0.56rem";
-  const timeFs = mobile ? "0.78rem" : "0.48rem";
-  const pad = mobile ? "0.62rem 0.9rem" : "0.42rem 0.52rem";
-  const gap = mobile ? "0.62rem" : "0.38rem";
+  const nameFs = joinCompact ? "0.58rem" : mobile ? "0.96rem" : "0.62rem";
+  const subFs = joinCompact ? "0.52rem" : mobile ? "0.88rem" : "0.56rem";
+  const timeFs = joinCompact ? "0.46rem" : mobile ? "0.78rem" : "0.48rem";
+  const pad = joinCompact ? "0.34rem 0.46rem" : mobile ? "0.62rem 0.9rem" : "0.42rem 0.52rem";
+  const gap = joinCompact ? "0.32rem" : mobile ? "0.62rem" : "0.38rem";
+  const rowMargin = joinCompact ? "0 0.24rem" : mobile ? "0 0.5rem" : "0 0.32rem";
+  const rowRadius = joinCompact ? "0.42rem" : mobile ? "0.85rem" : "0.55rem";
+  const rowRadiusDefault = joinCompact ? "0.38rem" : mobile ? "0.65rem" : "0.45rem";
 
   if (row.selected) {
     return (
       <div
         className={config.paneGlassTw}
         style={{
-          margin: mobile ? "0 0.5rem" : "0 0.32rem",
+          margin: rowMargin,
           padding: pad,
-          borderRadius: mobile ? "0.85rem" : "0.55rem",
+          borderRadius: rowRadius,
           background: config.selectedGradient,
           border: `1px solid ${config.selectedBorder}`,
           boxShadow: "none",
@@ -261,7 +276,7 @@ function InboxListRow({
           gap,
         }}
       >
-        <SenderMark row={row} mobile={mobile} config={config} />
+        <SenderMark row={row} mobile={mobile} joinCompact={joinCompact} config={config} />
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline justify-between gap-[0.4em]">
             <span
@@ -300,13 +315,13 @@ function InboxListRow({
       className={`flex items-start ${config.paneGlassTw}`}
       style={{
         gap,
-        margin: mobile ? "0 0.5rem" : "0 0.32rem",
+        margin: rowMargin,
         padding: pad,
-        borderRadius: mobile ? "0.65rem" : "0.45rem",
+        borderRadius: rowRadiusDefault,
         ...config.chipStyle(),
       }}
     >
-      <SenderMark row={row} mobile={mobile} config={config} />
+      <SenderMark row={row} mobile={mobile} joinCompact={joinCompact} config={config} />
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline justify-between gap-[0.4em]">
           <span style={{ fontSize: nameFs, fontWeight: 500, color: colors.navActive, letterSpacing: "-0.01em" }}>
@@ -561,7 +576,7 @@ export function HeroTriagePreview({
   const { colors } = config;
   const navW = isJoinMobile ? "3.15rem" : isMobile ? "5.1rem" : isSimple ? "3.25rem" : "2.85rem";
   const listW = isMobile && !isSimple ? HERO_TRIAGE_MOBILE_LIST_WIDTH : isSimple ? undefined : "38%";
-  const inboxRows = isJoinMobile ? INBOX_ROWS.slice(0, 7) : isSimple ? INBOX_ROWS.slice(0, 5) : INBOX_ROWS;
+  const inboxRows = isJoinMobile ? INBOX_ROWS.slice(0, 9) : isSimple ? INBOX_ROWS.slice(0, 5) : INBOX_ROWS;
   const listRowMobile = (isMobile || isSimple) && !isJoinMobile;
   const navIconMobile = isMobile && !isJoinMobile;
   const mobileScaleValue = mobileScale ?? HERO_TRIAGE_MOBILE_SCALE;
@@ -612,7 +627,7 @@ export function HeroTriagePreview({
         <div
           className={`${config.outerGlassTw} ${fontClassName} overflow-hidden`}
           style={{
-            borderRadius: theme === "light" ? "1rem" : isMobile ? "1.35rem" : "1.1rem",
+            borderRadius: isJoinMobile ? "0 0 1rem 1rem" : theme === "light" ? "1rem" : isMobile ? "1.35rem" : "1.1rem",
             background: config.shellGradient,
             ...(isJoinMobile ? { width: JOIN_MOBILE_HERO_TRIAGE_PANEL.panelWidth } : {}),
             ...(theme === "light"
@@ -638,8 +653,8 @@ export function HeroTriagePreview({
               style={{
                 width: navW,
                 borderRight: isSimple ? "none" : `1px solid ${colors.divider}`,
-                padding: isJoinMobile ? "0.75rem 0.35rem" : isMobile ? "1.1rem 0.55rem" : isSimple ? "0.85rem 0.4rem" : "0.65rem 0.32rem",
-                gap: isJoinMobile ? "0.24rem" : isMobile ? "0.35rem" : "0.28rem",
+                padding: isJoinMobile ? "0.58rem 0.3rem" : isMobile ? "1.1rem 0.55rem" : isSimple ? "0.85rem 0.4rem" : "0.65rem 0.32rem",
+                gap: isJoinMobile ? "0.18rem" : isMobile ? "0.35rem" : "0.28rem",
                 ...config.paneStyle(),
                 borderRadius: 0,
                 borderTop: "none",
@@ -685,7 +700,7 @@ export function HeroTriagePreview({
               <div
                 className={`flex items-center gap-[0.45em] ${config.paneGlassTw}`}
                 style={{
-                  padding: isJoinMobile ? "0.65rem 0.85rem" : isMobile ? "0.85rem 0.95rem" : isSimple ? "0.85rem 1rem" : "0.52rem 0.58rem",
+                  padding: isJoinMobile ? "0.52rem 0.75rem" : isMobile ? "0.85rem 0.95rem" : isSimple ? "0.85rem 1rem" : "0.52rem 0.58rem",
                   borderBottom: `1px solid ${colors.divider}`,
                   color: colors.navIcon,
                   ...config.paneStyle({ borderRadius: 0, borderTop: "none", borderLeft: "none", borderRight: "none" }),
@@ -739,11 +754,11 @@ export function HeroTriagePreview({
               {/* Message list */}
               <div
                 className="min-h-0 flex-1 overflow-hidden"
-                style={{ padding: isJoinMobile ? "0.32rem 0.28rem" : isMobile ? "0.45rem 0.35rem" : isSimple ? "0.55rem 0.45rem" : "0.28rem 0.2rem", gap: isMobile ? "0.28rem" : "0.18rem" }}
+                style={{ padding: isJoinMobile ? "0.24rem 0.22rem" : isMobile ? "0.45rem 0.35rem" : isSimple ? "0.55rem 0.45rem" : "0.28rem 0.2rem", gap: isMobile ? "0.28rem" : "0.18rem" }}
               >
                 {inboxRows.map((row) => (
                   <div key={row.id}>
-                    <InboxListRow row={row} mobile={listRowMobile} config={config} />
+                    <InboxListRow row={row} mobile={listRowMobile} joinCompact={isJoinMobile} config={config} />
                   </div>
                 ))}
               </div>

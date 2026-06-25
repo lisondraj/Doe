@@ -178,8 +178,9 @@ export const JOIN_MOBILE_HERO_TRIAGE_PANEL = {
   left: "max(1.25rem, 8%)",
   top: "50%",
   panelWidth: "min(40rem, 145vw)",
-  outerHeight: "44rem",
-  innerMinHeight: "46rem",
+  /** Tall enough that scaled top clears hero top while bottom-left anchor stays fixed. */
+  outerHeight: "62rem",
+  innerMinHeight: "64rem",
 } as const;
 
 export const JOIN_MOBILE_HERO_TRIAGE_SCALE = 1.32;
