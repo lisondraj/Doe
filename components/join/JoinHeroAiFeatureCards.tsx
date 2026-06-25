@@ -22,18 +22,28 @@ type MiniRow = {
   selected?: boolean;
 };
 
-function MiniIcon({ d, color = "rgba(30, 52, 58, 0.34)" }: { d: string; color?: string }) {
+function MiniIcon({ d, color = "rgba(30, 52, 58, 0.34)", size = 14 }: { d: string; color?: string; size?: number }) {
   return (
-    <svg width={14} height={14} viewBox="0 0 24 24" fill="none" aria-hidden style={{ color, display: "block" }}>
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden style={{ color, display: "block" }}>
       <path d={d} stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
 
-function MiniSenderMark({ initials, selected }: { initials: string; selected?: boolean }) {
+function MiniSenderMark({
+  initials,
+  selected,
+  large = false,
+}: {
+  initials: string;
+  selected?: boolean;
+  large?: boolean;
+}) {
   return (
     <div
-      className="flex h-[1.45rem] w-[1.45rem] shrink-0 items-center justify-center rounded-full text-[0.52rem] font-medium"
+      className={`flex shrink-0 items-center justify-center rounded-full font-medium ${
+        large ? "h-[1.75rem] w-[1.75rem] text-[0.62rem]" : "h-[1.45rem] w-[1.45rem] text-[0.52rem]"
+      }`}
       style={{
         background: selected ? "rgba(255,255,255,0.14)" : "rgba(210,119,76,0.14)",
         color: selected ? "#FFFFFF" : JOIN_FORM_BEIGE.ink,
@@ -45,17 +55,20 @@ function MiniSenderMark({ initials, selected }: { initials: string; selected?: b
   );
 }
 
-function MiniListRow({ row }: { row: MiniRow }) {
-  const pad = "0.42rem 0.52rem";
-  const gap = "0.38rem";
+function MiniListRow({ row, large = false }: { row: MiniRow; large?: boolean }) {
+  const pad = large ? "0.52rem 0.62rem" : "0.42rem 0.52rem";
+  const gap = large ? "0.46rem" : "0.38rem";
+  const nameFs = large ? "0.74rem" : "0.62rem";
+  const subFs = large ? "0.68rem" : "0.56rem";
+  const timeFs = large ? "0.58rem" : "0.48rem";
 
   if (row.selected) {
     return (
       <div
         style={{
-          margin: "0 0.32rem",
+          margin: large ? "0 0.38rem" : "0 0.32rem",
           padding: pad,
-          borderRadius: "0.55rem",
+          borderRadius: large ? "0.62rem" : "0.55rem",
           background: "#D2774C",
           border: "1px solid #D2774C",
           display: "flex",
@@ -63,20 +76,20 @@ function MiniListRow({ row }: { row: MiniRow }) {
           gap,
         }}
       >
-        <MiniSenderMark initials={row.initials} selected />
+        <MiniSenderMark initials={row.initials} selected large={large} />
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline justify-between gap-[0.4em]">
-            <span style={{ fontSize: "0.62rem", fontWeight: 500, color: "#FFFFFF", letterSpacing: "-0.01em" }}>
+            <span style={{ fontSize: nameFs, fontWeight: 500, color: "#FFFFFF", letterSpacing: "-0.01em" }}>
               {row.sender}
             </span>
-            <span style={{ fontSize: "0.48rem", fontWeight: 400, color: "rgba(255,255,255,0.72)", flexShrink: 0 }}>
+            <span style={{ fontSize: timeFs, fontWeight: 400, color: "rgba(255,255,255,0.72)", flexShrink: 0 }}>
               {row.time}
             </span>
           </div>
-          <p className="truncate" style={{ fontSize: "0.56rem", fontWeight: 500, color: "#FFFFFF", marginTop: "0.15em" }}>
+          <p className="truncate" style={{ fontSize: subFs, fontWeight: 500, color: "#FFFFFF", marginTop: "0.15em" }}>
             {row.subject}
           </p>
-          <p className="mt-[0.12em] truncate" style={{ fontSize: "0.56rem", fontWeight: 400, color: "rgba(255,255,255,0.84)" }}>
+          <p className="mt-[0.12em] truncate" style={{ fontSize: subFs, fontWeight: 400, color: "rgba(255,255,255,0.84)" }}>
             {row.preview}
           </p>
         </div>
@@ -89,26 +102,26 @@ function MiniListRow({ row }: { row: MiniRow }) {
       className="flex items-start"
       style={{
         gap,
-        margin: "0 0.32rem",
+        margin: large ? "0 0.38rem" : "0 0.32rem",
         padding: pad,
-        borderRadius: "0.45rem",
+        borderRadius: large ? "0.52rem" : "0.45rem",
         background: JOIN_FORM_BEIGE.page,
       }}
     >
-      <MiniSenderMark initials={row.initials} />
+      <MiniSenderMark initials={row.initials} large={large} />
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline justify-between gap-[0.4em]">
-          <span style={{ fontSize: "0.62rem", fontWeight: 500, color: JOIN_FORM_BEIGE.ink, letterSpacing: "-0.01em" }}>
+          <span style={{ fontSize: nameFs, fontWeight: 500, color: JOIN_FORM_BEIGE.ink, letterSpacing: "-0.01em" }}>
             {row.sender}
           </span>
-          <span style={{ fontSize: "0.48rem", fontWeight: 400, color: "rgba(154, 143, 130, 0.88)", flexShrink: 0 }}>
+          <span style={{ fontSize: timeFs, fontWeight: 400, color: "rgba(154, 143, 130, 0.88)", flexShrink: 0 }}>
             {row.time}
           </span>
         </div>
-        <p className="truncate" style={{ fontSize: "0.56rem", fontWeight: 500, color: "rgba(30, 52, 58, 0.76)", marginTop: "0.15em" }}>
+        <p className="truncate" style={{ fontSize: subFs, fontWeight: 500, color: "rgba(30, 52, 58, 0.76)", marginTop: "0.15em" }}>
           {row.subject}
         </p>
-        <p className="mt-[0.1em] truncate" style={{ fontSize: "0.56rem", fontWeight: 400, color: "rgba(30, 52, 58, 0.56)" }}>
+        <p className="mt-[0.1em] truncate" style={{ fontSize: subFs, fontWeight: 400, color: "rgba(30, 52, 58, 0.56)" }}>
           {row.preview}
         </p>
       </div>
@@ -125,6 +138,7 @@ function MiniInboxShell({
   badge,
   rows,
   footer,
+  large = false,
 }: {
   width: string;
   height: string;
@@ -134,23 +148,27 @@ function MiniInboxShell({
   badge?: string;
   rows: readonly MiniRow[];
   footer?: string;
+  large?: boolean;
 }) {
+  const navWidth = large ? "3.65rem" : NAV_W;
+  const iconSize = large ? 16 : 14;
+
   return (
     <div className={`${SHELL} flex ${width} ${height} ${suisseIntl.className}`}>
       <nav
         className="flex shrink-0 flex-col items-center"
         style={{
-          width: NAV_W,
+          width: navWidth,
           borderRight: `1px solid ${DIVIDER}`,
-          padding: "0.85rem 0.4rem",
+          padding: large ? "1rem 0.45rem" : "0.85rem 0.4rem",
           background: "#FFFFFF",
         }}
       >
         <div
-          className="flex h-8 w-8 items-center justify-center rounded-[0.55rem]"
+          className={`flex items-center justify-center rounded-[0.55rem] ${large ? "h-9 w-9" : "h-8 w-8"}`}
           style={{ background: JOIN_FORM_BEIGE.page }}
         >
-          <MiniIcon d={navIcon} color={JOIN_FORM_BEIGE.ink} />
+          <MiniIcon d={navIcon} color={JOIN_FORM_BEIGE.ink} size={iconSize} />
         </div>
       </nav>
 
@@ -158,18 +176,20 @@ function MiniInboxShell({
         <div
           className="flex items-center gap-[0.45em]"
           style={{
-            padding: "0.85rem 1rem",
+            padding: large ? "1rem 1.15rem" : "0.85rem 1rem",
             borderBottom: `1px solid ${DIVIDER}`,
           }}
         >
           <div className="flex items-center gap-[0.35em]">
-            <MiniIcon d={toolbarIcon} color="#D2774C" />
-            <span style={{ fontSize: "0.92rem", fontWeight: 500, color: JOIN_FORM_BEIGE.ink }}>{toolbarLabel}</span>
+            <MiniIcon d={toolbarIcon} color="#D2774C" size={iconSize} />
+            <span style={{ fontSize: large ? "1.05rem" : "0.92rem", fontWeight: 500, color: JOIN_FORM_BEIGE.ink }}>
+              {toolbarLabel}
+            </span>
             {badge ? (
               <span
                 className="rounded-full px-[0.45em] text-center"
                 style={{
-                  fontSize: "0.48rem",
+                  fontSize: large ? "0.56rem" : "0.48rem",
                   fontWeight: 500,
                   color: "rgba(30, 52, 58, 0.52)",
                   background: JOIN_FORM_BEIGE.page,
@@ -182,20 +202,20 @@ function MiniInboxShell({
           </div>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-hidden" style={{ padding: "0.55rem 0.45rem" }}>
-          <div className="flex flex-col gap-[0.18rem]">
+        <div className="min-h-0 flex-1 overflow-hidden" style={{ padding: large ? "0.65rem 0.55rem" : "0.55rem 0.45rem" }}>
+          <div className={`flex flex-col ${large ? "gap-[0.24rem]" : "gap-[0.18rem]"}`}>
             {rows.map((row) => (
-              <MiniListRow key={row.id} row={row} />
+              <MiniListRow key={row.id} row={row} large={large} />
             ))}
           </div>
         </div>
 
         {footer ? (
           <div
-            className="truncate px-4 py-2.5"
+            className={`truncate border-t ${large ? "px-[1.15rem] py-[0.85rem]" : "px-4 py-2.5"}`}
             style={{
-              borderTop: `1px solid ${DIVIDER}`,
-              fontSize: "0.52rem",
+              borderColor: DIVIDER,
+              fontSize: large ? "0.62rem" : "0.52rem",
               fontWeight: 400,
               color: "rgba(154, 143, 130, 0.92)",
               background: "#FAFAF8",
@@ -268,8 +288,9 @@ const AGENT_ROWS: readonly MiniRow[] = [
 function JoinHeroBrainPanel() {
   return (
     <MiniInboxShell
-      width="w-[29rem]"
-      height="h-[23rem]"
+      large
+      width="w-[32rem]"
+      height="h-[25rem]"
       navIcon="M12 3v2M12 19v2M5 12H3M21 12h-2M7.05 7.05 5.636 5.636M18.364 18.364l-1.414-1.414M16.95 7.05l1.414-1.414M7.05 16.95l-1.414 1.414"
       toolbarLabel="Brain"
       toolbarIcon="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
@@ -300,8 +321,10 @@ const AGENTS_SCALE = JOIN_HERO_AI_CARD_DISPLAY_SCALE;
 function JoinHeroBrainCard({ zIndex }: { zIndex: number }) {
   return (
     <div
-      className="absolute left-0 top-1/2"
+      className="absolute"
       style={{
+        left: "12%",
+        top: "56%",
         zIndex,
         transform: `translate(-50%, -50%) scale(${BRAIN_SCALE})`,
       }}
