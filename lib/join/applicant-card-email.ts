@@ -3,6 +3,7 @@ import {
   JOIN_APPLY_EDUCATION_LABELS,
   type JoinApplyFormState,
 } from "@/lib/join/join-apply-form";
+import { getResendClient } from "@/lib/resend/client";
 
 function escapeHtml(value: string): string {
   return value
@@ -89,29 +90,21 @@ export function isApplicantCardEmailConfigured(): boolean {
 }
 
 export async function sendApplicantCardEmail(data: JoinApplyFormState): Promise<void> {
-  const apiKey = process.env.RESEND_API_KEY?.trim();
   const from = process.env.RESEND_FROM_EMAIL?.trim();
 
-  if (!apiKey || !from) {
+  if (!process.env.RESEND_API_KEY?.trim() || !from) {
     throw new Error("Email service is not configured.");
   }
 
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from,
-      to: [data.email.trim()],
-      subject: "Your Doe applicant card",
-      html: buildApplicantCardEmailHtml(data),
-    }),
+  const resend = getResendClient();
+  const { error } = await resend.emails.send({
+    from,
+    to: data.email.trim(),
+    subject: "Your Doe applicant card",
+    html: buildApplicantCardEmailHtml(data),
   });
 
-  if (!response.ok) {
-    const detail = await response.text().catch(() => "");
-    throw new Error(detail || "Failed to send confirmation email.");
+  if (error) {
+    throw new Error(error.message || "Failed to send confirmation email.");
   }
 }
