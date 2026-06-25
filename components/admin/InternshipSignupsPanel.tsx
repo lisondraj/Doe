@@ -31,6 +31,7 @@ import {
   ADMIN_MOBILE_LIST_NAME_TW,
   ADMIN_MOBILE_LIST_ROW_PAD,
   ADMIN_MOBILE_META_TW,
+  ADMIN_MOBILE_PANEL_SCROLL_PAD,
   ADMIN_MOBILE_PANEL_STACK,
   ADMIN_MOBILE_FIELD_TEXT_TW,
   ADMIN_MOBILE_SELECT_CHEVRON_TW,
@@ -615,7 +616,7 @@ export function InternshipSignupsPanel({
           </div>
         </header>
       ) : (
-        <AdminMobileSectionHeader title="Signups" loading={loading} onRefresh={onRefresh} />
+        <AdminMobileSectionHeader title="Signups" />
       )}
 
       <div className={variant === "mobile" ? statsGrid : "border-b border-[#EFEFEF] px-4 py-3"}>
@@ -686,7 +687,7 @@ export function InternshipSignupsPanel({
       </div>
 
       {variant === "mobile" ? (
-        <div className={`${ADMIN_MOBILE_SURFACE} min-h-0 flex-1 overflow-y-auto`}>
+        <div className={`${ADMIN_MOBILE_SURFACE} min-h-0 flex-1 overflow-y-auto ${ADMIN_MOBILE_PANEL_SCROLL_PAD}`}>
           <ApplicationList
             visibleApplications={visibleApplications}
             filtered={filtered}

@@ -8,8 +8,11 @@ import { DoeBuildIcon } from "@/components/admin/doe-build-icon";
 import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
 import type { AdminInternshipApplication, InternshipSignupStats } from "@/lib/admin/internship-applications";
 import {
+  ADMIN_MOBILE_BUTTON_TW,
+  ADMIN_MOBILE_CONTENT_BOTTOM_PAD,
   ADMIN_MOBILE_CONTENT_STACK,
   ADMIN_MOBILE_CONTENT_TOP_PAD,
+  ADMIN_MOBILE_INPUT_H,
   ADMIN_MOBILE_NAV_CLEARANCE,
   ADMIN_MOBILE_TAB_BADGE_TW,
   ADMIN_MOBILE_TAB_BAR_INSET,
@@ -48,8 +51,19 @@ export function AdminMobileView({
       shellMinHeightClass="min-h-[var(--app-vh,100lvh)]"
     >
       <div
-        className={`flex min-h-[var(--app-vh,100lvh)] flex-col ${ADMIN_MOBILE_NAV_CLEARANCE} ${ADMIN_MOBILE_CONTENT_TOP_PAD} ${ADMIN_MOBILE_TAB_BAR_RESERVE} ${inter.className}`}
+        className={`flex min-h-[var(--app-vh,100lvh)] flex-col ${ADMIN_MOBILE_NAV_CLEARANCE} ${ADMIN_MOBILE_CONTENT_TOP_PAD} ${ADMIN_MOBILE_CONTENT_BOTTOM_PAD} ${ADMIN_MOBILE_TAB_BAR_RESERVE} ${inter.className}`}
       >
+        <header className="flex shrink-0 justify-end pb-5 iphone-page:pb-6">
+          <button
+            type="button"
+            onClick={() => void refresh()}
+            disabled={loading}
+            className={`${ADMIN_MOBILE_BUTTON_TW} ${ADMIN_MOBILE_INPUT_H}`}
+          >
+            {loading ? "…" : "Refresh"}
+          </button>
+        </header>
+
         <div className={`min-h-0 flex-1 ${ADMIN_MOBILE_CONTENT_STACK}`}>
           {activeTab === "signups" ? (
             <InternshipSignupsPanel

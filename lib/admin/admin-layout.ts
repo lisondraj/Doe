@@ -10,11 +10,19 @@ export const ADMIN_MOBILE_NAV_CLEARANCE =
 
 /** Small gap between site nav clearance and panel content. */
 export const ADMIN_MOBILE_CONTENT_TOP_PAD =
-  "pt-4 iphone-page:pt-5";
+  "pt-6 iphone-page:pt-8";
+
+/** Breathing room above the bottom tab bar. */
+export const ADMIN_MOBILE_CONTENT_BOTTOM_PAD =
+  "pb-6 iphone-page:pb-8";
+
+/** Extra scroll padding inside scrollable panel regions. */
+export const ADMIN_MOBILE_PANEL_SCROLL_PAD =
+  "pb-5 iphone-page:pb-6";
 
 /** Fixed bottom tab bar height reserve — matches tab row + safe area. */
 export const ADMIN_MOBILE_TAB_BAR_RESERVE =
-  "pb-[max(8.5rem,calc(env(safe-area-inset-bottom,0px)+7.75rem))] iphone-page:pb-[max(9rem,calc(env(safe-area-inset-bottom,0px)+8.25rem))]";
+  "pb-[max(9.25rem,calc(env(safe-area-inset-bottom,0px)+8.5rem))] iphone-page:pb-[max(9.75rem,calc(env(safe-area-inset-bottom,0px)+9rem))]";
 
 /** Vertical rhythm between major mobile admin blocks. */
 export const ADMIN_MOBILE_CONTENT_STACK =

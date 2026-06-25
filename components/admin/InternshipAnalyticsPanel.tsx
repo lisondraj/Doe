@@ -9,6 +9,7 @@ import type { AdminInternshipApplication } from "@/lib/admin/internship-applicat
 import { buildInternshipAnalytics } from "@/lib/admin/internship-analytics";
 import {
   ADMIN_MOBILE_CHART_STACK,
+  ADMIN_MOBILE_PANEL_SCROLL_PAD,
   ADMIN_MOBILE_PANEL_STACK,
   ADMIN_MOBILE_STAT_GRID,
   ADMIN_MOBILE_STAT_TILE,
@@ -125,10 +126,10 @@ export function InternshipAnalyticsPanel({
           </div>
         </header>
       ) : (
-        <AdminMobileSectionHeader title="Analytics" loading={loading} onRefresh={onRefresh} />
+        <AdminMobileSectionHeader title="Analytics" />
       )}
 
-      <div className={`min-h-0 flex-1 overflow-y-auto ${variant === "mobile" ? "" : "px-4 py-4"}`}>
+      <div className={`min-h-0 flex-1 overflow-y-auto ${variant === "mobile" ? ADMIN_MOBILE_PANEL_SCROLL_PAD : "px-4 py-4"}`}>
         {variant === "mobile" ? (
           <div className={ADMIN_MOBILE_PANEL_STACK}>
             <div className={ADMIN_MOBILE_STAT_GRID}>{summaryTiles}</div>
