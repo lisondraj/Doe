@@ -2,11 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-/** Show the hint only during the first 10s without card interaction. */
-const INITIAL_HINT_MS = 10000;
-/** Matches `join-card-idle-blur-pulse` duration — two blur cycles. */
-const PULSE_MS = 1500;
-const PULSE_INTERVAL_MS = 3200;
+/** Wait this long without clicking a field before the hint fades in. */
+const IDLE_MS = 10000;
 
 export function useJoinCardIdleHint({
   enabled,
@@ -16,88 +13,42 @@ export function useJoinCardIdleHint({
   resetEpoch: number;
 }) {
   const [hasContacted, setHasContacted] = useState(false);
-  const [initialWindowExpired, setInitialWindowExpired] = useState(false);
-  const [isPulsing, setIsPulsing] = useState(false);
-  const mountTimeRef = useRef(Date.now());
-  const pulseEndTimerRef = useRef<number | null>(null);
-  const pulseIntervalRef = useRef<number | null>(null);
-  const initialWindowTimerRef = useRef<number | null>(null);
-
-  const clearPulseTimers = useCallback(() => {
-    if (pulseEndTimerRef.current !== null) {
-      window.clearTimeout(pulseEndTimerRef.current);
-      pulseEndTimerRef.current = null;
-    }
-    if (pulseIntervalRef.current !== null) {
-      window.clearInterval(pulseIntervalRef.current);
-      pulseIntervalRef.current = null;
-    }
-  }, []);
+  const [hintReady, setHintReady] = useState(false);
+  const hasContactedRef = useRef(false);
+  const idleTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
+    hasContactedRef.current = false;
     setHasContacted(false);
-    setInitialWindowExpired(false);
-    setIsPulsing(false);
-    mountTimeRef.current = Date.now();
-    clearPulseTimers();
+    setHintReady(false);
 
-    if (initialWindowTimerRef.current !== null) {
-      window.clearTimeout(initialWindowTimerRef.current);
+    if (idleTimerRef.current !== null) {
+      window.clearTimeout(idleTimerRef.current);
     }
-    initialWindowTimerRef.current = window.setTimeout(() => {
-      setInitialWindowExpired(true);
-      setIsPulsing(false);
-      clearPulseTimers();
-      initialWindowTimerRef.current = null;
-    }, INITIAL_HINT_MS);
+
+    idleTimerRef.current = window.setTimeout(() => {
+      if (!hasContactedRef.current) {
+        setHintReady(true);
+      }
+      idleTimerRef.current = null;
+    }, IDLE_MS);
 
     return () => {
-      if (initialWindowTimerRef.current !== null) {
-        window.clearTimeout(initialWindowTimerRef.current);
-        initialWindowTimerRef.current = null;
+      if (idleTimerRef.current !== null) {
+        window.clearTimeout(idleTimerRef.current);
+        idleTimerRef.current = null;
       }
-      clearPulseTimers();
     };
-  }, [resetEpoch, clearPulseTimers]);
+  }, [resetEpoch]);
 
   const registerContact = useCallback(() => {
+    if (hasContactedRef.current) return;
+    hasContactedRef.current = true;
     setHasContacted(true);
-    setIsPulsing(false);
-    clearPulseTimers();
-  }, [clearPulseTimers]);
-
-  const bumpActivity = useCallback(() => {
-    // Pointer/focus on the card counts as interaction for dismissing the hint.
+    setHintReady(false);
   }, []);
 
-  const showIdleHint = enabled && !hasContacted && !initialWindowExpired;
+  const showIdleHint = enabled && !hasContacted && hintReady;
 
-  useEffect(() => {
-    if (!showIdleHint) {
-      setIsPulsing(false);
-      clearPulseTimers();
-      return;
-    }
-
-    const triggerPulse = () => {
-      if (Date.now() - mountTimeRef.current >= INITIAL_HINT_MS) return;
-      setIsPulsing(true);
-      if (pulseEndTimerRef.current !== null) {
-        window.clearTimeout(pulseEndTimerRef.current);
-      }
-      pulseEndTimerRef.current = window.setTimeout(() => {
-        setIsPulsing(false);
-        pulseEndTimerRef.current = null;
-      }, PULSE_MS);
-    };
-
-    triggerPulse();
-    pulseIntervalRef.current = window.setInterval(triggerPulse, PULSE_INTERVAL_MS);
-
-    return () => {
-      clearPulseTimers();
-    };
-  }, [showIdleHint, clearPulseTimers]);
-
-  return { showIdleHint, isPulsing, registerContact, bumpActivity };
+  return { showIdleHint, registerContact };
 }

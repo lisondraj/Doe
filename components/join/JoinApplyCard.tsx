@@ -1,6 +1,6 @@
 "use client";
 
-import type { PointerEvent, ReactNode } from "react";
+import type { FocusEvent, PointerEvent, ReactNode } from "react";
 import { useRef } from "react";
 
 import { JoinApplyCardDesktopLineGraphic, JoinInternLineGraphic } from "@/components/join/JoinInternLineGraphic";
@@ -53,7 +53,7 @@ const CARD_STYLES = {
     modalCloseBtn: "left-0 top-0",
     modalCloseIcon: "h-7 w-7 iphone-page:h-8 iphone-page:w-8",
     inviteText:
-      "text-[1.5rem] leading-snug tracking-[-0.02em] iphone-page:text-[1.6875rem]",
+      "text-[1.875rem] leading-snug tracking-[-0.02em] iphone-page:text-[2.125rem]",
   },
   desktop: {
     height: JOIN_DESKTOP_APPLY_CARD_HEIGHT,
@@ -84,7 +84,7 @@ const CARD_STYLES = {
     confirmBtnGap: "mt-5 flex flex-col gap-2.5",
     modalCloseBtn: "left-0 top-0",
     modalCloseIcon: "h-6 w-6",
-    inviteText: "text-[1.3125rem] leading-snug tracking-[-0.02em]",
+    inviteText: "text-[1.625rem] leading-snug tracking-[-0.02em]",
   },
 } as const;
 
@@ -406,7 +406,7 @@ export function JoinApplyCard({
   const isEditing = activeStep !== null && activeStep !== 0;
   const isSubmitReviewing = showSubmitReview && Boolean(submitReviewEditor);
   const isModalOpen = isEditing || showResetConfirm || isSubmitReviewing;
-  const { showIdleHint, isPulsing, registerContact, bumpActivity } = useJoinCardIdleHint({
+  const { showIdleHint, registerContact } = useJoinCardIdleHint({
     enabled: !readOnly && !isModalOpen,
     resetEpoch: idleHintResetEpoch,
   });
@@ -428,14 +428,17 @@ export function JoinApplyCard({
     if (target.closest("button, input, [role='group']")) {
       registerContact();
     }
-    bumpActivity();
   };
 
-  const handleCardFocusCapture = () => {
+  const handleCardFocusCapture = (event: FocusEvent<HTMLDivElement>) => {
     if (readOnly) return;
-    registerContact();
-    bumpActivity();
+    const target = event.target as HTMLElement;
+    if (target.closest("button, input, [role='group']")) {
+      registerContact();
+    }
   };
+
+  const fieldLayerClass = showIdleHint ? "z-[4]" : "z-[3]";
 
   return (
     <div className={`relative w-full ${!readOnly && onResetRequest ? styles.resetSlot : ""}`}>
@@ -456,7 +459,7 @@ export function JoinApplyCard({
         onPointerDownCapture={handleCardPointerDownCapture}
         onFocusCapture={handleCardFocusCapture}
       >
-        <div className={`pointer-events-none ${styles.lineBand} ${isModalOpen ? CARD_BLUR : ""} ${isPulsing ? "join-card-idle-line-blur-pulse" : ""}`}>
+        <div className={`pointer-events-none ${styles.lineBand} ${isModalOpen ? CARD_BLUR : ""}`}>
           {variant === "desktop" ? (
             <div className={`relative ${styles.lineGraphicSize}`}>
               <JoinApplyCardDesktopLineGraphic />
@@ -469,15 +472,15 @@ export function JoinApplyCard({
         {showIdleHint ? (
           <>
             <div
-              className={`absolute inset-x-0 z-[2] ${styles.idleBlurBand} pointer-events-none opacity-0 ${isPulsing ? "join-card-idle-scrim-pulse" : ""}`}
+              className={`join-card-idle-scrim absolute inset-x-0 z-[2] ${styles.idleBlurBand} pointer-events-none`}
               aria-hidden
             />
             <div
-              className="pointer-events-none absolute inset-0 z-[2] flex items-center justify-center px-8 iphone-page:px-10"
+              className="join-card-idle-hint-copy pointer-events-none absolute inset-0 z-[2] flex items-center justify-center px-8 iphone-page:px-10"
               aria-hidden
             >
               <p
-                className={`max-w-[16rem] text-center font-medium text-[#1E343A]/72 ${styles.inviteText} ${inter.className}`}
+                className={`max-w-[min(100%,22rem)] text-center font-medium text-[#1E343A]/72 ${styles.inviteText} ${inter.className}`}
               >
                 <span className="block">Click on any field</span>
                 <span className="block">to begin editing</span>
@@ -486,9 +489,9 @@ export function JoinApplyCard({
           </>
         ) : null}
 
-        {/* Top-left: preferred roles — in front of idle blur */}
+        {/* Top-left: preferred roles — above idle overlay */}
         <div
-          className={`absolute left-0 top-0 z-[3] ${styles.topLeftMaxW} ${styles.topPad} transition-[filter] duration-300 ${isModalOpen ? "pointer-events-none" : ""}`}
+          className={`absolute left-0 top-0 ${fieldLayerClass} ${styles.topLeftMaxW} ${styles.topPad} transition-[filter] duration-300 ${isModalOpen ? "pointer-events-none" : ""}`}
         >
           <div className={`flex flex-col items-start ${styles.roleGap} ${inter.className}`}>
             {data.areas.length === 0 ? (
@@ -517,9 +520,9 @@ export function JoinApplyCard({
           </div>
         </div>
 
-        {/* Top-right: other fields — in front of idle blur */}
+        {/* Top-right: other fields — above idle overlay */}
         <div
-          className={`absolute right-0 top-0 z-[3] ${styles.topRightMaxW} ${styles.topPad} transition-[filter] duration-300 ${isModalOpen ? "pointer-events-none" : ""}`}
+          className={`absolute right-0 top-0 ${fieldLayerClass} ${styles.topRightMaxW} ${styles.topPad} transition-[filter] duration-300 ${isModalOpen ? "pointer-events-none" : ""}`}
         >
           <div className={`flex flex-col items-end ${styles.topGap}`}>
             {TOP_RIGHT_FIELDS.map(({ step, placeholder, singleLine }) => {
@@ -579,9 +582,9 @@ export function JoinApplyCard({
           </div>
         </div>
 
-        {/* Bottom-left: inline name — in front of idle blur */}
+        {/* Bottom-left: inline name — above idle overlay */}
         <div
-          className={`absolute bottom-0 left-0 z-[3] transition-[filter] duration-300 ${isModalOpen ? "pointer-events-none" : ""}`}
+          className={`absolute bottom-0 left-0 ${fieldLayerClass} transition-[filter] duration-300 ${isModalOpen ? "pointer-events-none" : ""}`}
         >
           <JoinApplyCardNameField
             variant={variant}
