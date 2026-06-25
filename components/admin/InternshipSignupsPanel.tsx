@@ -15,9 +15,42 @@ import {
   INTERNSHIP_GROUP_MODE_OPTIONS,
   type InternshipGroupMode,
 } from "@/lib/admin/internship-grouping";
+import {
+  ADMIN_MOBILE_BODY_TW,
+  ADMIN_MOBILE_BUTTON_TW,
+  ADMIN_MOBILE_CARD_RADIUS,
+  ADMIN_MOBILE_DETAIL_TITLE_TW,
+  ADMIN_MOBILE_INPUT_H,
+  ADMIN_MOBILE_LABEL_TW,
+  ADMIN_MOBILE_LIST_NAME_TW,
+  ADMIN_MOBILE_META_TW,
+  ADMIN_MOBILE_SECTION_GAP,
+  ADMIN_MOBILE_SECTION_TITLE_TW,
+  ADMIN_MOBILE_STAT_VALUE_TW,
+  ADMIN_MOBILE_STACK_GAP,
+} from "@/lib/admin/admin-layout";
 import { inter, lora } from "@/lib/home/fonts";
 
-function StatCard({ label, value }: { label: string; value: number }) {
+type PanelVariant = "mobile" | "desktop";
+
+function StatCard({
+  label,
+  value,
+  variant,
+}: {
+  label: string;
+  value: number;
+  variant: PanelVariant;
+}) {
+  if (variant === "mobile") {
+    return (
+      <div className={`border border-[#E8E8E8] bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] ${ADMIN_MOBILE_CARD_RADIUS}`}>
+        <p className={ADMIN_MOBILE_LABEL_TW}>{label}</p>
+        <p className={`mt-2 ${ADMIN_MOBILE_STAT_VALUE_TW}`}>{value}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-xl border border-[#E8E8E8] bg-white p-3 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
       <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">{label}</p>
@@ -28,7 +61,24 @@ function StatCard({ label, value }: { label: string; value: number }) {
   );
 }
 
-function DetailField({ label, value }: { label: string; value: ReactNode }) {
+function DetailField({
+  label,
+  value,
+  variant,
+}: {
+  label: string;
+  value: ReactNode;
+  variant: PanelVariant;
+}) {
+  if (variant === "mobile") {
+    return (
+      <div className="border-b border-[#F0F0F0] py-4 last:border-b-0 iphone-page:py-5">
+        <p className={ADMIN_MOBILE_LABEL_TW}>{label}</p>
+        <div className={`mt-2 ${ADMIN_MOBILE_BODY_TW}`}>{value}</div>
+      </div>
+    );
+  }
+
   return (
     <div className="border-b border-[#F0F0F0] py-3 last:border-b-0">
       <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">{label}</p>
@@ -41,16 +91,45 @@ function ApplicationListItem({
   application,
   selected,
   onSelect,
+  variant,
 }: {
   application: AdminInternshipApplication;
   selected: boolean;
   onSelect: () => void;
+  variant: PanelVariant;
 }) {
   const initials = application.name
     .split(/\s+/)
     .slice(0, 2)
     .map((part) => part[0]?.toUpperCase() ?? "")
     .join("");
+
+  if (variant === "mobile") {
+    return (
+      <button
+        type="button"
+        onClick={onSelect}
+        className={`flex w-full items-start gap-4 border-b border-[#F0F0F0] py-4 text-left transition-colors iphone-page:gap-5 iphone-page:py-5 ${
+          selected ? "bg-white" : "bg-transparent active:bg-white/80"
+        }`}
+      >
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#E7A944] via-[#D2774C] to-[#1E343A] text-[0.82rem] font-semibold text-white iphone-page:h-14 iphone-page:w-14 iphone-page:text-[0.9rem]">
+          {initials || "?"}
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-start justify-between gap-3">
+            <p className={ADMIN_MOBILE_LIST_NAME_TW}>{application.name}</p>
+            <span className={`shrink-0 tabular-nums ${ADMIN_MOBILE_META_TW}`}>
+              {formatAdminDate(application.created_at)}
+            </span>
+          </div>
+          <p className={`mt-1.5 truncate ${ADMIN_MOBILE_META_TW} text-neutral-600`}>{application.email}</p>
+          <p className={`mt-1 truncate ${ADMIN_MOBILE_META_TW}`}>{application.school_name}</p>
+          <p className={`mt-1 line-clamp-2 ${ADMIN_MOBILE_META_TW}`}>{application.areas.join(", ")}</p>
+        </div>
+      </button>
+    );
+  }
 
   return (
     <button
@@ -83,67 +162,69 @@ function ApplicationDetail({
   resendingConfirmation,
   resendError,
   onResendConfirmationEmail,
-  onBack,
+  variant,
 }: {
   application: AdminInternshipApplication;
   resendingConfirmation: boolean;
   resendError: string | null;
   onResendConfirmationEmail: () => void;
-  onBack?: () => void;
+  variant: PanelVariant;
 }) {
   const linkedin = application.linkedin_username?.trim()
     ? `linkedin.com/in/${application.linkedin_username.trim()}`
     : null;
 
+  const areaChips = application.areas.length ? (
+    <div className="flex flex-wrap gap-2">
+      {application.areas.map((area) => (
+        <span
+          key={area}
+          className={`rounded-xl bg-neutral-100 px-3 py-1.5 font-medium text-neutral-700 ${
+            variant === "mobile"
+              ? "text-[clamp(0.95rem,0.84rem+0.45vmin,1.05rem)] iphone-page:text-[1.02rem]"
+              : "text-[11px]"
+          }`}
+        >
+          {area}
+        </span>
+      ))}
+    </div>
+  ) : (
+    "—"
+  );
+
+  const resendButtonClass =
+    variant === "mobile"
+      ? `${ADMIN_MOBILE_BUTTON_TW} ${ADMIN_MOBILE_INPUT_H}`
+      : "inline-flex h-8 items-center rounded-lg border border-[#E2E2E2] bg-white px-3 text-[12px] font-medium text-neutral-700 transition-colors hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-60";
+
   return (
-    <div className="flex h-full min-h-0 flex-col">
-      <header className="border-b border-[#EFEFEF] px-5 py-4">
-        {onBack ? (
-          <button
-            type="button"
-            onClick={onBack}
-            className="mb-3 inline-flex items-center gap-1 text-[13px] font-medium text-[#BF593D] lg:hidden"
-          >
-            ← Back to list
-          </button>
-        ) : null}
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">Applicant card</p>
-        <h2 className={`mt-1 text-[22px] font-normal tracking-tight text-neutral-900 ${lora.className}`}>
+    <div className={`flex h-full min-h-0 flex-col bg-white ${variant === "mobile" ? "" : ""}`}>
+      <header className={`border-b border-[#EFEFEF] ${variant === "mobile" ? "px-0 py-5 iphone-page:py-6" : "px-5 py-4"}`}>
+        <p className={variant === "mobile" ? ADMIN_MOBILE_LABEL_TW : "text-[10px] font-semibold uppercase tracking-wider text-neutral-400"}>
+          Applicant card
+        </p>
+        <h2 className={`mt-2 ${variant === "mobile" ? ADMIN_MOBILE_DETAIL_TITLE_TW : `text-[22px] font-normal tracking-tight text-neutral-900 ${lora.className}`}`}>
           {application.name}
         </h2>
-        <p className="mt-1 text-[13px] text-neutral-500">Submitted {formatAdminDate(application.created_at)}</p>
+        <p className={`mt-2 ${variant === "mobile" ? ADMIN_MOBILE_META_TW : "text-[13px] text-neutral-500"}`}>
+          Submitted {formatAdminDate(application.created_at)}
+        </p>
       </header>
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-5 py-2">
-        <DetailField label="Email" value={application.email} />
-        <DetailField label="Country" value={formatCountry(application.country)} />
-        <DetailField label="Education" value={formatEducation(application.education)} />
-        <DetailField label="School" value={application.school_name} />
-        <DetailField label="Program of study" value={application.program_of_study} />
+      <div className={`min-h-0 flex-1 overflow-y-auto ${variant === "mobile" ? "px-0 py-1" : "px-5 py-2"}`}>
+        <DetailField variant={variant} label="Email" value={application.email} />
+        <DetailField variant={variant} label="Country" value={formatCountry(application.country)} />
+        <DetailField variant={variant} label="Education" value={formatEducation(application.education)} />
+        <DetailField variant={variant} label="School" value={application.school_name} />
+        <DetailField variant={variant} label="Program of study" value={application.program_of_study} />
+        <DetailField variant={variant} label="Areas" value={areaChips} />
         <DetailField
-          label="Areas"
-          value={
-            application.areas.length ? (
-              <div className="flex flex-wrap gap-1.5">
-                {application.areas.map((area) => (
-                  <span
-                    key={area}
-                    className="rounded-md bg-neutral-100 px-2 py-1 text-[11px] font-medium text-neutral-700"
-                  >
-                    {area}
-                  </span>
-                ))}
-              </div>
-            ) : (
-              "—"
-            )
-          }
-        />
-        <DetailField
+          variant={variant}
           label="Resume"
           value={
             application.resume_file_name ? (
-              <div className="flex flex-col gap-0.5">
+              <div className="flex flex-col gap-1">
                 {application.resume_download_url ? (
                   <a
                     href={application.resume_download_url}
@@ -157,7 +238,9 @@ function ApplicationDetail({
                   application.resume_file_name
                 )}
                 {application.resume_file_type ? (
-                  <span className="text-[11px] font-medium text-neutral-500">{application.resume_file_type}</span>
+                  <span className={variant === "mobile" ? ADMIN_MOBILE_META_TW : "text-[11px] font-medium text-neutral-500"}>
+                    {application.resume_file_type}
+                  </span>
                 ) : null}
               </div>
             ) : (
@@ -166,6 +249,7 @@ function ApplicationDetail({
           }
         />
         <DetailField
+          variant={variant}
           label="LinkedIn"
           value={
             linkedin ? (
@@ -183,33 +267,56 @@ function ApplicationDetail({
           }
         />
         <DetailField
+          variant={variant}
           label="Additional notes"
           value={application.additional_notes?.trim() ? application.additional_notes : "None"}
         />
         <DetailField
+          variant={variant}
           label="Confirmation email sent"
           value={
-            <div className="flex flex-col items-start gap-2">
+            <div className="flex flex-col items-start gap-3">
               <span>{formatAdminDate(application.email_sent_at)}</span>
               <button
                 type="button"
                 onClick={onResendConfirmationEmail}
                 disabled={resendingConfirmation}
-                className="inline-flex h-8 items-center rounded-lg border border-[#E2E2E2] bg-white px-3 text-[12px] font-medium text-neutral-700 transition-colors hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-60"
+                className={resendButtonClass}
               >
                 {resendingConfirmation ? "Sending…" : "Re-send confirmation email"}
               </button>
-              {resendError ? <span className="text-[12px] font-medium text-[#BF593D]">{resendError}</span> : null}
+              {resendError ? (
+                <span className={`font-medium text-[#BF593D] ${variant === "mobile" ? ADMIN_MOBILE_META_TW : "text-[12px]"}`}>
+                  {resendError}
+                </span>
+              ) : null}
             </div>
           }
         />
-        <DetailField label="Application ID" value={<span className="font-mono text-[11px]">{application.id}</span>} />
+        <DetailField
+          variant={variant}
+          label="Application ID"
+          value={<span className={`font-mono ${variant === "mobile" ? "text-[0.95rem] iphone-page:text-[1rem]" : "text-[11px]"}`}>{application.id}</span>}
+        />
       </div>
     </div>
   );
 }
 
-function GroupHeader({ label, count }: { label: string; count: number }) {
+function GroupHeader({ label, count, variant }: { label: string; count: number; variant: PanelVariant }) {
+  if (variant === "mobile") {
+    return (
+      <div className="sticky top-0 z-[1] border-b border-[#ECECEC] bg-[#FAFAFA] py-3">
+        <div className="flex items-center justify-between gap-3">
+          <p className={`truncate ${ADMIN_MOBILE_LABEL_TW} text-neutral-600`}>{label}</p>
+          <span className="shrink-0 rounded-full bg-white px-2.5 py-0.5 text-[0.82rem] font-semibold tabular-nums text-neutral-500 iphone-page:text-[0.88rem]">
+            {count}
+          </span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="sticky top-0 z-[1] border-b border-[#ECECEC] bg-[#FAFAFA] px-4 py-2">
       <div className="flex items-center justify-between gap-2">
@@ -222,7 +329,70 @@ function GroupHeader({ label, count }: { label: string; count: number }) {
   );
 }
 
+function ApplicationList({
+  visibleApplications,
+  filtered,
+  groups,
+  groupMode,
+  selectedId,
+  onSelect,
+  variant,
+}: {
+  visibleApplications: AdminInternshipApplication[];
+  filtered: AdminInternshipApplication[];
+  groups: ReturnType<typeof groupInternshipApplications>;
+  groupMode: InternshipGroupMode;
+  selectedId: string | null;
+  onSelect: (id: string) => void;
+  variant: PanelVariant;
+}) {
+  const emptyClass =
+    variant === "mobile"
+      ? `py-12 text-center ${ADMIN_MOBILE_META_TW}`
+      : "px-4 py-10 text-center text-[13px] text-neutral-500";
+
+  if (visibleApplications.length === 0) {
+    return <div className={emptyClass}>No internship signups yet.</div>;
+  }
+
+  if (groupMode === "none") {
+    return (
+      <>
+        {filtered.map((application) => (
+          <ApplicationListItem
+            key={application.id}
+            application={application}
+            selected={selectedId === application.id}
+            onSelect={() => onSelect(application.id)}
+            variant={variant}
+          />
+        ))}
+      </>
+    );
+  }
+
+  return (
+    <>
+      {groups.map((group) => (
+        <div key={group.key}>
+          <GroupHeader label={group.label} count={group.count} variant={variant} />
+          {group.applications.map((application) => (
+            <ApplicationListItem
+              key={`${group.key}-${application.id}`}
+              application={application}
+              selected={selectedId === application.id}
+              onSelect={() => onSelect(application.id)}
+              variant={variant}
+            />
+          ))}
+        </div>
+      ))}
+    </>
+  );
+}
+
 export function InternshipSignupsPanel({
+  variant = "desktop",
   applications,
   stats,
   loading,
@@ -230,6 +400,7 @@ export function InternshipSignupsPanel({
   onRefresh,
   onApplicationUpdated,
 }: {
+  variant?: PanelVariant;
   applications: AdminInternshipApplication[];
   stats: InternshipSignupStats;
   loading: boolean;
@@ -307,53 +478,95 @@ export function InternshipSignupsPanel({
     [filtered, groupMode, groups],
   );
 
-  const selected = useMemo(() => {
-    if (!selectedId) return null;
-    return visibleApplications.find((row) => row.id === selectedId) ?? null;
-  }, [visibleApplications, selectedId]);
-
-  const desktopSelected = useMemo(
+  const selected = useMemo(
     () => visibleApplications.find((row) => row.id === selectedId) ?? visibleApplications[0] ?? null,
     [visibleApplications, selectedId],
   );
 
-  return (
-    <div className={`flex h-full min-h-0 flex-col ${inter.className}`}>
-      <header className="flex items-center gap-2 border-b border-[#EFEFEF] px-4 py-3">
-        <DoeBuildIcon className="h-5 w-5 text-neutral-500">
-          <>
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-          </>
-        </DoeBuildIcon>
-        <h1 className="text-[15px] font-semibold tracking-tight text-neutral-900">Internship signups</h1>
-        <div className="ml-auto flex items-center gap-2">
+  const handleSelect = (id: string) => {
+    setSelectedId(id);
+    if (variant === "mobile") setMobileDetailOpen(true);
+  };
+
+  if (variant === "mobile" && mobileDetailOpen && selected) {
+    return (
+      <div className={`flex h-full min-h-0 flex-col ${inter.className}`}>
+        <header className="shrink-0 pb-4">
           <button
             type="button"
-            onClick={onRefresh}
-            disabled={loading}
-            className="inline-flex h-8 items-center rounded-lg border border-[#E2E2E2] bg-white px-3 text-[12px] font-medium text-neutral-700 hover:bg-neutral-50 disabled:opacity-60"
+            onClick={() => setMobileDetailOpen(false)}
+            className={`${ADMIN_MOBILE_BUTTON_TW} ${ADMIN_MOBILE_INPUT_H} gap-2 px-4`}
           >
-            {loading ? "Refreshing…" : "Refresh"}
+            <DoeBuildIcon className="h-5 w-5">
+              <path d="m15 18-6-6 6-6" />
+            </DoeBuildIcon>
+            Back to signups
           </button>
+        </header>
+        <div className="min-h-0 flex-1 overflow-hidden">
+          <ApplicationDetail
+            application={selected}
+            resendingConfirmation={resendingConfirmation}
+            resendError={resendError}
+            onResendConfirmationEmail={() => void handleResendConfirmationEmail(selected)}
+            variant="mobile"
+          />
         </div>
-      </header>
+      </div>
+    );
+  }
 
-      <div className="border-b border-[#EFEFEF] px-4 py-3">
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-          <StatCard label="Total signups" value={stats.total} />
-          <StatCard label="With resume" value={stats.withResume} />
-          <StatCard label="With LinkedIn" value={stats.withLinkedIn} />
-          <StatCard label="With notes" value={stats.withNotes} />
+  const statsGrid = variant === "mobile" ? "grid-cols-2" : "grid-cols-4";
+  const inputTextClass =
+    variant === "mobile"
+      ? "min-w-0 flex-1 bg-transparent text-[clamp(1.02rem,0.9rem+0.5vmin,1.12rem)] iphone-page:text-[1.0625rem] text-neutral-800 outline-none placeholder:text-neutral-400"
+      : "min-w-0 flex-1 bg-transparent text-[13px] text-neutral-800 outline-none placeholder:text-neutral-400";
+
+  return (
+    <div className={`flex h-full min-h-0 flex-col ${inter.className}`}>
+      {variant === "desktop" ? (
+        <header className="flex items-center gap-2 border-b border-[#EFEFEF] px-4 py-3">
+          <DoeBuildIcon className="h-5 w-5 text-neutral-500">
+            <>
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </>
+          </DoeBuildIcon>
+          <h1 className="text-[15px] font-semibold tracking-tight text-neutral-900">Internship signups</h1>
+          <div className="ml-auto flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onRefresh}
+              disabled={loading}
+              className="inline-flex h-8 items-center rounded-lg border border-[#E2E2E2] bg-white px-3 text-[12px] font-medium text-neutral-700 hover:bg-neutral-50 disabled:opacity-60"
+            >
+              {loading ? "Refreshing…" : "Refresh"}
+            </button>
+          </div>
+        </header>
+      ) : (
+        <h2 className={`shrink-0 pb-4 ${ADMIN_MOBILE_SECTION_TITLE_TW}`}>Signups</h2>
+      )}
+
+      <div className={variant === "mobile" ? ADMIN_MOBILE_SECTION_GAP : "border-b border-[#EFEFEF] px-4 py-3"}>
+        <div className={`grid gap-3 ${statsGrid}`}>
+          <StatCard variant={variant} label="Total signups" value={stats.total} />
+          <StatCard variant={variant} label="With resume" value={stats.withResume} />
+          <StatCard variant={variant} label="With LinkedIn" value={stats.withLinkedIn} />
+          <StatCard variant={variant} label="With notes" value={stats.withNotes} />
         </div>
       </div>
 
-      <div className="border-b border-[#EFEFEF] px-4 py-3">
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="flex h-9 min-w-0 flex-1 items-center gap-2 rounded-lg border border-[#ECECEC] bg-[#FAFAFA] px-2.5">
-            <DoeBuildIcon className="h-4 w-4 shrink-0 text-neutral-400">
+      <div className={variant === "mobile" ? `pb-4 ${ADMIN_MOBILE_STACK_GAP} flex flex-col` : "border-b border-[#EFEFEF] px-4 py-3"}>
+        <div className={`flex gap-3 ${variant === "mobile" ? "flex-col" : "flex-wrap items-center"}`}>
+          <div
+            className={`flex min-w-0 flex-1 items-center gap-3 border border-[#ECECEC] bg-[#FAFAFA] px-4 ${
+              variant === "mobile" ? `${ADMIN_MOBILE_INPUT_H} ${ADMIN_MOBILE_CARD_RADIUS}` : "h-9 rounded-lg px-2.5"
+            }`}
+          >
+            <DoeBuildIcon className={`shrink-0 text-neutral-400 ${variant === "mobile" ? "h-5 w-5" : "h-4 w-4"}`}>
               <>
                 <circle cx="11" cy="11" r="7" />
                 <path d="m21 21-4.35-4.35" />
@@ -363,19 +576,31 @@ export function InternshipSignupsPanel({
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search name, email, school, areas…"
-              className="min-w-0 flex-1 bg-transparent text-[13px] text-neutral-800 outline-none placeholder:text-neutral-400"
+              className={inputTextClass}
             />
-            <span className="rounded border border-[#E5E5E5] bg-white px-1.5 py-0.5 text-[10px] font-medium text-neutral-500">
+            <span
+              className={`rounded border border-[#E5E5E5] bg-white font-medium text-neutral-500 ${
+                variant === "mobile" ? "px-2 py-1 text-[0.82rem] iphone-page:text-[0.88rem]" : "px-1.5 py-0.5 text-[10px]"
+              }`}
+            >
               {filtered.length}
             </span>
           </div>
 
-          <label className="flex h-9 items-center gap-2 rounded-lg border border-[#ECECEC] bg-white px-2.5">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">Group by</span>
+          <label
+            className={`flex w-full items-center gap-3 border border-[#ECECEC] bg-white px-4 ${
+              variant === "mobile" ? `${ADMIN_MOBILE_INPUT_H} ${ADMIN_MOBILE_CARD_RADIUS}` : "h-9 rounded-lg px-2.5"
+            }`}
+          >
+            <span className={variant === "mobile" ? `${ADMIN_MOBILE_LABEL_TW} shrink-0` : "text-[11px] font-semibold uppercase tracking-wider text-neutral-400"}>
+              Group by
+            </span>
             <select
               value={groupMode}
               onChange={(event) => setGroupMode(event.target.value as InternshipGroupMode)}
-              className="bg-transparent text-[12px] font-medium text-neutral-800 outline-none"
+              className={`min-w-0 flex-1 bg-transparent font-medium text-neutral-800 outline-none ${
+                variant === "mobile" ? "text-[1.02rem] iphone-page:text-[1.0625rem]" : "text-[12px]"
+              }`}
             >
               {INTERNSHIP_GROUP_MODE_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -385,70 +610,56 @@ export function InternshipSignupsPanel({
             </select>
           </label>
         </div>
-        {error ? <p className="mt-2 text-[12px] font-medium text-[#BF593D]">{error}</p> : null}
+        {error ? (
+          <p className={`font-medium text-[#BF593D] ${variant === "mobile" ? ADMIN_MOBILE_META_TW : "text-[12px]"}`}>
+            {error}
+          </p>
+        ) : null}
       </div>
 
-      <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)]">
-        <div
-          className={`min-h-0 overflow-y-auto bg-white lg:border-r lg:border-[#EFEFEF] ${
-            mobileDetailOpen ? "hidden lg:block" : "block"
-          }`}
-        >
-          {visibleApplications.length === 0 ? (
-            <div className="px-4 py-10 text-center text-[13px] text-neutral-500">No internship signups yet.</div>
-          ) : groupMode === "none" ? (
-            filtered.map((application) => (
-              <ApplicationListItem
-                key={application.id}
-                application={application}
-                selected={desktopSelected?.id === application.id}
-                onSelect={() => {
-                  setSelectedId(application.id);
-                  setMobileDetailOpen(true);
-                }}
-              />
-            ))
-          ) : (
-            groups.map((group) => (
-              <div key={group.key}>
-                <GroupHeader label={group.label} count={group.count} />
-                {group.applications.map((application) => (
-                  <ApplicationListItem
-                    key={`${group.key}-${application.id}`}
-                    application={application}
-                    selected={selected?.id === application.id}
-                    onSelect={() => {
-                      setSelectedId(application.id);
-                      setMobileDetailOpen(true);
-                    }}
-                  />
-                ))}
-              </div>
-            ))
-          )}
+      {variant === "mobile" ? (
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          <ApplicationList
+            visibleApplications={visibleApplications}
+            filtered={filtered}
+            groups={groups}
+            groupMode={groupMode}
+            selectedId={selected?.id ?? null}
+            onSelect={handleSelect}
+            variant={variant}
+          />
         </div>
-
-        <div className={`min-h-0 bg-white ${mobileDetailOpen ? "block" : "hidden lg:block"}`}>
-          {(mobileDetailOpen ? selected : desktopSelected) ? (
-            <ApplicationDetail
-              application={(mobileDetailOpen ? selected : desktopSelected)!}
-              resendingConfirmation={resendingConfirmation}
-              resendError={resendError}
-              onResendConfirmationEmail={() =>
-                void handleResendConfirmationEmail((mobileDetailOpen ? selected : desktopSelected)!)
-              }
-              onBack={() => {
-                setMobileDetailOpen(false);
-                setSelectedId(null);
-              }}
+      ) : (
+        <div className="grid min-h-0 flex-1 grid-cols-[minmax(280px,360px)_minmax(0,1fr)]">
+          <div className="min-h-0 overflow-y-auto border-r border-[#EFEFEF] bg-white">
+            <ApplicationList
+              visibleApplications={visibleApplications}
+              filtered={filtered}
+              groups={groups}
+              groupMode={groupMode}
+              selectedId={selected?.id ?? null}
+              onSelect={handleSelect}
+              variant={variant}
             />
-          ) : (
-            <div className="flex h-full items-center justify-center px-6 text-center text-[13px] text-neutral-500">
-              Select a signup to view the full applicant card.
-            </div>
-          )}
+          </div>
+
+          <div className="min-h-0 bg-white">
+            {selected ? (
+              <ApplicationDetail
+                application={selected}
+                resendingConfirmation={resendingConfirmation}
+                resendError={resendError}
+                onResendConfirmationEmail={() => void handleResendConfirmationEmail(selected)}
+                variant="desktop"
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center px-6 text-center text-[13px] text-neutral-500">
+                Select a signup to view the full applicant card.
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
