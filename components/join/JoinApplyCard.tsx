@@ -29,6 +29,8 @@ const CARD_STYLES = {
     topRightMaxW: "max-w-[52%] iphone-page:max-w-[54%]",
     topGap: "gap-3 iphone-page:gap-3.5",
     nameWidth: "w-full max-w-[min(100%,18rem)] iphone-page:max-w-[min(100%,20rem)]",
+    nameBlockH: "h-[calc(2*1.04em)]",
+    nameRowH: "h-[1.04em] min-h-[1.04em] max-h-[1.04em] overflow-hidden py-0",
     nameLineGap: "gap-0",
     lineBand:
       "absolute inset-x-0 top-[40%] bottom-[11rem] origin-center scale-[1.34] iphone-page:top-[38%] iphone-page:bottom-[12rem] iphone-page:scale-[1.4]",
@@ -39,10 +41,10 @@ const CARD_STYLES = {
       "w-fit max-w-full shrink-0 rounded-xl px-2.5 py-1.5 text-right font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[clamp(1.2rem,4vw,1.55rem)] iphone-page:px-3 iphone-page:py-2 iphone-page:text-[clamp(1.3rem,1.1rem+1.2vmin,1.7rem)]",
     editorPad: "px-8 py-12 iphone-page:px-10 iphone-page:py-14",
     editorMaxW: "max-w-[min(100%,34rem)]",
-    cornerPad: "pl-9 pb-10 pr-8 iphone-page:pl-10 iphone-page:pb-12 iphone-page:pr-9",
-    resetSlot: "pt-11 iphone-page:pt-12",
-    resetBtn: "gap-3 text-[1.25rem] iphone-page:text-[1.375rem]",
-    resetIcon: "h-6 w-6 iphone-page:h-7 iphone-page:w-7",
+    cornerPad: "pl-10 pb-11 pr-8 pt-0 iphone-page:pl-11 iphone-page:pb-12 iphone-page:pr-9",
+    resetSlot: "pt-12 iphone-page:pt-14",
+    resetBtn: "gap-3.5 text-[1.5rem] iphone-page:text-[1.625rem]",
+    resetIcon: "h-7 w-7 iphone-page:h-8 iphone-page:w-8",
     confirmTitle: "text-[1.625rem] iphone-page:text-[1.75rem]",
     confirmBody: "text-[1.125rem] iphone-page:text-[1.1875rem]",
     confirmBtn: "rounded-xl px-5 py-3 text-[1.125rem] iphone-page:rounded-[0.95rem] iphone-page:px-6 iphone-page:py-3.5 iphone-page:text-[1.1875rem]",
@@ -51,7 +53,6 @@ const CARD_STYLES = {
   },
   desktop: {
     height: JOIN_DESKTOP_APPLY_CARD_HEIGHT,
-    fieldText: "text-[1.5rem] leading-[1.14]",
     placeholderLabel: "text-[0.9375rem] font-medium uppercase tracking-[0.24em] text-[#C8C0B4]",
     namePlaceholder: "text-[2.35rem] leading-[1.04] text-[#C8C0B4]",
     nameText: "text-[2.35rem] leading-[1.04]",
@@ -60,20 +61,21 @@ const CARD_STYLES = {
     topRightMaxW: "max-w-[54%]",
     topGap: "gap-2.5",
     nameWidth: "w-full max-w-[16rem]",
+    nameBlockH: "h-[calc(2*1.04em)]",
+    nameRowH: "h-[1.04em] min-h-[1.04em] max-h-[1.04em] overflow-hidden py-0",
     nameLineGap: "gap-0",
     lineBand: "absolute inset-x-0 top-[38%] bottom-[9.5rem] origin-center scale-[1.36]",
     roleChip:
       "w-fit max-w-full shrink-0 rounded-lg px-2.5 py-1.5 text-left font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[1.125rem]",
-    roleGrid: "inline-grid grid-cols-1",
     roleGap: "gap-y-1.5",
     filledChip:
       "w-fit max-w-full shrink-0 rounded-lg px-2.5 py-1.5 text-right font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[1.125rem]",
     editorPad: "px-11 py-10",
     editorMaxW: "max-w-[min(100%,32rem)]",
-    cornerPad: "pl-8 pb-9 pr-7",
-    resetSlot: "pt-10",
-    resetBtn: "gap-3 text-[1.1875rem]",
-    resetIcon: "h-6 w-6",
+    cornerPad: "pl-9 pb-10 pr-7 pt-0",
+    resetSlot: "pt-12",
+    resetBtn: "gap-3.5 text-[1.4375rem]",
+    resetIcon: "h-7 w-7",
     confirmTitle: "text-[1.5rem]",
     confirmBody: "text-[1.125rem]",
     confirmBtn: "rounded-lg px-4 py-2.5 text-[1.0625rem]",
@@ -86,7 +88,7 @@ const MODAL_SCRIM = "bg-[#EFECE7]/62 backdrop-blur-[10px]";
 const CARD_BLUR = "blur-[12px]";
 
 const BOTTOM_LEFT_NAME_LINE =
-  "block w-full bg-transparent font-normal tracking-[-0.03em] leading-[1.04] outline-none";
+  "block w-full appearance-none border-0 bg-transparent font-normal tracking-[-0.03em] leading-[1.04] outline-none";
 
 function splitNameLines(name: string): { first: string; last: string } {
   const trimmed = name.trimStart();
@@ -322,53 +324,55 @@ export function JoinApplyCard({
               })}
             </div>
           </div>
+        </div>
 
-          {/* Bottom-left: inline name input */}
-          <div className={`absolute bottom-0 left-0 z-[2] ${styles.nameWidth} ${styles.cornerPad}`}>
-            <div className={`relative flex flex-col ${styles.nameLineGap}`}>
-              {!hasName && !readOnly ? (
-                <div
-                  className={`pointer-events-none absolute inset-0 text-left ${styles.namePlaceholder} ${lora.className}`}
-                  aria-hidden
-                >
-                  <span className="block">Enter your</span>
-                  <span className="block">name here</span>
-                </div>
-              ) : null}
-              {readOnly ? (
-                <>
-                  <span className={`text-[#1E343A] ${styles.nameText} ${lora.className} ${BOTTOM_LEFT_NAME_LINE}`}>
-                    {splitNameLines(name).first}
-                  </span>
-                  <span className={`text-[#1E343A] ${styles.nameText} ${lora.className} ${BOTTOM_LEFT_NAME_LINE}`}>
-                    {splitNameLines(name).last}
-                  </span>
-                </>
-              ) : (
-                <>
-                  <input
-                    type="text"
-                    value={splitNameLines(name).first}
-                    onChange={(e) =>
-                      onNameChange(joinNameLines(e.target.value, splitNameLines(name).last))
-                    }
-                    autoComplete="given-name"
-                    aria-label="First name"
-                    className={`text-[#1E343A] ${styles.nameText} ${lora.className} ${BOTTOM_LEFT_NAME_LINE}`}
-                  />
-                  <input
-                    type="text"
-                    value={splitNameLines(name).last}
-                    onChange={(e) =>
-                      onNameChange(joinNameLines(splitNameLines(name).first, e.target.value))
-                    }
-                    autoComplete="family-name"
-                    aria-label="Last name"
-                    className={`text-[#1E343A] ${styles.nameText} ${lora.className} ${BOTTOM_LEFT_NAME_LINE}`}
-                  />
-                </>
-              )}
-            </div>
+        {/* Bottom-left: inline name — outside blur layer so it stays fixed when editing */}
+        <div
+          className={`absolute bottom-0 left-0 z-[3] ${styles.nameWidth} ${styles.cornerPad} ${isEditing || showResetConfirm ? "pointer-events-none" : ""}`}
+        >
+          <div className={`relative grid grid-rows-2 ${styles.nameBlockH} ${styles.nameLineGap}`}>
+            {!hasName && !readOnly ? (
+              <div
+                className={`pointer-events-none absolute inset-0 grid grid-rows-2 ${styles.nameBlockH} ${lora.className}`}
+                aria-hidden
+              >
+                <span className={`${styles.nameRowH} text-left ${styles.namePlaceholder}`}>Enter your</span>
+                <span className={`${styles.nameRowH} text-left ${styles.namePlaceholder}`}>name here</span>
+              </div>
+            ) : null}
+            {readOnly ? (
+              <>
+                <span className={`text-[#1E343A] ${styles.nameText} ${lora.className} ${BOTTOM_LEFT_NAME_LINE} ${styles.nameRowH}`}>
+                  {splitNameLines(name).first}
+                </span>
+                <span className={`text-[#1E343A] ${styles.nameText} ${lora.className} ${BOTTOM_LEFT_NAME_LINE} ${styles.nameRowH}`}>
+                  {splitNameLines(name).last}
+                </span>
+              </>
+            ) : (
+              <>
+                <input
+                  type="text"
+                  value={splitNameLines(name).first}
+                  onChange={(e) =>
+                    onNameChange(joinNameLines(e.target.value, splitNameLines(name).last))
+                  }
+                  autoComplete="given-name"
+                  aria-label="First name"
+                  className={`text-[#1E343A] ${styles.nameText} ${lora.className} ${BOTTOM_LEFT_NAME_LINE} ${styles.nameRowH}`}
+                />
+                <input
+                  type="text"
+                  value={splitNameLines(name).last}
+                  onChange={(e) =>
+                    onNameChange(joinNameLines(splitNameLines(name).first, e.target.value))
+                  }
+                  autoComplete="family-name"
+                  aria-label="Last name"
+                  className={`text-[#1E343A] ${styles.nameText} ${lora.className} ${BOTTOM_LEFT_NAME_LINE} ${styles.nameRowH}`}
+                />
+              </>
+            )}
           </div>
         </div>
 
