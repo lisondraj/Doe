@@ -48,21 +48,27 @@ export const JOIN_MOBILE_APPLY_SECTION_PAD =
 export const JOIN_MOBILE_APPLY_TITLE_CARD_GAP =
   "mt-8 iphone-page:mt-[max(2rem,calc(env(safe-area-inset-left,0px)+4.25vmin))]";
 
-/** Desktop apply section — vertical band + footer pad. */
-export const JOIN_DESKTOP_APPLY_SECTION_MIN =
-  "min-h-[min(88vh,52rem)]";
-export const JOIN_DESKTOP_APPLY_FOOTER_PAD = "pb-24";
-
 /** Desktop hero — same proportions as mobile, capped for wide screens. */
 export const JOIN_DESKTOP_HERO_HEIGHT = "min-h-[min(72vh,44rem)] h-[min(72vh,44rem)]";
+
+/** Extra top padding above desktop hero card (below nav). */
+export const JOIN_DESKTOP_HERO_TOP_PAD = "pt-10";
 
 /** Legacy stacked desktop track card height. */
 export const JOIN_DESKTOP_CARD_HEIGHT = "min-h-[min(36vh,22rem)] h-[min(36vh,22rem)]";
 
 /** Desktop intern track row — four compact cards in one line. */
-export const JOIN_DESKTOP_TRACK_ROW_CARD_HEIGHT = "min-h-[11rem] h-[11rem]";
+export const JOIN_DESKTOP_TRACK_ROW_CARD_HEIGHT = "min-h-[13.5rem] h-[13.5rem]";
 export const JOIN_DESKTOP_TRACK_ROW_GAP = "mt-12";
 export const JOIN_DESKTOP_TRACK_ROW_COL_GAP = "gap-5";
+
+/** Desktop apply section — vertical band + footer pad. */
+export const JOIN_DESKTOP_APPLY_SECTION_MIN =
+  "min-h-[min(88vh,52rem)]";
+export const JOIN_DESKTOP_APPLY_FOOTER_PAD = "pb-24";
+
+/** Padding above “Build your applicant card.” on desktop. */
+export const JOIN_DESKTOP_APPLY_TITLE_TOP_PAD = "pt-16";
 
 /** Desktop applicant card — scaled from iPhone inline editor card. */
 export const JOIN_DESKTOP_APPLY_CARD_HEIGHT = "h-[38rem]";

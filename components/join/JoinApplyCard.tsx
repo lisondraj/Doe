@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { useRef } from "react";
 
-import { JoinInternLineGraphic } from "@/components/join/JoinInternLineGraphic";
+import { JoinApplyCardDesktopLineGraphic, JoinInternLineGraphic } from "@/components/join/JoinInternLineGraphic";
 import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
 import { inter, lora } from "@/lib/home/fonts";
 import type { JoinApplyFormState } from "@/lib/join/join-apply-form";
@@ -32,6 +32,7 @@ const CARD_STYLES = {
       "px-8 pb-14 pt-0 iphone-page:px-[clamp(2rem,1.65rem+1.45vmin,2.6rem)] iphone-page:pb-[clamp(3rem,2.5rem+1.8vmin,3.75rem)]",
     lineBand:
       "absolute inset-x-0 z-[1] bottom-[10.25rem] h-[18rem] overflow-hidden iphone-page:bottom-[11rem] iphone-page:h-[20rem]",
+    lineGraphicSize: "",
     roleChip:
       "w-fit max-w-full shrink-0 rounded-xl px-3 py-1.75 text-left font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[clamp(1.35rem,4.4vw,1.7rem)] iphone-page:px-3.5 iphone-page:py-2.25 iphone-page:text-[clamp(1.45rem,1.2rem+1.35vmin,1.875rem)]",
     roleGap: "gap-y-2.5 iphone-page:gap-y-3",
@@ -59,7 +60,8 @@ const CARD_STYLES = {
     topGap: "gap-8",
     nameLeading: 1.04,
     nameCornerPad: "px-7 pb-10 pt-0",
-    lineBand: "absolute inset-x-0 z-[1] bottom-[7.5rem] h-[11rem] overflow-hidden",
+    lineBand: "absolute inset-0 z-[1] flex items-center justify-center overflow-hidden",
+    lineGraphicSize: "h-[19rem] w-[19rem] shrink-0",
     roleChip:
       "w-fit max-w-full shrink-0 rounded-lg px-3 py-2 text-left font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[1.25rem]",
     roleGap: "gap-y-2",
@@ -84,11 +86,11 @@ const CARD_BLUR = "blur-[10px]";
 const NAME_LORA_MOBILE =
   "text-[clamp(2.35rem,8vw,3.55rem)] iphone-page:text-[clamp(2.5rem,1.9rem+3.4vmin,4.15rem)]";
 
-const NAME_LORA_DESKTOP = "text-[clamp(2.2rem,4.8vw,3.35rem)]";
+const NAME_LORA_DESKTOP = "text-[clamp(2.85rem,5vw,3.95rem)]";
 
 const NAME_SIZE = {
   mobile: { max: 4.15, min: 1.75, shrinkAfter: 20 },
-  desktop: { max: 2.35, min: 1.25, shrinkAfter: 20 },
+  desktop: { max: 3, min: 1.35, shrinkAfter: 20 },
 } as const;
 
 /** Shrink font only after 20 total characters; padding and slot stay fixed. */
@@ -170,7 +172,7 @@ function JoinApplyCardNameField({
 
   return (
     <div
-      className={`w-[min(100%,19em)] ${cornerPad} pt-0 ${lora.className} ${loraSizeClass}`}
+      className={`${variant === "desktop" ? "w-[min(100%,22em)]" : "w-[min(100%,19em)]"} ${cornerPad} pt-0 ${lora.className} ${loraSizeClass}`}
       onClick={focusName}
       onKeyDown={(e) => {
         if (readOnly) return;
@@ -409,7 +411,13 @@ export function JoinApplyCard({
           className={`absolute inset-0 transition-[filter] duration-300 ${isEditing || showResetConfirm ? `pointer-events-none ${CARD_BLUR}` : ""}`}
         >
           <div className={`pointer-events-none ${styles.lineBand}`}>
-            <JoinInternLineGraphic variant={2} fullBleed />
+            {variant === "desktop" ? (
+              <div className={`relative ${styles.lineGraphicSize}`}>
+                <JoinApplyCardDesktopLineGraphic />
+              </div>
+            ) : (
+              <JoinInternLineGraphic variant={2} fullBleed />
+            )}
           </div>
 
           {/* Top-left: preferred roles */}

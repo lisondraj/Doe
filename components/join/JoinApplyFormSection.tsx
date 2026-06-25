@@ -9,6 +9,7 @@ import {
 import {
   JOIN_DESKTOP_APPLY_FOOTER_PAD,
   JOIN_DESKTOP_APPLY_SECTION_MIN,
+  JOIN_DESKTOP_APPLY_TITLE_TOP_PAD,
   JOIN_DESKTOP_CONTENT,
   JOIN_DESKTOP_TRACK_ROW_GAP,
   JOIN_MOBILE_APPLY_SECTION,
@@ -41,7 +42,7 @@ export function JoinApplyFormSection({ variant }: { variant: "mobile" | "desktop
       className={`flex w-full flex-col justify-center ${JOIN_DESKTOP_TRACK_ROW_GAP} ${JOIN_DESKTOP_APPLY_SECTION_MIN} ${JOIN_DESKTOP_APPLY_FOOTER_PAD}`}
       aria-label="Internship application"
     >
-      <div className={JOIN_DESKTOP_CONTENT}>
+      <div className={`${JOIN_DESKTOP_CONTENT} ${JOIN_DESKTOP_APPLY_TITLE_TOP_PAD}`}>
         <JoinInternTrackReveal variant="desktop" className="flex w-full flex-col justify-center">
           <DoePhoneSectionTitle line1="Build your" line2="applicant card." />
           <div className={`${DOEPHONE_SECTION_TITLE_CAROUSEL_GAP} w-full`}>

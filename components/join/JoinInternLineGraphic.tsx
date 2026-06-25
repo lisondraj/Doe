@@ -1,4 +1,5 @@
 import { BLOG_LANDING_HERO } from "@/lib/blog/blog-landing-hero-colors";
+import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
 
 type LinePalette = {
   lineSoft: string;
@@ -192,6 +193,76 @@ function CrosshatchLinesGraphic({ palette }: { palette: LinePalette }) {
         />
       ))}
       <circle cx={200} cy={200} r="2.5" fill={accentWarm} opacity={0.55} />
+    </svg>
+  );
+}
+
+type CircleSpec = { cx: number; cy: number; r: number };
+
+function circlePairIntersections(a: CircleSpec, b: CircleSpec): [number, number][] {
+  const dx = b.cx - a.cx;
+  const dy = b.cy - a.cy;
+  const d = Math.hypot(dx, dy);
+  if (d === 0 || d > a.r + b.r || d < Math.abs(a.r - b.r)) return [];
+
+  const chord = (a.r * a.r - b.r * b.r + d * d) / (2 * d);
+  const h2 = a.r * a.r - chord * chord;
+  if (h2 < 0) return [];
+
+  const h = Math.sqrt(h2);
+  const px = a.cx + (chord * dx) / d;
+  const py = a.cy + (chord * dy) / d;
+  const rx = (-dy * h) / d;
+  const ry = (dx * h) / d;
+
+  return [
+    [px + rx, py + ry],
+    [px - rx, py - ry],
+  ];
+}
+
+function innerIntersectionPoint(
+  a: CircleSpec,
+  b: CircleSpec,
+  focusX: number,
+  focusY: number,
+): [number, number] | null {
+  const points = circlePairIntersections(a, b);
+  if (points.length === 0) return null;
+  if (points.length === 1) return points[0];
+  const d0 = Math.hypot(points[0][0] - focusX, points[0][1] - focusY);
+  const d1 = Math.hypot(points[1][0] - focusX, points[1][1] - focusY);
+  return d0 < d1 ? points[0] : points[1];
+}
+
+/** Three overlapping circles — desktop apply card center mark. */
+export function JoinApplyCardDesktopLineGraphic() {
+  const line = JOIN_FORM_BEIGE.line;
+  const point = JOIN_FORM_BEIGE.meter;
+  const focusX = 200;
+  const focusY = 206;
+
+  const circles: CircleSpec[] = [
+    { cx: 200, cy: 156, r: 84 },
+    { cx: 156, cy: 248, r: 84 },
+    { cx: 244, cy: 248, r: 84 },
+  ];
+
+  const intersectionPoints = [
+    innerIntersectionPoint(circles[0], circles[1], focusX, focusY),
+    innerIntersectionPoint(circles[1], circles[2], focusX, focusY),
+    innerIntersectionPoint(circles[0], circles[2], focusX, focusY),
+    [focusX, focusY] as [number, number],
+  ].filter((p): p is [number, number] => p !== null);
+
+  return (
+    <svg viewBox="0 0 400 400" fill="none" preserveAspectRatio="xMidYMid meet" aria-hidden className={SVG_CLASS}>
+      {circles.map(({ cx, cy, r }) => (
+        <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r={r} stroke={line} strokeWidth="0.85" />
+      ))}
+      {intersectionPoints.map(([x, y], i) => (
+        <circle key={`${x}-${y}-${i}`} cx={x} cy={y} r="3.25" fill={point} />
+      ))}
     </svg>
   );
 }
