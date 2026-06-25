@@ -62,6 +62,7 @@ const CARD_STYLES = {
     topGap: "gap-3.5",
     nameMinH: "min-h-[calc(2*1.04em)]",
     nameWidth: "w-full max-w-[7em]",
+    lineBand: "absolute left-0 right-0 bottom-[9.5rem] top-auto h-[24%] origin-bottom scale-[1.24]",
     editBtn: "h-12 w-12 rounded-lg",
     pencil: "h-[1.35rem] w-[1.35rem]",
     roleChip: "w-fit max-w-full shrink-0 rounded-lg px-2.5 py-1.5 text-[1.125rem]",
