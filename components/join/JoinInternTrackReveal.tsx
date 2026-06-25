@@ -8,19 +8,17 @@ type JoinInternTrackRevealProps = {
   className?: string;
 };
 
-/** Scroll-triggered unblur + rise for intern track visuals and copy (not hero). */
+/** Scroll-triggered unblur + rise for join track visuals, copy, and apply card. */
 export function JoinInternTrackReveal({
   variant,
   children,
   className = "",
 }: JoinInternTrackRevealProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(variant === "desktop");
+  const [visible, setVisible] = useState(false);
   const [, startTransition] = useTransition();
 
   useEffect(() => {
-    if (variant === "desktop") return;
-
     const el = ref.current;
     if (!el) return;
 
@@ -33,7 +31,6 @@ export function JoinInternTrackReveal({
     const obs = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          // Low-priority update: won't block the scroll thread
           startTransition(() => setVisible(true));
           obs.disconnect();
         }
@@ -42,12 +39,9 @@ export function JoinInternTrackReveal({
     );
     obs.observe(el);
     return () => obs.disconnect();
-  }, [variant]);
+  }, []);
 
-  const revealClass =
-    variant === "mobile"
-      ? `doephone-section-copy${visible ? " doephone-section-copy-visible" : ""}`
-      : "";
+  const revealClass = `doephone-section-copy${visible ? " doephone-section-copy-visible" : ""}`;
 
   // After the reveal animation finishes, release the GPU composite layer
   const onAnimationEnd = () => {

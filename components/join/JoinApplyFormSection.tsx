@@ -31,10 +31,12 @@ export function JoinApplyFormSection({ variant }: { variant: "mobile" | "desktop
           className="flex w-full shrink-0 flex-col justify-center"
         >
           <DoePhoneSectionTitle line1="Build your" line2="applicant card." />
-          <div className={`${JOIN_MOBILE_APPLY_TITLE_CARD_GAP} w-full shrink-0`}>
-            <JoinApplyForm variant="mobile" />
-          </div>
         </JoinInternTrackReveal>
+        <div className={`${JOIN_MOBILE_APPLY_TITLE_CARD_GAP} w-full shrink-0`}>
+          <JoinInternTrackReveal variant="mobile" className="w-full shrink-0">
+            <JoinApplyForm variant="mobile" />
+          </JoinInternTrackReveal>
+        </div>
       </section>
     );
   }
@@ -48,10 +50,12 @@ export function JoinApplyFormSection({ variant }: { variant: "mobile" | "desktop
       <div className={`${JOIN_DESKTOP_CONTENT} ${JOIN_DESKTOP_APPLY_TITLE_TOP_PAD}`}>
         <JoinInternTrackReveal variant="desktop" className="flex w-full flex-col justify-center">
           <DoePhoneSectionTitle line1="Build your" line2="applicant card." />
-          <div className={`${JOIN_DESKTOP_APPLY_TITLE_CARD_GAP} w-full`}>
-            <JoinApplyForm variant="desktop" />
-          </div>
         </JoinInternTrackReveal>
+        <div className={`${JOIN_DESKTOP_APPLY_TITLE_CARD_GAP} w-full`}>
+          <JoinInternTrackReveal variant="desktop" className="w-full">
+            <JoinApplyForm variant="desktop" />
+          </JoinInternTrackReveal>
+        </div>
       </div>
     </section>
   );
