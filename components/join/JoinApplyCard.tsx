@@ -78,7 +78,8 @@ const CARD_STYLES = {
   },
 } as const;
 
-const MODAL_SCRIM = "bg-[#EFECE7]/72";
+const MODAL_SCRIM = "bg-[#EFECE7]/58 backdrop-blur-[12px]";
+const CARD_BLUR = "blur-[10px]";
 
 const NAME_LORA_MOBILE =
   "text-[clamp(2.35rem,8vw,3.55rem)] iphone-page:text-[clamp(2.5rem,1.9rem+3.4vmin,4.15rem)]";
@@ -402,7 +403,7 @@ export function JoinApplyCard({
         style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
       >
         <div
-          className={`absolute inset-0 ${isEditing || showResetConfirm ? "pointer-events-none" : ""}`}
+          className={`absolute inset-0 transition-[filter] duration-300 ${isEditing || showResetConfirm ? `pointer-events-none ${CARD_BLUR}` : ""}`}
         >
           <div className={`pointer-events-none ${styles.lineBand}`}>
             <JoinInternLineGraphic variant={2} fullBleed />
