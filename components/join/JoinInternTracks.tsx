@@ -9,6 +9,7 @@ import {
   JOIN_MOBILE_CARD_HEIGHT,
   JOIN_MOBILE_SECTION_STACK_GAP,
   JOIN_MOBILE_TRACK_SECTION,
+  JOIN_MOBILE_TRACKS_LEAD_GAP,
 } from "@/lib/join/join-layout";
 import {
   DOEPHONE_SECTION_CAROUSEL_RADIUS,
@@ -98,45 +99,27 @@ export function JoinInternTracks({ variant }: { variant: "mobile" | "desktop" })
     );
   }
 
-  const [clinicalTrack, ...remainingTracks] = JOIN_INTERN_TRACKS;
-
   return (
-    <>
-      <section
-        className={`${JOIN_MOBILE_TRACK_SECTION} flex flex-col`}
-        aria-label={`${clinicalTrack.title} track`}
-      >
-        <JoinInternTrackBlock
-          track={clinicalTrack}
-          variant={variant}
-          cardHeight={cardHeight}
-          cardStackClass={cardStackClass}
-          titleClass={titleClass}
-          descClass={descClass}
-        />
-      </section>
-
-      <div
-        className={`flex flex-col ${JOIN_MOBILE_SECTION_STACK_GAP}`}
-        aria-label="Internship tracks"
-      >
-        {remainingTracks.map((track) => (
-          <section
-            key={track.title}
-            className={`${JOIN_MOBILE_TRACK_SECTION} flex flex-col`}
-            aria-label={`${track.title} track`}
-          >
-            <JoinInternTrackBlock
-              track={track}
-              variant={variant}
-              cardHeight={cardHeight}
-              cardStackClass={cardStackClass}
-              titleClass={titleClass}
-              descClass={descClass}
-            />
-          </section>
-        ))}
-      </div>
-    </>
+    <div
+      className={`flex flex-col ${JOIN_MOBILE_SECTION_STACK_GAP} ${JOIN_MOBILE_TRACKS_LEAD_GAP}`}
+      aria-label="Internship tracks"
+    >
+      {JOIN_INTERN_TRACKS.map((track) => (
+        <section
+          key={track.title}
+          className={`${JOIN_MOBILE_TRACK_SECTION} flex flex-col`}
+          aria-label={`${track.title} track`}
+        >
+          <JoinInternTrackBlock
+            track={track}
+            variant={variant}
+            cardHeight={cardHeight}
+            cardStackClass={cardStackClass}
+            titleClass={titleClass}
+            descClass={descClass}
+          />
+        </section>
+      ))}
+    </div>
   );
 }

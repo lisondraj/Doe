@@ -33,8 +33,8 @@ const CARD_STYLES = {
     lineBand:
       "absolute inset-x-0 z-[1] bottom-[10.25rem] h-[18rem] overflow-hidden iphone-page:bottom-[11rem] iphone-page:h-[20rem]",
     roleChip:
-      "w-fit max-w-full shrink-0 rounded-xl px-2.5 py-1.5 text-left font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[clamp(1.2rem,4vw,1.55rem)] iphone-page:px-3 iphone-page:py-2 iphone-page:text-[clamp(1.3rem,1.1rem+1.2vmin,1.7rem)]",
-    roleGap: "gap-y-2 iphone-page:gap-y-2.5",
+      "w-fit max-w-full shrink-0 rounded-xl px-3 py-1.75 text-left font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[clamp(1.35rem,4.4vw,1.7rem)] iphone-page:px-3.5 iphone-page:py-2.25 iphone-page:text-[clamp(1.45rem,1.2rem+1.35vmin,1.875rem)]",
+    roleGap: "gap-y-2.5 iphone-page:gap-y-3",
     filledFieldText:
       "text-right font-medium leading-tight tracking-[-0.01em] text-[#9A8F82] text-[clamp(1.35rem,4.2vw,1.75rem)] iphone-page:text-[clamp(1.45rem,1.2rem+1.4vmin,1.85rem)]",
     editorPad: "px-8 py-12 iphone-page:px-10 iphone-page:py-14",
@@ -61,8 +61,8 @@ const CARD_STYLES = {
     nameCornerPad: "px-7 pb-10 pt-0",
     lineBand: "absolute inset-x-0 z-[1] bottom-[7.5rem] h-[11rem] overflow-hidden",
     roleChip:
-      "w-fit max-w-full shrink-0 rounded-lg px-2.5 py-1.5 text-left font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[1.125rem]",
-    roleGap: "gap-y-1.5",
+      "w-fit max-w-full shrink-0 rounded-lg px-3 py-2 text-left font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[1.25rem]",
+    roleGap: "gap-y-2",
     filledFieldText:
       "text-right font-medium leading-tight tracking-[-0.01em] text-[#9A8F82] text-[1.3125rem]",
     editorPad: "px-11 py-10",

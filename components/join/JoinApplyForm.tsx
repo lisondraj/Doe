@@ -119,7 +119,9 @@ function JoinApplyCardForm({
       ? "text-[1.875rem] iphone-page:text-[2.125rem]"
       : "text-[1.5rem]";
   const thankYouBody =
-    variant === "mobile" ? "text-[1.125rem] iphone-page:text-[1.25rem]" : "text-[1rem]";
+    variant === "mobile"
+      ? "text-[0.9375rem] leading-snug iphone-page:text-[1rem]"
+      : "text-[0.8125rem] leading-snug";
   const submitBtnClass =
     variant === "mobile"
       ? `w-full inline-flex items-center justify-center rounded-2xl bg-black font-semibold text-white leading-none transition-opacity hover:opacity-90 active:scale-[0.99] active:opacity-80 text-[1.4375rem] py-[1.5rem] iphone-page:text-[clamp(1.5rem,1.28rem+1.1vmin,1.75rem)] iphone-page:py-[clamp(1.45rem,1.18rem+1.25vmin,1.68rem)] iphone-page:rounded-[clamp(1rem,0.85rem+0.72vmin,1.2rem)] ${inter.className}`
@@ -155,10 +157,11 @@ function JoinApplyCardForm({
         <p
           className={`mt-6 font-normal leading-snug tracking-[-0.02em] text-[#1E343A] ${thankYouTitle} ${variant === "mobile" ? "iphone-page:mt-8" : "mt-5"} ${suisseIntl.className}`}
         >
-          Thank you — we&apos;ll be in touch.
+          Thank you! We will be in touch.
         </p>
         <p className={`mt-2 text-[#1E343A]/55 ${thankYouBody} ${inter.className}`}>
-          Your application has been received.
+          <span className="block">A copy of your applicant card</span>
+          <span className="block">has been emailed to you.</span>
         </p>
       </div>
     );
@@ -199,10 +202,9 @@ function JoinApplyCardForm({
         <div className={submitReviewGap}>
           <JoinFormBorderedTextarea
             variant={variant}
-            prompt="Anything else you'd like to add?"
             value={data.additionalNotes}
             onChange={(additionalNotes) => patch({ additionalNotes })}
-            placeholder="Optional notes"
+            placeholder="Anything else you'd like to add?"
           />
           <button
             type="button"

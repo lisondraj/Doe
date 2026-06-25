@@ -53,22 +53,11 @@ function joinFormBorderedBoxClass(variant: "mobile" | "desktop") {
   return `w-full border ${size} ${inter.className}`;
 }
 
-function joinFormBorderedPromptClass(variant: "mobile" | "desktop") {
-  const size =
-    variant === "mobile"
-      ? "mb-4 text-[1.35rem] iphone-page:mb-5 iphone-page:text-[1.5rem]"
-      : "mb-3 text-[1rem]";
-
-  return `${size} font-medium leading-snug tracking-[0.01em] text-[#1E343A]/45`;
-}
-
 export function JoinFormBorderedStep({
   variant,
-  prompt,
   children,
 }: {
   variant: "mobile" | "desktop";
-  prompt: string;
   children: ReactNode;
 }) {
   return (
@@ -76,7 +65,6 @@ export function JoinFormBorderedStep({
       className={joinFormBorderedBoxClass(variant)}
       style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
     >
-      <p className={joinFormBorderedPromptClass(variant)}>{prompt}</p>
       {children}
     </div>
   );
@@ -84,18 +72,18 @@ export function JoinFormBorderedStep({
 
 export function JoinFormBorderedTextarea({
   variant,
-  prompt,
   value,
   onChange,
   placeholder,
+  ariaLabel,
   readOnly = false,
   interactive = true,
 }: {
   variant: "mobile" | "desktop";
-  prompt: string;
   value: string;
   onChange: (value: string) => void;
-  placeholder?: string;
+  placeholder: string;
+  ariaLabel?: string;
   readOnly?: boolean;
   interactive?: boolean;
 }) {
@@ -109,13 +97,12 @@ export function JoinFormBorderedTextarea({
       className={joinFormBorderedBoxClass(variant)}
       style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
     >
-      <p className={joinFormBorderedPromptClass(variant)}>{prompt}</p>
       <textarea
         data-join-apply-interactive
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        aria-label={prompt}
+        aria-label={ariaLabel ?? placeholder}
         readOnly={readOnly}
         tabIndex={interactive ? 0 : -1}
         rows={variant === "mobile" ? 4 : 3}
@@ -287,10 +274,10 @@ function JoinFormBorderedInput({
 
 export function JoinFormBorderedField({
   variant,
-  prompt,
   value,
   onChange,
   placeholder,
+  ariaLabel,
   type = "text",
   readOnly = false,
   interactive = true,
@@ -300,10 +287,10 @@ export function JoinFormBorderedField({
   prefix,
 }: {
   variant: "mobile" | "desktop";
-  prompt: string;
   value: string;
   onChange: (value: string) => void;
-  placeholder?: string;
+  placeholder: string;
+  ariaLabel?: string;
   type?: "text" | "email";
   readOnly?: boolean;
   interactive?: boolean;
@@ -317,14 +304,13 @@ export function JoinFormBorderedField({
       className={joinFormBorderedBoxClass(variant)}
       style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
     >
-      <p className={joinFormBorderedPromptClass(variant)}>{prompt}</p>
       <JoinFormBorderedInput
         variant={variant}
         type={type}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        ariaLabel={prompt}
+        ariaLabel={ariaLabel ?? placeholder}
         readOnly={readOnly}
         interactive={interactive}
         onEnter={onEnter}
@@ -355,42 +341,35 @@ export function JoinFormBorderedSchoolFields({
   interactive?: boolean;
   onEnter?: () => void;
 }) {
-  const programPromptClass =
-    variant === "mobile"
-      ? "mb-4 mt-6 text-[1.35rem] iphone-page:mb-5 iphone-page:mt-7 iphone-page:text-[1.5rem]"
-      : "mb-3 mt-5 text-[1rem]";
-
   return (
     <div
       className={joinFormBorderedBoxClass(variant)}
       style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
     >
-      <p className={joinFormBorderedPromptClass(variant)}>What school do/did you attend?</p>
       <JoinFormBorderedInput
         variant={variant}
         value={schoolName}
         onChange={onSchoolChange}
         placeholder="School name"
         autoComplete="organization"
-        ariaLabel="What school do/did you attend?"
+        ariaLabel="School name"
         readOnly={readOnly}
         interactive={interactive}
         onEnter={onEnter}
       />
-      <p className={`${programPromptClass} font-medium leading-snug tracking-[0.01em] text-[#1E343A]/45`}>
-        What is/was your program of study?
-      </p>
-      <JoinFormBorderedInput
-        variant={variant}
-        value={programOfStudy}
-        onChange={onProgramChange}
-        placeholder="Program of study"
-        autoComplete="organization-title"
-        ariaLabel="What is/was your program of study?"
-        readOnly={readOnly}
-        interactive={interactive}
-        onEnter={onEnter}
-      />
+      <div className={variant === "mobile" ? "mt-6 iphone-page:mt-7" : "mt-5"}>
+        <JoinFormBorderedInput
+          variant={variant}
+          value={programOfStudy}
+          onChange={onProgramChange}
+          placeholder="Program of study"
+          autoComplete="organization-title"
+          ariaLabel="Program of study"
+          readOnly={readOnly}
+          interactive={interactive}
+          onEnter={onEnter}
+        />
+      </div>
     </div>
   );
 }
@@ -453,6 +432,131 @@ export function JoinFormBorderedLinkedInField({
           }
         />
       </div>
+    </div>
+  );
+}
+
+function ResumeFileIcon({ className }: { className: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden className={className}>
+      <path
+        d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M14 2v6h6"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M9 13h6M9 17h4"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+export function JoinFormBorderedResumeField({
+  variant,
+  resume,
+  onChange,
+  readOnly = false,
+  interactive = true,
+  inputRef,
+}: {
+  variant: "mobile" | "desktop";
+  resume: File | null;
+  onChange: (file: File | null) => void;
+  readOnly?: boolean;
+  interactive?: boolean;
+  inputRef?: RefObject<HTMLInputElement | null>;
+}) {
+  const localInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = inputRef ?? localInputRef;
+  const { shell } = BORDERED_INPUT_SIZE[variant];
+  const textSize =
+    variant === "mobile"
+      ? "text-[1.35rem] iphone-page:text-[1.5rem]"
+      : "text-[1rem]";
+  const iconSize =
+    variant === "mobile"
+      ? "h-[1.35rem] w-[1.35rem] shrink-0 iphone-page:h-[1.5rem] iphone-page:w-[1.5rem]"
+      : "h-[1.125rem] w-[1.125rem] shrink-0";
+  const innerPad =
+    variant === "mobile"
+      ? "rounded-lg px-5 py-4 iphone-page:rounded-[0.85rem] iphone-page:px-6 iphone-page:py-[1.15rem]"
+      : "rounded-lg px-4 py-3";
+
+  const openPicker = () => {
+    if (!interactive || readOnly) return;
+    const input = fileInputRef.current;
+    if (!input) return;
+    input.value = "";
+    input.click();
+  };
+
+  const label = resume ? resume.name : "Choose a file";
+
+  return (
+    <div
+      className={joinFormBorderedBoxClass(variant)}
+      style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
+    >
+      {interactive ? (
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+          className="sr-only"
+          onChange={(e) => onChange(e.target.files?.[0] ?? null)}
+        />
+      ) : null}
+
+      <div
+        className={`border ${innerPad}`}
+        style={{ backgroundColor: JOIN_FORM_BEIGE.fieldMuted, borderColor: JOIN_FORM_BEIGE.border }}
+      >
+        {resume ? (
+          <div
+            className={`flex min-w-0 items-center gap-3 ${shell} ${textSize} font-medium leading-snug tracking-[-0.01em] text-[#1E343A]`}
+          >
+            <ResumeFileIcon className={iconSize} />
+            <span className="min-w-0 truncate">{label}</span>
+          </div>
+        ) : (
+          <button
+            type="button"
+            data-join-apply-interactive
+            disabled={readOnly}
+            tabIndex={interactive ? 0 : -1}
+            onClick={openPicker}
+            aria-label="Choose a resume file"
+            className={`flex w-full min-w-0 items-center gap-3 text-left font-medium leading-snug tracking-[-0.01em] transition-opacity hover:opacity-90 active:scale-[0.99] disabled:cursor-default disabled:opacity-100 ${shell} ${textSize} ${inter.className}`}
+          >
+            <ResumeFileIcon className={`${iconSize} text-[#1E343A]/45`} />
+            <span className="text-[#1E343A]/38">Choose a file</span>
+          </button>
+        )}
+      </div>
+
+      {resume && interactive && !readOnly ? (
+        <button
+          type="button"
+          data-join-apply-interactive
+          onClick={openPicker}
+          className={`mt-3 font-medium leading-snug tracking-[-0.01em] text-[#1E343A]/45 transition-colors hover:text-[#1E343A]/70 active:scale-[0.99] ${
+            variant === "mobile" ? "text-[1.2rem] iphone-page:text-[1.3125rem]" : "text-[0.9375rem]"
+          } ${inter.className}`}
+        >
+          Reupload
+        </button>
+      ) : null}
     </div>
   );
 }
