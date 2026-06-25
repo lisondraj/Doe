@@ -9,6 +9,7 @@ import {
   HERO_TRIAGE_TILT,
 } from "@/lib/home/hero-triage-preview-styles";
 import { getHeroTriageThemeConfig, type HeroTriageTheme, type HeroTriageThemeConfig } from "@/lib/home/hero-triage-theme";
+import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
 import type { CSSProperties, ReactNode } from "react";
 
 type InboxRow = {
@@ -530,6 +531,8 @@ export type HeroTriagePreviewProps = {
   fontClassName: string;
   size?: "desktop" | "mobile";
   theme?: HeroTriageTheme;
+  layout?: "full" | "simple";
+  desktopScale?: number;
   style?: CSSProperties;
   className?: string;
 };
@@ -542,14 +545,20 @@ export function HeroTriagePreview({
   fontClassName,
   size = "desktop",
   theme = "dark",
+  layout = "full",
+  desktopScale = 1,
   style,
   className = "",
 }: HeroTriagePreviewProps) {
   const isMobile = size === "mobile";
+  const isSimple = layout === "simple";
   const config = getHeroTriageThemeConfig(theme);
   const { colors } = config;
-  const navW = isMobile ? "5.1rem" : "2.85rem";
-  const listW = isMobile ? HERO_TRIAGE_MOBILE_LIST_WIDTH : "38%";
+  const navW = isMobile ? "5.1rem" : isSimple ? "3.25rem" : "2.85rem";
+  const listW = isMobile ? HERO_TRIAGE_MOBILE_LIST_WIDTH : isSimple ? undefined : "38%";
+  const inboxRows = isSimple ? INBOX_ROWS.slice(0, 5) : INBOX_ROWS;
+  const desktopTransform =
+    !isMobile && desktopScale !== 1 ? `scale(${desktopScale})` : HERO_TRIAGE_TILT.desktop;
 
   return (
     <div
@@ -568,8 +577,8 @@ export function HeroTriagePreview({
     >
       <div
         style={{
-          transform: isMobile ? `scale(${HERO_TRIAGE_MOBILE_SCALE})` : HERO_TRIAGE_TILT.desktop,
-          transformOrigin: isMobile ? "bottom left" : undefined,
+          transform: isMobile ? `scale(${HERO_TRIAGE_MOBILE_SCALE})` : desktopTransform,
+          transformOrigin: isMobile ? "bottom left" : "bottom right",
           WebkitFontSmoothing: "antialiased",
           MozOsxFontSmoothing: "grayscale",
         }}
@@ -577,7 +586,7 @@ export function HeroTriagePreview({
         <div
           className={`${config.outerGlassTw} ${fontClassName} overflow-hidden`}
           style={{
-            borderRadius: theme === "light" ? "0.875rem" : isMobile ? "1.35rem" : "1.1rem",
+            borderRadius: theme === "light" ? "1rem" : isMobile ? "1.35rem" : "1.1rem",
             background: config.shellGradient,
             ...(theme === "light"
               ? {}
@@ -586,13 +595,13 @@ export function HeroTriagePreview({
                   boxShadow: "inset 0 1px 0 rgba(255,228,196,0.1)",
                 }),
             height: isMobile ? HERO_TRIAGE_MOBILE_MIN_HEIGHT.outer : undefined,
-            minHeight: isMobile ? undefined : "16rem",
+            minHeight: isMobile ? undefined : isSimple ? "22rem" : "16rem",
           }}
         >
           <div
             className={`flex h-full ${config.innerGlassTw}`}
             style={{
-              minHeight: isMobile ? HERO_TRIAGE_MOBILE_MIN_HEIGHT.inner : "18rem",
+              minHeight: isMobile ? HERO_TRIAGE_MOBILE_MIN_HEIGHT.inner : isSimple ? "24rem" : "18rem",
               background: config.innerGradient,
             }}
           >
@@ -601,9 +610,9 @@ export function HeroTriagePreview({
               className={`flex shrink-0 flex-col items-center ${config.paneGlassTw}`}
               style={{
                 width: navW,
-                borderRight: `1px solid ${colors.divider}`,
-                padding: isMobile ? "1.1rem 0.55rem" : "0.65rem 0.32rem",
-                gap: isMobile ? "0.35rem" : "0.2rem",
+                borderRight: isSimple ? "none" : `1px solid ${colors.divider}`,
+                padding: isMobile ? "1.1rem 0.55rem" : isSimple ? "0.85rem 0.4rem" : "0.65rem 0.32rem",
+                gap: isMobile ? "0.35rem" : "0.28rem",
                 ...config.paneStyle(),
                 borderRadius: 0,
                 borderTop: "none",
@@ -614,27 +623,31 @@ export function HeroTriagePreview({
               <NavIcon active mobile={isMobile} config={config}>
                 <InboxIcon mobile={isMobile} d="M4 6h16v12H4V6zm0 0 8 7 8-7" color={colors.navIcon} />
               </NavIcon>
-              <NavIcon mobile={isMobile} config={config}>
-                <InboxIcon mobile={isMobile} d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z" color={colors.navIcon} />
-              </NavIcon>
-              <NavIcon mobile={isMobile} config={config}>
-                <InboxIcon mobile={isMobile} d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7M3 7l9 6 9-6M3 7h18" color={colors.navIcon} />
-              </NavIcon>
-              <NavIcon mobile={isMobile} config={config}>
-                <InboxIcon mobile={isMobile} d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2z" color={colors.navIcon} />
-              </NavIcon>
-              <div className="flex-1" />
-              <NavIcon mobile={isMobile} config={config}>
-                <InboxIcon mobile={isMobile} d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7.5-9.5a8.38 8.38 0 0 1 0 11M4.5 5.5a8.38 8.38 0 0 0 0 11" color={colors.navIcon} />
-              </NavIcon>
+              {isSimple ? null : (
+                <>
+                  <NavIcon mobile={isMobile} config={config}>
+                    <InboxIcon mobile={isMobile} d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z" color={colors.navIcon} />
+                  </NavIcon>
+                  <NavIcon mobile={isMobile} config={config}>
+                    <InboxIcon mobile={isMobile} d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7M3 7l9 6 9-6M3 7h18" color={colors.navIcon} />
+                  </NavIcon>
+                  <NavIcon mobile={isMobile} config={config}>
+                    <InboxIcon mobile={isMobile} d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2z" color={colors.navIcon} />
+                  </NavIcon>
+                  <div className="flex-1" />
+                  <NavIcon mobile={isMobile} config={config}>
+                    <InboxIcon mobile={isMobile} d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7.5-9.5a8.38 8.38 0 0 1 0 11M4.5 5.5a8.38 8.38 0 0 0 0 11" color={colors.navIcon} />
+                  </NavIcon>
+                </>
+              )}
             </nav>
 
             {/* Inbox preview column */}
             <div
-              className={`flex h-full min-w-0 shrink-0 flex-col ${config.paneGlassTw}`}
+              className={`flex h-full min-w-0 flex-col ${isSimple ? "flex-1" : "shrink-0"} ${config.paneGlassTw}`}
               style={{
-                width: listW,
-                borderRight: `1px solid ${colors.divider}`,
+                ...(listW ? { width: listW } : {}),
+                borderRight: isSimple ? "none" : `1px solid ${colors.divider}`,
                 ...config.paneStyle(),
                 borderRadius: 0,
                 borderTop: "none",
@@ -645,7 +658,7 @@ export function HeroTriagePreview({
               <div
                 className={`flex items-center gap-[0.45em] ${config.paneGlassTw}`}
                 style={{
-                  padding: isMobile ? "0.85rem 0.95rem" : "0.52rem 0.58rem",
+                  padding: isMobile ? "0.85rem 0.95rem" : isSimple ? "0.85rem 1rem" : "0.52rem 0.58rem",
                   borderBottom: `1px solid ${colors.divider}`,
                   color: colors.navIcon,
                   ...config.paneStyle({ borderRadius: 0, borderTop: "none", borderLeft: "none", borderRight: "none" }),
@@ -655,55 +668,69 @@ export function HeroTriagePreview({
                   className={`flex items-center gap-[0.35em] ${config.paneGlassTw}`}
                   style={{
                     borderRadius: "999px",
-                    padding: isMobile ? "0.38rem 0.75rem" : "0.24rem 0.48rem",
-                    ...config.chipStyle(),
+                    padding: isMobile ? "0.38rem 0.75rem" : isSimple ? "0.35rem 0.65rem" : "0.24rem 0.48rem",
+                    ...(isSimple ? { background: "transparent" } : config.chipStyle()),
                   }}
                 >
-                  <InboxIcon mobile={isMobile} d="M4 6h16v12H4V6zm0 0 8 7 8-7" color={colors.pillText} />
-                  <span style={{ fontSize: isMobile ? "0.95rem" : "0.58rem", fontWeight: 500, color: colors.pillText }}>
-                    Inbox
-                  </span>
+                  <InboxIcon mobile={isMobile} d="M4 6h16v12H4V6zm0 0 8 7 8-7" color={isSimple ? "#D2774C" : colors.pillText} />
                   <span
-                    className={config.paneGlassTw}
                     style={{
-                      fontSize: isMobile ? "0.78rem" : "0.48rem",
+                      fontSize: isMobile ? "0.95rem" : isSimple ? "0.92rem" : "0.58rem",
                       fontWeight: 500,
-                      color: colors.badgeText,
-                      borderRadius: "999px",
-                      padding: "0.12em 0.45em",
-                      minWidth: "1.4em",
-                      textAlign: "center",
-                      ...config.chipStyle({ background: config.chipGradient }),
+                      color: isSimple ? JOIN_FORM_BEIGE.ink : colors.pillText,
                     }}
                   >
-                    12
+                    Inbox
                   </span>
+                  {!isSimple ? (
+                    <span
+                      className={config.paneGlassTw}
+                      style={{
+                        fontSize: isMobile ? "0.78rem" : "0.48rem",
+                        fontWeight: 500,
+                        color: colors.badgeText,
+                        borderRadius: "999px",
+                        padding: "0.12em 0.45em",
+                        minWidth: "1.4em",
+                        textAlign: "center",
+                        ...config.chipStyle({ background: config.chipGradient }),
+                      }}
+                    >
+                      12
+                    </span>
+                  ) : null}
                 </div>
-                <InboxIcon mobile={isMobile} d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z" color={colors.navIcon} />
-                <InboxIcon mobile={isMobile} d="M12 6v6l4 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" color={colors.navIcon} />
-                <InboxIcon mobile={isMobile} d="M12 6h.01M12 12h.01M12 18h.01" color={colors.navIcon} />
+                {!isSimple ? (
+                  <>
+                    <InboxIcon mobile={isMobile} d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z" color={colors.navIcon} />
+                    <InboxIcon mobile={isMobile} d="M12 6v6l4 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" color={colors.navIcon} />
+                    <InboxIcon mobile={isMobile} d="M12 6h.01M12 12h.01M12 18h.01" color={colors.navIcon} />
+                  </>
+                ) : null}
               </div>
 
               {/* Message list */}
               <div
                 className="min-h-0 flex-1 overflow-hidden"
-                style={{ padding: isMobile ? "0.45rem 0.35rem" : "0.28rem 0.2rem", gap: isMobile ? "0.28rem" : "0.18rem" }}
+                style={{ padding: isMobile ? "0.45rem 0.35rem" : isSimple ? "0.55rem 0.45rem" : "0.28rem 0.2rem", gap: isMobile ? "0.28rem" : "0.18rem" }}
               >
-                {INBOX_ROWS.map((row) => (
+                {inboxRows.map((row) => (
                   <div key={row.id}>
-                    <InboxListRow row={row} mobile={isMobile} config={config} />
+                    <InboxListRow row={row} mobile={isMobile || isSimple} config={config} />
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Open email — partial column, clipped by hero overflow */}
-            <div
-              className={`min-w-0 flex-1 ${config.paneGlassTw}`}
-              style={config.paneStyle({ borderRadius: 0, borderTop: "none", borderBottom: "none", borderRight: "none" })}
-            >
-              <OpenEmailPane mobile={isMobile} config={config} />
-            </div>
+            {!isSimple ? (
+              /* Open email — partial column, clipped by hero overflow */
+              <div
+                className={`min-w-0 flex-1 ${config.paneGlassTw}`}
+                style={config.paneStyle({ borderRadius: 0, borderTop: "none", borderBottom: "none", borderRight: "none" })}
+              >
+                <OpenEmailPane mobile={isMobile} config={config} />
+              </div>
+            ) : null}
           </div>
         </div>
       </div>

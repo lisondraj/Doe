@@ -104,25 +104,25 @@ export function getHeroTriageThemeConfig(theme: HeroTriageTheme): HeroTriageThem
       innerGradient: "#FFFFFF",
       paneGradient: "#FAFAF8",
       chipGradient: JOIN_FORM_BEIGE.field,
-      selectedGradient: JOIN_FORM_BEIGE.ink,
-      selectedBorder: JOIN_FORM_BEIGE.ink,
-      outerGlassTw: "border border-[#E5E1DA]",
+      selectedGradient: "#D2774C",
+      selectedBorder: "#D2774C",
+      outerGlassTw: "border border-[#EBE7E0]",
       innerGlassTw: "",
       paneGlassTw: "",
       insetShadow: "none",
       senderBorder: "transparent",
       paneStyle(extra) {
         return {
-          background: "#FAFAF8",
-          border: `1px solid ${LIGHT_COLORS.glassBorder}`,
+          background: "#FFFFFF",
+          border: "none",
           boxShadow: "none",
           ...extra,
         };
       },
       chipStyle(extra) {
         return {
-          background: JOIN_FORM_BEIGE.field,
-          border: `1px solid ${LIGHT_COLORS.glassBorder}`,
+          background: JOIN_FORM_BEIGE.page,
+          border: "none",
           boxShadow: "none",
           ...extra,
         };
@@ -165,8 +165,10 @@ export function getHeroTriageThemeConfig(theme: HeroTriageTheme): HeroTriageThem
 
 /** Join hero — wide panel clipped on right and bottom inside the orange box. */
 export const JOIN_HERO_TRIAGE_PANEL = {
-  top: "14%",
-  right: "calc(min(68rem, 118%) / -2)",
-  bottom: "-1.25rem",
-  width: "min(68rem, 118%)",
+  top: "6%",
+  right: "calc(min(54rem, 94%) / -2)",
+  bottom: "-2rem",
+  width: "min(54rem, 94%)",
 } as const;
+
+export const JOIN_HERO_TRIAGE_SCALE = 1.58;

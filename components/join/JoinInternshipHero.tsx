@@ -3,7 +3,7 @@ import { HeroTriagePreview } from "@/components/home/HeroTriagePreview";
 import { BLOG_LANDING_HERO_CORNER_PAD } from "@/lib/blog/blog-layout-styles";
 import { DOEPHONE_COMMUNICATION_SLIDES } from "@/lib/doephone/communication-carousel";
 import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
-import { JOIN_HERO_TRIAGE_PANEL } from "@/lib/home/hero-triage-theme";
+import { JOIN_HERO_TRIAGE_PANEL, JOIN_HERO_TRIAGE_SCALE } from "@/lib/home/hero-triage-theme";
 import {
   JOIN_DESKTOP_HERO_HEIGHT,
   JOIN_MOBILE_HERO_CARD_HEIGHT,
@@ -44,6 +44,8 @@ export function JoinInternshipHero({ variant }: { variant: "mobile" | "desktop" 
           fontClassName={suisseIntl.className}
           size="desktop"
           theme="light"
+          layout="simple"
+          desktopScale={JOIN_HERO_TRIAGE_SCALE}
           className="z-[2]"
           style={{
             top: JOIN_HERO_TRIAGE_PANEL.top,

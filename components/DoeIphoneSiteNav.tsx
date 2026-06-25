@@ -80,8 +80,12 @@ function NavChromeStrip({
   const pageInsetX = DOEPHONE_SECTION_CAROUSEL_INSET_X;
   const pageDoeLeft =
     "left-14 iphone-page:left-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
+  const pageApplyRight =
+    "right-14 iphone-page:right-[max(2.35rem,calc(env(safe-area-inset-right,0px)+5.25vmin))]";
+  const pageNavLeftPad =
+    "pl-14 iphone-page:pl-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
   const navInsetX = showApplyScrollCta
-    ? pageInsetX
+    ? `${pageNavLeftPad} pr-0`
     : pinchSafe
       ? "px-11 iphone-page:px-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))] iphone-page:pr-[max(1.65rem,env(safe-area-inset-right,0px))]"
       : "px-8 iphone-page:px-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))]";
@@ -93,7 +97,7 @@ function NavChromeStrip({
   const doeClassName = `absolute top-1/2 -translate-y-1/2 ${doeLeft} font-normal z-[1] min-w-0 whitespace-nowrap ${lora.className} text-4xl iphone-page:text-[clamp(1.85rem,1.05rem+3.55vmin,3.9rem)] iphone-page:leading-none`;
 
   return (
-    <div className={`${navInsetX} py-6 iphone-page:py-[clamp(0.8125rem,0.52rem+1.55vmin,1.9rem)] flex items-center relative z-10 iphone-page:gap-[clamp(0.45rem,0.35rem+0.85vmin,0.75rem)] justify-end`}>
+    <div className={`${navInsetX} py-6 iphone-page:py-[clamp(0.8125rem,0.52rem+1.55vmin,1.9rem)] flex items-center relative z-10 iphone-page:gap-[clamp(0.45rem,0.35rem+0.85vmin,0.75rem)] ${showApplyScrollCta ? "" : "justify-end"}`}>
       {logoLink ? (
         <Link href={homeHref} className={`${doeClassName} transition-opacity duration-500 ease-out opacity-100`} style={{ color: navTextColor }}>
           Doe
@@ -112,9 +116,13 @@ function NavChromeStrip({
         ))}
       </div>
 
-      <div className="flex shrink-0 items-center gap-2.5 iphone-page:gap-[clamp(0.45rem,0.35rem+0.65vmin,0.7rem)]">
+      <div className={`flex shrink-0 items-center gap-2.5 iphone-page:gap-[clamp(0.45rem,0.35rem+0.65vmin,0.7rem)] ${showApplyScrollCta ? "contents" : ""}`}>
         {showApplyScrollCta ? (
-          <button type="button" onClick={scrollToJoinApplySection} className={DOEPHONE_NAV_WAITLIST_CLASS}>
+          <button
+            type="button"
+            onClick={scrollToJoinApplySection}
+            className={`absolute top-1/2 z-[2] -translate-y-1/2 ${pageApplyRight} ${DOEPHONE_NAV_WAITLIST_CLASS}`}
+          >
             Apply
           </button>
         ) : showJoinCta ? (
