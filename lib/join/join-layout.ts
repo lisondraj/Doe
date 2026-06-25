@@ -66,6 +66,9 @@ export const JOIN_DESKTOP_APPLY_FOOTER_PAD = "pb-24";
 /** Padding above “Build your applicant card.” on desktop. */
 export const JOIN_DESKTOP_APPLY_TITLE_TOP_PAD = "pt-16";
 
+/** Gap between apply title and card on desktop — half of doephone title→carousel gap. */
+export const JOIN_DESKTOP_APPLY_TITLE_CARD_GAP = "mt-14";
+
 /** Desktop applicant card — scaled from iPhone inline editor card. */
 export const JOIN_DESKTOP_APPLY_CARD_HEIGHT = "h-[38rem]";
 

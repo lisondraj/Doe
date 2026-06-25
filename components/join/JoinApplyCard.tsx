@@ -61,7 +61,7 @@ const CARD_STYLES = {
     nameLeading: 1.04,
     nameCornerPad: "px-7 pb-10 pt-0",
     lineBand: "absolute inset-0 z-[1] flex items-center justify-center overflow-hidden",
-    lineGraphicSize: "h-[19rem] w-[19rem] shrink-0",
+    lineGraphicSize: "h-[27rem] w-[27rem] shrink-0",
     roleChip:
       "w-fit max-w-full shrink-0 rounded-lg px-3 py-2 text-left font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[1.25rem]",
     roleGap: "gap-y-2",

@@ -243,16 +243,15 @@ export function JoinApplyCardDesktopLineGraphic() {
   const focusY = 206;
 
   const circles: CircleSpec[] = [
-    { cx: 200, cy: 156, r: 84 },
-    { cx: 156, cy: 248, r: 84 },
-    { cx: 244, cy: 248, r: 84 },
+    { cx: 200, cy: 156, r: 96 },
+    { cx: 156, cy: 248, r: 96 },
+    { cx: 244, cy: 248, r: 96 },
   ];
 
   const intersectionPoints = [
     innerIntersectionPoint(circles[0], circles[1], focusX, focusY),
     innerIntersectionPoint(circles[1], circles[2], focusX, focusY),
     innerIntersectionPoint(circles[0], circles[2], focusX, focusY),
-    [focusX, focusY] as [number, number],
   ].filter((p): p is [number, number] => p !== null);
 
   return (

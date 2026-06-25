@@ -4,11 +4,9 @@ import { DoePhoneSectionTitle } from "@/components/doephone/DoePhoneSectionText"
 import { JoinApplyForm } from "@/components/join/JoinApplyForm";
 import { JoinInternTrackReveal } from "@/components/join/JoinInternTrackReveal";
 import {
-  DOEPHONE_SECTION_TITLE_CAROUSEL_GAP,
-} from "@/lib/doephone/section-styles";
-import {
   JOIN_DESKTOP_APPLY_FOOTER_PAD,
   JOIN_DESKTOP_APPLY_SECTION_MIN,
+  JOIN_DESKTOP_APPLY_TITLE_CARD_GAP,
   JOIN_DESKTOP_APPLY_TITLE_TOP_PAD,
   JOIN_DESKTOP_CONTENT,
   JOIN_DESKTOP_TRACK_ROW_GAP,
@@ -45,7 +43,7 @@ export function JoinApplyFormSection({ variant }: { variant: "mobile" | "desktop
       <div className={`${JOIN_DESKTOP_CONTENT} ${JOIN_DESKTOP_APPLY_TITLE_TOP_PAD}`}>
         <JoinInternTrackReveal variant="desktop" className="flex w-full flex-col justify-center">
           <DoePhoneSectionTitle line1="Build your" line2="applicant card." />
-          <div className={`${DOEPHONE_SECTION_TITLE_CAROUSEL_GAP} w-full`}>
+          <div className={`${JOIN_DESKTOP_APPLY_TITLE_CARD_GAP} w-full`}>
             <JoinApplyForm variant="desktop" />
           </div>
         </JoinInternTrackReveal>
