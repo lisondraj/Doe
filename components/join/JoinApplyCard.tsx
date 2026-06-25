@@ -18,8 +18,6 @@ export const JOIN_APPLY_CARD_HEIGHT = "h-[56rem] iphone-page:h-[62rem]";
 const CARD_STYLES = {
   mobile: {
     height: JOIN_APPLY_CARD_HEIGHT,
-    fieldText:
-      "text-[clamp(1.95rem,5.8vw,2.85rem)] leading-[1.08] iphone-page:text-[clamp(2.15rem,1.75rem+2.4vmin,3.05rem)]",
     placeholderLabel:
       "text-[clamp(0.95rem,3vw,1.2rem)] font-medium uppercase tracking-[0.26em] text-[#C8C0B4] iphone-page:text-[clamp(1rem,0.85rem+0.8vmin,1.3rem)] iphone-page:tracking-[0.28em]",
     namePlaceholder:
@@ -27,17 +25,18 @@ const CARD_STYLES = {
     nameText:
       "text-[clamp(2.55rem,7.5vw,3.85rem)] leading-[1.04] iphone-page:text-[clamp(2.85rem,2.35rem+2.9vmin,4.25rem)]",
     topPad: "p-8 iphone-page:p-9",
-    topMaxW: "max-w-[94%]",
-    topGap: "gap-4 iphone-page:gap-5",
+    topLeftMaxW: "max-w-[44%] iphone-page:max-w-[42%]",
+    topRightMaxW: "max-w-[52%] iphone-page:max-w-[54%]",
+    topGap: "gap-3 iphone-page:gap-3.5",
     nameWidth: "w-full max-w-[min(100%,18rem)] iphone-page:max-w-[min(100%,20rem)]",
     nameLineGap: "gap-0",
-    lineBand: "absolute inset-0 origin-center scale-[1.34] iphone-page:scale-[1.4]",
-    editBtn: "h-14 w-14 iphone-page:h-[3.75rem] iphone-page:w-[3.75rem] iphone-page:rounded-[1rem]",
-    pencil: "h-6 w-6 iphone-page:h-[1.4rem] iphone-page:w-[1.4rem]",
+    lineBand:
+      "absolute inset-x-0 top-[40%] bottom-[11rem] origin-center scale-[1.34] iphone-page:top-[38%] iphone-page:bottom-[12rem] iphone-page:scale-[1.4]",
     roleChip:
-      "w-fit max-w-full shrink-0 rounded-xl px-2.5 py-1.5 text-[clamp(1.2rem,4vw,1.55rem)] iphone-page:px-3 iphone-page:py-2 iphone-page:text-[clamp(1.3rem,1.1rem+1.2vmin,1.7rem)]",
-    roleGrid: "inline-grid grid-cols-1",
+      "w-fit max-w-full shrink-0 rounded-xl px-2.5 py-1.5 text-left font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[clamp(1.2rem,4vw,1.55rem)] iphone-page:px-3 iphone-page:py-2 iphone-page:text-[clamp(1.3rem,1.1rem+1.2vmin,1.7rem)]",
     roleGap: "gap-y-2 iphone-page:gap-y-2.5",
+    filledChip:
+      "w-fit max-w-full shrink-0 rounded-xl px-2.5 py-1.5 text-right font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[clamp(1.2rem,4vw,1.55rem)] iphone-page:px-3 iphone-page:py-2 iphone-page:text-[clamp(1.3rem,1.1rem+1.2vmin,1.7rem)]",
     editorPad: "px-8 py-12 iphone-page:px-10 iphone-page:py-14",
     editorMaxW: "max-w-[min(100%,34rem)]",
     cornerPad: "pl-9 pb-10 pr-8 iphone-page:pl-10 iphone-page:pb-12 iphone-page:pr-9",
@@ -57,16 +56,18 @@ const CARD_STYLES = {
     namePlaceholder: "text-[2.35rem] leading-[1.04] text-[#C8C0B4]",
     nameText: "text-[2.35rem] leading-[1.04]",
     topPad: "p-7",
-    topMaxW: "max-w-[94%]",
-    topGap: "gap-3.5",
+    topLeftMaxW: "max-w-[42%]",
+    topRightMaxW: "max-w-[54%]",
+    topGap: "gap-2.5",
     nameWidth: "w-full max-w-[16rem]",
     nameLineGap: "gap-0",
-    lineBand: "absolute inset-0 origin-center scale-[1.36]",
-    editBtn: "h-12 w-12 rounded-lg",
-    pencil: "h-[1.35rem] w-[1.35rem]",
-    roleChip: "w-fit max-w-full shrink-0 rounded-lg px-2.5 py-1.5 text-[1.125rem]",
+    lineBand: "absolute inset-x-0 top-[38%] bottom-[9.5rem] origin-center scale-[1.36]",
+    roleChip:
+      "w-fit max-w-full shrink-0 rounded-lg px-2.5 py-1.5 text-left font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[1.125rem]",
     roleGrid: "inline-grid grid-cols-1",
     roleGap: "gap-y-1.5",
+    filledChip:
+      "w-fit max-w-full shrink-0 rounded-lg px-2.5 py-1.5 text-right font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[1.125rem]",
     editorPad: "px-11 py-10",
     editorMaxW: "max-w-[min(100%,32rem)]",
     cornerPad: "pl-8 pb-9 pr-7",
@@ -114,20 +115,6 @@ const TOP_RIGHT_FIELDS = [
 
 function spacedCapsLabel(label: string): string {
   return label.toUpperCase().split("").join(" ");
-}
-
-function PencilIcon({ className }: { className: string }) {
-  return (
-    <svg width="20" height="20" viewBox="0 0 16 16" fill="none" aria-hidden className={className}>
-      <path
-        d="M11.5 2.5l2 2M2 14l.75-3.25L11.5 2.5l2 2L4.25 13.25 2 14z"
-        stroke="currentColor"
-        strokeWidth="1.35"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
 }
 
 function CloseIcon({ className }: { className: string }) {
@@ -223,44 +210,6 @@ function ModalCloseButton({
   );
 }
 
-function EditButton({
-  onClick,
-  label,
-  className,
-  pencilClass,
-}: {
-  onClick: () => void;
-  label: string;
-  className: string;
-  pencilClass: string;
-}) {
-  return (
-    <span
-      role="button"
-      tabIndex={0}
-      onClick={(e) => {
-        e.stopPropagation();
-        onClick();
-      }}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          e.stopPropagation();
-          onClick();
-        }
-      }}
-      aria-label={label}
-      className={`flex shrink-0 items-center justify-center rounded-xl transition-all active:scale-95 ${className}`}
-      style={{
-        backgroundColor: JOIN_FORM_BEIGE.fieldMuted,
-        color: JOIN_FORM_BEIGE.meter,
-      }}
-    >
-      <PencilIcon className={pencilClass} />
-    </span>
-  );
-}
-
 export function JoinApplyCard({
   variant = "mobile",
   data,
@@ -321,73 +270,54 @@ export function JoinApplyCard({
             </div>
           </div>
 
-          {/* Top-left: roles */}
-          <div className={`absolute left-0 top-0 z-[2] ${styles.topMaxW} ${styles.topPad}`}>
-            <div className={`flex max-w-full items-start gap-1 ${inter.className}`}>
-              {data.areas.length > 0 ? (
-                <div className={`${styles.roleGrid} ${styles.roleGap}`}>
-                  {data.areas.map((area) => (
-                    <span
-                      key={area}
-                      className={`font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 ${styles.roleChip}`}
-                      style={{ backgroundColor: JOIN_FORM_BEIGE.fieldMuted }}
-                    >
-                      {area}
-                    </span>
-                  ))}
-                </div>
-              ) : (
+          {/* Top-left: preferred roles */}
+          <div className={`absolute left-0 top-0 z-[2] ${styles.topLeftMaxW} ${styles.topPad}`}>
+            <div className={`flex flex-col items-start ${styles.roleGap} ${inter.className}`}>
+              <button
+                type="button"
+                disabled={readOnly}
+                onClick={() => onEdit(5)}
+                className={`transition-opacity hover:opacity-90 active:scale-[0.98] ${styles.roleChip}`}
+                style={{ backgroundColor: JOIN_FORM_BEIGE.fieldMuted }}
+              >
+                Preferred Roles
+              </button>
+              {data.areas.map((area) => (
                 <button
+                  key={area}
                   type="button"
                   disabled={readOnly}
                   onClick={() => onEdit(5)}
-                  className={`text-left ${styles.placeholderLabel}`}
+                  className={`transition-opacity hover:opacity-90 active:scale-[0.98] ${styles.roleChip} ${data.areas.length > 0 ? "[animation:join-card-field-in_0.45s_cubic-bezier(0.22,1,0.36,1)_both]" : ""}`}
+                  style={{ backgroundColor: JOIN_FORM_BEIGE.fieldMuted }}
                 >
-                  {spacedCapsLabel("Roles")}
+                  {area}
                 </button>
-              )}
-              {!readOnly ? (
-                <EditButton
-                  onClick={() => onEdit(5)}
-                  label="Edit roles"
-                  className={styles.editBtn}
-                  pencilClass={styles.pencil}
-                />
-              ) : null}
+              ))}
             </div>
           </div>
 
           {/* Top-right: other fields */}
-          <div className={`absolute right-0 top-0 z-[2] ${styles.topMaxW} ${styles.topPad}`}>
+          <div className={`absolute right-0 top-0 z-[2] ${styles.topRightMaxW} ${styles.topPad}`}>
             <div className={`flex flex-col items-end ${styles.topGap}`}>
               {TOP_RIGHT_FIELDS.map(({ step, placeholder }) => {
                 const value = getTopRightDisplayValue(step, data, touchedSteps);
-                const textClass = value
-                  ? `text-[#1E343A]/72 ${styles.fieldText}`
-                  : styles.placeholderLabel;
 
                 return (
-                  <div
+                  <button
                     key={step}
-                    className={`flex max-w-full items-start justify-end gap-2 ${value ? "[animation:join-card-field-in_0.45s_cubic-bezier(0.22,1,0.36,1)_both]" : ""} ${inter.className}`}
+                    type="button"
+                    disabled={readOnly}
+                    onClick={() => onEdit(step)}
+                    className={`max-w-full whitespace-normal break-words transition-opacity hover:opacity-90 active:scale-[0.98] ${
+                      value
+                        ? `${styles.filledChip} [animation:join-card-field-in_0.45s_cubic-bezier(0.22,1,0.36,1)_both]`
+                        : `text-right ${styles.placeholderLabel}`
+                    } ${inter.className}`}
+                    style={value ? { backgroundColor: JOIN_FORM_BEIGE.fieldMuted } : undefined}
                   >
-                    <button
-                      type="button"
-                      disabled={readOnly}
-                      onClick={() => onEdit(step)}
-                      className={`min-w-0 flex-1 text-right whitespace-normal break-words ${textClass}`}
-                    >
-                      {value ? formatCardValue(step, value) : spacedCapsLabel(placeholder)}
-                    </button>
-                    {!readOnly ? (
-                      <EditButton
-                        onClick={() => onEdit(step)}
-                        label={`Edit ${placeholder.toLowerCase()}`}
-                        className={styles.editBtn}
-                        pencilClass={styles.pencil}
-                      />
-                    ) : null}
-                  </div>
+                    {value ? formatCardValue(step, value) : spacedCapsLabel(placeholder)}
+                  </button>
                 );
               })}
             </div>
