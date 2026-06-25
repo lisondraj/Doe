@@ -121,7 +121,13 @@ function ConvergingLinesGraphic({
   const cpFar = fullBleed ? 304 : 272;
 
   return (
-    <svg viewBox="0 0 400 400" fill="none" preserveAspectRatio="xMidYMid meet" aria-hidden className={SVG_CLASS}>
+    <svg
+      viewBox="0 0 400 400"
+      fill="none"
+      preserveAspectRatio={fullBleed ? "xMidYMax slice" : "xMidYMid meet"}
+      aria-hidden
+      className={SVG_CLASS}
+    >
       {offsets.map((offset, i) => {
         const yAtEdge = cy + offset;
         const yAtCenter = cy + (offset > 0 ? 5 : offset < 0 ? -5 : 0) * (Math.abs(offset) / 52);

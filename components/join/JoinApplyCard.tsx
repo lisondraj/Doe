@@ -4,7 +4,6 @@ import type { ReactNode } from "react";
 import { useRef } from "react";
 
 import { JoinInternLineGraphic } from "@/components/join/JoinInternLineGraphic";
-import { BLOG_LANDING_HERO_CORNER_PAD } from "@/lib/blog/blog-layout-styles";
 import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
 import { inter, lora } from "@/lib/home/fonts";
 import type { JoinApplyFormState } from "@/lib/join/join-apply-form";
@@ -29,8 +28,10 @@ const CARD_STYLES = {
     topRightMaxW: "max-w-[56%] iphone-page:max-w-[58%]",
     topGap: "gap-7 iphone-page:gap-8",
     nameLeading: 1.04,
+    nameCornerPad:
+      "px-8 pb-10 pt-0 iphone-page:px-[clamp(2rem,1.65rem+1.45vmin,2.6rem)] iphone-page:pb-[clamp(2.35rem,1.9rem+1.6vmin,2.85rem)]",
     lineBand:
-      "absolute inset-x-0 top-[54%] bottom-[10.25rem] origin-bottom scale-[1.52] iphone-page:top-[52%] iphone-page:bottom-[11rem] iphone-page:scale-[1.58]",
+      "absolute inset-x-0 z-[1] bottom-[12.5rem] h-[26rem] iphone-page:bottom-[13.25rem] iphone-page:h-[28rem]",
     roleChip:
       "w-fit max-w-full shrink-0 rounded-xl px-2.5 py-1.5 text-left font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[clamp(1.2rem,4vw,1.55rem)] iphone-page:px-3 iphone-page:py-2 iphone-page:text-[clamp(1.3rem,1.1rem+1.2vmin,1.7rem)]",
     roleGap: "gap-y-2 iphone-page:gap-y-2.5",
@@ -38,7 +39,6 @@ const CARD_STYLES = {
       "text-right font-medium leading-tight tracking-[-0.01em] text-[#9A8F82] text-[clamp(1.35rem,4.2vw,1.75rem)] iphone-page:text-[clamp(1.45rem,1.2rem+1.4vmin,1.85rem)]",
     editorPad: "px-8 py-12 iphone-page:px-10 iphone-page:py-14",
     editorMaxW: "max-w-[min(100%,34rem)]",
-    cornerPad: BLOG_LANDING_HERO_CORNER_PAD,
     resetSlot: "pt-12 iphone-page:pt-14",
     resetBtn: "gap-3.5 text-[1.5rem] iphone-page:text-[1.625rem]",
     resetIcon: "h-7 w-7 iphone-page:h-8 iphone-page:w-8",
@@ -58,7 +58,8 @@ const CARD_STYLES = {
     topRightMaxW: "max-w-[56%]",
     topGap: "gap-6",
     nameLeading: 1.04,
-    lineBand: "absolute inset-x-0 top-[52%] bottom-[8.75rem] origin-bottom scale-[1.54]",
+    nameCornerPad: "px-7 pb-8 pt-0",
+    lineBand: "absolute inset-x-0 z-[1] bottom-[9.75rem] h-[16.5rem]",
     roleChip:
       "w-fit max-w-full shrink-0 rounded-lg px-2.5 py-1.5 text-left font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[1.125rem]",
     roleGap: "gap-y-1.5",
@@ -66,7 +67,6 @@ const CARD_STYLES = {
       "text-right font-medium leading-tight tracking-[-0.01em] text-[#9A8F82] text-[1.3125rem]",
     editorPad: "px-11 py-10",
     editorMaxW: "max-w-[min(100%,32rem)]",
-    cornerPad: BLOG_LANDING_HERO_CORNER_PAD,
     resetSlot: "pt-12",
     resetBtn: "gap-3.5 text-[1.4375rem]",
     resetIcon: "h-7 w-7",
@@ -405,10 +405,8 @@ export function JoinApplyCard({
         <div
           className={`absolute inset-0 ${isEditing || showResetConfirm ? "pointer-events-none" : ""}`}
         >
-          <div className={`pointer-events-none absolute origin-center ${styles.lineBand}`}>
-            <div className="relative h-full w-full">
-              <JoinInternLineGraphic variant={2} fullBleed />
-            </div>
+          <div className={`pointer-events-none ${styles.lineBand}`}>
+            <JoinInternLineGraphic variant={2} fullBleed />
           </div>
 
           {/* Top-left: preferred roles */}
@@ -498,7 +496,7 @@ export function JoinApplyCard({
             name={name}
             readOnly={readOnly}
             onNameChange={onNameChange}
-            cornerPad={styles.cornerPad}
+            cornerPad={styles.nameCornerPad}
             leading={styles.nameLeading}
           />
         </div>
