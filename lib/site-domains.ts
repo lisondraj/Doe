@@ -1,8 +1,8 @@
-/** Primary marketing site (all pages except /join). */
+/** Primary marketing site (includes /join). */
 export const PRIMARY_SITE_HOST =
   process.env.PRIMARY_SITE_HOST ?? "doe.care";
 
-/** Dedicated join domain — /join is served here; all other paths redirect to /join. */
+/** Legacy join domain — redirects to primary /join. */
 export const JOIN_SITE_HOST = process.env.JOIN_SITE_HOST ?? "doehealth.care";
 
 export const JOIN_PATH = "/join";
@@ -49,7 +49,7 @@ export function joinSiteOrigin(protocol: "http" | "https" = "https"): string {
 }
 
 export function joinPageUrl(protocol: "http" | "https" = "https"): string {
-  return `${joinSiteOrigin(protocol)}${JOIN_PATH}`;
+  return `${primarySiteOrigin(protocol)}${JOIN_PATH}`;
 }
 
 /**
