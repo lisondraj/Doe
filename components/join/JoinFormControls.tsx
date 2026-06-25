@@ -1,6 +1,6 @@
 "use client";
 
-import type { JoinApplyCountry, JoinApplyEducation } from "@/lib/join/join-apply-form";
+import type { JoinApplyCountry, JoinApplyEducation, JoinApplyEducationValue } from "@/lib/join/join-apply-form";
 import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
 import { inter } from "@/lib/home/fonts";
 
@@ -126,7 +126,7 @@ export function JoinFormAdvanceButton({
 
 type JoinSegmentSliderProps<T extends string> = {
   options: readonly { value: T; label: string }[];
-  value: T;
+  value: T | "";
   onChange: (value: T) => void;
   ariaLabel: string;
   variant: "mobile" | "desktop";
@@ -141,11 +141,11 @@ export function JoinSegmentSlider<T extends string>({
   variant,
   disabled = false,
 }: JoinSegmentSliderProps<T>) {
-  const activeIndex = options.findIndex((o) => o.value === value);
+  const activeIndex = value ? options.findIndex((o) => o.value === value) : -1;
   const labelSize =
     variant === "mobile"
-      ? "py-[1.65rem] text-[1.5rem] iphone-page:py-[1.85rem] iphone-page:text-[1.625rem]"
-      : "py-[1.1rem] text-[1.125rem]";
+      ? "px-3 py-[1.65rem] text-[1.375rem] leading-snug iphone-page:px-3.5 iphone-page:py-[1.85rem] iphone-page:text-[1.5rem]"
+      : "px-3 py-[1.1rem] text-[1.0625rem] leading-snug";
 
   return (
     <div
@@ -154,16 +154,18 @@ export function JoinSegmentSlider<T extends string>({
       role="group"
       aria-label={ariaLabel}
     >
-      <div
-        className="pointer-events-none absolute top-1 bottom-1 rounded-[0.65rem] transition-[left,width] duration-200 ease-out iphone-page:top-1.5 iphone-page:bottom-1.5"
-        style={{
-          left: `calc(${activeIndex} * (100% / ${options.length}) + ${variant === "mobile" ? 6 : 4}px)`,
-          width: `calc(100% / ${options.length} - ${variant === "mobile" ? 12 : 8}px)`,
-          backgroundColor: JOIN_FORM_BEIGE.field,
-          boxShadow: "0 1px 2px rgba(30, 52, 58, 0.06)",
-        }}
-        aria-hidden
-      />
+      {activeIndex >= 0 ? (
+        <div
+          className="pointer-events-none absolute top-1 bottom-1 rounded-[0.65rem] transition-[left,width] duration-200 ease-out iphone-page:top-1.5 iphone-page:bottom-1.5"
+          style={{
+            left: `calc(${activeIndex} * (100% / ${options.length}) + ${variant === "mobile" ? 6 : 4}px)`,
+            width: `calc(100% / ${options.length} - ${variant === "mobile" ? 12 : 8}px)`,
+            backgroundColor: JOIN_FORM_BEIGE.field,
+            boxShadow: "0 1px 2px rgba(30, 52, 58, 0.06)",
+          }}
+          aria-hidden
+        />
+      ) : null}
       <div
         className="relative grid"
         style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}
@@ -177,7 +179,7 @@ export function JoinSegmentSlider<T extends string>({
               aria-pressed={active}
               disabled={disabled}
               onClick={() => onChange(option.value)}
-              className={`relative z-[1] px-2 text-center font-medium leading-tight tracking-[-0.01em] transition-colors ${labelSize} ${inter.className} ${
+              className={`relative z-[1] whitespace-normal break-words text-center font-medium tracking-[-0.01em] transition-colors ${labelSize} ${inter.className} ${
                 active ? "text-[#1E343A]" : "text-[#1E343A]/42 hover:text-[#1E343A]/65"
               }`}
             >
@@ -293,30 +295,55 @@ export function JoinEducationSlider({
   disabled = false,
   className,
 }: {
-  value: JoinApplyEducation;
+  value: JoinApplyEducationValue;
   onChange: (value: JoinApplyEducation) => void;
   prompt: string;
   variant: "mobile" | "desktop";
   disabled?: boolean;
   className?: string;
 }) {
+  const optionSize =
+    variant === "mobile"
+      ? "px-5 py-[1.65rem] text-[1.375rem] iphone-page:px-5 iphone-page:py-[1.85rem] iphone-page:text-[1.5rem]"
+      : "px-4 py-3.5 text-[1.0625rem]";
+
+  const options = [
+    { value: "highschool" as const, label: "Highschool" },
+    { value: "university" as const, label: "University/College" },
+    { value: "graduated" as const, label: "Graduated" },
+  ];
+
   return (
-    <div
-      className={`${joinFormPanelClass(variant)}${className ? ` ${className}` : ""}`}
-    >
+    <div className={`${joinFormPanelClass(variant)}${className ? ` ${className}` : ""}`}>
       <p className={joinFormPromptClass(variant)}>{prompt}</p>
-      <JoinSegmentSlider
-        variant={variant}
-        ariaLabel="Education level"
-        value={value}
-        onChange={onChange}
-        disabled={disabled}
-        options={[
-          { value: "highschool", label: "Highschool" },
-          { value: "university", label: "University/College" },
-          { value: "graduated", label: "Graduated" },
-        ]}
-      />
+      <div className={`flex flex-col ${variant === "mobile" ? "gap-3 iphone-page:gap-3.5" : "gap-2.5"}`}>
+        {options.map((option) => {
+          const active = option.value === value;
+          return (
+            <button
+              key={option.value}
+              type="button"
+              aria-pressed={active}
+              disabled={disabled}
+              onClick={() => onChange(option.value)}
+              className={`w-full rounded-xl text-left font-medium leading-snug tracking-[-0.01em] transition-colors ${optionSize} ${inter.className}`}
+              style={
+                active
+                  ? {
+                      backgroundColor: JOIN_FORM_BEIGE.meter,
+                      color: JOIN_FORM_BEIGE.page,
+                    }
+                  : {
+                      backgroundColor: JOIN_FORM_BEIGE.fieldMuted,
+                      color: "rgba(30, 52, 58, 0.58)",
+                    }
+              }
+            >
+              {option.label}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }

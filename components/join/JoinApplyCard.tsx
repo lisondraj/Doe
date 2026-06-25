@@ -21,7 +21,7 @@ const CARD_STYLES = {
     fieldText:
       "text-[clamp(1.95rem,5.8vw,2.85rem)] leading-[1.08] iphone-page:text-[clamp(2.15rem,1.75rem+2.4vmin,3.05rem)]",
     placeholderLabel:
-      "text-[0.875rem] font-medium uppercase tracking-[0.36em] text-[#C8C0B4] iphone-page:text-[0.9375rem] iphone-page:tracking-[0.38em]",
+      "text-[clamp(1.35rem,4.2vw,1.7rem)] font-medium uppercase tracking-[0.34em] text-[#C8C0B4] iphone-page:text-[clamp(1.45rem,1.2rem+1.5vmin,1.8rem)] iphone-page:tracking-[0.36em]",
     namePlaceholder:
       "text-[clamp(2.55rem,7.5vw,3.85rem)] leading-[1.04] text-[#C8C0B4] iphone-page:text-[clamp(2.85rem,2.35rem+2.9vmin,4.25rem)]",
     nameText:
@@ -30,14 +30,15 @@ const CARD_STYLES = {
     topMaxW: "max-w-[94%]",
     topGap: "gap-4 iphone-page:gap-5",
     nameMinH: "min-h-[calc(2*1.04em)] iphone-page:min-h-[calc(2*1.04em)]",
-    nameWidth: "w-full",
-    lineBand: "inset-0 scale-[1.22] iphone-page:scale-[1.28]",
+    nameWidth: "w-full max-w-[6.75em] iphone-page:max-w-[7.25em]",
+    lineBand:
+      "absolute left-0 right-0 bottom-[11rem] top-auto h-[24%] origin-bottom scale-[1.22] iphone-page:bottom-[12rem] iphone-page:h-[23%] iphone-page:scale-[1.28]",
     editBtn: "h-14 w-14 iphone-page:h-[3.75rem] iphone-page:w-[3.75rem] iphone-page:rounded-[1rem]",
     pencil: "h-6 w-6 iphone-page:h-[1.4rem] iphone-page:w-[1.4rem]",
     roleChip:
-      "w-fit max-w-full shrink-0 rounded-xl px-4 py-2.5 text-[clamp(1.2rem,4vw,1.55rem)] iphone-page:px-[1.125rem] iphone-page:py-3 iphone-page:text-[clamp(1.3rem,1.1rem+1.2vmin,1.7rem)]",
+      "w-fit max-w-full shrink-0 rounded-xl px-2.5 py-1.5 text-[clamp(1.2rem,4vw,1.55rem)] iphone-page:px-3 iphone-page:py-2 iphone-page:text-[clamp(1.3rem,1.1rem+1.2vmin,1.7rem)]",
     roleGrid: "inline-grid grid-cols-[max-content_max-content]",
-    roleGap: "gap-x-3 gap-y-2.5 iphone-page:gap-x-3.5 iphone-page:gap-y-3",
+    roleGap: "gap-x-1.5 gap-y-2 iphone-page:gap-x-2 iphone-page:gap-y-2",
     editorPad: "px-8 py-12 iphone-page:px-10 iphone-page:py-14",
     editorMaxW: "max-w-[min(100%,34rem)]",
     cornerPad: "pl-9 pb-10 pr-8 iphone-page:pl-10 iphone-page:pb-12 iphone-page:pr-9",
@@ -53,20 +54,19 @@ const CARD_STYLES = {
   desktop: {
     height: JOIN_DESKTOP_APPLY_CARD_HEIGHT,
     fieldText: "text-[1.5rem] leading-[1.14]",
-    placeholderLabel: "text-[0.8125rem] font-medium uppercase tracking-[0.34em] text-[#C8C0B4]",
+    placeholderLabel: "text-[1.25rem] font-medium uppercase tracking-[0.32em] text-[#C8C0B4]",
     namePlaceholder: "text-[2.35rem] leading-[1.04] text-[#C8C0B4]",
     nameText: "text-[2.35rem] leading-[1.04]",
     topPad: "p-7",
     topMaxW: "max-w-[94%]",
     topGap: "gap-3.5",
     nameMinH: "min-h-[calc(2*1.04em)]",
-    nameWidth: "w-full",
-    lineBand: "inset-0 scale-[1.24]",
+    nameWidth: "w-full max-w-[7em]",
     editBtn: "h-12 w-12 rounded-lg",
     pencil: "h-[1.35rem] w-[1.35rem]",
-    roleChip: "w-fit max-w-full shrink-0 rounded-lg px-3.5 py-2 text-[1.125rem]",
+    roleChip: "w-fit max-w-full shrink-0 rounded-lg px-2.5 py-1.5 text-[1.125rem]",
     roleGrid: "inline-grid grid-cols-[max-content_max-content]",
-    roleGap: "gap-x-2.5 gap-y-2",
+    roleGap: "gap-x-1.5 gap-y-1.5",
     editorPad: "px-11 py-10",
     editorMaxW: "max-w-[min(100%,32rem)]",
     cornerPad: "pl-8 pb-9 pr-7",
@@ -80,6 +80,9 @@ const CARD_STYLES = {
     modalCloseIcon: "h-6 w-6",
   },
 } as const;
+
+const MODAL_SCRIM = "bg-[#EFECE7]/62 backdrop-blur-[10px]";
+const CARD_BLUR = "blur-[12px]";
 
 const BOTTOM_LEFT_NAME_TEXT =
   "w-full resize-none overflow-hidden whitespace-normal break-words bg-transparent font-normal tracking-[-0.03em] leading-[1.04] outline-none";
@@ -166,7 +169,9 @@ function getTopRightDisplayValue(
     case 2:
       return touchedSteps.has(2) ? JOIN_APPLY_COUNTRY_LABELS[data.country] : null;
     case 3:
-      return touchedSteps.has(3) ? JOIN_APPLY_EDUCATION_LABELS[data.education] : null;
+      return touchedSteps.has(3) && data.education
+        ? JOIN_APPLY_EDUCATION_LABELS[data.education]
+        : null;
     case 4:
       return data.schoolName.trim() || null;
     case 6:
@@ -293,7 +298,7 @@ export function JoinApplyCard({
         style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
       >
         <div
-          className={`absolute inset-0 transition-[filter] duration-300 ${isEditing || showResetConfirm ? "pointer-events-none blur-[7px]" : ""}`}
+          className={`absolute inset-0 transition-[filter] duration-300 ${isEditing || showResetConfirm ? `pointer-events-none ${CARD_BLUR}` : ""}`}
         >
           <div className={`pointer-events-none absolute origin-center ${styles.lineBand}`}>
             <div className="relative h-full w-full">
@@ -303,7 +308,7 @@ export function JoinApplyCard({
 
           {/* Top-left: roles */}
           <div className={`absolute left-0 top-0 z-[2] ${styles.topMaxW} ${styles.topPad}`}>
-            <div className={`flex max-w-full items-start gap-2 ${inter.className}`}>
+            <div className={`flex max-w-full items-start gap-1 ${inter.className}`}>
               {data.areas.length > 0 ? (
                 <div className={`${styles.roleGrid} ${styles.roleGap}`}>
                   {data.areas.map((area) => (
@@ -410,7 +415,7 @@ export function JoinApplyCard({
             <button
               type="button"
               aria-label="Close editor"
-              className="absolute inset-0 z-[4] bg-[#EFECE7]/55 backdrop-blur-[2px]"
+              className={`absolute inset-0 z-[4] ${MODAL_SCRIM}`}
               onClick={onCloseEditor}
             />
             <ModalCloseButton
@@ -435,16 +440,12 @@ export function JoinApplyCard({
             <button
               type="button"
               aria-label="Cancel reset"
-              className="absolute inset-0 z-[4] bg-[#EFECE7]/55 backdrop-blur-[2px]"
+              className={`absolute inset-0 z-[4] ${MODAL_SCRIM}`}
               onClick={onResetCancel}
             />
             <div className={`absolute inset-0 z-[5] flex items-center justify-center ${styles.editorPad}`}>
               <div
-                className={`w-full ${styles.editorMaxW} rounded-[1.25rem] border p-6 [animation:join-step-enter-down_0.38s_cubic-bezier(0.22,1,0.36,1)_both] iphone-page:rounded-[1.35rem] iphone-page:p-7`}
-                style={{
-                  backgroundColor: JOIN_FORM_BEIGE.field,
-                  borderColor: JOIN_FORM_BEIGE.border,
-                }}
+                className={`w-full ${styles.editorMaxW} [animation:join-step-enter-down_0.38s_cubic-bezier(0.22,1,0.36,1)_both]`}
                 onClick={(e) => e.stopPropagation()}
               >
                 <p className={`font-normal leading-snug tracking-[-0.02em] text-[#1E343A] ${styles.confirmTitle} ${lora.className}`}>

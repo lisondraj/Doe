@@ -42,6 +42,16 @@ type RenderJoinApplyStepOptions = {
   enterLabel?: string;
 };
 
+function StepPrompt({
+  variant,
+  children,
+}: {
+  variant: "mobile" | "desktop";
+  children: string;
+}) {
+  return <p className={joinFormPromptClass(variant)}>{children}</p>;
+}
+
 export function renderJoinApplyStep({
   step,
   data,
@@ -62,33 +72,39 @@ export function renderJoinApplyStep({
   switch (step) {
     case 0:
       return (
-        <input
-          type="text"
-          value={data.name}
-          onChange={(e) => patch({ name: e.target.value })}
-          placeholder={prompt}
-          autoComplete="name"
-          aria-label={prompt}
-          readOnly={readOnly}
-          tabIndex={interactive ? 0 : -1}
-          className={fieldClass}
-          onKeyDown={onEnter ? (e) => { if (e.key === "Enter") { e.preventDefault(); onEnter(); } } : undefined}
-        />
+        <div>
+          <StepPrompt variant={variant}>{prompt}</StepPrompt>
+          <input
+            type="text"
+            value={data.name}
+            onChange={(e) => patch({ name: e.target.value })}
+            placeholder="Your name"
+            autoComplete="name"
+            aria-label={prompt}
+            readOnly={readOnly}
+            tabIndex={interactive ? 0 : -1}
+            className={fieldClass}
+            onKeyDown={onEnter ? (e) => { if (e.key === "Enter") { e.preventDefault(); onEnter(); } } : undefined}
+          />
+        </div>
       );
     case 1:
       return (
-        <input
-          type="email"
-          value={data.email}
-          onChange={(e) => patch({ email: e.target.value })}
-          placeholder={prompt}
-          autoComplete="email"
-          aria-label={prompt}
-          readOnly={readOnly}
-          tabIndex={interactive ? 0 : -1}
-          className={fieldClass}
-          onKeyDown={onEnter ? (e) => { if (e.key === "Enter") { e.preventDefault(); onEnter(); } } : undefined}
-        />
+        <div>
+          <StepPrompt variant={variant}>{prompt}</StepPrompt>
+          <input
+            type="email"
+            value={data.email}
+            onChange={(e) => patch({ email: e.target.value })}
+            placeholder="you@email.com"
+            autoComplete="email"
+            aria-label={prompt}
+            readOnly={readOnly}
+            tabIndex={interactive ? 0 : -1}
+            className={fieldClass}
+            onKeyDown={onEnter ? (e) => { if (e.key === "Enter") { e.preventDefault(); onEnter(); } } : undefined}
+          />
+        </div>
       );
     case 2:
       return (
@@ -112,18 +128,21 @@ export function renderJoinApplyStep({
       );
     case 4:
       return (
-        <input
-          type="text"
-          value={data.schoolName}
-          onChange={(e) => patch({ schoolName: e.target.value })}
-          placeholder={prompt}
-          autoComplete="organization"
-          aria-label={prompt}
-          readOnly={readOnly}
-          tabIndex={interactive ? 0 : -1}
-          className={fieldClass}
-          onKeyDown={onEnter ? (e) => { if (e.key === "Enter") { e.preventDefault(); onEnter(); } } : undefined}
-        />
+        <div>
+          <StepPrompt variant={variant}>{prompt}</StepPrompt>
+          <input
+            type="text"
+            value={data.schoolName}
+            onChange={(e) => patch({ schoolName: e.target.value })}
+            placeholder="School name"
+            autoComplete="organization"
+            aria-label={prompt}
+            readOnly={readOnly}
+            tabIndex={interactive ? 0 : -1}
+            className={fieldClass}
+            onKeyDown={onEnter ? (e) => { if (e.key === "Enter") { e.preventDefault(); onEnter(); } } : undefined}
+          />
+        </div>
       );
     case 5:
       return (
@@ -140,7 +159,7 @@ export function renderJoinApplyStep({
                   disabled={readOnly}
                   tabIndex={interactive ? 0 : -1}
                   onClick={() => patch({ areas: toggleArea(data.areas, area) })}
-                  className={`rounded-xl text-center font-medium leading-tight tracking-[-0.01em] transition-colors ${areaLabelSize} ${inter.className}`}
+                  className={`rounded-xl text-center font-medium leading-snug tracking-[-0.01em] transition-colors ${areaLabelSize} ${inter.className}`}
                   style={
                     active
                       ? {
@@ -172,18 +191,21 @@ export function renderJoinApplyStep({
               onChange={(e) => patch({ resume: e.target.files?.[0] ?? null })}
             />
           ) : null}
-          <button
-            type="button"
-            disabled={readOnly}
-            tabIndex={interactive ? 0 : -1}
-            onClick={() => interactive && resumeInputRef?.current?.click()}
-            aria-label={prompt}
-            className={`${fieldClass} flex h-full min-h-0 items-center text-left`}
-          >
-            <span className={`min-w-0 flex-1 truncate ${data.resume ? "text-[#1E343A]" : "text-[#1E343A]/38"}`}>
-              {data.resume ? data.resume.name : prompt}
-            </span>
-          </button>
+          <div>
+            <StepPrompt variant={variant}>{prompt}</StepPrompt>
+            <button
+              type="button"
+              disabled={readOnly}
+              tabIndex={interactive ? 0 : -1}
+              onClick={() => interactive && resumeInputRef?.current?.click()}
+              aria-label={prompt}
+              className={`${fieldClass} flex h-full min-h-0 items-center text-left`}
+            >
+              <span className={`min-w-0 flex-1 whitespace-normal break-words text-left ${data.resume ? "text-[#1E343A]" : "text-[#1E343A]/38"}`}>
+                {data.resume ? data.resume.name : "Choose a file"}
+              </span>
+            </button>
+          </div>
         </>
       );
     case 7:
@@ -203,16 +225,19 @@ export function renderJoinApplyStep({
       );
     case 8:
       return (
-        <textarea
-          value={data.notes}
-          onChange={(e) => patch({ notes: e.target.value })}
-          placeholder={prompt}
-          aria-label={prompt}
-          readOnly={readOnly}
-          tabIndex={interactive ? 0 : -1}
-          rows={4}
-          className={`${fieldClass} h-full min-h-0 resize-none`}
-        />
+        <div>
+          <StepPrompt variant={variant}>{prompt}</StepPrompt>
+          <textarea
+            value={data.notes}
+            onChange={(e) => patch({ notes: e.target.value })}
+            placeholder="Optional notes"
+            aria-label={prompt}
+            readOnly={readOnly}
+            tabIndex={interactive ? 0 : -1}
+            rows={4}
+            className={`${fieldClass} h-full min-h-0 resize-none`}
+          />
+        </div>
       );
     default:
       return null;
