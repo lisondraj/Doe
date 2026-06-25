@@ -1,6 +1,5 @@
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { HeroTriagePreview } from "@/components/home/HeroTriagePreview";
-import { JoinHeroAiFeatureCards } from "@/components/join/JoinHeroAiFeatureCards";
 import { BLOG_LANDING_HERO_CORNER_PAD } from "@/lib/blog/blog-layout-styles";
 import { DOEPHONE_COMMUNICATION_SLIDES } from "@/lib/doephone/communication-carousel";
 import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
@@ -63,23 +62,21 @@ export function JoinInternshipHero({ variant }: { variant: "mobile" | "desktop" 
           }}
         />
       ) : variant === "desktop" ? (
-        <>
-          <HeroTriagePreview
-            fontClassName={suisseIntl.className}
-            size="desktop"
-            theme="light"
-            layout="simple"
-            desktopScale={JOIN_HERO_TRIAGE_SCALE}
-            className="z-[2]"
-            style={{
-              top: JOIN_HERO_TRIAGE_PANEL.top,
-              right: JOIN_HERO_TRIAGE_PANEL.right,
-              bottom: JOIN_HERO_TRIAGE_PANEL.bottom,
-              width: JOIN_HERO_TRIAGE_PANEL.width,
-            }}
-          />
-          <JoinHeroAiFeatureCards className="z-[3]" />
-        </>
+        <HeroTriagePreview
+          fontClassName={suisseIntl.className}
+          size="desktop"
+          theme="light"
+          layout="simple"
+          showNavIcons
+          desktopScale={JOIN_HERO_TRIAGE_SCALE}
+          className="z-[2]"
+          style={{
+            top: JOIN_HERO_TRIAGE_PANEL.top,
+            right: JOIN_HERO_TRIAGE_PANEL.right,
+            bottom: JOIN_HERO_TRIAGE_PANEL.bottom,
+            width: JOIN_HERO_TRIAGE_PANEL.width,
+          }}
+        />
       ) : null}
     </div>
   );

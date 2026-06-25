@@ -192,10 +192,9 @@ export type JoinHeroAiFeatureCardConfig = {
   zIndex: number;
 };
 
-/** Join desktop hero — AI panels anchored to the inbox preview edges. */
+/** Join desktop hero — Brain panel anchored to the inbox preview edge. */
 export const JOIN_HERO_AI_FEATURE_CARDS: readonly JoinHeroAiFeatureCardConfig[] = [
   { id: "brain", zIndex: 3 },
-  { id: "agents", zIndex: 4 },
 ] as const;
 
 /** Counter-scale so AI panels stay natural size inside the inbox scale wrapper. */

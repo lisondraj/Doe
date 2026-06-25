@@ -220,6 +220,7 @@ function SenderMark({
   const sz = joinCompact ? "1.28rem" : mobile ? "2.35rem" : "1.45rem";
   const onSelectedRow = Boolean(row.selected);
   const useFlatSelectedMark = onSelectedRow && config.flat;
+  const useFlatLightMark = !onSelectedRow && config.flat;
   return (
     <div
       className={`flex shrink-0 items-center justify-center font-medium ${config.paneGlassTw}`}
@@ -227,10 +228,24 @@ function SenderMark({
         width: sz,
         height: sz,
         borderRadius: "50%",
-        background: useFlatSelectedMark ? "rgba(255,255,255,0.14)" : row.iconBg,
-        color: useFlatSelectedMark ? "#FFFFFF" : row.iconColor,
+        background: useFlatSelectedMark
+          ? "rgba(255,255,255,0.14)"
+          : useFlatLightMark
+            ? "rgba(210,119,76,0.14)"
+            : row.iconBg,
+        color: useFlatSelectedMark
+          ? "#FFFFFF"
+          : useFlatLightMark
+            ? JOIN_FORM_BEIGE.ink
+            : row.iconColor,
         fontSize: joinCompact ? "0.48rem" : mobile ? "0.82rem" : "0.52rem",
-        border: `1px solid ${useFlatSelectedMark ? "rgba(255,255,255,0.12)" : colors.glassBorder}`,
+        border: `1px solid ${
+          useFlatSelectedMark
+            ? "rgba(255,255,255,0.12)"
+            : useFlatLightMark
+              ? "#ECE8E1"
+              : colors.glassBorder
+        }`,
         boxShadow: config.flat ? "none" : config.insetShadow,
       }}
     >
@@ -456,8 +471,18 @@ function OpenEmailPane({ mobile, config }: { mobile: boolean; config: HeroTriage
                 row={{
                   ...SELECTED,
                   initials: msg.from === "Dr. Singh" ? "DS" : "MR",
-                  iconBg: msg.from === "Dr. Singh" ? "rgba(231,169,68,0.17)" : SELECTED.iconBg,
-                  iconColor: msg.from === "Dr. Singh" ? "rgba(255,240,215,0.88)" : SELECTED.iconColor,
+                  iconBg:
+                    msg.from === "Dr. Singh"
+                      ? config.flat
+                        ? "rgba(210,119,76,0.14)"
+                        : "rgba(231,169,68,0.17)"
+                      : SELECTED.iconBg,
+                  iconColor:
+                    msg.from === "Dr. Singh"
+                      ? config.flat
+                        ? JOIN_FORM_BEIGE.ink
+                        : "rgba(255,240,215,0.88)"
+                      : SELECTED.iconColor,
                 }}
                 mobile={mobile}
                 config={config}
@@ -542,11 +567,31 @@ function OpenEmailPane({ mobile, config }: { mobile: boolean; config: HeroTriage
   );
 }
 
+function ProfileNavMark({ mobile }: { mobile: boolean }) {
+  const sz = mobile ? "3.1rem" : "2rem";
+  return (
+    <div
+      className="flex items-center justify-center rounded-full font-semibold"
+      style={{
+        width: sz,
+        height: sz,
+        fontSize: mobile ? "0.82rem" : "0.52rem",
+        background: JOIN_FORM_BEIGE.page,
+        color: JOIN_FORM_BEIGE.ink,
+        border: "1px solid #ECE8E1",
+      }}
+    >
+      DS
+    </div>
+  );
+}
+
 export type HeroTriagePreviewProps = {
   fontClassName: string;
   size?: "desktop" | "mobile";
   theme?: HeroTriageTheme;
   layout?: "full" | "simple";
+  showNavIcons?: boolean;
   desktopScale?: number;
   mobileScale?: number;
   mobileAnchor?: "default" | "join";
@@ -563,6 +608,7 @@ export function HeroTriagePreview({
   size = "desktop",
   theme = "dark",
   layout = "full",
+  showNavIcons = false,
   desktopScale = 1,
   mobileScale,
   mobileAnchor = "default",
@@ -572,6 +618,7 @@ export function HeroTriagePreview({
   const isMobile = size === "mobile";
   const isSimple = layout === "simple";
   const isJoinMobile = isMobile && mobileAnchor === "join";
+  const showFullNav = !isSimple || showNavIcons;
   const config = getHeroTriageThemeConfig(theme);
   const { colors } = config;
   const navW = isJoinMobile ? "3.15rem" : isMobile ? "5.1rem" : isSimple ? "3.25rem" : "2.85rem";
@@ -652,7 +699,7 @@ export function HeroTriagePreview({
               className={`flex shrink-0 flex-col items-center ${config.paneGlassTw}`}
               style={{
                 width: navW,
-                borderRight: isSimple ? "none" : `1px solid ${colors.divider}`,
+                borderRight: isSimple && !showNavIcons ? "none" : `1px solid ${colors.divider}`,
                 padding: isJoinMobile ? "0.58rem 0.3rem" : isMobile ? "1.1rem 0.55rem" : isSimple ? "0.85rem 0.4rem" : "0.65rem 0.32rem",
                 gap: isJoinMobile ? "0.18rem" : isMobile ? "0.35rem" : "0.28rem",
                 ...config.paneStyle(),
@@ -665,7 +712,7 @@ export function HeroTriagePreview({
               <NavIcon active mobile={navIconMobile} config={config}>
                 <InboxIcon mobile={navIconMobile} d="M4 6h16v12H4V6zm0 0 8 7 8-7" color={colors.navIcon} />
               </NavIcon>
-              {isSimple ? null : (
+              {showFullNav ? (
                 <>
                   <NavIcon mobile={isMobile} config={config}>
                     <InboxIcon mobile={isMobile} d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z" color={colors.navIcon} />
@@ -677,11 +724,9 @@ export function HeroTriagePreview({
                     <InboxIcon mobile={isMobile} d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2z" color={colors.navIcon} />
                   </NavIcon>
                   <div className="flex-1" />
-                  <NavIcon mobile={isMobile} config={config}>
-                    <InboxIcon mobile={isMobile} d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7.5-9.5a8.38 8.38 0 0 1 0 11M4.5 5.5a8.38 8.38 0 0 0 0 11" color={colors.navIcon} />
-                  </NavIcon>
+                  <ProfileNavMark mobile={isMobile} />
                 </>
-              )}
+              ) : null}
             </nav>
 
             {/* Inbox preview column */}
