@@ -31,7 +31,7 @@ const CARD_STYLES = {
     nameCornerPad:
       "px-8 pb-14 pt-0 iphone-page:px-[clamp(2rem,1.65rem+1.45vmin,2.6rem)] iphone-page:pb-[clamp(3rem,2.5rem+1.8vmin,3.75rem)]",
     lineBand:
-      "absolute inset-x-0 z-[1] bottom-[11.75rem] h-[10rem] iphone-page:bottom-[12.5rem] iphone-page:h-[11rem]",
+      "absolute inset-x-0 z-[1] bottom-[12rem] h-[18rem] overflow-hidden iphone-page:bottom-[12.75rem] iphone-page:h-[20rem]",
     roleChip:
       "w-fit max-w-full shrink-0 rounded-xl px-2.5 py-1.5 text-left font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[clamp(1.2rem,4vw,1.55rem)] iphone-page:px-3 iphone-page:py-2 iphone-page:text-[clamp(1.3rem,1.1rem+1.2vmin,1.7rem)]",
     roleGap: "gap-y-2 iphone-page:gap-y-2.5",
@@ -59,7 +59,7 @@ const CARD_STYLES = {
     topGap: "gap-8",
     nameLeading: 1.04,
     nameCornerPad: "px-7 pb-10 pt-0",
-    lineBand: "absolute inset-x-0 z-[1] bottom-[8.25rem] h-[8.5rem]",
+    lineBand: "absolute inset-x-0 z-[1] bottom-[8.75rem] h-[11rem] overflow-hidden",
     roleChip:
       "w-fit max-w-full shrink-0 rounded-lg px-2.5 py-1.5 text-left font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[1.125rem]",
     roleGap: "gap-y-1.5",

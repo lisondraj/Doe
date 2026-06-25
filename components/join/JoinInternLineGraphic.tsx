@@ -124,7 +124,7 @@ function ConvergingLinesGraphic({
     <svg
       viewBox="0 0 400 400"
       fill="none"
-      preserveAspectRatio={fullBleed ? "xMidYMax slice" : "xMidYMid meet"}
+      preserveAspectRatio={fullBleed ? "xMidYMid slice" : "xMidYMid meet"}
       aria-hidden
       className={SVG_CLASS}
     >
