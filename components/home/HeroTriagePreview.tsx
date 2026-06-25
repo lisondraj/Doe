@@ -8,7 +8,7 @@ import {
   HERO_TRIAGE_PANEL_WIDTH,
   HERO_TRIAGE_TILT,
 } from "@/lib/home/hero-triage-preview-styles";
-import { getHeroTriageThemeConfig, type HeroTriageTheme, type HeroTriageThemeConfig } from "@/lib/home/hero-triage-theme";
+import { getHeroTriageThemeConfig, JOIN_MOBILE_HERO_TRIAGE_PANEL, type HeroTriageTheme, type HeroTriageThemeConfig } from "@/lib/home/hero-triage-theme";
 import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
 import type { CSSProperties, ReactNode } from "react";
 
@@ -533,6 +533,8 @@ export type HeroTriagePreviewProps = {
   theme?: HeroTriageTheme;
   layout?: "full" | "simple";
   desktopScale?: number;
+  mobileScale?: number;
+  mobileAnchor?: "default" | "join";
   style?: CSSProperties;
   className?: string;
 };
@@ -547,38 +549,60 @@ export function HeroTriagePreview({
   theme = "dark",
   layout = "full",
   desktopScale = 1,
+  mobileScale,
+  mobileAnchor = "default",
   style,
   className = "",
 }: HeroTriagePreviewProps) {
   const isMobile = size === "mobile";
   const isSimple = layout === "simple";
+  const isJoinMobile = isMobile && mobileAnchor === "join";
   const config = getHeroTriageThemeConfig(theme);
   const { colors } = config;
   const navW = isMobile ? "5.1rem" : isSimple ? "3.25rem" : "2.85rem";
-  const listW = isMobile ? HERO_TRIAGE_MOBILE_LIST_WIDTH : isSimple ? undefined : "38%";
+  const listW = isMobile && !isSimple ? HERO_TRIAGE_MOBILE_LIST_WIDTH : isSimple ? undefined : "38%";
   const inboxRows = isSimple ? INBOX_ROWS.slice(0, 5) : INBOX_ROWS;
+  const mobileScaleValue = mobileScale ?? HERO_TRIAGE_MOBILE_SCALE;
   const desktopTransform =
     !isMobile && desktopScale !== 1 ? `scale(${desktopScale})` : HERO_TRIAGE_TILT.desktop;
+  const mobileOuterHeight = isJoinMobile
+    ? JOIN_MOBILE_HERO_TRIAGE_PANEL.outerHeight
+    : isMobile && isSimple
+      ? "26rem"
+      : isMobile
+        ? HERO_TRIAGE_MOBILE_MIN_HEIGHT.outer
+        : undefined;
+  const mobileInnerMinHeight = isJoinMobile
+    ? JOIN_MOBILE_HERO_TRIAGE_PANEL.innerMinHeight
+    : isMobile && isSimple
+      ? "28rem"
+      : isSimple
+        ? "24rem"
+        : isMobile
+          ? HERO_TRIAGE_MOBILE_MIN_HEIGHT.inner
+          : "18rem";
 
   return (
     <div
       className={`pointer-events-none absolute select-none ${className}`}
       style={{
-        ...(isMobile
-          ? HERO_TRIAGE_PANEL_ANCHOR.mobile
-          : { top: "30%", right: HERO_TRIAGE_PANEL_RIGHT.desktop }),
-        ...(isMobile && HERO_TRIAGE_PANEL_LEFT.mobile != null
+        ...(isMobile && mobileAnchor === "default" ? HERO_TRIAGE_PANEL_ANCHOR.mobile : {}),
+        ...(isMobile && mobileAnchor === "default"
+          ? { width: HERO_TRIAGE_PANEL_WIDTH.mobile }
+          : !isMobile
+            ? { top: "30%", right: HERO_TRIAGE_PANEL_RIGHT.desktop, width: HERO_TRIAGE_PANEL_WIDTH.desktop }
+            : {}),
+        ...(isMobile && HERO_TRIAGE_PANEL_LEFT.mobile != null && mobileAnchor === "default"
           ? { left: HERO_TRIAGE_PANEL_LEFT.mobile }
           : {}),
-        width: isMobile ? HERO_TRIAGE_PANEL_WIDTH.mobile : HERO_TRIAGE_PANEL_WIDTH.desktop,
         ...style,
       }}
       aria-hidden
     >
       <div
         style={{
-          transform: isMobile ? `scale(${HERO_TRIAGE_MOBILE_SCALE})` : desktopTransform,
-          transformOrigin: isMobile ? "bottom left" : "bottom right",
+          transform: isMobile ? `scale(${mobileScaleValue})` : desktopTransform,
+          transformOrigin: isJoinMobile ? "top left" : isMobile ? "bottom left" : "bottom right",
           WebkitFontSmoothing: "antialiased",
           MozOsxFontSmoothing: "grayscale",
         }}
@@ -594,14 +618,14 @@ export function HeroTriagePreview({
                   border: `1px solid ${colors.shellBorder}`,
                   boxShadow: "inset 0 1px 0 rgba(255,228,196,0.1)",
                 }),
-            height: isMobile ? HERO_TRIAGE_MOBILE_MIN_HEIGHT.outer : undefined,
+            height: mobileOuterHeight,
             minHeight: isMobile ? undefined : isSimple ? "22rem" : "16rem",
           }}
         >
           <div
             className={`flex h-full ${config.innerGlassTw}`}
             style={{
-              minHeight: isMobile ? HERO_TRIAGE_MOBILE_MIN_HEIGHT.inner : isSimple ? "24rem" : "18rem",
+              minHeight: isMobile ? mobileInnerMinHeight : isSimple ? "24rem" : "18rem",
               background: config.innerGradient,
             }}
           >
