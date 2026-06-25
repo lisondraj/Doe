@@ -502,12 +502,17 @@ export function JoinFormBorderedResumeField({
   };
 
   const label = resume ? resume.name : "Choose a file";
+  const optionalClass =
+    variant === "mobile"
+      ? "mt-2 text-[0.8125rem] leading-snug iphone-page:text-[0.875rem]"
+      : "mt-1.5 text-[0.75rem] leading-snug";
 
   return (
-    <div
-      className={joinFormBorderedBoxClass(variant)}
-      style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
-    >
+    <div className="w-full">
+      <div
+        className={joinFormBorderedBoxClass(variant)}
+        style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
+      >
       {interactive ? (
         <input
           ref={fileInputRef}
@@ -557,6 +562,10 @@ export function JoinFormBorderedResumeField({
           Reupload
         </button>
       ) : null}
+      </div>
+      <p className={`text-right font-medium tracking-[-0.01em] text-[#1E343A]/45 ${optionalClass} ${inter.className}`}>
+        Optional
+      </p>
     </div>
   );
 }
