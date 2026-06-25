@@ -176,6 +176,7 @@ export function JoinSegmentSlider<T extends string>({
             <button
               key={option.value}
               type="button"
+              data-join-apply-interactive
               aria-pressed={active}
               disabled={disabled}
               onClick={() => onChange(option.value)}
@@ -287,6 +288,7 @@ export function JoinCountrySlider({
             <button
               key={option.value}
               type="button"
+              data-join-apply-interactive
               aria-pressed={active}
               disabled={disabled}
               onClick={() => onChange(option.value)}
@@ -348,6 +350,7 @@ export function JoinEducationSlider({
             <button
               key={option.value}
               type="button"
+              data-join-apply-interactive
               aria-pressed={active}
               disabled={disabled}
               onClick={() => onChange(option.value)}

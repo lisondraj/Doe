@@ -74,6 +74,7 @@ export function renderJoinApplyStep({
           <StepPrompt variant={variant}>{prompt}</StepPrompt>
           <input
             type="text"
+            data-join-apply-interactive
             value={data.name}
             onChange={(e) => patch({ name: e.target.value })}
             placeholder="Your name"
@@ -92,6 +93,7 @@ export function renderJoinApplyStep({
           <StepPrompt variant={variant}>{prompt}</StepPrompt>
           <input
             type="email"
+            data-join-apply-interactive
             value={data.email}
             onChange={(e) => patch({ email: e.target.value })}
             placeholder="you@email.com"
@@ -130,6 +132,7 @@ export function renderJoinApplyStep({
           <StepPrompt variant={variant}>{prompt}</StepPrompt>
           <input
             type="text"
+            data-join-apply-interactive
             value={data.schoolName}
             onChange={(e) => patch({ schoolName: e.target.value })}
             placeholder="School name"
@@ -153,6 +156,7 @@ export function renderJoinApplyStep({
                 <button
                   key={area}
                   type="button"
+                  data-join-apply-interactive
                   aria-pressed={active}
                   disabled={readOnly}
                   tabIndex={interactive ? 0 : -1}
@@ -193,6 +197,7 @@ export function renderJoinApplyStep({
             <StepPrompt variant={variant}>{prompt}</StepPrompt>
             <button
               type="button"
+              data-join-apply-interactive
               disabled={readOnly}
               tabIndex={interactive ? 0 : -1}
               onClick={() => interactive && resumeInputRef?.current?.click()}
@@ -220,6 +225,7 @@ export function renderJoinApplyStep({
           </p>
           <input
             type="text"
+            data-join-apply-interactive
             value={data.linkedinUsername}
             onChange={(e) => patch({ linkedinUsername: e.target.value.replace(/\s/g, "") })}
             placeholder="username"

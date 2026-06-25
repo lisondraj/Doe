@@ -78,8 +78,7 @@ const CARD_STYLES = {
   },
 } as const;
 
-const MODAL_SCRIM = "bg-[#EFECE7]/62 backdrop-blur-[10px]";
-const CARD_BLUR = "blur-[12px]";
+const MODAL_SCRIM = "bg-[#EFECE7]/72";
 
 const NAME_LORA_MOBILE =
   "text-[clamp(2.35rem,8vw,3.55rem)] iphone-page:text-[clamp(2.5rem,1.9rem+3.4vmin,4.15rem)]";
@@ -236,7 +235,7 @@ function JoinApplyCardNameField({
 }
 
 const TOP_RIGHT_FIELDS = [
-  { step: 1, placeholder: "Email", singleLine: true },
+  { step: 1, placeholder: "Email", singleLine: false },
   { step: 2, placeholder: "Country", singleLine: false },
   { step: 3, placeholder: "Education", singleLine: false },
   { step: 4, placeholder: "School", singleLine: false },
@@ -283,17 +282,16 @@ function ResetIcon({ className }: { className: string }) {
 
 function LinkedInIcon({ className }: { className: string }) {
   return (
-    <svg viewBox="0 0 16 16" fill="none" aria-hidden className={className}>
-      <rect width="16" height="16" rx="2.5" fill="currentColor" />
-      <path
-        d="M4.5 6.5v5M4.5 4.5v.25M8 11.5V9a1.5 1.5 0 0 1 3 0v2.5M8 6.5v5"
-        stroke="white"
-        strokeWidth="1.35"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden className={className}>
+      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
     </svg>
   );
+}
+
+function splitEmailLines(email: string): { local: string; domain: string } | null {
+  const at = email.indexOf("@");
+  if (at <= 0) return null;
+  return { local: email.slice(0, at), domain: email.slice(at) };
 }
 
 function capitalizeFirst(value: string): string {
@@ -405,7 +403,7 @@ export function JoinApplyCard({
         style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
       >
         <div
-          className={`absolute inset-0 transition-[filter] duration-300 ${isEditing || showResetConfirm ? `pointer-events-none ${CARD_BLUR}` : ""}`}
+          className={`absolute inset-0 ${isEditing || showResetConfirm ? "pointer-events-none" : ""}`}
         >
           <div className={`pointer-events-none absolute origin-center ${styles.lineBand}`}>
             <div className="relative h-full w-full">
@@ -446,6 +444,8 @@ export function JoinApplyCard({
               {TOP_RIGHT_FIELDS.map(({ step, placeholder, singleLine }) => {
                 const value = getTopRightDisplayValue(step, data, touchedSteps);
                 const isLinkedIn = step === 7;
+                const isEmail = step === 1;
+                const emailLines = isEmail && value ? splitEmailLines(value) : null;
                 const displayText = value
                   ? isLinkedIn
                     ? `/${formatCardValue(step, value)}`
@@ -466,13 +466,18 @@ export function JoinApplyCard({
                         : styles.placeholderLabel
                     } ${isLinkedIn && value ? "flex items-center gap-1.5 justify-end" : ""} ${inter.className}`}
                   >
-                    {isLinkedIn && value ? (
+                    {isEmail && emailLines ? (
+                      <span className="flex flex-col items-end leading-tight">
+                        <span>{emailLines.local}</span>
+                        <span>{emailLines.domain}</span>
+                      </span>
+                    ) : isLinkedIn && value ? (
                       <>
                         <LinkedInIcon className={variant === "mobile"
                           ? "h-[1.15em] w-[1.15em] shrink-0 iphone-page:h-[1.12em] iphone-page:w-[1.12em]"
                           : "h-[1.1em] w-[1.1em] shrink-0"
                         } />
-                        <span className="min-w-0 overflow-hidden text-ellipsis whitespace-nowrap">{displayText}</span>
+                        <span className="min-w-0 break-words">{displayText}</span>
                       </>
                     ) : (
                       displayText
@@ -512,10 +517,15 @@ export function JoinApplyCard({
               iconClass={styles.modalCloseIcon}
               padClass={styles.topPad}
             />
-            <div className={`absolute inset-0 z-[5] flex items-center justify-center ${styles.editorPad}`}>
+            <div
+              className={`absolute inset-0 z-[5] flex items-center justify-center ${styles.editorPad}`}
+              onClick={(e) => {
+                if ((e.target as HTMLElement).closest("[data-join-apply-interactive]")) return;
+                onCloseEditor();
+              }}
+            >
               <div
                 className={`w-full ${styles.editorMaxW} [animation:join-step-enter-down_0.38s_cubic-bezier(0.22,1,0.36,1)_both]`}
-                onClick={(e) => e.stopPropagation()}
               >
                 {editor}
               </div>
@@ -531,10 +541,15 @@ export function JoinApplyCard({
               className={`absolute inset-0 z-[4] ${MODAL_SCRIM}`}
               onClick={onResetCancel}
             />
-            <div className={`absolute inset-0 z-[5] flex items-center justify-center ${styles.editorPad}`}>
+            <div
+              className={`absolute inset-0 z-[5] flex items-center justify-center ${styles.editorPad}`}
+              onClick={(e) => {
+                if ((e.target as HTMLElement).closest("[data-join-apply-interactive]")) return;
+                onResetCancel?.();
+              }}
+            >
               <div
                 className={`w-full ${styles.editorMaxW} [animation:join-step-enter-down_0.38s_cubic-bezier(0.22,1,0.36,1)_both]`}
-                onClick={(e) => e.stopPropagation()}
               >
                 <p className={`font-medium tracking-[-0.02em] text-[#1E343A] ${styles.confirmTitle} ${inter.className}`}>
                   Are you sure?
@@ -542,6 +557,7 @@ export function JoinApplyCard({
                 <div className={styles.confirmBtnGap}>
                   <button
                     type="button"
+                    data-join-apply-interactive
                     onClick={onResetConfirm}
                     className={`transition-colors hover:opacity-90 active:scale-[0.98] ${styles.confirmBtnSize} ${inter.className}`}
                     style={{
@@ -553,6 +569,7 @@ export function JoinApplyCard({
                   </button>
                   <button
                     type="button"
+                    data-join-apply-interactive
                     onClick={onResetCancel}
                     className={`transition-colors hover:opacity-90 active:scale-[0.98] ${styles.confirmBtnSize} ${inter.className}`}
                     style={{
