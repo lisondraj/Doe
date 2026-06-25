@@ -21,7 +21,7 @@ const CARD_STYLES = {
     fieldText:
       "text-[clamp(1.95rem,5.8vw,2.85rem)] leading-[1.08] iphone-page:text-[clamp(2.15rem,1.75rem+2.4vmin,3.05rem)]",
     placeholderLabel:
-      "text-[clamp(1.35rem,4.2vw,1.7rem)] font-medium uppercase tracking-[0.34em] text-[#C8C0B4] iphone-page:text-[clamp(1.45rem,1.2rem+1.5vmin,1.8rem)] iphone-page:tracking-[0.36em]",
+      "text-[clamp(0.95rem,3vw,1.2rem)] font-medium uppercase tracking-[0.26em] text-[#C8C0B4] iphone-page:text-[clamp(1rem,0.85rem+0.8vmin,1.3rem)] iphone-page:tracking-[0.28em]",
     namePlaceholder:
       "text-[clamp(2.55rem,7.5vw,3.85rem)] leading-[1.04] text-[#C8C0B4] iphone-page:text-[clamp(2.85rem,2.35rem+2.9vmin,4.25rem)]",
     nameText:
@@ -29,22 +29,21 @@ const CARD_STYLES = {
     topPad: "p-8 iphone-page:p-9",
     topMaxW: "max-w-[94%]",
     topGap: "gap-4 iphone-page:gap-5",
-    nameMinH: "min-h-[calc(2*1.04em)] iphone-page:min-h-[calc(2*1.04em)]",
-    nameWidth: "w-full max-w-[6.75em] iphone-page:max-w-[7.25em]",
-    lineBand:
-      "absolute left-0 right-0 bottom-[11rem] top-auto h-[24%] origin-bottom scale-[1.22] iphone-page:bottom-[12rem] iphone-page:h-[23%] iphone-page:scale-[1.28]",
+    nameWidth: "w-full max-w-[min(100%,18rem)] iphone-page:max-w-[min(100%,20rem)]",
+    nameLineGap: "gap-0",
+    lineBand: "absolute inset-0 origin-center scale-[1.34] iphone-page:scale-[1.4]",
     editBtn: "h-14 w-14 iphone-page:h-[3.75rem] iphone-page:w-[3.75rem] iphone-page:rounded-[1rem]",
     pencil: "h-6 w-6 iphone-page:h-[1.4rem] iphone-page:w-[1.4rem]",
     roleChip:
       "w-fit max-w-full shrink-0 rounded-xl px-2.5 py-1.5 text-[clamp(1.2rem,4vw,1.55rem)] iphone-page:px-3 iphone-page:py-2 iphone-page:text-[clamp(1.3rem,1.1rem+1.2vmin,1.7rem)]",
-    roleGrid: "inline-grid grid-cols-[max-content_max-content]",
-    roleGap: "gap-x-1.5 gap-y-2 iphone-page:gap-x-2 iphone-page:gap-y-2",
+    roleGrid: "inline-grid grid-cols-1",
+    roleGap: "gap-y-2 iphone-page:gap-y-2.5",
     editorPad: "px-8 py-12 iphone-page:px-10 iphone-page:py-14",
     editorMaxW: "max-w-[min(100%,34rem)]",
     cornerPad: "pl-9 pb-10 pr-8 iphone-page:pl-10 iphone-page:pb-12 iphone-page:pr-9",
-    resetSlot: "pt-9 iphone-page:pt-10",
-    resetBtn: "gap-2.5 text-[1.0625rem] iphone-page:text-[1.1875rem]",
-    resetIcon: "h-[1.35rem] w-[1.35rem] iphone-page:h-6 iphone-page:w-6",
+    resetSlot: "pt-11 iphone-page:pt-12",
+    resetBtn: "gap-3 text-[1.25rem] iphone-page:text-[1.375rem]",
+    resetIcon: "h-6 w-6 iphone-page:h-7 iphone-page:w-7",
     confirmTitle: "text-[1.625rem] iphone-page:text-[1.75rem]",
     confirmBody: "text-[1.125rem] iphone-page:text-[1.1875rem]",
     confirmBtn: "rounded-xl px-5 py-3 text-[1.125rem] iphone-page:rounded-[0.95rem] iphone-page:px-6 iphone-page:py-3.5 iphone-page:text-[1.1875rem]",
@@ -54,26 +53,26 @@ const CARD_STYLES = {
   desktop: {
     height: JOIN_DESKTOP_APPLY_CARD_HEIGHT,
     fieldText: "text-[1.5rem] leading-[1.14]",
-    placeholderLabel: "text-[1.25rem] font-medium uppercase tracking-[0.32em] text-[#C8C0B4]",
+    placeholderLabel: "text-[0.9375rem] font-medium uppercase tracking-[0.24em] text-[#C8C0B4]",
     namePlaceholder: "text-[2.35rem] leading-[1.04] text-[#C8C0B4]",
     nameText: "text-[2.35rem] leading-[1.04]",
     topPad: "p-7",
     topMaxW: "max-w-[94%]",
     topGap: "gap-3.5",
-    nameMinH: "min-h-[calc(2*1.04em)]",
-    nameWidth: "w-full max-w-[7em]",
-    lineBand: "absolute left-0 right-0 bottom-[9.5rem] top-auto h-[24%] origin-bottom scale-[1.24]",
+    nameWidth: "w-full max-w-[16rem]",
+    nameLineGap: "gap-0",
+    lineBand: "absolute inset-0 origin-center scale-[1.36]",
     editBtn: "h-12 w-12 rounded-lg",
     pencil: "h-[1.35rem] w-[1.35rem]",
     roleChip: "w-fit max-w-full shrink-0 rounded-lg px-2.5 py-1.5 text-[1.125rem]",
-    roleGrid: "inline-grid grid-cols-[max-content_max-content]",
-    roleGap: "gap-x-1.5 gap-y-1.5",
+    roleGrid: "inline-grid grid-cols-1",
+    roleGap: "gap-y-1.5",
     editorPad: "px-11 py-10",
     editorMaxW: "max-w-[min(100%,32rem)]",
     cornerPad: "pl-8 pb-9 pr-7",
-    resetSlot: "pt-8",
-    resetBtn: "gap-2.5 text-[1.0625rem]",
-    resetIcon: "h-5 w-5",
+    resetSlot: "pt-10",
+    resetBtn: "gap-3 text-[1.1875rem]",
+    resetIcon: "h-6 w-6",
     confirmTitle: "text-[1.5rem]",
     confirmBody: "text-[1.125rem]",
     confirmBtn: "rounded-lg px-4 py-2.5 text-[1.0625rem]",
@@ -85,8 +84,23 @@ const CARD_STYLES = {
 const MODAL_SCRIM = "bg-[#EFECE7]/62 backdrop-blur-[10px]";
 const CARD_BLUR = "blur-[12px]";
 
-const BOTTOM_LEFT_NAME_TEXT =
-  "w-full resize-none overflow-hidden whitespace-normal break-words bg-transparent font-normal tracking-[-0.03em] leading-[1.04] outline-none";
+const BOTTOM_LEFT_NAME_LINE =
+  "block w-full bg-transparent font-normal tracking-[-0.03em] leading-[1.04] outline-none";
+
+function splitNameLines(name: string): { first: string; last: string } {
+  const trimmed = name.trimStart();
+  const space = trimmed.indexOf(" ");
+  if (space === -1) return { first: trimmed, last: "" };
+  return { first: trimmed.slice(0, space), last: trimmed.slice(space + 1) };
+}
+
+function joinNameLines(first: string, last: string): string {
+  const f = first.trimEnd();
+  const l = last.trimStart();
+  if (!f) return l;
+  if (!l) return f;
+  return `${f} ${l}`;
+}
 
 const TOP_RIGHT_FIELDS = [
   { step: 1, placeholder: "Email" },
@@ -381,7 +395,7 @@ export function JoinApplyCard({
 
           {/* Bottom-left: inline name input */}
           <div className={`absolute bottom-0 left-0 z-[2] ${styles.nameWidth} ${styles.cornerPad}`}>
-            <div className={`relative ${styles.nameMinH}`}>
+            <div className={`relative flex flex-col ${styles.nameLineGap}`}>
               {!hasName && !readOnly ? (
                 <div
                   className={`pointer-events-none absolute inset-0 text-left ${styles.namePlaceholder} ${lora.className}`}
@@ -392,20 +406,37 @@ export function JoinApplyCard({
                 </div>
               ) : null}
               {readOnly ? (
-                <p
-                  className={`text-[#1E343A] ${styles.nameText} ${lora.className} ${BOTTOM_LEFT_NAME_TEXT} ${styles.nameMinH}`}
-                >
-                  {name.trim()}
-                </p>
+                <>
+                  <span className={`text-[#1E343A] ${styles.nameText} ${lora.className} ${BOTTOM_LEFT_NAME_LINE}`}>
+                    {splitNameLines(name).first}
+                  </span>
+                  <span className={`text-[#1E343A] ${styles.nameText} ${lora.className} ${BOTTOM_LEFT_NAME_LINE}`}>
+                    {splitNameLines(name).last}
+                  </span>
+                </>
               ) : (
-                <textarea
-                  value={name}
-                  onChange={(e) => onNameChange(e.target.value)}
-                  autoComplete="name"
-                  aria-label="Enter your name"
-                  rows={2}
-                  className={`text-[#1E343A] ${styles.nameText} ${lora.className} ${BOTTOM_LEFT_NAME_TEXT} ${styles.nameMinH}`}
-                />
+                <>
+                  <input
+                    type="text"
+                    value={splitNameLines(name).first}
+                    onChange={(e) =>
+                      onNameChange(joinNameLines(e.target.value, splitNameLines(name).last))
+                    }
+                    autoComplete="given-name"
+                    aria-label="First name"
+                    className={`text-[#1E343A] ${styles.nameText} ${lora.className} ${BOTTOM_LEFT_NAME_LINE}`}
+                  />
+                  <input
+                    type="text"
+                    value={splitNameLines(name).last}
+                    onChange={(e) =>
+                      onNameChange(joinNameLines(splitNameLines(name).first, e.target.value))
+                    }
+                    autoComplete="family-name"
+                    aria-label="Last name"
+                    className={`text-[#1E343A] ${styles.nameText} ${lora.className} ${BOTTOM_LEFT_NAME_LINE}`}
+                  />
+                </>
               )}
             </div>
           </div>
