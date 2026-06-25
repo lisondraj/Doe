@@ -6,9 +6,12 @@ import {
   HERO_TRIAGE_PANEL_LEFT,
   HERO_TRIAGE_PANEL_RIGHT,
   HERO_TRIAGE_PANEL_WIDTH,
+  HERO_TRIAGE_JOIN_AVATAR_GRADIENT,
+  HERO_TRIAGE_JOIN_NAV_CHIP_ACTIVE,
   HERO_TRIAGE_TILT,
 } from "@/lib/home/hero-triage-preview-styles";
 import { getHeroTriageThemeConfig, JOIN_MOBILE_HERO_TRIAGE_PANEL, type HeroTriageTheme, type HeroTriageThemeConfig } from "@/lib/home/hero-triage-theme";
+import { DoeBuildIcon } from "@/components/admin/doe-build-icon";
 import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
 import type { CSSProperties, ReactNode } from "react";
 
@@ -150,6 +153,41 @@ const INBOX_ROWS: InboxRow[] = [
 
 const SELECTED = INBOX_ROWS.find((r) => r.selected)!;
 
+function heroInboxIconClass({
+  mobile,
+  joinCompact = false,
+  accent = false,
+  active = false,
+}: {
+  mobile: boolean;
+  joinCompact?: boolean;
+  accent?: boolean;
+  active?: boolean;
+}) {
+  if (joinCompact || mobile) {
+    if (accent) return "h-[1.5rem] w-[1.5rem] shrink-0 text-[#D2774C] iphone-page:h-[1.7rem] iphone-page:w-[1.7rem]";
+    if (active) return "h-[1.5rem] w-[1.5rem] shrink-0 text-[#1E343A] iphone-page:h-[1.7rem] iphone-page:w-[1.7rem]";
+    return "h-[1.5rem] w-[1.5rem] shrink-0 text-neutral-400 iphone-page:h-[1.7rem] iphone-page:w-[1.7rem]";
+  }
+  if (accent) return "h-[18px] w-[18px] shrink-0 text-[#D2774C]";
+  if (active) return "h-[18px] w-[18px] shrink-0 text-[#1E343A]";
+  return "h-[18px] w-[18px] shrink-0 text-neutral-500";
+}
+
+function HeroInboxIcon({
+  d,
+  className,
+}: {
+  d: string;
+  className: string;
+}) {
+  return (
+    <DoeBuildIcon className={className}>
+      <path d={d} />
+    </DoeBuildIcon>
+  );
+}
+
 function NavIcon({
   children,
   active = false,
@@ -163,6 +201,19 @@ function NavIcon({
 }) {
   const { colors } = config;
   const sz = mobile ? "3.1rem" : "2rem";
+  if (config.flat) {
+    return (
+      <div
+        className={`flex items-center justify-center rounded-[0.55rem] ${active ? HERO_TRIAGE_JOIN_NAV_CHIP_ACTIVE : ""}`}
+        style={{
+          width: sz,
+          height: sz,
+        }}
+      >
+        {children}
+      </div>
+    );
+  }
   return (
     <div
       className={`flex items-center justify-center${active ? ` ${config.paneGlassTw}` : ""}`}
@@ -178,30 +229,6 @@ function NavIcon({
     >
       {children}
     </div>
-  );
-}
-
-function InboxIcon({
-  d,
-  mobile,
-  color,
-}: {
-  d: string;
-  mobile: boolean;
-  color?: string;
-}) {
-  const s = mobile ? 22 : 14;
-  return (
-    <svg
-      width={s}
-      height={s}
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden
-      style={{ color, display: "block", flexShrink: 0 }}
-    >
-      <path d={d} stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
   );
 }
 
@@ -221,6 +248,23 @@ function SenderMark({
   const onSelectedRow = Boolean(row.selected);
   const useFlatSelectedMark = onSelectedRow && config.flat;
   const useFlatLightMark = !onSelectedRow && config.flat;
+  const fontSize = joinCompact ? "0.48rem" : mobile ? "0.82rem" : "0.52rem";
+
+  if (useFlatLightMark) {
+    return (
+      <div
+        className={`flex shrink-0 items-center justify-center rounded-full ${HERO_TRIAGE_JOIN_AVATAR_GRADIENT}`}
+        style={{
+          width: sz,
+          height: sz,
+          fontSize,
+        }}
+      >
+        {row.initials}
+      </div>
+    );
+  }
+
   return (
     <div
       className={`flex shrink-0 items-center justify-center font-medium ${config.paneGlassTw}`}
@@ -228,24 +272,10 @@ function SenderMark({
         width: sz,
         height: sz,
         borderRadius: "50%",
-        background: useFlatSelectedMark
-          ? "rgba(255,255,255,0.14)"
-          : useFlatLightMark
-            ? "rgba(210,119,76,0.14)"
-            : row.iconBg,
-        color: useFlatSelectedMark
-          ? "#FFFFFF"
-          : useFlatLightMark
-            ? JOIN_FORM_BEIGE.ink
-            : row.iconColor,
-        fontSize: joinCompact ? "0.48rem" : mobile ? "0.82rem" : "0.52rem",
-        border: `1px solid ${
-          useFlatSelectedMark
-            ? "rgba(255,255,255,0.12)"
-            : useFlatLightMark
-              ? "#ECE8E1"
-              : colors.glassBorder
-        }`,
+        background: useFlatSelectedMark ? "rgba(255,255,255,0.14)" : row.iconBg,
+        color: useFlatSelectedMark ? "#FFFFFF" : row.iconColor,
+        fontSize,
+        border: `1px solid ${useFlatSelectedMark ? "rgba(255,255,255,0.12)" : colors.glassBorder}`,
         boxShadow: config.flat ? "none" : config.insetShadow,
       }}
     >
@@ -470,19 +500,8 @@ function OpenEmailPane({ mobile, config }: { mobile: boolean; config: HeroTriage
               <SenderMark
                 row={{
                   ...SELECTED,
+                  selected: false,
                   initials: msg.from === "Dr. Singh" ? "DS" : "MR",
-                  iconBg:
-                    msg.from === "Dr. Singh"
-                      ? config.flat
-                        ? "rgba(210,119,76,0.14)"
-                        : "rgba(231,169,68,0.17)"
-                      : SELECTED.iconBg,
-                  iconColor:
-                    msg.from === "Dr. Singh"
-                      ? config.flat
-                        ? JOIN_FORM_BEIGE.ink
-                        : "rgba(255,240,215,0.88)"
-                      : SELECTED.iconColor,
                 }}
                 mobile={mobile}
                 config={config}
@@ -571,14 +590,11 @@ function ProfileNavMark({ mobile }: { mobile: boolean }) {
   const sz = mobile ? "3.1rem" : "2rem";
   return (
     <div
-      className="flex items-center justify-center rounded-full font-semibold"
+      className={`flex items-center justify-center rounded-full ${HERO_TRIAGE_JOIN_AVATAR_GRADIENT}`}
       style={{
         width: sz,
         height: sz,
         fontSize: mobile ? "0.82rem" : "0.52rem",
-        background: JOIN_FORM_BEIGE.page,
-        color: JOIN_FORM_BEIGE.ink,
-        border: "1px solid #ECE8E1",
       }}
     >
       DS
@@ -710,18 +726,34 @@ export function HeroTriagePreview({
               }}
             >
               <NavIcon active mobile={navIconMobile} config={config}>
-                <InboxIcon mobile={navIconMobile} d="M4 6h16v12H4V6zm0 0 8 7 8-7" color={colors.navIcon} />
+                <HeroInboxIcon
+                  d="M4 6h16v12H4V6zm0 0 8 7 8-7"
+                  className={heroInboxIconClass({
+                    mobile: navIconMobile,
+                    joinCompact: isJoinMobile,
+                    active: config.flat,
+                  })}
+                />
               </NavIcon>
               {showFullNav ? (
                 <>
                   <NavIcon mobile={isMobile} config={config}>
-                    <InboxIcon mobile={isMobile} d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z" color={colors.navIcon} />
+                    <HeroInboxIcon
+                      d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"
+                      className={heroInboxIconClass({ mobile: isMobile, joinCompact: isJoinMobile })}
+                    />
                   </NavIcon>
                   <NavIcon mobile={isMobile} config={config}>
-                    <InboxIcon mobile={isMobile} d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7M3 7l9 6 9-6M3 7h18" color={colors.navIcon} />
+                    <HeroInboxIcon
+                      d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7M3 7l9 6 9-6M3 7h18"
+                      className={heroInboxIconClass({ mobile: isMobile, joinCompact: isJoinMobile })}
+                    />
                   </NavIcon>
                   <NavIcon mobile={isMobile} config={config}>
-                    <InboxIcon mobile={isMobile} d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2z" color={colors.navIcon} />
+                    <HeroInboxIcon
+                      d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2z"
+                      className={heroInboxIconClass({ mobile: isMobile, joinCompact: isJoinMobile })}
+                    />
                   </NavIcon>
                   <div className="flex-1" />
                   <ProfileNavMark mobile={isMobile} />
@@ -759,7 +791,14 @@ export function HeroTriagePreview({
                     ...(isSimple ? { background: "transparent" } : config.chipStyle()),
                   }}
                 >
-                  <InboxIcon mobile={navIconMobile} d="M4 6h16v12H4V6zm0 0 8 7 8-7" color={isSimple ? "#D2774C" : colors.pillText} />
+                  <HeroInboxIcon
+                    d="M4 6h16v12H4V6zm0 0 8 7 8-7"
+                    className={heroInboxIconClass({
+                      mobile: navIconMobile,
+                      joinCompact: isJoinMobile,
+                      accent: isSimple && config.flat,
+                    })}
+                  />
                   <span
                     style={{
                       fontSize: isJoinMobile ? "0.92rem" : isMobile ? "0.95rem" : isSimple ? "0.92rem" : "0.58rem",
@@ -789,9 +828,18 @@ export function HeroTriagePreview({
                 </div>
                 {!isSimple ? (
                   <>
-                    <InboxIcon mobile={isMobile} d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z" color={colors.navIcon} />
-                    <InboxIcon mobile={isMobile} d="M12 6v6l4 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" color={colors.navIcon} />
-                    <InboxIcon mobile={isMobile} d="M12 6h.01M12 12h.01M12 18h.01" color={colors.navIcon} />
+                    <HeroInboxIcon
+                      d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"
+                      className={heroInboxIconClass({ mobile: isMobile, joinCompact: isJoinMobile })}
+                    />
+                    <HeroInboxIcon
+                      d="M12 6v6l4 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"
+                      className={heroInboxIconClass({ mobile: isMobile, joinCompact: isJoinMobile })}
+                    />
+                    <HeroInboxIcon
+                      d="M12 6h.01M12 12h.01M12 18h.01"
+                      className={heroInboxIconClass({ mobile: isMobile, joinCompact: isJoinMobile })}
+                    />
                   </>
                 ) : null}
               </div>

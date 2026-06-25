@@ -24,6 +24,12 @@ export const HERO_TRIAGE_CHIP_GRADIENT =
 export const HERO_TRIAGE_SELECTED_GRADIENT =
   "linear-gradient(135deg, rgba(231,169,68,0.55) 0%, rgba(210,119,76,0.48) 52%, rgba(196,122,90,0.4) 100%)";
 
+/** Join hero inbox — match /admin DoeBuildIcon sizing and avatar gradient. */
+export const HERO_TRIAGE_JOIN_AVATAR_GRADIENT =
+  "bg-gradient-to-br from-[#E7A944] via-[#D2774C] to-[#1E343A] text-white font-semibold";
+
+export const HERO_TRIAGE_JOIN_NAV_CHIP_ACTIVE = "bg-[#F7F6F3]";
+
 /** Re-exports for hero inbox glass shell. */
 export {
   DOEPHONE_COMMUNICATION_GLASS_RADIUS_TW,
