@@ -58,9 +58,9 @@ export const JOIN_DESKTOP_HERO_TOP_PAD = "pt-10";
 export const JOIN_DESKTOP_CARD_HEIGHT = "min-h-[min(36vh,22rem)] h-[min(36vh,22rem)]";
 
 /** Desktop intern track grid — 2×2 cards with larger boxes. */
-export const JOIN_DESKTOP_TRACK_ROW_CARD_HEIGHT = "min-h-[19.5rem] h-[19.5rem]";
+export const JOIN_DESKTOP_TRACK_ROW_CARD_HEIGHT = "min-h-[28rem] h-[28rem]";
 export const JOIN_DESKTOP_TRACK_ROW_GAP = "mt-14";
-export const JOIN_DESKTOP_TRACK_ROW_COL_GAP = "gap-x-8 gap-y-12";
+export const JOIN_DESKTOP_TRACK_ROW_COL_GAP = "gap-x-8 gap-y-16";
 
 /** Desktop apply section — vertical band + footer pad. */
 export const JOIN_DESKTOP_APPLY_SECTION_MIN =
