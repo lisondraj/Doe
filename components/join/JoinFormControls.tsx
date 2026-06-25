@@ -475,7 +475,7 @@ export function JoinFormBorderedResumeField({
   onChange: (file: File | null) => void;
   readOnly?: boolean;
   interactive?: boolean;
-  inputRef?: RefObject<HTMLInputElement | null>;
+  inputRef?: RefObject<HTMLInputElement>;
 }) {
   const localInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = inputRef ?? localInputRef;
