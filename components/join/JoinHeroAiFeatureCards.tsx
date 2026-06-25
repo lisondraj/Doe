@@ -323,7 +323,7 @@ function JoinHeroBrainCard({ zIndex }: { zIndex: number }) {
     <div
       className="absolute"
       style={{
-        left: "12%",
+        left: "4%",
         top: "56%",
         zIndex,
         transform: `translate(-50%, -50%) scale(${BRAIN_SCALE})`,
