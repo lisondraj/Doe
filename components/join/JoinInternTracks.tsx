@@ -41,7 +41,7 @@ export function JoinInternTracks({ variant }: { variant: "mobile" | "desktop" })
         return (
           <article
             key={track.title}
-            className={`${variant === "mobile" || index > 0 ? stackGap : ""} ${variant === "mobile" ? `${JOIN_MOBILE_TRACK_SECTION} flex flex-col` : ""}`.trim()}
+            className={`${stackGap} ${variant === "mobile" ? `${JOIN_MOBILE_TRACK_SECTION} flex flex-col` : ""}`.trim()}
           >
             <div className={`${cardStackClass} ${variant === "mobile" ? "flex min-h-0 flex-1 flex-col" : ""}`}>
               <JoinInternTrackReveal
