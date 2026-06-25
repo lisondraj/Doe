@@ -20,163 +20,107 @@ const AGENT_NODES = [
   {
     id: "auth",
     label: "Prior Auth",
-    initials: "PA",
-    status: "running" as const,
-    progress: 72,
+    sub: "Running",
+    tone: "accent" as const,
     x: "16%",
     y: "20%",
   },
   {
     id: "referral",
     label: "Referral",
-    initials: "RF",
-    status: "queued" as const,
-    progress: 38,
+    sub: "Queued",
+    tone: "beige" as const,
     x: "74%",
     y: "16%",
   },
   {
     id: "lab",
     label: "Lab Sync",
-    initials: "LS",
-    status: "done" as const,
-    progress: 100,
+    sub: "Done",
+    tone: "ink" as const,
     x: "82%",
     y: "70%",
   },
 ] as const;
 
-type AgentStatus = (typeof AGENT_NODES)[number]["status"];
-
-function AgentStatusDot({ status }: { status: AgentStatus }) {
-  const color =
-    status === "running" ? BRAIN_ACCENT : status === "done" ? BRAIN_INK : "rgba(154, 143, 130, 0.88)";
-
-  return (
-    <span
-      className="inline-block h-[0.42rem] w-[0.42rem] rounded-full"
-      style={{
-        background: color,
-        boxShadow: status === "running" ? `0 0 0 3px rgba(210, 119, 76, 0.16)` : "none",
-      }}
-      aria-hidden
-    />
-  );
-}
-
-function AgentNetworkNode({
+function AgentGraphNode({
   label,
-  initials,
-  status,
-  progress,
-  active = false,
+  sub,
+  tone,
 }: {
   label: string;
-  initials: string;
-  status: AgentStatus;
-  progress: number;
-  active?: boolean;
+  sub: string;
+  tone: "beige" | "accent" | "ink";
 }) {
+  const isAccent = tone === "accent";
+  const isInk = tone === "ink";
+
   return (
     <div
-      className="flex flex-col items-center gap-[0.35rem]"
-      style={{ width: "4.65rem" }}
+      className="flex flex-col items-start justify-center rounded-[0.55rem] border px-2.5 py-2"
+      style={{
+        width: "4.85rem",
+        minHeight: "2.65rem",
+        background: isAccent ? BRAIN_ACCENT : isInk ? BRAIN_INK : "#FFFFFF",
+        borderColor: isAccent ? BRAIN_ACCENT : isInk ? BRAIN_INK : "#ECE8E1",
+        color: isAccent || isInk ? "#FFFFFF" : BRAIN_INK,
+      }}
     >
-      <div
-        className="relative flex h-[2.85rem] w-[2.85rem] items-center justify-center rounded-full border font-medium"
-        style={{
-          fontSize: "0.56rem",
-          background: active ? BRAIN_ACCENT : JOIN_FORM_BEIGE.page,
-          color: active ? "#FFFFFF" : BRAIN_INK,
-          borderColor: active ? BRAIN_ACCENT : "#ECE8E1",
-          boxShadow: active ? "0 10px 22px rgba(210, 119, 76, 0.2)" : "none",
-        }}
-      >
-        {initials}
-        <span className="absolute -right-[0.1rem] -top-[0.1rem]">
-          <AgentStatusDot status={status} />
-        </span>
-      </div>
+      <span style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "-0.02em", lineHeight: 1.2 }}>{label}</span>
       <span
         style={{
-          fontSize: "0.58rem",
-          fontWeight: 600,
-          color: BRAIN_INK,
-          letterSpacing: "-0.02em",
-          textAlign: "center",
+          fontSize: "0.48rem",
+          fontWeight: 400,
+          marginTop: "0.16rem",
+          lineHeight: 1.25,
+          color: isAccent || isInk ? "rgba(255,255,255,0.82)" : BRAIN_MUTED,
         }}
       >
-        {label}
+        {sub}
       </span>
-      <div className="h-[0.34rem] w-full overflow-hidden rounded-full" style={{ background: JOIN_FORM_BEIGE.page }}>
-        <div
-          className="h-full rounded-full"
-          style={{
-            width: `${progress}%`,
-            background: active ? BRAIN_ACCENT : status === "done" ? BRAIN_INK : "rgba(30, 52, 58, 0.18)",
-          }}
-        />
-      </div>
     </div>
   );
 }
 
 function JoinHeroAgentsVisualBody() {
   return (
-    <div className="relative flex h-full flex-col overflow-hidden" style={{ background: "#FFFFFF" }}>
+    <div className="relative flex h-full flex-col overflow-hidden bg-white">
       <div
-        className="flex items-center justify-between border-b px-4 py-2.5"
-        style={{ borderColor: DIVIDER, background: "#FAFAF8" }}
+        className="flex items-center justify-between border-b px-4 py-[0.85rem]"
+        style={{ borderColor: DIVIDER }}
       >
-        <div className="flex items-center gap-2">
-          <span className="flex gap-1" aria-hidden>
-            <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full" style={{ background: BRAIN_ACCENT }} />
-            <span
-              className="inline-block h-1.5 w-1.5 animate-pulse rounded-full [animation-delay:180ms]"
-              style={{ background: BRAIN_ACCENT }}
-            />
-            <span
-              className="inline-block h-1.5 w-1.5 animate-pulse rounded-full [animation-delay:360ms]"
-              style={{ background: BRAIN_ACCENT }}
-            />
-          </span>
-          <span style={{ fontSize: "0.58rem", fontWeight: 600, color: BRAIN_INK }}>3 agents coordinating</span>
-        </div>
+        <span style={{ fontSize: "0.58rem", fontWeight: 600, color: BRAIN_INK }}>3 agents coordinating</span>
         <span
-          className="rounded-full px-2 py-[0.15rem]"
-          style={{ fontSize: "0.48rem", fontWeight: 600, color: BRAIN_ACCENT, background: "rgba(210,119,76,0.12)" }}
+          className="inline-flex items-center rounded-[0.35rem] border px-1.5 py-[0.12rem]"
+          style={{ borderColor: "#ECE8E1", color: BRAIN_ACCENT, fontSize: "0.48rem", fontWeight: 600 }}
         >
           Same thread
         </span>
       </div>
 
-      <div className="relative min-h-0 flex-1 overflow-hidden">
+      <div className="relative min-h-0 flex-1 overflow-hidden px-3 py-[0.75rem]">
         <svg className="pointer-events-none absolute inset-0 h-full w-[112%] max-w-none" viewBox="0 0 420 240" preserveAspectRatio="none" aria-hidden>
-          <path d="M122 62 C 172 46, 198 52, 252 46" fill="none" stroke="rgba(30, 52, 58, 0.1)" strokeWidth="2" strokeLinecap="round" />
-          <path d="M252 46 C 278 88, 284 132, 278 178" fill="none" stroke="rgba(30, 52, 58, 0.1)" strokeWidth="2" strokeLinecap="round" />
-          <path d="M122 62 C 146 92, 160 118, 176 128" fill="none" stroke="rgba(30, 52, 58, 0.1)" strokeWidth="2" strokeLinecap="round" />
-          <path d="M278 178 C 236 154, 204 138, 176 128" fill="none" stroke="rgba(30, 52, 58, 0.1)" strokeWidth="2" strokeLinecap="round" />
-          <path d="M252 46 C 218 76, 194 102, 176 128" fill="none" stroke={BRAIN_ACCENT} strokeWidth="2.2" strokeLinecap="round" opacity="0.42" />
-          <path d="M278 178 C 244 154, 208 138, 176 128" fill="none" stroke={BRAIN_ACCENT} strokeWidth="2.2" strokeLinecap="round" opacity="0.42" />
+          <path d="M122 62 C 172 46, 198 52, 252 46" fill="none" stroke="#EEEAE3" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M252 46 C 278 88, 284 132, 278 178" fill="none" stroke="#EEEAE3" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M122 62 C 146 92, 160 118, 176 128" fill="none" stroke="#EEEAE3" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M278 178 C 236 154, 204 138, 176 128" fill="none" stroke="#EEEAE3" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M252 46 C 218 76, 194 102, 176 128" fill="none" stroke={BRAIN_ACCENT} strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M278 178 C 244 154, 208 138, 176 128" fill="none" stroke={BRAIN_ACCENT} strokeWidth="1.5" strokeLinecap="round" />
         </svg>
 
         <div
-          className="absolute left-1/2 top-[52%] flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-[0.28rem]"
+          className="absolute left-1/2 top-[52%] flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1.5"
           style={{ zIndex: 2 }}
         >
           <div
-            className="flex h-[3.35rem] w-[3.35rem] items-center justify-center rounded-full border-4"
-            style={{
-              borderColor: "rgba(210,119,76,0.16)",
-              background: "#FFFFFF",
-              boxShadow: "inset 0 0 0 1px rgba(210,119,76,0.08)",
-            }}
+            className="flex h-[2.65rem] w-[2.65rem] items-center justify-center rounded-full border"
+            style={{ borderColor: "#ECE8E1", background: "#FFFFFF" }}
           >
             <div
-              className="flex h-[2.15rem] w-[2.15rem] items-center justify-center rounded-full"
+              className="flex h-[1.85rem] w-[1.85rem] items-center justify-center rounded-full"
               style={{ background: BRAIN_INK }}
             >
-              <MiniIcon d="M4 6h16v12H4V6zm0 0 8 7 8-7" color="#FFFFFF" size={13} />
+              <MiniIcon d="M4 6h16v12H4V6zm0 0 8 7 8-7" color="#FFFFFF" size={12} />
             </div>
           </div>
           <span style={{ fontSize: "0.5rem", fontWeight: 500, color: BRAIN_MUTED }}>Inbox hub</span>
@@ -188,42 +132,27 @@ function JoinHeroAgentsVisualBody() {
             className="absolute"
             style={{ left: node.x, top: node.y, transform: "translate(-50%, -50%)" }}
           >
-            <AgentNetworkNode
-              label={node.label}
-              initials={node.initials}
-              status={node.status}
-              progress={node.progress}
-              active={node.status === "running" && node.id === "auth"}
-            />
+            <AgentGraphNode label={node.label} sub={node.sub} tone={node.tone} />
           </div>
         ))}
-
-        <div
-          className="absolute bottom-0 right-[-1.25rem] top-[18%] w-[4.5rem] rounded-l-[1rem] border border-r-0"
-          style={{
-            borderColor: "#ECE8E1",
-            background: "linear-gradient(90deg, rgba(250,250,248,0.2) 0%, rgba(235,231,224,0.72) 100%)",
-          }}
-          aria-hidden
-        />
       </div>
 
       <div
-        className="grid grid-cols-3 gap-2 border-t px-4 py-2.5"
-        style={{ borderColor: DIVIDER, background: "#FAFAF8" }}
+        className="flex items-center gap-2 border-t px-4 py-[0.8rem]"
+        style={{ borderColor: DIVIDER }}
       >
         {[
-          { label: "Running", value: "1", tone: BRAIN_ACCENT },
-          { label: "Queued", value: "1", tone: "rgba(154, 143, 130, 0.88)" },
-          { label: "Done", value: "1", tone: BRAIN_INK },
+          { label: "Running", value: "1" },
+          { label: "Queued", value: "1" },
+          { label: "Done", value: "1" },
         ].map((item) => (
           <div
             key={item.label}
-            className="rounded-[0.55rem] px-2 py-[0.45rem] text-center"
-            style={{ background: JOIN_FORM_BEIGE.page }}
+            className="flex min-w-0 flex-1 items-center justify-between rounded-[0.45rem] border px-2.5 py-2"
+            style={{ borderColor: "#ECE8E1", background: "#FFFFFF" }}
           >
-            <div style={{ fontSize: "0.72rem", fontWeight: 600, color: item.tone }}>{item.value}</div>
-            <div style={{ fontSize: "0.48rem", color: BRAIN_MUTED, marginTop: "0.08rem" }}>{item.label}</div>
+            <span style={{ fontSize: "0.52rem", fontWeight: 500, color: BRAIN_MUTED }}>{item.label}</span>
+            <span style={{ fontSize: "0.6rem", fontWeight: 600, color: BRAIN_INK }}>{item.value}</span>
           </div>
         ))}
       </div>
