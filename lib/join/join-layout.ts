@@ -46,9 +46,9 @@ export const JOIN_MOBILE_TRACK_SECTION =
 export const JOIN_MOBILE_APPLY_SECTION =
   "box-border h-[var(--app-vh,100lvh)] min-h-[var(--app-vh,100lvh)]";
 
-/** Top/bottom breathing room outside the centered title + card block. */
+/** Safe-area-only padding so justify-center fills the full viewport height. */
 export const JOIN_MOBILE_APPLY_SECTION_PAD =
-  "pt-[max(1.95rem,calc(env(safe-area-inset-top,0px)+calc(var(--app-vh,100lvh)*0.0725)))] pb-[max(1.95rem,calc(env(safe-area-inset-bottom,0px)+calc(var(--app-vh,100lvh)*0.0725)))] iphone-page:pt-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))] iphone-page:pb-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
+  "pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)]";
 
 /** Gap between apply section title and applicant card. */
 export const JOIN_MOBILE_APPLY_TITLE_CARD_GAP =
