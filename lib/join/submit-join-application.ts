@@ -143,7 +143,7 @@ export async function submitJoinApplication(formData: FormData): Promise<{ id: s
       console.error("[join/apply] confirmation email failed:", error);
     }
   } else {
-    console.warn("[join/apply] RESEND_API_KEY or RESEND_FROM_EMAIL is not configured; skipping confirmation email.");
+    console.warn("[join/apply] RESEND_API_KEY is not configured; skipping confirmation email.");
   }
 
   if (emailSent) {
