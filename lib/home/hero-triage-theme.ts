@@ -200,3 +200,6 @@ export const JOIN_HERO_AI_FEATURE_CARDS: readonly JoinHeroAiFeatureCardConfig[] 
 /** Counter-scale so AI panels stay natural size inside the inbox scale wrapper. */
 export const JOIN_HERO_AI_CARD_INVERSE_SCALE = 1 / JOIN_HERO_TRIAGE_SCALE;
 
+/** Extra scale bump for both desktop hero AI panels. */
+export const JOIN_HERO_AI_CARD_DISPLAY_SCALE = 1.15;
+

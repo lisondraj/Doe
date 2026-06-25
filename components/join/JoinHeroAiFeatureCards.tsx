@@ -1,10 +1,10 @@
 import { suisseIntl } from "@/lib/home/fonts";
 import {
+  JOIN_HERO_AI_CARD_DISPLAY_SCALE,
   JOIN_HERO_AI_CARD_INVERSE_SCALE,
   JOIN_HERO_AI_FEATURE_CARDS,
   JOIN_HERO_TRIAGE_PANEL,
   JOIN_HERO_TRIAGE_SCALE,
-  type JoinHeroAiFeatureCardId,
 } from "@/lib/home/hero-triage-theme";
 import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
 
@@ -268,8 +268,8 @@ const AGENT_ROWS: readonly MiniRow[] = [
 function JoinHeroBrainPanel() {
   return (
     <MiniInboxShell
-      width="w-[23rem]"
-      height="h-[18.5rem]"
+      width="w-[29rem]"
+      height="h-[23rem]"
       navIcon="M12 3v2M12 19v2M5 12H3M21 12h-2M7.05 7.05 5.636 5.636M18.364 18.364l-1.414-1.414M16.95 7.05l1.414-1.414M7.05 16.95l-1.414 1.414"
       toolbarLabel="Brain"
       toolbarIcon="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
@@ -282,8 +282,8 @@ function JoinHeroBrainPanel() {
 function JoinHeroAgentsPanel() {
   return (
     <MiniInboxShell
-      width="w-[24rem]"
-      height="h-[19.5rem]"
+      width="w-[31rem]"
+      height="h-[25rem]"
       navIcon="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"
       toolbarLabel="Agents"
       toolbarIcon="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"
@@ -294,64 +294,69 @@ function JoinHeroAgentsPanel() {
   );
 }
 
-const PANELS: Record<JoinHeroAiFeatureCardId, () => JSX.Element> = {
-  brain: JoinHeroBrainPanel,
-  agents: JoinHeroAgentsPanel,
-};
+const BRAIN_SCALE = JOIN_HERO_AI_CARD_INVERSE_SCALE * JOIN_HERO_AI_CARD_DISPLAY_SCALE;
+const AGENTS_SCALE = JOIN_HERO_AI_CARD_DISPLAY_SCALE;
 
-const CARD_ANCHOR: Record<JoinHeroAiFeatureCardId, { className: string; transform: string }> = {
-  brain: {
-    className: "left-0 top-1/2",
-    transform: `translate(-50%, -50%) scale(${JOIN_HERO_AI_CARD_INVERSE_SCALE})`,
-  },
-  agents: {
-    className: "left-1/2 top-full",
-    transform: `translate(-50%, -50%) scale(${JOIN_HERO_AI_CARD_INVERSE_SCALE})`,
-  },
-};
-
-function JoinHeroAiFeatureCard({ id, zIndex }: { id: JoinHeroAiFeatureCardId; zIndex: number }) {
-  const Panel = PANELS[id];
-  const anchor = CARD_ANCHOR[id];
-
+function JoinHeroBrainCard({ zIndex }: { zIndex: number }) {
   return (
     <div
-      className={`absolute ${anchor.className}`}
+      className="absolute left-0 top-1/2"
       style={{
         zIndex,
-        transform: anchor.transform,
+        transform: `translate(-50%, -50%) scale(${BRAIN_SCALE})`,
       }}
       aria-hidden
     >
-      <Panel />
+      <JoinHeroBrainPanel />
     </div>
   );
 }
 
-/** Desktop join hero — inbox-style AI panels locked to inbox preview edge midpoints. */
-export function JoinHeroAiFeatureCards({ className = "" }: { className?: string }) {
+function JoinHeroAgentsCard({ zIndex }: { zIndex: number }) {
   return (
-    <div
-      className={`pointer-events-none absolute select-none ${className}`}
-      style={{
-        top: JOIN_HERO_TRIAGE_PANEL.top,
-        right: JOIN_HERO_TRIAGE_PANEL.right,
-        bottom: JOIN_HERO_TRIAGE_PANEL.bottom,
-        width: JOIN_HERO_TRIAGE_PANEL.width,
-      }}
-      aria-hidden
-    >
+    <div className="absolute left-0 top-0 h-0 w-0" style={{ zIndex }} aria-hidden>
       <div
-        className="relative h-full w-full"
         style={{
-          transform: `scale(${JOIN_HERO_TRIAGE_SCALE})`,
-          transformOrigin: "bottom right",
+          transform: `scale(${AGENTS_SCALE})`,
+          transformOrigin: "bottom left",
         }}
       >
-        {JOIN_HERO_AI_FEATURE_CARDS.map((config) => (
-          <JoinHeroAiFeatureCard key={config.id} id={config.id} zIndex={config.zIndex} />
-        ))}
+        <JoinHeroAgentsPanel />
       </div>
+    </div>
+  );
+}
+
+/** Desktop join hero — Brain on inbox left edge; Agents from hero top-left. */
+export function JoinHeroAiFeatureCards({ className = "" }: { className?: string }) {
+  const brainConfig = JOIN_HERO_AI_FEATURE_CARDS.find((card) => card.id === "brain");
+  const agentsConfig = JOIN_HERO_AI_FEATURE_CARDS.find((card) => card.id === "agents");
+
+  return (
+    <div className={`pointer-events-none absolute inset-0 select-none ${className}`} aria-hidden>
+      {brainConfig ? (
+        <div
+          className="absolute"
+          style={{
+            top: JOIN_HERO_TRIAGE_PANEL.top,
+            right: JOIN_HERO_TRIAGE_PANEL.right,
+            bottom: JOIN_HERO_TRIAGE_PANEL.bottom,
+            width: JOIN_HERO_TRIAGE_PANEL.width,
+          }}
+        >
+          <div
+            className="relative h-full w-full"
+            style={{
+              transform: `scale(${JOIN_HERO_TRIAGE_SCALE})`,
+              transformOrigin: "bottom right",
+            }}
+          >
+            <JoinHeroBrainCard zIndex={brainConfig.zIndex} />
+          </div>
+        </div>
+      ) : null}
+
+      {agentsConfig ? <JoinHeroAgentsCard zIndex={agentsConfig.zIndex} /> : null}
     </div>
   );
 }
