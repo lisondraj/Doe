@@ -30,7 +30,7 @@ export function JoinInternshipHero({ variant }: { variant: "mobile" | "desktop" 
 
   return (
     <div
-      className={`relative w-full overflow-hidden ${heightClass} ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
+      className={`relative w-full overflow-hidden border border-[#D9D4CC] ${heightClass} ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
     >
       <WorkflowCarouselDesignBackdrop
         backdrop={AGENTS_CAROUSEL_BACKDROP}
