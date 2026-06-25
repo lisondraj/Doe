@@ -3,6 +3,7 @@ import {
   JOIN_APPLY_EDUCATION_LABELS,
   type JoinApplyCountry,
   type JoinApplyEducation,
+  type JoinApplyFormState,
 } from "@/lib/join/join-apply-form";
 import { createSupabaseAdmin, RESUME_BUCKET, type InternshipApplicationRow } from "@/lib/supabase/admin";
 
@@ -46,6 +47,22 @@ export function summarizeInternshipApplications(
     withResume: applications.filter((row) => row.resume_storage_path).length,
     withLinkedIn: applications.filter((row) => row.linkedin_username?.trim()).length,
     withNotes: applications.filter((row) => row.additional_notes?.trim()).length,
+  };
+}
+
+export function joinFormStateFromApplicationRow(row: InternshipApplicationRow): JoinApplyFormState {
+  return {
+    name: row.name,
+    email: row.email,
+    country: row.country,
+    education: row.education,
+    schoolName: row.school_name,
+    programOfStudy: row.program_of_study,
+    areas: row.areas as JoinApplyFormState["areas"],
+    resumeFileName: row.resume_file_name,
+    resumeFileType: row.resume_file_type,
+    linkedinUsername: row.linkedin_username ?? "",
+    additionalNotes: row.additional_notes ?? "",
   };
 }
 

@@ -78,7 +78,17 @@ function ApplicationListItem({
   );
 }
 
-function ApplicationDetail({ application }: { application: AdminInternshipApplication }) {
+function ApplicationDetail({
+  application,
+  resendingConfirmation,
+  resendError,
+  onResendConfirmationEmail,
+}: {
+  application: AdminInternshipApplication;
+  resendingConfirmation: boolean;
+  resendError: string | null;
+  onResendConfirmationEmail: () => void;
+}) {
   const linkedin = application.linkedin_username?.trim()
     ? `linkedin.com/in/${application.linkedin_username.trim()}`
     : null;
@@ -165,7 +175,23 @@ function ApplicationDetail({ application }: { application: AdminInternshipApplic
           label="Additional notes"
           value={application.additional_notes?.trim() ? application.additional_notes : "None"}
         />
-        <DetailField label="Confirmation email sent" value={formatAdminDate(application.email_sent_at)} />
+        <DetailField
+          label="Confirmation email sent"
+          value={
+            <div className="flex flex-col items-start gap-2">
+              <span>{formatAdminDate(application.email_sent_at)}</span>
+              <button
+                type="button"
+                onClick={onResendConfirmationEmail}
+                disabled={resendingConfirmation}
+                className="inline-flex h-8 items-center rounded-lg border border-[#E2E2E2] bg-white px-3 text-[12px] font-medium text-neutral-700 transition-colors hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {resendingConfirmation ? "Sending…" : "Re-send confirmation email"}
+              </button>
+              {resendError ? <span className="text-[12px] font-medium text-[#BF593D]">{resendError}</span> : null}
+            </div>
+          }
+        />
         <DetailField label="Application ID" value={<span className="font-mono text-[11px]">{application.id}</span>} />
       </div>
     </div>
@@ -191,22 +217,51 @@ export function InternshipSignupsPanel({
   loading,
   error,
   onRefresh,
+  onApplicationUpdated,
 }: {
   applications: AdminInternshipApplication[];
   stats: InternshipSignupStats;
   loading: boolean;
   error: string | null;
   onRefresh: () => void;
+  onApplicationUpdated: (application: AdminInternshipApplication) => void;
 }) {
   const [query, setQuery] = useState("");
   const [groupMode, setGroupMode] = useState<InternshipGroupMode>("none");
   const [selectedId, setSelectedId] = useState<string | null>(applications[0]?.id ?? null);
+  const [resendingConfirmation, setResendingConfirmation] = useState(false);
+  const [resendError, setResendError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!applications.some((row) => row.id === selectedId)) {
       setSelectedId(applications[0]?.id ?? null);
     }
   }, [applications, selectedId]);
+
+  useEffect(() => {
+    setResendError(null);
+  }, [selectedId]);
+
+  const handleResendConfirmationEmail = async (application: AdminInternshipApplication) => {
+    setResendingConfirmation(true);
+    setResendError(null);
+    try {
+      const response = await fetch(`/api/admin/internship-applications/${application.id}/resend-email`, {
+        method: "POST",
+      });
+      const payload = (await response.json()) as { ok?: boolean; emailSentAt?: string; error?: string };
+      if (!response.ok || !payload.ok || !payload.emailSentAt) {
+        throw new Error(payload.error || "Could not resend confirmation email.");
+      }
+      onApplicationUpdated({ ...application, email_sent_at: payload.emailSentAt });
+    } catch (resendFailure) {
+      setResendError(
+        resendFailure instanceof Error ? resendFailure.message : "Could not resend confirmation email.",
+      );
+    } finally {
+      setResendingConfirmation(false);
+    }
+  };
 
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -347,7 +402,12 @@ export function InternshipSignupsPanel({
 
         <div className="min-h-0 bg-white">
           {selected ? (
-            <ApplicationDetail application={selected} />
+            <ApplicationDetail
+              application={selected}
+              resendingConfirmation={resendingConfirmation}
+              resendError={resendError}
+              onResendConfirmationEmail={() => void handleResendConfirmationEmail(selected)}
+            />
           ) : (
             <div className="flex h-full items-center justify-center px-6 text-center text-[13px] text-neutral-500">
               Select a signup to view the full applicant card.

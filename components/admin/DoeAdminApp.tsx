@@ -23,6 +23,10 @@ export function DoeAdminApp({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const handleApplicationUpdated = useCallback((updated: AdminInternshipApplication) => {
+    setApplications((current) => current.map((row) => (row.id === updated.id ? updated : row)));
+  }, []);
+
   const refresh = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -154,6 +158,7 @@ export function DoeAdminApp({
                     loading={loading}
                     error={error}
                     onRefresh={() => void refresh()}
+                    onApplicationUpdated={handleApplicationUpdated}
                   />
                 ) : (
                   <InternshipAnalyticsPanel
