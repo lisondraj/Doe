@@ -8,9 +8,13 @@ export const ADMIN_MOBILE_PAGE_INSET_X = BLOG_PAGE_INSET_X;
 export const ADMIN_MOBILE_NAV_CLEARANCE =
   "pt-[max(11.25rem,calc(env(safe-area-inset-top,0px)+7.75rem))]";
 
-/** Fixed bottom tab bar height reserve. */
+/** Fixed bottom tab bar height reserve — matches tab row + safe area. */
 export const ADMIN_MOBILE_TAB_BAR_RESERVE =
-  "pb-[max(5.25rem,calc(env(safe-area-inset-bottom,0px)+4.75rem))] iphone-page:pb-[max(5.75rem,calc(env(safe-area-inset-bottom,0px)+5.1rem))]";
+  "pb-[max(5.75rem,calc(env(safe-area-inset-bottom,0px)+5.25rem))] iphone-page:pb-[max(6.25rem,calc(env(safe-area-inset-bottom,0px)+5.5rem))]";
+
+/** Vertical rhythm between major mobile admin blocks. */
+export const ADMIN_MOBILE_CONTENT_STACK =
+  "flex flex-col gap-5 iphone-page:gap-[max(1.35rem,1.05rem+1.1vmin,2rem)]";
 
 export const ADMIN_MOBILE_SECTION_TITLE_TW = `text-[clamp(1.65rem,1.35rem+1.15vmin,2.15rem)] iphone-page:text-[clamp(2rem,1.62rem+1.75vmin,2.65rem)] font-normal leading-[1.08] tracking-[-0.028em] text-[#1E343A] ${suisseIntl.className}`;
 
@@ -44,3 +48,7 @@ export const ADMIN_MOBILE_STACK_GAP =
 
 export const ADMIN_MOBILE_SECTION_GAP =
   "space-y-5 iphone-page:space-y-[clamp(1.35rem,1.05rem+1.1vmin,2rem)]";
+
+/** Bottom tab bar inner padding — mirrors page horizontal inset. */
+export const ADMIN_MOBILE_TAB_BAR_INSET =
+  "px-14 pt-2.5 iphone-page:px-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))] iphone-page:pt-3";
