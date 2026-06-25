@@ -31,7 +31,7 @@ const CARD_STYLES = {
     nameCornerPad:
       "px-8 pb-14 pt-0 iphone-page:px-[clamp(2rem,1.65rem+1.45vmin,2.6rem)] iphone-page:pb-[clamp(3rem,2.5rem+1.8vmin,3.75rem)]",
     lineBand:
-      "absolute inset-x-0 z-[1] bottom-[12rem] h-[18rem] overflow-hidden iphone-page:bottom-[12.75rem] iphone-page:h-[20rem]",
+      "absolute inset-x-0 z-[1] bottom-[10.25rem] h-[18rem] overflow-hidden iphone-page:bottom-[11rem] iphone-page:h-[20rem]",
     roleChip:
       "w-fit max-w-full shrink-0 rounded-xl px-2.5 py-1.5 text-left font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[clamp(1.2rem,4vw,1.55rem)] iphone-page:px-3 iphone-page:py-2 iphone-page:text-[clamp(1.3rem,1.1rem+1.2vmin,1.7rem)]",
     roleGap: "gap-y-2 iphone-page:gap-y-2.5",
@@ -59,7 +59,7 @@ const CARD_STYLES = {
     topGap: "gap-8",
     nameLeading: 1.04,
     nameCornerPad: "px-7 pb-10 pt-0",
-    lineBand: "absolute inset-x-0 z-[1] bottom-[8.75rem] h-[11rem] overflow-hidden",
+    lineBand: "absolute inset-x-0 z-[1] bottom-[7.5rem] h-[11rem] overflow-hidden",
     roleChip:
       "w-fit max-w-full shrink-0 rounded-lg px-2.5 py-1.5 text-left font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 text-[1.125rem]",
     roleGap: "gap-y-1.5",
@@ -239,6 +239,7 @@ const TOP_RIGHT_FIELDS = [
   { step: 2, placeholder: "Country", singleLine: false },
   { step: 3, placeholder: "Education", singleLine: false },
   { step: 4, placeholder: "School", singleLine: false },
+  { step: 8, placeholder: "Program", singleLine: false },
   { step: 7, placeholder: "LinkedIn", singleLine: false },
   { step: 6, placeholder: "Resume", singleLine: false },
 ] as const;
@@ -320,6 +321,8 @@ function getTopRightDisplayValue(
         : null;
     case 4:
       return data.schoolName.trim() || null;
+    case 8:
+      return data.programOfStudy.trim() || null;
     case 6:
       return data.resume?.name ?? null;
     case 7:
@@ -445,9 +448,7 @@ export function JoinApplyCard({
                 const value = getTopRightDisplayValue(step, data, touchedSteps);
                 const isLinkedIn = step === 7;
                 const isEmail = step === 1;
-                const isSchool = step === 4;
                 const emailLines = isEmail && value ? splitEmailLines(value) : null;
-                const programValue = isSchool ? data.programOfStudy.trim() : "";
                 const displayText = value
                   ? isLinkedIn
                     ? `/${formatCardValue(step, value)}`
@@ -472,11 +473,6 @@ export function JoinApplyCard({
                       <span className="flex flex-col items-end leading-tight">
                         <span>{emailLines.local}</span>
                         <span>{emailLines.domain}</span>
-                      </span>
-                    ) : isSchool && value ? (
-                      <span className="flex flex-col items-end leading-tight">
-                        <span>{formatCardValue(step, value)}</span>
-                        {programValue ? <span>{capitalizeFirst(programValue)}</span> : null}
                       </span>
                     ) : isLinkedIn && value ? (
                       <>

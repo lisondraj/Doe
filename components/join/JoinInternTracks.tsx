@@ -7,7 +7,6 @@ import {
   JOIN_DESKTOP_TRACK_ROW_CARD_HEIGHT,
   JOIN_DESKTOP_TRACK_ROW_COL_GAP,
   JOIN_MOBILE_CARD_HEIGHT,
-  JOIN_MOBILE_HERO_TO_TRACK_GAP,
   JOIN_MOBILE_SECTION_STACK_GAP,
   JOIN_MOBILE_TRACK_SECTION,
 } from "@/lib/join/join-layout";
@@ -104,7 +103,7 @@ export function JoinInternTracks({ variant }: { variant: "mobile" | "desktop" })
   return (
     <>
       <section
-        className={`${JOIN_MOBILE_TRACK_SECTION} ${JOIN_MOBILE_HERO_TO_TRACK_GAP} flex flex-col`}
+        className={`${JOIN_MOBILE_TRACK_SECTION} flex flex-col`}
         aria-label={`${clinicalTrack.title} track`}
       >
         <JoinInternTrackBlock

@@ -52,7 +52,7 @@ export const JOIN_APPLY_EDUCATION_LABELS: Record<JoinApplyEducation, string> = {
   graduated: "Graduated",
 };
 
-export const JOIN_APPLY_STEP_COUNT = 8;
+export const JOIN_APPLY_STEP_COUNT = 9;
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -67,20 +67,22 @@ export function isJoinApplyStepValid(step: number, data: JoinApplyFormState): bo
     case 3:
       return data.education === "highschool" || data.education === "university" || data.education === "graduated";
     case 4:
-      return data.schoolName.trim().length > 0 && data.programOfStudy.trim().length > 0;
+      return data.schoolName.trim().length > 0;
     case 5:
       return data.areas.length > 0;
     case 6:
       return true;
     case 7:
       return true;
+    case 8:
+      return data.programOfStudy.trim().length > 0;
     default:
       return false;
   }
 }
 
 /** Mandatory steps — resume (6), LinkedIn (7) are optional. */
-export const JOIN_APPLY_MANDATORY_STEPS = [0, 1, 2, 3, 4, 5] as const;
+export const JOIN_APPLY_MANDATORY_STEPS = [0, 1, 2, 3, 4, 5, 8] as const;
 
 export function isJoinApplyMandatoryComplete(data: JoinApplyFormState): boolean {
   return JOIN_APPLY_MANDATORY_STEPS.every((step) => isJoinApplyStepValid(step, data));
@@ -97,6 +99,7 @@ export function isJoinApplyCardMandatoryComplete(
     touchedSteps.has(2) &&
     touchedSteps.has(3) &&
     isJoinApplyStepValid(4, data) &&
-    isJoinApplyStepValid(5, data)
+    isJoinApplyStepValid(5, data) &&
+    isJoinApplyStepValid(8, data)
   );
 }

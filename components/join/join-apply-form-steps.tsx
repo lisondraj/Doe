@@ -7,7 +7,6 @@ import {
   JoinEducationSlider,
   JoinFormBorderedField,
   JoinFormBorderedLinkedInField,
-  JoinFormBorderedSchoolFields,
   JoinFormBorderedStep,
 } from "@/components/join/JoinFormControls";
 import { JOIN_APPLY_AREAS, type JoinApplyArea, type JoinApplyFormState } from "@/lib/join/join-apply-form";
@@ -23,6 +22,7 @@ export const JOIN_APPLY_STEP_PROMPTS = [
   "Which areas would you like to help with?",
   "Upload your resume (optional)",
   "LinkedIn",
+  "What is/was your program of study?",
 ] as const;
 
 function toggleArea(areas: JoinApplyArea[], area: JoinApplyArea): JoinApplyArea[] {
@@ -119,12 +119,13 @@ export function renderJoinApplyStep({
       );
     case 4:
       return (
-        <JoinFormBorderedSchoolFields
+        <JoinFormBorderedField
           variant={variant}
-          schoolName={data.schoolName}
-          programOfStudy={data.programOfStudy}
-          onSchoolChange={(schoolName) => patch({ schoolName })}
-          onProgramChange={(programOfStudy) => patch({ programOfStudy })}
+          prompt={prompt}
+          value={data.schoolName}
+          onChange={(schoolName) => patch({ schoolName })}
+          placeholder="School name"
+          autoComplete="organization"
           readOnly={readOnly}
           interactive={interactive}
           onEnter={onEnter}
@@ -200,6 +201,20 @@ export function renderJoinApplyStep({
           variant={variant}
           value={data.linkedinUsername}
           onChange={(linkedinUsername) => patch({ linkedinUsername: linkedinUsername.replace(/\s/g, "") })}
+          readOnly={readOnly}
+          interactive={interactive}
+          onEnter={onEnter}
+        />
+      );
+    case 8:
+      return (
+        <JoinFormBorderedField
+          variant={variant}
+          prompt={prompt}
+          value={data.programOfStudy}
+          onChange={(programOfStudy) => patch({ programOfStudy })}
+          placeholder="Program of study"
+          autoComplete="organization-title"
           readOnly={readOnly}
           interactive={interactive}
           onEnter={onEnter}
