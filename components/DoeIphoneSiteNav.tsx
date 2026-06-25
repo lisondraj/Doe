@@ -10,6 +10,7 @@ import {
   NAV_ITEMS,
 } from "@/components/doe-nav-data";
 import { DOEPHONE_NAV_WAITLIST_CLASS } from "@/lib/doephone/waitlist-button";
+import { DOEPHONE_SECTION_CAROUSEL_INSET_X } from "@/lib/doephone/section-styles";
 import { JOIN_PAGE_HREF } from "@/lib/site-domains";
 import { scrollToJoinApplySection } from "@/lib/join/join-apply-scroll";
 import {
@@ -76,18 +77,19 @@ function NavChromeStrip({
   logoLink?: boolean;
   showMenu?: boolean;
 }) {
-  const pageRightInset =
-    "pr-14 iphone-page:pr-[max(2.35rem,calc(env(safe-area-inset-right,0px)+5.25vmin))]";
+  const pageInsetX = DOEPHONE_SECTION_CAROUSEL_INSET_X;
+  const pageDoeLeft =
+    "left-14 iphone-page:left-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
   const navInsetX = showApplyScrollCta
-    ? pinchSafe
-      ? `pl-11 ${pageRightInset} iphone-page:pl-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))]`
-      : `pl-8 ${pageRightInset} iphone-page:pl-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))]`
+    ? pageInsetX
     : pinchSafe
       ? "px-11 iphone-page:px-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))] iphone-page:pr-[max(1.65rem,env(safe-area-inset-right,0px))]"
       : "px-8 iphone-page:px-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))]";
-  const doeLeft = pinchSafe
-    ? "left-11 iphone-page:left-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))]"
-    : "left-8 iphone-page:left-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))]";
+  const doeLeft = showApplyScrollCta
+    ? pageDoeLeft
+    : pinchSafe
+      ? "left-11 iphone-page:left-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))]"
+      : "left-8 iphone-page:left-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))]";
   const doeClassName = `absolute top-1/2 -translate-y-1/2 ${doeLeft} font-normal z-[1] min-w-0 whitespace-nowrap ${lora.className} text-4xl iphone-page:text-[clamp(1.85rem,1.05rem+3.55vmin,3.9rem)] iphone-page:leading-none`;
 
   return (

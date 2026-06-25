@@ -207,6 +207,8 @@ function InboxIcon({
 function SenderMark({ row, mobile, config }: { row: InboxRow; mobile: boolean; config: HeroTriageThemeConfig }) {
   const { colors } = config;
   const sz = mobile ? "2.35rem" : "1.45rem";
+  const onSelectedRow = Boolean(row.selected);
+  const useFlatSelectedMark = onSelectedRow && config.flat;
   return (
     <div
       className={`flex shrink-0 items-center justify-center font-medium ${config.paneGlassTw}`}
@@ -214,11 +216,11 @@ function SenderMark({ row, mobile, config }: { row: InboxRow; mobile: boolean; c
         width: sz,
         height: sz,
         borderRadius: "50%",
-        background: row.iconBg,
-        color: row.iconColor,
+        background: useFlatSelectedMark ? "rgba(255,255,255,0.14)" : row.iconBg,
+        color: useFlatSelectedMark ? "#FFFFFF" : row.iconColor,
         fontSize: mobile ? "0.82rem" : "0.52rem",
-        border: `1px solid ${colors.glassBorder}`,
-        boxShadow: config.insetShadow,
+        border: `1px solid ${useFlatSelectedMark ? "rgba(255,255,255,0.12)" : colors.glassBorder}`,
+        boxShadow: config.flat ? "none" : config.insetShadow,
       }}
     >
       {row.initials}
@@ -251,8 +253,8 @@ function InboxListRow({
           padding: pad,
           borderRadius: mobile ? "0.85rem" : "0.55rem",
           background: config.selectedGradient,
-          border: `1px solid rgba(255,220,180,0.14)`,
-          boxShadow: config.insetShadow,
+          border: `1px solid ${config.selectedBorder}`,
+          boxShadow: "none",
           display: "flex",
           alignItems: "flex-start",
           gap,
@@ -261,10 +263,17 @@ function InboxListRow({
         <SenderMark row={row} mobile={mobile} config={config} />
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline justify-between gap-[0.4em]">
-            <span style={{ fontSize: nameFs, fontWeight: 500, color: "#fff", letterSpacing: "-0.01em" }}>
+            <span
+              style={{
+                fontSize: nameFs,
+                fontWeight: 500,
+                color: colors.selectedSender,
+                letterSpacing: "-0.01em",
+              }}
+            >
               {row.sender}
             </span>
-            <span style={{ fontSize: timeFs, fontWeight: 400, color: colors.selectedMuted, flexShrink: 0 }}>
+            <span style={{ fontSize: timeFs, fontWeight: 400, color: colors.selectedTime, flexShrink: 0 }}>
               {row.time}
             </span>
           </div>
@@ -505,11 +514,11 @@ function OpenEmailPane({ mobile, config }: { mobile: boolean; config: HeroTriage
               padding: mobile ? "0.32rem 0.75rem" : "0.2rem 0.5rem",
               flexShrink: 0,
               background: config.selectedGradient,
-              border: `1px solid rgba(255,220,180,0.14)`,
-              boxShadow: config.insetShadow,
+              border: `1px solid ${config.selectedBorder}`,
+              boxShadow: "none",
             }}
           >
-            <span style={{ fontSize: labelFs, fontWeight: 500, color: "#fff" }}>Send</span>
+            <span style={{ fontSize: labelFs, fontWeight: 500, color: colors.sendButtonText }}>Send</span>
           </div>
         </div>
       </div>
@@ -568,10 +577,14 @@ export function HeroTriagePreview({
         <div
           className={`${config.outerGlassTw} ${fontClassName} overflow-hidden`}
           style={{
-            borderRadius: isMobile ? "1.35rem" : "1.1rem",
+            borderRadius: theme === "light" ? "0.875rem" : isMobile ? "1.35rem" : "1.1rem",
             background: config.shellGradient,
-            border: `1px solid ${colors.shellBorder}`,
-            boxShadow: theme === "light" ? undefined : "inset 0 1px 0 rgba(255,228,196,0.1)",
+            ...(theme === "light"
+              ? {}
+              : {
+                  border: `1px solid ${colors.shellBorder}`,
+                  boxShadow: "inset 0 1px 0 rgba(255,228,196,0.1)",
+                }),
             height: isMobile ? HERO_TRIAGE_MOBILE_MIN_HEIGHT.outer : undefined,
             minHeight: isMobile ? undefined : "16rem",
           }}
