@@ -1,9 +1,14 @@
 "use client";
 
+import { useCallback, useEffect, useState } from "react";
+
+import { InternshipAnalyticsPanel } from "@/components/admin/InternshipAnalyticsPanel";
 import { InternshipSignupsPanel } from "@/components/admin/InternshipSignupsPanel";
 import { DoeBuildIcon } from "@/components/admin/doe-build-icon";
 import type { AdminInternshipApplication, InternshipSignupStats } from "@/lib/admin/internship-applications";
 import { inter, lora } from "@/lib/home/fonts";
+
+type AdminTab = "signups" | "analytics";
 
 export function DoeAdminApp({
   initialApplications,
@@ -12,6 +17,35 @@ export function DoeAdminApp({
   initialApplications: AdminInternshipApplication[];
   initialStats: InternshipSignupStats;
 }) {
+  const [activeTab, setActiveTab] = useState<AdminTab>("signups");
+  const [applications, setApplications] = useState(initialApplications);
+  const [stats, setStats] = useState(initialStats);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const refresh = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch("/api/admin/internship-applications");
+      const payload = (await response.json()) as {
+        ok?: boolean;
+        applications?: AdminInternshipApplication[];
+        stats?: InternshipSignupStats;
+        error?: string;
+      };
+      if (!response.ok || !payload.ok || !payload.applications || !payload.stats) {
+        throw new Error(payload.error || "Could not refresh applications.");
+      }
+      setApplications(payload.applications);
+      setStats(payload.stats);
+    } catch (refreshError) {
+      setError(refreshError instanceof Error ? refreshError.message : "Could not refresh applications.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   return (
     <main className={`h-dvh min-h-0 w-full overflow-hidden bg-white ${inter.className}`}>
       <div className="flex h-full min-h-0 w-full flex-col">
@@ -62,7 +96,12 @@ export function DoeAdminApp({
                   <div className="mt-1 flex flex-col gap-0.5">
                     <button
                       type="button"
-                      className="flex items-center gap-2 rounded-lg bg-neutral-100 px-2 py-2 text-[13px] font-medium text-neutral-900"
+                      onClick={() => setActiveTab("signups")}
+                      className={`flex items-center gap-2 rounded-lg px-2 py-2 text-[13px] font-medium ${
+                        activeTab === "signups"
+                          ? "bg-neutral-100 text-neutral-900"
+                          : "text-neutral-600 hover:bg-neutral-50"
+                      }`}
                     >
                       <DoeBuildIcon className="h-[18px] w-[18px]">
                         <>
@@ -74,8 +113,26 @@ export function DoeAdminApp({
                       </DoeBuildIcon>
                       <span className="flex-1 truncate text-left">Internship signups</span>
                       <span className="rounded-full bg-white px-1.5 py-0.5 text-[11px] font-medium text-neutral-600">
-                        {initialStats.total}
+                        {stats.total}
                       </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab("analytics")}
+                      className={`flex items-center gap-2 rounded-lg px-2 py-2 text-[13px] font-medium ${
+                        activeTab === "analytics"
+                          ? "bg-neutral-100 text-neutral-900"
+                          : "text-neutral-600 hover:bg-neutral-50"
+                      }`}
+                    >
+                      <DoeBuildIcon className="h-[18px] w-[18px]">
+                        <>
+                          <path d="M3 3v18h18" />
+                          <path d="M7 16l4-4 4 4 5-6" />
+                        </>
+                      </DoeBuildIcon>
+                      <span className="flex-1 truncate text-left">Analytics</span>
                     </button>
                   </div>
                 </div>
@@ -90,10 +147,21 @@ export function DoeAdminApp({
               </aside>
 
               <div className="flex min-h-0 min-w-0 flex-1 flex-col bg-white">
-                <InternshipSignupsPanel
-                  initialApplications={initialApplications}
-                  initialStats={initialStats}
-                />
+                {activeTab === "signups" ? (
+                  <InternshipSignupsPanel
+                    applications={applications}
+                    stats={stats}
+                    loading={loading}
+                    error={error}
+                    onRefresh={() => void refresh()}
+                  />
+                ) : (
+                  <InternshipAnalyticsPanel
+                    applications={applications}
+                    loading={loading}
+                    onRefresh={() => void refresh()}
+                  />
+                )}
               </div>
             </div>
           </div>

@@ -1,16 +1,20 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState, useEffect, type ReactNode } from "react";
 
 import { DoeBuildIcon } from "@/components/admin/doe-build-icon";
 import {
   formatAdminDate,
   formatCountry,
   formatEducation,
-  summarizeInternshipApplications,
   type AdminInternshipApplication,
   type InternshipSignupStats,
 } from "@/lib/admin/internship-applications";
+import {
+  groupInternshipApplications,
+  INTERNSHIP_GROUP_MODE_OPTIONS,
+  type InternshipGroupMode,
+} from "@/lib/admin/internship-grouping";
 import { inter, lora } from "@/lib/home/fonts";
 
 function StatCard({ label, value }: { label: string; value: number }) {
@@ -168,19 +172,41 @@ function ApplicationDetail({ application }: { application: AdminInternshipApplic
   );
 }
 
+function GroupHeader({ label, count }: { label: string; count: number }) {
+  return (
+    <div className="sticky top-0 z-[1] border-b border-[#ECECEC] bg-[#FAFAFA] px-4 py-2">
+      <div className="flex items-center justify-between gap-2">
+        <p className="truncate text-[11px] font-semibold uppercase tracking-wider text-neutral-600">{label}</p>
+        <span className="shrink-0 rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold tabular-nums text-neutral-500">
+          {count}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export function InternshipSignupsPanel({
-  initialApplications,
-  initialStats,
+  applications,
+  stats,
+  loading,
+  error,
+  onRefresh,
 }: {
-  initialApplications: AdminInternshipApplication[];
-  initialStats: InternshipSignupStats;
+  applications: AdminInternshipApplication[];
+  stats: InternshipSignupStats;
+  loading: boolean;
+  error: string | null;
+  onRefresh: () => void;
 }) {
-  const [applications, setApplications] = useState(initialApplications);
-  const [stats, setStats] = useState(initialStats);
   const [query, setQuery] = useState("");
-  const [selectedId, setSelectedId] = useState<string | null>(initialApplications[0]?.id ?? null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [groupMode, setGroupMode] = useState<InternshipGroupMode>("none");
+  const [selectedId, setSelectedId] = useState<string | null>(applications[0]?.id ?? null);
+
+  useEffect(() => {
+    if (!applications.some((row) => row.id === selectedId)) {
+      setSelectedId(applications[0]?.id ?? null);
+    }
+  }, [applications, selectedId]);
 
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -194,6 +220,8 @@ export function InternshipSignupsPanel({
         row.areas.join(" "),
         row.linkedin_username ?? "",
         row.additional_notes ?? "",
+        formatCountry(row.country),
+        formatEducation(row.education),
       ]
         .join(" ")
         .toLowerCase();
@@ -201,36 +229,20 @@ export function InternshipSignupsPanel({
     });
   }, [applications, query]);
 
-  const selected = useMemo(
-    () => filtered.find((row) => row.id === selectedId) ?? filtered[0] ?? null,
-    [filtered, selectedId],
+  const groups = useMemo(
+    () => groupInternshipApplications(filtered, groupMode),
+    [filtered, groupMode],
   );
 
-  const refresh = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch("/api/admin/internship-applications");
-      const payload = (await response.json()) as {
-        ok?: boolean;
-        applications?: AdminInternshipApplication[];
-        stats?: InternshipSignupStats;
-        error?: string;
-      };
-      if (!response.ok || !payload.ok || !payload.applications || !payload.stats) {
-        throw new Error(payload.error || "Could not refresh applications.");
-      }
-      setApplications(payload.applications);
-      setStats(payload.stats);
-      if (!payload.applications.some((row) => row.id === selectedId)) {
-        setSelectedId(payload.applications[0]?.id ?? null);
-      }
-    } catch (refreshError) {
-      setError(refreshError instanceof Error ? refreshError.message : "Could not refresh applications.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const visibleApplications = useMemo(
+    () => (groupMode === "none" ? filtered : groups.flatMap((group) => group.applications)),
+    [filtered, groupMode, groups],
+  );
+
+  const selected = useMemo(
+    () => visibleApplications.find((row) => row.id === selectedId) ?? visibleApplications[0] ?? null,
+    [visibleApplications, selectedId],
+  );
 
   return (
     <div className={`flex h-full min-h-0 flex-col ${inter.className}`}>
@@ -247,7 +259,7 @@ export function InternshipSignupsPanel({
         <div className="ml-auto flex items-center gap-2">
           <button
             type="button"
-            onClick={() => void refresh()}
+            onClick={onRefresh}
             disabled={loading}
             className="inline-flex h-8 items-center rounded-lg border border-[#E2E2E2] bg-white px-3 text-[12px] font-medium text-neutral-700 hover:bg-neutral-50 disabled:opacity-60"
           >
@@ -266,31 +278,48 @@ export function InternshipSignupsPanel({
       </div>
 
       <div className="border-b border-[#EFEFEF] px-4 py-3">
-        <div className="flex h-9 items-center gap-2 rounded-lg border border-[#ECECEC] bg-[#FAFAFA] px-2.5">
-          <DoeBuildIcon className="h-4 w-4 text-neutral-400">
-            <>
-              <circle cx="11" cy="11" r="7" />
-              <path d="m21 21-4.35-4.35" />
-            </>
-          </DoeBuildIcon>
-          <input
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search name, email, school, areas…"
-            className="flex-1 bg-transparent text-[13px] text-neutral-800 outline-none placeholder:text-neutral-400"
-          />
-          <span className="rounded border border-[#E5E5E5] bg-white px-1.5 py-0.5 text-[10px] font-medium text-neutral-500">
-            {filtered.length}
-          </span>
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex h-9 min-w-0 flex-1 items-center gap-2 rounded-lg border border-[#ECECEC] bg-[#FAFAFA] px-2.5">
+            <DoeBuildIcon className="h-4 w-4 shrink-0 text-neutral-400">
+              <>
+                <circle cx="11" cy="11" r="7" />
+                <path d="m21 21-4.35-4.35" />
+              </>
+            </DoeBuildIcon>
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search name, email, school, areas…"
+              className="min-w-0 flex-1 bg-transparent text-[13px] text-neutral-800 outline-none placeholder:text-neutral-400"
+            />
+            <span className="rounded border border-[#E5E5E5] bg-white px-1.5 py-0.5 text-[10px] font-medium text-neutral-500">
+              {filtered.length}
+            </span>
+          </div>
+
+          <label className="flex h-9 items-center gap-2 rounded-lg border border-[#ECECEC] bg-white px-2.5">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">Group by</span>
+            <select
+              value={groupMode}
+              onChange={(event) => setGroupMode(event.target.value as InternshipGroupMode)}
+              className="bg-transparent text-[12px] font-medium text-neutral-800 outline-none"
+            >
+              {INTERNSHIP_GROUP_MODE_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
         {error ? <p className="mt-2 text-[12px] font-medium text-[#BF593D]">{error}</p> : null}
       </div>
 
       <div className="grid min-h-0 flex-1 grid-cols-[minmax(280px,360px)_minmax(0,1fr)]">
         <div className="min-h-0 overflow-y-auto border-r border-[#EFEFEF] bg-white">
-          {filtered.length === 0 ? (
+          {visibleApplications.length === 0 ? (
             <div className="px-4 py-10 text-center text-[13px] text-neutral-500">No internship signups yet.</div>
-          ) : (
+          ) : groupMode === "none" ? (
             filtered.map((application) => (
               <ApplicationListItem
                 key={application.id}
@@ -298,6 +327,20 @@ export function InternshipSignupsPanel({
                 selected={selected?.id === application.id}
                 onSelect={() => setSelectedId(application.id)}
               />
+            ))
+          ) : (
+            groups.map((group) => (
+              <div key={group.key}>
+                <GroupHeader label={group.label} count={group.count} />
+                {group.applications.map((application) => (
+                  <ApplicationListItem
+                    key={`${group.key}-${application.id}`}
+                    application={application}
+                    selected={selected?.id === application.id}
+                    onSelect={() => setSelectedId(application.id)}
+                  />
+                ))}
+              </div>
             ))
           )}
         </div>
