@@ -173,16 +173,16 @@ export const JOIN_HERO_TRIAGE_PANEL = {
 
 export const JOIN_HERO_TRIAGE_SCALE = 1.58;
 
-/** Join iPhone hero — inbox UI anchored top-left, clipped at top/left like desktop at bottom/right. */
+/** Join iPhone hero — inbox UI anchored top-left; left edge flush so border stays visible. */
 export const JOIN_MOBILE_HERO_TRIAGE_PANEL = {
-  left: "-0.75rem",
-  top: "-1rem",
-  width: "112vw",
-  outerHeight: "26rem",
-  innerMinHeight: "28rem",
+  left: 0,
+  top: 0,
+  width: "100%",
+  outerHeight: "28rem",
+  innerMinHeight: "30rem",
 } as const;
 
-export const JOIN_MOBILE_HERO_TRIAGE_SCALE = 1.14;
+export const JOIN_MOBILE_HERO_TRIAGE_SCALE = 1.32;
 
 export type JoinHeroAiFeatureCardConfig = {
   label: string;
