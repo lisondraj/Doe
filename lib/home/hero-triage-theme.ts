@@ -173,13 +173,13 @@ export const JOIN_HERO_TRIAGE_PANEL = {
 
 export const JOIN_HERO_TRIAGE_SCALE = 1.58;
 
-/** Join iPhone hero — bottom-left at mid-height; ~half panel width visible, rest clipped right. */
+/** Join iPhone hero — bottom-left at mid-height; tall panel clips at hero top and right. */
 export const JOIN_MOBILE_HERO_TRIAGE_PANEL = {
   left: "max(1.25rem, 8%)",
   top: "50%",
   panelWidth: "min(40rem, 145vw)",
-  outerHeight: "24rem",
-  innerMinHeight: "26rem",
+  outerHeight: "44rem",
+  innerMinHeight: "46rem",
 } as const;
 
 export const JOIN_MOBILE_HERO_TRIAGE_SCALE = 1.32;

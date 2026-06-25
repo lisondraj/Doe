@@ -559,9 +559,11 @@ export function HeroTriagePreview({
   const isJoinMobile = isMobile && mobileAnchor === "join";
   const config = getHeroTriageThemeConfig(theme);
   const { colors } = config;
-  const navW = isMobile ? "5.1rem" : isSimple ? "3.25rem" : "2.85rem";
+  const navW = isJoinMobile ? "3.15rem" : isMobile ? "5.1rem" : isSimple ? "3.25rem" : "2.85rem";
   const listW = isMobile && !isSimple ? HERO_TRIAGE_MOBILE_LIST_WIDTH : isSimple ? undefined : "38%";
-  const inboxRows = isSimple ? INBOX_ROWS.slice(0, 5) : INBOX_ROWS;
+  const inboxRows = isJoinMobile ? INBOX_ROWS.slice(0, 7) : isSimple ? INBOX_ROWS.slice(0, 5) : INBOX_ROWS;
+  const listRowMobile = (isMobile || isSimple) && !isJoinMobile;
+  const navIconMobile = isMobile && !isJoinMobile;
   const mobileScaleValue = mobileScale ?? HERO_TRIAGE_MOBILE_SCALE;
   const desktopTransform =
     !isMobile && desktopScale !== 1 ? `scale(${desktopScale})` : HERO_TRIAGE_TILT.desktop;
@@ -636,8 +638,8 @@ export function HeroTriagePreview({
               style={{
                 width: navW,
                 borderRight: isSimple ? "none" : `1px solid ${colors.divider}`,
-                padding: isMobile ? "1.1rem 0.55rem" : isSimple ? "0.85rem 0.4rem" : "0.65rem 0.32rem",
-                gap: isMobile ? "0.35rem" : "0.28rem",
+                padding: isJoinMobile ? "0.75rem 0.35rem" : isMobile ? "1.1rem 0.55rem" : isSimple ? "0.85rem 0.4rem" : "0.65rem 0.32rem",
+                gap: isJoinMobile ? "0.24rem" : isMobile ? "0.35rem" : "0.28rem",
                 ...config.paneStyle(),
                 borderRadius: 0,
                 borderTop: "none",
@@ -645,8 +647,8 @@ export function HeroTriagePreview({
                 borderLeft: "none",
               }}
             >
-              <NavIcon active mobile={isMobile} config={config}>
-                <InboxIcon mobile={isMobile} d="M4 6h16v12H4V6zm0 0 8 7 8-7" color={colors.navIcon} />
+              <NavIcon active mobile={navIconMobile} config={config}>
+                <InboxIcon mobile={navIconMobile} d="M4 6h16v12H4V6zm0 0 8 7 8-7" color={colors.navIcon} />
               </NavIcon>
               {isSimple ? null : (
                 <>
@@ -683,7 +685,7 @@ export function HeroTriagePreview({
               <div
                 className={`flex items-center gap-[0.45em] ${config.paneGlassTw}`}
                 style={{
-                  padding: isMobile ? "0.85rem 0.95rem" : isSimple ? "0.85rem 1rem" : "0.52rem 0.58rem",
+                  padding: isJoinMobile ? "0.65rem 0.85rem" : isMobile ? "0.85rem 0.95rem" : isSimple ? "0.85rem 1rem" : "0.52rem 0.58rem",
                   borderBottom: `1px solid ${colors.divider}`,
                   color: colors.navIcon,
                   ...config.paneStyle({ borderRadius: 0, borderTop: "none", borderLeft: "none", borderRight: "none" }),
@@ -693,14 +695,14 @@ export function HeroTriagePreview({
                   className={`flex items-center gap-[0.35em] ${config.paneGlassTw}`}
                   style={{
                     borderRadius: "999px",
-                    padding: isMobile ? "0.38rem 0.75rem" : isSimple ? "0.35rem 0.65rem" : "0.24rem 0.48rem",
+                    padding: isJoinMobile ? "0.28rem 0.55rem" : isMobile ? "0.38rem 0.75rem" : isSimple ? "0.35rem 0.65rem" : "0.24rem 0.48rem",
                     ...(isSimple ? { background: "transparent" } : config.chipStyle()),
                   }}
                 >
-                  <InboxIcon mobile={isMobile} d="M4 6h16v12H4V6zm0 0 8 7 8-7" color={isSimple ? "#D2774C" : colors.pillText} />
+                  <InboxIcon mobile={navIconMobile} d="M4 6h16v12H4V6zm0 0 8 7 8-7" color={isSimple ? "#D2774C" : colors.pillText} />
                   <span
                     style={{
-                      fontSize: isMobile ? "0.95rem" : isSimple ? "0.92rem" : "0.58rem",
+                      fontSize: isJoinMobile ? "0.92rem" : isMobile ? "0.95rem" : isSimple ? "0.92rem" : "0.58rem",
                       fontWeight: 500,
                       color: isSimple ? JOIN_FORM_BEIGE.ink : colors.pillText,
                     }}
@@ -737,11 +739,11 @@ export function HeroTriagePreview({
               {/* Message list */}
               <div
                 className="min-h-0 flex-1 overflow-hidden"
-                style={{ padding: isMobile ? "0.45rem 0.35rem" : isSimple ? "0.55rem 0.45rem" : "0.28rem 0.2rem", gap: isMobile ? "0.28rem" : "0.18rem" }}
+                style={{ padding: isJoinMobile ? "0.32rem 0.28rem" : isMobile ? "0.45rem 0.35rem" : isSimple ? "0.55rem 0.45rem" : "0.28rem 0.2rem", gap: isMobile ? "0.28rem" : "0.18rem" }}
               >
                 {inboxRows.map((row) => (
                   <div key={row.id}>
-                    <InboxListRow row={row} mobile={isMobile || isSimple} config={config} />
+                    <InboxListRow row={row} mobile={listRowMobile} config={config} />
                   </div>
                 ))}
               </div>
