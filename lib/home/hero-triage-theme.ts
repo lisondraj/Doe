@@ -173,10 +173,10 @@ export const JOIN_HERO_TRIAGE_PANEL = {
 
 export const JOIN_HERO_TRIAGE_SCALE = 1.58;
 
-/** Join iPhone hero — bottom-left anchored at ~42% from left, 74% from top; clips at hero top and right. */
+/** Join iPhone hero — bottom-left anchored at ~42% from left, 50% from top; clips at hero top and right. */
 export const JOIN_MOBILE_HERO_TRIAGE_PANEL = {
   left: "42%",
-  top: "74%",
+  top: "50%",
   panelWidth: "min(40rem, 145vw)",
   /** Tall enough that scaled top clears hero top while bottom-left anchor stays fixed. */
   outerHeight: "62rem",
