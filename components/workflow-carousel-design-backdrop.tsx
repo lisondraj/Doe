@@ -1,8 +1,12 @@
 import {
+  WORKFLOW_BEIGE_SURFACE_FILL,
   WORKFLOW_CAROUSEL_GRAIN_STYLE,
   getWorkflowGridOverlayStyle,
+  workflowPolarStroke,
+  workflowWaveStroke,
   type WorkflowCarouselDesignBackdrop,
   type WorkflowCarouselGridKind,
+  type WorkflowCarouselSurface,
 } from "@/lib/workflow-carousel-design-backdrops";
 import {
   doephoneHeroIntroRingDelayMs,
@@ -75,13 +79,16 @@ function PolarGridOverlay({
   patternScale = 1,
   centerY = "36%",
   introOnLoad = false,
+  surface = "orange",
 }: {
   patternScale?: number;
   centerY?: string;
   introOnLoad?: boolean;
+  surface?: WorkflowCarouselSurface;
 }) {
   const polarCy = polarCenterYUnits(centerY);
   const ringCount = introOnLoad ? DOEPHONE_HERO_INTRO_RING_COUNT : 6;
+  const stroke = workflowPolarStroke(surface);
   const ringStyle = (index: number): CSSProperties | undefined =>
     introOnLoad
       ? {
@@ -113,6 +120,7 @@ function PolarGridOverlay({
                 className="doephone-hero-polar-segment doephone-hero-polar-radial"
                 d={polarSpokePathD(POLAR_CX, polarCy, angle)}
                 fill="none"
+                stroke={stroke}
                 strokeWidth="0.8"
                 strokeLinecap="butt"
                 vectorEffect="non-scaling-stroke"
@@ -135,6 +143,7 @@ function PolarGridOverlay({
               cy={polarCy}
               r={r}
               fill="none"
+              stroke={stroke}
               strokeWidth="0.8"
               strokeLinecap="round"
               vectorEffect="non-scaling-stroke"
@@ -147,7 +156,15 @@ function PolarGridOverlay({
 }
 
 /** Prior auth slide — curved waves; viewBox includes path bleed so strokes are not clipped. */
-function WaveGridOverlay({ patternScale = 1 }: { patternScale?: number }) {
+function WaveGridOverlay({
+  patternScale = 1,
+  surface = "orange",
+}: {
+  patternScale?: number;
+  surface?: WorkflowCarouselSurface;
+}) {
+  const stroke = workflowWaveStroke(surface);
+
   return (
     <div className="pointer-events-none absolute inset-0 z-[2] overflow-hidden" aria-hidden>
       <svg
@@ -166,7 +183,7 @@ function WaveGridOverlay({ patternScale = 1 }: { patternScale?: number }) {
             key={`wave-${w}`}
             d={`M -40 ${60 + w * 58} Q 175 ${20 + w * 58} 350 ${60 + w * 58} T 740 ${60 + w * 58}`}
             fill="none"
-            stroke="rgba(255, 255, 255, 0.12)"
+            stroke={stroke}
             strokeWidth="1"
           />
         ))}
@@ -180,11 +197,13 @@ function GridOverlay({
   patternScale = 1,
   polarCenterY = "36%",
   introOnLoad = false,
+  surface = "orange",
 }: {
   kind: WorkflowCarouselGridKind;
   patternScale?: number;
   polarCenterY?: string;
   introOnLoad?: boolean;
+  surface?: WorkflowCarouselSurface;
 }) {
   if (kind === "polar") {
     return (
@@ -192,12 +211,13 @@ function GridOverlay({
         patternScale={patternScale}
         centerY={polarCenterY}
         introOnLoad={introOnLoad}
+        surface={surface}
       />
     );
   }
-  if (kind === "wave") return <WaveGridOverlay patternScale={patternScale} />;
+  if (kind === "wave") return <WaveGridOverlay patternScale={patternScale} surface={surface} />;
 
-  const style = getWorkflowGridOverlayStyle(kind, patternScale);
+  const style = getWorkflowGridOverlayStyle(kind, patternScale, surface);
   if (!style) return null;
 
   return <div className="pointer-events-none absolute inset-0 z-[2]" style={style} aria-hidden />;
@@ -211,6 +231,7 @@ export function WorkflowCarouselDesignBackdrop({
   gradientOverride,
   gradientScale = 1,
   introOnLoad = false,
+  surface = "orange",
 }: {
   backdrop: WorkflowCarouselDesignBackdrop;
   className?: string;
@@ -224,7 +245,11 @@ export function WorkflowCarouselDesignBackdrop({
   gradientScale?: number;
   /** Staggered fade-in for polar line overlay on load. */
   introOnLoad?: boolean;
+  /** Beige uses solid fill and taupe line overlays instead of orange gradient + white lines. */
+  surface?: WorkflowCarouselSurface;
 }) {
+  const isBeige = surface === "beige";
+  const fill = isBeige ? WORKFLOW_BEIGE_SURFACE_FILL : (gradientOverride ?? backdrop.gradient);
   const rootClass = embedded
     ? `absolute inset-0 overflow-hidden [transform:translateZ(0)] ${className}`.trim()
     : `fixed inset-0 min-h-[100dvh] min-w-full overflow-hidden ${className}`.trim();
@@ -236,7 +261,7 @@ export function WorkflowCarouselDesignBackdrop({
       <div
         className="pointer-events-none absolute inset-0"
         style={{
-          background: gradientOverride ?? backdrop.gradient,
+          background: fill,
           backgroundPosition: "center center",
           /*
            * Always use a percentage-based background-size for the embedded hero gradient.
@@ -254,12 +279,15 @@ export function WorkflowCarouselDesignBackdrop({
         }}
         aria-hidden
       />
-      <div className="pointer-events-none absolute inset-0 z-[1]" style={WORKFLOW_CAROUSEL_GRAIN_STYLE} aria-hidden />
+      {!isBeige ? (
+        <div className="pointer-events-none absolute inset-0 z-[1]" style={WORKFLOW_CAROUSEL_GRAIN_STYLE} aria-hidden />
+      ) : null}
       <GridOverlay
         kind={backdrop.grid}
         patternScale={patternScale}
         polarCenterY={backdrop.polarCenterY}
         introOnLoad={introOnLoad}
+        surface={surface}
       />
     </Root>
   );

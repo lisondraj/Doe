@@ -14,6 +14,7 @@ import {
 } from "@/lib/join/join-layout";
 import { JOIN_HERO_BANDS, JOIN_HERO_PRIMARY_BACKDROP } from "@/lib/join/join-hero-backdrops";
 import type { WorkflowCarouselDesignBackdrop as WorkflowCarouselDesignBackdropConfig } from "@/lib/workflow-carousel-design-backdrops";
+import type { WorkflowCarouselSurface } from "@/lib/workflow-carousel-design-backdrops";
 import { lora, suisseIntl } from "@/lib/home/fonts";
 
 const JOIN_HERO_HEADLINE_MOBILE =
@@ -25,23 +26,33 @@ const JOIN_HERO_TOP_LEFT_PAD =
   "pt-8 px-8 iphone-page:pt-[clamp(2rem,1.65rem+1.45vmin,2.6rem)] iphone-page:px-[clamp(2rem,1.65rem+1.45vmin,2.6rem)]";
 
 const JOIN_HERO_DESCRIPTION_MOBILE =
-  "max-w-[min(100%,20.25rem)] text-[clamp(0.98rem,3.9vw,1.18rem)] font-normal leading-[1.5] tracking-[-0.012em] text-white/95 iphone-page:max-w-[min(100%,21.75rem)]";
+  "max-w-[min(100%,20.25rem)] text-[clamp(0.98rem,3.9vw,1.18rem)] font-normal leading-[1.5] tracking-[-0.012em] iphone-page:max-w-[min(100%,21.75rem)]";
 
 const JOIN_HERO_DESCRIPTION_DESKTOP =
-  "max-w-[min(100%,33em)] text-[clamp(1.08rem,1.55vw,1.34rem)] font-normal leading-[1.52] tracking-[-0.014em] text-white/95";
+  "max-w-[min(100%,33em)] text-[clamp(1.08rem,1.55vw,1.34rem)] font-normal leading-[1.52] tracking-[-0.014em]";
+
+function joinHeroInkClass(surface: WorkflowCarouselSurface = "orange") {
+  return surface === "beige" ? "text-[#1E343A]" : "text-white";
+}
+
+function joinHeroDescriptionInkClass(surface: WorkflowCarouselSurface = "orange") {
+  return surface === "beige" ? "text-[#1E343A]/88" : "text-white/95";
+}
 
 function JoinHeroDescription({
   text,
   variant,
+  surface = "orange",
 }: {
   text: string;
   variant: "mobile" | "desktop";
+  surface?: WorkflowCarouselSurface;
 }) {
   const textClass = variant === "mobile" ? JOIN_HERO_DESCRIPTION_MOBILE : JOIN_HERO_DESCRIPTION_DESKTOP;
 
   return (
     <p
-      className={`absolute left-0 top-0 z-[3] text-left ${JOIN_HERO_TOP_LEFT_PAD} ${textClass} ${suisseIntl.className}`}
+      className={`absolute left-0 top-0 z-[3] text-left ${JOIN_HERO_TOP_LEFT_PAD} ${textClass} ${joinHeroDescriptionInkClass(surface)} ${suisseIntl.className}`}
     >
       {text}
     </p>
@@ -51,13 +62,15 @@ function JoinHeroDescription({
 function JoinHeroHeadline({
   titleClass,
   lines,
+  surface = "orange",
 }: {
   titleClass: string;
   lines: readonly [string] | readonly [string, string];
+  surface?: WorkflowCarouselSurface;
 }) {
   return (
     <p
-      className={`absolute bottom-0 left-0 z-[3] max-w-[min(100%,20em)] text-left font-normal leading-[1.04] tracking-[-0.035em] text-white ${BLOG_LANDING_HERO_CORNER_PAD} ${titleClass} ${lora.className}`}
+      className={`absolute bottom-0 left-0 z-[3] max-w-[min(100%,20em)] text-left font-normal leading-[1.04] tracking-[-0.035em] ${joinHeroInkClass(surface)} ${BLOG_LANDING_HERO_CORNER_PAD} ${titleClass} ${lora.className}`}
     >
       {lines.map((line) => (
         <span key={line} className="block">
@@ -75,12 +88,14 @@ export function JoinInternshipHero({
   showInbox = true,
   headline = JOIN_HERO_BANDS[0].headline,
   description,
+  surface = "orange",
 }: {
   variant: "mobile" | "desktop";
   backdrop?: WorkflowCarouselDesignBackdropConfig;
   showInbox?: boolean;
   headline?: readonly [string] | readonly [string, string];
   description?: string;
+  surface?: WorkflowCarouselSurface;
 }) {
   const heightClass = variant === "mobile" ? JOIN_MOBILE_HERO_CARD_HEIGHT : JOIN_DESKTOP_HERO_HEIGHT;
   const titleClass = variant === "mobile" ? JOIN_HERO_HEADLINE_MOBILE : JOIN_HERO_HEADLINE_DESKTOP;
@@ -92,12 +107,15 @@ export function JoinInternshipHero({
       <WorkflowCarouselDesignBackdrop
         backdrop={backdrop}
         embedded
+        surface={surface}
         className={DOEPHONE_SECTION_CAROUSEL_RADIUS}
       />
 
-      <JoinHeroHeadline titleClass={titleClass} lines={headline} />
+      <JoinHeroHeadline titleClass={titleClass} lines={headline} surface={surface} />
 
-      {description ? <JoinHeroDescription text={description} variant={variant} /> : null}
+      {description ? (
+        <JoinHeroDescription text={description} variant={variant} surface={surface} />
+      ) : null}
 
       {showInbox && variant === "mobile" ? (
         <HeroTriagePreview

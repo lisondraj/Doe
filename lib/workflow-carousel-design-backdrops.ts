@@ -1,8 +1,14 @@
 import type { CSSProperties } from "react";
 
+import { BLOG_LANDING_HERO } from "@/lib/blog/blog-landing-hero-colors";
 import { HERO_CAROUSEL_GRAIN_BG } from "@/lib/hero-carousel-grain";
 
 export type WorkflowCarouselGridKind = "dot" | "crosshatch" | "diagonal" | "hex" | "polar" | "wave";
+
+export type WorkflowCarouselSurface = "orange" | "beige";
+
+/** Solid fill for beige workflow / join hero surfaces. */
+export const WORKFLOW_BEIGE_SURFACE_FILL = BLOG_LANDING_HERO.fill;
 
 export type WorkflowCarouselDesignBackdrop = {
   /** Carousel box index in `app/page.tsx` (0–5). */
@@ -105,82 +111,118 @@ export const WORKFLOW_CAROUSEL_GRAIN_STYLE: CSSProperties = {
 };
 
 const CROSSHATCH_CELL_PX = 56;
-const CROSSHATCH_LINE = "rgba(255, 255, 255, 0.12)";
-const CROSSHATCH_DOT = "rgba(255, 255, 255, 0.18)";
+const CROSSHATCH_LINE_ORANGE = "rgba(255, 255, 255, 0.12)";
+const CROSSHATCH_DOT_ORANGE = "rgba(255, 255, 255, 0.18)";
 
-export const WORKFLOW_CROSSHATCH_GRID_STYLE: CSSProperties = {
-  backgroundImage: [
-    `radial-gradient(circle, ${CROSSHATCH_DOT} 1px, transparent 1px)`,
-    `repeating-linear-gradient(0deg, transparent 0, transparent calc(${CROSSHATCH_CELL_PX}px - 0.8px), ${CROSSHATCH_LINE} calc(${CROSSHATCH_CELL_PX}px - 0.8px), ${CROSSHATCH_LINE} ${CROSSHATCH_CELL_PX}px)`,
-    `repeating-linear-gradient(90deg, transparent 0, transparent calc(${CROSSHATCH_CELL_PX}px - 0.8px), ${CROSSHATCH_LINE} calc(${CROSSHATCH_CELL_PX}px - 0.8px), ${CROSSHATCH_LINE} ${CROSSHATCH_CELL_PX}px)`,
-  ].join(", "),
-  backgroundSize: `${CROSSHATCH_CELL_PX}px ${CROSSHATCH_CELL_PX}px`,
-  backgroundPosition: `${CROSSHATCH_CELL_PX / 2}px ${CROSSHATCH_CELL_PX / 2}px, 0 0, 0 0`,
-};
+function crosshatchGridStyle(surface: WorkflowCarouselSurface): CSSProperties {
+  const line = surface === "beige" ? BLOG_LANDING_HERO.lineSoft : CROSSHATCH_LINE_ORANGE;
+  const dot = surface === "beige" ? BLOG_LANDING_HERO.line : CROSSHATCH_DOT_ORANGE;
 
-export const WORKFLOW_DOT_GRID_STYLE: CSSProperties = {
-  backgroundImage: `radial-gradient(circle, rgba(255, 255, 255, 0.25) 1.5px, transparent 1.5px)`,
-  backgroundSize: "50px 50px",
-};
+  return {
+    backgroundImage: [
+      `radial-gradient(circle, ${dot} 1px, transparent 1px)`,
+      `repeating-linear-gradient(0deg, transparent 0, transparent calc(${CROSSHATCH_CELL_PX}px - 0.8px), ${line} calc(${CROSSHATCH_CELL_PX}px - 0.8px), ${line} ${CROSSHATCH_CELL_PX}px)`,
+      `repeating-linear-gradient(90deg, transparent 0, transparent calc(${CROSSHATCH_CELL_PX}px - 0.8px), ${line} calc(${CROSSHATCH_CELL_PX}px - 0.8px), ${line} ${CROSSHATCH_CELL_PX}px)`,
+    ].join(", "),
+    backgroundSize: `${CROSSHATCH_CELL_PX}px ${CROSSHATCH_CELL_PX}px`,
+    backgroundPosition: `${CROSSHATCH_CELL_PX / 2}px ${CROSSHATCH_CELL_PX / 2}px, 0 0, 0 0`,
+  };
+}
 
-export const WORKFLOW_DIAGONAL_GRID_STYLE: CSSProperties = {
-  backgroundImage: `
+export const WORKFLOW_CROSSHATCH_GRID_STYLE: CSSProperties = crosshatchGridStyle("orange");
+
+export function dotGridStyle(surface: WorkflowCarouselSurface): CSSProperties {
+  const dot = surface === "beige" ? BLOG_LANDING_HERO.line : "rgba(255, 255, 255, 0.25)";
+  return {
+    backgroundImage: `radial-gradient(circle, ${dot} 1.5px, transparent 1.5px)`,
+    backgroundSize: "50px 50px",
+  };
+}
+
+export const WORKFLOW_DOT_GRID_STYLE: CSSProperties = dotGridStyle("orange");
+
+function diagonalGridStyle(surface: WorkflowCarouselSurface): CSSProperties {
+  const line = surface === "beige" ? BLOG_LANDING_HERO.lineSoft : "rgba(255, 255, 255, 0.15)";
+  return {
+    backgroundImage: `
     repeating-linear-gradient(
       45deg,
       transparent 0,
       transparent calc(60px - 0.8px),
-      rgba(255, 255, 255, 0.15) calc(60px - 0.8px),
-      rgba(255, 255, 255, 0.15) 60px
+      ${line} calc(60px - 0.8px),
+      ${line} 60px
     ),
     repeating-linear-gradient(
       -45deg,
       transparent 0,
       transparent calc(60px - 0.8px),
-      rgba(255, 255, 255, 0.15) calc(60px - 0.8px),
-      rgba(255, 255, 255, 0.15) 60px
+      ${line} calc(60px - 0.8px),
+      ${line} 60px
     )`,
-  backgroundSize: "60px 60px",
-};
+    backgroundSize: "60px 60px",
+  };
+}
+
+export const WORKFLOW_DIAGONAL_GRID_STYLE: CSSProperties = diagonalGridStyle("orange");
 
 const HEX_CELL_W_PX = 80;
 const HEX_CELL_H_PX = 69.28;
 
-const hexGridSvg = encodeURIComponent(
-  `<svg xmlns="http://www.w3.org/2000/svg" width="${HEX_CELL_W_PX}" height="${HEX_CELL_H_PX}"><defs><pattern id="hex" width="${HEX_CELL_W_PX}" height="${HEX_CELL_H_PX}" patternUnits="userSpaceOnUse"><path d="M 40 0 L 80 17.32 L 80 51.96 L 40 69.28 L 0 51.96 L 0 17.32 Z" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.8"/></pattern></defs><rect width="100%" height="100%" fill="url(#hex)"/></svg>`,
-);
+function hexGridSvg(surface: WorkflowCarouselSurface) {
+  const stroke =
+    surface === "beige" ? BLOG_LANDING_HERO.lineSoft : "rgba(255,255,255,0.1)";
+  return encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${HEX_CELL_W_PX}" height="${HEX_CELL_H_PX}"><defs><pattern id="hex" width="${HEX_CELL_W_PX}" height="${HEX_CELL_H_PX}" patternUnits="userSpaceOnUse"><path d="M 40 0 L 80 17.32 L 80 51.96 L 40 69.28 L 0 51.96 L 0 17.32 Z" fill="none" stroke="${stroke}" stroke-width="0.8"/></pattern></defs><rect width="100%" height="100%" fill="url(#hex)"/></svg>`,
+  );
+}
 
-export const WORKFLOW_HEX_GRID_STYLE: CSSProperties = {
-  backgroundImage: `url("data:image/svg+xml,${hexGridSvg}")`,
-  backgroundSize: `${HEX_CELL_W_PX}px ${HEX_CELL_H_PX}px`,
-};
+function hexGridStyle(surface: WorkflowCarouselSurface): CSSProperties {
+  return {
+    backgroundImage: `url("data:image/svg+xml,${hexGridSvg(surface)}")`,
+    backgroundSize: `${HEX_CELL_W_PX}px ${HEX_CELL_H_PX}px`,
+  };
+}
+
+export const WORKFLOW_HEX_GRID_STYLE: CSSProperties = hexGridStyle("orange");
+
+/** Wave overlay stroke for orange vs beige surfaces. */
+export function workflowWaveStroke(surface: WorkflowCarouselSurface): string {
+  return surface === "beige" ? BLOG_LANDING_HERO.lineSoft : "rgba(255, 255, 255, 0.12)";
+}
+
+/** Polar overlay stroke for orange vs beige surfaces. */
+export function workflowPolarStroke(surface: WorkflowCarouselSurface): string {
+  return surface === "beige" ? BLOG_LANDING_HERO.line : "rgba(255, 255, 255, 0.24)";
+}
 
 /** Scale > 1 zooms patterns out (larger cell spacing). */
 export function getWorkflowGridOverlayStyle(
   kind: WorkflowCarouselGridKind,
   patternScale = 1,
+  surface: WorkflowCarouselSurface = "orange",
 ): CSSProperties | null {
   const scaleSize = (px: number) => `${Math.round(px * patternScale)}px`;
 
   switch (kind) {
     case "dot":
       return {
-        ...WORKFLOW_DOT_GRID_STYLE,
+        ...dotGridStyle(surface),
         backgroundSize: `${scaleSize(50)} ${scaleSize(50)}`,
       };
     case "crosshatch":
       return {
-        ...WORKFLOW_CROSSHATCH_GRID_STYLE,
+        ...crosshatchGridStyle(surface),
         backgroundSize: `${scaleSize(CROSSHATCH_CELL_PX)} ${scaleSize(CROSSHATCH_CELL_PX)}`,
         backgroundPosition: `${(CROSSHATCH_CELL_PX * patternScale) / 2}px ${(CROSSHATCH_CELL_PX * patternScale) / 2}px, 0 0, 0 0`,
       };
     case "diagonal":
       return {
-        ...WORKFLOW_DIAGONAL_GRID_STYLE,
+        ...diagonalGridStyle(surface),
         backgroundSize: `${scaleSize(60)} ${scaleSize(60)}`,
       };
     case "hex":
       return {
-        ...WORKFLOW_HEX_GRID_STYLE,
+        ...hexGridStyle(surface),
         backgroundSize: `${scaleSize(HEX_CELL_W_PX)} ${scaleSize(HEX_CELL_H_PX)}`,
       };
     case "polar":

@@ -2,7 +2,7 @@ import { JoinInternshipHero } from "@/components/join/JoinInternshipHero";
 import { JOIN_HERO_BANDS } from "@/lib/join/join-hero-backdrops";
 import { JOIN_MOBILE_SECTION_STACK_GAP } from "@/lib/join/join-layout";
 
-/** Stacked join hero bands — primary with inbox UI, three gradient-only variants below. */
+/** Stacked join hero bands — primary with inbox UI, four gradient/beige variants below. */
 export function JoinHeroBands({ variant }: { variant: "mobile" | "desktop" }) {
   return (
     <div className={`flex w-full flex-col ${JOIN_MOBILE_SECTION_STACK_GAP}`}>
@@ -14,6 +14,7 @@ export function JoinHeroBands({ variant }: { variant: "mobile" | "desktop" }) {
           showInbox={band.showInbox}
           headline={band.headline}
           description={band.description}
+          surface={band.surface ?? "orange"}
         />
       ))}
     </div>
