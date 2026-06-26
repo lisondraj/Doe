@@ -33,7 +33,6 @@ export const JOIN_HERO_EXTRA_BANDS: readonly JoinHeroBandConfig[] = [
     id: "incoming",
     showInbox: false,
     surface: "beige",
-    textAlign: "right",
     headline: ["About Doe's", "Mission."],
     description: [
       "Doe is an all-in-one healthcare communication layer built on top of health providers' existing inboxes. It automates every touchpoint in a patient's healthcare journey, from intake and scheduling to follow-ups and care coordination, without replacing the tools teams already trust.",
@@ -57,7 +56,6 @@ export const JOIN_HERO_EXTRA_BANDS: readonly JoinHeroBandConfig[] = [
     id: "integrate",
     showInbox: false,
     surface: "beige",
-    textAlign: "right",
     headline: ["Where we're at", "right now."],
     description: [
       "We're seeking technical talent from around the world to help build Doe. If you care about healthcare, AI, and giving providers real control over the tools they use every day, we want to hear from you.",

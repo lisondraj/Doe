@@ -178,7 +178,6 @@ const JOIN_DESKTOP_NAV_MID: readonly JoinDesktopNavItem[] = [
 
 const JOIN_DESKTOP_NAV_BOTTOM: readonly JoinDesktopNavItem[] = [
   { id: "analytics", d: "M3 3v18h18M7 16l4-4 4 4 5-6" },
-  { id: "settings", d: "M12 6h.01M12 12h.01M12 18h.01" },
 ] as const;
 
 const JOIN_DESKTOP_SELECTED_ORANGE = "#D2774C";
@@ -220,15 +219,14 @@ function JoinDesktopAvatar({
 function JoinDesktopInboxRow({ row }: { row: InboxRow }) {
   const selected = Boolean(row.selected);
   return (
-    <div
-      className={`flex items-start gap-2.5 border-b border-[#F0F0F0] px-[0.62rem] py-[0.52rem] ${
-        selected ? "mx-[0.32rem] rounded-[0.42rem] border-b-[#E8E4DD]" : ""
-      }`}
-      style={{
-        background: selected ? JOIN_DESKTOP_SELECTED_ORANGE : "transparent",
-      }}
-    >
-      <JoinDesktopAvatar initials={row.initials} selected={selected} size="1.62rem" fontSize="0.54rem" />
+    <div className="border-b border-[#F0F0F0]">
+      <div
+        className={`flex items-start gap-2.5 px-[0.62rem] py-[0.52rem] ${selected ? "mx-[0.32rem] rounded-[0.42rem]" : ""}`}
+        style={{
+          background: selected ? JOIN_DESKTOP_SELECTED_ORANGE : "transparent",
+        }}
+      >
+        <JoinDesktopAvatar initials={row.initials} selected={selected} size="1.62rem" fontSize="0.54rem" />
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline justify-between gap-2">
             <span
@@ -253,6 +251,7 @@ function JoinDesktopInboxRow({ row }: { row: InboxRow }) {
           {!selected ? (
             <p className="mt-0.5 truncate text-[0.48rem] font-normal text-[#9A9590]">{row.preview}</p>
           ) : null}
+        </div>
       </div>
     </div>
   );
@@ -260,51 +259,32 @@ function JoinDesktopInboxRow({ row }: { row: InboxRow }) {
 
 function JoinDesktopOpenEmailClipPane() {
   return (
-    <div className="flex h-full min-h-0 min-w-0 flex-[2] flex-col justify-end overflow-hidden bg-[#FAFAF8]">
+    <div className="flex h-full min-h-0 min-w-0 flex-[2] flex-col justify-end overflow-hidden border-l border-[#EEEAE3] bg-[#FAFAF8]">
       <div className="w-[245%] shrink-0">
-        <div className="border-b border-[#F0F0F0] bg-white px-4 py-3.5">
-          <p className="text-[0.82rem] font-semibold leading-snug tracking-tight text-[#1E343A]">
+        <div className="border-b border-[#F0F0F0] bg-white px-3.5 py-2.5">
+          <p className="text-[0.68rem] font-semibold leading-snug tracking-tight text-[#1E343A]">
             Follow-up visit scheduling
           </p>
-          <p className="mt-1 text-[0.5rem] text-neutral-500">Maria Rodriguez · Patient message</p>
+          <p className="mt-0.5 text-[0.48rem] text-neutral-500">Maria Rodriguez · Patient message</p>
         </div>
 
         <div className="bg-[#FAFAF8]">
-          {EMAIL_THREAD.map((msg, index) => {
+          {EMAIL_THREAD.map((msg) => {
             const initials = msg.from === "Dr. Singh" ? "DS" : "MR";
-            const isRecent = index >= EMAIL_THREAD.length - 2;
 
             return (
-              <div
-                key={msg.id}
-                className={`border-b border-[#F0F0F0] bg-white px-4 ${isRecent ? "py-4" : "py-3"}`}
-              >
-                <div className="flex items-start gap-2.5">
-                  <JoinDesktopAvatar
-                    initials={initials}
-                    size={isRecent ? "1.65rem" : "1.45rem"}
-                    fontSize={isRecent ? "0.52rem" : "0.48rem"}
-                  />
+              <div key={msg.id} className="border-b border-[#F0F0F0] bg-white px-3.5 py-2.5">
+                <div className="flex items-start gap-2">
+                  <JoinDesktopAvatar initials={initials} size="1.35rem" fontSize="0.46rem" />
                   <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-                      <span
-                        className={`font-medium text-[#1E343A] ${isRecent ? "text-[0.62rem]" : "text-[0.56rem]"}`}
-                      >
-                        {msg.from}
-                      </span>
-                      <span className={`text-neutral-400 ${isRecent ? "text-[0.52rem]" : "text-[0.48rem]"}`}>
-                        to {msg.to}
-                      </span>
+                    <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
+                      <span className="text-[0.52rem] font-medium text-[#1E343A]">{msg.from}</span>
+                      <span className="text-[0.44rem] text-neutral-400">to {msg.to}</span>
                     </div>
-                    <p className={`mt-0.5 text-neutral-400 ${isRecent ? "text-[0.52rem]" : "text-[0.48rem]"}`}>
-                      {msg.time}
-                    </p>
-                    <div className={`space-y-1.5 ${isRecent ? "mt-3" : "mt-2"}`}>
+                    <p className="mt-0.5 text-[0.44rem] text-neutral-400">{msg.time}</p>
+                    <div className="mt-1.5 space-y-0.5">
                       {msg.lines.map((line) => (
-                        <p
-                          key={line}
-                          className={`leading-[1.55] text-neutral-700 ${isRecent ? "text-[0.68rem]" : "text-[0.56rem]"}`}
-                        >
+                        <p key={line} className="text-[0.5rem] leading-[1.48] text-neutral-600">
                           {line}
                         </p>
                       ))}
