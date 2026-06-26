@@ -12,7 +12,7 @@ import {
   JOIN_DESKTOP_HERO_HEIGHT,
   JOIN_MOBILE_HERO_CARD_HEIGHT,
 } from "@/lib/join/join-layout";
-import { JOIN_HERO_PRIMARY_BACKDROP } from "@/lib/join/join-hero-backdrops";
+import { JOIN_HERO_BANDS, JOIN_HERO_PRIMARY_BACKDROP } from "@/lib/join/join-hero-backdrops";
 import type { WorkflowCarouselDesignBackdrop as WorkflowCarouselDesignBackdropConfig } from "@/lib/workflow-carousel-design-backdrops";
 import { lora, suisseIntl } from "@/lib/home/fonts";
 
@@ -21,13 +21,22 @@ const JOIN_HERO_HEADLINE_MOBILE =
 
 const JOIN_HERO_HEADLINE_DESKTOP = "text-[clamp(2.85rem,4.8vw,4.35rem)]";
 
-function JoinHeroHeadline({ titleClass }: { titleClass: string }) {
+function JoinHeroHeadline({
+  titleClass,
+  lines,
+}: {
+  titleClass: string;
+  lines: readonly [string] | readonly [string, string];
+}) {
   return (
     <p
       className={`absolute bottom-0 left-0 z-[3] max-w-[min(100%,20em)] text-left font-normal leading-[1.04] tracking-[-0.035em] text-white ${BLOG_LANDING_HERO_CORNER_PAD} ${titleClass} ${lora.className}`}
     >
-      <span className="block">Let&apos;s rebuild</span>
-      <span className="block">healthcare.</span>
+      {lines.map((line) => (
+        <span key={line} className="block">
+          {line}
+        </span>
+      ))}
     </p>
   );
 }
@@ -37,10 +46,12 @@ export function JoinInternshipHero({
   variant,
   backdrop = JOIN_HERO_PRIMARY_BACKDROP,
   showInbox = true,
+  headline = JOIN_HERO_BANDS[0].headline,
 }: {
   variant: "mobile" | "desktop";
   backdrop?: WorkflowCarouselDesignBackdropConfig;
   showInbox?: boolean;
+  headline?: readonly [string] | readonly [string, string];
 }) {
   const heightClass = variant === "mobile" ? JOIN_MOBILE_HERO_CARD_HEIGHT : JOIN_DESKTOP_HERO_HEIGHT;
   const titleClass = variant === "mobile" ? JOIN_HERO_HEADLINE_MOBILE : JOIN_HERO_HEADLINE_DESKTOP;
@@ -55,7 +66,7 @@ export function JoinInternshipHero({
         className={DOEPHONE_SECTION_CAROUSEL_RADIUS}
       />
 
-      <JoinHeroHeadline titleClass={titleClass} />
+      <JoinHeroHeadline titleClass={titleClass} lines={headline} />
 
       {showInbox && variant === "mobile" ? (
         <HeroTriagePreview

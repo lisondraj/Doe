@@ -12,6 +12,7 @@ export function JoinHeroBands({ variant }: { variant: "mobile" | "desktop" }) {
           variant={variant}
           backdrop={band.backdrop}
           showInbox={band.showInbox}
+          headline={band.headline}
         />
       ))}
     </div>
