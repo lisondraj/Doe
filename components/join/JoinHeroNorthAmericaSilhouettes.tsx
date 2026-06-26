@@ -144,17 +144,41 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
           );
         })}
 
-        {/* White orbit boxes */}
+        {/* Animation + hover styles — scoped to this instance */}
+        <style>{`
+          @keyframes ${id}-unblur {
+            from { filter: blur(8px); opacity: 0; transform: translateY(6px); }
+            to   { filter: blur(0px); opacity: 1; transform: translateY(0px);  }
+          }
+          .${id}-box {
+            pointer-events: auto;
+            transform-box: fill-box;
+            transform-origin: center;
+            animation: ${id}-unblur 0.55s cubic-bezier(0.22,1,0.36,1) both;
+            transition: filter 0.28s ease, transform 0.28s cubic-bezier(0.22,1,0.36,1);
+          }
+          .${id}-box:hover {
+            filter: blur(0px);
+            transform: translateY(-7px);
+          }
+        `}</style>
+
+        {/* White orbit boxes — each wrapped in <g> for CSS transitions */}
         {ORBIT.map((pt, i) => (
-          <rect
+          <g
             key={`box-${i}`}
-            x={pt.x - BOX_W / 2} y={pt.y - BOX_H / 2}
-            width={BOX_W} height={BOX_H}
-            rx={BOX_RX}
-            fill="#FFFFFF"
-            stroke="#E8E4DD"
-            strokeWidth={1}
-          />
+            className={`${id}-box`}
+            style={{ animationDelay: `${i * 0.07}s` }}
+          >
+            <rect
+              x={pt.x - BOX_W / 2} y={pt.y - BOX_H / 2}
+              width={BOX_W} height={BOX_H}
+              rx={BOX_RX}
+              fill="#FFFFFF"
+              stroke="#E8E4DD"
+              strokeWidth={1}
+            />
+          </g>
         ))}
       </svg>
     </div>
