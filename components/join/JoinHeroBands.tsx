@@ -16,6 +16,7 @@ export function JoinHeroBands({ variant }: { variant: "mobile" | "desktop" }) {
           description={band.description}
           surface={band.surface ?? "orange"}
           textAlign={band.textAlign}
+          decoration={band.decoration}
         />
       ))}
     </div>

@@ -1,3 +1,4 @@
+import { JoinHeroNorthAmericaSilhouettes } from "@/components/join/JoinHeroNorthAmericaSilhouettes";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { HeroTriagePreview } from "@/components/home/HeroTriagePreview";
 import { BLOG_LANDING_HERO_CORNER_PAD } from "@/lib/blog/blog-layout-styles";
@@ -13,6 +14,7 @@ import {
   JOIN_MOBILE_HERO_CARD_HEIGHT,
 } from "@/lib/join/join-layout";
 import { JOIN_HERO_BANDS, JOIN_HERO_PRIMARY_BACKDROP } from "@/lib/join/join-hero-backdrops";
+import type { JoinHeroBandConfig } from "@/lib/join/join-hero-backdrops";
 import type { WorkflowCarouselDesignBackdrop as WorkflowCarouselDesignBackdropConfig } from "@/lib/workflow-carousel-design-backdrops";
 import type { WorkflowCarouselSurface } from "@/lib/workflow-carousel-design-backdrops";
 import { lora, suisseIntl } from "@/lib/home/fonts";
@@ -101,6 +103,7 @@ export function JoinInternshipHero({
   description,
   surface = "orange",
   textAlign = "left",
+  decoration,
 }: {
   variant: "mobile" | "desktop";
   backdrop?: WorkflowCarouselDesignBackdropConfig;
@@ -109,6 +112,7 @@ export function JoinInternshipHero({
   description?: readonly string[];
   surface?: WorkflowCarouselSurface;
   textAlign?: "left" | "right";
+  decoration?: JoinHeroBandConfig["decoration"];
 }) {
   const heightClass = variant === "mobile" ? JOIN_MOBILE_HERO_CARD_HEIGHT : JOIN_DESKTOP_HERO_HEIGHT;
   const titleClass = variant === "mobile" ? JOIN_HERO_HEADLINE_MOBILE : JOIN_HERO_HEADLINE_DESKTOP;
@@ -168,6 +172,10 @@ export function JoinInternshipHero({
             width: JOIN_HERO_TRIAGE_PANEL.width,
           }}
         />
+      ) : null}
+
+      {decoration === "north-america-maps" ? (
+        <JoinHeroNorthAmericaSilhouettes variant={variant} />
       ) : null}
     </div>
   );
