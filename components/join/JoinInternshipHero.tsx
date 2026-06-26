@@ -25,10 +25,10 @@ const JOIN_HERO_TOP_LEFT_PAD =
   "pt-8 px-8 iphone-page:pt-[clamp(2rem,1.65rem+1.45vmin,2.6rem)] iphone-page:px-[clamp(2rem,1.65rem+1.45vmin,2.6rem)]";
 
 const JOIN_HERO_DESCRIPTION_MOBILE =
-  "max-w-[min(100%,13.5rem)] text-[clamp(0.98rem,3.9vw,1.18rem)] font-normal leading-[1.5] tracking-[-0.012em] text-white/95 iphone-page:max-w-[min(100%,14.5rem)]";
+  "max-w-[min(100%,20.25rem)] text-[clamp(0.98rem,3.9vw,1.18rem)] font-normal leading-[1.5] tracking-[-0.012em] text-white/95 iphone-page:max-w-[min(100%,21.75rem)]";
 
 const JOIN_HERO_DESCRIPTION_DESKTOP =
-  "max-w-[min(100%,22em)] text-[clamp(1.08rem,1.55vw,1.34rem)] font-normal leading-[1.52] tracking-[-0.014em] text-white/95";
+  "max-w-[min(100%,33em)] text-[clamp(1.08rem,1.55vw,1.34rem)] font-normal leading-[1.52] tracking-[-0.014em] text-white/95";
 
 function JoinHeroDescription({
   text,
