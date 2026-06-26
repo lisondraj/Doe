@@ -67,8 +67,8 @@ export const JOIN_HERO_EXTRA_BANDS: readonly JoinHeroBandConfig[] = [
     headline: ["Co-Founders"],
     description: [
       "Doe's co-founders bring complementary experiences and backgrounds to launching health tech products, combining clinical insight with deep technical execution.",
-      "James Lisondra is studying medicine at the University of Ottawa. Matthew Lisondra brings backgrounds in physics, robotics engineering, AI, and computer science. Together, they are building Doe from the ground up.",
-      "They are also supported by initial counsel from business advisors with experience in healthcare sales, compliance, and go-to-market strategy.",
+      "James Lisondra brings a Doctor of Medicine (MD) background through the University of Ottawa, with experience in clinical medicine and healthcare delivery. Matthew Lisondra brings a PhD background through the University of Toronto, with experience in physics, robotics engineering, AI, and computer science.",
+      "Both have published in scholarly journals on healthcare access, AI, and computer science, and have presented at international conferences.",
     ],
     backdrop: JOIN_HERO_ORANGE_RADIAL_BACKDROP,
   },
