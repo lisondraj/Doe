@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 import { suisseIntl } from "@/lib/home/fonts";
 
-const FS = "clamp(0.58rem, 0.72vw, 0.68rem)";
-const FS_SM = "clamp(0.48rem, 0.58vw, 0.56rem)";
-const FS_LG = "clamp(0.72rem, 0.92vw, 0.86rem)";
-const FS_XL = "clamp(1.05rem, 1.35vw, 1.28rem)";
+const FS = "clamp(0.68rem, 0.88vw, 0.82rem)";
+const FS_SM = "clamp(0.56rem, 0.68vw, 0.66rem)";
+const FS_LG = "clamp(0.92rem, 1.12vw, 1.05rem)";
+const FS_XL = "clamp(1.32rem, 1.68vw, 1.58rem)";
 
 function GlassCard({
   children,
@@ -19,10 +19,10 @@ function GlassCard({
     <div
       style={{
         position: "absolute",
-        borderRadius: "0.95rem",
-        border: "1px solid rgba(255,255,255,0.28)",
+        borderRadius: "1.05rem",
+        border: "1px solid rgba(255,255,255,0.26)",
         background: `rgba(255,255,255,${opacity})`,
-        padding: "0.72rem 0.82rem",
+        padding: "0.95rem 1.05rem",
         color: "#FFFFFF",
         ...style,
       }}
@@ -35,14 +35,14 @@ function GlassCard({
 function ProgressRow({ label, pct }: { label: string; pct: string }) {
   const n = parseFloat(pct);
   return (
-    <div style={{ marginBottom: "0.55rem" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.28rem" }}>
+    <div style={{ marginBottom: "0.7rem" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.32rem" }}>
         <span style={{ fontSize: FS_SM, opacity: 0.88 }}>{label}</span>
         <span style={{ fontSize: FS_SM, opacity: 0.72 }}>{pct}</span>
       </div>
       <div
         style={{
-          height: "0.28rem",
+          height: "0.32rem",
           borderRadius: "999px",
           background: "rgba(255,255,255,0.18)",
           overflow: "hidden",
@@ -63,7 +63,7 @@ function ProgressRow({ label, pct }: { label: string; pct: string }) {
 
 function CardHeader({ title, action }: { title: string; action?: string }) {
   return (
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.55rem" }}>
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.65rem" }}>
       <span style={{ fontSize: FS_SM, fontWeight: 500, opacity: 0.82 }}>{title}</span>
       {action ? (
         <span style={{ fontSize: FS_SM, opacity: 0.55 }}>{action}</span>
@@ -74,7 +74,7 @@ function CardHeader({ title, action }: { title: string; action?: string }) {
 
 function AgentIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
+    <svg width="16" height="16" viewBox="0 0 14 14" fill="none" aria-hidden>
       <circle cx="7" cy="7" r="5.5" stroke="rgba(255,255,255,0.85)" strokeWidth="1.1" />
       <circle cx="7" cy="7" r="1.6" fill="rgba(255,255,255,0.85)" />
       <path d="M7 1.5v2M7 10.5v2M1.5 7h2M10.5 7h2" stroke="rgba(255,255,255,0.65)" strokeWidth="1" strokeLinecap="round" />
@@ -92,46 +92,46 @@ export function JoinHeroCoFoundersCards({ variant }: { variant: "mobile" | "desk
       aria-hidden
       style={{
         top: "50%",
-        right: "clamp(7rem, 16vw, 13rem)",
+        right: "clamp(5rem, 12vw, 10rem)",
         transform: "translateY(-50%)",
-        width: "min(40rem, 50%)",
-        height: "min(24rem, 76%)",
+        width: "min(46rem, 54%)",
+        height: "min(30rem, 84%)",
       }}
     >
-      {/* Top — booking-style card */}
-      <GlassCard style={{ top: "2%", left: "12%", width: "60%", zIndex: 1 }} opacity={0.14}>
+      {/* Top — background / profile card (anchor) */}
+      <GlassCard style={{ top: "0%", left: "6%", width: "74%", zIndex: 1 }} opacity={0.13}>
         <CardHeader title="Background" action="View profile ›" />
-        <p style={{ fontSize: FS_LG, fontWeight: 500, marginBottom: "0.65rem", letterSpacing: "-0.01em" }}>
+        <p style={{ fontSize: FS_LG, fontWeight: 500, marginBottom: "0.75rem", letterSpacing: "-0.01em" }}>
           James Lisondra
         </p>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.65rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.85rem" }}>
           <div>
-            <p style={{ fontSize: FS_SM, opacity: 0.55, marginBottom: "0.15rem" }}>Degree</p>
+            <p style={{ fontSize: FS_SM, opacity: 0.55, marginBottom: "0.18rem" }}>Degree</p>
             <p style={{ fontSize: FS, fontWeight: 500 }}>MD</p>
-            <p style={{ fontSize: FS_SM, opacity: 0.65, marginTop: "0.1rem" }}>U. of Ottawa</p>
+            <p style={{ fontSize: FS_SM, opacity: 0.65, marginTop: "0.12rem" }}>U. of Ottawa</p>
           </div>
           <div>
-            <p style={{ fontSize: FS_SM, opacity: 0.55, marginBottom: "0.15rem" }}>Focus</p>
+            <p style={{ fontSize: FS_SM, opacity: 0.55, marginBottom: "0.18rem" }}>Focus</p>
             <p style={{ fontSize: FS, fontWeight: 500 }}>Clinical</p>
-            <p style={{ fontSize: FS_SM, opacity: 0.65, marginTop: "0.1rem" }}>Medicine</p>
+            <p style={{ fontSize: FS_SM, opacity: 0.65, marginTop: "0.12rem" }}>Medicine</p>
           </div>
         </div>
       </GlassCard>
 
-      {/* Top right — progress bars */}
-      <GlassCard style={{ top: "4%", right: "0%", width: "36%", zIndex: 1 }} opacity={0.12}>
+      {/* Top right — progress bars, overlapping background */}
+      <GlassCard style={{ top: "0%", left: "52%", width: "50%", zIndex: 2 }} opacity={0.11}>
         <ProgressRow label="Clinical medicine" pct="43%" />
         <ProgressRow label="Healthcare delivery" pct="26.9%" />
       </GlassCard>
 
-      {/* Left edge — more info */}
-      <GlassCard style={{ top: "20%", left: "0%", width: "auto", zIndex: 2, padding: "0.45rem 0.65rem" }} opacity={0.1}>
+      {/* Left — more info chip */}
+      <GlassCard style={{ top: "30%", left: "0%", width: "auto", zIndex: 4, padding: "0.5rem 0.75rem" }} opacity={0.1}>
         <span style={{ fontSize: FS_SM, opacity: 0.7 }}>More info ›</span>
       </GlassCard>
 
-      {/* Center — primary card */}
-      <GlassCard style={{ top: "24%", left: "2%", width: "54%", zIndex: 5 }} opacity={0.42}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.45rem", marginBottom: "0.65rem" }}>
+      {/* Center — primary card, overlaps background from below-left */}
+      <GlassCard style={{ top: "24%", left: "0%", width: "64%", zIndex: 6 }} opacity={0.46}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem" }}>
           <AgentIcon />
           <span style={{ fontSize: FS, fontWeight: 500 }}>Clinical Co-Founder</span>
         </div>
@@ -140,24 +140,24 @@ export function JoinHeroCoFoundersCards({ variant }: { variant: "mobile" | "desk
         </p>
       </GlassCard>
 
-      {/* Bottom center — subscriptions-style */}
-      <GlassCard style={{ bottom: "18%", left: "14%", width: "58%", zIndex: 3 }} opacity={0.13}>
+      {/* Bottom center — publications, tucked under center card */}
+      <GlassCard style={{ top: "58%", left: "10%", width: "68%", zIndex: 3 }} opacity={0.12}>
         <CardHeader title="Publications" action="Manage ›" />
-        <p style={{ fontSize: FS, marginBottom: "0.55rem", opacity: 0.88 }}>Scholarly journals • Healthcare access</p>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
-          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>
+        <p style={{ fontSize: FS, marginBottom: "0.65rem", opacity: 0.88 }}>Scholarly journals • Healthcare access</p>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+          <svg width="11" height="11" viewBox="0 0 10 10" fill="none" aria-hidden>
             <path d="M2 5.2l2 2 4-4.5" stroke="rgba(255,255,255,0.75)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
           <span style={{ fontSize: FS_SM, opacity: 0.72 }}>International conferences</span>
         </div>
       </GlassCard>
 
-      {/* Bottom right — ETA-style */}
-      <GlassCard style={{ bottom: "6%", right: "0%", width: "32%", zIndex: 4 }} opacity={0.16}>
-        <p style={{ fontSize: FS_SM, opacity: 0.6, marginBottom: "0.2rem" }}>Technical Co-Founder</p>
+      {/* Bottom right — PhD card, overlapping publications */}
+      <GlassCard style={{ top: "70%", left: "56%", width: "40%", zIndex: 5 }} opacity={0.15}>
+        <p style={{ fontSize: FS_SM, opacity: 0.6, marginBottom: "0.25rem" }}>Technical Co-Founder</p>
         <p style={{ fontSize: FS_XL, fontWeight: 500, letterSpacing: "-0.02em", lineHeight: 1.1 }}>PhD</p>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", marginTop: "0.45rem" }}>
-          <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", marginTop: "0.5rem" }}>
+          <svg width="12" height="12" viewBox="0 0 11 11" fill="none" aria-hidden>
             <rect x="1" y="2" width="9" height="7" rx="1.2" stroke="rgba(255,255,255,0.55)" strokeWidth="1" />
             <path d="M1 4.5h9" stroke="rgba(255,255,255,0.55)" strokeWidth="1" />
           </svg>
@@ -165,8 +165,8 @@ export function JoinHeroCoFoundersCards({ variant }: { variant: "mobile" | "desk
         </div>
       </GlassCard>
 
-      {/* Bottom left — partial link */}
-      <GlassCard style={{ bottom: "4%", left: "0%", width: "auto", zIndex: 2, padding: "0.45rem 0.65rem" }} opacity={0.09}>
+      {/* Bottom left — view profile chip */}
+      <GlassCard style={{ top: "78%", left: "0%", width: "auto", zIndex: 2, padding: "0.5rem 0.75rem" }} opacity={0.09}>
         <span style={{ fontSize: FS_SM, opacity: 0.65 }}>View profile ›</span>
       </GlassCard>
     </div>
