@@ -26,11 +26,11 @@ const US = { x: 24,  y: 212, w: 352, h: 190 };
 // Composition center for orbit layout
 const CX = VW / 2;
 const CY = VH / 2;
-const R  = 192;
+const R  = 158;
 
-const BOX_W = 54;
-const BOX_H = 34;
-const BOX_RX = 6;
+const BOX_W = 92;
+const BOX_H = 60;
+const BOX_RX = 10;
 
 const ORBIT = Array.from({ length: 6 }, (_, i) => {
   const a = -Math.PI / 2 + (i * 2 * Math.PI) / 6;
@@ -62,8 +62,8 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
 
   const wrapperClass =
     variant === "mobile"
-      ? "pointer-events-none absolute right-0 top-[42%] z-[2] -translate-y-1/2 pr-2 w-[min(62%,17rem)]"
-      : "pointer-events-none absolute right-0 top-1/2 z-[2] -translate-y-1/2 pr-[clamp(0.5rem,1.5vw,1.5rem)] w-[min(52%,34rem)]";
+      ? "pointer-events-none absolute right-[clamp(3rem,8vw,6rem)] top-[42%] z-[2] -translate-y-1/2 w-[min(62%,17rem)]"
+      : "pointer-events-none absolute right-[clamp(8rem,18vw,14rem)] top-1/2 z-[2] -translate-y-1/2 w-[min(48%,32rem)]";
 
   const caGrad  = `${id}-ca-grad`;
   const usGrad  = `${id}-us-grad`;
@@ -128,7 +128,7 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
         <rect x={CA.x} y={CA.y} width={CA.w} height={CA.h} fill={`url(#${caGrad})`} mask={`url(#${caMask})`} />
         <rect x={US.x} y={US.y} width={US.w} height={US.h} fill={`url(#${usGrad})`} mask={`url(#${usMask})`} />
 
-        {/* Connector lines */}
+        {/* Connector lines — behind boxes so overlap reads cleanly */}
         {ORBIT.map((pt, i) => {
           const target = TARGETS[i];
           const edge = boxEdge(pt, target);
