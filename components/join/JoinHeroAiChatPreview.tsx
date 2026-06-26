@@ -31,7 +31,7 @@ const MESSAGES = [
   },
 ] as const;
 
-const SCALE = 1.52;
+const SCALE = 1.68;
 
 export function JoinHeroAiChatPreview({ variant }: { variant: "mobile" | "desktop" }) {
   if (variant === "mobile") return null;
@@ -41,10 +41,10 @@ export function JoinHeroAiChatPreview({ variant }: { variant: "mobile" | "deskto
       className="pointer-events-none absolute z-[2]"
       aria-hidden
       style={{
-        top: "8%",
-        right: "calc(min(48rem, 92%) / -2)",
+        top: "6%",
+        right: "calc(min(52rem, 94%) / -2)",
         bottom: "-2rem",
-        width: "min(48rem, 92%)",
+        width: "min(52rem, 94%)",
       }}
     >
       <div
@@ -56,52 +56,17 @@ export function JoinHeroAiChatPreview({ variant }: { variant: "mobile" | "deskto
         }}
       >
         <div
-          className="overflow-hidden"
           style={{
-            borderRadius: "1rem",
-            background: "#FFFFFF",
-            border: "1px solid #E8E4DD",
             width: "100%",
           }}
         >
-          {/* Header */}
+          {/* Messages — floating directly on the hero, no outer container */}
           <div
             style={{
-              borderBottom: "1px solid #F0F0F0",
-              background: "#FAFAF8",
-              padding: "0.75rem 1.1rem",
-              display: "flex",
-              alignItems: "center",
-              gap: "0.55rem",
-            }}
-          >
-            <div
-              style={{
-                width: "1.6rem",
-                height: "1.6rem",
-                borderRadius: "50%",
-                background: "linear-gradient(135deg, #E7A944 0%, #D2774C 60%, #C47A5A 100%)",
-                flexShrink: 0,
-              }}
-            />
-            <div>
-              <p style={{ fontSize: "0.68rem", fontWeight: 600, color: "#1E343A", letterSpacing: "-0.01em" }}>
-                Doe AI
-              </p>
-              <p style={{ fontSize: "0.46rem", color: "#9A9590", marginTop: "0.05rem" }}>
-                Tool builder · Connected to your workspace
-              </p>
-            </div>
-          </div>
-
-          {/* Messages */}
-          <div
-            style={{
-              background: "#FAFAF8",
               padding: "0.85rem 0.95rem",
               display: "flex",
               flexDirection: "column",
-              gap: "0.65rem",
+              gap: "0.75rem",
             }}
           >
             {MESSAGES.map((msg) =>
@@ -168,12 +133,10 @@ export function JoinHeroAiChatPreview({ variant }: { variant: "mobile" | "deskto
             )}
           </div>
 
-          {/* Input */}
+          {/* Input — no outer background, floats on hero */}
           <div
             style={{
-              borderTop: "1px solid #F0F0F0",
-              background: "#FFFFFF",
-              padding: "0.65rem 0.85rem",
+              padding: "0 0.95rem 0.65rem",
               display: "flex",
               alignItems: "center",
               gap: "0.55rem",
