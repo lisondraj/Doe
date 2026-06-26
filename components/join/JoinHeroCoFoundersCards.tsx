@@ -82,7 +82,7 @@ function AgentIcon() {
   );
 }
 
-/** Layered glass cards — central focus card with faded cards around it (Co-Founders band). */
+/** Layered glass cards — clinic scheduling / EMR UI mock (Co-Founders band). */
 export function JoinHeroCoFoundersCards({ variant }: { variant: "mobile" | "desktop" }) {
   if (variant === "mobile") return null;
 
@@ -98,76 +98,76 @@ export function JoinHeroCoFoundersCards({ variant }: { variant: "mobile" | "desk
         height: "min(30rem, 84%)",
       }}
     >
-      {/* Top — background / profile card (anchor) */}
+      {/* Top — appointment details card (anchor) */}
       <GlassCard style={{ top: "0%", left: "6%", width: "74%", zIndex: 1 }} opacity={0.13}>
-        <CardHeader title="Background" action="View profile ›" />
+        <CardHeader title="Appointment details" action="Manage visit ›" />
         <p style={{ fontSize: FS_LG, fontWeight: 500, marginBottom: "0.75rem", letterSpacing: "-0.01em" }}>
-          James Lisondra
+          Sarah Chen — Annual physical
         </p>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.85rem" }}>
           <div>
-            <p style={{ fontSize: FS_SM, opacity: 0.55, marginBottom: "0.18rem" }}>Degree</p>
-            <p style={{ fontSize: FS, fontWeight: 500 }}>MD</p>
-            <p style={{ fontSize: FS_SM, opacity: 0.65, marginTop: "0.12rem" }}>U. of Ottawa</p>
+            <p style={{ fontSize: FS_SM, opacity: 0.55, marginBottom: "0.18rem" }}>Scheduled</p>
+            <p style={{ fontSize: FS, fontWeight: 500 }}>Fri, Jun 27</p>
+            <p style={{ fontSize: FS_SM, opacity: 0.65, marginTop: "0.12rem" }}>10:30 AM</p>
           </div>
           <div>
-            <p style={{ fontSize: FS_SM, opacity: 0.55, marginBottom: "0.18rem" }}>Focus</p>
-            <p style={{ fontSize: FS, fontWeight: 500 }}>Clinical</p>
-            <p style={{ fontSize: FS_SM, opacity: 0.65, marginTop: "0.12rem" }}>Medicine</p>
+            <p style={{ fontSize: FS_SM, opacity: 0.55, marginBottom: "0.18rem" }}>Provider</p>
+            <p style={{ fontSize: FS, fontWeight: 500 }}>Dr. Patel</p>
+            <p style={{ fontSize: FS_SM, opacity: 0.65, marginTop: "0.12rem" }}>Exam Room 3</p>
           </div>
         </div>
       </GlassCard>
 
-      {/* Top right — progress bars, overlapping background */}
+      {/* Top right — schedule metrics, overlapping background */}
       <GlassCard style={{ top: "0%", left: "52%", width: "50%", zIndex: 2 }} opacity={0.11}>
-        <ProgressRow label="Clinical medicine" pct="43%" />
-        <ProgressRow label="Healthcare delivery" pct="26.9%" />
+        <ProgressRow label="Open slots today" pct="68%" />
+        <ProgressRow label="Intake forms sent" pct="41%" />
       </GlassCard>
 
-      {/* Left — more info chip */}
+      {/* Left — chart chip */}
       <GlassCard style={{ top: "30%", left: "0%", width: "auto", zIndex: 4, padding: "0.5rem 0.75rem" }} opacity={0.1}>
-        <span style={{ fontSize: FS_SM, opacity: 0.7 }}>More info ›</span>
+        <span style={{ fontSize: FS_SM, opacity: 0.7 }}>Open chart ›</span>
       </GlassCard>
 
-      {/* Center — primary card, overlaps background from below-left */}
+      {/* Center — primary scheduling agent card */}
       <GlassCard style={{ top: "24%", left: "0%", width: "64%", zIndex: 6 }} opacity={0.46}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem" }}>
           <AgentIcon />
-          <span style={{ fontSize: FS, fontWeight: 500 }}>Clinical Co-Founder</span>
+          <span style={{ fontSize: FS, fontWeight: 500 }}>Scheduling Agent</span>
         </div>
         <p style={{ fontSize: FS_LG, lineHeight: 1.45, letterSpacing: "-0.015em" }}>
-          Hi — James here. Building Doe with Matthew to give providers control over their workflows.
+          Hi — Sarah&apos;s intake is in Epic. Insurance verified and a reminder goes out 48 h before her visit.
         </p>
       </GlassCard>
 
-      {/* Bottom center — publications, tucked under center card */}
+      {/* Bottom center — EMR integrations */}
       <GlassCard style={{ top: "58%", left: "10%", width: "68%", zIndex: 3 }} opacity={0.12}>
-        <CardHeader title="Publications" action="Manage ›" />
-        <p style={{ fontSize: FS, marginBottom: "0.65rem", opacity: 0.88 }}>Scholarly journals • Healthcare access</p>
+        <CardHeader title="Integrations" action="Manage ›" />
+        <p style={{ fontSize: FS, marginBottom: "0.65rem", opacity: 0.88 }}>Epic EHR • Insurance API • Clinic scheduler</p>
         <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
           <svg width="11" height="11" viewBox="0 0 10 10" fill="none" aria-hidden>
             <path d="M2 5.2l2 2 4-4.5" stroke="rgba(255,255,255,0.75)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          <span style={{ fontSize: FS_SM, opacity: 0.72 }}>International conferences</span>
+          <span style={{ fontSize: FS_SM, opacity: 0.72 }}>Chart synced to inbox</span>
         </div>
       </GlassCard>
 
-      {/* Bottom right — PhD card, overlapping publications */}
+      {/* Bottom right — next appointment */}
       <GlassCard style={{ top: "70%", left: "56%", width: "40%", zIndex: 5 }} opacity={0.15}>
-        <p style={{ fontSize: FS_SM, opacity: 0.6, marginBottom: "0.25rem" }}>Technical Co-Founder</p>
-        <p style={{ fontSize: FS_XL, fontWeight: 500, letterSpacing: "-0.02em", lineHeight: 1.1 }}>PhD</p>
+        <p style={{ fontSize: FS_SM, opacity: 0.6, marginBottom: "0.25rem" }}>Next in queue</p>
+        <p style={{ fontSize: FS_XL, fontWeight: 500, letterSpacing: "-0.02em", lineHeight: 1.1 }}>10:30 AM</p>
         <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", marginTop: "0.5rem" }}>
           <svg width="12" height="12" viewBox="0 0 11 11" fill="none" aria-hidden>
             <rect x="1" y="2" width="9" height="7" rx="1.2" stroke="rgba(255,255,255,0.55)" strokeWidth="1" />
             <path d="M1 4.5h9" stroke="rgba(255,255,255,0.55)" strokeWidth="1" />
           </svg>
-          <span style={{ fontSize: FS_SM, opacity: 0.65 }}>U. of Toronto</span>
+          <span style={{ fontSize: FS_SM, opacity: 0.65 }}>Front desk triage</span>
         </div>
       </GlassCard>
 
-      {/* Bottom left — view profile chip */}
+      {/* Bottom left — reschedule chip */}
       <GlassCard style={{ top: "78%", left: "0%", width: "auto", zIndex: 2, padding: "0.5rem 0.75rem" }} opacity={0.09}>
-        <span style={{ fontSize: FS_SM, opacity: 0.65 }}>View profile ›</span>
+        <span style={{ fontSize: FS_SM, opacity: 0.65 }}>Reschedule ›</span>
       </GlassCard>
     </div>
   );
