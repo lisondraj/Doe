@@ -91,6 +91,9 @@ function PolarGridOverlay({
   const polarCy = polarCenterYUnits(centerY);
   const ringCount = introOnLoad ? DOEPHONE_HERO_INTRO_RING_COUNT : 6;
   const stroke = workflowPolarStroke(surface, lineOverlayOpacity);
+  /** globals.css `.doephone-hero-polar-segment` sets stroke — inline style wins when opacity is custom. */
+  const customStrokeStyle =
+    lineOverlayOpacity !== undefined && !introOnLoad ? ({ stroke } as CSSProperties) : undefined;
   const ringStyle = (index: number): CSSProperties | undefined =>
     introOnLoad
       ? {
@@ -122,7 +125,8 @@ function PolarGridOverlay({
                 className="doephone-hero-polar-segment doephone-hero-polar-radial"
                 d={polarSpokePathD(POLAR_CX, polarCy, angle)}
                 fill="none"
-                stroke={stroke}
+                style={customStrokeStyle}
+                stroke={customStrokeStyle ? undefined : stroke}
                 strokeWidth="0.8"
                 strokeLinecap="butt"
                 vectorEffect="non-scaling-stroke"
@@ -139,13 +143,14 @@ function PolarGridOverlay({
               }`}
               style={{
                 ...ringStyle(j),
+                ...customStrokeStyle,
                 transformOrigin: introOnLoad ? `${POLAR_CX}px ${polarCy}px` : undefined,
               }}
               cx={POLAR_CX}
               cy={polarCy}
               r={r}
               fill="none"
-              stroke={stroke}
+              stroke={customStrokeStyle ? undefined : stroke}
               strokeWidth="0.8"
               strokeLinecap="round"
               vectorEffect="non-scaling-stroke"

@@ -25,6 +25,20 @@ const VOY = -760;
 const CA = { x: -225, y: -306, w: 850, h: 525 };
 const US = { x: -232, y: 219, w: 864, h: 517 };
 
+/** Zoom map art inside the fixed clip rects — larger silhouettes without moving white boxes. */
+const COUNTRY_IMAGE_SCALE = 1.14;
+
+function scaledMapImage(box: { x: number; y: number; w: number; h: number }) {
+  const w = box.w * COUNTRY_IMAGE_SCALE;
+  const h = box.h * COUNTRY_IMAGE_SCALE;
+  const cx = box.x + box.w / 2;
+  const cy = box.y + box.h / 2;
+  return { x: cx - w / 2, y: cy - h / 2, w, h };
+}
+
+const CA_MAP = scaledMapImage(CA);
+const US_MAP = scaledMapImage(US);
+
 // Composition center for orbit layout — elliptical so top/bottom rings sit closer
 const CX = 200;
 const CY = 215;
@@ -46,8 +60,8 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
 
   const wrapperClass =
     variant === "mobile"
-      ? "pointer-events-none absolute right-[clamp(0.5rem,2vw,1.5rem)] top-[42%] z-[2] -translate-y-1/2 w-[min(78%,26rem)] overflow-visible"
-      : "pointer-events-none absolute right-[clamp(1rem,4vw,3rem)] top-1/2 z-[2] -translate-y-1/2 w-[min(72%,58rem)] overflow-visible";
+      ? "pointer-events-none absolute right-[clamp(0,0.75vw,0.75rem)] top-[42%] z-[2] -translate-y-1/2 translate-x-3 scale-[0.965] w-[min(78%,26rem)] overflow-visible origin-center"
+      : "pointer-events-none absolute right-[clamp(0.25rem,1.5vw,1.25rem)] top-1/2 z-[2] -translate-y-1/2 translate-x-6 scale-[0.965] w-[min(72%,58rem)] overflow-visible origin-center";
 
   const caGrad  = `${id}-ca-grad`;
   const usGrad  = `${id}-us-grad`;
@@ -87,8 +101,8 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
           <mask id={caMask}>
             <image
               href="/images/canada-map.jpg"
-              x={CA.x} y={CA.y}
-              width={CA.w} height={CA.h}
+              x={CA_MAP.x} y={CA_MAP.y}
+              width={CA_MAP.w} height={CA_MAP.h}
               preserveAspectRatio="xMidYMid meet"
               filter={`url(#${invertF})`}
             />
@@ -97,8 +111,8 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
           <mask id={usMask}>
             <image
               href="/images/usa-map.jpg"
-              x={US.x} y={US.y}
-              width={US.w} height={US.h}
+              x={US_MAP.x} y={US_MAP.y}
+              width={US_MAP.w} height={US_MAP.h}
               preserveAspectRatio="xMidYMid meet"
               filter={`url(#${invertF})`}
             />

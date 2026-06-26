@@ -181,7 +181,7 @@ export function JoinInternshipHero({
       ) : decoration === "ai-chat" ? (
         <JoinHeroAiChatPreview variant={variant} />
       ) : decoration === "co-founders-cards" ? (
-        <JoinHeroCoFoundersCards variant={variant} />
+        <JoinHeroCoFoundersCards variant={variant} surface={surface} />
       ) : null}
     </div>
   );

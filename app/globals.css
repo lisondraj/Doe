@@ -481,6 +481,15 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
   animation: doephone-hero-headline-in 1.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
+/* Join hero bands — same scroll reveal as intern track cards, with hover lift after in. */
+.join-hero-band-reveal.doephone-section-copy-visible {
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.join-hero-band-reveal.doephone-section-copy-visible:hover {
+  transform: translateY(-7px);
+}
+
 /* Join hero decorative boxes — scroll-triggered rise + hover lift. */
 @keyframes join-hero-box-rise-in {
   from {
