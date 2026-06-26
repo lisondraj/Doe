@@ -13,7 +13,7 @@ export type JoinHeroBandConfig = {
   /** Title and description corner — defaults to bottom-left / top-left. */
   textAlign?: "left" | "right";
   /** Optional decorative overlay for the band. */
-  decoration?: "north-america-maps";
+  decoration?: "north-america-maps" | "ai-chat";
   /** Beige uses solid fill + taupe line overlays; orange uses gradient + white lines. */
   surface?: WorkflowCarouselSurface;
 };
@@ -47,6 +47,7 @@ export const JOIN_HERO_EXTRA_BANDS: readonly JoinHeroBandConfig[] = [
   {
     id: "tools",
     showInbox: false,
+    decoration: "ai-chat",
     headline: ["Rebuilding healthcare", "communication."],
     description: [
       "Doe differentiates from existing AI in patient care by letting providers fully customize their experience. They can build new tools connected to their clinic's integrations through a no-code, visual-first interface and shape the product around their own workflow.",

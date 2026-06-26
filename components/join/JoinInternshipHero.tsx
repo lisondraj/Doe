@@ -1,4 +1,5 @@
 import { JoinHeroNorthAmericaSilhouettes } from "@/components/join/JoinHeroNorthAmericaSilhouettes";
+import { JoinHeroAiChatPreview } from "@/components/join/JoinHeroAiChatPreview";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { HeroTriagePreview } from "@/components/home/HeroTriagePreview";
 import { BLOG_LANDING_HERO_CORNER_PAD } from "@/lib/blog/blog-layout-styles";
@@ -176,6 +177,8 @@ export function JoinInternshipHero({
 
       {decoration === "north-america-maps" ? (
         <JoinHeroNorthAmericaSilhouettes variant={variant} />
+      ) : decoration === "ai-chat" ? (
+        <JoinHeroAiChatPreview variant={variant} />
       ) : null}
     </div>
   );
