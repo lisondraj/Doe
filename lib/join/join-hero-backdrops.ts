@@ -28,7 +28,7 @@ export const JOIN_HERO_ORANGE_RADIAL_BACKDROP: WorkflowCarouselDesignBackdrop = 
   gradient: "radial-gradient(circle at center, #C47A5A 0%, #D2774C 58%, #D49D4F 100%)",
   grid: "polar",
   polarCenterY: "50%",
-  lineOverlayOpacity: 0.11,
+  lineOverlayOpacity: 0.06,
 };
 
 /** Three additional hero bands — varied gradients and line overlays, no inbox UI. */
