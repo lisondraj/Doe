@@ -91,7 +91,7 @@ const MESSAGES = [
   {
     id: "ai1",
     role: "ai" as const,
-    formPreview: true,
+    formPreview: false,
     lines: [
       "Connected Epic EHR, your insurance API, and scheduler.",
       "Patients receive the form 48 h before their appointment.",
@@ -106,7 +106,7 @@ const MESSAGES = [
   {
     id: "ai2",
     role: "ai" as const,
-    formPreview: false,
+    formPreview: true,
     lines: [
       "Done. Scores above 7 trigger an inbox alert and add a follow-up task to your schedule.",
     ],
@@ -127,8 +127,8 @@ export function JoinHeroAiChatPreview({ variant }: { variant: "mobile" | "deskto
       style={{
         top: "50%",
         transform: "translateY(-50%)",
-        right: "clamp(1.25rem, 2.8vw, 2.5rem)",
-        width: "min(27rem, 44%)",
+        right: "clamp(3rem, 8vw, 7rem)",
+        width: "min(27rem, 40%)",
         gap: "0.9rem",
       }}
     >
