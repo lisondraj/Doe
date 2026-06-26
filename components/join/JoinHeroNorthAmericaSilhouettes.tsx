@@ -14,10 +14,15 @@ const AGENT_INK = "#1E343A";
 const DOE_ORANGE = "#D2774C";
 const ON_ORANGE_INK = "#FFFFFF";
 const ON_ORANGE_MUTED = "rgba(255, 255, 255, 0.82)";
-const DAY_MUTED = "rgba(30, 52, 58, 0.52)";
+
+/** Loaded Suisse weights only — avoids synthetic bold in foreignObject HTML. */
+const SUISSE_FOREIGN_FONT = {
+  fontFamily: suisseIntl.style.fontFamily,
+  fontSynthesis: "none" as const,
+  WebkitFontSmoothing: "antialiased" as const,
+};
 
 const SCHEDULING_WEEK = {
-  range: "Jun 23 – Jun 27",
   days: [
     { label: "Mon", date: 23, status: "available" as const },
     { label: "Tue", date: 24, status: "unavailable" as const },
@@ -88,32 +93,54 @@ const ORBIT_BOX_OUTSET: Partial<Record<number, number>> = {
   3: 42, // Referrals Agent — bottom
 };
 
+/** Pull side boxes toward center on Y — Scheduling, Labs, Live, Billing. */
+const ORBIT_BOX_Y_INSET: Partial<Record<number, number>> = {
+  1: 58, // Scheduling Agent
+  2: 58, // Labs Agent
+  4: 58, // Live Appointment
+  5: 58, // Billing Agent
+};
+
 const ORBIT = Array.from({ length: 6 }, (_, i) => {
   const a = -Math.PI / 2 + (i * 2 * Math.PI) / 6;
   const d = ORBIT_BOX_OUTSET[i] ?? 0;
-  return { x: CX + (RX + d) * Math.cos(a), y: CY + (RY + d) * Math.sin(a) };
+  let x = CX + (RX + d) * Math.cos(a);
+  let y = CY + (RY + d) * Math.sin(a);
+  const yInset = ORBIT_BOX_Y_INSET[i] ?? 0;
+  if (yInset !== 0) {
+    y = y > CY ? y - yInset : y + yInset;
+  }
+  return { x, y };
 });
 
 function DayStatusIcon({ x, y, status }: { x: number; y: number; status: "available" | "unavailable" }) {
-  const scale = 2.45;
+  const iconSize = 30;
+  const scale = iconSize / 12;
 
   if (status === "available") {
     return (
-      <g transform={`translate(${x}, ${y}) scale(${scale}) translate(-9, -9)`}>
+      <g transform={`translate(${x}, ${y}) scale(${scale}) translate(-6, -6)`}>
         <path
-          d="M2.5 5.2l2.2 2.2 5-5.4"
+          d="M2 6l2.5 2.5 5.5-5.5"
           stroke={ON_ORANGE_INK}
           strokeWidth="1.85"
           strokeLinecap="round"
           strokeLinejoin="round"
+          fill="none"
         />
       </g>
     );
   }
 
   return (
-    <g transform={`translate(${x}, ${y}) scale(${scale}) translate(-9, -9)`}>
-      <path d="M3 3l6 6M9 3L3 9" stroke={ON_ORANGE_MUTED} strokeWidth="1.8" strokeLinecap="round" />
+    <g transform={`translate(${x}, ${y}) scale(${scale}) translate(-6, -6)`}>
+      <path
+        d="M3 3l6 6M9 3L3 9"
+        stroke={ON_ORANGE_MUTED}
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        fill="none"
+      />
     </g>
   );
 }
@@ -122,49 +149,200 @@ function boxContentTop(boxY: number) {
   return boxY + BOX_PAD_Y + ORBIT_ICON_R * 2 + 18;
 }
 
-function LabsAgentChart({ boxX, boxY, fillGradId }: { boxX: number; boxY: number; fillGradId: string }) {
+function smoothChartPath(points: [number, number][], tension = 0.36): string {
+  if (points.length < 2) return "";
+  let path = `M ${points[0][0]} ${points[0][1]}`;
+
+  for (let i = 0; i < points.length - 1; i++) {
+    const prev = points[Math.max(0, i - 1)];
+    const curr = points[i];
+    const next = points[i + 1];
+    const after = points[Math.min(points.length - 1, i + 2)];
+
+    const cp1x = curr[0] + (next[0] - prev[0]) * tension;
+    const cp1y = curr[1] + (next[1] - prev[1]) * tension;
+    const cp2x = next[0] - (after[0] - curr[0]) * tension;
+    const cp2y = next[1] - (after[1] - curr[1]) * tension;
+
+    path += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${next[0]} ${next[1]}`;
+  }
+
+  return path;
+}
+
+function labsChartPoints(
+  axisLeft: number,
+  axisBottom: number,
+  plotW: number,
+  plotH: number,
+): [number, number][] {
+  const x = (pct: number) => axisLeft + plotW * pct;
+  const y = (pct: number) => axisBottom - plotH * pct;
+
+  return [
+    [x(0), y(0.18)],
+    [x(0.28), y(0.88)],
+    [x(0.54), y(0.15)],
+    [x(1), y(0.3)],
+  ];
+}
+
+function LabsAgentStats({ x, y, width, height }: { x: number; y: number; width: number; height: number }) {
+  return (
+    <foreignObject x={x} y={y} width={width} height={height}>
+      <div
+        xmlns="http://www.w3.org/1999/xhtml"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100%",
+          color: DOE_ORANGE,
+          textAlign: "center",
+          ...SUISSE_FOREIGN_FONT,
+        }}
+      >
+        <span style={{ fontSize: 34, fontWeight: 500, lineHeight: 1.1, letterSpacing: "-0.02em" }}>HbA1C</span>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginTop: 10 }}>
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" aria-hidden style={{ flexShrink: 0 }}>
+            <path
+              d="M12 5v12M7 14l5 5 5-5"
+              stroke={DOE_ORANGE}
+              strokeWidth="2.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          <span style={{ fontSize: 50, fontWeight: 600, lineHeight: 1.05, letterSpacing: "-0.03em", fontVariantNumeric: "lining-nums" }}>
+            6.2%
+          </span>
+        </div>
+      </div>
+    </foreignObject>
+  );
+}
+
+function LabsAgentChart({
+  boxX,
+  boxY,
+  orbGradId,
+  orbShadeId,
+  orbGrainId,
+}: {
+  boxX: number;
+  boxY: number;
+  orbGradId: string;
+  orbShadeId: string;
+  orbGrainId: string;
+}) {
   const innerX = boxX + BOX_PAD_X;
   const innerW = BOX_W - BOX_PAD_X * 2;
-  const chartTop = boxContentTop(boxY) + 12;
-  const chartH = 196;
+  const contentBottom = boxY + BOX_H - BOX_PAD_Y;
+  const chartTop = boxContentTop(boxY) + 8;
+  const bottomGap = 14;
   const axisLeft = innerX + 24;
-  const axisBottom = chartTop + chartH - 10;
   const axisRight = innerX + innerW - 6;
-  const plotTop = chartTop + 10;
+  const statsW = 168;
+  const statsGap = 14;
+  const plotRight = axisRight - statsW - statsGap;
+  const axisBottom = contentBottom - bottomGap;
+  const plotTop = chartTop;
   const plotH = axisBottom - plotTop;
+  const plotW = plotRight - axisLeft;
+  const statsX = plotRight + statsGap;
+  const axisStroke = "rgba(210, 119, 76, 0.55)";
+  const gridLineStroke = "rgba(210, 119, 76, 0.14)";
+  const gridRows = 4;
+  const gridCols = 5;
 
-  const points: [number, number][] = [
-    [axisLeft, axisBottom - plotH * 0.16],
-    [axisLeft + (axisRight - axisLeft) * 0.2, axisBottom - plotH * 0.28],
-    [axisLeft + (axisRight - axisLeft) * 0.42, axisBottom - plotH * 0.36],
-    [axisLeft + (axisRight - axisLeft) * 0.66, axisBottom - plotH * 0.58],
-    [axisRight, axisBottom - plotH * 0.84],
-  ];
-
-  const linePath = points.map(([x, y], idx) => `${idx === 0 ? "M" : "L"} ${x} ${y}`).join(" ");
-  const areaPath = `${linePath} L ${axisRight} ${axisBottom} L ${axisLeft} ${axisBottom} Z`;
-  const axisStroke = "rgba(30, 52, 58, 0.16)";
+  const points = labsChartPoints(axisLeft, axisBottom, plotW, plotH);
+  const linePath = smoothChartPath(points);
+  const areaPath = `${linePath} L ${plotRight} ${axisBottom} L ${axisLeft} ${axisBottom} Z`;
+  const areaFadeId = `${orbGradId}-area-fade`;
 
   return (
     <g aria-hidden>
+      <defs>
+        <linearGradient
+          id={areaFadeId}
+          gradientUnits="userSpaceOnUse"
+          x1={axisLeft}
+          y1={plotTop}
+          x2={axisLeft}
+          y2={axisBottom}
+        >
+          <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0" />
+          <stop offset="34%" stopColor="#FFFFFF" stopOpacity="0.1" />
+          <stop offset="68%" stopColor="#FFFFFF" stopOpacity="0.58" />
+          <stop offset="100%" stopColor="#FFFFFF" stopOpacity="1" />
+        </linearGradient>
+      </defs>
+      <g filter={`url(#${orbGrainId})`}>
+        <path d={areaPath} fill={`url(#${orbGradId})`} />
+        <path d={areaPath} fill={`url(#${orbShadeId})`} />
+      </g>
+      <path d={areaPath} fill={`url(#${areaFadeId})`} />
+
+      {Array.from({ length: gridRows - 1 }, (_, i) => {
+        const y = plotTop + ((i + 1) / gridRows) * plotH;
+        return (
+          <line
+            key={`labs-grid-h-${i}`}
+            x1={axisLeft}
+            y1={y}
+            x2={plotRight}
+            y2={y}
+            stroke={gridLineStroke}
+            strokeWidth={1}
+          />
+        );
+      })}
+
+      {Array.from({ length: gridCols - 1 }, (_, i) => {
+        const x = axisLeft + ((i + 1) / gridCols) * plotW;
+        return (
+          <line
+            key={`labs-grid-v-${i}`}
+            x1={x}
+            y1={plotTop}
+            x2={x}
+            y2={axisBottom}
+            stroke={gridLineStroke}
+            strokeWidth={1}
+          />
+        );
+      })}
+
       <line x1={axisLeft} y1={plotTop} x2={axisLeft} y2={axisBottom} stroke={axisStroke} strokeWidth={2} strokeLinecap="round" />
-      <line x1={axisLeft} y1={axisBottom} x2={axisRight} y2={axisBottom} stroke={axisStroke} strokeWidth={2} strokeLinecap="round" />
-      <path d={areaPath} fill={`url(#${fillGradId})`} />
+      <line x1={axisLeft} y1={axisBottom} x2={plotRight} y2={axisBottom} stroke={axisStroke} strokeWidth={2} strokeLinecap="round" />
       <path
         d={linePath}
         fill="none"
         stroke={DOE_ORANGE}
-        strokeWidth={3}
+        strokeWidth={3.5}
         strokeLinecap="round"
         strokeLinejoin="round"
       />
+      {points.map(([px, py], i) => (
+        <circle
+          key={`labs-point-${i}`}
+          cx={px}
+          cy={py}
+          r={6.5}
+          fill={DOE_ORANGE}
+          stroke="#FFFFFF"
+          strokeWidth={2.2}
+        />
+      ))}
+      <LabsAgentStats x={statsX} y={plotTop} width={statsW} height={plotH} />
     </g>
   );
 }
 
 function SchedulingBookingLoading({ x, y, width }: { x: number; y: number; width: number }) {
   return (
-    <foreignObject x={x} y={y} width={width} height={54}>
+    <foreignObject x={x} y={y} width={width} height={56}>
       <div
         xmlns="http://www.w3.org/1999/xhtml"
         className={suisseIntl.className}
@@ -177,14 +355,27 @@ function SchedulingBookingLoading({ x, y, width }: { x: number; y: number; width
           background: "#FAFAF8",
           padding: "0 16px",
           boxSizing: "border-box",
+          overflow: "hidden",
         }}
       >
         <span
           className="shrink-0 animate-spin rounded-full border-[2px] border-[#D9D4CC] border-r-transparent border-b-transparent"
-          style={{ width: 19, height: 19, animationDuration: "1.1s", display: "block" }}
+          style={{ width: 20, height: 20, animationDuration: "1.1s", display: "block" }}
           aria-hidden
         />
-        <span style={{ fontSize: 27, color: "#78716C", fontWeight: 500, lineHeight: 1.2 }}>
+        <span
+          style={{
+            flex: 1,
+            minWidth: 0,
+            fontSize: 30,
+            color: "#78716C",
+            fontWeight: 500,
+            lineHeight: 1.2,
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
           Booking Sarah Walsh for Wed...
         </span>
       </div>
@@ -192,59 +383,54 @@ function SchedulingBookingLoading({ x, y, width }: { x: number; y: number; width
   );
 }
 
-function SchedulingAgentCalendar({ boxX, boxY }: { boxX: number; boxY: number }) {
+function SchedulingAgentCalendar({
+  boxX,
+  boxY,
+  orbGradId,
+  orbShadeId,
+  orbGrainId,
+}: {
+  boxX: number;
+  boxY: number;
+  orbGradId: string;
+  orbShadeId: string;
+  orbGrainId: string;
+}) {
   const innerX = boxX + BOX_PAD_X;
   const innerW = BOX_W - BOX_PAD_X * 2;
-  const headerBottom = boxContentTop(boxY);
-  const rangeBoxTop = headerBottom + 22;
-  const rangeBoxH = 44;
-  const rangeBoxW = 248;
-  const colsTop = rangeBoxTop + rangeBoxH + 18;
-  const colH = 132;
+  const contentTop = boxContentTop(boxY) + 6;
+  const loadingH = 56;
+  const loadingGap = 12;
+  const colH = 176;
   const colGap = 12;
   const colW = (innerW - colGap * 4) / 5;
   const colRx = 12;
-  const dayLabelY = colsTop + 26;
-  const dateY = colsTop + 68;
-  const statusY = colsTop + colH - 22;
-  const loadingY = colsTop + colH + 14;
+  const colsTop = contentTop;
+  const colLabelY = colsTop + 22;
+  const colDateY = colsTop + 64;
+  const colDateFontSize = 44;
+  const statusZoneTop = colDateY + colDateFontSize / 2;
+  const statusZoneBottom = colsTop + colH;
+  const colStatusY = (statusZoneTop + statusZoneBottom) / 2;
+  const loadingY = colsTop + colH + loadingGap;
 
   return (
     <g aria-hidden>
-      <rect
-        x={innerX}
-        y={rangeBoxTop}
-        width={rangeBoxW}
-        height={rangeBoxH}
-        rx={10}
-        fill="#FAFAF8"
-        stroke="rgba(30, 52, 58, 0.1)"
-        strokeWidth={1.2}
-      />
-      <text
-        x={innerX + 18}
-        y={rangeBoxTop + rangeBoxH / 2}
-        dominantBaseline="middle"
-        fill={DAY_MUTED}
-        fontSize={28}
-        fontWeight={500}
-        fontFamily={suisseIntl.style.fontFamily}
-        letterSpacing="-0.01em"
-      >
-        {SCHEDULING_WEEK.range}
-      </text>
-
       {SCHEDULING_WEEK.days.map((day, i) => {
         const x = innerX + i * (colW + colGap);
         const cx = x + colW / 2;
 
         return (
           <g key={day.label}>
-            <rect x={x} y={colsTop} width={colW} height={colH} rx={colRx} fill={DOE_ORANGE} />
+            <g filter={`url(#${orbGrainId})`}>
+              <rect x={x} y={colsTop} width={colW} height={colH} rx={colRx} fill={`url(#${orbGradId})`} />
+              <rect x={x} y={colsTop} width={colW} height={colH} rx={colRx} fill={`url(#${orbShadeId})`} />
+            </g>
             <text
               x={cx}
-              y={dayLabelY}
+              y={colLabelY}
               textAnchor="middle"
+              dominantBaseline="middle"
               fill={ON_ORANGE_MUTED}
               fontSize={24}
               fontWeight={500}
@@ -254,22 +440,133 @@ function SchedulingAgentCalendar({ boxX, boxY }: { boxX: number; boxY: number })
             </text>
             <text
               x={cx}
-              y={dateY}
+              y={colDateY}
               textAnchor="middle"
+              dominantBaseline="middle"
               fill={ON_ORANGE_INK}
-              fontSize={42}
+              fontSize={colDateFontSize}
               fontWeight={500}
               fontFamily={suisseIntl.style.fontFamily}
               letterSpacing="-0.02em"
             >
               {day.date}
             </text>
-            <DayStatusIcon x={cx} y={statusY} status={day.status} />
+            <DayStatusIcon x={cx} y={colStatusY} status={day.status} />
           </g>
         );
       })}
 
       <SchedulingBookingLoading x={innerX} y={loadingY} width={innerW} />
+    </g>
+  );
+}
+
+function VoiceAgentMicIcon({ cx, cy, size }: { cx: number; cy: number; size: number }) {
+  const scale = size / 24;
+
+  return (
+    <g
+      transform={`translate(${cx}, ${cy}) scale(${scale}) translate(-12, -12)`}
+      fill="none"
+      stroke="#FFFFFF"
+      strokeWidth={1.35}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      opacity={0.94}
+    >
+      <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" />
+      <path d="M19 10v2a7 7 0 01-14 0v-2" />
+      <path d="M12 19v4M8 23h8" />
+    </g>
+  );
+}
+
+function VoiceAgentSpeakingOrb({
+  boxX,
+  boxY,
+  orbGradId,
+  orbShadeId,
+  orbGrainId,
+}: {
+  boxX: number;
+  boxY: number;
+  orbGradId: string;
+  orbShadeId: string;
+  orbGrainId: string;
+}) {
+  const contentTop = boxContentTop(boxY);
+  const orbLayoutR = 96;
+  const orbDrawR = 110;
+  const cx = boxX + BOX_PAD_X + orbLayoutR + 8;
+  const cy = contentTop + 28 + orbLayoutR;
+  const clipId = `${orbGrainId}-clip`;
+  const quoteGap = 34;
+  const quoteX = cx + orbDrawR + quoteGap;
+  const quoteW = boxX + BOX_W - BOX_PAD_X - quoteX;
+  const quoteY = cy - orbLayoutR;
+
+  return (
+    <g aria-hidden>
+      <defs>
+        <clipPath id={clipId}>
+          <circle cx={cx} cy={cy} r={orbDrawR} />
+        </clipPath>
+      </defs>
+      <g clipPath={`url(#${clipId})`}>
+        <g filter={`url(#${orbGrainId})`}>
+          <circle cx={cx} cy={cy} r={orbDrawR} fill={`url(#${orbGradId})`} />
+          <circle cx={cx} cy={cy} r={orbDrawR} fill={`url(#${orbShadeId})`} />
+        </g>
+        <VoiceAgentMicIcon cx={cx} cy={cy} size={82} />
+      </g>
+      <foreignObject x={quoteX} y={quoteY} width={quoteW} height={orbLayoutR * 2}>
+        <div
+          xmlns="http://www.w3.org/1999/xhtml"
+          className={suisseIntl.className}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            gap: "10px",
+            height: "100%",
+            ...SUISSE_FOREIGN_FONT,
+          }}
+        >
+          <span
+            style={{
+              ...SUISSE_FOREIGN_FONT,
+              alignSelf: "flex-start",
+              display: "inline-flex",
+              fontSize: 32,
+              color: "#78716C",
+              fontWeight: 400,
+              lineHeight: 1.2,
+              letterSpacing: "0.02em",
+              fontFeatureSettings: '"lnum" 1',
+              fontVariantNumeric: "lining-nums",
+              background: "#FAFAF8",
+              border: "1px solid #EDE9E2",
+              borderRadius: "10px",
+              padding: "8px 14px",
+              boxSizing: "border-box",
+            }}
+          >
+            (416) 555-0142
+          </span>
+          <span
+            style={{
+              ...SUISSE_FOREIGN_FONT,
+              fontSize: 36,
+              color: AGENT_INK,
+              fontWeight: 500,
+              lineHeight: 1.28,
+              letterSpacing: "-0.02em",
+            }}
+          >
+            &ldquo;Hi this is Sarah Walsh, can I get a refill?&rdquo;
+          </span>
+        </div>
+      </foreignObject>
     </g>
   );
 }
@@ -323,7 +620,10 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
   const caMask  = `${id}-ca-mask`;
   const usMask  = `${id}-us-mask`;
   const invertF = `${id}-invert`;
-  const labsFillGrad = `${id}-labs-fill`;
+  const voiceOrbGrad = `${id}-voice-orb-grad`;
+  const voiceOrbShade = `${id}-voice-orb-shade`;
+  const voiceOrbGrain = `${id}-voice-orb-grain`;
+  const countryGrain = `${id}-country-grain`;
 
   return (
     <div ref={ref} className={`${wrapperClass} ${suisseIntl.className}`} aria-hidden>
@@ -374,16 +674,44 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
             />
           </mask>
 
-          <linearGradient id={labsFillGrad} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#D2774C" stopOpacity="0.42" />
-            <stop offset="52%" stopColor="#D2774C" stopOpacity="0.16" />
-            <stop offset="100%" stopColor="#D2774C" stopOpacity="0" />
-          </linearGradient>
+          <radialGradient id={voiceOrbGrad} cx="38%" cy="34%" fx="34%" fy="28%" r="72%">
+            <stop offset="0%" stopColor="#E7A944" />
+            <stop offset="38%" stopColor="#D49D4F" />
+            <stop offset="72%" stopColor="#D2774C" />
+            <stop offset="100%" stopColor="#C47A5A" />
+          </radialGradient>
+
+          <radialGradient id={voiceOrbShade} cx="74%" cy="80%" r="58%">
+            <stop offset="0%" stopColor="#D2774C" stopOpacity="0.38" />
+            <stop offset="55%" stopColor="#C47A5A" stopOpacity="0.16" />
+            <stop offset="100%" stopColor="#C47A5A" stopOpacity="0" />
+          </radialGradient>
+
+          <filter id={voiceOrbGrain} x="-8%" y="-8%" width="116%" height="116%" colorInterpolationFilters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="1.05" numOctaves="2" stitchTiles="stitch" result="noise" />
+            <feColorMatrix in="noise" type="saturate" values="0" result="monoNoise" />
+            <feComponentTransfer in="monoNoise" result="faintNoise">
+              <feFuncA type="linear" slope="0.14" intercept="0" />
+            </feComponentTransfer>
+            <feComposite in="faintNoise" in2="SourceGraphic" operator="in" result="maskedNoise" />
+            <feBlend in="SourceGraphic" in2="maskedNoise" mode="overlay" />
+          </filter>
+
+          <filter id={countryGrain} x="-4%" y="-4%" width="108%" height="108%" colorInterpolationFilters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.78" numOctaves="3" stitchTiles="stitch" result="noise" />
+            <feColorMatrix in="noise" type="saturate" values="0" result="monoNoise" />
+            <feComponentTransfer in="monoNoise" result="faintNoise">
+              <feFuncA type="linear" slope="0.22" intercept="0" />
+            </feComponentTransfer>
+            <feComposite in="faintNoise" in2="SourceGraphic" operator="in" result="maskedNoise" />
+            <feBlend in="SourceGraphic" in2="maskedNoise" mode="overlay" />
+          </filter>
         </defs>
 
         <g
           className={joinHeroBoxRevealClass(revealed)}
           style={{ animationDelay: joinHeroBoxRevealDelay(revealed, 0) }}
+          filter={`url(#${countryGrain})`}
         >
           <rect x={CA.x} y={CA.y} width={CA.w} height={CA.h} fill={`url(#${caGrad})`} mask={`url(#${caMask})`} />
           <rect x={US.x} y={US.y} width={US.w} height={US.h} fill={`url(#${usGrad})`} mask={`url(#${usMask})`} />
@@ -411,19 +739,36 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
               fill="#FFFFFF"
               stroke="none"
             />
+            {i === 0 ? (
+              <VoiceAgentSpeakingOrb
+                boxX={pt.x - BOX_W / 2}
+                boxY={pt.y - BOX_H / 2}
+                orbGradId={voiceOrbGrad}
+                orbShadeId={voiceOrbShade}
+                orbGrainId={voiceOrbGrain}
+              />
+            ) : null}
             <OrbitAgentRow
               boxX={pt.x - BOX_W / 2}
               boxY={pt.y - BOX_H / 2}
               name={ORBIT_AGENTS[i]}
             />
             {i === 1 ? (
-              <SchedulingAgentCalendar boxX={pt.x - BOX_W / 2} boxY={pt.y - BOX_H / 2} />
+              <SchedulingAgentCalendar
+                boxX={pt.x - BOX_W / 2}
+                boxY={pt.y - BOX_H / 2}
+                orbGradId={voiceOrbGrad}
+                orbShadeId={voiceOrbShade}
+                orbGrainId={voiceOrbGrain}
+              />
             ) : null}
             {i === 2 ? (
               <LabsAgentChart
                 boxX={pt.x - BOX_W / 2}
                 boxY={pt.y - BOX_H / 2}
-                fillGradId={labsFillGrad}
+                orbGradId={voiceOrbGrad}
+                orbShadeId={voiceOrbShade}
+                orbGrainId={voiceOrbGrain}
               />
             ) : null}
           </g>
