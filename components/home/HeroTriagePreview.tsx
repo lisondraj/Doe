@@ -186,20 +186,18 @@ const JOIN_DESKTOP_SELECTED_ORANGE = "#D2774C";
 function JoinDesktopAvatar({
   initials,
   selected = false,
-  row,
   size = "1.62rem",
   fontSize = "0.54rem",
 }: {
   initials: string;
   selected?: boolean;
-  row?: Pick<InboxRow, "iconBg" | "iconColor">;
   size?: string;
   fontSize?: string;
 }) {
   return (
     <div
       className={`flex shrink-0 items-center justify-center rounded-full font-semibold ${
-        !selected && !row ? HERO_TRIAGE_JOIN_AVATAR_FLAT : ""
+        selected ? "" : HERO_TRIAGE_JOIN_AVATAR_FLAT
       }`}
       style={{
         width: size,
@@ -211,13 +209,7 @@ function JoinDesktopAvatar({
               color: "#FFFFFF",
               border: "1px solid rgba(255,255,255,0.26)",
             }
-          : row
-            ? {
-                background: row.iconBg,
-                color: row.iconColor,
-                border: "1px solid #ECE8E1",
-              }
-            : {}),
+          : {}),
       }}
     >
       {initials}
@@ -228,18 +220,15 @@ function JoinDesktopAvatar({
 function JoinDesktopInboxRow({ row }: { row: InboxRow }) {
   const selected = Boolean(row.selected);
   return (
-    <div className={selected ? "border-y border-[#E8E4DD] py-2" : ""}>
-      <div
-        className="flex items-start gap-2.5"
-        style={{
-          margin: selected ? "0 0.32rem" : "0 0.32rem",
-          padding: selected ? "0.58rem 0.62rem" : "0.52rem 0.62rem",
-          borderRadius: selected ? "0.42rem" : undefined,
-          background: selected ? JOIN_DESKTOP_SELECTED_ORANGE : "transparent",
-          borderBottom: selected ? "none" : "1px solid #F2F0EC",
-        }}
-      >
-        <JoinDesktopAvatar initials={row.initials} selected={selected} row={row} size="1.62rem" fontSize="0.54rem" />
+    <div
+      className={`flex items-start gap-2.5 border-b border-[#F0F0F0] px-[0.62rem] py-[0.52rem] ${
+        selected ? "mx-[0.32rem] rounded-[0.42rem] border-b-[#E8E4DD]" : ""
+      }`}
+      style={{
+        background: selected ? JOIN_DESKTOP_SELECTED_ORANGE : "transparent",
+      }}
+    >
+      <JoinDesktopAvatar initials={row.initials} selected={selected} size="1.62rem" fontSize="0.54rem" />
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline justify-between gap-2">
             <span
@@ -264,7 +253,6 @@ function JoinDesktopInboxRow({ row }: { row: InboxRow }) {
           {!selected ? (
             <p className="mt-0.5 truncate text-[0.48rem] font-normal text-[#9A9590]">{row.preview}</p>
           ) : null}
-        </div>
       </div>
     </div>
   );
@@ -272,7 +260,7 @@ function JoinDesktopInboxRow({ row }: { row: InboxRow }) {
 
 function JoinDesktopPreviewPane({ row }: { row: InboxRow }) {
   return (
-    <div className="flex min-h-0 min-w-0 flex-1 flex-col border-r border-[#EEEAE3] bg-[#FAFAF8]">
+    <div className="flex min-h-0 min-w-0 flex-[1.05] flex-col border-r border-[#EEEAE3] bg-[#FAFAF8]">
       <div className="border-b border-[#F0F0F0] px-4 py-3.5">
         <h3 className="text-[0.82rem] font-semibold leading-snug tracking-tight text-[#1E343A]">{row.subject}</h3>
         <p className="mt-1 text-[0.5rem] text-neutral-500">
@@ -293,25 +281,19 @@ function JoinDesktopThreadPane() {
   const threadMessages = EMAIL_THREAD.slice(1, 4);
 
   return (
-    <div className="flex h-full min-h-0 w-full flex-col bg-white">
-      <div className="border-b border-[#F0F0F0] bg-white px-3.5 py-3">
-        <p className="text-[0.64rem] font-semibold tracking-tight text-[#1E343A]">Follow-up visit</p>
+    <div className="flex min-h-0 min-w-0 flex-[0.95] flex-col bg-[#FAFAF8]">
+      <div className="border-b border-[#F0F0F0] px-4 py-3">
+        <p className="text-[0.68rem] font-semibold tracking-tight text-[#1E343A]">Follow-up visit</p>
         <p className="mt-0.5 text-[0.48rem] text-neutral-500">Maria Rodriguez · 4 messages</p>
       </div>
-      <div className="min-h-0 flex-1 overflow-hidden bg-white px-3 py-2.5">
+      <div className="min-h-0 flex-1 overflow-hidden px-3.5 py-2.5">
         {threadMessages.map((msg) => {
-          const isDoctor = msg.from === "Dr. Singh";
-          const initials = isDoctor ? "DS" : "MR";
+          const initials = msg.from === "Dr. Singh" ? "DS" : "MR";
 
           return (
-            <div key={msg.id} className="mb-3 border-b border-[#F2F0EC] pb-3 last:mb-0 last:border-0 last:pb-0">
+            <div key={msg.id} className="mb-2.5 border-b border-[#F0F0F0] pb-2.5 last:mb-0 last:border-0 last:pb-0">
               <div className="flex items-start gap-2">
-                <JoinDesktopAvatar
-                  initials={initials}
-                  row={isDoctor ? undefined : { iconBg: SELECTED.iconBg, iconColor: SELECTED.iconColor }}
-                  size="1.38rem"
-                  fontSize="0.46rem"
-                />
+                <JoinDesktopAvatar initials={initials} size="1.35rem" fontSize="0.46rem" />
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
                     <span className="text-[0.52rem] font-medium text-[#1E343A]">{msg.from}</span>
@@ -330,7 +312,7 @@ function JoinDesktopThreadPane() {
             </div>
           );
         })}
-        <div className="mt-2 rounded-md border border-[#F0F0F0] bg-[#FAFAF8] px-3 py-2">
+        <div className="mt-2 rounded-md border border-[#F0F0F0] bg-white px-3 py-2">
           <p className="text-[0.48rem] leading-[1.45] text-neutral-500">
             Thursday at 10 AM works. See you then.
           </p>
@@ -398,12 +380,11 @@ function JoinDesktopNav({
 
 function JoinDesktopInboxPane({ rows }: { rows: readonly InboxRow[] }) {
   const selected = rows.find((row) => row.selected) ?? rows[0];
-  const selectedIndex = Math.max(0, rows.findIndex((row) => row.selected));
-  const visibleRows = rows.slice(Math.max(0, selectedIndex - 2), selectedIndex + 5);
+  const visibleRows = rows.slice(0, 8);
 
   return (
-    <div className="flex min-h-0 min-w-0 w-full flex-1 pr-[34%]">
-      <div className="flex w-[24%] shrink-0 flex-col bg-white">
+    <div className="flex min-h-0 min-w-0 flex-1">
+      <div className="flex w-[31%] shrink-0 flex-col bg-white">
         <div className="flex items-center justify-between border-b border-[#F0F0F0] px-3.5 py-2.5">
           <div className="flex items-center gap-1.5">
             <HeroInboxIcon
@@ -416,13 +397,14 @@ function JoinDesktopInboxPane({ rows }: { rows: readonly InboxRow[] }) {
             12
           </span>
         </div>
-        <div className="min-h-0 flex-1 overflow-hidden pt-1.5">
+        <div className="min-h-0 flex-1 overflow-hidden">
           {visibleRows.map((row) => (
             <JoinDesktopInboxRow key={row.id} row={row} />
           ))}
         </div>
       </div>
       <JoinDesktopPreviewPane row={selected} />
+      <JoinDesktopThreadPane />
     </div>
   );
 }
@@ -979,20 +961,17 @@ export function HeroTriagePreview({
           }}
         >
           <div
-            className={`flex h-full w-full ${config.innerGlassTw}`}
+            className={`flex h-full ${config.innerGlassTw}`}
             style={{
               minHeight: isMobile ? mobileInnerMinHeight : isJoinDesktop ? "26rem" : isSimple ? "24rem" : "18rem",
               background: config.innerGradient,
             }}
           >
             {isJoinDesktop ? (
-              <div className="relative flex min-h-0 min-w-0 w-full flex-1">
+              <>
                 <JoinDesktopNav config={config} />
                 <JoinDesktopInboxPane rows={INBOX_ROWS} />
-                <div className="absolute bottom-0 right-0 top-0 z-[4] w-[34%] min-w-[10.5rem] max-w-[14rem] border-l border-[#EEEAE3] bg-white">
-                  <JoinDesktopThreadPane />
-                </div>
-              </div>
+              </>
             ) : (
               <>
             {/* Collapsed vertical nav — icons only */}
