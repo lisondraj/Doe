@@ -258,64 +258,58 @@ function JoinDesktopInboxRow({ row }: { row: InboxRow }) {
   );
 }
 
-function JoinDesktopPreviewPane({ row }: { row: InboxRow }) {
+function JoinDesktopOpenEmailClipPane() {
   return (
-    <div className="flex min-h-0 min-w-0 flex-[1.05] flex-col border-r border-[#EEEAE3] bg-[#FAFAF8]">
-      <div className="border-b border-[#F0F0F0] px-4 py-3.5">
-        <h3 className="text-[0.82rem] font-semibold leading-snug tracking-tight text-[#1E343A]">{row.subject}</h3>
-        <p className="mt-1 text-[0.5rem] text-neutral-500">
-          {row.sender} · {row.time}
-        </p>
-      </div>
-      <div className="min-h-0 flex-1 overflow-hidden px-4 py-3.5">
-        <p className="text-[0.56rem] leading-[1.55] text-neutral-700">{row.preview}</p>
-        <p className="mt-3 text-[0.54rem] leading-[1.55] text-neutral-500">
-          Need to schedule a visit this week. Thursday or Friday works on my end.
-        </p>
-      </div>
-    </div>
-  );
-}
+    <div className="relative min-h-0 min-w-0 flex-[2] overflow-hidden bg-[#FAFAF8]">
+      <div className="absolute bottom-0 left-0 w-[245%]">
+        <div className="border-b border-[#F0F0F0] bg-white px-4 py-3.5">
+          <p className="text-[0.82rem] font-semibold leading-snug tracking-tight text-[#1E343A]">
+            Follow-up visit scheduling
+          </p>
+          <p className="mt-1 text-[0.5rem] text-neutral-500">Maria Rodriguez · Patient message</p>
+        </div>
 
-function JoinDesktopThreadPane() {
-  const threadMessages = EMAIL_THREAD.slice(1, 4);
-
-  return (
-    <div className="flex min-h-0 min-w-0 flex-[0.95] flex-col bg-[#FAFAF8]">
-      <div className="border-b border-[#F0F0F0] px-4 py-3">
-        <p className="text-[0.68rem] font-semibold tracking-tight text-[#1E343A]">Follow-up visit</p>
-        <p className="mt-0.5 text-[0.48rem] text-neutral-500">Maria Rodriguez · 4 messages</p>
-      </div>
-      <div className="min-h-0 flex-1 overflow-hidden px-3.5 py-2.5">
-        {threadMessages.map((msg) => {
-          const initials = msg.from === "Dr. Singh" ? "DS" : "MR";
-
-          return (
-            <div key={msg.id} className="mb-2.5 border-b border-[#F0F0F0] pb-2.5 last:mb-0 last:border-0 last:pb-0">
-              <div className="flex items-start gap-2">
-                <JoinDesktopAvatar initials={initials} size="1.35rem" fontSize="0.46rem" />
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
-                    <span className="text-[0.52rem] font-medium text-[#1E343A]">{msg.from}</span>
-                    <span className="text-[0.44rem] text-neutral-400">to {msg.to}</span>
-                  </div>
-                  <p className="mt-0.5 text-[0.44rem] text-neutral-400">{msg.time}</p>
-                  <div className="mt-1.5 space-y-0.5">
-                    {msg.lines.map((line) => (
-                      <p key={line} className="text-[0.5rem] leading-[1.48] text-neutral-600">
-                        {line}
-                      </p>
-                    ))}
+        <div className="bg-[#FAFAF8] py-1">
+          {EMAIL_THREAD.map((msg) => {
+            const initials = msg.from === "Dr. Singh" ? "DS" : "MR";
+            return (
+              <div
+                key={msg.id}
+                className="mx-2.5 my-2 rounded-md border border-[#F0F0F0] bg-white px-3 py-2.5"
+              >
+                <div className="flex items-start gap-2">
+                  <JoinDesktopAvatar initials={initials} size="1.35rem" fontSize="0.46rem" />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
+                      <span className="text-[0.52rem] font-medium text-[#1E343A]">{msg.from}</span>
+                      <span className="text-[0.44rem] text-neutral-400">to {msg.to}</span>
+                    </div>
+                    <p className="mt-0.5 text-[0.44rem] text-neutral-400">{msg.time}</p>
                   </div>
                 </div>
+                <div className="mt-2 pl-[1.65rem]">
+                  {msg.lines.map((line) => (
+                    <p key={line} className="text-[0.5rem] leading-[1.48] text-neutral-600">
+                      {line}
+                    </p>
+                  ))}
+                </div>
               </div>
-            </div>
-          );
-        })}
-        <div className="mt-2 rounded-md border border-[#F0F0F0] bg-white px-3 py-2">
-          <p className="text-[0.48rem] leading-[1.45] text-neutral-500">
-            Thursday at 10 AM works. See you then.
-          </p>
+            );
+          })}
+        </div>
+
+        <div className="border-t border-[#F0F0F0] bg-white px-4 py-3">
+          <p className="mb-2 text-[0.48rem] font-medium text-neutral-500">Reply to Maria Rodriguez</p>
+          <div className="flex items-center gap-2 rounded-md border border-[#F0F0F0] bg-[#FAFAF8] px-3 py-2">
+            <JoinDesktopAvatar initials="DS" size="1.2rem" fontSize="0.42rem" />
+            <p className="min-w-0 flex-1 truncate text-[0.5rem] text-neutral-500">
+              Thursday at 10 AM works. See you then.
+            </p>
+            <span className="shrink-0 rounded-md bg-[#D2774C] px-2 py-0.5 text-[0.44rem] font-medium text-white">
+              Send
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -379,7 +373,6 @@ function JoinDesktopNav({
 }
 
 function JoinDesktopInboxPane({ rows }: { rows: readonly InboxRow[] }) {
-  const selected = rows.find((row) => row.selected) ?? rows[0];
   const visibleRows = rows.slice(0, 8);
 
   return (
@@ -403,8 +396,7 @@ function JoinDesktopInboxPane({ rows }: { rows: readonly InboxRow[] }) {
           ))}
         </div>
       </div>
-      <JoinDesktopPreviewPane row={selected} />
-      <JoinDesktopThreadPane />
+      <JoinDesktopOpenEmailClipPane />
     </div>
   );
 }
