@@ -168,6 +168,9 @@ const JOIN_DESKTOP_NAV_MAIN: readonly JoinDesktopNavItem[] = [
   },
   { id: "calendar", d: "M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2z" },
   { id: "tasks", d: "M9 11l3 3 8.5-8.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" },
+] as const;
+
+const JOIN_DESKTOP_NAV_MID: readonly JoinDesktopNavItem[] = [
   { id: "compose", d: "M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z" },
   { id: "files", d: "M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6" },
   { id: "search", d: "M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.35-4.35" },
@@ -177,6 +180,8 @@ const JOIN_DESKTOP_NAV_BOTTOM: readonly JoinDesktopNavItem[] = [
   { id: "analytics", d: "M3 3v18h18M7 16l4-4 4 4 5-6" },
   { id: "settings", d: "M12 6h.01M12 12h.01M12 18h.01" },
 ] as const;
+
+const JOIN_DESKTOP_SELECTED_ORANGE = "#D2774C";
 
 function FlatSenderMark({
   initials,
@@ -202,9 +207,9 @@ function FlatSenderMark({
         fontSize,
         ...(selected
           ? {
-              background: "#FFF0E8",
-              color: "#D2774C",
-              border: "1px solid #E8D4C8",
+              background: "rgba(255,255,255,0.22)",
+              color: "#FFFFFF",
+              border: "1px solid rgba(255,255,255,0.26)",
             }
           : {}),
       }}
@@ -218,29 +223,40 @@ function JoinDesktopInboxRow({ row }: { row: InboxRow }) {
   const selected = Boolean(row.selected);
   return (
     <div
-      className="flex items-start gap-3 border-b border-[#F0F0F0] px-4 py-[0.65rem]"
+      className="flex items-start gap-2.5"
       style={{
-        background: selected ? "#FFF8F4" : "#FFFFFF",
-        boxShadow: selected ? "inset 3px 0 0 #D2774C" : undefined,
+        margin: selected ? "0.18rem 0.32rem" : "0 0.32rem",
+        padding: selected ? "0.58rem 0.62rem" : "0.52rem 0.62rem",
+        borderRadius: selected ? "0.42rem" : undefined,
+        background: selected ? JOIN_DESKTOP_SELECTED_ORANGE : "transparent",
+        borderBottom: selected ? "none" : "1px solid #F2F0EC",
       }}
     >
-      <FlatSenderMark initials={row.initials} selected={selected} />
+      <FlatSenderMark initials={row.initials} selected={selected} size="1.62rem" fontSize="0.54rem" />
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline justify-between gap-2">
           <span
-            className="truncate text-[0.62rem] font-semibold tracking-tight"
-            style={{ color: selected ? "#D2774C" : JOIN_FORM_BEIGE.ink }}
+            className="truncate text-[0.6rem] font-medium tracking-tight"
+            style={{ color: selected ? "#FFFFFF" : JOIN_FORM_BEIGE.ink }}
           >
             {row.sender}
           </span>
-          <span className="shrink-0 text-[0.48rem] font-medium text-neutral-400">{row.time}</span>
+          <span
+            className="shrink-0 text-[0.46rem] font-normal tabular-nums"
+            style={{ color: selected ? "rgba(255,255,255,0.78)" : "#A8A29E" }}
+          >
+            {row.time}
+          </span>
         </div>
         <p
-          className="mt-0.5 truncate text-[0.56rem] font-medium"
-          style={{ color: selected ? "#1E343A" : "rgba(30, 52, 58, 0.72)" }}
+          className="mt-0.5 truncate text-[0.54rem] font-medium"
+          style={{ color: selected ? "rgba(255,255,255,0.94)" : "#1E343A" }}
         >
           {row.subject}
         </p>
+        {!selected ? (
+          <p className="mt-0.5 truncate text-[0.48rem] font-normal text-[#9A9590]">{row.preview}</p>
+        ) : null}
       </div>
     </div>
   );
@@ -248,27 +264,82 @@ function JoinDesktopInboxRow({ row }: { row: InboxRow }) {
 
 function JoinDesktopPreviewPane({ row }: { row: InboxRow }) {
   return (
-    <div className="flex min-h-0 min-w-0 flex-1 flex-col bg-[#FAFAF8]">
-      <div className="border-b border-[#F0F0F0] px-5 py-4">
-        <p className="text-[0.48rem] font-semibold uppercase tracking-[0.14em] text-neutral-400">Message</p>
-        <h3 className="mt-2 text-[0.88rem] font-semibold leading-snug tracking-tight text-[#1E343A]">{row.subject}</h3>
-        <p className="mt-1.5 text-[0.52rem] text-neutral-500">
+    <div className="flex min-h-0 min-w-0 flex-[1.05] flex-col border-r border-[#EEEAE3] bg-[#FAFAF8]">
+      <div className="border-b border-[#F0F0F0] px-4 py-3.5">
+        <h3 className="text-[0.82rem] font-semibold leading-snug tracking-tight text-[#1E343A]">{row.subject}</h3>
+        <p className="mt-1 text-[0.5rem] text-neutral-500">
           {row.sender} · {row.time}
         </p>
       </div>
-      <div className="min-h-0 flex-1 overflow-hidden px-5 py-4">
-        <p className="text-[0.58rem] leading-[1.55] text-neutral-700">{row.preview}</p>
-        <p className="mt-4 text-[0.54rem] leading-[1.55] text-neutral-400">
-          Hi — wanted to follow up on this thread. Let me know if you need anything else from our side before
-          end of day.
+      <div className="min-h-0 flex-1 overflow-hidden px-4 py-3.5">
+        <p className="text-[0.56rem] leading-[1.55] text-neutral-700">{row.preview}</p>
+        <p className="mt-3 text-[0.54rem] leading-[1.55] text-neutral-500">
+          Need to schedule a visit this week. Thursday or Friday works on my end.
         </p>
       </div>
-      <div className="border-t border-[#F0F0F0] px-5 py-3">
-        <div className="flex items-center gap-2 rounded-lg border border-[#E8E8E8] bg-white px-3 py-2">
-          <FlatSenderMark initials="DS" size="1.35rem" fontSize="0.48rem" />
-          <span className="truncate text-[0.52rem] text-neutral-400">Reply to {row.sender}…</span>
+    </div>
+  );
+}
+
+function JoinDesktopThreadPane() {
+  const messages = EMAIL_THREAD.slice(0, 2);
+
+  return (
+    <div className="flex min-h-0 min-w-0 flex-[0.95] flex-col bg-white">
+      <div className="border-b border-[#F0F0F0] px-4 py-3">
+        <p className="text-[0.68rem] font-semibold tracking-tight text-[#1E343A]">Thread</p>
+        <p className="mt-0.5 text-[0.48rem] text-neutral-500">Maria Rodriguez · 4 messages</p>
+      </div>
+      <div className="min-h-0 flex-1 overflow-hidden py-2">
+        {messages.map((msg, index) => {
+          const initials = msg.from === "Dr. Singh" ? "DS" : "MR";
+          return (
+            <div
+              key={msg.id}
+              className="mx-2.5 mb-2 rounded-md border border-[#F0F0F0] bg-[#FAFAF8] px-3 py-2.5"
+              style={{ opacity: index === 1 ? 0.92 : 1 }}
+            >
+              <div className="flex items-start gap-2">
+                <FlatSenderMark initials={initials} size="1.35rem" fontSize="0.46rem" />
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="truncate text-[0.52rem] font-medium text-[#1E343A]">{msg.from}</span>
+                    <span className="shrink-0 text-[0.44rem] text-neutral-400">{msg.time.split(", ").pop()}</span>
+                  </div>
+                  <p className="mt-1 line-clamp-3 text-[0.5rem] leading-[1.45] text-neutral-600">
+                    {msg.lines.slice(1, 3).join(" ")}
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+        <div
+          className="mx-2.5 rounded-md border border-dashed border-[#E8E8E8] px-3 py-2"
+          aria-hidden
+        >
+          <div className="h-8 rounded bg-[#F5F4F1]" />
         </div>
       </div>
+    </div>
+  );
+}
+
+function JoinDesktopNavButton({
+  active = false,
+  children,
+}: {
+  active?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <div
+      className="flex h-[1.85rem] w-[1.85rem] items-center justify-center rounded-[0.45rem]"
+      style={{
+        background: active ? JOIN_DESKTOP_SELECTED_ORANGE : "transparent",
+      }}
+    >
+      {children}
     </div>
   );
 }
@@ -279,30 +350,32 @@ function JoinDesktopNav({
   config: HeroTriageThemeConfig;
 }) {
   const iconClass = (active?: boolean) =>
-    heroInboxIconClass({ mobile: false, active: active && config.flat });
+    active
+      ? "h-[16px] w-[16px] shrink-0 text-white"
+      : heroInboxIconClass({ mobile: false, active: false });
+
+  const renderItems = (items: readonly JoinDesktopNavItem[]) =>
+    items.map((item) => (
+      <JoinDesktopNavButton key={item.id} active={item.active}>
+        <HeroInboxIcon d={item.d} className={iconClass(item.active)} />
+      </JoinDesktopNavButton>
+    ));
 
   return (
     <nav
-      className={`flex w-[3.75rem] shrink-0 flex-col items-center border-r border-[#EEEAE3] bg-white py-3 ${config.paneGlassTw}`}
-      style={config.paneStyle()}
+      className={`flex w-[3.35rem] shrink-0 flex-col items-center border-r border-[#EEEAE3] bg-[#F7F6F3] py-3 ${config.paneGlassTw}`}
+      style={config.paneStyle({ background: "#F7F6F3" })}
     >
-      <div className="flex w-full flex-col items-center gap-1 px-1.5">
-        {JOIN_DESKTOP_NAV_MAIN.map((item) => (
-          <NavIcon key={item.id} active={item.active} mobile={false} config={config}>
-            <HeroInboxIcon d={item.d} className={iconClass(item.active)} />
-          </NavIcon>
-        ))}
+      <div className="mb-2 flex h-[1.85rem] w-[1.85rem] items-center justify-center rounded-[0.45rem] bg-white shadow-[0_1px_0_rgba(0,0,0,0.04)]">
+        <span className="text-[0.62rem] font-semibold tracking-tight text-[#D2774C]">D</span>
       </div>
+      <div className="flex w-full flex-col items-center gap-0.5 px-1.5">{renderItems(JOIN_DESKTOP_NAV_MAIN)}</div>
+      <div className="my-2 h-px w-[1.65rem] bg-[#E8E4DD]" />
+      <div className="flex w-full flex-col items-center gap-0.5 px-1.5">{renderItems(JOIN_DESKTOP_NAV_MID)}</div>
       <div className="flex-1" />
-      <div className="flex w-full flex-col items-center gap-1 px-1.5 pb-1">
-        {JOIN_DESKTOP_NAV_BOTTOM.map((item) => (
-          <NavIcon key={item.id} mobile={false} config={config}>
-            <HeroInboxIcon d={item.d} className={iconClass(false)} />
-          </NavIcon>
-        ))}
-        <div className="mt-2">
-          <FlatSenderMark initials="DS" size="2rem" fontSize="0.52rem" square={false} />
-        </div>
+      <div className="flex w-full flex-col items-center gap-0.5 px-1.5 pb-1">{renderItems(JOIN_DESKTOP_NAV_BOTTOM)}</div>
+      <div className="mt-2.5 border-t border-[#E8E4DD] pt-2.5">
+        <FlatSenderMark initials="DS" size="1.85rem" fontSize="0.5rem" square={false} />
       </div>
     </nav>
   );
@@ -310,28 +383,31 @@ function JoinDesktopNav({
 
 function JoinDesktopInboxPane({ rows }: { rows: readonly InboxRow[] }) {
   const selected = rows.find((row) => row.selected) ?? rows[0];
+  const visibleRows = rows.slice(0, 8);
+
   return (
     <div className="flex min-h-0 min-w-0 flex-1">
-      <div className="flex w-[40%] shrink-0 flex-col border-r border-[#EEEAE3] bg-white">
-        <div className="flex items-center justify-between border-b border-[#F0F0F0] px-4 py-3">
-          <div className="flex items-center gap-2">
+      <div className="flex w-[31%] shrink-0 flex-col bg-white">
+        <div className="flex items-center justify-between border-b border-[#F0F0F0] px-3.5 py-2.5">
+          <div className="flex items-center gap-1.5">
             <HeroInboxIcon
               d="M4 6h16v12H4V6zm0 0 8 7 8-7"
               className={heroInboxIconClass({ mobile: false, accent: true })}
             />
-            <span className="text-[0.72rem] font-semibold tracking-tight text-[#1E343A]">Inbox</span>
+            <span className="text-[0.68rem] font-semibold tracking-tight text-[#1E343A]">Inbox</span>
           </div>
-          <span className="rounded-full bg-[#F7F6F3] px-2 py-0.5 text-[0.48rem] font-semibold tabular-nums text-neutral-500">
+          <span className="rounded-full bg-[#F0EDE8] px-1.5 py-0.5 text-[0.44rem] font-medium tabular-nums text-[#78716C]">
             12
           </span>
         </div>
-        <div className="min-h-0 flex-1 overflow-hidden">
-          {rows.map((row) => (
+        <div className="min-h-0 flex-1 overflow-hidden pt-0.5">
+          {visibleRows.map((row) => (
             <JoinDesktopInboxRow key={row.id} row={row} />
           ))}
         </div>
       </div>
       <JoinDesktopPreviewPane row={selected} />
+      <JoinDesktopThreadPane />
     </div>
   );
 }
