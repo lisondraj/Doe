@@ -43,7 +43,6 @@ function cardTheme(surface: WorkflowCarouselSurface) {
     return {
       ink: "#1E343A",
       accent: DOE_ORANGE,
-      border: "rgba(30, 52, 58, 0.12)",
       glass: (opacity: number) => `rgba(255, 255, 255, ${opacity})`,
       track: DOE_ORANGE_TRACK,
       fill: DOE_ORANGE,
@@ -55,7 +54,6 @@ function cardTheme(surface: WorkflowCarouselSurface) {
   return {
     ink: "#FFFFFF",
     accent: "#FFFFFF",
-    border: "rgba(255, 255, 255, 0.26)",
     glass: (opacity: number) => `rgba(255, 255, 255, ${opacity})`,
     track: "rgba(255, 255, 255, 0.18)",
     fill: "rgba(255, 255, 255, 0.72)",
@@ -86,7 +84,6 @@ function GlassCard({
       className={`join-hero-box-reveal${revealed ? " join-hero-box-reveal--in" : ""}`}
       style={{
         borderRadius: "1.1rem",
-        border: `1px solid ${theme.border}`,
         background: theme.glass(opacity),
         padding: compact ? "0.58rem 0.85rem" : "0.95rem 1.05rem",
         color: theme.ink,

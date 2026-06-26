@@ -7,7 +7,25 @@
  * white background → transparent).
  */
 import { useId } from "react";
+import { suisseIntl } from "@/lib/home/fonts";
 import { useJoinHeroScrollReveal } from "@/lib/join/use-join-hero-scroll-reveal";
+
+const AGENT_INK = "#1E343A";
+
+const ORBIT_AGENTS = [
+  "Voice Agent",
+  "Scheduling Agent",
+  "Labs Agent",
+  "Referrals Agent",
+  "Live Appointment",
+  "Billing Agent",
+] as const;
+
+const ORBIT_ICON_R = 16;
+const ORBIT_LABEL_SIZE = 38;
+const BOX_PAD_X = 42;
+const BOX_PAD_Y = 40;
+const ROW_ICON_TEXT_GAP = 16;
 
 const GRADIENT_STOPS = [
   { offset: "0%",   color: "#E7A944" },
@@ -22,8 +40,8 @@ const VOX = -860;
 const VOY = -760;
 
 // Canada + USA centered on the orbit hub (CX, CY) — scaled up within box clearance
-const CA = { x: -225, y: -306, w: 850, h: 525 };
-const US = { x: -232, y: 219, w: 864, h: 517 };
+const CA = { x: -225, y: -281, w: 850, h: 525 };
+const US = { x: -232, y: 194, w: 864, h: 517 };
 
 /** Zoom map art inside the fixed clip rects — larger silhouettes without moving white boxes. */
 const COUNTRY_IMAGE_SCALE = 1.14;
@@ -43,16 +61,58 @@ const US_MAP = scaledMapImage(US);
 const CX = 200;
 const CY = 215;
 const RX = 792;
-const RY = 713;
+const RY = 652;
 
 const BOX_W = 614;
 const BOX_H = 382;
 const BOX_RX = 51;
 
+/** Extra radial push for individual orbit boxes (index → outset). */
+const ORBIT_BOX_OUTSET: Partial<Record<number, number>> = {
+  0: 42, // Voice Agent — top
+  3: 42, // Referrals Agent — bottom
+};
+
 const ORBIT = Array.from({ length: 6 }, (_, i) => {
   const a = -Math.PI / 2 + (i * 2 * Math.PI) / 6;
-  return { x: CX + RX * Math.cos(a), y: CY + RY * Math.sin(a) };
+  const d = ORBIT_BOX_OUTSET[i] ?? 0;
+  return { x: CX + (RX + d) * Math.cos(a), y: CY + (RY + d) * Math.sin(a) };
 });
+
+function OrbitAgentRow({ boxX, boxY, name }: { boxX: number; boxY: number; name: string }) {
+  const iconCx = boxX + BOX_PAD_X + ORBIT_ICON_R;
+  const iconCy = boxY + BOX_PAD_Y + ORBIT_ICON_R;
+  const textX = iconCx + ORBIT_ICON_R + ROW_ICON_TEXT_GAP;
+
+  return (
+    <g aria-hidden>
+      <g transform={`translate(${iconCx}, ${iconCy})`}>
+        <circle cx={0} cy={0} r={ORBIT_ICON_R * 0.78} stroke={AGENT_INK} strokeWidth={2.2} fill="none" />
+        <circle cx={0} cy={0} r={ORBIT_ICON_R * 0.22} fill={AGENT_INK} />
+        <path
+          d={`M0 ${-ORBIT_ICON_R}v${ORBIT_ICON_R * 0.38}M0 ${ORBIT_ICON_R * 0.42}v${ORBIT_ICON_R * 0.58}M${-ORBIT_ICON_R} 0h${ORBIT_ICON_R * 0.38}M${ORBIT_ICON_R * 0.42} 0h${ORBIT_ICON_R * 0.58}`}
+          stroke={AGENT_INK}
+          strokeWidth={1.8}
+          strokeLinecap="round"
+          opacity={0.42}
+        />
+      </g>
+      <text
+        x={textX}
+        y={iconCy}
+        dominantBaseline="middle"
+        textAnchor="start"
+        fill={AGENT_INK}
+        fontSize={ORBIT_LABEL_SIZE}
+        fontWeight={500}
+        fontFamily={suisseIntl.style.fontFamily}
+        letterSpacing="-0.02em"
+      >
+        {name}
+      </text>
+    </g>
+  );
+}
 
 export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile" | "desktop" }) {
   const id = useId().replace(/:/g, "");
@@ -70,7 +130,7 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
   const invertF = `${id}-invert`;
 
   return (
-    <div ref={ref} className={wrapperClass} aria-hidden>
+    <div ref={ref} className={`${wrapperClass} ${suisseIntl.className}`} aria-hidden>
       <svg
         viewBox={`${VOX} ${VOY} ${VW} ${VH}`}
         fill="none"
@@ -140,6 +200,11 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
               rx={BOX_RX}
               fill="#FFFFFF"
               stroke="none"
+            />
+            <OrbitAgentRow
+              boxX={pt.x - BOX_W / 2}
+              boxY={pt.y - BOX_H / 2}
+              name={ORBIT_AGENTS[i]}
             />
           </g>
         ))}
