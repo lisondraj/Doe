@@ -259,13 +259,13 @@ function JoinDesktopInboxRow({ row }: { row: InboxRow }) {
 
 function JoinDesktopOpenEmailClipPane() {
   return (
-    <div className="flex h-full min-h-0 min-w-0 flex-[2] flex-col justify-end overflow-hidden border-l border-[#EEEAE3] bg-[#FAFAF8]">
-      <div className="w-[245%] shrink-0">
-        <div className="border-b border-[#F0F0F0] bg-white px-3.5 py-2.5">
-          <p className="text-[0.68rem] font-semibold leading-snug tracking-tight text-[#1E343A]">
+    <div className="relative flex h-full min-h-0 min-w-0 flex-1 flex-col justify-end overflow-hidden bg-[#FAFAF8]">
+      <div className="w-[220%] shrink-0">
+        <div className="border-b border-[#F0F0F0] bg-white px-4 py-3">
+          <p className="text-[0.76rem] font-semibold leading-snug tracking-tight text-[#1E343A]">
             Follow-up visit scheduling
           </p>
-          <p className="mt-0.5 text-[0.48rem] text-neutral-500">Maria Rodriguez · Patient message</p>
+          <p className="mt-0.5 text-[0.52rem] text-neutral-500">Maria Rodriguez · Patient message</p>
         </div>
 
         <div className="bg-[#FAFAF8]">
@@ -273,18 +273,18 @@ function JoinDesktopOpenEmailClipPane() {
             const initials = msg.from === "Dr. Singh" ? "DS" : "MR";
 
             return (
-              <div key={msg.id} className="border-b border-[#F0F0F0] bg-white px-3.5 py-2.5">
-                <div className="flex items-start gap-2">
-                  <JoinDesktopAvatar initials={initials} size="1.35rem" fontSize="0.46rem" />
+              <div key={msg.id} className="border-b border-[#F0F0F0] bg-white px-4 py-3">
+                <div className="flex items-start gap-2.5">
+                  <JoinDesktopAvatar initials={initials} size="1.5rem" fontSize="0.5rem" />
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
-                      <span className="text-[0.52rem] font-medium text-[#1E343A]">{msg.from}</span>
-                      <span className="text-[0.44rem] text-neutral-400">to {msg.to}</span>
+                      <span className="text-[0.58rem] font-medium text-[#1E343A]">{msg.from}</span>
+                      <span className="text-[0.48rem] text-neutral-400">to {msg.to}</span>
                     </div>
-                    <p className="mt-0.5 text-[0.44rem] text-neutral-400">{msg.time}</p>
-                    <div className="mt-1.5 space-y-0.5">
+                    <p className="mt-0.5 text-[0.48rem] text-neutral-400">{msg.time}</p>
+                    <div className="mt-2 space-y-0.5">
                       {msg.lines.map((line) => (
-                        <p key={line} className="text-[0.5rem] leading-[1.48] text-neutral-600">
+                        <p key={line} className="text-[0.56rem] leading-[1.5] text-neutral-600">
                           {line}
                         </p>
                       ))}
@@ -360,8 +360,8 @@ function JoinDesktopInboxPane({ rows }: { rows: readonly InboxRow[] }) {
   const visibleRows = rows.slice(0, 8);
 
   return (
-    <div className="flex h-full min-h-0 min-w-0 flex-1">
-      <div className="flex w-[31%] shrink-0 flex-col bg-white">
+    <div className="flex h-full min-h-0 min-w-0 flex-1 items-stretch">
+      <div className="flex h-full w-[27%] shrink-0 flex-col border-r border-[#EEEAE3] bg-white">
         <div className="flex items-center justify-between border-b border-[#F0F0F0] px-3.5 py-2.5">
           <div className="flex items-center gap-1.5">
             <HeroInboxIcon
