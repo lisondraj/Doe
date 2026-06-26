@@ -21,12 +21,13 @@ export type JoinHeroBandConfig = {
 /** Primary join hero — Agents dot grid (existing top box). */
 export const JOIN_HERO_PRIMARY_BACKDROP = DOEPHONE_COMMUNICATION_SLIDES[0].backdrop;
 
-/** Standard Doe orange radial — fifth hero band. */
+/** Standard Doe orange radial — Co-Founders hero band. */
 export const JOIN_HERO_ORANGE_RADIAL_BACKDROP: WorkflowCarouselDesignBackdrop = {
   slideIndex: 3,
   label: "Join",
   gradient: "radial-gradient(circle at center, #C47A5A 0%, #D2774C 58%, #D49D4F 100%)",
-  grid: "diagonal",
+  grid: "polar",
+  polarCenterY: "50%",
 };
 
 /** Three additional hero bands — varied gradients and line overlays, no inbox UI. */
