@@ -10,6 +10,13 @@ export type WorkflowCarouselSurface = "orange" | "beige";
 /** Solid fill for beige workflow / join hero surfaces. */
 export const WORKFLOW_BEIGE_SURFACE_FILL = BLOG_LANDING_HERO.fill;
 
+/** Lighter grid line colors for beige surfaces — lower contrast than BLOG_LANDING_HERO ink lines. */
+const WORKFLOW_BEIGE_GRID = {
+  line: "rgba(201, 192, 180, 0.28)",
+  lineSoft: "rgba(201, 192, 180, 0.2)",
+  dot: "rgba(201, 192, 180, 0.34)",
+} as const;
+
 export type WorkflowCarouselDesignBackdrop = {
   /** Carousel box index in `app/page.tsx` (0–5). */
   slideIndex: number;
@@ -115,8 +122,8 @@ const CROSSHATCH_LINE_ORANGE = "rgba(255, 255, 255, 0.12)";
 const CROSSHATCH_DOT_ORANGE = "rgba(255, 255, 255, 0.18)";
 
 function crosshatchGridStyle(surface: WorkflowCarouselSurface): CSSProperties {
-  const line = surface === "beige" ? BLOG_LANDING_HERO.lineSoft : CROSSHATCH_LINE_ORANGE;
-  const dot = surface === "beige" ? BLOG_LANDING_HERO.line : CROSSHATCH_DOT_ORANGE;
+  const line = surface === "beige" ? WORKFLOW_BEIGE_GRID.lineSoft : CROSSHATCH_LINE_ORANGE;
+  const dot = surface === "beige" ? WORKFLOW_BEIGE_GRID.dot : CROSSHATCH_DOT_ORANGE;
 
   return {
     backgroundImage: [
@@ -132,7 +139,7 @@ function crosshatchGridStyle(surface: WorkflowCarouselSurface): CSSProperties {
 export const WORKFLOW_CROSSHATCH_GRID_STYLE: CSSProperties = crosshatchGridStyle("orange");
 
 export function dotGridStyle(surface: WorkflowCarouselSurface): CSSProperties {
-  const dot = surface === "beige" ? BLOG_LANDING_HERO.line : "rgba(255, 255, 255, 0.25)";
+  const dot = surface === "beige" ? WORKFLOW_BEIGE_GRID.dot : "rgba(255, 255, 255, 0.25)";
   return {
     backgroundImage: `radial-gradient(circle, ${dot} 1.5px, transparent 1.5px)`,
     backgroundSize: "50px 50px",
@@ -142,7 +149,7 @@ export function dotGridStyle(surface: WorkflowCarouselSurface): CSSProperties {
 export const WORKFLOW_DOT_GRID_STYLE: CSSProperties = dotGridStyle("orange");
 
 function diagonalGridStyle(surface: WorkflowCarouselSurface): CSSProperties {
-  const line = surface === "beige" ? BLOG_LANDING_HERO.lineSoft : "rgba(255, 255, 255, 0.15)";
+  const line = surface === "beige" ? WORKFLOW_BEIGE_GRID.lineSoft : "rgba(255, 255, 255, 0.15)";
   return {
     backgroundImage: `
     repeating-linear-gradient(
@@ -170,7 +177,7 @@ const HEX_CELL_H_PX = 69.28;
 
 function hexGridSvg(surface: WorkflowCarouselSurface) {
   const stroke =
-    surface === "beige" ? BLOG_LANDING_HERO.lineSoft : "rgba(255,255,255,0.1)";
+    surface === "beige" ? WORKFLOW_BEIGE_GRID.lineSoft : "rgba(255,255,255,0.1)";
   return encodeURIComponent(
     `<svg xmlns="http://www.w3.org/2000/svg" width="${HEX_CELL_W_PX}" height="${HEX_CELL_H_PX}"><defs><pattern id="hex" width="${HEX_CELL_W_PX}" height="${HEX_CELL_H_PX}" patternUnits="userSpaceOnUse"><path d="M 40 0 L 80 17.32 L 80 51.96 L 40 69.28 L 0 51.96 L 0 17.32 Z" fill="none" stroke="${stroke}" stroke-width="0.8"/></pattern></defs><rect width="100%" height="100%" fill="url(#hex)"/></svg>`,
   );
@@ -187,12 +194,12 @@ export const WORKFLOW_HEX_GRID_STYLE: CSSProperties = hexGridStyle("orange");
 
 /** Wave overlay stroke for orange vs beige surfaces. */
 export function workflowWaveStroke(surface: WorkflowCarouselSurface): string {
-  return surface === "beige" ? BLOG_LANDING_HERO.lineSoft : "rgba(255, 255, 255, 0.12)";
+  return surface === "beige" ? WORKFLOW_BEIGE_GRID.line : "rgba(255, 255, 255, 0.12)";
 }
 
 /** Polar overlay stroke for orange vs beige surfaces. */
 export function workflowPolarStroke(surface: WorkflowCarouselSurface): string {
-  return surface === "beige" ? BLOG_LANDING_HERO.line : "rgba(255, 255, 255, 0.24)";
+  return surface === "beige" ? WORKFLOW_BEIGE_GRID.line : "rgba(255, 255, 255, 0.24)";
 }
 
 /** Scale > 1 zooms patterns out (larger cell spacing). */

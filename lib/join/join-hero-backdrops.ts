@@ -8,8 +8,8 @@ export type JoinHeroBandConfig = {
   showInbox: boolean;
   /** Bottom-left headline — one or two lines max. */
   headline: readonly [string] | readonly [string, string];
-  /** Top-left paragraph — optional per band. */
-  description?: string;
+  /** Top-left copy — one or more paragraphs. */
+  description?: readonly string[];
   /** Beige uses solid fill + taupe line overlays; orange uses gradient + white lines. */
   surface?: WorkflowCarouselSurface;
 };
@@ -32,8 +32,11 @@ export const JOIN_HERO_EXTRA_BANDS: readonly JoinHeroBandConfig[] = [
     showInbox: false,
     surface: "beige",
     headline: ["About Doe's", "Mission"],
-    description:
+    description: [
       "Doe is an all-in-one healthcare communication layer built on top of health providers' existing inboxes. It automates every touchpoint in a patient's healthcare journey, from intake and scheduling to follow-ups and care coordination, without replacing the tools teams already trust.",
+      "Doe will be a registered Delaware corporation, validate its tool with the Canadian healthcare market, and eventually expand to the US starting in California and New York City.",
+      "It will focus on doctors first, then expand to allied health teams.",
+    ],
     backdrop: DOEPHONE_COMMUNICATION_SLIDES[1].backdrop,
   },
   {

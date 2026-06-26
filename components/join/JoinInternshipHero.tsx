@@ -40,22 +40,26 @@ function joinHeroDescriptionInkClass(surface: WorkflowCarouselSurface = "orange"
 }
 
 function JoinHeroDescription({
-  text,
+  paragraphs,
   variant,
   surface = "orange",
 }: {
-  text: string;
+  paragraphs: readonly string[];
   variant: "mobile" | "desktop";
   surface?: WorkflowCarouselSurface;
 }) {
   const textClass = variant === "mobile" ? JOIN_HERO_DESCRIPTION_MOBILE : JOIN_HERO_DESCRIPTION_DESKTOP;
 
   return (
-    <p
+    <div
       className={`absolute left-0 top-0 z-[3] text-left ${JOIN_HERO_TOP_LEFT_PAD} ${textClass} ${joinHeroDescriptionInkClass(surface)} ${suisseIntl.className}`}
     >
-      {text}
-    </p>
+      {paragraphs.map((paragraph) => (
+        <p key={paragraph} className={paragraph === paragraphs[0] ? "" : "mt-[1.1em]"}>
+          {paragraph}
+        </p>
+      ))}
+    </div>
   );
 }
 
@@ -94,7 +98,7 @@ export function JoinInternshipHero({
   backdrop?: WorkflowCarouselDesignBackdropConfig;
   showInbox?: boolean;
   headline?: readonly [string] | readonly [string, string];
-  description?: string;
+  description?: readonly string[];
   surface?: WorkflowCarouselSurface;
 }) {
   const heightClass = variant === "mobile" ? JOIN_MOBILE_HERO_CARD_HEIGHT : JOIN_DESKTOP_HERO_HEIGHT;
@@ -113,8 +117,8 @@ export function JoinInternshipHero({
 
       <JoinHeroHeadline titleClass={titleClass} lines={headline} surface={surface} />
 
-      {description ? (
-        <JoinHeroDescription text={description} variant={variant} surface={surface} />
+      {description?.length ? (
+        <JoinHeroDescription paragraphs={description} variant={variant} surface={surface} />
       ) : null}
 
       {showInbox && variant === "mobile" ? (
