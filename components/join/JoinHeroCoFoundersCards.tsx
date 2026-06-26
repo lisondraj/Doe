@@ -272,7 +272,7 @@ export function JoinHeroCoFoundersCards({
         <p
           style={{
             fontSize: FS_XL,
-            fontWeight: 500,
+            fontWeight: 400,
             letterSpacing: "-0.02em",
             lineHeight: 1.1,
             color: isBeige ? theme.accent : theme.ink,

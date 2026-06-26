@@ -13,6 +13,7 @@ const SPEAKER_LABEL: CSSProperties = {
 };
 
 const DOE_ORANGE_DARK = "#BF593D";
+const DOE_ORANGE_TEXT = "#A04E36";
 
 const INTEGRATIONS = ["Epic EHR", "Insurance API", "Clinic scheduler"] as const;
 
@@ -77,7 +78,7 @@ function IntegrationCheck() {
     <svg width="11" height="11" viewBox="0 0 10 10" fill="none" aria-hidden>
       <path
         d="M2 5.1l1.4 1.4 2.6-2.8"
-        stroke={DOE_ORANGE_DARK}
+        stroke={DOE_ORANGE_TEXT}
         strokeWidth="1.1"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -106,7 +107,7 @@ function AiResultPreview() {
             key={label}
             style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem" }}
           >
-            <span style={{ fontSize: FS_BUBBLE, color: DOE_ORANGE_DARK }}>{label}</span>
+            <span style={{ fontSize: FS_BUBBLE, color: DOE_ORANGE_TEXT }}>{label}</span>
             <IntegrationCheck />
           </div>
         ))}
@@ -157,7 +158,7 @@ export function JoinHeroAiChatPreview({ variant }: { variant: "mobile" | "deskto
       aria-hidden
       style={{
         top: "50%",
-        transform: `translateY(-50%) translateX(0.5rem) scale(${PREVIEW_SCALE})`,
+        transform: `translateY(calc(-50% - 1.25rem)) translateX(0.5rem) scale(${PREVIEW_SCALE})`,
         transformOrigin: "right center",
         right: "clamp(3.25rem, 9vw, 7.75rem)",
         width: "min(36rem, 50%)",
@@ -255,7 +256,18 @@ export function JoinHeroAiChatPreview({ variant }: { variant: "mobile" | "deskto
             padding: "0.65rem 0.85rem 0",
           }}
         >
-          <span style={{ fontSize: FS_SM, fontWeight: 500, color: DOE_ORANGE_DARK }}>Dr. Chen&apos;s Clinic</span>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.32rem" }}>
+            <span style={{ fontSize: FS_SM, fontWeight: 500, color: DOE_ORANGE_TEXT }}>Dr. Chen&apos;s Clinic</span>
+            <svg width="8" height="8" viewBox="0 0 8 8" fill="none" aria-hidden>
+              <path
+                d="M2 3l2 2 2-2"
+                stroke={DOE_ORANGE_TEXT}
+                strokeWidth="1.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
         </div>
 
         {/* Text area */}
