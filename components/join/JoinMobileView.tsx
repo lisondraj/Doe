@@ -1,7 +1,7 @@
 "use client";
 
 import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
-import { JoinInternshipHero } from "@/components/join/JoinInternshipHero";
+import { JoinHeroBands } from "@/components/join/JoinHeroBands";
 import { JoinInternTracks } from "@/components/join/JoinInternTracks";
 import { JoinApplyFormSection } from "@/components/join/JoinApplyFormSection";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
@@ -21,7 +21,7 @@ export function JoinMobileView() {
     >
       <main className={`flex w-full flex-col ${JOIN_MOBILE_SECTION_STACK_GAP} ${JOIN_MOBILE_NAV_CLEARANCE}`}>
         <section className={JOIN_MOBILE_HERO_SECTION} aria-label="Internship hero">
-          <JoinInternshipHero variant="mobile" />
+          <JoinHeroBands variant="mobile" />
         </section>
         <JoinInternTracks variant="mobile" />
       </main>

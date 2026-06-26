@@ -1,7 +1,6 @@
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { HeroTriagePreview } from "@/components/home/HeroTriagePreview";
 import { BLOG_LANDING_HERO_CORNER_PAD } from "@/lib/blog/blog-layout-styles";
-import { DOEPHONE_COMMUNICATION_SLIDES } from "@/lib/doephone/communication-carousel";
 import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
 import {
   JOIN_HERO_TRIAGE_PANEL,
@@ -13,17 +12,36 @@ import {
   JOIN_DESKTOP_HERO_HEIGHT,
   JOIN_MOBILE_HERO_CARD_HEIGHT,
 } from "@/lib/join/join-layout";
+import { JOIN_HERO_PRIMARY_BACKDROP } from "@/lib/join/join-hero-backdrops";
+import type { WorkflowCarouselDesignBackdrop as WorkflowCarouselDesignBackdropConfig } from "@/lib/workflow-carousel-design-backdrops";
 import { lora, suisseIntl } from "@/lib/home/fonts";
-
-const AGENTS_CAROUSEL_BACKDROP = DOEPHONE_COMMUNICATION_SLIDES[0].backdrop;
 
 const JOIN_HERO_HEADLINE_MOBILE =
   "text-[clamp(2.35rem,8vw,3.55rem)] iphone-page:text-[clamp(2.5rem,1.9rem+3.4vmin,4.15rem)]";
 
 const JOIN_HERO_HEADLINE_DESKTOP = "text-[clamp(2.85rem,4.8vw,4.35rem)]";
 
-/** Join hero — Agents fill, blog-style bottom-left headline. */
-export function JoinInternshipHero({ variant }: { variant: "mobile" | "desktop" }) {
+function JoinHeroHeadline({ titleClass }: { titleClass: string }) {
+  return (
+    <p
+      className={`absolute bottom-0 left-0 z-[3] max-w-[min(100%,20em)] text-left font-normal leading-[1.04] tracking-[-0.035em] text-white ${BLOG_LANDING_HERO_CORNER_PAD} ${titleClass} ${lora.className}`}
+    >
+      <span className="block">Let&apos;s rebuild</span>
+      <span className="block">healthcare.</span>
+    </p>
+  );
+}
+
+/** Join hero band — gradient backdrop, bottom-left headline, optional inbox UI on primary only. */
+export function JoinInternshipHero({
+  variant,
+  backdrop = JOIN_HERO_PRIMARY_BACKDROP,
+  showInbox = true,
+}: {
+  variant: "mobile" | "desktop";
+  backdrop?: WorkflowCarouselDesignBackdropConfig;
+  showInbox?: boolean;
+}) {
   const heightClass = variant === "mobile" ? JOIN_MOBILE_HERO_CARD_HEIGHT : JOIN_DESKTOP_HERO_HEIGHT;
   const titleClass = variant === "mobile" ? JOIN_HERO_HEADLINE_MOBILE : JOIN_HERO_HEADLINE_DESKTOP;
 
@@ -32,19 +50,14 @@ export function JoinInternshipHero({ variant }: { variant: "mobile" | "desktop" 
       className={`relative w-full overflow-hidden border border-[#D9D4CC] ${heightClass} ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
     >
       <WorkflowCarouselDesignBackdrop
-        backdrop={AGENTS_CAROUSEL_BACKDROP}
+        backdrop={backdrop}
         embedded
         className={DOEPHONE_SECTION_CAROUSEL_RADIUS}
       />
 
-      <p
-        className={`absolute bottom-0 left-0 z-[3] max-w-[min(100%,20em)] text-left font-normal leading-[1.04] tracking-[-0.035em] text-white ${BLOG_LANDING_HERO_CORNER_PAD} ${titleClass} ${lora.className}`}
-      >
-        <span className="block">Let&apos;s rebuild</span>
-        <span className="block">healthcare.</span>
-      </p>
+      <JoinHeroHeadline titleClass={titleClass} />
 
-      {variant === "mobile" ? (
+      {showInbox && variant === "mobile" ? (
         <HeroTriagePreview
           fontClassName={suisseIntl.className}
           size="mobile"
@@ -61,7 +74,7 @@ export function JoinInternshipHero({ variant }: { variant: "mobile" | "desktop" 
             overflow: "visible",
           }}
         />
-      ) : variant === "desktop" ? (
+      ) : showInbox && variant === "desktop" ? (
         <HeroTriagePreview
           fontClassName={suisseIntl.className}
           size="desktop"
