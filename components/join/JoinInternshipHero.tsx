@@ -43,16 +43,19 @@ function JoinHeroDescription({
   paragraphs,
   variant,
   surface = "orange",
+  textAlign = "left",
 }: {
   paragraphs: readonly string[];
   variant: "mobile" | "desktop";
   surface?: WorkflowCarouselSurface;
+  textAlign?: "left" | "right";
 }) {
   const textClass = variant === "mobile" ? JOIN_HERO_DESCRIPTION_MOBILE : JOIN_HERO_DESCRIPTION_DESKTOP;
+  const anchorClass = textAlign === "right" ? "right-0 text-right" : "left-0 text-left";
 
   return (
     <div
-      className={`absolute left-0 top-0 z-[3] text-left ${JOIN_HERO_TOP_LEFT_PAD} ${textClass} ${joinHeroDescriptionInkClass(surface)} ${suisseIntl.className}`}
+      className={`absolute top-0 z-[3] ${anchorClass} ${JOIN_HERO_TOP_LEFT_PAD} ${textClass} ${joinHeroDescriptionInkClass(surface)} ${suisseIntl.className}`}
     >
       {paragraphs.map((paragraph) => (
         <p key={paragraph} className={paragraph === paragraphs[0] ? "" : "mt-[1.1em]"}>
@@ -67,14 +70,18 @@ function JoinHeroHeadline({
   titleClass,
   lines,
   surface = "orange",
+  textAlign = "left",
 }: {
   titleClass: string;
   lines: readonly [string] | readonly [string, string];
   surface?: WorkflowCarouselSurface;
+  textAlign?: "left" | "right";
 }) {
+  const anchorClass = textAlign === "right" ? "bottom-0 right-0 text-right" : "bottom-0 left-0 text-left";
+
   return (
     <p
-      className={`absolute bottom-0 left-0 z-[3] max-w-[min(100%,20em)] text-left font-normal leading-[1.04] tracking-[-0.035em] ${joinHeroInkClass(surface)} ${BLOG_LANDING_HERO_CORNER_PAD} ${titleClass} ${lora.className}`}
+      className={`absolute z-[3] max-w-[min(100%,20em)] font-normal leading-[1.04] tracking-[-0.035em] ${anchorClass} ${joinHeroInkClass(surface)} ${BLOG_LANDING_HERO_CORNER_PAD} ${titleClass} ${lora.className}`}
     >
       {lines.map((line) => (
         <span key={line} className="block">
@@ -93,6 +100,7 @@ export function JoinInternshipHero({
   headline = JOIN_HERO_BANDS[0].headline,
   description,
   surface = "orange",
+  textAlign = "left",
 }: {
   variant: "mobile" | "desktop";
   backdrop?: WorkflowCarouselDesignBackdropConfig;
@@ -100,6 +108,7 @@ export function JoinInternshipHero({
   headline?: readonly [string] | readonly [string, string];
   description?: readonly string[];
   surface?: WorkflowCarouselSurface;
+  textAlign?: "left" | "right";
 }) {
   const heightClass = variant === "mobile" ? JOIN_MOBILE_HERO_CARD_HEIGHT : JOIN_DESKTOP_HERO_HEIGHT;
   const titleClass = variant === "mobile" ? JOIN_HERO_HEADLINE_MOBILE : JOIN_HERO_HEADLINE_DESKTOP;
@@ -115,10 +124,15 @@ export function JoinInternshipHero({
         className={DOEPHONE_SECTION_CAROUSEL_RADIUS}
       />
 
-      <JoinHeroHeadline titleClass={titleClass} lines={headline} surface={surface} />
+      <JoinHeroHeadline titleClass={titleClass} lines={headline} surface={surface} textAlign={textAlign} />
 
       {description?.length ? (
-        <JoinHeroDescription paragraphs={description} variant={variant} surface={surface} />
+        <JoinHeroDescription
+          paragraphs={description}
+          variant={variant}
+          surface={surface}
+          textAlign={textAlign}
+        />
       ) : null}
 
       {showInbox && variant === "mobile" ? (

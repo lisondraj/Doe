@@ -10,6 +10,8 @@ export type JoinHeroBandConfig = {
   headline: readonly [string] | readonly [string, string];
   /** Top-left copy — one or more paragraphs. */
   description?: readonly string[];
+  /** Title and description corner — defaults to bottom-left / top-left. */
+  textAlign?: "left" | "right";
   /** Beige uses solid fill + taupe line overlays; orange uses gradient + white lines. */
   surface?: WorkflowCarouselSurface;
 };
@@ -31,6 +33,7 @@ export const JOIN_HERO_EXTRA_BANDS: readonly JoinHeroBandConfig[] = [
     id: "incoming",
     showInbox: false,
     surface: "beige",
+    textAlign: "right",
     headline: ["About Doe's", "Mission."],
     description: [
       "Doe is an all-in-one healthcare communication layer built on top of health providers' existing inboxes. It automates every touchpoint in a patient's healthcare journey, from intake and scheduling to follow-ups and care coordination, without replacing the tools teams already trust.",
@@ -42,6 +45,7 @@ export const JOIN_HERO_EXTRA_BANDS: readonly JoinHeroBandConfig[] = [
   {
     id: "tools",
     showInbox: false,
+    textAlign: "right",
     headline: ["Rebuilding healthcare", "communication."],
     description: [
       "Doe differentiates from existing AI in patient care by letting providers fully customize their experience. They can build new tools connected to their clinic's integrations through a no-code, visual-first interface and shape the product around their own workflow.",
