@@ -219,9 +219,11 @@ function JoinDesktopAvatar({
 function JoinDesktopInboxRow({ row }: { row: InboxRow }) {
   const selected = Boolean(row.selected);
   return (
-    <div className="border-b border-[#F0F0F0]">
+    <div className="py-[0.12rem]">
       <div
-        className={`flex items-start gap-2.5 px-[0.62rem] py-[0.52rem] ${selected ? "mx-[0.32rem] rounded-[0.42rem]" : ""}`}
+        className={`flex min-h-[2.55rem] items-start gap-2.5 py-[0.46rem] ${
+          selected ? "mx-[0.32rem] rounded-[0.42rem] px-[0.3rem]" : "px-[0.62rem]"
+        }`}
         style={{
           background: selected ? JOIN_DESKTOP_SELECTED_ORANGE : "transparent",
         }}
@@ -248,9 +250,12 @@ function JoinDesktopInboxRow({ row }: { row: InboxRow }) {
           >
             {row.subject}
           </p>
-          {!selected ? (
-            <p className="mt-0.5 truncate text-[0.48rem] font-normal text-[#9A9590]">{row.preview}</p>
-          ) : null}
+          <p
+            className={`mt-0.5 truncate text-[0.48rem] font-normal ${selected ? "invisible" : "text-[#9A9590]"}`}
+            aria-hidden={selected}
+          >
+            {selected ? row.subject : row.preview}
+          </p>
         </div>
       </div>
     </div>
@@ -259,41 +264,43 @@ function JoinDesktopInboxRow({ row }: { row: InboxRow }) {
 
 function JoinDesktopOpenEmailClipPane() {
   return (
-    <div className="relative flex h-full min-h-0 min-w-0 flex-1 flex-col justify-end overflow-hidden bg-[#FAFAF8]">
-      <div className="w-[220%] shrink-0">
-        <div className="border-b border-[#F0F0F0] bg-white px-4 py-3">
-          <p className="text-[0.76rem] font-semibold leading-snug tracking-tight text-[#1E343A]">
-            Follow-up visit scheduling
-          </p>
-          <p className="mt-0.5 text-[0.52rem] text-neutral-500">Maria Rodriguez · Patient message</p>
-        </div>
+    <div className="relative min-h-0 min-w-0 flex-1 self-stretch overflow-hidden border-l border-[#EEEAE3] bg-white">
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute bottom-0 left-0 w-[220%]">
+          <div className="border-b border-[#F0F0F0] bg-white px-4 py-3">
+            <p className="text-[0.76rem] font-semibold leading-snug tracking-tight text-[#1E343A]">
+              Follow-up visit scheduling
+            </p>
+            <p className="mt-0.5 text-[0.52rem] text-neutral-500">Maria Rodriguez · Patient message</p>
+          </div>
 
-        <div className="bg-[#FAFAF8]">
-          {EMAIL_THREAD.map((msg) => {
-            const initials = msg.from === "Dr. Singh" ? "DS" : "MR";
+          <div>
+            {EMAIL_THREAD.map((msg) => {
+              const initials = msg.from === "Dr. Singh" ? "DS" : "MR";
 
-            return (
-              <div key={msg.id} className="border-b border-[#F0F0F0] bg-white px-4 py-3">
-                <div className="flex items-start gap-2.5">
-                  <JoinDesktopAvatar initials={initials} size="1.5rem" fontSize="0.5rem" />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
-                      <span className="text-[0.58rem] font-medium text-[#1E343A]">{msg.from}</span>
-                      <span className="text-[0.48rem] text-neutral-400">to {msg.to}</span>
-                    </div>
-                    <p className="mt-0.5 text-[0.48rem] text-neutral-400">{msg.time}</p>
-                    <div className="mt-2 space-y-0.5">
-                      {msg.lines.map((line) => (
-                        <p key={line} className="text-[0.56rem] leading-[1.5] text-neutral-600">
-                          {line}
-                        </p>
-                      ))}
+              return (
+                <div key={msg.id} className="border-b border-[#F0F0F0] bg-white px-4 py-3">
+                  <div className="flex items-start gap-2.5">
+                    <JoinDesktopAvatar initials={initials} size="1.5rem" fontSize="0.5rem" />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
+                        <span className="text-[0.58rem] font-medium text-[#1E343A]">{msg.from}</span>
+                        <span className="text-[0.48rem] text-neutral-400">to {msg.to}</span>
+                      </div>
+                      <p className="mt-0.5 text-[0.48rem] text-neutral-400">{msg.time}</p>
+                      <div className="mt-2 space-y-0.5">
+                        {msg.lines.map((line) => (
+                          <p key={line} className="text-[0.56rem] leading-[1.5] text-neutral-600">
+                            {line}
+                          </p>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
@@ -341,7 +348,7 @@ function JoinDesktopNav({
       className={`flex w-[3.35rem] shrink-0 flex-col items-center border-r border-[#EEEAE3] bg-[#F7F6F3] py-3 ${config.paneGlassTw}`}
       style={config.paneStyle({ background: "#F7F6F3" })}
     >
-      <div className="mb-2 flex h-[1.85rem] w-[1.85rem] items-center justify-center rounded-[0.45rem] bg-white shadow-[0_1px_0_rgba(0,0,0,0.04)]">
+      <div className="mb-2 flex h-[1.85rem] w-[1.85rem] items-center justify-center rounded-[0.45rem] bg-white">
         <span className="text-[0.62rem] font-semibold tracking-tight text-[#D2774C]">D</span>
       </div>
       <div className="flex w-full flex-col items-center gap-0.5 px-1.5">{renderItems(JOIN_DESKTOP_NAV_MAIN)}</div>
@@ -375,9 +382,11 @@ function JoinDesktopInboxPane({ rows }: { rows: readonly InboxRow[] }) {
           </span>
         </div>
         <div className="min-h-0 flex-1 overflow-hidden">
-          {visibleRows.map((row) => (
-            <JoinDesktopInboxRow key={row.id} row={row} />
-          ))}
+          <div className="flex flex-col divide-y divide-[#F0F0F0]">
+            {visibleRows.map((row) => (
+              <JoinDesktopInboxRow key={row.id} row={row} />
+            ))}
+          </div>
         </div>
       </div>
       <JoinDesktopOpenEmailClipPane />
@@ -921,13 +930,13 @@ export function HeroTriagePreview({
         }}
       >
         <div
-          className={`${config.outerGlassTw} ${fontClassName} overflow-hidden`}
+          className={`${config.outerGlassTw} ${fontClassName} overflow-hidden${isJoinDesktop ? " shadow-none" : ""}`}
           style={{
             borderRadius: isJoinMobile ? "0 0 1rem 1rem" : theme === "light" ? "1rem" : isMobile ? "1.35rem" : "1.1rem",
             background: config.shellGradient,
             ...(isJoinMobile ? { width: JOIN_MOBILE_HERO_TRIAGE_PANEL.panelWidth } : {}),
-            ...(theme === "light"
-              ? {}
+            ...(theme === "light" || isJoinDesktop
+              ? { boxShadow: "none", filter: "none" }
               : {
                   border: `1px solid ${colors.shellBorder}`,
                   boxShadow: "inset 0 1px 0 rgba(255,228,196,0.1)",
