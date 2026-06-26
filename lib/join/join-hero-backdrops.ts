@@ -43,6 +43,11 @@ export const JOIN_HERO_EXTRA_BANDS: readonly JoinHeroBandConfig[] = [
     id: "tools",
     showInbox: false,
     headline: ["Rebuilding healthcare", "communication"],
+    description: [
+      "Doe differentiates from existing AI in patient care by letting providers fully customize their experience. They can build new tools connected to their clinic's integrations through a no-code, visual-first interface and shape the product around their own workflow.",
+      "Doe will offer front-desk triage and a voice assistant, handle patient intake, and process all incoming documents.",
+      "During live patient encounters, Doe provides tools to automate documentation, surface clinical evidence, and pull patient information. It is built for doctors as multi-faceted people whose work extends far beyond the clinic.",
+    ],
     backdrop: DOEPHONE_COMMUNICATION_SLIDES[3].backdrop,
   },
   {
