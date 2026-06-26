@@ -55,6 +55,10 @@ export const JOIN_HERO_EXTRA_BANDS: readonly JoinHeroBandConfig[] = [
     showInbox: false,
     surface: "beige",
     headline: ["Co-Founders"],
+    description: [
+      "We're seeking technical talent from around the world to help build Doe. If you care about healthcare, AI, and giving providers real control over the tools they use every day, we want to hear from you.",
+      "We are currently fundraising with US and Canadian backers who share our belief that better clinical communication starts with software providers can shape themselves.",
+    ],
     backdrop: DOEPHONE_COMMUNICATION_SLIDES[5].backdrop,
   },
   {
