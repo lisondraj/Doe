@@ -21,6 +21,33 @@ const JOIN_HERO_HEADLINE_MOBILE =
 
 const JOIN_HERO_HEADLINE_DESKTOP = "text-[clamp(2.85rem,4.8vw,4.35rem)]";
 
+const JOIN_HERO_TOP_LEFT_PAD =
+  "pt-8 px-8 iphone-page:pt-[clamp(2rem,1.65rem+1.45vmin,2.6rem)] iphone-page:px-[clamp(2rem,1.65rem+1.45vmin,2.6rem)]";
+
+const JOIN_HERO_DESCRIPTION_MOBILE =
+  "max-w-[min(100%,13.5rem)] text-[clamp(0.98rem,3.9vw,1.18rem)] font-normal leading-[1.5] tracking-[-0.012em] text-white/95 iphone-page:max-w-[min(100%,14.5rem)]";
+
+const JOIN_HERO_DESCRIPTION_DESKTOP =
+  "max-w-[min(100%,22em)] text-[clamp(1.08rem,1.55vw,1.34rem)] font-normal leading-[1.52] tracking-[-0.014em] text-white/95";
+
+function JoinHeroDescription({
+  text,
+  variant,
+}: {
+  text: string;
+  variant: "mobile" | "desktop";
+}) {
+  const textClass = variant === "mobile" ? JOIN_HERO_DESCRIPTION_MOBILE : JOIN_HERO_DESCRIPTION_DESKTOP;
+
+  return (
+    <p
+      className={`absolute left-0 top-0 z-[3] text-left ${JOIN_HERO_TOP_LEFT_PAD} ${textClass} ${suisseIntl.className}`}
+    >
+      {text}
+    </p>
+  );
+}
+
 function JoinHeroHeadline({
   titleClass,
   lines,
@@ -47,11 +74,13 @@ export function JoinInternshipHero({
   backdrop = JOIN_HERO_PRIMARY_BACKDROP,
   showInbox = true,
   headline = JOIN_HERO_BANDS[0].headline,
+  description,
 }: {
   variant: "mobile" | "desktop";
   backdrop?: WorkflowCarouselDesignBackdropConfig;
   showInbox?: boolean;
   headline?: readonly [string] | readonly [string, string];
+  description?: string;
 }) {
   const heightClass = variant === "mobile" ? JOIN_MOBILE_HERO_CARD_HEIGHT : JOIN_DESKTOP_HERO_HEIGHT;
   const titleClass = variant === "mobile" ? JOIN_HERO_HEADLINE_MOBILE : JOIN_HERO_HEADLINE_DESKTOP;
@@ -67,6 +96,8 @@ export function JoinInternshipHero({
       />
 
       <JoinHeroHeadline titleClass={titleClass} lines={headline} />
+
+      {description ? <JoinHeroDescription text={description} variant={variant} /> : null}
 
       {showInbox && variant === "mobile" ? (
         <HeroTriagePreview

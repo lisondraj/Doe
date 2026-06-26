@@ -7,6 +7,8 @@ export type JoinHeroBandConfig = {
   showInbox: boolean;
   /** Bottom-left headline — one or two lines max. */
   headline: readonly [string] | readonly [string, string];
+  /** Top-left paragraph — primary hero only. */
+  description?: string;
 };
 
 /** Primary join hero — Agents dot grid (existing top box). */
@@ -39,6 +41,8 @@ export const JOIN_HERO_BANDS: readonly JoinHeroBandConfig[] = [
     id: "agents",
     showInbox: true,
     headline: ["Let's rebuild", "healthcare."],
+    description:
+      "Doe is an all-in-one healthcare communication layer built on top of health providers' existing inboxes. It automates every touchpoint in a patient's healthcare journey — from intake and scheduling to follow-ups and care coordination — without replacing the tools teams already trust.",
     backdrop: JOIN_HERO_PRIMARY_BACKDROP,
   },
   ...JOIN_HERO_EXTRA_BANDS,
