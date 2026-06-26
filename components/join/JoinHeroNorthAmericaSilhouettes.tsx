@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * Canada + USA silhouettes.
  * Uses SVG <mask> + <feComponentTransfer> invert filter so the black-on-white
@@ -5,6 +7,7 @@
  * white background → transparent).
  */
 import { useId } from "react";
+import { useJoinHeroScrollReveal } from "@/lib/join/use-join-hero-scroll-reveal";
 
 const GRADIENT_STOPS = [
   { offset: "0%",   color: "#E7A944" },
@@ -39,6 +42,7 @@ const ORBIT = Array.from({ length: 6 }, (_, i) => {
 
 export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile" | "desktop" }) {
   const id = useId().replace(/:/g, "");
+  const { ref, revealed } = useJoinHeroScrollReveal();
 
   const wrapperClass =
     variant === "mobile"
@@ -52,7 +56,7 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
   const invertF = `${id}-invert`;
 
   return (
-    <div className={wrapperClass} aria-hidden>
+    <div ref={ref} className={wrapperClass} aria-hidden>
       <svg
         viewBox={`${VOX} ${VOY} ${VW} ${VH}`}
         fill="none"
@@ -61,7 +65,6 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
         style={{ overflow: "visible" }}
       >
         <defs>
-          {/* Invert filter — turns black-on-white silhouette into white-on-black so SVG mask shows the country */}
           <filter id={invertF} colorInterpolationFilters="sRGB">
             <feComponentTransfer>
               <feFuncR type="linear" slope="-1" intercept="1" />
@@ -70,7 +73,6 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
             </feComponentTransfer>
           </filter>
 
-          {/* Orange gradient — shared */}
           <linearGradient id={caGrad} x1="0%" y1="0%" x2="100%" y2="100%">
             {GRADIENT_STOPS.map((s) => (
               <stop key={s.offset} offset={s.offset} stopColor={s.color} />
@@ -82,7 +84,6 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
             ))}
           </linearGradient>
 
-          {/* Canada mask — image inverted so black country = white (visible) in mask */}
           <mask id={caMask}>
             <image
               href="/images/canada-map.jpg"
@@ -93,7 +94,6 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
             />
           </mask>
 
-          {/* USA mask */}
           <mask id={usMask}>
             <image
               href="/images/usa-map.jpg"
@@ -105,38 +105,20 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
           </mask>
         </defs>
 
-        {/* Country fills — rects filled with gradient, clipped to each mask */}
         <rect x={CA.x} y={CA.y} width={CA.w} height={CA.h} fill={`url(#${caGrad})`} mask={`url(#${caMask})`} />
         <rect x={US.x} y={US.y} width={US.w} height={US.h} fill={`url(#${usGrad})`} mask={`url(#${usMask})`} />
 
-        {/* Animation + hover styles — scoped to this instance */}
         <style>{`
-          @keyframes ${id}-unblur {
-            from { filter: blur(8px); opacity: 0; transform: translateY(6px); }
-            to   { filter: blur(0px); opacity: 1; transform: translateY(0px);  }
-          }
-          .${id}-box {
-            pointer-events: auto;
-            transform-box: fill-box;
-            transform-origin: center;
-            animation: ${id}-unblur 0.55s cubic-bezier(0.22,1,0.36,1) both;
-            transition: filter 0.28s ease, transform 0.28s cubic-bezier(0.22,1,0.36,1);
-          }
           .${id}-box rect {
             stroke: none;
           }
-          .${id}-box:hover {
-            filter: blur(0px);
-            transform: translateY(-7px);
-          }
         `}</style>
 
-        {/* White orbit boxes — each wrapped in <g> for CSS transitions */}
         {ORBIT.map((pt, i) => (
           <g
             key={`box-${i}`}
-            className={`${id}-box`}
-            style={{ animationDelay: `${i * 0.07}s` }}
+            className={`join-hero-box-reveal ${id}-box${revealed ? " join-hero-box-reveal--in" : ""}`}
+            style={{ animationDelay: revealed ? `${i * 70}ms` : undefined }}
           >
             <rect
               x={pt.x - BOX_W / 2} y={pt.y - BOX_H / 2}

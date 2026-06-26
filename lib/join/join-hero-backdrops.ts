@@ -28,7 +28,7 @@ export const JOIN_HERO_ORANGE_RADIAL_BACKDROP: WorkflowCarouselDesignBackdrop = 
   gradient: "radial-gradient(circle at center, #C47A5A 0%, #D2774C 58%, #D49D4F 100%)",
   grid: "polar",
   polarCenterY: "50%",
-  lineOverlayOpacity: 0.06,
+  lineOverlayOpacity: 0.03,
 };
 
 /** Three additional hero bands — varied gradients and line overlays, no inbox UI. */
@@ -61,18 +61,18 @@ export const JOIN_HERO_EXTRA_BANDS: readonly JoinHeroBandConfig[] = [
   {
     id: "integrate",
     showInbox: false,
-    surface: "beige",
+    decoration: "co-founders-cards",
     headline: ["Where we're at", "right now."],
     description: [
       "We're seeking technical talent from around the world to help build Doe. If you care about healthcare, AI, and giving providers real control over the tools they use every day, we want to hear from you.",
       "We are currently fundraising with US and Canadian backers who share our belief that better clinical communication starts with software providers can shape themselves.",
     ],
-    backdrop: DOEPHONE_COMMUNICATION_SLIDES[5].backdrop,
+    backdrop: JOIN_HERO_ORANGE_RADIAL_BACKDROP,
   },
   {
     id: "join",
     showInbox: false,
-    decoration: "co-founders-cards",
+    surface: "beige",
     headline: ["Co-Founders"],
     description: [
       "James and Matthew Lisondra are brothers who have been building together since they were young. As Doe's co-founders, they bring complementary experiences to launching health tech products, combining clinical insight with deep technical execution.",
@@ -80,7 +80,7 @@ export const JOIN_HERO_EXTRA_BANDS: readonly JoinHeroBandConfig[] = [
       "Matthew Lisondra brings a PhD background through the University of Toronto, with experience in physics, robotics engineering, AI, and computer science.",
       "Both have published in scholarly journals on healthcare access, AI, and computer science, and have presented at international conferences.",
     ],
-    backdrop: JOIN_HERO_ORANGE_RADIAL_BACKDROP,
+    backdrop: DOEPHONE_COMMUNICATION_SLIDES[5].backdrop,
   },
 ] as const;
 

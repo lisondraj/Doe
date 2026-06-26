@@ -1,5 +1,8 @@
-import type { ReactNode } from "react";
+"use client";
+
+import type { CSSProperties, ReactNode } from "react";
 import { suisseIntl } from "@/lib/home/fonts";
+import { useJoinHeroScrollReveal } from "@/lib/join/use-join-hero-scroll-reveal";
 
 const FS = "clamp(0.76rem, 0.98vw, 0.92rem)";
 const FS_SM = "clamp(0.62rem, 0.76vw, 0.74rem)";
@@ -10,13 +13,18 @@ function GlassCard({
   children,
   style,
   opacity = 0.32,
+  revealIndex,
+  revealed,
 }: {
   children: ReactNode;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
   opacity?: number;
+  revealIndex: number;
+  revealed: boolean;
 }) {
   return (
     <div
+      className={`join-hero-box-reveal${revealed ? " join-hero-box-reveal--in" : ""}`}
       style={{
         position: "absolute",
         borderRadius: "1.2rem",
@@ -24,6 +32,7 @@ function GlassCard({
         background: `rgba(255,255,255,${opacity})`,
         padding: "1.15rem 1.25rem",
         color: "#FFFFFF",
+        animationDelay: revealed ? `${revealIndex * 70}ms` : undefined,
         ...style,
       }}
     >
@@ -82,12 +91,15 @@ function AgentIcon() {
   );
 }
 
-/** Layered glass cards — clinic scheduling / EMR UI mock (Co-Founders band). */
+/** Layered glass cards — clinic scheduling / EMR UI mock (join hero band). */
 export function JoinHeroCoFoundersCards({ variant }: { variant: "mobile" | "desktop" }) {
+  const { ref, revealed } = useJoinHeroScrollReveal();
+
   if (variant === "mobile") return null;
 
   return (
     <div
+      ref={ref}
       className={`pointer-events-none absolute z-[2] ${suisseIntl.className}`}
       aria-hidden
       style={{
@@ -98,8 +110,7 @@ export function JoinHeroCoFoundersCards({ variant }: { variant: "mobile" | "desk
         height: "min(36rem, 92%)",
       }}
     >
-      {/* Top — appointment details card (anchor) */}
-      <GlassCard style={{ top: "0%", left: "6%", width: "74%", zIndex: 1 }} opacity={0.13}>
+      <GlassCard revealIndex={0} revealed={revealed} style={{ top: "0%", left: "6%", width: "74%", zIndex: 1 }} opacity={0.13}>
         <CardHeader title="Appointment details" action="Manage visit ›" />
         <p style={{ fontSize: FS_LG, fontWeight: 500, marginBottom: "0.75rem", letterSpacing: "-0.01em" }}>
           Sarah Chen, annual physical
@@ -118,19 +129,16 @@ export function JoinHeroCoFoundersCards({ variant }: { variant: "mobile" | "desk
         </div>
       </GlassCard>
 
-      {/* Top right — schedule metrics, overlapping background */}
-      <GlassCard style={{ top: "0%", left: "52%", width: "50%", zIndex: 2 }} opacity={0.11}>
+      <GlassCard revealIndex={1} revealed={revealed} style={{ top: "0%", left: "52%", width: "50%", zIndex: 2 }} opacity={0.11}>
         <ProgressRow label="Open slots today" pct="68%" />
         <ProgressRow label="Intake forms sent" pct="41%" />
       </GlassCard>
 
-      {/* Left — chart chip */}
-      <GlassCard style={{ top: "30%", left: "0%", width: "auto", zIndex: 4, padding: "0.62rem 0.9rem" }} opacity={0.1}>
+      <GlassCard revealIndex={2} revealed={revealed} style={{ top: "30%", left: "0%", width: "auto", zIndex: 4, padding: "0.62rem 0.9rem" }} opacity={0.1}>
         <span style={{ fontSize: FS_SM, opacity: 0.7 }}>Open chart ›</span>
       </GlassCard>
 
-      {/* Center — primary scheduling agent card */}
-      <GlassCard style={{ top: "24%", left: "0%", width: "64%", zIndex: 6 }} opacity={0.46}>
+      <GlassCard revealIndex={3} revealed={revealed} style={{ top: "24%", left: "0%", width: "64%", zIndex: 6 }} opacity={0.46}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem" }}>
           <AgentIcon />
           <span style={{ fontSize: FS, fontWeight: 500 }}>Scheduling Agent</span>
@@ -140,8 +148,7 @@ export function JoinHeroCoFoundersCards({ variant }: { variant: "mobile" | "desk
         </p>
       </GlassCard>
 
-      {/* Bottom center — EMR integrations */}
-      <GlassCard style={{ top: "58%", left: "10%", width: "68%", zIndex: 3 }} opacity={0.12}>
+      <GlassCard revealIndex={4} revealed={revealed} style={{ top: "58%", left: "10%", width: "68%", zIndex: 3 }} opacity={0.12}>
         <CardHeader title="Integrations" action="Manage ›" />
         <p style={{ fontSize: FS, marginBottom: "0.65rem", opacity: 0.88 }}>Epic EHR • Insurance API • Clinic scheduler</p>
         <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
@@ -152,8 +159,7 @@ export function JoinHeroCoFoundersCards({ variant }: { variant: "mobile" | "desk
         </div>
       </GlassCard>
 
-      {/* Bottom right — next appointment */}
-      <GlassCard style={{ top: "70%", left: "56%", width: "40%", zIndex: 5 }} opacity={0.15}>
+      <GlassCard revealIndex={5} revealed={revealed} style={{ top: "70%", left: "56%", width: "40%", zIndex: 5 }} opacity={0.15}>
         <p style={{ fontSize: FS_SM, opacity: 0.6, marginBottom: "0.25rem" }}>Next in queue</p>
         <p style={{ fontSize: FS_XL, fontWeight: 500, letterSpacing: "-0.02em", lineHeight: 1.1 }}>10:30 AM</p>
         <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", marginTop: "0.5rem" }}>
@@ -165,8 +171,7 @@ export function JoinHeroCoFoundersCards({ variant }: { variant: "mobile" | "desk
         </div>
       </GlassCard>
 
-      {/* Bottom left — reschedule chip */}
-      <GlassCard style={{ top: "78%", left: "0%", width: "auto", zIndex: 2, padding: "0.62rem 0.9rem" }} opacity={0.09}>
+      <GlassCard revealIndex={6} revealed={revealed} style={{ top: "78%", left: "0%", width: "auto", zIndex: 2, padding: "0.62rem 0.9rem" }} opacity={0.09}>
         <span style={{ fontSize: FS_SM, opacity: 0.65 }}>Reschedule ›</span>
       </GlassCard>
     </div>

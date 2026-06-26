@@ -481,6 +481,40 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
   animation: doephone-hero-headline-in 1.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
+/* Join hero decorative boxes — scroll-triggered rise + hover lift. */
+@keyframes join-hero-box-rise-in {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+.join-hero-box-reveal {
+  opacity: 0;
+  filter: blur(8px);
+  transform: translateY(10px);
+  transform-box: fill-box;
+  transform-origin: center;
+  pointer-events: auto;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), filter 0.28s ease;
+}
+
+.join-hero-box-reveal--in {
+  animation: join-hero-box-rise-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.join-hero-box-reveal--in:hover {
+  filter: blur(0);
+  transform: translateY(-7px);
+}
+
 /* /join apply card — individual answered field animates in from the right. */
 @keyframes join-card-field-in {
   from {
@@ -820,6 +854,16 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
 
   .hero-mission-caret-bar {
     opacity: 1;
+  }
+
+  .join-hero-box-reveal {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+
+  .join-hero-box-reveal--in {
+    animation: none;
   }
 }
 
