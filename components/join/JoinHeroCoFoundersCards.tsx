@@ -2,7 +2,11 @@
 
 import type { CSSProperties, ReactNode } from "react";
 import { suisseIntl } from "@/lib/home/fonts";
-import { useJoinHeroScrollReveal } from "@/lib/join/use-join-hero-scroll-reveal";
+import {
+  joinHeroBoxRevealClass,
+  joinHeroBoxRevealDelay,
+  useJoinHeroScrollReveal,
+} from "@/lib/join/use-join-hero-scroll-reveal";
 import type { WorkflowCarouselSurface } from "@/lib/workflow-carousel-design-backdrops";
 
 const FS = "clamp(0.72rem, 0.92vw, 0.86rem)";
@@ -81,13 +85,13 @@ function GlassCard({
 }) {
   return (
     <div
-      className={`join-hero-box-reveal${revealed ? " join-hero-box-reveal--in" : ""}`}
+      className={joinHeroBoxRevealClass(revealed)}
       style={{
         borderRadius: "1.1rem",
         background: theme.glass(opacity),
         padding: compact ? "0.58rem 0.85rem" : "0.95rem 1.05rem",
         color: theme.ink,
-        animationDelay: revealed ? `${revealIndex * 70}ms` : undefined,
+        animationDelay: joinHeroBoxRevealDelay(revealed, revealIndex),
         minWidth: 0,
         ...style,
       }}

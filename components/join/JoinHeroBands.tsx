@@ -5,11 +5,19 @@ import { JoinInternTrackReveal } from "@/components/join/JoinInternTrackReveal";
 import { JOIN_HERO_BANDS } from "@/lib/join/join-hero-backdrops";
 import { JOIN_MOBILE_SECTION_STACK_GAP } from "@/lib/join/join-layout";
 
+import type { JoinHeroBandConfig } from "@/lib/join/join-hero-backdrops";
+
 /** Stacked join hero bands — primary with inbox UI, four gradient/beige variants below. */
-export function JoinHeroBands({ variant }: { variant: "mobile" | "desktop" }) {
+export function JoinHeroBands({
+  variant,
+  bands = JOIN_HERO_BANDS,
+}: {
+  variant: "mobile" | "desktop";
+  bands?: readonly JoinHeroBandConfig[];
+}) {
   return (
     <div className={`flex w-full flex-col ${JOIN_MOBILE_SECTION_STACK_GAP}`}>
-      {JOIN_HERO_BANDS.map((band) => (
+      {bands.map((band) => (
         <JoinInternTrackReveal
           key={band.id}
           variant={variant}

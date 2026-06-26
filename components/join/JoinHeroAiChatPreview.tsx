@@ -1,4 +1,11 @@
+"use client";
+
 import { suisseIntl } from "@/lib/home/fonts";
+import {
+  joinHeroBoxRevealClass,
+  joinHeroBoxRevealDelay,
+  useJoinHeroScrollReveal,
+} from "@/lib/join/use-join-hero-scroll-reveal";
 import type { CSSProperties } from "react";
 
 const FS_BUBBLE = "clamp(0.84rem, 1.08vw, 0.95rem)";
@@ -101,18 +108,6 @@ function LoadingWheel() {
 function AiResultPreview() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "0.42rem", width: "100%" }}>
-      <div style={{ display: "flex", flexDirection: "column", gap: "0.18rem" }}>
-        {INTEGRATIONS.map((label) => (
-          <div
-            key={label}
-            style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem" }}
-          >
-            <span style={{ fontSize: FS_BUBBLE, color: DOE_ORANGE_TEXT }}>{label}</span>
-            <IntegrationCheck />
-          </div>
-        ))}
-      </div>
-
       <div
         style={{
           borderRadius: "0.42rem",
@@ -125,6 +120,18 @@ function AiResultPreview() {
       >
         <LoadingWheel />
         <span style={{ fontSize: FS_BUBBLE, color: "#78716C" }}>Building pre-visit intake...</span>
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.18rem" }}>
+        {INTEGRATIONS.map((label) => (
+          <div
+            key={label}
+            style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem" }}
+          >
+            <span style={{ fontSize: FS_BUBBLE, color: DOE_ORANGE_TEXT }}>{label}</span>
+            <IntegrationCheck />
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -150,10 +157,13 @@ const FS_SM = "clamp(0.72rem, 0.98vw, 0.84rem)";
 const PREVIEW_SCALE = 1.08;
 
 export function JoinHeroAiChatPreview({ variant }: { variant: "mobile" | "desktop" }) {
+  const { ref, revealed } = useJoinHeroScrollReveal();
+
   if (variant === "mobile") return null;
 
   return (
     <div
+      ref={ref}
       className={`pointer-events-none absolute z-[2] flex flex-col ${suisseIntl.className}`}
       aria-hidden
       style={{
@@ -173,9 +183,13 @@ export function JoinHeroAiChatPreview({ variant }: { variant: "mobile" | "deskto
           gap: "0.85rem",
         }}
       >
-        {MESSAGES.map((msg) =>
+        {MESSAGES.map((msg, msgIndex) =>
           msg.role === "user" ? (
-            <div key={msg.id} style={{ display: "flex", justifyContent: "flex-end" }}>
+            <div
+              key={msg.id}
+              className={joinHeroBoxRevealClass(revealed)}
+              style={{ animationDelay: joinHeroBoxRevealDelay(revealed, msgIndex), display: "flex", justifyContent: "flex-end" }}
+            >
               <div style={{ display: "flex", flexDirection: "column", maxWidth: "61.33%" }}>
                 <div style={{ display: "flex", alignItems: "stretch", gap: "0.55rem" }}>
                   <BubbleActionIcons />
@@ -195,7 +209,11 @@ export function JoinHeroAiChatPreview({ variant }: { variant: "mobile" | "deskto
               </div>
             </div>
           ) : (
-            <div key={msg.id} style={{ display: "flex", justifyContent: "flex-start" }}>
+            <div
+              key={msg.id}
+              className={joinHeroBoxRevealClass(revealed)}
+              style={{ animationDelay: joinHeroBoxRevealDelay(revealed, msgIndex), display: "flex", justifyContent: "flex-start" }}
+            >
               <div
                 style={{
                   display: "flex",
@@ -240,7 +258,9 @@ export function JoinHeroAiChatPreview({ variant }: { variant: "mobile" | "deskto
 
       {/* Input box — chatbox style with model selector and toolbar */}
       <div
+        className={joinHeroBoxRevealClass(revealed)}
         style={{
+          animationDelay: joinHeroBoxRevealDelay(revealed, MESSAGES.length),
           background: "#FFFFFF",
           borderRadius: "0.95rem",
           overflow: "hidden",

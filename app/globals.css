@@ -516,7 +516,7 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
 }
 
 .join-hero-box-reveal--in {
-  animation: join-hero-box-rise-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: join-hero-box-rise-in 0.78s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .join-hero-box-reveal--in:hover {

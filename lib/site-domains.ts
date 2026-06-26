@@ -6,6 +6,7 @@ export const PRIMARY_SITE_HOST =
 export const JOIN_SITE_HOST = process.env.JOIN_SITE_HOST ?? "doehealth.care";
 
 export const JOIN_PATH = "/join";
+export const WAITLIST_PATH = "/waitlist";
 
 const LOCAL_DEV_HOSTS = new Set(["localhost", "127.0.0.1"]);
 
@@ -50,6 +51,10 @@ export function joinSiteOrigin(protocol: "http" | "https" = "https"): string {
 
 export function joinPageUrl(protocol: "http" | "https" = "https"): string {
   return `${primarySiteOrigin(protocol)}${JOIN_PATH}`;
+}
+
+export function waitlistPageUrl(protocol: "http" | "https" = "https"): string {
+  return `${primarySiteOrigin(protocol)}${WAITLIST_PATH}`;
 }
 
 /**

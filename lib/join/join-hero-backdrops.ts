@@ -75,10 +75,9 @@ export const JOIN_HERO_EXTRA_BANDS: readonly JoinHeroBandConfig[] = [
     showInbox: false,
     headline: ["Co-Founders"],
     description: [
-      "James and Matthew Lisondra are brothers who have been building together since they were young. As Doe's co-founders, they bring complementary experiences to launching health tech products, combining clinical insight with deep technical execution.",
-      "James Lisondra brings a Doctor of Medicine (MD) background through the University of Ottawa, with experience in clinical medicine and healthcare delivery.",
-      "Matthew Lisondra brings a PhD background through the University of Toronto, with experience in physics, robotics engineering, AI, and computer science.",
-      "Both have published in scholarly journals on healthcare access, AI, and computer science, and have presented at international conferences.",
+      "Brothers James and Matthew Lisondra co-founded Doe to pair clinical depth with technical execution in health tech.",
+      "James holds an MD from the University of Ottawa with experience in clinical medicine and healthcare delivery. Matthew holds a PhD from the University of Toronto with backgrounds in physics, robotics, AI, and computer science.",
+      "Both have published in scholarly journals and presented at international conferences.",
     ],
     backdrop: JOIN_HERO_ORANGE_RADIAL_BACKDROP,
   },

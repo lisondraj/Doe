@@ -1,65 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
 import { JoinDesktopView } from "@/components/join/JoinDesktopView";
 import { JoinMobileView } from "@/components/join/JoinMobileView";
+import { useJoinPageVariant, type JoinPageVariant } from "@/lib/join/use-join-page-variant";
 
-type Variant = "phone" | "desktop";
-const QUERY = "(min-width: 1024px)";
-
-export function JoinRouter({ initialVariant }: { initialVariant: Variant }) {
-  const [variant, setVariant] = useState<Variant>(initialVariant);
-
-  useEffect(() => {
-    const mq = window.matchMedia(QUERY);
-    const sync = () => setVariant(mq.matches ? "desktop" : "phone");
-    sync();
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, []);
-
-  useEffect(() => {
-    if (variant !== "phone") return;
-
-    const html = document.documentElement;
-    const meta = document.querySelector('meta[name="viewport"]');
-    const prevViewport = meta?.getAttribute("content") ?? "";
-    const pinchViewport =
-      "width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover";
-
-    html.setAttribute("data-doephone-pinching", "true");
-    meta?.setAttribute("content", pinchViewport);
-
-    return () => {
-      html.removeAttribute("data-doephone-pinching");
-      if (meta) {
-        if (prevViewport) meta.setAttribute("content", prevViewport);
-        else meta.removeAttribute("content");
-      }
-    };
-  }, [variant]);
-
-  useEffect(() => {
-    const html = document.documentElement;
-    const body = document.body;
-
-    if (variant === "desktop") {
-      html.removeAttribute("data-doeforvc-always-phone");
-      html.setAttribute("data-layout", "desktop");
-      body.classList.add("desktop-route");
-    } else {
-      html.setAttribute("data-doeforvc-always-phone", "true");
-      html.removeAttribute("data-layout");
-      body.classList.remove("desktop-route");
-    }
-
-    return () => {
-      html.setAttribute("data-doeforvc-always-phone", "true");
-      html.removeAttribute("data-layout");
-      body.classList.remove("desktop-route");
-    };
-  }, [variant]);
+export function JoinRouter({ initialVariant }: { initialVariant: JoinPageVariant }) {
+  const variant = useJoinPageVariant(initialVariant);
 
   return variant === "desktop" ? <JoinDesktopView /> : <JoinMobileView />;
 }

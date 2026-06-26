@@ -1,16 +1,14 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import {
-  JOIN_PATH,
   isJoinHost,
-  isPrimaryHost,
   joinPageUrl,
   shouldEnforceDomainRouting,
 } from "@/lib/site-domains";
 
 export function middleware(request: NextRequest) {
   const host = request.headers.get("host") ?? "";
-  const { pathname, search } = request.nextUrl;
+  const { search } = request.nextUrl;
 
   if (!shouldEnforceDomainRouting(host)) {
     return NextResponse.next();
@@ -22,15 +20,6 @@ export function middleware(request: NextRequest) {
     const url = new URL(joinPageUrl(proto));
     url.search = search;
     return NextResponse.redirect(url, 308);
-  }
-
-  if (isPrimaryHost(host)) {
-    if (pathname === "/waitlist" || pathname.startsWith("/waitlist/")) {
-      const url = request.nextUrl.clone();
-      url.pathname = JOIN_PATH;
-      url.search = search;
-      return NextResponse.redirect(url, 308);
-    }
   }
 
   return NextResponse.next();
