@@ -163,10 +163,10 @@ export function getHeroTriageThemeConfig(theme: HeroTriageTheme): HeroTriageThem
   };
 }
 
-/** Join hero — panel inset from right so thread column stays inside the orange box clip. */
+/** Join hero — wide panel clipped on right and bottom inside the orange box. */
 export const JOIN_HERO_TRIAGE_PANEL = {
   top: "11%",
-  right: "3%",
+  right: "calc(min(54rem, 94%) / -2)",
   bottom: "-2rem",
   width: "min(54rem, 94%)",
 } as const;

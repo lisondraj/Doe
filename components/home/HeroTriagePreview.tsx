@@ -272,7 +272,7 @@ function JoinDesktopInboxRow({ row }: { row: InboxRow }) {
 
 function JoinDesktopPreviewPane({ row }: { row: InboxRow }) {
   return (
-    <div className="flex min-h-0 min-w-0 w-[34%] shrink-0 flex-col border-r border-[#EEEAE3] bg-[#FAFAF8]">
+    <div className="flex min-h-0 min-w-0 flex-1 flex-col border-r border-[#EEEAE3] bg-[#FAFAF8]">
       <div className="border-b border-[#F0F0F0] px-4 py-3.5">
         <h3 className="text-[0.82rem] font-semibold leading-snug tracking-tight text-[#1E343A]">{row.subject}</h3>
         <p className="mt-1 text-[0.5rem] text-neutral-500">
@@ -293,7 +293,7 @@ function JoinDesktopThreadPane() {
   const threadMessages = EMAIL_THREAD.slice(1, 4);
 
   return (
-    <div className="relative z-[1] flex min-h-0 min-w-0 w-[32%] shrink-0 flex-col bg-white">
+    <div className="flex h-full min-h-0 w-full flex-col bg-white">
       <div className="border-b border-[#F0F0F0] bg-white px-3.5 py-3">
         <p className="text-[0.64rem] font-semibold tracking-tight text-[#1E343A]">Follow-up visit</p>
         <p className="mt-0.5 text-[0.48rem] text-neutral-500">Maria Rodriguez · 4 messages</p>
@@ -402,8 +402,8 @@ function JoinDesktopInboxPane({ rows }: { rows: readonly InboxRow[] }) {
   const visibleRows = rows.slice(Math.max(0, selectedIndex - 2), selectedIndex + 5);
 
   return (
-    <div className="flex min-h-0 min-w-0 flex-1">
-      <div className="flex w-[26%] shrink-0 flex-col bg-white">
+    <div className="flex min-h-0 min-w-0 w-full flex-1 pr-[34%]">
+      <div className="flex w-[24%] shrink-0 flex-col bg-white">
         <div className="flex items-center justify-between border-b border-[#F0F0F0] px-3.5 py-2.5">
           <div className="flex items-center gap-1.5">
             <HeroInboxIcon
@@ -423,7 +423,6 @@ function JoinDesktopInboxPane({ rows }: { rows: readonly InboxRow[] }) {
         </div>
       </div>
       <JoinDesktopPreviewPane row={selected} />
-      <JoinDesktopThreadPane />
     </div>
   );
 }
@@ -980,17 +979,20 @@ export function HeroTriagePreview({
           }}
         >
           <div
-            className={`flex h-full ${config.innerGlassTw}`}
+            className={`flex h-full w-full ${config.innerGlassTw}`}
             style={{
               minHeight: isMobile ? mobileInnerMinHeight : isJoinDesktop ? "26rem" : isSimple ? "24rem" : "18rem",
               background: config.innerGradient,
             }}
           >
             {isJoinDesktop ? (
-              <>
+              <div className="relative flex min-h-0 min-w-0 w-full flex-1">
                 <JoinDesktopNav config={config} />
                 <JoinDesktopInboxPane rows={INBOX_ROWS} />
-              </>
+                <div className="absolute bottom-0 right-0 top-0 z-[4] w-[34%] min-w-[10.5rem] max-w-[14rem] border-l border-[#EEEAE3] bg-white">
+                  <JoinDesktopThreadPane />
+                </div>
+              </div>
             ) : (
               <>
             {/* Collapsed vertical nav — icons only */}
