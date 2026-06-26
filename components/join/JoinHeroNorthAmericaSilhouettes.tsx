@@ -16,21 +16,23 @@ const GRADIENT_STOPS = [
   { offset: "100%", color: "#C47A5A" },
 ] as const;
 
-const VW = 400;
-const VH = 430;
+const VW = 480;
+const VH = 510;
+const VOX = -40;
+const VOY = -40;
 
 // Canada occupies the top half, USA the bottom — expanded to fill viewBox
 const CA = { x: 6,  y: 0,   w: 388, h: 218 };
 const US = { x: 2,  y: 218, w: 396, h: 212 };
 
 // Composition center for orbit layout
-const CX = VW / 2;
-const CY = VH / 2;
-const R  = 168;
+const CX = 200;
+const CY = 215;
+const R  = 162;
 
-const BOX_W = 128;
-const BOX_H = 82;
-const BOX_RX = 12;
+const BOX_W = 140;
+const BOX_H = 90;
+const BOX_RX = 13;
 
 const ORBIT = Array.from({ length: 6 }, (_, i) => {
   const a = -Math.PI / 2 + (i * 2 * Math.PI) / 6;
@@ -62,8 +64,8 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
 
   const wrapperClass =
     variant === "mobile"
-      ? "pointer-events-none absolute right-[clamp(4rem,10vw,8rem)] top-[42%] z-[2] -translate-y-1/2 w-[min(68%,19rem)]"
-      : "pointer-events-none absolute right-[clamp(10rem,22vw,17rem)] top-1/2 z-[2] -translate-y-1/2 w-[min(60%,42rem)]";
+      ? "pointer-events-none absolute right-[clamp(3rem,8vw,6rem)] top-[42%] z-[2] -translate-y-1/2 w-[min(68%,19rem)] overflow-visible"
+      : "pointer-events-none absolute right-[clamp(7rem,16vw,13rem)] top-1/2 z-[2] -translate-y-1/2 w-[min(60%,42rem)] overflow-visible";
 
   const caGrad  = `${id}-ca-grad`;
   const usGrad  = `${id}-us-grad`;
@@ -74,10 +76,11 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
   return (
     <div className={wrapperClass} aria-hidden>
       <svg
-        viewBox={`0 0 ${VW} ${VH}`}
+        viewBox={`${VOX} ${VOY} ${VW} ${VH}`}
         fill="none"
         preserveAspectRatio="xMidYMid meet"
-        className="h-full w-full"
+        className="h-full w-full overflow-visible"
+        style={{ overflow: "visible" }}
       >
         <defs>
           {/* Invert filter — turns black-on-white silhouette into white-on-black so SVG mask shows the country */}
