@@ -228,41 +228,43 @@ function JoinDesktopAvatar({
 function JoinDesktopInboxRow({ row }: { row: InboxRow }) {
   const selected = Boolean(row.selected);
   return (
-    <div
-      className="flex items-start gap-2.5"
-      style={{
-        margin: selected ? "0.18rem 0.32rem" : "0 0.32rem",
-        padding: selected ? "0.58rem 0.62rem" : "0.52rem 0.62rem",
-        borderRadius: selected ? "0.42rem" : undefined,
-        background: selected ? JOIN_DESKTOP_SELECTED_ORANGE : "transparent",
-        borderBottom: selected ? "none" : "1px solid #F2F0EC",
-      }}
-    >
-      <JoinDesktopAvatar initials={row.initials} selected={selected} row={row} size="1.62rem" fontSize="0.54rem" />
-      <div className="min-w-0 flex-1">
-        <div className="flex items-baseline justify-between gap-2">
-          <span
-            className="truncate text-[0.6rem] font-medium tracking-tight"
-            style={{ color: selected ? "#FFFFFF" : JOIN_FORM_BEIGE.ink }}
+    <div className={selected ? "border-b border-[#E8E4DD] pb-2" : ""}>
+      <div
+        className="flex items-start gap-2.5"
+        style={{
+          margin: selected ? "0.18rem 0.32rem 0" : "0 0.32rem",
+          padding: selected ? "0.58rem 0.62rem" : "0.52rem 0.62rem",
+          borderRadius: selected ? "0.42rem" : undefined,
+          background: selected ? JOIN_DESKTOP_SELECTED_ORANGE : "transparent",
+          borderBottom: selected ? "none" : "1px solid #F2F0EC",
+        }}
+      >
+        <JoinDesktopAvatar initials={row.initials} selected={selected} row={row} size="1.62rem" fontSize="0.54rem" />
+        <div className="min-w-0 flex-1">
+          <div className="flex items-baseline justify-between gap-2">
+            <span
+              className="truncate text-[0.6rem] font-medium tracking-tight"
+              style={{ color: selected ? "#FFFFFF" : JOIN_FORM_BEIGE.ink }}
+            >
+              {row.sender}
+            </span>
+            <span
+              className="shrink-0 text-[0.46rem] font-normal tabular-nums"
+              style={{ color: selected ? "rgba(255,255,255,0.78)" : "#A8A29E" }}
+            >
+              {row.time}
+            </span>
+          </div>
+          <p
+            className="mt-0.5 truncate text-[0.54rem] font-medium"
+            style={{ color: selected ? "rgba(255,255,255,0.94)" : "#1E343A" }}
           >
-            {row.sender}
-          </span>
-          <span
-            className="shrink-0 text-[0.46rem] font-normal tabular-nums"
-            style={{ color: selected ? "rgba(255,255,255,0.78)" : "#A8A29E" }}
-          >
-            {row.time}
-          </span>
+            {row.subject}
+          </p>
+          {!selected ? (
+            <p className="mt-0.5 truncate text-[0.48rem] font-normal text-[#9A9590]">{row.preview}</p>
+          ) : null}
         </div>
-        <p
-          className="mt-0.5 truncate text-[0.54rem] font-medium"
-          style={{ color: selected ? "rgba(255,255,255,0.94)" : "#1E343A" }}
-        >
-          {row.subject}
-        </p>
-        {!selected ? (
-          <p className="mt-0.5 truncate text-[0.48rem] font-normal text-[#9A9590]">{row.preview}</p>
-        ) : null}
       </div>
     </div>
   );
