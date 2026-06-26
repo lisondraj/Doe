@@ -13,27 +13,28 @@ const GRADIENT_STOPS = [
   { offset: "100%", color: "#C47A5A" },
 ] as const;
 
-const VW = 1020;
-const VH = 900;
-const VOX = -310;
-const VOY = -240;
+const VW = 2100;
+const VH = 1960;
+const VOX = -860;
+const VOY = -760;
 
-// Canada occupies the top half, USA the bottom — expanded to fill viewBox
-const CA = { x: -43, y: -18, w: 486, h: 272 };
-const US = { x: -47, y: 254, w: 494, h: 268 };
+// Canada + USA centered on the orbit hub (CX, CY) — scaled up within box clearance
+const CA = { x: -225, y: -306, w: 850, h: 525 };
+const US = { x: -232, y: 219, w: 864, h: 517 };
 
-// Composition center for orbit layout — larger radius keeps boxes outside countries
+// Composition center for orbit layout — elliptical so top/bottom rings sit closer
 const CX = 200;
 const CY = 215;
-const R  = 368;
+const RX = 792;
+const RY = 713;
 
-const BOX_W = 242;
-const BOX_H = 152;
-const BOX_RX = 20;
+const BOX_W = 614;
+const BOX_H = 382;
+const BOX_RX = 51;
 
 const ORBIT = Array.from({ length: 6 }, (_, i) => {
   const a = -Math.PI / 2 + (i * 2 * Math.PI) / 6;
-  return { x: CX + R * Math.cos(a), y: CY + R * Math.sin(a) };
+  return { x: CX + RX * Math.cos(a), y: CY + RY * Math.sin(a) };
 });
 
 export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile" | "desktop" }) {
@@ -41,8 +42,8 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
 
   const wrapperClass =
     variant === "mobile"
-      ? "pointer-events-none absolute right-[clamp(0.5rem,2vw,1.5rem)] top-[42%] z-[2] -translate-y-1/2 w-[min(72%,22rem)] overflow-visible"
-      : "pointer-events-none absolute right-[clamp(1rem,4vw,3rem)] top-1/2 z-[2] -translate-y-1/2 w-[min(64%,48rem)] overflow-visible";
+      ? "pointer-events-none absolute right-[clamp(0.5rem,2vw,1.5rem)] top-[42%] z-[2] -translate-y-1/2 w-[min(78%,26rem)] overflow-visible"
+      : "pointer-events-none absolute right-[clamp(1rem,4vw,3rem)] top-1/2 z-[2] -translate-y-1/2 w-[min(72%,58rem)] overflow-visible";
 
   const caGrad  = `${id}-ca-grad`;
   const usGrad  = `${id}-us-grad`;
