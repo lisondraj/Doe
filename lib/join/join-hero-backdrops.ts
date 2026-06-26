@@ -45,7 +45,6 @@ export const JOIN_HERO_EXTRA_BANDS: readonly JoinHeroBandConfig[] = [
   {
     id: "tools",
     showInbox: false,
-    textAlign: "right",
     headline: ["Rebuilding healthcare", "communication."],
     description: [
       "Doe differentiates from existing AI in patient care by letting providers fully customize their experience. They can build new tools connected to their clinic's integrations through a no-code, visual-first interface and shape the product around their own workflow.",
@@ -58,6 +57,7 @@ export const JOIN_HERO_EXTRA_BANDS: readonly JoinHeroBandConfig[] = [
     id: "integrate",
     showInbox: false,
     surface: "beige",
+    textAlign: "right",
     headline: ["Where we're at", "right now."],
     description: [
       "We're seeking technical talent from around the world to help build Doe. If you care about healthcare, AI, and giving providers real control over the tools they use every day, we want to hear from you.",
