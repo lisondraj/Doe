@@ -183,23 +183,23 @@ const JOIN_DESKTOP_NAV_BOTTOM: readonly JoinDesktopNavItem[] = [
 
 const JOIN_DESKTOP_SELECTED_ORANGE = "#D2774C";
 
-function FlatSenderMark({
+function JoinDesktopAvatar({
   initials,
   selected = false,
-  size = "1.75rem",
-  fontSize = "0.58rem",
-  square = true,
+  row,
+  size = "1.62rem",
+  fontSize = "0.54rem",
 }: {
   initials: string;
   selected?: boolean;
+  row?: Pick<InboxRow, "iconBg" | "iconColor">;
   size?: string;
   fontSize?: string;
-  square?: boolean;
 }) {
   return (
     <div
-      className={`flex shrink-0 items-center justify-center font-semibold ${square ? "rounded-lg" : "rounded-full"} ${
-        selected ? "" : HERO_TRIAGE_JOIN_AVATAR_FLAT
+      className={`flex shrink-0 items-center justify-center rounded-full font-semibold ${
+        !selected && !row ? HERO_TRIAGE_JOIN_AVATAR_FLAT : ""
       }`}
       style={{
         width: size,
@@ -211,7 +211,13 @@ function FlatSenderMark({
               color: "#FFFFFF",
               border: "1px solid rgba(255,255,255,0.26)",
             }
-          : {}),
+          : row
+            ? {
+                background: row.iconBg,
+                color: row.iconColor,
+                border: "1px solid #ECE8E1",
+              }
+            : {}),
       }}
     >
       {initials}
@@ -232,7 +238,7 @@ function JoinDesktopInboxRow({ row }: { row: InboxRow }) {
         borderBottom: selected ? "none" : "1px solid #F2F0EC",
       }}
     >
-      <FlatSenderMark initials={row.initials} selected={selected} size="1.62rem" fontSize="0.54rem" />
+      <JoinDesktopAvatar initials={row.initials} selected={selected} row={row} size="1.62rem" fontSize="0.54rem" />
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline justify-between gap-2">
           <span
@@ -282,43 +288,51 @@ function JoinDesktopPreviewPane({ row }: { row: InboxRow }) {
 }
 
 function JoinDesktopThreadPane() {
-  const messages = EMAIL_THREAD.slice(0, 2);
+  const threadMessages = EMAIL_THREAD.slice(1, 4);
 
   return (
     <div className="flex min-h-0 min-w-0 flex-[0.95] flex-col bg-white">
-      <div className="border-b border-[#F0F0F0] px-4 py-3">
-        <p className="text-[0.68rem] font-semibold tracking-tight text-[#1E343A]">Thread</p>
+      <div className="border-b border-[#F0F0F0] px-3.5 py-3">
+        <p className="text-[0.64rem] font-semibold tracking-tight text-[#1E343A]">Follow-up visit</p>
         <p className="mt-0.5 text-[0.48rem] text-neutral-500">Maria Rodriguez · 4 messages</p>
       </div>
-      <div className="min-h-0 flex-1 overflow-hidden py-2">
-        {messages.map((msg, index) => {
-          const initials = msg.from === "Dr. Singh" ? "DS" : "MR";
+      <div className="min-h-0 flex-1 overflow-hidden px-3 py-2.5">
+        {threadMessages.map((msg) => {
+          const isDoctor = msg.from === "Dr. Singh";
+          const initials = isDoctor ? "DS" : "MR";
+          const avatarRow = isDoctor ? SELECTED : { iconBg: SELECTED.iconBg, iconColor: SELECTED.iconColor };
+
           return (
-            <div
-              key={msg.id}
-              className="mx-2.5 mb-2 rounded-md border border-[#F0F0F0] bg-[#FAFAF8] px-3 py-2.5"
-              style={{ opacity: index === 1 ? 0.92 : 1 }}
-            >
+            <div key={msg.id} className="mb-3 border-b border-[#F2F0EC] pb-3 last:mb-0 last:border-0 last:pb-0">
               <div className="flex items-start gap-2">
-                <FlatSenderMark initials={initials} size="1.35rem" fontSize="0.46rem" />
+                <JoinDesktopAvatar
+                  initials={initials}
+                  row={isDoctor ? undefined : avatarRow}
+                  size="1.38rem"
+                  fontSize="0.46rem"
+                />
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-baseline justify-between gap-2">
-                    <span className="truncate text-[0.52rem] font-medium text-[#1E343A]">{msg.from}</span>
-                    <span className="shrink-0 text-[0.44rem] text-neutral-400">{msg.time.split(", ").pop()}</span>
+                  <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
+                    <span className="text-[0.52rem] font-medium text-[#1E343A]">{msg.from}</span>
+                    <span className="text-[0.44rem] text-neutral-400">to {msg.to}</span>
                   </div>
-                  <p className="mt-1 line-clamp-3 text-[0.5rem] leading-[1.45] text-neutral-600">
-                    {msg.lines.slice(1, 3).join(" ")}
-                  </p>
+                  <p className="mt-0.5 text-[0.44rem] text-neutral-400">{msg.time}</p>
+                  <div className="mt-1.5 space-y-0.5">
+                    {msg.lines.map((line) => (
+                      <p key={line} className="text-[0.5rem] leading-[1.48] text-neutral-600">
+                        {line}
+                      </p>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
           );
         })}
-        <div
-          className="mx-2.5 rounded-md border border-dashed border-[#E8E8E8] px-3 py-2"
-          aria-hidden
-        >
-          <div className="h-8 rounded bg-[#F5F4F1]" />
+        <div className="mt-2 rounded-md border border-[#F0F0F0] bg-[#FAFAF8] px-3 py-2">
+          <p className="text-[0.48rem] leading-[1.45] text-neutral-500">
+            Thursday at 10 AM works. See you then.
+          </p>
         </div>
       </div>
     </div>
@@ -375,7 +389,7 @@ function JoinDesktopNav({
       <div className="flex-1" />
       <div className="flex w-full flex-col items-center gap-0.5 px-1.5 pb-1">{renderItems(JOIN_DESKTOP_NAV_BOTTOM)}</div>
       <div className="mt-2.5 border-t border-[#E8E4DD] pt-2.5">
-        <FlatSenderMark initials="DS" size="1.85rem" fontSize="0.5rem" square={false} />
+        <JoinDesktopAvatar initials="DS" size="1.85rem" fontSize="0.5rem" />
       </div>
     </nav>
   );
