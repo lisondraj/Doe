@@ -35,7 +35,7 @@ export const JOIN_HERO_EXTRA_BANDS: readonly JoinHeroBandConfig[] = [
     description: [
       "Doe is an all-in-one healthcare communication layer built on top of health providers' existing inboxes. It automates every touchpoint in a patient's healthcare journey, from intake and scheduling to follow-ups and care coordination, without replacing the tools teams already trust.",
       "Doe will be a registered Delaware corporation, validate its tool with the Canadian healthcare market, and eventually expand to the US starting in California and New York City.",
-      "We believe providers should have full autonomy over the AI that touches their workflows. Doe will start with physicians in primary and specialty care, then expand to nurse practitioners, physician assistants, nurses, and the allied health teams that support patient care.",
+      "We believe providers should have full autonomy over the AI in their workflows. Doe will start with physicians, then expand to nurse practitioners, PAs, nurses, and allied health teams.",
     ],
     backdrop: DOEPHONE_COMMUNICATION_SLIDES[1].backdrop,
   },
