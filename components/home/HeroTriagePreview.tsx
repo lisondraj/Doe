@@ -259,6 +259,8 @@ function JoinDesktopInboxRow({ row }: { row: InboxRow }) {
 }
 
 function JoinDesktopOpenEmailClipPane() {
+  const visibleMessages = EMAIL_THREAD.slice(-2);
+
   return (
     <div className="relative min-h-0 min-w-0 flex-[2] overflow-hidden bg-[#FAFAF8]">
       <div className="absolute bottom-0 left-0 w-[245%]">
@@ -269,47 +271,32 @@ function JoinDesktopOpenEmailClipPane() {
           <p className="mt-1 text-[0.5rem] text-neutral-500">Maria Rodriguez · Patient message</p>
         </div>
 
-        <div className="bg-[#FAFAF8] py-1">
-          {EMAIL_THREAD.map((msg) => {
+        <div className="bg-[#FAFAF8]">
+          {visibleMessages.map((msg) => {
             const initials = msg.from === "Dr. Singh" ? "DS" : "MR";
+
             return (
-              <div
-                key={msg.id}
-                className="mx-2.5 my-2 rounded-md border border-[#F0F0F0] bg-white px-3 py-2.5"
-              >
-                <div className="flex items-start gap-2">
-                  <JoinDesktopAvatar initials={initials} size="1.35rem" fontSize="0.46rem" />
+              <div key={msg.id} className="border-b border-[#F0F0F0] bg-white px-4 py-4">
+                <div className="flex items-start gap-2.5">
+                  <JoinDesktopAvatar initials={initials} size="1.65rem" fontSize="0.52rem" />
                   <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
-                      <span className="text-[0.52rem] font-medium text-[#1E343A]">{msg.from}</span>
-                      <span className="text-[0.44rem] text-neutral-400">to {msg.to}</span>
+                    <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                      <span className="text-[0.62rem] font-medium text-[#1E343A]">{msg.from}</span>
+                      <span className="text-[0.52rem] text-neutral-400">to {msg.to}</span>
                     </div>
-                    <p className="mt-0.5 text-[0.44rem] text-neutral-400">{msg.time}</p>
+                    <p className="mt-0.5 text-[0.52rem] text-neutral-400">{msg.time}</p>
+                    <div className="mt-3 space-y-1.5">
+                      {msg.lines.map((line) => (
+                        <p key={line} className="text-[0.68rem] leading-[1.55] text-neutral-700">
+                          {line}
+                        </p>
+                      ))}
+                    </div>
                   </div>
-                </div>
-                <div className="mt-2 pl-[1.65rem]">
-                  {msg.lines.map((line) => (
-                    <p key={line} className="text-[0.5rem] leading-[1.48] text-neutral-600">
-                      {line}
-                    </p>
-                  ))}
                 </div>
               </div>
             );
           })}
-        </div>
-
-        <div className="border-t border-[#F0F0F0] bg-white px-4 py-3">
-          <p className="mb-2 text-[0.48rem] font-medium text-neutral-500">Reply to Maria Rodriguez</p>
-          <div className="flex items-center gap-2 rounded-md border border-[#F0F0F0] bg-[#FAFAF8] px-3 py-2">
-            <JoinDesktopAvatar initials="DS" size="1.2rem" fontSize="0.42rem" />
-            <p className="min-w-0 flex-1 truncate text-[0.5rem] text-neutral-500">
-              Thursday at 10 AM works. See you then.
-            </p>
-            <span className="shrink-0 rounded-md bg-[#D2774C] px-2 py-0.5 text-[0.44rem] font-medium text-white">
-              Send
-            </span>
-          </div>
         </div>
       </div>
     </div>
