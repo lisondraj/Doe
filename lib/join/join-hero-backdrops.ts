@@ -54,7 +54,7 @@ export const JOIN_HERO_EXTRA_BANDS: readonly JoinHeroBandConfig[] = [
     id: "integrate",
     showInbox: false,
     surface: "beige",
-    headline: ["Where we're at right now."],
+    headline: ["Where we're at", "right now."],
     description: [
       "We're seeking technical talent from around the world to help build Doe. If you care about healthcare, AI, and giving providers real control over the tools they use every day, we want to hear from you.",
       "We are currently fundraising with US and Canadian backers who share our belief that better clinical communication starts with software providers can shape themselves.",
@@ -64,7 +64,7 @@ export const JOIN_HERO_EXTRA_BANDS: readonly JoinHeroBandConfig[] = [
   {
     id: "join",
     showInbox: false,
-    headline: ["Co-Founders."],
+    headline: ["Co-Founders"],
     description: [
       "Doe's co-founders bring complementary experiences and backgrounds to launching health tech products, combining clinical insight with deep technical execution.",
       "James Lisondra is studying medicine at the University of Ottawa. Matthew Lisondra brings backgrounds in physics, robotics engineering, AI, and computer science. Together, they are building Doe from the ground up.",
