@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 import { suisseIntl } from "@/lib/home/fonts";
 
-const FS = "clamp(0.68rem, 0.88vw, 0.82rem)";
-const FS_SM = "clamp(0.56rem, 0.68vw, 0.66rem)";
-const FS_LG = "clamp(0.92rem, 1.12vw, 1.05rem)";
-const FS_XL = "clamp(1.32rem, 1.68vw, 1.58rem)";
+const FS = "clamp(0.76rem, 0.98vw, 0.92rem)";
+const FS_SM = "clamp(0.62rem, 0.76vw, 0.74rem)";
+const FS_LG = "clamp(1.02rem, 1.25vw, 1.18rem)";
+const FS_XL = "clamp(1.48rem, 1.88vw, 1.78rem)";
 
 function GlassCard({
   children,
@@ -19,10 +19,10 @@ function GlassCard({
     <div
       style={{
         position: "absolute",
-        borderRadius: "1.05rem",
+        borderRadius: "1.2rem",
         border: "1px solid rgba(255,255,255,0.26)",
         background: `rgba(255,255,255,${opacity})`,
-        padding: "0.95rem 1.05rem",
+        padding: "1.15rem 1.25rem",
         color: "#FFFFFF",
         ...style,
       }}
@@ -74,7 +74,7 @@ function CardHeader({ title, action }: { title: string; action?: string }) {
 
 function AgentIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 14 14" fill="none" aria-hidden>
+    <svg width="18" height="18" viewBox="0 0 14 14" fill="none" aria-hidden>
       <circle cx="7" cy="7" r="5.5" stroke="rgba(255,255,255,0.85)" strokeWidth="1.1" />
       <circle cx="7" cy="7" r="1.6" fill="rgba(255,255,255,0.85)" />
       <path d="M7 1.5v2M7 10.5v2M1.5 7h2M10.5 7h2" stroke="rgba(255,255,255,0.65)" strokeWidth="1" strokeLinecap="round" />
@@ -94,12 +94,12 @@ export function JoinHeroCoFoundersCards({ variant }: { variant: "mobile" | "desk
         top: "50%",
         right: "clamp(5rem, 12vw, 10rem)",
         transform: "translateY(-50%)",
-        width: "min(46rem, 54%)",
-        height: "min(34rem, 88%)",
+        width: "min(54rem, 60%)",
+        height: "min(36rem, 92%)",
       }}
     >
-      {/* Top left — appointment details */}
-      <GlassCard style={{ top: "0%", left: "0%", width: "52%", zIndex: 1 }} opacity={0.13}>
+      {/* Top — appointment details card (anchor) */}
+      <GlassCard style={{ top: "0%", left: "6%", width: "74%", zIndex: 1 }} opacity={0.13}>
         <CardHeader title="Appointment details" action="Manage visit ›" />
         <p style={{ fontSize: FS_LG, fontWeight: 500, marginBottom: "0.75rem", letterSpacing: "-0.01em" }}>
           Sarah Chen, annual physical
@@ -118,19 +118,19 @@ export function JoinHeroCoFoundersCards({ variant }: { variant: "mobile" | "desk
         </div>
       </GlassCard>
 
-      {/* Top right — schedule metrics */}
-      <GlassCard style={{ top: "0%", right: "0%", width: "42%", zIndex: 1 }} opacity={0.11}>
+      {/* Top right — schedule metrics, overlapping background */}
+      <GlassCard style={{ top: "0%", left: "52%", width: "50%", zIndex: 2 }} opacity={0.11}>
         <ProgressRow label="Open slots today" pct="68%" />
         <ProgressRow label="Intake forms sent" pct="41%" />
       </GlassCard>
 
-      {/* Right — chart chip */}
-      <GlassCard style={{ top: "32%", right: "0%", width: "auto", zIndex: 2, padding: "0.5rem 0.75rem" }} opacity={0.1}>
+      {/* Left — chart chip */}
+      <GlassCard style={{ top: "30%", left: "0%", width: "auto", zIndex: 4, padding: "0.62rem 0.9rem" }} opacity={0.1}>
         <span style={{ fontSize: FS_SM, opacity: 0.7 }}>Open chart ›</span>
       </GlassCard>
 
       {/* Center — primary scheduling agent card */}
-      <GlassCard style={{ top: "44%", left: "0%", width: "58%", zIndex: 3 }} opacity={0.46}>
+      <GlassCard style={{ top: "24%", left: "0%", width: "64%", zIndex: 6 }} opacity={0.46}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem" }}>
           <AgentIcon />
           <span style={{ fontSize: FS, fontWeight: 500 }}>Scheduling Agent</span>
@@ -141,7 +141,7 @@ export function JoinHeroCoFoundersCards({ variant }: { variant: "mobile" | "desk
       </GlassCard>
 
       {/* Bottom center — EMR integrations */}
-      <GlassCard style={{ top: "68%", left: "0%", width: "52%", zIndex: 2 }} opacity={0.12}>
+      <GlassCard style={{ top: "58%", left: "10%", width: "68%", zIndex: 3 }} opacity={0.12}>
         <CardHeader title="Integrations" action="Manage ›" />
         <p style={{ fontSize: FS, marginBottom: "0.65rem", opacity: 0.88 }}>Epic EHR • Insurance API • Clinic scheduler</p>
         <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
@@ -153,7 +153,7 @@ export function JoinHeroCoFoundersCards({ variant }: { variant: "mobile" | "desk
       </GlassCard>
 
       {/* Bottom right — next appointment */}
-      <GlassCard style={{ top: "86%", right: "0%", width: "38%", zIndex: 2 }} opacity={0.15}>
+      <GlassCard style={{ top: "70%", left: "56%", width: "40%", zIndex: 5 }} opacity={0.15}>
         <p style={{ fontSize: FS_SM, opacity: 0.6, marginBottom: "0.25rem" }}>Next in queue</p>
         <p style={{ fontSize: FS_XL, fontWeight: 500, letterSpacing: "-0.02em", lineHeight: 1.1 }}>10:30 AM</p>
         <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", marginTop: "0.5rem" }}>
@@ -166,7 +166,7 @@ export function JoinHeroCoFoundersCards({ variant }: { variant: "mobile" | "desk
       </GlassCard>
 
       {/* Bottom left — reschedule chip */}
-      <GlassCard style={{ top: "86%", left: "0%", width: "auto", zIndex: 2, padding: "0.5rem 0.75rem" }} opacity={0.09}>
+      <GlassCard style={{ top: "78%", left: "0%", width: "auto", zIndex: 2, padding: "0.62rem 0.9rem" }} opacity={0.09}>
         <span style={{ fontSize: FS_SM, opacity: 0.65 }}>Reschedule ›</span>
       </GlassCard>
     </div>
