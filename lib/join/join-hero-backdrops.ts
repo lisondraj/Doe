@@ -31,7 +31,7 @@ export const JOIN_HERO_EXTRA_BANDS: readonly JoinHeroBandConfig[] = [
     id: "incoming",
     showInbox: false,
     surface: "beige",
-    headline: ["About Doe's", "Mission"],
+    headline: ["About Doe's", "Mission."],
     description: [
       "Doe is an all-in-one healthcare communication layer built on top of health providers' existing inboxes. It automates every touchpoint in a patient's healthcare journey, from intake and scheduling to follow-ups and care coordination, without replacing the tools teams already trust.",
       "Doe will be a registered Delaware corporation, validate its tool with the Canadian healthcare market, and eventually expand to the US starting in California and New York City.",
@@ -42,7 +42,7 @@ export const JOIN_HERO_EXTRA_BANDS: readonly JoinHeroBandConfig[] = [
   {
     id: "tools",
     showInbox: false,
-    headline: ["Rebuilding healthcare", "communication"],
+    headline: ["Rebuilding healthcare.", "communication."],
     description: [
       "Doe differentiates from existing AI in patient care by letting providers fully customize their experience. They can build new tools connected to their clinic's integrations through a no-code, visual-first interface and shape the product around their own workflow.",
       "Doe will offer front-desk triage and a voice assistant, handle patient intake, and process all incoming documents.",
@@ -54,7 +54,7 @@ export const JOIN_HERO_EXTRA_BANDS: readonly JoinHeroBandConfig[] = [
     id: "integrate",
     showInbox: false,
     surface: "beige",
-    headline: ["Co-Founders"],
+    headline: ["Where we're at right now."],
     description: [
       "We're seeking technical talent from around the world to help build Doe. If you care about healthcare, AI, and giving providers real control over the tools they use every day, we want to hear from you.",
       "We are currently fundraising with US and Canadian backers who share our belief that better clinical communication starts with software providers can shape themselves.",
@@ -64,7 +64,7 @@ export const JOIN_HERO_EXTRA_BANDS: readonly JoinHeroBandConfig[] = [
   {
     id: "join",
     showInbox: false,
-    headline: ["Build with", "Doe."],
+    headline: ["Co-Founders."],
     backdrop: JOIN_HERO_ORANGE_RADIAL_BACKDROP,
   },
 ] as const;
@@ -73,7 +73,7 @@ export const JOIN_HERO_BANDS: readonly JoinHeroBandConfig[] = [
   {
     id: "agents",
     showInbox: true,
-    headline: ["Let's rebuild", "healthcare."],
+    headline: ["Let's rebuild.", "healthcare."],
     backdrop: JOIN_HERO_PRIMARY_BACKDROP,
   },
   ...JOIN_HERO_EXTRA_BANDS,
