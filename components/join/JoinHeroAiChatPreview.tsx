@@ -2,81 +2,73 @@ import { suisseIntl } from "@/lib/home/fonts";
 
 /** Mini visual preview of the intake form that the AI built */
 function IntakeFormPreview() {
-  const fields = [
-    { label: "Full name", w: "60%" },
-    { label: "Date of birth", w: "44%" },
-    { label: "Reason for visit", w: "100%", tall: true },
-    { label: "Current medications", w: "100%" },
-  ] as const;
+  const fields: { label: string; w: string; tall?: true }[] = [
+    { label: "Patient name",       w: "62%" },
+    { label: "Date of birth",      w: "46%" },
+    { label: "Reason for visit",   w: "100%", tall: true },
+    { label: "Current medications",w: "100%" },
+  ];
 
   return (
     <div
       style={{
-        background: "#F7F6F3",
-        borderRadius: "0.65rem",
-        padding: "0.7rem 0.75rem",
-        marginBottom: "0.65rem",
-        display: "flex",
-        flexDirection: "column",
-        gap: "0.45rem",
+        background: "#FFFFFF",
+        borderRadius: "0.6rem",
+        border: "1px solid #EDE9E2",
+        overflow: "hidden",
+        marginBottom: "0.55rem",
       }}
     >
-      <p
-        style={{
-          fontSize: "0.6rem",
-          fontWeight: 600,
-          color: "#1E343A",
-          letterSpacing: "-0.01em",
-          marginBottom: "0.15rem",
-        }}
-      >
-        Pre-Visit Intake Form
-      </p>
-      {fields.map((f) => (
-        <div key={f.label}>
-          <div
-            style={{
-              fontSize: "0.5rem",
-              color: "#9A9590",
-              marginBottom: "0.2rem",
-            }}
-          >
-            {f.label}
-          </div>
-          <div
-            style={{
-              width: f.w,
-              height: "tall" in f && f.tall ? "1.6rem" : "0.9rem",
-              background: "#FFFFFF",
-              borderRadius: "0.3rem",
-              border: "1px solid #EEEAE3",
-            }}
-          />
-        </div>
-      ))}
+      {/* Orange header strip */}
       <div
         style={{
+          background: "linear-gradient(90deg,#D2774C,#E7A944)",
+          padding: "0.42rem 0.7rem",
           display: "flex",
+          alignItems: "center",
           gap: "0.4rem",
-          marginTop: "0.1rem",
-          flexWrap: "wrap",
         }}
       >
-        {["Epic EHR", "Insurance API", "Scheduler"].map((t) => (
-          <span
-            key={t}
-            style={{
-              fontSize: "0.5rem",
-              fontWeight: 500,
-              background: "#EEEAE3",
-              color: "#78716C",
-              borderRadius: "0.3rem",
-              padding: "0.15rem 0.45rem",
-            }}
-          >
-            {t}
-          </span>
+        <svg width="9" height="9" viewBox="0 0 9 9" fill="none" aria-hidden>
+          <rect x="0.5" y="0.5" width="3.3" height="3.3" rx="0.6" fill="rgba(255,255,255,0.85)" />
+          <rect x="5.2" y="0.5" width="3.3" height="3.3" rx="0.6" fill="rgba(255,255,255,0.85)" />
+          <rect x="0.5" y="5.2" width="3.3" height="3.3" rx="0.6" fill="rgba(255,255,255,0.85)" />
+          <rect x="5.2" y="5.2" width="3.3" height="3.3" rx="0.6" fill="rgba(255,255,255,0.85)" />
+        </svg>
+        <span style={{ fontSize: "0.55rem", fontWeight: 600, color: "#FFFFFF", letterSpacing: "0.01em" }}>
+          Pre-Visit Intake Form
+        </span>
+      </div>
+
+      {/* Fields */}
+      <div style={{ padding: "0.55rem 0.7rem 0.6rem", display: "flex", flexDirection: "column", gap: "0.38rem" }}>
+        {fields.map((f) => (
+          <div key={f.label}>
+            <div style={{ fontSize: "0.46rem", color: "#9A9590", marginBottom: "0.18rem" }}>{f.label}</div>
+            <div
+              style={{
+                width: f.w,
+                height: f.tall ? "1.5rem" : "0.82rem",
+                background: "#F7F5F2",
+                borderRadius: "0.28rem",
+                border: "1px solid #EDE9E2",
+              }}
+            />
+          </div>
         ))}
+
+        {/* Submit button */}
+        <div
+          style={{
+            marginTop: "0.25rem",
+            background: "#D2774C",
+            borderRadius: "0.32rem",
+            padding: "0.3rem 0",
+            textAlign: "center",
+          }}
+        >
+          <span style={{ fontSize: "0.5rem", fontWeight: 600, color: "#FFFFFF" }}>Submit</span>
+        </div>
       </div>
     </div>
   );
@@ -107,9 +99,7 @@ const MESSAGES = [
     id: "ai2",
     role: "ai" as const,
     formPreview: true,
-    lines: [
-      "Done. Scores above 7 trigger an inbox alert and add a follow-up task to your schedule.",
-    ],
+    lines: [] as const,
     integrations: [] as const,
   },
 ] as const;
@@ -127,7 +117,7 @@ export function JoinHeroAiChatPreview({ variant }: { variant: "mobile" | "deskto
       style={{
         top: "50%",
         transform: "translateY(-50%)",
-        right: "clamp(3rem, 8vw, 7rem)",
+        right: "clamp(8rem, 18vw, 14rem)",
         width: "min(27rem, 40%)",
         gap: "0.9rem",
       }}
@@ -148,7 +138,7 @@ export function JoinHeroAiChatPreview({ variant }: { variant: "mobile" | "deskto
                   background: "#FFFFFF",
                   borderRadius: "1rem 1rem 0.3rem 1rem",
                   padding: "0.75rem 0.9rem",
-                  maxWidth: "80%",
+                  maxWidth: "92%",
                 }}
               >
                 <p style={{ fontSize: FS, color: "#1E343A", lineHeight: 1.5 }}>{msg.text}</p>
@@ -161,7 +151,7 @@ export function JoinHeroAiChatPreview({ variant }: { variant: "mobile" | "deskto
                   background: "#FFFFFF",
                   borderRadius: "1rem 1rem 1rem 0.3rem",
                   padding: "0.8rem 0.9rem",
-                  maxWidth: "88%",
+                  maxWidth: "96%",
                 }}
               >
                 {"formPreview" in msg && msg.formPreview && <IntakeFormPreview />}
