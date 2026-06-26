@@ -19,18 +19,18 @@ const GRADIENT_STOPS = [
 const VW = 400;
 const VH = 430;
 
-// Canada occupies the top ~46%, USA the bottom ~44%
-const CA = { x: 28,  y: 8,   w: 344, h: 192 };
-const US = { x: 24,  y: 212, w: 352, h: 190 };
+// Canada occupies the top half, USA the bottom — expanded to fill viewBox
+const CA = { x: 6,  y: 0,   w: 388, h: 218 };
+const US = { x: 2,  y: 218, w: 396, h: 212 };
 
 // Composition center for orbit layout
 const CX = VW / 2;
 const CY = VH / 2;
-const R  = 158;
+const R  = 168;
 
-const BOX_W = 92;
-const BOX_H = 60;
-const BOX_RX = 10;
+const BOX_W = 128;
+const BOX_H = 82;
+const BOX_RX = 12;
 
 const ORBIT = Array.from({ length: 6 }, (_, i) => {
   const a = -Math.PI / 2 + (i * 2 * Math.PI) / 6;
@@ -39,12 +39,12 @@ const ORBIT = Array.from({ length: 6 }, (_, i) => {
 
 // Line targets — one per orbit box, aimed inside the nearest country
 const TARGETS = [
-  { x: 200, y: 72  },  // top → Canada north
-  { x: 282, y: 130 },  // top-right → Canada east
-  { x: 286, y: 280 },  // bottom-right → USA east
-  { x: 200, y: 332 },  // bottom → USA south
-  { x: 118, y: 280 },  // bottom-left → USA west
-  { x: 118, y: 130 },  // top-left → Canada west
+  { x: 200, y: 55  },  // top → Canada north
+  { x: 300, y: 115 },  // top-right → Canada east
+  { x: 304, y: 300 },  // bottom-right → USA east
+  { x: 200, y: 370 },  // bottom → USA south
+  { x: 96,  y: 300 },  // bottom-left → USA west
+  { x: 96,  y: 115 },  // top-left → Canada west
 ];
 
 function boxEdge(from: { x: number; y: number }, to: { x: number; y: number }) {
@@ -62,8 +62,8 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
 
   const wrapperClass =
     variant === "mobile"
-      ? "pointer-events-none absolute right-[clamp(4rem,10vw,8rem)] top-[42%] z-[2] -translate-y-1/2 w-[min(62%,17rem)]"
-      : "pointer-events-none absolute right-[clamp(10rem,22vw,17rem)] top-1/2 z-[2] -translate-y-1/2 w-[min(48%,32rem)]";
+      ? "pointer-events-none absolute right-[clamp(4rem,10vw,8rem)] top-[42%] z-[2] -translate-y-1/2 w-[min(68%,19rem)]"
+      : "pointer-events-none absolute right-[clamp(10rem,22vw,17rem)] top-1/2 z-[2] -translate-y-1/2 w-[min(60%,42rem)]";
 
   const caGrad  = `${id}-ca-grad`;
   const usGrad  = `${id}-us-grad`;
