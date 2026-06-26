@@ -16,10 +16,10 @@ const GRADIENT_STOPS = [
   { offset: "100%", color: "#C47A5A" },
 ] as const;
 
-const VW = 620;
-const VH = 610;
-const VOX = -90;
-const VOY = -90;
+const VW = 760;
+const VH = 690;
+const VOX = -175;
+const VOY = -125;
 
 // Canada occupies the top half, USA the bottom — expanded to fill viewBox
 const CA = { x: 6,  y: 0,   w: 388, h: 218 };
@@ -28,11 +28,11 @@ const US = { x: 2,  y: 218, w: 396, h: 212 };
 // Composition center for orbit layout — larger radius keeps boxes outside countries
 const CX = 200;
 const CY = 215;
-const R  = 232;
+const R  = 272;
 
-const BOX_W = 172;
-const BOX_H = 110;
-const BOX_RX = 15;
+const BOX_W = 198;
+const BOX_H = 124;
+const BOX_RX = 16;
 
 const ORBIT = Array.from({ length: 6 }, (_, i) => {
   const a = -Math.PI / 2 + (i * 2 * Math.PI) / 6;
