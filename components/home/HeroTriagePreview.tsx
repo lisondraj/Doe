@@ -259,11 +259,9 @@ function JoinDesktopInboxRow({ row }: { row: InboxRow }) {
 }
 
 function JoinDesktopOpenEmailClipPane() {
-  const visibleMessages = EMAIL_THREAD.slice(-2);
-
   return (
-    <div className="relative min-h-0 min-w-0 flex-[2] overflow-hidden bg-[#FAFAF8]">
-      <div className="absolute bottom-0 left-0 w-[245%]">
+    <div className="flex h-full min-h-0 min-w-0 flex-[2] flex-col justify-end overflow-hidden bg-[#FAFAF8]">
+      <div className="w-[245%] shrink-0">
         <div className="border-b border-[#F0F0F0] bg-white px-4 py-3.5">
           <p className="text-[0.82rem] font-semibold leading-snug tracking-tight text-[#1E343A]">
             Follow-up visit scheduling
@@ -272,22 +270,41 @@ function JoinDesktopOpenEmailClipPane() {
         </div>
 
         <div className="bg-[#FAFAF8]">
-          {visibleMessages.map((msg) => {
+          {EMAIL_THREAD.map((msg, index) => {
             const initials = msg.from === "Dr. Singh" ? "DS" : "MR";
+            const isRecent = index >= EMAIL_THREAD.length - 2;
 
             return (
-              <div key={msg.id} className="border-b border-[#F0F0F0] bg-white px-4 py-4">
+              <div
+                key={msg.id}
+                className={`border-b border-[#F0F0F0] bg-white px-4 ${isRecent ? "py-4" : "py-3"}`}
+              >
                 <div className="flex items-start gap-2.5">
-                  <JoinDesktopAvatar initials={initials} size="1.65rem" fontSize="0.52rem" />
+                  <JoinDesktopAvatar
+                    initials={initials}
+                    size={isRecent ? "1.65rem" : "1.45rem"}
+                    fontSize={isRecent ? "0.52rem" : "0.48rem"}
+                  />
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-                      <span className="text-[0.62rem] font-medium text-[#1E343A]">{msg.from}</span>
-                      <span className="text-[0.52rem] text-neutral-400">to {msg.to}</span>
+                      <span
+                        className={`font-medium text-[#1E343A] ${isRecent ? "text-[0.62rem]" : "text-[0.56rem]"}`}
+                      >
+                        {msg.from}
+                      </span>
+                      <span className={`text-neutral-400 ${isRecent ? "text-[0.52rem]" : "text-[0.48rem]"}`}>
+                        to {msg.to}
+                      </span>
                     </div>
-                    <p className="mt-0.5 text-[0.52rem] text-neutral-400">{msg.time}</p>
-                    <div className="mt-3 space-y-1.5">
+                    <p className={`mt-0.5 text-neutral-400 ${isRecent ? "text-[0.52rem]" : "text-[0.48rem]"}`}>
+                      {msg.time}
+                    </p>
+                    <div className={`space-y-1.5 ${isRecent ? "mt-3" : "mt-2"}`}>
                       {msg.lines.map((line) => (
-                        <p key={line} className="text-[0.68rem] leading-[1.55] text-neutral-700">
+                        <p
+                          key={line}
+                          className={`leading-[1.55] text-neutral-700 ${isRecent ? "text-[0.68rem]" : "text-[0.56rem]"}`}
+                        >
                           {line}
                         </p>
                       ))}
@@ -363,7 +380,7 @@ function JoinDesktopInboxPane({ rows }: { rows: readonly InboxRow[] }) {
   const visibleRows = rows.slice(0, 8);
 
   return (
-    <div className="flex min-h-0 min-w-0 flex-1">
+    <div className="flex h-full min-h-0 min-w-0 flex-1">
       <div className="flex w-[31%] shrink-0 flex-col bg-white">
         <div className="flex items-center justify-between border-b border-[#F0F0F0] px-3.5 py-2.5">
           <div className="flex items-center gap-1.5">
