@@ -16,19 +16,19 @@ const GRADIENT_STOPS = [
   { offset: "100%", color: "#C47A5A" },
 ] as const;
 
-const VW = 480;
-const VH = 510;
-const VOX = -40;
-const VOY = -40;
+const VW = 560;
+const VH = 580;
+const VOX = -80;
+const VOY = -80;
 
 // Canada occupies the top half, USA the bottom — expanded to fill viewBox
 const CA = { x: 6,  y: 0,   w: 388, h: 218 };
 const US = { x: 2,  y: 218, w: 396, h: 212 };
 
-// Composition center for orbit layout
+// Composition center for orbit layout — larger radius keeps boxes outside countries
 const CX = 200;
 const CY = 215;
-const R  = 162;
+const R  = 232;
 
 const BOX_W = 140;
 const BOX_H = 90;
@@ -64,8 +64,8 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
 
   const wrapperClass =
     variant === "mobile"
-      ? "pointer-events-none absolute right-[clamp(3rem,8vw,6rem)] top-[42%] z-[2] -translate-y-1/2 w-[min(68%,19rem)] overflow-visible"
-      : "pointer-events-none absolute right-[clamp(7rem,16vw,13rem)] top-1/2 z-[2] -translate-y-1/2 w-[min(60%,42rem)] overflow-visible";
+      ? "pointer-events-none absolute right-[clamp(1.5rem,5vw,4rem)] top-[42%] z-[2] -translate-y-1/2 w-[min(68%,19rem)] overflow-visible"
+      : "pointer-events-none absolute right-[clamp(4rem,10vw,8rem)] top-1/2 z-[2] -translate-y-1/2 w-[min(60%,42rem)] overflow-visible";
 
   const caGrad  = `${id}-ca-grad`;
   const usGrad  = `${id}-us-grad`;
@@ -178,8 +178,6 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
               width={BOX_W} height={BOX_H}
               rx={BOX_RX}
               fill="#FFFFFF"
-              stroke="#E8E4DD"
-              strokeWidth={1}
             />
           </g>
         ))}
