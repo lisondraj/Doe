@@ -62,8 +62,8 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
 
   const wrapperClass =
     variant === "mobile"
-      ? "pointer-events-none absolute right-[clamp(3rem,8vw,6rem)] top-[42%] z-[2] -translate-y-1/2 w-[min(62%,17rem)]"
-      : "pointer-events-none absolute right-[clamp(8rem,18vw,14rem)] top-1/2 z-[2] -translate-y-1/2 w-[min(48%,32rem)]";
+      ? "pointer-events-none absolute right-[clamp(4rem,10vw,8rem)] top-[42%] z-[2] -translate-y-1/2 w-[min(62%,17rem)]"
+      : "pointer-events-none absolute right-[clamp(10rem,22vw,17rem)] top-1/2 z-[2] -translate-y-1/2 w-[min(48%,32rem)]";
 
   const caGrad  = `${id}-ca-grad`;
   const usGrad  = `${id}-us-grad`;
