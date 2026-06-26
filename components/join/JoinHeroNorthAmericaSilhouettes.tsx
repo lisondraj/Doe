@@ -1,38 +1,50 @@
 /**
- * Canada + USA silhouettes using the actual map images as CSS masks.
- * The black silhouette is used as an alpha mask over the Doe orange gradient.
- * Six white orbit boxes ring the composition with orange connector lines.
+ * Canada + USA silhouettes.
+ * Uses SVG <mask> + <feComponentTransfer> invert filter so the black-on-white
+ * JPG images correctly mask an orange gradient fill (black country → shows orange,
+ * white background → transparent).
  */
+import { useId } from "react";
 
 const DOE_ORANGE = "#D2774C";
 const DOE_ORANGE_SOFT = "#D49D4F";
-const DOE_GRADIENT = "linear-gradient(135deg, #E7A944 0%, #D49D4F 32%, #D2774C 64%, #C47A5A 100%)";
 
-const LINE_SOFT = "rgba(255,255,255,0.30)";
+const GRADIENT_STOPS = [
+  { offset: "0%",   color: "#E7A944" },
+  { offset: "30%",  color: "#D49D4F" },
+  { offset: "62%",  color: "#D2774C" },
+  { offset: "100%", color: "#C47A5A" },
+] as const;
 
-const BOX_W = 52;
-const BOX_H = 33;
+const VW = 400;
+const VH = 430;
+
+// Canada occupies the top ~46%, USA the bottom ~44%
+const CA = { x: 28,  y: 8,   w: 344, h: 192 };
+const US = { x: 24,  y: 212, w: 352, h: 190 };
+
+// Composition center for orbit layout
+const CX = VW / 2;
+const CY = VH / 2;
+const R  = 192;
+
+const BOX_W = 54;
+const BOX_H = 34;
 const BOX_RX = 6;
-
-// Orbit boxes — 6 evenly around the composition center
-// Center of the full composed graphic (Canada above, USA below)
-const CX = 200;
-const CY = 210;
-const R = 188;
 
 const ORBIT = Array.from({ length: 6 }, (_, i) => {
   const a = -Math.PI / 2 + (i * 2 * Math.PI) / 6;
   return { x: CX + R * Math.cos(a), y: CY + R * Math.sin(a) };
 });
 
-// Line targets — one per box, aimed at a point inside the nearest country
+// Line targets — one per orbit box, aimed inside the nearest country
 const TARGETS = [
-  { x: 200, y: 82 },   // top → Canada north
-  { x: 272, y: 132 },  // top-right → Canada east
-  { x: 268, y: 272 },  // bottom-right → USA east
-  { x: 200, y: 316 },  // bottom → USA south
-  { x: 128, y: 272 },  // bottom-left → USA west
-  { x: 128, y: 132 },  // top-left → Canada west
+  { x: 200, y: 72  },  // top → Canada north
+  { x: 282, y: 130 },  // top-right → Canada east
+  { x: 286, y: 280 },  // bottom-right → USA east
+  { x: 200, y: 332 },  // bottom → USA south
+  { x: 118, y: 280 },  // bottom-left → USA west
+  { x: 118, y: 130 },  // top-left → Canada west
 ];
 
 function boxEdge(from: { x: number; y: number }, to: { x: number; y: number }) {
@@ -45,77 +57,78 @@ function boxEdge(from: { x: number; y: number }, to: { x: number; y: number }) {
   return { x: from.x + ux * scale, y: from.y + uy * scale };
 }
 
-// Horizontal hatch lines rendered inside the mask via SVG pattern
-function hatchLines() {
-  const lines = [];
-  for (let y = 0; y <= 400; y += 11) {
-    lines.push(
-      <line
-        key={y}
-        x1={0} y1={y} x2={400} y2={y}
-        stroke={LINE_SOFT}
-        strokeWidth={0.6}
-        strokeLinecap="round"
-      />,
-    );
-  }
-  return lines;
-}
-
 export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile" | "desktop" }) {
+  const id = useId().replace(/:/g, "");
+
   const wrapperClass =
     variant === "mobile"
       ? "pointer-events-none absolute right-0 top-[42%] z-[2] -translate-y-1/2 pr-2 w-[min(62%,17rem)]"
       : "pointer-events-none absolute right-0 top-1/2 z-[2] -translate-y-1/2 pr-[clamp(0.5rem,1.5vw,1.5rem)] w-[min(52%,34rem)]";
 
-  // Canada: sits top-half, slight left offset to match image proportions
-  // USA: sits bottom-half, centered
-  const canadaStyle: React.CSSProperties = {
-    position: "absolute",
-    // Map image is ~750×600 — in our 400×420 SVG space, Canada occupies roughly top 46%
-    left: "8%",
-    top: "3%",
-    width: "84%",
-    height: "44%",
-    background: DOE_GRADIENT,
-    WebkitMaskImage: "url(/images/canada-map.jpg)",
-    WebkitMaskSize: "100% 100%",
-    WebkitMaskRepeat: "no-repeat",
-    maskImage: "url(/images/canada-map.jpg)",
-    maskSize: "100% 100%",
-    maskRepeat: "no-repeat",
-  };
-
-  const usaStyle: React.CSSProperties = {
-    position: "absolute",
-    left: "7%",
-    top: "50%",
-    width: "86%",
-    height: "44%",
-    background: DOE_GRADIENT,
-    WebkitMaskImage: "url(/images/usa-map.jpg)",
-    WebkitMaskSize: "100% 100%",
-    WebkitMaskRepeat: "no-repeat",
-    maskImage: "url(/images/usa-map.jpg)",
-    maskSize: "100% 100%",
-    maskRepeat: "no-repeat",
-  };
+  const caGrad  = `${id}-ca-grad`;
+  const usGrad  = `${id}-us-grad`;
+  const caMask  = `${id}-ca-mask`;
+  const usMask  = `${id}-us-mask`;
+  const invertF = `${id}-invert`;
 
   return (
-    <div className={wrapperClass} aria-hidden style={{ aspectRatio: "400/420", position: "absolute" }}>
-      {/* Country silhouettes using actual image masks */}
-      <div style={{ position: "absolute", inset: 0 }}>
-        <div style={canadaStyle} />
-        <div style={usaStyle} />
-      </div>
-
-      {/* SVG overlay — connector lines + orbit boxes */}
+    <div className={wrapperClass} aria-hidden>
       <svg
-        viewBox="0 0 400 420"
+        viewBox={`0 0 ${VW} ${VH}`}
         fill="none"
         preserveAspectRatio="xMidYMid meet"
-        style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
+        className="h-full w-full"
       >
+        <defs>
+          {/* Invert filter — turns black-on-white silhouette into white-on-black so SVG mask shows the country */}
+          <filter id={invertF} colorInterpolationFilters="sRGB">
+            <feComponentTransfer>
+              <feFuncR type="linear" slope="-1" intercept="1" />
+              <feFuncG type="linear" slope="-1" intercept="1" />
+              <feFuncB type="linear" slope="-1" intercept="1" />
+            </feComponentTransfer>
+          </filter>
+
+          {/* Orange gradient — shared */}
+          <linearGradient id={caGrad} x1="0%" y1="0%" x2="100%" y2="100%">
+            {GRADIENT_STOPS.map((s) => (
+              <stop key={s.offset} offset={s.offset} stopColor={s.color} />
+            ))}
+          </linearGradient>
+          <linearGradient id={usGrad} x1="0%" y1="0%" x2="100%" y2="100%">
+            {GRADIENT_STOPS.map((s) => (
+              <stop key={s.offset} offset={s.offset} stopColor={s.color} />
+            ))}
+          </linearGradient>
+
+          {/* Canada mask — image inverted so black country = white (visible) in mask */}
+          <mask id={caMask}>
+            <image
+              href="/images/canada-map.jpg"
+              x={CA.x} y={CA.y}
+              width={CA.w} height={CA.h}
+              preserveAspectRatio="xMidYMid meet"
+              filter={`url(#${invertF})`}
+            />
+          </mask>
+
+          {/* USA mask */}
+          <mask id={usMask}>
+            <image
+              href="/images/usa-map.jpg"
+              x={US.x} y={US.y}
+              width={US.w} height={US.h}
+              preserveAspectRatio="xMidYMid meet"
+              filter={`url(#${invertF})`}
+            />
+          </mask>
+        </defs>
+
+        {/* Country fills — rects filled with gradient, clipped to each mask */}
+        <rect x={CA.x} y={CA.y} width={CA.w} height={CA.h} fill={`url(#${caGrad})`} mask={`url(#${caMask})`} />
+        <rect x={US.x} y={US.y} width={US.w} height={US.h} fill={`url(#${usGrad})`} mask={`url(#${usMask})`} />
+
+        {/* Connector lines */}
         {ORBIT.map((pt, i) => {
           const target = TARGETS[i];
           const edge = boxEdge(pt, target);
@@ -131,6 +144,7 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
           );
         })}
 
+        {/* White orbit boxes */}
         {ORBIT.map((pt, i) => (
           <rect
             key={`box-${i}`}
