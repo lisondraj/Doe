@@ -10,27 +10,66 @@ const DOE_ORANGE_GRADIENT_STOPS = [
   { offset: "100%", color: "#C47A5A" },
 ] as const;
 
-const LINE = "rgba(255, 255, 255, 0.46)";
-const LINE_SOFT = "rgba(255, 255, 255, 0.26)";
-const LINE_FAINT = "rgba(255, 255, 255, 0.18)";
+const LINE_SOFT = "rgba(255, 255, 255, 0.30)";
+const LINE_FAINT = "rgba(255, 255, 255, 0.16)";
 
-/** Continental Canada — single path with a soft Hudson Bay notch on the northern edge. */
+/**
+ * Canada — continental outline (no arctic islands).
+ * Coordinates are in the 400×400 viewBox.
+ * BC coast on west, Maritimes on east, flat 49th-parallel bottom.
+ */
 const CANADA_PATH =
-  "M 38 120 L 46 98 L 58 76 L 74 56 L 94 40 L 116 30 L 132 38 L 148 30 L 168 24 L 190 26 L 208 38 L 218 54 L 220 70 L 210 86 L 190 100 L 164 110 L 136 116 L 108 114 L 82 110 L 58 114 L 42 118 Z";
+  "M 44 168 " +
+  "C 40 152 36 132 38 108 " +   // BC coast going north
+  "C 40 86 48 66 58 52 " +       // Northern BC
+  "C 68 38 84 28 104 22 " +      // NW corner
+  "L 132 16 " +                   // Top north, NWT
+  "C 150 13 164 20 178 16 " +    // Top middle (Hudson Bay region)
+  "C 193 12 208 18 218 15 " +    // Top east
+  "C 234 12 250 22 262 34 " +    // NE corner
+  "C 270 46 270 64 265 80 " +    // East coast going down
+  "C 260 96 254 110 250 124 " +  // Atlantic provinces
+  "C 246 138 246 152 248 164 " + // Maritimes
+  "L 244 168 " +                  // SE (NB/NS area)
+  "Z";                            // closes across the flat US border
 
-/** Lower 48 — single closed path; Maine nub, Gulf coast, and Florida peninsula. */
+/**
+ * USA lower 48 — continental outline.
+ * West coast top-left, east coast top-right, Florida SE, TX/Gulf south.
+ */
 const US_PATH =
-  "M 32 38 L 36 24 L 46 14 L 62 8 L 82 4 L 104 2 L 128 4 L 152 10 L 170 20 L 180 28 L 186 22 L 192 30 L 184 42 L 188 54 L 182 60 L 166 64 L 154 66 L 150 76 L 154 84 L 146 88 L 138 78 L 142 66 L 124 64 L 102 62 L 80 60 L 58 56 L 42 48 L 34 38 L 30 28 L 32 18 L 38 12 L 46 16 L 50 24 L 44 32 Z";
+  "M 44 175 " +                   // NW (WA coast)
+  "L 244 175 " +                  // straight northern border to NE
+  "C 252 177 259 182 264 190 " +  // New England coast angle
+  "C 268 200 266 214 262 226 " +  // Mid-Atlantic
+  "C 258 238 256 250 258 260 " +  // NC coast
+  "C 260 268 264 276 266 284 " +  // GA/FL border area
+  "C 268 292 267 303 263 312 " +  // North Florida
+  "C 259 321 254 327 249 327 " +  // FL tip (east)
+  "C 244 327 240 322 239 314 " +  // FL very tip
+  "C 238 306 239 295 241 285 " +  // FL west coast
+  "C 243 275 246 265 243 256 " +  // FL panhandle
+  "C 240 248 230 244 216 244 " +  // Gulf panhandle
+  "C 200 244 185 250 172 256 " +  // AL/MS Gulf coast
+  "C 157 262 144 264 133 268 " +  // LA coast
+  "C 120 272 110 278 106 287 " +  // TX south coast
+  "C 102 295 100 301 97 295 " +   // TX tip
+  "C 94 289 95 278 99 267 " +     // TX west coast going up
+  "C 103 256 107 241 102 228 " +  // TX/NM
+  "C 97 215 86 209 75 212 " +     // NM
+  "C 63 215 52 210 46 202 " +     // AZ / CA south
+  "C 40 196 38 185 40 177 " +     // CA coast going north
+  "Z";
 
-const VIEW_SIZE = 400;
-const MAP_CENTER = { x: 200, y: 208 };
-const ORBIT_RADIUS = 162;
-const BOX_W = 46;
-const BOX_H = 30;
-const BOX_RX = 5;
+const VIEW_W = 400;
+const VIEW_H = 360;
 
-const CANADA_TRANSFORM = "translate(76 44) scale(1.22)";
-const US_TRANSFORM = "translate(76 168) scale(1.22)";
+// Center of the space between/over the two countries
+const MAP_CENTER = { x: 200, y: 210 };
+const ORBIT_RADIUS = 172;
+const BOX_W = 50;
+const BOX_H = 32;
+const BOX_RX = 6;
 
 function orbitPoint(index: number) {
   const angle = -Math.PI / 2 + (index * (2 * Math.PI)) / 6;
@@ -60,11 +99,10 @@ function clusterTarget(from: { x: number; y: number }) {
   const dx = MAP_CENTER.x - from.x;
   const dy = MAP_CENTER.y - from.y;
   const len = Math.hypot(dx, dy) || 1;
-  const inset = from.y < MAP_CENTER.y ? 44 : 40;
 
   return {
-    x: MAP_CENTER.x - (dx / len) * inset,
-    y: MAP_CENTER.y - (dy / len) * inset,
+    x: MAP_CENTER.x - (dx / len) * 52,
+    y: MAP_CENTER.y - (dy / len) * 52,
   };
 }
 
@@ -86,50 +124,37 @@ function diagonalLines(
     const y1 = height;
     const x2 = offset + Math.cos(rad) * span * 2;
     const y2 = height - Math.sin(rad) * span * 2;
-
     lines.push(
       <line
         key={`${angleDeg}-${offset}`}
-        x1={x1}
-        y1={y1}
-        x2={x2}
-        y2={y2}
-        stroke={stroke}
-        strokeWidth={strokeWidth}
-        opacity={opacity}
+        x1={x1} y1={y1} x2={x2} y2={y2}
+        stroke={stroke} strokeWidth={strokeWidth} opacity={opacity}
         strokeLinecap="round"
       />,
     );
   }
-
   return lines;
 }
 
-function CountrySilhouette({
+function CountryFill({
   pathD,
-  viewBox,
+  boundW,
+  boundH,
   lineAngle,
   lineSpacing,
-  accentLines,
-  transform,
   gradientId,
   clipId,
 }: {
   pathD: string;
-  viewBox: string;
+  boundW: number;
+  boundH: number;
   lineAngle: number;
   lineSpacing: number;
-  accentLines?: ReactNode;
-  transform: string;
   gradientId: string;
   clipId: string;
 }) {
-  const [, , widthStr, heightStr] = viewBox.split(" ");
-  const width = Number(widthStr);
-  const height = Number(heightStr);
-
   return (
-    <g transform={transform}>
+    <>
       <defs>
         <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
           {DOE_ORANGE_GRADIENT_STOPS.map((stop) => (
@@ -144,100 +169,71 @@ function CountrySilhouette({
       <path d={pathD} fill={`url(#${gradientId})`} />
 
       <g clipPath={`url(#${clipId})`}>
-        {diagonalLines(width, height, lineSpacing, lineAngle, LINE_SOFT, 0.55, 0.72)}
-        {diagonalLines(width, height, lineSpacing * 1.65, lineAngle + 8, LINE_FAINT, 0.45, 0.55)}
-        {accentLines}
+        {diagonalLines(boundW, boundH, lineSpacing, lineAngle, LINE_SOFT, 0.6, 0.75)}
+        {diagonalLines(boundW, boundH, lineSpacing * 1.7, lineAngle + 10, LINE_FAINT, 0.45, 0.55)}
       </g>
-    </g>
+    </>
   );
 }
 
-/** Canada + US with six white orbit boxes and orange connector lines. */
 export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile" | "desktop" }) {
   const baseId = useId().replace(/:/g, "");
-  const canadaGradId = `${baseId}-canada-grad`;
-  const canadaClipId = `${baseId}-canada-clip`;
-  const usGradId = `${baseId}-us-grad`;
-  const usClipId = `${baseId}-us-clip`;
 
   const wrapperClass =
     variant === "mobile"
-      ? "pointer-events-none absolute right-0 top-[38%] z-[2] aspect-square w-[min(52%,13.5rem)] -translate-y-1/2 pr-4"
-      : "pointer-events-none absolute right-0 top-1/2 z-[2] aspect-square w-[min(42%,28rem)] -translate-y-1/2 pr-[clamp(1rem,2.4vw,2.5rem)]";
+      ? "pointer-events-none absolute right-0 top-[40%] z-[2] -translate-y-1/2 pr-3 w-[min(56%,15rem)]"
+      : "pointer-events-none absolute right-0 top-1/2 z-[2] -translate-y-1/2 pr-[clamp(0.75rem,2vw,2rem)] w-[min(46%,30rem)]";
 
   const orbitBoxes = Array.from({ length: 6 }, (_, index) => {
     const center = orbitPoint(index);
     const target = clusterTarget(center);
     const lineStart = boxEdgeToward(center, target);
-
     return { index, center, target, lineStart };
   });
 
   return (
     <div className={wrapperClass} aria-hidden>
       <svg
-        viewBox={`0 0 ${VIEW_SIZE} ${VIEW_SIZE}`}
+        viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
         fill="none"
         preserveAspectRatio="xMidYMid meet"
         className="h-full w-full"
       >
-        {orbitBoxes.map(({ index, center, target, lineStart }) => (
+        {/* Connector lines — drawn first (behind countries) */}
+        {orbitBoxes.map(({ index, lineStart, target }) => (
           <line
             key={`link-${index}`}
-            x1={lineStart.x}
-            y1={lineStart.y}
-            x2={target.x}
-            y2={target.y}
+            x1={lineStart.x} y1={lineStart.y}
+            x2={target.x} y2={target.y}
             stroke={index % 2 === 0 ? DOE_ORANGE : DOE_ORANGE_SOFT}
-            strokeWidth={2.1}
+            strokeWidth={1.8}
             strokeLinecap="round"
           />
         ))}
 
-        <CountrySilhouette
+        {/* Canada */}
+        <CountryFill
           pathD={CANADA_PATH}
-          viewBox="0 0 240 132"
-          lineAngle={-42}
-          lineSpacing={11}
-          gradientId={canadaGradId}
-          clipId={canadaClipId}
-          transform={CANADA_TRANSFORM}
-          accentLines={
-            <>
-              <path
-                d="M 24 98 C 78 90 138 92 210 98"
-                stroke={LINE}
-                strokeWidth={0.65}
-                opacity={0.42}
-                strokeLinecap="round"
-              />
-              <path
-                d="M 40 68 C 92 62 148 64 204 68"
-                stroke={LINE_SOFT}
-                strokeWidth={0.55}
-                opacity={0.34}
-                strokeLinecap="round"
-              />
-            </>
-          }
+          boundW={VIEW_W}
+          boundH={180}
+          lineAngle={-38}
+          lineSpacing={12}
+          gradientId={`${baseId}-ca-grad`}
+          clipId={`${baseId}-ca-clip`}
         />
 
-        <CountrySilhouette
+        {/* USA */}
+        <CountryFill
           pathD={US_PATH}
-          viewBox="0 0 220 88"
-          lineAngle={-56}
-          lineSpacing={10}
-          gradientId={usGradId}
-          clipId={usClipId}
-          transform={US_TRANSFORM}
-          accentLines={
-            <>
-              <line x1={20} y1={44} x2={200} y2={44} stroke={LINE} strokeWidth={0.6} opacity={0.38} strokeLinecap="round" />
-              <line x1={28} y1={30} x2={184} y2={30} stroke={LINE_SOFT} strokeWidth={0.5} opacity={0.28} strokeLinecap="round" />
-            </>
-          }
+          boundW={VIEW_W}
+          boundH={VIEW_H}
+          lineAngle={-50}
+          lineSpacing={11}
+          gradientId={`${baseId}-us-grad`}
+          clipId={`${baseId}-us-clip`}
         />
 
+        {/* White orbit boxes — drawn on top */}
         {orbitBoxes.map(({ index, center }) => (
           <rect
             key={`box-${index}`}
