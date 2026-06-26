@@ -1,5 +1,8 @@
 import { useId, type ReactNode } from "react";
 
+const DOE_ORANGE = "#D2774C";
+const DOE_ORANGE_SOFT = "#D49D4F";
+
 const DOE_ORANGE_GRADIENT_STOPS = [
   { offset: "0%", color: "#E7A944" },
   { offset: "30%", color: "#D49D4F" },
@@ -11,13 +14,52 @@ const LINE = "rgba(255, 255, 255, 0.46)";
 const LINE_SOFT = "rgba(255, 255, 255, 0.26)";
 const LINE_FAINT = "rgba(255, 255, 255, 0.18)";
 
-/** Stylized continental Canada — Hudson Bay cutout via even-odd fill. */
 const CANADA_PATH =
   "M 28 108 L 34 88 L 42 68 L 52 50 L 66 34 L 84 22 L 106 14 L 130 10 L 154 10 L 176 16 L 194 28 L 206 44 L 210 60 L 206 76 L 194 90 L 176 100 L 152 106 L 126 108 L 98 106 L 72 102 L 50 104 Z M 98 48 C 108 42 122 40 134 44 C 142 50 144 58 138 66 C 128 74 112 72 102 64 C 96 58 94 52 98 48 Z";
 
-/** Stylized lower 48 — separate silhouette from Canada. */
 const US_PATH =
   "M 12 54 L 18 38 L 28 26 L 42 18 L 60 12 L 80 8 L 102 6 L 126 8 L 150 14 L 170 24 L 184 36 L 190 50 L 186 62 L 172 68 L 152 70 L 128 68 L 102 66 L 76 64 L 52 60 L 32 54 L 20 48 L 14 38 Z M 42 18 L 36 10 L 32 16 M 184 36 L 194 30 L 192 40 M 152 70 L 160 80 L 154 84 L 146 76 M 76 64 L 70 74 L 64 70";
+
+const VIEW_SIZE = 400;
+const CENTER = { x: 200, y: 206 };
+const ORBIT_RADIUS = 158;
+const BOX_W = 46;
+const BOX_H = 30;
+const BOX_RX = 5;
+
+/** Landing points on the country cluster — one per orbit box. */
+const COUNTRY_TARGETS = [
+  { x: 200, y: 118 },
+  { x: 252, y: 148 },
+  { x: 258, y: 268 },
+  { x: 200, y: 308 },
+  { x: 142, y: 268 },
+  { x: 148, y: 148 },
+] as const;
+
+function orbitPoint(index: number) {
+  const angle = -Math.PI / 2 + (index * (2 * Math.PI)) / 6;
+  return {
+    x: CENTER.x + ORBIT_RADIUS * Math.cos(angle),
+    y: CENTER.y + ORBIT_RADIUS * Math.sin(angle),
+  };
+}
+
+function boxEdgeToward(from: { x: number; y: number }, to: { x: number; y: number }) {
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const len = Math.hypot(dx, dy) || 1;
+  const ux = dx / len;
+  const uy = dy / len;
+  const halfW = BOX_W / 2;
+  const halfH = BOX_H / 2;
+  const scale = 1 / Math.max(Math.abs(ux) / halfW, Math.abs(uy) / halfH);
+
+  return {
+    x: from.x + ux * scale,
+    y: from.y + uy * scale,
+  };
+}
 
 function diagonalLines(
   width: number,
@@ -62,7 +104,7 @@ function CountrySilhouette({
   lineAngle,
   lineSpacing,
   accentLines,
-  className,
+  transform,
   gradientId,
   clipId,
 }: {
@@ -71,7 +113,7 @@ function CountrySilhouette({
   lineAngle: number;
   lineSpacing: number;
   accentLines?: ReactNode;
-  className?: string;
+  transform: string;
   gradientId: string;
   clipId: string;
 }) {
@@ -80,13 +122,7 @@ function CountrySilhouette({
   const height = Number(heightStr);
 
   return (
-    <svg
-      viewBox={viewBox}
-      fill="none"
-      preserveAspectRatio="xMidYMid meet"
-      aria-hidden
-      className={className}
-    >
+    <g transform={transform}>
       <defs>
         <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
           {DOE_ORANGE_GRADIENT_STOPS.map((stop) => (
@@ -105,11 +141,11 @@ function CountrySilhouette({
         {diagonalLines(width, height, lineSpacing * 1.65, lineAngle + 8, LINE_FAINT, 0.45, 0.55)}
         {accentLines}
       </g>
-    </svg>
+    </g>
   );
 }
 
-/** Canada over US — Doe orange gradient silhouettes with internal line art, hero right side. */
+/** Canada + US with six white orbit boxes and orange connector lines. */
 export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile" | "desktop" }) {
   const baseId = useId().replace(/:/g, "");
   const canadaGradId = `${baseId}-canada-grad`;
@@ -119,53 +155,96 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
 
   const wrapperClass =
     variant === "mobile"
-      ? "pointer-events-none absolute right-0 top-[38%] z-[2] flex w-[min(48%,12rem)] -translate-y-1/2 flex-col gap-2 pr-5"
-      : "pointer-events-none absolute right-0 top-1/2 z-[2] flex h-[min(80%,22rem)] w-[min(38%,26rem)] -translate-y-1/2 flex-col justify-center gap-[0.65rem] pr-[clamp(1.25rem,2.8vw,2.75rem)]";
+      ? "pointer-events-none absolute right-0 top-[38%] z-[2] aspect-square w-[min(52%,13.5rem)] -translate-y-1/2 pr-4"
+      : "pointer-events-none absolute right-0 top-1/2 z-[2] aspect-square w-[min(42%,28rem)] -translate-y-1/2 pr-[clamp(1rem,2.4vw,2.5rem)]";
+
+  const orbitBoxes = Array.from({ length: 6 }, (_, index) => {
+    const center = orbitPoint(index);
+    const target = COUNTRY_TARGETS[index];
+    const lineStart = boxEdgeToward(center, target);
+
+    return { index, center, target, lineStart };
+  });
 
   return (
     <div className={wrapperClass} aria-hidden>
-      <CountrySilhouette
-        pathD={CANADA_PATH}
-        viewBox="0 0 220 120"
-        lineAngle={-42}
-        lineSpacing={11}
-        gradientId={canadaGradId}
-        clipId={canadaClipId}
-        className="h-[52%] w-full min-h-0"
-        accentLines={
-          <>
-            <path
-              d="M 18 92 C 70 84 130 86 202 94"
-              stroke={LINE}
-              strokeWidth={0.65}
-              opacity={0.42}
-              strokeLinecap="round"
-            />
-            <path
-              d="M 32 62 C 88 56 142 58 196 64"
-              stroke={LINE_SOFT}
-              strokeWidth={0.55}
-              opacity={0.34}
-              strokeLinecap="round"
-            />
-          </>
-        }
-      />
-      <CountrySilhouette
-        pathD={US_PATH}
-        viewBox="0 0 220 92"
-        lineAngle={-56}
-        lineSpacing={10}
-        gradientId={usGradId}
-        clipId={usClipId}
-        className="h-[42%] w-full min-h-0"
-        accentLines={
-          <>
-            <line x1={16} y1={46} x2={204} y2={46} stroke={LINE} strokeWidth={0.6} opacity={0.38} strokeLinecap="round" />
-            <line x1={24} y1={32} x2={188} y2={32} stroke={LINE_SOFT} strokeWidth={0.5} opacity={0.28} strokeLinecap="round" />
-          </>
-        }
-      />
+      <svg
+        viewBox={`0 0 ${VIEW_SIZE} ${VIEW_SIZE}`}
+        fill="none"
+        preserveAspectRatio="xMidYMid meet"
+        className="h-full w-full"
+      >
+        {orbitBoxes.map(({ index, center, target, lineStart }) => (
+          <line
+            key={`link-${index}`}
+            x1={lineStart.x}
+            y1={lineStart.y}
+            x2={target.x}
+            y2={target.y}
+            stroke={index % 2 === 0 ? DOE_ORANGE : DOE_ORANGE_SOFT}
+            strokeWidth={2.1}
+            strokeLinecap="round"
+          />
+        ))}
+
+        <CountrySilhouette
+          pathD={CANADA_PATH}
+          viewBox="0 0 220 120"
+          lineAngle={-42}
+          lineSpacing={11}
+          gradientId={canadaGradId}
+          clipId={canadaClipId}
+          transform="translate(90 52) scale(1)"
+          accentLines={
+            <>
+              <path
+                d="M 18 92 C 70 84 130 86 202 94"
+                stroke={LINE}
+                strokeWidth={0.65}
+                opacity={0.42}
+                strokeLinecap="round"
+              />
+              <path
+                d="M 32 62 C 88 56 142 58 196 64"
+                stroke={LINE_SOFT}
+                strokeWidth={0.55}
+                opacity={0.34}
+                strokeLinecap="round"
+              />
+            </>
+          }
+        />
+
+        <CountrySilhouette
+          pathD={US_PATH}
+          viewBox="0 0 220 92"
+          lineAngle={-56}
+          lineSpacing={10}
+          gradientId={usGradId}
+          clipId={usClipId}
+          transform="translate(90 188) scale(1)"
+          accentLines={
+            <>
+              <line x1={16} y1={46} x2={204} y2={46} stroke={LINE} strokeWidth={0.6} opacity={0.38} strokeLinecap="round" />
+              <line x1={24} y1={32} x2={188} y2={32} stroke={LINE_SOFT} strokeWidth={0.5} opacity={0.28} strokeLinecap="round" />
+            </>
+          }
+        />
+
+        {orbitBoxes.map(({ index, center }) => (
+          <rect
+            key={`box-${index}`}
+            x={center.x - BOX_W / 2}
+            y={center.y - BOX_H / 2}
+            width={BOX_W}
+            height={BOX_H}
+            rx={BOX_RX}
+            fill="#FFFFFF"
+            stroke="#E8E4DD"
+            strokeWidth={1}
+          />
+        ))}
+      </svg>
     </div>
   );
 }
