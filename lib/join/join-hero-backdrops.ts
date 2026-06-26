@@ -13,7 +13,7 @@ export type JoinHeroBandConfig = {
   /** Title and description corner — defaults to bottom-left / top-left. */
   textAlign?: "left" | "right";
   /** Optional decorative overlay for the band. */
-  decoration?: "north-america-maps" | "ai-chat";
+  decoration?: "north-america-maps" | "ai-chat" | "co-founders-cards";
   /** Beige uses solid fill + taupe line overlays; orange uses gradient + white lines. */
   surface?: WorkflowCarouselSurface;
 };
@@ -70,6 +70,7 @@ export const JOIN_HERO_EXTRA_BANDS: readonly JoinHeroBandConfig[] = [
   {
     id: "join",
     showInbox: false,
+    decoration: "co-founders-cards",
     headline: ["Co-Founders"],
     description: [
       "James and Matthew Lisondra are brothers who have been building together since they were young. As Doe's co-founders, they bring complementary experiences to launching health tech products, combining clinical insight with deep technical execution.",

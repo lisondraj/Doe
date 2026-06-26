@@ -1,5 +1,6 @@
 import { JoinHeroNorthAmericaSilhouettes } from "@/components/join/JoinHeroNorthAmericaSilhouettes";
 import { JoinHeroAiChatPreview } from "@/components/join/JoinHeroAiChatPreview";
+import { JoinHeroCoFoundersCards } from "@/components/join/JoinHeroCoFoundersCards";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { HeroTriagePreview } from "@/components/home/HeroTriagePreview";
 import { BLOG_LANDING_HERO_CORNER_PAD } from "@/lib/blog/blog-layout-styles";
@@ -179,6 +180,8 @@ export function JoinInternshipHero({
         <JoinHeroNorthAmericaSilhouettes variant={variant} />
       ) : decoration === "ai-chat" ? (
         <JoinHeroAiChatPreview variant={variant} />
+      ) : decoration === "co-founders-cards" ? (
+        <JoinHeroCoFoundersCards variant={variant} />
       ) : null}
     </div>
   );
