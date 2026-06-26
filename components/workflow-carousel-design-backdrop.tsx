@@ -80,15 +80,17 @@ function PolarGridOverlay({
   centerY = "36%",
   introOnLoad = false,
   surface = "orange",
+  lineOverlayOpacity,
 }: {
   patternScale?: number;
   centerY?: string;
   introOnLoad?: boolean;
   surface?: WorkflowCarouselSurface;
+  lineOverlayOpacity?: number;
 }) {
   const polarCy = polarCenterYUnits(centerY);
   const ringCount = introOnLoad ? DOEPHONE_HERO_INTRO_RING_COUNT : 6;
-  const stroke = workflowPolarStroke(surface);
+  const stroke = workflowPolarStroke(surface, lineOverlayOpacity);
   const ringStyle = (index: number): CSSProperties | undefined =>
     introOnLoad
       ? {
@@ -159,11 +161,13 @@ function PolarGridOverlay({
 function WaveGridOverlay({
   patternScale = 1,
   surface = "orange",
+  lineOverlayOpacity,
 }: {
   patternScale?: number;
   surface?: WorkflowCarouselSurface;
+  lineOverlayOpacity?: number;
 }) {
-  const stroke = workflowWaveStroke(surface);
+  const stroke = workflowWaveStroke(surface, lineOverlayOpacity);
 
   return (
     <div className="pointer-events-none absolute inset-0 z-[2] overflow-hidden" aria-hidden>
@@ -198,12 +202,14 @@ function GridOverlay({
   polarCenterY = "36%",
   introOnLoad = false,
   surface = "orange",
+  lineOverlayOpacity,
 }: {
   kind: WorkflowCarouselGridKind;
   patternScale?: number;
   polarCenterY?: string;
   introOnLoad?: boolean;
   surface?: WorkflowCarouselSurface;
+  lineOverlayOpacity?: number;
 }) {
   if (kind === "polar") {
     return (
@@ -212,10 +218,19 @@ function GridOverlay({
         centerY={polarCenterY}
         introOnLoad={introOnLoad}
         surface={surface}
+        lineOverlayOpacity={lineOverlayOpacity}
       />
     );
   }
-  if (kind === "wave") return <WaveGridOverlay patternScale={patternScale} surface={surface} />;
+  if (kind === "wave") {
+    return (
+      <WaveGridOverlay
+        patternScale={patternScale}
+        surface={surface}
+        lineOverlayOpacity={lineOverlayOpacity}
+      />
+    );
+  }
 
   const style = getWorkflowGridOverlayStyle(kind, patternScale, surface);
   if (!style) return null;
@@ -288,6 +303,7 @@ export function WorkflowCarouselDesignBackdrop({
         polarCenterY={backdrop.polarCenterY}
         introOnLoad={introOnLoad}
         surface={surface}
+        lineOverlayOpacity={backdrop.lineOverlayOpacity}
       />
     </Root>
   );

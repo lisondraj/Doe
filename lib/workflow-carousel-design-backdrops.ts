@@ -25,6 +25,8 @@ export type WorkflowCarouselDesignBackdrop = {
   grid: WorkflowCarouselGridKind;
   /** Polar grid anchor Y as CSS % (defaults to 36% for built-for-you layout). */
   polarCenterY?: string;
+  /** Optional white-line alpha for polar/wave overlays (default 0.24 polar / 0.12 wave on orange). */
+  lineOverlayOpacity?: number;
 };
 
 /** First five workflow carousel cards in scroll order (`WORKFLOW_SLIDE_DISPLAY_ORDER`). */
@@ -193,13 +195,13 @@ function hexGridStyle(surface: WorkflowCarouselSurface): CSSProperties {
 export const WORKFLOW_HEX_GRID_STYLE: CSSProperties = hexGridStyle("orange");
 
 /** Wave overlay stroke for orange vs beige surfaces. */
-export function workflowWaveStroke(surface: WorkflowCarouselSurface): string {
-  return surface === "beige" ? WORKFLOW_BEIGE_GRID.line : "rgba(255, 255, 255, 0.12)";
+export function workflowWaveStroke(surface: WorkflowCarouselSurface, opacity = 0.12): string {
+  return surface === "beige" ? WORKFLOW_BEIGE_GRID.line : `rgba(255, 255, 255, ${opacity})`;
 }
 
 /** Polar overlay stroke for orange vs beige surfaces. */
-export function workflowPolarStroke(surface: WorkflowCarouselSurface): string {
-  return surface === "beige" ? WORKFLOW_BEIGE_GRID.line : "rgba(255, 255, 255, 0.24)";
+export function workflowPolarStroke(surface: WorkflowCarouselSurface, opacity = 0.24): string {
+  return surface === "beige" ? WORKFLOW_BEIGE_GRID.line : `rgba(255, 255, 255, ${opacity})`;
 }
 
 /** Scale > 1 zooms patterns out (larger cell spacing). */
