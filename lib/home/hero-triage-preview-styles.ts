@@ -24,7 +24,11 @@ export const HERO_TRIAGE_CHIP_GRADIENT =
 export const HERO_TRIAGE_SELECTED_GRADIENT =
   "linear-gradient(135deg, rgba(231,169,68,0.55) 0%, rgba(210,119,76,0.48) 52%, rgba(196,122,90,0.4) 100%)";
 
-/** Join hero inbox — match /admin DoeBuildIcon sizing and avatar gradient. */
+/** Join hero inbox — flat avatar tile (no gradient). */
+export const HERO_TRIAGE_JOIN_AVATAR_FLAT =
+  "bg-[#EFECE7] text-[#1E343A] font-semibold border border-[#E8E8E8]";
+
+/** @deprecated Use HERO_TRIAGE_JOIN_AVATAR_FLAT for join desktop; kept for mobile compact rows. */
 export const HERO_TRIAGE_JOIN_AVATAR_GRADIENT =
   "bg-gradient-to-br from-[#E7A944] via-[#D2774C] to-[#1E343A] text-white font-semibold";
 

@@ -7,6 +7,7 @@ import {
   HERO_TRIAGE_PANEL_RIGHT,
   HERO_TRIAGE_PANEL_WIDTH,
   HERO_TRIAGE_JOIN_AVATAR_GRADIENT,
+  HERO_TRIAGE_JOIN_AVATAR_FLAT,
   HERO_TRIAGE_JOIN_NAV_CHIP_ACTIVE,
   HERO_TRIAGE_TILT,
 } from "@/lib/home/hero-triage-preview-styles";
@@ -152,6 +153,188 @@ const INBOX_ROWS: InboxRow[] = [
 ];
 
 const SELECTED = INBOX_ROWS.find((r) => r.selected)!;
+
+type JoinDesktopNavItem = {
+  id: string;
+  d: string;
+  active?: boolean;
+};
+
+const JOIN_DESKTOP_NAV_MAIN: readonly JoinDesktopNavItem[] = [
+  { id: "inbox", d: "M4 6h16v12H4V6zm0 0 8 7 8-7", active: true },
+  {
+    id: "patients",
+    d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",
+  },
+  { id: "calendar", d: "M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2z" },
+  { id: "tasks", d: "M9 11l3 3 8.5-8.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" },
+  { id: "compose", d: "M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z" },
+  { id: "files", d: "M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6" },
+  { id: "search", d: "M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.35-4.35" },
+] as const;
+
+const JOIN_DESKTOP_NAV_BOTTOM: readonly JoinDesktopNavItem[] = [
+  { id: "analytics", d: "M3 3v18h18M7 16l4-4 4 4 5-6" },
+  { id: "settings", d: "M12 6h.01M12 12h.01M12 18h.01" },
+] as const;
+
+function FlatSenderMark({
+  initials,
+  selected = false,
+  size = "1.75rem",
+  fontSize = "0.58rem",
+  square = true,
+}: {
+  initials: string;
+  selected?: boolean;
+  size?: string;
+  fontSize?: string;
+  square?: boolean;
+}) {
+  return (
+    <div
+      className={`flex shrink-0 items-center justify-center font-semibold ${square ? "rounded-lg" : "rounded-full"} ${
+        selected ? "" : HERO_TRIAGE_JOIN_AVATAR_FLAT
+      }`}
+      style={{
+        width: size,
+        height: size,
+        fontSize,
+        ...(selected
+          ? {
+              background: "#FFF0E8",
+              color: "#D2774C",
+              border: "1px solid #E8D4C8",
+            }
+          : {}),
+      }}
+    >
+      {initials}
+    </div>
+  );
+}
+
+function JoinDesktopInboxRow({ row }: { row: InboxRow }) {
+  const selected = Boolean(row.selected);
+  return (
+    <div
+      className="flex items-start gap-3 border-b border-[#F0F0F0] px-4 py-[0.65rem]"
+      style={{
+        background: selected ? "#FFF8F4" : "#FFFFFF",
+        boxShadow: selected ? "inset 3px 0 0 #D2774C" : undefined,
+      }}
+    >
+      <FlatSenderMark initials={row.initials} selected={selected} />
+      <div className="min-w-0 flex-1">
+        <div className="flex items-baseline justify-between gap-2">
+          <span
+            className="truncate text-[0.62rem] font-semibold tracking-tight"
+            style={{ color: selected ? "#D2774C" : JOIN_FORM_BEIGE.ink }}
+          >
+            {row.sender}
+          </span>
+          <span className="shrink-0 text-[0.48rem] font-medium text-neutral-400">{row.time}</span>
+        </div>
+        <p
+          className="mt-0.5 truncate text-[0.56rem] font-medium"
+          style={{ color: selected ? "#1E343A" : "rgba(30, 52, 58, 0.72)" }}
+        >
+          {row.subject}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function JoinDesktopPreviewPane({ row }: { row: InboxRow }) {
+  return (
+    <div className="flex min-h-0 min-w-0 flex-1 flex-col bg-[#FAFAF8]">
+      <div className="border-b border-[#F0F0F0] px-5 py-4">
+        <p className="text-[0.48rem] font-semibold uppercase tracking-[0.14em] text-neutral-400">Message</p>
+        <h3 className="mt-2 text-[0.88rem] font-semibold leading-snug tracking-tight text-[#1E343A]">{row.subject}</h3>
+        <p className="mt-1.5 text-[0.52rem] text-neutral-500">
+          {row.sender} · {row.time}
+        </p>
+      </div>
+      <div className="min-h-0 flex-1 overflow-hidden px-5 py-4">
+        <p className="text-[0.58rem] leading-[1.55] text-neutral-700">{row.preview}</p>
+        <p className="mt-4 text-[0.54rem] leading-[1.55] text-neutral-400">
+          Hi — wanted to follow up on this thread. Let me know if you need anything else from our side before
+          end of day.
+        </p>
+      </div>
+      <div className="border-t border-[#F0F0F0] px-5 py-3">
+        <div className="flex items-center gap-2 rounded-lg border border-[#E8E8E8] bg-white px-3 py-2">
+          <FlatSenderMark initials="DS" size="1.35rem" fontSize="0.48rem" />
+          <span className="truncate text-[0.52rem] text-neutral-400">Reply to {row.sender}…</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function JoinDesktopNav({
+  config,
+}: {
+  config: HeroTriageThemeConfig;
+}) {
+  const iconClass = (active?: boolean) =>
+    heroInboxIconClass({ mobile: false, active: active && config.flat });
+
+  return (
+    <nav
+      className={`flex w-[3.75rem] shrink-0 flex-col items-center border-r border-[#EEEAE3] bg-white py-3 ${config.paneGlassTw}`}
+      style={config.paneStyle()}
+    >
+      <div className="flex w-full flex-col items-center gap-1 px-1.5">
+        {JOIN_DESKTOP_NAV_MAIN.map((item) => (
+          <NavIcon key={item.id} active={item.active} mobile={false} config={config}>
+            <HeroInboxIcon d={item.d} className={iconClass(item.active)} />
+          </NavIcon>
+        ))}
+      </div>
+      <div className="flex-1" />
+      <div className="flex w-full flex-col items-center gap-1 px-1.5 pb-1">
+        {JOIN_DESKTOP_NAV_BOTTOM.map((item) => (
+          <NavIcon key={item.id} mobile={false} config={config}>
+            <HeroInboxIcon d={item.d} className={iconClass(false)} />
+          </NavIcon>
+        ))}
+        <div className="mt-2">
+          <FlatSenderMark initials="DS" size="2rem" fontSize="0.52rem" square={false} />
+        </div>
+      </div>
+    </nav>
+  );
+}
+
+function JoinDesktopInboxPane({ rows }: { rows: readonly InboxRow[] }) {
+  const selected = rows.find((row) => row.selected) ?? rows[0];
+  return (
+    <div className="flex min-h-0 min-w-0 flex-1">
+      <div className="flex w-[40%] shrink-0 flex-col border-r border-[#EEEAE3] bg-white">
+        <div className="flex items-center justify-between border-b border-[#F0F0F0] px-4 py-3">
+          <div className="flex items-center gap-2">
+            <HeroInboxIcon
+              d="M4 6h16v12H4V6zm0 0 8 7 8-7"
+              className={heroInboxIconClass({ mobile: false, accent: true })}
+            />
+            <span className="text-[0.72rem] font-semibold tracking-tight text-[#1E343A]">Inbox</span>
+          </div>
+          <span className="rounded-full bg-[#F7F6F3] px-2 py-0.5 text-[0.48rem] font-semibold tabular-nums text-neutral-500">
+            12
+          </span>
+        </div>
+        <div className="min-h-0 flex-1 overflow-hidden">
+          {rows.map((row) => (
+            <JoinDesktopInboxRow key={row.id} row={row} />
+          ))}
+        </div>
+      </div>
+      <JoinDesktopPreviewPane row={selected} />
+    </div>
+  );
+}
 
 function heroInboxIconClass({
   mobile,
@@ -634,6 +817,7 @@ export function HeroTriagePreview({
   const isMobile = size === "mobile";
   const isSimple = layout === "simple";
   const isJoinMobile = isMobile && mobileAnchor === "join";
+  const isJoinDesktop = !isMobile && isSimple && showNavIcons;
   const showFullNav = !isSimple || showNavIcons;
   const config = getHeroTriageThemeConfig(theme);
   const { colors } = config;
@@ -706,10 +890,17 @@ export function HeroTriagePreview({
           <div
             className={`flex h-full ${config.innerGlassTw}`}
             style={{
-              minHeight: isMobile ? mobileInnerMinHeight : isSimple ? "24rem" : "18rem",
+              minHeight: isMobile ? mobileInnerMinHeight : isJoinDesktop ? "26rem" : isSimple ? "24rem" : "18rem",
               background: config.innerGradient,
             }}
           >
+            {isJoinDesktop ? (
+              <>
+                <JoinDesktopNav config={config} />
+                <JoinDesktopInboxPane rows={INBOX_ROWS} />
+              </>
+            ) : (
+              <>
             {/* Collapsed vertical nav — icons only */}
             <nav
               className={`flex shrink-0 flex-col items-center ${config.paneGlassTw}`}
@@ -866,6 +1057,8 @@ export function HeroTriagePreview({
                 <OpenEmailPane mobile={isMobile} config={config} />
               </div>
             ) : null}
+              </>
+            )}
           </div>
         </div>
       </div>
