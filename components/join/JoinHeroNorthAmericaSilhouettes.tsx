@@ -1123,12 +1123,21 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
           </filter>
         </defs>
 
+        {/* Canada — reveals first */}
         <g
           className={joinHeroBoxRevealClass(revealed)}
           style={{ animationDelay: joinHeroBoxRevealDelay(revealed, 0) }}
           filter={`url(#${countryGrain})`}
         >
           <rect x={CA.x} y={CA.y} width={CA.w} height={CA.h} fill={`url(#${caGrad})`} mask={`url(#${caMask})`} />
+        </g>
+
+        {/* USA — follows Canada */}
+        <g
+          className={joinHeroBoxRevealClass(revealed)}
+          style={{ animationDelay: joinHeroBoxRevealDelay(revealed, 1) }}
+          filter={`url(#${countryGrain})`}
+        >
           <rect x={US.x} y={US.y} width={US.w} height={US.h} fill={`url(#${usGrad})`} mask={`url(#${usMask})`} />
         </g>
 
@@ -1139,7 +1148,9 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
         `}</style>
 
         {ORBIT.map((pt, i) => {
-          const boxRevealBase = JOIN_HERO_BOX_RISE_DURATION_MS + JOIN_HERO_BOX_SEQUENCE_GAP_MS;
+          // Wait for USA (index 1) to finish before boxes start
+          const boxRevealBase =
+            JOIN_HERO_BOX_REVEAL_STAGGER_MS + JOIN_HERO_BOX_RISE_DURATION_MS + JOIN_HERO_BOX_SEQUENCE_GAP_MS;
 
           return (
           <g
