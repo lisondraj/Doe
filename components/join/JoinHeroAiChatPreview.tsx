@@ -21,6 +21,8 @@ const SPEAKER_LABEL: CSSProperties = {
 
 const DOE_ORANGE_DARK = "#BF593D";
 const DOE_ORANGE_TEXT = "#A04E36";
+const DOE_ORANGE_GRADIENT =
+  "radial-gradient(circle at 38% 34%, #E7A944 0%, #D49D4F 38%, #D2774C 72%, #C47A5A 100%)";
 
 const INTEGRATIONS = ["Epic EHR", "Insurance API", "Clinic scheduler"] as const;
 
@@ -94,11 +96,18 @@ function IntegrationCheck() {
   );
 }
 
-function LoadingWheel() {
+function LoadingWheel({ onOrange = false }: { onOrange?: boolean }) {
   return (
     <span
-      className="shrink-0 animate-spin rounded-full border-[1.5px] border-[#D9D4CC] border-r-transparent border-b-transparent"
-      style={{ width: "0.85rem", height: "0.85rem", animationDuration: "1.1s" }}
+      className="shrink-0 animate-spin rounded-full border-[1.5px] border-r-transparent border-b-transparent"
+      style={{
+        width: "0.85rem",
+        height: "0.85rem",
+        animationDuration: "1.1s",
+        borderColor: onOrange ? "rgba(255, 255, 255, 0.42)" : "#D9D4CC",
+        borderRightColor: "transparent",
+        borderBottomColor: "transparent",
+      }}
       aria-hidden
     />
   );
@@ -111,15 +120,15 @@ function AiResultPreview() {
       <div
         style={{
           borderRadius: "0.42rem",
-          background: "#FAFAF8",
+          background: DOE_ORANGE_GRADIENT,
           padding: "0.55rem 0.65rem",
           display: "flex",
           alignItems: "center",
           gap: "0.45rem",
         }}
       >
-        <LoadingWheel />
-        <span style={{ fontSize: FS_BUBBLE, color: "#78716C" }}>Building pre-visit intake...</span>
+        <LoadingWheel onOrange />
+        <span style={{ fontSize: FS_BUBBLE, color: "#FFFFFF", fontWeight: 500 }}>Building pre-visit intake...</span>
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: "0.18rem" }}>

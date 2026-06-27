@@ -41,6 +41,10 @@ function glassFillOpacity(tier: GlassTier, surface: WorkflowCarouselSurface): nu
 
 const DOE_ORANGE = "#D2774C";
 const DOE_ORANGE_TRACK = "rgba(210, 119, 76, 0.16)";
+const DOE_ORANGE_GRADIENT =
+  "radial-gradient(circle at 38% 34%, #E7A944 0%, #D49D4F 38%, #D2774C 72%, #C47A5A 100%)";
+const ON_ORANGE_INK = "#FFFFFF";
+const ON_ORANGE_MUTED = "rgba(255, 255, 255, 0.82)";
 
 function cardTheme(surface: WorkflowCarouselSurface) {
   if (surface === "beige") {
@@ -73,6 +77,7 @@ function GlassCard({
   revealed,
   theme,
   compact = false,
+  gradient = false,
   style,
 }: {
   children: ReactNode;
@@ -81,6 +86,7 @@ function GlassCard({
   revealed: boolean;
   theme: ReturnType<typeof cardTheme>;
   compact?: boolean;
+  gradient?: boolean;
   style?: CSSProperties;
 }) {
   return (
@@ -88,9 +94,9 @@ function GlassCard({
       className={joinHeroBoxRevealClass(revealed)}
       style={{
         borderRadius: "1.1rem",
-        background: theme.glass(opacity),
+        background: gradient ? DOE_ORANGE_GRADIENT : theme.glass(opacity),
         padding: compact ? "0.58rem 0.85rem" : "0.95rem 1.05rem",
-        color: theme.ink,
+        color: gradient ? ON_ORANGE_INK : theme.ink,
         animationDelay: joinHeroBoxRevealDelay(revealed, revealIndex),
         minWidth: 0,
         ...style,
@@ -179,6 +185,7 @@ export function JoinHeroCoFoundersCards({
 }) {
   const { ref, revealed } = useJoinHeroScrollReveal();
   const theme = cardTheme(surface);
+  const orangeTheme = cardTheme("orange");
 
   if (variant === "mobile") return null;
 
@@ -239,15 +246,18 @@ export function JoinHeroCoFoundersCards({
         theme={theme}
         revealIndex={4}
         revealed={revealed}
-        opacity={glassFillOpacity("center", surface)}
+        gradient
         style={{ gridColumn: "1 / -1" }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "0.45rem", marginBottom: "0.6rem" }}>
-          <AgentIcon theme={theme} />
-          <span style={{ fontSize: FS, fontWeight: 500, color: isBeige ? theme.accent : theme.ink }}>Scheduling Agent</span>
+          <AgentIcon theme={orangeTheme} />
+          <span style={{ fontSize: FS, fontWeight: 500, color: ON_ORANGE_MUTED }}>Scheduling Agent</span>
         </div>
         <p style={{ fontSize: FS_LG, lineHeight: 1.42, letterSpacing: "-0.015em" }}>
-          Sarah&apos;s intake is in Epic. Insurance verified and a reminder goes out 48 h before her visit.
+          <span style={{ color: ON_ORANGE_INK, fontWeight: 500 }}>Sarah&apos;s intake is in Epic.</span>{" "}
+          <span style={{ color: ON_ORANGE_MUTED }}>
+            Insurance verified and a reminder goes out 48 h before her visit.
+          </span>
         </p>
       </GlassCard>
 

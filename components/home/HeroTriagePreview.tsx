@@ -181,6 +181,8 @@ const JOIN_DESKTOP_NAV_BOTTOM: readonly JoinDesktopNavItem[] = [
 ] as const;
 
 const JOIN_DESKTOP_SELECTED_ORANGE = "#D2774C";
+const JOIN_DESKTOP_ORANGE_GRADIENT =
+  "radial-gradient(circle at 38% 34%, #E7A944 0%, #D49D4F 38%, #D2774C 72%, #C47A5A 100%)";
 
 function JoinDesktopAvatar({
   initials,
@@ -219,44 +221,72 @@ function JoinDesktopAvatar({
 function JoinDesktopInboxRow({ row }: { row: InboxRow }) {
   const selected = Boolean(row.selected);
   return (
-    <div className="py-[0.12rem]">
-      <div
-        className={`flex min-h-[2.55rem] items-start gap-2.5 py-[0.46rem] ${
-          selected ? "mx-[0.32rem] rounded-[0.42rem] px-[0.3rem]" : "px-[0.62rem]"
-        }`}
-        style={{
-          background: selected ? JOIN_DESKTOP_SELECTED_ORANGE : "transparent",
-        }}
-      >
-        <JoinDesktopAvatar initials={row.initials} selected={selected} size="1.62rem" fontSize="0.54rem" />
-        <div className="min-w-0 flex-1">
-          <div className="flex items-baseline justify-between gap-2">
-            <span
-              className="truncate text-[0.6rem] font-medium tracking-tight"
-              style={{ color: selected ? "#FFFFFF" : JOIN_FORM_BEIGE.ink }}
-            >
-              {row.sender}
-            </span>
-            <span
-              className="shrink-0 text-[0.46rem] font-normal tabular-nums"
-              style={{ color: selected ? "rgba(255,255,255,0.78)" : "#A8A29E" }}
-            >
-              {row.time}
-            </span>
-          </div>
-          <p
-            className="mt-0.5 truncate text-[0.54rem] font-medium"
-            style={{ color: selected ? "rgba(255,255,255,0.94)" : "#1E343A" }}
+    <div
+      style={{
+        margin: "0 0.28rem",
+        borderRadius: selected ? "0.65rem" : "0.52rem",
+        background: selected ? JOIN_DESKTOP_ORANGE_GRADIENT : "#F7F6F3",
+        padding: selected ? "0.52rem 0.44rem" : "0.44rem 0.44rem",
+        display: "flex",
+        alignItems: "flex-start",
+        gap: "0.5rem",
+      }}
+    >
+      <JoinDesktopAvatar initials={row.initials} selected={selected} size="1.58rem" fontSize="0.52rem" />
+      <div style={{ minWidth: 0, flex: 1 }}>
+        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: "0.4rem" }}>
+          <span
+            style={{
+              fontSize: "0.6rem",
+              fontWeight: 500,
+              letterSpacing: "-0.01em",
+              color: selected ? "#FFFFFF" : JOIN_FORM_BEIGE.ink,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
           >
-            {row.subject}
-          </p>
-          <p
-            className={`mt-0.5 truncate text-[0.48rem] font-normal ${selected ? "invisible" : "text-[#9A9590]"}`}
-            aria-hidden={selected}
+            {row.sender}
+          </span>
+          <span
+            style={{
+              fontSize: "0.46rem",
+              fontWeight: 400,
+              color: selected ? "rgba(255,255,255,0.72)" : "#A8A29E",
+              flexShrink: 0,
+            }}
           >
-            {selected ? row.subject : row.preview}
-          </p>
+            {row.time}
+          </span>
         </div>
+        <p
+          style={{
+            fontSize: "0.54rem",
+            fontWeight: 500,
+            color: selected ? "rgba(255,255,255,0.94)" : "#1E343A",
+            marginTop: "0.15em",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {row.subject}
+        </p>
+        <p
+          style={{
+            fontSize: "0.48rem",
+            fontWeight: 400,
+            color: "#9A9590",
+            marginTop: "0.1em",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            visibility: selected ? "hidden" : "visible",
+          }}
+          aria-hidden={selected}
+        >
+          {row.preview}
+        </p>
       </div>
     </div>
   );
@@ -264,42 +294,97 @@ function JoinDesktopInboxRow({ row }: { row: InboxRow }) {
 
 function JoinDesktopOpenEmailClipPane() {
   return (
-    <div className="relative min-h-0 min-w-0 flex-1 self-stretch overflow-hidden border-l border-[#EEEAE3] bg-white">
+    <div
+      className="relative min-h-0 min-w-0 flex-1 self-stretch overflow-hidden"
+      style={{ borderLeft: "1px solid #EEEAE3", background: "#F7F6F3" }}
+    >
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute bottom-0 left-0 w-[220%]">
-          <div className="border-b border-[#F0F0F0] bg-white px-4 py-3">
-            <p className="text-[0.76rem] font-semibold leading-snug tracking-tight text-[#1E343A]">
+        <div
+          className="absolute bottom-0 left-0 w-[215%]"
+          style={{ padding: "0.45rem 0.48rem", display: "flex", flexDirection: "column", gap: "0.2rem" }}
+        >
+          {/* Thread header card */}
+          <div
+            style={{
+              background: "#FFFFFF",
+              borderRadius: "0.65rem",
+              padding: "0.62rem 0.72rem",
+              marginBottom: "0.1rem",
+            }}
+          >
+            <p style={{ fontSize: "0.76rem", fontWeight: 600, letterSpacing: "-0.018em", lineHeight: 1.25, color: "#1E343A" }}>
               Follow-up visit scheduling
             </p>
-            <p className="mt-0.5 text-[0.52rem] text-neutral-500">Maria Rodriguez · Patient message</p>
+            <p style={{ fontSize: "0.5rem", color: "#9A9590", marginTop: "0.26rem" }}>
+              Maria Rodriguez · Patient message
+            </p>
           </div>
 
-          <div>
-            {EMAIL_THREAD.map((msg) => {
-              const initials = msg.from === "Dr. Singh" ? "DS" : "MR";
-
-              return (
-                <div key={msg.id} className="border-b border-[#F0F0F0] bg-white px-4 py-3">
-                  <div className="flex items-start gap-2.5">
-                    <JoinDesktopAvatar initials={initials} size="1.5rem" fontSize="0.5rem" />
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
-                        <span className="text-[0.58rem] font-medium text-[#1E343A]">{msg.from}</span>
-                        <span className="text-[0.48rem] text-neutral-400">to {msg.to}</span>
-                      </div>
-                      <p className="mt-0.5 text-[0.48rem] text-neutral-400">{msg.time}</p>
-                      <div className="mt-2 space-y-0.5">
-                        {msg.lines.map((line) => (
-                          <p key={line} className="text-[0.56rem] leading-[1.5] text-neutral-600">
-                            {line}
-                          </p>
-                        ))}
-                      </div>
+          {/* Message cards */}
+          {EMAIL_THREAD.map((msg) => {
+            const initials = msg.from === "Dr. Singh" ? "DS" : "MR";
+            return (
+              <div
+                key={msg.id}
+                style={{
+                  background: "#FFFFFF",
+                  borderRadius: "0.55rem",
+                  padding: "0.52rem 0.65rem 0.58rem",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "flex-start", gap: "0.45rem" }}>
+                  <JoinDesktopAvatar initials={initials} size="1.45rem" fontSize="0.48rem" />
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <div style={{ display: "flex", flexWrap: "wrap", alignItems: "baseline", gap: "0 0.3rem" }}>
+                      <span style={{ fontSize: "0.58rem", fontWeight: 500, color: "#1E343A" }}>{msg.from}</span>
+                      <span style={{ fontSize: "0.46rem", color: "#A8A29E" }}>to {msg.to}</span>
+                    </div>
+                    <p style={{ fontSize: "0.44rem", color: "#B8B3AE", marginTop: "0.1rem" }}>{msg.time}</p>
+                    <div style={{ marginTop: "0.38rem" }}>
+                      {msg.lines.map((line) => (
+                        <p
+                          key={line}
+                          style={{
+                            fontSize: "0.54rem",
+                            lineHeight: 1.5,
+                            color: "rgba(30, 52, 58, 0.72)",
+                            marginBottom: "0.16rem",
+                          }}
+                        >
+                          {line}
+                        </p>
+                      ))}
                     </div>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            );
+          })}
+
+          {/* Reply compose card */}
+          <div
+            style={{
+              background: "#FFFFFF",
+              borderRadius: "0.65rem",
+              padding: "0.52rem 0.65rem",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+            }}
+          >
+            <p style={{ flex: 1, fontSize: "0.54rem", color: "#A8A29E", lineHeight: 1.4 }}>
+              Thursday at 10 AM works. See you then.
+            </p>
+            <div
+              style={{
+                background: JOIN_DESKTOP_ORANGE_GRADIENT,
+                borderRadius: "0.42rem",
+                padding: "0.22rem 0.55rem",
+                flexShrink: 0,
+              }}
+            >
+              <span style={{ fontSize: "0.48rem", fontWeight: 500, color: "#FFFFFF" }}>Send</span>
+            </div>
           </div>
         </div>
       </div>
@@ -307,56 +392,118 @@ function JoinDesktopOpenEmailClipPane() {
   );
 }
 
-function JoinDesktopNavButton({
-  active = false,
-  children,
-}: {
-  active?: boolean;
-  children: ReactNode;
-}) {
-  return (
+function JoinDesktopNav({ config: _config }: { config: HeroTriageThemeConfig }) {
+  const ic = "#B8B2AB";
+  const sw = "1.4";
+  const sz = 14;
+
+  const btn = (active: boolean, icon: React.ReactNode) => (
     <div
-      className="flex h-[1.85rem] w-[1.85rem] items-center justify-center rounded-[0.45rem]"
       style={{
-        background: active ? JOIN_DESKTOP_SELECTED_ORANGE : "transparent",
+        width: "100%",
+        height: "1.9rem",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: "0.48rem",
+        background: active ? JOIN_DESKTOP_ORANGE_GRADIENT : "transparent",
       }}
     >
-      {children}
+      {icon}
     </div>
   );
-}
-
-function JoinDesktopNav({
-  config,
-}: {
-  config: HeroTriageThemeConfig;
-}) {
-  const iconClass = (active?: boolean) =>
-    active
-      ? "h-[16px] w-[16px] shrink-0 text-white"
-      : heroInboxIconClass({ mobile: false, active: false });
-
-  const renderItems = (items: readonly JoinDesktopNavItem[]) =>
-    items.map((item) => (
-      <JoinDesktopNavButton key={item.id} active={item.active}>
-        <HeroInboxIcon d={item.d} className={iconClass(item.active)} />
-      </JoinDesktopNavButton>
-    ));
 
   return (
     <nav
-      className={`flex w-[3.35rem] shrink-0 flex-col items-center border-r border-[#EEEAE3] bg-[#F7F6F3] py-3 ${config.paneGlassTw}`}
-      style={config.paneStyle({ background: "#F7F6F3" })}
+      style={{
+        width: "3.2rem",
+        flexShrink: 0,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        borderRight: "1px solid #EEEAE3",
+        background: "#F7F6F3",
+        padding: "0.62rem 0",
+      }}
     >
-      <div className="mb-2 flex h-[1.85rem] w-[1.85rem] items-center justify-center rounded-[0.45rem] bg-white">
-        <span className="text-[0.62rem] font-semibold tracking-tight text-[#D2774C]">D</span>
+      {/* Logo */}
+      <div
+        style={{
+          width: "1.9rem",
+          height: "1.9rem",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: "0.48rem",
+          background: "#FFFFFF",
+          marginBottom: "0.52rem",
+          boxShadow: "0 1px 2px rgba(0,0,0,0.07)",
+          flexShrink: 0,
+        }}
+      >
+        <span style={{ fontSize: "0.66rem", fontWeight: 700, color: "#D2774C", letterSpacing: "-0.02em" }}>D</span>
       </div>
-      <div className="flex w-full flex-col items-center gap-0.5 px-1.5">{renderItems(JOIN_DESKTOP_NAV_MAIN)}</div>
-      <div className="my-2 h-px w-[1.65rem] bg-[#E8E4DD]" />
-      <div className="flex w-full flex-col items-center gap-0.5 px-1.5">{renderItems(JOIN_DESKTOP_NAV_MID)}</div>
-      <div className="flex-1" />
-      <div className="flex w-full flex-col items-center gap-0.5 px-1.5 pb-1">{renderItems(JOIN_DESKTOP_NAV_BOTTOM)}</div>
-      <div className="mt-2.5 border-t border-[#E8E4DD] pt-2.5">
+
+      {/* Main icons */}
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.12rem", width: "100%", padding: "0 0.35rem" }}>
+        {/* Inbox — active */}
+        {btn(
+          true,
+          <svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <rect x="2" y="4" width="20" height="16" rx="2" />
+            <path d="M2 8l10 7 10-7" />
+          </svg>,
+        )}
+
+        {/* Patients */}
+        {btn(
+          false,
+          <svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>,
+        )}
+
+        {/* Calendar */}
+        {btn(
+          false,
+          <svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <rect x="3" y="4" width="18" height="18" rx="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg>,
+        )}
+
+        {/* Tasks */}
+        {btn(
+          false,
+          <svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <polyline points="9,11 12,14 22,4" />
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+          </svg>,
+        )}
+      </div>
+
+      {/* Divider */}
+      <div style={{ width: "1.5rem", height: "1px", background: "#E5E1DA", margin: "0.42rem 0" }} />
+
+      {/* Compose */}
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%", padding: "0 0.35rem" }}>
+        {btn(
+          false,
+          <svg width={sz} height={sz} viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M12 20h9" />
+            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+          </svg>,
+        )}
+      </div>
+
+      {/* Spacer */}
+      <div style={{ flex: 1 }} />
+
+      {/* Avatar */}
+      <div style={{ borderTop: "1px solid #E5E1DA", paddingTop: "0.52rem" }}>
         <JoinDesktopAvatar initials="DS" size="1.85rem" fontSize="0.5rem" />
       </div>
     </nav>
@@ -368,25 +515,65 @@ function JoinDesktopInboxPane({ rows }: { rows: readonly InboxRow[] }) {
 
   return (
     <div className="flex h-full min-h-0 min-w-0 flex-1 items-stretch">
-      <div className="flex h-full w-[27%] shrink-0 flex-col border-r border-[#EEEAE3] bg-white">
-        <div className="flex items-center justify-between border-b border-[#F0F0F0] px-3.5 py-2.5">
-          <div className="flex items-center gap-1.5">
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+          width: "27%",
+          flexShrink: 0,
+          borderRight: "1px solid #EEEAE3",
+          background: "#FFFFFF",
+        }}
+      >
+        {/* Header */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "0.7rem 0.9rem 0.55rem",
+            borderBottom: "1px solid #F0EDE8",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "0.38rem" }}>
             <HeroInboxIcon
               d="M4 6h16v12H4V6zm0 0 8 7 8-7"
               className={heroInboxIconClass({ mobile: false, accent: true })}
             />
-            <span className="text-[0.68rem] font-semibold tracking-tight text-[#1E343A]">Inbox</span>
+            <span style={{ fontSize: "0.68rem", fontWeight: 600, letterSpacing: "-0.015em", color: "#1E343A" }}>
+              Inbox
+            </span>
           </div>
-          <span className="rounded-full bg-[#F0EDE8] px-1.5 py-0.5 text-[0.44rem] font-medium tabular-nums text-[#78716C]">
+          <span
+            style={{
+              fontSize: "0.44rem",
+              fontWeight: 500,
+              color: "#78716C",
+              background: "#F0EDE8",
+              borderRadius: "999px",
+              padding: "0.2em 0.55em",
+            }}
+          >
             12
           </span>
         </div>
-        <div className="min-h-0 flex-1 overflow-hidden">
-          <div className="flex flex-col divide-y divide-[#F0F0F0]">
-            {visibleRows.map((row) => (
-              <JoinDesktopInboxRow key={row.id} row={row} />
-            ))}
-          </div>
+
+        {/* Row list — card gaps, no dividers */}
+        <div
+          style={{
+            flex: 1,
+            minHeight: 0,
+            overflow: "hidden",
+            padding: "0.35rem 0",
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.15rem",
+          }}
+        >
+          {visibleRows.map((row) => (
+            <JoinDesktopInboxRow key={row.id} row={row} />
+          ))}
         </div>
       </div>
       <JoinDesktopOpenEmailClipPane />

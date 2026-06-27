@@ -496,18 +496,6 @@ function BillingAgentRevenue({
       </g>
       <text
         x={innerX + cardPadX}
-        y={labelY}
-        dominantBaseline="hanging"
-        fill={ON_ORANGE_MUTED}
-        fontSize={labelFontSize}
-        fontWeight={500}
-        fontFamily={suisseIntl.style.fontFamily}
-        letterSpacing="0.01em"
-      >
-        Approved today
-      </text>
-      <text
-        x={innerX + cardPadX}
         y={amountY}
         dominantBaseline="middle"
         fill={ON_ORANGE_INK}
@@ -520,6 +508,19 @@ function BillingAgentRevenue({
         <tspan fontFamily={dmSans.style.fontFamily} fontWeight={300}>
           8,640
         </tspan>
+      </text>
+      <text
+        x={innerX + innerW - cardPadX}
+        y={amountY}
+        textAnchor="end"
+        dominantBaseline="middle"
+        fill={ON_ORANGE_MUTED}
+        fontSize={labelFontSize}
+        fontWeight={500}
+        fontFamily={suisseIntl.style.fontFamily}
+        letterSpacing="0.01em"
+      >
+        Approved today
       </text>
 
       {/* Claim rows */}
@@ -951,11 +952,18 @@ function OrbitAgentTitleIcon({ agentIndex }: { agentIndex: number }) {
         <path d="M16 3.13a4 4 0 010 7.75" />
       </g>
     );
+  } else if (agentIndex === 4) {
+    content = (
+      <g {...iconProps}>
+        <polyline points="22,12 18,12 15,21 9,3 6,12 2,12" />
+      </g>
+    );
   } else if (agentIndex === 5) {
     content = (
       <g {...iconProps}>
-        <rect x="2" y="5" width="20" height="14" rx="2" />
-        <path d="M2 10h20" />
+        <path d="M14 2H6a2 2 0 0 0-2 2v16l3-1.5 3 1.5 3-1.5 3 1.5V4a2 2 0 0 0-2-2z" />
+        <line x1="8" y1="9" x2="16" y2="9" />
+        <line x1="8" y1="13" x2="13" y2="13" />
       </g>
     );
   }
@@ -989,7 +997,7 @@ function OrbitAgentRow({
   const iconCx = boxX + BOX_PAD_X + ORBIT_ICON_R;
   const iconCy = boxY + BOX_PAD_Y + ORBIT_ICON_R;
   const textX = iconCx + ORBIT_ICON_R + ROW_ICON_TEXT_GAP;
-  const useSemanticIcon = agentIndex === 0 || agentIndex === 1 || agentIndex === 2 || agentIndex === 3 || agentIndex === 5;
+  const useSemanticIcon = agentIndex === 0 || agentIndex === 1 || agentIndex === 2 || agentIndex === 3 || agentIndex === 4 || agentIndex === 5;
 
   return (
     <g aria-hidden>
