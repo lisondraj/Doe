@@ -1,14 +1,21 @@
 "use client";
 
 /**
- * Canada + USA silhouettes.
+ * Canada + USA silhouettes and/or join-hero agent grid.
  * Uses SVG <mask> + <feComponentTransfer> invert filter so the black-on-white
  * JPG images correctly mask an orange gradient fill (black country → shows orange,
  * white background → transparent).
  */
 import { useId } from "react";
 import { dmSans, suisseIntl } from "@/lib/home/fonts";
-import { useJoinHeroScrollReveal, joinHeroBoxRevealClass, joinHeroBoxRevealDelay, JOIN_HERO_BOX_REVEAL_STAGGER_MS, JOIN_HERO_BOX_RISE_DURATION_MS, JOIN_HERO_BOX_SEQUENCE_GAP_MS } from "@/lib/join/use-join-hero-scroll-reveal";
+import {
+  useJoinHeroScrollReveal,
+  joinHeroBoxRevealClass,
+  joinHeroBoxRevealDelay,
+  JOIN_HERO_BOX_REVEAL_STAGGER_MS,
+  JOIN_HERO_BOX_RISE_DURATION_MS,
+  JOIN_HERO_BOX_SEQUENCE_GAP_MS,
+} from "@/lib/join/use-join-hero-scroll-reveal";
 import {
   HERO_AGENT_BOX_H,
   HERO_AGENT_BOX_W,
@@ -23,54 +30,82 @@ const GRADIENT_STOPS = [
   { offset: "100%", color: "#C47A5A" },
 ] as const;
 
-const VW = 2100;
-const VH = 1960;
-const VOX = -860;
-const VOY = -760;
+type CountryLayout = "hero-agents" | "mission-right";
 
-// Agent grid — top-right; countries diagonal on the right (Canada top-left, US bottom-right).
-const GRID_RIGHT = 1180;
-const GRID_TOP = -700;
-const MAP_W = 780;
-const MAP_H = 560;
-const MAP_REGION_RIGHT = 1240;
-const MAP_REGION_BOTTOM = 420;
-
-const BOX_W = HERO_AGENT_BOX_W;
-const BOX_H = HERO_AGENT_BOX_H;
-const BOX_RX = HERO_AGENT_BOX_RX;
-const BOX_ROW_GAP = 52;
-const ROW_SPAN = BOX_W + BOX_ROW_GAP;
-const GRID_CX = GRID_RIGHT - ROW_SPAN - BOX_W / 2;
-const TOP_ROW_Y = GRID_TOP + BOX_H / 2 + 24;
-const BOTTOM_ROW_Y = TOP_ROW_Y + BOX_H + BOX_ROW_GAP;
-
-const CA = {
-  x: MAP_REGION_RIGHT - MAP_W * 1.38,
-  y: MAP_REGION_BOTTOM - MAP_H * 1.42,
-  w: MAP_W,
-  h: MAP_H,
-};
-const US = {
-  x: MAP_REGION_RIGHT - MAP_W * 0.92,
-  y: MAP_REGION_BOTTOM - MAP_H * 0.52,
-  w: MAP_W,
-  h: MAP_H,
+type CountryGeometry = {
+  viewBox: { x: number; y: number; w: number; h: number };
+  mapW: number;
+  mapH: number;
+  mapRegionRight: number;
+  mapRegionBottom: number;
+  countryImageScale: number;
+  ca: { xMul: number; yMul: number };
+  us: { xMul: number; yMul: number };
 };
 
-/** Zoom map art inside the fixed clip rects — larger silhouettes without moving white boxes. */
-const COUNTRY_IMAGE_SCALE = 1.22;
+const HERO_AGENTS_COUNTRY: CountryGeometry = {
+  viewBox: { x: -860, y: -760, w: 2100, h: 1960 },
+  mapW: 780,
+  mapH: 560,
+  mapRegionRight: 1240,
+  mapRegionBottom: 420,
+  countryImageScale: 1.22,
+  ca: { xMul: 1.38, yMul: 1.42 },
+  us: { xMul: 0.92, yMul: 0.52 },
+};
 
-function scaledMapImage(box: { x: number; y: number; w: number; h: number }) {
-  const w = box.w * COUNTRY_IMAGE_SCALE;
-  const h = box.h * COUNTRY_IMAGE_SCALE;
+/** Larger maps anchored on the right — About Doe's Mission band. */
+const MISSION_RIGHT_COUNTRY: CountryGeometry = {
+  viewBox: { x: 80, y: -520, w: 1180, h: 1080 },
+  mapW: 980,
+  mapH: 720,
+  mapRegionRight: 1120,
+  mapRegionBottom: 420,
+  countryImageScale: 1.42,
+  ca: { xMul: 1.34, yMul: 1.48 },
+  us: { xMul: 0.86, yMul: 0.46 },
+};
+
+function countryRects(geometry: CountryGeometry) {
+  const { mapW, mapH, mapRegionRight, mapRegionBottom, ca, us } = geometry;
+
+  const caBox = {
+    x: mapRegionRight - mapW * ca.xMul,
+    y: mapRegionBottom - mapH * ca.yMul,
+    w: mapW,
+    h: mapH,
+  };
+  const usBox = {
+    x: mapRegionRight - mapW * us.xMul,
+    y: mapRegionBottom - mapH * us.yMul,
+    w: mapW,
+    h: mapH,
+  };
+
+  return { caBox, usBox };
+}
+
+function scaledMapImage(
+  box: { x: number; y: number; w: number; h: number },
+  countryImageScale: number,
+) {
+  const w = box.w * countryImageScale;
+  const h = box.h * countryImageScale;
   const cx = box.x + box.w / 2;
   const cy = box.y + box.h / 2;
   return { x: cx - w / 2, y: cy - h / 2, w, h };
 }
 
-const CA_MAP = scaledMapImage(CA);
-const US_MAP = scaledMapImage(US);
+// Agent grid — top-right on the hero-agents band.
+const GRID_RIGHT = 1180;
+const GRID_TOP = -700;
+const BOX_W = HERO_AGENT_BOX_W;
+const BOX_H = HERO_AGENT_BOX_H;
+const BOX_ROW_GAP = 52;
+const ROW_SPAN = BOX_W + BOX_ROW_GAP;
+const GRID_CX = GRID_RIGHT - ROW_SPAN - BOX_W / 2;
+const TOP_ROW_Y = GRID_TOP + BOX_H / 2 + 24;
+const BOTTOM_ROW_Y = TOP_ROW_Y + BOX_H + BOX_ROW_GAP;
 
 const ORBIT: { x: number; y: number }[] = [
   { x: GRID_CX - ROW_SPAN, y: TOP_ROW_Y },
@@ -81,28 +116,60 @@ const ORBIT: { x: number; y: number }[] = [
   { x: GRID_CX + ROW_SPAN, y: BOTTOM_ROW_Y },
 ];
 
-export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile" | "desktop" }) {
+function wrapperClass(
+  variant: "mobile" | "desktop",
+  countryLayout: CountryLayout,
+  showAgents: boolean,
+  showCountries: boolean,
+) {
+  if (countryLayout === "mission-right" && showCountries && !showAgents) {
+    return variant === "mobile"
+      ? "pointer-events-none absolute right-0 top-1/2 z-[2] h-[min(82%,34rem)] w-[min(96%,30rem)] -translate-y-1/2 translate-x-[3%] origin-center overflow-visible"
+      : "pointer-events-none absolute right-[clamp(0.25rem,1.4vw,1.75rem)] top-1/2 z-[2] h-[min(94%,38rem)] w-[min(64%,52rem)] -translate-y-1/2 origin-center-right overflow-visible";
+  }
+
+  return variant === "mobile"
+    ? "pointer-events-none absolute right-[clamp(0,0.75vw,0.75rem)] top-[8%] z-[2] w-[min(88%,24rem)] translate-x-2 scale-[0.88] origin-top-right overflow-visible"
+    : "pointer-events-none absolute right-[clamp(0.25rem,1.5vw,1.25rem)] top-[clamp(0.35rem,1.8vh,1.1rem)] z-[2] w-[min(94%,64rem)] translate-x-3 scale-[1.02] origin-top-right overflow-visible";
+}
+
+export function JoinHeroNorthAmericaSilhouettes({
+  variant,
+  showAgents = true,
+  showCountries = true,
+  countryLayout = "hero-agents",
+}: {
+  variant: "mobile" | "desktop";
+  showAgents?: boolean;
+  showCountries?: boolean;
+  countryLayout?: CountryLayout;
+}) {
   const id = useId().replace(/:/g, "");
   const { ref, revealed } = useJoinHeroScrollReveal();
 
-  const wrapperClass =
-    variant === "mobile"
-      ? "pointer-events-none absolute right-[clamp(0,0.75vw,0.75rem)] top-[8%] z-[2] translate-x-2 scale-[0.88] w-[min(88%,24rem)] overflow-visible origin-top-right"
-      : "pointer-events-none absolute right-[clamp(0.25rem,1.5vw,1.25rem)] top-[clamp(0.35rem,1.8vh,1.1rem)] z-[2] translate-x-3 scale-[1.02] w-[min(94%,64rem)] overflow-visible origin-top-right";
+  const geometry = countryLayout === "mission-right" ? MISSION_RIGHT_COUNTRY : HERO_AGENTS_COUNTRY;
+  const { caBox, usBox } = countryRects(geometry);
+  const caMap = scaledMapImage(caBox, geometry.countryImageScale);
+  const usMap = scaledMapImage(usBox, geometry.countryImageScale);
+  const { viewBox } = geometry;
 
   const caGrad = `${id}-ca-grad`;
   const usGrad = `${id}-us-grad`;
-  const caMask  = `${id}-ca-mask`;
-  const usMask  = `${id}-us-mask`;
+  const caMask = `${id}-ca-mask`;
+  const usMask = `${id}-us-mask`;
   const invertF = `${id}-invert`;
   const orbIdPrefix = `${id}-orb`;
   const voiceOrbGrain = `${id}-voice-orb-grain`;
   const countryGrain = `${id}-country-grain`;
 
   return (
-    <div ref={ref} className={`${wrapperClass} ${suisseIntl.className} ${dmSans.className}`} aria-hidden>
+    <div
+      ref={ref}
+      className={`${wrapperClass(variant, countryLayout, showAgents, showCountries)} ${suisseIntl.className} ${dmSans.className}`}
+      aria-hidden
+    >
       <svg
-        viewBox={`${VOX} ${VOY} ${VW} ${VH}`}
+        viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`}
         fill="none"
         preserveAspectRatio="xMidYMid meet"
         className="h-full w-full overflow-visible"
@@ -128,84 +195,101 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
             ))}
           </linearGradient>
 
-          <mask id={caMask}>
-            <image
-              href="/images/canada-map.jpg"
-              x={CA_MAP.x} y={CA_MAP.y}
-              width={CA_MAP.w} height={CA_MAP.h}
-              preserveAspectRatio="xMidYMid meet"
-              filter={`url(#${invertF})`}
-            />
-          </mask>
+          {showCountries ? (
+            <>
+              <mask id={caMask}>
+                <image
+                  href="/images/canada-map.jpg"
+                  x={caMap.x}
+                  y={caMap.y}
+                  width={caMap.w}
+                  height={caMap.h}
+                  preserveAspectRatio="xMidYMid meet"
+                  filter={`url(#${invertF})`}
+                />
+              </mask>
 
-          <mask id={usMask}>
-            <image
-              href="/images/usa-map.jpg"
-              x={US_MAP.x} y={US_MAP.y}
-              width={US_MAP.w} height={US_MAP.h}
-              preserveAspectRatio="xMidYMid meet"
-              filter={`url(#${invertF})`}
-            />
-          </mask>
+              <mask id={usMask}>
+                <image
+                  href="/images/usa-map.jpg"
+                  x={usMap.x}
+                  y={usMap.y}
+                  width={usMap.w}
+                  height={usMap.h}
+                  preserveAspectRatio="xMidYMid meet"
+                  filter={`url(#${invertF})`}
+                />
+              </mask>
+            </>
+          ) : null}
 
-          <HeroAgentBoxGrainFilter id={voiceOrbGrain} />
+          {showAgents ? <HeroAgentBoxGrainFilter id={voiceOrbGrain} /> : null}
 
-          <filter id={countryGrain} x="-4%" y="-4%" width="108%" height="108%" colorInterpolationFilters="sRGB">
-            <feTurbulence type="fractalNoise" baseFrequency="0.78" numOctaves="3" stitchTiles="stitch" result="noise" />
-            <feColorMatrix in="noise" type="saturate" values="0" result="monoNoise" />
-            <feComponentTransfer in="monoNoise" result="faintNoise">
-              <feFuncA type="linear" slope="0.22" intercept="0" />
-            </feComponentTransfer>
-            <feComposite in="faintNoise" in2="SourceGraphic" operator="in" result="maskedNoise" />
-            <feBlend in="SourceGraphic" in2="maskedNoise" mode="overlay" />
-          </filter>
+          {showCountries ? (
+            <filter id={countryGrain} x="-4%" y="-4%" width="108%" height="108%" colorInterpolationFilters="sRGB">
+              <feTurbulence type="fractalNoise" baseFrequency="0.78" numOctaves="3" stitchTiles="stitch" result="noise" />
+              <feColorMatrix in="noise" type="saturate" values="0" result="monoNoise" />
+              <feComponentTransfer in="monoNoise" result="faintNoise">
+                <feFuncA type="linear" slope="0.22" intercept="0" />
+              </feComponentTransfer>
+              <feComposite in="faintNoise" in2="SourceGraphic" operator="in" result="maskedNoise" />
+              <feBlend in="SourceGraphic" in2="maskedNoise" mode="overlay" />
+            </filter>
+          ) : null}
         </defs>
 
-        {/* Canada — reveals first */}
-        <g
-          className={joinHeroBoxRevealClass(revealed)}
-          style={{ animationDelay: joinHeroBoxRevealDelay(revealed, 0) }}
-          filter={`url(#${countryGrain})`}
-        >
-          <rect x={CA.x} y={CA.y} width={CA.w} height={CA.h} fill={`url(#${caGrad})`} mask={`url(#${caMask})`} />
-        </g>
+        {showCountries ? (
+          <>
+            <g
+              className={joinHeroBoxRevealClass(revealed)}
+              style={{ animationDelay: joinHeroBoxRevealDelay(revealed, 0) }}
+              filter={`url(#${countryGrain})`}
+            >
+              <rect x={caBox.x} y={caBox.y} width={caBox.w} height={caBox.h} fill={`url(#${caGrad})`} mask={`url(#${caMask})`} />
+            </g>
 
-        {/* USA — follows Canada */}
-        <g
-          className={joinHeroBoxRevealClass(revealed)}
-          style={{ animationDelay: joinHeroBoxRevealDelay(revealed, 1) }}
-          filter={`url(#${countryGrain})`}
-        >
-          <rect x={US.x} y={US.y} width={US.w} height={US.h} fill={`url(#${usGrad})`} mask={`url(#${usMask})`} />
-        </g>
+            <g
+              className={joinHeroBoxRevealClass(revealed)}
+              style={{ animationDelay: joinHeroBoxRevealDelay(revealed, 1) }}
+              filter={`url(#${countryGrain})`}
+            >
+              <rect x={usBox.x} y={usBox.y} width={usBox.w} height={usBox.h} fill={`url(#${usGrad})`} mask={`url(#${usMask})`} />
+            </g>
+          </>
+        ) : null}
 
-        <style>{`
-          .${id}-box rect {
-            stroke: none;
-          }
-        `}</style>
+        {showAgents ? (
+          <>
+            <style>{`
+              .${id}-box rect {
+                stroke: none;
+              }
+            `}</style>
 
-        {ORBIT.map((pt, i) => {
-          // Wait for USA (index 1) to finish before boxes start
-          const boxRevealBase =
-            JOIN_HERO_BOX_REVEAL_STAGGER_MS + JOIN_HERO_BOX_RISE_DURATION_MS + JOIN_HERO_BOX_SEQUENCE_GAP_MS;
+            {ORBIT.map((pt, i) => {
+              const boxRevealBase =
+                showCountries
+                  ? JOIN_HERO_BOX_REVEAL_STAGGER_MS + JOIN_HERO_BOX_RISE_DURATION_MS + JOIN_HERO_BOX_SEQUENCE_GAP_MS
+                  : 0;
 
-          return (
-          <g
-            key={`box-${i}`}
-            className={`${joinHeroBoxRevealClass(revealed)} ${id}-box`}
-            style={{ animationDelay: joinHeroBoxRevealDelay(revealed, i, boxRevealBase) }}
-          >
-            <HeroAgentBoxContent
-              agentIndex={i as 0 | 1 | 2 | 3 | 4 | 5}
-              boxX={pt.x - BOX_W / 2}
-              boxY={pt.y - BOX_H / 2}
-              grainFilterId={voiceOrbGrain}
-              idPrefix={`${orbIdPrefix}-${i}`}
-            />
-          </g>
-          );
-        })}
+              return (
+                <g
+                  key={`box-${i}`}
+                  className={`${joinHeroBoxRevealClass(revealed)} ${id}-box`}
+                  style={{ animationDelay: joinHeroBoxRevealDelay(revealed, i, boxRevealBase) }}
+                >
+                  <HeroAgentBoxContent
+                    agentIndex={i as 0 | 1 | 2 | 3 | 4 | 5}
+                    boxX={pt.x - BOX_W / 2}
+                    boxY={pt.y - BOX_H / 2}
+                    grainFilterId={voiceOrbGrain}
+                    idPrefix={`${orbIdPrefix}-${i}`}
+                  />
+                </g>
+              );
+            })}
+          </>
+        ) : null}
       </svg>
     </div>
   );

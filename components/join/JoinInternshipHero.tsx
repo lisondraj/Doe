@@ -177,7 +177,9 @@ export function JoinInternshipHero({
       ) : null}
 
       {decoration === "north-america-maps" ? (
-        <JoinHeroNorthAmericaSilhouettes variant={variant} />
+        <JoinHeroNorthAmericaSilhouettes variant={variant} showAgents={false} countryLayout="mission-right" />
+      ) : decoration === "agent-grid" ? (
+        <JoinHeroNorthAmericaSilhouettes variant={variant} showCountries={false} />
       ) : decoration === "ai-chat" ? (
         <JoinHeroAiChatPreview variant={variant} />
       ) : decoration === "co-founders-cards" ? (
