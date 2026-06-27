@@ -9,7 +9,7 @@ import {
   doephoneHeroIntroStyleVars,
 } from "@/lib/doephone/hero-intro-timing";
 import { DOEPHONE_HERO_COPY_INSET } from "@/lib/doephone/section-styles";
-import { DOEPHONE_HERO_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
+import { CARE_COORDINATION_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 import { useEffect, useState, type CSSProperties } from "react";
 
 /** Hero — modest height band; inbox UI anchors to bottom of this section. */
@@ -54,7 +54,7 @@ export function DoePhoneHeroSection() {
 
   return (
     <section
-      className="doephone-hero-section relative w-full overflow-hidden bg-[#1E343A]"
+      className="doephone-hero-section relative w-full overflow-hidden bg-[#D2774C]"
       style={
         {
           minHeight: DOEPHONE_HERO_HEIGHT,
@@ -65,7 +65,7 @@ export function DoePhoneHeroSection() {
       aria-label="Hero"
     >
       <WorkflowCarouselDesignBackdrop
-        backdrop={DOEPHONE_HERO_BACKDROP}
+        backdrop={CARE_COORDINATION_BACKDROP}
         embedded
         introOnLoad
         gradientScale={gradientZoom}

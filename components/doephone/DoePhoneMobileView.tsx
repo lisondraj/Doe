@@ -20,7 +20,7 @@ export function DoePhoneMobileView() {
       suppressHydrationWarning
       data-doeforvc-view="iphone"
     >
-      <DoeIphoneSiteNav pinchSafe showMenu={false} ctaLayout="triple" />
+      <DoeIphoneSiteNav pinchSafe />
 
       <DoePhoneHeroSection />
 

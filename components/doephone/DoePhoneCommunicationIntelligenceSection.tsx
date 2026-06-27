@@ -7,15 +7,15 @@ import {
   DOEPHONE_SECTION_TITLE_PT,
   DOEPHONE_VIEWPORT_SECTION,
 } from "@/lib/doephone/section-styles";
-import { CARE_COORDINATION_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
+import { DOEPHONE_HERO_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 
 /** Gradient viewport — Communication + Intelligence title. */
 export function DoePhoneCommunicationIntelligenceSection() {
   return (
-    <section className={`${DOEPHONE_VIEWPORT_SECTION} overflow-hidden bg-[#D2774C]`} aria-label="Communication">
+    <section className={`${DOEPHONE_VIEWPORT_SECTION} overflow-hidden bg-[#1E343A]`} aria-label="Communication">
       <div className="pointer-events-none absolute -inset-[3%] overflow-hidden" aria-hidden>
         <WorkflowCarouselDesignBackdrop
-          backdrop={CARE_COORDINATION_BACKDROP}
+          backdrop={DOEPHONE_HERO_BACKDROP}
           embedded
           gradientScale={1.52}
         />
