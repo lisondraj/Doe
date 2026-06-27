@@ -59,9 +59,26 @@ const VH = 1960;
 const VOX = -860;
 const VOY = -760;
 
-// Canada + USA centered on the orbit hub (CX, CY) — scaled up within box clearance
-const CA = { x: -225, y: -281, w: 850, h: 525 };
-const US = { x: -232, y: 194, w: 864, h: 517 };
+// Side-by-side countries centered on composition hub; agent boxes in two rows above/below.
+const COMP_CX = 200;
+const COMP_CY = 180;
+
+const MAP_W = 620;
+const MAP_H = 460;
+const MAP_GAP = 36;
+
+const CA = {
+  x: COMP_CX - MAP_GAP / 2 - MAP_W,
+  y: COMP_CY - MAP_H / 2,
+  w: MAP_W,
+  h: MAP_H,
+};
+const US = {
+  x: COMP_CX + MAP_GAP / 2,
+  y: COMP_CY - MAP_H / 2,
+  w: MAP_W,
+  h: MAP_H,
+};
 
 /** Zoom map art inside the fixed clip rects — larger silhouettes without moving white boxes. */
 const COUNTRY_IMAGE_SCALE = 1.14;
@@ -77,41 +94,25 @@ function scaledMapImage(box: { x: number; y: number; w: number; h: number }) {
 const CA_MAP = scaledMapImage(CA);
 const US_MAP = scaledMapImage(US);
 
-// Composition center for orbit layout — elliptical so top/bottom rings sit closer
-const CX = 200;
-const CY = 215;
-const RX = 792;
-const RY = 652;
-
 const BOX_W = 614;
 const BOX_H = 382;
 const BOX_RX = 51;
 
-/** Extra radial push for individual orbit boxes (index → outset). */
-const ORBIT_BOX_OUTSET: Partial<Record<number, number>> = {
-  0: 42, // Voice Agent — top
-  3: 42, // Referrals Agent — bottom
-};
+/** Top row (0–2) and bottom row (3–5) — evenly spaced, overlapping country silhouettes. */
+const BOX_ROW_GAP = 52;
+const BOX_OVERLAP = 168;
+const ROW_SPAN = BOX_W + BOX_ROW_GAP;
+const TOP_ROW_Y = COMP_CY - MAP_H / 2 - BOX_H / 2 + BOX_OVERLAP;
+const BOTTOM_ROW_Y = COMP_CY + MAP_H / 2 + BOX_H / 2 - BOX_OVERLAP;
 
-/** Pull side boxes toward center on Y — Scheduling, Labs, Live, Billing. */
-const ORBIT_BOX_Y_INSET: Partial<Record<number, number>> = {
-  1: 58, // Scheduling Agent
-  2: 58, // Labs Agent
-  4: 58, // Live Appointment
-  5: 58, // Billing Agent
-};
-
-const ORBIT = Array.from({ length: 6 }, (_, i) => {
-  const a = -Math.PI / 2 + (i * 2 * Math.PI) / 6;
-  const d = ORBIT_BOX_OUTSET[i] ?? 0;
-  let x = CX + (RX + d) * Math.cos(a);
-  let y = CY + (RY + d) * Math.sin(a);
-  const yInset = ORBIT_BOX_Y_INSET[i] ?? 0;
-  if (yInset !== 0) {
-    y = y > CY ? y - yInset : y + yInset;
-  }
-  return { x, y };
-});
+const ORBIT: { x: number; y: number }[] = [
+  { x: COMP_CX - ROW_SPAN, y: TOP_ROW_Y },
+  { x: COMP_CX, y: TOP_ROW_Y },
+  { x: COMP_CX + ROW_SPAN, y: TOP_ROW_Y },
+  { x: COMP_CX - ROW_SPAN, y: BOTTOM_ROW_Y },
+  { x: COMP_CX, y: BOTTOM_ROW_Y },
+  { x: COMP_CX + ROW_SPAN, y: BOTTOM_ROW_Y },
+];
 
 function DayStatusIcon({ x, y, status }: { x: number; y: number; status: "available" | "unavailable" }) {
   const iconSize = 30;
