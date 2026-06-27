@@ -7,7 +7,7 @@
  * white background → transparent).
  */
 import { useId } from "react";
-import { suisseIntl } from "@/lib/home/fonts";
+import { suisseIntl, suisseIntlHairline } from "@/lib/home/fonts";
 import { useJoinHeroScrollReveal, joinHeroBoxRevealClass, joinHeroBoxRevealDelay, JOIN_HERO_BOX_RISE_DURATION_MS, JOIN_HERO_BOX_SEQUENCE_GAP_MS } from "@/lib/join/use-join-hero-scroll-reveal";
 
 const AGENT_INK = "#1E343A";
@@ -448,16 +448,7 @@ function LiveAppointmentSteps({ boxX, boxY }: { boxX: number; boxY: number }) {
   );
 }
 
-const BILLING_PRIOR_AUTH_CASES = [
-  { label: "Ozempic", type: "Rx PA" },
-  { label: "MRI lumbar", type: "Imaging" },
-  { label: "Stelara", type: "Rx PA" },
-  { label: "CPAP", type: "DME" },
-  { label: "Cardiology echo", type: "Imaging" },
-  { label: "Humira", type: "Rx PA" },
-] as const;
-
-function BillingAgentPriorAuthGrid({
+function BillingAgentRevenue({
   boxX,
   boxY,
   orbGradId,
@@ -473,114 +464,126 @@ function BillingAgentPriorAuthGrid({
   const innerX = boxX + BOX_PAD_X;
   const innerW = BOX_W - BOX_PAD_X * 2;
   const contentTop = boxContentTop(boxY) + 6;
-  const loadingH = 56;
-  const loadingGap = 12;
-  const colGap = 12;
-  const rowGap = 12;
-  const cols = 3;
-  const rows = 2;
-  const cellRx = 12;
-  const typeFontSize = 24;
-  const labelFontSize = 30;
-  const gridTop = contentTop;
-  const gridH = BOX_H - BOX_PAD_Y - (gridTop - boxY) - loadingH - loadingGap - 8;
-  const cellW = (innerW - colGap * (cols - 1)) / cols;
-  const cellH = (gridH - rowGap * (rows - 1)) / rows;
-  const loadingY = gridTop + gridH + loadingGap;
+  const contentBottom = boxY + BOX_H - BOX_PAD_Y;
+  const cardRx = 14;
+  const rowGap = 10;
+  const rowH = 56;
+  const rowCount = 2;
+  const rowsH = rowH * rowCount + rowGap * (rowCount - 1);
+  const cardGap = 14;
+  const cardH = (contentBottom - contentTop) - rowsH - cardGap;
+  const cardPadX = 28;
+
+  // Revenue card text positions
+  const amountFontSize = 64;
+  const labelFontSize = 26;
+  const labelY = contentTop + cardPadX;
+  const amountY = contentTop + cardH / 2 + 8;
+  const amountBlockH = Math.ceil(amountFontSize * 1.08);
+  const amountBlockY = amountY - amountBlockH / 2;
+
+  // Claim rows below the card
+  const rowsTop = contentTop + cardH + cardGap;
+  const rows = [
+    { label: "6 claims processed",  done: true  },
+    { label: "2 prior auths pending", done: false },
+  ];
 
   return (
     <g aria-hidden>
-      {BILLING_PRIOR_AUTH_CASES.map((item, i) => {
-        const col = i % cols;
-        const row = Math.floor(i / cols);
-        const x = innerX + col * (cellW + colGap);
-        const y = gridTop + row * (cellH + rowGap);
-        const cx = x + cellW / 2;
-        const typeY = y + 22;
-        const labelY = y + Math.min(58, cellH * 0.46);
-        const statusZoneTop = labelY + labelFontSize / 2;
-        const statusZoneBottom = y + cellH;
-        const statusY = (statusZoneTop + statusZoneBottom) / 2;
-
-        return (
-          <g key={item.label}>
-            <g filter={`url(#${orbGrainId})`}>
-              <rect x={x} y={y} width={cellW} height={cellH} rx={cellRx} fill={`url(#${orbGradId})`} />
-              <rect x={x} y={y} width={cellW} height={cellH} rx={cellRx} fill={`url(#${orbShadeId})`} />
-            </g>
-            <text
-              x={cx}
-              y={typeY}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              fill={ON_ORANGE_MUTED}
-              fontSize={typeFontSize}
-              fontWeight={500}
-              fontFamily={suisseIntl.style.fontFamily}
-            >
-              {item.type}
-            </text>
-            <text
-              x={cx}
-              y={labelY}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              fill={ON_ORANGE_INK}
-              fontSize={labelFontSize}
-              fontWeight={500}
-              fontFamily={suisseIntl.style.fontFamily}
-              letterSpacing="-0.02em"
-            >
-              {item.label}
-            </text>
-            <DayStatusIcon x={cx} y={statusY} status="available" />
-          </g>
-        );
-      })}
-
-      <foreignObject x={innerX} y={loadingY} width={innerW} height={loadingH}>
+      {/* Orange revenue card */}
+      <g filter={`url(#${orbGrainId})`}>
+        <rect x={innerX} y={contentTop} width={innerW} height={cardH} rx={cardRx} fill={`url(#${orbGradId})`} />
+        <rect x={innerX} y={contentTop} width={innerW} height={cardH} rx={cardRx} fill={`url(#${orbShadeId})`} />
+      </g>
+      <text
+        x={innerX + cardPadX}
+        y={labelY}
+        dominantBaseline="hanging"
+        fill={ON_ORANGE_MUTED}
+        fontSize={labelFontSize}
+        fontWeight={500}
+        fontFamily={suisseIntl.style.fontFamily}
+        letterSpacing="0.01em"
+      >
+        Approved today
+      </text>
+      <foreignObject
+        x={innerX + cardPadX}
+        y={amountBlockY}
+        width={innerW - cardPadX * 2}
+        height={amountBlockH}
+      >
         <div
-          className={suisseIntl.className}
+          className={suisseIntlHairline.className}
           style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "12px",
-            height: "100%",
-            borderRadius: "10px",
-            background: "#FAFAF8",
-            padding: "0 16px",
-            boxSizing: "border-box",
-            overflow: "hidden",
-            ...SUISSE_FOREIGN_FONT,
+            fontFamily: suisseIntlHairline.style.fontFamily,
+            fontSynthesis: "none",
+            WebkitFontSmoothing: "antialiased",
+            fontSize: amountFontSize,
+            fontWeight: 100,
+            color: ON_ORANGE_INK,
+            letterSpacing: "-0.03em",
+            lineHeight: 1,
+            fontVariantNumeric: "lining-nums",
           }}
         >
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden style={{ flexShrink: 0 }}>
-            <circle cx="11" cy="11" r="11" fill={DOE_ORANGE} />
-            <path
-              d="M6.5 11.2l2.4 2.4 6.2-6.4"
-              stroke="#FFFFFF"
-              strokeWidth="1.85"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-          <span
-            style={{
-              flex: 1,
-              minWidth: 0,
-              fontSize: 30,
-              color: AGENT_INK,
-              fontWeight: 500,
-              lineHeight: 1.2,
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}
-          >
-            6 prior auths handled today
-          </span>
+          $8,640
         </div>
       </foreignObject>
+
+      {/* Claim rows */}
+      {rows.map((row, i) => {
+        const y = rowsTop + i * (rowH + rowGap);
+        return (
+          <foreignObject key={row.label} x={innerX} y={y} width={innerW} height={rowH}>
+            <div
+              className={suisseIntl.className}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "14px",
+                height: "100%",
+                borderRadius: "10px",
+                background: "#FAFAF8",
+                border: "1px solid #EDE9E2",
+                padding: "0 18px",
+                boxSizing: "border-box",
+                overflow: "hidden",
+                ...SUISSE_FOREIGN_FONT,
+              }}
+            >
+              {row.done ? (
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden style={{ flexShrink: 0 }}>
+                  <circle cx="11" cy="11" r="11" fill={DOE_ORANGE} />
+                  <path d="M6.5 11.2l2.4 2.4 6.2-6.4" stroke="#FFFFFF" strokeWidth="1.85" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              ) : (
+                <span
+                  className="shrink-0 animate-spin rounded-full border-[2px] border-[#D9D4CC] border-r-transparent border-b-transparent"
+                  style={{ width: 20, height: 20, animationDuration: "1.1s", display: "block" }}
+                  aria-hidden
+                />
+              )}
+              <span
+                style={{
+                  flex: 1,
+                  minWidth: 0,
+                  fontSize: 30,
+                  color: row.done ? AGENT_INK : "#78716C",
+                  fontWeight: 500,
+                  lineHeight: 1.2,
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {row.label}
+              </span>
+            </div>
+          </foreignObject>
+        );
+      })}
     </g>
   );
 }
@@ -1199,7 +1202,7 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
               <LiveAppointmentSteps boxX={pt.x - BOX_W / 2} boxY={pt.y - BOX_H / 2} />
             ) : null}
             {i === 5 ? (
-              <BillingAgentPriorAuthGrid
+              <BillingAgentRevenue
                 boxX={pt.x - BOX_W / 2}
                 boxY={pt.y - BOX_H / 2}
                 orbGradId={voiceOrbGrad}
