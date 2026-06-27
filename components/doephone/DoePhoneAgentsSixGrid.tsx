@@ -5,19 +5,28 @@ import { suisseIntl } from "@/lib/home/fonts";
 
 const COLUMN_X = [16.666, 50, 83.333] as const;
 const BUS_Y = 50;
+/** Line anchors — bottom of top row boxes / top of bottom row boxes. */
+const TOP_STUB_Y = 36;
+const BOTTOM_STUB_Y = 64;
 
 function AgentSquare() {
   return (
     <div
-      className="aspect-square w-[min(72%,4.85rem)] rounded-[clamp(0.52rem,0.42rem+0.48vmin,0.82rem)] border-[1.5px] border-[#1E343A] bg-[#D2774C]"
+      className="aspect-square w-[min(84%,6.5rem)] rounded-[clamp(0.55rem,0.45rem+0.5vmin,0.88rem)] bg-white shadow-[0_10px_28px_rgba(30,52,58,0.14)]"
       aria-hidden
     />
   );
 }
 
-function AgentName({ label }: { label: string }) {
+function AgentName({ label, placement }: { label: string; placement: "above" | "below" }) {
   return (
-    <p className="mt-[clamp(0.28rem,0.18rem+0.42vmin,0.42rem)] text-center text-[clamp(0.52rem,2vmin,0.68rem)] font-normal leading-[1.12] tracking-[-0.015em] text-white">
+    <p
+      className={`text-center text-[clamp(0.58rem,2.15vmin,0.76rem)] font-normal leading-[1.1] tracking-[-0.015em] text-white ${
+        placement === "above"
+          ? "mb-[clamp(0.35rem,1.25vmin,0.5rem)]"
+          : "mt-[clamp(0.14rem,0.45vmin,0.22rem)]"
+      }`}
+    >
       {label}
     </p>
   );
@@ -30,7 +39,7 @@ export function DoePhoneAgentsSixGrid() {
 
   return (
     <div
-      className={`relative mx-auto aspect-[1.08/1] w-full max-w-[min(90%,21rem)] iphone-page:max-w-[min(94%,23.5rem)] ${suisseIntl.className}`}
+      className={`relative mx-auto aspect-[1.02/1] w-full max-w-[min(96%,28rem)] iphone-page:max-w-[min(98%,30.5rem)] ${suisseIntl.className}`}
       aria-hidden
     >
       <svg
@@ -53,7 +62,7 @@ export function DoePhoneAgentsSixGrid() {
           <g key={x}>
             <line
               x1={x}
-              y1="27"
+              y1={TOP_STUB_Y}
               x2={x}
               y2={BUS_Y}
               stroke="white"
@@ -65,7 +74,7 @@ export function DoePhoneAgentsSixGrid() {
               x1={x}
               y1={BUS_Y}
               x2={x}
-              y2="73"
+              y2={BOTTOM_STUB_Y}
               stroke="white"
               strokeWidth="0.55"
               strokeLinecap="round"
@@ -75,18 +84,18 @@ export function DoePhoneAgentsSixGrid() {
         ))}
       </svg>
 
-      <div className="relative grid h-full grid-cols-3 grid-rows-[1fr_auto_auto_1fr_auto] gap-x-[clamp(0.55rem,2.8vmin,1.05rem)] px-[2%]">
+      <div className="relative grid h-full grid-cols-3 grid-rows-[auto_minmax(0,1fr)_auto_minmax(0,1fr)_auto] gap-x-[clamp(0.65rem,3.2vmin,1.15rem)] px-[1%]">
+        {topAgents.map((label) => (
+          <AgentName key={`${label}-name-top`} label={label} placement="above" />
+        ))}
+
         {topAgents.map((label) => (
           <div key={`${label}-box-top`} className="flex items-end justify-center">
             <AgentSquare />
           </div>
         ))}
 
-        {topAgents.map((label) => (
-          <AgentName key={`${label}-name-top`} label={label} />
-        ))}
-
-        <div className="col-span-3 h-[clamp(0.75rem,2.8vmin,1.2rem)]" aria-hidden />
+        <div className="col-span-3 h-[clamp(0.85rem,3.1vmin,1.28rem)]" aria-hidden />
 
         {bottomAgents.map((label) => (
           <div key={`${label}-box-bottom`} className="flex items-start justify-center">
@@ -95,7 +104,7 @@ export function DoePhoneAgentsSixGrid() {
         ))}
 
         {bottomAgents.map((label) => (
-          <AgentName key={`${label}-name-bottom`} label={label} />
+          <AgentName key={`${label}-name-bottom`} label={label} placement="below" />
         ))}
       </div>
     </div>
