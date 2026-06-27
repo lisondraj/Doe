@@ -21,64 +21,6 @@ export type DoePhoneBoxClusterPreset = {
 /** Four customization presets — unique backdrop pairs and box compositions. */
 export const DOEPHONE_BOX_CLUSTER_PRESETS: readonly DoePhoneBoxClusterPreset[] = [
   {
-    id: "intake",
-    menuLabel: "Intake",
-    agentIndex: 0,
-    description: [
-      "Collect patient details before the first visit.",
-      "Forms adapt to your workflows and payers.",
-      "Everything lands in one chart-ready record.",
-    ],
-    layout: {
-      left: "absolute left-0 top-[4%] z-[1] h-[72%] w-[40%] iphone-page:top-[3%] iphone-page:w-[39%]",
-      right:
-        "absolute bottom-[6%] right-0 z-[1] aspect-[1.28] w-[53%] iphone-page:bottom-[5%] iphone-page:w-[51%]",
-      center:
-        "absolute left-1/2 top-1/2 z-[2] flex h-[clamp(22rem,60vmin,30rem)] w-[88%] max-w-[min(100%,30rem)] -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden bg-white iphone-page:h-[clamp(21rem,57vmin,28rem)] iphone-page:w-[86%]",
-    },
-    left: {
-      slideIndex: 3,
-      label: "Intake",
-      gradient: "radial-gradient(circle at center, #C47A5A 0%, #D2774C 58%, #D49D4F 100%)",
-      grid: "dot",
-    },
-    right: {
-      slideIndex: 0,
-      label: "Intake",
-      gradient: "linear-gradient(135deg, #D49D4F 0%, #D2774C 42%, #C47A5A 100%)",
-      grid: "diagonal",
-    },
-  },
-  {
-    id: "routing",
-    menuLabel: "Routing",
-    agentIndex: 3,
-    description: [
-      "Direct every referral to the right specialist.",
-      "Rules you set once, applied across your network.",
-      "No manual triage or lost messages.",
-    ],
-    layout: {
-      left: "absolute left-0 top-1/2 z-[1] h-[100%] w-[30%] -translate-y-1/2 iphone-page:w-[29%]",
-      right: "absolute bottom-[3%] right-0 z-[1] aspect-square w-[45%] iphone-page:bottom-[2%] iphone-page:w-[43%]",
-      center:
-        "absolute left-1/2 top-1/2 z-[2] flex h-[clamp(20.5rem,56vmin,28rem)] w-[96%] max-w-[min(100%,34rem)] -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden bg-white iphone-page:h-[clamp(19.75rem,54vmin,26.5rem)] iphone-page:w-[94%]",
-    },
-    left: {
-      slideIndex: 0,
-      label: "Routing",
-      gradient: "radial-gradient(ellipse 100% 88% at 22% 18%, #D49D4F 0%, #D2774C 52%, #B87862 100%)",
-      grid: "hex",
-    },
-    right: {
-      slideIndex: 1,
-      label: "Routing",
-      gradient:
-        "linear-gradient(135deg, #B87862 0%, #C47A5A 24%, #D2774C 58%, #D49D4F 100%)",
-      grid: "crosshatch",
-    },
-  },
-  {
     id: "labs",
     menuLabel: "Labs",
     agentIndex: 2,
@@ -134,6 +76,64 @@ export const DOEPHONE_BOX_CLUSTER_PRESETS: readonly DoePhoneBoxClusterPreset[] =
       label: "Sync",
       gradient: "linear-gradient(90deg, #C47A5A 0%, #D2774C 42%, #D49D4F 100%)",
       grid: "wave",
+    },
+  },
+  {
+    id: "intake",
+    menuLabel: "Intake",
+    agentIndex: 0,
+    description: [
+      "Collect patient details before the first visit.",
+      "Forms adapt to your workflows and payers.",
+      "Everything lands in one chart-ready record.",
+    ],
+    layout: {
+      left: "absolute left-0 top-[4%] z-[1] h-[72%] w-[40%] iphone-page:top-[3%] iphone-page:w-[39%]",
+      right:
+        "absolute bottom-[6%] right-0 z-[1] aspect-[1.28] w-[53%] iphone-page:bottom-[5%] iphone-page:w-[51%]",
+      center:
+        "absolute left-1/2 top-1/2 z-[2] flex h-[clamp(22rem,60vmin,30rem)] w-[88%] max-w-[min(100%,30rem)] -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden bg-white iphone-page:h-[clamp(21rem,57vmin,28rem)] iphone-page:w-[86%]",
+    },
+    left: {
+      slideIndex: 3,
+      label: "Intake",
+      gradient: "radial-gradient(circle at center, #C47A5A 0%, #D2774C 58%, #D49D4F 100%)",
+      grid: "dot",
+    },
+    right: {
+      slideIndex: 0,
+      label: "Intake",
+      gradient: "linear-gradient(135deg, #D49D4F 0%, #D2774C 42%, #C47A5A 100%)",
+      grid: "diagonal",
+    },
+  },
+  {
+    id: "routing",
+    menuLabel: "Routing",
+    agentIndex: 3,
+    description: [
+      "Direct every referral to the right specialist.",
+      "Rules you set once, applied across your network.",
+      "No manual triage or lost messages.",
+    ],
+    layout: {
+      left: "absolute left-0 top-1/2 z-[1] h-[100%] w-[30%] -translate-y-1/2 iphone-page:w-[29%]",
+      right: "absolute bottom-[3%] right-0 z-[1] aspect-square w-[45%] iphone-page:bottom-[2%] iphone-page:w-[43%]",
+      center:
+        "absolute left-1/2 top-1/2 z-[2] flex h-[clamp(20.5rem,56vmin,28rem)] w-[96%] max-w-[min(100%,34rem)] -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden bg-white iphone-page:h-[clamp(19.75rem,54vmin,26.5rem)] iphone-page:w-[94%]",
+    },
+    left: {
+      slideIndex: 0,
+      label: "Routing",
+      gradient: "radial-gradient(ellipse 100% 88% at 22% 18%, #D49D4F 0%, #D2774C 52%, #B87862 100%)",
+      grid: "hex",
+    },
+    right: {
+      slideIndex: 1,
+      label: "Routing",
+      gradient:
+        "linear-gradient(135deg, #B87862 0%, #C47A5A 24%, #D2774C 58%, #D49D4F 100%)",
+      grid: "crosshatch",
     },
   },
 ] as const;
