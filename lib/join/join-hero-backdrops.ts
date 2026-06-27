@@ -37,7 +37,6 @@ export const JOIN_HERO_EXTRA_BANDS: readonly JoinHeroBandConfig[] = [
     id: "incoming",
     showInbox: false,
     surface: "beige",
-    decoration: "north-america-maps",
     headline: ["About Doe's", "Mission."],
     description: [
       "Doe is an all-in-one healthcare communication layer built on top of health providers' existing inboxes. It automates every touchpoint in a patient's healthcare journey, from intake and scheduling to follow-ups and care coordination, without replacing the tools teams already trust.",
@@ -86,7 +85,8 @@ export const JOIN_HERO_EXTRA_BANDS: readonly JoinHeroBandConfig[] = [
 export const JOIN_HERO_BANDS: readonly JoinHeroBandConfig[] = [
   {
     id: "agents",
-    showInbox: true,
+    showInbox: false,
+    decoration: "north-america-maps",
     headline: ["Let's rebuild.", "healthcare."],
     backdrop: JOIN_HERO_PRIMARY_BACKDROP,
   },

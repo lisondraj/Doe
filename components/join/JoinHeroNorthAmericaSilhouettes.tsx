@@ -59,29 +59,38 @@ const VH = 1960;
 const VOX = -860;
 const VOY = -760;
 
-// Side-by-side countries centered on composition hub; agent boxes in two rows above/below.
-const COMP_CX = 200;
-const COMP_CY = 180;
+// Agent grid — top-right; countries diagonal on the right (Canada top-left, US bottom-right).
+const GRID_RIGHT = 1180;
+const GRID_TOP = -700;
+const MAP_W = 780;
+const MAP_H = 560;
+const MAP_REGION_RIGHT = 1240;
+const MAP_REGION_BOTTOM = 420;
 
-const MAP_W = 620;
-const MAP_H = 460;
-const MAP_GAP = 36;
+const BOX_W = 614;
+const BOX_H = 382;
+const BOX_RX = 51;
+const BOX_ROW_GAP = 52;
+const ROW_SPAN = BOX_W + BOX_ROW_GAP;
+const GRID_CX = GRID_RIGHT - ROW_SPAN - BOX_W / 2;
+const TOP_ROW_Y = GRID_TOP + BOX_H / 2 + 24;
+const BOTTOM_ROW_Y = TOP_ROW_Y + BOX_H + BOX_ROW_GAP;
 
 const CA = {
-  x: COMP_CX - MAP_GAP / 2 - MAP_W,
-  y: COMP_CY - MAP_H / 2,
+  x: MAP_REGION_RIGHT - MAP_W * 1.38,
+  y: MAP_REGION_BOTTOM - MAP_H * 1.42,
   w: MAP_W,
   h: MAP_H,
 };
 const US = {
-  x: COMP_CX + MAP_GAP / 2,
-  y: COMP_CY - MAP_H / 2,
+  x: MAP_REGION_RIGHT - MAP_W * 0.92,
+  y: MAP_REGION_BOTTOM - MAP_H * 0.52,
   w: MAP_W,
   h: MAP_H,
 };
 
 /** Zoom map art inside the fixed clip rects — larger silhouettes without moving white boxes. */
-const COUNTRY_IMAGE_SCALE = 1.14;
+const COUNTRY_IMAGE_SCALE = 1.22;
 
 function scaledMapImage(box: { x: number; y: number; w: number; h: number }) {
   const w = box.w * COUNTRY_IMAGE_SCALE;
@@ -94,24 +103,13 @@ function scaledMapImage(box: { x: number; y: number; w: number; h: number }) {
 const CA_MAP = scaledMapImage(CA);
 const US_MAP = scaledMapImage(US);
 
-const BOX_W = 614;
-const BOX_H = 382;
-const BOX_RX = 51;
-
-/** Top row (0–2) and bottom row (3–5) — evenly spaced, overlapping country silhouettes. */
-const BOX_ROW_GAP = 52;
-const BOX_OVERLAP = 168;
-const ROW_SPAN = BOX_W + BOX_ROW_GAP;
-const TOP_ROW_Y = COMP_CY - MAP_H / 2 - BOX_H / 2 + BOX_OVERLAP;
-const BOTTOM_ROW_Y = COMP_CY + MAP_H / 2 + BOX_H / 2 - BOX_OVERLAP;
-
 const ORBIT: { x: number; y: number }[] = [
-  { x: COMP_CX - ROW_SPAN, y: TOP_ROW_Y },
-  { x: COMP_CX, y: TOP_ROW_Y },
-  { x: COMP_CX + ROW_SPAN, y: TOP_ROW_Y },
-  { x: COMP_CX - ROW_SPAN, y: BOTTOM_ROW_Y },
-  { x: COMP_CX, y: BOTTOM_ROW_Y },
-  { x: COMP_CX + ROW_SPAN, y: BOTTOM_ROW_Y },
+  { x: GRID_CX - ROW_SPAN, y: TOP_ROW_Y },
+  { x: GRID_CX, y: TOP_ROW_Y },
+  { x: GRID_CX + ROW_SPAN, y: TOP_ROW_Y },
+  { x: GRID_CX - ROW_SPAN, y: BOTTOM_ROW_Y },
+  { x: GRID_CX, y: BOTTOM_ROW_Y },
+  { x: GRID_CX + ROW_SPAN, y: BOTTOM_ROW_Y },
 ];
 
 function DayStatusIcon({ x, y, status }: { x: number; y: number; status: "available" | "unavailable" }) {
@@ -1023,8 +1021,8 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
 
   const wrapperClass =
     variant === "mobile"
-      ? "pointer-events-none absolute right-[clamp(0,0.75vw,0.75rem)] top-[42%] z-[2] -translate-y-1/2 translate-x-3 scale-[0.965] w-[min(78%,26rem)] overflow-visible origin-center"
-      : "pointer-events-none absolute right-[clamp(0.25rem,1.5vw,1.25rem)] top-1/2 z-[2] -translate-y-1/2 translate-x-6 scale-[0.965] w-[min(72%,58rem)] overflow-visible origin-center";
+      ? "pointer-events-none absolute right-[clamp(0,0.75vw,0.75rem)] top-[8%] z-[2] translate-x-2 scale-[0.88] w-[min(88%,24rem)] overflow-visible origin-top-right"
+      : "pointer-events-none absolute right-[clamp(0.25rem,1.5vw,1.25rem)] top-[clamp(0.35rem,1.8vh,1.1rem)] z-[2] translate-x-3 scale-[1.02] w-[min(94%,64rem)] overflow-visible origin-top-right";
 
   const caGrad = `${id}-ca-grad`;
   const usGrad = `${id}-us-grad`;

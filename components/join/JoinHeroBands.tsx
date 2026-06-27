@@ -7,7 +7,7 @@ import { JOIN_MOBILE_SECTION_STACK_GAP } from "@/lib/join/join-layout";
 
 import type { JoinHeroBandConfig } from "@/lib/join/join-hero-backdrops";
 
-/** Stacked join hero bands — primary with inbox UI, four gradient/beige variants below. */
+/** Stacked join hero bands — primary with agent orbit UI, four gradient/beige variants below. */
 export function JoinHeroBands({
   variant,
   bands = JOIN_HERO_BANDS,
