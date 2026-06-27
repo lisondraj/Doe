@@ -8,7 +8,7 @@
  */
 import { useId } from "react";
 import { dmSans, suisseIntl, suisseIntlLight } from "@/lib/home/fonts";
-import { useJoinHeroScrollReveal, joinHeroBoxRevealClass, joinHeroBoxRevealDelay, JOIN_HERO_BOX_RISE_DURATION_MS, JOIN_HERO_BOX_SEQUENCE_GAP_MS } from "@/lib/join/use-join-hero-scroll-reveal";
+import { useJoinHeroScrollReveal, joinHeroBoxRevealClass, joinHeroBoxRevealDelay, JOIN_HERO_BOX_REVEAL_STAGGER_MS, JOIN_HERO_BOX_RISE_DURATION_MS, JOIN_HERO_BOX_SEQUENCE_GAP_MS } from "@/lib/join/use-join-hero-scroll-reveal";
 
 const AGENT_INK = "#1E343A";
 const DOE_ORANGE = "#D2774C";
@@ -48,9 +48,9 @@ const BOX_PAD_Y = 40;
 const ROW_ICON_TEXT_GAP = 16;
 
 const GRADIENT_STOPS = [
-  { offset: "0%",   color: "#E7A944" },
-  { offset: "30%",  color: "#D49D4F" },
-  { offset: "62%",  color: "#D2774C" },
+  { offset: "0%", color: "#E7A944" },
+  { offset: "30%", color: "#D49D4F" },
+  { offset: "62%", color: "#D2774C" },
   { offset: "100%", color: "#C47A5A" },
 ] as const;
 
@@ -303,8 +303,7 @@ function LabsAgentChart({
         </linearGradient>
       </defs>
       <g filter={`url(#${orbGrainId})`}>
-        <path d={areaPath} fill={`url(#${orbGradId})`} />
-        <path d={areaPath} fill={`url(#${orbShadeId})`} />
+        <path d={areaPath} fill={DOE_ORANGE} />
       </g>
       <path d={areaPath} fill={`url(#${areaFadeId})`} />
 
@@ -491,8 +490,7 @@ function BillingAgentRevenue({
     <g aria-hidden>
       {/* Orange revenue card */}
       <g filter={`url(#${orbGrainId})`}>
-        <rect x={innerX} y={contentTop} width={innerW} height={cardH} rx={cardRx} fill={`url(#${orbGradId})`} />
-        <rect x={innerX} y={contentTop} width={innerW} height={cardH} rx={cardRx} fill={`url(#${orbShadeId})`} />
+        <rect x={innerX} y={contentTop} width={innerW} height={cardH} rx={cardRx} fill={DOE_ORANGE} />
       </g>
       <text
         x={innerX + cardPadX}
@@ -611,8 +609,7 @@ function ReferralsAgentCard({
   return (
     <g aria-hidden>
       <g filter={`url(#${orbGrainId})`}>
-        <rect x={innerX} y={contentTop} width={innerW} height={cardH} rx={cardRx} fill={`url(#${orbGradId})`} />
-        <rect x={innerX} y={contentTop} width={innerW} height={cardH} rx={cardRx} fill={`url(#${orbShadeId})`} />
+        <rect x={innerX} y={contentTop} width={innerW} height={cardH} rx={cardRx} fill={DOE_ORANGE} />
       </g>
       <foreignObject x={innerX} y={contentTop} width={innerW} height={cardH}>
         <div
@@ -750,8 +747,7 @@ function SchedulingAgentCalendar({
         return (
           <g key={day.label}>
             <g filter={`url(#${orbGrainId})`}>
-              <rect x={x} y={colsTop} width={colW} height={colH} rx={colRx} fill={`url(#${orbGradId})`} />
-              <rect x={x} y={colsTop} width={colW} height={colH} rx={colRx} fill={`url(#${orbShadeId})`} />
+              <rect x={x} y={colsTop} width={colW} height={colH} rx={colRx} fill={DOE_ORANGE} />
             </g>
             <text
               x={cx}
@@ -845,8 +841,7 @@ function VoiceAgentSpeakingOrb({
       </defs>
       <g clipPath={`url(#${clipId})`}>
         <g filter={`url(#${orbGrainId})`}>
-          <circle cx={cx} cy={cy} r={orbDrawR} fill={`url(#${orbGradId})`} />
-          <circle cx={cx} cy={cy} r={orbDrawR} fill={`url(#${orbShadeId})`} />
+          <circle cx={cx} cy={cy} r={orbDrawR} fill={DOE_ORANGE} />
         </g>
         <VoiceAgentMicIcon cx={cx} cy={cy} size={82} />
       </g>
@@ -1030,13 +1025,12 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
       ? "pointer-events-none absolute right-[clamp(0,0.75vw,0.75rem)] top-[42%] z-[2] -translate-y-1/2 translate-x-3 scale-[0.965] w-[min(78%,26rem)] overflow-visible origin-center"
       : "pointer-events-none absolute right-[clamp(0.25rem,1.5vw,1.25rem)] top-1/2 z-[2] -translate-y-1/2 translate-x-6 scale-[0.965] w-[min(72%,58rem)] overflow-visible origin-center";
 
-  const caGrad  = `${id}-ca-grad`;
-  const usGrad  = `${id}-us-grad`;
+  const caGrad = `${id}-ca-grad`;
+  const usGrad = `${id}-us-grad`;
   const caMask  = `${id}-ca-mask`;
   const usMask  = `${id}-us-mask`;
   const invertF = `${id}-invert`;
-  const voiceOrbGrad = `${id}-voice-orb-grad`;
-  const voiceOrbShade = `${id}-voice-orb-shade`;
+  const orbIdPrefix = `${id}-orb`;
   const voiceOrbGrain = `${id}-voice-orb-grain`;
   const countryGrain = `${id}-country-grain`;
 
@@ -1088,19 +1082,6 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
               filter={`url(#${invertF})`}
             />
           </mask>
-
-          <radialGradient id={voiceOrbGrad} cx="38%" cy="34%" fx="34%" fy="28%" r="72%">
-            <stop offset="0%" stopColor="#E7A944" />
-            <stop offset="38%" stopColor="#D49D4F" />
-            <stop offset="72%" stopColor="#D2774C" />
-            <stop offset="100%" stopColor="#C47A5A" />
-          </radialGradient>
-
-          <radialGradient id={voiceOrbShade} cx="74%" cy="80%" r="58%">
-            <stop offset="0%" stopColor="#D2774C" stopOpacity="0.38" />
-            <stop offset="55%" stopColor="#C47A5A" stopOpacity="0.16" />
-            <stop offset="100%" stopColor="#C47A5A" stopOpacity="0" />
-          </radialGradient>
 
           <filter id={voiceOrbGrain} x="-8%" y="-8%" width="116%" height="116%" colorInterpolationFilters="sRGB">
             <feTurbulence type="fractalNoise" baseFrequency="1.05" numOctaves="2" stitchTiles="stitch" result="noise" />
@@ -1169,8 +1150,8 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
               <VoiceAgentSpeakingOrb
                 boxX={pt.x - BOX_W / 2}
                 boxY={pt.y - BOX_H / 2}
-                orbGradId={voiceOrbGrad}
-                orbShadeId={voiceOrbShade}
+                orbGradId={orbIdPrefix}
+                orbShadeId={orbIdPrefix}
                 orbGrainId={voiceOrbGrain}
               />
             ) : null}
@@ -1184,8 +1165,8 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
               <SchedulingAgentCalendar
                 boxX={pt.x - BOX_W / 2}
                 boxY={pt.y - BOX_H / 2}
-                orbGradId={voiceOrbGrad}
-                orbShadeId={voiceOrbShade}
+                orbGradId={orbIdPrefix}
+                orbShadeId={orbIdPrefix}
                 orbGrainId={voiceOrbGrain}
               />
             ) : null}
@@ -1193,8 +1174,8 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
               <LabsAgentChart
                 boxX={pt.x - BOX_W / 2}
                 boxY={pt.y - BOX_H / 2}
-                orbGradId={voiceOrbGrad}
-                orbShadeId={voiceOrbShade}
+                orbGradId={orbIdPrefix}
+                orbShadeId={orbIdPrefix}
                 orbGrainId={voiceOrbGrain}
               />
             ) : null}
@@ -1202,8 +1183,8 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
               <ReferralsAgentCard
                 boxX={pt.x - BOX_W / 2}
                 boxY={pt.y - BOX_H / 2}
-                orbGradId={voiceOrbGrad}
-                orbShadeId={voiceOrbShade}
+                orbGradId={orbIdPrefix}
+                orbShadeId={orbIdPrefix}
                 orbGrainId={voiceOrbGrain}
               />
             ) : null}
@@ -1214,8 +1195,8 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
               <BillingAgentRevenue
                 boxX={pt.x - BOX_W / 2}
                 boxY={pt.y - BOX_H / 2}
-                orbGradId={voiceOrbGrad}
-                orbShadeId={voiceOrbShade}
+                orbGradId={orbIdPrefix}
+                orbShadeId={orbIdPrefix}
                 orbGrainId={voiceOrbGrain}
               />
             ) : null}

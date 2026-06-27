@@ -21,8 +21,7 @@ const SPEAKER_LABEL: CSSProperties = {
 
 const DOE_ORANGE_DARK = "#BF593D";
 const DOE_ORANGE_TEXT = "#A04E36";
-const DOE_ORANGE_GRADIENT =
-  "radial-gradient(circle at 38% 34%, #E7A944 0%, #D49D4F 38%, #D2774C 72%, #C47A5A 100%)";
+const DOE_ORANGE_SOLID = "#D2774C";
 
 const INTEGRATIONS = ["Epic EHR", "Insurance API", "Clinic scheduler"] as const;
 
@@ -120,7 +119,7 @@ function AiResultPreview() {
       <div
         style={{
           borderRadius: "0.42rem",
-          background: DOE_ORANGE_GRADIENT,
+          background: DOE_ORANGE_SOLID,
           padding: "0.55rem 0.65rem",
           display: "flex",
           alignItems: "center",

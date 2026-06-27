@@ -41,8 +41,7 @@ function glassFillOpacity(tier: GlassTier, surface: WorkflowCarouselSurface): nu
 
 const DOE_ORANGE = "#D2774C";
 const DOE_ORANGE_TRACK = "rgba(210, 119, 76, 0.16)";
-const DOE_ORANGE_GRADIENT =
-  "radial-gradient(circle at 38% 34%, #E7A944 0%, #D49D4F 38%, #D2774C 72%, #C47A5A 100%)";
+const DOE_ORANGE_SOLID = "#D2774C";
 const ON_ORANGE_INK = "#FFFFFF";
 const ON_ORANGE_MUTED = "rgba(255, 255, 255, 0.82)";
 
@@ -94,7 +93,7 @@ function GlassCard({
       className={joinHeroBoxRevealClass(revealed)}
       style={{
         borderRadius: "1.1rem",
-        background: gradient ? DOE_ORANGE_GRADIENT : theme.glass(opacity),
+        background: gradient ? DOE_ORANGE_SOLID : theme.glass(opacity),
         padding: compact ? "0.58rem 0.85rem" : "0.95rem 1.05rem",
         color: gradient ? ON_ORANGE_INK : theme.ink,
         animationDelay: joinHeroBoxRevealDelay(revealed, revealIndex),

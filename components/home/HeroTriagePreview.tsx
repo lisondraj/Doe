@@ -180,30 +180,36 @@ const JOIN_DESKTOP_NAV_BOTTOM: readonly JoinDesktopNavItem[] = [
   { id: "analytics", d: "M3 3v18h18M7 16l4-4 4 4 5-6" },
 ] as const;
 
-const JOIN_DESKTOP_SELECTED_ORANGE = "#D2774C";
-const JOIN_DESKTOP_ORANGE_GRADIENT =
-  "radial-gradient(circle at 38% 34%, #E7A944 0%, #D49D4F 38%, #D2774C 72%, #C47A5A 100%)";
+const JOIN_DESKTOP_ORANGE = "#D2774C";
 
 function JoinDesktopAvatar({
   initials,
   selected = false,
+  orange = false,
   size = "1.62rem",
   fontSize = "0.54rem",
 }: {
   initials: string;
   selected?: boolean;
+  orange?: boolean;
   size?: string;
   fontSize?: string;
 }) {
   return (
     <div
       className={`flex shrink-0 items-center justify-center rounded-full font-semibold ${
-        selected ? "" : HERO_TRIAGE_JOIN_AVATAR_FLAT
+        selected || orange ? "" : HERO_TRIAGE_JOIN_AVATAR_FLAT
       }`}
       style={{
         width: size,
         height: size,
         fontSize,
+        ...(orange && !selected
+          ? {
+              background: JOIN_DESKTOP_ORANGE,
+              color: "#FFFFFF",
+            }
+          : {}),
         ...(selected
           ? {
               background: "rgba(255,255,255,0.22)",
@@ -225,7 +231,7 @@ function JoinDesktopInboxRow({ row }: { row: InboxRow }) {
       style={{
         margin: "0 0.28rem",
         borderRadius: selected ? "0.65rem" : "0.52rem",
-        background: selected ? JOIN_DESKTOP_ORANGE_GRADIENT : "#F7F6F3",
+        background: selected ? JOIN_DESKTOP_ORANGE : "#F7F6F3",
         padding: selected ? "0.52rem 0.44rem" : "0.44rem 0.44rem",
         display: "flex",
         alignItems: "flex-start",
@@ -300,46 +306,62 @@ function EmailAttachmentChip({ name, ext, size }: { name: string; ext: string; s
         alignItems: "center",
         gap: "0.3rem",
         background: "#F7F6F3",
-        border: "1px solid #EAE6DF",
+        border: "1px solid rgba(210,119,76,0.18)",
         borderRadius: "0.45rem",
         padding: "0.26rem 0.52rem",
         flexShrink: 0,
       }}
     >
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9A9590" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#D2774C" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
         <polyline points="14,2 14,8 20,8" />
       </svg>
       <span style={{ fontSize: "0.46rem", fontWeight: 500, color: "#4A4540" }}>{name}</span>
-      <span style={{ fontSize: "0.42rem", color: "#B0AAA4", background: "#EEEAE3", borderRadius: "0.22rem", padding: "0.06em 0.35em" }}>{ext}</span>
+      <span style={{ fontSize: "0.42rem", color: "#BF7A55", background: "rgba(210,119,76,0.12)", borderRadius: "0.22rem", padding: "0.06em 0.35em" }}>{ext}</span>
       <span style={{ fontSize: "0.42rem", color: "#B0AAA4" }}>{size}</span>
     </div>
   );
 }
 
 function EmailActionRow() {
-  const btnStyle: React.CSSProperties = {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "0.22rem",
-    fontSize: "0.46rem",
-    fontWeight: 500,
-    color: "#9A9590",
-    background: "#F7F6F3",
-    border: "1px solid #EAE6DF",
-    borderRadius: "0.38rem",
-    padding: "0.2rem 0.48rem",
-    cursor: "default",
-  };
   return (
     <div style={{ display: "flex", gap: "0.32rem", marginTop: "0.55rem" }}>
-      <div style={btnStyle}>
+      {/* Reply — orange primary */}
+      <div
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "0.22rem",
+          fontSize: "0.46rem",
+          fontWeight: 500,
+          color: "#FFFFFF",
+          background: JOIN_DESKTOP_ORANGE,
+          borderRadius: "0.38rem",
+          padding: "0.2rem 0.52rem",
+          cursor: "default",
+        }}
+      >
         <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
           <polyline points="9,17 4,12 9,7" /><path d="M20 18v-2a4 4 0 0 0-4-4H4" />
         </svg>
         Reply
       </div>
-      <div style={btnStyle}>
+      {/* Forward — muted secondary */}
+      <div
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "0.22rem",
+          fontSize: "0.46rem",
+          fontWeight: 500,
+          color: "#9A9590",
+          background: "#F7F6F3",
+          border: "1px solid #EAE6DF",
+          borderRadius: "0.38rem",
+          padding: "0.2rem 0.48rem",
+          cursor: "default",
+        }}
+      >
         <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
           <polyline points="15,17 20,12 15,7" /><path d="M4 18v-2a4 4 0 0 1 4-4h12" />
         </svg>
@@ -379,26 +401,26 @@ function JoinDesktopOpenEmailClipPane() {
           className="absolute top-0 left-0 w-[205%]"
           style={{ padding: "0.45rem 0.48rem", display: "flex", flexDirection: "column", gap: "0.22rem" }}
         >
-          {/* Thread header */}
+          {/* Thread header — orange gradient */}
           <div
             style={{
-              background: "#FFFFFF",
+              background: JOIN_DESKTOP_ORANGE,
               borderRadius: "0.68rem",
               padding: "0.7rem 0.85rem 0.65rem",
             }}
           >
             <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "0.5rem" }}>
               <div>
-                <p style={{ fontSize: "0.82rem", fontWeight: 600, letterSpacing: "-0.02em", lineHeight: 1.22, color: "#1E343A" }}>
+                <p style={{ fontSize: "0.82rem", fontWeight: 600, letterSpacing: "-0.02em", lineHeight: 1.22, color: "#FFFFFF" }}>
                   Follow-up visit scheduling
                 </p>
-                <p style={{ fontSize: "0.52rem", color: "#9A9590", marginTop: "0.28rem" }}>
+                <p style={{ fontSize: "0.52rem", color: "rgba(255,255,255,0.72)", marginTop: "0.28rem" }}>
                   4 messages · Maria Rodriguez · Patient message
                 </p>
               </div>
               <div style={{ display: "flex", gap: "0.28rem", flexShrink: 0, marginTop: "0.08rem" }}>
-                <EmailTagChip label="Follow-up" color="#D2774C" />
-                <EmailTagChip label="Unread" color="#5B9BD5" />
+                <span style={{ display: "inline-block", fontSize: "0.42rem", fontWeight: 500, color: "rgba(255,255,255,0.9)", background: "rgba(255,255,255,0.18)", border: "1px solid rgba(255,255,255,0.28)", borderRadius: "999px", padding: "0.1em 0.5em" }}>Follow-up</span>
+                <span style={{ display: "inline-block", fontSize: "0.42rem", fontWeight: 500, color: "rgba(255,255,255,0.9)", background: "rgba(255,255,255,0.18)", border: "1px solid rgba(255,255,255,0.28)", borderRadius: "999px", padding: "0.1em 0.5em" }}>Unread</span>
               </div>
             </div>
           </div>
@@ -460,16 +482,15 @@ function JoinDesktopOpenEmailClipPane() {
                     alignItems: "center",
                     gap: "0.28rem",
                     marginTop: "0.6rem",
-                    background: "rgba(210,119,76,0.08)",
-                    border: "1px solid rgba(210,119,76,0.22)",
+                    background: JOIN_DESKTOP_ORANGE,
                     borderRadius: "0.45rem",
-                    padding: "0.26rem 0.52rem",
+                    padding: "0.28rem 0.56rem",
                   }}
                 >
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#D2774C" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.88)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                     <circle cx="12" cy="12" r="10" /><path d="M12 8v4l3 3" />
                   </svg>
-                  <span style={{ fontSize: "0.44rem", color: "#D2774C", fontWeight: 500 }}>Doe: Suggested follow-up slot — Thu 10 AM</span>
+                  <span style={{ fontSize: "0.44rem", color: "#FFFFFF", fontWeight: 500 }}>Doe: Suggested follow-up slot — Thu 10 AM</span>
                 </div>
                 <EmailActionRow />
               </div>
@@ -506,7 +527,7 @@ function JoinDesktopOpenEmailClipPane() {
 }
 
 function JoinDesktopNav({ config: _config }: { config: HeroTriageThemeConfig }) {
-  const ic = "#B8B2AB";
+  const ic = JOIN_DESKTOP_ORANGE;
   const sw = "1.4";
   const sz = 14;
 
@@ -519,7 +540,7 @@ function JoinDesktopNav({ config: _config }: { config: HeroTriageThemeConfig }) 
         alignItems: "center",
         justifyContent: "center",
         borderRadius: "0.48rem",
-        background: active ? JOIN_DESKTOP_ORANGE_GRADIENT : "transparent",
+        background: active ? JOIN_DESKTOP_ORANGE : "transparent",
       }}
     >
       {icon}
@@ -617,7 +638,7 @@ function JoinDesktopNav({ config: _config }: { config: HeroTriageThemeConfig }) 
 
       {/* Avatar */}
       <div style={{ borderTop: "1px solid #E5E1DA", paddingTop: "0.52rem" }}>
-        <JoinDesktopAvatar initials="DS" size="1.85rem" fontSize="0.5rem" />
+        <JoinDesktopAvatar initials="DS" size="1.85rem" fontSize="0.5rem" orange />
       </div>
     </nav>
   );
