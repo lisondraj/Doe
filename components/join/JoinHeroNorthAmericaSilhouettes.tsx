@@ -2,9 +2,8 @@
 
 /**
  * Canada + USA silhouettes and/or join-hero agent grid.
- * Uses SVG <mask> + <feComponentTransfer> invert filter so the black-on-white
- * JPG images correctly mask an orange gradient fill (black country → shows orange,
- * white background → transparent).
+ * Canada uses an inline SVG path mask; USA uses a JPG mask with invert filter
+ * (black country → shows orange, white background → transparent).
  */
 import { useId } from "react";
 import { dmSans, suisseIntl } from "@/lib/home/fonts";
@@ -16,6 +15,10 @@ import {
   JOIN_HERO_BOX_RISE_DURATION_MS,
   JOIN_HERO_BOX_SEQUENCE_GAP_MS,
 } from "@/lib/join/use-join-hero-scroll-reveal";
+import {
+  CANADA_SILHOUETTE_PATH,
+  CANADA_SILHOUETTE_VIEWBOX,
+} from "@/lib/join/canada-silhouette-path";
 import {
   HERO_AGENT_BOX_H,
   HERO_AGENT_BOX_W,
@@ -96,6 +99,21 @@ function scaledMapImage(
   return { x: cx - w / 2, y: cy - h / 2, w, h };
 }
 
+/** Fit vector silhouette inside map rect (xMidYMid meet). */
+function fittedSilhouetteTransform(
+  mapRect: { x: number; y: number; w: number; h: number },
+  viewBox: { w: number; h: number },
+) {
+  const scale = Math.min(mapRect.w / viewBox.w, mapRect.h / viewBox.h);
+  const fittedW = viewBox.w * scale;
+  const fittedH = viewBox.h * scale;
+  return {
+    x: mapRect.x + (mapRect.w - fittedW) / 2,
+    y: mapRect.y + (mapRect.h - fittedH) / 2,
+    scale,
+  };
+}
+
 // Agent grid — top-right on the hero-agents band.
 const GRID_RIGHT = 1180;
 const GRID_TOP = -700;
@@ -150,6 +168,7 @@ export function JoinHeroNorthAmericaSilhouettes({
   const geometry = countryLayout === "mission-right" ? MISSION_RIGHT_COUNTRY : HERO_AGENTS_COUNTRY;
   const { caBox, usBox } = countryRects(geometry);
   const caMap = scaledMapImage(caBox, geometry.countryImageScale);
+  const caSilhouette = fittedSilhouetteTransform(caMap, CANADA_SILHOUETTE_VIEWBOX);
   const usMap = scaledMapImage(usBox, geometry.countryImageScale);
   const { viewBox } = geometry;
 
@@ -198,15 +217,11 @@ export function JoinHeroNorthAmericaSilhouettes({
           {showCountries ? (
             <>
               <mask id={caMask}>
-                <image
-                  href="/images/canada-map.jpg"
-                  x={caMap.x}
-                  y={caMap.y}
-                  width={caMap.w}
-                  height={caMap.h}
-                  preserveAspectRatio="xMidYMid meet"
-                  filter={`url(#${invertF})`}
-                />
+                <g
+                  transform={`translate(${caSilhouette.x}, ${caSilhouette.y}) scale(${caSilhouette.scale})`}
+                >
+                  <path d={CANADA_SILHOUETTE_PATH} fill="white" fillRule="evenodd" />
+                </g>
               </mask>
 
               <mask id={usMask}>
