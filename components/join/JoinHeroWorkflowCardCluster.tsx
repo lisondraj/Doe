@@ -167,9 +167,9 @@ function CardHeader({
   );
 }
 
-function AgentIcon({ theme }: { theme: ReturnType<typeof cardTheme> }) {
+function AgentIcon({ theme, size = 16 }: { theme: ReturnType<typeof cardTheme>; size?: number }) {
   return (
-    <svg width="16" height="16" viewBox="0 0 14 14" fill="none" aria-hidden>
+    <svg width={size} height={size} viewBox="0 0 14 14" fill="none" aria-hidden className="shrink-0">
       <circle cx="7" cy="7" r="5.5" stroke={theme.accent} strokeWidth="1.1" />
       <circle cx="7" cy="7" r="1.6" fill={theme.accent} />
       <path d="M7 1.5v2M7 10.5v2M1.5 7h2M10.5 7h2" stroke={theme.iconSoft} strokeWidth="1" strokeLinecap="round" />
@@ -194,6 +194,7 @@ function MiniLabSparkline({
   isBeige,
   labelSize,
   valueSize,
+  chartHeight = "1.35rem",
 }: {
   label: string;
   value: string;
@@ -203,17 +204,18 @@ function MiniLabSparkline({
   isBeige: boolean;
   labelSize: string;
   valueSize: string;
+  chartHeight?: string;
 }) {
   const stroke = isBeige ? DOE_ORANGE : theme.accent;
 
   return (
     <div>
-      <p style={{ fontSize: labelSize, opacity: 0.55, marginBottom: "0.1rem" }}>{label}</p>
-      <div style={{ display: "flex", alignItems: "baseline", gap: "0.18rem", marginBottom: "0.22rem" }}>
+      <p style={{ fontSize: labelSize, opacity: 0.55, marginBottom: "0.12rem" }}>{label}</p>
+      <div style={{ display: "flex", alignItems: "baseline", gap: "0.22rem", marginBottom: "0.28rem" }}>
         <span style={{ fontSize: valueSize, fontWeight: 600, letterSpacing: "-0.02em" }}>{value}</span>
         <span style={{ fontSize: labelSize, opacity: 0.62 }}>{unit}</span>
       </div>
-      <svg viewBox="0 0 72 22" fill="none" aria-hidden style={{ display: "block", width: "100%", height: "1.35rem" }}>
+      <svg viewBox="0 0 72 22" fill="none" aria-hidden style={{ display: "block", width: "100%", height: chartHeight }}>
         <line x1="0" y1="20" x2="72" y2="20" stroke={isBeige ? DOE_ORANGE_TRACK : "rgba(255,255,255,0.16)"} strokeWidth="0.8" />
         <path
           d={path}
@@ -233,16 +235,20 @@ function LabResultsColumn({
   isBeige,
   labelSize,
   valueSize,
+  chartHeight,
+  rowGap,
 }: {
   theme: ReturnType<typeof cardTheme>;
   isBeige: boolean;
   labelSize: string;
   valueSize: string;
+  chartHeight?: string;
+  rowGap?: string;
 }) {
   return (
-    <div>
-      <p style={{ fontSize: labelSize, opacity: 0.55, marginBottom: "0.28rem" }}>Lab results</p>
-      <div style={{ display: "flex", flexDirection: "column", gap: "0.48rem" }}>
+    <div style={{ minWidth: 0 }}>
+      <p style={{ fontSize: labelSize, opacity: 0.55, marginBottom: "0.32rem" }}>Lab results</p>
+      <div style={{ display: "flex", flexDirection: "column", gap: rowGap ?? "0.48rem" }}>
         <MiniLabSparkline
           label="A1c"
           value="8.2"
@@ -252,6 +258,7 @@ function LabResultsColumn({
           isBeige={isBeige}
           labelSize={labelSize}
           valueSize={valueSize}
+          chartHeight={chartHeight}
         />
         <MiniLabSparkline
           label="Systolic BP"
@@ -262,6 +269,7 @@ function LabResultsColumn({
           isBeige={isBeige}
           labelSize={labelSize}
           valueSize={valueSize}
+          chartHeight={chartHeight}
         />
       </div>
     </div>
@@ -276,6 +284,11 @@ function AppointmentDetailsGrid({
   detailSize,
   headlineSize,
   showLiveCta = false,
+  headlineMarginBottom,
+  gridColumnGap,
+  gridRowGap,
+  labChartHeight,
+  labRowGap,
 }: {
   theme: ReturnType<typeof cardTheme>;
   isBeige: boolean;
@@ -284,6 +297,11 @@ function AppointmentDetailsGrid({
   detailSize: string;
   headlineSize: string;
   showLiveCta?: boolean;
+  headlineMarginBottom?: string;
+  gridColumnGap?: string;
+  gridRowGap?: string;
+  labChartHeight?: string;
+  labRowGap?: string;
 }) {
   return (
     <>
@@ -293,33 +311,49 @@ function AppointmentDetailsGrid({
         accent={isBeige ? theme.accent : undefined}
         labelSize={labelSize}
       />
-      <p style={{ fontSize: headlineSize, fontWeight: 500, marginBottom: "0.65rem", letterSpacing: "-0.012em", lineHeight: 1.15 }}>
+      <p
+        style={{
+          fontSize: headlineSize,
+          fontWeight: 500,
+          marginBottom: headlineMarginBottom ?? "0.65rem",
+          letterSpacing: "-0.012em",
+          lineHeight: 1.12,
+        }}
+      >
         {APPOINTMENT_HEADLINE}
       </p>
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "auto auto minmax(0, 1fr)",
-          columnGap: "0.28rem",
-          rowGap: "0.75rem",
+          gridTemplateColumns: "minmax(0, 1.05fr) minmax(0, 0.95fr) minmax(0, 1.35fr)",
+          columnGap: gridColumnGap ?? "0.28rem",
+          rowGap: gridRowGap ?? "0.75rem",
+          alignItems: "start",
         }}
       >
         <div>
-          <p style={{ fontSize: labelSize, opacity: 0.55, marginBottom: "0.14rem" }}>Scheduled</p>
-          <p style={{ fontSize: valueSize, fontWeight: 500 }}>Fri, Jun 27</p>
-          <p style={{ fontSize: detailSize, opacity: 0.65, marginTop: "0.1rem" }}>10:30 AM</p>
+          <p style={{ fontSize: labelSize, opacity: 0.55, marginBottom: "0.16rem" }}>Scheduled</p>
+          <p style={{ fontSize: valueSize, fontWeight: 500, lineHeight: 1.2 }}>Fri, Jun 27</p>
+          <p style={{ fontSize: detailSize, opacity: 0.65, marginTop: "0.14rem", lineHeight: 1.25 }}>10:30 AM</p>
         </div>
         <div>
-          <p style={{ fontSize: labelSize, opacity: 0.55, marginBottom: "0.14rem" }}>Provider</p>
-          <p style={{ fontSize: valueSize, fontWeight: 500 }}>Dr. Patel</p>
-          <p style={{ fontSize: detailSize, opacity: 0.65, marginTop: "0.1rem" }}>Exam Room 3</p>
+          <p style={{ fontSize: labelSize, opacity: 0.55, marginBottom: "0.16rem" }}>Provider</p>
+          <p style={{ fontSize: valueSize, fontWeight: 500, lineHeight: 1.2 }}>Dr. Patel</p>
+          <p style={{ fontSize: detailSize, opacity: 0.65, marginTop: "0.14rem", lineHeight: 1.25 }}>Exam Room 3</p>
         </div>
-        <LabResultsColumn theme={theme} isBeige={isBeige} labelSize={labelSize} valueSize={detailSize} />
+        <LabResultsColumn
+          theme={theme}
+          isBeige={isBeige}
+          labelSize={labelSize}
+          valueSize={detailSize}
+          chartHeight={labChartHeight}
+          rowGap={labRowGap}
+        />
       </div>
       {showLiveCta ? (
         <p
           style={{
-            marginTop: "0.72rem",
+            marginTop: "0.88rem",
             fontSize: labelSize,
             fontWeight: 500,
             color: isBeige ? theme.accent : theme.ink,
@@ -343,6 +377,10 @@ function AppointmentAgentCard({
   bodySize,
   padding,
   borderRadius,
+  iconSize = 16,
+  headerGap,
+  headerMarginBottom,
+  bodyLineHeight,
   style,
 }: {
   theme: ReturnType<typeof cardTheme>;
@@ -354,6 +392,10 @@ function AppointmentAgentCard({
   bodySize: string;
   padding?: string;
   borderRadius?: string;
+  iconSize?: number;
+  headerGap?: string;
+  headerMarginBottom?: string;
+  bodyLineHeight?: number;
   style?: CSSProperties;
 }) {
   return (
@@ -369,11 +411,18 @@ function AppointmentAgentCard({
         ...style,
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: "0.45rem", marginBottom: "0.6rem" }}>
-        <AgentIcon theme={orangeTheme} />
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: headerGap ?? "0.45rem",
+          marginBottom: headerMarginBottom ?? "0.6rem",
+        }}
+      >
+        <AgentIcon theme={orangeTheme} size={iconSize} />
         <span style={{ fontSize: titleSize, fontWeight: 500, color: ON_ORANGE_MUTED }}>{APPOINTMENT_AGENT_COPY.title}</span>
       </div>
-      <p style={{ fontSize: bodySize, lineHeight: 1.46, letterSpacing: "-0.015em", margin: 0 }}>
+      <p style={{ fontSize: bodySize, lineHeight: bodyLineHeight ?? 1.46, letterSpacing: "-0.015em", margin: 0 }}>
         <span style={{ color: ON_ORANGE_INK, fontWeight: 500 }}>{APPOINTMENT_AGENT_COPY.lead}</span>{" "}
         <span style={{ color: ON_ORANGE_MUTED }}>{APPOINTMENT_AGENT_COPY.body}</span>
       </p>
@@ -388,9 +437,21 @@ const FS_HERO = {
   xl: "clamp(1.68rem, 2.25vw, 2rem)",
 } as const;
 
+/** DoePhone hero-left-column — larger in-box content; width unchanged, height grows via pad + type. */
+const FS_HERO_LEFT = {
+  sm: "clamp(1.05rem, 1.45vw, 1.26rem)",
+  base: "clamp(1.34rem, 1.88vw, 1.62rem)",
+  lg: "clamp(1.62rem, 2.2vw, 1.92rem)",
+  xl: "clamp(1.92rem, 2.62vw, 2.38rem)",
+} as const;
+
 const HERO_CARD_PAD = "1.25rem 1.35rem";
+const HERO_LEFT_CARD_PAD_Y = "clamp(1.45rem, 3.8vmin, 1.85rem)";
+const HERO_LEFT_CARD_PAD_X = "1.35rem";
+const HERO_LEFT_CARD_PAD = `${HERO_LEFT_CARD_PAD_Y} ${HERO_LEFT_CARD_PAD_X}`;
 const HERO_CARD_PAD_COMPACT = "1rem 1.2rem";
 const HERO_CARD_GAP = "0.82rem";
+const HERO_LEFT_CARD_GAP = "clamp(1rem, 2.35vmin, 1.22rem)";
 
 /** hero-left-column — peaks at agent + appointment; subtle fade downward. */
 const HERO_STACK_AGENT_OPACITY = 0.86;
@@ -443,7 +504,7 @@ export function JoinHeroWorkflowCardCluster({
         style={{
           display: "flex",
           flexDirection: "column",
-          gap: "clamp(0.95rem, 2.1vmin, 1.15rem)",
+          gap: HERO_LEFT_CARD_GAP,
           width: "100%",
           minWidth: 0,
           ...style,
@@ -455,10 +516,14 @@ export function JoinHeroWorkflowCardCluster({
           revealIndex={0}
           revealed={revealed}
           gradientOpacity={HERO_STACK_AGENT_OPACITY}
-          titleSize={FS_HERO.base}
-          bodySize={FS_HERO.base}
-          padding={HERO_CARD_PAD}
+          titleSize={FS_HERO_LEFT.base}
+          bodySize={FS_HERO_LEFT.base}
+          padding={HERO_LEFT_CARD_PAD}
           borderRadius="1.25rem"
+          iconSize={20}
+          headerGap="0.55rem"
+          headerMarginBottom="0.72rem"
+          bodyLineHeight={1.5}
         />
 
         <GlassCard
@@ -466,16 +531,21 @@ export function JoinHeroWorkflowCardCluster({
           revealIndex={1}
           revealed={revealed}
           opacity={heroStackGlassOpacity("peak", surface)}
-          style={{ padding: HERO_CARD_PAD, borderRadius: "1.25rem" }}
+          style={{ padding: HERO_LEFT_CARD_PAD, borderRadius: "1.25rem" }}
         >
           <AppointmentDetailsGrid
             theme={theme}
             isBeige={isBeige}
-            labelSize={FS_HERO.sm}
-            valueSize={FS_HERO.base}
-            detailSize={FS_HERO.sm}
-            headlineSize={FS_HERO.xl}
+            labelSize={FS_HERO_LEFT.sm}
+            valueSize={FS_HERO_LEFT.base}
+            detailSize={FS_HERO_LEFT.sm}
+            headlineSize={FS_HERO_LEFT.xl}
             showLiveCta
+            headlineMarginBottom="0.78rem"
+            gridColumnGap="0.55rem"
+            gridRowGap="0.55rem"
+            labChartHeight="clamp(1.55rem, 4.2vmin, 1.95rem)"
+            labRowGap="0.62rem"
           />
         </GlassCard>
 
