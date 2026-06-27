@@ -1,6 +1,7 @@
 "use client";
 
 import { DoePhoneAgentsSixGrid } from "@/components/doephone/DoePhoneAgentsSixGrid";
+import { DoePhoneIncomingLabsVisual } from "@/components/doephone/DoePhoneIncomingLabsVisual";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import {
   DOEPHONE_COMMUNICATION_SLIDES,
@@ -26,6 +27,11 @@ function DoePhoneCarouselCard({ slide }: { slide: DoePhoneCommunicationSlide }) 
       {slide.id === "agents" ? (
         <div className="absolute inset-0 z-10 flex items-center justify-center px-[clamp(1.25rem,4vmin,2rem)] py-[clamp(1rem,3vmin,1.75rem)]">
           <DoePhoneAgentsSixGrid />
+        </div>
+      ) : null}
+      {slide.id === "inbox" ? (
+        <div className="absolute inset-0 z-10 flex items-center justify-center px-[clamp(1.25rem,4vmin,2rem)] py-[clamp(1rem,3vmin,1.75rem)]">
+          <DoePhoneIncomingLabsVisual />
         </div>
       ) : null}
     </div>

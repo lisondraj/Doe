@@ -1,4 +1,7 @@
-import { DOEPHONE_COMMUNICATION_SLIDES } from "@/lib/doephone/communication-carousel";
+import {
+  DOEPHONE_COMMUNICATION_SLIDES,
+  doephoneCommunicationBackdrop,
+} from "@/lib/doephone/communication-carousel";
 import type { WorkflowCarouselDesignBackdrop } from "@/lib/workflow-carousel-design-backdrops";
 import type { WorkflowCarouselSurface } from "@/lib/workflow-carousel-design-backdrops";
 
@@ -44,7 +47,7 @@ export const JOIN_HERO_EXTRA_BANDS: readonly JoinHeroBandConfig[] = [
       "Doe will be a registered Delaware corporation, validate its tool with the Canadian healthcare market, and eventually expand to the US starting in California and New York City.",
       "We believe providers should have full autonomy over the AI in their workflows. Doe will start with physicians, then expand to nurse practitioners, PAs, nurses, and allied health teams.",
     ],
-    backdrop: DOEPHONE_COMMUNICATION_SLIDES[1].backdrop,
+    backdrop: doephoneCommunicationBackdrop("inbox"),
   },
   {
     id: "tools",
@@ -56,7 +59,7 @@ export const JOIN_HERO_EXTRA_BANDS: readonly JoinHeroBandConfig[] = [
       "Doe will offer front-desk triage and a voice assistant, handle patient intake, and process all incoming documents.",
       "During live patient encounters, Doe provides tools to automate documentation, surface clinical evidence, and pull patient information. It is built for doctors as multi-faceted people whose work extends far beyond the clinic.",
     ],
-    backdrop: DOEPHONE_COMMUNICATION_SLIDES[3].backdrop,
+    backdrop: doephoneCommunicationBackdrop("front-desk"),
   },
   {
     id: "integrate",
@@ -68,7 +71,7 @@ export const JOIN_HERO_EXTRA_BANDS: readonly JoinHeroBandConfig[] = [
       "We're seeking technical talent from around the world to help build Doe. If you care about healthcare, AI, and giving providers real control over the tools they use every day, we want to hear from you.",
       "We are currently fundraising with US and Canadian backers who share our belief that better clinical communication starts with software providers can shape themselves.",
     ],
-    backdrop: DOEPHONE_COMMUNICATION_SLIDES[5].backdrop,
+    backdrop: doephoneCommunicationBackdrop("integrate"),
   },
   {
     id: "join",

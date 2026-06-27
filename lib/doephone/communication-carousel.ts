@@ -19,44 +19,44 @@ export const DOEPHONE_COMMUNICATION_SLIDES: readonly DoePhoneCommunicationSlide[
     },
   },
   {
-    id: "incoming",
-    menuLabel: "Incoming",
-    backdrop: {
-      slideIndex: 4,
-      label: "Incoming",
-      gradient:
-        "linear-gradient(135deg, #B87862 0%, #C47A5A 24%, #D2774C 58%, #D49D4F 100%)",
-      grid: "crosshatch",
-    },
-  },
-  {
-    id: "outgoing",
-    menuLabel: "Outgoing",
-    backdrop: {
-      slideIndex: 4,
-      label: "Outgoing",
-      gradient: "radial-gradient(circle at center, #D49D4F 0%, #D2774C 42%, #C47A5A 100%)",
-      grid: "polar",
-      polarCenterY: "50%",
-    },
-  },
-  {
-    id: "tools",
-    menuLabel: "Tools",
+    id: "front-desk",
+    menuLabel: "Front Desk",
     backdrop: {
       slideIndex: 0,
-      label: "Tools",
+      label: "Front Desk",
       gradient:
         "radial-gradient(ellipse 100% 88% at 22% 18%, #D49D4F 0%, #D2774C 52%, #B87862 100%)",
       grid: "hex",
     },
   },
   {
-    id: "customize",
-    menuLabel: "Customize",
+    id: "inbox",
+    menuLabel: "Inbox",
+    backdrop: {
+      slideIndex: 4,
+      label: "Inbox",
+      gradient:
+        "linear-gradient(135deg, #B87862 0%, #C47A5A 24%, #D2774C 58%, #D49D4F 100%)",
+      grid: "crosshatch",
+    },
+  },
+  {
+    id: "ambient",
+    menuLabel: "Ambient",
+    backdrop: {
+      slideIndex: 4,
+      label: "Ambient",
+      gradient: "radial-gradient(circle at center, #D49D4F 0%, #D2774C 42%, #C47A5A 100%)",
+      grid: "polar",
+      polarCenterY: "50%",
+    },
+  },
+  {
+    id: "billing",
+    menuLabel: "Billing",
     backdrop: {
       slideIndex: 1,
-      label: "Customize",
+      label: "Billing",
       gradient:
         "linear-gradient(180deg, #B87862 0%, #C47A5A 20%, #D2774C 55%, #D49D4F 100%)",
       grid: "diagonal",
@@ -75,3 +75,10 @@ export const DOEPHONE_COMMUNICATION_SLIDES: readonly DoePhoneCommunicationSlide[
 ] as const;
 
 export const DOEPHONE_COMMUNICATION_SLIDE_COUNT = DOEPHONE_COMMUNICATION_SLIDES.length;
+
+/** Lookup slide backdrop by id — stable when slide order changes. */
+export function doephoneCommunicationBackdrop(id: (typeof DOEPHONE_COMMUNICATION_SLIDES)[number]["id"]) {
+  const slide = DOEPHONE_COMMUNICATION_SLIDES.find((entry) => entry.id === id);
+  if (!slide) throw new Error(`Unknown communication slide: ${id}`);
+  return slide.backdrop;
+}
