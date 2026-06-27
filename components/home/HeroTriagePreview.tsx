@@ -229,68 +229,27 @@ function JoinDesktopInboxRow({ row }: { row: InboxRow }) {
   return (
     <div
       style={{
-        margin: "0 0.28rem",
-        borderRadius: selected ? "0.65rem" : "0.52rem",
-        background: selected ? JOIN_DESKTOP_ORANGE : "#F7F6F3",
-        padding: selected ? "0.52rem 0.44rem" : "0.44rem 0.44rem",
+        position: "relative",
+        padding: "0.46rem 0.75rem 0.46rem 0.85rem",
         display: "flex",
         alignItems: "flex-start",
-        gap: "0.5rem",
+        gap: "0.48rem",
+        background: selected ? "rgba(210,119,76,0.07)" : "transparent",
+        borderLeft: selected ? `2px solid ${JOIN_DESKTOP_ORANGE}` : "2px solid transparent",
       }}
     >
-      <JoinDesktopAvatar initials={row.initials} selected={selected} size="1.58rem" fontSize="0.52rem" />
+      <JoinDesktopAvatar initials={row.initials} size="1.5rem" fontSize="0.5rem" />
       <div style={{ minWidth: 0, flex: 1 }}>
-        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: "0.4rem" }}>
-          <span
-            style={{
-              fontSize: "0.6rem",
-              fontWeight: 500,
-              letterSpacing: "-0.01em",
-              color: selected ? "#FFFFFF" : JOIN_FORM_BEIGE.ink,
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-            }}
-          >
+        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: "0.3rem" }}>
+          <span style={{ fontSize: "0.58rem", fontWeight: selected ? 600 : 500, color: "#1E343A", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
             {row.sender}
           </span>
-          <span
-            style={{
-              fontSize: "0.46rem",
-              fontWeight: 400,
-              color: selected ? "rgba(255,255,255,0.72)" : "#A8A29E",
-              flexShrink: 0,
-            }}
-          >
-            {row.time}
-          </span>
+          <span style={{ fontSize: "0.44rem", color: "#B0AAA4", flexShrink: 0 }}>{row.time}</span>
         </div>
-        <p
-          style={{
-            fontSize: "0.54rem",
-            fontWeight: 500,
-            color: selected ? "rgba(255,255,255,0.94)" : "#1E343A",
-            marginTop: "0.15em",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-          }}
-        >
+        <p style={{ fontSize: "0.52rem", fontWeight: selected ? 500 : 400, color: selected ? "#1E343A" : "#4A4540", marginTop: "0.1em", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
           {row.subject}
         </p>
-        <p
-          style={{
-            fontSize: "0.48rem",
-            fontWeight: 400,
-            color: "#9A9590",
-            marginTop: "0.1em",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-            visibility: selected ? "hidden" : "visible",
-          }}
-          aria-hidden={selected}
-        >
+        <p style={{ fontSize: "0.46rem", color: "#A8A29E", marginTop: "0.08em", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
           {row.preview}
         </p>
       </div>
@@ -298,228 +257,117 @@ function JoinDesktopInboxRow({ row }: { row: InboxRow }) {
   );
 }
 
-function EmailAttachmentChip({ name, ext, size }: { name: string; ext: string; size: string }) {
+function EmailAttachmentChip({ name, ext }: { name: string; ext: string; size: string }) {
   return (
     <div
       style={{
         display: "inline-flex",
         alignItems: "center",
-        gap: "0.3rem",
+        gap: "0.25rem",
         background: "#F7F6F3",
-        border: "1px solid rgba(210,119,76,0.18)",
-        borderRadius: "0.45rem",
-        padding: "0.26rem 0.52rem",
+        border: "1px solid #EAE6DF",
+        borderRadius: "0.35rem",
+        padding: "0.2rem 0.42rem",
         flexShrink: 0,
       }}
     >
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#D2774C" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#A8A29E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
         <polyline points="14,2 14,8 20,8" />
       </svg>
-      <span style={{ fontSize: "0.46rem", fontWeight: 500, color: "#4A4540" }}>{name}</span>
-      <span style={{ fontSize: "0.42rem", color: "#BF7A55", background: "rgba(210,119,76,0.12)", borderRadius: "0.22rem", padding: "0.06em 0.35em" }}>{ext}</span>
-      <span style={{ fontSize: "0.42rem", color: "#B0AAA4" }}>{size}</span>
+      <span style={{ fontSize: "0.44rem", color: "#78716C" }}>{name}.{ext.toLowerCase()}</span>
     </div>
-  );
-}
-
-function EmailActionRow() {
-  return (
-    <div style={{ display: "flex", gap: "0.32rem", marginTop: "0.55rem" }}>
-      {/* Reply — orange primary */}
-      <div
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: "0.22rem",
-          fontSize: "0.46rem",
-          fontWeight: 500,
-          color: "#FFFFFF",
-          background: JOIN_DESKTOP_ORANGE,
-          borderRadius: "0.38rem",
-          padding: "0.2rem 0.52rem",
-          cursor: "default",
-        }}
-      >
-        <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-          <polyline points="9,17 4,12 9,7" /><path d="M20 18v-2a4 4 0 0 0-4-4H4" />
-        </svg>
-        Reply
-      </div>
-      {/* Forward — muted secondary */}
-      <div
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: "0.22rem",
-          fontSize: "0.46rem",
-          fontWeight: 500,
-          color: "#9A9590",
-          background: "#F7F6F3",
-          border: "1px solid #EAE6DF",
-          borderRadius: "0.38rem",
-          padding: "0.2rem 0.48rem",
-          cursor: "default",
-        }}
-      >
-        <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-          <polyline points="15,17 20,12 15,7" /><path d="M4 18v-2a4 4 0 0 1 4-4h12" />
-        </svg>
-        Forward
-      </div>
-    </div>
-  );
-}
-
-function EmailTagChip({ label, color }: { label: string; color: string }) {
-  return (
-    <span
-      style={{
-        display: "inline-block",
-        fontSize: "0.42rem",
-        fontWeight: 500,
-        color,
-        background: `${color}18`,
-        border: `1px solid ${color}38`,
-        borderRadius: "999px",
-        padding: "0.1em 0.5em",
-      }}
-    >
-      {label}
-    </span>
   );
 }
 
 function JoinDesktopOpenEmailClipPane() {
+  const msgs = [
+    {
+      initials: "MR",
+      from: "Maria Rodriguez",
+      time: "Jun 21, 9:02 AM",
+      body: "Hi Dr. Singh — I wanted to follow up on my chest tightness from last week. Symptoms have improved but I still notice mild tightness in the mornings. Would it be possible to schedule a visit this week?",
+      attachments: [{ name: "symptom_log", ext: "PDF", size: "" }, { name: "prior_notes", ext: "DOCX", size: "" }],
+    },
+    {
+      initials: "DS",
+      from: "Dr. Singh",
+      time: "Jun 21, 2:18 PM",
+      body: "Hi Maria, thanks for the update. Glad to hear things are improving. Any shortness of breath with walking or stairs?",
+      attachments: [],
+      doeNote: "Suggested: Thu 10 AM follow-up",
+    },
+    {
+      initials: "MR",
+      from: "Maria Rodriguez",
+      time: "Jun 22, 8:41 AM",
+      body: "No shortness of breath, just the morning tightness. Thursday or Friday would work on my end.",
+      attachments: [{ name: "morning_log", ext: "PDF", size: "" }],
+    },
+  ];
+
   return (
     <div
       className="relative min-h-0 min-w-0 flex-1 self-stretch overflow-hidden"
-      style={{ borderLeft: "1px solid #EEEAE3", background: "#F0EDE8" }}
+      style={{ borderLeft: "1px solid #EEEAE3", background: "#FFFFFF" }}
     >
       <div className="absolute inset-0 overflow-hidden">
-        <div
-          className="absolute top-0 left-0 w-[205%]"
-          style={{ padding: "0.45rem 0.48rem", display: "flex", flexDirection: "column", gap: "0.22rem" }}
-        >
-          {/* Thread header — orange gradient */}
-          <div
-            style={{
-              background: JOIN_DESKTOP_ORANGE,
-              borderRadius: "0.68rem",
-              padding: "0.7rem 0.85rem 0.65rem",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "0.5rem" }}>
-              <div>
-                <p style={{ fontSize: "0.82rem", fontWeight: 600, letterSpacing: "-0.02em", lineHeight: 1.22, color: "#FFFFFF" }}>
-                  Follow-up visit scheduling
-                </p>
-                <p style={{ fontSize: "0.52rem", color: "rgba(255,255,255,0.72)", marginTop: "0.28rem" }}>
-                  4 messages · Maria Rodriguez · Patient message
-                </p>
-              </div>
-              <div style={{ display: "flex", gap: "0.28rem", flexShrink: 0, marginTop: "0.08rem" }}>
-                <span style={{ display: "inline-block", fontSize: "0.42rem", fontWeight: 500, color: "rgba(255,255,255,0.9)", background: "rgba(255,255,255,0.18)", border: "1px solid rgba(255,255,255,0.28)", borderRadius: "999px", padding: "0.1em 0.5em" }}>Follow-up</span>
-                <span style={{ display: "inline-block", fontSize: "0.42rem", fontWeight: 500, color: "rgba(255,255,255,0.9)", background: "rgba(255,255,255,0.18)", border: "1px solid rgba(255,255,255,0.28)", borderRadius: "999px", padding: "0.1em 0.5em" }}>Unread</span>
-              </div>
-            </div>
+        <div className="absolute top-0 left-0 w-[205%]">
+
+          {/* Thread header */}
+          <div style={{ padding: "0.7rem 0.95rem 0.6rem", borderBottom: "1px solid #F0ECE6" }}>
+            <p style={{ fontSize: "0.78rem", fontWeight: 600, letterSpacing: "-0.018em", color: "#1E343A", lineHeight: 1.2 }}>
+              Follow-up visit scheduling
+            </p>
+            <p style={{ fontSize: "0.48rem", color: "#A8A29E", marginTop: "0.22rem" }}>
+              Maria Rodriguez · 4 messages
+            </p>
           </div>
 
-          {/* Message 1 — Maria Rodriguez, full with attachment */}
-          <div style={{ background: "#FFFFFF", borderRadius: "0.62rem", padding: "0.75rem 0.85rem 0.8rem" }}>
-            <div style={{ display: "flex", alignItems: "flex-start", gap: "0.52rem" }}>
-              <JoinDesktopAvatar initials="MR" size="1.65rem" fontSize="0.52rem" />
-              <div style={{ minWidth: 0, flex: 1 }}>
-                <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
-                  <div style={{ display: "flex", alignItems: "baseline", gap: "0.32rem" }}>
-                    <span style={{ fontSize: "0.64rem", fontWeight: 600, color: "#1E343A" }}>Maria Rodriguez</span>
-                    <span style={{ fontSize: "0.47rem", color: "#A8A29E" }}>to Dr. Singh</span>
+          {/* Messages */}
+          {msgs.map((msg, i) => (
+            <div key={i} style={{ padding: "0.72rem 0.95rem", borderBottom: "1px solid #F5F2EF" }}>
+              <div style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem" }}>
+                <JoinDesktopAvatar initials={msg.initials} size="1.5rem" fontSize="0.48rem" />
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: "0.4rem" }}>
+                    <span style={{ fontSize: "0.58rem", fontWeight: 600, color: "#1E343A" }}>{msg.from}</span>
+                    <span style={{ fontSize: "0.42rem", color: "#B8B2AB", flexShrink: 0 }}>{msg.time}</span>
                   </div>
-                  <span style={{ fontSize: "0.44rem", color: "#C0BAB4", flexShrink: 0 }}>Jun 21, 9:02 AM</span>
-                </div>
-                <div style={{ marginTop: "0.48rem", display: "flex", flexDirection: "column", gap: "0.2rem" }}>
-                  <p style={{ fontSize: "0.58rem", lineHeight: 1.55, color: "rgba(30,52,58,0.78)" }}>Hi Dr. Singh,</p>
-                  <p style={{ fontSize: "0.58rem", lineHeight: 1.55, color: "rgba(30,52,58,0.78)" }}>
-                    I wanted to follow up on my chest tightness from last week. Symptoms have improved but I still notice mild tightness in the mornings.
+                  <p style={{ fontSize: "0.54rem", lineHeight: 1.55, color: "rgba(30,52,58,0.72)", marginTop: "0.3rem" }}>
+                    {msg.body}
                   </p>
-                  <p style={{ fontSize: "0.58rem", lineHeight: 1.55, color: "rgba(30,52,58,0.78)" }}>Would it be possible to schedule a visit this week?</p>
+                  {msg.attachments.length > 0 && (
+                    <div style={{ display: "flex", gap: "0.25rem", marginTop: "0.45rem", flexWrap: "wrap" }}>
+                      {msg.attachments.map((a) => (
+                        <EmailAttachmentChip key={a.name} name={a.name} ext={a.ext} size={a.size} />
+                      ))}
+                    </div>
+                  )}
+                  {"doeNote" in msg && msg.doeNote && (
+                    <div style={{ display: "inline-flex", alignItems: "center", gap: "0.22rem", marginTop: "0.45rem", color: JOIN_DESKTOP_ORANGE }}>
+                      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                        <circle cx="12" cy="12" r="10" /><path d="M12 8v4l3 3" />
+                      </svg>
+                      <span style={{ fontSize: "0.44rem", fontWeight: 500 }}>{msg.doeNote}</span>
+                    </div>
+                  )}
                 </div>
-                {/* Attachment */}
-                <div style={{ display: "flex", gap: "0.3rem", marginTop: "0.6rem", flexWrap: "wrap" }}>
-                  <EmailAttachmentChip name="symptom_log_jun21" ext="PDF" size="84 KB" />
-                  <EmailAttachmentChip name="prior_visit_notes" ext="DOCX" size="126 KB" />
-                </div>
-                <EmailActionRow />
               </div>
+            </div>
+          ))}
+
+          {/* Reply strip */}
+          <div style={{ padding: "0.6rem 0.95rem", display: "flex", alignItems: "center", gap: "0.6rem" }}>
+            <JoinDesktopAvatar initials="DS" size="1.35rem" fontSize="0.44rem" />
+            <div style={{ flex: 1, background: "#F7F6F3", borderRadius: "0.45rem", padding: "0.38rem 0.65rem" }}>
+              <p style={{ fontSize: "0.5rem", color: "#B0AAA4" }}>Thursday at 10 AM works. See you then.</p>
+            </div>
+            <div style={{ flexShrink: 0, background: JOIN_DESKTOP_ORANGE, borderRadius: "0.38rem", padding: "0.25rem 0.6rem" }}>
+              <span style={{ fontSize: "0.46rem", fontWeight: 500, color: "#FFFFFF" }}>Send</span>
             </div>
           </div>
 
-          {/* Message 2 — Dr. Singh reply */}
-          <div style={{ background: "#FFFFFF", borderRadius: "0.62rem", padding: "0.75rem 0.85rem 0.8rem" }}>
-            <div style={{ display: "flex", alignItems: "flex-start", gap: "0.52rem" }}>
-              <JoinDesktopAvatar initials="DS" size="1.65rem" fontSize="0.52rem" />
-              <div style={{ minWidth: 0, flex: 1 }}>
-                <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
-                  <div style={{ display: "flex", alignItems: "baseline", gap: "0.32rem" }}>
-                    <span style={{ fontSize: "0.64rem", fontWeight: 600, color: "#1E343A" }}>Dr. Singh</span>
-                    <span style={{ fontSize: "0.47rem", color: "#A8A29E" }}>to Maria Rodriguez</span>
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.28rem", flexShrink: 0 }}>
-                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#68C298" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                      <path d="M20 6 9 17l-5-5" />
-                    </svg>
-                    <span style={{ fontSize: "0.44rem", color: "#C0BAB4" }}>Jun 21, 2:18 PM</span>
-                  </div>
-                </div>
-                <div style={{ marginTop: "0.48rem", display: "flex", flexDirection: "column", gap: "0.2rem" }}>
-                  <p style={{ fontSize: "0.58rem", lineHeight: 1.55, color: "rgba(30,52,58,0.78)" }}>Hi Maria, thanks for the update. Glad to hear things are improving.</p>
-                  <p style={{ fontSize: "0.58rem", lineHeight: 1.55, color: "rgba(30,52,58,0.78)" }}>Any shortness of breath with walking or stairs?</p>
-                </div>
-                {/* AI suggestion chip */}
-                <div
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "0.28rem",
-                    marginTop: "0.6rem",
-                    background: JOIN_DESKTOP_ORANGE,
-                    borderRadius: "0.45rem",
-                    padding: "0.28rem 0.56rem",
-                  }}
-                >
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.88)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                    <circle cx="12" cy="12" r="10" /><path d="M12 8v4l3 3" />
-                  </svg>
-                  <span style={{ fontSize: "0.44rem", color: "#FFFFFF", fontWeight: 500 }}>Doe: Suggested follow-up slot — Thu 10 AM</span>
-                </div>
-                <EmailActionRow />
-              </div>
-            </div>
-          </div>
-
-          {/* Message 3 — Maria follow-up, partially clipped */}
-          <div style={{ background: "#FFFFFF", borderRadius: "0.62rem", padding: "0.75rem 0.85rem 0.8rem" }}>
-            <div style={{ display: "flex", alignItems: "flex-start", gap: "0.52rem" }}>
-              <JoinDesktopAvatar initials="MR" size="1.65rem" fontSize="0.52rem" />
-              <div style={{ minWidth: 0, flex: 1 }}>
-                <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
-                  <div style={{ display: "flex", alignItems: "baseline", gap: "0.32rem" }}>
-                    <span style={{ fontSize: "0.64rem", fontWeight: 600, color: "#1E343A" }}>Maria Rodriguez</span>
-                    <span style={{ fontSize: "0.47rem", color: "#A8A29E" }}>to Dr. Singh</span>
-                  </div>
-                  <span style={{ fontSize: "0.44rem", color: "#C0BAB4", flexShrink: 0 }}>Jun 22, 8:41 AM</span>
-                </div>
-                <div style={{ marginTop: "0.48rem", display: "flex", flexDirection: "column", gap: "0.2rem" }}>
-                  <p style={{ fontSize: "0.58rem", lineHeight: 1.55, color: "rgba(30,52,58,0.78)" }}>No shortness of breath, just the morning tightness.</p>
-                  <p style={{ fontSize: "0.58rem", lineHeight: 1.55, color: "rgba(30,52,58,0.78)" }}>Thursday or Friday would work well on my end.</p>
-                </div>
-                <div style={{ display: "flex", gap: "0.3rem", marginTop: "0.6rem", flexWrap: "wrap" }}>
-                  <EmailAttachmentChip name="morning_log_jun22" ext="PDF" size="31 KB" />
-                </div>
-                <EmailActionRow />
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -527,7 +375,7 @@ function JoinDesktopOpenEmailClipPane() {
 }
 
 function JoinDesktopNav({ config: _config }: { config: HeroTriageThemeConfig }) {
-  const ic = JOIN_DESKTOP_ORANGE;
+  const ic = "#C4BDB7";
   const sw = "1.4";
   const sz = 14;
 
@@ -693,20 +541,18 @@ function JoinDesktopInboxPane({ rows }: { rows: readonly InboxRow[] }) {
           </span>
         </div>
 
-        {/* Row list — card gaps, no dividers */}
+        {/* Row list */}
         <div
           style={{
             flex: 1,
             minHeight: 0,
             overflow: "hidden",
-            padding: "0.35rem 0",
-            display: "flex",
-            flexDirection: "column",
-            gap: "0.15rem",
           }}
         >
           {visibleRows.map((row) => (
-            <JoinDesktopInboxRow key={row.id} row={row} />
+            <div key={row.id} style={{ borderBottom: "1px solid #F5F2EF" }}>
+              <JoinDesktopInboxRow row={row} />
+            </div>
           ))}
         </div>
       </div>
