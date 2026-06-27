@@ -5,23 +5,22 @@ import { DoePhoneSectionTitle } from "@/components/doephone/DoePhoneSectionText"
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import {
   DOEPHONE_SECTION_CONTENT_INSET,
-  DOEPHONE_SECTION_TITLE_CAROUSEL_GAP,
-  DOEPHONE_SECTION_TITLE_PB,
-  DOEPHONE_SECTION_TITLE_PT,
   DOEPHONE_VIEWPORT_SECTION,
+  DOEPHONE_VIEWPORT_SECTION_INNER,
+  DOEPHONE_VIEWPORT_SECTION_STACK_GAP,
 } from "@/lib/doephone/section-styles";
 import { DIAGNOSTIC_ASSISTANT_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 
 /** Gradient viewport — Intelligence built into your stack + outer glass panel. */
 export function DoePhoneIntegrationsSection() {
   return (
-    <section className={`${DOEPHONE_VIEWPORT_SECTION} overflow-hidden bg-[#1E343A]`} aria-label="Integrations">
+    <section className={`${DOEPHONE_VIEWPORT_SECTION} flex flex-col overflow-hidden bg-[#1E343A]`} aria-label="Integrations">
       <div className="pointer-events-none absolute -inset-[3%] overflow-hidden" aria-hidden>
         <WorkflowCarouselDesignBackdrop backdrop={DIAGNOSTIC_ASSISTANT_BACKDROP} embedded gradientScale={1.12} />
       </div>
 
-      <div className="relative z-10 flex h-full min-h-0 flex-col">
-        <div className={`shrink-0 ${DOEPHONE_SECTION_CONTENT_INSET} ${DOEPHONE_SECTION_TITLE_PT}`}>
+      <div className={`relative z-10 ${DOEPHONE_VIEWPORT_SECTION_INNER}`}>
+        <div className={DOEPHONE_SECTION_CONTENT_INSET}>
           <DoePhoneSectionTitle
             line1="Intelligence built."
             line2="into your stack."
@@ -29,10 +28,8 @@ export function DoePhoneIntegrationsSection() {
           />
         </div>
 
-        <div
-          className={`shrink-0 overflow-hidden ${DOEPHONE_SECTION_TITLE_CAROUSEL_GAP} ${DOEPHONE_SECTION_TITLE_PB}`}
-        >
-          <DoePhoneCommunicationOuterGlassPanel />
+        <div className={`overflow-hidden ${DOEPHONE_VIEWPORT_SECTION_STACK_GAP}`}>
+          <DoePhoneCommunicationOuterGlassPanel viewport />
         </div>
       </div>
     </section>

@@ -6,9 +6,10 @@ import {
   useDoePhoneSectionCarousel,
 } from "@/components/doephone/DoePhoneSectionCarousel";
 import {
-  DOEPHONE_SECTION_CAROUSEL_HEIGHT,
   DOEPHONE_SECTION_CAROUSEL_INSET_X,
   DOEPHONE_SECTION_CAROUSEL_MENU_GAP,
+  DOEPHONE_SECTION_CAROUSEL_VIEWPORT_HEIGHT,
+  DOEPHONE_VIEWPORT_SECTION_INNER,
 } from "@/lib/doephone/section-styles";
 import {
   doePhoneSectionRevealSegmentClass,
@@ -29,12 +30,12 @@ export function DoePhoneCommunicationSection() {
   return (
     <div
       ref={sectionRef}
-      className="flex min-h-0 flex-1 flex-col justify-center"
+      className={DOEPHONE_VIEWPORT_SECTION_INNER}
       style={doephoneSectionRevealStyleVars() as CSSProperties}
     >
       <div className={DOEPHONE_SECTION_CAROUSEL_INSET_X}>
         <div
-          className={`w-full ${DOEPHONE_SECTION_CAROUSEL_HEIGHT} ${doePhoneSectionRevealSegmentClass("carousel", revealed)}`}
+          className={`w-full ${DOEPHONE_SECTION_CAROUSEL_VIEWPORT_HEIGHT} ${doePhoneSectionRevealSegmentClass("carousel", revealed)}`}
         >
           <DoePhoneSectionCarousel
             scrollRef={scrollRef}
