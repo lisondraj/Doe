@@ -23,7 +23,7 @@ import {
   DOEPHONE_FIXED_NAV_CONTENT_RIGHT,
   DOEPHONE_SECTION_CAROUSEL_INSET_X,
 } from "@/lib/doephone/section-styles";
-import { FOR_INVESTORS_LABEL } from "@/lib/subpage/subpage-nav";
+import { FOR_INVESTORS_LABEL, MAIN_HOME_NAV_SHEET_ITEMS } from "@/lib/subpage/subpage-nav";
 import { INVESTORS_PATH, JOIN_PAGE_HREF, WAITLIST_PATH } from "@/lib/site-domains";
 import {
   NAV_FOOTER_BOX_TITLE_TW,
@@ -75,9 +75,12 @@ export type SiteNavCtaLayout =
   | "single"
   | "triple"
   | "join-waitlist"
+  | "main-home"
   | "subpage-join"
   | "subpage-investors"
   | "subpage-waitlist";
+
+export type NavSheetItem = { label: string; href: string };
 
 function NavChromeStrip({
   navTextColor,
@@ -169,6 +172,10 @@ function NavChromeStrip({
       >
         {subpageVariant ? (
           <SubpageMobileNavRow variant={subpageVariant} />
+        ) : ctaLayout === "main-home" ? (
+          <Link href={INVESTORS_PATH} className={DOEPHONE_NAV_WAITLIST_CLASS}>
+            {FOR_INVESTORS_LABEL}
+          </Link>
         ) : ctaLayout === "triple" ? (
           <>
             <Link href={WAITLIST_PATH} className={DOEPHONE_NAV_TRIPLE_CTA_CLASS}>
@@ -273,6 +280,7 @@ export default function DoeIphoneSiteNav({
   logoLink = true,
   showMenu = true,
   ctaLayout = "single",
+  navSheetItems,
 }: {
   pinchSafe?: boolean;
   homeHref?: string;
@@ -282,7 +290,13 @@ export default function DoeIphoneSiteNav({
   logoLink?: boolean;
   showMenu?: boolean;
   ctaLayout?: SiteNavCtaLayout;
+  navSheetItems?: readonly NavSheetItem[];
 }) {
+  const resolvedNavSheetItems: readonly NavSheetItem[] =
+    navSheetItems ??
+    (ctaLayout === "main-home"
+      ? MAIN_HOME_NAV_SHEET_ITEMS
+      : NAV_ITEMS.map((item) => ({ label: item, href: NAV_HREFS[item] })));
   const isPhoneLayout = true;
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   /** Keeps the sheet mounted through the close animation. */
@@ -517,14 +531,14 @@ export default function DoeIphoneSiteNav({
           aria-label="Site navigation"
         >
           <nav className="flex flex-col flex-1 min-h-0 overflow-y-auto overscroll-contain">
-            {NAV_ITEMS.map((item) => (
-              <div key={item} className="border-b border-[#E6E6E6]">
+            {resolvedNavSheetItems.map((item) => (
+              <div key={item.href} className="border-b border-[#E6E6E6]">
                 <Link
-                  href={NAV_HREFS[item]}
+                  href={item.href}
                   className={`flex w-full items-center text-left font-medium tracking-[-0.02em] text-gray-900 pl-5 pr-5 iphone-page:pl-[max(1.35rem,calc(env(safe-area-inset-left,0px)+12px+2.4vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))] py-4 iphone-page:py-[clamp(0.65rem,0.42rem+1.35vmin,1.2rem)] active:bg-black/[0.04] transition-colors no-underline ${inter.className} text-4xl iphone-page:text-[clamp(1.52rem,0.82rem+2.92vmin,3.92rem)] iphone-page:leading-none`}
                   onClick={() => setMobileNavOpen(false)}
                 >
-                  <span className="min-w-0">{item}</span>
+                  <span className="min-w-0">{item.label}</span>
                 </Link>
               </div>
             ))}

@@ -48,3 +48,10 @@ export function subpageNavButton(variant: SubpageNavVariant) {
       return null;
   }
 }
+
+/** Main mobile home — expanded nav sheet links (order matters). */
+export const MAIN_HOME_NAV_SHEET_ITEMS = [
+  { label: FOR_INVESTORS_LABEL, href: INVESTORS_PATH },
+  { label: "Waitlist", href: WAITLIST_PATH },
+  { label: "Team", href: JOIN_PATH },
+] as const;
