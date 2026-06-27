@@ -95,7 +95,7 @@ const INBOX_ROWS: InboxRow[] = [
     sender: "Quest Diagnostics",
     initials: "QD",
     subject: "Panel results",
-    preview: "Lipid + HbA1c ready for T. Brooks",
+    preview: "Lipid + HBA1C ready for T. Brooks",
     time: "Sun",
     iconBg: "rgba(212,157,79,0.17)",
     iconColor: "rgba(255,236,210,0.88)",

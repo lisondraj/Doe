@@ -2623,7 +2623,7 @@ export function DoeSchedulesAppMock({
                                 <div className="flex items-start justify-between gap-2">
                                   <div>
                                     <p className="text-[10px] font-normal uppercase tracking-[0.12em] text-neutral-400">
-                                      HbA1c
+                                      HBA1C
                                     </p>
                                     <p className="mt-0.5 text-[10px] font-normal tabular-nums text-neutral-400">
                                       6 mo
@@ -2695,7 +2695,7 @@ export function DoeSchedulesAppMock({
                               <>
                                 <div className="flex items-baseline justify-between gap-3">
                                   <p className="text-[10px] font-normal uppercase tracking-[0.12em] text-neutral-400">
-                                    HbA1c
+                                    HBA1C
                                   </p>
                                   <p className="text-[11px] font-normal tabular-nums text-neutral-400">
                                     Last 6 visits

@@ -188,38 +188,62 @@ function labsChartPoints(
 }
 
 function LabsAgentStats({ x, y, width, height }: { x: number; y: number; width: number; height: number }) {
+  const cx = x + width / 2;
+  const labelFontSize = 26;
+  const valueFontSize = 50;
+  const rowGap = 10;
+  const arrowSize = 44;
+  const valueLineH = valueFontSize * 1.05;
+  const blockH = labelFontSize * 1.1 + rowGap + Math.max(arrowSize, valueLineH);
+  const blockTop = y + (height - blockH) / 2;
+  const rowCenterY = blockTop + labelFontSize * 1.1 + rowGap + Math.max(arrowSize, valueLineH) / 2;
+  const valueApproxW = valueFontSize * 2.15;
+  const gap = 12;
+  const groupW = arrowSize + gap + valueApproxW;
+  const groupLeft = cx - groupW / 2;
+  const arrowX = groupLeft;
+  const valueX = groupLeft + arrowSize + gap;
+  const arrowScale = arrowSize / 24;
+
   return (
-    <foreignObject x={x} y={y} width={width} height={height}>
-      <div
-        xmlns="http://www.w3.org/1999/xhtml"
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "100%",
-          color: DOE_ORANGE,
-          textAlign: "center",
-          ...SUISSE_FOREIGN_FONT,
-        }}
+    <g aria-hidden>
+      <text
+        x={cx}
+        y={blockTop}
+        dominantBaseline="hanging"
+        textAnchor="middle"
+        fill="#78716C"
+        fontSize={labelFontSize}
+        fontWeight={500}
+        fontFamily={suisseIntl.style.fontFamily}
+        letterSpacing="0.14em"
       >
-        <span style={{ fontSize: 34, fontWeight: 500, lineHeight: 1.1, letterSpacing: "-0.02em" }}>HbA1C</span>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginTop: 10 }}>
-          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" aria-hidden style={{ flexShrink: 0 }}>
-            <path
-              d="M12 5v12M7 14l5 5 5-5"
-              stroke={DOE_ORANGE}
-              strokeWidth="2.4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-          <span style={{ fontSize: 50, fontWeight: 600, lineHeight: 1.05, letterSpacing: "-0.03em", fontVariantNumeric: "lining-nums" }}>
-            6.2%
-          </span>
-        </div>
-      </div>
-    </foreignObject>
+        HBA1C
+      </text>
+      <g transform={`translate(${arrowX}, ${rowCenterY - 12 * arrowScale}) scale(${arrowScale})`}>
+        <path
+          d="M12 5v12M7 14l5 5 5-5"
+          stroke={DOE_ORANGE}
+          strokeWidth={2.4}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          fill="none"
+        />
+      </g>
+      <text
+        x={valueX}
+        y={rowCenterY}
+        dominantBaseline="middle"
+        textAnchor="start"
+        fill={DOE_ORANGE}
+        fontSize={valueFontSize}
+        fontWeight={600}
+        fontFamily={suisseIntl.style.fontFamily}
+        letterSpacing="-0.03em"
+      >
+        6.2%
+      </text>
+    </g>
   );
 }
 
@@ -340,11 +364,320 @@ function LabsAgentChart({
   );
 }
 
+const LIVE_APPT_STEPS = [
+  { status: "done" as const, label: "AI scanning patient chart" },
+  { status: "done" as const, label: "Pulling patient information" },
+  { status: "loading" as const, label: "Gathering clinical evidence" },
+];
+
+function LiveAppointmentSteps({ boxX, boxY }: { boxX: number; boxY: number }) {
+  const innerX = boxX + BOX_PAD_X;
+  const innerW = BOX_W - BOX_PAD_X * 2;
+  const contentTop = boxContentTop(boxY) + 8;
+  const contentBottom = boxY + BOX_H - BOX_PAD_Y;
+  const rowGap = 12;
+  const rowCount = LIVE_APPT_STEPS.length;
+  const rowH = Math.floor((contentBottom - contentTop - rowGap * (rowCount - 1)) / rowCount);
+
+  return (
+    <foreignObject x={innerX} y={contentTop} width={innerW} height={contentBottom - contentTop}>
+      <div
+        className={suisseIntl.className}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: rowGap,
+          height: "100%",
+          ...SUISSE_FOREIGN_FONT,
+        }}
+      >
+        {LIVE_APPT_STEPS.map((step) => (
+          <div
+            key={step.label}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 16,
+              flex: 1,
+              minHeight: rowH,
+              borderRadius: 12,
+              background: "#FAFAF8",
+              border: "1px solid #EDE9E2",
+              padding: "0 18px",
+              boxSizing: "border-box",
+              overflow: "hidden",
+            }}
+          >
+            {step.status === "done" ? (
+              <svg width="24" height="24" viewBox="0 0 22 22" fill="none" aria-hidden style={{ flexShrink: 0 }}>
+                <circle cx="11" cy="11" r="11" fill={DOE_ORANGE} />
+                <path
+                  d="M6.5 11.2l2.4 2.4 6.2-6.4"
+                  stroke="#FFFFFF"
+                  strokeWidth="1.85"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            ) : (
+              <span
+                className="shrink-0 animate-spin rounded-full border-[2px] border-[#D9D4CC] border-r-transparent border-b-transparent"
+                style={{ width: 22, height: 22, animationDuration: "1.1s", display: "block" }}
+                aria-hidden
+              />
+            )}
+            <span
+              style={{
+                flex: 1,
+                minWidth: 0,
+                fontSize: 30,
+                color: step.status === "done" ? AGENT_INK : "#78716C",
+                fontWeight: 500,
+                lineHeight: 1.2,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {step.label}
+            </span>
+          </div>
+        ))}
+      </div>
+    </foreignObject>
+  );
+}
+
+const BILLING_PRIOR_AUTH_CASES = [
+  { label: "Ozempic", type: "Rx PA" },
+  { label: "MRI lumbar", type: "Imaging" },
+  { label: "Stelara", type: "Rx PA" },
+  { label: "CPAP", type: "DME" },
+  { label: "Cardiology echo", type: "Imaging" },
+  { label: "Humira", type: "Rx PA" },
+] as const;
+
+function BillingAgentPriorAuthGrid({
+  boxX,
+  boxY,
+  orbGradId,
+  orbShadeId,
+  orbGrainId,
+}: {
+  boxX: number;
+  boxY: number;
+  orbGradId: string;
+  orbShadeId: string;
+  orbGrainId: string;
+}) {
+  const innerX = boxX + BOX_PAD_X;
+  const innerW = BOX_W - BOX_PAD_X * 2;
+  const contentTop = boxContentTop(boxY) + 6;
+  const loadingH = 56;
+  const loadingGap = 12;
+  const colGap = 12;
+  const rowGap = 12;
+  const cols = 3;
+  const rows = 2;
+  const cellRx = 12;
+  const typeFontSize = 24;
+  const labelFontSize = 30;
+  const gridTop = contentTop;
+  const gridH = BOX_H - BOX_PAD_Y - (gridTop - boxY) - loadingH - loadingGap - 8;
+  const cellW = (innerW - colGap * (cols - 1)) / cols;
+  const cellH = (gridH - rowGap * (rows - 1)) / rows;
+  const loadingY = gridTop + gridH + loadingGap;
+
+  return (
+    <g aria-hidden>
+      {BILLING_PRIOR_AUTH_CASES.map((item, i) => {
+        const col = i % cols;
+        const row = Math.floor(i / cols);
+        const x = innerX + col * (cellW + colGap);
+        const y = gridTop + row * (cellH + rowGap);
+        const cx = x + cellW / 2;
+        const typeY = y + 22;
+        const labelY = y + Math.min(58, cellH * 0.46);
+        const statusZoneTop = labelY + labelFontSize / 2;
+        const statusZoneBottom = y + cellH;
+        const statusY = (statusZoneTop + statusZoneBottom) / 2;
+
+        return (
+          <g key={item.label}>
+            <g filter={`url(#${orbGrainId})`}>
+              <rect x={x} y={y} width={cellW} height={cellH} rx={cellRx} fill={`url(#${orbGradId})`} />
+              <rect x={x} y={y} width={cellW} height={cellH} rx={cellRx} fill={`url(#${orbShadeId})`} />
+            </g>
+            <text
+              x={cx}
+              y={typeY}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              fill={ON_ORANGE_MUTED}
+              fontSize={typeFontSize}
+              fontWeight={500}
+              fontFamily={suisseIntl.style.fontFamily}
+            >
+              {item.type}
+            </text>
+            <text
+              x={cx}
+              y={labelY}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              fill={ON_ORANGE_INK}
+              fontSize={labelFontSize}
+              fontWeight={500}
+              fontFamily={suisseIntl.style.fontFamily}
+              letterSpacing="-0.02em"
+            >
+              {item.label}
+            </text>
+            <DayStatusIcon x={cx} y={statusY} status="available" />
+          </g>
+        );
+      })}
+
+      <foreignObject x={innerX} y={loadingY} width={innerW} height={loadingH}>
+        <div
+          className={suisseIntl.className}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+            height: "100%",
+            borderRadius: "10px",
+            background: "#FAFAF8",
+            padding: "0 16px",
+            boxSizing: "border-box",
+            overflow: "hidden",
+            ...SUISSE_FOREIGN_FONT,
+          }}
+        >
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden style={{ flexShrink: 0 }}>
+            <circle cx="11" cy="11" r="11" fill={DOE_ORANGE} />
+            <path
+              d="M6.5 11.2l2.4 2.4 6.2-6.4"
+              stroke="#FFFFFF"
+              strokeWidth="1.85"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          <span
+            style={{
+              flex: 1,
+              minWidth: 0,
+              fontSize: 30,
+              color: AGENT_INK,
+              fontWeight: 500,
+              lineHeight: 1.2,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            6 prior auths handled today
+          </span>
+        </div>
+      </foreignObject>
+    </g>
+  );
+}
+
+function ReferralsAgentCard({
+  boxX,
+  boxY,
+  orbGradId,
+  orbShadeId,
+  orbGrainId,
+}: {
+  boxX: number;
+  boxY: number;
+  orbGradId: string;
+  orbShadeId: string;
+  orbGrainId: string;
+}) {
+  const innerX = boxX + BOX_PAD_X;
+  const innerW = BOX_W - BOX_PAD_X * 2;
+  const contentTop = boxContentTop(boxY) + 8;
+  const nameFontSize = 48;
+  const referralFontSize = 38;
+  const cardPadY = 32;
+  const cardPadX = 32;
+  const cardLineGap = 18;
+  const cardRx = 16;
+  const nameLineH = nameFontSize * 1.12;
+  const referralLineH = referralFontSize * 1.18;
+  const cardH = cardPadY * 2 + nameLineH + cardLineGap + referralLineH;
+  const dyspneaGap = 16;
+  const dyspneaFontSize = 32;
+  const dyspneaY = contentTop + cardH + dyspneaGap;
+
+  return (
+    <g aria-hidden>
+      <g filter={`url(#${orbGrainId})`}>
+        <rect x={innerX} y={contentTop} width={innerW} height={cardH} rx={cardRx} fill={`url(#${orbGradId})`} />
+        <rect x={innerX} y={contentTop} width={innerW} height={cardH} rx={cardRx} fill={`url(#${orbShadeId})`} />
+      </g>
+      <foreignObject x={innerX} y={contentTop} width={innerW} height={cardH}>
+        <div
+          className={suisseIntl.className}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            gap: `${cardLineGap}px`,
+            height: "100%",
+            padding: `0 ${cardPadX}px`,
+            boxSizing: "border-box",
+            ...SUISSE_FOREIGN_FONT,
+          }}
+        >
+          <span
+            style={{
+              fontSize: nameFontSize,
+              color: ON_ORANGE_INK,
+              fontWeight: 500,
+              lineHeight: 1.12,
+              letterSpacing: "-0.02em",
+            }}
+          >
+            Sarah Walsh
+          </span>
+          <span
+            style={{
+              fontSize: referralFontSize,
+              color: ON_ORANGE_INK,
+              fontWeight: 500,
+              lineHeight: 1.18,
+              letterSpacing: "-0.015em",
+            }}
+          >
+            Referral to Cardiology
+          </span>
+        </div>
+      </foreignObject>
+      <text
+        x={innerX + cardPadX}
+        y={dyspneaY}
+        dominantBaseline="hanging"
+        fill="#78716C"
+        fontSize={dyspneaFontSize}
+        fontWeight={500}
+        fontFamily={suisseIntl.style.fontFamily}
+        letterSpacing="-0.01em"
+      >
+        Recent dyspnea on exertion
+      </text>
+    </g>
+  );
+}
+
 function SchedulingBookingLoading({ x, y, width }: { x: number; y: number; width: number }) {
   return (
     <foreignObject x={x} y={y} width={width} height={56}>
       <div
-        xmlns="http://www.w3.org/1999/xhtml"
         className={suisseIntl.className}
         style={{
           display: "flex",
@@ -504,6 +837,10 @@ function VoiceAgentSpeakingOrb({
   const quoteX = cx + orbDrawR + quoteGap;
   const quoteW = boxX + BOX_W - BOX_PAD_X - quoteX;
   const quoteY = cy - orbLayoutR;
+  const phoneFontSize = 24;
+  const phoneLineH = phoneFontSize * 1.2;
+  const phoneQuoteGap = 10;
+  const quoteBlockY = quoteY + phoneLineH + phoneQuoteGap;
 
   return (
     <g aria-hidden>
@@ -519,40 +856,29 @@ function VoiceAgentSpeakingOrb({
         </g>
         <VoiceAgentMicIcon cx={cx} cy={cy} size={82} />
       </g>
-      <foreignObject x={quoteX} y={quoteY} width={quoteW} height={orbLayoutR * 2}>
+      <text
+        x={quoteX}
+        y={quoteY}
+        dominantBaseline="hanging"
+        fill="#78716C"
+        fontSize={phoneFontSize}
+        fontWeight={600}
+        fontFamily={suisseIntl.style.fontFamily}
+        letterSpacing="0.16em"
+      >
+        (416) 555-0142
+      </text>
+      <foreignObject x={quoteX} y={quoteBlockY} width={quoteW} height={orbLayoutR * 2 - (quoteBlockY - quoteY)}>
         <div
-          xmlns="http://www.w3.org/1999/xhtml"
           className={suisseIntl.className}
           style={{
             display: "flex",
             flexDirection: "column",
-            justifyContent: "center",
-            gap: "10px",
+            justifyContent: "flex-start",
             height: "100%",
             ...SUISSE_FOREIGN_FONT,
           }}
         >
-          <span
-            style={{
-              ...SUISSE_FOREIGN_FONT,
-              alignSelf: "flex-start",
-              display: "inline-flex",
-              fontSize: 32,
-              color: "#78716C",
-              fontWeight: 400,
-              lineHeight: 1.2,
-              letterSpacing: "0.02em",
-              fontFeatureSettings: '"lnum" 1',
-              fontVariantNumeric: "lining-nums",
-              background: "#FAFAF8",
-              border: "1px solid #EDE9E2",
-              borderRadius: "10px",
-              padding: "8px 14px",
-              boxSizing: "border-box",
-            }}
-          >
-            (416) 555-0142
-          </span>
           <span
             style={{
               ...SUISSE_FOREIGN_FONT,
@@ -571,23 +897,111 @@ function VoiceAgentSpeakingOrb({
   );
 }
 
-function OrbitAgentRow({ boxX, boxY, name }: { boxX: number; boxY: number; name: string }) {
+function DefaultOrbitAgentIcon() {
+  return (
+    <>
+      <circle cx={0} cy={0} r={ORBIT_ICON_R * 0.78} stroke={AGENT_INK} strokeWidth={2.2} fill="none" />
+      <circle cx={0} cy={0} r={ORBIT_ICON_R * 0.22} fill={AGENT_INK} />
+      <path
+        d={`M0 ${-ORBIT_ICON_R}v${ORBIT_ICON_R * 0.38}M0 ${ORBIT_ICON_R * 0.42}v${ORBIT_ICON_R * 0.58}M${-ORBIT_ICON_R} 0h${ORBIT_ICON_R * 0.38}M${ORBIT_ICON_R * 0.42} 0h${ORBIT_ICON_R * 0.58}`}
+        stroke={AGENT_INK}
+        strokeWidth={1.8}
+        strokeLinecap="round"
+        opacity={0.42}
+      />
+    </>
+  );
+}
+
+function OrbitAgentTitleIcon({ agentIndex }: { agentIndex: number }) {
+  const size = ORBIT_ICON_R * 2;
+  const stroke = DOE_ORANGE;
+  const sw = 1.55;
+  const iconProps = {
+    fill: "none" as const,
+    stroke,
+    strokeWidth: sw,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+  };
+
+  let content: React.ReactNode = null;
+
+  if (agentIndex === 0) {
+    content = (
+      <g {...iconProps}>
+        <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" />
+        <path d="M19 10v2a7 7 0 01-14 0v-2" />
+        <path d="M12 19v4M8 23h8" />
+      </g>
+    );
+  } else if (agentIndex === 1) {
+    content = (
+      <g {...iconProps}>
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 7v5l3.5 2" />
+      </g>
+    );
+  } else if (agentIndex === 2) {
+    content = (
+      <g {...iconProps}>
+        <path d="M4 19V5M4 19h16" />
+        <path d="M4 15l5-6 4 4 7-9" />
+      </g>
+    );
+  } else if (agentIndex === 3) {
+    content = (
+      <g {...iconProps}>
+        <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M22 21v-2a4 4 0 00-3-3.87" />
+        <path d="M16 3.13a4 4 0 010 7.75" />
+      </g>
+    );
+  } else if (agentIndex === 5) {
+    content = (
+      <g {...iconProps}>
+        <rect x="2" y="5" width="20" height="14" rx="2" />
+        <path d="M2 10h20" />
+      </g>
+    );
+  }
+
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      x={-ORBIT_ICON_R}
+      y={-ORBIT_ICON_R}
+      overflow="visible"
+      aria-hidden
+    >
+      {content}
+    </svg>
+  );
+}
+
+function OrbitAgentRow({
+  boxX,
+  boxY,
+  name,
+  agentIndex,
+}: {
+  boxX: number;
+  boxY: number;
+  name: string;
+  agentIndex: number;
+}) {
   const iconCx = boxX + BOX_PAD_X + ORBIT_ICON_R;
   const iconCy = boxY + BOX_PAD_Y + ORBIT_ICON_R;
   const textX = iconCx + ORBIT_ICON_R + ROW_ICON_TEXT_GAP;
+  const useSemanticIcon = agentIndex === 0 || agentIndex === 1 || agentIndex === 2 || agentIndex === 3 || agentIndex === 5;
 
   return (
     <g aria-hidden>
       <g transform={`translate(${iconCx}, ${iconCy})`}>
-        <circle cx={0} cy={0} r={ORBIT_ICON_R * 0.78} stroke={AGENT_INK} strokeWidth={2.2} fill="none" />
-        <circle cx={0} cy={0} r={ORBIT_ICON_R * 0.22} fill={AGENT_INK} />
-        <path
-          d={`M0 ${-ORBIT_ICON_R}v${ORBIT_ICON_R * 0.38}M0 ${ORBIT_ICON_R * 0.42}v${ORBIT_ICON_R * 0.58}M${-ORBIT_ICON_R} 0h${ORBIT_ICON_R * 0.38}M${ORBIT_ICON_R * 0.42} 0h${ORBIT_ICON_R * 0.58}`}
-          stroke={AGENT_INK}
-          strokeWidth={1.8}
-          strokeLinecap="round"
-          opacity={0.42}
-        />
+        {useSemanticIcon ? <OrbitAgentTitleIcon agentIndex={agentIndex} /> : <DefaultOrbitAgentIcon />}
       </g>
       <text
         x={textX}
@@ -752,6 +1166,7 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
               boxX={pt.x - BOX_W / 2}
               boxY={pt.y - BOX_H / 2}
               name={ORBIT_AGENTS[i]}
+              agentIndex={i}
             />
             {i === 1 ? (
               <SchedulingAgentCalendar
@@ -764,6 +1179,27 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
             ) : null}
             {i === 2 ? (
               <LabsAgentChart
+                boxX={pt.x - BOX_W / 2}
+                boxY={pt.y - BOX_H / 2}
+                orbGradId={voiceOrbGrad}
+                orbShadeId={voiceOrbShade}
+                orbGrainId={voiceOrbGrain}
+              />
+            ) : null}
+            {i === 3 ? (
+              <ReferralsAgentCard
+                boxX={pt.x - BOX_W / 2}
+                boxY={pt.y - BOX_H / 2}
+                orbGradId={voiceOrbGrad}
+                orbShadeId={voiceOrbShade}
+                orbGrainId={voiceOrbGrain}
+              />
+            ) : null}
+            {i === 4 ? (
+              <LiveAppointmentSteps boxX={pt.x - BOX_W / 2} boxY={pt.y - BOX_H / 2} />
+            ) : null}
+            {i === 5 ? (
+              <BillingAgentPriorAuthGrid
                 boxX={pt.x - BOX_W / 2}
                 boxY={pt.y - BOX_H / 2}
                 orbGradId={voiceOrbGrad}
