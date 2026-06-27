@@ -62,6 +62,11 @@ function siteNavAppViewportPx(): { width: number; height: number } {
   return { width: Math.max(w, 280), height: Math.max(h, 320) };
 }
 
+const NAV_JOIN_ROW_GAP =
+  "gap-3.5 iphone-page:gap-[clamp(0.65rem,0.48rem+0.85vmin,0.95rem)]";
+const NAV_DEFAULT_ROW_GAP =
+  "gap-2.5 iphone-page:gap-[clamp(0.45rem,0.35rem+0.65vmin,0.7rem)]";
+
 function NavChromeStrip({
   navTextColor,
   mobileNavOpen,
