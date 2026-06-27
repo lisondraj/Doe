@@ -74,6 +74,7 @@ function GlassCard({
   theme,
   compact = false,
   gradient = false,
+  gradientOpacity = 1,
   style,
 }: {
   children: ReactNode;
@@ -83,6 +84,7 @@ function GlassCard({
   theme: ReturnType<typeof cardTheme>;
   compact?: boolean;
   gradient?: boolean;
+  gradientOpacity?: number;
   style?: CSSProperties;
 }) {
   return (
@@ -90,7 +92,7 @@ function GlassCard({
       className={joinHeroBoxRevealClass(revealed)}
       style={{
         borderRadius: "1.1rem",
-        background: gradient ? DOE_ORANGE_SOLID : theme.glass(opacity),
+        background: gradient ? `rgba(210, 119, 76, ${gradientOpacity})` : theme.glass(opacity),
         padding: compact ? "0.58rem 0.85rem" : "0.95rem 1.05rem",
         color: gradient ? ON_ORANGE_INK : theme.ink,
         animationDelay: joinHeroBoxRevealDelay(revealed, revealIndex),
@@ -187,22 +189,24 @@ const HERO_CARD_PAD_COMPACT = "1rem 1.2rem";
 const HERO_CARD_GAP = "0.82rem";
 
 /** hero-left-column — peaks at agent + appointment; subtle fade downward. */
+const HERO_STACK_AGENT_OPACITY = 0.86;
+
 const HERO_STACK_GLASS_ORANGE = {
-  peak: 0.48,
-  fade1: 0.45,
-  fade2: 0.41,
-  fade3: 0.37,
-  fade4: 0.33,
-  fade5: 0.29,
+  peak: 0.4,
+  fade1: 0.37,
+  fade2: 0.34,
+  fade3: 0.31,
+  fade4: 0.28,
+  fade5: 0.25,
 } as const;
 
 const HERO_STACK_GLASS_BEIGE = {
-  peak: 0.94,
-  fade1: 0.91,
-  fade2: 0.87,
-  fade3: 0.83,
-  fade4: 0.79,
-  fade5: 0.75,
+  peak: 0.86,
+  fade1: 0.81,
+  fade2: 0.76,
+  fade3: 0.71,
+  fade4: 0.66,
+  fade5: 0.61,
 } as const;
 
 function heroStackGlassOpacity(tier: keyof typeof HERO_STACK_GLASS_ORANGE, surface: WorkflowCarouselSurface): number {
