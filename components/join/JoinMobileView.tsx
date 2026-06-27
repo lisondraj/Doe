@@ -13,7 +13,6 @@ export function JoinMobileView() {
   return (
     <BlogMobileShell
       showJoinCta={false}
-      showMenu={false}
       ctaLayout="subpage-join"
       logoLink={false}
       footerLinksDisabled

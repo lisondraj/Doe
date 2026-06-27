@@ -13,7 +13,6 @@ export function AboutMobileView() {
   return (
     <BlogMobileShell
       showJoinCta={false}
-      showMenu={false}
       ctaLayout="subpage-investors"
       logoLink={false}
       footerLinksDisabled

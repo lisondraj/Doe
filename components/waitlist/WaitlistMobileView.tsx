@@ -13,7 +13,6 @@ export function WaitlistMobileView() {
   return (
     <BlogMobileShell
       showJoinCta={false}
-      showMenu={false}
       ctaLayout="subpage-waitlist"
       logoLink={false}
       footerLinksDisabled

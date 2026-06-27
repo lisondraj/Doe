@@ -18,34 +18,38 @@ import {
 export function SubpageMobileNavRow({
   variant,
   interactive = true,
+  showLinks = true,
 }: {
   variant: SubpageNavVariant;
   interactive?: boolean;
+  showLinks?: boolean;
 }) {
   const links = subpageNavLinks(variant);
   const button = subpageNavButton(variant);
 
   return (
     <>
-      {links.map((item, index) => (
-        <Fragment key={item.href}>
-          {index > 0 ? (
-            <span className={DOEPHONE_NAV_JOIN_ROW_DOT_CLASS} aria-hidden>
-              ·
-            </span>
-          ) : null}
-          {interactive ? (
-            <Link href={item.href} className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>
-              {item.label}
-            </Link>
-          ) : (
-            <span className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>{item.label}</span>
-          )}
-        </Fragment>
-      ))}
+      {showLinks
+        ? links.map((item, index) => (
+            <Fragment key={item.href}>
+              {index > 0 ? (
+                <span className={DOEPHONE_NAV_JOIN_ROW_DOT_CLASS} aria-hidden>
+                  ·
+                </span>
+              ) : null}
+              {interactive ? (
+                <Link href={item.href} className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>
+                  {item.label}
+                </Link>
+              ) : (
+                <span className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>{item.label}</span>
+              )}
+            </Fragment>
+          ))
+        : null}
       {button ? (
         <>
-          {links.length > 0 ? (
+          {showLinks && links.length > 0 ? (
             <span className={DOEPHONE_NAV_JOIN_ROW_DOT_CLASS} aria-hidden>
               ·
             </span>

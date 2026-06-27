@@ -171,7 +171,7 @@ function NavChromeStrip({
         className={`flex shrink-0 items-center ${navRowGap} ${subpageAnchored ? `absolute top-1/2 z-[2] -translate-y-1/2 ${subpageRight}` : ""} ${tripleCtaAnchored ? `absolute top-1/2 z-[2] -translate-y-1/2 ${navRightInset}` : ""}`}
       >
         {subpageVariant ? (
-          <SubpageMobileNavRow variant={subpageVariant} />
+          <SubpageMobileNavRow variant={subpageVariant} showLinks={!showMenu || !subpageWithButton} />
         ) : ctaLayout === "main-home" ? (
           <Link href={INVESTORS_PATH} className={DOEPHONE_NAV_WAITLIST_CLASS}>
             {FOR_INVESTORS_LABEL}
@@ -294,7 +294,10 @@ export default function DoeIphoneSiteNav({
 }) {
   const resolvedNavSheetItems: readonly NavSheetItem[] =
     navSheetItems ??
-    (ctaLayout === "main-home"
+    (ctaLayout === "main-home" ||
+    ctaLayout === "subpage-join" ||
+    ctaLayout === "subpage-investors" ||
+    ctaLayout === "subpage-waitlist"
       ? MAIN_HOME_NAV_SHEET_ITEMS
       : NAV_ITEMS.map((item) => ({ label: item, href: NAV_HREFS[item] })));
   const isPhoneLayout = true;
