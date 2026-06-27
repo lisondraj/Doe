@@ -10,10 +10,27 @@ import {
   DOEPHONE_COMMUNICATION_SLIDE_COUNT,
   type DoePhoneCommunicationSlide,
 } from "@/lib/doephone/communication-carousel";
+import { CAROUSEL_MENU_UI } from "@/lib/doephone/carousel-menu-visual-styles";
 import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
 import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from "react";
 
 type MenuInject = { scrollIndex: number; slideIndex: number };
+
+const CAROUSEL_MENU_OVERLAY =
+  "absolute inset-0 z-10 flex h-full w-full items-center justify-center";
+
+function CarouselMenuOverlay({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      className={CAROUSEL_MENU_OVERLAY}
+      style={{
+        padding: `${CAROUSEL_MENU_UI.overlayPadY} ${CAROUSEL_MENU_UI.overlayPadX}`,
+      }}
+    >
+      <div className="flex h-full w-full max-h-full items-center justify-center">{children}</div>
+    </div>
+  );
+}
 
 function DoePhoneCarouselCard({ slide }: { slide: DoePhoneCommunicationSlide }) {
   return (
@@ -27,19 +44,19 @@ function DoePhoneCarouselCard({ slide }: { slide: DoePhoneCommunicationSlide }) 
         className={DOEPHONE_SECTION_CAROUSEL_RADIUS}
       />
       {slide.id === "agents" ? (
-        <div className="absolute inset-0 z-10 flex items-center justify-center px-[clamp(1.25rem,4vmin,2rem)] py-[clamp(1rem,3vmin,1.75rem)]">
+        <CarouselMenuOverlay>
           <DoePhoneAgentsSixGrid />
-        </div>
+        </CarouselMenuOverlay>
       ) : null}
       {slide.id === "inbox" ? (
-        <div className="absolute inset-0 z-10 flex items-center justify-center px-[clamp(1.25rem,4vmin,2rem)] py-[clamp(1rem,3vmin,1.75rem)]">
+        <CarouselMenuOverlay>
           <DoePhoneIncomingLabsVisual />
-        </div>
+        </CarouselMenuOverlay>
       ) : null}
       {slide.id === "front-desk" ? (
-        <div className="absolute inset-0 z-10 flex items-center justify-center px-[clamp(1.25rem,4vmin,2rem)] py-[clamp(1rem,3vmin,1.75rem)]">
+        <CarouselMenuOverlay>
           <DoePhoneFrontDeskVoiceVisual />
-        </div>
+        </CarouselMenuOverlay>
       ) : null}
       {slide.id === "billing" ? (
         <div className="absolute inset-0 z-10 flex items-center justify-center px-[clamp(1.25rem,4vmin,2rem)] py-[clamp(1rem,3vmin,1.75rem)]">
