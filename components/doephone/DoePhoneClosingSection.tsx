@@ -15,7 +15,7 @@ export function DoePhoneClosingSection() {
   return (
     <div className="flex h-full min-h-0 flex-col">
       <div className={`shrink-0 ${DOEPHONE_SECTION_CONTENT_INSET} ${DOEPHONE_SECTION_TITLE_PT}`}>
-        <DoePhoneSectionTitle line1="One provider," line2="one patient at a time." />
+        <DoePhoneSectionTitle line1="More about" line2="the Doe vision." />
       </div>
 
       <div
