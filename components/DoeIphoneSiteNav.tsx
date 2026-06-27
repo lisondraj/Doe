@@ -9,7 +9,12 @@ import {
   NAV_HREFS,
   NAV_ITEMS,
 } from "@/components/doe-nav-data";
-import { DOEPHONE_NAV_PAGE_LINK_CLASS, DOEPHONE_NAV_TRIPLE_CTA_CLASS, DOEPHONE_NAV_WAITLIST_CLASS } from "@/lib/doephone/waitlist-button";
+import {
+  DOEPHONE_NAV_JOIN_ROW_LINK_CLASS,
+  DOEPHONE_NAV_JOIN_ROW_WAITLIST_CLASS,
+  DOEPHONE_NAV_TRIPLE_CTA_CLASS,
+  DOEPHONE_NAV_WAITLIST_CLASS,
+} from "@/lib/doephone/waitlist-button";
 import {
   DOEPHONE_FIXED_NAV_CONTENT_LEFT,
   DOEPHONE_FIXED_NAV_CONTENT_RIGHT,
@@ -93,6 +98,8 @@ function NavChromeStrip({
   const pageNavLeftPad =
     "pl-14 iphone-page:pl-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
   const joinWaitlistAnchored = ctaLayout === "join-waitlist" && !showMenu;
+  const joinWaitlistRight = pinchSafe ? DOEPHONE_FIXED_NAV_CONTENT_RIGHT : pageApplyRight;
+  const joinWaitlistDoeLeft = pinchSafe ? DOEPHONE_FIXED_NAV_CONTENT_LEFT : pageDoeLeft;
   const navInsetX = showApplyScrollCta
     ? `${pageNavLeftPad} pr-0`
     : joinWaitlistAnchored
@@ -103,7 +110,7 @@ function NavChromeStrip({
   const doeLeft = showApplyScrollCta
     ? pageDoeLeft
     : joinWaitlistAnchored
-      ? pageDoeLeft
+      ? joinWaitlistDoeLeft
       : pinchSafe
         ? "left-11 iphone-page:left-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))]"
         : "left-8 iphone-page:left-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))]";
@@ -163,13 +170,13 @@ function NavChromeStrip({
           </>
         ) : ctaLayout === "join-waitlist" ? (
           <>
-            <Link href={joinHref} className={DOEPHONE_NAV_PAGE_LINK_CLASS}>
+            <Link href={joinHref} className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>
               Join Us
             </Link>
-            <a href={investorsHref} className={DOEPHONE_NAV_PAGE_LINK_CLASS}>
+            <a href={investorsHref} className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>
               Investors
             </a>
-            <Link href={WAITLIST_PATH} className={DOEPHONE_NAV_WAITLIST_CLASS}>
+            <Link href={WAITLIST_PATH} className={DOEPHONE_NAV_JOIN_ROW_WAITLIST_CLASS}>
               Waitlist
             </Link>
           </>
@@ -236,9 +243,9 @@ function NavChromeStrip({
           className="ml-auto flex shrink-0 items-center gap-2.5 invisible pointer-events-none iphone-page:gap-[clamp(0.45rem,0.35rem+0.65vmin,0.7rem)]"
           aria-hidden
         >
-          <span className={DOEPHONE_NAV_PAGE_LINK_CLASS}>Join Us</span>
-          <span className={DOEPHONE_NAV_PAGE_LINK_CLASS}>Investors</span>
-          <span className={DOEPHONE_NAV_WAITLIST_CLASS}>Waitlist</span>
+          <span className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>Join Us</span>
+          <span className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>Investors</span>
+          <span className={DOEPHONE_NAV_JOIN_ROW_WAITLIST_CLASS}>Waitlist</span>
           <span className="flex items-center justify-center p-3 iphone-page:p-[clamp(0.625rem,0.38rem+1.35vmin,0.975rem)]">
             <svg
               className="w-9 h-9 iphone-page:w-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)] iphone-page:h-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)]"
