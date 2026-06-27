@@ -11,7 +11,7 @@ import {
 } from "@/components/doe-nav-data";
 import { DOEPHONE_NAV_WAITLIST_CLASS } from "@/lib/doephone/waitlist-button";
 import { DOEPHONE_SECTION_CAROUSEL_INSET_X } from "@/lib/doephone/section-styles";
-import { JOIN_PAGE_HREF } from "@/lib/site-domains";
+import { JOIN_PAGE_HREF, WAITLIST_PATH } from "@/lib/site-domains";
 import { scrollToJoinApplySection } from "@/lib/join/join-apply-scroll";
 import {
   NAV_FOOTER_BOX_TITLE_TW,
@@ -65,6 +65,8 @@ function NavChromeStrip({
   showApplyScrollCta = false,
   logoLink = true,
   showMenu = true,
+  ctaLayout = "single",
+  investorsHref = "mailto:james@doe.care?subject=Investors",
 }: {
   navTextColor: string;
   mobileNavOpen: boolean;
@@ -76,6 +78,8 @@ function NavChromeStrip({
   showApplyScrollCta?: boolean;
   logoLink?: boolean;
   showMenu?: boolean;
+  ctaLayout?: "single" | "triple";
+  investorsHref?: string;
 }) {
   const pageInsetX = DOEPHONE_SECTION_CAROUSEL_INSET_X;
   const pageDoeLeft =
@@ -125,6 +129,18 @@ function NavChromeStrip({
           >
             Apply
           </button>
+        ) : ctaLayout === "triple" ? (
+          <>
+            <Link href={WAITLIST_PATH} className={DOEPHONE_NAV_WAITLIST_CLASS}>
+              Waitlist
+            </Link>
+            <Link href={joinHref} className={DOEPHONE_NAV_WAITLIST_CLASS}>
+              Join Us
+            </Link>
+            <a href={investorsHref} className={DOEPHONE_NAV_WAITLIST_CLASS}>
+              Investors
+            </a>
+          </>
         ) : showJoinCta ? (
           <a href={joinHref} className={DOEPHONE_NAV_WAITLIST_CLASS}>
             Join Waitlist
@@ -198,6 +214,8 @@ export default function DoeIphoneSiteNav({
   showApplyScrollCta = false,
   logoLink = true,
   showMenu = true,
+  ctaLayout = "single",
+  investorsHref = "mailto:james@doe.care?subject=Investors",
 }: {
   pinchSafe?: boolean;
   homeHref?: string;
@@ -206,6 +224,8 @@ export default function DoeIphoneSiteNav({
   showApplyScrollCta?: boolean;
   logoLink?: boolean;
   showMenu?: boolean;
+  ctaLayout?: "single" | "triple";
+  investorsHref?: string;
 }) {
   const isPhoneLayout = true;
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -578,6 +598,8 @@ export default function DoeIphoneSiteNav({
           showApplyScrollCta={showApplyScrollCta}
           logoLink={logoLink}
           showMenu={showMenu}
+          ctaLayout={ctaLayout}
+          investorsHref={investorsHref}
         />
       </header>,
       document.body
@@ -619,6 +641,8 @@ export default function DoeIphoneSiteNav({
             showApplyScrollCta={showApplyScrollCta}
             logoLink={logoLink}
             showMenu={showMenu}
+            ctaLayout={ctaLayout}
+            investorsHref={investorsHref}
           />
         </div>
       </nav>

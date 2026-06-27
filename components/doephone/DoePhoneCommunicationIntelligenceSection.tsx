@@ -1,6 +1,6 @@
 "use client";
 
-import { DoePhoneCommIntelGrid } from "@/components/doephone/DoePhoneCommIntelGrid";
+import { DoePhoneCommIntelWorkflowCards } from "@/components/doephone/DoePhoneCommIntelWorkflowCards";
 import { DoePhoneSectionPlus, DoePhoneSectionTitle } from "@/components/doephone/DoePhoneSectionText";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import {
@@ -10,7 +10,7 @@ import {
 } from "@/lib/doephone/section-styles";
 import { CARE_COORDINATION_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 
-/** Gradient viewport — Communication + Intelligence title and 3×3 feature grid. */
+/** Gradient viewport — Communication + Intelligence title and workflow card cluster. */
 export function DoePhoneCommunicationIntelligenceSection() {
   return (
     <section className={`${DOEPHONE_VIEWPORT_SECTION} overflow-hidden bg-[#D2774C]`} aria-label="Communication">
@@ -36,9 +36,9 @@ export function DoePhoneCommunicationIntelligenceSection() {
           />
         </div>
 
-        {/* Grid pushed to section bottom, all rows visible, no bottom gap. */}
-        <div className="mt-auto shrink-0">
-          <DoePhoneCommIntelGrid />
+        {/* Workflow cards — replaces 3D tilt tile array. */}
+        <div className="mt-auto min-h-0 shrink-0">
+          <DoePhoneCommIntelWorkflowCards />
         </div>
       </div>
     </section>
