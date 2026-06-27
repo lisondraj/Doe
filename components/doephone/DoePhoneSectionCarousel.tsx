@@ -1,5 +1,6 @@
 "use client";
 
+import { DoePhoneAgentsSixGrid } from "@/components/doephone/DoePhoneAgentsSixGrid";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import {
   DOEPHONE_COMMUNICATION_SLIDES,
@@ -7,22 +8,26 @@ import {
   type DoePhoneCommunicationSlide,
 } from "@/lib/doephone/communication-carousel";
 import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
-import type { WorkflowCarouselDesignBackdrop as WorkflowCarouselDesignBackdropType } from "@/lib/workflow-carousel-design-backdrops";
 import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from "react";
 
 type MenuInject = { scrollIndex: number; slideIndex: number };
 
-function DoePhoneCarouselCard({ backdrop }: { backdrop: WorkflowCarouselDesignBackdropType }) {
+function DoePhoneCarouselCard({ slide }: { slide: DoePhoneCommunicationSlide }) {
   return (
     <div
       className={`relative isolate h-full w-full overflow-hidden shadow-[0_10px_32px_rgba(0,0,0,0.1)] [contain:layout_paint] ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
       aria-hidden
     >
       <WorkflowCarouselDesignBackdrop
-        backdrop={backdrop}
+        backdrop={slide.backdrop}
         embedded
         className={DOEPHONE_SECTION_CAROUSEL_RADIUS}
       />
+      {slide.id === "agents" ? (
+        <div className="absolute inset-0 z-10 flex items-center justify-center px-[clamp(1.25rem,4vmin,2rem)] py-[clamp(1rem,3vmin,1.75rem)]">
+          <DoePhoneAgentsSixGrid />
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -266,7 +271,7 @@ export function DoePhoneSectionCarousel({
             role="tabpanel"
             aria-hidden={!isActive}
           >
-            <DoePhoneCarouselCard backdrop={slide.backdrop} />
+            <DoePhoneCarouselCard slide={slide} />
           </div>
         );
       })}
