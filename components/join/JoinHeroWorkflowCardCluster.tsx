@@ -177,6 +177,40 @@ function AgentIcon({ theme }: { theme: ReturnType<typeof cardTheme> }) {
   );
 }
 
+function IntegrationsColumn({
+  theme,
+  isBeige,
+  labelSize,
+  valueSize,
+  detailSize,
+}: {
+  theme: ReturnType<typeof cardTheme>;
+  isBeige: boolean;
+  labelSize: string;
+  valueSize: string;
+  detailSize: string;
+}) {
+  return (
+    <div>
+      <p style={{ fontSize: labelSize, opacity: 0.55, marginBottom: "0.14rem" }}>Integrations</p>
+      <p style={{ fontSize: valueSize, fontWeight: 500, lineHeight: 1.35 }}>Epic EHR</p>
+      <p style={{ fontSize: detailSize, opacity: 0.65, marginTop: "0.1rem" }}>Insurance API • Scheduler</p>
+      <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", marginTop: "0.32rem" }}>
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>
+          <path
+            d="M2 5.2l2 2 4-4.5"
+            stroke={isBeige ? theme.accent : theme.icon}
+            strokeWidth="1.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+        <span style={{ fontSize: detailSize, opacity: 0.72 }}>Chart synced to inbox</span>
+      </div>
+    </div>
+  );
+}
+
 const FS_HERO = {
   sm: "clamp(0.95rem, 1.28vw, 1.12rem)",
   base: "clamp(1.18rem, 1.62vw, 1.42rem)",
@@ -281,7 +315,7 @@ export function JoinHeroWorkflowCardCluster({
           <p style={{ fontSize: FS_HERO.lg, fontWeight: 500, marginBottom: "0.65rem", letterSpacing: "-0.01em" }}>
             Sarah Chen, annual physical
           </p>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.75rem" }}>
             <div>
               <p style={{ fontSize: FS_HERO.sm, opacity: 0.55, marginBottom: "0.14rem" }}>Scheduled</p>
               <p style={{ fontSize: FS_HERO.base, fontWeight: 500 }}>Fri, Jun 27</p>
@@ -292,42 +326,19 @@ export function JoinHeroWorkflowCardCluster({
               <p style={{ fontSize: FS_HERO.base, fontWeight: 500 }}>Dr. Patel</p>
               <p style={{ fontSize: FS_HERO.sm, opacity: 0.65, marginTop: "0.1rem" }}>Exam Room 3</p>
             </div>
+            <IntegrationsColumn
+              theme={theme}
+              isBeige={isBeige}
+              labelSize={FS_HERO.sm}
+              valueSize={FS_HERO.base}
+              detailSize={FS_HERO.sm}
+            />
           </div>
         </GlassCard>
 
         <GlassCard
           theme={theme}
           revealIndex={2}
-          revealed={revealed}
-          opacity={heroStackGlassOpacity("fade1", surface)}
-          style={{ padding: HERO_CARD_PAD, borderRadius: "1.25rem" }}
-        >
-          <CardHeader
-            title="Integrations"
-            action="Manage ›"
-            accent={isBeige ? theme.accent : undefined}
-            labelSize={FS_HERO.sm}
-          />
-          <p style={{ fontSize: FS_HERO.base, marginBottom: "0.5rem", opacity: 0.88 }}>
-            Epic EHR • Insurance API • Clinic scheduler
-          </p>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>
-              <path
-                d="M2 5.2l2 2 4-4.5"
-                stroke={isBeige ? theme.accent : theme.icon}
-                strokeWidth="1.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            <span style={{ fontSize: FS_HERO.sm, opacity: 0.72 }}>Chart synced to inbox</span>
-          </div>
-        </GlassCard>
-
-        <GlassCard
-          theme={theme}
-          revealIndex={3}
           revealed={revealed}
           opacity={heroStackGlassOpacity("fade2", surface)}
           style={{ padding: HERO_CARD_PAD, borderRadius: "1.25rem" }}
@@ -368,7 +379,7 @@ export function JoinHeroWorkflowCardCluster({
         <p style={{ fontSize: FS_LG, fontWeight: 500, marginBottom: "0.65rem", letterSpacing: "-0.01em" }}>
           Sarah Chen, annual physical
         </p>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.75rem" }}>
           <div>
             <p style={{ fontSize: FS_SM, opacity: 0.55, marginBottom: "0.14rem" }}>Scheduled</p>
             <p style={{ fontSize: FS, fontWeight: 500 }}>Fri, Jun 27</p>
@@ -379,6 +390,13 @@ export function JoinHeroWorkflowCardCluster({
             <p style={{ fontSize: FS, fontWeight: 500 }}>Dr. Patel</p>
             <p style={{ fontSize: FS_SM, opacity: 0.65, marginTop: "0.1rem" }}>Exam Room 3</p>
           </div>
+          <IntegrationsColumn
+            theme={theme}
+            isBeige={isBeige}
+            labelSize={FS_SM}
+            valueSize={FS}
+            detailSize={FS_SM}
+          />
         </div>
       </GlassCard>
 
@@ -407,23 +425,6 @@ export function JoinHeroWorkflowCardCluster({
       </GlassCard>
 
       <GlassCard theme={theme} revealIndex={5} revealed={revealed} opacity={glassFillOpacity("near", surface)}>
-        <CardHeader title="Integrations" action="Manage ›" accent={isBeige ? theme.accent : undefined} />
-        <p style={{ fontSize: FS, marginBottom: "0.5rem", opacity: 0.88 }}>Epic EHR • Insurance API • Clinic scheduler</p>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
-          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>
-            <path
-              d="M2 5.2l2 2 4-4.5"
-              stroke={isBeige ? theme.accent : theme.icon}
-              strokeWidth="1.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-          <span style={{ fontSize: FS_SM, opacity: 0.72 }}>Chart synced to inbox</span>
-        </div>
-      </GlassCard>
-
-      <GlassCard theme={theme} revealIndex={6} revealed={revealed} opacity={glassFillOpacity("near", surface)}>
         <p style={{ fontSize: FS_SM, opacity: 0.6, marginBottom: "0.2rem" }}>Next in queue</p>
         <p
           style={{
@@ -445,19 +446,19 @@ export function JoinHeroWorkflowCardCluster({
         </div>
       </GlassCard>
 
-      <GlassCard theme={theme} revealIndex={7} revealed={revealed} compact opacity={glassFillOpacity("mid", surface)}>
+      <GlassCard theme={theme} revealIndex={6} revealed={revealed} compact opacity={glassFillOpacity("mid", surface)}>
         <span style={{ fontSize: FS_SM, opacity: 0.7 }}>Open chart ›</span>
       </GlassCard>
 
-      <GlassCard theme={theme} revealIndex={8} revealed={revealed} compact opacity={glassFillOpacity("mid", surface)}>
+      <GlassCard theme={theme} revealIndex={7} revealed={revealed} compact opacity={glassFillOpacity("mid", surface)}>
         <span style={{ fontSize: FS_SM, opacity: 0.65 }}>Reschedule ›</span>
       </GlassCard>
 
-      <GlassCard theme={theme} revealIndex={9} revealed={revealed} compact opacity={glassFillOpacity("edge", surface)}>
+      <GlassCard theme={theme} revealIndex={8} revealed={revealed} compact opacity={glassFillOpacity("edge", surface)}>
         <span style={{ fontSize: FS_SM, opacity: 0.7 }}>Send reminder ›</span>
       </GlassCard>
 
-      <GlassCard theme={theme} revealIndex={10} revealed={revealed} compact opacity={glassFillOpacity("edge", surface)}>
+      <GlassCard theme={theme} revealIndex={9} revealed={revealed} compact opacity={glassFillOpacity("edge", surface)}>
         <span style={{ fontSize: FS_SM, opacity: 0.65 }}>View calendar ›</span>
       </GlassCard>
     </div>
