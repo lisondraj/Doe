@@ -189,20 +189,20 @@ const HERO_CARD_GAP = "0.82rem";
 /** hero-left-column — peaks at agent + appointment; subtle fade downward. */
 const HERO_STACK_GLASS_ORANGE = {
   peak: 0.48,
-  fade1: 0.42,
-  fade2: 0.38,
-  fade3: 0.34,
-  fade4: 0.3,
-  fade5: 0.26,
+  fade1: 0.45,
+  fade2: 0.41,
+  fade3: 0.37,
+  fade4: 0.33,
+  fade5: 0.29,
 } as const;
 
 const HERO_STACK_GLASS_BEIGE = {
   peak: 0.94,
-  fade1: 0.88,
-  fade2: 0.83,
-  fade3: 0.78,
-  fade4: 0.73,
-  fade5: 0.68,
+  fade1: 0.91,
+  fade2: 0.87,
+  fade3: 0.83,
+  fade4: 0.79,
+  fade5: 0.75,
 } as const;
 
 function heroStackGlassOpacity(tier: keyof typeof HERO_STACK_GLASS_ORANGE, surface: WorkflowCarouselSurface): number {
