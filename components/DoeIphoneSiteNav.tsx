@@ -10,6 +10,7 @@ import {
   NAV_ITEMS,
 } from "@/components/doe-nav-data";
 import {
+  DOEPHONE_NAV_JOIN_ROW_DOT_CLASS,
   DOEPHONE_NAV_JOIN_ROW_LINK_CLASS,
   DOEPHONE_NAV_TRIPLE_CTA_CLASS,
   DOEPHONE_NAV_WAITLIST_CLASS,
@@ -67,6 +68,52 @@ const NAV_JOIN_ROW_GAP =
 const NAV_DEFAULT_ROW_GAP =
   "gap-2.5 iphone-page:gap-[clamp(0.45rem,0.35rem+0.65vmin,0.7rem)]";
 
+function JoinWaitlistNavRow({
+  joinHref,
+  investorsHref,
+  interactive = true,
+}: {
+  joinHref: string;
+  investorsHref: string;
+  interactive?: boolean;
+}) {
+  if (interactive) {
+    return (
+      <>
+        <Link href={joinHref} className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>
+          Team
+        </Link>
+        <span className={DOEPHONE_NAV_JOIN_ROW_DOT_CLASS} aria-hidden>
+          ·
+        </span>
+        <a href={investorsHref} className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>
+          Investors
+        </a>
+        <span className={DOEPHONE_NAV_JOIN_ROW_DOT_CLASS} aria-hidden>
+          ·
+        </span>
+        <Link href={WAITLIST_PATH} className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>
+          Waitlist
+        </Link>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <span className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>Team</span>
+      <span className={DOEPHONE_NAV_JOIN_ROW_DOT_CLASS} aria-hidden>
+        ·
+      </span>
+      <span className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>Investors</span>
+      <span className={DOEPHONE_NAV_JOIN_ROW_DOT_CLASS} aria-hidden>
+        ·
+      </span>
+      <span className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>Waitlist</span>
+    </>
+  );
+}
+
 function NavChromeStrip({
   navTextColor,
   mobileNavOpen,
@@ -123,6 +170,7 @@ function NavChromeStrip({
     ? "right-11 iphone-page:right-[max(1.65rem,env(safe-area-inset-right,0px)+3.8vmin)]"
     : "right-8 iphone-page:right-[max(1.25rem,calc(env(safe-area-inset-right,0px)+2.85vmin))]";
   const tripleCtaAnchored = ctaLayout === "triple" && !showMenu;
+  const navRowGap = joinWaitlistAnchored ? NAV_JOIN_ROW_GAP : NAV_DEFAULT_ROW_GAP;
   const navStripMinH = tripleCtaAnchored
     ? "min-h-[clamp(4.35rem,3.55rem+3.15vmin,5.15rem)]"
     : "";
@@ -150,7 +198,7 @@ function NavChromeStrip({
       </div>
 
       <div
-        className={`flex shrink-0 items-center gap-2.5 iphone-page:gap-[clamp(0.45rem,0.35rem+0.65vmin,0.7rem)] ${showApplyScrollCta ? "contents" : joinWaitlistAnchored ? `absolute top-1/2 z-[2] -translate-y-1/2 ${joinWaitlistRight}` : ""} ${tripleCtaAnchored ? `absolute top-1/2 z-[2] -translate-y-1/2 ${navRightInset}` : ""}`}
+        className={`flex shrink-0 items-center ${navRowGap} ${showApplyScrollCta ? "contents" : joinWaitlistAnchored ? `absolute top-1/2 z-[2] -translate-y-1/2 ${joinWaitlistRight}` : ""} ${tripleCtaAnchored ? `absolute top-1/2 z-[2] -translate-y-1/2 ${navRightInset}` : ""}`}
       >
         {showApplyScrollCta ? (
           <button
@@ -173,17 +221,7 @@ function NavChromeStrip({
             </a>
           </>
         ) : ctaLayout === "join-waitlist" ? (
-          <>
-            <Link href={joinHref} className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>
-              Team
-            </Link>
-            <a href={investorsHref} className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>
-              Investors
-            </a>
-            <Link href={WAITLIST_PATH} className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>
-              Waitlist
-            </Link>
-          </>
+          <JoinWaitlistNavRow joinHref={joinHref} investorsHref={investorsHref} />
         ) : showJoinCta ? (
           <a href={joinHref} className={DOEPHONE_NAV_WAITLIST_CLASS}>
             Join Waitlist
@@ -244,12 +282,10 @@ function NavChromeStrip({
 
       {joinWaitlistAnchored ? (
         <div
-          className="ml-auto flex shrink-0 items-center gap-2.5 invisible pointer-events-none iphone-page:gap-[clamp(0.45rem,0.35rem+0.65vmin,0.7rem)]"
+          className={`ml-auto flex shrink-0 items-center ${navRowGap} invisible pointer-events-none`}
           aria-hidden
         >
-          <span className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>Team</span>
-          <span className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>Investors</span>
-          <span className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>Waitlist</span>
+          <JoinWaitlistNavRow joinHref={joinHref} investorsHref={investorsHref} interactive={false} />
           <span className="flex items-center justify-center p-3 iphone-page:p-[clamp(0.625rem,0.38rem+1.35vmin,0.975rem)]">
             <svg
               className="w-9 h-9 iphone-page:w-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)] iphone-page:h-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)]"
