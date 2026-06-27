@@ -10,7 +10,7 @@ import {
   NAV_ITEMS,
 } from "@/components/doe-nav-data";
 import { DOEPHONE_NAV_PAGE_LINK_CLASS, DOEPHONE_NAV_TRIPLE_CTA_CLASS, DOEPHONE_NAV_WAITLIST_CLASS } from "@/lib/doephone/waitlist-button";
-import { DOEPHONE_SECTION_CAROUSEL_INSET_X } from "@/lib/doephone/section-styles";
+import { DOEPHONE_SECTION_CAROUSEL_INSET_X, DOEPHONE_SECTION_COPY_INSET } from "@/lib/doephone/section-styles";
 import { JOIN_PAGE_HREF, WAITLIST_PATH } from "@/lib/site-domains";
 import { scrollToJoinApplySection } from "@/lib/join/join-apply-scroll";
 import {
@@ -88,16 +88,21 @@ function NavChromeStrip({
     "right-14 iphone-page:right-[max(2.35rem,calc(env(safe-area-inset-right,0px)+5.25vmin))]";
   const pageNavLeftPad =
     "pl-14 iphone-page:pl-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
+  const joinWaitlistAnchored = ctaLayout === "join-waitlist" && !showMenu;
   const navInsetX = showApplyScrollCta
     ? `${pageNavLeftPad} pr-0`
-    : pinchSafe
-      ? "px-11 iphone-page:px-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))] iphone-page:pr-[max(1.65rem,env(safe-area-inset-right,0px))]"
-      : "px-8 iphone-page:px-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))]";
+    : joinWaitlistAnchored
+      ? DOEPHONE_SECTION_COPY_INSET
+      : pinchSafe
+        ? "px-11 iphone-page:px-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))] iphone-page:pr-[max(1.65rem,env(safe-area-inset-right,0px))]"
+        : "px-8 iphone-page:px-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))]";
   const doeLeft = showApplyScrollCta
     ? pageDoeLeft
-    : pinchSafe
-      ? "left-11 iphone-page:left-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))]"
-      : "left-8 iphone-page:left-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))]";
+    : joinWaitlistAnchored
+      ? pageDoeLeft
+      : pinchSafe
+        ? "left-11 iphone-page:left-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))]"
+        : "left-8 iphone-page:left-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))]";
   const doeClassName = `absolute top-1/2 -translate-y-1/2 ${doeLeft} font-normal z-[1] min-w-0 whitespace-nowrap ${lora.className} text-4xl iphone-page:text-[clamp(1.85rem,1.05rem+3.55vmin,3.9rem)] iphone-page:leading-none`;
   const navRightInset = pinchSafe
     ? "right-11 iphone-page:right-[max(1.65rem,env(safe-area-inset-right,0px)+3.8vmin)]"
@@ -130,7 +135,7 @@ function NavChromeStrip({
       </div>
 
       <div
-        className={`flex shrink-0 items-center gap-2.5 iphone-page:gap-[clamp(0.45rem,0.35rem+0.65vmin,0.7rem)] ${showApplyScrollCta ? "contents" : ""} ${tripleCtaAnchored ? `absolute top-1/2 z-[2] -translate-y-1/2 ${navRightInset}` : ""}`}
+        className={`flex shrink-0 items-center gap-2.5 iphone-page:gap-[clamp(0.45rem,0.35rem+0.65vmin,0.7rem)] ${showApplyScrollCta ? "contents" : joinWaitlistAnchored ? "absolute top-1/2 right-0 z-[2] -translate-y-1/2" : ""} ${tripleCtaAnchored ? `absolute top-1/2 z-[2] -translate-y-1/2 ${navRightInset}` : ""}`}
       >
         {showApplyScrollCta ? (
           <button
@@ -208,7 +213,7 @@ function NavChromeStrip({
               </svg>
             )}
           </button>
-        ) : !tripleCtaAnchored ? (
+        ) : !tripleCtaAnchored && !joinWaitlistAnchored ? (
           <span
             className="invisible pointer-events-none flex items-center justify-center p-3 iphone-page:p-[clamp(0.625rem,0.38rem+1.35vmin,0.975rem)]"
             aria-hidden
@@ -221,6 +226,24 @@ function NavChromeStrip({
           </span>
         ) : null}
       </div>
+
+      {joinWaitlistAnchored ? (
+        <div
+          className="ml-auto flex shrink-0 items-center gap-2.5 invisible pointer-events-none iphone-page:gap-[clamp(0.45rem,0.35rem+0.65vmin,0.7rem)]"
+          aria-hidden
+        >
+          <span className={DOEPHONE_NAV_PAGE_LINK_CLASS}>Join Us</span>
+          <span className={DOEPHONE_NAV_PAGE_LINK_CLASS}>Investors</span>
+          <span className={DOEPHONE_NAV_WAITLIST_CLASS}>Waitlist</span>
+          <span className="flex items-center justify-center p-3 iphone-page:p-[clamp(0.625rem,0.38rem+1.35vmin,0.975rem)]">
+            <svg
+              className="w-9 h-9 iphone-page:w-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)] iphone-page:h-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)]"
+              viewBox="0 0 24 24"
+              aria-hidden
+            />
+          </span>
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -172,10 +172,10 @@ function AgentIcon({ theme }: { theme: ReturnType<typeof cardTheme> }) {
 }
 
 const FS_HERO = {
-  sm: "clamp(0.68rem, 0.88vw, 0.78rem)",
-  base: "clamp(0.82rem, 1.08vw, 0.96rem)",
-  lg: "clamp(1.02rem, 1.28vw, 1.16rem)",
-  xl: "clamp(1.22rem, 1.52vw, 1.38rem)",
+  sm: "clamp(0.72rem, 0.96vw, 0.86rem)",
+  base: "clamp(0.92rem, 1.18vw, 1.06rem)",
+  lg: "clamp(1.12rem, 1.42vw, 1.28rem)",
+  xl: "clamp(1.32rem, 1.68vw, 1.52rem)",
 } as const;
 
 /** Glass workflow card bento — shared by join hero and DoePhone comm + intelligence. */
@@ -204,8 +204,8 @@ export function JoinHeroWorkflowCardCluster({
         style={{
           display: "flex",
           flexDirection: "column",
-          gap: "0.62rem",
-          width: "min(100%, 56%)",
+          gap: "0.68rem",
+          width: "100%",
           minWidth: 0,
           ...style,
         }}
@@ -213,11 +213,6 @@ export function JoinHeroWorkflowCardCluster({
         <GlassCard theme={theme} revealIndex={0} revealed={revealed} opacity={glassFillOpacity("mid", surface)}>
           <p style={{ fontSize: FS_HERO.sm, opacity: 0.6, marginBottom: "0.16rem" }}>Today</p>
           <p style={{ fontSize: FS_HERO.base, fontWeight: 500 }}>Fri, Jun 27</p>
-        </GlassCard>
-
-        <GlassCard theme={theme} revealIndex={1} revealed={revealed} opacity={glassFillOpacity("mid", surface)}>
-          <p style={{ fontSize: FS_HERO.sm, opacity: 0.6, marginBottom: "0.16rem" }}>Checked in</p>
-          <p style={{ fontSize: FS_HERO.base, fontWeight: 500 }}>3 patients</p>
         </GlassCard>
 
         <GlassCard theme={theme} revealIndex={2} revealed={revealed} opacity={glassFillOpacity("near", surface)}>
@@ -304,14 +299,6 @@ export function JoinHeroWorkflowCardCluster({
 
         <GlassCard theme={theme} revealIndex={8} revealed={revealed} compact opacity={glassFillOpacity("mid", surface)}>
           <span style={{ fontSize: FS_HERO.base, opacity: 0.65 }}>Reschedule ›</span>
-        </GlassCard>
-
-        <GlassCard theme={theme} revealIndex={9} revealed={revealed} compact opacity={glassFillOpacity("edge", surface)}>
-          <span style={{ fontSize: FS_HERO.base, opacity: 0.7 }}>Send reminder ›</span>
-        </GlassCard>
-
-        <GlassCard theme={theme} revealIndex={10} revealed={revealed} compact opacity={glassFillOpacity("edge", surface)}>
-          <span style={{ fontSize: FS_HERO.base, opacity: 0.65 }}>View calendar ›</span>
         </GlassCard>
       </div>
     );
