@@ -6,8 +6,8 @@ import { suisseIntl } from "@/lib/home/fonts";
 
 const COLUMN_X = [16.666, 50, 83.333] as const;
 const BUS_Y = 50;
-const TOP_STUB_Y = 35;
-const BOTTOM_STUB_Y = 65;
+const TOP_STUB_Y = 28;
+const BOTTOM_STUB_Y = 72;
 
 function AgentSquare() {
   return (
@@ -23,8 +23,8 @@ function AgentName({ label, placement }: { label: string; placement: "above" | "
     <p
       className={`text-center font-normal leading-[1.08] tracking-[-0.018em] text-white ${
         placement === "above"
-          ? "mb-[clamp(0.45rem,1.55vmin,0.65rem)]"
-          : "mt-[clamp(0.2rem,0.65vmin,0.32rem)]"
+          ? "mb-[clamp(0.55rem,1.85vmin,0.78rem)]"
+          : "mt-[clamp(0.32rem,0.95vmin,0.48rem)]"
       }`}
       style={{ fontSize: CAROUSEL_MENU_UI.type.caption }}
     >
@@ -51,9 +51,9 @@ export function DoePhoneAgentsSixGrid() {
         aria-hidden
       >
         <line
-          x1="6"
+          x1={COLUMN_X[0]}
           y1={BUS_Y}
-          x2="94"
+          x2={COLUMN_X[2]}
           y2={BUS_Y}
           stroke="white"
           strokeWidth="0.62"
@@ -97,7 +97,7 @@ export function DoePhoneAgentsSixGrid() {
           </div>
         ))}
 
-        <div className="col-span-3 h-[clamp(1rem,3.6vmin,1.55rem)]" aria-hidden />
+        <div className="col-span-3 h-[clamp(2rem,6.5vmin,3.25rem)]" aria-hidden />
 
         {bottomAgents.map((label) => (
           <div key={`${label}-box-bottom`} className="flex items-start justify-center">
