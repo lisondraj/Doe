@@ -9,7 +9,7 @@ import {
   NAV_HREFS,
   NAV_ITEMS,
 } from "@/components/doe-nav-data";
-import { DOEPHONE_NAV_TRIPLE_CTA_CLASS, DOEPHONE_NAV_WAITLIST_CLASS } from "@/lib/doephone/waitlist-button";
+import { DOEPHONE_NAV_PAGE_LINK_CLASS, DOEPHONE_NAV_TRIPLE_CTA_CLASS, DOEPHONE_NAV_WAITLIST_CLASS } from "@/lib/doephone/waitlist-button";
 import { DOEPHONE_SECTION_CAROUSEL_INSET_X } from "@/lib/doephone/section-styles";
 import { JOIN_PAGE_HREF, WAITLIST_PATH } from "@/lib/site-domains";
 import { scrollToJoinApplySection } from "@/lib/join/join-apply-scroll";
@@ -78,7 +78,7 @@ function NavChromeStrip({
   showApplyScrollCta?: boolean;
   logoLink?: boolean;
   showMenu?: boolean;
-  ctaLayout?: "single" | "triple";
+  ctaLayout?: "single" | "triple" | "join-waitlist";
   investorsHref?: string;
 }) {
   const pageInsetX = DOEPHONE_SECTION_CAROUSEL_INSET_X;
@@ -151,6 +151,18 @@ function NavChromeStrip({
             <a href={investorsHref} className={DOEPHONE_NAV_TRIPLE_CTA_CLASS}>
               Investors
             </a>
+          </>
+        ) : ctaLayout === "join-waitlist" ? (
+          <>
+            <Link href={joinHref} className={DOEPHONE_NAV_PAGE_LINK_CLASS}>
+              Join Us
+            </Link>
+            <a href={investorsHref} className={DOEPHONE_NAV_PAGE_LINK_CLASS}>
+              Investors
+            </a>
+            <Link href={WAITLIST_PATH} className={DOEPHONE_NAV_WAITLIST_CLASS}>
+              Waitlist
+            </Link>
           </>
         ) : showJoinCta ? (
           <a href={joinHref} className={DOEPHONE_NAV_WAITLIST_CLASS}>
@@ -235,7 +247,7 @@ export default function DoeIphoneSiteNav({
   showApplyScrollCta?: boolean;
   logoLink?: boolean;
   showMenu?: boolean;
-  ctaLayout?: "single" | "triple";
+  ctaLayout?: "single" | "triple" | "join-waitlist";
   investorsHref?: string;
 }) {
   const isPhoneLayout = true;
