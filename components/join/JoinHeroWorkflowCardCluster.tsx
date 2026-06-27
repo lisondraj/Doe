@@ -186,6 +186,31 @@ const HERO_CARD_PAD = "1.25rem 1.35rem";
 const HERO_CARD_PAD_COMPACT = "1rem 1.2rem";
 const HERO_CARD_GAP = "0.82rem";
 
+/** hero-left-column — peaks at appointment + agent; fades above and below. */
+const HERO_STACK_GLASS_ORANGE = {
+  aboveFar: 0.1,
+  aboveMid: 0.14,
+  peak: 0.48,
+  below1: 0.28,
+  below2: 0.2,
+  below3: 0.14,
+  below4: 0.1,
+} as const;
+
+const HERO_STACK_GLASS_BEIGE = {
+  aboveFar: 0.32,
+  aboveMid: 0.42,
+  peak: 0.94,
+  below1: 0.58,
+  below2: 0.42,
+  below3: 0.32,
+  below4: 0.24,
+} as const;
+
+function heroStackGlassOpacity(tier: keyof typeof HERO_STACK_GLASS_ORANGE, surface: WorkflowCarouselSurface): number {
+  return surface === "beige" ? HERO_STACK_GLASS_BEIGE[tier] : HERO_STACK_GLASS_ORANGE[tier];
+}
+
 /** Glass workflow card bento — shared by join hero and DoePhone comm + intelligence. */
 export function JoinHeroWorkflowCardCluster({
   surface = "orange",
@@ -222,7 +247,7 @@ export function JoinHeroWorkflowCardCluster({
           theme={theme}
           revealIndex={0}
           revealed={revealed}
-          opacity={glassFillOpacity("mid", surface)}
+          opacity={heroStackGlassOpacity("aboveFar", surface)}
           style={{ padding: HERO_CARD_PAD, borderRadius: "1.25rem" }}
         >
           <p style={{ fontSize: FS_HERO.sm, opacity: 0.6, marginBottom: "0.16rem" }}>Today</p>
@@ -231,9 +256,20 @@ export function JoinHeroWorkflowCardCluster({
 
         <GlassCard
           theme={theme}
+          revealIndex={1}
+          revealed={revealed}
+          opacity={heroStackGlassOpacity("aboveMid", surface)}
+          style={{ padding: HERO_CARD_PAD, borderRadius: "1.25rem" }}
+        >
+          <ProgressRow theme={theme} label="Open slots today" pct="68%" labelSize={FS_HERO.sm} />
+          <ProgressRow theme={theme} label="Intake forms sent" pct="41%" last labelSize={FS_HERO.sm} />
+        </GlassCard>
+
+        <GlassCard
+          theme={theme}
           revealIndex={2}
           revealed={revealed}
-          opacity={glassFillOpacity("near", surface)}
+          opacity={heroStackGlassOpacity("peak", surface)}
           style={{ padding: HERO_CARD_PAD, borderRadius: "1.25rem" }}
         >
           <CardHeader
@@ -263,17 +299,6 @@ export function JoinHeroWorkflowCardCluster({
           theme={theme}
           revealIndex={3}
           revealed={revealed}
-          opacity={glassFillOpacity("near", surface)}
-          style={{ padding: HERO_CARD_PAD, borderRadius: "1.25rem" }}
-        >
-          <ProgressRow theme={theme} label="Open slots today" pct="68%" labelSize={FS_HERO.sm} />
-          <ProgressRow theme={theme} label="Intake forms sent" pct="41%" last labelSize={FS_HERO.sm} />
-        </GlassCard>
-
-        <GlassCard
-          theme={theme}
-          revealIndex={4}
-          revealed={revealed}
           gradient
           style={{ padding: HERO_CARD_PAD, borderRadius: "1.25rem" }}
         >
@@ -291,9 +316,9 @@ export function JoinHeroWorkflowCardCluster({
 
         <GlassCard
           theme={theme}
-          revealIndex={5}
+          revealIndex={4}
           revealed={revealed}
-          opacity={glassFillOpacity("near", surface)}
+          opacity={heroStackGlassOpacity("below1", surface)}
           style={{ padding: HERO_CARD_PAD, borderRadius: "1.25rem" }}
         >
           <CardHeader
@@ -321,9 +346,9 @@ export function JoinHeroWorkflowCardCluster({
 
         <GlassCard
           theme={theme}
-          revealIndex={6}
+          revealIndex={5}
           revealed={revealed}
-          opacity={glassFillOpacity("near", surface)}
+          opacity={heroStackGlassOpacity("below2", surface)}
           style={{ padding: HERO_CARD_PAD, borderRadius: "1.25rem" }}
         >
           <p style={{ fontSize: FS_HERO.sm, opacity: 0.6, marginBottom: "0.2rem" }}>Next in queue</p>
@@ -349,10 +374,10 @@ export function JoinHeroWorkflowCardCluster({
 
         <GlassCard
           theme={theme}
-          revealIndex={7}
+          revealIndex={6}
           revealed={revealed}
           compact
-          opacity={glassFillOpacity("mid", surface)}
+          opacity={heroStackGlassOpacity("below3", surface)}
           style={{ padding: HERO_CARD_PAD_COMPACT, borderRadius: "1.25rem" }}
         >
           <span style={{ fontSize: FS_HERO.base, opacity: 0.7 }}>Open chart ›</span>
@@ -360,10 +385,10 @@ export function JoinHeroWorkflowCardCluster({
 
         <GlassCard
           theme={theme}
-          revealIndex={8}
+          revealIndex={7}
           revealed={revealed}
           compact
-          opacity={glassFillOpacity("mid", surface)}
+          opacity={heroStackGlassOpacity("below4", surface)}
           style={{ padding: HERO_CARD_PAD_COMPACT, borderRadius: "1.25rem" }}
         >
           <span style={{ fontSize: FS_HERO.base, opacity: 0.65 }}>Reschedule ›</span>
