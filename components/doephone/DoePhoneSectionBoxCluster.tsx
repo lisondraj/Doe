@@ -1,6 +1,7 @@
 "use client";
 
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
+import { HeroAgentBoxPreview } from "@/lib/join/hero-agent-box-svg";
 import { DOEPHONE_BOX_CLUSTER_PRESETS } from "@/lib/doephone/section-box-cluster-backdrops";
 import {
   DOEPHONE_BOX_CLUSTER_STAGE_HEIGHT,
@@ -37,7 +38,7 @@ function GradientBox({
   );
 }
 
-/** Three-box wireframe — blank white center over two gradient side tiles. */
+/** Three-box wireframe — join-hero agent UI in center over two gradient side tiles. */
 export function DoePhoneSectionBoxCluster({ activeIndex }: { activeIndex: number }) {
   const preset = DOEPHONE_BOX_CLUSTER_PRESETS[activeIndex] ?? DOEPHONE_BOX_CLUSTER_PRESETS[0];
   const { layout } = preset;
@@ -66,7 +67,12 @@ export function DoePhoneSectionBoxCluster({ activeIndex }: { activeIndex: number
       <div
         className={`${layout.center} ${DOEPHONE_SECTION_CAROUSEL_RADIUS} ${BOX_MORPH_TW}`}
         aria-label="Feature preview"
-      />
+      >
+        <HeroAgentBoxPreview
+          agentIndex={preset.agentIndex}
+          className="h-full w-full"
+        />
+      </div>
     </div>
   );
 }
