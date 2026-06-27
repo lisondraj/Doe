@@ -3,14 +3,15 @@
 import Link from "next/link";
 
 import { DoePhoneClosingBandVisual } from "@/components/doephone/DoePhoneClosingBandVisual";
+import { JOIN_INTERN_TRACKS } from "@/components/join/join-intern-tracks";
 import {
   DOEPHONE_SECTION_CAROUSEL_MENU_GAP,
   DOEPHONE_SECTION_FOOTER_OUTSIDE_CAPTION_TW,
 } from "@/lib/doephone/section-styles";
 import { BLOG_ARTICLES } from "@/lib/blog/articles";
-import { JOIN_MAIN_PAGE_CLOSING_VISUALS } from "@/lib/join/join-hero-backdrops";
 
 const CLOSING_FEATURE_ARTICLES = BLOG_ARTICLES.slice(0, 3);
+const CLOSING_LINE_GRAPHICS = JOIN_INTERN_TRACKS.slice(0, 3);
 
 /** Three stacked feature cards with captions — no carousel. */
 export function DoePhoneClosingFeatureStack() {
@@ -24,10 +25,7 @@ export function DoePhoneClosingFeatureStack() {
             index > 0 ? ` ${DOEPHONE_SECTION_CAROUSEL_MENU_GAP}` : ""
           }`}
         >
-          <DoePhoneClosingBandVisual
-            backdrop={JOIN_MAIN_PAGE_CLOSING_VISUALS[index].backdrop}
-            surface={JOIN_MAIN_PAGE_CLOSING_VISUALS[index].surface}
-          />
+          <DoePhoneClosingBandVisual graphic={CLOSING_LINE_GRAPHICS[index].graphic} />
           <p className={`text-left ${DOEPHONE_SECTION_FOOTER_OUTSIDE_CAPTION_TW} transition-colors group-active:opacity-70`}>
             {article.title}
           </p>

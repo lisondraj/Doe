@@ -93,9 +93,3 @@ export const JOIN_HERO_BANDS: readonly JoinHeroBandConfig[] = [
   },
   ...JOIN_HERO_EXTRA_BANDS,
 ] as const;
-
-/** Main page closing section — three of four join hero band visuals below primary. */
-export const JOIN_MAIN_PAGE_CLOSING_VISUALS = JOIN_HERO_EXTRA_BANDS.slice(0, 3).map((band) => ({
-  backdrop: band.backdrop,
-  surface: band.surface ?? ("orange" as WorkflowCarouselSurface),
-}));
