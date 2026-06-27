@@ -8,8 +8,13 @@ import { DoePhoneCommunicationSection } from "@/components/doephone/DoePhoneComm
 import { DoePhoneCustomizationSection } from "@/components/doephone/DoePhoneCustomizationSection";
 import { DoePhoneHeroSection } from "@/components/doephone/DoePhoneHeroSection";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
-import { DOEPHONE_BEIGE_SECTION } from "@/lib/doephone/section-styles";
+import {
+  DOEPHONE_MAIN_PAGE_BEIGE_SECTION,
+  DOEPHONE_MAIN_PAGE_SECTION_HEIGHT,
+  DOEPHONE_MAIN_PAGE_VIEWPORT_SECTION,
+} from "@/lib/doephone/section-styles";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
+import type { CSSProperties } from "react";
 
 export function DoePhoneMobileView() {
   useDoePhoneStableViewport();
@@ -17,6 +22,7 @@ export function DoePhoneMobileView() {
   return (
     <div
       className="doephone-mobile-root relative z-0 min-h-[var(--app-vh,100lvh)] overflow-x-hidden bg-[#F7F6F3]"
+      style={{ "--doephone-main-section-height": DOEPHONE_MAIN_PAGE_SECTION_HEIGHT } as CSSProperties}
       suppressHydrationWarning
       data-doeforvc-view="iphone"
     >
@@ -24,19 +30,19 @@ export function DoePhoneMobileView() {
 
       <DoePhoneHeroSection />
 
-      <section className={DOEPHONE_BEIGE_SECTION} aria-label="Labs">
+      <section className={DOEPHONE_MAIN_PAGE_BEIGE_SECTION} aria-label="Labs">
         <DoePhoneCommunicationSection />
       </section>
 
-      <DoePhoneCommunicationIntelligenceSection />
+      <DoePhoneCommunicationIntelligenceSection sectionClassName={DOEPHONE_MAIN_PAGE_VIEWPORT_SECTION} />
 
-      <section className={DOEPHONE_BEIGE_SECTION} aria-label="Customization">
+      <section className={DOEPHONE_MAIN_PAGE_BEIGE_SECTION} aria-label="Customization">
         <DoePhoneCustomizationSection />
       </section>
 
-      <DoePhoneIntegrationsSection />
+      <DoePhoneIntegrationsSection sectionClassName={DOEPHONE_MAIN_PAGE_VIEWPORT_SECTION} />
 
-      <section className={DOEPHONE_BEIGE_SECTION} aria-label="Closing">
+      <section className={DOEPHONE_MAIN_PAGE_BEIGE_SECTION} aria-label="Closing">
         <DoePhoneClosingSection />
       </section>
 

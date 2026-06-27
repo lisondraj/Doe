@@ -72,6 +72,18 @@ export const DOEPHONE_VIEWPORT_SECTION =
 export const DOEPHONE_BEIGE_SECTION =
   "relative z-10 flex min-h-[var(--app-vh,100lvh)] w-full flex-col bg-[#F7F6F3]";
 
+/** Main mobile home — section band height including iOS browser menu + home indicator. */
+export const DOEPHONE_MAIN_PAGE_SECTION_HEIGHT =
+  "calc(var(--app-vh,100lvh)+env(safe-area-inset-bottom,0px)+max(2.75rem,12vmin))";
+
+/** Main page beige scroll band — taller than `--app-vh` for Safari bottom chrome. */
+export const DOEPHONE_MAIN_PAGE_BEIGE_SECTION =
+  "relative z-10 flex min-h-[var(--doephone-main-section-height,var(--app-vh,100lvh))] w-full flex-col bg-[#F7F6F3]";
+
+/** Main page dark viewport band — matches beige extra height. */
+export const DOEPHONE_MAIN_PAGE_VIEWPORT_SECTION =
+  "relative z-10 w-full min-h-[var(--doephone-main-section-height,var(--app-vh,100lvh))] h-[var(--doephone-main-section-height,var(--app-vh,100lvh))]";
+
 /** Centers a section's content block vertically without altering its internal layout. */
 export const DOEPHONE_SECTION_CONTENT_CENTER =
   "flex min-h-0 flex-1 flex-col justify-center";

@@ -10,14 +10,18 @@ import {
 import { DOEPHONE_HERO_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 
 /** Gradient viewport — Communication + Intelligence title. */
-export function DoePhoneCommunicationIntelligenceSection() {
+export function DoePhoneCommunicationIntelligenceSection({
+  sectionClassName = DOEPHONE_VIEWPORT_SECTION,
+}: {
+  sectionClassName?: string;
+}) {
   const backdrop = {
     ...DOEPHONE_HERO_BACKDROP,
     lineOverlayOpacity: 0.14,
   };
 
   return (
-    <section className={`${DOEPHONE_VIEWPORT_SECTION} overflow-hidden bg-[#1E343A]`} aria-label="Communication">
+    <section className={`${sectionClassName} overflow-hidden bg-[#1E343A]`} aria-label="Communication">
       <div className="pointer-events-none absolute -inset-[3%] overflow-hidden" aria-hidden>
         <WorkflowCarouselDesignBackdrop
           backdrop={backdrop}

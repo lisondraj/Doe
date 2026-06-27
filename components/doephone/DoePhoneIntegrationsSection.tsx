@@ -13,9 +13,13 @@ import {
 import { DIAGNOSTIC_ASSISTANT_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 
 /** Gradient viewport — Intelligence built into your stack + outer glass panel. */
-export function DoePhoneIntegrationsSection() {
+export function DoePhoneIntegrationsSection({
+  sectionClassName = DOEPHONE_VIEWPORT_SECTION,
+}: {
+  sectionClassName?: string;
+}) {
   return (
-    <section className={`${DOEPHONE_VIEWPORT_SECTION} overflow-hidden bg-[#1E343A]`} aria-label="Integrations">
+    <section className={`${sectionClassName} overflow-hidden bg-[#1E343A]`} aria-label="Integrations">
       <div className="pointer-events-none absolute -inset-[3%] overflow-hidden" aria-hidden>
         <WorkflowCarouselDesignBackdrop backdrop={DIAGNOSTIC_ASSISTANT_BACKDROP} embedded gradientScale={1.12} />
       </div>
