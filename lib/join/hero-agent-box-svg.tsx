@@ -1049,9 +1049,12 @@ export function HeroAgentBoxContent({
 export function HeroAgentBoxPreview({
   agentIndex,
   className,
+  fit = "contain",
 }: {
   agentIndex: HeroAgentPreviewIndex;
   className?: string;
+  /** How the 614×382 agent art fits its container — contain scales to fit, slice fills and crops. */
+  fit?: "contain" | "slice";
 }) {
   const id = useId().replace(/:/g, "");
   const grainFilterId = `${id}-grain`;
@@ -1060,7 +1063,7 @@ export function HeroAgentBoxPreview({
     <svg
       viewBox={`0 0 ${HERO_AGENT_BOX_W} ${HERO_AGENT_BOX_H}`}
       fill="none"
-      preserveAspectRatio="xMidYMid meet"
+      preserveAspectRatio={fit === "slice" ? "xMidYMid slice" : "xMidYMid meet"}
       className={className ?? "h-full w-full"}
       aria-hidden
     >

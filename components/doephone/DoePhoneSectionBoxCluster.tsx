@@ -71,6 +71,7 @@ export function DoePhoneSectionBoxCluster({ activeIndex }: { activeIndex: number
         <HeroAgentBoxPreview
           agentIndex={preset.agentIndex}
           className="h-full w-full"
+          fit="contain"
         />
       </div>
     </div>
