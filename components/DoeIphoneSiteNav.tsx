@@ -11,7 +11,6 @@ import {
 } from "@/components/doe-nav-data";
 import {
   DOEPHONE_NAV_JOIN_ROW_LINK_CLASS,
-  DOEPHONE_NAV_JOIN_ROW_WAITLIST_CLASS,
   DOEPHONE_NAV_TRIPLE_CTA_CLASS,
   DOEPHONE_NAV_WAITLIST_CLASS,
 } from "@/lib/doephone/waitlist-button";
@@ -171,12 +170,12 @@ function NavChromeStrip({
         ) : ctaLayout === "join-waitlist" ? (
           <>
             <Link href={joinHref} className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>
-              Join Us
+              Team
             </Link>
             <a href={investorsHref} className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>
               Investors
             </a>
-            <Link href={WAITLIST_PATH} className={DOEPHONE_NAV_JOIN_ROW_WAITLIST_CLASS}>
+            <Link href={WAITLIST_PATH} className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>
               Waitlist
             </Link>
           </>
@@ -243,9 +242,9 @@ function NavChromeStrip({
           className="ml-auto flex shrink-0 items-center gap-2.5 invisible pointer-events-none iphone-page:gap-[clamp(0.45rem,0.35rem+0.65vmin,0.7rem)]"
           aria-hidden
         >
-          <span className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>Join Us</span>
+          <span className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>Team</span>
           <span className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>Investors</span>
-          <span className={DOEPHONE_NAV_JOIN_ROW_WAITLIST_CLASS}>Waitlist</span>
+          <span className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>Waitlist</span>
           <span className="flex items-center justify-center p-3 iphone-page:p-[clamp(0.625rem,0.38rem+1.35vmin,0.975rem)]">
             <svg
               className="w-9 h-9 iphone-page:w-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)] iphone-page:h-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)]"
