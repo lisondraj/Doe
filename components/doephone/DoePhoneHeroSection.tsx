@@ -1,7 +1,7 @@
 "use client";
 
 import { DoePhoneHeroHeadline } from "@/components/doephone/DoePhoneHeroHeadline";
-import { HeroTriagePreview } from "@/components/home/HeroTriagePreview";
+import { DoePhoneHeroWorkflowCards } from "@/components/doephone/DoePhoneHeroWorkflowCards";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import {
   DOEPHONE_HERO_INTRO_GRADIENT_MS,
@@ -9,7 +9,6 @@ import {
   doephoneHeroIntroStyleVars,
 } from "@/lib/doephone/hero-intro-timing";
 import { DOEPHONE_HERO_COPY_INSET } from "@/lib/doephone/section-styles";
-import { suisseIntl } from "@/lib/home/fonts";
 import { DOEPHONE_HERO_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 import { useEffect, useState, type CSSProperties } from "react";
 
@@ -78,11 +77,7 @@ export function DoePhoneHeroSection() {
         <DoePhoneHeroHeadline />
       </div>
 
-      <HeroTriagePreview
-        fontClassName={suisseIntl.className}
-        size="mobile"
-        className="doephone-hero-triage-preview z-[2]"
-      />
+      <DoePhoneHeroWorkflowCards />
     </section>
   );
 }

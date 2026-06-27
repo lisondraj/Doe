@@ -99,6 +99,10 @@ function NavChromeStrip({
       ? "left-11 iphone-page:left-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))]"
       : "left-8 iphone-page:left-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))]";
   const doeClassName = `absolute top-1/2 -translate-y-1/2 ${doeLeft} font-normal z-[1] min-w-0 whitespace-nowrap ${lora.className} text-4xl iphone-page:text-[clamp(1.85rem,1.05rem+3.55vmin,3.9rem)] iphone-page:leading-none`;
+  const navRightInset = pinchSafe
+    ? "right-11 iphone-page:right-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))]"
+    : "right-8 iphone-page:right-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))]";
+  const tripleCtaAnchored = ctaLayout === "triple" && !showMenu;
 
   return (
     <div className={`${navInsetX} py-6 iphone-page:py-[clamp(0.8125rem,0.52rem+1.55vmin,1.9rem)] flex items-center relative z-10 iphone-page:gap-[clamp(0.45rem,0.35rem+0.85vmin,0.75rem)] ${showApplyScrollCta ? "" : "justify-end"}`}>
@@ -120,7 +124,9 @@ function NavChromeStrip({
         ))}
       </div>
 
-      <div className={`flex shrink-0 items-center gap-2.5 iphone-page:gap-[clamp(0.45rem,0.35rem+0.65vmin,0.7rem)] ${showApplyScrollCta ? "contents" : ""}`}>
+      <div
+        className={`flex shrink-0 items-center gap-2.5 iphone-page:gap-[clamp(0.45rem,0.35rem+0.65vmin,0.7rem)] ${showApplyScrollCta ? "contents" : ""} ${tripleCtaAnchored ? `absolute top-1/2 z-[2] -translate-y-1/2 ${navRightInset}` : ""}`}
+      >
         {showApplyScrollCta ? (
           <button
             type="button"
@@ -185,7 +191,7 @@ function NavChromeStrip({
               </svg>
             )}
           </button>
-        ) : (
+        ) : !tripleCtaAnchored ? (
           <span
             className="invisible pointer-events-none flex items-center justify-center p-3 iphone-page:p-[clamp(0.625rem,0.38rem+1.35vmin,0.975rem)]"
             aria-hidden
@@ -196,7 +202,7 @@ function NavChromeStrip({
               aria-hidden
             />
           </span>
-        )}
+        ) : null}
       </div>
     </div>
   );
