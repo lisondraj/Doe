@@ -72,37 +72,17 @@ export const DOEPHONE_VIEWPORT_SECTION =
 export const DOEPHONE_BEIGE_SECTION =
   "relative z-10 flex min-h-[var(--app-vh,100lvh)] w-full flex-col bg-[#F7F6F3]";
 
-/** Beige scroll band — exactly one iPhone viewport tall. */
-export const DOEPHONE_BEIGE_VIEWPORT_SECTION =
-  "relative z-10 flex h-[var(--app-vh,100lvh)] min-h-[var(--app-vh,100lvh)] w-full flex-col overflow-hidden bg-[#F7F6F3]";
-
-/** Vertically centers children within a viewport-height section shell. */
-export const DOEPHONE_VIEWPORT_SECTION_INNER =
+/** Centers a section's content block vertically without altering its internal layout. */
+export const DOEPHONE_SECTION_CONTENT_CENTER =
   "flex min-h-0 flex-1 flex-col justify-center";
-
-/** Stack gap for content grouped inside a viewport band. */
-export const DOEPHONE_VIEWPORT_SECTION_STACK_GAP =
-  "mt-8 iphone-page:mt-[clamp(1.15rem,0.9rem+1.25vmin,1.65rem)]";
 
 /** Section 2 carousel — fixed height; tied to stable viewport, not dynamic svh. */
 export const DOEPHONE_SECTION_CAROUSEL_HEIGHT =
   "h-[clamp(46rem,calc(var(--app-vh,100lvh)*1.04),69rem)] min-h-[clamp(46rem,calc(var(--app-vh,100lvh)*1.04),69rem)] max-h-[clamp(46rem,calc(var(--app-vh,100lvh)*1.04),69rem)] shrink-0";
 
-/** Carousel in a single viewport band — leaves room for the 3×2 menu below. */
-export const DOEPHONE_SECTION_CAROUSEL_VIEWPORT_HEIGHT =
-  "h-[clamp(17rem,calc(var(--app-vh,100lvh)*0.46),30rem)] min-h-[clamp(17rem,calc(var(--app-vh,100lvh)*0.46),30rem)] max-h-[clamp(17rem,calc(var(--app-vh,100lvh)*0.46),30rem)] shrink-0";
-
 /** Fixed stage — tallest preset layout so menu below does not shift on tab change. */
 export const DOEPHONE_BOX_CLUSTER_STAGE_HEIGHT =
   "h-[clamp(36rem,86vmin,50rem)] min-h-[clamp(36rem,86vmin,50rem)] max-h-[clamp(36rem,86vmin,50rem)] shrink-0 iphone-page:h-[clamp(34rem,82vmin,47rem)] iphone-page:min-h-[clamp(34rem,82vmin,47rem)] iphone-page:max-h-[clamp(34rem,82vmin,47rem)]";
-
-/** Box cluster in a single viewport band — shares space with title, copy, and menu. */
-export const DOEPHONE_BOX_CLUSTER_VIEWPORT_HEIGHT =
-  "h-[clamp(11rem,calc(var(--app-vh,100lvh)*0.24),18rem)] min-h-[clamp(11rem,calc(var(--app-vh,100lvh)*0.24),18rem)] max-h-[clamp(11rem,calc(var(--app-vh,100lvh)*0.24),18rem)] shrink-0";
-
-/** Integrations glass panel within one viewport band. */
-export const DOEPHONE_SECTION_GLASS_VIEWPORT_HEIGHT =
-  "h-[clamp(14rem,calc(var(--app-vh,100lvh)*0.38),24rem)] min-h-[clamp(14rem,calc(var(--app-vh,100lvh)*0.38),24rem)] max-h-[clamp(14rem,calc(var(--app-vh,100lvh)*0.38),24rem)] shrink-0";
 
 /** Rounded corners shared by section 2 carousel cards + embedded backdrop clip. */
 export const DOEPHONE_SECTION_CAROUSEL_RADIUS =

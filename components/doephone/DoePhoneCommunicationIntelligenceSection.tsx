@@ -4,8 +4,8 @@ import { DoePhoneSectionPlus, DoePhoneSectionTitle } from "@/components/doephone
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import {
   DOEPHONE_SECTION_CONTENT_INSET,
+  DOEPHONE_SECTION_TITLE_PT,
   DOEPHONE_VIEWPORT_SECTION,
-  DOEPHONE_VIEWPORT_SECTION_INNER,
 } from "@/lib/doephone/section-styles";
 import { DOEPHONE_HERO_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 
@@ -17,7 +17,7 @@ export function DoePhoneCommunicationIntelligenceSection() {
   };
 
   return (
-    <section className={`${DOEPHONE_VIEWPORT_SECTION} flex flex-col overflow-hidden bg-[#1E343A]`} aria-label="Communication">
+    <section className={`${DOEPHONE_VIEWPORT_SECTION} overflow-hidden bg-[#1E343A]`} aria-label="Communication">
       <div className="pointer-events-none absolute -inset-[3%] overflow-hidden" aria-hidden>
         <WorkflowCarouselDesignBackdrop
           backdrop={backdrop}
@@ -27,8 +27,8 @@ export function DoePhoneCommunicationIntelligenceSection() {
         />
       </div>
 
-      <div className={`relative z-10 ${DOEPHONE_VIEWPORT_SECTION_INNER}`}>
-        <div className={DOEPHONE_SECTION_CONTENT_INSET}>
+      <div className="relative z-10 flex h-full min-h-0 flex-col">
+        <div className={`shrink-0 ${DOEPHONE_SECTION_CONTENT_INSET} ${DOEPHONE_SECTION_TITLE_PT}`}>
           <DoePhoneSectionTitle
             line1="Communication"
             line2={

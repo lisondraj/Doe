@@ -8,7 +8,7 @@ import { DoePhoneCommunicationSection } from "@/components/doephone/DoePhoneComm
 import { DoePhoneCustomizationSection } from "@/components/doephone/DoePhoneCustomizationSection";
 import { DoePhoneHeroSection } from "@/components/doephone/DoePhoneHeroSection";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
-import { DOEPHONE_BEIGE_SECTION, DOEPHONE_BEIGE_VIEWPORT_SECTION } from "@/lib/doephone/section-styles";
+import { DOEPHONE_BEIGE_SECTION } from "@/lib/doephone/section-styles";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 
 export function DoePhoneMobileView() {
@@ -24,13 +24,13 @@ export function DoePhoneMobileView() {
 
       <DoePhoneHeroSection />
 
-      <section className={DOEPHONE_BEIGE_VIEWPORT_SECTION} aria-label="Labs">
+      <section className={DOEPHONE_BEIGE_SECTION} aria-label="Labs">
         <DoePhoneCommunicationSection />
       </section>
 
       <DoePhoneCommunicationIntelligenceSection />
 
-      <section className={DOEPHONE_BEIGE_VIEWPORT_SECTION} aria-label="Customization">
+      <section className={DOEPHONE_BEIGE_SECTION} aria-label="Customization">
         <DoePhoneCustomizationSection />
       </section>
 

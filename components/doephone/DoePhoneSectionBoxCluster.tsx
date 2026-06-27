@@ -39,19 +39,13 @@ function GradientBox({
 }
 
 /** Three-box wireframe — join-hero agent UI in center over two gradient side tiles. */
-export function DoePhoneSectionBoxCluster({
-  activeIndex,
-  stageHeightClass = DOEPHONE_BOX_CLUSTER_STAGE_HEIGHT,
-}: {
-  activeIndex: number;
-  stageHeightClass?: string;
-}) {
+export function DoePhoneSectionBoxCluster({ activeIndex }: { activeIndex: number }) {
   const preset = DOEPHONE_BOX_CLUSTER_PRESETS[activeIndex] ?? DOEPHONE_BOX_CLUSTER_PRESETS[0];
   const { layout } = preset;
 
   return (
     <div
-      className={`relative mx-auto w-full overflow-hidden ${stageHeightClass}`}
+      className={`relative mx-auto w-full overflow-hidden ${DOEPHONE_BOX_CLUSTER_STAGE_HEIGHT}`}
       role="tabpanel"
       id={`doephone-box-cluster-${preset.id}`}
       aria-label={preset.menuLabel}
