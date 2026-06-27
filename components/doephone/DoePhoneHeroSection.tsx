@@ -74,10 +74,12 @@ export function DoePhoneHeroSection() {
       <div
         className={`absolute inset-0 z-[3] flex min-w-0 flex-col items-start justify-end overflow-visible pb-[clamp(1.5rem,5vmin,2.5rem)] ${DOEPHONE_SECTION_CAROUSEL_INSET_X}`}
       >
-        <div className="doephone-hero-copy pointer-events-none mb-[clamp(1rem,2.5vmin,1.75rem)] w-full min-w-0">
+        <div className="doephone-hero-copy pointer-events-none mb-[clamp(1.5rem,3.5vmin,2.5rem)] w-full min-w-0">
           <DoePhoneHeroHeadline />
         </div>
-        <DoePhoneHeroWorkflowCards />
+        <div className="w-full min-w-0 pt-[clamp(0.35rem,1vmin,0.75rem)]">
+          <DoePhoneHeroWorkflowCards />
+        </div>
       </div>
     </section>
   );

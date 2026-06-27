@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 
-import DoeIphoneSiteNav from "@/components/DoeIphoneSiteNav";
+import DoeIphoneSiteNav, { type SiteNavCtaLayout } from "@/components/DoeIphoneSiteNav";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
 import { BLOG_FOOTER_GAP, BLOG_PAGE_INSET_X } from "@/lib/blog/blog-layout-styles";
 
@@ -15,6 +15,7 @@ type BlogMobileShellProps = {
   logoLink?: boolean;
   footerLinksDisabled?: boolean;
   showMenu?: boolean;
+  ctaLayout?: SiteNavCtaLayout;
   /** Override shell min-height — join uses locked `--app-vh`. */
   shellMinHeightClass?: string;
   showFooter?: boolean;
@@ -29,6 +30,7 @@ export function BlogMobileShell({
   logoLink = true,
   footerLinksDisabled = false,
   showMenu = true,
+  ctaLayout = "single",
   shellMinHeightClass = "min-h-[100svh]",
   showFooter = true,
 }: BlogMobileShellProps) {
@@ -46,6 +48,7 @@ export function BlogMobileShell({
         showApplyScrollCta={showApplyScrollCta}
         logoLink={logoLink}
         showMenu={showMenu}
+        ctaLayout={ctaLayout}
       />
       <div className={`blog-page-root relative z-0 ${BLOG_PAGE_INSET_X} ${showFooter ? BLOG_FOOTER_GAP : ""}`}>
         {children}

@@ -239,7 +239,7 @@ export function JoinHeroWorkflowCardCluster({
         style={{
           display: "flex",
           flexDirection: "column",
-          gap: HERO_CARD_GAP,
+          gap: "clamp(0.95rem, 2.1vmin, 1.15rem)",
           width: "100%",
           minWidth: 0,
           ...style,
@@ -336,44 +336,6 @@ export function JoinHeroWorkflowCardCluster({
           <ProgressRow theme={theme} label="Intake forms sent" pct="41%" last labelSize={FS_HERO.sm} />
         </GlassCard>
 
-        <GlassCard
-          theme={theme}
-          revealIndex={4}
-          revealed={revealed}
-          opacity={heroStackGlassOpacity("fade3", surface)}
-          style={{ padding: HERO_CARD_PAD, borderRadius: "1.25rem" }}
-        >
-          <p style={{ fontSize: FS_HERO.sm, opacity: 0.6, marginBottom: "0.2rem" }}>Next in queue</p>
-          <p
-            style={{
-              fontSize: FS_HERO.xl,
-              fontWeight: 400,
-              letterSpacing: "-0.02em",
-              lineHeight: 1.1,
-              color: isBeige ? theme.accent : theme.ink,
-            }}
-          >
-            10:30 AM
-          </p>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.32rem", marginTop: "0.42rem" }}>
-            <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden>
-              <rect x="1" y="2" width="9" height="7" rx="1.2" stroke={theme.iconSoft} strokeWidth="1" />
-              <path d="M1 4.5h9" stroke={theme.iconSoft} strokeWidth="1" />
-            </svg>
-            <span style={{ fontSize: FS_HERO.sm, opacity: 0.65 }}>Front desk triage</span>
-          </div>
-        </GlassCard>
-
-        <GlassCard
-          theme={theme}
-          revealIndex={5}
-          revealed={revealed}
-          compact
-          opacity={heroStackGlassOpacity("fade4", surface)}
-          style={{ padding: HERO_CARD_PAD_COMPACT, borderRadius: "1.25rem" }}
-        >
-          <span style={{ fontSize: FS_HERO.base, opacity: 0.7 }}>Open chart ›</span>
-        </GlassCard>
       </div>
     );
   }

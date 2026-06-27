@@ -10,8 +10,11 @@ import {
   NAV_ITEMS,
 } from "@/components/doe-nav-data";
 import {
-  DOEPHONE_NAV_JOIN_ROW_DOT_CLASS,
-  DOEPHONE_NAV_JOIN_ROW_LINK_CLASS,
+  subpageNavHasButton,
+  SubpageMobileNavRow,
+  subpageVariantFromCtaLayout,
+} from "@/components/subpage/SubpageMobileNavRow";
+import {
   DOEPHONE_NAV_TRIPLE_CTA_CLASS,
   DOEPHONE_NAV_WAITLIST_CLASS,
 } from "@/lib/doephone/waitlist-button";
@@ -20,8 +23,8 @@ import {
   DOEPHONE_FIXED_NAV_CONTENT_RIGHT,
   DOEPHONE_SECTION_CAROUSEL_INSET_X,
 } from "@/lib/doephone/section-styles";
-import { JOIN_PAGE_HREF, WAITLIST_PATH } from "@/lib/site-domains";
-import { scrollToJoinApplySection } from "@/lib/join/join-apply-scroll";
+import { FOR_INVESTORS_LABEL } from "@/lib/subpage/subpage-nav";
+import { INVESTORS_PATH, JOIN_PAGE_HREF, WAITLIST_PATH } from "@/lib/site-domains";
 import {
   NAV_FOOTER_BOX_TITLE_TW,
   NAV_FOOTER_CARD_INSET,
@@ -68,51 +71,13 @@ const NAV_JOIN_ROW_GAP =
 const NAV_DEFAULT_ROW_GAP =
   "gap-2.5 iphone-page:gap-[clamp(0.45rem,0.35rem+0.65vmin,0.7rem)]";
 
-function JoinWaitlistNavRow({
-  joinHref,
-  investorsHref,
-  interactive = true,
-}: {
-  joinHref: string;
-  investorsHref: string;
-  interactive?: boolean;
-}) {
-  if (interactive) {
-    return (
-      <>
-        <Link href={joinHref} className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>
-          Team
-        </Link>
-        <span className={DOEPHONE_NAV_JOIN_ROW_DOT_CLASS} aria-hidden>
-          ·
-        </span>
-        <a href={investorsHref} className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>
-          Investors
-        </a>
-        <span className={DOEPHONE_NAV_JOIN_ROW_DOT_CLASS} aria-hidden>
-          ·
-        </span>
-        <Link href={WAITLIST_PATH} className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>
-          Waitlist
-        </Link>
-      </>
-    );
-  }
-
-  return (
-    <>
-      <span className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>Team</span>
-      <span className={DOEPHONE_NAV_JOIN_ROW_DOT_CLASS} aria-hidden>
-        ·
-      </span>
-      <span className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>Investors</span>
-      <span className={DOEPHONE_NAV_JOIN_ROW_DOT_CLASS} aria-hidden>
-        ·
-      </span>
-      <span className={DOEPHONE_NAV_JOIN_ROW_LINK_CLASS}>Waitlist</span>
-    </>
-  );
-}
+export type SiteNavCtaLayout =
+  | "single"
+  | "triple"
+  | "join-waitlist"
+  | "subpage-join"
+  | "subpage-investors"
+  | "subpage-waitlist";
 
 function NavChromeStrip({
   navTextColor,
@@ -126,7 +91,6 @@ function NavChromeStrip({
   logoLink = true,
   showMenu = true,
   ctaLayout = "single",
-  investorsHref = "mailto:james@doe.care?subject=Investors",
 }: {
   navTextColor: string;
   mobileNavOpen: boolean;
@@ -138,8 +102,7 @@ function NavChromeStrip({
   showApplyScrollCta?: boolean;
   logoLink?: boolean;
   showMenu?: boolean;
-  ctaLayout?: "single" | "triple" | "join-waitlist";
-  investorsHref?: string;
+  ctaLayout?: SiteNavCtaLayout;
 }) {
   const pageInsetX = DOEPHONE_SECTION_CAROUSEL_INSET_X;
   const pageDoeLeft =
@@ -148,36 +111,40 @@ function NavChromeStrip({
     "right-14 iphone-page:right-[max(2.35rem,calc(env(safe-area-inset-right,0px)+5.25vmin))]";
   const pageNavLeftPad =
     "pl-14 iphone-page:pl-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
-  const joinWaitlistAnchored = ctaLayout === "join-waitlist" && !showMenu;
-  const joinWaitlistRight = pinchSafe ? DOEPHONE_FIXED_NAV_CONTENT_RIGHT : pageApplyRight;
-  const joinWaitlistDoeLeft = pinchSafe ? DOEPHONE_FIXED_NAV_CONTENT_LEFT : pageDoeLeft;
-  const navInsetX = showApplyScrollCta
+  const effectiveCtaLayout = showApplyScrollCta ? "subpage-join" : ctaLayout;
+  const subpageVariant = subpageVariantFromCtaLayout(effectiveCtaLayout);
+  const subpageAnchored = subpageVariant !== null && !showMenu;
+  const subpageWithButton = subpageVariant !== null && subpageNavHasButton(subpageVariant);
+  const subpageRight = pinchSafe ? DOEPHONE_FIXED_NAV_CONTENT_RIGHT : pageApplyRight;
+  const navInsetX = subpageAnchored && subpageWithButton
     ? `${pageNavLeftPad} pr-0`
-    : joinWaitlistAnchored
+    : subpageAnchored
       ? DOEPHONE_SECTION_CAROUSEL_INSET_X
       : pinchSafe
         ? "px-11 iphone-page:px-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))] iphone-page:pr-[max(1.65rem,env(safe-area-inset-right,0px))]"
         : "px-8 iphone-page:px-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))]";
-  const doeLeft = showApplyScrollCta
-    ? pageDoeLeft
-    : joinWaitlistAnchored
-      ? joinWaitlistDoeLeft
+  const doeLeft = subpageAnchored
+    ? subpageWithButton
+      ? pageDoeLeft
       : pinchSafe
-        ? "left-11 iphone-page:left-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))]"
-        : "left-8 iphone-page:left-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))]";
+        ? DOEPHONE_FIXED_NAV_CONTENT_LEFT
+        : pageDoeLeft
+    : pinchSafe
+      ? "left-11 iphone-page:left-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))]"
+      : "left-8 iphone-page:left-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))]";
   const doeClassName = `absolute top-1/2 -translate-y-1/2 ${doeLeft} font-normal z-[1] min-w-0 whitespace-nowrap ${lora.className} text-4xl iphone-page:text-[clamp(1.85rem,1.05rem+3.55vmin,3.9rem)] iphone-page:leading-none`;
   const navRightInset = pinchSafe
     ? "right-11 iphone-page:right-[max(1.65rem,env(safe-area-inset-right,0px)+3.8vmin)]"
     : "right-8 iphone-page:right-[max(1.25rem,calc(env(safe-area-inset-right,0px)+2.85vmin))]";
   const tripleCtaAnchored = ctaLayout === "triple" && !showMenu;
-  const navRowGap = joinWaitlistAnchored ? NAV_JOIN_ROW_GAP : NAV_DEFAULT_ROW_GAP;
+  const navRowGap = subpageAnchored ? NAV_JOIN_ROW_GAP : NAV_DEFAULT_ROW_GAP;
   const navStripMinH = tripleCtaAnchored
     ? "min-h-[clamp(4.35rem,3.55rem+3.15vmin,5.15rem)]"
     : "";
 
   return (
     <div
-      className={`${navInsetX} ${navStripMinH} py-6 iphone-page:py-[clamp(0.8125rem,0.52rem+1.55vmin,1.9rem)] flex items-center relative z-10 iphone-page:gap-[clamp(0.45rem,0.35rem+0.85vmin,0.75rem)] ${showApplyScrollCta ? "" : "justify-end"}`}
+      className={`${navInsetX} ${navStripMinH} py-6 iphone-page:py-[clamp(0.8125rem,0.52rem+1.55vmin,1.9rem)] flex items-center relative z-10 iphone-page:gap-[clamp(0.45rem,0.35rem+0.85vmin,0.75rem)] ${subpageAnchored && subpageWithButton ? "" : "justify-end"}`}
     >
       {logoLink ? (
         <Link href={homeHref} className={`${doeClassName} transition-opacity duration-500 ease-out opacity-100`} style={{ color: navTextColor }}>
@@ -198,16 +165,10 @@ function NavChromeStrip({
       </div>
 
       <div
-        className={`flex shrink-0 items-center ${navRowGap} ${showApplyScrollCta ? "contents" : joinWaitlistAnchored ? `absolute top-1/2 z-[2] -translate-y-1/2 ${joinWaitlistRight}` : ""} ${tripleCtaAnchored ? `absolute top-1/2 z-[2] -translate-y-1/2 ${navRightInset}` : ""}`}
+        className={`flex shrink-0 items-center ${navRowGap} ${subpageAnchored ? `absolute top-1/2 z-[2] -translate-y-1/2 ${subpageRight}` : ""} ${tripleCtaAnchored ? `absolute top-1/2 z-[2] -translate-y-1/2 ${navRightInset}` : ""}`}
       >
-        {showApplyScrollCta ? (
-          <button
-            type="button"
-            onClick={scrollToJoinApplySection}
-            className={`absolute top-1/2 z-[2] -translate-y-1/2 ${pageApplyRight} ${DOEPHONE_NAV_WAITLIST_CLASS}`}
-          >
-            Apply
-          </button>
+        {subpageVariant ? (
+          <SubpageMobileNavRow variant={subpageVariant} />
         ) : ctaLayout === "triple" ? (
           <>
             <Link href={WAITLIST_PATH} className={DOEPHONE_NAV_TRIPLE_CTA_CLASS}>
@@ -216,12 +177,10 @@ function NavChromeStrip({
             <Link href={joinHref} className={DOEPHONE_NAV_TRIPLE_CTA_CLASS}>
               Join Us
             </Link>
-            <a href={investorsHref} className={DOEPHONE_NAV_TRIPLE_CTA_CLASS}>
-              Investors
+            <a href={INVESTORS_PATH} className={DOEPHONE_NAV_TRIPLE_CTA_CLASS}>
+              {FOR_INVESTORS_LABEL}
             </a>
           </>
-        ) : ctaLayout === "join-waitlist" ? (
-          <JoinWaitlistNavRow joinHref={joinHref} investorsHref={investorsHref} />
         ) : showJoinCta ? (
           <a href={joinHref} className={DOEPHONE_NAV_WAITLIST_CLASS}>
             Join Waitlist
@@ -266,7 +225,7 @@ function NavChromeStrip({
               </svg>
             )}
           </button>
-        ) : !tripleCtaAnchored && !joinWaitlistAnchored ? (
+        ) : !tripleCtaAnchored && !subpageAnchored ? (
           <span
             className="invisible pointer-events-none flex items-center justify-center p-3 iphone-page:p-[clamp(0.625rem,0.38rem+1.35vmin,0.975rem)]"
             aria-hidden
@@ -280,19 +239,21 @@ function NavChromeStrip({
         ) : null}
       </div>
 
-      {joinWaitlistAnchored ? (
+      {subpageAnchored ? (
         <div
           className={`ml-auto flex shrink-0 items-center ${navRowGap} invisible pointer-events-none`}
           aria-hidden
         >
-          <JoinWaitlistNavRow joinHref={joinHref} investorsHref={investorsHref} interactive={false} />
-          <span className="flex items-center justify-center p-3 iphone-page:p-[clamp(0.625rem,0.38rem+1.35vmin,0.975rem)]">
-            <svg
-              className="w-9 h-9 iphone-page:w-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)] iphone-page:h-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)]"
-              viewBox="0 0 24 24"
-              aria-hidden
-            />
-          </span>
+          {subpageVariant ? <SubpageMobileNavRow variant={subpageVariant} interactive={false} /> : null}
+          {subpageVariant === "main" ? (
+            <span className="flex items-center justify-center p-3 iphone-page:p-[clamp(0.625rem,0.38rem+1.35vmin,0.975rem)]">
+              <svg
+                className="w-9 h-9 iphone-page:w-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)] iphone-page:h-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)]"
+                viewBox="0 0 24 24"
+                aria-hidden
+              />
+            </span>
+          ) : null}
         </div>
       ) : null}
     </div>
@@ -312,7 +273,6 @@ export default function DoeIphoneSiteNav({
   logoLink = true,
   showMenu = true,
   ctaLayout = "single",
-  investorsHref = "mailto:james@doe.care?subject=Investors",
 }: {
   pinchSafe?: boolean;
   homeHref?: string;
@@ -321,8 +281,7 @@ export default function DoeIphoneSiteNav({
   showApplyScrollCta?: boolean;
   logoLink?: boolean;
   showMenu?: boolean;
-  ctaLayout?: "single" | "triple" | "join-waitlist";
-  investorsHref?: string;
+  ctaLayout?: SiteNavCtaLayout;
 }) {
   const isPhoneLayout = true;
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -696,7 +655,6 @@ export default function DoeIphoneSiteNav({
           logoLink={logoLink}
           showMenu={showMenu}
           ctaLayout={ctaLayout}
-          investorsHref={investorsHref}
         />
       </header>,
       document.body
@@ -739,7 +697,6 @@ export default function DoeIphoneSiteNav({
             logoLink={logoLink}
             showMenu={showMenu}
             ctaLayout={ctaLayout}
-            investorsHref={investorsHref}
           />
         </div>
       </nav>

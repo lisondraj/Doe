@@ -1,27 +1,27 @@
 "use client";
 
+import { AboutHeroBands } from "@/components/about/AboutHeroBands";
 import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
 import { JoinApplyFormSection } from "@/components/join/JoinApplyFormSection";
 import { JoinInternTracks } from "@/components/join/JoinInternTracks";
-import { WaitlistHeroBands } from "@/components/waitlist/WaitlistHeroBands";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 import { JOIN_MOBILE_HERO_SECTION, JOIN_MOBILE_NAV_CLEARANCE, JOIN_MOBILE_SECTION_STACK_GAP } from "@/lib/join/join-layout";
 
-export function WaitlistMobileView() {
+export function AboutMobileView() {
   useDoePhoneStableViewport();
 
   return (
     <BlogMobileShell
       showJoinCta={false}
       showMenu={false}
-      ctaLayout="subpage-waitlist"
+      ctaLayout="subpage-investors"
       logoLink={false}
       footerLinksDisabled
       shellMinHeightClass="min-h-[var(--app-vh,100lvh)]"
     >
       <main className={`flex w-full flex-col ${JOIN_MOBILE_SECTION_STACK_GAP} ${JOIN_MOBILE_NAV_CLEARANCE}`}>
-        <section className={JOIN_MOBILE_HERO_SECTION} aria-label="Waitlist hero">
-          <WaitlistHeroBands variant="mobile" />
+        <section className={JOIN_MOBILE_HERO_SECTION} aria-label="About hero">
+          <AboutHeroBands variant="mobile" />
         </section>
         <JoinInternTracks variant="mobile" />
       </main>

@@ -13,10 +13,10 @@ export function JoinMobileView() {
   return (
     <BlogMobileShell
       showJoinCta={false}
-      showApplyScrollCta
+      showMenu={false}
+      ctaLayout="subpage-join"
       logoLink={false}
       footerLinksDisabled
-      showMenu={false}
       shellMinHeightClass="min-h-[var(--app-vh,100lvh)]"
     >
       <main className={`flex w-full flex-col ${JOIN_MOBILE_SECTION_STACK_GAP} ${JOIN_MOBILE_NAV_CLEARANCE}`}>
