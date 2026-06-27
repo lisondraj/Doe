@@ -10,7 +10,11 @@ import {
   NAV_ITEMS,
 } from "@/components/doe-nav-data";
 import { DOEPHONE_NAV_PAGE_LINK_CLASS, DOEPHONE_NAV_TRIPLE_CTA_CLASS, DOEPHONE_NAV_WAITLIST_CLASS } from "@/lib/doephone/waitlist-button";
-import { DOEPHONE_SECTION_CAROUSEL_INSET_X } from "@/lib/doephone/section-styles";
+import {
+  DOEPHONE_FIXED_NAV_CONTENT_LEFT,
+  DOEPHONE_FIXED_NAV_CONTENT_RIGHT,
+  DOEPHONE_SECTION_CAROUSEL_INSET_X,
+} from "@/lib/doephone/section-styles";
 import { JOIN_PAGE_HREF, WAITLIST_PATH } from "@/lib/site-domains";
 import { scrollToJoinApplySection } from "@/lib/join/join-apply-scroll";
 import {
@@ -135,7 +139,7 @@ function NavChromeStrip({
       </div>
 
       <div
-        className={`flex shrink-0 items-center gap-2.5 iphone-page:gap-[clamp(0.45rem,0.35rem+0.65vmin,0.7rem)] ${showApplyScrollCta ? "contents" : joinWaitlistAnchored ? "absolute top-1/2 right-0 z-[2] -translate-y-1/2" : ""} ${tripleCtaAnchored ? `absolute top-1/2 z-[2] -translate-y-1/2 ${navRightInset}` : ""}`}
+        className={`flex shrink-0 items-center gap-2.5 iphone-page:gap-[clamp(0.45rem,0.35rem+0.65vmin,0.7rem)] ${showApplyScrollCta ? "contents" : joinWaitlistAnchored ? `absolute top-1/2 z-[2] -translate-y-1/2 ${joinWaitlistRight}` : ""} ${tripleCtaAnchored ? `absolute top-1/2 z-[2] -translate-y-1/2 ${navRightInset}` : ""}`}
       >
         {showApplyScrollCta ? (
           <button

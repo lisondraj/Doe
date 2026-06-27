@@ -23,6 +23,13 @@ export const DOEPHONE_SECTION_UNIFORM_PAD =
 export const DOEPHONE_SECTION_CAROUSEL_INSET_X =
   "px-14 iphone-page:px-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
 
+/** Fixed nav chrome — matches page content edge inside `.doephone-mobile-root`. */
+export const DOEPHONE_FIXED_NAV_CONTENT_LEFT =
+  "left-[calc(env(safe-area-inset-left,0px)+max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin)))]";
+
+export const DOEPHONE_FIXED_NAV_CONTENT_RIGHT =
+  "right-[calc(env(safe-area-inset-right,0px)+max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin)))]";
+
 /** Vertical gap — carousel→menu (matches carousel horizontal inset). */
 export const DOEPHONE_SECTION_CAROUSEL_MENU_GAP =
   "mt-14 iphone-page:mt-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
