@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 
-import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
+import { DoePhoneClosingBandVisual } from "@/components/doephone/DoePhoneClosingBandVisual";
 import {
   DOEPHONE_SECTION_CAROUSEL_MENU_GAP,
   DOEPHONE_SECTION_FOOTER_OUTSIDE_CAPTION_TW,
 } from "@/lib/doephone/section-styles";
 import { BLOG_ARTICLES } from "@/lib/blog/articles";
+import { JOIN_MAIN_PAGE_CLOSING_VISUALS } from "@/lib/join/join-hero-backdrops";
 
 const CLOSING_FEATURE_ARTICLES = BLOG_ARTICLES.slice(0, 3);
 
@@ -23,7 +24,10 @@ export function DoePhoneClosingFeatureStack() {
             index > 0 ? ` ${DOEPHONE_SECTION_CAROUSEL_MENU_GAP}` : ""
           }`}
         >
-          <BlogHeroVisual backdrop={article.backdrop} variant="list" />
+          <DoePhoneClosingBandVisual
+            backdrop={JOIN_MAIN_PAGE_CLOSING_VISUALS[index].backdrop}
+            surface={JOIN_MAIN_PAGE_CLOSING_VISUALS[index].surface}
+          />
           <p className={`text-left ${DOEPHONE_SECTION_FOOTER_OUTSIDE_CAPTION_TW} transition-colors group-active:opacity-70`}>
             {article.title}
           </p>
