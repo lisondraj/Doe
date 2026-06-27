@@ -13,7 +13,7 @@ const FS_SM = "clamp(0.6rem, 0.72vw, 0.7rem)";
 const FS_LG = "clamp(0.96rem, 1.15vw, 1.1rem)";
 const FS_XL = "clamp(1.32rem, 1.65vw, 1.55rem)";
 
-/** Glass fill opacity — peaks at Scheduling Agent, fades with grid distance. */
+/** Glass fill opacity — peaks at Appointment Agent, fades with grid distance. */
 const GLASS_OPACITY_ORANGE = {
   center: 0.48,
   near: 0.28,
@@ -177,37 +177,207 @@ function AgentIcon({ theme }: { theme: ReturnType<typeof cardTheme> }) {
   );
 }
 
-function IntegrationsColumn({
+const APPOINTMENT_AGENT_COPY = {
+  title: "Appointment Agent",
+  lead: "Sarah's appointment is at 10:30 AM today.",
+  body: "Pre-appointment form sent, insurance verified, and info from chart extracted.",
+} as const;
+
+const APPOINTMENT_HEADLINE = "Sarah Chen, blood pressure follow-up";
+
+function MiniLabSparkline({
+  label,
+  value,
+  unit,
+  path,
+  theme,
+  isBeige,
+  labelSize,
+  valueSize,
+}: {
+  label: string;
+  value: string;
+  unit: string;
+  path: string;
+  theme: ReturnType<typeof cardTheme>;
+  isBeige: boolean;
+  labelSize: string;
+  valueSize: string;
+}) {
+  const stroke = isBeige ? DOE_ORANGE : theme.accent;
+
+  return (
+    <div>
+      <p style={{ fontSize: labelSize, opacity: 0.55, marginBottom: "0.1rem" }}>{label}</p>
+      <div style={{ display: "flex", alignItems: "baseline", gap: "0.18rem", marginBottom: "0.22rem" }}>
+        <span style={{ fontSize: valueSize, fontWeight: 600, letterSpacing: "-0.02em" }}>{value}</span>
+        <span style={{ fontSize: labelSize, opacity: 0.62 }}>{unit}</span>
+      </div>
+      <svg viewBox="0 0 72 22" fill="none" aria-hidden style={{ display: "block", width: "100%", height: "1.35rem" }}>
+        <line x1="0" y1="20" x2="72" y2="20" stroke={isBeige ? DOE_ORANGE_TRACK : "rgba(255,255,255,0.16)"} strokeWidth="0.8" />
+        <path
+          d={path}
+          stroke={stroke}
+          strokeWidth="1.35"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          fill="none"
+        />
+      </svg>
+    </div>
+  );
+}
+
+function LabResultsColumn({
+  theme,
+  isBeige,
+  labelSize,
+  valueSize,
+}: {
+  theme: ReturnType<typeof cardTheme>;
+  isBeige: boolean;
+  labelSize: string;
+  valueSize: string;
+}) {
+  return (
+    <div>
+      <p style={{ fontSize: labelSize, opacity: 0.55, marginBottom: "0.28rem" }}>Lab results</p>
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.48rem" }}>
+        <MiniLabSparkline
+          label="A1c"
+          value="8.2"
+          unit="%"
+          path="M2 16 L18 12 L34 14 L52 7 L70 9"
+          theme={theme}
+          isBeige={isBeige}
+          labelSize={labelSize}
+          valueSize={valueSize}
+        />
+        <MiniLabSparkline
+          label="Systolic BP"
+          value="142"
+          unit="mmHg"
+          path="M2 8 L20 10 L36 13 L54 11 L70 15"
+          theme={theme}
+          isBeige={isBeige}
+          labelSize={labelSize}
+          valueSize={valueSize}
+        />
+      </div>
+    </div>
+  );
+}
+
+function AppointmentDetailsGrid({
   theme,
   isBeige,
   labelSize,
   valueSize,
   detailSize,
+  headlineSize,
+  showLiveCta = false,
 }: {
   theme: ReturnType<typeof cardTheme>;
   isBeige: boolean;
   labelSize: string;
   valueSize: string;
   detailSize: string;
+  headlineSize: string;
+  showLiveCta?: boolean;
 }) {
   return (
-    <div>
-      <p style={{ fontSize: labelSize, opacity: 0.55, marginBottom: "0.14rem" }}>Integrations</p>
-      <p style={{ fontSize: valueSize, fontWeight: 500, lineHeight: 1.35 }}>Epic EHR</p>
-      <p style={{ fontSize: detailSize, opacity: 0.65, marginTop: "0.1rem" }}>Insurance API • Scheduler</p>
-      <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", marginTop: "0.32rem" }}>
-        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>
-          <path
-            d="M2 5.2l2 2 4-4.5"
-            stroke={isBeige ? theme.accent : theme.icon}
-            strokeWidth="1.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-        <span style={{ fontSize: detailSize, opacity: 0.72 }}>Chart synced to inbox</span>
+    <>
+      <CardHeader
+        title="Appointment details"
+        action="Manage visit ›"
+        accent={isBeige ? theme.accent : undefined}
+        labelSize={labelSize}
+      />
+      <p style={{ fontSize: headlineSize, fontWeight: 500, marginBottom: "0.65rem", letterSpacing: "-0.012em", lineHeight: 1.15 }}>
+        {APPOINTMENT_HEADLINE}
+      </p>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "auto auto minmax(0, 1fr)",
+          columnGap: "0.28rem",
+          rowGap: "0.75rem",
+        }}
+      >
+        <div>
+          <p style={{ fontSize: labelSize, opacity: 0.55, marginBottom: "0.14rem" }}>Scheduled</p>
+          <p style={{ fontSize: valueSize, fontWeight: 500 }}>Fri, Jun 27</p>
+          <p style={{ fontSize: detailSize, opacity: 0.65, marginTop: "0.1rem" }}>10:30 AM</p>
+        </div>
+        <div>
+          <p style={{ fontSize: labelSize, opacity: 0.55, marginBottom: "0.14rem" }}>Provider</p>
+          <p style={{ fontSize: valueSize, fontWeight: 500 }}>Dr. Patel</p>
+          <p style={{ fontSize: detailSize, opacity: 0.65, marginTop: "0.1rem" }}>Exam Room 3</p>
+        </div>
+        <LabResultsColumn theme={theme} isBeige={isBeige} labelSize={labelSize} valueSize={detailSize} />
       </div>
-    </div>
+      {showLiveCta ? (
+        <p
+          style={{
+            marginTop: "0.72rem",
+            fontSize: labelSize,
+            fontWeight: 500,
+            color: isBeige ? theme.accent : theme.ink,
+            opacity: 0.92,
+          }}
+        >
+          Begin Live Appointment ›
+        </p>
+      ) : null}
+    </>
+  );
+}
+
+function AppointmentAgentCard({
+  theme,
+  orangeTheme,
+  revealIndex,
+  revealed,
+  gradientOpacity,
+  titleSize,
+  bodySize,
+  padding,
+  borderRadius,
+  style,
+}: {
+  theme: ReturnType<typeof cardTheme>;
+  orangeTheme: ReturnType<typeof cardTheme>;
+  revealIndex: number;
+  revealed: boolean;
+  gradientOpacity: number;
+  titleSize: string;
+  bodySize: string;
+  padding?: string;
+  borderRadius?: string;
+  style?: CSSProperties;
+}) {
+  return (
+    <GlassCard
+      theme={theme}
+      revealIndex={revealIndex}
+      revealed={revealed}
+      gradient
+      gradientOpacity={gradientOpacity}
+      style={{
+        ...(padding ? { padding } : null),
+        ...(borderRadius ? { borderRadius } : null),
+        ...style,
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: "0.45rem", marginBottom: "0.6rem" }}>
+        <AgentIcon theme={orangeTheme} />
+        <span style={{ fontSize: titleSize, fontWeight: 500, color: ON_ORANGE_MUTED }}>{APPOINTMENT_AGENT_COPY.title}</span>
+      </div>
+      <p style={{ fontSize: bodySize, lineHeight: 1.46, letterSpacing: "-0.015em", margin: 0 }}>
+        <span style={{ color: ON_ORANGE_INK, fontWeight: 500 }}>{APPOINTMENT_AGENT_COPY.lead}</span>{" "}
+        <span style={{ color: ON_ORANGE_MUTED }}>{APPOINTMENT_AGENT_COPY.body}</span>
+      </p>
+    </GlassCard>
   );
 }
 
@@ -279,25 +449,17 @@ export function JoinHeroWorkflowCardCluster({
           ...style,
         }}
       >
-        <GlassCard
+        <AppointmentAgentCard
           theme={theme}
+          orangeTheme={orangeTheme}
           revealIndex={0}
           revealed={revealed}
-          gradient
           gradientOpacity={HERO_STACK_AGENT_OPACITY}
-          style={{ padding: HERO_CARD_PAD, borderRadius: "1.25rem" }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: "0.45rem", marginBottom: "0.6rem" }}>
-            <AgentIcon theme={orangeTheme} />
-            <span style={{ fontSize: FS_HERO.base, fontWeight: 500, color: ON_ORANGE_MUTED }}>Scheduling Agent</span>
-          </div>
-          <p style={{ fontSize: FS_HERO.lg, lineHeight: 1.42, letterSpacing: "-0.015em", margin: 0 }}>
-            <span style={{ color: ON_ORANGE_INK, fontWeight: 500 }}>Sarah&apos;s intake is in Epic.</span>{" "}
-            <span style={{ color: ON_ORANGE_MUTED }}>
-              Insurance verified and a reminder goes out 48 h before her visit.
-            </span>
-          </p>
-        </GlassCard>
+          titleSize={FS_HERO.base}
+          bodySize={FS_HERO.base}
+          padding={HERO_CARD_PAD}
+          borderRadius="1.25rem"
+        />
 
         <GlassCard
           theme={theme}
@@ -306,45 +468,15 @@ export function JoinHeroWorkflowCardCluster({
           opacity={heroStackGlassOpacity("peak", surface)}
           style={{ padding: HERO_CARD_PAD, borderRadius: "1.25rem" }}
         >
-          <CardHeader
-            title="Appointment details"
-            action="Manage visit ›"
-            accent={isBeige ? theme.accent : undefined}
+          <AppointmentDetailsGrid
+            theme={theme}
+            isBeige={isBeige}
             labelSize={FS_HERO.sm}
+            valueSize={FS_HERO.base}
+            detailSize={FS_HERO.sm}
+            headlineSize={FS_HERO.xl}
+            showLiveCta
           />
-          <p style={{ fontSize: FS_HERO.lg, fontWeight: 500, marginBottom: "0.65rem", letterSpacing: "-0.01em" }}>
-            Sarah Chen, annual physical
-          </p>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.75rem" }}>
-            <div>
-              <p style={{ fontSize: FS_HERO.sm, opacity: 0.55, marginBottom: "0.14rem" }}>Scheduled</p>
-              <p style={{ fontSize: FS_HERO.base, fontWeight: 500 }}>Fri, Jun 27</p>
-              <p style={{ fontSize: FS_HERO.sm, opacity: 0.65, marginTop: "0.1rem" }}>10:30 AM</p>
-            </div>
-            <div>
-              <p style={{ fontSize: FS_HERO.sm, opacity: 0.55, marginBottom: "0.14rem" }}>Provider</p>
-              <p style={{ fontSize: FS_HERO.base, fontWeight: 500 }}>Dr. Patel</p>
-              <p style={{ fontSize: FS_HERO.sm, opacity: 0.65, marginTop: "0.1rem" }}>Exam Room 3</p>
-            </div>
-            <IntegrationsColumn
-              theme={theme}
-              isBeige={isBeige}
-              labelSize={FS_HERO.sm}
-              valueSize={FS_HERO.base}
-              detailSize={FS_HERO.sm}
-            />
-          </div>
-        </GlassCard>
-
-        <GlassCard
-          theme={theme}
-          revealIndex={2}
-          revealed={revealed}
-          opacity={heroStackGlassOpacity("fade2", surface)}
-          style={{ padding: HERO_CARD_PAD, borderRadius: "1.25rem" }}
-        >
-          <ProgressRow theme={theme} label="Open slots today" pct="68%" labelSize={FS_HERO.sm} />
-          <ProgressRow theme={theme} label="Intake forms sent" pct="41%" last labelSize={FS_HERO.sm} />
         </GlassCard>
 
       </div>
@@ -375,54 +507,30 @@ export function JoinHeroWorkflowCardCluster({
       </GlassCard>
 
       <GlassCard theme={theme} revealIndex={2} revealed={revealed} opacity={glassFillOpacity("near", surface)}>
-        <CardHeader title="Appointment details" action="Manage visit ›" accent={isBeige ? theme.accent : undefined} />
-        <p style={{ fontSize: FS_LG, fontWeight: 500, marginBottom: "0.65rem", letterSpacing: "-0.01em" }}>
-          Sarah Chen, annual physical
-        </p>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.75rem" }}>
-          <div>
-            <p style={{ fontSize: FS_SM, opacity: 0.55, marginBottom: "0.14rem" }}>Scheduled</p>
-            <p style={{ fontSize: FS, fontWeight: 500 }}>Fri, Jun 27</p>
-            <p style={{ fontSize: FS_SM, opacity: 0.65, marginTop: "0.1rem" }}>10:30 AM</p>
-          </div>
-          <div>
-            <p style={{ fontSize: FS_SM, opacity: 0.55, marginBottom: "0.14rem" }}>Provider</p>
-            <p style={{ fontSize: FS, fontWeight: 500 }}>Dr. Patel</p>
-            <p style={{ fontSize: FS_SM, opacity: 0.65, marginTop: "0.1rem" }}>Exam Room 3</p>
-          </div>
-          <IntegrationsColumn
-            theme={theme}
-            isBeige={isBeige}
-            labelSize={FS_SM}
-            valueSize={FS}
-            detailSize={FS_SM}
-          />
-        </div>
+        <AppointmentDetailsGrid
+          theme={theme}
+          isBeige={isBeige}
+          labelSize={FS_SM}
+          valueSize={FS}
+          detailSize={FS_SM}
+          headlineSize={FS_XL}
+        />
       </GlassCard>
 
       <GlassCard theme={theme} revealIndex={3} revealed={revealed} opacity={glassFillOpacity("near", surface)}>
-        <ProgressRow theme={theme} label="Open slots today" pct="68%" />
         <ProgressRow theme={theme} label="Intake forms sent" pct="41%" last />
       </GlassCard>
 
-      <GlassCard
+      <AppointmentAgentCard
         theme={theme}
+        orangeTheme={orangeTheme}
         revealIndex={4}
         revealed={revealed}
-        gradient
+        gradientOpacity={1}
+        titleSize={FS}
+        bodySize={FS_LG}
         style={{ gridColumn: "1 / -1" }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "0.45rem", marginBottom: "0.6rem" }}>
-          <AgentIcon theme={orangeTheme} />
-          <span style={{ fontSize: FS, fontWeight: 500, color: ON_ORANGE_MUTED }}>Scheduling Agent</span>
-        </div>
-        <p style={{ fontSize: FS_LG, lineHeight: 1.42, letterSpacing: "-0.015em" }}>
-          <span style={{ color: ON_ORANGE_INK, fontWeight: 500 }}>Sarah&apos;s intake is in Epic.</span>{" "}
-          <span style={{ color: ON_ORANGE_MUTED }}>
-            Insurance verified and a reminder goes out 48 h before her visit.
-          </span>
-        </p>
-      </GlassCard>
+      />
 
       <GlassCard theme={theme} revealIndex={5} revealed={revealed} opacity={glassFillOpacity("near", surface)}>
         <p style={{ fontSize: FS_SM, opacity: 0.6, marginBottom: "0.2rem" }}>Next in queue</p>
