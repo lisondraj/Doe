@@ -108,18 +108,20 @@ function ProgressRow({
   pct,
   theme,
   last = false,
+  labelSize = FS_SM,
 }: {
   label: string;
   pct: string;
   theme: ReturnType<typeof cardTheme>;
   last?: boolean;
+  labelSize?: string;
 }) {
   const n = parseFloat(pct);
   return (
     <div style={{ marginBottom: last ? 0 : "0.55rem" }}>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.28rem" }}>
-        <span style={{ fontSize: FS_SM, opacity: 0.88 }}>{label}</span>
-        <span style={{ fontSize: FS_SM, color: theme.accent, opacity: 0.9 }}>{pct}</span>
+        <span style={{ fontSize: labelSize, opacity: 0.88 }}>{label}</span>
+        <span style={{ fontSize: labelSize, color: theme.accent, opacity: 0.9 }}>{pct}</span>
       </div>
       <div
         style={{
@@ -146,16 +148,18 @@ function CardHeader({
   title,
   action,
   accent,
+  labelSize = FS_SM,
 }: {
   title: string;
   action?: string;
   accent?: string;
+  labelSize?: string;
 }) {
   return (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.55rem" }}>
-      <span style={{ fontSize: FS_SM, fontWeight: 500, opacity: 0.82 }}>{title}</span>
+      <span style={{ fontSize: labelSize, fontWeight: 500, opacity: 0.82 }}>{title}</span>
       {action ? (
-        <span style={{ fontSize: FS_SM, color: accent, opacity: accent ? 0.92 : 0.55 }}>{action}</span>
+        <span style={{ fontSize: labelSize, color: accent, opacity: accent ? 0.92 : 0.55 }}>{action}</span>
       ) : null}
     </div>
   );
@@ -172,11 +176,15 @@ function AgentIcon({ theme }: { theme: ReturnType<typeof cardTheme> }) {
 }
 
 const FS_HERO = {
-  sm: "clamp(0.72rem, 0.96vw, 0.86rem)",
-  base: "clamp(0.92rem, 1.18vw, 1.06rem)",
-  lg: "clamp(1.12rem, 1.42vw, 1.28rem)",
-  xl: "clamp(1.32rem, 1.68vw, 1.52rem)",
+  sm: "clamp(0.95rem, 1.28vw, 1.12rem)",
+  base: "clamp(1.18rem, 1.62vw, 1.42rem)",
+  lg: "clamp(1.42rem, 1.92vw, 1.68rem)",
+  xl: "clamp(1.68rem, 2.25vw, 2rem)",
 } as const;
+
+const HERO_CARD_PAD = "1.25rem 1.35rem";
+const HERO_CARD_PAD_COMPACT = "1rem 1.2rem";
+const HERO_CARD_GAP = "0.82rem";
 
 /** Glass workflow card bento — shared by join hero and DoePhone comm + intelligence. */
 export function JoinHeroWorkflowCardCluster({
@@ -204,19 +212,36 @@ export function JoinHeroWorkflowCardCluster({
         style={{
           display: "flex",
           flexDirection: "column",
-          gap: "0.68rem",
+          gap: HERO_CARD_GAP,
           width: "100%",
           minWidth: 0,
           ...style,
         }}
       >
-        <GlassCard theme={theme} revealIndex={0} revealed={revealed} opacity={glassFillOpacity("mid", surface)}>
+        <GlassCard
+          theme={theme}
+          revealIndex={0}
+          revealed={revealed}
+          opacity={glassFillOpacity("mid", surface)}
+          style={{ padding: HERO_CARD_PAD, borderRadius: "1.25rem" }}
+        >
           <p style={{ fontSize: FS_HERO.sm, opacity: 0.6, marginBottom: "0.16rem" }}>Today</p>
           <p style={{ fontSize: FS_HERO.base, fontWeight: 500 }}>Fri, Jun 27</p>
         </GlassCard>
 
-        <GlassCard theme={theme} revealIndex={2} revealed={revealed} opacity={glassFillOpacity("near", surface)}>
-          <CardHeader title="Appointment details" action="Manage visit ›" accent={isBeige ? theme.accent : undefined} />
+        <GlassCard
+          theme={theme}
+          revealIndex={2}
+          revealed={revealed}
+          opacity={glassFillOpacity("near", surface)}
+          style={{ padding: HERO_CARD_PAD, borderRadius: "1.25rem" }}
+        >
+          <CardHeader
+            title="Appointment details"
+            action="Manage visit ›"
+            accent={isBeige ? theme.accent : undefined}
+            labelSize={FS_HERO.sm}
+          />
           <p style={{ fontSize: FS_HERO.lg, fontWeight: 500, marginBottom: "0.65rem", letterSpacing: "-0.01em" }}>
             Sarah Chen, annual physical
           </p>
@@ -234,12 +259,24 @@ export function JoinHeroWorkflowCardCluster({
           </div>
         </GlassCard>
 
-        <GlassCard theme={theme} revealIndex={3} revealed={revealed} opacity={glassFillOpacity("near", surface)}>
-          <ProgressRow theme={theme} label="Open slots today" pct="68%" />
-          <ProgressRow theme={theme} label="Intake forms sent" pct="41%" last />
+        <GlassCard
+          theme={theme}
+          revealIndex={3}
+          revealed={revealed}
+          opacity={glassFillOpacity("near", surface)}
+          style={{ padding: HERO_CARD_PAD, borderRadius: "1.25rem" }}
+        >
+          <ProgressRow theme={theme} label="Open slots today" pct="68%" labelSize={FS_HERO.sm} />
+          <ProgressRow theme={theme} label="Intake forms sent" pct="41%" last labelSize={FS_HERO.sm} />
         </GlassCard>
 
-        <GlassCard theme={theme} revealIndex={4} revealed={revealed} gradient>
+        <GlassCard
+          theme={theme}
+          revealIndex={4}
+          revealed={revealed}
+          gradient
+          style={{ padding: HERO_CARD_PAD, borderRadius: "1.25rem" }}
+        >
           <div style={{ display: "flex", alignItems: "center", gap: "0.45rem", marginBottom: "0.6rem" }}>
             <AgentIcon theme={orangeTheme} />
             <span style={{ fontSize: FS_HERO.base, fontWeight: 500, color: ON_ORANGE_MUTED }}>Scheduling Agent</span>
@@ -252,8 +289,19 @@ export function JoinHeroWorkflowCardCluster({
           </p>
         </GlassCard>
 
-        <GlassCard theme={theme} revealIndex={5} revealed={revealed} opacity={glassFillOpacity("near", surface)}>
-          <CardHeader title="Integrations" action="Manage ›" accent={isBeige ? theme.accent : undefined} />
+        <GlassCard
+          theme={theme}
+          revealIndex={5}
+          revealed={revealed}
+          opacity={glassFillOpacity("near", surface)}
+          style={{ padding: HERO_CARD_PAD, borderRadius: "1.25rem" }}
+        >
+          <CardHeader
+            title="Integrations"
+            action="Manage ›"
+            accent={isBeige ? theme.accent : undefined}
+            labelSize={FS_HERO.sm}
+          />
           <p style={{ fontSize: FS_HERO.base, marginBottom: "0.5rem", opacity: 0.88 }}>
             Epic EHR • Insurance API • Clinic scheduler
           </p>
@@ -271,7 +319,13 @@ export function JoinHeroWorkflowCardCluster({
           </div>
         </GlassCard>
 
-        <GlassCard theme={theme} revealIndex={6} revealed={revealed} opacity={glassFillOpacity("near", surface)}>
+        <GlassCard
+          theme={theme}
+          revealIndex={6}
+          revealed={revealed}
+          opacity={glassFillOpacity("near", surface)}
+          style={{ padding: HERO_CARD_PAD, borderRadius: "1.25rem" }}
+        >
           <p style={{ fontSize: FS_HERO.sm, opacity: 0.6, marginBottom: "0.2rem" }}>Next in queue</p>
           <p
             style={{
@@ -293,11 +347,25 @@ export function JoinHeroWorkflowCardCluster({
           </div>
         </GlassCard>
 
-        <GlassCard theme={theme} revealIndex={7} revealed={revealed} compact opacity={glassFillOpacity("mid", surface)}>
+        <GlassCard
+          theme={theme}
+          revealIndex={7}
+          revealed={revealed}
+          compact
+          opacity={glassFillOpacity("mid", surface)}
+          style={{ padding: HERO_CARD_PAD_COMPACT, borderRadius: "1.25rem" }}
+        >
           <span style={{ fontSize: FS_HERO.base, opacity: 0.7 }}>Open chart ›</span>
         </GlassCard>
 
-        <GlassCard theme={theme} revealIndex={8} revealed={revealed} compact opacity={glassFillOpacity("mid", surface)}>
+        <GlassCard
+          theme={theme}
+          revealIndex={8}
+          revealed={revealed}
+          compact
+          opacity={glassFillOpacity("mid", surface)}
+          style={{ padding: HERO_CARD_PAD_COMPACT, borderRadius: "1.25rem" }}
+        >
           <span style={{ fontSize: FS_HERO.base, opacity: 0.65 }}>Reschedule ›</span>
         </GlassCard>
       </div>

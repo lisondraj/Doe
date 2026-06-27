@@ -10,7 +10,7 @@ import {
   NAV_ITEMS,
 } from "@/components/doe-nav-data";
 import { DOEPHONE_NAV_PAGE_LINK_CLASS, DOEPHONE_NAV_TRIPLE_CTA_CLASS, DOEPHONE_NAV_WAITLIST_CLASS } from "@/lib/doephone/waitlist-button";
-import { DOEPHONE_SECTION_CAROUSEL_INSET_X, DOEPHONE_SECTION_COPY_INSET } from "@/lib/doephone/section-styles";
+import { DOEPHONE_SECTION_CAROUSEL_INSET_X } from "@/lib/doephone/section-styles";
 import { JOIN_PAGE_HREF, WAITLIST_PATH } from "@/lib/site-domains";
 import { scrollToJoinApplySection } from "@/lib/join/join-apply-scroll";
 import {
@@ -92,7 +92,7 @@ function NavChromeStrip({
   const navInsetX = showApplyScrollCta
     ? `${pageNavLeftPad} pr-0`
     : joinWaitlistAnchored
-      ? DOEPHONE_SECTION_COPY_INSET
+      ? DOEPHONE_SECTION_CAROUSEL_INSET_X
       : pinchSafe
         ? "px-11 iphone-page:px-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))] iphone-page:pr-[max(1.65rem,env(safe-area-inset-right,0px))]"
         : "px-8 iphone-page:px-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))]";
