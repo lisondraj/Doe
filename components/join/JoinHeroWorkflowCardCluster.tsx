@@ -369,17 +369,6 @@ export function JoinHeroWorkflowCardCluster({
         >
           <span style={{ fontSize: FS_HERO.base, opacity: 0.7 }}>Open chart ›</span>
         </GlassCard>
-
-        <GlassCard
-          theme={theme}
-          revealIndex={6}
-          revealed={revealed}
-          compact
-          opacity={heroStackGlassOpacity("fade5", surface)}
-          style={{ padding: HERO_CARD_PAD_COMPACT, borderRadius: "1.25rem" }}
-        >
-          <span style={{ fontSize: FS_HERO.base, opacity: 0.65 }}>Reschedule ›</span>
-        </GlassCard>
       </div>
     );
   }
