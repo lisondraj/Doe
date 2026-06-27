@@ -44,19 +44,26 @@ export function SubpageMobileNavRow({
         </Fragment>
       ))}
       {button ? (
-        interactive ? (
-          button.kind === "scroll-apply" ? (
-            <button type="button" onClick={scrollToJoinApplySection} className={DOEPHONE_NAV_WAITLIST_CLASS}>
-              {button.label}
-            </button>
+        <>
+          {links.length > 0 ? (
+            <span className={DOEPHONE_NAV_JOIN_ROW_DOT_CLASS} aria-hidden>
+              ·
+            </span>
+          ) : null}
+          {interactive ? (
+            button.kind === "scroll-apply" ? (
+              <button type="button" onClick={scrollToJoinApplySection} className={DOEPHONE_NAV_WAITLIST_CLASS}>
+                {button.label}
+              </button>
+            ) : (
+              <a href={button.href} className={DOEPHONE_NAV_WAITLIST_CLASS}>
+                {button.label}
+              </a>
+            )
           ) : (
-            <a href={button.href} className={DOEPHONE_NAV_WAITLIST_CLASS}>
-              {button.label}
-            </a>
-          )
-        ) : (
-          <span className={DOEPHONE_NAV_WAITLIST_CLASS}>{button.label}</span>
-        )
+            <span className={DOEPHONE_NAV_WAITLIST_CLASS}>{button.label}</span>
+          )}
+        </>
       ) : null}
     </>
   );

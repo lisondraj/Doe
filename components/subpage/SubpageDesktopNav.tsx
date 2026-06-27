@@ -31,32 +31,37 @@ export function SubpageDesktopNav({ variant }: { variant: SubpageNavVariant }) {
       <div className={`${JOIN_DESKTOP_CONTENT} flex items-center justify-between py-6`}>
         <h1 className={`text-4xl font-normal text-black ${lora.className}`}>Doe</h1>
 
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-3">
-            {links.map((item, index) => (
-              <Fragment key={item.href}>
-                {index > 0 ? (
-                  <span className={SUBPAGE_NAV_DOT_CLASS} aria-hidden>
-                    ·
-                  </span>
-                ) : null}
-                <Link href={item.href} className={SUBPAGE_NAV_LINK_CLASS}>
-                  {item.label}
-                </Link>
-              </Fragment>
-            ))}
-          </div>
+        <div className="flex items-center gap-3">
+          {links.map((item, index) => (
+            <Fragment key={item.href}>
+              {index > 0 ? (
+                <span className={SUBPAGE_NAV_DOT_CLASS} aria-hidden>
+                  ·
+                </span>
+              ) : null}
+              <Link href={item.href} className={SUBPAGE_NAV_LINK_CLASS}>
+                {item.label}
+              </Link>
+            </Fragment>
+          ))}
 
           {button ? (
-            button.kind === "scroll-apply" ? (
-              <button type="button" onClick={scrollToJoinApplySection} className={DESKTOP_CTA_CLASS}>
-                {button.label}
-              </button>
-            ) : (
-              <a href={button.href} className={DESKTOP_CTA_CLASS}>
-                {button.label}
-              </a>
-            )
+            <>
+              {links.length > 0 ? (
+                <span className={SUBPAGE_NAV_DOT_CLASS} aria-hidden>
+                  ·
+                </span>
+              ) : null}
+              {button.kind === "scroll-apply" ? (
+                <button type="button" onClick={scrollToJoinApplySection} className={DESKTOP_CTA_CLASS}>
+                  {button.label}
+                </button>
+              ) : (
+                <a href={button.href} className={DESKTOP_CTA_CLASS}>
+                  {button.label}
+                </a>
+              )}
+            </>
           ) : null}
         </div>
       </div>
