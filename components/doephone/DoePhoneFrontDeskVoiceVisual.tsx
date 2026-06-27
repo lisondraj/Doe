@@ -8,9 +8,9 @@ const { ink: INK, muted: MUTED, accent: DOE_ORANGE, divider: DIVIDER, row: ROW_S
 const CARD = `${CAROUSEL_MENU_UI.cardRadius} ${CAROUSEL_MENU_UI.cardShell}`;
 
 const CALL_STEPS = [
-  "Patient requesting refill for Bupropion XL 300 mg",
-  "Medication pulled from chart",
-  "Clinic availability shared",
+  { label: "Refill", icon: "pill" },
+  { label: "Chart", icon: "chart" },
+  { label: "Slots", icon: "calendar" },
 ] as const;
 
 function LiveDot() {
@@ -63,6 +63,42 @@ function VoiceOrb() {
   );
 }
 
+function StepIcon({ kind }: { kind: (typeof CALL_STEPS)[number]["icon"] }) {
+  const props = {
+    width: 18,
+    height: 18,
+    viewBox: "0 0 24 24",
+    fill: "none" as const,
+    stroke: DOE_ORANGE,
+    strokeWidth: 1.6,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+  };
+
+  if (kind === "pill") {
+    return (
+      <svg {...props} aria-hidden>
+        <path d="M8.5 8.5l7 7M15 9l-6 6" />
+        <rect x="3" y="11" width="8" height="8" rx="4" transform="rotate(-45 7 15)" />
+      </svg>
+    );
+  }
+  if (kind === "chart") {
+    return (
+      <svg {...props} aria-hidden>
+        <path d="M4 19V5M4 19h16" />
+        <path d="M4 15l5-6 4 4 7-9" />
+      </svg>
+    );
+  }
+  return (
+    <svg {...props} aria-hidden>
+      <rect x="3" y="4" width="18" height="18" rx="2" />
+      <path d="M16 2v4M8 2v4M3 10h18" />
+    </svg>
+  );
+}
+
 function StepCheck() {
   return (
     <svg width="13" height="13" viewBox="0 0 10 10" fill="none" aria-hidden className="shrink-0">
@@ -94,16 +130,10 @@ export function DoePhoneFrontDeskVoiceVisual() {
             padding: `${CAROUSEL_MENU_UI.padY} ${CAROUSEL_MENU_UI.padX}`,
           }}
         >
-          <div>
+          <div className="flex items-center gap-[0.38rem]">
+            <LiveDot />
             <p className="font-medium tracking-[-0.014em]" style={{ color: INK, fontSize: CAROUSEL_MENU_UI.type.title }}>
               Voice Agent
-            </p>
-            <p
-              className={`mt-[0.22rem] flex items-center gap-[0.32rem] ${inter.className}`}
-              style={{ color: MUTED, fontSize: CAROUSEL_MENU_UI.type.eyebrow }}
-            >
-              <LiveDot />
-              Live call in progress
             </p>
           </div>
           <span
@@ -114,51 +144,47 @@ export function DoePhoneFrontDeskVoiceVisual() {
               fontSize: CAROUSEL_MENU_UI.type.eyebrow,
             }}
           >
-            Front desk
+            Live
           </span>
         </div>
 
         <div
-          className="flex min-h-0 flex-1 flex-col gap-[clamp(0.85rem,3vmin,1.15rem)] sm:flex-row sm:items-start"
+          className="flex min-h-0 flex-1 flex-col gap-[clamp(0.85rem,3vmin,1.15rem)] sm:flex-row sm:items-center"
           style={{ padding: `${CAROUSEL_MENU_UI.padY} ${CAROUSEL_MENU_UI.padX}` }}
         >
           <VoiceOrb />
 
           <div className="min-w-0 flex-1">
             <p
-              className="font-semibold uppercase tracking-[0.14em]"
-              style={{ color: MUTED, fontSize: CAROUSEL_MENU_UI.type.eyebrow }}
+              className="font-semibold tabular-nums tracking-[0.06em]"
+              style={{ color: MUTED, fontSize: CAROUSEL_MENU_UI.type.headline }}
             >
               (416) 555-0142
             </p>
-            <p
-              className="mt-[0.38rem] font-medium leading-[1.4] tracking-[-0.02em]"
-              style={{ color: INK, fontSize: CAROUSEL_MENU_UI.type.body }}
-            >
-              &ldquo;Hi, this is Sarah Walsh — can I get a refill on my Bupropion?&rdquo;
-            </p>
 
-            <div className={`mt-[clamp(0.65rem,2.4vmin,0.9rem)] space-y-[0.38rem] ${inter.className}`}>
+            <div className={`mt-[clamp(0.75rem,2.6vmin,1rem)] grid grid-cols-3 gap-[0.38rem] ${inter.className}`}>
               {CALL_STEPS.map((step) => (
                 <div
-                  key={step}
-                  className={`flex items-start gap-[0.42rem] px-[0.72rem] py-[0.52rem] ${ROW_SHELL}`}
+                  key={step.label}
+                  className={`flex flex-col items-center gap-[0.32rem] px-[0.38rem] py-[0.55rem] ${ROW_SHELL}`}
                 >
                   <StepCheck />
-                  <p className="min-w-0 leading-[1.38]" style={{ color: INK, fontSize: CAROUSEL_MENU_UI.type.caption }}>
-                    {step}
+                  <StepIcon kind={step.icon} />
+                  <p className="font-medium" style={{ color: INK, fontSize: CAROUSEL_MENU_UI.type.eyebrow }}>
+                    {step.label}
                   </p>
                 </div>
               ))}
-              <div className={`flex items-center gap-[0.42rem] px-[0.72rem] py-[0.52rem] ${ROW_SHELL}`}>
-                <span
-                  className="h-[0.72rem] w-[0.72rem] shrink-0 animate-spin rounded-full border-[1.5px] border-[#D9D4CC] border-r-transparent"
-                  aria-hidden
-                />
-                <p className="leading-[1.38]" style={{ color: MUTED, fontSize: CAROUSEL_MENU_UI.type.caption }}>
-                  Reviewing calendar
-                </p>
-              </div>
+            </div>
+
+            <div
+              className={`mt-[0.42rem] flex items-center justify-center gap-[0.42rem] px-[0.72rem] py-[0.48rem] ${ROW_SHELL}`}
+            >
+              <span
+                className="h-[0.72rem] w-[0.72rem] shrink-0 animate-spin rounded-full border-[1.5px] border-[#D9D4CC] border-r-transparent"
+                aria-hidden
+              />
+              <StepIcon kind="calendar" />
             </div>
           </div>
         </div>

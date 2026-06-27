@@ -59,9 +59,9 @@ function DoePhoneCarouselCard({ slide }: { slide: DoePhoneCommunicationSlide }) 
         </CarouselMenuOverlay>
       ) : null}
       {slide.id === "billing" ? (
-        <div className="absolute inset-0 z-10 flex items-center justify-center px-[clamp(1.25rem,4vmin,2rem)] py-[clamp(1rem,3vmin,1.75rem)]">
+        <CarouselMenuOverlay>
           <DoePhoneBillingVisual />
-        </div>
+        </CarouselMenuOverlay>
       ) : null}
     </div>
   );

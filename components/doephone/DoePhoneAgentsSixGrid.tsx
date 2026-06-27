@@ -1,6 +1,13 @@
 "use client";
 
-import { HERO_AGENT_LABELS } from "@/lib/join/hero-agent-box-svg";
+import { useId } from "react";
+import {
+  HERO_AGENT_BOX_H,
+  HERO_AGENT_BOX_W,
+  HeroAgentBoxContent,
+  HeroAgentBoxGrainFilter,
+  type HeroAgentIndex,
+} from "@/lib/join/hero-agent-box-svg";
 import { CAROUSEL_MENU_UI } from "@/lib/doephone/carousel-menu-visual-styles";
 import { suisseIntl } from "@/lib/home/fonts";
 
@@ -9,12 +16,34 @@ const BUS_Y = 50;
 const TOP_STUB_Y = 28;
 const BOTTOM_STUB_Y = 72;
 
-function AgentSquare() {
+const SHORT_LABELS = ["Voice", "Scheduling", "Labs", "Referrals", "Live", "Billing"] as const;
+
+function AgentBoxVisual({ agentIndex }: { agentIndex: HeroAgentIndex }) {
+  const id = useId().replace(/:/g, "");
+  const grainFilterId = `${id}-grain`;
+
   return (
     <div
-      className={`aspect-square w-[min(90%,9.25rem)] ${CAROUSEL_MENU_UI.cardRadius} bg-white shadow-[0_12px_32px_rgba(30,52,58,0.16)]`}
+      className={`aspect-square w-[min(90%,9.25rem)] overflow-hidden ${CAROUSEL_MENU_UI.cardRadius} bg-white shadow-[0_12px_32px_rgba(30,52,58,0.16)]`}
       aria-hidden
-    />
+    >
+      <svg
+        viewBox={`0 0 ${HERO_AGENT_BOX_W} ${HERO_AGENT_BOX_H}`}
+        preserveAspectRatio="xMidYMid slice"
+        className="h-full w-full"
+      >
+        <defs>
+          <HeroAgentBoxGrainFilter id={grainFilterId} />
+        </defs>
+        <HeroAgentBoxContent
+          agentIndex={agentIndex}
+          boxX={0}
+          boxY={0}
+          grainFilterId={grainFilterId}
+          idPrefix={id}
+        />
+      </svg>
+    </div>
   );
 }
 
@@ -35,8 +64,8 @@ function AgentName({ label, placement }: { label: string; placement: "above" | "
 
 /** Six-agent 2×3 grid with white bus wiring — Agents carousel slide. */
 export function DoePhoneAgentsSixGrid() {
-  const topAgents = HERO_AGENT_LABELS.slice(0, 3);
-  const bottomAgents = HERO_AGENT_LABELS.slice(3, 6);
+  const topAgents = SHORT_LABELS.slice(0, 3);
+  const bottomAgents = SHORT_LABELS.slice(3, 6);
 
   return (
     <div
@@ -91,17 +120,17 @@ export function DoePhoneAgentsSixGrid() {
           <AgentName key={`${label}-name-top`} label={label} placement="above" />
         ))}
 
-        {topAgents.map((label) => (
+        {topAgents.map((label, i) => (
           <div key={`${label}-box-top`} className="flex items-end justify-center">
-            <AgentSquare />
+            <AgentBoxVisual agentIndex={i as HeroAgentIndex} />
           </div>
         ))}
 
         <div className="col-span-3 h-[clamp(2rem,6.5vmin,3.25rem)]" aria-hidden />
 
-        {bottomAgents.map((label) => (
+        {bottomAgents.map((label, i) => (
           <div key={`${label}-box-bottom`} className="flex items-start justify-center">
-            <AgentSquare />
+            <AgentBoxVisual agentIndex={(i + 3) as HeroAgentIndex} />
           </div>
         ))}
 
