@@ -72,12 +72,13 @@ export function DoePhoneHeroSection() {
       />
 
       <div
-        className={`doephone-hero-copy absolute inset-0 z-[3] flex min-w-0 flex-col items-start justify-start overflow-visible pt-[max(6.25rem,calc(env(safe-area-inset-top,0px)+calc(var(--app-vh,100lvh)*0.19)))] pb-[clamp(1.5rem,5vmin,2.5rem)] ${DOEPHONE_HERO_COPY_INSET}`}
+        className={`absolute inset-0 z-[3] flex min-w-0 flex-col items-start justify-end overflow-visible pb-[clamp(1.5rem,5vmin,2.5rem)] ${DOEPHONE_SECTION_CAROUSEL_INSET_X}`}
       >
-        <DoePhoneHeroHeadline />
+        <div className="doephone-hero-copy pointer-events-none mb-[clamp(0.6rem,1.6vmin,1rem)] w-full min-w-0">
+          <DoePhoneHeroHeadline />
+        </div>
+        <DoePhoneHeroWorkflowCards />
       </div>
-
-      <DoePhoneHeroWorkflowCards />
     </section>
   );
 }

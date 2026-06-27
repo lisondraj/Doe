@@ -250,6 +250,7 @@ export function JoinHeroWorkflowCardCluster({
           revealIndex={0}
           revealed={revealed}
           gradient
+          gradientOpacity={HERO_STACK_AGENT_OPACITY}
           style={{ padding: HERO_CARD_PAD, borderRadius: "1.25rem" }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: "0.45rem", marginBottom: "0.6rem" }}>
