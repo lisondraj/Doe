@@ -7,7 +7,23 @@ type LinePalette = {
   lineStrong: string;
   accent: string;
   accentWarm: string;
+  /** Gradient or solid stroke for focal accent lines (center mark, warm overlay). */
+  accentStroke?: string;
 };
+
+const DOE_LINE_ACCENT_GRADIENT_ID = "doe-line-accent";
+
+function DoeLineAccentGradientDef() {
+  return (
+    <defs>
+      <linearGradient id={DOE_LINE_ACCENT_GRADIENT_ID} x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stopColor="#C47A5A" />
+        <stop offset="48%" stopColor="#D2774C" />
+        <stop offset="100%" stopColor="#D49D4F" />
+      </linearGradient>
+    </defs>
+  );
+}
 
 const BEIGE_PALETTE: LinePalette = {
   lineSoft: BLOG_LANDING_HERO.lineSoft,
@@ -15,6 +31,13 @@ const BEIGE_PALETTE: LinePalette = {
   lineStrong: BLOG_LANDING_HERO.lineStrong,
   accent: BLOG_LANDING_HERO.accent,
   accentWarm: BLOG_LANDING_HERO.accentWarm,
+};
+
+const BRAND_ACCENT_BEIGE_PALETTE: LinePalette = {
+  ...BEIGE_PALETTE,
+  accent: "#D2774C",
+  accentWarm: "#D49D4F",
+  accentStroke: `url(#${DOE_LINE_ACCENT_GRADIENT_ID})`,
 };
 
 const ORANGE_PALETTE: LinePalette = {
@@ -28,8 +51,8 @@ const ORANGE_PALETTE: LinePalette = {
 const SVG_CLASS = "absolute inset-0 h-full w-full";
 
 /** Horizontal wave lines — compact, centered. */
-function WaveLinesGraphic({ palette }: { palette: LinePalette }) {
-  const { lineSoft, line, lineStrong, accentWarm } = palette;
+function WaveLinesGraphic({ palette, showAccentGradient }: { palette: LinePalette; showAccentGradient?: boolean }) {
+  const { lineSoft, line, lineStrong, accentWarm, accentStroke } = palette;
   const waves = [
     { y: 118, amp: 10, cycles: 1.5, phase: 1 as const, col: lineSoft, sw: 0.55, op: 0.55 },
     { y: 148, amp: 16, cycles: 1, phase: -1 as const, col: line, sw: 0.68, op: 0.72 },
@@ -55,24 +78,28 @@ function WaveLinesGraphic({ palette }: { palette: LinePalette }) {
 
   return (
     <svg viewBox="0 0 400 400" fill="none" preserveAspectRatio="xMidYMid meet" aria-hidden className={SVG_CLASS}>
-      {waves.map((w, i) => (
-        <path
-          key={i}
-          d={path(w.y, w.amp, w.cycles, w.phase)}
-          stroke={w.col}
-          strokeWidth={w.sw}
-          opacity={w.op}
-          strokeLinecap="round"
-          fill="none"
-        />
-      ))}
+      {showAccentGradient ? <DoeLineAccentGradientDef /> : null}
+      {waves.map((w, i) => {
+        const isAccent = w.col === accentWarm;
+        return (
+          <path
+            key={i}
+            d={path(w.y, w.amp, w.cycles, w.phase)}
+            stroke={isAccent && accentStroke ? accentStroke : w.col}
+            strokeWidth={w.sw}
+            opacity={isAccent && accentStroke ? 0.72 : w.op}
+            strokeLinecap="round"
+            fill="none"
+          />
+        );
+      })}
     </svg>
   );
 }
 
 /** Diagonal parallel lines — bottom-left to top-right. */
-function DiagonalLinesGraphic({ palette }: { palette: LinePalette }) {
-  const { lineSoft, line, lineStrong, accentWarm } = palette;
+function DiagonalLinesGraphic({ palette, showAccentGradient }: { palette: LinePalette; showAccentGradient?: boolean }) {
+  const { lineSoft, line, lineStrong, accentWarm, accentStroke } = palette;
   const rise = 72;
   const rows = [
     { leftY: 318, leftX: 0, rightX: 400, col: lineSoft, sw: 0.55, op: 0.52 },
@@ -88,19 +115,23 @@ function DiagonalLinesGraphic({ palette }: { palette: LinePalette }) {
 
   return (
     <svg viewBox="0 0 400 400" fill="none" preserveAspectRatio="xMidYMid meet" aria-hidden className={SVG_CLASS}>
-      {rows.map(({ leftY, leftX, rightX, col, sw, op }, i) => (
-        <line
-          key={i}
-          x1={leftX}
-          y1={leftY}
-          x2={rightX}
-          y2={leftY - (rise * (rightX - leftX)) / 400}
-          stroke={col}
-          strokeWidth={sw}
-          opacity={op}
-          strokeLinecap="round"
-        />
-      ))}
+      {showAccentGradient ? <DoeLineAccentGradientDef /> : null}
+      {rows.map(({ leftY, leftX, rightX, col, sw, op }, i) => {
+        const isAccent = col === accentWarm;
+        return (
+          <line
+            key={i}
+            x1={leftX}
+            y1={leftY}
+            x2={rightX}
+            y2={leftY - (rise * (rightX - leftX)) / 400}
+            stroke={isAccent && accentStroke ? accentStroke : col}
+            strokeWidth={isAccent && accentStroke ? sw + 0.12 : sw}
+            opacity={isAccent && accentStroke ? 0.78 : op}
+            strokeLinecap="round"
+          />
+        );
+      })}
     </svg>
   );
 }
@@ -109,11 +140,13 @@ function DiagonalLinesGraphic({ palette }: { palette: LinePalette }) {
 function ConvergingLinesGraphic({
   palette,
   fullBleed = false,
+  showAccentGradient = false,
 }: {
   palette: LinePalette;
   fullBleed?: boolean;
+  showAccentGradient?: boolean;
 }) {
-  const { lineSoft, line, lineStrong, accent } = palette;
+  const { lineSoft, line, lineStrong, accent, accentStroke } = palette;
   const cy = 200;
   const offsets = [-52, -40, -28, -18, -9, -3, 0, 3, 9, 18, 28, 40, 52];
   const edgeX = fullBleed ? 0 : 32;
@@ -129,18 +162,40 @@ function ConvergingLinesGraphic({
       aria-hidden
       className={SVG_CLASS}
     >
+      {showAccentGradient ? <DoeLineAccentGradientDef /> : null}
       {offsets.map((offset, i) => {
         const yAtEdge = cy + offset;
         const yAtCenter = cy + (offset > 0 ? 5 : offset < 0 ? -5 : 0) * (Math.abs(offset) / 52);
         const isCenter = i === 6;
-        const col = isCenter ? accent : Math.abs(offset) > 36 ? lineSoft : i % 3 === 0 ? lineStrong : line;
-        const sw = isCenter ? (fullBleed ? "1.35" : "0.95") : Math.abs(offset) > 40 ? "0.58" : "0.72";
+        const isNearCenter = Math.abs(offset) <= 9;
+        const col = isCenter
+          ? accentStroke ?? accent
+          : isNearCenter && accentStroke
+            ? accentStroke
+            : Math.abs(offset) > 36
+              ? lineSoft
+              : i % 3 === 0
+                ? lineStrong
+                : line;
+        const sw = isCenter
+          ? fullBleed
+            ? "1.35"
+            : accentStroke
+              ? "1.05"
+              : "0.95"
+          : isNearCenter && accentStroke
+            ? "0.82"
+            : Math.abs(offset) > 40
+              ? "0.58"
+              : "0.72";
+        const opacity = isCenter && accentStroke ? 0.92 : isNearCenter && accentStroke ? 0.55 : undefined;
         return (
           <path
             key={i}
             d={`M ${edgeX},${yAtEdge} C ${cpNear},${yAtEdge} 168,${yAtCenter} 200,${yAtCenter} C 232,${yAtCenter} ${cpFar},${yAtEdge} ${farX},${yAtEdge}`}
             stroke={col}
             strokeWidth={sw}
+            opacity={opacity}
           />
         );
       })}
@@ -149,8 +204,14 @@ function ConvergingLinesGraphic({
 }
 
 /** Soft crosshatch — balanced diagonal grid. */
-function CrosshatchLinesGraphic({ palette }: { palette: LinePalette }) {
-  const { lineSoft, line, lineStrong, accentWarm } = palette;
+function CrosshatchLinesGraphic({
+  palette,
+  showAccentGradient = false,
+}: {
+  palette: LinePalette;
+  showAccentGradient?: boolean;
+}) {
+  const { lineSoft, line, lineStrong, accentWarm, accent, accentStroke } = palette;
   const spacing = 28;
   const lines: { x1: number; y1: number; x2: number; y2: number; col: string; sw: number; op: number }[] = [];
 
@@ -179,6 +240,7 @@ function CrosshatchLinesGraphic({ palette }: { palette: LinePalette }) {
 
   return (
     <svg viewBox="0 0 400 400" fill="none" preserveAspectRatio="xMidYMid meet" aria-hidden className={SVG_CLASS}>
+      {showAccentGradient ? <DoeLineAccentGradientDef /> : null}
       {lines.map((l, i) => (
         <line
           key={i}
@@ -192,7 +254,13 @@ function CrosshatchLinesGraphic({ palette }: { palette: LinePalette }) {
           strokeLinecap="round"
         />
       ))}
-      <circle cx={200} cy={200} r="2.5" fill={accentWarm} opacity={0.55} />
+      <circle
+        cx={200}
+        cy={200}
+        r={showAccentGradient && accentStroke ? "3.25" : "2.5"}
+        fill={showAccentGradient ? accent : accentWarm}
+        opacity={showAccentGradient ? 0.82 : 0.55}
+      />
     </svg>
   );
 }
@@ -276,17 +344,23 @@ const JOIN_LINE_GRAPHICS = [
 export function JoinInternLineGraphic({
   variant,
   onOrange = false,
+  brandAccent = false,
   fullBleed = false,
 }: {
   variant: 0 | 1 | 2 | 3;
   onOrange?: boolean;
+  /** Doe orange gradient on central/accent line strokes (beige backgrounds). */
+  brandAccent?: boolean;
   /** Converging lines extend to the SVG edges (apply card). */
   fullBleed?: boolean;
 }) {
-  const palette = onOrange ? ORANGE_PALETTE : BEIGE_PALETTE;
+  const palette = onOrange ? ORANGE_PALETTE : brandAccent ? BRAND_ACCENT_BEIGE_PALETTE : BEIGE_PALETTE;
+  const showAccentGradient = brandAccent && !onOrange;
   if (variant === 2) {
-    return <ConvergingLinesGraphic palette={palette} fullBleed={fullBleed} />;
+    return (
+      <ConvergingLinesGraphic palette={palette} fullBleed={fullBleed} showAccentGradient={showAccentGradient} />
+    );
   }
   const Graphic = JOIN_LINE_GRAPHICS[variant];
-  return <Graphic palette={palette} />;
+  return <Graphic palette={palette} showAccentGradient={showAccentGradient} />;
 }

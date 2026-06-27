@@ -9,7 +9,7 @@ export function DoePhoneClosingBandVisual({ graphic }: { graphic: 0 | 1 | 2 | 3 
       className={`relative w-full overflow-hidden border border-[#D9D4CC] bg-[#EBE7E0] ${DOEPHONE_SECTION_CLOSING_FEATURE_HEIGHT} ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
       aria-hidden
     >
-      <JoinInternLineGraphic variant={graphic} />
+      <JoinInternLineGraphic variant={graphic} brandAccent />
     </div>
   );
 }
