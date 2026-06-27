@@ -9,7 +9,7 @@ import {
   NAV_HREFS,
   NAV_ITEMS,
 } from "@/components/doe-nav-data";
-import { DOEPHONE_NAV_PAGE_LINK_CLASS, DOEPHONE_NAV_WAITLIST_CLASS } from "@/lib/doephone/waitlist-button";
+import { DOEPHONE_NAV_TRIPLE_CTA_CLASS, DOEPHONE_NAV_WAITLIST_CLASS } from "@/lib/doephone/waitlist-button";
 import { DOEPHONE_SECTION_CAROUSEL_INSET_X } from "@/lib/doephone/section-styles";
 import { JOIN_PAGE_HREF, WAITLIST_PATH } from "@/lib/site-domains";
 import { scrollToJoinApplySection } from "@/lib/join/join-apply-scroll";
@@ -100,12 +100,17 @@ function NavChromeStrip({
       : "left-8 iphone-page:left-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))]";
   const doeClassName = `absolute top-1/2 -translate-y-1/2 ${doeLeft} font-normal z-[1] min-w-0 whitespace-nowrap ${lora.className} text-4xl iphone-page:text-[clamp(1.85rem,1.05rem+3.55vmin,3.9rem)] iphone-page:leading-none`;
   const navRightInset = pinchSafe
-    ? "right-11 iphone-page:right-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))]"
-    : "right-8 iphone-page:right-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))]";
+    ? "right-11 iphone-page:right-[max(1.65rem,env(safe-area-inset-right,0px)+3.8vmin)]"
+    : "right-8 iphone-page:right-[max(1.25rem,calc(env(safe-area-inset-right,0px)+2.85vmin))]";
   const tripleCtaAnchored = ctaLayout === "triple" && !showMenu;
+  const navStripMinH = tripleCtaAnchored
+    ? "min-h-[clamp(4.35rem,3.55rem+3.15vmin,5.15rem)]"
+    : "";
 
   return (
-    <div className={`${navInsetX} py-6 iphone-page:py-[clamp(0.8125rem,0.52rem+1.55vmin,1.9rem)] flex items-center relative z-10 iphone-page:gap-[clamp(0.45rem,0.35rem+0.85vmin,0.75rem)] ${showApplyScrollCta ? "" : "justify-end"}`}>
+    <div
+      className={`${navInsetX} ${navStripMinH} py-6 iphone-page:py-[clamp(0.8125rem,0.52rem+1.55vmin,1.9rem)] flex items-center relative z-10 iphone-page:gap-[clamp(0.45rem,0.35rem+0.85vmin,0.75rem)] ${showApplyScrollCta ? "" : "justify-end"}`}
+    >
       {logoLink ? (
         <Link href={homeHref} className={`${doeClassName} transition-opacity duration-500 ease-out opacity-100`} style={{ color: navTextColor }}>
           Doe
@@ -137,13 +142,13 @@ function NavChromeStrip({
           </button>
         ) : ctaLayout === "triple" ? (
           <>
-            <Link href={WAITLIST_PATH} className={DOEPHONE_NAV_PAGE_LINK_CLASS}>
+            <Link href={WAITLIST_PATH} className={DOEPHONE_NAV_TRIPLE_CTA_CLASS}>
               Waitlist
             </Link>
-            <Link href={joinHref} className={DOEPHONE_NAV_PAGE_LINK_CLASS}>
+            <Link href={joinHref} className={DOEPHONE_NAV_TRIPLE_CTA_CLASS}>
               Join Us
             </Link>
-            <a href={investorsHref} className={DOEPHONE_NAV_PAGE_LINK_CLASS}>
+            <a href={investorsHref} className={DOEPHONE_NAV_TRIPLE_CTA_CLASS}>
               Investors
             </a>
           </>

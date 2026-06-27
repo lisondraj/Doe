@@ -15,12 +15,13 @@ export function DoePhoneHeroWorkflowCards() {
       aria-hidden
     >
       <JoinHeroWorkflowCardCluster
+        variant="hero-scheduling"
         surface="beige"
         revealed={revealed}
         style={{
           width: "100%",
           maxWidth: "100%",
-          transform: "scale(1.04)",
+          transform: "scale(1.14)",
           transformOrigin: "center center",
         }}
       />

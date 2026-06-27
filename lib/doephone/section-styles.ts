@@ -6,7 +6,7 @@ export const DOEPHONE_SECTION_COPY_INSET =
 
 /** Hero copy — balanced L/R gutters so long career lines do not clip on narrow viewports. */
 export const DOEPHONE_HERO_COPY_INSET =
-  "px-10 iphone-page:px-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))] doephone-hero-copy-inset";
+  "px-12 iphone-page:px-[max(2.75rem,calc(env(safe-area-inset-left,0px)+6vmin))] doephone-hero-copy-inset";
 
 /** Footer copy row — section left inset + matching right gutter (Doe wordmark sits outside). */
 export const DOEPHONE_FOOTER_CONTENT_INSET =

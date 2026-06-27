@@ -171,21 +171,99 @@ function AgentIcon({ theme }: { theme: ReturnType<typeof cardTheme> }) {
   );
 }
 
+const HERO_MENU_ITEMS = [
+  { label: "Open chart ›", tier: "mid" as const, revealIndex: 0 },
+  { label: "Reschedule ›", tier: "mid" as const, revealIndex: 1 },
+  { label: "Send reminder ›", tier: "edge" as const, revealIndex: 2 },
+  { label: "View calendar ›", tier: "edge" as const, revealIndex: 3 },
+] as const;
+
+const FS_HERO_MENU = "clamp(0.88rem, 1.05vw, 1.02rem)";
+const FS_HERO_BODY = "clamp(1.08rem, 1.32vw, 1.28rem)";
+const FS_HERO_LABEL = "clamp(0.95rem, 1.1vw, 1.08rem)";
+
 /** Glass workflow card bento — shared by join hero and DoePhone comm + intelligence. */
 export function JoinHeroWorkflowCardCluster({
   surface = "orange",
   revealed,
   className,
   style,
+  variant = "full",
 }: {
   surface?: WorkflowCarouselSurface;
   revealed: boolean;
   className?: string;
   style?: CSSProperties;
+  variant?: "full" | "hero-scheduling";
 }) {
   const theme = cardTheme(surface);
   const orangeTheme = cardTheme("orange");
   const isBeige = surface === "beige";
+
+  if (variant === "hero-scheduling") {
+    return (
+      <div
+        className={`${suisseIntl.className} ${className ?? ""}`}
+        aria-hidden
+        style={{
+          display: "grid",
+          gridTemplateColumns: "minmax(0,34%) minmax(0,1fr)",
+          gap: "0.85rem",
+          alignItems: "stretch",
+          minWidth: 0,
+          ...style,
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.65rem",
+            justifyContent: "center",
+            minWidth: 0,
+          }}
+        >
+          {HERO_MENU_ITEMS.map((item) => (
+            <GlassCard
+              key={item.label}
+              theme={theme}
+              revealIndex={item.revealIndex}
+              revealed={revealed}
+              compact
+              opacity={glassFillOpacity(item.tier, surface)}
+            >
+              <span style={{ fontSize: FS_HERO_MENU, opacity: 0.78, fontWeight: 500 }}>{item.label}</span>
+            </GlassCard>
+          ))}
+        </div>
+
+        <GlassCard
+          theme={theme}
+          revealIndex={4}
+          revealed={revealed}
+          gradient
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            padding: "1.2rem 1.3rem",
+            minHeight: "100%",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem" }}>
+            <AgentIcon theme={orangeTheme} />
+            <span style={{ fontSize: FS_HERO_LABEL, fontWeight: 500, color: ON_ORANGE_MUTED }}>Scheduling Agent</span>
+          </div>
+          <p style={{ fontSize: FS_HERO_BODY, lineHeight: 1.44, letterSpacing: "-0.015em" }}>
+            <span style={{ color: ON_ORANGE_INK, fontWeight: 500 }}>Sarah&apos;s intake is in Epic.</span>{" "}
+            <span style={{ color: ON_ORANGE_MUTED }}>
+              Insurance verified and a reminder goes out 48 h before her visit.
+            </span>
+          </p>
+        </GlassCard>
+      </div>
+    );
+  }
 
   return (
     <div
