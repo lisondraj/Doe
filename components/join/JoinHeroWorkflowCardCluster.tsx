@@ -178,9 +178,9 @@ const HERO_MENU_ITEMS = [
   { label: "View calendar ›", tier: "edge" as const, revealIndex: 3 },
 ] as const;
 
-const FS_HERO_MENU = "clamp(0.88rem, 1.05vw, 1.02rem)";
-const FS_HERO_BODY = "clamp(1.08rem, 1.32vw, 1.28rem)";
-const FS_HERO_LABEL = "clamp(0.95rem, 1.1vw, 1.08rem)";
+const FS_HERO_MENU = "clamp(1.02rem, 1.45vw, 1.22rem)";
+const FS_HERO_BODY = "clamp(1.14rem, 1.62vw, 1.38rem)";
+const FS_HERO_LABEL = "clamp(1.02rem, 1.28vw, 1.18rem)";
 
 /** Glass workflow card bento — shared by join hero and DoePhone comm + intelligence. */
 export function JoinHeroWorkflowCardCluster({
@@ -207,9 +207,11 @@ export function JoinHeroWorkflowCardCluster({
         aria-hidden
         style={{
           display: "grid",
-          gridTemplateColumns: "minmax(0,34%) minmax(0,1fr)",
-          gap: "0.85rem",
+          gridTemplateColumns: "minmax(0, 38%) minmax(0, 44%)",
+          justifyContent: "space-between",
+          gap: "1rem",
           alignItems: "stretch",
+          width: "100%",
           minWidth: 0,
           ...style,
         }}
@@ -218,7 +220,7 @@ export function JoinHeroWorkflowCardCluster({
           style={{
             display: "flex",
             flexDirection: "column",
-            gap: "0.65rem",
+            gap: "0.78rem",
             justifyContent: "center",
             minWidth: 0,
           }}
@@ -231,6 +233,7 @@ export function JoinHeroWorkflowCardCluster({
               revealed={revealed}
               compact
               opacity={glassFillOpacity(item.tier, surface)}
+              style={{ padding: "0.72rem 1rem" }}
             >
               <span style={{ fontSize: FS_HERO_MENU, opacity: 0.78, fontWeight: 500 }}>{item.label}</span>
             </GlassCard>
@@ -246,15 +249,26 @@ export function JoinHeroWorkflowCardCluster({
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            padding: "1.2rem 1.3rem",
+            padding: "1.35rem 1.25rem",
             minHeight: "100%",
+            minWidth: 0,
+            maxWidth: "100%",
+            justifySelf: "end",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.55rem", marginBottom: "0.85rem" }}>
             <AgentIcon theme={orangeTheme} />
             <span style={{ fontSize: FS_HERO_LABEL, fontWeight: 500, color: ON_ORANGE_MUTED }}>Scheduling Agent</span>
           </div>
-          <p style={{ fontSize: FS_HERO_BODY, lineHeight: 1.44, letterSpacing: "-0.015em" }}>
+          <p
+            style={{
+              fontSize: FS_HERO_BODY,
+              lineHeight: 1.42,
+              letterSpacing: "-0.015em",
+              margin: 0,
+              whiteSpace: "normal",
+            }}
+          >
             <span style={{ color: ON_ORANGE_INK, fontWeight: 500 }}>Sarah&apos;s intake is in Epic.</span>{" "}
             <span style={{ color: ON_ORANGE_MUTED }}>
               Insurance verified and a reminder goes out 48 h before her visit.

@@ -103,7 +103,9 @@ function NavChromeStrip({
     ? "right-11 iphone-page:right-[max(1.65rem,env(safe-area-inset-right,0px)+3.8vmin)]"
     : "right-8 iphone-page:right-[max(1.25rem,calc(env(safe-area-inset-right,0px)+2.85vmin))]";
   const tripleCtaAnchored = ctaLayout === "triple" && !showMenu;
-  const navStripMinH = tripleCtaAnchored
+  const joinWaitlistAnchored = ctaLayout === "join-waitlist" && !showMenu;
+  const ctaAnchoredRight = tripleCtaAnchored || joinWaitlistAnchored;
+  const navStripMinH = ctaAnchoredRight
     ? "min-h-[clamp(4.35rem,3.55rem+3.15vmin,5.15rem)]"
     : "";
 
@@ -130,7 +132,7 @@ function NavChromeStrip({
       </div>
 
       <div
-        className={`flex shrink-0 items-center gap-2.5 iphone-page:gap-[clamp(0.45rem,0.35rem+0.65vmin,0.7rem)] ${showApplyScrollCta ? "contents" : ""} ${tripleCtaAnchored ? `absolute top-1/2 z-[2] -translate-y-1/2 ${navRightInset}` : ""}`}
+        className={`flex shrink-0 items-center gap-2.5 iphone-page:gap-[clamp(0.45rem,0.35rem+0.65vmin,0.7rem)] ${showApplyScrollCta ? "contents" : ""} ${ctaAnchoredRight ? `absolute top-1/2 z-[2] -translate-y-1/2 ${navRightInset}` : ""}`}
       >
         {showApplyScrollCta ? (
           <button
@@ -208,7 +210,7 @@ function NavChromeStrip({
               </svg>
             )}
           </button>
-        ) : !tripleCtaAnchored ? (
+        ) : !ctaAnchoredRight ? (
           <span
             className="invisible pointer-events-none flex items-center justify-center p-3 iphone-page:p-[clamp(0.625rem,0.38rem+1.35vmin,0.975rem)]"
             aria-hidden

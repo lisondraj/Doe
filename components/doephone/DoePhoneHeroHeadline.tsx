@@ -2,50 +2,24 @@
 
 import { DOEPHONE_DISPLAY_WEIGHT_TW } from "@/lib/doephone/section-styles";
 import { suisseIntl } from "@/lib/home/fonts";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-
-const DOEPHONE_HERO_CAREERS = [
-  "doctors",
-  "nurses",
-  "pharmacists",
-  "therapists",
-  "surgeons",
-  "paramedics",
-  "dentists",
-  "optometrists",
-  "midwives",
-  "doulas",
-] as const;
-
-/** Longest label — reserves width so layout never shifts. */
-const DOEPHONE_HERO_CAREER_WIDTH_SAMPLE = "optometrists.";
-
-/** Hold each profession on screen before advancing. */
-const CAREER_ROTATE_MS = 3600;
-
-/** Exit animation duration — outgoing word clears before next arrives. */
-const CAREER_EXIT_MS = 290;
+import { useLayoutEffect, useRef } from "react";
 
 const MIN_FIT_SCALE = 0.68;
 const MIN_FIT_PX = 17;
 
 function measureHeadlineContentWidth(headline: HTMLElement): number {
-  const firstLine = headline.querySelector<HTMLElement>(
-    ".doephone-hero-headline-line:not(.doephone-hero-headline-line--second)",
-  );
-  const secondLine = headline.querySelector<HTMLElement>(".doephone-hero-second-line");
-  if (!firstLine || !secondLine) return headline.scrollWidth;
+  const lines = headline.querySelectorAll<HTMLElement>(".doephone-hero-headline-line");
+  if (lines.length === 0) return headline.scrollWidth;
 
   const prevW = headline.style.width;
-  const prevMax = secondLine.style.maxWidth;
   headline.style.width = "max-content";
-  secondLine.style.maxWidth = "max-content";
 
-  const width = Math.max(firstLine.scrollWidth, secondLine.scrollWidth);
+  let width = 0;
+  lines.forEach((line) => {
+    width = Math.max(width, line.scrollWidth);
+  });
 
   headline.style.width = prevW;
-  secondLine.style.maxWidth = prevMax;
-
   return width;
 }
 
@@ -83,33 +57,6 @@ function fitHeadlineFontSize(headline: HTMLElement, container: HTMLElement) {
 
 export function DoePhoneHeroHeadline() {
   const headlineRef = useRef<HTMLHeadingElement>(null);
-  const currRef = useRef(0);
-  const [curr, setCurr] = useState(0);
-  const [prev, setPrev] = useState<number | null>(null);
-  const exitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (mq.matches) return;
-
-    const advance = () => {
-      const from = currRef.current;
-      const to = (from + 1) % DOEPHONE_HERO_CAREERS.length;
-      currRef.current = to;
-
-      setPrev(from);
-      setCurr(to);
-
-      if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
-      exitTimerRef.current = setTimeout(() => setPrev(null), CAREER_EXIT_MS + 60);
-    };
-
-    const id = setInterval(advance, CAREER_ROTATE_MS);
-    return () => {
-      clearInterval(id);
-      if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
-    };
-  }, []);
 
   useLayoutEffect(() => {
     const headline = headlineRef.current;
@@ -141,7 +88,7 @@ export function DoePhoneHeroHeadline() {
       window.removeEventListener("resize", onResize);
       window.visualViewport?.removeEventListener("resize", onResize);
     };
-  }, [curr]);
+  }, []);
 
   return (
     <h1
@@ -149,41 +96,7 @@ export function DoePhoneHeroHeadline() {
       className={`doephone-hero-headline flex w-full min-w-0 max-w-full flex-col items-start ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] text-white ${suisseIntl.className}`}
     >
       <span className="doephone-hero-headline-line block">Intelligence</span>
-      <span className="doephone-hero-headline-line doephone-hero-headline-line--second doephone-hero-second-line flex min-w-0 max-w-full items-baseline justify-start whitespace-nowrap">
-        <span className="shrink-0">built for</span>
-        <span className="doephone-hero-career-slot relative inline-grid align-baseline">
-          {/* Invisible sizer — keeps slot width = longest word, no layout shift */}
-          <span
-            aria-hidden
-            className={`invisible col-start-1 row-start-1 block select-none ${DOEPHONE_DISPLAY_WEIGHT_TW}`}
-          >
-            {DOEPHONE_HERO_CAREER_WIDTH_SAMPLE}
-          </span>
-
-          {/* Clip window */}
-          <span className="doephone-hero-career-clip col-start-1 row-start-1">
-            {/* Outgoing word — exits upward */}
-            {prev !== null && (
-              <span
-                key={`out-${prev}`}
-                className={`doephone-hero-career-word doephone-hero-career-word--exit ${DOEPHONE_DISPLAY_WEIGHT_TW}`}
-                aria-hidden
-              >
-                {DOEPHONE_HERO_CAREERS[prev]}.
-              </span>
-            )}
-
-            {/* Incoming word — enters from below */}
-            <span
-              key={`in-${curr}`}
-              className={`doephone-hero-career-word doephone-hero-career-word--enter ${DOEPHONE_DISPLAY_WEIGHT_TW}`}
-              aria-live="polite"
-            >
-              {DOEPHONE_HERO_CAREERS[curr]}.
-            </span>
-          </span>
-        </span>
-      </span>
+      <span className="doephone-hero-headline-line doephone-hero-headline-line--second block">built for doctors.</span>
     </h1>
   );
 }
