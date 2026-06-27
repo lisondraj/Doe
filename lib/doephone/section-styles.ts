@@ -66,23 +66,23 @@ export const DOEPHONE_SECTION_COPY_TW =
 
 /** Full iPhone viewport band — locked to `--app-vh` (stable vs Safari chrome). */
 export const DOEPHONE_VIEWPORT_SECTION =
-  "relative z-10 w-full min-h-[var(--app-vh,100lvh)] h-[var(--app-vh,100lvh)]";
+  "relative z-10 w-full min-h-[var(--app-vh,100lvh)] h-[var(--app-vh,100lvh)] overflow-hidden bg-[#1E343A]";
 
 /** Beige section shell — at least one stable viewport tall; grows with content. */
 export const DOEPHONE_BEIGE_SECTION =
   "relative z-10 flex min-h-[var(--app-vh,100lvh)] w-full flex-col bg-[#F7F6F3]";
 
-/** Main mobile home — section band height including iOS browser menu + home indicator. */
-export const DOEPHONE_MAIN_PAGE_SECTION_HEIGHT =
-  "calc(var(--app-vh,100lvh)+env(safe-area-inset-bottom,0px)+max(2.75rem,12vmin))";
+/** Main mobile home — min band height clearing iOS home indicator + Safari bottom bar. */
+export const DOEPHONE_MAIN_PAGE_SECTION_MIN_H =
+  "min-h-[calc(var(--app-vh,100lvh)+env(safe-area-inset-bottom,0px)+3.25rem)]";
 
-/** Main page beige scroll band — taller than `--app-vh` for Safari bottom chrome. */
+/** Main page beige band — grows with content; never clips like a fixed height. */
 export const DOEPHONE_MAIN_PAGE_BEIGE_SECTION =
-  "relative z-10 flex min-h-[var(--doephone-main-section-height,var(--app-vh,100lvh))] w-full flex-col bg-[#F7F6F3]";
+  `relative z-10 flex w-full flex-col bg-[#F7F6F3] ${DOEPHONE_MAIN_PAGE_SECTION_MIN_H}`;
 
-/** Main page dark viewport band — matches beige extra height. */
+/** Main page dark band — min-height only so inner content is not clipped. */
 export const DOEPHONE_MAIN_PAGE_VIEWPORT_SECTION =
-  "relative z-10 w-full min-h-[var(--doephone-main-section-height,var(--app-vh,100lvh))] h-[var(--doephone-main-section-height,var(--app-vh,100lvh))]";
+  `relative z-10 flex w-full flex-col overflow-hidden bg-[#1E343A] ${DOEPHONE_MAIN_PAGE_SECTION_MIN_H}`;
 
 /** Centers a section's content block vertically without altering its internal layout. */
 export const DOEPHONE_SECTION_CONTENT_CENTER =

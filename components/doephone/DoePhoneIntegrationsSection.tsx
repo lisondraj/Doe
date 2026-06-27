@@ -19,7 +19,7 @@ export function DoePhoneIntegrationsSection({
   sectionClassName?: string;
 }) {
   return (
-    <section className={`${sectionClassName} overflow-hidden bg-[#1E343A]`} aria-label="Integrations">
+    <section className={sectionClassName} aria-label="Integrations">
       <div className="pointer-events-none absolute -inset-[3%] overflow-hidden" aria-hidden>
         <WorkflowCarouselDesignBackdrop backdrop={DIAGNOSTIC_ASSISTANT_BACKDROP} embedded gradientScale={1.12} />
       </div>

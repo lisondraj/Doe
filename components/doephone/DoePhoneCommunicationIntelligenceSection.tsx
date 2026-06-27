@@ -21,7 +21,7 @@ export function DoePhoneCommunicationIntelligenceSection({
   };
 
   return (
-    <section className={`${sectionClassName} overflow-hidden bg-[#1E343A]`} aria-label="Communication">
+    <section className={sectionClassName} aria-label="Communication">
       <div className="pointer-events-none absolute -inset-[3%] overflow-hidden" aria-hidden>
         <WorkflowCarouselDesignBackdrop
           backdrop={backdrop}
