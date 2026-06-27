@@ -40,6 +40,13 @@ export const suisseIntl = localFont({
   weight: "300",
 });
 
+/** Light face only — reliable uniform weight for SVG numerals in orbit mocks. */
+export const suisseIntlLight = localFont({
+  src: [{ path: "../../fonts/suisse/SuisseIntlTrial-Light.otf", weight: "300", style: "normal" }],
+  display: "swap",
+  weight: "300",
+});
+
 /** Hairline face — thin symbols (e.g. +) that match Suisse light body copy. */
 export const suisseIntlHairline = localFont({
   src: [{ path: "../../fonts/suisse/SuisseIntlTrial-Hairline.otf", weight: "100", style: "normal" }],

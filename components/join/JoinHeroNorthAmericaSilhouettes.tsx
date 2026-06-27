@@ -7,7 +7,7 @@
  * white background → transparent).
  */
 import { useId } from "react";
-import { suisseIntl, suisseIntlHairline } from "@/lib/home/fonts";
+import { dmSans, suisseIntl, suisseIntlLight } from "@/lib/home/fonts";
 import { useJoinHeroScrollReveal, joinHeroBoxRevealClass, joinHeroBoxRevealDelay, JOIN_HERO_BOX_RISE_DURATION_MS, JOIN_HERO_BOX_SEQUENCE_GAP_MS } from "@/lib/join/use-join-hero-scroll-reveal";
 
 const AGENT_INK = "#1E343A";
@@ -479,8 +479,6 @@ function BillingAgentRevenue({
   const labelFontSize = 26;
   const labelY = contentTop + cardPadX;
   const amountY = contentTop + cardH / 2 + 8;
-  const amountBlockH = Math.ceil(amountFontSize * 1.08);
-  const amountBlockY = amountY - amountBlockH / 2;
 
   // Claim rows below the card
   const rowsTop = contentTop + cardH + cardGap;
@@ -508,29 +506,21 @@ function BillingAgentRevenue({
       >
         Approved today
       </text>
-      <foreignObject
+      <text
         x={innerX + cardPadX}
-        y={amountBlockY}
-        width={innerW - cardPadX * 2}
-        height={amountBlockH}
+        y={amountY}
+        dominantBaseline="middle"
+        fill={ON_ORANGE_INK}
+        fontSize={amountFontSize}
+        letterSpacing="-0.03em"
       >
-        <div
-          className={suisseIntlHairline.className}
-          style={{
-            fontFamily: suisseIntlHairline.style.fontFamily,
-            fontSynthesis: "none",
-            WebkitFontSmoothing: "antialiased",
-            fontSize: amountFontSize,
-            fontWeight: 100,
-            color: ON_ORANGE_INK,
-            letterSpacing: "-0.03em",
-            lineHeight: 1,
-            fontVariantNumeric: "lining-nums",
-          }}
-        >
-          $8,640
-        </div>
-      </foreignObject>
+        <tspan fontFamily={suisseIntlLight.style.fontFamily} fontWeight={300}>
+          $
+        </tspan>
+        <tspan fontFamily={dmSans.style.fontFamily} fontWeight={300}>
+          8,640
+        </tspan>
+      </text>
 
       {/* Claim rows */}
       {rows.map((row, i) => {
@@ -1043,7 +1033,7 @@ export function JoinHeroNorthAmericaSilhouettes({ variant }: { variant: "mobile"
   const countryGrain = `${id}-country-grain`;
 
   return (
-    <div ref={ref} className={`${wrapperClass} ${suisseIntl.className}`} aria-hidden>
+    <div ref={ref} className={`${wrapperClass} ${suisseIntl.className} ${dmSans.className}`} aria-hidden>
       <svg
         viewBox={`${VOX} ${VOY} ${VW} ${VH}`}
         fill="none"
