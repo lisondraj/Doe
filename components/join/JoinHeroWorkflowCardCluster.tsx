@@ -171,16 +171,12 @@ function AgentIcon({ theme }: { theme: ReturnType<typeof cardTheme> }) {
   );
 }
 
-const HERO_MENU_ITEMS = [
-  { label: "Open chart ›", tier: "mid" as const, revealIndex: 0 },
-  { label: "Reschedule ›", tier: "mid" as const, revealIndex: 1 },
-  { label: "Send reminder ›", tier: "edge" as const, revealIndex: 2 },
-  { label: "View calendar ›", tier: "edge" as const, revealIndex: 3 },
-] as const;
-
-const FS_HERO_MENU = "clamp(1.02rem, 1.45vw, 1.22rem)";
-const FS_HERO_BODY = "clamp(1.14rem, 1.62vw, 1.38rem)";
-const FS_HERO_LABEL = "clamp(1.02rem, 1.28vw, 1.18rem)";
+const FS_HERO = {
+  sm: "clamp(0.68rem, 0.88vw, 0.78rem)",
+  base: "clamp(0.82rem, 1.08vw, 0.96rem)",
+  lg: "clamp(1.02rem, 1.28vw, 1.16rem)",
+  xl: "clamp(1.22rem, 1.52vw, 1.38rem)",
+} as const;
 
 /** Glass workflow card bento — shared by join hero and DoePhone comm + intelligence. */
 export function JoinHeroWorkflowCardCluster({
@@ -194,86 +190,128 @@ export function JoinHeroWorkflowCardCluster({
   revealed: boolean;
   className?: string;
   style?: CSSProperties;
-  variant?: "full" | "hero-scheduling";
+  variant?: "full" | "hero-left-column";
 }) {
   const theme = cardTheme(surface);
   const orangeTheme = cardTheme("orange");
   const isBeige = surface === "beige";
 
-  if (variant === "hero-scheduling") {
+  if (variant === "hero-left-column") {
     return (
       <div
         className={`${suisseIntl.className} ${className ?? ""}`}
         aria-hidden
         style={{
-          display: "grid",
-          gridTemplateColumns: "minmax(0, 38%) minmax(0, 44%)",
-          justifyContent: "space-between",
-          gap: "1rem",
-          alignItems: "stretch",
-          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          gap: "0.62rem",
+          width: "min(100%, 56%)",
           minWidth: 0,
           ...style,
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "0.78rem",
-            justifyContent: "center",
-            minWidth: 0,
-          }}
-        >
-          {HERO_MENU_ITEMS.map((item) => (
-            <GlassCard
-              key={item.label}
-              theme={theme}
-              revealIndex={item.revealIndex}
-              revealed={revealed}
-              compact
-              opacity={glassFillOpacity(item.tier, surface)}
-              style={{ padding: "0.72rem 1rem" }}
-            >
-              <span style={{ fontSize: FS_HERO_MENU, opacity: 0.78, fontWeight: 500 }}>{item.label}</span>
-            </GlassCard>
-          ))}
-        </div>
+        <GlassCard theme={theme} revealIndex={0} revealed={revealed} opacity={glassFillOpacity("mid", surface)}>
+          <p style={{ fontSize: FS_HERO.sm, opacity: 0.6, marginBottom: "0.16rem" }}>Today</p>
+          <p style={{ fontSize: FS_HERO.base, fontWeight: 500 }}>Fri, Jun 27</p>
+        </GlassCard>
 
-        <GlassCard
-          theme={theme}
-          revealIndex={4}
-          revealed={revealed}
-          gradient
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            padding: "1.35rem 1.25rem",
-            minHeight: "100%",
-            minWidth: 0,
-            maxWidth: "100%",
-            justifySelf: "end",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: "0.55rem", marginBottom: "0.85rem" }}>
-            <AgentIcon theme={orangeTheme} />
-            <span style={{ fontSize: FS_HERO_LABEL, fontWeight: 500, color: ON_ORANGE_MUTED }}>Scheduling Agent</span>
+        <GlassCard theme={theme} revealIndex={1} revealed={revealed} opacity={glassFillOpacity("mid", surface)}>
+          <p style={{ fontSize: FS_HERO.sm, opacity: 0.6, marginBottom: "0.16rem" }}>Checked in</p>
+          <p style={{ fontSize: FS_HERO.base, fontWeight: 500 }}>3 patients</p>
+        </GlassCard>
+
+        <GlassCard theme={theme} revealIndex={2} revealed={revealed} opacity={glassFillOpacity("near", surface)}>
+          <CardHeader title="Appointment details" action="Manage visit ›" accent={isBeige ? theme.accent : undefined} />
+          <p style={{ fontSize: FS_HERO.lg, fontWeight: 500, marginBottom: "0.65rem", letterSpacing: "-0.01em" }}>
+            Sarah Chen, annual physical
+          </p>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+            <div>
+              <p style={{ fontSize: FS_HERO.sm, opacity: 0.55, marginBottom: "0.14rem" }}>Scheduled</p>
+              <p style={{ fontSize: FS_HERO.base, fontWeight: 500 }}>Fri, Jun 27</p>
+              <p style={{ fontSize: FS_HERO.sm, opacity: 0.65, marginTop: "0.1rem" }}>10:30 AM</p>
+            </div>
+            <div>
+              <p style={{ fontSize: FS_HERO.sm, opacity: 0.55, marginBottom: "0.14rem" }}>Provider</p>
+              <p style={{ fontSize: FS_HERO.base, fontWeight: 500 }}>Dr. Patel</p>
+              <p style={{ fontSize: FS_HERO.sm, opacity: 0.65, marginTop: "0.1rem" }}>Exam Room 3</p>
+            </div>
           </div>
-          <p
-            style={{
-              fontSize: FS_HERO_BODY,
-              lineHeight: 1.42,
-              letterSpacing: "-0.015em",
-              margin: 0,
-              whiteSpace: "normal",
-            }}
-          >
+        </GlassCard>
+
+        <GlassCard theme={theme} revealIndex={3} revealed={revealed} opacity={glassFillOpacity("near", surface)}>
+          <ProgressRow theme={theme} label="Open slots today" pct="68%" />
+          <ProgressRow theme={theme} label="Intake forms sent" pct="41%" last />
+        </GlassCard>
+
+        <GlassCard theme={theme} revealIndex={4} revealed={revealed} gradient>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.45rem", marginBottom: "0.6rem" }}>
+            <AgentIcon theme={orangeTheme} />
+            <span style={{ fontSize: FS_HERO.base, fontWeight: 500, color: ON_ORANGE_MUTED }}>Scheduling Agent</span>
+          </div>
+          <p style={{ fontSize: FS_HERO.lg, lineHeight: 1.42, letterSpacing: "-0.015em", margin: 0 }}>
             <span style={{ color: ON_ORANGE_INK, fontWeight: 500 }}>Sarah&apos;s intake is in Epic.</span>{" "}
             <span style={{ color: ON_ORANGE_MUTED }}>
               Insurance verified and a reminder goes out 48 h before her visit.
             </span>
           </p>
+        </GlassCard>
+
+        <GlassCard theme={theme} revealIndex={5} revealed={revealed} opacity={glassFillOpacity("near", surface)}>
+          <CardHeader title="Integrations" action="Manage ›" accent={isBeige ? theme.accent : undefined} />
+          <p style={{ fontSize: FS_HERO.base, marginBottom: "0.5rem", opacity: 0.88 }}>
+            Epic EHR • Insurance API • Clinic scheduler
+          </p>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>
+              <path
+                d="M2 5.2l2 2 4-4.5"
+                stroke={isBeige ? theme.accent : theme.icon}
+                strokeWidth="1.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span style={{ fontSize: FS_HERO.sm, opacity: 0.72 }}>Chart synced to inbox</span>
+          </div>
+        </GlassCard>
+
+        <GlassCard theme={theme} revealIndex={6} revealed={revealed} opacity={glassFillOpacity("near", surface)}>
+          <p style={{ fontSize: FS_HERO.sm, opacity: 0.6, marginBottom: "0.2rem" }}>Next in queue</p>
+          <p
+            style={{
+              fontSize: FS_HERO.xl,
+              fontWeight: 400,
+              letterSpacing: "-0.02em",
+              lineHeight: 1.1,
+              color: isBeige ? theme.accent : theme.ink,
+            }}
+          >
+            10:30 AM
+          </p>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.32rem", marginTop: "0.42rem" }}>
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden>
+              <rect x="1" y="2" width="9" height="7" rx="1.2" stroke={theme.iconSoft} strokeWidth="1" />
+              <path d="M1 4.5h9" stroke={theme.iconSoft} strokeWidth="1" />
+            </svg>
+            <span style={{ fontSize: FS_HERO.sm, opacity: 0.65 }}>Front desk triage</span>
+          </div>
+        </GlassCard>
+
+        <GlassCard theme={theme} revealIndex={7} revealed={revealed} compact opacity={glassFillOpacity("mid", surface)}>
+          <span style={{ fontSize: FS_HERO.base, opacity: 0.7 }}>Open chart ›</span>
+        </GlassCard>
+
+        <GlassCard theme={theme} revealIndex={8} revealed={revealed} compact opacity={glassFillOpacity("mid", surface)}>
+          <span style={{ fontSize: FS_HERO.base, opacity: 0.65 }}>Reschedule ›</span>
+        </GlassCard>
+
+        <GlassCard theme={theme} revealIndex={9} revealed={revealed} compact opacity={glassFillOpacity("edge", surface)}>
+          <span style={{ fontSize: FS_HERO.base, opacity: 0.7 }}>Send reminder ›</span>
+        </GlassCard>
+
+        <GlassCard theme={theme} revealIndex={10} revealed={revealed} compact opacity={glassFillOpacity("edge", surface)}>
+          <span style={{ fontSize: FS_HERO.base, opacity: 0.65 }}>View calendar ›</span>
         </GlassCard>
       </div>
     );
