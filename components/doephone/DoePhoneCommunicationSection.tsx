@@ -5,15 +5,10 @@ import {
   DoePhoneSectionCarousel,
   useDoePhoneSectionCarousel,
 } from "@/components/doephone/DoePhoneSectionCarousel";
-import { DoePhoneSectionTitle } from "@/components/doephone/DoePhoneSectionText";
 import {
   DOEPHONE_SECTION_CAROUSEL_HEIGHT,
   DOEPHONE_SECTION_CAROUSEL_INSET_X,
   DOEPHONE_SECTION_CAROUSEL_MENU_GAP,
-  DOEPHONE_SECTION_CONTENT_INSET,
-  DOEPHONE_SECTION_TITLE_CAROUSEL_GAP,
-  DOEPHONE_SECTION_TITLE_PB,
-  DOEPHONE_SECTION_TITLE_PT,
 } from "@/lib/doephone/section-styles";
 import {
   doePhoneSectionRevealSegmentClass,
@@ -22,7 +17,7 @@ import {
 import { doephoneSectionRevealStyleVars } from "@/lib/doephone/section-reveal-timing";
 import { useState, type CSSProperties } from "react";
 
-/** First beige section — Labs title, carousel, and feature menu. */
+/** Second beige section — carousel slide and 3×2 feature menu. */
 export function DoePhoneCommunicationSection() {
   const [activeSlide, setActiveSlide] = useState(0);
   const { scrollRef, loopScrollIndices, menuInject, selectSlide, handleScroll } = useDoePhoneSectionCarousel(
@@ -34,21 +29,10 @@ export function DoePhoneCommunicationSection() {
   return (
     <div
       ref={sectionRef}
-      className="flex h-full min-h-0 flex-col"
+      className="flex min-h-0 flex-1 flex-col justify-center"
       style={doephoneSectionRevealStyleVars() as CSSProperties}
     >
-      <div className={`shrink-0 ${DOEPHONE_SECTION_CONTENT_INSET} ${DOEPHONE_SECTION_TITLE_PT}`}>
-        <DoePhoneSectionTitle
-          segmentedReveal
-          revealed={revealed}
-          line1="Your inbox should"
-          line2="be built for you."
-        />
-      </div>
-
-      <div
-        className={`shrink-0 ${DOEPHONE_SECTION_TITLE_CAROUSEL_GAP} ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${DOEPHONE_SECTION_TITLE_PB}`}
-      >
+      <div className={DOEPHONE_SECTION_CAROUSEL_INSET_X}>
         <div
           className={`w-full ${DOEPHONE_SECTION_CAROUSEL_HEIGHT} ${doePhoneSectionRevealSegmentClass("carousel", revealed)}`}
         >
