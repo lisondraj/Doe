@@ -8,7 +8,7 @@ import {
   DOEPHONE_HERO_INTRO_GRADIENT_START,
   doephoneHeroIntroStyleVars,
 } from "@/lib/doephone/hero-intro-timing";
-import { DOEPHONE_HERO_COPY_INSET } from "@/lib/doephone/section-styles";
+import { DOEPHONE_SECTION_CAROUSEL_INSET_X } from "@/lib/doephone/section-styles";
 import { CARE_COORDINATION_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 import { useEffect, useState, type CSSProperties } from "react";
 
