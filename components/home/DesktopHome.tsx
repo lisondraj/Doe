@@ -19,6 +19,7 @@ import { DoePhoneDesktopCohortWatchSection } from "@/components/doephone/DoePhon
 import { DoePhoneDesktopIntelligenceSection } from "@/components/doephone/DoePhoneDesktopIntelligenceSection";
 import { DoePhoneHeroSection } from "@/components/doephone/DoePhoneHeroSection";
 import { DesktopMainNavCta } from "@/components/home/DesktopMainNavCta";
+import { DesktopNavEmailButton } from "@/components/nav/DesktopNavEmailButton";
 import {
   DOEPHONE_DESKTOP_PAGE_INSET_X,
   DOEPHONE_DESKTOP_PAGE_MARGIN_X,
@@ -426,22 +427,27 @@ export function DesktopHome() {
           )}
           {/* Top bar — white bar only after hero */}
           <div className={`relative z-10 flex items-center justify-between py-6 ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
-            <h1
-              className={`text-4xl font-normal transition-all duration-300 ${lora.className}`}
+            <Link
+              href="/"
+              className={`text-4xl font-normal no-underline transition-all duration-300 ${lora.className}`}
               style={{
                 color: heroNavInk,
                 textShadow: heroNavShadowResolved,
               }}
             >
               Doe
-            </h1>
+            </Link>
 
-            <DesktopMainNavCta
-              bg={heroWaitlistBg}
-              fg={heroWaitlistFg}
-              shadow={heroWaitlistShadow}
-              divider={heroCtaDivider}
-            />
+            <div className="flex shrink-0 items-center gap-2.5">
+              <DesktopNavEmailButton />
+
+              <DesktopMainNavCta
+                bg={heroWaitlistBg}
+                fg={heroWaitlistFg}
+                shadow={heroWaitlistShadow}
+                divider={heroCtaDivider}
+              />
+            </div>
           </div>
 
           {/* Dropdown Panel — disabled via DESKTOP_NAV_DROPDOWN_ENABLED */}

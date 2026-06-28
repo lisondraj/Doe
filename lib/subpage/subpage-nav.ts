@@ -1,4 +1,5 @@
 import { ABOUT_PATH, JOIN_PATH, WAITLIST_PATH } from "@/lib/site-domains";
+import { DESKTOP_INVESTORS_CTA_LABEL } from "@/lib/subpage/desktop-nav-styles";
 
 export const ABOUT_LABEL = "Investors";
 
@@ -62,7 +63,7 @@ export const MAIN_HOME_NAV_SHEET_ITEMS = [
 
 /** Main desktop home — About split-button menu. */
 export const DESKTOP_MAIN_CTA_MENU_ITEMS = [
-  { label: ABOUT_LABEL, href: ABOUT_PATH },
+  { label: DESKTOP_INVESTORS_CTA_LABEL, href: ABOUT_PATH },
   { label: "Waitlist", href: WAITLIST_PATH },
   { label: "Join Us", href: JOIN_PATH },
 ] as const;

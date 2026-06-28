@@ -32,8 +32,9 @@ export function AboutMobileView() {
   return (
     <BlogMobileShell
       showJoinCta={false}
-      ctaLayout="subpage-about"
-      logoLink={false}
+      ctaLayout="main-home"
+      logoLink
+      showMenu={false}
       footerLinksDisabled
       shellMinHeightClass="min-h-[var(--app-vh,100lvh)]"
     >

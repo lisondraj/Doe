@@ -14,6 +14,7 @@ import {
   SubpageMobileNavRow,
   subpageVariantFromCtaLayout,
 } from "@/components/subpage/SubpageMobileNavRow";
+import { MobileNavActionRow } from "@/components/nav/MobileNavActionRow";
 import {
   DOEPHONE_NAV_TRIPLE_CTA_CLASS,
   DOEPHONE_NAV_WAITLIST_CLASS,
@@ -172,10 +173,8 @@ function NavChromeStrip({
       >
         {subpageVariant ? (
           <SubpageMobileNavRow variant={subpageVariant} showLinks={!showMenu || !subpageWithButton} />
-        ) : ctaLayout === "main-home" ? (
-          <Link href={ABOUT_PATH} className={DOEPHONE_NAV_WAITLIST_CLASS}>
-            {ABOUT_LABEL}
-          </Link>
+        ) : ctaLayout === "main-home" || ctaLayout === "subpage-about" ? (
+          <MobileNavActionRow />
         ) : ctaLayout === "triple" ? (
           <>
             <Link href={WAITLIST_PATH} className={DOEPHONE_NAV_TRIPLE_CTA_CLASS}>
@@ -232,7 +231,7 @@ function NavChromeStrip({
               </svg>
             )}
           </button>
-        ) : !tripleCtaAnchored && !subpageAnchored ? (
+        ) : !tripleCtaAnchored && !subpageAnchored && showMenu ? (
           <span
             className="invisible pointer-events-none flex items-center justify-center p-3 iphone-page:p-[clamp(0.625rem,0.38rem+1.35vmin,0.975rem)]"
             aria-hidden

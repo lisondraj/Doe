@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import { AboutDesktopNavEmailButton } from "@/components/about/AboutDesktopNavEmailButton";
+import { DesktopNavEmailButton } from "@/components/nav/DesktopNavEmailButton";
 import { DesktopMainNavCta } from "@/components/home/DesktopMainNavCta";
 import { ABOUT_DESKTOP_PAGE_INSET } from "@/lib/about/about-layout-styles";
 import { lora } from "@/lib/home/fonts";
@@ -20,7 +20,7 @@ export function AboutDesktopNav() {
         </Link>
 
         <div className="flex shrink-0 items-center gap-2.5">
-          <AboutDesktopNavEmailButton />
+          <DesktopNavEmailButton />
 
           <DesktopMainNavCta
             bg="#000000"

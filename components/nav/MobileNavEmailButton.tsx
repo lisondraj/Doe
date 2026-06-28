@@ -3,11 +3,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { ABOUT_CONTACT_EMAIL } from "@/lib/about/about-contact";
+import { DOEPHONE_NAV_CTA_BASE } from "@/lib/doephone/waitlist-button";
 import { dmSans, inter } from "@/lib/home/fonts";
 
-const NAV_EMAIL_BG = "#000000";
-const NAV_EMAIL_FG = "#ffffff";
-const NAV_EMAIL_DIVIDER = "rgba(255, 255, 255, 0.22)";
+const MOBILE_NAV_MAIL_BUTTON_TW = `${DOEPHONE_NAV_CTA_BASE} aspect-square !min-w-[3.35rem] !w-[3.35rem] !px-0 iphone-page:!min-w-[clamp(3.55rem,2.85rem+3.05vmin,4.3rem)] iphone-page:!w-[clamp(3.55rem,2.85rem+3.05vmin,4.3rem)]`;
 
 function MailIcon({ className }: { className?: string }) {
   return (
@@ -42,8 +41,8 @@ function CheckIcon({ className }: { className?: string }) {
   );
 }
 
-/** Desktop /about nav — square email button with left-aligned copy dropdown. */
-export function AboutDesktopNavEmailButton() {
+/** iPhone nav — square email button with copy dropdown. */
+export function MobileNavEmailButton() {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -105,35 +104,26 @@ export function AboutDesktopNavEmailButton() {
     <div ref={rootRef} className="relative shrink-0">
       <button
         type="button"
-        className="flex h-[2.625rem] w-[2.625rem] items-center justify-center rounded-md transition-opacity hover:opacity-90"
-        style={{ backgroundColor: NAV_EMAIL_BG, color: NAV_EMAIL_FG }}
+        className={`${MOBILE_NAV_MAIL_BUTTON_TW} transition-opacity hover:opacity-90 active:opacity-80`}
         aria-expanded={open}
         aria-haspopup="dialog"
         aria-label={`Email ${ABOUT_CONTACT_EMAIL}`}
         onClick={handleToggle}
       >
-        <MailIcon className="h-[1.125rem] w-[1.125rem]" />
+        <MailIcon className="h-[1.125rem] w-[1.125rem] iphone-page:h-[clamp(1.05rem,0.92rem+0.65vmin,1.22rem)] iphone-page:w-[clamp(1.05rem,0.92rem+0.65vmin,1.22rem)]" />
       </button>
 
       {open ? (
-        <div
-          className="absolute left-0 top-[calc(100%+0.5rem)] z-[60] min-w-max overflow-hidden rounded-md px-4 py-3.5"
-          style={{
-            backgroundColor: NAV_EMAIL_BG,
-            color: NAV_EMAIL_FG,
-            border: `1px solid ${NAV_EMAIL_DIVIDER}`,
-            boxShadow: "0 8px 24px rgba(0, 0, 0, 0.12)",
-          }}
-        >
+        <div className="absolute right-0 top-[calc(100%+0.5rem)] z-[60] min-w-max overflow-hidden rounded-[10px] bg-black px-4 py-3.5 text-white shadow-[0_8px_24px_rgba(0,0,0,0.12)] iphone-page:rounded-[clamp(0.68rem,0.54rem+0.48vmin,0.86rem)] iphone-page:px-[clamp(0.95rem,0.78rem+0.85vmin,1.15rem)] iphone-page:py-[clamp(0.82rem,0.65rem+0.85vmin,1.05rem)]">
           <p
-            className={`whitespace-nowrap text-[1.1875rem] font-medium tracking-[-0.02em] md:text-[1.3125rem] ${inter.className}`}
+            className={`whitespace-nowrap text-[1.0625rem] font-medium tracking-[-0.02em] iphone-page:text-[clamp(1.05rem,0.92rem+0.82vmin,1.22rem)] ${inter.className}`}
           >
             {ABOUT_CONTACT_EMAIL}
           </p>
 
           {copied ? (
             <p
-              className={`mt-2 flex items-center gap-1.5 text-sm font-normal text-white/72 ${dmSans.className}`}
+              className={`mt-2 flex items-center gap-1.5 text-sm font-normal text-white/72 iphone-page:text-[clamp(0.88rem,0.78rem+0.62vmin,1rem)] ${dmSans.className}`}
             >
               <CheckIcon className="h-4 w-4 shrink-0" />
               Copied to clipboard
