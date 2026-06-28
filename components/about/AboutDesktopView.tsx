@@ -16,9 +16,10 @@ import {
   ABOUT_DESKTOP_HERO_WRAP,
   ABOUT_HERO_HEADLINE_WRAP,
   ABOUT_DESKTOP_PAGE_INSET,
-  ABOUT_DESKTOP_SECTION_1_PT,
+  ABOUT_DESKTOP_SECTION_1_LAYOUT,
   ABOUT_DESKTOP_SECTION_GRID,
   ABOUT_DESKTOP_SECTION_H,
+  ABOUT_DESKTOP_SECTION_LAYOUT,
   ABOUT_DESKTOP_STACK_GAP,
   ABOUT_DESKTOP_SUBHEADING_TW,
   ABOUT_DESKTOP_TITLE_TW,
@@ -80,9 +81,7 @@ export function AboutDesktopView() {
         <AboutDesktopNav />
 
         <main className="pb-16 md:pb-20">
-          <section
-            className={`${ABOUT_DESKTOP_SECTION_H} ${ABOUT_DESKTOP_SECTION_1_PT} flex flex-col justify-start ${ABOUT_DESKTOP_PAGE_INSET}`}
-          >
+          <section className={`${ABOUT_DESKTOP_SECTION_H} ${ABOUT_DESKTOP_SECTION_1_LAYOUT}`}>
             <div className={ABOUT_HERO_HEADLINE_WRAP}>
               <h1 className={ABOUT_DESKTOP_TITLE_TW}>
                 <span className="block">Doe is on a mission</span>
@@ -106,7 +105,7 @@ export function AboutDesktopView() {
             </div>
           </section>
 
-          <section className={`${ABOUT_DESKTOP_SECTION_H} flex items-center ${ABOUT_DESKTOP_PAGE_INSET}`}>
+          <section className={`${ABOUT_DESKTOP_SECTION_H} ${ABOUT_DESKTOP_SECTION_LAYOUT}`}>
             <div className={ABOUT_DESKTOP_SECTION_GRID}>
               <div className={`flex flex-col ${ABOUT_DESKTOP_STACK_GAP}`}>
                 <AboutDesktopParagraph text={sections.intro.text} />
@@ -125,7 +124,7 @@ export function AboutDesktopView() {
             </div>
           </section>
 
-          <section className={`${ABOUT_DESKTOP_SECTION_H} flex items-center ${ABOUT_DESKTOP_PAGE_INSET}`}>
+          <section className={`${ABOUT_DESKTOP_SECTION_H} ${ABOUT_DESKTOP_SECTION_LAYOUT}`}>
             <div className={ABOUT_DESKTOP_SECTION_GRID}>
               <ArticlePieChart
                 title={sections.pieChart.title}
