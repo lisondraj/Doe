@@ -3,7 +3,10 @@
 /** Workflow carousel slide mocks — desktop second section + legacy caption tokens. */
 
 import { DoePhoneCommunicationCarouselCard } from "@/components/doephone/DoePhoneCommunicationCarouselCard";
-import { DOEPHONE_COMMUNICATION_SLIDES } from "@/lib/doephone/communication-carousel";
+import {
+  DOEPHONE_COMMUNICATION_SLIDES,
+  type DoePhoneCommunicationSlide,
+} from "@/lib/doephone/communication-carousel";
 import { DOEPHONE_SECTION_CAROUSEL_CLIP_STYLE, DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
 import type { RefObject } from "react";
 
@@ -24,6 +27,7 @@ export type WorkflowCarouselSlidesProps = {
   scaledSide: number;
   captionLeft700: number;
   captionRight700: number;
+  slides?: readonly DoePhoneCommunicationSlide[];
 };
 
 export function WorkflowCarouselSlides({
@@ -32,10 +36,11 @@ export function WorkflowCarouselSlides({
   slideBoxH,
   slideUniformScale,
   scaledSide,
+  slides = DOEPHONE_COMMUNICATION_SLIDES,
 }: WorkflowCarouselSlidesProps) {
   return (
     <>
-      {DOEPHONE_COMMUNICATION_SLIDES.map((slide, i) => {
+      {slides.map((slide, i) => {
         const cropInset700X = Math.max(0, (scaledSide - slideBoxW) / (2 * slideUniformScale));
         const cropInset700Y = Math.max(0, (scaledSide - slideBoxH) / (2 * slideUniformScale));
 

@@ -23,6 +23,10 @@ import {
   DESIGN6_BACKDROP,
 } from "@/lib/workflow-carousel-design-backdrops";
 import {
+  DOEPHONE_COMMUNICATION_SLIDES,
+  DOEPHONE_COMMUNICATION_SLIDES_DESKTOP,
+} from "@/lib/doephone/communication-carousel";
+import {
   DOEPHONE_DESKTOP_PAGE_INSET_X,
   DOEPHONE_DESKTOP_PAGE_MARGIN_X,
 } from "@/lib/doephone/section-styles";
@@ -736,7 +740,7 @@ export function DesktopHome() {
     
     let animationFrameId: number;
     let lastTime = performance.now();
-    const slideSpeed = 0.05;
+    const slideSpeed = isPhoneLayout ? 0.05 : 0.032;
     let lastStateUpdate = 0;
     
     const animate = (currentTime: number) => {
@@ -777,7 +781,7 @@ export function DesktopHome() {
         cancelAnimationFrame(animationFrameId);
       }
     };
-  }, [isManualScroll, shouldStartSlidingAnimation, isSlidingPaused, slideBoxW, slideGap]);
+  }, [isManualScroll, shouldStartSlidingAnimation, isSlidingPaused, slideBoxW, slideGap, isPhoneLayout]);
 
   // Initialize box positions when animation starts
   useEffect(() => {
@@ -1307,6 +1311,7 @@ export function DesktopHome() {
               scaledSide={scaledSide}
               captionLeft700={captionLeft700}
               captionRight700={captionRight700}
+              slides={isPhoneLayout ? DOEPHONE_COMMUNICATION_SLIDES : DOEPHONE_COMMUNICATION_SLIDES_DESKTOP}
             />
             </div>
           </div>

@@ -90,6 +90,16 @@ export const DOEPHONE_COMMUNICATION_SLIDES: readonly DoePhoneCommunicationSlide[
 
 export const DOEPHONE_COMMUNICATION_SLIDE_COUNT = DOEPHONE_COMMUNICATION_SLIDES.length;
 
+/** Desktop home carousel — Ambient (Sarah HBA1C) before Documents. */
+export const DOEPHONE_COMMUNICATION_SLIDES_DESKTOP: readonly DoePhoneCommunicationSlide[] = [
+  DOEPHONE_COMMUNICATION_SLIDES[0],
+  DOEPHONE_COMMUNICATION_SLIDES[1],
+  DOEPHONE_COMMUNICATION_SLIDES[3],
+  DOEPHONE_COMMUNICATION_SLIDES[2],
+  DOEPHONE_COMMUNICATION_SLIDES[4],
+  DOEPHONE_COMMUNICATION_SLIDES[5],
+];
+
 /** Lookup slide backdrop by id — stable when slide order changes. */
 export function doephoneCommunicationBackdrop(id: (typeof DOEPHONE_COMMUNICATION_SLIDES)[number]["id"]) {
   const slide = DOEPHONE_COMMUNICATION_SLIDES.find((entry) => entry.id === id);
