@@ -14,7 +14,7 @@ export const DOEPHONE_COMMUNICATION_SLIDES: readonly DoePhoneCommunicationSlide[
     id: "agents",
     menuLabel: "Agents",
     description:
-      "Deploy voice, scheduling, and labs agents across your clinic roster. Monitor live status, assign workflows, and scale automation from one dashboard.",
+      "Your clinic runs on more than one workflow, and Agents gives you a single place to deploy voice, scheduling, and labs automation across the roster. From live status to workflow assignment, you can see what is running, what is waiting, and what to turn on next without jumping between tools.",
     backdrop: {
       slideIndex: 3,
       label: "Agents",
@@ -26,7 +26,7 @@ export const DOEPHONE_COMMUNICATION_SLIDES: readonly DoePhoneCommunicationSlide[
     id: "front-desk",
     menuLabel: "Reception",
     description:
-      "Voice and scheduling agents handle calls, intake, and calendar booking in parallel. Patients get answers while your front desk stays focused on care.",
+      "When the phone rings and the schedule fills up at the same time, Reception keeps both moving. Voice and scheduling agents handle intake, answers, and calendar booking in parallel so patients get help immediately and your front desk team can stay with the people in front of them.",
     backdrop: {
       slideIndex: 0,
       label: "Reception",
@@ -39,7 +39,7 @@ export const DOEPHONE_COMMUNICATION_SLIDES: readonly DoePhoneCommunicationSlide[
     id: "inbox",
     menuLabel: "Documents",
     description:
-      "Route labs, referrals, and prior auths through automated document workflows. Each file lands in the right chart without manual sorting or follow-up.",
+      "Incoming labs, referrals, and prior auths rarely arrive in a neat stack, and Documents routes each one through the right workflow automatically. Files land in the correct chart, outcomes stay visible, and your team spends less time sorting and chasing follow-ups.",
     backdrop: {
       slideIndex: 4,
       label: "Documents",
@@ -52,7 +52,7 @@ export const DOEPHONE_COMMUNICATION_SLIDES: readonly DoePhoneCommunicationSlide[
     id: "ambient",
     menuLabel: "Ambient",
     description:
-      "Ask clinical questions in natural language with patient context built in. Query trends, labs, and history without leaving the chart or breaking flow.",
+      "Clinical questions should not require hunting through tabs or rebuilding context from scratch. Ambient lets you ask in natural language with the patient already in frame, so trends, labs, and history come back while you stay in flow at the point of care.",
     backdrop: {
       slideIndex: 4,
       label: "Ambient",
@@ -76,7 +76,7 @@ export const DOEPHONE_COMMUNICATION_SLIDES: readonly DoePhoneCommunicationSlide[
     id: "integrate",
     menuLabel: "Integrate",
     description:
-      "Connect your EMR, billing stack, and clinical tools through Doe's integration layer. One view of the systems your practice already runs on every day.",
+      "Every practice runs a different stack, and Integrate connects the EMRs, billing platforms, and clinical tools you already rely on through one layer. Doe meets your team where they work instead of asking them to rip out what is already in place.",
     backdrop: {
       slideIndex: 5,
       label: "Integrate",
