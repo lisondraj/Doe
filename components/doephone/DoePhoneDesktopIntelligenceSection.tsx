@@ -10,10 +10,11 @@ import {
 
 const DESKTOP_SECTION_UNIFORM_PAD = "p-10 md:p-20 lg:p-28 xl:p-36";
 
-const DEPLOYMENT_SLIDE = DOEPHONE_COMMUNICATION_SLIDES.find((slide) => slide.id === "agents");
-if (!DEPLOYMENT_SLIDE) {
-  throw new Error("Missing agents communication slide");
-}
+const DEPLOYMENT_SLIDE =
+  DOEPHONE_COMMUNICATION_SLIDES.find((slide) => slide.id === "agents") ??
+  (() => {
+    throw new Error("Missing agents communication slide");
+  })();
 
 const ORANGE_FROST_STYLE = {
   background: "rgba(210, 119, 76, 0.48)",
