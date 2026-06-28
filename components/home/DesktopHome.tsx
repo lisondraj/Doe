@@ -22,7 +22,7 @@ import { DesktopMainNavCta } from "@/components/home/DesktopMainNavCta";
 import {
   DOEPHONE_DESKTOP_PAGE_INSET_X,
   DOEPHONE_DESKTOP_PAGE_MARGIN_X,
-  DESKTOP_HOME_BAND_H,
+  DESKTOP_HOME_PANEL_BAND_H,
 } from "@/lib/doephone/section-styles";
 
 /** Set true to restore mega-menu hover panels (kept in codebase). */
@@ -551,9 +551,9 @@ export function DesktopHome() {
       <div className="w-full border-t border-[#E6E6E6]" />
 
       {/* Second Section — intelligence copy + deployments UI */}
-      <div ref={secondSectionRef} className={`relative z-10 ${DESKTOP_HOME_BAND_H}`}>
+      <div ref={secondSectionRef} className={`relative z-10 ${DESKTOP_HOME_PANEL_BAND_H}`}>
         <div
-          className={`relative flex flex-col items-stretch justify-center ${DESKTOP_HOME_BAND_H}`}
+          className={`relative flex flex-col items-stretch justify-center ${DESKTOP_HOME_PANEL_BAND_H}`}
           style={{
             opacity: slidingBoxesOpacity,
             transform: `translateY(${slidingBoxesTranslateY}px)`,
@@ -568,9 +568,9 @@ export function DesktopHome() {
       <DoePhoneDesktopBuildSection />
 
       {/* Fourth section — reception panel (mirrors second section) */}
-      <div ref={carouselSectionRef} className={`relative z-10 ${DESKTOP_HOME_BAND_H}`}>
+      <div ref={carouselSectionRef} className={`relative z-10 ${DESKTOP_HOME_PANEL_BAND_H}`}>
         <div
-          className={`relative flex flex-col items-stretch justify-center ${DESKTOP_HOME_BAND_H}`}
+          className={`relative flex flex-col items-stretch justify-center ${DESKTOP_HOME_PANEL_BAND_H}`}
           style={{
             opacity: carouselSectionOpacity,
             transform: `translateY(${carouselSectionTranslateY}px)`,
@@ -591,8 +591,8 @@ export function DesktopHome() {
       <DoePhoneDesktopDocumentsWorkflowSection />
 
       {/* Eighth section — cohort watch panel (mirrors second section) */}
-      <div className={`relative z-10 ${DESKTOP_HOME_BAND_H}`}>
-        <div className={`relative flex flex-col items-stretch justify-center ${DESKTOP_HOME_BAND_H}`}>
+      <div className={`relative z-10 ${DESKTOP_HOME_PANEL_BAND_H}`}>
+        <div className={`relative flex flex-col items-stretch justify-center ${DESKTOP_HOME_PANEL_BAND_H}`}>
           <DoePhoneDesktopCohortWatchSection />
         </div>
       </div>

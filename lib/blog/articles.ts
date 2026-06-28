@@ -67,7 +67,7 @@ export const BLOG_ARTICLES: readonly BlogArticle[] = [
     body: [
       {
         type: "p",
-        text: "Physicians in the United States and Canada entered medicine to care for people—not to spend their days inside payer portals, inbox queues, and after-hours charting. Administrative work now consumes a growing share of every clinic week, pulling clinicians away from patients on both sides of the border.",
+        text: "Physicians in the United States and Canada entered medicine to care for people, not to spend their days inside payer portals, inbox queues, and after-hours charting. Administrative work now consumes a growing share of every clinic week, pulling clinicians away from patients on both sides of the border.",
       },
       {
         type: "ul",
@@ -80,7 +80,7 @@ export const BLOG_ARTICLES: readonly BlogArticle[] = [
       },
       {
         type: "p",
-        text: "The burden looks different in each country—billing codes and prior authorization in the U.S., fragmented provincial systems and referral handoffs in Canada—but the effect is the same. Doctors finish their last appointment and still face an evening of documentation, form chasing, and message triage before the next day begins.",
+        text: "The burden looks different in each country, with billing codes and prior authorization in the U.S. and fragmented provincial systems and referral handoffs in Canada, but the effect is the same. Doctors finish their last appointment and still face an evening of documentation, form chasing, and message triage before the next day begins.",
       },
       {
         type: "bar-chart",
@@ -92,7 +92,7 @@ export const BLOG_ARTICLES: readonly BlogArticle[] = [
         ],
       },
       { type: "p", text: "Doe listens during the visit, drafts the note with citations, and surfaces only what needs a clinician's eyes before sign-off. The chart updates without another hour at the keyboard after clinic." },
-      { type: "p", text: "Ambient capture runs with explicit consent and clear controls—pause, discard, or edit before anything lands in the record. Drafts follow your note templates and pull problem lists, meds, and prior visits so you are not starting from a blank screen." },
+      { type: "p", text: "Ambient capture runs with explicit consent and clear controls: pause, discard, or edit before anything lands in the record. Drafts follow your note templates and pull problem lists, meds, and prior visits so you are not starting from a blank screen." },
       { type: "p", text: "The goal is not to remove the clinician from the note. It is to remove the clerical tax that keeps smart people documenting instead of caring for the next patient in the queue." },
       { type: "h2", text: "Controls Clinicians Trust" },
       { type: "ul", items: [
@@ -103,7 +103,7 @@ export const BLOG_ARTICLES: readonly BlogArticle[] = [
         "Review the source citation for every claim before signing",
       ]},
       { type: "image", design: 1 },
-      { type: "p", text: "Every practice has a different rhythm. A family medicine visit runs differently than a hospitalist consult or an ED triage. Ambient documentation adapts to each context—the length, the tone, the sections that matter—because the note is trained on how your practice already writes, not on a generic template built in a conference room somewhere." },
+      { type: "p", text: "Every practice has a different rhythm. A family medicine visit runs differently than a hospitalist consult or an ED triage. Ambient documentation adapts to each context, from the length and tone to the sections that matter, because the note is trained on how your practice already writes, not on a generic template built in a conference room somewhere." },
       { type: "quote", text: "The note is not the goal. The patient is the goal.", attribution: "Doe Clinical Advisory Group" },
       { type: "p", text: "Trust is the harder problem. Clinicians have been burned by autofill that missed the nuance, by voice recognition that mangled medication names, by AI that hallucinated a finding that was never said. Doe addresses this by making every sentence traceable. Each claim in the draft links to the moment in the conversation that supports it. You review evidence, not output." },
       { type: "p", text: "We piloted ambient documentation with three primary care groups and two specialty practices over six months. On average, clinicians recovered forty-five minutes per day previously spent on after-hours charting. Patient interaction time in the room increased. Burnout scores on the MBI-HWB survey dropped meaningfully across all five sites." },

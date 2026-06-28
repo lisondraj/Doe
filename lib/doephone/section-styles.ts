@@ -28,9 +28,12 @@ export const DESKTOP_HOME_FIXED_NAV_HEIGHT = "5.5rem";
 /** Viewport band below fixed desktop nav — shared desktop section height. */
 export const DESKTOP_HOME_BELOW_NAV_HEIGHT = `calc(100dvh - ${DESKTOP_HOME_FIXED_NAV_HEIGHT})`;
 
-/** Desktop home — panel rows and full-bleed gradient bands. */
+/** Desktop home — full-bleed gradient bands (Build, Integrations, Documents). */
 export const DESKTOP_HOME_BAND_MIN_H = "min-h-[calc(100dvh-5.5rem)]";
 export const DESKTOP_HOME_BAND_H = "min-h-[calc(100dvh-5.5rem)] h-[calc(100dvh-5.5rem)]";
+
+/** Desktop home — rounded panel sections (deployments, reception, billing, cohort watch). */
+export const DESKTOP_HOME_PANEL_BAND_H = "min-h-[112vh] h-[112vh]";
 
 /** Full-bleed desktop bands — shared top inset for title (left) and + badge (right). */
 export const DESKTOP_FULLSCREEN_SECTION_TOP = "top-10 md:top-14 lg:top-16 xl:top-20";

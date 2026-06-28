@@ -91,7 +91,7 @@ export function renderArticleBlock(block: ArticleBlock, index: number) {
               <p
                 className={`mt-4 iphone-page:mt-5 font-medium text-[#9A8F82] text-[clamp(1.08rem,0.95rem+0.55vmin,1.28rem)] iphone-page:text-[clamp(1.22rem,1.05rem+0.8vmin,1.48rem)] ${dmSans.className}`}
               >
-                &mdash;&thinsp;{block.attribution}
+                {block.attribution}
               </p>
             ) : null}
           </div>

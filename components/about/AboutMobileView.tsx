@@ -4,12 +4,11 @@ import { renderArticleBlock } from "@/components/blog/ArticleBodyBlocks";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
 import {
-  ABOUT_HERO_BOX_TW,
   ABOUT_HERO_WRAP,
   ABOUT_PAGE_SUBHEADING_TW,
   ABOUT_PAGE_TITLE_TW,
 } from "@/lib/about/about-layout-styles";
-import { BLOG_CONTENT_PT } from "@/lib/blog/blog-layout-styles";
+import { BLOG_CONTENT_PT, BLOG_FEATURE_BOX_TW } from "@/lib/blog/blog-layout-styles";
 import { getBlogArticle } from "@/lib/blog/articles";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 
@@ -44,7 +43,7 @@ export function AboutMobileView() {
         </p>
 
         <div className={ABOUT_HERO_WRAP}>
-          <BlogHeroVisual backdrop={ABOUT_ARTICLE.backdrop} variant="hero" boxClassName={ABOUT_HERO_BOX_TW} gapClassName="" />
+          <BlogHeroVisual backdrop={ABOUT_ARTICLE.backdrop} variant="hero" boxClassName={BLOG_FEATURE_BOX_TW} gapClassName="" />
         </div>
 
         <div className={`article-body text-left`}>
