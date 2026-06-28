@@ -34,6 +34,7 @@ export function AboutMobileStatCharts() {
           embedded
           showCaption={false}
           showCitation={false}
+          titleClassName={ABOUT_MOBILE_PIE_CHART_TITLE_TW}
         />
       </div>
 

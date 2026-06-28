@@ -102,11 +102,12 @@ export const ABOUT_MOBILE_TAM_CHART = {
     { label: "U.S. doctors", value: 8.5, suffix: "B USD" },
     { label: "U.S. health providers", value: 24, suffix: "B USD" },
     { label: "Canada + U.S. doctors", value: 9.6, suffix: "B USD" },
+    { label: "Canada + U.S. health providers", value: 28, suffix: "B USD" },
   ],
   highlight: {
     valueB: 28,
+    tamLabel: "Total Addressable Market",
     headline: "Canada + U.S. all health providers",
-    summary: "Combined addressable software TAM across every clinic, hospital, and care team Doe can serve in North America.",
   },
 } as const;
 

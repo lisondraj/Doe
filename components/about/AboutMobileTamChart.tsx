@@ -10,8 +10,8 @@ const BAR = "#D2774C";
 const AXIS = "rgba(30, 52, 58, 0.22)";
 const GRID_LINE = "rgba(30, 52, 58, 0.07)";
 
-const TAM_Y_MAX = 24;
-const TAM_Y_TICKS = [0, 6, 12, 18, 24] as const;
+const TAM_Y_MAX = 28;
+const TAM_Y_TICKS = [0, 7, 14, 21, 28] as const;
 
 function formatTamAxis(value: number) {
   return value === 0 ? "0" : value >= 10 ? `$${value}B` : `$${value.toFixed(0)}B`;
@@ -29,15 +29,15 @@ export function AboutMobileTamChart() {
         {ABOUT_MOBILE_TAM_CHART.title}
       </figcaption>
 
-      <div className="aspect-square w-full">
-        <div className="grid h-full grid-cols-[clamp(2.35rem,9.5vw,3rem)_minmax(0,1fr)] grid-rows-[minmax(0,1fr)_auto] gap-x-2">
+      <div className="aspect-[5/4] w-full">
+        <div className="grid h-full grid-cols-[clamp(2.65rem,10.5vw,3.35rem)_minmax(0,1fr)] grid-rows-[minmax(0,1fr)_auto] gap-x-2.5">
           <div className="relative col-start-1 row-start-1">
             {TAM_Y_TICKS.slice()
               .reverse()
               .map((tick) => (
                 <span
                   key={tick}
-                  className={`absolute right-0 -translate-y-1/2 text-right tabular-nums font-normal leading-none text-[#9A8F82] ${inter.className} text-[clamp(0.62rem,0.54rem+0.38vmin,0.76rem)] iphone-page:text-[clamp(0.68rem,0.58rem+0.42vmin,0.82rem)]`}
+                  className={`absolute right-0 -translate-y-1/2 text-right tabular-nums font-normal leading-none text-[#9A8F82] ${inter.className} text-[clamp(0.72rem,0.62rem+0.45vmin,0.88rem)] iphone-page:text-[clamp(0.82rem,0.7rem+0.52vmin,0.98rem)]`}
                   style={{ bottom: `${(tick / TAM_Y_MAX) * 100}%` }}
                 >
                   {formatTamAxis(tick)}
@@ -61,14 +61,14 @@ export function AboutMobileTamChart() {
               />
             ))}
 
-            <div className="absolute inset-0 flex items-end justify-around gap-1 px-1 pb-px iphone-page:gap-1.5 iphone-page:px-1.5">
+            <div className="absolute inset-0 flex items-end justify-around gap-0.5 px-0.5 pb-px iphone-page:gap-1 iphone-page:px-1">
               {bars.map((bar) => {
                 const heightPct = `${Math.max(2, Math.round((bar.value / TAM_Y_MAX) * 100))}%`;
 
                 return (
                   <div
                     key={bar.label}
-                    className="h-full max-w-[2.85rem] flex-1 iphone-page:max-w-[3.15rem]"
+                    className="h-full max-w-[2.35rem] flex-1 iphone-page:max-w-[2.65rem]"
                     aria-hidden
                   >
                     <div className="flex h-full flex-col justify-end">
@@ -83,11 +83,11 @@ export function AboutMobileTamChart() {
             </div>
           </div>
 
-          <div className="col-start-2 row-start-2 flex justify-around gap-1 px-1 pt-2.5 iphone-page:gap-1.5 iphone-page:px-1.5 iphone-page:pt-3">
+          <div className="col-start-2 row-start-2 flex justify-around gap-0.5 px-0.5 pt-2.5 iphone-page:gap-1 iphone-page:px-1 iphone-page:pt-3">
             {bars.map((bar) => (
               <span
                 key={`${bar.label}-label`}
-                className={`min-w-0 flex-1 text-center font-normal leading-[1.15] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className} text-[clamp(0.62rem,0.54rem+0.38vmin,0.76rem)] iphone-page:text-[clamp(0.68rem,0.58rem+0.42vmin,0.82rem)]`}
+                className={`min-w-0 flex-1 text-center font-normal leading-[1.15] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className} text-[clamp(0.72rem,0.62rem+0.45vmin,0.88rem)] iphone-page:text-[clamp(0.82rem,0.7rem+0.52vmin,0.98rem)]`}
               >
                 {bar.label}
               </span>
@@ -98,22 +98,19 @@ export function AboutMobileTamChart() {
 
       <div className="mt-6 border border-[#D9D4CC] px-4 py-4 iphone-page:mt-7 iphone-page:px-5 iphone-page:py-5">
         <p
-          className={`font-normal leading-snug text-[#9A8F82] ${inter.className} text-[clamp(0.92rem,0.82rem+0.52vmin,1.05rem)] iphone-page:text-[clamp(0.98rem,0.88rem+0.58vmin,1.12rem)]`}
-        >
-          {ABOUT_MOBILE_TAM_CHART.highlight.headline}
-        </p>
-        <p
-          className={`mt-1.5 font-medium leading-none tracking-[-0.03em] text-[#1E343A] ${dmSans.className} text-[clamp(2.35rem,1.85rem+2.15vmin,3.05rem)] iphone-page:mt-2 iphone-page:text-[clamp(2.65rem,2.05rem+2.55vmin,3.45rem)]`}
+          className={`font-medium leading-none tracking-[-0.03em] text-[#1E343A] ${dmSans.className} text-[clamp(2.55rem,2rem+2.35vmin,3.35rem)] iphone-page:text-[clamp(2.85rem,2.2rem+2.75vmin,3.75rem)]`}
         >
           ${ABOUT_MOBILE_TAM_CHART.highlight.valueB}B
-          <span className="ml-1.5 text-[0.42em] font-medium tracking-[-0.02em] text-[#9A8F82]">
-            addressable TAM
-          </span>
         </p>
         <p
-          className={`mt-3 font-normal leading-[1.45] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className} text-[clamp(0.92rem,0.82rem+0.52vmin,1.05rem)] iphone-page:mt-3.5 iphone-page:text-[clamp(0.98rem,0.88rem+0.58vmin,1.12rem)]`}
+          className={`mt-2 font-medium leading-snug tracking-[-0.02em] text-[#1E343A] ${dmSans.className} text-[clamp(1.08rem,0.92rem+0.75vmin,1.32rem)] iphone-page:mt-2.5 iphone-page:text-[clamp(1.22rem,1.02rem+0.95vmin,1.48rem)]`}
         >
-          {ABOUT_MOBILE_TAM_CHART.highlight.summary}
+          {ABOUT_MOBILE_TAM_CHART.highlight.tamLabel}
+        </p>
+        <p
+          className={`mt-1.5 font-normal leading-snug text-[#9A8F82] ${inter.className} text-[clamp(1rem,0.88rem+0.58vmin,1.18rem)] iphone-page:mt-2 iphone-page:text-[clamp(1.12rem,0.96rem+0.72vmin,1.32rem)]`}
+        >
+          {ABOUT_MOBILE_TAM_CHART.highlight.headline}
         </p>
       </div>
 
