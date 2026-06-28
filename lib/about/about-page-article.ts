@@ -37,7 +37,7 @@ function getAboutSectionTwoArticleBlocks() {
     throw new Error("About page section two article blocks are out of order");
   }
 
-  return { intro, stats };
+  return { intro, stats, pieChart };
 }
 
 const aboutSectionTwoArticle = getAboutSectionTwoArticleBlocks();
@@ -47,6 +47,14 @@ export const ABOUT_DESKTOP_SECTION_2_INTRO = aboutSectionTwoArticle.intro.text;
 
 /** /about section two — stat bullets before the clinic-hour pie chart (from article body). */
 export const ABOUT_DESKTOP_SECTION_2_BULLETS = aboutSectionTwoArticle.stats.items;
+
+/** /about section two — clinic-hour pie chart (from article body). */
+export const ABOUT_SECTION_2_PIE_CHART = {
+  title: aboutSectionTwoArticle.pieChart.title,
+  caption: aboutSectionTwoArticle.pieChart.caption,
+  citation: aboutSectionTwoArticle.pieChart.citation,
+  slices: aboutSectionTwoArticle.pieChart.slices,
+};
 
 /** Desktop /about section three — co-founder bios beside beige panel. */
 export const ABOUT_DESKTOP_FOUNDERS_PARAGRAPHS = [

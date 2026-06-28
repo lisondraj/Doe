@@ -1,10 +1,16 @@
 "use client";
 
-import { renderArticleBlock } from "@/components/blog/ArticleBodyBlocks";
+import { AboutMobileBeigePanel } from "@/components/about/AboutMobileBeigePanel";
+import { AboutMobileFaqTabs } from "@/components/about/AboutMobileFaqTabs";
+import { ArticlePieChart } from "@/components/blog/ArticlePieChart";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
 import {
   ABOUT_HERO_HEADLINE_WRAP,
+  ABOUT_MOBILE_BODY_TW,
+  ABOUT_MOBILE_CONTENT_GAP,
+  ABOUT_MOBILE_LIST_GAP,
+  ABOUT_MOBILE_SECTION_GAP,
   ABOUT_PAGE_HERO_AFTER_BYLINE,
   ABOUT_PAGE_HERO_BEFORE_ARTICLE,
   ABOUT_PAGE_HERO_BOX_TW,
@@ -16,18 +22,23 @@ import {
   ABOUT_PAGE_TITLE_TW,
 } from "@/lib/about/about-layout-styles";
 import {
-  ABOUT_PAGE_ARTICLE,
+  ABOUT_DESKTOP_FOUNDERS_PARAGRAPHS,
+  ABOUT_DESKTOP_SECTION_2_BULLETS,
+  ABOUT_DESKTOP_SECTION_2_INTRO,
   ABOUT_PAGE_HERO_BACKDROP,
   ABOUT_PAGE_HERO_PATTERN_SCALE,
   ABOUT_PAGE_MOBILE_BYLINE,
   ABOUT_PAGE_MOBILE_DATE,
+  ABOUT_SECTION_2_PIE_CHART,
 } from "@/lib/about/about-page-article";
 import { BLOG_CONTENT_PT } from "@/lib/blog/blog-layout-styles";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 
-/** iPhone /about — mission headline, fundraising subheading, and full blog article body. */
+/** iPhone /about — mission hero plus section copy, pie chart, FAQ, and founder bios. */
 export function AboutMobileView() {
   useDoePhoneStableViewport();
+
+  const [foundersOne, foundersTwo] = ABOUT_DESKTOP_FOUNDERS_PARAGRAPHS;
 
   return (
     <BlogMobileShell
@@ -69,8 +80,40 @@ export function AboutMobileView() {
           />
         </div>
 
-        <div className="article-body text-left">
-          {ABOUT_PAGE_ARTICLE.body.map((block, index) => renderArticleBlock(block, index))}
+        <div className={ABOUT_MOBILE_SECTION_GAP}>
+          <div className={ABOUT_MOBILE_CONTENT_GAP}>
+            <p className={ABOUT_MOBILE_BODY_TW}>{ABOUT_DESKTOP_SECTION_2_INTRO}</p>
+            <ul className={`${ABOUT_MOBILE_LIST_GAP} list-none pl-0`}>
+              {ABOUT_DESKTOP_SECTION_2_BULLETS.map((item) => (
+                <li key={item} className={`flex items-start gap-3 ${ABOUT_MOBILE_BODY_TW}`}>
+                  <span
+                    className="mt-[0.35em] h-[0.45em] w-[0.45em] shrink-0 rounded-full bg-[#9A8F82]"
+                    aria-hidden
+                  />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <ArticlePieChart
+            title={ABOUT_SECTION_2_PIE_CHART.title}
+            caption={ABOUT_SECTION_2_PIE_CHART.caption}
+            citation={ABOUT_SECTION_2_PIE_CHART.citation}
+            slices={ABOUT_SECTION_2_PIE_CHART.slices}
+            layout="mobile"
+          />
+
+          <AboutMobileBeigePanel graphic={0} />
+
+          <AboutMobileFaqTabs />
+
+          <div className={ABOUT_MOBILE_CONTENT_GAP}>
+            <p className={ABOUT_MOBILE_BODY_TW}>{foundersOne}</p>
+            <p className={ABOUT_MOBILE_BODY_TW}>{foundersTwo}</p>
+          </div>
+
+          <AboutMobileBeigePanel graphic={1} />
         </div>
       </main>
     </BlogMobileShell>
