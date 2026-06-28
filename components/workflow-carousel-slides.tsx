@@ -2,13 +2,9 @@
 
 /** Workflow carousel slide mocks — desktop second section + legacy caption tokens. */
 
-import { DoePhoneCommunicationSlideVisual } from "@/components/doephone/DoePhoneCommunicationSlideVisual";
-import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
+import { DoePhoneCommunicationCarouselCard } from "@/components/doephone/DoePhoneCommunicationCarouselCard";
 import { DOEPHONE_COMMUNICATION_SLIDES } from "@/lib/doephone/communication-carousel";
-import {
-  DOEPHONE_SECTION_CAROUSEL_CLIP_STYLE,
-  DOEPHONE_SECTION_CAROUSEL_RADIUS,
-} from "@/lib/doephone/section-styles";
+import { DOEPHONE_SECTION_CAROUSEL_CLIP_STYLE, DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
 import type { RefObject } from "react";
 
 /** Bottom title pill + description inside 700×700 slide mocks (legacy PhoneHome carousel). */
@@ -65,16 +61,7 @@ export function WorkflowCarouselSlides({
               ...DOEPHONE_SECTION_CAROUSEL_CLIP_STYLE,
             }}
           >
-            <WorkflowCarouselDesignBackdrop
-              backdrop={slide.backdrop}
-              embedded
-              className={DOEPHONE_SECTION_CAROUSEL_RADIUS}
-            />
-            <div className="absolute inset-0 z-[15] flex h-full w-full flex-col items-center justify-center overflow-hidden px-6 py-8">
-              <div className="flex w-full max-w-[560px] items-center justify-center">
-                <DoePhoneCommunicationSlideVisual slideId={slide.id} />
-              </div>
-            </div>
+            <DoePhoneCommunicationCarouselCard slide={slide} layout="desktop" className="shadow-none" />
           </div>
         </div>
       ))}
