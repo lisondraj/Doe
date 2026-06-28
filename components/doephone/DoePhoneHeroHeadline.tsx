@@ -95,8 +95,8 @@ export function DoePhoneHeroHeadline() {
       ref={headlineRef}
       className={`doephone-hero-headline flex w-full min-w-0 max-w-full flex-col items-start ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] text-white ${suisseIntl.className}`}
     >
-      <span className="doephone-hero-headline-line block">Intelligence</span>
-      <span className="doephone-hero-headline-line doephone-hero-headline-line--second block">built for doctors.</span>
+      <span className="doephone-hero-headline-line block">Meet your new</span>
+      <span className="doephone-hero-headline-line doephone-hero-headline-line--second block">clinic assistant.</span>
     </h1>
   );
 }
