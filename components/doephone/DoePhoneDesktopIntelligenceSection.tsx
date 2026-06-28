@@ -1,6 +1,7 @@
 "use client";
 
 import { DoePhoneClinicAgentsVisual } from "@/components/doephone/DoePhoneClinicAgentsVisual";
+import { DoePhoneDesktopFrostPlusBadge } from "@/components/doephone/DoePhoneDesktopFrostPlusBadge";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { DOEPHONE_COMMUNICATION_SLIDES } from "@/lib/doephone/communication-carousel";
 import {
@@ -16,39 +17,10 @@ const DEPLOYMENT_SLIDE =
     throw new Error("Missing agents communication slide");
   })();
 
-const ORANGE_FROST_STYLE = {
-  background: "rgba(210, 119, 76, 0.48)",
-  boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.38)",
+const BOX_PLUS_INSET = {
+  top: "clamp(1.65rem, 2.5vw, 2.75rem)",
+  left: "clamp(1.85rem, 2.75vw, 3rem)",
 } as const;
-
-const FROST_BLUR_CLASS = "backdrop-blur-[10px]";
-const PLUS_BADGE_SIZE = "clamp(5.25rem, 7.5vw, 6.75rem)";
-
-function DeploymentSectionPlusBadge() {
-  return (
-    <span
-      className={`pointer-events-none absolute z-30 grid place-items-center rounded-full ${FROST_BLUR_CLASS}`}
-      style={{
-        bottom: "clamp(1.65rem, 2.5vw, 2.75rem)",
-        right: "clamp(1.85rem, 2.75vw, 3rem)",
-        width: PLUS_BADGE_SIZE,
-        height: PLUS_BADGE_SIZE,
-        ...ORANGE_FROST_STYLE,
-      }}
-      aria-hidden
-    >
-      <span
-        className="block font-light leading-none text-white"
-        style={{
-          fontSize: "clamp(2.85rem, 4vw, 3.55rem)",
-          textShadow: "0 1px 8px rgba(30, 52, 58, 0.18)",
-        }}
-      >
-        +
-      </span>
-    </span>
-  );
-}
 
 /** Desktop second section — single deployments slide as a full-width rounded panel. */
 export function DoePhoneDesktopIntelligenceSection() {
@@ -68,7 +40,10 @@ export function DoePhoneDesktopIntelligenceSection() {
           <DoePhoneClinicAgentsVisual layout="desktop" />
         </div>
 
-        <DeploymentSectionPlusBadge />
+        <DoePhoneDesktopFrostPlusBadge
+          className="absolute z-30"
+          style={BOX_PLUS_INSET}
+        />
       </div>
     </div>
   );

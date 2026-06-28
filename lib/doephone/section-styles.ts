@@ -19,6 +19,12 @@ export const DOEPHONE_DESKTOP_PAGE_INSET_LEFT =
 export const DOEPHONE_DESKTOP_PAGE_MARGIN_X =
   "mx-10 md:mx-20 lg:mx-28 xl:mx-36";
 
+/** Desktop home fixed nav — py-6 bar + text-4xl Doe wordmark row. */
+export const DESKTOP_HOME_FIXED_NAV_HEIGHT = "5.5rem";
+
+/** Viewport band below fixed desktop nav (Build section height). */
+export const DESKTOP_HOME_BELOW_NAV_HEIGHT = `calc(100dvh - ${DESKTOP_HOME_FIXED_NAV_HEIGHT})`;
+
 /** Footer copy row — section left inset + matching right gutter (Doe wordmark sits outside). */
 export const DOEPHONE_FOOTER_CONTENT_INSET =
   "pl-14 pr-14 iphone-page:pl-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))] iphone-page:pr-[max(2.35rem,calc(env(safe-area-inset-right,0px)+5.25vmin))]";

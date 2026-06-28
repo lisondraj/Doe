@@ -5,10 +5,12 @@ import {
   PromptTag,
   WorkflowMentionAt,
 } from "@/components/doephone/DoePhoneAmbientPromptCard";
+import { DoePhoneDesktopFrostPlusBadge } from "@/components/doephone/DoePhoneDesktopFrostPlusBadge";
 import { DoePhoneSectionTitle } from "@/components/doephone/DoePhoneSectionText";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { inter } from "@/lib/home/fonts";
 import {
+  DESKTOP_HOME_BELOW_NAV_HEIGHT,
   DOEPHONE_DESKTOP_PAGE_INSET_X,
   DOEPHONE_SECTION_TITLE_PT,
 } from "@/lib/doephone/section-styles";
@@ -24,14 +26,6 @@ const DESKTOP_BUILD_INSET = DOEPHONE_DESKTOP_PAGE_INSET_X;
 const DESKTOP_BUILD_INPUT_INSET = "p-10 md:p-14 lg:p-16 xl:p-20";
 const DESKTOP_BUILD_BADGE_INSET = "right-10 md:right-20 lg:right-28 xl:right-36 top-10 md:top-14 lg:top-16 xl:top-20";
 
-const BUILD_ADD_BADGE_SIZE = "clamp(5.25rem, 7.5vw, 6.75rem)";
-
-const ORANGE_FROST_STYLE = {
-  background: "rgba(210, 119, 76, 0.48)",
-  boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.38)",
-} as const;
-
-const FROST_BLUR_CLASS = "backdrop-blur-[10px]";
 const EXPAND_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
 const EXPAND_DURATION_MS = 720;
 
@@ -45,87 +39,15 @@ type PanelPhase = "idle" | "open" | "closing";
 function BuildSectionFrostOverlay({ closing }: { closing: boolean }) {
   return (
     <div
-      className={`pointer-events-none absolute inset-0 z-[12] h-full w-full ${FROST_BLUR_CLASS} ${
+      className={`pointer-events-none absolute inset-0 z-[12] h-full w-full backdrop-blur-[10px] ${
         closing ? "doephone-carousel-frost-out" : "doephone-carousel-frost-fill"
       }`}
-      style={ORANGE_FROST_STYLE}
+      style={{
+        background: "rgba(210, 119, 76, 0.48)",
+        boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.38)",
+      }}
       aria-hidden
     />
-  );
-}
-
-function BuildSectionToggleBadge({
-  expanded,
-  interactive,
-  onToggle,
-  className = "",
-}: {
-  expanded: boolean;
-  interactive: boolean;
-  onToggle: () => void;
-  className?: string;
-}) {
-  const sharedStyle = {
-    width: BUILD_ADD_BADGE_SIZE,
-    height: BUILD_ADD_BADGE_SIZE,
-    ...ORANGE_FROST_STYLE,
-  } as const;
-
-  const plusStyle = {
-    fontSize: "clamp(1.575rem, 2.25vw, 2rem)",
-    marginTop: "-0.06em",
-    paddingRight: "0.07em",
-    textShadow: "0 1px 8px rgba(30, 52, 58, 0.18)",
-  } as const;
-
-  if (!interactive) {
-    return (
-      <span
-        className={`pointer-events-none absolute flex items-center justify-center rounded-full ${FROST_BLUR_CLASS} ${className}`}
-        style={sharedStyle}
-        aria-hidden
-      >
-        <span className="font-light leading-none text-white" style={plusStyle}>
-          +
-        </span>
-      </span>
-    );
-  }
-
-  return (
-    <button
-      type="button"
-      className={`absolute flex items-center justify-center rounded-full ${FROST_BLUR_CLASS} ${className}`}
-      style={{ ...sharedStyle, transition: `opacity 720ms ${EXPAND_EASE}` }}
-      aria-label={expanded ? "Close details" : "Show details"}
-      aria-expanded={expanded}
-      onClick={onToggle}
-    >
-      {expanded ? (
-        <svg
-          viewBox="0 0 20 20"
-          fill="none"
-          aria-hidden
-          className="shrink-0"
-          style={{
-            width: "clamp(2rem, 2.85vw, 2.55rem)",
-            height: "clamp(2rem, 2.85vw, 2.55rem)",
-          }}
-        >
-          <path
-            d="M5 5l10 10M15 5L5 15"
-            stroke="white"
-            strokeWidth="1.35"
-            strokeLinecap="round"
-            style={{ filter: "drop-shadow(0 1px 8px rgba(30, 52, 58, 0.18))" }}
-          />
-        </svg>
-      ) : (
-        <span className="font-light leading-none text-white" style={plusStyle}>
-          +
-        </span>
-      )}
-    </button>
   );
 }
 
@@ -165,8 +87,12 @@ export function DoePhoneDesktopBuildSection() {
 
   return (
     <section
-      className="relative isolate z-10 min-h-[100dvh] w-full overflow-hidden bg-[#1E343A]"
-      style={doephoneSectionRevealStyleVars() as CSSProperties}
+      className="relative isolate z-10 w-full overflow-hidden bg-[#1E343A]"
+      style={{
+        ...(doephoneSectionRevealStyleVars() as CSSProperties),
+        minHeight: DESKTOP_HOME_BELOW_NAV_HEIGHT,
+        height: DESKTOP_HOME_BELOW_NAV_HEIGHT,
+      }}
       aria-label="Build"
     >
       <div className="pointer-events-none absolute -inset-[3%] overflow-hidden" aria-hidden>
@@ -181,12 +107,16 @@ export function DoePhoneDesktopBuildSection() {
 
       {panelOpen ? <BuildSectionFrostOverlay closing={isClosing} /> : null}
 
-      <div ref={sectionRef} className="relative z-[20] flex min-h-[100dvh] w-full flex-col">
-        <BuildSectionToggleBadge
+      <div
+        ref={sectionRef}
+        className="relative z-[20] flex w-full flex-col"
+        style={{ minHeight: DESKTOP_HOME_BELOW_NAV_HEIGHT, height: DESKTOP_HOME_BELOW_NAV_HEIGHT }}
+      >
+        <DoePhoneDesktopFrostPlusBadge
           expanded={panelOpen}
           interactive={!isClosing}
           onToggle={toggleExpanded}
-          className={`z-30 ${DESKTOP_BUILD_BADGE_INSET} ${doePhoneSectionRevealSegmentClass("badge", revealed)}`}
+          className={`absolute z-30 ${DESKTOP_BUILD_BADGE_INSET} ${doePhoneSectionRevealSegmentClass("badge", revealed)}`}
         />
 
         <div className={`shrink-0 ${DESKTOP_BUILD_INSET} ${DOEPHONE_SECTION_TITLE_PT}`}>
