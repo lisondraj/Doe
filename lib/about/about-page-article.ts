@@ -56,6 +56,9 @@ export const ABOUT_SECTION_2_PIE_CHART = {
   slices: aboutSectionTwoArticle.pieChart.slices,
 };
 
+/** iPhone /about — founders section headline below FAQ. */
+export const ABOUT_MOBILE_FOUNDERS_HEADLINE_LINES = ["Two brothers,", "two fields"] as const;
+
 /** Desktop /about section three — co-founder bios beside beige panel. */
 export const ABOUT_DESKTOP_FOUNDERS_PARAGRAPHS = [
   "Brothers James and Matthew Lisondra co-founded Doe to pair clinical depth with technical execution in health tech.",
