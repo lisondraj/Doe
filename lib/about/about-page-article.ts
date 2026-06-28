@@ -28,16 +28,33 @@ export const ABOUT_PAGE_MOBILE_BYLINE = "By James & Matthew Lisondra";
 
 export const ABOUT_PAGE_MOBILE_DATE = "June 28, 2026";
 
-/** Desktop /about section two — shortened intro beside beige panel. */
-export const ABOUT_DESKTOP_SECTION_2_INTRO =
-  "Physicians in the United States and Canada entered medicine to care for people, not to spend their days inside payer portals, inbox queues, and after-hours charting. Administrative work now consumes a growing share of every clinic week, pulling clinicians away from patients on both sides of the border.";
+function getAboutSectionTwoArticleBlocks() {
+  const intro = ABOUT_PAGE_ARTICLE.body[0];
+  const stats = ABOUT_PAGE_ARTICLE.body[1];
+  const pieChart = ABOUT_PAGE_ARTICLE.body[4];
 
-/** Desktop /about section two — stats before the clinic-hour pie chart. */
-export const ABOUT_DESKTOP_SECTION_2_BULLETS = [
-  "Physicians spend nearly two hours on EHR and desk work for every one hour of direct patient care during clinic hours.",
-  "The average physician logs more than 16 hours per week on administrative tasks outside scheduled patient time.",
-  "A majority of Canadian physicians cite administrative load as a leading driver of burnout and reduced clinic capacity.",
-] as const;
+  if (intro?.type !== "p" || stats?.type !== "ul" || pieChart?.type !== "pie-chart") {
+    throw new Error("About page section two article blocks are out of order");
+  }
+
+  return { intro, stats, pieChart };
+}
+
+const aboutSectionTwoArticle = getAboutSectionTwoArticleBlocks();
+
+/** /about section two — intro beside beige panel (from article body). */
+export const ABOUT_DESKTOP_SECTION_2_INTRO = aboutSectionTwoArticle.intro.text;
+
+/** /about section two — stat bullets before the clinic-hour pie chart (from article body). */
+export const ABOUT_DESKTOP_SECTION_2_BULLETS = aboutSectionTwoArticle.stats.items;
+
+/** /about section two — clinic-hour pie chart (from article body). */
+export const ABOUT_SECTION_2_PIE_CHART = {
+  title: aboutSectionTwoArticle.pieChart.title,
+  caption: aboutSectionTwoArticle.pieChart.caption,
+  citation: aboutSectionTwoArticle.pieChart.citation,
+  slices: aboutSectionTwoArticle.pieChart.slices,
+};
 
 /** Desktop /about section three — co-founder bios beside beige panel. */
 export const ABOUT_DESKTOP_FOUNDERS_PARAGRAPHS = [

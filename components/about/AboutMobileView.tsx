@@ -2,6 +2,7 @@
 
 import { AboutMobileBeigePanel } from "@/components/about/AboutMobileBeigePanel";
 import { AboutMobileFaqTabs } from "@/components/about/AboutMobileFaqTabs";
+import { ArticlePieChart } from "@/components/blog/ArticlePieChart";
 import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
 import {
   ABOUT_MOBILE_BODY_TW,
@@ -13,6 +14,7 @@ import {
   ABOUT_DESKTOP_FOUNDERS_PARAGRAPHS,
   ABOUT_DESKTOP_SECTION_2_BULLETS,
   ABOUT_DESKTOP_SECTION_2_INTRO,
+  ABOUT_SECTION_2_PIE_CHART,
 } from "@/lib/about/about-page-article";
 import { BLOG_CONTENT_PT } from "@/lib/blog/blog-layout-styles";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
@@ -47,6 +49,14 @@ export function AboutMobileView() {
             ))}
           </ul>
         </div>
+
+        <ArticlePieChart
+          title={ABOUT_SECTION_2_PIE_CHART.title}
+          caption={ABOUT_SECTION_2_PIE_CHART.caption}
+          citation={ABOUT_SECTION_2_PIE_CHART.citation}
+          slices={ABOUT_SECTION_2_PIE_CHART.slices}
+          layout="mobile"
+        />
 
         <AboutMobileBeigePanel graphic={0} />
 
