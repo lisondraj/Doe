@@ -1,6 +1,6 @@
 "use client";
 
-import { DoePhoneAgentsSixGrid } from "@/components/doephone/DoePhoneAgentsSixGrid";
+import { DoePhoneEmbeddedFilesVisual } from "@/components/doephone/DoePhoneEmbeddedFilesVisual";
 import { DoePhoneBillingVisual } from "@/components/doephone/DoePhoneBillingVisual";
 import { DoePhoneFrontDeskVoiceVisual } from "@/components/doephone/DoePhoneFrontDeskVoiceVisual";
 import { DoePhoneIncomingLabsVisual } from "@/components/doephone/DoePhoneIncomingLabsVisual";
@@ -45,7 +45,7 @@ function DoePhoneCarouselCard({ slide }: { slide: DoePhoneCommunicationSlide }) 
       />
       {slide.id === "agents" ? (
         <CarouselMenuOverlay>
-          <DoePhoneAgentsSixGrid />
+          <DoePhoneEmbeddedFilesVisual />
         </CarouselMenuOverlay>
       ) : null}
       {slide.id === "inbox" ? (
