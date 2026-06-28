@@ -430,128 +430,21 @@ function AppointmentAgentCard({
   );
 }
 
-const FS_HERO = {
-  sm: "clamp(0.95rem, 1.28vw, 1.12rem)",
-  base: "clamp(1.18rem, 1.62vw, 1.42rem)",
-  lg: "clamp(1.42rem, 1.92vw, 1.68rem)",
-  xl: "clamp(1.68rem, 2.25vw, 2rem)",
-} as const;
-
-/** DoePhone hero-left-column — larger in-box content; width unchanged, height grows via pad + type. */
-const FS_HERO_LEFT = {
-  sm: "clamp(1.05rem, 1.45vw, 1.26rem)",
-  base: "clamp(1.34rem, 1.88vw, 1.62rem)",
-  lg: "clamp(1.62rem, 2.2vw, 1.92rem)",
-  xl: "clamp(1.92rem, 2.62vw, 2.38rem)",
-} as const;
-
-const HERO_CARD_PAD = "1.25rem 1.35rem";
-const HERO_LEFT_CARD_PAD_Y = "clamp(1.45rem, 3.8vmin, 1.85rem)";
-const HERO_LEFT_CARD_PAD_X = "1.35rem";
-const HERO_LEFT_CARD_PAD = `${HERO_LEFT_CARD_PAD_Y} ${HERO_LEFT_CARD_PAD_X}`;
-const HERO_CARD_PAD_COMPACT = "1rem 1.2rem";
-const HERO_CARD_GAP = "0.82rem";
-const HERO_LEFT_CARD_GAP = "clamp(1rem, 2.35vmin, 1.22rem)";
-
-/** hero-left-column — peaks at agent + appointment; subtle fade downward. */
-const HERO_STACK_AGENT_OPACITY = 0.86;
-
-const HERO_STACK_GLASS_ORANGE = {
-  peak: 0.4,
-  fade1: 0.37,
-  fade2: 0.34,
-  fade3: 0.31,
-  fade4: 0.28,
-  fade5: 0.25,
-} as const;
-
-const HERO_STACK_GLASS_BEIGE = {
-  peak: 0.86,
-  fade1: 0.81,
-  fade2: 0.76,
-  fade3: 0.71,
-  fade4: 0.66,
-  fade5: 0.61,
-} as const;
-
-function heroStackGlassOpacity(tier: keyof typeof HERO_STACK_GLASS_ORANGE, surface: WorkflowCarouselSurface): number {
-  return surface === "beige" ? HERO_STACK_GLASS_BEIGE[tier] : HERO_STACK_GLASS_ORANGE[tier];
-}
-
 /** Glass workflow card bento — shared by join hero and DoePhone comm + intelligence. */
 export function JoinHeroWorkflowCardCluster({
   surface = "orange",
   revealed,
   className,
   style,
-  variant = "full",
 }: {
   surface?: WorkflowCarouselSurface;
   revealed: boolean;
   className?: string;
   style?: CSSProperties;
-  variant?: "full" | "hero-left-column";
 }) {
   const theme = cardTheme(surface);
   const orangeTheme = cardTheme("orange");
   const isBeige = surface === "beige";
-
-  if (variant === "hero-left-column") {
-    return (
-      <div
-        className={`${suisseIntl.className} ${className ?? ""}`}
-        aria-hidden
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: HERO_LEFT_CARD_GAP,
-          width: "100%",
-          minWidth: 0,
-          ...style,
-        }}
-      >
-        <AppointmentAgentCard
-          theme={theme}
-          orangeTheme={orangeTheme}
-          revealIndex={0}
-          revealed={revealed}
-          gradientOpacity={HERO_STACK_AGENT_OPACITY}
-          titleSize={FS_HERO_LEFT.base}
-          bodySize={FS_HERO_LEFT.base}
-          padding={HERO_LEFT_CARD_PAD}
-          borderRadius="1.25rem"
-          iconSize={20}
-          headerGap="0.55rem"
-          headerMarginBottom="0.72rem"
-          bodyLineHeight={1.5}
-        />
-
-        <GlassCard
-          theme={theme}
-          revealIndex={1}
-          revealed={revealed}
-          opacity={heroStackGlassOpacity("peak", surface)}
-          style={{ padding: HERO_LEFT_CARD_PAD, borderRadius: "1.25rem" }}
-        >
-          <AppointmentDetailsGrid
-            theme={theme}
-            isBeige={isBeige}
-            labelSize={FS_HERO_LEFT.sm}
-            valueSize={FS_HERO_LEFT.base}
-            detailSize={FS_HERO_LEFT.sm}
-            headlineSize={FS_HERO_LEFT.xl}
-            showLiveCta
-            headlineMarginBottom="0.78rem"
-            gridColumnGap="0.55rem"
-            gridRowGap="0.55rem"
-            labChartHeight="clamp(1.55rem, 4.2vmin, 1.95rem)"
-            labRowGap="0.62rem"
-          />
-        </GlassCard>
-
-      </div>
-    );
-  }
 
   return (
     <div

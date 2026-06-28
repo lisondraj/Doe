@@ -1,7 +1,6 @@
 "use client";
 
 import { DoePhoneHeroHeadline } from "@/components/doephone/DoePhoneHeroHeadline";
-import { DoePhoneHeroWorkflowCards } from "@/components/doephone/DoePhoneHeroWorkflowCards";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import {
   DOEPHONE_HERO_INTRO_GRADIENT_MS,
@@ -74,11 +73,8 @@ export function DoePhoneHeroSection() {
       <div
         className={`absolute inset-0 z-[3] flex min-w-0 flex-col items-start justify-end overflow-visible pb-[clamp(1.5rem,5vmin,2.5rem)] ${DOEPHONE_SECTION_CAROUSEL_INSET_X}`}
       >
-        <div className="doephone-hero-copy pointer-events-none mb-[clamp(1.5rem,3.5vmin,2.5rem)] w-full min-w-0">
+        <div className="doephone-hero-copy pointer-events-none w-full min-w-0">
           <DoePhoneHeroHeadline />
-        </div>
-        <div className="w-full min-w-0 pt-[clamp(0.35rem,1vmin,0.75rem)]">
-          <DoePhoneHeroWorkflowCards />
         </div>
       </div>
     </section>
