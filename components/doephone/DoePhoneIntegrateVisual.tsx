@@ -41,14 +41,16 @@ type TileIconKind =
   | "avaros"
   | "pssuite"
   | "availity"
-  | "stripe";
+  | "stripe"
+  | "modmed"
+  | "canvas";
 
 type IntegrationTile = {
   name: string;
   icon: TileIconKind;
 };
 
-/** Core integration rows — first and last lines restored from earlier layout. */
+/** Ten rows × three tiles — first and last rows preserved from earlier layout. */
 const INTEGRATION_ROWS: readonly IntegrationTile[][] = [
   [
     { name: "TELUS EMR", icon: "telus" },
@@ -63,47 +65,43 @@ const INTEGRATION_ROWS: readonly IntegrationTile[][] = [
   [
     { name: "OpenEvidence", icon: "evidence" },
     { name: "UpToDate", icon: "uptodate" },
-    { name: "Abridge", icon: "abridge" },
     { name: "DAX Copilot", icon: "dax" },
-    { name: "Ambience", icon: "ambience" },
   ],
   [
+    { name: "Abridge", icon: "abridge" },
+    { name: "Ambience", icon: "ambience" },
+    { name: "Fathom", icon: "fathom" },
+  ],
+  [
+    { name: "Nuance", icon: "nuance" },
     { name: "FHIR", icon: "fhir" },
     { name: "Slack", icon: "slack" },
-    { name: "Zoom", icon: "zoom" },
   ],
-];
-
-/** Middle integrations — multi-tile rows only (no single-box lines). */
-const EXTRA_INTEGRATION_ROWS: readonly IntegrationTile[][] = [
   [
+    { name: "Zoom", icon: "zoom" },
     { name: "Jane App", icon: "jane" },
     { name: "Meditech", icon: "meditech" },
   ],
   [
     { name: "Athena", icon: "athena" },
     { name: "Redox", icon: "redox" },
-  ],
-  [
-    { name: "Fathom", icon: "fathom" },
-    { name: "Nuance", icon: "nuance" },
-  ],
-  [
     { name: "Teams", icon: "teams" },
+  ],
+  [
     { name: "Outlook", icon: "outlook" },
     { name: "Avaros", icon: "avaros" },
+    { name: "Doximity", icon: "doximity" },
   ],
   [
-    { name: "Doximity", icon: "doximity" },
     { name: "Surescripts", icon: "surescripts" },
+    { name: "ModMed", icon: "modmed" },
+    { name: "Canvas", icon: "canvas" },
   ],
-];
-
-/** Final row — PS Suite, Availity, Stripe. */
-const FINAL_INTEGRATION_ROW: readonly IntegrationTile[] = [
-  { name: "PS Suite", icon: "pssuite" },
-  { name: "Availity", icon: "availity" },
-  { name: "Stripe", icon: "stripe" },
+  [
+    { name: "PS Suite", icon: "pssuite" },
+    { name: "Availity", icon: "availity" },
+    { name: "Stripe", icon: "stripe" },
+  ],
 ];
 
 function TileIcon({ kind }: { kind: TileIconKind }) {
@@ -291,6 +289,18 @@ function TileIcon({ kind }: { kind: TileIconKind }) {
         <path d="M3.5 9.5h13" stroke={stroke} strokeWidth={sw * 0.9} strokeLinecap={cap} />
       </>
     ),
+    modmed: (
+      <>
+        <rect x="4.5" y="4" width="11" height="12" rx="1.4" stroke={stroke} strokeWidth={sw} />
+        <path d="M7 14V6l3 4 3-4v8" stroke={stroke} strokeWidth={sw * 0.9} strokeLinecap={cap} strokeLinejoin={join} />
+      </>
+    ),
+    canvas: (
+      <>
+        <rect x="4" y="5" width="12" height="10" rx="1.2" stroke={stroke} strokeWidth={sw} />
+        <path d="M4 8h12M8 5v10" stroke={stroke} strokeWidth={sw * 0.85} strokeLinecap={cap} />
+      </>
+    ),
   };
 
   return (
@@ -347,12 +357,8 @@ export function DoePhoneIntegrateVisual() {
         style={{ gap: TILE_GAP }}
       >
         {INTEGRATION_ROWS.map((row, index) => (
-          <IntegrationRow key={`core-${index}`} tiles={row} />
+          <IntegrationRow key={`row-${index}`} tiles={row} />
         ))}
-        {EXTRA_INTEGRATION_ROWS.map((row, index) => (
-          <IntegrationRow key={`extra-${index}`} tiles={row} />
-        ))}
-        <IntegrationRow key="final" tiles={[...FINAL_INTEGRATION_ROW]} />
       </div>
     </div>
   );
