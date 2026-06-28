@@ -55,12 +55,6 @@ export const ABOUT_DESKTOP_SECTION_LAYOUT = `flex flex-col justify-center ${ABOU
 /** Hero band — clears fixed nav, then centers headline + gradient box. */
 export const ABOUT_DESKTOP_SECTION_1_LAYOUT = `${ABOUT_DESKTOP_SECTION_LAYOUT} ${ABOUT_DESKTOP_MAIN_PT}`;
 
-/** Blog-style beige band — matches /blog landing hero card. */
-export const ABOUT_DESKTOP_BEIGE_SECTION =
-  "relative isolate overflow-hidden border-y border-[#D9D4CC] bg-[#EBE7E0]";
-
-export const ABOUT_DESKTOP_BEIGE_SECTION_CONTENT = `relative z-10 flex h-full w-full flex-col justify-center ${ABOUT_DESKTOP_PAGE_INSET}`;
-
 export const ABOUT_DESKTOP_TITLE_TW = `text-left font-light leading-[1.02] tracking-[-0.03em] text-[clamp(2.85rem,4.1vw,4.25rem)] md:text-[clamp(3.1rem,3.75vw,4.45rem)] lg:text-[clamp(3.3rem,3.55vw,4.65rem)] text-[#1E343A] ${suisseIntl.className}`;
 
 export const ABOUT_DESKTOP_SUBHEADING_TW = `mt-5 md:mt-6 text-[clamp(1.38rem,1.25vw,1.62rem)] md:text-[clamp(1.48rem,1.35vw,1.72rem)] font-normal leading-[1.44] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
