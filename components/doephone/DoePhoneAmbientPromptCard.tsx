@@ -17,8 +17,10 @@ const BTN_RADIUS = "rounded-[clamp(0.35rem,1.03vmin,0.43rem)]";
 
 const CAROUSEL_INPUT_PAD = "clamp(0.89rem,2.75vmin,1.1rem) clamp(0.95rem,2.97vmin,1.13rem)";
 const SECTION_INPUT_PAD = "clamp(1.12rem,3.45vmin,1.38rem) clamp(1.15rem,3.55vmin,1.42rem)";
+const SECTION_INPUT_PAD_LARGE = "clamp(1.28rem,3.95vmin,1.58rem) clamp(1.32rem,4.05vmin,1.65rem)";
 const BODY_SIZE = "clamp(0.95rem,2.86vmin,1.13rem)";
 const SECTION_BODY_SIZE = "clamp(1.02rem,3.1vmin,1.22rem)";
+const SECTION_BODY_SIZE_LARGE = "clamp(1.1rem,3.35vmin,1.32rem)";
 const ACTION_SIZE = "clamp(0.91rem,2.75vmin,1.08rem)";
 const HEADER_SIZE = "clamp(0.84rem,2.54vmin,0.99rem)";
 const SECTION_HEADER_SIZE = "clamp(0.92rem,2.8vmin,1.08rem)";
@@ -251,18 +253,21 @@ function SubmitIconButton() {
 export function DoePhoneAmbientPromptCard({
   headerLabel,
   layout = "carousel",
+  size = "default",
   toolIcons = "chart",
   children,
 }: {
   headerLabel: string;
   layout?: "carousel" | "section";
+  size?: "default" | "large";
   toolIcons?: "chart" | "workflow";
   children: ReactNode;
 }) {
   const isSection = layout === "section";
-  const bodySize = isSection ? SECTION_BODY_SIZE : BODY_SIZE;
+  const isLarge = isSection && size === "large";
+  const bodySize = isLarge ? SECTION_BODY_SIZE_LARGE : isSection ? SECTION_BODY_SIZE : BODY_SIZE;
   const headerSize = isSection ? SECTION_HEADER_SIZE : HEADER_SIZE;
-  const pad = isSection ? SECTION_INPUT_PAD : CAROUSEL_INPUT_PAD;
+  const pad = isLarge ? SECTION_INPUT_PAD_LARGE : isSection ? SECTION_INPUT_PAD : CAROUSEL_INPUT_PAD;
   const widthClass = isSection ? "w-full" : "w-[96%]";
 
   return (
