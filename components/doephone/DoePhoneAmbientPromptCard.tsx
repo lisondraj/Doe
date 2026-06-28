@@ -18,12 +18,18 @@ const BTN_RADIUS = "rounded-[clamp(0.35rem,1.03vmin,0.43rem)]";
 const CAROUSEL_INPUT_PAD = "clamp(0.89rem,2.75vmin,1.1rem) clamp(0.95rem,2.97vmin,1.13rem)";
 const SECTION_INPUT_PAD = "clamp(1.12rem,3.45vmin,1.38rem) clamp(1.15rem,3.55vmin,1.42rem)";
 const SECTION_INPUT_PAD_LARGE = "clamp(1.28rem,3.95vmin,1.58rem) clamp(1.32rem,4.05vmin,1.65rem)";
+const SECTION_INPUT_PAD_DESKTOP = "1.75rem 1.85rem";
 const BODY_SIZE = "clamp(0.95rem,2.86vmin,1.13rem)";
 const SECTION_BODY_SIZE = "clamp(1.02rem,3.1vmin,1.22rem)";
 const SECTION_BODY_SIZE_LARGE = "clamp(1.1rem,3.35vmin,1.32rem)";
+const SECTION_BODY_SIZE_DESKTOP = "1.28rem";
 const ACTION_SIZE = "clamp(0.91rem,2.75vmin,1.08rem)";
+const ACTION_SIZE_DESKTOP = "1.05rem";
 const HEADER_SIZE = "clamp(0.84rem,2.54vmin,0.99rem)";
 const SECTION_HEADER_SIZE = "clamp(0.92rem,2.8vmin,1.08rem)";
+const SECTION_HEADER_SIZE_DESKTOP = "1.02rem";
+const SUBMIT_SIZE_DESKTOP = "2.65rem";
+const SUBMIT_ICON_DESKTOP = "1.15rem";
 
 export function PromptTag({ label }: { label: string }) {
   return (
@@ -199,7 +205,7 @@ function WorkflowToolIcons() {
   );
 }
 
-function ModelSelector() {
+function ModelSelector({ actionSize = ACTION_SIZE }: { actionSize?: string }) {
   const iconSize = "clamp(0.52rem,1.57vmin,0.63rem)";
 
   return (
@@ -208,7 +214,7 @@ function ModelSelector() {
       style={{
         background: BTN_BG,
         color: INK,
-        fontSize: ACTION_SIZE,
+        fontSize: actionSize,
         gap: "clamp(0.24rem,0.73vmin,0.3rem)",
         padding: "clamp(0.41rem,1.3vmin,0.52rem) clamp(0.59rem,1.78vmin,0.73rem)",
       }}
@@ -227,9 +233,9 @@ function ModelSelector() {
   );
 }
 
-function SubmitIconButton() {
-  const size = "clamp(2rem,6.1vmin,2.32rem)";
-  const iconSize = "clamp(0.89rem,2.7vmin,1.06rem)";
+function SubmitIconButton({ desktop = false }: { desktop?: boolean }) {
+  const size = desktop ? SUBMIT_SIZE_DESKTOP : "clamp(2rem,6.1vmin,2.32rem)";
+  const iconSize = desktop ? SUBMIT_ICON_DESKTOP : "clamp(0.89rem,2.7vmin,1.06rem)";
 
   return (
     <span
@@ -259,16 +265,34 @@ export function DoePhoneAmbientPromptCard({
 }: {
   headerLabel: string;
   layout?: "carousel" | "section";
-  size?: "default" | "large";
+  size?: "default" | "large" | "desktop";
   toolIcons?: "chart" | "workflow";
   children: ReactNode;
 }) {
   const isSection = layout === "section";
+  const isDesktop = isSection && size === "desktop";
   const isLarge = isSection && size === "large";
-  const bodySize = isLarge ? SECTION_BODY_SIZE_LARGE : isSection ? SECTION_BODY_SIZE : BODY_SIZE;
-  const headerSize = isSection ? SECTION_HEADER_SIZE : HEADER_SIZE;
-  const pad = isLarge ? SECTION_INPUT_PAD_LARGE : isSection ? SECTION_INPUT_PAD : CAROUSEL_INPUT_PAD;
+  const bodySize = isDesktop
+    ? SECTION_BODY_SIZE_DESKTOP
+    : isLarge
+      ? SECTION_BODY_SIZE_LARGE
+      : isSection
+        ? SECTION_BODY_SIZE
+        : BODY_SIZE;
+  const headerSize = isDesktop
+    ? SECTION_HEADER_SIZE_DESKTOP
+    : isSection
+      ? SECTION_HEADER_SIZE
+      : HEADER_SIZE;
+  const pad = isDesktop
+    ? SECTION_INPUT_PAD_DESKTOP
+    : isLarge
+      ? SECTION_INPUT_PAD_LARGE
+      : isSection
+        ? SECTION_INPUT_PAD
+        : CAROUSEL_INPUT_PAD;
   const widthClass = isSection ? "w-full" : "w-[96%]";
+  const actionSize = isDesktop ? ACTION_SIZE_DESKTOP : ACTION_SIZE;
 
   return (
     <div
@@ -298,8 +322,8 @@ export function DoePhoneAmbientPromptCard({
         {toolIcons === "workflow" ? <WorkflowToolIcons /> : <ChartToolIcons />}
 
         <div className="flex shrink-0 items-center" style={{ gap: "clamp(0.45rem,1.38vmin,0.59rem)" }}>
-          <ModelSelector />
-          <SubmitIconButton />
+          <ModelSelector actionSize={actionSize} />
+          <SubmitIconButton desktop={isDesktop} />
         </div>
       </div>
     </div>

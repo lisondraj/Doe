@@ -28,7 +28,7 @@ const LAYOUT = {
   phone: {
     badgeSize: "clamp(4.35rem,13.4vmin,5.4rem)",
     badgeBottom: "clamp(1.45rem,4.45vmin,1.85rem)",
-    badgeRight: "clamp(1.45rem,4.45vmin,1.85rem)",
+    badgeRight: "clamp(1.65rem,4.85vmin,2.05rem)",
     plusFont: "clamp(2.85rem,8.85vmin,3.55rem)",
     closeIcon: "clamp(1.85rem,5.75vmin,2.35rem)",
     overlayPadX: CAROUSEL_MENU_UI.overlayPadX,
@@ -44,7 +44,7 @@ const LAYOUT = {
   desktop: {
     badgeSize: "5rem",
     badgeBottom: "1.65rem",
-    badgeRight: "1.65rem",
+    badgeRight: "1.85rem",
     plusFont: "3.15rem",
     closeIcon: "2rem",
     overlayPadX: "0.75rem",
@@ -64,16 +64,20 @@ function CarouselSlideToggleBadge({
   interactive,
   onToggle,
   layout,
+  badgeCrop700,
 }: {
   expanded: boolean;
   interactive: boolean;
   onToggle: () => void;
   layout: CarouselCardLayout;
+  badgeCrop700?: { x: number; y: number };
 }) {
   const tokens = LAYOUT[layout];
+  const cropX = badgeCrop700?.x ?? 0;
+  const cropY = badgeCrop700?.y ?? 0;
   const sharedStyle = {
-    bottom: tokens.badgeBottom,
-    right: tokens.badgeRight,
+    bottom: cropY > 0 ? `calc(${tokens.badgeBottom} + ${cropY}px)` : tokens.badgeBottom,
+    right: cropX > 0 ? `calc(${tokens.badgeRight} + ${cropX}px)` : tokens.badgeRight,
     width: tokens.badgeSize,
     height: tokens.badgeSize,
     ...ORANGE_FROST_STYLE,
@@ -82,6 +86,7 @@ function CarouselSlideToggleBadge({
   const plusStyle = {
     fontSize: tokens.plusFont,
     marginTop: "-0.06em",
+    paddingRight: "0.07em",
     textShadow: "0 1px 8px rgba(30, 52, 58, 0.18)",
   } as const;
 
@@ -213,11 +218,14 @@ export function DoePhoneCommunicationCarouselCard({
   isActive = true,
   layout = "phone",
   className = "",
+  badgeCrop700,
 }: {
   slide: DoePhoneCommunicationSlide;
   isActive?: boolean;
   layout?: CarouselCardLayout;
   className?: string;
+  /** Extra inset when the slide canvas is cover-cropped (desktop sliding boxes). */
+  badgeCrop700?: { x: number; y: number };
 }) {
   const [panelPhase, setPanelPhase] = useState<PanelPhase>("idle");
   const closeTimerRef = useRef<number | undefined>(undefined);
@@ -277,6 +285,7 @@ export function DoePhoneCommunicationCarouselCard({
         interactive={expandable && !isClosing}
         onToggle={toggleExpanded}
         layout={layout}
+        badgeCrop700={badgeCrop700}
       />
     </div>
   );

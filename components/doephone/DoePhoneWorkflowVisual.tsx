@@ -302,9 +302,13 @@ export function DoePhoneWorkflowVisual() {
       aria-hidden
     >
       <div
-        className={`w-full border bg-white ${OUTER_RADIUS}`}
-        style={{ borderColor: BORDER, padding: CARD_PAD }}
+        className="w-full origin-center"
+        style={{ transform: "scale(0.9)" }}
       >
+        <div
+          className={`w-full border bg-white ${OUTER_RADIUS}`}
+          style={{ borderColor: BORDER, padding: CARD_PAD }}
+        >
         <div
           className="flex items-center justify-between"
           style={{ gap: "clamp(0.55rem,1.65vmin,0.72rem)", marginBottom: "clamp(0.78rem,2.45vmin,0.95rem)" }}
@@ -329,6 +333,7 @@ export function DoePhoneWorkflowVisual() {
         </div>
 
         <ClinicalOutcomesColumn />
+        </div>
       </div>
     </div>
   );

@@ -35,7 +35,11 @@ export function WorkflowCarouselSlides({
 }: WorkflowCarouselSlidesProps) {
   return (
     <>
-      {DOEPHONE_COMMUNICATION_SLIDES.map((slide, i) => (
+      {DOEPHONE_COMMUNICATION_SLIDES.map((slide, i) => {
+        const cropInset700X = Math.max(0, (scaledSide - slideBoxW) / (2 * slideUniformScale));
+        const cropInset700Y = Math.max(0, (scaledSide - slideBoxH) / (2 * slideUniformScale));
+
+        return (
         <div
           key={slide.id}
           ref={slidingBoxRefs[i]}
@@ -61,10 +65,16 @@ export function WorkflowCarouselSlides({
               ...DOEPHONE_SECTION_CAROUSEL_CLIP_STYLE,
             }}
           >
-            <DoePhoneCommunicationCarouselCard slide={slide} layout="desktop" className="shadow-none" />
+            <DoePhoneCommunicationCarouselCard
+              slide={slide}
+              layout="desktop"
+              className="shadow-none"
+              badgeCrop700={{ x: cropInset700X, y: cropInset700Y }}
+            />
           </div>
         </div>
-      ))}
+        );
+      })}
     </>
   );
 }
