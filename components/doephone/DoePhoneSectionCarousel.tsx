@@ -162,9 +162,7 @@ function CarouselMenuOverlay({
     >
       <div className="flex min-h-0 w-full flex-1 flex-col items-center justify-center">
         <div
-          className={`mx-auto flex w-full flex-col ${
-            showContent ? "doephone-carousel-content--expanded" : closing ? "doephone-carousel-content--closing" : ""
-          }`}
+          className={`mx-auto flex w-full flex-col ${showContent ? "doephone-carousel-content--expanded" : ""}`}
           style={{ maxWidth: contentMaxWidth }}
         >
           <div className="w-full shrink-0">
