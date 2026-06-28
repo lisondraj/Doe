@@ -16,94 +16,217 @@ import {
   DOEPHONE_SECTION_CAROUSEL_CLIP_STYLE,
   DOEPHONE_SECTION_CAROUSEL_RADIUS,
 } from "@/lib/doephone/section-styles";
+import { inter } from "@/lib/home/fonts";
 import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from "react";
 
 type MenuInject = { scrollIndex: number; slideIndex: number };
 
-const CAROUSEL_MENU_OVERLAY =
-  "absolute inset-0 z-10 flex h-full w-full items-center justify-center";
-
 const ADD_BADGE_SIZE = "clamp(4.35rem,13.4vmin,5.4rem)";
 
-function CarouselSlideAddBadge() {
-  return (
-    <span
-      className="pointer-events-none absolute z-20 flex items-center justify-center rounded-full backdrop-blur-[10px] iphone-page:backdrop-blur-[8px]"
-      style={{
-        bottom: "clamp(1.45rem,4.45vmin,1.85rem)",
-        right: "clamp(1.45rem,4.45vmin,1.85rem)",
-        width: ADD_BADGE_SIZE,
-        height: ADD_BADGE_SIZE,
-        background: "rgba(255, 255, 255, 0.42)",
-        boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.62)",
-      }}
-      aria-hidden
-    >
+const FROST_GLASS_STYLE = {
+  background: "rgba(255, 255, 255, 0.42)",
+  boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.62)",
+} as const;
+
+const FROST_BLUR_CLASS = "backdrop-blur-[10px] iphone-page:backdrop-blur-[8px]";
+
+const EXPAND_TRANSITION = "transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]";
+
+function CarouselSlideToggleBadge({
+  expanded,
+  interactive,
+  onToggle,
+}: {
+  expanded: boolean;
+  interactive: boolean;
+  onToggle: () => void;
+}) {
+  const sharedStyle = {
+    bottom: "clamp(1.45rem,4.45vmin,1.85rem)",
+    right: "clamp(1.45rem,4.45vmin,1.85rem)",
+    width: ADD_BADGE_SIZE,
+    height: ADD_BADGE_SIZE,
+    ...FROST_GLASS_STYLE,
+  } as const;
+
+  if (!interactive) {
+    return (
       <span
-        className="font-light leading-none text-white"
-        style={{
-          fontSize: "clamp(2.85rem,8.85vmin,3.55rem)",
-          marginTop: "-0.06em",
-          textShadow: "0 1px 8px rgba(30, 52, 58, 0.18)",
-        }}
+        className={`pointer-events-none absolute z-30 flex items-center justify-center rounded-full ${FROST_BLUR_CLASS}`}
+        style={sharedStyle}
+        aria-hidden
       >
-        +
+        <span
+          className="font-light leading-none text-white"
+          style={{
+            fontSize: "clamp(2.85rem,8.85vmin,3.55rem)",
+            marginTop: "-0.06em",
+            textShadow: "0 1px 8px rgba(30, 52, 58, 0.18)",
+          }}
+        >
+          +
+        </span>
       </span>
-    </span>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      className={`absolute z-30 flex items-center justify-center rounded-full ${FROST_BLUR_CLASS} ${EXPAND_TRANSITION}`}
+      style={sharedStyle}
+      aria-label={expanded ? "Close details" : "Show details"}
+      aria-expanded={expanded}
+      onClick={onToggle}
+    >
+      {expanded ? (
+        <svg
+          viewBox="0 0 20 20"
+          fill="none"
+          aria-hidden
+          className="shrink-0"
+          style={{
+            width: "clamp(1.85rem,5.75vmin,2.35rem)",
+            height: "clamp(1.85rem,5.75vmin,2.35rem)",
+          }}
+        >
+          <path
+            d="M5 5l10 10M15 5L5 15"
+            stroke="white"
+            strokeWidth="1.35"
+            strokeLinecap="round"
+            style={{ filter: "drop-shadow(0 1px 8px rgba(30, 52, 58, 0.18))" }}
+          />
+        </svg>
+      ) : (
+        <span
+          className="font-light leading-none text-white"
+          style={{
+            fontSize: "clamp(2.85rem,8.85vmin,3.55rem)",
+            marginTop: "-0.06em",
+            textShadow: "0 1px 8px rgba(30, 52, 58, 0.18)",
+          }}
+        >
+          +
+        </span>
+      )}
+    </button>
   );
 }
 
-function CarouselMenuOverlay({ children }: { children: React.ReactNode }) {
+function CarouselSlideFrostOverlay({ visible }: { visible: boolean }) {
   return (
     <div
-      className={CAROUSEL_MENU_OVERLAY}
+      className={`pointer-events-none absolute inset-0 z-[12] ${FROST_BLUR_CLASS} ${EXPAND_TRANSITION} ${
+        visible ? "opacity-100" : "opacity-0"
+      }`}
+      style={FROST_GLASS_STYLE}
+      aria-hidden
+    />
+  );
+}
+
+function CarouselMenuOverlay({
+  children,
+  expanded,
+  description,
+}: {
+  children: React.ReactNode;
+  expanded: boolean;
+  description?: string;
+}) {
+  const padX = CAROUSEL_MENU_UI.overlayPadX;
+  const padY = CAROUSEL_MENU_UI.overlayPadY;
+
+  return (
+    <div
+      className={`absolute inset-0 z-[15] flex h-full w-full flex-col ${expanded ? "overflow-y-auto" : "overflow-hidden"}`}
       style={{
-        padding: `${CAROUSEL_MENU_UI.overlayPadY} ${CAROUSEL_MENU_UI.overlayPadX}`,
+        padding: expanded
+          ? `clamp(1rem,3.1vmin,1.35rem) ${padX} clamp(5.75rem,17vmin,7.25rem)`
+          : `${padY} ${padX}`,
       }}
     >
-      <div className="flex h-full w-full max-h-full items-center justify-center">{children}</div>
+      <div
+        className={`flex min-h-0 w-full flex-1 flex-col ${expanded ? "items-start justify-start" : "items-center justify-center"}`}
+      >
+        <div
+          className={`w-full shrink-0 ${EXPAND_TRANSITION} ${
+            expanded ? "doephone-carousel-slide-ui--expanded" : "translate-y-0 opacity-100"
+          }`}
+        >
+          <div className={`${expanded ? "" : "flex h-full w-full items-center justify-center"}`}>{children}</div>
+        </div>
+        {description ? (
+          <p
+            className={`${inter.className} mt-[clamp(0.75rem,2.25vmin,1rem)] w-full text-left font-normal ${EXPAND_TRANSITION} ${
+              expanded
+                ? "translate-y-0 opacity-100 delay-100"
+                : "pointer-events-none h-0 translate-y-3 overflow-hidden opacity-0"
+            }`}
+            style={{
+              color: CAROUSEL_MENU_UI.ink,
+              fontSize: CAROUSEL_MENU_UI.type.body,
+              lineHeight: 1.48,
+              letterSpacing: "-0.01em",
+            }}
+          >
+            {description}
+          </p>
+        ) : null}
+      </div>
     </div>
   );
 }
 
-function DoePhoneCarouselCard({ slide }: { slide: DoePhoneCommunicationSlide }) {
+function DoePhoneCarouselCard({ slide, isActive }: { slide: DoePhoneCommunicationSlide; isActive: boolean }) {
+  const [expanded, setExpanded] = useState(false);
+  const expandable = Boolean(slide.description);
+
+  useEffect(() => {
+    if (!isActive) setExpanded(false);
+  }, [isActive]);
+
+  const toggleExpanded = useCallback(() => {
+    if (!expandable) return;
+    setExpanded((open) => !open);
+  }, [expandable]);
+
+  const overlayVisual =
+    slide.id === "agents" ? (
+      <DoePhoneClinicAgentsVisual />
+    ) : slide.id === "inbox" ? (
+      <DoePhoneWorkflowVisual />
+    ) : slide.id === "front-desk" ? (
+      <DoePhoneFrontDeskInboxVisual />
+    ) : slide.id === "ambient" ? (
+      <DoePhoneAmbientVisual />
+    ) : slide.id === "integrate" ? (
+      <DoePhoneIntegrateVisual />
+    ) : null;
+
   return (
     <div
       className={`relative isolate h-full w-full overflow-hidden ${DOEPHONE_SECTION_CAROUSEL_RADIUS} shadow-[0_10px_32px_rgba(0,0,0,0.1)]`}
       style={DOEPHONE_SECTION_CAROUSEL_CLIP_STYLE}
-      aria-hidden
+      aria-hidden={!isActive}
     >
       <WorkflowCarouselDesignBackdrop
         backdrop={slide.backdrop}
         embedded
         className={DOEPHONE_SECTION_CAROUSEL_RADIUS}
       />
-      {slide.id === "agents" ? (
-        <CarouselMenuOverlay>
-          <DoePhoneClinicAgentsVisual />
+      {expandable ? <CarouselSlideFrostOverlay visible={expanded} /> : null}
+      {overlayVisual ? (
+        <CarouselMenuOverlay expanded={expanded} description={slide.description}>
+          {overlayVisual}
         </CarouselMenuOverlay>
       ) : null}
-      {slide.id === "inbox" ? (
-        <CarouselMenuOverlay>
-          <DoePhoneWorkflowVisual />
-        </CarouselMenuOverlay>
-      ) : null}
-      {slide.id === "front-desk" ? (
-        <CarouselMenuOverlay>
-          <DoePhoneFrontDeskInboxVisual />
-        </CarouselMenuOverlay>
-      ) : null}
-      {slide.id === "ambient" ? (
-        <CarouselMenuOverlay>
-          <DoePhoneAmbientVisual />
-        </CarouselMenuOverlay>
-      ) : null}
-      {slide.id === "integrate" ? (
-        <CarouselMenuOverlay>
-          <DoePhoneIntegrateVisual />
-        </CarouselMenuOverlay>
-      ) : null}
-      <CarouselSlideAddBadge />
+      <CarouselSlideToggleBadge
+        expanded={expanded}
+        interactive={expandable}
+        onToggle={toggleExpanded}
+      />
     </div>
   );
 }
@@ -347,7 +470,7 @@ export function DoePhoneSectionCarousel({
             role="tabpanel"
             aria-hidden={!isActive}
           >
-            <DoePhoneCarouselCard slide={slide} />
+            <DoePhoneCarouselCard slide={slide} isActive={isActive} />
           </div>
         );
       })}

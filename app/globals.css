@@ -326,6 +326,21 @@ body.mainpage-route {
   padding-right: max(2.35rem, calc(env(safe-area-inset-right, 0px) + 5.25vmin));
 }
 
+@keyframes doephone-carousel-slide-ui-in {
+  from {
+    opacity: 0.52;
+    transform: translateY(1.35rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-0.85rem);
+  }
+}
+
+.doephone-carousel-slide-ui--expanded {
+  animation: doephone-carousel-slide-ui-in 500ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
 .doephone-hero-headline {
   font-size: clamp(2rem, 10.75cqi, 5.85rem);
 }
