@@ -15,6 +15,7 @@ import { HERO_CAROUSEL_GRAIN_BG } from "@/components/hero-carousel-texture";
 import { DoePhoneDesktopBuildSection } from "@/components/doephone/DoePhoneDesktopBuildSection";
 import { DoePhoneDesktopReceptionSection } from "@/components/doephone/DoePhoneDesktopReceptionSection";
 import { DoePhoneDesktopIntegrationsSection } from "@/components/doephone/DoePhoneDesktopIntegrationsSection";
+import { DoePhoneDesktopBillingSection } from "@/components/doephone/DoePhoneDesktopBillingSection";
 import { DoePhoneDesktopIntelligenceSection } from "@/components/doephone/DoePhoneDesktopIntelligenceSection";
 import { DoePhoneHeroSection } from "@/components/doephone/DoePhoneHeroSection";
 import { DesktopMainNavCta } from "@/components/home/DesktopMainNavCta";
@@ -967,6 +968,9 @@ export function DesktopHome() {
 
       {/* Fifth section — integrations gradient + 3D block grid */}
       <DoePhoneDesktopIntegrationsSection />
+
+      {/* Sixth section — billing panel (mirrors second section) */}
+      <DoePhoneDesktopBillingSection />
 
       {/* New Section - Hero Gradient Full Page */}
       <div ref={thirdSectionRef} className="min-h-screen w-full relative z-10 p-8">

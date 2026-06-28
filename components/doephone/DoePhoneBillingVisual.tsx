@@ -110,11 +110,13 @@ function AuthTimeline() {
 }
 
 /** AI prior auth timeline — Billing carousel slide. */
-export function DoePhoneBillingVisual() {
+export function DoePhoneBillingVisual({ layout = "phone" }: { layout?: "phone" | "desktop" }) {
+  const isDesktop = layout === "desktop";
+
   return (
     <div
       className={`mx-auto flex h-full w-full items-center justify-center ${suisseIntl.className}`}
-      style={{ maxWidth: CAROUSEL_MENU_UI.maxWidthPhone }}
+      style={{ maxWidth: isDesktop ? "min(100%, 28rem)" : CAROUSEL_MENU_UI.maxWidthPhone }}
       aria-hidden
     >
       <div
