@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 
-import { AboutMobileView } from "@/components/about/AboutMobileView";
+import { AboutRouter } from "@/components/about/AboutRouter";
 import { aboutPageUrl } from "@/lib/site-domains";
 
 export const dynamic = "force-dynamic";
@@ -20,9 +19,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   const ua = headers().get("user-agent") ?? "";
-  if (!MOBILE_UA.test(ua)) {
-    redirect("/");
-  }
+  const initialVariant = MOBILE_UA.test(ua) ? "phone" : "desktop";
 
-  return <AboutMobileView />;
+  return <AboutRouter initialVariant={initialVariant} />;
 }

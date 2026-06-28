@@ -8,17 +8,9 @@ import {
   ABOUT_PAGE_SUBHEADING_TW,
   ABOUT_PAGE_TITLE_TW,
 } from "@/lib/about/about-layout-styles";
+import { ABOUT_PAGE_ARTICLE } from "@/lib/about/about-page-article";
 import { BLOG_CONTENT_PT, BLOG_FEATURE_BOX_TW } from "@/lib/blog/blog-layout-styles";
-import { getBlogArticle } from "@/lib/blog/articles";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
-
-const ABOUT_ARTICLE_SLUG = "ambient-documentation-at-the-bedside";
-
-const ABOUT_ARTICLE =
-  getBlogArticle(ABOUT_ARTICLE_SLUG) ??
-  (() => {
-    throw new Error("Missing about page article");
-  })();
 
 /** iPhone /about — mission headline, fundraising subheading, and full blog article body. */
 export function AboutMobileView() {
@@ -43,11 +35,16 @@ export function AboutMobileView() {
         </p>
 
         <div className={ABOUT_HERO_WRAP}>
-          <BlogHeroVisual backdrop={ABOUT_ARTICLE.backdrop} variant="hero" boxClassName={BLOG_FEATURE_BOX_TW} gapClassName="" />
+          <BlogHeroVisual
+            backdrop={ABOUT_PAGE_ARTICLE.backdrop}
+            variant="hero"
+            boxClassName={BLOG_FEATURE_BOX_TW}
+            gapClassName=""
+          />
         </div>
 
-        <div className={`article-body text-left`}>
-          {ABOUT_ARTICLE.body.map((block, index) => renderArticleBlock(block, index))}
+        <div className="article-body text-left">
+          {ABOUT_PAGE_ARTICLE.body.map((block, index) => renderArticleBlock(block, index))}
         </div>
       </main>
     </BlogMobileShell>
