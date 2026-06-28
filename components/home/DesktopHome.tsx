@@ -15,6 +15,7 @@ import { DoePhoneDesktopReceptionSection } from "@/components/doephone/DoePhoneD
 import { DoePhoneDesktopIntegrationsSection } from "@/components/doephone/DoePhoneDesktopIntegrationsSection";
 import { DoePhoneDesktopBillingSection } from "@/components/doephone/DoePhoneDesktopBillingSection";
 import { DoePhoneDesktopDocumentsWorkflowSection } from "@/components/doephone/DoePhoneDesktopDocumentsWorkflowSection";
+import { DoePhoneDesktopCohortWatchSection } from "@/components/doephone/DoePhoneDesktopCohortWatchSection";
 import { DoePhoneDesktopIntelligenceSection } from "@/components/doephone/DoePhoneDesktopIntelligenceSection";
 import { DoePhoneHeroSection } from "@/components/doephone/DoePhoneHeroSection";
 import { DesktopMainNavCta } from "@/components/home/DesktopMainNavCta";
@@ -577,6 +578,13 @@ export function DesktopHome() {
 
       {/* Seventh section — documents workflow band (mirrors integrations) */}
       <DoePhoneDesktopDocumentsWorkflowSection />
+
+      {/* Eighth section — cohort watch panel (mirrors second section) */}
+      <div className="relative z-10 min-h-[112vh]">
+        <div className="relative flex min-h-[112vh] flex-col items-stretch justify-center">
+          <DoePhoneDesktopCohortWatchSection />
+        </div>
+      </div>
 
       {/* Footer */}
       <div className={`relative left-1/2 w-screen -translate-x-1/2 pb-8 ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
