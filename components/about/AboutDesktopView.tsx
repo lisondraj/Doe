@@ -17,6 +17,7 @@ import {
   ABOUT_DESKTOP_HERO_WRAP,
   ABOUT_HERO_HEADLINE_WRAP,
   ABOUT_DESKTOP_PAGE_INSET,
+  ABOUT_DESKTOP_SECTION_1_H,
   ABOUT_DESKTOP_SECTION_1_LAYOUT,
   ABOUT_DESKTOP_SECTION_H,
   ABOUT_DESKTOP_SUBHEADING_TW,
@@ -88,8 +89,8 @@ export function AboutDesktopView() {
         <AboutDesktopNav />
 
         <main>
-          <section className={`${ABOUT_DESKTOP_SECTION_H} ${ABOUT_DESKTOP_SECTION_1_LAYOUT}`}>
-            <div className={ABOUT_HERO_HEADLINE_WRAP}>
+          <section className={`${ABOUT_DESKTOP_SECTION_1_H} ${ABOUT_DESKTOP_SECTION_1_LAYOUT}`}>
+            <div className={`${ABOUT_HERO_HEADLINE_WRAP} shrink-0`}>
               <h1 className={ABOUT_DESKTOP_TITLE_TW}>
                 <span className="block">Doe is on a mission</span>
                 <span className="block">to redefine healthcare.</span>

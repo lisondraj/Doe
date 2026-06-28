@@ -49,11 +49,14 @@ export const ABOUT_DESKTOP_MAIN_PT = "pt-[5.5rem]";
 /** One full-viewport /about desktop band. */
 export const ABOUT_DESKTOP_SECTION_H = "box-border min-h-[100dvh] h-[100dvh]";
 
+/** Hero band — exactly one viewport; headline + gradient box only. */
+export const ABOUT_DESKTOP_SECTION_1_H = "box-border h-[100dvh] max-h-[100dvh] overflow-hidden";
+
 /** Vertically centered section content with page gutters. */
 export const ABOUT_DESKTOP_SECTION_LAYOUT = `flex flex-col justify-center ${ABOUT_DESKTOP_PAGE_INSET}`;
 
-/** Hero band — clears fixed nav, then centers headline + gradient box. */
-export const ABOUT_DESKTOP_SECTION_1_LAYOUT = `${ABOUT_DESKTOP_SECTION_LAYOUT} ${ABOUT_DESKTOP_MAIN_PT}`;
+/** Hero band — clears fixed nav; headline stack + flex hero fill remaining height. */
+export const ABOUT_DESKTOP_SECTION_1_LAYOUT = `flex min-h-0 flex-col ${ABOUT_DESKTOP_PAGE_INSET} ${ABOUT_DESKTOP_MAIN_PT} pb-8 md:pb-10 lg:pb-12 xl:pb-14`;
 
 export const ABOUT_DESKTOP_TITLE_TW = `text-left font-light leading-[1.02] tracking-[-0.03em] text-[clamp(2.85rem,4.1vw,4.25rem)] md:text-[clamp(3.1rem,3.75vw,4.45rem)] lg:text-[clamp(3.3rem,3.55vw,4.65rem)] text-[#1E343A] ${suisseIntl.className}`;
 
@@ -76,9 +79,9 @@ export const ABOUT_DESKTOP_CHART_CITATION_TW = `mt-3 md:mt-4 font-normal leading
 
 export const ABOUT_DESKTOP_ARTICLE_SECTION_GAP = "mt-12 md:mt-14";
 
-export const ABOUT_DESKTOP_HERO_WRAP = "mt-5 md:mt-6 w-full";
+export const ABOUT_DESKTOP_HERO_WRAP = "mt-5 md:mt-6 flex min-h-0 w-full flex-1 flex-col";
 
-export const ABOUT_DESKTOP_HERO_BOX_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} h-[clamp(22rem,min(36vw,38vh),34rem)] min-h-[clamp(22rem,min(36vw,38vh),34rem)]`;
+export const ABOUT_DESKTOP_HERO_BOX_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} h-full min-h-0 w-full flex-1`;
 
 export const ABOUT_DESKTOP_ARTICLE_BODY_TW = `text-[clamp(1.12rem,1.05vw,1.32rem)] md:text-[clamp(1.22rem,1.1vw,1.42rem)] font-normal leading-[1.5] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
 
