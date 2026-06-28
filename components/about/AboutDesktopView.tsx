@@ -14,6 +14,7 @@ import { DesktopRouteLayout } from "@/components/DesktopRouteLayout";
 import {
   ABOUT_DESKTOP_HERO_BOX_TW,
   ABOUT_DESKTOP_HERO_WRAP,
+  ABOUT_HERO_HEADLINE_WRAP,
   ABOUT_DESKTOP_PAGE_INSET,
   ABOUT_DESKTOP_SECTION_1_PT,
   ABOUT_DESKTOP_SECTION_GRID,
@@ -79,16 +80,18 @@ export function AboutDesktopView() {
 
         <main className="pb-16 md:pb-20">
           <section
-            className={`${ABOUT_DESKTOP_SECTION_H} ${ABOUT_DESKTOP_SECTION_1_PT} flex flex-col justify-center ${ABOUT_DESKTOP_PAGE_INSET}`}
+            className={`${ABOUT_DESKTOP_SECTION_H} ${ABOUT_DESKTOP_SECTION_1_PT} flex flex-col justify-start ${ABOUT_DESKTOP_PAGE_INSET}`}
           >
-            <h1 className={ABOUT_DESKTOP_TITLE_TW}>
-              <span className="block">Doe is on a mission</span>
-              <span className="block">to redefine healthcare.</span>
-            </h1>
+            <div className={ABOUT_HERO_HEADLINE_WRAP}>
+              <h1 className={ABOUT_DESKTOP_TITLE_TW}>
+                <span className="block">Doe is on a mission</span>
+                <span className="block">to redefine healthcare.</span>
+              </h1>
 
-            <p className={ABOUT_DESKTOP_SUBHEADING_TW}>
-              We intend to register as a Delaware corporation and are actively raising a pre-seed round.
-            </p>
+              <p className={ABOUT_DESKTOP_SUBHEADING_TW}>
+                We intend to register as a Delaware corporation and are actively raising a pre-seed round.
+              </p>
+            </div>
 
             <div className={ABOUT_DESKTOP_HERO_WRAP}>
               <BlogHeroVisual

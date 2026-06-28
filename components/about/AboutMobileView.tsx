@@ -4,6 +4,8 @@ import { renderArticleBlock } from "@/components/blog/ArticleBodyBlocks";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
 import {
+  ABOUT_HERO_HEADLINE_WRAP,
+  ABOUT_PAGE_HERO_HEADLINE_PT,
   ABOUT_PAGE_HERO_WRAP,
   ABOUT_PAGE_SUBHEADING_TW,
   ABOUT_PAGE_TITLE_TW,
@@ -24,15 +26,17 @@ export function AboutMobileView() {
       footerLinksDisabled
       shellMinHeightClass="min-h-[var(--app-vh,100lvh)]"
     >
-      <main className={`w-full ${BLOG_CONTENT_PT}`}>
-        <h1 className={ABOUT_PAGE_TITLE_TW}>
-          <span className="block">Doe is on a mission</span>
-          <span className="block">to redefine healthcare.</span>
-        </h1>
+      <main className={`w-full ${BLOG_CONTENT_PT} ${ABOUT_PAGE_HERO_HEADLINE_PT}`}>
+        <div className={ABOUT_HERO_HEADLINE_WRAP}>
+          <h1 className={ABOUT_PAGE_TITLE_TW}>
+            <span className="block">Doe is on a mission</span>
+            <span className="block">to redefine healthcare.</span>
+          </h1>
 
-        <p className={ABOUT_PAGE_SUBHEADING_TW}>
-          We intend to register as a Delaware corporation and are actively raising a pre-seed round.
-        </p>
+          <p className={ABOUT_PAGE_SUBHEADING_TW}>
+            We intend to register as a Delaware corporation and are actively raising a pre-seed round.
+          </p>
+        </div>
 
         <div className={ABOUT_PAGE_HERO_WRAP}>
           <BlogHeroVisual
