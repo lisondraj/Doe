@@ -53,7 +53,7 @@ function getAboutDesktopArticleSections(body: readonly ArticleBlock[]) {
     barChart?.type !== "bar-chart" ||
     pieChart?.type !== "pie-chart" ||
     productCopy.length !== 3 ||
-    productCopy.every((block) => block.type === "p")
+    !productCopy.every((block) => block.type === "p")
   ) {
     throw new Error("About page article layout blocks are out of order");
   }
