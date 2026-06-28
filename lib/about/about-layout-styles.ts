@@ -98,7 +98,12 @@ export const ABOUT_DESKTOP_SPLIT_BOX_COLUMN =
 export const ABOUT_DESKTOP_BEIGE_PANEL_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} aspect-square max-h-full max-w-full w-full`;
 
 /** FAQ accordion — same max square as the beige panel in the adjacent column. */
-export const ABOUT_DESKTOP_FAQ_PANEL_TW = ABOUT_DESKTOP_BEIGE_PANEL_TW;
+export const ABOUT_DESKTOP_SQUARE_PANEL_TW = ABOUT_DESKTOP_BEIGE_PANEL_TW;
+
+export const ABOUT_DESKTOP_FAQ_PANEL_TW = ABOUT_DESKTOP_SQUARE_PANEL_TW;
+
+/** Desktop /about section two — intro + chart aligned to beige square height. */
+export const ABOUT_DESKTOP_SECTION_2_STACK = "flex h-full min-h-0 w-full flex-col justify-between";
 
 /** Desktop /about FAQ tabs — section four accordion beside beige panel. */
 export const ABOUT_DESKTOP_FAQ_LIST_TW = "relative grid h-full min-h-0 w-full grid-rows-4";

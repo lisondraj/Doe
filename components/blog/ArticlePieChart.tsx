@@ -31,6 +31,7 @@ export function ArticlePieChart({
   slices,
   layout = "mobile",
   embedded = false,
+  compact = false,
 }: {
   title: string;
   caption?: string;
@@ -38,24 +39,41 @@ export function ArticlePieChart({
   slices: readonly { label: string; value: number; suffix?: string }[];
   layout?: ArticleBodyLayout;
   embedded?: boolean;
+  compact?: boolean;
 }) {
   const isDesktop = layout === "desktop";
 
   return (
     <figure className={embedded ? "" : isDesktop ? ABOUT_DESKTOP_ARTICLE_SECTION_GAP : "mt-10 iphone-page:mt-12"}>
       <figcaption
-        className={`mb-5 font-medium leading-snug tracking-[-0.01em] text-[#1E343A] ${dmSans.className} ${
-          isDesktop
-            ? "text-[clamp(1.22rem,1.05vw,1.42rem)] md:text-[clamp(1.32rem,1.12vw,1.52rem)] mb-6 md:mb-7"
-            : "text-[clamp(1.08rem,0.92rem+0.72vmin,1.32rem)] iphone-page:text-[clamp(1.22rem,1.02rem+0.95vmin,1.48rem)] iphone-page:mb-6"
+        className={`font-medium leading-snug tracking-[-0.01em] text-[#1E343A] ${dmSans.className} ${
+          compact && isDesktop
+            ? "mb-3 text-[clamp(1.02rem,0.92vw,1.18rem)] md:text-[clamp(1.08rem,0.98vw,1.22rem)]"
+            : isDesktop
+              ? "mb-6 text-[clamp(1.22rem,1.05vw,1.42rem)] md:mb-7 md:text-[clamp(1.32rem,1.12vw,1.52rem)]"
+              : "mb-5 text-[clamp(1.08rem,0.92rem+0.72vmin,1.32rem)] iphone-page:mb-6 iphone-page:text-[clamp(1.22rem,1.02rem+0.95vmin,1.48rem)]"
         }`}
       >
         {title}
       </figcaption>
 
-      <div className={`flex items-center ${isDesktop ? "gap-8 md:gap-10" : "gap-6 iphone-page:gap-7"}`}>
+      <div
+        className={`flex items-center ${
+          compact && isDesktop
+            ? "gap-4 md:gap-5"
+            : isDesktop
+              ? "gap-8 md:gap-10"
+              : "gap-6 iphone-page:gap-7"
+        }`}
+      >
         <div
-          className={`relative shrink-0 ${isDesktop ? "h-[9.5rem] w-[9.5rem] md:h-[10.5rem] md:w-[10.5rem]" : "h-[8.5rem] w-[8.5rem] iphone-page:h-[9rem] iphone-page:w-[9rem]"}`}
+          className={`relative shrink-0 ${
+            compact && isDesktop
+              ? "h-[5.25rem] w-[5.25rem] md:h-[5.75rem] md:w-[5.75rem]"
+              : isDesktop
+                ? "h-[9.5rem] w-[9.5rem] md:h-[10.5rem] md:w-[10.5rem]"
+                : "h-[8.5rem] w-[8.5rem] iphone-page:h-[9rem] iphone-page:w-[9rem]"
+          }`}
           aria-hidden
         >
           <div
@@ -65,7 +83,15 @@ export function ArticlePieChart({
           <div className="absolute inset-[28%] rounded-full bg-[#F7F6F3]" />
         </div>
 
-        <div className={isDesktop ? "min-w-0 flex-1 space-y-4 md:space-y-5" : "min-w-0 flex-1 space-y-3.5 iphone-page:space-y-4"}>
+        <div
+          className={
+            compact && isDesktop
+              ? "min-w-0 flex-1 space-y-2.5 md:space-y-3"
+              : isDesktop
+                ? "min-w-0 flex-1 space-y-4 md:space-y-5"
+                : "min-w-0 flex-1 space-y-3.5 iphone-page:space-y-4"
+          }
+        >
           {slices.map((slice, index) => (
             <div key={slice.label} className="flex items-center justify-between gap-3">
               <div className="flex min-w-0 items-center gap-2.5">
@@ -76,9 +102,11 @@ export function ArticlePieChart({
                 />
                 <span
                   className={`${inter.className} font-normal text-[#1E343A]/72 ${
-                    isDesktop
-                      ? `${ABOUT_DESKTOP_ARTICLE_BODY_TW} !text-[clamp(1.08rem,1vw,1.28rem)] md:!text-[clamp(1.15rem,1.05vw,1.35rem)]`
-                      : "text-[clamp(1.08rem,0.92rem+0.72vmin,1.28rem)] iphone-page:text-[clamp(1.22rem,1.02rem+0.95vmin,1.45rem)]"
+                    compact && isDesktop
+                      ? "text-[clamp(0.92rem,0.84vw,1.02rem)] md:text-[clamp(0.98rem,0.88vw,1.08rem)]"
+                      : isDesktop
+                        ? `${ABOUT_DESKTOP_ARTICLE_BODY_TW} !text-[clamp(1.08rem,1vw,1.28rem)] md:!text-[clamp(1.15rem,1.05vw,1.35rem)]`
+                        : "text-[clamp(1.08rem,0.92rem+0.72vmin,1.28rem)] iphone-page:text-[clamp(1.22rem,1.02rem+0.95vmin,1.45rem)]"
                   }`}
                 >
                   {slice.label}
@@ -86,9 +114,11 @@ export function ArticlePieChart({
               </div>
               <span
                 className={`shrink-0 tabular-nums font-medium text-[#1E343A] ${dmSans.className} ${
-                  isDesktop
-                    ? "text-[clamp(1.08rem,1vw,1.28rem)] md:text-[clamp(1.15rem,1.05vw,1.35rem)]"
-                    : "text-[clamp(1.02rem,0.88rem+0.65vmin,1.22rem)] iphone-page:text-[clamp(1.12rem,0.96rem+0.82vmin,1.32rem)]"
+                  compact && isDesktop
+                    ? "text-[clamp(0.92rem,0.84vw,1.02rem)] md:text-[clamp(0.98rem,0.88vw,1.08rem)]"
+                    : isDesktop
+                      ? "text-[clamp(1.08rem,1vw,1.28rem)] md:text-[clamp(1.15rem,1.05vw,1.35rem)]"
+                      : "text-[clamp(1.02rem,0.88rem+0.65vmin,1.22rem)] iphone-page:text-[clamp(1.12rem,0.96rem+0.82vmin,1.32rem)]"
                 }`}
               >
                 {slice.value}
@@ -102,9 +132,11 @@ export function ArticlePieChart({
       {caption ? (
         <p
           className={`font-normal leading-snug text-[#9A8F82] ${inter.className} ${
-            isDesktop
-              ? "mt-5 md:mt-6 text-[clamp(1.02rem,0.95vw,1.18rem)] md:text-[clamp(1.08rem,1vw,1.22rem)]"
-              : "mt-4 iphone-page:mt-5 text-[clamp(0.98rem,0.86rem+0.55vmin,1.12rem)] iphone-page:text-[clamp(1.05rem,0.92rem+0.65vmin,1.2rem)]"
+            compact && isDesktop
+              ? "mt-2.5 text-[clamp(0.88rem,0.8vw,0.98rem)] md:mt-3 md:text-[clamp(0.92rem,0.84vw,1.02rem)]"
+              : isDesktop
+                ? "mt-5 text-[clamp(1.02rem,0.95vw,1.18rem)] md:mt-6 md:text-[clamp(1.08rem,1vw,1.22rem)]"
+                : "mt-4 text-[clamp(0.98rem,0.86rem+0.55vmin,1.12rem)] iphone-page:mt-5 iphone-page:text-[clamp(1.05rem,0.92rem+0.65vmin,1.2rem)]"
           }`}
         >
           {caption}
@@ -114,9 +146,11 @@ export function ArticlePieChart({
       {citation ? (
         <p
           className={
-            isDesktop
-              ? ABOUT_DESKTOP_CHART_CITATION_TW
-              : `mt-3 font-normal leading-snug text-[#9A8F82] text-[clamp(0.92rem,0.86rem+0.5vmin,1.05rem)] ${inter.className}`
+            compact && isDesktop
+              ? `mt-2 font-normal leading-snug text-[#9A8F82] text-[clamp(0.82rem,0.76vw,0.92rem)] md:text-[clamp(0.88rem,0.8vw,0.98rem)] ${inter.className}`
+              : isDesktop
+                ? ABOUT_DESKTOP_CHART_CITATION_TW
+                : `mt-3 font-normal leading-snug text-[#9A8F82] text-[clamp(0.92rem,0.86rem+0.5vmin,1.05rem)] ${inter.className}`
           }
         >
           {citation}

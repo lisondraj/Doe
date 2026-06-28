@@ -2,7 +2,6 @@
 
 import { AboutDesktopFaqTabs } from "@/components/about/AboutDesktopFaqTabs";
 import {
-  AboutDesktopBulletList,
   AboutDesktopParagraph,
 } from "@/components/about/AboutDesktopArticleBlocks";
 import { AboutDesktopNav } from "@/components/about/AboutDesktopNav";
@@ -25,6 +24,8 @@ import {
   ABOUT_DESKTOP_HERO_BYLINE_WRAP_TW,
   ABOUT_DESKTOP_HERO_DATE_TW,
   ABOUT_DESKTOP_HERO_HEADLINE_TOP,
+  ABOUT_DESKTOP_SECTION_2_STACK,
+  ABOUT_DESKTOP_SQUARE_PANEL_TW,
   ABOUT_DESKTOP_SUBHEADING_TW,
   ABOUT_DESKTOP_TITLE_TW,
   ABOUT_PAGE_SUBHEADING_LINES,
@@ -32,6 +33,7 @@ import {
 import {
   ABOUT_PAGE_ARTICLE,
   ABOUT_DESKTOP_FOUNDERS_PARAGRAPHS,
+  ABOUT_DESKTOP_SECTION_2_INTRO,
   ABOUT_PAGE_HERO_BACKDROP,
   ABOUT_PAGE_HERO_PATTERN_SCALE,
   ABOUT_PAGE_MOBILE_BYLINE,
@@ -124,18 +126,20 @@ export function AboutDesktopView() {
             </div>
           </section>
 
-          <AboutDesktopSplitSection boxSide="right" graphic={0}>
-            <div className={`flex flex-col ${ABOUT_DESKTOP_CONTENT_STACK_GAP}`}>
-              <AboutDesktopParagraph text={sections.intro.text} />
-              <AboutDesktopBulletList items={sections.stats.items} />
-              <ArticlePieChart
-                title={sections.pieChart.title}
-                caption={sections.pieChart.caption}
-                citation={sections.pieChart.citation}
-                slices={sections.pieChart.slices}
-                layout="desktop"
-                embedded
-              />
+          <AboutDesktopSplitSection boxSide="right" graphic={0} textFill>
+            <div className={`${ABOUT_DESKTOP_SQUARE_PANEL_TW} min-h-0`}>
+              <div className={ABOUT_DESKTOP_SECTION_2_STACK}>
+                <AboutDesktopParagraph text={ABOUT_DESKTOP_SECTION_2_INTRO} />
+                <ArticlePieChart
+                  title={sections.pieChart.title}
+                  caption={sections.pieChart.caption}
+                  citation={sections.pieChart.citation}
+                  slices={sections.pieChart.slices}
+                  layout="desktop"
+                  embedded
+                  compact
+                />
+              </div>
             </div>
           </AboutDesktopSplitSection>
 

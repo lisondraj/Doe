@@ -28,6 +28,10 @@ export const ABOUT_PAGE_MOBILE_BYLINE = "By James & Matthew Lisondra";
 
 export const ABOUT_PAGE_MOBILE_DATE = "June 28, 2026";
 
+/** Desktop /about section two — shortened intro beside beige panel. */
+export const ABOUT_DESKTOP_SECTION_2_INTRO =
+  "Physicians in the United States and Canada entered medicine to care for people, not to spend their days inside payer portals, inbox queues, and after-hours charting.";
+
 /** Desktop /about section three — co-founder bios beside beige panel. */
 export const ABOUT_DESKTOP_FOUNDERS_PARAGRAPHS = [
   "Brothers James and Matthew Lisondra co-founded Doe to pair clinical depth with technical execution in health tech.",
