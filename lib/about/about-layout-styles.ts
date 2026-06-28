@@ -8,6 +8,12 @@ import { dmSans, inter, lora, suisseIntl } from "@/lib/home/fonts";
 /** About page mission headline — matches iPhone main page section titles. */
 export const ABOUT_PAGE_TITLE_TW = `${DOEPHONE_SECTION_COPY_TW} text-[#1E343A] ${suisseIntl.className}`;
 
+/** Fundraising subheading — fixed two-line break aligned to mission title. */
+export const ABOUT_PAGE_SUBHEADING_LINES = [
+  "We intend to register as a Delaware corporation",
+  "and are actively raising a pre-seed round.",
+] as const;
+
 /** About subheading — customization-section description style, scaled up. */
 export const ABOUT_PAGE_SUBHEADING_TW = `mt-[clamp(0.85rem,0.65rem+0.85vmin,1.25rem)] text-[clamp(1.42rem,1.22rem+0.95vmin,1.78rem)] iphone-page:text-[clamp(1.68rem,1.38rem+1.35vmin,2.12rem)] font-normal leading-[1.44] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
 
@@ -51,7 +57,7 @@ export const ABOUT_DESKTOP_ARTICLE_SECTION_GAP = "mt-12 md:mt-14";
 
 export const ABOUT_DESKTOP_HERO_WRAP = "mt-8 md:mt-10 mb-10 md:mb-12";
 
-export const ABOUT_DESKTOP_HERO_BOX_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} shadow-[0_10px_32px_rgba(0,0,0,0.1)] min-h-[clamp(28rem,42vw,38rem)] h-[clamp(28rem,42vw,38rem)]`;
+export const ABOUT_DESKTOP_HERO_BOX_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} min-h-[clamp(28rem,42vw,38rem)] h-[clamp(28rem,42vw,38rem)]`;
 
 export const ABOUT_DESKTOP_ARTICLE_BODY_TW = `text-[clamp(1.12rem,1.05vw,1.32rem)] md:text-[clamp(1.22rem,1.1vw,1.42rem)] font-normal leading-[1.5] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
 

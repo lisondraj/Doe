@@ -22,6 +22,7 @@ import {
   ABOUT_DESKTOP_STACK_GAP,
   ABOUT_DESKTOP_SUBHEADING_TW,
   ABOUT_DESKTOP_TITLE_TW,
+  ABOUT_PAGE_SUBHEADING_LINES,
 } from "@/lib/about/about-layout-styles";
 import { ABOUT_PAGE_ARTICLE, ABOUT_PAGE_HERO_BACKDROP, ABOUT_PAGE_HERO_PATTERN_SCALE } from "@/lib/about/about-page-article";
 import type { ArticleBlock } from "@/lib/blog/articles";
@@ -89,7 +90,8 @@ export function AboutDesktopView() {
               </h1>
 
               <p className={ABOUT_DESKTOP_SUBHEADING_TW}>
-                We intend to register as a Delaware corporation and are actively raising a pre-seed round.
+                <span className="block">{ABOUT_PAGE_SUBHEADING_LINES[0]}</span>
+                <span className="block">{ABOUT_PAGE_SUBHEADING_LINES[1]}</span>
               </p>
             </div>
 

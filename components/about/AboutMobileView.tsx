@@ -7,6 +7,7 @@ import {
   ABOUT_HERO_HEADLINE_WRAP,
   ABOUT_PAGE_HERO_HEADLINE_PT,
   ABOUT_PAGE_HERO_WRAP,
+  ABOUT_PAGE_SUBHEADING_LINES,
   ABOUT_PAGE_SUBHEADING_TW,
   ABOUT_PAGE_TITLE_TW,
 } from "@/lib/about/about-layout-styles";
@@ -34,7 +35,8 @@ export function AboutMobileView() {
           </h1>
 
           <p className={ABOUT_PAGE_SUBHEADING_TW}>
-            We intend to register as a Delaware corporation and are actively raising a pre-seed round.
+            <span className="block">{ABOUT_PAGE_SUBHEADING_LINES[0]}</span>
+            <span className="block">{ABOUT_PAGE_SUBHEADING_LINES[1]}</span>
           </p>
         </div>
 
