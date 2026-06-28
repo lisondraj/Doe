@@ -1,5 +1,6 @@
 "use client";
 
+import { DoePhoneAmbientVisual } from "@/components/doephone/DoePhoneAmbientVisual";
 import { DoePhoneClinicAgentsVisual } from "@/components/doephone/DoePhoneClinicAgentsVisual";
 import { DoePhoneBillingVisual } from "@/components/doephone/DoePhoneBillingVisual";
 import { DoePhoneWorkflowVisual } from "@/components/doephone/DoePhoneWorkflowVisual";
@@ -56,6 +57,11 @@ function DoePhoneCarouselCard({ slide }: { slide: DoePhoneCommunicationSlide }) 
       {slide.id === "front-desk" ? (
         <CarouselMenuOverlay>
           <DoePhoneFrontDeskInboxVisual />
+        </CarouselMenuOverlay>
+      ) : null}
+      {slide.id === "ambient" ? (
+        <CarouselMenuOverlay>
+          <DoePhoneAmbientVisual />
         </CarouselMenuOverlay>
       ) : null}
       {slide.id === "billing" ? (
