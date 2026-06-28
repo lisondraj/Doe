@@ -34,7 +34,10 @@ const FROST_BLUR_CLASS = "backdrop-blur-[10px] iphone-page:backdrop-blur-[8px]";
 
 const EXPAND_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
 const EXPAND_DURATION = "720ms";
+const EXPAND_DURATION_MS = 720;
 const DESCRIPTION_PAD_X = "clamp(1.45rem,4.45vmin,1.95rem)";
+
+type PanelPhase = "idle" | "open" | "closing";
 
 function CarouselSlideToggleBadge({
   expanded,
@@ -118,10 +121,12 @@ function CarouselSlideToggleBadge({
   );
 }
 
-function CarouselSlideFrostOverlay() {
+function CarouselSlideFrostOverlay({ closing }: { closing: boolean }) {
   return (
     <div
-      className={`pointer-events-none absolute inset-0 z-[12] ${FROST_BLUR_CLASS} doephone-carousel-frost-fill ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
+      className={`pointer-events-none absolute inset-0 z-[12] ${FROST_BLUR_CLASS} ${
+        closing ? "doephone-carousel-frost-out" : "doephone-carousel-frost-fill"
+      } ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
       style={ORANGE_FROST_STYLE}
       aria-hidden
     />
@@ -132,11 +137,13 @@ function CarouselMenuOverlay({
   children,
   expanded,
   showContent,
+  closing,
   description,
 }: {
   children: React.ReactNode;
   expanded: boolean;
   showContent: boolean;
+  closing: boolean;
   description?: string;
 }) {
   const padX = CAROUSEL_MENU_UI.overlayPadX;
@@ -155,7 +162,9 @@ function CarouselMenuOverlay({
     >
       <div className="flex min-h-0 w-full flex-1 flex-col items-center justify-center">
         <div
-          className={`mx-auto flex w-full flex-col ${expanded && showContent ? "doephone-carousel-content--expanded" : ""}`}
+          className={`mx-auto flex w-full flex-col ${
+            showContent ? "doephone-carousel-content--expanded" : closing ? "doephone-carousel-content--closing" : ""
+          }`}
           style={{ maxWidth: contentMaxWidth }}
         >
           <div className="w-full shrink-0">
@@ -190,19 +199,38 @@ function CarouselMenuOverlay({
 }
 
 function DoePhoneCarouselCard({ slide, isActive }: { slide: DoePhoneCommunicationSlide; isActive: boolean }) {
-  const [expanded, setExpanded] = useState(false);
+  const [panelPhase, setPanelPhase] = useState<PanelPhase>("idle");
+  const closeTimerRef = useRef<number | undefined>(undefined);
   const expandable = Boolean(slide.description);
+  const panelOpen = panelPhase !== "idle";
+  const isClosing = panelPhase === "closing";
 
   useEffect(() => {
     if (!isActive) {
-      setExpanded(false);
+      window.clearTimeout(closeTimerRef.current);
+      setPanelPhase("idle");
     }
   }, [isActive]);
 
+  useEffect(() => {
+    return () => {
+      window.clearTimeout(closeTimerRef.current);
+    };
+  }, []);
+
   const toggleExpanded = useCallback(() => {
-    if (!expandable) return;
-    setExpanded((open) => !open);
-  }, [expandable]);
+    if (!expandable || panelPhase === "closing") return;
+
+    if (panelPhase === "open") {
+      setPanelPhase("closing");
+      closeTimerRef.current = window.setTimeout(() => {
+        setPanelPhase("idle");
+      }, EXPAND_DURATION_MS);
+      return;
+    }
+
+    setPanelPhase("open");
+  }, [expandable, panelPhase]);
 
   const overlayVisual =
     slide.id === "agents" ? (
@@ -230,19 +258,20 @@ function DoePhoneCarouselCard({ slide, isActive }: { slide: DoePhoneCommunicatio
         embedded
         className={DOEPHONE_SECTION_CAROUSEL_RADIUS}
       />
-      {expandable && expanded ? <CarouselSlideFrostOverlay /> : null}
+      {expandable && panelOpen ? <CarouselSlideFrostOverlay closing={isClosing} /> : null}
       {overlayVisual ? (
         <CarouselMenuOverlay
-          expanded={expanded}
-          showContent={expanded}
+          expanded={panelPhase === "open"}
+          showContent={panelPhase === "open"}
+          closing={isClosing}
           description={slide.description}
         >
           {overlayVisual}
         </CarouselMenuOverlay>
       ) : null}
       <CarouselSlideToggleBadge
-        expanded={expanded}
-        interactive={expandable}
+        expanded={panelOpen}
+        interactive={expandable && !isClosing}
         onToggle={toggleExpanded}
       />
     </div>

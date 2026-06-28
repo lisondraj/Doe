@@ -339,6 +339,20 @@ body.mainpage-route {
   animation: doephone-carousel-frost-fill 720ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+@keyframes doephone-carousel-frost-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.doephone-carousel-frost-out {
+  opacity: 1;
+  animation: doephone-carousel-frost-out 720ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 @keyframes doephone-carousel-content-lift {
   from {
     transform: translateY(clamp(1.45rem, 4.45vmin, 1.95rem));
@@ -350,6 +364,19 @@ body.mainpage-route {
 
 .doephone-carousel-content--expanded {
   animation: doephone-carousel-content-lift 720ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes doephone-carousel-content-lower {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(clamp(1.45rem, 4.45vmin, 1.95rem));
+  }
+}
+
+.doephone-carousel-content--closing {
+  animation: doephone-carousel-content-lower 720ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .doephone-hero-headline {
