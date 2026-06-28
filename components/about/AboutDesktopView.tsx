@@ -22,6 +22,8 @@ import {
   ABOUT_DESKTOP_SECTION_1_LAYOUT,
   ABOUT_DESKTOP_SECTION_H,
   ABOUT_DESKTOP_HERO_BYLINE_TW,
+  ABOUT_DESKTOP_HERO_BYLINE_WRAP_TW,
+  ABOUT_DESKTOP_HERO_DATE_TW,
   ABOUT_DESKTOP_SUBHEADING_TW,
   ABOUT_DESKTOP_TITLE_TW,
   ABOUT_PAGE_SUBHEADING_LINES,
@@ -31,6 +33,7 @@ import {
   ABOUT_PAGE_HERO_BACKDROP,
   ABOUT_PAGE_HERO_PATTERN_SCALE,
   ABOUT_PAGE_MOBILE_BYLINE,
+  ABOUT_PAGE_MOBILE_DATE,
 } from "@/lib/about/about-page-article";
 import type { ArticleBlock } from "@/lib/blog/articles";
 import { lora } from "@/lib/home/fonts";
@@ -90,7 +93,7 @@ export function AboutDesktopView() {
 
         <main>
           <section className={`${ABOUT_DESKTOP_SECTION_1_H} ${ABOUT_DESKTOP_SECTION_1_LAYOUT}`}>
-            <div className={`${ABOUT_HERO_HEADLINE_WRAP} shrink-0`}>
+            <div className={`${ABOUT_HERO_HEADLINE_WRAP} min-w-0`}>
               <h1 className={ABOUT_DESKTOP_TITLE_TW}>
                 <span className="block">Doe is on a mission</span>
                 <span className="block">to redefine healthcare.</span>
@@ -100,7 +103,6 @@ export function AboutDesktopView() {
                 <span className="block">{ABOUT_PAGE_SUBHEADING_LINES[0]}</span>
                 <span className="block">{ABOUT_PAGE_SUBHEADING_LINES[1]}</span>
               </p>
-
             </div>
 
             <div className={ABOUT_DESKTOP_HERO_WRAP}>
@@ -111,7 +113,10 @@ export function AboutDesktopView() {
                 gapClassName=""
                 patternScale={ABOUT_PAGE_HERO_PATTERN_SCALE}
               >
-                <p className={ABOUT_DESKTOP_HERO_BYLINE_TW}>{ABOUT_PAGE_MOBILE_BYLINE}</p>
+                <div className={ABOUT_DESKTOP_HERO_BYLINE_WRAP_TW}>
+                  <p className={ABOUT_DESKTOP_HERO_BYLINE_TW}>{ABOUT_PAGE_MOBILE_BYLINE}</p>
+                  <p className={ABOUT_DESKTOP_HERO_DATE_TW}>{ABOUT_PAGE_MOBILE_DATE}</p>
+                </div>
               </BlogHeroVisual>
             </div>
           </section>
