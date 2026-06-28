@@ -18,7 +18,7 @@ import {
   JOIN_DESKTOP_TRACK_ROW_GAP,
 } from "@/lib/join/join-layout";
 
-const ABOUT_CONTACT_EMAIL = "james@doe.care";
+import { ABOUT_CONTACT_EMAIL } from "@/lib/about/about-contact";
 
 const ABOUT_CONTACT_ACTION_TW = `inline-flex items-center gap-2.5 rounded-xl px-4 py-3 font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 transition-colors hover:text-[#1E343A] text-[1.0625rem] md:px-5 md:py-3.5 md:text-[1.125rem] ${inter.className}`;
 
