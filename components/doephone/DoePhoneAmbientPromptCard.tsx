@@ -17,17 +17,21 @@ const BTN_RADIUS = "rounded-[clamp(0.35rem,1.03vmin,0.43rem)]";
 
 const CAROUSEL_INPUT_PAD = "clamp(0.89rem,2.75vmin,1.1rem) clamp(0.95rem,2.97vmin,1.13rem)";
 const SECTION_INPUT_PAD = "clamp(1.12rem,3.45vmin,1.38rem) clamp(1.15rem,3.55vmin,1.42rem)";
-const SECTION_INPUT_PAD_LARGE = "clamp(1.28rem,3.95vmin,1.58rem) clamp(1.32rem,4.05vmin,1.65rem)";
+const SECTION_INPUT_PAD_LARGE = "clamp(1.65rem,5.1vmin,2rem) clamp(1.68rem,5.2vmin,2.05rem)";
 const SECTION_INPUT_PAD_DESKTOP = "1.75rem 1.85rem";
 const BODY_SIZE = "clamp(0.95rem,2.86vmin,1.13rem)";
 const SECTION_BODY_SIZE = "clamp(1.02rem,3.1vmin,1.22rem)";
-const SECTION_BODY_SIZE_LARGE = "clamp(1.1rem,3.35vmin,1.32rem)";
+const SECTION_BODY_SIZE_LARGE = "clamp(1.32rem,4.05vmin,1.58rem)";
 const SECTION_BODY_SIZE_DESKTOP = "1.28rem";
 const ACTION_SIZE = "clamp(0.91rem,2.75vmin,1.08rem)";
+const ACTION_SIZE_LARGE = "clamp(1.05rem,3.2vmin,1.25rem)";
 const ACTION_SIZE_DESKTOP = "1.05rem";
 const HEADER_SIZE = "clamp(0.84rem,2.54vmin,0.99rem)";
 const SECTION_HEADER_SIZE = "clamp(0.92rem,2.8vmin,1.08rem)";
+const SECTION_HEADER_SIZE_LARGE = "clamp(1.05rem,3.2vmin,1.28rem)";
 const SECTION_HEADER_SIZE_DESKTOP = "1.02rem";
+const SUBMIT_SIZE_LARGE = "clamp(2.45rem,7.5vmin,2.85rem)";
+const SUBMIT_ICON_LARGE = "clamp(1.05rem,3.2vmin,1.25rem)";
 const SUBMIT_SIZE_DESKTOP = "2.65rem";
 const SUBMIT_ICON_DESKTOP = "1.15rem";
 
@@ -112,13 +116,18 @@ export function WorkflowMentionAt() {
   );
 }
 
-function ContextHeader({ label, headerSize }: { label: string; headerSize: string }) {
-  const iconSize = "clamp(0.52rem,1.57vmin,0.63rem)";
+function ContextHeader({ label, headerSize, large = false }: { label: string; headerSize: string; large?: boolean }) {
+  const iconSize = large
+    ? "clamp(0.62rem,1.88vmin,0.75rem)"
+    : "clamp(0.52rem,1.57vmin,0.63rem)";
 
   return (
     <div
       className="flex items-center"
-      style={{ gap: "clamp(0.3rem,0.92vmin,0.39rem)", marginBottom: "clamp(0.59rem,1.78vmin,0.73rem)" }}
+      style={{
+        gap: large ? "clamp(0.38rem,1.15vmin,0.48rem)" : "clamp(0.3rem,0.92vmin,0.39rem)",
+        marginBottom: large ? "clamp(0.78rem,2.38vmin,0.95rem)" : "clamp(0.59rem,1.78vmin,0.73rem)",
+      }}
     >
       <span className="font-medium leading-none" style={{ color: DOE_ORANGE, fontSize: headerSize }}>
         {label}
@@ -175,13 +184,19 @@ function ChartToolIcons() {
   );
 }
 
-function WorkflowToolIcons() {
-  const iconSize = "clamp(1.22rem,3.75vmin,1.48rem)";
+function WorkflowToolIcons({ large = false }: { large?: boolean }) {
+  const iconSize = large
+    ? "clamp(1.48rem,4.55vmin,1.78rem)"
+    : "clamp(1.22rem,3.75vmin,1.48rem)";
   const sw = 1.25;
   const cap = "round" as const;
 
   return (
-    <div className="flex items-center" style={{ gap: "clamp(0.82rem,2.5vmin,1rem)" }} aria-hidden>
+    <div
+      className="flex items-center"
+      style={{ gap: large ? "clamp(0.98rem,3vmin,1.18rem)" : "clamp(0.82rem,2.5vmin,1rem)" }}
+      aria-hidden
+    >
       <svg viewBox="0 0 16 16" fill="none" style={{ width: iconSize, height: iconSize }}>
         <circle cx="8" cy="8" r="4.75" stroke={MUTED} strokeWidth={sw} />
         <circle cx="8" cy="8" r="1.35" fill={MUTED} />
@@ -205,8 +220,10 @@ function WorkflowToolIcons() {
   );
 }
 
-function ModelSelector({ actionSize = ACTION_SIZE }: { actionSize?: string }) {
-  const iconSize = "clamp(0.52rem,1.57vmin,0.63rem)";
+function ModelSelector({ actionSize = ACTION_SIZE, large = false }: { actionSize?: string; large?: boolean }) {
+  const iconSize = large
+    ? "clamp(0.62rem,1.88vmin,0.75rem)"
+    : "clamp(0.52rem,1.57vmin,0.63rem)";
 
   return (
     <span
@@ -215,8 +232,10 @@ function ModelSelector({ actionSize = ACTION_SIZE }: { actionSize?: string }) {
         background: BTN_BG,
         color: INK,
         fontSize: actionSize,
-        gap: "clamp(0.24rem,0.73vmin,0.3rem)",
-        padding: "clamp(0.41rem,1.3vmin,0.52rem) clamp(0.59rem,1.78vmin,0.73rem)",
+        gap: large ? "clamp(0.32rem,0.95vmin,0.4rem)" : "clamp(0.24rem,0.73vmin,0.3rem)",
+        padding: large
+          ? "clamp(0.52rem,1.58vmin,0.65rem) clamp(0.72rem,2.18vmin,0.88rem)"
+          : "clamp(0.41rem,1.3vmin,0.52rem) clamp(0.59rem,1.78vmin,0.73rem)",
       }}
     >
       Fable 5
@@ -233,9 +252,9 @@ function ModelSelector({ actionSize = ACTION_SIZE }: { actionSize?: string }) {
   );
 }
 
-function SubmitIconButton({ desktop = false }: { desktop?: boolean }) {
-  const size = desktop ? SUBMIT_SIZE_DESKTOP : "clamp(2rem,6.1vmin,2.32rem)";
-  const iconSize = desktop ? SUBMIT_ICON_DESKTOP : "clamp(0.89rem,2.7vmin,1.06rem)";
+function SubmitIconButton({ desktop = false, large = false }: { desktop?: boolean; large?: boolean }) {
+  const size = desktop ? SUBMIT_SIZE_DESKTOP : large ? SUBMIT_SIZE_LARGE : "clamp(2rem,6.1vmin,2.32rem)";
+  const iconSize = desktop ? SUBMIT_ICON_DESKTOP : large ? SUBMIT_ICON_LARGE : "clamp(0.89rem,2.7vmin,1.06rem)";
 
   return (
     <span
@@ -281,9 +300,11 @@ export function DoePhoneAmbientPromptCard({
         : BODY_SIZE;
   const headerSize = isDesktop
     ? SECTION_HEADER_SIZE_DESKTOP
-    : isSection
-      ? SECTION_HEADER_SIZE
-      : HEADER_SIZE;
+    : isLarge
+      ? SECTION_HEADER_SIZE_LARGE
+      : isSection
+        ? SECTION_HEADER_SIZE
+        : HEADER_SIZE;
   const pad = isDesktop
     ? SECTION_INPUT_PAD_DESKTOP
     : isLarge
@@ -292,21 +313,21 @@ export function DoePhoneAmbientPromptCard({
         ? SECTION_INPUT_PAD
         : CAROUSEL_INPUT_PAD;
   const widthClass = isSection ? "w-full" : "w-[96%]";
-  const actionSize = isDesktop ? ACTION_SIZE_DESKTOP : ACTION_SIZE;
+  const actionSize = isDesktop ? ACTION_SIZE_DESKTOP : isLarge ? ACTION_SIZE_LARGE : ACTION_SIZE;
 
   return (
     <div
       className={`${widthClass} bg-white ${OUTER_RADIUS} ${isSection ? "overflow-visible" : ""} ${suisseIntl.className}`}
       style={{ padding: pad }}
     >
-      <ContextHeader label={headerLabel} headerSize={headerSize} />
+      <ContextHeader label={headerLabel} headerSize={headerSize} large={isLarge} />
 
       <p
         className={`font-normal ${isSection ? "relative overflow-visible" : ""}`}
         style={{
           color: INK,
           fontSize: bodySize,
-          lineHeight: isSection ? 1.58 : 1.46,
+          lineHeight: isLarge ? 1.62 : isSection ? 1.58 : 1.46,
         }}
       >
         {children}
@@ -315,15 +336,18 @@ export function DoePhoneAmbientPromptCard({
       <div
         className="flex items-center justify-between"
         style={{
-          gap: "clamp(0.59rem,1.78vmin,0.73rem)",
-          marginTop: "clamp(0.67rem,2.05vmin,0.84rem)",
+          gap: isLarge ? "clamp(0.78rem,2.38vmin,0.95rem)" : "clamp(0.59rem,1.78vmin,0.73rem)",
+          marginTop: isLarge ? "clamp(0.95rem,2.9vmin,1.18rem)" : "clamp(0.67rem,2.05vmin,0.84rem)",
         }}
       >
-        {toolIcons === "workflow" ? <WorkflowToolIcons /> : <ChartToolIcons />}
+        {toolIcons === "workflow" ? <WorkflowToolIcons large={isLarge} /> : <ChartToolIcons />}
 
-        <div className="flex shrink-0 items-center" style={{ gap: "clamp(0.45rem,1.38vmin,0.59rem)" }}>
-          <ModelSelector actionSize={actionSize} />
-          <SubmitIconButton desktop={isDesktop} />
+        <div
+          className="flex shrink-0 items-center"
+          style={{ gap: isLarge ? "clamp(0.58rem,1.75vmin,0.72rem)" : "clamp(0.45rem,1.38vmin,0.59rem)" }}
+        >
+          <ModelSelector actionSize={actionSize} large={isLarge} />
+          <SubmitIconButton desktop={isDesktop} large={isLarge} />
         </div>
       </div>
     </div>

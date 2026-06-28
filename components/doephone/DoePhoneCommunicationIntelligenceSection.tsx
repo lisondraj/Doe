@@ -74,18 +74,17 @@ function BuildSectionToggleBadge({
 
   const plusStyle = {
     fontSize: "clamp(3.35rem,10.4vmin,4.2rem)",
-    marginTop: "-0.06em",
     textShadow: "0 1px 8px rgba(30, 52, 58, 0.18)",
   } as const;
 
   if (!interactive) {
     return (
       <span
-        className={`pointer-events-none absolute flex items-center justify-center rounded-full ${FROST_BLUR_CLASS} ${className}`}
+        className={`pointer-events-none absolute grid place-items-center rounded-full ${FROST_BLUR_CLASS} ${className}`}
         style={sharedStyle}
         aria-hidden
       >
-        <span className="font-light leading-none text-white" style={plusStyle}>
+        <span className="block font-light leading-none text-white" style={plusStyle}>
           +
         </span>
       </span>
@@ -95,7 +94,7 @@ function BuildSectionToggleBadge({
   return (
     <button
       type="button"
-      className={`absolute flex items-center justify-center rounded-full ${FROST_BLUR_CLASS} ${className}`}
+      className={`absolute grid place-items-center rounded-full ${FROST_BLUR_CLASS} ${className}`}
       style={{ ...sharedStyle, transition: `opacity 720ms ${EXPAND_EASE}` }}
       aria-label={expanded ? "Close details" : "Show details"}
       aria-expanded={expanded}
@@ -121,7 +120,7 @@ function BuildSectionToggleBadge({
           />
         </svg>
       ) : (
-        <span className="font-light leading-none text-white" style={plusStyle}>
+        <span className="block font-light leading-none text-white" style={plusStyle}>
           +
         </span>
       )}

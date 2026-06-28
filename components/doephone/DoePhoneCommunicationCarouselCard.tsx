@@ -87,19 +87,17 @@ function CarouselSlideToggleBadge({
 
   const plusStyle = {
     fontSize: tokens.plusFont,
-    marginTop: "-0.06em",
-    paddingRight: "0.07em",
     textShadow: "0 1px 8px rgba(30, 52, 58, 0.18)",
   } as const;
 
   if (!interactive) {
     return (
       <span
-        className={`pointer-events-none absolute z-30 flex items-center justify-center rounded-full ${FROST_BLUR_CLASS}`}
+        className={`pointer-events-none absolute z-30 grid place-items-center rounded-full ${FROST_BLUR_CLASS}`}
         style={sharedStyle}
         aria-hidden
       >
-        <span className="font-light leading-none text-white" style={plusStyle}>
+        <span className="block font-light leading-none text-white" style={plusStyle}>
           +
         </span>
       </span>
@@ -109,7 +107,7 @@ function CarouselSlideToggleBadge({
   return (
     <button
       type="button"
-      className={`absolute z-30 flex items-center justify-center rounded-full ${FROST_BLUR_CLASS} transition-[transform,opacity] duration-[720ms]`}
+      className={`absolute z-30 grid place-items-center rounded-full ${FROST_BLUR_CLASS} transition-[transform,opacity] duration-[720ms]`}
       style={{ ...sharedStyle, transitionTimingFunction: EXPAND_EASE }}
       aria-label={expanded ? "Close details" : "Show details"}
       aria-expanded={expanded}
@@ -132,7 +130,7 @@ function CarouselSlideToggleBadge({
           />
         </svg>
       ) : (
-        <span className="font-light leading-none text-white" style={plusStyle}>
+        <span className="block font-light leading-none text-white" style={plusStyle}>
           +
         </span>
       )}
