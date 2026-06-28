@@ -1,6 +1,6 @@
 "use client";
 
-import { dmSans } from "@/lib/home/fonts";
+import { suisseIntl } from "@/lib/home/fonts";
 import { CAROUSEL_MENU_UI } from "@/lib/doephone/carousel-menu-visual-styles";
 
 const { ink: INK, accent: DOE_ORANGE } = CAROUSEL_MENU_UI;
@@ -144,8 +144,8 @@ function VoiceCallPanel() {
         </div>
 
         <p
-          className="font-medium leading-snug"
-          style={{ color: INK, fontSize: HEADING_SIZE, marginTop: "clamp(0.42rem,1.28vmin,0.55rem)" }}
+          className="truncate font-normal leading-snug"
+          style={{ color: MUTED_TEXT, fontSize: FOOTER_PRIMARY_SIZE, marginTop: "clamp(0.42rem,1.28vmin,0.55rem)" }}
         >
           Amlodipine 20 mg
         </p>
@@ -272,7 +272,7 @@ function SchedulingPanel() {
 export function DoePhoneFrontDeskInboxVisual() {
   return (
     <div
-      className={`mx-auto flex h-full w-full items-center justify-center ${dmSans.className}`}
+      className={`mx-auto flex h-full w-full items-center justify-center ${suisseIntl.className}`}
       style={{ maxWidth: CAROUSEL_MENU_UI.maxWidthPhone }}
       aria-hidden
     >
