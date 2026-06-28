@@ -23,9 +23,16 @@ import {
   ABOUT_DESKTOP_STACK_GAP,
   ABOUT_DESKTOP_SUBHEADING_TW,
   ABOUT_DESKTOP_TITLE_TW,
+  ABOUT_DESKTOP_BYLINE_TW,
   ABOUT_PAGE_SUBHEADING_LINES,
 } from "@/lib/about/about-layout-styles";
-import { ABOUT_PAGE_ARTICLE, ABOUT_PAGE_HERO_BACKDROP, ABOUT_PAGE_HERO_PATTERN_SCALE } from "@/lib/about/about-page-article";
+import {
+  ABOUT_PAGE_ARTICLE,
+  ABOUT_PAGE_HERO_BACKDROP,
+  ABOUT_PAGE_HERO_PATTERN_SCALE,
+  ABOUT_PAGE_MOBILE_BYLINE,
+  ABOUT_PAGE_MOBILE_DATE,
+} from "@/lib/about/about-page-article";
 import type { ArticleBlock } from "@/lib/blog/articles";
 import { lora } from "@/lib/home/fonts";
 
@@ -91,6 +98,14 @@ export function AboutDesktopView() {
               <p className={ABOUT_DESKTOP_SUBHEADING_TW}>
                 <span className="block">{ABOUT_PAGE_SUBHEADING_LINES[0]}</span>
                 <span className="block">{ABOUT_PAGE_SUBHEADING_LINES[1]}</span>
+              </p>
+
+              <p className={ABOUT_DESKTOP_BYLINE_TW}>
+                {ABOUT_PAGE_MOBILE_BYLINE}
+                <span className="mx-2" aria-hidden>
+                  ·
+                </span>
+                {ABOUT_PAGE_MOBILE_DATE}
               </p>
             </div>
 
