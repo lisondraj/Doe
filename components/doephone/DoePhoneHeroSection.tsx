@@ -15,7 +15,17 @@ import { useEffect, useState, type CSSProperties } from "react";
 export const DOEPHONE_HERO_HEIGHT =
   "calc(var(--app-vh,100lvh)*0.88 + max(8rem, calc(env(safe-area-inset-top, 0px) + 3.5rem)))";
 
-export function DoePhoneHeroSection() {
+const DOEPHONE_HERO_DESKTOP_HEIGHT = "100dvh";
+
+const DOEPHONE_HERO_DESKTOP_INSET =
+  "px-10 md:px-20 lg:px-28 xl:px-36";
+
+export function DoePhoneHeroSection({
+  variant = "mobile",
+}: {
+  /** Desktop home uses full viewport height and wider copy gutters. */
+  variant?: "mobile" | "desktop";
+}) {
   const [introZoom, setIntroZoom] = useState(DOEPHONE_HERO_INTRO_GRADIENT_START);
   const [introDone, setIntroDone] = useState(false);
 
@@ -50,14 +60,17 @@ export function DoePhoneHeroSection() {
   }, []);
 
   const gradientZoom = introDone ? 1 : introZoom;
+  const isDesktop = variant === "desktop";
+  const heroHeight = isDesktop ? DOEPHONE_HERO_DESKTOP_HEIGHT : DOEPHONE_HERO_HEIGHT;
+  const copyInset = isDesktop ? DOEPHONE_HERO_DESKTOP_INSET : DOEPHONE_SECTION_CAROUSEL_INSET_X;
 
   return (
     <section
       className="doephone-hero-section relative w-full overflow-hidden bg-[#D2774C]"
       style={
         {
-          minHeight: DOEPHONE_HERO_HEIGHT,
-          height: DOEPHONE_HERO_HEIGHT,
+          minHeight: heroHeight,
+          height: heroHeight,
           ...doephoneHeroIntroStyleVars(),
         } as CSSProperties
       }
@@ -71,7 +84,7 @@ export function DoePhoneHeroSection() {
       />
 
       <div
-        className={`absolute inset-0 z-[3] flex min-w-0 flex-col items-start justify-end overflow-visible pb-[clamp(1.5rem,5vmin,2.5rem)] ${DOEPHONE_SECTION_CAROUSEL_INSET_X}`}
+        className={`absolute inset-0 z-[3] flex min-w-0 flex-col items-start justify-end overflow-visible pb-[clamp(1.5rem,5vmin,2.5rem)] ${copyInset}`}
       >
         <div className="doephone-hero-copy pointer-events-none w-full min-w-0">
           <DoePhoneHeroHeadline />

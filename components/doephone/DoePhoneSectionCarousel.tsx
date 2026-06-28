@@ -1,11 +1,6 @@
 "use client";
 
-import { DoePhoneAmbientVisual } from "@/components/doephone/DoePhoneAmbientVisual";
-import { DoePhoneClinicAgentsVisual } from "@/components/doephone/DoePhoneClinicAgentsVisual";
-import { DoePhoneWorkflowVisual } from "@/components/doephone/DoePhoneWorkflowVisual";
-import { DoePhoneIntegrateVisual } from "@/components/doephone/DoePhoneIntegrateVisual";
-import { DoePhoneFrontDeskInboxVisual } from "@/components/doephone/DoePhoneFrontDeskInboxVisual";
-import { DoePhoneBillingVisual } from "@/components/doephone/DoePhoneBillingVisual";
+import { DoePhoneCommunicationSlideVisual } from "@/components/doephone/DoePhoneCommunicationSlideVisual";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import {
   DOEPHONE_COMMUNICATION_SLIDES,
@@ -229,20 +224,7 @@ function DoePhoneCarouselCard({ slide, isActive }: { slide: DoePhoneCommunicatio
     setPanelPhase("open");
   }, [expandable, panelPhase]);
 
-  const overlayVisual =
-    slide.id === "agents" ? (
-      <DoePhoneClinicAgentsVisual />
-    ) : slide.id === "inbox" ? (
-      <DoePhoneWorkflowVisual />
-    ) : slide.id === "front-desk" ? (
-      <DoePhoneFrontDeskInboxVisual />
-    ) : slide.id === "ambient" ? (
-      <DoePhoneAmbientVisual />
-    ) : slide.id === "integrate" ? (
-      <DoePhoneIntegrateVisual />
-    ) : slide.id === "billing" ? (
-      <DoePhoneBillingVisual />
-    ) : null;
+  const overlayVisual = <DoePhoneCommunicationSlideVisual slideId={slide.id} />;
 
   return (
     <div

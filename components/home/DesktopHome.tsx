@@ -4,16 +4,16 @@ import { Lora, Old_Standard_TT, Inter } from "next/font/google";
 import localFont from "next/font/local";
 import Link from "next/link";
 import {
-  Fragment,
   useState,
   useEffect,
   useLayoutEffect,
   useRef,
   type HTMLAttributes,
-  type Ref,
 } from "react";
 import { NAV_HREFS } from "@/components/doe-nav-data";
 import { HERO_CAROUSEL_GRAIN_BG } from "@/components/hero-carousel-texture";
+import { DoePhoneHeroSection } from "@/components/doephone/DoePhoneHeroSection";
+import { DesktopMainNavCta } from "@/components/home/DesktopMainNavCta";
 import { DesignHeroBackdropSection } from "@/components/design-hero-backdrop-section";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { WorkflowCarouselSlides } from "@/components/workflow-carousel-slides";
@@ -48,106 +48,6 @@ const suisseIntl = localFont({
   ],
   display: "swap",
 });
-
-const DESKTOP_MISSION_L1_TEXT = "We're building the future ";
-const DESKTOP_MISSION_L2_TEXT = "of AI in healthcare.";
-const DESKTOP_MISSION_FULL = DESKTOP_MISSION_L1_TEXT + DESKTOP_MISSION_L2_TEXT;
-const DESKTOP_MISSION_CHAR_COUNT = DESKTOP_MISSION_FULL.length;
-const DESKTOP_MISSION_L1_LEN = DESKTOP_MISSION_L1_TEXT.length;
-
-function DesktopHeroMissionScrollText({
-  interClassName,
-  typeLinear,
-  line1SpanRef,
-}: {
-  interClassName: string;
-  typeLinear: number;
-  /** Ref on the line-1 inline-block span — getBCR on it gives true ink width regardless of parent clip. */
-  line1SpanRef?: Ref<HTMLSpanElement>;
-}) {
-  const clampedT = Math.min(1, Math.max(0, typeLinear));
-  const R = clampedT * DESKTOP_MISSION_CHAR_COUNT;
-  const typingDone = clampedT >= 1 - 1e-5;
-
-  const charOpacityAt = (idx: number) => {
-    if (R <= idx) return 0;
-    if (R >= idx + 1) return 1;
-    return R - idx;
-  };
-
-  // kFocus: the character currently being faded in (its opacity is 0→1 as R advances)
-  const kFocus = Math.min(Math.floor(R + 1e-9), DESKTOP_MISSION_CHAR_COUNT - 1);
-
-  // Caret opacity mirrors the active character's fade progress so bar + letter arrive together
-  const caretOpacity = typingDone ? 0 : charOpacityAt(kFocus);
-
-  // Caret element — sits to the RIGHT of the active character, disappears when typing done
-  const caret = (
-    <span
-      key="caret"
-      aria-hidden
-      style={{
-        display: typingDone ? "none" : "inline-block",
-        width: "2px",
-        /* ~cap-height ↔ ascender span for clamped headline Inter (~0.9em reads true next to glyphs) */
-        height: "0.9em",
-        verticalAlign: "-0.1em",
-        marginLeft: "0.04em",
-        borderRadius: "1px",
-        background: "rgb(255 255 255 / 0.92)",
-        opacity: caretOpacity,
-        transition: "opacity 100ms linear",
-      }}
-    />
-  );
-
-  // Render all characters with their current opacity so layout is stable from the start —
-  // invisible future characters preserve line width and prevent the first line from shifting.
-  const renderLine = (start: number, end: number) =>
-    DESKTOP_MISSION_FULL.slice(start, end)
-      .split("")
-      .map((ch, rel) => {
-        const idx = start + rel;
-        const op = charOpacityAt(idx);
-        return (
-          <Fragment key={idx}>
-            <span
-              style={{ opacity: op }}
-              className="inline-block whitespace-pre"
-            >
-              {ch === " " ? "\u00A0" : ch}
-            </span>
-            {/* Place caret immediately after the active character */}
-            {!typingDone && idx === kFocus ? caret : null}
-          </Fragment>
-        );
-      });
-
-  const lineStyle: React.CSSProperties = {
-    display: "inline-block",
-    minHeight: "1.22em",
-    whiteSpace: "nowrap",
-    lineHeight: 1.22,
-    verticalAlign: "top",
-  };
-
-  return (
-    <p
-      className={`flex w-max max-w-full flex-col items-start gap-0 text-left text-white ${interClassName}`}
-      style={{
-        fontWeight: 400,
-        fontSize: "clamp(2.6rem, 5.8vw, 5rem)",
-        lineHeight: 1.12,
-        letterSpacing: "-0.038em",
-      }}
-    >
-      <span ref={line1SpanRef} style={lineStyle}>
-        {renderLine(0, DESKTOP_MISSION_L1_LEN)}
-      </span>
-      <span style={lineStyle}>{renderLine(DESKTOP_MISSION_L1_LEN, DESKTOP_MISSION_CHAR_COUNT)}</span>
-    </p>
-  );
-}
 
 const DESKTOP_NAV_ITEMS = [
   { label: "Features", href: NAV_HREFS.Features },
@@ -399,8 +299,6 @@ export function DesktopHome() {
   const [thirdSectionOpacity, setThirdSectionOpacity] = useState(0);
   const [thirdSectionTranslateY, setThirdSectionTranslateY] = useState(40);
   const secondSectionRef = useRef<HTMLDivElement>(null);
-  const [secondSectionTitleOpacity, setSecondSectionTitleOpacity] = useState(0);
-  const [secondSectionTitleTranslateY, setSecondSectionTitleTranslateY] = useState(40);
   const [slidingBoxesOpacity, setSlidingBoxesOpacity] = useState(0);
   const [slidingBoxesTranslateY, setSlidingBoxesTranslateY] = useState(40);
   const [shouldStartSlidingAnimation, setShouldStartSlidingAnimation] = useState(false);
@@ -418,10 +316,6 @@ export function DesktopHome() {
   const desktopHeroWheelLinearRef = useRef(1);
   const desktopHeroScrollReleasedRef = useRef(true);
   const [desktopHeroScrollReleased, setDesktopHeroScrollReleased] = useState(true);
-
-  /** Line-1 span ref — getBCR gives true ink width even if the paragraph parent is max-w clamped. */
-  const desktopHeroMissionLine1SpanRef = useRef<HTMLSpanElement>(null);
-  const [desktopHeroMissionLine1PxWidth, setDesktopHeroMissionLine1PxWidth] = useState<number | null>(null);
 
   const releaseDesktopHeroScroll = () => {
     desktopHeroScrollReleasedRef.current = true;
@@ -531,29 +425,6 @@ export function DesktopHome() {
   const slideBoxH = isPhoneLayout ? phoneSlideSize.h : desktopCarouselH;
   const carouselViewportW = isPhoneLayout ? slideBoxW : viewportWidth;
 
-  useLayoutEffect(() => {
-    if (typeof window === "undefined" || isPhoneLayout) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    /* Measure the LINE-1 span directly — whitespace:nowrap inline-block so its BCR width
-       is the true ink width of "We're building the future" regardless of parent max-w clip. */
-    const el = desktopHeroMissionLine1SpanRef.current;
-    if (!el) {
-      setDesktopHeroMissionLine1PxWidth(null);
-      return;
-    }
-    const flush = () => {
-      const w = el.getBoundingClientRect().width;
-      if (w > 0) setDesktopHeroMissionLine1PxWidth(Math.ceil(w));
-    };
-    void document.fonts.ready.then(flush).catch(() => flush());
-    flush();
-    requestAnimationFrame(flush);
-    const ro = new ResizeObserver(flush);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [isPhoneLayout, viewportWidth, desktopHeroScrollLinear]);
-
   /** Lock page scroll until desktop hero zoom finishes (wheel drives zoom without advancing layout). */
   useLayoutEffect(() => {
     const mqPhone = window.matchMedia("(max-width: 639px)");
@@ -655,57 +526,33 @@ export function DesktopHome() {
     const handleScroll = () => {
       setScrollY(window.scrollY);
 
-      // Calculate second section title fade-in and slide-up animation
+      // Second section — carousel fade-in and slide-up
       if (secondSectionRef.current) {
         const rect = secondSectionRef.current.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
         const sectionTop = rect.top;
-        
-        // Start animation when section enters viewport (when top is at 85% of viewport)
-        // Complete animation when section is at 60% from top of viewport
+
         const startPoint = viewportHeight * 0.85;
-        const endPoint = viewportHeight * 0.6;
+        const endPoint = viewportHeight * 0.55;
         const distance = startPoint - endPoint;
-        
+
         if (sectionTop <= startPoint && sectionTop >= endPoint) {
-          // Section is in animation range
           const progress = (startPoint - sectionTop) / distance;
           const clampedProgress = Math.min(Math.max(progress, 0), 1);
-          
-          // Fade in: 0 to 1
-          setSecondSectionTitleOpacity(clampedProgress);
-          // Slide up: 40px to 0px
-          setSecondSectionTitleTranslateY(40 * (1 - clampedProgress));
-          
-          // Sliding boxes animation starts after title animation (at 60% progress)
-          // Sliding boxes animation range: 60% to 100% of title animation progress
-          if (clampedProgress >= 0.6) {
-            const slidingBoxesProgress = (clampedProgress - 0.6) / 0.4; // 0 to 1 when title is 60% to 100%
-            const clampedSlidingProgress = Math.min(Math.max(slidingBoxesProgress, 0), 1);
-            
-            setSlidingBoxesOpacity(clampedSlidingProgress);
-            setSlidingBoxesTranslateY(40 * (1 - clampedSlidingProgress));
-            
-            // Start sliding animation after title animation completes (at 80% progress)
-            if (clampedProgress >= 0.8) {
-              setShouldStartSlidingAnimation(true);
-            }
+
+          setSlidingBoxesOpacity(clampedProgress);
+          setSlidingBoxesTranslateY(40 * (1 - clampedProgress));
+
+          if (clampedProgress >= 0.65) {
+            setShouldStartSlidingAnimation(true);
           } else {
-            setSlidingBoxesOpacity(0);
-            setSlidingBoxesTranslateY(40);
             setShouldStartSlidingAnimation(false);
           }
         } else if (sectionTop < endPoint) {
-          // Section is past animation point - fully visible
-          setSecondSectionTitleOpacity(1);
-          setSecondSectionTitleTranslateY(0);
           setSlidingBoxesOpacity(1);
           setSlidingBoxesTranslateY(0);
           setShouldStartSlidingAnimation(true);
         } else {
-          // Section hasn't reached animation point yet
-          setSecondSectionTitleOpacity(0);
-          setSecondSectionTitleTranslateY(40);
           setSlidingBoxesOpacity(0);
           setSlidingBoxesTranslateY(40);
           setShouldStartSlidingAnimation(false);
@@ -1184,178 +1031,35 @@ export function DesktopHome() {
   const loginButtonText = navOnWhiteBar ? "#fff" : "#000";
   const loginButtonShadow = showNavShadow && isOnHero ? "0 2px 4px rgba(0, 0, 0, 0.1)" : "none";
 
-  const prefersReducedMotion =
-    typeof window !== "undefined" &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const heroZoomLin =
-    prefersReducedMotion || isPhoneLayout ? 1 : Math.min(1, Math.max(0, desktopHeroScrollLinear));
-  /** Same smooth easing as legacy single-phase zoom (applied only while linear ∈ [0,1]). */
-  const desktopHeroZoomProgress =
-    prefersReducedMotion || isPhoneLayout ? 1 : heroZoomLin * heroZoomLin * (3 - 2 * heroZoomLin);
-  /** Second wheel phase [1,2] drives mission glyphs; capped at 1 once past 2 while [2,3] runs the AI card. */
-  const desktopHeroMissionTypeLinear =
-    prefersReducedMotion || isPhoneLayout
-      ? 0
-      : desktopHeroScrollLinear <= 1
-        ? 0
-        : desktopHeroScrollLinear >= 2
-          ? 1
-          : desktopHeroScrollLinear - 1;
-
-  /** Scrubs with scroll (~3.6×); applied via `background-size` zoom instead of transform so layers stay crisp. */
-  const desktopHeroBackdropZoom =
-    prefersReducedMotion || isPhoneLayout ? 1 : 1 + desktopHeroZoomProgress * 3.65;
-  const desktopHeroBackdropBgLayers = `radial-gradient(circle at center, #D49D4F 0%, #D2774C 18%, #BF593D 32%, #C88A5F 45%, #7B5C4B 55%, #8B6F47 65%, #6D5B41 72%, #5C4A3A 78%, #4A3D32 85%, #1E343A 95%, rgba(30, 52, 58, 0.6) 100%),
-              radial-gradient(ellipse 60% 60% at 0% 0%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
-              radial-gradient(ellipse 60% 60% at 100% 0%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
-              radial-gradient(ellipse 60% 60% at 0% 100%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
-              radial-gradient(ellipse 60% 60% at 100% 100%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%)`;
-  const desktopHeroBackdropBgSizing = (() => {
-    const pct = `${desktopHeroBackdropZoom * 100}% ${desktopHeroBackdropZoom * 100}%`;
-    return `${pct}, ${pct}, ${pct}, ${pct}, ${pct}`;
-  })();
-
-  /** Show mission surface once the hero opens on the orange gradient (zoom phase skipped). */
-  const desktopHeroMissionBlockOpacity =
-    isPhoneLayout || prefersReducedMotion
-      ? 0
-      : heroZoomLin >= 1 - 1e-4
-        ? 1
-        : 0;
-
-  /**
-   * White hero nav persists through mission typing AND initial scroll beneath the sticky hero —
-   * until `navOnWhiteBar` (cream “non-hero” bar threshold), then vanilla scroll-linked nav styling takes over.
-   */
-  const desktopHeroMissionNavChrome =
-    !isPhoneLayout &&
-    !prefersReducedMotion &&
-    heroZoomLin >= 1 - 1e-4 &&
-    !navOnWhiteBar;
+  /** White nav on the orange hero until the cream section bar takes over. */
+  const desktopHeroNavChrome = !isPhoneLayout && !navOnWhiteBar;
 
   const heroNavRevealPainted = Math.max(
     heroNavReveal,
-    desktopHeroMissionNavChrome ? 1 : 0,
+    desktopHeroNavChrome ? 1 : 0,
   );
 
-  const heroNavPointerOk =
-    desktopHeroMissionNavChrome || heroNavReveal >= 0.04;
-  const heroNavInk = desktopHeroMissionNavChrome ? "#ffffff" : navTextColor;
-  const heroNavShadowResolved = desktopHeroMissionNavChrome
+  const heroNavPointerOk = desktopHeroNavChrome || heroNavReveal >= 0.04;
+  const heroNavInk = desktopHeroNavChrome ? "#ffffff" : navTextColor;
+  const heroNavShadowResolved = desktopHeroNavChrome
     ? "0 1px 3px rgba(0, 0, 0, 0.28)"
     : navTextShadow;
-  const heroWaitlistBg = desktopHeroMissionNavChrome ? "#ffffff" : loginButtonBg;
-  const heroWaitlistFg = desktopHeroMissionNavChrome ? "#000000" : loginButtonText;
-  const heroWaitlistShadow = desktopHeroMissionNavChrome
+  const heroWaitlistBg = desktopHeroNavChrome ? "#ffffff" : loginButtonBg;
+  const heroWaitlistFg = desktopHeroNavChrome ? "#000000" : loginButtonText;
+  const heroWaitlistShadow = desktopHeroNavChrome
     ? "0 2px 6px rgba(0, 0, 0, 0.12)"
     : loginButtonShadow;
+  const heroCtaDivider = desktopHeroNavChrome
+    ? "rgba(0, 0, 0, 0.12)"
+    : "rgba(255, 255, 255, 0.22)";
 
   return (
     <div className="relative overflow-x-hidden" style={{ backgroundColor: '#F7F6F3' }}>
-      {/* Hero — desktop: wheel zoom, typed mission; scroll locks until wheel phases finish */}
+      {/* Hero — same gradient + headline as /doephone mobile */}
       {/* z-[40]: stack above later sections (z-10) so fixed nav isn’t painted under carousel / gradients */}
-      <div className="relative z-[40] min-h-screen overflow-x-clip overflow-y-visible">
-        <div
-          className={
-            isPhoneLayout
-              ? "relative min-h-screen overflow-x-clip overflow-y-visible"
-              : "sticky top-0 z-0 flex min-h-[100dvh] h-[100dvh] overflow-x-clip overflow-y-visible relative"
-          }
-        >
-          {/* Zoomed gradient canvas — background-size zoom (not transform) keeps edges sharp. */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              {/* Hero with Gradient from Chart2 */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  backgroundImage: desktopHeroBackdropBgLayers,
-                  backgroundSize: desktopHeroBackdropBgSizing,
-                  backgroundPosition: "center, center, center, center, center",
-                  backgroundRepeat: "no-repeat, no-repeat, no-repeat, no-repeat, no-repeat",
-                  filter: "saturate(1.15)",
-                  ...(prefersReducedMotion || isPhoneLayout
-                    ? {}
-                    : desktopHeroZoomProgress > 0.02
-                      ? { willChange: "background-size" }
-                      : {}),
-                }}
-              >
-                {/* Grain texture overlay */}
-                <div
-                  className="absolute inset-0 pointer-events-none"
-                  style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E")`,
-                    backgroundSize: "200px 200px",
-                    opacity: 1,
-                    mixBlendMode: "overlay",
-                  }}
-                />
-                {/* Center brightness reduction overlay — match gradient zoom so it stays aligned */}
-                <div
-                  className="absolute inset-0 pointer-events-none"
-                  style={{
-                    backgroundImage:
-                      "radial-gradient(circle at center, rgba(0, 0, 0, 0.15) 0%, transparent 60%)",
-                    backgroundSize: `${desktopHeroBackdropZoom * 100}% ${desktopHeroBackdropZoom * 100}%`,
-                    backgroundPosition: "center",
-                    backgroundRepeat: "no-repeat",
-                  }}
-                />
-                {/* Grid lines overlay */}
-                <div className="absolute inset-0 pointer-events-none">
-                  <svg
-                    className="absolute inset-0 pointer-events-none w-full h-full"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <defs>
-                      <pattern id="gridPattern" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
-                        <path
-                          d="M 0 0 L 80 0 M 0 0 L 0 80"
-                          fill="none"
-                          stroke="#999999"
-                          strokeWidth="0.5"
-                          opacity="0.15"
-                        />
-                        <circle cx="0" cy="0" r="1" fill="#999999" opacity="0.25" />
-                        <circle cx="80" cy="0" r="1" fill="#999999" opacity="0.25" />
-                        <circle cx="0" cy="80" r="1" fill="#999999" opacity="0.25" />
-                        <circle cx="80" cy="80" r="1" fill="#999999" opacity="0.25" />
-                      </pattern>
-                    </defs>
-                    <rect width="100%" height="100%" fill="url(#gridPattern)" />
-                  </svg>
-                  <div
-                    className="absolute inset-0 pointer-events-none"
-                    style={{
-                      transform: "perspective(1200px) translateZ(-200px) rotateX(75deg)",
-                      transformStyle: "preserve-3d",
-                    }}
-                  >
-                    <svg
-                      className="absolute inset-0 pointer-events-none w-full h-full"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <defs>
-                        <pattern id="gridPattern2" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
-                          <path
-                            d="M 0 0 L 80 0 M 0 0 L 0 80"
-                            fill="none"
-                            stroke="#999999"
-                            strokeWidth="0.5"
-                            opacity="0.15"
-                          />
-                          <circle cx="0" cy="0" r="1" fill="#999999" opacity="0.25" />
-                          <circle cx="80" cy="0" r="1" fill="#999999" opacity="0.25" />
-                          <circle cx="0" cy="80" r="1" fill="#999999" opacity="0.25" />
-                          <circle cx="80" cy="80" r="1" fill="#999999" opacity="0.25" />
-                        </pattern>
-                      </defs>
-                      <rect width="100%" height="100%" fill="url(#gridPattern2)" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-          </div>
+      <div className="relative z-[40] overflow-x-clip overflow-y-visible">
+        <DoePhoneHeroSection variant="desktop" />
+
         {/* Navigation Bar */}
         <nav
           className={`fixed top-0 left-0 right-0 z-[50] transition-opacity duration-300 ease-out ${
@@ -1365,7 +1069,7 @@ export function DesktopHome() {
             opacity: DESKTOP_NAV_DROPDOWN_ENABLED && isDropdownOpen ? 1 : heroNavRevealPainted,
             backgroundColor: 'transparent',
             borderBottom:
-              !desktopHeroMissionNavChrome &&
+              !desktopHeroNavChrome &&
               navOnWhiteBar &&
               (showBackgroundBox || isDropdownOpen)
                 ? '1px solid #E6E6E6'
@@ -1387,7 +1091,7 @@ export function DesktopHome() {
             />
           )}
           {/* Background box when close to second section — hide during mission-type nav */}
-          {showBackgroundBox && !isDropdownOpen && !desktopHeroMissionNavChrome && (
+          {showBackgroundBox && !isDropdownOpen && !desktopHeroNavChrome && (
             <div 
               className="absolute inset-0 pointer-events-none"
               style={{ 
@@ -1407,42 +1111,12 @@ export function DesktopHome() {
               Doe
             </h1>
 
-            <div className="absolute left-1/2 flex max-w-[min(56rem,calc(100vw-11rem))] -translate-x-1/2 flex-wrap justify-center gap-x-5 gap-y-2 lg:gap-x-8">
-              {DESKTOP_NAV_ITEMS.map((item) =>
-                DESKTOP_NAV_DROPDOWN_ENABLED ? (
-                <button
-                    key={item.label}
-                    type="button"
-                    className="flex cursor-pointer items-center gap-1 border-none bg-transparent text-[13.5px] font-medium leading-tight transition-all duration-300 hover:opacity-70"
-                  style={{ color: heroNavInk, textShadow: heroNavShadowResolved }}
-                    onMouseEnter={() => setActiveDropdown(item.label)}
-                  >
-                    {item.label}
-                </button>
-                ) : (
-                  <Link
-                    key={item.label}
-                    href={item.href}
-                    className="text-[13.5px] font-medium leading-tight no-underline transition-all duration-300 hover:opacity-70"
-                    style={{ color: heroNavInk, textShadow: heroNavShadowResolved }}
-                  >
-                    {item.label}
-                  </Link>
-                ),
-              )}
-            </div>
-
-            <a
-              href="#"
-              className="rounded-md px-6 py-2.5 text-sm font-medium transition-all duration-300 hover:opacity-90"
-              style={{
-                backgroundColor: heroWaitlistBg,
-                color: heroWaitlistFg,
-                boxShadow: heroWaitlistShadow,
-              }}
-            >
-              Waitlist
-            </a>
+            <DesktopMainNavCta
+              bg={heroWaitlistBg}
+              fg={heroWaitlistFg}
+              shadow={heroWaitlistShadow}
+              divider={heroCtaDivider}
+            />
           </div>
 
           {/* Dropdown Panel — disabled via DESKTOP_NAV_DROPDOWN_ENABLED */}
@@ -1546,45 +1220,14 @@ export function DesktopHome() {
           </div>
           </>
         </nav>
-
-        {/* Mission copy — left */}
-        {!isPhoneLayout && desktopHeroMissionBlockOpacity > 0 && (
-          <div
-            className="absolute inset-x-0 bottom-0 top-0 z-[21] flex flex-col items-start justify-center overflow-visible pb-[clamp(1.5rem,3.5vh,3rem)] pl-10 pt-[max(6rem,calc(env(safe-area-inset-top,0px)+4.75rem))] md:pl-20 lg:pl-28 xl:pl-36"
-          >
-            <DesktopHeroMissionScrollText
-              interClassName={inter.className}
-              typeLinear={desktopHeroMissionTypeLinear}
-              line1SpanRef={desktopHeroMissionLine1SpanRef}
-            />
-          </div>
-        )}
-
-      </div>
       </div>
 
       {/* Horizontal line at bottom of hero section */}
       <div className="w-full border-t border-[#E6E6E6]" />
 
-      {/* Second Section */}
+      {/* Second Section — iPhone communication carousel slides */}
       <div ref={secondSectionRef} className="relative z-10 min-h-[112vh]">
         <div className="relative flex min-h-[112vh] flex-col items-center justify-center py-24 md:py-28">
-          {/* Title — extra padding before carousel on wide layout only */}
-          <div
-            className={`mt-20 w-full text-center ${isPhoneLayout ? "mb-5" : "mb-12 md:mb-16 lg:mb-20"}`}
-          >
-            <h1 
-              className={`text-3xl sm:text-[2rem] font-normal text-gray-900 tracking-tight ${lora.className}`}
-              style={{
-                opacity: secondSectionTitleOpacity,
-                transform: `translateY(${secondSectionTitleTranslateY}px)`,
-                transition: 'opacity 1.2s ease-out, transform 1.2s ease-out'
-              }}
-            >
-              Agents for every workflow.
-            </h1>
-          </div>
-          
           {/* Sliding squares container — edge-to-edge */}
           <div 
             className="relative flex w-full max-w-[100vw] items-center justify-center" 

@@ -55,3 +55,10 @@ export const MAIN_HOME_NAV_SHEET_ITEMS = [
   { label: "Waitlist", href: WAITLIST_PATH },
   { label: "Team", href: JOIN_PATH },
 ] as const;
+
+/** Main desktop home — For Investors split-button menu. */
+export const DESKTOP_MAIN_CTA_MENU_ITEMS = [
+  { label: FOR_INVESTORS_LABEL, href: INVESTORS_PATH },
+  { label: "Waitlist", href: WAITLIST_PATH },
+  { label: "Join Us", href: JOIN_PATH },
+] as const;
