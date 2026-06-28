@@ -8,7 +8,6 @@ import {
 import { DoePhoneDesktopFrostPlusBadge } from "@/components/doephone/DoePhoneDesktopFrostPlusBadge";
 import { DoePhoneSectionTitle } from "@/components/doephone/DoePhoneSectionText";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
-import { inter } from "@/lib/home/fonts";
 import {
   DESKTOP_HOME_BAND_H,
   DESKTOP_FULLSCREEN_SECTION_BADGE_INSET,
@@ -21,6 +20,11 @@ import {
   DOEPHONE_DESKTOP_BUILD_INPUT_DELAY_MS,
   doephoneSectionRevealStyleVars,
 } from "@/lib/doephone/section-reveal-timing";
+import {
+  ABOUT_DESKTOP_ARTICLE_BODY_TW,
+  ABOUT_DESKTOP_STACK_GAP,
+  ABOUT_DESKTOP_SUBHEADING_TW,
+} from "@/lib/about/about-layout-styles";
 import {
   doePhoneSectionRevealSegmentClass,
   useDoePhoneSectionReveal,
@@ -36,13 +40,29 @@ const BUILD_BACKDROP_SLIDE =
 
 const DESKTOP_BUILD_INSET = DOEPHONE_DESKTOP_PAGE_INSET_X;
 const DESKTOP_BUILD_INPUT_INSET = `pb-10 md:pb-14 lg:pb-16 xl:pb-20 ${DOEPHONE_DESKTOP_PAGE_INSET_RIGHT}`;
+const DESKTOP_BUILD_EXPAND_INSET = `pb-10 md:pb-14 lg:pb-16 xl:pb-20 ${DOEPHONE_DESKTOP_PAGE_INSET_X}`;
+
+const BUILD_EXPAND_SUBHEADING_TW = ABOUT_DESKTOP_SUBHEADING_TW.replace(
+  "text-[#1E343A]/72",
+  "text-white/72",
+);
+const BUILD_EXPAND_BODY_TW = ABOUT_DESKTOP_ARTICLE_BODY_TW.replace(
+  "text-[#1E343A]/72",
+  "text-white/85",
+);
 
 const EXPAND_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
 const EXPAND_DURATION_MS = 720;
 
-const BUILD_PARAGRAPHS = [
-  "Tell Doe what you are trying to accomplish, from chart pulls and trial lists to exports, integrations, and handoffs.",
-  "It assembles the steps, tags the right sources, and routes the result to the people who need it without rebuilding the workflow every time.",
+const BUILD_EXPAND_BLOCKS = [
+  {
+    subheading: "Describe what you need.",
+    body: "Tell Doe what you are trying to accomplish, from chart pulls and trial lists to exports, integrations, and handoffs.",
+  },
+  {
+    subheading: "Doe assembles the workflow.",
+    body: "It assembles the steps, tags the right sources, and routes the result to the people who need it without rebuilding the workflow every time.",
+  },
 ] as const;
 
 type PanelPhase = "idle" | "open" | "closing";
@@ -143,29 +163,23 @@ export function DoePhoneDesktopBuildSection() {
         </div>
 
         <div className="relative z-[20] flex min-h-0 flex-1 flex-col">
-          <div className="flex min-h-0 flex-1 flex-col items-center justify-center">
-            <div
-              className={`${DESKTOP_BUILD_INSET} w-full max-w-[42rem] transition-[opacity,transform] duration-[720ms] lg:max-w-[48rem]`}
-              style={{
-                transitionTimingFunction: EXPAND_EASE,
-                opacity: showContent ? 1 : 0,
-                transform: showContent ? "translateY(0)" : "translateY(0.65rem)",
-                pointerEvents: showContent ? "auto" : "none",
-              }}
-            >
-              {BUILD_PARAGRAPHS.map((paragraph) => (
-                <p
-                  key={paragraph}
-                  className={`${inter.className} text-left font-normal text-white`}
-                  style={{
-                    fontSize: "clamp(1.05rem, 1.35vw, 1.28rem)",
-                    lineHeight: 1.48,
-                    letterSpacing: "-0.018em",
-                    marginTop: paragraph === BUILD_PARAGRAPHS[0] ? 0 : "clamp(0.85rem, 1.2vw, 1.15rem)",
-                  }}
-                >
-                  {paragraph}
-                </p>
+          <div
+            className={`absolute bottom-0 left-0 z-[25] ${DESKTOP_BUILD_EXPAND_INSET} w-full max-w-[42rem] transition-[opacity,transform] duration-[720ms] lg:max-w-[48rem]`}
+            style={{
+              transitionTimingFunction: EXPAND_EASE,
+              opacity: showContent ? 1 : 0,
+              transform: showContent ? "translateY(0)" : "translateY(0.65rem)",
+              pointerEvents: showContent ? "auto" : "none",
+            }}
+          >
+            <div className={`flex flex-col ${ABOUT_DESKTOP_STACK_GAP}`}>
+              {BUILD_EXPAND_BLOCKS.map((block, index) => (
+                <div key={block.subheading}>
+                  <p className={`${BUILD_EXPAND_SUBHEADING_TW}${index === 0 ? " mt-0" : ""}`}>
+                    {block.subheading}
+                  </p>
+                  <p className={`${BUILD_EXPAND_BODY_TW} mt-3 md:mt-4`}>{block.body}</p>
+                </div>
               ))}
             </div>
           </div>
