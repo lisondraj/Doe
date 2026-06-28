@@ -116,7 +116,7 @@ export const ABOUT_DESKTOP_FAQ_LIST_TW = "grid h-full min-h-0 w-full grid-rows-4
 
 export const ABOUT_DESKTOP_FAQ_ITEM_TW = `text-[clamp(1.35rem,1.22vw,1.72rem)] md:text-[clamp(1.5rem,1.35vw,1.9rem)] lg:text-[clamp(1.62rem,1.45vw,2.05rem)] leading-[1.15] tracking-[-0.015em] ${inter.className}`;
 
-export const ABOUT_DESKTOP_FAQ_ANSWER_TW = "min-h-0 flex-1 overflow-y-auto pt-3 md:pt-3.5";
+export const ABOUT_DESKTOP_FAQ_ANSWER_TW = "pt-3 md:pt-4";
 
 export const ABOUT_DESKTOP_ARTICLE_VISUAL_GAP = "mt-12 md:mt-14";
 

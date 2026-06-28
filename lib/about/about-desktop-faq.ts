@@ -10,7 +10,7 @@ export const ABOUT_DESKTOP_FAQ_ITEMS: readonly AboutDesktopFaqItem[] = [
       "Doe is ambient clinical intelligence for frontline care. We listen during the visit, draft documentation with citations, and surface only what needs a clinician's eyes before sign-off, so teams spend less time charting and more time with patients.",
   },
   {
-    question: "How does Doe differentiate from other healthcare AI tools?",
+    question: "What makes us different?",
     answer:
       "Every sentence in a Doe draft links back to the moment in the conversation that supports it. Clinicians review evidence, not opaque output, with explicit pause, discard, and edit controls before anything lands in the record.",
   },
