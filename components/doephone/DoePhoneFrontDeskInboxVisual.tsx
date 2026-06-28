@@ -1,6 +1,6 @@
 "use client";
 
-import { suisseIntl } from "@/lib/home/fonts";
+import { dmSans, suisseIntl } from "@/lib/home/fonts";
 import { CAROUSEL_MENU_UI } from "@/lib/doephone/carousel-menu-visual-styles";
 
 const { ink: INK, accent: DOE_ORANGE } = CAROUSEL_MENU_UI;
@@ -8,10 +8,10 @@ const { ink: INK, accent: DOE_ORANGE } = CAROUSEL_MENU_UI;
 const MUTED = "#9CA3AF";
 const MUTED_TEXT = "#6B7280";
 const BORDER = "#E5E7EB";
-const LIVE_BG = "rgba(210, 119, 76, 0.12)";
 
 const OUTER_RADIUS = "rounded-[clamp(0.8rem,2.4vmin,0.95rem)]";
 const INNER_RADIUS = "rounded-[clamp(0.45rem,1.35vmin,0.55rem)]";
+const CONTENT_INSET_X = "clamp(0.88rem,2.75vmin,1.05rem)";
 const CALENDAR_INNER_PAD = "clamp(0.55rem,1.65vmin,0.68rem)";
 const CALENDAR_OUTER_PAD_Y = "clamp(0.38rem,1.15vmin,0.48rem)";
 const CALLER_INNER_PAD_Y = "clamp(0.82rem,2.45vmin,1rem)";
@@ -26,8 +26,7 @@ const HEADING_SIZE = "clamp(1.02rem,3.15vmin,1.22rem)";
 
 const WEEKDAY_LABELS = ["M", "T", "W", "T", "F", "S", "S"] as const;
 const WEEK_DATES = ["12", "13", "14", "15", "16", "17", "18"] as const;
-const TODAY = "14";
-const BOOKED = "16";
+const SELECTED_DAY = "16";
 
 const WAVE_HEIGHTS = [0.38, 0.72, 0.55, 0.88, 0.48, 0.68, 0.42] as const;
 
@@ -118,7 +117,7 @@ function VoiceCallPanel() {
             style={{ gap: "clamp(0.55rem,1.75vmin,0.72rem)" }}
           >
             <div
-              className="flex min-w-0 items-center"
+              className="flex min-w-0 flex-1 items-center"
               style={{ gap: "clamp(0.55rem,1.75vmin,0.72rem)" }}
             >
               <VoiceWaveform inline />
@@ -135,7 +134,7 @@ function VoiceCallPanel() {
               </div>
             </div>
             <span
-              className="shrink-0 self-center font-medium leading-none tabular-nums"
+              className="shrink-0 font-medium leading-none tabular-nums"
               style={{ color: MUTED, fontSize: FOOTER_PRIMARY_SIZE }}
             >
               2:14
@@ -150,12 +149,6 @@ function VoiceCallPanel() {
           Amlodipine 20 mg
         </p>
         <p
-          className="font-normal leading-none"
-          style={{ color: MUTED, fontSize: CAPTION_SIZE, marginTop: "clamp(0.18rem,0.55vmin,0.24rem)" }}
-        >
-          Medication Refill
-        </p>
-        <p
           className="font-normal leading-snug"
           style={{ color: MUTED_TEXT, fontSize: BODY_SIZE, marginTop: "clamp(0.28rem,0.85vmin,0.38rem)" }}
         >
@@ -167,55 +160,61 @@ function VoiceCallPanel() {
 }
 
 function WeekCalendar() {
-  const dateRangeSize = "clamp(0.88rem,2.65vmin,1.05rem)";
-  const weekdaySize = "clamp(0.62rem,1.88vmin,0.74rem)";
-  const daySize = "clamp(0.72rem,2.15vmin,0.86rem)";
-  const dayCell = "clamp(1.35rem,4.15vmin,1.65rem)";
+  const weekdaySize = "clamp(0.6rem,1.82vmin,0.72rem)";
+  const daySize = "clamp(0.68rem,2.05vmin,0.82rem)";
+  const dayCell = "clamp(1.22rem,3.75vmin,1.48rem)";
+  const gridGap = "clamp(0.1rem,0.3vmin,0.12rem)";
 
   return (
-    <div
-      style={{
-        padding: `${CALENDAR_OUTER_PAD_Y} clamp(0.88rem,2.75vmin,1.05rem)`,
-      }}
-    >
+    <div style={{ padding: `${CALENDAR_OUTER_PAD_Y} ${CONTENT_INSET_X} 0` }}>
       <div
         className={`border ${INNER_RADIUS}`}
         style={{ borderColor: BORDER, padding: CALENDAR_INNER_PAD }}
       >
         <span
-          className="block font-medium leading-none"
-          style={{ color: INK, fontSize: dateRangeSize, marginBottom: "clamp(0.55rem,1.65vmin,0.68rem)" }}
+          className={`block font-medium leading-none tabular-nums ${dmSans.className}`}
+          style={{
+            color: INK,
+            fontSize: "clamp(0.88rem,2.65vmin,1.05rem)",
+            marginBottom: "clamp(0.42rem,1.28vmin,0.52rem)",
+          }}
         >
           Jun 12 – 18
         </span>
 
-        <div className="grid grid-cols-7" style={{ marginBottom: "clamp(0.22rem,0.68vmin,0.28rem)" }}>
+        <div
+          className="grid grid-cols-7"
+          style={{ columnGap: gridGap, marginBottom: "clamp(0.14rem,0.42vmin,0.18rem)" }}
+        >
           {WEEKDAY_LABELS.map((label, index) => (
             <span
-              key={`${label}-${index}`}
-              className="text-center font-normal leading-none"
-              style={{ color: MUTED, fontSize: weekdaySize }}
+              key={`weekday-${index}`}
+              className="flex items-center justify-center font-normal leading-none"
+              style={{ color: MUTED, fontSize: weekdaySize, height: dayCell }}
             >
               {label}
             </span>
           ))}
         </div>
 
-        <div className="grid grid-cols-7">
+        <div className="grid grid-cols-7" style={{ columnGap: gridGap }}>
           {WEEK_DATES.map((day) => {
-            const isToday = day === TODAY;
-            const isBooked = day === BOOKED;
+            const isSelected = day === SELECTED_DAY;
 
             return (
-              <div key={day} className="flex items-center justify-center">
+              <div
+                key={day}
+                className="flex items-center justify-center"
+                style={{ height: dayCell }}
+              >
                 <span
-                  className="inline-flex items-center justify-center rounded-full font-medium leading-none tabular-nums"
+                  className={`inline-flex items-center justify-center rounded-full leading-none tabular-nums ${isSelected ? "font-semibold" : "font-medium"}`}
                   style={{
                     width: dayCell,
                     height: dayCell,
                     fontSize: daySize,
-                    background: isBooked ? DOE_ORANGE : isToday ? LIVE_BG : "transparent",
-                    color: isBooked ? "#FFFFFF" : isToday ? DOE_ORANGE : INK,
+                    background: isSelected ? DOE_ORANGE : "transparent",
+                    color: isSelected ? "#FFFFFF" : INK,
                   }}
                 >
                   {day}
@@ -240,7 +239,7 @@ function SchedulingPanel() {
         className="flex items-center justify-between"
         style={{
           gap: "clamp(0.55rem,1.75vmin,0.72rem)",
-          padding: `${CALENDAR_OUTER_PAD_Y} clamp(0.88rem,2.75vmin,1.05rem) clamp(0.82rem,2.55vmin,1.02rem)`,
+          padding: `${CALENDAR_OUTER_PAD_Y} ${CONTENT_INSET_X} clamp(0.82rem,2.55vmin,1.02rem)`,
         }}
       >
         <div className="min-w-0">
@@ -258,7 +257,7 @@ function SchedulingPanel() {
           </p>
         </div>
         <span
-          className="shrink-0 font-normal leading-snug"
+          className="shrink-0 self-center font-normal leading-snug"
           style={{ color: MUTED_TEXT, fontSize: FOOTER_PRIMARY_SIZE }}
         >
           3 open
