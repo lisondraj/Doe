@@ -32,8 +32,6 @@ const ORANGE_FROST_STYLE = {
 
 const FROST_BLUR_CLASS = "backdrop-blur-[10px] iphone-page:backdrop-blur-[8px]";
 
-const DESCRIPTION_PAD_X = "clamp(1.15rem,3.55vmin,1.55rem)";
-
 const EXPAND_TRANSITION = "transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]";
 
 function CarouselSlideToggleBadge({
@@ -130,68 +128,66 @@ function CarouselSlideFrostOverlay() {
 
 function CarouselMenuOverlay({
   children,
-  showUiMotion,
-  showDescription,
+  expanded,
+  showContent,
   description,
 }: {
   children: React.ReactNode;
-  showUiMotion: boolean;
-  showDescription: boolean;
+  expanded: boolean;
+  showContent: boolean;
   description?: string;
 }) {
   const padX = CAROUSEL_MENU_UI.overlayPadX;
   const padY = CAROUSEL_MENU_UI.overlayPadY;
+  const contentMaxWidth = CAROUSEL_MENU_UI.maxWidthPhone;
 
   return (
     <div
-      className={`absolute inset-0 z-[15] flex h-full w-full flex-col ${showUiMotion ? "overflow-y-auto" : "overflow-hidden"}`}
+      className="absolute inset-0 z-[15] flex h-full w-full flex-col overflow-hidden"
       style={{
-        padding: showUiMotion
+        padding: expanded
           ? `clamp(1rem,3.1vmin,1.35rem) ${padX} clamp(5.75rem,17vmin,7.25rem)`
           : `${padY} ${padX}`,
       }}
     >
-      <div
-        className={`flex min-h-0 w-full flex-1 flex-col ${
-          showUiMotion ? "items-start justify-start" : "items-center justify-center"
-        }`}
-      >
-        <div
-          className={`w-full shrink-0 ${EXPAND_TRANSITION} ${
-            showUiMotion ? "doephone-carousel-slide-ui--expanded" : "translate-y-0 opacity-100"
-          }`}
-        >
-          <div className={`${showUiMotion ? "" : "flex h-full w-full items-center justify-center"}`}>{children}</div>
-        </div>
-        {description ? (
-          <p
-            className={`${inter.className} mt-[clamp(0.85rem,2.6vmin,1.15rem)] w-full text-left font-normal ${
-              showDescription
-                ? "doephone-carousel-slide-description--expanded"
-                : "pointer-events-none h-0 overflow-hidden opacity-0"
+      <div className="flex min-h-0 w-full flex-1 flex-col items-center justify-center">
+        <div className="mx-auto flex w-full flex-col" style={{ maxWidth: contentMaxWidth }}>
+          <div
+            className={`w-full shrink-0 ${EXPAND_TRANSITION} ${
+              expanded && showContent
+                ? "doephone-carousel-slide-ui--expanded"
+                : "translate-y-0 opacity-100"
             }`}
-            style={{
-              color: "#FFFFFF",
-              fontSize: "clamp(1.32rem,4.05vmin,1.68rem)",
-              lineHeight: 1.46,
-              letterSpacing: "-0.018em",
-              paddingLeft: DESCRIPTION_PAD_X,
-              paddingRight: DESCRIPTION_PAD_X,
-              textShadow: "0 1px 8px rgba(30, 52, 58, 0.18)",
-            }}
           >
-            {description}
-          </p>
-        ) : null}
+            <div className="flex w-full items-center justify-center">{children}</div>
+          </div>
+          {description ? (
+            <p
+              className={`${inter.className} mt-[clamp(0.85rem,2.6vmin,1.15rem)] w-full text-left font-normal ${
+                expanded && showContent
+                  ? "doephone-carousel-slide-description--expanded"
+                  : "pointer-events-none h-0 overflow-hidden opacity-0"
+              }`}
+              style={{
+                color: "#FFFFFF",
+                fontSize: "clamp(1.32rem,4.05vmin,1.68rem)",
+                lineHeight: 1.46,
+                letterSpacing: "-0.018em",
+                textShadow: "0 1px 8px rgba(30, 52, 58, 0.18)",
+              }}
+            >
+              {description}
+            </p>
+          ) : null}
+        </div>
       </div>
     </div>
   );
 }
 
-type ExpandAnimPhase = "idle" | "frost" | "ui" | "description";
+type ExpandAnimPhase = "idle" | "frost" | "expanded";
 
-const UI_MOVE_DELAY_MS = 420;
-const DESCRIPTION_DELAY_MS = 900;
+const FROST_DURATION_MS = 420;
 
 function DoePhoneCarouselCard({ slide, isActive }: { slide: DoePhoneCommunicationSlide; isActive: boolean }) {
   const [expanded, setExpanded] = useState(false);
@@ -212,12 +208,10 @@ function DoePhoneCarouselCard({ slide, isActive }: { slide: DoePhoneCommunicatio
     }
 
     setAnimPhase("frost");
-    const uiTimer = window.setTimeout(() => setAnimPhase("ui"), UI_MOVE_DELAY_MS);
-    const descTimer = window.setTimeout(() => setAnimPhase("description"), DESCRIPTION_DELAY_MS);
+    const contentTimer = window.setTimeout(() => setAnimPhase("expanded"), FROST_DURATION_MS);
 
     return () => {
-      window.clearTimeout(uiTimer);
-      window.clearTimeout(descTimer);
+      window.clearTimeout(contentTimer);
     };
   }, [expanded]);
 
@@ -255,8 +249,8 @@ function DoePhoneCarouselCard({ slide, isActive }: { slide: DoePhoneCommunicatio
       {expandable && animPhase !== "idle" ? <CarouselSlideFrostOverlay /> : null}
       {overlayVisual ? (
         <CarouselMenuOverlay
-          showUiMotion={animPhase === "ui" || animPhase === "description"}
-          showDescription={animPhase === "description"}
+          expanded={expanded}
+          showContent={animPhase === "expanded"}
           description={slide.description}
         >
           {overlayVisual}

@@ -10,8 +10,8 @@ const MUTED_TEXT = "#6B7280";
 
 const OUTER_RADIUS = "rounded-[clamp(0.8rem,2.4vmin,0.95rem)]";
 const CARD_PAD = "clamp(1.2rem,3.85vmin,1.45rem) clamp(1.25rem,4vmin,1.55rem)";
-const EYEBROW_SIZE = "clamp(0.72rem,2.15vmin,0.86rem)";
 const TITLE_SIZE = "clamp(1.12rem,3.45vmin,1.38rem)";
+const DOT_SIZE = "clamp(0.78rem,2.35vmin,0.94rem)";
 const BODY_SIZE = "clamp(0.88rem,2.65vmin,1.05rem)";
 const CAPTION_SIZE = "clamp(0.72rem,2.15vmin,0.86rem)";
 const FOOTER_SIZE = "clamp(0.84rem,2.55vmin,1rem)";
@@ -23,13 +23,11 @@ const TIMELINE = [
 ] as const;
 
 function TimelineDot({ state }: { state: (typeof TIMELINE)[number]["state"] }) {
-  const size = "clamp(0.52rem,1.58vmin,0.64rem)";
-
   if (state === "done") {
     return (
       <span
         className="relative z-[1] flex shrink-0 items-center justify-center rounded-full"
-        style={{ width: size, height: size, background: DOE_ORANGE }}
+        style={{ width: DOT_SIZE, height: DOT_SIZE, background: DOE_ORANGE }}
         aria-hidden
       >
         <svg width="55%" height="55%" viewBox="0 0 10 10" fill="none">
@@ -48,7 +46,7 @@ function TimelineDot({ state }: { state: (typeof TIMELINE)[number]["state"] }) {
   return (
     <span
       className="relative z-[1] shrink-0 rounded-full border-[2px] bg-white"
-      style={{ width: size, height: size, borderColor: DOE_ORANGE }}
+      style={{ width: DOT_SIZE, height: DOT_SIZE, borderColor: DOE_ORANGE }}
       aria-hidden
     />
   );
@@ -72,7 +70,7 @@ function AuthTimeline() {
             className="flex items-stretch"
             style={{ gap: "clamp(0.68rem,2.1vmin,0.86rem)" }}
           >
-            <div className="flex w-[clamp(0.52rem,1.58vmin,0.64rem)] shrink-0 flex-col items-center">
+            <div className="flex shrink-0 flex-col items-center" style={{ width: DOT_SIZE }}>
               <TimelineDot state={event.state} />
               {!isLast ? (
                 <span
@@ -123,19 +121,11 @@ export function DoePhoneBillingVisual() {
         className={`w-full border bg-white ${OUTER_RADIUS}`}
         style={{ borderColor: "#E5E7EB", padding: CARD_PAD }}
       >
-        <p
-          className="font-medium uppercase tracking-[0.14em]"
-          style={{ color: DOE_ORANGE, fontSize: EYEBROW_SIZE }}
-        >
-          Prior authorization
-        </p>
-
         <h3
           className="font-semibold leading-tight tracking-[-0.02em]"
           style={{
             color: INK,
             fontSize: TITLE_SIZE,
-            marginTop: "clamp(0.55rem,1.68vmin,0.72rem)",
           }}
         >
           Humira 40mg
@@ -162,7 +152,7 @@ export function DoePhoneBillingVisual() {
             marginTop: "clamp(1.05rem,3.25vmin,1.32rem)",
           }}
         >
-          AI monitoring this case · next check 4:30 PM
+          Refreshing in 30 minutes
         </p>
       </div>
     </div>
