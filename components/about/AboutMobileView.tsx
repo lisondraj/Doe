@@ -4,6 +4,7 @@ import { AboutMobileBeigePanel } from "@/components/about/AboutMobileBeigePanel"
 import { AboutMobileFaqTabs } from "@/components/about/AboutMobileFaqTabs";
 import { AboutMobileQuote } from "@/components/about/AboutMobileQuote";
 import { AboutMobileStatCharts } from "@/components/about/AboutMobileStatCharts";
+import { AboutMobileTamChart } from "@/components/about/AboutMobileTamChart";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
 import {
@@ -110,6 +111,8 @@ export function AboutMobileView() {
           <AboutMobileBeigePanel graphic={0} />
 
           <AboutMobileFaqTabs />
+
+          <AboutMobileTamChart />
 
           <h2 className={ABOUT_MOBILE_SECTION_HEADLINE_TW}>
             <span className="block">{ABOUT_MOBILE_FOUNDERS_HEADLINE_LINES[0]}</span>

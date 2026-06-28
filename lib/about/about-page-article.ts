@@ -89,6 +89,23 @@ export const ABOUT_MOBILE_ASSISTANT_HEADLINE_LINES = ["Personal assistant", "for
 /** iPhone /about — founders section headline below FAQ. */
 export const ABOUT_MOBILE_FOUNDERS_HEADLINE_LINES = ["Two brothers.", "two fields"] as const;
 
+/** iPhone /about — addressable TAM by provider segment (billions USD). */
+export const ABOUT_MOBILE_TAM_CHART = {
+  title: "Addressable TAM",
+  caption:
+    "Estimated annual software spend for Doe across physician and broader health-provider segments in Canada and the United States.",
+  citation:
+    "Sources: CMA, AAMC, Statistics Canada, U.S. BLS; Doe market model, 2026.",
+  bars: [
+    { label: "Canadian doctors", value: 1.1, suffix: "B USD" },
+    { label: "Canadian health providers", value: 4.2, suffix: "B USD" },
+    { label: "U.S. doctors", value: 8.5, suffix: "B USD" },
+    { label: "U.S. health providers", value: 24, suffix: "B USD" },
+    { label: "Canada + U.S. doctors", value: 9.6, suffix: "B USD" },
+    { label: "Canada + U.S. health providers", value: 28, suffix: "B USD" },
+  ],
+} as const;
+
 /** Desktop /about section three — co-founder bios beside beige panel. */
 export const ABOUT_DESKTOP_FOUNDERS_PARAGRAPHS = [
   "Brothers James and Matthew Lisondra co-founded Doe to pair clinical depth with technical execution in health tech.",
