@@ -59,7 +59,7 @@ export const DOEPHONE_COMMUNICATION_SLIDES: readonly DoePhoneCommunicationSlide[
       label: "Billing",
       gradient:
         "linear-gradient(180deg, #B87862 0%, #C47A5A 20%, #D2774C 55%, #D49D4F 100%)",
-      grid: "diagonal",
+      grid: "hex",
     },
   },
   {
