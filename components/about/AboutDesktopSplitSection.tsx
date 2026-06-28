@@ -26,7 +26,7 @@ export function AboutDesktopSplitSection({
     </div>
   );
   const boxColumn = (
-    <div className={boxSide === "left" ? ABOUT_DESKTOP_SPLIT_BOX_COLUMN_LEFT : ABOUT_DESKTOP_SPLIT_BOX_COLUMN_RIGHT}>
+    <div className={ABOUT_DESKTOP_SPLIT_BOX_COLUMN}>
       <AboutDesktopBeigePanel graphic={graphic} />
     </div>
   );
