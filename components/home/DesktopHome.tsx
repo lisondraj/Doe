@@ -16,6 +16,7 @@ import { DoePhoneDesktopBuildSection } from "@/components/doephone/DoePhoneDeskt
 import { DoePhoneDesktopReceptionSection } from "@/components/doephone/DoePhoneDesktopReceptionSection";
 import { DoePhoneDesktopIntegrationsSection } from "@/components/doephone/DoePhoneDesktopIntegrationsSection";
 import { DoePhoneDesktopBillingSection } from "@/components/doephone/DoePhoneDesktopBillingSection";
+import { DoePhoneDesktopDocumentsWorkflowSection } from "@/components/doephone/DoePhoneDesktopDocumentsWorkflowSection";
 import { DoePhoneDesktopIntelligenceSection } from "@/components/doephone/DoePhoneDesktopIntelligenceSection";
 import { DoePhoneHeroSection } from "@/components/doephone/DoePhoneHeroSection";
 import { DesktopMainNavCta } from "@/components/home/DesktopMainNavCta";
@@ -971,6 +972,9 @@ export function DesktopHome() {
 
       {/* Sixth section — billing panel (mirrors second section) */}
       <DoePhoneDesktopBillingSection />
+
+      {/* Seventh section — documents workflow band (mirrors integrations) */}
+      <DoePhoneDesktopDocumentsWorkflowSection />
 
       {/* New Section - Hero Gradient Full Page */}
       <div ref={thirdSectionRef} className="min-h-screen w-full relative z-10 p-8">
