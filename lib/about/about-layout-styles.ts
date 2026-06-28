@@ -32,7 +32,7 @@ export const ABOUT_PAGE_HERO_BEFORE_ARTICLE = "mb-10 iphone-page:mb-12";
 export const ABOUT_PAGE_HERO_WRAP = `${ABOUT_PAGE_HERO_AFTER_SUBHEADING} ${ABOUT_PAGE_HERO_BEFORE_ARTICLE}`;
 
 /** iPhone /about — byline under subheading, before hero. */
-export const ABOUT_PAGE_MOBILE_BYLINE_TW = `text-[clamp(1.02rem,0.92rem+0.55vmin,1.18rem)] iphone-page:text-[clamp(1.12rem,0.98rem+0.65vmin,1.28rem)] font-medium text-[#9A8F82] ${dmSans.className}`;
+export const ABOUT_PAGE_MOBILE_BYLINE_TW = `text-[clamp(1.15rem,1rem+0.65vmin,1.32rem)] iphone-page:text-[clamp(1.32rem,1.12rem+0.9vmin,1.52rem)] font-medium text-[#9A8F82] ${dmSans.className}`;
 
 export const ABOUT_PAGE_MOBILE_BYLINE_GAP = "mt-6 iphone-page:mt-7";
 
