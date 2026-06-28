@@ -245,7 +245,7 @@ function GridOverlay({
     );
   }
 
-  const style = getWorkflowGridOverlayStyle(kind, patternScale, surface);
+  const style = getWorkflowGridOverlayStyle(kind, patternScale, surface, lineOverlayOpacity);
   if (!style) return null;
 
   return (

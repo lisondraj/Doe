@@ -120,12 +120,14 @@ export const WORKFLOW_CAROUSEL_GRAIN_STYLE: CSSProperties = {
 };
 
 const CROSSHATCH_CELL_PX = 56;
-const CROSSHATCH_LINE_ORANGE = "rgba(255, 255, 255, 0.12)";
-const CROSSHATCH_DOT_ORANGE = "rgba(255, 255, 255, 0.18)";
 
-function crosshatchGridStyle(surface: WorkflowCarouselSurface): CSSProperties {
-  const line = surface === "beige" ? WORKFLOW_BEIGE_GRID.lineSoft : CROSSHATCH_LINE_ORANGE;
-  const dot = surface === "beige" ? WORKFLOW_BEIGE_GRID.dot : CROSSHATCH_DOT_ORANGE;
+function crosshatchGridStyle(
+  surface: WorkflowCarouselSurface,
+  lineOpacity = 0.12,
+  dotOpacity = 0.18,
+): CSSProperties {
+  const line = surface === "beige" ? WORKFLOW_BEIGE_GRID.lineSoft : `rgba(255, 255, 255, ${lineOpacity})`;
+  const dot = surface === "beige" ? WORKFLOW_BEIGE_GRID.dot : `rgba(255, 255, 255, ${dotOpacity})`;
 
   return {
     backgroundImage: [
@@ -209,8 +211,11 @@ export function getWorkflowGridOverlayStyle(
   kind: WorkflowCarouselGridKind,
   patternScale = 1,
   surface: WorkflowCarouselSurface = "orange",
+  lineOverlayOpacity?: number,
 ): CSSProperties | null {
   const scaleSize = (px: number) => `${Math.round(px * patternScale)}px`;
+  const crosshatchLineOpacity = lineOverlayOpacity ?? 0.12;
+  const crosshatchDotOpacity = lineOverlayOpacity !== undefined ? lineOverlayOpacity * 1.5 : 0.18;
 
   switch (kind) {
     case "dot":
@@ -220,7 +225,7 @@ export function getWorkflowGridOverlayStyle(
       };
     case "crosshatch":
       return {
-        ...crosshatchGridStyle(surface),
+        ...crosshatchGridStyle(surface, crosshatchLineOpacity, crosshatchDotOpacity),
         backgroundSize: `${scaleSize(CROSSHATCH_CELL_PX)} ${scaleSize(CROSSHATCH_CELL_PX)}`,
         backgroundPosition: `${(CROSSHATCH_CELL_PX * patternScale) / 2}px ${(CROSSHATCH_CELL_PX * patternScale) / 2}px, 0 0, 0 0`,
       };

@@ -4,11 +4,21 @@ import { DoePhoneDesktopPanelSection } from "@/components/doephone/DoePhoneDeskt
 import { DoePhoneFrontDeskInboxVisual } from "@/components/doephone/DoePhoneFrontDeskInboxVisual";
 import { DOEPHONE_COMMUNICATION_SLIDES } from "@/lib/doephone/communication-carousel";
 
-const RECEPTION_SLIDE =
-  DOEPHONE_COMMUNICATION_SLIDES.find((slide) => slide.id === "inbox") ??
-  (() => {
-    throw new Error("Missing documents communication slide");
-  })();
+const RECEPTION_SLIDE = (() => {
+  const slide =
+    DOEPHONE_COMMUNICATION_SLIDES.find((entry) => entry.id === "inbox") ??
+    (() => {
+      throw new Error("Missing documents communication slide");
+    })();
+
+  return {
+    ...slide,
+    backdrop: {
+      ...slide.backdrop,
+      lineOverlayOpacity: 0.09,
+    },
+  };
+})();
 
 /** Desktop section below Build — same panel shell as deployments with reception UI centered. */
 export function DoePhoneDesktopReceptionSection() {
