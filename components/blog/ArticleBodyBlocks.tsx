@@ -2,6 +2,7 @@
 
 import { ArticleInlineVisual } from "@/components/blog/ArticleInlineVisual";
 import { ArticleBarChart } from "@/components/blog/ArticleBarChart";
+import { ArticlePieChart } from "@/components/blog/ArticlePieChart";
 import {
   ABOUT_DESKTOP_ARTICLE_ATTRIBUTION_TW,
   ABOUT_DESKTOP_ARTICLE_BODY_TW,
@@ -99,7 +100,20 @@ export function renderArticleBlock(
           key={index}
           title={block.title}
           caption={block.caption}
+          citation={block.citation}
           bars={block.bars}
+          layout={layout}
+        />
+      );
+
+    case "pie-chart":
+      return (
+        <ArticlePieChart
+          key={index}
+          title={block.title}
+          caption={block.caption}
+          citation={block.citation}
+          slices={block.slices}
           layout={layout}
         />
       );

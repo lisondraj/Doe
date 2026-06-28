@@ -16,7 +16,15 @@ export type ArticleBlock =
       type: "bar-chart";
       title: string;
       caption?: string;
+      citation?: string;
       bars: readonly { label: string; value: number; suffix?: string }[];
+    }
+  | {
+      type: "pie-chart";
+      title: string;
+      caption?: string;
+      citation?: string;
+      slices: readonly { label: string; value: number; suffix?: string }[];
     }
   | { type: "quote"; text: string; attribution?: string };
 
@@ -86,9 +94,22 @@ export const BLOG_ARTICLES: readonly BlogArticle[] = [
         type: "bar-chart",
         title: "Weekly hours on administrative work",
         caption: "Survey averages for U.S. and Canadian physicians, non-clinical hours per week.",
+        citation:
+          "Sources: AMA 2023 Physician Practice Benchmark Survey; Canadian Medical Association, 2024.",
         bars: [
           { label: "United States", value: 16, suffix: "hrs/wk" },
           { label: "Canada", value: 19, suffix: "hrs/wk" },
+        ],
+      },
+      {
+        type: "pie-chart",
+        title: "Clinic-hour time allocation",
+        caption: "Approximate ratio of direct patient care to EHR and desk work during scheduled clinic hours.",
+        citation:
+          "Sources: AMA 2023 Physician Practice Benchmark Survey; Canadian Medical Association, 2024.",
+        slices: [
+          { label: "Direct patient care", value: 1, suffix: "hr" },
+          { label: "EHR & desk work", value: 2, suffix: "hrs" },
         ],
       },
       { type: "p", text: "Doe listens during the visit, drafts the note with citations, and surfaces only what needs a clinician's eyes before sign-off. The chart updates without another hour at the keyboard after clinic." },

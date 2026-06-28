@@ -3,6 +3,7 @@
 import {
   ABOUT_DESKTOP_ARTICLE_BODY_TW,
   ABOUT_DESKTOP_ARTICLE_SECTION_GAP,
+  ABOUT_DESKTOP_CHART_CITATION_TW,
 } from "@/lib/about/about-layout-styles";
 import { dmSans, inter } from "@/lib/home/fonts";
 import type { ArticleBodyLayout } from "@/components/blog/ArticleBodyBlocks";
@@ -13,19 +14,23 @@ const BAR = "#D2774C";
 export function ArticleBarChart({
   title,
   caption,
+  citation,
   bars,
   layout = "mobile",
+  embedded = false,
 }: {
   title: string;
   caption?: string;
+  citation?: string;
   bars: readonly { label: string; value: number; suffix?: string }[];
   layout?: ArticleBodyLayout;
+  embedded?: boolean;
 }) {
   const isDesktop = layout === "desktop";
   const maxValue = Math.max(...bars.map((bar) => bar.value), 1);
 
   return (
-    <figure className={isDesktop ? ABOUT_DESKTOP_ARTICLE_SECTION_GAP : "mt-10 iphone-page:mt-12"}>
+    <figure className={embedded ? "" : isDesktop ? ABOUT_DESKTOP_ARTICLE_SECTION_GAP : "mt-10 iphone-page:mt-12"}>
       <figcaption
         className={`mb-5 font-medium leading-snug tracking-[-0.01em] text-[#1E343A] ${dmSans.className} ${
           isDesktop
@@ -87,6 +92,12 @@ export function ArticleBarChart({
           }`}
         >
           {caption}
+        </p>
+      ) : null}
+
+      {citation ? (
+        <p className={isDesktop ? ABOUT_DESKTOP_CHART_CITATION_TW : `mt-3 font-normal leading-snug text-[#9A8F82] text-[clamp(0.92rem,0.86rem+0.5vmin,1.05rem)] ${inter.className}`}>
+          {citation}
         </p>
       ) : null}
     </figure>

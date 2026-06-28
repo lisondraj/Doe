@@ -1,19 +1,30 @@
 "use client";
 
-import { renderArticleBlock } from "@/components/blog/ArticleBodyBlocks";
-import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
+import {
+  AboutDesktopBulletList,
+  AboutDesktopParagraph,
+  AboutDesktopParagraphStack,
+} from "@/components/about/AboutDesktopArticleBlocks";
 import { AboutDesktopNav } from "@/components/about/AboutDesktopNav";
+import { renderArticleBlock } from "@/components/blog/ArticleBodyBlocks";
+import { ArticleBarChart } from "@/components/blog/ArticleBarChart";
+import { ArticlePieChart } from "@/components/blog/ArticlePieChart";
+import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import { DesktopRouteLayout } from "@/components/DesktopRouteLayout";
 import {
   ABOUT_DESKTOP_ARTICLE_MAX_W,
   ABOUT_DESKTOP_HERO_BOX_TW,
   ABOUT_DESKTOP_HERO_WRAP,
-  ABOUT_DESKTOP_MAIN_PT,
   ABOUT_DESKTOP_PAGE_INSET,
+  ABOUT_DESKTOP_SECTION_1_PT,
+  ABOUT_DESKTOP_SECTION_GRID,
+  ABOUT_DESKTOP_SECTION_H,
+  ABOUT_DESKTOP_STACK_GAP,
   ABOUT_DESKTOP_SUBHEADING_TW,
   ABOUT_DESKTOP_TITLE_TW,
 } from "@/lib/about/about-layout-styles";
 import { ABOUT_PAGE_ARTICLE } from "@/lib/about/about-page-article";
+import type { ArticleBlock } from "@/lib/blog/articles";
 import { lora } from "@/lib/home/fonts";
 
 const DESKTOP_FOOTER_GRADIENT = `
@@ -26,39 +37,111 @@ const DESKTOP_FOOTER_GRADIENT = `
   linear-gradient(to left, #1E343A 0%, rgba(30, 52, 58, 0.8) 15%, transparent 25%)
 `;
 
-/** Desktop /about — mission headline, hero, and scaled article body. */
+function getAboutDesktopArticleSections(body: readonly ArticleBlock[]) {
+  const intro = body[0];
+  const stats = body[1];
+  const burden = body[2];
+  const barChart = body[3];
+  const pieChart = body[4];
+  const productCopy = body.slice(5, 8);
+  const remainder = body.slice(8);
+
+  if (
+    intro?.type !== "p" ||
+    stats?.type !== "ul" ||
+    burden?.type !== "p" ||
+    barChart?.type !== "bar-chart" ||
+    pieChart?.type !== "pie-chart" ||
+    productCopy.length !== 3 ||
+    productCopy.every((block) => block.type === "p")
+  ) {
+    throw new Error("About page article layout blocks are out of order");
+  }
+
+  return {
+    intro,
+    stats,
+    burden,
+    barChart,
+    pieChart,
+    productParagraphs: productCopy.map((block) => (block.type === "p" ? block.text : "")),
+    remainder,
+  };
+}
+
+/** Desktop /about — three full-height bands, then remaining article body. */
 export function AboutDesktopView() {
+  const sections = getAboutDesktopArticleSections(ABOUT_PAGE_ARTICLE.body);
+
   return (
     <DesktopRouteLayout>
       <div className="relative min-h-[100dvh] overflow-x-hidden bg-[#F7F6F3]" data-doeforvc-view="desktop">
         <AboutDesktopNav />
 
-        <main className={`${ABOUT_DESKTOP_MAIN_PT} pb-16 md:pb-20`}>
-          <div className={ABOUT_DESKTOP_PAGE_INSET}>
-          <div className={ABOUT_DESKTOP_ARTICLE_MAX_W}>
-            <h1 className={ABOUT_DESKTOP_TITLE_TW}>
-              <span className="block">Doe is on a mission</span>
-              <span className="block">to redefine healthcare.</span>
-            </h1>
+        <main className="pb-16 md:pb-20">
+          <section
+            className={`${ABOUT_DESKTOP_SECTION_H} ${ABOUT_DESKTOP_SECTION_1_PT} flex flex-col justify-center ${ABOUT_DESKTOP_PAGE_INSET}`}
+          >
+            <div className={ABOUT_DESKTOP_ARTICLE_MAX_W}>
+              <h1 className={ABOUT_DESKTOP_TITLE_TW}>
+                <span className="block">Doe is on a mission</span>
+                <span className="block">to redefine healthcare.</span>
+              </h1>
 
-            <p className={ABOUT_DESKTOP_SUBHEADING_TW}>
-              We intend to register as a Delaware corporation and are actively raising a pre-seed round.
-            </p>
+              <p className={ABOUT_DESKTOP_SUBHEADING_TW}>
+                We intend to register as a Delaware corporation and are actively raising a pre-seed round.
+              </p>
 
-            <div className={ABOUT_DESKTOP_HERO_WRAP}>
-              <BlogHeroVisual
-                backdrop={ABOUT_PAGE_ARTICLE.backdrop}
-                variant="hero"
-                boxClassName={ABOUT_DESKTOP_HERO_BOX_TW}
-                gapClassName=""
+              <div className={ABOUT_DESKTOP_HERO_WRAP}>
+                <BlogHeroVisual
+                  backdrop={ABOUT_PAGE_ARTICLE.backdrop}
+                  variant="hero"
+                  boxClassName={ABOUT_DESKTOP_HERO_BOX_TW}
+                  gapClassName=""
+                />
+              </div>
+            </div>
+          </section>
+
+          <section className={`${ABOUT_DESKTOP_SECTION_H} flex items-center ${ABOUT_DESKTOP_PAGE_INSET}`}>
+            <div className={ABOUT_DESKTOP_SECTION_GRID}>
+              <div className={`flex flex-col ${ABOUT_DESKTOP_STACK_GAP}`}>
+                <AboutDesktopParagraph text={sections.intro.text} />
+                <AboutDesktopBulletList items={sections.stats.items} />
+                <AboutDesktopParagraph text={sections.burden.text} />
+              </div>
+
+              <ArticleBarChart
+                title={sections.barChart.title}
+                caption={sections.barChart.caption}
+                citation={sections.barChart.citation}
+                bars={sections.barChart.bars}
+                layout="desktop"
+                embedded
               />
             </div>
+          </section>
 
-            <div className="article-body text-left">
-              {ABOUT_PAGE_ARTICLE.body.map((block, index) => renderArticleBlock(block, index, "desktop"))}
+          <section className={`${ABOUT_DESKTOP_SECTION_H} flex items-center ${ABOUT_DESKTOP_PAGE_INSET}`}>
+            <div className={ABOUT_DESKTOP_SECTION_GRID}>
+              <ArticlePieChart
+                title={sections.pieChart.title}
+                caption={sections.pieChart.caption}
+                citation={sections.pieChart.citation}
+                slices={sections.pieChart.slices}
+                layout="desktop"
+                embedded
+              />
+
+              <AboutDesktopParagraphStack paragraphs={sections.productParagraphs} />
+            </div>
+          </section>
+
+          <div className={`${ABOUT_DESKTOP_PAGE_INSET} pt-12 md:pt-14`}>
+            <div className={`${ABOUT_DESKTOP_ARTICLE_MAX_W} article-body text-left`}>
+              {sections.remainder.map((block, index) => renderArticleBlock(block, index, "desktop"))}
             </div>
           </div>
-        </div>
         </main>
 
         <footer

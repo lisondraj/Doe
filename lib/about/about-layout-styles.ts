@@ -23,11 +23,22 @@ export const ABOUT_DESKTOP_PAGE_INSET = DOEPHONE_DESKTOP_PAGE_INSET_X;
 
 export const ABOUT_DESKTOP_MAIN_PT = "pt-[5.5rem]";
 
-export const ABOUT_DESKTOP_TITLE_TW = `text-left font-light leading-[1.02] tracking-[-0.03em] text-[clamp(3.35rem,4.8vw,5.35rem)] md:text-[clamp(3.65rem,4.2vw,5.65rem)] lg:text-[clamp(3.85rem,3.85vw,5.85rem)] text-[#1E343A] ${suisseIntl.className}`;
+/** Full viewport band below fixed desktop nav — one /about desktop section. */
+export const ABOUT_DESKTOP_SECTION_H = "min-h-[calc(100dvh-5.5rem)] h-[calc(100dvh-5.5rem)]";
 
-export const ABOUT_DESKTOP_SUBHEADING_TW = `mt-6 md:mt-8 text-[clamp(1.55rem,1.35vw,1.95rem)] md:text-[clamp(1.72rem,1.55vw,2.2rem)] font-normal leading-[1.44] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
+export const ABOUT_DESKTOP_SECTION_1_PT = "pt-10 md:pt-12 lg:pt-14";
+
+export const ABOUT_DESKTOP_TITLE_TW = `text-left font-light leading-[1.02] tracking-[-0.03em] text-[clamp(2.35rem,3.5vw,3.65rem)] md:text-[clamp(2.55rem,3.2vw,3.85rem)] lg:text-[clamp(2.75rem,3vw,4.05rem)] text-[#1E343A] ${suisseIntl.className}`;
+
+export const ABOUT_DESKTOP_SUBHEADING_TW = `mt-5 md:mt-6 text-[clamp(1.22rem,1.1vw,1.45rem)] md:text-[clamp(1.32rem,1.2vw,1.55rem)] font-normal leading-[1.44] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
 
 export const ABOUT_DESKTOP_ARTICLE_MAX_W = "max-w-[min(100%,54rem)]";
+
+export const ABOUT_DESKTOP_SECTION_GRID = "grid w-full max-w-[min(100%,72rem)] grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] items-center gap-12 xl:gap-16";
+
+export const ABOUT_DESKTOP_STACK_GAP = "gap-12 md:gap-14";
+
+export const ABOUT_DESKTOP_CHART_CITATION_TW = `mt-3 md:mt-4 font-normal leading-snug text-[#9A8F82] text-[clamp(0.92rem,0.85vw,1.05rem)] md:text-[clamp(0.98rem,0.9vw,1.1rem)] ${inter.className}`;
 
 export const ABOUT_DESKTOP_ARTICLE_SECTION_GAP = "mt-12 md:mt-14";
 
@@ -37,7 +48,7 @@ export const ABOUT_DESKTOP_HERO_BEFORE_ARTICLE = "mb-12 md:mb-14";
 
 export const ABOUT_DESKTOP_HERO_WRAP = `${ABOUT_DESKTOP_HERO_AFTER_SUBHEADING} ${ABOUT_DESKTOP_HERO_BEFORE_ARTICLE}`;
 
-export const ABOUT_DESKTOP_HERO_BOX_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} min-h-[clamp(28rem,42vw,38rem)] h-[clamp(28rem,42vw,38rem)]`;
+export const ABOUT_DESKTOP_HERO_BOX_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} min-h-[clamp(16rem,28vw,22rem)] h-[clamp(16rem,28vw,22rem)] md:min-h-[clamp(17rem,30vw,23rem)] md:h-[clamp(17rem,30vw,23rem)]`;
 
 export const ABOUT_DESKTOP_ARTICLE_BODY_TW = `text-[clamp(1.12rem,1.05vw,1.32rem)] md:text-[clamp(1.22rem,1.1vw,1.42rem)] font-normal leading-[1.5] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
 
