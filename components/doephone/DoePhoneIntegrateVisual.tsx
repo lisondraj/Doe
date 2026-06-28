@@ -62,14 +62,10 @@ const INTEGRATION_ROWS: readonly IntegrationTile[][] = [
   ],
   [
     { name: "OpenEvidence", icon: "evidence" },
-    { name: "Fathom", icon: "fathom" },
+    { name: "UpToDate", icon: "uptodate" },
     { name: "Abridge", icon: "abridge" },
     { name: "DAX Copilot", icon: "dax" },
     { name: "Ambience", icon: "ambience" },
-    { name: "Nuance", icon: "nuance" },
-    { name: "Surescripts", icon: "surescripts" },
-    { name: "UpToDate", icon: "uptodate" },
-    { name: "Doximity", icon: "doximity" },
   ],
   [
     { name: "FHIR", icon: "fhir" },
@@ -89,9 +85,17 @@ const EXTRA_INTEGRATION_ROWS: readonly IntegrationTile[][] = [
     { name: "Redox", icon: "redox" },
   ],
   [
+    { name: "Fathom", icon: "fathom" },
+    { name: "Nuance", icon: "nuance" },
+  ],
+  [
     { name: "Teams", icon: "teams" },
     { name: "Outlook", icon: "outlook" },
     { name: "Avaros", icon: "avaros" },
+  ],
+  [
+    { name: "Doximity", icon: "doximity" },
+    { name: "Surescripts", icon: "surescripts" },
   ],
 ];
 
