@@ -38,7 +38,7 @@ export function DoePhoneDesktopIntegrationsSection() {
           backdrop={DIAGNOSTIC_ASSISTANT_BACKDROP}
           embedded
           gradientOverride={DOEPHONE_DEPLOYMENTS_GRADIENT}
-          gradientScale={1.18}
+          gradientScale={1}
           patternScale={1.12}
         />
       </div>
