@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import {
-  DESKTOP_NAV_ACTION_SIZE,
   MOBILE_NAV_DROPDOWN_ATTACH_TW,
   MOBILE_NAV_SPLIT_INNER_TW,
   MOBILE_NAV_SPLIT_LINK_TW,
@@ -71,27 +70,22 @@ export function MobileMainNavCta({
         <div className={MOBILE_NAV_SPLIT_INNER_TW}>
           <Link
             href={primary.href}
-            className={`${MOBILE_NAV_SPLIT_LINK_TW} no-underline transition-opacity`}
+            className={`${MOBILE_NAV_SPLIT_LINK_TW} no-underline transition-[opacity,background-color,color,box-shadow] duration-300`}
             style={{ backgroundColor: bg, color: fg }}
           >
             {DESKTOP_INVESTORS_CTA_LABEL}
           </Link>
           <button
             type="button"
-            className={`${MOBILE_NAV_SPLIT_TOGGLE_TW} transition-opacity`}
-            style={{
-              backgroundColor: bg,
-              color: fg,
-              borderColor: divider,
-              width: DESKTOP_NAV_ACTION_SIZE,
-            }}
+            className={`${MOBILE_NAV_SPLIT_TOGGLE_TW} transition-[opacity,background-color,color,box-shadow] duration-300`}
+            style={{ backgroundColor: bg, color: fg, borderColor: divider }}
             aria-expanded={open}
             aria-haspopup="menu"
             aria-label="Open navigation menu"
             onClick={() => setOpen((value) => !value)}
           >
             <svg
-              className="h-[1.125rem] w-[1.125rem] shrink-0 transition-transform duration-200"
+              className="h-[1.125rem] w-[1.125rem] shrink-0 transition-transform duration-200 iphone-page:h-[clamp(1.05rem,0.92rem+0.65vmin,1.22rem)] iphone-page:w-[clamp(1.05rem,0.92rem+0.65vmin,1.22rem)]"
               style={{ transform: open ? "rotate(180deg)" : undefined }}
               fill="none"
               stroke="currentColor"
@@ -120,7 +114,7 @@ export function MobileMainNavCta({
                 key={item.href}
                 href={item.href}
                 role="menuitem"
-                className={`block px-4 py-2.5 text-sm font-medium no-underline transition-colors ${dropdownHoverClass}`}
+                className={`block px-4 py-2.5 text-sm font-medium no-underline transition-colors ${dropdownHoverClass} iphone-page:px-[clamp(1rem,0.82rem+0.9vmin,1.2rem)] iphone-page:py-[clamp(0.72rem,0.58rem+0.62vmin,0.88rem)] iphone-page:text-[clamp(0.95rem,0.86rem+0.58vmin,1.08rem)]`}
                 style={{ color: fg }}
                 onClick={() => setOpen(false)}
               >
