@@ -108,7 +108,7 @@ export function DoePhoneDesktopBuildSection() {
         <WorkflowCarouselDesignBackdrop
           backdrop={backdrop}
           embedded
-          gradientScale={1.18}
+          gradientScale={1.32}
           grainBackgroundSize="100px 100px"
           patternScale={1}
         />
