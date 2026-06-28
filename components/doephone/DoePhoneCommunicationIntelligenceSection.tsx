@@ -38,7 +38,7 @@ type PanelPhase = "idle" | "open" | "closing";
 function BuildSectionFrostOverlay({ closing }: { closing: boolean }) {
   return (
     <div
-      className={`pointer-events-none absolute inset-0 z-[12] ${FROST_BLUR_CLASS} ${
+      className={`pointer-events-none absolute inset-0 z-[12] h-full w-full ${FROST_BLUR_CLASS} ${
         closing ? "doephone-carousel-frost-out" : "doephone-carousel-frost-fill"
       }`}
       style={ORANGE_FROST_STYLE}
@@ -159,7 +159,7 @@ export function DoePhoneCommunicationIntelligenceSection() {
 
   return (
     <section
-      className="relative isolate z-10 w-full overflow-hidden bg-[#1E343A]"
+      className="relative isolate z-10 h-full w-full overflow-hidden bg-[#1E343A]"
       style={{ minHeight: DOEPHONE_HERO_HEIGHT, height: DOEPHONE_HERO_HEIGHT }}
       aria-label="Build"
     >
@@ -172,8 +172,9 @@ export function DoePhoneCommunicationIntelligenceSection() {
         />
       </div>
 
-      <div className="relative flex h-full min-h-0 flex-col">
-        {panelOpen ? <BuildSectionFrostOverlay closing={isClosing} /> : null}
+      {panelOpen ? <BuildSectionFrostOverlay closing={isClosing} /> : null}
+
+      <div className="relative z-[20] flex h-full min-h-0 flex-col">
 
         <BuildSectionToggleBadge
           expanded={panelOpen}
