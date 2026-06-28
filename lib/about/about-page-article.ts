@@ -102,7 +102,6 @@ export const ABOUT_MOBILE_TAM_CHART = {
     { label: "U.S. doctors", value: 8.5, suffix: "B USD" },
     { label: "U.S. health providers", value: 24, suffix: "B USD" },
     { label: "Canada + U.S. doctors", value: 9.6, suffix: "B USD" },
-    { label: "Canada + U.S. health providers", value: 28, suffix: "B USD" },
   ],
 } as const;
 
