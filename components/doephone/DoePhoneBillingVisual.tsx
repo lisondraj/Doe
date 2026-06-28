@@ -3,101 +3,116 @@
 import { inter, suisseIntl } from "@/lib/home/fonts";
 import { CAROUSEL_MENU_UI } from "@/lib/doephone/carousel-menu-visual-styles";
 
-const { ink: INK, muted: MUTED, accent: DOE_ORANGE, divider: DIVIDER } = CAROUSEL_MENU_UI;
+const { ink: INK, accent: DOE_ORANGE, divider: DIVIDER } = CAROUSEL_MENU_UI;
 
-const BORDER = "#E5E7EB";
-const LIVE_BG = "rgba(210, 119, 76, 0.12)";
+const MUTED = "#9CA3AF";
+const MUTED_TEXT = "#6B7280";
 
 const OUTER_RADIUS = "rounded-[clamp(0.8rem,2.4vmin,0.95rem)]";
+const CARD_PAD = "clamp(1.2rem,3.85vmin,1.45rem) clamp(1.25rem,4vmin,1.55rem)";
+const EYEBROW_SIZE = "clamp(0.72rem,2.15vmin,0.86rem)";
+const TITLE_SIZE = "clamp(1.12rem,3.45vmin,1.38rem)";
+const BODY_SIZE = "clamp(0.88rem,2.65vmin,1.05rem)";
+const CAPTION_SIZE = "clamp(0.72rem,2.15vmin,0.86rem)";
+const FOOTER_SIZE = "clamp(0.84rem,2.55vmin,1rem)";
 
-const AUTH_STEPS = [
-  { label: "Chart review", done: true },
-  { label: "Payer submit", done: true },
-  { label: "Awaiting approval", done: false },
+const TIMELINE = [
+  { label: "Clinical note pulled from chart", time: "9:02 AM", state: "done" as const },
+  { label: "Prior auth form submitted to BCBS", time: "9:04 AM", state: "done" as const },
+  { label: "Awaiting payer decision", time: "Pending", state: "active" as const },
 ] as const;
 
-function ProgressRing({ pct, size }: { pct: number; size: number }) {
-  const stroke = 5;
-  const r = (size - stroke) / 2;
-  const c = 2 * Math.PI * r;
-  const offset = c * (1 - pct);
+function TimelineDot({ state }: { state: (typeof TIMELINE)[number]["state"] }) {
+  const size = "clamp(0.52rem,1.58vmin,0.64rem)";
+
+  if (state === "done") {
+    return (
+      <span
+        className="relative z-[1] flex shrink-0 items-center justify-center rounded-full"
+        style={{ width: size, height: size, background: DOE_ORANGE }}
+        aria-hidden
+      >
+        <svg width="55%" height="55%" viewBox="0 0 10 10" fill="none">
+          <path
+            d="M2.8 5.1l1.2 1.2 3.1-3.2"
+            stroke="#FFFFFF"
+            strokeWidth="1.35"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </span>
+    );
+  }
 
   return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden className="shrink-0">
-      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={DIVIDER} strokeWidth={stroke} />
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={r}
-        fill="none"
-        stroke={DOE_ORANGE}
-        strokeWidth={stroke}
-        strokeLinecap="round"
-        strokeDasharray={c}
-        strokeDashoffset={offset}
-        transform={`rotate(-90 ${size / 2} ${size / 2})`}
-      />
-      <text
-        x="50%"
-        y="50%"
-        dominantBaseline="middle"
-        textAnchor="middle"
-        fill={INK}
-        fontSize={size * 0.22}
-        fontWeight={600}
-        fontFamily={suisseIntl.style.fontFamily}
-      >
-        {Math.round(pct * 100)}%
-      </text>
-    </svg>
+    <span
+      className="relative z-[1] shrink-0 rounded-full border-[2px] bg-white"
+      style={{ width: size, height: size, borderColor: DOE_ORANGE }}
+      aria-hidden
+    />
   );
 }
 
-function StepRow({ label, done }: { label: string; done: boolean }) {
+function AuthTimeline() {
   return (
-    <div className="flex items-center" style={{ gap: "clamp(0.48rem,1.45vmin,0.62rem)" }}>
-      <span
-        className="flex shrink-0 items-center justify-center rounded-full border"
-        style={{
-          width: "clamp(1.35rem,4.15vmin,1.62rem)",
-          height: "clamp(1.35rem,4.15vmin,1.62rem)",
-          borderColor: done ? DOE_ORANGE : DIVIDER,
-          background: done ? LIVE_BG : "#FAFAF8",
-        }}
-        aria-hidden
-      >
-        {done ? (
-          <svg width="42%" height="42%" viewBox="0 0 10 10" fill="none">
-            <path
-              d="M2.8 5.1l1.2 1.2 3.1-3.2"
-              stroke={DOE_ORANGE}
-              strokeWidth="1.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        ) : (
-          <span className="h-[0.38rem] w-[0.38rem] rounded-full bg-[#D9D4CC]" />
-        )}
-      </span>
-      <span
-        className={`font-medium leading-snug ${inter.className}`}
-        style={{
-          color: done ? INK : MUTED,
-          fontSize: "clamp(0.84rem,2.55vmin,1rem)",
-        }}
-      >
-        {label}
-      </span>
+    <div
+      className="flex flex-col"
+      style={{
+        marginTop: "clamp(1.05rem,3.25vmin,1.32rem)",
+        gap: "clamp(0.82rem,2.55vmin,1.02rem)",
+      }}
+    >
+      {TIMELINE.map((event, index) => {
+        const isLast = index === TIMELINE.length - 1;
+
+        return (
+          <div
+            key={event.label}
+            className="flex items-stretch"
+            style={{ gap: "clamp(0.68rem,2.1vmin,0.86rem)" }}
+          >
+            <div className="flex w-[clamp(0.52rem,1.58vmin,0.64rem)] shrink-0 flex-col items-center">
+              <TimelineDot state={event.state} />
+              {!isLast ? (
+                <span
+                  className="mt-[0.12rem] w-px flex-1 min-h-[clamp(0.55rem,1.68vmin,0.72rem)]"
+                  style={{ background: index === 0 ? DOE_ORANGE : DIVIDER }}
+                  aria-hidden
+                />
+              ) : null}
+            </div>
+
+            <div className="min-w-0 flex-1 pb-[0.02rem]">
+              <p
+                className={`font-medium leading-snug ${event.state === "active" ? "" : inter.className}`}
+                style={{
+                  color: event.state === "active" ? INK : MUTED_TEXT,
+                  fontSize: BODY_SIZE,
+                }}
+              >
+                {event.label}
+              </p>
+              <p
+                className={`${inter.className} font-normal leading-snug tabular-nums`}
+                style={{
+                  color: event.state === "active" ? DOE_ORANGE : MUTED,
+                  fontSize: CAPTION_SIZE,
+                  marginTop: "clamp(0.12rem,0.38vmin,0.16rem)",
+                }}
+              >
+                {event.time}
+              </p>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
 
-/** Prior auth — Billing carousel slide. */
+/** AI prior auth timeline — Billing carousel slide. */
 export function DoePhoneBillingVisual() {
-  const headingSize = "clamp(1.02rem,3.15vmin,1.22rem)";
-  const captionSize = "clamp(0.78rem,2.45vmin,0.94rem)";
-
   return (
     <div
       className={`mx-auto flex h-full w-full items-center justify-center ${suisseIntl.className}`}
@@ -106,71 +121,48 @@ export function DoePhoneBillingVisual() {
     >
       <div
         className={`w-full border bg-white ${OUTER_RADIUS}`}
-        style={{
-          borderColor: BORDER,
-          padding: "clamp(1.2rem,3.85vmin,1.45rem) clamp(1.25rem,4vmin,1.55rem)",
-        }}
+        style={{ borderColor: "#E5E7EB", padding: CARD_PAD }}
       >
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <p
-              className="font-semibold leading-none tracking-[-0.015em]"
-              style={{ color: INK, fontSize: headingSize }}
-            >
-              Prior Authorization
-            </p>
-            <p
-              className={`${inter.className} mt-[clamp(0.38rem,1.15vmin,0.48rem)] font-normal leading-snug`}
-              style={{ color: MUTED, fontSize: captionSize }}
-            >
-              Humira · BCBS
-            </p>
-          </div>
-          <span
-            className={`inline-flex shrink-0 items-center rounded-full font-medium leading-none ${inter.className}`}
-            style={{
-              background: LIVE_BG,
-              color: DOE_ORANGE,
-              fontSize: "clamp(0.72rem,2.2vmin,0.86rem)",
-              padding: "clamp(0.28rem,0.85vmin,0.36rem) clamp(0.52rem,1.58vmin,0.65rem)",
-              gap: "clamp(0.28rem,0.85vmin,0.36rem)",
-            }}
-          >
-            <span
-              className="rounded-full"
-              style={{
-                width: "clamp(0.38rem,1.15vmin,0.46rem)",
-                height: "clamp(0.38rem,1.15vmin,0.46rem)",
-                background: DOE_ORANGE,
-              }}
-            />
-            AI handling
-          </span>
-        </div>
+        <p
+          className="font-medium uppercase tracking-[0.14em]"
+          style={{ color: DOE_ORANGE, fontSize: EYEBROW_SIZE }}
+        >
+          Prior authorization
+        </p>
 
-        <div
-          className="flex flex-col items-center"
+        <h3
+          className="font-semibold leading-tight tracking-[-0.02em]"
           style={{
-            marginTop: "clamp(1.05rem,3.25vmin,1.32rem)",
-            gap: "clamp(0.85rem,2.6vmin,1.08rem)",
+            color: INK,
+            fontSize: TITLE_SIZE,
+            marginTop: "clamp(0.55rem,1.68vmin,0.72rem)",
           }}
         >
-          <ProgressRing pct={2 / 3} size={92} />
-          <div
-            className="flex w-full flex-col"
-            style={{ gap: "clamp(0.55rem,1.68vmin,0.72rem)", maxWidth: "min(100%,16.5rem)" }}
-          >
-            {AUTH_STEPS.map((step) => (
-              <StepRow key={step.label} {...step} />
-            ))}
-          </div>
-        </div>
+          Humira 40mg
+        </h3>
 
         <p
-          className={`${inter.className} mt-[clamp(0.95rem,2.95vmin,1.18rem)] text-center font-normal leading-snug`}
-          style={{ color: MUTED, fontSize: captionSize }}
+          className={`${inter.className} font-normal leading-snug`}
+          style={{
+            color: MUTED_TEXT,
+            fontSize: BODY_SIZE,
+            marginTop: "clamp(0.28rem,0.85vmin,0.36rem)",
+          }}
         >
-          AI submitted clinical documentation to payer
+          BCBS Ontario · M. Alvarez
+        </p>
+
+        <AuthTimeline />
+
+        <p
+          className={`${inter.className} font-normal leading-snug`}
+          style={{
+            color: MUTED,
+            fontSize: FOOTER_SIZE,
+            marginTop: "clamp(1.05rem,3.25vmin,1.32rem)",
+          }}
+        >
+          AI monitoring this case · next check 4:30 PM
         </p>
       </div>
     </div>

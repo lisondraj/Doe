@@ -171,12 +171,13 @@ function CarouselMenuOverlay({
                 : "pointer-events-none h-0 overflow-hidden opacity-0"
             }`}
             style={{
-              color: CAROUSEL_MENU_UI.ink,
+              color: "#FFFFFF",
               fontSize: "clamp(1.32rem,4.05vmin,1.68rem)",
               lineHeight: 1.46,
               letterSpacing: "-0.018em",
               paddingLeft: DESCRIPTION_PAD_X,
               paddingRight: DESCRIPTION_PAD_X,
+              textShadow: "0 1px 8px rgba(30, 52, 58, 0.18)",
             }}
           >
             {description}
