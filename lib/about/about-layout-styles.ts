@@ -11,7 +11,7 @@ export const ABOUT_PAGE_TITLE_TW = `${DOEPHONE_SECTION_COPY_TW} text-[#1E343A] $
 
 /** Fundraising subheading — fixed two-line break aligned to mission title. */
 export const ABOUT_PAGE_SUBHEADING_LINES = [
-  "We intend to register as a Delaware corporation",
+  "We intend to register as a C-corporation",
   "and are actively raising a pre-seed round.",
 ] as const;
 
