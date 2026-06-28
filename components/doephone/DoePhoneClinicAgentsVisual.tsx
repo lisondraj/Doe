@@ -127,20 +127,9 @@ function StatusPill({ label }: { label: string }) {
         color: isDeployed ? DOE_ORANGE : MUTED_TEXT,
         fontSize: "clamp(0.72rem,2.15vmin,0.86rem)",
         padding: "clamp(0.22rem,0.68vmin,0.28rem) clamp(0.42rem,1.28vmin,0.52rem)",
-        gap: isDeployed ? "clamp(0.28rem,0.85vmin,0.38rem)" : undefined,
       }}
     >
       {label}
-      {isDeployed ? (
-        <span
-          className="rounded-full"
-          style={{
-            width: "clamp(0.32rem,0.98vmin,0.38rem)",
-            height: "clamp(0.32rem,0.98vmin,0.38rem)",
-            background: DOE_ORANGE,
-          }}
-        />
-      ) : null}
     </span>
   );
 }

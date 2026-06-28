@@ -10,8 +10,7 @@ const MUTED = "#9CA3AF";
 const MUTED_TEXT = "#6B7280";
 const BTN_BG = "#F3F4F6";
 const LIVE_BG = "rgba(210, 119, 76, 0.12)";
-const ORANGE_ICON_BG = "rgba(210, 119, 76, 0.12)";
-const ICON_SW = 1.2;
+const ICON_SW = 1.25;
 
 const PUBLISH_BG = "#111827";
 const BTN_RADIUS = "rounded-[clamp(0.32rem,0.95vmin,0.4rem)]";
@@ -23,7 +22,13 @@ const PILL_RADIUS = "rounded-[clamp(0.38rem,1.15vmin,0.48rem)]";
 
 const ROW_PAD = "clamp(0.48rem,1.48vmin,0.6rem) clamp(0.72rem,2.2vmin,0.88rem)";
 const ICON_SIZE = "clamp(1.15rem,3.55vmin,1.38rem)";
+const TILE_ICON_SIZE = "clamp(1.15rem,3.55vmin,1.38rem)";
 const LABEL_SIZE = "clamp(0.76rem,2.28vmin,0.9rem)";
+const TILE_LABEL_SIZE = "clamp(0.58rem,1.75vmin,0.68rem)";
+const TILE_GAP = "clamp(0.32rem,0.98vmin,0.42rem)";
+const CONNECTOR_H = "clamp(1.65rem,5.05vmin,2.02rem)";
+const FLOW_STROKE = 1.1;
+const FLOW_NODE = "clamp(0.32rem,0.98vmin,0.38rem)";
 const CANVAS_PAD =
   "clamp(1.15rem,3.55vmin,1.45rem) clamp(0.95rem,2.9vmin,1.15rem) clamp(1.25rem,3.85vmin,1.55rem)";
 
@@ -41,67 +46,93 @@ const CLINICAL_OUTCOMES = [
 
 type DocIconKind = (typeof INCOMING_DOCS)[number]["icon"];
 
-function IconBox({ children }: { children: React.ReactNode }) {
+function FlowNode({ className = "" }: { className?: string }) {
   return (
-    <div
-      className="flex shrink-0 items-center justify-center"
+    <span
+      className={`block shrink-0 rounded-full border bg-white ${className}`}
       style={{
-        width: ICON_SIZE,
-        height: ICON_SIZE,
-        borderRadius: "clamp(0.28rem,0.85vmin,0.35rem)",
-        background: ORANGE_ICON_BG,
+        width: FLOW_NODE,
+        height: FLOW_NODE,
+        borderColor: BORDER,
+        borderWidth: FLOW_STROKE,
       }}
-    >
-      {children}
-    </div>
+    />
   );
 }
 
-function DocIcon({ kind }: { kind: DocIconKind }) {
+function FlowChevron() {
   return (
-    <IconBox>
-      <svg viewBox="0 0 20 20" fill="none" aria-hidden style={{ width: "56%", height: "56%" }}>
-        {kind === "labs" && (
-          <>
-            <path d="M4.5 14h11" stroke={DOE_ORANGE} strokeWidth={ICON_SW} strokeLinecap="round" />
-            <path
-              d="M5.5 13l3.5-4 2.5 2.5 3.5-5"
-              stroke={DOE_ORANGE}
-              strokeWidth={ICON_SW}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </>
-        )}
-        {kind === "referral" && (
+    <svg
+      viewBox="0 0 12 8"
+      fill="none"
+      aria-hidden
+      className="shrink-0"
+      style={{ width: "clamp(0.55rem,1.65vmin,0.65rem)", height: "clamp(0.32rem,0.98vmin,0.38rem)" }}
+    >
+      <path
+        d="M2 2 L6 6 L10 2"
+        stroke={BORDER}
+        strokeWidth={FLOW_STROKE}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function DocIcon({ kind, size = ICON_SIZE }: { kind: DocIconKind; size?: string }) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      aria-hidden
+      className="shrink-0"
+      style={{ width: size, height: size }}
+    >
+      {kind === "labs" && (
+        <>
+          <path d="M4.5 14h11" stroke={DOE_ORANGE} strokeWidth={ICON_SW} strokeLinecap="round" />
           <path
-            d="M4 10h8M12 10l-2.5-2.5M12 10l-2.5 2.5"
+            d="M5.5 13l3.5-4 2.5 2.5 3.5-5"
             stroke={DOE_ORANGE}
             strokeWidth={ICON_SW}
             strokeLinecap="round"
             strokeLinejoin="round"
           />
-        )}
-        {kind === "auth" && (
-          <>
-            <rect x="4" y="3.5" width="12" height="13" rx="1.5" stroke={DOE_ORANGE} strokeWidth={ICON_SW} />
-            <path d="M7 8.5l2 2 4-4.5" stroke={DOE_ORANGE} strokeWidth={ICON_SW} strokeLinecap="round" strokeLinejoin="round" />
-          </>
-        )}
-      </svg>
-    </IconBox>
+        </>
+      )}
+      {kind === "referral" && (
+        <path
+          d="M4 10h8M12 10l-2.5-2.5M12 10l-2.5 2.5"
+          stroke={DOE_ORANGE}
+          strokeWidth={ICON_SW}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      )}
+      {kind === "auth" && (
+        <>
+          <rect x="4" y="3.5" width="12" height="13" rx="1.5" stroke={DOE_ORANGE} strokeWidth={ICON_SW} />
+          <path d="M7 8.5l2 2 4-4.5" stroke={DOE_ORANGE} strokeWidth={ICON_SW} strokeLinecap="round" strokeLinejoin="round" />
+        </>
+      )}
+    </svg>
   );
 }
 
 function AgentIcon() {
   return (
-    <IconBox>
-      <svg viewBox="0 0 20 20" fill="none" aria-hidden style={{ width: "56%", height: "56%" }}>
-        <circle cx="10" cy="10" r="6.25" stroke={DOE_ORANGE} strokeWidth={ICON_SW} />
-        <circle cx="10" cy="10" r="2" fill={DOE_ORANGE} />
-        <path d="M10 3.75v1.5M10 15v1.5M3.75 10h1.5M15 10h1.5" stroke={DOE_ORANGE} strokeWidth={ICON_SW} strokeLinecap="round" />
-      </svg>
-    </IconBox>
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      aria-hidden
+      className="shrink-0"
+      style={{ width: ICON_SIZE, height: ICON_SIZE }}
+    >
+      <circle cx="10" cy="10" r="6.25" stroke={DOE_ORANGE} strokeWidth={ICON_SW} />
+      <circle cx="10" cy="10" r="2" fill={DOE_ORANGE} />
+      <path d="M10 3.75v1.5M10 15v1.5M3.75 10h1.5M15 10h1.5" stroke={DOE_ORANGE} strokeWidth={ICON_SW} strokeLinecap="round" />
+    </svg>
   );
 }
 
@@ -121,58 +152,100 @@ function OutputTag({ label, accent = false }: { label: string; accent?: boolean 
   );
 }
 
-function IncomingDocBox({ title, icon }: (typeof INCOMING_DOCS)[number]) {
+function IncomingDocTile({ title, icon }: (typeof INCOMING_DOCS)[number]) {
   return (
     <div
-      className={`flex items-center border bg-white ${INNER_RADIUS}`}
+      className={`flex min-w-0 flex-1 flex-col items-center justify-center border bg-white ${INNER_RADIUS}`}
       style={{
         borderColor: BORDER,
-        gap: "clamp(0.38rem,1.15vmin,0.48rem)",
-        padding: ROW_PAD,
-        minHeight: "clamp(2.05rem,6.3vmin,2.52rem)",
+        aspectRatio: "1",
+        gap: "clamp(0.28rem,0.85vmin,0.38rem)",
+        padding: "clamp(0.38rem,1.15vmin,0.48rem) clamp(0.22rem,0.68vmin,0.28rem)",
       }}
     >
-      <DocIcon kind={icon} />
-      <span className="truncate font-medium leading-none" style={{ color: INK, fontSize: LABEL_SIZE }}>
+      <DocIcon kind={icon} size={TILE_ICON_SIZE} />
+      <span
+        className="line-clamp-2 text-center font-medium leading-tight"
+        style={{ color: INK, fontSize: TILE_LABEL_SIZE }}
+      >
         {title}
       </span>
     </div>
   );
 }
 
-function IncomingDocsStack() {
+function IncomingDocsRow() {
   return (
-    <div className="flex w-full flex-col" style={{ gap: "clamp(0.42rem,1.28vmin,0.55rem)" }}>
+    <div className="flex w-full items-stretch" style={{ gap: TILE_GAP }}>
       {INCOMING_DOCS.map((doc) => (
-        <IncomingDocBox key={doc.title} {...doc} />
+        <IncomingDocTile key={doc.title} {...doc} />
       ))}
     </div>
   );
 }
 
-function MergeToCenter() {
+function DocsToInboxConnector() {
+  const mergeY = "38%";
+
   return (
-    <svg
-      viewBox="0 0 280 48"
-      fill="none"
-      aria-hidden
-      className="w-full"
-      style={{ maxWidth: "clamp(15rem,46vmin,19rem)", height: "clamp(1.25rem,3.85vmin,1.55rem)" }}
-    >
-      <path d="M70 2 V10 Q70 14 74 14 V26" stroke={BORDER} strokeWidth="1.1" strokeLinecap="round" fill="none" />
-      <path d="M140 2 V26" stroke={BORDER} strokeWidth="1.1" strokeLinecap="round" />
-      <path d="M210 2 V10 Q210 14 206 14 V26" stroke={BORDER} strokeWidth="1.1" strokeLinecap="round" fill="none" />
-      <path d="M74 26 H206" stroke={BORDER} strokeWidth="1.1" strokeLinecap="round" />
-      <line x1="140" y1="26" x2="140" y2="42" stroke={BORDER} strokeWidth="1.1" />
-      <path
-        d="M136 42 L140 46 L144 42"
-        stroke={BORDER}
-        strokeWidth="1.1"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
-    </svg>
+    <div className="relative w-full" style={{ height: CONNECTOR_H }}>
+      <div className="flex h-full w-full" style={{ gap: TILE_GAP }}>
+        {[0, 1, 2].map((index) => (
+          <div key={index} className="relative min-w-0 flex-1">
+            <div
+              className="absolute left-1/2 -translate-x-1/2"
+              style={{ top: 0, width: 1, height: mergeY, background: BORDER }}
+            />
+            <div
+              className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2"
+              style={{ top: mergeY }}
+            >
+              <FlowNode />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div
+        className="pointer-events-none absolute inset-x-0 flex -translate-y-1/2"
+        style={{ top: mergeY, gap: TILE_GAP }}
+      >
+        {[0, 1, 2].map((index) => (
+          <div key={index} className="min-w-0 flex-1">
+            <div
+              style={{
+                height: 1,
+                background: BORDER,
+                marginLeft: index === 0 ? "50%" : 0,
+                marginRight: index === 2 ? "50%" : 0,
+                width: index === 1 ? "100%" : "50%",
+              }}
+            />
+          </div>
+        ))}
+      </div>
+
+      <div
+        className="absolute left-1/2 flex -translate-x-1/2 flex-col items-center"
+        style={{ top: mergeY, bottom: 0, width: 1 }}
+      >
+        <div className="w-px flex-1" style={{ background: BORDER }} />
+      </div>
+
+      <div className="absolute bottom-0 left-1/2 flex -translate-x-1/2 translate-y-1/2 flex-col items-center">
+        <FlowChevron />
+      </div>
+    </div>
+  );
+}
+
+function IncomingDocsFlow() {
+  return (
+    <>
+      <IncomingDocsRow />
+      <DocsToInboxConnector />
+      <InboxAgentHub />
+    </>
   );
 }
 
@@ -225,24 +298,14 @@ function ClinicalOutcomesColumn() {
 
 function FlowConnector() {
   return (
-    <svg
-      viewBox="0 0 24 36"
-      fill="none"
-      aria-hidden
-      className="shrink-0"
-      style={{ width: "clamp(0.85rem,2.6vmin,1.02rem)", height: "clamp(1.35rem,4.15vmin,1.65rem)" }}
+    <div
+      className="flex flex-col items-center"
+      style={{ height: "clamp(1.35rem,4.15vmin,1.65rem)", width: "clamp(0.85rem,2.6vmin,1.02rem)" }}
     >
-      <circle cx="12" cy="3" r="1.65" stroke={BORDER} strokeWidth="1.1" fill="white" />
-      <line x1="12" y1="5.2" x2="12" y2="27" stroke={BORDER} strokeWidth="1.1" />
-      <path
-        d="M8.75 27 L12 33 L15.25 27"
-        stroke={BORDER}
-        strokeWidth="1.1"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
-    </svg>
+      <FlowNode />
+      <div className="w-px flex-1" style={{ background: BORDER }} />
+      <FlowChevron />
+    </div>
   );
 }
 
@@ -322,13 +385,7 @@ export function DoePhoneWorkflowVisual() {
 
         <div className="flex flex-col items-center" style={{ padding: CANVAS_PAD, gap: 0 }}>
           <div className="w-full" style={{ maxWidth: "clamp(15rem,46vmin,19rem)" }}>
-            <IncomingDocsStack />
-          </div>
-
-          <MergeToCenter />
-
-          <div className="w-full" style={{ maxWidth: "clamp(15rem,46vmin,19rem)" }}>
-            <InboxAgentHub />
+            <IncomingDocsFlow />
           </div>
 
           <FlowConnector />

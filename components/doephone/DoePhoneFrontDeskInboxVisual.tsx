@@ -13,9 +13,14 @@ const LIVE_BG = "rgba(210, 119, 76, 0.12)";
 
 const OUTER_RADIUS = "rounded-[clamp(0.8rem,2.4vmin,0.95rem)]";
 const INNER_RADIUS = "rounded-[clamp(0.45rem,1.35vmin,0.55rem)]";
-const PILL_RADIUS = "rounded-[clamp(0.32rem,0.95vmin,0.4rem)]";
+const CARD_PAD = "clamp(1.15rem,3.65vmin,1.42rem) clamp(1.05rem,3.35vmin,1.32rem)";
+const HEADING_MB = "clamp(0.78rem,2.45vmin,0.95rem)";
+const ROW_PAD = "clamp(0.68rem,2.1vmin,0.82rem) clamp(0.88rem,2.75vmin,1.05rem)";
 
-const CALENDAR_DAYS = ["12", "13", "14", "15", "16", "17", "18"] as const;
+const WEEKDAY_LABELS = ["M", "T", "W", "T", "F", "S", "S"] as const;
+const WEEK_DATES = ["12", "13", "14", "15", "16", "17", "18"] as const;
+const TODAY = "14";
+const BOOKED = "16";
 
 function VoiceIcon() {
   const iconSize = "clamp(1.15rem,3.55vmin,1.38rem)";
@@ -45,202 +50,211 @@ function CalendarIcon() {
   );
 }
 
-function StatusPill({ label }: { label: string }) {
-  const isDeployed = label === "Deployed";
+function ModernWeekCalendar() {
+  const monthSize = "clamp(0.88rem,2.65vmin,1.05rem)";
+  const weekdaySize = "clamp(0.52rem,1.55vmin,0.62rem)";
+  const daySize = "clamp(0.72rem,2.15vmin,0.86rem)";
+  const dayCell = "clamp(1.42rem,4.35vmin,1.72rem)";
 
   return (
-    <span
-      className={`inline-flex shrink-0 items-center font-medium leading-none ${PILL_RADIUS}`}
-      style={{
-        background: isDeployed ? LIVE_BG : BTN_BG,
-        color: isDeployed ? DOE_ORANGE : MUTED_TEXT,
-        fontSize: "clamp(0.72rem,2.15vmin,0.86rem)",
-        padding: "clamp(0.22rem,0.68vmin,0.28rem) clamp(0.42rem,1.28vmin,0.52rem)",
-        gap: isDeployed ? "clamp(0.28rem,0.85vmin,0.38rem)" : undefined,
-      }}
-    >
-      {label}
-      {isDeployed ? (
-        <span
-          className="rounded-full"
-          style={{
-            width: "clamp(0.32rem,0.98vmin,0.38rem)",
-            height: "clamp(0.32rem,0.98vmin,0.38rem)",
-            background: DOE_ORANGE,
-          }}
-        />
-      ) : null}
-    </span>
-  );
-}
+    <div style={{ padding: ROW_PAD }}>
+      <div
+        className="flex items-baseline justify-between"
+        style={{ marginBottom: "clamp(0.55rem,1.65vmin,0.68rem)" }}
+      >
+        <span className="font-semibold leading-none tracking-[-0.015em]" style={{ color: INK, fontSize: monthSize }}>
+          June
+        </span>
+        <span className="font-normal leading-none" style={{ color: MUTED, fontSize: "clamp(0.68rem,2.05vmin,0.82rem)" }}>
+          Dr. Chen
+        </span>
+      </div>
 
-function MetricPill({ label, accent = false }: { label: string; accent?: boolean }) {
-  return (
-    <span
-      className={`inline-flex shrink-0 items-center font-normal leading-none ${PILL_RADIUS}`}
-      style={{
-        background: accent ? LIVE_BG : BTN_BG,
-        color: accent ? DOE_ORANGE : MUTED_TEXT,
-        fontSize: "clamp(0.72rem,2.15vmin,0.86rem)",
-        padding: "clamp(0.22rem,0.68vmin,0.28rem) clamp(0.42rem,1.28vmin,0.52rem)",
-      }}
-    >
-      {label}
-    </span>
-  );
-}
-
-function WeekStripCalendar() {
-  return (
-    <div className="flex w-full items-center justify-between" style={{ gap: "clamp(0.22rem,0.68vmin,0.28rem)" }}>
-      {CALENDAR_DAYS.map((day) => {
-        const isBooked = day === "16";
-        const isToday = day === "14";
-
-        return (
-          <div
-            key={day}
-            className={`flex flex-1 flex-col items-center ${INNER_RADIUS}`}
-            style={{
-              padding: "clamp(0.28rem,0.85vmin,0.35rem) clamp(0.18rem,0.55vmin,0.22rem)",
-              background: isBooked ? DOE_ORANGE : isToday ? LIVE_BG : BTN_BG,
-            }}
+      <div
+        className="grid grid-cols-7"
+        style={{ marginBottom: "clamp(0.28rem,0.85vmin,0.38rem)" }}
+      >
+        {WEEKDAY_LABELS.map((label, index) => (
+          <span
+            key={`${label}-${index}`}
+            className="text-center font-medium leading-none"
+            style={{ color: MUTED, fontSize: weekdaySize }}
           >
-            <span
-              className="font-normal leading-none"
-              style={{
-                color: isBooked ? "#FFFFFF" : MUTED,
-                fontSize: "clamp(0.52rem,1.55vmin,0.62rem)",
-                minHeight: "clamp(0.52rem,1.55vmin,0.62rem)",
-              }}
-            >
-              {isToday ? "Tue" : ""}
-            </span>
-            <span
-              className="font-medium leading-none"
-              style={{
-                color: isBooked ? "#FFFFFF" : isToday ? DOE_ORANGE : INK,
-                fontSize: "clamp(0.72rem,2.15vmin,0.86rem)",
-                marginTop: "clamp(0.06rem,0.18vmin,0.1rem)",
-              }}
-            >
-              {day}
-            </span>
-          </div>
-        );
-      })}
+            {label}
+          </span>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-7" style={{ gap: "clamp(0.12rem,0.38vmin,0.18rem) 0" }}>
+        {WEEK_DATES.map((day) => {
+          const isToday = day === TODAY;
+          const isBooked = day === BOOKED;
+
+          return (
+            <div key={day} className="flex items-center justify-center">
+              <span
+                className="inline-flex items-center justify-center rounded-full font-medium leading-none tabular-nums"
+                style={{
+                  width: dayCell,
+                  height: dayCell,
+                  fontSize: daySize,
+                  background: isBooked ? DOE_ORANGE : isToday ? LIVE_BG : "transparent",
+                  color: isBooked ? "#FFFFFF" : isToday ? DOE_ORANGE : INK,
+                  fontWeight: isToday || isBooked ? 600 : 500,
+                }}
+              >
+                {day}
+              </span>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
 
-function AgentCard({ title, children }: { title: string; children: React.ReactNode }) {
+function SchedulingAgentPanel() {
   const headingSize = "clamp(1.02rem,3.15vmin,1.22rem)";
+  const bodySize = "clamp(0.88rem,2.65vmin,1.05rem)";
+  const smallSize = "clamp(0.72rem,2.15vmin,0.86rem)";
 
   return (
     <div
       className={`w-full border bg-white ${OUTER_RADIUS}`}
-      style={{
-        borderColor: BORDER,
-        padding: "clamp(1.15rem,3.65vmin,1.42rem) clamp(1.05rem,3.35vmin,1.32rem)",
-      }}
+      style={{ borderColor: BORDER, padding: CARD_PAD }}
     >
-      <p
-        className="font-semibold leading-none tracking-[-0.015em]"
-        style={{ color: INK, fontSize: headingSize, marginBottom: "clamp(0.78rem,2.45vmin,0.95rem)" }}
+      <div
+        className="flex items-center justify-between"
+        style={{ gap: "clamp(0.55rem,1.75vmin,0.72rem)", marginBottom: HEADING_MB }}
       >
-        {title}
-      </p>
-      {children}
+        <div className="flex min-w-0 items-center" style={{ gap: "clamp(0.55rem,1.75vmin,0.72rem)" }}>
+          <CalendarIcon />
+          <span className="truncate font-semibold leading-none tracking-[-0.015em]" style={{ color: INK, fontSize: headingSize }}>
+            Scheduling Agent
+          </span>
+        </div>
+        <span
+          className="inline-flex shrink-0 items-center font-medium leading-none"
+          style={{ color: DOE_ORANGE, fontSize: smallSize, gap: "clamp(0.28rem,0.85vmin,0.38rem)" }}
+        >
+          <span
+            className="rounded-full"
+            style={{
+              width: "clamp(0.32rem,0.98vmin,0.38rem)",
+              height: "clamp(0.32rem,0.98vmin,0.38rem)",
+              background: DOE_ORANGE,
+            }}
+          />
+          Booking
+        </span>
+      </div>
+
+      <div className={`overflow-hidden border ${INNER_RADIUS}`} style={{ borderColor: BORDER }}>
+        <ModernWeekCalendar />
+
+        <div className="h-px w-full" style={{ background: DIVIDER }} />
+
+        <div
+          className="flex items-center justify-between"
+          style={{ gap: "clamp(0.55rem,1.75vmin,0.72rem)", padding: ROW_PAD }}
+        >
+          <div className="min-w-0">
+            <p className="truncate font-medium leading-snug tabular-nums" style={{ color: INK, fontSize: bodySize }}>
+              Tue 2:30 PM
+            </p>
+            <p
+              className="truncate font-normal leading-snug"
+              style={{ color: MUTED_TEXT, fontSize: smallSize, marginTop: "clamp(0.18rem,0.55vmin,0.24rem)" }}
+            >
+              M. Patel · Follow-up
+            </p>
+          </div>
+          <span
+            className={`inline-flex shrink-0 items-center font-medium leading-none ${INNER_RADIUS}`}
+            style={{
+              background: BTN_BG,
+              color: MUTED_TEXT,
+              fontSize: smallSize,
+              padding: "clamp(0.22rem,0.68vmin,0.28rem) clamp(0.42rem,1.28vmin,0.52rem)",
+            }}
+          >
+            3 open
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
 
 function VoiceAgentPanel() {
+  const headingSize = "clamp(1.02rem,3.15vmin,1.22rem)";
   const bodySize = "clamp(0.88rem,2.65vmin,1.05rem)";
+  const smallSize = "clamp(0.72rem,2.15vmin,0.86rem)";
 
   return (
-    <AgentCard title="Voice Agent">
+    <div
+      className={`w-full border bg-white ${OUTER_RADIUS}`}
+      style={{ borderColor: BORDER, padding: CARD_PAD }}
+    >
+      <div
+        className="flex items-center justify-between"
+        style={{ gap: "clamp(0.55rem,1.75vmin,0.72rem)", marginBottom: HEADING_MB }}
+      >
+        <div className="flex min-w-0 items-center" style={{ gap: "clamp(0.55rem,1.75vmin,0.72rem)" }}>
+          <VoiceIcon />
+          <span className="truncate font-semibold leading-none tracking-[-0.015em]" style={{ color: INK, fontSize: headingSize }}>
+            Voice Agent
+          </span>
+        </div>
+        <span
+          className="inline-flex shrink-0 items-center font-medium leading-none"
+          style={{ color: DOE_ORANGE, fontSize: smallSize, gap: "clamp(0.28rem,0.85vmin,0.38rem)" }}
+        >
+          <span
+            className="rounded-full"
+            style={{
+              width: "clamp(0.32rem,0.98vmin,0.38rem)",
+              height: "clamp(0.32rem,0.98vmin,0.38rem)",
+              background: DOE_ORANGE,
+            }}
+          />
+          On call
+        </span>
+      </div>
+
       <div className={`overflow-hidden border ${INNER_RADIUS}`} style={{ borderColor: BORDER }}>
         <div
-          className="flex items-center justify-between"
-          style={{
-            gap: "clamp(0.55rem,1.75vmin,0.72rem)",
-            padding: "clamp(0.82rem,2.55vmin,1.02rem) clamp(0.88rem,2.75vmin,1.05rem)",
-          }}
+          className="flex items-start justify-between"
+          style={{ gap: "clamp(0.55rem,1.75vmin,0.72rem)", padding: "clamp(0.82rem,2.55vmin,1.02rem) clamp(0.88rem,2.75vmin,1.05rem)" }}
         >
-          <div className="flex min-w-0 items-center" style={{ gap: "clamp(0.55rem,1.75vmin,0.72rem)" }}>
-            <VoiceIcon />
-            <span className="min-w-0 truncate font-normal leading-snug tabular-nums" style={{ color: MUTED_TEXT, fontSize: bodySize }}>
-              (416) 555-0142 · refill request
-            </span>
+          <div className="min-w-0">
+            <p className="truncate font-medium leading-snug" style={{ color: INK, fontSize: bodySize }}>
+              M. Patel
+            </p>
+            <p className="truncate font-normal leading-snug tabular-nums" style={{ color: MUTED_TEXT, fontSize: smallSize, marginTop: "clamp(0.18rem,0.55vmin,0.24rem)" }}>
+              (416) 555-0142
+            </p>
           </div>
-          <StatusPill label="Deployed" />
+          <span className="shrink-0 font-normal leading-none tabular-nums" style={{ color: MUTED, fontSize: smallSize }}>
+            2:14
+          </span>
         </div>
 
         <div className="h-px w-full" style={{ background: DIVIDER }} />
 
-        <div
-          className="flex flex-wrap items-center"
-          style={{
-            gap: "clamp(0.35rem,1.05vmin,0.45rem)",
-            padding: "clamp(0.68rem,2.1vmin,0.82rem) clamp(0.88rem,2.75vmin,1.05rem)",
-          }}
-        >
-          <span className="font-normal leading-none" style={{ color: MUTED, fontSize: "clamp(0.72rem,2.15vmin,0.86rem)" }}>
-            Status
-          </span>
-          <MetricPill label="Answering call" accent />
-          <MetricPill label="Routing to scheduling" />
+        <div style={{ padding: ROW_PAD }}>
+          <p className="font-normal leading-none" style={{ color: MUTED, fontSize: smallSize }}>
+            Refill request
+          </p>
+          <p
+            className="truncate font-normal leading-snug"
+            style={{ color: MUTED_TEXT, fontSize: bodySize, marginTop: "clamp(0.28rem,0.85vmin,0.38rem)" }}
+          >
+            &ldquo;I can help with that refill.&rdquo;
+          </p>
         </div>
       </div>
-    </AgentCard>
-  );
-}
-
-function SchedulingAgentPanel() {
-  const bodySize = "clamp(0.88rem,2.65vmin,1.05rem)";
-
-  return (
-    <AgentCard title="Scheduling Agent">
-      <div className={`overflow-hidden border ${INNER_RADIUS}`} style={{ borderColor: BORDER }}>
-        <div
-          className="flex items-center justify-between"
-          style={{
-            gap: "clamp(0.55rem,1.75vmin,0.72rem)",
-            padding: "clamp(0.82rem,2.55vmin,1.02rem) clamp(0.88rem,2.75vmin,1.05rem)",
-          }}
-        >
-          <div className="flex min-w-0 items-center" style={{ gap: "clamp(0.55rem,1.75vmin,0.72rem)" }}>
-            <CalendarIcon />
-            <span className="min-w-0 truncate font-normal leading-snug" style={{ color: MUTED_TEXT, fontSize: bodySize }}>
-              Booking into calendar · Dr. Chen
-            </span>
-          </div>
-          <StatusPill label="Deployed" />
-        </div>
-
-        <div className="h-px w-full" style={{ background: DIVIDER }} />
-
-        <div style={{ padding: "clamp(0.68rem,2.1vmin,0.82rem) clamp(0.88rem,2.75vmin,1.05rem)" }}>
-          <WeekStripCalendar />
-        </div>
-
-        <div className="h-px w-full" style={{ background: DIVIDER }} />
-
-        <div
-          className="flex items-center"
-          style={{
-            gap: "clamp(0.35rem,1.05vmin,0.45rem)",
-            padding: "clamp(0.68rem,2.1vmin,0.82rem) clamp(0.88rem,2.75vmin,1.05rem)",
-          }}
-        >
-          <span className="font-normal leading-none" style={{ color: MUTED, fontSize: "clamp(0.72rem,2.15vmin,0.86rem)" }}>
-            Booked
-          </span>
-          <MetricPill label="Tue 2:30 PM" accent />
-        </div>
-      </div>
-    </AgentCard>
+    </div>
   );
 }
 
