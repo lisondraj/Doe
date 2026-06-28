@@ -187,11 +187,11 @@ export const ABOUT_MOBILE_BEIGE_PANEL_TW = `relative w-full overflow-hidden bord
 /** iPhone /about FAQ accordion — single column within page margins. */
 export const ABOUT_MOBILE_FAQ_LIST_TW = "flex w-full flex-col";
 
-export const ABOUT_MOBILE_FAQ_ITEM_TW = `text-[clamp(1.22rem,1.08rem+0.75vmin,1.48rem)] iphone-page:text-[clamp(1.32rem,1.12rem+0.95vmin,1.62rem)] leading-[1.15] tracking-[-0.015em] ${inter.className}`;
+export const ABOUT_MOBILE_FAQ_ITEM_TW = `text-[clamp(1.48rem,1.28rem+0.95vmin,1.82rem)] iphone-page:text-[clamp(1.68rem,1.38rem+1.22vmin,2.08rem)] leading-[1.15] tracking-[-0.015em] ${inter.className}`;
 
 export const ABOUT_MOBILE_FAQ_ANSWER_TW = "pb-4 pt-2.5 iphone-page:pb-5 iphone-page:pt-3";
 
 export const ABOUT_MOBILE_FAQ_ANSWER_BODY_TW = BLOG_ARTICLE_BODY_TW;
 
-/** iPhone /about — founders headline below FAQ (smaller than mission title). */
-export const ABOUT_MOBILE_FOUNDERS_HEADLINE_TW = `text-left font-light leading-[1.02] tracking-[-0.03em] text-[clamp(2.35rem,8.25vw,3.95rem)] iphone-page:text-[clamp(2.2rem,7.75vw,3.65rem)] text-[#1E343A] ${suisseIntl.className}`;
+/** iPhone /about — section headlines (below main mission title). */
+export const ABOUT_MOBILE_SECTION_HEADLINE_TW = `text-left font-light leading-[1.02] tracking-[-0.03em] text-[clamp(2.65rem,9.5vw,4.35rem)] iphone-page:text-[clamp(2.5rem,9vw,4.05rem)] text-[#1E343A] ${suisseIntl.className}`;

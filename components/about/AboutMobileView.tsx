@@ -9,7 +9,7 @@ import {
   ABOUT_HERO_HEADLINE_WRAP,
   ABOUT_MOBILE_BODY_TW,
   ABOUT_MOBILE_CONTENT_GAP,
-  ABOUT_MOBILE_FOUNDERS_HEADLINE_TW,
+  ABOUT_MOBILE_SECTION_HEADLINE_TW,
   ABOUT_MOBILE_LIST_GAP,
   ABOUT_MOBILE_SECTION_GAP,
   ABOUT_PAGE_HERO_AFTER_BYLINE,
@@ -26,6 +26,7 @@ import {
   ABOUT_DESKTOP_FOUNDERS_PARAGRAPHS,
   ABOUT_DESKTOP_SECTION_2_BULLETS,
   ABOUT_DESKTOP_SECTION_2_INTRO,
+  ABOUT_MOBILE_ASSISTANT_HEADLINE_LINES,
   ABOUT_MOBILE_FOUNDERS_HEADLINE_LINES,
   ABOUT_PAGE_HERO_BACKDROP,
   ABOUT_PAGE_HERO_PATTERN_SCALE,
@@ -106,11 +107,16 @@ export function AboutMobileView() {
             layout="mobile"
           />
 
+          <h2 className={ABOUT_MOBILE_SECTION_HEADLINE_TW}>
+            <span className="block">{ABOUT_MOBILE_ASSISTANT_HEADLINE_LINES[0]}</span>
+            <span className="block">{ABOUT_MOBILE_ASSISTANT_HEADLINE_LINES[1]}</span>
+          </h2>
+
           <AboutMobileBeigePanel graphic={0} />
 
           <AboutMobileFaqTabs />
 
-          <h2 className={ABOUT_MOBILE_FOUNDERS_HEADLINE_TW}>
+          <h2 className={ABOUT_MOBILE_SECTION_HEADLINE_TW}>
             <span className="block">{ABOUT_MOBILE_FOUNDERS_HEADLINE_LINES[0]}</span>
             <span className="block">{ABOUT_MOBILE_FOUNDERS_HEADLINE_LINES[1]}</span>
           </h2>
