@@ -1,9 +1,9 @@
 "use client";
 
+import { AboutDesktopFaqTabs } from "@/components/about/AboutDesktopFaqTabs";
 import {
   AboutDesktopBulletList,
   AboutDesktopParagraph,
-  AboutDesktopQuote,
 } from "@/components/about/AboutDesktopArticleBlocks";
 import { AboutDesktopNav } from "@/components/about/AboutDesktopNav";
 import { AboutDesktopSplitSection } from "@/components/about/AboutDesktopSplitSection";
@@ -84,7 +84,7 @@ function getAboutDesktopArticleSections(body: readonly ArticleBlock[]) {
 /** Desktop /about — hero plus four alternating beige-panel bands, then footer. */
 export function AboutDesktopView() {
   const sections = getAboutDesktopArticleSections(ABOUT_PAGE_ARTICLE.body);
-  const [productOne, productTwo, productThree] = sections.productParagraphs;
+  const [productTwo, productThree] = sections.productParagraphs.slice(1);
 
   return (
     <DesktopRouteLayout>
@@ -151,10 +151,7 @@ export function AboutDesktopView() {
           </AboutDesktopSplitSection>
 
           <AboutDesktopSplitSection boxSide="right" graphic={2}>
-            <div className={`flex flex-col ${ABOUT_DESKTOP_CONTENT_STACK_GAP}`}>
-              <AboutDesktopQuote text={sections.quote.text} attribution={sections.quote.attribution} />
-              <AboutDesktopParagraph text={productOne} />
-            </div>
+            <AboutDesktopFaqTabs />
           </AboutDesktopSplitSection>
 
           <AboutDesktopSplitSection boxSide="left" graphic={3}>

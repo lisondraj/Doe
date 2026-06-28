@@ -104,6 +104,13 @@ export const ABOUT_DESKTOP_HERO_BOX_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} h-
 
 export const ABOUT_DESKTOP_ARTICLE_BODY_TW = `text-[clamp(1.12rem,1.05vw,1.32rem)] md:text-[clamp(1.22rem,1.1vw,1.42rem)] font-normal leading-[1.5] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
 
+/** Desktop /about FAQ tabs — section three accordion beside beige panel. */
+export const ABOUT_DESKTOP_FAQ_LIST_TW = "flex w-full min-w-0 flex-col";
+
+export const ABOUT_DESKTOP_FAQ_ITEM_TW = `text-[clamp(1.05rem,0.95vw,1.22rem)] md:text-[clamp(1.12rem,1vw,1.32rem)] leading-snug tracking-[-0.01em] ${inter.className}`;
+
+export const ABOUT_DESKTOP_FAQ_ANSWER_TW = "pb-5 pt-3 md:pb-6 md:pt-3.5";
+
 export const ABOUT_DESKTOP_ARTICLE_VISUAL_GAP = "mt-12 md:mt-14";
 
 export const ABOUT_DESKTOP_ARTICLE_H2_TW = `text-left font-semibold leading-[1.15] tracking-[-0.01em] text-[#1E343A] text-[clamp(1.55rem,1.35vw,1.95rem)] md:text-[clamp(1.72rem,1.45vw,2.1rem)] ${dmSans.className}`;
