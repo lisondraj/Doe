@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 
+import { AboutContactRingsGraphic } from "@/components/about/AboutContactRingsGraphic";
 import { JoinInternTrackReveal } from "@/components/join/JoinInternTrackReveal";
 import { DOEPHONE_SECTION_CAROUSEL_RADIUS, DOEPHONE_SECTION_COPY_TW } from "@/lib/doephone/section-styles";
 import { dmSans, inter } from "@/lib/home/fonts";
@@ -92,7 +93,14 @@ export function AboutDesktopContactSection() {
               className={`relative flex w-full items-center justify-center overflow-hidden border ${JOIN_DESKTOP_APPLY_CARD_HEIGHT} ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
               style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
             >
-              <div className="flex flex-col items-center justify-center gap-8 md:gap-10">
+              <div
+                className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-[min(24%,9.5rem)]"
+                aria-hidden
+              >
+                <AboutContactRingsGraphic />
+              </div>
+
+              <div className="relative z-10 flex flex-col items-center justify-center gap-8 md:gap-10 pb-4 md:pb-5">
                 <p
                   className={`font-medium tracking-[-0.02em] text-[#1E343A]/72 text-[clamp(1.65rem,1.45vw,2.05rem)] md:text-[clamp(1.85rem,1.55vw,2.25rem)] ${inter.className}`}
                 >
