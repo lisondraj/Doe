@@ -23,8 +23,8 @@ import {
   DOEPHONE_FIXED_NAV_CONTENT_RIGHT,
   DOEPHONE_SECTION_CAROUSEL_INSET_X,
 } from "@/lib/doephone/section-styles";
-import { FOR_INVESTORS_LABEL, MAIN_HOME_NAV_SHEET_ITEMS } from "@/lib/subpage/subpage-nav";
-import { INVESTORS_PATH, JOIN_PAGE_HREF, WAITLIST_PATH } from "@/lib/site-domains";
+import { ABOUT_LABEL, MAIN_HOME_NAV_SHEET_ITEMS } from "@/lib/subpage/subpage-nav";
+import { ABOUT_PATH, JOIN_PAGE_HREF, WAITLIST_PATH } from "@/lib/site-domains";
 import {
   NAV_FOOTER_BOX_TITLE_TW,
   NAV_FOOTER_CARD_INSET,
@@ -77,7 +77,7 @@ export type SiteNavCtaLayout =
   | "join-waitlist"
   | "main-home"
   | "subpage-join"
-  | "subpage-investors"
+  | "subpage-about"
   | "subpage-waitlist";
 
 export type NavSheetItem = { label: string; href: string };
@@ -173,8 +173,8 @@ function NavChromeStrip({
         {subpageVariant ? (
           <SubpageMobileNavRow variant={subpageVariant} showLinks={!showMenu || !subpageWithButton} />
         ) : ctaLayout === "main-home" ? (
-          <Link href={INVESTORS_PATH} className={DOEPHONE_NAV_WAITLIST_CLASS}>
-            {FOR_INVESTORS_LABEL}
+          <Link href={ABOUT_PATH} className={DOEPHONE_NAV_WAITLIST_CLASS}>
+            {ABOUT_LABEL}
           </Link>
         ) : ctaLayout === "triple" ? (
           <>
@@ -184,8 +184,8 @@ function NavChromeStrip({
             <Link href={joinHref} className={DOEPHONE_NAV_TRIPLE_CTA_CLASS}>
               Join Us
             </Link>
-            <a href={INVESTORS_PATH} className={DOEPHONE_NAV_TRIPLE_CTA_CLASS}>
-              {FOR_INVESTORS_LABEL}
+            <a href={ABOUT_PATH} className={DOEPHONE_NAV_TRIPLE_CTA_CLASS}>
+              {ABOUT_LABEL}
             </a>
           </>
         ) : showJoinCta ? (
@@ -296,7 +296,7 @@ export default function DoeIphoneSiteNav({
     navSheetItems ??
     (ctaLayout === "main-home" ||
     ctaLayout === "subpage-join" ||
-    ctaLayout === "subpage-investors" ||
+    ctaLayout === "subpage-about" ||
     ctaLayout === "subpage-waitlist"
       ? MAIN_HOME_NAV_SHEET_ITEMS
       : NAV_ITEMS.map((item) => ({ label: item, href: NAV_HREFS[item] })));

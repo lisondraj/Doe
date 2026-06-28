@@ -1,31 +1,52 @@
 "use client";
 
-import { AboutHeroBands } from "@/components/about/AboutHeroBands";
+import { renderArticleBlock } from "@/components/blog/ArticleBodyBlocks";
+import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
-import { JoinApplyFormSection } from "@/components/join/JoinApplyFormSection";
-import { JoinInternTracks } from "@/components/join/JoinInternTracks";
+import {
+  ABOUT_PAGE_SUBHEADING_TW,
+  ABOUT_PAGE_TITLE_TW,
+} from "@/lib/about/about-layout-styles";
+import { BLOG_CONTENT_PT, BLOG_TITLE_VISUAL_GAP } from "@/lib/blog/blog-layout-styles";
+import { getBlogArticle } from "@/lib/blog/articles";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
-import { JOIN_MOBILE_HERO_SECTION, JOIN_MOBILE_NAV_CLEARANCE, JOIN_MOBILE_SECTION_STACK_GAP } from "@/lib/join/join-layout";
 
+const ABOUT_ARTICLE_SLUG = "ambient-documentation-at-the-bedside";
+
+const ABOUT_ARTICLE =
+  getBlogArticle(ABOUT_ARTICLE_SLUG) ??
+  (() => {
+    throw new Error("Missing about page article");
+  })();
+
+/** iPhone /about — mission headline, fundraising subheading, and full blog article body. */
 export function AboutMobileView() {
   useDoePhoneStableViewport();
 
   return (
     <BlogMobileShell
       showJoinCta={false}
-      ctaLayout="subpage-investors"
+      ctaLayout="subpage-about"
       logoLink={false}
       footerLinksDisabled
       shellMinHeightClass="min-h-[var(--app-vh,100lvh)]"
     >
-      <main className={`flex w-full flex-col ${JOIN_MOBILE_SECTION_STACK_GAP} ${JOIN_MOBILE_NAV_CLEARANCE}`}>
-        <section className={JOIN_MOBILE_HERO_SECTION} aria-label="About hero">
-          <AboutHeroBands variant="mobile" />
-        </section>
-        <JoinInternTracks variant="mobile" />
-      </main>
+      <main className={`w-full ${BLOG_CONTENT_PT}`}>
+        <h1 className={ABOUT_PAGE_TITLE_TW}>
+          <span className="block">Doe is on a mission</span>
+          <span className="block">to redefine healthcare.</span>
+        </h1>
 
-      <JoinApplyFormSection variant="mobile" />
+        <p className={ABOUT_PAGE_SUBHEADING_TW}>
+          We intend to register as a Delaware corporation and are actively raising a pre-seed round.
+        </p>
+
+        <BlogHeroVisual backdrop={ABOUT_ARTICLE.backdrop} variant="hero" />
+
+        <div className={`article-body ${BLOG_TITLE_VISUAL_GAP} text-left`}>
+          {ABOUT_ARTICLE.body.map((block, index) => renderArticleBlock(block, index))}
+        </div>
+      </main>
     </BlogMobileShell>
   );
 }

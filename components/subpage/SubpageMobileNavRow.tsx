@@ -81,8 +81,8 @@ export function subpageVariantFromCtaLayout(
       return "main";
     case "subpage-join":
       return "join";
-    case "subpage-investors":
-      return "investors";
+    case "subpage-about":
+      return "about";
     case "subpage-waitlist":
       return "waitlist";
     default:
@@ -91,5 +91,5 @@ export function subpageVariantFromCtaLayout(
 }
 
 export function subpageNavHasButton(variant: SubpageNavVariant): boolean {
-  return variant === "join" || variant === "investors" || variant === "waitlist";
+  return variant === "join" || variant === "about" || variant === "waitlist";
 }

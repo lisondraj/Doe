@@ -7,10 +7,10 @@ export const JOIN_SITE_HOST = process.env.JOIN_SITE_HOST ?? "doehealth.care";
 
 export const JOIN_PATH = "/join";
 export const WAITLIST_PATH = "/waitlist";
-export const INVESTORS_PATH = "/investors";
+export const ABOUT_PATH = "/about";
 
-/** @deprecated Use INVESTORS_PATH */
-export const ABOUT_PATH = INVESTORS_PATH;
+/** @deprecated Redirects to /about */
+export const INVESTORS_PATH = "/investors";
 
 const LOCAL_DEV_HOSTS = new Set(["localhost", "127.0.0.1"]);
 
@@ -61,13 +61,13 @@ export function waitlistPageUrl(protocol: "http" | "https" = "https"): string {
   return `${primarySiteOrigin(protocol)}${WAITLIST_PATH}`;
 }
 
-export function investorsPageUrl(protocol: "http" | "https" = "https"): string {
-  return `${primarySiteOrigin(protocol)}${INVESTORS_PATH}`;
+export function aboutPageUrl(protocol: "http" | "https" = "https"): string {
+  return `${primarySiteOrigin(protocol)}${ABOUT_PATH}`;
 }
 
-/** @deprecated Use investorsPageUrl */
-export function aboutPageUrl(protocol: "http" | "https" = "https"): string {
-  return investorsPageUrl(protocol);
+/** @deprecated Use aboutPageUrl */
+export function investorsPageUrl(protocol: "http" | "https" = "https"): string {
+  return aboutPageUrl(protocol);
 }
 
 /**
