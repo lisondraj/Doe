@@ -1,6 +1,6 @@
 "use client";
 
-import { inter, suisseIntl } from "@/lib/home/fonts";
+import { suisseIntl } from "@/lib/home/fonts";
 import { CAROUSEL_MENU_UI } from "@/lib/doephone/carousel-menu-visual-styles";
 
 const { ink: INK, accent: DOE_ORANGE, divider: DIVIDER } = CAROUSEL_MENU_UI;
@@ -12,23 +12,24 @@ const BTN_BG = "#F3F4F6";
 const LIVE_BG = "rgba(210, 119, 76, 0.12)";
 const ICON_SW = 1.25;
 
-const PUBLISH_BG = "#111827";
-const BTN_RADIUS = "rounded-[clamp(0.32rem,0.95vmin,0.4rem)]";
-
 const OUTER_RADIUS = "rounded-[clamp(0.8rem,2.4vmin,0.95rem)]";
 const INNER_RADIUS = "rounded-[clamp(0.45rem,1.35vmin,0.55rem)]";
-const NODE_RADIUS = "rounded-[clamp(0.68rem,2.05vmin,0.82rem)]";
 const PILL_RADIUS = "rounded-[clamp(0.38rem,1.15vmin,0.48rem)]";
 
-const ROW_PAD = "clamp(0.48rem,1.48vmin,0.6rem) clamp(0.72rem,2.2vmin,0.88rem)";
-const ICON_SIZE = "clamp(1.15rem,3.55vmin,1.38rem)";
-const TILE_ICON_SIZE = "clamp(1.15rem,3.55vmin,1.38rem)";
-const LABEL_SIZE = "clamp(0.76rem,2.28vmin,0.9rem)";
-const TILE_LABEL_SIZE = "clamp(0.58rem,1.75vmin,0.68rem)";
+const CARD_PAD = "clamp(1.2rem,3.85vmin,1.45rem) clamp(1.25rem,4vmin,1.55rem)";
+const ROW_PAD = "clamp(0.82rem,2.55vmin,1.02rem) clamp(0.88rem,2.75vmin,1.05rem)";
+const ICON_SIZE = "clamp(1.35rem,4.15vmin,1.65rem)";
+const BODY_SIZE = "clamp(0.88rem,2.65vmin,1.05rem)";
+const CAPTION_SIZE = "clamp(0.72rem,2.15vmin,0.86rem)";
+const TILE_LABEL_SIZE = "clamp(0.72rem,2.15vmin,0.86rem)";
 const TILE_GAP = "clamp(0.32rem,0.98vmin,0.42rem)";
+const TILE_ASPECT = "1.18";
+const TILE_PAD_Y = "clamp(0.5rem,1.52vmin,0.62rem)";
+const TILE_INNER_GAP = "clamp(0.36rem,1.1vmin,0.46rem)";
+const MERGE_ZONE_H = "clamp(0.78rem,2.38vmin,0.95rem)";
+const MERGE_BAR_Y = "44%";
+const FLOW_LINE = { background: DIVIDER } as const;
 const FLOW_CONNECTOR_H = "clamp(1.35rem,4.15vmin,1.65rem)";
-const CANVAS_PAD =
-  "clamp(1.15rem,3.55vmin,1.45rem) clamp(0.95rem,2.9vmin,1.15rem) clamp(1.25rem,3.85vmin,1.55rem)";
 
 const INCOMING_DOCS = [
   { title: "Lab results", icon: "labs" },
@@ -107,8 +108,8 @@ function OutputTag({ label, accent = false }: { label: string; accent?: boolean 
       style={{
         background: accent ? LIVE_BG : BTN_BG,
         color: accent ? DOE_ORANGE : MUTED_TEXT,
-        fontSize: "clamp(0.64rem,1.92vmin,0.76rem)",
-        padding: "clamp(0.18rem,0.55vmin,0.24rem) clamp(0.38rem,1.15vmin,0.48rem)",
+        fontSize: "clamp(0.72rem,2.15vmin,0.86rem)",
+        padding: "clamp(0.22rem,0.68vmin,0.28rem) clamp(0.42rem,1.28vmin,0.52rem)",
       }}
     >
       {label}
@@ -122,12 +123,12 @@ function IncomingDocTile({ title, icon }: (typeof INCOMING_DOCS)[number]) {
       className={`flex min-w-0 flex-1 flex-col items-center justify-center border bg-white ${INNER_RADIUS}`}
       style={{
         borderColor: BORDER,
-        aspectRatio: "1",
-        gap: "clamp(0.28rem,0.85vmin,0.38rem)",
-        padding: "clamp(0.38rem,1.15vmin,0.48rem) clamp(0.22rem,0.68vmin,0.28rem)",
+        aspectRatio: TILE_ASPECT,
+        gap: TILE_INNER_GAP,
+        padding: `${TILE_PAD_Y} clamp(0.42rem,1.28vmin,0.52rem)`,
       }}
     >
-      <DocIcon kind={icon} size={TILE_ICON_SIZE} />
+      <DocIcon kind={icon} size={ICON_SIZE} />
       <span
         className="line-clamp-2 text-center font-medium leading-tight"
         style={{ color: INK, fontSize: TILE_LABEL_SIZE }}
@@ -149,45 +150,32 @@ function IncomingDocsRow() {
 }
 
 function MergeToCenter() {
-  const mergeTop = "42%";
-
   return (
-    <div className="relative w-full" style={{ height: FLOW_CONNECTOR_H }}>
-      <div className="flex h-full w-full" style={{ gap: TILE_GAP }}>
+    <div aria-hidden className="relative w-full" style={{ height: MERGE_ZONE_H }}>
+      <div className="absolute inset-x-0 top-0 flex" style={{ gap: TILE_GAP, height: MERGE_BAR_Y }}>
         {[0, 1, 2].map((index) => (
-          <div key={index} className="flex min-w-0 flex-1 justify-center">
+          <div key={index} className="relative min-w-0 flex-1">
             <div
-              aria-hidden
-              style={{ width: 1, height: mergeTop, background: BORDER }}
+              className="absolute bottom-0 left-1/2 top-0 w-px -translate-x-1/2"
+              style={FLOW_LINE}
             />
           </div>
         ))}
       </div>
 
       <div
-        className="pointer-events-none absolute inset-x-0 flex -translate-y-1/2"
-        style={{ top: mergeTop, gap: TILE_GAP, height: 1 }}
-      >
-        {[0, 1, 2].map((index) => (
-          <div key={index} className="flex min-w-0 flex-1 items-center">
-            <div
-              aria-hidden
-              style={{
-                height: 1,
-                background: BORDER,
-                marginLeft: index === 0 ? "50%" : 0,
-                marginRight: index === 2 ? "50%" : 0,
-                width: index === 1 ? "100%" : "50%",
-              }}
-            />
-          </div>
-        ))}
-      </div>
+        className="pointer-events-none absolute h-px -translate-y-1/2"
+        style={{
+          ...FLOW_LINE,
+          top: MERGE_BAR_Y,
+          left: `calc((100% - 2 * ${TILE_GAP}) / 6)`,
+          right: `calc((100% - 2 * ${TILE_GAP}) / 6)`,
+        }}
+      />
 
       <div
-        aria-hidden
-        className="absolute left-1/2 -translate-x-1/2"
-        style={{ top: mergeTop, bottom: 0, width: 1, background: BORDER }}
+        className="absolute bottom-0 left-1/2 w-px -translate-x-1/2"
+        style={{ ...FLOW_LINE, top: MERGE_BAR_Y }}
       />
     </div>
   );
@@ -195,35 +183,36 @@ function MergeToCenter() {
 
 function IncomingDocsFlow() {
   return (
-    <>
+    <div className="relative overflow-visible">
       <IncomingDocsRow />
       <MergeToCenter />
       <InboxAgentHub />
-    </>
+    </div>
   );
 }
 
 function InboxAgentHub() {
   return (
-    <div className={`w-full border bg-white ${NODE_RADIUS}`} style={{ borderColor: BORDER }}>
+    <div className={`w-full overflow-hidden border bg-white ${INNER_RADIUS}`} style={{ borderColor: BORDER }}>
       <div
         className="flex items-center"
-        style={{ gap: "clamp(0.38rem,1.15vmin,0.48rem)", padding: ROW_PAD }}
+        style={{ gap: "clamp(0.55rem,1.75vmin,0.72rem)", padding: ROW_PAD }}
       >
         <AgentIcon />
-        <span className="truncate font-medium leading-none" style={{ color: INK, fontSize: LABEL_SIZE }}>
+        <span className="truncate font-normal leading-snug" style={{ color: MUTED_TEXT, fontSize: BODY_SIZE }}>
           Inbox Agent
         </span>
       </div>
       <div className="h-px w-full" style={{ background: DIVIDER }} />
       <div
         className="flex items-center"
-        style={{ gap: "clamp(0.32rem,0.98vmin,0.42rem)", padding: ROW_PAD }}
+        style={{ gap: "clamp(0.35rem,1.05vmin,0.45rem)", padding: ROW_PAD }}
       >
-        <span className="font-normal leading-none" style={{ color: MUTED, fontSize: "clamp(0.68rem,2.05vmin,0.82rem)" }}>
-          Output
+        <span className="font-normal leading-none" style={{ color: MUTED, fontSize: CAPTION_SIZE }}>
+          Integrations
         </span>
-        <OutputTag label="Sorted & routed" />
+        <OutputTag label="Outlook" />
+        <OutputTag label="EPIC" />
       </div>
     </div>
   );
@@ -237,9 +226,9 @@ function ClinicalOutcomesColumn() {
           {index > 0 ? <div className="h-px w-full" style={{ background: DIVIDER }} /> : null}
           <div
             className="flex items-center justify-between"
-            style={{ gap: "clamp(0.38rem,1.15vmin,0.48rem)", padding: ROW_PAD }}
+            style={{ gap: "clamp(0.55rem,1.75vmin,0.72rem)", padding: ROW_PAD }}
           >
-            <span className="min-w-0 truncate font-normal leading-none" style={{ color: MUTED_TEXT, fontSize: LABEL_SIZE }}>
+            <span className="min-w-0 truncate font-normal leading-snug" style={{ color: MUTED_TEXT, fontSize: BODY_SIZE }}>
               {row.title}
             </span>
             <OutputTag label={row.action} accent={row.accent} />
@@ -254,44 +243,15 @@ function FlowConnector() {
   return (
     <div
       aria-hidden
-      className="shrink-0"
-      style={{
-        width: 1,
-        height: FLOW_CONNECTOR_H,
-        background: BORDER,
-      }}
+      className="w-px shrink-0"
+      style={{ ...FLOW_LINE, height: FLOW_CONNECTOR_H }}
     />
-  );
-}
-
-function HeaderButton({
-  label,
-  variant = "outline",
-}: {
-  label: string;
-  variant?: "outline" | "solid";
-}) {
-  const labelSize = "clamp(0.72rem,2.15vmin,0.86rem)";
-
-  return (
-    <span
-      className={`inline-flex items-center font-medium leading-none ${BTN_RADIUS} ${inter.className}`}
-      style={{
-        fontSize: labelSize,
-        padding: "clamp(0.28rem,0.85vmin,0.36rem) clamp(0.42rem,1.28vmin,0.55rem)",
-        ...(variant === "solid"
-          ? { background: PUBLISH_BG, color: "#FFFFFF" }
-          : { background: "#FFFFFF", color: INK, border: `1px solid ${BORDER}` }),
-      }}
-    >
-      {label}
-    </span>
   );
 }
 
 /** Incoming document flow web — Inbox carousel slide. */
 export function DoePhoneWorkflowVisual() {
-  const titleSize = "clamp(0.82rem,2.5vmin,0.96rem)";
+  const headingSize = "clamp(1.02rem,3.15vmin,1.22rem)";
 
   return (
     <div
@@ -299,56 +259,24 @@ export function DoePhoneWorkflowVisual() {
       style={{ maxWidth: CAROUSEL_MENU_UI.maxWidthPhone }}
       aria-hidden
     >
-      <div className={`w-full overflow-hidden border bg-white ${OUTER_RADIUS}`} style={{ borderColor: BORDER }}>
-        <div
-          className="flex items-center justify-between border-b"
-          style={{
-            borderColor: BORDER,
-            padding: "clamp(0.68rem,2.1vmin,0.82rem) clamp(0.88rem,2.7vmin,1.05rem)",
-            gap: "clamp(0.55rem,1.65vmin,0.72rem)",
-          }}
+      <div
+        className={`w-full border bg-white ${OUTER_RADIUS}`}
+        style={{ borderColor: BORDER, padding: CARD_PAD }}
+      >
+        <p
+          className="font-semibold leading-none tracking-[-0.015em] iphone-page:mb-[clamp(0.95rem,3.05vmin,1.2rem)]"
+          style={{ color: INK, fontSize: headingSize, marginBottom: "clamp(0.78rem,2.45vmin,0.95rem)" }}
         >
-          <div className="flex min-w-0 flex-1 items-center" style={{ gap: "clamp(0.28rem,0.85vmin,0.38rem)" }}>
-            <svg
-              viewBox="0 0 16 16"
-              fill="none"
-              aria-hidden
-              className="shrink-0 opacity-45"
-              style={{ width: "clamp(0.72rem,2.15vmin,0.85rem)", height: "clamp(0.72rem,2.15vmin,0.85rem)" }}
-            >
-              <path d="M10 3L5 8l5 5" stroke={INK} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            <span className="truncate font-medium leading-none" style={{ color: INK, fontSize: titleSize }}>
-              Dr. Chen&apos;s Clinic
-            </span>
-            <svg
-              viewBox="0 0 16 16"
-              fill="none"
-              aria-hidden
-              className="shrink-0 opacity-30"
-              style={{ width: "clamp(0.62rem,1.85vmin,0.72rem)", height: "clamp(0.62rem,1.85vmin,0.72rem)" }}
-            >
-              <path d="M11.5 2.5l2 2-7.5 7.5H4v-2L11.5 2.5z" stroke={INK} strokeWidth="1.1" strokeLinejoin="round" />
-            </svg>
-          </div>
+          Documents Workflow
+        </p>
 
-          <div className="flex shrink-0 items-center" style={{ gap: "clamp(0.22rem,0.68vmin,0.32rem)" }}>
-            <HeaderButton label="Review" />
-            <HeaderButton label="Deploy" variant="solid" />
-          </div>
-        </div>
+        <IncomingDocsFlow />
 
-        <div className="flex flex-col items-center" style={{ padding: CANVAS_PAD, gap: 0 }}>
-          <div className="w-full" style={{ maxWidth: "clamp(15rem,46vmin,19rem)" }}>
-            <IncomingDocsFlow />
-          </div>
-
+        <div className="flex justify-center">
           <FlowConnector />
-
-          <div className="w-full" style={{ maxWidth: "clamp(15rem,46vmin,19rem)" }}>
-            <ClinicalOutcomesColumn />
-          </div>
         </div>
+
+        <ClinicalOutcomesColumn />
       </div>
     </div>
   );
