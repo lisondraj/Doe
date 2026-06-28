@@ -34,6 +34,7 @@ const FROST_BLUR_CLASS = "backdrop-blur-[10px] iphone-page:backdrop-blur-[8px]";
 
 const EXPAND_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
 const EXPAND_DURATION = "720ms";
+const DESCRIPTION_PAD_X = "clamp(1.45rem,4.45vmin,1.95rem)";
 
 function CarouselSlideToggleBadge({
   expanded,
@@ -172,6 +173,9 @@ function CarouselMenuOverlay({
                 fontSize: "clamp(1.32rem,4.05vmin,1.68rem)",
                 lineHeight: 1.46,
                 letterSpacing: "-0.018em",
+                paddingLeft: DESCRIPTION_PAD_X,
+                paddingRight: DESCRIPTION_PAD_X,
+                textWrap: "pretty",
                 textShadow: "0 1px 8px rgba(30, 52, 58, 0.18)",
                 transition: `max-height ${EXPAND_DURATION} ${EXPAND_EASE}, opacity 640ms ${EXPAND_EASE}, margin-top ${EXPAND_DURATION} ${EXPAND_EASE}`,
               }}
