@@ -30,7 +30,7 @@ export const ABOUT_PAGE_MOBILE_DATE = "June 28, 2026";
 
 /** Desktop /about section two — shortened intro beside beige panel. */
 export const ABOUT_DESKTOP_SECTION_2_INTRO =
-  "Physicians in the United States and Canada entered medicine to care for people, not to spend their days inside payer portals, inbox queues, and after-hours charting.";
+  "Physicians in the United States and Canada entered medicine to care for people, not to spend their days inside payer portals, inbox queues, and after-hours charting. Administrative work now consumes a growing share of every clinic week, pulling clinicians away from patients on both sides of the border.";
 
 /** Desktop /about section three — co-founder bios beside beige panel. */
 export const ABOUT_DESKTOP_FOUNDERS_PARAGRAPHS = [

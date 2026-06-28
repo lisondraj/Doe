@@ -129,7 +129,9 @@ export function AboutDesktopView() {
           <AboutDesktopSplitSection boxSide="right" graphic={0} textFill>
             <div className={`${ABOUT_DESKTOP_SQUARE_PANEL_TW} min-h-0`}>
               <div className={ABOUT_DESKTOP_SECTION_2_STACK}>
-                <AboutDesktopParagraph text={ABOUT_DESKTOP_SECTION_2_INTRO} />
+                <div className="flex min-h-0 flex-1 flex-col justify-center">
+                  <AboutDesktopParagraph text={ABOUT_DESKTOP_SECTION_2_INTRO} />
+                </div>
                 <ArticlePieChart
                   title={sections.pieChart.title}
                   caption={sections.pieChart.caption}

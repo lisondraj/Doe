@@ -15,12 +15,12 @@ export const ABOUT_DESKTOP_FAQ_ITEMS: readonly AboutDesktopFaqItem[] = [
       "Every sentence in a Doe draft links back to the moment in the conversation that supports it. Clinicians review evidence, not opaque output, with explicit pause, discard, and edit controls before anything lands in the record.",
   },
   {
-    question: "Which countries does Doe serve?",
+    question: "Which countries do we serve?",
     answer:
       "We are building for physicians and clinics in the United States and Canada first, where administrative load and documentation burden are reshaping how care is delivered on both sides of the border.",
   },
   {
-    question: "Which professions will Doe support?",
+    question: "Which professions do we support?",
     answer:
       "Doe starts with physicians in ambulatory and hospital-based practice, including primary care, internal medicine, and urgent care, with nursing and allied roles on the roadmap as triage and inbox workflows expand.",
   },

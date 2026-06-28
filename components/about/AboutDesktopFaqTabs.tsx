@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import {
   ABOUT_DESKTOP_FAQ_ANSWER_BODY_TW,
@@ -11,37 +11,70 @@ import {
 } from "@/lib/about/about-layout-styles";
 import { ABOUT_DESKTOP_FAQ_ITEMS } from "@/lib/about/about-desktop-faq";
 
+const FAQ_RULE_TRANSITION_MS = 300;
+
 /** Desktop /about section four — expandable FAQ tabs beside the beige panel. */
 export function AboutDesktopFaqTabs() {
   const [openIndex, setOpenIndex] = useState(0);
   const listRef = useRef<HTMLDivElement>(null);
   const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [activeRuleTop, setActiveRuleTop] = useState(0);
+  const [ruleTransitionEnabled, setRuleTransitionEnabled] = useState(false);
+
+  const measureActiveRule = useCallback(() => {
+    const row = rowRefs.current[openIndex];
+    if (!row) return;
+    setActiveRuleTop(row.offsetTop);
+  }, [openIndex]);
+
+  useLayoutEffect(() => {
+    setRuleTransitionEnabled(true);
+    measureActiveRule();
+
+    const timeoutId = window.setTimeout(() => {
+      setRuleTransitionEnabled(false);
+    }, FAQ_RULE_TRANSITION_MS);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [openIndex, measureActiveRule]);
 
   useLayoutEffect(() => {
     const list = listRef.current;
     if (!list) return;
 
-    const updateActiveRule = () => {
-      const row = rowRefs.current[openIndex];
-      if (!row) return;
-      setActiveRuleTop(row.offsetTop);
-    };
+    measureActiveRule();
 
-    updateActiveRule();
-
-    const observer = new ResizeObserver(updateActiveRule);
+    const observer = new ResizeObserver(measureActiveRule);
     observer.observe(list);
+    rowRefs.current.forEach((row) => {
+      if (row) observer.observe(row);
+    });
 
     return () => observer.disconnect();
-  }, [openIndex]);
+  }, [measureActiveRule]);
+
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list) return;
+
+    const onTransitionEnd = (event: TransitionEvent) => {
+      if (event.target === list || rowRefs.current.some((row) => row === event.target)) {
+        measureActiveRule();
+      }
+    };
+
+    list.addEventListener("transitionend", onTransitionEnd);
+    return () => list.removeEventListener("transitionend", onTransitionEnd);
+  }, [measureActiveRule]);
 
   return (
     <div className={`${ABOUT_DESKTOP_FAQ_PANEL_TW} min-h-0`}>
       <div ref={listRef} className={ABOUT_DESKTOP_FAQ_LIST_TW}>
         <div
-          className="pointer-events-none absolute left-0 right-0 z-10 h-0.5 bg-[#1E343A] transition-[top] duration-300 ease-out motion-reduce:transition-none"
-          style={{ top: activeRuleTop }}
+          className={`pointer-events-none absolute left-0 right-0 top-0 z-10 h-0.5 bg-[#1E343A] motion-reduce:transition-none ${
+            ruleTransitionEnabled ? "transition-transform duration-300 ease-out" : ""
+          }`}
+          style={{ transform: `translateY(${activeRuleTop}px)` }}
           aria-hidden
         />
 

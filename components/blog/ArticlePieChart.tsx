@@ -133,7 +133,7 @@ export function ArticlePieChart({
         <p
           className={`font-normal leading-snug text-[#9A8F82] ${inter.className} ${
             compact && isDesktop
-              ? "mt-2.5 text-[clamp(0.88rem,0.8vw,0.98rem)] md:mt-3 md:text-[clamp(0.92rem,0.84vw,1.02rem)]"
+              ? "mt-2 text-pretty text-[clamp(0.78rem,0.72vw,0.88rem)] md:mt-2.5 md:text-[clamp(0.82rem,0.74vw,0.92rem)]"
               : isDesktop
                 ? "mt-5 text-[clamp(1.02rem,0.95vw,1.18rem)] md:mt-6 md:text-[clamp(1.08rem,1vw,1.22rem)]"
                 : "mt-4 text-[clamp(0.98rem,0.86rem+0.55vmin,1.12rem)] iphone-page:mt-5 iphone-page:text-[clamp(1.05rem,0.92rem+0.65vmin,1.2rem)]"
@@ -147,7 +147,7 @@ export function ArticlePieChart({
         <p
           className={
             compact && isDesktop
-              ? `mt-2 font-normal leading-snug text-[#9A8F82] text-[clamp(0.82rem,0.76vw,0.92rem)] md:text-[clamp(0.88rem,0.8vw,0.98rem)] ${inter.className}`
+              ? `mt-1.5 text-pretty font-normal leading-snug text-[#9A8F82] text-[clamp(0.72rem,0.66vw,0.82rem)] md:mt-2 md:text-[clamp(0.76rem,0.68vw,0.86rem)] ${inter.className}`
               : isDesktop
                 ? ABOUT_DESKTOP_CHART_CITATION_TW
                 : `mt-3 font-normal leading-snug text-[#9A8F82] text-[clamp(0.92rem,0.86rem+0.5vmin,1.05rem)] ${inter.className}`
