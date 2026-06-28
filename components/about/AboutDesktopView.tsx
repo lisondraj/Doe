@@ -126,7 +126,7 @@ export function AboutDesktopView() {
             </div>
           </section>
 
-          <AboutDesktopSplitSection boxSide="right" graphic={0} textFill>
+          <AboutDesktopSplitSection boxSide="right" graphic={0} textFill boxBleedToMargin>
             <div className={`${ABOUT_DESKTOP_SQUARE_PANEL_TW} min-h-0`}>
               <div className={ABOUT_DESKTOP_SECTION_2_STACK}>
                 <div className="flex min-h-0 flex-1 flex-col justify-center">
@@ -145,14 +145,14 @@ export function AboutDesktopView() {
             </div>
           </AboutDesktopSplitSection>
 
-          <AboutDesktopSplitSection boxSide="left" graphic={1}>
+          <AboutDesktopSplitSection boxSide="left" graphic={1} boxBleedToMargin>
             <div className={`flex flex-col ${ABOUT_DESKTOP_CONTENT_STACK_GAP}`}>
               <AboutDesktopParagraph text={foundersOne} />
               <AboutDesktopParagraph text={foundersTwo} />
             </div>
           </AboutDesktopSplitSection>
 
-          <AboutDesktopSplitSection boxSide="right" graphic={2} textFill>
+          <AboutDesktopSplitSection boxSide="right" graphic={2} textFill boxBleedToMargin>
             <AboutDesktopFaqTabs />
           </AboutDesktopSplitSection>
 

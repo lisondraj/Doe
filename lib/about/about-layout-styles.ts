@@ -1,5 +1,7 @@
 import {
   DOEPHONE_DESKTOP_PAGE_INSET_X,
+  DOEPHONE_DESKTOP_PAGE_INSET_LEFT,
+  DOEPHONE_DESKTOP_PAGE_INSET_RIGHT,
   DOEPHONE_SECTION_CAROUSEL_RADIUS,
   DOEPHONE_SECTION_COPY_TW,
 } from "@/lib/doephone/section-styles";
@@ -76,6 +78,19 @@ export const ABOUT_DESKTOP_SECTION_H = "box-border h-[100dvh] max-h-[100dvh] min
 /** Split bands — two equal columns with page gutters and vertical breathing room. */
 export const ABOUT_DESKTOP_SPLIT_SECTION_GRID = `grid h-full min-h-0 w-full grid-cols-2 gap-8 md:gap-10 lg:gap-12 xl:gap-14 ${ABOUT_DESKTOP_PAGE_INSET} py-8 md:py-10 lg:py-12`;
 
+/** Sections 2–4 — beige panel bleeds to the outer page margin on its side. */
+export const ABOUT_DESKTOP_SPLIT_SECTION_GRID_BLEED =
+  "grid h-full min-h-0 w-full grid-cols-2 py-8 md:py-10 lg:py-12";
+
+/** Shared inner gutter between text and beige panel (sections 2–4 bleed layout). */
+export const ABOUT_DESKTOP_SPLIT_BLEED_INNER_X_LEFT =
+  "pl-10 md:pl-12 lg:pl-14 xl:pl-16";
+
+export const ABOUT_DESKTOP_SPLIT_BLEED_INNER_X_RIGHT =
+  "pr-10 md:pr-12 lg:pr-14 xl:pr-16";
+
+export const ABOUT_DESKTOP_SPLIT_BLEED_INNER_Y = "py-8 md:py-10 lg:py-12";
+
 /** Shared inset for text and beige columns within each split band. */
 export const ABOUT_DESKTOP_SPLIT_COLUMN_PAD = "p-6 md:p-8 lg:p-10 xl:p-12";
 
@@ -87,13 +102,28 @@ export const ABOUT_DESKTOP_SPLIT_TEXT_COLUMN_LEFT =
 export const ABOUT_DESKTOP_SPLIT_TEXT_COLUMN_RIGHT =
   `flex min-h-0 min-w-0 flex-col justify-center ${ABOUT_DESKTOP_SPLIT_COLUMN_PAD}`;
 
+/** Text column — bleed layout, beige panel on the right. */
+export const ABOUT_DESKTOP_SPLIT_TEXT_COLUMN_LEFT_BLEED = `flex min-h-0 min-w-0 flex-col justify-center ${DOEPHONE_DESKTOP_PAGE_INSET_LEFT} ${ABOUT_DESKTOP_SPLIT_BLEED_INNER_X_RIGHT} ${ABOUT_DESKTOP_SPLIT_BLEED_INNER_Y}`;
+
+/** Text column — bleed layout, beige panel on the left. */
+export const ABOUT_DESKTOP_SPLIT_TEXT_COLUMN_RIGHT_BLEED = `flex min-h-0 min-w-0 flex-col justify-center ${DOEPHONE_DESKTOP_PAGE_INSET_RIGHT} ${ABOUT_DESKTOP_SPLIT_BLEED_INNER_X_LEFT} ${ABOUT_DESKTOP_SPLIT_BLEED_INNER_Y}`;
+
 /** FAQ text column — center accordion to match beige square footprint. */
 export const ABOUT_DESKTOP_SPLIT_TEXT_COLUMN_FAQ =
   `grid min-h-0 min-w-0 h-full place-items-center ${ABOUT_DESKTOP_SPLIT_COLUMN_PAD}`;
 
+/** FAQ text column — bleed layout beside right-side beige panel. */
+export const ABOUT_DESKTOP_SPLIT_TEXT_COLUMN_FAQ_BLEED = `grid min-h-0 min-w-0 h-full place-items-center ${DOEPHONE_DESKTOP_PAGE_INSET_LEFT} ${ABOUT_DESKTOP_SPLIT_BLEED_INNER_X_RIGHT} ${ABOUT_DESKTOP_SPLIT_BLEED_INNER_Y}`;
+
 /** Beige square column — inset on all four sides within its half of the section. */
 export const ABOUT_DESKTOP_SPLIT_BOX_COLUMN =
   `grid min-h-0 min-w-0 h-full place-items-center ${ABOUT_DESKTOP_SPLIT_COLUMN_PAD}`;
+
+/** Beige square column — flush to the right page margin (sections 2 & 4). */
+export const ABOUT_DESKTOP_SPLIT_BOX_COLUMN_RIGHT_BLEED = `grid min-h-0 min-w-0 h-full items-center justify-items-end ${ABOUT_DESKTOP_SPLIT_BLEED_INNER_X_LEFT} ${ABOUT_DESKTOP_SPLIT_BLEED_INNER_Y}`;
+
+/** Beige square column — flush to the left page margin (section 3). */
+export const ABOUT_DESKTOP_SPLIT_BOX_COLUMN_LEFT_BLEED = `grid min-h-0 min-w-0 h-full items-center justify-items-start ${ABOUT_DESKTOP_SPLIT_BLEED_INNER_X_RIGHT} ${ABOUT_DESKTOP_SPLIT_BLEED_INNER_Y}`;
 
 export const ABOUT_DESKTOP_BEIGE_PANEL_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} aspect-square max-h-full max-w-full w-full`;
 
