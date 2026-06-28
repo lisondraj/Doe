@@ -47,7 +47,17 @@ function CheckIcon({ className }: { className?: string }) {
 }
 
 /** Desktop nav — square email button with left-aligned copy dropdown. */
-export function DesktopNavEmailButton() {
+export function DesktopNavEmailButton({
+  bg = NAV_EMAIL_BG,
+  fg = NAV_EMAIL_FG,
+  borderColor,
+  shadow,
+}: {
+  bg?: string;
+  fg?: string;
+  borderColor?: string;
+  shadow?: string;
+}) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -109,11 +119,13 @@ export function DesktopNavEmailButton() {
     <div ref={rootRef} className="relative shrink-0">
       <button
         type="button"
-        className={`flex ${DESKTOP_NAV_ACTION_HEIGHT_TW} items-center justify-center rounded-md transition-opacity hover:opacity-90`}
+        className={`flex ${DESKTOP_NAV_ACTION_HEIGHT_TW} items-center justify-center rounded-md transition-[opacity,background-color,color,border-color,box-shadow] duration-300 hover:opacity-90`}
         style={{
-          backgroundColor: NAV_EMAIL_BG,
-          color: NAV_EMAIL_FG,
+          backgroundColor: bg,
+          color: fg,
           width: DESKTOP_NAV_ACTION_SIZE,
+          border: borderColor ? `1px solid ${borderColor}` : undefined,
+          boxShadow: shadow,
         }}
         aria-expanded={open}
         aria-haspopup="dialog"

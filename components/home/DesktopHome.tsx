@@ -378,6 +378,9 @@ export function DesktopHome() {
   const heroCtaDivider = desktopHeroNavChrome
     ? "rgba(0, 0, 0, 0.12)"
     : "rgba(255, 255, 255, 0.22)";
+  const heroMailBg = desktopHeroNavChrome ? "transparent" : "#000000";
+  const heroMailFg = "#ffffff";
+  const heroMailBorder = desktopHeroNavChrome ? "rgba(255, 255, 255, 0.35)" : undefined;
 
   return (
     <div className="relative overflow-x-hidden" style={{ backgroundColor: '#F7F6F3' }}>
@@ -439,7 +442,11 @@ export function DesktopHome() {
             </Link>
 
             <div className="flex shrink-0 items-center gap-2.5">
-              <DesktopNavEmailButton />
+              <DesktopNavEmailButton
+                bg={heroMailBg}
+                fg={heroMailFg}
+                borderColor={heroMailBorder}
+              />
 
               <DesktopMainNavCta
                 bg={heroWaitlistBg}
