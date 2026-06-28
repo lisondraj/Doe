@@ -173,9 +173,9 @@ export function DoePhoneCommunicationIntelligenceSection({
         />
       </div>
 
-      {panelOpen ? <BuildSectionFrostOverlay closing={isClosing} /> : null}
+      <div className="relative flex h-full min-h-0 flex-col">
+        {panelOpen ? <BuildSectionFrostOverlay closing={isClosing} /> : null}
 
-      <div className="relative z-10 flex h-full min-h-0 flex-col">
         <BuildSectionToggleBadge
           expanded={panelOpen}
           interactive={!isClosing}
@@ -186,8 +186,8 @@ export function DoePhoneCommunicationIntelligenceSection({
           }}
         />
 
-        <div className={`relative shrink-0 ${DOEPHONE_SECTION_CONTENT_INSET} ${DOEPHONE_SECTION_TITLE_PT}`}>
-          <div className="relative z-[10] pr-[clamp(5.5rem,17vmin,7rem)]">
+        <div className={`relative z-[20] shrink-0 ${DOEPHONE_SECTION_CONTENT_INSET} ${DOEPHONE_SECTION_TITLE_PT}`}>
+          <div className="relative pr-[clamp(5.5rem,17vmin,7rem)]">
             <DoePhoneSectionTitle
               line1="Build."
               line2="Build."
@@ -197,7 +197,7 @@ export function DoePhoneCommunicationIntelligenceSection({
           </div>
         </div>
 
-        <div className="relative z-[18] flex min-h-0 flex-1 flex-col items-center justify-center">
+        <div className="relative z-[20] flex min-h-0 flex-1 flex-col items-center justify-center">
           <div
             className={`${DOEPHONE_SECTION_CAROUSEL_INSET_X} w-full max-w-full transition-[opacity,transform] duration-[720ms]`}
             style={{
