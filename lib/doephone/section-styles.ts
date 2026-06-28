@@ -28,6 +28,10 @@ export const DESKTOP_HOME_FIXED_NAV_HEIGHT = "5.5rem";
 /** Viewport band below fixed desktop nav (Build section height). */
 export const DESKTOP_HOME_BELOW_NAV_HEIGHT = `calc(100dvh - ${DESKTOP_HOME_FIXED_NAV_HEIGHT})`;
 
+/** Desktop home — panel rows and full-bleed gradient bands share second-section height. */
+export const DESKTOP_HOME_BAND_MIN_H = "min-h-[112vh]";
+export const DESKTOP_HOME_BAND_H = "min-h-[112vh] h-[112vh]";
+
 /** Full-bleed desktop bands — shared top inset for title (left) and + badge (right). */
 export const DESKTOP_FULLSCREEN_SECTION_TOP = "top-10 md:top-14 lg:top-16 xl:top-20";
 
@@ -93,9 +97,9 @@ export const DOEPHONE_DISPLAY_WEIGHT_TW = "font-[350]";
 export const DOEPHONE_SECTION_COPY_TW =
   "text-left font-light leading-[1.02] tracking-[-0.03em] text-[clamp(3.05rem,11.75vw,5.15rem)] iphone-page:text-[clamp(2.9rem,11vw,4.85rem)]";
 
-/** Desktop full-bleed gradient bands — slightly smaller than mobile section titles. */
+/** Desktop full-bleed gradient bands — between mobile section scale and prior desktop size. */
 export const DESKTOP_FULLSCREEN_SECTION_TITLE_TW =
-  "text-left font-light leading-[1.02] tracking-[-0.03em] text-[clamp(2.15rem,3.35vw,3.35rem)] md:text-[clamp(2.28rem,3.05vw,3.55rem)] lg:text-[clamp(2.4rem,2.85vw,3.75rem)]";
+  "text-left font-light leading-[1.02] tracking-[-0.03em] text-[clamp(2.45rem,3.75vw,3.75rem)] md:text-[clamp(2.58rem,3.45vw,3.95rem)] lg:text-[clamp(2.72rem,3.2vw,4.15rem)]";
 
 /** Full iPhone viewport band — locked to `--app-vh` (stable vs Safari chrome). */
 export const DOEPHONE_VIEWPORT_SECTION =

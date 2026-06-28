@@ -1,6 +1,6 @@
 import { ABOUT_PATH, JOIN_PATH, WAITLIST_PATH } from "@/lib/site-domains";
 
-export const ABOUT_LABEL = "About";
+export const ABOUT_LABEL = "Investors";
 
 /** @deprecated Use ABOUT_LABEL */
 export const FOR_INVESTORS_LABEL = ABOUT_LABEL;

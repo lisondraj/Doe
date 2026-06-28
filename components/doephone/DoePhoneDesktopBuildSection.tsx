@@ -10,7 +10,7 @@ import { DoePhoneSectionTitle } from "@/components/doephone/DoePhoneSectionText"
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { inter } from "@/lib/home/fonts";
 import {
-  DESKTOP_HOME_BELOW_NAV_HEIGHT,
+  DESKTOP_HOME_BAND_H,
   DESKTOP_FULLSCREEN_SECTION_BADGE_INSET,
   DESKTOP_FULLSCREEN_SECTION_TITLE_PT,
   DESKTOP_FULLSCREEN_SECTION_TITLE_TW,
@@ -92,12 +92,8 @@ export function DoePhoneDesktopBuildSection() {
 
   return (
     <section
-      className="relative isolate z-10 w-full overflow-hidden bg-[#1E343A]"
-      style={{
-        ...(doephoneSectionRevealStyleVars() as CSSProperties),
-        minHeight: DESKTOP_HOME_BELOW_NAV_HEIGHT,
-        height: DESKTOP_HOME_BELOW_NAV_HEIGHT,
-      }}
+      className={`relative isolate z-10 w-full overflow-hidden bg-[#1E343A] ${DESKTOP_HOME_BAND_H}`}
+      style={doephoneSectionRevealStyleVars() as CSSProperties}
       aria-label="Build"
     >
       <div className="pointer-events-none absolute -inset-[3%] overflow-hidden" aria-hidden>
@@ -114,8 +110,7 @@ export function DoePhoneDesktopBuildSection() {
 
       <div
         ref={sectionRef}
-        className="relative z-[20] flex w-full flex-col"
-        style={{ minHeight: DESKTOP_HOME_BELOW_NAV_HEIGHT, height: DESKTOP_HOME_BELOW_NAV_HEIGHT }}
+        className={`relative z-[20] flex w-full flex-col ${DESKTOP_HOME_BAND_H}`}
       >
         <DoePhoneDesktopFrostPlusBadge
           expanded={panelOpen}

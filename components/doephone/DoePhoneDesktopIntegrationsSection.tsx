@@ -5,6 +5,7 @@ import { DoePhoneIntegrateVisual } from "@/components/doephone/DoePhoneIntegrate
 import { DoePhoneSectionTitle } from "@/components/doephone/DoePhoneSectionText";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import {
+  DESKTOP_HOME_BAND_H,
   DESKTOP_FULLSCREEN_SECTION_BADGE_INSET,
   DESKTOP_FULLSCREEN_SECTION_TITLE_PT,
   DESKTOP_FULLSCREEN_SECTION_TITLE_TW,
@@ -27,7 +28,7 @@ export function DoePhoneDesktopIntegrationsSection() {
 
   return (
     <section
-      className="relative isolate z-10 min-h-[112vh] w-full overflow-hidden bg-[#1E343A]"
+      className={`relative isolate z-10 w-full overflow-hidden bg-[#1E343A] ${DESKTOP_HOME_BAND_H}`}
       style={doephoneSectionRevealStyleVars() as CSSProperties}
       aria-label="Integrations"
     >
@@ -42,7 +43,7 @@ export function DoePhoneDesktopIntegrationsSection() {
 
       <div
         ref={sectionRef}
-        className={`relative z-[20] min-h-[112vh] w-full ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}
+        className={`relative z-[20] w-full ${DESKTOP_HOME_BAND_H} ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}
       >
         <DoePhoneDesktopFrostPlusBadge
           className={`absolute z-30 ${DESKTOP_FULLSCREEN_SECTION_BADGE_INSET} ${doePhoneSectionRevealSegmentClass("badge", revealed)}`}

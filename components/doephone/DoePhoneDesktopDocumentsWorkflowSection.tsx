@@ -5,9 +5,11 @@ import { DoePhoneSectionTitle } from "@/components/doephone/DoePhoneSectionText"
 import { DoePhoneWorkflowVisual } from "@/components/doephone/DoePhoneWorkflowVisual";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import {
+  DESKTOP_HOME_BAND_H,
   DESKTOP_FULLSCREEN_SECTION_BADGE_INSET,
   DESKTOP_FULLSCREEN_SECTION_TITLE_PT,
   DESKTOP_FULLSCREEN_SECTION_TITLE_TW,
+  DOEPHONE_DESKTOP_PAGE_INSET_RIGHT,
   DOEPHONE_DESKTOP_PAGE_INSET_X,
 } from "@/lib/doephone/section-styles";
 import { doephoneSectionRevealStyleVars } from "@/lib/doephone/section-reveal-timing";
@@ -23,13 +25,15 @@ const DOCUMENTS_BAND_BACKDROP = {
   grid: "wave" as const,
 };
 
-/** Desktop documents band — Build hero gradient with wave overlay and workflow UI centered. */
+const DESKTOP_DOCUMENTS_UI_INSET = `pb-10 md:pb-14 lg:pb-16 xl:pb-20 ${DOEPHONE_DESKTOP_PAGE_INSET_RIGHT}`;
+
+/** Desktop documents band — hero gradient with wave overlay and workflow UI bottom-right. */
 export function DoePhoneDesktopDocumentsWorkflowSection() {
   const { ref: sectionRef, revealed } = useDoePhoneSectionReveal();
 
   return (
     <section
-      className="relative isolate z-10 min-h-[112vh] w-full overflow-hidden bg-[#1E343A]"
+      className={`relative isolate z-10 w-full overflow-hidden bg-[#1E343A] ${DESKTOP_HOME_BAND_H}`}
       style={doephoneSectionRevealStyleVars() as CSSProperties}
       aria-label="Documents workflow"
     >
@@ -44,7 +48,7 @@ export function DoePhoneDesktopDocumentsWorkflowSection() {
 
       <div
         ref={sectionRef}
-        className={`relative z-[20] min-h-[112vh] w-full ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}
+        className={`relative z-[20] w-full ${DESKTOP_HOME_BAND_H} ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}
       >
         <DoePhoneDesktopFrostPlusBadge
           className={`absolute z-30 ${DESKTOP_FULLSCREEN_SECTION_BADGE_INSET} ${doePhoneSectionRevealSegmentClass("badge", revealed)}`}
@@ -64,9 +68,9 @@ export function DoePhoneDesktopDocumentsWorkflowSection() {
         </div>
 
         <div
-          className={`pointer-events-none absolute inset-0 z-[20] flex items-center justify-center px-[clamp(1.5rem,3vw,3rem)] ${doePhoneSectionRevealSegmentClass("input", revealed)}`}
+          className={`absolute bottom-0 right-0 z-[20] ${DESKTOP_DOCUMENTS_UI_INSET} ${doePhoneSectionRevealSegmentClass("input", revealed)}`}
         >
-          <div className="pointer-events-auto w-full max-w-[min(100%,40rem)]">
+          <div className="pointer-events-auto origin-bottom-right w-full max-w-[min(100%,40rem)]">
             <DoePhoneWorkflowVisual layout="desktop" />
           </div>
         </div>
