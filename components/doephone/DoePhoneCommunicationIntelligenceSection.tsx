@@ -11,10 +11,9 @@ import { inter } from "@/lib/home/fonts";
 import {
   DOEPHONE_SECTION_CAROUSEL_INSET_X,
   DOEPHONE_SECTION_CONTENT_INSET,
-  DOEPHONE_SECTION_TITLE_PB,
   DOEPHONE_SECTION_TITLE_PT,
-  DOEPHONE_VIEWPORT_SECTION,
 } from "@/lib/doephone/section-styles";
+import { DOEPHONE_HERO_HEIGHT } from "@/components/doephone/DoePhoneHeroSection";
 import { DOEPHONE_HERO_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 
@@ -126,11 +125,7 @@ function BuildSectionToggleBadge({
 }
 
 /** Gradient viewport — Build. Build. Build. title + workflow prompt. */
-export function DoePhoneCommunicationIntelligenceSection({
-  sectionClassName = DOEPHONE_VIEWPORT_SECTION,
-}: {
-  sectionClassName?: string;
-}) {
+export function DoePhoneCommunicationIntelligenceSection() {
   const [panelPhase, setPanelPhase] = useState<PanelPhase>("idle");
   const closeTimerRef = useRef<number | undefined>(undefined);
   const panelOpen = panelPhase !== "idle";
@@ -163,7 +158,11 @@ export function DoePhoneCommunicationIntelligenceSection({
   }, [panelPhase]);
 
   return (
-    <section className={`${sectionClassName} isolate`} aria-label="Build">
+    <section
+      className="relative isolate z-10 w-full overflow-hidden bg-[#1E343A]"
+      style={{ minHeight: DOEPHONE_HERO_HEIGHT, height: DOEPHONE_HERO_HEIGHT }}
+      aria-label="Build"
+    >
       <div className="pointer-events-none absolute -inset-[3%] overflow-hidden" aria-hidden>
         <WorkflowCarouselDesignBackdrop
           backdrop={backdrop}
@@ -197,42 +196,44 @@ export function DoePhoneCommunicationIntelligenceSection({
           </div>
         </div>
 
-        <div className="relative z-[20] flex min-h-0 flex-1 flex-col items-center justify-center">
-          <div
-            className={`${DOEPHONE_SECTION_CAROUSEL_INSET_X} w-full max-w-full transition-[opacity,transform] duration-[720ms]`}
-            style={{
-              transitionTimingFunction: EXPAND_EASE,
-              opacity: showContent ? 1 : 0,
-              transform: showContent ? "translateY(0)" : "translateY(0.65rem)",
-              pointerEvents: showContent ? "auto" : "none",
-            }}
-          >
-            {BUILD_PARAGRAPHS.map((paragraph) => (
-              <p
-                key={paragraph}
-                className={`${inter.className} text-left font-normal text-white`}
-                style={{
-                  fontSize: "clamp(1.38rem,4.25vmin,1.78rem)",
-                  lineHeight: 1.48,
-                  letterSpacing: "-0.018em",
-                  textShadow: "0 1px 8px rgba(30, 52, 58, 0.18)",
-                  marginTop: paragraph === BUILD_PARAGRAPHS[0] ? 0 : "clamp(1rem,3.1vmin,1.35rem)",
-                }}
-              >
-                {paragraph}
-              </p>
-            ))}
+        <div className="relative z-[20] flex min-h-0 flex-1 flex-col">
+          <div className="flex min-h-0 flex-1 flex-col items-center justify-center">
+            <div
+              className={`${DOEPHONE_SECTION_CAROUSEL_INSET_X} w-full max-w-full transition-[opacity,transform] duration-[720ms]`}
+              style={{
+                transitionTimingFunction: EXPAND_EASE,
+                opacity: showContent ? 1 : 0,
+                transform: showContent ? "translateY(0)" : "translateY(0.65rem)",
+                pointerEvents: showContent ? "auto" : "none",
+              }}
+            >
+              {BUILD_PARAGRAPHS.map((paragraph) => (
+                <p
+                  key={paragraph}
+                  className={`${inter.className} text-left font-normal text-white`}
+                  style={{
+                    fontSize: "clamp(1.38rem,4.25vmin,1.78rem)",
+                    lineHeight: 1.48,
+                    letterSpacing: "-0.018em",
+                    textShadow: "0 1px 8px rgba(30, 52, 58, 0.18)",
+                    marginTop: paragraph === BUILD_PARAGRAPHS[0] ? 0 : "clamp(1rem,3.1vmin,1.35rem)",
+                  }}
+                >
+                  {paragraph}
+                </p>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div
-          className={`relative z-[20] shrink-0 ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${DOEPHONE_SECTION_TITLE_PB}`}
-        >
-          <DoePhoneAmbientPromptCard headerLabel="New Workflow" layout="section" toolIcons="workflow" size="large">
-            Show me which patients have been enrolled in <PromptTag label="Clinical Trial #473" /> from my EMR,
-            compile results in <PromptTag label="Excel" /> and integrate data from{" "}
-            <PromptTag label="OpenEvidence" /> + email to <WorkflowMentionAt />
-          </DoePhoneAmbientPromptCard>
+          <div
+            className={`relative shrink-0 ${DOEPHONE_SECTION_CAROUSEL_INSET_X} pb-[clamp(1.25rem,3.85vmin,1.65rem)]`}
+          >
+            <DoePhoneAmbientPromptCard headerLabel="New Workflow" layout="section" toolIcons="workflow" size="large">
+              Show me which patients have been enrolled in <PromptTag label="Clinical Trial #473" /> from my EMR,
+              compile results in <PromptTag label="Excel" /> and integrate data from{" "}
+              <PromptTag label="OpenEvidence" /> + email to <WorkflowMentionAt />
+            </DoePhoneAmbientPromptCard>
+          </div>
         </div>
       </div>
     </section>

@@ -6,7 +6,7 @@ import { DoePhoneCommunicationIntelligenceSection } from "@/components/doephone/
 import { DoePhoneIntegrationsSection } from "@/components/doephone/DoePhoneIntegrationsSection";
 import { DoePhoneCommunicationSection } from "@/components/doephone/DoePhoneCommunicationSection";
 import { DoePhoneCustomizationSection } from "@/components/doephone/DoePhoneCustomizationSection";
-import { DoePhoneHeroSection } from "@/components/doephone/DoePhoneHeroSection";
+import { DoePhoneHeroSection, DOEPHONE_HERO_HEIGHT } from "@/components/doephone/DoePhoneHeroSection";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
 import {
   DOEPHONE_BEIGE_SECTION,
@@ -32,7 +32,7 @@ export function DoePhoneMobileView() {
         <DoePhoneCommunicationSection />
       </section>
 
-      <DoePhoneCommunicationIntelligenceSection sectionClassName={DOEPHONE_MAIN_PAGE_VIEWPORT_SECTION} />
+      <DoePhoneCommunicationIntelligenceSection />
 
       <section className={DOEPHONE_MAIN_PAGE_BEIGE_SECTION} aria-label="Customization">
         <DoePhoneCustomizationSection />
