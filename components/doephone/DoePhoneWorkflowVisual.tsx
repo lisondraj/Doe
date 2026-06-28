@@ -292,8 +292,13 @@ function HeaderButton({
 }
 
 /** Incoming document flow web — Inbox carousel slide. */
-export function DoePhoneWorkflowVisual() {
+export function DoePhoneWorkflowVisual({
+  layout = "phone",
+}: {
+  layout?: "phone" | "desktop";
+}) {
   const headingSize = "clamp(1.02rem,3.15vmin,1.22rem)";
+  const scale = layout === "desktop" ? 0.74 : 0.9;
 
   return (
     <div
@@ -303,7 +308,7 @@ export function DoePhoneWorkflowVisual() {
     >
       <div
         className="w-full origin-center"
-        style={{ transform: "scale(0.9)" }}
+        style={{ transform: `scale(${scale})` }}
       >
         <div
           className={`w-full border bg-white ${OUTER_RADIUS}`}

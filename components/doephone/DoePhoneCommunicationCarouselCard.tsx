@@ -282,7 +282,7 @@ export function DoePhoneCommunicationCarouselCard({
         description={slide.description}
         layout={layout}
       >
-        <DoePhoneCommunicationSlideVisual slideId={slide.id} />
+        <DoePhoneCommunicationSlideVisual slideId={slide.id} layout={layout} />
       </CarouselMenuOverlay>
       <CarouselSlideToggleBadge
         expanded={panelOpen}

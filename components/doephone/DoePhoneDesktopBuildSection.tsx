@@ -1,11 +1,7 @@
 "use client";
 
-import {
-  DoePhoneAmbientPromptCard,
-  PromptTag,
-  WorkflowMentionAt,
-} from "@/components/doephone/DoePhoneAmbientPromptCard";
 import { DoePhoneSectionTitle } from "@/components/doephone/DoePhoneSectionText";
+import { DoePhoneWorkflowVisual } from "@/components/doephone/DoePhoneWorkflowVisual";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { inter } from "@/lib/home/fonts";
 import {
@@ -233,16 +229,7 @@ export function DoePhoneDesktopBuildSection() {
             className={`absolute bottom-0 right-0 z-[30] ${DESKTOP_BUILD_INPUT_INSET} ${doePhoneSectionRevealSegmentClass("input", revealed)}`}
           >
             <div className="w-[clamp(28rem,42vw,44rem)] max-w-[calc(100vw-2rem)]">
-              <DoePhoneAmbientPromptCard
-                headerLabel="New Workflow"
-                layout="section"
-                toolIcons="workflow"
-                size="desktop"
-              >
-                Show me which patients have been enrolled in <PromptTag label="Clinical Trial #473" /> from my EMR,
-                compile results in <PromptTag label="Excel" /> and integrate data from{" "}
-                <PromptTag label="OpenEvidence" /> + email to <WorkflowMentionAt />
-              </DoePhoneAmbientPromptCard>
+              <DoePhoneWorkflowVisual layout="desktop" />
             </div>
           </div>
         </div>
