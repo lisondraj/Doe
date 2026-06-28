@@ -20,9 +20,9 @@ import {
   ABOUT_DESKTOP_SECTION_1_H,
   ABOUT_DESKTOP_SECTION_1_LAYOUT,
   ABOUT_DESKTOP_SECTION_H,
+  ABOUT_DESKTOP_HERO_BYLINE_TW,
   ABOUT_DESKTOP_SUBHEADING_TW,
   ABOUT_DESKTOP_TITLE_TW,
-  ABOUT_DESKTOP_BYLINE_TW,
   ABOUT_PAGE_SUBHEADING_LINES,
 } from "@/lib/about/about-layout-styles";
 import {
@@ -30,7 +30,6 @@ import {
   ABOUT_PAGE_HERO_BACKDROP,
   ABOUT_PAGE_HERO_PATTERN_SCALE,
   ABOUT_PAGE_MOBILE_BYLINE,
-  ABOUT_PAGE_MOBILE_DATE,
 } from "@/lib/about/about-page-article";
 import type { ArticleBlock } from "@/lib/blog/articles";
 import { lora } from "@/lib/home/fonts";
@@ -101,13 +100,6 @@ export function AboutDesktopView() {
                 <span className="block">{ABOUT_PAGE_SUBHEADING_LINES[1]}</span>
               </p>
 
-              <p className={ABOUT_DESKTOP_BYLINE_TW}>
-                {ABOUT_PAGE_MOBILE_BYLINE}
-                <span className="mx-2" aria-hidden>
-                  ·
-                </span>
-                {ABOUT_PAGE_MOBILE_DATE}
-              </p>
             </div>
 
             <div className={ABOUT_DESKTOP_HERO_WRAP}>
@@ -117,7 +109,9 @@ export function AboutDesktopView() {
                 boxClassName={ABOUT_DESKTOP_HERO_BOX_TW}
                 gapClassName=""
                 patternScale={ABOUT_PAGE_HERO_PATTERN_SCALE}
-              />
+              >
+                <p className={ABOUT_DESKTOP_HERO_BYLINE_TW}>{ABOUT_PAGE_MOBILE_BYLINE}</p>
+              </BlogHeroVisual>
             </div>
           </section>
 
