@@ -2,7 +2,7 @@
 
 import { DoePhoneEmbeddedFilesVisual } from "@/components/doephone/DoePhoneEmbeddedFilesVisual";
 import { DoePhoneBillingVisual } from "@/components/doephone/DoePhoneBillingVisual";
-import { DoePhoneFrontDeskVoiceVisual } from "@/components/doephone/DoePhoneFrontDeskVoiceVisual";
+import { DoePhoneWorkflowVisual } from "@/components/doephone/DoePhoneWorkflowVisual";
 import { DoePhoneIncomingLabsVisual } from "@/components/doephone/DoePhoneIncomingLabsVisual";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import {
@@ -55,7 +55,7 @@ function DoePhoneCarouselCard({ slide }: { slide: DoePhoneCommunicationSlide }) 
       ) : null}
       {slide.id === "front-desk" ? (
         <CarouselMenuOverlay>
-          <DoePhoneFrontDeskVoiceVisual />
+          <DoePhoneWorkflowVisual />
         </CarouselMenuOverlay>
       ) : null}
       {slide.id === "billing" ? (
