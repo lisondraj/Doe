@@ -15,6 +15,11 @@ import {
 } from "@/lib/doephone/section-styles";
 import { DOEPHONE_HERO_HEIGHT } from "@/components/doephone/DoePhoneHeroSection";
 import { DOEPHONE_HERO_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
+import { doephoneSectionRevealStyleVars } from "@/lib/doephone/section-reveal-timing";
+import {
+  doePhoneSectionRevealSegmentClass,
+  useDoePhoneSectionReveal,
+} from "@/lib/doephone/use-doe-phone-section-reveal";
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 
 const BUILD_ADD_BADGE_SIZE = "clamp(5.25rem,16vmin,6.75rem)";
@@ -126,6 +131,7 @@ function BuildSectionToggleBadge({
 
 /** Gradient viewport — Build. Build. Build. title + workflow prompt. */
 export function DoePhoneCommunicationIntelligenceSection() {
+  const { ref: sectionRef, revealed } = useDoePhoneSectionReveal();
   const [panelPhase, setPanelPhase] = useState<PanelPhase>("idle");
   const closeTimerRef = useRef<number | undefined>(undefined);
   const panelOpen = panelPhase !== "idle";
@@ -160,7 +166,13 @@ export function DoePhoneCommunicationIntelligenceSection() {
   return (
     <section
       className="relative isolate z-10 h-full w-full overflow-hidden bg-[#1E343A]"
-      style={{ minHeight: DOEPHONE_HERO_HEIGHT, height: DOEPHONE_HERO_HEIGHT }}
+      style={
+        {
+          minHeight: DOEPHONE_HERO_HEIGHT,
+          height: DOEPHONE_HERO_HEIGHT,
+          ...doephoneSectionRevealStyleVars(),
+        } as CSSProperties
+      }
       aria-label="Build"
     >
       <div className="pointer-events-none absolute -inset-[3%] overflow-hidden" aria-hidden>
@@ -174,13 +186,13 @@ export function DoePhoneCommunicationIntelligenceSection() {
 
       {panelOpen ? <BuildSectionFrostOverlay closing={isClosing} /> : null}
 
-      <div className="relative z-[20] flex h-full min-h-0 flex-col">
+      <div ref={sectionRef} className="relative z-[20] flex h-full min-h-0 flex-col">
 
         <BuildSectionToggleBadge
           expanded={panelOpen}
           interactive={!isClosing}
           onToggle={toggleExpanded}
-          className="z-30 right-6 iphone-page:right-[max(2.35rem,calc(env(safe-area-inset-right,0px)+5.25vmin))]"
+          className={`z-30 right-6 iphone-page:right-[max(2.35rem,calc(env(safe-area-inset-right,0px)+5.25vmin))] ${doePhoneSectionRevealSegmentClass("badge", revealed)}`}
           style={{
             top: "max(1.95rem, calc(env(safe-area-inset-top, 0px) + calc(var(--app-vh, 100lvh) * 0.0725)))",
           }}
@@ -193,6 +205,8 @@ export function DoePhoneCommunicationIntelligenceSection() {
               line2="Build."
               line3="Build."
               color="text-white"
+              segmentedReveal
+              revealed={revealed}
             />
           </div>
         </div>
@@ -226,7 +240,7 @@ export function DoePhoneCommunicationIntelligenceSection() {
           </div>
 
           <div
-            className={`relative shrink-0 ${DOEPHONE_SECTION_CAROUSEL_INSET_X} pb-[clamp(5.75rem,17.5vmin,7.5rem)]`}
+            className={`relative shrink-0 ${DOEPHONE_SECTION_CAROUSEL_INSET_X} pb-[clamp(5.75rem,17.5vmin,7.5rem)] ${doePhoneSectionRevealSegmentClass("input", revealed)}`}
           >
             <DoePhoneAmbientPromptCard headerLabel="New Workflow" layout="section" toolIcons="workflow" size="large">
               Show me which patients have been enrolled in <PromptTag label="Clinical Trial #473" /> from my EMR,

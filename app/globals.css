@@ -711,6 +711,16 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
     cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-menu-delay, 2.85s) both;
 }
 
+.doephone-section-reveal--in.doephone-section-reveal--badge {
+  animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 1.75s)
+    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-badge-delay, 700ms) both;
+}
+
+.doephone-section-reveal--in.doephone-section-reveal--input {
+  animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 1.75s)
+    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-input-delay, 2.85s) both;
+}
+
 .doephone-section-plus {
   display: inline-block;
   vertical-align: baseline;

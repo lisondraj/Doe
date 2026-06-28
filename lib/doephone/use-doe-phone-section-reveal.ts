@@ -34,7 +34,7 @@ export function useDoePhoneSectionReveal(threshold = 0.12) {
 }
 
 export function doePhoneSectionRevealSegmentClass(
-  segment: "title" | "carousel" | "menu",
+  segment: "title" | "carousel" | "menu" | "badge" | "input",
   revealed: boolean,
 ) {
   return [
