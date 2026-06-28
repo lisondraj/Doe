@@ -12,7 +12,10 @@ import {
   type DoePhoneCommunicationSlide,
 } from "@/lib/doephone/communication-carousel";
 import { CAROUSEL_MENU_UI } from "@/lib/doephone/carousel-menu-visual-styles";
-import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
+import {
+  DOEPHONE_SECTION_CAROUSEL_CLIP_STYLE,
+  DOEPHONE_SECTION_CAROUSEL_RADIUS,
+} from "@/lib/doephone/section-styles";
 import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from "react";
 
 type MenuInject = { scrollIndex: number; slideIndex: number };
@@ -20,15 +23,15 @@ type MenuInject = { scrollIndex: number; slideIndex: number };
 const CAROUSEL_MENU_OVERLAY =
   "absolute inset-0 z-10 flex h-full w-full items-center justify-center";
 
-const ADD_BADGE_SIZE = "clamp(3.75rem,11.5vmin,4.65rem)";
+const ADD_BADGE_SIZE = "clamp(4.35rem,13.4vmin,5.4rem)";
 
 function CarouselSlideAddBadge() {
   return (
     <span
-      className="pointer-events-none absolute z-20 flex items-center justify-center rounded-full backdrop-blur-[10px] iphone-page:backdrop-blur-[8px] [transform:translateZ(0)]"
+      className="pointer-events-none absolute z-20 flex items-center justify-center rounded-full backdrop-blur-[10px] iphone-page:backdrop-blur-[8px]"
       style={{
-        bottom: "clamp(1rem,3.05vmin,1.25rem)",
-        right: "clamp(1rem,3.05vmin,1.25rem)",
+        bottom: "clamp(1.45rem,4.45vmin,1.85rem)",
+        right: "clamp(1.45rem,4.45vmin,1.85rem)",
         width: ADD_BADGE_SIZE,
         height: ADD_BADGE_SIZE,
         background: "rgba(255, 255, 255, 0.42)",
@@ -39,7 +42,7 @@ function CarouselSlideAddBadge() {
       <span
         className="font-light leading-none text-white"
         style={{
-          fontSize: "clamp(2.45rem,7.55vmin,3.05rem)",
+          fontSize: "clamp(2.85rem,8.85vmin,3.55rem)",
           marginTop: "-0.06em",
           textShadow: "0 1px 8px rgba(30, 52, 58, 0.18)",
         }}
@@ -66,18 +69,15 @@ function CarouselMenuOverlay({ children }: { children: React.ReactNode }) {
 function DoePhoneCarouselCard({ slide }: { slide: DoePhoneCommunicationSlide }) {
   return (
     <div
-      className={`relative isolate h-full w-full ${DOEPHONE_SECTION_CAROUSEL_RADIUS} shadow-[0_10px_32px_rgba(0,0,0,0.1)]`}
+      className={`relative isolate h-full w-full overflow-hidden ${DOEPHONE_SECTION_CAROUSEL_RADIUS} shadow-[0_10px_32px_rgba(0,0,0,0.1)]`}
+      style={DOEPHONE_SECTION_CAROUSEL_CLIP_STYLE}
       aria-hidden
     >
-      <div
-        className={`absolute inset-0 overflow-hidden [transform:translateZ(0)] ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
-      >
-        <WorkflowCarouselDesignBackdrop
-          backdrop={slide.backdrop}
-          embedded
-          className={DOEPHONE_SECTION_CAROUSEL_RADIUS}
-        />
-      </div>
+      <WorkflowCarouselDesignBackdrop
+        backdrop={slide.backdrop}
+        embedded
+        className={DOEPHONE_SECTION_CAROUSEL_RADIUS}
+      />
       {slide.id === "agents" ? (
         <CarouselMenuOverlay>
           <DoePhoneClinicAgentsVisual />

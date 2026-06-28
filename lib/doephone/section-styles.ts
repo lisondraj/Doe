@@ -1,4 +1,5 @@
 import { inter, suisseIntl } from "@/lib/home/fonts";
+import type { CSSProperties } from "react";
 
 /** Shared horizontal inset for /doephone section copy — matches hero. */
 export const DOEPHONE_SECTION_COPY_INSET =
@@ -99,6 +100,15 @@ export const DOEPHONE_BOX_CLUSTER_STAGE_HEIGHT =
 /** Rounded corners shared by section 2 carousel cards + embedded backdrop clip. */
 export const DOEPHONE_SECTION_CAROUSEL_RADIUS =
   "rounded-[clamp(1.1rem,0.95rem+0.75vmin,1.45rem)]";
+
+/** Matching radius for clip-path — avoids grey square wedges at bottom corners on Safari. */
+export const DOEPHONE_SECTION_CAROUSEL_RADIUS_PX =
+  "clamp(1.1rem, calc(0.95rem + 0.75vmin), 1.45rem)";
+
+export const DOEPHONE_SECTION_CAROUSEL_CLIP_STYLE: CSSProperties = {
+  borderRadius: DOEPHONE_SECTION_CAROUSEL_RADIUS_PX,
+  clipPath: `inset(0 round ${DOEPHONE_SECTION_CAROUSEL_RADIUS_PX})`,
+};
 
 /** Customization section footer carousel — taller than nav default. */
 export const DOEPHONE_SECTION_FOOTER_CAROUSEL_HEIGHT =

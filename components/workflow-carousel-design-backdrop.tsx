@@ -81,12 +81,14 @@ function PolarGridOverlay({
   introOnLoad = false,
   surface = "orange",
   lineOverlayOpacity,
+  clipClassName = "",
 }: {
   patternScale?: number;
   centerY?: string;
   introOnLoad?: boolean;
   surface?: WorkflowCarouselSurface;
   lineOverlayOpacity?: number;
+  clipClassName?: string;
 }) {
   const polarCy = polarCenterYUnits(centerY);
   const ringCount = introOnLoad ? DOEPHONE_HERO_INTRO_RING_COUNT : 6;
@@ -104,9 +106,9 @@ function PolarGridOverlay({
 
   return (
     <div
-      className={`pointer-events-none absolute inset-0 z-[2] overflow-hidden${
+      className={`pointer-events-none absolute inset-0 z-[2] overflow-hidden ${clipClassName}${
         introOnLoad ? " doephone-hero-polar-overlay doephone-hero-polar-overlay--intro" : ""
-      }`}
+      }`.trim()}
       aria-hidden
     >
       <svg
@@ -167,15 +169,17 @@ function WaveGridOverlay({
   patternScale = 1,
   surface = "orange",
   lineOverlayOpacity,
+  clipClassName = "",
 }: {
   patternScale?: number;
   surface?: WorkflowCarouselSurface;
   lineOverlayOpacity?: number;
+  clipClassName?: string;
 }) {
   const stroke = workflowWaveStroke(surface, lineOverlayOpacity);
 
   return (
-    <div className="pointer-events-none absolute inset-0 z-[2] overflow-hidden" aria-hidden>
+    <div className={`pointer-events-none absolute inset-0 z-[2] overflow-hidden ${clipClassName}`.trim()} aria-hidden>
       <svg
         className="pointer-events-none absolute left-1/2 top-1/2 max-w-none"
         style={{
@@ -208,6 +212,7 @@ function GridOverlay({
   introOnLoad = false,
   surface = "orange",
   lineOverlayOpacity,
+  clipClassName = "",
 }: {
   kind: WorkflowCarouselGridKind;
   patternScale?: number;
@@ -215,6 +220,7 @@ function GridOverlay({
   introOnLoad?: boolean;
   surface?: WorkflowCarouselSurface;
   lineOverlayOpacity?: number;
+  clipClassName?: string;
 }) {
   if (kind === "polar") {
     return (
@@ -224,6 +230,7 @@ function GridOverlay({
         introOnLoad={introOnLoad}
         surface={surface}
         lineOverlayOpacity={lineOverlayOpacity}
+        clipClassName={clipClassName}
       />
     );
   }
@@ -233,6 +240,7 @@ function GridOverlay({
         patternScale={patternScale}
         surface={surface}
         lineOverlayOpacity={lineOverlayOpacity}
+        clipClassName={clipClassName}
       />
     );
   }
@@ -240,7 +248,13 @@ function GridOverlay({
   const style = getWorkflowGridOverlayStyle(kind, patternScale, surface);
   if (!style) return null;
 
-  return <div className="pointer-events-none absolute inset-0 z-[2]" style={style} aria-hidden />;
+  return (
+    <div
+      className={`pointer-events-none absolute inset-0 z-[2] overflow-hidden ${clipClassName}`.trim()}
+      style={style}
+      aria-hidden
+    />
+  );
 }
 
 export function WorkflowCarouselDesignBackdrop({
@@ -271,16 +285,17 @@ export function WorkflowCarouselDesignBackdrop({
   const isBeige = surface === "beige";
   const fill = isBeige ? WORKFLOW_BEIGE_SURFACE_FILL : (gradientOverride ?? backdrop.gradient);
   const rootClass = embedded
-    ? `absolute inset-0 overflow-hidden [transform:translateZ(0)] ${className}`.trim()
+    ? `absolute inset-0 overflow-hidden ${className}`.trim()
     : `fixed inset-0 min-h-[100dvh] min-w-full overflow-hidden ${className}`.trim();
   const layerClass = embedded && className ? className : "";
+  const layerInsetClass = embedded ? "absolute -inset-px" : "absolute inset-0";
 
   const Root = embedded ? "div" : "main";
 
   return (
     <Root className={rootClass}>
       <div
-        className={`pointer-events-none absolute inset-0 ${layerClass}`.trim()}
+        className={`pointer-events-none ${layerInsetClass} ${layerClass}`.trim()}
         style={{
           background: fill,
           backgroundPosition: "center center",
@@ -301,7 +316,11 @@ export function WorkflowCarouselDesignBackdrop({
         aria-hidden
       />
       {!isBeige ? (
-        <div className={`pointer-events-none absolute inset-0 z-[1] ${layerClass}`.trim()} style={WORKFLOW_CAROUSEL_GRAIN_STYLE} aria-hidden />
+        <div
+          className={`pointer-events-none ${layerInsetClass} z-[1] ${layerClass}`.trim()}
+          style={WORKFLOW_CAROUSEL_GRAIN_STYLE}
+          aria-hidden
+        />
       ) : null}
       <GridOverlay
         kind={backdrop.grid}
@@ -310,6 +329,7 @@ export function WorkflowCarouselDesignBackdrop({
         introOnLoad={introOnLoad}
         surface={surface}
         lineOverlayOpacity={backdrop.lineOverlayOpacity}
+        clipClassName={layerClass}
       />
     </Root>
   );
