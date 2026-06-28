@@ -11,6 +11,7 @@ import { ArticleBarChart } from "@/components/blog/ArticleBarChart";
 import { ArticlePieChart } from "@/components/blog/ArticlePieChart";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import { DesktopRouteLayout } from "@/components/DesktopRouteLayout";
+import { JoinApplyFormSection } from "@/components/join/JoinApplyFormSection";
 import {
   ABOUT_DESKTOP_CONTENT_STACK_GAP,
   ABOUT_DESKTOP_HERO_BOX_TW,
@@ -120,6 +121,11 @@ export function AboutDesktopView() {
               <AboutDesktopParagraph text={sections.intro.text} />
               <AboutDesktopBulletList items={sections.stats.items} />
               <AboutDesktopParagraph text={sections.burden.text} />
+            </div>
+          </AboutDesktopSplitSection>
+
+          <AboutDesktopSplitSection boxSide="left" graphic={1}>
+            <div className={`flex flex-col ${ABOUT_DESKTOP_CONTENT_STACK_GAP}`}>
               <ArticleBarChart
                 title={sections.barChart.title}
                 caption={sections.barChart.caption}
@@ -139,21 +145,22 @@ export function AboutDesktopView() {
             </div>
           </AboutDesktopSplitSection>
 
-          <AboutDesktopSplitSection boxSide="left" graphic={1}>
+          <AboutDesktopSplitSection boxSide="right" graphic={2}>
             <div className={`flex flex-col ${ABOUT_DESKTOP_CONTENT_STACK_GAP}`}>
               <AboutDesktopQuote text={sections.quote.text} attribution={sections.quote.attribution} />
               <AboutDesktopParagraph text={productOne} />
             </div>
           </AboutDesktopSplitSection>
 
-          <AboutDesktopSplitSection boxSide="right" graphic={2}>
-            <AboutDesktopParagraph text={productTwo} />
-          </AboutDesktopSplitSection>
-
           <AboutDesktopSplitSection boxSide="left" graphic={3}>
-            <AboutDesktopParagraph text={productThree} />
+            <div className={`flex flex-col ${ABOUT_DESKTOP_CONTENT_STACK_GAP}`}>
+              <AboutDesktopParagraph text={productTwo} />
+              <AboutDesktopParagraph text={productThree} />
+            </div>
           </AboutDesktopSplitSection>
         </main>
+
+        <JoinApplyFormSection variant="desktop" />
 
         <footer
           className="relative left-1/2 w-screen -translate-x-1/2 overflow-hidden py-20"

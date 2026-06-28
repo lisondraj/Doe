@@ -67,17 +67,20 @@ export const ABOUT_DESKTOP_SECTION_H = "box-border h-[100dvh] max-h-[100dvh] min
 /** Split bands — two equal columns with page gutters and vertical breathing room. */
 export const ABOUT_DESKTOP_SPLIT_SECTION_GRID = `grid h-full min-h-0 w-full grid-cols-2 gap-8 md:gap-10 lg:gap-12 xl:gap-14 ${ABOUT_DESKTOP_PAGE_INSET} py-8 md:py-10 lg:py-12`;
 
+/** Shared inset for text and beige columns within each split band. */
+export const ABOUT_DESKTOP_SPLIT_COLUMN_PAD = "p-6 md:p-8 lg:p-10 xl:p-12";
+
 /** Text column when the beige panel sits on the right. */
 export const ABOUT_DESKTOP_SPLIT_TEXT_COLUMN_LEFT =
-  "flex min-h-0 min-w-0 flex-col justify-center py-2 pr-4 md:pr-6 lg:pr-8";
+  `flex min-h-0 min-w-0 flex-col justify-center ${ABOUT_DESKTOP_SPLIT_COLUMN_PAD}`;
 
 /** Text column when the beige panel sits on the left. */
 export const ABOUT_DESKTOP_SPLIT_TEXT_COLUMN_RIGHT =
-  "flex min-h-0 min-w-0 flex-col justify-center py-2 pl-4 md:pl-6 lg:pl-8";
+  `flex min-h-0 min-w-0 flex-col justify-center ${ABOUT_DESKTOP_SPLIT_COLUMN_PAD}`;
 
 /** Beige square column — inset on all four sides within its half of the section. */
 export const ABOUT_DESKTOP_SPLIT_BOX_COLUMN =
-  "grid min-h-0 min-w-0 h-full place-items-center p-6 md:p-8 lg:p-10 xl:p-12";
+  `grid min-h-0 min-w-0 h-full place-items-center ${ABOUT_DESKTOP_SPLIT_COLUMN_PAD}`;
 
 export const ABOUT_DESKTOP_BEIGE_PANEL_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} aspect-square max-h-full max-w-full w-full`;
 
