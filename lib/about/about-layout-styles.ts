@@ -87,15 +87,27 @@ export const ABOUT_DESKTOP_SPLIT_TEXT_COLUMN_LEFT =
 export const ABOUT_DESKTOP_SPLIT_TEXT_COLUMN_RIGHT =
   `flex min-h-0 min-w-0 flex-col justify-center ${ABOUT_DESKTOP_SPLIT_COLUMN_PAD}`;
 
-/** FAQ text column — stretch tabs to match beige panel height. */
+/** FAQ text column — center accordion to match beige square footprint. */
 export const ABOUT_DESKTOP_SPLIT_TEXT_COLUMN_FAQ =
-  `flex h-full min-h-0 min-w-0 flex-col justify-start ${ABOUT_DESKTOP_SPLIT_COLUMN_PAD}`;
+  `grid min-h-0 min-w-0 h-full place-items-center ${ABOUT_DESKTOP_SPLIT_COLUMN_PAD}`;
 
 /** Beige square column — inset on all four sides within its half of the section. */
 export const ABOUT_DESKTOP_SPLIT_BOX_COLUMN =
   `grid min-h-0 min-w-0 h-full place-items-center ${ABOUT_DESKTOP_SPLIT_COLUMN_PAD}`;
 
 export const ABOUT_DESKTOP_BEIGE_PANEL_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} aspect-square max-h-full max-w-full w-full`;
+
+/** FAQ accordion — same max square as the beige panel in the adjacent column. */
+export const ABOUT_DESKTOP_FAQ_PANEL_TW = ABOUT_DESKTOP_BEIGE_PANEL_TW;
+
+/** Desktop /about FAQ tabs — section four accordion beside beige panel. */
+export const ABOUT_DESKTOP_FAQ_LIST_TW = "relative grid h-full min-h-0 w-full grid-rows-4";
+
+export const ABOUT_DESKTOP_FAQ_ITEM_TW = `text-[clamp(1.08rem,0.98vw,1.32rem)] md:text-[clamp(1.16rem,1.05vw,1.42rem)] lg:text-[clamp(1.22rem,1.1vw,1.5rem)] leading-[1.15] tracking-[-0.015em] ${inter.className}`;
+
+export const ABOUT_DESKTOP_FAQ_ANSWER_TW = "pt-2.5 md:pt-3";
+
+export const ABOUT_DESKTOP_FAQ_ANSWER_BODY_TW = `text-[clamp(0.98rem,0.9vw,1.12rem)] md:text-[clamp(1.05rem,0.95vw,1.18rem)] font-normal leading-[1.48] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
 
 export const ABOUT_DESKTOP_CONTENT_STACK_GAP = "gap-8 md:gap-9 lg:gap-10";
 
@@ -110,13 +122,6 @@ export const ABOUT_DESKTOP_HERO_WRAP = "flex min-h-0 w-full flex-col";
 export const ABOUT_DESKTOP_HERO_BOX_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} h-full min-h-0 w-full flex-1`;
 
 export const ABOUT_DESKTOP_ARTICLE_BODY_TW = `text-[clamp(1.12rem,1.05vw,1.32rem)] md:text-[clamp(1.22rem,1.1vw,1.42rem)] font-normal leading-[1.5] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
-
-/** Desktop /about FAQ tabs — section three accordion beside beige panel. */
-export const ABOUT_DESKTOP_FAQ_LIST_TW = "grid h-full min-h-0 w-full grid-rows-4";
-
-export const ABOUT_DESKTOP_FAQ_ITEM_TW = `text-[clamp(1.35rem,1.22vw,1.72rem)] md:text-[clamp(1.5rem,1.35vw,1.9rem)] lg:text-[clamp(1.62rem,1.45vw,2.05rem)] leading-[1.15] tracking-[-0.015em] ${inter.className}`;
-
-export const ABOUT_DESKTOP_FAQ_ANSWER_TW = "pt-3 md:pt-4";
 
 export const ABOUT_DESKTOP_ARTICLE_VISUAL_GAP = "mt-12 md:mt-14";
 
