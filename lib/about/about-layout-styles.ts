@@ -75,15 +75,11 @@ export const ABOUT_DESKTOP_SPLIT_TEXT_COLUMN_LEFT =
 export const ABOUT_DESKTOP_SPLIT_TEXT_COLUMN_RIGHT =
   "flex min-h-0 min-w-0 flex-col justify-center py-2 pl-4 md:pl-6 lg:pl-8";
 
-/** Beige square column when the panel sits on the right. */
-export const ABOUT_DESKTOP_SPLIT_BOX_COLUMN_RIGHT =
-  "flex min-h-0 min-w-0 items-center justify-center pl-4 md:pl-6 lg:pl-8";
+/** Beige square column — inset on all four sides within its half of the section. */
+export const ABOUT_DESKTOP_SPLIT_BOX_COLUMN =
+  "grid min-h-0 min-w-0 h-full place-items-center p-6 md:p-8 lg:p-10 xl:p-12";
 
-/** Beige square column when the panel sits on the left. */
-export const ABOUT_DESKTOP_SPLIT_BOX_COLUMN_LEFT =
-  "flex min-h-0 min-w-0 items-center justify-center pr-4 md:pr-6 lg:pr-8";
-
-export const ABOUT_DESKTOP_BEIGE_PANEL_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} max-h-[min(calc(100dvh-8rem),100%)] max-w-[min(calc(100dvh-8rem),100%)]`;
+export const ABOUT_DESKTOP_BEIGE_PANEL_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} aspect-square max-h-full max-w-full w-full`;
 
 export const ABOUT_DESKTOP_CONTENT_STACK_GAP = "gap-8 md:gap-9 lg:gap-10";
 
