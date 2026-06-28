@@ -11,6 +11,7 @@ import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-d
 import { inter } from "@/lib/home/fonts";
 import {
   DESKTOP_HOME_BELOW_NAV_HEIGHT,
+  DOEPHONE_DESKTOP_PAGE_INSET_RIGHT,
   DOEPHONE_DESKTOP_PAGE_INSET_X,
   DOEPHONE_SECTION_TITLE_PT,
 } from "@/lib/doephone/section-styles";
@@ -23,7 +24,7 @@ import { DOEPHONE_HERO_BACKDROP } from "@/lib/workflow-carousel-design-backdrops
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 
 const DESKTOP_BUILD_INSET = DOEPHONE_DESKTOP_PAGE_INSET_X;
-const DESKTOP_BUILD_INPUT_INSET = "p-10 md:p-14 lg:p-16 xl:p-20";
+const DESKTOP_BUILD_INPUT_INSET = `pb-10 md:pb-14 lg:pb-16 xl:pb-20 ${DOEPHONE_DESKTOP_PAGE_INSET_RIGHT}`;
 const DESKTOP_BUILD_BADGE_INSET = "right-10 md:right-20 lg:right-28 xl:right-36 top-10 md:top-14 lg:top-16 xl:top-20";
 
 const EXPAND_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
@@ -163,7 +164,7 @@ export function DoePhoneDesktopBuildSection() {
           <div
             className={`absolute bottom-0 right-0 z-[30] ${DESKTOP_BUILD_INPUT_INSET} ${doePhoneSectionRevealSegmentClass("input", revealed)}`}
           >
-            <div className="w-[clamp(28rem,42vw,44rem)] max-w-[calc(100vw-2rem)]">
+            <div className="w-[clamp(28rem,42vw,44rem)] max-w-full">
               <DoePhoneAmbientPromptCard
                 headerLabel="New Workflow"
                 layout="section"
@@ -172,7 +173,7 @@ export function DoePhoneDesktopBuildSection() {
               >
                 Show me which patients have been enrolled in <PromptTag label="Clinical Trial #473" /> from my EMR,
                 compile results in <PromptTag label="Excel" /> and integrate data from{" "}
-                <PromptTag label="OpenEvidence" /> + email to <WorkflowMentionAt />
+                <PromptTag label="OpenEvidence" /> and email to <WorkflowMentionAt />
               </DoePhoneAmbientPromptCard>
             </div>
           </div>

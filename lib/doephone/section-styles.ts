@@ -16,6 +16,9 @@ export const DOEPHONE_DESKTOP_PAGE_INSET_X =
 export const DOEPHONE_DESKTOP_PAGE_INSET_LEFT =
   "pl-10 md:pl-20 lg:pl-28 xl:pl-36";
 
+export const DOEPHONE_DESKTOP_PAGE_INSET_RIGHT =
+  "pr-10 md:pr-20 lg:pr-28 xl:pr-36";
+
 export const DOEPHONE_DESKTOP_PAGE_MARGIN_X =
   "mx-10 md:mx-20 lg:mx-28 xl:mx-36";
 
