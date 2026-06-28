@@ -32,7 +32,8 @@ const ORANGE_FROST_STYLE = {
 
 const FROST_BLUR_CLASS = "backdrop-blur-[10px] iphone-page:backdrop-blur-[8px]";
 
-const EXPAND_TRANSITION = "transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]";
+const EXPAND_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
+const EXPAND_DURATION = "720ms";
 
 function CarouselSlideToggleBadge({
   expanded,
@@ -75,8 +76,8 @@ function CarouselSlideToggleBadge({
   return (
     <button
       type="button"
-      className={`absolute z-30 flex items-center justify-center rounded-full ${FROST_BLUR_CLASS} ${EXPAND_TRANSITION}`}
-      style={sharedStyle}
+      className={`absolute z-30 flex items-center justify-center rounded-full ${FROST_BLUR_CLASS} transition-[transform,opacity] duration-[720ms]`}
+      style={{ ...sharedStyle, transitionTimingFunction: EXPAND_EASE }}
       aria-label={expanded ? "Close details" : "Show details"}
       aria-expanded={expanded}
       onClick={onToggle}
@@ -148,25 +149,23 @@ function CarouselMenuOverlay({
         padding: expanded
           ? `clamp(1rem,3.1vmin,1.35rem) ${padX} clamp(5.75rem,17vmin,7.25rem)`
           : `${padY} ${padX}`,
+        transition: `padding ${EXPAND_DURATION} ${EXPAND_EASE}`,
       }}
     >
       <div className="flex min-h-0 w-full flex-1 flex-col items-center justify-center">
-        <div className="mx-auto flex w-full flex-col" style={{ maxWidth: contentMaxWidth }}>
-          <div
-            className={`w-full shrink-0 ${EXPAND_TRANSITION} ${
-              expanded && showContent
-                ? "doephone-carousel-slide-ui--expanded"
-                : "translate-y-0 opacity-100"
-            }`}
-          >
+        <div
+          className={`mx-auto flex w-full flex-col ${expanded && showContent ? "doephone-carousel-content--expanded" : ""}`}
+          style={{ maxWidth: contentMaxWidth }}
+        >
+          <div className="w-full shrink-0">
             <div className="flex w-full items-center justify-center">{children}</div>
           </div>
           {description ? (
             <p
-              className={`${inter.className} mt-[clamp(0.85rem,2.6vmin,1.15rem)] w-full text-left font-normal ${
+              className={`${inter.className} w-full overflow-hidden text-left font-normal ${
                 expanded && showContent
-                  ? "doephone-carousel-slide-description--expanded"
-                  : "pointer-events-none h-0 overflow-hidden opacity-0"
+                  ? "mt-[clamp(0.85rem,2.6vmin,1.15rem)] max-h-[min(46vh,32rem)] opacity-100"
+                  : "mt-0 max-h-0 opacity-0"
               }`}
               style={{
                 color: "#FFFFFF",
@@ -174,6 +173,7 @@ function CarouselMenuOverlay({
                 lineHeight: 1.46,
                 letterSpacing: "-0.018em",
                 textShadow: "0 1px 8px rgba(30, 52, 58, 0.18)",
+                transition: `max-height ${EXPAND_DURATION} ${EXPAND_EASE}, opacity 640ms ${EXPAND_EASE}, margin-top ${EXPAND_DURATION} ${EXPAND_EASE}`,
               }}
             >
               {description}
@@ -185,35 +185,15 @@ function CarouselMenuOverlay({
   );
 }
 
-type ExpandAnimPhase = "idle" | "frost" | "expanded";
-
-const FROST_DURATION_MS = 420;
-
 function DoePhoneCarouselCard({ slide, isActive }: { slide: DoePhoneCommunicationSlide; isActive: boolean }) {
   const [expanded, setExpanded] = useState(false);
-  const [animPhase, setAnimPhase] = useState<ExpandAnimPhase>("idle");
   const expandable = Boolean(slide.description);
 
   useEffect(() => {
     if (!isActive) {
       setExpanded(false);
-      setAnimPhase("idle");
     }
   }, [isActive]);
-
-  useEffect(() => {
-    if (!expanded) {
-      setAnimPhase("idle");
-      return;
-    }
-
-    setAnimPhase("frost");
-    const contentTimer = window.setTimeout(() => setAnimPhase("expanded"), FROST_DURATION_MS);
-
-    return () => {
-      window.clearTimeout(contentTimer);
-    };
-  }, [expanded]);
 
   const toggleExpanded = useCallback(() => {
     if (!expandable) return;
@@ -246,11 +226,11 @@ function DoePhoneCarouselCard({ slide, isActive }: { slide: DoePhoneCommunicatio
         embedded
         className={DOEPHONE_SECTION_CAROUSEL_RADIUS}
       />
-      {expandable && animPhase !== "idle" ? <CarouselSlideFrostOverlay /> : null}
+      {expandable && expanded ? <CarouselSlideFrostOverlay /> : null}
       {overlayVisual ? (
         <CarouselMenuOverlay
           expanded={expanded}
-          showContent={animPhase === "expanded"}
+          showContent={expanded}
           description={slide.description}
         >
           {overlayVisual}
