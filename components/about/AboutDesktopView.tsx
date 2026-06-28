@@ -12,7 +12,6 @@ import { ArticlePieChart } from "@/components/blog/ArticlePieChart";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import { DesktopRouteLayout } from "@/components/DesktopRouteLayout";
 import {
-  ABOUT_DESKTOP_ARTICLE_MAX_W,
   ABOUT_DESKTOP_HERO_BOX_TW,
   ABOUT_DESKTOP_HERO_WRAP,
   ABOUT_DESKTOP_PAGE_INSET,
@@ -97,6 +96,7 @@ export function AboutDesktopView() {
                 variant="hero"
                 boxClassName={ABOUT_DESKTOP_HERO_BOX_TW}
                 gapClassName=""
+                patternScale={0.68}
               />
             </div>
           </section>
@@ -136,7 +136,7 @@ export function AboutDesktopView() {
           </section>
 
           <div className={`${ABOUT_DESKTOP_PAGE_INSET} pt-12 md:pt-14`}>
-            <div className={`${ABOUT_DESKTOP_ARTICLE_MAX_W} article-body text-left`}>
+            <div className="article-body w-full text-left">
               {sections.remainder.map((block, index) => renderArticleBlock(block, index, "desktop"))}
             </div>
           </div>

@@ -7,11 +7,13 @@ export function BlogHeroVisual({
   variant = "hero",
   boxClassName,
   gapClassName,
+  patternScale,
 }: {
   backdrop: WorkflowCarouselDesignBackdropType;
   variant?: "hero" | "list";
   boxClassName?: string;
   gapClassName?: string;
+  patternScale?: number;
 }) {
   const gap = gapClassName ?? (variant === "hero" ? BLOG_TITLE_VISUAL_GAP : "");
 
@@ -24,6 +26,7 @@ export function BlogHeroVisual({
         backdrop={backdrop}
         embedded
         className="absolute inset-0 h-full w-full"
+        patternScale={patternScale}
       />
     </div>
   );

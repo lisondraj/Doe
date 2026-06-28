@@ -10,6 +10,8 @@ import type { ArticleBodyLayout } from "@/components/blog/ArticleBodyBlocks";
 
 const TRACK = "rgba(30, 52, 58, 0.08)";
 const BAR = "#D2774C";
+const GRID_LINE = "rgba(30, 52, 58, 0.07)";
+const BAR_CHART_GRID_LINES = 5;
 
 export function ArticleBarChart({
   title,
@@ -41,7 +43,22 @@ export function ArticleBarChart({
         {title}
       </figcaption>
 
-      <div className={isDesktop ? "space-y-5 md:space-y-6" : "space-y-4 iphone-page:space-y-[clamp(1rem,0.82rem+0.85vmin,1.25rem)]"}>
+      <div className={`relative ${isDesktop ? "space-y-5 md:space-y-6" : "space-y-4 iphone-page:space-y-[clamp(1rem,0.82rem+0.85vmin,1.25rem)]"}`}>
+        {isDesktop ? (
+          <div className="pointer-events-none absolute inset-x-0 top-[0.35rem] bottom-[0.35rem]" aria-hidden>
+            {Array.from({ length: BAR_CHART_GRID_LINES }, (_, index) => (
+              <div
+                key={`grid-line-${index}`}
+                className="absolute left-0 right-0 border-t"
+                style={{
+                  top: `${(index / (BAR_CHART_GRID_LINES - 1)) * 100}%`,
+                  borderColor: GRID_LINE,
+                }}
+              />
+            ))}
+          </div>
+        ) : null}
+
         {bars.map((bar) => {
           const width = `${Math.round((bar.value / maxValue) * 100)}%`;
 
