@@ -50,6 +50,9 @@ export const ABOUT_DESKTOP_MAIN_PT = "pt-[5.25rem]";
 /** Hero band — exactly one viewport; headline + gradient box only. */
 export const ABOUT_DESKTOP_SECTION_1_H = "box-border h-[100dvh] max-h-[100dvh] overflow-hidden";
 
+/** Space below nav before mission title — matches subheading-to-hero gap. */
+export const ABOUT_DESKTOP_HERO_HEADLINE_TOP = "mt-8 md:mt-10";
+
 /** Hero band — nav clearance, uniform vertical rhythm, gradient box fills remainder. */
 export const ABOUT_DESKTOP_SECTION_1_LAYOUT = `grid min-h-0 grid-rows-[auto_minmax(0,1fr)] gap-y-8 md:gap-y-10 ${ABOUT_DESKTOP_PAGE_INSET} ${ABOUT_DESKTOP_MAIN_PT} pb-6 md:pb-8 lg:pb-10`;
 
@@ -84,6 +87,10 @@ export const ABOUT_DESKTOP_SPLIT_TEXT_COLUMN_LEFT =
 export const ABOUT_DESKTOP_SPLIT_TEXT_COLUMN_RIGHT =
   `flex min-h-0 min-w-0 flex-col justify-center ${ABOUT_DESKTOP_SPLIT_COLUMN_PAD}`;
 
+/** FAQ text column — stretch tabs to match beige panel height. */
+export const ABOUT_DESKTOP_SPLIT_TEXT_COLUMN_FAQ =
+  `flex h-full min-h-0 min-w-0 flex-col justify-start ${ABOUT_DESKTOP_SPLIT_COLUMN_PAD}`;
+
 /** Beige square column — inset on all four sides within its half of the section. */
 export const ABOUT_DESKTOP_SPLIT_BOX_COLUMN =
   `grid min-h-0 min-w-0 h-full place-items-center ${ABOUT_DESKTOP_SPLIT_COLUMN_PAD}`;
@@ -105,11 +112,11 @@ export const ABOUT_DESKTOP_HERO_BOX_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} h-
 export const ABOUT_DESKTOP_ARTICLE_BODY_TW = `text-[clamp(1.12rem,1.05vw,1.32rem)] md:text-[clamp(1.22rem,1.1vw,1.42rem)] font-normal leading-[1.5] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
 
 /** Desktop /about FAQ tabs — section three accordion beside beige panel. */
-export const ABOUT_DESKTOP_FAQ_LIST_TW = "flex w-full min-w-0 flex-col";
+export const ABOUT_DESKTOP_FAQ_LIST_TW = "grid h-full min-h-0 w-full grid-rows-4";
 
-export const ABOUT_DESKTOP_FAQ_ITEM_TW = `text-[clamp(1.05rem,0.95vw,1.22rem)] md:text-[clamp(1.12rem,1vw,1.32rem)] leading-snug tracking-[-0.01em] ${inter.className}`;
+export const ABOUT_DESKTOP_FAQ_ITEM_TW = `text-[clamp(1.35rem,1.22vw,1.72rem)] md:text-[clamp(1.5rem,1.35vw,1.9rem)] lg:text-[clamp(1.62rem,1.45vw,2.05rem)] leading-[1.15] tracking-[-0.015em] ${inter.className}`;
 
-export const ABOUT_DESKTOP_FAQ_ANSWER_TW = "pb-5 pt-3 md:pb-6 md:pt-3.5";
+export const ABOUT_DESKTOP_FAQ_ANSWER_TW = "min-h-0 flex-1 overflow-y-auto pt-3 md:pt-3.5";
 
 export const ABOUT_DESKTOP_ARTICLE_VISUAL_GAP = "mt-12 md:mt-14";
 

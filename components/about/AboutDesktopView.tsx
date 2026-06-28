@@ -24,6 +24,7 @@ import {
   ABOUT_DESKTOP_HERO_BYLINE_TW,
   ABOUT_DESKTOP_HERO_BYLINE_WRAP_TW,
   ABOUT_DESKTOP_HERO_DATE_TW,
+  ABOUT_DESKTOP_HERO_HEADLINE_TOP,
   ABOUT_DESKTOP_SUBHEADING_TW,
   ABOUT_DESKTOP_TITLE_TW,
   ABOUT_PAGE_SUBHEADING_LINES,
@@ -93,7 +94,7 @@ export function AboutDesktopView() {
 
         <main>
           <section className={`${ABOUT_DESKTOP_SECTION_1_H} ${ABOUT_DESKTOP_SECTION_1_LAYOUT}`}>
-            <div className={`${ABOUT_HERO_HEADLINE_WRAP} min-w-0`}>
+            <div className={`${ABOUT_HERO_HEADLINE_WRAP} min-w-0 ${ABOUT_DESKTOP_HERO_HEADLINE_TOP}`}>
               <h1 className={ABOUT_DESKTOP_TITLE_TW}>
                 <span className="block">Doe is on a mission</span>
                 <span className="block">to redefine healthcare.</span>
@@ -150,7 +151,7 @@ export function AboutDesktopView() {
             </div>
           </AboutDesktopSplitSection>
 
-          <AboutDesktopSplitSection boxSide="right" graphic={2}>
+          <AboutDesktopSplitSection boxSide="right" graphic={2} textFill>
             <AboutDesktopFaqTabs />
           </AboutDesktopSplitSection>
 

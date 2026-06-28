@@ -20,22 +20,25 @@ export function AboutDesktopFaqTabs() {
         const isOpen = openIndex === index;
 
         return (
-          <div key={item.question} className="min-w-0">
+          <div
+            key={item.question}
+            className={`flex min-h-0 flex-col ${
+              isOpen ? "border-t-2 border-[#1E343A]" : index > 0 ? "border-t border-[#DDD9D2]" : ""
+            }`}
+          >
             <button
               type="button"
               aria-expanded={isOpen}
               onClick={() => setOpenIndex(index)}
-              className={`block w-full border-t text-left transition-colors ${
-                isOpen
-                  ? "border-[#1E343A] pt-5 md:pt-6"
-                  : "border-[#DDD9D2] pt-4 md:pt-5 hover:text-[#1E343A]/80"
-              } ${ABOUT_DESKTOP_FAQ_ITEM_TW} ${isOpen ? "font-medium text-[#1E343A]" : "font-normal text-[#9A8F82]"}`}
+              className={`flex w-full min-h-0 flex-1 items-center text-left transition-colors ${
+                isOpen ? "font-medium text-[#1E343A]" : "font-normal text-[#9A8F82] hover:text-[#1E343A]/80"
+              } ${ABOUT_DESKTOP_FAQ_ITEM_TW}`}
             >
               {item.question}
             </button>
 
             <div
-              className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${
+              className={`grid min-h-0 transition-[grid-template-rows,opacity] duration-300 ease-out ${
                 isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
               }`}
             >
@@ -46,7 +49,6 @@ export function AboutDesktopFaqTabs() {
           </div>
         );
       })}
-      <div className="border-t border-[#DDD9D2]" aria-hidden />
     </div>
   );
 }
