@@ -2,6 +2,7 @@
 
 import { AboutDesktopFaqTabs } from "@/components/about/AboutDesktopFaqTabs";
 import {
+  AboutDesktopBulletList,
   AboutDesktopParagraph,
 } from "@/components/about/AboutDesktopArticleBlocks";
 import { AboutDesktopNav } from "@/components/about/AboutDesktopNav";
@@ -25,6 +26,7 @@ import {
   ABOUT_DESKTOP_HERO_DATE_TW,
   ABOUT_DESKTOP_HERO_HEADLINE_TOP,
   ABOUT_DESKTOP_SECTION_2_STACK,
+  ABOUT_DESKTOP_SECTION_2_CONTENT_GAP,
   ABOUT_DESKTOP_SQUARE_PANEL_TW,
   ABOUT_DESKTOP_SUBHEADING_TW,
   ABOUT_DESKTOP_TITLE_TW,
@@ -34,6 +36,7 @@ import {
   ABOUT_PAGE_ARTICLE,
   ABOUT_DESKTOP_FOUNDERS_PARAGRAPHS,
   ABOUT_DESKTOP_SECTION_2_INTRO,
+  ABOUT_DESKTOP_SECTION_2_BULLETS,
   ABOUT_PAGE_HERO_BACKDROP,
   ABOUT_PAGE_HERO_PATTERN_SCALE,
   ABOUT_PAGE_MOBILE_BYLINE,
@@ -129,8 +132,9 @@ export function AboutDesktopView() {
           <AboutDesktopSplitSection boxSide="right" graphic={0} textFill boxBleedToMargin>
             <div className={`${ABOUT_DESKTOP_SQUARE_PANEL_TW} min-h-0`}>
               <div className={ABOUT_DESKTOP_SECTION_2_STACK}>
-                <div className="flex min-h-0 flex-1 flex-col justify-center">
+                <div className={`flex min-h-0 flex-1 flex-col justify-center ${ABOUT_DESKTOP_SECTION_2_CONTENT_GAP}`}>
                   <AboutDesktopParagraph text={ABOUT_DESKTOP_SECTION_2_INTRO} />
+                  <AboutDesktopBulletList items={ABOUT_DESKTOP_SECTION_2_BULLETS} />
                 </div>
                 <ArticlePieChart
                   title={sections.pieChart.title}

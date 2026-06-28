@@ -135,6 +135,8 @@ export const ABOUT_DESKTOP_FAQ_PANEL_TW = ABOUT_DESKTOP_SQUARE_PANEL_TW;
 /** Desktop /about section two — intro + chart aligned to beige square height. */
 export const ABOUT_DESKTOP_SECTION_2_STACK = "flex h-full min-h-0 w-full flex-col justify-between";
 
+export const ABOUT_DESKTOP_SECTION_2_CONTENT_GAP = "gap-5 md:gap-6";
+
 /** Desktop /about FAQ tabs — section four accordion beside beige panel. */
 export const ABOUT_DESKTOP_FAQ_LIST_TW = "relative grid h-full min-h-0 w-full grid-rows-4";
 
