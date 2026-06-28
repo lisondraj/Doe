@@ -2,10 +2,9 @@
 
 import { useCallback, useState } from "react";
 
-import { DoePhoneSectionTitle } from "@/components/doephone/DoePhoneSectionText";
 import { JoinInternTrackReveal } from "@/components/join/JoinInternTrackReveal";
-import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
-import { inter } from "@/lib/home/fonts";
+import { DOEPHONE_SECTION_CAROUSEL_RADIUS, DOEPHONE_SECTION_COPY_TW } from "@/lib/doephone/section-styles";
+import { dmSans, inter } from "@/lib/home/fonts";
 import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
 import {
   JOIN_DESKTOP_APPLY_CARD_HEIGHT,
@@ -19,6 +18,8 @@ import {
 } from "@/lib/join/join-layout";
 
 const ABOUT_CONTACT_EMAIL = "james@doe.care";
+
+const ABOUT_CONTACT_ACTION_TW = `inline-flex items-center gap-2.5 rounded-xl px-4 py-3 font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 transition-colors hover:text-[#1E343A] text-[1.0625rem] md:px-5 md:py-3.5 md:text-[1.125rem] ${inter.className}`;
 
 function MailIcon({ className }: { className?: string }) {
   return (
@@ -62,10 +63,7 @@ function ClipboardIcon({ className }: { className?: string }) {
 export function AboutDesktopContactSection() {
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = useCallback(async (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-
+  const handleCopy = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(ABOUT_CONTACT_EMAIL);
       setCopied(true);
@@ -82,38 +80,45 @@ export function AboutDesktopContactSection() {
     >
       <div className={`${JOIN_DESKTOP_CONTENT} ${JOIN_DESKTOP_APPLY_TITLE_TOP_PAD}`}>
         <JoinInternTrackReveal variant="desktop" className="flex w-full flex-col justify-center">
-          <DoePhoneSectionTitle line1="We'd love" line2="to chat." />
+          <p className={`${DOEPHONE_SECTION_COPY_TW} text-[#1E343A] ${dmSans.className}`}>
+            <span className="block">We&apos;d love</span>
+            <span className="block">to chat.</span>
+          </p>
         </JoinInternTrackReveal>
 
         <div className={`${JOIN_DESKTOP_APPLY_TITLE_CARD_GAP} w-full`}>
           <JoinInternTrackReveal variant="desktop" className="w-full">
             <div
-              className={`relative w-full overflow-hidden border ${JOIN_DESKTOP_APPLY_CARD_HEIGHT} ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
+              className={`relative flex w-full items-center justify-center overflow-hidden border ${JOIN_DESKTOP_APPLY_CARD_HEIGHT} ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
               style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
             >
-              <a
-                href={`mailto:${ABOUT_CONTACT_EMAIL}`}
-                className="absolute inset-0 z-[1] rounded-[inherit]"
-                aria-label={`Email ${ABOUT_CONTACT_EMAIL}`}
-              />
-
-              <button
-                type="button"
-                onClick={handleCopy}
-                className={`absolute right-7 top-7 z-[2] flex items-center gap-2 rounded-lg px-3 py-2 text-left font-medium leading-tight tracking-[-0.01em] text-[#1E343A]/72 transition-colors hover:text-[#1E343A] text-[0.9375rem] ${inter.className}`}
-                style={{ backgroundColor: JOIN_FORM_BEIGE.fieldMuted }}
-              >
-                <ClipboardIcon className="h-4 w-4 shrink-0" />
-                {copied ? "Copied" : "Copy to clipboard"}
-              </button>
-
-              <div className="pointer-events-none relative z-[1] flex h-full flex-col items-center justify-center gap-4">
-                <MailIcon className="h-8 w-8 text-[#1E343A]/55" />
+              <div className="flex flex-col items-center justify-center gap-8 md:gap-10">
                 <p
-                  className={`font-medium tracking-[-0.01em] text-[#1E343A]/72 text-[1.3125rem] ${inter.className}`}
+                  className={`font-medium tracking-[-0.02em] text-[#1E343A]/72 text-[clamp(1.65rem,1.45vw,2.05rem)] md:text-[clamp(1.85rem,1.55vw,2.25rem)] ${inter.className}`}
                 >
                   {ABOUT_CONTACT_EMAIL}
                 </p>
+
+                <div className="flex items-center justify-center gap-3 md:gap-4">
+                  <a
+                    href={`mailto:${ABOUT_CONTACT_EMAIL}`}
+                    className={ABOUT_CONTACT_ACTION_TW}
+                    style={{ backgroundColor: JOIN_FORM_BEIGE.fieldMuted }}
+                    aria-label={`Email ${ABOUT_CONTACT_EMAIL}`}
+                  >
+                    <MailIcon className="h-5 w-5 shrink-0 md:h-6 md:w-6" />
+                  </a>
+
+                  <button
+                    type="button"
+                    onClick={handleCopy}
+                    className={ABOUT_CONTACT_ACTION_TW}
+                    style={{ backgroundColor: JOIN_FORM_BEIGE.fieldMuted }}
+                  >
+                    <ClipboardIcon className="h-5 w-5 shrink-0 md:h-6 md:w-6" />
+                    {copied ? "Copied" : "Copy to clipboard"}
+                  </button>
+                </div>
               </div>
             </div>
           </JoinInternTrackReveal>
