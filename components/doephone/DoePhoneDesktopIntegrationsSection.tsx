@@ -1,0 +1,82 @@
+"use client";
+
+import { DoePhoneCommIntelGrid } from "@/components/doephone/DoePhoneCommIntelGrid";
+import { DoePhoneDesktopFrostPlusBadge } from "@/components/doephone/DoePhoneDesktopFrostPlusBadge";
+import { DoePhoneIntegrateVisual } from "@/components/doephone/DoePhoneIntegrateVisual";
+import { DoePhoneSectionTitle } from "@/components/doephone/DoePhoneSectionText";
+import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
+import {
+  DOEPHONE_DESKTOP_PAGE_INSET_X,
+  DOEPHONE_SECTION_TITLE_PT,
+} from "@/lib/doephone/section-styles";
+import { doephoneSectionRevealStyleVars } from "@/lib/doephone/section-reveal-timing";
+import {
+  doePhoneSectionRevealSegmentClass,
+  useDoePhoneSectionReveal,
+} from "@/lib/doephone/use-doe-phone-section-reveal";
+import { DIAGNOSTIC_ASSISTANT_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
+import type { CSSProperties } from "react";
+
+const DESKTOP_INTEGRATIONS_BADGE_INSET =
+  "right-10 md:right-20 lg:right-28 xl:right-36 top-10 md:top-14 lg:top-16 xl:top-20";
+
+/** Desktop integrations band — gradient fill, 3D block grid, title, + badge, integration tiles right. */
+export function DoePhoneDesktopIntegrationsSection() {
+  const { ref: sectionRef, revealed } = useDoePhoneSectionReveal();
+
+  return (
+    <section
+      className="relative isolate z-10 min-h-[112vh] w-full overflow-hidden bg-[#1E343A]"
+      style={doephoneSectionRevealStyleVars() as CSSProperties}
+      aria-label="Integrations"
+    >
+      <div className="pointer-events-none absolute -inset-[3%] overflow-hidden" aria-hidden>
+        <WorkflowCarouselDesignBackdrop
+          backdrop={DIAGNOSTIC_ASSISTANT_BACKDROP}
+          embedded
+          gradientScale={1.18}
+          patternScale={1.12}
+        />
+      </div>
+
+      <div
+        className="pointer-events-none absolute inset-y-0 left-0 z-[8] w-[min(100%,58rem)] overflow-hidden opacity-[0.92]"
+        aria-hidden
+      >
+        <div
+          className="absolute inset-y-[-8%] left-[-8%] w-[115%]"
+          style={{ transform: "scale(1.08)", transformOrigin: "left center" }}
+        >
+          <DoePhoneCommIntelGrid />
+        </div>
+      </div>
+
+      <div
+        ref={sectionRef}
+        className={`relative z-[20] flex min-h-[112vh] w-full ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}
+      >
+        <DoePhoneDesktopFrostPlusBadge
+          className={`absolute z-30 ${DESKTOP_INTEGRATIONS_BADGE_INSET} ${doePhoneSectionRevealSegmentClass("badge", revealed)}`}
+        />
+
+        <div className={`relative z-[20] flex w-[42%] shrink-0 flex-col ${DOEPHONE_SECTION_TITLE_PT}`}>
+          <div className="relative pr-[clamp(5.5rem,8vw,7rem)]">
+            <DoePhoneSectionTitle
+              line1="Intelligence built."
+              line2="into your stack."
+              color="text-white"
+              segmentedReveal
+              revealed={revealed}
+            />
+          </div>
+        </div>
+
+        <div
+          className={`relative z-[20] flex min-w-0 flex-1 items-center justify-end py-[clamp(3rem,6vw,5rem)] pl-[clamp(1.5rem,3vw,3rem)] ${doePhoneSectionRevealSegmentClass("input", revealed)}`}
+        >
+          <DoePhoneIntegrateVisual layout="desktop" />
+        </div>
+      </div>
+    </section>
+  );
+}

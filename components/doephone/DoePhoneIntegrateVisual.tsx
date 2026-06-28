@@ -104,7 +104,7 @@ const INTEGRATION_ROWS: readonly IntegrationTile[][] = [
   ],
 ];
 
-function TileIcon({ kind }: { kind: TileIconKind }) {
+function TileIcon({ kind, size = ICON_SIZE }: { kind: TileIconKind; size?: string }) {
   const sw = 1.25;
   const cap = "round" as const;
   const join = "round" as const;
@@ -309,55 +309,107 @@ function TileIcon({ kind }: { kind: TileIconKind }) {
       fill="none"
       aria-hidden
       className="shrink-0"
-      style={{ width: ICON_SIZE, height: ICON_SIZE }}
+      style={{ width: size, height: size }}
     >
       {icons[kind]}
     </svg>
   );
 }
 
-function IntegrationTileCard({ name, icon }: IntegrationTile) {
+function IntegrationTileCard({
+  name,
+  icon,
+  sizes,
+}: IntegrationTile & {
+  sizes: {
+    tileRadius: string;
+    tilePadX: string;
+    tilePadY: string;
+    labelSize: string;
+    iconSize: string;
+  };
+}) {
   return (
     <div
-      className={`inline-flex w-fit max-w-full shrink-0 items-center border bg-white shadow-[0_8px_24px_rgba(30,52,58,0.12)] ${TILE_RADIUS}`}
+      className={`inline-flex w-fit max-w-full shrink-0 items-center border bg-white shadow-[0_8px_24px_rgba(30,52,58,0.12)] ${sizes.tileRadius}`}
       style={{
-        padding: `${TILE_PAD_Y} ${TILE_PAD_X}`,
+        padding: `${sizes.tilePadY} ${sizes.tilePadX}`,
         gap: "clamp(0.32rem,0.98vmin,0.42rem)",
         borderColor: DIVIDER,
       }}
     >
-      <TileIcon kind={icon} />
-      <span className="whitespace-nowrap font-medium leading-none" style={{ color: INK, fontSize: LABEL_SIZE }}>
+      <TileIcon kind={icon} size={sizes.iconSize} />
+      <span className="whitespace-nowrap font-medium leading-none" style={{ color: INK, fontSize: sizes.labelSize }}>
         {name}
       </span>
     </div>
   );
 }
 
-function IntegrationRow({ tiles }: { tiles: IntegrationTile[] }) {
+function IntegrationRow({
+  tiles,
+  sizes,
+  gap,
+}: {
+  tiles: IntegrationTile[];
+  sizes: {
+    tileRadius: string;
+    tilePadX: string;
+    tilePadY: string;
+    labelSize: string;
+    iconSize: string;
+  };
+  gap: string;
+}) {
   return (
-    <div className="flex w-full flex-nowrap items-center justify-center" style={{ gap: TILE_GAP }}>
+    <div className="flex w-full flex-nowrap items-center justify-center" style={{ gap }}>
       {tiles.map((tile) => (
-        <IntegrationTileCard key={tile.name} {...tile} />
+        <IntegrationTileCard key={tile.name} {...tile} sizes={sizes} />
       ))}
     </div>
   );
 }
 
+const PHONE_INTEGRATION_SIZES = {
+  tileRadius: TILE_RADIUS,
+  tilePadX: TILE_PAD_X,
+  tilePadY: TILE_PAD_Y,
+  tileGap: TILE_GAP,
+  labelSize: LABEL_SIZE,
+  iconSize: ICON_SIZE,
+  maxWidth: "min(99%,24rem)",
+} as const;
+
+const DESKTOP_INTEGRATION_SIZES = {
+  tileRadius: "rounded-[clamp(0.72rem,0.88vw,0.92rem)]",
+  tilePadX: "clamp(0.92rem,1.12vw,1.2rem)",
+  tilePadY: "clamp(0.65rem,0.82vw,0.88rem)",
+  tileGap: "clamp(0.68rem,0.85vw,0.92rem)",
+  labelSize: "clamp(1.02rem,1.22vw,1.28rem)",
+  iconSize: "clamp(1.38rem,1.68vw,1.78rem)",
+  maxWidth: "min(100%, 40rem)",
+} as const;
+
 /** Integration mosaic — Integrate carousel slide. */
-export function DoePhoneIntegrateVisual() {
+export function DoePhoneIntegrateVisual({ layout = "phone" }: { layout?: "phone" | "desktop" }) {
+  const sizes = layout === "desktop" ? DESKTOP_INTEGRATION_SIZES : PHONE_INTEGRATION_SIZES;
+  const tileSizes = {
+    tileRadius: sizes.tileRadius,
+    tilePadX: sizes.tilePadX,
+    tilePadY: sizes.tilePadY,
+    labelSize: sizes.labelSize,
+    iconSize: sizes.iconSize,
+  };
+
   return (
     <div
       className={`mx-auto flex h-full w-full items-center justify-center ${suisseIntl.className}`}
-      style={{ maxWidth: CAROUSEL_MENU_UI.maxWidthPhone }}
+      style={{ maxWidth: layout === "desktop" ? sizes.maxWidth : CAROUSEL_MENU_UI.maxWidthPhone }}
       aria-hidden
     >
-      <div
-        className="flex w-[min(99%,24rem)] flex-col"
-        style={{ gap: TILE_GAP }}
-      >
+      <div className="flex w-full flex-col" style={{ gap: sizes.tileGap, maxWidth: sizes.maxWidth }}>
         {INTEGRATION_ROWS.map((row, index) => (
-          <IntegrationRow key={`row-${index}`} tiles={row} />
+          <IntegrationRow key={`row-${index}`} tiles={row} sizes={tileSizes} gap={sizes.tileGap} />
         ))}
       </div>
     </div>
