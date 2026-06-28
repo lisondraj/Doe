@@ -32,6 +32,9 @@ export function ArticlePieChart({
   layout = "mobile",
   embedded = false,
   compact = false,
+  showCaption = true,
+  showCitation = true,
+  titleClassName = "",
 }: {
   title: string;
   caption?: string;
@@ -40,13 +43,16 @@ export function ArticlePieChart({
   layout?: ArticleBodyLayout;
   embedded?: boolean;
   compact?: boolean;
+  showCaption?: boolean;
+  showCitation?: boolean;
+  titleClassName?: string;
 }) {
   const isDesktop = layout === "desktop";
 
   return (
     <figure className={embedded ? "" : isDesktop ? ABOUT_DESKTOP_ARTICLE_SECTION_GAP : "mt-10 iphone-page:mt-12"}>
       <figcaption
-        className={`font-medium leading-snug tracking-[-0.01em] text-[#1E343A] ${dmSans.className} ${
+        className={`font-medium leading-snug tracking-[-0.01em] text-[#1E343A] ${dmSans.className} ${titleClassName} ${
           compact && isDesktop
             ? "mb-3 text-[clamp(1.02rem,0.92vw,1.18rem)] md:text-[clamp(1.08rem,0.98vw,1.22rem)]"
             : isDesktop
@@ -129,7 +135,7 @@ export function ArticlePieChart({
         </div>
       </div>
 
-      {caption ? (
+      {showCaption && caption ? (
         <p
           className={`font-normal leading-snug text-[#9A8F82] ${inter.className} ${
             compact && isDesktop
@@ -143,7 +149,7 @@ export function ArticlePieChart({
         </p>
       ) : null}
 
-      {citation ? (
+      {showCitation && citation ? (
         <p
           className={
             compact && isDesktop

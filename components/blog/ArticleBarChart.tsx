@@ -20,6 +20,9 @@ export function ArticleBarChart({
   bars,
   layout = "mobile",
   embedded = false,
+  showCaption = true,
+  showCitation = true,
+  titleClassName = "",
 }: {
   title: string;
   caption?: string;
@@ -27,6 +30,9 @@ export function ArticleBarChart({
   bars: readonly { label: string; value: number; suffix?: string }[];
   layout?: ArticleBodyLayout;
   embedded?: boolean;
+  showCaption?: boolean;
+  showCitation?: boolean;
+  titleClassName?: string;
 }) {
   const isDesktop = layout === "desktop";
   const maxValue = Math.max(...bars.map((bar) => bar.value), 1);
@@ -34,7 +40,7 @@ export function ArticleBarChart({
   return (
     <figure className={embedded ? "" : isDesktop ? ABOUT_DESKTOP_ARTICLE_SECTION_GAP : "mt-10 iphone-page:mt-12"}>
       <figcaption
-        className={`mb-5 font-medium leading-snug tracking-[-0.01em] text-[#1E343A] ${dmSans.className} ${
+        className={`mb-5 font-medium leading-snug tracking-[-0.01em] text-[#1E343A] ${dmSans.className} ${titleClassName} ${
           isDesktop
             ? "text-[clamp(1.22rem,1.05vw,1.42rem)] md:text-[clamp(1.32rem,1.12vw,1.52rem)] mb-6 md:mb-7"
             : "text-[clamp(1.08rem,0.92rem+0.72vmin,1.32rem)] iphone-page:text-[clamp(1.22rem,1.02rem+0.95vmin,1.48rem)] iphone-page:mb-6"
@@ -100,7 +106,7 @@ export function ArticleBarChart({
         })}
       </div>
 
-      {caption ? (
+      {showCaption && caption ? (
         <p
           className={`font-normal leading-snug text-[#9A8F82] ${inter.className} ${
             isDesktop
@@ -112,7 +118,7 @@ export function ArticleBarChart({
         </p>
       ) : null}
 
-      {citation ? (
+      {showCitation && citation ? (
         <p className={isDesktop ? ABOUT_DESKTOP_CHART_CITATION_TW : `mt-3 font-normal leading-snug text-[#9A8F82] text-[clamp(0.92rem,0.86rem+0.5vmin,1.05rem)] ${inter.className}`}>
           {citation}
         </p>

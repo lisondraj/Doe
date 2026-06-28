@@ -31,13 +31,21 @@ export const ABOUT_PAGE_MOBILE_DATE = "June 28, 2026";
 function getAboutSectionTwoArticleBlocks() {
   const intro = ABOUT_PAGE_ARTICLE.body[0];
   const stats = ABOUT_PAGE_ARTICLE.body[1];
+  const barChart = ABOUT_PAGE_ARTICLE.body[3];
   const pieChart = ABOUT_PAGE_ARTICLE.body[4];
+  const quote = ABOUT_PAGE_ARTICLE.body.find((block) => block.type === "quote");
 
-  if (intro?.type !== "p" || stats?.type !== "ul" || pieChart?.type !== "pie-chart") {
+  if (
+    intro?.type !== "p" ||
+    stats?.type !== "ul" ||
+    barChart?.type !== "bar-chart" ||
+    pieChart?.type !== "pie-chart" ||
+    quote?.type !== "quote"
+  ) {
     throw new Error("About page section two article blocks are out of order");
   }
 
-  return { intro, stats, pieChart };
+  return { intro, stats, barChart, pieChart, quote };
 }
 
 const aboutSectionTwoArticle = getAboutSectionTwoArticleBlocks();
@@ -54,6 +62,25 @@ export const ABOUT_SECTION_2_PIE_CHART = {
   caption: aboutSectionTwoArticle.pieChart.caption,
   citation: aboutSectionTwoArticle.pieChart.citation,
   slices: aboutSectionTwoArticle.pieChart.slices,
+};
+
+/** /about section two — weekly admin bar chart (from article body). */
+export const ABOUT_SECTION_2_BAR_CHART = {
+  title: aboutSectionTwoArticle.barChart.title,
+  caption: aboutSectionTwoArticle.barChart.caption,
+  citation: aboutSectionTwoArticle.barChart.citation,
+  bars: aboutSectionTwoArticle.barChart.bars,
+};
+
+/** iPhone /about — shared caption under pie + bar charts. */
+export const ABOUT_SECTION_2_CHARTS_CAPTION = `${aboutSectionTwoArticle.pieChart.caption} ${aboutSectionTwoArticle.barChart.caption}`;
+
+export const ABOUT_SECTION_2_CHARTS_CITATION = aboutSectionTwoArticle.pieChart.citation;
+
+/** iPhone /about — founders pull quote (from article body). */
+export const ABOUT_MOBILE_FOUNDERS_QUOTE = {
+  text: aboutSectionTwoArticle.quote.text,
+  attribution: aboutSectionTwoArticle.quote.attribution,
 };
 
 /** iPhone /about — assistant headline above first beige panel / FAQ. */

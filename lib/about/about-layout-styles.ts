@@ -195,3 +195,15 @@ export const ABOUT_MOBILE_FAQ_ANSWER_BODY_TW = BLOG_ARTICLE_BODY_TW;
 
 /** iPhone /about — section headlines (below main mission title). */
 export const ABOUT_MOBILE_SECTION_HEADLINE_TW = `text-left font-light leading-[1.02] tracking-[-0.03em] text-[clamp(2.65rem,9.5vw,4.35rem)] iphone-page:text-[clamp(2.5rem,9vw,4.05rem)] text-[#1E343A] ${suisseIntl.className}`;
+
+/** iPhone /about — enlarged pie chart title. */
+export const ABOUT_MOBILE_PIE_CHART_TITLE_TW =
+  "text-[clamp(1.32rem,1.12rem+0.95vmin,1.62rem)] iphone-page:text-[clamp(1.55rem,1.28rem+1.22vmin,1.92rem)]";
+
+export const ABOUT_MOBILE_CHART_JOINT_CAPTION_TW = `mt-4 font-normal leading-snug text-[#9A8F82] iphone-page:mt-5 text-[clamp(0.98rem,0.86rem+0.55vmin,1.12rem)] iphone-page:text-[clamp(1.05rem,0.92rem+0.65vmin,1.2rem)] ${inter.className}`;
+
+export const ABOUT_MOBILE_CHART_CITATION_TW = `mt-3 font-normal leading-snug text-[#9A8F82] text-[clamp(0.92rem,0.86rem+0.5vmin,1.05rem)] ${inter.className}`;
+
+export const ABOUT_MOBILE_ARTICLE_QUOTE_TW = `font-normal leading-[1.22] tracking-[-0.025em] text-[#1E343A] text-[clamp(1.62rem,1.3rem+1.45vmin,2.1rem)] iphone-page:text-[clamp(1.85rem,1.45rem+2vmin,2.6rem)] ${lora.className}`;
+
+export const ABOUT_MOBILE_ARTICLE_QUOTE_ATTRIBUTION_TW = `mt-4 font-medium text-[#9A8F82] iphone-page:mt-5 text-[clamp(1.08rem,0.95rem+0.55vmin,1.28rem)] iphone-page:text-[clamp(1.22rem,1.05rem+0.8vmin,1.48rem)] ${dmSans.className}`;

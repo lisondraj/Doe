@@ -2,7 +2,8 @@
 
 import { AboutMobileBeigePanel } from "@/components/about/AboutMobileBeigePanel";
 import { AboutMobileFaqTabs } from "@/components/about/AboutMobileFaqTabs";
-import { ArticlePieChart } from "@/components/blog/ArticlePieChart";
+import { AboutMobileQuote } from "@/components/about/AboutMobileQuote";
+import { AboutMobileStatCharts } from "@/components/about/AboutMobileStatCharts";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
 import {
@@ -28,11 +29,11 @@ import {
   ABOUT_DESKTOP_SECTION_2_INTRO,
   ABOUT_MOBILE_ASSISTANT_HEADLINE_LINES,
   ABOUT_MOBILE_FOUNDERS_HEADLINE_LINES,
+  ABOUT_MOBILE_FOUNDERS_QUOTE,
   ABOUT_PAGE_HERO_BACKDROP,
   ABOUT_PAGE_HERO_PATTERN_SCALE,
   ABOUT_PAGE_MOBILE_BYLINE,
   ABOUT_PAGE_MOBILE_DATE,
-  ABOUT_SECTION_2_PIE_CHART,
 } from "@/lib/about/about-page-article";
 import { BLOG_CONTENT_PT } from "@/lib/blog/blog-layout-styles";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
@@ -99,13 +100,7 @@ export function AboutMobileView() {
             </ul>
           </div>
 
-          <ArticlePieChart
-            title={ABOUT_SECTION_2_PIE_CHART.title}
-            caption={ABOUT_SECTION_2_PIE_CHART.caption}
-            citation={ABOUT_SECTION_2_PIE_CHART.citation}
-            slices={ABOUT_SECTION_2_PIE_CHART.slices}
-            layout="mobile"
-          />
+          <AboutMobileStatCharts />
 
           <h2 className={ABOUT_MOBILE_SECTION_HEADLINE_TW}>
             <span className="block">{ABOUT_MOBILE_ASSISTANT_HEADLINE_LINES[0]}</span>
@@ -125,6 +120,11 @@ export function AboutMobileView() {
             <p className={ABOUT_MOBILE_BODY_TW}>{foundersOne}</p>
             <p className={ABOUT_MOBILE_BODY_TW}>{foundersTwo}</p>
           </div>
+
+          <AboutMobileQuote
+            text={ABOUT_MOBILE_FOUNDERS_QUOTE.text}
+            attribution={ABOUT_MOBILE_FOUNDERS_QUOTE.attribution}
+          />
 
           <AboutMobileBeigePanel graphic={1} />
         </div>
