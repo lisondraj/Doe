@@ -46,14 +46,8 @@ export const ABOUT_DESKTOP_PAGE_INSET = DOEPHONE_DESKTOP_PAGE_INSET_X;
 
 export const ABOUT_DESKTOP_MAIN_PT = "pt-[5.5rem]";
 
-/** One full-viewport /about desktop band. */
-export const ABOUT_DESKTOP_SECTION_H = "box-border min-h-[100dvh] h-[100dvh]";
-
 /** Hero band — exactly one viewport; headline + gradient box only. */
 export const ABOUT_DESKTOP_SECTION_1_H = "box-border h-[100dvh] max-h-[100dvh] overflow-hidden";
-
-/** Vertically centered section content with page gutters. */
-export const ABOUT_DESKTOP_SECTION_LAYOUT = `flex flex-col justify-center ${ABOUT_DESKTOP_PAGE_INSET}`;
 
 /** Hero band — clears fixed nav; headline stack + flex hero fill remaining height. */
 export const ABOUT_DESKTOP_SECTION_1_LAYOUT = `flex min-h-0 flex-col ${ABOUT_DESKTOP_PAGE_INSET} ${ABOUT_DESKTOP_MAIN_PT} pb-8 md:pb-10 lg:pb-12 xl:pb-14`;
@@ -67,9 +61,21 @@ export const ABOUT_DESKTOP_BYLINE_TW = `mt-2.5 md:mt-3 font-medium text-[#9A8F82
 
 export const ABOUT_DESKTOP_ARTICLE_MAX_W = "max-w-[min(100%,54rem)]";
 
-export const ABOUT_DESKTOP_SECTION_GRID = "grid w-full grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] items-center gap-12 xl:gap-16";
+/** One full-viewport /about desktop band. */
+export const ABOUT_DESKTOP_SECTION_H = "box-border h-[100dvh] max-h-[100dvh] min-h-[100dvh] overflow-hidden";
 
-export const ABOUT_DESKTOP_BEIGE_PANEL_TW = DOEPHONE_SECTION_CAROUSEL_RADIUS;
+/** Split bands — two equal columns filling the viewport height. */
+export const ABOUT_DESKTOP_SPLIT_SECTION_GRID = "grid h-full min-h-0 w-full grid-cols-2";
+
+/** Text column padding when the beige panel sits on the right. */
+export const ABOUT_DESKTOP_SPLIT_TEXT_INSET_LEFT =
+  "flex min-h-0 min-w-0 flex-col justify-center pl-10 md:pl-20 lg:pl-28 xl:pl-36 pr-8 md:pr-12 lg:pr-16";
+
+/** Text column padding when the beige panel sits on the left. */
+export const ABOUT_DESKTOP_SPLIT_TEXT_INSET_RIGHT =
+  "flex min-h-0 min-w-0 flex-col justify-center pr-10 md:pr-20 lg:pr-28 xl:pr-36 pl-8 md:pl-12 lg:pl-16";
+
+export const ABOUT_DESKTOP_SECTION_GRID = "grid w-full grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] items-center gap-12 xl:gap-16";
 
 export const ABOUT_DESKTOP_CONTENT_STACK_GAP = "gap-10 md:gap-12";
 
