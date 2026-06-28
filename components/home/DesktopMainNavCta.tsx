@@ -45,6 +45,11 @@ export function DesktopMainNavCta({
     };
   }, [open]);
 
+  const dropdownHoverClass =
+    fg.toLowerCase() === "#fff" || fg.toLowerCase() === "#ffffff"
+      ? "hover:bg-white/10"
+      : "hover:bg-black/[0.04]";
+
   return (
     <div ref={rootRef} className="relative flex shrink-0 items-center">
       <div className="relative flex items-stretch overflow-visible rounded-md" style={{ boxShadow: shadow }}>
@@ -82,14 +87,21 @@ export function DesktopMainNavCta({
         {open ? (
           <div
             role="menu"
-            className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-[60] overflow-hidden rounded-md border border-[#E6E6E6] bg-white py-1 shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
+            className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-[60] overflow-hidden rounded-md py-1"
+            style={{
+              backgroundColor: bg,
+              color: fg,
+              border: `1px solid ${divider}`,
+              boxShadow: shadow === "none" ? "0 8px 24px rgba(0, 0, 0, 0.12)" : shadow,
+            }}
           >
             {DESKTOP_MAIN_CTA_DROPDOWN_ITEMS.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 role="menuitem"
-                className="block px-4 py-2.5 text-sm font-medium text-black no-underline transition-colors hover:bg-black/[0.04]"
+                className={`block px-4 py-2.5 text-sm font-medium no-underline transition-colors ${dropdownHoverClass}`}
+                style={{ color: fg }}
                 onClick={() => setOpen(false)}
               >
                 {item.label}
