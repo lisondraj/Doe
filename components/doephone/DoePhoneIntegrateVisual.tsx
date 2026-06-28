@@ -104,6 +104,20 @@ const INTEGRATION_ROWS: readonly IntegrationTile[][] = [
   ],
 ];
 
+/** Desktop integrations — one flank tile per side; center three rows stay unchanged. */
+const DESKTOP_INTEGRATION_FLANKS: readonly { left: IntegrationTile; right: IntegrationTile }[] = [
+  { left: { name: "Meditech", icon: "meditech" }, right: { name: "Canvas", icon: "canvas" } },
+  { left: { name: "Jane App", icon: "jane" }, right: { name: "Redox", icon: "redox" } },
+  { left: { name: "Slack", icon: "slack" }, right: { name: "Zoom", icon: "zoom" } },
+  { left: { name: "Athena", icon: "athena" }, right: { name: "Teams", icon: "teams" } },
+  { left: { name: "Outlook", icon: "outlook" }, right: { name: "Doximity", icon: "doximity" } },
+  { left: { name: "Surescripts", icon: "surescripts" }, right: { name: "Avaros", icon: "avaros" } },
+  { left: { name: "PS Suite", icon: "pssuite" }, right: { name: "Availity", icon: "availity" } },
+  { left: { name: "Stripe", icon: "stripe" }, right: { name: "ModMed", icon: "modmed" } },
+  { left: { name: "Nuance", icon: "nuance" }, right: { name: "FHIR", icon: "fhir" } },
+  { left: { name: "Fathom", icon: "fathom" }, right: { name: "Ambience", icon: "ambience" } },
+];
+
 function TileIcon({ kind, size = ICON_SIZE }: { kind: TileIconKind; size?: string }) {
   const sw = 1.25;
   const cap = "round" as const;
@@ -370,6 +384,50 @@ function IntegrationRow({
   );
 }
 
+function IntegrationRowWithFlanks({
+  centerTiles,
+  left,
+  right,
+  sizes,
+  gap,
+  rowIndex,
+}: {
+  centerTiles: IntegrationTile[];
+  left: IntegrationTile;
+  right: IntegrationTile;
+  sizes: {
+    tileRadius: string;
+    tilePadX: string;
+    tilePadY: string;
+    labelSize: string;
+    iconSize: string;
+  };
+  gap: string;
+  rowIndex: number;
+}) {
+  return (
+    <div className="flex w-full justify-center">
+      <div className="relative flex flex-nowrap items-center justify-center" style={{ gap }}>
+        <div
+          className="absolute top-1/2 -translate-y-1/2"
+          style={{ right: `calc(100% + ${gap})` }}
+        >
+          <IntegrationTileCard key={`${rowIndex}-left`} {...left} sizes={sizes} />
+        </div>
+        {centerTiles.map((tile) => (
+          <IntegrationTileCard key={tile.name} {...tile} sizes={sizes} />
+        ))}
+        <div
+          className="absolute top-1/2 -translate-y-1/2"
+          style={{ left: `calc(100% + ${gap})` }}
+        >
+          <IntegrationTileCard key={`${rowIndex}-right`} {...right} sizes={sizes} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const PHONE_INTEGRATION_SIZES = {
   tileRadius: TILE_RADIUS,
   tilePadX: TILE_PAD_X,
@@ -388,11 +446,13 @@ const DESKTOP_INTEGRATION_SIZES = {
   labelSize: "clamp(1.02rem,1.22vw,1.28rem)",
   iconSize: "clamp(1.38rem,1.68vw,1.78rem)",
   maxWidth: "min(100%, 40rem)",
+  outerMaxWidth: "min(100%, 58rem)",
 } as const;
 
 /** Integration mosaic — Integrate carousel slide. */
 export function DoePhoneIntegrateVisual({ layout = "phone" }: { layout?: "phone" | "desktop" }) {
-  const sizes = layout === "desktop" ? DESKTOP_INTEGRATION_SIZES : PHONE_INTEGRATION_SIZES;
+  const isDesktop = layout === "desktop";
+  const sizes = isDesktop ? DESKTOP_INTEGRATION_SIZES : PHONE_INTEGRATION_SIZES;
   const tileSizes = {
     tileRadius: sizes.tileRadius,
     tilePadX: sizes.tilePadX,
@@ -400,17 +460,30 @@ export function DoePhoneIntegrateVisual({ layout = "phone" }: { layout?: "phone"
     labelSize: sizes.labelSize,
     iconSize: sizes.iconSize,
   };
+  const outerMaxWidth = isDesktop ? DESKTOP_INTEGRATION_SIZES.outerMaxWidth : sizes.maxWidth;
 
   return (
     <div
       className={`mx-auto flex h-full w-full items-center justify-center ${suisseIntl.className}`}
-      style={{ maxWidth: layout === "desktop" ? sizes.maxWidth : CAROUSEL_MENU_UI.maxWidthPhone }}
+      style={{ maxWidth: isDesktop ? outerMaxWidth : CAROUSEL_MENU_UI.maxWidthPhone }}
       aria-hidden
     >
-      <div className="flex w-full flex-col" style={{ gap: sizes.tileGap, maxWidth: sizes.maxWidth }}>
-        {INTEGRATION_ROWS.map((row, index) => (
-          <IntegrationRow key={`row-${index}`} tiles={row} sizes={tileSizes} gap={sizes.tileGap} />
-        ))}
+      <div className="flex w-full flex-col" style={{ gap: sizes.tileGap, maxWidth: outerMaxWidth }}>
+        {INTEGRATION_ROWS.map((row, index) =>
+          isDesktop ? (
+            <IntegrationRowWithFlanks
+              key={`row-${index}`}
+              rowIndex={index}
+              centerTiles={row}
+              left={DESKTOP_INTEGRATION_FLANKS[index]!.left}
+              right={DESKTOP_INTEGRATION_FLANKS[index]!.right}
+              sizes={tileSizes}
+              gap={sizes.tileGap}
+            />
+          ) : (
+            <IntegrationRow key={`row-${index}`} tiles={row} sizes={tileSizes} gap={sizes.tileGap} />
+          ),
+        )}
       </div>
     </div>
   );

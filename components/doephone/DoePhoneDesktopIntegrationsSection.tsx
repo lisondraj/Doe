@@ -1,6 +1,5 @@
 "use client";
 
-import { DoePhoneCommIntelGrid } from "@/components/doephone/DoePhoneCommIntelGrid";
 import { DoePhoneDesktopFrostPlusBadge } from "@/components/doephone/DoePhoneDesktopFrostPlusBadge";
 import { DoePhoneIntegrateVisual } from "@/components/doephone/DoePhoneIntegrateVisual";
 import { DoePhoneSectionTitle } from "@/components/doephone/DoePhoneSectionText";
@@ -20,7 +19,7 @@ import type { CSSProperties } from "react";
 const DESKTOP_INTEGRATIONS_BADGE_INSET =
   "right-10 md:right-20 lg:right-28 xl:right-36 top-10 md:top-14 lg:top-16 xl:top-20";
 
-/** Desktop integrations band — gradient fill, 3D block grid, title, + badge, integration tiles centered. */
+/** Desktop integrations band — gradient fill, title, + badge, integration tiles centered. */
 export function DoePhoneDesktopIntegrationsSection() {
   const { ref: sectionRef, revealed } = useDoePhoneSectionReveal();
 
@@ -37,18 +36,6 @@ export function DoePhoneDesktopIntegrationsSection() {
           gradientScale={1.18}
           patternScale={1.12}
         />
-      </div>
-
-      <div
-        className="pointer-events-none absolute inset-y-0 left-0 z-[8] w-[min(100%,58rem)] overflow-hidden opacity-[0.92]"
-        aria-hidden
-      >
-        <div
-          className="absolute inset-y-[-8%] left-[-8%] w-[115%]"
-          style={{ transform: "scale(1.08)", transformOrigin: "left center" }}
-        >
-          <DoePhoneCommIntelGrid />
-        </div>
       </div>
 
       <div
@@ -74,7 +61,7 @@ export function DoePhoneDesktopIntegrationsSection() {
         <div
           className={`pointer-events-none absolute inset-0 z-[20] flex items-center justify-center px-[clamp(1.5rem,3vw,3rem)] ${doePhoneSectionRevealSegmentClass("input", revealed)}`}
         >
-          <div className="pointer-events-auto w-full max-w-[min(100%,40rem)]">
+          <div className="pointer-events-auto w-full max-w-[min(100%,58rem)]">
             <DoePhoneIntegrateVisual layout="desktop" />
           </div>
         </div>
