@@ -277,17 +277,14 @@ export function DoePhoneFrontDeskInboxVisual() {
       aria-hidden
     >
       <div
-        className="flex w-full flex-col"
+        className="flex w-full flex-col items-center"
         style={{ gap: "clamp(0.55rem,1.65vmin,0.68rem)" }}
       >
-        <div
-          className="w-[75%]"
-          style={{ marginTop: "clamp(-0.38rem,-1.15vmin,-0.48rem)" }}
-        >
+        <div className="w-[75%]">
           <VoiceCallPanel />
         </div>
 
-        <div className="w-[75%] self-end">
+        <div className="w-[75%]">
           <SchedulingPanel />
         </div>
       </div>
