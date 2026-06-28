@@ -13,19 +13,15 @@ import {
 import { NAV_HREFS } from "@/components/doe-nav-data";
 import { HERO_CAROUSEL_GRAIN_BG } from "@/components/hero-carousel-texture";
 import { DoePhoneDesktopBuildSection } from "@/components/doephone/DoePhoneDesktopBuildSection";
+import { DoePhoneDesktopIntelligenceSection } from "@/components/doephone/DoePhoneDesktopIntelligenceSection";
 import { DoePhoneHeroSection } from "@/components/doephone/DoePhoneHeroSection";
 import { DesktopMainNavCta } from "@/components/home/DesktopMainNavCta";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
-import { WorkflowCarouselSlides } from "@/components/workflow-carousel-slides";
 import {
   DESIGN3_BACKDROP,
   DESIGN5_BACKDROP,
   DESIGN6_BACKDROP,
 } from "@/lib/workflow-carousel-design-backdrops";
-import {
-  DOEPHONE_COMMUNICATION_SLIDES,
-  DOEPHONE_COMMUNICATION_SLIDES_DESKTOP,
-} from "@/lib/doephone/communication-carousel";
 import {
   DOEPHONE_DESKTOP_PAGE_INSET_X,
   DOEPHONE_DESKTOP_PAGE_MARGIN_X,
@@ -281,7 +277,6 @@ export function DesktopHome() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [hoveredBox, setHoveredBox] = useState<number | null>(null);
   const [hoveredBuildBox, setHoveredBuildBox] = useState<number | null>(null);
-  const [slidingBoxScroll, setSlidingBoxScroll] = useState(0);
   const [selectedWordIndex, setSelectedWordIndex] = useState(2);
   const [carouselOffset, setCarouselOffset] = useState(0);
   const [isCarouselTransitioning, setIsCarouselTransitioning] = useState(false);
@@ -292,24 +287,12 @@ export function DesktopHome() {
   const [carouselSectionOpacity, setCarouselSectionOpacity] = useState(0);
   const [carouselSectionTranslateY, setCarouselSectionTranslateY] = useState(40);
   const [activeWordVisible, setActiveWordVisible] = useState(true);
-  const [isManualScroll, setIsManualScroll] = useState(false);
-  const [isSlidingPaused, setIsSlidingPaused] = useState(false);
-  const slidingBoxRefs = [
-    useRef<HTMLDivElement>(null),
-    useRef<HTMLDivElement>(null),
-    useRef<HTMLDivElement>(null),
-    useRef<HTMLDivElement>(null),
-    useRef<HTMLDivElement>(null),
-    useRef<HTMLDivElement>(null),
-  ];
-  const autoScrollPositionRef = useRef(0);
   const thirdSectionRef = useRef<HTMLDivElement>(null);
   const [thirdSectionOpacity, setThirdSectionOpacity] = useState(0);
   const [thirdSectionTranslateY, setThirdSectionTranslateY] = useState(40);
   const secondSectionRef = useRef<HTMLDivElement>(null);
   const [slidingBoxesOpacity, setSlidingBoxesOpacity] = useState(0);
   const [slidingBoxesTranslateY, setSlidingBoxesTranslateY] = useState(40);
-  const [shouldStartSlidingAnimation, setShouldStartSlidingAnimation] = useState(false);
   const newGradientSectionRef = useRef<HTMLDivElement>(null);
   const [newGradientSectionOpacity, setNewGradientSectionOpacity] = useState(0);
   const [newGradientSectionTranslateY, setNewGradientSectionTranslateY] = useState(40);
@@ -379,13 +362,9 @@ export function DesktopHome() {
     Workflow: DESIGN3_BACKDROP,
   } as const;
 
-  const [viewportWidth, setViewportWidth] = useState(1200);
-  const [phoneSlideSize, setPhoneSlideSize] = useState({ w: 850, h: 1090 });
-
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 639px)");
     const updateLayout = () => {
-      setViewportWidth(window.innerWidth);
       setIsPhoneLayout(mq.matches);
     };
     updateLayout();
@@ -396,42 +375,6 @@ export function DesktopHome() {
       window.removeEventListener("resize", updateLayout);
     };
   }, []);
-
-  useEffect(() => {
-    if (!isPhoneLayout) return;
-    const measure = () => {
-      const vv = window.visualViewport;
-      const vw = vv?.width ?? window.innerWidth;
-      const horizontalInset = 12;
-      const phoneSlideScale = 0.96;
-      const w = (vw - horizontalInset * 2) * phoneSlideScale;
-      const h = w * 1.28;
-      setPhoneSlideSize({ w, h });
-    };
-    measure();
-    window.addEventListener("resize", measure);
-    window.visualViewport?.addEventListener("resize", measure);
-    window.visualViewport?.addEventListener("scroll", measure);
-    return () => {
-      window.removeEventListener("resize", measure);
-      window.visualViewport?.removeEventListener("resize", measure);
-      window.visualViewport?.removeEventListener("scroll", measure);
-    };
-  }, [isPhoneLayout, viewportWidth]);
-
-  const slideGap = isPhoneLayout ? 12 : 20;
-  /** Cap card width on large viewports (~12% under old 620) so band reads lighter vs hero. */
-  const desktopCarouselMaxW = 545;
-  const desktopCarouselW = isPhoneLayout
-    ? phoneSlideSize.w
-    : Math.min(
-        desktopCarouselMaxW,
-        Math.max(300, Math.floor((viewportWidth - slideGap) / 2)),
-      );
-  const desktopCarouselH = Math.round(desktopCarouselW * 1.08);
-  const slideBoxW = isPhoneLayout ? phoneSlideSize.w : desktopCarouselW;
-  const slideBoxH = isPhoneLayout ? phoneSlideSize.h : desktopCarouselH;
-  const carouselViewportW = isPhoneLayout ? slideBoxW : viewportWidth;
 
   /** Lock page scroll until desktop hero zoom finishes (wheel drives zoom without advancing layout). */
   useLayoutEffect(() => {
@@ -550,20 +493,12 @@ export function DesktopHome() {
 
           setSlidingBoxesOpacity(clampedProgress);
           setSlidingBoxesTranslateY(40 * (1 - clampedProgress));
-
-          if (clampedProgress >= 0.65) {
-            setShouldStartSlidingAnimation(true);
-          } else {
-            setShouldStartSlidingAnimation(false);
-          }
         } else if (sectionTop < endPoint) {
           setSlidingBoxesOpacity(1);
           setSlidingBoxesTranslateY(0);
-          setShouldStartSlidingAnimation(true);
         } else {
           setSlidingBoxesOpacity(0);
           setSlidingBoxesTranslateY(40);
-          setShouldStartSlidingAnimation(false);
         }
       }
       
@@ -726,129 +661,7 @@ export function DesktopHome() {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleScroll);
     };
-  }, [isPhoneLayout]);
-
-  // Auto-slide using optimized requestAnimationFrame with hardware acceleration
-  useEffect(() => {
-    // Only start sliding animation after title animation completes
-    if (!shouldStartSlidingAnimation) return;
-    
-    const boxWidth = slideBoxW;
-    const boxTotalWidth = boxWidth + slideGap;
-    const totalBoxes = 6;
-    const totalWidth = totalBoxes * boxTotalWidth;
-    
-    let animationFrameId: number;
-    let lastTime = performance.now();
-    const slideSpeed = isPhoneLayout ? 0.05 : 0.032;
-    let lastStateUpdate = 0;
-    
-    const animate = (currentTime: number) => {
-      const deltaTime = Math.min(currentTime - lastTime, 16.67);
-      lastTime = currentTime;
-      
-      if (!isManualScroll && !isSlidingPaused) {
-        autoScrollPositionRef.current += slideSpeed * deltaTime;
-        
-        const offset = ((autoScrollPositionRef.current % totalWidth) + totalWidth) % totalWidth;
-        
-        slidingBoxRefs.forEach((boxRef, i) => {
-          if (!boxRef.current) return;
-          
-          let pos = i * boxTotalWidth - offset;
-          
-          if (pos < -boxTotalWidth) {
-            pos += totalWidth;
-          }
-          
-          boxRef.current.style.transform = `translate3d(${pos}px, 0, 0)`;
-          boxRef.current.style.willChange = 'transform';
-        });
-        
-        if (currentTime - lastStateUpdate > 100) {
-          setSlidingBoxScroll(Math.round(autoScrollPositionRef.current));
-          lastStateUpdate = currentTime;
-        }
-      }
-      
-      animationFrameId = requestAnimationFrame(animate);
-    };
-    
-    animationFrameId = requestAnimationFrame(animate);
-    
-    return () => {
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-      }
-    };
-  }, [isManualScroll, shouldStartSlidingAnimation, isSlidingPaused, slideBoxW, slideGap, isPhoneLayout]);
-
-  // Initialize box positions when animation starts
-  useEffect(() => {
-    if (!shouldStartSlidingAnimation) return;
-    
-    const boxWidth = slideBoxW;
-    const boxTotalWidth = boxWidth + slideGap;
-    
-    slidingBoxRefs.forEach((boxRef, i) => {
-      if (boxRef.current) {
-        const initialPos = i * boxTotalWidth;
-        boxRef.current.style.transform = `translate3d(${initialPos}px, 0, 0)`;
-      }
-    });
-  }, [shouldStartSlidingAnimation, slideBoxW, slideGap]);
-
-  // Keep slide positions in sync when viewport/card sizing changes
-  useEffect(() => {
-    if (!shouldStartSlidingAnimation) return;
-
-    const boxWidth = slideBoxW;
-    const boxTotalWidth = boxWidth + slideGap;
-    const totalBoxes = 6;
-    const totalWidth = totalBoxes * boxTotalWidth;
-    const offset = ((autoScrollPositionRef.current % totalWidth) + totalWidth) % totalWidth;
-
-    slidingBoxRefs.forEach((boxRef, i) => {
-      if (!boxRef.current) return;
-
-      let pos = i * boxTotalWidth - offset;
-      if (pos < -boxTotalWidth) {
-        pos += totalWidth;
-      }
-
-      boxRef.current.style.transform = `translate3d(${pos}px, 0, 0)`;
-    });
-  }, [shouldStartSlidingAnimation, slideBoxW, slideGap]);
-
-  useEffect(() => {
-    // Add bento expand and sliding animation styles
-    const style = document.createElement('style');
-    const boxWidth = slideBoxW;
-    const boxGap = slideGap;
-    const boxTotalWidth = boxWidth + boxGap;
-    const totalBoxes = 6;
-    const maxScroll = -(boxTotalWidth * (totalBoxes - 1));
-    
-    style.textContent = `
-      @keyframes bentoExpand {
-        0% { transform: scale(0.08); opacity: 0; }
-        40% { opacity: 1; }
-        100% { transform: scale(1); opacity: 1; }
-      }
-      @keyframes slide-left-continuous {
-        0% { transform: translateX(0px); }
-        100% { transform: translateX(${maxScroll}px); }
-      }
-      @keyframes slide-text-right {
-        0% { transform: translateX(0px); }
-        100% { transform: translateX(2000px); }
-      }
-    `;
-    if (!document.head.querySelector('style[data-slide-animation]')) {
-      style.setAttribute('data-slide-animation', 'true');
-      document.head.appendChild(style);
-    }
-  }, [slideBoxW, slideGap]);
+  }, []);
 
   // Dynamic color calculation - modern purple gradient palette (gender-neutral, vibrant)
   const getColor1 = () => {
@@ -929,92 +742,6 @@ export function DesktopHome() {
     const shift = Math.sin((colorShift + 66) * Math.PI / 50) * 5;
     return `hsl(${225 + shift}, 80%, ${65 + shift * 0.3}%)`; // Deep purple-blue (lighter)
   };
-
-  // Fit (min) leaves transparent letterboxing when viewport is taller than the fitted
-  // square — composites badly with shadows + rounding (gray “pillars” at bottom corners).
-  // Cover (max), same as scroll carousel on `app/page.tsx`, fills the card opaquely.
-  const slideUniformScale = isPhoneLayout
-    ? Math.min(slideBoxW / 700, slideBoxH / 700)
-    : Math.max(slideBoxW / 700, slideBoxH / 700);
-  const scaledSide = 700 * slideUniformScale;
-  const boxTotalWidth = slideBoxW + slideGap;
-  const totalBoxes = 6;
-  const xStart700 = (slideBoxW - scaledSide) / 2;
-  const visibleMargin = 22;
-  const captionLeft700 = Math.ceil((visibleMargin - xStart700) / slideUniformScale);
-  const captionRight700 = captionLeft700;
-  const totalWidth = totalBoxes * boxTotalWidth;
-  
-  const applySlidingBoxPositions = (scrollPos: number, shouldWrap: boolean = true) => {
-    const offset = ((scrollPos % totalWidth) + totalWidth) % totalWidth;
-
-    slidingBoxRefs.forEach((boxRef, i) => {
-      if (!boxRef.current) return;
-
-      let pos = i * boxTotalWidth - offset;
-      if (shouldWrap && pos < -boxTotalWidth) {
-        pos += totalWidth;
-      }
-
-      boxRef.current.style.transform = `translate3d(${pos}px, 0, 0)`;
-      boxRef.current.style.willChange = 'transform';
-    });
-  };
-
-  const handleSlideLeft = () => {
-    if (isManualScroll) return;
-
-    setIsManualScroll(true);
-    const newScroll = autoScrollPositionRef.current + boxTotalWidth;
-    autoScrollPositionRef.current = newScroll;
-    setSlidingBoxScroll(newScroll);
-
-    slidingBoxRefs.forEach((boxRef, i) => {
-      if (!boxRef.current) return;
-      const match = boxRef.current.style.transform.match(/translate3d\((-?[\d.]+)px/);
-      const currentX = match ? parseFloat(match[1]) : i * boxTotalWidth;
-      boxRef.current.style.transition = 'transform 800ms cubic-bezier(0.4, 0, 0.2, 1)';
-      boxRef.current.style.transform = `translate3d(${currentX - boxTotalWidth}px, 0, 0)`;
-    });
-
-    setTimeout(() => {
-      setIsManualScroll(false);
-      slidingBoxRefs.forEach((boxRef) => {
-        if (boxRef.current) boxRef.current.style.transition = 'none';
-      });
-      applySlidingBoxPositions(newScroll, true);
-    }, 820);
-  };
-
-  const handleSlideRight = () => {
-    if (isManualScroll) return;
-
-    setIsManualScroll(true);
-    const newScroll = autoScrollPositionRef.current - boxTotalWidth;
-    autoScrollPositionRef.current = newScroll;
-    setSlidingBoxScroll(newScroll);
-
-    slidingBoxRefs.forEach((boxRef, i) => {
-      if (!boxRef.current) return;
-      const match = boxRef.current.style.transform.match(/translate3d\((-?[\d.]+)px/);
-      const currentX = match ? parseFloat(match[1]) : i * boxTotalWidth;
-      boxRef.current.style.transition = 'transform 800ms cubic-bezier(0.4, 0, 0.2, 1)';
-      boxRef.current.style.transform = `translate3d(${currentX + boxTotalWidth}px, 0, 0)`;
-    });
-
-    setTimeout(() => {
-      setIsManualScroll(false);
-      slidingBoxRefs.forEach((boxRef) => {
-        if (boxRef.current) boxRef.current.style.transition = 'none';
-      });
-      applySlidingBoxPositions(newScroll, true);
-    }, 820);
-  };
-
-  // Determine arrow visibility - with perpetual scroll, arrows can always be shown
-  // or we can hide them since there's no end. For now, always show them.
-  const showLeftArrow = true;
-  const showRightArrow = true;
 
   const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 1000;
   /** Match beige nav backdrop: fade in scrolling down ~85→90vh, fade out symmetrically upward */
@@ -1233,88 +960,17 @@ export function DesktopHome() {
       {/* Horizontal line at bottom of hero section */}
       <div className="w-full border-t border-[#E6E6E6]" />
 
-      {/* Second Section — iPhone communication carousel slides */}
+      {/* Second Section — intelligence copy + deployments UI */}
       <div ref={secondSectionRef} className="relative z-10 min-h-[112vh]">
-        <div className="relative flex min-h-[112vh] flex-col items-center justify-center py-24 md:py-28">
-          {/* Sliding squares container — edge-to-edge */}
-          <div 
-            className="relative flex w-full max-w-[100vw] items-center justify-center" 
-            style={{ 
-              width: carouselViewportW,
-              height: slideBoxH,
-              opacity: slidingBoxesOpacity,
-              transform: `translateY(${slidingBoxesTranslateY}px)`,
-              transition: 'opacity 1.2s ease-out, transform 1.2s ease-out'
-            }}
-          >
-            {/* Pause button - top right corner */}
-            <button
-              onClick={() => setIsSlidingPaused(!isSlidingPaused)}
-              className="absolute top-4 right-4 z-30 p-2 rounded-full hover:bg-gray-100 transition-colors"
-              style={{
-                opacity: slidingBoxesOpacity,
-              }}
-            >
-              {isSlidingPaused ? (
-                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              ) : (
-                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              )}
-            </button>
-            
-            {/* Navigation Arrows */}
-            {showLeftArrow && (
-              <button 
-                className="absolute left-3 max-[639px]:left-2 z-20 transition-opacity duration-200 hover:opacity-70"
-                onClick={handleSlideRight}
-                style={{
-                  filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))'
-                }}
-              >
-                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                </svg>
-              </button>
-            )}
-            {showRightArrow && (
-              <button 
-                className="absolute right-3 max-[639px]:right-2 z-20 transition-opacity duration-200 hover:opacity-70"
-                onClick={handleSlideLeft}
-                style={{
-                  filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))'
-                }}
-              >
-                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                </svg>
-              </button>
-            )}
-            
-            {/* Sliding squares container - relative positioning for absolute children */}
-            <div 
-              className="relative w-full max-[639px]:rounded-2xl"
-              style={{ 
-                height: slideBoxH,
-                overflow: 'hidden'
-              }}
-            >
-            <WorkflowCarouselSlides
-              slidingBoxRefs={slidingBoxRefs}
-              slideBoxW={slideBoxW}
-              slideBoxH={slideBoxH}
-              slideUniformScale={slideUniformScale}
-              scaledSide={scaledSide}
-              captionLeft700={captionLeft700}
-              captionRight700={captionRight700}
-              slides={isPhoneLayout ? DOEPHONE_COMMUNICATION_SLIDES : DOEPHONE_COMMUNICATION_SLIDES_DESKTOP}
-            />
-            </div>
-          </div>
+        <div
+          className="relative flex min-h-[112vh] flex-col items-stretch justify-center"
+          style={{
+            opacity: slidingBoxesOpacity,
+            transform: `translateY(${slidingBoxesTranslateY}px)`,
+            transition: "opacity 1.2s ease-out, transform 1.2s ease-out",
+          }}
+        >
+          <DoePhoneDesktopIntelligenceSection />
         </div>
       </div>
 
