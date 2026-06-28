@@ -20,7 +20,7 @@ import type { CSSProperties } from "react";
 const DESKTOP_INTEGRATIONS_BADGE_INSET =
   "right-10 md:right-20 lg:right-28 xl:right-36 top-10 md:top-14 lg:top-16 xl:top-20";
 
-/** Desktop integrations band — gradient fill, 3D block grid, title, + badge, integration tiles right. */
+/** Desktop integrations band — gradient fill, 3D block grid, title, + badge, integration tiles centered. */
 export function DoePhoneDesktopIntegrationsSection() {
   const { ref: sectionRef, revealed } = useDoePhoneSectionReveal();
 
@@ -53,13 +53,13 @@ export function DoePhoneDesktopIntegrationsSection() {
 
       <div
         ref={sectionRef}
-        className={`relative z-[20] flex min-h-[112vh] w-full ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}
+        className={`relative z-[20] min-h-[112vh] w-full ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}
       >
         <DoePhoneDesktopFrostPlusBadge
           className={`absolute z-30 ${DESKTOP_INTEGRATIONS_BADGE_INSET} ${doePhoneSectionRevealSegmentClass("badge", revealed)}`}
         />
 
-        <div className={`relative z-[20] flex w-[42%] shrink-0 flex-col ${DOEPHONE_SECTION_TITLE_PT}`}>
+        <div className={`relative z-[20] flex flex-col ${DOEPHONE_SECTION_TITLE_PT}`}>
           <div className="relative pr-[clamp(5.5rem,8vw,7rem)]">
             <DoePhoneSectionTitle
               line1="Intelligence built."
@@ -72,9 +72,11 @@ export function DoePhoneDesktopIntegrationsSection() {
         </div>
 
         <div
-          className={`relative z-[20] flex min-w-0 flex-1 items-center justify-end py-[clamp(3rem,6vw,5rem)] pl-[clamp(1.5rem,3vw,3rem)] ${doePhoneSectionRevealSegmentClass("input", revealed)}`}
+          className={`pointer-events-none absolute inset-0 z-[20] flex items-center justify-center px-[clamp(1.5rem,3vw,3rem)] ${doePhoneSectionRevealSegmentClass("input", revealed)}`}
         >
-          <DoePhoneIntegrateVisual layout="desktop" />
+          <div className="pointer-events-auto w-full max-w-[min(100%,40rem)]">
+            <DoePhoneIntegrateVisual layout="desktop" />
+          </div>
         </div>
       </div>
     </section>
