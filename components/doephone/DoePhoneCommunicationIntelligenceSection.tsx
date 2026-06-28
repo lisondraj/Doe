@@ -227,7 +227,7 @@ export function DoePhoneCommunicationIntelligenceSection() {
           </div>
 
           <div
-            className={`relative shrink-0 ${DOEPHONE_SECTION_CAROUSEL_INSET_X} pb-[clamp(1.25rem,3.85vmin,1.65rem)]`}
+            className={`relative shrink-0 ${DOEPHONE_SECTION_CAROUSEL_INSET_X} pb-[clamp(5.75rem,17.5vmin,7.5rem)]`}
           >
             <DoePhoneAmbientPromptCard headerLabel="New Workflow" layout="section" toolIcons="workflow" size="large">
               Show me which patients have been enrolled in <PromptTag label="Clinical Trial #473" /> from my EMR,
