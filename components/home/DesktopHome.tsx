@@ -22,6 +22,7 @@ import { DesktopMainNavCta } from "@/components/home/DesktopMainNavCta";
 import {
   DOEPHONE_DESKTOP_PAGE_INSET_X,
   DOEPHONE_DESKTOP_PAGE_MARGIN_X,
+  DESKTOP_HOME_BAND_H,
 } from "@/lib/doephone/section-styles";
 
 /** Set true to restore mega-menu hover panels (kept in codebase). */
@@ -57,6 +58,16 @@ const lora = Lora({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
+
+const DESKTOP_FOOTER_GRADIENT = `
+  radial-gradient(circle at center, #D49D4F 0%, #D2774C 18%, #BF593D 32%, #C88A5F 45%, #7B5C4B 55%, #8B6F47 65%, #6D5B41 72%, #5C4A3A 78%, #4A3D32 85%, #1E343A 95%, rgba(30, 52, 58, 0.6) 100%),
+  radial-gradient(ellipse 60% 60% at 0% 0%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
+  radial-gradient(ellipse 60% 60% at 100% 0%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
+  radial-gradient(ellipse 60% 60% at 0% 100%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
+  radial-gradient(ellipse 60% 60% at 100% 100%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
+  linear-gradient(to right, #1E343A 0%, rgba(30, 52, 58, 0.8) 15%, transparent 25%),
+  linear-gradient(to left, #1E343A 0%, rgba(30, 52, 58, 0.8) 15%, transparent 25%)
+`;
 
 const dropdownContent: Record<string, { items: { title: string; desc: string }[]; featured?: { title: string; desc: string } }> = {
   Features: {
@@ -540,9 +551,9 @@ export function DesktopHome() {
       <div className="w-full border-t border-[#E6E6E6]" />
 
       {/* Second Section — intelligence copy + deployments UI */}
-      <div ref={secondSectionRef} className="relative z-10 min-h-[112vh]">
+      <div ref={secondSectionRef} className={`relative z-10 ${DESKTOP_HOME_BAND_H}`}>
         <div
-          className="relative flex min-h-[112vh] flex-col items-stretch justify-center"
+          className={`relative flex flex-col items-stretch justify-center ${DESKTOP_HOME_BAND_H}`}
           style={{
             opacity: slidingBoxesOpacity,
             transform: `translateY(${slidingBoxesTranslateY}px)`,
@@ -557,9 +568,9 @@ export function DesktopHome() {
       <DoePhoneDesktopBuildSection />
 
       {/* Fourth section — reception panel (mirrors second section) */}
-      <div ref={carouselSectionRef} className="relative z-10 min-h-[112vh]">
+      <div ref={carouselSectionRef} className={`relative z-10 ${DESKTOP_HOME_BAND_H}`}>
         <div
-          className="relative flex min-h-[112vh] flex-col items-stretch justify-center"
+          className={`relative flex flex-col items-stretch justify-center ${DESKTOP_HOME_BAND_H}`}
           style={{
             opacity: carouselSectionOpacity,
             transform: `translateY(${carouselSectionTranslateY}px)`,
@@ -580,64 +591,43 @@ export function DesktopHome() {
       <DoePhoneDesktopDocumentsWorkflowSection />
 
       {/* Eighth section — cohort watch panel (mirrors second section) */}
-      <div className="relative z-10 min-h-[112vh]">
-        <div className="relative flex min-h-[112vh] flex-col items-stretch justify-center">
+      <div className={`relative z-10 ${DESKTOP_HOME_BAND_H}`}>
+        <div className={`relative flex flex-col items-stretch justify-center ${DESKTOP_HOME_BAND_H}`}>
           <DoePhoneDesktopCohortWatchSection />
         </div>
       </div>
 
-      {/* Footer */}
-      <div className={`relative left-1/2 w-screen -translate-x-1/2 pb-8 ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
-          <div 
-            className="py-20 relative rounded-2xl overflow-hidden flex items-center"
-            style={{
-              background: `
-                radial-gradient(circle at center, #D49D4F 0%, #D2774C 18%, #BF593D 32%, #C88A5F 45%, #7B5C4B 55%, #8B6F47 65%, #6D5B41 72%, #5C4A3A 78%, #4A3D32 85%, #1E343A 95%, rgba(30, 52, 58, 0.6) 100%),
-                radial-gradient(ellipse 60% 60% at 0% 0%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
-                radial-gradient(ellipse 60% 60% at 100% 0%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
-                radial-gradient(ellipse 60% 60% at 0% 100%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
-                radial-gradient(ellipse 60% 60% at 100% 100%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
-                linear-gradient(to right, #1E343A 0%, rgba(30, 52, 58, 0.8) 15%, transparent 25%),
-                linear-gradient(to left, #1E343A 0%, rgba(30, 52, 58, 0.8) 15%, transparent 25%)
-              `,
-              overflow: 'hidden',
-              minHeight: '160px'
-            }}
-          >
-            {/* Grain texture overlay */}
-            <div
-              className="absolute inset-0 pointer-events-none rounded-2xl"
-              style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E")`,
-                backgroundSize: '200px 200px',
-                opacity: 1,
-                mixBlendMode: 'overlay',
-              }}
-            />
-            <div className={`max-w-[1400px] mx-auto w-full flex items-center justify-between relative z-10 ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
-            {/* Doe Logo */}
-            <h1 className={`text-4xl font-normal text-white ${lora.className}`}>
-              Doe
-            </h1>
+      {/* Footer — full-bleed gradient band aligned to page margins */}
+      <footer
+        className="relative left-1/2 w-screen -translate-x-1/2 overflow-hidden py-20"
+        style={{ background: DESKTOP_FOOTER_GRADIENT }}
+      >
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E")`,
+            backgroundSize: "200px 200px",
+            opacity: 1,
+            mixBlendMode: "overlay",
+          }}
+          aria-hidden
+        />
+        <div className={`relative z-10 flex items-center justify-between ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
+          <h1 className={`text-4xl font-normal text-white ${lora.className}`}>Doe</h1>
 
-            {/* Footer nav — matches site nav */}
-            <nav
-              className="ml-auto grid grid-cols-2 gap-x-12 gap-y-4"
-              aria-label="Footer"
-            >
-              {DESKTOP_NAV_ITEMS.map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  className="text-sm font-medium text-white no-underline transition-colors hover:text-white/80"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
-          </div>
+          <nav className="ml-auto grid grid-cols-2 gap-x-12 gap-y-4" aria-label="Footer">
+            {DESKTOP_NAV_ITEMS.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                className="text-sm font-medium text-white no-underline transition-colors hover:text-white/80"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
         </div>
-      </div>
+      </footer>
     </div>
   );
 }

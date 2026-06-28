@@ -3,29 +3,29 @@
 import { inter, suisseIntl } from "@/lib/home/fonts";
 import { CAROUSEL_MENU_UI } from "@/lib/doephone/carousel-menu-visual-styles";
 
-const { ink: INK, accent: DOE_ORANGE, divider: DIVIDER, muted: MUTED } = CAROUSEL_MENU_UI;
+const { ink: INK, accent: DOE_ORANGE, divider: DIVIDER } = CAROUSEL_MENU_UI;
 
 const MUTED_TEXT = "#6B7280";
-const PANEL_BG = "#FAFAF8";
+const BTN_BG = "#F3F4F6";
+const BORDER = "#E5E7EB";
+
+const PANELS = ["Diabetes panel", "142 patients"] as const;
 
 const SIGNALS = [
   {
     patient: "M. Chen",
     detail: "A1c trend rising · 8.4 → 9.1",
-    action: "Outreach draft",
-    state: "ready" as const,
+    status: "Draft ready",
   },
   {
     patient: "J. Park",
     detail: "Missed metformin refill · 12 days",
-    action: "Pharmacy queue",
-    state: "queued" as const,
+    status: "Queued",
   },
   {
     patient: "S. Reyes",
     detail: "Home BP avg ↑ · 148/94",
-    action: "Care plan review",
-    state: "review" as const,
+    status: "Review",
   },
 ] as const;
 
@@ -34,84 +34,137 @@ type VisualLayout = "phone" | "desktop";
 type VisualSizes = {
   outerRadius: string;
   innerRadius: string;
+  btnRadius: string;
   maxWidth: string;
   panelPad: string;
-  eyebrow: string;
-  title: string;
-  statValue: string;
-  statLabel: string;
+  heading: string;
+  action: string;
   body: string;
-  caption: string;
-  chip: string;
-  rowPad: string;
-  rowGap: string;
+  status: string;
+  addPlus: string;
+  smallIcon: string;
   sectionGap: string;
-  statGap: string;
+  chipGap: string;
+  chipPad: string;
+  rowGap: string;
+  rowPad: string;
+  footerPad: string;
+  headingMarginBottom: string;
+  subheadingMarginTop: string;
+  subheadingMarginBottom: string;
 };
 
 const PHONE_SIZES: VisualSizes = {
   outerRadius: "rounded-[clamp(0.8rem,2.4vmin,0.95rem)]",
   innerRadius: "rounded-[clamp(0.45rem,1.35vmin,0.55rem)]",
+  btnRadius: "rounded-[clamp(0.32rem,0.95vmin,0.4rem)]",
   maxWidth: CAROUSEL_MENU_UI.maxWidthPhone,
   panelPad: "clamp(1.2rem,3.85vmin,1.45rem) clamp(1.25rem,4vmin,1.55rem)",
-  eyebrow: "clamp(0.68rem,2.15vmin,0.86rem)",
-  title: "clamp(1.02rem,3.15vmin,1.22rem)",
-  statValue: "clamp(1.45rem,4.45vmin,1.75rem)",
-  statLabel: "clamp(0.72rem,2.15vmin,0.86rem)",
+  heading: "clamp(1.02rem,3.15vmin,1.22rem)",
+  action: "clamp(0.84rem,2.55vmin,1rem)",
   body: "clamp(0.88rem,2.65vmin,1.05rem)",
-  caption: "clamp(0.72rem,2.15vmin,0.86rem)",
-  chip: "clamp(0.68rem,2.05vmin,0.82rem)",
-  rowPad: "clamp(0.72rem,2.2vmin,0.9rem) clamp(0.82rem,2.5vmin,1rem)",
-  rowGap: "clamp(0.48rem,1.45vmin,0.62rem)",
-  sectionGap: "clamp(0.95rem,2.9vmin,1.18rem)",
-  statGap: "clamp(0.72rem,2.2vmin,0.9rem)",
+  status: "clamp(0.72rem,2.15vmin,0.86rem)",
+  addPlus: "clamp(0.95rem,2.85vmin,1.12rem)",
+  smallIcon: "clamp(0.9rem,2.75vmin,1.05rem)",
+  sectionGap: "clamp(0.62rem,1.95vmin,0.82rem)",
+  chipGap: "clamp(0.32rem,1vmin,0.42rem)",
+  chipPad: "clamp(0.38rem,1.2vmin,0.48rem) clamp(0.62rem,1.95vmin,0.78rem)",
+  rowGap: "clamp(0.55rem,1.75vmin,0.72rem)",
+  rowPad: "clamp(0.82rem,2.55vmin,1.02rem) clamp(0.88rem,2.75vmin,1.05rem)",
+  footerPad: "clamp(0.62rem,1.95vmin,0.78rem) clamp(0.88rem,2.75vmin,1.05rem)",
+  headingMarginBottom: "clamp(0.78rem,2.45vmin,0.95rem)",
+  subheadingMarginTop: "clamp(1.15rem,3.55vmin,1.42rem)",
+  subheadingMarginBottom: "clamp(0.68rem,2.1vmin,0.82rem)",
 };
 
 const DESKTOP_SIZES: VisualSizes = {
   outerRadius: "rounded-[clamp(0.85rem,0.95vw,1rem)]",
   innerRadius: "rounded-[clamp(0.48rem,0.58vw,0.62rem)]",
-  maxWidth: "min(100%, 34rem)",
+  btnRadius: "rounded-[clamp(0.36rem,0.44vw,0.48rem)]",
+  maxWidth: "min(100%, 32rem)",
   panelPad: "clamp(1.15rem,1.45vw,1.5rem) clamp(1.2rem,1.55vw,1.6rem)",
-  eyebrow: "clamp(0.72rem,0.85vw,0.9rem)",
-  title: "clamp(1.12rem,1.35vw,1.42rem)",
-  statValue: "clamp(1.55rem,1.85vw,1.95rem)",
-  statLabel: "clamp(0.78rem,0.9vw,0.92rem)",
+  heading: "clamp(1.12rem,1.35vw,1.42rem)",
+  action: "clamp(0.92rem,1.05vw,1.08rem)",
   body: "clamp(0.9rem,1.02vw,1.05rem)",
-  caption: "clamp(0.78rem,0.9vw,0.92rem)",
-  chip: "clamp(0.72rem,0.85vw,0.88rem)",
-  rowPad: "clamp(0.72rem,0.88vw,0.92rem) clamp(0.82rem,1vw,1.05rem)",
-  rowGap: "clamp(0.5rem,0.62vw,0.66rem)",
-  sectionGap: "clamp(0.95rem,1.15vw,1.2rem)",
-  statGap: "clamp(0.72rem,0.88vw,0.92rem)",
+  status: "clamp(0.78rem,0.9vw,0.92rem)",
+  addPlus: "clamp(0.98rem,1.1vw,1.12rem)",
+  smallIcon: "clamp(0.86rem,0.98vw,1.02rem)",
+  sectionGap: "clamp(0.62rem,0.78vw,0.82rem)",
+  chipGap: "clamp(0.34rem,0.42vw,0.46rem)",
+  chipPad: "clamp(0.42rem,0.52vw,0.56rem) clamp(0.68rem,0.82vw,0.88rem)",
+  rowGap: "clamp(0.58rem,0.72vw,0.76rem)",
+  rowPad: "clamp(0.78rem,0.95vw,1rem) clamp(0.82rem,1vw,1.05rem)",
+  footerPad: "clamp(0.62rem,0.78vw,0.82rem) clamp(0.82rem,1vw,1.05rem)",
+  headingMarginBottom: "clamp(0.78rem,0.95vw,1rem)",
+  subheadingMarginTop: "clamp(1.05rem,1.3vw,1.35rem)",
+  subheadingMarginBottom: "clamp(0.68rem,0.82vw,0.88rem)",
 };
 
-function SignalPulse({ size }: { size: string }) {
+function PanelIcon({ size }: { size: string }) {
   return (
-    <span className="relative flex shrink-0 items-center justify-center" style={{ width: size, height: size }} aria-hidden>
-      <span
-        className="absolute inset-0 rounded-full"
-        style={{ background: "rgba(210, 119, 76, 0.18)", animation: "cohort-pulse 2.4s ease-out infinite" }}
-      />
-      <span className="relative rounded-full" style={{ width: "42%", height: "42%", background: DOE_ORANGE }} />
+    <svg viewBox="0 0 20 20" fill="none" aria-hidden className="shrink-0" style={{ width: size, height: size }}>
+      <rect x="3.5" y="4.5" width="13" height="11" rx="1.5" stroke={DOE_ORANGE} strokeWidth="1.2" />
+      <path d="M3.5 8h13" stroke={DOE_ORANGE} strokeWidth="1.2" strokeLinecap="round" />
+      <circle cx="7" cy="6.25" r="0.75" fill={DOE_ORANGE} />
+    </svg>
+  );
+}
+
+function SweepIcon({ size }: { size: string }) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" aria-hidden className="shrink-0" style={{ width: size, height: size }}>
+      <circle cx="10" cy="10" r="6.25" stroke={DOE_ORANGE} strokeWidth="1.2" />
+      <path d="M10 10V6.2" stroke={DOE_ORANGE} strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M10 10l3.1 1.8" stroke={DOE_ORANGE} strokeWidth="1.2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function SlidersIcon({ size }: { size: string }) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" aria-hidden className="shrink-0" style={{ width: size, height: size }}>
+      <line x1="3" y1="7" x2="17" y2="7" stroke={INK} strokeWidth="1.2" strokeLinecap="round" />
+      <circle cx="13" cy="7" r="2.25" fill="white" stroke={INK} strokeWidth="1.2" />
+      <line x1="3" y1="13" x2="17" y2="13" stroke={INK} strokeWidth="1.2" strokeLinecap="round" />
+      <circle cx="8" cy="13" r="2.25" fill="white" stroke={INK} strokeWidth="1.2" />
+    </svg>
+  );
+}
+
+function StatusLabel({ label, size }: { label: string; size: string }) {
+  const isReady = label === "Draft ready";
+
+  return (
+    <span
+      className="shrink-0 font-medium leading-none"
+      style={{ color: isReady ? DOE_ORANGE : MUTED_TEXT, fontSize: size }}
+    >
+      {label}
     </span>
   );
 }
 
-function ActionChip({ label, state, sizes }: { label: string; state: (typeof SIGNALS)[number]["state"]; sizes: VisualSizes }) {
-  const styles =
-    state === "ready"
-      ? { background: "rgba(210, 119, 76, 0.12)", color: DOE_ORANGE, border: "rgba(210, 119, 76, 0.28)" }
-      : state === "queued"
-        ? { background: "rgba(30, 52, 58, 0.06)", color: INK, border: DIVIDER }
-        : { background: "#FFFFFF", color: MUTED_TEXT, border: DIVIDER };
-
+function SignalRow({
+  patient,
+  detail,
+  status,
+  sizes,
+}: (typeof SIGNALS)[number] & { sizes: VisualSizes }) {
   return (
-    <span
-      className={`shrink-0 rounded-full border font-medium ${inter.className}`}
-      style={{ ...styles, fontSize: sizes.chip, padding: "0.22em 0.72em" }}
-    >
-      {label}
-    </span>
+    <div className="flex items-center justify-between" style={{ gap: sizes.rowGap, padding: sizes.rowPad }}>
+      <div className="min-w-0">
+        <p className="truncate font-normal leading-snug" style={{ color: MUTED_TEXT, fontSize: sizes.body }}>
+          {patient}
+        </p>
+        <p
+          className={`${inter.className} truncate font-normal leading-snug`}
+          style={{ color: MUTED_TEXT, fontSize: sizes.status, marginTop: "0.12em", opacity: 0.88 }}
+        >
+          {detail}
+        </p>
+      </div>
+      <StatusLabel label={status} size={sizes.status} />
+    </div>
   );
 }
 
@@ -120,144 +173,112 @@ export function DoePhoneCohortWatchVisual({ layout = "phone" }: { layout?: Visua
   const sizes = layout === "desktop" ? DESKTOP_SIZES : PHONE_SIZES;
 
   return (
-    <>
-      <style>{`
-        @keyframes cohort-pulse {
-          0% { transform: scale(0.85); opacity: 0.55; }
-          70% { transform: scale(1.35); opacity: 0; }
-          100% { transform: scale(1.35); opacity: 0; }
-        }
-      `}</style>
+    <div
+      className={`mx-auto flex h-full w-full items-center justify-center ${suisseIntl.className}`}
+      style={{ maxWidth: sizes.maxWidth }}
+      aria-hidden
+    >
       <div
-        className={`mx-auto flex h-full w-full items-center justify-center ${suisseIntl.className}`}
-        style={{ maxWidth: sizes.maxWidth }}
-        aria-hidden
+        className={`w-full border bg-white ${sizes.outerRadius}`}
+        style={{ borderColor: BORDER, padding: sizes.panelPad }}
       >
-        <div
-          className={`w-full border bg-white ${sizes.outerRadius}`}
-          style={{ borderColor: "#E5E7EB", padding: sizes.panelPad }}
+        <p
+          className="font-semibold leading-none tracking-[-0.015em]"
+          style={{ color: INK, fontSize: sizes.heading, marginBottom: sizes.headingMarginBottom }}
         >
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <p
-                className="font-medium uppercase tracking-[0.14em]"
-                style={{ color: MUTED, fontSize: sizes.eyebrow }}
-              >
-                Cohort watch
-              </p>
-              <h3
-                className="font-semibold leading-tight tracking-[-0.02em]"
-                style={{ color: INK, fontSize: sizes.title, marginTop: "0.28em" }}
-              >
-                Diabetes panel
-              </h3>
-            </div>
-            <div
-              className={`flex shrink-0 items-center gap-2 border ${sizes.innerRadius}`}
+          Cohort watch
+        </p>
+
+        <div className="flex flex-wrap items-center" style={{ gap: sizes.sectionGap }}>
+          {PANELS.map((label) => (
+            <button
+              key={label}
+              type="button"
+              className={`inline-flex items-center ${sizes.btnRadius} font-medium leading-none ${inter.className}`}
               style={{
-                borderColor: DIVIDER,
-                background: PANEL_BG,
-                padding: "0.42em 0.72em",
+                background: BTN_BG,
+                color: INK,
+                fontSize: sizes.action,
+                gap: sizes.chipGap,
+                padding: sizes.chipPad,
               }}
+              tabIndex={-1}
             >
-              <SignalPulse size="0.72rem" />
-              <span className={`${inter.className} font-normal`} style={{ color: MUTED_TEXT, fontSize: sizes.caption }}>
-                Sweep · 6m ago
-              </span>
-            </div>
-          </div>
+              <PanelIcon size={sizes.smallIcon} />
+              {label}
+            </button>
+          ))}
 
-          <div
-            className="grid"
+          <button
+            type="button"
+            className={`inline-flex items-center ${sizes.btnRadius} font-medium leading-none ${inter.className}`}
             style={{
-              marginTop: sizes.sectionGap,
-              gap: sizes.statGap,
-              gridTemplateColumns: layout === "desktop" ? "1fr 1.35fr" : "1fr",
+              background: BTN_BG,
+              color: INK,
+              fontSize: sizes.action,
+              gap: sizes.chipGap,
+              padding: sizes.chipPad,
             }}
+            tabIndex={-1}
           >
-            <div
-              className={`border ${sizes.innerRadius}`}
-              style={{ borderColor: DIVIDER, background: PANEL_BG, padding: sizes.rowPad }}
-            >
-              <p
-                className="font-semibold tabular-nums leading-none tracking-[-0.03em]"
-                style={{ color: INK, fontSize: sizes.statValue }}
-              >
-                142
-              </p>
-              <p
-                className={`${inter.className} font-normal`}
-                style={{ color: MUTED_TEXT, fontSize: sizes.statLabel, marginTop: "0.35em" }}
-              >
-                Active patients
-              </p>
-            </div>
+            <SweepIcon size={sizes.smallIcon} />
+            Sweep · 6m ago
+          </button>
+        </div>
 
-            <div
-              className={`border ${sizes.innerRadius}`}
-              style={{ borderColor: "rgba(210, 119, 76, 0.22)", background: "rgba(210, 119, 76, 0.07)", padding: sizes.rowPad }}
-            >
-              <p className="font-semibold leading-tight" style={{ color: DOE_ORANGE, fontSize: sizes.body }}>
-                3 signals surfaced
-              </p>
-              <p
-                className={`${inter.className} font-normal leading-snug`}
-                style={{ color: MUTED_TEXT, fontSize: sizes.caption, marginTop: "0.28em" }}
-              >
-                Agent drafted outreach and queued follow-ups overnight
-              </p>
-            </div>
-          </div>
+        <p
+          className="font-semibold leading-none tracking-[-0.015em]"
+          style={{
+            color: INK,
+            fontSize: sizes.heading,
+            marginTop: sizes.subheadingMarginTop,
+            marginBottom: sizes.subheadingMarginBottom,
+          }}
+        >
+          Signal queue
+        </p>
 
-          <div style={{ marginTop: sizes.sectionGap }}>
-            <div className="mb-[0.55em] flex items-center justify-between gap-2">
-              <p className="font-medium" style={{ color: INK, fontSize: sizes.body }}>
-                Signal queue
-              </p>
-              <span
-                className={`rounded-full font-medium text-white ${inter.className}`}
-                style={{ background: DOE_ORANGE, fontSize: sizes.chip, padding: "0.18em 0.62em" }}
-              >
-                3 new
+        <div className={`overflow-hidden border ${sizes.innerRadius}`} style={{ borderColor: BORDER }}>
+          {SIGNALS.map((signal, index) => (
+            <div key={signal.patient}>
+              {index > 0 ? <div className="h-px w-full" style={{ background: DIVIDER }} /> : null}
+              <SignalRow {...signal} sizes={sizes} />
+            </div>
+          ))}
+
+          <div className="h-px w-full" style={{ background: DIVIDER }} />
+
+          <div className="flex items-center justify-between" style={{ padding: sizes.footerPad }}>
+            <button
+              type="button"
+              className={`inline-flex items-center ${sizes.btnRadius} font-medium leading-none ${inter.className}`}
+              style={{
+                background: BTN_BG,
+                color: INK,
+                fontSize: sizes.action,
+                gap: sizes.chipGap,
+                padding: sizes.chipPad,
+              }}
+              tabIndex={-1}
+            >
+              <span className="font-normal" style={{ fontSize: sizes.addPlus }}>
+                +
               </span>
-            </div>
+              Draft outreach
+            </button>
 
-            <div className="flex flex-col" style={{ gap: sizes.rowGap }}>
-              {SIGNALS.map((signal) => (
-                <div
-                  key={signal.patient}
-                  className={`flex items-center justify-between gap-3 border ${sizes.innerRadius}`}
-                  style={{
-                    borderColor: DIVIDER,
-                    background: PANEL_BG,
-                    padding: sizes.rowPad,
-                  }}
-                >
-                  <div className="min-w-0 flex items-start gap-[0.55em]">
-                    <span
-                      className="mt-[0.35em] shrink-0 rounded-full"
-                      style={{ width: "0.42rem", height: "0.42rem", background: DOE_ORANGE }}
-                      aria-hidden
-                    />
-                    <div className="min-w-0">
-                      <p className="font-semibold leading-snug" style={{ color: INK, fontSize: sizes.body }}>
-                        {signal.patient}
-                      </p>
-                      <p
-                        className={`${inter.className} truncate font-normal leading-snug`}
-                        style={{ color: MUTED_TEXT, fontSize: sizes.caption, marginTop: "0.12em" }}
-                      >
-                        {signal.detail}
-                      </p>
-                    </div>
-                  </div>
-                  <ActionChip label={signal.action} state={signal.state} sizes={sizes} />
-                </div>
-              ))}
-            </div>
+            <button
+              type="button"
+              className={`ml-auto inline-flex items-center font-medium leading-none ${inter.className}`}
+              style={{ color: INK, fontSize: sizes.action, gap: sizes.chipGap }}
+              tabIndex={-1}
+            >
+              <SlidersIcon size={sizes.smallIcon} />
+              Manage thresholds
+            </button>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

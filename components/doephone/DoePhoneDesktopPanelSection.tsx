@@ -4,6 +4,7 @@ import { DoePhoneDesktopFrostPlusBadge } from "@/components/doephone/DoePhoneDes
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import type { DoePhoneCommunicationSlide } from "@/lib/doephone/communication-carousel";
 import {
+  DESKTOP_HOME_BAND_H,
   DOEPHONE_SECTION_CAROUSEL_CLIP_STYLE,
   DOEPHONE_SECTION_CAROUSEL_RADIUS,
 } from "@/lib/doephone/section-styles";
@@ -25,7 +26,7 @@ export function DoePhoneDesktopPanelSection({
   children: ReactNode;
 }) {
   return (
-    <div className={`flex min-h-[112vh] w-full flex-col ${DESKTOP_SECTION_UNIFORM_PAD}`}>
+    <div className={`flex w-full flex-col ${DESKTOP_HOME_BAND_H} ${DESKTOP_SECTION_UNIFORM_PAD}`}>
       <div
         className={`relative isolate min-h-0 w-full flex-1 overflow-hidden shadow-[0_10px_32px_rgba(0,0,0,0.1)] ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
         style={DOEPHONE_SECTION_CAROUSEL_CLIP_STYLE}
