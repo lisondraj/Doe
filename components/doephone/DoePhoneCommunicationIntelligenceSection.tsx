@@ -54,13 +54,13 @@ function BuildSectionFrostOverlay({ closing }: { closing: boolean }) {
 
 function BuildSectionToggleBadge({
   expanded,
-  interactive,
+  disabled = false,
   onToggle,
   className = "",
   style,
 }: {
   expanded: boolean;
-  interactive: boolean;
+  disabled?: boolean;
   onToggle: () => void;
   className?: string;
   style?: CSSProperties;
@@ -77,25 +77,12 @@ function BuildSectionToggleBadge({
     textShadow: "0 1px 8px rgba(30, 52, 58, 0.18)",
   } as const;
 
-  if (!interactive) {
-    return (
-      <span
-        className={`pointer-events-none absolute grid place-items-center rounded-full ${FROST_BLUR_CLASS} ${className}`}
-        style={sharedStyle}
-        aria-hidden
-      >
-        <span className="block font-light leading-none text-white" style={plusStyle}>
-          +
-        </span>
-      </span>
-    );
-  }
-
   return (
     <button
       type="button"
-      className={`absolute grid place-items-center rounded-full ${FROST_BLUR_CLASS} ${className}`}
-      style={{ ...sharedStyle, transition: `opacity 720ms ${EXPAND_EASE}` }}
+      disabled={disabled}
+      className={`absolute grid place-items-center rounded-full ${FROST_BLUR_CLASS} disabled:pointer-events-none ${className}`}
+      style={sharedStyle}
       aria-label={expanded ? "Close details" : "Show details"}
       aria-expanded={expanded}
       onClick={onToggle}
@@ -188,8 +175,8 @@ export function DoePhoneCommunicationIntelligenceSection() {
       <div ref={sectionRef} className="relative z-[20] flex h-full min-h-0 flex-col">
 
         <BuildSectionToggleBadge
-          expanded={panelOpen}
-          interactive={!isClosing}
+          expanded={panelPhase === "open"}
+          disabled={isClosing}
           onToggle={toggleExpanded}
           className={`z-30 right-6 iphone-page:right-[max(2.35rem,calc(env(safe-area-inset-right,0px)+5.25vmin))] ${doePhoneSectionRevealSegmentClass("badge", revealed)}`}
           style={{
