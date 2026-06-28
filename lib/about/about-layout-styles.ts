@@ -20,8 +20,8 @@ export const ABOUT_PAGE_SUBHEADING_TW = `mt-[clamp(0.85rem,0.65rem+0.85vmin,1.25
 /** Mission headline block — subheading wraps to the title column width. */
 export const ABOUT_HERO_HEADLINE_WRAP = "w-fit max-w-full";
 
-/** Space below fixed nav before mission headline. */
-export const ABOUT_PAGE_HERO_HEADLINE_PT = "pt-2 iphone-page:pt-3";
+/** Extra space below nav clearance before mission headline. */
+export const ABOUT_PAGE_HERO_HEADLINE_PT = "mt-2 iphone-page:mt-3";
 
 /** About hero — article section spacing after subheading and before body copy. */
 export const ABOUT_PAGE_HERO_AFTER_SUBHEADING = "mt-10 iphone-page:mt-12";

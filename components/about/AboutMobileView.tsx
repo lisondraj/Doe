@@ -27,8 +27,8 @@ export function AboutMobileView() {
       footerLinksDisabled
       shellMinHeightClass="min-h-[var(--app-vh,100lvh)]"
     >
-      <main className={`w-full ${BLOG_CONTENT_PT} ${ABOUT_PAGE_HERO_HEADLINE_PT}`}>
-        <div className={ABOUT_HERO_HEADLINE_WRAP}>
+      <main className={`w-full ${BLOG_CONTENT_PT}`}>
+        <div className={`${ABOUT_HERO_HEADLINE_WRAP} ${ABOUT_PAGE_HERO_HEADLINE_PT}`}>
           <h1 className={ABOUT_PAGE_TITLE_TW}>
             <span className="block">Doe is on a mission</span>
             <span className="block">to redefine healthcare.</span>
