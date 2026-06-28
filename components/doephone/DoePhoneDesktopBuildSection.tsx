@@ -29,9 +29,9 @@ import { DOEPHONE_COMMUNICATION_SLIDES } from "@/lib/doephone/communication-caro
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 
 const BUILD_BACKDROP_SLIDE =
-  DOEPHONE_COMMUNICATION_SLIDES.find((slide) => slide.id === "inbox") ??
+  DOEPHONE_COMMUNICATION_SLIDES.find((slide) => slide.id === "front-desk") ??
   (() => {
-    throw new Error("Missing documents communication slide");
+    throw new Error("Missing reception communication slide");
   })();
 
 const DESKTOP_BUILD_INSET = DOEPHONE_DESKTOP_PAGE_INSET_X;

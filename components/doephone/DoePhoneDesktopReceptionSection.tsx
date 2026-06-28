@@ -5,9 +5,9 @@ import { DoePhoneFrontDeskInboxVisual } from "@/components/doephone/DoePhoneFron
 import { DOEPHONE_COMMUNICATION_SLIDES } from "@/lib/doephone/communication-carousel";
 
 const RECEPTION_SLIDE =
-  DOEPHONE_COMMUNICATION_SLIDES.find((slide) => slide.id === "front-desk") ??
+  DOEPHONE_COMMUNICATION_SLIDES.find((slide) => slide.id === "inbox") ??
   (() => {
-    throw new Error("Missing reception communication slide");
+    throw new Error("Missing documents communication slide");
   })();
 
 /** Desktop section below Build — same panel shell as deployments with reception UI centered. */
