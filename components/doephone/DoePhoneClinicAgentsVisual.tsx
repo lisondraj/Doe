@@ -8,18 +8,15 @@ const { ink: INK, accent: DOE_ORANGE, divider: DIVIDER } = CAROUSEL_MENU_UI;
 const MUTED_TEXT = "#6B7280";
 const BTN_BG = "#F3F4F6";
 const BORDER = "#E5E7EB";
-const LIVE_BG = "rgba(210, 119, 76, 0.12)";
 
 const OUTER_RADIUS = "rounded-[clamp(0.8rem,2.4vmin,0.95rem)]";
 const INNER_RADIUS = "rounded-[clamp(0.45rem,1.35vmin,0.55rem)]";
 const BTN_RADIUS = "rounded-[clamp(0.32rem,0.95vmin,0.4rem)]";
-const PILL_RADIUS = "rounded-[clamp(0.32rem,0.95vmin,0.4rem)]";
 
 const CLINIC_AGENTS = [
   { name: "Voice Agent", status: "Deployed", icon: "voice" },
   { name: "Scheduling Agent", status: "Deployed", icon: "calendar" },
-  { name: "Labs Agent", status: "Ready", icon: "labs" },
-  { name: "Billing Agent", status: "Incomplete", icon: "billing" },
+  { name: "Billing Agent", status: "Ready", icon: "billing" },
 ] as const;
 
 const DEPLOYMENTS = ["Front Desk", "Inbox", "Referrals"] as const;
@@ -53,23 +50,6 @@ function AgentIcon({ kind }: { kind: AgentIconKind }) {
           <path d="M7 2.5v3M13 2.5v3" stroke={stroke} strokeWidth={sw} strokeLinecap="round" />
           <circle cx="7.1" cy="11.6" r="1.05" stroke={stroke} strokeWidth={sw * 0.85} />
           <circle cx="11" cy="11.6" r="1.05" stroke={stroke} strokeWidth={sw * 0.85} />
-        </>
-      )}
-      {kind === "labs" && (
-        <>
-          <path
-            d="M4.5 14.5h11"
-            stroke={stroke}
-            strokeWidth={sw}
-            strokeLinecap="round"
-          />
-          <path
-            d="M5.5 13.5l3.5-4 2.5 2.5 3.5-5"
-            stroke={stroke}
-            strokeWidth={sw}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
         </>
       )}
       {kind === "billing" && (
@@ -116,17 +96,15 @@ function SlidersIcon() {
   );
 }
 
-function StatusPill({ label }: { label: string }) {
+function StatusLabel({ label }: { label: string }) {
   const isDeployed = label === "Deployed";
 
   return (
     <span
-      className={`inline-flex shrink-0 items-center font-medium leading-none ${PILL_RADIUS}`}
+      className="shrink-0 font-medium leading-none"
       style={{
-        background: isDeployed ? LIVE_BG : BTN_BG,
         color: isDeployed ? DOE_ORANGE : MUTED_TEXT,
         fontSize: "clamp(0.72rem,2.15vmin,0.86rem)",
-        padding: "clamp(0.22rem,0.68vmin,0.28rem) clamp(0.42rem,1.28vmin,0.52rem)",
       }}
     >
       {label}
@@ -151,7 +129,7 @@ function AgentRow({ name, status, icon }: (typeof CLINIC_AGENTS)[number]) {
           {name}
         </span>
       </div>
-      <StatusPill label={status} />
+      <StatusLabel label={status} />
     </div>
   );
 }
@@ -171,7 +149,7 @@ export function DoePhoneClinicAgentsVisual() {
         className={`w-full border bg-white ${OUTER_RADIUS}`}
         style={{
           borderColor: BORDER,
-          padding: "clamp(1.35rem,4.4vmin,1.65rem) clamp(1.25rem,4vmin,1.55rem)",
+          padding: "clamp(1.2rem,3.85vmin,1.45rem) clamp(1.25rem,4vmin,1.55rem)",
         }}
       >
         <p
@@ -223,8 +201,8 @@ export function DoePhoneClinicAgentsVisual() {
           style={{
             color: INK,
             fontSize: headingSize,
-            marginTop: "clamp(1.45rem,4.5vmin,1.85rem)",
-            marginBottom: "clamp(0.78rem,2.45vmin,0.95rem)",
+            marginTop: "clamp(1.15rem,3.55vmin,1.42rem)",
+            marginBottom: "clamp(0.68rem,2.1vmin,0.82rem)",
           }}
         >
           Clinic Agents

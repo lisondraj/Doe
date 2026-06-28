@@ -26,9 +26,7 @@ const TILE_ICON_SIZE = "clamp(1.15rem,3.55vmin,1.38rem)";
 const LABEL_SIZE = "clamp(0.76rem,2.28vmin,0.9rem)";
 const TILE_LABEL_SIZE = "clamp(0.58rem,1.75vmin,0.68rem)";
 const TILE_GAP = "clamp(0.32rem,0.98vmin,0.42rem)";
-const CONNECTOR_H = "clamp(1.65rem,5.05vmin,2.02rem)";
-const FLOW_STROKE = 1.1;
-const FLOW_NODE = "clamp(0.32rem,0.98vmin,0.38rem)";
+const FLOW_CONNECTOR_H = "clamp(1.35rem,4.15vmin,1.65rem)";
 const CANVAS_PAD =
   "clamp(1.15rem,3.55vmin,1.45rem) clamp(0.95rem,2.9vmin,1.15rem) clamp(1.25rem,3.85vmin,1.55rem)";
 
@@ -45,40 +43,6 @@ const CLINICAL_OUTCOMES = [
 ] as const;
 
 type DocIconKind = (typeof INCOMING_DOCS)[number]["icon"];
-
-function FlowNode({ className = "" }: { className?: string }) {
-  return (
-    <span
-      className={`block shrink-0 rounded-full border bg-white ${className}`}
-      style={{
-        width: FLOW_NODE,
-        height: FLOW_NODE,
-        borderColor: BORDER,
-        borderWidth: FLOW_STROKE,
-      }}
-    />
-  );
-}
-
-function FlowChevron() {
-  return (
-    <svg
-      viewBox="0 0 12 8"
-      fill="none"
-      aria-hidden
-      className="shrink-0"
-      style={{ width: "clamp(0.55rem,1.65vmin,0.65rem)", height: "clamp(0.32rem,0.98vmin,0.38rem)" }}
-    >
-      <path
-        d="M2 2 L6 6 L10 2"
-        stroke={BORDER}
-        strokeWidth={FLOW_STROKE}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
 
 function DocIcon({ kind, size = ICON_SIZE }: { kind: DocIconKind; size?: string }) {
   return (
@@ -184,35 +148,30 @@ function IncomingDocsRow() {
   );
 }
 
-function DocsToInboxConnector() {
-  const mergeY = "38%";
+function MergeToCenter() {
+  const mergeTop = "42%";
 
   return (
-    <div className="relative w-full" style={{ height: CONNECTOR_H }}>
+    <div className="relative w-full" style={{ height: FLOW_CONNECTOR_H }}>
       <div className="flex h-full w-full" style={{ gap: TILE_GAP }}>
         {[0, 1, 2].map((index) => (
-          <div key={index} className="relative min-w-0 flex-1">
+          <div key={index} className="flex min-w-0 flex-1 justify-center">
             <div
-              className="absolute left-1/2 -translate-x-1/2"
-              style={{ top: 0, width: 1, height: mergeY, background: BORDER }}
+              aria-hidden
+              style={{ width: 1, height: mergeTop, background: BORDER }}
             />
-            <div
-              className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2"
-              style={{ top: mergeY }}
-            >
-              <FlowNode />
-            </div>
           </div>
         ))}
       </div>
 
       <div
         className="pointer-events-none absolute inset-x-0 flex -translate-y-1/2"
-        style={{ top: mergeY, gap: TILE_GAP }}
+        style={{ top: mergeTop, gap: TILE_GAP, height: 1 }}
       >
         {[0, 1, 2].map((index) => (
-          <div key={index} className="min-w-0 flex-1">
+          <div key={index} className="flex min-w-0 flex-1 items-center">
             <div
+              aria-hidden
               style={{
                 height: 1,
                 background: BORDER,
@@ -226,15 +185,10 @@ function DocsToInboxConnector() {
       </div>
 
       <div
-        className="absolute left-1/2 flex -translate-x-1/2 flex-col items-center"
-        style={{ top: mergeY, bottom: 0, width: 1 }}
-      >
-        <div className="w-px flex-1" style={{ background: BORDER }} />
-      </div>
-
-      <div className="absolute bottom-0 left-1/2 flex -translate-x-1/2 translate-y-1/2 flex-col items-center">
-        <FlowChevron />
-      </div>
+        aria-hidden
+        className="absolute left-1/2 -translate-x-1/2"
+        style={{ top: mergeTop, bottom: 0, width: 1, background: BORDER }}
+      />
     </div>
   );
 }
@@ -243,7 +197,7 @@ function IncomingDocsFlow() {
   return (
     <>
       <IncomingDocsRow />
-      <DocsToInboxConnector />
+      <MergeToCenter />
       <InboxAgentHub />
     </>
   );
@@ -299,13 +253,14 @@ function ClinicalOutcomesColumn() {
 function FlowConnector() {
   return (
     <div
-      className="flex flex-col items-center"
-      style={{ height: "clamp(1.35rem,4.15vmin,1.65rem)", width: "clamp(0.85rem,2.6vmin,1.02rem)" }}
-    >
-      <FlowNode />
-      <div className="w-px flex-1" style={{ background: BORDER }} />
-      <FlowChevron />
-    </div>
+      aria-hidden
+      className="shrink-0"
+      style={{
+        width: 1,
+        height: FLOW_CONNECTOR_H,
+        background: BORDER,
+      }}
+    />
   );
 }
 
