@@ -35,6 +35,7 @@ export function AboutDesktopView() {
 
         <main className={`${ABOUT_DESKTOP_MAIN_PT} pb-16 md:pb-20`}>
           <div className={ABOUT_DESKTOP_PAGE_INSET}>
+          <div className={ABOUT_DESKTOP_ARTICLE_MAX_W}>
             <h1 className={ABOUT_DESKTOP_TITLE_TW}>
               <span className="block">Doe is on a mission</span>
               <span className="block">to redefine healthcare.</span>
@@ -53,10 +54,11 @@ export function AboutDesktopView() {
               />
             </div>
 
-            <div className={`article-body text-left ${ABOUT_DESKTOP_ARTICLE_MAX_W}`}>
+            <div className="article-body text-left">
               {ABOUT_PAGE_ARTICLE.body.map((block, index) => renderArticleBlock(block, index, "desktop"))}
             </div>
           </div>
+        </div>
         </main>
 
         <footer

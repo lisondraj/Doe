@@ -4,7 +4,7 @@ import { renderArticleBlock } from "@/components/blog/ArticleBodyBlocks";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
 import {
-  ABOUT_HERO_WRAP,
+  ABOUT_PAGE_HERO_WRAP,
   ABOUT_PAGE_SUBHEADING_TW,
   ABOUT_PAGE_TITLE_TW,
 } from "@/lib/about/about-layout-styles";
@@ -34,7 +34,7 @@ export function AboutMobileView() {
           We intend to register as a Delaware corporation and are actively raising a pre-seed round.
         </p>
 
-        <div className={ABOUT_HERO_WRAP}>
+        <div className={ABOUT_PAGE_HERO_WRAP}>
           <BlogHeroVisual
             backdrop={ABOUT_PAGE_ARTICLE.backdrop}
             variant="hero"

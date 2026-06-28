@@ -72,10 +72,10 @@ export const BLOG_ARTICLES: readonly BlogArticle[] = [
       {
         type: "ul",
         items: [
-          "United States: Physicians spend nearly two hours on EHR and desk work for every one hour of direct patient care during clinic hours.",
-          "United States: The average physician logs more than 16 hours per week on administrative tasks outside scheduled patient time.",
-          "Canada: Family physicians report roughly 19 hours per week on non-clinical paperwork and care coordination.",
-          "Canada: A majority of Canadian physicians cite administrative load as a leading driver of burnout and reduced clinic capacity.",
+          "Physicians spend nearly two hours on EHR and desk work for every one hour of direct patient care during clinic hours.",
+          "The average physician logs more than 16 hours per week on administrative tasks outside scheduled patient time.",
+          "Family physicians report roughly 19 hours per week on non-clinical paperwork and care coordination.",
+          "A majority of Canadian physicians cite administrative load as a leading driver of burnout and reduced clinic capacity.",
         ],
       },
       {
