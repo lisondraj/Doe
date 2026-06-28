@@ -17,7 +17,10 @@ import {
   DOEPHONE_DESKTOP_PAGE_INSET_RIGHT,
   DOEPHONE_DESKTOP_PAGE_INSET_X,
 } from "@/lib/doephone/section-styles";
-import { doephoneSectionRevealStyleVars } from "@/lib/doephone/section-reveal-timing";
+import {
+  DOEPHONE_DESKTOP_BUILD_INPUT_DELAY_MS,
+  doephoneSectionRevealStyleVars,
+} from "@/lib/doephone/section-reveal-timing";
 import {
   doePhoneSectionRevealSegmentClass,
   useDoePhoneSectionReveal,
@@ -93,7 +96,12 @@ export function DoePhoneDesktopBuildSection() {
   return (
     <section
       className={`relative isolate z-10 w-full overflow-hidden bg-[#1E343A] ${DESKTOP_HOME_BAND_H}`}
-      style={doephoneSectionRevealStyleVars() as CSSProperties}
+      style={
+        {
+          ...doephoneSectionRevealStyleVars(),
+          "--doephone-section-reveal-input-delay": `${DOEPHONE_DESKTOP_BUILD_INPUT_DELAY_MS}ms`,
+        } as CSSProperties
+      }
       aria-label="Build"
     >
       <div className="pointer-events-none absolute -inset-[3%] overflow-hidden" aria-hidden>
@@ -113,8 +121,9 @@ export function DoePhoneDesktopBuildSection() {
         className={`relative z-[20] flex w-full flex-col ${DESKTOP_HOME_BAND_H}`}
       >
         <DoePhoneDesktopFrostPlusBadge
-          expanded={panelOpen}
-          interactive={!isClosing}
+          expanded={panelPhase === "open"}
+          disabled={isClosing}
+          interactive
           onToggle={toggleExpanded}
           className={`absolute z-30 ${DESKTOP_FULLSCREEN_SECTION_BADGE_INSET} ${doePhoneSectionRevealSegmentClass("badge", revealed)}`}
         />

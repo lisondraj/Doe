@@ -10,7 +10,6 @@ const ORANGE_FROST_STYLE = {
 } as const;
 
 const FROST_BLUR_CLASS = "backdrop-blur-[10px]";
-const EXPAND_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
 
 const plusStyle = {
   fontSize: "clamp(2.85rem, 4vw, 3.55rem)",
@@ -32,12 +31,14 @@ export function DoePhoneDesktopFrostPlusBadge({
   className = "",
   style,
   interactive = false,
+  disabled = false,
   expanded = false,
   onToggle,
 }: {
   className?: string;
   style?: CSSProperties;
   interactive?: boolean;
+  disabled?: boolean;
   expanded?: boolean;
   onToggle?: () => void;
 }) {
@@ -48,7 +49,7 @@ export function DoePhoneDesktopFrostPlusBadge({
     ...style,
   } as const;
 
-  if (!interactive) {
+  if (!interactive && !onToggle) {
     return (
       <span
         className={`pointer-events-none grid place-items-center rounded-full ${FROST_BLUR_CLASS} ${className}`.trim()}
@@ -63,8 +64,9 @@ export function DoePhoneDesktopFrostPlusBadge({
   return (
     <button
       type="button"
-      className={`grid place-items-center rounded-full ${FROST_BLUR_CLASS} ${className}`.trim()}
-      style={{ ...sharedStyle, transition: `opacity 720ms ${EXPAND_EASE}` }}
+      disabled={disabled}
+      className={`grid place-items-center rounded-full ${FROST_BLUR_CLASS} disabled:pointer-events-none ${className}`.trim()}
+      style={sharedStyle}
       aria-label={expanded ? "Close details" : "Show details"}
       aria-expanded={expanded}
       onClick={onToggle}

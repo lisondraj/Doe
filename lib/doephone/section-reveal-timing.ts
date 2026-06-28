@@ -17,6 +17,10 @@ export const DOEPHONE_SECTION_REVEAL_BADGE_DELAY_MS = DOEPHONE_SECTION_REVEAL_CA
 /** Build section — workflow input follows badge on the same cadence as menu. */
 export const DOEPHONE_SECTION_REVEAL_INPUT_DELAY_MS = DOEPHONE_SECTION_REVEAL_MENU_DELAY_MS;
 
+/** Desktop Build — workflow input appears one reveal gap after the + badge. */
+export const DOEPHONE_DESKTOP_BUILD_INPUT_DELAY_MS =
+  DOEPHONE_SECTION_REVEAL_BADGE_DELAY_MS + DOEPHONE_SECTION_REVEAL_GAP_MS;
+
 export function doephoneSectionRevealStyleVars(): Record<string, string> {
   return {
     "--doephone-section-reveal-duration": `${DOEPHONE_SECTION_REVEAL_DURATION_MS}ms`,
