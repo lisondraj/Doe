@@ -1,49 +1,16 @@
 "use client";
 
-import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
-import {
-  DOEPHONE_SECTION_CAROUSEL_RADIUS,
-  DOEPHONE_SECTION_CAROUSEL_RADIUS_PX,
-} from "@/lib/doephone/section-styles";
-import type { WorkflowCarouselGridKind } from "@/lib/workflow-carousel-design-backdrops";
-import type { CSSProperties } from "react";
+import { JoinInternLineGraphic } from "@/components/join/JoinInternLineGraphic";
+import { ABOUT_DESKTOP_BEIGE_PANEL_TW } from "@/lib/about/about-layout-styles";
 
-const INNER_RADIUS_LEFT = {
-  borderRadius: `0 ${DOEPHONE_SECTION_CAROUSEL_RADIUS_PX} ${DOEPHONE_SECTION_CAROUSEL_RADIUS_PX} 0`,
-  clipPath: `inset(0 round 0 ${DOEPHONE_SECTION_CAROUSEL_RADIUS_PX} ${DOEPHONE_SECTION_CAROUSEL_RADIUS_PX} 0)`,
-} as const satisfies CSSProperties;
-
-const INNER_RADIUS_RIGHT = {
-  borderRadius: `${DOEPHONE_SECTION_CAROUSEL_RADIUS_PX} 0 0 ${DOEPHONE_SECTION_CAROUSEL_RADIUS_PX}`,
-  clipPath: `inset(0 round ${DOEPHONE_SECTION_CAROUSEL_RADIUS_PX} 0 0 ${DOEPHONE_SECTION_CAROUSEL_RADIUS_PX})`,
-} as const satisfies CSSProperties;
-
-/** Beige panel — fills its column edge-to-edge with inner rounded corners toward text. */
-export function AboutDesktopBeigePanel({
-  grid,
-  boxSide,
-}: {
-  grid: WorkflowCarouselGridKind;
-  boxSide: "left" | "right";
-}) {
-  const panelRadius = boxSide === "left" ? INNER_RADIUS_LEFT : INNER_RADIUS_RIGHT;
-
+/** Beige square with centered join-hero line graphic — matches iPhone closing band cards. */
+export function AboutDesktopBeigePanel({ graphic }: { graphic: 0 | 1 | 2 | 3 }) {
   return (
     <div
-      className="relative isolate h-full min-h-0 w-full overflow-hidden"
-      style={panelRadius}
+      className={`relative aspect-square w-full overflow-hidden border border-[#D9D4CC] bg-[#EBE7E0] ${ABOUT_DESKTOP_BEIGE_PANEL_TW}`}
+      aria-hidden
     >
-      <WorkflowCarouselDesignBackdrop
-        backdrop={{
-          slideIndex: 0,
-          label: "About",
-          gradient: "#EBE7E0",
-          grid,
-        }}
-        embedded
-        surface="beige"
-        className={DOEPHONE_SECTION_CAROUSEL_RADIUS}
-      />
+      <JoinInternLineGraphic variant={graphic} brandAccent />
     </div>
   );
 }

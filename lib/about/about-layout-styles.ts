@@ -50,34 +50,42 @@ export const ABOUT_DESKTOP_MAIN_PT = "pt-[5.5rem]";
 export const ABOUT_DESKTOP_SECTION_1_H = "box-border h-[100dvh] max-h-[100dvh] overflow-hidden";
 
 /** Hero band — clears fixed nav; headline stack + flex hero fill remaining height. */
-export const ABOUT_DESKTOP_SECTION_1_LAYOUT = `flex min-h-0 flex-col ${ABOUT_DESKTOP_PAGE_INSET} ${ABOUT_DESKTOP_MAIN_PT} pb-8 md:pb-10 lg:pb-12 xl:pb-14`;
+export const ABOUT_DESKTOP_SECTION_1_LAYOUT = `flex min-h-0 flex-col ${ABOUT_DESKTOP_PAGE_INSET} ${ABOUT_DESKTOP_MAIN_PT} pb-6 md:pb-8 lg:pb-10`;
 
-export const ABOUT_DESKTOP_TITLE_TW = `text-left font-light leading-[1.02] tracking-[-0.03em] text-[clamp(2.85rem,4.1vw,4.25rem)] md:text-[clamp(3.1rem,3.75vw,4.45rem)] lg:text-[clamp(3.3rem,3.55vw,4.65rem)] text-[#1E343A] ${suisseIntl.className}`;
+export const ABOUT_DESKTOP_TITLE_TW = `text-left font-light leading-[1.02] tracking-[-0.03em] text-[clamp(2.35rem,3.35vw,3.55rem)] md:text-[clamp(2.55rem,3.1vw,3.75rem)] lg:text-[clamp(2.75rem,2.95vw,3.95rem)] text-[#1E343A] ${suisseIntl.className}`;
 
-export const ABOUT_DESKTOP_SUBHEADING_TW = `mt-2.5 md:mt-3 text-[clamp(1.38rem,1.25vw,1.62rem)] md:text-[clamp(1.48rem,1.35vw,1.72rem)] font-normal leading-[1.44] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
+export const ABOUT_DESKTOP_SUBHEADING_TW = `mt-2 md:mt-2.5 text-[clamp(1.15rem,1.05vw,1.38rem)] md:text-[clamp(1.22rem,1.12vw,1.48rem)] font-normal leading-[1.44] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
 
 /** Desktop /about byline — same copy as iPhone, gap matches title→subheading rhythm. */
-export const ABOUT_DESKTOP_BYLINE_TW = `mt-2.5 md:mt-3 font-medium text-[#9A8F82] text-[clamp(1.12rem,1vw,1.32rem)] md:text-[clamp(1.22rem,1.05vw,1.42rem)] ${dmSans.className}`;
+export const ABOUT_DESKTOP_BYLINE_TW = `mt-2 md:mt-2.5 font-medium text-[#9A8F82] text-[clamp(0.98rem,0.88vw,1.12rem)] md:text-[clamp(1.05rem,0.92vw,1.2rem)] ${dmSans.className}`;
 
 export const ABOUT_DESKTOP_ARTICLE_MAX_W = "max-w-[min(100%,54rem)]";
 
 /** One full-viewport /about desktop band. */
 export const ABOUT_DESKTOP_SECTION_H = "box-border h-[100dvh] max-h-[100dvh] min-h-[100dvh] overflow-hidden";
 
-/** Split bands — two equal columns filling the viewport height. */
-export const ABOUT_DESKTOP_SPLIT_SECTION_GRID = "grid h-full min-h-0 w-full grid-cols-2";
+/** Split bands — two equal columns with page gutters and vertical breathing room. */
+export const ABOUT_DESKTOP_SPLIT_SECTION_GRID = `grid h-full min-h-0 w-full grid-cols-2 gap-8 md:gap-10 lg:gap-12 xl:gap-14 ${ABOUT_DESKTOP_PAGE_INSET} py-8 md:py-10 lg:py-12`;
 
-/** Text column padding when the beige panel sits on the right. */
-export const ABOUT_DESKTOP_SPLIT_TEXT_INSET_LEFT =
-  "flex min-h-0 min-w-0 flex-col justify-center pl-10 md:pl-20 lg:pl-28 xl:pl-36 pr-8 md:pr-12 lg:pr-16";
+/** Text column when the beige panel sits on the right. */
+export const ABOUT_DESKTOP_SPLIT_TEXT_COLUMN_LEFT =
+  "flex min-h-0 min-w-0 flex-col justify-center py-2 pr-4 md:pr-6 lg:pr-8";
 
-/** Text column padding when the beige panel sits on the left. */
-export const ABOUT_DESKTOP_SPLIT_TEXT_INSET_RIGHT =
-  "flex min-h-0 min-w-0 flex-col justify-center pr-10 md:pr-20 lg:pr-28 xl:pr-36 pl-8 md:pl-12 lg:pl-16";
+/** Text column when the beige panel sits on the left. */
+export const ABOUT_DESKTOP_SPLIT_TEXT_COLUMN_RIGHT =
+  "flex min-h-0 min-w-0 flex-col justify-center py-2 pl-4 md:pl-6 lg:pl-8";
 
-export const ABOUT_DESKTOP_SECTION_GRID = "grid w-full grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] items-center gap-12 xl:gap-16";
+/** Beige square column when the panel sits on the right. */
+export const ABOUT_DESKTOP_SPLIT_BOX_COLUMN_RIGHT =
+  "flex min-h-0 min-w-0 items-center justify-center pl-4 md:pl-6 lg:pl-8";
 
-export const ABOUT_DESKTOP_CONTENT_STACK_GAP = "gap-10 md:gap-12";
+/** Beige square column when the panel sits on the left. */
+export const ABOUT_DESKTOP_SPLIT_BOX_COLUMN_LEFT =
+  "flex min-h-0 min-w-0 items-center justify-center pr-4 md:pr-6 lg:pr-8";
+
+export const ABOUT_DESKTOP_BEIGE_PANEL_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} max-h-[min(calc(100dvh-8rem),100%)] max-w-[min(calc(100dvh-8rem),100%)]`;
+
+export const ABOUT_DESKTOP_CONTENT_STACK_GAP = "gap-8 md:gap-9 lg:gap-10";
 
 export const ABOUT_DESKTOP_STACK_GAP = "gap-12 md:gap-14";
 
@@ -85,7 +93,7 @@ export const ABOUT_DESKTOP_CHART_CITATION_TW = `mt-3 md:mt-4 font-normal leading
 
 export const ABOUT_DESKTOP_ARTICLE_SECTION_GAP = "mt-12 md:mt-14";
 
-export const ABOUT_DESKTOP_HERO_WRAP = "mt-5 md:mt-6 flex min-h-0 w-full flex-1 flex-col";
+export const ABOUT_DESKTOP_HERO_WRAP = "mt-3 md:mt-4 flex min-h-0 w-full flex-1 flex-col";
 
 export const ABOUT_DESKTOP_HERO_BOX_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} h-full min-h-0 w-full flex-1`;
 

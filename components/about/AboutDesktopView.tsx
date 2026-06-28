@@ -121,7 +121,7 @@ export function AboutDesktopView() {
             </div>
           </section>
 
-          <AboutDesktopSplitSection boxSide="right" grid="dot">
+          <AboutDesktopSplitSection boxSide="right" graphic={0}>
             <div className={`flex flex-col ${ABOUT_DESKTOP_CONTENT_STACK_GAP}`}>
               <AboutDesktopParagraph text={sections.intro.text} />
               <AboutDesktopBulletList items={sections.stats.items} />
@@ -145,18 +145,18 @@ export function AboutDesktopView() {
             </div>
           </AboutDesktopSplitSection>
 
-          <AboutDesktopSplitSection boxSide="left" grid="hex">
+          <AboutDesktopSplitSection boxSide="left" graphic={1}>
             <div className={`flex flex-col ${ABOUT_DESKTOP_CONTENT_STACK_GAP}`}>
               <AboutDesktopQuote text={sections.quote.text} attribution={sections.quote.attribution} />
               <AboutDesktopParagraph text={productOne} />
             </div>
           </AboutDesktopSplitSection>
 
-          <AboutDesktopSplitSection boxSide="right" grid="crosshatch">
+          <AboutDesktopSplitSection boxSide="right" graphic={2}>
             <AboutDesktopParagraph text={productTwo} />
           </AboutDesktopSplitSection>
 
-          <AboutDesktopSplitSection boxSide="left" grid="wave">
+          <AboutDesktopSplitSection boxSide="left" graphic={3}>
             <AboutDesktopParagraph text={productThree} />
           </AboutDesktopSplitSection>
         </main>

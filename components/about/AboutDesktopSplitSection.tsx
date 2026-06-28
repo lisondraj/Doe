@@ -3,31 +3,32 @@
 import { AboutDesktopBeigePanel } from "@/components/about/AboutDesktopBeigePanel";
 import {
   ABOUT_DESKTOP_SECTION_H,
+  ABOUT_DESKTOP_SPLIT_BOX_COLUMN_LEFT,
+  ABOUT_DESKTOP_SPLIT_BOX_COLUMN_RIGHT,
   ABOUT_DESKTOP_SPLIT_SECTION_GRID,
-  ABOUT_DESKTOP_SPLIT_TEXT_INSET_LEFT,
-  ABOUT_DESKTOP_SPLIT_TEXT_INSET_RIGHT,
+  ABOUT_DESKTOP_SPLIT_TEXT_COLUMN_LEFT,
+  ABOUT_DESKTOP_SPLIT_TEXT_COLUMN_RIGHT,
 } from "@/lib/about/about-layout-styles";
-import type { WorkflowCarouselGridKind } from "@/lib/workflow-carousel-design-backdrops";
 import type { ReactNode } from "react";
 
-/** Full-height /about band — text column plus full-bleed beige line-art panel. */
+/** Full-height /about band — text column plus margined beige square with line graphic. */
 export function AboutDesktopSplitSection({
   boxSide,
-  grid,
+  graphic,
   children,
 }: {
   boxSide: "left" | "right";
-  grid: WorkflowCarouselGridKind;
+  graphic: 0 | 1 | 2 | 3;
   children: ReactNode;
 }) {
   const textColumn = (
-    <div className={boxSide === "right" ? ABOUT_DESKTOP_SPLIT_TEXT_INSET_LEFT : ABOUT_DESKTOP_SPLIT_TEXT_INSET_RIGHT}>
+    <div className={boxSide === "right" ? ABOUT_DESKTOP_SPLIT_TEXT_COLUMN_LEFT : ABOUT_DESKTOP_SPLIT_TEXT_COLUMN_RIGHT}>
       {children}
     </div>
   );
   const boxColumn = (
-    <div className="relative min-h-0 min-w-0 h-full">
-      <AboutDesktopBeigePanel grid={grid} boxSide={boxSide} />
+    <div className={boxSide === "left" ? ABOUT_DESKTOP_SPLIT_BOX_COLUMN_LEFT : ABOUT_DESKTOP_SPLIT_BOX_COLUMN_RIGHT}>
+      <AboutDesktopBeigePanel graphic={graphic} />
     </div>
   );
 
