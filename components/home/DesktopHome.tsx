@@ -13,7 +13,7 @@ import {
 import { NAV_HREFS } from "@/components/doe-nav-data";
 import { HERO_CAROUSEL_GRAIN_BG } from "@/components/hero-carousel-texture";
 import { DoePhoneDesktopBuildSection } from "@/components/doephone/DoePhoneDesktopBuildSection";
-import { DoePhoneDesktopDocumentsSection } from "@/components/doephone/DoePhoneDesktopDocumentsSection";
+import { DoePhoneDesktopReceptionSection } from "@/components/doephone/DoePhoneDesktopReceptionSection";
 import { DoePhoneDesktopIntegrationsSection } from "@/components/doephone/DoePhoneDesktopIntegrationsSection";
 import { DoePhoneDesktopIntelligenceSection } from "@/components/doephone/DoePhoneDesktopIntelligenceSection";
 import { DoePhoneHeroSection } from "@/components/doephone/DoePhoneHeroSection";
@@ -951,7 +951,7 @@ export function DesktopHome() {
       {/* Third section — iPhone Build backdrop + title + workflow input */}
       <DoePhoneDesktopBuildSection />
 
-      {/* Fourth section — documents panel (mirrors second section) */}
+      {/* Fourth section — reception panel (mirrors second section) */}
       <div ref={carouselSectionRef} className="relative z-10 min-h-[112vh]">
         <div
           className="relative flex min-h-[112vh] flex-col items-stretch justify-center"
@@ -961,7 +961,7 @@ export function DesktopHome() {
             transition: "opacity 1.2s ease-out, transform 1.2s ease-out",
           }}
         >
-          <DoePhoneDesktopDocumentsSection />
+          <DoePhoneDesktopReceptionSection />
         </div>
       </div>
 

@@ -263,22 +263,23 @@ function SchedulingPanel() {
 }
 
 /** Stacked voice + scheduling panels — Front Desk carousel slide. */
-export function DoePhoneFrontDeskInboxVisual() {
+export function DoePhoneFrontDeskInboxVisual({ layout = "phone" }: { layout?: "phone" | "desktop" }) {
+  const isDesktop = layout === "desktop";
+  const panelWidth = isDesktop ? "min(100%, 34rem)" : "75%";
+  const stackGap = isDesktop ? "clamp(0.72rem,0.92vw,0.98rem)" : "clamp(0.55rem,1.65vmin,0.68rem)";
+
   return (
     <div
       className={`mx-auto flex h-full w-full items-center justify-center ${suisseIntl.className}`}
-      style={{ maxWidth: CAROUSEL_MENU_UI.maxWidthPhone }}
+      style={{ maxWidth: isDesktop ? "min(100%, 36rem)" : CAROUSEL_MENU_UI.maxWidthPhone }}
       aria-hidden
     >
-      <div
-        className="flex w-full flex-col items-center"
-        style={{ gap: "clamp(0.55rem,1.65vmin,0.68rem)" }}
-      >
-        <div className="w-[75%]">
+      <div className="flex w-full flex-col items-center" style={{ gap: stackGap, maxWidth: panelWidth }}>
+        <div className="w-full">
           <VoiceCallPanel />
         </div>
 
-        <div className="w-[75%]">
+        <div className="w-full">
           <SchedulingPanel />
         </div>
       </div>
