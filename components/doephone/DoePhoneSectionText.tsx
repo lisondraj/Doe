@@ -11,12 +11,14 @@ import {
 export function DoePhoneSectionTitle({
   line1,
   line2,
+  line3,
   color = "text-[#1E343A]",
   segmentedReveal = false,
   revealed = false,
 }: {
   line1: ReactNode;
   line2?: ReactNode;
+  line3?: ReactNode;
   color?: string;
   /** Section 2 — parent drives staggered title → carousel → menu reveal. */
   segmentedReveal?: boolean;
@@ -62,6 +64,7 @@ export function DoePhoneSectionTitle({
       >
         <span className="block">{line1}</span>
         {line2 ? <span className="block">{line2}</span> : null}
+        {line3 ? <span className="block">{line3}</span> : null}
       </p>
     </div>
   );
