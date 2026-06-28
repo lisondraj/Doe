@@ -17,8 +17,15 @@ import {
   doePhoneSectionRevealSegmentClass,
   useDoePhoneSectionReveal,
 } from "@/lib/doephone/use-doe-phone-section-reveal";
+import { DOEPHONE_COMMUNICATION_SLIDES } from "@/lib/doephone/communication-carousel";
 import { DIAGNOSTIC_ASSISTANT_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 import type { CSSProperties } from "react";
+
+const DEPLOYMENTS_GRADIENT =
+  DOEPHONE_COMMUNICATION_SLIDES.find((slide) => slide.id === "agents")?.backdrop.gradient ??
+  (() => {
+    throw new Error("Missing agents communication slide");
+  })();
 
 const DESKTOP_INTEGRATIONS_UI_INSET = `pb-10 md:pb-14 lg:pb-16 xl:pb-20 ${DOEPHONE_DESKTOP_PAGE_INSET_RIGHT}`;
 
