@@ -5,6 +5,7 @@ import { DoePhoneClinicAgentsVisual } from "@/components/doephone/DoePhoneClinic
 import { DoePhoneWorkflowVisual } from "@/components/doephone/DoePhoneWorkflowVisual";
 import { DoePhoneIntegrateVisual } from "@/components/doephone/DoePhoneIntegrateVisual";
 import { DoePhoneFrontDeskInboxVisual } from "@/components/doephone/DoePhoneFrontDeskInboxVisual";
+import { DoePhoneBillingVisual } from "@/components/doephone/DoePhoneBillingVisual";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import {
   DOEPHONE_COMMUNICATION_SLIDES,
@@ -235,6 +236,8 @@ function DoePhoneCarouselCard({ slide, isActive }: { slide: DoePhoneCommunicatio
       <DoePhoneAmbientVisual />
     ) : slide.id === "integrate" ? (
       <DoePhoneIntegrateVisual />
+    ) : slide.id === "billing" ? (
+      <DoePhoneBillingVisual />
     ) : null;
 
   return (

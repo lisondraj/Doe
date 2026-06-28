@@ -3,7 +3,7 @@ import type { WorkflowCarouselDesignBackdrop } from "@/lib/workflow-carousel-des
 export type DoePhoneCommunicationSlide = {
   id: string;
   menuLabel: string;
-  /** Expand-panel copy — omitted for slides without a detail view (e.g. Billing). */
+  /** Expand-panel copy — omitted for slides without a detail view. */
   description?: string;
   backdrop: WorkflowCarouselDesignBackdrop;
 };
@@ -64,6 +64,8 @@ export const DOEPHONE_COMMUNICATION_SLIDES: readonly DoePhoneCommunicationSlide[
   {
     id: "billing",
     menuLabel: "Billing",
+    description:
+      "Prior authorizations stall when staff have to chase charts, forms, and payer portals by hand. Billing puts AI on the case—pulling clinical context, completing submissions, and tracking approval status so your team stays out of the back-and-forth.",
     backdrop: {
       slideIndex: 1,
       label: "Billing",
