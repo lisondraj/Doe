@@ -169,3 +169,25 @@ export const ABOUT_DESKTOP_ARTICLE_QUOTE_TW = `font-normal leading-[1.22] tracki
 export const ABOUT_DESKTOP_ARTICLE_ATTRIBUTION_TW = `mt-5 md:mt-6 font-medium text-[#9A8F82] text-[clamp(1.12rem,1vw,1.32rem)] md:text-[clamp(1.22rem,1.05vw,1.42rem)] ${dmSans.className}`;
 
 export const ABOUT_DESKTOP_ARTICLE_LIST_GAP = "space-y-3 md:space-y-3.5";
+
+/** iPhone /about — vertical rhythm between major bands. */
+export const ABOUT_MOBILE_SECTION_GAP = "space-y-10 iphone-page:space-y-12";
+
+/** iPhone /about — copy blocks (intro, bullets, founder paragraphs). */
+export const ABOUT_MOBILE_CONTENT_GAP = "space-y-6 iphone-page:space-y-7";
+
+export const ABOUT_MOBILE_BODY_TW = `text-[clamp(1.08rem,0.95rem+0.55vmin,1.28rem)] iphone-page:text-[clamp(1.18rem,1.02rem+0.82vmin,1.42rem)] font-normal leading-[1.5] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
+
+export const ABOUT_MOBILE_LIST_GAP = "space-y-3 iphone-page:space-y-3.5";
+
+/** iPhone /about beige panel — same footprint as the former hero gradient box. */
+export const ABOUT_MOBILE_BEIGE_PANEL_TW = `relative w-full overflow-hidden border border-[#D9D4CC] bg-[#EBE7E0] ${ABOUT_PAGE_HERO_BOX_TW}`;
+
+/** iPhone /about FAQ accordion — single column within page margins. */
+export const ABOUT_MOBILE_FAQ_LIST_TW = "flex w-full flex-col";
+
+export const ABOUT_MOBILE_FAQ_ITEM_TW = `text-[clamp(1.22rem,1.08rem+0.75vmin,1.48rem)] iphone-page:text-[clamp(1.32rem,1.12rem+0.95vmin,1.62rem)] leading-[1.15] tracking-[-0.015em] ${inter.className}`;
+
+export const ABOUT_MOBILE_FAQ_ANSWER_TW = "pb-4 pt-2.5 iphone-page:pb-5 iphone-page:pt-3";
+
+export const ABOUT_MOBILE_FAQ_ANSWER_BODY_TW = `text-[clamp(1.02rem,0.92rem+0.55vmin,1.18rem)] iphone-page:text-[clamp(1.08rem,0.96rem+0.72vmin,1.24rem)] font-normal leading-[1.48] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
