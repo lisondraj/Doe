@@ -2,7 +2,7 @@ import { MobileMainNavCta } from "@/components/nav/MobileMainNavCta";
 import { MobileNavEmailButton } from "@/components/nav/MobileNavEmailButton";
 
 const MOBILE_NAV_ACTION_ROW_GAP =
-  "gap-2.5 iphone-page:gap-[clamp(0.45rem,0.35rem+0.65vmin,0.7rem)]";
+  "gap-3 iphone-page:gap-[clamp(0.55rem,0.42rem+0.72vmin,0.82rem)]";
 
 /** iPhone nav — mail icon + investors split button. */
 export function MobileNavActionRow() {

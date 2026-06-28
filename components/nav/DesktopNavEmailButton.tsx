@@ -3,15 +3,20 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { ABOUT_CONTACT_EMAIL } from "@/lib/about/about-contact";
-import { dmSans, inter } from "@/lib/home/fonts";
+import {
+  NAV_EMAIL_DROPDOWN_ADDRESS_TW,
+  NAV_EMAIL_DROPDOWN_ATTACH_TW,
+  NAV_EMAIL_DROPDOWN_BG,
+  NAV_EMAIL_DROPDOWN_CHECK_TW,
+  NAV_EMAIL_DROPDOWN_COPIED_TW,
+  NAV_EMAIL_DROPDOWN_DIVIDER,
+  NAV_EMAIL_DROPDOWN_FG,
+  NAV_EMAIL_DROPDOWN_PANEL_TW,
+} from "@/lib/subpage/nav-email-dropdown-styles";
 import {
   DESKTOP_NAV_ACTION_HEIGHT_TW,
   DESKTOP_NAV_ACTION_SIZE,
 } from "@/lib/subpage/desktop-nav-styles";
-
-const NAV_EMAIL_BG = "#000000";
-const NAV_EMAIL_FG = "#ffffff";
-const NAV_EMAIL_DIVIDER = "rgba(255, 255, 255, 0.22)";
 
 function MailIcon({ className }: { className?: string }) {
   return (
@@ -48,8 +53,8 @@ function CheckIcon({ className }: { className?: string }) {
 
 /** Desktop nav — square email button with left-aligned copy dropdown. */
 export function DesktopNavEmailButton({
-  bg = NAV_EMAIL_BG,
-  fg = NAV_EMAIL_FG,
+  bg = NAV_EMAIL_DROPDOWN_BG,
+  fg = NAV_EMAIL_DROPDOWN_FG,
   borderColor,
   shadow,
 }: {
@@ -61,28 +66,21 @@ export function DesktopNavEmailButton({
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
-  const copyTimeoutRef = useRef<number | null>(null);
 
   const copyEmail = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(ABOUT_CONTACT_EMAIL);
       setCopied(true);
-      if (copyTimeoutRef.current !== null) {
-        window.clearTimeout(copyTimeoutRef.current);
-      }
-      copyTimeoutRef.current = window.setTimeout(() => setCopied(false), 2000);
     } catch {
       setCopied(false);
     }
   }, []);
 
   useEffect(() => {
-    return () => {
-      if (copyTimeoutRef.current !== null) {
-        window.clearTimeout(copyTimeoutRef.current);
-      }
-    };
-  }, []);
+    if (!open) {
+      setCopied(false);
+    }
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -137,25 +135,18 @@ export function DesktopNavEmailButton({
 
       {open ? (
         <div
-          className="absolute left-0 top-[calc(100%+0.5rem)] z-[60] min-w-max overflow-hidden rounded-md px-4 py-3.5"
+          className={`${NAV_EMAIL_DROPDOWN_ATTACH_TW} ${NAV_EMAIL_DROPDOWN_PANEL_TW}`}
           style={{
-            backgroundColor: NAV_EMAIL_BG,
-            color: NAV_EMAIL_FG,
-            border: `1px solid ${NAV_EMAIL_DIVIDER}`,
-            boxShadow: "0 8px 24px rgba(0, 0, 0, 0.12)",
+            backgroundColor: NAV_EMAIL_DROPDOWN_BG,
+            color: NAV_EMAIL_DROPDOWN_FG,
+            borderColor: NAV_EMAIL_DROPDOWN_DIVIDER,
           }}
         >
-          <p
-            className={`whitespace-nowrap text-[1.1875rem] font-medium tracking-[-0.02em] md:text-[1.3125rem] ${inter.className}`}
-          >
-            {ABOUT_CONTACT_EMAIL}
-          </p>
+          <p className={NAV_EMAIL_DROPDOWN_ADDRESS_TW}>{ABOUT_CONTACT_EMAIL}</p>
 
           {copied ? (
-            <p
-              className={`mt-2 flex items-center gap-1.5 text-sm font-normal text-white/72 ${dmSans.className}`}
-            >
-              <CheckIcon className="h-4 w-4 shrink-0" />
+            <p className={NAV_EMAIL_DROPDOWN_COPIED_TW}>
+              <CheckIcon className={NAV_EMAIL_DROPDOWN_CHECK_TW} />
               Copied to clipboard
             </p>
           ) : null}

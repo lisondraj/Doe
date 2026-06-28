@@ -3,16 +3,20 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
-import { DOEPHONE_NAV_CTA_BASE } from "@/lib/doephone/waitlist-button";
+import {
+  MOBILE_NAV_DROPDOWN_ATTACH_TW,
+  MOBILE_NAV_SPLIT_INNER_TW,
+  MOBILE_NAV_SPLIT_LINK_TW,
+  MOBILE_NAV_SPLIT_SHELL_TW,
+  MOBILE_NAV_SPLIT_TOGGLE_TW,
+} from "@/lib/subpage/mobile-nav-styles";
 import {
   DESKTOP_MAIN_CTA_DROPDOWN_ITEMS,
   DESKTOP_MAIN_CTA_MENU_ITEMS,
 } from "@/lib/subpage/subpage-nav";
-import { MOBILE_INVESTORS_CTA_LABEL } from "@/lib/subpage/desktop-nav-styles";
+import { DESKTOP_INVESTORS_CTA_LABEL } from "@/lib/subpage/desktop-nav-styles";
 
-const MOBILE_NAV_SPLIT_LINK_TW = `${DOEPHONE_NAV_CTA_BASE} rounded-none px-4 text-[1.0625rem] iphone-page:px-[clamp(1.05rem,0.82rem+1.05vmin,1.35rem)] iphone-page:text-[clamp(1.05rem,0.92rem+0.82vmin,1.22rem)]`;
-
-const MOBILE_NAV_SPLIT_TOGGLE_TW = `${DOEPHONE_NAV_CTA_BASE} rounded-none border-l border-white/20 px-2.5 iphone-page:px-[clamp(0.55rem,0.42rem+0.55vmin,0.72rem)]`;
+const NAV_CTA_DIVIDER = "rgba(255, 255, 255, 0.22)";
 
 /** iPhone nav — investors split button with chevron dropdown. */
 export function MobileMainNavCta() {
@@ -44,11 +48,11 @@ export function MobileMainNavCta() {
   }, [open]);
 
   return (
-    <div ref={rootRef} className="relative shrink-0">
-      <div className="flex items-stretch overflow-visible rounded-[10px] iphone-page:rounded-[clamp(0.68rem,0.54rem+0.48vmin,0.86rem)]">
-        <div className="flex items-stretch overflow-hidden rounded-[10px] iphone-page:rounded-[clamp(0.68rem,0.54rem+0.48vmin,0.86rem)]">
+    <div ref={rootRef} className="relative flex shrink-0 items-center">
+      <div className={MOBILE_NAV_SPLIT_SHELL_TW}>
+        <div className={MOBILE_NAV_SPLIT_INNER_TW}>
           <Link href={primary.href} className={`${MOBILE_NAV_SPLIT_LINK_TW} no-underline`}>
-            {MOBILE_INVESTORS_CTA_LABEL}
+            {DESKTOP_INVESTORS_CTA_LABEL}
           </Link>
           <button
             type="button"
@@ -59,7 +63,7 @@ export function MobileMainNavCta() {
             onClick={() => setOpen((value) => !value)}
           >
             <svg
-              className="h-4 w-4 shrink-0 transition-transform duration-200 iphone-page:h-[clamp(0.95rem,0.82rem+0.55vmin,1.1rem)] iphone-page:w-[clamp(0.95rem,0.82rem+0.55vmin,1.1rem)]"
+              className="h-[1.125rem] w-[1.125rem] shrink-0 transition-transform duration-200 iphone-page:h-[clamp(1.05rem,0.92rem+0.65vmin,1.22rem)] iphone-page:w-[clamp(1.05rem,0.92rem+0.65vmin,1.22rem)]"
               style={{ transform: open ? "rotate(180deg)" : undefined }}
               fill="none"
               stroke="currentColor"
@@ -75,14 +79,18 @@ export function MobileMainNavCta() {
         {open ? (
           <div
             role="menu"
-            className="absolute right-0 top-[calc(100%+0.5rem)] z-[60] min-w-[9.5rem] overflow-hidden rounded-[10px] bg-black py-1 text-white shadow-[0_8px_24px_rgba(0,0,0,0.12)] iphone-page:rounded-[clamp(0.68rem,0.54rem+0.48vmin,0.86rem)]"
+            className={`${MOBILE_NAV_DROPDOWN_ATTACH_TW} bg-black py-1 text-white`}
+            style={{
+              border: `1px solid ${NAV_CTA_DIVIDER}`,
+              boxShadow: "0 8px 24px rgba(0, 0, 0, 0.12)",
+            }}
           >
             {DESKTOP_MAIN_CTA_DROPDOWN_ITEMS.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 role="menuitem"
-                className="block px-4 py-2.5 text-sm font-medium text-white no-underline transition-colors hover:bg-white/10 iphone-page:px-[clamp(0.95rem,0.78rem+0.85vmin,1.15rem)] iphone-page:py-[clamp(0.62rem,0.5rem+0.55vmin,0.78rem)] iphone-page:text-[clamp(0.92rem,0.82rem+0.55vmin,1.05rem)]"
+                className="block px-4 py-2.5 text-sm font-medium text-white no-underline transition-colors hover:bg-white/10 iphone-page:px-[clamp(1rem,0.82rem+0.9vmin,1.2rem)] iphone-page:py-[clamp(0.72rem,0.58rem+0.62vmin,0.88rem)] iphone-page:text-[clamp(0.95rem,0.86rem+0.58vmin,1.08rem)]"
                 onClick={() => setOpen(false)}
               >
                 {item.label}

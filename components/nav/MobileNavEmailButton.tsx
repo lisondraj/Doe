@@ -3,10 +3,20 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { ABOUT_CONTACT_EMAIL } from "@/lib/about/about-contact";
-import { DOEPHONE_NAV_CTA_BASE } from "@/lib/doephone/waitlist-button";
-import { dmSans, inter } from "@/lib/home/fonts";
-
-const MOBILE_NAV_MAIL_BUTTON_TW = `${DOEPHONE_NAV_CTA_BASE} aspect-square !min-w-[3.35rem] !w-[3.35rem] !px-0 iphone-page:!min-w-[clamp(3.55rem,2.85rem+3.05vmin,4.3rem)] iphone-page:!w-[clamp(3.55rem,2.85rem+3.05vmin,4.3rem)]`;
+import {
+  MOBILE_NAV_MAIL_BUTTON_TW,
+  MOBILE_NAV_MAIL_ICON_TW,
+} from "@/lib/subpage/mobile-nav-styles";
+import {
+  NAV_EMAIL_DROPDOWN_ADDRESS_TW,
+  NAV_EMAIL_DROPDOWN_ATTACH_TW,
+  NAV_EMAIL_DROPDOWN_BG,
+  NAV_EMAIL_DROPDOWN_CHECK_TW,
+  NAV_EMAIL_DROPDOWN_COPIED_TW,
+  NAV_EMAIL_DROPDOWN_DIVIDER,
+  NAV_EMAIL_DROPDOWN_FG,
+  NAV_EMAIL_DROPDOWN_PANEL_TW,
+} from "@/lib/subpage/nav-email-dropdown-styles";
 
 function MailIcon({ className }: { className?: string }) {
   return (
@@ -46,28 +56,21 @@ export function MobileNavEmailButton() {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
-  const copyTimeoutRef = useRef<number | null>(null);
 
   const copyEmail = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(ABOUT_CONTACT_EMAIL);
       setCopied(true);
-      if (copyTimeoutRef.current !== null) {
-        window.clearTimeout(copyTimeoutRef.current);
-      }
-      copyTimeoutRef.current = window.setTimeout(() => setCopied(false), 2000);
     } catch {
       setCopied(false);
     }
   }, []);
 
   useEffect(() => {
-    return () => {
-      if (copyTimeoutRef.current !== null) {
-        window.clearTimeout(copyTimeoutRef.current);
-      }
-    };
-  }, []);
+    if (!open) {
+      setCopied(false);
+    }
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -110,22 +113,23 @@ export function MobileNavEmailButton() {
         aria-label={`Email ${ABOUT_CONTACT_EMAIL}`}
         onClick={handleToggle}
       >
-        <MailIcon className="h-[1.125rem] w-[1.125rem] iphone-page:h-[clamp(1.05rem,0.92rem+0.65vmin,1.22rem)] iphone-page:w-[clamp(1.05rem,0.92rem+0.65vmin,1.22rem)]" />
+        <MailIcon className={MOBILE_NAV_MAIL_ICON_TW} />
       </button>
 
       {open ? (
-        <div className="absolute right-0 top-[calc(100%+0.5rem)] z-[60] min-w-max overflow-hidden rounded-[10px] bg-black px-4 py-3.5 text-white shadow-[0_8px_24px_rgba(0,0,0,0.12)] iphone-page:rounded-[clamp(0.68rem,0.54rem+0.48vmin,0.86rem)] iphone-page:px-[clamp(0.95rem,0.78rem+0.85vmin,1.15rem)] iphone-page:py-[clamp(0.82rem,0.65rem+0.85vmin,1.05rem)]">
-          <p
-            className={`whitespace-nowrap text-[1.0625rem] font-medium tracking-[-0.02em] iphone-page:text-[clamp(1.05rem,0.92rem+0.82vmin,1.22rem)] ${inter.className}`}
-          >
-            {ABOUT_CONTACT_EMAIL}
-          </p>
+        <div
+          className={`${NAV_EMAIL_DROPDOWN_ATTACH_TW} ${NAV_EMAIL_DROPDOWN_PANEL_TW}`}
+          style={{
+            backgroundColor: NAV_EMAIL_DROPDOWN_BG,
+            color: NAV_EMAIL_DROPDOWN_FG,
+            borderColor: NAV_EMAIL_DROPDOWN_DIVIDER,
+          }}
+        >
+          <p className={NAV_EMAIL_DROPDOWN_ADDRESS_TW}>{ABOUT_CONTACT_EMAIL}</p>
 
           {copied ? (
-            <p
-              className={`mt-2 flex items-center gap-1.5 text-sm font-normal text-white/72 iphone-page:text-[clamp(0.88rem,0.78rem+0.62vmin,1rem)] ${dmSans.className}`}
-            >
-              <CheckIcon className="h-4 w-4 shrink-0" />
+            <p className={NAV_EMAIL_DROPDOWN_COPIED_TW}>
+              <CheckIcon className={NAV_EMAIL_DROPDOWN_CHECK_TW} />
               Copied to clipboard
             </p>
           ) : null}
