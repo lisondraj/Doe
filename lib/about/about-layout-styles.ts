@@ -120,10 +120,10 @@ export const ABOUT_DESKTOP_SPLIT_BOX_COLUMN =
   `grid min-h-0 min-w-0 h-full place-items-center ${ABOUT_DESKTOP_SPLIT_COLUMN_PAD}`;
 
 /** Beige square column — flush to the right page margin (sections 2 & 4). */
-export const ABOUT_DESKTOP_SPLIT_BOX_COLUMN_RIGHT_BLEED = `grid min-h-0 min-w-0 h-full items-center justify-items-end ${ABOUT_DESKTOP_SPLIT_BLEED_INNER_X_LEFT} ${ABOUT_DESKTOP_SPLIT_BLEED_INNER_Y}`;
+export const ABOUT_DESKTOP_SPLIT_BOX_COLUMN_RIGHT_BLEED = `grid min-h-0 min-w-0 h-full items-center justify-items-end ${DOEPHONE_DESKTOP_PAGE_INSET_RIGHT} ${ABOUT_DESKTOP_SPLIT_BLEED_INNER_X_LEFT} ${ABOUT_DESKTOP_SPLIT_BLEED_INNER_Y}`;
 
 /** Beige square column — flush to the left page margin (section 3). */
-export const ABOUT_DESKTOP_SPLIT_BOX_COLUMN_LEFT_BLEED = `grid min-h-0 min-w-0 h-full items-center justify-items-start ${ABOUT_DESKTOP_SPLIT_BLEED_INNER_X_RIGHT} ${ABOUT_DESKTOP_SPLIT_BLEED_INNER_Y}`;
+export const ABOUT_DESKTOP_SPLIT_BOX_COLUMN_LEFT_BLEED = `grid min-h-0 min-w-0 h-full items-center justify-items-start ${DOEPHONE_DESKTOP_PAGE_INSET_LEFT} ${ABOUT_DESKTOP_SPLIT_BLEED_INNER_X_RIGHT} ${ABOUT_DESKTOP_SPLIT_BLEED_INNER_Y}`;
 
 export const ABOUT_DESKTOP_BEIGE_PANEL_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} aspect-square max-h-full max-w-full w-full`;
 
