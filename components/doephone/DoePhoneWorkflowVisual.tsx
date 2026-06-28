@@ -1,6 +1,6 @@
 "use client";
 
-import { suisseIntl } from "@/lib/home/fonts";
+import { inter, suisseIntl } from "@/lib/home/fonts";
 import { CAROUSEL_MENU_UI } from "@/lib/doephone/carousel-menu-visual-styles";
 
 const { ink: INK, accent: DOE_ORANGE, divider: DIVIDER } = CAROUSEL_MENU_UI;
@@ -11,6 +11,8 @@ const MUTED_TEXT = "#6B7280";
 const BTN_BG = "#F3F4F6";
 const LIVE_BG = "rgba(210, 119, 76, 0.12)";
 const ICON_SW = 1.25;
+const PUBLISH_BG = "#111827";
+const BTN_RADIUS = "rounded-[clamp(0.32rem,0.95vmin,0.4rem)]";
 
 const OUTER_RADIUS = "rounded-[clamp(0.8rem,2.4vmin,0.95rem)]";
 const INNER_RADIUS = "rounded-[clamp(0.45rem,1.35vmin,0.55rem)]";
@@ -23,13 +25,16 @@ const BODY_SIZE = "clamp(0.88rem,2.65vmin,1.05rem)";
 const CAPTION_SIZE = "clamp(0.72rem,2.15vmin,0.86rem)";
 const TILE_LABEL_SIZE = "clamp(0.72rem,2.15vmin,0.86rem)";
 const TILE_GAP = "clamp(0.32rem,0.98vmin,0.42rem)";
-const TILE_ASPECT = "1.18";
-const TILE_PAD_Y = "clamp(0.5rem,1.52vmin,0.62rem)";
-const TILE_INNER_GAP = "clamp(0.36rem,1.1vmin,0.46rem)";
-const MERGE_ZONE_H = "clamp(0.78rem,2.38vmin,0.95rem)";
+const TILE_BASE_ASPECT = 1.18;
+const TILE_ASPECT = "2.08";
+const TILE_PAD_Y = "clamp(0.36rem,1.1vmin,0.44rem)";
+const TILE_INNER_GAP = "clamp(0.32rem,0.98vmin,0.4rem)";
 const MERGE_BAR_Y = "44%";
-const FLOW_LINE = { background: DIVIDER } as const;
+const FLOW_LINE = { backgroundColor: DIVIDER } as const;
 const FLOW_CONNECTOR_H = "clamp(1.35rem,4.15vmin,1.65rem)";
+const MERGE_CONNECTOR_H = `calc(0.75 * (${FLOW_CONNECTOR_H} + (100cqw - 2 * ${TILE_GAP}) / 3 * (1 / ${TILE_BASE_ASPECT} - 1 / ${TILE_ASPECT})))`;
+const HEADER_BTN_SIZE = "clamp(0.84rem,2.55vmin,1rem)";
+const HEADER_BTN_PAD = "clamp(0.38rem,1.2vmin,0.48rem) clamp(0.62rem,1.95vmin,0.78rem)";
 
 const INCOMING_DOCS = [
   { title: "Lab results", icon: "labs" },
@@ -101,6 +106,20 @@ function AgentIcon() {
   );
 }
 
+function OutcomeAction({ label, accent = false }: { label: string; accent?: boolean }) {
+  return (
+    <span
+      className="max-w-[48%] shrink-0 truncate font-normal leading-snug"
+      style={{
+        color: accent ? DOE_ORANGE : MUTED_TEXT,
+        fontSize: BODY_SIZE,
+      }}
+    >
+      {label}
+    </span>
+  );
+}
+
 function OutputTag({ label, accent = false }: { label: string; accent?: boolean }) {
   return (
     <span
@@ -125,12 +144,12 @@ function IncomingDocTile({ title, icon }: (typeof INCOMING_DOCS)[number]) {
         borderColor: BORDER,
         aspectRatio: TILE_ASPECT,
         gap: TILE_INNER_GAP,
-        padding: `${TILE_PAD_Y} clamp(0.42rem,1.28vmin,0.52rem)`,
+        padding: `${TILE_PAD_Y} clamp(0.36rem,1.1vmin,0.44rem)`,
       }}
     >
       <DocIcon kind={icon} size={ICON_SIZE} />
       <span
-        className="line-clamp-2 text-center font-medium leading-tight"
+        className="line-clamp-2 w-full text-center font-medium leading-tight"
         style={{ color: INK, fontSize: TILE_LABEL_SIZE }}
       >
         {title}
@@ -151,7 +170,7 @@ function IncomingDocsRow() {
 
 function MergeToCenter() {
   return (
-    <div aria-hidden className="relative w-full" style={{ height: MERGE_ZONE_H }}>
+    <div aria-hidden className="relative w-full" style={{ height: MERGE_CONNECTOR_H }}>
       <div className="absolute inset-x-0 top-0 flex" style={{ gap: TILE_GAP, height: MERGE_BAR_Y }}>
         {[0, 1, 2].map((index) => (
           <div key={index} className="relative min-w-0 flex-1">
@@ -183,7 +202,7 @@ function MergeToCenter() {
 
 function IncomingDocsFlow() {
   return (
-    <div className="relative overflow-visible">
+    <div className="relative overflow-visible" style={{ containerType: "inline-size" }}>
       <IncomingDocsRow />
       <MergeToCenter />
       <InboxAgentHub />
@@ -231,7 +250,7 @@ function ClinicalOutcomesColumn() {
             <span className="min-w-0 truncate font-normal leading-snug" style={{ color: MUTED_TEXT, fontSize: BODY_SIZE }}>
               {row.title}
             </span>
-            <OutputTag label={row.action} accent={row.accent} />
+            <OutcomeAction label={row.action} accent={row.accent} />
           </div>
         </div>
       ))}
@@ -249,6 +268,29 @@ function FlowConnector() {
   );
 }
 
+function HeaderButton({
+  label,
+  variant = "outline",
+}: {
+  label: string;
+  variant?: "outline" | "solid";
+}) {
+  return (
+    <span
+      className={`inline-flex items-center font-medium leading-none ${BTN_RADIUS} ${inter.className}`}
+      style={{
+        fontSize: HEADER_BTN_SIZE,
+        padding: HEADER_BTN_PAD,
+        ...(variant === "solid"
+          ? { background: PUBLISH_BG, color: "#FFFFFF" }
+          : { background: "#FFFFFF", color: INK, border: `1px solid ${BORDER}` }),
+      }}
+    >
+      {label}
+    </span>
+  );
+}
+
 /** Incoming document flow web — Inbox carousel slide. */
 export function DoePhoneWorkflowVisual() {
   const headingSize = "clamp(1.02rem,3.15vmin,1.22rem)";
@@ -263,12 +305,22 @@ export function DoePhoneWorkflowVisual() {
         className={`w-full border bg-white ${OUTER_RADIUS}`}
         style={{ borderColor: BORDER, padding: CARD_PAD }}
       >
-        <p
-          className="font-semibold leading-none tracking-[-0.015em] iphone-page:mb-[clamp(0.95rem,3.05vmin,1.2rem)]"
-          style={{ color: INK, fontSize: headingSize, marginBottom: "clamp(0.78rem,2.45vmin,0.95rem)" }}
+        <div
+          className="flex items-center justify-between"
+          style={{ gap: "clamp(0.55rem,1.65vmin,0.72rem)", marginBottom: "clamp(0.78rem,2.45vmin,0.95rem)" }}
         >
-          Documents Workflow
-        </p>
+          <p
+            className="min-w-0 truncate font-semibold leading-none tracking-[-0.015em]"
+            style={{ color: INK, fontSize: headingSize }}
+          >
+            Documents Workflow
+          </p>
+
+          <div className="flex shrink-0 items-center" style={{ gap: "clamp(0.28rem,0.85vmin,0.36rem)" }}>
+            <HeaderButton label="Review" />
+            <HeaderButton label="Deploy" variant="solid" />
+          </div>
+        </div>
 
         <IncomingDocsFlow />
 
