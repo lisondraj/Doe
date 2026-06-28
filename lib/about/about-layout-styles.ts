@@ -66,6 +66,10 @@ export const ABOUT_DESKTOP_ARTICLE_MAX_W = "max-w-[min(100%,54rem)]";
 
 export const ABOUT_DESKTOP_SECTION_GRID = "grid w-full grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] items-center gap-12 xl:gap-16";
 
+export const ABOUT_DESKTOP_BEIGE_PANEL_TW = DOEPHONE_SECTION_CAROUSEL_RADIUS;
+
+export const ABOUT_DESKTOP_CONTENT_STACK_GAP = "gap-10 md:gap-12";
+
 export const ABOUT_DESKTOP_STACK_GAP = "gap-12 md:gap-14";
 
 export const ABOUT_DESKTOP_CHART_CITATION_TW = `mt-3 md:mt-4 font-normal leading-snug text-[#9A8F82] text-[clamp(0.92rem,0.85vw,1.05rem)] md:text-[clamp(0.98rem,0.9vw,1.1rem)] ${inter.className}`;

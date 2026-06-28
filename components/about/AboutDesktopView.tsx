@@ -3,24 +3,22 @@
 import {
   AboutDesktopBulletList,
   AboutDesktopParagraph,
-  AboutDesktopParagraphStack,
+  AboutDesktopQuote,
 } from "@/components/about/AboutDesktopArticleBlocks";
 import { AboutDesktopNav } from "@/components/about/AboutDesktopNav";
-import { renderArticleBlock } from "@/components/blog/ArticleBodyBlocks";
+import { AboutDesktopSplitSection } from "@/components/about/AboutDesktopSplitSection";
 import { ArticleBarChart } from "@/components/blog/ArticleBarChart";
 import { ArticlePieChart } from "@/components/blog/ArticlePieChart";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import { DesktopRouteLayout } from "@/components/DesktopRouteLayout";
 import {
+  ABOUT_DESKTOP_CONTENT_STACK_GAP,
   ABOUT_DESKTOP_HERO_BOX_TW,
   ABOUT_DESKTOP_HERO_WRAP,
   ABOUT_HERO_HEADLINE_WRAP,
   ABOUT_DESKTOP_PAGE_INSET,
   ABOUT_DESKTOP_SECTION_1_LAYOUT,
-  ABOUT_DESKTOP_SECTION_GRID,
   ABOUT_DESKTOP_SECTION_H,
-  ABOUT_DESKTOP_SECTION_LAYOUT,
-  ABOUT_DESKTOP_STACK_GAP,
   ABOUT_DESKTOP_SUBHEADING_TW,
   ABOUT_DESKTOP_TITLE_TW,
   ABOUT_DESKTOP_BYLINE_TW,
@@ -53,7 +51,7 @@ function getAboutDesktopArticleSections(body: readonly ArticleBlock[]) {
   const barChart = body[3];
   const pieChart = body[4];
   const productCopy = body.slice(5, 8);
-  const remainder = body.slice(8);
+  const quote = body.find((block) => block.type === "quote");
 
   if (
     intro?.type !== "p" ||
@@ -62,7 +60,8 @@ function getAboutDesktopArticleSections(body: readonly ArticleBlock[]) {
     barChart?.type !== "bar-chart" ||
     pieChart?.type !== "pie-chart" ||
     productCopy.length !== 3 ||
-    !productCopy.every((block) => block.type === "p")
+    !productCopy.every((block) => block.type === "p") ||
+    quote?.type !== "quote"
   ) {
     throw new Error("About page article layout blocks are out of order");
   }
@@ -74,20 +73,21 @@ function getAboutDesktopArticleSections(body: readonly ArticleBlock[]) {
     barChart,
     pieChart,
     productParagraphs: productCopy.map((block) => (block.type === "p" ? block.text : "")),
-    remainder,
+    quote,
   };
 }
 
-/** Desktop /about — three full-height bands, then remaining article body. */
+/** Desktop /about — hero plus four alternating beige-panel bands, then footer. */
 export function AboutDesktopView() {
   const sections = getAboutDesktopArticleSections(ABOUT_PAGE_ARTICLE.body);
+  const [productOne, productTwo, productThree] = sections.productParagraphs;
 
   return (
     <DesktopRouteLayout>
       <div className="relative min-h-[100dvh] overflow-x-hidden bg-[#F7F6F3]" data-doeforvc-view="desktop">
         <AboutDesktopNav />
 
-        <main className="pb-16 md:pb-20">
+        <main>
           <section className={`${ABOUT_DESKTOP_SECTION_H} ${ABOUT_DESKTOP_SECTION_1_LAYOUT}`}>
             <div className={ABOUT_HERO_HEADLINE_WRAP}>
               <h1 className={ABOUT_DESKTOP_TITLE_TW}>
@@ -120,14 +120,11 @@ export function AboutDesktopView() {
             </div>
           </section>
 
-          <section className={`${ABOUT_DESKTOP_SECTION_H} ${ABOUT_DESKTOP_SECTION_LAYOUT}`}>
-            <div className={ABOUT_DESKTOP_SECTION_GRID}>
-              <div className={`flex flex-col ${ABOUT_DESKTOP_STACK_GAP}`}>
-                <AboutDesktopParagraph text={sections.intro.text} />
-                <AboutDesktopBulletList items={sections.stats.items} />
-                <AboutDesktopParagraph text={sections.burden.text} />
-              </div>
-
+          <AboutDesktopSplitSection boxSide="right" grid="dot">
+            <div className={`flex flex-col ${ABOUT_DESKTOP_CONTENT_STACK_GAP}`}>
+              <AboutDesktopParagraph text={sections.intro.text} />
+              <AboutDesktopBulletList items={sections.stats.items} />
+              <AboutDesktopParagraph text={sections.burden.text} />
               <ArticleBarChart
                 title={sections.barChart.title}
                 caption={sections.barChart.caption}
@@ -136,11 +133,6 @@ export function AboutDesktopView() {
                 layout="desktop"
                 embedded
               />
-            </div>
-          </section>
-
-          <section className={`${ABOUT_DESKTOP_SECTION_H} ${ABOUT_DESKTOP_SECTION_LAYOUT}`}>
-            <div className={ABOUT_DESKTOP_SECTION_GRID}>
               <ArticlePieChart
                 title={sections.pieChart.title}
                 caption={sections.pieChart.caption}
@@ -149,16 +141,23 @@ export function AboutDesktopView() {
                 layout="desktop"
                 embedded
               />
-
-              <AboutDesktopParagraphStack paragraphs={sections.productParagraphs} />
             </div>
-          </section>
+          </AboutDesktopSplitSection>
 
-          <div className={`${ABOUT_DESKTOP_PAGE_INSET} pt-12 md:pt-14`}>
-            <div className="article-body w-full text-left">
-              {sections.remainder.map((block, index) => renderArticleBlock(block, index, "desktop"))}
+          <AboutDesktopSplitSection boxSide="left" grid="hex">
+            <div className={`flex flex-col ${ABOUT_DESKTOP_CONTENT_STACK_GAP}`}>
+              <AboutDesktopQuote text={sections.quote.text} attribution={sections.quote.attribution} />
+              <AboutDesktopParagraph text={productOne} />
             </div>
-          </div>
+          </AboutDesktopSplitSection>
+
+          <AboutDesktopSplitSection boxSide="right" grid="crosshatch">
+            <AboutDesktopParagraph text={productTwo} />
+          </AboutDesktopSplitSection>
+
+          <AboutDesktopSplitSection boxSide="left" grid="wave">
+            <AboutDesktopParagraph text={productThree} />
+          </AboutDesktopSplitSection>
         </main>
 
         <footer

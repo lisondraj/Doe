@@ -1,8 +1,10 @@
 "use client";
 
 import {
+  ABOUT_DESKTOP_ARTICLE_ATTRIBUTION_TW,
   ABOUT_DESKTOP_ARTICLE_BODY_TW,
   ABOUT_DESKTOP_ARTICLE_LIST_GAP,
+  ABOUT_DESKTOP_ARTICLE_QUOTE_TW,
   ABOUT_DESKTOP_STACK_GAP,
 } from "@/lib/about/about-layout-styles";
 
@@ -46,5 +48,29 @@ export function AboutDesktopParagraphStack({
         <AboutDesktopParagraph key={`${index}-${text.slice(0, 24)}`} text={text} />
       ))}
     </div>
+  );
+}
+
+export function AboutDesktopQuote({
+  text,
+  attribution,
+  className = "",
+}: {
+  text: string;
+  attribution?: string;
+  className?: string;
+}) {
+  const parts = text.split(/\.\s+/);
+  const [firstSentence, ...rest] = parts;
+  const restText = rest.join(". ");
+
+  return (
+    <figure className={className}>
+      <blockquote className={ABOUT_DESKTOP_ARTICLE_QUOTE_TW}>
+        <span className="block">&ldquo;{firstSentence}.</span>
+        {restText ? <span className="block">{restText}&rdquo;</span> : null}
+      </blockquote>
+      {attribution ? <figcaption className={ABOUT_DESKTOP_ARTICLE_ATTRIBUTION_TW}>{attribution}</figcaption> : null}
+    </figure>
   );
 }
