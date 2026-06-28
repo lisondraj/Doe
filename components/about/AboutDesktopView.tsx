@@ -5,6 +5,7 @@ import {
   AboutDesktopParagraph,
   AboutDesktopParagraphStack,
 } from "@/components/about/AboutDesktopArticleBlocks";
+import { AboutDesktopBeigeBand } from "@/components/about/AboutDesktopBeigeBand";
 import { AboutDesktopNav } from "@/components/about/AboutDesktopNav";
 import { renderArticleBlock } from "@/components/blog/ArticleBodyBlocks";
 import { ArticleBarChart } from "@/components/blog/ArticleBarChart";
@@ -105,7 +106,7 @@ export function AboutDesktopView() {
             </div>
           </section>
 
-          <section className={`${ABOUT_DESKTOP_SECTION_H} ${ABOUT_DESKTOP_SECTION_LAYOUT}`}>
+          <AboutDesktopBeigeBand>
             <div className={ABOUT_DESKTOP_SECTION_GRID}>
               <div className={`flex flex-col ${ABOUT_DESKTOP_STACK_GAP}`}>
                 <AboutDesktopParagraph text={sections.intro.text} />
@@ -122,7 +123,7 @@ export function AboutDesktopView() {
                 embedded
               />
             </div>
-          </section>
+          </AboutDesktopBeigeBand>
 
           <section className={`${ABOUT_DESKTOP_SECTION_H} ${ABOUT_DESKTOP_SECTION_LAYOUT}`}>
             <div className={ABOUT_DESKTOP_SECTION_GRID}>
