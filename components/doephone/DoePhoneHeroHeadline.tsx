@@ -1,6 +1,7 @@
 "use client";
 
-import { lora } from "@/lib/home/fonts";
+import { DOEPHONE_DISPLAY_WEIGHT_TW } from "@/lib/doephone/section-styles";
+import { suisseIntl } from "@/lib/home/fonts";
 import { useLayoutEffect, useRef } from "react";
 
 const MIN_FIT_SCALE = 0.68;
@@ -92,7 +93,7 @@ export function DoePhoneHeroHeadline() {
   return (
     <h1
       ref={headlineRef}
-      className={`doephone-hero-headline flex w-full min-w-0 max-w-full flex-col items-start font-normal leading-[1.02] tracking-[-0.03em] text-white ${lora.className}`}
+      className={`doephone-hero-headline flex w-full min-w-0 max-w-full flex-col items-start ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] text-white ${suisseIntl.className}`}
     >
       <span className="doephone-hero-headline-line block">Intelligence</span>
       <span className="doephone-hero-headline-line doephone-hero-headline-line--second block">built for doctors.</span>
