@@ -8,7 +8,7 @@ const COHORT_WATCH_SLIDE = {
   id: "cohort-watch",
   menuLabel: "Signals",
   description:
-    "Chronic panels generate more data than any team can scan by hand, and Cohort Watch keeps an agent on the roster around the clock. It surfaces deteriorating trends, missed touchpoints, and home monitoring spikes before rounds so outreach and care plan updates are ready when you sit down.",
+    "Chronic panels generate more data than any team can scan by hand. Cohort Watch runs overnight sweeps across the roster and delivers a morning brief with ranked priorities, staged packets, and the clinical context you need before the first appointment.",
   backdrop: {
     slideIndex: 4,
     label: "Signals",
