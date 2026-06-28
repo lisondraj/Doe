@@ -183,7 +183,6 @@ function CarouselMenuOverlay({
                 paddingLeft: DESCRIPTION_PAD_X,
                 paddingRight: DESCRIPTION_PAD_X,
                 textWrap: "pretty",
-                textShadow: "0 1px 8px rgba(30, 52, 58, 0.18)",
                 transition: `max-height ${EXPAND_DURATION} ${EXPAND_EASE}, opacity 640ms ${EXPAND_EASE}, margin-top ${EXPAND_DURATION} ${EXPAND_EASE}`,
               }}
             >

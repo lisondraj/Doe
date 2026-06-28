@@ -216,7 +216,6 @@ export function DoePhoneCommunicationIntelligenceSection() {
                     fontSize: "clamp(1.38rem,4.25vmin,1.78rem)",
                     lineHeight: 1.48,
                     letterSpacing: "-0.018em",
-                    textShadow: "0 1px 8px rgba(30, 52, 58, 0.18)",
                     marginTop: paragraph === BUILD_PARAGRAPHS[0] ? 0 : "clamp(1rem,3.1vmin,1.35rem)",
                   }}
                 >
