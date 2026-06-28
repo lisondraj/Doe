@@ -9,13 +9,13 @@ const MUTED = "#9CA3AF";
 const BTN_BG = "#F3F4F6";
 const LIVE_BG = "rgba(210, 119, 76, 0.12)";
 
-const OUTER_RADIUS = "rounded-[clamp(0.8rem,2.4vmin,0.95rem)]";
-const BTN_RADIUS = "rounded-[clamp(0.32rem,0.95vmin,0.4rem)]";
+const OUTER_RADIUS = "rounded-[clamp(0.86rem,2.6vmin,1.03rem)]";
+const BTN_RADIUS = "rounded-[clamp(0.35rem,1.03vmin,0.43rem)]";
 
-const INPUT_PAD = "clamp(0.82rem,2.55vmin,1.02rem) clamp(0.88rem,2.75vmin,1.05rem)";
-const BODY_SIZE = "clamp(0.88rem,2.65vmin,1.05rem)";
-const ACTION_SIZE = "clamp(0.84rem,2.55vmin,1rem)";
-const HEADER_SIZE = "clamp(0.78rem,2.35vmin,0.92rem)";
+const INPUT_PAD = "clamp(0.89rem,2.75vmin,1.1rem) clamp(0.95rem,2.97vmin,1.13rem)";
+const BODY_SIZE = "clamp(0.95rem,2.86vmin,1.13rem)";
+const ACTION_SIZE = "clamp(0.91rem,2.75vmin,1.08rem)";
+const HEADER_SIZE = "clamp(0.84rem,2.54vmin,0.99rem)";
 
 function PatientTag({ label }: { label: string }) {
   return (
@@ -25,8 +25,8 @@ function PatientTag({ label }: { label: string }) {
         background: LIVE_BG,
         color: DOE_ORANGE,
         fontSize: BODY_SIZE,
-        padding: "clamp(0.12rem,0.38vmin,0.16rem) clamp(0.38rem,1.15vmin,0.48rem)",
-        marginInline: "clamp(0.12rem,0.38vmin,0.16rem)",
+        padding: "clamp(0.13rem,0.41vmin,0.17rem) clamp(0.41rem,1.24vmin,0.52rem)",
+        marginInline: "clamp(0.13rem,0.41vmin,0.17rem)",
         verticalAlign: "baseline",
       }}
     >
@@ -36,12 +36,12 @@ function PatientTag({ label }: { label: string }) {
 }
 
 function ChartContextHeader() {
-  const iconSize = "clamp(0.48rem,1.45vmin,0.58rem)";
+  const iconSize = "clamp(0.52rem,1.57vmin,0.63rem)";
 
   return (
     <div
       className="flex items-center"
-      style={{ gap: "clamp(0.28rem,0.85vmin,0.36rem)", marginBottom: "clamp(0.55rem,1.65vmin,0.68rem)" }}
+      style={{ gap: "clamp(0.3rem,0.92vmin,0.39rem)", marginBottom: "clamp(0.59rem,1.78vmin,0.73rem)" }}
     >
       <span className="font-medium leading-none" style={{ color: DOE_ORANGE, fontSize: HEADER_SIZE }}>
         Patient chart
@@ -60,13 +60,13 @@ function ChartContextHeader() {
 }
 
 function ChartToolIcons() {
-  const iconSize = "clamp(1.18rem,3.65vmin,1.42rem)";
+  const iconSize = "clamp(1.27rem,3.94vmin,1.53rem)";
   const sw = 1.3;
   const cap = "round" as const;
   const join = "round" as const;
 
   return (
-    <div className="flex items-center" style={{ gap: "clamp(0.68rem,2.05vmin,0.82rem)" }} aria-hidden>
+    <div className="flex items-center" style={{ gap: "clamp(0.73rem,2.21vmin,0.89rem)" }} aria-hidden>
       <svg viewBox="0 0 16 16" fill="none" style={{ width: iconSize, height: iconSize }}>
         <path d="M2.5 12.5V3.5" stroke={MUTED} strokeWidth={sw} strokeLinecap={cap} />
         <path d="M2.5 12.5h11" stroke={MUTED} strokeWidth={sw} strokeLinecap={cap} />
@@ -99,7 +99,7 @@ function ChartToolIcons() {
 }
 
 function ModelSelector() {
-  const iconSize = "clamp(0.48rem,1.45vmin,0.58rem)";
+  const iconSize = "clamp(0.52rem,1.57vmin,0.63rem)";
 
   return (
     <span
@@ -108,8 +108,8 @@ function ModelSelector() {
         background: BTN_BG,
         color: INK,
         fontSize: ACTION_SIZE,
-        gap: "clamp(0.22rem,0.68vmin,0.28rem)",
-        padding: "clamp(0.38rem,1.2vmin,0.48rem) clamp(0.55rem,1.65vmin,0.68rem)",
+        gap: "clamp(0.24rem,0.73vmin,0.3rem)",
+        padding: "clamp(0.41rem,1.3vmin,0.52rem) clamp(0.59rem,1.78vmin,0.73rem)",
       }}
     >
       Fable 5
@@ -127,8 +127,8 @@ function ModelSelector() {
 }
 
 function SubmitIconButton() {
-  const size = "clamp(1.85rem,5.65vmin,2.15rem)";
-  const iconSize = "clamp(0.82rem,2.5vmin,0.98rem)";
+  const size = "clamp(2rem,6.1vmin,2.32rem)";
+  const iconSize = "clamp(0.89rem,2.7vmin,1.06rem)";
 
   return (
     <span
@@ -158,7 +158,7 @@ export function DoePhoneAmbientVisual() {
       aria-hidden
     >
       <div
-        className={`w-[92%] bg-white ${OUTER_RADIUS}`}
+        className={`w-[96%] bg-white ${OUTER_RADIUS}`}
         style={{ padding: INPUT_PAD }}
       >
         <ChartContextHeader />
@@ -172,13 +172,13 @@ export function DoePhoneAmbientVisual() {
         <div
           className="flex items-center justify-between"
           style={{
-            gap: "clamp(0.55rem,1.65vmin,0.68rem)",
-            marginTop: "clamp(0.62rem,1.9vmin,0.78rem)",
+            gap: "clamp(0.59rem,1.78vmin,0.73rem)",
+            marginTop: "clamp(0.67rem,2.05vmin,0.84rem)",
           }}
         >
           <ChartToolIcons />
 
-          <div className="flex shrink-0 items-center" style={{ gap: "clamp(0.42rem,1.28vmin,0.55rem)" }}>
+          <div className="flex shrink-0 items-center" style={{ gap: "clamp(0.45rem,1.38vmin,0.59rem)" }}>
             <ModelSelector />
             <SubmitIconButton />
           </div>
