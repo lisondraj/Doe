@@ -2,7 +2,6 @@
 
 import { DoePhoneAmbientVisual } from "@/components/doephone/DoePhoneAmbientVisual";
 import { DoePhoneClinicAgentsVisual } from "@/components/doephone/DoePhoneClinicAgentsVisual";
-import { DoePhoneBillingVisual } from "@/components/doephone/DoePhoneBillingVisual";
 import { DoePhoneWorkflowVisual } from "@/components/doephone/DoePhoneWorkflowVisual";
 import { DoePhoneIntegrateVisual } from "@/components/doephone/DoePhoneIntegrateVisual";
 import { DoePhoneFrontDeskInboxVisual } from "@/components/doephone/DoePhoneFrontDeskInboxVisual";
@@ -21,7 +20,7 @@ type MenuInject = { scrollIndex: number; slideIndex: number };
 const CAROUSEL_MENU_OVERLAY =
   "absolute inset-0 z-10 flex h-full w-full items-center justify-center";
 
-const ADD_BADGE_SIZE = "clamp(2.05rem,6.35vmin,2.55rem)";
+const ADD_BADGE_SIZE = "clamp(3.2rem,9.8vmin,3.95rem)";
 
 function CarouselSlideAddBadge() {
   return (
@@ -40,7 +39,7 @@ function CarouselSlideAddBadge() {
       <span
         className="font-light leading-none text-white"
         style={{
-          fontSize: "clamp(1.35rem,4.15vmin,1.65rem)",
+          fontSize: "clamp(2.05rem,6.35vmin,2.55rem)",
           marginTop: "-0.06em",
           textShadow: "0 1px 8px rgba(30, 52, 58, 0.18)",
         }}
@@ -93,11 +92,6 @@ function DoePhoneCarouselCard({ slide }: { slide: DoePhoneCommunicationSlide }) 
       {slide.id === "ambient" ? (
         <CarouselMenuOverlay>
           <DoePhoneAmbientVisual />
-        </CarouselMenuOverlay>
-      ) : null}
-      {slide.id === "billing" ? (
-        <CarouselMenuOverlay>
-          <DoePhoneBillingVisual />
         </CarouselMenuOverlay>
       ) : null}
       {slide.id === "integrate" ? (
