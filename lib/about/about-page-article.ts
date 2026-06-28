@@ -27,3 +27,9 @@ export const ABOUT_DESKTOP_HERO_BACKDROP = ABOUT_PAGE_HERO_BACKDROP;
 export const ABOUT_PAGE_MOBILE_BYLINE = "By James & Matthew Lisondra";
 
 export const ABOUT_PAGE_MOBILE_DATE = "June 28, 2026";
+
+/** Desktop /about section three — co-founder bios beside beige panel. */
+export const ABOUT_DESKTOP_FOUNDERS_PARAGRAPHS = [
+  "Brothers James and Matthew Lisondra co-founded Doe to pair clinical depth with technical execution in health tech.",
+  "James holds an MD from the University of Ottawa with experience in clinical medicine and healthcare delivery. Matthew holds a PhD from the University of Toronto with backgrounds in physics, robotics, AI, and computer science.",
+] as const;

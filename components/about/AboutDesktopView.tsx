@@ -31,6 +31,7 @@ import {
 } from "@/lib/about/about-layout-styles";
 import {
   ABOUT_PAGE_ARTICLE,
+  ABOUT_DESKTOP_FOUNDERS_PARAGRAPHS,
   ABOUT_PAGE_HERO_BACKDROP,
   ABOUT_PAGE_HERO_PATTERN_SCALE,
   ABOUT_PAGE_MOBILE_BYLINE,
@@ -86,6 +87,7 @@ function getAboutDesktopArticleSections(body: readonly ArticleBlock[]) {
 export function AboutDesktopView() {
   const sections = getAboutDesktopArticleSections(ABOUT_PAGE_ARTICLE.body);
   const [productTwo, productThree] = sections.productParagraphs.slice(1);
+  const [foundersOne, foundersTwo] = ABOUT_DESKTOP_FOUNDERS_PARAGRAPHS;
 
   return (
     <DesktopRouteLayout>
@@ -126,20 +128,6 @@ export function AboutDesktopView() {
             <div className={`flex flex-col ${ABOUT_DESKTOP_CONTENT_STACK_GAP}`}>
               <AboutDesktopParagraph text={sections.intro.text} />
               <AboutDesktopBulletList items={sections.stats.items} />
-              <AboutDesktopParagraph text={sections.burden.text} />
-            </div>
-          </AboutDesktopSplitSection>
-
-          <AboutDesktopSplitSection boxSide="left" graphic={1}>
-            <div className={`flex flex-col ${ABOUT_DESKTOP_CONTENT_STACK_GAP}`}>
-              <ArticleBarChart
-                title={sections.barChart.title}
-                caption={sections.barChart.caption}
-                citation={sections.barChart.citation}
-                bars={sections.barChart.bars}
-                layout="desktop"
-                embedded
-              />
               <ArticlePieChart
                 title={sections.pieChart.title}
                 caption={sections.pieChart.caption}
@@ -151,12 +139,27 @@ export function AboutDesktopView() {
             </div>
           </AboutDesktopSplitSection>
 
+          <AboutDesktopSplitSection boxSide="left" graphic={1}>
+            <div className={`flex flex-col ${ABOUT_DESKTOP_CONTENT_STACK_GAP}`}>
+              <AboutDesktopParagraph text={foundersOne} />
+              <AboutDesktopParagraph text={foundersTwo} />
+            </div>
+          </AboutDesktopSplitSection>
+
           <AboutDesktopSplitSection boxSide="right" graphic={2} textFill>
             <AboutDesktopFaqTabs />
           </AboutDesktopSplitSection>
 
           <AboutDesktopSplitSection boxSide="left" graphic={3}>
             <div className={`flex flex-col ${ABOUT_DESKTOP_CONTENT_STACK_GAP}`}>
+              <ArticleBarChart
+                title={sections.barChart.title}
+                caption={sections.barChart.caption}
+                citation={sections.barChart.citation}
+                bars={sections.barChart.bars}
+                layout="desktop"
+                embedded
+              />
               <AboutDesktopParagraph text={productTwo} />
               <AboutDesktopParagraph text={productThree} />
             </div>
