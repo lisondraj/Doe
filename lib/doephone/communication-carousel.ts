@@ -20,10 +20,10 @@ export const DOEPHONE_COMMUNICATION_SLIDES: readonly DoePhoneCommunicationSlide[
   },
   {
     id: "front-desk",
-    menuLabel: "Front Desk",
+    menuLabel: "Reception",
     backdrop: {
       slideIndex: 0,
-      label: "Front Desk",
+      label: "Reception",
       gradient:
         "radial-gradient(ellipse 100% 88% at 22% 18%, #D49D4F 0%, #D2774C 52%, #B87862 100%)",
       grid: "hex",
@@ -31,10 +31,10 @@ export const DOEPHONE_COMMUNICATION_SLIDES: readonly DoePhoneCommunicationSlide[
   },
   {
     id: "inbox",
-    menuLabel: "Inbox",
+    menuLabel: "Documents",
     backdrop: {
       slideIndex: 4,
-      label: "Inbox",
+      label: "Documents",
       gradient:
         "linear-gradient(135deg, #B87862 0%, #C47A5A 24%, #D2774C 58%, #D49D4F 100%)",
       grid: "crosshatch",

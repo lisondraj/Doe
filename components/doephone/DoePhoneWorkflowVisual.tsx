@@ -1,6 +1,6 @@
 "use client";
 
-import { inter, suisseIntl } from "@/lib/home/fonts";
+import { dmSans } from "@/lib/home/fonts";
 import { CAROUSEL_MENU_UI } from "@/lib/doephone/carousel-menu-visual-styles";
 
 const { ink: INK, accent: DOE_ORANGE, divider: DIVIDER } = CAROUSEL_MENU_UI;
@@ -277,7 +277,7 @@ function HeaderButton({
 }) {
   return (
     <span
-      className={`inline-flex items-center font-medium leading-none ${BTN_RADIUS} ${inter.className}`}
+      className={`inline-flex items-center font-medium leading-none ${BTN_RADIUS}`}
       style={{
         fontSize: HEADER_BTN_SIZE,
         padding: HEADER_BTN_PAD,
@@ -297,7 +297,7 @@ export function DoePhoneWorkflowVisual() {
 
   return (
     <div
-      className={`mx-auto flex h-full w-full items-center justify-center ${suisseIntl.className}`}
+      className={`mx-auto flex h-full w-full items-center justify-center ${dmSans.className}`}
       style={{ maxWidth: CAROUSEL_MENU_UI.maxWidthPhone }}
       aria-hidden
     >

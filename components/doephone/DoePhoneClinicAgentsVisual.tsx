@@ -1,6 +1,6 @@
 "use client";
 
-import { inter, suisseIntl } from "@/lib/home/fonts";
+import { dmSans } from "@/lib/home/fonts";
 import { CAROUSEL_MENU_UI } from "@/lib/doephone/carousel-menu-visual-styles";
 
 const { ink: INK, accent: DOE_ORANGE, divider: DIVIDER } = CAROUSEL_MENU_UI;
@@ -141,7 +141,7 @@ export function DoePhoneClinicAgentsVisual() {
 
   return (
     <div
-      className={`mx-auto flex h-full w-full items-center justify-center ${suisseIntl.className}`}
+      className={`mx-auto flex h-full w-full items-center justify-center ${dmSans.className}`}
       style={{ maxWidth: CAROUSEL_MENU_UI.maxWidthPhone }}
       aria-hidden
     >
@@ -164,7 +164,7 @@ export function DoePhoneClinicAgentsVisual() {
             <button
               key={label}
               type="button"
-              className={`inline-flex items-center ${BTN_RADIUS} font-medium leading-none ${inter.className}`}
+              className={`inline-flex items-center ${BTN_RADIUS} font-medium leading-none`}
               style={{
                 background: BTN_BG,
                 color: INK,
@@ -181,7 +181,7 @@ export function DoePhoneClinicAgentsVisual() {
 
           <button
             type="button"
-            className={`inline-flex items-center font-medium leading-none ${inter.className}`}
+            className="inline-flex items-center font-medium leading-none"
             style={{
               color: INK,
               fontSize: actionSize,
@@ -226,7 +226,7 @@ export function DoePhoneClinicAgentsVisual() {
           >
             <button
               type="button"
-              className={`inline-flex items-center ${BTN_RADIUS} font-medium leading-none ${inter.className}`}
+              className={`inline-flex items-center ${BTN_RADIUS} font-medium leading-none`}
               style={{
                 background: BTN_BG,
                 color: INK,
@@ -244,7 +244,7 @@ export function DoePhoneClinicAgentsVisual() {
 
             <button
               type="button"
-              className={`ml-auto inline-flex items-center font-medium leading-none ${inter.className}`}
+              className="ml-auto inline-flex items-center font-medium leading-none"
               style={{
                 color: INK,
                 fontSize: actionSize,
