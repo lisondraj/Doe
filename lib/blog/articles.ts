@@ -12,6 +12,12 @@ export type ArticleBlock =
   | { type: "h2"; text: string }
   | { type: "ul"; items: readonly string[] }
   | { type: "image"; design: number }
+  | {
+      type: "bar-chart";
+      title: string;
+      caption?: string;
+      bars: readonly { label: string; value: number; suffix?: string }[];
+    }
   | { type: "quote"; text: string; attribution?: string };
 
 export type BlogArticle = {
@@ -59,6 +65,32 @@ export const BLOG_ARTICLES: readonly BlogArticle[] = [
     date: "April 28, 2026",
     backdrop: HEY_CAROUSEL_BACKDROP,
     body: [
+      {
+        type: "p",
+        text: "Physicians in the United States and Canada entered medicine to care for people—not to spend their days inside payer portals, inbox queues, and after-hours charting. Administrative work now consumes a growing share of every clinic week, pulling clinicians away from patients on both sides of the border.",
+      },
+      {
+        type: "ul",
+        items: [
+          "United States: Physicians spend nearly two hours on EHR and desk work for every one hour of direct patient care during clinic hours.",
+          "United States: The average physician logs more than 16 hours per week on administrative tasks outside scheduled patient time.",
+          "Canada: Family physicians report roughly 19 hours per week on non-clinical paperwork and care coordination.",
+          "Canada: A majority of Canadian physicians cite administrative load as a leading driver of burnout and reduced clinic capacity.",
+        ],
+      },
+      {
+        type: "p",
+        text: "The burden looks different in each country—billing codes and prior authorization in the U.S., fragmented provincial systems and referral handoffs in Canada—but the effect is the same. Doctors finish their last appointment and still face an evening of documentation, form chasing, and message triage before the next day begins.",
+      },
+      {
+        type: "bar-chart",
+        title: "Weekly hours on administrative work",
+        caption: "Survey averages for U.S. and Canadian physicians, non-clinical hours per week.",
+        bars: [
+          { label: "United States", value: 16, suffix: "hrs/wk" },
+          { label: "Canada", value: 19, suffix: "hrs/wk" },
+        ],
+      },
       { type: "p", text: "Doe listens during the visit, drafts the note with citations, and surfaces only what needs a clinician's eyes before sign-off. The chart updates without another hour at the keyboard after clinic." },
       { type: "p", text: "Ambient capture runs with explicit consent and clear controls—pause, discard, or edit before anything lands in the record. Drafts follow your note templates and pull problem lists, meds, and prior visits so you are not starting from a blank screen." },
       { type: "p", text: "The goal is not to remove the clinician from the note. It is to remove the clerical tax that keeps smart people documenting instead of caring for the next patient in the queue." },

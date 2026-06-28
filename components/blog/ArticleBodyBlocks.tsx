@@ -1,6 +1,7 @@
 "use client";
 
 import { ArticleInlineVisual } from "@/components/blog/ArticleInlineVisual";
+import { ArticleBarChart } from "@/components/blog/ArticleBarChart";
 import { BLOG_ARTICLE_BODY_TW } from "@/lib/blog/blog-layout-styles";
 import { dmSans, inter, lora } from "@/lib/home/fonts";
 import type { ArticleBlock } from "@/lib/blog/articles";
@@ -61,6 +62,16 @@ export function renderArticleBlock(block: ArticleBlock, index: number) {
         <div key={index} className={VISUAL_GAP}>
           <ArticleInlineVisual design={block.design} />
         </div>
+      );
+
+    case "bar-chart":
+      return (
+        <ArticleBarChart
+          key={index}
+          title={block.title}
+          caption={block.caption}
+          bars={block.bars}
+        />
       );
 
     case "quote": {
