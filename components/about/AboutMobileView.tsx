@@ -8,7 +8,7 @@ import {
   ABOUT_PAGE_SUBHEADING_TW,
   ABOUT_PAGE_TITLE_TW,
 } from "@/lib/about/about-layout-styles";
-import { ABOUT_PAGE_ARTICLE } from "@/lib/about/about-page-article";
+import { ABOUT_PAGE_ARTICLE, ABOUT_PAGE_HERO_BACKDROP, ABOUT_PAGE_HERO_PATTERN_SCALE } from "@/lib/about/about-page-article";
 import { BLOG_CONTENT_PT, BLOG_FEATURE_BOX_TW } from "@/lib/blog/blog-layout-styles";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 
@@ -36,10 +36,11 @@ export function AboutMobileView() {
 
         <div className={ABOUT_PAGE_HERO_WRAP}>
           <BlogHeroVisual
-            backdrop={ABOUT_PAGE_ARTICLE.backdrop}
+            backdrop={ABOUT_PAGE_HERO_BACKDROP}
             variant="hero"
             boxClassName={BLOG_FEATURE_BOX_TW}
             gapClassName=""
+            patternScale={ABOUT_PAGE_HERO_PATTERN_SCALE}
           />
         </div>
 

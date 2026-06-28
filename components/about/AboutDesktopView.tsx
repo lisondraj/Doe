@@ -22,7 +22,7 @@ import {
   ABOUT_DESKTOP_SUBHEADING_TW,
   ABOUT_DESKTOP_TITLE_TW,
 } from "@/lib/about/about-layout-styles";
-import { ABOUT_PAGE_ARTICLE, ABOUT_DESKTOP_HERO_BACKDROP } from "@/lib/about/about-page-article";
+import { ABOUT_PAGE_ARTICLE, ABOUT_PAGE_HERO_BACKDROP, ABOUT_PAGE_HERO_PATTERN_SCALE } from "@/lib/about/about-page-article";
 import type { ArticleBlock } from "@/lib/blog/articles";
 import { lora } from "@/lib/home/fonts";
 
@@ -92,11 +92,11 @@ export function AboutDesktopView() {
 
             <div className={ABOUT_DESKTOP_HERO_WRAP}>
               <BlogHeroVisual
-                backdrop={ABOUT_DESKTOP_HERO_BACKDROP}
+                backdrop={ABOUT_PAGE_HERO_BACKDROP}
                 variant="hero"
                 boxClassName={ABOUT_DESKTOP_HERO_BOX_TW}
                 gapClassName=""
-                patternScale={0.68}
+                patternScale={ABOUT_PAGE_HERO_PATTERN_SCALE}
               />
             </div>
           </section>
