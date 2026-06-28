@@ -46,12 +46,14 @@ type IntegrationTile = {
   icon: TileIconKind;
 };
 
-/** Existing four rows — unchanged. */
+/** Existing four rows — Accuro and UpToDate flanked; each row has multiple tiles. */
 const INTEGRATION_ROWS: readonly IntegrationTile[][] = [
   [
     { name: "TELUS EMR", icon: "telus" },
     { name: "OSCAR", icon: "oscar" },
+    { name: "Meditech", icon: "meditech" },
     { name: "Accuro", icon: "accuro" },
+    { name: "Jane App", icon: "jane" },
   ],
   [
     { name: "CHR", icon: "chr" },
@@ -63,7 +65,9 @@ const INTEGRATION_ROWS: readonly IntegrationTile[][] = [
     { name: "Fathom", icon: "fathom" },
     { name: "DAX Copilot", icon: "dax" },
     { name: "Nuance", icon: "nuance" },
+    { name: "Surescripts", icon: "surescripts" },
     { name: "UpToDate", icon: "uptodate" },
+    { name: "Doximity", icon: "doximity" },
   ],
   [
     { name: "FHIR", icon: "fhir" },
@@ -72,20 +76,24 @@ const INTEGRATION_ROWS: readonly IntegrationTile[][] = [
   ],
 ];
 
-/** Additional integrations — spread width-wise below the original mosaic. */
-const EXTRA_INTEGRATIONS: readonly IntegrationTile[] = [
-  { name: "Jane App", icon: "jane" },
-  { name: "Meditech", icon: "meditech" },
-  { name: "Athena", icon: "athena" },
-  { name: "Redox", icon: "redox" },
-  { name: "Teams", icon: "teams" },
-  { name: "Outlook", icon: "outlook" },
-  { name: "Doximity", icon: "doximity" },
-  { name: "Surescripts", icon: "surescripts" },
-  { name: "Avaros", icon: "avaros" },
-  { name: "PS Suite", icon: "pssuite" },
-  { name: "Availity", icon: "availity" },
-  { name: "Stripe", icon: "stripe" },
+/** Additional integrations — multi-tile rows only (no single-box lines). */
+const EXTRA_INTEGRATION_ROWS: readonly IntegrationTile[][] = [
+  [
+    { name: "Athena", icon: "athena" },
+    { name: "Redox", icon: "redox" },
+  ],
+  [
+    { name: "Teams", icon: "teams" },
+    { name: "Outlook", icon: "outlook" },
+  ],
+  [
+    { name: "Avaros", icon: "avaros" },
+    { name: "PS Suite", icon: "pssuite" },
+  ],
+  [
+    { name: "Availity", icon: "availity" },
+    { name: "Stripe", icon: "stripe" },
+  ],
 ];
 
 function TileIcon({ kind }: { kind: TileIconKind }) {
@@ -317,9 +325,11 @@ export function DoePhoneIntegrateVisual() {
         style={{ gap: TILE_GAP }}
       >
         {INTEGRATION_ROWS.map((row, index) => (
-          <IntegrationRow key={index} tiles={row} />
+          <IntegrationRow key={`core-${index}`} tiles={row} />
         ))}
-        <IntegrationRow tiles={[...EXTRA_INTEGRATIONS]} />
+        {EXTRA_INTEGRATION_ROWS.map((row, index) => (
+          <IntegrationRow key={`extra-${index}`} tiles={row} />
+        ))}
       </div>
     </div>
   );
