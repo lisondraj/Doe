@@ -21,6 +21,36 @@ type MenuInject = { scrollIndex: number; slideIndex: number };
 const CAROUSEL_MENU_OVERLAY =
   "absolute inset-0 z-10 flex h-full w-full items-center justify-center";
 
+const ADD_BADGE_SIZE = "clamp(2.05rem,6.35vmin,2.55rem)";
+
+function CarouselSlideAddBadge() {
+  return (
+    <span
+      className="pointer-events-none absolute z-20 flex items-center justify-center rounded-full backdrop-blur-[10px] iphone-page:backdrop-blur-[8px] [transform:translateZ(0)]"
+      style={{
+        bottom: "clamp(0.55rem,1.65vmin,0.68rem)",
+        right: "clamp(0.55rem,1.65vmin,0.68rem)",
+        width: ADD_BADGE_SIZE,
+        height: ADD_BADGE_SIZE,
+        background: "rgba(255, 255, 255, 0.42)",
+        boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.62)",
+      }}
+      aria-hidden
+    >
+      <span
+        className="font-light leading-none text-white"
+        style={{
+          fontSize: "clamp(1.35rem,4.15vmin,1.65rem)",
+          marginTop: "-0.06em",
+          textShadow: "0 1px 8px rgba(30, 52, 58, 0.18)",
+        }}
+      >
+        +
+      </span>
+    </span>
+  );
+}
+
 function CarouselMenuOverlay({ children }: { children: React.ReactNode }) {
   return (
     <div
@@ -75,6 +105,7 @@ function DoePhoneCarouselCard({ slide }: { slide: DoePhoneCommunicationSlide }) 
           <DoePhoneIntegrateVisual />
         </CarouselMenuOverlay>
       ) : null}
+      <CarouselSlideAddBadge />
     </div>
   );
 }

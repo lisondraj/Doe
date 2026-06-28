@@ -14,53 +14,35 @@ const TILE_GAP = "clamp(0.38rem,1.15vmin,0.48rem)";
 const LABEL_SIZE = "clamp(0.72rem,2.15vmin,0.86rem)";
 const ICON_BOX = "clamp(1.28rem,3.95vmin,1.58rem)";
 
-type TileIconKind = "epic" | "cerner" | "athena" | "uptodate" | "dax" | "evidence";
+type TileIconKind =
+  | "epic"
+  | "cerner"
+  | "athena"
+  | "uptodate"
+  | "dax"
+  | "fhir"
+  | "evidence"
+  | "slack"
+  | "zoom";
 
 type IntegrationTile = {
   name: string;
   icon: TileIconKind;
+  colSpan: 1 | 2;
 };
 
-/** Two rows × three columns — six integration tiles in a square mosaic. */
+/** Four rows × three columns — spans vary width while keeping a square mosaic. */
 const INTEGRATION_TILES: readonly IntegrationTile[] = [
-  { name: "Epic", icon: "epic" },
-  { name: "Cerner", icon: "cerner" },
-  { name: "Athena", icon: "athena" },
-  { name: "DAX Copilot", icon: "dax" },
-  { name: "UpToDate", icon: "uptodate" },
-  { name: "OpenEvidence", icon: "evidence" },
+  { name: "Epic", icon: "epic", colSpan: 2 },
+  { name: "Cerner", icon: "cerner", colSpan: 1 },
+  { name: "OpenEvidence", icon: "evidence", colSpan: 2 },
+  { name: "Athena", icon: "athena", colSpan: 1 },
+  { name: "DAX Copilot", icon: "dax", colSpan: 1 },
+  { name: "UpToDate", icon: "uptodate", colSpan: 1 },
+  { name: "FHIR", icon: "fhir", colSpan: 1 },
+  { name: "Slack", icon: "slack", colSpan: 1 },
+  { name: "Zoom", icon: "zoom", colSpan: 1 },
 ];
-
-const ADD_BADGE_SIZE = "clamp(2.05rem,6.35vmin,2.55rem)";
-const ADD_BADGE_OFFSET = "clamp(-0.42rem,-1.28vmin,-0.52rem)";
-
-function AddIntegrationBadge() {
-  return (
-    <span
-      className="pointer-events-none absolute flex items-center justify-center rounded-full backdrop-blur-[10px] iphone-page:backdrop-blur-[8px] [transform:translateZ(0)]"
-      style={{
-        bottom: ADD_BADGE_OFFSET,
-        right: ADD_BADGE_OFFSET,
-        width: ADD_BADGE_SIZE,
-        height: ADD_BADGE_SIZE,
-        background: "rgba(255, 255, 255, 0.42)",
-        boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.62)",
-      }}
-      aria-hidden
-    >
-      <span
-        className="font-light leading-none"
-        style={{
-          color: DOE_ORANGE,
-          fontSize: "clamp(1.35rem,4.15vmin,1.65rem)",
-          marginTop: "-0.06em",
-        }}
-      >
-        +
-      </span>
-    </span>
-  );
-}
 
 function TileIcon({ kind }: { kind: TileIconKind }) {
   const sw = 1.25;
@@ -104,10 +86,31 @@ function TileIcon({ kind }: { kind: TileIconKind }) {
         <path d="M10 8.8v3.4M8.6 10.5h2.8" stroke={MUTED} strokeWidth={sw * 0.85} strokeLinecap={cap} />
       </>
     ),
+    fhir: (
+      <>
+        <path d="M5 6.5h10v7H5z" stroke={DOE_ORANGE} strokeWidth={sw} strokeLinejoin={join} />
+        <path d="M8 9.5h4M8 12h2.5" stroke={MUTED} strokeWidth={sw * 0.9} strokeLinecap={cap} />
+        <circle cx="14.5" cy="8.5" r="1.4" fill={DOE_ORANGE} />
+      </>
+    ),
     evidence: (
       <>
         <circle cx="9.5" cy="9.5" r="5.25" stroke={DOE_ORANGE} strokeWidth={sw} />
         <path d="M14.5 14.5l3 3" stroke={MUTED} strokeWidth={sw * 0.95} strokeLinecap={cap} />
+      </>
+    ),
+    slack: (
+      <>
+        <rect x="4.5" y="9" width="3.5" height="3.5" rx="1" stroke={DOE_ORANGE} strokeWidth={sw * 0.95} />
+        <rect x="9" y="4.5" width="3.5" height="3.5" rx="1" stroke={MUTED} strokeWidth={sw * 0.95} />
+        <rect x="12.5" y="9" width="3.5" height="3.5" rx="1" stroke={MUTED} strokeWidth={sw * 0.95} />
+        <rect x="9" y="12.5" width="3.5" height="3.5" rx="1" stroke={DOE_ORANGE} strokeWidth={sw * 0.95} />
+      </>
+    ),
+    zoom: (
+      <>
+        <rect x="3.5" y="6" width="9.5" height="8" rx="1.5" stroke={DOE_ORANGE} strokeWidth={sw} />
+        <path d="M13 9.5l3.5-2v7l-3.5-2" stroke={MUTED} strokeWidth={sw * 0.95} strokeLinejoin={join} />
       </>
     ),
   };
@@ -129,11 +132,12 @@ function TileIcon({ kind }: { kind: TileIconKind }) {
   );
 }
 
-function IntegrationTileCard({ name, icon }: IntegrationTile) {
+function IntegrationTileCard({ name, icon, colSpan }: IntegrationTile) {
   return (
     <div
-      className={`relative flex items-center overflow-visible border bg-white shadow-[0_8px_24px_rgba(30,52,58,0.12)] ${TILE_RADIUS}`}
+      className={`flex items-center border bg-white shadow-[0_8px_24px_rgba(30,52,58,0.12)] ${TILE_RADIUS}`}
       style={{
+        gridColumn: `span ${colSpan}`,
         height: TILE_HEIGHT,
         paddingInline: TILE_PAD_X,
         gap: "clamp(0.42rem,1.28vmin,0.55rem)",
@@ -144,7 +148,6 @@ function IntegrationTileCard({ name, icon }: IntegrationTile) {
       <span className="truncate font-medium leading-none" style={{ color: INK, fontSize: LABEL_SIZE }}>
         {name}
       </span>
-      <AddIntegrationBadge />
     </div>
   );
 }
@@ -158,10 +161,10 @@ export function DoePhoneIntegrateVisual() {
       aria-hidden
     >
       <div
-        className="grid aspect-square w-[min(88%,20rem)] overflow-visible"
+        className="grid aspect-square w-[min(88%,20rem)]"
         style={{
           gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-          gridTemplateRows: "repeat(2, minmax(0, 1fr))",
+          gridTemplateRows: "repeat(4, minmax(0, 1fr))",
           gap: TILE_GAP,
         }}
       >
