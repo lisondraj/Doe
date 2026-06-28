@@ -8,7 +8,10 @@ import {
 import { DoePhoneSectionTitle } from "@/components/doephone/DoePhoneSectionText";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { inter } from "@/lib/home/fonts";
-import { DOEPHONE_SECTION_TITLE_PT } from "@/lib/doephone/section-styles";
+import {
+  DOEPHONE_DESKTOP_PAGE_INSET_X,
+  DOEPHONE_SECTION_TITLE_PT,
+} from "@/lib/doephone/section-styles";
 import { doephoneSectionRevealStyleVars } from "@/lib/doephone/section-reveal-timing";
 import {
   doePhoneSectionRevealSegmentClass,
@@ -17,7 +20,7 @@ import {
 import { DOEPHONE_HERO_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 
-const DESKTOP_BUILD_INSET = "px-10 md:px-20 lg:px-28 xl:px-36";
+const DESKTOP_BUILD_INSET = DOEPHONE_DESKTOP_PAGE_INSET_X;
 const DESKTOP_BUILD_INPUT_INSET = "p-10 md:p-14 lg:p-16 xl:p-20";
 const DESKTOP_BUILD_BADGE_INSET = "right-10 md:right-20 lg:right-28 xl:right-36 top-10 md:top-14 lg:top-16 xl:top-20";
 

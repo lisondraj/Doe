@@ -9,6 +9,16 @@ export const DOEPHONE_SECTION_COPY_INSET =
 export const DOEPHONE_HERO_COPY_INSET =
   "px-12 iphone-page:px-[max(2.75rem,calc(env(safe-area-inset-left,0px)+6vmin))] doephone-hero-copy-inset";
 
+/** Desktop home — shared horizontal gutters (nav, hero headline, Build, legacy bands). */
+export const DOEPHONE_DESKTOP_PAGE_INSET_X =
+  "px-10 md:px-20 lg:px-28 xl:px-36";
+
+export const DOEPHONE_DESKTOP_PAGE_INSET_LEFT =
+  "pl-10 md:pl-20 lg:pl-28 xl:pl-36";
+
+export const DOEPHONE_DESKTOP_PAGE_MARGIN_X =
+  "mx-10 md:mx-20 lg:mx-28 xl:mx-36";
+
 /** Footer copy row — section left inset + matching right gutter (Doe wordmark sits outside). */
 export const DOEPHONE_FOOTER_CONTENT_INSET =
   "pl-14 pr-14 iphone-page:pl-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))] iphone-page:pr-[max(2.35rem,calc(env(safe-area-inset-right,0px)+5.25vmin))]";

@@ -62,3 +62,6 @@ export const DESKTOP_MAIN_CTA_MENU_ITEMS = [
   { label: "Waitlist", href: WAITLIST_PATH },
   { label: "Join Us", href: JOIN_PATH },
 ] as const;
+
+/** Chevron dropdown — primary CTA is the split button label. */
+export const DESKTOP_MAIN_CTA_DROPDOWN_ITEMS = DESKTOP_MAIN_CTA_MENU_ITEMS.slice(1);

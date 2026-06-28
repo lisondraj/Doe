@@ -23,6 +23,10 @@ import {
   DESIGN6_BACKDROP,
 } from "@/lib/workflow-carousel-design-backdrops";
 import {
+  DOEPHONE_DESKTOP_PAGE_INSET_X,
+  DOEPHONE_DESKTOP_PAGE_MARGIN_X,
+} from "@/lib/doephone/section-styles";
+import {
   PATIENT_CARE_GREY_GRID_STYLE,
   TESTIMONIAL_MEDALLION_GRADIENT,
 } from "@/lib/main-page-design-backdrop";
@@ -1100,7 +1104,7 @@ export function DesktopHome() {
             />
           )}
           {/* Top bar — white bar only after hero */}
-          <div className="relative z-10 flex items-center justify-between px-8 py-6">
+          <div className={`relative z-10 flex items-center justify-between py-6 ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
             <h1
               className={`text-4xl font-normal transition-all duration-300 ${lora.className}`}
               style={{
@@ -1128,11 +1132,11 @@ export function DesktopHome() {
             }}
           >
             {/* Top border line */}
-            <div className="mx-8 border-t border-gray-200 relative z-30" style={{ borderColor: '#E6E6E6' }} />
+            <div className={`${DOEPHONE_DESKTOP_PAGE_MARGIN_X} border-t border-gray-200 relative z-30`} style={{ borderColor: '#E6E6E6' }} />
 
             <div className="py-8">
               <div 
-                className="max-w-[1400px] mx-auto px-8 flex"
+                className={`max-w-[1400px] mx-auto flex ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}
                 style={{ gap: '24px', height: '144px' }}
                 onMouseLeave={() => setHoveredBox(null)}
               >
@@ -1216,7 +1220,7 @@ export function DesktopHome() {
             </div>
 
             {/* Bottom border line */}
-            <div className="mx-8 border-b border-gray-200 relative z-30" style={{ borderColor: '#E6E6E6' }} />
+            <div className={`${DOEPHONE_DESKTOP_PAGE_MARGIN_X} border-b border-gray-200 relative z-30`} style={{ borderColor: '#E6E6E6' }} />
           </div>
           </>
         </nav>
@@ -1340,7 +1344,7 @@ export function DesktopHome() {
           }}
         />
         {/* Left-aligned Title and Description */}
-        <div className="absolute top-0 left-0 z-20 px-8 md:px-16 lg:px-24" style={{ overflow: 'visible', paddingTop: '40vh' }}>
+        <div className={`absolute top-0 left-0 z-20 ${DOEPHONE_DESKTOP_PAGE_INSET_X}`} style={{ overflow: 'visible', paddingTop: '40vh' }}>
           <div className="max-w-2xl">
             <h1 
               className={`text-4xl sm:text-6xl md:text-7xl lg:text-8xl text-gray-900 mb-8 max-w-[min(100%,52rem)] ${oldStandardTT.className}`}
@@ -1572,7 +1576,7 @@ export function DesktopHome() {
           const lines = descriptions[selectedWordIndex] ?? descriptions[0];
           return (
             <div
-              className="absolute bottom-[10vh] left-0 right-1/2 z-20 px-8 text-right md:px-16 lg:px-24"
+              className={`absolute bottom-[10vh] left-0 right-1/2 z-20 text-right ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}
               style={{ paddingRight: "clamp(1rem, 4vw, 2.75rem)" }}
             >
               <div
@@ -2165,7 +2169,7 @@ export function DesktopHome() {
 
       <div className="border-l border-r border-[#E6E6E6] relative left-1/2 max-w-[1800px] w-full -translate-x-1/2">
         <div ref={buildSectionRef} className="relative z-10 w-full">
-          <div className="mx-auto max-w-[1800px] px-8 pb-24 pt-16">
+          <div className={`mx-auto max-w-[1800px] pb-24 pt-16 ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
             <div className="mb-10 text-center">
               <h2
                 className={`text-4xl font-normal tracking-tight text-gray-900 ${lora.className}`}
@@ -2209,7 +2213,7 @@ export function DesktopHome() {
         </div>
 
         {/* Footer */}
-      <div className="relative left-1/2 w-screen -translate-x-1/2 px-8 pb-8">
+      <div className={`relative left-1/2 w-screen -translate-x-1/2 pb-8 ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
           <div 
             className="py-20 relative rounded-2xl overflow-hidden flex items-center"
             style={{
@@ -2236,7 +2240,7 @@ export function DesktopHome() {
                 mixBlendMode: 'overlay',
               }}
             />
-            <div className="max-w-[1400px] mx-auto px-8 w-full flex items-center justify-between relative z-10">
+            <div className={`max-w-[1400px] mx-auto w-full flex items-center justify-between relative z-10 ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
             {/* Doe Logo */}
             <h1 className={`text-4xl font-normal text-white ${lora.className}`}>
               Doe

@@ -7,7 +7,10 @@ import {
   DOEPHONE_HERO_INTRO_GRADIENT_START,
   doephoneHeroIntroStyleVars,
 } from "@/lib/doephone/hero-intro-timing";
-import { DOEPHONE_SECTION_CAROUSEL_INSET_X } from "@/lib/doephone/section-styles";
+import {
+  DOEPHONE_DESKTOP_PAGE_INSET_LEFT,
+  DOEPHONE_HERO_COPY_INSET,
+} from "@/lib/doephone/section-styles";
 import { CARE_COORDINATION_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 import { useEffect, useState, type CSSProperties } from "react";
 
@@ -16,9 +19,6 @@ export const DOEPHONE_HERO_HEIGHT =
   "calc(var(--app-vh,100lvh)*0.88 + max(8rem, calc(env(safe-area-inset-top, 0px) + 3.5rem)))";
 
 const DOEPHONE_HERO_DESKTOP_HEIGHT = "100dvh";
-
-const DOEPHONE_HERO_DESKTOP_INSET =
-  "px-10 md:px-20 lg:px-28 xl:px-36";
 
 export function DoePhoneHeroSection({
   variant = "mobile",
@@ -62,7 +62,10 @@ export function DoePhoneHeroSection({
   const gradientZoom = introDone ? 1 : introZoom;
   const isDesktop = variant === "desktop";
   const heroHeight = isDesktop ? DOEPHONE_HERO_DESKTOP_HEIGHT : DOEPHONE_HERO_HEIGHT;
-  const copyInset = isDesktop ? DOEPHONE_HERO_DESKTOP_INSET : DOEPHONE_SECTION_CAROUSEL_INSET_X;
+  const copyInset = isDesktop ? DOEPHONE_DESKTOP_PAGE_INSET_LEFT : DOEPHONE_HERO_COPY_INSET;
+  const copyBottom = isDesktop
+    ? "bottom-[clamp(5rem,16vh,10rem)]"
+    : "bottom-[clamp(2.75rem,9vmin,4.25rem)]";
 
   return (
     <section
@@ -84,7 +87,7 @@ export function DoePhoneHeroSection({
       />
 
       <div
-        className={`absolute inset-0 z-[3] flex min-w-0 flex-col items-start justify-end overflow-visible pb-[clamp(1.5rem,5vmin,2.5rem)] ${copyInset}`}
+        className={`absolute left-0 right-0 z-[3] ${copyInset} ${copyBottom}`}
       >
         <div className="doephone-hero-copy pointer-events-none w-full min-w-0">
           <DoePhoneHeroHeadline />
