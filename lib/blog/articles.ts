@@ -75,7 +75,7 @@ export const BLOG_ARTICLES: readonly BlogArticle[] = [
     body: [
       {
         type: "p",
-        text: "Physicians in the United States and Canada entered medicine to care for people, not to spend their days inside payer portals, inbox queues, and after-hours charting. Administrative work now consumes a growing share of every clinic week, pulling clinicians away from patients on both sides of the border.",
+        text: "We're two brothers who have lived inside a broken healthcare system—and we're building Doe to change it.",
       },
       {
         type: "ul",

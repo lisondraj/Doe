@@ -5,14 +5,24 @@ import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
 import {
   ABOUT_HERO_HEADLINE_WRAP,
+  ABOUT_PAGE_HERO_AFTER_BYLINE,
+  ABOUT_PAGE_HERO_BEFORE_ARTICLE,
+  ABOUT_PAGE_HERO_BOX_TW,
   ABOUT_PAGE_HERO_HEADLINE_PT,
-  ABOUT_PAGE_HERO_WRAP,
+  ABOUT_PAGE_MOBILE_BYLINE_GAP,
+  ABOUT_PAGE_MOBILE_BYLINE_TW,
   ABOUT_PAGE_SUBHEADING_LINES,
   ABOUT_PAGE_SUBHEADING_TW,
   ABOUT_PAGE_TITLE_TW,
 } from "@/lib/about/about-layout-styles";
-import { ABOUT_PAGE_ARTICLE, ABOUT_PAGE_HERO_BACKDROP, ABOUT_PAGE_HERO_PATTERN_SCALE } from "@/lib/about/about-page-article";
-import { BLOG_CONTENT_PT, BLOG_FEATURE_BOX_TW } from "@/lib/blog/blog-layout-styles";
+import {
+  ABOUT_PAGE_ARTICLE,
+  ABOUT_PAGE_HERO_BACKDROP,
+  ABOUT_PAGE_HERO_PATTERN_SCALE,
+  ABOUT_PAGE_MOBILE_BYLINE,
+  ABOUT_PAGE_MOBILE_DATE,
+} from "@/lib/about/about-page-article";
+import { BLOG_CONTENT_PT } from "@/lib/blog/blog-layout-styles";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 
 /** iPhone /about — mission headline, fundraising subheading, and full blog article body. */
@@ -40,11 +50,19 @@ export function AboutMobileView() {
           </p>
         </div>
 
-        <div className={ABOUT_PAGE_HERO_WRAP}>
+        <p className={`${ABOUT_PAGE_MOBILE_BYLINE_TW} ${ABOUT_PAGE_MOBILE_BYLINE_GAP}`}>
+          {ABOUT_PAGE_MOBILE_BYLINE}
+          <span className="mx-2" aria-hidden>
+            ·
+          </span>
+          {ABOUT_PAGE_MOBILE_DATE}
+        </p>
+
+        <div className={`${ABOUT_PAGE_HERO_AFTER_BYLINE} ${ABOUT_PAGE_HERO_BEFORE_ARTICLE}`}>
           <BlogHeroVisual
             backdrop={ABOUT_PAGE_HERO_BACKDROP}
             variant="hero"
-            boxClassName={BLOG_FEATURE_BOX_TW}
+            boxClassName={ABOUT_PAGE_HERO_BOX_TW}
             gapClassName=""
             patternScale={ABOUT_PAGE_HERO_PATTERN_SCALE}
           />

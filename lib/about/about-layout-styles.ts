@@ -3,6 +3,7 @@ import {
   DOEPHONE_SECTION_CAROUSEL_RADIUS,
   DOEPHONE_SECTION_COPY_TW,
 } from "@/lib/doephone/section-styles";
+import { DOEPHONE_SECTION_CLOSING_FEATURE_HEIGHT } from "@/lib/doephone/closing-section-styles";
 import { dmSans, inter, lora, suisseIntl } from "@/lib/home/fonts";
 
 /** About page mission headline — matches iPhone main page section titles. */
@@ -29,6 +30,16 @@ export const ABOUT_PAGE_HERO_AFTER_SUBHEADING = "mt-10 iphone-page:mt-12";
 export const ABOUT_PAGE_HERO_BEFORE_ARTICLE = "mb-10 iphone-page:mb-12";
 
 export const ABOUT_PAGE_HERO_WRAP = `${ABOUT_PAGE_HERO_AFTER_SUBHEADING} ${ABOUT_PAGE_HERO_BEFORE_ARTICLE}`;
+
+/** iPhone /about — byline under subheading, before hero. */
+export const ABOUT_PAGE_MOBILE_BYLINE_TW = `text-[clamp(1.02rem,0.92rem+0.55vmin,1.18rem)] iphone-page:text-[clamp(1.12rem,0.98rem+0.65vmin,1.28rem)] font-medium text-[#9A8F82] ${dmSans.className}`;
+
+export const ABOUT_PAGE_MOBILE_BYLINE_GAP = "mt-6 iphone-page:mt-7";
+
+export const ABOUT_PAGE_HERO_AFTER_BYLINE = "mt-8 iphone-page:mt-10";
+
+/** iPhone /about hero box — no drop shadow under gradient band. */
+export const ABOUT_PAGE_HERO_BOX_TW = `${DOEPHONE_SECTION_CLOSING_FEATURE_HEIGHT} ${DOEPHONE_SECTION_CAROUSEL_RADIUS} shadow-none`;
 
 /** Desktop /about — same horizontal gutters as desktop home. */
 export const ABOUT_DESKTOP_PAGE_INSET = DOEPHONE_DESKTOP_PAGE_INSET_X;

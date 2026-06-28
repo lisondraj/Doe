@@ -22,3 +22,8 @@ export const ABOUT_PAGE_HERO_PATTERN_SCALE = 0.68;
 
 /** @deprecated Use ABOUT_PAGE_HERO_BACKDROP */
 export const ABOUT_DESKTOP_HERO_BACKDROP = ABOUT_PAGE_HERO_BACKDROP;
+
+/** iPhone /about byline — shown between subheading and hero. */
+export const ABOUT_PAGE_MOBILE_BYLINE = "By James & Matthew Lisondra";
+
+export const ABOUT_PAGE_MOBILE_DATE = "June 28, 2026";
