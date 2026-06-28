@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { ABOUT_CONTACT_EMAIL } from "@/lib/about/about-contact";
 import {
+  DESKTOP_NAV_ACTION_SIZE,
   MOBILE_NAV_MAIL_BUTTON_TW,
   MOBILE_NAV_MAIL_ICON_TW,
   MOBILE_NAV_SPLIT_SHELL_TW,
@@ -117,8 +118,8 @@ export function MobileNavEmailButton({
       <div className={MOBILE_NAV_SPLIT_SHELL_TW} style={{ boxShadow: shadow }}>
         <button
           type="button"
-          className={`${MOBILE_NAV_MAIL_BUTTON_TW} transition-[opacity,background-color,color,box-shadow] duration-300 hover:opacity-90 active:opacity-80`}
-          style={{ backgroundColor: bg, color: fg }}
+          className={`${MOBILE_NAV_MAIL_BUTTON_TW} transition-[opacity,background-color,color,box-shadow] duration-300`}
+          style={{ backgroundColor: bg, color: fg, width: DESKTOP_NAV_ACTION_SIZE }}
           aria-expanded={open}
           aria-haspopup="dialog"
           aria-label={`Email ${ABOUT_CONTACT_EMAIL}`}

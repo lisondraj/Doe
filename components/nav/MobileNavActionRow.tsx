@@ -1,8 +1,7 @@
 import { MobileMainNavCta } from "@/components/nav/MobileMainNavCta";
 import { MobileNavEmailButton } from "@/components/nav/MobileNavEmailButton";
 
-const MOBILE_NAV_ACTION_ROW_GAP =
-  "gap-3 iphone-page:gap-[clamp(0.55rem,0.42rem+0.72vmin,0.82rem)]";
+const MOBILE_NAV_ACTION_ROW_GAP = "gap-2.5";
 
 export type MobileNavActionChrome = {
   bg?: string;
