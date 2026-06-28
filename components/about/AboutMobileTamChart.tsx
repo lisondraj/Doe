@@ -96,6 +96,27 @@ export function AboutMobileTamChart() {
         </div>
       </div>
 
+      <div className="mt-6 border border-[#D9D4CC] px-4 py-4 iphone-page:mt-7 iphone-page:px-5 iphone-page:py-5">
+        <p
+          className={`font-normal leading-snug text-[#9A8F82] ${inter.className} text-[clamp(0.92rem,0.82rem+0.52vmin,1.05rem)] iphone-page:text-[clamp(0.98rem,0.88rem+0.58vmin,1.12rem)]`}
+        >
+          {ABOUT_MOBILE_TAM_CHART.highlight.headline}
+        </p>
+        <p
+          className={`mt-1.5 font-medium leading-none tracking-[-0.03em] text-[#1E343A] ${dmSans.className} text-[clamp(2.35rem,1.85rem+2.15vmin,3.05rem)] iphone-page:mt-2 iphone-page:text-[clamp(2.65rem,2.05rem+2.55vmin,3.45rem)]`}
+        >
+          ${ABOUT_MOBILE_TAM_CHART.highlight.valueB}B
+          <span className="ml-1.5 text-[0.42em] font-medium tracking-[-0.02em] text-[#9A8F82]">
+            addressable TAM
+          </span>
+        </p>
+        <p
+          className={`mt-3 font-normal leading-[1.45] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className} text-[clamp(0.92rem,0.82rem+0.52vmin,1.05rem)] iphone-page:mt-3.5 iphone-page:text-[clamp(0.98rem,0.88rem+0.58vmin,1.12rem)]`}
+        >
+          {ABOUT_MOBILE_TAM_CHART.highlight.summary}
+        </p>
+      </div>
+
       <p className={ABOUT_MOBILE_CHART_JOINT_CAPTION_TW}>{ABOUT_MOBILE_TAM_CHART.caption}</p>
       <p className={ABOUT_MOBILE_CHART_CITATION_TW}>{ABOUT_MOBILE_TAM_CHART.citation}</p>
     </figure>

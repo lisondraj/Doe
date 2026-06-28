@@ -103,6 +103,11 @@ export const ABOUT_MOBILE_TAM_CHART = {
     { label: "U.S. health providers", value: 24, suffix: "B USD" },
     { label: "Canada + U.S. doctors", value: 9.6, suffix: "B USD" },
   ],
+  highlight: {
+    valueB: 28,
+    headline: "Canada + U.S. all health providers",
+    summary: "Combined addressable software TAM across every clinic, hospital, and care team Doe can serve in North America.",
+  },
 } as const;
 
 /** Desktop /about section three — co-founder bios beside beige panel. */
