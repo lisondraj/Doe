@@ -1,7 +1,11 @@
 "use client";
 
+import {
+  DoePhoneAmbientPromptCard,
+  PromptTag,
+  WorkflowMentionAt,
+} from "@/components/doephone/DoePhoneAmbientPromptCard";
 import { DoePhoneSectionTitle } from "@/components/doephone/DoePhoneSectionText";
-import { DoePhoneWorkflowVisual } from "@/components/doephone/DoePhoneWorkflowVisual";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import { inter } from "@/lib/home/fonts";
 import {
@@ -68,7 +72,7 @@ function BuildSectionToggleBadge({
   } as const;
 
   const plusStyle = {
-    fontSize: "clamp(3.15rem, 4.5vw, 4rem)",
+    fontSize: "clamp(1.575rem, 2.25vw, 2rem)",
     marginTop: "-0.06em",
     paddingRight: "0.07em",
     textShadow: "0 1px 8px rgba(30, 52, 58, 0.18)",
@@ -170,6 +174,7 @@ export function DoePhoneDesktopBuildSection() {
           backdrop={backdrop}
           embedded
           gradientScale={1.52}
+          grainBackgroundSize="100px 100px"
           patternScale={1}
         />
       </div>
@@ -229,7 +234,16 @@ export function DoePhoneDesktopBuildSection() {
             className={`absolute bottom-0 right-0 z-[30] ${DESKTOP_BUILD_INPUT_INSET} ${doePhoneSectionRevealSegmentClass("input", revealed)}`}
           >
             <div className="w-[clamp(28rem,42vw,44rem)] max-w-[calc(100vw-2rem)]">
-              <DoePhoneWorkflowVisual layout="desktop" />
+              <DoePhoneAmbientPromptCard
+                headerLabel="New Workflow"
+                layout="section"
+                toolIcons="workflow"
+                size="desktop"
+              >
+                Show me which patients have been enrolled in <PromptTag label="Clinical Trial #473" /> from my EMR,
+                compile results in <PromptTag label="Excel" /> and integrate data from{" "}
+                <PromptTag label="OpenEvidence" /> + email to <WorkflowMentionAt />
+              </DoePhoneAmbientPromptCard>
             </div>
           </div>
         </div>

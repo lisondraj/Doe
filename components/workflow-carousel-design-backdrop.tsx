@@ -264,6 +264,7 @@ export function WorkflowCarouselDesignBackdrop({
   patternScale = 1,
   gradientOverride,
   gradientScale = 1,
+  grainBackgroundSize = "200px 200px",
   introOnLoad = false,
   surface = "orange",
 }: {
@@ -277,6 +278,8 @@ export function WorkflowCarouselDesignBackdrop({
   gradientOverride?: string;
   /** Scales only the gradient layer (>1 pushes outer stops past edges). */
   gradientScale?: number;
+  /** Grain tile size — smaller values yield finer, sharper noise. */
+  grainBackgroundSize?: string;
   /** Staggered fade-in for polar line overlay on load. */
   introOnLoad?: boolean;
   /** Beige uses solid fill and taupe line overlays instead of orange gradient + white lines. */
@@ -318,7 +321,10 @@ export function WorkflowCarouselDesignBackdrop({
       {!isBeige ? (
         <div
           className={`pointer-events-none ${layerInsetClass} z-[1] ${layerClass}`.trim()}
-          style={WORKFLOW_CAROUSEL_GRAIN_STYLE}
+          style={{
+            ...WORKFLOW_CAROUSEL_GRAIN_STYLE,
+            backgroundSize: grainBackgroundSize,
+          }}
           aria-hidden
         />
       ) : null}
