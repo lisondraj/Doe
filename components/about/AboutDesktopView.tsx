@@ -11,7 +11,7 @@ import { ArticleBarChart } from "@/components/blog/ArticleBarChart";
 import { ArticlePieChart } from "@/components/blog/ArticlePieChart";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import { DesktopRouteLayout } from "@/components/DesktopRouteLayout";
-import { JoinApplyFormSection } from "@/components/join/JoinApplyFormSection";
+import { AboutDesktopContactSection } from "@/components/about/AboutDesktopContactSection";
 import {
   ABOUT_DESKTOP_CONTENT_STACK_GAP,
   ABOUT_DESKTOP_HERO_BOX_TW,
@@ -165,7 +165,7 @@ export function AboutDesktopView() {
           </AboutDesktopSplitSection>
         </main>
 
-        <JoinApplyFormSection variant="desktop" />
+        <AboutDesktopContactSection />
 
         <footer
           className="relative left-1/2 w-screen -translate-x-1/2 overflow-hidden py-20"
