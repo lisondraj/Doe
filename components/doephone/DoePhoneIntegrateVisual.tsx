@@ -326,7 +326,7 @@ function IntegrationTileCard({ name, icon }: IntegrationTile) {
 
 function IntegrationRow({ tiles }: { tiles: IntegrationTile[] }) {
   return (
-    <div className="flex w-full flex-wrap items-center justify-center" style={{ gap: TILE_GAP }}>
+    <div className="flex w-full flex-nowrap items-center justify-center" style={{ gap: TILE_GAP }}>
       {tiles.map((tile) => (
         <IntegrationTileCard key={tile.name} {...tile} />
       ))}
