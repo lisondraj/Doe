@@ -14,7 +14,7 @@ import {
   DOEPHONE_SECTION_TITLE_PT,
 } from "@/lib/doephone/section-styles";
 import { DOEPHONE_HERO_HEIGHT } from "@/components/doephone/DoePhoneHeroSection";
-import { DOEPHONE_HERO_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
+import { DOEPHONE_COMMUNICATION_SLIDES } from "@/lib/doephone/communication-carousel";
 import { doephoneSectionRevealStyleVars } from "@/lib/doephone/section-reveal-timing";
 import {
   doePhoneSectionRevealSegmentClass,
@@ -28,6 +28,12 @@ const ORANGE_FROST_STYLE = {
   background: "rgba(210, 119, 76, 0.48)",
   boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.38)",
 } as const;
+
+const BUILD_BACKDROP_SLIDE =
+  DOEPHONE_COMMUNICATION_SLIDES.find((slide) => slide.id === "inbox") ??
+  (() => {
+    throw new Error("Missing documents communication slide");
+  })();
 
 const FROST_BLUR_CLASS = "backdrop-blur-[10px] iphone-page:backdrop-blur-[8px]";
 const EXPAND_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
@@ -124,10 +130,7 @@ export function DoePhoneCommunicationIntelligenceSection() {
   const isClosing = panelPhase === "closing";
   const showContent = panelPhase === "open";
 
-  const backdrop = {
-    ...DOEPHONE_HERO_BACKDROP,
-    lineOverlayOpacity: 0.14,
-  };
+  const backdrop = BUILD_BACKDROP_SLIDE.backdrop;
 
   useEffect(() => {
     return () => {
@@ -231,7 +234,7 @@ export function DoePhoneCommunicationIntelligenceSection() {
             <DoePhoneAmbientPromptCard headerLabel="New Workflow" layout="section" toolIcons="workflow" size="large">
               Show me which patients have been enrolled in <PromptTag label="Clinical Trial #473" /> from my EMR,
               compile results in <PromptTag label="Excel" /> and integrate data from{" "}
-              <PromptTag label="OpenEvidence" /> + email to <WorkflowMentionAt />
+              <PromptTag label="OpenEvidence" /> and email to <WorkflowMentionAt />
             </DoePhoneAmbientPromptCard>
           </div>
         </div>

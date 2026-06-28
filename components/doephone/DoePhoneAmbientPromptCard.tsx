@@ -314,6 +314,7 @@ export function DoePhoneAmbientPromptCard({
         : CAROUSEL_INPUT_PAD;
   const widthClass = isSection ? "w-full" : "w-[96%]";
   const actionSize = isDesktop ? ACTION_SIZE_DESKTOP : isLarge ? ACTION_SIZE_LARGE : ACTION_SIZE;
+  const modelAfterTools = isDesktop && toolIcons === "workflow";
 
   return (
     <div
@@ -340,13 +341,25 @@ export function DoePhoneAmbientPromptCard({
           marginTop: isLarge ? "clamp(0.95rem,2.9vmin,1.18rem)" : "clamp(0.67rem,2.05vmin,0.84rem)",
         }}
       >
-        {toolIcons === "workflow" ? <WorkflowToolIcons large={isLarge} /> : <ChartToolIcons />}
+        <div
+          className="flex min-w-0 items-center"
+          style={{
+            gap: modelAfterTools
+              ? "clamp(0.72rem,1.05vw,1rem)"
+              : isLarge
+                ? "clamp(0.78rem,2.38vmin,0.95rem)"
+                : "clamp(0.59rem,1.78vmin,0.73rem)",
+          }}
+        >
+          {toolIcons === "workflow" ? <WorkflowToolIcons large={isLarge} /> : <ChartToolIcons />}
+          {modelAfterTools ? <ModelSelector actionSize={actionSize} large={isLarge} /> : null}
+        </div>
 
         <div
           className="flex shrink-0 items-center"
           style={{ gap: isLarge ? "clamp(0.58rem,1.75vmin,0.72rem)" : "clamp(0.45rem,1.38vmin,0.59rem)" }}
         >
-          <ModelSelector actionSize={actionSize} large={isLarge} />
+          {!modelAfterTools ? <ModelSelector actionSize={actionSize} large={isLarge} /> : null}
           <SubmitIconButton desktop={isDesktop} large={isLarge} />
         </div>
       </div>

@@ -28,6 +28,15 @@ export const DESKTOP_HOME_FIXED_NAV_HEIGHT = "5.5rem";
 /** Viewport band below fixed desktop nav (Build section height). */
 export const DESKTOP_HOME_BELOW_NAV_HEIGHT = `calc(100dvh - ${DESKTOP_HOME_FIXED_NAV_HEIGHT})`;
 
+/** Full-bleed desktop bands — shared top inset for title (left) and + badge (right). */
+export const DESKTOP_FULLSCREEN_SECTION_TOP = "top-10 md:top-14 lg:top-16 xl:top-20";
+
+export const DESKTOP_FULLSCREEN_SECTION_TITLE_PT =
+  "pt-10 md:pt-14 lg:pt-16 xl:pt-20";
+
+export const DESKTOP_FULLSCREEN_SECTION_BADGE_INSET =
+  `right-10 md:right-20 lg:right-28 xl:right-36 ${DESKTOP_FULLSCREEN_SECTION_TOP}`;
+
 /** Footer copy row — section left inset + matching right gutter (Doe wordmark sits outside). */
 export const DOEPHONE_FOOTER_CONTENT_INSET =
   "pl-14 pr-14 iphone-page:pl-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))] iphone-page:pr-[max(2.35rem,calc(env(safe-area-inset-right,0px)+5.25vmin))]";
@@ -83,6 +92,10 @@ export const DOEPHONE_DISPLAY_WEIGHT_TW = "font-[350]";
 /** Suisse Intl light — between hero and prior section scale. */
 export const DOEPHONE_SECTION_COPY_TW =
   "text-left font-light leading-[1.02] tracking-[-0.03em] text-[clamp(3.05rem,11.75vw,5.15rem)] iphone-page:text-[clamp(2.9rem,11vw,4.85rem)]";
+
+/** Desktop full-bleed gradient bands — slightly smaller than mobile section titles. */
+export const DESKTOP_FULLSCREEN_SECTION_TITLE_TW =
+  "text-left font-light leading-[1.02] tracking-[-0.03em] text-[clamp(2.15rem,3.35vw,3.35rem)] md:text-[clamp(2.28rem,3.05vw,3.55rem)] lg:text-[clamp(2.4rem,2.85vw,3.75rem)]";
 
 /** Full iPhone viewport band — locked to `--app-vh` (stable vs Safari chrome). */
 export const DOEPHONE_VIEWPORT_SECTION =

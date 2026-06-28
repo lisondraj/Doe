@@ -11,21 +11,28 @@ import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-d
 import { inter } from "@/lib/home/fonts";
 import {
   DESKTOP_HOME_BELOW_NAV_HEIGHT,
+  DESKTOP_FULLSCREEN_SECTION_BADGE_INSET,
+  DESKTOP_FULLSCREEN_SECTION_TITLE_PT,
+  DESKTOP_FULLSCREEN_SECTION_TITLE_TW,
   DOEPHONE_DESKTOP_PAGE_INSET_RIGHT,
   DOEPHONE_DESKTOP_PAGE_INSET_X,
-  DOEPHONE_SECTION_TITLE_PT,
 } from "@/lib/doephone/section-styles";
 import { doephoneSectionRevealStyleVars } from "@/lib/doephone/section-reveal-timing";
 import {
   doePhoneSectionRevealSegmentClass,
   useDoePhoneSectionReveal,
 } from "@/lib/doephone/use-doe-phone-section-reveal";
-import { DOEPHONE_HERO_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
+import { DOEPHONE_COMMUNICATION_SLIDES } from "@/lib/doephone/communication-carousel";
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
+
+const BUILD_BACKDROP_SLIDE =
+  DOEPHONE_COMMUNICATION_SLIDES.find((slide) => slide.id === "inbox") ??
+  (() => {
+    throw new Error("Missing documents communication slide");
+  })();
 
 const DESKTOP_BUILD_INSET = DOEPHONE_DESKTOP_PAGE_INSET_X;
 const DESKTOP_BUILD_INPUT_INSET = `pb-10 md:pb-14 lg:pb-16 xl:pb-20 ${DOEPHONE_DESKTOP_PAGE_INSET_RIGHT}`;
-const DESKTOP_BUILD_BADGE_INSET = "right-10 md:right-20 lg:right-28 xl:right-36 top-10 md:top-14 lg:top-16 xl:top-20";
 
 const EXPAND_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
 const EXPAND_DURATION_MS = 720;
@@ -61,10 +68,7 @@ export function DoePhoneDesktopBuildSection() {
   const isClosing = panelPhase === "closing";
   const showContent = panelPhase === "open";
 
-  const backdrop = {
-    ...DOEPHONE_HERO_BACKDROP,
-    lineOverlayOpacity: 0.14,
-  };
+  const backdrop = BUILD_BACKDROP_SLIDE.backdrop;
 
   useEffect(() => {
     return () => {
@@ -117,16 +121,17 @@ export function DoePhoneDesktopBuildSection() {
           expanded={panelOpen}
           interactive={!isClosing}
           onToggle={toggleExpanded}
-          className={`absolute z-30 ${DESKTOP_BUILD_BADGE_INSET} ${doePhoneSectionRevealSegmentClass("badge", revealed)}`}
+          className={`absolute z-30 ${DESKTOP_FULLSCREEN_SECTION_BADGE_INSET} ${doePhoneSectionRevealSegmentClass("badge", revealed)}`}
         />
 
-        <div className={`shrink-0 ${DESKTOP_BUILD_INSET} ${DOEPHONE_SECTION_TITLE_PT}`}>
+        <div className={`shrink-0 ${DESKTOP_BUILD_INSET} ${DESKTOP_FULLSCREEN_SECTION_TITLE_PT}`}>
           <div className="relative pr-[clamp(6rem,8.5vw,8.75rem)]">
             <DoePhoneSectionTitle
               line1="Build."
               line2="Build."
               line3="Build."
               color="text-white"
+              copyClassName={DESKTOP_FULLSCREEN_SECTION_TITLE_TW}
               segmentedReveal
               revealed={revealed}
             />

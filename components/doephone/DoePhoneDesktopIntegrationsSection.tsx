@@ -5,8 +5,11 @@ import { DoePhoneIntegrateVisual } from "@/components/doephone/DoePhoneIntegrate
 import { DoePhoneSectionTitle } from "@/components/doephone/DoePhoneSectionText";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import {
+  DESKTOP_FULLSCREEN_SECTION_BADGE_INSET,
+  DESKTOP_FULLSCREEN_SECTION_TITLE_PT,
+  DESKTOP_FULLSCREEN_SECTION_TITLE_TW,
+  DOEPHONE_DESKTOP_PAGE_INSET_RIGHT,
   DOEPHONE_DESKTOP_PAGE_INSET_X,
-  DOEPHONE_SECTION_TITLE_PT,
 } from "@/lib/doephone/section-styles";
 import { doephoneSectionRevealStyleVars } from "@/lib/doephone/section-reveal-timing";
 import {
@@ -16,10 +19,9 @@ import {
 import { DIAGNOSTIC_ASSISTANT_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 import type { CSSProperties } from "react";
 
-const DESKTOP_INTEGRATIONS_BADGE_INSET =
-  "right-10 md:right-20 lg:right-28 xl:right-36 top-10 md:top-14 lg:top-16 xl:top-20";
+const DESKTOP_INTEGRATIONS_UI_INSET = `pb-10 md:pb-14 lg:pb-16 xl:pb-20 ${DOEPHONE_DESKTOP_PAGE_INSET_RIGHT}`;
 
-/** Desktop integrations band — gradient fill, title, + badge, integration tiles centered. */
+/** Desktop integrations band — gradient fill, title, + badge, integration tiles bottom-right. */
 export function DoePhoneDesktopIntegrationsSection() {
   const { ref: sectionRef, revealed } = useDoePhoneSectionReveal();
 
@@ -43,15 +45,16 @@ export function DoePhoneDesktopIntegrationsSection() {
         className={`relative z-[20] min-h-[112vh] w-full ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}
       >
         <DoePhoneDesktopFrostPlusBadge
-          className={`absolute z-30 ${DESKTOP_INTEGRATIONS_BADGE_INSET} ${doePhoneSectionRevealSegmentClass("badge", revealed)}`}
+          className={`absolute z-30 ${DESKTOP_FULLSCREEN_SECTION_BADGE_INSET} ${doePhoneSectionRevealSegmentClass("badge", revealed)}`}
         />
 
-        <div className={`relative z-[20] flex flex-col ${DOEPHONE_SECTION_TITLE_PT}`}>
+        <div className={`relative z-[20] flex flex-col ${DESKTOP_FULLSCREEN_SECTION_TITLE_PT}`}>
           <div className="relative pr-[clamp(5.5rem,8vw,7rem)]">
             <DoePhoneSectionTitle
               line1="Intelligence built."
               line2="into your stack."
               color="text-white"
+              copyClassName={DESKTOP_FULLSCREEN_SECTION_TITLE_TW}
               segmentedReveal
               revealed={revealed}
             />
@@ -59,9 +62,9 @@ export function DoePhoneDesktopIntegrationsSection() {
         </div>
 
         <div
-          className={`pointer-events-none absolute inset-0 z-[20] flex items-center justify-center px-[clamp(1.5rem,3vw,3rem)] ${doePhoneSectionRevealSegmentClass("input", revealed)}`}
+          className={`absolute bottom-0 right-0 z-[20] ${DESKTOP_INTEGRATIONS_UI_INSET} ${doePhoneSectionRevealSegmentClass("input", revealed)}`}
         >
-          <div className="pointer-events-auto w-full max-w-[min(100%,58rem)]">
+          <div className="pointer-events-auto origin-bottom-right scale-[0.76]">
             <DoePhoneIntegrateVisual layout="desktop" />
           </div>
         </div>

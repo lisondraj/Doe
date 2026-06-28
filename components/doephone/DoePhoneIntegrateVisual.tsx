@@ -439,12 +439,12 @@ const PHONE_INTEGRATION_SIZES = {
 } as const;
 
 const DESKTOP_INTEGRATION_SIZES = {
-  tileRadius: "rounded-[clamp(0.72rem,0.88vw,0.92rem)]",
-  tilePadX: "clamp(0.92rem,1.12vw,1.2rem)",
-  tilePadY: "clamp(0.65rem,0.82vw,0.88rem)",
-  tileGap: "clamp(0.68rem,0.85vw,0.92rem)",
-  labelSize: "clamp(1.02rem,1.22vw,1.28rem)",
-  iconSize: "clamp(1.38rem,1.68vw,1.78rem)",
+  tileRadius: "rounded-[clamp(0.62rem,0.74vw,0.8rem)]",
+  tilePadX: "clamp(0.78rem,0.95vw,1.02rem)",
+  tilePadY: "clamp(0.55rem,0.7vw,0.76rem)",
+  tileGap: "clamp(0.58rem,0.72vw,0.78rem)",
+  labelSize: "clamp(0.88rem,1.05vw,1.12rem)",
+  iconSize: "clamp(1.18rem,1.42vw,1.52rem)",
   maxWidth: "min(100%, 40rem)",
   outerMaxWidth: "min(100%, 58rem)",
 } as const;

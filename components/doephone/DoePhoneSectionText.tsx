@@ -13,6 +13,7 @@ export function DoePhoneSectionTitle({
   line2,
   line3,
   color = "text-[#1E343A]",
+  copyClassName = DOEPHONE_SECTION_COPY_TW,
   segmentedReveal = false,
   revealed = false,
 }: {
@@ -20,6 +21,7 @@ export function DoePhoneSectionTitle({
   line2?: ReactNode;
   line3?: ReactNode;
   color?: string;
+  copyClassName?: string;
   /** Section 2 — parent drives staggered title → carousel → menu reveal. */
   segmentedReveal?: boolean;
   revealed?: boolean;
@@ -60,7 +62,7 @@ export function DoePhoneSectionTitle({
           segmentedReveal
             ? `doephone-section-reveal doephone-section-reveal--title${showCopy ? " doephone-section-reveal--in" : ""}`
             : `doephone-section-copy${showCopy ? " doephone-section-copy-visible" : ""}`
-        } ${DOEPHONE_SECTION_COPY_TW} ${color} ${suisseIntl.className}`.trim()}
+        } ${copyClassName} ${color} ${suisseIntl.className}`.trim()}
       >
         <span className="block">{line1}</span>
         {line2 ? <span className="block">{line2}</span> : null}
