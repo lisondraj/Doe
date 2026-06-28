@@ -110,6 +110,23 @@ export const ABOUT_MOBILE_TAM_CHART = {
   },
 } as const;
 
+/** iPhone /about — share of clinics and providers using AI by agent task (Canada + U.S.). */
+export const ABOUT_MOBILE_AI_ADOPTION_CHART = {
+  title: "AI adoption by clinical task",
+  caption:
+    "Share of clinics and health providers in Canada and the United States using AI for each workflow, blended from physician surveys and health-system deployment data.",
+  citation:
+    "Sources: AMA Physician Practice Benchmark Survey; AHA/ONC Hospital AI Survey; JAMIA health-system AI adoption study; Doe market model, 2026.",
+  bars: [
+    { label: "Clinical documentation", value: 58, suffix: "%" },
+    { label: "Scheduling", value: 52, suffix: "%" },
+    { label: "Billing & revenue cycle", value: 45, suffix: "%" },
+    { label: "Clinical evidence", value: 36, suffix: "%" },
+    { label: "Prior auth & referrals", value: 29, suffix: "%" },
+    { label: "Patient inbox & messaging", value: 24, suffix: "%" },
+  ],
+} as const;
+
 /** Desktop /about section three — co-founder bios beside beige panel. */
 export const ABOUT_DESKTOP_FOUNDERS_PARAGRAPHS = [
   "Brothers James and Matthew Lisondra co-founded Doe to pair clinical depth with technical execution in health tech.",
