@@ -6,12 +6,12 @@ import type { ReactNode } from "react";
 
 const { ink: INK, accent: DOE_ORANGE, divider: DIVIDER } = CAROUSEL_MENU_UI;
 
-const TILE_RADIUS = "rounded-[clamp(0.55rem,1.65vmin,0.68rem)]";
-const TILE_PAD_X = "clamp(0.55rem,1.65vmin,0.68rem)";
-const TILE_PAD_Y = "clamp(0.38rem,1.15vmin,0.48rem)";
-const TILE_GAP = "clamp(0.38rem,1.15vmin,0.48rem)";
-const LABEL_SIZE = "clamp(0.68rem,2.05vmin,0.82rem)";
-const ICON_SIZE = "clamp(0.95rem,2.9vmin,1.15rem)";
+const TILE_RADIUS = "rounded-[clamp(0.62rem,1.88vmin,0.78rem)]";
+const TILE_PAD_X = "clamp(0.68rem,2.1vmin,0.86rem)";
+const TILE_PAD_Y = "clamp(0.48rem,1.45vmin,0.58rem)";
+const TILE_GAP = "clamp(0.48rem,1.45vmin,0.58rem)";
+const LABEL_SIZE = "clamp(0.82rem,2.5vmin,0.98rem)";
+const ICON_SIZE = "clamp(1.12rem,3.45vmin,1.35rem)";
 
 type TileIconKind =
   | "telus"
@@ -23,6 +23,8 @@ type TileIconKind =
   | "evidence"
   | "uptodate"
   | "dax"
+  | "fathom"
+  | "nuance"
   | "fhir"
   | "slack"
   | "zoom"
@@ -58,8 +60,10 @@ const INTEGRATION_ROWS: readonly IntegrationTile[][] = [
   ],
   [
     { name: "OpenEvidence", icon: "evidence" },
-    { name: "UpToDate", icon: "uptodate" },
+    { name: "Fathom", icon: "fathom" },
     { name: "DAX Copilot", icon: "dax" },
+    { name: "Nuance", icon: "nuance" },
+    { name: "UpToDate", icon: "uptodate" },
   ],
   [
     { name: "FHIR", icon: "fhir" },
@@ -143,6 +147,18 @@ function TileIcon({ kind }: { kind: TileIconKind }) {
       <>
         <path d="M4.5 14V6.5l5.5-2.5 5.5 2.5V14" stroke={stroke} strokeWidth={sw} strokeLinejoin={join} />
         <circle cx="10" cy="10.5" r="2.1" stroke={stroke} strokeWidth={sw * 0.95} />
+      </>
+    ),
+    fathom: (
+      <>
+        <path d="M5 14V6l5-2.5 5 2.5v8" stroke={stroke} strokeWidth={sw} strokeLinejoin={join} />
+        <path d="M8 10h4" stroke={stroke} strokeWidth={sw * 0.9} strokeLinecap={cap} />
+      </>
+    ),
+    nuance: (
+      <>
+        <rect x="4.5" y="5" width="11" height="10" rx="1.4" stroke={stroke} strokeWidth={sw} />
+        <path d="M7.5 9.5c1.2-1.2 3.8-1.2 5 0M7.5 12c1.2 1.2 3.8 1.2 5 0" stroke={stroke} strokeWidth={sw * 0.9} strokeLinecap={cap} />
       </>
     ),
     fhir: (
@@ -297,7 +313,7 @@ export function DoePhoneIntegrateVisual() {
       aria-hidden
     >
       <div
-        className="flex w-[min(98%,22rem)] flex-col"
+        className="flex w-[min(99%,24rem)] flex-col"
         style={{ gap: TILE_GAP }}
       >
         {INTEGRATION_ROWS.map((row, index) => (

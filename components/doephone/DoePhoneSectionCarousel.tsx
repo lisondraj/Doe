@@ -20,15 +20,15 @@ type MenuInject = { scrollIndex: number; slideIndex: number };
 const CAROUSEL_MENU_OVERLAY =
   "absolute inset-0 z-10 flex h-full w-full items-center justify-center";
 
-const ADD_BADGE_SIZE = "clamp(3.2rem,9.8vmin,3.95rem)";
+const ADD_BADGE_SIZE = "clamp(3.75rem,11.5vmin,4.65rem)";
 
 function CarouselSlideAddBadge() {
   return (
     <span
       className="pointer-events-none absolute z-20 flex items-center justify-center rounded-full backdrop-blur-[10px] iphone-page:backdrop-blur-[8px] [transform:translateZ(0)]"
       style={{
-        bottom: "clamp(0.55rem,1.65vmin,0.68rem)",
-        right: "clamp(0.55rem,1.65vmin,0.68rem)",
+        bottom: "clamp(1rem,3.05vmin,1.25rem)",
+        right: "clamp(1rem,3.05vmin,1.25rem)",
         width: ADD_BADGE_SIZE,
         height: ADD_BADGE_SIZE,
         background: "rgba(255, 255, 255, 0.42)",
@@ -39,7 +39,7 @@ function CarouselSlideAddBadge() {
       <span
         className="font-light leading-none text-white"
         style={{
-          fontSize: "clamp(2.05rem,6.35vmin,2.55rem)",
+          fontSize: "clamp(2.45rem,7.55vmin,3.05rem)",
           marginTop: "-0.06em",
           textShadow: "0 1px 8px rgba(30, 52, 58, 0.18)",
         }}
@@ -66,14 +66,18 @@ function CarouselMenuOverlay({ children }: { children: React.ReactNode }) {
 function DoePhoneCarouselCard({ slide }: { slide: DoePhoneCommunicationSlide }) {
   return (
     <div
-      className={`relative isolate h-full w-full overflow-hidden shadow-[0_10px_32px_rgba(0,0,0,0.1)] [contain:layout_paint] ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
+      className={`relative isolate h-full w-full ${DOEPHONE_SECTION_CAROUSEL_RADIUS} shadow-[0_10px_32px_rgba(0,0,0,0.1)]`}
       aria-hidden
     >
-      <WorkflowCarouselDesignBackdrop
-        backdrop={slide.backdrop}
-        embedded
-        className={DOEPHONE_SECTION_CAROUSEL_RADIUS}
-      />
+      <div
+        className={`absolute inset-0 overflow-hidden [transform:translateZ(0)] ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
+      >
+        <WorkflowCarouselDesignBackdrop
+          backdrop={slide.backdrop}
+          embedded
+          className={DOEPHONE_SECTION_CAROUSEL_RADIUS}
+        />
+      </div>
       {slide.id === "agents" ? (
         <CarouselMenuOverlay>
           <DoePhoneClinicAgentsVisual />

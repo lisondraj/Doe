@@ -273,13 +273,14 @@ export function WorkflowCarouselDesignBackdrop({
   const rootClass = embedded
     ? `absolute inset-0 overflow-hidden [transform:translateZ(0)] ${className}`.trim()
     : `fixed inset-0 min-h-[100dvh] min-w-full overflow-hidden ${className}`.trim();
+  const layerClass = embedded && className ? className : "";
 
   const Root = embedded ? "div" : "main";
 
   return (
     <Root className={rootClass}>
       <div
-        className="pointer-events-none absolute inset-0"
+        className={`pointer-events-none absolute inset-0 ${layerClass}`.trim()}
         style={{
           background: fill,
           backgroundPosition: "center center",
@@ -300,7 +301,7 @@ export function WorkflowCarouselDesignBackdrop({
         aria-hidden
       />
       {!isBeige ? (
-        <div className="pointer-events-none absolute inset-0 z-[1]" style={WORKFLOW_CAROUSEL_GRAIN_STYLE} aria-hidden />
+        <div className={`pointer-events-none absolute inset-0 z-[1] ${layerClass}`.trim()} style={WORKFLOW_CAROUSEL_GRAIN_STYLE} aria-hidden />
       ) : null}
       <GridOverlay
         kind={backdrop.grid}
