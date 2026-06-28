@@ -76,14 +76,21 @@ export function renderArticleBlock(
           key={index}
           className={`${sectionGap} ${isDesktop ? ABOUT_DESKTOP_ARTICLE_LIST_GAP : "space-y-2.5 iphone-page:space-y-3"} pl-0 list-none`}
         >
-          {block.items.map((item, i) => (
-            <li key={i} className={`grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 ${bodyTw} !mt-0`}>
-              <span className="flex h-[1lh] items-center" aria-hidden>
-                <span className="h-[0.45em] w-[0.45em] rounded-full bg-[#9A8F82]" />
-              </span>
-              <span>{item}</span>
-            </li>
-          ))}
+          {block.items.map((item, i) =>
+            isDesktop ? (
+              <li key={i} className={`flex items-start gap-3 ${bodyTw} !mt-0`}>
+                <span className="mt-[0.35em] shrink-0 h-[0.45em] w-[0.45em] rounded-full bg-[#9A8F82]" aria-hidden />
+                {item}
+              </li>
+            ) : (
+              <li key={i} className={`grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 ${bodyTw} !mt-0`}>
+                <span className="flex h-[1lh] items-center" aria-hidden>
+                  <span className="h-[0.45em] w-[0.45em] rounded-full bg-[#9A8F82]" />
+                </span>
+                <span>{item}</span>
+              </li>
+            ),
+          )}
         </ul>
       );
 

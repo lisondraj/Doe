@@ -82,24 +82,22 @@ export function AboutDesktopView() {
           <section
             className={`${ABOUT_DESKTOP_SECTION_H} ${ABOUT_DESKTOP_SECTION_1_PT} flex flex-col justify-center ${ABOUT_DESKTOP_PAGE_INSET}`}
           >
-            <div className={ABOUT_DESKTOP_ARTICLE_MAX_W}>
-              <h1 className={ABOUT_DESKTOP_TITLE_TW}>
-                <span className="block">Doe is on a mission</span>
-                <span className="block">to redefine healthcare.</span>
-              </h1>
+            <h1 className={ABOUT_DESKTOP_TITLE_TW}>
+              <span className="block">Doe is on a mission</span>
+              <span className="block">to redefine healthcare.</span>
+            </h1>
 
-              <p className={ABOUT_DESKTOP_SUBHEADING_TW}>
-                We intend to register as a Delaware corporation and are actively raising a pre-seed round.
-              </p>
+            <p className={ABOUT_DESKTOP_SUBHEADING_TW}>
+              We intend to register as a Delaware corporation and are actively raising a pre-seed round.
+            </p>
 
-              <div className={ABOUT_DESKTOP_HERO_WRAP}>
-                <BlogHeroVisual
-                  backdrop={ABOUT_PAGE_ARTICLE.backdrop}
-                  variant="hero"
-                  boxClassName={ABOUT_DESKTOP_HERO_BOX_TW}
-                  gapClassName=""
-                />
-              </div>
+            <div className={ABOUT_DESKTOP_HERO_WRAP}>
+              <BlogHeroVisual
+                backdrop={ABOUT_PAGE_ARTICLE.backdrop}
+                variant="hero"
+                boxClassName={ABOUT_DESKTOP_HERO_BOX_TW}
+                gapClassName=""
+              />
             </div>
           </section>
 

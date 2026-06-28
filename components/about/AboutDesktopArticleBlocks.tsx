@@ -26,11 +26,9 @@ export function AboutDesktopBulletList({
   return (
     <ul className={`${ABOUT_DESKTOP_ARTICLE_LIST_GAP} list-none pl-0 ${className}`.trim()}>
       {items.map((item) => (
-        <li key={item} className={`grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 ${ABOUT_DESKTOP_ARTICLE_BODY_TW}`}>
-          <span className="flex h-[1lh] items-center" aria-hidden>
-            <span className="h-[0.45em] w-[0.45em] rounded-full bg-[#9A8F82]" />
-          </span>
-          <span>{item}</span>
+        <li key={item} className={`flex items-start gap-3 ${ABOUT_DESKTOP_ARTICLE_BODY_TW}`}>
+          <span className="mt-[0.35em] shrink-0 h-[0.45em] w-[0.45em] rounded-full bg-[#9A8F82]" aria-hidden />
+          {item}
         </li>
       ))}
     </ul>

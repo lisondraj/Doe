@@ -30,7 +30,7 @@ export const ABOUT_DESKTOP_SECTION_1_PT = "pt-10 md:pt-12 lg:pt-14";
 
 export const ABOUT_DESKTOP_TITLE_TW = `text-left font-light leading-[1.02] tracking-[-0.03em] text-[clamp(2.35rem,3.5vw,3.65rem)] md:text-[clamp(2.55rem,3.2vw,3.85rem)] lg:text-[clamp(2.75rem,3vw,4.05rem)] text-[#1E343A] ${suisseIntl.className}`;
 
-export const ABOUT_DESKTOP_SUBHEADING_TW = `mt-5 md:mt-6 text-[clamp(1.22rem,1.1vw,1.45rem)] md:text-[clamp(1.32rem,1.2vw,1.55rem)] font-normal leading-[1.44] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
+export const ABOUT_DESKTOP_SUBHEADING_TW = `mt-5 md:mt-6 max-w-[min(100%,46rem)] text-[clamp(1.22rem,1.1vw,1.45rem)] md:text-[clamp(1.32rem,1.2vw,1.55rem)] font-normal leading-[1.44] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
 
 export const ABOUT_DESKTOP_ARTICLE_MAX_W = "max-w-[min(100%,54rem)]";
 
@@ -42,11 +42,7 @@ export const ABOUT_DESKTOP_CHART_CITATION_TW = `mt-3 md:mt-4 font-normal leading
 
 export const ABOUT_DESKTOP_ARTICLE_SECTION_GAP = "mt-12 md:mt-14";
 
-export const ABOUT_DESKTOP_HERO_AFTER_SUBHEADING = ABOUT_DESKTOP_ARTICLE_SECTION_GAP;
-
-export const ABOUT_DESKTOP_HERO_BEFORE_ARTICLE = "mb-12 md:mb-14";
-
-export const ABOUT_DESKTOP_HERO_WRAP = `${ABOUT_DESKTOP_HERO_AFTER_SUBHEADING} ${ABOUT_DESKTOP_HERO_BEFORE_ARTICLE}`;
+export const ABOUT_DESKTOP_HERO_WRAP = "mt-8 md:mt-10 mb-10 md:mb-12";
 
 export const ABOUT_DESKTOP_HERO_BOX_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} min-h-[clamp(16rem,28vw,22rem)] h-[clamp(16rem,28vw,22rem)] md:min-h-[clamp(17rem,30vw,23rem)] md:h-[clamp(17rem,30vw,23rem)]`;
 
