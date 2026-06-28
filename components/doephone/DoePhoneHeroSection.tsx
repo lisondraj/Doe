@@ -11,9 +11,9 @@ import { DOEPHONE_SECTION_CAROUSEL_INSET_X } from "@/lib/doephone/section-styles
 import { CARE_COORDINATION_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 import { useEffect, useState, type CSSProperties } from "react";
 
-/** Hero — modest height band; inbox UI anchors to bottom of this section. */
+/** Hero — slightly below full viewport so Safari bottom bar does not clip; section 2 stays full height. */
 export const DOEPHONE_HERO_HEIGHT =
-  "calc(var(--app-vh,100lvh)*0.94 + max(8rem, calc(env(safe-area-inset-top, 0px) + 3.5rem)))";
+  "calc(var(--app-vh,100lvh)*0.88 + max(8rem, calc(env(safe-area-inset-top, 0px) + 3.5rem)))";
 
 export function DoePhoneHeroSection() {
   const [introZoom, setIntroZoom] = useState(DOEPHONE_HERO_INTRO_GRADIENT_START);
