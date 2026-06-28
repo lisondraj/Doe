@@ -14,7 +14,6 @@ const INNER_RADIUS = "rounded-[clamp(0.45rem,1.35vmin,0.55rem)]";
 const CONTENT_INSET_X = "clamp(0.88rem,2.75vmin,1.05rem)";
 const CALENDAR_INNER_PAD = "clamp(0.55rem,1.65vmin,0.68rem)";
 const CALENDAR_OUTER_PAD_Y = "clamp(0.38rem,1.15vmin,0.48rem)";
-const CALLER_INNER_PAD_Y = "clamp(0.82rem,2.45vmin,1rem)";
 
 const ROW_PAD = "clamp(0.82rem,2.55vmin,1.02rem) clamp(0.88rem,2.75vmin,1.05rem)";
 const BODY_SIZE = "clamp(0.88rem,2.65vmin,1.05rem)";
@@ -96,50 +95,35 @@ function VoiceWaveform({ inline = false }: { inline?: boolean }) {
 
 function VoiceCallPanel() {
   return (
-    <div className={`border bg-white ${OUTER_RADIUS}`} style={{ borderColor: BORDER }}>
+    <div className={`relative border bg-white ${OUTER_RADIUS}`} style={{ borderColor: BORDER }}>
       <PanelHeading title="Voice Agent" status="On call" tightBelow />
 
       <div
         style={{
-          padding: "clamp(0.32rem,0.98vmin,0.42rem) clamp(0.88rem,2.75vmin,1.05rem) clamp(0.55rem,1.65vmin,0.68rem)",
+          padding: "clamp(0.32rem,0.98vmin,0.42rem) clamp(0.88rem,2.75vmin,1.05rem) clamp(0.82rem,2.55vmin,1.02rem)",
         }}
       >
         <div
-          className={`flex items-center border ${INNER_RADIUS}`}
-          style={{
-            borderColor: BORDER,
-            padding: `${CALLER_INNER_PAD_Y} ${CALENDAR_INNER_PAD}`,
-            marginBottom: "clamp(0.42rem,1.28vmin,0.55rem)",
-          }}
+          className="flex w-full items-center justify-between"
+          style={{ gap: "clamp(0.55rem,1.75vmin,0.72rem)", marginBottom: "clamp(0.42rem,1.28vmin,0.55rem)" }}
         >
-          <div
-            className="flex w-full items-center justify-between"
-            style={{ gap: "clamp(0.55rem,1.75vmin,0.72rem)" }}
-          >
-            <div
-              className="flex min-w-0 flex-1 items-center"
-              style={{ gap: "clamp(0.55rem,1.75vmin,0.72rem)" }}
+          <div className="min-w-0">
+            <p className="truncate font-medium leading-snug" style={{ color: INK, fontSize: BODY_SIZE }}>
+              S. Nguyen
+            </p>
+            <p
+              className="truncate font-normal leading-snug tabular-nums"
+              style={{ color: MUTED_TEXT, fontSize: CAPTION_SIZE, marginTop: "clamp(0.18rem,0.55vmin,0.24rem)" }}
             >
-              <VoiceWaveform inline />
-              <div className="min-w-0">
-                <p className="truncate font-medium leading-snug" style={{ color: INK, fontSize: BODY_SIZE }}>
-                  S. Nguyen
-                </p>
-                <p
-                  className="truncate font-normal leading-snug tabular-nums"
-                  style={{ color: MUTED_TEXT, fontSize: CAPTION_SIZE, marginTop: "clamp(0.18rem,0.55vmin,0.24rem)" }}
-                >
-                  (416) 555-0142
-                </p>
-              </div>
-            </div>
-            <span
-              className="shrink-0 font-medium leading-none tabular-nums"
-              style={{ color: MUTED, fontSize: FOOTER_PRIMARY_SIZE }}
-            >
-              2:14
-            </span>
+              (416) 555-0142
+            </p>
           </div>
+          <span
+            className="shrink-0 font-medium leading-none tabular-nums"
+            style={{ color: MUTED, fontSize: FOOTER_PRIMARY_SIZE }}
+          >
+            2:14
+          </span>
         </div>
 
         <p
@@ -154,6 +138,17 @@ function VoiceCallPanel() {
         >
           &ldquo;I can help with that refill today.&rdquo;
         </p>
+      </div>
+
+      <div
+        className="pointer-events-none absolute"
+        style={{
+          right: "clamp(0.88rem,2.75vmin,1.05rem)",
+          bottom: "clamp(0.55rem,1.65vmin,0.68rem)",
+        }}
+        aria-hidden
+      >
+        <VoiceWaveform inline />
       </div>
     </div>
   );
