@@ -14,7 +14,7 @@ import {
   SubpageMobileNavRow,
   subpageVariantFromCtaLayout,
 } from "@/components/subpage/SubpageMobileNavRow";
-import { MobileNavActionRow } from "@/components/nav/MobileNavActionRow";
+import { MobileNavActionRow, type MobileNavActionChrome } from "@/components/nav/MobileNavActionRow";
 import {
   DOEPHONE_NAV_TRIPLE_CTA_CLASS,
   DOEPHONE_NAV_WAITLIST_CLASS,
@@ -95,6 +95,7 @@ function NavChromeStrip({
   logoLink = true,
   showMenu = true,
   ctaLayout = "single",
+  mobileNavChrome,
 }: {
   navTextColor: string;
   mobileNavOpen: boolean;
@@ -107,6 +108,7 @@ function NavChromeStrip({
   logoLink?: boolean;
   showMenu?: boolean;
   ctaLayout?: SiteNavCtaLayout;
+  mobileNavChrome?: MobileNavActionChrome;
 }) {
   const pageInsetX = DOEPHONE_SECTION_CAROUSEL_INSET_X;
   const pageDoeLeft =
@@ -174,7 +176,7 @@ function NavChromeStrip({
         {subpageVariant ? (
           <SubpageMobileNavRow variant={subpageVariant} showLinks={!showMenu || !subpageWithButton} />
         ) : ctaLayout === "main-home" || ctaLayout === "subpage-about" ? (
-          <MobileNavActionRow />
+          <MobileNavActionRow {...mobileNavChrome} />
         ) : ctaLayout === "triple" ? (
           <>
             <Link href={WAITLIST_PATH} className={DOEPHONE_NAV_TRIPLE_CTA_CLASS}>
@@ -280,6 +282,7 @@ export default function DoeIphoneSiteNav({
   showMenu = true,
   ctaLayout = "single",
   navSheetItems,
+  mobileNavChrome,
 }: {
   pinchSafe?: boolean;
   homeHref?: string;
@@ -290,6 +293,7 @@ export default function DoeIphoneSiteNav({
   showMenu?: boolean;
   ctaLayout?: SiteNavCtaLayout;
   navSheetItems?: readonly NavSheetItem[];
+  mobileNavChrome?: MobileNavActionChrome;
 }) {
   const resolvedNavSheetItems: readonly NavSheetItem[] =
     navSheetItems ??
@@ -671,6 +675,7 @@ export default function DoeIphoneSiteNav({
           logoLink={logoLink}
           showMenu={showMenu}
           ctaLayout={ctaLayout}
+          mobileNavChrome={mobileNavChrome}
         />
       </header>,
       document.body
@@ -713,6 +718,7 @@ export default function DoeIphoneSiteNav({
             logoLink={logoLink}
             showMenu={showMenu}
             ctaLayout={ctaLayout}
+            mobileNavChrome={mobileNavChrome}
           />
         </div>
       </nav>

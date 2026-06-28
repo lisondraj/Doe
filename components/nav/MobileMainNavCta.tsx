@@ -16,10 +16,22 @@ import {
 } from "@/lib/subpage/subpage-nav";
 import { DESKTOP_INVESTORS_CTA_LABEL } from "@/lib/subpage/desktop-nav-styles";
 
+const NAV_CTA_BG = "#000000";
+const NAV_CTA_FG = "#ffffff";
 const NAV_CTA_DIVIDER = "rgba(255, 255, 255, 0.22)";
 
 /** iPhone nav — investors split button with chevron dropdown. */
-export function MobileMainNavCta() {
+export function MobileMainNavCta({
+  bg = NAV_CTA_BG,
+  fg = NAV_CTA_FG,
+  shadow = "none",
+  divider = NAV_CTA_DIVIDER,
+}: {
+  bg?: string;
+  fg?: string;
+  shadow?: string;
+  divider?: string;
+}) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const primary = DESKTOP_MAIN_CTA_MENU_ITEMS[0];
@@ -47,16 +59,26 @@ export function MobileMainNavCta() {
     };
   }, [open]);
 
+  const dropdownHoverClass =
+    fg.toLowerCase() === "#fff" || fg.toLowerCase() === "#ffffff"
+      ? "hover:bg-white/10"
+      : "hover:bg-black/[0.04]";
+
   return (
     <div ref={rootRef} className="relative flex shrink-0 items-center">
-      <div className={MOBILE_NAV_SPLIT_SHELL_TW}>
+      <div className={MOBILE_NAV_SPLIT_SHELL_TW} style={{ boxShadow: shadow }}>
         <div className={MOBILE_NAV_SPLIT_INNER_TW}>
-          <Link href={primary.href} className={`${MOBILE_NAV_SPLIT_LINK_TW} no-underline`}>
+          <Link
+            href={primary.href}
+            className={`${MOBILE_NAV_SPLIT_LINK_TW} no-underline transition-[opacity,background-color,color,box-shadow] duration-300`}
+            style={{ backgroundColor: bg, color: fg }}
+          >
             {DESKTOP_INVESTORS_CTA_LABEL}
           </Link>
           <button
             type="button"
-            className={MOBILE_NAV_SPLIT_TOGGLE_TW}
+            className={`${MOBILE_NAV_SPLIT_TOGGLE_TW} transition-[opacity,background-color,color,box-shadow] duration-300`}
+            style={{ backgroundColor: bg, color: fg, borderColor: divider }}
             aria-expanded={open}
             aria-haspopup="menu"
             aria-label="Open navigation menu"
@@ -79,10 +101,12 @@ export function MobileMainNavCta() {
         {open ? (
           <div
             role="menu"
-            className={`${MOBILE_NAV_DROPDOWN_ATTACH_TW} bg-black py-1 text-white`}
+            className={`${MOBILE_NAV_DROPDOWN_ATTACH_TW} py-1`}
             style={{
-              border: `1px solid ${NAV_CTA_DIVIDER}`,
-              boxShadow: "0 8px 24px rgba(0, 0, 0, 0.12)",
+              backgroundColor: bg,
+              color: fg,
+              border: `1px solid ${divider}`,
+              boxShadow: shadow === "none" ? "0 8px 24px rgba(0, 0, 0, 0.12)" : shadow,
             }}
           >
             {DESKTOP_MAIN_CTA_DROPDOWN_ITEMS.map((item) => (
@@ -90,7 +114,8 @@ export function MobileMainNavCta() {
                 key={item.href}
                 href={item.href}
                 role="menuitem"
-                className="block px-4 py-2.5 text-sm font-medium text-white no-underline transition-colors hover:bg-white/10 iphone-page:px-[clamp(1rem,0.82rem+0.9vmin,1.2rem)] iphone-page:py-[clamp(0.72rem,0.58rem+0.62vmin,0.88rem)] iphone-page:text-[clamp(0.95rem,0.86rem+0.58vmin,1.08rem)]"
+                className={`block px-4 py-2.5 text-sm font-medium no-underline transition-colors ${dropdownHoverClass} iphone-page:px-[clamp(1rem,0.82rem+0.9vmin,1.2rem)] iphone-page:py-[clamp(0.72rem,0.58rem+0.62vmin,0.88rem)] iphone-page:text-[clamp(0.95rem,0.86rem+0.58vmin,1.08rem)]`}
+                style={{ color: fg }}
                 onClick={() => setOpen(false)}
               >
                 {item.label}

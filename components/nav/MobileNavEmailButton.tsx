@@ -6,6 +6,7 @@ import { ABOUT_CONTACT_EMAIL } from "@/lib/about/about-contact";
 import {
   MOBILE_NAV_MAIL_BUTTON_TW,
   MOBILE_NAV_MAIL_ICON_TW,
+  MOBILE_NAV_SPLIT_SHELL_TW,
 } from "@/lib/subpage/mobile-nav-styles";
 import {
   NAV_EMAIL_DROPDOWN_ADDRESS_TW,
@@ -52,7 +53,15 @@ function CheckIcon({ className }: { className?: string }) {
 }
 
 /** iPhone nav — square email button with copy dropdown. */
-export function MobileNavEmailButton() {
+export function MobileNavEmailButton({
+  bg = NAV_EMAIL_DROPDOWN_BG,
+  fg = NAV_EMAIL_DROPDOWN_FG,
+  shadow = "none",
+}: {
+  bg?: string;
+  fg?: string;
+  shadow?: string;
+}) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -104,17 +113,20 @@ export function MobileNavEmailButton() {
   }, [copyEmail, open]);
 
   return (
-    <div ref={rootRef} className="relative shrink-0">
-      <button
-        type="button"
-        className={`${MOBILE_NAV_MAIL_BUTTON_TW} transition-opacity hover:opacity-90 active:opacity-80`}
-        aria-expanded={open}
-        aria-haspopup="dialog"
-        aria-label={`Email ${ABOUT_CONTACT_EMAIL}`}
-        onClick={handleToggle}
-      >
-        <MailIcon className={MOBILE_NAV_MAIL_ICON_TW} />
-      </button>
+    <div ref={rootRef} className="relative flex shrink-0 items-center">
+      <div className={MOBILE_NAV_SPLIT_SHELL_TW} style={{ boxShadow: shadow }}>
+        <button
+          type="button"
+          className={`${MOBILE_NAV_MAIL_BUTTON_TW} transition-[opacity,background-color,color,box-shadow] duration-300 hover:opacity-90 active:opacity-80`}
+          style={{ backgroundColor: bg, color: fg }}
+          aria-expanded={open}
+          aria-haspopup="dialog"
+          aria-label={`Email ${ABOUT_CONTACT_EMAIL}`}
+          onClick={handleToggle}
+        >
+          <MailIcon className={MOBILE_NAV_MAIL_ICON_TW} />
+        </button>
+      </div>
 
       {open ? (
         <div

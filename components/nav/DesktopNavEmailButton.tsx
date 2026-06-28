@@ -55,12 +55,10 @@ function CheckIcon({ className }: { className?: string }) {
 export function DesktopNavEmailButton({
   bg = NAV_EMAIL_DROPDOWN_BG,
   fg = NAV_EMAIL_DROPDOWN_FG,
-  borderColor,
-  shadow,
+  shadow = "none",
 }: {
   bg?: string;
   fg?: string;
-  borderColor?: string;
   shadow?: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -114,24 +112,24 @@ export function DesktopNavEmailButton({
   }, [copyEmail, open]);
 
   return (
-    <div ref={rootRef} className="relative shrink-0">
-      <button
-        type="button"
-        className={`flex ${DESKTOP_NAV_ACTION_HEIGHT_TW} items-center justify-center rounded-md transition-[opacity,background-color,color,border-color,box-shadow] duration-300 hover:opacity-90`}
-        style={{
-          backgroundColor: bg,
-          color: fg,
-          width: DESKTOP_NAV_ACTION_SIZE,
-          border: borderColor ? `1px solid ${borderColor}` : undefined,
-          boxShadow: shadow,
-        }}
-        aria-expanded={open}
-        aria-haspopup="dialog"
-        aria-label={`Email ${ABOUT_CONTACT_EMAIL}`}
-        onClick={handleToggle}
-      >
-        <MailIcon className="h-[1.25rem] w-[1.25rem]" />
-      </button>
+    <div ref={rootRef} className="relative flex shrink-0 items-center">
+      <div className="relative flex items-stretch overflow-visible rounded-md" style={{ boxShadow: shadow }}>
+        <button
+          type="button"
+          className={`flex ${DESKTOP_NAV_ACTION_HEIGHT_TW} items-center justify-center rounded-md transition-[opacity,background-color,color,box-shadow] duration-300 hover:opacity-90`}
+          style={{
+            backgroundColor: bg,
+            color: fg,
+            width: DESKTOP_NAV_ACTION_SIZE,
+          }}
+          aria-expanded={open}
+          aria-haspopup="dialog"
+          aria-label={`Email ${ABOUT_CONTACT_EMAIL}`}
+          onClick={handleToggle}
+        >
+          <MailIcon className="h-[1.25rem] w-[1.25rem]" />
+        </button>
+      </div>
 
       {open ? (
         <div
