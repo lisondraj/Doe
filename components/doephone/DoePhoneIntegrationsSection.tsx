@@ -10,6 +10,7 @@ import {
   DOEPHONE_SECTION_TITLE_PT,
   DOEPHONE_VIEWPORT_SECTION,
 } from "@/lib/doephone/section-styles";
+import { DOEPHONE_DEPLOYMENTS_GRADIENT } from "@/lib/doephone/communication-carousel";
 import { DIAGNOSTIC_ASSISTANT_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 
 /** Gradient viewport — Intelligence built into your stack + outer glass panel. */
@@ -21,7 +22,12 @@ export function DoePhoneIntegrationsSection({
   return (
     <section className={sectionClassName} aria-label="Integrations">
       <div className="pointer-events-none absolute -inset-[3%] overflow-hidden" aria-hidden>
-        <WorkflowCarouselDesignBackdrop backdrop={DIAGNOSTIC_ASSISTANT_BACKDROP} embedded gradientScale={1.12} />
+        <WorkflowCarouselDesignBackdrop
+          backdrop={DIAGNOSTIC_ASSISTANT_BACKDROP}
+          embedded
+          gradientOverride={DOEPHONE_DEPLOYMENTS_GRADIENT}
+          gradientScale={1.12}
+        />
       </div>
 
       <div className="relative z-10 flex h-full min-h-0 flex-col">

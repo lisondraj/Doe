@@ -106,3 +106,6 @@ export function doephoneCommunicationBackdrop(id: (typeof DOEPHONE_COMMUNICATION
   if (!slide) throw new Error(`Unknown communication slide: ${id}`);
   return slide.backdrop;
 }
+
+/** Agents deployment panel radial fill — reused on integrations bands. */
+export const DOEPHONE_DEPLOYMENTS_GRADIENT = doephoneCommunicationBackdrop("agents").gradient;
