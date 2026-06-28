@@ -4,12 +4,15 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import {
-  MOBILE_NAV_DROPDOWN_ATTACH_TW,
+  MOBILE_NAV_CTA_DROPDOWN_ATTACH_TW,
   MOBILE_NAV_SPLIT_INNER_TW,
   MOBILE_NAV_SPLIT_LINK_TW,
   MOBILE_NAV_SPLIT_SHELL_TW,
   MOBILE_NAV_SPLIT_TOGGLE_TW,
 } from "@/lib/subpage/mobile-nav-styles";
+import {
+  MOBILE_NAV_CTA_DROPDOWN_ITEM_TW,
+} from "@/lib/subpage/nav-email-dropdown-styles";
 import {
   DESKTOP_MAIN_CTA_DROPDOWN_ITEMS,
   DESKTOP_MAIN_CTA_MENU_ITEMS,
@@ -70,14 +73,14 @@ export function MobileMainNavCta({
         <div className={MOBILE_NAV_SPLIT_INNER_TW}>
           <Link
             href={primary.href}
-            className={`${MOBILE_NAV_SPLIT_LINK_TW} no-underline transition-[opacity,background-color,color,box-shadow] duration-300`}
+            className={`${MOBILE_NAV_SPLIT_LINK_TW} no-underline transition-[opacity,background-color,color] duration-300`}
             style={{ backgroundColor: bg, color: fg }}
           >
             {DESKTOP_INVESTORS_CTA_LABEL}
           </Link>
           <button
             type="button"
-            className={`${MOBILE_NAV_SPLIT_TOGGLE_TW} transition-[opacity,background-color,color,box-shadow] duration-300`}
+            className={`${MOBILE_NAV_SPLIT_TOGGLE_TW} transition-[opacity,background-color,color] duration-300`}
             style={{ backgroundColor: bg, color: fg, borderColor: divider }}
             aria-expanded={open}
             aria-haspopup="menu"
@@ -101,7 +104,7 @@ export function MobileMainNavCta({
         {open ? (
           <div
             role="menu"
-            className={`${MOBILE_NAV_DROPDOWN_ATTACH_TW} py-1`}
+            className={MOBILE_NAV_CTA_DROPDOWN_ATTACH_TW}
             style={{
               backgroundColor: bg,
               color: fg,
@@ -114,7 +117,7 @@ export function MobileMainNavCta({
                 key={item.href}
                 href={item.href}
                 role="menuitem"
-                className={`block px-4 py-2.5 text-sm font-medium no-underline transition-colors ${dropdownHoverClass} iphone-page:px-[clamp(1rem,0.82rem+0.9vmin,1.2rem)] iphone-page:py-[clamp(0.72rem,0.58rem+0.62vmin,0.88rem)] iphone-page:text-[clamp(0.95rem,0.86rem+0.58vmin,1.08rem)]`}
+                className={`${MOBILE_NAV_CTA_DROPDOWN_ITEM_TW} ${dropdownHoverClass}`}
                 style={{ color: fg }}
                 onClick={() => setOpen(false)}
               >

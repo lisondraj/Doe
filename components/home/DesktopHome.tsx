@@ -18,8 +18,7 @@ import { DoePhoneDesktopDocumentsWorkflowSection } from "@/components/doephone/D
 import { DoePhoneDesktopCohortWatchSection } from "@/components/doephone/DoePhoneDesktopCohortWatchSection";
 import { DoePhoneDesktopIntelligenceSection } from "@/components/doephone/DoePhoneDesktopIntelligenceSection";
 import { DoePhoneHeroSection } from "@/components/doephone/DoePhoneHeroSection";
-import { DesktopMainNavCta } from "@/components/home/DesktopMainNavCta";
-import { DesktopNavEmailButton } from "@/components/nav/DesktopNavEmailButton";
+import { DesktopNavActionRow } from "@/components/nav/DesktopNavActionRow";
 import {
   DOEPHONE_DESKTOP_PAGE_INSET_X,
   DOEPHONE_DESKTOP_PAGE_MARGIN_X,
@@ -438,14 +437,8 @@ export function DesktopHome() {
               Doe
             </Link>
 
-            <div className="flex shrink-0 items-center gap-2.5">
-              <DesktopNavEmailButton
-                bg={heroWaitlistBg}
-                fg={heroWaitlistFg}
-                shadow={heroWaitlistShadow}
-              />
-
-              <DesktopMainNavCta
+            <div className="flex shrink-0 items-center">
+              <DesktopNavActionRow
                 bg={heroWaitlistBg}
                 fg={heroWaitlistFg}
                 shadow={heroWaitlistShadow}
