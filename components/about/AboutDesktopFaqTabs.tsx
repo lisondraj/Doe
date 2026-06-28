@@ -24,7 +24,9 @@ export function AboutDesktopFaqTabs() {
           return (
             <div
               key={item.question}
-              className={`flex min-h-0 flex-col border-t transition-[border-color] duration-300 ease-out motion-reduce:transition-none ${
+              className={`flex min-h-0 basis-0 flex-col overflow-hidden border-t transition-[flex-grow,border-color] duration-300 ease-out motion-reduce:transition-none ${
+                isOpen ? "grow-[1.85]" : "grow"
+              } ${
                 isOpen ? "border-[#1E343A]" : index > 0 ? "border-[#DDD9D2]" : "border-transparent"
               }`}
             >
@@ -32,18 +34,18 @@ export function AboutDesktopFaqTabs() {
                 type="button"
                 aria-expanded={isOpen}
                 onClick={() => setOpenIndex(index)}
-                className={`w-full text-left transition-colors ${
+                className={`w-full shrink-0 text-left pt-4 transition-colors duration-300 ease-out md:pt-5 ${
                   isOpen
-                    ? "shrink-0 pt-4 font-medium text-[#1E343A] md:pt-5"
-                    : "flex min-h-0 flex-1 items-center font-normal text-[#9A8F82] hover:text-[#1E343A]/80"
+                    ? "font-medium text-[#1E343A]"
+                    : "font-normal text-[#9A8F82] hover:text-[#1E343A]/80"
                 } ${ABOUT_DESKTOP_FAQ_ITEM_TW}`}
               >
                 {item.question}
               </button>
 
               <div
-                className={`grid min-h-0 transition-[grid-template-rows,opacity] duration-300 ease-out motion-reduce:transition-none ${
-                  isOpen ? "grid-rows-[1fr] flex-1 opacity-100" : "grid-rows-[0fr] opacity-0"
+                className={`grid min-h-0 flex-1 transition-[grid-template-rows,opacity] duration-300 ease-out motion-reduce:transition-none ${
+                  isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
                 }`}
               >
                 <div className="overflow-hidden">

@@ -138,7 +138,7 @@ export const ABOUT_DESKTOP_SECTION_2_STACK = "flex h-full min-h-0 w-full flex-co
 export const ABOUT_DESKTOP_SECTION_2_CONTENT_GAP = "gap-5 md:gap-6";
 
 /** Desktop /about FAQ tabs — section four accordion beside beige panel. */
-export const ABOUT_DESKTOP_FAQ_LIST_TW = "relative grid h-full min-h-0 w-full grid-rows-4";
+export const ABOUT_DESKTOP_FAQ_LIST_TW = "flex h-full min-h-0 w-full flex-col";
 
 export const ABOUT_DESKTOP_FAQ_ITEM_TW = `text-[clamp(1.28rem,1.18vw,1.52rem)] md:text-[clamp(1.4rem,1.28vw,1.68rem)] lg:text-[clamp(1.5rem,1.35vw,1.78rem)] leading-[1.15] tracking-[-0.015em] ${inter.className}`;
 
