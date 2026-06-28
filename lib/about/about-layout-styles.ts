@@ -44,7 +44,7 @@ export const ABOUT_DESKTOP_ARTICLE_SECTION_GAP = "mt-12 md:mt-14";
 
 export const ABOUT_DESKTOP_HERO_WRAP = "mt-8 md:mt-10 mb-10 md:mb-12";
 
-export const ABOUT_DESKTOP_HERO_BOX_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} min-h-[clamp(16rem,28vw,22rem)] h-[clamp(16rem,28vw,22rem)] md:min-h-[clamp(17rem,30vw,23rem)] md:h-[clamp(17rem,30vw,23rem)]`;
+export const ABOUT_DESKTOP_HERO_BOX_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} shadow-[0_10px_32px_rgba(0,0,0,0.1)] min-h-[clamp(16rem,28vw,22rem)] h-[clamp(16rem,28vw,22rem)] md:min-h-[clamp(17rem,30vw,23rem)] md:h-[clamp(17rem,30vw,23rem)]`;
 
 export const ABOUT_DESKTOP_ARTICLE_BODY_TW = `text-[clamp(1.12rem,1.05vw,1.32rem)] md:text-[clamp(1.22rem,1.1vw,1.42rem)] font-normal leading-[1.5] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
 
