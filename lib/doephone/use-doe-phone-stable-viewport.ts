@@ -148,9 +148,18 @@ export function useDoePhoneStableViewport() {
 
     const stored = readStoredLock();
     if (stored) {
-      stable.width = stored.width;
-      stable.height = stored.height;
-      apply(stable.width, stable.height);
+      const current = read();
+      const widthDrift = stored.width > current.width * 1.12;
+      const heightDrift = stored.height > current.height * 1.12;
+
+      if (widthDrift || heightDrift) {
+        clearStoredLock();
+        measure(true);
+      } else {
+        stable.width = stored.width;
+        stable.height = stored.height;
+        apply(stable.width, stable.height);
+      }
     } else {
       measure(true);
     }
