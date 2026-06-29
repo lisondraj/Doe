@@ -1,0 +1,49 @@
+/*
+ * /designers — lock iPhone vertical chrome when the layout viewport is wider than
+ * a phone (desktop browser, minimized windows, Safari desktop-site mode). Native
+ * `vmin` uses the inflated width and section content outgrows fixed `--app-vh`
+ * bands, clipping title top/bottom padding. Remap to `--designers-vmin` instead.
+ */
+html[data-designers-page="true"] {
+  --designers-vmin: min(390px, var(--app-vh, 100lvh));
+}
+
+/* Uniform section pad — only `iphone-page:p-[max(...5.25vmin)]`, not pl/pr/px gutters */
+html[data-designers-page="true"] .doephone-mobile-root [class*="iphone-page:p-[max"][class*="5.25vmin"] {
+  padding-top: max(2.35rem, calc(var(--designers-vmin) * 0.0525)) !important;
+  padding-bottom: max(2.35rem, calc(var(--designers-vmin) * 0.0525)) !important;
+}
+
+html[data-designers-page="true"] .doephone-mobile-root [class*="17.5vmin"] {
+  padding-bottom: clamp(5.75rem, calc(var(--designers-vmin) * 0.175), 7.5rem) !important;
+}
+
+html[data-designers-page="true"] .doephone-mobile-root [class*="3.35vmin"] {
+  min-height: clamp(5.15rem, calc(4.35rem + var(--designers-vmin) * 0.0335), 6.85rem) !important;
+}
+
+html[data-designers-page="true"] .doephone-mobile-root [class*="2.85vmin"] {
+  min-height: clamp(4.35rem, calc(3.65rem + var(--designers-vmin) * 0.0285), 5.65rem) !important;
+}
+
+html[data-designers-page="true"] .doephone-mobile-root [class*="86vmin"] {
+  height: clamp(36rem, calc(var(--designers-vmin) * 0.86), 50rem) !important;
+  min-height: clamp(36rem, calc(var(--designers-vmin) * 0.86), 50rem) !important;
+  max-height: clamp(36rem, calc(var(--designers-vmin) * 0.86), 50rem) !important;
+}
+
+html[data-designers-page="true"] .doephone-mobile-root [class*="82vmin"] {
+  height: clamp(34rem, calc(var(--designers-vmin) * 0.82), 47rem) !important;
+  min-height: clamp(34rem, calc(var(--designers-vmin) * 0.82), 47rem) !important;
+  max-height: clamp(34rem, calc(var(--designers-vmin) * 0.82), 47rem) !important;
+}
+
+html[data-designers-page="true"] .doephone-mobile-root [class*="52vmin"] {
+  min-height: clamp(19.5rem, calc(var(--designers-vmin) * 0.52), 29rem) !important;
+  height: clamp(19.5rem, calc(var(--designers-vmin) * 0.52), 29rem) !important;
+}
+
+html[data-designers-page="true"] .doephone-mobile-root [class*="49vmin"] {
+  min-height: clamp(18.25rem, calc(var(--designers-vmin) * 0.49), 27rem) !important;
+  height: clamp(18.25rem, calc(var(--designers-vmin) * 0.49), 27rem) !important;
+}
