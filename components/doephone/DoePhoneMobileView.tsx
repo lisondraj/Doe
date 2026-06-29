@@ -15,7 +15,7 @@ import {
 } from "@/lib/doephone/section-styles";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 
-export function DoePhoneMobileView() {
+export function DoePhoneMobileView({ staticNav = false }: { staticNav?: boolean } = {}) {
   useDoePhoneStableViewport();
 
   return (
@@ -29,6 +29,8 @@ export function DoePhoneMobileView() {
         showMenu={false}
         ctaLayout="main-home"
         showJoinCta={false}
+        logoLink={!staticNav}
+        navActionLinksEnabled={!staticNav}
       />
 
       <DoePhoneHeroSection />

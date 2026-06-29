@@ -8,7 +8,13 @@ import { DoePhoneMobileView } from "./DoePhoneMobileView";
 type Variant = "phone" | "desktop";
 const QUERY = "(min-width: 1024px)";
 
-export function DoePhoneRouter({ initialVariant }: { initialVariant: Variant }) {
+export function DoePhoneRouter({
+  initialVariant,
+  staticNav = false,
+}: {
+  initialVariant: Variant;
+  staticNav?: boolean;
+}) {
   const [variant, setVariant] = useState<Variant>(initialVariant);
 
   useEffect(() => {
@@ -63,5 +69,9 @@ export function DoePhoneRouter({ initialVariant }: { initialVariant: Variant }) 
     };
   }, [variant]);
 
-  return variant === "desktop" ? <DoePhoneDesktopView /> : <DoePhoneMobileView />;
+  return variant === "desktop" ? (
+    <DoePhoneDesktopView staticNav={staticNav} />
+  ) : (
+    <DoePhoneMobileView staticNav={staticNav} />
+  );
 }

@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
 
-import { DesignersRouter } from "@/components/designers/DesignersRouter";
+import { DoePhoneRouter } from "@/components/doephone/DoePhoneRouter";
 
 export const dynamic = "force-dynamic";
 
@@ -10,5 +10,5 @@ const MOBILE_UA =
 export default function DesignersPage() {
   const ua = headers().get("user-agent") ?? "";
   const initialVariant = MOBILE_UA.test(ua) ? "phone" : "desktop";
-  return <DesignersRouter initialVariant={initialVariant} />;
+  return <DoePhoneRouter initialVariant={initialVariant} staticNav />;
 }

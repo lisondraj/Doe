@@ -16,6 +16,17 @@ export const DESIGNERS_PATH = "/designers";
 
 const LOCAL_DEV_HOSTS = new Set(["localhost", "127.0.0.1"]);
 
+/** Resolve host from Next request/server headers (Vercel may use x-forwarded-host). */
+export function requestHostFromHeaders(
+  headers: Headers | { get(name: string): string | null },
+): string {
+  return (
+    headers.get("x-forwarded-host") ??
+    headers.get("host") ??
+    ""
+  );
+}
+
 /** Strip port + www for host comparisons. */
 export function normalizeHost(host: string | null | undefined): string {
   if (!host) return "";
@@ -33,6 +44,12 @@ export function isPreviewHost(host: string | null | undefined): boolean {
 
 export function isDesignersHost(host: string | null | undefined): boolean {
   return normalizeHost(host) === normalizeHost(DESIGNERS_SITE_HOST);
+}
+
+export function isDesignersRequest(
+  headers: Headers | { get(name: string): string | null },
+): boolean {
+  return isDesignersHost(requestHostFromHeaders(headers));
 }
 
 /** @deprecated Use isDesignersHost */
