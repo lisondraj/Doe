@@ -1,77 +1,93 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
+
+import {
+  DOEPHONE_DESKTOP_MEDIA_QUERY,
+  resolveDoePhoneVariant,
+  type DoePhoneVariant,
+} from "@/lib/doephone/resolve-doe-phone-variant";
+import { isDesignersHost } from "@/lib/site-domains";
 
 import { DoePhoneDesktopView } from "./DoePhoneDesktopView";
 import { DoePhoneMobileView } from "./DoePhoneMobileView";
 
-type Variant = "phone" | "desktop";
-const QUERY = "(min-width: 1024px)";
+const PINCH_VIEWPORT =
+  "width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover";
+
+function applyPhoneDocumentAttrs() {
+  const html = document.documentElement;
+  const body = document.body;
+  html.setAttribute("data-doeforvc-always-phone", "true");
+  html.removeAttribute("data-layout");
+  body.classList.remove("desktop-route");
+}
+
+function applyDesktopDocumentAttrs() {
+  const html = document.documentElement;
+  const body = document.body;
+  html.removeAttribute("data-doeforvc-always-phone");
+  html.setAttribute("data-layout", "desktop");
+  body.classList.add("desktop-route");
+}
+
+function applyDesignersDocumentAttrs(enabled: boolean) {
+  document.documentElement.toggleAttribute("data-doe-designers-site", enabled);
+}
 
 export function DoePhoneRouter({
   initialVariant,
   staticNav = false,
 }: {
-  initialVariant: Variant;
+  initialVariant: DoePhoneVariant;
   staticNav?: boolean;
 }) {
-  const [variant, setVariant] = useState<Variant>(initialVariant);
+  const [variant, setVariant] = useState<DoePhoneVariant>(initialVariant);
+  const [resolvedStaticNav, setResolvedStaticNav] = useState(staticNav);
+
+  useLayoutEffect(() => {
+    const designers =
+      staticNav || isDesignersHost(window.location.hostname);
+    setResolvedStaticNav(designers);
+    applyDesignersDocumentAttrs(designers);
+    setVariant(resolveDoePhoneVariant());
+  }, [staticNav]);
 
   useEffect(() => {
-    if (variant !== "phone") return;
-
-    const html = document.documentElement;
-    const body = document.body;
-    const meta = document.querySelector('meta[name="viewport"]');
-    const prevViewport = meta?.getAttribute("content") ?? "";
-    const pinchViewport =
-      "width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover";
-
-    html.setAttribute("data-doephone-pinching", "true");
-    body.classList.add("doephone-route");
-    meta?.setAttribute("content", pinchViewport);
-
-    return () => {
-      html.removeAttribute("data-doephone-pinching");
-      body.classList.remove("doephone-route");
-      if (meta) {
-        if (prevViewport) meta.setAttribute("content", prevViewport);
-        else meta.removeAttribute("content");
-      }
-    };
-  }, [variant]);
-
-  useEffect(() => {
-    const mq = window.matchMedia(QUERY);
-    const sync = () => setVariant(mq.matches ? "desktop" : "phone");
+    const mq = window.matchMedia(DOEPHONE_DESKTOP_MEDIA_QUERY);
+    const sync = () => setVariant(resolveDoePhoneVariant());
     sync();
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
   }, []);
 
-  useEffect(() => {
-    const html = document.documentElement;
-    const body = document.body;
-    if (variant === "desktop") {
-      html.removeAttribute("data-doeforvc-always-phone");
-      html.setAttribute("data-layout", "desktop");
-      body.classList.add("desktop-route");
-    } else {
-      html.setAttribute("data-doeforvc-always-phone", "true");
-      html.removeAttribute("data-layout");
-      body.classList.remove("desktop-route");
+  useLayoutEffect(() => {
+    if (variant === "phone") {
+      applyPhoneDocumentAttrs();
+      const html = document.documentElement;
+      const body = document.body;
+      const meta = document.querySelector('meta[name="viewport"]');
+      html.setAttribute("data-doephone-pinching", "true");
+      body.classList.add("doephone-route");
+      meta?.setAttribute("content", PINCH_VIEWPORT);
+      return;
     }
 
-    return () => {
-      html.setAttribute("data-doeforvc-always-phone", "true");
-      html.removeAttribute("data-layout");
-      body.classList.remove("desktop-route");
-    };
+    applyDesktopDocumentAttrs();
+    document.documentElement.removeAttribute("data-doephone-pinching");
+    document.body.classList.remove("doephone-route");
   }, [variant]);
 
+  useEffect(() => {
+    return () => {
+      applyDesignersDocumentAttrs(false);
+      applyPhoneDocumentAttrs();
+    };
+  }, []);
+
   return variant === "desktop" ? (
-    <DoePhoneDesktopView staticNav={staticNav} />
+    <DoePhoneDesktopView staticNav={resolvedStaticNav} />
   ) : (
-    <DoePhoneMobileView staticNav={staticNav} />
+    <DoePhoneMobileView staticNav={resolvedStaticNav} />
   );
 }

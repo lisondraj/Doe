@@ -20,11 +20,15 @@ const LOCAL_DEV_HOSTS = new Set(["localhost", "127.0.0.1"]);
 export function requestHostFromHeaders(
   headers: Headers | { get(name: string): string | null },
 ): string {
-  return (
-    headers.get("x-forwarded-host") ??
-    headers.get("host") ??
-    ""
-  );
+  const raw =
+    headers.get("x-doe-designers-site") === "1"
+      ? DESIGNERS_SITE_HOST
+      : (headers.get("x-forwarded-host") ??
+        headers.get("x-vercel-forwarded-host") ??
+        headers.get("host") ??
+        "");
+
+  return raw.split(",")[0]?.trim() ?? "";
 }
 
 /** Strip port + www for host comparisons. */
@@ -49,6 +53,7 @@ export function isDesignersHost(host: string | null | undefined): boolean {
 export function isDesignersRequest(
   headers: Headers | { get(name: string): string | null },
 ): boolean {
+  if (headers.get("x-doe-designers-site") === "1") return true;
   return isDesignersHost(requestHostFromHeaders(headers));
 }
 

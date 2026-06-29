@@ -4,14 +4,18 @@ import { vbIsVisualViewportPinching } from "@/lib/home/vertical-bento";
 import { useLayoutEffect } from "react";
 
 const SETTLE_MS = 220;
-const STORAGE_KEY = "doephone-app-viewport-lock";
+
+function viewportStorageKey(): string {
+  if (typeof window === "undefined") return "doephone-app-viewport-lock";
+  return `doephone-app-viewport-lock:${window.location.hostname}`;
+}
 
 type ViewportLock = { width: number; height: number };
 
 function readStoredLock(): ViewportLock | null {
   if (typeof sessionStorage === "undefined") return null;
   try {
-    const raw = sessionStorage.getItem(STORAGE_KEY);
+    const raw = sessionStorage.getItem(viewportStorageKey());
     if (!raw) return null;
     const parsed = JSON.parse(raw) as ViewportLock;
     if (typeof parsed.width === "number" && typeof parsed.height === "number") {
@@ -26,7 +30,7 @@ function readStoredLock(): ViewportLock | null {
 function storeLock(lock: ViewportLock) {
   if (typeof sessionStorage === "undefined") return;
   try {
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(lock));
+    sessionStorage.setItem(viewportStorageKey(), JSON.stringify(lock));
   } catch {
     /* ignore */
   }
@@ -35,7 +39,7 @@ function storeLock(lock: ViewportLock) {
 function clearStoredLock() {
   if (typeof sessionStorage === "undefined") return;
   try {
-    sessionStorage.removeItem(STORAGE_KEY);
+    sessionStorage.removeItem(viewportStorageKey());
   } catch {
     /* ignore */
   }

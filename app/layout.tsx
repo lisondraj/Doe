@@ -1,13 +1,17 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import { headers } from "next/headers";
 import "./globals.css";
 import { RootChrome } from "@/components/RootChrome";
+import { isDesignersRequest } from "@/lib/site-domains";
 
 const inter = Inter({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700"],
   variable: "--font-inter",
 });
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Doe AI",
@@ -33,8 +37,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const designersSite = isDesignersRequest(headers());
+
   return (
-    <html lang="en" data-doeforvc-always-phone="true">
+    <html
+      lang="en"
+      data-doeforvc-always-phone="true"
+      data-doe-designers-site={designersSite ? "true" : undefined}
+    >
       <body className={`${inter.variable} font-sans antialiased wide-desktop:overflow-hidden`}>
         <RootChrome>{children}</RootChrome>
       </body>

@@ -11,11 +11,9 @@ const MOBILE_UA =
 export default function HomePage() {
   const headerList = headers();
   const ua = headerList.get("user-agent") ?? "";
+  const designersSite = isDesignersRequest(headerList);
   const initialVariant = MOBILE_UA.test(ua) ? "phone" : "desktop";
   return (
-    <DoePhoneRouter
-      initialVariant={initialVariant}
-      staticNav={isDesignersRequest(headerList)}
-    />
+    <DoePhoneRouter initialVariant={initialVariant} staticNav={designersSite} />
   );
 }
