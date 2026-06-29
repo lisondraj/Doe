@@ -10,5 +10,5 @@ const MOBILE_UA =
 export default function DesignersPage() {
   const ua = headers().get("user-agent") ?? "";
   const initialVariant = MOBILE_UA.test(ua) ? "phone" : "desktop";
-  return <DoePhoneRouter initialVariant={initialVariant} staticNav />;
+  return <DoePhoneRouter initialVariant={initialVariant} />;
 }

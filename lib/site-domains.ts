@@ -21,12 +21,10 @@ export function requestHostFromHeaders(
   headers: Headers | { get(name: string): string | null },
 ): string {
   const raw =
-    headers.get("x-doe-designers-site") === "1"
-      ? DESIGNERS_SITE_HOST
-      : (headers.get("x-forwarded-host") ??
-        headers.get("x-vercel-forwarded-host") ??
-        headers.get("host") ??
-        "");
+    headers.get("x-forwarded-host") ??
+    headers.get("x-vercel-forwarded-host") ??
+    headers.get("host") ??
+    "";
 
   return raw.split(",")[0]?.trim() ?? "";
 }
@@ -53,7 +51,6 @@ export function isDesignersHost(host: string | null | undefined): boolean {
 export function isDesignersRequest(
   headers: Headers | { get(name: string): string | null },
 ): boolean {
-  if (headers.get("x-doe-designers-site") === "1") return true;
   return isDesignersHost(requestHostFromHeaders(headers));
 }
 

@@ -9,20 +9,11 @@ import {
 export function middleware(request: NextRequest) {
   const host = requestHostFromHeaders(request.headers);
 
-  if (!shouldEnforceDomainRouting(host)) {
+  if (!shouldEnforceDomainRouting(host) || !isDesignersHost(host)) {
     return NextResponse.next();
   }
 
-  if (!isDesignersHost(host)) {
-    return NextResponse.next();
-  }
-
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("x-doe-designers-site", "1");
-
-  const response = NextResponse.next({
-    request: { headers: requestHeaders },
-  });
+  const response = NextResponse.next();
 
   /** Bust edge/browser caches of the old permanent redirect to /join. */
   response.headers.set(

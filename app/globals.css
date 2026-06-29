@@ -42,27 +42,6 @@ html:has(.doephone-mobile-root) body {
   overscroll-behavior-y: none;
 }
 
-/*
- * doehealth.care — mirror /doephone canvas even before :has() resolves or after
- * a desktop-layout flash on narrow viewports (Safari “Request Desktop Website”).
- */
-html[data-doe-designers-site="true"] {
-  font-size: min(16px, 3.7209vw);
-  background-color: #f7f6f3;
-  --app-vw: 100vw;
-  --app-vh: 100lvh;
-  overscroll-behavior-y: none;
-}
-
-html[data-doe-designers-site="true"] body {
-  background-color: #f7f6f3;
-  overscroll-behavior-y: none;
-}
-
-html[data-doe-designers-site="true"][data-doephone-pinching="true"] .doephone-mobile-root {
-  overscroll-behavior-y: auto;
-}
-
 html:has(.blog-mobile-root) {
   font-size: 100%;
   background-color: #f7f6f3;
