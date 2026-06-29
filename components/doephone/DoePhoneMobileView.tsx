@@ -13,10 +13,12 @@ import {
   DOEPHONE_MAIN_PAGE_BEIGE_SECTION,
   DOEPHONE_MAIN_PAGE_VIEWPORT_SECTION,
 } from "@/lib/doephone/section-styles";
+import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-viewport";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 import { useDesignersStaticNav } from "@/lib/designers/use-designers-static-nav";
 
 export function DoePhoneMobileView() {
+  useDoePhoneLayoutViewport();
   useDoePhoneStableViewport();
   const staticNav = useDesignersStaticNav();
 

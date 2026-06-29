@@ -9,11 +9,13 @@ import {
 } from "@/lib/doephone/resolve-doe-phone-variant";
 import { shouldLockDesignersTouchPhoneLayout } from "@/lib/designers/designers-page-context";
 
+import {
+  applyPhoneLayoutViewportMeta,
+  phoneLayoutViewportContent,
+} from "@/lib/doephone/phone-layout-viewport";
+
 import { DoePhoneDesktopView } from "./DoePhoneDesktopView";
 import { DoePhoneMobileView } from "./DoePhoneMobileView";
-
-const PINCH_VIEWPORT =
-  "width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover";
 
 function applyPhoneDocumentAttrs() {
   const html = document.documentElement;
@@ -37,7 +39,7 @@ function applyPhonePinchViewport() {
   const meta = document.querySelector('meta[name="viewport"]');
   html.setAttribute("data-doephone-pinching", "true");
   body.classList.add("doephone-route");
-  meta?.setAttribute("content", PINCH_VIEWPORT);
+  meta?.setAttribute("content", phoneLayoutViewportContent());
 }
 
 function clearPhonePinchViewport(prevViewport: string) {
@@ -76,6 +78,7 @@ export function DoePhoneRouter() {
   useLayoutEffect(() => {
     if (variant === "phone") {
       applyPhoneDocumentAttrs();
+      applyPhoneLayoutViewportMeta();
       applyPhonePinchViewport();
       return;
     }

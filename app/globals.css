@@ -27,10 +27,12 @@ html:has(.doeforvc-iphone-root) body {
 }
 
 /*
- * /doephone — native pinch zoom; no CSS `zoom` canvas. Full rem scale + safe-area gutters.
+ * /doephone — native pinch zoom; cap rem base at iPhone reference width so wide
+ * layout viewports (Safari desktop-site mode, minimized desktop windows) do not
+ * inflate typography before the viewport meta correction runs.
  */
 html:has(.doephone-mobile-root) {
-  font-size: min(16px, 3.7209vw);
+  font-size: min(14.5px, 3.7209vw);
   background-color: #f7f6f3;
   --app-vw: 100vw;
   --app-vh: 100lvh;
