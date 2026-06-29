@@ -1,5 +1,7 @@
 "use client";
 
+import { shouldLockDesignersTouchPhoneLayout } from "@/lib/designers/designers-page-context";
+
 import { vbIsVisualViewportPinching } from "@/lib/home/vertical-bento";
 import { useLayoutEffect } from "react";
 
@@ -146,22 +148,27 @@ export function useDoePhoneStableViewport() {
       if (event.persisted) reapplyStable();
     };
 
-    const stored = readStoredLock();
-    if (stored) {
-      const current = read();
-      const widthDrift = stored.width > current.width * 1.12;
-      const heightDrift = stored.height > current.height * 1.12;
-
-      if (widthDrift || heightDrift) {
-        clearStoredLock();
-        measure(true);
-      } else {
-        stable.width = stored.width;
-        stable.height = stored.height;
-        apply(stable.width, stable.height);
-      }
-    } else {
+    if (shouldLockDesignersTouchPhoneLayout()) {
+      clearStoredLock();
       measure(true);
+    } else {
+      const stored = readStoredLock();
+      if (stored) {
+        const current = read();
+        const widthDrift = stored.width > current.width * 1.12;
+        const heightDrift = stored.height > current.height * 1.12;
+
+        if (widthDrift || heightDrift) {
+          clearStoredLock();
+          measure(true);
+        } else {
+          stable.width = stored.width;
+          stable.height = stored.height;
+          apply(stable.width, stable.height);
+        }
+      } else {
+        measure(true);
+      }
     }
 
     window.addEventListener("orientationchange", onOrientation);

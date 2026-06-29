@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { RootChrome } from "@/components/RootChrome";
+import { designersTouchPhoneBootstrapScript } from "@/lib/designers/designers-touch-phone-bootstrap-script";
+import { DESIGNERS_SITE_HOST } from "@/lib/site-domains";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -28,6 +30,8 @@ export const viewport: Viewport = {
   themeColor: "#f7f6f3",
 };
 
+const designersTouchBootstrap = designersTouchPhoneBootstrapScript(DESIGNERS_SITE_HOST);
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -35,6 +39,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-doeforvc-always-phone="true">
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: designersTouchBootstrap }} />
+      </head>
       <body className={`${inter.variable} font-sans antialiased wide-desktop:overflow-hidden`}>
         <RootChrome>{children}</RootChrome>
       </body>

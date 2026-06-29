@@ -7,6 +7,7 @@ import {
   resolveDoePhoneVariant,
   type DoePhoneVariant,
 } from "@/lib/doephone/resolve-doe-phone-variant";
+import { shouldLockDesignersTouchPhoneLayout } from "@/lib/designers/designers-page-context";
 
 import { DoePhoneDesktopView } from "./DoePhoneDesktopView";
 import { DoePhoneMobileView } from "./DoePhoneMobileView";
@@ -60,9 +61,14 @@ export function DoePhoneRouter() {
   }, []);
 
   useEffect(() => {
-    const mq = window.matchMedia(DOEPHONE_DESKTOP_MEDIA_QUERY);
     const sync = () => setVariant(resolveDoePhoneVariant());
     sync();
+
+    if (shouldLockDesignersTouchPhoneLayout()) {
+      return;
+    }
+
+    const mq = window.matchMedia(DOEPHONE_DESKTOP_MEDIA_QUERY);
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
   }, []);
