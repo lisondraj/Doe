@@ -16,11 +16,13 @@ export function DesktopNavActionRow({
   fg = "#ffffff",
   shadow = "none",
   divider = "rgba(255, 255, 255, 0.22)",
+  linksEnabled = true,
 }: {
   bg?: string;
   fg?: string;
   shadow?: string;
   divider?: string;
+  linksEnabled?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -82,7 +84,7 @@ export function DesktopNavActionRow({
         onToggle={handleMailToggle}
       />
 
-      <DesktopMainNavCta bg={bg} fg={fg} shadow={shadow} divider={divider} />
+      <DesktopMainNavCta bg={bg} fg={fg} shadow={shadow} divider={divider} linksEnabled={linksEnabled} />
 
       {open ? <NavEmailCopyDropdown copied={copied} attachClassName={NAV_EMAIL_DROPDOWN_ATTACH_RIGHT_TW} /> : null}
     </div>

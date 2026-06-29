@@ -24,7 +24,8 @@ export function MobileNavActionRow({
   fg,
   shadow,
   divider,
-}: MobileNavActionChrome = {}) {
+  linksEnabled = true,
+}: MobileNavActionChrome & { linksEnabled?: boolean } = {}) {
   const chrome = { bg, fg, shadow, divider };
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -79,7 +80,7 @@ export function MobileNavActionRow({
   return (
     <div ref={rowRef} className={`relative flex shrink-0 items-center ${MOBILE_NAV_ACTION_ROW_GAP}`}>
       <MobileNavEmailButton {...chrome} open={open} onToggle={handleMailToggle} />
-      <MobileMainNavCta {...chrome} />
+      <MobileMainNavCta {...chrome} linksEnabled={linksEnabled} />
       {open ? <NavEmailCopyDropdown copied={copied} attachClassName={NAV_EMAIL_DROPDOWN_ATTACH_RIGHT_TW} /> : null}
     </div>
   );

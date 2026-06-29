@@ -108,7 +108,13 @@ const dropdownContent: Record<string, { items: { title: string; desc: string }[]
   },
 };
 
-export function DesktopHome() {
+export function DesktopHome({
+  logoLink = true,
+  navActionLinksEnabled = true,
+}: {
+  logoLink?: boolean;
+  navActionLinksEnabled?: boolean;
+} = {}) {
   const [scrollY, setScrollY] = useState(0);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [hoveredBox, setHoveredBox] = useState<number | null>(null);
@@ -426,16 +432,28 @@ export function DesktopHome() {
           )}
           {/* Top bar — white bar only after hero */}
           <div className={`relative z-10 flex items-center justify-between py-6 ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
-            <Link
-              href="/"
-              className={`text-4xl font-normal no-underline transition-all duration-300 ${lora.className}`}
-              style={{
-                color: heroNavInk,
-                textShadow: heroNavShadowResolved,
-              }}
-            >
-              Doe
-            </Link>
+            {logoLink ? (
+              <Link
+                href="/"
+                className={`text-4xl font-normal no-underline transition-all duration-300 ${lora.className}`}
+                style={{
+                  color: heroNavInk,
+                  textShadow: heroNavShadowResolved,
+                }}
+              >
+                Doe
+              </Link>
+            ) : (
+              <span
+                className={`text-4xl font-normal transition-all duration-300 ${lora.className}`}
+                style={{
+                  color: heroNavInk,
+                  textShadow: heroNavShadowResolved,
+                }}
+              >
+                Doe
+              </span>
+            )}
 
             <div className="flex shrink-0 items-center">
               <DesktopNavActionRow
@@ -443,6 +461,7 @@ export function DesktopHome() {
                 fg={heroWaitlistFg}
                 shadow={heroWaitlistShadow}
                 divider={heroCtaDivider}
+                linksEnabled={navActionLinksEnabled}
               />
             </div>
           </div>

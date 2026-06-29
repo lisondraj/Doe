@@ -1,3 +1,7 @@
 "use client";
 
-export { DesktopHome as default } from "@/components/home/DesktopHome";
+import { DesktopHome } from "@/components/home/DesktopHome";
+
+export default function DesktopPage() {
+  return <DesktopHome />;
+}

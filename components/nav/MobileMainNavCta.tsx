@@ -29,11 +29,13 @@ export function MobileMainNavCta({
   fg = NAV_CTA_FG,
   shadow = "none",
   divider = NAV_CTA_DIVIDER,
+  linksEnabled = true,
 }: {
   bg?: string;
   fg?: string;
   shadow?: string;
   divider?: string;
+  linksEnabled?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -71,13 +73,22 @@ export function MobileMainNavCta({
     <div ref={rootRef} className="relative flex shrink-0 items-center">
       <div className={MOBILE_NAV_SPLIT_SHELL_TW} style={{ boxShadow: shadow }}>
         <div className={MOBILE_NAV_SPLIT_INNER_TW}>
-          <Link
-            href={primary.href}
-            className={`${MOBILE_NAV_SPLIT_LINK_TW} no-underline transition-[opacity,background-color,color] duration-300`}
-            style={{ backgroundColor: bg, color: fg }}
-          >
-            {DESKTOP_INVESTORS_CTA_LABEL}
-          </Link>
+          {linksEnabled ? (
+            <Link
+              href={primary.href}
+              className={`${MOBILE_NAV_SPLIT_LINK_TW} no-underline transition-[opacity,background-color,color] duration-300`}
+              style={{ backgroundColor: bg, color: fg }}
+            >
+              {DESKTOP_INVESTORS_CTA_LABEL}
+            </Link>
+          ) : (
+            <span
+              className={`${MOBILE_NAV_SPLIT_LINK_TW} transition-[opacity,background-color,color] duration-300`}
+              style={{ backgroundColor: bg, color: fg }}
+            >
+              {DESKTOP_INVESTORS_CTA_LABEL}
+            </span>
+          )}
           <button
             type="button"
             className={`${MOBILE_NAV_SPLIT_TOGGLE_TW} transition-[opacity,background-color,color] duration-300`}
@@ -112,18 +123,29 @@ export function MobileMainNavCta({
               boxShadow: shadow === "none" ? "0 8px 24px rgba(0, 0, 0, 0.12)" : shadow,
             }}
           >
-            {DESKTOP_MAIN_CTA_DROPDOWN_ITEMS.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                role="menuitem"
-                className={`${MOBILE_NAV_CTA_DROPDOWN_ITEM_TW} ${dropdownHoverClass}`}
-                style={{ color: fg }}
-                onClick={() => setOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {DESKTOP_MAIN_CTA_DROPDOWN_ITEMS.map((item) =>
+              linksEnabled ? (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  role="menuitem"
+                  className={`${MOBILE_NAV_CTA_DROPDOWN_ITEM_TW} ${dropdownHoverClass}`}
+                  style={{ color: fg }}
+                  onClick={() => setOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              ) : (
+                <span
+                  key={item.href}
+                  role="menuitem"
+                  className={`${MOBILE_NAV_CTA_DROPDOWN_ITEM_TW} ${dropdownHoverClass}`}
+                  style={{ color: fg }}
+                >
+                  {item.label}
+                </span>
+              ),
+            )}
           </div>
         ) : null}
       </div>

@@ -96,6 +96,7 @@ function NavChromeStrip({
   showMenu = true,
   ctaLayout = "single",
   mobileNavChrome,
+  navActionLinksEnabled = true,
 }: {
   navTextColor: string;
   mobileNavOpen: boolean;
@@ -109,6 +110,7 @@ function NavChromeStrip({
   showMenu?: boolean;
   ctaLayout?: SiteNavCtaLayout;
   mobileNavChrome?: MobileNavActionChrome;
+  navActionLinksEnabled?: boolean;
 }) {
   const pageInsetX = DOEPHONE_SECTION_CAROUSEL_INSET_X;
   const pageDoeLeft =
@@ -176,7 +178,7 @@ function NavChromeStrip({
         {subpageVariant ? (
           <SubpageMobileNavRow variant={subpageVariant} showLinks={!showMenu || !subpageWithButton} />
         ) : ctaLayout === "main-home" || ctaLayout === "subpage-about" ? (
-          <MobileNavActionRow {...mobileNavChrome} />
+          <MobileNavActionRow {...mobileNavChrome} linksEnabled={navActionLinksEnabled} />
         ) : ctaLayout === "triple" ? (
           <>
             <Link href={WAITLIST_PATH} className={DOEPHONE_NAV_TRIPLE_CTA_CLASS}>
@@ -283,6 +285,7 @@ export default function DoeIphoneSiteNav({
   ctaLayout = "single",
   navSheetItems,
   mobileNavChrome,
+  navActionLinksEnabled = true,
 }: {
   pinchSafe?: boolean;
   homeHref?: string;
@@ -294,6 +297,7 @@ export default function DoeIphoneSiteNav({
   ctaLayout?: SiteNavCtaLayout;
   navSheetItems?: readonly NavSheetItem[];
   mobileNavChrome?: MobileNavActionChrome;
+  navActionLinksEnabled?: boolean;
 }) {
   const resolvedNavSheetItems: readonly NavSheetItem[] =
     navSheetItems ??
@@ -676,6 +680,7 @@ export default function DoeIphoneSiteNav({
           showMenu={showMenu}
           ctaLayout={ctaLayout}
           mobileNavChrome={mobileNavChrome}
+          navActionLinksEnabled={navActionLinksEnabled}
         />
       </header>,
       document.body
@@ -719,6 +724,7 @@ export default function DoeIphoneSiteNav({
             showMenu={showMenu}
             ctaLayout={ctaLayout}
             mobileNavChrome={mobileNavChrome}
+            navActionLinksEnabled={navActionLinksEnabled}
           />
         </div>
       </nav>

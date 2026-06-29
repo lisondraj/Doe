@@ -16,11 +16,13 @@ export function DesktopMainNavCta({
   fg,
   shadow,
   divider,
+  linksEnabled = true,
 }: {
   bg: string;
   fg: string;
   shadow: string;
   divider: string;
+  linksEnabled?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -58,13 +60,22 @@ export function DesktopMainNavCta({
     <div ref={rootRef} className="relative flex shrink-0 items-center">
       <div className="relative flex items-stretch overflow-visible rounded-md" style={{ boxShadow: shadow }}>
         <div className="flex items-stretch overflow-hidden rounded-md">
-          <Link
-            href={primary.href}
-            className={`flex ${DESKTOP_NAV_ACTION_HEIGHT_TW} items-center px-7 text-[0.9375rem] font-medium no-underline transition-opacity hover:opacity-90`}
-            style={{ backgroundColor: bg, color: fg }}
-          >
-            {primary.label}
-          </Link>
+          {linksEnabled ? (
+            <Link
+              href={primary.href}
+              className={`flex ${DESKTOP_NAV_ACTION_HEIGHT_TW} items-center px-7 text-[0.9375rem] font-medium no-underline transition-opacity hover:opacity-90`}
+              style={{ backgroundColor: bg, color: fg }}
+            >
+              {primary.label}
+            </Link>
+          ) : (
+            <span
+              className={`flex ${DESKTOP_NAV_ACTION_HEIGHT_TW} items-center px-7 text-[0.9375rem] font-medium`}
+              style={{ backgroundColor: bg, color: fg }}
+            >
+              {primary.label}
+            </span>
+          )}
           <button
             type="button"
             className={`flex ${DESKTOP_NAV_ACTION_HEIGHT_TW} items-center justify-center border-l transition-opacity hover:opacity-90`}
@@ -104,18 +115,29 @@ export function DesktopMainNavCta({
               boxShadow: shadow === "none" ? "0 8px 24px rgba(0, 0, 0, 0.12)" : shadow,
             }}
           >
-            {DESKTOP_MAIN_CTA_DROPDOWN_ITEMS.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                role="menuitem"
-                className={`block px-4 py-2.5 text-sm font-medium no-underline transition-colors ${dropdownHoverClass}`}
-                style={{ color: fg }}
-                onClick={() => setOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {DESKTOP_MAIN_CTA_DROPDOWN_ITEMS.map((item) =>
+              linksEnabled ? (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  role="menuitem"
+                  className={`block px-4 py-2.5 text-sm font-medium no-underline transition-colors ${dropdownHoverClass}`}
+                  style={{ color: fg }}
+                  onClick={() => setOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              ) : (
+                <span
+                  key={item.href}
+                  role="menuitem"
+                  className={`block px-4 py-2.5 text-sm font-medium ${dropdownHoverClass}`}
+                  style={{ color: fg }}
+                >
+                  {item.label}
+                </span>
+              ),
+            )}
           </div>
         ) : null}
       </div>

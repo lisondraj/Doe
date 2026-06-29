@@ -2,12 +2,17 @@
 export const PRIMARY_SITE_HOST =
   process.env.PRIMARY_SITE_HOST ?? "doe.care";
 
-/** Legacy join domain — redirects to primary /join. */
-export const JOIN_SITE_HOST = process.env.JOIN_SITE_HOST ?? "doehealth.care";
+/** Designers landing domain — serves /designers at the site root. */
+export const DESIGNERS_SITE_HOST =
+  process.env.DESIGNERS_SITE_HOST ?? process.env.JOIN_SITE_HOST ?? "doehealth.care";
+
+/** @deprecated Use DESIGNERS_SITE_HOST */
+export const JOIN_SITE_HOST = DESIGNERS_SITE_HOST;
 
 export const JOIN_PATH = "/join";
 export const WAITLIST_PATH = "/waitlist";
 export const ABOUT_PATH = "/about";
+export const DESIGNERS_PATH = "/designers";
 
 const LOCAL_DEV_HOSTS = new Set(["localhost", "127.0.0.1"]);
 
@@ -26,8 +31,13 @@ export function isPreviewHost(host: string | null | undefined): boolean {
   return h.endsWith(".vercel.app");
 }
 
+export function isDesignersHost(host: string | null | undefined): boolean {
+  return normalizeHost(host) === normalizeHost(DESIGNERS_SITE_HOST);
+}
+
+/** @deprecated Use isDesignersHost */
 export function isJoinHost(host: string | null | undefined): boolean {
-  return normalizeHost(host) === normalizeHost(JOIN_SITE_HOST);
+  return isDesignersHost(host);
 }
 
 export function isPrimaryHost(host: string | null | undefined): boolean {
@@ -39,7 +49,7 @@ export function shouldEnforceDomainRouting(host: string | null | undefined): boo
   if (!host) return false;
   if (isLocalDevHost(host)) return false;
   if (isPreviewHost(host)) return false;
-  return isPrimaryHost(host) || isJoinHost(host);
+  return isPrimaryHost(host) || isDesignersHost(host);
 }
 
 export function primarySiteOrigin(protocol: "http" | "https" = "https"): string {
@@ -47,7 +57,15 @@ export function primarySiteOrigin(protocol: "http" | "https" = "https"): string 
 }
 
 export function joinSiteOrigin(protocol: "http" | "https" = "https"): string {
-  return `${protocol}://${JOIN_SITE_HOST}`;
+  return `${protocol}://${DESIGNERS_SITE_HOST}`;
+}
+
+export function designersSiteOrigin(protocol: "http" | "https" = "https"): string {
+  return joinSiteOrigin(protocol);
+}
+
+export function designersPageUrl(protocol: "http" | "https" = "https"): string {
+  return `${designersSiteOrigin(protocol)}${DESIGNERS_PATH}`;
 }
 
 export function joinPageUrl(protocol: "http" | "https" = "https"): string {
