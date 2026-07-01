@@ -35,13 +35,15 @@ const PROTO_HUMIRA_GRADIENT_STOPS = [
   `${PROTO_HUMIRA_COLORS.wheat} 100%`,
 ].join(", ");
 
-/** Patient chart — warm radial aligned with card action row (Fable 5 + submit). */
+/** Patient chart — warm center with expanded light-blue outer ring. */
 const PROTO_AMBIENT_RADIAL_STOPS = [
   `${PROTO_RECEPTION_PALETTE.lightYellow} 0%`,
-  `${PROTO_RECEPTION_PALETTE.wheat} 20%`,
-  `#D2774C 42%`,
-  `${PROTO_RECEPTION_PALETTE.copper} 68%`,
-  `#C47A5A 100%`,
+  `${PROTO_HUMIRA_COLORS.bridgeBlue} 20%`,
+  `${PROTO_RECEPTION_PALETTE.blue} 38%`,
+  `#D2774C 52%`,
+  `${PROTO_HUMIRA_COLORS.bridgeBlue} 70%`,
+  `${PROTO_RECEPTION_PALETTE.blue} 86%`,
+  `${PROTO_RECEPTION_PALETTE.deep} 100%`,
 ].join(", ");
 
 /** /proto section 2 — home gradient shapes; Reception colours only. */
