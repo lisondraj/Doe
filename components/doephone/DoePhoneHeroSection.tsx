@@ -12,6 +12,7 @@ import {
   DOEPHONE_HERO_COPY_INSET,
 } from "@/lib/doephone/section-styles";
 import { CARE_COORDINATION_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
+import { PROTO_HERO_HEIGHT } from "@/lib/proto/proto-hero-layout";
 import { PROTO_FONT_CLASS } from "@/lib/proto/proto-font";
 import { PROTO_HERO_BACKDROP } from "@/lib/proto/proto-hero-backdrop";
 import { useEffect, useState, type CSSProperties } from "react";
@@ -65,7 +66,11 @@ export function DoePhoneHeroSection({
   const isDesktop = variant === "desktop";
   const isProto = variant === "proto";
   const heroBackdrop = isProto ? PROTO_HERO_BACKDROP : CARE_COORDINATION_BACKDROP;
-  const heroHeight = isDesktop ? DOEPHONE_HERO_DESKTOP_HEIGHT : DOEPHONE_HERO_HEIGHT;
+  const heroHeight = isDesktop
+    ? DOEPHONE_HERO_DESKTOP_HEIGHT
+    : isProto
+      ? PROTO_HERO_HEIGHT
+      : DOEPHONE_HERO_HEIGHT;
   const copyInset = isDesktop ? DOEPHONE_DESKTOP_PAGE_INSET_LEFT : DOEPHONE_HERO_COPY_INSET;
   const copyBottom = isDesktop
     ? "bottom-[clamp(5rem,16vh,10rem)]"

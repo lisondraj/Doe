@@ -9,9 +9,7 @@ html[data-proto-page] nav.doephone-site-nav button,
 html[data-proto-page] nav.doephone-site-nav [role="menuitem"],
 html[data-proto-page] nav.doephone-site-nav p,
 html[data-proto-page] .doephone-section-copy,
-html[data-proto-page] .doephone-section-reveal--title,
-html[data-proto-page] section[aria-label="Labs"] [role="tablist"] button,
-html[data-proto-page] section[aria-label="Build"] p {
+html[data-proto-page] .doephone-section-reveal--title {
   font-family: var(--font-plus-jakarta-sans), "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif !important;
 }
 
@@ -33,22 +31,19 @@ html[data-proto-page] .proto-section-band {
   background-color: #151c1f !important;
 }
 
-/* Section 2 (carousel band) — locked viewport tokens (padding + height). */
-html[data-proto-page] .doephone-mobile-root > section[aria-label="Labs"] {
-  min-height: calc(
-    var(--app-vh, 100lvh) + env(safe-area-inset-bottom, 0px) + 3.25rem
-  ) !important;
+/* Feature stack — one slide per section, vertical scroll. */
+html[data-proto-page] .proto-feature-section {
   padding-top: max(
-    1.95rem,
-    calc(env(safe-area-inset-top, 0px) + calc(var(--app-vh, 100lvh) * 0.0725))
+    1.45rem,
+    calc(env(safe-area-inset-top, 0px) + calc(var(--app-vh, 100lvh) * 0.042))
   ) !important;
   padding-bottom: max(
-    1.95rem,
-    calc(env(safe-area-inset-bottom, 0px) + calc(var(--app-vh, 100lvh) * 0.0725))
+    1.45rem,
+    calc(env(safe-area-inset-bottom, 0px) + calc(var(--app-vh, 100lvh) * 0.042))
   ) !important;
 }
 
-html[data-proto-page] section[aria-label="Labs"] > div > div {
+html[data-proto-page] .proto-feature-section__inner {
   padding-left: max(
     2.35rem,
     calc(env(safe-area-inset-left, 0px) + calc(var(--app-vw, 100vw) * 0.0525))
@@ -59,7 +54,8 @@ html[data-proto-page] section[aria-label="Labs"] > div > div {
   ) !important;
 }
 
-html[data-proto-page] section[aria-label="Labs"] .doephone-section-reveal--carousel {
+html[data-proto-page] .proto-feature-section .doephone-section-carousel,
+html[data-proto-page] .proto-feature-section > div > div {
   height: clamp(
     46rem,
     calc(var(--app-vh, 100lvh) * 1.04),
@@ -75,50 +71,6 @@ html[data-proto-page] section[aria-label="Labs"] .doephone-section-reveal--carou
     calc(var(--app-vh, 100lvh) * 1.04),
     69rem
   ) !important;
-}
-
-html[data-proto-page] section[aria-label="Labs"] .doephone-section-reveal--menu {
-  margin-top: max(
-    2.35rem,
-    calc(env(safe-area-inset-left, 0px) + calc(var(--app-vw, 100vw) * 0.0525))
-  ) !important;
-}
-
-html[data-proto-page] section[aria-label="Labs"] [role="tablist"] {
-  gap: clamp(
-    0.65rem,
-    calc(0.5rem + calc(var(--app-vw, 100vw) * 0.0072)),
-    0.95rem
-  ) !important;
-}
-
-html[data-proto-page] section[aria-label="Labs"] [role="tablist"] button {
-  min-height: clamp(
-    5.15rem,
-    calc(4.35rem + calc(var(--app-vw, 100vw) * 0.0335)),
-    6.85rem
-  ) !important;
-  padding-top: clamp(
-    0.62rem,
-    calc(0.5rem + calc(var(--app-vw, 100vw) * 0.0048)),
-    0.82rem
-  ) !important;
-  padding-bottom: clamp(
-    0.88rem,
-    calc(0.72rem + calc(var(--app-vw, 100vw) * 0.0062)),
-    1.12rem
-  ) !important;
-  font-size: clamp(
-    1.42rem,
-    calc(1.22rem + calc(var(--app-vw, 100vw) * 0.01)),
-    1.78rem
-  ) !important;
-}
-
-/* Build band — avoid fixed height clipping bottom prompt padding. */
-html[data-proto-page] .doephone-mobile-root > section[aria-label="Build"] {
-  height: auto !important;
-  overflow: visible !important;
 }
 
 /* Nav bar — scaled up with locked viewport tokens. */
@@ -279,38 +231,28 @@ html[data-proto-page] .doephone-hero-headline-line {
   color: #ffffff !important;
 }
 
-html[data-proto-page] .doephone-mobile-root [role="tablist"] button:not([aria-selected="true"]) {
-  background-color: rgba(232, 237, 239, 0.08) !important;
-  color: rgba(232, 237, 239, 0.42) !important;
-}
-
-html[data-proto-page] .doephone-mobile-root [role="tablist"] button[aria-selected="true"] {
-  background-color: #e3e1db !important;
-  color: #1e343a !important;
-}
-
-/* Section 2 — + badge aligned with proto hero palette. */
-html[data-proto-page] section[aria-label="Labs"] .doephone-section-carousel .absolute.z-30.rounded-full {
-  background: rgba(36, 58, 64, 0.58) !important;
+/* Feature stack — + badge (proto reception palette). */
+html[data-proto-page] .proto-feature-section .absolute.z-30.rounded-full {
+  background: rgba(196, 104, 72, 0.52) !important;
   box-shadow:
-    inset 0 1px 0 rgba(231, 169, 68, 0.24),
-    0 6px 20px rgba(18, 24, 25, 0.28) !important;
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 6px 20px rgba(42, 69, 88, 0.32) !important;
 }
 
-html[data-proto-page] section[aria-label="Labs"] .doephone-section-carousel .absolute.z-30.rounded-full span {
-  color: #f2cf7a !important;
-  text-shadow: 0 1px 12px rgba(18, 24, 25, 0.42) !important;
+html[data-proto-page] .proto-feature-section .absolute.z-30.rounded-full span {
+  color: #ffffff !important;
+  text-shadow: 0 1px 10px rgba(42, 69, 88, 0.35) !important;
 }
 
-html[data-proto-page] section[aria-label="Labs"] .doephone-section-carousel .absolute.z-30.rounded-full path {
-  stroke: #f2cf7a !important;
-  filter: drop-shadow(0 1px 10px rgba(18, 24, 25, 0.38)) !important;
+html[data-proto-page] .proto-feature-section .absolute.z-30.rounded-full path {
+  stroke: #ffffff !important;
+  filter: drop-shadow(0 1px 8px rgba(42, 69, 88, 0.32)) !important;
 }
 
-html[data-proto-page] section[aria-label="Labs"] .doephone-carousel-frost-fill,
-html[data-proto-page] section[aria-label="Labs"] .doephone-carousel-frost-out {
-  background: rgba(36, 58, 64, 0.5) !important;
-  box-shadow: inset 0 1px 0 rgba(231, 169, 68, 0.18) !important;
+html[data-proto-page] .proto-feature-section .doephone-carousel-frost-fill,
+html[data-proto-page] .proto-feature-section .doephone-carousel-frost-out {
+  background: rgba(90, 120, 136, 0.48) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
 }
 
 html[data-proto-page] .doephone-section-reveal {

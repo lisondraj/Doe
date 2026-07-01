@@ -5,18 +5,17 @@ import { useLayoutEffect } from "react";
 import DoeIphoneSiteNav from "@/components/DoeIphoneSiteNav";
 import { DoePhoneClosingSection } from "@/components/doephone/DoePhoneClosingSection";
 import { DoePhoneCommunicationIntelligenceSection } from "@/components/doephone/DoePhoneCommunicationIntelligenceSection";
-import { DoePhoneIntegrationsSection } from "@/components/doephone/DoePhoneIntegrationsSection";
 import { DoePhoneCommunicationSection } from "@/components/doephone/DoePhoneCommunicationSection";
 import { DoePhoneCustomizationSection } from "@/components/doephone/DoePhoneCustomizationSection";
 import { DoePhoneHeroSection } from "@/components/doephone/DoePhoneHeroSection";
+import { DoePhoneIntegrationsSection } from "@/components/doephone/DoePhoneIntegrationsSection";
+import { ProtoCommunicationStack } from "@/components/proto/ProtoCommunicationStack";
 import { ProtoFooter } from "@/components/proto/ProtoFooter";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
 import {
   DOEPHONE_BEIGE_SECTION,
   DOEPHONE_MAIN_PAGE_BEIGE_SECTION,
-  DOEPHONE_MAIN_PAGE_SECTION_MIN_H,
   DOEPHONE_MAIN_PAGE_VIEWPORT_SECTION,
-  DOEPHONE_SECTION_TITLE_PB,
 } from "@/lib/doephone/section-styles";
 import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-viewport";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
@@ -84,18 +83,17 @@ export function DoePhoneMobileView({ variant = "home" }: { variant?: "home" | "p
 
       <DoePhoneHeroSection variant={isProto ? "proto" : "mobile"} />
 
-      <section
-        className={
-          isProto
-            ? `${DOEPHONE_MAIN_PAGE_BEIGE_SECTION} proto-section-band ${DOEPHONE_SECTION_TITLE_PB}`
-            : DOEPHONE_MAIN_PAGE_BEIGE_SECTION
-        }
-        aria-label="Labs"
-      >
-        <DoePhoneCommunicationSection variant={isProto ? "proto" : "home"} />
-      </section>
+      {isProto ? (
+        <ProtoCommunicationStack />
+      ) : (
+        <>
+          <section className={DOEPHONE_MAIN_PAGE_BEIGE_SECTION} aria-label="Labs">
+            <DoePhoneCommunicationSection />
+          </section>
 
-      <DoePhoneCommunicationIntelligenceSection />
+          <DoePhoneCommunicationIntelligenceSection />
+        </>
+      )}
 
       {isProto ? (
         <ProtoFooter />
