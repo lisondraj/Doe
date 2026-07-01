@@ -31,8 +31,12 @@ html[data-proto-page] .proto-section-band {
   background-color: #151c1f !important;
 }
 
-/* Feature stack — one slide per section, vertical scroll. */
+/* Feature stack — one slide per full-viewport section on iPhone. */
 html[data-proto-page] .proto-feature-section {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: var(--app-vh, 100lvh) !important;
+  height: var(--app-vh, 100lvh) !important;
   padding-top: max(
     1.45rem,
     calc(env(safe-area-inset-top, 0px) + calc(var(--app-vh, 100lvh) * 0.042))
@@ -44,6 +48,10 @@ html[data-proto-page] .proto-feature-section {
 }
 
 html[data-proto-page] .proto-feature-section__inner {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
   padding-left: max(
     2.35rem,
     calc(env(safe-area-inset-left, 0px) + calc(var(--app-vw, 100vw) * 0.0525))
@@ -54,23 +62,20 @@ html[data-proto-page] .proto-feature-section__inner {
   ) !important;
 }
 
-html[data-proto-page] .proto-feature-section .doephone-section-carousel,
-html[data-proto-page] .proto-feature-section > div > div {
-  height: clamp(
-    46rem,
-    calc(var(--app-vh, 100lvh) * 1.04),
-    69rem
-  ) !important;
-  min-height: clamp(
-    46rem,
-    calc(var(--app-vh, 100lvh) * 1.04),
-    69rem
-  ) !important;
-  max-height: clamp(
-    46rem,
-    calc(var(--app-vh, 100lvh) * 1.04),
-    69rem
-  ) !important;
+html[data-proto-page] .proto-feature-section__card,
+html[data-proto-page] .proto-feature-section .doephone-section-carousel {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+}
+
+html[data-proto-page] .proto-feature-section__card > * {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: 100% !important;
 }
 
 /* Nav bar — scaled up with locked viewport tokens. */
@@ -233,20 +238,31 @@ html[data-proto-page] .doephone-hero-headline-line {
 
 /* Feature stack — + badge (proto reception palette). */
 html[data-proto-page] .proto-feature-section .absolute.z-30.rounded-full {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
   background: rgba(196, 104, 72, 0.52) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.28),
-    0 6px 20px rgba(42, 69, 88, 0.32) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28) !important;
 }
 
 html[data-proto-page] .proto-feature-section .absolute.z-30.rounded-full span {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
   color: #ffffff !important;
-  text-shadow: 0 1px 10px rgba(42, 69, 88, 0.35) !important;
+  line-height: 1 !important;
+  text-shadow: none !important;
+  transform: translateY(-0.05em);
 }
 
 html[data-proto-page] .proto-feature-section .absolute.z-30.rounded-full path {
   stroke: #ffffff !important;
-  filter: drop-shadow(0 1px 8px rgba(42, 69, 88, 0.32)) !important;
+  filter: none !important;
 }
 
 html[data-proto-page] .proto-feature-section .doephone-carousel-frost-fill,

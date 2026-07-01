@@ -2,10 +2,7 @@
 
 import { DoePhoneCommunicationCarouselCard } from "@/components/doephone/DoePhoneCommunicationCarouselCard";
 import { DOEPHONE_COMMUNICATION_SLIDES } from "@/lib/doephone/communication-carousel";
-import {
-  DOEPHONE_SECTION_CAROUSEL_HEIGHT,
-  DOEPHONE_SECTION_CAROUSEL_INSET_X,
-} from "@/lib/doephone/section-styles";
+import { DOEPHONE_SECTION_CAROUSEL_INSET_X } from "@/lib/doephone/section-styles";
 import { protoCommunicationGradient } from "@/lib/proto/proto-communication-gradients";
 
 /** /proto — six feature slides stacked vertically, one section each (no carousel or menu). */
@@ -19,7 +16,7 @@ export function ProtoCommunicationStack() {
           aria-label={slide.menuLabel}
         >
           <div className={`${DOEPHONE_SECTION_CAROUSEL_INSET_X} proto-feature-section__inner`}>
-            <div className={`w-full ${DOEPHONE_SECTION_CAROUSEL_HEIGHT}`}>
+            <div className="proto-feature-section__card w-full">
               <DoePhoneCommunicationCarouselCard
                 slide={slide}
                 isActive
