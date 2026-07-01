@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 
-import { PROTO_FONT_CLASS, PROTO_FONT_VARIABLE } from "@/lib/proto/proto-font";
+import { PROTO_FONT_CLASS, PROTO_FONT_VARIABLE, PROTO_NAV_LOGO_FONT_VARIABLE } from "@/lib/proto/proto-font";
 import { protoPageBootstrapScript } from "@/lib/proto/proto-layout";
 
 import "./proto.css";
@@ -29,7 +29,7 @@ export default function ProtoLayout({
   return (
     <>
       <script dangerouslySetInnerHTML={{ __html: protoBootstrap }} />
-      <div className={`${PROTO_FONT_VARIABLE} ${PROTO_FONT_CLASS}`}>{children}</div>
+      <div className={`${PROTO_FONT_VARIABLE} ${PROTO_NAV_LOGO_FONT_VARIABLE} ${PROTO_FONT_CLASS}`}>{children}</div>
     </>
   );
 }

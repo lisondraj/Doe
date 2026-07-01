@@ -3,7 +3,7 @@
 import { DoePhoneCommunicationCarouselCard } from "@/components/doephone/DoePhoneCommunicationCarouselCard";
 import { DOEPHONE_COMMUNICATION_SLIDES } from "@/lib/doephone/communication-carousel";
 import { DOEPHONE_SECTION_CAROUSEL_INSET_X } from "@/lib/doephone/section-styles";
-import { protoCommunicationGradient } from "@/lib/proto/proto-communication-gradients";
+import { protoCommunicationGradient, protoCommunicationGrid } from "@/lib/proto/proto-communication-gradients";
 
 /** /proto — six feature slides stacked vertically, one section each (no carousel or menu). */
 export function ProtoCommunicationStack() {
@@ -22,6 +22,7 @@ export function ProtoCommunicationStack() {
                 isActive
                 layout="phone"
                 gradientOverride={protoCommunicationGradient(slide.id)}
+                gridOverride={protoCommunicationGrid(slide.id)}
               />
             </div>
           </div>

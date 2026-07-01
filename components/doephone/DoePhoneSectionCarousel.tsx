@@ -6,7 +6,7 @@ import {
   DOEPHONE_COMMUNICATION_SLIDE_COUNT,
   type DoePhoneCommunicationSlide,
 } from "@/lib/doephone/communication-carousel";
-import { protoCommunicationGradient } from "@/lib/proto/proto-communication-gradients";
+import { protoCommunicationGradient, protoCommunicationGrid } from "@/lib/proto/proto-communication-gradients";
 import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from "react";
 
 type MenuInject = { scrollIndex: number; slideIndex: number };
@@ -257,6 +257,7 @@ export function DoePhoneSectionCarousel({
               isActive={isActive}
               layout="phone"
               gradientOverride={variant === "proto" ? protoCommunicationGradient(slide.id) : undefined}
+              gridOverride={variant === "proto" ? protoCommunicationGrid(slide.id) : undefined}
             />
           </div>
         );

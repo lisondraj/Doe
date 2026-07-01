@@ -23,8 +23,8 @@ export const PROTO_HUMIRA_COLORS = {
   wheat: PROTO_RECEPTION_PALETTE.wheat,
 } as const;
 
-/** Humira + TELUS — 8 spaced stops (cool → warm). */
-const PROTO_HUMIRA_GRADIENT_STOPS = [
+/** Humira billing — vertical band, full-height stop spacing (cool top → warm bottom). */
+const PROTO_HUMIRA_VERTICAL_STOPS = [
   `${PROTO_HUMIRA_COLORS.deep} 0%`,
   `${PROTO_HUMIRA_COLORS.bridgeDeep} 15%`,
   `${PROTO_HUMIRA_COLORS.blue} 32%`,
@@ -32,6 +32,18 @@ const PROTO_HUMIRA_GRADIENT_STOPS = [
   `${PROTO_HUMIRA_COLORS.copper} 62%`,
   `${PROTO_HUMIRA_COLORS.amber} 76%`,
   `${PROTO_HUMIRA_COLORS.gold} 88%`,
+  `${PROTO_HUMIRA_COLORS.wheat} 100%`,
+].join(", ");
+
+/** TELUS EMR — same Humira palette, compressed for shorter horizontal band (cool left → warm right). */
+const PROTO_HUMIRA_HORIZONTAL_STOPS = [
+  `${PROTO_HUMIRA_COLORS.deep} 0%`,
+  `${PROTO_HUMIRA_COLORS.bridgeDeep} 6%`,
+  `${PROTO_HUMIRA_COLORS.blue} 18%`,
+  `${PROTO_HUMIRA_COLORS.bridgeBlue} 36%`,
+  `${PROTO_HUMIRA_COLORS.copper} 52%`,
+  `${PROTO_HUMIRA_COLORS.amber} 66%`,
+  `${PROTO_HUMIRA_COLORS.gold} 82%`,
   `${PROTO_HUMIRA_COLORS.wheat} 100%`,
 ].join(", ");
 
@@ -52,15 +64,27 @@ export const PROTO_COMMUNICATION_GRADIENTS = {
   "front-desk": `radial-gradient(ellipse 100% 88% at 22% 18%, ${PROTO_RECEPTION_PALETTE.gold} 0%, ${PROTO_RECEPTION_PALETTE.copper} 45%, ${PROTO_RECEPTION_PALETTE.blue} 72%, ${PROTO_RECEPTION_PALETTE.deep} 100%)`,
   inbox: `linear-gradient(135deg, ${PROTO_RECEPTION_PALETTE.deep} 0%, ${PROTO_RECEPTION_PALETTE.blue} 24%, ${PROTO_RECEPTION_PALETTE.copper} 58%, ${PROTO_RECEPTION_PALETTE.gold} 100%)`,
   ambient: `radial-gradient(circle at center, ${PROTO_AMBIENT_RADIAL_STOPS})`,
-  billing: `linear-gradient(180deg, ${PROTO_HUMIRA_GRADIENT_STOPS})`,
-  integrate: `linear-gradient(90deg, ${PROTO_HUMIRA_GRADIENT_STOPS})`,
+  billing: `linear-gradient(180deg, ${PROTO_HUMIRA_VERTICAL_STOPS})`,
+  integrate: `linear-gradient(90deg, ${PROTO_HUMIRA_HORIZONTAL_STOPS})`,
 } as const satisfies Record<string, string>;
 
 export type ProtoCommunicationSlideId = keyof typeof PROTO_COMMUNICATION_GRADIENTS;
 
+/** Integrate matches Humira hex overlay — same as billing screenshot. */
+export const PROTO_COMMUNICATION_GRIDS: Partial<Record<ProtoCommunicationSlideId, "hex">> = {
+  integrate: "hex",
+};
+
 export function protoCommunicationGradient(slideId: string): string | undefined {
   if (slideId in PROTO_COMMUNICATION_GRADIENTS) {
     return PROTO_COMMUNICATION_GRADIENTS[slideId as ProtoCommunicationSlideId];
+  }
+  return undefined;
+}
+
+export function protoCommunicationGrid(slideId: string) {
+  if (slideId in PROTO_COMMUNICATION_GRIDS) {
+    return PROTO_COMMUNICATION_GRIDS[slideId as ProtoCommunicationSlideId];
   }
   return undefined;
 }

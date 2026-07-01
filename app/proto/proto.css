@@ -4,7 +4,7 @@
 
 /* Proto typography — Plus Jakarta Sans overrides for shared components with baked-in fonts. */
 html[data-proto-page] nav.doephone-site-nav,
-html[data-proto-page] nav.doephone-site-nav a,
+html[data-proto-page] nav.doephone-site-nav a:not(.proto-nav-logo),
 html[data-proto-page] nav.doephone-site-nav button,
 html[data-proto-page] nav.doephone-site-nav [role="menuitem"],
 html[data-proto-page] nav.doephone-site-nav p,
@@ -35,23 +35,27 @@ html[data-proto-page] .proto-section-band {
 html[data-proto-page] .proto-feature-section {
   display: flex !important;
   flex-direction: column !important;
+  box-sizing: border-box !important;
   min-height: var(--app-vh, 100lvh) !important;
   height: var(--app-vh, 100lvh) !important;
-  padding-top: max(
-    1.45rem,
-    calc(env(safe-area-inset-top, 0px) + calc(var(--app-vh, 100lvh) * 0.042))
-  ) !important;
-  padding-bottom: max(
-    1.45rem,
-    calc(env(safe-area-inset-bottom, 0px) + calc(var(--app-vh, 100lvh) * 0.042))
-  ) !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 html[data-proto-page] .proto-feature-section__inner {
   display: flex !important;
   flex: 1 1 auto !important;
   flex-direction: column !important;
+  box-sizing: border-box !important;
   min-height: 0 !important;
+  padding-top: max(
+    2.35rem,
+    calc(env(safe-area-inset-top, 0px) + calc(var(--app-vh, 100lvh) * 0.0525))
+  ) !important;
+  padding-bottom: max(
+    2.35rem,
+    calc(env(safe-area-inset-bottom, 0px) + calc(var(--app-vh, 100lvh) * 0.0525))
+  ) !important;
   padding-left: max(
     2.35rem,
     calc(env(safe-area-inset-left, 0px) + calc(var(--app-vw, 100vw) * 0.0525))
@@ -69,7 +73,7 @@ html[data-proto-page] .proto-feature-section .doephone-section-carousel {
   flex-direction: column !important;
   min-height: 0 !important;
   height: auto !important;
-  max-height: none !important;
+  max-height: 100% !important;
 }
 
 html[data-proto-page] .proto-feature-section__card > * {
@@ -109,13 +113,14 @@ html[data-proto-page] nav.doephone-site-nav > div > div > .absolute[class*="top-
     1.65rem,
     calc(env(safe-area-inset-left, 0px) + calc(var(--app-vw, 100vw) * 0.038))
   ) !important;
+  font-family: var(--font-outfit), "Outfit", ui-sans-serif, system-ui, sans-serif !important;
   font-size: clamp(
     2.45rem,
     calc(1.35rem + calc(var(--app-vw, 100vw) * 0.048)),
     4.2rem
   ) !important;
   font-weight: 400 !important;
-  letter-spacing: -0.03em !important;
+  letter-spacing: -0.04em !important;
   line-height: 1 !important;
 }
 
