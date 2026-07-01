@@ -221,6 +221,7 @@ export function DoePhoneCommunicationCarouselCard({
   layout = "phone",
   className = "",
   badgeCrop700,
+  gradientOverride,
 }: {
   slide: DoePhoneCommunicationSlide;
   isActive?: boolean;
@@ -228,6 +229,8 @@ export function DoePhoneCommunicationCarouselCard({
   className?: string;
   /** Extra inset when the slide canvas is cover-cropped (desktop sliding boxes). */
   badgeCrop700?: { x: number; y: number };
+  /** Replaces only the backdrop gradient layer. */
+  gradientOverride?: string;
 }) {
   const [panelPhase, setPanelPhase] = useState<PanelPhase>("idle");
   const closeTimerRef = useRef<number | undefined>(undefined);
@@ -272,6 +275,7 @@ export function DoePhoneCommunicationCarouselCard({
         backdrop={slide.backdrop}
         embedded
         className={DOEPHONE_SECTION_CAROUSEL_RADIUS}
+        gradientOverride={gradientOverride}
       />
       {expandable && panelOpen ? <CarouselSlideFrostOverlay closing={isClosing} /> : null}
       <CarouselMenuOverlay

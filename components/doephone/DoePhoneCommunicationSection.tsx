@@ -19,7 +19,7 @@ import { doephoneSectionRevealStyleVars } from "@/lib/doephone/section-reveal-ti
 import { useState, type CSSProperties } from "react";
 
 /** Second beige section — carousel slide and 3×2 feature menu. */
-export function DoePhoneCommunicationSection() {
+export function DoePhoneCommunicationSection({ variant = "home" }: { variant?: "home" | "proto" }) {
   const [activeSlide, setActiveSlide] = useState(0);
   const { scrollRef, loopScrollIndices, menuInject, selectSlide, handleScroll } = useDoePhoneSectionCarousel(
     activeSlide,
@@ -43,6 +43,7 @@ export function DoePhoneCommunicationSection() {
             menuInject={menuInject}
             activeIndex={activeSlide}
             onScroll={handleScroll}
+            variant={variant}
           />
         </div>
 

@@ -98,6 +98,7 @@ function NavChromeStrip({
   mobileNavChrome,
   navActionLinksEnabled = true,
   brandName = "Doe",
+  brandFontClass,
 }: {
   navTextColor: string;
   mobileNavOpen: boolean;
@@ -113,6 +114,7 @@ function NavChromeStrip({
   mobileNavChrome?: MobileNavActionChrome;
   navActionLinksEnabled?: boolean;
   brandName?: string;
+  brandFontClass?: string;
 }) {
   const pageInsetX = DOEPHONE_SECTION_CAROUSEL_INSET_X;
   const pageDoeLeft =
@@ -142,7 +144,7 @@ function NavChromeStrip({
     : pinchSafe
       ? "left-11 iphone-page:left-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))]"
       : "left-8 iphone-page:left-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))]";
-  const doeClassName = `absolute top-1/2 -translate-y-1/2 ${doeLeft} font-normal z-[1] min-w-0 whitespace-nowrap ${lora.className} text-4xl iphone-page:text-[clamp(1.85rem,1.05rem+3.55vmin,3.9rem)] iphone-page:leading-none`;
+  const doeClassName = `absolute top-1/2 -translate-y-1/2 ${doeLeft} font-normal z-[1] min-w-0 whitespace-nowrap ${brandFontClass ?? lora.className} text-4xl iphone-page:text-[clamp(1.85rem,1.05rem+3.55vmin,3.9rem)] iphone-page:leading-none`;
   const navRightInset = pinchSafe
     ? "right-11 iphone-page:right-[max(1.65rem,env(safe-area-inset-right,0px)+3.8vmin)]"
     : "right-8 iphone-page:right-[max(1.25rem,calc(env(safe-area-inset-right,0px)+2.85vmin))]";
@@ -289,6 +291,7 @@ export default function DoeIphoneSiteNav({
   mobileNavChrome,
   navActionLinksEnabled = true,
   brandName = "Doe",
+  brandFontClass,
   navChromeTheme = "light",
 }: {
   pinchSafe?: boolean;
@@ -303,6 +306,7 @@ export default function DoeIphoneSiteNav({
   mobileNavChrome?: MobileNavActionChrome;
   navActionLinksEnabled?: boolean;
   brandName?: string;
+  brandFontClass?: string;
   navChromeTheme?: "light" | "dark";
 }) {
   const resolvedNavSheetItems: readonly NavSheetItem[] =
@@ -692,6 +696,7 @@ export default function DoeIphoneSiteNav({
           mobileNavChrome={mobileNavChrome}
           navActionLinksEnabled={navActionLinksEnabled}
           brandName={brandName}
+          brandFontClass={brandFontClass}
         />
       </header>,
       document.body
@@ -738,6 +743,7 @@ export default function DoeIphoneSiteNav({
             mobileNavChrome={mobileNavChrome}
             navActionLinksEnabled={navActionLinksEnabled}
             brandName={brandName}
+            brandFontClass={brandFontClass}
           />
         </div>
       </nav>

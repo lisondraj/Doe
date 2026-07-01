@@ -12,6 +12,7 @@ import {
   DOEPHONE_HERO_COPY_INSET,
 } from "@/lib/doephone/section-styles";
 import { CARE_COORDINATION_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
+import { PROTO_HERO_BACKDROP, PROTO_HERO_GRADIENT_BLENDED } from "@/lib/proto/proto-hero-backdrop";
 import { useEffect, useState, type CSSProperties } from "react";
 
 /** Hero — slightly below full viewport so Safari bottom bar does not clip; section 2 stays full height. */
@@ -24,7 +25,7 @@ export function DoePhoneHeroSection({
   variant = "mobile",
 }: {
   /** Desktop home uses full viewport height and wider copy gutters. */
-  variant?: "mobile" | "desktop";
+  variant?: "mobile" | "desktop" | "proto";
 }) {
   const [introZoom, setIntroZoom] = useState(DOEPHONE_HERO_INTRO_GRADIENT_START);
   const [introDone, setIntroDone] = useState(false);
@@ -61,6 +62,8 @@ export function DoePhoneHeroSection({
 
   const gradientZoom = introDone ? 1 : introZoom;
   const isDesktop = variant === "desktop";
+  const isProto = variant === "proto";
+  const heroBackdrop = isProto ? PROTO_HERO_BACKDROP : CARE_COORDINATION_BACKDROP;
   const heroHeight = isDesktop ? DOEPHONE_HERO_DESKTOP_HEIGHT : DOEPHONE_HERO_HEIGHT;
   const copyInset = isDesktop ? DOEPHONE_DESKTOP_PAGE_INSET_LEFT : DOEPHONE_HERO_COPY_INSET;
   const copyBottom = isDesktop
@@ -69,7 +72,9 @@ export function DoePhoneHeroSection({
 
   return (
     <section
-      className="doephone-hero-section relative w-full overflow-hidden bg-[#D2774C]"
+      className={`doephone-hero-section relative w-full overflow-hidden ${
+        isProto ? "bg-[#121819]" : "bg-[#D2774C]"
+      }`}
       style={
         {
           minHeight: heroHeight,
@@ -80,17 +85,21 @@ export function DoePhoneHeroSection({
       aria-label="Hero"
     >
       <WorkflowCarouselDesignBackdrop
-        backdrop={CARE_COORDINATION_BACKDROP}
+        backdrop={heroBackdrop}
         embedded
         introOnLoad
         gradientScale={gradientZoom}
+        gradientOverride={isProto ? PROTO_HERO_GRADIENT_BLENDED : undefined}
       />
 
       <div
         className={`absolute left-0 right-0 z-[3] ${copyInset} ${copyBottom}`}
       >
         <div className="doephone-hero-copy pointer-events-none w-full min-w-0">
-          <DoePhoneHeroHeadline />
+          <DoePhoneHeroHeadline
+            line1={isProto ? "Recruiting for the" : undefined}
+            line2={isProto ? "intelligence era." : undefined}
+          />
         </div>
       </div>
     </section>

@@ -6,6 +6,7 @@ import {
   DOEPHONE_COMMUNICATION_SLIDE_COUNT,
   type DoePhoneCommunicationSlide,
 } from "@/lib/doephone/communication-carousel";
+import { PROTO_HERO_BACKDROP } from "@/lib/proto/proto-hero-backdrop";
 import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from "react";
 
 type MenuInject = { scrollIndex: number; slideIndex: number };
@@ -220,12 +221,14 @@ export function DoePhoneSectionCarousel({
   loopScrollIndices,
   menuInject,
   onScroll,
+  variant = "home",
 }: {
   activeIndex: number;
   scrollRef: RefObject<HTMLDivElement>;
   loopScrollIndices: number[];
   menuInject: MenuInject | null;
   onScroll: () => void;
+  variant?: "home" | "proto";
 }) {
   return (
     <div
@@ -249,7 +252,16 @@ export function DoePhoneSectionCarousel({
             role="tabpanel"
             aria-hidden={!isActive}
           >
-            <DoePhoneCommunicationCarouselCard slide={slide} isActive={isActive} layout="phone" />
+            <DoePhoneCommunicationCarouselCard
+              slide={slide}
+              isActive={isActive}
+              layout="phone"
+              gradientOverride={
+                variant === "proto" && slide.id === "agents"
+                  ? PROTO_HERO_BACKDROP.gradient
+                  : undefined
+              }
+            />
           </div>
         );
       })}

@@ -55,7 +55,13 @@ function fitHeadlineFontSize(headline: HTMLElement, container: HTMLElement) {
   }
 }
 
-export function DoePhoneHeroHeadline() {
+export function DoePhoneHeroHeadline({
+  line1 = "Meet your new",
+  line2 = "clinic assistant..",
+}: {
+  line1?: string;
+  line2?: string;
+}) {
   const headlineRef = useRef<HTMLHeadingElement>(null);
 
   useLayoutEffect(() => {
@@ -95,8 +101,8 @@ export function DoePhoneHeroHeadline() {
       ref={headlineRef}
       className={`doephone-hero-headline flex w-full min-w-0 max-w-full flex-col items-start ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] text-white ${suisseIntl.className}`}
     >
-      <span className="doephone-hero-headline-line block">Meet your new</span>
-      <span className="doephone-hero-headline-line doephone-hero-headline-line--second block">clinic assistant..</span>
+      <span className="doephone-hero-headline-line block">{line1}</span>
+      <span className="doephone-hero-headline-line doephone-hero-headline-line--second block">{line2}</span>
     </h1>
   );
 }

@@ -22,6 +22,7 @@ import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-v
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 import { useDesignersStaticNav } from "@/lib/designers/use-designers-static-nav";
 import { useProtoViewportMetrics } from "@/lib/proto/use-proto-viewport-metrics";
+import { suisseIntl } from "@/lib/home/fonts";
 
 export function DoePhoneMobileView({ variant = "home" }: { variant?: "home" | "proto" }) {
   const isProto = variant === "proto";
@@ -74,13 +75,14 @@ export function DoePhoneMobileView({ variant = "home" }: { variant?: "home" | "p
         ctaLayout="main-home"
         showJoinCta={false}
         brandName={isProto ? "Proto" : "Doe"}
+        brandFontClass={isProto ? suisseIntl.className : undefined}
         homeHref={isProto ? "/proto" : "/"}
         navChromeTheme={isProto ? "dark" : "light"}
         logoLink={isProto ? true : !staticNav}
         navActionLinksEnabled={isProto ? true : !staticNav}
       />
 
-      <DoePhoneHeroSection />
+      <DoePhoneHeroSection variant={isProto ? "proto" : "mobile"} />
 
       <section
         className={
@@ -90,7 +92,7 @@ export function DoePhoneMobileView({ variant = "home" }: { variant?: "home" | "p
         }
         aria-label="Labs"
       >
-        <DoePhoneCommunicationSection />
+        <DoePhoneCommunicationSection variant={isProto ? "proto" : "home"} />
       </section>
 
       <DoePhoneCommunicationIntelligenceSection />
