@@ -1,0 +1,59 @@
+/*
+ * /proto — dark chrome; gradient colors unchanged.
+ */
+
+html[data-proto-page],
+html[data-proto-page]:has(.doephone-mobile-root) {
+  background-color: #121819 !important;
+}
+
+html[data-proto-page] body,
+html[data-proto-page]:has(.doephone-mobile-root) body {
+  background-color: #121819 !important;
+}
+
+html[data-proto-page] .doephone-mobile-root {
+  background-color: #121819;
+}
+
+html[data-proto-page] .proto-section-band {
+  background-color: #151c1f !important;
+}
+
+/* Section 2 (carousel band) — explicit top/bottom breathing room matching home section insets. */
+html[data-proto-page] .doephone-mobile-root > section[aria-label="Labs"] {
+  padding-top: max(
+    1.95rem,
+    calc(env(safe-area-inset-top, 0px) + calc(var(--app-vh, 100lvh) * 0.0725))
+  ) !important;
+  padding-bottom: max(
+    1.95rem,
+    calc(env(safe-area-inset-bottom, 0px) + calc(var(--app-vh, 100lvh) * 0.0725))
+  ) !important;
+}
+
+/* Build band — avoid fixed height clipping bottom prompt padding. */
+html[data-proto-page] .doephone-mobile-root > section[aria-label="Build"] {
+  height: auto !important;
+  overflow: visible !important;
+}
+
+html[data-proto-page] .doephone-mobile-root [role="tablist"] button:not([aria-selected="true"]) {
+  background-color: rgba(232, 237, 239, 0.08) !important;
+  color: rgba(232, 237, 239, 0.42) !important;
+}
+
+html[data-proto-page] .doephone-mobile-root [role="tablist"] button[aria-selected="true"] {
+  background-color: #e3e1db !important;
+  color: #1e343a !important;
+}
+
+html[data-proto-page] .doephone-section-reveal {
+  opacity: 1 !important;
+  filter: none !important;
+  transform: none !important;
+}
+
+html[data-proto-page] .doephone-section-reveal--in {
+  animation: none !important;
+}

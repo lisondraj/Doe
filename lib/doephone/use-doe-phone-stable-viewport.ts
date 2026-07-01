@@ -53,8 +53,10 @@ function clearStoredLock() {
  * Height is committed once per session (restored from sessionStorage) and only
  * resets on orientation change.
  */
-export function useDoePhoneStableViewport() {
+export function useDoePhoneStableViewport(enabled = true) {
   useLayoutEffect(() => {
+    if (!enabled) return;
+
     const stable: ViewportLock = { width: 0, height: 0 };
     let scrollActive = false;
     let scrollQuietTimer: number | null = null;
@@ -191,5 +193,5 @@ export function useDoePhoneStableViewport() {
       window.removeEventListener("focus", reapplyStable);
       if (scrollQuietTimer !== null) window.clearTimeout(scrollQuietTimer);
     };
-  }, []);
+  }, [enabled]);
 }

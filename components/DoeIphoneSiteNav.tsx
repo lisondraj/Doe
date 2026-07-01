@@ -97,6 +97,7 @@ function NavChromeStrip({
   ctaLayout = "single",
   mobileNavChrome,
   navActionLinksEnabled = true,
+  brandName = "Doe",
 }: {
   navTextColor: string;
   mobileNavOpen: boolean;
@@ -111,6 +112,7 @@ function NavChromeStrip({
   ctaLayout?: SiteNavCtaLayout;
   mobileNavChrome?: MobileNavActionChrome;
   navActionLinksEnabled?: boolean;
+  brandName?: string;
 }) {
   const pageInsetX = DOEPHONE_SECTION_CAROUSEL_INSET_X;
   const pageDoeLeft =
@@ -156,11 +158,11 @@ function NavChromeStrip({
     >
       {logoLink ? (
         <Link href={homeHref} className={`${doeClassName} transition-opacity duration-500 ease-out opacity-100`} style={{ color: navTextColor }}>
-          Doe
+          {brandName}
         </Link>
       ) : (
         <span className={doeClassName} style={{ color: navTextColor }}>
-          Doe
+          {brandName}
         </span>
       )}
 
@@ -286,6 +288,8 @@ export default function DoeIphoneSiteNav({
   navSheetItems,
   mobileNavChrome,
   navActionLinksEnabled = true,
+  brandName = "Doe",
+  navChromeTheme = "light",
 }: {
   pinchSafe?: boolean;
   homeHref?: string;
@@ -298,6 +302,8 @@ export default function DoeIphoneSiteNav({
   navSheetItems?: readonly NavSheetItem[];
   mobileNavChrome?: MobileNavActionChrome;
   navActionLinksEnabled?: boolean;
+  brandName?: string;
+  navChromeTheme?: "light" | "dark";
 }) {
   const resolvedNavSheetItems: readonly NavSheetItem[] =
     navSheetItems ??
@@ -502,7 +508,9 @@ export default function DoeIphoneSiteNav({
     return () => window.clearInterval(id);
   }, [mobileNavOpen]);
 
-  const navTextColor = "#000";
+  const navTextColor = navChromeTheme === "dark" ? "#E8EDEF" : "#000";
+  const navBackground = navChromeTheme === "dark" ? "#121819" : "#F7F6F3";
+  const navBorderColor = navChromeTheme === "dark" ? "#2A3538" : "#E6E6E6";
   const navSheetTransition = `opacity ${NAV_SHEET_MS}ms ${NAV_SHEET_EASE}, transform ${NAV_SHEET_MS}ms ${NAV_SHEET_EASE}`;
   const navFooterCarouselZoom = pinchSafe ? 1 : mobileNavFooterZoom;
 
@@ -661,10 +669,12 @@ export default function DoeIphoneSiteNav({
     navSheetLive &&
     createPortal(
       <header
-        className="fixed top-0 left-0 right-0 z-[200] iphone-page:pt-[env(safe-area-inset-top,0px)] bg-[#F7F6F3] border-b border-[#E6E6E6]"
+        className="fixed top-0 left-0 right-0 z-[200] iphone-page:pt-[env(safe-area-inset-top,0px)] border-b"
         style={{
           opacity: navSheetVisualOpen ? 1 : 0.98,
           transition: navSheetTransition,
+          backgroundColor: navBackground,
+          borderColor: navBorderColor,
         }}
       >
         <NavChromeStrip
@@ -681,6 +691,7 @@ export default function DoeIphoneSiteNav({
           ctaLayout={ctaLayout}
           mobileNavChrome={mobileNavChrome}
           navActionLinksEnabled={navActionLinksEnabled}
+          brandName={brandName}
         />
       </header>,
       document.body
@@ -692,10 +703,11 @@ export default function DoeIphoneSiteNav({
         ref={navBarRowRef}
         className={`${pinchSafe ? "doephone-site-nav " : ""}fixed top-0 left-0 right-0 iphone-page:pt-[env(safe-area-inset-top,0px)] ${
           navSheetLive ? "z-[200]" : "z-50"
-        } ${pinchSafe ? "shadow-[0_-120px_0_120px_#F7F6F3] translate-z-0" : ""}`}
+        } ${pinchSafe ? "translate-z-0" : ""}`}
         style={{
-          backgroundColor: "#F7F6F3",
-          borderBottom: "1px solid #E6E6E6",
+          backgroundColor: navBackground,
+          borderBottom: `1px solid ${navBorderColor}`,
+          boxShadow: pinchSafe ? `0 -120px 0 120px ${navBackground}` : undefined,
           transition: "border-bottom 100ms ease-out, border-color 100ms ease-out, background-color 180ms ease-out",
         }}
       >
@@ -725,6 +737,7 @@ export default function DoeIphoneSiteNav({
             ctaLayout={ctaLayout}
             mobileNavChrome={mobileNavChrome}
             navActionLinksEnabled={navActionLinksEnabled}
+            brandName={brandName}
           />
         </div>
       </nav>

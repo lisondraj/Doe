@@ -1,5 +1,7 @@
 "use client";
 
+import { useLayoutEffect } from "react";
+
 import DoeIphoneSiteNav from "@/components/DoeIphoneSiteNav";
 import { DoePhoneClosingSection } from "@/components/doephone/DoePhoneClosingSection";
 import { DoePhoneCommunicationIntelligenceSection } from "@/components/doephone/DoePhoneCommunicationIntelligenceSection";
@@ -7,24 +9,62 @@ import { DoePhoneIntegrationsSection } from "@/components/doephone/DoePhoneInteg
 import { DoePhoneCommunicationSection } from "@/components/doephone/DoePhoneCommunicationSection";
 import { DoePhoneCustomizationSection } from "@/components/doephone/DoePhoneCustomizationSection";
 import { DoePhoneHeroSection } from "@/components/doephone/DoePhoneHeroSection";
+import { ProtoFooter } from "@/components/proto/ProtoFooter";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
 import {
   DOEPHONE_BEIGE_SECTION,
   DOEPHONE_MAIN_PAGE_BEIGE_SECTION,
+  DOEPHONE_MAIN_PAGE_SECTION_MIN_H,
   DOEPHONE_MAIN_PAGE_VIEWPORT_SECTION,
+  DOEPHONE_SECTION_TITLE_PB,
 } from "@/lib/doephone/section-styles";
 import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-viewport";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 import { useDesignersStaticNav } from "@/lib/designers/use-designers-static-nav";
+import { useProtoViewportMetrics } from "@/lib/proto/use-proto-viewport-metrics";
 
-export function DoePhoneMobileView() {
+export function DoePhoneMobileView({ variant = "home" }: { variant?: "home" | "proto" }) {
+  const isProto = variant === "proto";
+
   useDoePhoneLayoutViewport();
-  useDoePhoneStableViewport();
+  useDoePhoneStableViewport(!isProto);
+  useProtoViewportMetrics(isProto);
   const staticNav = useDesignersStaticNav();
+
+  useLayoutEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+
+    html.setAttribute("data-doeforvc-always-phone", "true");
+    html.removeAttribute("data-layout");
+    html.setAttribute("data-doephone-pinching", "true");
+    body.classList.add("doephone-route");
+
+    if (isProto) {
+      html.setAttribute("data-proto-page", "true");
+      body.classList.add("proto-route");
+      try {
+        sessionStorage.removeItem(`doephone-app-viewport-lock:${location.hostname}`);
+      } catch {
+        /* ignore */
+      }
+    }
+
+    return () => {
+      html.removeAttribute("data-doephone-pinching");
+      body.classList.remove("doephone-route");
+      if (isProto) {
+        html.removeAttribute("data-proto-page");
+        body.classList.remove("proto-route");
+      }
+    };
+  }, [isProto]);
 
   return (
     <div
-      className="doephone-mobile-root relative z-0 min-h-[var(--app-vh,100lvh)] overflow-x-hidden bg-[#F7F6F3]"
+      className={`doephone-mobile-root relative z-0 min-h-[var(--app-vh,100lvh)] overflow-x-hidden ${
+        isProto ? "bg-[#121819]" : "bg-[#F7F6F3]"
+      }`}
       suppressHydrationWarning
       data-doeforvc-view="iphone"
     >
@@ -33,29 +73,45 @@ export function DoePhoneMobileView() {
         showMenu={false}
         ctaLayout="main-home"
         showJoinCta={false}
-        logoLink={!staticNav}
-        navActionLinksEnabled={!staticNav}
+        brandName={isProto ? "Proto" : "Doe"}
+        homeHref={isProto ? "/proto" : "/"}
+        navChromeTheme={isProto ? "dark" : "light"}
+        logoLink={isProto ? true : !staticNav}
+        navActionLinksEnabled={isProto ? true : !staticNav}
       />
 
       <DoePhoneHeroSection />
 
-      <section className={DOEPHONE_MAIN_PAGE_BEIGE_SECTION} aria-label="Labs">
+      <section
+        className={
+          isProto
+            ? `${DOEPHONE_MAIN_PAGE_BEIGE_SECTION} proto-section-band ${DOEPHONE_SECTION_TITLE_PB}`
+            : DOEPHONE_MAIN_PAGE_BEIGE_SECTION
+        }
+        aria-label="Labs"
+      >
         <DoePhoneCommunicationSection />
       </section>
 
       <DoePhoneCommunicationIntelligenceSection />
 
-      <section className={DOEPHONE_MAIN_PAGE_BEIGE_SECTION} aria-label="Customization">
-        <DoePhoneCustomizationSection />
-      </section>
+      {isProto ? (
+        <ProtoFooter />
+      ) : (
+        <>
+          <section className={DOEPHONE_MAIN_PAGE_BEIGE_SECTION} aria-label="Customization">
+            <DoePhoneCustomizationSection />
+          </section>
 
-      <DoePhoneIntegrationsSection sectionClassName={DOEPHONE_MAIN_PAGE_VIEWPORT_SECTION} />
+          <DoePhoneIntegrationsSection sectionClassName={DOEPHONE_MAIN_PAGE_VIEWPORT_SECTION} />
 
-      <section className={DOEPHONE_BEIGE_SECTION} aria-label="Closing">
-        <DoePhoneClosingSection />
-      </section>
+          <section className={DOEPHONE_BEIGE_SECTION} aria-label="Closing">
+            <DoePhoneClosingSection />
+          </section>
 
-      <HomeFooter />
+          <HomeFooter />
+        </>
+      )}
     </div>
   );
 }

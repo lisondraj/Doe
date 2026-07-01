@@ -83,7 +83,8 @@ html[data-doephone-pinching="true"] .doephone-mobile-root {
 
 /** /desktop — full desktop scroll; root layout uses wide-desktop:overflow-hidden on body */
 body.desktop-route,
-body.mainpage-route {
+body.mainpage-route,
+body.proto-route {
   overflow: auto;
 }
 
