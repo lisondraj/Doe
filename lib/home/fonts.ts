@@ -1,4 +1,4 @@
-import { DM_Sans, Inter, Lora } from "next/font/google";
+import { DM_Sans, Inter, Lora, Plus_Jakarta_Sans } from "next/font/google";
 import localFont from "next/font/local";
 
 export const lora = Lora({
@@ -24,6 +24,15 @@ export const dmSans = DM_Sans({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   display: "swap",
+  variable: "--font-dm-sans",
+});
+
+/** /proto — geometric grotesque with subtle character (not generic Inter/DM Sans). */
+export const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+  variable: "--font-plus-jakarta-sans",
 });
 
 /** Second-section workflow carousel — white in-card UI mocks only (not slide captions). */

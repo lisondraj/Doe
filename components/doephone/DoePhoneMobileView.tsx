@@ -22,7 +22,7 @@ import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-v
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 import { useDesignersStaticNav } from "@/lib/designers/use-designers-static-nav";
 import { useProtoViewportMetrics } from "@/lib/proto/use-proto-viewport-metrics";
-import { suisseIntl } from "@/lib/home/fonts";
+import { PROTO_FONT_CLASS } from "@/lib/proto/proto-font";
 
 export function DoePhoneMobileView({ variant = "home" }: { variant?: "home" | "proto" }) {
   const isProto = variant === "proto";
@@ -64,7 +64,7 @@ export function DoePhoneMobileView({ variant = "home" }: { variant?: "home" | "p
   return (
     <div
       className={`doephone-mobile-root relative z-0 min-h-[var(--app-vh,100lvh)] overflow-x-hidden ${
-        isProto ? "bg-[#121819]" : "bg-[#F7F6F3]"
+        isProto ? `bg-[#121819] ${PROTO_FONT_CLASS}` : "bg-[#F7F6F3]"
       }`}
       suppressHydrationWarning
       data-doeforvc-view="iphone"
@@ -75,7 +75,7 @@ export function DoePhoneMobileView({ variant = "home" }: { variant?: "home" | "p
         ctaLayout="main-home"
         showJoinCta={false}
         brandName={isProto ? "Proto" : "Doe"}
-        brandFontClass={isProto ? suisseIntl.className : undefined}
+        brandFontClass={isProto ? PROTO_FONT_CLASS : undefined}
         homeHref={isProto ? "/proto" : "/"}
         navChromeTheme={isProto ? "dark" : "light"}
         logoLink={isProto ? true : !staticNav}

@@ -58,9 +58,11 @@ function fitHeadlineFontSize(headline: HTMLElement, container: HTMLElement) {
 export function DoePhoneHeroHeadline({
   line1 = "Meet your new",
   line2 = "clinic assistant..",
+  fontClass,
 }: {
   line1?: string;
   line2?: string;
+  fontClass?: string;
 }) {
   const headlineRef = useRef<HTMLHeadingElement>(null);
 
@@ -99,7 +101,7 @@ export function DoePhoneHeroHeadline({
   return (
     <h1
       ref={headlineRef}
-      className={`doephone-hero-headline flex w-full min-w-0 max-w-full flex-col items-start ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] text-white ${suisseIntl.className}`}
+      className={`doephone-hero-headline flex w-full min-w-0 max-w-full flex-col items-start ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] text-white ${fontClass ?? suisseIntl.className}`}
     >
       <span className="doephone-hero-headline-line block">{line1}</span>
       <span className="doephone-hero-headline-line doephone-hero-headline-line--second block">{line2}</span>

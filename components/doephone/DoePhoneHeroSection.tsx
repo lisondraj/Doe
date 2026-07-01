@@ -12,7 +12,8 @@ import {
   DOEPHONE_HERO_COPY_INSET,
 } from "@/lib/doephone/section-styles";
 import { CARE_COORDINATION_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
-import { PROTO_HERO_BACKDROP, PROTO_HERO_GRADIENT_BLENDED } from "@/lib/proto/proto-hero-backdrop";
+import { PROTO_FONT_CLASS } from "@/lib/proto/proto-font";
+import { PROTO_HERO_BACKDROP } from "@/lib/proto/proto-hero-backdrop";
 import { useEffect, useState, type CSSProperties } from "react";
 
 /** Hero — slightly below full viewport so Safari bottom bar does not clip; section 2 stays full height. */
@@ -73,7 +74,7 @@ export function DoePhoneHeroSection({
   return (
     <section
       className={`doephone-hero-section relative w-full overflow-hidden ${
-        isProto ? "bg-[#121819]" : "bg-[#D2774C]"
+        isProto ? "bg-[#2A4558]" : "bg-[#D2774C]"
       }`}
       style={
         {
@@ -87,9 +88,8 @@ export function DoePhoneHeroSection({
       <WorkflowCarouselDesignBackdrop
         backdrop={heroBackdrop}
         embedded
-        introOnLoad
-        gradientScale={gradientZoom}
-        gradientOverride={isProto ? PROTO_HERO_GRADIENT_BLENDED : undefined}
+        introOnLoad={!isProto}
+        gradientScale={isProto ? 1 : gradientZoom}
       />
 
       <div
@@ -99,6 +99,7 @@ export function DoePhoneHeroSection({
           <DoePhoneHeroHeadline
             line1={isProto ? "Recruiting for the" : undefined}
             line2={isProto ? "intelligence era." : undefined}
+            fontClass={isProto ? PROTO_FONT_CLASS : undefined}
           />
         </div>
       </div>

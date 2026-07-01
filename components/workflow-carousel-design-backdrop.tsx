@@ -264,6 +264,7 @@ export function WorkflowCarouselDesignBackdrop({
   patternScale = 1,
   gradientOverride,
   gradientScale = 1,
+  gridOverride,
   grainBackgroundSize = "200px 200px",
   introOnLoad = false,
   surface = "orange",
@@ -276,6 +277,8 @@ export function WorkflowCarouselDesignBackdrop({
   patternScale?: number;
   /** Replaces only the gradient layer — grid + grain unchanged. */
   gradientOverride?: string;
+  /** Replaces only the grid overlay kind. */
+  gridOverride?: WorkflowCarouselGridKind;
   /** Scales only the gradient layer (>1 pushes outer stops past edges). */
   gradientScale?: number;
   /** Grain tile size — smaller values yield finer, sharper noise. */
@@ -329,7 +332,7 @@ export function WorkflowCarouselDesignBackdrop({
         />
       ) : null}
       <GridOverlay
-        kind={backdrop.grid}
+        kind={gridOverride ?? backdrop.grid}
         patternScale={patternScale}
         polarCenterY={backdrop.polarCenterY}
         introOnLoad={introOnLoad}

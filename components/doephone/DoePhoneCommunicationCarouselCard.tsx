@@ -3,6 +3,7 @@
 import { DoePhoneCommunicationSlideVisual } from "@/components/doephone/DoePhoneCommunicationSlideVisual";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import type { DoePhoneCommunicationSlide } from "@/lib/doephone/communication-carousel";
+import type { WorkflowCarouselGridKind } from "@/lib/workflow-carousel-design-backdrops";
 import { CAROUSEL_MENU_UI } from "@/lib/doephone/carousel-menu-visual-styles";
 import {
   DOEPHONE_SECTION_CAROUSEL_CLIP_STYLE,
@@ -222,6 +223,7 @@ export function DoePhoneCommunicationCarouselCard({
   className = "",
   badgeCrop700,
   gradientOverride,
+  gridOverride,
 }: {
   slide: DoePhoneCommunicationSlide;
   isActive?: boolean;
@@ -231,6 +233,8 @@ export function DoePhoneCommunicationCarouselCard({
   badgeCrop700?: { x: number; y: number };
   /** Replaces only the backdrop gradient layer. */
   gradientOverride?: string;
+  /** Replaces only the backdrop grid overlay. */
+  gridOverride?: WorkflowCarouselGridKind;
 }) {
   const [panelPhase, setPanelPhase] = useState<PanelPhase>("idle");
   const closeTimerRef = useRef<number | undefined>(undefined);
@@ -276,6 +280,7 @@ export function DoePhoneCommunicationCarouselCard({
         embedded
         className={DOEPHONE_SECTION_CAROUSEL_RADIUS}
         gradientOverride={gradientOverride}
+        gridOverride={gridOverride}
       />
       {expandable && panelOpen ? <CarouselSlideFrostOverlay closing={isClosing} /> : null}
       <CarouselMenuOverlay

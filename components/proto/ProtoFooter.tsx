@@ -3,7 +3,7 @@
 import Link from "next/link";
 
 import { DOEPHONE_FOOTER_CONTENT_INSET } from "@/lib/doephone/section-styles";
-import { inter, lora } from "@/lib/home/fonts";
+import { PROTO_FONT_CLASS } from "@/lib/proto/proto-font";
 
 const FOOTER_LINKS = [
   { href: "/features", label: "Features" },
@@ -67,7 +67,7 @@ export function ProtoFooter() {
           className={`mb-14 flex w-full items-end justify-between gap-8 md:mb-16 iphone-page:mb-12 iphone-page:gap-6 ${DOEPHONE_FOOTER_CONTENT_INSET}`}
         >
           <div
-            className={`min-w-0 shrink text-left text-white ${inter.className} text-[clamp(1.28rem,1.1rem+0.75vmin,1.55rem)] font-normal leading-[1.38] tracking-[-0.01em] iphone-page:text-[clamp(1.2rem,1.05rem+0.68vmin,1.45rem)]`}
+            className={`min-w-0 shrink text-left text-white ${PROTO_FONT_CLASS} text-[clamp(1.28rem,1.1rem+0.75vmin,1.55rem)] font-normal leading-[1.38] tracking-[-0.01em] iphone-page:text-[clamp(1.2rem,1.05rem+0.68vmin,1.45rem)]`}
           >
             <p className="text-[clamp(1.45rem,1.22rem+0.85vmin,1.75rem)] font-semibold leading-[1.16] iphone-page:text-[clamp(1.35rem,1.15rem+0.78vmin,1.62rem)]">
               Proto
@@ -104,7 +104,7 @@ export function ProtoFooter() {
         <div className="relative z-[11] flex justify-center overflow-x-clip overflow-y-visible pt-3 pb-0">
           <Link
             href="/proto"
-            className={`pointer-events-auto inline-block shrink-0 text-center font-normal leading-[0.65] tracking-tight no-underline transition-opacity hover:opacity-90 ${lora.className}`}
+            className={`pointer-events-auto inline-block shrink-0 text-center font-normal leading-[0.65] tracking-tight no-underline transition-opacity hover:opacity-90 ${PROTO_FONT_CLASS}`}
             style={{
               color: "#F7F6F3",
               fontSize: "clamp(11rem, min(76vw, 68vmin), 30rem)",
