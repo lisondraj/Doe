@@ -10,40 +10,46 @@ export type ProtoFeatureCopy = {
 /** /proto feature sections — two-line titles + short white copy under each box. */
 export const PROTO_FEATURE_COPY: Record<ProtoCommunicationSlideId, ProtoFeatureCopy> = {
   agents: {
-    titleLine1: "Your whole roster.",
-    titleLine2: "One live surface.",
+    titleLine1: "Recruit only the",
+    titleLine2: "most talent.",
     description:
-      "Voice, scheduling, and labs automation in one deployment view — what is running, waiting, and ready to turn on. See live status and workflow assignment without jumping between tools.",
+      "Post one role, then watch candidates enter a live sandbox where every action is tracked. Proto scores task outcomes, surfaces hidden signal, and lets you compare applicants side by side before you decide.",
   },
   "front-desk": {
-    titleLine1: "The phone won't stop.",
-    titleLine2: "Neither does intake.",
+    titleLine1: "Everything built",
+    titleLine2: "within a sandbox.",
     description:
-      "Voice and scheduling agents handle answers and booking in parallel while your team stays with patients in the room. Patients get help immediately instead of waiting on hold or a callback.",
+      "Applicants complete real tasks inside a sandbox that mirrors your product, engineering, data, and overall vision. You see how they think, where they trade off, and who can actually execute before the interview loop decides.",
   },
   inbox: {
-    titleLine1: "Documents pile up.",
-    titleLine2: "Workflow sorts them.",
+    titleLine1: "Tracks. Compares.",
+    titleLine2: "Chooses.",
     description:
-      "Labs, referrals, and prior auths route into the right chart automatically — outcomes stay visible without manual sorting. Your team spends less time chasing follow-ups and re-filing what already arrived.",
+      "Replay how each candidate worked, not just what they submitted. Head-to-head scorecards on the same rubric, then a ranked shortlist when you're ready. The hire gets obvious before anyone schedules a panel.",
   },
   ambient: {
-    titleLine1: "The patient is in frame.",
-    titleLine2: "Just ask.",
+    titleLine1: "Post challenges,",
+    titleLine2: "hire the best.",
     description:
-      "Natural-language queries with chart context already loaded — trends, labs, and history while you stay at the point of care. No hunting through tabs or rebuilding context from scratch mid-visit.",
+      "Companies publish open challenges in product, ops, engineering, etc., and any applicant can jump in. Proto captures every submission, scores the work, and surfaces the strongest talent before you ever open a req.",
   },
   billing: {
-    titleLine1: "Prior auth submitted.",
-    titleLine2: "Payer still deciding.",
+    titleLine1: "Analyzes in seconds,",
+    titleLine2: "delivers to phone.",
     description:
-      "Clinical notes pulled, forms completed, and approval status tracked — without staff chasing portals and charts by hand. AI stays on the case until the payer decides, not your front desk.",
+      "Recruiters review candidate evals on mobile the moment work lands. Scores, replays, and shortlists sync to your phone so you can move on strong talent and fill roles whether you're at your desk or on the road.",
+  },
+  prototype: {
+    titleLine1: "Validate prototypes &",
+    titleLine2: "test within your product.",
+    description:
+      "Take an applicant's prototype, gather real user feedback, and simulate it back inside your product before you ship. Proto shows how the idea lands with your users and where it might fit in your roadmap.",
   },
   integrate: {
-    titleLine1: "Every tool you use.",
-    titleLine2: "One connective layer.",
+    titleLine1: "Built on top",
+    titleLine2: "of your stack.",
     description:
-      "EMRs, billing platforms, and clinical tools you already rely on — connected without ripping out what is in place. Doe meets your team where they work instead of forcing a rip-and-replace.",
+      "EMRs, billing platforms, and clinical tools you already rely on, connected without ripping out what is in place. Doe meets your team where they work instead of forcing a rip-and-replace.",
   },
 };
 

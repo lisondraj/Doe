@@ -45,6 +45,16 @@ const PROTO_PRIOR_AUTH_GRADIENT = `radial-gradient(ellipse 118% 112% at 72% 88%,
 /** Integrate — horizontal connective band; cool left bloom, warmer center, less yellow on the right. */
 const PROTO_INTEGRATE_GRADIENT = `linear-gradient(90deg, ${PROTO_RECEPTION_PALETTE.deep} 0%, ${PROTO_HUMIRA_COLORS.bridgeBlue} 18%, ${PROTO_AGENTS_MID_BLUE} 36%, ${PROTO_RECEPTION_PALETTE.blue} 52%, ${PROTO_RECEPTION_PALETTE.copper} 72%, ${PROTO_RECEPTION_PALETTE.gold} 90%, ${PROTO_RECEPTION_PALETTE.deep} 100%)`;
 
+/** Prototype validation — cool upper arc into warm copper/gold. */
+const PROTO_PROTOTYPE_GRADIENT = `linear-gradient(160deg, ${PROTO_HUMIRA_COLORS.bridgeBlue} 0%, ${PROTO_RECEPTION_PALETTE.blue} 26%, ${PROTO_RECEPTION_PALETTE.copper} 58%, ${PROTO_RECEPTION_PALETTE.gold} 100%)`;
+
+export const PROTO_PROTOTYPE_BACKDROP = {
+  slideIndex: 6,
+  label: "Prototype",
+  gradient: PROTO_PROTOTYPE_GRADIENT,
+  grid: "diagonal" as const,
+};
+
 /** Patient chart — Documents palette flipped; warm upper-left → cool edge. */
 const PROTO_AMBIENT_RADIAL = `radial-gradient(ellipse 125% 110% at 14% 12%, ${PROTO_RECEPTION_PALETTE.gold} 0%, ${PROTO_RECEPTION_PALETTE.copper} 36%, ${PROTO_RECEPTION_PALETTE.blue} 70%, ${PROTO_RECEPTION_PALETTE.deep} 100%)`;
 
@@ -67,13 +77,15 @@ export const PROTO_COMMUNICATION_GRADIENTS = {
   inbox: PROTO_DOCUMENTS_GRADIENT,
   ambient: PROTO_FRONT_DESK_GRADIENT,
   billing: PROTO_PRIOR_AUTH_GRADIENT,
+  prototype: PROTO_PROTOTYPE_GRADIENT,
   integrate: PROTO_INTEGRATE_GRADIENT,
 } as const satisfies Record<string, string>;
 
 export type ProtoCommunicationSlideId = keyof typeof PROTO_COMMUNICATION_GRADIENTS;
 
-/** Integrate matches Humira hex overlay — same as billing screenshot. */
-export const PROTO_COMMUNICATION_GRIDS: Partial<Record<ProtoCommunicationSlideId, "hex">> = {
+/** Grid overlays for /proto feature bands. */
+export const PROTO_COMMUNICATION_GRIDS: Partial<Record<ProtoCommunicationSlideId, "hex" | "diagonal">> = {
+  prototype: "diagonal",
   integrate: "hex",
 };
 
