@@ -81,7 +81,7 @@ export function DoePhoneMobileView({ variant = "home" }: { variant?: "home" | "p
         investorsHref={isProto ? PROTO_INVEST_PATH : undefined}
       />
 
-      <DoePhoneHeroSection variant={isProto ? "proto" : "mobile"} />
+      <DoePhoneHeroSection variant="mobile" proto={isProto} />
 
       {isProto ? (
         <ProtoCommunicationStack />

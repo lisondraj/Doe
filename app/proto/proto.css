@@ -511,3 +511,66 @@ html[data-proto-page] .doephone-section-reveal {
 html[data-proto-page] .doephone-section-reveal--in {
   animation: none !important;
 }
+
+/* Desktop /proto — Doe home band layout with proto dark styling. */
+html[data-proto-page][data-layout="desktop"],
+html[data-proto-page][data-layout="desktop"] body {
+  background-color: #121819 !important;
+}
+
+html[data-proto-page][data-layout="desktop"] .proto-desktop-root {
+  background-color: #121819;
+}
+
+html[data-proto-page][data-layout="desktop"] .proto-desktop-feature.proto-feature-section {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 112vh !important;
+  height: 112vh !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+html[data-proto-page][data-layout="desktop"] .proto-desktop-feature .proto-feature-section__description {
+  margin-top: 0 !important;
+}
+
+html[data-proto-page][data-layout="desktop"] .proto-desktop-feature .proto-feature-reveal {
+  opacity: 1 !important;
+  filter: none !important;
+  transform: none !important;
+  animation: none !important;
+}
+
+html[data-proto-page][data-layout="desktop"] .doephone-hero-section .doephone-hero-headline,
+html[data-proto-page][data-layout="desktop"] .doephone-hero-section .doephone-hero-headline-line {
+  font-size: clamp(2.85rem, 4.75vw, 4.85rem) !important;
+}
+
+html[data-proto-page][data-layout="desktop"] .proto-footer-main,
+html[data-proto-page][data-layout="desktop"] .proto-footer-wordmark-wrap {
+  padding-left: clamp(2.5rem, 5vw, 9rem) !important;
+  padding-right: clamp(2.5rem, 5vw, 9rem) !important;
+}
+
+html[data-proto-page][data-layout="desktop"] .proto-footer-contact__brand {
+  font-size: clamp(1.35rem, 1.15rem + 0.55vw, 1.75rem) !important;
+}
+
+html[data-proto-page][data-layout="desktop"] .proto-footer-contact__line,
+html[data-proto-page][data-layout="desktop"] .proto-footer-column__link {
+  font-size: clamp(0.98rem, 0.92rem + 0.22vw, 1.12rem) !important;
+}
+
+html[data-proto-page][data-layout="desktop"] .proto-footer-column__title {
+  font-size: clamp(1.02rem, 0.96rem + 0.25vw, 1.18rem) !important;
+}
+
+html[data-proto-page][data-layout="desktop"] .proto-footer-inner {
+  padding-top: clamp(3.5rem, 3rem + 2vw, 5rem) !important;
+}
+
+html[data-proto-page][data-layout="desktop"] .proto-footer-columns {
+  margin-top: 1.25rem !important;
+  max-width: 28rem;
+}

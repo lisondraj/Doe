@@ -1,7 +1,7 @@
-import { DoePhoneMobileView } from "@/components/doephone/DoePhoneMobileView";
+import { ProtoRouter } from "@/components/proto/ProtoRouter";
 
 export const dynamic = "force-dynamic";
 
 export default function ProtoPage() {
-  return <DoePhoneMobileView variant="proto" />;
+  return <ProtoRouter />;
 }

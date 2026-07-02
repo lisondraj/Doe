@@ -25,16 +25,19 @@ const DOEPHONE_HERO_DESKTOP_HEIGHT = "100dvh";
 
 export function DoePhoneHeroSection({
   variant = "mobile",
+  proto = false,
 }: {
   /** Desktop home uses full viewport height and wider copy gutters. */
-  variant?: "mobile" | "desktop" | "proto";
+  variant?: "mobile" | "desktop";
+  /** Proto landing — dark palette and hiring headline. */
+  proto?: boolean;
 }) {
   const [introZoom, setIntroZoom] = useState(DOEPHONE_HERO_INTRO_GRADIENT_START);
   const [introDone, setIntroDone] = useState(false);
 
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reducedMotion) {
+    if (reducedMotion || proto) {
       setIntroZoom(1);
       setIntroDone(true);
       return;
@@ -60,11 +63,11 @@ export function DoePhoneHeroSection({
 
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, []);
+  }, [proto]);
 
   const gradientZoom = introDone ? 1 : introZoom;
   const isDesktop = variant === "desktop";
-  const isProto = variant === "proto";
+  const isProto = proto;
   const heroBackdrop = isProto ? PROTO_HERO_BACKDROP : CARE_COORDINATION_BACKDROP;
   const heroHeight = isDesktop
     ? DOEPHONE_HERO_DESKTOP_HEIGHT
