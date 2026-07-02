@@ -48,8 +48,8 @@ export function ProtoInvestMobileContent() {
     <main className={`proto-invest-main w-full ${PROTO_INVEST_CONTENT_PT} ${PROTO_INVEST_MAIN_PB} ${PROTO_INVEST_PAGE_INSET_X}`}>
       <div className={`${PROTO_INVEST_HERO_HEADLINE_WRAP} ${PROTO_INVEST_HERO_HEADLINE_PT}`}>
         <h1 className={PROTO_INVEST_TITLE_TW}>
-          <span className="block">Proto is on a mission</span>
-          <span className="block">to redefine healthcare.</span>
+          <span className="block">Proto is changing the</span>
+          <span className="block">way we hire talent.</span>
         </h1>
 
         <p className={PROTO_INVEST_SUBHEADING_TW}>

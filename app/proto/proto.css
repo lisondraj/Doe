@@ -452,7 +452,16 @@ html[data-proto-page] .doephone-hero-section > div > div[aria-hidden]:first-of-t
   background-position: center top !important;
 }
 
-/* Hero — title stays white; grid uses front-desk hex overlay from backdrop. */
+/* Hero — title stays white, always visible (no load-in blur/rise). */
+html[data-proto-page] .doephone-hero-section .doephone-hero-headline,
+html[data-proto-page] .doephone-hero-section .doephone-hero-headline-line {
+  color: #ffffff !important;
+  animation: none !important;
+  opacity: 1 !important;
+  filter: none !important;
+  transform: none !important;
+}
+
 html[data-proto-page] .doephone-hero-headline,
 html[data-proto-page] .doephone-hero-headline-line {
   color: #ffffff !important;
