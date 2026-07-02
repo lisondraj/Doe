@@ -46,8 +46,13 @@ html[data-proto-page] .proto-feature-section__inner {
   display: flex !important;
   flex: 1 1 auto !important;
   flex-direction: column !important;
+  justify-content: flex-start !important;
   box-sizing: border-box !important;
   min-height: 0 !important;
+  gap: max(
+    1.45rem,
+    calc(var(--app-vh, 100lvh) * 0.038)
+  ) !important;
   padding-top: max(
     2.35rem,
     calc(env(safe-area-inset-top, 0px) + calc(var(--app-vh, 100lvh) * 0.0525))
@@ -69,17 +74,55 @@ html[data-proto-page] .proto-feature-section__inner {
 html[data-proto-page] .proto-feature-section__card,
 html[data-proto-page] .proto-feature-section .doephone-section-carousel {
   display: flex !important;
-  flex: 1 1 auto !important;
+  flex: 0 0 auto !important;
   flex-direction: column !important;
   min-height: 0 !important;
-  height: auto !important;
-  max-height: 100% !important;
+  height: clamp(
+    28rem,
+    calc(var(--app-vh, 100lvh) * 0.8),
+    48rem
+  ) !important;
+  max-height: clamp(
+    28rem,
+    calc(var(--app-vh, 100lvh) * 0.8),
+    48rem
+  ) !important;
 }
 
 html[data-proto-page] .proto-feature-section__card > * {
   flex: 1 1 auto !important;
   min-height: 0 !important;
   height: 100% !important;
+}
+
+html[data-proto-page] .proto-feature-section__copy {
+  flex: 0 0 auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  color: #ffffff !important;
+}
+
+html[data-proto-page] .proto-feature-section__copy .doephone-hero-headline,
+html[data-proto-page] .proto-feature-section__copy .doephone-hero-headline-line {
+  color: #ffffff !important;
+  animation: none !important;
+  opacity: 1 !important;
+  filter: none !important;
+  transform: none !important;
+}
+
+html[data-proto-page] .proto-feature-section__description {
+  margin: 0 !important;
+  margin-top: max(
+    0.85rem,
+    calc(var(--app-vh, 100lvh) * 0.018)
+  ) !important;
+  font-family: var(--font-plus-jakarta-sans), "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif !important;
+  font-size: clamp(1.42rem, calc(1.18rem + 1.2vmin), 1.82rem) !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+  letter-spacing: -0.012em !important;
+  color: #ffffff !important;
 }
 
 /* Nav bar — scaled up with locked viewport tokens. */
@@ -128,9 +171,19 @@ html[data-proto-page] nav.doephone-site-nav > div > div > .flex.shrink-0.items-c
   gap: clamp(0.85rem, calc(var(--app-vw, 100vw) * 0.011), 1.25rem) !important;
 }
 
-/* Nav buttons — mail + investors split CTA. */
-html[data-proto-page] nav.doephone-site-nav .inline-flex.shrink-0.items-center.justify-center {
+/* Nav mail button — square, scaled up. */
+html[data-proto-page] nav.doephone-site-nav button.aspect-square.rounded-md {
   min-height: clamp(
+    5.85rem,
+    calc(4.75rem + calc(var(--app-vw, 100vw) * 0.052)),
+    7.1rem
+  ) !important;
+  min-width: clamp(
+    5.85rem,
+    calc(4.75rem + calc(var(--app-vw, 100vw) * 0.052)),
+    7.1rem
+  ) !important;
+  width: clamp(
     5.85rem,
     calc(4.75rem + calc(var(--app-vw, 100vw) * 0.052)),
     7.1rem
@@ -148,16 +201,55 @@ html[data-proto-page] nav.doephone-site-nav .inline-flex.shrink-0.items-center.j
   border-radius: clamp(0.62rem, calc(var(--app-vw, 100vw) * 0.016), 0.82rem) !important;
 }
 
-html[data-proto-page] nav.doephone-site-nav a.inline-flex.rounded-none {
+html[data-proto-page] nav.doephone-site-nav button.aspect-square.rounded-md svg {
+  width: clamp(
+    1.85rem,
+    calc(1.58rem + calc(var(--app-vw, 100vw) * 0.011)),
+    2.2rem
+  ) !important;
+  height: clamp(
+    1.85rem,
+    calc(1.58rem + calc(var(--app-vw, 100vw) * 0.011)),
+    2.2rem
+  ) !important;
+}
+
+/* Nav For Investors — attached label + chevron in one split control. */
+html[data-proto-page] nav.doephone-site-nav .flex.items-stretch.overflow-hidden.rounded-md {
+  display: flex !important;
+  align-items: stretch !important;
+  overflow: hidden !important;
+  border-radius: clamp(0.62rem, calc(var(--app-vw, 100vw) * 0.016), 0.82rem) !important;
+}
+
+html[data-proto-page] nav.doephone-site-nav .flex.items-stretch.overflow-hidden.rounded-md > a.inline-flex.rounded-none,
+html[data-proto-page] nav.doephone-site-nav .flex.items-stretch.overflow-hidden.rounded-md > button.aspect-square.rounded-none {
+  min-height: clamp(
+    5.85rem,
+    calc(4.75rem + calc(var(--app-vw, 100vw) * 0.052)),
+    7.1rem
+  ) !important;
+  height: auto !important;
+  align-self: stretch !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  border-radius: 0 !important;
+  line-height: 1 !important;
+}
+
+html[data-proto-page] nav.doephone-site-nav .flex.items-stretch.overflow-hidden.rounded-md > a.inline-flex.rounded-none {
   padding-left: clamp(
     1.55rem,
     calc(1.2rem + calc(var(--app-vw, 100vw) * 0.016)),
     2rem
   ) !important;
   padding-right: clamp(
-    1.55rem,
-    calc(1.2rem + calc(var(--app-vw, 100vw) * 0.016)),
-    2rem
+    1.15rem,
+    calc(0.92rem + calc(var(--app-vw, 100vw) * 0.012)),
+    1.45rem
   ) !important;
   font-size: clamp(
     1.48rem,
@@ -166,7 +258,7 @@ html[data-proto-page] nav.doephone-site-nav a.inline-flex.rounded-none {
   ) !important;
 }
 
-html[data-proto-page] nav.doephone-site-nav button.aspect-square {
+html[data-proto-page] nav.doephone-site-nav .flex.items-stretch.overflow-hidden.rounded-md > button.aspect-square.rounded-none {
   min-width: clamp(
     5.85rem,
     calc(4.75rem + calc(var(--app-vw, 100vw) * 0.052)),
@@ -177,18 +269,27 @@ html[data-proto-page] nav.doephone-site-nav button.aspect-square {
     calc(4.75rem + calc(var(--app-vw, 100vw) * 0.052)),
     7.1rem
   ) !important;
+  max-width: clamp(
+    5.85rem,
+    calc(4.75rem + calc(var(--app-vw, 100vw) * 0.052)),
+    7.1rem
+  ) !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.22) !important;
+  flex-shrink: 0 !important;
 }
 
-html[data-proto-page] nav.doephone-site-nav button svg {
+html[data-proto-page] nav.doephone-site-nav .flex.items-stretch.overflow-hidden.rounded-md > button.aspect-square.rounded-none svg {
   width: clamp(
-    1.85rem,
-    calc(1.58rem + calc(var(--app-vw, 100vw) * 0.011)),
-    2.2rem
+    1.28rem,
+    calc(1.1rem + calc(var(--app-vw, 100vw) * 0.008)),
+    1.55rem
   ) !important;
   height: clamp(
-    1.85rem,
-    calc(1.58rem + calc(var(--app-vw, 100vw) * 0.011)),
-    2.2rem
+    1.28rem,
+    calc(1.1rem + calc(var(--app-vw, 100vw) * 0.008)),
+    1.55rem
   ) !important;
 }
 
@@ -233,6 +334,86 @@ html[data-proto-page] nav.doephone-site-nav .absolute.top-\[calc\(100\%\+0\.5rem
 html[data-proto-page] nav.doephone-site-nav .absolute.top-\[calc\(100\%\+0\.5rem\)\] svg {
   width: clamp(1.32rem, calc(var(--app-vw, 100vw) * 0.032), 1.55rem) !important;
   height: clamp(1.32rem, calc(var(--app-vw, 100vw) * 0.032), 1.55rem) !important;
+}
+
+/* Footer — page background, top rule. */
+html[data-proto-page] .proto-footer {
+  background-color: #121819 !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
+  overflow: visible !important;
+}
+
+html[data-proto-page] .proto-footer-inner {
+  padding-top: clamp(3.25rem, calc(2.15rem + 5.25vmin), 5.5rem) !important;
+}
+
+html[data-proto-page] .proto-footer-contact__brand {
+  font-size: clamp(1.85rem, calc(1.52rem + 1.15vmin), 2.35rem) !important;
+  letter-spacing: -0.02em !important;
+}
+
+html[data-proto-page] .proto-footer-contact__line {
+  font-size: clamp(1.62rem, calc(1.32rem + 1vmin), 2rem) !important;
+  font-weight: 400 !important;
+  line-height: 1.38 !important;
+  letter-spacing: -0.012em !important;
+}
+
+html[data-proto-page] .proto-footer-contact__email {
+  padding-bottom: clamp(1.85rem, calc(1.2rem + 2.35vmin), 2.85rem) !important;
+}
+
+html[data-proto-page] .proto-footer-columns {
+  margin-top: clamp(0.85rem, calc(0.5rem + 1.1vmin), 1.35rem) !important;
+}
+
+html[data-proto-page] .proto-footer-main {
+  margin-bottom: clamp(1rem, calc(0.65rem + 1.35vmin), 1.65rem) !important;
+}
+
+html[data-proto-page] .proto-footer-column__title {
+  font-size: clamp(1.48rem, calc(1.22rem + 0.95vmin), 1.82rem) !important;
+  letter-spacing: -0.018em !important;
+  line-height: 1.2 !important;
+}
+
+html[data-proto-page] .proto-footer-column__link {
+  font-size: clamp(1.38rem, calc(1.14rem + 0.82vmin), 1.68rem) !important;
+  font-weight: 400 !important;
+  line-height: 1.32 !important;
+  letter-spacing: -0.01em !important;
+}
+
+/* Footer — edge-to-edge Proto wordmark (Outfit, same as nav). */
+html[data-proto-page] .proto-footer-wordmark-wrap {
+  container-type: inline-size !important;
+  container-name: proto-footer-wordmark !important;
+  overflow: visible !important;
+  padding-left: env(safe-area-inset-left, 0px) !important;
+  padding-right: env(safe-area-inset-right, 0px) !important;
+  padding-top: clamp(1rem, calc(0.65rem + 1.35vmin), 1.65rem) !important;
+  padding-bottom: clamp(1rem, calc(0.65rem + 1.85vmin), 1.85rem) !important;
+}
+
+html[data-proto-page] .proto-footer-wordmark {
+  font-family: var(--font-outfit), "Outfit", ui-sans-serif, system-ui, sans-serif !important;
+  font-size: clamp(5.5rem, 32.75cqi, 24rem) !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.045em !important;
+  line-height: 1 !important;
+  color: #f7f6f3 !important;
+  margin-bottom: 0 !important;
+  padding-bottom: 0.05em !important;
+  overflow: visible !important;
+  white-space: nowrap !important;
+  width: 100% !important;
+  text-align: center !important;
+}
+
+/* Hero — Documents gradient stretched for full-viewport band. */
+html[data-proto-page] .doephone-hero-section > div > div[aria-hidden]:first-of-type {
+  background-size: 100% 118% !important;
+  background-position: center top !important;
 }
 
 /* Hero — title stays white; grid uses Documents crosshatch from backdrop. */

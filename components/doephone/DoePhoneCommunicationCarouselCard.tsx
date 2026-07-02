@@ -221,6 +221,7 @@ export function DoePhoneCommunicationCarouselCard({
   isActive = true,
   layout = "phone",
   className = "",
+  showExpandControls = true,
   badgeCrop700,
   gradientOverride,
   gridOverride,
@@ -229,6 +230,8 @@ export function DoePhoneCommunicationCarouselCard({
   isActive?: boolean;
   layout?: CarouselCardLayout;
   className?: string;
+  /** When false, hides the + badge and expand panel (e.g. /proto feature stack). */
+  showExpandControls?: boolean;
   /** Extra inset when the slide canvas is cover-cropped (desktop sliding boxes). */
   badgeCrop700?: { x: number; y: number };
   /** Replaces only the backdrop gradient layer. */
@@ -238,7 +241,7 @@ export function DoePhoneCommunicationCarouselCard({
 }) {
   const [panelPhase, setPanelPhase] = useState<PanelPhase>("idle");
   const closeTimerRef = useRef<number | undefined>(undefined);
-  const expandable = Boolean(slide.description);
+  const expandable = showExpandControls && Boolean(slide.description);
   const panelOpen = panelPhase !== "idle";
   const isClosing = panelPhase === "closing";
 
@@ -286,18 +289,20 @@ export function DoePhoneCommunicationCarouselCard({
       <CarouselMenuOverlay
         expanded={panelPhase === "open"}
         showContent={panelPhase === "open"}
-        description={slide.description}
+        description={expandable ? slide.description : undefined}
         layout={layout}
       >
         <DoePhoneCommunicationSlideVisual slideId={slide.id} layout={layout} />
       </CarouselMenuOverlay>
-      <CarouselSlideToggleBadge
-        expanded={panelOpen}
-        interactive={expandable && !isClosing}
-        onToggle={toggleExpanded}
-        layout={layout}
-        badgeCrop700={badgeCrop700}
-      />
+      {expandable ? (
+        <CarouselSlideToggleBadge
+          expanded={panelOpen}
+          interactive={!isClosing}
+          onToggle={toggleExpanded}
+          layout={layout}
+          badgeCrop700={badgeCrop700}
+        />
+      ) : null}
     </div>
   );
 }
