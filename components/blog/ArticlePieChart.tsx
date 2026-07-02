@@ -6,10 +6,12 @@ import {
   ABOUT_DESKTOP_CHART_CITATION_TW,
 } from "@/lib/about/about-layout-styles";
 import { dmSans, inter } from "@/lib/home/fonts";
+import { PROTO_CHART_SLICE_COLORS } from "@/lib/proto/proto-chart-colors";
 import type { ArticleBodyLayout } from "@/components/blog/ArticleBodyBlocks";
 
 const SLICE_COLORS_LIGHT = ["#D2774C", "rgba(30, 52, 58, 0.22)", "rgba(30, 52, 58, 0.38)"] as const;
-const SLICE_COLORS_DARK = ["#C46848", "rgba(255, 255, 255, 0.22)", "rgba(255, 255, 255, 0.38)"] as const;
+const SLICE_COLORS_DARK = PROTO_CHART_SLICE_COLORS;
+const SLICE_COLORS_PROTO = PROTO_CHART_SLICE_COLORS;
 
 function pieGradient(slices: readonly { value: number }[], sliceColors: readonly string[]) {
   const total = slices.reduce((sum, slice) => sum + slice.value, 0) || 1;
@@ -48,11 +50,12 @@ export function ArticlePieChart({
   showCaption?: boolean;
   showCitation?: boolean;
   titleClassName?: string;
-  theme?: "light" | "dark";
+  theme?: "light" | "dark" | "proto";
 }) {
   const isDesktop = layout === "desktop";
-  const isDark = theme === "dark";
-  const sliceColors = isDark ? SLICE_COLORS_DARK : SLICE_COLORS_LIGHT;
+  const isDark = theme === "dark" || theme === "proto";
+  const sliceColors =
+    theme === "proto" ? SLICE_COLORS_PROTO : isDark ? SLICE_COLORS_DARK : SLICE_COLORS_LIGHT;
   const titleColor = isDark ? "text-white" : "text-[#1E343A]";
   const labelColor = isDark ? "text-white/72" : "text-[#1E343A]/72";
   const valueColor = isDark ? "text-white" : "text-[#1E343A]";

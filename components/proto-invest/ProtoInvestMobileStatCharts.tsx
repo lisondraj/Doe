@@ -24,7 +24,7 @@ export function ProtoInvestMobileStatCharts() {
         showCaption={false}
         showCitation={false}
         titleClassName={PROTO_INVEST_CHART_TITLE_TW}
-        theme="dark"
+        theme="proto"
       />
 
       <div className="mt-8 iphone-page:mt-10">
@@ -36,7 +36,7 @@ export function ProtoInvestMobileStatCharts() {
           showCaption={false}
           showCitation={false}
           titleClassName={PROTO_INVEST_CHART_TITLE_TW}
-          theme="dark"
+          theme="proto"
         />
       </div>
 
