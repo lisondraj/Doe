@@ -3,7 +3,8 @@
 import Link from "next/link";
 
 import { DOEPHONE_FOOTER_CONTENT_INSET } from "@/lib/doephone/section-styles";
-import { PROTO_FONT_CLASS, PROTO_NAV_LOGO_FONT_CLASS } from "@/lib/proto/proto-font";
+import { PROTO_FONT_CLASS } from "@/lib/proto/proto-font";
+import { ProtoFooterWordmark } from "@/components/proto/ProtoFooterWordmark";
 
 const FOOTER_COLUMNS = [
   {
@@ -61,14 +62,7 @@ export function ProtoFooter() {
           </div>
         </div>
 
-        <div className="proto-footer-wordmark-wrap relative z-[11] w-full pb-0">
-          <Link
-            href="/proto"
-            className={`proto-footer-wordmark pointer-events-auto block w-full text-center font-normal no-underline transition-opacity hover:opacity-90 ${PROTO_NAV_LOGO_FONT_CLASS}`}
-          >
-            Proto
-          </Link>
-        </div>
+        <ProtoFooterWordmark />
       </div>
     </footer>
   );

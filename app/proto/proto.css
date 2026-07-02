@@ -78,14 +78,14 @@ html[data-proto-page] .proto-feature-section .doephone-section-carousel {
   flex-direction: column !important;
   min-height: 0 !important;
   height: clamp(
-    28rem,
-    calc(var(--app-vh, 100lvh) * 0.8),
-    48rem
+    32rem,
+    calc(var(--app-vh, 100lvh) * 0.88),
+    52rem
   ) !important;
   max-height: clamp(
-    28rem,
-    calc(var(--app-vh, 100lvh) * 0.8),
-    48rem
+    32rem,
+    calc(var(--app-vh, 100lvh) * 0.88),
+    52rem
   ) !important;
 }
 
@@ -118,9 +118,9 @@ html[data-proto-page] .proto-feature-section__description {
     calc(var(--app-vh, 100lvh) * 0.018)
   ) !important;
   font-family: var(--font-plus-jakarta-sans), "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif !important;
-  font-size: clamp(1.42rem, calc(1.18rem + 1.2vmin), 1.82rem) !important;
+  font-size: clamp(1.62rem, calc(1.32rem + 1.55vmin), 2.08rem) !important;
   font-weight: 400 !important;
-  line-height: 1.5 !important;
+  line-height: 1.52 !important;
   letter-spacing: -0.012em !important;
   color: #ffffff !important;
 }
@@ -384,20 +384,19 @@ html[data-proto-page] .proto-footer-column__link {
   letter-spacing: -0.01em !important;
 }
 
-/* Footer — edge-to-edge Proto wordmark (Outfit, same as nav). */
+/* Footer — Proto wordmark aligned to footer content gutters. */
 html[data-proto-page] .proto-footer-wordmark-wrap {
-  container-type: inline-size !important;
-  container-name: proto-footer-wordmark !important;
   overflow: visible !important;
-  padding-left: env(safe-area-inset-left, 0px) !important;
-  padding-right: env(safe-area-inset-right, 0px) !important;
   padding-top: clamp(1rem, calc(0.65rem + 1.35vmin), 1.65rem) !important;
   padding-bottom: clamp(1rem, calc(0.65rem + 1.85vmin), 1.85rem) !important;
 }
 
+html[data-proto-page] .proto-footer-wordmark-fit {
+  overflow: visible !important;
+}
+
 html[data-proto-page] .proto-footer-wordmark {
   font-family: var(--font-outfit), "Outfit", ui-sans-serif, system-ui, sans-serif !important;
-  font-size: clamp(5.5rem, 32.75cqi, 24rem) !important;
   font-weight: 400 !important;
   letter-spacing: -0.045em !important;
   line-height: 1 !important;
@@ -407,7 +406,7 @@ html[data-proto-page] .proto-footer-wordmark {
   overflow: visible !important;
   white-space: nowrap !important;
   width: 100% !important;
-  text-align: center !important;
+  text-align: left !important;
 }
 
 /* Hero — Documents gradient stretched for full-viewport band. */
