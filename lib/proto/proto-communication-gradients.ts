@@ -42,8 +42,8 @@ const PROTO_AGENTS_GRADIENT = `linear-gradient(225deg, ${PROTO_RECEPTION_FULL_ST
 /** Prior auth — warm lower-right bloom; full reception sweep (all phone won't stop colours). */
 const PROTO_PRIOR_AUTH_GRADIENT = `radial-gradient(ellipse 118% 112% at 72% 88%, ${PROTO_RECEPTION_PALETTE.lightYellow} 0%, ${PROTO_RECEPTION_PALETTE.wheat} 12%, ${PROTO_RECEPTION_PALETTE.gold} 26%, ${PROTO_RECEPTION_PALETTE.copper} 40%, ${PROTO_RECEPTION_PALETTE.blue} 56%, ${PROTO_AGENTS_MID_BLUE} 72%, ${PROTO_RECEPTION_PALETTE.deep} 100%)`;
 
-/** Integrate — horizontal connective band; same seven colours cool → warm → cool. */
-const PROTO_INTEGRATE_GRADIENT = `linear-gradient(90deg, ${PROTO_RECEPTION_PALETTE.deep} 0%, ${PROTO_AGENTS_MID_BLUE} 10%, ${PROTO_RECEPTION_PALETTE.blue} 24%, ${PROTO_RECEPTION_PALETTE.copper} 40%, ${PROTO_RECEPTION_PALETTE.gold} 56%, ${PROTO_RECEPTION_PALETTE.wheat} 72%, ${PROTO_RECEPTION_PALETTE.lightYellow} 88%, ${PROTO_RECEPTION_PALETTE.deep} 100%)`;
+/** Integrate — horizontal connective band; cool left bloom, warmer center, less yellow on the right. */
+const PROTO_INTEGRATE_GRADIENT = `linear-gradient(90deg, ${PROTO_RECEPTION_PALETTE.deep} 0%, ${PROTO_HUMIRA_COLORS.bridgeBlue} 18%, ${PROTO_AGENTS_MID_BLUE} 36%, ${PROTO_RECEPTION_PALETTE.blue} 52%, ${PROTO_RECEPTION_PALETTE.copper} 72%, ${PROTO_RECEPTION_PALETTE.gold} 90%, ${PROTO_RECEPTION_PALETTE.deep} 100%)`;
 
 /** Patient chart — Documents palette flipped; warm upper-left → cool edge. */
 const PROTO_AMBIENT_RADIAL = `radial-gradient(ellipse 125% 110% at 14% 12%, ${PROTO_RECEPTION_PALETTE.gold} 0%, ${PROTO_RECEPTION_PALETTE.copper} 36%, ${PROTO_RECEPTION_PALETTE.blue} 70%, ${PROTO_RECEPTION_PALETTE.deep} 100%)`;
