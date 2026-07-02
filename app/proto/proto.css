@@ -416,7 +416,7 @@ html[data-proto-page] .doephone-hero-section > div > div[aria-hidden]:first-of-t
   background-position: center top !important;
 }
 
-/* Hero — title stays white; grid uses Documents crosshatch from backdrop. */
+/* Hero — title stays white; grid uses front-desk hex overlay from backdrop. */
 html[data-proto-page] .doephone-hero-headline,
 html[data-proto-page] .doephone-hero-headline-line {
   color: #ffffff !important;

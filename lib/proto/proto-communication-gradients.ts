@@ -8,8 +8,8 @@ export const PROTO_RECEPTION_PALETTE = {
   deep: "#2A4558",
 } as const;
 
-/** Documents crosshatch — shared line overlay for /proto hero + section 2. */
-export const PROTO_LINE_GRID = "crosshatch" as const;
+/** Reception hex grid — same line overlay as the front-desk (The phone won't stop) slide. */
+export const PROTO_LINE_GRID = "hex" as const;
 
 /** Humira / TELUS — exact shared colour stops (solid hex). */
 export const PROTO_HUMIRA_COLORS = {
