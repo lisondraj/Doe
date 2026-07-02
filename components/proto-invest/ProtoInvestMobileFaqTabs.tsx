@@ -22,7 +22,7 @@ export function ProtoInvestMobileFaqTabs() {
           <div
             key={item.question}
             className={`flex flex-col border-t transition-[border-color] duration-300 ease-out motion-reduce:transition-none ${
-              isOpen ? "border-white/28" : index > 0 ? "border-white/12" : "border-transparent"
+              isOpen ? "border-[#2A3538]" : index > 0 ? "border-[#2A3538]/60" : "border-transparent"
             }`}
           >
             <button

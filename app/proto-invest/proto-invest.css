@@ -1,9 +1,54 @@
 /*
- * /proto-invest — investor page; dark chart overrides on shared article chart components.
+ * /proto-invest — dark page polish aligned with /proto chrome.
  */
 
+html[data-proto-page] .proto-invest-main {
+  color-scheme: dark;
+}
+
+html[data-proto-page] .proto-invest-main,
+html[data-proto-page] .proto-invest-main p,
+html[data-proto-page] .proto-invest-main li,
+html[data-proto-page] .proto-invest-main h1,
+html[data-proto-page] .proto-invest-main h2,
+html[data-proto-page] .proto-invest-main blockquote,
+html[data-proto-page] .proto-invest-main figcaption {
+  font-family: var(--font-plus-jakarta-sans), "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif !important;
+}
+
+html[data-proto-page] .proto-invest-main p.text-white,
+html[data-proto-page] .proto-invest-main li.text-white {
+  color: #ffffff !important;
+}
+
+html[data-proto-page] .proto-invest-main .text-white\/72 {
+  color: rgba(255, 255, 255, 0.72) !important;
+}
+
+html[data-proto-page] .proto-invest-main .text-white\/85 {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+html[data-proto-page] .proto-invest-main .text-white\/55 {
+  color: rgba(255, 255, 255, 0.55) !important;
+}
+
+html[data-proto-page] .proto-invest-main .text-white\/45 {
+  color: rgba(255, 255, 255, 0.45) !important;
+}
+
+/* Hero + graphic panels — unified proto border. */
+html[data-proto-page] .proto-invest-main .relative.w-full.overflow-hidden.rounded-\[0\.875rem\] {
+  border-color: #2a3538 !important;
+}
+
+html[data-proto-page] .proto-invest-chart-zone figcaption,
+html[data-proto-page] .proto-invest-chart-zone span {
+  font-family: var(--font-plus-jakarta-sans), "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif !important;
+}
+
 html[data-proto-page] .proto-invest-chart-zone figcaption {
-  color: rgba(255, 255, 255, 0.92) !important;
+  color: #ffffff !important;
 }
 
 html[data-proto-page] .proto-invest-chart-zone span {
@@ -11,23 +56,10 @@ html[data-proto-page] .proto-invest-chart-zone span {
 }
 
 html[data-proto-page] .proto-invest-chart-zone span[class*="tabular-nums"] {
-  color: rgba(255, 255, 255, 0.92) !important;
+  color: #ffffff !important;
 }
 
-html[data-proto-page] .proto-invest-main {
-  color-scheme: dark;
-}
-
-/* Pie legend labels */
-html[data-proto-page] .proto-invest-chart-zone figure span.font-normal {
-  color: rgba(255, 255, 255, 0.72) !important;
-}
-
-html[data-proto-page] .proto-invest-chart-zone figure span.font-medium {
-  color: rgba(255, 255, 255, 0.92) !important;
-}
-
-/* Bar track — lighten on dark bg */
-html[data-proto-page] .proto-invest-chart-zone [style*="rgba(30, 52, 58, 0.08)"] {
-  background: rgba(255, 255, 255, 0.1) !important;
+html[data-proto-page] .proto-invest-tam-highlight {
+  border-color: #2a3538 !important;
+  background: #151c1f;
 }

@@ -10,11 +10,7 @@ import {
   PROTO_INVEST_TAM_CITATION,
 } from "@/lib/proto-invest/proto-invest-content";
 
-const BAR = "#D2774C";
-const AXIS = "rgba(255, 255, 255, 0.22)";
-const GRID_LINE = "rgba(255, 255, 255, 0.07)";
-const LABEL_MUTED = "rgba(255, 255, 255, 0.55)";
-const LABEL = "rgba(255, 255, 255, 0.72)";
+import { PROTO_INVEST_CHART_COLORS } from "@/lib/proto-invest/proto-invest-theme";
 
 const TAM_Y_MAX = 28;
 const TAM_Y_TICKS = [0, 7, 14, 21, 28] as const;
@@ -44,7 +40,7 @@ export function ProtoInvestMobileTamChart() {
                 <span
                   key={tick}
                   className={`absolute right-0 -translate-y-1/2 text-right tabular-nums font-normal leading-none text-[clamp(0.72rem,0.62rem+0.45vmin,0.88rem)] iphone-page:text-[clamp(0.82rem,0.7rem+0.52vmin,0.98rem)] ${PROTO_FONT_CLASS}`}
-                  style={{ bottom: `${(tick / TAM_Y_MAX) * 100}%`, color: LABEL_MUTED }}
+                  style={{ bottom: `${(tick / TAM_Y_MAX) * 100}%`, color: PROTO_INVEST_CHART_COLORS.labelMuted }}
                 >
                   {formatTamAxis(tick)}
                 </span>
@@ -53,7 +49,7 @@ export function ProtoInvestMobileTamChart() {
 
           <div
             className="relative col-start-2 row-start-1 min-h-0 border-b border-l"
-            style={{ borderColor: AXIS }}
+            style={{ borderColor: PROTO_INVEST_CHART_COLORS.axis }}
           >
             {TAM_Y_TICKS.map((tick) => (
               <div
@@ -61,7 +57,7 @@ export function ProtoInvestMobileTamChart() {
                 className="pointer-events-none absolute left-0 right-0 border-t"
                 style={{
                   bottom: `${(tick / TAM_Y_MAX) * 100}%`,
-                  borderColor: tick === 0 ? AXIS : GRID_LINE,
+                  borderColor: tick === 0 ? PROTO_INVEST_CHART_COLORS.axis : PROTO_INVEST_CHART_COLORS.gridLine,
                 }}
                 aria-hidden
               />
@@ -80,7 +76,7 @@ export function ProtoInvestMobileTamChart() {
                     <div className="flex h-full flex-col justify-end">
                       <div
                         className="w-full rounded-t-[0.35rem] transition-[height] duration-500 ease-out iphone-page:rounded-t-[0.42rem]"
-                        style={{ height: heightPct, background: BAR }}
+                        style={{ height: heightPct, background: PROTO_INVEST_CHART_COLORS.accent }}
                       />
                     </div>
                   </div>
@@ -94,7 +90,7 @@ export function ProtoInvestMobileTamChart() {
               <span
                 key={`${bar.label}-label`}
                 className={`min-w-0 flex-1 text-center font-normal leading-[1.15] tracking-[-0.01em] text-[clamp(0.72rem,0.62rem+0.45vmin,0.88rem)] iphone-page:text-[clamp(0.82rem,0.7rem+0.52vmin,0.98rem)] ${PROTO_FONT_CLASS}`}
-                style={{ color: LABEL }}
+                style={{ color: PROTO_INVEST_CHART_COLORS.label }}
               >
                 {bar.label}
               </span>
@@ -103,7 +99,7 @@ export function ProtoInvestMobileTamChart() {
         </div>
       </div>
 
-      <div className="proto-invest-tam-highlight mt-6 border border-white/12 px-4 py-4 iphone-page:mt-7 iphone-page:px-5 iphone-page:py-5">
+      <div className="proto-invest-tam-highlight mt-6 border border-[#2A3538] px-4 py-4 iphone-page:mt-7 iphone-page:px-5 iphone-page:py-5">
         <p
           className={`font-medium leading-none tracking-[-0.03em] text-white ${PROTO_FONT_CLASS} text-[clamp(2.55rem,2rem+2.35vmin,3.35rem)] iphone-page:text-[clamp(2.85rem,2.2rem+2.75vmin,3.75rem)]`}
         >
@@ -116,7 +112,7 @@ export function ProtoInvestMobileTamChart() {
         </p>
         <p
           className={`mt-1.5 font-normal leading-snug text-[clamp(1rem,0.88rem+0.58vmin,1.18rem)] iphone-page:mt-2 iphone-page:text-[clamp(1.12rem,0.96rem+0.72vmin,1.32rem)] ${PROTO_FONT_CLASS}`}
-          style={{ color: LABEL_MUTED }}
+          style={{ color: PROTO_INVEST_CHART_COLORS.labelMuted }}
         >
           {ABOUT_MOBILE_TAM_CHART.highlight.headline}
         </p>

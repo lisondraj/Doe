@@ -8,9 +8,10 @@ import {
 import { dmSans, inter } from "@/lib/home/fonts";
 import type { ArticleBodyLayout } from "@/components/blog/ArticleBodyBlocks";
 
-const SLICE_COLORS = ["#D2774C", "rgba(30, 52, 58, 0.22)", "rgba(30, 52, 58, 0.38)"] as const;
+const SLICE_COLORS_LIGHT = ["#D2774C", "rgba(30, 52, 58, 0.22)", "rgba(30, 52, 58, 0.38)"] as const;
+const SLICE_COLORS_DARK = ["#C46848", "rgba(255, 255, 255, 0.22)", "rgba(255, 255, 255, 0.38)"] as const;
 
-function pieGradient(slices: readonly { value: number }[]) {
+function pieGradient(slices: readonly { value: number }[], sliceColors: readonly string[]) {
   const total = slices.reduce((sum, slice) => sum + slice.value, 0) || 1;
   let cursor = 0;
 
@@ -19,7 +20,7 @@ function pieGradient(slices: readonly { value: number }[]) {
       const start = (cursor / total) * 100;
       cursor += slice.value;
       const end = (cursor / total) * 100;
-      return `${SLICE_COLORS[index % SLICE_COLORS.length]} ${start}% ${end}%`;
+      return `${sliceColors[index % sliceColors.length]} ${start}% ${end}%`;
     })
     .join(", ");
 }
@@ -35,6 +36,7 @@ export function ArticlePieChart({
   showCaption = true,
   showCitation = true,
   titleClassName = "",
+  theme = "light",
 }: {
   title: string;
   caption?: string;
@@ -46,13 +48,21 @@ export function ArticlePieChart({
   showCaption?: boolean;
   showCitation?: boolean;
   titleClassName?: string;
+  theme?: "light" | "dark";
 }) {
   const isDesktop = layout === "desktop";
+  const isDark = theme === "dark";
+  const sliceColors = isDark ? SLICE_COLORS_DARK : SLICE_COLORS_LIGHT;
+  const titleColor = isDark ? "text-white" : "text-[#1E343A]";
+  const labelColor = isDark ? "text-white/72" : "text-[#1E343A]/72";
+  const valueColor = isDark ? "text-white" : "text-[#1E343A]";
+  const metaColor = isDark ? "text-white/55" : "text-[#9A8F82]";
+  const donutCenter = isDark ? "bg-[#121819]" : "bg-[#F7F6F3]";
 
   return (
     <figure className={embedded ? "" : isDesktop ? ABOUT_DESKTOP_ARTICLE_SECTION_GAP : "mt-10 iphone-page:mt-12"}>
       <figcaption
-        className={`font-medium leading-snug tracking-[-0.01em] text-[#1E343A] ${dmSans.className} ${titleClassName} ${
+        className={`font-medium leading-snug tracking-[-0.01em] ${titleColor} ${isDark ? "" : dmSans.className} ${titleClassName} ${
           compact && isDesktop
             ? "mb-3 text-[clamp(1.02rem,0.92vw,1.18rem)] md:text-[clamp(1.08rem,0.98vw,1.22rem)]"
             : isDesktop
@@ -84,9 +94,9 @@ export function ArticlePieChart({
         >
           <div
             className="absolute inset-0 rounded-full"
-            style={{ background: `conic-gradient(${pieGradient(slices)})` }}
+            style={{ background: `conic-gradient(${pieGradient(slices, sliceColors)})` }}
           />
-          <div className="absolute inset-[28%] rounded-full bg-[#F7F6F3]" />
+          <div className={`absolute inset-[28%] rounded-full ${donutCenter}`} />
         </div>
 
         <div
@@ -103,11 +113,11 @@ export function ArticlePieChart({
               <div className="flex min-w-0 items-center gap-2.5">
                 <span
                   className="h-[0.62rem] w-[0.62rem] shrink-0 rounded-full"
-                  style={{ background: SLICE_COLORS[index % SLICE_COLORS.length] }}
+                  style={{ background: sliceColors[index % sliceColors.length] }}
                   aria-hidden
                 />
                 <span
-                  className={`${inter.className} font-normal text-[#1E343A]/72 ${
+                  className={`${isDark ? "" : inter.className} font-normal ${labelColor} ${
                     compact && isDesktop
                       ? "text-[clamp(0.92rem,0.84vw,1.02rem)] md:text-[clamp(0.98rem,0.88vw,1.08rem)]"
                       : isDesktop
@@ -119,7 +129,7 @@ export function ArticlePieChart({
                 </span>
               </div>
               <span
-                className={`shrink-0 tabular-nums font-medium text-[#1E343A] ${dmSans.className} ${
+                className={`shrink-0 tabular-nums font-medium ${valueColor} ${isDark ? "" : dmSans.className} ${
                   compact && isDesktop
                     ? "text-[clamp(0.92rem,0.84vw,1.02rem)] md:text-[clamp(0.98rem,0.88vw,1.08rem)]"
                     : isDesktop
@@ -137,7 +147,7 @@ export function ArticlePieChart({
 
       {showCaption && caption ? (
         <p
-          className={`font-normal leading-snug text-[#9A8F82] ${inter.className} ${
+          className={`font-normal leading-snug ${metaColor} ${isDark ? "" : inter.className} ${
             compact && isDesktop
               ? "mt-2 text-pretty text-[clamp(0.78rem,0.72vw,0.88rem)] md:mt-2.5 md:text-[clamp(0.82rem,0.74vw,0.92rem)]"
               : isDesktop
@@ -153,10 +163,10 @@ export function ArticlePieChart({
         <p
           className={
             compact && isDesktop
-              ? `mt-1.5 text-pretty font-normal leading-snug text-[#9A8F82] text-[clamp(0.72rem,0.66vw,0.82rem)] md:mt-2 md:text-[clamp(0.76rem,0.68vw,0.86rem)] ${inter.className}`
+              ? `mt-1.5 text-pretty font-normal leading-snug ${metaColor} text-[clamp(0.72rem,0.66vw,0.82rem)] md:mt-2 md:text-[clamp(0.76rem,0.68vw,0.86rem)] ${isDark ? "" : inter.className}`
               : isDesktop
                 ? ABOUT_DESKTOP_CHART_CITATION_TW
-                : `mt-3 font-normal leading-snug text-[#9A8F82] text-[clamp(0.92rem,0.86rem+0.5vmin,1.05rem)] ${inter.className}`
+                : `mt-3 font-normal leading-snug ${metaColor} text-[clamp(0.92rem,0.86rem+0.5vmin,1.05rem)] ${isDark ? "" : inter.className}`
           }
         >
           {citation}

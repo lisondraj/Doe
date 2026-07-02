@@ -21,6 +21,7 @@ import {
   PROTO_INVEST_BODY_TW,
   PROTO_INVEST_BYLINE_GAP,
   PROTO_INVEST_BYLINE_TW,
+  PROTO_INVEST_BULLET_TW,
   PROTO_INVEST_CONTENT_GAP,
   PROTO_INVEST_CONTENT_PT,
   PROTO_INVEST_HERO_AFTER_BYLINE,
@@ -80,10 +81,7 @@ export function ProtoInvestMobileContent() {
           <ul className={`${PROTO_INVEST_LIST_GAP} list-none pl-0`}>
             {ABOUT_DESKTOP_SECTION_2_BULLETS.map((item) => (
               <li key={item} className={`flex items-start gap-3 ${PROTO_INVEST_BODY_TW}`}>
-                <span
-                  className="mt-[0.35em] h-[0.45em] w-[0.45em] shrink-0 rounded-full bg-[#D2774C]"
-                  aria-hidden
-                />
+                <span className={PROTO_INVEST_BULLET_TW} aria-hidden />
                 {item}
               </li>
             ))}

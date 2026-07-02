@@ -22,6 +22,7 @@ export function ProtoInvestMobileAiAdoptionChart() {
         showCaption={false}
         showCitation={false}
         titleClassName={PROTO_INVEST_CHART_TITLE_TW}
+        theme="dark"
       />
 
       <p className={PROTO_INVEST_CHART_CAPTION_TW}>{PROTO_INVEST_AI_ADOPTION_CAPTION}</p>
