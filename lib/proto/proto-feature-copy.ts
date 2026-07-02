@@ -40,8 +40,8 @@ export const PROTO_FEATURE_COPY: Record<ProtoCommunicationSlideId, ProtoFeatureC
       "Recruiters review candidate evals on mobile the moment work lands. Scores, replays, and shortlists sync to your phone so you can move on strong talent and fill roles whether you're at your desk or on the road.",
   },
   prototype: {
-    titleLine1: "Validate prototypes &",
-    titleLine2: "test within your product.",
+    titleLine1: "See if submissions",
+    titleLine2: "fit your product.",
     description:
       "Take an applicant's prototype, gather real user feedback, and simulate it back inside your product before you ship. Proto shows how the idea lands with your users and where it might fit in your roadmap.",
   },
