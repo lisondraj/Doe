@@ -23,6 +23,8 @@ export function ProtoFooterWordmark() {
     measure.className = `proto-footer-wordmark proto-footer-wordmark--measure pointer-events-none absolute left-0 top-0 whitespace-nowrap opacity-0 ${PROTO_NAV_LOGO_FONT_CLASS}`;
     container.appendChild(measure);
 
+    let rafId = 0;
+
     const fit = () => {
       const available = container.clientWidth;
       if (available <= 0) return;
@@ -36,15 +38,21 @@ export function ProtoFooterWordmark() {
         else hi = mid - 1;
       }
 
-      setFontSizePx(lo);
+      setFontSizePx((prev) => (prev === lo ? prev : lo));
     };
 
-    fit();
-    const observer = new ResizeObserver(fit);
+    const scheduleFit = () => {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(fit);
+    };
+
+    scheduleFit();
+    const observer = new ResizeObserver(scheduleFit);
     observer.observe(container);
-    void document.fonts?.ready.then(fit);
+    void document.fonts?.ready.then(scheduleFit);
 
     return () => {
+      cancelAnimationFrame(rafId);
       observer.disconnect();
       measure.remove();
     };

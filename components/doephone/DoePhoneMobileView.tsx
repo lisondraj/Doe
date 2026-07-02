@@ -20,15 +20,13 @@ import {
 import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-viewport";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 import { useDesignersStaticNav } from "@/lib/designers/use-designers-static-nav";
-import { useProtoViewportMetrics } from "@/lib/proto/use-proto-viewport-metrics";
 import { PROTO_FONT_CLASS, PROTO_NAV_LOGO_FONT_CLASS } from "@/lib/proto/proto-font";
 
 export function DoePhoneMobileView({ variant = "home" }: { variant?: "home" | "proto" }) {
   const isProto = variant === "proto";
 
   useDoePhoneLayoutViewport();
-  useDoePhoneStableViewport(!isProto);
-  useProtoViewportMetrics(isProto);
+  useDoePhoneStableViewport(true);
   const staticNav = useDesignersStaticNav();
 
   useLayoutEffect(() => {

@@ -82,7 +82,11 @@ export function DoePhoneHeroHeadline({
 
     const onResize = () => measure();
     window.addEventListener("resize", onResize);
-    window.visualViewport?.addEventListener("resize", onResize);
+    const onVisualViewportResize = () => {
+      if (document.documentElement.hasAttribute("data-proto-page")) return;
+      measure();
+    };
+    window.visualViewport?.addEventListener("resize", onVisualViewportResize);
 
     let cancelled = false;
     void document.fonts.ready.then(() => {
@@ -94,7 +98,7 @@ export function DoePhoneHeroHeadline({
       cancelAnimationFrame(raf);
       ro.disconnect();
       window.removeEventListener("resize", onResize);
-      window.visualViewport?.removeEventListener("resize", onResize);
+      window.visualViewport?.removeEventListener("resize", onVisualViewportResize);
     };
   }, []);
 
