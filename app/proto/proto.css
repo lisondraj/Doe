@@ -113,10 +113,39 @@ html[data-proto-page] .proto-feature-section__copy {
 html[data-proto-page] .proto-feature-section__copy .doephone-hero-headline,
 html[data-proto-page] .proto-feature-section__copy .doephone-hero-headline-line {
   color: #ffffff !important;
+}
+
+html[data-proto-page] .proto-feature-reveal {
+  opacity: 0;
+  filter: blur(16px);
+  transform: translateY(1.75rem);
+  will-change: opacity, filter, transform;
+}
+
+html[data-proto-page] .proto-feature-reveal--in {
+  animation: doephone-hero-headline-in 1.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+html[data-proto-page] .proto-feature-reveal--description.proto-feature-reveal--in {
+  animation-delay: 0.2s;
+}
+
+html[data-proto-page] .proto-feature-reveal .doephone-hero-headline,
+html[data-proto-page] .proto-feature-reveal .doephone-hero-headline-line {
   animation: none !important;
   opacity: 1 !important;
   filter: none !important;
   transform: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-proto-page] .proto-feature-reveal,
+  html[data-proto-page] .proto-feature-reveal--in {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+    animation: none !important;
+  }
 }
 
 html[data-proto-page] .proto-feature-section__description {
