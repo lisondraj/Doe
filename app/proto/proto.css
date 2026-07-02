@@ -89,9 +89,9 @@ html[data-proto-page] .proto-feature-section .doephone-section-carousel {
   flex: 1 1 auto !important;
   flex-direction: column !important;
   min-height: clamp(
-    28rem,
-    calc(var(--app-vh, 100lvh) * 0.52),
-    40rem
+    34rem,
+    calc(var(--app-vh, 100lvh) * 0.68),
+    52rem
   ) !important;
   height: auto !important;
   max-height: none !important;
