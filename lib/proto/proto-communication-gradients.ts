@@ -51,8 +51,8 @@ export const PROTO_DOCUMENTS_GRADIENT = `linear-gradient(135deg, ${PROTO_RECEPTI
 
 /** Hero — Documents palette; light blue anchored to the top-left edge. */
 export const PROTO_HERO_GRADIENT = [
-  `radial-gradient(ellipse 72% 58% at 0% 0%, ${PROTO_HUMIRA_COLORS.bridgeBlue} 0%, transparent 68%)`,
-  `linear-gradient(135deg, ${PROTO_RECEPTION_PALETTE.deep} 0%, ${PROTO_RECEPTION_PALETTE.blue} 18%, ${PROTO_RECEPTION_PALETTE.blue} 56%, ${PROTO_RECEPTION_PALETTE.copper} 74%, ${PROTO_RECEPTION_PALETTE.gold} 100%)`,
+  `radial-gradient(ellipse 66% 52% at 0% 0%, ${PROTO_HUMIRA_COLORS.bridgeBlue} 0%, transparent 62%)`,
+  `linear-gradient(135deg, ${PROTO_RECEPTION_PALETTE.deep} 0%, ${PROTO_RECEPTION_PALETTE.blue} 20%, ${PROTO_RECEPTION_PALETTE.blue} 52%, ${PROTO_RECEPTION_PALETTE.copper} 74%, ${PROTO_RECEPTION_PALETTE.gold} 100%)`,
 ].join(", ");
 
 /** Reception — warm upper-left ellipse (The phone won't stop). */
