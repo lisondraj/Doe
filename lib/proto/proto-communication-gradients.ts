@@ -26,22 +26,24 @@ export const PROTO_HUMIRA_COLORS = {
 /** Agents roster — exact legacy colours; linear 225° (not center radial). */
 const PROTO_AGENTS_MID_BLUE = "#4A6878";
 
-const PROTO_AGENTS_GRADIENT = `linear-gradient(225deg, ${PROTO_RECEPTION_PALETTE.lightYellow} 0%, ${PROTO_RECEPTION_PALETTE.wheat} 15%, ${PROTO_RECEPTION_PALETTE.gold} 30%, ${PROTO_RECEPTION_PALETTE.copper} 45%, ${PROTO_RECEPTION_PALETTE.blue} 60%, ${PROTO_AGENTS_MID_BLUE} 75%, ${PROTO_RECEPTION_PALETTE.deep} 100%)`;
-
-/** Prior auth — all 8 Humira colours; radial from upper-right (not vertical / horizontal). */
-const PROTO_HUMIRA_PRIOR_AUTH_GRADIENT = `radial-gradient(ellipse 118% 112% at 78% 16%, ${PROTO_HUMIRA_COLORS.deep} 0%, ${PROTO_HUMIRA_COLORS.bridgeDeep} 13%, ${PROTO_HUMIRA_COLORS.blue} 26%, ${PROTO_HUMIRA_COLORS.bridgeBlue} 39%, ${PROTO_HUMIRA_COLORS.copper} 52%, ${PROTO_HUMIRA_COLORS.amber} 65%, ${PROTO_HUMIRA_COLORS.gold} 78%, ${PROTO_HUMIRA_COLORS.wheat} 100%)`;
-
-/** TELUS EMR — same Humira palette, compressed for shorter horizontal band (cool left → warm right). */
-const PROTO_HUMIRA_HORIZONTAL_STOPS = [
-  `${PROTO_HUMIRA_COLORS.deep} 0%`,
-  `${PROTO_HUMIRA_COLORS.bridgeDeep} 6%`,
-  `${PROTO_HUMIRA_COLORS.blue} 18%`,
-  `${PROTO_HUMIRA_COLORS.bridgeBlue} 36%`,
-  `${PROTO_HUMIRA_COLORS.copper} 52%`,
-  `${PROTO_HUMIRA_COLORS.amber} 66%`,
-  `${PROTO_HUMIRA_COLORS.gold} 82%`,
-  `${PROTO_HUMIRA_COLORS.wheat} 100%`,
+/** Every colour in the phone won't stop (front-desk) gradient — shared across billing + integrate. */
+const PROTO_RECEPTION_FULL_STOPS = [
+  `${PROTO_RECEPTION_PALETTE.lightYellow} 0%`,
+  `${PROTO_RECEPTION_PALETTE.wheat} 15%`,
+  `${PROTO_RECEPTION_PALETTE.gold} 30%`,
+  `${PROTO_RECEPTION_PALETTE.copper} 45%`,
+  `${PROTO_RECEPTION_PALETTE.blue} 60%`,
+  `${PROTO_AGENTS_MID_BLUE} 75%`,
+  `${PROTO_RECEPTION_PALETTE.deep} 100%`,
 ].join(", ");
+
+const PROTO_AGENTS_GRADIENT = `linear-gradient(225deg, ${PROTO_RECEPTION_FULL_STOPS})`;
+
+/** Prior auth — warm lower-right bloom; full reception sweep (all phone won't stop colours). */
+const PROTO_PRIOR_AUTH_GRADIENT = `radial-gradient(ellipse 118% 112% at 72% 88%, ${PROTO_RECEPTION_PALETTE.lightYellow} 0%, ${PROTO_RECEPTION_PALETTE.wheat} 12%, ${PROTO_RECEPTION_PALETTE.gold} 26%, ${PROTO_RECEPTION_PALETTE.copper} 40%, ${PROTO_RECEPTION_PALETTE.blue} 56%, ${PROTO_AGENTS_MID_BLUE} 72%, ${PROTO_RECEPTION_PALETTE.deep} 100%)`;
+
+/** Integrate — horizontal connective band; same seven colours cool → warm → cool. */
+const PROTO_INTEGRATE_GRADIENT = `linear-gradient(90deg, ${PROTO_RECEPTION_PALETTE.deep} 0%, ${PROTO_AGENTS_MID_BLUE} 10%, ${PROTO_RECEPTION_PALETTE.blue} 24%, ${PROTO_RECEPTION_PALETTE.copper} 40%, ${PROTO_RECEPTION_PALETTE.gold} 56%, ${PROTO_RECEPTION_PALETTE.wheat} 72%, ${PROTO_RECEPTION_PALETTE.lightYellow} 88%, ${PROTO_RECEPTION_PALETTE.deep} 100%)`;
 
 /** Patient chart — Documents palette flipped; warm upper-left → cool edge. */
 const PROTO_AMBIENT_RADIAL = `radial-gradient(ellipse 125% 110% at 14% 12%, ${PROTO_RECEPTION_PALETTE.gold} 0%, ${PROTO_RECEPTION_PALETTE.copper} 36%, ${PROTO_RECEPTION_PALETTE.blue} 70%, ${PROTO_RECEPTION_PALETTE.deep} 100%)`;
@@ -64,8 +66,8 @@ export const PROTO_COMMUNICATION_GRADIENTS = {
   "front-desk": PROTO_AGENTS_GRADIENT,
   inbox: PROTO_DOCUMENTS_GRADIENT,
   ambient: PROTO_FRONT_DESK_GRADIENT,
-  billing: PROTO_HUMIRA_PRIOR_AUTH_GRADIENT,
-  integrate: `linear-gradient(90deg, ${PROTO_HUMIRA_HORIZONTAL_STOPS})`,
+  billing: PROTO_PRIOR_AUTH_GRADIENT,
+  integrate: PROTO_INTEGRATE_GRADIENT,
 } as const satisfies Record<string, string>;
 
 export type ProtoCommunicationSlideId = keyof typeof PROTO_COMMUNICATION_GRADIENTS;
