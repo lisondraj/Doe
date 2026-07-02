@@ -6,15 +6,15 @@ import {
   ABOUT_DESKTOP_CHART_CITATION_TW,
 } from "@/lib/about/about-layout-styles";
 import { dmSans, inter } from "@/lib/home/fonts";
-import { PROTO_CHART_COLORS } from "@/lib/proto/proto-chart-colors";
+import { PROTO_CHART_GRADIENTS } from "@/lib/proto/proto-chart-colors";
 import type { ArticleBodyLayout } from "@/components/blog/ArticleBodyBlocks";
 
 const TRACK_LIGHT = "rgba(30, 52, 58, 0.08)";
 const TRACK_DARK = "rgba(255, 255, 255, 0.12)";
-const TRACK_PROTO = PROTO_CHART_COLORS.track;
+const TRACK_PROTO = PROTO_CHART_GRADIENTS.track;
 const BAR = "#D2774C";
 const BAR_DARK = "#C46848";
-const BAR_PROTO = PROTO_CHART_COLORS.accent;
+const BAR_PROTO = PROTO_CHART_GRADIENTS.bar;
 const GRID_LINE = "rgba(30, 52, 58, 0.07)";
 const BAR_CHART_GRID_LINES = 5;
 

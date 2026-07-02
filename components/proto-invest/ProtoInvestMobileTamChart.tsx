@@ -9,6 +9,7 @@ import {
   PROTO_INVEST_TAM_CAPTION,
   PROTO_INVEST_TAM_CITATION,
 } from "@/lib/proto-invest/proto-invest-content";
+import { PROTO_CHART_GRADIENTS } from "@/lib/proto/proto-chart-colors";
 
 import { PROTO_INVEST_CHART_COLORS } from "@/lib/proto-invest/proto-invest-theme";
 
@@ -76,7 +77,7 @@ export function ProtoInvestMobileTamChart() {
                     <div className="flex h-full flex-col justify-end">
                       <div
                         className="w-full rounded-t-[0.35rem] transition-[height] duration-500 ease-out iphone-page:rounded-t-[0.42rem]"
-                        style={{ height: heightPct, background: PROTO_INVEST_CHART_COLORS.accent }}
+                        style={{ height: heightPct, background: PROTO_CHART_GRADIENTS.tamBar }}
                       />
                     </div>
                   </div>
