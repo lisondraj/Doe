@@ -46,13 +46,12 @@ html[data-proto-page] .proto-feature-section__inner {
   display: flex !important;
   flex: 1 1 auto !important;
   flex-direction: column !important;
-  justify-content: flex-start !important;
+  justify-content: center !important;
+  align-items: stretch !important;
   box-sizing: border-box !important;
+  width: 100% !important;
+  height: 100% !important;
   min-height: 0 !important;
-  gap: max(
-    1.45rem,
-    calc(var(--app-vh, 100lvh) * 0.038)
-  ) !important;
   padding-top: max(
     2.35rem,
     calc(env(safe-area-inset-top, 0px) + calc(var(--app-vh, 100lvh) * 0.0525))
@@ -71,22 +70,31 @@ html[data-proto-page] .proto-feature-section__inner {
   ) !important;
 }
 
+html[data-proto-page] .proto-feature-section__stack {
+  display: flex !important;
+  flex: 0 1 auto !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+  gap: max(
+    1.45rem,
+    calc(var(--app-vh, 100lvh) * 0.038)
+  ) !important;
+}
+
 html[data-proto-page] .proto-feature-section__card,
 html[data-proto-page] .proto-feature-section .doephone-section-carousel {
   display: flex !important;
-  flex: 0 0 auto !important;
+  flex: 1 1 auto !important;
   flex-direction: column !important;
-  min-height: 0 !important;
-  height: clamp(
-    32rem,
-    calc(var(--app-vh, 100lvh) * 0.88),
-    52rem
+  min-height: clamp(
+    28rem,
+    calc(var(--app-vh, 100lvh) * 0.52),
+    40rem
   ) !important;
-  max-height: clamp(
-    32rem,
-    calc(var(--app-vh, 100lvh) * 0.88),
-    52rem
-  ) !important;
+  height: auto !important;
+  max-height: none !important;
 }
 
 html[data-proto-page] .proto-feature-section__card > * {

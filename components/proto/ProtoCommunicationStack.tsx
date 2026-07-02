@@ -22,17 +22,19 @@ export function ProtoCommunicationStack() {
             aria-label={slide.menuLabel}
           >
             <div className={`${DOEPHONE_SECTION_CAROUSEL_INSET_X} proto-feature-section__inner`}>
-              <div className="proto-feature-section__card w-full">
-                <DoePhoneCommunicationCarouselCard
-                  slide={slide}
-                  isActive
-                  layout="phone"
-                  showExpandControls={false}
-                  gradientOverride={protoCommunicationGradient(slide.id)}
-                  gridOverride={protoCommunicationGrid(slide.id)}
-                />
+              <div className="proto-feature-section__stack w-full min-h-0">
+                <div className="proto-feature-section__card w-full min-h-0">
+                  <DoePhoneCommunicationCarouselCard
+                    slide={slide}
+                    isActive
+                    layout="phone"
+                    showExpandControls={false}
+                    gradientOverride={protoCommunicationGradient(slide.id)}
+                    gridOverride={protoCommunicationGrid(slide.id)}
+                  />
+                </div>
+                <ProtoFeatureSectionCopy copy={copy} />
               </div>
-              <ProtoFeatureSectionCopy copy={copy} />
             </div>
           </section>
         );
