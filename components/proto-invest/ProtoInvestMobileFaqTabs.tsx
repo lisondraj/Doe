@@ -7,7 +7,7 @@ import {
   PROTO_INVEST_FAQ_ANSWER_TW,
   PROTO_INVEST_FAQ_ITEM_TW,
 } from "@/lib/proto-invest/proto-invest-layout-styles";
-import { ABOUT_DESKTOP_FAQ_ITEMS } from "@/lib/about/about-desktop-faq";
+import { PROTO_INVEST_FAQ_ITEMS } from "@/lib/proto-invest/proto-invest-content";
 
 /** /proto-invest — FAQ accordion with proto dark styling. */
 export function ProtoInvestMobileFaqTabs() {
@@ -15,7 +15,7 @@ export function ProtoInvestMobileFaqTabs() {
 
   return (
     <div className="flex w-full flex-col">
-      {ABOUT_DESKTOP_FAQ_ITEMS.map((item, index) => {
+      {PROTO_INVEST_FAQ_ITEMS.map((item, index) => {
         const isOpen = openIndex === index;
 
         return (

@@ -4,9 +4,9 @@ import {
   PROTO_INVEST_CHART_CITATION_TW,
   PROTO_INVEST_CHART_TITLE_TW,
 } from "@/lib/proto-invest/proto-invest-layout-styles";
-import { ABOUT_MOBILE_TAM_CHART } from "@/lib/about/about-page-article";
 import {
   PROTO_INVEST_TAM_CAPTION,
+  PROTO_INVEST_TAM_CHART,
   PROTO_INVEST_TAM_CITATION,
 } from "@/lib/proto-invest/proto-invest-content";
 import { PROTO_CHART_GRADIENTS } from "@/lib/proto/proto-chart-colors";
@@ -17,19 +17,19 @@ const TAM_Y_MAX = 28;
 const TAM_Y_TICKS = [0, 7, 14, 21, 28] as const;
 
 function formatTamAxis(value: number) {
-  return value === 0 ? "0" : value >= 10 ? `$${value}B` : `$${value.toFixed(0)}B`;
+  return value === 0 ? "0" : value >= 10 ? `$${value}B` : `$${value.toFixed(1)}B`;
 }
 
 /** /proto-invest — TAM vertical bar chart with dark-theme palette. */
 export function ProtoInvestMobileTamChart() {
-  const bars = ABOUT_MOBILE_TAM_CHART.bars;
+  const bars = PROTO_INVEST_TAM_CHART.bars;
 
   return (
     <figure className="proto-invest-chart-zone">
       <figcaption
         className={`mb-5 font-medium leading-snug tracking-[-0.01em] text-white ${PROTO_INVEST_CHART_TITLE_TW} iphone-page:mb-6 ${PROTO_FONT_CLASS}`}
       >
-        {ABOUT_MOBILE_TAM_CHART.title}
+        {PROTO_INVEST_TAM_CHART.title}
       </figcaption>
 
       <div className="aspect-[5/4] w-full">
@@ -104,18 +104,18 @@ export function ProtoInvestMobileTamChart() {
         <p
           className={`font-medium leading-none tracking-[-0.03em] text-white ${PROTO_FONT_CLASS} text-[clamp(2.55rem,2rem+2.35vmin,3.35rem)] iphone-page:text-[clamp(2.85rem,2.2rem+2.75vmin,3.75rem)]`}
         >
-          ${ABOUT_MOBILE_TAM_CHART.highlight.valueB}B
+          ${PROTO_INVEST_TAM_CHART.highlight.valueB}B
         </p>
         <p
           className={`mt-2 font-medium leading-snug tracking-[-0.02em] text-white ${PROTO_FONT_CLASS} text-[clamp(1.08rem,0.92rem+0.75vmin,1.32rem)] iphone-page:mt-2.5 iphone-page:text-[clamp(1.22rem,1.02rem+0.95vmin,1.48rem)]`}
         >
-          {ABOUT_MOBILE_TAM_CHART.highlight.tamLabel}
+          {PROTO_INVEST_TAM_CHART.highlight.tamLabel}
         </p>
         <p
           className={`mt-1.5 font-normal leading-snug text-[clamp(1rem,0.88rem+0.58vmin,1.18rem)] iphone-page:mt-2 iphone-page:text-[clamp(1.12rem,0.96rem+0.72vmin,1.32rem)] ${PROTO_FONT_CLASS}`}
           style={{ color: PROTO_INVEST_CHART_COLORS.labelMuted }}
         >
-          {ABOUT_MOBILE_TAM_CHART.highlight.headline}
+          {PROTO_INVEST_TAM_CHART.highlight.headline}
         </p>
       </div>
 
