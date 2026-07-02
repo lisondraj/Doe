@@ -11,7 +11,7 @@ export type ProtoFeatureCopy = {
 export const PROTO_FEATURE_COPY: Record<ProtoCommunicationSlideId, ProtoFeatureCopy> = {
   agents: {
     titleLine1: "Recruit only the",
-    titleLine2: "most talent.",
+    titleLine2: "most talented.",
     description:
       "Post one role, then watch candidates enter a live sandbox where every action is tracked. Proto scores task outcomes, surfaces hidden signal, and lets you compare applicants side by side before you decide.",
   },
