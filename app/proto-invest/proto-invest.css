@@ -1,0 +1,33 @@
+/*
+ * /proto-invest — investor page; dark chart overrides on shared article chart components.
+ */
+
+html[data-proto-page] .proto-invest-chart-zone figcaption {
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+
+html[data-proto-page] .proto-invest-chart-zone span {
+  color: rgba(255, 255, 255, 0.72) !important;
+}
+
+html[data-proto-page] .proto-invest-chart-zone span[class*="tabular-nums"] {
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+
+html[data-proto-page] .proto-invest-main {
+  color-scheme: dark;
+}
+
+/* Pie legend labels */
+html[data-proto-page] .proto-invest-chart-zone figure span.font-normal {
+  color: rgba(255, 255, 255, 0.72) !important;
+}
+
+html[data-proto-page] .proto-invest-chart-zone figure span.font-medium {
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+
+/* Bar track — lighten on dark bg */
+html[data-proto-page] .proto-invest-chart-zone [style*="rgba(30, 52, 58, 0.08)"] {
+  background: rgba(255, 255, 255, 0.1) !important;
+}

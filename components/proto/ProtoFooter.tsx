@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { DOEPHONE_FOOTER_CONTENT_INSET } from "@/lib/doephone/section-styles";
 import { PROTO_FONT_CLASS } from "@/lib/proto/proto-font";
+import { PROTO_INVEST_PATH } from "@/lib/site-domains";
 import { ProtoFooterWordmark } from "@/components/proto/ProtoFooterWordmark";
 
 const FOOTER_COLUMNS = [
@@ -19,7 +20,7 @@ const FOOTER_COLUMNS = [
     title: "Company",
     links: [
       { href: "/about", label: "About Proto" },
-      { href: "/proto", label: "For Investors" },
+      { href: PROTO_INVEST_PATH, label: "For Investors" },
       { href: "/join", label: "Careers" },
     ],
   },

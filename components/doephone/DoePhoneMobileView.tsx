@@ -21,6 +21,7 @@ import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-v
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 import { useDesignersStaticNav } from "@/lib/designers/use-designers-static-nav";
 import { PROTO_FONT_CLASS, PROTO_NAV_LOGO_FONT_CLASS } from "@/lib/proto/proto-font";
+import { PROTO_INVEST_PATH } from "@/lib/site-domains";
 
 export function DoePhoneMobileView({ variant = "home" }: { variant?: "home" | "proto" }) {
   const isProto = variant === "proto";
@@ -77,6 +78,7 @@ export function DoePhoneMobileView({ variant = "home" }: { variant?: "home" | "p
         navChromeTheme={isProto ? "dark" : "light"}
         logoLink={isProto ? true : !staticNav}
         navActionLinksEnabled={isProto ? true : !staticNav}
+        investorsHref={isProto ? PROTO_INVEST_PATH : undefined}
       />
 
       <DoePhoneHeroSection variant={isProto ? "proto" : "mobile"} />

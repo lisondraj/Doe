@@ -30,16 +30,21 @@ export function MobileMainNavCta({
   shadow = "none",
   divider = NAV_CTA_DIVIDER,
   linksEnabled = true,
+  investorsHref,
 }: {
   bg?: string;
   fg?: string;
   shadow?: string;
   divider?: string;
   linksEnabled?: boolean;
+  investorsHref?: string;
 }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
-  const primary = DESKTOP_MAIN_CTA_MENU_ITEMS[0];
+  const primary = {
+    ...DESKTOP_MAIN_CTA_MENU_ITEMS[0],
+    href: investorsHref ?? DESKTOP_MAIN_CTA_MENU_ITEMS[0].href,
+  };
 
   useEffect(() => {
     if (!open) return;
