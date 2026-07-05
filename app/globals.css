@@ -716,11 +716,37 @@ html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav .proto-nav-ct
   color: var(--proto-nav-cta-text) !important;
 }
 
-/* Home + /about — solid CTA rim (semi-transparent border bleeds sand at corners). */
+/* Home + /about — clip CTA corners on shell; 1px border inset leaves sand wedges. */
 html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell,
 html[data-about-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell,
 html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell {
-  border-color: var(--proto-nav-cta-bg) !important;
+  border: none !important;
+  background-color: var(--proto-nav-cta-bg) !important;
+  overflow: hidden !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell > button,
+html[data-about-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell > button,
+html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell > button {
+  border-radius: 0 !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell > div:not([role="menu"]),
+html[data-about-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell > div:not([role="menu"]),
+html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell > div:not([role="menu"]) {
+  border-radius: 0 !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell.proto-nav-cta-shell--open:has(> [role="menu"]),
+html[data-about-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell.proto-nav-cta-shell--open:has(> [role="menu"]),
+html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell.proto-nav-cta-shell--open:has(> [role="menu"]) {
+  overflow: visible !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav--scrolled .proto-nav-cta-shell.proto-nav-cta-shell--open:not(:has(> [role="menu"])),
+html[data-about-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav--scrolled .proto-nav-cta-shell.proto-nav-cta-shell--open:not(:has(> [role="menu"])),
+html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav.proto-nav--scrolled .proto-nav-cta-shell.proto-nav-cta-shell--open:not(:has(> [role="menu"])) {
+  overflow: hidden !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell [role="menu"],
