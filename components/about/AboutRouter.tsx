@@ -2,10 +2,10 @@
 
 import { AboutDesktopView } from "@/components/about/AboutDesktopView";
 import { AboutMobileView } from "@/components/about/AboutMobileView";
-import { useJoinPageVariant, type JoinPageVariant } from "@/lib/join/use-join-page-variant";
+import { useAboutPageVariant } from "@/lib/about/use-about-page-variant";
 
-export function AboutRouter({ initialVariant }: { initialVariant: JoinPageVariant }) {
-  const variant = useJoinPageVariant(initialVariant);
+export function AboutRouter() {
+  const variant = useAboutPageVariant();
 
   return variant === "desktop" ? <AboutDesktopView /> : <AboutMobileView />;
 }

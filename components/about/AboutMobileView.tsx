@@ -48,18 +48,11 @@ export function AboutMobileView() {
   useDoePhoneStableViewport();
 
   useLayoutEffect(() => {
-    const html = document.documentElement;
-    html.setAttribute("data-about-page", "true");
-
     try {
       sessionStorage.removeItem(`doephone-app-viewport-lock:${location.hostname}`);
     } catch {
       /* ignore */
     }
-
-    return () => {
-      html.removeAttribute("data-about-page");
-    };
   }, []);
 
   const [foundersOne, foundersTwo] = ABOUT_DESKTOP_FOUNDERS_PARAGRAPHS;

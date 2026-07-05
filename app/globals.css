@@ -45,9 +45,26 @@ html:has(.doephone-mobile-root) body {
 }
 
 /*
- * / (home) — match proto iPhone scale: 80% rem base so layout fits at browser 100%.
+ * /about — surface tokens as soon as bootstrap sets data-about-page (before shell mounts).
+ */
+html[data-about-page] {
+  --doe-page-surface: #ede8df;
+  --doe-page-surface-raised: #f2ece4;
+  --doe-page-ink: #1e343a;
+  --doe-page-border: rgba(30, 52, 58, 0.14);
+  --proto-page-bg: var(--doe-page-surface);
+  background-color: var(--doe-page-surface);
+}
+
+html[data-about-page] body {
+  background-color: var(--doe-page-surface);
+}
+
+/*
+ * / (home) + /about phone — match proto iPhone scale: 80% rem base so layout fits at browser 100%.
  */
 html[data-home-page]:has(.doephone-mobile-root),
+html[data-about-page][data-doeforvc-always-phone],
 html[data-about-page]:has(.doephone-mobile-root),
 html[data-about-page]:has(.blog-mobile-root) {
   font-size: 80%;
