@@ -45,7 +45,7 @@ import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-v
 /** iPhone /about — mission hero plus section copy, pie chart, FAQ, and founder bios. */
 export function AboutMobileView() {
   useDoePhoneLayoutViewport();
-  useDoePhoneStableViewport();
+  useDoePhoneStableViewport(true);
 
   useLayoutEffect(() => {
     try {

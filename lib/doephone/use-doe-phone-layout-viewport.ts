@@ -11,15 +11,22 @@ export function useDoePhoneLayoutViewport() {
     const raf = requestAnimationFrame(() => applyPhoneLayoutViewportMeta());
 
     const sync = () => applyPhoneLayoutViewportMeta();
+    const syncAfterOrientation = () => {
+      sync();
+      requestAnimationFrame(sync);
+      window.setTimeout(sync, 120);
+      window.setTimeout(sync, 280);
+    };
+
     window.addEventListener("resize", sync);
     window.visualViewport?.addEventListener("resize", sync);
-    window.addEventListener("orientationchange", sync);
+    window.addEventListener("orientationchange", syncAfterOrientation);
 
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", sync);
       window.visualViewport?.removeEventListener("resize", sync);
-      window.removeEventListener("orientationchange", sync);
+      window.removeEventListener("orientationchange", syncAfterOrientation);
     };
   }, []);
 }

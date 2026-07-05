@@ -1,11 +1,21 @@
 "use client";
 
 import { shouldLockDesignersTouchPhoneLayout } from "@/lib/designers/designers-page-context";
+import { shouldLockDoeTouchPhoneLayout } from "@/lib/doephone/doe-touch-phone-layout";
 
 import { vbIsVisualViewportPinching } from "@/lib/home/vertical-bento";
 import { useLayoutEffect } from "react";
 
 const SETTLE_MS = 220;
+const ORIENTATION_SETTLE_MS = [120, 280] as const;
+
+function scheduleAfterOrientation(run: () => void) {
+  run();
+  requestAnimationFrame(run);
+  for (const delay of ORIENTATION_SETTLE_MS) {
+    window.setTimeout(run, delay);
+  }
+}
 
 function viewportStorageKey(): string {
   if (typeof window === "undefined") return "doephone-app-viewport-lock";
@@ -110,6 +120,8 @@ export function useDoePhoneStableViewport(enabled = true) {
 
       if (next.width !== stable.width) {
         stable.width = next.width;
+        // Width flip (portrait ↔ landscape) — refresh height too; URL-bar-only resizes change height alone.
+        stable.height = next.height;
         apply(stable.width, stable.height);
         storeLock(stable);
       }
@@ -133,7 +145,7 @@ export function useDoePhoneStableViewport(enabled = true) {
       clearStoredLock();
       stable.height = 0;
       stable.width = 0;
-      measure(true);
+      scheduleAfterOrientation(() => measure(true));
     };
 
     const onViewportResize = () => {
@@ -150,15 +162,15 @@ export function useDoePhoneStableViewport(enabled = true) {
       if (event.persisted) reapplyStable();
     };
 
-    if (shouldLockDesignersTouchPhoneLayout()) {
+    if (shouldLockDesignersTouchPhoneLayout() || shouldLockDoeTouchPhoneLayout()) {
       clearStoredLock();
       measure(true);
     } else {
       const stored = readStoredLock();
       if (stored) {
         const current = read();
-        const widthDrift = stored.width > current.width * 1.12;
-        const heightDrift = stored.height > current.height * 1.12;
+        const widthDrift = Math.abs(stored.width - current.width) > 64;
+        const heightDrift = Math.abs(stored.height - current.height) > 64;
 
         if (widthDrift || heightDrift) {
           clearStoredLock();

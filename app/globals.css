@@ -264,6 +264,22 @@ html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Integrations
   padding-right: var(--proto-phone-gutter-right) !important;
 }
 
+/* Home + /about iPhone — Paper shader only; hide legacy PNG grain overlays. */
+html[data-home-page]:has(.doephone-mobile-root) .proto-shader-surface .proto-grain-layer,
+html[data-home-page]:has(.doephone-mobile-root) .proto-shader-surface > div.z-\[1\],
+html[data-home-page]:has(.doephone-mobile-root) .proto-shader-surface > .pointer-events-none.z-\[2\],
+html[data-about-page]:has(.doephone-mobile-root) .proto-shader-surface .proto-grain-layer,
+html[data-about-page]:has(.doephone-mobile-root) .proto-shader-surface > div.z-\[1\],
+html[data-about-page]:has(.doephone-mobile-root) .proto-shader-surface > .pointer-events-none.z-\[2\],
+html[data-about-page]:has(.blog-mobile-root) .proto-shader-surface .proto-grain-layer,
+html[data-about-page]:has(.blog-mobile-root) .proto-shader-surface > div.z-\[1\],
+html[data-about-page]:has(.blog-mobile-root) .proto-shader-surface > .pointer-events-none.z-\[2\] {
+  display: none !important;
+  background-image: none !important;
+  opacity: 0 !important;
+  mix-blend-mode: normal !important;
+}
+
 
 html[data-about-page]:has(.blog-mobile-root),
 html[data-about-page]:has(.doephone-mobile-root) {
