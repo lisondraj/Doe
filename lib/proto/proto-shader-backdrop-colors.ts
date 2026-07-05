@@ -51,14 +51,14 @@ export function doeHomeBuildShaderSurface(): ProtoGrainGradientSurface {
   };
 }
 
-/** Home + /about footer — hero palette, static ripple flow along the bottom edge. */
+/** Home + /about footer — teal field above, warm ripple pooled along the bottom edge. */
 export function doeHomeFooterShaderSurface(): ProtoGrainGradientSurface {
   return {
     variant: "home-footer",
     colors: [
-      DOE_HOME_ORANGE_PALETTE.gold,
+      "#2A454C",
       DOE_HOME_ORANGE_PALETTE.orange,
-      DOE_HOME_ORANGE_PALETTE.copper,
+      DOE_HOME_ORANGE_PALETTE.gold,
     ],
     colorBack: DOE_HOME_ORANGE_PALETTE.back,
   };

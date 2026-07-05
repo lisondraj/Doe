@@ -100,15 +100,15 @@ export const PROTO_GRAIN_GRADIENT_PRESETS: Record<ProtoGrainGradientVariant, Pro
     scale: 1.14,
     speed: 0.42,
   },
-  /** Home/about footer — hero palette, warmth pooled along the bottom band (static). */
+  /** Home/about footer — teal-dominant upper field, warm ripple pooled along bottom (static). */
   "home-footer": {
     shape: "ripple",
-    softness: 0.68,
-    intensity: 0.17,
+    softness: 0.72,
+    intensity: 0.14,
     fit: "cover",
     rotation: 188,
     offsetX: 0.05,
-    offsetY: 0.4,
+    offsetY: 0.52,
     scale: 1.08,
     worldWidth: 1280,
     worldHeight: 960,
