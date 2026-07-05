@@ -13,7 +13,7 @@ import {
   QUALITY_ORBIT_TILE_FILL,
   QUALITY_ORBIT_TILE_LABELS,
 } from "@/lib/home/quality-orbit";
-import { VBENTO_GRAIN_BG } from "@/lib/home/vertical-bento";
+import { WORKFLOW_CAROUSEL_GRAIN_STYLE } from "@/lib/workflow-carousel-design-backdrops";
 
 export function QualityOrbitSection({
   qualityOrbitSectionRef,
@@ -169,12 +169,7 @@ export function QualityOrbitSection({
                   />
                   <div
                     className="absolute inset-0 pointer-events-none rounded-2xl iphone-page:rounded-[0.9rem]"
-                    style={{
-                      backgroundImage: VBENTO_GRAIN_BG,
-                      backgroundSize: "200px 200px",
-                      opacity: 0.9,
-                      mixBlendMode: "overlay",
-                    }}
+                    style={WORKFLOW_CAROUSEL_GRAIN_STYLE}
                   />
                   <svg
                     className="absolute inset-0 h-full w-full pointer-events-none rounded-2xl iphone-page:rounded-[0.9rem]"

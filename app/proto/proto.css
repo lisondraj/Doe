@@ -103,6 +103,71 @@ html[data-proto-page] .proto-feature-section__card > * {
   height: 100% !important;
 }
 
+/* iPhone — fit-shader feature boxes are 1/6 taller than the default card height. */
+html[data-proto-page]:has(.doephone-mobile-root)
+  .proto-feature-section--fit-shader
+  .proto-feature-section__card {
+  min-height: clamp(
+    calc(22rem + var(--app-vh, 100lvh) / 6),
+    calc(var(--app-vh, 100lvh) * 0.46 + var(--app-vh, 100lvh) / 6),
+    calc(36rem + var(--app-vh, 100lvh) / 6)
+  ) !important;
+  max-height: calc(var(--app-vh, 100lvh) * 0.5 + var(--app-vh, 100lvh) / 6) !important;
+}
+
+/* Paper shader surfaces — no legacy PNG grain or line-grid overlays. */
+html[data-proto-page] .proto-shader-surface .proto-grain-layer,
+html[data-proto-page] .proto-shader-surface > div.z-\[1\],
+html[data-proto-page] .proto-shader-surface > .pointer-events-none.z-\[2\] {
+  display: none !important;
+  background-image: none !important;
+  opacity: 0 !important;
+  mix-blend-mode: normal !important;
+}
+
+/* Feature box UI mocks — display-only (no selection or control clicks). */
+html[data-proto-page] .proto-feature-box-ui,
+html[data-proto-page] .proto-feature-box-ui * {
+  pointer-events: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -webkit-touch-callout: none;
+  cursor: default !important;
+}
+
+/* Fit-shader mocks — fill the overlay; UI centers as one scaled unit. */
+html[data-proto-page]:has(.doephone-mobile-root)
+  .proto-feature-section--fit-shader
+  .proto-feature-section__card
+  .proto-feature-ui-fit-scale {
+  position: absolute !important;
+  inset: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  transform: none !important;
+}
+
+html[data-proto-page]:has(.doephone-mobile-root)
+  .proto-feature-section--fit-shader
+  .proto-feature-section__card
+  .proto-feature-ui-fit-scale
+  > * {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+html[data-proto-page]:has(.doephone-mobile-root) .doephone-hero-section .doephone-hero-headline {
+  font-size: clamp(2.15rem, 1.15rem + 6.45vmin, 3.58rem) !important;
+}
+
+html[data-proto-page]:has(.doephone-mobile-root) .proto-feature-section__copy .doephone-hero-headline {
+  font-size: clamp(2.28rem, 1.22rem + 6.15vmin, 3.72rem) !important;
+}
+
 html[data-proto-page] .proto-feature-section__copy {
   flex: 0 0 auto !important;
   width: 100% !important;

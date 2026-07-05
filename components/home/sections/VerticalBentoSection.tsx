@@ -2,8 +2,8 @@
 
 import { lora } from "@/lib/home/fonts";
 import { narrowHorizontalInset, VBENTO_CANVAS_PADDING } from "@/lib/home/hero-constants";
+import { WORKFLOW_CAROUSEL_GRAIN_STYLE } from "@/lib/workflow-carousel-design-backdrops";
 import {
-  VBENTO_GRAIN_BG,
   VBENTO_WORKFLOW_GRADIENTS,
   vbDeriveRails,
   vbDominantRailIndex,
@@ -124,12 +124,7 @@ export function VerticalBentoSection(props: VerticalBentoSectionProps) {
                             <div className="absolute inset-0 z-[1] rounded-2xl" style={{ background: VBENTO_WORKFLOW_GRADIENTS[i] }} />
                             <div
                               className="absolute inset-0 z-[1] pointer-events-none rounded-2xl"
-                              style={{
-                                backgroundImage: VBENTO_GRAIN_BG,
-                                backgroundSize: "200px 200px",
-                                opacity: 1,
-                                mixBlendMode: "overlay",
-                              }}
+                              style={WORKFLOW_CAROUSEL_GRAIN_STYLE}
                             />
                             <div className="absolute inset-0 z-[1] pointer-events-none rounded-2xl overflow-hidden">
                             {i === 0 ? (

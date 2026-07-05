@@ -1,10 +1,13 @@
 "use client";
 
 import { DoePhoneCommunicationSlideVisual } from "@/components/doephone/DoePhoneCommunicationSlideVisual";
+import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import type { DoePhoneCommunicationSlide } from "@/lib/doephone/communication-carousel";
 import type { WorkflowCarouselGridKind } from "@/lib/workflow-carousel-design-backdrops";
 import { CAROUSEL_MENU_UI } from "@/lib/doephone/carousel-menu-visual-styles";
+import { protoGrainGradientVariant, type ProtoGrainGradientVariant } from "@/lib/proto/proto-grain-gradient";
+import { iphoneShaderSurfaceForSlide, doeHomeLabsShaderSurface } from "@/lib/proto/proto-shader-backdrop-colors";
 import {
   DOEPHONE_SECTION_CAROUSEL_CLIP_STYLE,
   DOEPHONE_SECTION_CAROUSEL_RADIUS,
@@ -157,18 +160,24 @@ function CarouselMenuOverlay({
   showContent,
   description,
   layout,
+  uiScaleClass,
+  uiInteractive = true,
 }: {
   children: React.ReactNode;
   expanded: boolean;
   showContent: boolean;
   description?: string;
   layout: CarouselCardLayout;
+  uiScaleClass?: string;
+  uiInteractive?: boolean;
 }) {
   const tokens = LAYOUT[layout];
 
   return (
     <div
-      className="absolute inset-0 z-[15] flex h-full w-full flex-col overflow-hidden"
+      className={`absolute inset-0 z-[15] flex h-full w-full flex-col overflow-hidden${
+        uiInteractive ? "" : " proto-feature-box-ui"
+      }`}
       style={{
         padding: expanded
           ? `${tokens.overlayExpandedPadTop} ${tokens.overlayPadX} ${tokens.overlayExpandedPadBottom}`
@@ -182,7 +191,9 @@ function CarouselMenuOverlay({
           style={{ maxWidth: tokens.contentMaxWidth }}
         >
           <div className="w-full shrink-0">
-            <div className="flex w-full items-center justify-center">{children}</div>
+            <div className={`flex w-full items-center justify-center ${uiScaleClass ?? ""}`.trim()}>
+              {children}
+            </div>
           </div>
           {description ? (
             <p
@@ -225,6 +236,12 @@ export function DoePhoneCommunicationCarouselCard({
   badgeCrop700,
   gradientOverride,
   gridOverride,
+  backdropClassName = "",
+  protoShaderVariant,
+  heroShaderColors = false,
+  protoSite = false,
+  uiScaleClass,
+  uiInteractive = true,
 }: {
   slide: DoePhoneCommunicationSlide;
   isActive?: boolean;
@@ -232,12 +249,22 @@ export function DoePhoneCommunicationCarouselCard({
   className?: string;
   /** When false, hides the + badge and expand panel (e.g. /proto feature stack). */
   showExpandControls?: boolean;
+  /** When false, UI mocks are display-only (no text selection or control clicks). */
+  uiInteractive?: boolean;
   /** Extra inset when the slide canvas is cover-cropped (desktop sliding boxes). */
   badgeCrop700?: { x: number; y: number };
   /** Replaces only the backdrop gradient layer. */
   gradientOverride?: string;
   /** Replaces only the backdrop grid overlay. */
   gridOverride?: WorkflowCarouselGridKind;
+  backdropClassName?: string;
+  /** iPhone — Paper flow preset; colours come from existing CSS gradients. */
+  protoShaderVariant?: ProtoGrainGradientVariant;
+  /** Home Labs — match hero shader colours, keep per-slide flow. */
+  heroShaderColors?: boolean;
+  /** /proto — use reception palette instead of Doe home orange. */
+  protoSite?: boolean;
+  uiScaleClass?: string;
 }) {
   const [panelPhase, setPanelPhase] = useState<PanelPhase>("idle");
   const closeTimerRef = useRef<number | undefined>(undefined);
@@ -272,25 +299,43 @@ export function DoePhoneCommunicationCarouselCard({
     setPanelPhase("open");
   }, [expandable, panelPhase]);
 
+  const shaderSurface =
+    layout === "phone" && protoShaderVariant
+      ? heroShaderColors
+        ? doeHomeLabsShaderSurface(slide.id)
+        : iphoneShaderSurfaceForSlide(slide, protoSite)
+      : undefined;
+
   return (
     <div
       className={`relative isolate h-full w-full overflow-hidden ${DOEPHONE_SECTION_CAROUSEL_RADIUS} shadow-[0_10px_32px_rgba(0,0,0,0.1)] ${className}`.trim()}
       style={DOEPHONE_SECTION_CAROUSEL_CLIP_STYLE}
       aria-hidden={!isActive}
     >
-      <WorkflowCarouselDesignBackdrop
-        backdrop={slide.backdrop}
-        embedded
-        className={DOEPHONE_SECTION_CAROUSEL_RADIUS}
-        gradientOverride={gradientOverride}
-        gridOverride={gridOverride}
-      />
+      {shaderSurface ? (
+        <ProtoGrainGradient
+          variant={shaderSurface.variant}
+          colors={shaderSurface.colors}
+          colorBack={shaderSurface.colorBack}
+          className={`${DOEPHONE_SECTION_CAROUSEL_RADIUS} ${backdropClassName}`.trim()}
+        />
+      ) : (
+        <WorkflowCarouselDesignBackdrop
+          backdrop={slide.backdrop}
+          embedded
+          className={`${DOEPHONE_SECTION_CAROUSEL_RADIUS} ${backdropClassName}`.trim()}
+          gradientOverride={gradientOverride}
+          gridOverride={gridOverride}
+        />
+      )}
       {expandable && panelOpen ? <CarouselSlideFrostOverlay closing={isClosing} /> : null}
       <CarouselMenuOverlay
         expanded={panelPhase === "open"}
         showContent={panelPhase === "open"}
         description={expandable ? slide.description : undefined}
         layout={layout}
+        uiScaleClass={uiScaleClass}
+        uiInteractive={uiInteractive}
       >
         <DoePhoneCommunicationSlideVisual slideId={slide.id} layout={layout} />
       </CarouselMenuOverlay>
