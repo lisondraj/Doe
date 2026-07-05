@@ -19,7 +19,7 @@ export const ABOUT_PAGE_SUBHEADING_LINES = [
 ] as const;
 
 /** About subheading — customization-section description style, scaled up. */
-export const ABOUT_PAGE_SUBHEADING_TW = `mt-[clamp(0.85rem,0.65rem+0.85vmin,1.25rem)] text-[clamp(1.42rem,1.22rem+0.95vmin,1.78rem)] iphone-page:text-[clamp(1.68rem,1.38rem+1.35vmin,2.12rem)] font-normal leading-[1.44] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
+export const ABOUT_PAGE_SUBHEADING_TW = `mt-[clamp(0.55rem,0.42rem+0.55vmin,0.85rem)] text-[clamp(1.42rem,1.22rem+0.95vmin,1.78rem)] iphone-page:text-[clamp(1.68rem,1.38rem+1.35vmin,2.12rem)] font-normal leading-[1.44] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
 
 /** Mission headline block — subheading wraps to the title column width. */
 export const ABOUT_HERO_HEADLINE_WRAP = "w-fit max-w-full";
@@ -35,11 +35,11 @@ export const ABOUT_PAGE_HERO_BEFORE_ARTICLE = "mb-10 iphone-page:mb-12";
 export const ABOUT_PAGE_HERO_WRAP = `${ABOUT_PAGE_HERO_AFTER_SUBHEADING} ${ABOUT_PAGE_HERO_BEFORE_ARTICLE}`;
 
 /** iPhone /about — byline under subheading, before hero. */
-export const ABOUT_PAGE_MOBILE_BYLINE_TW = `text-[clamp(1.15rem,1rem+0.65vmin,1.32rem)] iphone-page:text-[clamp(1.32rem,1.12rem+0.9vmin,1.52rem)] font-medium text-[#9A8F82] ${dmSans.className}`;
+export const ABOUT_PAGE_MOBILE_BYLINE_TW = `about-page-byline text-[clamp(1.02rem,0.88rem+0.58vmin,1.22rem)] iphone-page:text-[clamp(1.08rem,0.92rem+0.62vmin,1.28rem)] font-medium text-[#9A8F82] ${dmSans.className}`;
 
-export const ABOUT_PAGE_MOBILE_BYLINE_GAP = "mt-6 iphone-page:mt-7";
+export const ABOUT_PAGE_MOBILE_BYLINE_GAP = "mt-3 iphone-page:mt-4";
 
-export const ABOUT_PAGE_HERO_AFTER_BYLINE = "mt-8 iphone-page:mt-10";
+export const ABOUT_PAGE_HERO_AFTER_BYLINE = "mt-4 iphone-page:mt-5";
 
 /** iPhone /about hero box — no drop shadow under gradient band. */
 export const ABOUT_PAGE_HERO_BOX_TW = `${DOEPHONE_SECTION_CLOSING_FEATURE_HEIGHT} ${DOEPHONE_SECTION_CAROUSEL_RADIUS} shadow-none`;
@@ -67,9 +67,9 @@ export const ABOUT_DESKTOP_SUBHEADING_TW = `mt-5 md:mt-6 text-[clamp(1.32rem,1.2
 export const ABOUT_DESKTOP_HERO_BYLINE_WRAP_TW =
   "pointer-events-none absolute bottom-6 right-6 z-10 text-right md:bottom-8 md:right-8 lg:bottom-10 lg:right-10";
 
-export const ABOUT_DESKTOP_HERO_BYLINE_TW = `font-medium leading-none text-white text-[clamp(0.98rem,0.88vw,1.12rem)] md:text-[clamp(1.05rem,0.92vw,1.2rem)] ${dmSans.className}`;
+export const ABOUT_DESKTOP_HERO_BYLINE_TW = `font-medium leading-none text-white text-[clamp(0.88rem,0.78vw,1rem)] md:text-[clamp(0.92rem,0.82vw,1.06rem)] ${dmSans.className}`;
 
-export const ABOUT_DESKTOP_HERO_DATE_TW = `mt-1 font-medium leading-none text-white/90 text-[clamp(0.92rem,0.82vw,1.05rem)] md:text-[clamp(0.98rem,0.86vw,1.1rem)] ${dmSans.className}`;
+export const ABOUT_DESKTOP_HERO_DATE_TW = `mt-1 font-medium leading-none text-white/90 text-[clamp(0.82rem,0.74vw,0.94rem)] md:text-[clamp(0.88rem,0.78vw,0.98rem)] ${dmSans.className}`;
 
 export const ABOUT_DESKTOP_ARTICLE_MAX_W = "max-w-[min(100%,54rem)]";
 

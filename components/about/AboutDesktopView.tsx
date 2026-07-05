@@ -38,7 +38,6 @@ import {
   ABOUT_DESKTOP_SECTION_2_INTRO,
   ABOUT_DESKTOP_SECTION_2_BULLETS,
   ABOUT_PAGE_HERO_BACKDROP,
-  ABOUT_PAGE_HERO_PATTERN_SCALE,
   ABOUT_PAGE_MOBILE_BYLINE,
   ABOUT_PAGE_MOBILE_DATE,
 } from "@/lib/about/about-page-article";
@@ -119,7 +118,7 @@ export function AboutDesktopView() {
                 variant="hero"
                 boxClassName={ABOUT_DESKTOP_HERO_BOX_TW}
                 gapClassName=""
-                patternScale={ABOUT_PAGE_HERO_PATTERN_SCALE}
+                useHomeHeroShader
               >
                 <div className={ABOUT_DESKTOP_HERO_BYLINE_WRAP_TW}>
                   <p className={ABOUT_DESKTOP_HERO_BYLINE_TW}>{ABOUT_PAGE_MOBILE_BYLINE}</p>

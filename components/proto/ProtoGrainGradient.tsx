@@ -15,7 +15,7 @@ import {
 } from "@/lib/proto/proto-grain-gradient";
 
 function isHeroVariant(variant: ProtoGrainGradientVariant) {
-  return variant === "home-hero" || variant === "about-hero";
+  return variant === "home-hero" || variant === "build-hero" || variant === "about-hero";
 }
 
 function isNearViewport(node: HTMLElement, marginRatio = 0.75) {

@@ -41,6 +41,8 @@ export const PROTO_INTEGRATE_SHADER_COLORS = ["#5f8ea8", "#8a9a72", "#c8b888"] a
 
 export type ProtoGrainGradientVariant =
   | "home-hero"
+  | "build-hero"
+  | "home-footer"
   | "about-hero"
   | "agents"
   | "front-desk"
@@ -84,6 +86,32 @@ export const PROTO_GRAIN_GRADIENT_PRESETS: Record<ProtoGrainGradientVariant, Pro
     offsetY: -0.08,
     scale: 1.12,
     speed: 0.85,
+  },
+  /** Home Build band — same palette, warmth anchored low-left behind workflow input. */
+  "build-hero": {
+    shape: "blob",
+    softness: 0.64,
+    intensity: 0.18,
+    fit: "cover",
+    rotation: 238,
+    offsetX: -0.2,
+    offsetY: 0.3,
+    scale: 1.14,
+    speed: 0.42,
+  },
+  /** Home/about footer — hero palette, warmth pooled along the bottom band (static). */
+  "home-footer": {
+    shape: "ripple",
+    softness: 0.68,
+    intensity: 0.17,
+    fit: "cover",
+    rotation: 188,
+    offsetX: 0.05,
+    offsetY: 0.4,
+    scale: 1.08,
+    worldWidth: 1280,
+    worldHeight: 960,
+    speed: 0,
   },
   "about-hero": {
     shape: "wave",
@@ -314,11 +342,11 @@ export function protoHomeHeroGrainGradientSurface(): ProtoGrainGradientSurface {
 }
 
 export function isProtoShaderHeroVariant(variant: ProtoGrainGradientVariant) {
-  return variant === "home-hero" || variant === "about-hero";
+  return variant === "home-hero" || variant === "build-hero" || variant === "about-hero";
 }
 
 export function protoShaderMaxPixelCount(variant: ProtoGrainGradientVariant) {
-  if (isProtoShaderHeroVariant(variant)) {
+  if (isProtoShaderHeroVariant(variant) || variant === "home-footer") {
     return PROTO_SHADER_MAX_PIXEL_COUNT_HERO;
   }
 

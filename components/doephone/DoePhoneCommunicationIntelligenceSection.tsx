@@ -6,7 +6,7 @@ import {
   WorkflowMentionAt,
 } from "@/components/doephone/DoePhoneAmbientPromptCard";
 import { DoePhoneSectionTitle } from "@/components/doephone/DoePhoneSectionText";
-import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
+import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import { inter } from "@/lib/home/fonts";
 import {
   DOEPHONE_SECTION_CAROUSEL_INSET_X,
@@ -14,7 +14,7 @@ import {
   DOEPHONE_SECTION_TITLE_PT,
 } from "@/lib/doephone/section-styles";
 import { DOEPHONE_HERO_HEIGHT } from "@/components/doephone/DoePhoneHeroSection";
-import { DOEPHONE_COMMUNICATION_SLIDES } from "@/lib/doephone/communication-carousel";
+import { doeHomeBuildShaderSurface } from "@/lib/proto/proto-shader-backdrop-colors";
 import { doephoneSectionRevealStyleVars } from "@/lib/doephone/section-reveal-timing";
 import {
   doePhoneSectionRevealSegmentClass,
@@ -29,15 +29,11 @@ const ORANGE_FROST_STYLE = {
   boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.38)",
 } as const;
 
-const BUILD_BACKDROP_SLIDE =
-  DOEPHONE_COMMUNICATION_SLIDES.find((slide) => slide.id === "inbox") ??
-  (() => {
-    throw new Error("Missing documents communication slide");
-  })();
-
 const FROST_BLUR_CLASS = "backdrop-blur-[10px] iphone-page:backdrop-blur-[8px]";
 const EXPAND_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
 const EXPAND_DURATION_MS = 720;
+
+const BUILD_HERO_SHADER = doeHomeBuildShaderSurface();
 
 const BUILD_PARAGRAPHS = [
   "Tell Doe what you are trying to accomplish, from chart pulls and trial lists to exports, integrations, and handoffs.",
@@ -130,8 +126,6 @@ export function DoePhoneCommunicationIntelligenceSection() {
   const isClosing = panelPhase === "closing";
   const showContent = panelPhase === "open";
 
-  const backdrop = BUILD_BACKDROP_SLIDE.backdrop;
-
   useEffect(() => {
     return () => {
       window.clearTimeout(closeTimerRef.current);
@@ -164,12 +158,11 @@ export function DoePhoneCommunicationIntelligenceSection() {
       }
       aria-label="Build"
     >
-      <div className="pointer-events-none absolute -inset-[3%] overflow-hidden" aria-hidden>
-        <WorkflowCarouselDesignBackdrop
-          backdrop={backdrop}
-          embedded
-          gradientScale={1.52}
-          patternScale={1}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+        <ProtoGrainGradient
+          variant={BUILD_HERO_SHADER.variant}
+          colors={BUILD_HERO_SHADER.colors}
+          colorBack={BUILD_HERO_SHADER.colorBack}
         />
       </div>
 
@@ -187,7 +180,7 @@ export function DoePhoneCommunicationIntelligenceSection() {
           }}
         />
 
-        <div className={`relative z-[20] shrink-0 ${DOEPHONE_SECTION_CONTENT_INSET} ${DOEPHONE_SECTION_TITLE_PT}`}>
+        <div className={`build-section-title-row relative z-[20] shrink-0 ${DOEPHONE_SECTION_CONTENT_INSET} ${DOEPHONE_SECTION_TITLE_PT}`}>
           <div className="relative pr-[clamp(5.5rem,17vmin,7rem)]">
             <DoePhoneSectionTitle
               line1="Build."
@@ -229,13 +222,15 @@ export function DoePhoneCommunicationIntelligenceSection() {
           </div>
 
           <div
-            className={`relative shrink-0 ${DOEPHONE_SECTION_CAROUSEL_INSET_X} pb-[clamp(5.75rem,17.5vmin,7.5rem)] ${doePhoneSectionRevealSegmentClass("input", revealed)}`}
+            className={`relative shrink-0 overflow-visible ${DOEPHONE_SECTION_CONTENT_INSET} pb-[clamp(5.75rem,17.5vmin,7.5rem)] ${doePhoneSectionRevealSegmentClass("input", revealed)}`}
           >
-            <DoePhoneAmbientPromptCard headerLabel="New Workflow" layout="section" toolIcons="workflow" size="large">
-              Show me which patients have been enrolled in <PromptTag label="Clinical Trial #473" /> from my EMR,
-              compile results in <PromptTag label="Excel" /> and integrate data from{" "}
-              <PromptTag label="OpenEvidence" /> and email to <WorkflowMentionAt />
-            </DoePhoneAmbientPromptCard>
+            <div className="build-workflow-ui-scale">
+              <DoePhoneAmbientPromptCard headerLabel="New Workflow" layout="section" toolIcons="workflow" size="large">
+                Show me which patients have been enrolled in <PromptTag label="Clinical Trial #473" /> from my EMR,
+                compile results in <PromptTag label="Excel" /> and integrate data from{" "}
+                <PromptTag label="OpenEvidence" /> and email to <WorkflowMentionAt />
+              </DoePhoneAmbientPromptCard>
+            </div>
           </div>
         </div>
       </div>

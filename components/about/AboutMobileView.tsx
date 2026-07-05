@@ -35,7 +35,6 @@ import {
   ABOUT_MOBILE_FOUNDERS_HEADLINE_LINES,
   ABOUT_MOBILE_FOUNDERS_QUOTE,
   ABOUT_PAGE_HERO_BACKDROP,
-  ABOUT_PAGE_HERO_PATTERN_SCALE,
   ABOUT_PAGE_MOBILE_BYLINE,
   ABOUT_PAGE_MOBILE_DATE,
 } from "@/lib/about/about-page-article";
@@ -102,7 +101,7 @@ export function AboutMobileView() {
             variant="hero"
             boxClassName={ABOUT_PAGE_HERO_BOX_TW}
             gapClassName=""
-            patternScale={ABOUT_PAGE_HERO_PATTERN_SCALE}
+            useHomeHeroShader
           />
         </div>
 

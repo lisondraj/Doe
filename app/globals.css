@@ -112,17 +112,21 @@ html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Labs"] > div
   flex-direction: column !important;
   flex: 0 1 auto !important;
   width: 100% !important;
-  max-height: calc(var(--app-vh, 100lvh) * 0.88) !important;
+  max-height: calc(var(--app-vh, 100lvh) * 0.92) !important;
   min-height: 0 !important;
-  gap: max(1rem, calc(var(--app-vh, 100lvh) * 0.022)) !important;
+  gap: max(0.85rem, calc(var(--app-vh, 100lvh) * 0.018)) !important;
   margin-top: auto !important;
   margin-bottom: auto !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Labs"] > div > div > div:first-child {
   flex: 1 1 auto !important;
-  min-height: clamp(22rem, calc(var(--app-vh, 100lvh) * 0.48), 36rem) !important;
-  max-height: calc(var(--app-vh, 100lvh) * 0.52) !important;
+  min-height: clamp(
+    calc(24rem + var(--app-vh, 100lvh) / 8),
+    calc(var(--app-vh, 100lvh) * 0.55),
+    calc(40rem + var(--app-vh, 100lvh) / 8)
+  ) !important;
+  max-height: calc(var(--app-vh, 100lvh) * 0.6) !important;
   height: auto !important;
 }
 
@@ -183,14 +187,31 @@ html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Build"] .doe
   padding-bottom: clamp(5.75rem, 17.5vmin, 7.5rem) !important;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Build"] .doephone-section-reveal--input > div {
-  transform: scale(0.88);
-  transform-origin: center bottom;
+html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Build"] .build-section-title-row,
+html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Build"] .doephone-section-reveal--input {
+  padding-left: var(--proto-phone-gutter-left) !important;
+  padding-right: var(--proto-phone-gutter-right) !important;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Build"] > div:last-child > button.rounded-full {
+html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Build"] .doephone-section-reveal--input > .build-workflow-ui-scale {
+  --build-workflow-ui-scale: 0.84;
+  transform: scale(var(--build-workflow-ui-scale));
+  transform-origin: left bottom;
+  width: calc(100% / var(--build-workflow-ui-scale));
+  max-width: none;
+  margin-left: 0;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Build"] .doephone-section-reveal--input > div:not(.build-workflow-ui-scale) {
+  transform: none !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Build"] > div:last-child > button.rounded-full,
+html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Build"] button.rounded-full.z-30 {
   width: clamp(4.65rem, 14.2vmin, 5.85rem) !important;
   height: clamp(4.65rem, 14.2vmin, 5.85rem) !important;
+  transform: scale(0.86) !important;
+  transform-origin: bottom right !important;
 }
 
 
@@ -200,13 +221,27 @@ html[data-about-page]:has(.doephone-mobile-root) {
   --proto-page-bg: #f7f6f3;
   --proto-phone-gutter-left: max(2rem, calc(env(safe-area-inset-left, 0px) + 4.25vmin));
   --proto-phone-gutter-right: max(2rem, calc(env(safe-area-inset-right, 0px) + 4.25vmin));
+  --proto-phone-gutter-y: max(2rem, calc(env(safe-area-inset-bottom, 0px) + 4.25vmin));
+  --proto-about-nav-clearance: calc(
+    env(safe-area-inset-top, 0px) + clamp(6.85rem, 5.85rem + 5.15vmin, 8.65rem)
+  );
   --proto-nav-cta-border: #151c1f;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .blog-page-root {
+  padding-left: var(--proto-phone-gutter-left) !important;
+  padding-right: var(--proto-phone-gutter-right) !important;
+}
+
+html[data-about-page]:has(.blog-mobile-root) main {
+  padding-top: calc(var(--proto-about-nav-clearance) + 0.35rem) !important;
 }
 
 /* /about iPhone — mission title scale + line graphics. */
 html[data-about-page]:has(.blog-mobile-root) main h1:first-of-type,
 html[data-about-page]:has(.doephone-mobile-root) main h1:first-of-type {
-  font-size: clamp(2.15rem, 1.15rem + 6.45vmin, 3.58rem) !important;
+  font-size: clamp(1.88rem, 0.98rem + 5.35vmin, 3.05rem) !important;
+  line-height: 1.02 !important;
 }
 
 html[data-about-page]:has(.blog-mobile-root) main h1,
@@ -216,8 +251,32 @@ html[data-about-page]:has(.doephone-mobile-root) main h2 {
   max-width: 100%;
 }
 
-html[data-about-page]:has(.blog-mobile-root) .about-mobile-beige-panel svg,
-html[data-about-page]:has(.doephone-mobile-root) .about-mobile-beige-panel svg {
+html[data-about-page]:has(.blog-mobile-root) main h2 {
+  font-size: clamp(2.15rem, 1.12rem + 5.85vmin, 3.35rem) !important;
+}
+
+html[data-about-page]:has(.blog-mobile-root) main p {
+  font-size: clamp(1.18rem, 1.02rem + 0.68vmin, 1.42rem) !important;
+  line-height: 1.46 !important;
+}
+
+html[data-about-page]:has(.blog-mobile-root) main p.about-page-byline {
+  font-size: clamp(1.02rem, 0.88rem + 0.58vmin, 1.22rem) !important;
+  line-height: 1.35 !important;
+}
+
+html[data-about-page]:has(.blog-mobile-root) main li {
+  font-size: clamp(1.18rem, 1.02rem + 0.68vmin, 1.42rem) !important;
+  line-height: 1.46 !important;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-hero-visual {
+  transform: none;
+  width: 100%;
+  max-width: 100%;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-mobile-beige-panel svg {
   transform: scale(0.84);
   transform-origin: center center;
 }

@@ -38,6 +38,32 @@ export function doeHomeHeroShaderSurface(): ProtoGrainGradientSurface {
   };
 }
 
+/** Home Build band — hero palette with bottom-left warm flow behind workflow card. */
+export function doeHomeBuildShaderSurface(): ProtoGrainGradientSurface {
+  return {
+    variant: "build-hero",
+    colors: [
+      DOE_HOME_ORANGE_PALETTE.gold,
+      DOE_HOME_ORANGE_PALETTE.orange,
+      DOE_HOME_ORANGE_PALETTE.copper,
+    ],
+    colorBack: DOE_HOME_ORANGE_PALETTE.back,
+  };
+}
+
+/** Home + /about footer — hero palette, static ripple flow along the bottom edge. */
+export function doeHomeFooterShaderSurface(): ProtoGrainGradientSurface {
+  return {
+    variant: "home-footer",
+    colors: [
+      DOE_HOME_ORANGE_PALETTE.gold,
+      DOE_HOME_ORANGE_PALETTE.orange,
+      DOE_HOME_ORANGE_PALETTE.copper,
+    ],
+    colorBack: DOE_HOME_ORANGE_PALETTE.back,
+  };
+}
+
 /** /proto hero — reception palette (matches PROTO_HERO_GRADIENT CSS). */
 export function protoSiteHeroShaderSurface(): ProtoGrainGradientSurface {
   return {
