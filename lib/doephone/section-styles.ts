@@ -104,17 +104,20 @@ export const DOEPHONE_SECTION_COPY_TW =
 export const DESKTOP_FULLSCREEN_SECTION_TITLE_TW =
   "text-left font-light leading-[1.02] tracking-[-0.03em] text-[clamp(2.65rem,4.05vw,4.05rem)] md:text-[clamp(2.78rem,3.75vw,4.28rem)] lg:text-[clamp(2.92rem,3.5vw,4.52rem)]";
 
-/** Full iPhone viewport band — locked to `--app-vh` (stable vs Safari chrome). */
+/** iPhone home/about section band — slightly taller than viewport for scroll rhythm. */
+export const DOEPHONE_SECTION_BAND_VH = "var(--doe-section-band-vh,var(--app-vh,100lvh))";
+
+/** Full iPhone viewport band — locked to `--doe-section-band-vh` (stable vs Safari chrome). */
 export const DOEPHONE_VIEWPORT_SECTION =
-  "relative z-10 w-full min-h-[var(--app-vh,100lvh)] h-[var(--app-vh,100lvh)] overflow-hidden bg-[#1E343A]";
+  `relative z-10 w-full min-h-[${DOEPHONE_SECTION_BAND_VH}] h-[${DOEPHONE_SECTION_BAND_VH}] overflow-hidden bg-[#1E343A]`;
 
 /** Beige section shell — at least one stable viewport tall; grows with content. */
 export const DOEPHONE_BEIGE_SECTION =
-  "relative z-10 flex min-h-[var(--app-vh,100lvh)] w-full flex-col bg-[var(--doe-page-surface,#EDE8DF)]";
+  `relative z-10 flex min-h-[${DOEPHONE_SECTION_BAND_VH}] w-full flex-col bg-[var(--doe-page-surface,#EDE8DF)]`;
 
 /** Main mobile home — min band height clearing iOS home indicator + Safari bottom bar. */
 export const DOEPHONE_MAIN_PAGE_SECTION_MIN_H =
-  "min-h-[calc(var(--app-vh,100lvh)+env(safe-area-inset-bottom,0px)+3.25rem)]";
+  `min-h-[calc(${DOEPHONE_SECTION_BAND_VH}+env(safe-area-inset-bottom,0px)+3.25rem)]`;
 
 /** Main page beige band — grows with content; never clips like a fixed height. */
 export const DOEPHONE_MAIN_PAGE_BEIGE_SECTION =

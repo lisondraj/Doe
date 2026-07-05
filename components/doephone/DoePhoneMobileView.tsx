@@ -71,7 +71,7 @@ export function DoePhoneMobileView({ variant = "home" }: { variant?: "home" | "p
 
   return (
     <div
-      className={`doephone-mobile-root relative z-0 min-h-[var(--app-vh,100lvh)] overflow-x-hidden ${
+      className={`doephone-mobile-root relative z-0 min-h-[var(--doe-section-band-vh,var(--app-vh,100lvh))] overflow-x-hidden ${
         isProto ? `bg-[#121819] ${PROTO_FONT_CLASS}` : "bg-[var(--doe-page-surface,#EDE8DF)]"
       }`}
       suppressHydrationWarning
@@ -89,8 +89,8 @@ export function DoePhoneMobileView({ variant = "home" }: { variant?: "home" | "p
         logoLink={isProto ? true : !staticNav}
         navActionLinksEnabled={isProto ? true : !staticNav}
         investorsHref={isProto ? PROTO_INVEST_PATH : undefined}
-        frostedScrollNav
-        frostedScrollPastHero
+        frostedScrollNav={isProto}
+        frostedScrollPastHero={isProto}
       />
 
       <DoePhoneHeroSection variant="mobile" proto={isProto} />

@@ -172,7 +172,7 @@ export const ABOUT_DESKTOP_ARTICLE_ATTRIBUTION_TW = `mt-5 md:mt-6 font-medium te
 export const ABOUT_DESKTOP_ARTICLE_LIST_GAP = "space-y-3 md:space-y-3.5";
 
 /** iPhone /about — vertical rhythm between major bands. */
-export const ABOUT_MOBILE_SECTION_GAP = "space-y-10 iphone-page:space-y-12";
+export const ABOUT_MOBILE_SECTION_GAP = "space-y-14 iphone-page:space-y-16";
 
 /** iPhone /about — copy blocks (intro, bullets, founder paragraphs). */
 export const ABOUT_MOBILE_CONTENT_GAP = "space-y-6 iphone-page:space-y-7";
