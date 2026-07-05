@@ -2,7 +2,7 @@
 
 import { DoePhoneCommunicationOuterGlassPanel } from "@/components/doephone/DoePhoneCommunicationGlassPanels";
 import { DoePhoneSectionTitle } from "@/components/doephone/DoePhoneSectionText";
-import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
+import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import {
   DOEPHONE_SECTION_CONTENT_INSET,
   DOEPHONE_SECTION_TITLE_CAROUSEL_GAP,
@@ -10,8 +10,9 @@ import {
   DOEPHONE_SECTION_TITLE_PT,
   DOEPHONE_VIEWPORT_SECTION,
 } from "@/lib/doephone/section-styles";
-import { DOEPHONE_DEPLOYMENTS_GRADIENT } from "@/lib/doephone/communication-carousel";
-import { DIAGNOSTIC_ASSISTANT_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
+import { doeHomeIntegrationsShaderSurface } from "@/lib/proto/proto-shader-backdrop-colors";
+
+const INTEGRATIONS_SHADER = doeHomeIntegrationsShaderSurface();
 
 /** Gradient viewport — Intelligence built into your stack + outer glass panel. */
 export function DoePhoneIntegrationsSection({
@@ -21,17 +22,18 @@ export function DoePhoneIntegrationsSection({
 }) {
   return (
     <section className={sectionClassName} aria-label="Integrations">
-      <div className="pointer-events-none absolute -inset-[3%] overflow-hidden" aria-hidden>
-        <WorkflowCarouselDesignBackdrop
-          backdrop={DIAGNOSTIC_ASSISTANT_BACKDROP}
-          embedded
-          gradientOverride={DOEPHONE_DEPLOYMENTS_GRADIENT}
-          gradientScale={1}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+        <ProtoGrainGradient
+          variant={INTEGRATIONS_SHADER.variant}
+          colors={INTEGRATIONS_SHADER.colors}
+          colorBack={INTEGRATIONS_SHADER.colorBack}
         />
       </div>
 
       <div className="relative z-10 flex h-full min-h-0 flex-col">
-        <div className={`shrink-0 ${DOEPHONE_SECTION_CONTENT_INSET} ${DOEPHONE_SECTION_TITLE_PT}`}>
+        <div
+          className={`integrations-section-title-row shrink-0 ${DOEPHONE_SECTION_CONTENT_INSET} ${DOEPHONE_SECTION_TITLE_PT}`}
+        >
           <DoePhoneSectionTitle
             line1="Intelligence built."
             line2="into your stack."

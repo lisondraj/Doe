@@ -43,6 +43,7 @@ export type ProtoGrainGradientVariant =
   | "home-hero"
   | "build-hero"
   | "home-footer"
+  | "home-integrations"
   | "about-hero"
   | "agents"
   | "front-desk"
@@ -112,6 +113,18 @@ export const PROTO_GRAIN_GRADIENT_PRESETS: Record<ProtoGrainGradientVariant, Pro
     worldWidth: 1280,
     worldHeight: 960,
     speed: 0,
+  },
+  /** Home Integrations band — hero palette, truchet lattice drift (stack / grid motif). */
+  "home-integrations": {
+    shape: "truchet",
+    softness: 0.56,
+    intensity: 0.2,
+    fit: "cover",
+    rotation: 118,
+    offsetX: 0.14,
+    offsetY: -0.12,
+    scale: 1.06,
+    speed: 0.55,
   },
   "about-hero": {
     shape: "wave",
@@ -346,7 +359,7 @@ export function isProtoShaderHeroVariant(variant: ProtoGrainGradientVariant) {
 }
 
 export function protoShaderMaxPixelCount(variant: ProtoGrainGradientVariant) {
-  if (isProtoShaderHeroVariant(variant) || variant === "home-footer") {
+  if (isProtoShaderHeroVariant(variant) || variant === "home-footer" || variant === "home-integrations") {
     return PROTO_SHADER_MAX_PIXEL_COUNT_HERO;
   }
 

@@ -214,6 +214,20 @@ html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Build"] butt
   transform-origin: bottom right !important;
 }
 
+/* Home iPhone — Integrations band: hero shader + title scale aligned to Build. */
+html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Integrations"] {
+  min-height: var(--app-vh, 100lvh) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Integrations"] .doephone-section-copy {
+  font-size: clamp(2.5rem, 8.75vw, 4.05rem) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Integrations"] .integrations-section-title-row {
+  padding-left: var(--proto-phone-gutter-left) !important;
+  padding-right: var(--proto-phone-gutter-right) !important;
+}
+
 
 html[data-about-page]:has(.blog-mobile-root),
 html[data-about-page]:has(.doephone-mobile-root) {

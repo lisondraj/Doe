@@ -64,6 +64,19 @@ export function doeHomeFooterShaderSurface(): ProtoGrainGradientSurface {
   };
 }
 
+/** Home Integrations band — hero palette with truchet stack-lattice flow. */
+export function doeHomeIntegrationsShaderSurface(): ProtoGrainGradientSurface {
+  return {
+    variant: "home-integrations",
+    colors: [
+      DOE_HOME_ORANGE_PALETTE.gold,
+      DOE_HOME_ORANGE_PALETTE.orange,
+      DOE_HOME_ORANGE_PALETTE.copper,
+    ],
+    colorBack: DOE_HOME_ORANGE_PALETTE.back,
+  };
+}
+
 /** /proto hero — reception palette (matches PROTO_HERO_GRADIENT CSS). */
 export function protoSiteHeroShaderSurface(): ProtoGrainGradientSurface {
   return {
