@@ -8,6 +8,7 @@ import {
   type DoePhoneVariant,
 } from "@/lib/doephone/resolve-doe-phone-variant";
 import { shouldLockDesignersTouchPhoneLayout } from "@/lib/designers/designers-page-context";
+import { shouldLockHomeTouchPhoneLayout } from "@/lib/home/home-page-context";
 
 import {
   applyPhoneLayoutViewportMeta,
@@ -66,7 +67,7 @@ export function DoePhoneRouter() {
     const sync = () => setVariant(resolveDoePhoneVariant());
     sync();
 
-    if (shouldLockDesignersTouchPhoneLayout()) {
+    if (shouldLockDesignersTouchPhoneLayout() || shouldLockHomeTouchPhoneLayout()) {
       return;
     }
 

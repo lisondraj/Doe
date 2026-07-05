@@ -42,6 +42,9 @@ export function DoePhoneMobileView({ variant = "home" }: { variant?: "home" | "p
     if (isProto) {
       html.setAttribute("data-proto-page", "true");
       body.classList.add("proto-route");
+    }
+
+    if (isProto || variant === "home") {
       try {
         sessionStorage.removeItem(`doephone-app-viewport-lock:${location.hostname}`);
       } catch {
@@ -57,7 +60,7 @@ export function DoePhoneMobileView({ variant = "home" }: { variant?: "home" | "p
         body.classList.remove("proto-route");
       }
     };
-  }, [isProto]);
+  }, [isProto, variant]);
 
   return (
     <div

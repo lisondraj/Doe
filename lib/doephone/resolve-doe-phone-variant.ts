@@ -1,4 +1,5 @@
 import { shouldLockDesignersTouchPhoneLayout } from "@/lib/designers/designers-page-context";
+import { shouldLockHomeTouchPhoneLayout } from "@/lib/home/home-page-context";
 
 /** Real desktop/laptop — excludes phones even in “Request Desktop Website” mode. */
 export const DOEPHONE_DESKTOP_MEDIA_QUERY =
@@ -9,7 +10,7 @@ export type DoePhoneVariant = "phone" | "desktop";
 export function resolveDoePhoneVariant(): DoePhoneVariant {
   if (typeof window === "undefined") return "phone";
 
-  if (shouldLockDesignersTouchPhoneLayout()) {
+  if (shouldLockDesignersTouchPhoneLayout() || shouldLockHomeTouchPhoneLayout()) {
     return "phone";
   }
 
