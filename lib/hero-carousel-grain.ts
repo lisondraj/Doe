@@ -1,2 +1,6 @@
-/** SVG noise tile used on hero / workflow carousel grain overlays. */
-export const HERO_CAROUSEL_GRAIN_BG = `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E")`;
+export {
+  PROTO_GRAIN_BG as HERO_CAROUSEL_GRAIN_BG,
+  PROTO_GRAIN_SIZE as HERO_CAROUSEL_GRAIN_SIZE,
+  PROTO_GRAIN_OPACITY as HERO_CAROUSEL_GRAIN_OPACITY,
+  PROTO_HERO_GRAIN_OPACITY as HERO_CAROUSEL_HERO_GRAIN_OPACITY,
+} from "@/lib/proto/proto-phone-grain";

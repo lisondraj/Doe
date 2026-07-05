@@ -1,13 +1,18 @@
 import {
   WORKFLOW_BEIGE_SURFACE_FILL,
-  WORKFLOW_CAROUSEL_GRAIN_STYLE,
   getWorkflowGridOverlayStyle,
+  workflowCarouselGrainStyle,
   workflowPolarStroke,
   workflowWaveStroke,
   type WorkflowCarouselDesignBackdrop,
   type WorkflowCarouselGridKind,
   type WorkflowCarouselSurface,
 } from "@/lib/workflow-carousel-design-backdrops";
+import {
+  PROTO_GRAIN_OPACITY,
+  PROTO_GRAIN_SIZE,
+  PROTO_HERO_GRAIN_OPACITY,
+} from "@/lib/proto/proto-phone-grain";
 import {
   doephoneHeroIntroRingDelayMs,
   DOEPHONE_HERO_INTRO_RING_COUNT,
@@ -265,7 +270,8 @@ export function WorkflowCarouselDesignBackdrop({
   gradientOverride,
   gradientScale = 1,
   gridOverride,
-  grainBackgroundSize = "200px 200px",
+  grainBackgroundSize = PROTO_GRAIN_SIZE,
+  grainOpacity,
   introOnLoad = false,
   surface = "orange",
 }: {
@@ -281,8 +287,10 @@ export function WorkflowCarouselDesignBackdrop({
   gridOverride?: WorkflowCarouselGridKind;
   /** Scales only the gradient layer (>1 pushes outer stops past edges). */
   gradientScale?: number;
-  /** Grain tile size — smaller values yield finer, sharper noise. */
+  /** Grain tile size — proto uses 208px; override only when needed. */
   grainBackgroundSize?: string;
+  /** Grain layer opacity — hero bands use a lighter pass (0.4). */
+  grainOpacity?: number;
   /** Staggered fade-in for polar line overlay on load. */
   introOnLoad?: boolean;
   /** Beige uses solid fill and taupe line overlays instead of orange gradient + white lines. */
@@ -295,6 +303,10 @@ export function WorkflowCarouselDesignBackdrop({
     : `fixed inset-0 min-h-[100dvh] min-w-full overflow-hidden ${className}`.trim();
   const layerClass = embedded && className ? className : "";
   const layerInsetClass = embedded ? "absolute -inset-px" : "absolute inset-0";
+  const grainStyle = workflowCarouselGrainStyle(
+    grainOpacity ?? (introOnLoad ? PROTO_HERO_GRAIN_OPACITY : PROTO_GRAIN_OPACITY),
+    grainBackgroundSize,
+  );
 
   const Root = embedded ? "div" : "main";
 
@@ -324,10 +336,7 @@ export function WorkflowCarouselDesignBackdrop({
       {!isBeige ? (
         <div
           className={`pointer-events-none ${layerInsetClass} z-[1] ${layerClass}`.trim()}
-          style={{
-            ...WORKFLOW_CAROUSEL_GRAIN_STYLE,
-            backgroundSize: grainBackgroundSize,
-          }}
+          style={grainStyle}
           aria-hidden
         />
       ) : null}

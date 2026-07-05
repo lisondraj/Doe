@@ -1,4 +1,4 @@
-import { HERO_CAROUSEL_GRAIN_BG } from "@/components/hero-carousel-texture";
+import { WORKFLOW_CAROUSEL_GRAIN_STYLE } from "@/lib/workflow-carousel-design-backdrops";
 import {
   MAIN_PAGE_BEIGE,
   PATIENT_CARE_GREY_GRID_STYLE,
@@ -21,12 +21,7 @@ function TestimonialMedallionCircle() {
     >
       <div
         className="pointer-events-none absolute inset-0"
-        style={{
-          backgroundImage: HERO_CAROUSEL_GRAIN_BG,
-          backgroundSize: "200px 200px",
-          opacity: 1,
-          mixBlendMode: "overlay",
-        }}
+        style={WORKFLOW_CAROUSEL_GRAIN_STYLE}
       />
       <svg
         className="pointer-events-none absolute left-1/2 top-1/2 max-w-none -translate-x-1/2 -translate-y-1/2"

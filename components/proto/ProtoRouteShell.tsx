@@ -62,6 +62,8 @@ export function ProtoRouteShell({
         navChromeTheme="dark"
         logoLink
         navActionLinksEnabled
+        frostedScrollNav
+        frostedScrollPastHero
       />
       {children}
     </div>

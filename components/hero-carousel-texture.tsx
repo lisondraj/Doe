@@ -1,9 +1,14 @@
 import type { CSSProperties } from "react";
 
-import { HERO_CAROUSEL_GRAIN_BG } from "@/lib/hero-carousel-grain";
-import { WORKFLOW_DOT_GRID_STYLE } from "@/lib/workflow-carousel-design-backdrops";
+import {
+  WORKFLOW_DOT_GRID_STYLE,
+  WORKFLOW_HERO_GRAIN_STYLE,
+} from "@/lib/workflow-carousel-design-backdrops";
 
-export { HERO_CAROUSEL_GRAIN_BG };
+export {
+  HERO_CAROUSEL_GRAIN_BG,
+  HERO_CAROUSEL_GRAIN_SIZE,
+} from "@/lib/hero-carousel-grain";
 
 /**
  * Grain + fine square grid from workflow carousel “Referral Intake” slide (box 5).
@@ -43,12 +48,7 @@ export function HeroCarouselTextureOverlay({
     <>
       <div
         className="pointer-events-none absolute inset-0 z-[1]"
-        style={{
-          backgroundImage: HERO_CAROUSEL_GRAIN_BG,
-          backgroundSize: "200px 200px",
-          opacity: 1,
-          mixBlendMode: "overlay",
-        }}
+        style={WORKFLOW_HERO_GRAIN_STYLE}
         aria-hidden
       />
       <div

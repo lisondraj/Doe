@@ -129,7 +129,6 @@ export function DoePhoneDesktopBuildSection() {
           backdrop={backdrop}
           embedded
           gradientScale={1.32}
-          grainBackgroundSize="100px 100px"
           patternScale={1}
         />
       </div>

@@ -1,7 +1,12 @@
 import type { CSSProperties } from "react";
 
 import { BLOG_LANDING_HERO } from "@/lib/blog/blog-landing-hero-colors";
-import { HERO_CAROUSEL_GRAIN_BG } from "@/lib/hero-carousel-grain";
+import {
+  PROTO_GRAIN_BG,
+  PROTO_GRAIN_OPACITY,
+  PROTO_GRAIN_SIZE,
+  PROTO_HERO_GRAIN_OPACITY,
+} from "@/lib/proto/proto-phone-grain";
 
 export type WorkflowCarouselGridKind = "dot" | "crosshatch" | "diagonal" | "hex" | "polar" | "wave";
 
@@ -112,12 +117,23 @@ export const WORKFLOW_CAROUSEL_LAST_BACKDROP: WorkflowCarouselDesignBackdrop = {
 /** `/design6` — same as last carousel slide. */
 export const DESIGN6_BACKDROP = WORKFLOW_CAROUSEL_LAST_BACKDROP;
 
-export const WORKFLOW_CAROUSEL_GRAIN_STYLE: CSSProperties = {
-  backgroundImage: HERO_CAROUSEL_GRAIN_BG,
-  backgroundSize: "200px 200px",
-  opacity: 1,
-  mixBlendMode: "overlay",
-};
+/** Proto PNG grain overlay — hard-light blend, gradients unchanged underneath. */
+export function workflowCarouselGrainStyle(
+  opacity: number = PROTO_GRAIN_OPACITY,
+  backgroundSize: string = PROTO_GRAIN_SIZE,
+): CSSProperties {
+  return {
+    backgroundImage: PROTO_GRAIN_BG,
+    backgroundSize,
+    backgroundRepeat: "repeat",
+    opacity,
+    mixBlendMode: "hard-light",
+  };
+}
+
+export const WORKFLOW_CAROUSEL_GRAIN_STYLE = workflowCarouselGrainStyle();
+
+export const WORKFLOW_HERO_GRAIN_STYLE = workflowCarouselGrainStyle(PROTO_HERO_GRAIN_OPACITY);
 
 const CROSSHATCH_CELL_PX = 56;
 

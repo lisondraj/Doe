@@ -1,3 +1,4 @@
+import { shouldLockAboutTouchPhoneLayout } from "@/lib/about/about-page-context";
 import { shouldLockDesignersTouchPhoneLayout } from "@/lib/designers/designers-page-context";
 import { shouldLockHomeTouchPhoneLayout } from "@/lib/home/home-page-context";
 
@@ -10,7 +11,11 @@ export type DoePhoneVariant = "phone" | "desktop";
 export function resolveDoePhoneVariant(): DoePhoneVariant {
   if (typeof window === "undefined") return "phone";
 
-  if (shouldLockDesignersTouchPhoneLayout() || shouldLockHomeTouchPhoneLayout()) {
+  if (
+    shouldLockDesignersTouchPhoneLayout() ||
+    shouldLockHomeTouchPhoneLayout() ||
+    shouldLockAboutTouchPhoneLayout()
+  ) {
     return "phone";
   }
 

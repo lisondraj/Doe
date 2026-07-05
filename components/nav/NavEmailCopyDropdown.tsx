@@ -27,17 +27,23 @@ function CheckIcon({ className }: { className?: string }) {
 export function NavEmailCopyDropdown({
   copied,
   attachClassName,
+  bg = NAV_EMAIL_DROPDOWN_BG,
+  fg = NAV_EMAIL_DROPDOWN_FG,
+  divider = NAV_EMAIL_DROPDOWN_DIVIDER,
 }: {
   copied: boolean;
   attachClassName: string;
+  bg?: string;
+  fg?: string;
+  divider?: string;
 }) {
   return (
     <div
-      className={`${attachClassName} ${NAV_EMAIL_DROPDOWN_PANEL_TW}`}
+      className={`proto-nav-email-dropdown proto-nav-cta-dropdown ${attachClassName} ${NAV_EMAIL_DROPDOWN_PANEL_TW}`}
       style={{
-        backgroundColor: NAV_EMAIL_DROPDOWN_BG,
-        color: NAV_EMAIL_DROPDOWN_FG,
-        borderColor: NAV_EMAIL_DROPDOWN_DIVIDER,
+        backgroundColor: bg,
+        color: fg,
+        border: `1px solid ${divider}`,
       }}
     >
       <p className={NAV_EMAIL_DROPDOWN_ADDRESS_TW}>{ABOUT_CONTACT_EMAIL}</p>

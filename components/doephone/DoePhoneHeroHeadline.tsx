@@ -71,6 +71,11 @@ export function DoePhoneHeroHeadline({
     const container = headline?.closest<HTMLElement>(".doephone-hero-copy");
     if (!headline || !container) return;
 
+    const html = document.documentElement;
+    if (html.hasAttribute("data-proto-page") || html.hasAttribute("data-home-page")) {
+      return;
+    }
+
     const measure = () => fitHeadlineFontSize(headline, container);
 
     measure();

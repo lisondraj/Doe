@@ -79,10 +79,21 @@ export function MobileNavActionRow({
   }, [copyEmail, open]);
 
   return (
-    <div ref={rowRef} className={`relative flex shrink-0 items-center ${MOBILE_NAV_ACTION_ROW_GAP}`}>
+    <div
+      ref={rowRef}
+      className={`relative flex shrink-0 items-center ${MOBILE_NAV_ACTION_ROW_GAP}${open ? " proto-nav-action-row--open" : ""}`}
+    >
       <MobileNavEmailButton {...chrome} open={open} onToggle={handleMailToggle} />
       <MobileMainNavCta {...chrome} linksEnabled={linksEnabled} investorsHref={investorsHref} />
-      {open ? <NavEmailCopyDropdown copied={copied} attachClassName={NAV_EMAIL_DROPDOWN_ATTACH_RIGHT_TW} /> : null}
+      {open ? (
+        <NavEmailCopyDropdown
+          copied={copied}
+          attachClassName={NAV_EMAIL_DROPDOWN_ATTACH_RIGHT_TW}
+          bg={bg}
+          fg={fg}
+          divider={divider}
+        />
+      ) : null}
     </div>
   );
 }

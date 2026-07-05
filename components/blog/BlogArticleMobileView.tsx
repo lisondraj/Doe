@@ -1,5 +1,7 @@
 "use client";
 
+import { useLayoutEffect } from "react";
+
 import { renderArticleBlock } from "@/components/blog/ArticleBodyBlocks";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
@@ -13,6 +15,15 @@ import {
 import type { BlogArticle } from "@/lib/blog/articles";
 
 export function BlogArticleMobileView({ article }: { article: BlogArticle }) {
+  useLayoutEffect(() => {
+    const html = document.documentElement;
+    html.setAttribute("data-blog-article-page", "true");
+
+    return () => {
+      html.removeAttribute("data-blog-article-page");
+    };
+  }, []);
+
   return (
     <BlogMobileShell>
       <main className={`w-full ${BLOG_CONTENT_PT}`}>

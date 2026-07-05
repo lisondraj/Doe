@@ -100,6 +100,7 @@ function NavChromeStrip({
   brandName = "Doe",
   brandFontClass,
   investorsHref,
+  frostedScrollChrome = false,
 }: {
   navTextColor: string;
   mobileNavOpen: boolean;
@@ -117,6 +118,8 @@ function NavChromeStrip({
   brandName?: string;
   brandFontClass?: string;
   investorsHref?: string;
+  /** Proto iPhone — hooks for compact pill chrome on scroll. */
+  frostedScrollChrome?: boolean;
 }) {
   const pageInsetX = DOEPHONE_SECTION_CAROUSEL_INSET_X;
   const pageDoeLeft =
@@ -146,7 +149,7 @@ function NavChromeStrip({
     : pinchSafe
       ? "left-11 iphone-page:left-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))]"
       : "left-8 iphone-page:left-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))]";
-  const doeClassName = `absolute top-1/2 -translate-y-1/2 ${doeLeft} font-normal z-[1] min-w-0 whitespace-nowrap ${brandFontClass ?? lora.className} text-4xl iphone-page:text-[clamp(1.85rem,1.05rem+3.55vmin,3.9rem)] iphone-page:leading-none`;
+  const doeClassName = `absolute top-1/2 -translate-y-1/2 ${doeLeft} font-normal z-[1] min-w-0 whitespace-nowrap ${frostedScrollChrome ? "proto-nav-chrome-logo " : ""}${brandFontClass ?? lora.className} text-4xl iphone-page:text-[clamp(1.85rem,1.05rem+3.55vmin,3.9rem)] iphone-page:leading-none`;
   const navRightInset = pinchSafe
     ? "right-11 iphone-page:right-[max(1.65rem,env(safe-area-inset-right,0px)+3.8vmin)]"
     : "right-8 iphone-page:right-[max(1.25rem,calc(env(safe-area-inset-right,0px)+2.85vmin))]";
@@ -161,7 +164,7 @@ function NavChromeStrip({
       className={`${navInsetX} ${navStripMinH} py-6 iphone-page:py-[clamp(0.8125rem,0.52rem+1.55vmin,1.9rem)] flex items-center relative z-10 iphone-page:gap-[clamp(0.45rem,0.35rem+0.85vmin,0.75rem)] ${subpageAnchored && subpageWithButton ? "" : "justify-end"}`}
     >
       {logoLink ? (
-        <Link href={homeHref} className={`${doeClassName} transition-opacity duration-500 ease-out opacity-100`} style={{ color: navTextColor }}>
+        <Link href={homeHref} className={`${doeClassName}${frostedScrollChrome ? "" : " transition-opacity duration-500 ease-out"} opacity-100`} style={{ color: navTextColor }}>
           {brandName}
         </Link>
       ) : (
@@ -179,7 +182,7 @@ function NavChromeStrip({
       </div>
 
       <div
-        className={`flex shrink-0 items-center ${navRowGap} ${subpageAnchored ? `absolute top-1/2 z-[2] -translate-y-1/2 ${subpageRight}` : ""} ${tripleCtaAnchored ? `absolute top-1/2 z-[2] -translate-y-1/2 ${navRightInset}` : ""}`}
+        className={`flex shrink-0 items-center ${navRowGap} ${frostedScrollChrome ? "proto-nav-chrome-actions " : ""}${subpageAnchored ? `absolute top-1/2 z-[2] -translate-y-1/2 ${subpageRight}` : ""} ${tripleCtaAnchored ? `absolute top-1/2 z-[2] -translate-y-1/2 ${navRightInset}` : ""}`}
       >
         {subpageVariant ? (
           <SubpageMobileNavRow variant={subpageVariant} showLinks={!showMenu || !subpageWithButton} />
@@ -296,6 +299,8 @@ export default function DoeIphoneSiteNav({
   brandFontClass,
   navChromeTheme = "light",
   investorsHref,
+  frostedScrollNav = false,
+  frostedScrollPastHero = false,
 }: {
   pinchSafe?: boolean;
   homeHref?: string;
@@ -312,6 +317,10 @@ export default function DoeIphoneSiteNav({
   brandFontClass?: string;
   navChromeTheme?: "light" | "dark";
   investorsHref?: string;
+  /** Proto iPhone — solid bar at top; frosted pill between page gutters on scroll. */
+  frostedScrollNav?: boolean;
+  /** Proto home — delay frosted pill until the hero section has scrolled past. */
+  frostedScrollPastHero?: boolean;
 }) {
   const resolvedNavSheetItems: readonly NavSheetItem[] =
     navSheetItems ??
@@ -328,6 +337,8 @@ export default function DoeIphoneSiteNav({
   /** Drives enter/exit opacity + slide on the sheet layer. */
   const [navSheetVisualOpen, setNavSheetVisualOpen] = useState(false);
   const [mobileNavFooterSlide, setMobileNavFooterSlide] = useState(0);
+  const [navFrostProgress, setNavFrostProgress] = useState(0);
+  const [protoNavScrolled, setProtoNavScrolled] = useState(false);
   const mobileNavFooterCarouselRef = useRef<HTMLDivElement>(null);
   /** Carousel width when the sheet first opens — `zoom` shrinks uniformly if the window gets narrower (matches home `app/page.tsx`). */
   const mobileNavFooterWidthBaselineRef = useRef(0);
@@ -337,10 +348,28 @@ export default function DoeIphoneSiteNav({
   const [viewportWidth, setViewportWidth] = useState(1200);
   const [appViewport, setAppViewport] = useState({ width: 1200, height: 800 });
   const [mounted, setMounted] = useState(false);
+  const [navMotionReady, setNavMotionReady] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useLayoutEffect(() => {
+    if (!frostedScrollNav) {
+      setNavMotionReady(true);
+      return;
+    }
+
+    setNavMotionReady(false);
+    let raf2 = 0;
+    const raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => setNavMotionReady(true));
+    });
+    return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+    };
+  }, [frostedScrollNav]);
 
   useEffect(() => {
     if (mobileNavOpen) {
@@ -359,6 +388,44 @@ export default function DoeIphoneSiteNav({
     const t = window.setTimeout(() => setNavSheetLive(false), NAV_SHEET_MS);
     return () => window.clearTimeout(t);
   }, [mobileNavOpen]);
+
+  useEffect(() => {
+    if (!frostedScrollNav) return;
+
+    let raf = 0;
+    const computeFrostProgress = () => {
+      if (frostedScrollPastHero) {
+        const hero = document.querySelector<HTMLElement>(".doephone-hero-section");
+        if (hero) {
+          const bottom = hero.getBoundingClientRect().bottom;
+          const range = 96;
+          return Math.min(1, Math.max(0, (range - bottom) / range));
+        }
+      }
+      const range = 56;
+      return Math.min(1, Math.max(0, window.scrollY / range));
+    };
+
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const next = computeFrostProgress();
+        setNavFrostProgress(next);
+        setProtoNavScrolled((prev) => (prev ? next > 0.68 : next >= 0.88));
+      });
+    };
+
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    window.addEventListener("orientationchange", onScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("orientationchange", onScroll);
+    };
+  }, [frostedScrollNav, frostedScrollPastHero]);
 
   useEffect(() => {
     if (pinchSafe) {
@@ -521,6 +588,28 @@ export default function DoeIphoneSiteNav({
   const navBorderColor = navChromeTheme === "dark" ? "#2A3538" : "#E6E6E6";
   const navSheetTransition = `opacity ${NAV_SHEET_MS}ms ${NAV_SHEET_EASE}, transform ${NAV_SHEET_MS}ms ${NAV_SHEET_EASE}`;
   const navFooterCarouselZoom = pinchSafe ? 1 : mobileNavFooterZoom;
+
+  const navChromeStrip = (
+    <NavChromeStrip
+      navTextColor={navTextColor}
+      mobileNavOpen={mobileNavOpen}
+      toggleMenu={() => setMobileNavOpen((o) => !o)}
+      pinchSafe={pinchSafe}
+      homeHref={homeHref}
+      joinHref={joinHref}
+      showJoinCta={showJoinCta}
+      showApplyScrollCta={showApplyScrollCta}
+      logoLink={logoLink}
+      showMenu={showMenu}
+      ctaLayout={ctaLayout}
+      mobileNavChrome={mobileNavChrome}
+      navActionLinksEnabled={navActionLinksEnabled}
+      brandName={brandName}
+      brandFontClass={brandFontClass}
+      investorsHref={investorsHref}
+      frostedScrollChrome={frostedScrollNav}
+    />
+  );
 
   const mobileMenuLayerContent = navSheetLive ? (
     <>
@@ -702,6 +791,7 @@ export default function DoeIphoneSiteNav({
           brandName={brandName}
           brandFontClass={brandFontClass}
           investorsHref={investorsHref}
+          frostedScrollChrome={frostedScrollNav}
         />
       </header>,
       document.body
@@ -711,47 +801,50 @@ export default function DoeIphoneSiteNav({
     <>
       <nav
         ref={navBarRowRef}
-        className={`${pinchSafe ? "doephone-site-nav " : ""}fixed top-0 left-0 right-0 iphone-page:pt-[env(safe-area-inset-top,0px)] ${
+        className={`${pinchSafe ? "doephone-site-nav " : ""}${
+          frostedScrollNav ? "proto-nav-scroll-frost " : ""
+        }${frostedScrollNav && navMotionReady ? "proto-nav--motion-ready " : ""}${
+          protoNavScrolled ? "proto-nav--scrolled " : ""
+        }fixed top-0 left-0 right-0 iphone-page:pt-[env(safe-area-inset-top,0px)] ${
           navSheetLive ? "z-[200]" : "z-50"
         } ${pinchSafe ? "translate-z-0" : ""}`}
-        style={{
-          backgroundColor: navBackground,
-          borderBottom: `1px solid ${navBorderColor}`,
-          boxShadow: pinchSafe ? `0 -120px 0 120px ${navBackground}` : undefined,
-          transition: "border-bottom 100ms ease-out, border-color 100ms ease-out, background-color 180ms ease-out",
-        }}
+        style={
+          frostedScrollNav
+            ? {
+                ["--proto-nav-frost-progress" as string]: navFrostProgress,
+              }
+            : {
+                backgroundColor: protoNavScrolled ? "transparent" : navBackground,
+                borderBottom: protoNavScrolled
+                  ? "1px solid transparent"
+                  : `1px solid ${navBorderColor}`,
+                boxShadow: protoNavScrolled
+                  ? undefined
+                  : pinchSafe
+                    ? `0 -120px 0 120px ${navBackground}`
+                    : undefined,
+                transition: "border-bottom 320ms cubic-bezier(0.22, 1, 0.36, 1), border-color 320ms cubic-bezier(0.22, 1, 0.36, 1), background-color 420ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 420ms cubic-bezier(0.22, 1, 0.36, 1)",
+              }
+        }
       >
-        <div
-          className={pinchSafe ? undefined : "transition-opacity duration-[320ms] ease-[cubic-bezier(0.32,0.72,0,1)]"}
-          style={
-            pinchSafe
-              ? undefined
-              : {
-                  opacity: navSheetLive ? 0 : 1,
-                  pointerEvents: navSheetLive ? "none" : "auto",
-                }
-          }
-          aria-hidden={pinchSafe ? undefined : navSheetLive ? true : undefined}
-        >
-          <NavChromeStrip
-            navTextColor={navTextColor}
-            mobileNavOpen={mobileNavOpen}
-            toggleMenu={() => setMobileNavOpen((o) => !o)}
-            pinchSafe={pinchSafe}
-            homeHref={homeHref}
-            joinHref={joinHref}
-            showJoinCta={showJoinCta}
-            showApplyScrollCta={showApplyScrollCta}
-            logoLink={logoLink}
-            showMenu={showMenu}
-            ctaLayout={ctaLayout}
-            mobileNavChrome={mobileNavChrome}
-            navActionLinksEnabled={navActionLinksEnabled}
-            brandName={brandName}
-            brandFontClass={brandFontClass}
-            investorsHref={investorsHref}
-          />
-        </div>
+        {frostedScrollNav ? (
+          <div className="proto-nav-frost-shell">{navChromeStrip}</div>
+        ) : (
+          <div
+            className={pinchSafe ? undefined : "transition-opacity duration-[320ms] ease-[cubic-bezier(0.32,0.72,0,1)]"}
+            style={
+              pinchSafe
+                ? undefined
+                : {
+                    opacity: navSheetLive ? 0 : 1,
+                    pointerEvents: navSheetLive ? "none" : "auto",
+                  }
+            }
+            aria-hidden={pinchSafe ? undefined : navSheetLive ? true : undefined}
+          >
+            {navChromeStrip}
+          </div>
+        )}
       </nav>
       {pinchSafe && showMenu ? mobileMenuLayerContent : null}
       {mobileMenuLayer}

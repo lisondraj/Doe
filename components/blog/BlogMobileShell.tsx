@@ -1,5 +1,7 @@
 "use client";
 
+import { useLayoutEffect } from "react";
+
 import type { ReactNode } from "react";
 
 import DoeIphoneSiteNav, { type SiteNavCtaLayout } from "@/components/DoeIphoneSiteNav";
@@ -19,6 +21,8 @@ type BlogMobileShellProps = {
   /** Override shell min-height — join uses locked `--app-vh`. */
   shellMinHeightClass?: string;
   showFooter?: boolean;
+  frostedScrollNav?: boolean;
+  frostedScrollPastHero?: boolean;
 };
 
 export function BlogMobileShell({
@@ -33,10 +37,12 @@ export function BlogMobileShell({
   ctaLayout = "single",
   shellMinHeightClass = "min-h-[100svh]",
   showFooter = true,
+  frostedScrollNav = false,
+  frostedScrollPastHero = false,
 }: BlogMobileShellProps) {
   return (
     <div
-      className={`blog-mobile-root relative z-0 overflow-x-hidden bg-[#F7F6F3] ${shellMinHeightClass}`}
+      className={`blog-mobile-root${frostedScrollNav ? " doephone-mobile-root" : ""} relative z-0 overflow-x-hidden bg-[#F7F6F3] ${shellMinHeightClass}`}
       suppressHydrationWarning
       data-doeforvc-view="iphone"
     >
@@ -49,6 +55,8 @@ export function BlogMobileShell({
         logoLink={logoLink}
         showMenu={showMenu}
         ctaLayout={ctaLayout}
+        frostedScrollNav={frostedScrollNav}
+        frostedScrollPastHero={frostedScrollPastHero}
       />
       <div className={`blog-page-root relative z-0 ${BLOG_PAGE_INSET_X} ${showFooter ? BLOG_FOOTER_GAP : ""}`}>
         {children}

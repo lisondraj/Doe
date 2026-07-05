@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { RootChrome } from "@/components/RootChrome";
+import { aboutRouteBootstrapScript } from "@/lib/about/about-route-bootstrap-script";
 import { designersTouchPhoneBootstrapScript } from "@/lib/designers/designers-touch-phone-bootstrap-script";
 import { homeRouteBootstrapScript } from "@/lib/home/home-route-bootstrap-script";
 import { DESIGNERS_SITE_HOST } from "@/lib/site-domains";
@@ -33,6 +34,7 @@ export const viewport: Viewport = {
 
 const designersTouchBootstrap = designersTouchPhoneBootstrapScript(DESIGNERS_SITE_HOST);
 const homeBootstrap = homeRouteBootstrapScript();
+const aboutBootstrap = aboutRouteBootstrapScript();
 
 export default function RootLayout({
   children,
@@ -44,6 +46,7 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: designersTouchBootstrap }} />
         <script dangerouslySetInnerHTML={{ __html: homeBootstrap }} />
+        <script dangerouslySetInnerHTML={{ __html: aboutBootstrap }} />
       </head>
       <body className={`${inter.variable} font-sans antialiased wide-desktop:overflow-hidden`}>
         <RootChrome>{children}</RootChrome>

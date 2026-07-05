@@ -46,7 +46,10 @@ export function MobileNavEmailButton({
 }) {
   return (
     <div className="relative flex shrink-0 items-center">
-      <div className={MOBILE_NAV_SPLIT_SHELL_TW} style={{ boxShadow: shadow }}>
+      <div
+        className={`${MOBILE_NAV_SPLIT_SHELL_TW} proto-nav-cta-shell${open ? " proto-nav-cta-shell--open" : ""}`}
+        style={{ boxShadow: shadow }}
+      >
         <button
           type="button"
           className={`${MOBILE_NAV_MAIL_BUTTON_TW} transition-[opacity,background-color,color,box-shadow] duration-300 hover:opacity-90 active:opacity-80`}

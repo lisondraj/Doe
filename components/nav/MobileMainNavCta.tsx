@@ -76,7 +76,10 @@ export function MobileMainNavCta({
 
   return (
     <div ref={rootRef} className="relative flex shrink-0 items-center">
-      <div className={MOBILE_NAV_SPLIT_SHELL_TW} style={{ boxShadow: shadow }}>
+      <div
+        className={`${MOBILE_NAV_SPLIT_SHELL_TW} proto-nav-cta-shell${open ? " proto-nav-cta-shell--open" : ""}`}
+        style={{ boxShadow: shadow }}
+      >
         <div className={MOBILE_NAV_SPLIT_INNER_TW}>
           {linksEnabled ? (
             <Link
@@ -120,7 +123,7 @@ export function MobileMainNavCta({
         {open ? (
           <div
             role="menu"
-            className={MOBILE_NAV_CTA_DROPDOWN_ATTACH_TW}
+            className={`${MOBILE_NAV_CTA_DROPDOWN_ATTACH_TW} proto-nav-cta-dropdown`}
             style={{
               backgroundColor: bg,
               color: fg,
