@@ -93,7 +93,7 @@ export function HomeFooter({ linksDisabled = false }: { linksDisabled?: boolean 
               href="/"
               className={`pointer-events-auto inline-block shrink-0 text-center font-normal leading-[0.65] tracking-tight no-underline transition-opacity hover:opacity-90 ${lora.className}`}
               style={{
-                color: "#F7F6F3",
+                color: "#F2ECE4",
                 /** Giant: wide enough that “d” / “e” bleed past L/R edges; milder bottom bleed. */
                 fontSize: "clamp(11rem, min(76vw, 68vmin), 30rem)",
                 marginBottom: "calc(-0.06em - env(safe-area-inset-bottom, 0px))",

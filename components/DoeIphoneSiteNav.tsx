@@ -85,6 +85,7 @@ export type NavSheetItem = { label: string; href: string };
 
 function NavChromeStrip({
   navTextColor,
+  navLogoColor,
   mobileNavOpen,
   toggleMenu,
   pinchSafe = false,
@@ -103,6 +104,7 @@ function NavChromeStrip({
   frostedScrollChrome = false,
 }: {
   navTextColor: string;
+  navLogoColor: string;
   mobileNavOpen: boolean;
   toggleMenu: () => void;
   pinchSafe?: boolean;
@@ -164,11 +166,11 @@ function NavChromeStrip({
       className={`${navInsetX} ${navStripMinH} py-6 iphone-page:py-[clamp(0.8125rem,0.52rem+1.55vmin,1.9rem)] flex items-center relative z-10 iphone-page:gap-[clamp(0.45rem,0.35rem+0.85vmin,0.75rem)] ${subpageAnchored && subpageWithButton ? "" : "justify-end"}`}
     >
       {logoLink ? (
-        <Link href={homeHref} className={`${doeClassName}${frostedScrollChrome ? "" : " transition-opacity duration-500 ease-out"} opacity-100`} style={{ color: navTextColor }}>
+        <Link href={homeHref} className={`${doeClassName}${frostedScrollChrome ? "" : " transition-opacity duration-500 ease-out"} opacity-100`} style={{ color: navLogoColor }}>
           {brandName}
         </Link>
       ) : (
-        <span className={doeClassName} style={{ color: navTextColor }}>
+        <span className={doeClassName} style={{ color: navLogoColor }}>
           {brandName}
         </span>
       )}
@@ -583,15 +585,23 @@ export default function DoeIphoneSiteNav({
     return () => window.clearInterval(id);
   }, [mobileNavOpen]);
 
-  const navTextColor = navChromeTheme === "dark" ? "#E8EDEF" : "#000";
-  const navBackground = navChromeTheme === "dark" ? "#121819" : "#F7F6F3";
-  const navBorderColor = navChromeTheme === "dark" ? "#2A3538" : "#E6E6E6";
+  const navTextColor = navChromeTheme === "dark" ? "#E8EDEF" : "var(--doe-page-ink, #1E343A)";
+  const navBackground = navChromeTheme === "dark" ? "#121819" : "var(--doe-page-surface, #EDE8DF)";
+  const navBorderColor = navChromeTheme === "dark" ? "#2A3538" : "var(--doe-page-border, rgba(30, 52, 58, 0.14))";
+  /** Flat sand bar → teal ink; frosted teal pill → warm cream (matches shader chrome). */
+  const navLogoColor =
+    navChromeTheme === "dark"
+      ? "#E8EDEF"
+      : frostedScrollNav && protoNavScrolled
+        ? "var(--doe-page-surface-raised, #F2ECE4)"
+        : "var(--doe-page-ink, #1E343A)";
   const navSheetTransition = `opacity ${NAV_SHEET_MS}ms ${NAV_SHEET_EASE}, transform ${NAV_SHEET_MS}ms ${NAV_SHEET_EASE}`;
   const navFooterCarouselZoom = pinchSafe ? 1 : mobileNavFooterZoom;
 
   const navChromeStrip = (
     <NavChromeStrip
       navTextColor={navTextColor}
+      navLogoColor={navLogoColor}
       mobileNavOpen={mobileNavOpen}
       toggleMenu={() => setMobileNavOpen((o) => !o)}
       pinchSafe={pinchSafe}
@@ -627,13 +637,13 @@ export default function DoeIphoneSiteNav({
       <div className="fixed inset-0 z-[95] pointer-events-none" role="presentation">
         {!pinchSafe ? (
           <div
-            className="absolute inset-x-0 top-0 bg-[#F7F6F3] pointer-events-none"
+            className="absolute inset-x-0 top-0 bg-[var(--doe-page-surface,#EDE8DF)] pointer-events-none"
             style={{ height: iphoneMenuTopPx }}
             aria-hidden
           />
         ) : null}
         <div
-          className="absolute inset-x-0 bottom-0 bg-[#F7F6F3] flex flex-col pointer-events-auto overflow-hidden min-h-0"
+          className="absolute inset-x-0 bottom-0 bg-[var(--doe-page-surface,#EDE8DF)] flex flex-col pointer-events-auto overflow-hidden min-h-0"
           style={{
             top: iphoneMenuTopPx,
             opacity: navSheetVisualOpen ? 1 : 0,
@@ -647,10 +657,10 @@ export default function DoeIphoneSiteNav({
         >
           <nav className="flex flex-col flex-1 min-h-0 overflow-y-auto overscroll-contain">
             {resolvedNavSheetItems.map((item) => (
-              <div key={item.href} className="border-b border-[#E6E6E6]">
+              <div key={item.href} className="border-b border-[var(--doe-page-border,rgba(30,52,58,0.14))]">
                 <Link
                   href={item.href}
-                  className={`flex w-full items-center text-left font-medium tracking-[-0.02em] text-gray-900 pl-5 pr-5 iphone-page:pl-[max(1.35rem,calc(env(safe-area-inset-left,0px)+12px+2.4vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))] py-4 iphone-page:py-[clamp(0.65rem,0.42rem+1.35vmin,1.2rem)] active:bg-black/[0.04] transition-colors no-underline ${inter.className} text-4xl iphone-page:text-[clamp(1.52rem,0.82rem+2.92vmin,3.92rem)] iphone-page:leading-none`}
+                  className={`flex w-full items-center text-left font-medium tracking-[-0.02em] text-[var(--doe-page-ink,#1E343A)] pl-5 pr-5 iphone-page:pl-[max(1.35rem,calc(env(safe-area-inset-left,0px)+12px+2.4vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))] py-4 iphone-page:py-[clamp(0.65rem,0.42rem+1.35vmin,1.2rem)] active:bg-black/[0.04] transition-colors no-underline ${inter.className} text-4xl iphone-page:text-[clamp(1.52rem,0.82rem+2.92vmin,3.92rem)] iphone-page:leading-none`}
                   onClick={() => setMobileNavOpen(false)}
                 >
                   <span className="min-w-0">{item.label}</span>
@@ -658,7 +668,7 @@ export default function DoeIphoneSiteNav({
               </div>
             ))}
           </nav>
-          <div className="shrink-0 pb-[max(1rem,calc(env(safe-area-inset-bottom,0px)+10px))] iphone-page:pb-[max(0.9375rem,calc(env(safe-area-inset-bottom,0px)+clamp(10px,1.85vmin,20px)))] pt-4 iphone-page:pt-[clamp(0.75rem,0.52rem+1.05vmin,1.25rem)] border-t border-[#ECEAE6]">
+          <div className="shrink-0 pb-[max(1rem,calc(env(safe-area-inset-bottom,0px)+10px))] iphone-page:pb-[max(0.9375rem,calc(env(safe-area-inset-bottom,0px)+clamp(10px,1.85vmin,20px)))] pt-4 iphone-page:pt-[clamp(0.75rem,0.52rem+1.05vmin,1.25rem)] border-t border-[var(--doe-page-border,rgba(30,52,58,0.14))]">
             <div
               ref={mobileNavFooterCarouselRef}
               className="flex overflow-x-auto snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
@@ -776,6 +786,7 @@ export default function DoeIphoneSiteNav({
       >
         <NavChromeStrip
           navTextColor={navTextColor}
+          navLogoColor={navLogoColor}
           mobileNavOpen={navSheetLive}
           toggleMenu={() => setMobileNavOpen((o) => !o)}
           pinchSafe={pinchSafe}

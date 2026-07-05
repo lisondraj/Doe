@@ -110,7 +110,7 @@ export const DOEPHONE_VIEWPORT_SECTION =
 
 /** Beige section shell — at least one stable viewport tall; grows with content. */
 export const DOEPHONE_BEIGE_SECTION =
-  "relative z-10 flex min-h-[var(--app-vh,100lvh)] w-full flex-col bg-[#F7F6F3]";
+  "relative z-10 flex min-h-[var(--app-vh,100lvh)] w-full flex-col bg-[var(--doe-page-surface,#EDE8DF)]";
 
 /** Main mobile home — min band height clearing iOS home indicator + Safari bottom bar. */
 export const DOEPHONE_MAIN_PAGE_SECTION_MIN_H =
@@ -118,7 +118,7 @@ export const DOEPHONE_MAIN_PAGE_SECTION_MIN_H =
 
 /** Main page beige band — grows with content; never clips like a fixed height. */
 export const DOEPHONE_MAIN_PAGE_BEIGE_SECTION =
-  `relative z-10 flex w-full flex-col bg-[#F7F6F3] ${DOEPHONE_MAIN_PAGE_SECTION_MIN_H}`;
+  `relative z-10 flex w-full flex-col bg-[var(--doe-page-surface,#EDE8DF)] ${DOEPHONE_MAIN_PAGE_SECTION_MIN_H}`;
 
 /** Main page dark band — min-height only so inner content is not clipped. */
 export const DOEPHONE_MAIN_PAGE_VIEWPORT_SECTION =

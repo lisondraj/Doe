@@ -95,7 +95,7 @@ export function AboutDesktopView() {
 
   return (
     <DesktopRouteLayout>
-      <div className="relative min-h-[100dvh] overflow-x-hidden bg-[#F7F6F3]" data-doeforvc-view="desktop">
+      <div className="relative min-h-[100dvh] overflow-x-hidden bg-[#EDE8DF]" data-doeforvc-view="desktop">
         <AboutDesktopNav />
 
         <main>

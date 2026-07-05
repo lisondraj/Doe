@@ -42,7 +42,7 @@ export function BlogMobileShell({
 }: BlogMobileShellProps) {
   return (
     <div
-      className={`blog-mobile-root${frostedScrollNav ? " doephone-mobile-root" : ""} relative z-0 overflow-x-hidden bg-[#F7F6F3] ${shellMinHeightClass}`}
+      className={`blog-mobile-root${frostedScrollNav ? " doephone-mobile-root" : ""} relative z-0 overflow-x-hidden bg-[var(--doe-page-surface,#EDE8DF)] ${shellMinHeightClass}`}
       suppressHydrationWarning
       data-doeforvc-view="iphone"
     >
