@@ -85,18 +85,12 @@ html[data-about-page]:has(.blog-mobile-root) {
   --proto-nav-cta-divider: rgba(242, 236, 228, 0.22);
   --proto-nav-cta-bg: var(--doe-shader-back);
   --proto-nav-cta-text: var(--doe-page-surface-raised);
-  --doe-nav-frost-scrolled-fill: rgba(24, 42, 47, 0.9);
+  --doe-nav-frost-scrolled-fill: #182a2f;
   --doe-nav-frost-scrolled-border: rgba(242, 236, 228, 0.3);
   --doe-nav-frost-scrolled-shadow: 0 12px 40px rgba(18, 32, 36, 0.4);
   --doe-nav-frost-scrolled-cta-bg: #f4eee6;
   --doe-nav-frost-scrolled-cta-text: #1a2f34;
   --doe-nav-frost-scrolled-cta-divider: rgba(30, 52, 58, 0.16);
-  --doe-nav-frost-shader-fill: rgba(237, 232, 223, 0.9);
-  --doe-nav-frost-shader-border: rgba(30, 52, 58, 0.16);
-  --doe-nav-frost-shader-shadow: 0 12px 40px rgba(0, 0, 0, 0.28);
-  --doe-nav-frost-shader-cta-bg: var(--doe-shader-back);
-  --doe-nav-frost-shader-cta-text: var(--doe-page-surface-raised);
-  --doe-nav-frost-shader-cta-divider: rgba(242, 236, 228, 0.22);
   background-color: var(--doe-page-surface);
 }
 
@@ -447,6 +441,9 @@ html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav-
 html[data-about-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav-scroll-frost,
 html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav.proto-nav-scroll-frost {
   border-bottom-color: var(--doe-page-border) !important;
+  /* Opaque sand tray — page shaders must not bleed through the punch-out zone. */
+  background: var(--doe-page-surface) !important;
+  box-shadow: none !important;
 }
 
 html[data-proto-page]:has(.doephone-mobile-root),
@@ -674,18 +671,18 @@ html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav .proto-nav-ct
   border-left-color: var(--proto-nav-cta-divider, var(--proto-nav-cta-border)) !important;
 }
 
-/* Home + /about — punched-out nav shell base (radius + motion). */
+/* Home + /about — punched-out nav shell base (radius + motion, no backdrop bleed). */
 html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav-scroll-frost .proto-nav-frost-shell,
 html[data-about-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav-scroll-frost .proto-nav-frost-shell,
 html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav.proto-nav-scroll-frost .proto-nav-frost-shell {
   border: 1px solid transparent;
   border-radius: calc(var(--proto-nav-frost-progress, 0) * 9999px);
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   transition:
     background-color var(--proto-nav-motion-duration, 620ms) var(--proto-nav-motion-ease, cubic-bezier(0.28, 0.84, 0.24, 1)),
     border-color var(--proto-nav-motion-duration, 620ms) var(--proto-nav-motion-ease, cubic-bezier(0.28, 0.84, 0.24, 1)),
-    box-shadow var(--proto-nav-motion-duration, 620ms) var(--proto-nav-motion-ease, cubic-bezier(0.28, 0.84, 0.24, 1)),
-    backdrop-filter var(--proto-nav-motion-duration, 620ms) var(--proto-nav-motion-ease, cubic-bezier(0.28, 0.84, 0.24, 1)),
-    -webkit-backdrop-filter var(--proto-nav-motion-duration, 620ms) var(--proto-nav-motion-ease, cubic-bezier(0.28, 0.84, 0.24, 1));
+    box-shadow var(--proto-nav-motion-duration, 620ms) var(--proto-nav-motion-ease, cubic-bezier(0.28, 0.84, 0.24, 1));
 }
 
 /* Home + /about — punched-out nav: smoked teal capsule on sand bands. */
@@ -698,16 +695,9 @@ html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav:not(.proto-na
   border-color: rgba(242, 236, 228, calc(var(--proto-nav-frost-progress, 0) * 0.3));
   background-color: color-mix(
     in srgb,
-    rgba(24, 42, 47, calc(0.42 + var(--proto-nav-frost-progress, 0) * 0.48))
-      calc(var(--proto-nav-frost-progress, 0) * 100%),
+    #182a2f calc(var(--proto-nav-frost-progress, 0) * 100%),
     transparent
   );
-  backdrop-filter: blur(calc(var(--proto-nav-frost-progress, 0) * 44px))
-    saturate(calc(1.06 + var(--proto-nav-frost-progress, 0) * 0.24))
-    brightness(calc(1 - var(--proto-nav-frost-progress, 0) * 0.06));
-  -webkit-backdrop-filter: blur(calc(var(--proto-nav-frost-progress, 0) * 44px))
-    saturate(calc(1.06 + var(--proto-nav-frost-progress, 0) * 0.24))
-    brightness(calc(1 - var(--proto-nav-frost-progress, 0) * 0.06));
   box-shadow:
     0 calc(var(--proto-nav-frost-progress, 0) * 12px) calc(var(--proto-nav-frost-progress, 0) * 40px)
       rgba(18, 32, 36, calc(var(--proto-nav-frost-progress, 0) * 0.4)),
@@ -715,26 +705,19 @@ html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav:not(.proto-na
     inset 0 -1px 0 rgba(0, 0, 0, calc(var(--proto-nav-frost-progress, 0) * 0.12));
 }
 
-/* Home — punched-out nav: warm sand capsule on teal shader bands. */
+/* Home — punched-out nav: teal capsule (nav tray is opaque sand over shader bands). */
 html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav--over-shader .proto-nav-frost-shell {
-  border-color: rgba(30, 52, 58, calc(var(--proto-nav-frost-progress, 0) * 0.16));
+  border-color: rgba(242, 236, 228, calc(var(--proto-nav-frost-progress, 0) * 0.3));
   background-color: color-mix(
     in srgb,
-    rgba(237, 232, 223, calc(0.44 + var(--proto-nav-frost-progress, 0) * 0.46))
-      calc(var(--proto-nav-frost-progress, 0) * 100%),
+    #182a2f calc(var(--proto-nav-frost-progress, 0) * 100%),
     transparent
   );
-  backdrop-filter: blur(calc(var(--proto-nav-frost-progress, 0) * 40px))
-    saturate(calc(1.04 + var(--proto-nav-frost-progress, 0) * 0.14))
-    brightness(calc(1 + var(--proto-nav-frost-progress, 0) * 0.05));
-  -webkit-backdrop-filter: blur(calc(var(--proto-nav-frost-progress, 0) * 40px))
-    saturate(calc(1.04 + var(--proto-nav-frost-progress, 0) * 0.14))
-    brightness(calc(1 + var(--proto-nav-frost-progress, 0) * 0.05));
   box-shadow:
     0 calc(var(--proto-nav-frost-progress, 0) * 12px) calc(var(--proto-nav-frost-progress, 0) * 40px)
-      rgba(0, 0, 0, calc(var(--proto-nav-frost-progress, 0) * 0.28)),
-    inset 0 1px 0 rgba(255, 255, 255, calc(var(--proto-nav-frost-progress, 0) * 0.42)),
-    inset 0 -1px 0 rgba(30, 52, 58, calc(var(--proto-nav-frost-progress, 0) * 0.08));
+      rgba(18, 32, 36, calc(var(--proto-nav-frost-progress, 0) * 0.4)),
+    inset 0 1px 0 rgba(255, 255, 255, calc(var(--proto-nav-frost-progress, 0) * 0.18)),
+    inset 0 -1px 0 rgba(0, 0, 0, calc(var(--proto-nav-frost-progress, 0) * 0.12));
 }
 
 html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav--scrolled.proto-nav--over-sand .proto-nav-frost-shell,
@@ -745,8 +728,6 @@ html[data-about-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav
 html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav.proto-nav--scrolled:not(.proto-nav--over-shader) .proto-nav-frost-shell {
   border-color: var(--doe-nav-frost-scrolled-border) !important;
   background-color: var(--doe-nav-frost-scrolled-fill) !important;
-  backdrop-filter: blur(44px) saturate(1.3) brightness(0.94) !important;
-  -webkit-backdrop-filter: blur(44px) saturate(1.3) brightness(0.94) !important;
   box-shadow:
     var(--doe-nav-frost-scrolled-shadow),
     inset 0 1px 0 rgba(255, 255, 255, 0.18),
@@ -754,14 +735,12 @@ html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav.proto-nav--sc
 }
 
 html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav--scrolled.proto-nav--over-shader .proto-nav-frost-shell {
-  border-color: var(--doe-nav-frost-shader-border) !important;
-  background-color: var(--doe-nav-frost-shader-fill) !important;
-  backdrop-filter: blur(40px) saturate(1.14) brightness(1.05) !important;
-  -webkit-backdrop-filter: blur(40px) saturate(1.14) brightness(1.05) !important;
+  border-color: var(--doe-nav-frost-scrolled-border) !important;
+  background-color: var(--doe-nav-frost-scrolled-fill) !important;
   box-shadow:
-    var(--doe-nav-frost-shader-shadow),
-    inset 0 1px 0 rgba(255, 255, 255, 0.44),
-    inset 0 -1px 0 rgba(30, 52, 58, 0.08) !important;
+    var(--doe-nav-frost-scrolled-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.12) !important;
 }
 
 /* Home + /about — fixed nav: teal ink logo on sand bar. */
@@ -802,8 +781,8 @@ html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav.proto-nav--sc
 
 html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav--scrolled.proto-nav--over-shader .proto-nav-chrome-logo,
 html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav--scrolled.proto-nav--over-shader .proto-nav-chrome-logo a {
-  color: var(--doe-page-ink) !important;
-  text-shadow: none;
+  color: var(--doe-page-surface-raised) !important;
+  text-shadow: 0 1px 12px rgba(18, 32, 36, 0.24);
 }
 
 /* Home + /about — punched-out nav: sand CTAs on smoked teal capsule. */
@@ -827,9 +806,9 @@ html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav.proto-nav--sc
 /* Home — punched-out nav: teal CTAs on sand capsule over shader bands. */
 html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav--scrolled.proto-nav--over-shader .proto-nav-cta-shell a,
 html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav--scrolled.proto-nav--over-shader .proto-nav-cta-shell button {
-  background-color: var(--doe-nav-frost-shader-cta-bg) !important;
-  color: var(--doe-nav-frost-shader-cta-text) !important;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.14) inset !important;
+  background-color: var(--doe-nav-frost-scrolled-cta-bg) !important;
+  color: var(--doe-nav-frost-scrolled-cta-text) !important;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.46) inset !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav--scrolled.proto-nav--over-sand .proto-nav-cta-shell button[class*="border-l"],
@@ -842,7 +821,7 @@ html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav.proto-nav--sc
 }
 
 html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav--scrolled.proto-nav--over-shader .proto-nav-cta-shell button[class*="border-l"] {
-  border-left-color: var(--doe-nav-frost-shader-cta-divider) !important;
+  border-left-color: var(--doe-nav-frost-scrolled-cta-divider) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav--scrolled.proto-nav--over-sand .proto-nav-cta-shell [role="menu"],
@@ -865,10 +844,10 @@ html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav.proto-nav--sc
 
 html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav--scrolled.proto-nav--over-shader .proto-nav-cta-shell [role="menu"],
 html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav--scrolled.proto-nav--over-shader .proto-nav-email-dropdown {
-  background-color: var(--doe-nav-frost-shader-cta-bg) !important;
-  color: var(--doe-nav-frost-shader-cta-text) !important;
-  border-color: var(--doe-nav-frost-shader-cta-divider) !important;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22) !important;
+  background-color: var(--doe-nav-frost-scrolled-cta-bg) !important;
+  color: var(--doe-nav-frost-scrolled-cta-text) !important;
+  border-color: var(--doe-nav-frost-scrolled-cta-divider) !important;
+  box-shadow: 0 10px 28px rgba(18, 32, 36, 0.24) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav--scrolled.proto-nav--over-sand .proto-nav-cta-shell [role="menu"] [role="menuitem"],
@@ -881,7 +860,7 @@ html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav.proto-nav--sc
 }
 
 html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav--scrolled.proto-nav--over-shader .proto-nav-cta-shell [role="menu"] [role="menuitem"] {
-  color: var(--doe-nav-frost-shader-cta-text) !important;
+  color: var(--doe-nav-frost-scrolled-cta-text) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell a,

@@ -600,9 +600,7 @@ export default function DoeIphoneSiteNav({
     navChromeTheme === "dark"
       ? "#E8EDEF"
       : frostedScrollNav && protoNavScrolled
-        ? navBackdrop === "shader"
-          ? "var(--doe-page-ink, #1E343A)"
-          : "var(--doe-page-surface-raised, #F2ECE4)"
+        ? "var(--doe-page-surface-raised, #F2ECE4)"
         : "var(--doe-page-ink, #1E343A)";
   const navSheetTransition = `opacity ${NAV_SHEET_MS}ms ${NAV_SHEET_EASE}, transform ${NAV_SHEET_MS}ms ${NAV_SHEET_EASE}`;
   const navFooterCarouselZoom = pinchSafe ? 1 : mobileNavFooterZoom;
