@@ -87,10 +87,13 @@ html[data-about-page]:has(.blog-mobile-root) {
   --proto-nav-cta-text: var(--doe-page-surface-raised);
   --doe-nav-frost-scrolled-fill: rgba(24, 42, 47, 0.9);
   --doe-nav-frost-scrolled-border: rgba(242, 236, 228, 0.24);
-  --doe-nav-frost-scrolled-shadow: none;
+  --doe-nav-frost-scrolled-shadow: 0 10px 28px -8px rgba(30, 52, 58, 0.32);
   --doe-nav-frost-scrolled-cta-bg: var(--doe-page-surface-raised);
   --doe-nav-frost-scrolled-cta-text: var(--doe-page-ink);
   --doe-nav-frost-scrolled-cta-divider: rgba(30, 52, 58, 0.14);
+  --doe-nav-cta-depth: 0 1px 0 rgba(255, 255, 255, 0.12) inset, 0 3px 10px -4px rgba(18, 32, 36, 0.36);
+  --doe-nav-frost-scrolled-cta-depth: 0 1px 0 rgba(255, 255, 255, 0.48) inset,
+    0 2px 8px -3px rgba(18, 32, 36, 0.24);
   background-color: var(--doe-page-surface);
 }
 
@@ -698,6 +701,12 @@ html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav .proto-nav-fr
     saturate(calc(1.08 + var(--proto-nav-frost-progress, 0) * 0.22))
     brightness(calc(1 - var(--proto-nav-frost-progress, 0) * 0.08));
   box-shadow:
+    0 calc(var(--proto-nav-frost-progress, 0) * 6px) calc(var(--proto-nav-frost-progress, 0) * 16px)
+      calc(var(--proto-nav-frost-progress, 0) * -8px)
+      rgba(30, 52, 58, calc(var(--proto-nav-frost-progress, 0) * 0.24)),
+    0 calc(var(--proto-nav-frost-progress, 0) * 12px) calc(var(--proto-nav-frost-progress, 0) * 28px)
+      calc(var(--proto-nav-frost-progress, 0) * -10px)
+      rgba(30, 52, 58, calc(var(--proto-nav-frost-progress, 0) * 0.18)),
     inset 0 1px 0 rgba(255, 255, 255, calc(var(--proto-nav-frost-progress, 0) * 0.16)),
     inset 0 -1px 0 rgba(0, 0, 0, calc(var(--proto-nav-frost-progress, 0) * 0.1));
   transition:
@@ -716,6 +725,7 @@ html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav.proto-nav--sc
   backdrop-filter: blur(48px) saturate(1.28) brightness(0.92) !important;
   -webkit-backdrop-filter: blur(48px) saturate(1.28) brightness(0.92) !important;
   box-shadow:
+    var(--doe-nav-frost-scrolled-shadow),
     inset 0 1px 0 rgba(255, 255, 255, 0.16),
     inset 0 -1px 0 rgba(0, 0, 0, 0.1) !important;
 }
@@ -759,7 +769,7 @@ html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav.proto-nav--sc
 html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav.proto-nav--scrolled .proto-nav-cta-shell button {
   background-color: var(--doe-nav-frost-scrolled-cta-bg) !important;
   color: var(--doe-nav-frost-scrolled-cta-text) !important;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.42) inset !important;
+  box-shadow: var(--doe-nav-frost-scrolled-cta-depth) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav--scrolled .proto-nav-cta-shell button[class*="border-l"],
@@ -794,6 +804,7 @@ html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav .proto-nav-ct
 html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell button {
   background-color: var(--proto-nav-cta-bg) !important;
   color: var(--proto-nav-cta-text) !important;
+  box-shadow: var(--doe-nav-cta-depth) !important;
 }
 
 /* Home + /about — flat sand nav: pill CTAs at rest (frosted nav enabled, not punched out). */
