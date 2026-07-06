@@ -65,6 +65,7 @@ export function AboutMobileView() {
       showMenu={false}
       footerLinksDisabled
       shellMinHeightClass="min-h-[var(--doe-section-band-vh,var(--app-vh,100lvh))]"
+      frostedScrollNav
     >
       <main className={`w-full ${BLOG_CONTENT_PT}`}>
         <div className={`${ABOUT_HERO_HEADLINE_WRAP} ${ABOUT_PAGE_HERO_HEADLINE_PT}`}>

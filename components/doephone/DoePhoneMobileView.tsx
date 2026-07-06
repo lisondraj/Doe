@@ -89,8 +89,8 @@ export function DoePhoneMobileView({ variant = "home" }: { variant?: "home" | "p
         logoLink={isProto ? true : !staticNav}
         navActionLinksEnabled={isProto ? true : !staticNav}
         investorsHref={isProto ? PROTO_INVEST_PATH : undefined}
-        frostedScrollNav={isProto}
-        frostedScrollPastHero={isProto}
+        frostedScrollNav
+        frostedScrollPastHero
       />
 
       <DoePhoneHeroSection variant="mobile" proto={isProto} />
