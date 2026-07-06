@@ -20,6 +20,10 @@ import {
   DOEPHONE_NAV_WAITLIST_CLASS,
 } from "@/lib/doephone/waitlist-button";
 import {
+  navBackdropUnderNav,
+  type NavBackdropKind,
+} from "@/lib/doephone/nav-backdrop-under-nav";
+import {
   DOEPHONE_FIXED_NAV_CONTENT_LEFT,
   DOEPHONE_FIXED_NAV_CONTENT_RIGHT,
   DOEPHONE_SECTION_CAROUSEL_INSET_X,
@@ -341,6 +345,7 @@ export default function DoeIphoneSiteNav({
   const [mobileNavFooterSlide, setMobileNavFooterSlide] = useState(0);
   const [navFrostProgress, setNavFrostProgress] = useState(0);
   const [protoNavScrolled, setProtoNavScrolled] = useState(false);
+  const [navBackdrop, setNavBackdrop] = useState<NavBackdropKind>("sand");
   const mobileNavFooterCarouselRef = useRef<HTMLDivElement>(null);
   /** Carousel width when the sheet first opens — `zoom` shrinks uniformly if the window gets narrower (matches home `app/page.tsx`). */
   const mobileNavFooterWidthBaselineRef = useRef(0);
@@ -412,8 +417,10 @@ export default function DoeIphoneSiteNav({
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
         const next = computeFrostProgress();
+        const backdrop = navBackdropUnderNav(navBarRowRef.current);
         setNavFrostProgress(next);
         setProtoNavScrolled((prev) => (prev ? next > 0.68 : next >= 0.88));
+        setNavBackdrop((prev) => (prev === backdrop ? prev : backdrop));
       });
     };
 
@@ -588,12 +595,14 @@ export default function DoeIphoneSiteNav({
   const navTextColor = navChromeTheme === "dark" ? "#E8EDEF" : "var(--doe-page-ink, #1E343A)";
   const navBackground = navChromeTheme === "dark" ? "#121819" : "var(--doe-page-surface, #EDE8DF)";
   const navBorderColor = navChromeTheme === "dark" ? "#2A3538" : "var(--doe-page-border, rgba(30, 52, 58, 0.14))";
-  /** Flat sand bar → teal ink; frosted teal pill → warm cream (matches shader chrome). */
+  /** Flat sand bar → teal ink; frosted pill inverts with the band underneath. */
   const navLogoColor =
     navChromeTheme === "dark"
       ? "#E8EDEF"
       : frostedScrollNav && protoNavScrolled
-        ? "var(--doe-page-surface-raised, #F2ECE4)"
+        ? navBackdrop === "shader"
+          ? "var(--doe-page-ink, #1E343A)"
+          : "var(--doe-page-surface-raised, #F2ECE4)"
         : "var(--doe-page-ink, #1E343A)";
   const navSheetTransition = `opacity ${NAV_SHEET_MS}ms ${NAV_SHEET_EASE}, transform ${NAV_SHEET_MS}ms ${NAV_SHEET_EASE}`;
   const navFooterCarouselZoom = pinchSafe ? 1 : mobileNavFooterZoom;
@@ -816,6 +825,10 @@ export default function DoeIphoneSiteNav({
           frostedScrollNav ? "proto-nav-scroll-frost " : ""
         }${frostedScrollNav && navMotionReady ? "proto-nav--motion-ready " : ""}${
           protoNavScrolled ? "proto-nav--scrolled " : ""
+        }${
+          frostedScrollNav && navBackdrop === "shader" ? "proto-nav--over-shader " : ""
+        }${
+          frostedScrollNav && navBackdrop === "sand" ? "proto-nav--over-sand " : ""
         }fixed top-0 left-0 right-0 iphone-page:pt-[env(safe-area-inset-top,0px)] ${
           navSheetLive ? "z-[200]" : "z-50"
         } ${pinchSafe ? "translate-z-0" : ""}`}
