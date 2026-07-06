@@ -22,6 +22,21 @@ export const PROTO_SHADER_MAX_PIXEL_COUNT_HERO = 1920 * 1080 * 4;
 /** Cap feature boxes — headroom for taller fit-shader cards at 2–3× DPR. */
 export const PROTO_SHADER_MAX_PIXEL_COUNT_FEATURE = Math.floor(1920 * 1080 * 3);
 
+/** iPhone — lower WebGL resolution to keep scroll responsive. */
+export const PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO = Math.floor(1280 * 720 * 2);
+
+export const PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_FEATURE = Math.floor(960 * 640 * 2);
+
+export const PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_STACK = Math.floor(960 * 640 * 1.25);
+
+function isDoePhoneShaderContext() {
+  if (typeof document === "undefined") return false;
+  return (
+    document.documentElement.getAttribute("data-doeforvc-always-phone") === "true" ||
+    document.querySelector("[data-doeforvc-view='iphone']") != null
+  );
+}
+
 /** /about Meet Proto stack — smaller cap for static panels in a vertical stack. */
 export const PROTO_SHADER_MAX_PIXEL_COUNT_STACK = Math.floor(1920 * 1080 * 1.25);
 
@@ -359,6 +374,18 @@ export function isProtoShaderHeroVariant(variant: ProtoGrainGradientVariant) {
 }
 
 export function protoShaderMaxPixelCount(variant: ProtoGrainGradientVariant) {
+  if (isDoePhoneShaderContext()) {
+    if (isProtoShaderHeroVariant(variant) || variant === "home-footer" || variant === "home-integrations") {
+      return PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO;
+    }
+
+    if (variant.startsWith("meet-proto-stack")) {
+      return PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_STACK;
+    }
+
+    return PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_FEATURE;
+  }
+
   if (isProtoShaderHeroVariant(variant) || variant === "home-footer" || variant === "home-integrations") {
     return PROTO_SHADER_MAX_PIXEL_COUNT_HERO;
   }

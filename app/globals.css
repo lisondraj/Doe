@@ -177,6 +177,19 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band {
   min-height: var(--doe-section-band-vh, var(--app-vh, 100lvh)) !important;
 }
 
+/* Home iPhone — defer off-screen section paint until near viewport. */
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section,
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band {
+  content-visibility: auto;
+  contain-intrinsic-size: auto calc(var(--app-vh, 100lvh) * 1.1);
+}
+
+html[data-home-page]:has(.doephone-mobile-root) .proto-shader-surface,
+html[data-about-page]:has(.doephone-mobile-root) .proto-shader-surface,
+html[data-about-page]:has(.blog-mobile-root) .proto-shader-surface {
+  contain: layout paint style;
+}
+
 /* Home iPhone — Build section: one viewport band, slightly tighter copy + prompt. */
 html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Build"] {
   min-height: var(--doe-section-band-vh, var(--app-vh, 100lvh)) !important;
@@ -444,6 +457,9 @@ html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav.proto-nav-scr
   /* Opaque sand tray — page shaders must not bleed through the punch-out zone. */
   background: var(--doe-page-surface) !important;
   box-shadow: none !important;
+  transition:
+    background var(--proto-nav-motion-duration) var(--proto-nav-motion-ease),
+    box-shadow var(--proto-nav-motion-duration) var(--proto-nav-motion-ease);
 }
 
 html[data-proto-page]:has(.doephone-mobile-root),

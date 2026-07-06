@@ -20,10 +20,6 @@ import {
   DOEPHONE_NAV_WAITLIST_CLASS,
 } from "@/lib/doephone/waitlist-button";
 import {
-  navBackdropUnderNav,
-  type NavBackdropKind,
-} from "@/lib/doephone/nav-backdrop-under-nav";
-import {
   DOEPHONE_FIXED_NAV_CONTENT_LEFT,
   DOEPHONE_FIXED_NAV_CONTENT_RIGHT,
   DOEPHONE_SECTION_CAROUSEL_INSET_X,
@@ -170,11 +166,11 @@ function NavChromeStrip({
       className={`${navInsetX} ${navStripMinH} py-6 iphone-page:py-[clamp(0.8125rem,0.52rem+1.55vmin,1.9rem)] flex items-center relative z-10 iphone-page:gap-[clamp(0.45rem,0.35rem+0.85vmin,0.75rem)] ${subpageAnchored && subpageWithButton ? "" : "justify-end"}`}
     >
       {logoLink ? (
-        <Link href={homeHref} className={`${doeClassName}${frostedScrollChrome ? "" : " transition-opacity duration-500 ease-out"} opacity-100`} style={{ color: navLogoColor }}>
+        <Link href={homeHref} className={`${doeClassName}${frostedScrollChrome ? "" : " transition-opacity duration-500 ease-out"} opacity-100`} style={frostedScrollChrome ? undefined : { color: navLogoColor }}>
           {brandName}
         </Link>
       ) : (
-        <span className={doeClassName} style={{ color: navLogoColor }}>
+        <span className={doeClassName} style={frostedScrollChrome ? undefined : { color: navLogoColor }}>
           {brandName}
         </span>
       )}
@@ -343,9 +339,9 @@ export default function DoeIphoneSiteNav({
   /** Drives enter/exit opacity + slide on the sheet layer. */
   const [navSheetVisualOpen, setNavSheetVisualOpen] = useState(false);
   const [mobileNavFooterSlide, setMobileNavFooterSlide] = useState(0);
-  const [navFrostProgress, setNavFrostProgress] = useState(0);
   const [protoNavScrolled, setProtoNavScrolled] = useState(false);
-  const [navBackdrop, setNavBackdrop] = useState<NavBackdropKind>("sand");
+  const frostProgressRef = useRef(0);
+  const protoNavScrolledRef = useRef(false);
   const mobileNavFooterCarouselRef = useRef<HTMLDivElement>(null);
   /** Carousel width when the sheet first opens — `zoom` shrinks uniformly if the window gets narrower (matches home `app/page.tsx`). */
   const mobileNavFooterWidthBaselineRef = useRef(0);
@@ -400,11 +396,12 @@ export default function DoeIphoneSiteNav({
     if (!frostedScrollNav) return;
 
     let raf = 0;
+    let heroEl: HTMLElement | null = null;
     const computeFrostProgress = () => {
       if (frostedScrollPastHero) {
-        const hero = document.querySelector<HTMLElement>(".doephone-hero-section");
-        if (hero) {
-          const bottom = hero.getBoundingClientRect().bottom;
+        heroEl ??= document.querySelector<HTMLElement>(".doephone-hero-section");
+        if (heroEl) {
+          const bottom = heroEl.getBoundingClientRect().bottom;
           const range = 96;
           return Math.min(1, Math.max(0, (range - bottom) / range));
         }
@@ -413,14 +410,29 @@ export default function DoeIphoneSiteNav({
       return Math.min(1, Math.max(0, window.scrollY / range));
     };
 
+    const applyFrostProgress = (next: number) => {
+      const nav = navBarRowRef.current;
+      const quantized = Math.round(next * 100) / 100;
+      if (Math.abs(quantized - frostProgressRef.current) < 0.01) {
+        const shouldScroll = protoNavScrolledRef.current ? quantized > 0.68 : quantized >= 0.88;
+        if (shouldScroll === protoNavScrolledRef.current) return;
+      }
+
+      frostProgressRef.current = quantized;
+      nav?.style.setProperty("--proto-nav-frost-progress", String(quantized));
+
+      const shouldScroll = protoNavScrolledRef.current ? quantized > 0.68 : quantized >= 0.88;
+      if (shouldScroll !== protoNavScrolledRef.current) {
+        protoNavScrolledRef.current = shouldScroll;
+        nav?.classList.toggle("proto-nav--scrolled", shouldScroll);
+        setProtoNavScrolled(shouldScroll);
+      }
+    };
+
     const onScroll = () => {
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
-        const next = computeFrostProgress();
-        const backdrop = navBackdropUnderNav(navBarRowRef.current);
-        setNavFrostProgress(next);
-        setProtoNavScrolled((prev) => (prev ? next > 0.68 : next >= 0.88));
-        setNavBackdrop((prev) => (prev === backdrop ? prev : backdrop));
+        applyFrostProgress(computeFrostProgress());
       });
     };
 
@@ -823,18 +835,12 @@ export default function DoeIphoneSiteNav({
           frostedScrollNav ? "proto-nav-scroll-frost " : ""
         }${frostedScrollNav && navMotionReady ? "proto-nav--motion-ready " : ""}${
           protoNavScrolled ? "proto-nav--scrolled " : ""
-        }${
-          frostedScrollNav && navBackdrop === "shader" ? "proto-nav--over-shader " : ""
-        }${
-          frostedScrollNav && navBackdrop === "sand" ? "proto-nav--over-sand " : ""
         }fixed top-0 left-0 right-0 iphone-page:pt-[env(safe-area-inset-top,0px)] ${
           navSheetLive ? "z-[200]" : "z-50"
         } ${pinchSafe ? "translate-z-0" : ""}`}
         style={
           frostedScrollNav
-            ? {
-                ["--proto-nav-frost-progress" as string]: navFrostProgress,
-              }
+            ? undefined
             : {
                 backgroundColor: protoNavScrolled ? "transparent" : navBackground,
                 borderBottom: protoNavScrolled

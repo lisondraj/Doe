@@ -24,6 +24,7 @@ export function DoePhoneHomeShaderBandSection({
             variant={shader.variant}
             colors={shader.colors}
             colorBack={shader.colorBack}
+            static
           />
         </div>
       ) : null}

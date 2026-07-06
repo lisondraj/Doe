@@ -50,7 +50,7 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   useLayoutEffect(() => {
     const node = containerRef.current;
     if (!node) return;
-    if (isNearViewport(node, hero ? 0.4 : 0.75)) {
+    if (isNearViewport(node, hero ? 0.4 : 0.5)) {
       setHasMounted(true);
     }
   }, [hero]);
@@ -74,25 +74,17 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     const node = containerRef.current;
     if (!node) return;
 
-    const mountObserver = new IntersectionObserver(
+    const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) setHasMounted(true);
+        const visible = entry.isIntersecting;
+        if (visible) setHasMounted(true);
+        setIsVisible(visible);
       },
-      { rootMargin: hero ? "40% 0px" : "80% 0px", threshold: 0 },
+      { rootMargin: hero ? "35% 0px" : "45% 0px", threshold: 0 },
     );
 
-    const animateObserver = new IntersectionObserver(
-      ([entry]) => setIsVisible(entry.isIntersecting),
-      { rootMargin: "12% 0px", threshold: 0 },
-    );
-
-    mountObserver.observe(node);
-    animateObserver.observe(node);
-
-    return () => {
-      mountObserver.disconnect();
-      animateObserver.disconnect();
-    };
+    observer.observe(node);
+    return () => observer.disconnect();
   }, [hero]);
 
   const targetSpeed = preset.speed ?? PROTO_GRAIN_GRADIENT_SPEED;
