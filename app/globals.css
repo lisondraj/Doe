@@ -268,6 +268,17 @@ html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Integrations
   padding-right: var(--proto-phone-gutter-right) !important;
 }
 
+html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Integrations"] .integrations-section-stack {
+  padding-left: var(--proto-phone-gutter-left) !important;
+  padding-right: var(--proto-phone-gutter-right) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Integrations"] .integrations-section-stack > div {
+  transform: scale(0.84);
+  transform-origin: center center;
+  width: 100%;
+}
+
 /* Home + /about iPhone — Paper shader only; hide legacy PNG grain overlays. */
 html[data-home-page]:has(.doephone-mobile-root) .proto-shader-surface .proto-grain-layer,
 html[data-home-page]:has(.doephone-mobile-root) .proto-shader-surface > div.z-\[1\],

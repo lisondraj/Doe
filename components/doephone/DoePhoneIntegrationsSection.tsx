@@ -1,6 +1,6 @@
 "use client";
 
-import { DoePhoneCommunicationOuterGlassPanel } from "@/components/doephone/DoePhoneCommunicationGlassPanels";
+import { DoePhoneIntegrateVisual } from "@/components/doephone/DoePhoneIntegrateVisual";
 import { DoePhoneSectionTitle } from "@/components/doephone/DoePhoneSectionText";
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import {
@@ -14,7 +14,7 @@ import { doeHomeIntegrationsShaderSurface } from "@/lib/proto/proto-shader-backd
 
 const INTEGRATIONS_SHADER = doeHomeIntegrationsShaderSurface();
 
-/** Gradient viewport — Intelligence built into your stack + outer glass panel. */
+/** Gradient viewport — Intelligence built into your stack + integration tile mosaic. */
 export function DoePhoneIntegrationsSection({
   sectionClassName = DOEPHONE_VIEWPORT_SECTION,
 }: {
@@ -42,9 +42,9 @@ export function DoePhoneIntegrationsSection({
         </div>
 
         <div
-          className={`shrink-0 overflow-hidden ${DOEPHONE_SECTION_TITLE_CAROUSEL_GAP} ${DOEPHONE_SECTION_TITLE_PB}`}
+          className={`integrations-section-stack flex min-h-0 flex-1 flex-col justify-center overflow-hidden ${DOEPHONE_SECTION_TITLE_CAROUSEL_GAP} ${DOEPHONE_SECTION_TITLE_PB}`}
         >
-          <DoePhoneCommunicationOuterGlassPanel />
+          <DoePhoneIntegrateVisual />
         </div>
       </div>
     </section>

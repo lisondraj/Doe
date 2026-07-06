@@ -3,7 +3,7 @@
 import { DoePhoneDesktopFrostPlusBadge } from "@/components/doephone/DoePhoneDesktopFrostPlusBadge";
 import { DoePhoneIntegrateVisual } from "@/components/doephone/DoePhoneIntegrateVisual";
 import { DoePhoneSectionTitle } from "@/components/doephone/DoePhoneSectionText";
-import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
+import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import {
   DESKTOP_HOME_BAND_H,
   DESKTOP_FULLSCREEN_SECTION_BADGE_INSET,
@@ -17,13 +17,13 @@ import {
   doePhoneSectionRevealSegmentClass,
   useDoePhoneSectionReveal,
 } from "@/lib/doephone/use-doe-phone-section-reveal";
-import { DOEPHONE_DEPLOYMENTS_GRADIENT } from "@/lib/doephone/communication-carousel";
-import { DIAGNOSTIC_ASSISTANT_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
+import { doeHomeIntegrationsShaderSurface } from "@/lib/proto/proto-shader-backdrop-colors";
 import type { CSSProperties } from "react";
 
 const DESKTOP_INTEGRATIONS_UI_INSET = `pb-10 md:pb-14 lg:pb-16 xl:pb-20 ${DOEPHONE_DESKTOP_PAGE_INSET_RIGHT}`;
+const INTEGRATIONS_SHADER = doeHomeIntegrationsShaderSurface();
 
-/** Desktop integrations band — gradient fill, title, + badge, integration tiles bottom-right. */
+/** Desktop integrations band — Paper shader, title, + badge, integration tiles bottom-right. */
 export function DoePhoneDesktopIntegrationsSection() {
   const { ref: sectionRef, revealed } = useDoePhoneSectionReveal();
 
@@ -33,13 +33,11 @@ export function DoePhoneDesktopIntegrationsSection() {
       style={doephoneSectionRevealStyleVars() as CSSProperties}
       aria-label="Integrations"
     >
-      <div className="pointer-events-none absolute -inset-[3%] overflow-hidden" aria-hidden>
-        <WorkflowCarouselDesignBackdrop
-          backdrop={DIAGNOSTIC_ASSISTANT_BACKDROP}
-          embedded
-          gradientOverride={DOEPHONE_DEPLOYMENTS_GRADIENT}
-          gradientScale={1}
-          patternScale={1.12}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+        <ProtoGrainGradient
+          variant={INTEGRATIONS_SHADER.variant}
+          colors={INTEGRATIONS_SHADER.colors}
+          colorBack={INTEGRATIONS_SHADER.colorBack}
         />
       </div>
 

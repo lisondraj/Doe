@@ -64,16 +64,13 @@ export function doeHomeFooterShaderSurface(): ProtoGrainGradientSurface {
   };
 }
 
-/** Home Integrations band — hero palette with truchet stack-lattice flow. */
+/** Home Integrations band — hero palette locked, integrate wave flow. */
 export function doeHomeIntegrationsShaderSurface(): ProtoGrainGradientSurface {
+  const hero = doeHomeHeroShaderSurface();
   return {
     variant: "home-integrations",
-    colors: [
-      DOE_HOME_ORANGE_PALETTE.gold,
-      DOE_HOME_ORANGE_PALETTE.orange,
-      DOE_HOME_ORANGE_PALETTE.copper,
-    ],
-    colorBack: DOE_HOME_ORANGE_PALETTE.back,
+    colors: hero.colors,
+    colorBack: hero.colorBack,
   };
 }
 

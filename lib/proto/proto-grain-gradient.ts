@@ -114,17 +114,17 @@ export const PROTO_GRAIN_GRADIENT_PRESETS: Record<ProtoGrainGradientVariant, Pro
     worldHeight: 960,
     speed: 0,
   },
-  /** Home Integrations band — hero palette, truchet lattice drift (stack / grid motif). */
+  /** Home Integrations band — hero palette, integrate wave drift (stack motif). */
   "home-integrations": {
-    shape: "truchet",
-    softness: 0.56,
-    intensity: 0.2,
+    shape: "wave",
+    softness: 0.72,
+    intensity: 0.17,
     fit: "cover",
-    rotation: 118,
-    offsetX: 0.14,
-    offsetY: -0.12,
-    scale: 1.06,
-    speed: 0.55,
+    rotation: 168,
+    offsetX: 0.06,
+    offsetY: -0.08,
+    scale: 1.12,
+    speed: 0.65,
   },
   "about-hero": {
     shape: "wave",
