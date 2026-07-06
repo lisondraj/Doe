@@ -104,8 +104,11 @@ export const DOEPHONE_SECTION_COPY_TW =
 export const DESKTOP_FULLSCREEN_SECTION_TITLE_TW =
   "text-left font-light leading-[1.02] tracking-[-0.03em] text-[clamp(2.65rem,4.05vw,4.05rem)] md:text-[clamp(2.78rem,3.75vw,4.28rem)] lg:text-[clamp(2.92rem,3.5vw,4.52rem)]";
 
-/** iPhone home/about section band — slightly shorter than full viewport for scroll rhythm. */
+/** iPhone home/about section band — slightly taller than viewport for scroll rhythm. */
 export const DOEPHONE_SECTION_BAND_VH = "var(--doe-section-band-vh,var(--app-vh,100lvh))";
+
+/** iPhone home hero — slightly shorter than section bands. */
+export const DOEPHONE_HERO_BAND_VH = "var(--doe-hero-band-vh,var(--doe-section-band-vh,var(--app-vh,100lvh)))";
 
 /** Full iPhone viewport band — locked to `--doe-section-band-vh` (stable vs Safari chrome). */
 export const DOEPHONE_VIEWPORT_SECTION =
@@ -131,9 +134,9 @@ export const DOEPHONE_MAIN_PAGE_VIEWPORT_SECTION =
 export const DOEPHONE_SECTION_CONTENT_CENTER =
   "flex min-h-0 flex-1 flex-col justify-center";
 
-/** Section 2 carousel — fixed height; tied to section band, not dynamic svh. */
+/** Section 2 carousel — fixed height; tied to stable viewport, not dynamic svh. */
 export const DOEPHONE_SECTION_CAROUSEL_HEIGHT =
-  "h-[clamp(40rem,calc(var(--doe-section-band-vh,var(--app-vh,100lvh))*0.58),62rem)] min-h-[clamp(40rem,calc(var(--doe-section-band-vh,var(--app-vh,100lvh))*0.58),62rem)] max-h-[clamp(40rem,calc(var(--doe-section-band-vh,var(--app-vh,100lvh))*0.58),62rem)] shrink-0";
+  "h-[clamp(46rem,calc(var(--app-vh,100lvh)*1.04),69rem)] min-h-[clamp(46rem,calc(var(--app-vh,100lvh)*1.04),69rem)] max-h-[clamp(46rem,calc(var(--app-vh,100lvh)*1.04),69rem)] shrink-0";
 
 /** Fixed stage — tallest preset layout so menu below does not shift on tab change. */
 export const DOEPHONE_BOX_CLUSTER_STAGE_HEIGHT =
