@@ -18,6 +18,19 @@ function isHeroVariant(variant: ProtoGrainGradientVariant) {
   return variant === "home-hero" || variant === "build-hero" || variant === "about-hero";
 }
 
+function isPhoneLayout() {
+  if (typeof document === "undefined") return false;
+  return (
+    document.documentElement.getAttribute("data-doeforvc-always-phone") === "true" ||
+    document.querySelector("[data-doeforvc-view='iphone']") != null
+  );
+}
+
+function hasRenderableSize(node: HTMLElement) {
+  const { width, height } = node.getBoundingClientRect();
+  return width > 1 && height > 1;
+}
+
 function isNearViewport(node: HTMLElement, marginRatio = 0.75) {
   const rect = node.getBoundingClientRect();
   const vh = window.innerHeight;
@@ -42,18 +55,76 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   const preset = PROTO_GRAIN_GRADIENT_PRESETS[variant];
   const containerRef = useRef<HTMLDivElement>(null);
   const hero = isHeroVariant(variant);
+  const phone = isPhoneLayout();
+  const hasMountedRef = useRef(hero);
   const [hasMounted, setHasMounted] = useState(hero);
+  const [containerReady, setContainerReady] = useState(false);
   const [isVisible, setIsVisible] = useState(hero);
   const [tabVisible, setTabVisible] = useState(true);
   const [reducedMotion, setReducedMotion] = useState(false);
 
+  const requestMount = () => {
+    if (hasMountedRef.current) return;
+    hasMountedRef.current = true;
+    setHasMounted(true);
+  };
+
+  useLayoutEffect(() => {
+    if (hero) requestMount();
+  }, [hero]);
+
   useLayoutEffect(() => {
     const node = containerRef.current;
     if (!node) return;
-    if (isNearViewport(node, hero ? 0.4 : 0.85)) {
-      setHasMounted(true);
-    }
-  }, [hero]);
+
+    const syncReady = () => {
+      if (!hasRenderableSize(node)) return false;
+      setContainerReady(true);
+
+      const mountMargin = phone ? 2 : hero ? 0.5 : 0.85;
+      if (hero || isNearViewport(node, mountMargin)) {
+        requestMount();
+      }
+      return true;
+    };
+
+    if (syncReady()) return;
+
+    const ro = new ResizeObserver(() => {
+      syncReady();
+    });
+    ro.observe(node);
+
+    let raf2 = 0;
+    let raf3 = 0;
+    const raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => {
+        syncReady();
+        raf3 = requestAnimationFrame(() => syncReady());
+      });
+    });
+
+    return () => {
+      ro.disconnect();
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+      cancelAnimationFrame(raf3);
+    };
+  }, [hero, phone]);
+
+  useEffect(() => {
+    if (!phone) return;
+
+    const retry = () => {
+      const node = containerRef.current;
+      if (!node || !hasRenderableSize(node)) return;
+      setContainerReady(true);
+      if (hero || isNearViewport(node, 2.5)) requestMount();
+    };
+
+    const t = window.setTimeout(retry, 320);
+    return () => window.clearTimeout(t);
+  }, [hero, phone]);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -74,11 +145,13 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     const node = containerRef.current;
     if (!node) return;
 
+    const mountMargin = phone ? "120% 0px" : hero ? "40% 0px" : "85% 0px";
+
     const mountObserver = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) setHasMounted(true);
+        if (entry.isIntersecting) requestMount();
       },
-      { rootMargin: hero ? "40% 0px" : "85% 0px", threshold: 0 },
+      { rootMargin: mountMargin, threshold: 0 },
     );
 
     const animateObserver = new IntersectionObserver(
@@ -89,15 +162,23 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     mountObserver.observe(node);
     animateObserver.observe(node);
 
+    const raf = requestAnimationFrame(() => {
+      if (isNearViewport(node, phone ? 2 : hero ? 0.5 : 0.85)) {
+        requestMount();
+      }
+    });
+
     return () => {
+      cancelAnimationFrame(raf);
       mountObserver.disconnect();
       animateObserver.disconnect();
     };
-  }, [hero]);
+  }, [hero, phone]);
 
   const targetSpeed = preset.speed ?? PROTO_GRAIN_GRADIENT_SPEED;
   const shouldAnimate =
     !staticShader && !reducedMotion && targetSpeed > 0 && isVisible && tabVisible && hasMounted;
+  const showGradient = hasMounted && containerReady;
 
   return (
     <div
@@ -106,7 +187,7 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
       style={{ backgroundColor: colorBack ?? PROTO_GRAIN_GRADIENT_COLOR_BACK }}
       aria-hidden
     >
-      {hasMounted ? (
+      {showGradient ? (
         <GrainGradient
           width="100%"
           height="100%"
