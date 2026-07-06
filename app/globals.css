@@ -79,7 +79,7 @@ html[data-about-page]:has(.blog-mobile-root) {
   --proto-phone-gutter-right: max(2rem, calc(env(safe-area-inset-right, 0px) + 4.25vmin));
   --proto-phone-gutter-y: max(2rem, calc(env(safe-area-inset-bottom, 0px) + 4.25vmin));
   --proto-phone-nav-clearance: max(5rem, calc(env(safe-area-inset-top, 0px) + 4.1rem));
-  --doe-section-band-vh: calc(var(--app-vh, 100lvh) * 1.1);
+  --doe-section-band-vh: calc(var(--app-vh, 100lvh) * 0.96);
   --proto-nav-cta-border: #1e343a;
   --proto-nav-cta-divider: rgba(242, 236, 228, 0.22);
   --proto-nav-cta-bg: var(--doe-shader-back);
@@ -124,8 +124,10 @@ html[data-home-page]:has(.doephone-mobile-root) .doephone-hero-section > .absolu
   padding-bottom: var(--proto-phone-gutter-y) !important;
 }
 
-/* Home iPhone — Labs: full viewport, hero shader colours, taller slide card, proto UI scale. */
+/* Home iPhone — Labs: viewport band, hero shader colours, vertically centered slide card. */
 html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Labs"] {
+  display: flex !important;
+  flex-direction: column !important;
   min-height: var(--doe-section-band-vh, var(--app-vh, 100lvh)) !important;
   height: var(--doe-section-band-vh, var(--app-vh, 100lvh)) !important;
   box-sizing: border-box !important;
@@ -136,10 +138,11 @@ html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Labs"] > div
   flex: 1 1 auto !important;
   flex-direction: column !important;
   justify-content: center !important;
+  align-items: stretch !important;
   box-sizing: border-box !important;
   min-height: 0 !important;
   height: 100% !important;
-  padding-top: max(var(--proto-phone-nav-clearance), var(--proto-phone-gutter-y)) !important;
+  padding-top: var(--proto-phone-gutter-y) !important;
   padding-bottom: var(--proto-phone-gutter-y) !important;
 }
 
@@ -148,21 +151,21 @@ html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Labs"] > div
   flex-direction: column !important;
   flex: 0 1 auto !important;
   width: 100% !important;
-  max-height: calc(var(--app-vh, 100lvh) * 0.92) !important;
+  max-height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.84) !important;
   min-height: 0 !important;
-  gap: max(0.85rem, calc(var(--app-vh, 100lvh) * 0.018)) !important;
-  margin-top: auto !important;
-  margin-bottom: auto !important;
+  gap: max(0.75rem, calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.016)) !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Labs"] > div > div > div:first-child {
   flex: 1 1 auto !important;
   min-height: clamp(
-    calc(24rem + var(--app-vh, 100lvh) / 8),
-    calc(var(--app-vh, 100lvh) * 0.55),
-    calc(40rem + var(--app-vh, 100lvh) / 8)
+    calc(20rem + var(--doe-section-band-vh, var(--app-vh, 100lvh)) / 10),
+    calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.46),
+    calc(34rem + var(--doe-section-band-vh, var(--app-vh, 100lvh)) / 10)
   ) !important;
-  max-height: calc(var(--app-vh, 100lvh) * 0.6) !important;
+  max-height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.5) !important;
   height: auto !important;
 }
 
@@ -183,7 +186,7 @@ html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Labs"] .abso
 }
 
 html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Labs"] > div > div > div:last-child {
-  margin-top: max(1rem, calc(var(--app-vh, 100lvh) * 0.022)) !important;
+  margin-top: max(0.75rem, calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.018)) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Labs"] [role="tablist"] {
