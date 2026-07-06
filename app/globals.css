@@ -131,87 +131,50 @@ html[data-home-page]:has(.doephone-mobile-root) .doephone-hero-section > .absolu
   padding-bottom: var(--proto-phone-gutter-y) !important;
 }
 
-/* Home iPhone — Labs: viewport band, hero shader colours, vertically centered slide card. */
-html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Labs"] {
+/* Home iPhone — feature stack: sand band + shader card + title, shader spacers between. */
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section {
   display: flex !important;
   flex-direction: column !important;
-  min-height: var(--doe-section-band-vh, var(--app-vh, 100lvh)) !important;
-  height: var(--doe-section-band-vh, var(--app-vh, 100lvh)) !important;
   box-sizing: border-box !important;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Labs"] > div {
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__inner {
   display: flex !important;
   flex: 1 1 auto !important;
   flex-direction: column !important;
   justify-content: center !important;
   align-items: stretch !important;
   box-sizing: border-box !important;
-  min-height: 0 !important;
-  height: 100% !important;
+  min-height: var(--doe-section-band-vh, var(--app-vh, 100lvh)) !important;
   padding-top: var(--proto-phone-gutter-y) !important;
   padding-bottom: var(--proto-phone-gutter-y) !important;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Labs"] > div > div {
-  display: flex !important;
-  flex-direction: column !important;
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__card {
   flex: 0 1 auto !important;
-  width: 100% !important;
-  max-height: calc(var(--app-vh, 100lvh) * 0.92) !important;
-  min-height: 0 !important;
-  gap: max(0.85rem, calc(var(--app-vh, 100lvh) * 0.018)) !important;
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Labs"] > div > div > div:first-child {
-  flex: 1 1 auto !important;
   min-height: clamp(
-    calc(24rem + var(--app-vh, 100lvh) / 8),
-    calc(var(--app-vh, 100lvh) * 0.55),
-    calc(40rem + var(--app-vh, 100lvh) / 8)
+    calc(22rem + var(--app-vh, 100lvh) / 9),
+    calc(var(--app-vh, 100lvh) * 0.52),
+    calc(38rem + var(--app-vh, 100lvh) / 9)
   ) !important;
-  max-height: calc(var(--app-vh, 100lvh) * 0.6) !important;
+  max-height: calc(var(--app-vh, 100lvh) * 0.58) !important;
   height: auto !important;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Labs"] .doephone-section-carousel {
-  transform: none !important;
-  height: 100% !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Labs"] .proto-carousel-ui-scale {
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-ui-scale {
   transform: scale(0.84);
   transform-origin: center center;
   width: 100%;
+  height: 100%;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Labs"] .absolute.z-30.rounded-full {
-  transform: scale(0.86) !important;
-  transform-origin: bottom right !important;
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__title {
+  font-size: clamp(1.72rem, 1.02rem + 4.85vmin, 2.85rem) !important;
+  font-weight: 350 !important;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Labs"] > div > div > div:last-child {
-  margin-top: max(1rem, calc(var(--app-vh, 100lvh) * 0.022)) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Labs"] [role="tablist"] {
-  flex: 0 0 auto !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Labs"] [role="tablist"] button {
-  min-height: clamp(3.35rem, 2.85rem + 1.75vmin, 4.35rem) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Labs"] [role="tablist"] button > span:first-child {
-  font-size: clamp(1.05rem, 0.92rem + 0.62vmin, 1.28rem) !important;
-  line-height: 1.08 !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Labs"] .doephone-section-carousel button.rounded-full {
-  width: clamp(3.65rem, 11.2vmin, 4.55rem) !important;
-  height: clamp(3.65rem, 11.2vmin, 4.55rem) !important;
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band {
+  min-height: var(--doe-section-band-vh, var(--app-vh, 100lvh)) !important;
 }
 
 /* Home iPhone — Build section: one viewport band, slightly tighter copy + prompt. */

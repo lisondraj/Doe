@@ -4,18 +4,13 @@ import { useLayoutEffect } from "react";
 
 import DoeIphoneSiteNav from "@/components/DoeIphoneSiteNav";
 import { DoePhoneClosingSection } from "@/components/doephone/DoePhoneClosingSection";
-import { DoePhoneCommunicationIntelligenceSection } from "@/components/doephone/DoePhoneCommunicationIntelligenceSection";
-import { DoePhoneCommunicationSection } from "@/components/doephone/DoePhoneCommunicationSection";
-import { DoePhoneCustomizationSection } from "@/components/doephone/DoePhoneCustomizationSection";
 import { DoePhoneHeroSection } from "@/components/doephone/DoePhoneHeroSection";
-import { DoePhoneIntegrationsSection } from "@/components/doephone/DoePhoneIntegrationsSection";
+import { DoePhoneHomeFeatureStack } from "@/components/doephone/DoePhoneHomeFeatureStack";
 import { ProtoCommunicationStack } from "@/components/proto/ProtoCommunicationStack";
 import { ProtoFooter } from "@/components/proto/ProtoFooter";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
 import {
   DOEPHONE_BEIGE_SECTION,
-  DOEPHONE_MAIN_PAGE_BEIGE_SECTION,
-  DOEPHONE_MAIN_PAGE_VIEWPORT_SECTION,
 } from "@/lib/doephone/section-styles";
 import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-viewport";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
@@ -98,25 +93,13 @@ export function DoePhoneMobileView({ variant = "home" }: { variant?: "home" | "p
       {isProto ? (
         <ProtoCommunicationStack />
       ) : (
-        <>
-          <section className={DOEPHONE_MAIN_PAGE_BEIGE_SECTION} aria-label="Labs">
-            <DoePhoneCommunicationSection />
-          </section>
-
-          <DoePhoneCommunicationIntelligenceSection />
-        </>
+        <DoePhoneHomeFeatureStack />
       )}
 
       {isProto ? (
         <ProtoFooter />
       ) : (
         <>
-          <section className={DOEPHONE_MAIN_PAGE_BEIGE_SECTION} aria-label="Customization">
-            <DoePhoneCustomizationSection />
-          </section>
-
-          <DoePhoneIntegrationsSection sectionClassName={DOEPHONE_MAIN_PAGE_VIEWPORT_SECTION} />
-
           <section className={DOEPHONE_BEIGE_SECTION} aria-label="Closing">
             <DoePhoneClosingSection />
           </section>
