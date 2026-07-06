@@ -28,7 +28,12 @@ function isPhoneLayout() {
 
 function hasRenderableSize(node: HTMLElement) {
   const { width, height } = node.getBoundingClientRect();
-  return width > 1 && height > 1;
+  if (width > 1 && height > 1) return true;
+
+  const parent = node.parentElement;
+  if (!parent) return false;
+  const parentRect = parent.getBoundingClientRect();
+  return parentRect.width > 1 && parentRect.height > 1;
 }
 
 function isNearViewport(node: HTMLElement, marginRatio = 0.75) {
@@ -77,12 +82,14 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     const node = containerRef.current;
     if (!node) return;
 
+    const inHomeFeatureCard = node.closest(".home-feature-card-section__card") != null;
+
     const syncReady = () => {
       if (!hasRenderableSize(node)) return false;
       setContainerReady(true);
 
       const mountMargin = phone ? 2 : hero ? 0.5 : 0.85;
-      if (hero || isNearViewport(node, mountMargin)) {
+      if (hero || inHomeFeatureCard || isNearViewport(node, mountMargin)) {
         requestMount();
       }
       return true;
@@ -119,7 +126,8 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
       const node = containerRef.current;
       if (!node || !hasRenderableSize(node)) return;
       setContainerReady(true);
-      if (hero || isNearViewport(node, 2.5)) requestMount();
+      const inHomeFeatureCard = node.closest(".home-feature-card-section__card") != null;
+      if (hero || inHomeFeatureCard || isNearViewport(node, 2.5)) requestMount();
     };
 
     const t = window.setTimeout(retry, 320);
@@ -147,6 +155,8 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
 
     const mountMargin = phone ? "120% 0px" : hero ? "40% 0px" : "85% 0px";
 
+    const inHomeFeatureCard = node.closest(".home-feature-card-section__card") != null;
+
     const mountObserver = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) requestMount();
@@ -163,7 +173,7 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     animateObserver.observe(node);
 
     const raf = requestAnimationFrame(() => {
-      if (isNearViewport(node, phone ? 2 : hero ? 0.5 : 0.85)) {
+      if (hero || inHomeFeatureCard || isNearViewport(node, phone ? 2 : hero ? 0.5 : 0.85)) {
         requestMount();
       }
     });

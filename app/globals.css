@@ -152,13 +152,23 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__inne
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__card {
   flex: 0 1 auto !important;
+  height: clamp(
+    calc(22rem + var(--app-vh, 100lvh) / 9),
+    calc(var(--app-vh, 100lvh) * 0.52),
+    calc(38rem + var(--app-vh, 100lvh) / 9)
+  ) !important;
   min-height: clamp(
     calc(22rem + var(--app-vh, 100lvh) / 9),
     calc(var(--app-vh, 100lvh) * 0.52),
     calc(38rem + var(--app-vh, 100lvh) / 9)
   ) !important;
   max-height: calc(var(--app-vh, 100lvh) * 0.58) !important;
-  height: auto !important;
+}
+
+/* Card shell is all absolute layers — explicit height so h-full children paint. */
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__card > * {
+  height: 100% !important;
+  min-height: 100% !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-ui-scale {
