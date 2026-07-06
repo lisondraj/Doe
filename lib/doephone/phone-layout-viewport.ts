@@ -38,3 +38,9 @@ export function phoneLayoutViewportBootstrapScript(): string {
 
   return `(function(){try{var m=document.querySelector('meta[name="viewport"]');if(!m)return;var w=Math.max(280,document.documentElement.clientWidth||window.innerWidth);m.setAttribute("content",w>${ref + 32}?${JSON.stringify(narrow)}:${JSON.stringify(device)});}catch(e){}})();`;
 }
+
+/** Safari Dynamic Island + bottom chrome, rubber-band overscroll gutters. */
+export function phoneOverflowChromeBootstrapScript(surfaceColor = "#ede8df"): string {
+  const color = JSON.stringify(surfaceColor);
+  return `(function(){try{var html=document.documentElement;html.style.setProperty("--doe-page-surface",${color});html.style.setProperty("--proto-page-bg",${color});html.style.backgroundColor=${color};if(document.body)document.body.style.backgroundColor=${color};var tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.setAttribute("content",${color});}catch(e){}})();`;
+}

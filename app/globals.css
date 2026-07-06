@@ -18,12 +18,12 @@
  */
 html:has(.doeforvc-iphone-root) {
   font-size: 100%;
-  /** Safe-area “ears” beside Dynamic Island / overscroll — match canvas beige */
-  background-color: #f7f6f3;
+  /** Safe-area “ears” beside Dynamic Island / overscroll — match page surface */
+  background-color: var(--doe-page-surface, #ede8df);
 }
 
 html:has(.doeforvc-iphone-root) body {
-  background-color: #f7f6f3;
+  background-color: var(--doe-page-surface, #ede8df);
 }
 
 /*
@@ -33,14 +33,14 @@ html:has(.doeforvc-iphone-root) body {
  */
 html:has(.doephone-mobile-root) {
   font-size: min(14.5px, 3.7209vw);
-  background-color: #f7f6f3;
+  background-color: var(--doe-page-surface, #ede8df);
   --app-vw: 100vw;
   --app-vh: 100lvh;
   overscroll-behavior-y: none;
 }
 
 html:has(.doephone-mobile-root) body {
-  background-color: #f7f6f3;
+  background-color: var(--doe-page-surface, #ede8df);
   overscroll-behavior-y: none;
 }
 

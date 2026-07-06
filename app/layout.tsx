@@ -1,3 +1,4 @@
+import { DOE_PAGE_SURFACE } from "@/lib/home/doe-page-colors";
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -29,7 +30,7 @@ export const viewport: Viewport = {
   userScalable: true,
   viewportFit: "cover",
   /** iOS Safari chrome / safe-area gutters beside Dynamic Island */
-  themeColor: "#f7f6f3",
+  themeColor: DOE_PAGE_SURFACE,
 };
 
 const designersTouchBootstrap = designersTouchPhoneBootstrapScript(DESIGNERS_SITE_HOST);
