@@ -80,7 +80,7 @@ html[data-about-page]:has(.blog-mobile-root) {
   --proto-phone-gutter-y: max(2rem, calc(env(safe-area-inset-bottom, 0px) + 4.25vmin));
   --proto-phone-nav-clearance: max(5rem, calc(env(safe-area-inset-top, 0px) + 4.1rem));
   --doe-section-band-vh: calc(var(--app-vh, 100lvh) * 1.14);
-  --doe-hero-band-vh: calc(var(--app-vh, 100lvh) * 1.05);
+  --doe-hero-band-vh: calc(var(--app-vh, 100lvh) * 1.03);
   --proto-nav-cta-border: #1e343a;
   --proto-nav-cta-divider: rgba(242, 236, 228, 0.22);
   --proto-nav-cta-bg: var(--doe-shader-back);
