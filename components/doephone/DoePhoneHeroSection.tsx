@@ -20,7 +20,7 @@ import { PROTO_FONT_CLASS } from "@/lib/proto/proto-font";
 import { PROTO_RECEPTION_PALETTE } from "@/lib/proto/proto-communication-gradients";
 import {
   DOE_HOME_ORANGE_PALETTE,
-  doeHomePhoneHeroBackdropSurface,
+  doeHomeHeroShaderSurface,
 } from "@/lib/proto/proto-shader-backdrop-colors";
 import { useEffect, useState, type CSSProperties } from "react";
 
@@ -76,7 +76,7 @@ export function DoePhoneHeroSection({
   const isDesktop = variant === "desktop";
   const isMobile = !isDesktop;
   const isProto = proto;
-  const homeHeroShader = doeHomePhoneHeroBackdropSurface();
+  const homeHeroShader = doeHomeHeroShaderSurface();
   const heroHeight = isDesktop
     ? DOEPHONE_HERO_DESKTOP_HEIGHT
     : isProto
@@ -116,7 +116,6 @@ export function DoePhoneHeroSection({
             variant={homeHeroShader.variant}
             colors={homeHeroShader.colors}
             colorBack={homeHeroShader.colorBack}
-            static
           />
         )
       ) : (
