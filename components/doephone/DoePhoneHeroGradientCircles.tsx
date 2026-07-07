@@ -108,7 +108,10 @@ const ORBIT_MAX_SCALE = 1;
 const ORBIT_REVOLUTION_MS = 36000;
 
 /** Z-order tracks a lagged depth so front/back swaps ease in, not pop. */
-const Z_DEPTH_LERP = 0.045;
+const Z_DEPTH_LERP = 0.06;
+
+/** Visual pose eases toward the orbit target each frame. */
+const ORBIT_DISPLAY_LERP = 0.11;
 
 /** Recenters the shifted-vertex ellipse within the stage. */
 const ORBIT_ANCHOR_X = 14.8;
@@ -151,9 +154,24 @@ type OrbPose = {
   zIndex: number;
 };
 
-/** Smoothstep — softer grow/fade at orbit extremes. */
+type OrbDisplay = {
+  xPct: number;
+  yPct: number;
+  scale: number;
+  opacity: number;
+};
+
+/** Quintic smootherstep — gentler scale/opacity at orbit extremes. */
 function easeDepth(depth: number) {
-  return depth * depth * (3 - 2 * depth);
+  return depth * depth * depth * (depth * (depth * 6 - 15) + 10);
+}
+
+function lerpDisplay(target: OrbPose, display: OrbDisplay) {
+  const t = ORBIT_DISPLAY_LERP;
+  display.xPct += (target.xPct - display.xPct) * t;
+  display.yPct += (target.yPct - display.yPct) * t;
+  display.scale += (target.scale - display.scale) * t;
+  display.opacity += (target.opacity - display.opacity) * t;
 }
 
 function orbitPoint(index: number, count: number, phase: number, target?: OrbPose): OrbPose {
@@ -229,16 +247,14 @@ type TagDomCache = {
   nudgeValid: boolean;
 };
 
-function orbNodeStyle(orb: OrbPose) {
-  const xPct = Math.round(orb.xPct * 100) / 100;
-  const yPct = Math.round(orb.yPct * 100) / 100;
-  const scale = Math.round(orb.scale * 1000) / 1000;
+function orbNodeStyle(display: OrbDisplay, zIndex: number) {
+  const opacity = Math.round(display.opacity * 1000) / 1000;
   return {
-    left: `calc(50% + ${xPct}%)`,
-    top: `calc(50% + ${yPct}%)`,
-    transform: `translate3d(-50%, -50%, 0) scale(${scale})`,
-    opacity: orb.opacity,
-    zIndex: orb.zIndex,
+    left: `calc(50% + ${display.xPct}%)`,
+    top: `calc(50% + ${display.yPct}%)`,
+    transform: `translate3d(-50%, -50%, 0) scale(${display.scale})`,
+    opacity,
+    zIndex,
   } as const;
 }
 
@@ -722,7 +738,22 @@ export function DoePhoneHeroGradientCircles() {
       zIndex: 10,
     })),
   );
+  const displayRef = useRef<OrbDisplay[]>(
+    Array.from({ length: ORBIT_COUNT }, () => ({
+      xPct: 0,
+      yPct: 0,
+      scale: 1,
+      opacity: 1,
+    })),
+  );
   const initialLayoutRef = useRef(buildOrbLayout(0, [...initialZDepths], Array.from({ length: ORBIT_COUNT }, (_, i) => i), layoutRef.current));
+  displayRef.current.forEach((display, index) => {
+    const pose = initialLayoutRef.current[index];
+    display.xPct = pose.xPct;
+    display.yPct = pose.yPct;
+    display.scale = pose.scale;
+    display.opacity = pose.opacity;
+  });
   const nodeRefs = useRef<(HTMLDivElement | null)[]>([]);
   const tagRefs = useRef<(HTMLDivElement | null)[]>([]);
   const tagTextRefs = useRef<(HTMLSpanElement | null)[]>([]);
@@ -815,8 +846,11 @@ export function DoePhoneHeroGradientCircles() {
       for (let index = 0; index < ORBIT_COUNT; index += 1) {
         const node = nodeRefs.current[index];
         if (!node) continue;
+        const target = layout[index];
+        const display = displayRef.current[index];
+        lerpDisplay(target, display);
         const nodeCache = nodeCacheRef.current[index];
-        const style = orbNodeStyle(layout[index]);
+        const style = orbNodeStyle(display, target.zIndex);
         const nodeMoved = nodeCache.transform !== style.transform;
         applyOrbNodeStyle(node, style, nodeCache);
 
@@ -987,7 +1021,7 @@ export function DoePhoneHeroGradientCircles() {
             key={`orbit-${index}`}
             ref={nodeRefFns[index]}
             className="hero-speaking-orbs__node"
-            style={orbNodeStyle(initialLayoutRef.current[index])}
+            style={orbNodeStyle(displayRef.current[index], initialLayoutRef.current[index].zIndex)}
           >
             <SpeakingGradientOrb
               scheme={scheme}
