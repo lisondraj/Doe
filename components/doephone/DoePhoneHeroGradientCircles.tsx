@@ -8,10 +8,9 @@ import { DOE_HOME_ORANGE_PALETTE } from "@/lib/proto/proto-shader-backdrop-color
 import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO } from "@/lib/proto/proto-grain-gradient";
 
 const TAG_DEPTH_ENTER = 0.66;
-const TAG_LOOP_MS = 3800;
-const TAG_FADE_IN = 0.14;
-const TAG_HOLD = 0.58;
-const TAG_FADE_OUT = 0.28;
+const TAG_DEPTH_RESET = 0.2;
+const TAG_FADE_MS = 420;
+const TAG_HOLD_MS = 2400;
 
 type TagCorner = "tl" | "tr" | "bl" | "br";
 
@@ -258,17 +257,117 @@ function frontOrbIndex(layout: OrbPose[]) {
   return frontIndex;
 }
 
-function tagLoopOpacity(elapsedMs: number) {
-  const cycle = (elapsedMs % TAG_LOOP_MS) / TAG_LOOP_MS;
+type PillPhase = "idle" | "entering" | "holding" | "leaving";
 
-  if (cycle < TAG_FADE_IN) return cycle / TAG_FADE_IN;
-  if (cycle < TAG_FADE_IN + TAG_HOLD) return 1;
-  const fadeStart = TAG_FADE_IN + TAG_HOLD;
-  return Math.max(0, 1 - (cycle - fadeStart) / TAG_FADE_OUT);
+type PillController = {
+  activeOrbIndex: number;
+  phase: PillPhase;
+  phaseStartMs: number;
+  labelIndex: number;
+  orbCooldown: boolean[];
+};
+
+function createPillController(): PillController {
+  return {
+    activeOrbIndex: -1,
+    phase: "idle",
+    phaseStartMs: 0,
+    labelIndex: 0,
+    orbCooldown: Array.from({ length: ORBIT.orbitCount }, () => false),
+  };
 }
 
-function tagLabelIndex(elapsedMs: number) {
-  return Math.floor(elapsedMs / TAG_LOOP_MS) % ORB_AGENT_LABELS.length;
+function pillOpacityForPhase(phase: PillPhase, phaseElapsedMs: number) {
+  if (phase === "idle") return 0;
+  const fadeT = Math.min(1, phaseElapsedMs / TAG_FADE_MS);
+  if (phase === "entering") return fadeT;
+  if (phase === "holding") return 1;
+  return 1 - fadeT;
+}
+
+/** One pill per orb pass — label advances only after a completed show on a new orb. */
+function updatePillController(
+  ctrl: PillController,
+  frontIndex: number,
+  layout: OrbPose[],
+  elapsedMs: number,
+) {
+  for (let i = 0; i < ORBIT.orbitCount; i += 1) {
+    if (ctrl.orbCooldown[i] && layout[i].depth < TAG_DEPTH_RESET) {
+      ctrl.orbCooldown[i] = false;
+    }
+  }
+
+  const frontDepth = frontIndex >= 0 ? layout[frontIndex].depth : 0;
+  const inWindow = frontIndex >= 0 && frontOrbInTagWindow(frontDepth);
+
+  const finishActive = (advanceLabel: boolean) => {
+    if (ctrl.activeOrbIndex >= 0) {
+      ctrl.orbCooldown[ctrl.activeOrbIndex] = true;
+      if (advanceLabel) {
+        ctrl.labelIndex = (ctrl.labelIndex + 1) % ORB_AGENT_LABELS.length;
+      }
+    }
+    ctrl.activeOrbIndex = -1;
+    ctrl.phase = "idle";
+  };
+
+  if (ctrl.activeOrbIndex >= 0) {
+    const active = ctrl.activeOrbIndex;
+    const phaseElapsed = elapsedMs - ctrl.phaseStartMs;
+
+    if (frontIndex !== active) {
+      finishActive(ctrl.phase === "holding" || ctrl.phase === "leaving");
+    } else if (!inWindow) {
+      if (ctrl.phase === "entering" || ctrl.phase === "holding") {
+        ctrl.phase = "leaving";
+        ctrl.phaseStartMs = elapsedMs;
+      } else if (ctrl.phase === "leaving" && phaseElapsed >= TAG_FADE_MS) {
+        finishActive(true);
+      }
+    } else {
+      switch (ctrl.phase) {
+        case "entering":
+          if (phaseElapsed >= TAG_FADE_MS) {
+            ctrl.phase = "holding";
+            ctrl.phaseStartMs = elapsedMs;
+          }
+          break;
+        case "holding":
+          if (phaseElapsed >= TAG_HOLD_MS) {
+            ctrl.phase = "leaving";
+            ctrl.phaseStartMs = elapsedMs;
+          }
+          break;
+        case "leaving":
+          if (phaseElapsed >= TAG_FADE_MS) {
+            finishActive(true);
+          }
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
+  if (ctrl.activeOrbIndex < 0 && inWindow && !ctrl.orbCooldown[frontIndex]) {
+    ctrl.activeOrbIndex = frontIndex;
+    ctrl.phase = "entering";
+    ctrl.phaseStartMs = elapsedMs;
+  }
+
+  const showIndex = ctrl.activeOrbIndex;
+  const phaseElapsed = showIndex >= 0 ? elapsedMs - ctrl.phaseStartMs : 0;
+  const opacity =
+    showIndex >= 0 && showIndex === frontIndex && inWindow
+      ? pillOpacityForPhase(ctrl.phase, phaseElapsed)
+      : 0;
+
+  return {
+    showIndex,
+    opacity,
+    labelIndex: ctrl.labelIndex,
+  };
 }
 
 function frontOrbInTagWindow(depth: number) {
@@ -522,6 +621,7 @@ export function DoePhoneHeroGradientCircles() {
   const rafRef = useRef<number | undefined>(undefined);
   const startRef = useRef<number | undefined>(undefined);
   const zDepthsRef = useRef<number[]>(initialZDepths);
+  const pillCtrlRef = useRef<PillController>(createPillController());
   const tabVisibleRef = useRef(true);
   const tagRefFns = useRef(
     Array.from({ length: ORBIT.orbitCount }, (_, index) => (node: HTMLDivElement | null) => {
@@ -550,12 +650,10 @@ export function DoePhoneHeroGradientCircles() {
     const applyLayout = (phase: number, elapsedMs: number) => {
       const layout = buildOrbLayout(phase, zDepthsRef.current, zOrderRef.current);
       const frontIndex = frontOrbIndex(layout);
-      const frontDepth = frontIndex >= 0 ? layout[frontIndex].depth : 0;
-      const inTagWindow = frontIndex >= 0 && frontOrbInTagWindow(frontDepth);
-      const loopOpacity = tagLoopOpacity(elapsedMs);
-      const frontTagOpacity = inTagWindow ? loopOpacity : 0;
-      const frontTagVisible = frontTagOpacity > 0.01;
-      const currentLabel = ORB_AGENT_LABELS[tagLabelIndex(elapsedMs)];
+      const pill = updatePillController(pillCtrlRef.current, frontIndex, layout, elapsedMs);
+      const frontTagOpacity = pill.opacity;
+      const frontTagVisible = pill.opacity > 0.01;
+      const currentLabel = ORB_AGENT_LABELS[pill.labelIndex];
       const secondaryPulse =
         frontIndex >= 0 ? secondaryPulseIndex(frontIndex, ORBIT.orbitCount) : -1;
 
@@ -568,9 +666,9 @@ export function DoePhoneHeroGradientCircles() {
 
         const tag = tagRefs.current[index];
         if (tag) {
-          const isFront = index === frontIndex;
-          const tagOpacity = isFront ? frontTagOpacity : 0;
-          const visible = isFront && frontTagVisible;
+          const isPillOrb = index === pill.showIndex;
+          const tagOpacity = isPillOrb ? pill.opacity : 0;
+          const visible = isPillOrb && frontTagVisible;
 
           if (visible && node) {
             applyVisibleTagLayout(tag, node, ORB_TAG_CORNERS[index], tagOpacity, currentLabel);
