@@ -11,7 +11,7 @@ import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO } from "@/lib/proto/proto-grain
 
 /** One dedicated agent label per orb on the dial. */
 const ORB_AGENT_LABELS = [
-  "Voice Agent",
+  "Inbox Agent",
   "Scheduling Agent",
   "Labs Agent",
   "Referrals Agent",
