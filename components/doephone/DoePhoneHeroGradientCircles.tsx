@@ -7,8 +7,6 @@ import { suisseIntl } from "@/lib/home/fonts";
 import { DOE_HOME_ORANGE_PALETTE } from "@/lib/proto/proto-shader-backdrop-colors";
 import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO } from "@/lib/proto/proto-grain-gradient";
 
-const TAG_FADE_MS = 420;
-
 /** One dedicated agent label per orb on the dial. */
 const ORB_AGENT_LABELS = [
   "Voice Agent",
@@ -66,11 +64,11 @@ const SCHEME_ORDER = [
 
 const ORB_COUNT = SCHEME_ORDER.length;
 const DIAL_STEP = (Math.PI * 2) / ORB_COUNT;
-/** Dial radius — left half of this circle is visible; center sits on the right edge. */
 const DIAL_RADIUS_VMIN = 46;
 const ORB_BASE_SIZE = "clamp(17rem, 52vmin, 24rem)";
-const SWIPE_RAD_PER_PX = 0.011;
-const SNAP_MS = 260;
+const AUTO_ADVANCE_MS = 10000;
+const SWITCH_MS = 920;
+const PILL_OUT_MS = 220;
 
 /** Center slot — 9 o'clock on the dial (leftmost, vertically centered). */
 const CENTER_SLOT_ANGLE = Math.PI;
@@ -99,6 +97,13 @@ type DialOrbPose = {
   isFocused: boolean;
 };
 
+/** Slight overshoot — dial rolls one notch down then settles. */
+function easeDialStep(t: number) {
+  const c1 = 1.525;
+  const c3 = c1 + 1;
+  return 1 + c3 * (t - 1) ** 3 + c1 * (t - 1) ** 2;
+}
+
 function orbAccentStyle(scheme: OrbScheme) {
   const [dark, mid, light] = scheme.colors;
   return {
@@ -119,10 +124,6 @@ function focusedIndexForRotation(dialRotation: number) {
   return normalizeDialIndex(Math.round(-dialRotation / DIAL_STEP));
 }
 
-function snapDialRotation(dialRotation: number) {
-  return Math.round(dialRotation / DIAL_STEP) * DIAL_STEP;
-}
-
 function angularDistance(a: number, b: number) {
   let diff = Math.abs(a - b) % (Math.PI * 2);
   if (diff > Math.PI) diff = Math.PI * 2 - diff;
@@ -139,8 +140,8 @@ function buildDialLayout(dialRotation: number): DialOrbPose[] {
     const isFocused = index === focusedIndex;
     const dist = angularDistance(angle, CENTER_SLOT_ANGLE);
     const t = Math.min(1, dist / (DIAL_STEP * 0.72));
-    const scale = isFocused ? 1 : 0.74 - t * 0.1;
-    const opacity = isFocused ? 1 : 0.5 + (1 - t) * 0.18;
+    const scale = isFocused ? 1 : 0.84 - t * 0.06;
+    const opacity = isFocused ? 1 : 0.56 + (1 - t) * 0.2;
 
     return {
       xVmin,
@@ -214,111 +215,96 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
   );
 });
 
-/** Hero — static half-circle dial on the right edge; swipe up/down to rotate. */
+/** Hero — half-circle dial on the right edge; auto-steps down every 10s. */
 export function DoePhoneHeroGradientCircles() {
   const [dialRotation, setDialRotation] = useState(0);
+  const [pillVisible, setPillVisible] = useState(true);
+  const [stepping, setStepping] = useState(false);
   const dialRotationRef = useRef(0);
-  const dragRef = useRef<{ active: boolean; startY: number; startRotation: number; pointerId: number } | null>(
-    null,
-  );
-  const snapRafRef = useRef<number | undefined>(undefined);
+  const switchRafRef = useRef<number | undefined>(undefined);
+  const pillTimerRef = useRef<number | undefined>(undefined);
+  const switchingRef = useRef(false);
   const reducedMotionRef = useRef(false);
+  const tabVisibleRef = useRef(true);
 
   const layout = useMemo(() => buildDialLayout(dialRotation), [dialRotation]);
   const focusedIndex = focusedIndexForRotation(dialRotation);
 
-  useEffect(() => {
-    reducedMotionRef.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  }, []);
-
-  const animateSnap = useCallback((from: number, to: number) => {
-    if (snapRafRef.current !== undefined) {
-      cancelAnimationFrame(snapRafRef.current);
+  const animateStep = useCallback((from: number, to: number, onDone: () => void) => {
+    if (switchRafRef.current !== undefined) {
+      cancelAnimationFrame(switchRafRef.current);
     }
 
-    if (reducedMotionRef.current || Math.abs(from - to) < 0.0001) {
+    if (reducedMotionRef.current) {
       dialRotationRef.current = to;
       setDialRotation(to);
+      onDone();
       return;
     }
 
+    setStepping(true);
     const start = performance.now();
+
     const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / SNAP_MS);
-      const eased = 1 - (1 - t) ** 3;
+      const t = Math.min(1, (now - start) / SWITCH_MS);
+      const eased = easeDialStep(t);
       const value = from + (to - from) * eased;
       dialRotationRef.current = value;
       setDialRotation(value);
       if (t < 1) {
-        snapRafRef.current = requestAnimationFrame(tick);
+        switchRafRef.current = requestAnimationFrame(tick);
       } else {
-        snapRafRef.current = undefined;
+        switchRafRef.current = undefined;
+        setStepping(false);
+        onDone();
       }
     };
 
-    snapRafRef.current = requestAnimationFrame(tick);
+    switchRafRef.current = requestAnimationFrame(tick);
   }, []);
 
-  const finishDrag = useCallback(() => {
-    const drag = dragRef.current;
-    if (!drag) return;
-    dragRef.current = null;
-    const snapped = snapDialRotation(dialRotationRef.current);
-    animateSnap(dialRotationRef.current, snapped);
-  }, [animateSnap]);
+  const advanceDial = useCallback(() => {
+    if (switchingRef.current || !tabVisibleRef.current) return;
+    switchingRef.current = true;
+    setPillVisible(false);
 
-  const onPointerDown = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
-    if (reducedMotionRef.current) return;
-    if (snapRafRef.current !== undefined) {
-      cancelAnimationFrame(snapRafRef.current);
-      snapRafRef.current = undefined;
+    if (pillTimerRef.current !== undefined) {
+      window.clearTimeout(pillTimerRef.current);
     }
-    dragRef.current = {
-      active: true,
-      startY: event.clientY,
-      startRotation: dialRotationRef.current,
-      pointerId: event.pointerId,
-    };
-    event.currentTarget.setPointerCapture(event.pointerId);
-  }, []);
 
-  const onPointerMove = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
-    const drag = dragRef.current;
-    if (!drag?.active || drag.pointerId !== event.pointerId) return;
-    const deltaY = event.clientY - drag.startY;
-    const next = drag.startRotation - deltaY * SWIPE_RAD_PER_PX;
-    dialRotationRef.current = next;
-    setDialRotation(next);
-  }, []);
-
-  const onPointerEnd = useCallback(
-    (event: React.PointerEvent<HTMLDivElement>) => {
-      const drag = dragRef.current;
-      if (!drag?.active || drag.pointerId !== event.pointerId) return;
-      if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-        event.currentTarget.releasePointerCapture(event.pointerId);
-      }
-      finishDrag();
-    },
-    [finishDrag],
-  );
+    pillTimerRef.current = window.setTimeout(() => {
+      const from = dialRotationRef.current;
+      const to = from - DIAL_STEP;
+      animateStep(from, to, () => {
+        switchingRef.current = false;
+        setPillVisible(true);
+      });
+    }, reducedMotionRef.current ? 0 : PILL_OUT_MS);
+  }, [animateStep]);
 
   useEffect(() => {
-    return () => {
-      if (snapRafRef.current !== undefined) cancelAnimationFrame(snapRafRef.current);
+    reducedMotionRef.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const onVisibility = () => {
+      tabVisibleRef.current = document.visibilityState === "visible";
     };
-  }, []);
+    onVisibility();
+    document.addEventListener("visibilitychange", onVisibility);
+
+    const interval = window.setInterval(advanceDial, AUTO_ADVANCE_MS);
+
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.clearInterval(interval);
+      if (switchRafRef.current !== undefined) cancelAnimationFrame(switchRafRef.current);
+      if (pillTimerRef.current !== undefined) window.clearTimeout(pillTimerRef.current);
+    };
+  }, [advanceDial]);
 
   return (
     <div className="hero-speaking-orbs" aria-hidden>
-      <div
-        className="hero-speaking-orbs__stage"
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerEnd}
-        onPointerCancel={onPointerEnd}
-      >
-        <div className="hero-speaking-orbs__dial">
+      <div className="hero-speaking-orbs__stage">
+        <div className={`hero-speaking-orbs__dial${stepping ? " hero-speaking-orbs__dial--stepping" : ""}`}>
           {SCHEME_ORDER.map((scheme, index) => {
             const pose = layout[index];
             const style = dialNodeStyle(pose);
@@ -335,14 +321,14 @@ export function DoePhoneHeroGradientCircles() {
                 <SpeakingGradientOrb
                   scheme={scheme}
                   label={ORB_AGENT_LABELS[index]}
-                  showPill={pose.isFocused}
+                  showPill={pose.isFocused && pillVisible}
                 />
               </div>
             );
           })}
         </div>
       </div>
-      <span className="sr-only">Agent dial — {ORB_AGENT_LABELS[focusedIndex]} selected. Swipe up or down to change.</span>
+      <span className="sr-only">Agent dial — {ORB_AGENT_LABELS[focusedIndex]} selected.</span>
     </div>
   );
 }

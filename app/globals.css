@@ -1230,7 +1230,7 @@ body.proto-route {
   }
 }
 
-/* Hero — half-circle agent dial on the right edge; swipe to rotate. */
+/* Hero — half-circle agent dial on the right edge; auto-steps every 10s. */
 .hero-speaking-orbs {
   pointer-events: none;
   position: absolute;
@@ -1251,19 +1251,17 @@ body.proto-route {
   --hero-pill-copper: #d49d4f;
   --hero-pill-orange: #d2774c;
   --hero-dial-radius: 46vmin;
+  --hero-dial-shift-x: 3.75vmin;
 }
 
 .hero-speaking-orbs__stage {
   position: relative;
-  pointer-events: auto;
-  touch-action: none;
-  user-select: none;
-  -webkit-user-select: none;
   width: var(--hero-dial-radius);
   height: calc(var(--hero-dial-radius) * 2);
   max-height: calc(100% - clamp(1.5rem, 4vmin, 2.5rem));
   flex-shrink: 0;
   overflow: visible;
+  transform: translateX(var(--hero-dial-shift-x));
 }
 
 .hero-speaking-orbs__dial {
@@ -1272,6 +1270,24 @@ body.proto-route {
   top: 50%;
   width: 0;
   height: 0;
+}
+
+.hero-speaking-orbs__dial--stepping {
+  animation: hero-dial-step-dip 920ms cubic-bezier(0.34, 1.18, 0.64, 1) both;
+}
+
+@keyframes hero-dial-step-dip {
+  0% {
+    transform: translateY(0);
+  }
+
+  38% {
+    transform: translateY(12px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
 }
 
 .hero-speaking-orbs__node {
