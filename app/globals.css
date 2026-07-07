@@ -1381,19 +1381,12 @@ body.proto-route {
   transform-origin: top left;
 }
 
-/* /doephone hero headline — deblur + rise after polar overlay build completes. */
+/* /doephone hero headline — visible immediately (no load-in blur/rise). */
 .doephone-hero-headline-line {
-  opacity: 0;
-  filter: blur(16px);
-  transform: translateY(1.75rem);
-  animation: doephone-hero-headline-in 1.45s cubic-bezier(0.22, 1, 0.36, 1)
-    var(--doephone-hero-headline-1, 3.05s) both;
-  will-change: opacity, filter, transform;
+  opacity: 1;
+  filter: none;
+  transform: none;
   text-shadow: none;
-}
-
-.doephone-hero-headline-line--second {
-  animation-delay: var(--doephone-hero-headline-2, 3.53s);
 }
 
 .doephone-hero-waitlist-cta {
