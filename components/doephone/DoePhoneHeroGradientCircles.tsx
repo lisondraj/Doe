@@ -5,48 +5,48 @@ import { useEffect, useRef } from "react";
 
 import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO } from "@/lib/proto/proto-grain-gradient";
 
-/** Orb palettes — blue shades for hero speaking orbs. */
+/** Orb palettes — teal shades light → dark (offset from hero #1E343A). */
 const HERO_SPEAKING_ORB_SCHEMES = {
-  sky: {
-    colors: ["#B8DCF4", "#7EB8E8", "#D8EEFC"] as const,
-    colorBack: "#1A3458",
+  glacial: {
+    colors: ["#D8F2EE", "#AEE4DC", "#84D4C8"] as const,
+    colorBack: "#5AA89E",
   },
-  periwinkle: {
-    colors: ["#A8BCE8", "#6E8EC8", "#C8D8F4"] as const,
-    colorBack: "#243060",
+  foam: {
+    colors: ["#C4EBE4", "#94D9CE", "#6EC4B8"] as const,
+    colorBack: "#4A968C",
   },
-  cobalt: {
-    colors: ["#88A8E0", "#5070B8", "#B0C8F0"] as const,
-    colorBack: "#1E2E58",
+  surf: {
+    colors: ["#B0E2DA", "#7ECCBE", "#58B4A6"] as const,
+    colorBack: "#3E8878",
   },
-  azure: {
-    colors: ["#78B8E8", "#4898D0", "#A8D8F4"] as const,
-    colorBack: "#1A3850",
+  reef: {
+    colors: ["#98D6CC", "#68BAAE", "#48A292"] as const,
+    colorBack: "#357868",
   },
-  slate: {
-    colors: ["#98A8C8", "#6878A8", "#C0CCE8"] as const,
-    colorBack: "#283448",
+  current: {
+    colors: ["#80C8BE", "#56AC9E", "#389484"] as const,
+    colorBack: "#2C6A5C",
   },
-  indigo: {
-    colors: ["#9098D8", "#6068B0", "#B8BCE8"] as const,
-    colorBack: "#2A2858",
+  depth: {
+    colors: ["#6AB8AE", "#449A8C", "#2E8274"] as const,
+    colorBack: "#245C50",
   },
-  powder: {
-    colors: ["#C0DCF0", "#90B8DC", "#E0F0FA"] as const,
-    colorBack: "#284860",
+  trench: {
+    colors: ["#56A8A0", "#368C7E", "#287468"] as const,
+    colorBack: "#1E4E44",
   },
 } as const;
 
 type OrbScheme = (typeof HERO_SPEAKING_ORB_SCHEMES)[keyof typeof HERO_SPEAKING_ORB_SCHEMES];
 
 const SCHEME_ORDER = [
-  HERO_SPEAKING_ORB_SCHEMES.sky,
-  HERO_SPEAKING_ORB_SCHEMES.periwinkle,
-  HERO_SPEAKING_ORB_SCHEMES.cobalt,
-  HERO_SPEAKING_ORB_SCHEMES.azure,
-  HERO_SPEAKING_ORB_SCHEMES.slate,
-  HERO_SPEAKING_ORB_SCHEMES.indigo,
-  HERO_SPEAKING_ORB_SCHEMES.powder,
+  HERO_SPEAKING_ORB_SCHEMES.glacial,
+  HERO_SPEAKING_ORB_SCHEMES.foam,
+  HERO_SPEAKING_ORB_SCHEMES.surf,
+  HERO_SPEAKING_ORB_SCHEMES.reef,
+  HERO_SPEAKING_ORB_SCHEMES.current,
+  HERO_SPEAKING_ORB_SCHEMES.depth,
+  HERO_SPEAKING_ORB_SCHEMES.trench,
 ] as const;
 
 /**
