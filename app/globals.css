@@ -1230,7 +1230,7 @@ body.proto-route {
   }
 }
 
-/* Hero — gradient speaking orbs on vertical right-edge path. */
+/* Hero — gradient speaking orbs on vertical circular right-edge path. */
 .hero-speaking-orbs {
   pointer-events: none;
   position: absolute;

@@ -88,18 +88,24 @@ const SCHEME_ORDER = [
 ] as const;
 
 /**
- * Vertical path along the right edge — orbs rise from bottom-left (front /
- * highlight) to upper-right (half off the phone edge) and back down.
+ * Vertical ellipse along the right edge — circular path with the bottom
+ * vertex at the bottom-left highlight (front); right arc spills off the phone.
  */
 const ORBIT = {
+  rx: 28,
+  ry: 34,
   orbitCount: SCHEME_ORDER.length,
-  /** Bottom-left highlight — largest orb, pill anchor. */
-  leftX: -24,
-  yBottom: 34,
-  /** Upper-right — ~half the orb spills past the phone edge. */
-  rightX: 44,
-  yTop: -32,
 } as const;
+
+/** Anchor — bottom vertex sits at the bottom-left highlight spot. */
+const ORBIT_ANCHOR_X = 16;
+const ORBIT_ANCHOR_Y = 34;
+
+/** Bunch orbs closer at the far/back arc (upper portion of the loop). */
+const ORBIT_BACK_BUNCH = 0.34;
+
+const ORBIT_WARP_SCALE = ORBIT_BACK_BUNCH / (Math.PI * 2);
+const ORBIT_COUNT = ORBIT.orbitCount;
 
 /** Single shared size — apparent size is depth-driven scale only. */
 const ORB_BASE_SIZE = "clamp(13.75rem, 40vmin, 18.25rem)";
@@ -111,12 +117,6 @@ const ORBIT_REVOLUTION_MS = 36000;
 
 /** Z-order tracks a lagged depth so front/back swaps ease in, not pop. */
 const Z_DEPTH_LERP = 0.045;
-
-/** Bunch orbs closer at the far/back end of the vertical path (upper-right). */
-const ORBIT_BACK_BUNCH = 0.34;
-
-const ORBIT_WARP_SCALE = ORBIT_BACK_BUNCH / (Math.PI * 2);
-const ORBIT_COUNT = ORBIT.orbitCount;
 
 /** Volumetric sphere — smooth gradient, no grain. */
 const HERO_ORB_SHADER = {
@@ -156,8 +156,11 @@ function orbitPoint(index: number, count: number, phase: number, target?: OrbPos
   const depth = (Math.sin(t) + 1) / 2;
   const eased = easeDepth(depth);
 
-  const xPct = ORBIT.leftX + (ORBIT.rightX - ORBIT.leftX) * (1 - depth);
-  const yPct = ORBIT.yTop + (ORBIT.yBottom - ORBIT.yTop) * depth;
+  const x = Math.cos(t) * ORBIT.rx;
+  const y = (Math.sin(t) - 1) * ORBIT.ry;
+
+  const xPct = x + ORBIT_ANCHOR_X;
+  const yPct = y + ORBIT_ANCHOR_Y;
   const scale = ORBIT_MIN_SCALE + eased * (ORBIT_MAX_SCALE - ORBIT_MIN_SCALE);
   const opacity = 0.72 + eased * 0.28;
 
@@ -695,8 +698,8 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
   );
 });
 
-/** Hero — orbs travel a vertical path along the right edge; each passes
- *  through the bottom-left highlight spot where the pill attaches. */
+/** Hero — orbs travel a vertical circular path along the right edge; each
+ *  passes through the bottom-left highlight spot where the pill attaches. */
 export function DoePhoneHeroGradientCircles() {
   const initialZDepths = Array.from({ length: ORBIT_COUNT }, (_, index) =>
     orbitPoint(index, ORBIT_COUNT, 0).depth,
