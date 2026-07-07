@@ -1254,6 +1254,7 @@ body.proto-route {
   width: clamp(28rem, 84vmin, 38rem);
   height: clamp(23rem, 68vmin, 31rem);
   contain: layout style;
+  overflow: visible;
 }
 
 .hero-speaking-orbs__node {
@@ -1273,6 +1274,7 @@ body.proto-route {
   display: grid;
   place-items: center;
   flex-shrink: 0;
+  overflow: visible;
 }
 
 .hero-speaking-orb__core {
@@ -1317,11 +1319,11 @@ body.proto-route {
     inset 0 0 14px color-mix(in srgb, var(--orb-halo-mid) 18%, transparent);
 }
 
-/* Bottom-center tag — hero ink → warm sand → light (matches orange/gold shader). */
+/* Corner tag — inset on orb edge so pills stay on-screen. */
 .hero-speaking-orb__tag {
   position: absolute;
   z-index: 4;
-  max-width: min(16.5rem, 58vw);
+  max-width: min(14rem, 42vw);
   padding: 0.72rem 1.22rem;
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--hero-pill-gold) 38%, white);
@@ -1348,7 +1350,7 @@ body.proto-route {
   visibility: hidden;
   pointer-events: none;
   will-change: opacity, transform, visibility;
-  transform: translateX(-50%) translateY(8px) scale(0.94);
+  transform: translateY(6px) scale(0.94);
   transition: none;
 }
 
@@ -1362,10 +1364,28 @@ body.proto-route {
   white-space: nowrap;
 }
 
-.hero-speaking-orb__tag--bc {
-  bottom: -6%;
-  left: 50%;
-  transform-origin: center bottom;
+.hero-speaking-orb__tag--tl {
+  top: 13%;
+  left: 10%;
+  transform-origin: bottom right;
+}
+
+.hero-speaking-orb__tag--tr {
+  top: 13%;
+  right: 10%;
+  transform-origin: bottom left;
+}
+
+.hero-speaking-orb__tag--bl {
+  bottom: 13%;
+  left: 10%;
+  transform-origin: top right;
+}
+
+.hero-speaking-orb__tag--br {
+  bottom: 13%;
+  right: 10%;
+  transform-origin: top left;
 }
 
 /* /doephone hero headline — deblur + rise after polar overlay build completes. */

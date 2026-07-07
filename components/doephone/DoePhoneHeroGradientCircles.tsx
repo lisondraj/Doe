@@ -7,10 +7,14 @@ import { suisseIntl } from "@/lib/home/fonts";
 import { DOE_HOME_ORANGE_PALETTE } from "@/lib/proto/proto-shader-backdrop-colors";
 import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_ORB } from "@/lib/proto/proto-grain-gradient";
 
-const TAG_DEPTH_ENTER = 0.48;
-const TAG_DEPTH_EXIT = 0.46;
+const TAG_DEPTH_ENTER = 0.66;
+const TAG_DEPTH_EXIT = 0.62;
 const TAG_DEPTH_RESET = 0.18;
 const TAG_FADE_MS = 420;
+
+type TagCorner = "tl" | "tr" | "bl" | "br";
+
+const ORB_TAG_CORNERS: TagCorner[] = ["tl", "tr", "bl", "br", "tl", "tr", "bl"];
 
 const PULSE_SLOT_MS = 2600;
 const PULSE_MAX_BOOST = 0.07;
@@ -300,6 +304,24 @@ function advanceTagState(state: OrbTagState, depth: number, elapsedMs: number): 
   }
 }
 
+function tagMotionTransform(corner: TagCorner, tagOpacity: number, visible: boolean) {
+  const scale = visible ? 0.94 + tagOpacity * 0.06 : 0.94;
+  const offset = visible ? (1 - tagOpacity) * 5 : 6;
+
+  switch (corner) {
+    case "tl":
+    case "tr":
+      return `translateY(${offset}px) scale(${scale})`;
+    case "bl":
+    case "br":
+      return `translateY(${-offset}px) scale(${scale})`;
+  }
+}
+
+function tagRestTransform(corner: TagCorner) {
+  return tagMotionTransform(corner, 0, false);
+}
+
 function tagOpacityFromState(state: OrbTagState, elapsedMs: number) {
   const fadeT = Math.min(1, (elapsedMs - state.phaseStartMs) / TAG_FADE_MS);
 
@@ -348,12 +370,14 @@ function pulseScaleForOrb(index: number, elapsedMs: number) {
 const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
   scheme,
   agentLabel,
+  tagCorner,
   tagRef,
   haloPrimaryRef,
   haloEchoRef,
 }: {
   scheme: OrbScheme;
   agentLabel: string;
+  tagCorner: TagCorner;
   tagRef?: (node: HTMLDivElement | null) => void;
   haloPrimaryRef?: (node: HTMLDivElement | null) => void;
   haloEchoRef?: (node: HTMLDivElement | null) => void;
@@ -393,7 +417,7 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
       </div>
       <div
         ref={tagRef}
-        className={`hero-speaking-orb__tag hero-speaking-orb__tag--bc ${suisseIntl.className}`}
+        className={`hero-speaking-orb__tag hero-speaking-orb__tag--${tagCorner} ${suisseIntl.className}`}
         aria-hidden
       >
         <span className="hero-speaking-orb__tag-text">{agentLabel}</span>
@@ -506,11 +530,11 @@ export function DoePhoneHeroGradientCircles() {
           if (visible) {
             tag.style.visibility = "visible";
             tag.style.opacity = `${tagOpacity}`;
-            tag.style.transform = `translateX(-50%) translateY(${(1 - tagOpacity) * 5}px) scale(${0.94 + tagOpacity * 0.06})`;
+            tag.style.transform = tagMotionTransform(ORB_TAG_CORNERS[index], tagOpacity, true);
           } else if (tag.style.visibility !== "hidden") {
             tag.style.opacity = "0";
             tag.style.visibility = "hidden";
-            tag.style.transform = "translateX(-50%) translateY(8px) scale(0.94)";
+            tag.style.transform = tagRestTransform(ORB_TAG_CORNERS[index]);
           }
         }
 
@@ -546,8 +570,8 @@ export function DoePhoneHeroGradientCircles() {
         tag.style.opacity = isFront ? "1" : "0";
         tag.style.visibility = isFront ? "visible" : "hidden";
         tag.style.transform = isFront
-          ? "translateX(-50%) translateY(0) scale(1)"
-          : "translateX(-50%) translateY(8px) scale(0.94)";
+          ? tagMotionTransform(ORB_TAG_CORNERS[index], 1, true)
+          : tagRestTransform(ORB_TAG_CORNERS[index]);
       });
       return;
     }
@@ -609,6 +633,7 @@ export function DoePhoneHeroGradientCircles() {
             <SpeakingGradientOrb
               scheme={scheme}
               agentLabel={ORB_AGENT_LABELS[index]}
+              tagCorner={ORB_TAG_CORNERS[index]}
               tagRef={tagRefFns[index]}
               haloPrimaryRef={haloPrimaryRefFns[index]}
               haloEchoRef={haloEchoRefFns[index]}
