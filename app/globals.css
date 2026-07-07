@@ -731,9 +731,22 @@ html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav .proto-nav-fr
   );
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
-  box-shadow: 0 calc(var(--proto-nav-frost-shell-progress) * 10px)
-    calc(var(--proto-nav-frost-shell-progress) * 28px)
-    rgba(30, 52, 58, calc(var(--proto-nav-frost-shell-progress) * 0.3));
+  overflow: visible;
+  box-shadow:
+    0 calc(var(--proto-nav-frost-shell-progress) * 10px)
+      calc(var(--proto-nav-frost-shell-progress) * 26px)
+      calc(var(--proto-nav-frost-shell-progress) * -8px)
+      rgba(30, 52, 58, calc(var(--proto-nav-frost-shell-progress) * 0.34)),
+    calc(var(--proto-nav-frost-shell-progress) * -9px)
+      calc(var(--proto-nav-frost-shell-progress) * 9px)
+      calc(var(--proto-nav-frost-shell-progress) * 22px)
+      calc(var(--proto-nav-frost-shell-progress) * -14px)
+      rgba(30, 52, 58, calc(var(--proto-nav-frost-shell-progress) * 0.22)),
+    calc(var(--proto-nav-frost-shell-progress) * 9px)
+      calc(var(--proto-nav-frost-shell-progress) * 9px)
+      calc(var(--proto-nav-frost-shell-progress) * 22px)
+      calc(var(--proto-nav-frost-shell-progress) * -14px)
+      rgba(30, 52, 58, calc(var(--proto-nav-frost-shell-progress) * 0.22));
 }
 
 /* Home + /about — fixed nav: teal ink logo on sand bar. */
