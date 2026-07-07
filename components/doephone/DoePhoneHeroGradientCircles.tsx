@@ -16,7 +16,7 @@ const PULSE_SLOT_MS = 2600;
 const PULSE_MAX_BOOST = 0.07;
 
 const HALO_CYCLE_MS = 3000;
-const HALO_ORB_OFFSETS = [0, 2, 4] as const;
+const PULSE_ORB_OFFSETS = [0, 3] as const;
 /** One dedicated agent label per orb — advances as each orb reaches the front. */
 const ORB_AGENT_LABELS = [
   "Voice Agent",
