@@ -92,14 +92,14 @@ const SCHEME_ORDER = [
  * vertex at the bottom-left highlight (front); right arc spills off the phone.
  */
 const ORBIT = {
-  rx: 30,
-  ry: 46,
+  rx: 28,
+  ry: 36,
   orbitCount: SCHEME_ORDER.length,
 } as const;
 
 /** Anchor — bottom vertex sits at the bottom-left highlight spot. */
-const ORBIT_ANCHOR_X = 18;
-const ORBIT_ANCHOR_Y = 40;
+const ORBIT_ANCHOR_X = 17;
+const ORBIT_ANCHOR_Y = 32;
 
 /** Bunch orbs closer at the far/back arc (upper portion of the loop). */
 const ORBIT_BACK_BUNCH = 0.34;
@@ -108,7 +108,7 @@ const ORBIT_WARP_SCALE = ORBIT_BACK_BUNCH / (Math.PI * 2);
 const ORBIT_COUNT = ORBIT.orbitCount;
 
 /** Single shared size — apparent size is depth-driven scale only. */
-const ORB_BASE_SIZE = "clamp(16.5rem, 48vmin, 22.5rem)";
+const ORB_BASE_SIZE = "clamp(15rem, 44vmin, 20rem)";
 const ORBIT_MIN_SCALE = 0.56;
 const ORBIT_MAX_SCALE = 1;
 

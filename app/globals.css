@@ -1237,10 +1237,10 @@ body.proto-route {
   inset: 0;
   z-index: 2;
   display: flex;
-  align-items: stretch;
+  align-items: center;
   justify-content: flex-end;
-  padding-top: clamp(1.5rem, 4.5vmin, 2.75rem);
-  padding-bottom: clamp(3.25rem, 10vmin, 5.25rem);
+  padding-top: clamp(2rem, 6vmin, 3.25rem);
+  padding-bottom: clamp(3.75rem, 11.5vmin, 5.75rem);
   padding-left: clamp(0.85rem, 4.5vw, 1.75rem);
   padding-right: 0;
   --hero-pill-ink: #1e343a;
@@ -1253,10 +1253,8 @@ body.proto-route {
 
 .hero-speaking-orbs__stage {
   position: relative;
-  align-self: flex-end;
-  width: clamp(26rem, 88vmin, 38rem);
-  height: 100%;
-  min-height: clamp(24rem, 76vmin, 36rem);
+  width: clamp(25rem, 84vmin, 36rem);
+  height: clamp(22rem, 68vmin, 31rem);
   overflow: visible;
 }
 
