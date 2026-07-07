@@ -1241,6 +1241,8 @@ body.proto-route {
   justify-content: center;
   padding-top: clamp(2.25rem, 7.5vmin, 3.75rem);
   padding-bottom: clamp(4.25rem, 13vmin, 6.75rem);
+  padding-left: clamp(0.85rem, 4.5vw, 1.75rem);
+  padding-right: clamp(0.85rem, 4.5vw, 1.75rem);
   --hero-pill-ink: #1e343a;
   --hero-pill-warm: #f2e6d8;
   --hero-pill-light: #fffbf6;
@@ -1316,7 +1318,7 @@ body.proto-route {
 .hero-speaking-orb__tag {
   position: absolute;
   z-index: 4;
-  max-width: min(14rem, 42vw);
+  max-width: min(14rem, calc(100vw - 2.5rem));
   padding: 0.72rem 1.22rem;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.92);
@@ -1358,26 +1360,26 @@ body.proto-route {
 }
 
 .hero-speaking-orb__tag--tl {
-  top: 5%;
-  left: -10%;
+  top: 6%;
+  left: -5%;
   transform-origin: bottom right;
 }
 
 .hero-speaking-orb__tag--tr {
-  top: 5%;
-  right: -10%;
+  top: 6%;
+  right: -5%;
   transform-origin: bottom left;
 }
 
 .hero-speaking-orb__tag--bl {
-  bottom: 5%;
-  left: -10%;
+  bottom: 6%;
+  left: -5%;
   transform-origin: top right;
 }
 
 .hero-speaking-orb__tag--br {
-  bottom: 5%;
-  right: -10%;
+  bottom: 6%;
+  right: -5%;
   transform-origin: top left;
 }
 

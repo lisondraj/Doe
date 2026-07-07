@@ -292,6 +292,98 @@ function tagRestTransform(corner: TagCorner) {
   return tagMotionTransform(corner, 0, false);
 }
 
+const VIEWPORT_EDGE_PAD = 14;
+const TAG_EDGE_GUARD_PX = 100;
+
+const TAG_CORNER_CLASS: Record<TagCorner, string> = {
+  tl: "hero-speaking-orb__tag--tl",
+  tr: "hero-speaking-orb__tag--tr",
+  bl: "hero-speaking-orb__tag--bl",
+  br: "hero-speaking-orb__tag--br",
+};
+
+/** Flip corner when the orb sits near a viewport edge so the pill stays on-screen. */
+function pickTagCorner(preferred: TagCorner, anchorRect: DOMRect): TagCorner {
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  let corner = preferred;
+
+  if (anchorRect.left < TAG_EDGE_GUARD_PX && (corner === "tl" || corner === "bl")) {
+    corner = corner === "tl" ? "tr" : "br";
+  }
+  if (anchorRect.right > vw - TAG_EDGE_GUARD_PX && (corner === "tr" || corner === "br")) {
+    corner = corner === "tr" ? "tl" : "bl";
+  }
+  if (anchorRect.top < TAG_EDGE_GUARD_PX && (corner === "tl" || corner === "tr")) {
+    corner = corner === "tl" ? "bl" : "br";
+  }
+  if (anchorRect.bottom > vh - TAG_EDGE_GUARD_PX && (corner === "bl" || corner === "br")) {
+    corner = corner === "bl" ? "tl" : "tr";
+  }
+
+  return corner;
+}
+
+function viewportNudge(rect: DOMRect) {
+  let dx = 0;
+  let dy = 0;
+  const maxX = window.innerWidth - VIEWPORT_EDGE_PAD;
+  const minX = VIEWPORT_EDGE_PAD;
+  const maxY = window.innerHeight - VIEWPORT_EDGE_PAD;
+  const minY = VIEWPORT_EDGE_PAD;
+
+  if (rect.left < minX) dx = minX - rect.left;
+  else if (rect.right > maxX) dx = maxX - rect.right;
+
+  if (rect.top < minY) dy = minY - rect.top;
+  else if (rect.bottom > maxY) dy = maxY - rect.bottom;
+
+  return { dx, dy };
+}
+
+function tagTransformWithNudge(
+  corner: TagCorner,
+  tagOpacity: number,
+  visible: boolean,
+  nudge: { dx: number; dy: number },
+) {
+  const base = tagMotionTransform(corner, tagOpacity, visible);
+  if (!visible || (nudge.dx === 0 && nudge.dy === 0)) return base;
+  return `${base} translate(${nudge.dx}px, ${nudge.dy}px)`;
+}
+
+function applyTagCornerClass(tag: HTMLDivElement, corner: TagCorner) {
+  if (tag.dataset.cornerApplied === corner) return;
+  tag.classList.remove(
+    "hero-speaking-orb__tag--tl",
+    "hero-speaking-orb__tag--tr",
+    "hero-speaking-orb__tag--bl",
+    "hero-speaking-orb__tag--br",
+  );
+  tag.classList.add(TAG_CORNER_CLASS[corner]);
+  tag.dataset.cornerApplied = corner;
+}
+
+function applyVisibleTagLayout(
+  tag: HTMLDivElement,
+  node: HTMLDivElement,
+  preferredCorner: TagCorner,
+  tagOpacity: number,
+  label: string,
+) {
+  const corner = pickTagCorner(preferredCorner, node.getBoundingClientRect());
+  applyTagCornerClass(tag, corner);
+
+  const tagText = tag.querySelector<HTMLSpanElement>(".hero-speaking-orb__tag-text");
+  if (tagText) tagText.textContent = label;
+
+  tag.style.visibility = "visible";
+  tag.style.opacity = `${tagOpacity}`;
+  tag.style.transform = tagMotionTransform(corner, tagOpacity, true);
+  const nudge = viewportNudge(tag.getBoundingClientRect());
+  tag.style.transform = tagTransformWithNudge(corner, tagOpacity, true, nudge);
+}
+
 function isOrbitNeighbor(a: number, b: number, count: number) {
   const diff = Math.abs(a - b);
   return diff === 1 || diff === count - 1;
@@ -493,12 +585,8 @@ export function DoePhoneHeroGradientCircles() {
           const tagOpacity = isFront ? frontTagOpacity : 0;
           const visible = isFront && frontTagVisible;
 
-          if (visible) {
-            const tagText = tag.querySelector<HTMLSpanElement>(".hero-speaking-orb__tag-text");
-            if (tagText) tagText.textContent = currentLabel;
-            tag.style.visibility = "visible";
-            tag.style.opacity = `${tagOpacity}`;
-            tag.style.transform = tagMotionTransform(ORB_TAG_CORNERS[index], tagOpacity, true);
+          if (visible && node) {
+            applyVisibleTagLayout(tag, node, ORB_TAG_CORNERS[index], tagOpacity, currentLabel);
           } else if (tag.style.visibility !== "hidden") {
             tag.style.opacity = "0";
             tag.style.visibility = "hidden";
@@ -542,13 +630,14 @@ export function DoePhoneHeroGradientCircles() {
       tagRefs.current.forEach((tag, index) => {
         if (!tag) return;
         const isFront = index === frontIndex;
-        const tagText = tag.querySelector<HTMLSpanElement>(".hero-speaking-orb__tag-text");
-        if (tagText) tagText.textContent = currentLabel;
-        tag.style.opacity = isFront ? "1" : "0";
-        tag.style.visibility = isFront ? "visible" : "hidden";
-        tag.style.transform = isFront
-          ? tagMotionTransform(ORB_TAG_CORNERS[index], 1, true)
-          : tagRestTransform(ORB_TAG_CORNERS[index]);
+        const node = nodeRefs.current[index];
+        if (isFront && node) {
+          applyVisibleTagLayout(tag, node, ORB_TAG_CORNERS[index], 1, currentLabel);
+        } else {
+          tag.style.opacity = "0";
+          tag.style.visibility = "hidden";
+          tag.style.transform = tagRestTransform(ORB_TAG_CORNERS[index]);
+        }
       });
       return;
     }
