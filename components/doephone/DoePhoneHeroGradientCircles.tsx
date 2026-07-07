@@ -6,12 +6,17 @@ import { useEffect, useRef } from "react";
 import { suisseIntl } from "@/lib/home/fonts";
 import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO } from "@/lib/proto/proto-grain-gradient";
 
-const TAG_CYCLE_MS = 3600;
-const TAG_FADE_IN = 0.16;
-const TAG_HOLD = 0.56;
-const TAG_FADE_OUT = 0.28;
+const TAG_DEPTH_ENTER = 0.48;
+const TAG_DEPTH_EXIT = 0.46;
+const TAG_DEPTH_RESET = 0.18;
+const TAG_FADE_MS = 420;
 
-/** One dedicated agent label per orb — no repeats while the orbit advances. */
+const PULSE_SLOT_MS = 2600;
+const PULSE_MAX_BOOST = 0.07;
+
+const HALO_CYCLE_MS = 3000;
+const HALO_ORB_OFFSETS = [0, 2, 4] as const;
+/** One dedicated agent label per orb — advances as each orb reaches the front. */
 const ORB_AGENT_LABELS = [
   "Voice Agent",
   "Scheduling Agent",
@@ -21,14 +26,6 @@ const ORB_AGENT_LABELS = [
   "Billing Agent",
   "Refill Agent",
 ] as const;
-
-type TagCorner = "tl" | "tr" | "bl" | "br";
-
-const TAG_CORNERS: TagCorner[] = ["tl", "tr", "bl", "br"];
-
-const CENTER_DEPTH_THRESHOLD = 0.86;
-const PULSE_SLOT_MS = 2600;
-const PULSE_MAX_BOOST = 0.07;
 
 /** Orb palettes — offset from hero (teal + gold/orange/copper). */
 const HERO_SPEAKING_ORB_SCHEMES = {
@@ -193,11 +190,110 @@ function orbNodeStyle(orb: OrbPose, pulseScale = 1) {
   } as const;
 }
 
-function orbTagCorner(index: number): TagCorner {
-  return TAG_CORNERS[index % TAG_CORNERS.length];
+function frontOrbIndex(layout: OrbPose[]) {
+  let frontIndex = -1;
+  let maxDepth = -1;
+
+  layout.forEach((orb, index) => {
+    if (orb.depth > maxDepth) {
+      maxDepth = orb.depth;
+      frontIndex = index;
+    }
+  });
+
+  return frontIndex;
 }
 
-/** Two or three orbs pulse per time slot — staggered around the loop. */
+type OrbTagPhase = "idle" | "entering" | "holding" | "leaving" | "done";
+
+type OrbTagState = {
+  phase: OrbTagPhase;
+  phaseStartMs: number;
+};
+
+function createTagState(): OrbTagState {
+  return { phase: "idle", phaseStartMs: 0 };
+}
+
+/** One fade-in, hold, fade-out per center pass — no repeat until the orb loops back. */
+function advanceTagState(state: OrbTagState, depth: number, elapsedMs: number): OrbTagState {
+  const fadeT = Math.min(1, (elapsedMs - state.phaseStartMs) / TAG_FADE_MS);
+
+  switch (state.phase) {
+    case "idle":
+      if (depth >= TAG_DEPTH_ENTER) {
+        return { phase: "entering", phaseStartMs: elapsedMs };
+      }
+      return state;
+
+    case "entering": {
+      if (depth < TAG_DEPTH_EXIT) {
+        return { phase: "idle", phaseStartMs: elapsedMs };
+      }
+      if (fadeT >= 1) {
+        return { phase: "holding", phaseStartMs: elapsedMs };
+      }
+      return state;
+    }
+
+    case "holding":
+      if (depth < TAG_DEPTH_EXIT) {
+        return { phase: "leaving", phaseStartMs: elapsedMs };
+      }
+      return state;
+
+    case "leaving": {
+      if (fadeT >= 1 || depth < TAG_DEPTH_RESET) {
+        return { phase: "done", phaseStartMs: elapsedMs };
+      }
+      return state;
+    }
+
+    case "done":
+      if (depth < TAG_DEPTH_RESET) {
+        return { phase: "idle", phaseStartMs: elapsedMs };
+      }
+      return state;
+
+    default:
+      return state;
+  }
+}
+
+function tagOpacityFromState(state: OrbTagState, elapsedMs: number) {
+  const fadeT = Math.min(1, (elapsedMs - state.phaseStartMs) / TAG_FADE_MS);
+
+  switch (state.phase) {
+    case "entering":
+      return fadeT;
+    case "holding":
+      return 1;
+    case "leaving":
+      return 1 - fadeT;
+    default:
+      return 0;
+  }
+}
+
+function haloWavesForOrb(index: number, elapsedMs: number) {
+  const slot = Math.floor(elapsedMs / HALO_CYCLE_MS);
+  const active = HALO_ORB_OFFSETS.map((offset) => (slot + offset) % ORBIT.orbitCount);
+  if (!active.includes(index)) return null;
+
+  const wave = (elapsedMs % HALO_CYCLE_MS) / HALO_CYCLE_MS;
+  return {
+    primary: wave,
+    echo: (wave + 0.38) % 1,
+  };
+}
+
+function haloRingStyle(progress: number) {
+  const eased = 1 - (1 - progress) ** 1.6;
+  return {
+    opacity: `${(1 - eased) * 0.62}`,
+    transform: `translate3d(-50%, -50%, 0) scale(${1 + eased * 0.48})`,
+  } as const;
+}
 function pulseScaleForOrb(index: number, elapsedMs: number) {
   const slot = Math.floor(elapsedMs / PULSE_SLOT_MS);
   const phase = (elapsedMs % PULSE_SLOT_MS) / PULSE_SLOT_MS;
@@ -213,43 +309,27 @@ function pulseScaleForOrb(index: number, elapsedMs: number) {
   return 1 + PULSE_MAX_BOOST * wave * wave;
 }
 
-function centerOrbIndex(layout: OrbPose[]) {
-  let centerIndex = -1;
-  let maxDepth = -1;
-
-  layout.forEach((orb, index) => {
-    if (orb.depth > maxDepth) {
-      maxDepth = orb.depth;
-      centerIndex = index;
-    }
-  });
-
-  if (maxDepth < CENTER_DEPTH_THRESHOLD) return -1;
-  return centerIndex;
-}
-
-function tagOpacityForCenterVisit(centerVisitMs: number) {
-  const cycle = (centerVisitMs % TAG_CYCLE_MS) / TAG_CYCLE_MS;
-
-  if (cycle < TAG_FADE_IN) return cycle / TAG_FADE_IN;
-  if (cycle < TAG_FADE_IN + TAG_HOLD) return 1;
-  const fadeStart = TAG_FADE_IN + TAG_HOLD;
-  return Math.max(0, 1 - (cycle - fadeStart) / TAG_FADE_OUT);
-}
-
 function SpeakingGradientOrb({
   scheme,
-  tagCorner,
   agentLabel,
   tagRef,
+  haloPrimaryRef,
+  haloEchoRef,
 }: {
   scheme: OrbScheme;
-  tagCorner: TagCorner;
   agentLabel: string;
   tagRef?: (node: HTMLDivElement | null) => void;
+  haloPrimaryRef?: (node: HTMLDivElement | null) => void;
+  haloEchoRef?: (node: HTMLDivElement | null) => void;
 }) {
   return (
     <div className="hero-speaking-orb" style={{ width: ORB_BASE_SIZE, height: ORB_BASE_SIZE }}>
+      <div ref={haloPrimaryRef} className="hero-speaking-orb__halo-ring" aria-hidden />
+      <div
+        ref={haloEchoRef}
+        className="hero-speaking-orb__halo-ring hero-speaking-orb__halo-ring--echo"
+        aria-hidden
+      />
       <div className="hero-speaking-orb__core relative overflow-hidden rounded-full shadow-[0_18px_48px_rgba(30,52,58,0.32)]">
         <GrainGradient
           width="100%"
@@ -277,7 +357,7 @@ function SpeakingGradientOrb({
       </div>
       <div
         ref={tagRef}
-        className={`hero-speaking-orb__tag hero-speaking-orb__tag--${tagCorner} ${suisseIntl.className}`}
+        className={`hero-speaking-orb__tag hero-speaking-orb__tag--bc ${suisseIntl.className}`}
         aria-hidden
       >
         <span className="hero-speaking-orb__tag-text">{agentLabel}</span>
@@ -295,26 +375,43 @@ export function DoePhoneHeroGradientCircles() {
   const initialLayoutRef = useRef(buildOrbLayout(0, [...initialZDepths]));
   const nodeRefs = useRef<(HTMLDivElement | null)[]>([]);
   const tagRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const haloPrimaryRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const haloEchoRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const tagStatesRef = useRef<OrbTagState[]>(
+    Array.from({ length: ORBIT.orbitCount }, () => createTagState()),
+  );
   const rafRef = useRef<number | undefined>(undefined);
   const startRef = useRef<number | undefined>(undefined);
   const zDepthsRef = useRef<number[]>(initialZDepths);
-  const initialCenterIndexRef = useRef(centerOrbIndex(initialLayoutRef.current));
-  const lastCenterIndexRef = useRef(-1);
-  const centerVisitStartRef = useRef(0);
+  const lastFrontIndexRef = useRef(-1);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
     const applyLayout = (phase: number, elapsedMs: number) => {
       const layout = buildOrbLayout(phase, zDepthsRef.current);
-      const centerIndex = centerOrbIndex(layout);
+      const frontIndex = frontOrbIndex(layout);
 
-      if (centerIndex !== lastCenterIndexRef.current) {
-        lastCenterIndexRef.current = centerIndex;
-        centerVisitStartRef.current = elapsedMs;
+      if (frontIndex !== lastFrontIndexRef.current && lastFrontIndexRef.current >= 0) {
+        const previous = lastFrontIndexRef.current;
+        const previousState = tagStatesRef.current[previous];
+        if (
+          previousState.phase === "entering" ||
+          previousState.phase === "holding" ||
+          previousState.phase === "leaving"
+        ) {
+          tagStatesRef.current[previous] = { phase: "done", phaseStartMs: elapsedMs };
+        }
       }
+      lastFrontIndexRef.current = frontIndex;
 
-      const centerVisitMs = elapsedMs - centerVisitStartRef.current;
-      const tagOpacity = centerIndex >= 0 ? tagOpacityForCenterVisit(centerVisitMs) : 0;
+      if (frontIndex >= 0) {
+        const current = tagStatesRef.current[frontIndex];
+        tagStatesRef.current[frontIndex] = advanceTagState(
+          current,
+          layout[frontIndex].depth,
+          elapsedMs,
+        );
+      }
 
       layout.forEach((orb, index) => {
         const node = nodeRefs.current[index];
@@ -328,28 +425,49 @@ export function DoePhoneHeroGradientCircles() {
         node.style.zIndex = `${style.zIndex}`;
 
         const tag = tagRefs.current[index];
-        if (!tag) return;
+        if (tag) {
+          const isFront = index === frontIndex;
+          const tagOpacity = isFront ? tagOpacityFromState(tagStatesRef.current[index], elapsedMs) : 0;
+          const visible = isFront && tagOpacity > 0.01;
 
-        const isCenter = index === centerIndex;
-        const visible = isCenter && tagOpacity > 0.01;
+          tag.style.opacity = `${tagOpacity}`;
+          tag.style.visibility = visible ? "visible" : "hidden";
+          tag.style.transform = visible
+            ? `translateX(-50%) translateY(${(1 - tagOpacity) * 5}px) scale(${0.94 + tagOpacity * 0.06})`
+            : "translateX(-50%) translateY(8px) scale(0.94)";
+        }
 
-        tag.style.opacity = isCenter ? `${tagOpacity}` : "0";
-        tag.style.visibility = visible ? "visible" : "hidden";
-        tag.style.transform = isCenter
-          ? `translateY(${(1 - tagOpacity) * 6}px) scale(${0.92 + tagOpacity * 0.08})`
-          : "translateY(8px) scale(0.92)";
+        const haloWaves = haloWavesForOrb(index, elapsedMs);
+        const haloPrimary = haloPrimaryRefs.current[index];
+        const haloEcho = haloEchoRefs.current[index];
+
+        if (haloPrimary && haloEcho) {
+          if (haloWaves) {
+            const primaryStyle = haloRingStyle(haloWaves.primary);
+            const echoStyle = haloRingStyle(haloWaves.echo);
+            haloPrimary.style.opacity = primaryStyle.opacity;
+            haloPrimary.style.transform = primaryStyle.transform;
+            haloEcho.style.opacity = echoStyle.opacity;
+            haloEcho.style.transform = echoStyle.transform;
+          } else {
+            haloPrimary.style.opacity = "0";
+            haloEcho.style.opacity = "0";
+          }
+        }
       });
     };
 
     if (media.matches) {
       applyLayout(0, 0);
-      const centerIndex = initialCenterIndexRef.current;
+      const frontIndex = frontOrbIndex(initialLayoutRef.current);
       tagRefs.current.forEach((tag, index) => {
         if (!tag) return;
-        const isCenter = index === centerIndex;
-        tag.style.opacity = isCenter ? "1" : "0";
-        tag.style.visibility = isCenter ? "visible" : "hidden";
-        tag.style.transform = isCenter ? "translateY(0) scale(1)" : "translateY(8px) scale(0.92)";
+        const isFront = index === frontIndex;
+        tag.style.opacity = isFront ? "1" : "0";
+        tag.style.visibility = isFront ? "visible" : "hidden";
+        tag.style.transform = isFront
+          ? "translateX(-50%) translateY(0) scale(1)"
+          : "translateX(-50%) translateY(8px) scale(0.94)";
       });
       return;
     }
@@ -382,10 +500,15 @@ export function DoePhoneHeroGradientCircles() {
           >
             <SpeakingGradientOrb
               scheme={scheme}
-              tagCorner={orbTagCorner(index)}
               agentLabel={ORB_AGENT_LABELS[index]}
               tagRef={(node) => {
                 tagRefs.current[index] = node;
+              }}
+              haloPrimaryRef={(node) => {
+                haloPrimaryRefs.current[index] = node;
+              }}
+              haloEchoRef={(node) => {
+                haloEchoRefs.current[index] = node;
               }}
             />
           </div>
