@@ -101,7 +101,7 @@ html[data-about-page]:has(.blog-mobile-root) {
     rgba(30, 52, 58, 0.05) 82%,
     rgba(30, 52, 58, 0.095) 100%
   );
-  --doe-nav-frost-scrolled-fill: rgba(24, 42, 47, 0.9);
+  --doe-nav-frost-scrolled-fill: #1e343a;
   --doe-nav-frost-scrolled-border: rgba(242, 236, 228, 0.24);
   --doe-nav-frost-scrolled-shadow: 0 10px 28px -8px rgba(30, 52, 58, 0.32);
   --doe-nav-frost-scrolled-cta-bg: var(--doe-page-surface-raised);
@@ -717,26 +717,23 @@ html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav .proto-nav-ct
   border-left-color: var(--proto-nav-cta-divider, var(--proto-nav-cta-border)) !important;
 }
 
-/* Home + /about — punched-out nav: smoked teal capsule (readable on sand + teal bands). */
+/* Home + /about — punched-out nav: solid hero teal capsule (no frost). */
 html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-frost-shell,
 html[data-about-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-frost-shell,
 html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav .proto-nav-frost-shell {
   border: 1px solid transparent;
   border-radius: calc(var(--proto-nav-frost-shell-progress) * 9999px);
-  border-color: rgba(242, 236, 228, calc(var(--proto-nav-frost-shell-progress) * 0.24));
+  border-color: rgba(242, 236, 228, calc(var(--proto-nav-frost-shell-progress) * 0.2));
   background-color: color-mix(
     in srgb,
-    rgba(30, 52, 58, calc(0.38 + var(--proto-nav-frost-shell-progress) * 0.44))
-      calc(var(--proto-nav-frost-shell-progress) * 100%),
+    var(--doe-shader-back) calc(var(--proto-nav-frost-shell-progress) * 100%),
     transparent
   );
-  backdrop-filter: blur(calc(var(--proto-nav-frost-shell-progress) * 48px))
-    saturate(calc(1.08 + var(--proto-nav-frost-shell-progress) * 0.22))
-    brightness(calc(1 - var(--proto-nav-frost-shell-progress) * 0.08));
-  -webkit-backdrop-filter: blur(calc(var(--proto-nav-frost-shell-progress) * 48px))
-    saturate(calc(1.08 + var(--proto-nav-frost-shell-progress) * 0.22))
-    brightness(calc(1 - var(--proto-nav-frost-shell-progress) * 0.08));
-  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: 0 calc(var(--proto-nav-frost-shell-progress) * 10px)
+    calc(var(--proto-nav-frost-shell-progress) * 28px)
+    rgba(30, 52, 58, calc(var(--proto-nav-frost-shell-progress) * 0.3));
 }
 
 /* Home + /about — fixed nav: teal ink logo on sand bar. */
