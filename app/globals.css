@@ -738,7 +738,7 @@ html[data-home-page]:has(.doe-home-top-banner) {
   --doe-home-top-banner-height: calc(
     env(safe-area-inset-top, 0px) + clamp(2.25rem, 6.35vmin, 2.85rem)
   );
-  --doe-home-banner-surface: #e4ddd2;
+  --doe-home-banner-surface: #ede8df;
 }
 
 .doe-home-top-banner {
@@ -754,8 +754,8 @@ html[data-home-page]:has(.doe-home-top-banner) {
   padding-top: env(safe-area-inset-top, 0px);
   padding-left: max(0.9rem, env(safe-area-inset-left, 0px));
   padding-right: max(0.9rem, env(safe-area-inset-right, 0px));
-  background-color: var(--doe-home-banner-surface, #e4ddd2);
-  border-bottom: 1px solid rgba(30, 52, 58, 0.14);
+  background-color: var(--doe-home-banner-surface, #ede8df);
+  border-bottom: 1px solid rgba(30, 52, 58, 0.11);
   transform: translate3d(0, 0, 0);
   opacity: 1;
   visibility: visible;

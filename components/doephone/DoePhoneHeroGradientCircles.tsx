@@ -6,6 +6,7 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState, type CSSProper
 import { suisseIntl } from "@/lib/home/fonts";
 import {
   DOE_HOME_ORANGE_PALETTE,
+  DOE_HOME_PHONE_HERO_SHADER_COLORS,
 } from "@/lib/proto/proto-shader-backdrop-colors";
 import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO } from "@/lib/proto/proto-grain-gradient";
 
@@ -20,17 +21,18 @@ const ORB_AGENT_LABELS = [
   "Refill Agent",
 ] as const;
 
+const [HERO_SKY, HERO_BLUSH, HERO_SEA] = DOE_HOME_PHONE_HERO_SHADER_COLORS;
 const BRAND = DOE_HOME_ORANGE_PALETTE;
 
-/** Workflow warm stops → hero shader accents — wider hue steps for legibility. */
+/** Workflow warm stops → hero shader accents — matches care-coordination + phone hero field. */
 const HERO_ORB_SHADE_LADDER = [
-  { colors: ["#8A7020", BRAND.gold, "#F8E890"] as const, colorBack: BRAND.back },
-  { colors: ["#8C3818", BRAND.orange, "#F0A078"] as const, colorBack: BRAND.back },
-  { colors: ["#883C38", BRAND.rose, "#E8B0A0"] as const, colorBack: BRAND.back },
-  { colors: ["#6E4838", BRAND.tan, "#D8B098"] as const, colorBack: BRAND.back },
-  { colors: ["#486888", "#6A9CC8", "#B8D8F0"] as const, colorBack: BRAND.back },
-  { colors: ["#785868", "#B888A0", "#E8C8D8"] as const, colorBack: BRAND.back },
-  { colors: ["#387068", "#58B098", "#A8E0D0"] as const, colorBack: BRAND.back },
+  { colors: ["#9A7830", BRAND.gold, "#F6E4B0"] as const, colorBack: BRAND.back },
+  { colors: ["#9A6838", BRAND.copper, "#F2D8B0"] as const, colorBack: BRAND.back },
+  { colors: ["#943E28", BRAND.orange, "#F0B898"] as const, colorBack: BRAND.back },
+  { colors: ["#884838", BRAND.rose, "#E8C0A8"] as const, colorBack: BRAND.back },
+  { colors: ["#687888", HERO_SKY, "#C0D4E8"] as const, colorBack: BRAND.back },
+  { colors: ["#786878", HERO_BLUSH, "#E4CCD4"] as const, colorBack: BRAND.back },
+  { colors: ["#588878", HERO_SEA, "#B8E4D4"] as const, colorBack: BRAND.back },
 ] as const;
 
 type OrbScheme = (typeof HERO_ORB_SHADE_LADDER)[number];
