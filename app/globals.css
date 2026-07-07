@@ -722,11 +722,12 @@ html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav-
   --proto-nav-frost-progress: 1;
 }
 
-/* Home — thin pre-seed announcement above nav. */
+/* Home — pre-seed announcement above nav (banner = sunken sand, page = overflow sand). */
 html[data-home-page]:has(.doe-home-top-banner) {
   --doe-home-top-banner-height: calc(
-    env(safe-area-inset-top, 0px) + clamp(1.55rem, 4.65vmin, 1.95rem)
+    env(safe-area-inset-top, 0px) + clamp(1.95rem, 5.65vmin, 2.45rem)
   );
+  --doe-home-banner-surface: #e4ddd2;
 }
 
 .doe-home-top-banner {
@@ -742,8 +743,8 @@ html[data-home-page]:has(.doe-home-top-banner) {
   padding-top: env(safe-area-inset-top, 0px);
   padding-left: max(0.85rem, env(safe-area-inset-left, 0px));
   padding-right: max(0.85rem, env(safe-area-inset-right, 0px));
-  background-color: #e0d9ce;
-  border-bottom: 1px solid rgba(30, 52, 58, 0.1);
+  background-color: var(--doe-home-banner-surface, #e4ddd2);
+  border-bottom: 1px solid rgba(30, 52, 58, 0.08);
 }
 
 .doe-home-top-banner__text {
@@ -752,11 +753,11 @@ html[data-home-page]:has(.doe-home-top-banner) {
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 0.35rem 0.5rem;
-  padding: 0.28rem 0 0.32rem;
-  font-size: clamp(0.68rem, 2.05vmin, 0.8rem);
+  gap: 0.4rem 0.55rem;
+  padding: 0.38rem 0 0.42rem;
+  font-size: clamp(0.75rem, 2.35vmin, 0.92rem);
   font-weight: 500;
-  line-height: 1.2;
+  line-height: 1.25;
   letter-spacing: -0.01em;
   color: var(--doe-page-ink, #1e343a);
   text-align: center;
@@ -781,6 +782,15 @@ html[data-home-page]:has(.doe-home-top-banner) {
 .doe-home-top-banner__arrow {
   flex-shrink: 0;
   margin-top: 0.02em;
+}
+
+html[data-home-page]:has(.doe-home-top-banner) {
+  --doe-page-surface: #ede8df;
+  background-color: #ede8df;
+}
+
+html[data-home-page]:has(.doe-home-top-banner) body {
+  background-color: #ede8df;
 }
 
 html[data-home-page]:has(.doe-home-top-banner) nav.doephone-site-nav,
