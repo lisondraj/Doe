@@ -49,24 +49,11 @@ export const DOE_HOME_PHONE_HERO_SHADER_COLORS = [
   "#78B8A8",
 ] as const;
 
-const DOE_HOME_PHONE_SHADER: ShaderColors = {
-  colors: DOE_HOME_PHONE_HERO_SHADER_COLORS,
-  colorBack: DOE_HOME_ORANGE_PALETTE.back,
-};
-
 export function doeHomePhoneHeroShaderSurface(): ProtoGrainGradientSurface {
   return {
-    variant: "home-hero",
-    colors: DOE_HOME_PHONE_SHADER.colors,
-    colorBack: DOE_HOME_PHONE_SHADER.colorBack,
-  };
-}
-
-export function doeHomePhoneFooterShaderSurface(): ProtoGrainGradientSurface {
-  return {
-    variant: "home-footer",
-    colors: DOE_HOME_PHONE_SHADER.colors,
-    colorBack: DOE_HOME_PHONE_SHADER.colorBack,
+    variant: "home-hero-phone",
+    colors: DOE_HOME_PHONE_HERO_SHADER_COLORS,
+    colorBack: DOE_HOME_ORANGE_PALETTE.back,
   };
 }
 
@@ -120,13 +107,34 @@ export function protoSiteHeroShaderSurface(): ProtoGrainGradientSurface {
 }
 
 const DOE_HOME_SLIDE_SHADER_COLORS: Record<string, ShaderColors> = {
-  agents: DOE_HOME_PHONE_SHADER,
-  "front-desk": DOE_HOME_PHONE_SHADER,
-  inbox: DOE_HOME_PHONE_SHADER,
-  ambient: DOE_HOME_PHONE_SHADER,
-  billing: DOE_HOME_PHONE_SHADER,
-  integrate: DOE_HOME_PHONE_SHADER,
-  prototype: DOE_HOME_PHONE_SHADER,
+  agents: {
+    colors: [DOE_HOME_ORANGE_PALETTE.copper, DOE_HOME_ORANGE_PALETTE.orange, DOE_HOME_ORANGE_PALETTE.rose],
+    colorBack: DOE_HOME_ORANGE_PALETTE.rose,
+  },
+  "front-desk": {
+    colors: [DOE_HOME_ORANGE_PALETTE.copper, DOE_HOME_ORANGE_PALETTE.orange, DOE_HOME_ORANGE_PALETTE.tan],
+    colorBack: DOE_HOME_ORANGE_PALETTE.tan,
+  },
+  inbox: {
+    colors: [DOE_HOME_ORANGE_PALETTE.copper, DOE_HOME_ORANGE_PALETTE.orange, DOE_HOME_ORANGE_PALETTE.tan],
+    colorBack: DOE_HOME_ORANGE_PALETTE.tan,
+  },
+  ambient: {
+    colors: [DOE_HOME_ORANGE_PALETTE.copper, DOE_HOME_ORANGE_PALETTE.orange, DOE_HOME_ORANGE_PALETTE.rose],
+    colorBack: DOE_HOME_ORANGE_PALETTE.rose,
+  },
+  billing: {
+    colors: [DOE_HOME_ORANGE_PALETTE.copper, DOE_HOME_ORANGE_PALETTE.orange, DOE_HOME_ORANGE_PALETTE.tan],
+    colorBack: DOE_HOME_ORANGE_PALETTE.tan,
+  },
+  integrate: {
+    colors: [DOE_HOME_ORANGE_PALETTE.copper, DOE_HOME_ORANGE_PALETTE.orange, DOE_HOME_ORANGE_PALETTE.rose],
+    colorBack: DOE_HOME_ORANGE_PALETTE.rose,
+  },
+  prototype: {
+    colors: [PROTO_HUMIRA_COLORS.bridgeBlue, PROTO_RECEPTION_PALETTE.blue, PROTO_RECEPTION_PALETTE.gold],
+    colorBack: PROTO_RECEPTION_PALETTE.deep,
+  },
 };
 
 /** /proto iPhone — reception palette per slide (matches PROTO_COMMUNICATION_GRADIENTS). */
@@ -195,7 +203,7 @@ export function doeHomeLabsShaderSurface(
   const variant = protoGrainGradientVariant(slideId);
   if (!variant) return undefined;
 
-  const hero = doeHomePhoneHeroShaderSurface();
+  const hero = doeHomeHeroShaderSurface();
   return {
     variant,
     colors: hero.colors,
@@ -211,10 +219,10 @@ export function doeHomeShaderBandSurface(
   if (!variant) return undefined;
 
   if (slideId === "billing") {
-    return doeHomePhoneFooterShaderSurface();
+    return doeHomeFooterShaderSurface();
   }
 
-  const hero = doeHomePhoneHeroShaderSurface();
+  const hero = doeHomeHeroShaderSurface();
   return {
     variant,
     colors: hero.colors,

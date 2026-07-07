@@ -9,7 +9,6 @@ import { DoePhoneHomeFeatureStack } from "@/components/doephone/DoePhoneHomeFeat
 import { ProtoCommunicationStack } from "@/components/proto/ProtoCommunicationStack";
 import { ProtoFooter } from "@/components/proto/ProtoFooter";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
-import { doeHomePhoneFooterShaderSurface } from "@/lib/proto/proto-shader-backdrop-colors";
 import {
   DOEPHONE_BEIGE_SECTION,
 } from "@/lib/doephone/section-styles";
@@ -105,7 +104,7 @@ export function DoePhoneMobileView({ variant = "home" }: { variant?: "home" | "p
             <DoePhoneClosingSection />
           </section>
 
-          <HomeFooter shaderSurface={doeHomePhoneFooterShaderSurface()} />
+          <HomeFooter />
         </>
       )}
     </div>
