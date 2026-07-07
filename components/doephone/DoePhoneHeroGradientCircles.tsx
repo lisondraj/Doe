@@ -14,7 +14,7 @@ const TAG_HOLD_MS = 2400;
 
 type TagCorner = "tl" | "tr" | "bl" | "br";
 
-const ORB_TAG_CORNERS: TagCorner[] = ["tl", "tr", "bl", "br", "tl", "tr", "bl"];
+const TAG_CORNERS_ALL: TagCorner[] = ["tl", "tr", "bl", "br"];
 
 const PULSE_SLOT_MS = 2600;
 const PULSE_MAX_BOOST = 0.07;
@@ -265,6 +265,8 @@ type PillController = {
   phaseStartMs: number;
   labelIndex: number;
   orbCooldown: boolean[];
+  activeCorner: TagCorner | null;
+  lastCorner: TagCorner | null;
 };
 
 function createPillController(): PillController {
@@ -274,7 +276,18 @@ function createPillController(): PillController {
     phaseStartMs: 0,
     labelIndex: 0,
     orbCooldown: Array.from({ length: ORBIT.orbitCount }, () => false),
+    activeCorner: null,
+    lastCorner: null,
   };
+}
+
+function nextTagCorner(last: TagCorner | null, orbIndex: number): TagCorner {
+  const start = orbIndex % TAG_CORNERS_ALL.length;
+  for (let i = 0; i < TAG_CORNERS_ALL.length; i += 1) {
+    const corner = TAG_CORNERS_ALL[(start + i) % TAG_CORNERS_ALL.length];
+    if (corner !== last) return corner;
+  }
+  return TAG_CORNERS_ALL[(start + 1) % TAG_CORNERS_ALL.length];
 }
 
 function pillOpacityForPhase(phase: PillPhase, phaseElapsedMs: number) {
@@ -304,12 +317,16 @@ function updatePillController(
   const finishActive = (advanceLabel: boolean) => {
     if (ctrl.activeOrbIndex >= 0) {
       ctrl.orbCooldown[ctrl.activeOrbIndex] = true;
+      if (ctrl.activeCorner) {
+        ctrl.lastCorner = ctrl.activeCorner;
+      }
       if (advanceLabel) {
         ctrl.labelIndex = (ctrl.labelIndex + 1) % ORB_AGENT_LABELS.length;
       }
     }
     ctrl.activeOrbIndex = -1;
     ctrl.phase = "idle";
+    ctrl.activeCorner = null;
   };
 
   if (ctrl.activeOrbIndex >= 0) {
@@ -354,6 +371,7 @@ function updatePillController(
     ctrl.activeOrbIndex = frontIndex;
     ctrl.phase = "entering";
     ctrl.phaseStartMs = elapsedMs;
+    ctrl.activeCorner = nextTagCorner(ctrl.lastCorner, frontIndex);
   }
 
   const showIndex = ctrl.activeOrbIndex;
@@ -367,6 +385,7 @@ function updatePillController(
     showIndex,
     opacity,
     labelIndex: ctrl.labelIndex,
+    corner: ctrl.activeCorner,
   };
 }
 
@@ -402,11 +421,11 @@ const TAG_CORNER_CLASS: Record<TagCorner, string> = {
   br: "hero-speaking-orb__tag--br",
 };
 
-/** Flip corner when the orb sits near a viewport edge so the pill stays on-screen. */
-function pickTagCorner(preferred: TagCorner, anchorRect: DOMRect): TagCorner {
+/** Flip corner near viewport edges, still avoiding a repeat of the last corner when possible. */
+function pickTagCorner(preferred: TagCorner, anchorRect: DOMRect, avoid: TagCorner | null = null) {
+  let corner = preferred;
   const vw = window.innerWidth;
   const vh = window.innerHeight;
-  let corner = preferred;
 
   if (anchorRect.left < TAG_EDGE_GUARD_PX && (corner === "tl" || corner === "bl")) {
     corner = corner === "tl" ? "tr" : "br";
@@ -419,6 +438,11 @@ function pickTagCorner(preferred: TagCorner, anchorRect: DOMRect): TagCorner {
   }
   if (anchorRect.bottom > vh - TAG_EDGE_GUARD_PX && (corner === "bl" || corner === "br")) {
     corner = corner === "bl" ? "tl" : "tr";
+  }
+
+  if (avoid && corner === avoid) {
+    const fallback = TAG_CORNERS_ALL.find((candidate) => candidate !== avoid);
+    if (fallback) corner = fallback;
   }
 
   return corner;
@@ -470,8 +494,9 @@ function applyVisibleTagLayout(
   preferredCorner: TagCorner,
   tagOpacity: number,
   label: string,
-) {
-  const corner = pickTagCorner(preferredCorner, node.getBoundingClientRect());
+  avoidCorner: TagCorner | null,
+): TagCorner {
+  const corner = pickTagCorner(preferredCorner, node.getBoundingClientRect(), avoidCorner);
   applyTagCornerClass(tag, corner);
 
   const tagText = tag.querySelector<HTMLSpanElement>(".hero-speaking-orb__tag-text");
@@ -482,6 +507,7 @@ function applyVisibleTagLayout(
   tag.style.transform = tagMotionTransform(corner, tagOpacity, true);
   const nudge = viewportNudge(tag.getBoundingClientRect());
   tag.style.transform = tagTransformWithNudge(corner, tagOpacity, true, nudge);
+  return corner;
 }
 
 function isOrbitNeighbor(a: number, b: number, count: number) {
@@ -541,13 +567,11 @@ function pulseScaleForOrb(
 
 const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
   scheme,
-  tagCorner,
   tagRef,
   haloPrimaryRef,
   haloEchoRef,
 }: {
   scheme: OrbScheme;
-  tagCorner: TagCorner;
   tagRef?: (node: HTMLDivElement | null) => void;
   haloPrimaryRef?: (node: HTMLDivElement | null) => void;
   haloEchoRef?: (node: HTMLDivElement | null) => void;
@@ -587,7 +611,7 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
       </div>
       <div
         ref={tagRef}
-        className={`hero-speaking-orb__tag hero-speaking-orb__tag--${tagCorner} ${suisseIntl.className}`}
+        className={`hero-speaking-orb__tag ${suisseIntl.className}`}
         aria-hidden
       >
         <span className="hero-speaking-orb__tag-text">{ORB_AGENT_LABELS[0]}</span>
@@ -670,12 +694,20 @@ export function DoePhoneHeroGradientCircles() {
           const tagOpacity = isPillOrb ? pill.opacity : 0;
           const visible = isPillOrb && frontTagVisible;
 
-          if (visible && node) {
-            applyVisibleTagLayout(tag, node, ORB_TAG_CORNERS[index], tagOpacity, currentLabel);
+          if (visible && node && pill.corner) {
+            pillCtrlRef.current.activeCorner = applyVisibleTagLayout(
+              tag,
+              node,
+              pill.corner,
+              tagOpacity,
+              currentLabel,
+              pillCtrlRef.current.lastCorner,
+            );
           } else if (tag.style.visibility !== "hidden") {
             tag.style.opacity = "0";
             tag.style.visibility = "hidden";
-            tag.style.transform = tagRestTransform(ORB_TAG_CORNERS[index]);
+            const restCorner = pillCtrlRef.current.lastCorner ?? "tl";
+            tag.style.transform = tagRestTransform(restCorner);
           }
         }
 
@@ -710,12 +742,20 @@ export function DoePhoneHeroGradientCircles() {
         if (!tag) return;
         const isFront = index === frontIndex;
         const node = nodeRefs.current[index];
-        if (isFront && node) {
-          applyVisibleTagLayout(tag, node, ORB_TAG_CORNERS[index], 1, currentLabel);
+        if (isFront && node && pillCtrlRef.current.activeCorner) {
+          pillCtrlRef.current.activeCorner = applyVisibleTagLayout(
+            tag,
+            node,
+            pillCtrlRef.current.activeCorner,
+            1,
+            currentLabel,
+            pillCtrlRef.current.lastCorner,
+          );
         } else {
           tag.style.opacity = "0";
           tag.style.visibility = "hidden";
-          tag.style.transform = tagRestTransform(ORB_TAG_CORNERS[index]);
+          const restCorner = pillCtrlRef.current.lastCorner ?? "tl";
+          tag.style.transform = tagRestTransform(restCorner);
         }
       });
       return;
@@ -778,7 +818,6 @@ export function DoePhoneHeroGradientCircles() {
           >
             <SpeakingGradientOrb
               scheme={scheme}
-              tagCorner={ORB_TAG_CORNERS[index]}
               tagRef={tagRefFns[index]}
               haloPrimaryRef={haloPrimaryRefFns[index]}
               haloEchoRef={haloEchoRefFns[index]}
