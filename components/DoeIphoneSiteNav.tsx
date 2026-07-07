@@ -293,6 +293,7 @@ export default function DoeIphoneSiteNav({
   investorsHref,
   frostedScrollNav = false,
   frostedScrollPastHero = false,
+  frostedNavAlwaysPunched = false,
 }: {
   pinchSafe?: boolean;
   homeHref?: string;
@@ -313,6 +314,8 @@ export default function DoeIphoneSiteNav({
   frostedScrollNav?: boolean;
   /** Proto home — delay frosted pill until the hero section has scrolled past. */
   frostedScrollPastHero?: boolean;
+  /** Home iPhone — keep the punched teal capsule at rest (no scroll morph). */
+  frostedNavAlwaysPunched?: boolean;
 }) {
   const resolvedNavSheetItems: readonly NavSheetItem[] =
     navSheetItems ??
@@ -329,9 +332,9 @@ export default function DoeIphoneSiteNav({
   /** Drives enter/exit opacity + slide on the sheet layer. */
   const [navSheetVisualOpen, setNavSheetVisualOpen] = useState(false);
   const [mobileNavFooterSlide, setMobileNavFooterSlide] = useState(0);
-  const [protoNavScrolled, setProtoNavScrolled] = useState(false);
+  const [protoNavScrolled, setProtoNavScrolled] = useState(frostedNavAlwaysPunched && frostedScrollNav);
   const frostProgressRef = useRef(0);
-  const protoNavScrolledRef = useRef(false);
+  const protoNavScrolledRef = useRef(frostedNavAlwaysPunched && frostedScrollNav);
   const mobileNavFooterCarouselRef = useRef<HTMLDivElement>(null);
   /** Carousel width when the sheet first opens — `zoom` shrinks uniformly if the window gets narrower (matches home `app/page.tsx`). */
   const mobileNavFooterWidthBaselineRef = useRef(0);
@@ -382,8 +385,19 @@ export default function DoeIphoneSiteNav({
     return () => window.clearTimeout(t);
   }, [mobileNavOpen]);
 
+  useLayoutEffect(() => {
+    if (!frostedScrollNav || !frostedNavAlwaysPunched) return;
+
+    const nav = navBarRowRef.current;
+    frostProgressRef.current = 1;
+    protoNavScrolledRef.current = true;
+    nav?.style.setProperty("--proto-nav-frost-progress", "1");
+    nav?.classList.add("proto-nav--scrolled");
+    setProtoNavScrolled(true);
+  }, [frostedScrollNav, frostedNavAlwaysPunched]);
+
   useEffect(() => {
-    if (!frostedScrollNav) return;
+    if (!frostedScrollNav || frostedNavAlwaysPunched) return;
 
     let raf = 0;
     let settleRaf = 0;
@@ -464,7 +478,7 @@ export default function DoeIphoneSiteNav({
       window.removeEventListener("resize", onScroll);
       window.removeEventListener("orientationchange", onScroll);
     };
-  }, [frostedScrollNav, frostedScrollPastHero]);
+  }, [frostedScrollNav, frostedScrollPastHero, frostedNavAlwaysPunched]);
 
   useEffect(() => {
     if (pinchSafe) {
@@ -851,9 +865,9 @@ export default function DoeIphoneSiteNav({
         ref={navBarRowRef}
         className={`${pinchSafe ? "doephone-site-nav " : ""}${
           frostedScrollNav ? "proto-nav-scroll-frost " : ""
-        }${frostedScrollNav && navMotionReady ? "proto-nav--motion-ready " : ""}${
-          protoNavScrolled ? "proto-nav--scrolled " : ""
-        }fixed top-0 left-0 right-0 iphone-page:pt-[env(safe-area-inset-top,0px)] ${
+        }${frostedNavAlwaysPunched ? "proto-nav-always-punched " : ""}${
+          frostedScrollNav && navMotionReady ? "proto-nav--motion-ready " : ""
+        }${protoNavScrolled ? "proto-nav--scrolled " : ""}fixed top-0 left-0 right-0 iphone-page:pt-[env(safe-area-inset-top,0px)] ${
           navSheetLive ? "z-[200]" : "z-50"
         } ${pinchSafe ? "translate-z-0" : ""}`}
         style={

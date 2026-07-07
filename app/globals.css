@@ -717,6 +717,11 @@ html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav .proto-nav-ct
   border-left-color: var(--proto-nav-cta-divider, var(--proto-nav-cta-border)) !important;
 }
 
+/* Home iPhone — punched nav at rest (no flat-bar → capsule scroll morph). */
+html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav-always-punched {
+  --proto-nav-frost-progress: 1;
+}
+
 /* Home + /about — punched-out nav: solid hero teal capsule (no frost). */
 html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-frost-shell,
 html[data-about-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-frost-shell,
