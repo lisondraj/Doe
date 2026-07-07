@@ -133,7 +133,7 @@ function orbitPoint(index: number, count: number, phase: number): OrbPose {
     yPct,
     depth,
     scale: ORBIT_MIN_SCALE + eased * (ORBIT_MAX_SCALE - ORBIT_MIN_SCALE),
-    opacity: 0.38 + eased * 0.62,
+    opacity: 0.72 + eased * 0.28,
     zIndex: 10,
   };
 }
