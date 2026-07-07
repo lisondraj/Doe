@@ -1,9 +1,6 @@
 "use client";
 
-import { GrainGradient } from "@paper-design/shaders-react";
 import { useEffect, useRef } from "react";
-
-import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO } from "@/lib/proto/proto-grain-gradient";
 
 /** Orb palettes — offset from hero (teal + gold/orange/copper). */
 const HERO_SPEAKING_ORB_SCHEMES = {
@@ -82,22 +79,6 @@ const ORBIT_ANCHOR_Y = 33.2;
  */
 const ORBIT_BACK_BUNCH = 0.34;
 
-/** Volumetric sphere — smooth gradient, no grain. */
-const HERO_ORB_SHADER = {
-  shape: "sphere" as const,
-  softness: 0.58,
-  intensity: 0.11,
-  noise: 0,
-  fit: "cover" as const,
-  scale: 1.32,
-  rotation: 0,
-  offsetX: 0,
-  offsetY: 0,
-  worldWidth: 0,
-  worldHeight: 0,
-  speed: 0,
-} as const;
-
 type OrbPose = {
   xPct: number;
   yPct: number;
@@ -168,29 +149,25 @@ function orbNodeStyle(orb: OrbPose) {
   } as const;
 }
 
+/** Volumetric sphere — CSS radial layers (no WebGL; seven shaders stall scroll). */
+function speakingOrbBackground(scheme: OrbScheme) {
+  const [highlight, mid, shadow] = scheme.colors;
+  return [
+    `radial-gradient(circle at 36% 30%, ${highlight} 0%, transparent 52%)`,
+    `radial-gradient(circle at 58% 64%, ${mid} 0%, ${shadow} 40%, ${scheme.colorBack} 76%)`,
+  ].join(", ");
+}
+
 function SpeakingGradientOrb({ scheme }: { scheme: OrbScheme }) {
   return (
     <div className="hero-speaking-orb" style={{ width: ORB_BASE_SIZE, height: ORB_BASE_SIZE }}>
-      <div className="hero-speaking-orb__core relative overflow-hidden rounded-full shadow-[0_18px_48px_rgba(30,52,58,0.32)]">
-        <GrainGradient
-          width="100%"
-          height="100%"
-          fit={HERO_ORB_SHADER.fit}
-          worldWidth={HERO_ORB_SHADER.worldWidth}
-          worldHeight={HERO_ORB_SHADER.worldHeight}
-          colors={[...scheme.colors]}
-          colorBack={scheme.colorBack}
-          softness={HERO_ORB_SHADER.softness}
-          intensity={HERO_ORB_SHADER.intensity}
-          noise={HERO_ORB_SHADER.noise}
-          shape={HERO_ORB_SHADER.shape}
-          speed={HERO_ORB_SHADER.speed}
-          rotation={HERO_ORB_SHADER.rotation}
-          offsetX={HERO_ORB_SHADER.offsetX}
-          offsetY={HERO_ORB_SHADER.offsetY}
-          scale={HERO_ORB_SHADER.scale}
-          maxPixelCount={PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO}
-        />
+      <div
+        className="hero-speaking-orb__core relative overflow-hidden rounded-full shadow-[0_18px_48px_rgba(30,52,58,0.32)]"
+        style={{
+          backgroundColor: scheme.colorBack,
+          backgroundImage: speakingOrbBackground(scheme),
+        }}
+      >
         <div
           className="pointer-events-none absolute inset-0 rounded-full shadow-[inset_0_-18px_36px_rgba(30,52,58,0.22)]"
           aria-hidden
@@ -207,10 +184,12 @@ export function DoePhoneHeroGradientCircles() {
     orbitPoint(index, ORBIT.orbitCount, 0).depth,
   );
   const initialLayoutRef = useRef(buildOrbLayout(0, [...initialZDepths]));
+  const rootRef = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef<(HTMLDivElement | null)[]>([]);
   const rafRef = useRef<number | undefined>(undefined);
   const startRef = useRef<number | undefined>(undefined);
   const zDepthsRef = useRef<number[]>(initialZDepths);
+  const isActiveRef = useRef(true);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -228,12 +207,15 @@ export function DoePhoneHeroGradientCircles() {
       });
     };
 
-    if (media.matches) {
-      applyLayout(0);
-      return;
-    }
+    const stop = () => {
+      if (rafRef.current !== undefined) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = undefined;
+      }
+    };
 
     const tick = (now: number) => {
+      if (!isActiveRef.current) return;
       if (startRef.current === undefined) startRef.current = now;
       const elapsed = now - startRef.current;
       const phase = (elapsed % ORBIT_REVOLUTION_MS) / ORBIT_REVOLUTION_MS;
@@ -241,14 +223,55 @@ export function DoePhoneHeroGradientCircles() {
       rafRef.current = requestAnimationFrame(tick);
     };
 
-    rafRef.current = requestAnimationFrame(tick);
+    const start = () => {
+      if (media.matches || !isActiveRef.current) return;
+      stop();
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    applyLayout(0);
+
+    if (media.matches) {
+      return;
+    }
+
+    const root = rootRef.current;
+    const observer =
+      root &&
+      new IntersectionObserver(
+        ([entry]) => {
+          isActiveRef.current = entry.isIntersecting;
+          if (isActiveRef.current) {
+            startRef.current = undefined;
+            start();
+          } else {
+            stop();
+          }
+        },
+        { rootMargin: "12% 0px", threshold: 0 },
+      );
+
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") {
+        stop();
+        return;
+      }
+      if (isActiveRef.current) start();
+    };
+
+    observer?.observe(root);
+    document.addEventListener("visibilitychange", onVisibility);
+    start();
+
     return () => {
-      if (rafRef.current !== undefined) cancelAnimationFrame(rafRef.current);
+      stop();
+      observer?.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, []);
 
   return (
-    <div className="hero-speaking-orbs" aria-hidden>
+    <div ref={rootRef} className="hero-speaking-orbs" aria-hidden>
       <div className="hero-speaking-orbs__stage">
         {SCHEME_ORDER.map((scheme, index) => (
           <div
