@@ -1270,7 +1270,6 @@ body.proto-route {
   transform-origin: center center;
   will-change: transform, opacity;
   backface-visibility: hidden;
-  contain: layout style paint;
 }
 
 .hero-speaking-orb {
@@ -1278,6 +1277,8 @@ body.proto-route {
   display: grid;
   place-items: center;
   flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 50%;
 }
 
 .hero-speaking-orb__core {
@@ -1286,7 +1287,25 @@ body.proto-route {
   width: 100%;
   height: 100%;
   transform-origin: center center;
-  contain: paint;
+  overflow: hidden;
+  border-radius: 50%;
+  clip-path: circle(50% at 50% 50%);
+}
+
+.hero-speaking-orb__shader,
+.hero-speaking-orb__shader > div {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 50%;
+  clip-path: circle(50% at 50% 50%);
+}
+
+.hero-speaking-orb__core canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 /* /doephone hero headline — deblur + rise after polar overlay build completes. */

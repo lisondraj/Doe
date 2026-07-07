@@ -192,6 +192,7 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({ scheme }: { sche
     <div className="hero-speaking-orb" style={{ width: ORB_BASE_SIZE, height: ORB_BASE_SIZE }}>
       <div className="hero-speaking-orb__core relative overflow-hidden rounded-full shadow-[0_18px_48px_rgba(30,52,58,0.32)]">
         <GrainGradient
+          className="hero-speaking-orb__shader"
           width="100%"
           height="100%"
           fit={HERO_ORB_SHADER.fit}
