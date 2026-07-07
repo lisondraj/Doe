@@ -4,6 +4,10 @@ import { GrainGradient } from "@paper-design/shaders-react";
 import { memo, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 
 import { suisseIntl } from "@/lib/home/fonts";
+import {
+  DOE_HOME_ORANGE_PALETTE,
+  DOE_HOME_PHONE_HERO_SHADER_COLORS,
+} from "@/lib/proto/proto-shader-backdrop-colors";
 import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO } from "@/lib/proto/proto-grain-gradient";
 
 /** One dedicated agent label per orb on the dial. */
@@ -17,15 +21,18 @@ const ORB_AGENT_LABELS = [
   "Refill Agent",
 ] as const;
 
-/** Orange / gold ladder — lightest to darkest around the dial (lifted mid-tones). */
+const [HERO_SKY, HERO_BLUSH, HERO_SEA] = DOE_HOME_PHONE_HERO_SHADER_COLORS;
+const BRAND = DOE_HOME_ORANGE_PALETTE;
+
+/** Workflow warm stops → hero shader accents — matches care-coordination + phone hero field. */
 const HERO_ORB_SHADE_LADDER = [
-  { colors: ["#C8A848", "#F0D880", "#FBF0C8"] as const, colorBack: "#1E343A" },
-  { colors: ["#C09840", "#ECC878", "#F8E8B0"] as const, colorBack: "#1E343A" },
-  { colors: ["#B89038", "#E8C068", "#F5DEA0"] as const, colorBack: "#1E343A" },
-  { colors: ["#B08830", "#E4B85C", "#F2D898"] as const, colorBack: "#1E343A" },
-  { colors: ["#A88028", "#DDA850", "#EECC88"] as const, colorBack: "#1E343A" },
-  { colors: ["#A07822", "#D49C48", "#E8C078"] as const, colorBack: "#1E343A" },
-  { colors: ["#987018", "#CC9038", "#E0B068"] as const, colorBack: "#1E343A" },
+  { colors: ["#9A7830", BRAND.gold, "#F6E4B0"] as const, colorBack: BRAND.back },
+  { colors: ["#9A6838", BRAND.copper, "#F2D8B0"] as const, colorBack: BRAND.back },
+  { colors: ["#943E28", BRAND.orange, "#F0B898"] as const, colorBack: BRAND.back },
+  { colors: ["#884838", BRAND.rose, "#E8C0A8"] as const, colorBack: BRAND.back },
+  { colors: ["#687888", HERO_SKY, "#C0D4E8"] as const, colorBack: BRAND.back },
+  { colors: ["#786878", HERO_BLUSH, "#E4CCD4"] as const, colorBack: BRAND.back },
+  { colors: ["#588878", HERO_SEA, "#B8E4D4"] as const, colorBack: BRAND.back },
 ] as const;
 
 type OrbScheme = (typeof HERO_ORB_SHADE_LADDER)[number];
