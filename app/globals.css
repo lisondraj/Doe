@@ -101,8 +101,6 @@ html[data-about-page]:has(.blog-mobile-root) {
     rgba(30, 52, 58, 0.05) 82%,
     rgba(30, 52, 58, 0.095) 100%
   );
-  --doe-nav-cta-punch-rim-dark: rgba(30, 52, 58, 0.2);
-  --doe-nav-cta-punch-rim-light: rgba(242, 236, 228, 0.52);
   --doe-nav-frost-scrolled-fill: rgba(24, 42, 47, 0.9);
   --doe-nav-frost-scrolled-border: rgba(242, 236, 228, 0.24);
   --doe-nav-frost-scrolled-shadow: 0 10px 28px -8px rgba(30, 52, 58, 0.32);
@@ -429,13 +427,9 @@ html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav.proto-nav-scr
   --proto-nav-frost-shell-progress: calc(
     var(--proto-nav-frost-progress, 0) * var(--proto-nav-frost-progress, 0)
   );
-  --proto-nav-cta-tone-progress: calc(
-    var(--proto-nav-frost-progress, 0) * var(--proto-nav-frost-progress, 0) *
-    (3 - 2 * var(--proto-nav-frost-progress, 0))
-  );
   --proto-nav-frost-pad-x-min: clamp(0.8rem, 0.55rem + 1.1vmin, 1.05rem);
   --proto-nav-frost-pad-x-max: clamp(1.12rem, 0.82rem + 1.45vmin, 1.45rem);
-  --proto-nav-frost-pad-y: clamp(0.36rem, 0.22rem + 0.58vmin, 0.56rem);
+  --proto-nav-frost-pad-y: clamp(0.3rem, 0.18rem + 0.5vmin, 0.5rem);
   --proto-nav-frost-pad-x: calc(
     (1 - var(--proto-nav-frost-progress, 0)) * var(--proto-nav-frost-pad-x-min) +
     var(--proto-nav-frost-progress, 0) * var(--proto-nav-frost-pad-x-max)
@@ -742,10 +736,7 @@ html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav .proto-nav-fr
   -webkit-backdrop-filter: blur(calc(var(--proto-nav-frost-shell-progress) * 48px))
     saturate(calc(1.08 + var(--proto-nav-frost-shell-progress) * 0.22))
     brightness(calc(1 - var(--proto-nav-frost-shell-progress) * 0.08));
-  box-shadow:
-    inset 0 0 0 1px rgba(242, 236, 228, calc(var(--proto-nav-frost-shell-progress) * 0.14)),
-    inset 0 1px calc(6px + var(--proto-nav-frost-shell-progress) * 8px)
-      rgba(18, 32, 36, calc(var(--proto-nav-frost-shell-progress) * 0.12));
+  box-shadow: none;
 }
 
 /* Home + /about — fixed nav: teal ink logo on sand bar. */
@@ -777,8 +768,8 @@ html[data-about-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-na
 html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell button[class*="border-l"] {
   border-left-color: color-mix(
     in srgb,
-    var(--proto-nav-cta-divider) calc((1 - var(--proto-nav-cta-tone-progress, 0)) * 100%),
-    var(--doe-nav-frost-scrolled-cta-divider) calc(var(--proto-nav-cta-tone-progress, 0) * 100%)
+    var(--proto-nav-cta-divider) calc((1 - var(--proto-nav-frost-progress, 0)) * 100%),
+    var(--doe-nav-frost-scrolled-cta-divider) calc(var(--proto-nav-frost-progress, 0) * 100%)
   ) !important;
 }
 
@@ -808,59 +799,42 @@ html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav .proto-nav-ct
 html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell button {
   background-color: color-mix(
     in srgb,
-    var(--proto-nav-cta-bg) calc((1 - var(--proto-nav-cta-tone-progress, 0)) * 100%),
-    var(--doe-nav-frost-scrolled-cta-bg) calc(var(--proto-nav-cta-tone-progress, 0) * 100%)
+    var(--proto-nav-cta-bg) calc((1 - var(--proto-nav-frost-progress, 0)) * 100%),
+    var(--doe-nav-frost-scrolled-cta-bg) calc(var(--proto-nav-frost-progress, 0) * 100%)
   ) !important;
   background-image: linear-gradient(
     180deg,
     color-mix(
       in srgb,
-      rgba(255, 255, 255, 0.05) calc((1 - var(--proto-nav-cta-tone-progress, 0)) * 100%),
-      rgba(255, 255, 255, 0.78) calc(var(--proto-nav-cta-tone-progress, 0) * 100%)
+      rgba(255, 255, 255, 0.05) calc((1 - var(--proto-nav-frost-progress, 0)) * 100%),
+      rgba(255, 255, 255, 0.78) calc(var(--proto-nav-frost-progress, 0) * 100%)
     )
       0%,
     color-mix(
       in srgb,
-      rgba(255, 255, 255, 0.015) calc((1 - var(--proto-nav-cta-tone-progress, 0)) * 100%),
-      rgba(255, 255, 255, 0.22) calc(var(--proto-nav-cta-tone-progress, 0) * 100%)
+      rgba(255, 255, 255, 0.015) calc((1 - var(--proto-nav-frost-progress, 0)) * 100%),
+      rgba(255, 255, 255, 0.22) calc(var(--proto-nav-frost-progress, 0) * 100%)
     )
       54%,
     color-mix(
       in srgb,
-      rgba(255, 255, 255, 0.004) calc((1 - var(--proto-nav-cta-tone-progress, 0)) * 100%),
-      rgba(30, 52, 58, 0.05) calc(var(--proto-nav-cta-tone-progress, 0) * 100%)
+      rgba(255, 255, 255, 0.004) calc((1 - var(--proto-nav-frost-progress, 0)) * 100%),
+      rgba(30, 52, 58, 0.05) calc(var(--proto-nav-frost-progress, 0) * 100%)
     )
       82%,
     color-mix(
       in srgb,
-      transparent calc((1 - var(--proto-nav-cta-tone-progress, 0)) * 100%),
-      rgba(30, 52, 58, 0.095) calc(var(--proto-nav-cta-tone-progress, 0) * 100%)
+      transparent calc((1 - var(--proto-nav-frost-progress, 0)) * 100%),
+      rgba(30, 52, 58, 0.095) calc(var(--proto-nav-frost-progress, 0) * 100%)
     )
       100%
   ) !important;
   color: color-mix(
     in srgb,
-    var(--proto-nav-cta-text) calc((1 - var(--proto-nav-cta-tone-progress, 0)) * 100%),
-    var(--doe-nav-frost-scrolled-cta-text) calc(var(--proto-nav-cta-tone-progress, 0) * 100%)
+    var(--proto-nav-cta-text) calc((1 - var(--proto-nav-frost-progress, 0)) * 100%),
+    var(--doe-nav-frost-scrolled-cta-text) calc(var(--proto-nav-frost-progress, 0) * 100%)
   ) !important;
-  box-shadow:
-    0 0 0 1px
-      color-mix(
-        in srgb,
-        var(--doe-nav-cta-punch-rim-dark) calc((1 - var(--proto-nav-cta-tone-progress, 0)) * 100%),
-        var(--doe-nav-cta-punch-rim-light) calc(var(--proto-nav-cta-tone-progress, 0) * 100%)
-      ),
-    0 1px 0
-      color-mix(
-        in srgb,
-        rgba(255, 255, 255, 0.1) calc((1 - var(--proto-nav-cta-tone-progress, 0)) * 100%),
-        rgba(255, 255, 255, 0.46) calc(var(--proto-nav-cta-tone-progress, 0) * 100%)
-      )
-      inset,
-    0 calc(2px + var(--proto-nav-cta-tone-progress, 0) * 1px)
-      calc(8px + var(--proto-nav-cta-tone-progress, 0) * 2px)
-      calc(-4px - var(--proto-nav-cta-tone-progress, 0) * 1px)
-      rgba(18, 32, 36, calc(0.34 - var(--proto-nav-cta-tone-progress, 0) * 0.14)) !important;
+  box-shadow: none !important;
 }
 
 /* Home + /about — frosted nav: sand pill shell fades as capsule punches in. */
@@ -1277,8 +1251,6 @@ body.proto-route {
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  overflow: hidden;
-  border-radius: 50%;
 }
 
 .hero-speaking-orb__core {
@@ -1287,19 +1259,6 @@ body.proto-route {
   width: 100%;
   height: 100%;
   transform-origin: center center;
-  overflow: hidden;
-  border-radius: 50%;
-  clip-path: circle(50% at 50% 50%);
-}
-
-.hero-speaking-orb__shader,
-.hero-speaking-orb__shader > div {
-  display: block;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  border-radius: 50%;
-  clip-path: circle(50% at 50% 50%);
 }
 
 .hero-speaking-orb__core canvas {
