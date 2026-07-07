@@ -6,8 +6,13 @@ import { useEffect, useRef } from "react";
 import { suisseIntl } from "@/lib/home/fonts";
 import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO } from "@/lib/proto/proto-grain-gradient";
 
-/** Center-orb tag labels — cycles while the front orb is in the highlight spot. */
-const HERO_ORB_AGENT_TAGS = [
+const TAG_CYCLE_MS = 3600;
+const TAG_FADE_IN = 0.16;
+const TAG_HOLD = 0.56;
+const TAG_FADE_OUT = 0.28;
+
+/** One dedicated agent label per orb — no repeats while the orbit advances. */
+const ORB_AGENT_LABELS = [
   "Voice Agent",
   "Scheduling Agent",
   "Labs Agent",
@@ -24,10 +29,6 @@ const TAG_CORNERS: TagCorner[] = ["tl", "tr", "bl", "br"];
 const CENTER_DEPTH_THRESHOLD = 0.86;
 const PULSE_SLOT_MS = 2600;
 const PULSE_MAX_BOOST = 0.07;
-const TAG_CYCLE_MS = 3400;
-const TAG_FADE_IN = 0.14;
-const TAG_HOLD = 0.58;
-const TAG_FADE_OUT = 0.28;
 
 /** Orb palettes — offset from hero (teal + gold/orange/copper). */
 const HERO_SPEAKING_ORB_SCHEMES = {
@@ -227,8 +228,8 @@ function centerOrbIndex(layout: OrbPose[]) {
   return centerIndex;
 }
 
-function tagOpacityForCycle(elapsedMs: number) {
-  const cycle = (elapsedMs % TAG_CYCLE_MS) / TAG_CYCLE_MS;
+function tagOpacityForCenterVisit(centerVisitMs: number) {
+  const cycle = (centerVisitMs % TAG_CYCLE_MS) / TAG_CYCLE_MS;
 
   if (cycle < TAG_FADE_IN) return cycle / TAG_FADE_IN;
   if (cycle < TAG_FADE_IN + TAG_HOLD) return 1;
@@ -236,17 +237,15 @@ function tagOpacityForCycle(elapsedMs: number) {
   return Math.max(0, 1 - (cycle - fadeStart) / TAG_FADE_OUT);
 }
 
-function tagLabelIndex(elapsedMs: number) {
-  return Math.floor(elapsedMs / TAG_CYCLE_MS) % HERO_ORB_AGENT_TAGS.length;
-}
-
 function SpeakingGradientOrb({
   scheme,
   tagCorner,
+  agentLabel,
   tagRef,
 }: {
   scheme: OrbScheme;
   tagCorner: TagCorner;
+  agentLabel: string;
   tagRef?: (node: HTMLDivElement | null) => void;
 }) {
   return (
@@ -281,7 +280,7 @@ function SpeakingGradientOrb({
         className={`hero-speaking-orb__tag hero-speaking-orb__tag--${tagCorner} ${suisseIntl.className}`}
         aria-hidden
       >
-        <span className="hero-speaking-orb__tag-text" />
+        <span className="hero-speaking-orb__tag-text">{agentLabel}</span>
       </div>
     </div>
   );
@@ -296,20 +295,26 @@ export function DoePhoneHeroGradientCircles() {
   const initialLayoutRef = useRef(buildOrbLayout(0, [...initialZDepths]));
   const nodeRefs = useRef<(HTMLDivElement | null)[]>([]);
   const tagRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const tagTextRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const rafRef = useRef<number | undefined>(undefined);
   const startRef = useRef<number | undefined>(undefined);
   const zDepthsRef = useRef<number[]>(initialZDepths);
   const initialCenterIndexRef = useRef(centerOrbIndex(initialLayoutRef.current));
+  const lastCenterIndexRef = useRef(-1);
+  const centerVisitStartRef = useRef(0);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
     const applyLayout = (phase: number, elapsedMs: number) => {
       const layout = buildOrbLayout(phase, zDepthsRef.current);
       const centerIndex = centerOrbIndex(layout);
-      const tagOpacity = centerIndex >= 0 ? tagOpacityForCycle(elapsedMs) : 0;
-      const labelIndex = tagLabelIndex(elapsedMs);
-      const label = HERO_ORB_AGENT_TAGS[labelIndex];
+
+      if (centerIndex !== lastCenterIndexRef.current) {
+        lastCenterIndexRef.current = centerIndex;
+        centerVisitStartRef.current = elapsedMs;
+      }
+
+      const centerVisitMs = elapsedMs - centerVisitStartRef.current;
+      const tagOpacity = centerIndex >= 0 ? tagOpacityForCenterVisit(centerVisitMs) : 0;
 
       layout.forEach((orb, index) => {
         const node = nodeRefs.current[index];
@@ -323,35 +328,29 @@ export function DoePhoneHeroGradientCircles() {
         node.style.zIndex = `${style.zIndex}`;
 
         const tag = tagRefs.current[index];
-        const tagText = tagTextRefs.current[index];
         if (!tag) return;
 
         const isCenter = index === centerIndex;
-        tag.style.opacity = isCenter ? `${tagOpacity}` : "0";
-        tag.style.transform = isCenter
-          ? `translateY(${(1 - tagOpacity) * 5}px) scale(${0.94 + tagOpacity * 0.06})`
-          : "translateY(6px) scale(0.94)";
+        const visible = isCenter && tagOpacity > 0.01;
 
-        if (tagText && isCenter) {
-          tagText.textContent = label;
-        }
+        tag.style.opacity = isCenter ? `${tagOpacity}` : "0";
+        tag.style.visibility = visible ? "visible" : "hidden";
+        tag.style.transform = isCenter
+          ? `translateY(${(1 - tagOpacity) * 6}px) scale(${0.92 + tagOpacity * 0.08})`
+          : "translateY(8px) scale(0.92)";
       });
     };
 
     if (media.matches) {
       applyLayout(0, 0);
       const centerIndex = initialCenterIndexRef.current;
-      if (centerIndex >= 0) {
-        const tag = tagRefs.current[centerIndex];
-        const tagText = tagTextRefs.current[centerIndex];
-        if (tag) {
-          tag.style.opacity = "1";
-          tag.style.transform = "translateY(0) scale(1)";
-        }
-        if (tagText) {
-          tagText.textContent = HERO_ORB_AGENT_TAGS[0];
-        }
-      }
+      tagRefs.current.forEach((tag, index) => {
+        if (!tag) return;
+        const isCenter = index === centerIndex;
+        tag.style.opacity = isCenter ? "1" : "0";
+        tag.style.visibility = isCenter ? "visible" : "hidden";
+        tag.style.transform = isCenter ? "translateY(0) scale(1)" : "translateY(8px) scale(0.92)";
+      });
       return;
     }
 
@@ -384,10 +383,9 @@ export function DoePhoneHeroGradientCircles() {
             <SpeakingGradientOrb
               scheme={scheme}
               tagCorner={orbTagCorner(index)}
+              agentLabel={ORB_AGENT_LABELS[index]}
               tagRef={(node) => {
                 tagRefs.current[index] = node;
-                const tagText = node?.querySelector<HTMLSpanElement>(".hero-speaking-orb__tag-text") ?? null;
-                tagTextRefs.current[index] = tagText;
               }}
             />
           </div>
