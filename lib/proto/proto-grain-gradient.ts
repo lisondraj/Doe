@@ -22,6 +22,9 @@ export const PROTO_SHADER_MAX_PIXEL_COUNT_HERO = 1920 * 1080 * 4;
 /** Cap feature boxes — headroom for taller fit-shader cards at 2–3× DPR. */
 export const PROTO_SHADER_MAX_PIXEL_COUNT_FEATURE = Math.floor(1920 * 1080 * 3);
 
+/** iPhone hero speaking orbs — tiny cap so all 11 instances fit in WebGL budget. */
+export const PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_ORB = Math.floor(320 * 320 * 1.5);
+
 /** iPhone — lower WebGL resolution to keep scroll responsive. */
 export const PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO = Math.floor(1280 * 720 * 2);
 
