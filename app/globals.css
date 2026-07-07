@@ -1312,33 +1312,33 @@ body.proto-route {
     inset 0 0 14px color-mix(in srgb, var(--orb-halo-mid) 18%, transparent);
 }
 
-/* Corner tag — inset on orb edge so pills stay on-screen. */
+/* Corner tag — clean white pill on the orb edge. */
 .hero-speaking-orb__tag {
   position: absolute;
   z-index: 4;
   max-width: min(14rem, 42vw);
   padding: 0.72rem 1.22rem;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--hero-pill-gold) 38%, white);
+  border: 1px solid rgba(255, 255, 255, 0.92);
   background:
     linear-gradient(
       180deg,
-      color-mix(in srgb, var(--hero-pill-light) 88%, var(--hero-pill-gold)) 0%,
-      transparent 46%
+      rgba(255, 255, 255, 0.78) 0%,
+      transparent 44%
     ),
     linear-gradient(
       152deg,
-      var(--hero-pill-light) 0%,
-      var(--hero-pill-warm) 46%,
-      color-mix(in srgb, var(--hero-pill-warm) 82%, var(--hero-pill-copper)) 100%
+      #ffffff 0%,
+      #fafaf8 52%,
+      #f5f4f2 100%
     );
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow:
-    0 16px 38px color-mix(in srgb, var(--hero-pill-ink) 20%, transparent),
-    0 5px 14px color-mix(in srgb, var(--hero-pill-orange) 12%, transparent),
-    inset 0 1px 0 rgba(255, 255, 255, 0.96),
-    inset 0 -1px 0 color-mix(in srgb, var(--hero-pill-copper) 22%, transparent);
+    0 16px 38px color-mix(in srgb, var(--hero-pill-ink) 18%, transparent),
+    0 5px 14px rgba(30, 52, 58, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.98),
+    inset 0 -1px 0 rgba(237, 235, 232, 0.55);
   opacity: 0;
   visibility: hidden;
   pointer-events: none;

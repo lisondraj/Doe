@@ -8,9 +8,10 @@ import { DOE_HOME_ORANGE_PALETTE } from "@/lib/proto/proto-shader-backdrop-color
 import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO } from "@/lib/proto/proto-grain-gradient";
 
 const TAG_DEPTH_ENTER = 0.66;
-const TAG_DEPTH_EXIT = 0.62;
-const TAG_DEPTH_RESET = 0.18;
-const TAG_FADE_MS = 420;
+const TAG_LOOP_MS = 3800;
+const TAG_FADE_IN = 0.14;
+const TAG_HOLD = 0.58;
+const TAG_FADE_OUT = 0.28;
 
 type TagCorner = "tl" | "tr" | "bl" | "br";
 
@@ -256,60 +257,21 @@ function frontOrbIndex(layout: OrbPose[]) {
   return frontIndex;
 }
 
-type OrbTagPhase = "idle" | "entering" | "holding" | "leaving" | "done";
+function tagLoopOpacity(elapsedMs: number) {
+  const cycle = (elapsedMs % TAG_LOOP_MS) / TAG_LOOP_MS;
 
-type OrbTagState = {
-  phase: OrbTagPhase;
-  phaseStartMs: number;
-};
-
-function createTagState(): OrbTagState {
-  return { phase: "idle", phaseStartMs: 0 };
+  if (cycle < TAG_FADE_IN) return cycle / TAG_FADE_IN;
+  if (cycle < TAG_FADE_IN + TAG_HOLD) return 1;
+  const fadeStart = TAG_FADE_IN + TAG_HOLD;
+  return Math.max(0, 1 - (cycle - fadeStart) / TAG_FADE_OUT);
 }
 
-/** One fade-in, hold, fade-out per center pass — no repeat until the orb loops back. */
-function advanceTagState(state: OrbTagState, depth: number, elapsedMs: number): OrbTagState {
-  const fadeT = Math.min(1, (elapsedMs - state.phaseStartMs) / TAG_FADE_MS);
+function tagLabelIndex(elapsedMs: number) {
+  return Math.floor(elapsedMs / TAG_LOOP_MS) % ORB_AGENT_LABELS.length;
+}
 
-  switch (state.phase) {
-    case "idle":
-      if (depth >= TAG_DEPTH_ENTER) {
-        return { phase: "entering", phaseStartMs: elapsedMs };
-      }
-      return state;
-
-    case "entering": {
-      if (depth < TAG_DEPTH_EXIT) {
-        return { phase: "idle", phaseStartMs: elapsedMs };
-      }
-      if (fadeT >= 1) {
-        return { phase: "holding", phaseStartMs: elapsedMs };
-      }
-      return state;
-    }
-
-    case "holding":
-      if (depth < TAG_DEPTH_EXIT) {
-        return { phase: "leaving", phaseStartMs: elapsedMs };
-      }
-      return state;
-
-    case "leaving": {
-      if (fadeT >= 1 || depth < TAG_DEPTH_RESET) {
-        return { phase: "done", phaseStartMs: elapsedMs };
-      }
-      return state;
-    }
-
-    case "done":
-      if (depth < TAG_DEPTH_RESET) {
-        return { phase: "idle", phaseStartMs: elapsedMs };
-      }
-      return state;
-
-    default:
-      return state;
-  }
+function frontOrbInTagWindow(depth: number) {
+  return depth >= TAG_DEPTH_ENTER;
 }
 
 function tagMotionTransform(corner: TagCorner, tagOpacity: number, visible: boolean) {
@@ -328,21 +290,6 @@ function tagMotionTransform(corner: TagCorner, tagOpacity: number, visible: bool
 
 function tagRestTransform(corner: TagCorner) {
   return tagMotionTransform(corner, 0, false);
-}
-
-function tagOpacityFromState(state: OrbTagState, elapsedMs: number) {
-  const fadeT = Math.min(1, (elapsedMs - state.phaseStartMs) / TAG_FADE_MS);
-
-  switch (state.phase) {
-    case "entering":
-      return fadeT;
-    case "holding":
-      return 1;
-    case "leaving":
-      return 1 - fadeT;
-    default:
-      return 0;
-  }
 }
 
 function isOrbitNeighbor(a: number, b: number, count: number) {
@@ -410,14 +357,12 @@ function pulseScaleForOrb(
 
 const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
   scheme,
-  agentLabel,
   tagCorner,
   tagRef,
   haloPrimaryRef,
   haloEchoRef,
 }: {
   scheme: OrbScheme;
-  agentLabel: string;
   tagCorner: TagCorner;
   tagRef?: (node: HTMLDivElement | null) => void;
   haloPrimaryRef?: (node: HTMLDivElement | null) => void;
@@ -461,7 +406,7 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
         className={`hero-speaking-orb__tag hero-speaking-orb__tag--${tagCorner} ${suisseIntl.className}`}
         aria-hidden
       >
-        <span className="hero-speaking-orb__tag-text">{agentLabel}</span>
+        <span className="hero-speaking-orb__tag-text">{ORB_AGENT_LABELS[0]}</span>
       </div>
     </div>
   );
@@ -489,13 +434,9 @@ export function DoePhoneHeroGradientCircles() {
   );
   const haloActiveRef = useRef<boolean[]>(Array.from({ length: ORBIT.orbitCount }, () => false));
   const zOrderRef = useRef(Array.from({ length: ORBIT.orbitCount }, (_, index) => index));
-  const tagStatesRef = useRef<OrbTagState[]>(
-    Array.from({ length: ORBIT.orbitCount }, () => createTagState()),
-  );
   const rafRef = useRef<number | undefined>(undefined);
   const startRef = useRef<number | undefined>(undefined);
   const zDepthsRef = useRef<number[]>(initialZDepths);
-  const lastFrontIndexRef = useRef(-1);
   const tabVisibleRef = useRef(true);
   const tagRefFns = useRef(
     Array.from({ length: ORBIT.orbitCount }, (_, index) => (node: HTMLDivElement | null) => {
@@ -524,32 +465,12 @@ export function DoePhoneHeroGradientCircles() {
     const applyLayout = (phase: number, elapsedMs: number) => {
       const layout = buildOrbLayout(phase, zDepthsRef.current, zOrderRef.current);
       const frontIndex = frontOrbIndex(layout);
-
-      if (frontIndex !== lastFrontIndexRef.current && lastFrontIndexRef.current >= 0) {
-        const previous = lastFrontIndexRef.current;
-        const previousState = tagStatesRef.current[previous];
-        if (
-          previousState.phase === "entering" ||
-          previousState.phase === "holding" ||
-          previousState.phase === "leaving"
-        ) {
-          tagStatesRef.current[previous] = { phase: "done", phaseStartMs: elapsedMs };
-        }
-      }
-      lastFrontIndexRef.current = frontIndex;
-
-      if (frontIndex >= 0) {
-        const current = tagStatesRef.current[frontIndex];
-        tagStatesRef.current[frontIndex] = advanceTagState(
-          current,
-          layout[frontIndex].depth,
-          elapsedMs,
-        );
-      }
-
-      const frontTagOpacity =
-        frontIndex >= 0 ? tagOpacityFromState(tagStatesRef.current[frontIndex], elapsedMs) : 0;
+      const frontDepth = frontIndex >= 0 ? layout[frontIndex].depth : 0;
+      const inTagWindow = frontIndex >= 0 && frontOrbInTagWindow(frontDepth);
+      const loopOpacity = tagLoopOpacity(elapsedMs);
+      const frontTagOpacity = inTagWindow ? loopOpacity : 0;
       const frontTagVisible = frontTagOpacity > 0.01;
+      const currentLabel = ORB_AGENT_LABELS[tagLabelIndex(elapsedMs)];
       const secondaryPulse =
         frontIndex >= 0 ? secondaryPulseIndex(frontIndex, ORBIT.orbitCount) : -1;
 
@@ -573,6 +494,8 @@ export function DoePhoneHeroGradientCircles() {
           const visible = isFront && frontTagVisible;
 
           if (visible) {
+            const tagText = tag.querySelector<HTMLSpanElement>(".hero-speaking-orb__tag-text");
+            if (tagText) tagText.textContent = currentLabel;
             tag.style.visibility = "visible";
             tag.style.opacity = `${tagOpacity}`;
             tag.style.transform = tagMotionTransform(ORB_TAG_CORNERS[index], tagOpacity, true);
@@ -615,9 +538,12 @@ export function DoePhoneHeroGradientCircles() {
     if (media.matches) {
       applyLayout(0, 0);
       const frontIndex = frontOrbIndex(initialLayoutRef.current);
+      const currentLabel = ORB_AGENT_LABELS[0];
       tagRefs.current.forEach((tag, index) => {
         if (!tag) return;
         const isFront = index === frontIndex;
+        const tagText = tag.querySelector<HTMLSpanElement>(".hero-speaking-orb__tag-text");
+        if (tagText) tagText.textContent = currentLabel;
         tag.style.opacity = isFront ? "1" : "0";
         tag.style.visibility = isFront ? "visible" : "hidden";
         tag.style.transform = isFront
@@ -684,7 +610,6 @@ export function DoePhoneHeroGradientCircles() {
           >
             <SpeakingGradientOrb
               scheme={scheme}
-              agentLabel={ORB_AGENT_LABELS[index]}
               tagCorner={ORB_TAG_CORNERS[index]}
               tagRef={tagRefFns[index]}
               haloPrimaryRef={haloPrimaryRefFns[index]}
