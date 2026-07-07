@@ -30,34 +30,34 @@ const ORB_AGENT_LABELS = [
   "Refill Agent",
 ] as const;
 
-/** Orb palettes — muted gold / copper / orange (hero palette, no bright yellow). */
+/** Orb palettes — cohesive orange / gold / yellow family (no muddy browns). */
 const HERO_SPEAKING_ORB_SCHEMES = {
-  amber: {
-    colors: ["#8A5C18", "#C49238", "#E0C080"] as const,
+  champagne: {
+    colors: ["#9A8020", "#F2E090", "#FFF8E0"] as const,
     colorBack: DOE_HOME_ORANGE_PALETTE.back,
   },
   gold: {
-    colors: ["#886018", DOE_HOME_ORANGE_PALETTE.gold, "#E8CC88"] as const,
+    colors: ["#907018", DOE_HOME_ORANGE_PALETTE.gold, "#F8E8B0"] as const,
     colorBack: DOE_HOME_ORANGE_PALETTE.back,
   },
-  copper: {
-    colors: ["#845020", DOE_HOME_ORANGE_PALETTE.copper, "#E0B878"] as const,
+  honey: {
+    colors: ["#987018", "#F0C848", "#FCEAB8"] as const,
     colorBack: DOE_HOME_ORANGE_PALETTE.back,
   },
-  tangerine: {
-    colors: ["#8C4828", "#D08048", "#E8B090"] as const,
+  saffron: {
+    colors: ["#986018", "#E8B038", "#F8D888"] as const,
+    colorBack: DOE_HOME_ORANGE_PALETTE.back,
+  },
+  apricot: {
+    colors: ["#985028", "#E89858", "#F8D0A8"] as const,
     colorBack: DOE_HOME_ORANGE_PALETTE.back,
   },
   orange: {
-    colors: ["#883C28", DOE_HOME_ORANGE_PALETTE.orange, "#E8A878"] as const,
+    colors: ["#904028", DOE_HOME_ORANGE_PALETTE.orange, "#F4B890"] as const,
     colorBack: DOE_HOME_ORANGE_PALETTE.back,
   },
-  ember: {
-    colors: ["#7C3828", "#C06040", "#D89070"] as const,
-    colorBack: DOE_HOME_ORANGE_PALETTE.back,
-  },
-  coral: {
-    colors: ["#804838", "#C07860", "#DCA088"] as const,
+  peach: {
+    colors: ["#985838", "#E8A078", "#F8D0B8"] as const,
     colorBack: DOE_HOME_ORANGE_PALETTE.back,
   },
 } as const;
@@ -76,15 +76,15 @@ function orbAccentStyle(scheme: OrbScheme) {
   } as CSSProperties;
 }
 
-/** Orbit order — gold/orange spectrum with alternating warmth for neighbor contrast. */
+/** Orbit order — warm spectrum with yellow/orange alternation for neighbor contrast. */
 const SCHEME_ORDER = [
-  HERO_SPEAKING_ORB_SCHEMES.gold,
+  HERO_SPEAKING_ORB_SCHEMES.champagne,
   HERO_SPEAKING_ORB_SCHEMES.orange,
-  HERO_SPEAKING_ORB_SCHEMES.copper,
-  HERO_SPEAKING_ORB_SCHEMES.tangerine,
-  HERO_SPEAKING_ORB_SCHEMES.ember,
-  HERO_SPEAKING_ORB_SCHEMES.coral,
-  HERO_SPEAKING_ORB_SCHEMES.amber,
+  HERO_SPEAKING_ORB_SCHEMES.honey,
+  HERO_SPEAKING_ORB_SCHEMES.peach,
+  HERO_SPEAKING_ORB_SCHEMES.gold,
+  HERO_SPEAKING_ORB_SCHEMES.apricot,
+  HERO_SPEAKING_ORB_SCHEMES.saffron,
 ] as const;
 
 /**
