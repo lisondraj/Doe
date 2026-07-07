@@ -1287,7 +1287,7 @@ body.proto-route {
   height: 100%;
 }
 
-/* Speaking halo — orb-tinted rings (dark core → light edge). */
+/* Speaking halo — thin orb-tinted rings. */
 .hero-speaking-orb__halo-ring {
   position: absolute;
   top: 50%;
@@ -1296,11 +1296,8 @@ body.proto-route {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  border: 2px solid color-mix(in srgb, var(--orb-halo-light) 78%, white);
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--orb-halo-mid) 42%, transparent),
-    0 0 22px color-mix(in srgb, var(--orb-halo-dark) 18%, transparent),
-    inset 0 0 20px color-mix(in srgb, var(--orb-halo-light) 24%, transparent);
+  border: 1px solid color-mix(in srgb, var(--orb-halo-light) 68%, white);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--orb-halo-mid) 10%, transparent);
   opacity: 0;
   pointer-events: none;
   will-change: opacity, transform;
@@ -1308,10 +1305,8 @@ body.proto-route {
 }
 
 .hero-speaking-orb__halo-ring--echo {
-  border-color: color-mix(in srgb, var(--orb-halo-mid) 62%, var(--orb-halo-light));
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--orb-halo-dark) 28%, transparent),
-    inset 0 0 14px color-mix(in srgb, var(--orb-halo-mid) 18%, transparent);
+  border-color: color-mix(in srgb, var(--orb-halo-mid) 50%, var(--orb-halo-light));
+  box-shadow: none;
 }
 
 /* Corner tag — clean white pill on the orb edge. */

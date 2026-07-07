@@ -16,11 +16,11 @@ type TagCorner = "tl" | "tr" | "bl" | "br";
 
 const TAG_CORNERS_ALL: TagCorner[] = ["tl", "tr", "bl", "br"];
 
-const PULSE_SLOT_MS = 2600;
+const PULSE_SLOT_MS = 1700;
+const PULSE_ACTIVE_FRACTION = 0.48;
 const PULSE_PAIR_COUNT = 2;
-const PULSE_MAX_BOOST = 0.07;
-
-const HALO_CYCLE_MS = 3000;
+const PULSE_MAX_BOOST = 0.05;
+const HALO_ECHO_LAG = 0.16;
 /** One dedicated agent label per orb — advances as each orb reaches the front. */
 const ORB_AGENT_LABELS = [
   "Voice Agent",
@@ -555,10 +555,18 @@ function pulseIndicesForSlot(
   return picked;
 }
 
+function pulsePhase(elapsedMs: number) {
+  const slotElapsed = elapsedMs % PULSE_SLOT_MS;
+  const activeMs = PULSE_SLOT_MS * PULSE_ACTIVE_FRACTION;
+  if (slotElapsed > activeMs) return null;
+  return slotElapsed / activeMs;
+}
+
 function pulseWave(elapsedMs: number) {
-  const phase = (elapsedMs % PULSE_SLOT_MS) / PULSE_SLOT_MS;
+  const phase = pulsePhase(elapsedMs);
+  if (phase === null) return 1;
   const wave = Math.sin(phase * Math.PI);
-  return 1 + PULSE_MAX_BOOST * wave * wave;
+  return 1 + PULSE_MAX_BOOST * wave;
 }
 
 function shouldPulseOrb(index: number, pulseIndices: number[]) {
@@ -568,18 +576,20 @@ function shouldPulseOrb(index: number, pulseIndices: number[]) {
 function haloWavesForOrb(index: number, elapsedMs: number, pulseIndices: number[]) {
   if (!shouldPulseOrb(index, pulseIndices)) return null;
 
-  const wave = (elapsedMs % HALO_CYCLE_MS) / HALO_CYCLE_MS;
+  const phase = pulsePhase(elapsedMs);
+  if (phase === null) return null;
+
   return {
-    primary: wave,
-    echo: (wave + 0.38) % 1,
+    primary: phase,
+    echo: Math.max(0, phase - HALO_ECHO_LAG),
   };
 }
 
 function haloRingStyle(progress: number) {
-  const eased = 1 - (1 - progress) ** 1.6;
+  const eased = 1 - (1 - progress) ** 2;
   return {
-    opacity: `${(1 - eased) * 0.62}`,
-    transform: `translate3d(-50%, -50%, 0) scale(${1 + eased * 0.48})`,
+    opacity: `${(1 - eased) * 0.4}`,
+    transform: `translate3d(-50%, -50%, 0) scale(${1 + eased * 0.26})`,
   } as const;
 }
 function pulseScaleForOrb(index: number, elapsedMs: number, pulseIndices: number[]) {
