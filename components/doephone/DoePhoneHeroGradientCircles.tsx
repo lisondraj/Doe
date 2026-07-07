@@ -33,34 +33,34 @@ const ORB_AGENT_LABELS = [
   "Refill Agent",
 ] as const;
 
-/** Orb palettes — warm hero family (gold / orange / copper / rose / tan) on ink back. */
+/** Orb palettes — warm hero family, hues nudged apart so neighbors read distinct. */
 const HERO_SPEAKING_ORB_SCHEMES = {
   gold: {
-    colors: ["#9A7420", DOE_HOME_ORANGE_PALETTE.gold, "#F8E4B0"] as const,
+    colors: ["#8E6A18", DOE_HOME_ORANGE_PALETTE.gold, "#FAE8B8"] as const,
     colorBack: DOE_HOME_ORANGE_PALETTE.back,
   },
   orange: {
-    colors: ["#984E30", DOE_HOME_ORANGE_PALETTE.orange, "#F0C0A0"] as const,
+    colors: ["#8C4428", DOE_HOME_ORANGE_PALETTE.orange, "#F4B890"] as const,
     colorBack: DOE_HOME_ORANGE_PALETTE.back,
   },
   copper: {
-    colors: ["#946A28", DOE_HOME_ORANGE_PALETTE.copper, "#EDD4A8"] as const,
+    colors: ["#7A5820", "#B88038", "#E8C890"] as const,
     colorBack: DOE_HOME_ORANGE_PALETTE.back,
   },
   rose: {
-    colors: ["#884838", DOE_HOME_ORANGE_PALETTE.rose, "#E8C0B0"] as const,
+    colors: ["#704038", "#B86858", "#E8B8A8"] as const,
     colorBack: DOE_HOME_ORANGE_PALETTE.back,
   },
   tan: {
-    colors: ["#805038", DOE_HOME_ORANGE_PALETTE.tan, "#DCC8B4"] as const,
+    colors: ["#685040", "#9A7868", "#D8C4B0"] as const,
     colorBack: DOE_HOME_ORANGE_PALETTE.back,
   },
   honey: {
-    colors: ["#A07828", "#E0B050", "#F5E0B8"] as const,
+    colors: ["#947018", "#E8C868", "#F8E8C0"] as const,
     colorBack: DOE_HOME_ORANGE_PALETTE.back,
   },
   ember: {
-    colors: ["#903820", "#C86848", "#E8A898"] as const,
+    colors: ["#782C20", "#B84838", "#E89080"] as const,
     colorBack: DOE_HOME_ORANGE_PALETTE.back,
   },
 } as const;
@@ -79,14 +79,15 @@ function orbAccentStyle(scheme: OrbScheme) {
   } as CSSProperties;
 }
 
+/** Orbit order — alternate yellows, roses, and oranges so side-by-side orbs contrast. */
 const SCHEME_ORDER = [
   HERO_SPEAKING_ORB_SCHEMES.gold,
-  HERO_SPEAKING_ORB_SCHEMES.orange,
-  HERO_SPEAKING_ORB_SCHEMES.copper,
   HERO_SPEAKING_ORB_SCHEMES.rose,
-  HERO_SPEAKING_ORB_SCHEMES.tan,
   HERO_SPEAKING_ORB_SCHEMES.honey,
   HERO_SPEAKING_ORB_SCHEMES.ember,
+  HERO_SPEAKING_ORB_SCHEMES.copper,
+  HERO_SPEAKING_ORB_SCHEMES.tan,
+  HERO_SPEAKING_ORB_SCHEMES.orange,
 ] as const;
 
 /**
@@ -433,10 +434,9 @@ function pulseScaleForOrb(
   index: number,
   elapsedMs: number,
   frontIndex: number,
-  frontTagVisible: boolean,
   secondaryIndex: number,
 ) {
-  if (!shouldPulseOrb(index, frontIndex, frontTagVisible, secondaryIndex)) return 1;
+  if (!shouldPulseOrb(index, frontIndex, secondaryIndex)) return 1;
   return pulseWave(elapsedMs);
 }
 
@@ -562,13 +562,7 @@ export function DoePhoneHeroGradientCircles() {
       layout.forEach((orb, index) => {
         const node = nodeRefs.current[index];
         if (!node) return;
-        const pulseScale = pulseScaleForOrb(
-          index,
-          elapsedMs,
-          frontIndex,
-          frontTagVisible,
-          secondaryPulse,
-        );
+        const pulseScale = pulseScaleForOrb(index, elapsedMs, frontIndex, secondaryPulse);
         const style = orbNodeStyle(orb, pulseScale);
         applyOrbNodeStyle(node, style, nodeCacheRef.current[index]);
 
@@ -587,13 +581,7 @@ export function DoePhoneHeroGradientCircles() {
           }
         }
 
-        const haloWaves = haloWavesForOrb(
-          index,
-          elapsedMs,
-          frontIndex,
-          frontTagVisible,
-          secondaryPulse,
-        );
+        const haloWaves = haloWavesForOrb(index, elapsedMs, frontIndex, secondaryPulse);
         const haloPrimary = haloPrimaryRefs.current[index];
         const haloEcho = haloEchoRefs.current[index];
         const haloActive = haloWaves !== null;
