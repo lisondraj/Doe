@@ -1,11 +1,11 @@
 "use client";
 
 import { GrainGradient } from "@paper-design/shaders-react";
-import { memo, useEffect, useLayoutEffect, useRef, type CSSProperties } from "react";
+import { memo, useEffect, useRef, type CSSProperties } from "react";
 
 import { suisseIntl } from "@/lib/home/fonts";
 import { DOE_HOME_ORANGE_PALETTE } from "@/lib/proto/proto-shader-backdrop-colors";
-import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_ORB } from "@/lib/proto/proto-grain-gradient";
+import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO } from "@/lib/proto/proto-grain-gradient";
 
 const TAG_DEPTH_ENTER = 0.66;
 const TAG_DEPTH_EXIT = 0.62;
@@ -200,37 +200,45 @@ function buildOrbLayout(phase: number, zDepths: number[], zOrder: number[]): Orb
 }
 
 type OrbNodeCache = {
-  xPct: number;
-  yPct: number;
-  scale: number;
+  left: string;
+  top: string;
+  transform: string;
   opacity: number;
   zIndex: number;
 };
 
-function applyOrbNodeVars(
+function orbNodeStyle(orb: OrbPose, pulseScale = 1) {
+  return {
+    left: `calc(50% + ${orb.xPct}%)`,
+    top: `calc(50% + ${orb.yPct}%)`,
+    transform: `translate3d(-50%, -50%, 0) scale(${orb.scale * pulseScale})`,
+    opacity: orb.opacity,
+    zIndex: orb.zIndex,
+  } as const;
+}
+
+function applyOrbNodeStyle(
   node: HTMLDivElement,
-  orb: OrbPose,
-  pulseScale: number,
+  style: ReturnType<typeof orbNodeStyle>,
   cache: OrbNodeCache,
 ) {
-  const scale = orb.scale * pulseScale;
   if (
-    cache.xPct !== orb.xPct ||
-    cache.yPct !== orb.yPct ||
-    cache.scale !== scale ||
-    cache.opacity !== orb.opacity ||
-    cache.zIndex !== orb.zIndex
+    cache.left !== style.left ||
+    cache.top !== style.top ||
+    cache.transform !== style.transform ||
+    cache.opacity !== style.opacity ||
+    cache.zIndex !== style.zIndex
   ) {
-    node.style.setProperty("--orb-x", `${orb.xPct}%`);
-    node.style.setProperty("--orb-y", `${orb.yPct}%`);
-    node.style.setProperty("--orb-scale", String(scale));
-    node.style.opacity = `${orb.opacity}`;
-    node.style.zIndex = `${orb.zIndex}`;
-    cache.xPct = orb.xPct;
-    cache.yPct = orb.yPct;
-    cache.scale = scale;
-    cache.opacity = orb.opacity;
-    cache.zIndex = orb.zIndex;
+    node.style.left = style.left;
+    node.style.top = style.top;
+    node.style.transform = style.transform;
+    node.style.opacity = `${style.opacity}`;
+    node.style.zIndex = `${style.zIndex}`;
+    cache.left = style.left;
+    cache.top = style.top;
+    cache.transform = style.transform;
+    cache.opacity = style.opacity;
+    cache.zIndex = style.zIndex;
   }
 }
 
@@ -408,7 +416,7 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
           offsetX={HERO_ORB_SHADER.offsetX}
           offsetY={HERO_ORB_SHADER.offsetY}
           scale={HERO_ORB_SHADER.scale}
-          maxPixelCount={PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_ORB}
+          maxPixelCount={PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO}
         />
         <div
           className="pointer-events-none absolute inset-0 rounded-full shadow-[inset_0_-18px_36px_rgba(30,52,58,0.22)]"
@@ -439,9 +447,9 @@ export function DoePhoneHeroGradientCircles() {
   const haloEchoRefs = useRef<(HTMLDivElement | null)[]>([]);
   const nodeCacheRef = useRef<OrbNodeCache[]>(
     Array.from({ length: ORBIT.orbitCount }, () => ({
-      xPct: Number.NaN,
-      yPct: Number.NaN,
-      scale: Number.NaN,
+      left: "",
+      top: "",
+      transform: "",
       opacity: Number.NaN,
       zIndex: Number.NaN,
     })),
@@ -477,15 +485,6 @@ export function DoePhoneHeroGradientCircles() {
     }),
   ).current;
 
-  useLayoutEffect(() => {
-    const layout = initialLayoutRef.current;
-    layout.forEach((orb, index) => {
-      const node = nodeRefs.current[index];
-      if (!node) return;
-      applyOrbNodeVars(node, orb, 1, nodeCacheRef.current[index]);
-    });
-  }, []);
-
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -519,7 +518,8 @@ export function DoePhoneHeroGradientCircles() {
         const node = nodeRefs.current[index];
         if (!node) return;
         const pulseScale = pulseScaleForOrb(index, elapsedMs);
-        applyOrbNodeVars(node, orb, pulseScale, nodeCacheRef.current[index]);
+        const style = orbNodeStyle(orb, pulseScale);
+        applyOrbNodeStyle(node, style, nodeCacheRef.current[index]);
 
         const tag = tagRefs.current[index];
         if (tag) {
@@ -629,6 +629,7 @@ export function DoePhoneHeroGradientCircles() {
             key={`orbit-${index}`}
             ref={nodeRefFns[index]}
             className="hero-speaking-orbs__node"
+            style={orbNodeStyle(initialLayoutRef.current[index])}
           >
             <SpeakingGradientOrb
               scheme={scheme}
