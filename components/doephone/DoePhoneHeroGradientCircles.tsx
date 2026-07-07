@@ -1,11 +1,11 @@
 "use client";
 
 import { GrainGradient } from "@paper-design/shaders-react";
-import { useEffect, useRef, type CSSProperties } from "react";
+import { memo, useEffect, useLayoutEffect, useRef, type CSSProperties } from "react";
 
 import { suisseIntl } from "@/lib/home/fonts";
 import { DOE_HOME_ORANGE_PALETTE } from "@/lib/proto/proto-shader-backdrop-colors";
-import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO } from "@/lib/proto/proto-grain-gradient";
+import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_ORB } from "@/lib/proto/proto-grain-gradient";
 
 const TAG_DEPTH_ENTER = 0.48;
 const TAG_DEPTH_EXIT = 0.46;
@@ -173,7 +173,7 @@ function orbitPoint(index: number, count: number, phase: number): OrbPose {
   };
 }
 
-function buildOrbLayout(phase: number, zDepths: number[]): OrbPose[] {
+function buildOrbLayout(phase: number, zDepths: number[], zOrder: number[]): OrbPose[] {
   const poses = Array.from({ length: ORBIT.orbitCount }, (_, index) =>
     orbitPoint(index, ORBIT.orbitCount, phase),
   );
@@ -182,25 +182,52 @@ function buildOrbLayout(phase: number, zDepths: number[]): OrbPose[] {
     zDepths[index] += (poses[index].depth - zDepths[index]) * Z_DEPTH_LERP;
   }
 
-  const zOrder = Array.from({ length: ORBIT.orbitCount }, (_, index) => index).sort(
-    (a, b) => zDepths[a] - zDepths[b] || a - b,
-  );
-  const zByIndex = new Map(zOrder.map((index, rank) => [index, 10 + rank * 2]));
+  for (let index = 0; index < ORBIT.orbitCount; index += 1) {
+    zOrder[index] = index;
+  }
+  zOrder.sort((a, b) => zDepths[a] - zDepths[b] || a - b);
 
-  return poses.map((pose, index) => ({
-    ...pose,
-    zIndex: zByIndex.get(index) ?? 10,
-  }));
+  for (let rank = 0; rank < ORBIT.orbitCount; rank += 1) {
+    const index = zOrder[rank];
+    poses[index].zIndex = 10 + rank * 2;
+  }
+
+  return poses;
 }
 
-function orbNodeStyle(orb: OrbPose, pulseScale = 1) {
-  return {
-    left: `calc(50% + ${orb.xPct}%)`,
-    top: `calc(50% + ${orb.yPct}%)`,
-    transform: `translate3d(-50%, -50%, 0) scale(${orb.scale * pulseScale})`,
-    opacity: orb.opacity,
-    zIndex: orb.zIndex,
-  } as const;
+type OrbNodeCache = {
+  xPct: number;
+  yPct: number;
+  scale: number;
+  opacity: number;
+  zIndex: number;
+};
+
+function applyOrbNodeVars(
+  node: HTMLDivElement,
+  orb: OrbPose,
+  pulseScale: number,
+  cache: OrbNodeCache,
+) {
+  const scale = orb.scale * pulseScale;
+  if (
+    cache.xPct !== orb.xPct ||
+    cache.yPct !== orb.yPct ||
+    cache.scale !== scale ||
+    cache.opacity !== orb.opacity ||
+    cache.zIndex !== orb.zIndex
+  ) {
+    node.style.setProperty("--orb-x", `${orb.xPct}%`);
+    node.style.setProperty("--orb-y", `${orb.yPct}%`);
+    node.style.setProperty("--orb-scale", String(scale));
+    node.style.opacity = `${orb.opacity}`;
+    node.style.zIndex = `${orb.zIndex}`;
+    cache.xPct = orb.xPct;
+    cache.yPct = orb.yPct;
+    cache.scale = scale;
+    cache.opacity = orb.opacity;
+    cache.zIndex = orb.zIndex;
+  }
 }
 
 function frontOrbIndex(layout: OrbPose[]) {
@@ -318,7 +345,7 @@ function pulseScaleForOrb(index: number, elapsedMs: number) {
   return 1 + PULSE_MAX_BOOST * wave * wave;
 }
 
-function SpeakingGradientOrb({
+const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
   scheme,
   agentLabel,
   tagRef,
@@ -346,7 +373,7 @@ function SpeakingGradientOrb({
           fit={HERO_ORB_SHADER.fit}
           worldWidth={HERO_ORB_SHADER.worldWidth}
           worldHeight={HERO_ORB_SHADER.worldHeight}
-          colors={[...scheme.colors]}
+          colors={[scheme.colors[0], scheme.colors[1], scheme.colors[2]]}
           colorBack={scheme.colorBack}
           softness={HERO_ORB_SHADER.softness}
           intensity={HERO_ORB_SHADER.intensity}
@@ -357,7 +384,7 @@ function SpeakingGradientOrb({
           offsetX={HERO_ORB_SHADER.offsetX}
           offsetY={HERO_ORB_SHADER.offsetY}
           scale={HERO_ORB_SHADER.scale}
-          maxPixelCount={PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO}
+          maxPixelCount={PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_ORB}
         />
         <div
           className="pointer-events-none absolute inset-0 rounded-full shadow-[inset_0_-18px_36px_rgba(30,52,58,0.22)]"
@@ -373,7 +400,7 @@ function SpeakingGradientOrb({
       </div>
     </div>
   );
-}
+});
 
 /** Hero — every orb travels one shared elliptical path that dips through the
  *  center, so each color takes its turn passing through the big highlight spot. */
@@ -381,11 +408,22 @@ export function DoePhoneHeroGradientCircles() {
   const initialZDepths = Array.from({ length: ORBIT.orbitCount }, (_, index) =>
     orbitPoint(index, ORBIT.orbitCount, 0).depth,
   );
-  const initialLayoutRef = useRef(buildOrbLayout(0, [...initialZDepths]));
+  const initialLayoutRef = useRef(buildOrbLayout(0, [...initialZDepths], Array.from({ length: ORBIT.orbitCount }, (_, i) => i)));
   const nodeRefs = useRef<(HTMLDivElement | null)[]>([]);
   const tagRefs = useRef<(HTMLDivElement | null)[]>([]);
   const haloPrimaryRefs = useRef<(HTMLDivElement | null)[]>([]);
   const haloEchoRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const nodeCacheRef = useRef<OrbNodeCache[]>(
+    Array.from({ length: ORBIT.orbitCount }, () => ({
+      xPct: Number.NaN,
+      yPct: Number.NaN,
+      scale: Number.NaN,
+      opacity: Number.NaN,
+      zIndex: Number.NaN,
+    })),
+  );
+  const haloActiveRef = useRef<boolean[]>(Array.from({ length: ORBIT.orbitCount }, () => false));
+  const zOrderRef = useRef(Array.from({ length: ORBIT.orbitCount }, (_, index) => index));
   const tagStatesRef = useRef<OrbTagState[]>(
     Array.from({ length: ORBIT.orbitCount }, () => createTagState()),
   );
@@ -393,11 +431,42 @@ export function DoePhoneHeroGradientCircles() {
   const startRef = useRef<number | undefined>(undefined);
   const zDepthsRef = useRef<number[]>(initialZDepths);
   const lastFrontIndexRef = useRef(-1);
+  const tabVisibleRef = useRef(true);
+  const tagRefFns = useRef(
+    Array.from({ length: ORBIT.orbitCount }, (_, index) => (node: HTMLDivElement | null) => {
+      tagRefs.current[index] = node;
+    }),
+  ).current;
+  const haloPrimaryRefFns = useRef(
+    Array.from({ length: ORBIT.orbitCount }, (_, index) => (node: HTMLDivElement | null) => {
+      haloPrimaryRefs.current[index] = node;
+    }),
+  ).current;
+  const haloEchoRefFns = useRef(
+    Array.from({ length: ORBIT.orbitCount }, (_, index) => (node: HTMLDivElement | null) => {
+      haloEchoRefs.current[index] = node;
+    }),
+  ).current;
+  const nodeRefFns = useRef(
+    Array.from({ length: ORBIT.orbitCount }, (_, index) => (node: HTMLDivElement | null) => {
+      nodeRefs.current[index] = node;
+    }),
+  ).current;
+
+  useLayoutEffect(() => {
+    const layout = initialLayoutRef.current;
+    layout.forEach((orb, index) => {
+      const node = nodeRefs.current[index];
+      if (!node) return;
+      applyOrbNodeVars(node, orb, 1, nodeCacheRef.current[index]);
+    });
+  }, []);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+
     const applyLayout = (phase: number, elapsedMs: number) => {
-      const layout = buildOrbLayout(phase, zDepthsRef.current);
+      const layout = buildOrbLayout(phase, zDepthsRef.current, zOrderRef.current);
       const frontIndex = frontOrbIndex(layout);
 
       if (frontIndex !== lastFrontIndexRef.current && lastFrontIndexRef.current >= 0) {
@@ -426,12 +495,7 @@ export function DoePhoneHeroGradientCircles() {
         const node = nodeRefs.current[index];
         if (!node) return;
         const pulseScale = pulseScaleForOrb(index, elapsedMs);
-        const style = orbNodeStyle(orb, pulseScale);
-        node.style.left = style.left;
-        node.style.top = style.top;
-        node.style.transform = style.transform;
-        node.style.opacity = `${style.opacity}`;
-        node.style.zIndex = `${style.zIndex}`;
+        applyOrbNodeVars(node, orb, pulseScale, nodeCacheRef.current[index]);
 
         const tag = tagRefs.current[index];
         if (tag) {
@@ -439,28 +503,35 @@ export function DoePhoneHeroGradientCircles() {
           const tagOpacity = isFront ? tagOpacityFromState(tagStatesRef.current[index], elapsedMs) : 0;
           const visible = isFront && tagOpacity > 0.01;
 
-          tag.style.opacity = `${tagOpacity}`;
-          tag.style.visibility = visible ? "visible" : "hidden";
-          tag.style.transform = visible
-            ? `translateX(-50%) translateY(${(1 - tagOpacity) * 5}px) scale(${0.94 + tagOpacity * 0.06})`
-            : "translateX(-50%) translateY(8px) scale(0.94)";
+          if (visible) {
+            tag.style.visibility = "visible";
+            tag.style.opacity = `${tagOpacity}`;
+            tag.style.transform = `translateX(-50%) translateY(${(1 - tagOpacity) * 5}px) scale(${0.94 + tagOpacity * 0.06})`;
+          } else if (tag.style.visibility !== "hidden") {
+            tag.style.opacity = "0";
+            tag.style.visibility = "hidden";
+            tag.style.transform = "translateX(-50%) translateY(8px) scale(0.94)";
+          }
         }
 
         const haloWaves = haloWavesForOrb(index, elapsedMs);
         const haloPrimary = haloPrimaryRefs.current[index];
         const haloEcho = haloEchoRefs.current[index];
+        const haloActive = haloWaves !== null;
 
         if (haloPrimary && haloEcho) {
-          if (haloWaves) {
+          if (haloActive) {
             const primaryStyle = haloRingStyle(haloWaves.primary);
             const echoStyle = haloRingStyle(haloWaves.echo);
             haloPrimary.style.opacity = primaryStyle.opacity;
             haloPrimary.style.transform = primaryStyle.transform;
             haloEcho.style.opacity = echoStyle.opacity;
             haloEcho.style.transform = echoStyle.transform;
-          } else {
+            haloActiveRef.current[index] = true;
+          } else if (haloActiveRef.current[index]) {
             haloPrimary.style.opacity = "0";
             haloEcho.style.opacity = "0";
+            haloActiveRef.current[index] = false;
           }
         }
       });
@@ -481,7 +552,11 @@ export function DoePhoneHeroGradientCircles() {
       return;
     }
 
+    const pausedAtRef = { current: undefined as number | undefined };
+
     const tick = (now: number) => {
+      rafRef.current = undefined;
+      if (!tabVisibleRef.current) return;
       if (startRef.current === undefined) startRef.current = now;
       const elapsed = now - startRef.current;
       const phase = (elapsed % ORBIT_REVOLUTION_MS) / ORBIT_REVOLUTION_MS;
@@ -489,8 +564,35 @@ export function DoePhoneHeroGradientCircles() {
       rafRef.current = requestAnimationFrame(tick);
     };
 
+    const onVisibility = () => {
+      const visible = document.visibilityState === "visible";
+      tabVisibleRef.current = visible;
+
+      if (!visible) {
+        pausedAtRef.current = performance.now();
+        if (rafRef.current !== undefined) {
+          cancelAnimationFrame(rafRef.current);
+          rafRef.current = undefined;
+        }
+        return;
+      }
+
+      if (pausedAtRef.current !== undefined && startRef.current !== undefined) {
+        startRef.current += performance.now() - pausedAtRef.current;
+        pausedAtRef.current = undefined;
+      }
+
+      if (rafRef.current === undefined) {
+        rafRef.current = requestAnimationFrame(tick);
+      }
+    };
+
+    tabVisibleRef.current = document.visibilityState === "visible";
+    document.addEventListener("visibilitychange", onVisibility);
+
     rafRef.current = requestAnimationFrame(tick);
     return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
       if (rafRef.current !== undefined) cancelAnimationFrame(rafRef.current);
     };
   }, []);
@@ -501,24 +603,15 @@ export function DoePhoneHeroGradientCircles() {
         {SCHEME_ORDER.map((scheme, index) => (
           <div
             key={`orbit-${index}`}
-            ref={(node) => {
-              nodeRefs.current[index] = node;
-            }}
+            ref={nodeRefFns[index]}
             className="hero-speaking-orbs__node"
-            style={orbNodeStyle(initialLayoutRef.current[index])}
           >
             <SpeakingGradientOrb
               scheme={scheme}
               agentLabel={ORB_AGENT_LABELS[index]}
-              tagRef={(node) => {
-                tagRefs.current[index] = node;
-              }}
-              haloPrimaryRef={(node) => {
-                haloPrimaryRefs.current[index] = node;
-              }}
-              haloEchoRef={(node) => {
-                haloEchoRefs.current[index] = node;
-              }}
+              tagRef={tagRefFns[index]}
+              haloPrimaryRef={haloPrimaryRefFns[index]}
+              haloEchoRef={haloEchoRefFns[index]}
             />
           </div>
         ))}
