@@ -1230,7 +1230,7 @@ body.proto-route {
   }
 }
 
-/* Hero — gradient speaking orbs on vertical circular right-edge path. */
+/* Hero — half-circle agent dial on the right edge; swipe to rotate. */
 .hero-speaking-orbs {
   pointer-events: none;
   position: absolute;
@@ -1239,9 +1239,10 @@ body.proto-route {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding-top: clamp(2rem, 6vmin, 3.25rem);
-  padding-bottom: clamp(3.75rem, 11.5vmin, 5.75rem);
-  padding-left: clamp(0.85rem, 4.5vw, 1.75rem);
+  overflow: hidden;
+  padding-top: clamp(1.75rem, 5.5vmin, 3rem);
+  padding-bottom: clamp(3.5rem, 11vmin, 5.5rem);
+  padding-left: 0;
   padding-right: 0;
   --hero-pill-ink: #1e343a;
   --hero-pill-warm: #f2e6d8;
@@ -1249,17 +1250,34 @@ body.proto-route {
   --hero-pill-gold: #e7a944;
   --hero-pill-copper: #d49d4f;
   --hero-pill-orange: #d2774c;
+  --hero-dial-radius: 46vmin;
 }
 
 .hero-speaking-orbs__stage {
   position: relative;
-  width: clamp(25rem, 84vmin, 36rem);
-  height: clamp(22rem, 68vmin, 31rem);
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  width: var(--hero-dial-radius);
+  height: calc(var(--hero-dial-radius) * 2);
+  max-height: calc(100% - clamp(1.5rem, 4vmin, 2.5rem));
+  flex-shrink: 0;
   overflow: visible;
+}
+
+.hero-speaking-orbs__dial {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 0;
+  height: 0;
 }
 
 .hero-speaking-orbs__node {
   position: absolute;
+  left: 0;
+  top: 0;
   transform-origin: center center;
   will-change: transform, opacity;
   backface-visibility: hidden;
@@ -1355,6 +1373,29 @@ body.proto-route {
   letter-spacing: -0.028em;
   line-height: 1.08;
   white-space: nowrap;
+}
+
+.hero-speaking-orb__tag--left-mid {
+  right: calc(100% + 0.55rem);
+  left: auto;
+  top: 50%;
+  bottom: auto;
+  transform: translate3d(-8px, -50%, 0) scale(0.96);
+  transform-origin: center right;
+  transition:
+    opacity 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0ms linear 420ms;
+}
+
+.hero-speaking-orb__tag--left-mid.hero-speaking-orb__tag--visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translate3d(0, -50%, 0) scale(1);
+  transition:
+    opacity 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0ms linear 0ms;
 }
 
 .hero-speaking-orb__tag--tl {
