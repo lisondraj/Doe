@@ -30,7 +30,7 @@ function ReadMoreArrow() {
   );
 }
 
-/** Home announcement strip — raised overflow sand behind, base sand strip. */
+/** Home announcement strip — main-page white overflow behind, base sand strip. */
 export function DoeHomeTopBanner() {
   const [dismissed, setDismissed] = useState(false);
 

@@ -722,7 +722,7 @@ html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav-
   --proto-nav-frost-progress: 1;
 }
 
-/* Home — pre-seed announcement above nav (raised overflow sand, base sand strip). */
+/* Home — pre-seed announcement above nav (main-page white overflow, base sand strip). */
 html[data-home-page]:has(.doe-home-top-banner) {
   --doe-home-top-banner-height: calc(
     env(safe-area-inset-top, 0px) + clamp(2.25rem, 6.35vmin, 2.85rem)
@@ -805,12 +805,12 @@ html[data-home-page]:has(.doe-home-top-banner) {
 }
 
 html[data-home-page]:has(.doe-home-top-banner) {
-  --doe-page-surface: #f2ece4;
-  background-color: #f2ece4;
+  --doe-page-surface: #f7f6f3;
+  background-color: #f7f6f3;
 }
 
 html[data-home-page]:has(.doe-home-top-banner) body {
-  background-color: #f2ece4;
+  background-color: #f7f6f3;
 }
 
 html[data-home-page]:has(.doe-home-top-banner) nav.doephone-site-nav,

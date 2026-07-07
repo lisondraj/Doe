@@ -2,7 +2,9 @@
 export const DOE_PAGE_SURFACE = "#EDE8DF";
 export const DOE_PAGE_SURFACE_RAISED = "#F2ECE4";
 export const DOE_PAGE_SURFACE_SUNKEN = "#E4DDD2";
-/** Home pre-seed strip — one step darker than raised overflow sand. */
+/** Home overflow — matches main page white sections (#F7F6F3). */
+export const DOE_HOME_OVERFLOW_SURFACE = "#F7F6F3";
+/** Home pre-seed strip — one step darker than overflow white. */
 export const DOE_HOME_BANNER_SURFACE = DOE_PAGE_SURFACE;
 /** Agents tray — clearly darker than page surface for nested feature cards. */
 export const DOE_PAGE_SURFACE_SUNKEN_DEEP = "#D5CABE";
