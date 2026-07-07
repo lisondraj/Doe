@@ -1253,8 +1253,8 @@ body.proto-route {
 
 .hero-speaking-orbs__stage {
   position: relative;
-  width: clamp(28rem, 84vmin, 38rem);
-  height: clamp(23rem, 68vmin, 31rem);
+  width: clamp(25rem, 76vmin, 34rem);
+  height: clamp(20.5rem, 62vmin, 28rem);
   overflow: visible;
 }
 

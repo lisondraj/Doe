@@ -16,8 +16,8 @@ type TagCorner = "tl" | "tr" | "bl" | "br";
 
 const TAG_CORNERS_ALL: TagCorner[] = ["tl", "tr", "bl", "br"];
 
-const PULSE_SLOT_MS = 1700;
-const PULSE_ACTIVE_FRACTION = 0.48;
+const PULSE_SLOT_MS = 2500;
+const PULSE_ACTIVE_FRACTION = 0.52;
 const PULSE_PAIR_COUNT = 2;
 const PULSE_MAX_BOOST = 0.05;
 const HALO_ECHO_LAG = 0.16;
@@ -102,7 +102,7 @@ const ORBIT = {
 } as const;
 
 /** Single shared size — apparent size is depth-driven scale only. */
-const ORB_BASE_SIZE = "clamp(15.5rem, 46vmin, 20.5rem)";
+const ORB_BASE_SIZE = "clamp(13.75rem, 40vmin, 18.25rem)";
 const ORBIT_MIN_SCALE = 0.56;
 const ORBIT_MAX_SCALE = 1;
 
@@ -206,6 +206,22 @@ type OrbNodeCache = {
   transform: string;
   opacity: number;
   zIndex: number;
+};
+
+type TagDomCache = {
+  opacity: number;
+  transform: string;
+  nudgeDx: number;
+  nudgeDy: number;
+  nudgeValid: boolean;
+};
+
+type HaloDomCache = {
+  primaryOpacity: string;
+  primaryTransform: string;
+  echoOpacity: string;
+  echoTransform: string;
+  active: boolean;
 };
 
 function orbNodeStyle(orb: OrbPose, pulseScale = 1) {
@@ -495,11 +511,72 @@ function updateVisibleTagFrame(
   tag: HTMLDivElement,
   corner: TagCorner,
   tagOpacity: number,
+  remeasureNudge: boolean,
+  cache: TagDomCache,
 ) {
-  tag.style.opacity = `${tagOpacity}`;
-  tag.style.transform = tagMotionTransform(corner, tagOpacity, true);
-  const nudge = viewportNudge(tag.getBoundingClientRect());
-  tag.style.transform = tagTransformWithNudge(corner, tagOpacity, true, nudge);
+  const roundedOpacity = Math.round(tagOpacity * 100) / 100;
+  const baseTransform = tagMotionTransform(corner, tagOpacity, true);
+
+  if (remeasureNudge || !cache.nudgeValid) {
+    tag.style.transform = baseTransform;
+    const nudge = viewportNudge(tag.getBoundingClientRect());
+    cache.nudgeDx = nudge.dx;
+    cache.nudgeDy = nudge.dy;
+    cache.nudgeValid = true;
+  }
+
+  const transform =
+    cache.nudgeDx === 0 && cache.nudgeDy === 0
+      ? baseTransform
+      : tagTransformWithNudge(corner, tagOpacity, true, {
+          dx: cache.nudgeDx,
+          dy: cache.nudgeDy,
+        });
+
+  if (cache.opacity !== roundedOpacity) {
+    tag.style.opacity = `${roundedOpacity}`;
+    cache.opacity = roundedOpacity;
+  }
+  if (cache.transform !== transform) {
+    tag.style.transform = transform;
+    cache.transform = transform;
+  }
+}
+
+function applyHaloDom(
+  primary: HTMLDivElement,
+  echo: HTMLDivElement,
+  waves: { primary: number; echo: number } | null,
+  cache: HaloDomCache,
+) {
+  if (!waves) {
+    if (!cache.active) return;
+    primary.style.opacity = "0";
+    echo.style.opacity = "0";
+    cache.active = false;
+    return;
+  }
+
+  const primaryStyle = haloRingStyle(waves.primary);
+  const echoStyle = haloRingStyle(waves.echo);
+  cache.active = true;
+
+  if (cache.primaryOpacity !== primaryStyle.opacity) {
+    primary.style.opacity = primaryStyle.opacity;
+    cache.primaryOpacity = primaryStyle.opacity;
+  }
+  if (cache.primaryTransform !== primaryStyle.transform) {
+    primary.style.transform = primaryStyle.transform;
+    cache.primaryTransform = primaryStyle.transform;
+  }
+  if (cache.echoOpacity !== echoStyle.opacity) {
+    echo.style.opacity = echoStyle.opacity;
+    cache.echoOpacity = echoStyle.opacity;
+  }
+  if (cache.echoTransform !== echoStyle.transform) {
+    echo.style.transform = echoStyle.transform;
+    cache.echoTransform = echoStyle.transform;
+  }
 }
 
 function isOrbitNeighbor(a: number, b: number, count: number) {
@@ -561,12 +638,12 @@ function pulseWave(elapsedMs: number) {
   return 1 + PULSE_MAX_BOOST * wave;
 }
 
-function shouldPulseOrb(index: number, pulseIndices: number[]) {
-  return pulseIndices.includes(index);
+function shouldPulseOrb(index: number, pulseSet: ReadonlySet<number>) {
+  return pulseSet.has(index);
 }
 
-function haloWavesForOrb(index: number, elapsedMs: number, pulseIndices: number[]) {
-  if (!shouldPulseOrb(index, pulseIndices)) return null;
+function haloWavesForOrb(index: number, elapsedMs: number, pulseSet: ReadonlySet<number>) {
+  if (!shouldPulseOrb(index, pulseSet)) return null;
 
   const phase = pulsePhase(elapsedMs);
   if (phase === null) return null;
@@ -579,13 +656,15 @@ function haloWavesForOrb(index: number, elapsedMs: number, pulseIndices: number[
 
 function haloRingStyle(progress: number) {
   const eased = 1 - (1 - progress) ** 2;
+  const opacity = Math.round((1 - eased) * 0.4 * 1000) / 1000;
+  const scale = Math.round((1 + eased * 0.26) * 10000) / 10000;
   return {
-    opacity: `${(1 - eased) * 0.4}`,
-    transform: `translate3d(-50%, -50%, 0) scale(${1 + eased * 0.26})`,
+    opacity: `${opacity}`,
+    transform: `translate3d(-50%, -50%, 0) scale(${scale})`,
   } as const;
 }
-function pulseScaleForOrb(index: number, elapsedMs: number, pulseIndices: number[]) {
-  if (!shouldPulseOrb(index, pulseIndices)) return 1;
+function pulseScaleForOrb(index: number, elapsedMs: number, pulseSet: ReadonlySet<number>) {
+  if (!shouldPulseOrb(index, pulseSet)) return 1;
   return pulseWave(elapsedMs);
 }
 
@@ -664,7 +743,24 @@ export function DoePhoneHeroGradientCircles() {
       zIndex: Number.NaN,
     })),
   );
-  const haloActiveRef = useRef<boolean[]>(Array.from({ length: ORBIT.orbitCount }, () => false));
+  const tagCacheRef = useRef<TagDomCache[]>(
+    Array.from({ length: ORBIT.orbitCount }, () => ({
+      opacity: Number.NaN,
+      transform: "",
+      nudgeDx: 0,
+      nudgeDy: 0,
+      nudgeValid: false,
+    })),
+  );
+  const haloCacheRef = useRef<HaloDomCache[]>(
+    Array.from({ length: ORBIT.orbitCount }, () => ({
+      primaryOpacity: "",
+      primaryTransform: "",
+      echoOpacity: "",
+      echoTransform: "",
+      active: false,
+    })),
+  );
   const zOrderRef = useRef(Array.from({ length: ORBIT.orbitCount }, (_, index) => index));
   const rafRef = useRef<number | undefined>(undefined);
   const startRef = useRef<number | undefined>(undefined);
@@ -705,20 +801,25 @@ export function DoePhoneHeroGradientCircles() {
       const pulseExclude: number[] = [];
       if (pill.showIndex >= 0) pulseExclude.push(pill.showIndex);
       const pulseSlot = Math.floor(elapsedMs / PULSE_SLOT_MS);
-      const pulseIndices = pulseIndicesForSlot(pulseSlot, ORBIT.orbitCount, pulseExclude);
+      const pulseSet = new Set(
+        pulseIndicesForSlot(pulseSlot, ORBIT.orbitCount, pulseExclude),
+      );
 
       layout.forEach((orb, index) => {
         const node = nodeRefs.current[index];
         if (!node) return;
-        const pulseScale = pulseScaleForOrb(index, elapsedMs, pulseIndices);
+        const nodeCache = nodeCacheRef.current[index];
+        const pulseScale = pulseScaleForOrb(index, elapsedMs, pulseSet);
         const style = orbNodeStyle(orb, pulseScale);
-        applyOrbNodeStyle(node, style, nodeCacheRef.current[index]);
+        const nodeMoved = nodeCache.transform !== style.transform;
+        applyOrbNodeStyle(node, style, nodeCache);
 
         const tag = tagRefs.current[index];
         if (tag) {
           const isPillOrb = index === pill.showIndex;
           const tagOpacity = isPillOrb ? pill.opacity : 0;
           const visible = isPillOrb && frontTagVisible;
+          const tagCache = tagCacheRef.current[index];
 
           if (visible && node && pill.corner) {
             if (tagSessionRef.current !== pill.sessionId) {
@@ -731,12 +832,20 @@ export function DoePhoneHeroGradientCircles() {
               );
               pillCtrlRef.current.activeCorner = corner;
               tagSessionRef.current = pill.sessionId;
+              tagCache.nudgeValid = false;
             }
-            updateVisibleTagFrame(tag, pillCtrlRef.current.activeCorner ?? pill.corner, tagOpacity);
+            updateVisibleTagFrame(
+              tag,
+              pillCtrlRef.current.activeCorner ?? pill.corner,
+              tagOpacity,
+              nodeMoved,
+              tagCache,
+            );
           } else if (tag.style.visibility !== "hidden") {
             if (tagSessionRef.current === pill.sessionId) {
               tagSessionRef.current = -1;
             }
+            tagCache.nudgeValid = false;
             tag.style.opacity = "0";
             tag.style.visibility = "hidden";
             const restCorner = pillCtrlRef.current.lastCorner ?? "tl";
@@ -744,25 +853,15 @@ export function DoePhoneHeroGradientCircles() {
           }
         }
 
-        const haloWaves = haloWavesForOrb(index, elapsedMs, pulseIndices);
         const haloPrimary = haloPrimaryRefs.current[index];
         const haloEcho = haloEchoRefs.current[index];
-        const haloActive = haloWaves !== null;
-
         if (haloPrimary && haloEcho) {
-          if (haloActive) {
-            const primaryStyle = haloRingStyle(haloWaves.primary);
-            const echoStyle = haloRingStyle(haloWaves.echo);
-            haloPrimary.style.opacity = primaryStyle.opacity;
-            haloPrimary.style.transform = primaryStyle.transform;
-            haloEcho.style.opacity = echoStyle.opacity;
-            haloEcho.style.transform = echoStyle.transform;
-            haloActiveRef.current[index] = true;
-          } else if (haloActiveRef.current[index]) {
-            haloPrimary.style.opacity = "0";
-            haloEcho.style.opacity = "0";
-            haloActiveRef.current[index] = false;
-          }
+          applyHaloDom(
+            haloPrimary,
+            haloEcho,
+            haloWavesForOrb(index, elapsedMs, pulseSet),
+            haloCacheRef.current[index],
+          );
         }
       });
     };
@@ -784,7 +883,8 @@ export function DoePhoneHeroGradientCircles() {
             pillCtrlRef.current.lastCorner,
           );
           pillCtrlRef.current.activeCorner = corner;
-          updateVisibleTagFrame(tag, corner, 1);
+          tagCacheRef.current[index].nudgeValid = false;
+          updateVisibleTagFrame(tag, corner, 1, true, tagCacheRef.current[index]);
         } else {
           tag.style.opacity = "0";
           tag.style.visibility = "hidden";
