@@ -120,6 +120,12 @@ const ORBIT_ANCHOR_Y = 33.2;
  */
 const ORBIT_BACK_BUNCH = 0.34;
 
+const ORBIT_TILT_RAD = (ORBIT.tiltDeg * Math.PI) / 180;
+const ORBIT_TILT_COS = Math.cos(ORBIT_TILT_RAD);
+const ORBIT_TILT_SIN = Math.sin(ORBIT_TILT_RAD);
+const ORBIT_WARP_SCALE = ORBIT_BACK_BUNCH / (Math.PI * 2);
+const ORBIT_COUNT = ORBIT.orbitCount;
+
 /** Volumetric sphere — smooth gradient, no grain. */
 const HERO_ORB_SHADER = {
   shape: "sphere" as const,
@@ -150,49 +156,50 @@ function easeDepth(depth: number) {
   return depth * depth * (3 - 2 * depth);
 }
 
-function orbitPoint(index: number, count: number, phase: number): OrbPose {
-  const tilt = (ORBIT.tiltDeg * Math.PI) / 180;
+function orbitPoint(index: number, count: number, phase: number, target?: OrbPose): OrbPose {
   const fraction = index / count + phase;
-  const warped = fraction + (ORBIT_BACK_BUNCH / (Math.PI * 2)) * Math.sin(fraction * Math.PI * 2);
+  const warped = fraction + ORBIT_WARP_SCALE * Math.sin(fraction * Math.PI * 2);
   const t = Math.PI / 2 + warped * Math.PI * 2;
 
-  // depth: 1 at the near vertex (t = π/2), 0 at the far vertex (t = -π/2).
   const depth = (Math.sin(t) + 1) / 2;
   const eased = easeDepth(depth);
 
   const x = Math.cos(t) * ORBIT.rx;
   const y = (Math.sin(t) - 1) * ORBIT.ry;
 
-  const xPct = x * Math.cos(tilt) - y * Math.sin(tilt) + ORBIT_ANCHOR_X;
-  const yPct = x * Math.sin(tilt) + y * Math.cos(tilt) + ORBIT_ANCHOR_Y;
+  const xPct = x * ORBIT_TILT_COS - y * ORBIT_TILT_SIN + ORBIT_ANCHOR_X;
+  const yPct = x * ORBIT_TILT_SIN + y * ORBIT_TILT_COS + ORBIT_ANCHOR_Y;
+  const scale = ORBIT_MIN_SCALE + eased * (ORBIT_MAX_SCALE - ORBIT_MIN_SCALE);
+  const opacity = 0.72 + eased * 0.28;
 
-  return {
-    xPct,
-    yPct,
-    depth,
-    scale: ORBIT_MIN_SCALE + eased * (ORBIT_MAX_SCALE - ORBIT_MIN_SCALE),
-    opacity: 0.72 + eased * 0.28,
-    zIndex: 10,
-  };
+  if (target) {
+    target.xPct = xPct;
+    target.yPct = yPct;
+    target.depth = depth;
+    target.scale = scale;
+    target.opacity = opacity;
+    return target;
+  }
+
+  return { xPct, yPct, depth, scale, opacity, zIndex: 10 };
 }
 
-function buildOrbLayout(phase: number, zDepths: number[], zOrder: number[]): OrbPose[] {
-  const poses = Array.from({ length: ORBIT.orbitCount }, (_, index) =>
-    orbitPoint(index, ORBIT.orbitCount, phase),
-  );
+function buildOrbLayout(phase: number, zDepths: number[], zOrder: number[], poses: OrbPose[]) {
+  for (let index = 0; index < ORBIT_COUNT; index += 1) {
+    orbitPoint(index, ORBIT_COUNT, phase, poses[index]);
+  }
 
-  for (let index = 0; index < ORBIT.orbitCount; index += 1) {
+  for (let index = 0; index < ORBIT_COUNT; index += 1) {
     zDepths[index] += (poses[index].depth - zDepths[index]) * Z_DEPTH_LERP;
   }
 
-  for (let index = 0; index < ORBIT.orbitCount; index += 1) {
+  for (let index = 0; index < ORBIT_COUNT; index += 1) {
     zOrder[index] = index;
   }
   zOrder.sort((a, b) => zDepths[a] - zDepths[b] || a - b);
 
-  for (let rank = 0; rank < ORBIT.orbitCount; rank += 1) {
-    const index = zOrder[rank];
-    poses[index].zIndex = 10 + rank * 2;
+  for (let rank = 0; rank < ORBIT_COUNT; rank += 1) {
+    poses[zOrder[rank]].zIndex = 10 + rank * 2;
   }
 
   return poses;
@@ -214,11 +221,22 @@ type HaloDomCache = {
   active: boolean;
 };
 
+type TagDomCache = {
+  opacity: number;
+  transform: string;
+  nudgeDx: number;
+  nudgeDy: number;
+  nudgeValid: boolean;
+};
+
 function orbNodeStyle(orb: OrbPose) {
+  const xPct = Math.round(orb.xPct * 100) / 100;
+  const yPct = Math.round(orb.yPct * 100) / 100;
+  const scale = Math.round(orb.scale * 1000) / 1000;
   return {
-    left: `calc(50% + ${orb.xPct}%)`,
-    top: `calc(50% + ${orb.yPct}%)`,
-    transform: `translate3d(-50%, -50%, 0) scale(${orb.scale})`,
+    left: `calc(50% + ${xPct}%)`,
+    top: `calc(50% + ${yPct}%)`,
+    transform: `translate3d(-50%, -50%, 0) scale(${scale})`,
     opacity: orb.opacity,
     zIndex: orb.zIndex,
   } as const;
@@ -477,35 +495,51 @@ function initVisibleTagLayout(
   preferredCorner: TagCorner,
   label: string,
   avoidCorner: TagCorner | null,
+  tagText?: HTMLSpanElement | null,
 ): TagCorner {
   const corner = pickTagCorner(preferredCorner, node.getBoundingClientRect(), avoidCorner);
   applyTagCornerClass(tag, corner);
 
-  const tagText = tag.querySelector<HTMLSpanElement>(".hero-speaking-orb__tag-text");
   if (tagText) tagText.textContent = label;
 
   tag.style.visibility = "visible";
   return corner;
 }
 
-function updateVisibleTagFrame(tag: HTMLDivElement, corner: TagCorner, tagOpacity: number) {
-  tag.style.opacity = `${tagOpacity}`;
-  tag.style.transform = tagMotionTransform(corner, tagOpacity, true);
-  const nudge = viewportNudge(tag.getBoundingClientRect());
-  tag.style.transform = tagTransformWithNudge(corner, tagOpacity, true, nudge);
-}
-
-function applyVisibleTagLayout(
+function updateVisibleTagFrame(
   tag: HTMLDivElement,
-  node: HTMLDivElement,
-  preferredCorner: TagCorner,
+  corner: TagCorner,
   tagOpacity: number,
-  label: string,
-  avoidCorner: TagCorner | null,
-): TagCorner {
-  const corner = initVisibleTagLayout(tag, node, preferredCorner, label, avoidCorner);
-  updateVisibleTagFrame(tag, corner, tagOpacity);
-  return corner;
+  remeasureNudge: boolean,
+  cache: TagDomCache,
+) {
+  const roundedOpacity = Math.round(tagOpacity * 100) / 100;
+  const baseTransform = tagMotionTransform(corner, tagOpacity, true);
+
+  if (remeasureNudge || !cache.nudgeValid) {
+    tag.style.transform = baseTransform;
+    const nudge = viewportNudge(tag.getBoundingClientRect());
+    cache.nudgeDx = nudge.dx;
+    cache.nudgeDy = nudge.dy;
+    cache.nudgeValid = true;
+  }
+
+  const transform =
+    cache.nudgeDx === 0 && cache.nudgeDy === 0
+      ? baseTransform
+      : tagTransformWithNudge(corner, tagOpacity, true, {
+          dx: cache.nudgeDx,
+          dy: cache.nudgeDy,
+        });
+
+  if (cache.opacity !== roundedOpacity) {
+    tag.style.opacity = `${roundedOpacity}`;
+    cache.opacity = roundedOpacity;
+  }
+  if (cache.transform !== transform) {
+    tag.style.transform = transform;
+    cache.transform = transform;
+  }
 }
 
 function applyHaloDom(
@@ -596,19 +630,12 @@ function pulsePhase(elapsedMs: number) {
   return slotElapsed / activeMs;
 }
 
-function shouldPulseOrb(index: number, pulseSet: ReadonlySet<number>) {
-  return pulseSet.has(index);
-}
-
-function haloWavesForOrb(index: number, elapsedMs: number, pulseSet: ReadonlySet<number>) {
-  if (!shouldPulseOrb(index, pulseSet)) return null;
-
-  const phase = pulsePhase(elapsedMs);
-  if (phase === null) return null;
+function haloWavesForOrb(index: number, pulseSet: ReadonlySet<number>, sharedPhase: number | null) {
+  if (!pulseSet.has(index) || sharedPhase === null) return null;
 
   return {
-    primary: phase,
-    echo: Math.max(0, phase - HALO_ECHO_LAG),
+    primary: sharedPhase,
+    echo: Math.max(0, sharedPhase - HALO_ECHO_LAG),
   };
 }
 
@@ -625,11 +652,13 @@ function haloRingStyle(progress: number) {
 const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
   scheme,
   tagRef,
+  tagTextRef,
   haloPrimaryRef,
   haloEchoRef,
 }: {
   scheme: OrbScheme;
   tagRef?: (node: HTMLDivElement | null) => void;
+  tagTextRef?: (node: HTMLSpanElement | null) => void;
   haloPrimaryRef?: (node: HTMLDivElement | null) => void;
   haloEchoRef?: (node: HTMLDivElement | null) => void;
 }) {
@@ -671,7 +700,7 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
         className={`hero-speaking-orb__tag ${suisseIntl.className}`}
         aria-hidden
       >
-        <span className="hero-speaking-orb__tag-text">{ORB_AGENT_LABELS[0]}</span>
+        <span ref={tagTextRef} className="hero-speaking-orb__tag-text">{ORB_AGENT_LABELS[0]}</span>
       </div>
     </div>
   );
@@ -680,12 +709,23 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
 /** Hero — every orb travels one shared elliptical path that dips through the
  *  center, so each color takes its turn passing through the big highlight spot. */
 export function DoePhoneHeroGradientCircles() {
-  const initialZDepths = Array.from({ length: ORBIT.orbitCount }, (_, index) =>
-    orbitPoint(index, ORBIT.orbitCount, 0).depth,
+  const initialZDepths = Array.from({ length: ORBIT_COUNT }, (_, index) =>
+    orbitPoint(index, ORBIT_COUNT, 0).depth,
   );
-  const initialLayoutRef = useRef(buildOrbLayout(0, [...initialZDepths], Array.from({ length: ORBIT.orbitCount }, (_, i) => i)));
+  const layoutRef = useRef<OrbPose[]>(
+    Array.from({ length: ORBIT_COUNT }, () => ({
+      xPct: 0,
+      yPct: 0,
+      depth: 0,
+      scale: 1,
+      opacity: 1,
+      zIndex: 10,
+    })),
+  );
+  const initialLayoutRef = useRef(buildOrbLayout(0, [...initialZDepths], Array.from({ length: ORBIT_COUNT }, (_, i) => i), layoutRef.current));
   const nodeRefs = useRef<(HTMLDivElement | null)[]>([]);
   const tagRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const tagTextRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const haloPrimaryRefs = useRef<(HTMLDivElement | null)[]>([]);
   const haloEchoRefs = useRef<(HTMLDivElement | null)[]>([]);
   const nodeCacheRef = useRef<OrbNodeCache[]>(
@@ -698,7 +738,7 @@ export function DoePhoneHeroGradientCircles() {
     })),
   );
   const haloCacheRef = useRef<HaloDomCache[]>(
-    Array.from({ length: ORBIT.orbitCount }, () => ({
+    Array.from({ length: ORBIT_COUNT }, () => ({
       primaryOpacity: "",
       primaryTransform: "",
       echoOpacity: "",
@@ -706,16 +746,33 @@ export function DoePhoneHeroGradientCircles() {
       active: false,
     })),
   );
-  const zOrderRef = useRef(Array.from({ length: ORBIT.orbitCount }, (_, index) => index));
+  const tagCacheRef = useRef<TagDomCache[]>(
+    Array.from({ length: ORBIT_COUNT }, () => ({
+      opacity: Number.NaN,
+      transform: "",
+      nudgeDx: 0,
+      nudgeDy: 0,
+      nudgeValid: false,
+    })),
+  );
+  const pulseCacheRef = useRef({ slot: -1, exclude: -1, set: new Set<number>() });
+  const stageRef = useRef<HTMLDivElement | null>(null);
+  const zOrderRef = useRef(Array.from({ length: ORBIT_COUNT }, (_, index) => index));
   const rafRef = useRef<number | undefined>(undefined);
   const startRef = useRef<number | undefined>(undefined);
   const zDepthsRef = useRef<number[]>(initialZDepths);
   const pillCtrlRef = useRef<PillController>(createPillController());
   const tagSessionRef = useRef(-1);
   const tabVisibleRef = useRef(true);
+  const inViewRef = useRef(true);
   const tagRefFns = useRef(
-    Array.from({ length: ORBIT.orbitCount }, (_, index) => (node: HTMLDivElement | null) => {
+    Array.from({ length: ORBIT_COUNT }, (_, index) => (node: HTMLDivElement | null) => {
       tagRefs.current[index] = node;
+    }),
+  ).current;
+  const tagTextRefFns = useRef(
+    Array.from({ length: ORBIT_COUNT }, (_, index) => (node: HTMLSpanElement | null) => {
+      tagTextRefs.current[index] = node;
     }),
   ).current;
   const haloPrimaryRefFns = useRef(
@@ -738,31 +795,35 @@ export function DoePhoneHeroGradientCircles() {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
 
     const applyLayout = (phase: number, elapsedMs: number) => {
-      const layout = buildOrbLayout(phase, zDepthsRef.current, zOrderRef.current);
+      const layout = buildOrbLayout(phase, zDepthsRef.current, zOrderRef.current, layoutRef.current);
       const pill = updatePillController(pillCtrlRef.current, zDepthsRef.current, layout, elapsedMs);
       const frontTagVisible = pill.opacity > 0.01;
       const currentLabel = pill.label;
-      const pulseExclude: number[] = [];
-      if (pill.showIndex >= 0) pulseExclude.push(pill.showIndex);
+      const pulseExcludeIndex = pill.showIndex;
       const pulseSlot = Math.floor(elapsedMs / PULSE_SLOT_MS);
-      const pulseSet = new Set(
-        pulseIndicesForSlot(pulseSlot, ORBIT.orbitCount, pulseExclude),
-      );
+      const pulseCache = pulseCacheRef.current;
+      if (pulseCache.slot !== pulseSlot || pulseCache.exclude !== pulseExcludeIndex) {
+        pulseCache.slot = pulseSlot;
+        pulseCache.exclude = pulseExcludeIndex;
+        const excludeIndices = pulseExcludeIndex >= 0 ? [pulseExcludeIndex] : [];
+        pulseCache.set = new Set(pulseIndicesForSlot(pulseSlot, ORBIT_COUNT, excludeIndices));
+      }
+      const pulseSet = pulseCache.set;
+      const sharedPulsePhase = pulsePhase(elapsedMs);
+      const pillShowIndex = pill.showIndex;
 
-      layout.forEach((orb, index) => {
+      for (let index = 0; index < ORBIT_COUNT; index += 1) {
         const node = nodeRefs.current[index];
-        if (!node) return;
+        if (!node) continue;
         const nodeCache = nodeCacheRef.current[index];
-        const style = orbNodeStyle(orb);
+        const style = orbNodeStyle(layout[index]);
+        const nodeMoved = nodeCache.transform !== style.transform;
         applyOrbNodeStyle(node, style, nodeCache);
 
-        const tag = tagRefs.current[index];
-        if (tag) {
-          const isPillOrb = index === pill.showIndex;
-          const tagOpacity = isPillOrb ? pill.opacity : 0;
-          const visible = isPillOrb && frontTagVisible;
-
-          if (visible && node && pill.corner) {
+        if (index === pillShowIndex) {
+          const tag = tagRefs.current[index];
+          if (tag && frontTagVisible && pill.corner) {
+            const tagCache = tagCacheRef.current[index];
             if (tagSessionRef.current !== pill.sessionId) {
               const corner = initVisibleTagLayout(
                 tag,
@@ -770,19 +831,33 @@ export function DoePhoneHeroGradientCircles() {
                 pill.corner,
                 currentLabel,
                 pillCtrlRef.current.lastCorner,
+                tagTextRefs.current[index],
               );
               pillCtrlRef.current.activeCorner = corner;
               tagSessionRef.current = pill.sessionId;
+              tagCache.nudgeValid = false;
             }
             updateVisibleTagFrame(
               tag,
               pillCtrlRef.current.activeCorner ?? pill.corner,
-              tagOpacity,
+              pill.opacity,
+              nodeMoved,
+              tagCache,
             );
-          } else if (tag.style.visibility !== "hidden") {
+          } else if (tag && tag.style.visibility !== "hidden") {
             if (tagSessionRef.current === pill.sessionId) {
               tagSessionRef.current = -1;
             }
+            tagCacheRef.current[index].nudgeValid = false;
+            tag.style.opacity = "0";
+            tag.style.visibility = "hidden";
+            const restCorner = pillCtrlRef.current.lastCorner ?? "tl";
+            tag.style.transform = tagRestTransform(restCorner);
+          }
+        } else {
+          const tag = tagRefs.current[index];
+          if (tag && tag.style.visibility !== "hidden") {
+            tagCacheRef.current[index].nudgeValid = false;
             tag.style.opacity = "0";
             tag.style.visibility = "hidden";
             const restCorner = pillCtrlRef.current.lastCorner ?? "tl";
@@ -792,15 +867,20 @@ export function DoePhoneHeroGradientCircles() {
 
         const haloPrimary = haloPrimaryRefs.current[index];
         const haloEcho = haloEchoRefs.current[index];
-        if (haloPrimary && haloEcho) {
+        if (!haloPrimary || !haloEcho) continue;
+
+        const haloCache = haloCacheRef.current[index];
+        if (pulseSet.has(index)) {
           applyHaloDom(
             haloPrimary,
             haloEcho,
-            haloWavesForOrb(index, elapsedMs, pulseSet),
-            haloCacheRef.current[index],
+            haloWavesForOrb(index, pulseSet, sharedPulsePhase),
+            haloCache,
           );
+        } else if (haloCache.active) {
+          applyHaloDom(haloPrimary, haloEcho, null, haloCache);
         }
-      });
+      }
     };
 
     if (media.matches) {
@@ -818,9 +898,11 @@ export function DoePhoneHeroGradientCircles() {
             nextTagCorner(pillCtrlRef.current.lastCorner, index),
             ORB_AGENT_LABELS[index],
             pillCtrlRef.current.lastCorner,
+            tagTextRefs.current[index],
           );
           pillCtrlRef.current.activeCorner = corner;
-          updateVisibleTagFrame(tag, corner, 1);
+          tagCacheRef.current[index].nudgeValid = false;
+          updateVisibleTagFrame(tag, corner, 1, true, tagCacheRef.current[index]);
         } else {
           tag.style.opacity = "0";
           tag.style.visibility = "hidden";
@@ -835,7 +917,7 @@ export function DoePhoneHeroGradientCircles() {
 
     const tick = (now: number) => {
       rafRef.current = undefined;
-      if (!tabVisibleRef.current) return;
+      if (!tabVisibleRef.current || !inViewRef.current) return;
       if (startRef.current === undefined) startRef.current = now;
       const elapsed = now - startRef.current;
       const phase = (elapsed % ORBIT_REVOLUTION_MS) / ORBIT_REVOLUTION_MS;
@@ -869,15 +951,36 @@ export function DoePhoneHeroGradientCircles() {
     tabVisibleRef.current = document.visibilityState === "visible";
     document.addEventListener("visibilitychange", onVisibility);
 
+    const stageNode = stageRef.current;
+    const intersectionObserver =
+      stageNode &&
+      new IntersectionObserver(
+        ([entry]) => {
+          inViewRef.current = entry.isIntersecting;
+          if (
+            entry.isIntersecting &&
+            tabVisibleRef.current &&
+            rafRef.current === undefined
+          ) {
+            rafRef.current = requestAnimationFrame(tick);
+          }
+        },
+        { rootMargin: "80px" },
+      );
+    if (stageNode && intersectionObserver) {
+      intersectionObserver.observe(stageNode);
+    }
+
     rafRef.current = requestAnimationFrame(tick);
     return () => {
       document.removeEventListener("visibilitychange", onVisibility);
+      intersectionObserver?.disconnect();
       if (rafRef.current !== undefined) cancelAnimationFrame(rafRef.current);
     };
   }, []);
 
   return (
-    <div className="hero-speaking-orbs" aria-hidden>
+    <div ref={stageRef} className="hero-speaking-orbs" aria-hidden>
       <div className="hero-speaking-orbs__stage">
         {SCHEME_ORDER.map((scheme, index) => (
           <div
@@ -889,6 +992,7 @@ export function DoePhoneHeroGradientCircles() {
             <SpeakingGradientOrb
               scheme={scheme}
               tagRef={tagRefFns[index]}
+              tagTextRef={tagTextRefFns[index]}
               haloPrimaryRef={haloPrimaryRefFns[index]}
               haloEchoRef={haloEchoRefFns[index]}
             />

@@ -1263,6 +1263,7 @@ body.proto-route {
   transform-origin: center center;
   will-change: transform, opacity;
   backface-visibility: hidden;
+  contain: layout style;
 }
 
 .hero-speaking-orb {
