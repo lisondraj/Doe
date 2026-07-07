@@ -23,7 +23,7 @@ function ReadMoreArrow() {
   );
 }
 
-/** Thin home announcement strip — darkened overflow field, Doe teal copy. */
+/** Home announcement strip — raised overflow sand behind, base sand strip. */
 export function DoeHomeTopBanner() {
   return (
     <div className="doe-home-top-banner" role="region" aria-label="Company news">
