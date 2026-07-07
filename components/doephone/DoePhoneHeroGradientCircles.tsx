@@ -18,9 +18,9 @@ const ORB_TAG_CORNERS: TagCorner[] = ["tl", "tr", "bl", "br", "tl", "tr", "bl"];
 
 const PULSE_SLOT_MS = 2600;
 const PULSE_MAX_BOOST = 0.07;
+const PULSE_SECONDARY_ORBIT_STEP = 3;
 
 const HALO_CYCLE_MS = 3000;
-const PULSE_ORB_OFFSETS = [0, 3] as const;
 /** One dedicated agent label per orb — advances as each orb reaches the front. */
 const ORB_AGENT_LABELS = [
   "Voice Agent",
@@ -345,10 +345,43 @@ function tagOpacityFromState(state: OrbTagState, elapsedMs: number) {
   }
 }
 
-function haloWavesForOrb(index: number, elapsedMs: number) {
-  const slot = Math.floor(elapsedMs / HALO_CYCLE_MS);
-  const active = PULSE_ORB_OFFSETS.map((offset) => (slot + offset) % ORBIT.orbitCount);
-  if (!active.includes(index)) return null;
+function isOrbitNeighbor(a: number, b: number, count: number) {
+  const diff = Math.abs(a - b);
+  return diff === 1 || diff === count - 1;
+}
+
+/** Second pulse — same orbit ring, never the orb just before/after the front one. */
+function secondaryPulseIndex(frontIndex: number, count: number) {
+  const candidate = (frontIndex + PULSE_SECONDARY_ORBIT_STEP) % count;
+  if (!isOrbitNeighbor(frontIndex, candidate, count)) return candidate;
+  return (frontIndex + PULSE_SECONDARY_ORBIT_STEP + 1) % count;
+}
+
+function pulseWave(elapsedMs: number) {
+  const phase = (elapsedMs % PULSE_SLOT_MS) / PULSE_SLOT_MS;
+  const wave = Math.sin(phase * Math.PI);
+  return 1 + PULSE_MAX_BOOST * wave * wave;
+}
+
+function shouldPulseOrb(
+  index: number,
+  frontIndex: number,
+  frontTagVisible: boolean,
+  secondaryIndex: number,
+) {
+  if (frontIndex < 0) return false;
+  if (index === frontIndex && frontTagVisible) return true;
+  return index === secondaryIndex;
+}
+
+function haloWavesForOrb(
+  index: number,
+  elapsedMs: number,
+  frontIndex: number,
+  frontTagVisible: boolean,
+  secondaryIndex: number,
+) {
+  if (!shouldPulseOrb(index, frontIndex, frontTagVisible, secondaryIndex)) return null;
 
   const wave = (elapsedMs % HALO_CYCLE_MS) / HALO_CYCLE_MS;
   return {
@@ -364,15 +397,15 @@ function haloRingStyle(progress: number) {
     transform: `translate3d(-50%, -50%, 0) scale(${1 + eased * 0.48})`,
   } as const;
 }
-function pulseScaleForOrb(index: number, elapsedMs: number) {
-  const slot = Math.floor(elapsedMs / PULSE_SLOT_MS);
-  const phase = (elapsedMs % PULSE_SLOT_MS) / PULSE_SLOT_MS;
-  const active = new Set(PULSE_ORB_OFFSETS.map((offset) => (slot + offset) % ORBIT.orbitCount));
-
-  if (!active.has(index)) return 1;
-
-  const wave = Math.sin(phase * Math.PI);
-  return 1 + PULSE_MAX_BOOST * wave * wave;
+function pulseScaleForOrb(
+  index: number,
+  elapsedMs: number,
+  frontIndex: number,
+  frontTagVisible: boolean,
+  secondaryIndex: number,
+) {
+  if (!shouldPulseOrb(index, frontIndex, frontTagVisible, secondaryIndex)) return 1;
+  return pulseWave(elapsedMs);
 }
 
 const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
@@ -514,18 +547,30 @@ export function DoePhoneHeroGradientCircles() {
         );
       }
 
+      const frontTagOpacity =
+        frontIndex >= 0 ? tagOpacityFromState(tagStatesRef.current[frontIndex], elapsedMs) : 0;
+      const frontTagVisible = frontTagOpacity > 0.01;
+      const secondaryPulse =
+        frontIndex >= 0 ? secondaryPulseIndex(frontIndex, ORBIT.orbitCount) : -1;
+
       layout.forEach((orb, index) => {
         const node = nodeRefs.current[index];
         if (!node) return;
-        const pulseScale = pulseScaleForOrb(index, elapsedMs);
+        const pulseScale = pulseScaleForOrb(
+          index,
+          elapsedMs,
+          frontIndex,
+          frontTagVisible,
+          secondaryPulse,
+        );
         const style = orbNodeStyle(orb, pulseScale);
         applyOrbNodeStyle(node, style, nodeCacheRef.current[index]);
 
         const tag = tagRefs.current[index];
         if (tag) {
           const isFront = index === frontIndex;
-          const tagOpacity = isFront ? tagOpacityFromState(tagStatesRef.current[index], elapsedMs) : 0;
-          const visible = isFront && tagOpacity > 0.01;
+          const tagOpacity = isFront ? frontTagOpacity : 0;
+          const visible = isFront && frontTagVisible;
 
           if (visible) {
             tag.style.visibility = "visible";
@@ -538,7 +583,13 @@ export function DoePhoneHeroGradientCircles() {
           }
         }
 
-        const haloWaves = haloWavesForOrb(index, elapsedMs);
+        const haloWaves = haloWavesForOrb(
+          index,
+          elapsedMs,
+          frontIndex,
+          frontTagVisible,
+          secondaryPulse,
+        );
         const haloPrimary = haloPrimaryRefs.current[index];
         const haloEcho = haloEchoRefs.current[index];
         const haloActive = haloWaves !== null;

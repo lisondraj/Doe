@@ -1358,26 +1358,26 @@ body.proto-route {
 }
 
 .hero-speaking-orb__tag--tl {
-  top: 13%;
-  left: 10%;
+  top: 5%;
+  left: -10%;
   transform-origin: bottom right;
 }
 
 .hero-speaking-orb__tag--tr {
-  top: 13%;
-  right: 10%;
+  top: 5%;
+  right: -10%;
   transform-origin: bottom left;
 }
 
 .hero-speaking-orb__tag--bl {
-  bottom: 13%;
-  left: 10%;
+  bottom: 5%;
+  left: -10%;
   transform-origin: top right;
 }
 
 .hero-speaking-orb__tag--br {
-  bottom: 13%;
-  right: 10%;
+  bottom: 5%;
+  right: -10%;
   transform-origin: top left;
 }
 
