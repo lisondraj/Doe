@@ -59,6 +59,7 @@ export const PROTO_INTEGRATE_SHADER_COLORS = ["#5f8ea8", "#8a9a72", "#c8b888"] a
 
 export type ProtoGrainGradientVariant =
   | "home-hero"
+  | "home-hero-phone"
   | "build-hero"
   | "home-footer"
   | "home-integrations"
@@ -106,6 +107,23 @@ export const PROTO_GRAIN_GRADIENT_PRESETS: Record<ProtoGrainGradientVariant, Pro
     offsetY: -0.08,
     scale: 1.12,
     speed: 0.85,
+  },
+  /**
+   * iPhone home hero with speaking orbs — teal field behind the tilted ellipse,
+   * orb-family colour ripples pooled low and upper-left along the orbit arc.
+   */
+  "home-hero-phone": {
+    shape: "ripple",
+    softness: 0.8,
+    intensity: 0.1,
+    fit: "cover",
+    rotation: 202,
+    offsetX: -0.16,
+    offsetY: 0.38,
+    scale: 1.24,
+    worldWidth: 1280,
+    worldHeight: 960,
+    speed: 0.36,
   },
   /** Home Build band — same palette, warmth anchored low-left behind workflow input. */
   "build-hero": {
@@ -400,7 +418,12 @@ export function protoHomeHeroGrainGradientSurface(): ProtoGrainGradientSurface {
 }
 
 export function isProtoShaderHeroVariant(variant: ProtoGrainGradientVariant) {
-  return variant === "home-hero" || variant === "build-hero" || variant === "about-hero";
+  return (
+    variant === "home-hero" ||
+    variant === "home-hero-phone" ||
+    variant === "build-hero" ||
+    variant === "about-hero"
+  );
 }
 
 export function protoShaderMaxPixelCount(variant: ProtoGrainGradientVariant) {

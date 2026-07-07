@@ -21,6 +21,7 @@ import { PROTO_RECEPTION_PALETTE } from "@/lib/proto/proto-communication-gradien
 import {
   DOE_HOME_ORANGE_PALETTE,
   doeHomeHeroShaderSurface,
+  doeHomePhoneHeroShaderSurface,
 } from "@/lib/proto/proto-shader-backdrop-colors";
 import { useEffect, useState, type CSSProperties } from "react";
 
@@ -76,7 +77,8 @@ export function DoePhoneHeroSection({
   const isDesktop = variant === "desktop";
   const isMobile = !isDesktop;
   const isProto = proto;
-  const homeHeroShader = doeHomeHeroShaderSurface();
+  const homeHeroShader =
+    isMobile && !isProto ? doeHomePhoneHeroShaderSurface() : doeHomeHeroShaderSurface();
   const heroHeight = isDesktop
     ? DOEPHONE_HERO_DESKTOP_HEIGHT
     : isProto

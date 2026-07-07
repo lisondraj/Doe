@@ -39,6 +39,24 @@ export function doeHomeHeroShaderSurface(): ProtoGrainGradientSurface {
   };
 }
 
+/**
+ * iPhone home hero with speaking orbs — muted periwinkle / rose-lilac / mint
+ * ripples that echo the orb palette without competing with it.
+ */
+export const DOE_HOME_PHONE_HERO_SHADER_COLORS = [
+  "#88A8C8",
+  "#C0A0B0",
+  "#78B8A8",
+] as const;
+
+export function doeHomePhoneHeroShaderSurface(): ProtoGrainGradientSurface {
+  return {
+    variant: "home-hero-phone",
+    colors: DOE_HOME_PHONE_HERO_SHADER_COLORS,
+    colorBack: DOE_HOME_ORANGE_PALETTE.back,
+  };
+}
+
 /** Home Build band — hero palette with bottom-left warm flow behind workflow card. */
 export function doeHomeBuildShaderSurface(): ProtoGrainGradientSurface {
   return {

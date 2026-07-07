@@ -15,7 +15,12 @@ import {
 } from "@/lib/proto/proto-grain-gradient";
 
 function isHeroVariant(variant: ProtoGrainGradientVariant) {
-  return variant === "home-hero" || variant === "build-hero" || variant === "about-hero";
+  return (
+    variant === "home-hero" ||
+    variant === "home-hero-phone" ||
+    variant === "build-hero" ||
+    variant === "about-hero"
+  );
 }
 
 function isPhoneLayout() {
