@@ -18,8 +18,7 @@ const TAG_CORNERS_ALL: TagCorner[] = ["tl", "tr", "bl", "br"];
 const PULSE_SLOT_MS = 2500;
 const PULSE_ACTIVE_FRACTION = 0.52;
 const PULSE_PAIR_COUNT = 2;
-const PULSE_MAX_BOOST = 0.05;
-const HALO_ECHO_LAG = 0.16;
+const HALO_ECHO_LAG = 0.2;
 /** One dedicated agent label per orb — advances as each orb reaches the front. */
 const ORB_AGENT_LABELS = [
   "Voice Agent",
@@ -215,11 +214,11 @@ type HaloDomCache = {
   active: boolean;
 };
 
-function orbNodeStyle(orb: OrbPose, pulseScale = 1) {
+function orbNodeStyle(orb: OrbPose) {
   return {
     left: `calc(50% + ${orb.xPct}%)`,
     top: `calc(50% + ${orb.yPct}%)`,
-    transform: `translate3d(-50%, -50%, 0) scale(${orb.scale * pulseScale})`,
+    transform: `translate3d(-50%, -50%, 0) scale(${orb.scale})`,
     opacity: orb.opacity,
     zIndex: orb.zIndex,
   } as const;
@@ -597,13 +596,6 @@ function pulsePhase(elapsedMs: number) {
   return slotElapsed / activeMs;
 }
 
-function pulseWave(elapsedMs: number) {
-  const phase = pulsePhase(elapsedMs);
-  if (phase === null) return 1;
-  const wave = Math.sin(phase * Math.PI);
-  return 1 + PULSE_MAX_BOOST * wave;
-}
-
 function shouldPulseOrb(index: number, pulseSet: ReadonlySet<number>) {
   return pulseSet.has(index);
 }
@@ -621,17 +613,13 @@ function haloWavesForOrb(index: number, elapsedMs: number, pulseSet: ReadonlySet
 }
 
 function haloRingStyle(progress: number) {
-  const eased = 1 - (1 - progress) ** 2;
-  const opacity = Math.round((1 - eased) * 0.4 * 1000) / 1000;
-  const scale = Math.round((1 + eased * 0.26) * 10000) / 10000;
+  const eased = 1 - (1 - progress) ** 1.8;
+  const opacity = Math.round((1 - eased) * 0.48 * 1000) / 1000;
+  const scale = Math.round((1 + eased * 0.34) * 10000) / 10000;
   return {
     opacity: `${opacity}`,
     transform: `translate3d(-50%, -50%, 0) scale(${scale})`,
   } as const;
-}
-function pulseScaleForOrb(index: number, elapsedMs: number, pulseSet: ReadonlySet<number>) {
-  if (!shouldPulseOrb(index, pulseSet)) return 1;
-  return pulseWave(elapsedMs);
 }
 
 const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
@@ -765,8 +753,7 @@ export function DoePhoneHeroGradientCircles() {
         const node = nodeRefs.current[index];
         if (!node) return;
         const nodeCache = nodeCacheRef.current[index];
-        const pulseScale = pulseScaleForOrb(index, elapsedMs, pulseSet);
-        const style = orbNodeStyle(orb, pulseScale);
+        const style = orbNodeStyle(orb);
         applyOrbNodeStyle(node, style, nodeCache);
 
         const tag = tagRefs.current[index];
