@@ -290,7 +290,7 @@ function tagOpacityFromState(state: OrbTagState, elapsedMs: number) {
 
 function haloWavesForOrb(index: number, elapsedMs: number) {
   const slot = Math.floor(elapsedMs / HALO_CYCLE_MS);
-  const active = HALO_ORB_OFFSETS.map((offset) => (slot + offset) % ORBIT.orbitCount);
+  const active = PULSE_ORB_OFFSETS.map((offset) => (slot + offset) % ORBIT.orbitCount);
   if (!active.includes(index)) return null;
 
   const wave = (elapsedMs % HALO_CYCLE_MS) / HALO_CYCLE_MS;
@@ -310,11 +310,7 @@ function haloRingStyle(progress: number) {
 function pulseScaleForOrb(index: number, elapsedMs: number) {
   const slot = Math.floor(elapsedMs / PULSE_SLOT_MS);
   const phase = (elapsedMs % PULSE_SLOT_MS) / PULSE_SLOT_MS;
-  const active = new Set([
-    slot % ORBIT.orbitCount,
-    (slot + 2) % ORBIT.orbitCount,
-    (slot + 4) % ORBIT.orbitCount,
-  ]);
+  const active = new Set(PULSE_ORB_OFFSETS.map((offset) => (slot + offset) % ORBIT.orbitCount));
 
   if (!active.has(index)) return 1;
 
