@@ -722,6 +722,72 @@ html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav-
   --proto-nav-frost-progress: 1;
 }
 
+/* Home — thin pre-seed announcement above nav. */
+html[data-home-page]:has(.doe-home-top-banner) {
+  --doe-home-top-banner-height: calc(
+    env(safe-area-inset-top, 0px) + clamp(1.55rem, 4.65vmin, 1.95rem)
+  );
+}
+
+.doe-home-top-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--doe-home-top-banner-height);
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-left: max(0.85rem, env(safe-area-inset-left, 0px));
+  padding-right: max(0.85rem, env(safe-area-inset-right, 0px));
+  background-color: #e0d9ce;
+  border-bottom: 1px solid rgba(30, 52, 58, 0.1);
+}
+
+.doe-home-top-banner__text {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem 0.5rem;
+  padding: 0.28rem 0 0.32rem;
+  font-size: clamp(0.68rem, 2.05vmin, 0.8rem);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--doe-page-ink, #1e343a);
+  text-align: center;
+}
+
+.doe-home-top-banner__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: rgba(30, 52, 58, 0.34);
+  text-underline-offset: 0.18em;
+  transition: text-decoration-color 180ms ease, opacity 180ms ease;
+}
+
+.doe-home-top-banner__link:hover {
+  text-decoration-color: rgba(30, 52, 58, 0.72);
+  opacity: 0.88;
+}
+
+.doe-home-top-banner__arrow {
+  flex-shrink: 0;
+  margin-top: 0.02em;
+}
+
+html[data-home-page]:has(.doe-home-top-banner) nav.doephone-site-nav,
+html[data-home-page]:has(.doe-home-top-banner) nav.desktop-home-nav {
+  top: var(--doe-home-top-banner-height);
+}
+
 /* Home + /about — punched-out nav: solid hero teal capsule (no frost). */
 html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-frost-shell,
 html[data-about-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-frost-shell,

@@ -17,6 +17,7 @@ import {
 
 import { DoePhoneDesktopView } from "./DoePhoneDesktopView";
 import { DoePhoneMobileView } from "./DoePhoneMobileView";
+import { DoeHomeTopBanner } from "./DoeHomeTopBanner";
 
 function applyPhoneDocumentAttrs() {
   const html = document.documentElement;
@@ -60,6 +61,13 @@ export function DoePhoneRouter() {
   const [variant, setVariant] = useState<DoePhoneVariant>("phone");
 
   useLayoutEffect(() => {
+    document.documentElement.setAttribute("data-home-page", "true");
+    return () => {
+      document.documentElement.removeAttribute("data-home-page");
+    };
+  }, []);
+
+  useLayoutEffect(() => {
     setVariant(resolveDoePhoneVariant());
   }, []);
 
@@ -99,5 +107,10 @@ export function DoePhoneRouter() {
     };
   }, [variant]);
 
-  return variant === "desktop" ? <DoePhoneDesktopView /> : <DoePhoneMobileView />;
+  return (
+    <>
+      <DoeHomeTopBanner />
+      {variant === "desktop" ? <DoePhoneDesktopView /> : <DoePhoneMobileView />}
+    </>
+  );
 }

@@ -393,7 +393,7 @@ export function DesktopHome({
 
         {/* Navigation Bar */}
         <nav
-          className={`fixed top-0 left-0 right-0 z-[50] transition-opacity duration-300 ease-out ${
+          className={`desktop-home-nav fixed top-0 left-0 right-0 z-[50] transition-opacity duration-300 ease-out ${
             !heroNavPointerOk ? 'pointer-events-none' : ''
           }`}
           style={{
