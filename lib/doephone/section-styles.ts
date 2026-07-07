@@ -1,13 +1,35 @@
 import { inter, suisseIntl } from "@/lib/home/fonts";
 import type { CSSProperties } from "react";
 
+/** iPhone horizontal page gutter — nav, hero, sections, and footer share these edges. */
+export const DOEPHONE_PHONE_GUTTER_MIN = "1.65rem";
+export const DOEPHONE_PHONE_GUTTER_VMIN = "3.8vmin";
+export const DOEPHONE_PHONE_GUTTER_MIN_RIGHT = "1.35rem";
+
+const phoneGutterLeft = `max(${DOEPHONE_PHONE_GUTTER_MIN},calc(env(safe-area-inset-left,0px)+${DOEPHONE_PHONE_GUTTER_VMIN}))`;
+const phoneGutterRight = `max(${DOEPHONE_PHONE_GUTTER_MIN},calc(env(safe-area-inset-right,0px)+${DOEPHONE_PHONE_GUTTER_VMIN}))`;
+const phoneGutterRightAsymmetric = `max(${DOEPHONE_PHONE_GUTTER_MIN_RIGHT},env(safe-area-inset-right,0px))`;
+
+/** Shared gutter token for layout math (join hero height, etc.). */
+export const DOEPHONE_PHONE_GUTTER_X = phoneGutterLeft;
+
+/** Nav / subpage absolute logo and CTA edges. */
+export const DOEPHONE_PHONE_GUTTER_LOGO_LEFT =
+  `left-11 iphone-page:left-[${phoneGutterLeft}]`;
+
+export const DOEPHONE_PHONE_GUTTER_APPLY_RIGHT =
+  `right-11 iphone-page:right-[${phoneGutterRight}]`;
+
+export const DOEPHONE_PHONE_GUTTER_NAV_LEFT_PAD =
+  `pl-11 iphone-page:pl-[${phoneGutterLeft}]`;
+
 /** Shared horizontal inset for /doephone section copy — matches hero. */
 export const DOEPHONE_SECTION_COPY_INSET =
-  "pl-14 pr-6 iphone-page:pl-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))] iphone-page:pr-[max(1.65rem,env(safe-area-inset-right,0px))]";
+  `pl-11 pr-5 iphone-page:pl-[${phoneGutterLeft}] iphone-page:pr-[${phoneGutterRightAsymmetric}]`;
 
 /** Hero copy — balanced L/R gutters so long career lines do not clip on narrow viewports. */
 export const DOEPHONE_HERO_COPY_INSET =
-  "px-12 iphone-page:px-[max(2.75rem,calc(env(safe-area-inset-left,0px)+6vmin))] doephone-hero-copy-inset";
+  `px-11 iphone-page:px-[${phoneGutterLeft}] doephone-hero-copy-inset`;
 
 /** Desktop home — shared horizontal gutters (nav, hero headline, Build, legacy bands). */
 export const DOEPHONE_DESKTOP_PAGE_INSET_X =
@@ -46,33 +68,33 @@ export const DESKTOP_FULLSCREEN_SECTION_BADGE_INSET =
 
 /** Footer copy row — section left inset + matching right gutter (Doe wordmark sits outside). */
 export const DOEPHONE_FOOTER_CONTENT_INSET =
-  "pl-14 pr-14 iphone-page:pl-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))] iphone-page:pr-[max(2.35rem,calc(env(safe-area-inset-right,0px)+5.25vmin))]";
+  `pl-11 pr-11 iphone-page:pl-[${phoneGutterLeft}] iphone-page:pr-[${phoneGutterRight}]`;
 
 /** Standard content gutter for all sections (same left edge as hero headline). */
 export const DOEPHONE_SECTION_CONTENT_INSET = DOEPHONE_SECTION_COPY_INSET;
 
-/** Uniform section gutter — same value as hero/section left inset on all four sides. */
+/** Uniform section gutter — vertical rhythm unchanged; horizontal matches page edge. */
 export const DOEPHONE_SECTION_UNIFORM_PAD =
-  "p-14 iphone-page:p-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
+  `py-14 px-11 iphone-page:py-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))] iphone-page:px-[${phoneGutterLeft}]`;
 
 /** Carousel band in section 2 — horizontal inset (matches hero left / uniform pad). */
 export const DOEPHONE_SECTION_CAROUSEL_INSET_X =
-  "px-14 iphone-page:px-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
+  `px-11 iphone-page:px-[${phoneGutterLeft}]`;
 
 /** Fixed nav chrome — matches page content edge inside `.doephone-mobile-root`. */
 export const DOEPHONE_FIXED_NAV_CONTENT_LEFT =
-  "left-[calc(env(safe-area-inset-left,0px)+max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin)))]";
+  `left-[calc(env(safe-area-inset-left,0px)+${phoneGutterLeft})]`;
 
 export const DOEPHONE_FIXED_NAV_CONTENT_RIGHT =
-  "right-[calc(env(safe-area-inset-right,0px)+max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin)))]";
+  `right-[calc(env(safe-area-inset-right,0px)+${phoneGutterLeft})]`;
 
 /** Vertical gap — carousel→menu (matches carousel horizontal inset). */
 export const DOEPHONE_SECTION_CAROUSEL_MENU_GAP =
-  "mt-14 iphone-page:mt-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
+  `mt-11 iphone-page:mt-[${phoneGutterLeft}]`;
 
 /** Title→carousel gap — double the carousel→menu inset. */
 export const DOEPHONE_SECTION_TITLE_CAROUSEL_GAP =
-  "mt-28 iphone-page:mt-[max(4.7rem,calc(env(safe-area-inset-left,0px)+10.5vmin))]";
+  `mt-[5.5rem] iphone-page:mt-[max(3.3rem,calc(env(safe-area-inset-left,0px)+7.6vmin))]`;
 
 /** Carousel band in section 2 — equal padding on all sides (matches hero left inset). */
 export const DOEPHONE_SECTION_CAROUSEL_UNIFORM_PAD = DOEPHONE_SECTION_UNIFORM_PAD;

@@ -4,6 +4,7 @@ import {
   PROTO_RECEPTION_PALETTE,
 } from "@/lib/proto/proto-communication-gradients";
 import {
+  doeHomeShaderBandVariant,
   protoGrainGradientVariant,
   type ProtoGrainGradientSurface,
 } from "@/lib/proto/proto-grain-gradient";
@@ -183,6 +184,25 @@ export function doeHomeLabsShaderSurface(
 ): ProtoGrainGradientSurface | undefined {
   const variant = protoGrainGradientVariant(slideId);
   if (!variant) return undefined;
+
+  const hero = doeHomeHeroShaderSurface();
+  return {
+    variant,
+    colors: hero.colors,
+    colorBack: hero.colorBack,
+  };
+}
+
+/** Home iPhone — full-viewport shader bands between feature cards. */
+export function doeHomeShaderBandSurface(
+  slideId: string,
+): ProtoGrainGradientSurface | undefined {
+  const variant = doeHomeShaderBandVariant(slideId);
+  if (!variant) return undefined;
+
+  if (slideId === "billing") {
+    return doeHomeFooterShaderSurface();
+  }
 
   const hero = doeHomeHeroShaderSurface();
   return {

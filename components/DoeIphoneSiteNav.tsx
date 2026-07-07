@@ -22,6 +22,9 @@ import {
 import {
   DOEPHONE_FIXED_NAV_CONTENT_LEFT,
   DOEPHONE_FIXED_NAV_CONTENT_RIGHT,
+  DOEPHONE_PHONE_GUTTER_APPLY_RIGHT,
+  DOEPHONE_PHONE_GUTTER_LOGO_LEFT,
+  DOEPHONE_PHONE_GUTTER_NAV_LEFT_PAD,
   DOEPHONE_SECTION_CAROUSEL_INSET_X,
 } from "@/lib/doephone/section-styles";
 import { ABOUT_LABEL, MAIN_HOME_NAV_SHEET_ITEMS } from "@/lib/subpage/subpage-nav";
@@ -124,12 +127,9 @@ function NavChromeStrip({
   frostedScrollChrome?: boolean;
 }) {
   const pageInsetX = DOEPHONE_SECTION_CAROUSEL_INSET_X;
-  const pageDoeLeft =
-    "left-14 iphone-page:left-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
-  const pageApplyRight =
-    "right-14 iphone-page:right-[max(2.35rem,calc(env(safe-area-inset-right,0px)+5.25vmin))]";
-  const pageNavLeftPad =
-    "pl-14 iphone-page:pl-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
+  const pageDoeLeft = DOEPHONE_PHONE_GUTTER_LOGO_LEFT;
+  const pageApplyRight = DOEPHONE_PHONE_GUTTER_APPLY_RIGHT;
+  const pageNavLeftPad = DOEPHONE_PHONE_GUTTER_NAV_LEFT_PAD;
   const effectiveCtaLayout = showApplyScrollCta ? "subpage-join" : ctaLayout;
   const subpageVariant = subpageVariantFromCtaLayout(effectiveCtaLayout);
   const subpageAnchored = subpageVariant !== null && !showMenu;
@@ -137,24 +137,14 @@ function NavChromeStrip({
   const subpageRight = pinchSafe ? DOEPHONE_FIXED_NAV_CONTENT_RIGHT : pageApplyRight;
   const navInsetX = subpageAnchored && subpageWithButton
     ? `${pageNavLeftPad} pr-0`
-    : subpageAnchored
-      ? DOEPHONE_SECTION_CAROUSEL_INSET_X
-      : pinchSafe
-        ? "px-11 iphone-page:px-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))] iphone-page:pr-[max(1.65rem,env(safe-area-inset-right,0px))]"
-        : "px-8 iphone-page:px-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))] iphone-page:pr-[max(1.25rem,env(safe-area-inset-right,0px))]";
+    : DOEPHONE_SECTION_CAROUSEL_INSET_X;
   const doeLeft = subpageAnchored
     ? subpageWithButton
       ? pageDoeLeft
-      : pinchSafe
-        ? DOEPHONE_FIXED_NAV_CONTENT_LEFT
-        : pageDoeLeft
-    : pinchSafe
-      ? "left-11 iphone-page:left-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))]"
-      : "left-8 iphone-page:left-[max(1.25rem,calc(env(safe-area-inset-left,0px)+2.85vmin))]";
+      : DOEPHONE_FIXED_NAV_CONTENT_LEFT
+    : DOEPHONE_FIXED_NAV_CONTENT_LEFT;
   const doeClassName = `absolute top-1/2 -translate-y-1/2 ${doeLeft} font-normal z-[1] min-w-0 whitespace-nowrap ${frostedScrollChrome ? "proto-nav-chrome-logo " : ""}${brandFontClass ?? lora.className} text-4xl iphone-page:text-[clamp(1.85rem,1.05rem+3.55vmin,3.9rem)] iphone-page:leading-none`;
-  const navRightInset = pinchSafe
-    ? "right-11 iphone-page:right-[max(1.65rem,env(safe-area-inset-right,0px)+3.8vmin)]"
-    : "right-8 iphone-page:right-[max(1.25rem,calc(env(safe-area-inset-right,0px)+2.85vmin))]";
+  const navRightInset = DOEPHONE_PHONE_GUTTER_APPLY_RIGHT;
   const tripleCtaAnchored = ctaLayout === "triple" && !showMenu;
   const navRowGap = subpageAnchored ? NAV_JOIN_ROW_GAP : NAV_DEFAULT_ROW_GAP;
   const navStripMinH = tripleCtaAnchored
@@ -396,44 +386,71 @@ export default function DoeIphoneSiteNav({
     if (!frostedScrollNav) return;
 
     let raf = 0;
+    let settleRaf = 0;
+    let displayedProgress = 0;
     let heroEl: HTMLElement | null = null;
+
+    /** Punch-in tracks scroll; expand back to flat bar eases out on scroll-up. */
+    const FROST_EXPAND_LERP = 0.42;
+    const FROST_SCROLLED_ENTER = 0.12;
+    const FROST_SCROLLED_EXIT = 0.05;
+
     const computeFrostProgress = () => {
       if (frostedScrollPastHero) {
         heroEl ??= document.querySelector<HTMLElement>(".doephone-hero-section");
         if (heroEl) {
           const bottom = heroEl.getBoundingClientRect().bottom;
-          const range = 96;
+          const range = 112;
           return Math.min(1, Math.max(0, (range - bottom) / range));
         }
       }
-      const range = 56;
+      const range = 72;
       return Math.min(1, Math.max(0, window.scrollY / range));
     };
 
-    const applyFrostProgress = (next: number) => {
+    const publishFrostProgress = (value: number) => {
       const nav = navBarRowRef.current;
-      const quantized = Math.round(next * 100) / 100;
-      if (Math.abs(quantized - frostProgressRef.current) < 0.01) {
-        const shouldScroll = protoNavScrolledRef.current ? quantized > 0.68 : quantized >= 0.88;
-        if (shouldScroll === protoNavScrolledRef.current) return;
-      }
-
+      const quantized = Math.round(value * 100) / 100;
       frostProgressRef.current = quantized;
       nav?.style.setProperty("--proto-nav-frost-progress", String(quantized));
 
-      const shouldScroll = protoNavScrolledRef.current ? quantized > 0.68 : quantized >= 0.88;
-      if (shouldScroll !== protoNavScrolledRef.current) {
-        protoNavScrolledRef.current = shouldScroll;
-        nav?.classList.toggle("proto-nav--scrolled", shouldScroll);
-        setProtoNavScrolled(shouldScroll);
+      const shouldScroll = protoNavScrolledRef.current
+        ? quantized > FROST_SCROLLED_EXIT
+        : quantized > FROST_SCROLLED_ENTER;
+      if (shouldScroll === protoNavScrolledRef.current) return;
+
+      protoNavScrolledRef.current = shouldScroll;
+      nav?.classList.toggle("proto-nav--scrolled", shouldScroll);
+      setProtoNavScrolled(shouldScroll);
+    };
+
+    const tickFrost = () => {
+      const target = computeFrostProgress();
+
+      if (target <= 0.001) {
+        displayedProgress = 0;
+      } else if (target > displayedProgress + 0.001) {
+        displayedProgress = target;
+      } else if (target < displayedProgress - 0.001) {
+        displayedProgress += (target - displayedProgress) * FROST_EXPAND_LERP;
+        if (Math.abs(displayedProgress - target) < 0.006) {
+          displayedProgress = target;
+        }
+      } else {
+        displayedProgress = target;
+      }
+
+      publishFrostProgress(displayedProgress);
+
+      if (Math.abs(displayedProgress - target) > 0.004) {
+        settleRaf = requestAnimationFrame(tickFrost);
       }
     };
 
     const onScroll = () => {
       cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        applyFrostProgress(computeFrostProgress());
-      });
+      cancelAnimationFrame(settleRaf);
+      raf = requestAnimationFrame(tickFrost);
     };
 
     onScroll();
@@ -442,6 +459,7 @@ export default function DoeIphoneSiteNav({
     window.addEventListener("orientationchange", onScroll);
     return () => {
       cancelAnimationFrame(raf);
+      cancelAnimationFrame(settleRaf);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
       window.removeEventListener("orientationchange", onScroll);

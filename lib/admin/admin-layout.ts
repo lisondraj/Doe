@@ -107,7 +107,7 @@ export const ADMIN_MOBILE_CHART_STACK =
 
 /** Bottom tab bar inner padding — mirrors page horizontal inset. */
 export const ADMIN_MOBILE_TAB_BAR_INSET =
-  "px-14 pt-3 iphone-page:px-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))] iphone-page:pt-3.5";
+  "px-11 pt-3 iphone-page:px-[max(1.65rem,calc(env(safe-area-inset-left,0px)+3.8vmin))] iphone-page:pt-3.5";
 
 export const ADMIN_MOBILE_TAB_BAR_SAFE_BOTTOM =
   "pb-[max(1.25rem,env(safe-area-inset-bottom,0px))]";

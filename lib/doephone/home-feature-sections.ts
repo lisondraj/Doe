@@ -15,8 +15,8 @@ export const HOME_FEATURE_SECTION_TITLES: Record<
     line2: "workflow in clinic.",
   },
   "front-desk": {
-    line1: "Reception that keeps",
-    line2: "phone and schedule moving.",
+    line1: "Phone and schedule,",
+    line2: "handled together.",
   },
   inbox: {
     line1: "Documents routed",
@@ -28,7 +28,7 @@ export const HOME_FEATURE_SECTION_TITLES: Record<
   },
   billing: {
     line1: "Billing without the",
-    line2: "back-and-forth.",
+    line2: "chase.",
   },
   integrate: {
     line1: "Integrate your",

@@ -62,6 +62,7 @@ export type ProtoGrainGradientVariant =
   | "about-hero"
   | "agents"
   | "front-desk"
+  | "front-desk-band"
   | "inbox"
   | "ambient"
   | "billing"
@@ -172,6 +173,20 @@ export const PROTO_GRAIN_GRADIENT_PRESETS: Record<ProtoGrainGradientVariant, Pro
     offsetY: 0.2,
     scale: 0.96,
   },
+  /** Home iPhone — full-viewport band after Reception (Phone and schedule…). */
+  "front-desk-band": {
+    shape: "ripple",
+    softness: 0.78,
+    intensity: 0.11,
+    fit: "cover",
+    rotation: 156,
+    offsetX: -0.06,
+    offsetY: 0.38,
+    scale: 1.24,
+    worldWidth: 1280,
+    worldHeight: 960,
+    speed: 0,
+  },
   inbox: {
     shape: "truchet",
     softness: 0.55,
@@ -192,12 +207,14 @@ export const PROTO_GRAIN_GRADIENT_PRESETS: Record<ProtoGrainGradientVariant, Pro
     scale: 1.14,
   },
   billing: {
-    shape: "wave",
-    softness: 0.7,
-    intensity: 0.15,
+    shape: "corners",
+    softness: 0.72,
+    intensity: 0.14,
     fit: "cover",
-    offsetX: 0.24,
-    offsetY: 0.14,
+    rotation: 118,
+    offsetX: -0.1,
+    offsetY: 0.08,
+    scale: 1.1,
   },
   "sandbox-build": {
     shape: "corners",
@@ -312,6 +329,18 @@ export const PROTO_GRAIN_GRADIENT_PRESETS: Record<ProtoGrainGradientVariant, Pro
   },
 };
 
+/** Home iPhone — full-viewport shader bands between feature cards. */
+export function doeHomeShaderBandVariant(
+  slideId: string,
+): ProtoGrainGradientVariant | undefined {
+  if (slideId === "front-desk") return "front-desk-band";
+  // Care → finance: ripple card, then horizontal flow tightens.
+  if (slideId === "ambient") return "integrate";
+  // Finance → stack: structured card, then teal footer pool into Integrate.
+  if (slideId === "billing") return "home-footer";
+  return protoGrainGradientVariant(slideId);
+}
+
 export function protoGrainGradientVariant(
   slideId: string,
 ): ProtoGrainGradientVariant | undefined {
@@ -320,9 +349,7 @@ export function protoGrainGradientVariant(
       ? "front-desk"
       : slideId === "front-desk"
         ? "agents"
-        : slideId === "ambient"
-          ? "billing"
-          : slideId;
+        : slideId;
 
   if (resolvedId in PROTO_GRAIN_GRADIENT_PRESETS) {
     return resolvedId as ProtoGrainGradientVariant;

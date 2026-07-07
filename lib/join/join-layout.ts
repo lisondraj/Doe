@@ -1,3 +1,5 @@
+import { DOEPHONE_PHONE_GUTTER_X } from "@/lib/doephone/section-styles";
+
 /** Shared desktop content column — nav, main, and footer inner edges align here. */
 export const JOIN_DESKTOP_CONTENT_MAX = "max-w-[1400px]";
 export const JOIN_DESKTOP_CONTENT_PAD = "px-8";
@@ -5,8 +7,7 @@ export const JOIN_DESKTOP_CONTENT =
   `mx-auto w-full ${JOIN_DESKTOP_CONTENT_MAX} ${JOIN_DESKTOP_CONTENT_PAD}`;
 
 /** Shared vertical/horizontal gutter for join iPhone sections — matches carousel inset. */
-export const JOIN_MOBILE_SECTION_GUTTER =
-  "max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))";
+export const JOIN_MOBILE_SECTION_GUTTER = DOEPHONE_PHONE_GUTTER_X;
 
 /** Clears pinchSafe nav strip — no extra band above hero. */
 export const JOIN_MOBILE_NAV_CLEARANCE =
@@ -14,15 +15,15 @@ export const JOIN_MOBILE_NAV_CLEARANCE =
 
 /** Hero band — top gutter; gap before tracks comes from main flex gap below. */
 export const JOIN_MOBILE_HERO_SECTION =
-  "flex shrink-0 flex-col pt-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
+  `flex shrink-0 flex-col pt-[${JOIN_MOBILE_SECTION_GUTTER}]`;
 
 /** Vertical stack gap — hero→Clinical and between track sections. */
 export const JOIN_MOBILE_SECTION_STACK_GAP =
-  "gap-14 iphone-page:gap-[max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin))]";
+  `gap-11 iphone-page:gap-[${JOIN_MOBILE_SECTION_GUTTER}]`;
 
 /** Hero card — first screen minus nav, top gutter, and hero→track gap. */
 export const JOIN_MOBILE_HERO_CARD_HEIGHT =
-  "h-[calc(var(--app-vh,100lvh)-env(safe-area-inset-top,0px)-clamp(4.25rem,3.5rem+2.5vmin,5.25rem)-3*max(2.35rem,calc(env(safe-area-inset-left,0px)+5.25vmin)))] min-h-0 w-full shrink-0";
+  `h-[calc(var(--app-vh,100lvh)-env(safe-area-inset-top,0px)-clamp(4.25rem,3.5rem+2.5vmin,5.25rem)-3*${JOIN_MOBILE_SECTION_GUTTER})] min-h-0 w-full shrink-0`;
 
 /** Half of join mobile hero height — intern track graphic boxes (taller on iPhone). */
 export const JOIN_MOBILE_CARD_HEIGHT =

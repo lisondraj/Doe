@@ -174,7 +174,7 @@ export function DoePhoneCommunicationIntelligenceSection() {
           expanded={panelPhase === "open"}
           disabled={isClosing}
           onToggle={toggleExpanded}
-          className={`z-30 right-6 iphone-page:right-[max(2.35rem,calc(env(safe-area-inset-right,0px)+5.25vmin))] ${doePhoneSectionRevealSegmentClass("badge", revealed)}`}
+          className={`z-30 right-6 iphone-page:right-[max(1.65rem,calc(env(safe-area-inset-right,0px)+3.8vmin))] ${doePhoneSectionRevealSegmentClass("badge", revealed)}`}
           style={{
             top: "max(1.95rem, calc(env(safe-area-inset-top, 0px) + calc(var(--app-vh, 100lvh) * 0.0725)))",
           }}

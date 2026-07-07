@@ -1,5 +1,6 @@
 "use client";
 
+import { DoePhoneHeroGradientCircles } from "@/components/doephone/DoePhoneHeroGradientCircles";
 import { DoePhoneHeroHeadline } from "@/components/doephone/DoePhoneHeroHeadline";
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import { ProtoHomeHeroGradient } from "@/components/proto/ProtoHomeHeroGradient";
@@ -125,6 +126,8 @@ export function DoePhoneHeroSection({
           gradientScale={gradientZoom}
         />
       )}
+
+      {isMobile && !isProto ? <DoePhoneHeroGradientCircles /> : null}
 
       <div
         className={`absolute left-0 right-0 z-[3] ${copyInset} ${copyBottom}`}

@@ -7,11 +7,11 @@ import { DoePhoneHomeShaderBandSection } from "@/components/doephone/DoePhoneHom
 import { DOEPHONE_COMMUNICATION_SLIDES } from "@/lib/doephone/communication-carousel";
 import { HOME_FEATURE_SECTION_TITLES } from "@/lib/doephone/home-feature-sections";
 
-/** iPhone home — six feature cards on sand bands, shader spacers between. */
+/** iPhone home — feature cards on sand bands with full-viewport shader bands after each. */
 export function DoePhoneHomeFeatureStack() {
   return (
     <>
-      {DOEPHONE_COMMUNICATION_SLIDES.map((slide, index) => {
+      {DOEPHONE_COMMUNICATION_SLIDES.map((slide) => {
         const title = HOME_FEATURE_SECTION_TITLES[slide.id];
 
         return (
@@ -20,10 +20,9 @@ export function DoePhoneHomeFeatureStack() {
               slide={slide}
               titleLine1={title.line1}
               titleLine2={title.line2}
+              showTitle={slide.id !== "agents"}
             />
-            {index < DOEPHONE_COMMUNICATION_SLIDES.length - 1 ? (
-              <DoePhoneHomeShaderBandSection slideId={slide.id} />
-            ) : null}
+            <DoePhoneHomeShaderBandSection slideId={slide.id} />
           </Fragment>
         );
       })}
