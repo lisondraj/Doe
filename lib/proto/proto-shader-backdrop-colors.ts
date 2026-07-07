@@ -51,7 +51,7 @@ export const DOE_HOME_PHONE_HERO_SHADER_COLORS = [
 
 export function doeHomePhoneHeroShaderSurface(): ProtoGrainGradientSurface {
   return {
-    variant: "home-hero-phone",
+    variant: "home-hero",
     colors: DOE_HOME_PHONE_HERO_SHADER_COLORS,
     colorBack: DOE_HOME_ORANGE_PALETTE.back,
   };
