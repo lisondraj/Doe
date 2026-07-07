@@ -26,11 +26,11 @@ const BRAND = DOE_HOME_ORANGE_PALETTE;
 const HERO_ORB_SHADE_LADDER = [
   { colors: ["#A88028", BRAND.gold, "#FFF0B8"] as const, colorBack: BRAND.back },
   { colors: ["#288878", "#50C8A8", "#C8FFF0"] as const, colorBack: BRAND.back },
-  { colors: ["#A83820", BRAND.orange, "#FFC8A0"] as const, colorBack: BRAND.back },
+  { colors: ["#1870C8", "#48A8F8", "#C8ECFF"] as const, colorBack: BRAND.back },
   { colors: ["#7858A0", "#C090D8", "#F2D8FF"] as const, colorBack: BRAND.back },
   { colors: ["#A84858", "#F09888", "#FFD8D8"] as const, colorBack: BRAND.back },
   { colors: ["#3070A8", "#78B0E8", "#D8EEFF"] as const, colorBack: BRAND.back },
-  { colors: ["#985838", "#E8A860", "#FFE8C0"] as const, colorBack: BRAND.back },
+  { colors: ["#A83098", "#E860D0", "#FFD8F8"] as const, colorBack: BRAND.back },
 ] as const;
 
 type OrbScheme = (typeof HERO_ORB_SHADE_LADDER)[number];
