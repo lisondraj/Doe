@@ -402,14 +402,8 @@ function pulseWave(elapsedMs: number) {
   return 1 + PULSE_MAX_BOOST * wave * wave;
 }
 
-function shouldPulseOrb(
-  index: number,
-  frontIndex: number,
-  frontTagVisible: boolean,
-  secondaryIndex: number,
-) {
+function shouldPulseOrb(index: number, frontIndex: number, secondaryIndex: number) {
   if (frontIndex < 0) return false;
-  if (index === frontIndex && frontTagVisible) return true;
   return index === secondaryIndex;
 }
 
@@ -417,10 +411,9 @@ function haloWavesForOrb(
   index: number,
   elapsedMs: number,
   frontIndex: number,
-  frontTagVisible: boolean,
   secondaryIndex: number,
 ) {
-  if (!shouldPulseOrb(index, frontIndex, frontTagVisible, secondaryIndex)) return null;
+  if (!shouldPulseOrb(index, frontIndex, secondaryIndex)) return null;
 
   const wave = (elapsedMs % HALO_CYCLE_MS) / HALO_CYCLE_MS;
   return {
