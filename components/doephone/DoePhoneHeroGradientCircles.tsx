@@ -22,15 +22,15 @@ const ORB_AGENT_LABELS = [
 
 const BRAND = DOE_HOME_ORANGE_PALETTE;
 
-/** Orange / orange-gold ladder — yellow-gold ↔ burnt-orange interleaved on dial. */
+/** Orange / orange-gold ladder — rich mids, no yellows; warm ↔ burnt interleaved. */
 const HERO_ORB_SHADE_LADDER = [
-  { colors: ["#C89810", "#FFE040", "#FFF8B8"] as const, colorBack: BRAND.back },
-  { colors: ["#C83808", "#E84818", "#FFC0A0"] as const, colorBack: BRAND.back },
-  { colors: ["#C09018", BRAND.gold, "#FFF0A8"] as const, colorBack: BRAND.back },
-  { colors: ["#C85008", "#FF8828", "#FFD0A8"] as const, colorBack: BRAND.back },
-  { colors: ["#C88810", "#F8C038", "#FFE8A8"] as const, colorBack: BRAND.back },
-  { colors: ["#C84008", BRAND.orange, "#FFC8A0"] as const, colorBack: BRAND.back },
-  { colors: ["#C87818", BRAND.copper, "#FFE0B8"] as const, colorBack: BRAND.back },
+  { colors: ["#8A5818", "#D89038", "#E8B888"] as const, colorBack: BRAND.back },
+  { colors: ["#8A2810", "#D04820", "#E09878"] as const, colorBack: BRAND.back },
+  { colors: ["#883818", "#C85838", "#D8A088"] as const, colorBack: BRAND.back },
+  { colors: ["#8A5018", BRAND.copper, "#E0A878"] as const, colorBack: BRAND.back },
+  { colors: ["#8A3810", "#E06830", "#E0A080"] as const, colorBack: BRAND.back },
+  { colors: ["#883028", BRAND.rose, "#E0A090"] as const, colorBack: BRAND.back },
+  { colors: ["#8A3018", BRAND.orange, "#E0A080"] as const, colorBack: BRAND.back },
 ] as const;
 
 type OrbScheme = (typeof HERO_ORB_SHADE_LADDER)[number];
