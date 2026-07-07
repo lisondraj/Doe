@@ -5,48 +5,48 @@ import { useEffect, useRef } from "react";
 
 import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO } from "@/lib/proto/proto-grain-gradient";
 
-/** Orb palettes — Doe teal shades offset from hero #1E343A so orbs don't blend in. */
+/** Orb palettes — blue shades for hero speaking orbs. */
 const HERO_SPEAKING_ORB_SCHEMES = {
-  seafoam: {
-    colors: ["#C8ECE4", "#78B8A8", "#5A9C8C"] as const,
-    colorBack: "#2E5850",
+  sky: {
+    colors: ["#B8DCF4", "#7EB8E8", "#D8EEFC"] as const,
+    colorBack: "#1A3458",
   },
-  aqua: {
-    colors: ["#B8DCE8", "#6CA8BC", "#4E8CA0"] as const,
-    colorBack: "#2E4E5C",
+  periwinkle: {
+    colors: ["#A8BCE8", "#6E8EC8", "#C8D8F4"] as const,
+    colorBack: "#243060",
   },
-  lagoon: {
-    colors: ["#A8D4CC", "#68A898", "#4C8878"] as const,
-    colorBack: "#325850",
+  cobalt: {
+    colors: ["#88A8E0", "#5070B8", "#B0C8F0"] as const,
+    colorBack: "#1E2E58",
   },
-  glacier: {
-    colors: ["#D4ECEC", "#94C4C0", "#72A8A4"] as const,
-    colorBack: "#3A6864",
+  azure: {
+    colors: ["#78B8E8", "#4898D0", "#A8D8F4"] as const,
+    colorBack: "#1A3850",
   },
-  cypress: {
-    colors: ["#98C8BC", "#5C9C8C", "#468470"] as const,
-    colorBack: "#2C5248",
+  slate: {
+    colors: ["#98A8C8", "#6878A8", "#C0CCE8"] as const,
+    colorBack: "#283448",
   },
-  reef: {
-    colors: ["#B0E0D8", "#74B4A4", "#589888"] as const,
-    colorBack: "#346058",
+  indigo: {
+    colors: ["#9098D8", "#6068B0", "#B8BCE8"] as const,
+    colorBack: "#2A2858",
   },
-  surf: {
-    colors: ["#A0CCC4", "#60A090", "#4A8878"] as const,
-    colorBack: "#304E4A",
+  powder: {
+    colors: ["#C0DCF0", "#90B8DC", "#E0F0FA"] as const,
+    colorBack: "#284860",
   },
 } as const;
 
 type OrbScheme = (typeof HERO_SPEAKING_ORB_SCHEMES)[keyof typeof HERO_SPEAKING_ORB_SCHEMES];
 
 const SCHEME_ORDER = [
-  HERO_SPEAKING_ORB_SCHEMES.seafoam,
-  HERO_SPEAKING_ORB_SCHEMES.aqua,
-  HERO_SPEAKING_ORB_SCHEMES.lagoon,
-  HERO_SPEAKING_ORB_SCHEMES.glacier,
-  HERO_SPEAKING_ORB_SCHEMES.cypress,
-  HERO_SPEAKING_ORB_SCHEMES.reef,
-  HERO_SPEAKING_ORB_SCHEMES.surf,
+  HERO_SPEAKING_ORB_SCHEMES.sky,
+  HERO_SPEAKING_ORB_SCHEMES.periwinkle,
+  HERO_SPEAKING_ORB_SCHEMES.cobalt,
+  HERO_SPEAKING_ORB_SCHEMES.azure,
+  HERO_SPEAKING_ORB_SCHEMES.slate,
+  HERO_SPEAKING_ORB_SCHEMES.indigo,
+  HERO_SPEAKING_ORB_SCHEMES.powder,
 ] as const;
 
 /**
