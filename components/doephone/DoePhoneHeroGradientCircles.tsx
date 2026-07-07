@@ -1,7 +1,7 @@
 "use client";
 
 import { GrainGradient } from "@paper-design/shaders-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO } from "@/lib/proto/proto-grain-gradient";
 
@@ -87,7 +87,10 @@ const ORBIT_MIN_SCALE = 0.44;
 const ORBIT_MAX_SCALE = 1;
 
 /** One full lap — time between an orb's consecutive passes through center. */
-const ORBIT_REVOLUTION_MS = 26000;
+const ORBIT_REVOLUTION_MS = 42000;
+
+/** Z-order tracks a lagged depth so front/back swaps ease in, not pop. */
+const Z_DEPTH_LERP = 0.055;
 
 /** Recenters the shifted-vertex ellipse within the stage (the loop mostly arcs
  *  up and away from its near vertex, so the raw bounding box isn't symmetric). */
@@ -115,17 +118,20 @@ const HERO_ORB_SHADER = {
   speed: 0,
 } as const;
 
-type PlacedOrb = {
-  id: string;
-  scheme: OrbScheme;
+type OrbPose = {
   xPct: number;
   yPct: number;
+  depth: number;
   scale: number;
   opacity: number;
-  zIndex: number;
 };
 
-function orbitPoint(index: number, count: number, phase: number) {
+/** Smoothstep — softer grow/fade at orbit extremes. */
+function easeDepth(depth: number) {
+  return depth * depth * (3 - 2 * depth);
+}
+
+function orbitPoint(index: number, count: number, phase: number): OrbPose {
   const tilt = (ORBIT.tiltDeg * Math.PI) / 180;
   const fraction = index / count + phase;
   const warped = fraction + (ORBIT_BACK_BUNCH / (Math.PI * 2)) * Math.sin(fraction * Math.PI * 2);
@@ -133,6 +139,7 @@ function orbitPoint(index: number, count: number, phase: number) {
 
   // depth: 1 at the near vertex (t = π/2), 0 at the far vertex (t = -π/2).
   const depth = (Math.sin(t) + 1) / 2;
+  const eased = easeDepth(depth);
 
   const x = Math.cos(t) * ORBIT.rx;
   // Shift so the near vertex (sin(t) = 1) lands exactly on y = 0 — the path's
@@ -145,17 +152,29 @@ function orbitPoint(index: number, count: number, phase: number) {
   return {
     xPct,
     yPct,
-    scale: ORBIT_MIN_SCALE + depth * (ORBIT_MAX_SCALE - ORBIT_MIN_SCALE),
-    opacity: 0.34 + depth * 0.66,
-    zIndex: Math.round(10 + depth * 190),
+    depth,
+    scale: ORBIT_MIN_SCALE + eased * (ORBIT_MAX_SCALE - ORBIT_MIN_SCALE),
+    opacity: 0.34 + eased * 0.66,
   };
 }
 
-function buildOrbLayout(phase: number): PlacedOrb[] {
-  return Array.from({ length: ORBIT.orbitCount }, (_, index) => ({
-    id: `orbit-${index}`,
-    scheme: SCHEME_ORDER[index],
-    ...orbitPoint(index, ORBIT.orbitCount, phase),
+function buildOrbLayout(phase: number, zDepths: number[]) {
+  const poses = Array.from({ length: ORBIT.orbitCount }, (_, index) =>
+    orbitPoint(index, ORBIT.orbitCount, phase),
+  );
+
+  for (let index = 0; index < ORBIT.orbitCount; index += 1) {
+    zDepths[index] += (poses[index].depth - zDepths[index]) * Z_DEPTH_LERP;
+  }
+
+  const zOrder = Array.from({ length: ORBIT.orbitCount }, (_, index) => index).sort(
+    (a, b) => zDepths[a] - zDepths[b] || a - b,
+  );
+  const zByIndex = new Map(zOrder.map((index, rank) => [index, 10 + rank * 2]));
+
+  return poses.map((pose, index) => ({
+    ...pose,
+    zIndex: zByIndex.get(index) ?? 10,
   }));
 }
 
@@ -194,21 +213,62 @@ function SpeakingGradientOrb({ scheme }: { scheme: OrbScheme }) {
   );
 }
 
+function orbNodeStyle(orb: ReturnType<typeof buildOrbLayout>[number]) {
+  return {
+    left: `calc(50% + ${orb.xPct}%)`,
+    top: `calc(50% + ${orb.yPct}%)`,
+    transform: `translate3d(-50%, -50%, 0) scale(${orb.scale})`,
+    opacity: orb.opacity,
+    zIndex: orb.zIndex,
+  } as const;
+}
+
 /** Hero — every orb travels one shared elliptical path that dips through the
  *  center, so each color takes its turn passing through the big highlight spot. */
 export function DoePhoneHeroGradientCircles() {
-  const [phase, setPhase] = useState(0);
+  const initialLayoutRef = useRef(
+    buildOrbLayout(
+      0,
+      Array.from({ length: ORBIT.orbitCount }, (_, index) =>
+        orbitPoint(index, ORBIT.orbitCount, 0).depth,
+      ),
+    ),
+  );
+  const nodeRefs = useRef<(HTMLDivElement | null)[]>([]);
   const rafRef = useRef<number | undefined>(undefined);
   const startRef = useRef<number | undefined>(undefined);
+  const zDepthsRef = useRef<number[]>(
+    Array.from({ length: ORBIT.orbitCount }, (_, index) =>
+      orbitPoint(index, ORBIT.orbitCount, 0).depth,
+    ),
+  );
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (media.matches) return;
+    const applyLayout = (phase: number) => {
+      const layout = buildOrbLayout(phase, zDepthsRef.current);
+      layout.forEach((orb, index) => {
+        const node = nodeRefs.current[index];
+        if (!node) return;
+        const style = orbNodeStyle(orb);
+        node.style.left = style.left;
+        node.style.top = style.top;
+        node.style.transform = style.transform;
+        node.style.opacity = `${style.opacity}`;
+        node.style.zIndex = `${style.zIndex}`;
+      });
+    };
+
+    if (media.matches) {
+      applyLayout(0);
+      return;
+    }
 
     const tick = (now: number) => {
       if (startRef.current === undefined) startRef.current = now;
       const elapsed = now - startRef.current;
-      setPhase((elapsed % ORBIT_REVOLUTION_MS) / ORBIT_REVOLUTION_MS);
+      const phase = (elapsed % ORBIT_REVOLUTION_MS) / ORBIT_REVOLUTION_MS;
+      applyLayout(phase);
       rafRef.current = requestAnimationFrame(tick);
     };
 
@@ -218,24 +278,19 @@ export function DoePhoneHeroGradientCircles() {
     };
   }, []);
 
-  const orbs = buildOrbLayout(phase);
-
   return (
     <div className="hero-speaking-orbs" aria-hidden>
       <div className="hero-speaking-orbs__stage">
-        {orbs.map((orb) => (
+        {SCHEME_ORDER.map((scheme, index) => (
           <div
-            key={orb.id}
-            className="hero-speaking-orbs__node"
-            style={{
-              left: `calc(50% + ${orb.xPct}%)`,
-              top: `calc(50% + ${orb.yPct}%)`,
-              transform: `translate(-50%, -50%) scale(${orb.scale})`,
-              opacity: orb.opacity,
-              zIndex: orb.zIndex,
+            key={`orbit-${index}`}
+            ref={(node) => {
+              nodeRefs.current[index] = node;
             }}
+            className="hero-speaking-orbs__node"
+            style={orbNodeStyle(initialLayoutRef.current[index])}
           >
-            <SpeakingGradientOrb scheme={orb.scheme} />
+            <SpeakingGradientOrb scheme={scheme} />
           </div>
         ))}
       </div>

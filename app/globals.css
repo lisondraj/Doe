@@ -1335,6 +1335,7 @@ body.proto-route {
   position: absolute;
   transform-origin: center center;
   will-change: transform, opacity;
+  backface-visibility: hidden;
 }
 
 .hero-speaking-orb {
