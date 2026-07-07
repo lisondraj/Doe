@@ -17,8 +17,8 @@ type TagCorner = "tl" | "tr" | "bl" | "br";
 const TAG_CORNERS_ALL: TagCorner[] = ["tl", "tr", "bl", "br"];
 
 const PULSE_SLOT_MS = 2600;
+const PULSE_PAIR_COUNT = 2;
 const PULSE_MAX_BOOST = 0.07;
-const PULSE_SECONDARY_ORBIT_STEP = 3;
 
 const HALO_CYCLE_MS = 3000;
 /** One dedicated agent label per orb — advances as each orb reaches the front. */
@@ -32,34 +32,34 @@ const ORB_AGENT_LABELS = [
   "Refill Agent",
 ] as const;
 
-/** Orb palettes — warm hero family, hues nudged apart so neighbors read distinct. */
+/** Orb palettes — cohesive orange / gold / yellow family (no muddy browns). */
 const HERO_SPEAKING_ORB_SCHEMES = {
+  champagne: {
+    colors: ["#9A8020", "#F2E090", "#FFF8E0"] as const,
+    colorBack: DOE_HOME_ORANGE_PALETTE.back,
+  },
   gold: {
-    colors: ["#8E6A18", DOE_HOME_ORANGE_PALETTE.gold, "#FAE8B8"] as const,
-    colorBack: DOE_HOME_ORANGE_PALETTE.back,
-  },
-  orange: {
-    colors: ["#8C4428", DOE_HOME_ORANGE_PALETTE.orange, "#F4B890"] as const,
-    colorBack: DOE_HOME_ORANGE_PALETTE.back,
-  },
-  copper: {
-    colors: ["#7A5820", "#B88038", "#E8C890"] as const,
-    colorBack: DOE_HOME_ORANGE_PALETTE.back,
-  },
-  rose: {
-    colors: ["#704038", "#B86858", "#E8B8A8"] as const,
-    colorBack: DOE_HOME_ORANGE_PALETTE.back,
-  },
-  tan: {
-    colors: ["#685040", "#9A7868", "#D8C4B0"] as const,
+    colors: ["#907018", DOE_HOME_ORANGE_PALETTE.gold, "#F8E8B0"] as const,
     colorBack: DOE_HOME_ORANGE_PALETTE.back,
   },
   honey: {
-    colors: ["#947018", "#E8C868", "#F8E8C0"] as const,
+    colors: ["#987018", "#F0C848", "#FCEAB8"] as const,
     colorBack: DOE_HOME_ORANGE_PALETTE.back,
   },
-  ember: {
-    colors: ["#782C20", "#B84838", "#E89080"] as const,
+  saffron: {
+    colors: ["#986018", "#E8B038", "#F8D888"] as const,
+    colorBack: DOE_HOME_ORANGE_PALETTE.back,
+  },
+  apricot: {
+    colors: ["#985028", "#E89858", "#F8D0A8"] as const,
+    colorBack: DOE_HOME_ORANGE_PALETTE.back,
+  },
+  orange: {
+    colors: ["#904028", DOE_HOME_ORANGE_PALETTE.orange, "#F4B890"] as const,
+    colorBack: DOE_HOME_ORANGE_PALETTE.back,
+  },
+  peach: {
+    colors: ["#985838", "#E8A078", "#F8D0B8"] as const,
     colorBack: DOE_HOME_ORANGE_PALETTE.back,
   },
 } as const;
@@ -78,15 +78,15 @@ function orbAccentStyle(scheme: OrbScheme) {
   } as CSSProperties;
 }
 
-/** Orbit order — alternate yellows, roses, and oranges so side-by-side orbs contrast. */
+/** Orbit order — warm spectrum with yellow/orange alternation for neighbor contrast. */
 const SCHEME_ORDER = [
-  HERO_SPEAKING_ORB_SCHEMES.gold,
-  HERO_SPEAKING_ORB_SCHEMES.rose,
-  HERO_SPEAKING_ORB_SCHEMES.honey,
-  HERO_SPEAKING_ORB_SCHEMES.ember,
-  HERO_SPEAKING_ORB_SCHEMES.copper,
-  HERO_SPEAKING_ORB_SCHEMES.tan,
+  HERO_SPEAKING_ORB_SCHEMES.champagne,
   HERO_SPEAKING_ORB_SCHEMES.orange,
+  HERO_SPEAKING_ORB_SCHEMES.honey,
+  HERO_SPEAKING_ORB_SCHEMES.peach,
+  HERO_SPEAKING_ORB_SCHEMES.gold,
+  HERO_SPEAKING_ORB_SCHEMES.apricot,
+  HERO_SPEAKING_ORB_SCHEMES.saffron,
 ] as const;
 
 /**
@@ -515,11 +515,44 @@ function isOrbitNeighbor(a: number, b: number, count: number) {
   return diff === 1 || diff === count - 1;
 }
 
-/** Second pulse — same orbit ring, never the orb just before/after the front one. */
-function secondaryPulseIndex(frontIndex: number, count: number) {
-  const candidate = (frontIndex + PULSE_SECONDARY_ORBIT_STEP) % count;
-  if (!isOrbitNeighbor(frontIndex, candidate, count)) return candidate;
-  return (frontIndex + PULSE_SECONDARY_ORBIT_STEP + 1) % count;
+function mulberry32(seed: number) {
+  let state = seed >>> 0;
+  return () => {
+    state = (state + 0x6d2b79f5) >>> 0;
+    let t = state;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/** Two random pulsing orbs per slot — never orbit neighbors, never the pill orb. */
+function pulseIndicesForSlot(
+  slotIndex: number,
+  count: number,
+  excludeIndices: number[],
+) {
+  const exclude = new Set(excludeIndices);
+  const pool: number[] = [];
+  for (let i = 0; i < count; i += 1) {
+    if (!exclude.has(i)) pool.push(i);
+  }
+
+  const rand = mulberry32(slotIndex * 9973 + count * 31 + 17);
+  for (let i = pool.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(rand() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+
+  const picked: number[] = [];
+  for (const orb of pool) {
+    if (picked.length >= PULSE_PAIR_COUNT) break;
+    if (picked.every((other) => !isOrbitNeighbor(other, orb, count))) {
+      picked.push(orb);
+    }
+  }
+
+  return picked;
 }
 
 function pulseWave(elapsedMs: number) {
@@ -528,18 +561,12 @@ function pulseWave(elapsedMs: number) {
   return 1 + PULSE_MAX_BOOST * wave * wave;
 }
 
-function shouldPulseOrb(index: number, frontIndex: number, secondaryIndex: number) {
-  if (frontIndex < 0) return false;
-  return index === secondaryIndex;
+function shouldPulseOrb(index: number, pulseIndices: number[]) {
+  return pulseIndices.includes(index);
 }
 
-function haloWavesForOrb(
-  index: number,
-  elapsedMs: number,
-  frontIndex: number,
-  secondaryIndex: number,
-) {
-  if (!shouldPulseOrb(index, frontIndex, secondaryIndex)) return null;
+function haloWavesForOrb(index: number, elapsedMs: number, pulseIndices: number[]) {
+  if (!shouldPulseOrb(index, pulseIndices)) return null;
 
   const wave = (elapsedMs % HALO_CYCLE_MS) / HALO_CYCLE_MS;
   return {
@@ -555,13 +582,8 @@ function haloRingStyle(progress: number) {
     transform: `translate3d(-50%, -50%, 0) scale(${1 + eased * 0.48})`,
   } as const;
 }
-function pulseScaleForOrb(
-  index: number,
-  elapsedMs: number,
-  frontIndex: number,
-  secondaryIndex: number,
-) {
-  if (!shouldPulseOrb(index, frontIndex, secondaryIndex)) return 1;
+function pulseScaleForOrb(index: number, elapsedMs: number, pulseIndices: number[]) {
+  if (!shouldPulseOrb(index, pulseIndices)) return 1;
   return pulseWave(elapsedMs);
 }
 
@@ -678,13 +700,15 @@ export function DoePhoneHeroGradientCircles() {
       const frontTagOpacity = pill.opacity;
       const frontTagVisible = pill.opacity > 0.01;
       const currentLabel = ORB_AGENT_LABELS[pill.labelIndex];
-      const secondaryPulse =
-        frontIndex >= 0 ? secondaryPulseIndex(frontIndex, ORBIT.orbitCount) : -1;
+      const pulseExclude: number[] = [];
+      if (pill.showIndex >= 0) pulseExclude.push(pill.showIndex);
+      const pulseSlot = Math.floor(elapsedMs / PULSE_SLOT_MS);
+      const pulseIndices = pulseIndicesForSlot(pulseSlot, ORBIT.orbitCount, pulseExclude);
 
       layout.forEach((orb, index) => {
         const node = nodeRefs.current[index];
         if (!node) return;
-        const pulseScale = pulseScaleForOrb(index, elapsedMs, frontIndex, secondaryPulse);
+        const pulseScale = pulseScaleForOrb(index, elapsedMs, pulseIndices);
         const style = orbNodeStyle(orb, pulseScale);
         applyOrbNodeStyle(node, style, nodeCacheRef.current[index]);
 
@@ -711,7 +735,7 @@ export function DoePhoneHeroGradientCircles() {
           }
         }
 
-        const haloWaves = haloWavesForOrb(index, elapsedMs, frontIndex, secondaryPulse);
+        const haloWaves = haloWavesForOrb(index, elapsedMs, pulseIndices);
         const haloPrimary = haloPrimaryRefs.current[index];
         const haloEcho = haloEchoRefs.current[index];
         const haloActive = haloWaves !== null;
