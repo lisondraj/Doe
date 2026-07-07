@@ -20,7 +20,6 @@ export function DoePhoneHomeFeatureStack() {
               slide={slide}
               titleLine1={title.line1}
               titleLine2={title.line2}
-              showTitle={slide.id !== "agents"}
             />
             <DoePhoneHomeShaderBandSection slideId={slide.id} />
           </Fragment>

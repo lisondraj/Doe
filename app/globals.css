@@ -181,98 +181,6 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__card
   max-height: calc(var(--app-vh, 100lvh) * 0.62) !important;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section--agents .home-feature-card-section__inner {
-  min-height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 1.42) !important;
-  padding-top: var(--proto-phone-gutter-y) !important;
-  padding-bottom: var(--proto-phone-gutter-y) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section--agents .home-feature-card-section__agents-stack {
-  --agents-feature-box-h: clamp(
-    calc(23rem + var(--app-vh, 100lvh) / 8),
-    calc(var(--app-vh, 100lvh) * 0.52),
-    calc(38rem + var(--app-vh, 100lvh) / 8)
-  );
-  gap: clamp(0.85rem, 2.35vmin, 1.15rem) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section--agents .home-feature-card-section__shader-box,
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section--agents .home-feature-card-section__agents-lower-stack {
-  box-sizing: border-box !important;
-  flex: 0 0 auto !important;
-  height: var(--agents-feature-box-h) !important;
-  min-height: var(--agents-feature-box-h) !important;
-  max-height: var(--agents-feature-box-h) !important;
-  overflow: hidden !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section--agents .home-feature-card-section__agents-lower-stack {
-  gap: clamp(0.42rem, 1.2vmin, 0.58rem) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section--agents .home-feature-card-section__sunken-tray {
-  box-sizing: border-box !important;
-  padding: clamp(0.72rem, 2.05vmin, 1rem) !important;
-  overflow: hidden !important;
-  container-type: size !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section--agents .home-feature-card-section__teal-stack {
-  width: min(100%, calc(100cqh * 8 / 9)) !important;
-  gap: 0 !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section--agents .home-feature-card-section__teal-square {
-  aspect-ratio: 1 / 1 !important;
-  width: 100% !important;
-  height: auto !important;
-  border-radius: clamp(1.1rem, calc(0.95rem + 0.75vmin), 1.45rem) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section--agents .home-feature-card-section__teal-short {
-  width: 100% !important;
-  aspect-ratio: 8 / 1 !important;
-  height: auto !important;
-  border-radius: clamp(1.1rem, calc(0.95rem + 0.75vmin), 1.45rem) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section--agents .home-feature-card-section__teal-panel {
-  overflow: hidden !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section--agents .home-feature-card-section__teal-panel-inner {
-  height: 100% !important;
-  min-height: 0 !important;
-  overflow: hidden !important;
-  contain: paint !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section--agents .home-feature-card-section__teal-panel-inner > * {
-  height: 100% !important;
-  min-height: 100% !important;
-  max-height: 100% !important;
-  overflow: hidden !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section--agents .home-feature-card-ui-scale {
-  transform: scale(0.84) !important;
-  transform-origin: center center !important;
-  width: 100% !important;
-  height: 100% !important;
-  max-height: 100% !important;
-  overflow: hidden !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section--agents .home-feature-card-section__card-plate {
-  height: clamp(1.25rem, 3.55vmin, 1.72rem) !important;
-  min-height: clamp(1.25rem, 3.55vmin, 1.72rem) !important;
-  max-height: clamp(1.25rem, 3.55vmin, 1.72rem) !important;
-  border-radius: clamp(0.32rem, 0.9vmin, 0.45rem) !important;
-  background-color: #d5cabe !important;
-  border: none !important;
-  box-shadow: none !important;
-}
-
 /* Card shell is all absolute layers — explicit height so h-full children paint. */
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__card > * {
   height: 100% !important;
@@ -1335,6 +1243,7 @@ body.proto-route {
   position: absolute;
   transform-origin: center center;
   will-change: transform, opacity;
+  backface-visibility: hidden;
 }
 
 .hero-speaking-orb {
@@ -1350,6 +1259,12 @@ body.proto-route {
   width: 100%;
   height: 100%;
   transform-origin: center center;
+}
+
+.hero-speaking-orb__core canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 /* /doephone hero headline — deblur + rise after polar overlay build completes. */
