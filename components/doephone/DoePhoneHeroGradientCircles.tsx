@@ -4,7 +4,6 @@ import { GrainGradient } from "@paper-design/shaders-react";
 import { memo, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 
 import { suisseIntl } from "@/lib/home/fonts";
-import { DOE_HOME_ORANGE_PALETTE } from "@/lib/proto/proto-shader-backdrop-colors";
 import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO } from "@/lib/proto/proto-grain-gradient";
 
 /** One dedicated agent label per orb on the dial. */
@@ -18,54 +17,25 @@ const ORB_AGENT_LABELS = [
   "Refill Agent",
 ] as const;
 
-/** Orb palettes — cohesive orange / gold / yellow family (no muddy browns). */
-const HERO_SPEAKING_ORB_SCHEMES = {
-  champagne: {
-    colors: ["#9A8020", "#F2E090", "#FFF8E0"] as const,
-    colorBack: DOE_HOME_ORANGE_PALETTE.back,
-  },
-  gold: {
-    colors: ["#907018", DOE_HOME_ORANGE_PALETTE.gold, "#F8E8B0"] as const,
-    colorBack: DOE_HOME_ORANGE_PALETTE.back,
-  },
-  honey: {
-    colors: ["#987018", "#F0C848", "#FCEAB8"] as const,
-    colorBack: DOE_HOME_ORANGE_PALETTE.back,
-  },
-  saffron: {
-    colors: ["#986018", "#E8B038", "#F8D888"] as const,
-    colorBack: DOE_HOME_ORANGE_PALETTE.back,
-  },
-  apricot: {
-    colors: ["#985028", "#E89858", "#F8D0A8"] as const,
-    colorBack: DOE_HOME_ORANGE_PALETTE.back,
-  },
-  orange: {
-    colors: ["#904028", DOE_HOME_ORANGE_PALETTE.orange, "#F4B890"] as const,
-    colorBack: DOE_HOME_ORANGE_PALETTE.back,
-  },
-  peach: {
-    colors: ["#985838", "#E8A078", "#F8D0B8"] as const,
-    colorBack: DOE_HOME_ORANGE_PALETTE.back,
-  },
-} as const;
-
-type OrbScheme = (typeof HERO_SPEAKING_ORB_SCHEMES)[keyof typeof HERO_SPEAKING_ORB_SCHEMES];
-
-const SCHEME_ORDER = [
-  HERO_SPEAKING_ORB_SCHEMES.champagne,
-  HERO_SPEAKING_ORB_SCHEMES.orange,
-  HERO_SPEAKING_ORB_SCHEMES.honey,
-  HERO_SPEAKING_ORB_SCHEMES.peach,
-  HERO_SPEAKING_ORB_SCHEMES.gold,
-  HERO_SPEAKING_ORB_SCHEMES.apricot,
-  HERO_SPEAKING_ORB_SCHEMES.saffron,
+/** Orange / gold ladder — lightest to darkest around the dial. */
+const HERO_ORB_SHADE_LADDER = [
+  { colors: ["#B88828", "#E8CC70", "#F8E8B8"] as const, colorBack: "#1E343A" },
+  { colors: ["#B07822", "#E0BC58", "#F2DCA0"] as const, colorBack: "#1E343A" },
+  { colors: ["#A87020", "#D8B048", "#ECCE88"] as const, colorBack: "#1E343A" },
+  { colors: ["#A0641C", "#D4A040", "#E8C070"] as const, colorBack: "#1E343A" },
+  { colors: ["#985818", "#CC9438", "#E4B860"] as const, colorBack: "#1E343A" },
+  { colors: ["#904C14", "#C48830", "#D8A850"] as const, colorBack: "#1E343A" },
+  { colors: ["#884010", "#B87828", "#CC9840"] as const, colorBack: "#1E343A" },
 ] as const;
+
+type OrbScheme = (typeof HERO_ORB_SHADE_LADDER)[number];
+
+const SCHEME_ORDER = HERO_ORB_SHADE_LADDER;
 
 const ORB_COUNT = SCHEME_ORDER.length;
 const DIAL_STEP = (Math.PI * 2) / ORB_COUNT;
-const DIAL_RADIUS_VMIN = 52;
-const ORB_BASE_SIZE = "clamp(15.5rem, 47vmin, 21.5rem)";
+const DIAL_RADIUS_VMIN = 50;
+const ORB_BASE_SIZE = "clamp(17rem, 54vmin, 23.5rem)";
 const AUTO_ADVANCE_MS = 5000;
 const SWITCH_MS = 920;
 const PILL_OUT_MS = 220;
@@ -140,7 +110,7 @@ function buildDialLayout(dialRotation: number): DialOrbPose[] {
     const isFocused = index === focusedIndex;
     const dist = angularDistance(angle, CENTER_SLOT_ANGLE);
     const t = Math.min(1, dist / (DIAL_STEP * 0.72));
-    const scale = isFocused ? 1 : 0.84 - t * 0.06;
+    const scale = isFocused ? 1.04 : 0.9 - t * 0.05;
     const opacity = isFocused ? 1 : 0.56 + (1 - t) * 0.2;
 
     return {
