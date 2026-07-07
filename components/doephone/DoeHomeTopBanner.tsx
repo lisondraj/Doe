@@ -28,7 +28,7 @@ export function DoeHomeTopBanner() {
   return (
     <div className="doe-home-top-banner" role="region" aria-label="Company news">
       <p className={`doe-home-top-banner__text ${inter.className}`}>
-        <span>We raised a $5M pre-seed round</span>
+        <span>We raised a $5M pre-seed round!</span>
         <Link href="/blog" className="doe-home-top-banner__link">
           Read more
           <ReadMoreArrow />
