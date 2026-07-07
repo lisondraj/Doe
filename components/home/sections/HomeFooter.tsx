@@ -6,6 +6,7 @@ import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import { DOEPHONE_FOOTER_CONTENT_INSET } from "@/lib/doephone/section-styles";
 import { inter, lora } from "@/lib/home/fonts";
 import { doeHomeFooterShaderSurface } from "@/lib/proto/proto-shader-backdrop-colors";
+import type { ProtoGrainGradientSurface } from "@/lib/proto/proto-grain-gradient";
 
 const FOOTER_SHADER = doeHomeFooterShaderSurface();
 
@@ -16,7 +17,14 @@ const FOOTER_LINKS = [
   { href: "/", label: "Our Vision" },
 ] as const;
 
-export function HomeFooter({ linksDisabled = false }: { linksDisabled?: boolean }) {
+export function HomeFooter({
+  linksDisabled = false,
+  shaderSurface,
+}: {
+  linksDisabled?: boolean;
+  shaderSurface?: ProtoGrainGradientSurface;
+}) {
+  const footerShader = shaderSurface ?? FOOTER_SHADER;
   return (
     <>
       <footer
@@ -29,9 +37,9 @@ export function HomeFooter({ linksDisabled = false }: { linksDisabled?: boolean 
       >
         <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
           <ProtoGrainGradient
-            variant={FOOTER_SHADER.variant}
-            colors={FOOTER_SHADER.colors}
-            colorBack={FOOTER_SHADER.colorBack}
+            variant={footerShader.variant}
+            colors={footerShader.colors}
+            colorBack={footerShader.colorBack}
             static
           />
         </div>
