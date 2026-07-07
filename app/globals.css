@@ -1403,6 +1403,22 @@ body.proto-route {
   height: 100%;
 }
 
+.hero-speaking-orb__play {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.hero-speaking-orb__play-icon {
+  width: clamp(2.35rem, 24%, 3.35rem);
+  height: clamp(2.35rem, 24%, 3.35rem);
+  filter: drop-shadow(0 3px 10px rgba(30, 52, 58, 0.2));
+}
+
 /* Speaking halo — orb-tinted pulse rings. */
 .hero-speaking-orb__halo-ring {
   position: absolute;

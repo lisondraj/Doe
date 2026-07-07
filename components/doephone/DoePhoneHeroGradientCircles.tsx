@@ -172,6 +172,15 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
           className="pointer-events-none absolute inset-0 rounded-full shadow-[inset_0_-18px_36px_rgba(30,52,58,0.22)]"
           aria-hidden
         />
+        <div className="hero-speaking-orb__play" aria-hidden>
+          <svg className="hero-speaking-orb__play-icon" viewBox="0 0 48 48" fill="none">
+            <circle cx="24" cy="24" r="22" fill="rgba(255, 251, 246, 0.2)" stroke="rgba(255, 251, 246, 0.42)" strokeWidth="1.25" />
+            <path
+              d="M20.2 16.4v15.2c0 .72.78 1.16 1.4.8l10.2-5.9c.62-.36.62-1.24 0-1.6l-10.2-5.9c-.62-.36-1.4.08-1.4.8z"
+              fill="rgba(255, 251, 246, 0.94)"
+            />
+          </svg>
+        </div>
       </div>
       <div
         className={`hero-speaking-orb__tag hero-speaking-orb__tag--left-mid ${suisseIntl.className}${
