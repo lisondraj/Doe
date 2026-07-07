@@ -206,7 +206,7 @@ export const PROTO_GRAIN_GRADIENT_PRESETS: Record<ProtoGrainGradientVariant, Pro
     scale: 1.24,
     worldWidth: 1280,
     worldHeight: 960,
-    speed: 0,
+    speed: 0.55,
   },
   inbox: {
     shape: "truchet",

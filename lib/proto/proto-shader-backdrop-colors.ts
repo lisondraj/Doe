@@ -39,6 +39,16 @@ export function doeHomeHeroShaderSurface(): ProtoGrainGradientSurface {
   };
 }
 
+/** iPhone home hero — corners flow (swapped from agents shader band), static in section. */
+export function doeHomePhoneHeroBackdropSurface(): ProtoGrainGradientSurface {
+  const hero = doeHomeHeroShaderSurface();
+  return {
+    variant: "front-desk",
+    colors: hero.colors,
+    colorBack: hero.colorBack,
+  };
+}
+
 /**
  * iPhone home hero with speaking orbs — muted periwinkle / rose-lilac / mint
  * ripples that echo the orb palette without competing with it.
@@ -220,6 +230,15 @@ export function doeHomeShaderBandSurface(
 
   if (slideId === "billing") {
     return doeHomeFooterShaderSurface();
+  }
+
+  if (slideId === "agents") {
+    const hero = doeHomeHeroShaderSurface();
+    return {
+      variant: "home-hero",
+      colors: hero.colors,
+      colorBack: hero.colorBack,
+    };
   }
 
   const hero = doeHomeHeroShaderSurface();

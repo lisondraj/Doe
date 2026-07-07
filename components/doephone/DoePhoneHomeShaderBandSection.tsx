@@ -12,6 +12,7 @@ export function DoePhoneHomeShaderBandSection({
   slideId: DoePhoneCommunicationSlide["id"];
 }) {
   const shader = doeHomeShaderBandSurface(slideId);
+  const freezeShader = slideId !== "front-desk";
 
   return (
     <section
@@ -24,7 +25,7 @@ export function DoePhoneHomeShaderBandSection({
             variant={shader.variant}
             colors={shader.colors}
             colorBack={shader.colorBack}
-            static
+            static={freezeShader}
           />
         </div>
       ) : null}
