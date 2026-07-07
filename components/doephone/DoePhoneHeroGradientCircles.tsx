@@ -1,9 +1,10 @@
 "use client";
 
 import { GrainGradient } from "@paper-design/shaders-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 
 import { suisseIntl } from "@/lib/home/fonts";
+import { DOE_HOME_ORANGE_PALETTE } from "@/lib/proto/proto-shader-backdrop-colors";
 import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO } from "@/lib/proto/proto-grain-gradient";
 
 const TAG_DEPTH_ENTER = 0.48;
@@ -27,39 +28,51 @@ const ORB_AGENT_LABELS = [
   "Refill Agent",
 ] as const;
 
-/** Orb palettes — offset from hero (teal + gold/orange/copper). */
+/** Orb palettes — dark → mid → light, backs in the hero ink family (#1E343A). */
 const HERO_SPEAKING_ORB_SCHEMES = {
   mint: {
-    colors: ["#7EC4B0", "#5A9E88", "#C8EDE0"] as const,
-    colorBack: "#1E4A42",
+    colors: ["#3D7A6A", "#68B09A", "#C5EDE2"] as const,
+    colorBack: "#1A3834",
   },
   rose: {
-    colors: ["#E8A8B8", "#C9788E", "#F2DDD4"] as const,
-    colorBack: "#523040",
+    colors: ["#A45870", "#D08898", "#F0D4D8"] as const,
+    colorBack: "#382430",
   },
   periwinkle: {
-    colors: ["#9EB8E0", "#6E94C4", "#C5DCF0"] as const,
-    colorBack: "#2A4468",
+    colors: ["#4A72A8", "#7CA0CC", "#D0E4F4"] as const,
+    colorBack: "#243048",
   },
   apricot: {
-    colors: ["#F0C078", "#E09850", "#FAE8C8"] as const,
-    colorBack: "#5C4028",
+    colors: ["#B87838", "#E0A050", "#F8E4C0"] as const,
+    colorBack: "#483020",
   },
   lilac: {
-    colors: ["#C4A8E8", "#9678C8", "#EDE4F8"] as const,
-    colorBack: "#403058",
+    colors: ["#7860A8", "#A890D0", "#E4D8F4"] as const,
+    colorBack: "#302448",
   },
   coral: {
-    colors: ["#F4A896", "#E07868", "#FCE0D8"] as const,
-    colorBack: "#6E3828",
+    colors: ["#C06050", "#E88878", "#FADCD4"] as const,
+    colorBack: "#442820",
   },
   teal: {
-    colors: ["#88C4C4", "#58A0A0", "#D0ECEC"] as const,
-    colorBack: "#284848",
+    colors: ["#3A8888", "#68B0B0", "#C8EAEA"] as const,
+    colorBack: DOE_HOME_ORANGE_PALETTE.back,
   },
 } as const;
 
 type OrbScheme = (typeof HERO_SPEAKING_ORB_SCHEMES)[keyof typeof HERO_SPEAKING_ORB_SCHEMES];
+
+function orbAccentStyle(scheme: OrbScheme) {
+  const [dark, mid, light] = scheme.colors;
+  return {
+    width: ORB_BASE_SIZE,
+    height: ORB_BASE_SIZE,
+    "--orb-halo-dark": dark,
+    "--orb-halo-mid": mid,
+    "--orb-halo-light": light,
+    "--orb-halo-back": scheme.colorBack,
+  } as CSSProperties;
+}
 
 const SCHEME_ORDER = [
   HERO_SPEAKING_ORB_SCHEMES.mint,
@@ -323,7 +336,7 @@ function SpeakingGradientOrb({
   haloEchoRef?: (node: HTMLDivElement | null) => void;
 }) {
   return (
-    <div className="hero-speaking-orb" style={{ width: ORB_BASE_SIZE, height: ORB_BASE_SIZE }}>
+    <div className="hero-speaking-orb" style={orbAccentStyle(scheme)}>
       <div ref={haloPrimaryRef} className="hero-speaking-orb__halo-ring" aria-hidden />
       <div
         ref={haloEchoRef}

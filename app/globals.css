@@ -1241,6 +1241,12 @@ body.proto-route {
   justify-content: center;
   padding-top: clamp(2.25rem, 7.5vmin, 3.75rem);
   padding-bottom: clamp(4.25rem, 13vmin, 6.75rem);
+  --hero-pill-ink: #1e343a;
+  --hero-pill-warm: #f2e6d8;
+  --hero-pill-light: #fffbf6;
+  --hero-pill-gold: #e7a944;
+  --hero-pill-copper: #d49d4f;
+  --hero-pill-orange: #d2774c;
 }
 
 .hero-speaking-orbs__stage {
@@ -1277,7 +1283,7 @@ body.proto-route {
   height: 100%;
 }
 
-/* Speaking halo — intermittent ring ripples from non-center orbs. */
+/* Speaking halo — orb-tinted rings (dark core → light edge). */
 .hero-speaking-orb__halo-ring {
   position: absolute;
   top: 50%;
@@ -1286,10 +1292,11 @@ body.proto-route {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.52);
+  border: 2px solid color-mix(in srgb, var(--orb-halo-light) 78%, white);
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.12),
-    inset 0 0 18px rgba(255, 255, 255, 0.08);
+    0 0 0 1px color-mix(in srgb, var(--orb-halo-mid) 42%, transparent),
+    0 0 22px color-mix(in srgb, var(--orb-halo-dark) 18%, transparent),
+    inset 0 0 20px color-mix(in srgb, var(--orb-halo-light) 24%, transparent);
   opacity: 0;
   pointer-events: none;
   will-change: opacity, transform;
@@ -1297,36 +1304,39 @@ body.proto-route {
 }
 
 .hero-speaking-orb__halo-ring--echo {
-  border-color: rgba(255, 255, 255, 0.34);
+  border-color: color-mix(in srgb, var(--orb-halo-mid) 62%, var(--orb-halo-light));
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--orb-halo-dark) 28%, transparent),
+    inset 0 0 14px color-mix(in srgb, var(--orb-halo-mid) 18%, transparent);
 }
 
-/* Bottom-center tag — one fade per center pass on the front orb only. */
+/* Bottom-center tag — hero ink → warm sand → light (matches orange/gold shader). */
 .hero-speaking-orb__tag {
   position: absolute;
   z-index: 4;
   max-width: min(16.5rem, 58vw);
   padding: 0.72rem 1.22rem;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.92);
+  border: 1px solid color-mix(in srgb, var(--hero-pill-gold) 38%, white);
   background:
     linear-gradient(
       180deg,
-      rgba(255, 255, 255, 0.62) 0%,
-      rgba(255, 255, 255, 0) 44%
+      color-mix(in srgb, var(--hero-pill-light) 88%, var(--hero-pill-gold)) 0%,
+      transparent 46%
     ),
     linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 1) 0%,
-      rgba(255, 255, 255, 0.96) 40%,
-      rgba(252, 250, 246, 0.92) 100%
+      152deg,
+      var(--hero-pill-light) 0%,
+      var(--hero-pill-warm) 46%,
+      color-mix(in srgb, var(--hero-pill-warm) 82%, var(--hero-pill-copper)) 100%
     );
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow:
-    0 16px 38px rgba(30, 52, 58, 0.18),
-    0 5px 14px rgba(30, 52, 58, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 1),
-    inset 0 -1px 0 rgba(237, 233, 226, 0.7);
+    0 16px 38px color-mix(in srgb, var(--hero-pill-ink) 20%, transparent),
+    0 5px 14px color-mix(in srgb, var(--hero-pill-orange) 12%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.96),
+    inset 0 -1px 0 color-mix(in srgb, var(--hero-pill-copper) 22%, transparent);
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -1337,7 +1347,7 @@ body.proto-route {
 
 .hero-speaking-orb__tag-text {
   display: block;
-  color: #1e343a;
+  color: var(--hero-pill-ink);
   font-size: clamp(0.86rem, 2.28vmin, 1.08rem);
   font-weight: 500;
   letter-spacing: -0.028em;
