@@ -5,48 +5,48 @@ import { useEffect, useRef } from "react";
 
 import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO } from "@/lib/proto/proto-grain-gradient";
 
-/** Orb palettes — offset from hero (teal + gold/orange/copper). */
+/** Orb palettes — Doe teal shades offset from hero #1E343A so orbs don't blend in. */
 const HERO_SPEAKING_ORB_SCHEMES = {
-  mint: {
-    colors: ["#7EC4B0", "#5A9E88", "#C8EDE0"] as const,
-    colorBack: "#1E4A42",
+  seafoam: {
+    colors: ["#C8ECE4", "#78B8A8", "#5A9C8C"] as const,
+    colorBack: "#2E5850",
   },
-  rose: {
-    colors: ["#E8A8B8", "#C9788E", "#F2DDD4"] as const,
-    colorBack: "#523040",
+  aqua: {
+    colors: ["#B8DCE8", "#6CA8BC", "#4E8CA0"] as const,
+    colorBack: "#2E4E5C",
   },
-  periwinkle: {
-    colors: ["#9EB8E0", "#6E94C4", "#C5DCF0"] as const,
-    colorBack: "#2A4468",
+  lagoon: {
+    colors: ["#A8D4CC", "#68A898", "#4C8878"] as const,
+    colorBack: "#325850",
   },
-  apricot: {
-    colors: ["#F0C078", "#E09850", "#FAE8C8"] as const,
-    colorBack: "#5C4028",
+  glacier: {
+    colors: ["#D4ECEC", "#94C4C0", "#72A8A4"] as const,
+    colorBack: "#3A6864",
   },
-  lilac: {
-    colors: ["#C4A8E8", "#9678C8", "#EDE4F8"] as const,
-    colorBack: "#403058",
+  cypress: {
+    colors: ["#98C8BC", "#5C9C8C", "#468470"] as const,
+    colorBack: "#2C5248",
   },
-  coral: {
-    colors: ["#F4A896", "#E07868", "#FCE0D8"] as const,
-    colorBack: "#6E3828",
+  reef: {
+    colors: ["#B0E0D8", "#74B4A4", "#589888"] as const,
+    colorBack: "#346058",
   },
-  teal: {
-    colors: ["#88C4C4", "#58A0A0", "#D0ECEC"] as const,
-    colorBack: "#284848",
+  surf: {
+    colors: ["#A0CCC4", "#60A090", "#4A8878"] as const,
+    colorBack: "#304E4A",
   },
 } as const;
 
 type OrbScheme = (typeof HERO_SPEAKING_ORB_SCHEMES)[keyof typeof HERO_SPEAKING_ORB_SCHEMES];
 
 const SCHEME_ORDER = [
-  HERO_SPEAKING_ORB_SCHEMES.mint,
-  HERO_SPEAKING_ORB_SCHEMES.rose,
-  HERO_SPEAKING_ORB_SCHEMES.periwinkle,
-  HERO_SPEAKING_ORB_SCHEMES.apricot,
-  HERO_SPEAKING_ORB_SCHEMES.lilac,
-  HERO_SPEAKING_ORB_SCHEMES.coral,
-  HERO_SPEAKING_ORB_SCHEMES.teal,
+  HERO_SPEAKING_ORB_SCHEMES.seafoam,
+  HERO_SPEAKING_ORB_SCHEMES.aqua,
+  HERO_SPEAKING_ORB_SCHEMES.lagoon,
+  HERO_SPEAKING_ORB_SCHEMES.glacier,
+  HERO_SPEAKING_ORB_SCHEMES.cypress,
+  HERO_SPEAKING_ORB_SCHEMES.reef,
+  HERO_SPEAKING_ORB_SCHEMES.surf,
 ] as const;
 
 /**
