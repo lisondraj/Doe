@@ -88,15 +88,17 @@ const SCHEME_ORDER = [
 ] as const;
 
 /**
- * Tilted ellipse whose nearest vertex sits exactly at the stage center — every
- * orb travels this same path, so each one genuinely passes through the center
- * highlight spot (and grows to full size there) as it swings around.
+ * Vertical path along the right edge — orbs rise from bottom-left (front /
+ * highlight) to upper-right (half off the phone edge) and back down.
  */
 const ORBIT = {
-  rx: 48,
-  ry: 32,
-  tiltDeg: -22,
   orbitCount: SCHEME_ORDER.length,
+  /** Bottom-left highlight — largest orb, pill anchor. */
+  leftX: -24,
+  yBottom: 34,
+  /** Upper-right — ~half the orb spills past the phone edge. */
+  rightX: 44,
+  yTop: -32,
 } as const;
 
 /** Single shared size — apparent size is depth-driven scale only. */
@@ -110,19 +112,9 @@ const ORBIT_REVOLUTION_MS = 36000;
 /** Z-order tracks a lagged depth so front/back swaps ease in, not pop. */
 const Z_DEPTH_LERP = 0.045;
 
-/** Recenters the shifted-vertex ellipse within the stage. */
-const ORBIT_ANCHOR_X = 14.8;
-const ORBIT_ANCHOR_Y = 33.2;
-
-/**
- * Even parameter spacing leaves a visible gap between the small far orbs — warp
- * the back of the loop so those orbs sit closer together.
- */
+/** Bunch orbs closer at the far/back end of the vertical path (upper-right). */
 const ORBIT_BACK_BUNCH = 0.34;
 
-const ORBIT_TILT_RAD = (ORBIT.tiltDeg * Math.PI) / 180;
-const ORBIT_TILT_COS = Math.cos(ORBIT_TILT_RAD);
-const ORBIT_TILT_SIN = Math.sin(ORBIT_TILT_RAD);
 const ORBIT_WARP_SCALE = ORBIT_BACK_BUNCH / (Math.PI * 2);
 const ORBIT_COUNT = ORBIT.orbitCount;
 
@@ -164,11 +156,8 @@ function orbitPoint(index: number, count: number, phase: number, target?: OrbPos
   const depth = (Math.sin(t) + 1) / 2;
   const eased = easeDepth(depth);
 
-  const x = Math.cos(t) * ORBIT.rx;
-  const y = (Math.sin(t) - 1) * ORBIT.ry;
-
-  const xPct = x * ORBIT_TILT_COS - y * ORBIT_TILT_SIN + ORBIT_ANCHOR_X;
-  const yPct = x * ORBIT_TILT_SIN + y * ORBIT_TILT_COS + ORBIT_ANCHOR_Y;
+  const xPct = ORBIT.leftX + (ORBIT.rightX - ORBIT.leftX) * (1 - depth);
+  const yPct = ORBIT.yTop + (ORBIT.yBottom - ORBIT.yTop) * depth;
   const scale = ORBIT_MIN_SCALE + eased * (ORBIT_MAX_SCALE - ORBIT_MIN_SCALE);
   const opacity = 0.72 + eased * 0.28;
 
@@ -269,10 +258,10 @@ function applyOrbNodeStyle(
 }
 
 
-function focusOrbIndex(zDepths: number[]) {
+function focusOrbIndex(layout: OrbPose[]) {
   let focus = 0;
-  for (let i = 1; i < zDepths.length; i += 1) {
-    if (zDepths[i] > zDepths[focus]) focus = i;
+  for (let i = 1; i < layout.length; i += 1) {
+    if (layout[i].depth > layout[focus].depth) focus = i;
   }
   return focus;
 }
@@ -318,14 +307,13 @@ function pillOpacityForPhase(phase: PillPhase, phaseElapsedMs: number) {
   return 1 - fadeT;
 }
 
-/** Pill runs while an orb holds visual focus, from overtaking the prior front orb until it dives behind the next. */
+/** Pill tracks the bottom-left front orb (highest instantaneous path depth). */
 function updatePillController(
   ctrl: PillController,
-  zDepths: number[],
   layout: OrbPose[],
   elapsedMs: number,
 ) {
-  const focusIndex = focusOrbIndex(zDepths);
+  const focusIndex = focusOrbIndex(layout);
 
   for (let i = 0; i < ORBIT.orbitCount; i += 1) {
     if (ctrl.orbCooldown[i] && layout[i].depth < TAG_DEPTH_RESET) {
@@ -707,8 +695,8 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
   );
 });
 
-/** Hero — every orb travels one shared elliptical path that dips through the
- *  center, so each color takes its turn passing through the big highlight spot. */
+/** Hero — orbs travel a vertical path along the right edge; each passes
+ *  through the bottom-left highlight spot where the pill attaches. */
 export function DoePhoneHeroGradientCircles() {
   const initialZDepths = Array.from({ length: ORBIT_COUNT }, (_, index) =>
     orbitPoint(index, ORBIT_COUNT, 0).depth,
@@ -795,7 +783,7 @@ export function DoePhoneHeroGradientCircles() {
 
     const applyLayout = (phase: number, elapsedMs: number) => {
       const layout = buildOrbLayout(phase, zDepthsRef.current, zOrderRef.current, layoutRef.current);
-      const pill = updatePillController(pillCtrlRef.current, zDepthsRef.current, layout, elapsedMs);
+      const pill = updatePillController(pillCtrlRef.current, layout, elapsedMs);
       const frontTagVisible = pill.opacity > 0.01;
       const currentLabel = pill.label;
       const pulseExcludeIndex = pill.showIndex;
@@ -885,7 +873,7 @@ export function DoePhoneHeroGradientCircles() {
 
     if (media.matches) {
       applyLayout(0, 0);
-      const focusIndex = focusOrbIndex(zDepthsRef.current);
+      const focusIndex = focusOrbIndex(initialLayoutRef.current);
       tagRefs.current.forEach((tag, index) => {
         if (!tag) return;
         const node = nodeRefs.current[index];

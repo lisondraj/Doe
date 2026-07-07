@@ -1230,7 +1230,7 @@ body.proto-route {
   }
 }
 
-/* Hero — gradient speaking orbs on tilted 3D ellipse path. */
+/* Hero — gradient speaking orbs on vertical right-edge path. */
 .hero-speaking-orbs {
   pointer-events: none;
   position: absolute;
@@ -1238,11 +1238,11 @@ body.proto-route {
   z-index: 2;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   padding-top: clamp(2.25rem, 7.5vmin, 3.75rem);
   padding-bottom: clamp(4.25rem, 13vmin, 6.75rem);
   padding-left: clamp(0.85rem, 4.5vw, 1.75rem);
-  padding-right: clamp(0.85rem, 4.5vw, 1.75rem);
+  padding-right: 0;
   --hero-pill-ink: #1e343a;
   --hero-pill-warm: #f2e6d8;
   --hero-pill-light: #fffbf6;
@@ -1253,8 +1253,8 @@ body.proto-route {
 
 .hero-speaking-orbs__stage {
   position: relative;
-  width: clamp(25rem, 76vmin, 34rem);
-  height: clamp(20.5rem, 62vmin, 28rem);
+  width: clamp(25rem, 82vmin, 36rem);
+  height: clamp(20.5rem, 64vmin, 29rem);
   overflow: visible;
 }
 
