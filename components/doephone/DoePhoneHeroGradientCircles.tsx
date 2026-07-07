@@ -64,9 +64,9 @@ const SCHEME_ORDER = [
 
 const ORB_COUNT = SCHEME_ORDER.length;
 const DIAL_STEP = (Math.PI * 2) / ORB_COUNT;
-const DIAL_RADIUS_VMIN = 46;
-const ORB_BASE_SIZE = "clamp(17rem, 52vmin, 24rem)";
-const AUTO_ADVANCE_MS = 10000;
+const DIAL_RADIUS_VMIN = 52;
+const ORB_BASE_SIZE = "clamp(15.5rem, 47vmin, 21.5rem)";
+const AUTO_ADVANCE_MS = 5000;
 const SWITCH_MS = 920;
 const PILL_OUT_MS = 220;
 

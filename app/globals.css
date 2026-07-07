@@ -1230,7 +1230,7 @@ body.proto-route {
   }
 }
 
-/* Hero — half-circle agent dial on the right edge; auto-steps every 10s. */
+/* Hero — half-circle agent dial on the right edge; auto-steps every 5s. */
 .hero-speaking-orbs {
   pointer-events: none;
   position: absolute;
@@ -1240,8 +1240,8 @@ body.proto-route {
   align-items: center;
   justify-content: flex-end;
   overflow: hidden;
-  padding-top: clamp(1.75rem, 5.5vmin, 3rem);
-  padding-bottom: clamp(3.5rem, 11vmin, 5.5rem);
+  padding-top: clamp(1.5rem, 4.75vmin, 2.75rem);
+  padding-bottom: clamp(3.25rem, 10vmin, 5rem);
   padding-left: 0;
   padding-right: 0;
   --hero-pill-ink: #1e343a;
@@ -1250,7 +1250,7 @@ body.proto-route {
   --hero-pill-gold: #e7a944;
   --hero-pill-copper: #d49d4f;
   --hero-pill-orange: #d2774c;
-  --hero-dial-radius: 46vmin;
+  --hero-dial-radius: 52vmin;
   --hero-dial-shift-x: 3.75vmin;
 }
 
