@@ -116,6 +116,17 @@ html[data-about-page]:has(.blog-mobile-root) body {
   background-color: var(--doe-page-surface);
 }
 
+/* Home iPhone — main-page white overflow (overrides shared sand token above). */
+html[data-home-page]:has(.doephone-mobile-root) {
+  --doe-page-surface: #f7f6f3;
+  --proto-page-bg: #f7f6f3;
+  background-color: #f7f6f3;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) body {
+  background-color: #f7f6f3;
+}
+
 html[data-proto-page]:has(.doephone-mobile-root) {
   --proto-page-bg: #121819;
   --proto-phone-gutter-left: max(1.65rem, calc(env(safe-area-inset-left, 0px) + 3.8vmin));
@@ -810,6 +821,13 @@ html[data-home-page]:has(.doe-home-top-banner) {
 }
 
 html[data-home-page]:has(.doe-home-top-banner) body {
+  background-color: #f7f6f3;
+}
+
+html[data-home-page][data-home-banner-dismissed],
+html[data-home-page][data-home-banner-dismissed] body {
+  --doe-page-surface: #f7f6f3;
+  --proto-page-bg: #f7f6f3;
   background-color: #f7f6f3;
 }
 

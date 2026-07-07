@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 
+import { applyPhoneOverflowChrome } from "@/lib/doephone/phone-layout-viewport";
+import { DOE_HOME_OVERFLOW_SURFACE } from "@/lib/home/doe-page-colors";
 import { inter } from "@/lib/home/fonts";
 
 const BANNER_DISMISSED_ATTR = "data-home-banner-dismissed";
@@ -68,10 +70,12 @@ export function DoeHomeTopBanner() {
     };
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const html = document.documentElement;
+
     if (dismissed) {
       html.setAttribute(BANNER_DISMISSED_ATTR, "true");
+      applyPhoneOverflowChrome(DOE_HOME_OVERFLOW_SURFACE);
     } else {
       html.removeAttribute(BANNER_DISMISSED_ATTR);
     }

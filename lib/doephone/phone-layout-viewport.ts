@@ -40,6 +40,20 @@ export function phoneLayoutViewportBootstrapScript(): string {
 }
 
 /** Safari Dynamic Island + bottom chrome, rubber-band overscroll gutters. */
+export function applyPhoneOverflowChrome(surfaceColor: string): void {
+  if (typeof document === "undefined") return;
+
+  const html = document.documentElement;
+  const color = surfaceColor.toLowerCase();
+  html.style.setProperty("--doe-page-surface", color);
+  html.style.setProperty("--proto-page-bg", color);
+  html.style.backgroundColor = color;
+  if (document.body) document.body.style.backgroundColor = color;
+
+  const themeColor = document.querySelector('meta[name="theme-color"]');
+  if (themeColor) themeColor.setAttribute("content", color);
+}
+
 export function phoneOverflowChromeBootstrapScript(surfaceColor = "#ede8df"): string {
   const color = JSON.stringify(surfaceColor);
   return `(function(){try{var html=document.documentElement;html.style.setProperty("--doe-page-surface",${color});html.style.setProperty("--proto-page-bg",${color});html.style.backgroundColor=${color};if(document.body)document.body.style.backgroundColor=${color};var tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.setAttribute("content",${color});}catch(e){}})();`;
