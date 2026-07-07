@@ -7,10 +7,10 @@ import { suisseIntl } from "@/lib/home/fonts";
 import { DOE_HOME_ORANGE_PALETTE } from "@/lib/proto/proto-shader-backdrop-colors";
 import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO } from "@/lib/proto/proto-grain-gradient";
 
-const TAG_DEPTH_ENTER = 0.68;
-const TAG_DEPTH_EXIT = 0.58;
-const TAG_DEPTH_RESET = 0.15;
+const TAG_DEPTH_ENTER = 0.66;
+const TAG_DEPTH_RESET = 0.2;
 const TAG_FADE_MS = 420;
+const TAG_HOLD_MS = 2400;
 
 type TagCorner = "tl" | "tr" | "bl" | "br";
 
@@ -208,14 +208,6 @@ type OrbNodeCache = {
   zIndex: number;
 };
 
-type TagDomCache = {
-  opacity: number;
-  transform: string;
-  nudgeDx: number;
-  nudgeDy: number;
-  nudgeValid: boolean;
-};
-
 type HaloDomCache = {
   primaryOpacity: string;
   primaryTransform: string;
@@ -279,10 +271,10 @@ type PillController = {
   activeOrbIndex: number;
   phase: PillPhase;
   phaseStartMs: number;
+  labelIndex: number;
   orbCooldown: boolean[];
   activeCorner: TagCorner | null;
   lastCorner: TagCorner | null;
-  sessionId: number;
 };
 
 function createPillController(): PillController {
@@ -290,19 +282,11 @@ function createPillController(): PillController {
     activeOrbIndex: -1,
     phase: "idle",
     phaseStartMs: 0,
+    labelIndex: 0,
     orbCooldown: Array.from({ length: ORBIT.orbitCount }, () => false),
     activeCorner: null,
     lastCorner: null,
-    sessionId: 0,
   };
-}
-
-function orbInTagEnter(depth: number) {
-  return depth >= TAG_DEPTH_ENTER;
-}
-
-function orbInTagHold(depth: number) {
-  return depth >= TAG_DEPTH_EXIT;
 }
 
 function nextTagCorner(last: TagCorner | null, orbIndex: number): TagCorner {
@@ -322,7 +306,7 @@ function pillOpacityForPhase(phase: PillPhase, phaseElapsedMs: number) {
   return 1 - fadeT;
 }
 
-/** One pill per orb center pass — visible for the full in-window duration, once per lap. */
+/** One pill per orb pass — label advances only after a completed show on a new orb. */
 function updatePillController(
   ctrl: PillController,
   frontIndex: number,
@@ -335,11 +319,17 @@ function updatePillController(
     }
   }
 
-  const finishActive = () => {
+  const frontDepth = frontIndex >= 0 ? layout[frontIndex].depth : 0;
+  const inWindow = frontIndex >= 0 && frontOrbInTagWindow(frontDepth);
+
+  const finishActive = (advanceLabel: boolean) => {
     if (ctrl.activeOrbIndex >= 0) {
       ctrl.orbCooldown[ctrl.activeOrbIndex] = true;
       if (ctrl.activeCorner) {
         ctrl.lastCorner = ctrl.activeCorner;
+      }
+      if (advanceLabel) {
+        ctrl.labelIndex = (ctrl.labelIndex + 1) % ORB_AGENT_LABELS.length;
       }
     }
     ctrl.activeOrbIndex = -1;
@@ -349,50 +339,66 @@ function updatePillController(
 
   if (ctrl.activeOrbIndex >= 0) {
     const active = ctrl.activeOrbIndex;
-    const depth = layout[active].depth;
     const phaseElapsed = elapsedMs - ctrl.phaseStartMs;
-    const inHold = orbInTagHold(depth);
 
-    if (inHold) {
-      if (ctrl.phase === "entering" && phaseElapsed >= TAG_FADE_MS) {
-        ctrl.phase = "holding";
+    if (frontIndex !== active) {
+      finishActive(ctrl.phase === "holding" || ctrl.phase === "leaving");
+    } else if (!inWindow) {
+      if (ctrl.phase === "entering" || ctrl.phase === "holding") {
+        ctrl.phase = "leaving";
         ctrl.phaseStartMs = elapsedMs;
-      } else if (ctrl.phase === "leaving") {
-        ctrl.phase = "holding";
-        ctrl.phaseStartMs = elapsedMs;
+      } else if (ctrl.phase === "leaving" && phaseElapsed >= TAG_FADE_MS) {
+        finishActive(true);
       }
-    } else if (ctrl.phase === "entering" || ctrl.phase === "holding") {
-      ctrl.phase = "leaving";
-      ctrl.phaseStartMs = elapsedMs;
-    } else if (ctrl.phase === "leaving" && phaseElapsed >= TAG_FADE_MS) {
-      finishActive();
+    } else {
+      switch (ctrl.phase) {
+        case "entering":
+          if (phaseElapsed >= TAG_FADE_MS) {
+            ctrl.phase = "holding";
+            ctrl.phaseStartMs = elapsedMs;
+          }
+          break;
+        case "holding":
+          if (phaseElapsed >= TAG_HOLD_MS) {
+            ctrl.phase = "leaving";
+            ctrl.phaseStartMs = elapsedMs;
+          }
+          break;
+        case "leaving":
+          if (phaseElapsed >= TAG_FADE_MS) {
+            finishActive(true);
+          }
+          break;
+        default:
+          break;
+      }
     }
   }
 
-  if (ctrl.activeOrbIndex < 0 && frontIndex >= 0) {
-    const depth = layout[frontIndex].depth;
-    if (orbInTagEnter(depth) && !ctrl.orbCooldown[frontIndex]) {
-      ctrl.activeOrbIndex = frontIndex;
-      ctrl.phase = "entering";
-      ctrl.phaseStartMs = elapsedMs;
-      ctrl.activeCorner = nextTagCorner(ctrl.lastCorner, frontIndex);
-      ctrl.sessionId += 1;
-    }
+  if (ctrl.activeOrbIndex < 0 && inWindow && !ctrl.orbCooldown[frontIndex]) {
+    ctrl.activeOrbIndex = frontIndex;
+    ctrl.phase = "entering";
+    ctrl.phaseStartMs = elapsedMs;
+    ctrl.activeCorner = nextTagCorner(ctrl.lastCorner, frontIndex);
   }
 
   const showIndex = ctrl.activeOrbIndex;
   const phaseElapsed = showIndex >= 0 ? elapsedMs - ctrl.phaseStartMs : 0;
-  const activeDepth = showIndex >= 0 ? layout[showIndex].depth : 0;
-  const inHold = showIndex >= 0 && (orbInTagHold(activeDepth) || ctrl.phase === "leaving");
-  const opacity = inHold ? pillOpacityForPhase(ctrl.phase, phaseElapsed) : 0;
+  const opacity =
+    showIndex >= 0 && showIndex === frontIndex && inWindow
+      ? pillOpacityForPhase(ctrl.phase, phaseElapsed)
+      : 0;
 
   return {
     showIndex,
     opacity,
-    label: showIndex >= 0 ? ORB_AGENT_LABELS[showIndex] : "",
+    labelIndex: ctrl.labelIndex,
     corner: ctrl.activeCorner,
-    sessionId: ctrl.sessionId,
   };
+}
+
+function frontOrbInTagWindow(depth: number) {
+  return depth >= TAG_DEPTH_ENTER;
 }
 
 function tagMotionTransform(corner: TagCorner, tagOpacity: number, visible: boolean) {
@@ -490,10 +496,11 @@ function applyTagCornerClass(tag: HTMLDivElement, corner: TagCorner) {
   tag.dataset.cornerApplied = corner;
 }
 
-function initVisibleTagLayout(
+function applyVisibleTagLayout(
   tag: HTMLDivElement,
   node: HTMLDivElement,
   preferredCorner: TagCorner,
+  tagOpacity: number,
   label: string,
   avoidCorner: TagCorner | null,
 ): TagCorner {
@@ -504,43 +511,11 @@ function initVisibleTagLayout(
   if (tagText) tagText.textContent = label;
 
   tag.style.visibility = "visible";
+  tag.style.opacity = `${tagOpacity}`;
+  tag.style.transform = tagMotionTransform(corner, tagOpacity, true);
+  const nudge = viewportNudge(tag.getBoundingClientRect());
+  tag.style.transform = tagTransformWithNudge(corner, tagOpacity, true, nudge);
   return corner;
-}
-
-function updateVisibleTagFrame(
-  tag: HTMLDivElement,
-  corner: TagCorner,
-  tagOpacity: number,
-  remeasureNudge: boolean,
-  cache: TagDomCache,
-) {
-  const roundedOpacity = Math.round(tagOpacity * 100) / 100;
-  const baseTransform = tagMotionTransform(corner, tagOpacity, true);
-
-  if (remeasureNudge || !cache.nudgeValid) {
-    tag.style.transform = baseTransform;
-    const nudge = viewportNudge(tag.getBoundingClientRect());
-    cache.nudgeDx = nudge.dx;
-    cache.nudgeDy = nudge.dy;
-    cache.nudgeValid = true;
-  }
-
-  const transform =
-    cache.nudgeDx === 0 && cache.nudgeDy === 0
-      ? baseTransform
-      : tagTransformWithNudge(corner, tagOpacity, true, {
-          dx: cache.nudgeDx,
-          dy: cache.nudgeDy,
-        });
-
-  if (cache.opacity !== roundedOpacity) {
-    tag.style.opacity = `${roundedOpacity}`;
-    cache.opacity = roundedOpacity;
-  }
-  if (cache.transform !== transform) {
-    tag.style.transform = transform;
-    cache.transform = transform;
-  }
 }
 
 function applyHaloDom(
@@ -743,15 +718,6 @@ export function DoePhoneHeroGradientCircles() {
       zIndex: Number.NaN,
     })),
   );
-  const tagCacheRef = useRef<TagDomCache[]>(
-    Array.from({ length: ORBIT.orbitCount }, () => ({
-      opacity: Number.NaN,
-      transform: "",
-      nudgeDx: 0,
-      nudgeDy: 0,
-      nudgeValid: false,
-    })),
-  );
   const haloCacheRef = useRef<HaloDomCache[]>(
     Array.from({ length: ORBIT.orbitCount }, () => ({
       primaryOpacity: "",
@@ -766,7 +732,6 @@ export function DoePhoneHeroGradientCircles() {
   const startRef = useRef<number | undefined>(undefined);
   const zDepthsRef = useRef<number[]>(initialZDepths);
   const pillCtrlRef = useRef<PillController>(createPillController());
-  const tagSessionRef = useRef<number>(-1);
   const tabVisibleRef = useRef(true);
   const tagRefFns = useRef(
     Array.from({ length: ORBIT.orbitCount }, (_, index) => (node: HTMLDivElement | null) => {
@@ -797,7 +762,7 @@ export function DoePhoneHeroGradientCircles() {
       const frontIndex = frontOrbIndex(layout);
       const pill = updatePillController(pillCtrlRef.current, frontIndex, layout, elapsedMs);
       const frontTagVisible = pill.opacity > 0.01;
-      const currentLabel = pill.label;
+      const currentLabel = ORB_AGENT_LABELS[pill.labelIndex];
       const pulseExclude: number[] = [];
       if (pill.showIndex >= 0) pulseExclude.push(pill.showIndex);
       const pulseSlot = Math.floor(elapsedMs / PULSE_SLOT_MS);
@@ -811,7 +776,6 @@ export function DoePhoneHeroGradientCircles() {
         const nodeCache = nodeCacheRef.current[index];
         const pulseScale = pulseScaleForOrb(index, elapsedMs, pulseSet);
         const style = orbNodeStyle(orb, pulseScale);
-        const nodeMoved = nodeCache.transform !== style.transform;
         applyOrbNodeStyle(node, style, nodeCache);
 
         const tag = tagRefs.current[index];
@@ -819,33 +783,17 @@ export function DoePhoneHeroGradientCircles() {
           const isPillOrb = index === pill.showIndex;
           const tagOpacity = isPillOrb ? pill.opacity : 0;
           const visible = isPillOrb && frontTagVisible;
-          const tagCache = tagCacheRef.current[index];
 
           if (visible && node && pill.corner) {
-            if (tagSessionRef.current !== pill.sessionId) {
-              const corner = initVisibleTagLayout(
-                tag,
-                node,
-                pill.corner,
-                currentLabel,
-                pillCtrlRef.current.lastCorner,
-              );
-              pillCtrlRef.current.activeCorner = corner;
-              tagSessionRef.current = pill.sessionId;
-              tagCache.nudgeValid = false;
-            }
-            updateVisibleTagFrame(
+            pillCtrlRef.current.activeCorner = applyVisibleTagLayout(
               tag,
-              pillCtrlRef.current.activeCorner ?? pill.corner,
+              node,
+              pill.corner,
               tagOpacity,
-              nodeMoved,
-              tagCache,
+              currentLabel,
+              pillCtrlRef.current.lastCorner,
             );
           } else if (tag.style.visibility !== "hidden") {
-            if (tagSessionRef.current === pill.sessionId) {
-              tagSessionRef.current = -1;
-            }
-            tagCache.nudgeValid = false;
             tag.style.opacity = "0";
             tag.style.visibility = "hidden";
             const restCorner = pillCtrlRef.current.lastCorner ?? "tl";
@@ -869,22 +817,20 @@ export function DoePhoneHeroGradientCircles() {
     if (media.matches) {
       applyLayout(0, 0);
       const frontIndex = frontOrbIndex(initialLayoutRef.current);
+      const currentLabel = ORB_AGENT_LABELS[0];
       tagRefs.current.forEach((tag, index) => {
         if (!tag) return;
-        const node = nodeRefs.current[index];
         const isFront = index === frontIndex;
-        const depth = initialLayoutRef.current[index]?.depth ?? 0;
-        if (isFront && node && orbInTagEnter(depth)) {
-          const corner = initVisibleTagLayout(
+        const node = nodeRefs.current[index];
+        if (isFront && node && pillCtrlRef.current.activeCorner) {
+          pillCtrlRef.current.activeCorner = applyVisibleTagLayout(
             tag,
             node,
-            nextTagCorner(pillCtrlRef.current.lastCorner, index),
-            ORB_AGENT_LABELS[index],
+            pillCtrlRef.current.activeCorner,
+            1,
+            currentLabel,
             pillCtrlRef.current.lastCorner,
           );
-          pillCtrlRef.current.activeCorner = corner;
-          tagCacheRef.current[index].nudgeValid = false;
-          updateVisibleTagFrame(tag, corner, 1, true, tagCacheRef.current[index]);
         } else {
           tag.style.opacity = "0";
           tag.style.visibility = "hidden";
