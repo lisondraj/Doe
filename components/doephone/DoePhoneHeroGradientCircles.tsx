@@ -108,10 +108,7 @@ const ORBIT_MAX_SCALE = 1;
 const ORBIT_REVOLUTION_MS = 36000;
 
 /** Z-order tracks a lagged depth so front/back swaps ease in, not pop. */
-const Z_DEPTH_LERP = 0.06;
-
-/** Visual pose eases toward the orbit target each frame. */
-const ORBIT_DISPLAY_LERP = 0.11;
+const Z_DEPTH_LERP = 0.045;
 
 /** Recenters the shifted-vertex ellipse within the stage. */
 const ORBIT_ANCHOR_X = 14.8;
@@ -154,24 +151,9 @@ type OrbPose = {
   zIndex: number;
 };
 
-type OrbDisplay = {
-  xPct: number;
-  yPct: number;
-  scale: number;
-  opacity: number;
-};
-
 /** Quintic smootherstep — gentler scale/opacity at orbit extremes. */
 function easeDepth(depth: number) {
   return depth * depth * depth * (depth * (depth * 6 - 15) + 10);
-}
-
-function lerpDisplay(target: OrbPose, display: OrbDisplay) {
-  const t = ORBIT_DISPLAY_LERP;
-  display.xPct += (target.xPct - display.xPct) * t;
-  display.yPct += (target.yPct - display.yPct) * t;
-  display.scale += (target.scale - display.scale) * t;
-  display.opacity += (target.opacity - display.opacity) * t;
 }
 
 function orbitPoint(index: number, count: number, phase: number, target?: OrbPose): OrbPose {
@@ -247,14 +229,17 @@ type TagDomCache = {
   nudgeValid: boolean;
 };
 
-function orbNodeStyle(display: OrbDisplay, zIndex: number) {
-  const opacity = Math.round(display.opacity * 1000) / 1000;
+function orbNodeStyle(orb: OrbPose) {
+  const xPct = Math.round(orb.xPct * 100) / 100;
+  const yPct = Math.round(orb.yPct * 100) / 100;
+  const scale = Math.round(orb.scale * 1000) / 1000;
+  const opacity = Math.round(orb.opacity * 1000) / 1000;
   return {
-    left: `calc(50% + ${display.xPct}%)`,
-    top: `calc(50% + ${display.yPct}%)`,
-    transform: `translate3d(-50%, -50%, 0) scale(${display.scale})`,
+    left: `calc(50% + ${xPct}%)`,
+    top: `calc(50% + ${yPct}%)`,
+    transform: `translate3d(-50%, -50%, 0) scale(${scale})`,
     opacity,
-    zIndex,
+    zIndex: orb.zIndex,
   } as const;
 }
 
@@ -738,22 +723,7 @@ export function DoePhoneHeroGradientCircles() {
       zIndex: 10,
     })),
   );
-  const displayRef = useRef<OrbDisplay[]>(
-    Array.from({ length: ORBIT_COUNT }, () => ({
-      xPct: 0,
-      yPct: 0,
-      scale: 1,
-      opacity: 1,
-    })),
-  );
   const initialLayoutRef = useRef(buildOrbLayout(0, [...initialZDepths], Array.from({ length: ORBIT_COUNT }, (_, i) => i), layoutRef.current));
-  displayRef.current.forEach((display, index) => {
-    const pose = initialLayoutRef.current[index];
-    display.xPct = pose.xPct;
-    display.yPct = pose.yPct;
-    display.scale = pose.scale;
-    display.opacity = pose.opacity;
-  });
   const nodeRefs = useRef<(HTMLDivElement | null)[]>([]);
   const tagRefs = useRef<(HTMLDivElement | null)[]>([]);
   const tagTextRefs = useRef<(HTMLSpanElement | null)[]>([]);
@@ -787,7 +757,6 @@ export function DoePhoneHeroGradientCircles() {
     })),
   );
   const pulseCacheRef = useRef({ slot: -1, exclude: -1, set: new Set<number>() });
-  const stageRef = useRef<HTMLDivElement | null>(null);
   const zOrderRef = useRef(Array.from({ length: ORBIT_COUNT }, (_, index) => index));
   const rafRef = useRef<number | undefined>(undefined);
   const startRef = useRef<number | undefined>(undefined);
@@ -795,7 +764,6 @@ export function DoePhoneHeroGradientCircles() {
   const pillCtrlRef = useRef<PillController>(createPillController());
   const tagSessionRef = useRef(-1);
   const tabVisibleRef = useRef(true);
-  const inViewRef = useRef(true);
   const tagRefFns = useRef(
     Array.from({ length: ORBIT_COUNT }, (_, index) => (node: HTMLDivElement | null) => {
       tagRefs.current[index] = node;
@@ -847,10 +815,8 @@ export function DoePhoneHeroGradientCircles() {
         const node = nodeRefs.current[index];
         if (!node) continue;
         const target = layout[index];
-        const display = displayRef.current[index];
-        lerpDisplay(target, display);
         const nodeCache = nodeCacheRef.current[index];
-        const style = orbNodeStyle(display, target.zIndex);
+        const style = orbNodeStyle(target);
         const nodeMoved = nodeCache.transform !== style.transform;
         applyOrbNodeStyle(node, style, nodeCache);
 
@@ -951,7 +917,7 @@ export function DoePhoneHeroGradientCircles() {
 
     const tick = (now: number) => {
       rafRef.current = undefined;
-      if (!tabVisibleRef.current || !inViewRef.current) return;
+      if (!tabVisibleRef.current) return;
       if (startRef.current === undefined) startRef.current = now;
       const elapsed = now - startRef.current;
       const phase = (elapsed % ORBIT_REVOLUTION_MS) / ORBIT_REVOLUTION_MS;
@@ -985,43 +951,22 @@ export function DoePhoneHeroGradientCircles() {
     tabVisibleRef.current = document.visibilityState === "visible";
     document.addEventListener("visibilitychange", onVisibility);
 
-    const stageNode = stageRef.current;
-    const intersectionObserver =
-      stageNode &&
-      new IntersectionObserver(
-        ([entry]) => {
-          inViewRef.current = entry.isIntersecting;
-          if (
-            entry.isIntersecting &&
-            tabVisibleRef.current &&
-            rafRef.current === undefined
-          ) {
-            rafRef.current = requestAnimationFrame(tick);
-          }
-        },
-        { rootMargin: "80px" },
-      );
-    if (stageNode && intersectionObserver) {
-      intersectionObserver.observe(stageNode);
-    }
-
     rafRef.current = requestAnimationFrame(tick);
     return () => {
       document.removeEventListener("visibilitychange", onVisibility);
-      intersectionObserver?.disconnect();
       if (rafRef.current !== undefined) cancelAnimationFrame(rafRef.current);
     };
   }, []);
 
   return (
-    <div ref={stageRef} className="hero-speaking-orbs" aria-hidden>
+    <div className="hero-speaking-orbs" aria-hidden>
       <div className="hero-speaking-orbs__stage">
         {SCHEME_ORDER.map((scheme, index) => (
           <div
             key={`orbit-${index}`}
             ref={nodeRefFns[index]}
             className="hero-speaking-orbs__node"
-            style={orbNodeStyle(displayRef.current[index], initialLayoutRef.current[index].zIndex)}
+            style={orbNodeStyle(initialLayoutRef.current[index])}
           >
             <SpeakingGradientOrb
               scheme={scheme}
