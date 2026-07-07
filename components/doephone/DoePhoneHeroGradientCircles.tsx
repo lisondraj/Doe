@@ -33,34 +33,34 @@ const ORB_AGENT_LABELS = [
   "Refill Agent",
 ] as const;
 
-/** Orb palettes — dark → mid → light, backs in the hero ink family (#1E343A). */
+/** Orb palettes — warm hero family (gold / orange / copper / rose / tan) on ink back. */
 const HERO_SPEAKING_ORB_SCHEMES = {
-  mint: {
-    colors: ["#3D7A6A", "#68B09A", "#C5EDE2"] as const,
-    colorBack: "#1A3834",
+  gold: {
+    colors: ["#9A7420", DOE_HOME_ORANGE_PALETTE.gold, "#F8E4B0"] as const,
+    colorBack: DOE_HOME_ORANGE_PALETTE.back,
+  },
+  orange: {
+    colors: ["#984E30", DOE_HOME_ORANGE_PALETTE.orange, "#F0C0A0"] as const,
+    colorBack: DOE_HOME_ORANGE_PALETTE.back,
+  },
+  copper: {
+    colors: ["#946A28", DOE_HOME_ORANGE_PALETTE.copper, "#EDD4A8"] as const,
+    colorBack: DOE_HOME_ORANGE_PALETTE.back,
   },
   rose: {
-    colors: ["#A45870", "#D08898", "#F0D4D8"] as const,
-    colorBack: "#382430",
+    colors: ["#884838", DOE_HOME_ORANGE_PALETTE.rose, "#E8C0B0"] as const,
+    colorBack: DOE_HOME_ORANGE_PALETTE.back,
   },
-  periwinkle: {
-    colors: ["#4A72A8", "#7CA0CC", "#D0E4F4"] as const,
-    colorBack: "#243048",
+  tan: {
+    colors: ["#805038", DOE_HOME_ORANGE_PALETTE.tan, "#DCC8B4"] as const,
+    colorBack: DOE_HOME_ORANGE_PALETTE.back,
   },
-  apricot: {
-    colors: ["#B87838", "#E0A050", "#F8E4C0"] as const,
-    colorBack: "#483020",
+  honey: {
+    colors: ["#A07828", "#E0B050", "#F5E0B8"] as const,
+    colorBack: DOE_HOME_ORANGE_PALETTE.back,
   },
-  lilac: {
-    colors: ["#7860A8", "#A890D0", "#E4D8F4"] as const,
-    colorBack: "#302448",
-  },
-  coral: {
-    colors: ["#C06050", "#E88878", "#FADCD4"] as const,
-    colorBack: "#442820",
-  },
-  teal: {
-    colors: ["#3A8888", "#68B0B0", "#C8EAEA"] as const,
+  ember: {
+    colors: ["#903820", "#C86848", "#E8A898"] as const,
     colorBack: DOE_HOME_ORANGE_PALETTE.back,
   },
 } as const;
@@ -80,13 +80,13 @@ function orbAccentStyle(scheme: OrbScheme) {
 }
 
 const SCHEME_ORDER = [
-  HERO_SPEAKING_ORB_SCHEMES.mint,
+  HERO_SPEAKING_ORB_SCHEMES.gold,
+  HERO_SPEAKING_ORB_SCHEMES.orange,
+  HERO_SPEAKING_ORB_SCHEMES.copper,
   HERO_SPEAKING_ORB_SCHEMES.rose,
-  HERO_SPEAKING_ORB_SCHEMES.periwinkle,
-  HERO_SPEAKING_ORB_SCHEMES.apricot,
-  HERO_SPEAKING_ORB_SCHEMES.lilac,
-  HERO_SPEAKING_ORB_SCHEMES.coral,
-  HERO_SPEAKING_ORB_SCHEMES.teal,
+  HERO_SPEAKING_ORB_SCHEMES.tan,
+  HERO_SPEAKING_ORB_SCHEMES.honey,
+  HERO_SPEAKING_ORB_SCHEMES.ember,
 ] as const;
 
 /**
