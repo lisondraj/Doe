@@ -17,15 +17,15 @@ const ORB_AGENT_LABELS = [
   "Refill Agent",
 ] as const;
 
-/** Orange / gold ladder — lightest to darkest around the dial. */
+/** Orange / gold ladder — lightest to darkest around the dial (lifted mid-tones). */
 const HERO_ORB_SHADE_LADDER = [
-  { colors: ["#B88828", "#E8CC70", "#F8E8B8"] as const, colorBack: "#1E343A" },
-  { colors: ["#B07822", "#E0BC58", "#F2DCA0"] as const, colorBack: "#1E343A" },
-  { colors: ["#A87020", "#D8B048", "#ECCE88"] as const, colorBack: "#1E343A" },
-  { colors: ["#A0641C", "#D4A040", "#E8C070"] as const, colorBack: "#1E343A" },
-  { colors: ["#985818", "#CC9438", "#E4B860"] as const, colorBack: "#1E343A" },
-  { colors: ["#904C14", "#C48830", "#D8A850"] as const, colorBack: "#1E343A" },
-  { colors: ["#884010", "#B87828", "#CC9840"] as const, colorBack: "#1E343A" },
+  { colors: ["#C8A848", "#F0D880", "#FBF0C8"] as const, colorBack: "#1E343A" },
+  { colors: ["#C09840", "#ECC878", "#F8E8B0"] as const, colorBack: "#1E343A" },
+  { colors: ["#B89038", "#E8C068", "#F5DEA0"] as const, colorBack: "#1E343A" },
+  { colors: ["#B08830", "#E4B85C", "#F2D898"] as const, colorBack: "#1E343A" },
+  { colors: ["#A88028", "#DDA850", "#EECC88"] as const, colorBack: "#1E343A" },
+  { colors: ["#A07822", "#D49C48", "#E8C078"] as const, colorBack: "#1E343A" },
+  { colors: ["#987018", "#CC9038", "#E0B068"] as const, colorBack: "#1E343A" },
 ] as const;
 
 type OrbScheme = (typeof HERO_ORB_SHADE_LADDER)[number];
@@ -34,8 +34,8 @@ const SCHEME_ORDER = HERO_ORB_SHADE_LADDER;
 
 const ORB_COUNT = SCHEME_ORDER.length;
 const DIAL_STEP = (Math.PI * 2) / ORB_COUNT;
-const DIAL_RADIUS_VMIN = 50;
-const ORB_BASE_SIZE = "clamp(17rem, 54vmin, 23.5rem)";
+const DIAL_RADIUS_VMIN = 47;
+const ORB_BASE_SIZE = "clamp(15rem, 48vmin, 21rem)";
 const AUTO_ADVANCE_MS = 5000;
 const SWITCH_MS = 920;
 const PILL_OUT_MS = 220;
