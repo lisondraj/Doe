@@ -1417,15 +1417,27 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section:has(.
   max-height: var(--app-vh, 100dvh) !important;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section:has(.home-agents-carousel) .home-feature-card-section__inner,
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section:has(.home-agents-carousel) .home-feature-card-section__content {
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section:has(.home-agents-carousel) .home-feature-card-section__inner {
   overflow: visible !important;
+  flex: 1 1 auto !important;
   height: 100% !important;
-  min-height: 0 !important;
+  min-height: 100% !important;
   max-height: 100% !important;
   padding-top: 0 !important;
   padding-bottom: 0 !important;
   justify-content: center !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section:has(.home-agents-carousel) .home-feature-card-section__content {
+  overflow: visible !important;
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: center !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__card--agents-carousel {
@@ -1438,12 +1450,16 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__card
   min-height: 0 !important;
   max-height: none !important;
   flex: 0 0 auto !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__card--agents-carousel > .home-agents-carousel {
   height: auto !important;
   min-height: 0 !important;
   max-height: none !important;
+  flex: 0 0 auto !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel {
