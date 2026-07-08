@@ -2993,9 +2993,9 @@ html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop .hero-s
 }
 
 .hero-speaking-orb__play-icon {
-  width: clamp(2.35rem, 24%, 3.35rem);
-  height: clamp(2.35rem, 24%, 3.35rem);
-  filter: drop-shadow(0 3px 10px rgba(26, 18, 8, 0.26));
+  width: clamp(2.6rem, 26%, 3.6rem);
+  height: clamp(2.6rem, 26%, 3.6rem);
+  filter: drop-shadow(0 2px 8px rgba(26, 18, 8, 0.38));
   transition: opacity 320ms ease, transform 320ms ease;
 }
 

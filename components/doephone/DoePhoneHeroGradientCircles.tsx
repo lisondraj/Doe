@@ -168,11 +168,10 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
   onPlayClick?: (sourceNode: HTMLElement) => void;
 }) {
   const callIcon = (
-    <svg className="hero-speaking-orb__play-icon" viewBox="0 0 48 48" aria-hidden>
-      <circle cx="24" cy="24" r="22" fill="rgba(255, 251, 246, 0.2)" />
+    <svg className="hero-speaking-orb__play-icon" viewBox="0 0 32 32" aria-hidden>
       <path
-        fill="rgba(255, 251, 246, 0.94)"
-        d="M17.86 14.9c.62-.62 1.63-.6 2.28.03l2.98 2.9c.66.64.68 1.68.05 2.35l-1.62 1.72c1.14 2.15 2.98 3.99 5.13 5.13l1.72-1.62c.67-.63 1.71-.61 2.35.05l2.9 2.98c.63.65.65 1.66.03 2.28l-1.99 1.99c-.66.66-1.62.94-2.53.73-4.32-1-8.6-3.6-11.6-6.6-3-3-5.6-7.28-6.6-11.6-.21-.91.07-1.87.73-2.53l1.99-1.99Z"
+        fill="rgba(255, 251, 246, 0.92)"
+        d="M10.42 5.33a1.6 1.6 0 0 0-2.24 0L6.1 7.41a3.2 3.2 0 0 0-.78 3.24c1.18 3.6 3.38 7.04 6.54 10.2s6.6 5.36 10.2 6.54a3.2 3.2 0 0 0 3.24-.78l2.08-2.08a1.6 1.6 0 0 0 0-2.24l-3.2-3.2a1.6 1.6 0 0 0-2.24 0l-1.24 1.24a14.56 14.56 0 0 1-5.07-5.07l1.24-1.24a1.6 1.6 0 0 0 0-2.24l-3.2-3.2Z"
       />
     </svg>
   );
