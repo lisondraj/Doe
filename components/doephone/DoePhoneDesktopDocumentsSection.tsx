@@ -1,7 +1,7 @@
 "use client";
 
 import { DoePhoneDesktopPanelSection } from "@/components/doephone/DoePhoneDesktopPanelSection";
-import { DoePhoneWorkflowVisual } from "@/components/doephone/DoePhoneWorkflowVisual";
+import { DoePhoneCallHistoryVisual } from "@/components/doephone/DoePhoneCallHistoryVisual";
 import { DOEPHONE_COMMUNICATION_SLIDES } from "@/lib/doephone/communication-carousel";
 
 const DOCUMENTS_SLIDE =
@@ -14,7 +14,7 @@ const DOCUMENTS_SLIDE =
 export function DoePhoneDesktopDocumentsSection() {
   return (
     <DoePhoneDesktopPanelSection slide={DOCUMENTS_SLIDE}>
-      <DoePhoneWorkflowVisual layout="desktop" />
+      <DoePhoneCallHistoryVisual layout="desktop" />
     </DoePhoneDesktopPanelSection>
   );
 }

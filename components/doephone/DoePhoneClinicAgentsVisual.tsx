@@ -9,15 +9,16 @@ const MUTED_TEXT = "#6B7280";
 const BTN_BG = "#F3F4F6";
 const BORDER = "#E5E7EB";
 
-const CLINIC_AGENTS = [
-  { name: "Voice Agent", status: "Deployed", icon: "voice" },
-  { name: "Scheduling Agent", status: "Deployed", icon: "calendar" },
-  { name: "Billing Agent", status: "Ready", icon: "billing" },
+const ACTIVE_AGENTS = [
+  { name: "Voice Agent", status: "Active", icon: "voice" },
+  { name: "Scheduling Agent", status: "Active", icon: "calendar" },
+  { name: "Inbox Agent", status: "Active", icon: "inbox" },
+  { name: "Billing Agent", status: "Active", icon: "billing" },
+  { name: "Referrals Agent", status: "Active", icon: "referrals" },
+  { name: "Prior Auth Agent", status: "Active", icon: "prior-auth" },
 ] as const;
 
-const DEPLOYMENTS = ["Front Desk", "Inbox", "Referrals"] as const;
-
-type AgentIconKind = (typeof CLINIC_AGENTS)[number]["icon"];
+type AgentIconKind = (typeof ACTIVE_AGENTS)[number]["icon"];
 type VisualLayout = "phone" | "desktop";
 
 type VisualSizes = {
@@ -33,15 +34,13 @@ type VisualSizes = {
   addPlus: string;
   agentIcon: string;
   smallIcon: string;
-  sectionGap: string;
   chipGap: string;
   chipPad: string;
   rowGap: string;
   rowPad: string;
   footerPad: string;
   headingMarginBottom: string;
-  subheadingMarginTop: string;
-  subheadingMarginBottom: string;
+  cardHeight: string;
 };
 
 const PHONE_SIZES: VisualSizes = {
@@ -57,15 +56,13 @@ const PHONE_SIZES: VisualSizes = {
   addPlus: "clamp(0.95rem,2.85vmin,1.12rem)",
   agentIcon: "clamp(1.35rem,4.15vmin,1.65rem)",
   smallIcon: "clamp(0.9rem,2.75vmin,1.05rem)",
-  sectionGap: "clamp(0.62rem,1.95vmin,0.82rem)",
   chipGap: "clamp(0.32rem,1vmin,0.42rem)",
   chipPad: "clamp(0.38rem,1.2vmin,0.48rem) clamp(0.62rem,1.95vmin,0.78rem)",
   rowGap: "clamp(0.55rem,1.75vmin,0.72rem)",
-  rowPad: "clamp(0.82rem,2.55vmin,1.02rem) clamp(0.88rem,2.75vmin,1.05rem)",
+  rowPad: "clamp(0.72rem,2.25vmin,0.92rem) clamp(0.88rem,2.75vmin,1.05rem)",
   footerPad: "clamp(0.62rem,1.95vmin,0.78rem) clamp(0.88rem,2.75vmin,1.05rem)",
-  headingMarginBottom: "clamp(0.78rem,2.45vmin,0.95rem)",
-  subheadingMarginTop: "clamp(1.15rem,3.55vmin,1.42rem)",
-  subheadingMarginBottom: "clamp(0.68rem,2.1vmin,0.82rem)",
+  headingMarginBottom: "clamp(0.68rem,2.1vmin,0.82rem)",
+  cardHeight: "clamp(15.25rem,44.5vmin,18.75rem)",
 };
 
 const DESKTOP_SIZES: VisualSizes = {
@@ -81,15 +78,13 @@ const DESKTOP_SIZES: VisualSizes = {
   addPlus: "clamp(0.98rem,1.1vw,1.12rem)",
   agentIcon: "clamp(1.18rem,1.4vw,1.48rem)",
   smallIcon: "clamp(0.86rem,0.98vw,1.02rem)",
-  sectionGap: "clamp(0.62rem,0.78vw,0.82rem)",
   chipGap: "clamp(0.34rem,0.42vw,0.46rem)",
   chipPad: "clamp(0.42rem,0.52vw,0.56rem) clamp(0.68rem,0.82vw,0.88rem)",
   rowGap: "clamp(0.58rem,0.72vw,0.76rem)",
-  rowPad: "clamp(0.78rem,0.95vw,1rem) clamp(0.82rem,1vw,1.05rem)",
+  rowPad: "clamp(0.72rem,0.88vw,0.84rem) clamp(0.82rem,1vw,1.05rem)",
   footerPad: "clamp(0.62rem,0.78vw,0.82rem) clamp(0.82rem,1vw,1.05rem)",
-  headingMarginBottom: "clamp(0.78rem,0.95vw,1rem)",
-  subheadingMarginTop: "clamp(1.05rem,1.3vw,1.35rem)",
-  subheadingMarginBottom: "clamp(0.68rem,0.82vw,0.88rem)",
+  headingMarginBottom: "clamp(0.68rem,0.82vw,0.88rem)",
+  cardHeight: "clamp(15.5rem,18.5vw,19rem)",
 };
 
 function AgentIcon({ kind, size }: { kind: AgentIconKind; size: string }) {
@@ -128,21 +123,24 @@ function AgentIcon({ kind, size }: { kind: AgentIconKind; size: string }) {
           <path d="M11 10.75h2.5M11 12.75h1.75" stroke={stroke} strokeWidth={sw * 0.9} strokeLinecap="round" />
         </>
       )}
-    </svg>
-  );
-}
-
-function DeploymentIcon({ size }: { size: string }) {
-  return (
-    <svg
-      viewBox="0 0 20 20"
-      fill="none"
-      aria-hidden
-      className="shrink-0"
-      style={{ width: size, height: size }}
-    >
-      <circle cx="10" cy="10" r="7.25" stroke={DOE_ORANGE} strokeWidth="1.2" />
-      <path d="M6.5 10h7M10 6.5v7" stroke={DOE_ORANGE} strokeWidth="1.2" strokeLinecap="round" />
+      {kind === "inbox" && (
+        <>
+          <path d="M3.5 5.5h13v9a1.5 1.5 0 01-1.5 1.5H5a1.5 1.5 0 01-1.5-1.5v-9z" stroke={stroke} strokeWidth={sw} />
+          <path d="M3.5 8.5l4.2 2.8a1.2 1.2 0 001.2 0l4.1-2.8" stroke={stroke} strokeWidth={sw} strokeLinecap="round" />
+        </>
+      )}
+      {kind === "referrals" && (
+        <>
+          <path d="M4 10h8.5M10.5 7.5L13 10l-2.5 2.5" stroke={stroke} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M6.5 5.5h5a2 2 0 012 2v7.5a2 2 0 01-2 2h-5" stroke={stroke} strokeWidth={sw} strokeLinecap="round" />
+        </>
+      )}
+      {kind === "prior-auth" && (
+        <>
+          <rect x="5.5" y="3.5" width="9" height="13" rx="1.5" stroke={stroke} strokeWidth={sw} />
+          <path d="M8 7.5h4M8 10.5h4M8 13.5h2.5" stroke={stroke} strokeWidth={sw} strokeLinecap="round" />
+        </>
+      )}
     </svg>
   );
 }
@@ -165,13 +163,13 @@ function SlidersIcon({ size }: { size: string }) {
 }
 
 function StatusLabel({ label, size }: { label: string; size: string }) {
-  const isDeployed = label === "Deployed";
+  const isActive = label === "Active";
 
   return (
     <span
       className="shrink-0 font-medium leading-none"
       style={{
-        color: isDeployed ? DOE_ORANGE : MUTED_TEXT,
+        color: isActive ? DOE_ORANGE : MUTED_TEXT,
         fontSize: size,
       }}
     >
@@ -185,7 +183,7 @@ function AgentRow({
   status,
   icon,
   sizes,
-}: (typeof CLINIC_AGENTS)[number] & { sizes: VisualSizes }) {
+}: (typeof ACTIVE_AGENTS)[number] & { sizes: VisualSizes }) {
   return (
     <div
       className="flex items-center justify-between"
@@ -196,7 +194,7 @@ function AgentRow({
     >
       <div className="flex min-w-0 items-center" style={{ gap: sizes.rowGap }}>
         <AgentIcon kind={icon} size={sizes.agentIcon} />
-        <span className="min-w-0 truncate font-normal leading-snug" style={{ color: MUTED_TEXT, fontSize: sizes.body }}>
+        <span className={`min-w-0 truncate font-normal leading-snug ${inter.className}`} style={{ color: MUTED_TEXT, fontSize: sizes.body }}>
           {name}
         </span>
       </div>
@@ -205,7 +203,7 @@ function AgentRow({
   );
 }
 
-/** Clinic agent roster — Agents carousel slide and desktop intelligence section. */
+/** Active clinic agents list — Agents carousel slide and desktop intelligence section. */
 export function DoePhoneClinicAgentsVisual({
   layout = "phone",
 }: {
@@ -215,89 +213,74 @@ export function DoePhoneClinicAgentsVisual({
 
   return (
     <div
-      className={`mx-auto flex h-full w-full items-center justify-center ${suisseIntl.className}`}
+      className={`mx-auto flex h-full w-full items-center justify-center px-[clamp(0.65rem,2vmin,0.9rem)] ${suisseIntl.className}`}
       style={{ maxWidth: sizes.maxWidth }}
       aria-hidden
     >
       <div
-        className={`w-full border bg-white ${sizes.outerRadius}`}
+        className={`flex w-full flex-col border bg-white ${sizes.outerRadius}`}
         style={{
           borderColor: BORDER,
           padding: sizes.panelPad,
+          height: sizes.cardHeight,
+          minHeight: sizes.cardHeight,
+          maxHeight: sizes.cardHeight,
         }}
       >
-        <p
-          className="font-semibold leading-none tracking-[-0.015em]"
-          style={{
-            color: INK,
-            fontSize: sizes.heading,
-            marginBottom: sizes.headingMarginBottom,
-          }}
+        <div
+          className="flex shrink-0 items-center justify-between gap-3"
+          style={{ marginBottom: sizes.headingMarginBottom }}
         >
-          Deployments
-        </p>
-
-        <div className="flex flex-wrap items-center" style={{ gap: sizes.sectionGap }}>
-          {DEPLOYMENTS.map((label) => (
-            <button
-              key={label}
-              type="button"
-              className={`inline-flex items-center ${sizes.btnRadius} font-medium leading-none ${inter.className}`}
-              style={{
-                background: BTN_BG,
-                color: INK,
-                fontSize: sizes.action,
-                gap: sizes.chipGap,
-                padding: sizes.chipPad,
-              }}
-              tabIndex={-1}
-            >
-              <DeploymentIcon size={sizes.smallIcon} />
-              {label}
-            </button>
-          ))}
-
-          <button
-            type="button"
-            className={`inline-flex items-center font-medium leading-none ${inter.className}`}
+          <p
+            className="font-semibold leading-none tracking-[-0.015em]"
             style={{
               color: INK,
-              fontSize: sizes.action,
-              gap: sizes.chipGap,
+              fontSize: sizes.heading,
             }}
-            tabIndex={-1}
           >
-            <span className="font-normal" style={{ fontSize: sizes.addPlus }}>
-              +
-            </span>
-            Add
-          </button>
+            Active Agents
+          </p>
+          <span
+            className={`inline-flex shrink-0 items-center ${inter.className} font-medium leading-none`}
+            style={{
+              background: BTN_BG,
+              color: INK,
+              fontSize: sizes.status,
+              padding: sizes.chipPad,
+              borderRadius: "999px",
+            }}
+          >
+            {ACTIVE_AGENTS.length} live
+          </span>
         </div>
 
-        <p
-          className="font-semibold leading-none tracking-[-0.015em]"
-          style={{
-            color: INK,
-            fontSize: sizes.heading,
-            marginTop: sizes.subheadingMarginTop,
-            marginBottom: sizes.subheadingMarginBottom,
-          }}
+        <div
+          className={`flex min-h-0 flex-1 flex-col overflow-hidden border ${sizes.innerRadius}`}
+          style={{ borderColor: BORDER }}
         >
-          Clinic Agents
-        </p>
+          <div className="relative min-h-0 flex-1 overflow-hidden">
+            {ACTIVE_AGENTS.map((agent, index) => (
+              <div key={agent.name}>
+                {index > 0 ? <div className="h-px w-full" style={{ background: DIVIDER }} /> : null}
+                <AgentRow {...agent} sizes={sizes} />
+              </div>
+            ))}
 
-        <div className={`overflow-hidden border ${sizes.innerRadius}`} style={{ borderColor: BORDER }}>
-          {CLINIC_AGENTS.map((agent, index) => (
-            <div key={agent.name}>
-              {index > 0 ? <div className="h-px w-full" style={{ background: DIVIDER }} /> : null}
-              <AgentRow {...agent} sizes={sizes} />
-            </div>
-          ))}
+            <div
+              className="pointer-events-none absolute inset-x-0 bottom-0"
+              style={{
+                height: "clamp(1.75rem,18%,2.35rem)",
+                background:
+                  "linear-gradient(0deg, #FFFFFF 0%, #FFFFFF 28%, rgba(255,255,255,0.92) 58%, rgba(255,255,255,0) 100%)",
+              }}
+              aria-hidden
+            />
+          </div>
 
-          <div className="h-px w-full" style={{ background: DIVIDER }} />
+          <div className="h-px w-full shrink-0" style={{ background: DIVIDER }} />
 
           <div
-            className="flex items-center justify-between"
+            className="flex shrink-0 items-center justify-between bg-white"
             style={{
               padding: sizes.footerPad,
             }}

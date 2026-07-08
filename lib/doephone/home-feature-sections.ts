@@ -15,12 +15,12 @@ export const HOME_FEATURE_SECTION_TITLES: Record<
     line2: "workflow in clinic.",
   },
   "front-desk": {
-    line1: "Phone and schedule,",
-    line2: "handled together.",
+    line1: "Agents for",
+    line2: "every specialty.",
   },
   inbox: {
-    line1: "Documents routed",
-    line2: "to the right workflow.",
+    line1: "Review detailed",
+    line2: "call histories.",
   },
   ambient: {
     line1: "Ambient at the",

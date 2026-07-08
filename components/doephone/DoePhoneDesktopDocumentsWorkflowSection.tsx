@@ -2,7 +2,7 @@
 
 import { DoePhoneDesktopFrostPlusBadge } from "@/components/doephone/DoePhoneDesktopFrostPlusBadge";
 import { DoePhoneSectionTitle } from "@/components/doephone/DoePhoneSectionText";
-import { DoePhoneWorkflowVisual } from "@/components/doephone/DoePhoneWorkflowVisual";
+import { DoePhoneCallHistoryVisual } from "@/components/doephone/DoePhoneCallHistoryVisual";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import {
   DESKTOP_HOME_BAND_H,
@@ -71,7 +71,7 @@ export function DoePhoneDesktopDocumentsWorkflowSection() {
           className={`absolute bottom-0 right-0 z-[20] ${DESKTOP_DOCUMENTS_UI_INSET} ${doePhoneSectionRevealSegmentClass("input", revealed)}`}
         >
           <div className="pointer-events-auto origin-bottom-right w-full max-w-[min(100%,40rem)]">
-            <DoePhoneWorkflowVisual layout="desktop" />
+            <DoePhoneCallHistoryVisual layout="desktop" />
           </div>
         </div>
       </div>

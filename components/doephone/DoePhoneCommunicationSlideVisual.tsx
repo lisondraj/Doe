@@ -2,11 +2,11 @@
 
 import { DoePhoneAmbientVisual } from "@/components/doephone/DoePhoneAmbientVisual";
 import { DoePhoneBillingVisual } from "@/components/doephone/DoePhoneBillingVisual";
+import { DoePhoneCallHistoryVisual } from "@/components/doephone/DoePhoneCallHistoryVisual";
 import { DoePhoneFrontDeskInboxVisual } from "@/components/doephone/DoePhoneFrontDeskInboxVisual";
 import { DoePhoneIntegrateVisual } from "@/components/doephone/DoePhoneIntegrateVisual";
 import { DoePhoneProtoValidateVisual } from "@/components/doephone/DoePhoneProtoValidateVisual";
 import { DoePhoneReviewPackageVisual } from "@/components/doephone/DoePhoneReviewPackageVisual";
-import { DoePhoneWorkflowVisual } from "@/components/doephone/DoePhoneWorkflowVisual";
 import type { DoePhoneCommunicationSlide } from "@/lib/doephone/communication-carousel";
 
 export function DoePhoneCommunicationSlideVisual({
@@ -20,7 +20,7 @@ export function DoePhoneCommunicationSlideVisual({
     case "agents":
       return <DoePhoneReviewPackageVisual layout={layout} />;
     case "inbox":
-      return <DoePhoneWorkflowVisual layout={layout} />;
+      return <DoePhoneCallHistoryVisual layout={layout} />;
     case "front-desk":
       return <DoePhoneFrontDeskInboxVisual />;
     case "ambient":

@@ -3,21 +3,43 @@
 import { inter, suisseIntl } from "@/lib/home/fonts";
 import { CAROUSEL_MENU_UI } from "@/lib/doephone/carousel-menu-visual-styles";
 
-const { ink: INK } = CAROUSEL_MENU_UI;
+const { ink: INK, accent: DOE_ORANGE } = CAROUSEL_MENU_UI;
 
-const OUTER_RADIUS = "rounded-[clamp(1rem,2.8vmin,1.2rem)]";
-const INNER_RADIUS = "rounded-[clamp(0.55rem,1.6vmin,0.7rem)]";
-const CARD_PAD = "clamp(1.15rem,3.6vmin,1.4rem)";
-const TITLE_SIZE = "clamp(1.28rem,3.9vmin,1.55rem)";
+const MUTED_TEXT = "#6B7280";
+const BTN_BG = "#F3F4F6";
+const BORDER = "#E5E7EB";
+const ROW_BG = "#FAFAF8";
+const LIVE_BADGE_BG = "rgba(210, 119, 76, 0.14)";
+const CARD_SHADOW = "0 12px 32px rgba(30, 52, 58, 0.09), 0 1px 6px rgba(30, 52, 58, 0.04)";
+const BUTTON_SHADOW = "0 8px 22px rgba(30, 52, 58, 0.06)";
+
+const OUTER_RADIUS = "rounded-[clamp(0.72rem,2.1vmin,0.95rem)]";
+const INNER_RADIUS = "rounded-[clamp(0.45rem,1.3vmin,0.55rem)]";
+const BUTTON_RADIUS = "rounded-[clamp(0.48rem,1.4vmin,0.6rem)]";
+const BADGE_RADIUS = "0.375rem";
+const CARD_PAD = "clamp(1.2rem,3.75vmin,1.5rem) clamp(1.2rem,3.75vmin,1.5rem) clamp(0.95rem,2.85vmin,1.15rem)";
+const STACK_GAP = "clamp(0.62rem,1.85vmin,0.8rem)";
+const BUTTON_PAD = "clamp(0.72rem,2.15vmin,0.88rem) clamp(1.05rem,3.1vmin,1.3rem)";
+const TITLE_SIZE = "clamp(1.32rem,4vmin,1.62rem)";
 const ROW_SIZE = "clamp(0.92rem,2.75vmin,1.08rem)";
 const BADGE_SIZE = "clamp(0.72rem,2.15vmin,0.86rem)";
-const STEP_SIZE = "clamp(0.88rem,2.65vmin,1.02rem)";
+const ACTION_SIZE = "clamp(0.9rem,2.7vmin,1.05rem)";
+const STATUS_SIZE = "clamp(0.84rem,2.5vmin,1rem)";
+const STEP_SIZE = "clamp(0.76rem,2.2vmin,0.9rem)";
 
-const FILES = [
-  { name: "Patient_Info.PDF", faded: false },
-  { name: "Medications.PDF", faded: false },
-  { name: "Level_of_Care.PDF", faded: true },
+const ACTIVE_AGENTS = [
+  { name: "Referrals Agent" },
+  { name: "Scheduling Agent", expanded: true },
+  { name: "Inbox Agent" },
 ] as const;
+
+const SCHEDULING_STEPS = [
+  "Connect to Google Calendar",
+  "Sort appointments by type",
+  "Email Dr. Chen when confirmed",
+] as const;
+
+type VisualLayout = "phone" | "desktop";
 
 function CheckIcon() {
   return (
@@ -33,19 +55,6 @@ function CheckIcon() {
   );
 }
 
-function PencilIcon() {
-  return (
-    <svg viewBox="0 0 14 14" fill="none" aria-hidden className="h-[0.9em] w-[0.9em] shrink-0">
-      <path
-        d="M9.1 2.4l2.5 2.5-6.4 6.4H2.7V9.8L9.1 2.4z"
-        stroke="currentColor"
-        strokeWidth="1.15"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
 function ChevronUpIcon() {
   return (
     <svg viewBox="0 0 14 14" fill="none" aria-hidden className="h-[0.95em] w-[0.95em]">
@@ -54,118 +63,163 @@ function ChevronUpIcon() {
   );
 }
 
-/** Review package card — first home feature shader slide (agents). */
-export function DoePhoneReviewPackageVisual({ layout = "phone" }: { layout?: "phone" | "desktop" }) {
+function PlusIcon() {
+  return (
+    <svg viewBox="0 0 18 18" fill="none" aria-hidden className="h-[1.05em] w-[1.05em] shrink-0" style={{ color: INK }}>
+      <path d="M9 4.5v9M4.5 9h9" stroke="currentColor" strokeWidth="1.35" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/** Active agents list in Review Package card shell — Agents for every workflow in clinic. */
+export function DoePhoneReviewPackageVisual({ layout = "phone" }: { layout?: VisualLayout }) {
   const isDesktop = layout === "desktop";
+  const maxWidth = isDesktop ? "min(100%, 28rem)" : CAROUSEL_MENU_UI.maxWidthPhone;
 
   return (
     <div
       className={`mx-auto flex h-full w-full items-center justify-center px-[clamp(0.65rem,2vmin,0.9rem)] ${suisseIntl.className}`}
-      style={{ maxWidth: isDesktop ? "min(100%, 28rem)" : CAROUSEL_MENU_UI.maxWidthPhone }}
+      style={{ maxWidth }}
       aria-hidden
     >
-      <div className="flex w-full flex-col" style={{ gap: "clamp(0.85rem,2.6vmin,1.1rem)" }}>
+      <div className="flex w-full flex-col" style={{ gap: STACK_GAP }}>
         <div
-          className={`relative w-full bg-white ${OUTER_RADIUS}`}
+          className={`relative w-full overflow-hidden bg-white ${OUTER_RADIUS}`}
           style={{
             padding: CARD_PAD,
-            boxShadow: "0 18px 48px rgba(30, 52, 58, 0.14), 0 2px 8px rgba(30, 52, 58, 0.06)",
+            border: `1px solid ${BORDER}`,
+            boxShadow: CARD_SHADOW,
           }}
         >
-          <div className="flex items-start justify-between gap-3">
-            <span
-              className={`inline-flex items-center gap-[0.35em] ${inter.className} font-medium leading-none`}
-              style={{
-                background: "#E8F4D4",
-                color: "#4A7A32",
-                fontSize: BADGE_SIZE,
-                padding: "0.38em 0.72em",
-                borderRadius: "999px",
-              }}
-            >
-              <CheckIcon />
-              Complete
-            </span>
+          <div className="flex items-center justify-between gap-[clamp(0.55rem,1.65vmin,0.72rem)]">
+            <div className="flex min-w-0 items-center gap-[clamp(0.45rem,1.35vmin,0.58rem)]">
+              <h3
+                className="min-w-0 shrink-0 font-semibold leading-tight tracking-[-0.025em]"
+                style={{
+                  color: INK,
+                  fontSize: TITLE_SIZE,
+                }}
+              >
+                Active Agents
+              </h3>
+              <span
+                className={`inline-flex shrink-0 items-center gap-[0.35em] ${inter.className} font-medium leading-none`}
+                style={{
+                  background: LIVE_BADGE_BG,
+                  color: DOE_ORANGE,
+                  fontSize: BADGE_SIZE,
+                  padding: "0.38em 0.72em",
+                  borderRadius: BADGE_RADIUS,
+                }}
+              >
+                <CheckIcon />
+                {ACTIVE_AGENTS.length} live
+              </span>
+            </div>
             <span
               className="inline-flex shrink-0 items-center justify-center rounded-full"
               style={{
                 width: "clamp(1.85rem,5.4vmin,2.2rem)",
                 height: "clamp(1.85rem,5.4vmin,2.2rem)",
-                background: "#F3F1ED",
-                color: "#8A7868",
+                background: BTN_BG,
+                color: MUTED_TEXT,
               }}
             >
               <ChevronUpIcon />
             </span>
           </div>
 
-          <h3
-            className="font-semibold leading-tight tracking-[-0.025em]"
-            style={{
-              color: "#5C4E42",
-              fontSize: TITLE_SIZE,
-              marginTop: "clamp(0.85rem,2.6vmin,1.05rem)",
-            }}
-          >
-            Review Package
-          </h3>
-
-          <div
-            className="relative"
-            style={{ marginTop: "clamp(0.95rem,2.9vmin,1.2rem)" }}
-          >
-            <div className="flex flex-col" style={{ gap: "clamp(0.55rem,1.65vmin,0.72rem)" }}>
-              {FILES.map((file) => (
-                <div
-                  key={file.name}
-                  className={`flex items-center justify-between gap-3 ${INNER_RADIUS}`}
-                  style={{
-                    background: "#F7F6F3",
-                    padding: "clamp(0.72rem,2.2vmin,0.9rem) clamp(0.82rem,2.5vmin,1rem)",
-                    opacity: file.faded ? 0.38 : 1,
-                  }}
-                >
-                  <span
-                    className={`min-w-0 truncate ${inter.className} font-normal`}
-                    style={{ color: "#8A7868", fontSize: ROW_SIZE }}
+          <div style={{ marginTop: "clamp(0.85rem,2.5vmin,1rem)" }}>
+            <div className="flex flex-col" style={{ gap: "clamp(0.62rem,1.85vmin,0.8rem)" }}>
+              {ACTIVE_AGENTS.map((agent) =>
+                "expanded" in agent && agent.expanded ? (
+                  <div
+                    key={agent.name}
+                    className={INNER_RADIUS}
+                    style={{
+                      background: ROW_BG,
+                      padding: "clamp(0.78rem,2.35vmin,0.95rem) clamp(0.9rem,2.65vmin,1.05rem)",
+                    }}
                   >
-                    {file.name}
-                  </span>
-                  <span
-                    className={`inline-flex shrink-0 items-center gap-[0.3em] ${inter.className} font-normal`}
-                    style={{ color: "#B0A89C", fontSize: ROW_SIZE }}
+                    <div className="flex items-center justify-between gap-3">
+                      <span
+                        className={`min-w-0 truncate ${inter.className} font-normal`}
+                        style={{ color: MUTED_TEXT, fontSize: ROW_SIZE }}
+                      >
+                        {agent.name}
+                      </span>
+                      <span
+                        className={`inline-flex shrink-0 items-center ${inter.className} font-medium leading-none`}
+                        style={{ color: DOE_ORANGE, fontSize: STATUS_SIZE }}
+                      >
+                        Active
+                      </span>
+                    </div>
+                    <div
+                      className="flex flex-col"
+                      style={{
+                        marginTop: "clamp(0.62rem,1.85vmin,0.78rem)",
+                        marginLeft: "clamp(0.55rem,1.65vmin,0.72rem)",
+                        paddingLeft: "clamp(0.72rem,2.15vmin,0.88rem)",
+                        borderLeft: `1px solid ${BORDER}`,
+                        gap: "clamp(0.42rem,1.25vmin,0.55rem)",
+                      }}
+                    >
+                      {SCHEDULING_STEPS.map((step) => (
+                        <p
+                          key={step}
+                          className={`${inter.className} font-normal leading-snug`}
+                          style={{ color: MUTED_TEXT, fontSize: STEP_SIZE }}
+                        >
+                          {step}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div
+                    key={agent.name}
+                    className={`flex items-center justify-between gap-3 ${INNER_RADIUS}`}
+                    style={{
+                      background: ROW_BG,
+                      padding: "clamp(0.78rem,2.35vmin,0.95rem) clamp(0.9rem,2.65vmin,1.05rem)",
+                    }}
                   >
-                    <PencilIcon />
-                    Edit
-                  </span>
-                </div>
-              ))}
+                    <span
+                      className={`min-w-0 truncate ${inter.className} font-normal`}
+                      style={{ color: MUTED_TEXT, fontSize: ROW_SIZE }}
+                    >
+                      {agent.name}
+                    </span>
+                    <span
+                      className={`inline-flex shrink-0 items-center ${inter.className} font-medium leading-none`}
+                      style={{ color: DOE_ORANGE, fontSize: STATUS_SIZE }}
+                    >
+                      Active
+                    </span>
+                  </div>
+                ),
+              )}
             </div>
-
-            <div
-              className="pointer-events-none absolute inset-x-0 bottom-0"
-              style={{
-                height: "clamp(3.2rem,28%,4.8rem)",
-                background:
-                  "linear-gradient(0deg, #FFFFFF 0%, #FFFFFF 28%, rgba(255,255,255,0.88) 58%, rgba(255,255,255,0) 100%)",
-              }}
-              aria-hidden
-            />
           </div>
         </div>
 
         <div
-          className={`w-full ${OUTER_RADIUS}`}
+          className={`flex w-full items-center overflow-hidden ${BUTTON_RADIUS}`}
           style={{
-            background: "#E8F2FA",
-            padding: "clamp(0.9rem,2.75vmin,1.1rem) clamp(1rem,3vmin,1.25rem)",
+            background: BTN_BG,
+            padding: BUTTON_PAD,
+            gap: "clamp(0.62rem,1.85vmin,0.8rem)",
+            border: `1px solid ${BORDER}`,
+            boxShadow: BUTTON_SHADOW,
           }}
         >
+          <PlusIcon />
           <p
             className={`${inter.className} font-medium leading-snug`}
-            style={{ color: INK, fontSize: STEP_SIZE }}
+            style={{ color: INK, fontSize: ACTION_SIZE }}
           >
-            1. Submit Prior authorization
+            Build agent
           </p>
         </div>
       </div>
