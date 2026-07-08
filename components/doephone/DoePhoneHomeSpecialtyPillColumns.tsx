@@ -26,7 +26,6 @@ const SPECIALTY_COLUMNS = [
     "Cardiology",
     "Dermatology",
     "Endocrinology",
-    "Gastroenterology",
     "Hematology",
     "Neurology",
     "Oncology",
