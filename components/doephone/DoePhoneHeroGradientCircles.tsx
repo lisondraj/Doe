@@ -5,43 +5,14 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState, type CSSProper
 
 import { suisseIntl } from "@/lib/home/fonts";
 import {
-  DOE_HOME_ORANGE_PALETTE,
-} from "@/lib/proto/proto-shader-backdrop-colors";
+  HERO_DIAL_ORB_COUNT,
+  HERO_DIAL_ORB_SHADER,
+  HERO_DIAL_ORBS,
+  type HeroDialOrbScheme,
+} from "@/lib/doephone/hero-dial-orbs";
 import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO } from "@/lib/proto/proto-grain-gradient";
 
-/** One dedicated agent label per orb on the dial. */
-const ORB_AGENT_LABELS = [
-  "Inbox Agent",
-  "Scheduling Agent",
-  "Labs Agent",
-  "Referrals Agent",
-  "Live Appointment",
-  "Billing Agent",
-  "Refill Agent",
-] as const;
-
-const BRAND = DOE_HOME_ORANGE_PALETTE;
-
-const CREAM_GLOW = "#F0E4C8";
-const PEACH_GLOW = "#E8D4B0";
-
-/** Ember nodes — care-coordination palette; shared cream rims on hero teal (circles only). */
-const HERO_ORB_SHADE_LADDER = [
-  { colors: ["#2A4848", "#EAC050", CREAM_GLOW] as const, colorBack: BRAND.back },
-  { colors: ["#283440", "#DC8054", PEACH_GLOW] as const, colorBack: BRAND.back },
-  { colors: ["#2C4C48", "#EEBA4C", CREAM_GLOW] as const, colorBack: BRAND.back },
-  { colors: ["#2E4440", "#C88858", PEACH_GLOW] as const, colorBack: BRAND.back },
-  { colors: ["#304848", "#D8A058", CREAM_GLOW] as const, colorBack: BRAND.back },
-  { colors: ["#2A4040", "#CC8868", PEACH_GLOW] as const, colorBack: BRAND.back },
-  { colors: ["#283838", "#D06840", CREAM_GLOW] as const, colorBack: BRAND.back },
-] as const;
-
-type OrbScheme = (typeof HERO_ORB_SHADE_LADDER)[number];
-
-const SCHEME_ORDER = HERO_ORB_SHADE_LADDER;
-
-const ORB_COUNT = SCHEME_ORDER.length;
-const DIAL_STEP = (Math.PI * 2) / ORB_COUNT;
+const DIAL_STEP = (Math.PI * 2) / HERO_DIAL_ORB_COUNT;
 const DIAL_RADIUS_VMIN = 47;
 const ORB_BASE_SIZE = "clamp(15rem, 48vmin, 21rem)";
 const AUTO_ADVANCE_MS = 5000;
@@ -50,21 +21,6 @@ const PILL_OUT_MS = 220;
 
 /** Center slot — 9 o'clock on the dial (leftmost, vertically centered). */
 const CENTER_SLOT_ANGLE = Math.PI;
-
-const HERO_ORB_SHADER = {
-  shape: "sphere" as const,
-  softness: 0.58,
-  intensity: 0.11,
-  noise: 0,
-  fit: "cover" as const,
-  scale: 1.32,
-  rotation: 0,
-  offsetX: 0,
-  offsetY: 0,
-  worldWidth: 0,
-  worldHeight: 0,
-  speed: 0,
-} as const;
 
 type DialOrbPose = {
   xVmin: number;
@@ -82,7 +38,7 @@ function easeDialStep(t: number) {
   return 1 + c3 * (t - 1) ** 3 + c1 * (t - 1) ** 2;
 }
 
-function orbAccentStyle(scheme: OrbScheme) {
+function orbAccentStyle(scheme: HeroDialOrbScheme) {
   const [dark, mid, light] = scheme.colors;
   return {
     width: ORB_BASE_SIZE,
@@ -95,7 +51,7 @@ function orbAccentStyle(scheme: OrbScheme) {
 }
 
 function normalizeDialIndex(index: number) {
-  return ((index % ORB_COUNT) + ORB_COUNT) % ORB_COUNT;
+  return ((index % HERO_DIAL_ORB_COUNT) + HERO_DIAL_ORB_COUNT) % HERO_DIAL_ORB_COUNT;
 }
 
 function focusedIndexForRotation(dialRotation: number) {
@@ -111,15 +67,15 @@ function angularDistance(a: number, b: number) {
 function buildDialLayout(dialRotation: number): DialOrbPose[] {
   const focusedIndex = focusedIndexForRotation(dialRotation);
 
-  return SCHEME_ORDER.map((_, index) => {
+  return HERO_DIAL_ORBS.map((_, index) => {
     const angle = CENTER_SLOT_ANGLE + index * DIAL_STEP + dialRotation;
     const xVmin = Math.cos(angle) * DIAL_RADIUS_VMIN;
     const yVmin = Math.sin(angle) * DIAL_RADIUS_VMIN;
     const isFocused = index === focusedIndex;
     const dist = angularDistance(angle, CENTER_SLOT_ANGLE);
     const t = Math.min(1, dist / (DIAL_STEP * 0.72));
-    const scale = isFocused ? 1.04 : 0.9 - t * 0.05;
-    const opacity = isFocused ? 1 : 0.56 + (1 - t) * 0.2;
+    const scale = isFocused ? 1.05 : 0.91 - t * 0.05;
+    const opacity = isFocused ? 1 : 0.62 + (1 - t) * 0.22;
 
     return {
       xVmin,
@@ -147,37 +103,50 @@ function dialNodeStyle(pose: DialOrbPose) {
 
 const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
   scheme,
-  label,
+  isFocused,
   showPill,
 }: {
-  scheme: OrbScheme;
-  label: string;
+  scheme: HeroDialOrbScheme;
+  isFocused: boolean;
   showPill: boolean;
 }) {
+  const intensity = scheme.intensity ?? HERO_DIAL_ORB_SHADER.intensity;
+
   return (
-    <div className="hero-speaking-orb" style={orbAccentStyle(scheme)}>
-      <div className="hero-speaking-orb__core relative overflow-hidden rounded-full shadow-[0_18px_48px_rgba(30,52,58,0.32)]">
+    <div
+      className={`hero-speaking-orb${isFocused ? " hero-speaking-orb--focused" : ""}`}
+      style={orbAccentStyle(scheme)}
+    >
+      <div
+        className="hero-speaking-orb__halo-ring"
+        aria-hidden
+      />
+      <div
+        className="hero-speaking-orb__halo-ring hero-speaking-orb__halo-ring--echo"
+        aria-hidden
+      />
+      <div className="hero-speaking-orb__core relative overflow-hidden rounded-full">
         <GrainGradient
           width="100%"
           height="100%"
-          fit={HERO_ORB_SHADER.fit}
-          worldWidth={HERO_ORB_SHADER.worldWidth}
-          worldHeight={HERO_ORB_SHADER.worldHeight}
+          fit={HERO_DIAL_ORB_SHADER.fit}
+          worldWidth={HERO_DIAL_ORB_SHADER.worldWidth}
+          worldHeight={HERO_DIAL_ORB_SHADER.worldHeight}
           colors={[scheme.colors[0], scheme.colors[1], scheme.colors[2]]}
           colorBack={scheme.colorBack}
-          softness={HERO_ORB_SHADER.softness}
-          intensity={HERO_ORB_SHADER.intensity}
-          noise={HERO_ORB_SHADER.noise}
-          shape={HERO_ORB_SHADER.shape}
-          speed={HERO_ORB_SHADER.speed}
-          rotation={HERO_ORB_SHADER.rotation}
-          offsetX={HERO_ORB_SHADER.offsetX}
-          offsetY={HERO_ORB_SHADER.offsetY}
-          scale={HERO_ORB_SHADER.scale}
+          softness={HERO_DIAL_ORB_SHADER.softness}
+          intensity={intensity}
+          noise={HERO_DIAL_ORB_SHADER.noise}
+          shape={HERO_DIAL_ORB_SHADER.shape}
+          speed={HERO_DIAL_ORB_SHADER.speed}
+          rotation={HERO_DIAL_ORB_SHADER.rotation}
+          offsetX={HERO_DIAL_ORB_SHADER.offsetX}
+          offsetY={HERO_DIAL_ORB_SHADER.offsetY}
+          scale={HERO_DIAL_ORB_SHADER.scale}
           maxPixelCount={PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO}
         />
         <div
-          className="pointer-events-none absolute inset-0 rounded-full shadow-[inset_0_-18px_36px_rgba(30,52,58,0.22)]"
+          className="pointer-events-none absolute inset-0 rounded-full hero-speaking-orb__core-shade"
           aria-hidden
         />
         <div className="hero-speaking-orb__play" aria-hidden>
@@ -196,13 +165,13 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
         }`}
         aria-hidden={!showPill}
       >
-        <span className="hero-speaking-orb__tag-text">{label}</span>
+        <span className="hero-speaking-orb__tag-text">{scheme.label}</span>
       </div>
     </div>
   );
 });
 
-/** Hero — half-circle dial on the right edge; auto-steps down every 10s. */
+/** Hero — half-circle dial on the right edge; auto-steps down every 5s. */
 export function DoePhoneHeroGradientCircles() {
   const [dialRotation, setDialRotation] = useState(0);
   const [pillVisible, setPillVisible] = useState(true);
@@ -216,6 +185,7 @@ export function DoePhoneHeroGradientCircles() {
 
   const layout = useMemo(() => buildDialLayout(dialRotation), [dialRotation]);
   const focusedIndex = focusedIndexForRotation(dialRotation);
+  const focusedLabel = HERO_DIAL_ORBS[focusedIndex]?.label ?? "Agent";
 
   const animateStep = useCallback((from: number, to: number, onDone: () => void) => {
     if (switchRafRef.current !== undefined) {
@@ -292,12 +262,12 @@ export function DoePhoneHeroGradientCircles() {
     <div className="hero-speaking-orbs" aria-hidden>
       <div className="hero-speaking-orbs__stage">
         <div className={`hero-speaking-orbs__dial${stepping ? " hero-speaking-orbs__dial--stepping" : ""}`}>
-          {SCHEME_ORDER.map((scheme, index) => {
+          {HERO_DIAL_ORBS.map((scheme, index) => {
             const pose = layout[index];
             const style = dialNodeStyle(pose);
             return (
               <div
-                key={`dial-${index}`}
+                key={scheme.label}
                 className="hero-speaking-orbs__node"
                 style={{
                   transform: style.transform,
@@ -307,7 +277,7 @@ export function DoePhoneHeroGradientCircles() {
               >
                 <SpeakingGradientOrb
                   scheme={scheme}
-                  label={ORB_AGENT_LABELS[index]}
+                  isFocused={pose.isFocused}
                   showPill={pose.isFocused && pillVisible}
                 />
               </div>
@@ -315,7 +285,7 @@ export function DoePhoneHeroGradientCircles() {
           })}
         </div>
       </div>
-      <span className="sr-only">Agent dial — {ORB_AGENT_LABELS[focusedIndex]} selected.</span>
+      <span className="sr-only">Agent dial — {focusedLabel} selected.</span>
     </div>
   );
 }
