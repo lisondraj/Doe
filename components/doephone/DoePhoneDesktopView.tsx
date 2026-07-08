@@ -1,11 +1,11 @@
 "use client";
 
-import { DesktopHome } from "@/components/home/DesktopHome";
+import { DoeDesktopHome } from "@/components/doephone/DoeDesktopHome";
 import { useDesignersStaticNav } from "@/lib/designers/use-designers-static-nav";
 
 export function DoePhoneDesktopView() {
   const staticNav = useDesignersStaticNav();
   return (
-    <DesktopHome logoLink={!staticNav} navActionLinksEnabled={!staticNav} />
+    <DoeDesktopHome logoLink={!staticNav} navActionLinksEnabled={!staticNav} />
   );
 }

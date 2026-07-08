@@ -107,10 +107,14 @@ export function DoePhoneRouter() {
     };
   }, [variant]);
 
+  if (variant === "desktop") {
+    return <DoePhoneDesktopView />;
+  }
+
   return (
     <>
       <DoeHomeTopBanner />
-      {variant === "desktop" ? <DoePhoneDesktopView /> : <DoePhoneMobileView />}
+      <DoePhoneMobileView />
     </>
   );
 }
