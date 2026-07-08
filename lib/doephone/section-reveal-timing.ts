@@ -38,7 +38,7 @@ export const DOEPHONE_AGENTS_REVEAL_LABEL_DELAY_MS = 420;
 export const DOEPHONE_AGENTS_REVEAL_NAV_DELAY_MS = 560;
 
 /** Hero dial orbs — load-in after headline begins settling. */
-export const DOEPHONE_HERO_ORB_REVEAL_BASE_DELAY_MS = 0;
+export const DOEPHONE_HERO_ORB_REVEAL_BASE_DELAY_MS = 720;
 export const DOEPHONE_HERO_ORB_REVEAL_STAGGER_MS = 0;
 
 export function doephoneAgentsRevealStyleVars(): Record<string, string> {

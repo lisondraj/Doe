@@ -3559,7 +3559,7 @@ html[data-home-page] .hero-speaking-orbs__node-reveal.doephone-reveal-lift {
 
 html[data-home-page] .hero-speaking-orbs__node-reveal.doephone-reveal-lift--in {
   animation: doephone-hero-orb-reveal-in 1.45s cubic-bezier(0.22, 1, 0.36, 1)
-    var(--doephone-reveal-lift-delay, 0ms) both;
+    var(--doephone-reveal-lift-delay, 720ms) both;
 }
 
 @keyframes doephone-hero-orb-reveal-in {
