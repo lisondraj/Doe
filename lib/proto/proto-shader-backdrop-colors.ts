@@ -19,12 +19,12 @@ export const DOE_HOME_ORANGE_PALETTE = {
   tan: "#B87862",
 } as const;
 
-/** Hero experiment — desert dusk (hero shader + dial only). */
-export const DOE_HOME_HERO_DUSK_PALETTE = {
-  back: "#1A1208",
-  horizon: "#E8A060",
-  clay: "#C45C42",
-  sand: "#F2D8A8",
+/** Hero experiment — cherry blossom twilight (hero shader + dial only). */
+export const DOE_HOME_HERO_BLOSSOM_PALETTE = {
+  back: "#1A0A14",
+  sakura: "#FFB7D5",
+  blush: "#E88CB0",
+  petal: "#FFC8E0",
 } as const;
 
 const PROTO_AGENTS_MID_BLUE = "#4A6878";
@@ -47,16 +47,16 @@ export function doeHomeHeroShaderSurface(): ProtoGrainGradientSurface {
   };
 }
 
-/** Doe home hero — desert dusk experiment (same home-hero flow preset). */
-export function doeHomeHeroDuskShaderSurface(): ProtoGrainGradientSurface {
+/** Doe home hero — cherry blossom twilight experiment (same home-hero flow preset). */
+export function doeHomeHeroBlossomShaderSurface(): ProtoGrainGradientSurface {
   return {
     variant: "home-hero",
     colors: [
-      DOE_HOME_HERO_DUSK_PALETTE.horizon,
-      DOE_HOME_HERO_DUSK_PALETTE.clay,
-      DOE_HOME_HERO_DUSK_PALETTE.sand,
+      DOE_HOME_HERO_BLOSSOM_PALETTE.sakura,
+      DOE_HOME_HERO_BLOSSOM_PALETTE.blush,
+      DOE_HOME_HERO_BLOSSOM_PALETTE.petal,
     ],
-    colorBack: DOE_HOME_HERO_DUSK_PALETTE.back,
+    colorBack: DOE_HOME_HERO_BLOSSOM_PALETTE.back,
   };
 }
 
