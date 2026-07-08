@@ -1602,8 +1602,7 @@ html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb--focu
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb .hero-speaking-orb__grain-shell canvas {
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
+  display: none;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__nav {
@@ -2782,22 +2781,64 @@ html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop .hero-s
   transition: box-shadow 520ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.hero-speaking-orb__grain-shell canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  transition: opacity 480ms cubic-bezier(0.22, 1, 0.36, 1);
+.hero-speaking-orb__grain-shell--css {
+  background-color: var(--orb-fill-back, var(--orb-halo-back));
 }
 
-.hero-speaking-orb__grain-shell--painted canvas {
-  opacity: 1;
+.hero-speaking-orb__grain-sphere {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: var(--orb-fill-back, var(--orb-halo-back));
+  background-image:
+    radial-gradient(
+      circle at var(--orb-fill-highlight-x, 38%) var(--orb-fill-highlight-y, 26%),
+      color-mix(in srgb, var(--orb-fill-light) 94%, white) 0%,
+      color-mix(in srgb, var(--orb-fill-light) 58%, transparent) calc(18% + var(--orb-fill-softness, 0.52) * 8%),
+      transparent calc(44% + var(--orb-fill-softness, 0.52) * 10%)
+    ),
+    radial-gradient(
+      circle at var(--orb-fill-shadow-x, 44%) var(--orb-fill-shadow-y, 66%),
+      color-mix(in srgb, var(--orb-fill-dark) 82%, transparent) 0%,
+      transparent calc(40% + var(--orb-fill-softness, 0.52) * 12%)
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      var(--orb-fill-mid) 0%,
+      color-mix(in srgb, var(--orb-fill-mid) 78%, var(--orb-fill-dark)) calc(34% + var(--orb-fill-softness, 0.52) * 6%),
+      color-mix(in srgb, var(--orb-fill-dark) 90%, var(--orb-fill-back)) calc(62% + var(--orb-fill-softness, 0.52) * 8%),
+      var(--orb-fill-back, var(--orb-halo-back)) 100%
+    );
+  background-size: var(--orb-fill-scale, 100%);
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.hero-speaking-orb__grain-noise {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image: url("/proto-grain-tile.png");
+  background-size: 208px 208px;
+  background-repeat: repeat;
+  opacity: var(--orb-fill-grain-opacity, 0.38);
+  mix-blend-mode: hard-light;
+}
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .hero-speaking-orb__grain-noise {
+    background-image: url("/proto-grain-tile-3x.png");
+  }
+}
+
+.hero-speaking-orb__grain-shell canvas {
+  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .hero-speaking-orb__grain-shell canvas {
-    transition: none;
-    opacity: 1;
+    display: none;
   }
 }
 

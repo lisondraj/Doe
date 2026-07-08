@@ -11,8 +11,6 @@ import {
   heroDialOrbCarouselScheme,
   type HeroDialOrbScheme,
 } from "@/lib/doephone/hero-dial-orbs";
-import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_CAROUSEL_ORB } from "@/lib/proto/proto-grain-gradient";
-import { SHADER_WEBGL_SLOT_PRIORITY } from "@/lib/doephone/shader-webgl-budget";
 import { doephoneAgentsRevealStyleVars } from "@/lib/doephone/section-reveal-timing";
 import {
   doePhoneSectionRevealSegmentClass,
@@ -75,13 +73,9 @@ function CarouselChevron({
 function AgentCarouselOrb({
   scheme,
   focused,
-  mountShader,
-  orbIndex,
 }: {
   scheme: HeroDialOrbScheme;
   focused: boolean;
-  mountShader: boolean;
-  orbIndex: number;
 }) {
   const displayScheme = heroDialOrbCarouselScheme(scheme);
 
@@ -97,17 +91,6 @@ function AgentCarouselOrb({
           <HeroDialOrbGrainShader
             scheme={displayScheme}
             shaderConfig={HERO_DIAL_ORB_CAROUSEL_SHADER}
-            eager={focused}
-            enabled={mountShader}
-            stickMounted={focused}
-            mountDelayMs={focused ? 380 : 470}
-            maxPixelCount={PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_CAROUSEL_ORB}
-            shaderSlotId={`agents-carousel-${orbIndex}`}
-            shaderPriority={
-              focused
-                ? SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_FOCUSED
-                : SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_ADJACENT
-            }
           />
         </div>
       </div>
@@ -135,12 +118,7 @@ const AGENTS_CAROUSEL_LOOP_ORBS: readonly HeroDialOrbScheme[] = [
 ];
 const AGENTS_CAROUSEL_LOOP_START =
   AGENTS_CAROUSEL_ORB_COUNT + AGENTS_CAROUSEL_START_INDEX;
-const AGENTS_CAROUSEL_SHADER_WINDOW = 1;
 const AGENTS_CAROUSEL_SWIPE_THRESHOLD_PX = 44;
-
-function shouldMountCarouselShader(orbIndex: number, position: number) {
-  return Math.abs(orbIndex - position) <= AGENTS_CAROUSEL_SHADER_WINDOW;
-}
 
 /** Hero agent orbs — horizontal carousel with chevrons and label. */
 export function DoePhoneHomeAgentsCarousel() {
@@ -271,8 +249,6 @@ export function DoePhoneHomeAgentsCarousel() {
                 key={`${scheme.label}-${orbIndex}`}
                 scheme={scheme}
                 focused={orbIndex === position}
-                mountShader={shouldMountCarouselShader(orbIndex, position)}
-                orbIndex={orbIndex}
               />
             ))}
           </div>

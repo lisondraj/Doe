@@ -22,8 +22,6 @@ import {
   DOEPHONE_HERO_ORB_REVEAL_BASE_DELAY_MS,
 } from "@/lib/doephone/section-reveal-timing";
 import { doePhoneRevealLiftClass } from "@/lib/doephone/use-doe-phone-section-reveal";
-import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO_DIAL_ORB } from "@/lib/proto/proto-grain-gradient";
-import { SHADER_WEBGL_SLOT_PRIORITY } from "@/lib/doephone/shader-webgl-budget";
 
 const DIAL_STEP = (Math.PI * 2) / HERO_DIAL_ORB_COUNT;
 const AUTO_ADVANCE_MS = 5000;
@@ -155,8 +153,6 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
   isFocused,
   showPill,
   orbSize,
-  orbIndex = 0,
-  mountDelayMs = 380,
   interactive = false,
   expanded = false,
   showRinging = false,
@@ -166,8 +162,6 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
   isFocused: boolean;
   showPill: boolean;
   orbSize: string;
-  orbIndex?: number;
-  mountDelayMs?: number;
   interactive?: boolean;
   expanded?: boolean;
   showRinging?: boolean;
@@ -200,20 +194,7 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
       />
       <div className="hero-speaking-orb__progress-shell">
         <div className="hero-speaking-orb__core relative overflow-hidden rounded-full">
-        <HeroDialOrbGrainShader
-          scheme={scheme}
-          eager={isFocused || expanded}
-          enabled
-          stickMounted
-          mountDelayMs={mountDelayMs}
-          maxPixelCount={PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO_DIAL_ORB}
-          shaderSlotId={`hero-orb-${scheme.label}`}
-          shaderPriority={
-            isFocused || expanded
-              ? SHADER_WEBGL_SLOT_PRIORITY.HERO_ORB_FOCUSED
-              : SHADER_WEBGL_SLOT_PRIORITY.HERO_ORB
-          }
-        />
+        <HeroDialOrbGrainShader scheme={scheme} />
         <div
           className="pointer-events-none absolute inset-0 rounded-full hero-speaking-orb__core-shade"
           aria-hidden
@@ -252,11 +233,6 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
   );
 });
 
-function heroOrbMountDelayMs(orbIndex: number, focusedIndex: number) {
-  const forward = (orbIndex - focusedIndex + HERO_DIAL_ORB_COUNT) % HERO_DIAL_ORB_COUNT;
-  const backward = (focusedIndex - orbIndex + HERO_DIAL_ORB_COUNT) % HERO_DIAL_ORB_COUNT;
-  return 380 + Math.min(forward, backward) * 90;
-}
 
 /** Hero — half-circle dial on the right edge; auto-steps down every 5s. */
 export function DoePhoneHeroGradientCircles({
@@ -522,8 +498,6 @@ export function DoePhoneHeroGradientCircles({
                 >
                   <SpeakingGradientOrb
                     scheme={scheme}
-                    orbIndex={index}
-                    mountDelayMs={heroOrbMountDelayMs(index, focusedIndex)}
                     isFocused={pose.isFocused}
                     showPill={pose.isFocused && pillVisible && expandedOrbIndex === null}
                     orbSize={dialLayout.orbSize}
