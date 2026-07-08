@@ -154,14 +154,14 @@ html[data-about-page]:has(.doephone-mobile-root) body {
   background-color: #faf0d8;
 }
 
-/* iPhone /about — hero shader palette for stat charts (clay + sand + horizon). */
+/* iPhone /about — hero shader palette for stat charts (clay + shader brown + muted brown). */
 html[data-about-page]:has(.blog-mobile-root),
 html[data-about-page]:has(.doephone-mobile-root) {
   --doe-chart-bar: #c45c42;
   --doe-chart-pie-1: #c45c42;
-  --doe-chart-pie-2: #f2d8a8;
-  --doe-chart-pie-3: #e8a060;
-  --doe-chart-track: rgba(242, 216, 168, 0.55);
+  --doe-chart-pie-2: #1a1208;
+  --doe-chart-pie-3: #8a7868;
+  --doe-chart-track: rgba(26, 18, 8, 0.14);
 }
 
 /* iPhone /about — dusk stat charts (pie, bar, TAM). */
@@ -188,14 +188,14 @@ html[data-about-page]:has(.blog-mobile-root) .about-stat-charts .about-chart-pie
 html[data-about-page]:has(.doephone-mobile-root) .about-stat-charts .about-chart-pie-legend[data-chart-slice-index="1"],
 html[data-about-page]:has(.blog-mobile-root) .about-stat-chart .about-chart-pie-legend[data-chart-slice-index="1"],
 html[data-about-page]:has(.doephone-mobile-root) .about-stat-chart .about-chart-pie-legend[data-chart-slice-index="1"] {
-  background: var(--doe-chart-pie-2, #e8a060) !important;
+  background: var(--doe-chart-pie-2, #1a1208) !important;
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-stat-charts .about-chart-pie-legend[data-chart-slice-index="2"],
 html[data-about-page]:has(.doephone-mobile-root) .about-stat-charts .about-chart-pie-legend[data-chart-slice-index="2"],
 html[data-about-page]:has(.blog-mobile-root) .about-stat-chart .about-chart-pie-legend[data-chart-slice-index="2"],
 html[data-about-page]:has(.doephone-mobile-root) .about-stat-chart .about-chart-pie-legend[data-chart-slice-index="2"] {
-  background: var(--doe-chart-pie-3, #d8c8b0) !important;
+  background: var(--doe-chart-pie-3, #8a7868) !important;
 }
 
 html[data-proto-page]:has(.doephone-mobile-root) {

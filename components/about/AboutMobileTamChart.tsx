@@ -8,7 +8,6 @@ import {
   ABOUT_IPHONE_SHADER_CHART_PRIMARY,
   DOE_HOME_DUSK_CHART_AXIS,
   DOE_HOME_DUSK_CHART_GRID,
-  DOE_HOME_DUSK_CHART_PANEL_BORDER,
 } from "@/lib/home/doe-page-colors";
 import { dmSans, inter } from "@/lib/home/fonts";
 
@@ -100,7 +99,7 @@ export function AboutMobileTamChart() {
 
       <div
         className="mt-6 border px-4 py-4 iphone-page:mt-7 iphone-page:px-5 iphone-page:py-5"
-        style={{ borderColor: DOE_HOME_DUSK_CHART_PANEL_BORDER }}
+        style={{ borderColor: DOE_HOME_DUSK_CHART_AXIS }}
       >
         <p
           className={`font-medium leading-none tracking-[-0.03em] text-[#1A1208] ${dmSans.className} text-[clamp(2.55rem,2rem+2.35vmin,3.35rem)] iphone-page:text-[clamp(2.85rem,2.2rem+2.75vmin,3.75rem)]`}

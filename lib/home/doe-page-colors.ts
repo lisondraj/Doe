@@ -22,12 +22,12 @@ export const DOE_HOME_DUSK_CHART_AXIS = "rgba(26, 18, 8, 0.22)";
 export const DOE_HOME_DUSK_CHART_GRID = "rgba(26, 18, 8, 0.07)";
 export const DOE_HOME_DUSK_CHART_PANEL_BORDER = "#D8C8B0";
 
-/** iPhone /about stats — clay + sand + horizon from hero shader boxes. */
+/** iPhone /about stats — clay + shader brown + horizon from hero shader boxes. */
 export const ABOUT_IPHONE_SHADER_CHART_PRIMARY = "#C45C42";
-export const ABOUT_IPHONE_SHADER_CHART_SECONDARY = "#F2D8A8";
+export const ABOUT_IPHONE_SHADER_CHART_SECONDARY = "#1A1208";
 export const ABOUT_IPHONE_SHADER_CHART_ACCENT = "#E8A060";
-export const ABOUT_IPHONE_SHADER_CHART_TRACK = "rgba(242, 216, 168, 0.55)";
-export const ABOUT_IPHONE_SHADER_CHART_MUTED = "#E8D8C0";
+export const ABOUT_IPHONE_SHADER_CHART_TRACK = "rgba(26, 18, 8, 0.14)";
+export const ABOUT_IPHONE_SHADER_CHART_MUTED = "#8A7868";
 /** Home pre-seed strip — one step darker than overflow white. */
 export const DOE_HOME_BANNER_SURFACE = DOE_PAGE_SURFACE;
 /** Agents tray — clearly darker than page surface for nested feature cards. */

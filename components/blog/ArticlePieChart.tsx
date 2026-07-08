@@ -7,7 +7,7 @@ import {
 } from "@/lib/about/about-layout-styles";
 import { dmSans, inter } from "@/lib/home/fonts";
 import {
-  ABOUT_IPHONE_SHADER_CHART_ACCENT,
+  ABOUT_IPHONE_SHADER_CHART_MUTED,
   ABOUT_IPHONE_SHADER_CHART_PRIMARY,
   ABOUT_IPHONE_SHADER_CHART_SECONDARY,
   DOE_HOME_DUSK_CHART_ACCENT,
@@ -31,13 +31,13 @@ const SLICE_COLORS_DUSK_FALLBACK = [
 ] as const;
 const SLICE_COLORS_ABOUT = [
   "var(--doe-chart-pie-1, #C45C42)",
-  "var(--doe-chart-pie-2, #F2D8A8)",
-  "var(--doe-chart-pie-3, #E8A060)",
+  "var(--doe-chart-pie-2, #1A1208)",
+  "var(--doe-chart-pie-3, #8A7868)",
 ] as const;
 const SLICE_COLORS_ABOUT_FALLBACK = [
   ABOUT_IPHONE_SHADER_CHART_PRIMARY,
   ABOUT_IPHONE_SHADER_CHART_SECONDARY,
-  ABOUT_IPHONE_SHADER_CHART_ACCENT,
+  ABOUT_IPHONE_SHADER_CHART_MUTED,
 ] as const;
 const SLICE_COLORS_DARK = PROTO_CHART_SLICE_COLORS;
 const SLICE_COLORS_PROTO = PROTO_CHART_SLICE_COLORS;
