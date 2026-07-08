@@ -4,6 +4,7 @@ import { HeroDialOrbGrainShader } from "@/components/doephone/HeroDialOrbGrainSh
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type TouchEvent, type TransitionEvent } from "react";
 
 import { suisseIntl, suisseIntlLight } from "@/lib/home/fonts";
+import { AGENTS_CAROUSEL_DESCRIPTIONS } from "@/lib/doephone/agents-carousel-copy";
 import {
   HERO_DIAL_ORB_CAROUSEL_SHADER,
   HERO_DIAL_ORBS,
@@ -267,25 +268,33 @@ export function DoePhoneHomeAgentsCarousel() {
           </div>
         </div>
       </div>
-      <div className="home-agents-carousel__label-row">
-        <CarouselChevron
-          direction="left"
-          onClick={goPrev}
-          label="Previous agent"
-          className={doePhoneSectionRevealSegmentClass("agents-nav", revealed)}
-        />
-        <div
-          className={`home-agents-carousel__label ${suisseIntlLight.className} ${doePhoneSectionRevealSegmentClass("agents-label", revealed)}`}
+      <div className="home-agents-carousel__caption">
+        <div className="home-agents-carousel__label-row">
+          <CarouselChevron
+            direction="left"
+            onClick={goPrev}
+            label="Previous agent"
+            className={doePhoneSectionRevealSegmentClass("agents-nav", revealed)}
+          />
+          <div
+            className={`home-agents-carousel__label ${suisseIntlLight.className} ${doePhoneSectionRevealSegmentClass("agents-label", revealed)}`}
+            aria-hidden
+          >
+            <span className="home-agents-carousel__label-text">{active.label}</span>
+          </div>
+          <CarouselChevron
+            direction="right"
+            onClick={goNext}
+            label="Next agent"
+            className={doePhoneSectionRevealSegmentClass("agents-nav", revealed)}
+          />
+        </div>
+        <p
+          className={`home-agents-carousel__description ${suisseIntlLight.className} ${doePhoneSectionRevealSegmentClass("agents-label", revealed)}`}
           aria-hidden
         >
-          <span className="home-agents-carousel__label-text">{active.label}</span>
-        </div>
-        <CarouselChevron
-          direction="right"
-          onClick={goNext}
-          label="Next agent"
-          className={doePhoneSectionRevealSegmentClass("agents-nav", revealed)}
-        />
+          {AGENTS_CAROUSEL_DESCRIPTIONS[active.label] ?? ""}
+        </p>
       </div>
     </div>
   );
