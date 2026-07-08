@@ -315,7 +315,8 @@ body.desktop-route .home-feature-shader-band {
   width: 100vw !important;
   margin-left: calc(50% - 50vw) !important;
   margin-right: calc(50% - 50vw) !important;
-  min-height: 112vh !important;
+  min-height: calc(100dvh - 5.5rem + 4rem) !important;
+  height: calc(100dvh - 5.5rem + 4rem) !important;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-card-section__title {
@@ -334,7 +335,7 @@ html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] p {
 
 /* Desktop home — feature bands use viewport height (no phone viewport lock). */
 html[data-home-page][data-layout="desktop"] .home-feature-card-section__inner {
-  min-height: 100dvh !important;
+  min-height: calc(100dvh - 5.5rem + 4rem) !important;
   padding-left: clamp(2.5rem, 5vw, 9rem) !important;
   padding-right: clamp(2.5rem, 5vw, 9rem) !important;
 }
@@ -346,7 +347,8 @@ html[data-home-page][data-layout="desktop"] .home-feature-card-section__card {
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band {
-  min-height: 100dvh !important;
+  min-height: calc(100dvh - 5.5rem + 4rem) !important;
+  height: calc(100dvh - 5.5rem + 4rem) !important;
 }
 
 /* Home iPhone — Build section: one viewport band, slightly tighter copy + prompt. */
