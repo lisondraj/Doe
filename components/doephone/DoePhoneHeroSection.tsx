@@ -19,8 +19,8 @@ import { PROTO_HERO_HEIGHT } from "@/lib/proto/proto-hero-layout";
 import { PROTO_FONT_CLASS } from "@/lib/proto/proto-font";
 import { PROTO_RECEPTION_PALETTE } from "@/lib/proto/proto-communication-gradients";
 import {
-  DOE_HOME_HERO_GLACIER_PALETTE,
-  doeHomeHeroGlacierShaderSurface,
+  DOE_HOME_HERO_FOREST_PALETTE,
+  doeHomeHeroForestShaderSurface,
 } from "@/lib/proto/proto-shader-backdrop-colors";
 import { useEffect, useState, type CSSProperties } from "react";
 
@@ -39,7 +39,7 @@ export function DoePhoneHeroSection({
   variant?: "mobile" | "desktop";
   /** Proto landing — dark palette and hiring headline. */
   proto?: boolean;
-  /** Desktop — render the iPhone hero background (glacier shader + agent orb dial). */
+  /** Desktop — render the iPhone hero background (forest shader + agent orb dial). */
   iphoneBackdrop?: boolean;
 }) {
   const [introZoom, setIntroZoom] = useState(DOEPHONE_HERO_INTRO_GRADIENT_START);
@@ -79,9 +79,9 @@ export function DoePhoneHeroSection({
   const isDesktop = variant === "desktop";
   const isMobile = !isDesktop;
   const isProto = proto;
-  /** iPhone-style hero (glacier shader + orb dial) — mobile always, desktop when opted in. */
+  /** iPhone-style hero (forest shader + orb dial) — mobile always, desktop when opted in. */
   const renderIphoneHero = !isProto && (isMobile || iphoneBackdrop);
-  const homeHeroShader = doeHomeHeroGlacierShaderSurface();
+  const homeHeroShader = doeHomeHeroForestShaderSurface();
   const heroHeight = isDesktop
     ? DOEPHONE_HERO_DESKTOP_HEIGHT
     : isProto
@@ -95,14 +95,14 @@ export function DoePhoneHeroSection({
   return (
     <section
       className={`doephone-hero-section relative w-full overflow-hidden ${
-        isProto ? "" : "bg-[#0C1824]"
+        isProto ? "" : "bg-[#051812]"
       }`}
       style={
         {
           minHeight: heroHeight,
           height: heroHeight,
           ...(renderIphoneHero
-            ? { backgroundColor: DOE_HOME_HERO_GLACIER_PALETTE.back }
+            ? { backgroundColor: DOE_HOME_HERO_FOREST_PALETTE.back }
             : isMobile && isProto
               ? { backgroundColor: PROTO_RECEPTION_PALETTE.deep }
               : {}),

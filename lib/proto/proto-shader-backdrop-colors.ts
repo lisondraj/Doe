@@ -19,12 +19,12 @@ export const DOE_HOME_ORANGE_PALETTE = {
   tan: "#B87862",
 } as const;
 
-/** Hero experiment — arctic glacier (hero shader + dial only). */
-export const DOE_HOME_HERO_GLACIER_PALETTE = {
-  back: "#0C1824",
-  ice: "#A8E6FF",
-  arctic: "#6BB8E8",
-  frost: "#E8F4FC",
+/** Hero experiment — bioluminescent forest (hero shader + dial only). */
+export const DOE_HOME_HERO_FOREST_PALETTE = {
+  back: "#051812",
+  glow: "#00FF88",
+  teal: "#14B8A0",
+  mint: "#7CFFCB",
 } as const;
 
 const PROTO_AGENTS_MID_BLUE = "#4A6878";
@@ -47,16 +47,16 @@ export function doeHomeHeroShaderSurface(): ProtoGrainGradientSurface {
   };
 }
 
-/** Doe home hero — arctic glacier experiment (same home-hero flow preset). */
-export function doeHomeHeroGlacierShaderSurface(): ProtoGrainGradientSurface {
+/** Doe home hero — bioluminescent forest experiment (same home-hero flow preset). */
+export function doeHomeHeroForestShaderSurface(): ProtoGrainGradientSurface {
   return {
     variant: "home-hero",
     colors: [
-      DOE_HOME_HERO_GLACIER_PALETTE.ice,
-      DOE_HOME_HERO_GLACIER_PALETTE.arctic,
-      DOE_HOME_HERO_GLACIER_PALETTE.frost,
+      DOE_HOME_HERO_FOREST_PALETTE.glow,
+      DOE_HOME_HERO_FOREST_PALETTE.teal,
+      DOE_HOME_HERO_FOREST_PALETTE.mint,
     ],
-    colorBack: DOE_HOME_HERO_GLACIER_PALETTE.back,
+    colorBack: DOE_HOME_HERO_FOREST_PALETTE.back,
   };
 }
 
