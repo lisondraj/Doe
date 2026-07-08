@@ -47,17 +47,18 @@ export const ABOUT_PAGE_HERO_BOX_TW = `${DOEPHONE_SECTION_CLOSING_FEATURE_HEIGHT
 /** Desktop /about — same horizontal gutters as desktop home. */
 export const ABOUT_DESKTOP_PAGE_INSET = DOEPHONE_DESKTOP_PAGE_INSET_X;
 
-/** Clears fixed nav — matches AboutDesktopNav bar height (py-6 + text-4xl). */
+/** Clears fixed punched nav — matches desktop nav height token. */
 export const ABOUT_DESKTOP_MAIN_PT = "pt-[6.25rem]";
 
 /** Hero band — exactly one viewport; headline + gradient box only. */
-export const ABOUT_DESKTOP_SECTION_1_H = "box-border h-[100dvh] max-h-[100dvh] overflow-hidden";
+export const ABOUT_DESKTOP_SECTION_1_H = "about-desktop-section box-border h-[100dvh] max-h-[100dvh] overflow-hidden";
 
 /** Space below nav before mission title — matches subheading-to-hero gap. */
-export const ABOUT_DESKTOP_HERO_HEADLINE_TOP = "mt-8 md:mt-10";
+export const ABOUT_DESKTOP_HERO_HEADLINE_TOP = "mt-4 md:mt-6";
 
-/** Hero band — nav clearance, uniform vertical rhythm, gradient box fills remainder. */
-export const ABOUT_DESKTOP_SECTION_1_LAYOUT = `grid min-h-0 grid-rows-[auto_minmax(0,1fr)] gap-y-8 md:gap-y-10 ${ABOUT_DESKTOP_PAGE_INSET} ${ABOUT_DESKTOP_MAIN_PT} pb-6 md:pb-8 lg:pb-10`;
+/** Hero band — nav clearance + uniform vertical rhythm, gradient box fills remainder. */
+export const ABOUT_DESKTOP_SECTION_1_LAYOUT =
+  "about-desktop-section__inner grid min-h-0 grid-rows-[auto_minmax(0,1fr)] gap-y-6 md:gap-y-8";
 
 export const ABOUT_DESKTOP_TITLE_TW = `text-left font-light leading-[1.02] tracking-[-0.03em] text-[clamp(2.65rem,3.75vw,3.95rem)] md:text-[clamp(2.85rem,3.45vw,4.15rem)] lg:text-[clamp(3rem,3.25vw,4.35rem)] text-[#1E343A] ${suisseIntl.className}`;
 
@@ -74,14 +75,16 @@ export const ABOUT_DESKTOP_HERO_DATE_TW = `mt-1 font-medium leading-none text-wh
 export const ABOUT_DESKTOP_ARTICLE_MAX_W = "max-w-[min(100%,54rem)]";
 
 /** One full-viewport /about desktop band. */
-export const ABOUT_DESKTOP_SECTION_H = "box-border h-[100dvh] max-h-[100dvh] min-h-[100dvh] overflow-hidden";
+export const ABOUT_DESKTOP_SECTION_H =
+  "about-desktop-section box-border h-[100dvh] max-h-[100dvh] min-h-[100dvh] overflow-hidden";
 
-/** Split bands — two equal columns with page gutters and vertical breathing room. */
-export const ABOUT_DESKTOP_SPLIT_SECTION_GRID = `grid h-full min-h-0 w-full grid-cols-2 gap-8 md:gap-10 lg:gap-12 xl:gap-14 ${ABOUT_DESKTOP_PAGE_INSET} py-8 md:py-10 lg:py-12`;
+/** Split bands — two equal columns; inner shell clears punched nav. */
+export const ABOUT_DESKTOP_SPLIT_SECTION_GRID =
+  "about-desktop-section__inner grid h-full min-h-0 w-full grid-cols-2 gap-8 md:gap-10 lg:gap-12 xl:gap-14 px-[var(--desktop-page-inset-x,2.5rem)]";
 
 /** Sections 2–4 — beige panel bleeds to the outer page margin on its side. */
 export const ABOUT_DESKTOP_SPLIT_SECTION_GRID_BLEED =
-  "grid h-full min-h-0 w-full grid-cols-2 py-8 md:py-10 lg:py-12";
+  "about-desktop-section__inner grid h-full min-h-0 w-full grid-cols-2";
 
 /** Shared inner gutter between text and beige panel (sections 2–4 bleed layout). */
 export const ABOUT_DESKTOP_SPLIT_BLEED_INNER_X_LEFT =
@@ -126,7 +129,7 @@ export const ABOUT_DESKTOP_SPLIT_BOX_COLUMN_RIGHT_BLEED = `grid min-h-0 min-w-0 
 /** Beige square column — flush to the left page margin (section 3). */
 export const ABOUT_DESKTOP_SPLIT_BOX_COLUMN_LEFT_BLEED = `grid min-h-0 min-w-0 h-full items-center justify-items-start ${DOEPHONE_DESKTOP_PAGE_INSET_LEFT} ${ABOUT_DESKTOP_SPLIT_BLEED_INNER_X_RIGHT} ${ABOUT_DESKTOP_SPLIT_BLEED_INNER_Y}`;
 
-export const ABOUT_DESKTOP_BEIGE_PANEL_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} aspect-square max-h-full max-w-full w-full`;
+export const ABOUT_DESKTOP_BEIGE_PANEL_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} aspect-square max-h-full max-w-full w-full border border-[var(--doe-page-border,rgba(26,18,8,0.14))] bg-[var(--doe-page-surface-raised,#f5e6d0)]`;
 
 /** FAQ accordion — same max square as the beige panel in the adjacent column. */
 export const ABOUT_DESKTOP_SQUARE_PANEL_TW = ABOUT_DESKTOP_BEIGE_PANEL_TW;

@@ -20,7 +20,6 @@ import {
   ABOUT_DESKTOP_PAGE_INSET,
   ABOUT_DESKTOP_SECTION_1_H,
   ABOUT_DESKTOP_SECTION_1_LAYOUT,
-  ABOUT_DESKTOP_SECTION_H,
   ABOUT_DESKTOP_HERO_BYLINE_TW,
   ABOUT_DESKTOP_HERO_BYLINE_WRAP_TW,
   ABOUT_DESKTOP_HERO_DATE_TW,
@@ -95,12 +94,16 @@ export function AboutDesktopView() {
 
   return (
     <DesktopRouteLayout>
-      <div className="relative min-h-[100dvh] overflow-x-hidden bg-[#EDE8DF]" data-doeforvc-view="desktop">
+      <div
+        className="about-desktop-root relative min-h-[100dvh] overflow-x-hidden bg-[var(--doe-page-surface,#faf0d8)]"
+        data-doeforvc-view="desktop"
+      >
         <AboutDesktopNav />
 
         <main>
-          <section className={`${ABOUT_DESKTOP_SECTION_1_H} ${ABOUT_DESKTOP_SECTION_1_LAYOUT}`}>
-            <div className={`${ABOUT_HERO_HEADLINE_WRAP} min-w-0 ${ABOUT_DESKTOP_HERO_HEADLINE_TOP}`}>
+          <section className={ABOUT_DESKTOP_SECTION_1_H}>
+            <div className={ABOUT_DESKTOP_SECTION_1_LAYOUT}>
+            <div className={`${ABOUT_HERO_HEADLINE_WRAP} min-w-0 px-[var(--desktop-page-inset-x,2.5rem)] ${ABOUT_DESKTOP_HERO_HEADLINE_TOP}`}>
               <h1 className={ABOUT_DESKTOP_TITLE_TW}>
                 <span className="block">Doe is on a mission</span>
                 <span className="block">to redefine healthcare.</span>
@@ -112,7 +115,7 @@ export function AboutDesktopView() {
               </p>
             </div>
 
-            <div className={ABOUT_DESKTOP_HERO_WRAP}>
+            <div className={`${ABOUT_DESKTOP_HERO_WRAP} min-h-0 px-[var(--desktop-page-inset-x,2.5rem)]`}>
               <BlogHeroVisual
                 backdrop={ABOUT_PAGE_HERO_BACKDROP}
                 variant="hero"
@@ -125,6 +128,7 @@ export function AboutDesktopView() {
                   <p className={ABOUT_DESKTOP_HERO_DATE_TW}>{ABOUT_PAGE_MOBILE_DATE}</p>
                 </div>
               </BlogHeroVisual>
+            </div>
             </div>
           </section>
 
