@@ -41,7 +41,7 @@ import {
 import { BLOG_CONTENT_PT } from "@/lib/blog/blog-layout-styles";
 import { applyPhoneOverflowChrome } from "@/lib/doephone/phone-layout-viewport";
 import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-viewport";
-import { DOE_HOME_DUSK_OVERFLOW_SURFACE } from "@/lib/home/doe-page-colors";
+import { DOE_HOME_DUSK_CHART_ACCENT, DOE_HOME_DUSK_OVERFLOW_SURFACE } from "@/lib/home/doe-page-colors";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 
 /** iPhone /about — mission hero plus section copy, pie chart, FAQ, and founder bios. */
@@ -111,7 +111,8 @@ export function AboutMobileView() {
               {ABOUT_DESKTOP_SECTION_2_BULLETS.map((item) => (
                 <li key={item} className={`flex items-start gap-3 ${ABOUT_MOBILE_BODY_TW}`}>
                   <span
-                    className="mt-[0.35em] h-[0.45em] w-[0.45em] shrink-0 rounded-full bg-[#9A8F82]"
+                    className="mt-[0.35em] h-[0.45em] w-[0.45em] shrink-0 rounded-full"
+                    style={{ backgroundColor: DOE_HOME_DUSK_CHART_ACCENT }}
                     aria-hidden
                   />
                   {item}

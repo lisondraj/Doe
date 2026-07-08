@@ -7,6 +7,7 @@ import {
   ABOUT_DESKTOP_ARTICLE_QUOTE_TW,
   ABOUT_DESKTOP_STACK_GAP,
 } from "@/lib/about/about-layout-styles";
+import { DOE_HOME_DUSK_CHART_ACCENT } from "@/lib/home/doe-page-colors";
 
 export function AboutDesktopParagraph({
   text,
@@ -29,7 +30,11 @@ export function AboutDesktopBulletList({
     <ul className={`${ABOUT_DESKTOP_ARTICLE_LIST_GAP} list-none pl-0 ${className}`.trim()}>
       {items.map((item) => (
         <li key={item} className={`flex items-start gap-3 ${ABOUT_DESKTOP_ARTICLE_BODY_TW}`}>
-          <span className="mt-[0.35em] shrink-0 h-[0.45em] w-[0.45em] rounded-full bg-[#9A8F82]" aria-hidden />
+          <span
+            className="mt-[0.35em] h-[0.45em] w-[0.45em] shrink-0 rounded-full"
+            style={{ backgroundColor: DOE_HOME_DUSK_CHART_ACCENT }}
+            aria-hidden
+          />
           {item}
         </li>
       ))}
