@@ -31,3 +31,21 @@ export function doephoneSectionRevealStyleVars(): Record<string, string> {
     "--doephone-section-reveal-input-delay": `${DOEPHONE_SECTION_REVEAL_INPUT_DELAY_MS}ms`,
   };
 }
+
+/** Agents carousel — orbs → label + chevrons. */
+export const DOEPHONE_AGENTS_REVEAL_ORBS_DELAY_MS = 0;
+export const DOEPHONE_AGENTS_REVEAL_LABEL_DELAY_MS = 420;
+export const DOEPHONE_AGENTS_REVEAL_NAV_DELAY_MS = 560;
+
+/** Hero dial orbs — load-in after headline begins settling. */
+export const DOEPHONE_HERO_ORB_REVEAL_BASE_DELAY_MS = 3000;
+export const DOEPHONE_HERO_ORB_REVEAL_STAGGER_MS = 90;
+
+export function doephoneAgentsRevealStyleVars(): Record<string, string> {
+  return {
+    "--doephone-section-reveal-duration": `${DOEPHONE_SECTION_REVEAL_DURATION_MS}ms`,
+    "--doephone-section-reveal-agents-orbs-delay": `${DOEPHONE_AGENTS_REVEAL_ORBS_DELAY_MS}ms`,
+    "--doephone-section-reveal-agents-label-delay": `${DOEPHONE_AGENTS_REVEAL_LABEL_DELAY_MS}ms`,
+    "--doephone-section-reveal-agents-nav-delay": `${DOEPHONE_AGENTS_REVEAL_NAV_DELAY_MS}ms`,
+  };
+}

@@ -83,3 +83,22 @@ export const HERO_DIAL_ORB_SHADER = {
   worldHeight: 0,
   speed: 0,
 } as const;
+
+/** Beige-band carousel — zoom past umber rim, soften edge, match sand backdrop. */
+export const HERO_DIAL_ORB_CAROUSEL_SHADER = {
+  ...HERO_DIAL_ORB_SHADER,
+  scale: 1.5,
+  softness: 0.62,
+} as const;
+
+export const HERO_DIAL_ORB_CAROUSEL_COLOR_BACK = RIM_SAND;
+
+/** Drop umber shadow stop so the sphere edge stays warm on sand, not black. */
+export function heroDialOrbCarouselScheme(scheme: HeroDialOrbScheme): HeroDialOrbScheme {
+  const [, mid, light] = scheme.colors;
+  return {
+    ...scheme,
+    colorBack: HERO_DIAL_ORB_CAROUSEL_COLOR_BACK,
+    colors: [mid, mid, light],
+  };
+}

@@ -3,12 +3,19 @@
 import { HeroDialOrbGrainShader } from "@/components/doephone/HeroDialOrbGrainShader";
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type TransitionEvent } from "react";
 
-import { suisseIntl } from "@/lib/home/fonts";
+import { suisseIntl, suisseIntlLight } from "@/lib/home/fonts";
 import {
+  HERO_DIAL_ORB_CAROUSEL_SHADER,
   HERO_DIAL_ORBS,
+  heroDialOrbCarouselScheme,
   type HeroDialOrbScheme,
 } from "@/lib/doephone/hero-dial-orbs";
 import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_CAROUSEL_ORB } from "@/lib/proto/proto-grain-gradient";
+import { doephoneAgentsRevealStyleVars } from "@/lib/doephone/section-reveal-timing";
+import {
+  doePhoneSectionRevealSegmentClass,
+  useDoePhoneSectionReveal,
+} from "@/lib/doephone/use-doe-phone-section-reveal";
 
 function orbAccentStyle(scheme: HeroDialOrbScheme): CSSProperties {
   const [dark, mid, light] = scheme.colors;
@@ -24,10 +31,12 @@ function CarouselChevron({
   direction,
   onClick,
   label,
+  className,
 }: {
   direction: "left" | "right";
   onClick: () => void;
   label: string;
+  className?: string;
 }) {
   return (
     <button
@@ -36,7 +45,8 @@ function CarouselChevron({
       aria-label={label}
       onClick={onClick}
     >
-      <svg viewBox="0 0 16 16" fill="none" aria-hidden className="home-agents-carousel__nav-icon">
+      <span className={className ? `home-agents-carousel__nav-hit ${className}` : "home-agents-carousel__nav-hit"}>
+        <svg viewBox="0 0 16 16" fill="none" aria-hidden className="home-agents-carousel__nav-icon">
         {direction === "left" ? (
           <path
             d="M10 3L5 8l5 5"
@@ -55,6 +65,7 @@ function CarouselChevron({
           />
         )}
       </svg>
+      </span>
     </button>
   );
 }
@@ -68,28 +79,25 @@ function AgentCarouselOrb({
   focused: boolean;
   mountShader: boolean;
 }) {
+  const displayScheme = heroDialOrbCarouselScheme(scheme);
+
   return (
     <div
       className={`home-agents-carousel__orb hero-speaking-orb${
-        focused ? " hero-speaking-orb--focused home-agents-carousel__orb--focused" : ""
+        focused ? " home-agents-carousel__orb--focused" : ""
       }`}
-      style={orbAccentStyle(scheme)}
+      style={orbAccentStyle(displayScheme)}
     >
-      <div className="hero-speaking-orb__halo-ring" aria-hidden />
-      <div className="hero-speaking-orb__halo-ring hero-speaking-orb__halo-ring--echo" aria-hidden />
       <div className="hero-speaking-orb__progress-shell">
         <div className="hero-speaking-orb__core relative overflow-hidden rounded-full">
           <HeroDialOrbGrainShader
-            scheme={scheme}
+            scheme={displayScheme}
+            shaderConfig={HERO_DIAL_ORB_CAROUSEL_SHADER}
             eager={focused}
             enabled={mountShader}
             stickMounted
             mountDelayMs={focused ? 380 : 470}
             maxPixelCount={PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_CAROUSEL_ORB}
-          />
-          <div
-            className="pointer-events-none absolute inset-0 rounded-full hero-speaking-orb__core-shade"
-            aria-hidden
           />
         </div>
       </div>
@@ -123,11 +131,12 @@ function shouldMountCarouselShader(orbIndex: number, position: number) {
   return Math.abs(orbIndex - position) <= AGENTS_CAROUSEL_SHADER_WINDOW;
 }
 
-/** Hero agent orbs — horizontal carousel with chevrons and label pill. */
+/** Hero agent orbs — horizontal carousel with chevrons and label. */
 export function DoePhoneHomeAgentsCarousel() {
   const [position, setPosition] = useState(AGENTS_CAROUSEL_LOOP_START);
   const [trackInstant, setTrackInstant] = useState(false);
   const reenableTransitionRef = useRef<number | null>(null);
+  const { ref: sectionRef, revealed } = useDoePhoneSectionReveal(0.2);
 
   const active = AGENTS_CAROUSEL_LOOP_ORBS[position];
 
@@ -190,10 +199,22 @@ export function DoePhoneHomeAgentsCarousel() {
   }, [trackInstant, position]);
 
   return (
-    <div className={`home-agents-carousel ${suisseIntl.className}`} aria-hidden>
+    <div
+      ref={sectionRef}
+      className={`home-agents-carousel ${suisseIntl.className}`}
+      style={doephoneAgentsRevealStyleVars() as CSSProperties}
+      aria-hidden
+    >
       <div className="home-agents-carousel__stage">
-        <CarouselChevron direction="left" onClick={goPrev} label="Previous agent" />
-        <div className="home-agents-carousel__viewport">
+        <CarouselChevron
+          direction="left"
+          onClick={goPrev}
+          label="Previous agent"
+          className={doePhoneSectionRevealSegmentClass("agents-nav", revealed)}
+        />
+        <div
+          className={`home-agents-carousel__viewport ${doePhoneSectionRevealSegmentClass("agents-orbs", revealed)}`}
+        >
           <div
             className={`home-agents-carousel__track${
               trackInstant ? " home-agents-carousel__track--instant" : ""
@@ -213,10 +234,18 @@ export function DoePhoneHomeAgentsCarousel() {
             ))}
           </div>
         </div>
-        <CarouselChevron direction="right" onClick={goNext} label="Next agent" />
+        <CarouselChevron
+          direction="right"
+          onClick={goNext}
+          label="Next agent"
+          className={doePhoneSectionRevealSegmentClass("agents-nav", revealed)}
+        />
       </div>
-      <div className="home-agents-carousel__pill">
-        <span className="home-agents-carousel__pill-text">{active.label}</span>
+      <div
+        className={`home-agents-carousel__label ${suisseIntlLight.className} ${doePhoneSectionRevealSegmentClass("agents-label", revealed)}`}
+        aria-hidden
+      >
+        <span className="home-agents-carousel__label-text">{active.label}</span>
       </div>
     </div>
   );

@@ -18,18 +18,23 @@ import {
   HERO_DIAL_ORBS,
   type HeroDialOrbScheme,
 } from "@/lib/doephone/hero-dial-orbs";
+import {
+  DOEPHONE_HERO_ORB_REVEAL_BASE_DELAY_MS,
+  DOEPHONE_HERO_ORB_REVEAL_STAGGER_MS,
+} from "@/lib/doephone/section-reveal-timing";
+import { doePhoneRevealLiftClass } from "@/lib/doephone/use-doe-phone-section-reveal";
 
 const DIAL_STEP = (Math.PI * 2) / HERO_DIAL_ORB_COUNT;
 const AUTO_ADVANCE_MS = 5000;
 
 const HERO_DIAL_LAYOUT = {
   mobile: {
-    radiusVmin: 47,
-    orbSize: "clamp(15rem, 48vmin, 21rem)",
+    radiusVmin: 51,
+    orbSize: "clamp(16.25rem, 52vmin, 22.75rem)",
   },
   desktop: {
-    radiusVmin: 62,
-    orbSize: "clamp(19rem, 58vmin, 30rem)",
+    radiusVmin: 67,
+    orbSize: "clamp(20.5rem, 62.5vmin, 32.5rem)",
   },
 } as const;
 const SWITCH_MS = 920;
@@ -511,16 +516,23 @@ export function DoePhoneHeroGradientCircles({
                   zIndex: style.zIndex,
                 }}
               >
-                <SpeakingGradientOrb
-                  scheme={scheme}
-                  orbIndex={index}
-                  mountDelayMs={heroOrbMountDelayMs(index, focusedIndex)}
-                  isFocused={pose.isFocused}
-                  showPill={pose.isFocused && pillVisible && expandedOrbIndex === null}
-                  orbSize={dialLayout.orbSize}
-                  interactive={isMobileInteractive && expandedOrbIndex === null && pose.isFocused}
-                  onPlayClick={(sourceNode) => openExpanded(index, sourceNode)}
-                />
+                <div
+                  className={`hero-speaking-orbs__node-reveal ${doePhoneRevealLiftClass(true)}`}
+                  style={{
+                    "--doephone-reveal-lift-delay": `${DOEPHONE_HERO_ORB_REVEAL_BASE_DELAY_MS + index * DOEPHONE_HERO_ORB_REVEAL_STAGGER_MS}ms`,
+                  } as CSSProperties}
+                >
+                  <SpeakingGradientOrb
+                    scheme={scheme}
+                    orbIndex={index}
+                    mountDelayMs={heroOrbMountDelayMs(index, focusedIndex)}
+                    isFocused={pose.isFocused}
+                    showPill={pose.isFocused && pillVisible && expandedOrbIndex === null}
+                    orbSize={dialLayout.orbSize}
+                    interactive={isMobileInteractive && expandedOrbIndex === null && pose.isFocused}
+                    onPlayClick={(sourceNode) => openExpanded(index, sourceNode)}
+                  />
+                </div>
               </div>
             );
           })}

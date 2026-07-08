@@ -1437,9 +1437,9 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__card
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel {
-  --home-agents-orb-size: clamp(20.5rem, 94vw, 27.5rem);
+  --home-agents-orb-size: clamp(22.25rem, 97vw, 29.75rem);
   --home-agents-orb-gap: clamp(1rem, 3.2vmin, 1.65rem);
-  --home-agents-halo-bleed: clamp(1.55rem, 4.5vmin, 2.5rem);
+  --home-agents-halo-bleed: clamp(0.35rem, 1.1vmin, 0.65rem);
   --home-agents-orb-step: calc(var(--home-agents-orb-size) + var(--home-agents-orb-gap));
   --home-agents-orb-half: calc(var(--home-agents-orb-size) / 2);
   --home-agents-carousel-duration: 720ms;
@@ -1499,50 +1499,22 @@ html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb--focu
   opacity: 1;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb .hero-speaking-orb__halo-ring,
-html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb .hero-speaking-orb__halo-ring--echo {
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  border-width: 1px;
-  box-shadow: none;
-  transition:
-    opacity var(--home-agents-carousel-duration) var(--home-agents-carousel-ease),
-    transform var(--home-agents-carousel-duration) var(--home-agents-carousel-ease);
-}
-
-html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb .hero-speaking-orb__halo-ring--echo {
-  box-shadow: none;
-}
-
-html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb--focused .hero-speaking-orb__halo-ring {
-  opacity: 0.34;
-}
-
-html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb--focused .hero-speaking-orb__halo-ring--echo {
-  opacity: 0.18;
-  transform: translate3d(-50%, -50%, 0) scale(1.07);
-}
-
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb .hero-speaking-orb__core {
   background-color: var(--orb-halo-back);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--orb-halo-light) 20%, transparent);
-  transition: box-shadow var(--home-agents-carousel-duration) var(--home-agents-carousel-ease);
+  box-sizing: border-box;
+  box-shadow: none;
+  border: 0;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb--focused .hero-speaking-orb__core {
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--orb-halo-light) 34%, transparent);
+  box-shadow: none;
+  border: 0;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb .hero-speaking-orb__grain-shell,
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb .hero-speaking-orb__grain-shell canvas {
-  image-rendering: auto;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-}
-
-html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb .hero-speaking-orb__core-shade {
-  box-shadow: inset 0 -12px 24px rgba(26, 18, 8, 0.18);
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__nav {
@@ -1560,6 +1532,12 @@ html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__nav {
   transform: translateY(-50%);
 }
 
+html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__nav-hit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__nav--left {
   left: max(0.15rem, env(safe-area-inset-left, 0px));
 }
@@ -1573,22 +1551,20 @@ html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__nav-icon 
   height: clamp(1.48rem, 4.55vmin, 1.92rem);
 }
 
-html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__pill {
-  display: inline-flex;
+html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__label {
+  display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(1.35rem, 4.5vmin, 1.75rem) clamp(2.25rem, 7vmin, 3.05rem);
-  border-radius: 999px;
-  border: 1px solid rgba(26, 18, 8, 0.08);
-  background: #ffffff;
-  box-shadow: none;
+  text-align: center;
+  padding-inline: clamp(1rem, 4vw, 2rem);
 }
 
-html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__pill-text {
+html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__label-text {
+  display: block;
   color: var(--hero-pill-ink);
-  font-size: clamp(1.45rem, 4.5vmin, 2rem);
-  font-weight: 500;
-  letter-spacing: -0.028em;
+  font-size: clamp(2.35rem, 8.2vmin, 3.35rem);
+  font-weight: 300;
+  letter-spacing: -0.03em;
   line-height: 1.08;
   white-space: nowrap;
   transition: opacity 360ms ease;
@@ -3402,6 +3378,64 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
     cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-input-delay, 2.85s) both;
 }
 
+.doephone-section-reveal--in.doephone-section-reveal--agents-orbs {
+  animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 1.75s)
+    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-agents-orbs-delay, 0ms) both;
+}
+
+.doephone-section-reveal--in.doephone-section-reveal--agents-label {
+  animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 1.75s)
+    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-agents-label-delay, 420ms) both;
+}
+
+.doephone-section-reveal--in.doephone-section-reveal--agents-nav {
+  animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 1.75s)
+    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-agents-nav-delay, 560ms) both;
+}
+
+/* Shared unblur + rise with optional hover lift (hero orbs, carousel chrome). */
+.doephone-reveal-lift {
+  opacity: 0;
+  filter: blur(16px);
+  transform: translateY(1.75rem);
+  will-change: opacity, filter, transform;
+}
+
+.doephone-reveal-lift--in {
+  animation: doephone-hero-headline-in 1.45s cubic-bezier(0.22, 1, 0.36, 1)
+    var(--doephone-reveal-lift-delay, 0ms) both;
+}
+
+.doephone-reveal-lift--in.doephone-reveal-lift--hoverable {
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.doephone-reveal-lift--in.doephone-reveal-lift--hoverable:hover {
+  transform: translateY(-7px);
+}
+
+html[data-home-page]:has(.doephone-mobile-root) .doephone-section-reveal--agents-orbs,
+html[data-home-page]:has(.doephone-mobile-root) .doephone-section-reveal--agents-label,
+html[data-home-page]:has(.doephone-mobile-root) .doephone-section-reveal--agents-nav {
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html[data-home-page]:has(.doephone-mobile-root) .doephone-section-reveal--in.doephone-section-reveal--agents-orbs:hover,
+html[data-home-page]:has(.doephone-mobile-root) .doephone-section-reveal--in.doephone-section-reveal--agents-label:hover {
+  transform: translateY(-7px);
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html[data-home-page] .hero-speaking-orbs__node-reveal {
+  width: 100%;
+  height: 100%;
+}
+
+html[data-home-page] .hero-speaking-orbs__node-reveal.doephone-reveal-lift--in {
+  animation: doephone-hero-headline-in 1.45s cubic-bezier(0.22, 1, 0.36, 1)
+    var(--doephone-reveal-lift-delay, 3s) both;
+}
+
 .doephone-section-plus {
   display: inline-block;
   vertical-align: baseline;
@@ -3559,6 +3593,14 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
 
   .doephone-section-reveal,
   .doephone-section-reveal--in {
+    animation: none !important;
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+
+  .doephone-reveal-lift,
+  .doephone-reveal-lift--in {
     animation: none !important;
     opacity: 1;
     filter: none;

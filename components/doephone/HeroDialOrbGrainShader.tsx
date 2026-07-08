@@ -27,6 +27,7 @@ export const HeroDialOrbGrainShader = memo(function HeroDialOrbGrainShader({
   mountDelayMs = 0,
   stickMounted = false,
   maxPixelCount = PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_ORB,
+  shaderConfig = HERO_DIAL_ORB_SHADER,
 }: {
   scheme: HeroDialOrbScheme;
   /** Mount immediately when sized — hero focused orb, carousel center. */
@@ -38,13 +39,14 @@ export const HeroDialOrbGrainShader = memo(function HeroDialOrbGrainShader({
   /** Keep the grain shader after first mount — avoids fallback flash on dial rotation. */
   stickMounted?: boolean;
   maxPixelCount?: number;
+  shaderConfig?: typeof HERO_DIAL_ORB_SHADER;
 }) {
   const shellRef = useRef<HTMLDivElement>(null);
   const hasShaderRef = useRef(false);
   const [ready, setReady] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [painted, setPainted] = useState(false);
-  const intensity = scheme.intensity ?? HERO_DIAL_ORB_SHADER.intensity;
+  const intensity = scheme.intensity ?? shaderConfig.intensity;
   const shouldMount = enabled || (stickMounted && hasShaderRef.current);
   const showShader = shouldMount && ready && mounted;
 
@@ -156,20 +158,20 @@ export const HeroDialOrbGrainShader = memo(function HeroDialOrbGrainShader({
         <GrainGradient
           width="100%"
           height="100%"
-          fit={HERO_DIAL_ORB_SHADER.fit}
-          worldWidth={HERO_DIAL_ORB_SHADER.worldWidth}
-          worldHeight={HERO_DIAL_ORB_SHADER.worldHeight}
+          fit={shaderConfig.fit}
+          worldWidth={shaderConfig.worldWidth}
+          worldHeight={shaderConfig.worldHeight}
           colors={[scheme.colors[0], scheme.colors[1], scheme.colors[2]]}
           colorBack={scheme.colorBack}
-          softness={HERO_DIAL_ORB_SHADER.softness}
+          softness={shaderConfig.softness}
           intensity={intensity}
-          noise={HERO_DIAL_ORB_SHADER.noise}
-          shape={HERO_DIAL_ORB_SHADER.shape}
-          speed={HERO_DIAL_ORB_SHADER.speed}
-          rotation={HERO_DIAL_ORB_SHADER.rotation}
-          offsetX={HERO_DIAL_ORB_SHADER.offsetX}
-          offsetY={HERO_DIAL_ORB_SHADER.offsetY}
-          scale={HERO_DIAL_ORB_SHADER.scale}
+          noise={shaderConfig.noise}
+          shape={shaderConfig.shape}
+          speed={shaderConfig.speed}
+          rotation={shaderConfig.rotation}
+          offsetX={shaderConfig.offsetX}
+          offsetY={shaderConfig.offsetY}
+          scale={shaderConfig.scale}
           maxPixelCount={maxPixelCount}
         />
       ) : null}
