@@ -79,7 +79,7 @@ export const DOEPHONE_SECTION_UNIFORM_PAD =
 
 /** Carousel band in section 2 — horizontal inset (matches hero left / uniform pad). */
 export const DOEPHONE_SECTION_CAROUSEL_INSET_X =
-  `px-11 iphone-page:px-[${phoneGutterLeft}]`;
+  `px-11 iphone-page:px-[${phoneGutterLeft}] md:px-20 lg:px-28 xl:px-36`;
 
 /** Fixed nav chrome — matches page content edge inside `.doephone-mobile-root`. */
 export const DOEPHONE_FIXED_NAV_CONTENT_LEFT =
