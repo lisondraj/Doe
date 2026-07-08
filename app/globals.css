@@ -154,6 +154,16 @@ html[data-about-page]:has(.doephone-mobile-root) body {
   background-color: #faf0d8;
 }
 
+/* iPhone /about — hero shader palette for stat charts (clay + sand + horizon). */
+html[data-about-page]:has(.blog-mobile-root),
+html[data-about-page]:has(.doephone-mobile-root) {
+  --doe-chart-bar: #c45c42;
+  --doe-chart-pie-1: #c45c42;
+  --doe-chart-pie-2: #f2d8a8;
+  --doe-chart-pie-3: #e8a060;
+  --doe-chart-track: rgba(242, 216, 168, 0.55);
+}
+
 /* iPhone /about — dusk stat charts (pie, bar, TAM). */
 html[data-about-page]:has(.blog-mobile-root) .about-stat-charts .about-chart-bar-fill,
 html[data-about-page]:has(.doephone-mobile-root) .about-stat-charts .about-chart-bar-fill,

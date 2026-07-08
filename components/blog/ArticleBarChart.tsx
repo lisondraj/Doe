@@ -7,6 +7,7 @@ import {
 } from "@/lib/about/about-layout-styles";
 import { dmSans, inter } from "@/lib/home/fonts";
 import {
+  ABOUT_IPHONE_SHADER_CHART_PRIMARY,
   DOE_HOME_DUSK_CHART_BAR,
   DOE_HOME_DUSK_CHART_GRID,
 } from "@/lib/home/doe-page-colors";
@@ -43,23 +44,33 @@ export function ArticleBarChart({
   showCaption?: boolean;
   showCitation?: boolean;
   titleClassName?: string;
-  theme?: "light" | "dark" | "proto" | "dusk";
+  theme?: "light" | "dark" | "proto" | "dusk" | "about";
 }) {
   const isDesktop = layout === "desktop";
   const isDark = theme === "dark" || theme === "proto";
   const isDusk = theme === "dusk";
-  const track = theme === "proto" ? TRACK_PROTO : isDusk ? "var(--doe-chart-track, rgba(26, 18, 8, 0.1))" : isDark ? TRACK_DARK : TRACK_LIGHT;
-  const barColor = theme === "proto" ? BAR_PROTO : isDusk ? "var(--doe-chart-bar, #E8A060)" : isDark ? BAR_DARK : BAR;
-  const gridLine = isDusk ? DOE_HOME_DUSK_CHART_GRID : GRID_LINE;
-  const titleColor = isDark ? "text-white" : isDusk ? "text-[#1A1208]" : "text-[#1E343A]";
-  const labelColor = isDark ? "text-white/72" : isDusk ? "text-[#1A1208]/72" : "text-[#1E343A]/72";
-  const valueColor = isDark ? "text-white" : isDusk ? "text-[#1A1208]" : "text-[#1E343A]";
-  const metaColor = isDark ? "text-white/55" : isDusk ? "text-[#8A7868]" : "text-[#9A8F82]";
+  const isAbout = theme === "about";
+  const isWarmChart = isDusk || isAbout;
+  const track =
+    theme === "proto"
+      ? TRACK_PROTO
+      : isWarmChart
+        ? "var(--doe-chart-track, rgba(26, 18, 8, 0.1))"
+        : isDark
+          ? TRACK_DARK
+          : TRACK_LIGHT;
+  const barColor =
+    theme === "proto" ? BAR_PROTO : isWarmChart ? "var(--doe-chart-bar, #E8A060)" : isDark ? BAR_DARK : BAR;
+  const gridLine = isWarmChart ? DOE_HOME_DUSK_CHART_GRID : GRID_LINE;
+  const titleColor = isDark ? "text-white" : isWarmChart ? "text-[#1A1208]" : "text-[#1E343A]";
+  const labelColor = isDark ? "text-white/72" : isWarmChart ? "text-[#1A1208]/72" : "text-[#1E343A]/72";
+  const valueColor = isDark ? "text-white" : isWarmChart ? "text-[#1A1208]" : "text-[#1E343A]";
+  const metaColor = isDark ? "text-white/55" : isWarmChart ? "text-[#8A7868]" : "text-[#9A8F82]";
   const maxValue = Math.max(...bars.map((bar) => bar.value), 1);
 
   return (
     <figure
-      className={`${isDusk ? "about-stat-chart " : ""}${embedded ? "" : isDesktop ? ABOUT_DESKTOP_ARTICLE_SECTION_GAP : "mt-10 iphone-page:mt-12"}`}
+      className={`${isWarmChart ? "about-stat-chart " : ""}${embedded ? "" : isDesktop ? ABOUT_DESKTOP_ARTICLE_SECTION_GAP : "mt-10 iphone-page:mt-12"}`}
     >
       <figcaption
         className={`mb-5 font-medium leading-snug tracking-[-0.01em] ${titleColor} ${isDark ? "" : dmSans.className} ${titleClassName} ${
@@ -121,7 +132,9 @@ export function ArticleBarChart({
                 <div
                   className="about-chart-bar-fill h-full rounded-full transition-[width] duration-500 ease-out"
                   style={{ width, background: barColor }}
-                  data-chart-bar-color={isDusk ? DOE_HOME_DUSK_CHART_BAR : undefined}
+                  data-chart-bar-color={
+                    isAbout ? ABOUT_IPHONE_SHADER_CHART_PRIMARY : isDusk ? DOE_HOME_DUSK_CHART_BAR : undefined
+                  }
                 />
               </div>
             </div>

@@ -24,7 +24,7 @@ export function AboutMobileStatCharts() {
         showCaption={false}
         showCitation={false}
         titleClassName={ABOUT_MOBILE_PIE_CHART_TITLE_TW}
-        theme="dusk"
+        theme="about"
       />
 
       <div className="mt-8 iphone-page:mt-10">
@@ -36,7 +36,7 @@ export function AboutMobileStatCharts() {
           showCaption={false}
           showCitation={false}
           titleClassName={ABOUT_MOBILE_PIE_CHART_TITLE_TW}
-          theme="dusk"
+          theme="about"
         />
       </div>
 

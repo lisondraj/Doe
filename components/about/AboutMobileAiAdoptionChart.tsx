@@ -18,7 +18,7 @@ export function AboutMobileAiAdoptionChart() {
         showCaption={false}
         showCitation={false}
         titleClassName={ABOUT_MOBILE_PIE_CHART_TITLE_TW}
-        theme="dusk"
+        theme="about"
       />
 
       <p className={ABOUT_MOBILE_CHART_JOINT_CAPTION_TW}>{ABOUT_MOBILE_AI_ADOPTION_CHART.caption}</p>

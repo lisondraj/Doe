@@ -7,6 +7,9 @@ import {
 } from "@/lib/about/about-layout-styles";
 import { dmSans, inter } from "@/lib/home/fonts";
 import {
+  ABOUT_IPHONE_SHADER_CHART_ACCENT,
+  ABOUT_IPHONE_SHADER_CHART_PRIMARY,
+  ABOUT_IPHONE_SHADER_CHART_SECONDARY,
   DOE_HOME_DUSK_CHART_ACCENT,
   DOE_HOME_DUSK_CHART_BAR,
   DOE_HOME_DUSK_CHART_MUTED_STRONG,
@@ -25,6 +28,16 @@ const SLICE_COLORS_DUSK_FALLBACK = [
   DOE_HOME_DUSK_CHART_ACCENT,
   DOE_HOME_DUSK_CHART_BAR,
   DOE_HOME_DUSK_CHART_MUTED_STRONG,
+] as const;
+const SLICE_COLORS_ABOUT = [
+  "var(--doe-chart-pie-1, #C45C42)",
+  "var(--doe-chart-pie-2, #F2D8A8)",
+  "var(--doe-chart-pie-3, #E8A060)",
+] as const;
+const SLICE_COLORS_ABOUT_FALLBACK = [
+  ABOUT_IPHONE_SHADER_CHART_PRIMARY,
+  ABOUT_IPHONE_SHADER_CHART_SECONDARY,
+  ABOUT_IPHONE_SHADER_CHART_ACCENT,
 ] as const;
 const SLICE_COLORS_DARK = PROTO_CHART_SLICE_COLORS;
 const SLICE_COLORS_PROTO = PROTO_CHART_SLICE_COLORS;
@@ -66,29 +79,37 @@ export function ArticlePieChart({
   showCaption?: boolean;
   showCitation?: boolean;
   titleClassName?: string;
-  theme?: "light" | "dark" | "proto" | "dusk";
+  theme?: "light" | "dark" | "proto" | "dusk" | "about";
 }) {
   const isDesktop = layout === "desktop";
   const isDark = theme === "dark" || theme === "proto";
   const isDusk = theme === "dusk";
+  const isAbout = theme === "about";
+  const isWarmChart = isDusk || isAbout;
   const sliceColors =
     theme === "proto"
       ? SLICE_COLORS_PROTO
-      : isDusk
-        ? SLICE_COLORS_DUSK
-        : isDark
-          ? SLICE_COLORS_DARK
-          : SLICE_COLORS_LIGHT;
-  const sliceColorFallbacks = isDusk ? SLICE_COLORS_DUSK_FALLBACK : sliceColors;
-  const titleColor = isDark ? "text-white" : isDusk ? "text-[#1A1208]" : "text-[#1E343A]";
-  const labelColor = isDark ? "text-white/72" : isDusk ? "text-[#1A1208]/72" : "text-[#1E343A]/72";
-  const valueColor = isDark ? "text-white" : isDusk ? "text-[#1A1208]" : "text-[#1E343A]";
-  const metaColor = isDark ? "text-white/55" : isDusk ? "text-[#8A7868]" : "text-[#9A8F82]";
-  const donutCenter = isDark ? "bg-[#121819]" : isDusk ? "bg-[#FAF0D8]" : "bg-[#F7F6F3]";
+      : isAbout
+        ? SLICE_COLORS_ABOUT
+        : isDusk
+          ? SLICE_COLORS_DUSK
+          : isDark
+            ? SLICE_COLORS_DARK
+            : SLICE_COLORS_LIGHT;
+  const sliceColorFallbacks = isAbout
+    ? SLICE_COLORS_ABOUT_FALLBACK
+    : isDusk
+      ? SLICE_COLORS_DUSK_FALLBACK
+      : sliceColors;
+  const titleColor = isDark ? "text-white" : isWarmChart ? "text-[#1A1208]" : "text-[#1E343A]";
+  const labelColor = isDark ? "text-white/72" : isWarmChart ? "text-[#1A1208]/72" : "text-[#1E343A]/72";
+  const valueColor = isDark ? "text-white" : isWarmChart ? "text-[#1A1208]" : "text-[#1E343A]";
+  const metaColor = isDark ? "text-white/55" : isWarmChart ? "text-[#8A7868]" : "text-[#9A8F82]";
+  const donutCenter = isDark ? "bg-[#121819]" : isWarmChart ? "bg-[#FAF0D8]" : "bg-[#F7F6F3]";
 
   return (
     <figure
-      className={`${isDusk ? "about-stat-chart " : ""}${embedded ? "" : isDesktop ? ABOUT_DESKTOP_ARTICLE_SECTION_GAP : "mt-10 iphone-page:mt-12"}`}
+      className={`${isWarmChart ? "about-stat-chart " : ""}${embedded ? "" : isDesktop ? ABOUT_DESKTOP_ARTICLE_SECTION_GAP : "mt-10 iphone-page:mt-12"}`}
     >
       <figcaption
         className={`font-medium leading-snug tracking-[-0.01em] ${titleColor} ${isDark ? "" : dmSans.className} ${titleClassName} ${

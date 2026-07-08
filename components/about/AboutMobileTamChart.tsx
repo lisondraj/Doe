@@ -5,8 +5,8 @@ import {
 } from "@/lib/about/about-layout-styles";
 import { ABOUT_MOBILE_TAM_CHART } from "@/lib/about/about-page-article";
 import {
+  ABOUT_IPHONE_SHADER_CHART_PRIMARY,
   DOE_HOME_DUSK_CHART_AXIS,
-  DOE_HOME_DUSK_CHART_BAR,
   DOE_HOME_DUSK_CHART_GRID,
   DOE_HOME_DUSK_CHART_PANEL_BORDER,
 } from "@/lib/home/doe-page-colors";
@@ -76,7 +76,7 @@ export function AboutMobileTamChart() {
                     <div className="flex h-full flex-col justify-end">
                       <div
                         className="about-chart-tam-bar w-full rounded-t-[0.35rem] transition-[height] duration-500 ease-out iphone-page:rounded-t-[0.42rem]"
-                        style={{ height: heightPct, background: DOE_HOME_DUSK_CHART_BAR }}
+                        style={{ height: heightPct, background: ABOUT_IPHONE_SHADER_CHART_PRIMARY }}
                       />
                     </div>
                   </div>
