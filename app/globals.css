@@ -1456,17 +1456,17 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__card
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__card--agents-carousel > .home-agents-carousel {
-  height: 100% !important;
-  min-height: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
   max-height: none !important;
-  flex: 1 1 auto !important;
+  flex: 0 0 auto !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel {
   --home-agents-orb-size: clamp(18.5rem, 82vw, 24.5rem);
   --home-agents-orb-gap: clamp(1rem, 3.2vmin, 1.65rem);
   --home-agents-halo-bleed: clamp(0.35rem, 1.1vmin, 0.65rem);
-  --home-agents-glow-bleed: clamp(2.75rem, 7.5vmin, 4.25rem);
+  --home-agents-glow-bleed: clamp(1.5rem, 4vmin, 2.35rem);
   --home-agents-orb-step: calc(var(--home-agents-orb-size) + var(--home-agents-orb-gap));
   --home-agents-orb-half: calc(var(--home-agents-orb-size) / 2);
   --home-agents-carousel-duration: 720ms;
@@ -1478,15 +1478,15 @@ html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: clamp(1rem, 2.75vmin, 1.5rem);
-  padding-block: clamp(1.1rem, 3.2vmin, 1.85rem);
+  justify-content: center;
+  gap: clamp(0.45rem, 1.35vmin, 0.7rem);
+  padding-block: 0;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__stage {
   position: relative;
   width: 100vw;
-  flex: 1 1 auto;
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1636,7 +1636,7 @@ html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__caption {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(0.75rem, 2.2vmin, 1rem);
+  gap: clamp(0.55rem, 1.6vmin, 0.8rem);
   width: 100%;
   max-width: min(34rem, 92vw);
   padding-inline: max(var(--proto-phone-gutter-left), var(--proto-phone-gutter-right));
@@ -1682,6 +1682,12 @@ html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__descripti
   line-height: 1.48;
   text-align: center;
   text-wrap: pretty;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+  max-height: calc(1.48em * 3);
   transition: opacity 360ms ease;
 }
 
