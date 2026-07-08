@@ -239,12 +239,6 @@ export function DoePhoneHomeAgentsCarousel() {
       aria-hidden
     >
       <div className="home-agents-carousel__stage">
-        <CarouselChevron
-          direction="left"
-          onClick={goPrev}
-          label="Previous agent"
-          className={doePhoneSectionRevealSegmentClass("agents-nav", revealed)}
-        />
         <div
           className={`home-agents-carousel__viewport ${doePhoneSectionRevealSegmentClass("agents-orbs", revealed)}`}
           onTouchStart={handleViewportTouchStart}
@@ -272,18 +266,26 @@ export function DoePhoneHomeAgentsCarousel() {
             ))}
           </div>
         </div>
+      </div>
+      <div className="home-agents-carousel__label-row">
+        <CarouselChevron
+          direction="left"
+          onClick={goPrev}
+          label="Previous agent"
+          className={doePhoneSectionRevealSegmentClass("agents-nav", revealed)}
+        />
+        <div
+          className={`home-agents-carousel__label ${suisseIntlLight.className} ${doePhoneSectionRevealSegmentClass("agents-label", revealed)}`}
+          aria-hidden
+        >
+          <span className="home-agents-carousel__label-text">{active.label}</span>
+        </div>
         <CarouselChevron
           direction="right"
           onClick={goNext}
           label="Next agent"
           className={doePhoneSectionRevealSegmentClass("agents-nav", revealed)}
         />
-      </div>
-      <div
-        className={`home-agents-carousel__label ${suisseIntlLight.className} ${doePhoneSectionRevealSegmentClass("agents-label", revealed)}`}
-        aria-hidden
-      >
-        <span className="home-agents-carousel__label-text">{active.label}</span>
       </div>
     </div>
   );

@@ -91,6 +91,10 @@ export const HERO_DIAL_ORB_CAROUSEL_SHADER = {
   softness: 0.68,
 } as const;
 
+export type HeroDialOrbShaderConfig =
+  | typeof HERO_DIAL_ORB_SHADER
+  | typeof HERO_DIAL_ORB_CAROUSEL_SHADER;
+
 export const HERO_DIAL_ORB_CAROUSEL_COLOR_BACK = RIM_SAND;
 
 /** Warm edge stops — no umber rim on the sand band. */

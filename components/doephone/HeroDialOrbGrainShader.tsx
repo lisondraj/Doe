@@ -6,6 +6,7 @@ import { memo, useLayoutEffect, useRef, useState } from "react";
 import {
   HERO_DIAL_ORB_SHADER,
   type HeroDialOrbScheme,
+  type HeroDialOrbShaderConfig,
 } from "@/lib/doephone/hero-dial-orbs";
 import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_ORB } from "@/lib/proto/proto-grain-gradient";
 
@@ -39,7 +40,7 @@ export const HeroDialOrbGrainShader = memo(function HeroDialOrbGrainShader({
   /** Keep the grain shader after first mount — avoids fallback flash on dial rotation. */
   stickMounted?: boolean;
   maxPixelCount?: number;
-  shaderConfig?: typeof HERO_DIAL_ORB_SHADER;
+  shaderConfig?: HeroDialOrbShaderConfig;
 }) {
   const shellRef = useRef<HTMLDivElement>(null);
   const hasShaderRef = useRef(false);

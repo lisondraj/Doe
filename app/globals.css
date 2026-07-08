@@ -1605,18 +1605,18 @@ html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb .hero
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__nav {
-  position: absolute;
-  top: 50%;
-  z-index: 12;
+  position: static;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex: 0 0 auto;
   padding: 0.35rem;
   border: 0;
   background: transparent;
   color: rgba(26, 18, 8, 0.72);
   box-shadow: none;
-  transform: translateY(-50%);
+  transform: none;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__nav-hit {
@@ -1625,25 +1625,27 @@ html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__nav-hit {
   justify-content: center;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__nav--left {
-  left: max(0.15rem, env(safe-area-inset-left, 0px));
-}
-
-html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__nav--right {
-  right: max(0.15rem, env(safe-area-inset-right, 0px));
-}
-
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__nav-icon {
   width: clamp(1.48rem, 4.55vmin, 1.92rem);
   height: clamp(1.48rem, 4.55vmin, 1.92rem);
 }
 
+html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__label-row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.65rem, 2.4vmin, 1.1rem);
+  padding-inline: clamp(0.75rem, 3.5vw, 1.5rem);
+}
+
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__label {
   display: flex;
+  flex: 0 1 auto;
+  min-width: 0;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding-inline: clamp(1rem, 4vw, 2rem);
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__label-text {
