@@ -5,7 +5,6 @@ import { useCallback, useState, type CSSProperties } from "react";
 
 import { suisseIntl } from "@/lib/home/fonts";
 import {
-  HERO_DIAL_ORB_COUNT,
   HERO_DIAL_ORB_SHADER,
   HERO_DIAL_ORBS,
   type HeroDialOrbScheme,
@@ -110,19 +109,33 @@ function AgentCarouselOrb({
   );
 }
 
+/** Agents band order — Inbox second so a neighbor peeks on the left at start. */
+const AGENTS_CAROUSEL_ORBS: readonly HeroDialOrbScheme[] = [
+  HERO_DIAL_ORBS[1],
+  HERO_DIAL_ORBS[0],
+  HERO_DIAL_ORBS[2],
+  HERO_DIAL_ORBS[3],
+  HERO_DIAL_ORBS[4],
+  HERO_DIAL_ORBS[5],
+  HERO_DIAL_ORBS[6],
+];
+
+const AGENTS_CAROUSEL_ORB_COUNT = AGENTS_CAROUSEL_ORBS.length;
+const AGENTS_CAROUSEL_START_INDEX = 1;
+
 /** Hero agent orbs — horizontal carousel with chevrons and label pill. */
 export function DoePhoneHomeAgentsCarousel() {
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(AGENTS_CAROUSEL_START_INDEX);
 
   const goPrev = useCallback(() => {
-    setIndex((current) => (current - 1 + HERO_DIAL_ORB_COUNT) % HERO_DIAL_ORB_COUNT);
+    setIndex((current) => (current - 1 + AGENTS_CAROUSEL_ORB_COUNT) % AGENTS_CAROUSEL_ORB_COUNT);
   }, []);
 
   const goNext = useCallback(() => {
-    setIndex((current) => (current + 1) % HERO_DIAL_ORB_COUNT);
+    setIndex((current) => (current + 1) % AGENTS_CAROUSEL_ORB_COUNT);
   }, []);
 
-  const active = HERO_DIAL_ORBS[index];
+  const active = AGENTS_CAROUSEL_ORBS[index];
 
   return (
     <div className={`home-agents-carousel ${suisseIntl.className}`} aria-hidden>
@@ -135,7 +148,7 @@ export function DoePhoneHomeAgentsCarousel() {
               transform: `translateX(calc(50% - var(--home-agents-orb-half) - ${index} * var(--home-agents-orb-step)))`,
             }}
           >
-            {HERO_DIAL_ORBS.map((scheme, orbIndex) => (
+            {AGENTS_CAROUSEL_ORBS.map((scheme, orbIndex) => (
               <AgentCarouselOrb key={scheme.label} scheme={scheme} focused={orbIndex === index} />
             ))}
           </div>

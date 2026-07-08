@@ -1401,11 +1401,14 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workf
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__card--agents-carousel {
   overflow: visible;
   background: transparent;
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(50% - 50vw);
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel {
-  --home-agents-orb-size: clamp(16rem, 74vw, 21.5rem);
-  --home-agents-orb-gap: clamp(0.55rem, 2vw, 0.95rem);
+  --home-agents-orb-size: clamp(17rem, 82vw, 23rem);
+  --home-agents-orb-gap: 0;
   --home-agents-orb-step: calc(var(--home-agents-orb-size) + var(--home-agents-orb-gap));
   --home-agents-orb-half: calc(var(--home-agents-orb-size) / 2);
   --hero-pill-ink: #1a1208;
@@ -1421,14 +1424,14 @@ html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel {
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__stage {
   position: relative;
-  width: 100%;
+  width: 100vw;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__viewport {
-  width: 100%;
+  width: 100vw;
   overflow: hidden;
 }
 
@@ -1495,11 +1498,11 @@ html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__nav {
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__nav--left {
-  left: max(0.35rem, calc(env(safe-area-inset-left, 0px) + 0.15rem));
+  left: max(0.15rem, env(safe-area-inset-left, 0px));
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__nav--right {
-  right: max(0.35rem, calc(env(safe-area-inset-right, 0px) + 0.15rem));
+  right: max(0.15rem, env(safe-area-inset-right, 0px));
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__nav-icon {
