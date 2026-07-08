@@ -41,11 +41,11 @@ function CarouselChevron({
   return (
     <button
       type="button"
-      className={`home-agents-carousel__nav home-agents-carousel__nav--${direction}`}
+      className={`home-agents-carousel__nav home-agents-carousel__nav--${direction}${className ? ` ${className}` : ""}`}
       aria-label={label}
       onClick={onClick}
     >
-      <span className={className ? `home-agents-carousel__nav-hit ${className}` : "home-agents-carousel__nav-hit"}>
+      <span className="home-agents-carousel__nav-hit">
         <svg viewBox="0 0 16 16" fill="none" aria-hidden className="home-agents-carousel__nav-icon">
         {direction === "left" ? (
           <path
