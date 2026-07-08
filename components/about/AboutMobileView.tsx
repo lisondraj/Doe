@@ -39,7 +39,9 @@ import {
   ABOUT_PAGE_MOBILE_DATE,
 } from "@/lib/about/about-page-article";
 import { BLOG_CONTENT_PT } from "@/lib/blog/blog-layout-styles";
+import { applyPhoneOverflowChrome } from "@/lib/doephone/phone-layout-viewport";
 import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-viewport";
+import { DOE_HOME_DUSK_OVERFLOW_SURFACE } from "@/lib/home/doe-page-colors";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 
 /** iPhone /about — mission hero plus section copy, pie chart, FAQ, and founder bios. */
@@ -48,6 +50,8 @@ export function AboutMobileView() {
   useDoePhoneStableViewport(true);
 
   useLayoutEffect(() => {
+    applyPhoneOverflowChrome(DOE_HOME_DUSK_OVERFLOW_SURFACE);
+
     try {
       sessionStorage.removeItem(`doephone-app-viewport-lock:${location.hostname}`);
     } catch {
@@ -66,6 +70,8 @@ export function AboutMobileView() {
       footerLinksDisabled
       shellMinHeightClass="min-h-[var(--doe-section-band-vh,var(--app-vh,100lvh))]"
       frostedScrollNav
+      frostedNavAlwaysPunched
+      footerShaderTheme="dusk"
     >
       <main className={`w-full ${BLOG_CONTENT_PT}`}>
         <div className={`${ABOUT_HERO_HEADLINE_WRAP} ${ABOUT_PAGE_HERO_HEADLINE_PT}`}>
@@ -94,7 +100,7 @@ export function AboutMobileView() {
             variant="hero"
             boxClassName={ABOUT_PAGE_HERO_BOX_TW}
             gapClassName=""
-            useHomeHeroShader
+            useHomeHeroDuskShader
           />
         </div>
 

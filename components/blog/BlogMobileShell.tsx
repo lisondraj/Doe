@@ -23,6 +23,8 @@ type BlogMobileShellProps = {
   showFooter?: boolean;
   frostedScrollNav?: boolean;
   frostedScrollPastHero?: boolean;
+  frostedNavAlwaysPunched?: boolean;
+  footerShaderTheme?: "default" | "dusk";
 };
 
 export function BlogMobileShell({
@@ -39,6 +41,8 @@ export function BlogMobileShell({
   showFooter = true,
   frostedScrollNav = false,
   frostedScrollPastHero = false,
+  frostedNavAlwaysPunched = false,
+  footerShaderTheme = "default",
 }: BlogMobileShellProps) {
   return (
     <div
@@ -57,11 +61,12 @@ export function BlogMobileShell({
         ctaLayout={ctaLayout}
         frostedScrollNav={frostedScrollNav}
         frostedScrollPastHero={frostedScrollPastHero}
+        frostedNavAlwaysPunched={frostedNavAlwaysPunched}
       />
       <div className={`blog-page-root relative z-0 ${BLOG_PAGE_INSET_X} ${showFooter ? BLOG_FOOTER_GAP : ""}`}>
         {children}
       </div>
-      {showFooter ? <HomeFooter linksDisabled={footerLinksDisabled} /> : null}
+      {showFooter ? <HomeFooter linksDisabled={footerLinksDisabled} shaderTheme={footerShaderTheme} /> : null}
     </div>
   );
 }

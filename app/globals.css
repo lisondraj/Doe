@@ -110,8 +110,10 @@ html[data-about-page]:has(.blog-mobile-root) {
   background-color: var(--doe-page-surface);
 }
 
-/* Home iPhone — desert dusk page chrome + hero-brown nav capsule. */
-html[data-home-page]:has(.doephone-mobile-root) {
+/* iPhone home + /about — desert dusk page chrome + hero-brown nav capsule. */
+html[data-home-page]:has(.doephone-mobile-root),
+html[data-about-page]:has(.blog-mobile-root),
+html[data-about-page]:has(.doephone-mobile-root) {
   --doe-shader-back: #1a1208;
   --doe-shader-gold: #e8a060;
   --doe-page-surface: #faf0d8;
@@ -119,6 +121,7 @@ html[data-home-page]:has(.doephone-mobile-root) {
   --doe-page-surface-sunken: #e8d8c0;
   --doe-page-ink: #1a1208;
   --doe-page-border: rgba(26, 18, 8, 0.14);
+  --doe-muted-ink: #8a7868;
   --proto-page-bg: #faf0d8;
   --proto-nav-cta-border: #1a1208;
   --proto-nav-cta-divider: rgba(245, 230, 208, 0.24);
@@ -133,13 +136,10 @@ html[data-home-page]:has(.doephone-mobile-root) {
   background-color: #faf0d8;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) body {
+html[data-home-page]:has(.doephone-mobile-root) body,
+html[data-about-page]:has(.blog-mobile-root) body,
+html[data-about-page]:has(.doephone-mobile-root) body {
   background-color: #faf0d8;
-}
-
-html[data-about-page]:has(.doephone-mobile-root) body,
-html[data-about-page]:has(.blog-mobile-root) body {
-  background-color: var(--doe-page-surface);
 }
 
 html[data-proto-page]:has(.doephone-mobile-root) {
@@ -394,6 +394,50 @@ html[data-about-page]:has(.blog-mobile-root) main p.about-page-byline {
 html[data-about-page]:has(.blog-mobile-root) main li {
   font-size: clamp(1.18rem, 1.02rem + 0.68vmin, 1.42rem) !important;
   line-height: 1.46 !important;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-mobile-beige-panel {
+  border-color: #d8c8b0 !important;
+  background-color: #f0e4d0 !important;
+}
+
+html[data-about-page]:has(.blog-mobile-root) main h1,
+html[data-about-page]:has(.blog-mobile-root) main h2,
+html[data-about-page]:has(.doephone-mobile-root) main h1,
+html[data-about-page]:has(.doephone-mobile-root) main h2 {
+  color: var(--doe-page-ink) !important;
+}
+
+html[data-about-page]:has(.blog-mobile-root) main p,
+html[data-about-page]:has(.blog-mobile-root) main li,
+html[data-about-page]:has(.doephone-mobile-root) main p,
+html[data-about-page]:has(.doephone-mobile-root) main li {
+  color: color-mix(in srgb, var(--doe-page-ink) 72%, transparent);
+}
+
+html[data-about-page]:has(.blog-mobile-root) main p.about-page-byline,
+html[data-about-page]:has(.doephone-mobile-root) main p.about-page-byline {
+  color: var(--doe-muted-ink) !important;
+}
+
+html[data-about-page]:has(.blog-mobile-root) main [class*="text-[#1E343A]"],
+html[data-about-page]:has(.doephone-mobile-root) main [class*="text-[#1E343A]"] {
+  color: var(--doe-page-ink) !important;
+}
+
+html[data-about-page]:has(.blog-mobile-root) main [class*="text-[#9A8F82]"],
+html[data-about-page]:has(.doephone-mobile-root) main [class*="text-[#9A8F82]"] {
+  color: var(--doe-muted-ink) !important;
+}
+
+html[data-about-page]:has(.blog-mobile-root) main [class*="border-[#DDD9D2]"],
+html[data-about-page]:has(.doephone-mobile-root) main [class*="border-[#DDD9D2]"] {
+  border-color: #d8c8b0 !important;
+}
+
+html[data-about-page]:has(.blog-mobile-root) main [class*="bg-[#9A8F82]"],
+html[data-about-page]:has(.doephone-mobile-root) main [class*="bg-[#9A8F82]"] {
+  background-color: var(--doe-muted-ink) !important;
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-hero-visual {
@@ -979,8 +1023,10 @@ html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav .proto-nav-fr
       rgba(30, 52, 58, calc(var(--proto-nav-frost-shell-progress) * 0.22));
 }
 
-/* Home iPhone — hero-brown nav capsule shadows. */
-html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-frost-shell {
+/* Home + /about iPhone — hero-brown nav capsule shadows. */
+html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-frost-shell,
+html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav .proto-nav-frost-shell,
+html[data-about-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-frost-shell {
   border-color: rgba(245, 230, 208, calc(var(--proto-nav-frost-shell-progress) * 0.2));
   box-shadow:
     0 calc(var(--proto-nav-frost-shell-progress) * 10px)
