@@ -212,11 +212,13 @@ export function DoePhoneHomeAgentsCarousel() {
           label="Previous agent"
           className={doePhoneSectionRevealSegmentClass("agents-nav", revealed)}
         />
-        <div className="home-agents-carousel__viewport">
+        <div
+          className={`home-agents-carousel__viewport ${doePhoneSectionRevealSegmentClass("agents-orbs", revealed)}`}
+        >
           <div
             className={`home-agents-carousel__track${
               trackInstant ? " home-agents-carousel__track--instant" : ""
-            } ${doePhoneSectionRevealSegmentClass("agents-orbs", revealed)}`}
+            }`}
             onTransitionEnd={handleTrackTransitionEnd}
             style={{
               transform: `translateX(calc(50% - var(--home-agents-orb-half) - ${position} * var(--home-agents-orb-step)))`,
