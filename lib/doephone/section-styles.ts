@@ -58,7 +58,7 @@ export const DESKTOP_HOME_BELOW_NAV_HEIGHT_TW = "calc(100dvh-5.875rem)";
  * Desktop UI sections — equal VISUAL top/bottom pad under the fixed nav.
  * CSS padding-top adds nav clearance; padding-bottom is the pad alone.
  */
-export const DESKTOP_HOME_SECTION_PAD_Y = "py-6 md:py-8 lg:py-10 xl:py-12";
+export const DESKTOP_HOME_SECTION_PAD_Y = "py-5 md:py-6 lg:py-7 xl:py-8";
 
 /** Panel section shell — full viewport; nav overlays top clearance. */
 export const DESKTOP_HOME_PANEL_SECTION_H = "min-h-[100dvh] h-[100dvh] max-h-[100dvh]";

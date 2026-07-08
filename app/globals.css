@@ -291,8 +291,11 @@ html[data-home-page][data-layout="desktop"] {
   --desktop-below-nav-height: calc(100dvh - var(--desktop-nav-height));
   /* Match DOEPHONE_DESKTOP_PAGE_INSET_X: px-10 md:px-20 lg:px-28 xl:px-36 */
   --desktop-page-inset-x: 2.5rem;
-  /* Equal VISUAL pad under nav and above viewport bottom */
-  --desktop-section-pad-y: 1.5rem;
+  /* Equal pad above/below centered UI card (below-nav band) */
+  --desktop-section-pad-y: 1.25rem;
+  --desktop-section-card-max-h: calc(
+    var(--desktop-below-nav-height) - (2 * var(--desktop-section-pad-y))
+  );
   --doe-shader-back: #1a1208;
   --doe-shader-gold: #e8a060;
   --doe-page-surface: #faf0d8;
@@ -322,14 +325,17 @@ body.desktop-route {
   --desktop-nav-height: 5.875rem;
   --desktop-below-nav-height: calc(100dvh - var(--desktop-nav-height));
   --desktop-page-inset-x: 2.5rem;
-  --desktop-section-pad-y: 1.5rem;
+  --desktop-section-pad-y: 1.25rem;
+  --desktop-section-card-max-h: calc(
+    var(--desktop-below-nav-height) - (2 * var(--desktop-section-pad-y))
+  );
 }
 
 @media (min-width: 768px) {
   html[data-home-page][data-layout="desktop"],
   body.desktop-route {
     --desktop-page-inset-x: 5rem;
-    --desktop-section-pad-y: 2rem;
+    --desktop-section-pad-y: 1.5rem;
   }
 }
 
@@ -337,7 +343,7 @@ body.desktop-route {
   html[data-home-page][data-layout="desktop"],
   body.desktop-route {
     --desktop-page-inset-x: 7rem;
-    --desktop-section-pad-y: 2.5rem;
+    --desktop-section-pad-y: 1.75rem;
   }
 }
 
@@ -345,7 +351,7 @@ body.desktop-route {
   html[data-home-page][data-layout="desktop"],
   body.desktop-route {
     --desktop-page-inset-x: 9rem;
-    --desktop-section-pad-y: 3rem;
+    --desktop-section-pad-y: 2rem;
   }
 }
 
@@ -391,9 +397,9 @@ html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] p {
 
 /*
  * Desktop home UI sections (scroll under fixed nav):
- * - Band = 100dvh
- * - Explicit nav-clearance row = --desktop-nav-height (under the fixed overlay)
- * - Remaining area uses EQUAL padding-top and padding-bottom (--desktop-section-pad-y)
+ * - Band = 100dvh with nav-clearance spacer
+ * - Card vertically centered in the below-nav band
+ * - Equal top/bottom pad; card no longer stretch-fills (more room top+bottom)
  * - L/R = page gutters
  */
 html[data-home-page][data-layout="desktop"] .home-feature-card-section {
@@ -419,12 +425,14 @@ html[data-home-page][data-layout="desktop"] .home-feature-card-section__nav-clea
 
 html[data-home-page][data-layout="desktop"] .home-feature-card-section__inner {
   flex: 1 1 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: stretch !important;
   min-height: 0 !important;
   height: auto !important;
   max-height: none !important;
   box-sizing: border-box !important;
-  justify-content: stretch !important;
-  /* Equal visual pad above and below the dark card */
   padding-top: var(--desktop-section-pad-y) !important;
   padding-bottom: var(--desktop-section-pad-y) !important;
   padding-left: var(--desktop-page-inset-x) !important;
@@ -433,27 +441,28 @@ html[data-home-page][data-layout="desktop"] .home-feature-card-section__inner {
 
 html[data-home-page][data-layout="desktop"] .home-feature-card-section__inner > div {
   display: flex !important;
-  flex: 1 1 auto !important;
+  flex: 0 1 auto !important;
   flex-direction: column !important;
-  justify-content: stretch !important;
+  justify-content: center !important;
   min-height: 0 !important;
-  height: 100% !important;
+  height: auto !important;
   max-height: 100% !important;
+  width: 100% !important;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-card-section__card {
-  flex: 1 1 auto !important;
+  flex: 0 1 auto !important;
   width: 100% !important;
-  height: 100% !important;
-  min-height: 0 !important;
-  max-height: none !important;
+  height: min(42rem, var(--desktop-section-card-max-h)) !important;
+  min-height: min(28rem, var(--desktop-section-card-max-h)) !important;
+  max-height: var(--desktop-section-card-max-h) !important;
 }
 
 /* Neutralize phone carousel fixed heights on desktop feature cards */
 html[data-home-page][data-layout="desktop"] .home-feature-card-section__card.home-feature-card-section__card {
-  height: 100% !important;
-  min-height: 0 !important;
-  max-height: none !important;
+  height: min(42rem, var(--desktop-section-card-max-h)) !important;
+  min-height: min(28rem, var(--desktop-section-card-max-h)) !important;
+  max-height: var(--desktop-section-card-max-h) !important;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band {
@@ -462,7 +471,7 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band {
   max-height: 100dvh !important;
 }
 
-/* /desktop legacy route — same nav-clearance + equal pad treatment */
+/* /desktop legacy route — centered card + equal pad */
 body.desktop-route .home-feature-card-section {
   display: flex !important;
   flex-direction: column !important;
@@ -485,31 +494,35 @@ body.desktop-route .home-feature-card-section__nav-clearance {
 
 body.desktop-route .home-feature-card-section__inner {
   flex: 1 1 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: stretch !important;
   min-height: 0 !important;
   height: auto !important;
   box-sizing: border-box !important;
-  justify-content: stretch !important;
-  padding-top: var(--desktop-section-pad-y, 1.5rem) !important;
-  padding-bottom: var(--desktop-section-pad-y, 1.5rem) !important;
+  padding-top: var(--desktop-section-pad-y, 1.25rem) !important;
+  padding-bottom: var(--desktop-section-pad-y, 1.25rem) !important;
   padding-left: var(--desktop-page-inset-x, 2.5rem) !important;
   padding-right: var(--desktop-page-inset-x, 2.5rem) !important;
 }
 
 body.desktop-route .home-feature-card-section__inner > div {
   display: flex !important;
-  flex: 1 1 auto !important;
+  flex: 0 1 auto !important;
   flex-direction: column !important;
-  justify-content: stretch !important;
+  justify-content: center !important;
   min-height: 0 !important;
-  height: 100% !important;
+  height: auto !important;
+  width: 100% !important;
 }
 
 body.desktop-route .home-feature-card-section__card {
-  flex: 1 1 auto !important;
+  flex: 0 1 auto !important;
   width: 100% !important;
-  height: 100% !important;
-  min-height: 0 !important;
-  max-height: none !important;
+  height: min(42rem, var(--desktop-section-card-max-h, calc(100dvh - 5.875rem - 2.5rem))) !important;
+  min-height: min(28rem, var(--desktop-section-card-max-h, calc(100dvh - 5.875rem - 2.5rem))) !important;
+  max-height: var(--desktop-section-card-max-h, calc(100dvh - 5.875rem - 2.5rem)) !important;
 }
 
 /* Home iPhone — Build section: one viewport band, slightly tighter copy + prompt. */

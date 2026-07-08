@@ -27,9 +27,9 @@ export function DoeDesktopFeatureSection({
     >
       <div className="shrink-0" style={{ height: DESKTOP_HOME_FIXED_NAV_HEIGHT }} aria-hidden />
       <div
-        className={`flex min-h-0 flex-1 flex-col ${DOE_DESKTOP_PAGE_INSET_X} ${DOE_DESKTOP_FEATURE_SECTION_PAD}`}
+        className={`flex min-h-0 flex-1 flex-col justify-center ${DOE_DESKTOP_PAGE_INSET_X} ${DOE_DESKTOP_FEATURE_SECTION_PAD}`}
       >
-        <div className="flex min-h-0 flex-1 flex-col">
+        <div className="flex min-h-0 w-full flex-none flex-col">
           <DoeDesktopPanelSection slide={slide} />
         </div>
 
