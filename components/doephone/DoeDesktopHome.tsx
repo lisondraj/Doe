@@ -13,7 +13,12 @@ import {
   DOE_DESKTOP_PAGE_INSET_X,
 } from "@/lib/doephone/doe-desktop-layout-styles";
 import { DOEPHONE_BEIGE_SECTION } from "@/lib/doephone/section-styles";
-import { DOE_PAGE_BORDER, DOE_PAGE_SURFACE } from "@/lib/home/doe-page-colors";
+import {
+  DOE_HOME_DUSK_BORDER,
+  DOE_HOME_DUSK_INK,
+  DOE_HOME_DUSK_SURFACE,
+  DOE_HOME_DUSK_SURFACE_RAISED,
+} from "@/lib/home/doe-page-colors";
 import { lora } from "@/lib/home/fonts";
 
 /** Desktop home — light Doe layout mirroring /proto, driven by the iPhone home content. */
@@ -48,8 +53,8 @@ export function DoeDesktopHome({
         <nav
           className="fixed top-0 left-0 right-0 z-[50] transition-[background-color,border-color] duration-300 ease-out"
           style={{
-            backgroundColor: navSolid ? DOE_PAGE_SURFACE : "transparent",
-            borderBottom: navSolid ? `1px solid ${DOE_PAGE_BORDER}` : "1px solid transparent",
+            backgroundColor: navSolid ? DOE_HOME_DUSK_SURFACE : "transparent",
+            borderBottom: navSolid ? `1px solid ${DOE_HOME_DUSK_BORDER}` : "1px solid transparent",
           }}
           aria-label="Primary"
         >
@@ -59,7 +64,7 @@ export function DoeDesktopHome({
                 href="/"
                 className={`${lora.className} ${DOE_DESKTOP_NAV_LOGO_TW}`}
                 style={{
-                  color: navSolid ? "#1E343A" : "#ffffff",
+                  color: navSolid ? DOE_HOME_DUSK_INK : "#ffffff",
                   textShadow: navSolid ? "none" : "0 1px 3px rgba(0, 0, 0, 0.28)",
                 }}
               >
@@ -69,7 +74,7 @@ export function DoeDesktopHome({
               <span
                 className={`${lora.className} ${DOE_DESKTOP_NAV_LOGO_TW}`}
                 style={{
-                  color: navSolid ? "#1E343A" : "#ffffff",
+                  color: navSolid ? DOE_HOME_DUSK_INK : "#ffffff",
                   textShadow: navSolid ? "none" : "0 1px 3px rgba(0, 0, 0, 0.28)",
                 }}
               >
@@ -78,10 +83,10 @@ export function DoeDesktopHome({
             )}
 
             <DesktopNavActionRow
-              bg="#ffffff"
-              fg="#000000"
-              shadow="0 2px 6px rgba(0, 0, 0, 0.12)"
-              divider="rgba(0, 0, 0, 0.12)"
+              bg={navSolid ? DOE_HOME_DUSK_INK : "#1A1208"}
+              fg={DOE_HOME_DUSK_SURFACE_RAISED}
+              shadow="0 2px 6px rgba(26, 18, 8, 0.18)"
+              divider="rgba(245, 230, 208, 0.24)"
               linksEnabled={navActionLinksEnabled}
             />
           </div>
@@ -89,13 +94,13 @@ export function DoeDesktopHome({
       </div>
 
       <div className="relative z-10">
-        <DoePhoneHomeFeatureStack />
+        <DoePhoneHomeFeatureStack shaderTheme="dusk" />
 
         <section className={DOEPHONE_BEIGE_SECTION} aria-label="Closing">
           <DoePhoneClosingSection />
         </section>
 
-        <HomeFooter linksDisabled={!navActionLinksEnabled} />
+        <HomeFooter linksDisabled={!navActionLinksEnabled} shaderTheme="dusk" />
       </div>
     </div>
   );
