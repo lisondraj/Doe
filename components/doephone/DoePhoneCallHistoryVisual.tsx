@@ -54,12 +54,9 @@ const CALL_HISTORY: readonly CallEntry[] = [
 
 type VisualLayout = "phone" | "desktop";
 
-function CallLogRow({ call, isLast }: { call: CallEntry; isLast: boolean }) {
+function CallLogRow({ call }: { call: CallEntry }) {
   return (
-    <div
-      className="py-[clamp(0.72rem,2.15vmin,0.88rem)]"
-      style={{ borderBottom: isLast ? undefined : `1px solid ${BORDER}` }}
-    >
+    <div className="py-[clamp(0.72rem,2.15vmin,0.88rem)]">
       <div className="flex items-start justify-between gap-3">
         <p
           className={`min-w-0 flex-1 ${inter.className} font-medium leading-snug`}
@@ -148,16 +145,9 @@ export function DoePhoneCallHistoryVisual({ layout = "phone" }: { layout?: Visua
           </span>
         </div>
 
-        <div
-          className="mt-[clamp(0.85rem,2.5vmin,1rem)]"
-          style={{ borderTop: `1px solid ${BORDER}` }}
-        >
-          {CALL_HISTORY.map((call, index) => (
-            <CallLogRow
-              key={`${call.callerName}-${call.time}`}
-              call={call}
-              isLast={index === CALL_HISTORY.length - 1}
-            />
+        <div className="mt-[clamp(0.85rem,2.5vmin,1rem)]">
+          {CALL_HISTORY.map((call) => (
+            <CallLogRow key={`${call.callerName}-${call.time}`} call={call} />
           ))}
         </div>
       </div>
