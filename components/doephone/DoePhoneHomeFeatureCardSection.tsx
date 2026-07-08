@@ -34,7 +34,7 @@ export function DoePhoneHomeFeatureCardSection({
 
   return (
     <section
-      className={`home-feature-card-section${showSpecialtyColumns ? " home-feature-card-section--specialties" : ""} ${DOEPHONE_MAIN_PAGE_BEIGE_SECTION}`}
+      className={`home-feature-card-section${showSpecialtyColumns ? " home-feature-card-section--specialties" : ""}${showAgentsCarousel ? " home-feature-card-section--agents-carousel" : ""} ${DOEPHONE_MAIN_PAGE_BEIGE_SECTION}`}
       aria-label={slide.menuLabel}
     >
       <div className={`${DOEPHONE_SECTION_CONTENT_CENTER} home-feature-card-section__inner`}>
@@ -52,9 +52,7 @@ export function DoePhoneHomeFeatureCardSection({
               <DoePhoneHomeSpecialtyPillColumns />
             </div>
           ) : showAgentsCarousel ? (
-            <div
-              className={`home-feature-card-section__card home-feature-card-section__card--agents-carousel flex w-full items-center justify-center ${DOEPHONE_SECTION_CAROUSEL_HEIGHT} layout-desktop:!h-full layout-desktop:!min-h-0 layout-desktop:!max-h-none layout-desktop:!flex-1 layout-desktop:!shrink`}
-            >
+            <div className="home-feature-card-section__card home-feature-card-section__card--agents-carousel flex w-full items-center justify-center layout-desktop:!h-full layout-desktop:!min-h-0 layout-desktop:!max-h-none layout-desktop:!flex-1 layout-desktop:!shrink">
               <DoePhoneHomeAgentsCarousel />
             </div>
           ) : (
