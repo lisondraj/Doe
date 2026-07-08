@@ -12,7 +12,6 @@ import {
   DOE_DESKTOP_NAV_LOGO_TW,
   DOE_DESKTOP_PAGE_INSET_X,
 } from "@/lib/doephone/doe-desktop-layout-styles";
-import { DOEPHONE_BEIGE_SECTION } from "@/lib/doephone/section-styles";
 import {
   DOE_HOME_DUSK_BORDER,
   DOE_HOME_DUSK_INK,
@@ -94,10 +93,13 @@ export function DoeDesktopHome({
       </div>
 
       <div className="relative z-10">
-        <DoePhoneHomeFeatureStack shaderTheme="dusk" />
+        <DoePhoneHomeFeatureStack shaderTheme="dusk" variant="desktop" />
 
-        <section className={DOEPHONE_BEIGE_SECTION} aria-label="Closing">
-          <DoePhoneClosingSection />
+        <section
+          className="relative z-10 flex min-h-[100dvh] w-full flex-col bg-[var(--doe-page-surface,#EDE8DF)]"
+          aria-label="Closing"
+        >
+          <DoePhoneClosingSection variant="desktop" />
         </section>
 
         <HomeFooter linksDisabled={!navActionLinksEnabled} shaderTheme="dusk" />

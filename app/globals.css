@@ -241,7 +241,9 @@ html[data-home-page][data-layout="desktop"] {
   --proto-page-bg: #faf0d8;
   --proto-phone-gutter-left: max(2.5rem, calc(env(safe-area-inset-left, 0px) + 2.5vw));
   --proto-phone-gutter-right: max(2.5rem, calc(env(safe-area-inset-right, 0px) + 2.5vw));
-  --proto-phone-gutter-y: max(2rem, 4vmin);
+  --proto-phone-gutter-y: clamp(2.5rem, 5vh, 4.5rem);
+  --doe-section-band-vh: 100dvh;
+  --doe-hero-band-vh: 100dvh;
   background-color: #faf0d8;
 }
 
@@ -256,6 +258,19 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band {
 
 html[data-home-page][data-layout="desktop"] .home-feature-card-section__title {
   color: #1a1208 !important;
+  font-size: clamp(2.65rem, 4.05vw, 4.05rem) !important;
+}
+
+@media (min-width: 768px) {
+  html[data-home-page][data-layout="desktop"] .home-feature-card-section__title {
+    font-size: clamp(2.78rem, 3.75vw, 4.28rem) !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  html[data-home-page][data-layout="desktop"] .home-feature-card-section__title {
+    font-size: clamp(2.92rem, 3.5vw, 4.52rem) !important;
+  }
 }
 
 html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] [aria-hidden].border {
@@ -267,21 +282,61 @@ html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] p {
   color: #4a3828 !important;
 }
 
+html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] .doephone-section-copy {
+  font-size: clamp(2.65rem, 4.05vw, 4.05rem) !important;
+  color: #1a1208 !important;
+}
+
+@media (min-width: 768px) {
+  html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] .doephone-section-copy {
+    font-size: clamp(2.78rem, 3.75vw, 4.28rem) !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] .doephone-section-copy {
+    font-size: clamp(2.92rem, 3.5vw, 4.52rem) !important;
+  }
+}
+
 /* Desktop home — feature bands use viewport height (no phone viewport lock). */
 html[data-home-page][data-layout="desktop"] .home-feature-card-section__inner {
   min-height: 100dvh !important;
   padding-left: clamp(2.5rem, 5vw, 9rem) !important;
   padding-right: clamp(2.5rem, 5vw, 9rem) !important;
+  padding-top: clamp(2.5rem, 5vh, 4.5rem) !important;
+  padding-bottom: clamp(2.5rem, 5vh, 4.5rem) !important;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-card-section__card {
-  height: clamp(24rem, 56dvh, 42rem) !important;
-  min-height: clamp(24rem, 56dvh, 42rem) !important;
-  max-height: 62dvh !important;
+  height: clamp(26rem, 58dvh, 44rem) !important;
+  min-height: clamp(26rem, 58dvh, 44rem) !important;
+  max-height: 64dvh !important;
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-card-ui-scale {
+  transform: none;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band {
   min-height: 100dvh !important;
+}
+
+html[data-home-page][data-layout="desktop"] .doephone-hero-section .doephone-hero-headline {
+  font-size: clamp(2.85rem, 4.8vw, 5.25rem) !important;
+}
+
+html[data-home-page][data-layout="desktop"] footer .home-footer-content-row {
+  padding-left: clamp(2.5rem, 5vw, 9rem) !important;
+  padding-right: clamp(2.5rem, 5vw, 9rem) !important;
+}
+
+html[data-home-page][data-layout="desktop"] footer .home-footer-links {
+  font-size: clamp(1.32rem, 2.5vw, 1.88rem) !important;
+}
+
+html[data-home-page][data-layout="desktop"] footer .home-footer-contact {
+  font-size: clamp(1.08rem, 0.92rem + 0.35vw, 1.32rem) !important;
 }
 
 /* Home iPhone — Build section: one viewport band, slightly tighter copy + prompt. */
