@@ -1500,6 +1500,7 @@ html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__viewport 
   padding-bottom: var(--home-agents-glow-bleed);
   box-sizing: content-box;
   min-height: var(--home-agents-orb-size);
+  touch-action: pan-y;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__track {

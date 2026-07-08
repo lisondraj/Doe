@@ -1,7 +1,7 @@
 "use client";
 
 import { HeroDialOrbGrainShader } from "@/components/doephone/HeroDialOrbGrainShader";
-import { useCallback, useEffect, useRef, useState, type CSSProperties, type TransitionEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type TouchEvent, type TransitionEvent } from "react";
 
 import { suisseIntl, suisseIntlLight } from "@/lib/home/fonts";
 import {
@@ -126,6 +126,7 @@ const AGENTS_CAROUSEL_LOOP_ORBS: readonly HeroDialOrbScheme[] = [
 const AGENTS_CAROUSEL_LOOP_START =
   AGENTS_CAROUSEL_ORB_COUNT + AGENTS_CAROUSEL_START_INDEX;
 const AGENTS_CAROUSEL_SHADER_WINDOW = 1;
+const AGENTS_CAROUSEL_SWIPE_THRESHOLD_PX = 44;
 
 function shouldMountCarouselShader(orbIndex: number, position: number) {
   return Math.abs(orbIndex - position) <= AGENTS_CAROUSEL_SHADER_WINDOW;
@@ -136,6 +137,7 @@ export function DoePhoneHomeAgentsCarousel() {
   const [position, setPosition] = useState(AGENTS_CAROUSEL_LOOP_START);
   const [trackInstant, setTrackInstant] = useState(false);
   const reenableTransitionRef = useRef<number | null>(null);
+  const swipeStartRef = useRef<{ x: number; y: number } | null>(null);
   const { ref: sectionRef, revealed } = useDoePhoneSectionReveal(0.2);
 
   const active = AGENTS_CAROUSEL_LOOP_ORBS[position];
@@ -149,6 +151,37 @@ export function DoePhoneHomeAgentsCarousel() {
     setTrackInstant(false);
     setPosition((current) => current + 1);
   }, []);
+
+  const handleViewportTouchStart = useCallback((event: TouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0];
+    if (!touch) return;
+    swipeStartRef.current = { x: touch.clientX, y: touch.clientY };
+  }, []);
+
+  const handleViewportTouchEnd = useCallback(
+    (event: TouchEvent<HTMLDivElement>) => {
+      const start = swipeStartRef.current;
+      swipeStartRef.current = null;
+      if (!start) return;
+
+      const touch = event.changedTouches[0];
+      if (!touch) return;
+
+      const deltaX = touch.clientX - start.x;
+      const deltaY = touch.clientY - start.y;
+
+      if (Math.abs(deltaX) < AGENTS_CAROUSEL_SWIPE_THRESHOLD_PX) return;
+      if (Math.abs(deltaX) <= Math.abs(deltaY)) return;
+
+      if (deltaX < 0) {
+        goNext();
+        return;
+      }
+
+      goPrev();
+    },
+    [goNext, goPrev],
+  );
 
   const handleTrackTransitionEnd = useCallback(
     (event: TransitionEvent<HTMLDivElement>) => {
@@ -214,6 +247,11 @@ export function DoePhoneHomeAgentsCarousel() {
         />
         <div
           className={`home-agents-carousel__viewport ${doePhoneSectionRevealSegmentClass("agents-orbs", revealed)}`}
+          onTouchStart={handleViewportTouchStart}
+          onTouchEnd={handleViewportTouchEnd}
+          onTouchCancel={() => {
+            swipeStartRef.current = null;
+          }}
         >
           <div
             className={`home-agents-carousel__track${
