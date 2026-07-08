@@ -2790,25 +2790,7 @@ html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop .hero-s
   inset: 0;
   border-radius: inherit;
   background-color: var(--orb-fill-back, var(--orb-halo-back));
-  background-image:
-    radial-gradient(
-      circle at var(--orb-fill-highlight-x, 38%) var(--orb-fill-highlight-y, 26%),
-      color-mix(in srgb, var(--orb-fill-light) 94%, white) 0%,
-      color-mix(in srgb, var(--orb-fill-light) 58%, transparent) calc(18% + var(--orb-fill-softness, 0.52) * 8%),
-      transparent calc(44% + var(--orb-fill-softness, 0.52) * 10%)
-    ),
-    radial-gradient(
-      circle at var(--orb-fill-shadow-x, 44%) var(--orb-fill-shadow-y, 66%),
-      color-mix(in srgb, var(--orb-fill-dark) 82%, transparent) 0%,
-      transparent calc(40% + var(--orb-fill-softness, 0.52) * 12%)
-    ),
-    radial-gradient(
-      circle at 50% 50%,
-      var(--orb-fill-mid) 0%,
-      color-mix(in srgb, var(--orb-fill-mid) 78%, var(--orb-fill-dark)) calc(34% + var(--orb-fill-softness, 0.52) * 6%),
-      color-mix(in srgb, var(--orb-fill-dark) 90%, var(--orb-fill-back)) calc(62% + var(--orb-fill-softness, 0.52) * 8%),
-      var(--orb-fill-back, var(--orb-halo-back)) 100%
-    );
+  background-image: var(--orb-fill-sphere-bg);
   background-size: var(--orb-fill-scale, 100%);
   background-position: center;
   background-repeat: no-repeat;
@@ -2822,8 +2804,8 @@ html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop .hero-s
   background-image: url("/proto-grain-tile.png");
   background-size: 208px 208px;
   background-repeat: repeat;
-  opacity: var(--orb-fill-grain-opacity, 0.38);
-  mix-blend-mode: hard-light;
+  opacity: var(--orb-fill-grain-opacity, 0.22);
+  mix-blend-mode: soft-light;
 }
 
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
