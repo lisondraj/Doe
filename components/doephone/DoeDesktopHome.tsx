@@ -1,7 +1,6 @@
 "use client";
 
 import { DoePhoneClosingSection } from "@/components/doephone/DoePhoneClosingSection";
-import { DoePhoneDesktopBuildSection } from "@/components/doephone/DoePhoneDesktopBuildSection";
 import { DoePhoneHeroSection } from "@/components/doephone/DoePhoneHeroSection";
 import { DoePhoneHomeFeatureStack } from "@/components/doephone/DoePhoneHomeFeatureStack";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
@@ -28,7 +27,6 @@ export function DoeDesktopHome({
       </div>
 
       <div className="relative z-10">
-        <DoePhoneDesktopBuildSection />
         <DoePhoneHomeFeatureStack shaderTheme="dusk" />
 
         <section className={DOEPHONE_BEIGE_SECTION} aria-label="Closing">
