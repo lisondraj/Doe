@@ -1411,12 +1411,12 @@ body.proto-route {
   padding-bottom: clamp(3.25rem, 10vmin, 5rem);
   padding-left: 0;
   padding-right: 0;
-  --hero-pill-ink: #1a0e32;
-  --hero-pill-warm: #f0e8ff;
-  --hero-pill-light: #faf8ff;
-  --hero-pill-gold: #b088ff;
-  --hero-pill-copper: #7b58ff;
-  --hero-pill-orange: #ff5fe0;
+  --hero-pill-ink: #042a32;
+  --hero-pill-warm: #ffe8e0;
+  --hero-pill-light: #fffaf8;
+  --hero-pill-gold: #ffd166;
+  --hero-pill-copper: #ff9f6b;
+  --hero-pill-orange: #ff7a5c;
   --hero-dial-radius: 47vmin;
   --hero-dial-shift-x: 5.75vmin;
 }
@@ -1528,20 +1528,20 @@ html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop .hero-s
   transform-origin: center center;
   border-radius: 50%;
   box-shadow:
-    0 18px 48px rgba(22, 8, 46, 0.38),
+    0 18px 48px rgba(4, 42, 50, 0.38),
     0 0 0 1px color-mix(in srgb, var(--orb-halo-light) 18%, transparent);
   transition: box-shadow 520ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .hero-speaking-orb--focused .hero-speaking-orb__core {
   box-shadow:
-    0 22px 56px rgba(22, 8, 46, 0.42),
+    0 22px 56px rgba(4, 42, 50, 0.42),
     0 0 52px color-mix(in srgb, var(--orb-halo-mid) 32%, transparent),
     0 0 0 1px color-mix(in srgb, var(--orb-halo-light) 28%, transparent);
 }
 
 .hero-speaking-orb__core-shade {
-  box-shadow: inset 0 -18px 36px rgba(22, 8, 46, 0.28);
+  box-shadow: inset 0 -18px 36px rgba(4, 42, 50, 0.28);
 }
 
 .hero-speaking-orb__core canvas {
@@ -1563,7 +1563,7 @@ html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop .hero-s
 .hero-speaking-orb__play-icon {
   width: clamp(2.35rem, 24%, 3.35rem);
   height: clamp(2.35rem, 24%, 3.35rem);
-  filter: drop-shadow(0 3px 10px rgba(22, 8, 46, 0.24));
+  filter: drop-shadow(0 3px 10px rgba(4, 42, 50, 0.24));
   transition: opacity 320ms ease, transform 320ms ease;
 }
 
@@ -1595,7 +1595,7 @@ html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop .hero-s
   -webkit-backdrop-filter: blur(12px);
   box-shadow:
     0 16px 38px color-mix(in srgb, var(--hero-pill-ink) 18%, transparent),
-    0 5px 14px rgba(22, 8, 46, 0.1),
+    0 5px 14px rgba(4, 42, 50, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.98),
     inset 0 -1px 0 rgba(237, 235, 232, 0.55);
   opacity: 0;

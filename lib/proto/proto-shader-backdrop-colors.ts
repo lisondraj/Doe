@@ -19,12 +19,12 @@ export const DOE_HOME_ORANGE_PALETTE = {
   tan: "#B87862",
 } as const;
 
-/** Hero experiment — cosmic nebula (hero shader + dial only). */
-export const DOE_HOME_HERO_COSMIC_PALETTE = {
-  back: "#16082E",
-  magenta: "#FF4FD8",
-  violet: "#6B4DFF",
-  cyan: "#2EE8F0",
+/** Hero experiment — tropical reef (hero shader + dial only). */
+export const DOE_HOME_HERO_REEF_PALETTE = {
+  back: "#042A32",
+  coral: "#FF7A5C",
+  turquoise: "#3ECFCF",
+  anemone: "#FFD166",
 } as const;
 
 const PROTO_AGENTS_MID_BLUE = "#4A6878";
@@ -47,16 +47,16 @@ export function doeHomeHeroShaderSurface(): ProtoGrainGradientSurface {
   };
 }
 
-/** Doe home hero — cosmic nebula experiment (same home-hero flow preset). */
-export function doeHomeHeroCosmicShaderSurface(): ProtoGrainGradientSurface {
+/** Doe home hero — tropical reef experiment (same home-hero flow preset). */
+export function doeHomeHeroReefShaderSurface(): ProtoGrainGradientSurface {
   return {
     variant: "home-hero",
     colors: [
-      DOE_HOME_HERO_COSMIC_PALETTE.magenta,
-      DOE_HOME_HERO_COSMIC_PALETTE.violet,
-      DOE_HOME_HERO_COSMIC_PALETTE.cyan,
+      DOE_HOME_HERO_REEF_PALETTE.coral,
+      DOE_HOME_HERO_REEF_PALETTE.turquoise,
+      DOE_HOME_HERO_REEF_PALETTE.anemone,
     ],
-    colorBack: DOE_HOME_HERO_COSMIC_PALETTE.back,
+    colorBack: DOE_HOME_HERO_REEF_PALETTE.back,
   };
 }
 
