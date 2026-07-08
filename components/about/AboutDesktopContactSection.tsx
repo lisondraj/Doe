@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 
 import { AboutContactRingsGraphic } from "@/components/about/AboutContactRingsGraphic";
 import { JoinInternTrackReveal } from "@/components/join/JoinInternTrackReveal";
+import { ABOUT_DESKTOP_PAGE_INSET } from "@/lib/about/about-layout-styles";
 import { DOEPHONE_SECTION_CAROUSEL_RADIUS, DOEPHONE_SECTION_COPY_TW } from "@/lib/doephone/section-styles";
 import { dmSans, inter } from "@/lib/home/fonts";
 import { JOIN_FORM_BEIGE } from "@/lib/join/join-form-beige";
@@ -14,7 +15,6 @@ import {
   JOIN_DESKTOP_APPLY_SECTION_MIN,
   JOIN_DESKTOP_APPLY_TITLE_CARD_GAP,
   JOIN_DESKTOP_APPLY_TITLE_TOP_PAD,
-  JOIN_DESKTOP_CONTENT,
   JOIN_DESKTOP_TRACK_ROW_GAP,
 } from "@/lib/join/join-layout";
 
@@ -79,7 +79,7 @@ export function AboutDesktopContactSection() {
       className={`flex w-full flex-col justify-center ${JOIN_DESKTOP_TRACK_ROW_GAP} ${JOIN_DESKTOP_APPLY_SECTION_MIN} ${JOIN_DESKTOP_APPLY_FOOTER_PAD} ${JOIN_DESKTOP_APPLY_SCROLL_MARGIN}`}
       aria-label="Contact"
     >
-      <div className={`${JOIN_DESKTOP_CONTENT} ${JOIN_DESKTOP_APPLY_TITLE_TOP_PAD}`}>
+      <div className={`${ABOUT_DESKTOP_PAGE_INSET} ${JOIN_DESKTOP_APPLY_TITLE_TOP_PAD}`}>
         <JoinInternTrackReveal variant="desktop" className="flex w-full flex-col justify-center">
           <p className={`${DOEPHONE_SECTION_COPY_TW} text-[#1E343A] ${dmSans.className}`}>
             <span className="block">We&apos;d love</span>
