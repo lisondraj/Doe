@@ -5,15 +5,14 @@ import {
 } from "@/lib/about/about-layout-styles";
 import { ABOUT_MOBILE_TAM_CHART } from "@/lib/about/about-page-article";
 import {
-  ABOUT_IPHONE_SHADER_CHART_AXIS,
-  ABOUT_IPHONE_SHADER_CHART_GRID,
   ABOUT_IPHONE_SHADER_CHART_MUTED,
-  ABOUT_IPHONE_SHADER_CHART_PRIMARY,
 } from "@/lib/home/doe-page-colors";
 import { dmSans, inter } from "@/lib/home/fonts";
 
 const TAM_Y_MAX = 28;
 const TAM_Y_TICKS = [0, 7, 14, 21, 28] as const;
+const TAM_LIGHT_BROWN_AXIS = "rgba(154, 93, 49, 0.24)";
+const TAM_LIGHT_BROWN_GRID = "rgba(154, 93, 49, 0.11)";
 
 function formatTamAxis(value: number) {
   return value === 0 ? "0" : value >= 10 ? `$${value}B` : `$${value.toFixed(0)}B`;
@@ -49,7 +48,7 @@ export function AboutMobileTamChart() {
 
           <div
             className="relative col-start-2 row-start-1 min-h-0 border-b border-l"
-            style={{ borderColor: ABOUT_IPHONE_SHADER_CHART_AXIS }}
+            style={{ borderColor: TAM_LIGHT_BROWN_AXIS }}
           >
             {TAM_Y_TICKS.map((tick) => (
               <div
@@ -57,7 +56,7 @@ export function AboutMobileTamChart() {
                 className="pointer-events-none absolute left-0 right-0 border-t"
                 style={{
                   bottom: `${(tick / TAM_Y_MAX) * 100}%`,
-                  borderColor: tick === 0 ? ABOUT_IPHONE_SHADER_CHART_AXIS : ABOUT_IPHONE_SHADER_CHART_GRID,
+                  borderColor: tick === 0 ? TAM_LIGHT_BROWN_AXIS : TAM_LIGHT_BROWN_GRID,
                 }}
                 aria-hidden
               />
@@ -76,7 +75,7 @@ export function AboutMobileTamChart() {
                     <div className="flex h-full flex-col justify-end">
                       <div
                         className="about-chart-tam-bar w-full rounded-t-[0.35rem] transition-[height] duration-500 ease-out iphone-page:rounded-t-[0.42rem]"
-                        style={{ height: heightPct, background: ABOUT_IPHONE_SHADER_CHART_PRIMARY }}
+                        style={{ height: heightPct, background: "#9A5D31" }}
                       />
                     </div>
                   </div>
@@ -100,7 +99,7 @@ export function AboutMobileTamChart() {
 
       <div
         className="mt-6 border px-4 py-4 iphone-page:mt-7 iphone-page:px-5 iphone-page:py-5"
-        style={{ borderColor: ABOUT_IPHONE_SHADER_CHART_AXIS }}
+        style={{ borderColor: TAM_LIGHT_BROWN_AXIS }}
       >
         <p
           className={`font-medium leading-none tracking-[-0.03em] text-[#1A1208] ${dmSans.className} text-[clamp(2.55rem,2rem+2.35vmin,3.35rem)] iphone-page:text-[clamp(2.85rem,2.2rem+2.75vmin,3.75rem)]`}

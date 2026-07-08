@@ -22,13 +22,13 @@ export const DOE_HOME_DUSK_CHART_AXIS = "rgba(26, 18, 8, 0.22)";
 export const DOE_HOME_DUSK_CHART_GRID = "rgba(26, 18, 8, 0.07)";
 export const DOE_HOME_DUSK_CHART_PANEL_BORDER = "#D8C8B0";
 
-/** iPhone /about stats — shader-brown scale only (bars, pie, axes, tracks). */
-export const ABOUT_IPHONE_SHADER_CHART_PRIMARY = "#5C4E42";
-export const ABOUT_IPHONE_SHADER_CHART_SECONDARY = "#332B21";
-export const ABOUT_IPHONE_SHADER_CHART_MUTED = "#8A7868";
-export const ABOUT_IPHONE_SHADER_CHART_TRACK = "rgba(51, 43, 33, 0.16)";
-export const ABOUT_IPHONE_SHADER_CHART_AXIS = "rgba(51, 43, 33, 0.22)";
-export const ABOUT_IPHONE_SHADER_CHART_GRID = "rgba(51, 43, 33, 0.10)";
+/** iPhone /about stats — centered on the wood-brown swatch (#895129). */
+export const ABOUT_IPHONE_SHADER_CHART_PRIMARY = "#895129";
+export const ABOUT_IPHONE_SHADER_CHART_SECONDARY = "#A4683C";
+export const ABOUT_IPHONE_SHADER_CHART_MUTED = "#BE8660";
+export const ABOUT_IPHONE_SHADER_CHART_TRACK = "rgba(137, 81, 41, 0.14)";
+export const ABOUT_IPHONE_SHADER_CHART_AXIS = "rgba(137, 81, 41, 0.2)";
+export const ABOUT_IPHONE_SHADER_CHART_GRID = "rgba(137, 81, 41, 0.09)";
 /** Home pre-seed strip — one step darker than overflow white. */
 export const DOE_HOME_BANNER_SURFACE = DOE_PAGE_SURFACE;
 /** Agents tray — clearly darker than page surface for nested feature cards. */

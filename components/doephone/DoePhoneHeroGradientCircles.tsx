@@ -12,7 +12,7 @@ import {
   type CSSProperties,
 } from "react";
 
-import { suisseIntl } from "@/lib/home/fonts";
+import { inter, suisseIntl } from "@/lib/home/fonts";
 import {
   HERO_DIAL_ORB_COUNT,
   HERO_DIAL_ORB_SHADER,
@@ -37,9 +37,8 @@ const HERO_DIAL_LAYOUT = {
 const SWITCH_MS = 920;
 const PILL_OUT_MS = 220;
 const PLAY_DURATION_MS = 30_000;
-const EXPAND_CLOSE_MS = 720;
-/** Settled expanded orb — inset from hero edges so the progress ring stays visible. */
-const EXPANDED_ORB_SIZE = "min(86%, calc(100% - 2.75rem))";
+const EXPAND_CLOSE_MS = 820;
+const EXPANDED_ORB_MARGIN_PX = 44;
 
 /** Center slot — 9 o'clock on the dial (leftmost, vertically centered). */
 const CENTER_SLOT_ANGLE = Math.PI;
@@ -123,52 +122,27 @@ function dialNodeStyle(pose: DialOrbPose) {
   } as const;
 }
 
-const OrbCircularProgress = memo(function OrbCircularProgress({
-  durationMs,
-  active,
-}: {
-  durationMs: number;
-  active: boolean;
-}) {
-  const [animating, setAnimating] = useState(false);
-
-  useEffect(() => {
-    if (!active) {
-      setAnimating(false);
-      return;
-    }
-
-    const id = requestAnimationFrame(() => {
-      requestAnimationFrame(() => setAnimating(true));
-    });
-    return () => cancelAnimationFrame(id);
-  }, [active]);
-
+const HeroOrbRingingOverlay = memo(function HeroOrbRingingOverlay() {
   return (
-    <svg
-      className="hero-speaking-orb__progress-ring"
-      viewBox="0 0 100 100"
-      aria-hidden
-    >
-      <circle
-        className="hero-speaking-orb__progress-track"
-        cx="50"
-        cy="50"
-        r="47.5"
-      />
-      <circle
-        className="hero-speaking-orb__progress-fill"
-        cx="50"
-        cy="50"
-        r="47.5"
-        pathLength={100}
-        strokeDasharray="100"
-        strokeDashoffset={animating ? 0 : 100}
-        style={{
-          transition: animating ? `stroke-dashoffset ${durationMs}ms linear` : "none",
-        }}
-      />
-    </svg>
+    <div className="hero-speaking-orb__ringing" aria-live="polite">
+      <div className="hero-speaking-orb__ringing-waves" aria-hidden>
+        <svg className="hero-speaking-orb__ringing-waves-svg" viewBox="0 0 200 80" preserveAspectRatio="xMidYMid meet">
+          <g className="hero-speaking-orb__ringing-wave-group hero-speaking-orb__ringing-wave-group--a">
+            <path
+              className="hero-speaking-orb__ringing-wave"
+              d="M0 40 Q25 72 50 40 T100 40 T150 40 T200 40"
+            />
+          </g>
+          <g className="hero-speaking-orb__ringing-wave-group hero-speaking-orb__ringing-wave-group--b">
+            <path
+              className="hero-speaking-orb__ringing-wave"
+              d="M0 40 Q25 8 50 40 T100 40 T150 40 T200 40"
+            />
+          </g>
+        </svg>
+      </div>
+      <p className={`hero-speaking-orb__ringing-label ${inter.className}`}>Ringing…</p>
+    </div>
   );
 });
 
@@ -179,8 +153,7 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
   orbSize,
   interactive = false,
   expanded = false,
-  showProgress = false,
-  progressActive = false,
+  showRinging = false,
   onPlayClick,
 }: {
   scheme: HeroDialOrbScheme;
@@ -189,8 +162,7 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
   orbSize: string;
   interactive?: boolean;
   expanded?: boolean;
-  showProgress?: boolean;
-  progressActive?: boolean;
+  showRinging?: boolean;
   onPlayClick?: (sourceNode: HTMLElement) => void;
 }) {
   const intensity = scheme.intensity ?? HERO_DIAL_ORB_SHADER.intensity;
@@ -208,7 +180,7 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
     <div
       className={`hero-speaking-orb${isFocused ? " hero-speaking-orb--focused" : ""}${
         expanded ? " hero-speaking-orb--expanded" : ""
-      }${showProgress ? " hero-speaking-orb--progress" : ""}`}
+      }`}
       style={orbAccentStyle(scheme, orbSize)}
     >
       <div
@@ -220,9 +192,6 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
         aria-hidden
       />
       <div className="hero-speaking-orb__progress-shell">
-        {showProgress ? (
-          <OrbCircularProgress durationMs={PLAY_DURATION_MS} active={progressActive} />
-        ) : null}
         <div className="hero-speaking-orb__core relative overflow-hidden rounded-full">
         <GrainGradient
           width="100%"
@@ -254,8 +223,7 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
               className="hero-speaking-orb__play hero-speaking-orb__play--interactive"
               aria-label={`Play ${scheme.label}`}
               onClick={(event) => {
-                const node = event.currentTarget.closest(".hero-speaking-orbs__node");
-                if (node instanceof HTMLElement) onPlayClick?.(node);
+                onPlayClick?.(event.currentTarget);
               }}
             >
               {playIcon}
@@ -265,6 +233,8 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
               {playIcon}
             </div>
           )
+        ) : showRinging ? (
+          <HeroOrbRingingOverlay />
         ) : null}
         </div>
       </div>
@@ -298,6 +268,7 @@ export function DoePhoneHeroGradientCircles({
     x: number;
     y: number;
     size: number;
+    settledSize: number;
   } | null>(null);
   const dialRotationRef = useRef(0);
   const switchRafRef = useRef<number | undefined>(undefined);
@@ -357,22 +328,30 @@ export function DoePhoneHeroGradientCircles({
         playCloseTimerRef.current = undefined;
       }
 
-      const sourceRect = sourceNode.getBoundingClientRect();
+      const sourceOrb = sourceNode.closest(".hero-speaking-orb");
+      const sourceRect =
+        sourceOrb instanceof HTMLElement
+          ? sourceOrb.getBoundingClientRect()
+          : sourceNode.getBoundingClientRect();
       const rootRect = rootRef.current.getBoundingClientRect();
       const centerX = sourceRect.left + sourceRect.width / 2 - rootRect.left;
       const centerY = sourceRect.top + sourceRect.height / 2 - rootRect.top;
       const size = Math.max(sourceRect.width, sourceRect.height);
+      const settledSize = Math.max(
+        size,
+        Math.min(rootRect.width, rootRect.height) - EXPANDED_ORB_MARGIN_PX,
+      );
 
       setIsClosing(false);
       setExpandedOrbIndex(index);
       setExpandSettled(reducedMotionRef.current);
-      setExpandFlip({ x: centerX, y: centerY, size });
+      setExpandFlip({ x: centerX, y: centerY, size, settledSize });
     },
     [isMobileInteractive],
   );
 
   useLayoutEffect(() => {
-    if (expandedOrbIndex === null || expandFlip === null || expandSettled) return;
+    if (expandedOrbIndex === null || expandFlip === null || expandSettled || isClosing) return;
 
     const id = requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -381,7 +360,7 @@ export function DoePhoneHeroGradientCircles({
     });
 
     return () => cancelAnimationFrame(id);
-  }, [expandFlip, expandSettled, expandedOrbIndex]);
+  }, [expandFlip, expandSettled, expandedOrbIndex, isClosing]);
 
   useEffect(() => {
     if (expandedOrbIndex === null || !expandSettled) return;
@@ -484,6 +463,7 @@ export function DoePhoneHeroGradientCircles({
         top: expandFlip.y,
         width: expandFlip.size,
         height: expandFlip.size,
+        aspectRatio: "1 / 1",
         transform: "translate(-50%, -50%)",
       } as CSSProperties;
     }
@@ -491,10 +471,9 @@ export function DoePhoneHeroGradientCircles({
     return {
       left: "50%",
       top: "50%",
-      width: EXPANDED_ORB_SIZE,
-      height: "auto",
+      width: expandFlip.settledSize,
+      height: expandFlip.settledSize,
       aspectRatio: "1 / 1",
-      maxHeight: EXPANDED_ORB_SIZE,
       transform: "translate(-50%, -50%)",
     } as CSSProperties;
   }, [expandFlip, expandSettled]);
@@ -523,7 +502,7 @@ export function DoePhoneHeroGradientCircles({
                 }${pose.isFocused ? " hero-speaking-orbs__node--focused" : ""}`}
                 style={{
                   transform: style.transform,
-                  opacity: isExpandedSource ? 0 : style.opacity,
+                  opacity: isExpandedSource ? (isClosing ? style.opacity : 0) : style.opacity,
                   zIndex: style.zIndex,
                 }}
               >
@@ -567,8 +546,7 @@ export function DoePhoneHeroGradientCircles({
               showPill={false}
               orbSize="100%"
               expanded
-              showProgress={expandSettled && !isClosing}
-              progressActive={expandSettled && !isClosing}
+              showRinging={expandSettled && !isClosing}
             />
           </div>
         </div>

@@ -147,7 +147,7 @@ export function AboutDesktopView() {
                   layout="desktop"
                   embedded
                   compact
-                  theme="dusk"
+                  theme="about"
                 />
               </div>
             </div>
@@ -173,7 +173,7 @@ export function AboutDesktopView() {
                 bars={sections.barChart.bars}
                 layout="desktop"
                 embedded
-                theme="dusk"
+                theme="about"
               />
               <AboutDesktopParagraph text={productTwo} />
               <AboutDesktopParagraph text={productThree} />
