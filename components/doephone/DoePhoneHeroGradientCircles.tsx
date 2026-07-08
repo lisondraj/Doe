@@ -166,12 +166,22 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
   onPlayClick?: (sourceNode: HTMLElement) => void;
 }) {
   const intensity = scheme.intensity ?? HERO_DIAL_ORB_SHADER.intensity;
-  const playIcon = (
-    <svg className="hero-speaking-orb__play-icon" viewBox="0 0 48 48" fill="none">
-      <circle cx="24" cy="24" r="22" fill="rgba(255, 251, 246, 0.2)" stroke="rgba(255, 251, 246, 0.42)" strokeWidth="1.25" />
+  const callIcon = (
+    <svg className="hero-speaking-orb__play-icon" viewBox="0 0 48 48" fill="none" aria-hidden>
+      <circle
+        cx="24"
+        cy="24"
+        r="22"
+        fill="rgba(255, 251, 246, 0.2)"
+        stroke="rgba(255, 251, 246, 0.42)"
+        strokeWidth="1.25"
+      />
       <path
-        d="M20.2 16.4v15.2c0 .72.78 1.16 1.4.8l10.2-5.9c.62-.36.62-1.24 0-1.6l-10.2-5.9c-.62-.36-1.4.08-1.4.8z"
-        fill="rgba(255, 251, 246, 0.94)"
+        d="M17.35 16.15c.48-1.02 1.62-1.34 2.52-.72l2.05 1.38c.76.52.9 1.58.44 2.32l-1.18 1.68c1.02 1.9 2.72 3.6 4.62 4.62l1.68-1.18c.74-.46 1.8-.3 2.32.44l1.38 2.05c.62.9.28 2.08-.72 2.52l-1.92.96c-3.42 1.6-7.48.7-10.48-2.3-3-3-3.9-7.06-2.3-10.48l.96-1.92z"
+        stroke="rgba(255, 251, 246, 0.94)"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -221,16 +231,16 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
             <button
               type="button"
               className="hero-speaking-orb__play hero-speaking-orb__play--interactive"
-              aria-label={`Play ${scheme.label}`}
+              aria-label={`Call ${scheme.label}`}
               onClick={(event) => {
                 onPlayClick?.(event.currentTarget);
               }}
             >
-              {playIcon}
+              {callIcon}
             </button>
           ) : (
             <div className="hero-speaking-orb__play" aria-hidden>
-              {playIcon}
+              {callIcon}
             </div>
           )
         ) : showRinging ? (

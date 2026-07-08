@@ -1390,26 +1390,42 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__spec
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow {
   position: relative !important;
   min-height: var(--doe-section-band-vh, var(--app-vh, 100lvh)) !important;
+  height: var(--doe-section-band-vh, var(--app-vh, 100lvh)) !important;
+  max-height: var(--doe-section-band-vh, var(--app-vh, 100lvh)) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-shader-band__workflow-shell {
+  padding-inline: clamp(0.85rem, 3vmin, 1.35rem);
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-section__workflow-input {
-  padding-left: var(--proto-phone-gutter-left) !important;
-  padding-right: var(--proto-phone-gutter-right) !important;
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: min(100%, clamp(20.5rem, 94vw, 38.5rem));
+  margin-inline: auto;
+  padding: 0 !important;
+  transform: scale(var(--build-workflow-ui-scale, 0.88)) !important;
+  transform-origin: center center !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-workflow-prompt__body {
+  max-width: 100%;
+  text-wrap: pretty;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-workflow-prompt__body .block + .block {
+  margin-top: 0.08em;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-section__workflow-input .build-workflow-ui-scale {
-  --build-workflow-ui-scale: 0.84;
-  transform: scale(var(--build-workflow-ui-scale));
-  transform-origin: left bottom;
-  width: calc(100% / var(--build-workflow-ui-scale));
+  width: 100%;
   max-width: none;
-  margin-left: 0;
+  margin-inline: auto;
+  transform: none;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-section__workflow-input,
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .doephone-section-reveal--input {
   opacity: 1 !important;
-  transform: none !important;
   animation: none !important;
 }
 
@@ -1419,9 +1435,30 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow 
   height: 100dvh !important;
 }
 
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-shader-band__workflow-shell {
+  padding-inline: clamp(1.5rem, 4vw, 3rem);
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-section__workflow-input {
+  position: relative !important;
+  flex: 0 0 auto;
+  width: min(100%, clamp(32rem, 44vw, 44rem)) !important;
+  max-width: none !important;
+  margin-inline: auto !important;
+  padding: 0 !important;
+  transform: scale(var(--build-workflow-ui-scale, 0.96)) !important;
+  transform-origin: center center !important;
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-workflow-prompt__body {
+  max-width: 100%;
+  text-wrap: pretty;
+}
+
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-section__workflow-input .build-workflow-ui-scale {
-  transform: none;
   width: 100%;
+  transform: none;
+  margin-inline: auto;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__title--specialties {
@@ -1433,6 +1470,7 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__titl
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__pill-stage {
+  --specialty-pill-radius: clamp(1.05rem, 3vmin, 1.55rem);
   --specialty-pill-size: clamp(3.65rem, 6.35vmin, 4.75rem);
   --specialty-pill-gap: clamp(0.62rem, 0.32rem + 1.05vmin, 0.92rem);
   --specialty-visible-rows: 12;
@@ -1513,7 +1551,7 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__pill 
   padding: clamp(0.62rem, 1.85vmin, 0.78rem) clamp(0.72rem, 2.2vmin, 0.92rem);
   gap: clamp(0.38rem, 1.15vmin, 0.48rem);
   border: 1px solid #ebe7e0;
-  border-radius: 999px;
+  border-radius: var(--specialty-pill-radius, clamp(1.05rem, 3vmin, 1.55rem));
   background: linear-gradient(
     180deg,
     #ffffff 0%,

@@ -4,21 +4,8 @@ import type { ReactNode } from "react";
 
 import { suisseIntl } from "@/lib/home/fonts";
 import { CAROUSEL_MENU_UI } from "@/lib/doephone/carousel-menu-visual-styles";
-import { DOE_HOME_ORANGE_PALETTE } from "@/lib/proto/proto-shader-backdrop-colors";
 
-const { ink: INK } = CAROUSEL_MENU_UI;
-
-/** Alternating Doe accent strokes for specialty pill icons. */
-const SPECIALTY_ICON_COLORS = [
-  DOE_HOME_ORANGE_PALETTE.orange,
-  DOE_HOME_ORANGE_PALETTE.gold,
-  DOE_HOME_ORANGE_PALETTE.copper,
-  DOE_HOME_ORANGE_PALETTE.rose,
-  DOE_HOME_ORANGE_PALETTE.tan,
-  "#C45C42",
-  "#E8A060",
-  DOE_HOME_ORANGE_PALETTE.back,
-] as const;
+const { ink: INK, accent: DOE_ORANGE } = CAROUSEL_MENU_UI;
 
 const SPECIALTY_COLUMNS = [
   [
@@ -78,11 +65,11 @@ const SPECIALTY_ICON_KINDS = [
 
 type SpecialtyIconKind = (typeof SPECIALTY_ICON_KINDS)[number];
 
-function SpecialtyIcon({ kind, color }: { kind: SpecialtyIconKind; color: string }) {
+function SpecialtyIcon({ kind }: { kind: SpecialtyIconKind }) {
   const sw = 1.25;
   const cap = "round" as const;
   const join = "round" as const;
-  const stroke = color;
+  const stroke = DOE_ORANGE;
 
   const icons: Record<SpecialtyIconKind, ReactNode> = {
     care: (
@@ -178,7 +165,6 @@ export function DoePhoneHomeSpecialtyPillColumns() {
               <div className={`home-feature-specialties__track ${directionClass}`}>
                 {sequence.map((label, pillIndex) => {
                   const iconKind = SPECIALTY_ICON_KINDS[pillIndex % SPECIALTY_ICON_KINDS.length];
-                  const iconColor = SPECIALTY_ICON_COLORS[pillIndex % SPECIALTY_ICON_COLORS.length];
 
                   return (
                     <div
@@ -186,7 +172,7 @@ export function DoePhoneHomeSpecialtyPillColumns() {
                       className={`home-feature-specialties__pill ${suisseIntl.className}`}
                       style={{ color: INK }}
                     >
-                      <SpecialtyIcon kind={iconKind} color={iconColor} />
+                      <SpecialtyIcon kind={iconKind} />
                       <span className="home-feature-specialties__pill-label">{label}</span>
                     </div>
                   );

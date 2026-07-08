@@ -280,12 +280,14 @@ export function DoePhoneAmbientPromptCard({
   layout = "carousel",
   size = "default",
   toolIcons = "chart",
+  bodyClassName,
   children,
 }: {
   headerLabel: string;
   layout?: "carousel" | "section";
   size?: "default" | "large" | "desktop";
   toolIcons?: "chart" | "workflow";
+  bodyClassName?: string;
   children: ReactNode;
 }) {
   const isSection = layout === "section";
@@ -324,7 +326,7 @@ export function DoePhoneAmbientPromptCard({
       <ContextHeader label={headerLabel} headerSize={headerSize} large={isLarge} />
 
       <p
-        className={`font-normal ${isSection ? "relative overflow-visible" : ""}`}
+        className={`font-normal ${isSection ? "relative overflow-visible" : ""}${bodyClassName ? ` ${bodyClassName}` : ""}`}
         style={{
           color: INK,
           fontSize: bodySize,
