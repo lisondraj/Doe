@@ -324,6 +324,11 @@ html[data-home-page][data-layout="desktop"] .home-feature-card-section__title {
   color: #1a1208 !important;
 }
 
+/* /desktop route — DesktopHome uses desktop-route without data-home-page attrs. */
+body.desktop-route .home-feature-card-section__title {
+  display: none !important;
+}
+
 html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] [aria-hidden].border {
   border-color: #d8c8b0 !important;
   background-color: #f0e4d0 !important;
