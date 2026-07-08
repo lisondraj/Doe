@@ -169,16 +169,6 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
   showRinging?: boolean;
   onPlayClick?: (sourceNode: HTMLElement) => void;
 }) {
-  const callIcon = (
-    <svg className="hero-speaking-orb__play-icon" viewBox="0 0 32 32" aria-hidden>
-      <circle cx="16" cy="16" r="14" fill="rgba(255, 251, 246, 0.2)" />
-      <path
-        fill="rgba(255, 251, 246, 0.92)"
-        d="M10.42 5.33a1.6 1.6 0 0 0-2.24 0L6.1 7.41a3.2 3.2 0 0 0-.78 3.24c1.18 3.6 3.38 7.04 6.54 10.2s6.6 5.36 10.2 6.54a3.2 3.2 0 0 0 3.24-.78l2.08-2.08a1.6 1.6 0 0 0 0-2.24l-3.2-3.2a1.6 1.6 0 0 0-2.24 0l-1.24 1.24a14.56 14.56 0 0 1-5.07-5.07l1.24-1.24a1.6 1.6 0 0 0 0-2.24l-3.2-3.2Z"
-      />
-    </svg>
-  );
-
   return (
     <div
       className={`hero-speaking-orb${isFocused ? " hero-speaking-orb--focused" : ""}${
@@ -213,14 +203,8 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
               onClick={(event) => {
                 onPlayClick?.(event.currentTarget);
               }}
-            >
-              {callIcon}
-            </button>
-          ) : (
-            <div className="hero-speaking-orb__play" aria-hidden>
-              {callIcon}
-            </div>
-          )
+            />
+          ) : null
         ) : showRinging ? (
           <HeroOrbRingingOverlay />
         ) : null}
