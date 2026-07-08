@@ -486,8 +486,9 @@ body.desktop-route .home-feature-shader-band {
   width: 100vw !important;
   margin-left: calc(50% - 50vw) !important;
   margin-right: calc(50% - 50vw) !important;
-  min-height: var(--desktop-below-nav-height, calc(100dvh - 5.5rem)) !important;
-  height: var(--desktop-below-nav-height, calc(100dvh - 5.5rem)) !important;
+  min-height: 100dvh !important;
+  height: 100dvh !important;
+  max-height: 100dvh !important;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-card-section__title {
@@ -516,11 +517,8 @@ html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] p {
 }
 
 /*
- * Desktop home UI sections (scroll under fixed nav):
- * - Band = 100dvh
- * - Explicit nav-clearance row = --desktop-nav-height (under the fixed overlay)
- * - Remaining area uses EQUAL padding-top and padding-bottom (--desktop-section-pad-y)
- * - L/R = page gutters
+ * Desktop home UI sections — each band fills the full browser viewport (100dvh).
+ * Fixed nav overlays the top; inner pad clears nav then equal pad above/below the card.
  */
 html[data-home-page][data-layout="desktop"] .home-feature-card-section {
   display: flex !important;
@@ -534,24 +532,17 @@ html[data-home-page][data-layout="desktop"] .home-feature-card-section {
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-card-section__nav-clearance {
-  display: block !important;
-  flex: 0 0 var(--desktop-nav-height) !important;
-  width: 100% !important;
-  height: var(--desktop-nav-height) !important;
-  min-height: var(--desktop-nav-height) !important;
-  max-height: var(--desktop-nav-height) !important;
-  pointer-events: none !important;
+  display: none !important;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-card-section__inner {
   flex: 1 1 auto !important;
-  min-height: 0 !important;
-  height: auto !important;
-  max-height: none !important;
+  min-height: 100% !important;
+  height: 100% !important;
+  max-height: 100% !important;
   box-sizing: border-box !important;
   justify-content: stretch !important;
-  /* Equal visual pad above and below the dark card */
-  padding-top: var(--desktop-section-pad-y) !important;
+  padding-top: calc(var(--desktop-nav-height) + var(--desktop-section-pad-y)) !important;
   padding-bottom: var(--desktop-section-pad-y) !important;
   padding-left: var(--desktop-page-inset-x) !important;
   padding-right: var(--desktop-page-inset-x) !important;
@@ -588,7 +579,7 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band {
   max-height: 100dvh !important;
 }
 
-/* /desktop legacy route — same nav-clearance + equal pad treatment */
+/* /desktop legacy route — full viewport bands */
 body.desktop-route .home-feature-card-section {
   display: flex !important;
   flex-direction: column !important;
@@ -600,22 +591,16 @@ body.desktop-route .home-feature-card-section {
 }
 
 body.desktop-route .home-feature-card-section__nav-clearance {
-  display: block !important;
-  flex: 0 0 var(--desktop-nav-height, 6.25rem) !important;
-  width: 100% !important;
-  height: var(--desktop-nav-height, 6.25rem) !important;
-  min-height: var(--desktop-nav-height, 6.25rem) !important;
-  max-height: var(--desktop-nav-height, 6.25rem) !important;
-  pointer-events: none !important;
+  display: none !important;
 }
 
 body.desktop-route .home-feature-card-section__inner {
   flex: 1 1 auto !important;
-  min-height: 0 !important;
-  height: auto !important;
+  min-height: 100% !important;
+  height: 100% !important;
   box-sizing: border-box !important;
   justify-content: stretch !important;
-  padding-top: var(--desktop-section-pad-y, 1.5rem) !important;
+  padding-top: calc(var(--desktop-nav-height, 6.25rem) + var(--desktop-section-pad-y, 1.5rem)) !important;
   padding-bottom: var(--desktop-section-pad-y, 1.5rem) !important;
   padding-left: var(--desktop-page-inset-x, 2.5rem) !important;
   padding-right: var(--desktop-page-inset-x, 2.5rem) !important;
@@ -636,6 +621,12 @@ body.desktop-route .home-feature-card-section__card {
   height: 100% !important;
   min-height: 0 !important;
   max-height: none !important;
+}
+
+body.desktop-route .home-feature-shader-band {
+  min-height: 100dvh !important;
+  height: 100dvh !important;
+  max-height: 100dvh !important;
 }
 
 /* Home iPhone — Build section: one viewport band, slightly tighter copy + prompt. */

@@ -64,8 +64,8 @@ export const DESKTOP_HOME_SECTION_PAD_Y = "py-6 md:py-8 lg:py-10 xl:py-12";
 export const DESKTOP_HOME_PANEL_SECTION_H = "min-h-[100dvh] h-[100dvh] max-h-[100dvh]";
 
 /** Desktop home — full-bleed gradient bands (Build, Integrations, Documents). */
-export const DESKTOP_HOME_BAND_MIN_H = `min-h-[${DESKTOP_HOME_BELOW_NAV_HEIGHT_TW}]`;
-export const DESKTOP_HOME_BAND_H = `min-h-[${DESKTOP_HOME_BELOW_NAV_HEIGHT_TW}] h-[${DESKTOP_HOME_BELOW_NAV_HEIGHT_TW}]`;
+export const DESKTOP_HOME_BAND_MIN_H = "min-h-[100dvh]";
+export const DESKTOP_HOME_BAND_H = "min-h-[100dvh] h-[100dvh] max-h-[100dvh]";
 
 /** Desktop home — rounded panel sections (deployments, reception, billing, cohort watch). */
 export const DESKTOP_HOME_PANEL_BAND_H = DESKTOP_HOME_PANEL_SECTION_H;
