@@ -22,15 +22,15 @@ const ORB_AGENT_LABELS = [
 
 const BRAND = DOE_HOME_ORANGE_PALETTE;
 
-/** Orange / orange-gold ladder — vibrant mids, no yellows; tame red-orange outliers. */
+/** Orange / orange-gold ladder — vibrant, offset from hero brand stops (circles only). */
 const HERO_ORB_SHADE_LADDER = [
-  { colors: ["#9A6018", "#E8A048", "#F0C8A0"] as const, colorBack: BRAND.back },
-  { colors: ["#9A4818", "#D87838", "#E8B090"] as const, colorBack: BRAND.back },
-  { colors: ["#9A5518", "#D89058", "#E8B8A0"] as const, colorBack: BRAND.back },
-  { colors: ["#9A5818", "#E0A858", "#F0C898"] as const, colorBack: BRAND.back },
-  { colors: ["#9A5010", "#E88840", "#E8B888"] as const, colorBack: BRAND.back },
-  { colors: ["#8A4810", "#C88038", "#D8A878"] as const, colorBack: BRAND.back },
-  { colors: ["#9A3810", "#D86028", "#E0A070"] as const, colorBack: BRAND.back },
+  { colors: ["#966018", "#ECA850", "#F2CCA8"] as const, colorBack: BRAND.back },
+  { colors: ["#964818", "#DC8038", "#ECB498"] as const, colorBack: BRAND.back },
+  { colors: ["#965518", "#DC9860", "#ECBCA8"] as const, colorBack: BRAND.back },
+  { colors: ["#965818", "#E4B060", "#F2CC98"] as const, colorBack: BRAND.back },
+  { colors: ["#965010", "#EC9048", "#ECBA90"] as const, colorBack: BRAND.back },
+  { colors: ["#864810", "#CC8838", "#DEAC80"] as const, colorBack: BRAND.back },
+  { colors: ["#963810", "#DC6828", "#E6A878"] as const, colorBack: BRAND.back },
 ] as const;
 
 type OrbScheme = (typeof HERO_ORB_SHADE_LADDER)[number];
