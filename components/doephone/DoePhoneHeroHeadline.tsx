@@ -57,7 +57,7 @@ function fitHeadlineFontSize(headline: HTMLElement, container: HTMLElement) {
 
 export function DoePhoneHeroHeadline({
   line1 = "Voice Agents",
-  line2 = "for Healthcare",
+  line2 = "for Healthcare.",
   fontClass,
 }: {
   line1?: string;
