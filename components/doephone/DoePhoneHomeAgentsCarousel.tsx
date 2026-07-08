@@ -82,6 +82,7 @@ function AgentCarouselOrb({
             scheme={scheme}
             eager={focused}
             enabled={mountShader}
+            mountDelayMs={focused ? 280 : 0}
           />
           <div
             className="pointer-events-none absolute inset-0 rounded-full hero-speaking-orb__core-shade"
@@ -113,7 +114,7 @@ const AGENTS_CAROUSEL_LOOP_ORBS: readonly HeroDialOrbScheme[] = [
 ];
 const AGENTS_CAROUSEL_LOOP_START =
   AGENTS_CAROUSEL_ORB_COUNT + AGENTS_CAROUSEL_START_INDEX;
-const AGENTS_CAROUSEL_SHADER_WINDOW = 2;
+const AGENTS_CAROUSEL_SHADER_WINDOW = 1;
 
 function shouldMountCarouselShader(orbIndex: number, position: number) {
   return Math.abs(orbIndex - position) <= AGENTS_CAROUSEL_SHADER_WINDOW;

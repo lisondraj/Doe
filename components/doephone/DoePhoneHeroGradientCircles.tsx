@@ -200,7 +200,12 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
       />
       <div className="hero-speaking-orb__progress-shell">
         <div className="hero-speaking-orb__core relative overflow-hidden rounded-full">
-        <HeroDialOrbGrainShader scheme={scheme} eager={isFocused} />
+        <HeroDialOrbGrainShader
+          scheme={scheme}
+          eager={isFocused || expanded}
+          enabled={isFocused || expanded}
+          mountDelayMs={320}
+        />
         <div
           className="pointer-events-none absolute inset-0 rounded-full hero-speaking-orb__core-shade"
           aria-hidden

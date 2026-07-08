@@ -24,16 +24,19 @@ export const HeroDialOrbGrainShader = memo(function HeroDialOrbGrainShader({
   scheme,
   eager = false,
   enabled = true,
+  mountDelayMs = 0,
 }: {
   scheme: HeroDialOrbScheme;
   /** Mount immediately when sized — hero focused orb, carousel center. */
   eager?: boolean;
   /** When false, only the palette fallback is shown (saves WebGL budget). */
   enabled?: boolean;
+  /** Defer WebGL mount so hero background can claim a context first. */
+  mountDelayMs?: number;
 }) {
   const shellRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
-  const [mounted, setMounted] = useState(eager);
+  const [mounted, setMounted] = useState(false);
   const intensity = scheme.intensity ?? HERO_DIAL_ORB_SHADER.intensity;
   const [, mid, light] = scheme.colors;
 
@@ -50,7 +53,6 @@ export const HeroDialOrbGrainShader = memo(function HeroDialOrbGrainShader({
     const syncReady = () => {
       if (!hasRenderableSize(node)) return false;
       setReady(true);
-      if (eager) setMounted(true);
       return true;
     };
 
@@ -81,15 +83,20 @@ export const HeroDialOrbGrainShader = memo(function HeroDialOrbGrainShader({
       cancelAnimationFrame(raf2);
       cancelAnimationFrame(raf3);
     };
-  }, [eager, enabled]);
+  }, [enabled]);
 
   useLayoutEffect(() => {
-    if (!enabled) return;
-    if (eager || !ready || mounted) return;
+    if (!enabled || !ready || mounted) return;
 
-    const raf = requestAnimationFrame(() => setMounted(true));
-    return () => cancelAnimationFrame(raf);
-  }, [eager, enabled, mounted, ready]);
+    const delay = eager ? mountDelayMs : mountDelayMs + 180;
+    if (delay <= 0) {
+      const raf = requestAnimationFrame(() => setMounted(true));
+      return () => cancelAnimationFrame(raf);
+    }
+
+    const timer = window.setTimeout(() => setMounted(true), delay);
+    return () => window.clearTimeout(timer);
+  }, [eager, enabled, mountDelayMs, mounted, ready]);
 
   return (
     <div

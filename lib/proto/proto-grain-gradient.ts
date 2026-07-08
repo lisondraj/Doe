@@ -31,6 +31,9 @@ export const PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_ORB = Math.floor(320 * 320 * 1.5
 /** iPhone — hero full-bleed bands; raised cap for Retina without desktop cost. */
 export const PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO = Math.floor(1920 * 1080 * 2.25);
 
+/** iPhone hero with dial orbs — lower cap so background + one focused orb share WebGL. */
+export const PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO_WITH_ORBS = Math.floor(960 * 720 * 1.35);
+
 export const PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_FEATURE = Math.floor(960 * 640 * 2);
 
 export const PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_STACK = Math.floor(960 * 640 * 1.25);
@@ -437,6 +440,10 @@ export function isProtoShaderHeroVariant(variant: ProtoGrainGradientVariant) {
 export function protoShaderMaxPixelCount(variant: ProtoGrainGradientVariant) {
   if (isDoePhoneShaderContext()) {
     if (isProtoShaderHeroVariant(variant) || variant === "home-footer" || variant === "home-integrations") {
+      if (variant === "home-hero" || variant === "home-hero-phone") {
+        return PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO_WITH_ORBS;
+      }
+
       return PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO;
     }
 
