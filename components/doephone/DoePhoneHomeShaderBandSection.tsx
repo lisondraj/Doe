@@ -1,5 +1,6 @@
 "use client";
 
+import { DoePhoneHomeSectionWorkflowInput } from "@/components/doephone/DoePhoneHomeSectionWorkflowInput";
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import type { DoePhoneCommunicationSlide } from "@/lib/doephone/communication-carousel";
 import { DOEPHONE_MAIN_PAGE_VIEWPORT_SECTION } from "@/lib/doephone/section-styles";
@@ -9,9 +10,11 @@ import { doeHomeDuskShaderBandSurface, doeHomeShaderBandSurface } from "@/lib/pr
 export function DoePhoneHomeShaderBandSection({
   slideId,
   shaderTheme = "default",
+  showWorkflowInput = false,
 }: {
   slideId: DoePhoneCommunicationSlide["id"];
   shaderTheme?: "default" | "dusk";
+  showWorkflowInput?: boolean;
 }) {
   const shader =
     shaderTheme === "dusk"
@@ -19,7 +22,11 @@ export function DoePhoneHomeShaderBandSection({
       : doeHomeShaderBandSurface(slideId);
 
   return (
-    <section className={`home-feature-shader-band ${DOEPHONE_MAIN_PAGE_VIEWPORT_SECTION}`} aria-hidden>
+    <section
+      className={`home-feature-shader-band${showWorkflowInput ? " home-feature-shader-band--workflow" : ""} ${DOEPHONE_MAIN_PAGE_VIEWPORT_SECTION}`}
+      aria-label={showWorkflowInput ? "Build" : undefined}
+      aria-hidden={showWorkflowInput ? undefined : true}
+    >
       {shader ? (
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <ProtoGrainGradient
@@ -28,6 +35,12 @@ export function DoePhoneHomeShaderBandSection({
             colorBack={shader.colorBack}
             static
           />
+        </div>
+      ) : null}
+
+      {showWorkflowInput ? (
+        <div className="relative z-[10] flex h-full min-h-0 w-full flex-col justify-end">
+          <DoePhoneHomeSectionWorkflowInput />
         </div>
       ) : null}
     </section>

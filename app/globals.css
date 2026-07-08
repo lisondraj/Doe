@@ -1387,24 +1387,17 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__spec
   min-height: 0;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section--workflow .home-feature-card-section__inner {
-  justify-content: flex-start !important;
-  flex-direction: column !important;
-  position: relative;
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow {
+  position: relative !important;
+  min-height: var(--doe-section-band-vh, var(--app-vh, 100lvh)) !important;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section--workflow .home-feature-card-section__content {
-  flex: 1 1 auto !important;
-  min-height: 0;
-  justify-content: center !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-section__workflow-input {
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-section__workflow-input {
   padding-left: var(--proto-phone-gutter-left) !important;
   padding-right: var(--proto-phone-gutter-right) !important;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-section__workflow-input .build-workflow-ui-scale {
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-section__workflow-input .build-workflow-ui-scale {
   --build-workflow-ui-scale: 0.84;
   transform: scale(var(--build-workflow-ui-scale));
   transform-origin: left bottom;
@@ -1413,11 +1406,20 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-section__workflow-
   margin-left: 0;
 }
 
-html[data-home-page][data-layout="desktop"] .home-feature-card-section--workflow .home-feature-card-section__inner {
-  position: relative !important;
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-section__workflow-input,
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .doephone-section-reveal--input {
+  opacity: 1 !important;
+  transform: none !important;
+  animation: none !important;
 }
 
-html[data-home-page][data-layout="desktop"] .home-feature-card-section--workflow .home-feature-section__workflow-input .build-workflow-ui-scale {
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow {
+  position: relative !important;
+  min-height: 100dvh !important;
+  height: 100dvh !important;
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-section__workflow-input .build-workflow-ui-scale {
   transform: none;
   width: 100%;
 }

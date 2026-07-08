@@ -2,7 +2,6 @@
 
 import { DoePhoneCommunicationCarouselCard } from "@/components/doephone/DoePhoneCommunicationCarouselCard";
 import { DoePhoneHomeSpecialtyPillColumns } from "@/components/doephone/DoePhoneHomeSpecialtyPillColumns";
-import { DoePhoneHomeSectionWorkflowInput } from "@/components/doephone/DoePhoneHomeSectionWorkflowInput";
 import type { DoePhoneCommunicationSlide } from "@/lib/doephone/communication-carousel";
 import {
   DOEPHONE_DISPLAY_WEIGHT_TW,
@@ -21,20 +20,18 @@ export function DoePhoneHomeFeatureCardSection({
   titleLine2,
   shaderTheme = "default",
   showSpecialtyColumns = false,
-  showWorkflowInput = false,
 }: {
   slide: DoePhoneCommunicationSlide;
   titleLine1: string;
   titleLine2: string;
   shaderTheme?: "default" | "dusk";
   showSpecialtyColumns?: boolean;
-  showWorkflowInput?: boolean;
 }) {
   const shaderVariant = protoGrainGradientVariant(slide.id);
 
   return (
     <section
-      className={`home-feature-card-section${showSpecialtyColumns ? " home-feature-card-section--specialties" : ""}${showWorkflowInput ? " home-feature-card-section--workflow" : ""} ${DOEPHONE_MAIN_PAGE_BEIGE_SECTION}`}
+      className={`home-feature-card-section${showSpecialtyColumns ? " home-feature-card-section--specialties" : ""} ${DOEPHONE_MAIN_PAGE_BEIGE_SECTION}`}
       aria-label={slide.menuLabel}
     >
       <div className={`${DOEPHONE_SECTION_CONTENT_CENTER} home-feature-card-section__inner`}>
@@ -76,7 +73,6 @@ export function DoePhoneHomeFeatureCardSection({
             </>
           )}
         </div>
-        {showWorkflowInput ? <DoePhoneHomeSectionWorkflowInput /> : null}
       </div>
     </section>
   );
