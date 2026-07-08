@@ -28,6 +28,9 @@ export const PROTO_SHADER_MAX_PIXEL_COUNT_FEATURE = Math.floor(1920 * 1080 * 3);
 /** iPhone hero speaking orbs — tiny cap so all 11 instances fit in WebGL budget. */
 export const PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_ORB = Math.floor(320 * 320 * 1.5);
 
+/** iPhone hero dial orbs — sharper cap for large vmin sizing on Retina. */
+export const PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO_DIAL_ORB = Math.floor(420 * 420 * 2.1);
+
 /** iPhone agents carousel — larger orbs need a higher cap for crisp Retina edges. */
 export const PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_CAROUSEL_ORB = Math.floor(480 * 480 * 2.25);
 

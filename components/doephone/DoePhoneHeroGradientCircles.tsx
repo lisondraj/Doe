@@ -20,9 +20,9 @@ import {
 } from "@/lib/doephone/hero-dial-orbs";
 import {
   DOEPHONE_HERO_ORB_REVEAL_BASE_DELAY_MS,
-  DOEPHONE_HERO_ORB_REVEAL_STAGGER_MS,
 } from "@/lib/doephone/section-reveal-timing";
 import { doePhoneRevealLiftClass } from "@/lib/doephone/use-doe-phone-section-reveal";
+import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO_DIAL_ORB } from "@/lib/proto/proto-grain-gradient";
 
 const DIAL_STEP = (Math.PI * 2) / HERO_DIAL_ORB_COUNT;
 const AUTO_ADVANCE_MS = 5000;
@@ -215,6 +215,7 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
           enabled
           stickMounted
           mountDelayMs={mountDelayMs}
+          maxPixelCount={PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO_DIAL_ORB}
         />
         <div
           className="pointer-events-none absolute inset-0 rounded-full hero-speaking-orb__core-shade"
@@ -519,7 +520,7 @@ export function DoePhoneHeroGradientCircles({
                 <div
                   className={`hero-speaking-orbs__node-reveal ${doePhoneRevealLiftClass(true)}`}
                   style={{
-                    "--doephone-reveal-lift-delay": `${DOEPHONE_HERO_ORB_REVEAL_BASE_DELAY_MS + index * DOEPHONE_HERO_ORB_REVEAL_STAGGER_MS}ms`,
+                    "--doephone-reveal-lift-delay": `${DOEPHONE_HERO_ORB_REVEAL_BASE_DELAY_MS}ms`,
                   } as CSSProperties}
                 >
                   <SpeakingGradientOrb
