@@ -13,9 +13,18 @@ import {
 import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO } from "@/lib/proto/proto-grain-gradient";
 
 const DIAL_STEP = (Math.PI * 2) / HERO_DIAL_ORB_COUNT;
-const DIAL_RADIUS_VMIN = 47;
-const ORB_BASE_SIZE = "clamp(15rem, 48vmin, 21rem)";
 const AUTO_ADVANCE_MS = 5000;
+
+const HERO_DIAL_LAYOUT = {
+  mobile: {
+    radiusVmin: 47,
+    orbSize: "clamp(15rem, 48vmin, 21rem)",
+  },
+  desktop: {
+    radiusVmin: 58,
+    orbSize: "clamp(18rem, 54vmin, 28rem)",
+  },
+} as const;
 const SWITCH_MS = 920;
 const PILL_OUT_MS = 220;
 
@@ -38,11 +47,11 @@ function easeDialStep(t: number) {
   return 1 + c3 * (t - 1) ** 3 + c1 * (t - 1) ** 2;
 }
 
-function orbAccentStyle(scheme: HeroDialOrbScheme) {
+function orbAccentStyle(scheme: HeroDialOrbScheme, orbSize: string) {
   const [dark, mid, light] = scheme.colors;
   return {
-    width: ORB_BASE_SIZE,
-    height: ORB_BASE_SIZE,
+    width: orbSize,
+    height: orbSize,
     "--orb-halo-dark": dark,
     "--orb-halo-mid": mid,
     "--orb-halo-light": light,
@@ -64,13 +73,13 @@ function angularDistance(a: number, b: number) {
   return diff;
 }
 
-function buildDialLayout(dialRotation: number): DialOrbPose[] {
+function buildDialLayout(dialRotation: number, dialRadiusVmin: number): DialOrbPose[] {
   const focusedIndex = focusedIndexForRotation(dialRotation);
 
   return HERO_DIAL_ORBS.map((_, index) => {
     const angle = CENTER_SLOT_ANGLE + index * DIAL_STEP + dialRotation;
-    const xVmin = Math.cos(angle) * DIAL_RADIUS_VMIN;
-    const yVmin = Math.sin(angle) * DIAL_RADIUS_VMIN;
+    const xVmin = Math.cos(angle) * dialRadiusVmin;
+    const yVmin = Math.sin(angle) * dialRadiusVmin;
     const isFocused = index === focusedIndex;
     const dist = angularDistance(angle, CENTER_SLOT_ANGLE);
     const t = Math.min(1, dist / (DIAL_STEP * 0.72));
@@ -105,17 +114,19 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
   scheme,
   isFocused,
   showPill,
+  orbSize,
 }: {
   scheme: HeroDialOrbScheme;
   isFocused: boolean;
   showPill: boolean;
+  orbSize: string;
 }) {
   const intensity = scheme.intensity ?? HERO_DIAL_ORB_SHADER.intensity;
 
   return (
     <div
       className={`hero-speaking-orb${isFocused ? " hero-speaking-orb--focused" : ""}`}
-      style={orbAccentStyle(scheme)}
+      style={orbAccentStyle(scheme, orbSize)}
     >
       <div
         className="hero-speaking-orb__halo-ring"
@@ -172,7 +183,12 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
 });
 
 /** Hero — half-circle dial on the right edge; auto-steps down every 5s. */
-export function DoePhoneHeroGradientCircles() {
+export function DoePhoneHeroGradientCircles({
+  variant = "mobile",
+}: {
+  variant?: "mobile" | "desktop";
+}) {
+  const dialLayout = HERO_DIAL_LAYOUT[variant];
   const [dialRotation, setDialRotation] = useState(0);
   const [pillVisible, setPillVisible] = useState(true);
   const [stepping, setStepping] = useState(false);
@@ -183,7 +199,10 @@ export function DoePhoneHeroGradientCircles() {
   const reducedMotionRef = useRef(false);
   const tabVisibleRef = useRef(true);
 
-  const layout = useMemo(() => buildDialLayout(dialRotation), [dialRotation]);
+  const layout = useMemo(
+    () => buildDialLayout(dialRotation, dialLayout.radiusVmin),
+    [dialRotation, dialLayout.radiusVmin],
+  );
   const focusedIndex = focusedIndexForRotation(dialRotation);
   const focusedLabel = HERO_DIAL_ORBS[focusedIndex]?.label ?? "Agent";
 
@@ -259,7 +278,10 @@ export function DoePhoneHeroGradientCircles() {
   }, [advanceDial]);
 
   return (
-    <div className="hero-speaking-orbs" aria-hidden>
+    <div
+      className={`hero-speaking-orbs${variant === "desktop" ? " hero-speaking-orbs--desktop" : ""}`}
+      aria-hidden
+    >
       <div className="hero-speaking-orbs__stage">
         <div className={`hero-speaking-orbs__dial${stepping ? " hero-speaking-orbs__dial--stepping" : ""}`}>
           {HERO_DIAL_ORBS.map((scheme, index) => {
@@ -279,6 +301,7 @@ export function DoePhoneHeroGradientCircles() {
                   scheme={scheme}
                   isFocused={pose.isFocused}
                   showPill={pose.isFocused && pillVisible}
+                  orbSize={dialLayout.orbSize}
                 />
               </div>
             );

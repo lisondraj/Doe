@@ -158,14 +158,14 @@ html[data-home-page]:has(.doephone-mobile-root) .doephone-hero-section > .absolu
   padding-bottom: var(--proto-phone-gutter-y) !important;
 }
 
-/* Home iPhone — feature stack: sand band + shader card + title, shader spacers between. */
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section {
+/* Home — feature stack: sand band + shader card + title, shader spacers between. */
+html[data-home-page] .home-feature-card-section {
   display: flex !important;
   flex-direction: column !important;
   box-sizing: border-box !important;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__inner {
+html[data-home-page] .home-feature-card-section__inner {
   display: flex !important;
   flex: 1 1 auto !important;
   flex-direction: column !important;
@@ -177,7 +177,7 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__inne
   padding-bottom: var(--proto-phone-gutter-y) !important;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__card {
+html[data-home-page] .home-feature-card-section__card {
   flex: 0 1 auto !important;
   height: clamp(
     calc(23rem + var(--app-vh, 100lvh) / 8),
@@ -193,25 +193,55 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__card
 }
 
 /* Card shell is all absolute layers — explicit height so h-full children paint. */
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__card > * {
+html[data-home-page] .home-feature-card-section__card > * {
   height: 100% !important;
   min-height: 100% !important;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-ui-scale {
+html[data-home-page] .home-feature-card-ui-scale {
   transform: scale(0.84);
   transform-origin: center center;
   width: 100%;
   height: 100%;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__title {
+html[data-home-page] .home-feature-card-section__title {
   font-size: clamp(1.72rem, 1.02rem + 4.85vmin, 2.85rem) !important;
   font-weight: 350 !important;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band {
+html[data-home-page] .home-feature-shader-band {
   min-height: var(--doe-section-band-vh, var(--app-vh, 100lvh)) !important;
+}
+
+html[data-home-page][data-layout="desktop"] {
+  --doe-page-surface: #f7f6f3;
+  --proto-page-bg: #f7f6f3;
+  --proto-phone-gutter-left: max(2.5rem, calc(env(safe-area-inset-left, 0px) + 2.5vw));
+  --proto-phone-gutter-right: max(2.5rem, calc(env(safe-area-inset-right, 0px) + 2.5vw));
+  --proto-phone-gutter-y: max(2rem, 4vmin);
+  background-color: #f7f6f3;
+}
+
+html[data-home-page][data-layout="desktop"] body {
+  background-color: #f7f6f3;
+}
+
+/* Desktop home — feature bands use viewport height (no phone viewport lock). */
+html[data-home-page][data-layout="desktop"] .home-feature-card-section__inner {
+  min-height: 100dvh !important;
+  padding-left: clamp(2.5rem, 5vw, 9rem) !important;
+  padding-right: clamp(2.5rem, 5vw, 9rem) !important;
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-card-section__card {
+  height: clamp(24rem, 56dvh, 42rem) !important;
+  min-height: clamp(24rem, 56dvh, 42rem) !important;
+  max-height: 62dvh !important;
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band {
+  min-height: 100dvh !important;
 }
 
 /* Home iPhone — Build section: one viewport band, slightly tighter copy + prompt. */
@@ -1386,6 +1416,18 @@ body.proto-route {
   --hero-pill-orange: #d2774c;
   --hero-dial-radius: 47vmin;
   --hero-dial-shift-x: 5.75vmin;
+}
+
+/* Desktop home hero — larger dial so orbs fill the wide viewport band. */
+html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop {
+  --hero-dial-radius: 58vmin;
+  --hero-dial-shift-x: 8vmin;
+  padding-top: clamp(2rem, 5.5vmin, 3.25rem);
+  padding-bottom: clamp(4rem, 12vmin, 6.5rem);
+}
+
+html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop .hero-speaking-orbs__stage {
+  max-height: calc(100% - clamp(2rem, 5vmin, 3rem));
 }
 
 .hero-speaking-orbs__stage {

@@ -3,14 +3,16 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import { DoeDesktopFeatureStack } from "@/components/doephone/DoeDesktopFeatureStack";
+import { DoePhoneClosingSection } from "@/components/doephone/DoePhoneClosingSection";
 import { DoePhoneHeroSection } from "@/components/doephone/DoePhoneHeroSection";
+import { DoePhoneHomeFeatureStack } from "@/components/doephone/DoePhoneHomeFeatureStack";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
 import { DesktopNavActionRow } from "@/components/nav/DesktopNavActionRow";
 import {
   DOE_DESKTOP_NAV_LOGO_TW,
   DOE_DESKTOP_PAGE_INSET_X,
 } from "@/lib/doephone/doe-desktop-layout-styles";
+import { DOEPHONE_BEIGE_SECTION } from "@/lib/doephone/section-styles";
 import { DOE_PAGE_BORDER, DOE_PAGE_SURFACE } from "@/lib/home/doe-page-colors";
 import { lora } from "@/lib/home/fonts";
 
@@ -86,11 +88,15 @@ export function DoeDesktopHome({
         </nav>
       </div>
 
-      <div className="w-full border-t" style={{ borderColor: DOE_PAGE_BORDER }} aria-hidden />
+      <div className="relative z-10">
+        <DoePhoneHomeFeatureStack />
 
-      <DoeDesktopFeatureStack />
+        <section className={DOEPHONE_BEIGE_SECTION} aria-label="Closing">
+          <DoePhoneClosingSection />
+        </section>
 
-      <HomeFooter linksDisabled={!navActionLinksEnabled} />
+        <HomeFooter linksDisabled={!navActionLinksEnabled} />
+      </div>
     </div>
   );
 }
