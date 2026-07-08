@@ -127,7 +127,7 @@ export function DoePhoneHeroSection({
         />
       )}
 
-      {isMobile && !isProto ? <DoePhoneHeroGradientCircles /> : null}
+      {!isProto ? <DoePhoneHeroGradientCircles variant={variant} /> : null}
 
       <div
         className={`absolute left-0 right-0 z-[3] ${copyInset} ${copyBottom}`}

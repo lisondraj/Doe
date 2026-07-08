@@ -1388,6 +1388,18 @@ body.proto-route {
   --hero-dial-shift-x: 5.75vmin;
 }
 
+/* Desktop home hero — larger dial so orbs fill the wide viewport band. */
+html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop {
+  --hero-dial-radius: 58vmin;
+  --hero-dial-shift-x: 8vmin;
+  padding-top: clamp(2rem, 5.5vmin, 3.25rem);
+  padding-bottom: clamp(4rem, 12vmin, 6.5rem);
+}
+
+html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop .hero-speaking-orbs__stage {
+  max-height: calc(100% - clamp(2rem, 5vmin, 3rem));
+}
+
 .hero-speaking-orbs__stage {
   position: relative;
   width: var(--hero-dial-radius);
