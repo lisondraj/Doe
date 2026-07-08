@@ -32,7 +32,7 @@ function ReadMoreArrow() {
   );
 }
 
-/** Home announcement strip — main-page white overflow behind, base sand strip. */
+/** Home announcement strip — Meet Doe + read more. */
 export function DoeHomeTopBanner() {
   const [dismissed, setDismissed] = useState(false);
 
@@ -89,11 +89,11 @@ export function DoeHomeTopBanner() {
     <div
       className={`doe-home-top-banner${dismissed ? " doe-home-top-banner--dismissed" : ""}`}
       role="region"
-      aria-label="Company news"
+      aria-label="Meet Doe"
       aria-hidden={dismissed}
     >
       <p className={`doe-home-top-banner__text ${inter.className}`}>
-        <span>We raised a $5M pre-seed round!</span>
+        <span>Meet Doe, your 24/7 voice agent</span>
         <Link href="/blog" className="doe-home-top-banner__link">
           Read more
           <ReadMoreArrow />
