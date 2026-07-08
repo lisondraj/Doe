@@ -18,6 +18,7 @@ export function DoePhoneHomeFeatureStack({
       {DOEPHONE_COMMUNICATION_SLIDES.map((slide) => {
         const title = HOME_FEATURE_SECTION_TITLES[slide.id];
         const showSpecialtyColumns = slide.id === "front-desk";
+        const showWorkflowInput = slide.id === "inbox";
 
         return (
           <Fragment key={slide.id}>
@@ -27,6 +28,7 @@ export function DoePhoneHomeFeatureStack({
               titleLine2={title.line2}
               shaderTheme={shaderTheme}
               showSpecialtyColumns={showSpecialtyColumns}
+              showWorkflowInput={showWorkflowInput}
             />
             <DoePhoneHomeShaderBandSection slideId={slide.id} shaderTheme={shaderTheme} />
           </Fragment>

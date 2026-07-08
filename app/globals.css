@@ -1366,7 +1366,7 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section--spec
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section--specialties .home-feature-card-section__inner {
-  justify-content: flex-start !important;
+  justify-content: center !important;
   flex-direction: column !important;
   position: relative;
   height: var(--doe-section-band-vh, var(--app-vh, 100lvh)) !important;
@@ -1376,7 +1376,7 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section--spec
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section--specialties .home-feature-card-section__content--specialties {
-  flex: 1 1 auto !important;
+  flex: 0 0 auto !important;
   min-height: 0;
   display: flex !important;
   flex-direction: column !important;
@@ -1387,12 +1387,24 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__spec
   min-height: 0;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__workflow-input {
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section--workflow .home-feature-card-section__inner {
+  justify-content: flex-start !important;
+  flex-direction: column !important;
+  position: relative;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section--workflow .home-feature-card-section__content {
+  flex: 1 1 auto !important;
+  min-height: 0;
+  justify-content: center !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-section__workflow-input {
   padding-left: var(--proto-phone-gutter-left) !important;
   padding-right: var(--proto-phone-gutter-right) !important;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__workflow-input .build-workflow-ui-scale {
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-section__workflow-input .build-workflow-ui-scale {
   --build-workflow-ui-scale: 0.84;
   transform: scale(var(--build-workflow-ui-scale));
   transform-origin: left bottom;
@@ -1401,11 +1413,11 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__workf
   margin-left: 0;
 }
 
-html[data-home-page][data-layout="desktop"] .home-feature-card-section--specialties .home-feature-card-section__inner {
+html[data-home-page][data-layout="desktop"] .home-feature-card-section--workflow .home-feature-card-section__inner {
   position: relative !important;
 }
 
-html[data-home-page][data-layout="desktop"] .home-feature-card-section--specialties .home-feature-specialties__workflow-input .build-workflow-ui-scale {
+html[data-home-page][data-layout="desktop"] .home-feature-card-section--workflow .home-feature-section__workflow-input .build-workflow-ui-scale {
   transform: none;
   width: 100%;
 }
@@ -1421,7 +1433,7 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__titl
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__pill-stage {
   --specialty-pill-size: clamp(3.65rem, 6.35vmin, 4.75rem);
   --specialty-pill-gap: clamp(0.62rem, 0.32rem + 1.05vmin, 0.92rem);
-  --specialty-visible-rows: 10;
+  --specialty-visible-rows: 12;
   --specialty-scroll-duration: 36s;
   --specialty-fade-height-top: calc(var(--specialty-pill-size) * 1.35);
   --specialty-fade-height-bottom: calc(var(--specialty-pill-size) * 2.1 + var(--specialty-pill-gap));
