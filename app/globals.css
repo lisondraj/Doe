@@ -1412,9 +1412,9 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--activ
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section:has(.home-agents-carousel) {
   overflow: visible !important;
-  height: var(--app-vh, 100dvh) !important;
-  min-height: var(--app-vh, 100dvh) !important;
-  max-height: var(--app-vh, 100dvh) !important;
+  height: var(--doe-section-band-vh, var(--app-vh, 100lvh)) !important;
+  min-height: var(--doe-section-band-vh, var(--app-vh, 100lvh)) !important;
+  max-height: var(--doe-section-band-vh, var(--app-vh, 100lvh)) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section:has(.home-agents-carousel) .home-feature-card-section__inner {
@@ -1446,24 +1446,24 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__card
   width: 100vw;
   max-width: 100vw;
   margin-left: calc(50% - 50vw);
-  height: auto !important;
+  height: 100% !important;
   min-height: 0 !important;
   max-height: none !important;
-  flex: 0 0 auto !important;
+  flex: 1 1 auto !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__card--agents-carousel > .home-agents-carousel {
-  height: auto !important;
-  min-height: 0 !important;
+  height: 100% !important;
+  min-height: 100% !important;
   max-height: none !important;
-  flex: 0 0 auto !important;
+  flex: 1 1 auto !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel {
-  --home-agents-orb-size: clamp(22.25rem, 97vw, 29.75rem);
+  --home-agents-orb-size: clamp(18.5rem, 82vw, 24.5rem);
   --home-agents-orb-gap: clamp(1rem, 3.2vmin, 1.65rem);
   --home-agents-halo-bleed: clamp(0.35rem, 1.1vmin, 0.65rem);
   --home-agents-glow-bleed: clamp(2.75rem, 7.5vmin, 4.25rem);
@@ -3527,7 +3527,7 @@ html[data-home-page] .hero-speaking-orbs__node-reveal.doephone-reveal-lift {
 
 html[data-home-page] .hero-speaking-orbs__node-reveal.doephone-reveal-lift--in {
   animation: doephone-hero-orb-reveal-in 1.45s cubic-bezier(0.22, 1, 0.36, 1)
-    var(--doephone-reveal-lift-delay, 1.8s) both;
+    var(--doephone-reveal-lift-delay, 0ms) both;
 }
 
 @keyframes doephone-hero-orb-reveal-in {
