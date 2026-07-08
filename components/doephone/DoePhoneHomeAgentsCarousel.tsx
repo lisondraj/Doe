@@ -12,6 +12,7 @@ import {
   type HeroDialOrbScheme,
 } from "@/lib/doephone/hero-dial-orbs";
 import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_CAROUSEL_ORB } from "@/lib/proto/proto-grain-gradient";
+import { SHADER_WEBGL_SLOT_PRIORITY } from "@/lib/doephone/shader-webgl-budget";
 import { doephoneAgentsRevealStyleVars } from "@/lib/doephone/section-reveal-timing";
 import {
   doePhoneSectionRevealSegmentClass,
@@ -75,10 +76,12 @@ function AgentCarouselOrb({
   scheme,
   focused,
   mountShader,
+  orbIndex,
 }: {
   scheme: HeroDialOrbScheme;
   focused: boolean;
   mountShader: boolean;
+  orbIndex: number;
 }) {
   const displayScheme = heroDialOrbCarouselScheme(scheme);
 
@@ -96,9 +99,15 @@ function AgentCarouselOrb({
             shaderConfig={HERO_DIAL_ORB_CAROUSEL_SHADER}
             eager={focused}
             enabled={mountShader}
-            stickMounted
+            stickMounted={focused}
             mountDelayMs={focused ? 380 : 470}
             maxPixelCount={PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_CAROUSEL_ORB}
+            shaderSlotId={`agents-carousel-${orbIndex}`}
+            shaderPriority={
+              focused
+                ? SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_FOCUSED
+                : SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_ADJACENT
+            }
           />
         </div>
       </div>
@@ -263,6 +272,7 @@ export function DoePhoneHomeAgentsCarousel() {
                 scheme={scheme}
                 focused={orbIndex === position}
                 mountShader={shouldMountCarouselShader(orbIndex, position)}
+                orbIndex={orbIndex}
               />
             ))}
           </div>

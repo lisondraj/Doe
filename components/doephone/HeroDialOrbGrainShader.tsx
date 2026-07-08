@@ -1,13 +1,20 @@
 "use client";
 
 import { GrainGradient } from "@paper-design/shaders-react";
-import { memo, useLayoutEffect, useRef, useState } from "react";
+import { memo, useCallback, useId, useLayoutEffect, useRef, useState } from "react";
 
 import {
   HERO_DIAL_ORB_SHADER,
   type HeroDialOrbScheme,
   type HeroDialOrbShaderConfig,
 } from "@/lib/doephone/hero-dial-orbs";
+import {
+  acquireShaderWebGLSlot,
+  releaseShaderWebGLSlot,
+  SHADER_WEBGL_SLOT_PRIORITY,
+} from "@/lib/doephone/shader-webgl-budget";
+import { useShaderContextRecovery } from "@/lib/doephone/use-shader-context-recovery";
+import { useShaderViewportGate } from "@/lib/doephone/use-shader-viewport-gate";
 import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_ORB } from "@/lib/proto/proto-grain-gradient";
 
 function hasRenderableSize(node: HTMLElement) {
@@ -29,6 +36,8 @@ export const HeroDialOrbGrainShader = memo(function HeroDialOrbGrainShader({
   stickMounted = false,
   maxPixelCount = PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_ORB,
   shaderConfig = HERO_DIAL_ORB_SHADER,
+  shaderSlotId,
+  shaderPriority = SHADER_WEBGL_SLOT_PRIORITY.HERO_ORB,
 }: {
   scheme: HeroDialOrbScheme;
   /** Mount immediately when sized — hero focused orb, carousel center. */
@@ -37,19 +46,41 @@ export const HeroDialOrbGrainShader = memo(function HeroDialOrbGrainShader({
   enabled?: boolean;
   /** Defer WebGL mount so hero background can claim a context first. */
   mountDelayMs?: number;
-  /** Keep the grain shader after first mount — avoids fallback flash on dial rotation. */
+  /** Keep the grain shader after first mount while in view — avoids fallback flash on dial rotation. */
   stickMounted?: boolean;
   maxPixelCount?: number;
   shaderConfig?: HeroDialOrbShaderConfig;
+  shaderSlotId?: string;
+  shaderPriority?: number;
 }) {
+  const autoSlotId = useId();
+  const slotId = shaderSlotId ?? autoSlotId;
   const shellRef = useRef<HTMLDivElement>(null);
   const hasShaderRef = useRef(false);
   const [ready, setReady] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [painted, setPainted] = useState(false);
+  const [budgetGranted, setBudgetGranted] = useState(false);
+  const [shaderGeneration, setShaderGeneration] = useState(0);
+  const inViewport = useShaderViewportGate(shellRef);
   const intensity = scheme.intensity ?? shaderConfig.intensity;
-  const shouldMount = enabled || (stickMounted && hasShaderRef.current);
-  const showShader = shouldMount && ready && mounted;
+  const wantsShader = enabled || (stickMounted && hasShaderRef.current);
+  const shouldMount = wantsShader && inViewport;
+
+  const resetShader = useCallback(() => {
+    hasShaderRef.current = false;
+    setMounted(false);
+    setPainted(false);
+    setBudgetGranted(false);
+    releaseShaderWebGLSlot(slotId);
+    setShaderGeneration((current) => current + 1);
+  }, [slotId]);
+
+  const evictShader = useCallback(() => {
+    resetShader();
+  }, [resetShader]);
+
+  useShaderContextRecovery(shellRef, shouldMount && mounted, resetShader);
 
   useLayoutEffect(() => {
     if (!shouldMount) {
@@ -57,6 +88,10 @@ export const HeroDialOrbGrainShader = memo(function HeroDialOrbGrainShader({
         setReady(false);
         setMounted(false);
         setPainted(false);
+      }
+      if (budgetGranted) {
+        releaseShaderWebGLSlot(slotId);
+        setBudgetGranted(false);
       }
       return;
     }
@@ -97,10 +132,28 @@ export const HeroDialOrbGrainShader = memo(function HeroDialOrbGrainShader({
       cancelAnimationFrame(raf2);
       cancelAnimationFrame(raf3);
     };
-  }, [shouldMount, stickMounted]);
+  }, [budgetGranted, shouldMount, slotId, stickMounted]);
 
   useLayoutEffect(() => {
-    if (!shouldMount || !ready || mounted) return;
+    if (!shouldMount || !ready) {
+      if (budgetGranted) {
+        releaseShaderWebGLSlot(slotId);
+        setBudgetGranted(false);
+      }
+      return;
+    }
+
+    const granted = acquireShaderWebGLSlot(slotId, shaderPriority, evictShader);
+    setBudgetGranted(granted);
+
+    return () => {
+      releaseShaderWebGLSlot(slotId);
+      setBudgetGranted(false);
+    };
+  }, [evictShader, ready, shaderPriority, shouldMount, slotId]);
+
+  useLayoutEffect(() => {
+    if (!shouldMount || !ready || !budgetGranted || mounted) return;
 
     const delay = eager ? mountDelayMs : mountDelayMs + 120;
     if (delay <= 0) {
@@ -116,7 +169,9 @@ export const HeroDialOrbGrainShader = memo(function HeroDialOrbGrainShader({
       setMounted(true);
     }, delay);
     return () => window.clearTimeout(timer);
-  }, [eager, mountDelayMs, mounted, ready, shouldMount]);
+  }, [budgetGranted, eager, mountDelayMs, mounted, ready, shouldMount]);
+
+  const showShader = shouldMount && budgetGranted && ready && mounted;
 
   useLayoutEffect(() => {
     if (!showShader) {
@@ -157,6 +212,7 @@ export const HeroDialOrbGrainShader = memo(function HeroDialOrbGrainShader({
     >
       {showShader ? (
         <GrainGradient
+          key={shaderGeneration}
           width="100%"
           height="100%"
           fit={shaderConfig.fit}

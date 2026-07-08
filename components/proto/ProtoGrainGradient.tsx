@@ -1,7 +1,7 @@
 "use client";
 
 import { GrainGradient } from "@paper-design/shaders-react";
-import { memo, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 
 import {
   PROTO_GRAIN_GRADIENT_COLOR_BACK,
@@ -13,6 +13,13 @@ import {
   protoShaderMaxPixelCount,
   type ProtoGrainGradientVariant,
 } from "@/lib/proto/proto-grain-gradient";
+import {
+  acquireShaderWebGLSlot,
+  releaseShaderWebGLSlot,
+  SHADER_WEBGL_SLOT_PRIORITY,
+} from "@/lib/doephone/shader-webgl-budget";
+import { useShaderContextRecovery } from "@/lib/doephone/use-shader-context-recovery";
+import { useShaderViewportGate } from "@/lib/doephone/use-shader-viewport-gate";
 
 function isHeroVariant(variant: ProtoGrainGradientVariant) {
   return (
@@ -64,6 +71,7 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
 }) {
   const preset = PROTO_GRAIN_GRADIENT_PRESETS[variant];
   const containerRef = useRef<HTMLDivElement>(null);
+  const slotId = useId();
   const hero = isHeroVariant(variant);
   const phone = isPhoneLayout();
   const hasMountedRef = useRef(hero);
@@ -72,6 +80,24 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   const [isVisible, setIsVisible] = useState(hero);
   const [tabVisible, setTabVisible] = useState(true);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [budgetGranted, setBudgetGranted] = useState(false);
+  const [shaderGeneration, setShaderGeneration] = useState(0);
+  const inViewport = useShaderViewportGate(containerRef, hero ? "120% 0px" : "75% 0px");
+  const shaderPriority = hero
+    ? SHADER_WEBGL_SLOT_PRIORITY.HERO_BACKGROUND
+    : SHADER_WEBGL_SLOT_PRIORITY.SECTION_BAND;
+
+  const resetShader = useCallback(() => {
+    hasMountedRef.current = false;
+    setHasMounted(false);
+    setBudgetGranted(false);
+    releaseShaderWebGLSlot(slotId);
+    setShaderGeneration((current) => current + 1);
+  }, [slotId]);
+
+  const evictShader = useCallback(() => {
+    resetShader();
+  }, [resetShader]);
 
   const requestMount = () => {
     if (hasMountedRef.current) return;
@@ -79,9 +105,46 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     setHasMounted(true);
   };
 
+  const releaseMount = useCallback(() => {
+    if (!phone || hero) return;
+    hasMountedRef.current = false;
+    setHasMounted(false);
+    setBudgetGranted(false);
+    releaseShaderWebGLSlot(slotId);
+  }, [hero, phone, slotId]);
+
   useLayoutEffect(() => {
     if (hero) requestMount();
   }, [hero]);
+
+  useEffect(() => {
+    if (!phone || hero) return;
+    if (inViewport) {
+      requestMount();
+      return;
+    }
+    releaseMount();
+  }, [hero, inViewport, phone, releaseMount]);
+
+  useLayoutEffect(() => {
+    if (!hasMounted || !containerReady || !inViewport) {
+      if (budgetGranted) {
+        releaseShaderWebGLSlot(slotId);
+        setBudgetGranted(false);
+      }
+      return;
+    }
+
+    const granted = acquireShaderWebGLSlot(slotId, shaderPriority, evictShader);
+    setBudgetGranted(granted);
+
+    return () => {
+      releaseShaderWebGLSlot(slotId);
+      setBudgetGranted(false);
+    };
+  }, [containerReady, evictShader, hasMounted, inViewport, shaderPriority, slotId]);
+
+  useShaderContextRecovery(containerRef, hasMounted && budgetGranted && containerReady, resetShader);
 
   useLayoutEffect(() => {
     const node = containerRef.current;
@@ -193,7 +256,7 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   const targetSpeed = preset.speed ?? PROTO_GRAIN_GRADIENT_SPEED;
   const shouldAnimate =
     !staticShader && !reducedMotion && targetSpeed > 0 && isVisible && tabVisible && hasMounted;
-  const showGradient = hasMounted && containerReady;
+  const showGradient = hasMounted && containerReady && inViewport && budgetGranted;
 
   return (
     <div
@@ -204,6 +267,7 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     >
       {showGradient ? (
         <GrainGradient
+          key={shaderGeneration}
           width="100%"
           height="100%"
           fit={preset.fit ?? "cover"}

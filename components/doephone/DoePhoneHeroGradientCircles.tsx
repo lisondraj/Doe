@@ -23,6 +23,7 @@ import {
 } from "@/lib/doephone/section-reveal-timing";
 import { doePhoneRevealLiftClass } from "@/lib/doephone/use-doe-phone-section-reveal";
 import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO_DIAL_ORB } from "@/lib/proto/proto-grain-gradient";
+import { SHADER_WEBGL_SLOT_PRIORITY } from "@/lib/doephone/shader-webgl-budget";
 
 const DIAL_STEP = (Math.PI * 2) / HERO_DIAL_ORB_COUNT;
 const AUTO_ADVANCE_MS = 5000;
@@ -216,6 +217,12 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
           stickMounted
           mountDelayMs={mountDelayMs}
           maxPixelCount={PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO_DIAL_ORB}
+          shaderSlotId={`hero-orb-${scheme.label}`}
+          shaderPriority={
+            isFocused || expanded
+              ? SHADER_WEBGL_SLOT_PRIORITY.HERO_ORB_FOCUSED
+              : SHADER_WEBGL_SLOT_PRIORITY.HERO_ORB
+          }
         />
         <div
           className="pointer-events-none absolute inset-0 rounded-full hero-speaking-orb__core-shade"
