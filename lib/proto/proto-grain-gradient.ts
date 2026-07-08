@@ -19,14 +19,17 @@ export const PROTO_GRAIN_GRADIENT_SPEED = 1;
 /** Match library default — full hero sharpness on large bands. */
 export const PROTO_SHADER_MAX_PIXEL_COUNT_HERO = 1920 * 1080 * 4;
 
+/** Desktop home hero — 2× DPR headroom on large panels (e.g. 2560×1440). */
+export const PROTO_SHADER_MAX_PIXEL_COUNT_DESKTOP_HERO = Math.floor(2560 * 1440 * 4);
+
 /** Cap feature boxes — headroom for taller fit-shader cards at 2–3× DPR. */
 export const PROTO_SHADER_MAX_PIXEL_COUNT_FEATURE = Math.floor(1920 * 1080 * 3);
 
 /** iPhone hero speaking orbs — tiny cap so all 11 instances fit in WebGL budget. */
 export const PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_ORB = Math.floor(320 * 320 * 1.5);
 
-/** iPhone — lower WebGL resolution to keep scroll responsive. */
-export const PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO = Math.floor(1280 * 720 * 2);
+/** iPhone — hero full-bleed bands; raised cap for Retina without desktop cost. */
+export const PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO = Math.floor(1920 * 1080 * 2.25);
 
 export const PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_FEATURE = Math.floor(960 * 640 * 2);
 
@@ -38,6 +41,11 @@ function isDoePhoneShaderContext() {
     document.documentElement.getAttribute("data-doeforvc-always-phone") === "true" ||
     document.querySelector("[data-doeforvc-view='iphone']") != null
   );
+}
+
+function isDesktopHomeLayout() {
+  if (typeof document === "undefined") return false;
+  return document.documentElement.getAttribute("data-layout") === "desktop";
 }
 
 /** /about Meet Proto stack — smaller cap for static panels in a vertical stack. */
@@ -440,6 +448,10 @@ export function protoShaderMaxPixelCount(variant: ProtoGrainGradientVariant) {
   }
 
   if (isProtoShaderHeroVariant(variant) || variant === "home-footer" || variant === "home-integrations") {
+    if (isDesktopHomeLayout()) {
+      return PROTO_SHADER_MAX_PIXEL_COUNT_DESKTOP_HERO;
+    }
+
     return PROTO_SHADER_MAX_PIXEL_COUNT_HERO;
   }
 
