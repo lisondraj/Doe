@@ -22,15 +22,15 @@ const ORB_AGENT_LABELS = [
 
 const BRAND = DOE_HOME_ORANGE_PALETTE;
 
-/** Orange / orange-gold ladder — vibrant, offset from hero brand stops (circles only). */
+/** Periwinkle blue ladder — single secondary hue, light ↔ deep interleaved on dial. */
 const HERO_ORB_SHADE_LADDER = [
-  { colors: ["#966018", "#ECA850", "#F2CCA8"] as const, colorBack: BRAND.back },
-  { colors: ["#964818", "#DC8038", "#ECB498"] as const, colorBack: BRAND.back },
-  { colors: ["#965518", "#DC9860", "#ECBCA8"] as const, colorBack: BRAND.back },
-  { colors: ["#965818", "#E4B060", "#F2CC98"] as const, colorBack: BRAND.back },
-  { colors: ["#965010", "#EC9048", "#ECBA90"] as const, colorBack: BRAND.back },
-  { colors: ["#864810", "#CC8838", "#DEAC80"] as const, colorBack: BRAND.back },
-  { colors: ["#963810", "#DC6828", "#E6A878"] as const, colorBack: BRAND.back },
+  { colors: ["#2858A0", "#78C0F0", "#D8EEFF"] as const, colorBack: BRAND.back },
+  { colors: ["#203878", "#4870B8", "#A8B8E8"] as const, colorBack: BRAND.back },
+  { colors: ["#3068A8", "#90C8F8", "#E0F2FF"] as const, colorBack: BRAND.back },
+  { colors: ["#284888", "#5078C0", "#B0C8F0"] as const, colorBack: BRAND.back },
+  { colors: ["#3060A0", "#68A8E8", "#C8E2F8"] as const, colorBack: BRAND.back },
+  { colors: ["#1C3068", "#4060A0", "#98A8D0"] as const, colorBack: BRAND.back },
+  { colors: ["#2868A8", "#58B0E8", "#B8DFF8"] as const, colorBack: BRAND.back },
 ] as const;
 
 type OrbScheme = (typeof HERO_ORB_SHADE_LADDER)[number];
