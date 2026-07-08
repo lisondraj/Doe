@@ -96,10 +96,10 @@ html[data-about-page]:has(.blog-mobile-root) {
   );
   --proto-nav-cta-sheen-light: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.78) 0%,
-    rgba(255, 255, 255, 0.22) 54%,
-    rgba(30, 52, 58, 0.05) 82%,
-    rgba(30, 52, 58, 0.095) 100%
+    rgba(255, 255, 255, 0.34) 0%,
+    rgba(255, 255, 255, 0.09) 54%,
+    rgba(30, 52, 58, 0.025) 82%,
+    rgba(30, 52, 58, 0.045) 100%
   );
   --doe-nav-frost-scrolled-fill: #1e343a;
   --doe-nav-frost-scrolled-border: rgba(242, 236, 228, 0.24);
@@ -133,6 +133,13 @@ html[data-about-page]:has(.doephone-mobile-root) {
   --doe-nav-frost-scrolled-cta-bg: #f5e6d0;
   --doe-nav-frost-scrolled-cta-text: #1a1208;
   --doe-nav-frost-scrolled-cta-divider: rgba(26, 18, 8, 0.14);
+  --proto-nav-cta-sheen-light: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.3) 0%,
+    rgba(255, 255, 255, 0.08) 54%,
+    rgba(26, 18, 8, 0.02) 82%,
+    rgba(26, 18, 8, 0.035) 100%
+  );
   background-color: #faf0d8;
 }
 
@@ -1138,25 +1145,25 @@ html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav .proto-nav-ct
     color-mix(
       in srgb,
       rgba(255, 255, 255, 0.05) calc((1 - var(--proto-nav-frost-progress, 0)) * 100%),
-      rgba(255, 255, 255, 0.78) calc(var(--proto-nav-frost-progress, 0) * 100%)
+      rgba(255, 255, 255, 0.34) calc(var(--proto-nav-frost-progress, 0) * 100%)
     )
       0%,
     color-mix(
       in srgb,
       rgba(255, 255, 255, 0.015) calc((1 - var(--proto-nav-frost-progress, 0)) * 100%),
-      rgba(255, 255, 255, 0.22) calc(var(--proto-nav-frost-progress, 0) * 100%)
+      rgba(255, 255, 255, 0.09) calc(var(--proto-nav-frost-progress, 0) * 100%)
     )
       54%,
     color-mix(
       in srgb,
       rgba(255, 255, 255, 0.004) calc((1 - var(--proto-nav-frost-progress, 0)) * 100%),
-      rgba(30, 52, 58, 0.05) calc(var(--proto-nav-frost-progress, 0) * 100%)
+      rgba(30, 52, 58, 0.025) calc(var(--proto-nav-frost-progress, 0) * 100%)
     )
       82%,
     color-mix(
       in srgb,
       transparent calc((1 - var(--proto-nav-frost-progress, 0)) * 100%),
-      rgba(30, 52, 58, 0.095) calc(var(--proto-nav-frost-progress, 0) * 100%)
+      rgba(30, 52, 58, 0.045) calc(var(--proto-nav-frost-progress, 0) * 100%)
     )
       100%
   ) !important;
