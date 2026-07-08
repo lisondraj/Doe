@@ -31,8 +31,12 @@ function applyDesktopDocumentAttrs() {
   const html = document.documentElement;
   const body = document.body;
   html.removeAttribute("data-doeforvc-always-phone");
+  html.removeAttribute("data-doephone-pinching");
   html.setAttribute("data-layout", "desktop");
+  html.style.overflow = "";
+  body.classList.remove("doephone-route");
   body.classList.add("desktop-route");
+  body.style.overflow = "";
 }
 
 function applyPhonePinchViewport() {
@@ -92,18 +96,20 @@ export function DoePhoneRouter() {
       return;
     }
 
+    const meta = document.querySelector('meta[name="viewport"]');
+    const prevViewport = meta?.getAttribute("content") ?? "";
+    clearPhonePinchViewport(prevViewport);
     applyDesktopDocumentAttrs();
   }, [variant]);
 
   useEffect(() => {
-    if (variant !== "phone") return;
+    if (variant !== "phone") return undefined;
 
     const meta = document.querySelector('meta[name="viewport"]');
     const prevViewport = meta?.getAttribute("content") ?? "";
 
     return () => {
       clearPhonePinchViewport(prevViewport);
-      applyPhoneDocumentAttrs();
     };
   }, [variant]);
 

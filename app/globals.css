@@ -1187,10 +1187,13 @@ html[data-doephone-pinching="true"] .doephone-mobile-root {
 }
 
 /** /desktop — full desktop scroll; root layout uses wide-desktop:overflow-hidden on body */
+html[data-layout="desktop"],
+html[data-layout="desktop"] body,
 body.desktop-route,
 body.mainpage-route,
 body.proto-route {
   overflow: auto;
+  overscroll-behavior: auto;
 }
 
 .doeforvc-iphone-root {
