@@ -17,16 +17,25 @@ export function DoePhoneHomeFeatureStack({
     <>
       {DOEPHONE_COMMUNICATION_SLIDES.map((slide) => {
         const title = HOME_FEATURE_SECTION_TITLES[slide.id];
+        const moveCardToBand = slide.id === "front-desk";
 
         return (
           <Fragment key={slide.id}>
-            <DoePhoneHomeFeatureCardSection
-              slide={slide}
-              titleLine1={title.line1}
-              titleLine2={title.line2}
+            {moveCardToBand ? null : (
+              <DoePhoneHomeFeatureCardSection
+                slide={slide}
+                titleLine1={title.line1}
+                titleLine2={title.line2}
+                shaderTheme={shaderTheme}
+              />
+            )}
+            <DoePhoneHomeShaderBandSection
+              slideId={slide.id}
               shaderTheme={shaderTheme}
+              featureSlide={moveCardToBand ? slide : undefined}
+              titleLine1={moveCardToBand ? title.line1 : undefined}
+              titleLine2={moveCardToBand ? title.line2 : undefined}
             />
-            <DoePhoneHomeShaderBandSection slideId={slide.id} shaderTheme={shaderTheme} />
           </Fragment>
         );
       })}
