@@ -1,14 +1,14 @@
-import { DOE_HOME_ORANGE_PALETTE } from "@/lib/proto/proto-shader-backdrop-colors";
+import { DOE_HOME_HERO_COSMIC_PALETTE } from "@/lib/proto/proto-shader-backdrop-colors";
 
-const BRAND = DOE_HOME_ORANGE_PALETTE;
+const COSMIC = DOE_HOME_HERO_COSMIC_PALETTE;
 
-/** Shared rim lights — ties every sphere to hero sand / pill chrome. */
-const RIM_CREAM = "#F2E6D0";
-const RIM_PEACH = "#E8D8B8";
+/** Violet-tinted shadows — orbs sit in nebula depth, not on top of it. */
+const SHADOW_VIOLET = "#1E0F40";
+const SHADOW_DEEP = "#140832";
 
-/** Teal-tinted shadows — orbs sit in hero depth, not on top of it. */
-const SHADOW_TEAL = "#2A4848";
-const SHADOW_DEEP = "#243C3C";
+/** Frost rims — cool highlights against the cosmic field. */
+const RIM_FROST = "#F0E8FF";
+const RIM_ICE = "#D8FCFF";
 
 export type HeroDialOrbScheme = {
   label: string;
@@ -19,51 +19,51 @@ export type HeroDialOrbScheme = {
 };
 
 /**
- * Care-coordination ember nodes — brand gold / orange / copper / rose on teal.
- * Ordered bright ↔ deep around the ring so neighbors never share the same temperature.
+ * Cosmic nebula agent nodes — magenta / violet / cyan aurora on indigo.
+ * Ordered bright ↔ deep around the ring so neighbors never share the same hue.
  */
 export const HERO_DIAL_ORBS: readonly HeroDialOrbScheme[] = [
   {
     label: "Inbox Agent",
-    colors: [SHADOW_TEAL, "#EAC858", RIM_CREAM],
-    colorBack: BRAND.back,
-    intensity: 0.15,
+    colors: [SHADOW_VIOLET, "#FF5FE0", RIM_FROST],
+    colorBack: COSMIC.back,
+    intensity: 0.16,
   },
   {
     label: "Scheduling Agent",
-    colors: [SHADOW_DEEP, "#E89060", "#F2E4CC"],
-    colorBack: BRAND.back,
-    intensity: 0.14,
-  },
-  {
-    label: "Labs Agent",
-    colors: [SHADOW_TEAL, BRAND.gold, RIM_CREAM],
-    colorBack: BRAND.back,
-    intensity: 0.16,
-  },
-  {
-    label: "Referrals Agent",
-    colors: [SHADOW_DEEP, "#D99864", "#F5E6D4"],
-    colorBack: BRAND.back,
-    intensity: 0.14,
-  },
-  {
-    label: "Live Appointment",
-    colors: [SHADOW_TEAL, "#E4AD5C", "#FCF0E4"],
-    colorBack: BRAND.back,
-    intensity: 0.16,
-  },
-  {
-    label: "Billing Agent",
-    colors: [SHADOW_DEEP, "#D68662", "#F5DDD4"],
-    colorBack: BRAND.back,
+    colors: [SHADOW_DEEP, "#52E8F5", RIM_ICE],
+    colorBack: COSMIC.back,
     intensity: 0.15,
   },
   {
+    label: "Labs Agent",
+    colors: [SHADOW_VIOLET, "#7B58FF", "#E8DEFF"],
+    colorBack: COSMIC.back,
+    intensity: 0.17,
+  },
+  {
+    label: "Referrals Agent",
+    colors: [SHADOW_DEEP, "#FF78B8", "#FFE0F0"],
+    colorBack: COSMIC.back,
+    intensity: 0.15,
+  },
+  {
+    label: "Live Appointment",
+    colors: [SHADOW_VIOLET, "#B088FF", "#EDE4FF"],
+    colorBack: COSMIC.back,
+    intensity: 0.17,
+  },
+  {
+    label: "Billing Agent",
+    colors: [SHADOW_DEEP, "#3AD4E8", RIM_ICE],
+    colorBack: COSMIC.back,
+    intensity: 0.16,
+  },
+  {
     label: "Refill Agent",
-    colors: [SHADOW_DEEP, "#DE7850", "#F8E8DC"],
-    colorBack: BRAND.back,
-    intensity: 0.14,
+    colors: [SHADOW_DEEP, "#F06AD4", "#FFD8F5"],
+    colorBack: COSMIC.back,
+    intensity: 0.15,
   },
 ] as const;
 

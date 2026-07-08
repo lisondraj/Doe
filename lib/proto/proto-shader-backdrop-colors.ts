@@ -19,6 +19,14 @@ export const DOE_HOME_ORANGE_PALETTE = {
   tan: "#B87862",
 } as const;
 
+/** Hero experiment — cosmic nebula (hero shader + dial only). */
+export const DOE_HOME_HERO_COSMIC_PALETTE = {
+  back: "#16082E",
+  magenta: "#FF4FD8",
+  violet: "#6B4DFF",
+  cyan: "#2EE8F0",
+} as const;
+
 const PROTO_AGENTS_MID_BLUE = "#4A6878";
 
 type ShaderColors = {
@@ -36,6 +44,19 @@ export function doeHomeHeroShaderSurface(): ProtoGrainGradientSurface {
       DOE_HOME_ORANGE_PALETTE.copper,
     ],
     colorBack: DOE_HOME_ORANGE_PALETTE.back,
+  };
+}
+
+/** Doe home hero — cosmic nebula experiment (same home-hero flow preset). */
+export function doeHomeHeroCosmicShaderSurface(): ProtoGrainGradientSurface {
+  return {
+    variant: "home-hero",
+    colors: [
+      DOE_HOME_HERO_COSMIC_PALETTE.magenta,
+      DOE_HOME_HERO_COSMIC_PALETTE.violet,
+      DOE_HOME_HERO_COSMIC_PALETTE.cyan,
+    ],
+    colorBack: DOE_HOME_HERO_COSMIC_PALETTE.back,
   };
 }
 
