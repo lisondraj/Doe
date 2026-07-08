@@ -8,6 +8,7 @@ import {
   HERO_DIAL_ORBS,
   type HeroDialOrbScheme,
 } from "@/lib/doephone/hero-dial-orbs";
+import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_CAROUSEL_ORB } from "@/lib/proto/proto-grain-gradient";
 
 function orbAccentStyle(scheme: HeroDialOrbScheme): CSSProperties {
   const [dark, mid, light] = scheme.colors;
@@ -84,6 +85,7 @@ function AgentCarouselOrb({
             enabled={mountShader}
             stickMounted
             mountDelayMs={focused ? 380 : 470}
+            maxPixelCount={PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_CAROUSEL_ORB}
           />
           <div
             className="pointer-events-none absolute inset-0 rounded-full hero-speaking-orb__core-shade"

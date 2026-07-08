@@ -1490,16 +1490,13 @@ html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb {
   height: var(--home-agents-orb-size);
   flex: 0 0 var(--home-agents-orb-size);
   overflow: visible;
-  opacity: 0.9;
-  transform: scale(0.965);
-  transition:
-    opacity var(--home-agents-carousel-duration) var(--home-agents-carousel-ease),
-    transform var(--home-agents-carousel-duration) var(--home-agents-carousel-ease);
+  opacity: 0.88;
+  transform: none;
+  transition: opacity var(--home-agents-carousel-duration) var(--home-agents-carousel-ease);
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb--focused {
   opacity: 1;
-  transform: scale(1);
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb .hero-speaking-orb__halo-ring,
@@ -1508,16 +1505,14 @@ html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb .hero
   height: 100%;
   opacity: 0;
   border-width: 1px;
-  box-shadow:
-    0 0 0 0.5px color-mix(in srgb, var(--orb-halo-mid) 24%, transparent),
-    0 0 16px color-mix(in srgb, var(--orb-halo-mid) 16%, transparent);
+  box-shadow: none;
   transition:
     opacity var(--home-agents-carousel-duration) var(--home-agents-carousel-ease),
     transform var(--home-agents-carousel-duration) var(--home-agents-carousel-ease);
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb .hero-speaking-orb__halo-ring--echo {
-  box-shadow: 0 0 10px color-mix(in srgb, var(--orb-halo-light) 10%, transparent);
+  box-shadow: none;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb--focused .hero-speaking-orb__halo-ring {
@@ -1531,14 +1526,19 @@ html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb--focu
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb .hero-speaking-orb__core {
   background-color: var(--orb-halo-back);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--orb-halo-light) 14%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--orb-halo-light) 20%, transparent);
   transition: box-shadow var(--home-agents-carousel-duration) var(--home-agents-carousel-ease);
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb--focused .hero-speaking-orb__core {
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--orb-halo-light) 22%, transparent),
-    0 0 28px color-mix(in srgb, var(--orb-halo-mid) 18%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--orb-halo-light) 34%, transparent);
+}
+
+html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb .hero-speaking-orb__grain-shell,
+html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb .hero-speaking-orb__grain-shell canvas {
+  image-rendering: auto;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb .hero-speaking-orb__core-shade {

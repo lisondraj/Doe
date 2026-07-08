@@ -26,6 +26,7 @@ export const HeroDialOrbGrainShader = memo(function HeroDialOrbGrainShader({
   enabled = true,
   mountDelayMs = 0,
   stickMounted = false,
+  maxPixelCount = PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_ORB,
 }: {
   scheme: HeroDialOrbScheme;
   /** Mount immediately when sized — hero focused orb, carousel center. */
@@ -36,6 +37,7 @@ export const HeroDialOrbGrainShader = memo(function HeroDialOrbGrainShader({
   mountDelayMs?: number;
   /** Keep the grain shader after first mount — avoids fallback flash on dial rotation. */
   stickMounted?: boolean;
+  maxPixelCount?: number;
 }) {
   const shellRef = useRef<HTMLDivElement>(null);
   const hasShaderRef = useRef(false);
@@ -168,7 +170,7 @@ export const HeroDialOrbGrainShader = memo(function HeroDialOrbGrainShader({
           offsetX={HERO_DIAL_ORB_SHADER.offsetX}
           offsetY={HERO_DIAL_ORB_SHADER.offsetY}
           scale={HERO_DIAL_ORB_SHADER.scale}
-          maxPixelCount={PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_ORB}
+          maxPixelCount={maxPixelCount}
         />
       ) : null}
     </div>
