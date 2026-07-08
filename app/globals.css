@@ -1439,8 +1439,7 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__card
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel {
   --home-agents-orb-size: clamp(20.5rem, 94vw, 27.5rem);
   --home-agents-orb-gap: clamp(1rem, 3.2vmin, 1.65rem);
-  --home-agents-halo-scale: 1.16;
-  --home-agents-halo-bleed: clamp(1.85rem, 5.5vmin, 3rem);
+  --home-agents-halo-bleed: clamp(1.55rem, 4.5vmin, 2.5rem);
   --home-agents-orb-step: calc(var(--home-agents-orb-size) + var(--home-agents-orb-gap));
   --home-agents-orb-half: calc(var(--home-agents-orb-size) / 2);
   --home-agents-carousel-duration: 720ms;
@@ -1505,47 +1504,40 @@ html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb--focu
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb .hero-speaking-orb__halo-ring,
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb .hero-speaking-orb__halo-ring--echo {
-  width: calc(100% * var(--home-agents-halo-scale));
-  height: calc(100% * var(--home-agents-halo-scale));
-  opacity: 0.12;
-  border-width: 1.25px;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  border-width: 1px;
   box-shadow:
-    0 0 0 0.75px color-mix(in srgb, var(--orb-halo-mid) 28%, transparent),
-    0 0 22px color-mix(in srgb, var(--orb-halo-mid) 20%, transparent);
+    0 0 0 0.5px color-mix(in srgb, var(--orb-halo-mid) 24%, transparent),
+    0 0 16px color-mix(in srgb, var(--orb-halo-mid) 16%, transparent);
   transition:
     opacity var(--home-agents-carousel-duration) var(--home-agents-carousel-ease),
-    transform var(--home-agents-carousel-duration) var(--home-agents-carousel-ease),
-    box-shadow var(--home-agents-carousel-duration) var(--home-agents-carousel-ease);
+    transform var(--home-agents-carousel-duration) var(--home-agents-carousel-ease);
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb .hero-speaking-orb__halo-ring--echo {
-  box-shadow: 0 0 18px color-mix(in srgb, var(--orb-halo-light) 16%, transparent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--orb-halo-light) 10%, transparent);
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb--focused .hero-speaking-orb__halo-ring {
-  opacity: 0.58;
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--orb-halo-light) 36%, transparent),
-    0 0 32px color-mix(in srgb, var(--orb-halo-mid) 28%, transparent),
-    0 0 64px color-mix(in srgb, var(--orb-halo-mid) 14%, transparent);
+  opacity: 0.34;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb--focused .hero-speaking-orb__halo-ring--echo {
-  opacity: 0.36;
-  transform: translate3d(-50%, -50%, 0) scale(1.1);
-  box-shadow: 0 0 28px color-mix(in srgb, var(--orb-halo-light) 22%, transparent);
+  opacity: 0.18;
+  transform: translate3d(-50%, -50%, 0) scale(1.07);
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb .hero-speaking-orb__core {
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--orb-halo-light) 16%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--orb-halo-light) 14%, transparent);
   transition: box-shadow var(--home-agents-carousel-duration) var(--home-agents-carousel-ease);
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb--focused .hero-speaking-orb__core {
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--orb-halo-light) 30%, transparent),
-    0 0 40px color-mix(in srgb, var(--orb-halo-mid) 26%, transparent),
-    0 0 72px color-mix(in srgb, var(--orb-halo-mid) 12%, transparent);
+    0 0 0 1px color-mix(in srgb, var(--orb-halo-light) 22%, transparent),
+    0 0 28px color-mix(in srgb, var(--orb-halo-mid) 18%, transparent);
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb .hero-speaking-orb__core-shade {
