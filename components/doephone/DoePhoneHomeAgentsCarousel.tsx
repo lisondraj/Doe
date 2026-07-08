@@ -1,15 +1,13 @@
 "use client";
 
-import { GrainGradient } from "@paper-design/shaders-react";
-import { useCallback, useState, type CSSProperties } from "react";
+import { HeroDialOrbGrainShader } from "@/components/doephone/HeroDialOrbGrainShader";
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type TransitionEvent } from "react";
 
 import { suisseIntl } from "@/lib/home/fonts";
 import {
-  HERO_DIAL_ORB_SHADER,
   HERO_DIAL_ORBS,
   type HeroDialOrbScheme,
 } from "@/lib/doephone/hero-dial-orbs";
-import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO } from "@/lib/proto/proto-grain-gradient";
 
 function orbAccentStyle(scheme: HeroDialOrbScheme): CSSProperties {
   const [dark, mid, light] = scheme.colors;
@@ -63,12 +61,12 @@ function CarouselChevron({
 function AgentCarouselOrb({
   scheme,
   focused,
+  mountShader,
 }: {
   scheme: HeroDialOrbScheme;
   focused: boolean;
+  mountShader: boolean;
 }) {
-  const intensity = scheme.intensity ?? HERO_DIAL_ORB_SHADER.intensity;
-
   return (
     <div
       className={`home-agents-carousel__orb hero-speaking-orb${
@@ -80,24 +78,10 @@ function AgentCarouselOrb({
       <div className="hero-speaking-orb__halo-ring hero-speaking-orb__halo-ring--echo" aria-hidden />
       <div className="hero-speaking-orb__progress-shell">
         <div className="hero-speaking-orb__core relative overflow-hidden rounded-full">
-          <GrainGradient
-            width="100%"
-            height="100%"
-            fit={HERO_DIAL_ORB_SHADER.fit}
-            worldWidth={HERO_DIAL_ORB_SHADER.worldWidth}
-            worldHeight={HERO_DIAL_ORB_SHADER.worldHeight}
-            colors={[scheme.colors[0], scheme.colors[1], scheme.colors[2]]}
-            colorBack={scheme.colorBack}
-            softness={HERO_DIAL_ORB_SHADER.softness}
-            intensity={intensity}
-            noise={HERO_DIAL_ORB_SHADER.noise}
-            shape={HERO_DIAL_ORB_SHADER.shape}
-            speed={HERO_DIAL_ORB_SHADER.speed}
-            rotation={HERO_DIAL_ORB_SHADER.rotation}
-            offsetX={HERO_DIAL_ORB_SHADER.offsetX}
-            offsetY={HERO_DIAL_ORB_SHADER.offsetY}
-            scale={HERO_DIAL_ORB_SHADER.scale}
-            maxPixelCount={PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO}
+          <HeroDialOrbGrainShader
+            scheme={scheme}
+            eager={focused}
+            enabled={mountShader}
           />
           <div
             className="pointer-events-none absolute inset-0 rounded-full hero-speaking-orb__core-shade"
@@ -122,20 +106,84 @@ const AGENTS_CAROUSEL_ORBS: readonly HeroDialOrbScheme[] = [
 
 const AGENTS_CAROUSEL_ORB_COUNT = AGENTS_CAROUSEL_ORBS.length;
 const AGENTS_CAROUSEL_START_INDEX = 1;
+const AGENTS_CAROUSEL_LOOP_ORBS: readonly HeroDialOrbScheme[] = [
+  ...AGENTS_CAROUSEL_ORBS,
+  ...AGENTS_CAROUSEL_ORBS,
+  ...AGENTS_CAROUSEL_ORBS,
+];
+const AGENTS_CAROUSEL_LOOP_START =
+  AGENTS_CAROUSEL_ORB_COUNT + AGENTS_CAROUSEL_START_INDEX;
+const AGENTS_CAROUSEL_SHADER_WINDOW = 2;
+
+function shouldMountCarouselShader(orbIndex: number, position: number) {
+  return Math.abs(orbIndex - position) <= AGENTS_CAROUSEL_SHADER_WINDOW;
+}
 
 /** Hero agent orbs — horizontal carousel with chevrons and label pill. */
 export function DoePhoneHomeAgentsCarousel() {
-  const [index, setIndex] = useState(AGENTS_CAROUSEL_START_INDEX);
+  const [position, setPosition] = useState(AGENTS_CAROUSEL_LOOP_START);
+  const [trackInstant, setTrackInstant] = useState(false);
+  const reenableTransitionRef = useRef<number | null>(null);
+
+  const active = AGENTS_CAROUSEL_LOOP_ORBS[position];
 
   const goPrev = useCallback(() => {
-    setIndex((current) => (current - 1 + AGENTS_CAROUSEL_ORB_COUNT) % AGENTS_CAROUSEL_ORB_COUNT);
+    setTrackInstant(false);
+    setPosition((current) => current - 1);
   }, []);
 
   const goNext = useCallback(() => {
-    setIndex((current) => (current + 1) % AGENTS_CAROUSEL_ORB_COUNT);
+    setTrackInstant(false);
+    setPosition((current) => current + 1);
   }, []);
 
-  const active = AGENTS_CAROUSEL_ORBS[index];
+  const handleTrackTransitionEnd = useCallback(
+    (event: TransitionEvent<HTMLDivElement>) => {
+      if (trackInstant) {
+        return;
+      }
+
+      if (event.target !== event.currentTarget || event.propertyName !== "transform") {
+        return;
+      }
+
+      if (position >= AGENTS_CAROUSEL_ORB_COUNT && position < AGENTS_CAROUSEL_ORB_COUNT * 2) {
+        return;
+      }
+
+      setTrackInstant(true);
+      setPosition((current) => {
+        if (current < AGENTS_CAROUSEL_ORB_COUNT) {
+          return current + AGENTS_CAROUSEL_ORB_COUNT;
+        }
+
+        if (current >= AGENTS_CAROUSEL_ORB_COUNT * 2) {
+          return current - AGENTS_CAROUSEL_ORB_COUNT;
+        }
+
+        return current;
+      });
+    },
+    [position, trackInstant],
+  );
+
+  useEffect(() => {
+    if (!trackInstant) {
+      return;
+    }
+
+    reenableTransitionRef.current = window.requestAnimationFrame(() => {
+      reenableTransitionRef.current = window.requestAnimationFrame(() => {
+        setTrackInstant(false);
+      });
+    });
+
+    return () => {
+      if (reenableTransitionRef.current !== null) {
+        window.cancelAnimationFrame(reenableTransitionRef.current);
+      }
+    };
+  }, [trackInstant, position]);
 
   return (
     <div className={`home-agents-carousel ${suisseIntl.className}`} aria-hidden>
@@ -143,19 +191,27 @@ export function DoePhoneHomeAgentsCarousel() {
         <CarouselChevron direction="left" onClick={goPrev} label="Previous agent" />
         <div className="home-agents-carousel__viewport">
           <div
-            className="home-agents-carousel__track"
+            className={`home-agents-carousel__track${
+              trackInstant ? " home-agents-carousel__track--instant" : ""
+            }`}
+            onTransitionEnd={handleTrackTransitionEnd}
             style={{
-              transform: `translateX(calc(50% - var(--home-agents-orb-half) - ${index} * var(--home-agents-orb-step)))`,
+              transform: `translateX(calc(50% - var(--home-agents-orb-half) - ${position} * var(--home-agents-orb-step)))`,
             }}
           >
-            {AGENTS_CAROUSEL_ORBS.map((scheme, orbIndex) => (
-              <AgentCarouselOrb key={scheme.label} scheme={scheme} focused={orbIndex === index} />
+            {AGENTS_CAROUSEL_LOOP_ORBS.map((scheme, orbIndex) => (
+              <AgentCarouselOrb
+                key={`${scheme.label}-${orbIndex}`}
+                scheme={scheme}
+                focused={orbIndex === position}
+                mountShader={shouldMountCarouselShader(orbIndex, position)}
+              />
             ))}
           </div>
         </div>
         <CarouselChevron direction="right" onClick={goNext} label="Next agent" />
       </div>
-      <div className="home-agents-carousel__pill" key={active.label}>
+      <div className="home-agents-carousel__pill">
         <span className="home-agents-carousel__pill-text">{active.label}</span>
       </div>
     </div>
