@@ -1,14 +1,14 @@
-import { DOE_HOME_HERO_FOREST_PALETTE } from "@/lib/proto/proto-shader-backdrop-colors";
+import { DOE_HOME_HERO_DUSK_PALETTE } from "@/lib/proto/proto-shader-backdrop-colors";
 
-const FOREST = DOE_HOME_HERO_FOREST_PALETTE;
+const DUSK = DOE_HOME_HERO_DUSK_PALETTE;
 
-/** Jungle-depth shadows — orbs sit in the understory, not on top of it. */
-const SHADOW_JUNGLE = "#081E18";
-const SHADOW_DEEP = "#051410";
+/** Umber-depth shadows — orbs sit in the canyon, not on top of it. */
+const SHADOW_UMBER = "#24180C";
+const SHADOW_DEEP = "#1A1008";
 
-/** Phosphor rims — pale mint highlights in the dark. */
-const RIM_MINT = "#D8FFE8";
-const RIM_GLOW = "#B8FFD8";
+/** Sand rims — warm dust highlights against the dark. */
+const RIM_SAND = "#F5E6D0";
+const RIM_BLUSH = "#F8E0D4";
 
 export type HeroDialOrbScheme = {
   label: string;
@@ -19,50 +19,50 @@ export type HeroDialOrbScheme = {
 };
 
 /**
- * Bioluminescent forest agent nodes — neon lime / teal / phosphor on deep jungle.
+ * Desert dusk agent nodes — terracotta / sand gold / dusty peach on deep umber.
  * Ordered bright ↔ deep around the ring so neighbors never share the same hue.
  */
 export const HERO_DIAL_ORBS: readonly HeroDialOrbScheme[] = [
   {
     label: "Inbox Agent",
-    colors: [SHADOW_JUNGLE, "#5AFFA8", RIM_MINT],
-    colorBack: FOREST.back,
+    colors: [SHADOW_UMBER, "#E8A878", "#F8ECD8"],
+    colorBack: DUSK.back,
     intensity: 0.16,
   },
   {
     label: "Scheduling Agent",
-    colors: [SHADOW_DEEP, "#2EE8C0", RIM_GLOW],
-    colorBack: FOREST.back,
+    colors: [SHADOW_DEEP, "#C46848", "#F0D8CC"],
+    colorBack: DUSK.back,
     intensity: 0.15,
   },
   {
     label: "Labs Agent",
-    colors: [SHADOW_JUNGLE, "#A8FF60", "#EEFFD8"],
-    colorBack: FOREST.back,
+    colors: [SHADOW_UMBER, "#D4A858", "#F5EBD0"],
+    colorBack: DUSK.back,
     intensity: 0.17,
   },
   {
     label: "Referrals Agent",
-    colors: [SHADOW_DEEP, "#3AD8A0", "#D0FAE8"],
-    colorBack: FOREST.back,
+    colors: [SHADOW_DEEP, "#D08068", "#F5DDD4"],
+    colorBack: DUSK.back,
     intensity: 0.15,
   },
   {
     label: "Live Appointment",
-    colors: [SHADOW_JUNGLE, "#68FF88", RIM_MINT],
-    colorBack: FOREST.back,
+    colors: [SHADOW_UMBER, "#E0B060", "#FAF0D8"],
+    colorBack: DUSK.back,
     intensity: 0.17,
   },
   {
     label: "Billing Agent",
-    colors: [SHADOW_DEEP, "#28C898", "#C8F5E8"],
-    colorBack: FOREST.back,
+    colors: [SHADOW_DEEP, "#B85C40", "#EDD4C8"],
+    colorBack: DUSK.back,
     intensity: 0.16,
   },
   {
     label: "Refill Agent",
-    colors: [SHADOW_DEEP, "#40E8B0", RIM_GLOW],
-    colorBack: FOREST.back,
+    colors: [SHADOW_DEEP, "#C87850", "#F0E0D0"],
+    colorBack: DUSK.back,
     intensity: 0.15,
   },
 ] as const;

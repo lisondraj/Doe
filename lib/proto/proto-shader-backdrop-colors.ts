@@ -19,12 +19,12 @@ export const DOE_HOME_ORANGE_PALETTE = {
   tan: "#B87862",
 } as const;
 
-/** Hero experiment — bioluminescent forest (hero shader + dial only). */
-export const DOE_HOME_HERO_FOREST_PALETTE = {
-  back: "#051812",
-  glow: "#00FF88",
-  teal: "#14B8A0",
-  mint: "#7CFFCB",
+/** Hero experiment — desert dusk (hero shader + dial only). */
+export const DOE_HOME_HERO_DUSK_PALETTE = {
+  back: "#1A1208",
+  horizon: "#E8A060",
+  clay: "#C45C42",
+  sand: "#F2D8A8",
 } as const;
 
 const PROTO_AGENTS_MID_BLUE = "#4A6878";
@@ -47,16 +47,16 @@ export function doeHomeHeroShaderSurface(): ProtoGrainGradientSurface {
   };
 }
 
-/** Doe home hero — bioluminescent forest experiment (same home-hero flow preset). */
-export function doeHomeHeroForestShaderSurface(): ProtoGrainGradientSurface {
+/** Doe home hero — desert dusk experiment (same home-hero flow preset). */
+export function doeHomeHeroDuskShaderSurface(): ProtoGrainGradientSurface {
   return {
     variant: "home-hero",
     colors: [
-      DOE_HOME_HERO_FOREST_PALETTE.glow,
-      DOE_HOME_HERO_FOREST_PALETTE.teal,
-      DOE_HOME_HERO_FOREST_PALETTE.mint,
+      DOE_HOME_HERO_DUSK_PALETTE.horizon,
+      DOE_HOME_HERO_DUSK_PALETTE.clay,
+      DOE_HOME_HERO_DUSK_PALETTE.sand,
     ],
-    colorBack: DOE_HOME_HERO_FOREST_PALETTE.back,
+    colorBack: DOE_HOME_HERO_DUSK_PALETTE.back,
   };
 }
 
