@@ -93,7 +93,7 @@ export function DoeHomeTopBanner() {
       aria-hidden={dismissed}
     >
       <p className={`doe-home-top-banner__text ${inter.className}`}>
-        <span>Meet Doe, your 24/7 voice agent</span>
+        <span>Doe has officially launched!</span>
         <Link href="/blog" className="doe-home-top-banner__link">
           Read more
           <ReadMoreArrow />
