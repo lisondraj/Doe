@@ -1,7 +1,16 @@
 "use client";
 
 import { GrainGradient } from "@paper-design/shaders-react";
-import { memo, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 
 import { suisseIntl } from "@/lib/home/fonts";
 import {
@@ -27,6 +36,7 @@ const HERO_DIAL_LAYOUT = {
 } as const;
 const SWITCH_MS = 920;
 const PILL_OUT_MS = 220;
+const PLAY_DURATION_MS = 30_000;
 
 /** Center slot — 9 o'clock on the dial (leftmost, vertically centered). */
 const CENTER_SLOT_ANGLE = Math.PI;
@@ -110,22 +120,82 @@ function dialNodeStyle(pose: DialOrbPose) {
   } as const;
 }
 
+const OrbCircularProgress = memo(function OrbCircularProgress({
+  durationMs,
+}: {
+  durationMs: number;
+}) {
+  const [active, setActive] = useState(false);
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => {
+      requestAnimationFrame(() => setActive(true));
+    });
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  return (
+    <svg
+      className="hero-speaking-orb__progress-ring"
+      viewBox="0 0 100 100"
+      aria-hidden
+    >
+      <circle
+        className="hero-speaking-orb__progress-track"
+        cx="50"
+        cy="50"
+        r="48.5"
+        pathLength={1}
+      />
+      <circle
+        className={`hero-speaking-orb__progress-fill${active ? " hero-speaking-orb__progress-fill--active" : ""}`}
+        cx="50"
+        cy="50"
+        r="48.5"
+        pathLength={1}
+        style={{
+          transitionDuration: active ? `${durationMs}ms` : "0ms",
+        }}
+      />
+    </svg>
+  );
+});
+
 const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
   scheme,
   isFocused,
   showPill,
   orbSize,
+  interactive = false,
+  expanded = false,
+  showProgress = false,
+  onPlayClick,
 }: {
   scheme: HeroDialOrbScheme;
   isFocused: boolean;
   showPill: boolean;
   orbSize: string;
+  interactive?: boolean;
+  expanded?: boolean;
+  showProgress?: boolean;
+  onPlayClick?: (sourceNode: HTMLElement) => void;
 }) {
   const intensity = scheme.intensity ?? HERO_DIAL_ORB_SHADER.intensity;
+  const playIcon = (
+    <svg className="hero-speaking-orb__play-icon" viewBox="0 0 48 48" fill="none">
+      <circle cx="24" cy="24" r="22" fill="rgba(255, 251, 246, 0.2)" stroke="rgba(255, 251, 246, 0.42)" strokeWidth="1.25" />
+      <path
+        d="M20.2 16.4v15.2c0 .72.78 1.16 1.4.8l10.2-5.9c.62-.36.62-1.24 0-1.6l-10.2-5.9c-.62-.36-1.4.08-1.4.8z"
+        fill="rgba(255, 251, 246, 0.94)"
+      />
+    </svg>
+  );
 
   return (
     <div
-      className={`hero-speaking-orb${isFocused ? " hero-speaking-orb--focused" : ""}`}
+      className={`hero-speaking-orb${isFocused ? " hero-speaking-orb--focused" : ""}${
+        expanded ? " hero-speaking-orb--expanded" : ""
+      }`}
       style={orbAccentStyle(scheme, orbSize)}
     >
       <div
@@ -136,7 +206,11 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
         className="hero-speaking-orb__halo-ring hero-speaking-orb__halo-ring--echo"
         aria-hidden
       />
-      <div className="hero-speaking-orb__core relative overflow-hidden rounded-full">
+      <div className="hero-speaking-orb__progress-shell">
+        {showProgress ? (
+          <OrbCircularProgress durationMs={PLAY_DURATION_MS} />
+        ) : null}
+        <div className="hero-speaking-orb__core relative overflow-hidden rounded-full">
         <GrainGradient
           width="100%"
           height="100%"
@@ -160,14 +234,25 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
           className="pointer-events-none absolute inset-0 rounded-full hero-speaking-orb__core-shade"
           aria-hidden
         />
-        <div className="hero-speaking-orb__play" aria-hidden>
-          <svg className="hero-speaking-orb__play-icon" viewBox="0 0 48 48" fill="none">
-            <circle cx="24" cy="24" r="22" fill="rgba(255, 251, 246, 0.2)" stroke="rgba(255, 251, 246, 0.42)" strokeWidth="1.25" />
-            <path
-              d="M20.2 16.4v15.2c0 .72.78 1.16 1.4.8l10.2-5.9c.62-.36.62-1.24 0-1.6l-10.2-5.9c-.62-.36-1.4.08-1.4.8z"
-              fill="rgba(255, 251, 246, 0.94)"
-            />
-          </svg>
+        {!expanded ? (
+          interactive ? (
+            <button
+              type="button"
+              className="hero-speaking-orb__play hero-speaking-orb__play--interactive"
+              aria-label={`Play ${scheme.label}`}
+              onClick={(event) => {
+                const node = event.currentTarget.closest(".hero-speaking-orbs__node");
+                if (node instanceof HTMLElement) onPlayClick?.(node);
+              }}
+            >
+              {playIcon}
+            </button>
+          ) : (
+            <div className="hero-speaking-orb__play" aria-hidden>
+              {playIcon}
+            </div>
+          )
+        ) : null}
         </div>
       </div>
       <div
@@ -189,15 +274,25 @@ export function DoePhoneHeroGradientCircles({
   variant?: "mobile" | "desktop";
 }) {
   const dialLayout = HERO_DIAL_LAYOUT[variant];
+  const isMobileInteractive = variant === "mobile";
   const [dialRotation, setDialRotation] = useState(0);
   const [pillVisible, setPillVisible] = useState(true);
   const [stepping, setStepping] = useState(false);
+  const [expandedOrbIndex, setExpandedOrbIndex] = useState<number | null>(null);
+  const [expandSettled, setExpandSettled] = useState(false);
+  const [expandFlip, setExpandFlip] = useState<{
+    x: number;
+    y: number;
+    size: number;
+  } | null>(null);
   const dialRotationRef = useRef(0);
   const switchRafRef = useRef<number | undefined>(undefined);
   const pillTimerRef = useRef<number | undefined>(undefined);
   const switchingRef = useRef(false);
   const reducedMotionRef = useRef(false);
   const tabVisibleRef = useRef(true);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const playCloseTimerRef = useRef<number | undefined>(undefined);
 
   const layout = useMemo(
     () => buildDialLayout(dialRotation, dialLayout.radiusVmin),
@@ -205,6 +300,67 @@ export function DoePhoneHeroGradientCircles({
   );
   const focusedIndex = focusedIndexForRotation(dialRotation);
   const focusedLabel = HERO_DIAL_ORBS[focusedIndex]?.label ?? "Agent";
+  const expandedScheme =
+    expandedOrbIndex === null ? null : HERO_DIAL_ORBS[expandedOrbIndex] ?? null;
+
+  const closeExpanded = useCallback(() => {
+    if (playCloseTimerRef.current !== undefined) {
+      window.clearTimeout(playCloseTimerRef.current);
+      playCloseTimerRef.current = undefined;
+    }
+    setExpandSettled(false);
+    setExpandFlip(null);
+    setExpandedOrbIndex(null);
+  }, []);
+
+  const openExpanded = useCallback(
+    (index: number, sourceNode: HTMLElement) => {
+      if (!isMobileInteractive || !rootRef.current) return;
+
+      if (playCloseTimerRef.current !== undefined) {
+        window.clearTimeout(playCloseTimerRef.current);
+        playCloseTimerRef.current = undefined;
+      }
+
+      const sourceRect = sourceNode.getBoundingClientRect();
+      const rootRect = rootRef.current.getBoundingClientRect();
+      const centerX = sourceRect.left + sourceRect.width / 2 - rootRect.left;
+      const centerY = sourceRect.top + sourceRect.height / 2 - rootRect.top;
+      const size = Math.max(sourceRect.width, sourceRect.height);
+
+      setExpandedOrbIndex(index);
+      setExpandSettled(reducedMotionRef.current);
+      setExpandFlip({ x: centerX, y: centerY, size });
+    },
+    [isMobileInteractive],
+  );
+
+  useLayoutEffect(() => {
+    if (expandedOrbIndex === null || expandFlip === null || expandSettled) return;
+
+    const id = requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setExpandSettled(true);
+      });
+    });
+
+    return () => cancelAnimationFrame(id);
+  }, [expandFlip, expandSettled, expandedOrbIndex]);
+
+  useEffect(() => {
+    if (expandedOrbIndex === null || !expandSettled) return;
+
+    playCloseTimerRef.current = window.setTimeout(() => {
+      closeExpanded();
+    }, PLAY_DURATION_MS);
+
+    return () => {
+      if (playCloseTimerRef.current !== undefined) {
+        window.clearTimeout(playCloseTimerRef.current);
+        playCloseTimerRef.current = undefined;
+      }
+    };
+  }, [closeExpanded, expandSettled, expandedOrbIndex]);
 
   const animateStep = useCallback((from: number, to: number, onDone: () => void) => {
     if (switchRafRef.current !== undefined) {
@@ -267,48 +423,122 @@ export function DoePhoneHeroGradientCircles({
     onVisibility();
     document.addEventListener("visibilitychange", onVisibility);
 
-    const interval = window.setInterval(advanceDial, AUTO_ADVANCE_MS);
-
     return () => {
       document.removeEventListener("visibilitychange", onVisibility);
-      window.clearInterval(interval);
       if (switchRafRef.current !== undefined) cancelAnimationFrame(switchRafRef.current);
       if (pillTimerRef.current !== undefined) window.clearTimeout(pillTimerRef.current);
+      if (playCloseTimerRef.current !== undefined) window.clearTimeout(playCloseTimerRef.current);
     };
-  }, [advanceDial]);
+  }, []);
+
+  useEffect(() => {
+    if (expandedOrbIndex !== null) return;
+
+    const interval = window.setInterval(advanceDial, AUTO_ADVANCE_MS);
+    return () => window.clearInterval(interval);
+  }, [advanceDial, expandedOrbIndex]);
+
+  const expandedOrbStyle = useMemo(() => {
+    if (!expandFlip) return undefined;
+
+    if (!expandSettled) {
+      return {
+        left: expandFlip.x,
+        top: expandFlip.y,
+        width: expandFlip.size,
+        height: expandFlip.size,
+        transform: "translate(-50%, -50%)",
+      } as CSSProperties;
+    }
+
+    return {
+      left: "50%",
+      top: "50%",
+      width: "100%",
+      height: "auto",
+      aspectRatio: "1 / 1",
+      maxHeight: "100%",
+      transform: "translate(-50%, -50%)",
+    } as CSSProperties;
+  }, [expandFlip, expandSettled]);
 
   return (
     <div
-      className={`hero-speaking-orbs${variant === "desktop" ? " hero-speaking-orbs--desktop" : ""}`}
-      aria-hidden
+      ref={rootRef}
+      className={`hero-speaking-orbs${
+        variant === "desktop" ? " hero-speaking-orbs--desktop" : ""
+      }${isMobileInteractive ? " hero-speaking-orbs--mobile-interactive" : ""}${
+        expandedOrbIndex !== null ? " hero-speaking-orbs--expanded" : ""
+      }`}
+      aria-hidden={expandedOrbIndex === null ? true : undefined}
     >
       <div className="hero-speaking-orbs__stage">
         <div className={`hero-speaking-orbs__dial${stepping ? " hero-speaking-orbs__dial--stepping" : ""}`}>
           {HERO_DIAL_ORBS.map((scheme, index) => {
             const pose = layout[index];
             const style = dialNodeStyle(pose);
+            const isExpandedSource = expandedOrbIndex === index;
             return (
               <div
                 key={scheme.label}
-                className="hero-speaking-orbs__node"
+                className={`hero-speaking-orbs__node${
+                  isExpandedSource ? " hero-speaking-orbs__node--expanded-source" : ""
+                }`}
                 style={{
                   transform: style.transform,
-                  opacity: style.opacity,
+                  opacity: isExpandedSource ? 0 : style.opacity,
                   zIndex: style.zIndex,
                 }}
               >
                 <SpeakingGradientOrb
                   scheme={scheme}
                   isFocused={pose.isFocused}
-                  showPill={pose.isFocused && pillVisible}
+                  showPill={pose.isFocused && pillVisible && expandedOrbIndex === null}
                   orbSize={dialLayout.orbSize}
+                  interactive={isMobileInteractive && expandedOrbIndex === null}
+                  onPlayClick={(sourceNode) => openExpanded(index, sourceNode)}
                 />
               </div>
             );
           })}
         </div>
       </div>
-      <span className="sr-only">Agent dial — {focusedLabel} selected.</span>
+
+      {expandedScheme && expandedOrbIndex !== null ? (
+        <div
+          className="hero-speaking-orbs__expanded"
+          role="dialog"
+          aria-label={`${expandedScheme.label} playback`}
+        >
+          <button
+            type="button"
+            className="hero-speaking-orbs__expanded-dismiss"
+            aria-label="Close playback"
+            onClick={closeExpanded}
+          />
+          <div
+            className={`hero-speaking-orbs__expanded-orb${
+              expandSettled ? " hero-speaking-orbs__expanded-orb--settled" : ""
+            }`}
+            style={expandedOrbStyle}
+          >
+            <SpeakingGradientOrb
+              scheme={expandedScheme}
+              isFocused
+              showPill={false}
+              orbSize="100%"
+              expanded
+              showProgress={expandSettled}
+            />
+          </div>
+        </div>
+      ) : null}
+
+      <span className="sr-only">
+        {expandedOrbIndex !== null
+          ? `${expandedScheme?.label ?? "Agent"} playback open.`
+          : `Agent dial — ${focusedLabel} selected.`}
+      </span>
     </div>
   );
 }
