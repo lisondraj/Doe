@@ -2794,6 +2794,7 @@ html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop .hero-s
   background-size: var(--orb-fill-scale, 100%);
   background-position: center;
   background-repeat: no-repeat;
+  filter: saturate(1.14) contrast(1.05);
 }
 
 .hero-speaking-orb__grain-noise {
@@ -2804,8 +2805,8 @@ html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop .hero-s
   background-image: url("/proto-grain-tile.png");
   background-size: 208px 208px;
   background-repeat: repeat;
-  opacity: var(--orb-fill-grain-opacity, 0.22);
-  mix-blend-mode: soft-light;
+  opacity: var(--orb-fill-grain-opacity, 0.18);
+  mix-blend-mode: overlay;
 }
 
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
@@ -2832,7 +2833,7 @@ html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop .hero-s
 }
 
 .hero-speaking-orb__core-shade {
-  box-shadow: inset 0 -18px 36px rgba(26, 18, 8, 0.3);
+  box-shadow: inset 0 -14px 28px rgba(26, 18, 8, 0.22);
 }
 
 .hero-speaking-orb__core canvas {
