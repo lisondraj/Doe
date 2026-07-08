@@ -311,6 +311,7 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band {
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-card-section__title {
+  display: none !important;
   color: #1a1208 !important;
 }
 
