@@ -1969,12 +1969,20 @@ html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop {
 }
 
 .hero-speaking-orbs--mobile-interactive .hero-speaking-orbs__node {
+  pointer-events: none;
+}
+
+.hero-speaking-orbs--mobile-interactive .hero-speaking-orbs__node--focused {
   pointer-events: auto;
 }
 
 .hero-speaking-orbs--expanded .hero-speaking-orbs__dial {
   opacity: 0.34;
   transition: opacity 480ms ease;
+}
+
+.hero-speaking-orbs--closing .hero-speaking-orbs__dial {
+  opacity: 1;
 }
 
 .hero-speaking-orbs__expanded {
@@ -1990,6 +1998,31 @@ html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop {
     clamp(3.25rem, 10vmin, 5rem)
     max(1.65rem, calc(env(safe-area-inset-left, 0px) + 3.8vmin));
   pointer-events: auto;
+  animation: hero-expanded-backdrop-in 420ms ease both;
+}
+
+.hero-speaking-orbs__expanded--closing {
+  animation: hero-expanded-backdrop-out 420ms ease both;
+}
+
+@keyframes hero-expanded-backdrop-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes hero-expanded-backdrop-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
 }
 
 .hero-speaking-orbs__expanded-dismiss {
@@ -2000,6 +2033,11 @@ html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop {
   padding: 0;
   background: rgba(26, 18, 8, 0.24);
   cursor: pointer;
+  transition: background 420ms ease;
+}
+
+.hero-speaking-orbs__expanded--closing .hero-speaking-orbs__expanded-dismiss {
+  background: rgba(26, 18, 8, 0);
 }
 
 .hero-speaking-orbs__expanded-orb {
@@ -2014,16 +2052,32 @@ html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop {
     top 720ms cubic-bezier(0.16, 1, 0.3, 1),
     width 720ms cubic-bezier(0.16, 1, 0.3, 1),
     height 720ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform 720ms cubic-bezier(0.16, 1, 0.3, 1);
+    max-height 720ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 720ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 420ms ease;
 }
 
 .hero-speaking-orbs__expanded-orb--settled {
-  width: min(100%, 100%);
+  width: min(86%, calc(100% - 2.75rem));
   height: auto;
+  max-height: min(86%, calc(100% - 2.75rem));
   aspect-ratio: 1 / 1;
 }
 
+.hero-speaking-orbs__expanded-orb--closing {
+  opacity: 0.92;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .hero-speaking-orbs__expanded {
+    animation: none;
+  }
+
+  .hero-speaking-orbs__expanded--closing {
+    animation: none;
+    opacity: 0;
+  }
+
   .hero-speaking-orbs__expanded-orb {
     transition: none;
   }
@@ -2184,9 +2238,9 @@ html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop .hero-s
 
 .hero-speaking-orb__progress-ring {
   position: absolute;
-  inset: -4.5%;
-  width: 109%;
-  height: 109%;
+  inset: 0.75%;
+  width: 98.5%;
+  height: 98.5%;
   transform: rotate(-90deg);
   overflow: visible;
   pointer-events: none;
@@ -2195,31 +2249,28 @@ html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop .hero-s
 .hero-speaking-orb__progress-track,
 .hero-speaking-orb__progress-fill {
   fill: none;
-  stroke-width: 2.25;
+  stroke-width: 2;
   vector-effect: non-scaling-stroke;
 }
 
 .hero-speaking-orb__progress-track {
-  stroke: rgba(255, 251, 246, 0.22);
+  stroke: rgba(255, 251, 246, 0.2);
 }
 
 .hero-speaking-orb__progress-fill {
-  stroke: rgba(255, 251, 246, 0.9);
+  stroke: rgba(255, 251, 246, 0.92);
   stroke-linecap: round;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  transition-property: stroke-dashoffset;
-  transition-timing-function: linear;
 }
 
-.hero-speaking-orb__progress-fill--active {
-  stroke-dashoffset: 0;
+.hero-speaking-orb--progress .hero-speaking-orb__halo-ring,
+.hero-speaking-orb--progress .hero-speaking-orb__halo-ring--echo {
+  opacity: 0 !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .hero-speaking-orb__progress-fill {
-    transition-duration: 0ms !important;
-    stroke-dashoffset: 0;
+    stroke-dashoffset: 0 !important;
+    transition: none !important;
   }
 }
 

@@ -131,9 +131,9 @@ export function DoePhoneHeroSection({
       {renderIphoneHero ? <DoePhoneHeroGradientCircles variant={variant} /> : null}
 
       <div
-        className={`absolute left-0 right-0 z-[3] ${copyInset} ${copyBottom}`}
+        className={`pointer-events-none absolute left-0 right-0 z-[3] ${copyInset} ${copyBottom}`}
       >
-        <div className="doephone-hero-copy pointer-events-none w-full min-w-0">
+        <div className="doephone-hero-copy w-full min-w-0">
           <DoePhoneHeroHeadline
             line1={isProto ? "Recruiting for the" : undefined}
             line2={isProto ? "intelligence era." : undefined}
