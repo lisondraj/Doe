@@ -22,15 +22,18 @@ const ORB_AGENT_LABELS = [
 
 const BRAND = DOE_HOME_ORANGE_PALETTE;
 
-/** Teal / orange ladder — vibrant, offset from hero; alternated around dial. */
+const CREAM_GLOW = "#F0E4C8";
+const PEACH_GLOW = "#E8D4B0";
+
+/** Ember nodes — care-coordination palette; shared cream rims on hero teal (circles only). */
 const HERO_ORB_SHADE_LADDER = [
-  { colors: ["#986018", "#ECA848", "#F8D8A8"] as const, colorBack: BRAND.back },
-  { colors: ["#186858", "#48C8B0", "#C0FFF0"] as const, colorBack: BRAND.back },
-  { colors: ["#903818", "#E07840", "#F8C8A8"] as const, colorBack: BRAND.back },
-  { colors: ["#185878", "#58B8D8", "#C8EEFF"] as const, colorBack: BRAND.back },
-  { colors: ["#9A5818", "#E0A050", "#F8D8A0"] as const, colorBack: BRAND.back },
-  { colors: ["#187060", "#40D0C0", "#B8FFF0"] as const, colorBack: BRAND.back },
-  { colors: ["#984028", "#F08868", "#FFD0B8"] as const, colorBack: BRAND.back },
+  { colors: ["#2A4848", "#EAC050", CREAM_GLOW] as const, colorBack: BRAND.back },
+  { colors: ["#283440", "#DC8054", PEACH_GLOW] as const, colorBack: BRAND.back },
+  { colors: ["#2C4C48", "#EEBA4C", CREAM_GLOW] as const, colorBack: BRAND.back },
+  { colors: ["#2E4440", "#C88858", PEACH_GLOW] as const, colorBack: BRAND.back },
+  { colors: ["#304848", "#D8A058", CREAM_GLOW] as const, colorBack: BRAND.back },
+  { colors: ["#2A4040", "#CC8868", PEACH_GLOW] as const, colorBack: BRAND.back },
+  { colors: ["#283838", "#D06840", CREAM_GLOW] as const, colorBack: BRAND.back },
 ] as const;
 
 type OrbScheme = (typeof HERO_ORB_SHADE_LADDER)[number];
