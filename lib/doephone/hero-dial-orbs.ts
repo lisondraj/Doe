@@ -31,9 +31,9 @@ export const HERO_DIAL_ORBS: readonly HeroDialOrbScheme[] = [
   },
   {
     label: "Scheduling Agent",
-    colors: [SHADOW_DEEP, "#DC8054", RIM_PEACH],
+    colors: [SHADOW_DEEP, "#E89060", "#F2E4CC"],
     colorBack: BRAND.back,
-    intensity: 0.13,
+    intensity: 0.14,
   },
   {
     label: "Labs Agent",
@@ -43,25 +43,25 @@ export const HERO_DIAL_ORBS: readonly HeroDialOrbScheme[] = [
   },
   {
     label: "Referrals Agent",
-    colors: [SHADOW_DEEP, "#C88858", RIM_PEACH],
+    colors: [SHADOW_DEEP, "#D99864", "#F5E6D4"],
     colorBack: BRAND.back,
-    intensity: 0.12,
+    intensity: 0.14,
   },
   {
     label: "Live Appointment",
-    colors: [SHADOW_TEAL, BRAND.copper, RIM_CREAM],
+    colors: [SHADOW_TEAL, "#E4AD5C", "#FCF0E4"],
+    colorBack: BRAND.back,
+    intensity: 0.16,
+  },
+  {
+    label: "Billing Agent",
+    colors: [SHADOW_DEEP, "#D68662", "#F5DDD4"],
     colorBack: BRAND.back,
     intensity: 0.15,
   },
   {
-    label: "Billing Agent",
-    colors: [SHADOW_DEEP, BRAND.rose, RIM_PEACH],
-    colorBack: BRAND.back,
-    intensity: 0.13,
-  },
-  {
     label: "Refill Agent",
-    colors: [SHADOW_DEEP, "#D06840", RIM_CREAM],
+    colors: [SHADOW_DEEP, "#DE7850", "#F8E8DC"],
     colorBack: BRAND.back,
     intensity: 0.14,
   },
