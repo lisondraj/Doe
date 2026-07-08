@@ -1423,8 +1423,8 @@ body.proto-route {
 
 /* Desktop home hero — larger dial so orbs fill the wide viewport band. */
 html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop {
-  --hero-dial-radius: 58vmin;
-  --hero-dial-shift-x: 8vmin;
+  --hero-dial-radius: 62vmin;
+  --hero-dial-shift-x: 4.5vmin;
   padding-top: clamp(2rem, 5.5vmin, 3.25rem);
   padding-bottom: clamp(4rem, 12vmin, 6.5rem);
 }

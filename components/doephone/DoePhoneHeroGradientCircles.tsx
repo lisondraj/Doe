@@ -21,8 +21,8 @@ const HERO_DIAL_LAYOUT = {
     orbSize: "clamp(15rem, 48vmin, 21rem)",
   },
   desktop: {
-    radiusVmin: 58,
-    orbSize: "clamp(18rem, 54vmin, 28rem)",
+    radiusVmin: 62,
+    orbSize: "clamp(19rem, 58vmin, 30rem)",
   },
 } as const;
 const SWITCH_MS = 920;
