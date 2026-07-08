@@ -58,7 +58,7 @@ export function DoePhoneHomeFeatureCardSection({
               />
 
               <h2
-                className={`home-feature-card-section__title mt-[clamp(1.35rem,0.9rem+1.85vmin,2.15rem)] text-left ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] text-[#1E343A] ${suisseIntl.className}`}
+                className={`home-feature-card-section__title home-feature-card-section__title--feature-lead mt-[clamp(1.35rem,0.9rem+1.85vmin,2.15rem)] text-left ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] text-[#1E343A] ${suisseIntl.className}`}
               >
                 <span className="block">{titleLine1}</span>
                 <span className="block">{titleLine2}</span>

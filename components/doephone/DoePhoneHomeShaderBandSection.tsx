@@ -61,7 +61,7 @@ export function DoePhoneHomeShaderBandSection({
       {showWorkflowInput ? (
         <div className="home-feature-shader-band__workflow-shell relative z-[10] flex h-full min-h-0 w-full flex-col">
           <h2
-            className={`home-feature-shader-band__workflow-title home-feature-card-section__title home-feature-card-section__title--specialties text-left ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${suisseIntl.className}`}
+            className={`home-feature-shader-band__workflow-title home-feature-card-section__title home-feature-card-section__title--feature-lead text-left ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${suisseIntl.className}`}
           >
             <span className="block">Customize agents</span>
             <span className="block">to fix your needs.</span>

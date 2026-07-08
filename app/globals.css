@@ -286,6 +286,10 @@ html[data-home-page] .home-feature-card-section__title {
   font-weight: 350 !important;
 }
 
+html[data-home-page] .home-feature-card-section__title--feature-lead {
+  font-size: clamp(1.88rem, 1.08rem + 5.25vmin, 3.05rem) !important;
+}
+
 html[data-home-page] .home-feature-shader-band {
   min-height: var(--doe-section-band-vh, var(--app-vh, 100lvh)) !important;
 }
@@ -1457,9 +1461,12 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workf
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-section__workflow-input .build-workflow-ui-scale {
-  width: 96%;
-  max-width: 96%;
+  --build-workflow-ui-scale: 0.92;
+  width: calc(96% / var(--build-workflow-ui-scale));
+  max-width: calc(96% / var(--build-workflow-ui-scale));
   margin-inline: auto;
+  transform: scale(var(--build-workflow-ui-scale));
+  transform-origin: center center;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .doephone-section-reveal--input {
@@ -1509,9 +1516,12 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow 
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-section__workflow-input .build-workflow-ui-scale {
-  width: 96%;
-  max-width: 96%;
+  --build-workflow-ui-scale: 0.94;
+  width: calc(96% / var(--build-workflow-ui-scale));
+  max-width: calc(96% / var(--build-workflow-ui-scale));
   margin-inline: auto;
+  transform: scale(var(--build-workflow-ui-scale));
+  transform-origin: center center;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__title--specialties {
