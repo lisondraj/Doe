@@ -41,7 +41,7 @@ export function DoeDesktopHome({
   return (
     <div className="doe-desktop-root relative overflow-x-hidden bg-[var(--doe-page-surface,#EDE8DF)]">
       <div className="relative z-[40] overflow-x-clip overflow-y-visible">
-        <DoePhoneHeroSection variant="desktop" />
+        <DoePhoneHeroSection variant="desktop" iphoneBackdrop />
 
         <nav
           className="fixed top-0 left-0 right-0 z-[50] transition-[background-color,border-color] duration-300 ease-out"

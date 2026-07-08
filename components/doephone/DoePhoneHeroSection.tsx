@@ -33,11 +33,14 @@ const DOEPHONE_HERO_DESKTOP_HEIGHT = "100dvh";
 export function DoePhoneHeroSection({
   variant = "mobile",
   proto = false,
+  iphoneBackdrop = false,
 }: {
   /** Desktop home uses full viewport height and wider copy gutters. */
   variant?: "mobile" | "desktop";
   /** Proto landing — dark palette and hiring headline. */
   proto?: boolean;
+  /** Desktop — render the iPhone hero background (orange shader + agent orb dial). */
+  iphoneBackdrop?: boolean;
 }) {
   const [introZoom, setIntroZoom] = useState(DOEPHONE_HERO_INTRO_GRADIENT_START);
   const [introDone, setIntroDone] = useState(false);
@@ -76,6 +79,8 @@ export function DoePhoneHeroSection({
   const isDesktop = variant === "desktop";
   const isMobile = !isDesktop;
   const isProto = proto;
+  /** iPhone-style hero (orange shader + orb dial) — mobile always, desktop when opted in. */
+  const renderIphoneHero = !isProto && (isMobile || iphoneBackdrop);
   const homeHeroShader = doeHomeHeroShaderSurface();
   const heroHeight = isDesktop
     ? DOEPHONE_HERO_DESKTOP_HEIGHT
@@ -96,28 +101,24 @@ export function DoePhoneHeroSection({
         {
           minHeight: heroHeight,
           height: heroHeight,
-          ...(isMobile
-            ? {
-                backgroundColor: isProto
-                  ? PROTO_RECEPTION_PALETTE.deep
-                  : DOE_HOME_ORANGE_PALETTE.back,
-              }
-            : {}),
+          ...(renderIphoneHero
+            ? { backgroundColor: DOE_HOME_ORANGE_PALETTE.back }
+            : isMobile && isProto
+              ? { backgroundColor: PROTO_RECEPTION_PALETTE.deep }
+              : {}),
           ...doephoneHeroIntroStyleVars(),
         } as CSSProperties
       }
       aria-label="Hero"
     >
-      {isMobile ? (
-        isProto ? (
-          <ProtoHomeHeroGradient />
-        ) : (
-          <ProtoGrainGradient
-            variant={homeHeroShader.variant}
-            colors={homeHeroShader.colors}
-            colorBack={homeHeroShader.colorBack}
-          />
-        )
+      {isProto && isMobile ? (
+        <ProtoHomeHeroGradient />
+      ) : renderIphoneHero ? (
+        <ProtoGrainGradient
+          variant={homeHeroShader.variant}
+          colors={homeHeroShader.colors}
+          colorBack={homeHeroShader.colorBack}
+        />
       ) : (
         <WorkflowCarouselDesignBackdrop
           backdrop={CARE_COORDINATION_BACKDROP}
@@ -127,7 +128,7 @@ export function DoePhoneHeroSection({
         />
       )}
 
-      {isMobile && !isProto ? <DoePhoneHeroGradientCircles /> : null}
+      {renderIphoneHero ? <DoePhoneHeroGradientCircles /> : null}
 
       <div
         className={`absolute left-0 right-0 z-[3] ${copyInset} ${copyBottom}`}
