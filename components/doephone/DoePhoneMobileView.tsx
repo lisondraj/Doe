@@ -4,6 +4,7 @@ import { useLayoutEffect } from "react";
 
 import DoeIphoneSiteNav from "@/components/DoeIphoneSiteNav";
 import { DoePhoneClosingSection } from "@/components/doephone/DoePhoneClosingSection";
+import { DoePhoneCommunicationIntelligenceSection } from "@/components/doephone/DoePhoneCommunicationIntelligenceSection";
 import { DoePhoneHeroSection } from "@/components/doephone/DoePhoneHeroSection";
 import { DoePhoneHomeFeatureStack } from "@/components/doephone/DoePhoneHomeFeatureStack";
 import { ProtoCommunicationStack } from "@/components/proto/ProtoCommunicationStack";
@@ -97,7 +98,10 @@ export function DoePhoneMobileView({ variant = "home" }: { variant?: "home" | "p
       {isProto ? (
         <ProtoCommunicationStack />
       ) : (
-        <DoePhoneHomeFeatureStack shaderTheme="dusk" />
+        <>
+          <DoePhoneCommunicationIntelligenceSection />
+          <DoePhoneHomeFeatureStack shaderTheme="dusk" />
+        </>
       )}
 
       {isProto ? (
