@@ -25,6 +25,7 @@ export const HeroDialOrbGrainShader = memo(function HeroDialOrbGrainShader({
   eager = false,
   enabled = true,
   mountDelayMs = 0,
+  stickMounted = false,
 }: {
   scheme: HeroDialOrbScheme;
   /** Mount immediately when sized — hero focused orb, carousel center. */
@@ -33,17 +34,24 @@ export const HeroDialOrbGrainShader = memo(function HeroDialOrbGrainShader({
   enabled?: boolean;
   /** Defer WebGL mount so hero background can claim a context first. */
   mountDelayMs?: number;
+  /** Keep the grain shader after first mount — avoids fallback flash on dial rotation. */
+  stickMounted?: boolean;
 }) {
   const shellRef = useRef<HTMLDivElement>(null);
+  const hasShaderRef = useRef(false);
   const [ready, setReady] = useState(false);
   const [mounted, setMounted] = useState(false);
   const intensity = scheme.intensity ?? HERO_DIAL_ORB_SHADER.intensity;
   const [, mid, light] = scheme.colors;
+  const shouldMount = enabled || (stickMounted && hasShaderRef.current);
+  const showShader = shouldMount && ready && mounted;
 
   useLayoutEffect(() => {
-    if (!enabled) {
-      setReady(false);
-      setMounted(false);
+    if (!shouldMount) {
+      if (!stickMounted || !hasShaderRef.current) {
+        setReady(false);
+        setMounted(false);
+      }
       return;
     }
 
@@ -83,31 +91,39 @@ export const HeroDialOrbGrainShader = memo(function HeroDialOrbGrainShader({
       cancelAnimationFrame(raf2);
       cancelAnimationFrame(raf3);
     };
-  }, [enabled]);
+  }, [shouldMount, stickMounted]);
 
   useLayoutEffect(() => {
-    if (!enabled || !ready || mounted) return;
+    if (!shouldMount || !ready || mounted) return;
 
     const delay = eager ? mountDelayMs : mountDelayMs + 180;
     if (delay <= 0) {
-      const raf = requestAnimationFrame(() => setMounted(true));
+      const raf = requestAnimationFrame(() => {
+        hasShaderRef.current = true;
+        setMounted(true);
+      });
       return () => cancelAnimationFrame(raf);
     }
 
-    const timer = window.setTimeout(() => setMounted(true), delay);
+    const timer = window.setTimeout(() => {
+      hasShaderRef.current = true;
+      setMounted(true);
+    }, delay);
     return () => window.clearTimeout(timer);
-  }, [eager, enabled, mountDelayMs, mounted, ready]);
+  }, [eager, mountDelayMs, mounted, ready, shouldMount]);
 
   return (
     <div
       ref={shellRef}
       className="hero-speaking-orb__grain-shell absolute inset-0 overflow-hidden rounded-full"
       style={{
-        background: `radial-gradient(circle at 42% 38%, ${light} 0%, ${mid} 52%, ${scheme.colorBack} 100%)`,
+        background: showShader
+          ? scheme.colorBack
+          : `radial-gradient(circle at 42% 38%, ${light} 0%, ${mid} 52%, ${scheme.colorBack} 100%)`,
       }}
       aria-hidden
     >
-      {enabled && ready && mounted ? (
+      {showShader ? (
         <GrainGradient
           width="100%"
           height="100%"

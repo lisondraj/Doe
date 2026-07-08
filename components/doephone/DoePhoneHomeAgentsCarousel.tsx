@@ -82,6 +82,7 @@ function AgentCarouselOrb({
             scheme={scheme}
             eager={focused}
             enabled={mountShader}
+            stickMounted
             mountDelayMs={focused ? 280 : 0}
           />
           <div

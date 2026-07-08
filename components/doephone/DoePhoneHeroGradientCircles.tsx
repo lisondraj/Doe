@@ -149,6 +149,7 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
   isFocused,
   showPill,
   orbSize,
+  orbIndex = 0,
   interactive = false,
   expanded = false,
   showRinging = false,
@@ -158,6 +159,7 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
   isFocused: boolean;
   showPill: boolean;
   orbSize: string;
+  orbIndex?: number;
   interactive?: boolean;
   expanded?: boolean;
   showRinging?: boolean;
@@ -202,9 +204,10 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
         <div className="hero-speaking-orb__core relative overflow-hidden rounded-full">
         <HeroDialOrbGrainShader
           scheme={scheme}
-          eager={isFocused || expanded}
-          enabled={isFocused || expanded}
-          mountDelayMs={320}
+          eager={isFocused || expanded || orbIndex === 0}
+          enabled
+          stickMounted
+          mountDelayMs={360 + orbIndex * 240}
         />
         <div
           className="pointer-events-none absolute inset-0 rounded-full hero-speaking-orb__core-shade"
@@ -502,6 +505,7 @@ export function DoePhoneHeroGradientCircles({
               >
                 <SpeakingGradientOrb
                   scheme={scheme}
+                  orbIndex={index}
                   isFocused={pose.isFocused}
                   showPill={pose.isFocused && pillVisible && expandedOrbIndex === null}
                   orbSize={dialLayout.orbSize}
