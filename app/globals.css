@@ -248,6 +248,11 @@ html[data-home-page] .home-feature-card-section__inner {
   padding-bottom: var(--proto-phone-gutter-y) !important;
 }
 
+/* iPhone home — shader card + title size to content so __inner can center the pair. */
+html[data-home-page] .home-feature-card-section__content {
+  flex: 0 0 auto !important;
+}
+
 html[data-home-page] .home-feature-card-section__card {
   flex: 0 1 auto !important;
   height: clamp(
