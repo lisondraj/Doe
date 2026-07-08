@@ -22,15 +22,15 @@ const ORB_AGENT_LABELS = [
 
 const BRAND = DOE_HOME_ORANGE_PALETTE;
 
-/** Lilac-mauve ladder — single secondary hue, light ↔ deep interleaved on dial. */
+/** Seven distinct hues — warm brand + bright hero accents, interleaved so neighbors contrast. */
 const HERO_ORB_SHADE_LADDER = [
-  { colors: ["#4838A0", "#C0A0E8", "#F0E0FF"] as const, colorBack: BRAND.back },
-  { colors: ["#382878", "#6848A0", "#C8B0E0"] as const, colorBack: BRAND.back },
-  { colors: ["#5858A8", "#D8B0F0", "#F2E8FF"] as const, colorBack: BRAND.back },
-  { colors: ["#403878", "#8868B8", "#D0C0E8"] as const, colorBack: BRAND.back },
-  { colors: ["#5048A0", "#B888C8", "#E8D0F0"] as const, colorBack: BRAND.back },
-  { colors: ["#302060", "#5840A0", "#B0A0D0"] as const, colorBack: BRAND.back },
-  { colors: ["#4848A0", "#C898D8", "#F0D8E8"] as const, colorBack: BRAND.back },
+  { colors: ["#A88028", BRAND.gold, "#FFF0B8"] as const, colorBack: BRAND.back },
+  { colors: ["#288878", "#50C8A8", "#C8FFF0"] as const, colorBack: BRAND.back },
+  { colors: ["#1870C8", "#48A8F8", "#C8ECFF"] as const, colorBack: BRAND.back },
+  { colors: ["#7858A0", "#C090D8", "#F2D8FF"] as const, colorBack: BRAND.back },
+  { colors: ["#A84858", "#F09888", "#FFD8D8"] as const, colorBack: BRAND.back },
+  { colors: ["#3070A8", "#78B0E8", "#D8EEFF"] as const, colorBack: BRAND.back },
+  { colors: ["#A83098", "#E860D0", "#FFD8F8"] as const, colorBack: BRAND.back },
 ] as const;
 
 type OrbScheme = (typeof HERO_ORB_SHADE_LADDER)[number];
