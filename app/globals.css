@@ -286,12 +286,13 @@ html[data-home-page] .home-feature-shader-band {
 }
 
 html[data-home-page][data-layout="desktop"] {
-  --desktop-nav-height: 5.5rem;
+  /* py-6 (3rem) + action row h-[2.875rem] — matches fixed desktop nav */
+  --desktop-nav-height: 5.875rem;
   --desktop-below-nav-height: calc(100dvh - var(--desktop-nav-height));
   /* Match DOEPHONE_DESKTOP_PAGE_INSET_X: px-10 md:px-20 lg:px-28 xl:px-36 */
   --desktop-page-inset-x: 2.5rem;
-  /* Equal top/bottom UI pad (independent of horizontal page margins) */
-  --desktop-section-pad-y: 2.5rem;
+  /* Equal VISUAL pad under nav and above viewport bottom */
+  --desktop-section-pad-y: 1.5rem;
   --doe-shader-back: #1a1208;
   --doe-shader-gold: #e8a060;
   --doe-page-surface: #faf0d8;
@@ -318,17 +319,17 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band {
 
 /* Desktop route — nav / below-nav tokens when data-home-page attrs are absent (/desktop). */
 body.desktop-route {
-  --desktop-nav-height: 5.5rem;
+  --desktop-nav-height: 5.875rem;
   --desktop-below-nav-height: calc(100dvh - var(--desktop-nav-height));
   --desktop-page-inset-x: 2.5rem;
-  --desktop-section-pad-y: 2.5rem;
+  --desktop-section-pad-y: 1.5rem;
 }
 
 @media (min-width: 768px) {
   html[data-home-page][data-layout="desktop"],
   body.desktop-route {
     --desktop-page-inset-x: 5rem;
-    --desktop-section-pad-y: 3.5rem;
+    --desktop-section-pad-y: 2rem;
   }
 }
 
@@ -336,7 +337,7 @@ body.desktop-route {
   html[data-home-page][data-layout="desktop"],
   body.desktop-route {
     --desktop-page-inset-x: 7rem;
-    --desktop-section-pad-y: 4rem;
+    --desktop-section-pad-y: 2.5rem;
   }
 }
 
@@ -344,8 +345,14 @@ body.desktop-route {
   html[data-home-page][data-layout="desktop"],
   body.desktop-route {
     --desktop-page-inset-x: 9rem;
-    --desktop-section-pad-y: 5rem;
+    --desktop-section-pad-y: 3rem;
   }
+}
+
+/* Keep scrolled UI sections clear of the fixed nav */
+html[data-home-page][data-layout="desktop"],
+html[data-layout="desktop"] {
+  scroll-padding-top: var(--desktop-nav-height, 5.875rem);
 }
 
 /* Desktop /desktop route — make iPhone full-screen shader bands bleed beyond margins. */
@@ -383,27 +390,42 @@ html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] p {
 }
 
 /*
- * Desktop home UI sections:
- * - Full viewport band (100dvh) so fixed nav can overlay the top clearance
- * - Usable UI area = 100dvh - nav = --desktop-below-nav-height
- * - Padding above/below the dark card inside that below-nav band
+ * Desktop home UI sections (scroll under fixed nav):
+ * - Band = 100dvh
+ * - Explicit nav-clearance row = --desktop-nav-height (under the fixed overlay)
+ * - Remaining area uses EQUAL padding-top and padding-bottom (--desktop-section-pad-y)
+ * - L/R = page gutters
  */
 html[data-home-page][data-layout="desktop"] .home-feature-card-section {
+  display: flex !important;
+  flex-direction: column !important;
   min-height: 100dvh !important;
   height: 100dvh !important;
   max-height: 100dvh !important;
   overflow: hidden !important;
-  scroll-margin-top: 0 !important;
   box-sizing: border-box !important;
+  scroll-margin-top: 0 !important;
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-card-section__nav-clearance {
+  display: block !important;
+  flex: 0 0 var(--desktop-nav-height) !important;
+  width: 100% !important;
+  height: var(--desktop-nav-height) !important;
+  min-height: var(--desktop-nav-height) !important;
+  max-height: var(--desktop-nav-height) !important;
+  pointer-events: none !important;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-card-section__inner {
-  min-height: 100% !important;
-  height: 100% !important;
-  max-height: 100% !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
   box-sizing: border-box !important;
-  /* Equal pad above/below UI; L/R match page margins; top also clears fixed nav */
-  padding-top: calc(var(--desktop-nav-height) + var(--desktop-section-pad-y)) !important;
+  justify-content: stretch !important;
+  /* Equal visual pad above and below the dark card */
+  padding-top: var(--desktop-section-pad-y) !important;
   padding-bottom: var(--desktop-section-pad-y) !important;
   padding-left: var(--desktop-page-inset-x) !important;
   padding-right: var(--desktop-page-inset-x) !important;
@@ -413,8 +435,10 @@ html[data-home-page][data-layout="desktop"] .home-feature-card-section__inner > 
   display: flex !important;
   flex: 1 1 auto !important;
   flex-direction: column !important;
+  justify-content: stretch !important;
   min-height: 0 !important;
   height: 100% !important;
+  max-height: 100% !important;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-card-section__card {
@@ -433,13 +457,15 @@ html[data-home-page][data-layout="desktop"] .home-feature-card-section__card.hom
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band {
-  min-height: var(--desktop-below-nav-height) !important;
-  height: var(--desktop-below-nav-height) !important;
-  max-height: var(--desktop-below-nav-height) !important;
+  min-height: 100dvh !important;
+  height: 100dvh !important;
+  max-height: 100dvh !important;
 }
 
-/* /desktop legacy route — same below-nav + pad treatment */
+/* /desktop legacy route — same nav-clearance + equal pad treatment */
 body.desktop-route .home-feature-card-section {
+  display: flex !important;
+  flex-direction: column !important;
   min-height: 100dvh !important;
   height: 100dvh !important;
   max-height: 100dvh !important;
@@ -447,12 +473,24 @@ body.desktop-route .home-feature-card-section {
   box-sizing: border-box !important;
 }
 
+body.desktop-route .home-feature-card-section__nav-clearance {
+  display: block !important;
+  flex: 0 0 var(--desktop-nav-height, 5.875rem) !important;
+  width: 100% !important;
+  height: var(--desktop-nav-height, 5.875rem) !important;
+  min-height: var(--desktop-nav-height, 5.875rem) !important;
+  max-height: var(--desktop-nav-height, 5.875rem) !important;
+  pointer-events: none !important;
+}
+
 body.desktop-route .home-feature-card-section__inner {
-  min-height: 100% !important;
-  height: 100% !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: auto !important;
   box-sizing: border-box !important;
-  padding-top: calc(var(--desktop-nav-height, 5.5rem) + var(--desktop-section-pad-y, 2.5rem)) !important;
-  padding-bottom: var(--desktop-section-pad-y, 2.5rem) !important;
+  justify-content: stretch !important;
+  padding-top: var(--desktop-section-pad-y, 1.5rem) !important;
+  padding-bottom: var(--desktop-section-pad-y, 1.5rem) !important;
   padding-left: var(--desktop-page-inset-x, 2.5rem) !important;
   padding-right: var(--desktop-page-inset-x, 2.5rem) !important;
 }
@@ -461,6 +499,7 @@ body.desktop-route .home-feature-card-section__inner > div {
   display: flex !important;
   flex: 1 1 auto !important;
   flex-direction: column !important;
+  justify-content: stretch !important;
   min-height: 0 !important;
   height: 100% !important;
 }

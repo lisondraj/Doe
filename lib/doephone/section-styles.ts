@@ -44,27 +44,23 @@ export const DOEPHONE_DESKTOP_PAGE_INSET_RIGHT =
 export const DOEPHONE_DESKTOP_PAGE_MARGIN_X =
   "mx-10 md:mx-20 lg:mx-28 xl:mx-36";
 
-/** Desktop home fixed nav — py-6 bar + text-4xl Doe wordmark row. */
-export const DESKTOP_HOME_FIXED_NAV_HEIGHT = "5.5rem";
+/** Desktop home fixed nav — py-6 (3rem) + action row h-[2.875rem]. */
+export const DESKTOP_HOME_FIXED_NAV_HEIGHT = "5.875rem";
 
 /**
  * Visible viewport band below the fixed desktop nav (nav height excluded).
- * Full-bleed bands that sit under the fixed overlay use this height.
- * Panel sections that scroll under the nav use 100dvh + top pad of nav+section pad instead.
+ * Prefer CSS `--desktop-below-nav-height` for visual layout under the overlay.
  */
 export const DESKTOP_HOME_BELOW_NAV_HEIGHT = `calc(100dvh - ${DESKTOP_HOME_FIXED_NAV_HEIGHT})`;
-export const DESKTOP_HOME_BELOW_NAV_HEIGHT_TW = "calc(100dvh-5.5rem)";
+export const DESKTOP_HOME_BELOW_NAV_HEIGHT_TW = "calc(100dvh-5.875rem)";
 
 /**
- * Desktop UI sections — equal top/bottom pad (py-10 → xl:py-20).
- * Horizontal gutters use DOEPHONE_DESKTOP_PAGE_INSET_X separately.
+ * Desktop UI sections — equal VISUAL top/bottom pad under the fixed nav.
+ * CSS padding-top adds nav clearance; padding-bottom is the pad alone.
  */
-export const DESKTOP_HOME_SECTION_PAD_Y = "py-10 md:py-14 lg:py-16 xl:py-20";
+export const DESKTOP_HOME_SECTION_PAD_Y = "py-6 md:py-8 lg:py-10 xl:py-12";
 
-/**
- * Panel section shell height — full viewport so fixed nav overlays top clearance;
- * inner pad is nav-height + section pad (see globals.css / DoePhoneDesktopPanelSection).
- */
+/** Panel section shell — full viewport; nav overlays top clearance. */
 export const DESKTOP_HOME_PANEL_SECTION_H = "min-h-[100dvh] h-[100dvh] max-h-[100dvh]";
 
 /** Desktop home — full-bleed gradient bands (Build, Integrations, Documents). */

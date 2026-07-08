@@ -1,20 +1,13 @@
 import {
-  DESKTOP_HOME_BELOW_NAV_HEIGHT_TW,
   DESKTOP_HOME_SECTION_PAD_Y,
   DOEPHONE_DESKTOP_PAGE_INSET_X,
 } from "@/lib/doephone/section-styles";
 
-/**
- * Desktop feature band — full viewport; inner pad clears fixed nav then adds UI pad
- * so the panel height equals below-nav minus padding above/below.
- */
+/** Desktop feature band — full viewport; nav overlays top clearance. */
 export const DOE_DESKTOP_FEATURE_BAND_H = "min-h-[100dvh] h-[100dvh] max-h-[100dvh]";
 
-/** Vertical pad only — nav clearance applied separately via padding-top calc in the section. */
+/** Equal visual vertical pad (nav clearance applied separately on the section). */
 export const DOE_DESKTOP_FEATURE_SECTION_PAD = DESKTOP_HOME_SECTION_PAD_Y;
-
-/** @deprecated Prefer nav-clearing pad on the section shell; kept for copy spacing. */
-export const DOE_DESKTOP_BELOW_NAV_HEIGHT_TW = DESKTOP_HOME_BELOW_NAV_HEIGHT_TW;
 
 export const DOE_DESKTOP_FEATURE_COPY_PT = "pt-8 md:pt-10 lg:pt-12";
 
