@@ -7,6 +7,7 @@ import {
 } from "@/lib/about/about-layout-styles";
 import { dmSans, inter } from "@/lib/home/fonts";
 import {
+  ABOUT_IPHONE_SHADER_CHART_GRID,
   ABOUT_IPHONE_SHADER_CHART_PRIMARY,
   DOE_HOME_DUSK_CHART_BAR,
   DOE_HOME_DUSK_CHART_GRID,
@@ -54,14 +55,24 @@ export function ArticleBarChart({
   const track =
     theme === "proto"
       ? TRACK_PROTO
-      : isWarmChart
-        ? "var(--doe-chart-track, rgba(26, 18, 8, 0.1))"
-        : isDark
-          ? TRACK_DARK
-          : TRACK_LIGHT;
+      : isAbout
+        ? "var(--doe-chart-track, rgba(51, 43, 33, 0.16))"
+        : isWarmChart
+          ? "var(--doe-chart-track, rgba(26, 18, 8, 0.1))"
+          : isDark
+            ? TRACK_DARK
+            : TRACK_LIGHT;
   const barColor =
-    theme === "proto" ? BAR_PROTO : isWarmChart ? "var(--doe-chart-bar, #E8A060)" : isDark ? BAR_DARK : BAR;
-  const gridLine = isWarmChart ? DOE_HOME_DUSK_CHART_GRID : GRID_LINE;
+    theme === "proto"
+      ? BAR_PROTO
+      : isAbout
+        ? "var(--doe-chart-bar, #5C4E42)"
+        : isWarmChart
+          ? "var(--doe-chart-bar, #E8A060)"
+          : isDark
+            ? BAR_DARK
+            : BAR;
+  const gridLine = isAbout ? ABOUT_IPHONE_SHADER_CHART_GRID : isWarmChart ? DOE_HOME_DUSK_CHART_GRID : GRID_LINE;
   const titleColor = isDark ? "text-white" : isWarmChart ? "text-[#1A1208]" : "text-[#1E343A]";
   const labelColor = isDark ? "text-white/72" : isWarmChart ? "text-[#1A1208]/72" : "text-[#1E343A]/72";
   const valueColor = isDark ? "text-white" : isWarmChart ? "text-[#1A1208]" : "text-[#1E343A]";

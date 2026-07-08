@@ -154,13 +154,13 @@ html[data-about-page]:has(.doephone-mobile-root) body {
   background-color: #faf0d8;
 }
 
-/* iPhone /about — hero shader palette for stat charts (clay + lightened shader brown). */
+/* iPhone /about — stat charts use shader-brown shades only. */
 html[data-about-page]:has(.blog-mobile-root),
 html[data-about-page]:has(.doephone-mobile-root) {
-  --doe-chart-bar: #c45c42;
-  --doe-chart-pie-1: #c45c42;
+  --doe-chart-bar: #5c4e42;
+  --doe-chart-pie-1: #5c4e42;
   --doe-chart-pie-2: #332b21;
-  --doe-chart-pie-3: #5c4e42;
+  --doe-chart-pie-3: #8a7868;
   --doe-chart-track: rgba(51, 43, 33, 0.16);
 }
 
@@ -169,19 +169,19 @@ html[data-about-page]:has(.blog-mobile-root) .about-stat-charts .about-chart-bar
 html[data-about-page]:has(.doephone-mobile-root) .about-stat-charts .about-chart-bar-fill,
 html[data-about-page]:has(.blog-mobile-root) .about-stat-chart .about-chart-bar-fill,
 html[data-about-page]:has(.doephone-mobile-root) .about-stat-chart .about-chart-bar-fill {
-  background: var(--doe-chart-bar, #e8a060) !important;
+  background: var(--doe-chart-bar, #5c4e42) !important;
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-stat-charts .about-chart-tam-bar,
 html[data-about-page]:has(.doephone-mobile-root) .about-stat-charts .about-chart-tam-bar {
-  background: var(--doe-chart-bar, #e8a060) !important;
+  background: var(--doe-chart-bar, #5c4e42) !important;
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-stat-charts .about-chart-pie-legend[data-chart-slice-index="0"],
 html[data-about-page]:has(.doephone-mobile-root) .about-stat-charts .about-chart-pie-legend[data-chart-slice-index="0"],
 html[data-about-page]:has(.blog-mobile-root) .about-stat-chart .about-chart-pie-legend[data-chart-slice-index="0"],
 html[data-about-page]:has(.doephone-mobile-root) .about-stat-chart .about-chart-pie-legend[data-chart-slice-index="0"] {
-  background: var(--doe-chart-pie-1, #c45c42) !important;
+  background: var(--doe-chart-pie-1, #5c4e42) !important;
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-stat-charts .about-chart-pie-legend[data-chart-slice-index="1"],
@@ -195,7 +195,7 @@ html[data-about-page]:has(.blog-mobile-root) .about-stat-charts .about-chart-pie
 html[data-about-page]:has(.doephone-mobile-root) .about-stat-charts .about-chart-pie-legend[data-chart-slice-index="2"],
 html[data-about-page]:has(.blog-mobile-root) .about-stat-chart .about-chart-pie-legend[data-chart-slice-index="2"],
 html[data-about-page]:has(.doephone-mobile-root) .about-stat-chart .about-chart-pie-legend[data-chart-slice-index="2"] {
-  background: var(--doe-chart-pie-3, #5c4e42) !important;
+  background: var(--doe-chart-pie-3, #8a7868) !important;
 }
 
 html[data-proto-page]:has(.doephone-mobile-root) {
