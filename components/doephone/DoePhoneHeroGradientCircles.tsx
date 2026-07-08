@@ -38,7 +38,7 @@ const HERO_DIAL_LAYOUT = {
     orbSize: "clamp(20.5rem, 62.5vmin, 32.5rem)",
   },
 } as const;
-const SWITCH_MS = 920;
+const SWITCH_MS = 1100;
 const PILL_OUT_MS = 220;
 const PLAY_DURATION_MS = 30_000;
 const EXPAND_CLOSE_MS = 820;
@@ -56,11 +56,9 @@ type DialOrbPose = {
   isFocused: boolean;
 };
 
-/** Slight overshoot — dial rolls one notch down then settles. */
+/** Smooth ease-in-out — continuous dial roll without overshoot. */
 function easeDialStep(t: number) {
-  const c1 = 1.525;
-  const c3 = c1 + 1;
-  return 1 + c3 * (t - 1) ** 3 + c1 * (t - 1) ** 2;
+  return t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
 }
 
 function orbAccentStyle(scheme: HeroDialOrbScheme, orbSize: string) {
@@ -96,11 +94,15 @@ function buildDialLayout(dialRotation: number, dialRadiusVmin: number): DialOrbP
     const angle = CENTER_SLOT_ANGLE + index * DIAL_STEP + dialRotation;
     const xVmin = Math.cos(angle) * dialRadiusVmin;
     const yVmin = Math.sin(angle) * dialRadiusVmin;
-    const isFocused = index === focusedIndex;
     const dist = angularDistance(angle, CENTER_SLOT_ANGLE);
     const t = Math.min(1, dist / (DIAL_STEP * 0.72));
-    const scale = isFocused ? 1.05 : 0.91 - t * 0.05;
-    const opacity = isFocused ? 1 : 0.62 + (1 - t) * 0.22;
+    const focusBlend = Math.max(0, 1 - dist / (DIAL_STEP * 0.55));
+    const focusSmooth = focusBlend * focusBlend * (3 - 2 * focusBlend);
+    const baseScale = 0.91 - t * 0.05;
+    const scale = baseScale + focusSmooth * (1.05 - baseScale);
+    const baseOpacity = 0.62 + (1 - t) * 0.22;
+    const opacity = baseOpacity + focusSmooth * (1 - baseOpacity);
+    const isFocused = index === focusedIndex;
 
     return {
       xVmin,
@@ -114,14 +116,9 @@ function buildDialLayout(dialRotation: number, dialRadiusVmin: number): DialOrbP
 }
 
 function dialNodeStyle(pose: DialOrbPose) {
-  const x = Math.round(pose.xVmin * 100) / 100;
-  const y = Math.round(pose.yVmin * 100) / 100;
-  const scale = Math.round(pose.scale * 1000) / 1000;
-  const opacity = Math.round(pose.opacity * 1000) / 1000;
-
   return {
-    transform: `translate(calc(${x}vmin - 50%), calc(${y}vmin - 50%)) scale(${scale})`,
-    opacity,
+    transform: `translate3d(calc(${pose.xVmin}vmin - 50%), calc(${pose.yVmin}vmin - 50%), 0) scale(${pose.scale})`,
+    opacity: pose.opacity,
     zIndex: pose.zIndex,
   } as const;
 }
