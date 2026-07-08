@@ -19,24 +19,21 @@ export function DoePhoneBuildWorkflowPrompt({
 }) {
   const promptBody = fourLineLayout ? (
     <>
-      <span className="block">
-        Show me which patients have been enrolled in <PromptTag label="Clinical Trial #473" />
+      <span className="home-feature-workflow-prompt__line">
+        Build me a voice agent that schedules appointments in
       </span>
-      <span className="block">
-        from my EMR, compile results in <PromptTag label="Excel" /> and
+      <span className="home-feature-workflow-prompt__line">
+        <PromptTag label="Google Calendar" /> emails my receptionist <PromptTag label="Andrea Tu" />
       </span>
-      <span className="block">
-        integrate data from <PromptTag label="OpenEvidence" /> and email to
-      </span>
-      <span className="block">
-        <PromptTag label="Melissa Alvarez" />
+      <span className="home-feature-workflow-prompt__line">
+        and <PromptTag label="calls the patient" /> 2 days before to confirm.
       </span>
     </>
   ) : (
     <>
-      Show me which patients have been enrolled in <PromptTag label="Clinical Trial #473" /> from my EMR,
-      compile results in <PromptTag label="Excel" /> and integrate data from{" "}
-      <PromptTag label="OpenEvidence" /> and email to <PromptTag label="Melissa Alvarez" />
+      Build me a voice agent that schedules appointments in <PromptTag label="Google Calendar" /> emails my
+      receptionist <PromptTag label="Andrea Tu" /> and <PromptTag label="calls the patient" /> 2 days before to
+      confirm.
     </>
   );
 

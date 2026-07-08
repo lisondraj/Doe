@@ -3,7 +3,13 @@
 import { DoePhoneHomeSectionWorkflowInput } from "@/components/doephone/DoePhoneHomeSectionWorkflowInput";
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import type { DoePhoneCommunicationSlide } from "@/lib/doephone/communication-carousel";
-import { DOEPHONE_MAIN_PAGE_VIEWPORT_SECTION, DOEPHONE_VIEWPORT_SECTION } from "@/lib/doephone/section-styles";
+import {
+  DOEPHONE_DISPLAY_WEIGHT_TW,
+  DOEPHONE_MAIN_PAGE_VIEWPORT_SECTION,
+  DOEPHONE_SECTION_CAROUSEL_INSET_X,
+  DOEPHONE_VIEWPORT_SECTION,
+} from "@/lib/doephone/section-styles";
+import { suisseIntl } from "@/lib/home/fonts";
 import { doeHomeDuskShaderBandSurface, doeHomeShaderBandSurface } from "@/lib/proto/proto-shader-backdrop-colors";
 
 /** Full-viewport shader band — empty spacer between feature cards. */
@@ -28,7 +34,7 @@ export function DoePhoneHomeShaderBandSection({
   return (
     <section
       className={`home-feature-shader-band${showWorkflowInput ? " home-feature-shader-band--workflow" : ""} ${sectionShell}`}
-      aria-label={showWorkflowInput ? "Build" : undefined}
+      aria-label={showWorkflowInput ? "Customize agents" : undefined}
       aria-hidden={showWorkflowInput ? undefined : true}
     >
       {shader ? (
@@ -43,8 +49,16 @@ export function DoePhoneHomeShaderBandSection({
       ) : null}
 
       {showWorkflowInput ? (
-        <div className="home-feature-shader-band__workflow-shell relative z-[10] flex h-full min-h-0 w-full flex-col items-center justify-center">
-          <DoePhoneHomeSectionWorkflowInput />
+        <div className="home-feature-shader-band__workflow-shell relative z-[10] flex h-full min-h-0 w-full flex-col">
+          <h2
+            className={`home-feature-shader-band__workflow-title home-feature-card-section__title home-feature-card-section__title--specialties text-left ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${suisseIntl.className}`}
+          >
+            <span className="block">Customize agents</span>
+            <span className="block">to fix your needs.</span>
+          </h2>
+          <div className="flex min-h-0 flex-1 flex-col items-stretch justify-center">
+            <DoePhoneHomeSectionWorkflowInput />
+          </div>
         </div>
       ) : null}
     </section>

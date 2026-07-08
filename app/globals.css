@@ -1395,33 +1395,74 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workf
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-shader-band__workflow-shell {
-  padding-inline: clamp(0.85rem, 3vmin, 1.35rem);
+  padding-inline: 0;
+  padding-top: calc(
+    var(--proto-phone-gutter-y) + clamp(1.35rem, 0.9rem + 1.85vmin, 2.15rem)
+  ) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-shader-band__workflow-title {
+  flex: 0 0 auto;
+  margin: 0 0 clamp(1.5rem, 0.95rem + 2.4vmin, 2.35rem);
+  padding-top: max(1.55rem, calc(env(safe-area-inset-top, 0px) + calc(var(--app-vh, 100lvh) * 0.055))) !important;
+  color: #ffffff !important;
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-shader-band__workflow-shell {
+  padding-inline: 0;
+  padding-top: calc(var(--desktop-nav-height) + var(--desktop-section-pad-y));
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-shader-band__workflow-title {
+  color: #ffffff !important;
+  padding-left: var(--desktop-page-inset-x) !important;
+  padding-right: var(--desktop-page-inset-x) !important;
+  padding-top: clamp(1.35rem, 2vmin, 2rem) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-section__workflow-input {
   box-sizing: border-box;
   flex: 0 0 auto;
-  width: min(100%, clamp(20.5rem, 94vw, 38.5rem));
-  margin-inline: auto;
-  padding: 0 !important;
-  transform: scale(var(--build-workflow-ui-scale, 0.88)) !important;
-  transform-origin: center center !important;
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+  padding-left: var(--proto-phone-gutter-left) !important;
+  padding-right: var(--proto-phone-gutter-right) !important;
+  transform: none !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-workflow-prompt__body {
-  max-width: 100%;
-  text-wrap: pretty;
+  max-width: none;
+  text-wrap: wrap;
+  overflow-wrap: break-word;
+  font-size: clamp(0.9rem, 4.8cqi, 1.26rem) !important;
+  line-height: 1.72 !important;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-workflow-prompt__body .block + .block {
-  margin-top: 0.08em;
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-workflow-prompt__line {
+  display: block;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-workflow-prompt__line + .home-feature-workflow-prompt__line {
+  margin-top: 0.06em;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-workflow-prompt__body span.inline-flex {
+  margin-inline: clamp(0.3rem, 0.9vmin, 0.42rem) !important;
+  margin-block: 0.12em;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-section__workflow-input .build-workflow-ui-scale {
-  width: 100%;
-  max-width: none;
+  container-type: inline-size;
+  container-name: workflow-prompt;
+  width: 96%;
+  max-width: 96%;
   margin-inline: auto;
   transform: none;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-section__workflow-input .build-workflow-ui-scale > div {
+  overflow-x: clip;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .doephone-section-reveal--input {
@@ -1435,30 +1476,49 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow 
   height: 100dvh !important;
 }
 
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-shader-band__workflow-shell {
-  padding-inline: clamp(1.5rem, 4vw, 3rem);
-}
-
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-section__workflow-input {
   position: relative !important;
   flex: 0 0 auto;
-  width: min(100%, clamp(32rem, 44vw, 44rem)) !important;
+  width: 100% !important;
   max-width: none !important;
-  margin-inline: auto !important;
-  padding: 0 !important;
-  transform: scale(var(--build-workflow-ui-scale, 0.96)) !important;
-  transform-origin: center center !important;
+  margin-inline: 0 !important;
+  padding-left: var(--desktop-page-inset-x) !important;
+  padding-right: var(--desktop-page-inset-x) !important;
+  transform: none !important;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-workflow-prompt__body {
-  max-width: 100%;
-  text-wrap: pretty;
+  max-width: none;
+  text-wrap: wrap;
+  overflow-wrap: break-word;
+  font-size: clamp(1rem, 2.8cqi, 1.24rem) !important;
+  line-height: 1.68 !important;
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-workflow-prompt__line {
+  display: block;
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-workflow-prompt__line + .home-feature-workflow-prompt__line {
+  margin-top: 0.06em;
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-workflow-prompt__body span.inline-flex {
+  margin-inline: 0.36rem !important;
+  margin-block: 0.1em;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-section__workflow-input .build-workflow-ui-scale {
-  width: 100%;
+  container-type: inline-size;
+  container-name: workflow-prompt-desktop;
+  width: 96%;
+  max-width: 96%;
   transform: none;
   margin-inline: auto;
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-section__workflow-input .build-workflow-ui-scale > div {
+  overflow-x: clip;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__title--specialties {
