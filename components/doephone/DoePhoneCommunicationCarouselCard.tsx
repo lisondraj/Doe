@@ -7,7 +7,7 @@ import type { DoePhoneCommunicationSlide } from "@/lib/doephone/communication-ca
 import type { WorkflowCarouselGridKind } from "@/lib/workflow-carousel-design-backdrops";
 import { CAROUSEL_MENU_UI } from "@/lib/doephone/carousel-menu-visual-styles";
 import { protoGrainGradientVariant, type ProtoGrainGradientVariant } from "@/lib/proto/proto-grain-gradient";
-import { iphoneShaderSurfaceForSlide, doeHomeLabsShaderSurface } from "@/lib/proto/proto-shader-backdrop-colors";
+import { doeHomeDuskLabsShaderSurface, iphoneShaderSurfaceForSlide, doeHomeLabsShaderSurface } from "@/lib/proto/proto-shader-backdrop-colors";
 import {
   DOEPHONE_SECTION_CAROUSEL_CLIP_STYLE,
   DOEPHONE_SECTION_CAROUSEL_RADIUS,
@@ -239,6 +239,7 @@ export function DoePhoneCommunicationCarouselCard({
   backdropClassName = "",
   protoShaderVariant,
   heroShaderColors = false,
+  heroShaderDusk = false,
   protoSite = false,
   uiScaleClass,
   uiInteractive = true,
@@ -262,6 +263,8 @@ export function DoePhoneCommunicationCarouselCard({
   protoShaderVariant?: ProtoGrainGradientVariant;
   /** Home Labs — match hero shader colours, keep per-slide flow. */
   heroShaderColors?: boolean;
+  /** Home iPhone dusk — desert dusk hero palette on feature cards. */
+  heroShaderDusk?: boolean;
   /** /proto — use reception palette instead of Doe home orange. */
   protoSite?: boolean;
   uiScaleClass?: string;
@@ -302,7 +305,9 @@ export function DoePhoneCommunicationCarouselCard({
   const shaderSurface =
     layout === "phone" && protoShaderVariant
       ? heroShaderColors
-        ? doeHomeLabsShaderSurface(slide.id)
+        ? heroShaderDusk
+          ? doeHomeDuskLabsShaderSurface(slide.id)
+          : doeHomeLabsShaderSurface(slide.id)
         : iphoneShaderSurfaceForSlide(slide, protoSite)
       : undefined;
 

@@ -9,9 +9,11 @@ import { DoePhoneHomeFeatureStack } from "@/components/doephone/DoePhoneHomeFeat
 import { ProtoCommunicationStack } from "@/components/proto/ProtoCommunicationStack";
 import { ProtoFooter } from "@/components/proto/ProtoFooter";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
+import { applyPhoneOverflowChrome } from "@/lib/doephone/phone-layout-viewport";
 import {
   DOEPHONE_BEIGE_SECTION,
 } from "@/lib/doephone/section-styles";
+import { DOE_HOME_DUSK_OVERFLOW_SURFACE } from "@/lib/home/doe-page-colors";
 import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-viewport";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 import { useDesignersStaticNav } from "@/lib/designers/use-designers-static-nav";
@@ -41,6 +43,7 @@ export function DoePhoneMobileView({ variant = "home" }: { variant?: "home" | "p
 
     if (variant === "home") {
       html.setAttribute("data-home-page", "true");
+      applyPhoneOverflowChrome(DOE_HOME_DUSK_OVERFLOW_SURFACE);
     }
 
     if (isProto || variant === "home") {
@@ -94,7 +97,7 @@ export function DoePhoneMobileView({ variant = "home" }: { variant?: "home" | "p
       {isProto ? (
         <ProtoCommunicationStack />
       ) : (
-        <DoePhoneHomeFeatureStack />
+        <DoePhoneHomeFeatureStack shaderTheme="dusk" />
       )}
 
       {isProto ? (
@@ -105,7 +108,7 @@ export function DoePhoneMobileView({ variant = "home" }: { variant?: "home" | "p
             <DoePhoneClosingSection />
           </section>
 
-          <HomeFooter />
+          <HomeFooter shaderTheme="dusk" />
         </>
       )}
     </div>

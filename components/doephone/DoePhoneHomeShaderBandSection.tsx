@@ -3,15 +3,20 @@
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import type { DoePhoneCommunicationSlide } from "@/lib/doephone/communication-carousel";
 import { DOEPHONE_MAIN_PAGE_VIEWPORT_SECTION } from "@/lib/doephone/section-styles";
-import { doeHomeShaderBandSurface } from "@/lib/proto/proto-shader-backdrop-colors";
+import { doeHomeDuskShaderBandSurface, doeHomeShaderBandSurface } from "@/lib/proto/proto-shader-backdrop-colors";
 
 /** Full-viewport shader band — empty spacer between feature cards. */
 export function DoePhoneHomeShaderBandSection({
   slideId,
+  shaderTheme = "default",
 }: {
   slideId: DoePhoneCommunicationSlide["id"];
+  shaderTheme?: "default" | "dusk";
 }) {
-  const shader = doeHomeShaderBandSurface(slideId);
+  const shader =
+    shaderTheme === "dusk"
+      ? doeHomeDuskShaderBandSurface(slideId)
+      : doeHomeShaderBandSurface(slideId);
 
   return (
     <section

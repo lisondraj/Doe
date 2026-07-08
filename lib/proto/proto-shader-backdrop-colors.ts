@@ -19,12 +19,12 @@ export const DOE_HOME_ORANGE_PALETTE = {
   tan: "#B87862",
 } as const;
 
-/** Hero experiment — midnight sapphire (hero shader + dial only). */
-export const DOE_HOME_HERO_SAPPHIRE_PALETTE = {
-  back: "#060818",
-  electric: "#4A7CFF",
-  violet: "#6B3FD4",
-  phosphor: "#88D4FF",
+/** Hero experiment — desert dusk (hero shader + dial only). */
+export const DOE_HOME_HERO_DUSK_PALETTE = {
+  back: "#1A1208",
+  horizon: "#E8A060",
+  clay: "#C45C42",
+  sand: "#F2D8A8",
 } as const;
 
 const PROTO_AGENTS_MID_BLUE = "#4A6878";
@@ -47,16 +47,63 @@ export function doeHomeHeroShaderSurface(): ProtoGrainGradientSurface {
   };
 }
 
-/** Doe home hero — midnight sapphire experiment (same home-hero flow preset). */
-export function doeHomeHeroSapphireShaderSurface(): ProtoGrainGradientSurface {
+/** Doe home hero — desert dusk experiment (same home-hero flow preset). */
+export function doeHomeHeroDuskShaderSurface(): ProtoGrainGradientSurface {
   return {
     variant: "home-hero",
     colors: [
-      DOE_HOME_HERO_SAPPHIRE_PALETTE.electric,
-      DOE_HOME_HERO_SAPPHIRE_PALETTE.violet,
-      DOE_HOME_HERO_SAPPHIRE_PALETTE.phosphor,
+      DOE_HOME_HERO_DUSK_PALETTE.horizon,
+      DOE_HOME_HERO_DUSK_PALETTE.clay,
+      DOE_HOME_HERO_DUSK_PALETTE.sand,
     ],
-    colorBack: DOE_HOME_HERO_SAPPHIRE_PALETTE.back,
+    colorBack: DOE_HOME_HERO_DUSK_PALETTE.back,
+  };
+}
+
+/** iPhone home dusk — footer shader (warm pool on umber). */
+export function doeHomeDuskFooterShaderSurface(): ProtoGrainGradientSurface {
+  return {
+    variant: "home-footer",
+    colors: [
+      "#24180C",
+      DOE_HOME_HERO_DUSK_PALETTE.clay,
+      DOE_HOME_HERO_DUSK_PALETTE.horizon,
+    ],
+    colorBack: DOE_HOME_HERO_DUSK_PALETTE.back,
+  };
+}
+
+/** iPhone home dusk — feature card shaders (hero palette + per-slide flow). */
+export function doeHomeDuskLabsShaderSurface(
+  slideId: string,
+): ProtoGrainGradientSurface | undefined {
+  const variant = protoGrainGradientVariant(slideId);
+  if (!variant) return undefined;
+
+  const hero = doeHomeHeroDuskShaderSurface();
+  return {
+    variant,
+    colors: hero.colors,
+    colorBack: hero.colorBack,
+  };
+}
+
+/** iPhone home dusk — full-viewport shader bands between feature cards. */
+export function doeHomeDuskShaderBandSurface(
+  slideId: string,
+): ProtoGrainGradientSurface | undefined {
+  const variant = doeHomeShaderBandVariant(slideId);
+  if (!variant) return undefined;
+
+  if (slideId === "billing") {
+    return doeHomeDuskFooterShaderSurface();
+  }
+
+  const hero = doeHomeHeroDuskShaderSurface();
+  return {
+    variant,
+    colors: hero.colors,
+    colorBack: hero.colorBack,
   };
 }
 

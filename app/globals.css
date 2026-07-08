@@ -110,21 +110,36 @@ html[data-about-page]:has(.blog-mobile-root) {
   background-color: var(--doe-page-surface);
 }
 
-html[data-home-page]:has(.doephone-mobile-root) body,
-html[data-about-page]:has(.doephone-mobile-root) body,
-html[data-about-page]:has(.blog-mobile-root) body {
-  background-color: var(--doe-page-surface);
-}
-
-/* Home iPhone — main-page white overflow (overrides shared sand token above). */
+/* Home iPhone — desert dusk page chrome + hero-brown nav capsule. */
 html[data-home-page]:has(.doephone-mobile-root) {
-  --doe-page-surface: #f7f6f3;
-  --proto-page-bg: #f7f6f3;
-  background-color: #f7f6f3;
+  --doe-shader-back: #1a1208;
+  --doe-shader-gold: #e8a060;
+  --doe-page-surface: #faf0d8;
+  --doe-page-surface-raised: #f5e6d0;
+  --doe-page-surface-sunken: #e8d8c0;
+  --doe-page-ink: #1a1208;
+  --doe-page-border: rgba(26, 18, 8, 0.14);
+  --proto-page-bg: #faf0d8;
+  --proto-nav-cta-border: #1a1208;
+  --proto-nav-cta-divider: rgba(245, 230, 208, 0.24);
+  --proto-nav-cta-bg: #1a1208;
+  --proto-nav-cta-text: #f5e6d0;
+  --doe-nav-frost-scrolled-fill: #1a1208;
+  --doe-nav-frost-scrolled-border: rgba(245, 230, 208, 0.24);
+  --doe-nav-frost-scrolled-shadow: 0 10px 28px -8px rgba(26, 18, 8, 0.34);
+  --doe-nav-frost-scrolled-cta-bg: #f5e6d0;
+  --doe-nav-frost-scrolled-cta-text: #1a1208;
+  --doe-nav-frost-scrolled-cta-divider: rgba(26, 18, 8, 0.14);
+  background-color: #faf0d8;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) body {
-  background-color: #f7f6f3;
+  background-color: #faf0d8;
+}
+
+html[data-about-page]:has(.doephone-mobile-root) body,
+html[data-about-page]:has(.blog-mobile-root) body {
+  background-color: var(--doe-page-surface);
 }
 
 html[data-proto-page]:has(.doephone-mobile-root) {
@@ -763,12 +778,16 @@ html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav-
   --proto-nav-frost-progress: 1;
 }
 
-/* Home — pre-seed announcement above nav (main-page white overflow, base sand strip). */
+/* Home — pre-seed announcement above nav (dusk sand strip on iPhone home). */
 html[data-home-page]:has(.doe-home-top-banner) {
   --doe-home-top-banner-height: calc(
     env(safe-area-inset-top, 0px) + clamp(2.25rem, 6.35vmin, 2.85rem)
   );
   --doe-home-banner-surface: #ede8df;
+}
+
+html[data-home-page]:has(.doe-home-top-banner):has(.doephone-mobile-root) {
+  --doe-home-banner-surface: #f5e6d0;
 }
 
 .doe-home-top-banner {
@@ -850,8 +869,18 @@ html[data-home-page]:has(.doe-home-top-banner) {
   background-color: #f7f6f3;
 }
 
+html[data-home-page]:has(.doe-home-top-banner):has(.doephone-mobile-root) {
+  --doe-page-surface: #faf0d8;
+  --proto-page-bg: #faf0d8;
+  background-color: #faf0d8;
+}
+
 html[data-home-page]:has(.doe-home-top-banner) body {
   background-color: #f7f6f3;
+}
+
+html[data-home-page]:has(.doe-home-top-banner):has(.doephone-mobile-root) body {
+  background-color: #faf0d8;
 }
 
 html[data-home-page][data-home-banner-dismissed],
@@ -859,6 +888,43 @@ html[data-home-page][data-home-banner-dismissed] body {
   --doe-page-surface: #f7f6f3;
   --proto-page-bg: #f7f6f3;
   background-color: #f7f6f3;
+}
+
+html[data-home-page][data-home-banner-dismissed]:has(.doephone-mobile-root),
+html[data-home-page][data-home-banner-dismissed]:has(.doephone-mobile-root) body {
+  --doe-page-surface: #faf0d8;
+  --proto-page-bg: #faf0d8;
+  background-color: #faf0d8;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) .doe-home-top-banner {
+  border-bottom-color: rgba(26, 18, 8, 0.11);
+}
+
+html[data-home-page]:has(.doephone-mobile-root) .doe-home-top-banner__link {
+  text-decoration-color: rgba(26, 18, 8, 0.34);
+}
+
+html[data-home-page]:has(.doephone-mobile-root) .doe-home-top-banner__link:hover {
+  text-decoration-color: rgba(26, 18, 8, 0.72);
+}
+
+/* Home iPhone dusk — shader spacer bands, titles, closing cards. */
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band {
+  background-color: #1a1208 !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__title {
+  color: #1a1208 !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Closing"] [aria-hidden].border {
+  border-color: #d8c8b0 !important;
+  background-color: #f0e4d0 !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Closing"] p {
+  color: #4a3828 !important;
 }
 
 html[data-home-page]:has(.doe-home-top-banner) nav.doephone-site-nav,
@@ -911,6 +977,26 @@ html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav .proto-nav-fr
       calc(var(--proto-nav-frost-shell-progress) * 22px)
       calc(var(--proto-nav-frost-shell-progress) * -14px)
       rgba(30, 52, 58, calc(var(--proto-nav-frost-shell-progress) * 0.22));
+}
+
+/* Home iPhone — hero-brown nav capsule shadows. */
+html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-frost-shell {
+  border-color: rgba(245, 230, 208, calc(var(--proto-nav-frost-shell-progress) * 0.2));
+  box-shadow:
+    0 calc(var(--proto-nav-frost-shell-progress) * 10px)
+      calc(var(--proto-nav-frost-shell-progress) * 26px)
+      calc(var(--proto-nav-frost-shell-progress) * -8px)
+      rgba(26, 18, 8, calc(var(--proto-nav-frost-shell-progress) * 0.34)),
+    calc(var(--proto-nav-frost-shell-progress) * -9px)
+      calc(var(--proto-nav-frost-shell-progress) * 9px)
+      calc(var(--proto-nav-frost-shell-progress) * 22px)
+      calc(var(--proto-nav-frost-shell-progress) * -14px)
+      rgba(26, 18, 8, calc(var(--proto-nav-frost-shell-progress) * 0.22)),
+    calc(var(--proto-nav-frost-shell-progress) * 9px)
+      calc(var(--proto-nav-frost-shell-progress) * 9px)
+      calc(var(--proto-nav-frost-shell-progress) * 22px)
+      calc(var(--proto-nav-frost-shell-progress) * -14px)
+      rgba(26, 18, 8, calc(var(--proto-nav-frost-shell-progress) * 0.22));
 }
 
 /* Home + /about — fixed nav: teal ink logo on sand bar. */
@@ -1411,12 +1497,12 @@ body.proto-route {
   padding-bottom: clamp(3.25rem, 10vmin, 5rem);
   padding-left: 0;
   padding-right: 0;
-  --hero-pill-ink: #060818;
-  --hero-pill-warm: #d8e8ff;
-  --hero-pill-light: #f4f8ff;
-  --hero-pill-gold: #68d0ff;
-  --hero-pill-copper: #5a88ff;
-  --hero-pill-orange: #7860e8;
+  --hero-pill-ink: #1a1208;
+  --hero-pill-warm: #f5e6d0;
+  --hero-pill-light: #fffaf6;
+  --hero-pill-gold: #d4a858;
+  --hero-pill-copper: #e0b060;
+  --hero-pill-orange: #e8a878;
   --hero-dial-radius: 47vmin;
   --hero-dial-shift-x: 5.75vmin;
 }
@@ -1528,20 +1614,20 @@ html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop .hero-s
   transform-origin: center center;
   border-radius: 50%;
   box-shadow:
-    0 18px 48px rgba(6, 8, 24, 0.42),
+    0 18px 48px rgba(26, 18, 8, 0.4),
     0 0 0 1px color-mix(in srgb, var(--orb-halo-light) 18%, transparent);
   transition: box-shadow 520ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .hero-speaking-orb--focused .hero-speaking-orb__core {
   box-shadow:
-    0 22px 56px rgba(6, 8, 24, 0.46),
+    0 22px 56px rgba(26, 18, 8, 0.44),
     0 0 52px color-mix(in srgb, var(--orb-halo-mid) 32%, transparent),
     0 0 0 1px color-mix(in srgb, var(--orb-halo-light) 28%, transparent);
 }
 
 .hero-speaking-orb__core-shade {
-  box-shadow: inset 0 -18px 36px rgba(6, 8, 24, 0.32);
+  box-shadow: inset 0 -18px 36px rgba(26, 18, 8, 0.3);
 }
 
 .hero-speaking-orb__core canvas {
@@ -1563,7 +1649,7 @@ html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop .hero-s
 .hero-speaking-orb__play-icon {
   width: clamp(2.35rem, 24%, 3.35rem);
   height: clamp(2.35rem, 24%, 3.35rem);
-  filter: drop-shadow(0 3px 10px rgba(6, 8, 24, 0.28));
+  filter: drop-shadow(0 3px 10px rgba(26, 18, 8, 0.26));
   transition: opacity 320ms ease, transform 320ms ease;
 }
 
@@ -1595,7 +1681,7 @@ html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop .hero-s
   -webkit-backdrop-filter: blur(12px);
   box-shadow:
     0 16px 38px color-mix(in srgb, var(--hero-pill-ink) 18%, transparent),
-    0 5px 14px rgba(6, 8, 24, 0.14),
+    0 5px 14px rgba(26, 18, 8, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.98),
     inset 0 -1px 0 rgba(237, 235, 232, 0.55);
   opacity: 0;

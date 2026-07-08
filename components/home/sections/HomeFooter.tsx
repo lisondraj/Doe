@@ -5,9 +5,9 @@ import Link from "next/link";
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import { DOEPHONE_FOOTER_CONTENT_INSET } from "@/lib/doephone/section-styles";
 import { inter, lora } from "@/lib/home/fonts";
-import { doeHomeFooterShaderSurface } from "@/lib/proto/proto-shader-backdrop-colors";
+import { doeHomeDuskFooterShaderSurface, doeHomeFooterShaderSurface } from "@/lib/proto/proto-shader-backdrop-colors";
 
-const FOOTER_SHADER = doeHomeFooterShaderSurface();
+const DEFAULT_FOOTER_SHADER = doeHomeFooterShaderSurface();
 
 const FOOTER_LINKS = [
   { href: "/features", label: "Features" },
@@ -16,11 +16,25 @@ const FOOTER_LINKS = [
   { href: "/", label: "Our Vision" },
 ] as const;
 
-export function HomeFooter({ linksDisabled = false }: { linksDisabled?: boolean }) {
+export function HomeFooter({
+  linksDisabled = false,
+  shaderTheme = "default",
+}: {
+  linksDisabled?: boolean;
+  shaderTheme?: "default" | "dusk";
+}) {
+  const footerShader =
+    shaderTheme === "dusk" ? doeHomeDuskFooterShaderSurface() : DEFAULT_FOOTER_SHADER;
+  const footerShellClass =
+    shaderTheme === "dusk"
+      ? "bg-[#1A1208] home-footer--dusk"
+      : "bg-[#1E343A]";
+  const footerWordmarkColor = shaderTheme === "dusk" ? "#F5E6D0" : "#F2ECE4";
+
   return (
     <>
       <footer
-        className="relative z-10 mt-0 flex min-h-[min(69vh,42rem)] w-screen flex-col justify-end overflow-x-clip overflow-y-hidden bg-[#1E343A] pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] iphone-page:min-h-[66vh]"
+        className={`relative z-10 mt-0 flex min-h-[min(69vh,42rem)] w-screen flex-col justify-end overflow-x-clip overflow-y-hidden ${footerShellClass} pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] iphone-page:min-h-[66vh]`}
         style={{
           width: "100vw",
           marginLeft: "calc(50% - 50vw)",
@@ -29,9 +43,9 @@ export function HomeFooter({ linksDisabled = false }: { linksDisabled?: boolean 
       >
         <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
           <ProtoGrainGradient
-            variant={FOOTER_SHADER.variant}
-            colors={FOOTER_SHADER.colors}
-            colorBack={FOOTER_SHADER.colorBack}
+            variant={footerShader.variant}
+            colors={footerShader.colors}
+            colorBack={footerShader.colorBack}
             static
           />
         </div>
@@ -93,7 +107,7 @@ export function HomeFooter({ linksDisabled = false }: { linksDisabled?: boolean 
               href="/"
               className={`pointer-events-auto inline-block shrink-0 text-center font-normal leading-[0.65] tracking-tight no-underline transition-opacity hover:opacity-90 ${lora.className}`}
               style={{
-                color: "#F2ECE4",
+                color: footerWordmarkColor,
                 /** Giant: wide enough that “d” / “e” bleed past L/R edges; milder bottom bleed. */
                 fontSize: "clamp(11rem, min(76vw, 68vmin), 30rem)",
                 marginBottom: "calc(-0.06em - env(safe-area-inset-bottom, 0px))",

@@ -17,10 +17,12 @@ export function DoePhoneHomeFeatureCardSection({
   slide,
   titleLine1,
   titleLine2,
+  shaderTheme = "default",
 }: {
   slide: DoePhoneCommunicationSlide;
   titleLine1: string;
   titleLine2: string;
+  shaderTheme?: "default" | "dusk";
 }) {
   const shaderVariant = protoGrainGradientVariant(slide.id);
 
@@ -37,6 +39,7 @@ export function DoePhoneHomeFeatureCardSection({
               showExpandControls={false}
               uiInteractive={false}
               heroShaderColors
+              heroShaderDusk={shaderTheme === "dusk"}
               protoShaderVariant={shaderVariant}
               uiScaleClass="home-feature-card-ui-scale"
             />
