@@ -34,24 +34,24 @@ function CarouselChevron({
   return (
     <button
       type="button"
-      className="home-agents-carousel__nav"
+      className={`home-agents-carousel__nav home-agents-carousel__nav--${direction}`}
       aria-label={label}
       onClick={onClick}
     >
-      <svg viewBox="0 0 24 24" fill="none" aria-hidden className="home-agents-carousel__nav-icon">
+      <svg viewBox="0 0 16 16" fill="none" aria-hidden className="home-agents-carousel__nav-icon">
         {direction === "left" ? (
           <path
-            d="M15 18l-6-6 6-6"
+            d="M10 3L5 8l5 5"
             stroke="currentColor"
-            strokeWidth="1.75"
+            strokeWidth="1.5"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
         ) : (
           <path
-            d="M9 18l6-6-6-6"
+            d="M6 3l5 5-5 5"
             stroke="currentColor"
-            strokeWidth="1.75"
+            strokeWidth="1.5"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
@@ -126,7 +126,7 @@ export function DoePhoneHomeAgentsCarousel() {
 
   return (
     <div className={`home-agents-carousel ${suisseIntl.className}`} aria-hidden>
-      <div className="home-agents-carousel__shell">
+      <div className="home-agents-carousel__stage">
         <CarouselChevron direction="left" onClick={goPrev} label="Previous agent" />
         <div className="home-agents-carousel__viewport">
           <div
