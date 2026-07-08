@@ -19,6 +19,8 @@ export function DoePhoneHomeFeatureStack({
         const title = HOME_FEATURE_SECTION_TITLES[slide.id];
         const showSpecialtyColumns = slide.id === "front-desk";
         const showWorkflowInput = slide.id === "front-desk";
+        const blankCarousel = slide.id === "agents";
+        const showActiveAgents = slide.id === "agents";
 
         return (
           <Fragment key={slide.id}>
@@ -28,11 +30,13 @@ export function DoePhoneHomeFeatureStack({
               titleLine2={title.line2}
               shaderTheme={shaderTheme}
               showSpecialtyColumns={showSpecialtyColumns}
+              blankCarousel={blankCarousel}
             />
             <DoePhoneHomeShaderBandSection
               slideId={slide.id}
               shaderTheme={shaderTheme}
               showWorkflowInput={showWorkflowInput}
+              showActiveAgents={showActiveAgents}
             />
           </Fragment>
         );

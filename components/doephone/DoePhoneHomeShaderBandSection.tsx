@@ -1,6 +1,7 @@
 "use client";
 
 import { DoePhoneHomeSectionWorkflowInput } from "@/components/doephone/DoePhoneHomeSectionWorkflowInput";
+import { DoePhoneReviewPackageVisual } from "@/components/doephone/DoePhoneReviewPackageVisual";
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import type { DoePhoneCommunicationSlide } from "@/lib/doephone/communication-carousel";
 import {
@@ -17,25 +18,34 @@ export function DoePhoneHomeShaderBandSection({
   slideId,
   shaderTheme = "default",
   showWorkflowInput = false,
+  showActiveAgents = false,
 }: {
   slideId: DoePhoneCommunicationSlide["id"];
   shaderTheme?: "default" | "dusk";
   showWorkflowInput?: boolean;
+  showActiveAgents?: boolean;
 }) {
   const shader =
     shaderTheme === "dusk"
       ? doeHomeDuskShaderBandSurface(slideId)
       : doeHomeShaderBandSurface(slideId);
 
-  const sectionShell = showWorkflowInput
-    ? `${DOEPHONE_VIEWPORT_SECTION} flex flex-col`
-    : DOEPHONE_MAIN_PAGE_VIEWPORT_SECTION;
+  const sectionShell =
+    showWorkflowInput || showActiveAgents
+      ? `${DOEPHONE_VIEWPORT_SECTION} flex flex-col`
+      : DOEPHONE_MAIN_PAGE_VIEWPORT_SECTION;
+
+  const sectionLabel = showWorkflowInput
+    ? "Customize agents"
+    : showActiveAgents
+      ? "Agents"
+      : undefined;
 
   return (
     <section
-      className={`home-feature-shader-band${showWorkflowInput ? " home-feature-shader-band--workflow" : ""} ${sectionShell}`}
-      aria-label={showWorkflowInput ? "Customize agents" : undefined}
-      aria-hidden={showWorkflowInput ? undefined : true}
+      className={`home-feature-shader-band${showWorkflowInput ? " home-feature-shader-band--workflow" : ""}${showActiveAgents ? " home-feature-shader-band--active-agents" : ""} ${sectionShell}`}
+      aria-label={sectionLabel}
+      aria-hidden={sectionLabel ? undefined : true}
     >
       {shader ? (
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -59,6 +69,12 @@ export function DoePhoneHomeShaderBandSection({
           <div className="flex min-h-0 flex-1 flex-col items-stretch justify-center">
             <DoePhoneHomeSectionWorkflowInput />
           </div>
+        </div>
+      ) : null}
+
+      {showActiveAgents ? (
+        <div className="home-feature-shader-band__active-agents-shell relative z-[10] flex h-full min-h-0 w-full flex-1 flex-col items-center justify-center">
+          <DoePhoneReviewPackageVisual />
         </div>
       ) : null}
     </section>

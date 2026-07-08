@@ -1394,6 +1394,18 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workf
   max-height: var(--doe-section-band-vh, var(--app-vh, 100lvh)) !important;
 }
 
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--active-agents {
+  position: relative !important;
+  min-height: var(--doe-section-band-vh, var(--app-vh, 100lvh)) !important;
+  height: var(--doe-section-band-vh, var(--app-vh, 100lvh)) !important;
+  max-height: var(--doe-section-band-vh, var(--app-vh, 100lvh)) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--active-agents .home-feature-shader-band__active-agents-shell {
+  padding-inline: var(--proto-phone-gutter-left);
+  padding-block: var(--proto-phone-gutter-y);
+}
+
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-shader-band__workflow-shell {
   padding-inline: 0;
   padding-top: calc(
@@ -1459,6 +1471,17 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow 
   position: relative !important;
   min-height: 100dvh !important;
   height: 100dvh !important;
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--active-agents {
+  position: relative !important;
+  min-height: 100dvh !important;
+  height: 100dvh !important;
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--active-agents .home-feature-shader-band__active-agents-shell {
+  padding-inline: var(--desktop-page-inset-x);
+  padding-block: var(--desktop-section-pad-y);
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-section__workflow-input {

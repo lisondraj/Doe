@@ -20,12 +20,14 @@ export function DoePhoneHomeFeatureCardSection({
   titleLine2,
   shaderTheme = "default",
   showSpecialtyColumns = false,
+  blankCarousel = false,
 }: {
   slide: DoePhoneCommunicationSlide;
   titleLine1: string;
   titleLine2: string;
   shaderTheme?: "default" | "dusk";
   showSpecialtyColumns?: boolean;
+  blankCarousel?: boolean;
 }) {
   const shaderVariant = protoGrainGradientVariant(slide.id);
 
@@ -48,6 +50,20 @@ export function DoePhoneHomeFeatureCardSection({
               </h2>
               <DoePhoneHomeSpecialtyPillColumns />
             </div>
+          ) : blankCarousel ? (
+            <>
+              <div
+                className={`home-feature-card-section__card w-full ${DOEPHONE_SECTION_CAROUSEL_HEIGHT} layout-desktop:!h-full layout-desktop:!min-h-0 layout-desktop:!max-h-none layout-desktop:!flex-1 layout-desktop:!shrink`}
+                aria-hidden
+              />
+
+              <h2
+                className={`home-feature-card-section__title mt-[clamp(1.35rem,0.9rem+1.85vmin,2.15rem)] text-left ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] text-[#1E343A] ${suisseIntl.className}`}
+              >
+                <span className="block">{titleLine1}</span>
+                <span className="block">{titleLine2}</span>
+              </h2>
+            </>
           ) : (
             <>
               <div
