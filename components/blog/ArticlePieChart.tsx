@@ -6,10 +6,20 @@ import {
   ABOUT_DESKTOP_CHART_CITATION_TW,
 } from "@/lib/about/about-layout-styles";
 import { dmSans, inter } from "@/lib/home/fonts";
+import {
+  DOE_HOME_DUSK_CHART_ACCENT,
+  DOE_HOME_DUSK_CHART_MUTED,
+  DOE_HOME_DUSK_CHART_MUTED_STRONG,
+} from "@/lib/home/doe-page-colors";
 import { PROTO_CHART_SLICE_COLORS } from "@/lib/proto/proto-chart-colors";
 import type { ArticleBodyLayout } from "@/components/blog/ArticleBodyBlocks";
 
 const SLICE_COLORS_LIGHT = ["#D2774C", "rgba(30, 52, 58, 0.22)", "rgba(30, 52, 58, 0.38)"] as const;
+const SLICE_COLORS_DUSK = [
+  DOE_HOME_DUSK_CHART_ACCENT,
+  DOE_HOME_DUSK_CHART_MUTED,
+  DOE_HOME_DUSK_CHART_MUTED_STRONG,
+] as const;
 const SLICE_COLORS_DARK = PROTO_CHART_SLICE_COLORS;
 const SLICE_COLORS_PROTO = PROTO_CHART_SLICE_COLORS;
 
@@ -50,17 +60,24 @@ export function ArticlePieChart({
   showCaption?: boolean;
   showCitation?: boolean;
   titleClassName?: string;
-  theme?: "light" | "dark" | "proto";
+  theme?: "light" | "dark" | "proto" | "dusk";
 }) {
   const isDesktop = layout === "desktop";
   const isDark = theme === "dark" || theme === "proto";
+  const isDusk = theme === "dusk";
   const sliceColors =
-    theme === "proto" ? SLICE_COLORS_PROTO : isDark ? SLICE_COLORS_DARK : SLICE_COLORS_LIGHT;
-  const titleColor = isDark ? "text-white" : "text-[#1E343A]";
-  const labelColor = isDark ? "text-white/72" : "text-[#1E343A]/72";
-  const valueColor = isDark ? "text-white" : "text-[#1E343A]";
-  const metaColor = isDark ? "text-white/55" : "text-[#9A8F82]";
-  const donutCenter = isDark ? "bg-[#121819]" : "bg-[#F7F6F3]";
+    theme === "proto"
+      ? SLICE_COLORS_PROTO
+      : isDusk
+        ? SLICE_COLORS_DUSK
+        : isDark
+          ? SLICE_COLORS_DARK
+          : SLICE_COLORS_LIGHT;
+  const titleColor = isDark ? "text-white" : isDusk ? "text-[#1A1208]" : "text-[#1E343A]";
+  const labelColor = isDark ? "text-white/72" : isDusk ? "text-[#1A1208]/72" : "text-[#1E343A]/72";
+  const valueColor = isDark ? "text-white" : isDusk ? "text-[#1A1208]" : "text-[#1E343A]";
+  const metaColor = isDark ? "text-white/55" : isDusk ? "text-[#8A7868]" : "text-[#9A8F82]";
+  const donutCenter = isDark ? "bg-[#121819]" : isDusk ? "bg-[#FAF0D8]" : "bg-[#F7F6F3]";
 
   return (
     <figure className={embedded ? "" : isDesktop ? ABOUT_DESKTOP_ARTICLE_SECTION_GAP : "mt-10 iphone-page:mt-12"}>

@@ -6,6 +6,11 @@ import {
   ABOUT_DESKTOP_CHART_CITATION_TW,
 } from "@/lib/about/about-layout-styles";
 import { dmSans, inter } from "@/lib/home/fonts";
+import {
+  DOE_HOME_DUSK_CHART_BAR,
+  DOE_HOME_DUSK_CHART_GRID,
+  DOE_HOME_DUSK_CHART_TRACK,
+} from "@/lib/home/doe-page-colors";
 import { PROTO_CHART_GRADIENTS } from "@/lib/proto/proto-chart-colors";
 import type { ArticleBodyLayout } from "@/components/blog/ArticleBodyBlocks";
 
@@ -39,16 +44,18 @@ export function ArticleBarChart({
   showCaption?: boolean;
   showCitation?: boolean;
   titleClassName?: string;
-  theme?: "light" | "dark" | "proto";
+  theme?: "light" | "dark" | "proto" | "dusk";
 }) {
   const isDesktop = layout === "desktop";
   const isDark = theme === "dark" || theme === "proto";
-  const track = theme === "proto" ? TRACK_PROTO : isDark ? TRACK_DARK : TRACK_LIGHT;
-  const barColor = theme === "proto" ? BAR_PROTO : isDark ? BAR_DARK : BAR;
-  const titleColor = isDark ? "text-white" : "text-[#1E343A]";
-  const labelColor = isDark ? "text-white/72" : "text-[#1E343A]/72";
-  const valueColor = isDark ? "text-white" : "text-[#1E343A]";
-  const metaColor = isDark ? "text-white/55" : "text-[#9A8F82]";
+  const isDusk = theme === "dusk";
+  const track = theme === "proto" ? TRACK_PROTO : isDusk ? DOE_HOME_DUSK_CHART_TRACK : isDark ? TRACK_DARK : TRACK_LIGHT;
+  const barColor = theme === "proto" ? BAR_PROTO : isDusk ? DOE_HOME_DUSK_CHART_BAR : isDark ? BAR_DARK : BAR;
+  const gridLine = isDusk ? DOE_HOME_DUSK_CHART_GRID : GRID_LINE;
+  const titleColor = isDark ? "text-white" : isDusk ? "text-[#1A1208]" : "text-[#1E343A]";
+  const labelColor = isDark ? "text-white/72" : isDusk ? "text-[#1A1208]/72" : "text-[#1E343A]/72";
+  const valueColor = isDark ? "text-white" : isDusk ? "text-[#1A1208]" : "text-[#1E343A]";
+  const metaColor = isDark ? "text-white/55" : isDusk ? "text-[#8A7868]" : "text-[#9A8F82]";
   const maxValue = Math.max(...bars.map((bar) => bar.value), 1);
 
   return (
@@ -72,7 +79,7 @@ export function ArticleBarChart({
                 className="absolute left-0 right-0 border-t"
                 style={{
                   top: `${(index / (BAR_CHART_GRID_LINES - 1)) * 100}%`,
-                  borderColor: GRID_LINE,
+                  borderColor: gridLine,
                 }}
               />
             ))}
