@@ -1,14 +1,14 @@
-import { DOE_HOME_HERO_REEF_PALETTE } from "@/lib/proto/proto-shader-backdrop-colors";
+import { DOE_HOME_HERO_GLACIER_PALETTE } from "@/lib/proto/proto-shader-backdrop-colors";
 
-const REEF = DOE_HOME_HERO_REEF_PALETTE;
+const GLACIER = DOE_HOME_HERO_GLACIER_PALETTE;
 
-/** Reef-depth shadows — orbs sit in the water column, not on top of it. */
-const SHADOW_REEF = "#043038";
-const SHADOW_DEEP = "#052428";
+/** Slate-depth shadows — orbs sit in the ice field, not on top of it. */
+const SHADOW_SLATE = "#101E2C";
+const SHADOW_DEEP = "#0A1420";
 
-/** Sunlit rims — warm foam and seafoam highlights. */
-const RIM_FOAM = "#FFE8E0";
-const RIM_SEAFOAM = "#D8FFF5";
+/** Frost rims — pale ice highlights against the abyss. */
+const RIM_FROST = "#E8F4FC";
+const RIM_ICE = "#D0ECFF";
 
 export type HeroDialOrbScheme = {
   label: string;
@@ -19,50 +19,50 @@ export type HeroDialOrbScheme = {
 };
 
 /**
- * Tropical reef agent nodes — coral / turquoise / anemone gold on deep teal.
+ * Arctic glacier agent nodes — ice / steel / frost mint on deep slate.
  * Ordered bright ↔ deep around the ring so neighbors never share the same hue.
  */
 export const HERO_DIAL_ORBS: readonly HeroDialOrbScheme[] = [
   {
     label: "Inbox Agent",
-    colors: [SHADOW_REEF, "#FF8366", RIM_FOAM],
-    colorBack: REEF.back,
+    colors: [SHADOW_SLATE, "#8CD4FF", RIM_FROST],
+    colorBack: GLACIER.back,
     intensity: 0.16,
   },
   {
     label: "Scheduling Agent",
-    colors: [SHADOW_DEEP, "#5EEDC8", RIM_SEAFOAM],
-    colorBack: REEF.back,
+    colors: [SHADOW_DEEP, "#6BA8D8", RIM_ICE],
+    colorBack: GLACIER.back,
     intensity: 0.15,
   },
   {
     label: "Labs Agent",
-    colors: [SHADOW_REEF, "#FFC857", "#FFF4D8"],
-    colorBack: REEF.back,
+    colors: [SHADOW_SLATE, "#A0E8F0", "#E4FAFC"],
+    colorBack: GLACIER.back,
     intensity: 0.17,
   },
   {
     label: "Referrals Agent",
-    colors: [SHADOW_DEEP, "#3DD6C4", "#D0FAF4"],
-    colorBack: REEF.back,
+    colors: [SHADOW_DEEP, "#B8E0FF", "#F0F8FF"],
+    colorBack: GLACIER.back,
     intensity: 0.15,
   },
   {
     label: "Live Appointment",
-    colors: [SHADOW_REEF, "#FF9F6B", "#FFECD8"],
-    colorBack: REEF.back,
+    colors: [SHADOW_SLATE, "#58C8E8", "#D4F4FC"],
+    colorBack: GLACIER.back,
     intensity: 0.17,
   },
   {
     label: "Billing Agent",
-    colors: [SHADOW_DEEP, "#E85D4A", "#FFDED8"],
-    colorBack: REEF.back,
+    colors: [SHADOW_DEEP, "#88B8D8", "#E4F0F8"],
+    colorBack: GLACIER.back,
     intensity: 0.16,
   },
   {
     label: "Refill Agent",
-    colors: [SHADOW_DEEP, "#2ABFB4", "#C8F5F0"],
-    colorBack: REEF.back,
+    colors: [SHADOW_DEEP, "#4AACD8", "#C8E8F8"],
+    colorBack: GLACIER.back,
     intensity: 0.15,
   },
 ] as const;

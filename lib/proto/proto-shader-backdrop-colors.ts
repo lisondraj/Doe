@@ -19,12 +19,12 @@ export const DOE_HOME_ORANGE_PALETTE = {
   tan: "#B87862",
 } as const;
 
-/** Hero experiment — tropical reef (hero shader + dial only). */
-export const DOE_HOME_HERO_REEF_PALETTE = {
-  back: "#042A32",
-  coral: "#FF7A5C",
-  turquoise: "#3ECFCF",
-  anemone: "#FFD166",
+/** Hero experiment — arctic glacier (hero shader + dial only). */
+export const DOE_HOME_HERO_GLACIER_PALETTE = {
+  back: "#0C1824",
+  ice: "#A8E6FF",
+  arctic: "#6BB8E8",
+  frost: "#E8F4FC",
 } as const;
 
 const PROTO_AGENTS_MID_BLUE = "#4A6878";
@@ -47,16 +47,16 @@ export function doeHomeHeroShaderSurface(): ProtoGrainGradientSurface {
   };
 }
 
-/** Doe home hero — tropical reef experiment (same home-hero flow preset). */
-export function doeHomeHeroReefShaderSurface(): ProtoGrainGradientSurface {
+/** Doe home hero — arctic glacier experiment (same home-hero flow preset). */
+export function doeHomeHeroGlacierShaderSurface(): ProtoGrainGradientSurface {
   return {
     variant: "home-hero",
     colors: [
-      DOE_HOME_HERO_REEF_PALETTE.coral,
-      DOE_HOME_HERO_REEF_PALETTE.turquoise,
-      DOE_HOME_HERO_REEF_PALETTE.anemone,
+      DOE_HOME_HERO_GLACIER_PALETTE.ice,
+      DOE_HOME_HERO_GLACIER_PALETTE.arctic,
+      DOE_HOME_HERO_GLACIER_PALETTE.frost,
     ],
-    colorBack: DOE_HOME_HERO_REEF_PALETTE.back,
+    colorBack: DOE_HOME_HERO_GLACIER_PALETTE.back,
   };
 }
 
