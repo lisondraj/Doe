@@ -10,8 +10,10 @@ import { HOME_FEATURE_SECTION_TITLES } from "@/lib/doephone/home-feature-section
 /** iPhone home — feature cards on sand bands with full-viewport shader bands after each. */
 export function DoePhoneHomeFeatureStack({
   shaderTheme = "default",
+  variant = "mobile",
 }: {
   shaderTheme?: "default" | "dusk";
+  variant?: "mobile" | "desktop";
 }) {
   return (
     <>
@@ -25,6 +27,7 @@ export function DoePhoneHomeFeatureStack({
               titleLine1={title.line1}
               titleLine2={title.line2}
               shaderTheme={shaderTheme}
+              variant={variant}
             />
             <DoePhoneHomeShaderBandSection slideId={slide.id} shaderTheme={shaderTheme} />
           </Fragment>

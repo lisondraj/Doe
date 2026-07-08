@@ -34,7 +34,7 @@ export function HomeFooter({
   return (
     <>
       <footer
-        className={`relative z-10 mt-0 flex min-h-[min(69vh,42rem)] w-screen flex-col justify-end overflow-x-clip overflow-y-hidden ${footerShellClass} pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] iphone-page:min-h-[66vh]`}
+        className={`relative z-10 flex min-h-[min(69vh,42rem)] w-screen flex-col justify-end overflow-x-clip overflow-y-hidden ${footerShellClass} pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] layout-desktop:min-h-[min(72vh,44rem)] iphone-page:min-h-[66vh]`}
         style={{
           width: "100vw",
           marginLeft: "calc(50% - 50vw)",
@@ -52,7 +52,7 @@ export function HomeFooter({
 
         <div className="relative z-10 flex w-full flex-1 flex-col justify-end pt-10 md:pt-16">
           <div
-            className={`mb-14 flex w-full items-end justify-between gap-8 md:mb-16 iphone-page:mb-12 iphone-page:gap-6 ${DOEPHONE_FOOTER_CONTENT_INSET}`}
+            className={`home-footer-content-row mb-14 flex w-full items-end justify-between gap-8 md:mb-16 layout-desktop:mb-16 layout-desktop:gap-10 iphone-page:mb-12 iphone-page:gap-6 ${DOEPHONE_FOOTER_CONTENT_INSET}`}
           >
             <div
               className={`home-footer-contact min-w-0 shrink text-left text-white ${inter.className} text-[clamp(1.08rem,0.92rem+0.62vmin,1.32rem)] font-normal leading-[1.38] tracking-[-0.01em] iphone-page:text-[clamp(1.02rem,0.88rem+0.56vmin,1.22rem)]`}
