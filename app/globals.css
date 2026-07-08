@@ -356,8 +356,9 @@ html[data-layout="desktop"] {
 }
 
 /*
- * Desktop home + about — punched-out nav capsule (mirrors iPhone always-punched).
- * Outer nav is transparent gutters; inner .proto-nav-frost-shell is the dusk pill.
+ * Desktop home + about — punched-out nav capsule (mirrors iPhone).
+ * Home: --proto-nav-frost-progress driven by scroll (0 on hero → 1 beyond).
+ * About: always punched via .proto-nav-always-punched.
  */
 html[data-home-page][data-layout="desktop"],
 html[data-about-page][data-layout="desktop"] {
@@ -367,38 +368,77 @@ html[data-about-page][data-layout="desktop"] {
   --doe-nav-frost-scrolled-cta-bg: #f5e6d0;
   --doe-nav-frost-scrolled-cta-text: #1a1208;
   --doe-nav-frost-scrolled-cta-divider: rgba(26, 18, 8, 0.14);
+}
+
+html[data-about-page][data-layout="desktop"] {
   --proto-nav-frost-progress: 1;
   --proto-nav-frost-shell-progress: 1;
 }
 
 html[data-layout="desktop"] nav.desktop-punched-nav {
-  --proto-nav-frost-progress: 1;
-  --proto-nav-frost-shell-progress: 1;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
-  padding-top: 0.85rem !important;
-  padding-bottom: 0.55rem !important;
-  padding-left: var(--desktop-page-inset-x, 2.5rem) !important;
-  padding-right: var(--desktop-page-inset-x, 2.5rem) !important;
+  padding-top: calc(0.85rem * var(--proto-nav-frost-progress, 0)) !important;
+  padding-bottom: calc(0.55rem * var(--proto-nav-frost-progress, 0)) !important;
+  padding-left: calc(var(--desktop-page-inset-x, 2.5rem) * var(--proto-nav-frost-progress, 0)) !important;
+  padding-right: calc(var(--desktop-page-inset-x, 2.5rem) * var(--proto-nav-frost-progress, 0)) !important;
+  /* Progress is scroll-driven; avoid CSS transition fighting lerp */
+  transition: none;
+}
+
+html[data-layout="desktop"] nav.desktop-punched-nav.proto-nav-always-punched {
+  --proto-nav-frost-progress: 1;
+  --proto-nav-frost-shell-progress: 1;
+}
+
+html[data-layout="desktop"] nav.desktop-punched-nav .proto-nav-frost-shell {
+  transition: none;
+  will-change: border-radius, background-color, box-shadow, border-color;
 }
 
 html[data-layout="desktop"] nav.desktop-punched-nav .desktop-punched-nav__strip {
-  padding: 0.55rem 1.15rem 0.55rem 1.45rem;
   gap: 1.25rem;
+  box-sizing: border-box;
+  /* Hero: page gutters + py-6; punched: tight capsule pad (outer nav holds page gutters) */
+  padding-top: calc(
+    (1 - var(--proto-nav-frost-progress, 0)) * 1.5rem +
+      var(--proto-nav-frost-progress, 0) * 0.55rem
+  );
+  padding-bottom: calc(
+    (1 - var(--proto-nav-frost-progress, 0)) * 1.5rem +
+      var(--proto-nav-frost-progress, 0) * 0.55rem
+  );
+  padding-left: calc(
+    (1 - var(--proto-nav-frost-progress, 0)) * var(--desktop-page-inset-x, 2.5rem) +
+      var(--proto-nav-frost-progress, 0) * 1.45rem
+  );
+  padding-right: calc(
+    (1 - var(--proto-nav-frost-progress, 0)) * var(--desktop-page-inset-x, 2.5rem) +
+      var(--proto-nav-frost-progress, 0) * 1.15rem
+  );
+  transition: none;
 }
 
 html[data-layout="desktop"] nav.desktop-punched-nav .proto-nav-chrome-logo {
-  text-shadow: none !important;
   text-decoration: none !important;
+  /* Color is interpolated via --proto-nav-frost-progress; keep shadow soft fade */
+  text-shadow: 0 1px 3px rgba(0, 0, 0, calc((1 - var(--proto-nav-frost-progress, 0)) * 0.28));
+  transition: none;
 }
 
 html[data-layout="desktop"] nav.desktop-punched-nav .proto-nav-cta-shell {
   overflow: hidden;
 }
 
-html[data-layout="desktop"] nav.desktop-punched-nav .proto-nav-cta-shell a,
-html[data-layout="desktop"] nav.desktop-punched-nav .proto-nav-cta-shell button {
+/* Home keeps hero dark button fills — no punched sand gradient override */
+html[data-layout="desktop"] nav.desktop-punched-nav:not(.proto-nav-always-punched) .proto-nav-cta-shell a,
+html[data-layout="desktop"] nav.desktop-punched-nav:not(.proto-nav-always-punched) .proto-nav-cta-shell button {
+  background-image: none;
+}
+
+html[data-layout="desktop"] nav.desktop-punched-nav.proto-nav-always-punched .proto-nav-cta-shell a,
+html[data-layout="desktop"] nav.desktop-punched-nav.proto-nav-always-punched .proto-nav-cta-shell button {
   background-image: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0.34) 0%,
@@ -408,7 +448,12 @@ html[data-layout="desktop"] nav.desktop-punched-nav .proto-nav-cta-shell button 
 }
 
 html[data-layout="desktop"] nav.desktop-punched-nav .proto-nav-cta-shell button[class*="border-l"] {
-  border-left-color: var(--doe-nav-frost-scrolled-cta-divider, rgba(26, 18, 8, 0.14)) !important;
+  border-left-color: color-mix(
+    in srgb,
+    rgba(245, 230, 208, 0.24) calc((1 - var(--proto-nav-frost-progress, 0)) * 100%),
+    var(--doe-nav-frost-scrolled-cta-divider, rgba(26, 18, 8, 0.14))
+      calc(var(--proto-nav-frost-progress, 0) * 100%)
+  ) !important;
 }
 
 html[data-layout="desktop"] nav.desktop-punched-nav .proto-nav-cta-shell [role="menu"] {
@@ -419,9 +464,17 @@ html[data-layout="desktop"] nav.desktop-punched-nav .proto-nav-cta-shell [role="
   border-radius: 1rem !important;
 }
 
+/* Desktop home — keep hero CTA colors readable on sand page after punch */
+html[data-home-page][data-layout="desktop"] nav.desktop-punched-nav:not(.proto-nav-always-punched) .proto-nav-cta-shell [role="menu"] {
+  background-color: #1a1208 !important;
+  color: #f5e6d0 !important;
+  border-color: rgba(245, 230, 208, 0.24) !important;
+}
+
 /* Desktop route banner offset — punched nav shares .desktop-home-nav */
 html[data-home-page]:has(.doe-home-top-banner) nav.desktop-punched-nav {
   top: var(--doe-home-top-banner-height, 0px);
+  transition: top 320ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 html[data-home-page][data-home-banner-dismissed] nav.desktop-punched-nav {
@@ -1394,8 +1447,8 @@ html[data-layout="desktop"] nav.desktop-punched-nav .proto-nav-chrome-logo,
 html[data-layout="desktop"] nav.desktop-punched-nav .proto-nav-chrome-logo a {
   color: color-mix(
     in srgb,
-    var(--doe-page-ink, #1a1208) calc((1 - var(--proto-nav-frost-progress, 1)) * 100%),
-    var(--doe-page-surface-raised, #f5e6d0) calc(var(--proto-nav-frost-progress, 1) * 100%)
+    #ffffff calc((1 - var(--proto-nav-frost-progress, 0)) * 100%),
+    var(--doe-page-surface-raised, #f5e6d0) calc(var(--proto-nav-frost-progress, 0) * 100%)
   ) !important;
 }
 
