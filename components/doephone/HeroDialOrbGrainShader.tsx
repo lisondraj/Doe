@@ -19,7 +19,7 @@ function hasRenderableSize(node: HTMLElement) {
   return parentRect.width > 1 && parentRect.height > 1;
 }
 
-/** Grain orb fill — waits for layout, shows palette fallback, caps WebGL per instance. */
+/** Grain orb fill — waits for layout, caps WebGL per instance, fades in once painted. */
 export const HeroDialOrbGrainShader = memo(function HeroDialOrbGrainShader({
   scheme,
   eager = false,
@@ -41,8 +41,8 @@ export const HeroDialOrbGrainShader = memo(function HeroDialOrbGrainShader({
   const hasShaderRef = useRef(false);
   const [ready, setReady] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [painted, setPainted] = useState(false);
   const intensity = scheme.intensity ?? HERO_DIAL_ORB_SHADER.intensity;
-  const [, mid, light] = scheme.colors;
   const shouldMount = enabled || (stickMounted && hasShaderRef.current);
   const showShader = shouldMount && ready && mounted;
 
@@ -51,6 +51,7 @@ export const HeroDialOrbGrainShader = memo(function HeroDialOrbGrainShader({
       if (!stickMounted || !hasShaderRef.current) {
         setReady(false);
         setMounted(false);
+        setPainted(false);
       }
       return;
     }
@@ -96,7 +97,7 @@ export const HeroDialOrbGrainShader = memo(function HeroDialOrbGrainShader({
   useLayoutEffect(() => {
     if (!shouldMount || !ready || mounted) return;
 
-    const delay = eager ? mountDelayMs : mountDelayMs + 180;
+    const delay = eager ? mountDelayMs : mountDelayMs + 120;
     if (delay <= 0) {
       const raf = requestAnimationFrame(() => {
         hasShaderRef.current = true;
@@ -112,15 +113,41 @@ export const HeroDialOrbGrainShader = memo(function HeroDialOrbGrainShader({
     return () => window.clearTimeout(timer);
   }, [eager, mountDelayMs, mounted, ready, shouldMount]);
 
+  useLayoutEffect(() => {
+    if (!showShader) {
+      setPainted(false);
+      return;
+    }
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedMotion) {
+      setPainted(true);
+      return;
+    }
+
+    let raf2 = 0;
+    let raf3 = 0;
+    const raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => {
+        raf3 = requestAnimationFrame(() => setPainted(true));
+      });
+    });
+
+    return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+      cancelAnimationFrame(raf3);
+      setPainted(false);
+    };
+  }, [showShader]);
+
   return (
     <div
       ref={shellRef}
-      className="hero-speaking-orb__grain-shell absolute inset-0 overflow-hidden rounded-full"
-      style={{
-        background: showShader
-          ? scheme.colorBack
-          : `radial-gradient(circle at 42% 38%, ${light} 0%, ${mid} 52%, ${scheme.colorBack} 100%)`,
-      }}
+      className={`hero-speaking-orb__grain-shell absolute inset-0 overflow-hidden rounded-full${
+        painted ? " hero-speaking-orb__grain-shell--painted" : ""
+      }`}
+      style={{ backgroundColor: scheme.colorBack }}
       aria-hidden
     >
       {showShader ? (

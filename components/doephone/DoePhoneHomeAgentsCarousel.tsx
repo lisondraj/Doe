@@ -83,7 +83,7 @@ function AgentCarouselOrb({
             eager={focused}
             enabled={mountShader}
             stickMounted
-            mountDelayMs={focused ? 280 : 0}
+            mountDelayMs={focused ? 380 : 470}
           />
           <div
             className="pointer-events-none absolute inset-0 rounded-full hero-speaking-orb__core-shade"

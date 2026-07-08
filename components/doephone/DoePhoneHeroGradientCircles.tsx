@@ -150,6 +150,7 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
   showPill,
   orbSize,
   orbIndex = 0,
+  mountDelayMs = 380,
   interactive = false,
   expanded = false,
   showRinging = false,
@@ -160,6 +161,7 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
   showPill: boolean;
   orbSize: string;
   orbIndex?: number;
+  mountDelayMs?: number;
   interactive?: boolean;
   expanded?: boolean;
   showRinging?: boolean;
@@ -204,10 +206,10 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
         <div className="hero-speaking-orb__core relative overflow-hidden rounded-full">
         <HeroDialOrbGrainShader
           scheme={scheme}
-          eager={isFocused || expanded || orbIndex === 0}
+          eager={isFocused || expanded}
           enabled
           stickMounted
-          mountDelayMs={360 + orbIndex * 240}
+          mountDelayMs={mountDelayMs}
         />
         <div
           className="pointer-events-none absolute inset-0 rounded-full hero-speaking-orb__core-shade"
@@ -246,6 +248,12 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
     </div>
   );
 });
+
+function heroOrbMountDelayMs(orbIndex: number, focusedIndex: number) {
+  const forward = (orbIndex - focusedIndex + HERO_DIAL_ORB_COUNT) % HERO_DIAL_ORB_COUNT;
+  const backward = (focusedIndex - orbIndex + HERO_DIAL_ORB_COUNT) % HERO_DIAL_ORB_COUNT;
+  return 380 + Math.min(forward, backward) * 90;
+}
 
 /** Hero — half-circle dial on the right edge; auto-steps down every 5s. */
 export function DoePhoneHeroGradientCircles({
@@ -506,6 +514,7 @@ export function DoePhoneHeroGradientCircles({
                 <SpeakingGradientOrb
                   scheme={scheme}
                   orbIndex={index}
+                  mountDelayMs={heroOrbMountDelayMs(index, focusedIndex)}
                   isFocused={pose.isFocused}
                   showPill={pose.isFocused && pillVisible && expandedOrbIndex === null}
                   orbSize={dialLayout.orbSize}
