@@ -18,6 +18,7 @@ import { DoePhoneDesktopDocumentsWorkflowSection } from "@/components/doephone/D
 import { DoePhoneDesktopCohortWatchSection } from "@/components/doephone/DoePhoneDesktopCohortWatchSection";
 import { DoePhoneDesktopIntelligenceSection } from "@/components/doephone/DoePhoneDesktopIntelligenceSection";
 import { DoePhoneHeroSection } from "@/components/doephone/DoePhoneHeroSection";
+import { DoePhoneHomeShaderBandSection } from "@/components/doephone/DoePhoneHomeShaderBandSection";
 import { DesktopNavActionRow } from "@/components/nav/DesktopNavActionRow";
 import {
   DOEPHONE_DESKTOP_PAGE_INSET_X,
@@ -589,6 +590,9 @@ export function DesktopHome({
       {/* Third section — iPhone Build backdrop + title + workflow input */}
       <DoePhoneDesktopBuildSection />
 
+      {/* Full-screen iPhone shader band between UI sections */}
+      <DoePhoneHomeShaderBandSection slideId="front-desk" shaderTheme="dusk" />
+
       {/* Fourth section — reception panel (mirrors second section) */}
       <div ref={carouselSectionRef} className={`relative z-10 ${DESKTOP_HOME_PANEL_BAND_H}`}>
         <div
@@ -603,14 +607,26 @@ export function DesktopHome({
         </div>
       </div>
 
+      {/* Full-screen iPhone shader band between UI sections */}
+      <DoePhoneHomeShaderBandSection slideId="inbox" shaderTheme="dusk" />
+
       {/* Fifth section — integrations gradient + 3D block grid */}
       <DoePhoneDesktopIntegrationsSection />
+
+      {/* Full-screen iPhone shader band between UI sections */}
+      <DoePhoneHomeShaderBandSection slideId="integrate" shaderTheme="dusk" />
 
       {/* Sixth section — billing panel (mirrors second section) */}
       <DoePhoneDesktopBillingSection />
 
+      {/* Full-screen iPhone shader band between UI sections */}
+      <DoePhoneHomeShaderBandSection slideId="billing" shaderTheme="dusk" />
+
       {/* Seventh section — documents workflow band (mirrors integrations) */}
       <DoePhoneDesktopDocumentsWorkflowSection />
+
+      {/* Full-screen iPhone shader band between UI sections */}
+      <DoePhoneHomeShaderBandSection slideId="inbox" shaderTheme="dusk" />
 
       {/* Eighth section — cohort watch panel (mirrors second section) */}
       <div className={`relative z-10 ${DESKTOP_HOME_PANEL_BAND_H}`}>

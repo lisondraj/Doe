@@ -310,6 +310,14 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band {
   background-color: #1a1208 !important;
 }
 
+/* Desktop /desktop route — make iPhone full-screen shader bands bleed beyond margins. */
+body.desktop-route .home-feature-shader-band {
+  width: 100vw !important;
+  margin-left: calc(50% - 50vw) !important;
+  margin-right: calc(50% - 50vw) !important;
+  min-height: 112vh !important;
+}
+
 html[data-home-page][data-layout="desktop"] .home-feature-card-section__title {
   display: none !important;
   color: #1a1208 !important;
