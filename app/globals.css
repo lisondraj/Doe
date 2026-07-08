@@ -2718,6 +2718,7 @@ html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop .hero-s
 
 .hero-speaking-orbs__dial--stepping .hero-speaking-orbs__node {
   transition: none;
+  pointer-events: none;
 }
 
 .hero-speaking-orbs__node {
@@ -3577,30 +3578,6 @@ html[data-home-page]:has(.doephone-mobile-root) .doephone-section-reveal--in.doe
 html[data-home-page] .hero-speaking-orbs__node-reveal {
   width: 100%;
   height: 100%;
-}
-
-html[data-home-page] .hero-speaking-orbs__node-reveal.doephone-reveal-lift {
-  filter: blur(8px);
-  transform: translateY(1.25rem);
-}
-
-html[data-home-page] .hero-speaking-orbs__node-reveal.doephone-reveal-lift--in {
-  animation: doephone-hero-orb-reveal-in 1.45s cubic-bezier(0.22, 1, 0.36, 1)
-    var(--doephone-reveal-lift-delay, 720ms) both;
-}
-
-@keyframes doephone-hero-orb-reveal-in {
-  0% {
-    opacity: 0;
-    filter: blur(8px);
-    transform: translateY(1.25rem);
-  }
-
-  100% {
-    opacity: 1;
-    filter: blur(0);
-    transform: translateY(0);
-  }
 }
 
 .doephone-section-plus {

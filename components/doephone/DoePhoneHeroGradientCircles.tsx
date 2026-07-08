@@ -20,10 +20,6 @@ import {
   heroDialOrbCarouselScheme,
   type HeroDialOrbScheme,
 } from "@/lib/doephone/hero-dial-orbs";
-import {
-  DOEPHONE_HERO_ORB_REVEAL_BASE_DELAY_MS,
-} from "@/lib/doephone/section-reveal-timing";
-import { doePhoneRevealLiftClass } from "@/lib/doephone/use-doe-phone-section-reveal";
 
 const DIAL_STEP = (Math.PI * 2) / HERO_DIAL_ORB_COUNT;
 const AUTO_ADVANCE_MS = 5000;
@@ -229,7 +225,6 @@ export function DoePhoneHeroGradientCircles({
   const isMobileInteractive = variant === "mobile";
   const [dialRotation, setDialRotation] = useState(0);
   const [pillVisible, setPillVisible] = useState(true);
-  const [stepping, setStepping] = useState(false);
   const [expandedOrbIndex, setExpandedOrbIndex] = useState<number | null>(null);
   const [expandSettled, setExpandSettled] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
@@ -242,6 +237,8 @@ export function DoePhoneHeroGradientCircles({
   const dialRotationRef = useRef(0);
   const switchRafRef = useRef<number | undefined>(undefined);
   const switchingRef = useRef(false);
+  const dialRef = useRef<HTMLDivElement>(null);
+  const nodeRefs = useRef<Array<HTMLDivElement | null>>([]);
   const reducedMotionRef = useRef(false);
   const tabVisibleRef = useRef(true);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -256,6 +253,45 @@ export function DoePhoneHeroGradientCircles({
   const focusedLabel = HERO_DIAL_ORBS[focusedIndex]?.label ?? "Agent";
   const expandedScheme =
     expandedOrbIndex === null ? null : HERO_DIAL_ORBS[expandedOrbIndex] ?? null;
+
+  const applyDialLayoutToDom = useCallback(
+    (
+      rotation: number,
+      options?: {
+        expandedOrbIndex?: number | null;
+        isClosing?: boolean;
+      },
+    ) => {
+      const expandedIndex = options?.expandedOrbIndex ?? expandedOrbIndex;
+      const closing = options?.isClosing ?? isClosing;
+      const poses = buildDialLayout(rotation, dialLayout.radiusVmin);
+
+      poses.forEach((pose, index) => {
+        const node = nodeRefs.current[index];
+        if (!node) return;
+
+        const style = dialNodeStyle(pose);
+        const isExpandedSource = expandedIndex === index;
+        node.style.transform = style.transform;
+        node.style.opacity = String(
+          isExpandedSource ? (closing ? style.opacity : 0) : style.opacity,
+        );
+        node.style.zIndex = String(style.zIndex);
+        node.classList.toggle("hero-speaking-orbs__node--focused", pose.isFocused);
+
+        const orb = node.querySelector(".hero-speaking-orb");
+        if (orb) {
+          orb.classList.toggle("hero-speaking-orb--focused", pose.isFocused);
+        }
+      });
+    },
+    [dialLayout.radiusVmin, expandedOrbIndex, isClosing],
+  );
+
+  useLayoutEffect(() => {
+    if (switchingRef.current) return;
+    applyDialLayoutToDom(dialRotation);
+  }, [applyDialLayoutToDom, dialRotation]);
 
   const finishCloseExpanded = useCallback(() => {
     if (expandCloseTimerRef.current !== undefined) {
@@ -357,7 +393,8 @@ export function DoePhoneHeroGradientCircles({
       return;
     }
 
-    setStepping(true);
+    dialRef.current?.classList.add("hero-speaking-orbs__dial--stepping");
+
     const start = performance.now();
 
     const tick = (now: number) => {
@@ -365,18 +402,19 @@ export function DoePhoneHeroGradientCircles({
       const eased = easeDialStep(t);
       const value = from + (to - from) * eased;
       dialRotationRef.current = value;
-      setDialRotation(value);
+      applyDialLayoutToDom(value);
       if (t < 1) {
         switchRafRef.current = requestAnimationFrame(tick);
       } else {
         switchRafRef.current = undefined;
-        setStepping(false);
+        dialRef.current?.classList.remove("hero-speaking-orbs__dial--stepping");
+        setDialRotation(to);
         onDone();
       }
     };
 
     switchRafRef.current = requestAnimationFrame(tick);
-  }, []);
+  }, [applyDialLayoutToDom]);
 
   const advanceDial = useCallback(() => {
     if (switchingRef.current || !tabVisibleRef.current) return;
@@ -450,7 +488,7 @@ export function DoePhoneHeroGradientCircles({
       aria-hidden={expandedOrbIndex === null ? true : undefined}
     >
       <div className="hero-speaking-orbs__stage">
-        <div className={`hero-speaking-orbs__dial${stepping ? " hero-speaking-orbs__dial--stepping" : ""}`}>
+        <div ref={dialRef} className="hero-speaking-orbs__dial">
           {HERO_DIAL_ORBS.map((scheme, index) => {
             const pose = layout[index];
             const style = dialNodeStyle(pose);
@@ -458,6 +496,9 @@ export function DoePhoneHeroGradientCircles({
             return (
               <div
                 key={scheme.label}
+                ref={(node) => {
+                  nodeRefs.current[index] = node;
+                }}
                 className={`hero-speaking-orbs__node${
                   isExpandedSource ? " hero-speaking-orbs__node--expanded-source" : ""
                 }${pose.isFocused ? " hero-speaking-orbs__node--focused" : ""}`}
@@ -467,12 +508,7 @@ export function DoePhoneHeroGradientCircles({
                   zIndex: style.zIndex,
                 }}
               >
-                <div
-                  className={`hero-speaking-orbs__node-reveal ${doePhoneRevealLiftClass(true)}`}
-                  style={{
-                    "--doephone-reveal-lift-delay": `${DOEPHONE_HERO_ORB_REVEAL_BASE_DELAY_MS}ms`,
-                  } as CSSProperties}
-                >
+                <div className="hero-speaking-orbs__node-reveal">
                   <SpeakingGradientOrb
                     scheme={scheme}
                     isFocused={pose.isFocused}
