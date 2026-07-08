@@ -39,7 +39,6 @@ const HERO_DIAL_LAYOUT = {
   },
 } as const;
 const SWITCH_MS = 1100;
-const PILL_OUT_MS = 220;
 const PLAY_DURATION_MS = 30_000;
 const EXPAND_CLOSE_MS = 820;
 const EXPANDED_ORB_MARGIN_PX = 44;
@@ -242,7 +241,6 @@ export function DoePhoneHeroGradientCircles({
   } | null>(null);
   const dialRotationRef = useRef(0);
   const switchRafRef = useRef<number | undefined>(undefined);
-  const pillTimerRef = useRef<number | undefined>(undefined);
   const switchingRef = useRef(false);
   const reducedMotionRef = useRef(false);
   const tabVisibleRef = useRef(true);
@@ -385,18 +383,12 @@ export function DoePhoneHeroGradientCircles({
     switchingRef.current = true;
     setPillVisible(false);
 
-    if (pillTimerRef.current !== undefined) {
-      window.clearTimeout(pillTimerRef.current);
-    }
-
-    pillTimerRef.current = window.setTimeout(() => {
-      const from = dialRotationRef.current;
-      const to = from - DIAL_STEP;
-      animateStep(from, to, () => {
-        switchingRef.current = false;
-        setPillVisible(true);
-      });
-    }, reducedMotionRef.current ? 0 : PILL_OUT_MS);
+    const from = dialRotationRef.current;
+    const to = from - DIAL_STEP;
+    animateStep(from, to, () => {
+      switchingRef.current = false;
+      setPillVisible(true);
+    });
   }, [animateStep]);
 
   useEffect(() => {
@@ -411,7 +403,6 @@ export function DoePhoneHeroGradientCircles({
     return () => {
       document.removeEventListener("visibilitychange", onVisibility);
       if (switchRafRef.current !== undefined) cancelAnimationFrame(switchRafRef.current);
-      if (pillTimerRef.current !== undefined) window.clearTimeout(pillTimerRef.current);
       if (playCloseTimerRef.current !== undefined) window.clearTimeout(playCloseTimerRef.current);
       if (expandCloseTimerRef.current !== undefined) window.clearTimeout(expandCloseTimerRef.current);
     };
