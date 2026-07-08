@@ -5,8 +5,8 @@ import {
 } from "@/lib/about/about-layout-styles";
 import { ABOUT_MOBILE_TAM_CHART } from "@/lib/about/about-page-article";
 import {
-  DOE_HOME_DUSK_CHART_ACCENT,
   DOE_HOME_DUSK_CHART_AXIS,
+  DOE_HOME_DUSK_CHART_BAR,
   DOE_HOME_DUSK_CHART_GRID,
   DOE_HOME_DUSK_CHART_PANEL_BORDER,
 } from "@/lib/home/doe-page-colors";
@@ -24,7 +24,7 @@ export function AboutMobileTamChart() {
   const bars = ABOUT_MOBILE_TAM_CHART.bars;
 
   return (
-    <figure>
+    <figure className="about-stat-charts">
       <figcaption
         className={`mb-5 font-medium leading-snug tracking-[-0.01em] text-[#1A1208] ${dmSans.className} ${ABOUT_MOBILE_PIE_CHART_TITLE_TW} iphone-page:mb-6`}
       >
@@ -75,8 +75,8 @@ export function AboutMobileTamChart() {
                   >
                     <div className="flex h-full flex-col justify-end">
                       <div
-                        className="w-full rounded-t-[0.35rem] transition-[height] duration-500 ease-out iphone-page:rounded-t-[0.42rem]"
-                        style={{ height: heightPct, background: DOE_HOME_DUSK_CHART_ACCENT }}
+                        className="about-chart-tam-bar w-full rounded-t-[0.35rem] transition-[height] duration-500 ease-out iphone-page:rounded-t-[0.42rem]"
+                        style={{ height: heightPct, background: DOE_HOME_DUSK_CHART_BAR }}
                       />
                     </div>
                   </div>

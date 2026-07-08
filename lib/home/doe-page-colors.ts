@@ -13,10 +13,10 @@ export const DOE_HOME_DUSK_INK = "#1A1208";
 export const DOE_HOME_DUSK_BORDER = "rgba(26, 18, 8, 0.14)";
 export const DOE_HOME_DUSK_MUTED_INK = "#8A7868";
 /** Desert dusk — chart fills and axes (iPhone home/about). */
-export const DOE_HOME_DUSK_CHART_BAR = "#C45C42";
-export const DOE_HOME_DUSK_CHART_ACCENT = "#E8A060";
-export const DOE_HOME_DUSK_CHART_MUTED = "rgba(26, 18, 8, 0.22)";
-export const DOE_HOME_DUSK_CHART_MUTED_STRONG = "rgba(26, 18, 8, 0.38)";
+export const DOE_HOME_DUSK_CHART_BAR = "#E8A060";
+export const DOE_HOME_DUSK_CHART_ACCENT = "#C45C42";
+export const DOE_HOME_DUSK_CHART_MUTED = "#E8D8C0";
+export const DOE_HOME_DUSK_CHART_MUTED_STRONG = "#D8C8B0";
 export const DOE_HOME_DUSK_CHART_TRACK = "rgba(26, 18, 8, 0.08)";
 export const DOE_HOME_DUSK_CHART_AXIS = "rgba(26, 18, 8, 0.22)";
 export const DOE_HOME_DUSK_CHART_GRID = "rgba(26, 18, 8, 0.07)";

@@ -15,7 +15,7 @@ import {
 /** iPhone /about — pie and bar charts with a shared caption block. */
 export function AboutMobileStatCharts() {
   return (
-    <div>
+    <div className="about-stat-charts">
       <ArticlePieChart
         title={ABOUT_SECTION_2_PIE_CHART.title}
         slices={ABOUT_SECTION_2_PIE_CHART.slices}

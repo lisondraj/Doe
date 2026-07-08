@@ -9,7 +9,7 @@ import { ABOUT_MOBILE_AI_ADOPTION_CHART } from "@/lib/about/about-page-article";
 /** iPhone /about — horizontal bars for AI adoption by clinical task (Canada + U.S.). */
 export function AboutMobileAiAdoptionChart() {
   return (
-    <div className="mt-10 iphone-page:mt-12">
+    <div className="about-stat-charts mt-10 iphone-page:mt-12">
       <ArticleBarChart
         title={ABOUT_MOBILE_AI_ADOPTION_CHART.title}
         bars={ABOUT_MOBILE_AI_ADOPTION_CHART.bars}

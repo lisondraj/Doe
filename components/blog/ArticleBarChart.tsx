@@ -9,7 +9,6 @@ import { dmSans, inter } from "@/lib/home/fonts";
 import {
   DOE_HOME_DUSK_CHART_BAR,
   DOE_HOME_DUSK_CHART_GRID,
-  DOE_HOME_DUSK_CHART_TRACK,
 } from "@/lib/home/doe-page-colors";
 import { PROTO_CHART_GRADIENTS } from "@/lib/proto/proto-chart-colors";
 import type { ArticleBodyLayout } from "@/components/blog/ArticleBodyBlocks";
@@ -49,8 +48,8 @@ export function ArticleBarChart({
   const isDesktop = layout === "desktop";
   const isDark = theme === "dark" || theme === "proto";
   const isDusk = theme === "dusk";
-  const track = theme === "proto" ? TRACK_PROTO : isDusk ? DOE_HOME_DUSK_CHART_TRACK : isDark ? TRACK_DARK : TRACK_LIGHT;
-  const barColor = theme === "proto" ? BAR_PROTO : isDusk ? DOE_HOME_DUSK_CHART_BAR : isDark ? BAR_DARK : BAR;
+  const track = theme === "proto" ? TRACK_PROTO : isDusk ? "var(--doe-chart-track, rgba(26, 18, 8, 0.1))" : isDark ? TRACK_DARK : TRACK_LIGHT;
+  const barColor = theme === "proto" ? BAR_PROTO : isDusk ? "var(--doe-chart-bar, #E8A060)" : isDark ? BAR_DARK : BAR;
   const gridLine = isDusk ? DOE_HOME_DUSK_CHART_GRID : GRID_LINE;
   const titleColor = isDark ? "text-white" : isDusk ? "text-[#1A1208]" : "text-[#1E343A]";
   const labelColor = isDark ? "text-white/72" : isDusk ? "text-[#1A1208]/72" : "text-[#1E343A]/72";
@@ -59,7 +58,9 @@ export function ArticleBarChart({
   const maxValue = Math.max(...bars.map((bar) => bar.value), 1);
 
   return (
-    <figure className={embedded ? "" : isDesktop ? ABOUT_DESKTOP_ARTICLE_SECTION_GAP : "mt-10 iphone-page:mt-12"}>
+    <figure
+      className={`${isDusk ? "about-stat-chart " : ""}${embedded ? "" : isDesktop ? ABOUT_DESKTOP_ARTICLE_SECTION_GAP : "mt-10 iphone-page:mt-12"}`}
+    >
       <figcaption
         className={`mb-5 font-medium leading-snug tracking-[-0.01em] ${titleColor} ${isDark ? "" : dmSans.className} ${titleClassName} ${
           isDesktop
@@ -113,13 +114,14 @@ export function ArticleBarChart({
                 </span>
               </div>
               <div
-                className={`w-full overflow-hidden rounded-full ${isDesktop ? "h-[0.52rem] md:h-[0.58rem]" : "h-[0.42rem] iphone-page:h-[0.48rem]"}`}
+                className={`about-chart-bar-track w-full overflow-hidden rounded-full ${isDesktop ? "h-[0.52rem] md:h-[0.58rem]" : "h-[0.42rem] iphone-page:h-[0.48rem]"}`}
                 style={{ background: track }}
                 aria-hidden
               >
                 <div
-                  className="h-full rounded-full transition-[width] duration-500 ease-out"
+                  className="about-chart-bar-fill h-full rounded-full transition-[width] duration-500 ease-out"
                   style={{ width, background: barColor }}
+                  data-chart-bar-color={isDusk ? DOE_HOME_DUSK_CHART_BAR : undefined}
                 />
               </div>
             </div>

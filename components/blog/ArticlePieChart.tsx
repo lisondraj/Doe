@@ -8,7 +8,7 @@ import {
 import { dmSans, inter } from "@/lib/home/fonts";
 import {
   DOE_HOME_DUSK_CHART_ACCENT,
-  DOE_HOME_DUSK_CHART_MUTED,
+  DOE_HOME_DUSK_CHART_BAR,
   DOE_HOME_DUSK_CHART_MUTED_STRONG,
 } from "@/lib/home/doe-page-colors";
 import { PROTO_CHART_SLICE_COLORS } from "@/lib/proto/proto-chart-colors";
@@ -16,8 +16,14 @@ import type { ArticleBodyLayout } from "@/components/blog/ArticleBodyBlocks";
 
 const SLICE_COLORS_LIGHT = ["#D2774C", "rgba(30, 52, 58, 0.22)", "rgba(30, 52, 58, 0.38)"] as const;
 const SLICE_COLORS_DUSK = [
+  "var(--doe-chart-pie-1, #C45C42)",
+  "var(--doe-chart-pie-2, #E8A060)",
+  "var(--doe-chart-pie-3, #D8C8B0)",
+] as const;
+
+const SLICE_COLORS_DUSK_FALLBACK = [
   DOE_HOME_DUSK_CHART_ACCENT,
-  DOE_HOME_DUSK_CHART_MUTED,
+  DOE_HOME_DUSK_CHART_BAR,
   DOE_HOME_DUSK_CHART_MUTED_STRONG,
 ] as const;
 const SLICE_COLORS_DARK = PROTO_CHART_SLICE_COLORS;
@@ -73,6 +79,7 @@ export function ArticlePieChart({
         : isDark
           ? SLICE_COLORS_DARK
           : SLICE_COLORS_LIGHT;
+  const sliceColorFallbacks = isDusk ? SLICE_COLORS_DUSK_FALLBACK : sliceColors;
   const titleColor = isDark ? "text-white" : isDusk ? "text-[#1A1208]" : "text-[#1E343A]";
   const labelColor = isDark ? "text-white/72" : isDusk ? "text-[#1A1208]/72" : "text-[#1E343A]/72";
   const valueColor = isDark ? "text-white" : isDusk ? "text-[#1A1208]" : "text-[#1E343A]";
@@ -80,7 +87,9 @@ export function ArticlePieChart({
   const donutCenter = isDark ? "bg-[#121819]" : isDusk ? "bg-[#FAF0D8]" : "bg-[#F7F6F3]";
 
   return (
-    <figure className={embedded ? "" : isDesktop ? ABOUT_DESKTOP_ARTICLE_SECTION_GAP : "mt-10 iphone-page:mt-12"}>
+    <figure
+      className={`${isDusk ? "about-stat-chart " : ""}${embedded ? "" : isDesktop ? ABOUT_DESKTOP_ARTICLE_SECTION_GAP : "mt-10 iphone-page:mt-12"}`}
+    >
       <figcaption
         className={`font-medium leading-snug tracking-[-0.01em] ${titleColor} ${isDark ? "" : dmSans.className} ${titleClassName} ${
           compact && isDesktop
@@ -113,7 +122,7 @@ export function ArticlePieChart({
           aria-hidden
         >
           <div
-            className="absolute inset-0 rounded-full"
+            className="about-chart-pie-ring absolute inset-0 rounded-full"
             style={{ background: `conic-gradient(${pieGradient(slices, sliceColors)})` }}
           />
           <div className={`absolute inset-[28%] rounded-full ${donutCenter}`} />
@@ -132,8 +141,9 @@ export function ArticlePieChart({
             <div key={slice.label} className="flex items-center justify-between gap-3">
               <div className="flex min-w-0 items-center gap-2.5">
                 <span
-                  className="h-[0.62rem] w-[0.62rem] shrink-0 rounded-full"
-                  style={{ background: sliceColors[index % sliceColors.length] }}
+                  className="about-chart-pie-legend h-[0.62rem] w-[0.62rem] shrink-0 rounded-full"
+                  style={{ background: sliceColorFallbacks[index % sliceColorFallbacks.length] }}
+                  data-chart-slice-index={index}
                   aria-hidden
                 />
                 <span

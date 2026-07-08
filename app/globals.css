@@ -133,6 +133,11 @@ html[data-about-page]:has(.doephone-mobile-root) {
   --doe-nav-frost-scrolled-cta-bg: #f5e6d0;
   --doe-nav-frost-scrolled-cta-text: #1a1208;
   --doe-nav-frost-scrolled-cta-divider: rgba(26, 18, 8, 0.14);
+  --doe-chart-bar: #e8a060;
+  --doe-chart-pie-1: #c45c42;
+  --doe-chart-pie-2: #e8a060;
+  --doe-chart-pie-3: #d8c8b0;
+  --doe-chart-track: rgba(26, 18, 8, 0.1);
   --proto-nav-cta-sheen-light: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0.3) 0%,
@@ -147,6 +152,40 @@ html[data-home-page]:has(.doephone-mobile-root) body,
 html[data-about-page]:has(.blog-mobile-root) body,
 html[data-about-page]:has(.doephone-mobile-root) body {
   background-color: #faf0d8;
+}
+
+/* iPhone /about — dusk stat charts (pie, bar, TAM). */
+html[data-about-page]:has(.blog-mobile-root) .about-stat-charts .about-chart-bar-fill,
+html[data-about-page]:has(.doephone-mobile-root) .about-stat-charts .about-chart-bar-fill,
+html[data-about-page]:has(.blog-mobile-root) .about-stat-chart .about-chart-bar-fill,
+html[data-about-page]:has(.doephone-mobile-root) .about-stat-chart .about-chart-bar-fill {
+  background: var(--doe-chart-bar, #e8a060) !important;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-stat-charts .about-chart-tam-bar,
+html[data-about-page]:has(.doephone-mobile-root) .about-stat-charts .about-chart-tam-bar {
+  background: var(--doe-chart-bar, #e8a060) !important;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-stat-charts .about-chart-pie-legend[data-chart-slice-index="0"],
+html[data-about-page]:has(.doephone-mobile-root) .about-stat-charts .about-chart-pie-legend[data-chart-slice-index="0"],
+html[data-about-page]:has(.blog-mobile-root) .about-stat-chart .about-chart-pie-legend[data-chart-slice-index="0"],
+html[data-about-page]:has(.doephone-mobile-root) .about-stat-chart .about-chart-pie-legend[data-chart-slice-index="0"] {
+  background: var(--doe-chart-pie-1, #c45c42) !important;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-stat-charts .about-chart-pie-legend[data-chart-slice-index="1"],
+html[data-about-page]:has(.doephone-mobile-root) .about-stat-charts .about-chart-pie-legend[data-chart-slice-index="1"],
+html[data-about-page]:has(.blog-mobile-root) .about-stat-chart .about-chart-pie-legend[data-chart-slice-index="1"],
+html[data-about-page]:has(.doephone-mobile-root) .about-stat-chart .about-chart-pie-legend[data-chart-slice-index="1"] {
+  background: var(--doe-chart-pie-2, #e8a060) !important;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-stat-charts .about-chart-pie-legend[data-chart-slice-index="2"],
+html[data-about-page]:has(.doephone-mobile-root) .about-stat-charts .about-chart-pie-legend[data-chart-slice-index="2"],
+html[data-about-page]:has(.blog-mobile-root) .about-stat-chart .about-chart-pie-legend[data-chart-slice-index="2"],
+html[data-about-page]:has(.doephone-mobile-root) .about-stat-chart .about-chart-pie-legend[data-chart-slice-index="2"] {
+  background: var(--doe-chart-pie-3, #d8c8b0) !important;
 }
 
 html[data-proto-page]:has(.doephone-mobile-root) {
