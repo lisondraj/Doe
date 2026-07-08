@@ -286,6 +286,12 @@ html[data-home-page] .home-feature-shader-band {
 }
 
 html[data-home-page][data-layout="desktop"] {
+  --desktop-nav-height: 5.5rem;
+  --desktop-below-nav-height: calc(100dvh - var(--desktop-nav-height));
+  /* Match DOEPHONE_DESKTOP_PAGE_INSET_X: px-10 md:px-20 lg:px-28 xl:px-36 */
+  --desktop-page-inset-x: 2.5rem;
+  /* Equal top/bottom UI pad (independent of horizontal page margins) */
+  --desktop-section-pad-y: 2.5rem;
   --doe-shader-back: #1a1208;
   --doe-shader-gold: #e8a060;
   --doe-page-surface: #faf0d8;
@@ -310,13 +316,45 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band {
   background-color: #1a1208 !important;
 }
 
+/* Desktop route — nav / below-nav tokens when data-home-page attrs are absent (/desktop). */
+body.desktop-route {
+  --desktop-nav-height: 5.5rem;
+  --desktop-below-nav-height: calc(100dvh - var(--desktop-nav-height));
+  --desktop-page-inset-x: 2.5rem;
+  --desktop-section-pad-y: 2.5rem;
+}
+
+@media (min-width: 768px) {
+  html[data-home-page][data-layout="desktop"],
+  body.desktop-route {
+    --desktop-page-inset-x: 5rem;
+    --desktop-section-pad-y: 3.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  html[data-home-page][data-layout="desktop"],
+  body.desktop-route {
+    --desktop-page-inset-x: 7rem;
+    --desktop-section-pad-y: 4rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  html[data-home-page][data-layout="desktop"],
+  body.desktop-route {
+    --desktop-page-inset-x: 9rem;
+    --desktop-section-pad-y: 5rem;
+  }
+}
+
 /* Desktop /desktop route — make iPhone full-screen shader bands bleed beyond margins. */
 body.desktop-route .home-feature-shader-band {
   width: 100vw !important;
   margin-left: calc(50% - 50vw) !important;
   margin-right: calc(50% - 50vw) !important;
-  min-height: calc(100dvh - 5.5rem + 4rem) !important;
-  height: calc(100dvh - 5.5rem + 4rem) !important;
+  min-height: var(--desktop-below-nav-height, calc(100dvh - 5.5rem)) !important;
+  height: var(--desktop-below-nav-height, calc(100dvh - 5.5rem)) !important;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-card-section__title {
@@ -344,22 +382,95 @@ html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] p {
   color: #4a3828 !important;
 }
 
-/* Desktop home — feature bands use viewport height (no phone viewport lock). */
+/*
+ * Desktop home UI sections:
+ * - Full viewport band (100dvh) so fixed nav can overlay the top clearance
+ * - Usable UI area = 100dvh - nav = --desktop-below-nav-height
+ * - Padding above/below the dark card inside that below-nav band
+ */
+html[data-home-page][data-layout="desktop"] .home-feature-card-section {
+  min-height: 100dvh !important;
+  height: 100dvh !important;
+  max-height: 100dvh !important;
+  overflow: hidden !important;
+  scroll-margin-top: 0 !important;
+  box-sizing: border-box !important;
+}
+
 html[data-home-page][data-layout="desktop"] .home-feature-card-section__inner {
-  min-height: calc(100dvh - 5.5rem + 4rem) !important;
-  padding-left: clamp(2.5rem, 5vw, 9rem) !important;
-  padding-right: clamp(2.5rem, 5vw, 9rem) !important;
+  min-height: 100% !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  box-sizing: border-box !important;
+  /* Equal pad above/below UI; L/R match page margins; top also clears fixed nav */
+  padding-top: calc(var(--desktop-nav-height) + var(--desktop-section-pad-y)) !important;
+  padding-bottom: var(--desktop-section-pad-y) !important;
+  padding-left: var(--desktop-page-inset-x) !important;
+  padding-right: var(--desktop-page-inset-x) !important;
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-card-section__inner > div {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  height: 100% !important;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-card-section__card {
-  height: clamp(24rem, 56dvh, 42rem) !important;
-  min-height: clamp(24rem, 56dvh, 42rem) !important;
-  max-height: 62dvh !important;
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+}
+
+/* Neutralize phone carousel fixed heights on desktop feature cards */
+html[data-home-page][data-layout="desktop"] .home-feature-card-section__card.home-feature-card-section__card {
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band {
-  min-height: calc(100dvh - 5.5rem + 4rem) !important;
-  height: calc(100dvh - 5.5rem + 4rem) !important;
+  min-height: var(--desktop-below-nav-height) !important;
+  height: var(--desktop-below-nav-height) !important;
+  max-height: var(--desktop-below-nav-height) !important;
+}
+
+/* /desktop legacy route — same below-nav + pad treatment */
+body.desktop-route .home-feature-card-section {
+  min-height: 100dvh !important;
+  height: 100dvh !important;
+  max-height: 100dvh !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+body.desktop-route .home-feature-card-section__inner {
+  min-height: 100% !important;
+  height: 100% !important;
+  box-sizing: border-box !important;
+  padding-top: calc(var(--desktop-nav-height, 5.5rem) + var(--desktop-section-pad-y, 2.5rem)) !important;
+  padding-bottom: var(--desktop-section-pad-y, 2.5rem) !important;
+  padding-left: var(--desktop-page-inset-x, 2.5rem) !important;
+  padding-right: var(--desktop-page-inset-x, 2.5rem) !important;
+}
+
+body.desktop-route .home-feature-card-section__inner > div {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  height: 100% !important;
+}
+
+body.desktop-route .home-feature-card-section__card {
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
 }
 
 /* Home iPhone — Build section: one viewport band, slightly tighter copy + prompt. */

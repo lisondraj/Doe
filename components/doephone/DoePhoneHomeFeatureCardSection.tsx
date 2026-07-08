@@ -32,8 +32,10 @@ export function DoePhoneHomeFeatureCardSection({
       aria-label={slide.menuLabel}
     >
       <div className={`${DOEPHONE_SECTION_CONTENT_CENTER} home-feature-card-section__inner`}>
-        <div className={`w-full ${DOEPHONE_SECTION_CAROUSEL_INSET_X}`}>
-          <div className={`home-feature-card-section__card w-full ${DOEPHONE_SECTION_CAROUSEL_HEIGHT}`}>
+        <div className={`flex min-h-0 w-full flex-1 flex-col ${DOEPHONE_SECTION_CAROUSEL_INSET_X} layout-desktop:h-full layout-desktop:px-0`}>
+          <div
+            className={`home-feature-card-section__card w-full ${DOEPHONE_SECTION_CAROUSEL_HEIGHT} layout-desktop:!h-full layout-desktop:!min-h-0 layout-desktop:!max-h-none layout-desktop:!flex-1 layout-desktop:!shrink`}
+          >
             <DoePhoneCommunicationCarouselCard
               slide={slide}
               showExpandControls={false}

@@ -4,13 +4,21 @@ import { DoePhoneDesktopFrostPlusBadge } from "@/components/doephone/DoePhoneDes
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import type { DoePhoneCommunicationSlide } from "@/lib/doephone/communication-carousel";
 import {
+  DESKTOP_HOME_FIXED_NAV_HEIGHT,
   DESKTOP_HOME_PANEL_BAND_H,
+  DOEPHONE_DESKTOP_PAGE_INSET_X,
   DOEPHONE_SECTION_CAROUSEL_CLIP_STYLE,
   DOEPHONE_SECTION_CAROUSEL_RADIUS,
 } from "@/lib/doephone/section-styles";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
-const DESKTOP_SECTION_UNIFORM_PAD = "p-10 md:p-20 lg:p-28 xl:p-36";
+/** Horizontal page gutters; equal vertical pad matches those gutters; top also clears fixed nav. */
+const DESKTOP_SECTION_PAD = `box-border overflow-hidden ${DOEPHONE_DESKTOP_PAGE_INSET_X}`;
+
+const DESKTOP_SECTION_PAD_STYLE: CSSProperties = {
+  paddingTop: `calc(${DESKTOP_HOME_FIXED_NAV_HEIGHT} + var(--desktop-section-pad-y, 2.5rem))`,
+  paddingBottom: "var(--desktop-section-pad-y, 2.5rem)",
+};
 
 const BOX_PLUS_INSET = {
   top: "clamp(1.65rem, 2.5vw, 2.75rem)",
@@ -26,7 +34,10 @@ export function DoePhoneDesktopPanelSection({
   children: ReactNode;
 }) {
   return (
-    <div className={`flex w-full flex-col ${DESKTOP_HOME_PANEL_BAND_H} ${DESKTOP_SECTION_UNIFORM_PAD}`}>
+    <div
+      className={`flex w-full flex-col ${DESKTOP_HOME_PANEL_BAND_H} ${DESKTOP_SECTION_PAD}`}
+      style={DESKTOP_SECTION_PAD_STYLE}
+    >
       <div
         className={`relative isolate min-h-0 w-full flex-1 overflow-hidden shadow-[0_10px_32px_rgba(0,0,0,0.1)] ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
         style={DOEPHONE_SECTION_CAROUSEL_CLIP_STYLE}

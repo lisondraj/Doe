@@ -47,16 +47,32 @@ export const DOEPHONE_DESKTOP_PAGE_MARGIN_X =
 /** Desktop home fixed nav — py-6 bar + text-4xl Doe wordmark row. */
 export const DESKTOP_HOME_FIXED_NAV_HEIGHT = "5.5rem";
 
-/** Viewport band below fixed desktop nav — shared desktop section height. */
+/**
+ * Visible viewport band below the fixed desktop nav (nav height excluded).
+ * Full-bleed bands that sit under the fixed overlay use this height.
+ * Panel sections that scroll under the nav use 100dvh + top pad of nav+section pad instead.
+ */
 export const DESKTOP_HOME_BELOW_NAV_HEIGHT = `calc(100dvh - ${DESKTOP_HOME_FIXED_NAV_HEIGHT})`;
+export const DESKTOP_HOME_BELOW_NAV_HEIGHT_TW = "calc(100dvh-5.5rem)";
+
+/**
+ * Desktop UI sections — equal top/bottom pad (py-10 → xl:py-20).
+ * Horizontal gutters use DOEPHONE_DESKTOP_PAGE_INSET_X separately.
+ */
+export const DESKTOP_HOME_SECTION_PAD_Y = "py-10 md:py-14 lg:py-16 xl:py-20";
+
+/**
+ * Panel section shell height — full viewport so fixed nav overlays top clearance;
+ * inner pad is nav-height + section pad (see globals.css / DoePhoneDesktopPanelSection).
+ */
+export const DESKTOP_HOME_PANEL_SECTION_H = "min-h-[100dvh] h-[100dvh] max-h-[100dvh]";
 
 /** Desktop home — full-bleed gradient bands (Build, Integrations, Documents). */
-export const DESKTOP_HOME_BAND_MIN_H = "min-h-[calc(100dvh-5.5rem+4rem)]";
-export const DESKTOP_HOME_BAND_H = "min-h-[calc(100dvh-5.5rem+4rem)] h-[calc(100dvh-5.5rem+4rem)]";
+export const DESKTOP_HOME_BAND_MIN_H = `min-h-[${DESKTOP_HOME_BELOW_NAV_HEIGHT_TW}]`;
+export const DESKTOP_HOME_BAND_H = `min-h-[${DESKTOP_HOME_BELOW_NAV_HEIGHT_TW}] h-[${DESKTOP_HOME_BELOW_NAV_HEIGHT_TW}]`;
 
 /** Desktop home — rounded panel sections (deployments, reception, billing, cohort watch). */
-export const DESKTOP_HOME_PANEL_BAND_H =
-  "min-h-[calc(100dvh-5.5rem+4rem)] h-[calc(100dvh-5.5rem+4rem)]";
+export const DESKTOP_HOME_PANEL_BAND_H = DESKTOP_HOME_PANEL_SECTION_H;
 
 /** Full-bleed desktop bands — shared top inset for title (left) and + badge (right). */
 export const DESKTOP_FULLSCREEN_SECTION_TOP = "top-10 md:top-14 lg:top-16 xl:top-20";
