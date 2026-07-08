@@ -1463,7 +1463,7 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__card
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel {
-  --home-agents-orb-size: clamp(18.5rem, 82vw, 24.5rem);
+  --home-agents-orb-size: clamp(19.75rem, 85vw, 26.25rem);
   --home-agents-orb-gap: clamp(1rem, 3.2vmin, 1.65rem);
   --home-agents-halo-bleed: clamp(0.35rem, 1.1vmin, 0.65rem);
   --home-agents-glow-bleed: clamp(1.5rem, 4vmin, 2.35rem);
