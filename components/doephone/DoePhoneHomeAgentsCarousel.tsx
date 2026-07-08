@@ -263,10 +263,10 @@ export function DoePhoneHomeAgentsCarousel() {
             className={doePhoneSectionRevealSegmentClass("agents-nav", revealed)}
           />
           <div
-            className={`home-agents-carousel__label ${suisseIntlLight.className} ${doePhoneSectionRevealSegmentClass("agents-label", revealed)}`}
+            className={`hero-speaking-orb__tag hero-speaking-orb__tag--carousel hero-speaking-orb__tag--visible ${suisseIntl.className} ${doePhoneSectionRevealSegmentClass("agents-label", revealed)}`}
             aria-hidden
           >
-            <span className="home-agents-carousel__label-text">{active.label}</span>
+            <span className="hero-speaking-orb__tag-text">{active.label}</span>
           </div>
           <CarouselChevron
             direction="right"

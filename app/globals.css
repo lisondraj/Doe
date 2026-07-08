@@ -1651,24 +1651,24 @@ html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__label-row
   padding-inline: clamp(0.75rem, 3.5vw, 1.5rem);
 }
 
-html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__label {
-  display: flex;
+html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__label-row .hero-speaking-orb__tag--carousel {
+  position: static;
   flex: 0 1 auto;
   min-width: 0;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  max-width: min(18rem, calc(100vw - 8rem));
+  padding: clamp(0.9rem, 2.65vmin, 1.12rem) clamp(1.48rem, 4.4vmin, 1.85rem);
+  opacity: 1;
+  visibility: visible;
+  pointer-events: none;
+  transform: none;
+  will-change: auto;
+  transition: opacity 360ms ease;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__label-text {
-  display: block;
-  color: var(--hero-pill-ink);
-  font-size: clamp(1.9rem, 6.4vmin, 2.65rem);
-  font-weight: 300;
-  letter-spacing: -0.03em;
-  line-height: 1.08;
-  white-space: nowrap;
-  transition: opacity 360ms ease;
+html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__label-row .hero-speaking-orb__tag--carousel .hero-speaking-orb__tag-text {
+  font-size: clamp(1.04rem, 3.05vmin, 1.3rem);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__description {
