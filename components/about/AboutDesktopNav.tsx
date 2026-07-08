@@ -1,25 +1,8 @@
 "use client";
 
-import Link from "next/link";
+import { DesktopPunchedSiteNav } from "@/components/nav/DesktopPunchedSiteNav";
 
-import { DesktopNavActionRow } from "@/components/nav/DesktopNavActionRow";
-import { ABOUT_DESKTOP_PAGE_INSET } from "@/lib/about/about-layout-styles";
-import { lora } from "@/lib/home/fonts";
-
-/** Desktop /about nav — home logo + Investors split-button CTA. */
+/** Desktop /about nav — punched dusk capsule matching iPhone + home desktop. */
 export function AboutDesktopNav() {
-  return (
-    <nav
-      className="fixed top-0 left-0 right-0 z-50 border-b border-[#E6E6E6] bg-[#F7F6F3]"
-      aria-label="Site"
-    >
-      <div className={`flex items-center justify-between py-6 ${ABOUT_DESKTOP_PAGE_INSET}`}>
-        <Link href="/" className={`text-4xl font-normal text-black no-underline ${lora.className}`}>
-          Doe
-        </Link>
-
-        <DesktopNavActionRow />
-      </div>
-    </nav>
-  );
+  return <DesktopPunchedSiteNav ariaLabel="Site" />;
 }

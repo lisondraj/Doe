@@ -44,21 +44,21 @@ export const DOEPHONE_DESKTOP_PAGE_INSET_RIGHT =
 export const DOEPHONE_DESKTOP_PAGE_MARGIN_X =
   "mx-10 md:mx-20 lg:mx-28 xl:mx-36";
 
-/** Desktop home fixed nav — py-6 (3rem) + action row h-[2.875rem]. */
-export const DESKTOP_HOME_FIXED_NAV_HEIGHT = "5.875rem";
+/** Desktop home fixed nav — punched capsule + outer page gutters. */
+export const DESKTOP_HOME_FIXED_NAV_HEIGHT = "6.25rem";
 
 /**
  * Visible viewport band below the fixed desktop nav (nav height excluded).
  * Prefer CSS `--desktop-below-nav-height` for visual layout under the overlay.
  */
 export const DESKTOP_HOME_BELOW_NAV_HEIGHT = `calc(100dvh - ${DESKTOP_HOME_FIXED_NAV_HEIGHT})`;
-export const DESKTOP_HOME_BELOW_NAV_HEIGHT_TW = "calc(100dvh-5.875rem)";
+export const DESKTOP_HOME_BELOW_NAV_HEIGHT_TW = "calc(100dvh-6.25rem)";
 
 /**
  * Desktop UI sections — equal VISUAL top/bottom pad under the fixed nav.
  * CSS padding-top adds nav clearance; padding-bottom is the pad alone.
  */
-export const DESKTOP_HOME_SECTION_PAD_Y = "py-5 md:py-6 lg:py-7 xl:py-8";
+export const DESKTOP_HOME_SECTION_PAD_Y = "py-6 md:py-8 lg:py-10 xl:py-12";
 
 /** Panel section shell — full viewport; nav overlays top clearance. */
 export const DESKTOP_HOME_PANEL_SECTION_H = "min-h-[100dvh] h-[100dvh] max-h-[100dvh]";

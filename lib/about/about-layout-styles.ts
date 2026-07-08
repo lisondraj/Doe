@@ -48,7 +48,7 @@ export const ABOUT_PAGE_HERO_BOX_TW = `${DOEPHONE_SECTION_CLOSING_FEATURE_HEIGHT
 export const ABOUT_DESKTOP_PAGE_INSET = DOEPHONE_DESKTOP_PAGE_INSET_X;
 
 /** Clears fixed nav — matches AboutDesktopNav bar height (py-6 + text-4xl). */
-export const ABOUT_DESKTOP_MAIN_PT = "pt-[5.25rem]";
+export const ABOUT_DESKTOP_MAIN_PT = "pt-[6.25rem]";
 
 /** Hero band — exactly one viewport; headline + gradient box only. */
 export const ABOUT_DESKTOP_SECTION_1_H = "box-border h-[100dvh] max-h-[100dvh] overflow-hidden";

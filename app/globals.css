@@ -286,16 +286,13 @@ html[data-home-page] .home-feature-shader-band {
 }
 
 html[data-home-page][data-layout="desktop"] {
-  /* py-6 (3rem) + action row h-[2.875rem] — matches fixed desktop nav */
-  --desktop-nav-height: 5.875rem;
+  /* Punched capsule + outer gutter pads (matches desktop-punched-nav) */
+  --desktop-nav-height: 6.25rem;
   --desktop-below-nav-height: calc(100dvh - var(--desktop-nav-height));
   /* Match DOEPHONE_DESKTOP_PAGE_INSET_X: px-10 md:px-20 lg:px-28 xl:px-36 */
   --desktop-page-inset-x: 2.5rem;
-  /* Equal pad above/below centered UI card (below-nav band) */
-  --desktop-section-pad-y: 1.25rem;
-  --desktop-section-card-max-h: calc(
-    var(--desktop-below-nav-height) - (2 * var(--desktop-section-pad-y))
-  );
+  /* Equal VISUAL pad under nav and above viewport bottom */
+  --desktop-section-pad-y: 1.5rem;
   --doe-shader-back: #1a1208;
   --doe-shader-gold: #e8a060;
   --doe-page-surface: #faf0d8;
@@ -322,20 +319,17 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band {
 
 /* Desktop route — nav / below-nav tokens when data-home-page attrs are absent (/desktop). */
 body.desktop-route {
-  --desktop-nav-height: 5.875rem;
+  --desktop-nav-height: 6.25rem;
   --desktop-below-nav-height: calc(100dvh - var(--desktop-nav-height));
   --desktop-page-inset-x: 2.5rem;
-  --desktop-section-pad-y: 1.25rem;
-  --desktop-section-card-max-h: calc(
-    var(--desktop-below-nav-height) - (2 * var(--desktop-section-pad-y))
-  );
+  --desktop-section-pad-y: 1.5rem;
 }
 
 @media (min-width: 768px) {
   html[data-home-page][data-layout="desktop"],
   body.desktop-route {
     --desktop-page-inset-x: 5rem;
-    --desktop-section-pad-y: 1.5rem;
+    --desktop-section-pad-y: 2rem;
   }
 }
 
@@ -343,7 +337,7 @@ body.desktop-route {
   html[data-home-page][data-layout="desktop"],
   body.desktop-route {
     --desktop-page-inset-x: 7rem;
-    --desktop-section-pad-y: 1.75rem;
+    --desktop-section-pad-y: 2.5rem;
   }
 }
 
@@ -351,14 +345,87 @@ body.desktop-route {
   html[data-home-page][data-layout="desktop"],
   body.desktop-route {
     --desktop-page-inset-x: 9rem;
-    --desktop-section-pad-y: 2rem;
+    --desktop-section-pad-y: 3rem;
   }
 }
 
 /* Keep scrolled UI sections clear of the fixed nav */
 html[data-home-page][data-layout="desktop"],
 html[data-layout="desktop"] {
-  scroll-padding-top: var(--desktop-nav-height, 5.875rem);
+  scroll-padding-top: var(--desktop-nav-height, 6.25rem);
+}
+
+/*
+ * Desktop home + about — punched-out nav capsule (mirrors iPhone always-punched).
+ * Outer nav is transparent gutters; inner .proto-nav-frost-shell is the dusk pill.
+ */
+html[data-home-page][data-layout="desktop"],
+html[data-about-page][data-layout="desktop"] {
+  --doe-shader-back: #1a1208;
+  --doe-page-surface-raised: #f5e6d0;
+  --doe-page-ink: #1a1208;
+  --doe-nav-frost-scrolled-cta-bg: #f5e6d0;
+  --doe-nav-frost-scrolled-cta-text: #1a1208;
+  --doe-nav-frost-scrolled-cta-divider: rgba(26, 18, 8, 0.14);
+  --proto-nav-frost-progress: 1;
+  --proto-nav-frost-shell-progress: 1;
+}
+
+html[data-layout="desktop"] nav.desktop-punched-nav {
+  --proto-nav-frost-progress: 1;
+  --proto-nav-frost-shell-progress: 1;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding-top: 0.85rem !important;
+  padding-bottom: 0.55rem !important;
+  padding-left: var(--desktop-page-inset-x, 2.5rem) !important;
+  padding-right: var(--desktop-page-inset-x, 2.5rem) !important;
+}
+
+html[data-layout="desktop"] nav.desktop-punched-nav .desktop-punched-nav__strip {
+  padding: 0.55rem 1.15rem 0.55rem 1.45rem;
+  gap: 1.25rem;
+}
+
+html[data-layout="desktop"] nav.desktop-punched-nav .proto-nav-chrome-logo {
+  text-shadow: none !important;
+  text-decoration: none !important;
+}
+
+html[data-layout="desktop"] nav.desktop-punched-nav .proto-nav-cta-shell {
+  overflow: hidden;
+}
+
+html[data-layout="desktop"] nav.desktop-punched-nav .proto-nav-cta-shell a,
+html[data-layout="desktop"] nav.desktop-punched-nav .proto-nav-cta-shell button {
+  background-image: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.34) 0%,
+    rgba(255, 255, 255, 0.09) 54%,
+    rgba(26, 18, 8, 0.04) 100%
+  );
+}
+
+html[data-layout="desktop"] nav.desktop-punched-nav .proto-nav-cta-shell button[class*="border-l"] {
+  border-left-color: var(--doe-nav-frost-scrolled-cta-divider, rgba(26, 18, 8, 0.14)) !important;
+}
+
+html[data-layout="desktop"] nav.desktop-punched-nav .proto-nav-cta-shell [role="menu"] {
+  background-color: var(--doe-nav-frost-scrolled-cta-bg, #f5e6d0) !important;
+  color: var(--doe-nav-frost-scrolled-cta-text, #1a1208) !important;
+  border-color: var(--doe-nav-frost-scrolled-cta-divider, rgba(26, 18, 8, 0.14)) !important;
+  box-shadow: 0 10px 28px rgba(26, 18, 8, 0.22) !important;
+  border-radius: 1rem !important;
+}
+
+/* Desktop route banner offset — punched nav shares .desktop-home-nav */
+html[data-home-page]:has(.doe-home-top-banner) nav.desktop-punched-nav {
+  top: var(--doe-home-top-banner-height, 0px);
+}
+
+html[data-home-page][data-home-banner-dismissed] nav.desktop-punched-nav {
+  top: 0;
 }
 
 /* Desktop /desktop route — make iPhone full-screen shader bands bleed beyond margins. */
@@ -397,9 +464,9 @@ html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] p {
 
 /*
  * Desktop home UI sections (scroll under fixed nav):
- * - Band = 100dvh with nav-clearance spacer
- * - Card vertically centered in the below-nav band
- * - Equal top/bottom pad; card no longer stretch-fills (more room top+bottom)
+ * - Band = 100dvh
+ * - Explicit nav-clearance row = --desktop-nav-height (under the fixed overlay)
+ * - Remaining area uses EQUAL padding-top and padding-bottom (--desktop-section-pad-y)
  * - L/R = page gutters
  */
 html[data-home-page][data-layout="desktop"] .home-feature-card-section {
@@ -425,14 +492,12 @@ html[data-home-page][data-layout="desktop"] .home-feature-card-section__nav-clea
 
 html[data-home-page][data-layout="desktop"] .home-feature-card-section__inner {
   flex: 1 1 auto !important;
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: center !important;
-  align-items: stretch !important;
   min-height: 0 !important;
   height: auto !important;
   max-height: none !important;
   box-sizing: border-box !important;
+  justify-content: stretch !important;
+  /* Equal visual pad above and below the dark card */
   padding-top: var(--desktop-section-pad-y) !important;
   padding-bottom: var(--desktop-section-pad-y) !important;
   padding-left: var(--desktop-page-inset-x) !important;
@@ -441,28 +506,27 @@ html[data-home-page][data-layout="desktop"] .home-feature-card-section__inner {
 
 html[data-home-page][data-layout="desktop"] .home-feature-card-section__inner > div {
   display: flex !important;
-  flex: 0 1 auto !important;
+  flex: 1 1 auto !important;
   flex-direction: column !important;
-  justify-content: center !important;
+  justify-content: stretch !important;
   min-height: 0 !important;
-  height: auto !important;
+  height: 100% !important;
   max-height: 100% !important;
-  width: 100% !important;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-card-section__card {
-  flex: 0 1 auto !important;
+  flex: 1 1 auto !important;
   width: 100% !important;
-  height: min(42rem, var(--desktop-section-card-max-h)) !important;
-  min-height: min(28rem, var(--desktop-section-card-max-h)) !important;
-  max-height: var(--desktop-section-card-max-h) !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
 }
 
 /* Neutralize phone carousel fixed heights on desktop feature cards */
 html[data-home-page][data-layout="desktop"] .home-feature-card-section__card.home-feature-card-section__card {
-  height: min(42rem, var(--desktop-section-card-max-h)) !important;
-  min-height: min(28rem, var(--desktop-section-card-max-h)) !important;
-  max-height: var(--desktop-section-card-max-h) !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band {
@@ -471,7 +535,7 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band {
   max-height: 100dvh !important;
 }
 
-/* /desktop legacy route — centered card + equal pad */
+/* /desktop legacy route — same nav-clearance + equal pad treatment */
 body.desktop-route .home-feature-card-section {
   display: flex !important;
   flex-direction: column !important;
@@ -484,45 +548,41 @@ body.desktop-route .home-feature-card-section {
 
 body.desktop-route .home-feature-card-section__nav-clearance {
   display: block !important;
-  flex: 0 0 var(--desktop-nav-height, 5.875rem) !important;
+  flex: 0 0 var(--desktop-nav-height, 6.25rem) !important;
   width: 100% !important;
-  height: var(--desktop-nav-height, 5.875rem) !important;
-  min-height: var(--desktop-nav-height, 5.875rem) !important;
-  max-height: var(--desktop-nav-height, 5.875rem) !important;
+  height: var(--desktop-nav-height, 6.25rem) !important;
+  min-height: var(--desktop-nav-height, 6.25rem) !important;
+  max-height: var(--desktop-nav-height, 6.25rem) !important;
   pointer-events: none !important;
 }
 
 body.desktop-route .home-feature-card-section__inner {
   flex: 1 1 auto !important;
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: center !important;
-  align-items: stretch !important;
   min-height: 0 !important;
   height: auto !important;
   box-sizing: border-box !important;
-  padding-top: var(--desktop-section-pad-y, 1.25rem) !important;
-  padding-bottom: var(--desktop-section-pad-y, 1.25rem) !important;
+  justify-content: stretch !important;
+  padding-top: var(--desktop-section-pad-y, 1.5rem) !important;
+  padding-bottom: var(--desktop-section-pad-y, 1.5rem) !important;
   padding-left: var(--desktop-page-inset-x, 2.5rem) !important;
   padding-right: var(--desktop-page-inset-x, 2.5rem) !important;
 }
 
 body.desktop-route .home-feature-card-section__inner > div {
   display: flex !important;
-  flex: 0 1 auto !important;
+  flex: 1 1 auto !important;
   flex-direction: column !important;
-  justify-content: center !important;
+  justify-content: stretch !important;
   min-height: 0 !important;
-  height: auto !important;
-  width: 100% !important;
+  height: 100% !important;
 }
 
 body.desktop-route .home-feature-card-section__card {
-  flex: 0 1 auto !important;
+  flex: 1 1 auto !important;
   width: 100% !important;
-  height: min(42rem, var(--desktop-section-card-max-h, calc(100dvh - 5.875rem - 2.5rem))) !important;
-  min-height: min(28rem, var(--desktop-section-card-max-h, calc(100dvh - 5.875rem - 2.5rem))) !important;
-  max-height: var(--desktop-section-card-max-h, calc(100dvh - 5.875rem - 2.5rem)) !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
 }
 
 /* Home iPhone — Build section: one viewport band, slightly tighter copy + prompt. */
@@ -1260,55 +1320,57 @@ html[data-home-page][data-home-banner-dismissed] nav.desktop-home-nav {
 /* Home + /about — punched-out nav: solid hero teal capsule (no frost). */
 html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-frost-shell,
 html[data-about-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-frost-shell,
-html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav .proto-nav-frost-shell {
+html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav .proto-nav-frost-shell,
+html[data-layout="desktop"] nav.desktop-punched-nav .proto-nav-frost-shell {
   border: 1px solid transparent;
-  border-radius: calc(var(--proto-nav-frost-shell-progress) * 9999px);
-  border-color: rgba(242, 236, 228, calc(var(--proto-nav-frost-shell-progress) * 0.2));
+  border-radius: calc(var(--proto-nav-frost-shell-progress, 1) * 9999px);
+  border-color: rgba(242, 236, 228, calc(var(--proto-nav-frost-shell-progress, 1) * 0.2));
   background-color: color-mix(
     in srgb,
-    var(--doe-shader-back) calc(var(--proto-nav-frost-shell-progress) * 100%),
+    var(--doe-shader-back, #1a1208) calc(var(--proto-nav-frost-shell-progress, 1) * 100%),
     transparent
   );
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   overflow: visible;
   box-shadow:
-    0 calc(var(--proto-nav-frost-shell-progress) * 10px)
-      calc(var(--proto-nav-frost-shell-progress) * 26px)
-      calc(var(--proto-nav-frost-shell-progress) * -8px)
-      rgba(30, 52, 58, calc(var(--proto-nav-frost-shell-progress) * 0.34)),
-    calc(var(--proto-nav-frost-shell-progress) * -9px)
-      calc(var(--proto-nav-frost-shell-progress) * 9px)
-      calc(var(--proto-nav-frost-shell-progress) * 22px)
-      calc(var(--proto-nav-frost-shell-progress) * -14px)
-      rgba(30, 52, 58, calc(var(--proto-nav-frost-shell-progress) * 0.22)),
-    calc(var(--proto-nav-frost-shell-progress) * 9px)
-      calc(var(--proto-nav-frost-shell-progress) * 9px)
-      calc(var(--proto-nav-frost-shell-progress) * 22px)
-      calc(var(--proto-nav-frost-shell-progress) * -14px)
-      rgba(30, 52, 58, calc(var(--proto-nav-frost-shell-progress) * 0.22));
+    0 calc(var(--proto-nav-frost-shell-progress, 1) * 10px)
+      calc(var(--proto-nav-frost-shell-progress, 1) * 26px)
+      calc(var(--proto-nav-frost-shell-progress, 1) * -8px)
+      rgba(30, 52, 58, calc(var(--proto-nav-frost-shell-progress, 1) * 0.34)),
+    calc(var(--proto-nav-frost-shell-progress, 1) * -9px)
+      calc(var(--proto-nav-frost-shell-progress, 1) * 9px)
+      calc(var(--proto-nav-frost-shell-progress, 1) * 22px)
+      calc(var(--proto-nav-frost-shell-progress, 1) * -14px)
+      rgba(30, 52, 58, calc(var(--proto-nav-frost-shell-progress, 1) * 0.22)),
+    calc(var(--proto-nav-frost-shell-progress, 1) * 9px)
+      calc(var(--proto-nav-frost-shell-progress, 1) * 9px)
+      calc(var(--proto-nav-frost-shell-progress, 1) * 22px)
+      calc(var(--proto-nav-frost-shell-progress, 1) * -14px)
+      rgba(30, 52, 58, calc(var(--proto-nav-frost-shell-progress, 1) * 0.22));
 }
 
 /* Home + /about iPhone — hero-brown nav capsule shadows. */
 html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-frost-shell,
 html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav .proto-nav-frost-shell,
-html[data-about-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-frost-shell {
-  border-color: rgba(245, 230, 208, calc(var(--proto-nav-frost-shell-progress) * 0.2));
+html[data-about-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-frost-shell,
+html[data-layout="desktop"] nav.desktop-punched-nav .proto-nav-frost-shell {
+  border-color: rgba(245, 230, 208, calc(var(--proto-nav-frost-shell-progress, 1) * 0.2));
   box-shadow:
-    0 calc(var(--proto-nav-frost-shell-progress) * 10px)
-      calc(var(--proto-nav-frost-shell-progress) * 26px)
-      calc(var(--proto-nav-frost-shell-progress) * -8px)
-      rgba(26, 18, 8, calc(var(--proto-nav-frost-shell-progress) * 0.34)),
-    calc(var(--proto-nav-frost-shell-progress) * -9px)
-      calc(var(--proto-nav-frost-shell-progress) * 9px)
-      calc(var(--proto-nav-frost-shell-progress) * 22px)
-      calc(var(--proto-nav-frost-shell-progress) * -14px)
-      rgba(26, 18, 8, calc(var(--proto-nav-frost-shell-progress) * 0.22)),
-    calc(var(--proto-nav-frost-shell-progress) * 9px)
-      calc(var(--proto-nav-frost-shell-progress) * 9px)
-      calc(var(--proto-nav-frost-shell-progress) * 22px)
-      calc(var(--proto-nav-frost-shell-progress) * -14px)
-      rgba(26, 18, 8, calc(var(--proto-nav-frost-shell-progress) * 0.22));
+    0 calc(var(--proto-nav-frost-shell-progress, 1) * 10px)
+      calc(var(--proto-nav-frost-shell-progress, 1) * 26px)
+      calc(var(--proto-nav-frost-shell-progress, 1) * -8px)
+      rgba(26, 18, 8, calc(var(--proto-nav-frost-shell-progress, 1) * 0.34)),
+    calc(var(--proto-nav-frost-shell-progress, 1) * -9px)
+      calc(var(--proto-nav-frost-shell-progress, 1) * 9px)
+      calc(var(--proto-nav-frost-shell-progress, 1) * 22px)
+      calc(var(--proto-nav-frost-shell-progress, 1) * -14px)
+      rgba(26, 18, 8, calc(var(--proto-nav-frost-shell-progress, 1) * 0.22)),
+    calc(var(--proto-nav-frost-shell-progress, 1) * 9px)
+      calc(var(--proto-nav-frost-shell-progress, 1) * 9px)
+      calc(var(--proto-nav-frost-shell-progress, 1) * 22px)
+      calc(var(--proto-nav-frost-shell-progress, 1) * -14px)
+      rgba(26, 18, 8, calc(var(--proto-nav-frost-shell-progress, 1) * 0.22));
 }
 
 /* Home + /about — fixed nav: teal ink logo on sand bar. */
@@ -1327,11 +1389,13 @@ html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav-
 html[data-about-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav-scroll-frost .proto-nav-chrome-logo,
 html[data-about-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav-scroll-frost .proto-nav-chrome-logo a,
 html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav.proto-nav-scroll-frost .proto-nav-chrome-logo,
-html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav.proto-nav-scroll-frost .proto-nav-chrome-logo a {
+html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav.proto-nav-scroll-frost .proto-nav-chrome-logo a,
+html[data-layout="desktop"] nav.desktop-punched-nav .proto-nav-chrome-logo,
+html[data-layout="desktop"] nav.desktop-punched-nav .proto-nav-chrome-logo a {
   color: color-mix(
     in srgb,
-    var(--doe-page-ink) calc((1 - var(--proto-nav-frost-progress, 0)) * 100%),
-    var(--doe-page-surface-raised) calc(var(--proto-nav-frost-progress, 0) * 100%)
+    var(--doe-page-ink, #1a1208) calc((1 - var(--proto-nav-frost-progress, 1)) * 100%),
+    var(--doe-page-surface-raised, #f5e6d0) calc(var(--proto-nav-frost-progress, 1) * 100%)
   ) !important;
 }
 

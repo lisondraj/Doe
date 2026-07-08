@@ -36,19 +36,26 @@ export function DesktopNavEmailButton({
   shadow = "none",
   open = false,
   onToggle,
+  punched = false,
 }: {
   bg?: string;
   fg?: string;
   shadow?: string;
   open?: boolean;
   onToggle?: () => void;
+  punched?: boolean;
 }) {
+  const radius = punched ? "rounded-full" : "rounded-md";
+
   return (
     <div className="relative flex shrink-0 items-center">
-      <div className="relative flex items-stretch overflow-visible rounded-md" style={{ boxShadow: shadow }}>
+      <div
+        className={`relative flex items-stretch overflow-visible ${radius}${punched ? " proto-nav-cta-shell" : ""}`}
+        style={{ boxShadow: shadow }}
+      >
         <button
           type="button"
-          className={`flex ${DESKTOP_NAV_ACTION_HEIGHT_TW} items-center justify-center rounded-md transition-[opacity,background-color,color,box-shadow] duration-300 hover:opacity-90`}
+          className={`flex ${DESKTOP_NAV_ACTION_HEIGHT_TW} items-center justify-center ${radius} transition-[opacity,background-color,color,box-shadow] duration-300 hover:opacity-90`}
           style={{
             backgroundColor: bg,
             color: fg,

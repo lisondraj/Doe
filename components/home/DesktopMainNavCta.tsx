@@ -17,12 +17,14 @@ export function DesktopMainNavCta({
   shadow,
   divider,
   linksEnabled = true,
+  punched = false,
 }: {
   bg: string;
   fg: string;
   shadow: string;
   divider: string;
   linksEnabled?: boolean;
+  punched?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -56,10 +58,15 @@ export function DesktopMainNavCta({
       ? "hover:bg-white/10"
       : "hover:bg-black/[0.04]";
 
+  const radius = punched ? "rounded-full" : "rounded-md";
+
   return (
     <div ref={rootRef} className="relative flex shrink-0 items-center">
-      <div className="relative flex items-stretch overflow-visible rounded-md" style={{ boxShadow: shadow }}>
-        <div className="flex items-stretch overflow-hidden rounded-md">
+      <div
+        className={`relative flex items-stretch overflow-visible ${radius}${punched ? " proto-nav-cta-shell" : ""}`}
+        style={{ boxShadow: shadow }}
+      >
+        <div className={`flex items-stretch overflow-hidden ${radius}`}>
           {linksEnabled ? (
             <Link
               href={primary.href}
@@ -107,7 +114,7 @@ export function DesktopMainNavCta({
         {open ? (
           <div
             role="menu"
-            className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-[60] overflow-hidden rounded-md py-1"
+            className={`absolute left-0 right-0 top-[calc(100%+0.5rem)] z-[60] overflow-hidden py-1 ${radius}`}
             style={{
               backgroundColor: bg,
               color: fg,

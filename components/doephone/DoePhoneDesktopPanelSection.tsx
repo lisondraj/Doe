@@ -28,18 +28,14 @@ export function DoePhoneDesktopPanelSection({
 }) {
   return (
     <div className={`box-border flex w-full flex-col overflow-hidden ${DESKTOP_HOME_PANEL_BAND_H}`}>
-      {/* Reserves space under the fixed nav so the panel can center in the below-nav band */}
+      {/* Reserves space under the fixed nav so top/bottom pads can be equal */}
       <div className="shrink-0" style={{ height: DESKTOP_HOME_FIXED_NAV_HEIGHT }} aria-hidden />
       <div
-        className={`flex min-h-0 flex-1 flex-col items-stretch justify-center ${DESKTOP_HOME_SECTION_PAD_Y} ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}
+        className={`flex min-h-0 flex-1 flex-col ${DESKTOP_HOME_SECTION_PAD_Y} ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}
       >
         <div
-          className={`relative isolate w-full shrink-0 overflow-hidden shadow-[0_10px_32px_rgba(0,0,0,0.1)] ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
-          style={{
-            ...DOEPHONE_SECTION_CAROUSEL_CLIP_STYLE,
-            height: "min(42rem, var(--desktop-section-card-max-h, calc(100dvh - 5.875rem - 2.5rem)))",
-            maxHeight: "var(--desktop-section-card-max-h, calc(100dvh - 5.875rem - 2.5rem))",
-          }}
+          className={`relative isolate min-h-0 w-full flex-1 overflow-hidden shadow-[0_10px_32px_rgba(0,0,0,0.1)] ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
+          style={DOEPHONE_SECTION_CAROUSEL_CLIP_STYLE}
         >
           <WorkflowCarouselDesignBackdrop
             backdrop={slide.backdrop}
