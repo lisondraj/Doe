@@ -20,27 +20,35 @@ const NOTE_SIZE = "clamp(0.76rem,2.25vmin,0.9rem)";
 
 type CallEntry = {
   callerName: string;
+  phone: string;
   callType: string;
   time: string;
   duration: string;
-  needsCallback?: boolean;
   note?: string;
 };
 
 const CALL_HISTORY: readonly CallEntry[] = [
   {
     callerName: "Maria Lopez",
+    phone: "(415) 555-0176",
     callType: "Lab results callback",
     time: "2:41 PM",
     duration: "3m 08s",
   },
   {
     callerName: "Dr. Patel's office",
+    phone: "(628) 555-0134",
     callType: "Referral intake",
     time: "1:18 PM",
     duration: "6m 44s",
-    needsCallback: true,
     note: "Specialist slot held for Tuesday. Referral routed to chart and patient callback queued for 4 PM.",
+  },
+  {
+    callerName: "James Chen",
+    phone: "(510) 555-0192",
+    callType: "Appointment confirmation",
+    time: "11:52 AM",
+    duration: "2m 15s",
   },
 ] as const;
 
@@ -69,6 +77,15 @@ function CallLogRow({ call, isLast }: { call: CallEntry; isLast: boolean }) {
 
       <div className="mt-[0.28em] flex flex-wrap items-center gap-x-[0.45em] gap-y-[0.1em]">
         <span
+          className={`shrink-0 tabular-nums ${inter.className} font-medium leading-snug`}
+          style={{ color: DOE_ORANGE, fontSize: META_SIZE }}
+        >
+          {call.phone}
+        </span>
+        <span aria-hidden style={{ color: TYPE_MUTED, fontSize: META_SIZE }}>
+          ·
+        </span>
+        <span
           className={`${inter.className} font-normal leading-snug`}
           style={{ color: MUTED_TEXT, fontSize: META_SIZE }}
         >
@@ -83,19 +100,6 @@ function CallLogRow({ call, isLast }: { call: CallEntry; isLast: boolean }) {
         >
           {call.duration}
         </span>
-        {call.needsCallback ? (
-          <>
-            <span aria-hidden style={{ color: TYPE_MUTED, fontSize: META_SIZE }}>
-              ·
-            </span>
-            <span
-              className={`${inter.className} font-medium leading-snug`}
-              style={{ color: DOE_ORANGE, fontSize: META_SIZE }}
-            >
-              Call back
-            </span>
-          </>
-        ) : null}
       </div>
 
       {call.note ? (

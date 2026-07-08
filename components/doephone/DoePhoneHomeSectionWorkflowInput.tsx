@@ -21,7 +21,6 @@ export function DoePhoneHomeSectionWorkflowInput() {
         <DoePhoneBuildWorkflowPrompt
           size={isDesktop ? "desktop" : "large"}
           bodyClassName="home-feature-workflow-prompt__body"
-          fourLineLayout
         />
       </div>
     </div>

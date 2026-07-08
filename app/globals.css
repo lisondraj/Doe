@@ -1433,36 +1433,21 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workf
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-workflow-prompt__body {
   max-width: none;
-  text-wrap: wrap;
-  overflow-wrap: break-word;
-  font-size: clamp(0.9rem, 4.8cqi, 1.26rem) !important;
-  line-height: 1.72 !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-workflow-prompt__line {
-  display: block;
-}
-
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-workflow-prompt__line + .home-feature-workflow-prompt__line {
-  margin-top: 0.06em;
+  text-wrap: pretty;
+  font-size: clamp(1.22rem, 3.65vmin, 1.42rem) !important;
+  line-height: 1.65 !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-workflow-prompt__body span.inline-flex {
-  margin-inline: clamp(0.3rem, 0.9vmin, 0.42rem) !important;
-  margin-block: 0.12em;
+  margin-inline: 0.14em !important;
+  margin-block: 0;
+  vertical-align: baseline;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-section__workflow-input .build-workflow-ui-scale {
-  container-type: inline-size;
-  container-name: workflow-prompt;
   width: 96%;
   max-width: 96%;
   margin-inline: auto;
-  transform: none;
-}
-
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-section__workflow-input .build-workflow-ui-scale > div {
-  overflow-x: clip;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .doephone-section-reveal--input {
@@ -1489,36 +1474,21 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow 
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-workflow-prompt__body {
   max-width: none;
-  text-wrap: wrap;
-  overflow-wrap: break-word;
-  font-size: clamp(1rem, 2.8cqi, 1.24rem) !important;
-  line-height: 1.68 !important;
-}
-
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-workflow-prompt__line {
-  display: block;
-}
-
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-workflow-prompt__line + .home-feature-workflow-prompt__line {
-  margin-top: 0.06em;
+  text-wrap: pretty;
+  font-size: 1.2rem !important;
+  line-height: 1.62 !important;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-workflow-prompt__body span.inline-flex {
-  margin-inline: 0.36rem !important;
-  margin-block: 0.1em;
+  margin-inline: 0.14em !important;
+  margin-block: 0;
+  vertical-align: baseline;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-section__workflow-input .build-workflow-ui-scale {
-  container-type: inline-size;
-  container-name: workflow-prompt-desktop;
   width: 96%;
   max-width: 96%;
-  transform: none;
   margin-inline: auto;
-}
-
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-section__workflow-input .build-workflow-ui-scale > div {
-  overflow-x: clip;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section__title--specialties {
