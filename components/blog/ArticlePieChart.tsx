@@ -31,8 +31,8 @@ const SLICE_COLORS_DUSK_FALLBACK = [
 ] as const;
 const SLICE_COLORS_ABOUT = [
   "var(--doe-chart-pie-1, #C45C42)",
-  "var(--doe-chart-pie-2, #1A1208)",
-  "var(--doe-chart-pie-3, #8A7868)",
+  "var(--doe-chart-pie-2, #332B21)",
+  "var(--doe-chart-pie-3, #5C4E42)",
 ] as const;
 const SLICE_COLORS_ABOUT_FALLBACK = [
   ABOUT_IPHONE_SHADER_CHART_PRIMARY,
