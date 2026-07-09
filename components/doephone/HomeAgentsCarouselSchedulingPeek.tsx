@@ -65,27 +65,33 @@ function formatApptType(type: string) {
     .join("-");
 }
 
-function getApptSpread(dayIndex: number, apptIndex: number, isHighlighted: boolean) {
+function getApptSpread(dayIndex: number, apptIndex: number, isHighlighted: boolean, iphone = false) {
   if (isHighlighted) {
     return 0;
   }
 
   const columnDistance = Math.abs(dayIndex - BROOKS_DAY_INDEX);
+  const verticalWeight = iphone ? 0.15 : 0.4;
   const verticalDistance =
     dayIndex === BROOKS_DAY_INDEX ? Math.abs(apptIndex - BROOKS_APPT_INDEX) : 0;
 
-  return columnDistance + verticalDistance * 0.4;
+  return columnDistance + verticalDistance * verticalWeight;
 }
 
-function getApptOpacity(spread: number) {
+function getApptOpacity(spread: number, iphone = false) {
+  if (iphone) {
+    const eased = Math.pow(spread, 0.88);
+    return Math.max(0.78, 1 - eased * 0.055);
+  }
+
   const eased = Math.pow(spread, 0.72);
   return Math.max(0.54, 1 - eased * 0.1);
 }
 
 function getApptBlur(spread: number, iphone = false) {
   if (iphone) {
-    const eased = Math.pow(spread, 0.96);
-    return Math.min(0.42, eased * 0.16);
+    const eased = Math.pow(spread, 1.05);
+    return Math.min(0.28, eased * 0.1);
   }
 
   const eased = Math.pow(spread, 0.78);
@@ -114,7 +120,7 @@ export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: 
                   className="home-agents-carousel__scheduling-peek-day-head"
                   aria-hidden
                   style={{
-                    opacity: getApptOpacity(daySpread * 0.34),
+                    opacity: getApptOpacity(daySpread * 0.34, iphone),
                     filter: dayBlur > 0 ? `blur(${dayBlur}px)` : undefined,
                   }}
                 >
@@ -125,7 +131,7 @@ export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: 
                 <div className="home-agents-carousel__scheduling-peek-day-appts">
                   {day.appts.map((appt, apptIndex) => {
                     const isHighlighted = "highlight" in appt && appt.highlight;
-                    const spread = getApptSpread(dayIndex, apptIndex, isHighlighted);
+                    const spread = getApptSpread(dayIndex, apptIndex, isHighlighted, iphone);
                     const blur = getApptBlur(spread, iphone);
 
                     return (
@@ -137,7 +143,7 @@ export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: 
                           : ""
                       }`}
                       style={{
-                        opacity: getApptOpacity(spread),
+                        opacity: getApptOpacity(spread, iphone),
                         filter: blur > 0 ? `blur(${blur}px)` : undefined,
                       }}
                     >
