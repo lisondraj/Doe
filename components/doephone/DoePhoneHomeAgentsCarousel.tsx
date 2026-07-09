@@ -97,7 +97,7 @@ function AgentCarouselPeek({ label, isPhone = false }: { label: string; isPhone?
     case "Referrals Agent":
       return <HomeAgentsCarouselReferralsPeek />;
     case "Scheduling Agent":
-      return <HomeAgentsCarouselSchedulingPeek />;
+      return <HomeAgentsCarouselSchedulingPeek iphone={isPhone} />;
     case "Live Appointment":
       return <HomeAgentsCarouselLivePeek iphone={isPhone} />;
     case "Billing Agent":
