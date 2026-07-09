@@ -3386,32 +3386,10 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   overflow: visible;
 }
 
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb .hero-speaking-orb__progress-shell::after {
-  content: "";
-  position: absolute;
-  left: 14%;
-  right: 14%;
-  bottom: -18%;
-  height: 34%;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
-  background: radial-gradient(
-    ellipse 100% 88% at 50% 0%,
-    color-mix(in srgb, var(--orb-halo-mid) 18%, transparent),
-    transparent 74%
-  );
-  filter: blur(10px);
-  opacity: 0.9;
-}
-
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb .hero-speaking-orb__progress-shell::after,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb--focused .hero-speaking-orb__progress-shell::after {
-  opacity: 1;
-  background: radial-gradient(
-    ellipse 100% 88% at 50% 0%,
-    color-mix(in srgb, var(--orb-halo-mid) 22%, transparent),
-    transparent 74%
-  );
+  content: none;
+  display: none;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb--focused .hero-speaking-orb__core {
