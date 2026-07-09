@@ -17,6 +17,24 @@ const ROUTING_ROWS = [
   { label: "Moving info to chart", status: "loading" as const, active: true },
 ] as const;
 
+const LABS_ROUTING_FOCUS_INDEX = 2;
+
+function getLabsRowSpread(rowIndex: number, focusIndex: number, isActive = false) {
+  if (isActive) {
+    return 0;
+  }
+
+  return Math.abs(rowIndex - focusIndex);
+}
+
+function getRoutingFadeOpacity(spread: number) {
+  return Math.max(0.36, 1 - spread * 0.15);
+}
+
+function getRoutingFadeBlur(spread: number) {
+  return Math.min(2.5, spread * 0.88);
+}
+
 function AbnormalDownArrow() {
   return (
     <svg viewBox="0 0 12 12" fill="none" aria-hidden className="home-agents-carousel__labs-peek-down-arrow">
@@ -65,13 +83,9 @@ export function HomeAgentsCarouselLabsPeek() {
     <div className="home-agents-carousel__labs-peek" aria-hidden>
       <div className={`home-agents-carousel__labs-peek-stack ${suisseIntl.className}`}>
         <div className="home-agents-carousel__labs-peek-card home-agents-carousel__labs-peek-card--results">
-          <div className="home-agents-carousel__labs-peek-header">
-            <div
-              className="home-agents-carousel__labs-peek-logo bg-gradient-to-br from-[#E7A944] via-[#D2774C] to-[#1E343A]"
-              aria-hidden
-            />
+          <div className="home-agents-carousel__labs-peek-header home-agents-carousel__labs-peek-header--results">
             <div className="home-agents-carousel__labs-peek-heading">
-              <p className="home-agents-carousel__labs-peek-title">Bloodwork</p>
+              <p className="home-agents-carousel__labs-peek-title">Lab Results</p>
               <p className="home-agents-carousel__labs-peek-subtitle">Michael Chen</p>
             </div>
           </div>
@@ -106,12 +120,20 @@ export function HomeAgentsCarouselLabsPeek() {
 
         <div className="home-agents-carousel__labs-peek-card home-agents-carousel__labs-peek-card--routing">
           <ul className="home-agents-carousel__labs-peek-list">
-            {ROUTING_ROWS.map((row) => (
+            {ROUTING_ROWS.map((row, rowIndex) => {
+              const spread = getLabsRowSpread(rowIndex, LABS_ROUTING_FOCUS_INDEX, row.active);
+              const blur = getRoutingFadeBlur(spread);
+
+              return (
               <li
                 key={row.label}
                 className={`home-agents-carousel__labs-peek-row home-agents-carousel__labs-peek-row--routing${
                   row.active ? " home-agents-carousel__labs-peek-row--active" : ""
                 }`}
+                style={{
+                  opacity: getRoutingFadeOpacity(spread),
+                  filter: blur > 0 ? `blur(${blur}px)` : undefined,
+                }}
               >
                 <RoutingStatusIcon status={row.status} />
                 <span className="home-agents-carousel__labs-peek-label-block">
@@ -121,8 +143,10 @@ export function HomeAgentsCarouselLabsPeek() {
                   ) : null}
                 </span>
               </li>
-            ))}
+              );
+            })}
           </ul>
+          <div className="home-agents-carousel__labs-peek-edge-blur" aria-hidden />
         </div>
       </div>
     </div>

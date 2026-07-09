@@ -1,8 +1,12 @@
 "use client";
 
+import { HomeAgentsCarouselBillingPeek } from "@/components/doephone/HomeAgentsCarouselBillingPeek";
 import { HomeAgentsCarouselInboxPeek } from "@/components/doephone/HomeAgentsCarouselInboxPeek";
 import { HomeAgentsCarouselLabsPeek } from "@/components/doephone/HomeAgentsCarouselLabsPeek";
+import { HomeAgentsCarouselLivePeek } from "@/components/doephone/HomeAgentsCarouselLivePeek";
 import { HomeAgentsCarouselReferralsPeek } from "@/components/doephone/HomeAgentsCarouselReferralsPeek";
+import { HomeAgentsCarouselRefillPeek } from "@/components/doephone/HomeAgentsCarouselRefillPeek";
+import { HomeAgentsCarouselSchedulingPeek } from "@/components/doephone/HomeAgentsCarouselSchedulingPeek";
 import { HeroDialOrbGrainShader } from "@/components/doephone/HeroDialOrbGrainShader";
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type TouchEvent, type TransitionEvent } from "react";
 
@@ -68,23 +72,55 @@ function CarouselChevron({
   );
 }
 
+function AgentCarouselPeek({ label }: { label: string }) {
+  switch (label) {
+    case "Inbox Agent":
+      return <HomeAgentsCarouselInboxPeek />;
+    case "Labs Agent":
+      return <HomeAgentsCarouselLabsPeek />;
+    case "Referrals Agent":
+      return <HomeAgentsCarouselReferralsPeek />;
+    case "Scheduling Agent":
+      return <HomeAgentsCarouselSchedulingPeek />;
+    case "Live Appointment":
+      return <HomeAgentsCarouselLivePeek />;
+    case "Billing Agent":
+      return <HomeAgentsCarouselBillingPeek />;
+    case "Refill Agent":
+      return <HomeAgentsCarouselRefillPeek />;
+    default:
+      return null;
+  }
+}
+
+function getOrbBlur(distance: number, focused: boolean) {
+  if (focused || distance === 0) {
+    return 0;
+  }
+
+  return Math.min(3.2, distance * 1.05);
+}
+
 function AgentCarouselOrb({
   scheme,
   focused,
+  distance,
 }: {
   scheme: HeroDialOrbScheme;
   focused: boolean;
+  distance: number;
 }) {
   const displayScheme = heroDialOrbCarouselScheme(scheme);
-  const showInboxPeek = focused && scheme.label === "Inbox Agent";
-  const showLabsPeek = focused && scheme.label === "Labs Agent";
-  const showReferralsPeek = focused && scheme.label === "Referrals Agent";
+  const blur = getOrbBlur(distance, focused);
 
   return (
     <div
       className={`home-agents-carousel__orb-shell${
         focused ? " home-agents-carousel__orb-shell--focused" : ""
       }`}
+      style={{
+        filter: blur > 0 ? `blur(${blur}px)` : undefined,
+      }}
     >
       <div
         className={`home-agents-carousel__orb hero-speaking-orb${
@@ -98,9 +134,7 @@ function AgentCarouselOrb({
               scheme={displayScheme}
               shaderConfig={HERO_DIAL_ORB_CAROUSEL_SHADER}
             />
-            {showInboxPeek ? <HomeAgentsCarouselInboxPeek /> : null}
-            {showLabsPeek ? <HomeAgentsCarouselLabsPeek /> : null}
-            {showReferralsPeek ? <HomeAgentsCarouselReferralsPeek /> : null}
+            <AgentCarouselPeek label={scheme.label} />
           </div>
         </div>
       </div>
@@ -108,7 +142,7 @@ function AgentCarouselOrb({
   );
 }
 
-/** Agents band order — Inbox second so a neighbor peeks on the left at start. */
+/** Agents band order — Scheduling first so it is centered on page load. */
 const AGENTS_CAROUSEL_ORBS: readonly HeroDialOrbScheme[] = [
   HERO_DIAL_ORBS[1],
   HERO_DIAL_ORBS[0],
@@ -120,7 +154,7 @@ const AGENTS_CAROUSEL_ORBS: readonly HeroDialOrbScheme[] = [
 ];
 
 const AGENTS_CAROUSEL_ORB_COUNT = AGENTS_CAROUSEL_ORBS.length;
-const AGENTS_CAROUSEL_START_INDEX = 1;
+const AGENTS_CAROUSEL_START_INDEX = 0;
 const AGENTS_CAROUSEL_LOOP_ORBS: readonly HeroDialOrbScheme[] = [
   ...AGENTS_CAROUSEL_ORBS,
   ...AGENTS_CAROUSEL_ORBS,
@@ -253,6 +287,7 @@ export function DoePhoneHomeAgentsCarousel() {
                 key={`${scheme.label}-${orbIndex}`}
                 scheme={scheme}
                 focused={orbIndex === position}
+                distance={Math.abs(orbIndex - position)}
               />
             ))}
           </div>

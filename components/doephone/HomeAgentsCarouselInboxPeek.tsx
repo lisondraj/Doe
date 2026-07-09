@@ -16,6 +16,32 @@ const INBOX_ROWS = [
   { label: "Insurance EOB", count: 5, icon: "billing" as const },
 ] as const;
 
+const INBOX_CLEAR_ROW_COUNT = 3;
+
+function getInboxRowSpread(rowIndex: number) {
+  if (rowIndex < INBOX_CLEAR_ROW_COUNT) {
+    return 0;
+  }
+
+  return rowIndex - (INBOX_CLEAR_ROW_COUNT - 1);
+}
+
+function getPeekFadeOpacity(spread: number) {
+  if (spread === 0) {
+    return 1;
+  }
+
+  return Math.max(0.58, 1 - spread * 0.1);
+}
+
+function getPeekFadeBlur(spread: number) {
+  if (spread === 0) {
+    return 0;
+  }
+
+  return Math.min(1.4, spread * 0.42);
+}
+
 function RowIcon({ kind }: { kind: (typeof INBOX_ROWS)[number]["icon"] }) {
   const stroke = INK;
   return (
@@ -81,15 +107,28 @@ export function HomeAgentsCarouselInboxPeek() {
           aria-hidden
         />
 
-        <p className="home-agents-carousel__inbox-peek-title">Inbox</p>
+        <p
+          className="home-agents-carousel__inbox-peek-title"
+          style={{ opacity: 1, filter: "none" }}
+        >
+          Inbox
+        </p>
 
         <ul className="home-agents-carousel__inbox-peek-list">
-          {INBOX_ROWS.map((row) => (
+          {INBOX_ROWS.map((row, rowIndex) => {
+            const spread = getInboxRowSpread(rowIndex);
+            const blur = getPeekFadeBlur(spread);
+
+            return (
             <li
               key={row.label}
               className={`home-agents-carousel__inbox-peek-row${
                 row.active ? " home-agents-carousel__inbox-peek-row--active" : ""
               }`}
+              style={{
+                opacity: getPeekFadeOpacity(spread),
+                filter: blur > 0 ? `blur(${blur}px)` : undefined,
+              }}
             >
               <RowIcon kind={row.icon} />
               <span className="home-agents-carousel__inbox-peek-label-block">
@@ -100,10 +139,17 @@ export function HomeAgentsCarouselInboxPeek() {
                 ) : null}
               </span>
             </li>
-          ))}
+            );
+          })}
         </ul>
 
-        <div className="home-agents-carousel__inbox-peek-footer">
+        <div
+          className="home-agents-carousel__inbox-peek-footer"
+          style={{
+            opacity: getPeekFadeOpacity(2),
+            filter: getPeekFadeBlur(2) > 0 ? `blur(${getPeekFadeBlur(2)}px)` : undefined,
+          }}
+        >
           <span className="home-agents-carousel__inbox-peek-footer-stat">142 routed today</span>
           <span className="home-agents-carousel__inbox-peek-footer-pill">Auto-sort on</span>
         </div>

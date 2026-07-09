@@ -2,30 +2,61 @@
 
 import { suisseIntl } from "@/lib/home/fonts";
 
-const INK = "#3D4549";
 const ORANGE = "#D2774C";
 
+const WAVE_HEIGHTS = [0.42, 0.72, 0.58, 0.88, 0.5, 0.68, 0.46] as const;
+
 const REFERRAL_STEPS = [
-  { label: "Intake", status: "done" as const },
+  { label: "Call intake", status: "done" as const },
   { label: "Prior auth", status: "active" as const },
   { label: "Book visit", status: "upcoming" as const },
 ] as const;
 
 const REFERRAL_DETAILS = [
-  { label: "Specialist", value: "Riverside Cardiology" },
+  { label: "Specialist", value: "Riverside" },
   { label: "Auth ref", value: "PA-448291" },
-  { label: "Payer status", value: "Awaiting response" },
+  { label: "Payer status", value: "Awaiting" },
 ] as const;
 
-function StepNode({ status }: { status: (typeof REFERRAL_STEPS)[number]["status"] }) {
+function getReferralsFadeOpacity(spread: number) {
+  if (spread === 0) {
+    return 1;
+  }
+
+  return Math.max(0.58, 1 - spread * 0.1);
+}
+
+function getReferralsFadeBlur(spread: number) {
+  if (spread === 0) {
+    return 0;
+  }
+
+  return Math.min(1.2, spread * 0.38);
+}
+
+function VoiceWaveform() {
+  return (
+    <div className="home-agents-carousel__referrals-peek-waveform" aria-hidden>
+      {WAVE_HEIGHTS.map((height, index) => (
+        <span
+          key={index}
+          className="home-agents-carousel__referrals-peek-waveform-bar"
+          style={{ height: `${Math.round(height * 100)}%` }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function StepIndicator({ status }: { status: (typeof REFERRAL_STEPS)[number]["status"] }) {
   if (status === "done") {
     return (
-      <span className="home-agents-carousel__referrals-peek-step-node home-agents-carousel__referrals-peek-step-node--done">
+      <span className="home-agents-carousel__referrals-peek-indicator home-agents-carousel__referrals-peek-indicator--done">
         <svg viewBox="0 0 12 12" fill="none" aria-hidden>
           <path
             d="M3.1 6.1l1.9 1.9 4-4.1"
-            stroke={INK}
-            strokeWidth="1.35"
+            stroke={ORANGE}
+            strokeWidth="1.4"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
@@ -35,64 +66,71 @@ function StepNode({ status }: { status: (typeof REFERRAL_STEPS)[number]["status"
   }
 
   if (status === "active") {
-    return (
-      <span className="home-agents-carousel__referrals-peek-step-node home-agents-carousel__referrals-peek-step-node--active">
-        <span className="home-agents-carousel__referrals-peek-step-pulse" />
-      </span>
-    );
+    return <span className="home-agents-carousel__referrals-peek-indicator home-agents-carousel__referrals-peek-indicator--active" />;
   }
 
-  return <span className="home-agents-carousel__referrals-peek-step-node home-agents-carousel__referrals-peek-step-node--upcoming" />;
+  return <span className="home-agents-carousel__referrals-peek-indicator home-agents-carousel__referrals-peek-indicator--upcoming" />;
 }
 
-/** Desktop agents carousel — Referrals Agent UI peek (top-left, circular clip). */
+/** Desktop agents carousel — Referrals Agent UI peek (centered, circular clip). */
 export function HomeAgentsCarouselReferralsPeek() {
   return (
     <div className="home-agents-carousel__referrals-peek" aria-hidden>
       <div className={`home-agents-carousel__referrals-peek-card ${suisseIntl.className}`}>
-        <div className="home-agents-carousel__referrals-peek-header">
-          <div
-            className="home-agents-carousel__referrals-peek-logo bg-gradient-to-br from-[#E7A944] via-[#D2774C] to-[#1E343A]"
-            aria-hidden
-          />
-          <div className="home-agents-carousel__referrals-peek-heading">
-            <p className="home-agents-carousel__referrals-peek-title">Referral</p>
-            <p className="home-agents-carousel__referrals-peek-route">
-              <span>J. Ortiz</span>
-              <svg viewBox="0 0 20 8" fill="none" aria-hidden className="home-agents-carousel__referrals-peek-route-arrow">
-                <path d="M1 4h14M13 2l3 2-3 2" stroke={ORANGE} strokeWidth="1.35" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              <span>Cardiology</span>
-            </p>
+        <div className="home-agents-carousel__referrals-peek-lead">
+          <VoiceWaveform />
+          <div className="home-agents-carousel__referrals-peek-voice-copy">
+            <p className="home-agents-carousel__referrals-peek-voice-line">Calling specialist&apos;s office…</p>
+            <p className="home-agents-carousel__referrals-peek-voice-subline">Referral to Cardiology</p>
           </div>
         </div>
 
-        <div className="home-agents-carousel__referrals-peek-track" aria-hidden>
-          <span className="home-agents-carousel__referrals-peek-track-line" />
-          <span className="home-agents-carousel__referrals-peek-track-line home-agents-carousel__referrals-peek-track-line--active" />
-          <ol className="home-agents-carousel__referrals-peek-steps">
+        <div className="home-agents-carousel__referrals-peek-progress" aria-hidden>
+          <div className="home-agents-carousel__referrals-peek-progress-track">
+            <div className="home-agents-carousel__referrals-peek-progress-rail">
+              <span className="home-agents-carousel__referrals-peek-progress-fill" />
+            </div>
+            <div className="home-agents-carousel__referrals-peek-progress-indicators">
+              {REFERRAL_STEPS.map((step) => (
+                <StepIndicator key={step.label} status={step.status} />
+              ))}
+            </div>
+          </div>
+          <div
+            className="home-agents-carousel__referrals-peek-progress-labels"
+            style={{
+              opacity: getReferralsFadeOpacity(1),
+              filter:
+                getReferralsFadeBlur(1) > 0 ? `blur(${getReferralsFadeBlur(1)}px)` : undefined,
+            }}
+          >
             {REFERRAL_STEPS.map((step) => (
-              <li key={step.label} className="home-agents-carousel__referrals-peek-step">
-                <StepNode status={step.status} />
-                <span
-                  className={`home-agents-carousel__referrals-peek-step-label${
-                    step.status === "active" ? " home-agents-carousel__referrals-peek-step-label--active" : ""
-                  }`}
-                >
-                  {step.label}
-                </span>
-              </li>
+              <span key={step.label} className="home-agents-carousel__referrals-peek-progress-label">
+                {step.label}
+              </span>
             ))}
-          </ol>
+          </div>
         </div>
 
         <dl className="home-agents-carousel__referrals-peek-details">
-          {REFERRAL_DETAILS.map((item) => (
-            <div key={item.label} className="home-agents-carousel__referrals-peek-detail-row">
+          {REFERRAL_DETAILS.map((item, detailIndex) => {
+            const spread = detailIndex + 2;
+            const blur = getReferralsFadeBlur(spread);
+
+            return (
+            <div
+              key={item.label}
+              className="home-agents-carousel__referrals-peek-detail-row"
+              style={{
+                opacity: getReferralsFadeOpacity(spread),
+                filter: blur > 0 ? `blur(${blur}px)` : undefined,
+              }}
+            >
               <dt className="home-agents-carousel__referrals-peek-detail-label">{item.label}</dt>
               <dd className="home-agents-carousel__referrals-peek-detail-value">{item.value}</dd>
             </div>
-          ))}
+            );
+          })}
         </dl>
       </div>
     </div>
