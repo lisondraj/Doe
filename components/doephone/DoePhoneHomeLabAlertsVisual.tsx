@@ -1,103 +1,93 @@
 "use client";
 
 import { inter, suisseIntl } from "@/lib/home/fonts";
-import { CAROUSEL_MENU_UI } from "@/lib/doephone/carousel-menu-visual-styles";
 
-const ALERT_ACCENT = "#E85D4C";
-const ALERT_BG = "rgba(232, 93, 76, 0.14)";
-const CARD_SHADOW = "0 12px 32px rgba(30, 52, 58, 0.09), 0 1px 6px rgba(30, 52, 58, 0.04)";
+const ALERT = {
+  patient: "Maria Lopez · 58F",
+  value: "Potassium 6.1 mEq/L",
+  context: "CKD stage 3 · on lisinopril",
+  recipient: "Dr. Chen",
+  line: "Mobile · covering",
+} as const;
 
-const METRICS = [
-  {
-    id: "k",
-    label: "Potassium",
-    value: "6.1",
-    unit: "mEq/L",
-    status: "critical" as const,
-    spark: "M2 14 L6 10 L10 12 L14 6 L18 8",
-  },
-  {
-    id: "t",
-    label: "Troponin",
-    value: "0.42",
-    unit: "ng/mL",
-    status: "high" as const,
-    spark: "M2 12 L6 11 L10 9 L14 10 L18 5",
-  },
-  {
-    id: "inr",
-    label: "INR",
-    value: "4.8",
-    unit: "",
-    status: "critical" as const,
-    spark: "M2 13 L6 12 L10 8 L14 9 L18 4",
-  },
+const SCRIPT_LINES = [
+  "Hi Dr. Chen — calling with a critical lab for Maria Lopez.",
+  "Potassium is 6.1, up from 4.8 last week while on lisinopril.",
+  "Can I mark this reviewed and page nephrology if needed?",
 ] as const;
 
-function Sparkline({ path }: { path: string }) {
-  return (
-    <svg viewBox="0 0 20 16" fill="none" aria-hidden className="home-lab-alerts-visual__spark h-[1.65em] w-full">
-      <path d={path} stroke="currentColor" strokeWidth="1.35" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
+const STEPS = [
+  { id: "identify", label: "Identify patient", status: "done" as const },
+  { id: "deliver", label: "Deliver result", status: "active" as const },
+  { id: "log", label: "Log acknowledgment", status: "upcoming" as const },
+] as const;
+
+function StepMark({ status }: { status: (typeof STEPS)[number]["status"] }) {
+  if (status === "done") {
+    return <span className="home-lab-voice-visual__step-mark home-lab-voice-visual__step-mark--done" aria-hidden>✓</span>;
+  }
+
+  if (status === "active") {
+    return <span className="home-lab-voice-visual__step-mark home-lab-voice-visual__step-mark--active" aria-hidden />;
+  }
+
+  return <span className="home-lab-voice-visual__step-mark home-lab-voice-visual__step-mark--upcoming" aria-hidden />;
 }
 
-/** Critical lab monitoring dashboard — ambient shader band. */
+/** Outbound lab voice alert — ambient shader band. */
 export function DoePhoneHomeLabAlertsVisual() {
   return (
-    <div
-      className={`home-lab-alerts-visual mx-auto w-full ${suisseIntl.className}`}
-      style={{ maxWidth: CAROUSEL_MENU_UI.maxWidthPhone }}
-      aria-hidden
-    >
-      <div className="home-lab-alerts-visual__card">
-        <div
-          className="home-lab-alerts-visual__banner"
-          style={{ background: ALERT_BG, borderColor: "rgba(232, 93, 76, 0.28)" }}
-        >
-          <span className="home-lab-alerts-visual__banner-dot" aria-hidden />
-          <div className="home-lab-alerts-visual__banner-copy">
-            <p className={`home-lab-alerts-visual__banner-title ${inter.className}`}>2 critical values unreviewed</p>
-            <p className={`home-lab-alerts-visual__banner-meta ${inter.className}`}>Inpatient panel · updated 4m ago</p>
-          </div>
-          <span className={`home-lab-alerts-visual__banner-count ${inter.className}`}>2</span>
+    <div className={`home-lab-voice-visual ${suisseIntl.className}`} aria-hidden>
+      <div className="home-lab-voice-visual__header">
+        <div className="home-lab-voice-visual__header-copy">
+          <p className="home-lab-voice-visual__eyebrow">Outbound voice alert</p>
+          <p className="home-lab-voice-visual__title">Critical lab callback</p>
         </div>
+        <span className={`home-lab-voice-visual__live ${inter.className}`}>Ringing</span>
+      </div>
 
-        <div className="home-lab-alerts-visual__metrics">
-          {METRICS.map((metric) => (
-            <div
-              key={metric.id}
-              className={`home-lab-alerts-visual__metric home-lab-alerts-visual__metric--${metric.status}`}
-            >
-              <p className={`home-lab-alerts-visual__metric-label ${inter.className}`}>{metric.label}</p>
-              <p className="home-lab-alerts-visual__metric-value">
-                {metric.value}
-                {metric.unit ? (
-                  <span className={`home-lab-alerts-visual__metric-unit ${inter.className}`}>{metric.unit}</span>
-                ) : null}
-              </p>
-              <Sparkline path={metric.spark} />
-            </div>
+      <div className="home-lab-voice-visual__alert-block">
+        <p className="home-lab-voice-visual__patient">{ALERT.patient}</p>
+        <p className={`home-lab-voice-visual__value ${inter.className}`}>{ALERT.value}</p>
+        <p className={`home-lab-voice-visual__context ${inter.className}`}>{ALERT.context}</p>
+      </div>
+
+      <div className={`home-lab-voice-visual__dial ${inter.className}`}>
+        <div className="home-lab-voice-visual__waveform" aria-hidden>
+          {Array.from({ length: 18 }, (_, index) => (
+            <span
+              key={index}
+              className="home-lab-voice-visual__waveform-bar"
+              style={{ height: `${38 + ((index * 17) % 52)}%` }}
+            />
           ))}
         </div>
-
-        <div className="home-lab-alerts-visual__focus">
-          <div className="home-lab-alerts-visual__focus-head">
-            <div>
-              <p className="home-lab-alerts-visual__patient">Maria Lopez · 58F</p>
-              <p className={`home-lab-alerts-visual__focus-detail ${inter.className}`}>
-                K+ 6.1 · CKD stage 3 · on lisinopril
-              </p>
-            </div>
-            <span className={`home-lab-alerts-visual__focus-badge ${inter.className}`}>Critical</span>
-          </div>
-          <div className={`home-lab-alerts-visual__actions ${inter.className}`}>
-            <span className="home-lab-alerts-visual__action home-lab-alerts-visual__action--primary">Acknowledge</span>
-            <span className="home-lab-alerts-visual__action">Notify covering MD</span>
-            <span className="home-lab-alerts-visual__action">Repeat BMP</span>
-          </div>
+        <div className="home-lab-voice-visual__dial-copy">
+          <span className="home-lab-voice-visual__dial-target">Calling {ALERT.recipient}</span>
+          <span className="home-lab-voice-visual__dial-line">{ALERT.line}</span>
         </div>
       </div>
+
+      <div className="home-lab-voice-visual__script">
+        <p className={`home-lab-voice-visual__script-label ${inter.className}`}>Agent script</p>
+        {SCRIPT_LINES.map((line) => (
+          <p key={line} className={`home-lab-voice-visual__script-line ${inter.className}`}>
+            {line}
+          </p>
+        ))}
+      </div>
+
+      <ul className={`home-lab-voice-visual__steps ${inter.className}`}>
+        {STEPS.map((step) => (
+          <li
+            key={step.id}
+            className={`home-lab-voice-visual__step home-lab-voice-visual__step--${step.status}`}
+          >
+            <StepMark status={step.status} />
+            <span className="home-lab-voice-visual__step-label">{step.label}</span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
