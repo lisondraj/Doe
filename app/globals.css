@@ -307,6 +307,10 @@ html[data-home-page] .home-feature-card-ui-scale {
   height: 100%;
 }
 
+html[data-home-page] .home-feature-card-ui-scale--call-history {
+  transform: scale(0.93);
+}
+
 html[data-home-page] .home-feature-card-section__title {
   font-size: clamp(1.72rem, 1.02rem + 4.85vmin, 2.85rem) !important;
   font-weight: 350 !important;
@@ -6745,40 +6749,31 @@ html[data-home-page] .home-call-history-visual {
   display: flex;
   flex-direction: column;
   gap: clamp(0.62rem, 1.8vmin, 0.76rem);
-  padding-inline: clamp(0.65rem, 2vmin, 0.9rem);
+  padding-inline: clamp(0.45rem, 1.45vmin, 0.65rem);
 }
 
 html[data-home-page] .home-call-history-visual__header {
   display: flex;
   flex-direction: column;
-  gap: clamp(0.48rem, 1.35vmin, 0.58rem);
+  gap: clamp(0.42rem, 1.2vmin, 0.52rem);
 }
 
 html[data-home-page] .home-call-history-visual__header-copy {
   display: flex;
   flex-direction: column;
-  gap: clamp(0.1rem, 0.28vmin, 0.12rem);
+  gap: 0;
   min-width: 0;
-}
-
-html[data-home-page] .home-call-history-visual__label {
-  margin: 0;
-  color: #9ca3af;
-  font-size: clamp(0.62rem, 1.75vmin, 0.72rem);
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
 }
 
 html[data-home-page] .home-call-history-visual__summary {
   margin: 0;
   color: #1e343a;
-  font-size: clamp(0.88rem, 2.5vmin, 1rem);
-  font-weight: 500;
+  font-size: clamp(0.98rem, 2.85vmin, 1.12rem);
+  font-weight: 600;
   line-height: 1.1;
   letter-spacing: -0.015em;
   font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px 12px rgba(255, 255, 255, 0.42);
 }
 
 html[data-home-page] .home-call-history-visual__filters {
@@ -6787,19 +6782,20 @@ html[data-home-page] .home-call-history-visual__filters {
   gap: clamp(0.18rem, 0.52vmin, 0.22rem);
   padding: clamp(0.18rem, 0.52vmin, 0.22rem);
   border-radius: 999px;
-  border: 0.5px solid #e5e7eb;
-  background: rgba(255, 255, 255, 0.72);
+  border: 0.5px solid rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 8px 22px rgba(30, 52, 58, 0.1);
 }
 
 html[data-home-page] .home-call-history-visual__filter {
   display: inline-flex;
   align-items: center;
   gap: 0.32em;
-  padding: 0.34em 0.62em;
+  padding: 0.38em 0.68em;
   border-radius: 999px;
-  color: #6b7280;
-  font-size: clamp(0.66rem, 1.88vmin, 0.76rem);
-  font-weight: 500;
+  color: #4b5563;
+  font-size: clamp(0.72rem, 2.05vmin, 0.82rem);
+  font-weight: 600;
   line-height: 1;
 }
 
@@ -6810,7 +6806,7 @@ html[data-home-page] .home-call-history-visual__filter--active {
 
 html[data-home-page] .home-call-history-visual__filter-count {
   font-variant-numeric: tabular-nums;
-  opacity: 0.72;
+  opacity: 0.88;
 }
 
 html[data-home-page] .home-call-history-visual__card {
@@ -6978,7 +6974,10 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
-  .home-call-history-visual__label,
+  .home-call-history-visual__summary {
+  text-shadow: 0 1px 16px rgba(10, 18, 22, 0.34);
+}
+
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
   .home-call-history-visual__phone,

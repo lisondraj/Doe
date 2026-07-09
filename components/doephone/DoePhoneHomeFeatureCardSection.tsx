@@ -86,7 +86,11 @@ export function DoePhoneHomeFeatureCardSection({
                   heroShaderColors
                   heroShaderDusk={shaderTheme === "dusk"}
                   protoShaderVariant={shaderVariant}
-                  uiScaleClass="home-feature-card-ui-scale"
+                  uiScaleClass={
+                    slide.id === "inbox"
+                      ? "home-feature-card-ui-scale home-feature-card-ui-scale--call-history"
+                      : "home-feature-card-ui-scale"
+                  }
                 />
               </div>
 

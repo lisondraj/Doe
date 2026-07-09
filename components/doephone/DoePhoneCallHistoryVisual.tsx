@@ -1,9 +1,6 @@
 "use client";
 
 import { inter, suisseIntl } from "@/lib/home/fonts";
-import { CAROUSEL_MENU_UI } from "@/lib/doephone/carousel-menu-visual-styles";
-
-const { maxWidthPhone } = CAROUSEL_MENU_UI;
 
 type CallEntry = {
   callerName: string;
@@ -12,7 +9,6 @@ type CallEntry = {
   duration: string;
   direction: "inbound" | "outbound";
   agent: string;
-  queueTag: string;
   expanded?: boolean;
   highlight?: string;
   outcomes?: readonly string[];
@@ -34,7 +30,6 @@ const CALL_HISTORY: readonly CallEntry[] = [
     duration: "3m 08s",
     direction: "inbound",
     agent: "Inbox",
-    queueTag: "Results",
     highlight: "Note drafted",
   },
   {
@@ -44,7 +39,6 @@ const CALL_HISTORY: readonly CallEntry[] = [
     duration: "6m 44s",
     direction: "inbound",
     agent: "Referrals",
-    queueTag: "Cardiology",
     expanded: true,
     highlight: "Tue 2:30 PM held",
     outcomes: ["Referral queued", "Callback 4 PM"],
@@ -56,7 +50,6 @@ const CALL_HISTORY: readonly CallEntry[] = [
     duration: "2m 15s",
     direction: "outbound",
     agent: "Scheduling",
-    queueTag: "Confirm",
     highlight: "SMS queued",
   },
 ] as const;
@@ -115,10 +108,6 @@ function CallLogRow({ call, isLast }: { call: CallEntry; isLast: boolean }) {
 
       <p className={`home-call-history-visual__route ${inter.className}`}>
         <span className="home-call-history-visual__route-agent">{call.agent}</span>
-        <span className="home-call-history-visual__route-sep" aria-hidden>
-          ·
-        </span>
-        <span className="home-call-history-visual__route-queue">{call.queueTag}</span>
         {call.highlight ? (
           <>
             <span className="home-call-history-visual__route-sep" aria-hidden>
@@ -145,7 +134,7 @@ function CallLogRow({ call, isLast }: { call: CallEntry; isLast: boolean }) {
 /** Call history — compact routed log on the feature shader. */
 export function DoePhoneCallHistoryVisual({ layout = "phone" }: { layout?: VisualLayout }) {
   const isDesktop = layout === "desktop";
-  const maxWidth = isDesktop ? "min(100%, 28rem)" : maxWidthPhone;
+  const maxWidth = isDesktop ? "min(100%, 21.5rem)" : "min(90%, 21.5rem)";
 
   return (
     <div
@@ -155,7 +144,6 @@ export function DoePhoneCallHistoryVisual({ layout = "phone" }: { layout?: Visua
     >
       <header className="home-call-history-visual__header">
         <div className="home-call-history-visual__header-copy">
-          <p className={`home-call-history-visual__label ${inter.className}`}>Call log</p>
           <p className="home-call-history-visual__summary">18 routed today</p>
         </div>
 
