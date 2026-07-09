@@ -8,19 +8,20 @@ const TRUNK_NODES = [
   {
     id: "trigger",
     kind: "trigger" as const,
-    label: "Incoming call answered",
-    meta: "Front desk line",
+    label: "Call answered",
+    align: "center" as const,
   },
   {
     id: "verify",
     kind: "action" as const,
-    label: "Verify patient in chart",
-    meta: "Match DOB + phone",
+    label: "Verify patient",
+    align: "start" as const,
   },
   {
     id: "condition",
     kind: "condition" as const,
-    label: "Medication on active list?",
+    label: "On active med list?",
+    align: "center" as const,
   },
 ] as const;
 
@@ -32,15 +33,13 @@ const BRANCH_COLUMNS = [
       {
         id: "eligibility",
         kind: "action" as const,
-        label: "Check last refill date",
-        meta: "Editing rule",
+        label: "Check refill date",
         active: true,
       },
       {
         id: "route",
         kind: "action" as const,
-        label: "Route to pharmacy queue",
-        meta: "Notify Dr. Chen",
+        label: "Send to pharmacy",
       },
     ],
   },
@@ -51,14 +50,12 @@ const BRANCH_COLUMNS = [
       {
         id: "transfer",
         kind: "action" as const,
-        label: "Transfer to front desk",
-        meta: "Warm handoff",
+        label: "Transfer to desk",
       },
       {
         id: "escalate",
         kind: "action" as const,
-        label: "Flag for chart review",
-        meta: "Same-day callback",
+        label: "Flag for review",
       },
     ],
   },
@@ -75,7 +72,7 @@ function ChevronDownIcon() {
 function NodeKindIcon({ kind }: { kind: "trigger" | "action" | "condition" }) {
   if (kind === "trigger") {
     return (
-      <svg viewBox="0 0 16 16" fill="none" aria-hidden className="home-call-logic-diagram__node-icon h-[0.95em] w-[0.95em] shrink-0">
+      <svg viewBox="0 0 16 16" fill="none" aria-hidden className="home-call-logic-diagram__node-icon h-[0.9em] w-[0.9em] shrink-0">
         <path d="M4 6.5a4 4 0 018 0v2.2l1.4 1.1H2.6L4 8.7V6.5z" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round" />
         <path d="M6.5 12.2h3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
       </svg>
@@ -84,49 +81,36 @@ function NodeKindIcon({ kind }: { kind: "trigger" | "action" | "condition" }) {
 
   if (kind === "condition") {
     return (
-      <svg viewBox="0 0 16 16" fill="none" aria-hidden className="home-call-logic-diagram__node-icon h-[0.95em] w-[0.95em] shrink-0">
+      <svg viewBox="0 0 16 16" fill="none" aria-hidden className="home-call-logic-diagram__node-icon h-[0.9em] w-[0.9em] shrink-0">
         <path d="M3.5 8h3.2M9.3 8H12.5M8 3.5v3.2M8 9.3v3.2" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
         <rect x="2.5" y="2.5" width="11" height="11" rx="2.2" stroke="currentColor" strokeWidth="1.1" />
       </svg>
     );
   }
 
-  return (
-    <svg viewBox="0 0 16 16" fill="none" aria-hidden className="home-call-logic-diagram__node-icon h-[0.95em] w-[0.95em] shrink-0">
-      <rect x="3" y="3" width="10" height="10" rx="2" stroke="currentColor" strokeWidth="1.1" />
-      <path d="M6 8.2l1.4 1.4 2.8-2.9" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
+  return null;
 }
 
 type FlowNode = {
   id: string;
   kind: "trigger" | "action" | "condition";
   label: string;
-  meta?: string;
   active?: boolean;
 };
 
 function FlowNodeCard({ node }: { node: FlowNode }) {
+  const showIcon = node.kind === "trigger" || node.kind === "condition";
+
   return (
     <div
       className={`home-call-logic-diagram__node home-call-logic-diagram__node--${node.kind}${
         node.active ? " home-call-logic-diagram__node--active" : ""
       }`}
     >
-      <div className="home-call-logic-diagram__node-head">
-        <span className="home-call-logic-diagram__node-kind">
-          <NodeKindIcon kind={node.kind} />
-          <span className={`${inter.className} home-call-logic-diagram__node-kind-label`}>
-            {node.kind === "trigger" ? "Trigger" : node.kind === "condition" ? "If" : "Then"}
-          </span>
-        </span>
-        {node.active ? <span className={`home-call-logic-diagram__edit-badge ${inter.className}`}>Editing</span> : null}
-      </div>
-
-      <p className="home-call-logic-diagram__node-label">{node.label}</p>
-
-      {node.meta ? <p className={`home-call-logic-diagram__node-meta ${inter.className}`}>{node.meta}</p> : null}
+      <p className="home-call-logic-diagram__node-label">
+        {showIcon ? <NodeKindIcon kind={node.kind} /> : null}
+        <span>{node.label}</span>
+      </p>
     </div>
   );
 }
@@ -147,7 +131,10 @@ export function DoePhoneHomeCallLogicDiagram() {
       <div className="home-call-logic-diagram__canvas">
         <div className="home-call-logic-diagram__trunk">
           {TRUNK_NODES.map((node, index) => (
-            <div key={node.id} className="home-call-logic-diagram__trunk-step">
+            <div
+              key={node.id}
+              className={`home-call-logic-diagram__trunk-step home-call-logic-diagram__trunk-step--${node.align}`}
+            >
               {index > 0 ? <div className="home-call-logic-diagram__connector home-call-logic-diagram__connector--vertical" aria-hidden /> : null}
               <FlowNodeCard node={node} />
             </div>

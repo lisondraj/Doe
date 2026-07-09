@@ -27,7 +27,7 @@ const SHADER_BAND_FEATURES: Partial<Record<DoePhoneCommunicationSlide["id"], Sha
 };
 
 const SHADER_BAND_TITLES: Record<ShaderBandFeature, readonly [string, string]> = {
-  workflow: ["Customize agents", "to fix your needs."],
+  workflow: ["Customize agents", "to fit your needs."],
   "active-agents": ["Active Agents", ""],
   "call-summaries": ["Doe on the line.", "Charts fill in."],
   "lab-alerts": ["Outreach lands.", "Visits get booked."],

@@ -4898,7 +4898,7 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow 
 }
 
 html[data-home-page] .home-call-logic-diagram {
-  width: min(100%, 27rem);
+  width: min(100%, 28rem);
   margin-inline: auto;
   display: flex;
   flex-direction: column;
@@ -4909,30 +4909,30 @@ html[data-home-page] .home-call-logic-diagram {
 html[data-home-page] .home-call-logic-diagram__toolbar {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: flex-start;
   gap: 0;
   width: 100%;
-  padding: 0 0 clamp(0.72rem, 2vmin, 0.95rem);
+  padding: 0 0 clamp(0.62rem, 1.75vmin, 0.78rem);
 }
 
 html[data-home-page] .home-call-logic-diagram__toolbar-actions {
   display: flex;
   align-items: center;
-  width: 100%;
+  width: auto;
 }
 
 html[data-home-page] .home-call-logic-diagram__type-chip {
   display: inline-flex;
   align-items: center;
-  gap: clamp(0.28rem, 0.8vmin, 0.34rem);
+  gap: clamp(0.22rem, 0.62vmin, 0.28rem);
   flex: 0 0 auto;
-  padding: clamp(0.38rem, 1.08vmin, 0.46rem) clamp(0.62rem, 1.75vmin, 0.74rem);
-  border-radius: clamp(0.48rem, 1.35vmin, 0.58rem);
+  padding: clamp(0.32rem, 0.92vmin, 0.38rem) clamp(0.52rem, 1.48vmin, 0.62rem);
+  border-radius: clamp(0.42rem, 1.2vmin, 0.5rem);
   border: 0.5px solid color-mix(in srgb, #1e343a 8%, #ebe7e0);
   background: rgba(255, 255, 255, 0.92);
   box-shadow: 0 8px 22px rgba(30, 52, 58, 0.08);
   color: #d2774c;
-  font-size: clamp(0.8rem, 2.28vmin, 0.94rem);
+  font-size: clamp(0.74rem, 2.1vmin, 0.86rem);
   font-weight: 500;
   line-height: 1.1;
   white-space: nowrap;
@@ -4959,6 +4959,23 @@ html[data-home-page] .home-call-logic-diagram__branch-step {
   flex-direction: column;
   align-items: stretch;
   width: 100%;
+}
+
+html[data-home-page] .home-call-logic-diagram__trunk-step--center {
+  align-items: center;
+}
+
+html[data-home-page] .home-call-logic-diagram__trunk-step--center .home-call-logic-diagram__node {
+  width: min(100%, 15.5rem);
+}
+
+html[data-home-page] .home-call-logic-diagram__trunk-step--start {
+  align-items: flex-start;
+  padding-left: clamp(0.35rem, 1vmin, 0.5rem);
+}
+
+html[data-home-page] .home-call-logic-diagram__trunk-step--start .home-call-logic-diagram__node {
+  width: min(100%, 13.5rem);
 }
 
 html[data-home-page] .home-call-logic-diagram__connector {
@@ -4997,12 +5014,12 @@ html[data-home-page] .home-call-logic-diagram__fork-rail-line {
 }
 
 html[data-home-page] .home-call-logic-diagram__fork-rail-line--left {
-  left: 25%;
+  left: 14%;
   width: 1.5px;
 }
 
 html[data-home-page] .home-call-logic-diagram__fork-rail-line--right {
-  right: 25%;
+  right: 14%;
   width: 1.5px;
 }
 
@@ -5010,50 +5027,64 @@ html[data-home-page] .home-call-logic-diagram__fork-rail::before {
   content: "";
   position: absolute;
   top: 0;
-  left: 25%;
-  right: 25%;
+  left: 14%;
+  right: 14%;
   height: 1.5px;
   border-radius: 999px;
   background: color-mix(in srgb, #1e343a 14%, #ebe7e0);
 }
 
 html[data-home-page] .home-call-logic-diagram__branches {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(0.82rem, 2.35vmin, 1rem);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: clamp(1.65rem, 5.5vmin, 2.75rem);
   width: 100%;
-  margin-top: clamp(0.06rem, 0.18vmin, 0.08rem);
+  margin-top: clamp(0.1rem, 0.28vmin, 0.12rem);
+  padding-inline: clamp(0.1rem, 0.28vmin, 0.12rem);
 }
 
 html[data-home-page] .home-call-logic-diagram__branch-col {
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  flex: 0 1 38%;
   min-width: 0;
+  max-width: 11.5rem;
+}
+
+html[data-home-page] .home-call-logic-diagram__branch-col--yes {
+  align-self: flex-start;
+  margin-right: auto;
+}
+
+html[data-home-page] .home-call-logic-diagram__branch-col--no {
+  align-self: flex-end;
+  margin-left: auto;
 }
 
 html[data-home-page] .home-call-logic-diagram__branch-key {
   align-self: center;
-  margin-bottom: clamp(0.1rem, 0.28vmin, 0.12rem);
-  padding: clamp(0.16rem, 0.45vmin, 0.18rem) clamp(0.42rem, 1.2vmin, 0.5rem);
+  margin-bottom: clamp(0.14rem, 0.4vmin, 0.18rem);
+  padding: clamp(0.12rem, 0.34vmin, 0.14rem) clamp(0.36rem, 1.02vmin, 0.42rem);
   border-radius: 999px;
   background: rgba(210, 119, 76, 0.12);
   color: #d2774c;
-  font-size: clamp(0.66rem, 1.88vmin, 0.76rem);
+  font-size: clamp(0.58rem, 1.65vmin, 0.66rem);
   font-weight: 600;
   line-height: 1;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
 html[data-home-page] .home-call-logic-diagram__node {
-  border-radius: clamp(0.68rem, 1.95vmin, 0.8rem);
+  border-radius: clamp(0.58rem, 1.65vmin, 0.68rem);
   border: 0.5px solid color-mix(in srgb, #1e343a 7%, #ebe7e0);
   background: rgba(255, 255, 255, 0.94);
   box-shadow:
-    0 10px 28px rgba(30, 52, 58, 0.08),
-    0 1px 5px rgba(30, 52, 58, 0.04);
-  padding: clamp(0.65rem, 1.85vmin, 0.76rem) clamp(0.72rem, 2.05vmin, 0.82rem);
+    0 8px 22px rgba(30, 52, 58, 0.07),
+    0 1px 4px rgba(30, 52, 58, 0.04);
+  padding: clamp(0.5rem, 1.42vmin, 0.58rem) clamp(0.58rem, 1.65vmin, 0.66rem);
 }
 
 html[data-home-page] .home-call-logic-diagram__node--trigger {
@@ -5069,15 +5100,19 @@ html[data-home-page] .home-call-logic-diagram__node--active {
   background: rgba(210, 119, 76, 0.08);
   box-shadow:
     0 0 0 1px rgba(210, 119, 76, 0.12),
-    0 10px 28px rgba(30, 52, 58, 0.08);
+    0 8px 22px rgba(30, 52, 58, 0.07);
 }
 
-html[data-home-page] .home-call-logic-diagram__node-head {
-  display: flex;
+html[data-home-page] .home-call-logic-diagram__node-label {
+  margin: 0;
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: clamp(0.45rem, 1.25vmin, 0.55rem);
-  margin-bottom: clamp(0.3rem, 0.85vmin, 0.36rem);
+  gap: clamp(0.28rem, 0.8vmin, 0.34rem);
+  color: #1e343a;
+  font-size: clamp(0.82rem, 2.34vmin, 0.94rem);
+  font-weight: 500;
+  line-height: 1.22;
+  letter-spacing: -0.012em;
 }
 
 html[data-home-page] .home-call-logic-diagram__node-kind {
@@ -5087,54 +5122,24 @@ html[data-home-page] .home-call-logic-diagram__node-kind {
   color: #6b7280;
 }
 
-html[data-home-page] .home-call-logic-diagram__node-kind-label {
-  font-size: clamp(0.66rem, 1.88vmin, 0.76rem);
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-}
-
-html[data-home-page] .home-call-logic-diagram__edit-badge {
-  padding: clamp(0.14rem, 0.4vmin, 0.17rem) clamp(0.34rem, 0.95vmin, 0.4rem);
-  border-radius: 999px;
-  background: rgba(210, 119, 76, 0.14);
-  color: #d2774c;
-  font-size: clamp(0.62rem, 1.75vmin, 0.72rem);
-  font-weight: 500;
-  line-height: 1;
-}
-
-html[data-home-page] .home-call-logic-diagram__node-label {
-  margin: 0;
-  color: #1e343a;
-  font-size: clamp(0.95rem, 2.7vmin, 1.08rem);
-  font-weight: 500;
-  line-height: 1.25;
-  letter-spacing: -0.015em;
-}
-
-html[data-home-page] .home-call-logic-diagram__node-meta {
-  margin: clamp(0.2rem, 0.58vmin, 0.24rem) 0 0;
-  color: #6b7280;
-  font-size: clamp(0.78rem, 2.2vmin, 0.88rem);
-  font-weight: 400;
-  line-height: 1.2;
+html[data-home-page] .home-call-logic-diagram__node-icon {
+  color: #8b9199;
+  flex-shrink: 0;
 }
 
 html[data-home-page] .home-call-logic-diagram__add-step {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(0.32rem, 0.92vmin, 0.38rem);
-  width: 100%;
-  margin: clamp(0.18rem, 0.5vmin, 0.22rem) auto 0;
-  padding: clamp(0.52rem, 1.48vmin, 0.62rem) clamp(0.65rem, 1.85vmin, 0.76rem);
-  border-radius: clamp(0.52rem, 1.48vmin, 0.62rem);
+  gap: clamp(0.26rem, 0.74vmin, 0.3rem);
+  width: min(100%, 13.5rem);
+  margin: clamp(0.22rem, 0.62vmin, 0.28rem) auto 0;
+  padding: clamp(0.42rem, 1.2vmin, 0.5rem) clamp(0.55rem, 1.55vmin, 0.64rem);
+  border-radius: clamp(0.46rem, 1.32vmin, 0.54rem);
   border: 0.5px dashed color-mix(in srgb, #1e343a 16%, #ebe7e0);
   background: rgba(255, 255, 255, 0.72);
   color: #6b7280;
-  font-size: clamp(0.8rem, 2.28vmin, 0.92rem);
+  font-size: clamp(0.72rem, 2.05vmin, 0.82rem);
   font-weight: 500;
   line-height: 1.1;
 }
@@ -6543,9 +6548,6 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-call-logic-diagram__type-chip,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--workflow
-  .home-call-logic-diagram__edit-badge,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--workflow
   .home-call-logic-diagram__branch-key {
   color: var(--home-dusk-ui-horizon) !important;
 }
@@ -6556,9 +6558,6 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   color: var(--home-dusk-ui-ink) !important;
 }
 
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--workflow
-  .home-call-logic-diagram__edit-badge,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--workflow
   .home-call-logic-diagram__branch-key {
@@ -6596,9 +6595,6 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--workflow
   .home-call-logic-diagram__node-kind,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--workflow
-  .home-call-logic-diagram__node-meta,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--workflow
   .home-call-logic-diagram__add-step {
