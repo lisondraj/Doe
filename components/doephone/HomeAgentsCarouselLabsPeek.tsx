@@ -77,54 +77,53 @@ function RoutingStatusIcon({ status }: { status: (typeof ROUTING_ROWS)[number]["
   );
 }
 
-/** Desktop agents carousel — Labs Agent dual UI peek (centered, top/bottom clip). */
+/** Agents carousel — Labs Agent peek (results centered, routing below). */
 export function HomeAgentsCarouselLabsPeek() {
   return (
     <div className="home-agents-carousel__labs-peek" aria-hidden>
-      <div className={`home-agents-carousel__labs-peek-stack ${suisseIntl.className}`}>
-        <div className="home-agents-carousel__labs-peek-card home-agents-carousel__labs-peek-card--results">
-          <div className="home-agents-carousel__labs-peek-header home-agents-carousel__labs-peek-header--results">
-            <div className="home-agents-carousel__labs-peek-heading">
-              <p className="home-agents-carousel__labs-peek-title">Lab Results</p>
-              <p className="home-agents-carousel__labs-peek-subtitle">Michael Chen</p>
-            </div>
+      <div className={`home-agents-carousel__labs-peek-card home-agents-carousel__labs-peek-card--results ${suisseIntl.className}`}>
+        <div className="home-agents-carousel__labs-peek-header home-agents-carousel__labs-peek-header--results">
+          <div className="home-agents-carousel__labs-peek-heading">
+            <p className="home-agents-carousel__labs-peek-title">Lab Results</p>
+            <p className="home-agents-carousel__labs-peek-subtitle">Michael Chen</p>
           </div>
-
-          <ul className="home-agents-carousel__labs-peek-list">
-            {BLOODWORK_ROWS.map((row) => (
-              <li
-                key={row.label}
-                className={`home-agents-carousel__labs-peek-row${
-                  "abnormal" in row && row.abnormal ? " home-agents-carousel__labs-peek-row--flagged" : ""
-                }`}
-              >
-                <span className="home-agents-carousel__labs-peek-label-block">
-                  <span className="home-agents-carousel__labs-peek-label">{row.label}</span>
-                  <span className="home-agents-carousel__labs-peek-value">{row.value}</span>
-                </span>
-                <span className="home-agents-carousel__labs-peek-meter" aria-hidden>
-                  <span className="home-agents-carousel__labs-peek-down-arrow-slot">
-                    {"abnormal" in row && row.abnormal ? <AbnormalDownArrow /> : null}
-                  </span>
-                  <span className="home-agents-carousel__labs-peek-bar">
-                    <span
-                      className="home-agents-carousel__labs-peek-bar-fill"
-                      style={{ width: `${Math.round(row.bar * 100)}%` }}
-                    />
-                  </span>
-                </span>
-              </li>
-            ))}
-          </ul>
         </div>
 
-        <div className="home-agents-carousel__labs-peek-card home-agents-carousel__labs-peek-card--routing">
-          <ul className="home-agents-carousel__labs-peek-list">
-            {ROUTING_ROWS.map((row, rowIndex) => {
-              const spread = getLabsRowSpread(rowIndex, LABS_ROUTING_FOCUS_INDEX, row.active);
-              const blur = getRoutingFadeBlur(spread);
+        <ul className="home-agents-carousel__labs-peek-list">
+          {BLOODWORK_ROWS.map((row) => (
+            <li
+              key={row.label}
+              className={`home-agents-carousel__labs-peek-row${
+                "abnormal" in row && row.abnormal ? " home-agents-carousel__labs-peek-row--flagged" : ""
+              }`}
+            >
+              <span className="home-agents-carousel__labs-peek-label-block">
+                <span className="home-agents-carousel__labs-peek-label">{row.label}</span>
+                <span className="home-agents-carousel__labs-peek-value">{row.value}</span>
+              </span>
+              <span className="home-agents-carousel__labs-peek-meter" aria-hidden>
+                <span className="home-agents-carousel__labs-peek-down-arrow-slot">
+                  {"abnormal" in row && row.abnormal ? <AbnormalDownArrow /> : null}
+                </span>
+                <span className="home-agents-carousel__labs-peek-bar">
+                  <span
+                    className="home-agents-carousel__labs-peek-bar-fill"
+                    style={{ width: `${Math.round(row.bar * 100)}%` }}
+                  />
+                </span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
 
-              return (
+      <div className={`home-agents-carousel__labs-peek-card home-agents-carousel__labs-peek-card--routing ${suisseIntl.className}`}>
+        <ul className="home-agents-carousel__labs-peek-list">
+          {ROUTING_ROWS.map((row, rowIndex) => {
+            const spread = getLabsRowSpread(rowIndex, LABS_ROUTING_FOCUS_INDEX, row.active);
+            const blur = getRoutingFadeBlur(spread);
+
+            return (
               <li
                 key={row.label}
                 className={`home-agents-carousel__labs-peek-row home-agents-carousel__labs-peek-row--routing${
@@ -143,11 +142,10 @@ export function HomeAgentsCarouselLabsPeek() {
                   ) : null}
                 </span>
               </li>
-              );
-            })}
-          </ul>
-          <div className="home-agents-carousel__labs-peek-edge-blur" aria-hidden />
-        </div>
+            );
+          })}
+        </ul>
+        <div className="home-agents-carousel__labs-peek-edge-blur" aria-hidden />
       </div>
     </div>
   );

@@ -72,19 +72,19 @@ function StepIndicator({ status }: { status: (typeof REFERRAL_STEPS)[number]["st
   return <span className="home-agents-carousel__referrals-peek-indicator home-agents-carousel__referrals-peek-indicator--upcoming" />;
 }
 
-/** Desktop agents carousel — Referrals Agent UI peek (centered, circular clip). */
+/** Agents carousel — Referrals Agent peek (calling UI centered, progress below). */
 export function HomeAgentsCarouselReferralsPeek() {
   return (
     <div className="home-agents-carousel__referrals-peek" aria-hidden>
-      <div className={`home-agents-carousel__referrals-peek-card ${suisseIntl.className}`}>
-        <div className="home-agents-carousel__referrals-peek-lead">
-          <VoiceWaveform />
-          <div className="home-agents-carousel__referrals-peek-voice-copy">
-            <p className="home-agents-carousel__referrals-peek-voice-line">Calling specialist&apos;s office…</p>
-            <p className="home-agents-carousel__referrals-peek-voice-subline">Referral to Cardiology</p>
-          </div>
+      <div className={`home-agents-carousel__referrals-peek-lead ${suisseIntl.className}`}>
+        <VoiceWaveform />
+        <div className="home-agents-carousel__referrals-peek-voice-copy">
+          <p className="home-agents-carousel__referrals-peek-voice-line">Calling specialist&apos;s office…</p>
+          <p className="home-agents-carousel__referrals-peek-voice-subline">Referral to Cardiology</p>
         </div>
+      </div>
 
+      <div className={`home-agents-carousel__referrals-peek-lower ${suisseIntl.className}`}>
         <div className="home-agents-carousel__referrals-peek-progress" aria-hidden>
           <div className="home-agents-carousel__referrals-peek-progress-track">
             <div className="home-agents-carousel__referrals-peek-progress-rail">
@@ -118,17 +118,17 @@ export function HomeAgentsCarouselReferralsPeek() {
             const blur = getReferralsFadeBlur(spread);
 
             return (
-            <div
-              key={item.label}
-              className="home-agents-carousel__referrals-peek-detail-row"
-              style={{
-                opacity: getReferralsFadeOpacity(spread),
-                filter: blur > 0 ? `blur(${blur}px)` : undefined,
-              }}
-            >
-              <dt className="home-agents-carousel__referrals-peek-detail-label">{item.label}</dt>
-              <dd className="home-agents-carousel__referrals-peek-detail-value">{item.value}</dd>
-            </div>
+              <div
+                key={item.label}
+                className="home-agents-carousel__referrals-peek-detail-row"
+                style={{
+                  opacity: getReferralsFadeOpacity(spread),
+                  filter: blur > 0 ? `blur(${blur}px)` : undefined,
+                }}
+              >
+                <dt className="home-agents-carousel__referrals-peek-detail-label">{item.label}</dt>
+                <dd className="home-agents-carousel__referrals-peek-detail-value">{item.value}</dd>
+              </div>
             );
           })}
         </dl>
