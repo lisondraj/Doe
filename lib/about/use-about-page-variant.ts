@@ -22,6 +22,7 @@ export function useAboutPageVariant() {
   useLayoutEffect(() => {
     const html = document.documentElement;
     html.setAttribute("data-about-page", "true");
+    html.removeAttribute("data-home-page");
     setVariant(resolveAboutPageVariant());
     return () => html.removeAttribute("data-about-page");
   }, []);

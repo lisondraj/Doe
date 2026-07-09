@@ -66,9 +66,12 @@ export function DoePhoneRouter() {
   const [variant, setVariant] = useState<DoePhoneVariant>(readBootstrappedDoePhoneVariant);
 
   useLayoutEffect(() => {
-    document.documentElement.setAttribute("data-home-page", "true");
+    const html = document.documentElement;
+    html.setAttribute("data-home-page", "true");
+    html.removeAttribute("data-about-page");
+    html.removeAttribute("data-route-desktop");
     return () => {
-      document.documentElement.removeAttribute("data-home-page");
+      html.removeAttribute("data-home-page");
     };
   }, []);
 
@@ -100,6 +103,12 @@ export function DoePhoneRouter() {
     const meta = document.querySelector('meta[name="viewport"]');
     const prevViewport = meta?.getAttribute("content") ?? "";
     clearPhonePinchViewport(prevViewport);
+    applyDesktopDocumentAttrs();
+  }, [variant]);
+
+  /** Re-apply after subpage layout cleanups that run in the same navigation tick. */
+  useEffect(() => {
+    if (variant !== "desktop") return;
     applyDesktopDocumentAttrs();
   }, [variant]);
 

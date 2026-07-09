@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 
 /** /desktop — native desktop layout; restores phone canvas attrs on leave. */
 export function DesktopRouteLayout({ children }: { children: React.ReactNode }) {
-  useEffect(() => {
+  useLayoutEffect(() => {
     const html = document.documentElement;
     const body = document.body;
 

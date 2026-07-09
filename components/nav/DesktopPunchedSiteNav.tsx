@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 
 import { DesktopNavActionRow } from "@/components/nav/DesktopNavActionRow";
 import { DOE_DESKTOP_NAV_LOGO_TW } from "@/lib/doephone/doe-desktop-layout-styles";
@@ -60,6 +60,18 @@ export function DesktopPunchedSiteNav({
   const targetRef = useRef(alwaysPunched ? 1 : 0);
   const displayRef = useRef(alwaysPunched ? 1 : 0);
   const rafRef = useRef(0);
+
+  useLayoutEffect(() => {
+    if (alwaysPunched) return;
+
+    if (window.scrollY !== 0) {
+      window.scrollTo(0, 0);
+    }
+
+    targetRef.current = 0;
+    displayRef.current = 0;
+    setPunchProgress(0);
+  }, [alwaysPunched]);
 
   useEffect(() => {
     if (alwaysPunched) {
