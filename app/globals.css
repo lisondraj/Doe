@@ -311,6 +311,10 @@ html[data-home-page] .home-feature-card-ui-scale--call-history {
   transform: scale(0.93);
 }
 
+html[data-home-page] .home-feature-card-ui-scale--no-shows {
+  transform: scale(0.92);
+}
+
 html[data-home-page] .home-feature-card-section__title {
   font-size: clamp(1.72rem, 1.02rem + 4.85vmin, 2.85rem) !important;
   font-weight: 350 !important;
@@ -5534,64 +5538,47 @@ html[data-home-page] .home-prior-auth-visual__footer-status {
 }
 
 /* No-show callback queue — ambient feature shader card. */
+html[data-home-page] .home-recall-queue-scale {
+  --home-recall-queue-scale: 1.16;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(72% / var(--home-recall-queue-scale));
+  max-width: calc(72% / var(--home-recall-queue-scale));
+  margin-inline: auto;
+  transform: scale(var(--home-recall-queue-scale));
+  transform-origin: center center;
+}
+
+html[data-home-page] .home-recall-queue-scale--desktop {
+  --home-recall-queue-scale: 1.2;
+  width: min(calc(17.5rem / var(--home-recall-queue-scale)), calc(72% / var(--home-recall-queue-scale)));
+  max-width: min(calc(17.5rem / var(--home-recall-queue-scale)), calc(72% / var(--home-recall-queue-scale)));
+}
+
 html[data-home-page] .home-recall-queue-visual {
   display: flex;
   flex-direction: column;
   gap: clamp(0.62rem, 1.75vmin, 0.76rem);
-  width: min(100%, 26rem);
+  width: 100%;
   margin-inline: auto;
-  padding-inline: clamp(0.28rem, 0.8vmin, 0.42rem);
+  padding-inline: 0;
 }
 
 html[data-home-page] .home-recall-queue-visual__header {
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
-  gap: clamp(0.55rem, 1.6vmin, 0.68rem);
-}
-
-html[data-home-page] .home-recall-queue-visual__header-copy {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(0.12rem, 0.34vmin, 0.14rem);
   min-width: 0;
-}
-
-html[data-home-page] .home-recall-queue-visual__label {
-  margin: 0;
-  color: #9ca3af;
-  font-size: clamp(0.68rem, 1.92vmin, 0.78rem);
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
 }
 
 html[data-home-page] .home-recall-queue-visual__summary {
   margin: 0;
   color: #1e343a;
-  font-size: clamp(0.98rem, 2.8vmin, 1.12rem);
+  font-size: clamp(1.02rem, 2.92vmin, 1.16rem);
   font-weight: 500;
   line-height: 1.1;
   letter-spacing: -0.015em;
   font-variant-numeric: tabular-nums;
-}
-
-html[data-home-page] .home-recall-queue-visual__badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.32em;
-  flex-shrink: 0;
-  padding: clamp(0.3rem, 0.86vmin, 0.36rem) clamp(0.5rem, 1.42vmin, 0.6rem);
-  border-radius: clamp(0.28rem, 0.8vmin, 0.34rem);
-  border: 0.5px solid rgba(210, 119, 76, 0.28);
-  background: rgba(210, 119, 76, 0.12);
-  color: #d2774c;
-  font-size: clamp(0.66rem, 1.88vmin, 0.76rem);
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: 0.02em;
-  white-space: nowrap;
 }
 
 html[data-home-page] .home-recall-queue-visual__card {
@@ -6978,9 +6965,6 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
-  .home-recall-queue-visual__label,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
   .home-recall-queue-visual__detail,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
@@ -7013,14 +6997,6 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
   .home-recall-queue-visual__name {
   color: var(--home-dusk-ui-ink) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
-  .home-recall-queue-visual__badge {
-  color: var(--home-dusk-ui-horizon) !important;
-  background: var(--home-dusk-ui-surface-raised) !important;
-  border-color: rgba(232, 160, 96, 0.28) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])

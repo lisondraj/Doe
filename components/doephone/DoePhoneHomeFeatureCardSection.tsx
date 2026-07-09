@@ -89,7 +89,9 @@ export function DoePhoneHomeFeatureCardSection({
                   uiScaleClass={
                     slide.id === "inbox"
                       ? "home-feature-card-ui-scale home-feature-card-ui-scale--call-history"
-                      : "home-feature-card-ui-scale"
+                      : slide.id === "ambient"
+                        ? "home-feature-card-ui-scale home-feature-card-ui-scale--no-shows"
+                        : "home-feature-card-ui-scale"
                   }
                 />
               </div>
