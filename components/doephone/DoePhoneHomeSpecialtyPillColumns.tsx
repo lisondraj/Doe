@@ -1,5 +1,7 @@
 "use client";
 
+import type { CSSProperties } from "react";
+
 import { inter } from "@/lib/home/fonts";
 
 const ALL_SPECIALTIES = [
@@ -44,6 +46,8 @@ const PHONE_ROW_COUNT = 8;
 const DESKTOP_ROW_COUNT = 10;
 const CHIP_TONE_COUNT = 4;
 
+const MARQUEE_DURATIONS = [74, 92, 65, 84, 78, 97, 70, 86, 76, 95] as const;
+
 function buildSpecialtyRows(rowCount: number): readonly (readonly string[])[] {
   const buckets = Array.from({ length: rowCount }, () => [] as string[]);
   ALL_SPECIALTIES.forEach((label, index) => {
@@ -52,7 +56,7 @@ function buildSpecialtyRows(rowCount: number): readonly (readonly string[])[] {
   return buckets;
 }
 
-/** Static horizontal specialty chip rows — warm editorial chips on beige. */
+/** Infinite horizontal marquee rows — warm editorial chips on beige. */
 export function DoePhoneHomeSpecialtyPillColumns({
   variant = "phone",
 }: {
@@ -68,6 +72,7 @@ export function DoePhoneHomeSpecialtyPillColumns({
     >
       <div className="home-feature-specialties__rows">
         {rows.map((row, rowIndex) => {
+          const sequence = [...row, ...row];
           const reverse = rowIndex % 2 === 1;
 
           return (
@@ -76,8 +81,13 @@ export function DoePhoneHomeSpecialtyPillColumns({
                 className={`home-feature-specialties__marquee${
                   reverse ? " home-feature-specialties__marquee--reverse" : ""
                 }`}
+                style={
+                  {
+                    "--specialty-marquee-duration": `${MARQUEE_DURATIONS[rowIndex % MARQUEE_DURATIONS.length]}s`,
+                  } as CSSProperties
+                }
               >
-                {row.map((label, chipIndex) => {
+                {sequence.map((label, chipIndex) => {
                   const toneIndex = (rowIndex + chipIndex) % CHIP_TONE_COUNT;
 
                   return (
