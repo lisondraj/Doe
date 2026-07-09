@@ -5116,14 +5116,28 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--guardrail
   padding-top: calc(var(--desktop-nav-height) + var(--desktop-section-pad-y));
 }
 
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--lab-alerts .home-feature-shader-band__feature-content {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding-bottom: clamp(1.35rem, 0.9rem + 2.1vmin, 2.1rem);
+}
+
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-content,
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--lab-alerts .home-feature-shader-band__feature-content,
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--guardrails .home-feature-shader-band__feature-content {
   padding-bottom: clamp(1.35rem, 0.9rem + 2.1vmin, 2.1rem);
 }
 
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--lab-alerts .home-feature-shader-band__feature-title {
+  flex: 0 0 auto;
+  margin: 0 0 clamp(1.15rem, 0.8rem + 1.85vmin, 1.85rem);
+  padding-top: max(2.05rem, calc(env(safe-area-inset-top, 0px) + calc(var(--app-vh, 100lvh) * 0.072))) !important;
+  color: #ffffff !important;
+}
+
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-title,
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--lab-alerts .home-feature-shader-band__feature-title,
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--guardrails .home-feature-shader-band__feature-title {
   flex: 0 0 auto;
   margin: 0 0 clamp(1.5rem, 0.95rem + 2.4vmin, 2.35rem);
@@ -5131,8 +5145,14 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--guard
   color: #ffffff !important;
 }
 
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alerts .home-feature-shader-band__feature-title {
+  color: #ffffff !important;
+  padding-left: var(--desktop-page-inset-x) !important;
+  padding-right: var(--desktop-page-inset-x) !important;
+  padding-top: clamp(1.85rem, 2.6vmin, 2.45rem) !important;
+}
+
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-title,
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alerts .home-feature-shader-band__feature-title,
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--guardrails .home-feature-shader-band__feature-title {
   color: #ffffff !important;
   padding-left: var(--desktop-page-inset-x) !important;
@@ -5140,8 +5160,20 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--guardrail
   padding-top: clamp(1.35rem, 2vmin, 2rem) !important;
 }
 
+html[data-home-page] .home-feature-shader-band--lab-alerts .home-feature-section__lab-alerts {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: none;
+  margin-inline: auto;
+  padding-left: var(--proto-phone-gutter-left, 1.65rem);
+  padding-right: var(--proto-phone-gutter-right, 1.65rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 html[data-home-page] .home-feature-shader-band--call-summaries .home-feature-section__call-summaries,
-html[data-home-page] .home-feature-shader-band--lab-alerts .home-feature-section__lab-alerts,
 html[data-home-page] .home-feature-shader-band--guardrails .home-feature-section__guardrails {
   box-sizing: border-box;
   flex: 0 0 auto;
@@ -5181,9 +5213,12 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--call-
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--lab-alerts .home-lab-alerts-scale {
-  --home-shader-feature-scale: 1.12;
+  --home-shader-feature-scale: 1.18;
   width: calc(92% / var(--home-shader-feature-scale));
   max-width: calc(92% / var(--home-shader-feature-scale));
+  margin-inline: auto;
+  transform: scale(var(--home-shader-feature-scale));
+  transform-origin: center center;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-call-summaries-scale,
@@ -5203,9 +5238,9 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summ
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alerts .home-lab-alerts-scale {
-  --home-shader-feature-scale: 1.18;
-  width: min(calc(31rem / var(--home-shader-feature-scale)), calc(92% / var(--home-shader-feature-scale)));
-  max-width: min(calc(31rem / var(--home-shader-feature-scale)), calc(92% / var(--home-shader-feature-scale)));
+  --home-shader-feature-scale: 1.22;
+  width: min(calc(32rem / var(--home-shader-feature-scale)), calc(92% / var(--home-shader-feature-scale)));
+  max-width: min(calc(32rem / var(--home-shader-feature-scale)), calc(92% / var(--home-shader-feature-scale)));
   margin-inline: auto;
   transform: scale(var(--home-shader-feature-scale));
   transform-origin: center center;
@@ -5565,97 +5600,205 @@ html[data-home-page] .home-patient-outreach-visual__header {
 html[data-home-page] .home-patient-outreach-visual__header-copy {
   display: flex;
   flex-direction: column;
-  gap: clamp(0.12rem, 0.34vmin, 0.14rem);
+  gap: clamp(0.1rem, 0.28vmin, 0.12rem);
   min-width: 0;
 }
 
 html[data-home-page] .home-patient-outreach-visual__label {
   margin: 0;
-  color: #9ca3af;
-  font-size: clamp(0.68rem, 1.92vmin, 0.78rem);
+  color: rgba(255, 248, 240, 0.78);
+  font-size: clamp(0.62rem, 1.75vmin, 0.72rem);
   font-weight: 600;
   line-height: 1;
   letter-spacing: 0.05em;
   text-transform: uppercase;
+  text-shadow: 0 1px 10px rgba(30, 52, 58, 0.24);
 }
 
 html[data-home-page] .home-patient-outreach-visual__patient {
   margin: 0;
-  color: #1e343a;
-  font-size: clamp(0.98rem, 2.8vmin, 1.12rem);
+  color: #ffffff;
+  font-size: clamp(1.02rem, 2.92vmin, 1.18rem);
   font-weight: 500;
   line-height: 1.1;
   letter-spacing: -0.015em;
-}
-
-html[data-home-page] .home-patient-outreach-visual__badge {
-  flex-shrink: 0;
-  padding: clamp(0.32rem, 0.9vmin, 0.38rem) clamp(0.55rem, 1.55vmin, 0.65rem);
-  border-radius: 999px;
-  border: 0.5px solid rgba(210, 119, 76, 0.28);
-  background: rgba(210, 119, 76, 0.12);
-  color: #d2774c;
-  font-size: clamp(0.7rem, 1.98vmin, 0.8rem);
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
+  text-shadow: 0 1px 12px rgba(30, 52, 58, 0.3);
 }
 
 html[data-home-page] .home-patient-outreach-visual__campaign {
   margin: 0;
-  color: #6b7280;
-  font-size: clamp(0.78rem, 2.2vmin, 0.9rem);
+  color: rgba(255, 248, 240, 0.86);
+  font-size: clamp(0.74rem, 2.1vmin, 0.86rem);
   font-weight: 400;
-  line-height: 1.25;
+  line-height: 1.2;
+  text-shadow: 0 1px 10px rgba(30, 52, 58, 0.22);
 }
 
-html[data-home-page] .home-patient-outreach-visual__thread {
-  display: flex;
+html[data-home-page] .home-patient-outreach-visual__channels {
+  display: inline-flex;
   flex-direction: column;
-  gap: clamp(0.48rem, 1.35vmin, 0.58rem);
+  align-items: flex-end;
+  gap: clamp(0.18rem, 0.52vmin, 0.22rem);
+  flex-shrink: 0;
 }
 
-html[data-home-page] .home-patient-outreach-visual__message {
+html[data-home-page] .home-patient-outreach-visual__channel {
+  padding: 0.24em 0.5em;
+  border-radius: clamp(0.22rem, 0.62vmin, 0.28rem);
+  border: 0.5px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.16);
+  color: #fffaf5;
+  font-size: clamp(0.58rem, 1.65vmin, 0.66rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+html[data-home-page] .home-patient-outreach-visual__card {
   display: flex;
   flex-direction: column;
-  gap: clamp(0.22rem, 0.62vmin, 0.28rem);
+  gap: clamp(0.58rem, 1.65vmin, 0.68rem);
   border-radius: clamp(0.62rem, 1.75vmin, 0.72rem);
   border: 0.5px solid color-mix(in srgb, #1e343a 7%, #ebe7e0);
   background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 8px 22px rgba(30, 52, 58, 0.06);
-  padding: clamp(0.62rem, 1.75vmin, 0.72rem) clamp(0.68rem, 1.92vmin, 0.78rem);
+  box-shadow: 0 10px 28px rgba(30, 52, 58, 0.08);
+  padding: clamp(0.68rem, 1.92vmin, 0.78rem);
 }
 
-html[data-home-page] .home-patient-outreach-visual__message--patient {
-  margin-left: clamp(1.15rem, 3.25vmin, 1.45rem);
-  background: rgba(243, 241, 237, 0.94);
+html[data-home-page] .home-patient-outreach-visual__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.28rem, 0.8vmin, 0.34rem);
+  padding: clamp(0.42rem, 1.2vmin, 0.5rem);
+  border-radius: clamp(0.42rem, 1.2vmin, 0.5rem);
+  background: rgba(243, 241, 237, 0.92);
+  border: 0.5px solid #e5e7eb;
 }
 
-html[data-home-page] .home-patient-outreach-visual__message-label {
+html[data-home-page] .home-patient-outreach-visual__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.08rem, 0.22vmin, 0.1rem);
+  min-width: 0;
+}
+
+html[data-home-page] .home-patient-outreach-visual__stat-value {
+  color: #1e343a;
+  font-size: clamp(0.92rem, 2.62vmin, 1.04rem);
+  font-weight: 500;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+html[data-home-page] .home-patient-outreach-visual__stat-label {
   color: #9ca3af;
-  font-size: clamp(0.62rem, 1.75vmin, 0.72rem);
+  font-size: clamp(0.58rem, 1.65vmin, 0.66rem);
   font-weight: 600;
   line-height: 1;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
+html[data-home-page] .home-patient-outreach-visual__thread {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.42rem, 1.2vmin, 0.5rem);
+}
+
+html[data-home-page] .home-patient-outreach-visual__message {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.18rem, 0.52vmin, 0.22rem);
+  border-radius: clamp(0.42rem, 1.2vmin, 0.5rem);
+  border: 0.5px solid #e5e7eb;
+  background: rgba(250, 249, 247, 0.96);
+  padding: clamp(0.48rem, 1.35vmin, 0.56rem) clamp(0.52rem, 1.48vmin, 0.6rem);
+}
+
+html[data-home-page] .home-patient-outreach-visual__message--patient {
+  margin-left: clamp(0.92rem, 2.62vmin, 1.08rem);
+  background: rgba(255, 255, 255, 0.98);
+}
+
+html[data-home-page] .home-patient-outreach-visual__message-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem;
+}
+
+html[data-home-page] .home-patient-outreach-visual__message-label {
+  color: #9ca3af;
+  font-size: clamp(0.58rem, 1.65vmin, 0.66rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+html[data-home-page] .home-patient-outreach-visual__message-time {
+  color: #9ca3af;
+  font-size: clamp(0.56rem, 1.58vmin, 0.64rem);
+  font-weight: 500;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
 html[data-home-page] .home-patient-outreach-visual__message-text {
   margin: 0;
   color: #1e343a;
-  font-size: clamp(0.86rem, 2.45vmin, 0.98rem);
+  font-size: clamp(0.8rem, 2.28vmin, 0.92rem);
   font-weight: 500;
   line-height: 1.35;
   letter-spacing: -0.01em;
+}
+
+html[data-home-page] .home-patient-outreach-visual__progress {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.22rem, 0.62vmin, 0.28rem);
+}
+
+html[data-home-page] .home-patient-outreach-visual__progress-step {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: clamp(0.28rem, 0.8vmin, 0.34rem) clamp(0.32rem, 0.92vmin, 0.38rem);
+  border-radius: clamp(0.28rem, 0.8vmin, 0.34rem);
+  border: 0.5px solid #e5e7eb;
+  background: rgba(243, 241, 237, 0.88);
+  color: #6b7280;
+  font-size: clamp(0.56rem, 1.58vmin, 0.64rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  text-align: center;
+  white-space: nowrap;
+}
+
+html[data-home-page] .home-patient-outreach-visual__progress-step--done {
+  color: #1e343a;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+html[data-home-page] .home-patient-outreach-visual__progress-step--active {
+  color: #d2774c;
+  background: rgba(210, 119, 76, 0.1);
+  border-color: rgba(210, 119, 76, 0.22);
 }
 
 html[data-home-page] .home-patient-outreach-visual__booked {
   display: flex;
   align-items: center;
   gap: clamp(0.42rem, 1.2vmin, 0.5rem);
-  padding: clamp(0.52rem, 1.48vmin, 0.62rem) clamp(0.62rem, 1.75vmin, 0.72rem);
-  border-radius: clamp(0.55rem, 1.55vmin, 0.65rem);
+  padding: clamp(0.48rem, 1.35vmin, 0.56rem) clamp(0.52rem, 1.48vmin, 0.6rem);
+  border-radius: clamp(0.42rem, 1.2vmin, 0.5rem);
   border: 0.5px solid rgba(210, 119, 76, 0.22);
   background: rgba(210, 119, 76, 0.08);
 }
@@ -5671,7 +5814,7 @@ html[data-home-page] .home-patient-outreach-visual__booked-mark {
 
 html[data-home-page] .home-patient-outreach-visual__booked-copy {
   color: #1e343a;
-  font-size: clamp(0.78rem, 2.2vmin, 0.9rem);
+  font-size: clamp(0.76rem, 2.15vmin, 0.88rem);
   font-weight: 500;
   line-height: 1.2;
 }
@@ -6619,6 +6762,9 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 /* iPhone home — patient outreach shader band (dusk mock UI). */
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--lab-alerts
+  .home-patient-outreach-visual__card,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--lab-alerts
   .home-patient-outreach-visual__message,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--lab-alerts
@@ -6626,6 +6772,16 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   background: var(--home-dusk-ui-surface) !important;
   border-color: var(--home-dusk-ui-border) !important;
   box-shadow: var(--home-dusk-ui-shadow) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--lab-alerts
+  .home-patient-outreach-visual__stats,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--lab-alerts
+  .home-patient-outreach-visual__progress-step--done {
+  background: var(--home-dusk-ui-surface-sunken) !important;
+  border-color: var(--home-dusk-ui-border) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
@@ -6639,13 +6795,58 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-patient-outreach-visual__label,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--lab-alerts
-  .home-patient-outreach-visual__message-label {
+  .home-patient-outreach-visual__message-label,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--lab-alerts
+  .home-patient-outreach-visual__message-time,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--lab-alerts
+  .home-patient-outreach-visual__stat-label {
   color: var(--home-dusk-ui-muted) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--lab-alerts
-  .home-patient-outreach-visual__badge,
+  .home-patient-outreach-visual__patient,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--lab-alerts
+  .home-patient-outreach-visual__campaign,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--lab-alerts
+  .home-patient-outreach-visual__channel {
+  color: var(--home-dusk-ui-ink-secondary) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--lab-alerts
+  .home-patient-outreach-visual__channel,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--lab-alerts
+  .home-patient-outreach-visual__booked-mark {
+  background: rgba(232, 160, 96, 0.16) !important;
+  border-color: rgba(232, 160, 96, 0.24) !important;
+  color: var(--home-dusk-ui-horizon) !important;
+  box-shadow: inset 0 0 0 1px rgba(232, 160, 96, 0.18) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--lab-alerts
+  .home-patient-outreach-visual__stat-value,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--lab-alerts
+  .home-patient-outreach-visual__message-text,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--lab-alerts
+  .home-patient-outreach-visual__booked-copy,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--lab-alerts
+  .home-patient-outreach-visual__progress-step--done {
+  color: var(--home-dusk-ui-ink) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--lab-alerts
+  .home-patient-outreach-visual__progress-step--active,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--lab-alerts
   .home-patient-outreach-visual__booked-mark {
@@ -6654,34 +6855,20 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--lab-alerts
-  .home-patient-outreach-visual__badge {
-  background: var(--home-dusk-ui-surface-raised) !important;
-  border-color: rgba(232, 160, 96, 0.28) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--lab-alerts
-  .home-patient-outreach-visual__patient,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--lab-alerts
-  .home-patient-outreach-visual__message-text,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--lab-alerts
-  .home-patient-outreach-visual__booked-copy {
-  color: var(--home-dusk-ui-ink) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--lab-alerts
-  .home-patient-outreach-visual__campaign {
-  color: var(--home-dusk-ui-muted) !important;
-}
-
+  .home-patient-outreach-visual__progress-step--active,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--lab-alerts
   .home-patient-outreach-visual__booked {
   background: rgba(232, 160, 96, 0.08) !important;
   border-color: rgba(232, 160, 96, 0.22) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--lab-alerts
+  .home-patient-outreach-visual__progress-step:not(.home-patient-outreach-visual__progress-step--done):not(
+    .home-patient-outreach-visual__progress-step--active
+  ) {
+  color: var(--home-dusk-ui-muted) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
