@@ -7,80 +7,89 @@ const RX = {
   drug: "Lisinopril 10 mg",
   request: "Need my blood pressure refill called in",
   pharmacy: "CVS #4821",
-  eta: "Ready today · 4:30 PM",
+  eta: "Ready 4:30 PM",
 } as const;
 
-const CHECKS = [
-  { id: "identity", label: "Identity", detail: "DOB verified", status: "done" as const },
-  { id: "active", label: "Active RX", detail: "On chart", status: "done" as const },
-  { id: "coverage", label: "Coverage", detail: "Clearing", status: "active" as const },
-  { id: "pharmacy", label: "Pharmacy", detail: "CVS queued", status: "upcoming" as const },
+const STEPS = [
+  { id: "verify", label: "Verified", status: "done" as const },
+  { id: "coverage", label: "Coverage", status: "active" as const },
+  { id: "pharmacy", label: "Pharmacy", status: "upcoming" as const },
 ] as const;
 
-function CheckMark({ status }: { status: (typeof CHECKS)[number]["status"] }) {
+function PhoneIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" aria-hidden className="home-agents-carousel__refill-peek-phone-icon h-[0.9em] w-[0.9em] shrink-0">
+      <path
+        d="M4 6.5a4 4 0 018 0v2.2l1.4 1.1H2.6L4 8.7V6.5z"
+        stroke="currentColor"
+        strokeWidth="1.1"
+        strokeLinejoin="round"
+      />
+      <path d="M6.5 12.2h3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function StepMark({ status }: { status: (typeof STEPS)[number]["status"] }) {
   if (status === "done") {
-    return <span className="home-agents-carousel__refill-peek-check-mark home-agents-carousel__refill-peek-check-mark--done" aria-hidden>✓</span>;
+    return (
+      <span className="home-agents-carousel__refill-peek-step-mark home-agents-carousel__refill-peek-step-mark--done" aria-hidden>
+        ✓
+      </span>
+    );
   }
 
   if (status === "active") {
-    return <span className="home-agents-carousel__refill-peek-check-mark home-agents-carousel__refill-peek-check-mark--active" aria-hidden />;
+    return <span className="home-agents-carousel__refill-peek-step-mark home-agents-carousel__refill-peek-step-mark--active" aria-hidden />;
   }
 
-  return <span className="home-agents-carousel__refill-peek-check-mark home-agents-carousel__refill-peek-check-mark--upcoming" aria-hidden />;
+  return <span className="home-agents-carousel__refill-peek-step-mark home-agents-carousel__refill-peek-step-mark--upcoming" aria-hidden />;
 }
 
-/** Agents carousel — Refill Agent live call + verification peek. */
+/** Agents carousel — Refill Agent live call peek (content on shader, no outer card). */
 export function HomeAgentsCarouselRefillPeek() {
   return (
     <div className="home-agents-carousel__refill-peek" aria-hidden>
-      <div className={`home-agents-carousel__refill-peek-card ${suisseIntl.className}`}>
-        <div className="home-agents-carousel__refill-peek-header">
-          <div className="home-agents-carousel__refill-peek-header-copy">
+      <div className={`home-agents-carousel__refill-peek-surface ${suisseIntl.className}`}>
+        <div className="home-agents-carousel__refill-peek-agent">
+          <div className="home-agents-carousel__refill-peek-agent-row">
+            <span className="home-agents-carousel__refill-peek-phone-badge" aria-hidden>
+              <PhoneIcon />
+            </span>
             <span className="home-agents-carousel__refill-peek-heading">Refill Agent</span>
-            <span className={`home-agents-carousel__refill-peek-subheading ${inter.className}`}>Live refill call</span>
+            <span className={`home-agents-carousel__refill-peek-live ${inter.className}`}>1:42</span>
           </div>
-          <span className={`home-agents-carousel__refill-peek-live ${inter.className}`}>1:42</span>
         </div>
 
-        <div className={`home-agents-carousel__refill-peek-call-strip ${inter.className}`}>
+        <div className={`home-agents-carousel__refill-peek-call ${inter.className}`}>
           <div className="home-agents-carousel__refill-peek-waveform" aria-hidden>
-            {Array.from({ length: 16 }, (_, index) => (
+            {Array.from({ length: 12 }, (_, index) => (
               <span
                 key={index}
                 className="home-agents-carousel__refill-peek-waveform-bar"
-                style={{ height: `${36 + ((index * 19) % 48)}%` }}
+                style={{ height: `${34 + ((index * 17) % 52)}%` }}
               />
             ))}
           </div>
-          <div className="home-agents-carousel__refill-peek-call-copy">
-            <span className="home-agents-carousel__refill-peek-patient">{RX.patient}</span>
-            <span className="home-agents-carousel__refill-peek-request">&ldquo;{RX.request}&rdquo;</span>
-          </div>
+          <p className="home-agents-carousel__refill-peek-quote">&ldquo;{RX.request}&rdquo;</p>
         </div>
 
-        <div className="home-agents-carousel__refill-peek-rx-line">
+        <div className="home-agents-carousel__refill-peek-rx">
           <span className="home-agents-carousel__refill-peek-drug">{RX.drug}</span>
-          <span className={`home-agents-carousel__refill-peek-rx-meta ${inter.className}`}>30-day supply</span>
+          <span className={`home-agents-carousel__refill-peek-rx-meta ${inter.className}`}>{RX.patient}</span>
         </div>
 
-        <div className="home-agents-carousel__refill-peek-checks">
-          {CHECKS.map((check) => (
+        <div className="home-agents-carousel__refill-peek-steps" aria-hidden>
+          {STEPS.map((step) => (
             <div
-              key={check.id}
-              className={`home-agents-carousel__refill-peek-check home-agents-carousel__refill-peek-check--${check.status}`}
+              key={step.id}
+              className={`home-agents-carousel__refill-peek-step home-agents-carousel__refill-peek-step--${step.status}`}
             >
-              <CheckMark status={check.status} />
-              <div className={`home-agents-carousel__refill-peek-check-copy ${inter.className}`}>
-                <span className="home-agents-carousel__refill-peek-check-label">{check.label}</span>
-                <span className="home-agents-carousel__refill-peek-check-detail">{check.detail}</span>
-              </div>
+              <StepMark status={step.status} />
+              <span className={`home-agents-carousel__refill-peek-step-label ${inter.className}`}>{step.label}</span>
             </div>
           ))}
         </div>
-
-        <p className={`home-agents-carousel__refill-peek-agent-quote ${inter.className}`}>
-          &ldquo;I&apos;ll send this to {RX.pharmacy} and text you when it&apos;s ready.&rdquo;
-        </p>
 
         <div className={`home-agents-carousel__refill-peek-footer ${inter.className}`}>
           <span className="home-agents-carousel__refill-peek-footer-pharmacy">{RX.pharmacy}</span>

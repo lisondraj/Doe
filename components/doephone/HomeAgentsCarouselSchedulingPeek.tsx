@@ -101,7 +101,7 @@ function getApptBlur(spread: number) {
   return Math.min(0.95, eased * 0.42);
 }
 
-/** Agents carousel — Scheduling Agent voice calendar peek. */
+/** Agents carousel — Scheduling Agent week calendar peek. */
 export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: boolean }) {
   return (
     <div className="home-agents-carousel__scheduling-peek" aria-hidden>
@@ -116,7 +116,7 @@ export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: 
               <span className={`home-agents-carousel__scheduling-peek-live ${inter.className}`}>On call</span>
             </div>
             <span className={`home-agents-carousel__scheduling-peek-subheading ${inter.className}`}>
-              Voice booking · Dr. Chen&apos;s week
+              Dr. Chen · This week
             </span>
           </div>
           <span className="home-agents-carousel__scheduling-peek-open-slots">4 open</span>
@@ -190,13 +190,15 @@ export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: 
         </div>
 
         <div className="home-agents-carousel__scheduling-peek-focus">
+          <span className="home-agents-carousel__scheduling-peek-focus-phone" aria-hidden>
+            <PhoneIcon />
+          </span>
           <div className="home-agents-carousel__scheduling-peek-focus-copy">
             <span className="home-agents-carousel__scheduling-peek-focus-label">Confirming by phone</span>
             <span className={`home-agents-carousel__scheduling-peek-focus-meta ${inter.className}`}>
               Brooks · Wed 3:15p
             </span>
           </div>
-          <span className={`home-agents-carousel__scheduling-peek-focus-status ${inter.className}`}>Live</span>
         </div>
       </div>
     </div>
