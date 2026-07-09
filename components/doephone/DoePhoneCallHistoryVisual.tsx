@@ -8,31 +8,26 @@ const { ink: INK, accent: DOE_ORANGE } = CAROUSEL_MENU_UI;
 const MUTED_TEXT = "#6B7280";
 const TYPE_MUTED = "#9CA3AF";
 const BORDER = "#E5E7EB";
-const ROW_BG = "#FAFAF8";
+const ROW_BG = "#FFFFFF";
 const LIVE_BADGE_BG = "rgba(210, 119, 76, 0.14)";
-const CARD_SHADOW = "0 12px 32px rgba(30, 52, 58, 0.09), 0 1px 6px rgba(30, 52, 58, 0.04)";
+const CARD_SHADOW = "0 10px 28px rgba(30, 52, 58, 0.09), 0 1px 5px rgba(30, 52, 58, 0.04)";
 
-const OUTER_RADIUS = "rounded-[clamp(0.72rem,2.1vmin,0.95rem)]";
-const INNER_RADIUS = "rounded-[clamp(0.45rem,1.3vmin,0.55rem)]";
-const CARD_PAD = "clamp(1.2rem,3.75vmin,1.5rem)";
-const TITLE_SIZE = "clamp(1.32rem,4vmin,1.62rem)";
+const INNER_RADIUS = "rounded-[clamp(0.55rem,1.55vmin,0.65rem)]";
 const ROW_SIZE = "clamp(0.92rem,2.75vmin,1.08rem)";
 const META_SIZE = "clamp(0.78rem,2.3vmin,0.92rem)";
 const TIME_SIZE = "clamp(0.72rem,2.15vmin,0.86rem)";
 const NOTE_SIZE = "clamp(0.76rem,2.25vmin,0.9rem)";
 const BADGE_SIZE = "clamp(0.72rem,2.15vmin,0.86rem)";
 
-type CallStatus = "resolved" | "routed" | "review";
-
 type CallEntry = {
   callerName: string;
   phone: string;
-  callType: string;
   time: string;
   duration: string;
-  status: CallStatus;
-  agent: string;
   direction: "inbound" | "outbound";
+  routeDestination: string;
+  routeDetail: string;
+  routeQueue: string;
   expanded?: boolean;
   summary?: string;
   transcript?: string;
@@ -40,31 +35,33 @@ type CallEntry = {
 };
 
 const FILTERS = [
-  { id: "all", label: "All", count: 18 },
-  { id: "routed", label: "Routed", count: 6 },
-  { id: "review", label: "Needs review", count: 2 },
+  { id: "all-routed", label: "All routed", count: 18 },
+  { id: "agent-queues", label: "Routed to agents", count: 11 },
+  { id: "staff-handoff", label: "Routed to staff", count: 7 },
 ] as const;
+
+const ACTIVE_FILTER_ID = "all-routed";
 
 const CALL_HISTORY: readonly CallEntry[] = [
   {
     callerName: "Maria Lopez",
     phone: "(415) 555-0176",
-    callType: "Lab results callback",
     time: "2:41 PM",
     duration: "3m 08s",
-    status: "resolved",
-    agent: "Inbox Agent",
     direction: "inbound",
+    routeDestination: "Inbox Agent",
+    routeQueue: "Results queue",
+    routeDetail: "Critical potassium flagged · chart note drafted for Dr. Chen",
   },
   {
     callerName: "Dr. Patel's office",
     phone: "(628) 555-0134",
-    callType: "Referral intake",
     time: "1:18 PM",
     duration: "6m 44s",
-    status: "routed",
-    agent: "Referrals Agent",
     direction: "inbound",
+    routeDestination: "Referrals Agent",
+    routeQueue: "Cardiology intake",
+    routeDetail: "Tuesday 2:30 PM slot on hold · warm callback queued for 4 PM",
     expanded: true,
     summary: "Specialist slot held for Tuesday at 2:30 PM.",
     transcript: "\"Need to schedule Maria Lopez with cardiology for abnormal stress test.\"",
@@ -73,20 +70,14 @@ const CALL_HISTORY: readonly CallEntry[] = [
   {
     callerName: "James Chen",
     phone: "(510) 555-0192",
-    callType: "Appointment confirmation",
     time: "11:52 AM",
     duration: "2m 15s",
-    status: "resolved",
-    agent: "Scheduling Agent",
     direction: "outbound",
+    routeDestination: "Scheduling Agent",
+    routeQueue: "Confirmations",
+    routeDetail: "Apr 12 visit locked · reminder SMS queued before visit",
   },
 ] as const;
-
-const STATUS_LABEL: Record<CallStatus, string> = {
-  resolved: "Resolved",
-  routed: "Routed",
-  review: "Needs review",
-};
 
 type VisualLayout = "phone" | "desktop";
 
@@ -124,6 +115,8 @@ function CallLogRow({ call }: { call: CallEntry }) {
       }`}
       style={{
         background: ROW_BG,
+        border: `0.5px solid ${BORDER}`,
+        boxShadow: CARD_SHADOW,
         padding: "clamp(0.78rem,2.35vmin,0.95rem) clamp(0.9rem,2.65vmin,1.05rem)",
       }}
     >
@@ -173,31 +166,46 @@ function CallLogRow({ call }: { call: CallEntry }) {
             </div>
           </div>
 
-          <div className="home-call-history-visual__meta mt-[clamp(0.42rem,1.25vmin,0.55rem)] flex flex-wrap items-center gap-[clamp(0.28rem,0.82vmin,0.36rem)]">
-            <span
-              className={`home-call-history-visual__type ${inter.className} font-normal leading-none`}
-              style={{ color: MUTED_TEXT, fontSize: META_SIZE }}
+          <div className="home-call-history-visual__route mt-[clamp(0.48rem,1.4vmin,0.58rem)]">
+            <div className="home-call-history-visual__route-head flex flex-wrap items-center gap-[clamp(0.28rem,0.82vmin,0.36rem)]">
+              <span
+                className={`home-call-history-visual__route-dest ${inter.className} font-medium leading-snug`}
+                style={{ color: INK, fontSize: META_SIZE }}
+              >
+                → {call.routeDestination}
+              </span>
+              <span
+                className="home-call-history-visual__route-sep"
+                style={{ color: TYPE_MUTED, fontSize: META_SIZE }}
+                aria-hidden
+              >
+                ·
+              </span>
+              <span
+                className={`home-call-history-visual__route-queue ${inter.className} font-normal leading-snug`}
+                style={{ color: MUTED_TEXT, fontSize: META_SIZE }}
+              >
+                {call.routeQueue}
+              </span>
+              <span
+                className={`home-call-history-visual__status home-call-history-visual__status--routed ${inter.className} font-medium leading-none`}
+                style={{
+                  background: LIVE_BADGE_BG,
+                  color: DOE_ORANGE,
+                  fontSize: BADGE_SIZE,
+                  padding: "0.32em 0.62em",
+                  borderRadius: "999px",
+                }}
+              >
+                Routed
+              </span>
+            </div>
+            <p
+              className={`home-call-history-visual__route-detail mt-[clamp(0.28rem,0.82vmin,0.34rem)] ${inter.className} font-normal leading-snug`}
+              style={{ color: MUTED_TEXT, fontSize: NOTE_SIZE }}
             >
-              {call.callType}
-            </span>
-            <span
-              className={`home-call-history-visual__status home-call-history-visual__status--${call.status} ${inter.className} font-medium leading-none`}
-              style={{
-                background: call.status === "routed" ? LIVE_BADGE_BG : "rgba(30, 52, 58, 0.06)",
-                color: call.status === "routed" ? DOE_ORANGE : MUTED_TEXT,
-                fontSize: BADGE_SIZE,
-                padding: "0.32em 0.62em",
-                borderRadius: "999px",
-              }}
-            >
-              {STATUS_LABEL[call.status]}
-            </span>
-            <span
-              className={`home-call-history-visual__agent ${inter.className} font-normal leading-none`}
-              style={{ color: TYPE_MUTED, fontSize: META_SIZE }}
-            >
-              {call.agent}
-            </span>
+              {call.routeDetail}
+            </p>
           </div>
         </div>
       </div>
@@ -250,72 +258,38 @@ function CallLogRow({ call }: { call: CallEntry }) {
   );
 }
 
-/** Call history log in Review Package card shell — inbox / documents slide. */
+/** Call history — routed tabs and log rows placed directly on the feature shader. */
 export function DoePhoneCallHistoryVisual({ layout = "phone" }: { layout?: VisualLayout }) {
   const isDesktop = layout === "desktop";
   const maxWidth = isDesktop ? "min(100%, 28rem)" : CAROUSEL_MENU_UI.maxWidthPhone;
 
   return (
     <div
-      className={`home-call-history-visual mx-auto flex h-full w-full items-center justify-center px-[clamp(0.65rem,2vmin,0.9rem)] ${suisseIntl.className}`}
+      className={`home-call-history-visual mx-auto flex h-full w-full flex-col justify-center px-[clamp(0.65rem,2vmin,0.9rem)] ${suisseIntl.className}`}
       style={{ maxWidth }}
       aria-hidden
     >
       <div
-        className={`home-call-history-visual__card relative w-full overflow-hidden bg-white ${OUTER_RADIUS}`}
-        style={{
-          padding: CARD_PAD,
-          border: `1px solid ${BORDER}`,
-          boxShadow: CARD_SHADOW,
-        }}
+        className="home-call-history-visual__filters flex flex-wrap gap-[clamp(0.28rem,0.82vmin,0.36rem)]"
+        role="tablist"
+        aria-hidden
       >
-        <div className="home-call-history-visual__header flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <h3
-              className="home-call-history-visual__title font-semibold leading-tight tracking-[-0.025em]"
-              style={{ color: INK, fontSize: TITLE_SIZE }}
-            >
-              Call History
-            </h3>
-            <p
-              className={`home-call-history-visual__subtitle mt-[0.28em] ${inter.className} font-normal leading-snug`}
-              style={{ color: MUTED_TEXT, fontSize: META_SIZE }}
-            >
-              Review transcripts, routing, and outcomes
-            </p>
-          </div>
-          <span
-            className={`home-call-history-visual__count shrink-0 ${inter.className} font-medium leading-none`}
-            style={{
-              color: DOE_ORANGE,
-              fontSize: BADGE_SIZE,
-              padding: "0.38em 0.72em",
-              borderRadius: "0.375rem",
-              background: LIVE_BADGE_BG,
-            }}
-          >
-            18 today
-          </span>
-        </div>
+        {FILTERS.map((filter) => {
+          const isActive = filter.id === ACTIVE_FILTER_ID;
 
-        <div
-          className="home-call-history-visual__filters mt-[clamp(0.72rem,2.15vmin,0.88rem)] flex flex-wrap gap-[clamp(0.28rem,0.82vmin,0.36rem)]"
-          role="tablist"
-          aria-hidden
-        >
-          {FILTERS.map((filter, index) => (
+          return (
             <span
               key={filter.id}
               className={`home-call-history-visual__filter home-call-history-visual__filter--${filter.id}${
-                index === 0 ? " home-call-history-visual__filter--active" : ""
+                isActive ? " home-call-history-visual__filter--active" : ""
               } ${inter.className} font-medium leading-none`}
               style={{
-                color: index === 0 ? DOE_ORANGE : MUTED_TEXT,
+                color: isActive ? DOE_ORANGE : MUTED_TEXT,
                 fontSize: BADGE_SIZE,
                 padding: "0.38em 0.72em",
                 borderRadius: "999px",
-                background: index === 0 ? LIVE_BADGE_BG : "rgba(30, 52, 58, 0.05)",
-                border: index === 0 ? `1px solid rgba(210, 119, 76, 0.22)` : `1px solid ${BORDER}`,
+                background: isActive ? LIVE_BADGE_BG : "rgba(30, 52, 58, 0.05)",
+                border: isActive ? `1px solid rgba(210, 119, 76, 0.22)` : `1px solid ${BORDER}`,
               }}
             >
               {filter.label}
@@ -323,44 +297,20 @@ export function DoePhoneCallHistoryVisual({ layout = "phone" }: { layout?: Visua
                 {filter.count}
               </span>
             </span>
-          ))}
-        </div>
+          );
+        })}
+      </div>
 
-        <div
-          className="home-call-history-visual__list flex flex-col"
-          style={{
-            marginTop: "clamp(0.72rem,2.15vmin,0.88rem)",
-            gap: "clamp(0.55rem,1.65vmin,0.72rem)",
-          }}
-        >
-          {CALL_HISTORY.map((call) => (
-            <CallLogRow key={`${call.callerName}-${call.time}`} call={call} />
-          ))}
-        </div>
-
-        <div
-          className="home-call-history-visual__footer mt-[clamp(0.72rem,2.15vmin,0.88rem)] flex items-center justify-between gap-3 border-t pt-[clamp(0.72rem,2.15vmin,0.88rem)]"
-          style={{ borderColor: BORDER }}
-        >
-          <span
-            className={`home-call-history-visual__footer-stat ${inter.className} font-normal leading-snug`}
-            style={{ color: MUTED_TEXT, fontSize: META_SIZE }}
-          >
-            Avg handle time 4m 12s
-          </span>
-          <span
-            className={`home-call-history-visual__footer-pill ${inter.className} font-medium leading-none`}
-            style={{
-              color: DOE_ORANGE,
-              fontSize: BADGE_SIZE,
-              padding: "0.34em 0.68em",
-              borderRadius: "999px",
-              background: LIVE_BADGE_BG,
-            }}
-          >
-            Auto-route on
-          </span>
-        </div>
+      <div
+        className="home-call-history-visual__list flex flex-col"
+        style={{
+          marginTop: "clamp(0.72rem,2.15vmin,0.88rem)",
+          gap: "clamp(0.55rem,1.65vmin,0.72rem)",
+        }}
+      >
+        {CALL_HISTORY.map((call) => (
+          <CallLogRow key={`${call.callerName}-${call.time}`} call={call} />
+        ))}
       </div>
     </div>
   );
