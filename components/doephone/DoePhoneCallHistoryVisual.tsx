@@ -15,13 +15,13 @@ type CallEntry = {
   queueTag: string;
   expanded?: boolean;
   highlight?: string;
-  outcomes?: readonly { label: string; glyph: string }[];
+  outcomes?: readonly string[];
 };
 
 const FILTERS = [
-  { id: "all-routed", label: "All routed", count: 18 },
-  { id: "agent-queues", label: "Routed to agents", count: 11 },
-  { id: "staff-handoff", label: "Routed to staff", count: 7 },
+  { id: "all-routed", label: "All", count: 18 },
+  { id: "agent-queues", label: "Agents", count: 11 },
+  { id: "staff-handoff", label: "Staff", count: 7 },
 ] as const;
 
 const ACTIVE_FILTER_ID = "all-routed";
@@ -47,10 +47,7 @@ const CALL_HISTORY: readonly CallEntry[] = [
     queueTag: "Cardiology",
     expanded: true,
     highlight: "Tue 2:30 PM held",
-    outcomes: [
-      { glyph: "↗", label: "Referral queued" },
-      { glyph: "☎", label: "Callback 4 PM" },
-    ],
+    outcomes: ["Referral queued", "Callback 4 PM"],
   },
   {
     callerName: "James Chen",
@@ -90,87 +87,62 @@ function CallDirectionIcon({ direction }: { direction: CallEntry["direction"] })
   );
 }
 
-function RoutePipeline({ call }: { call: CallEntry }) {
-  return (
-    <div className="home-call-history-visual__route">
-      <div className="home-call-history-visual__pipeline" aria-hidden>
-        <span className="home-call-history-visual__pipeline-origin" />
-        <span className="home-call-history-visual__pipeline-segment" />
-        <span className="home-call-history-visual__pipeline-agent">
-          <span className="home-call-history-visual__pipeline-orb">{call.agent.charAt(0)}</span>
-          <span className={`home-call-history-visual__pipeline-agent-label ${suisseIntl.className}`}>
-            {call.agent}
-          </span>
-        </span>
-        <span className="home-call-history-visual__pipeline-segment home-call-history-visual__pipeline-segment--live" />
-        <span className="home-call-history-visual__pipeline-status">
-          <span className="home-call-history-visual__pipeline-status-ring" />
-        </span>
-      </div>
-
-      <div className={`home-call-history-visual__route-meta ${inter.className}`}>
-        <span className="home-call-history-visual__queue-tag">{call.queueTag}</span>
-        {call.highlight ? (
-          <span className="home-call-history-visual__route-highlight">{call.highlight}</span>
-        ) : null}
-      </div>
-    </div>
-  );
-}
-
-function OutcomeTiles({ outcomes }: { outcomes: readonly { label: string; glyph: string }[] }) {
-  return (
-    <div className="home-call-history-visual__outcome-tiles">
-      {outcomes.map((outcome) => (
-        <div key={outcome.label} className={`home-call-history-visual__outcome-tile ${inter.className}`}>
-          <span className="home-call-history-visual__outcome-glyph" aria-hidden>
-            {outcome.glyph}
-          </span>
-          <span className="home-call-history-visual__outcome-label">{outcome.label}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function CallLogRow({ call }: { call: CallEntry }) {
+function CallLogRow({ call, isLast }: { call: CallEntry; isLast: boolean }) {
   const isExpanded = Boolean(call.expanded);
 
   return (
     <article
       className={`home-call-history-visual__row${
         isExpanded ? " home-call-history-visual__row--expanded" : ""
-      }`}
+      }${isLast ? " home-call-history-visual__row--last" : ""}`}
     >
-      <div className="home-call-history-visual__row-main">
-        <span className="home-call-history-visual__avatar">
+      <div className="home-call-history-visual__row-top">
+        <span className="home-call-history-visual__direction">
           <CallDirectionIcon direction={call.direction} />
         </span>
 
-        <div className="home-call-history-visual__row-copy">
-          <div className="home-call-history-visual__identity">
-            <div className="home-call-history-visual__identity-copy">
-              <p className={`home-call-history-visual__name ${suisseIntl.className}`}>{call.callerName}</p>
-              <p className={`home-call-history-visual__phone ${inter.className}`}>{call.phone}</p>
-            </div>
-            <div className={`home-call-history-visual__time-block ${inter.className}`}>
-              <span className="home-call-history-visual__time">{call.time}</span>
-              <span className="home-call-history-visual__duration">{call.duration}</span>
-            </div>
+        <div className="home-call-history-visual__identity">
+          <div className="home-call-history-visual__identity-line">
+            <p className={`home-call-history-visual__name ${suisseIntl.className}`}>{call.callerName}</p>
+            <span className={`home-call-history-visual__time ${inter.className}`}>{call.time}</span>
           </div>
-
-          <RoutePipeline call={call} />
-
-          {isExpanded && call.outcomes && call.outcomes.length > 0 ? (
-            <OutcomeTiles outcomes={call.outcomes} />
-          ) : null}
+          <div className="home-call-history-visual__identity-line home-call-history-visual__identity-line--sub">
+            <p className={`home-call-history-visual__phone ${inter.className}`}>{call.phone}</p>
+            <span className={`home-call-history-visual__duration ${inter.className}`}>{call.duration}</span>
+          </div>
         </div>
       </div>
+
+      <p className={`home-call-history-visual__route ${inter.className}`}>
+        <span className="home-call-history-visual__route-agent">{call.agent}</span>
+        <span className="home-call-history-visual__route-sep" aria-hidden>
+          ·
+        </span>
+        <span className="home-call-history-visual__route-queue">{call.queueTag}</span>
+        {call.highlight ? (
+          <>
+            <span className="home-call-history-visual__route-sep" aria-hidden>
+              ·
+            </span>
+            <span className="home-call-history-visual__route-outcome">{call.highlight}</span>
+          </>
+        ) : null}
+      </p>
+
+      {isExpanded && call.outcomes && call.outcomes.length > 0 ? (
+        <ul className={`home-call-history-visual__details ${inter.className}`}>
+          {call.outcomes.map((outcome) => (
+            <li key={outcome} className="home-call-history-visual__detail">
+              {outcome}
+            </li>
+          ))}
+        </ul>
+      ) : null}
     </article>
   );
 }
 
-/** Call history — routed tabs and log rows placed directly on the feature shader. */
+/** Call history — compact routed log on the feature shader. */
 export function DoePhoneCallHistoryVisual({ layout = "phone" }: { layout?: VisualLayout }) {
   const isDesktop = layout === "desktop";
   const maxWidth = isDesktop ? "min(100%, 28rem)" : maxWidthPhone;
@@ -181,27 +153,38 @@ export function DoePhoneCallHistoryVisual({ layout = "phone" }: { layout?: Visua
       style={{ maxWidth }}
       aria-hidden
     >
-      <div className="home-call-history-visual__filters" role="tablist" aria-hidden>
-        {FILTERS.map((filter) => {
-          const isActive = filter.id === ACTIVE_FILTER_ID;
+      <header className="home-call-history-visual__header">
+        <div className="home-call-history-visual__header-copy">
+          <p className={`home-call-history-visual__label ${inter.className}`}>Call log</p>
+          <p className="home-call-history-visual__summary">18 routed today</p>
+        </div>
 
-          return (
-            <span
-              key={filter.id}
-              className={`home-call-history-visual__filter home-call-history-visual__filter--${filter.id}${
-                isActive ? " home-call-history-visual__filter--active" : ""
-              } ${inter.className}`}
-            >
-              {filter.label}
-              <span className="home-call-history-visual__filter-count">{filter.count}</span>
-            </span>
-          );
-        })}
-      </div>
+        <div className="home-call-history-visual__filters" role="tablist" aria-hidden>
+          {FILTERS.map((filter) => {
+            const isActive = filter.id === ACTIVE_FILTER_ID;
 
-      <div className="home-call-history-visual__list">
-        {CALL_HISTORY.map((call) => (
-          <CallLogRow key={`${call.callerName}-${call.time}`} call={call} />
+            return (
+              <span
+                key={filter.id}
+                className={`home-call-history-visual__filter${
+                  isActive ? " home-call-history-visual__filter--active" : ""
+                } ${inter.className}`}
+              >
+                {filter.label}
+                <span className="home-call-history-visual__filter-count">{filter.count}</span>
+              </span>
+            );
+          })}
+        </div>
+      </header>
+
+      <div className="home-call-history-visual__card">
+        {CALL_HISTORY.map((call, index) => (
+          <CallLogRow
+            key={`${call.callerName}-${call.time}`}
+            call={call}
+            isLast={index === CALL_HISTORY.length - 1}
+          />
         ))}
       </div>
     </div>
