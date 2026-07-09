@@ -121,15 +121,17 @@ function AgentCarouselOrb({
   focused,
   distance,
   isDesktop,
+  layoutReady,
 }: {
   scheme: HeroDialOrbScheme;
   focused: boolean;
   distance: number;
   isDesktop: boolean;
+  layoutReady: boolean;
 }) {
   const displayScheme = heroDialOrbCarouselScheme(scheme);
-  const blur = getOrbBlur(distance, focused);
-  const showPeek = focused;
+  const blur = isDesktop ? getOrbBlur(distance, focused) : 0;
+  const showPeek = focused && layoutReady;
   const [peekLifted, setPeekLifted] = useState(false);
 
   useEffect(() => {
@@ -180,13 +182,18 @@ function AgentCarouselOrb({
             />
             {showPeek ? (
               <div className="home-agents-carousel__orb-peek-reveal">
-                <div
-                  className={
-                    peekLiftClass || "home-agents-carousel__orb-peek-lift home-agents-carousel__orb-peek-lift--in"
-                  }
-                >
+                {isDesktop ? (
+                  <div
+                    className={
+                      peekLiftClass ||
+                      "home-agents-carousel__orb-peek-lift home-agents-carousel__orb-peek-lift--in"
+                    }
+                  >
+                    <AgentCarouselPeek label={scheme.label} />
+                  </div>
+                ) : (
                   <AgentCarouselPeek label={scheme.label} />
-                </div>
+                )}
               </div>
             ) : null}
           </div>
@@ -355,6 +362,7 @@ export function DoePhoneHomeAgentsCarousel() {
                 focused={orbIndex === position}
                 distance={Math.abs(orbIndex - position)}
                 isDesktop={isDesktop}
+                layoutReady={layoutReady}
               />
             ))}
           </div>

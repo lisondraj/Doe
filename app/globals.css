@@ -889,14 +889,27 @@ html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb-peek-
 }
 
 /* Peek roots — slight bottom bleed so circular clip has no seam. */
-html[data-home-page] .home-agents-carousel__orb-peek-lift > [class*="home-agents-carousel__"][class*="-peek"] {
+html[data-home-page] .home-agents-carousel__orb-peek-lift > [class*="home-agents-carousel__"][class*="-peek"],
+html[data-home-page] .home-agents-carousel__orb-peek-reveal > [class*="home-agents-carousel__"][class*="-peek"] {
   height: calc(100% + 3%);
   min-height: calc(100% + 3%);
 }
 
-html[data-home-page] .home-agents-carousel__orb-peek-lift > .home-agents-carousel__inbox-peek {
+html[data-home-page] .home-agents-carousel__orb-peek-lift > .home-agents-carousel__inbox-peek,
+html[data-home-page] .home-agents-carousel__orb-peek-reveal > .home-agents-carousel__inbox-peek {
   height: 94%;
   min-height: 94%;
+}
+
+/* iPhone — no stacked peek backdrop blur. */
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__labs-peek-edge-blur,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__billing-peek-edge-blur {
+  display: none;
+}
+
+html[data-home-page] .home-agents-carousel__labs-peek-card--results,
+html[data-home-page] .home-agents-carousel__referrals-peek-lead {
+  filter: none;
 }
 
 /* Agents carousel — agent peek UIs inside orb (desktop + iPhone). */
@@ -3323,7 +3336,8 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   height: var(--home-agents-orb-size);
   flex: 0 0 var(--home-agents-orb-size);
   overflow: visible;
-  transition: filter var(--home-agents-carousel-duration) var(--home-agents-carousel-ease);
+  filter: none;
+  transition: opacity var(--home-agents-carousel-duration) var(--home-agents-carousel-ease);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb-shell .home-agents-carousel__orb {

@@ -26,14 +26,6 @@ function getReferralsFadeOpacity(spread: number) {
   return Math.max(0.58, 1 - spread * 0.1);
 }
 
-function getReferralsFadeBlur(spread: number) {
-  if (spread === 0) {
-    return 0;
-  }
-
-  return Math.min(1.2, spread * 0.38);
-}
-
 function VoiceWaveform() {
   return (
     <div className="home-agents-carousel__referrals-peek-waveform" aria-hidden>
@@ -100,8 +92,6 @@ export function HomeAgentsCarouselReferralsPeek() {
             className="home-agents-carousel__referrals-peek-progress-labels"
             style={{
               opacity: getReferralsFadeOpacity(1),
-              filter:
-                getReferralsFadeBlur(1) > 0 ? `blur(${getReferralsFadeBlur(1)}px)` : undefined,
             }}
           >
             {REFERRAL_STEPS.map((step) => (
@@ -115,7 +105,6 @@ export function HomeAgentsCarouselReferralsPeek() {
         <dl className="home-agents-carousel__referrals-peek-details">
           {REFERRAL_DETAILS.map((item, detailIndex) => {
             const spread = detailIndex + 2;
-            const blur = getReferralsFadeBlur(spread);
 
             return (
               <div
@@ -123,7 +112,6 @@ export function HomeAgentsCarouselReferralsPeek() {
                 className="home-agents-carousel__referrals-peek-detail-row"
                 style={{
                   opacity: getReferralsFadeOpacity(spread),
-                  filter: blur > 0 ? `blur(${blur}px)` : undefined,
                 }}
               >
                 <dt className="home-agents-carousel__referrals-peek-detail-label">{item.label}</dt>

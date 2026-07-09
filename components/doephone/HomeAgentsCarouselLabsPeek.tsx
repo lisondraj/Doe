@@ -31,10 +31,6 @@ function getRoutingFadeOpacity(spread: number) {
   return Math.max(0.36, 1 - spread * 0.15);
 }
 
-function getRoutingFadeBlur(spread: number) {
-  return Math.min(2.5, spread * 0.88);
-}
-
 function AbnormalDownArrow() {
   return (
     <svg viewBox="0 0 12 12" fill="none" aria-hidden className="home-agents-carousel__labs-peek-down-arrow">
@@ -126,7 +122,6 @@ export function HomeAgentsCarouselLabsPeek() {
                 LABS_ROUTING_FOCUS_INDEX,
                 "active" in row && row.active,
               );
-              const blur = getRoutingFadeBlur(spread);
 
               return (
                 <li
@@ -136,7 +131,6 @@ export function HomeAgentsCarouselLabsPeek() {
                   }`}
                   style={{
                     opacity: getRoutingFadeOpacity(spread),
-                    filter: blur > 0 ? `blur(${blur}px)` : undefined,
                   }}
                 >
                   <RoutingStatusIcon status={row.status} />
@@ -150,7 +144,6 @@ export function HomeAgentsCarouselLabsPeek() {
               );
             })}
           </ul>
-          <div className="home-agents-carousel__labs-peek-edge-blur" aria-hidden />
         </div>
       </div>
     </div>
