@@ -72,19 +72,19 @@ function StepIndicator({ status }: { status: (typeof REFERRAL_STEPS)[number]["st
   return <span className="home-agents-carousel__referrals-peek-indicator home-agents-carousel__referrals-peek-indicator--upcoming" />;
 }
 
-/** Agents carousel — Referrals Agent peek (calling UI centered, progress below). */
+/** Agents carousel — Referrals Agent UI peek. */
 export function HomeAgentsCarouselReferralsPeek() {
   return (
     <div className="home-agents-carousel__referrals-peek" aria-hidden>
-      <div className={`home-agents-carousel__referrals-peek-lead ${suisseIntl.className}`}>
-        <VoiceWaveform />
-        <div className="home-agents-carousel__referrals-peek-voice-copy">
-          <p className="home-agents-carousel__referrals-peek-voice-line">Calling specialist&apos;s office…</p>
-          <p className="home-agents-carousel__referrals-peek-voice-subline">Referral to Cardiology</p>
+      <div className={`home-agents-carousel__referrals-peek-card ${suisseIntl.className}`}>
+        <div className="home-agents-carousel__referrals-peek-lead">
+          <VoiceWaveform />
+          <div className="home-agents-carousel__referrals-peek-voice-copy">
+            <p className="home-agents-carousel__referrals-peek-voice-line">Calling specialist&apos;s office…</p>
+            <p className="home-agents-carousel__referrals-peek-voice-subline">Referral to Cardiology</p>
+          </div>
         </div>
-      </div>
 
-      <div className={`home-agents-carousel__referrals-peek-lower ${suisseIntl.className}`}>
         <div className="home-agents-carousel__referrals-peek-progress" aria-hidden>
           <div className="home-agents-carousel__referrals-peek-progress-track">
             <div className="home-agents-carousel__referrals-peek-progress-rail">

@@ -202,9 +202,10 @@ const AGENTS_CAROUSEL_SWIPE_THRESHOLD_PX = 44;
 
 /** Hero agent orbs — horizontal carousel with chevrons and label. */
 export function DoePhoneHomeAgentsCarousel() {
-  const [layoutVariant, setLayoutVariant] = useState<DoePhoneVariant>(readBootstrappedDoePhoneVariant);
-  const isDesktop = layoutVariant === "desktop";
-  const { ref: sectionRef, revealed } = useDoePhoneSectionReveal(0.15);
+  const [layoutVariant, setLayoutVariant] = useState<DoePhoneVariant>("phone");
+  const [layoutReady, setLayoutReady] = useState(false);
+  const isDesktop = layoutReady && layoutVariant === "desktop";
+  const { ref: sectionRef, revealed } = useDoePhoneSectionReveal(isDesktop ? 0.15 : 1);
   const [peekRevealSettled, setPeekRevealSettled] = useState(false);
   const [position, setPosition] = useState(AGENTS_CAROUSEL_LOOP_START);
   const [trackInstant, setTrackInstant] = useState(true);
@@ -215,6 +216,7 @@ export function DoePhoneHomeAgentsCarousel() {
 
   useLayoutEffect(() => {
     setLayoutVariant(readBootstrappedDoePhoneVariant());
+    setLayoutReady(true);
     const sync = () => setLayoutVariant(resolveDoePhoneVariant());
     const mq = window.matchMedia(DOEPHONE_DESKTOP_MEDIA_QUERY);
     mq.addEventListener("change", sync);
