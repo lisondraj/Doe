@@ -24,14 +24,19 @@ import {
 const DIAL_STEP = (Math.PI * 2) / HERO_DIAL_ORB_COUNT;
 const AUTO_ADVANCE_MS = 5000;
 
+const DESKTOP_DIAL_RADIUS_VMIN = 44;
+/** Match mobile orb:radius ratio so overlap stays identical when scaled. */
+const DESKTOP_ORB_SIZE_VMIN = DESKTOP_DIAL_RADIUS_VMIN * (52 / 51);
+
 const HERO_DIAL_LAYOUT = {
   mobile: {
     radiusVmin: 51,
     orbSize: "clamp(16.25rem, 52vmin, 22.75rem)",
   },
   desktop: {
-    radiusVmin: 67,
-    orbSize: "clamp(20.5rem, 62.5vmin, 32.5rem)",
+    /** vmin-locked — keeps overlap + alignment stable as the viewport resizes. */
+    radiusVmin: DESKTOP_DIAL_RADIUS_VMIN,
+    orbSize: `${DESKTOP_ORB_SIZE_VMIN.toFixed(1)}vmin`,
   },
 } as const;
 const SWITCH_MS = 1100;

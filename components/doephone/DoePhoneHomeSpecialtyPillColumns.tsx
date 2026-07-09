@@ -51,6 +51,18 @@ const SPECIALTY_COLUMNS = [
   ],
 ] as const;
 
+const ALL_SPECIALTIES = SPECIALTY_COLUMNS.flat();
+
+const DESKTOP_SPECIALTY_COLUMN_COUNT = 4;
+
+function buildSpecialtyColumns(columnCount: number): readonly (readonly string[])[] {
+  const buckets = Array.from({ length: columnCount }, () => [] as string[]);
+  ALL_SPECIALTIES.forEach((label, index) => {
+    buckets[index % columnCount].push(label);
+  });
+  return buckets;
+}
+
 const SPECIALTY_ICON_KINDS = [
   "care",
   "heart",
@@ -145,17 +157,26 @@ function SpecialtyIcon({ kind }: { kind: SpecialtyIconKind }) {
   );
 }
 
-/** Three-column infinite-scrolling specialty pills — white integration-style tiles. */
-export function DoePhoneHomeSpecialtyPillColumns() {
+/** Infinite-scrolling specialty pills — three columns on phone, four on desktop. */
+export function DoePhoneHomeSpecialtyPillColumns({
+  variant = "phone",
+}: {
+  variant?: "phone" | "desktop";
+}) {
+  const columns =
+    variant === "desktop"
+      ? buildSpecialtyColumns(DESKTOP_SPECIALTY_COLUMN_COUNT)
+      : SPECIALTY_COLUMNS;
+
   return (
     <div className="home-feature-specialties__pill-stage relative min-h-0 flex-1 overflow-hidden">
       <div className="home-feature-specialties__fade home-feature-specialties__fade--top" />
       <div className="home-feature-specialties__fade home-feature-specialties__fade--bottom" />
       <div className="home-feature-specialties__columns h-full">
-        {SPECIALTY_COLUMNS.map((column, columnIndex) => {
+        {columns.map((column, columnIndex) => {
           const sequence = [...column, ...column];
           const directionClass =
-            columnIndex === 1
+            columnIndex % 2 === 1
               ? "home-feature-specialties__track--down"
               : "home-feature-specialties__track--up";
 

@@ -11,11 +11,6 @@ import {
   heroDialOrbCarouselScheme,
   type HeroDialOrbScheme,
 } from "@/lib/doephone/hero-dial-orbs";
-import { doephoneAgentsRevealStyleVars } from "@/lib/doephone/section-reveal-timing";
-import {
-  doePhoneSectionRevealSegmentClass,
-  useDoePhoneSectionReveal,
-} from "@/lib/doephone/use-doe-phone-section-reveal";
 
 function orbAccentStyle(scheme: HeroDialOrbScheme): CSSProperties {
   const [dark, mid, light] = scheme.colors;
@@ -123,10 +118,9 @@ const AGENTS_CAROUSEL_SWIPE_THRESHOLD_PX = 44;
 /** Hero agent orbs — horizontal carousel with chevrons and label. */
 export function DoePhoneHomeAgentsCarousel() {
   const [position, setPosition] = useState(AGENTS_CAROUSEL_LOOP_START);
-  const [trackInstant, setTrackInstant] = useState(false);
+  const [trackInstant, setTrackInstant] = useState(true);
   const reenableTransitionRef = useRef<number | null>(null);
   const swipeStartRef = useRef<{ x: number; y: number } | null>(null);
-  const { ref: sectionRef, revealed } = useDoePhoneSectionReveal(0.2);
 
   const active = AGENTS_CAROUSEL_LOOP_ORBS[position];
 
@@ -220,15 +214,10 @@ export function DoePhoneHomeAgentsCarousel() {
   }, [trackInstant, position]);
 
   return (
-    <div
-      ref={sectionRef}
-      className={`home-agents-carousel ${suisseIntl.className}`}
-      style={doephoneAgentsRevealStyleVars() as CSSProperties}
-      aria-hidden
-    >
+    <div className={`home-agents-carousel ${suisseIntl.className}`} aria-hidden>
       <div className="home-agents-carousel__stage">
         <div
-          className={`home-agents-carousel__viewport ${doePhoneSectionRevealSegmentClass("agents-orbs", revealed)}`}
+          className="home-agents-carousel__viewport"
           onTouchStart={handleViewportTouchStart}
           onTouchEnd={handleViewportTouchEnd}
           onTouchCancel={() => {
@@ -260,10 +249,9 @@ export function DoePhoneHomeAgentsCarousel() {
             direction="left"
             onClick={goPrev}
             label="Previous agent"
-            className={doePhoneSectionRevealSegmentClass("agents-nav", revealed)}
           />
           <div
-            className={`hero-speaking-orb__tag hero-speaking-orb__tag--carousel hero-speaking-orb__tag--visible ${suisseIntl.className} ${doePhoneSectionRevealSegmentClass("agents-label", revealed)}`}
+            className={`hero-speaking-orb__tag hero-speaking-orb__tag--carousel hero-speaking-orb__tag--visible ${suisseIntl.className}`}
             aria-hidden
           >
             <span className="hero-speaking-orb__tag-text">{active.label}</span>
@@ -272,11 +260,10 @@ export function DoePhoneHomeAgentsCarousel() {
             direction="right"
             onClick={goNext}
             label="Next agent"
-            className={doePhoneSectionRevealSegmentClass("agents-nav", revealed)}
           />
         </div>
         <p
-          className={`home-agents-carousel__description ${suisseIntlLight.className} ${doePhoneSectionRevealSegmentClass("agents-label", revealed)}`}
+          className={`home-agents-carousel__description ${suisseIntlLight.className}`}
           aria-hidden
         >
           {AGENTS_CAROUSEL_DESCRIPTIONS[active.label] ?? ""}

@@ -1,5 +1,7 @@
 "use client";
 
+import { useLayoutEffect, useState } from "react";
+
 import { DoePhoneCommunicationCarouselCard } from "@/components/doephone/DoePhoneCommunicationCarouselCard";
 import { DoePhoneHomeAgentsCarousel } from "@/components/doephone/DoePhoneHomeAgentsCarousel";
 import { DoePhoneHomeSpecialtyPillColumns } from "@/components/doephone/DoePhoneHomeSpecialtyPillColumns";
@@ -12,6 +14,12 @@ import {
   DOEPHONE_SECTION_CONTENT_CENTER,
 } from "@/lib/doephone/section-styles";
 import { suisseIntl } from "@/lib/home/fonts";
+import {
+  DOEPHONE_DESKTOP_MEDIA_QUERY,
+  readBootstrappedDoePhoneVariant,
+  resolveDoePhoneVariant,
+  type DoePhoneVariant,
+} from "@/lib/doephone/resolve-doe-phone-variant";
 import { protoGrainGradientVariant } from "@/lib/proto/proto-grain-gradient";
 
 /** Beige band — single shader card with hero-scale title underneath. */
@@ -31,6 +39,15 @@ export function DoePhoneHomeFeatureCardSection({
   showAgentsCarousel?: boolean;
 }) {
   const shaderVariant = protoGrainGradientVariant(slide.id);
+  const [layoutVariant, setLayoutVariant] = useState<DoePhoneVariant>(readBootstrappedDoePhoneVariant);
+
+  useLayoutEffect(() => {
+    setLayoutVariant(readBootstrappedDoePhoneVariant());
+    const sync = () => setLayoutVariant(resolveDoePhoneVariant());
+    const mq = window.matchMedia(DOEPHONE_DESKTOP_MEDIA_QUERY);
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
 
   return (
     <section
@@ -49,7 +66,7 @@ export function DoePhoneHomeFeatureCardSection({
                 <span className="block">{titleLine1}</span>
                 <span className="block">{titleLine2}</span>
               </h2>
-              <DoePhoneHomeSpecialtyPillColumns />
+              <DoePhoneHomeSpecialtyPillColumns variant={layoutVariant} />
             </div>
           ) : showAgentsCarousel ? (
             <div

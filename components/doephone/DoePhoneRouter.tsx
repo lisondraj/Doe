@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useState } from "react";
 
 import {
   DOEPHONE_DESKTOP_MEDIA_QUERY,
+  readBootstrappedDoePhoneVariant,
   resolveDoePhoneVariant,
   type DoePhoneVariant,
 } from "@/lib/doephone/resolve-doe-phone-variant";
@@ -61,8 +62,8 @@ function clearPhonePinchViewport(prevViewport: string) {
 }
 
 export function DoePhoneRouter() {
-  /** Always boot phone on SSR + first client paint to avoid desktop/mobile hydration splits. */
-  const [variant, setVariant] = useState<DoePhoneVariant>("phone");
+  /** SSR stays phone; client reads bootstrap `data-layout` to avoid phone→desktop remount flash. */
+  const [variant, setVariant] = useState<DoePhoneVariant>(readBootstrappedDoePhoneVariant);
 
   useLayoutEffect(() => {
     document.documentElement.setAttribute("data-home-page", "true");
@@ -72,7 +73,7 @@ export function DoePhoneRouter() {
   }, []);
 
   useLayoutEffect(() => {
-    setVariant(resolveDoePhoneVariant());
+    setVariant(readBootstrappedDoePhoneVariant());
   }, []);
 
   useEffect(() => {

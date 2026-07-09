@@ -17,14 +17,30 @@ export function useDoePhoneSectionReveal(threshold = 0.12) {
       return;
     }
 
+    const reveal = () => {
+      setRevealed(true);
+      obs.disconnect();
+    };
+
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+    const rect = el.getBoundingClientRect();
+    const visiblePx = Math.max(0, Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0));
+    const visibleRatio = visiblePx / Math.max(rect.height, 1);
+    if (visibleRatio >= Math.min(threshold, 0.08)) {
+      setRevealed(true);
+      return;
+    }
+
     const obs = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setRevealed(true);
-          obs.disconnect();
+          reveal();
         }
       },
-      { threshold },
+      {
+        threshold: [0, Math.min(threshold, 0.08), threshold],
+        rootMargin: "12% 0px 12% 0px",
+      },
     );
     obs.observe(el);
     return () => obs.disconnect();

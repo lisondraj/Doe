@@ -24,3 +24,12 @@ export function resolveDoePhoneVariant(): DoePhoneVariant {
 
   return "phone";
 }
+
+/** Match `homeRouteBootstrapScript` — desktop attr is set before React hydrates. */
+export function readBootstrappedDoePhoneVariant(): DoePhoneVariant {
+  if (typeof window === "undefined") return "phone";
+  if (document.documentElement.getAttribute("data-layout") === "desktop") {
+    return "desktop";
+  }
+  return resolveDoePhoneVariant();
+}
