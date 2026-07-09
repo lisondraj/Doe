@@ -620,6 +620,9 @@ html[data-home-page][data-layout="desktop"] .home-feature-card-section__card.hom
  */
 html[data-home-page][data-layout="desktop"] .home-feature-card-section:has(.home-agents-carousel) {
   overflow: visible !important;
+  min-height: calc(100dvh + clamp(2.5rem, 6vmin, 5rem)) !important;
+  height: calc(100dvh + clamp(2.5rem, 6vmin, 5rem)) !important;
+  max-height: none !important;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-card-section:has(.home-agents-carousel) .home-feature-card-section__inner {
@@ -628,8 +631,10 @@ html[data-home-page][data-layout="desktop"] .home-feature-card-section:has(.home
   height: 100% !important;
   min-height: 100% !important;
   max-height: 100% !important;
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
+  padding-top: calc(
+    var(--desktop-nav-height) + var(--desktop-section-pad-y) + clamp(1.25rem, 3.25vmin, 2.5rem)
+  ) !important;
+  padding-bottom: calc(var(--desktop-section-pad-y) + clamp(1.25rem, 3.25vmin, 2.5rem)) !important;
   padding-left: 0 !important;
   padding-right: 0 !important;
   justify-content: center !important;
@@ -672,8 +677,8 @@ html[data-home-page][data-layout="desktop"] .home-feature-card-section__card.hom
 html[data-home-page][data-layout="desktop"] .home-agents-carousel {
   --home-agents-orb-size: clamp(32rem, 51vmin, 46rem);
   --home-agents-orb-gap: clamp(1.55rem, 3.45vmin, 2.5rem);
-  --home-agents-halo-bleed: clamp(0.5rem, 1.5vmin, 0.92rem);
-  --home-agents-glow-bleed: clamp(2.15rem, 5.65vmin, 3.45rem);
+  --home-agents-halo-bleed: clamp(0.75rem, 2vmin, 1.2rem);
+  --home-agents-glow-bleed: clamp(2.75rem, 7vmin, 4.25rem);
   --home-agents-orb-step: calc(var(--home-agents-orb-size) + var(--home-agents-orb-gap));
   --home-agents-orb-half: calc(var(--home-agents-orb-size) / 2);
   --home-agents-carousel-duration: 720ms;
@@ -687,8 +692,8 @@ html[data-home-page][data-layout="desktop"] .home-agents-carousel {
   align-items: center;
   justify-content: center;
   gap: clamp(0.55rem, 1.5vmin, 0.85rem);
-  padding-block: clamp(0.5rem, 1.5vmin, 1rem);
-  margin-top: clamp(1.15rem, 2.65vmin, 1.85rem);
+  padding-block: clamp(1rem, 2.75vmin, 1.75rem);
+  margin-top: clamp(1.5rem, 3.25vmin, 2.25rem);
 }
 
 html[data-home-page][data-layout="desktop"] .home-agents-carousel__stage {
@@ -834,6 +839,43 @@ html[data-home-page] .home-agents-carousel {
 
 html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb .hero-speaking-orb__grain-shell canvas {
   display: none;
+}
+
+html[data-home-page] .home-agents-carousel__orb-peek-reveal {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb-peek-reveal.doephone-section-reveal {
+  opacity: 0;
+  filter: blur(20px);
+  transform: translateY(1.1rem);
+  will-change: opacity, filter, transform;
+}
+
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb-peek-reveal--settled {
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+
+@keyframes home-agents-carousel-peek-reveal-in {
+  0% {
+    opacity: 0;
+    filter: blur(20px);
+    transform: translateY(1.1rem);
+  }
+
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
 }
 
 /* Agents carousel — agent peek UIs inside orb (desktop + iPhone). */
@@ -5321,6 +5363,11 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
 .doephone-section-reveal--in.doephone-section-reveal--agents-carousel {
   animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 1.75s)
     cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-agents-carousel-delay, 0ms) both;
+}
+
+.doephone-section-reveal--in.doephone-section-reveal--agents-peek {
+  animation: home-agents-carousel-peek-reveal-in var(--doephone-section-reveal-duration, 1.75s)
+    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-agents-peek-delay, 280ms) both;
 }
 
 .doephone-section-reveal--in.doephone-section-reveal--agents-orbs {

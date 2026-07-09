@@ -57,6 +57,7 @@ export function doePhoneSectionRevealSegmentClass(
     | "badge"
     | "input"
     | "agents-carousel"
+    | "agents-peek"
     | "agents-orbs"
     | "agents-label"
     | "agents-nav",

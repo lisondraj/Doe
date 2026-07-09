@@ -125,13 +125,25 @@ function AgentCarouselOrb({
   scheme,
   focused,
   distance,
+  isDesktop,
+  peekRevealed,
+  peekRevealSettled,
 }: {
   scheme: HeroDialOrbScheme;
   focused: boolean;
   distance: number;
+  isDesktop: boolean;
+  peekRevealed: boolean;
+  peekRevealSettled: boolean;
 }) {
   const displayScheme = heroDialOrbCarouselScheme(scheme);
   const blur = getOrbBlur(distance, focused);
+  const showPeek = !isDesktop || focused;
+  const peekRevealClass = isDesktop
+    ? peekRevealSettled
+      ? "home-agents-carousel__orb-peek-reveal--settled"
+      : doePhoneSectionRevealSegmentClass("agents-peek", peekRevealed)
+    : "";
 
   return (
     <div
@@ -154,7 +166,11 @@ function AgentCarouselOrb({
               scheme={displayScheme}
               shaderConfig={HERO_DIAL_ORB_CAROUSEL_SHADER}
             />
-            <AgentCarouselPeek label={scheme.label} />
+            {showPeek ? (
+              <div className={`home-agents-carousel__orb-peek-reveal${peekRevealClass ? ` ${peekRevealClass}` : ""}`}>
+                <AgentCarouselPeek label={scheme.label} />
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
@@ -189,6 +205,7 @@ export function DoePhoneHomeAgentsCarousel() {
   const [layoutVariant, setLayoutVariant] = useState<DoePhoneVariant>(readBootstrappedDoePhoneVariant);
   const isDesktop = layoutVariant === "desktop";
   const { ref: sectionRef, revealed } = useDoePhoneSectionReveal(0.15);
+  const [peekRevealSettled, setPeekRevealSettled] = useState(false);
   const [position, setPosition] = useState(AGENTS_CAROUSEL_LOOP_START);
   const [trackInstant, setTrackInstant] = useState(true);
   const reenableTransitionRef = useRef<number | null>(null);
@@ -203,6 +220,18 @@ export function DoePhoneHomeAgentsCarousel() {
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
   }, []);
+
+  useEffect(() => {
+    if (!revealed || !isDesktop) {
+      return;
+    }
+
+    const settleTimer = window.setTimeout(() => {
+      setPeekRevealSettled(true);
+    }, 1900);
+
+    return () => window.clearTimeout(settleTimer);
+  }, [isDesktop, revealed]);
 
   const goPrev = useCallback(() => {
     setTrackInstant(false);
@@ -296,9 +325,7 @@ export function DoePhoneHomeAgentsCarousel() {
   return (
     <div
       ref={sectionRef}
-      className={`home-agents-carousel ${suisseIntl.className}${
-        isDesktop ? ` ${doePhoneSectionRevealSegmentClass("agents-carousel", revealed)}` : ""
-      }`}
+      className={`home-agents-carousel ${suisseIntl.className}`}
       style={isDesktop ? doephoneAgentsRevealStyleVars() : undefined}
       aria-hidden
     >
@@ -326,6 +353,9 @@ export function DoePhoneHomeAgentsCarousel() {
                 scheme={scheme}
                 focused={orbIndex === position}
                 distance={Math.abs(orbIndex - position)}
+                isDesktop={isDesktop}
+                peekRevealed={revealed}
+                peekRevealSettled={peekRevealSettled}
               />
             ))}
           </div>
