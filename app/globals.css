@@ -1442,15 +1442,6 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-appt-meta {
   font-variant-numeric: tabular-nums;
 }
 
-/* iPhone — reveal more calendar below Brooks inside the orb clip. */
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__scheduling-peek-card {
-  transform: translate(
-      -50%,
-      calc(-50% + clamp(5.15rem, calc(var(--app-vw, 100vw) * 0.128), 7.35rem) * var(--home-agents-peek-orb-scale))
-    )
-    scale(calc(1.4 * var(--home-agents-peek-orb-scale)));
-}
-
 /* Desktop agents carousel — Labs Agent dual UI peek (centered, top/bottom clip). */
 html[data-home-page] .home-agents-carousel__orb .hero-speaking-orb__core .home-agents-carousel__labs-peek {
   position: absolute;
