@@ -87,20 +87,69 @@ function getApptBlur(spread: number) {
   return Math.min(0.95, eased * 0.42);
 }
 
+function getIphoneDayHeadEdgeBlur(dayIndex: number) {
+  const edgeDistance = Math.min(dayIndex, WEEK_DAYS.length - 1 - dayIndex);
+  if (edgeDistance === 0) {
+    return 0.72;
+  }
+  if (edgeDistance === 1) {
+    return 0.34;
+  }
+  return 0;
+}
+
+function getIphoneApptEdgeBlur(
+  dayIndex: number,
+  apptIndex: number,
+  apptCount: number,
+  isHighlighted: boolean,
+) {
+  if (isHighlighted) {
+    return 0;
+  }
+
+  const colEdge = Math.min(dayIndex, WEEK_DAYS.length - 1 - dayIndex);
+  const rowEdge = Math.min(apptIndex, apptCount - 1 - apptIndex);
+
+  if (dayIndex === BROOKS_DAY_INDEX && Math.abs(apptIndex - BROOKS_APPT_INDEX) <= 1) {
+    return 0;
+  }
+
+  let blur = 0;
+
+  if (colEdge === 0) {
+    blur = Math.max(blur, 0.95);
+  } else if (colEdge === 1) {
+    blur = Math.max(blur, 0.5);
+  }
+
+  if (rowEdge === 0) {
+    blur = Math.max(blur, 0.58);
+  } else if (apptCount > 1 && apptCount - 1 - apptIndex === 0) {
+    blur = Math.max(blur, 0.72);
+  }
+
+  if (dayIndex === BROOKS_DAY_INDEX) {
+    if (Math.abs(apptIndex - BROOKS_APPT_INDEX) === 2) {
+      blur = Math.max(blur, 0.4);
+    }
+  }
+
+  return Math.min(blur, 1.05);
+}
+
 /** Desktop agents carousel — Scheduling Agent week calendar peek. */
 export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: boolean }) {
   return (
     <div className="home-agents-carousel__scheduling-peek" aria-hidden>
-      <div
-        className={`home-agents-carousel__scheduling-peek-card${
-          iphone ? " home-agents-carousel__scheduling-peek-card--iphone" : ""
-        } ${suisseIntl.className}`}
-      >
+      <div className={`home-agents-carousel__scheduling-peek-card ${suisseIntl.className}`}>
         <div className="home-agents-carousel__scheduling-peek-calendar">
           {WEEK_DAYS.map((day, dayIndex) => {
             const isActive = day.date === 10;
             const daySpread = Math.abs(dayIndex - BROOKS_DAY_INDEX);
-            const dayBlur = getApptBlur(daySpread * 0.42);
+            const dayBlur = iphone
+              ? getIphoneDayHeadEdgeBlur(dayIndex)
+              : getApptBlur(daySpread * 0.42);
 
             return (
               <div
@@ -114,7 +163,7 @@ export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: 
                   aria-hidden
                   style={{
                     opacity: getApptOpacity(daySpread * 0.34),
-                    filter: !iphone && dayBlur > 0 ? `blur(${dayBlur}px)` : undefined,
+                    filter: dayBlur > 0 ? `blur(${dayBlur}px)` : undefined,
                   }}
                 >
                   <span className="home-agents-carousel__scheduling-peek-day-label">{day.label}</span>
@@ -125,7 +174,9 @@ export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: 
                   {day.appts.map((appt, apptIndex) => {
                     const isHighlighted = "highlight" in appt && appt.highlight;
                     const spread = getApptSpread(dayIndex, apptIndex, isHighlighted);
-                    const blur = getApptBlur(spread);
+                    const blur = iphone
+                      ? getIphoneApptEdgeBlur(dayIndex, apptIndex, day.appts.length, isHighlighted)
+                      : getApptBlur(spread);
 
                     return (
                     <div
@@ -137,7 +188,7 @@ export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: 
                       }`}
                       style={{
                         opacity: getApptOpacity(spread),
-                        filter: !iphone && blur > 0 ? `blur(${blur}px)` : undefined,
+                        filter: blur > 0 ? `blur(${blur}px)` : undefined,
                       }}
                     >
                       <span className="home-agents-carousel__scheduling-peek-appt-title">{appt.name}</span>
@@ -153,9 +204,6 @@ export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: 
             );
           })}
         </div>
-        {iphone ? (
-          <div className="home-agents-carousel__scheduling-peek-edge-blur" aria-hidden />
-        ) : null}
       </div>
     </div>
   );
