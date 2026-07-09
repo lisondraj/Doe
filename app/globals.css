@@ -879,6 +879,10 @@ html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb-peek-lift
   transform: translateY(-5px);
 }
 
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb-peek-lift--instant {
+  transition: none;
+}
+
 /* iPhone — instant peek, no lift/blur animation. */
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb-peek-lift,
 html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb-peek-lift--in {
