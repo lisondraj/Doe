@@ -21,6 +21,7 @@ export function DoePhoneHomeSectionWorkflowInput() {
         <DoePhoneBuildWorkflowPrompt
           size={isDesktop ? "desktop" : "large"}
           bodyClassName="home-feature-workflow-prompt__body"
+          promptText="Build a refill request voice agent that verifies the patient, checks the active med list, and routes eligible refills to the pharmacy or others to the front desk."
         />
       </div>
     </div>

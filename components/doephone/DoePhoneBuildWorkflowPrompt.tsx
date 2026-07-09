@@ -11,13 +11,17 @@ export function DoePhoneBuildWorkflowPrompt({
   size = "large",
   bodyClassName,
   fourLineLayout = false,
+  promptText,
 }: {
   layout?: "carousel" | "section";
   size?: "default" | "large" | "desktop";
   bodyClassName?: string;
   fourLineLayout?: boolean;
+  promptText?: string;
 }) {
-  const promptBody = fourLineLayout ? (
+  const promptBody = promptText ? (
+    promptText
+  ) : fourLineLayout ? (
     <>
       <span className="home-feature-workflow-prompt__line">
         Build me a voice agent that schedules appointments in
