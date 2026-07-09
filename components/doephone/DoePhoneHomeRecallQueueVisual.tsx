@@ -1,6 +1,6 @@
 "use client";
 
-import { inter, suisseIntl } from "@/lib/home/fonts";
+import { dmSans, inter, suisseIntl } from "@/lib/home/fonts";
 
 const QUEUE_ROWS = [
   {
@@ -36,7 +36,7 @@ export function DoePhoneHomeRecallQueueVisual({ layout = "phone" }: { layout?: V
     >
       <div className={`home-recall-queue-visual mx-auto flex h-full w-full flex-col justify-center ${suisseIntl.className}`}>
         <header className="home-recall-queue-visual__header">
-          <p className="home-recall-queue-visual__summary">8 no-shows today</p>
+          <p className={`home-recall-queue-visual__summary ${dmSans.className}`}>8 no-shows today</p>
         </header>
 
         <div className="home-recall-queue-visual__card">

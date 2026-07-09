@@ -1,6 +1,6 @@
 "use client";
 
-import { inter, suisseIntl } from "@/lib/home/fonts";
+import { dmSans, inter, suisseIntl } from "@/lib/home/fonts";
 
 type CallEntry = {
   callerName: string;
@@ -149,7 +149,7 @@ export function DoePhoneCallHistoryVisual({ layout = "phone" }: { layout?: Visua
     >
       <header className="home-call-history-visual__header">
         <div className="home-call-history-visual__header-copy">
-          <p className="home-call-history-visual__summary">18 routed today</p>
+          <p className={`home-call-history-visual__summary ${dmSans.className}`}>18 routed today</p>
         </div>
 
         <div className="home-call-history-visual__filters" role="tablist" aria-hidden>
