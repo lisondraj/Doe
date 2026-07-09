@@ -662,10 +662,10 @@ html[data-home-page][data-layout="desktop"] .home-feature-card-section__card.hom
 }
 
 html[data-home-page][data-layout="desktop"] .home-agents-carousel {
-  --home-agents-orb-size: clamp(24rem, 36vmin, 34rem);
-  --home-agents-orb-gap: clamp(1.25rem, 2.8vmin, 2rem);
-  --home-agents-halo-bleed: clamp(0.4rem, 1.2vmin, 0.75rem);
-  --home-agents-glow-bleed: clamp(1.75rem, 4.5vmin, 2.75rem);
+  --home-agents-orb-size: clamp(27rem, 42vmin, 39rem);
+  --home-agents-orb-gap: clamp(1.35rem, 3vmin, 2.15rem);
+  --home-agents-halo-bleed: clamp(0.45rem, 1.35vmin, 0.85rem);
+  --home-agents-glow-bleed: clamp(2rem, 5.2vmin, 3.15rem);
   --home-agents-orb-step: calc(var(--home-agents-orb-size) + var(--home-agents-orb-gap));
   --home-agents-orb-half: calc(var(--home-agents-orb-size) / 2);
   --home-agents-carousel-duration: 720ms;
@@ -1985,10 +1985,10 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel {
-  --home-agents-orb-size: clamp(19.75rem, 85vw, 26.25rem);
-  --home-agents-orb-gap: clamp(1rem, 3.2vmin, 1.65rem);
-  --home-agents-halo-bleed: clamp(0.35rem, 1.1vmin, 0.65rem);
-  --home-agents-glow-bleed: clamp(1.5rem, 4vmin, 2.35rem);
+  --home-agents-orb-size: clamp(22rem, 90vw, 29.5rem);
+  --home-agents-orb-gap: clamp(1.1rem, 3.6vmin, 1.85rem);
+  --home-agents-halo-bleed: clamp(0.38rem, 1.25vmin, 0.72rem);
+  --home-agents-glow-bleed: clamp(1.65rem, 4.6vmin, 2.65rem);
   --home-agents-orb-step: calc(var(--home-agents-orb-size) + var(--home-agents-orb-gap));
   --home-agents-orb-half: calc(var(--home-agents-orb-size) / 2);
   --home-agents-carousel-duration: 720ms;
