@@ -100,23 +100,28 @@ function CallLogRow({ call, isLast }: { call: CallEntry; isLast: boolean }) {
             <span className={`home-call-history-visual__time ${inter.className}`}>{call.time}</span>
           </div>
           <div className="home-call-history-visual__identity-line home-call-history-visual__identity-line--sub">
-            <p className={`home-call-history-visual__phone ${inter.className}`}>{call.phone}</p>
+            <p className={`home-call-history-visual__phone ${inter.className}`}>
+              {call.phone}
+              <span className="home-call-history-visual__phone-route">
+                <span className="home-call-history-visual__phone-route-sep" aria-hidden>
+                  ·
+                </span>
+                <span className="home-call-history-visual__phone-route-agent">{call.agent}</span>
+                <span className="home-call-history-visual__phone-route-sep" aria-hidden>
+                  ·
+                </span>
+              </span>
+            </p>
             <span className={`home-call-history-visual__duration ${inter.className}`}>{call.duration}</span>
           </div>
         </div>
       </div>
 
-      <p className={`home-call-history-visual__route ${inter.className}`}>
-        <span className="home-call-history-visual__route-agent">{call.agent}</span>
-        {call.highlight ? (
-          <>
-            <span className="home-call-history-visual__route-sep" aria-hidden>
-              ·
-            </span>
-            <span className="home-call-history-visual__route-outcome">{call.highlight}</span>
-          </>
-        ) : null}
-      </p>
+      {call.highlight ? (
+        <p className={`home-call-history-visual__route ${inter.className}`}>
+          <span className="home-call-history-visual__route-outcome">{call.highlight}</span>
+        </p>
+      ) : null}
 
       {isExpanded && call.outcomes && call.outcomes.length > 0 ? (
         <ul className={`home-call-history-visual__details ${inter.className}`}>

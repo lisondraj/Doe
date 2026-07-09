@@ -6708,24 +6708,28 @@ html[data-home-page] .home-call-history-visual__phone {
   letter-spacing: 0.01em;
 }
 
+html[data-home-page] .home-call-history-visual__phone-route {
+  white-space: nowrap;
+}
+
+html[data-home-page] .home-call-history-visual__phone-route-sep {
+  margin-inline: 0.28em;
+  opacity: 0.55;
+}
+
+html[data-home-page] .home-call-history-visual__phone-route-agent {
+  color: #1e343a;
+  font-weight: 400;
+}
+
 html[data-home-page] .home-call-history-visual__route {
-  margin: clamp(0.42rem, 1.2vmin, 0.5rem) 0 0;
+  margin: clamp(0.34rem, 0.96vmin, 0.4rem) 0 0;
   padding-left: calc(clamp(1.55rem, 4.4vmin, 1.75rem) + clamp(0.48rem, 1.35vmin, 0.58rem));
   color: #6b7280;
   font-size: clamp(0.68rem, 1.92vmin, 0.76rem);
   font-weight: 400;
   line-height: 1.35;
   letter-spacing: 0.01em;
-}
-
-html[data-home-page] .home-call-history-visual__route-agent {
-  color: #1e343a;
-  font-weight: 400;
-}
-
-html[data-home-page] .home-call-history-visual__route-sep {
-  margin-inline: 0.28em;
-  opacity: 0.55;
 }
 
 html[data-home-page] .home-call-history-visual__route-outcome {
@@ -6771,7 +6775,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-call-history-visual__name,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
-  .home-call-history-visual__route-agent,
+  .home-call-history-visual__phone-route-agent,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
   .home-call-history-visual__detail {
