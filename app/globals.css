@@ -724,6 +724,24 @@ html[data-home-page][data-layout="desktop"] .home-agents-carousel__track--instan
   transition: none;
 }
 
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb-shell {
+  position: relative;
+  width: var(--home-agents-orb-size);
+  height: var(--home-agents-orb-size);
+  flex: 0 0 var(--home-agents-orb-size);
+  overflow: visible;
+}
+
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb-shell--focused {
+  z-index: 4;
+}
+
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb-shell .home-agents-carousel__orb {
+  width: 100%;
+  height: 100%;
+  flex: none;
+}
+
 html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb {
   width: var(--home-agents-orb-size);
   height: var(--home-agents-orb-size);
@@ -810,6 +828,101 @@ html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb--focused 
 
 html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb .hero-speaking-orb__grain-shell canvas {
   display: none;
+}
+
+/* Desktop agents carousel — Inbox Agent UI peek (Facility Overview cleanliness). */
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__inbox-peek {
+  position: absolute;
+  right: calc(var(--home-agents-orb-size) * 0.03);
+  bottom: calc(var(--home-agents-orb-size) * 0.07);
+  z-index: 6;
+  width: clamp(13.5rem, 21vmin, 17rem);
+  height: clamp(10.25rem, 15.75vmin, 13.25rem);
+  overflow: hidden;
+  pointer-events: none;
+  border-top-left-radius: clamp(0.7rem, 1.05vmin, 0.9rem);
+  box-shadow:
+    0 16px 38px rgba(26, 18, 8, 0.16),
+    0 2px 8px rgba(26, 18, 8, 0.06);
+}
+
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__inbox-peek-card {
+  min-width: clamp(16.25rem, 24.5vmin, 19.75rem);
+  background: #ffffff;
+  padding: clamp(0.82rem, 1.28vmin, 1rem) clamp(0.92rem, 1.42vmin, 1.12rem)
+    clamp(1.35rem, 2.1vmin, 1.65rem);
+}
+
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__inbox-peek-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(2.15rem, 3.25vmin, 2.55rem);
+  height: clamp(2.15rem, 3.25vmin, 2.55rem);
+  margin-bottom: clamp(0.62rem, 0.95vmin, 0.78rem);
+  border-radius: 9999px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42);
+}
+
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__inbox-peek-logo-mark {
+  width: 58%;
+  height: 58%;
+}
+
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__inbox-peek-title {
+  margin: 0 0 clamp(0.72rem, 1.1vmin, 0.9rem);
+  color: #3d4549;
+  font-size: clamp(1.02rem, 1.55vmin, 1.18rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__inbox-peek-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__inbox-peek-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: clamp(0.42rem, 0.68vmin, 0.55rem);
+  padding: clamp(0.48rem, 0.74vmin, 0.58rem) clamp(0.35rem, 0.55vmin, 0.45rem);
+  border-radius: clamp(0.35rem, 0.55vmin, 0.45rem);
+  color: #3d4549;
+  font-size: clamp(0.82rem, 1.22vmin, 0.94rem);
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__inbox-peek-row--active {
+  background: #f6f6f4;
+}
+
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__inbox-peek-label {
+  min-width: 0;
+  white-space: nowrap;
+}
+
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__inbox-peek-badge {
+  padding: clamp(0.14rem, 0.22vmin, 0.18rem) clamp(0.38rem, 0.58vmin, 0.48rem);
+  border-radius: clamp(0.22rem, 0.34vmin, 0.28rem);
+  background: #6e8eae;
+  color: #ffffff;
+  font-size: clamp(0.62rem, 0.92vmin, 0.72rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.01em;
+}
+
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__inbox-peek-count {
+  min-width: 1.35rem;
+  color: #9aa3a8;
+  font-size: clamp(0.82rem, 1.22vmin, 0.94rem);
+  font-weight: 400;
+  text-align: right;
 }
 
 html[data-home-page][data-layout="desktop"] .home-agents-carousel__nav {
@@ -2047,6 +2160,24 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__track--instant {
   transition: none;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb-shell {
+  position: relative;
+  width: var(--home-agents-orb-size);
+  height: var(--home-agents-orb-size);
+  flex: 0 0 var(--home-agents-orb-size);
+  overflow: visible;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb-shell .home-agents-carousel__orb {
+  width: 100%;
+  height: 100%;
+  flex: none;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__inbox-peek {
+  display: none !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb {

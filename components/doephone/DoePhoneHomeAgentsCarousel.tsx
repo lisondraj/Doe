@@ -1,5 +1,6 @@
 "use client";
 
+import { HomeAgentsCarouselInboxPeek } from "@/components/doephone/HomeAgentsCarouselInboxPeek";
 import { HeroDialOrbGrainShader } from "@/components/doephone/HeroDialOrbGrainShader";
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type TouchEvent, type TransitionEvent } from "react";
 
@@ -73,22 +74,30 @@ function AgentCarouselOrb({
   focused: boolean;
 }) {
   const displayScheme = heroDialOrbCarouselScheme(scheme);
+  const showInboxPeek = focused && scheme.label === "Inbox Agent";
 
   return (
     <div
-      className={`home-agents-carousel__orb hero-speaking-orb${
-        focused ? " home-agents-carousel__orb--focused" : ""
+      className={`home-agents-carousel__orb-shell${
+        focused ? " home-agents-carousel__orb-shell--focused" : ""
       }`}
-      style={orbAccentStyle(displayScheme)}
     >
-      <div className="hero-speaking-orb__progress-shell">
-        <div className="hero-speaking-orb__core relative overflow-hidden rounded-full">
-          <HeroDialOrbGrainShader
-            scheme={displayScheme}
-            shaderConfig={HERO_DIAL_ORB_CAROUSEL_SHADER}
-          />
+      <div
+        className={`home-agents-carousel__orb hero-speaking-orb${
+          focused ? " home-agents-carousel__orb--focused" : ""
+        }`}
+        style={orbAccentStyle(displayScheme)}
+      >
+        <div className="hero-speaking-orb__progress-shell">
+          <div className="hero-speaking-orb__core relative overflow-hidden rounded-full">
+            <HeroDialOrbGrainShader
+              scheme={displayScheme}
+              shaderConfig={HERO_DIAL_ORB_CAROUSEL_SHADER}
+            />
+          </div>
         </div>
       </div>
+      {showInboxPeek ? <HomeAgentsCarouselInboxPeek /> : null}
     </div>
   );
 }
