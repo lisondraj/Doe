@@ -9,6 +9,18 @@ const QUEUE_ROWS = [
     status: "Calling",
     tone: "active" as const,
   },
+  {
+    name: "Maria Lopez",
+    detail: "Missed Mon 2:30 PM",
+    status: "Queued",
+    tone: "muted" as const,
+  },
+  {
+    name: "S. Nguyen",
+    detail: "Missed Fri 11:00 AM",
+    status: "Booked",
+    tone: "done" as const,
+  },
 ] as const;
 
 type VisualLayout = "phone" | "desktop";
