@@ -179,8 +179,14 @@ function AgentCarouselOrb({
               shaderConfig={HERO_DIAL_ORB_CAROUSEL_SHADER}
             />
             {showPeek ? (
-              <div className={`home-agents-carousel__orb-peek-reveal${peekLiftClass ? ` ${peekLiftClass}` : ""}`}>
-                <AgentCarouselPeek label={scheme.label} />
+              <div className="home-agents-carousel__orb-peek-reveal">
+                <div
+                  className={
+                    peekLiftClass || "home-agents-carousel__orb-peek-lift home-agents-carousel__orb-peek-lift--in"
+                  }
+                >
+                  <AgentCarouselPeek label={scheme.label} />
+                </div>
               </div>
             ) : null}
           </div>
