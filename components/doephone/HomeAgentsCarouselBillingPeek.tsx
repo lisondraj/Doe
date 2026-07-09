@@ -53,8 +53,8 @@ export function HomeAgentsCarouselBillingPeek() {
             ))}
           </ul>
         </div>
+        <div className="home-agents-carousel__billing-peek-edge-blur" aria-hidden />
       </div>
-      <div className="home-agents-carousel__billing-peek-edge-blur" aria-hidden />
     </div>
   );
 }
