@@ -30,23 +30,25 @@ const MESSAGES = [
 export function DoePhoneHomeLabAlertsVisual() {
   return (
     <div className={`home-patient-outreach-visual ${suisseIntl.className}`} aria-hidden>
-      <div className="home-patient-outreach-visual__lead">
-        <p className="home-patient-outreach-visual__patient">{OUTREACH.patient}</p>
-        <p className={`home-patient-outreach-visual__meta ${inter.className}`}>{OUTREACH.meta}</p>
-      </div>
+      <div className="home-patient-outreach-visual__surface">
+        <div className="home-patient-outreach-visual__lead">
+          <p className="home-patient-outreach-visual__patient">{OUTREACH.patient}</p>
+          <p className={`home-patient-outreach-visual__meta ${inter.className}`}>{OUTREACH.meta}</p>
+        </div>
 
-      <div className="home-patient-outreach-visual__thread">
-        {MESSAGES.map((message) => (
-          <div
-            key={message.id}
-            className={`home-patient-outreach-visual__bubble home-patient-outreach-visual__bubble--${message.role} ${inter.className}`}
-          >
-            <p className="home-patient-outreach-visual__bubble-text">{message.text}</p>
-          </div>
-        ))}
-      </div>
+        <div className={`home-patient-outreach-visual__thread ${inter.className}`}>
+          {MESSAGES.map((message) => (
+            <div
+              key={message.id}
+              className={`home-patient-outreach-visual__bubble home-patient-outreach-visual__bubble--${message.role}`}
+            >
+              <p className="home-patient-outreach-visual__bubble-text">{message.text}</p>
+            </div>
+          ))}
+        </div>
 
-      <p className={`home-patient-outreach-visual__booked ${inter.className}`}>{OUTREACH.booked}</p>
+        <p className={`home-patient-outreach-visual__booked ${inter.className}`}>{OUTREACH.booked}</p>
+      </div>
     </div>
   );
 }
