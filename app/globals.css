@@ -688,6 +688,7 @@ html[data-home-page][data-layout="desktop"] .home-agents-carousel {
   justify-content: center;
   gap: clamp(0.55rem, 1.5vmin, 0.85rem);
   padding-block: clamp(0.5rem, 1.5vmin, 1rem);
+  margin-top: clamp(0.55rem, 1.35vmin, 0.9rem);
 }
 
 html[data-home-page][data-layout="desktop"] .home-agents-carousel__stage {
@@ -2011,6 +2012,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   justify-content: center;
   gap: clamp(0.45rem, 1.35vmin, 0.7rem);
   padding-block: 0;
+  margin-top: clamp(0.5rem, 1.2vmin, 0.8rem);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__stage {
