@@ -910,17 +910,11 @@ html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb-peek-
   transition: none;
 }
 
-/* iPhone carousel — pre-mount all peeks; only toggle visibility on focus (no mount pop). */
+/* iPhone carousel — all orb peek UIs stay mounted and visible in every circle. */
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb-peek-reveal {
-  opacity: 0;
-  visibility: hidden;
-  transition: none;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb-peek-reveal--visible {
   opacity: 1;
   visibility: visible;
+  transition: none;
 }
 
 /* Peek roots — slight bottom bleed so circular clip has no seam. */

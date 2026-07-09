@@ -144,8 +144,8 @@ function AgentCarouselOrb({
   const paperSlotPriority = focused
     ? SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_FOCUSED
     : SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_ADJACENT;
-  const mountPeek = isPhoneLayout ? layoutReady : focused && layoutReady;
-  const peekVisible = focused;
+  const mountPeek = isPhoneLayout || (focused && layoutReady);
+  const peekVisible = isPhoneLayout || focused;
   const [peekLifted, setPeekLifted] = useState(false);
 
   useLayoutEffect(() => {
