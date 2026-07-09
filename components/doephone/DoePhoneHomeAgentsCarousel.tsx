@@ -139,7 +139,6 @@ function AgentCarouselOrb({
   const displayScheme = heroDialOrbCarouselScheme(scheme);
   const blur = isDesktop ? getOrbBlur(distance, focused) : 0;
   const isPhone = layoutReady && !isDesktop;
-  const mountPaperShader = isPhone && distance <= 2;
   const paperSlotPriority = focused
     ? SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_FOCUSED
     : SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_ADJACENT;
@@ -210,12 +209,17 @@ function AgentCarouselOrb({
         <div className="hero-speaking-orb__progress-shell">
           <div className="hero-speaking-orb__core relative overflow-hidden rounded-full">
             {isPhone ? (
-              <HeroDialOrbPaperShader
-                scheme={displayScheme}
-                shaderConfig={HERO_DIAL_ORB_CAROUSEL_IPHONE_SHADER}
-                slotPriority={paperSlotPriority}
-                active={mountPaperShader}
-              />
+              <>
+                <HeroDialOrbGrainShader
+                  scheme={displayScheme}
+                  shaderConfig={HERO_DIAL_ORB_CAROUSEL_SHADER}
+                />
+                <HeroDialOrbPaperShader
+                  scheme={displayScheme}
+                  shaderConfig={HERO_DIAL_ORB_CAROUSEL_IPHONE_SHADER}
+                  slotPriority={paperSlotPriority}
+                />
+              </>
             ) : (
               <HeroDialOrbGrainShader
                 scheme={displayScheme}

@@ -1,7 +1,7 @@
 "use client";
 
 import { GrainGradient } from "@paper-design/shaders-react";
-import { memo, useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
+import { memo, useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 
 import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_CAROUSEL_ORB } from "@/lib/proto/proto-grain-gradient";
 import {
@@ -14,22 +14,15 @@ import {
   type HeroDialOrbScheme,
 } from "@/lib/doephone/hero-dial-orbs";
 
-function orbFallbackBackground(scheme: HeroDialOrbScheme) {
-  const [, mid, light] = scheme.colors;
-  return `radial-gradient(circle at 52% 36%, ${light} 0%, ${mid} 54%, ${scheme.colorBack} 100%)`;
-}
-
-/** iPhone carousel orb fill — static Paper grain shader (page-family flow). */
+/** iPhone carousel orb overlay — static Paper grain shader over CSS base fill. */
 export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
   scheme,
   shaderConfig,
   slotPriority,
-  active = true,
 }: {
   scheme: HeroDialOrbScheme;
   shaderConfig: HeroDialOrbPaperShaderConfig;
   slotPriority: number;
-  active?: boolean;
 }) {
   const slotId = useId();
   const shellRef = useRef<HTMLDivElement>(null);
@@ -50,11 +43,11 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
     resetShader();
   }, [resetShader]);
 
-  useShaderContextRecovery(shellRef, active && budgetGranted, resetShader);
+  useShaderContextRecovery(shellRef, budgetGranted, resetShader);
 
   useLayoutEffect(() => {
     const node = shellRef.current;
-    if (!node || !active) {
+    if (!node) {
       setContainerReady(false);
       return;
     }
@@ -68,10 +61,10 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
     const observer = new ResizeObserver(syncReady);
     observer.observe(node);
     return () => observer.disconnect();
-  }, [active]);
+  }, []);
 
   useEffect(() => {
-    if (!active || !containerReady) {
+    if (!containerReady) {
       setBudgetGranted(false);
       releaseShaderWebGLSlot(slotId);
       return;
@@ -84,15 +77,14 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
     }
 
     return () => releaseShaderWebGLSlot(slotId);
-  }, [active, containerReady, slotId, slotPriority, evictShader]);
+  }, [containerReady, slotId, slotPriority, evictShader]);
 
-  const showShader = active && containerReady && budgetGranted;
+  const showShader = containerReady && budgetGranted;
 
   return (
     <div
       ref={shellRef}
-      className="hero-speaking-orb__grain-shell hero-speaking-orb__grain-shell--paper hero-speaking-orb__grain-shell--painted absolute inset-0 overflow-hidden rounded-full"
-      style={{ backgroundColor: scheme.colorBack } as CSSProperties}
+      className="hero-speaking-orb__grain-shell hero-speaking-orb__grain-shell--paper hero-speaking-orb__grain-shell--painted pointer-events-none absolute inset-0 z-[1] overflow-hidden rounded-full"
       aria-hidden
     >
       {showShader ? (
@@ -116,12 +108,7 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
           scale={shaderConfig.scale}
           maxPixelCount={PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_CAROUSEL_ORB}
         />
-      ) : (
-        <div
-          className="hero-speaking-orb__grain-shell-fallback absolute inset-0 rounded-full"
-          style={{ background: orbFallbackBackground(scheme) }}
-        />
-      )}
+      ) : null}
     </div>
   );
 });

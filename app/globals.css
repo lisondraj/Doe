@@ -3429,9 +3429,16 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__grain-shell--paper
   canvas {
-  display: block;
+  display: block !important;
   width: 100%;
   height: 100%;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__grain-shell--css
+  canvas {
+  display: none;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb .hero-speaking-orb__core::after {
@@ -3450,10 +3457,6 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   box-shadow:
     inset 0 0 0 0.75px color-mix(in srgb, white 32%, var(--orb-halo-light)),
     0 0 0 1px color-mix(in srgb, var(--orb-halo-back) 78%, var(--orb-halo-light));
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb .hero-speaking-orb__grain-shell canvas {
-  display: none;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__nav {
