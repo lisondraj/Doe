@@ -58,6 +58,20 @@ const WEEK_DAYS = [
 const BROOKS_DAY_INDEX = 2;
 const BROOKS_APPT_INDEX = 1;
 
+function PhoneIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" aria-hidden className="home-agents-carousel__scheduling-peek-phone-icon h-[0.9em] w-[0.9em] shrink-0">
+      <path
+        d="M4 6.5a4 4 0 018 0v2.2l1.4 1.1H2.6L4 8.7V6.5z"
+        stroke="currentColor"
+        strokeWidth="1.1"
+        strokeLinejoin="round"
+      />
+      <path d="M6.5 12.2h3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function formatApptType(type: string) {
   return type
     .split("-")
@@ -87,11 +101,27 @@ function getApptBlur(spread: number) {
   return Math.min(0.95, eased * 0.42);
 }
 
-/** Agents carousel — Scheduling Agent week calendar peek (Brooks highlighted on shader). */
+/** Agents carousel — Scheduling Agent week calendar peek (Brooks highlighted on solid brown panel). */
 export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: boolean }) {
   return (
     <div className="home-agents-carousel__scheduling-peek" aria-hidden>
-      <div className={`home-agents-carousel__scheduling-peek-surface ${suisseIntl.className}`}>
+      <div className={`home-agents-carousel__scheduling-peek-card ${suisseIntl.className}`}>
+        <div className="home-agents-carousel__scheduling-peek-header">
+          <div className="home-agents-carousel__scheduling-peek-agent">
+            <div className="home-agents-carousel__scheduling-peek-agent-row">
+              <span className="home-agents-carousel__scheduling-peek-phone-badge" aria-hidden>
+                <PhoneIcon />
+              </span>
+              <span className="home-agents-carousel__scheduling-peek-heading">Scheduling Agent</span>
+              <span className={`home-agents-carousel__scheduling-peek-live ${inter.className}`}>On call</span>
+            </div>
+            <span className={`home-agents-carousel__scheduling-peek-subheading ${inter.className}`}>
+              Voice booking · Dr. Chen&apos;s week
+            </span>
+          </div>
+          <span className="home-agents-carousel__scheduling-peek-open-slots">4 open</span>
+        </div>
+
         <div className="home-agents-carousel__scheduling-peek-calendar">
           {WEEK_DAYS.map((day, dayIndex) => {
             const isActive = dayIndex === BROOKS_DAY_INDEX;
@@ -122,6 +152,7 @@ export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: 
                     const isHighlighted = "highlight" in appt && appt.highlight;
                     const spread = getApptSpread(dayIndex, apptIndex, isHighlighted);
                     const blur = getApptBlur(spread);
+                    const showApptText = !iphone || isHighlighted;
 
                     return (
                       <div
@@ -130,13 +161,17 @@ export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: 
                           isHighlighted ? " home-agents-carousel__scheduling-peek-appt--highlighted" : ""
                         }${
                           !isHighlighted ? " home-agents-carousel__scheduling-peek-appt--fill" : ""
+                        }${
+                          iphone && !isHighlighted
+                            ? " home-agents-carousel__scheduling-peek-appt--iphone-fill"
+                            : ""
                         }`}
                         style={{
                           opacity: getApptOpacity(spread),
                           filter: !iphone && blur > 0 ? `blur(${blur}px)` : undefined,
                         }}
                       >
-                        {isHighlighted ? (
+                        {showApptText ? (
                           <>
                             <span className="home-agents-carousel__scheduling-peek-appt-title">{appt.name}</span>
                             <span className={`home-agents-carousel__scheduling-peek-appt-type ${inter.className}`}>
@@ -154,6 +189,16 @@ export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: 
               </div>
             );
           })}
+        </div>
+
+        <div className="home-agents-carousel__scheduling-peek-focus">
+          <div className="home-agents-carousel__scheduling-peek-focus-copy">
+            <span className="home-agents-carousel__scheduling-peek-focus-label">Confirming by phone</span>
+            <span className={`home-agents-carousel__scheduling-peek-focus-meta ${inter.className}`}>
+              Brooks · Wed 3:15p
+            </span>
+          </div>
+          <span className={`home-agents-carousel__scheduling-peek-focus-status ${inter.className}`}>Live</span>
         </div>
       </div>
     </div>

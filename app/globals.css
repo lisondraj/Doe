@@ -1314,20 +1314,144 @@ html[data-home-page] .home-agents-carousel__orb .hero-speaking-orb__core .home-a
   transform: translateX(-50%);
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-surface {
+html[data-home-page] .home-agents-carousel__scheduling-peek-card {
   position: absolute;
   left: 50%;
   top: 50%;
   transform-origin: center center;
-  transform: translate(-50%, -43%) scale(calc(1.46 * var(--home-agents-peek-orb-scale)));
+  transform: translate(-50%, -43%) scale(calc(1.42 * var(--home-agents-peek-orb-scale)));
   display: flex;
   flex-direction: column;
   width: clamp(19.5rem, 29vmin, 24.5rem);
   min-width: 0;
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  padding: 0;
+  background: #4a3828;
+  border: 1px solid rgba(255, 248, 240, 0.12);
+  border-radius: clamp(0.85rem, 1.35vmin, 1.15rem);
+  padding: clamp(0.75rem, 1.15vmin, 0.92rem) clamp(0.82rem, 1.25vmin, 1rem)
+    clamp(0.72rem, 1.1vmin, 0.88rem);
+  box-shadow: 0 8px 22px rgba(30, 52, 58, 0.14);
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: clamp(0.48rem, 0.72vmin, 0.58rem);
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-agent {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.12rem, 0.18vmin, 0.15rem);
+  min-width: 0;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-agent-row {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.28rem, 0.42vmin, 0.34rem);
+  min-width: 0;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-phone-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: clamp(1.05rem, 1.58vmin, 1.22rem);
+  height: clamp(1.05rem, 1.58vmin, 1.22rem);
+  border-radius: 999px;
+  background: rgba(255, 220, 190, 0.16);
+  color: rgba(255, 236, 220, 0.92);
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-heading {
+  color: rgba(255, 250, 245, 0.96);
+  font-size: clamp(0.62rem, 0.94vmin, 0.74rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  white-space: nowrap;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-live {
+  flex-shrink: 0;
+  padding: 0.18em 0.42em;
+  border-radius: 999px;
+  background: rgba(120, 196, 148, 0.18);
+  color: rgba(168, 228, 188, 0.96);
+  font-size: clamp(0.46rem, 0.7vmin, 0.54rem);
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-subheading {
+  color: rgba(255, 248, 240, 0.62);
+  font-size: clamp(0.5rem, 0.75vmin, 0.58rem);
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-open-slots {
+  flex-shrink: 0;
+  padding: clamp(0.12rem, 0.18vmin, 0.15rem) clamp(0.32rem, 0.48vmin, 0.4rem);
+  border-radius: clamp(0.18rem, 0.28vmin, 0.22rem);
+  background: rgba(255, 220, 190, 0.14);
+  color: rgba(255, 236, 220, 0.9);
+  font-size: clamp(0.5rem, 0.76vmin, 0.6rem);
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-focus {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem;
+  margin-top: clamp(0.42rem, 0.64vmin, 0.52rem);
+  padding: clamp(0.3rem, 0.45vmin, 0.36rem) clamp(0.28rem, 0.42vmin, 0.34rem);
+  border-radius: clamp(0.22rem, 0.34vmin, 0.28rem);
+  background: rgba(255, 220, 190, 0.1);
+  border: 0.5px solid rgba(255, 248, 240, 0.12);
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-focus-copy {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.08rem, 0.12vmin, 0.1rem);
+  min-width: 0;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-focus-label {
+  color: rgba(255, 250, 245, 0.9);
+  font-size: clamp(0.5rem, 0.76vmin, 0.6rem);
+  font-weight: 500;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-focus-meta {
+  color: rgba(255, 248, 240, 0.62);
+  font-size: clamp(0.48rem, 0.72vmin, 0.56rem);
+  font-weight: 400;
+  line-height: 1.1;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-focus-status {
+  flex-shrink: 0;
+  padding: 0.2em 0.46em;
+  border-radius: 999px;
+  background: rgba(255, 220, 190, 0.16);
+  color: rgba(255, 236, 220, 0.92);
+  font-size: clamp(0.46rem, 0.7vmin, 0.54rem);
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-calendar {
@@ -2628,6 +2752,15 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-card {
+  background: #4a3828;
+  border-color: rgba(255, 248, 240, 0.12);
+  box-shadow: 0 8px 22px rgba(28, 19, 9, 0.28);
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
   .home-agents-carousel__scheduling-peek-day-label {
   color: var(--carousel-peek-dusk-muted);
 }
@@ -2713,6 +2846,39 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__scheduling-peek-appt--highlighted
   .home-agents-carousel__scheduling-peek-appt-meta {
   color: var(--carousel-peek-dusk-muted);
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-heading,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-focus-label {
+  color: var(--carousel-peek-dusk-ink);
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-subheading,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-focus-meta {
+  color: var(--carousel-peek-dusk-muted);
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-open-slots,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-focus-status {
+  color: var(--carousel-peek-dusk-horizon);
 }
 
 /* Labs peek */
