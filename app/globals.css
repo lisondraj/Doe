@@ -7066,8 +7066,8 @@ html[data-home-page] .home-call-history-visual__header-copy {
 html[data-home-page] .home-call-history-visual__summary {
   margin: 0;
   color: #1e343a;
-  font-size: clamp(0.98rem, 2.85vmin, 1.12rem);
-  font-weight: 600;
+  font-size: clamp(0.96rem, 2.75vmin, 1.08rem);
+  font-weight: 500;
   line-height: 1.1;
   letter-spacing: -0.015em;
   font-variant-numeric: tabular-nums;
@@ -7078,11 +7078,13 @@ html[data-home-page] .home-call-history-visual__filters {
   display: inline-flex;
   align-self: flex-start;
   gap: clamp(0.18rem, 0.52vmin, 0.22rem);
-  padding: clamp(0.18rem, 0.52vmin, 0.22rem);
+  padding: clamp(0.2rem, 0.58vmin, 0.24rem);
   border-radius: 999px;
-  border: 0.5px solid rgba(255, 255, 255, 0.55);
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 8px 22px rgba(30, 52, 58, 0.1);
+  border: 0.5px solid rgba(255, 255, 255, 0.82);
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow:
+    0 8px 22px rgba(30, 52, 58, 0.12),
+    inset 0 0 0 1px rgba(30, 52, 58, 0.05);
 }
 
 html[data-home-page] .home-call-history-visual__filter {
@@ -7091,20 +7093,21 @@ html[data-home-page] .home-call-history-visual__filter {
   gap: 0.32em;
   padding: 0.38em 0.68em;
   border-radius: 999px;
-  color: #4b5563;
+  color: #374151;
   font-size: clamp(0.72rem, 2.05vmin, 0.82rem);
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1;
 }
 
 html[data-home-page] .home-call-history-visual__filter--active {
-  background: rgba(210, 119, 76, 0.14);
-  color: #d2774c;
+  background: rgba(210, 119, 76, 0.16);
+  color: #c46848;
+  font-weight: 600;
 }
 
 html[data-home-page] .home-call-history-visual__filter-count {
   font-variant-numeric: tabular-nums;
-  opacity: 0.88;
+  opacity: 1;
 }
 
 html[data-home-page] .home-call-history-visual__card {
@@ -7174,7 +7177,7 @@ html[data-home-page] .home-call-history-visual__name {
   min-width: 0;
   color: #1e343a;
   font-size: clamp(0.86rem, 2.45vmin, 0.98rem);
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1.2;
   letter-spacing: -0.015em;
 }
@@ -7212,7 +7215,7 @@ html[data-home-page] .home-call-history-visual__route {
 
 html[data-home-page] .home-call-history-visual__route-agent {
   color: #1e343a;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 html[data-home-page] .home-call-history-visual__route-sep {
@@ -7239,7 +7242,7 @@ html[data-home-page] .home-call-history-visual__detail {
   padding-left: 0.85em;
   color: #1e343a;
   font-size: clamp(0.68rem, 1.92vmin, 0.76rem);
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1.25;
 }
 
@@ -7291,7 +7294,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
   .home-call-history-visual__filter:not(.home-call-history-visual__filter--active) {
-  color: var(--home-dusk-ui-muted) !important;
+  color: var(--home-dusk-ui-ink-secondary) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
@@ -7338,7 +7341,11 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
   .home-call-history-visual__filters {
-  border-color: var(--home-dusk-ui-border) !important;
+  background: var(--home-dusk-ui-surface) !important;
+  border-color: rgba(232, 160, 96, 0.32) !important;
+  box-shadow:
+    var(--home-dusk-ui-shadow),
+    inset 0 0 0 1px rgba(232, 160, 96, 0.12) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
