@@ -1442,6 +1442,39 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-appt-meta {
   font-variant-numeric: tabular-nums;
 }
 
+/* iPhone — scheduling peek edge blur only (center stays sharp). */
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__scheduling-peek-card--iphone {
+  isolation: isolate;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__scheduling-peek-edge-blur {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+  border-radius: inherit;
+  backdrop-filter: blur(0.45px);
+  -webkit-backdrop-filter: blur(0.45px);
+  -webkit-mask-image: radial-gradient(
+    ellipse 94% 88% at 50% 54%,
+    transparent 0%,
+    transparent 60%,
+    rgba(0, 0, 0, 0.2) 80%,
+    rgba(0, 0, 0, 0.58) 93%,
+    black 100%
+  );
+  mask-image: radial-gradient(
+    ellipse 94% 88% at 50% 54%,
+    transparent 0%,
+    transparent 60%,
+    rgba(0, 0, 0, 0.2) 80%,
+    rgba(0, 0, 0, 0.58) 93%,
+    black 100%
+  );
+}
+
 /* Desktop agents carousel — Labs Agent dual UI peek (centered, top/bottom clip). */
 html[data-home-page] .home-agents-carousel__orb .hero-speaking-orb__core .home-agents-carousel__labs-peek {
   position: absolute;
