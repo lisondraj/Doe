@@ -5458,14 +5458,14 @@ html[data-home-page] .home-phone-capture-visual__footer-sync {
   white-space: nowrap;
 }
 
-/* Recall queue — ambient feature shader card. */
+/* No-show callback queue — ambient feature shader card. */
 html[data-home-page] .home-recall-queue-visual {
   display: flex;
   flex-direction: column;
-  gap: clamp(0.72rem, 2.05vmin, 0.88rem);
-  width: min(100%, 27rem);
+  gap: clamp(0.62rem, 1.75vmin, 0.76rem);
+  width: min(100%, 26rem);
   margin-inline: auto;
-  padding-inline: clamp(0.35rem, 1vmin, 0.5rem);
+  padding-inline: clamp(0.28rem, 0.8vmin, 0.42rem);
 }
 
 html[data-home-page] .home-recall-queue-visual__header {
@@ -5503,17 +5503,20 @@ html[data-home-page] .home-recall-queue-visual__summary {
 }
 
 html[data-home-page] .home-recall-queue-visual__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32em;
   flex-shrink: 0;
-  padding: clamp(0.32rem, 0.9vmin, 0.38rem) clamp(0.55rem, 1.55vmin, 0.65rem);
-  border-radius: 999px;
+  padding: clamp(0.3rem, 0.86vmin, 0.36rem) clamp(0.5rem, 1.42vmin, 0.6rem);
+  border-radius: clamp(0.28rem, 0.8vmin, 0.34rem);
   border: 0.5px solid rgba(210, 119, 76, 0.28);
   background: rgba(210, 119, 76, 0.12);
   color: #d2774c;
-  font-size: clamp(0.7rem, 1.98vmin, 0.8rem);
+  font-size: clamp(0.66rem, 1.88vmin, 0.76rem);
   font-weight: 600;
   line-height: 1;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 
 html[data-home-page] .home-recall-queue-visual__card {
@@ -5534,9 +5537,13 @@ html[data-home-page] .home-recall-queue-visual__row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: clamp(0.65rem, 1.85vmin, 0.8rem);
-  padding: clamp(0.72rem, 2.05vmin, 0.85rem) clamp(0.78rem, 2.2vmin, 0.9rem);
+  gap: clamp(0.55rem, 1.55vmin, 0.68rem);
+  padding: clamp(0.62rem, 1.75vmin, 0.72rem) clamp(0.68rem, 1.92vmin, 0.78rem);
   border-bottom: 0.5px solid #e5e7eb;
+}
+
+html[data-home-page] .home-recall-queue-visual__row--active {
+  background: rgba(210, 119, 76, 0.04);
 }
 
 html[data-home-page] .home-recall-queue-visual__row--last {
@@ -5556,30 +5563,40 @@ html[data-home-page] .home-recall-queue-visual__name {
   letter-spacing: -0.015em;
 }
 
-html[data-home-page] .home-recall-queue-visual__gap {
-  margin: clamp(0.14rem, 0.4vmin, 0.18rem) 0 0;
+html[data-home-page] .home-recall-queue-visual__detail {
+  margin: clamp(0.1rem, 0.28vmin, 0.12rem) 0 0;
   color: #6b7280;
-  font-size: clamp(0.74rem, 2.1vmin, 0.86rem);
+  font-size: clamp(0.72rem, 2.05vmin, 0.82rem);
   font-weight: 400;
-  line-height: 1.15;
+  line-height: 1.2;
 }
 
-html[data-home-page] .home-recall-queue-visual__overdue {
+html[data-home-page] .home-recall-queue-visual__status {
   flex-shrink: 0;
   color: #9ca3af;
-  font-size: clamp(0.72rem, 2.05vmin, 0.84rem);
+  font-size: clamp(0.68rem, 1.92vmin, 0.78rem);
   font-weight: 500;
   line-height: 1;
-  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+html[data-home-page] .home-recall-queue-visual__status--active {
+  color: #d2774c;
+  font-weight: 600;
+}
+
+html[data-home-page] .home-recall-queue-visual__status--done {
+  color: #1e343a;
+  font-weight: 600;
 }
 
 html[data-home-page] .home-recall-queue-visual__footer {
   margin: 0;
   color: #6b7280;
-  font-size: clamp(0.74rem, 2.1vmin, 0.86rem);
+  font-size: clamp(0.72rem, 2.05vmin, 0.82rem);
   font-weight: 400;
   line-height: 1.25;
-  text-align: center;
+  text-align: left;
 }
 
 /* Patient outreach — recall shader band. */
@@ -6891,14 +6908,29 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-recall-queue-visual__label,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
-  .home-recall-queue-visual__gap,
+  .home-recall-queue-visual__detail,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
-  .home-recall-queue-visual__overdue,
+  .home-recall-queue-visual__status,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
   .home-recall-queue-visual__footer {
   color: var(--home-dusk-ui-muted) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-recall-queue-visual__status--active,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-recall-queue-visual__status--done {
+  color: var(--home-dusk-ui-horizon) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-recall-queue-visual__row--active {
+  background: rgba(232, 160, 96, 0.06) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])

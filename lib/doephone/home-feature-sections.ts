@@ -23,8 +23,8 @@ export const HOME_FEATURE_SECTION_TITLES: Record<
     line2: "call histories.",
   },
   ambient: {
-    line1: "Overdue patients",
-    line2: "surface automatically.",
+    line1: "No-shows get",
+    line2: "called back.",
   },
   billing: {
     line1: "Billing without the",
