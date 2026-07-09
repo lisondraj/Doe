@@ -136,10 +136,6 @@ export function DoePhoneHomeCallLogicDiagram() {
   return (
     <div className={`home-call-logic-diagram ${suisseIntl.className}`} aria-hidden>
       <div className="home-call-logic-diagram__toolbar">
-        <div className="home-call-logic-diagram__toolbar-copy">
-          <p className="home-call-logic-diagram__eyebrow">Call logic editor</p>
-          <p className="home-call-logic-diagram__title">When this call is answered</p>
-        </div>
         <div className="home-call-logic-diagram__toolbar-actions">
           <span className={`home-call-logic-diagram__type-chip ${inter.className}`}>
             {CALL_TYPE}
