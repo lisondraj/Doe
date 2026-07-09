@@ -1322,8 +1322,7 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-surface {
   transform: translate(-50%, -50%) scale(calc(1.46 * var(--home-agents-peek-orb-scale)));
   display: flex;
   flex-direction: column;
-  gap: clamp(0.42rem, 0.64vmin, 0.52rem);
-  width: clamp(17.5rem, 26vmin, 21.5rem);
+  width: clamp(19.5rem, 29vmin, 24.5rem);
   min-width: 0;
   background: transparent;
   border: none;
@@ -1331,250 +1330,135 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-surface {
   padding: 0;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-agent {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(0.1rem, 0.15vmin, 0.12rem);
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-agent-row {
-  display: flex;
-  align-items: center;
-  gap: clamp(0.28rem, 0.42vmin, 0.34rem);
-  min-width: 0;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-phone-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: clamp(1.12rem, 1.68vmin, 1.28rem);
-  height: clamp(1.12rem, 1.68vmin, 1.28rem);
-  border-radius: clamp(0.28rem, 0.42vmin, 0.34rem);
-  background: rgba(255, 255, 255, 0.24);
-  color: #ffffff;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-live {
-  flex-shrink: 0;
-  margin-left: auto;
-  padding: 0.22em 0.48em;
-  border-radius: clamp(0.24rem, 0.36vmin, 0.3rem);
-  background: rgba(255, 255, 255, 0.22);
-  color: #ffffff;
-  font-size: clamp(0.5rem, 0.76vmin, 0.58rem);
-  font-weight: 600;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-subheading {
-  flex: 1 1 auto;
-  min-width: 0;
-  color: rgba(255, 248, 240, 0.88);
-  font-size: clamp(0.54rem, 0.82vmin, 0.64rem);
-  font-weight: 400;
-  line-height: 1.1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-call {
-  display: flex;
-  align-items: flex-start;
-  gap: clamp(0.42rem, 0.64vmin, 0.52rem);
-  min-width: 0;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-waveform {
-  display: flex;
-  align-items: flex-end;
-  gap: 2px;
-  width: clamp(1.85rem, 2.78vmin, 2.2rem);
-  height: clamp(1.35rem, 2.02vmin, 1.58rem);
-  flex-shrink: 0;
-  margin-top: 0.14em;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-waveform-bar {
-  flex: 1 1 0;
-  min-width: 2px;
-  border-radius: 1px;
-  background: linear-gradient(180deg, #fff8f0 0%, rgba(255, 210, 170, 0.98) 100%);
-  opacity: 1;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-quote {
-  margin: 0;
-  flex: 1 1 auto;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.1em;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-quote-line {
-  display: block;
-  color: #fffaf5;
-  font-size: clamp(0.56rem, 0.84vmin, 0.66rem);
-  font-weight: 400;
-  line-height: 1.28;
-  font-style: italic;
-  text-shadow: 0 1px 10px rgba(30, 52, 58, 0.3);
-}
-
 html[data-home-page] .home-agents-carousel__scheduling-peek-calendar {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(0.18rem, 0.28vmin, 0.22rem);
-  padding: clamp(0.28rem, 0.42vmin, 0.34rem);
-  border-radius: clamp(0.34rem, 0.52vmin, 0.4rem);
-  background: rgba(255, 255, 255, 0.12);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-calendar-head,
-html[data-home-page] .home-agents-carousel__scheduling-peek-calendar-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: clamp(0.18rem, 0.28vmin, 0.22rem);
+  column-gap: clamp(0.22rem, 0.34vmin, 0.28rem);
+  align-items: start;
+  width: 100%;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-calendar--iphone .home-agents-carousel__scheduling-peek-calendar-head,
-html[data-home-page] .home-agents-carousel__scheduling-peek-calendar--iphone .home-agents-carousel__scheduling-peek-calendar-grid {
-  grid-template-columns: minmax(0, 1fr);
+html[data-home-page] .home-agents-carousel__scheduling-peek-day {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.32rem, 0.48vmin, 0.38rem);
+  min-width: 0;
+  border-radius: clamp(0.18rem, 0.28vmin, 0.22rem);
+  padding: clamp(0.08rem, 0.12vmin, 0.1rem) clamp(0.04rem, 0.06vmin, 0.05rem);
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-calendar-dayhead {
+html[data-home-page] .home-agents-carousel__scheduling-peek-day--active {
+  background: rgba(255, 220, 190, 0.12);
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-day-head {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.08em;
-  min-width: 0;
-  padding: clamp(0.14rem, 0.22vmin, 0.18rem) 0;
-  border-radius: clamp(0.22rem, 0.34vmin, 0.28rem);
+  gap: clamp(0.1rem, 0.15vmin, 0.12rem);
+  padding-bottom: clamp(0.28rem, 0.42vmin, 0.34rem);
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-calendar-dayhead--selected {
-  background: rgba(255, 220, 190, 0.24);
-  box-shadow: inset 0 0 0 1px rgba(255, 236, 220, 0.28);
+html[data-home-page] .home-agents-carousel__scheduling-peek-day--active .home-agents-carousel__scheduling-peek-day-head {
+  position: relative;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-calendar-label {
-  color: rgba(255, 250, 245, 0.9);
-  font-size: clamp(0.46rem, 0.7vmin, 0.54rem);
-  font-weight: 600;
+html[data-home-page] .home-agents-carousel__scheduling-peek-day--active .home-agents-carousel__scheduling-peek-day-head::after {
+  content: "";
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  bottom: 0;
+  height: 1.5px;
+  border-radius: 9999px;
+  background: rgba(255, 236, 220, 0.72);
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-day-label {
+  color: rgba(255, 250, 245, 0.72);
+  font-size: clamp(0.5rem, 0.75vmin, 0.58rem);
+  font-weight: 500;
   line-height: 1;
-  letter-spacing: 0.03em;
+  text-align: center;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-calendar-dayhead--selected .home-agents-carousel__scheduling-peek-calendar-label {
-  color: #ffffff;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-calendar-date {
-  color: rgba(255, 248, 240, 0.82);
-  font-size: clamp(0.5rem, 0.76vmin, 0.58rem);
+html[data-home-page] .home-agents-carousel__scheduling-peek-day-date {
+  color: rgba(255, 248, 240, 0.88);
+  font-size: clamp(0.68rem, 1.02vmin, 0.78rem);
   font-weight: 500;
   line-height: 1;
+  text-align: center;
   font-variant-numeric: tabular-nums;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-calendar-dayhead--selected .home-agents-carousel__scheduling-peek-calendar-date {
+html[data-home-page] .home-agents-carousel__scheduling-peek-day--active .home-agents-carousel__scheduling-peek-day-date {
   color: #fff0e2;
+  font-weight: 600;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-calendar-col {
+html[data-home-page] .home-agents-carousel__scheduling-peek-day-appts {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  gap: clamp(0.14rem, 0.22vmin, 0.18rem);
-  min-width: 0;
-  min-height: clamp(1.65rem, 2.48vmin, 1.92rem);
+  gap: clamp(0.18rem, 0.28vmin, 0.22rem);
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-calendar-slot {
+html[data-home-page] .home-agents-carousel__scheduling-peek-appt {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.1em;
+  width: 100%;
   min-width: 0;
-  padding: clamp(0.18rem, 0.28vmin, 0.22rem) clamp(0.12rem, 0.18vmin, 0.15rem);
-  border-radius: clamp(0.22rem, 0.34vmin, 0.28rem);
-  background: rgba(255, 255, 255, 0.14);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+  min-height: clamp(1.28rem, 1.92vmin, 1.48rem);
+  padding: clamp(0.22rem, 0.34vmin, 0.26rem) clamp(0.16rem, 0.24vmin, 0.2rem);
+  border-radius: clamp(0.18rem, 0.28vmin, 0.22rem);
+  border: none;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-calendar-slot--selected {
+html[data-home-page] .home-agents-carousel__scheduling-peek-appt--accent {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-appt--warm {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-appt--neutral {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-appt--highlighted {
   background: rgba(255, 220, 190, 0.3);
   box-shadow: inset 0 0 0 1px rgba(255, 236, 220, 0.32);
+  opacity: 1 !important;
+  filter: none !important;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-calendar-slot--passed {
-  opacity: 0.58;
+html[data-home-page] .home-agents-carousel__scheduling-peek-appt--fill {
+  min-height: clamp(1.28rem, 1.92vmin, 1.48rem);
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-calendar-slot-time {
-  color: rgba(255, 248, 240, 0.92);
-  font-size: clamp(0.46rem, 0.7vmin, 0.54rem);
+html[data-home-page] .home-agents-carousel__scheduling-peek-appt-title {
+  color: #ffffff;
+  font-size: clamp(0.54rem, 0.82vmin, 0.64rem);
   font-weight: 500;
-  line-height: 1.1;
+  line-height: 1.2;
   white-space: nowrap;
-  font-variant-numeric: tabular-nums;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 10px rgba(30, 52, 58, 0.28);
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-calendar-slot--selected .home-agents-carousel__scheduling-peek-calendar-slot-time {
-  color: #ffffff;
-  font-weight: 600;
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__scheduling-peek-day-head,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__scheduling-peek-appt {
+  filter: none !important;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-calendar-slot-tag {
-  color: #ffffff;
-  font-size: clamp(0.42rem, 0.64vmin, 0.5rem);
-  font-weight: 700;
-  line-height: 1;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-calendar-empty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: 1 1 auto;
-  color: rgba(255, 248, 240, 0.42);
-  font-size: clamp(0.46rem, 0.7vmin, 0.54rem);
-  font-weight: 400;
-  line-height: 1;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.45rem;
-  padding-top: clamp(0.12rem, 0.18vmin, 0.15rem);
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-footer-provider {
-  color: rgba(255, 248, 240, 0.86);
-  font-size: clamp(0.54rem, 0.82vmin, 0.64rem);
-  font-weight: 400;
-  line-height: 1.1;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-footer-confirmed {
-  color: #fff0e2;
-  font-size: clamp(0.54rem, 0.82vmin, 0.64rem);
-  font-weight: 600;
-  line-height: 1.1;
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__scheduling-peek-appt--fill {
+  min-height: clamp(1.42rem, calc(var(--app-vw, 100vw) * 0.042), 1.72rem);
+  padding-block: clamp(0.28rem, calc(var(--app-vw, 100vw) * 0.0085), 0.34rem);
 }
 
 /* Desktop agents carousel — Labs Agent dual UI peek (centered, top/bottom clip). */
@@ -2715,124 +2599,66 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-calendar-dayhead--selected
-  .home-agents-carousel__scheduling-peek-calendar-label,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-calendar-dayhead--selected
-  .home-agents-carousel__scheduling-peek-calendar-date,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-calendar-slot--selected
-  .home-agents-carousel__scheduling-peek-calendar-slot-time {
-  color: var(--carousel-peek-dusk-ink);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-quote-line {
-  color: var(--carousel-peek-dusk-ink-secondary);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-subheading,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-calendar-label,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-calendar-date,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-calendar-slot-time,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-footer-provider {
+  .home-agents-carousel__scheduling-peek-day-label {
   color: var(--carousel-peek-dusk-muted);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-phone-badge {
+  .home-agents-carousel__scheduling-peek-day-date {
+  color: var(--carousel-peek-dusk-ink-secondary);
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-day--active
+  .home-agents-carousel__scheduling-peek-day-head::after {
+  background: var(--carousel-peek-dusk-horizon);
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-day--active
+  .home-agents-carousel__scheduling-peek-day-date {
+  color: var(--carousel-peek-dusk-horizon);
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-appt--accent {
+  background: rgba(196, 92, 66, 0.22);
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-appt--warm {
   background: rgba(232, 160, 96, 0.16);
-  color: var(--carousel-peek-dusk-horizon);
-  box-shadow: inset 0 0 0 1px rgba(232, 160, 96, 0.22);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-live {
-  background: rgba(232, 160, 96, 0.16);
-  color: var(--carousel-peek-dusk-horizon);
-  box-shadow: inset 0 0 0 1px rgba(232, 160, 96, 0.2);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-footer-confirmed {
-  color: var(--carousel-peek-dusk-horizon);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-waveform-bar {
-  background: linear-gradient(
-    180deg,
-    var(--carousel-peek-dusk-ink-secondary) 0%,
-    var(--carousel-peek-dusk-horizon) 100%
-  );
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-calendar {
+  .home-agents-carousel__scheduling-peek-appt--neutral {
   background: var(--carousel-peek-dusk-surface-sunken);
-  box-shadow: inset 0 0 0 1px rgba(232, 160, 96, 0.14);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-calendar-dayhead--selected {
-  background: rgba(232, 160, 96, 0.2);
-  box-shadow: inset 0 0 0 1px rgba(232, 160, 96, 0.28);
+  .home-agents-carousel__scheduling-peek-appt--highlighted {
+  background: var(--carousel-peek-dusk-highlight);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-calendar-slot {
-  background: rgba(232, 160, 96, 0.1);
-  box-shadow: inset 0 0 0 1px rgba(232, 160, 96, 0.14);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-calendar-slot--selected {
-  background: rgba(232, 160, 96, 0.2);
-  box-shadow: inset 0 0 0 1px rgba(232, 160, 96, 0.28);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-calendar-slot-tag {
-  color: var(--carousel-peek-dusk-horizon);
+  .home-agents-carousel__scheduling-peek-appt-title {
+  color: var(--carousel-peek-dusk-ink-secondary);
 }
 
 /* Labs peek */

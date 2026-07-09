@@ -1,133 +1,145 @@
 "use client";
 
-import { inter, suisseIntl } from "@/lib/home/fonts";
+import { suisseIntl } from "@/lib/home/fonts";
 
-const CALL = {
-  patient: "Brooks, J.",
-  visit: "Follow-up",
-  provider: "Dr. Chen",
-  quoteLine1: "Wednesday at three",
-  quoteLine2: "works for me",
-  confirmed: "Wed 3:15p",
-} as const;
-
-const WEEK = [
-  { id: "mon", label: "Mon", date: 7, slots: [] as const },
+const WEEK_DAYS = [
   {
-    id: "tue",
+    label: "Mon",
+    date: 7,
+    appts: [
+      { name: "Chen", type: "labs", meta: "8:30", tone: "neutral" as const },
+      { name: "Okafor", type: "follow-up", meta: "10:00", tone: "warm" as const },
+      { name: "Walsh", type: "consult", meta: "1:30p", tone: "accent" as const },
+    ],
+  },
+  {
     label: "Tue",
     date: 8,
-    slots: [{ id: "tue-230", time: "2:30p", status: "passed" as const }],
+    appts: [
+      { name: "Nguyen", type: "follow-up", meta: "9:00", tone: "accent" as const },
+      { name: "Peters", type: "intake", meta: "11:30", tone: "warm" as const },
+      { name: "Cho", type: "telehealth", meta: "3:00", tone: "neutral" as const },
+      { name: "Fischer", type: "consult", meta: "3:45p", tone: "warm" as const },
+      { name: "Grant", type: "labs", meta: "4:30p", tone: "accent" as const },
+    ],
   },
   {
-    id: "wed",
     label: "Wed",
     date: 9,
-    slots: [{ id: "wed-315", time: "3:15p", status: "selected" as const }],
+    appts: [
+      { name: "Kowalski", type: "consult", meta: "11:00", tone: "warm" as const },
+      { name: "Brooks", type: "intake", meta: "3:15p", tone: "neutral" as const, highlight: true as const },
+      { name: "Rivera", type: "annual", meta: "4:45p", tone: "neutral" as const },
+      { name: "Sato", type: "follow-up", meta: "5:15p", tone: "warm" as const },
+      { name: "Webb", type: "intake", meta: "5:45p", tone: "accent" as const },
+    ],
   },
   {
-    id: "thu",
     label: "Thu",
     date: 10,
-    slots: [{ id: "thu-900", time: "9:00a", status: "alt" as const }],
+    appts: [
+      { name: "Haley", type: "follow-up", meta: "9:30", tone: "warm" as const },
+      { name: "Martinez", type: "intake", meta: "2:30p", tone: "accent" as const },
+      { name: "Shah", type: "telehealth", meta: "4:00", tone: "neutral" as const },
+      { name: "Lam", type: "labs", meta: "4:45p", tone: "accent" as const },
+    ],
   },
-  { id: "fri", label: "Fri", date: 11, slots: [] as const },
+  {
+    label: "Fri",
+    date: 11,
+    appts: [
+      { name: "Patel", type: "annual", meta: "10:15", tone: "warm" as const },
+      { name: "Simmons", type: "consult", meta: "12:00", tone: "accent" as const },
+      { name: "Yu", type: "follow-up", meta: "2:00p", tone: "neutral" as const },
+    ],
+  },
 ] as const;
 
-function PhoneIcon() {
-  return (
-    <svg viewBox="0 0 16 16" fill="none" aria-hidden className="home-agents-carousel__scheduling-peek-phone-icon h-[0.9em] w-[0.9em] shrink-0">
-      <path
-        d="M4 6.5a4 4 0 018 0v2.2l1.4 1.1H2.6L4 8.7V6.5z"
-        stroke="currentColor"
-        strokeWidth="1.1"
-        strokeLinejoin="round"
-      />
-      <path d="M6.5 12.2h3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
-    </svg>
-  );
+const BROOKS_DAY_INDEX = 2;
+const BROOKS_APPT_INDEX = 1;
+
+function getApptSpread(dayIndex: number, apptIndex: number, isHighlighted: boolean) {
+  if (isHighlighted) {
+    return 0;
+  }
+
+  const columnDistance = Math.abs(dayIndex - BROOKS_DAY_INDEX);
+  const verticalDistance =
+    dayIndex === BROOKS_DAY_INDEX ? Math.abs(apptIndex - BROOKS_APPT_INDEX) : 0;
+
+  return columnDistance + verticalDistance * 0.4;
 }
 
-/** Agents carousel — Scheduling Agent live call peek (content on shader, no outer card). */
-export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: boolean }) {
-  const visibleWeek = iphone ? WEEK.filter((day) => day.slots.some((slot) => slot.status === "selected")) : WEEK;
+function getApptOpacity(spread: number) {
+  const eased = Math.pow(spread, 0.72);
+  return Math.max(0.54, 1 - eased * 0.1);
+}
 
+function getApptBlur(spread: number) {
+  const eased = Math.pow(spread, 0.78);
+  return Math.min(0.95, eased * 0.42);
+}
+
+/** Agents carousel — Scheduling Agent week calendar peek (Brooks highlighted on shader). */
+export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: boolean }) {
   return (
     <div className="home-agents-carousel__scheduling-peek" aria-hidden>
       <div className={`home-agents-carousel__scheduling-peek-surface ${suisseIntl.className}`}>
-        <div className="home-agents-carousel__scheduling-peek-agent">
-          <div className="home-agents-carousel__scheduling-peek-agent-row">
-            <span className="home-agents-carousel__scheduling-peek-phone-badge" aria-hidden>
-              <PhoneIcon />
-            </span>
-            <span className={`home-agents-carousel__scheduling-peek-subheading ${inter.className}`}>
-              {CALL.patient} · {CALL.visit}
-            </span>
-            <span className={`home-agents-carousel__scheduling-peek-live ${inter.className}`}>2:18</span>
-          </div>
-        </div>
+        <div className="home-agents-carousel__scheduling-peek-calendar">
+          {WEEK_DAYS.map((day, dayIndex) => {
+            const isActive = dayIndex === BROOKS_DAY_INDEX;
+            const daySpread = Math.abs(dayIndex - BROOKS_DAY_INDEX);
+            const dayBlur = getApptBlur(daySpread * 0.42);
 
-        <div className={`home-agents-carousel__scheduling-peek-call ${inter.className}`}>
-          <div className="home-agents-carousel__scheduling-peek-waveform" aria-hidden>
-            {Array.from({ length: 10 }, (_, index) => (
-              <span
-                key={index}
-                className="home-agents-carousel__scheduling-peek-waveform-bar"
-                style={{ height: `${30 + ((index * 19) % 48)}%` }}
-              />
-            ))}
-          </div>
-          <p className="home-agents-carousel__scheduling-peek-quote">
-            <span className="home-agents-carousel__scheduling-peek-quote-line">&ldquo;{CALL.quoteLine1}</span>
-            <span className="home-agents-carousel__scheduling-peek-quote-line">{CALL.quoteLine2}&rdquo;</span>
-          </p>
-        </div>
-
-        <div
-          className={`home-agents-carousel__scheduling-peek-calendar${iphone ? " home-agents-carousel__scheduling-peek-calendar--iphone" : ""}`}
-          aria-hidden
-        >
-          <div className="home-agents-carousel__scheduling-peek-calendar-head">
-            {visibleWeek.map((day) => (
+            return (
               <div
-                key={day.id}
-                className={`home-agents-carousel__scheduling-peek-calendar-dayhead home-agents-carousel__scheduling-peek-calendar-dayhead--${day.slots.some((slot) => slot.status === "selected") ? "selected" : "default"}`}
+                key={`${day.label}-${day.date}`}
+                className={`home-agents-carousel__scheduling-peek-day${
+                  isActive ? " home-agents-carousel__scheduling-peek-day--active" : ""
+                }`}
               >
-                <span className={`home-agents-carousel__scheduling-peek-calendar-label ${inter.className}`}>{day.label}</span>
-                <span className={`home-agents-carousel__scheduling-peek-calendar-date ${inter.className}`}>{day.date}</span>
-              </div>
-            ))}
-          </div>
-          <div className="home-agents-carousel__scheduling-peek-calendar-grid">
-            {visibleWeek.map((day) => (
-              <div key={`${day.id}-slots`} className="home-agents-carousel__scheduling-peek-calendar-col">
-                {day.slots.length > 0 ? (
-                  day.slots.map((slot) => (
-                    <div
-                      key={slot.id}
-                      className={`home-agents-carousel__scheduling-peek-calendar-slot home-agents-carousel__scheduling-peek-calendar-slot--${slot.status}`}
-                    >
-                      <span className={`home-agents-carousel__scheduling-peek-calendar-slot-time ${inter.className}`}>
-                        {slot.time}
-                      </span>
-                      {slot.status === "selected" ? (
-                        <span className={`home-agents-carousel__scheduling-peek-calendar-slot-tag ${inter.className}`}>
-                          ✓
-                        </span>
-                      ) : null}
-                    </div>
-                  ))
-                ) : (
-                  <span className={`home-agents-carousel__scheduling-peek-calendar-empty ${inter.className}`}>—</span>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
+                <div
+                  className="home-agents-carousel__scheduling-peek-day-head"
+                  aria-hidden
+                  style={{
+                    opacity: getApptOpacity(daySpread * 0.34),
+                    filter: !iphone && dayBlur > 0 ? `blur(${dayBlur}px)` : undefined,
+                  }}
+                >
+                  <span className="home-agents-carousel__scheduling-peek-day-label">{day.label}</span>
+                  <span className="home-agents-carousel__scheduling-peek-day-date">{day.date}</span>
+                </div>
 
-        <div className={`home-agents-carousel__scheduling-peek-footer ${inter.className}`}>
-          <span className="home-agents-carousel__scheduling-peek-footer-provider">{CALL.provider}</span>
-          <span className="home-agents-carousel__scheduling-peek-footer-confirmed">{CALL.confirmed}</span>
+                <div className="home-agents-carousel__scheduling-peek-day-appts">
+                  {day.appts.map((appt, apptIndex) => {
+                    const isHighlighted = "highlight" in appt && appt.highlight;
+                    const spread = getApptSpread(dayIndex, apptIndex, isHighlighted);
+                    const blur = getApptBlur(spread);
+                    const showApptText = isHighlighted;
+
+                    return (
+                      <div
+                        key={`${day.date}-${appt.name}-${appt.type}`}
+                        className={`home-agents-carousel__scheduling-peek-appt home-agents-carousel__scheduling-peek-appt--${appt.tone}${
+                          isHighlighted ? " home-agents-carousel__scheduling-peek-appt--highlighted" : ""
+                        }${
+                          !isHighlighted ? " home-agents-carousel__scheduling-peek-appt--fill" : ""
+                        }`}
+                        style={{
+                          opacity: getApptOpacity(spread),
+                          filter: !iphone && blur > 0 ? `blur(${blur}px)` : undefined,
+                        }}
+                      >
+                        {showApptText ? (
+                          <span className="home-agents-carousel__scheduling-peek-appt-title">{appt.name}</span>
+                        ) : null}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
