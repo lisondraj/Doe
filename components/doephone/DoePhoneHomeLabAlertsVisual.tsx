@@ -35,19 +35,6 @@ export function DoePhoneHomeLabAlertsVisual() {
         <p className={`home-patient-outreach-visual__meta ${inter.className}`}>{OUTREACH.meta}</p>
       </div>
 
-      <div className={`home-patient-outreach-visual__voice ${inter.className}`}>
-        <div className="home-patient-outreach-visual__waveform" aria-hidden>
-          {Array.from({ length: 10 }, (_, index) => (
-            <span
-              key={index}
-              className="home-patient-outreach-visual__waveform-bar"
-              style={{ height: `${34 + ((index * 19) % 48)}%` }}
-            />
-          ))}
-        </div>
-        <span className="home-patient-outreach-visual__voice-label">Outreach call</span>
-      </div>
-
       <div className="home-patient-outreach-visual__thread">
         {MESSAGES.map((message) => (
           <div

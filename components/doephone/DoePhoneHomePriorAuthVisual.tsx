@@ -15,18 +15,6 @@ const CHART_ROWS = [
   { id: "payer", code: "UHC PPO", detail: "UnitedHealthcare", state: "active" as const },
 ] as const;
 
-function RowMark({ state }: { state: (typeof CHART_ROWS)[number]["state"] }) {
-  if (state === "done") {
-    return (
-      <span className="home-prior-auth-visual__row-mark home-prior-auth-visual__row-mark--done" aria-hidden>
-        ✓
-      </span>
-    );
-  }
-
-  return <span className="home-prior-auth-visual__row-mark home-prior-auth-visual__row-mark--active" aria-hidden />;
-}
-
 /** Prior auth — phone agent pulls chart facts on the shader band. */
 export function DoePhoneHomePriorAuthVisual() {
   return (
@@ -52,20 +40,19 @@ export function DoePhoneHomePriorAuthVisual() {
         <p className="home-prior-auth-visual__quote">&ldquo;{CALL.quote}&rdquo;</p>
       </div>
 
-      <ul className="home-prior-auth-visual__rows">
+      <div className="home-prior-auth-visual__facts" aria-hidden>
         {CHART_ROWS.map((row) => (
-          <li
+          <div
             key={row.id}
-            className={`home-prior-auth-visual__row home-prior-auth-visual__row--${row.state}`}
+            className={`home-prior-auth-visual__fact home-prior-auth-visual__fact--${row.state}`}
           >
-            <span className={`home-prior-auth-visual__row-code ${inter.className}`}>{row.code}</span>
-            <span className="home-prior-auth-visual__row-detail">{row.detail}</span>
-            <RowMark state={row.state} />
-          </li>
+            <span className={`home-prior-auth-visual__fact-code ${inter.className}`}>{row.code}</span>
+            <span className="home-prior-auth-visual__fact-detail">{row.detail}</span>
+          </div>
         ))}
-      </ul>
+      </div>
 
-      <p className={`home-prior-auth-visual__status ${inter.className}`}>
+      <p className={`home-prior-auth-visual__footer ${inter.className}`}>
         UnitedHealthcare · Submitted · Ref PA-48219
       </p>
     </div>
