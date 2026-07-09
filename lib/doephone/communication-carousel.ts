@@ -90,6 +90,14 @@ export const DOEPHONE_COMMUNICATION_SLIDES: readonly DoePhoneCommunicationSlide[
 
 export const DOEPHONE_COMMUNICATION_SLIDE_COUNT = DOEPHONE_COMMUNICATION_SLIDES.length;
 
+/** Home (iPhone + desktop) — feature stack stops before closing; billing → integrate omitted. */
+export const DOEPHONE_HOME_FEATURE_SLIDES: readonly DoePhoneCommunicationSlide[] =
+  DOEPHONE_COMMUNICATION_SLIDES.filter(
+    (slide) => slide.id !== "billing" && slide.id !== "integrate",
+  );
+
+export const DOEPHONE_HOME_FEATURE_SLIDE_COUNT = DOEPHONE_HOME_FEATURE_SLIDES.length;
+
 /** Desktop home carousel — Ambient (Sarah HBA1C) before Documents. */
 export const DOEPHONE_COMMUNICATION_SLIDES_DESKTOP: readonly DoePhoneCommunicationSlide[] = [
   DOEPHONE_COMMUNICATION_SLIDES[0],
@@ -99,6 +107,12 @@ export const DOEPHONE_COMMUNICATION_SLIDES_DESKTOP: readonly DoePhoneCommunicati
   DOEPHONE_COMMUNICATION_SLIDES[4],
   DOEPHONE_COMMUNICATION_SLIDES[5],
 ];
+
+/** Desktop home feature stack — same omissions as {@link DOEPHONE_HOME_FEATURE_SLIDES}. */
+export const DOEPHONE_HOME_FEATURE_SLIDES_DESKTOP: readonly DoePhoneCommunicationSlide[] =
+  DOEPHONE_COMMUNICATION_SLIDES_DESKTOP.filter(
+    (slide) => slide.id !== "billing" && slide.id !== "integrate",
+  );
 
 /** Lookup slide backdrop by id — stable when slide order changes. */
 export function doephoneCommunicationBackdrop(id: (typeof DOEPHONE_COMMUNICATION_SLIDES)[number]["id"]) {

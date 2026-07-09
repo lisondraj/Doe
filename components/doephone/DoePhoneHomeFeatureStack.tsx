@@ -4,7 +4,7 @@ import { Fragment } from "react";
 
 import { DoePhoneHomeFeatureCardSection } from "@/components/doephone/DoePhoneHomeFeatureCardSection";
 import { DoePhoneHomeShaderBandSection } from "@/components/doephone/DoePhoneHomeShaderBandSection";
-import { DOEPHONE_COMMUNICATION_SLIDES } from "@/lib/doephone/communication-carousel";
+import { DOEPHONE_HOME_FEATURE_SLIDES } from "@/lib/doephone/communication-carousel";
 import { HOME_FEATURE_SECTION_TITLES } from "@/lib/doephone/home-feature-sections";
 
 /** iPhone home — feature cards on sand bands with full-viewport shader bands after each. */
@@ -15,7 +15,7 @@ export function DoePhoneHomeFeatureStack({
 }) {
   return (
     <>
-      {DOEPHONE_COMMUNICATION_SLIDES.map((slide) => {
+      {DOEPHONE_HOME_FEATURE_SLIDES.map((slide) => {
         const title = HOME_FEATURE_SECTION_TITLES[slide.id];
         const showSpecialtyColumns = slide.id === "front-desk";
         const showWorkflowInput = slide.id === "front-desk";
