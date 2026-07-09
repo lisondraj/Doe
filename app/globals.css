@@ -853,8 +853,6 @@ html[data-home-page] .home-agents-carousel__orb-peek-reveal {
   border-radius: 50%;
   clip-path: circle(50.2% at 50% 50%);
   pointer-events: none;
-  backface-visibility: hidden;
-  transform: translateZ(0);
 }
 
 html[data-home-page] .home-agents-carousel__orb-peek-lift {
@@ -3300,9 +3298,9 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: clamp(0.45rem, 1.35vmin, 0.7rem);
+  gap: clamp(0.45rem, calc(var(--app-vw, 100vw) * 0.0135), 0.7rem);
   padding-block: 0;
-  margin-top: clamp(0.5rem, 1.2vmin, 0.8rem);
+  margin-top: clamp(0.5rem, calc(var(--app-vw, 100vw) * 0.012), 0.8rem);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__stage {
@@ -3313,16 +3311,18 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   align-items: center;
   justify-content: center;
   overflow-x: clip;
-  overflow-y: visible;
+  overflow-y: hidden;
+  height: calc(var(--home-agents-orb-size) + var(--home-agents-halo-bleed) + var(--home-agents-glow-bleed));
   min-height: calc(var(--home-agents-orb-size) + var(--home-agents-halo-bleed) + var(--home-agents-glow-bleed));
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__viewport {
   width: 100vw;
-  overflow: visible;
+  overflow: hidden;
   padding-top: var(--home-agents-halo-bleed);
   padding-bottom: var(--home-agents-glow-bleed);
   box-sizing: content-box;
+  height: var(--home-agents-orb-size);
   min-height: var(--home-agents-orb-size);
   touch-action: pan-y;
 }
@@ -3333,23 +3333,10 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   gap: var(--home-agents-orb-gap);
   transition: transform var(--home-agents-carousel-duration) var(--home-agents-carousel-ease);
   backface-visibility: hidden;
-  transform-style: preserve-3d;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__track--instant {
   transition: none;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__track--sliding .home-agents-carousel__orb,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__track--sliding .home-agents-carousel__orb-shell,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__track--sliding .hero-speaking-orb__progress-shell::after,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__track--sliding .hero-speaking-orb__tag--carousel,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__track--sliding .home-agents-carousel__description {
-  transition: none !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__track--sliding .home-agents-carousel__orb-peek-reveal {
-  visibility: hidden;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb-shell {
@@ -3359,9 +3346,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   flex: 0 0 var(--home-agents-orb-size);
   overflow: visible;
   filter: none;
-  backface-visibility: hidden;
-  transform: translateZ(0);
-  transition: opacity var(--home-agents-carousel-duration) var(--home-agents-carousel-ease);
+  contain: layout style paint;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb-shell .home-agents-carousel__orb {
@@ -3381,7 +3366,6 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   overflow: visible;
   opacity: 0.88;
   transform: none;
-  transition: opacity var(--home-agents-carousel-duration) var(--home-agents-carousel-ease);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb--focused {
@@ -3395,13 +3379,11 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   isolation: isolate;
   box-shadow: none;
   overflow: hidden;
-  transform: translateZ(0);
-  backface-visibility: hidden;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb .hero-speaking-orb__progress-shell {
   position: relative;
-  overflow: visible;
+  overflow: hidden;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb .hero-speaking-orb__progress-shell::after {
@@ -3416,21 +3398,10 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   z-index: 0;
   background: radial-gradient(
     ellipse 100% 88% at 50% 0%,
-    color-mix(in srgb, var(--orb-halo-mid) 18%, transparent),
+    color-mix(in srgb, var(--orb-halo-mid) 20%, transparent),
     transparent 74%
   );
-  filter: blur(10px);
-  opacity: 0.9;
-  transition: opacity var(--home-agents-carousel-duration) var(--home-agents-carousel-ease);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb--focused .hero-speaking-orb__progress-shell::after {
-  opacity: 1;
-  background: radial-gradient(
-    ellipse 100% 88% at 50% 0%,
-    color-mix(in srgb, var(--orb-halo-mid) 22%, transparent),
-    transparent 74%
-  );
+  opacity: 0.95;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb--focused .hero-speaking-orb__core {
@@ -3485,7 +3456,6 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
     inset 0 -1px 0 rgba(237, 235, 232, 0.42);
   color: var(--hero-pill-ink);
   cursor: pointer;
-  transform: translateZ(0);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__nav-hit {
@@ -3495,21 +3465,21 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__nav-icon {
-  width: clamp(1.65rem, 4.9vmin, 2.05rem);
-  height: clamp(1.65rem, 4.9vmin, 2.05rem);
+  width: clamp(1.65rem, calc(var(--app-vw, 100vw) * 0.049), 2.05rem);
+  height: clamp(1.65rem, calc(var(--app-vw, 100vw) * 0.049), 2.05rem);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__caption {
-  --home-agents-caption-control-size: clamp(3.55rem, 10.5vmin, 4.35rem);
+  --home-agents-caption-control-size: clamp(3.55rem, calc(var(--app-vw, 100vw) * 0.105), 4.35rem);
   --home-agents-caption-pill-bg:
     linear-gradient(180deg, rgba(255, 255, 255, 0.48) 0%, transparent 34%),
     linear-gradient(152deg, #ffffff 0%, #fbfaf8 64%, #f7f6f4 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(0.5rem, 1.45vmin, 0.78rem);
+  gap: clamp(0.5rem, calc(var(--app-vw, 100vw) * 0.0145), 0.78rem);
   width: 100%;
-  max-width: min(30rem, 96vw);
+  max-width: min(30rem, calc(var(--app-vw, 100vw) * 0.96));
   padding-inline: max(var(--proto-phone-gutter-left), var(--proto-phone-gutter-right));
   flex: 0 0 auto;
 }
@@ -3519,9 +3489,9 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   width: 100%;
   align-items: center;
   justify-content: center;
-  gap: clamp(0.45rem, 1.5vmin, 0.75rem);
-  padding-inline: clamp(0.35rem, 1.5vw, 0.85rem);
-  margin-bottom: clamp(0.28rem, 0.85vmin, 0.48rem);
+  gap: clamp(0.45rem, calc(var(--app-vw, 100vw) * 0.015), 0.75rem);
+  padding-inline: clamp(0.35rem, calc(var(--app-vw, 100vw) * 0.015), 0.85rem);
+  margin-bottom: clamp(0.28rem, calc(var(--app-vw, 100vw) * 0.0085), 0.48rem);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__label-row .hero-speaking-orb__tag--carousel {
@@ -3533,21 +3503,20 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   width: max-content;
   max-width: none;
   min-height: var(--home-agents-caption-control-size);
-  padding: 0 clamp(1.65rem, 4.85vmin, 2rem);
+  padding: 0 clamp(1.65rem, calc(var(--app-vw, 100vw) * 0.0485), 2rem);
   border-color: rgba(255, 255, 255, 0.82);
   background: var(--home-agents-caption-pill-bg);
   opacity: 1;
   visibility: visible;
   pointer-events: none;
-  transform: translateZ(0);
-  transition: opacity 360ms ease;
+  transform: none;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.88),
     inset 0 -1px 0 rgba(237, 235, 232, 0.42);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__label-row .hero-speaking-orb__tag--carousel .hero-speaking-orb__tag-text {
-  font-size: clamp(1.15rem, 3.4vmin, 1.45rem);
+  font-size: clamp(1.15rem, calc(var(--app-vw, 100vw) * 0.034), 1.45rem);
   overflow: visible;
   text-overflow: clip;
 }
@@ -3555,9 +3524,9 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__description {
   margin: 0;
   width: 100%;
-  max-width: min(22rem, 72vw);
+  max-width: min(22rem, calc(var(--app-vw, 100vw) * 0.72));
   color: rgba(26, 18, 8, 0.72);
-  font-size: clamp(1rem, 3.2vmin, 1.14rem);
+  font-size: clamp(1rem, calc(var(--app-vw, 100vw) * 0.032), 1.14rem);
   font-weight: 300;
   letter-spacing: -0.01em;
   line-height: 1.48;
@@ -3569,7 +3538,6 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   line-clamp: 4;
   overflow: hidden;
   max-height: calc(1.48em * 4);
-  transition: opacity 360ms ease;
 }
 
 @media (prefers-reduced-motion: reduce) {

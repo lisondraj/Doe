@@ -249,27 +249,20 @@ export function DoePhoneHomeAgentsCarousel() {
   const [layoutReady, setLayoutReady] = useState(false);
   const isDesktop = layoutReady && layoutVariant === "desktop";
   const [position, setPosition] = useState(AGENTS_CAROUSEL_LOOP_START);
-  const [focusedPosition, setFocusedPosition] = useState(AGENTS_CAROUSEL_LOOP_START);
   const [trackInstant, setTrackInstant] = useState(true);
   const reenableTransitionRef = useRef<number | null>(null);
   const swipeStartRef = useRef<{ x: number; y: number } | null>(null);
-  const positionRef = useRef(AGENTS_CAROUSEL_LOOP_START);
 
-  const active = AGENTS_CAROUSEL_LOOP_ORBS[focusedPosition];
+  const active = AGENTS_CAROUSEL_LOOP_ORBS[position];
   const prevActiveLabelRef = useRef<string | null>(null);
   const [animatePeekLift, setAnimatePeekLift] = useState(false);
-  const [isTrackAnimating, setIsTrackAnimating] = useState(false);
-
-  useLayoutEffect(() => {
-    positionRef.current = position;
-  }, [position]);
 
   useLayoutEffect(() => {
     const labelChanged =
       prevActiveLabelRef.current === null || prevActiveLabelRef.current !== active.label;
     setAnimatePeekLift(isDesktop && labelChanged);
     prevActiveLabelRef.current = active.label;
-  }, [focusedPosition, active.label, isDesktop]);
+  }, [position, active.label, isDesktop]);
 
   useLayoutEffect(() => {
     setLayoutVariant(readBootstrappedDoePhoneVariant());
@@ -282,13 +275,11 @@ export function DoePhoneHomeAgentsCarousel() {
 
   const goPrev = useCallback(() => {
     setTrackInstant(false);
-    setIsTrackAnimating(true);
     setPosition((current) => current - 1);
   }, []);
 
   const goNext = useCallback(() => {
     setTrackInstant(false);
-    setIsTrackAnimating(true);
     setPosition((current) => current + 1);
   }, []);
 
@@ -333,18 +324,10 @@ export function DoePhoneHomeAgentsCarousel() {
         return;
       }
 
-      const currentPosition = positionRef.current;
-
-      if (
-        currentPosition >= AGENTS_CAROUSEL_ORB_COUNT &&
-        currentPosition < AGENTS_CAROUSEL_ORB_COUNT * 2
-      ) {
-        setFocusedPosition(currentPosition);
-        setIsTrackAnimating(false);
+      if (position >= AGENTS_CAROUSEL_ORB_COUNT && position < AGENTS_CAROUSEL_ORB_COUNT * 2) {
         return;
       }
 
-      setIsTrackAnimating(false);
       setTrackInstant(true);
       setPosition((current) => {
         if (current < AGENTS_CAROUSEL_ORB_COUNT) {
@@ -358,15 +341,13 @@ export function DoePhoneHomeAgentsCarousel() {
         return current;
       });
     },
-    [trackInstant],
+    [position, trackInstant],
   );
 
   useEffect(() => {
     if (!trackInstant) {
       return;
     }
-
-    setFocusedPosition(position);
 
     reenableTransitionRef.current = window.requestAnimationFrame(() => {
       reenableTransitionRef.current = window.requestAnimationFrame(() => {
@@ -395,7 +376,7 @@ export function DoePhoneHomeAgentsCarousel() {
           <div
             className={`home-agents-carousel__track${
               trackInstant ? " home-agents-carousel__track--instant" : ""
-            }${isTrackAnimating ? " home-agents-carousel__track--sliding" : ""}`}
+            }`}
             onTransitionEnd={handleTrackTransitionEnd}
             style={{
               transform: `translate3d(calc(50% - var(--home-agents-orb-half) - ${position} * var(--home-agents-orb-step)), 0, 0)`,
@@ -405,8 +386,8 @@ export function DoePhoneHomeAgentsCarousel() {
               <AgentCarouselOrb
                 key={`${scheme.label}-${orbIndex}`}
                 scheme={scheme}
-                focused={orbIndex === focusedPosition}
-                distance={Math.abs(orbIndex - focusedPosition)}
+                focused={orbIndex === position}
+                distance={Math.abs(orbIndex - position)}
                 isDesktop={isDesktop}
                 layoutReady={layoutReady}
                 animatePeekLift={animatePeekLift}
