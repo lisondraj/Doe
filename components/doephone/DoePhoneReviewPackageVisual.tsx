@@ -34,9 +34,9 @@ const ACTIVE_AGENTS = [
 ] as const;
 
 const SCHEDULING_STEPS = [
-  "Connect to Google Calendar",
-  "Sort appointments by type",
-  "Email Dr. Chen when confirmed",
+  { label: "Connect to Google Calendar", status: "done" as const },
+  { label: "Sort appointments by type", status: "active" as const },
+  { label: "Email Dr. Chen when confirmed", status: "upcoming" as const },
 ] as const;
 
 type VisualLayout = "phone" | "desktop";
@@ -65,36 +65,52 @@ function ChevronUpIcon() {
 
 function PlusIcon() {
   return (
-    <svg viewBox="0 0 18 18" fill="none" aria-hidden className="h-[1.05em] w-[1.05em] shrink-0" style={{ color: INK }}>
+    <svg viewBox="0 0 18 18" fill="none" aria-hidden className="home-active-agents-visual__plus-icon h-[1.05em] w-[1.05em] shrink-0">
       <path d="M9 4.5v9M4.5 9h9" stroke="currentColor" strokeWidth="1.35" strokeLinecap="round" />
     </svg>
   );
 }
 
-/** Active agents list in Review Package card shell — Agents for every workflow in clinic. */
+function AgentStepIcon({ status }: { status: (typeof SCHEDULING_STEPS)[number]["status"] }) {
+  if (status === "done") {
+    return (
+      <span className="home-active-agents-visual__step-icon home-active-agents-visual__step-icon--done">
+        <CheckIcon />
+      </span>
+    );
+  }
+
+  if (status === "active") {
+    return <span className="home-active-agents-visual__step-icon home-active-agents-visual__step-icon--active" />;
+  }
+
+  return <span className="home-active-agents-visual__step-icon home-active-agents-visual__step-icon--upcoming" />;
+}
+
+/** Active agents list — shader band below agents carousel. */
 export function DoePhoneReviewPackageVisual({ layout = "phone" }: { layout?: VisualLayout }) {
   const isDesktop = layout === "desktop";
   const maxWidth = isDesktop ? "min(100%, 28rem)" : CAROUSEL_MENU_UI.maxWidthPhone;
 
   return (
     <div
-      className={`mx-auto flex h-full w-full items-center justify-center px-[clamp(0.65rem,2vmin,0.9rem)] ${suisseIntl.className}`}
+      className={`home-active-agents-visual mx-auto flex h-full w-full items-center justify-center px-[clamp(0.65rem,2vmin,0.9rem)] ${suisseIntl.className}`}
       style={{ maxWidth }}
       aria-hidden
     >
-      <div className="flex w-full flex-col" style={{ gap: STACK_GAP }}>
+      <div className="home-active-agents-visual__stack flex w-full flex-col" style={{ gap: STACK_GAP }}>
         <div
-          className={`relative w-full overflow-hidden bg-white ${OUTER_RADIUS}`}
+          className={`home-active-agents-visual__card relative w-full overflow-hidden bg-white ${OUTER_RADIUS}`}
           style={{
             padding: CARD_PAD,
             border: `1px solid ${BORDER}`,
             boxShadow: CARD_SHADOW,
           }}
         >
-          <div className="flex items-center justify-between gap-[clamp(0.55rem,1.65vmin,0.72rem)]">
+          <div className="home-active-agents-visual__header flex items-center justify-between gap-[clamp(0.55rem,1.65vmin,0.72rem)]">
             <div className="flex min-w-0 items-center gap-[clamp(0.45rem,1.35vmin,0.58rem)]">
               <h3
-                className="min-w-0 shrink-0 font-semibold leading-tight tracking-[-0.025em]"
+                className="home-active-agents-visual__title min-w-0 shrink-0 font-semibold leading-tight tracking-[-0.025em]"
                 style={{
                   color: INK,
                   fontSize: TITLE_SIZE,
@@ -103,7 +119,7 @@ export function DoePhoneReviewPackageVisual({ layout = "phone" }: { layout?: Vis
                 Active Agents
               </h3>
               <span
-                className={`inline-flex shrink-0 items-center gap-[0.35em] ${inter.className} font-medium leading-none`}
+                className={`home-active-agents-visual__badge inline-flex shrink-0 items-center gap-[0.35em] ${inter.className} font-medium leading-none`}
                 style={{
                   background: LIVE_BADGE_BG,
                   color: DOE_ORANGE,
@@ -117,7 +133,7 @@ export function DoePhoneReviewPackageVisual({ layout = "phone" }: { layout?: Vis
               </span>
             </div>
             <span
-              className="inline-flex shrink-0 items-center justify-center rounded-full"
+              className="home-active-agents-visual__collapse inline-flex shrink-0 items-center justify-center rounded-full"
               style={{
                 width: "clamp(1.85rem,5.4vmin,2.2rem)",
                 height: "clamp(1.85rem,5.4vmin,2.2rem)",
@@ -129,13 +145,13 @@ export function DoePhoneReviewPackageVisual({ layout = "phone" }: { layout?: Vis
             </span>
           </div>
 
-          <div style={{ marginTop: "clamp(0.85rem,2.5vmin,1rem)" }}>
+          <div className="home-active-agents-visual__list" style={{ marginTop: "clamp(0.85rem,2.5vmin,1rem)" }}>
             <div className="flex flex-col" style={{ gap: "clamp(0.62rem,1.85vmin,0.8rem)" }}>
               {ACTIVE_AGENTS.map((agent) =>
                 "expanded" in agent && agent.expanded ? (
                   <div
                     key={agent.name}
-                    className={INNER_RADIUS}
+                    className={`home-active-agents-visual__row home-active-agents-visual__row--expanded ${INNER_RADIUS}`}
                     style={{
                       background: ROW_BG,
                       padding: "clamp(0.78rem,2.35vmin,0.95rem) clamp(0.9rem,2.65vmin,1.05rem)",
@@ -143,20 +159,20 @@ export function DoePhoneReviewPackageVisual({ layout = "phone" }: { layout?: Vis
                   >
                     <div className="flex items-center justify-between gap-3">
                       <span
-                        className={`min-w-0 truncate ${inter.className} font-normal`}
+                        className={`home-active-agents-visual__row-name min-w-0 truncate ${inter.className} font-normal`}
                         style={{ color: MUTED_TEXT, fontSize: ROW_SIZE }}
                       >
                         {agent.name}
                       </span>
                       <span
-                        className={`inline-flex shrink-0 items-center ${inter.className} font-medium leading-none`}
+                        className={`home-active-agents-visual__row-status inline-flex shrink-0 items-center ${inter.className} font-medium leading-none`}
                         style={{ color: DOE_ORANGE, fontSize: STATUS_SIZE }}
                       >
                         Active
                       </span>
                     </div>
-                    <div
-                      className="flex flex-col"
+                    <ul
+                      className="home-active-agents-visual__steps flex flex-col"
                       style={{
                         marginTop: "clamp(0.62rem,1.85vmin,0.78rem)",
                         marginLeft: "clamp(0.55rem,1.65vmin,0.72rem)",
@@ -166,33 +182,35 @@ export function DoePhoneReviewPackageVisual({ layout = "phone" }: { layout?: Vis
                       }}
                     >
                       {SCHEDULING_STEPS.map((step) => (
-                        <p
-                          key={step}
-                          className={`${inter.className} font-normal leading-snug`}
-                          style={{ color: MUTED_TEXT, fontSize: STEP_SIZE }}
-                        >
-                          {step}
-                        </p>
+                        <li key={step.label} className="home-active-agents-visual__step flex items-center gap-[0.42rem]">
+                          <AgentStepIcon status={step.status} />
+                          <span
+                            className={`home-active-agents-visual__step-label ${inter.className} font-normal leading-snug`}
+                            style={{ color: MUTED_TEXT, fontSize: STEP_SIZE }}
+                          >
+                            {step.label}
+                          </span>
+                        </li>
                       ))}
-                    </div>
+                    </ul>
                   </div>
                 ) : (
                   <div
                     key={agent.name}
-                    className={`flex items-center justify-between gap-3 ${INNER_RADIUS}`}
+                    className={`home-active-agents-visual__row flex items-center justify-between gap-3 ${INNER_RADIUS}`}
                     style={{
                       background: ROW_BG,
                       padding: "clamp(0.78rem,2.35vmin,0.95rem) clamp(0.9rem,2.65vmin,1.05rem)",
                     }}
                   >
                     <span
-                      className={`min-w-0 truncate ${inter.className} font-normal`}
+                      className={`home-active-agents-visual__row-name min-w-0 truncate ${inter.className} font-normal`}
                       style={{ color: MUTED_TEXT, fontSize: ROW_SIZE }}
                     >
                       {agent.name}
                     </span>
                     <span
-                      className={`inline-flex shrink-0 items-center ${inter.className} font-medium leading-none`}
+                      className={`home-active-agents-visual__row-status inline-flex shrink-0 items-center ${inter.className} font-medium leading-none`}
                       style={{ color: DOE_ORANGE, fontSize: STATUS_SIZE }}
                     >
                       Active
@@ -205,7 +223,7 @@ export function DoePhoneReviewPackageVisual({ layout = "phone" }: { layout?: Vis
         </div>
 
         <div
-          className={`flex w-full items-center overflow-hidden ${BUTTON_RADIUS}`}
+          className={`home-active-agents-visual__action flex w-full items-center overflow-hidden ${BUTTON_RADIUS}`}
           style={{
             background: BTN_BG,
             padding: BUTTON_PAD,
@@ -216,7 +234,7 @@ export function DoePhoneReviewPackageVisual({ layout = "phone" }: { layout?: Vis
         >
           <PlusIcon />
           <p
-            className={`${inter.className} font-medium leading-snug`}
+            className={`home-active-agents-visual__action-label ${inter.className} font-medium leading-snug`}
             style={{ color: INK, fontSize: ACTION_SIZE }}
           >
             Build agent

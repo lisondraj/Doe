@@ -87,11 +87,16 @@ function getApptBlur(spread: number) {
   return Math.min(0.95, eased * 0.42);
 }
 
-/** Desktop agents carousel — Scheduling Agent week calendar peek. */
+/** Agents carousel — Scheduling Agent week calendar peek. */
 export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: boolean }) {
   return (
     <div className="home-agents-carousel__scheduling-peek" aria-hidden>
       <div className={`home-agents-carousel__scheduling-peek-card ${suisseIntl.className}`}>
+        <div className="home-agents-carousel__scheduling-peek-header">
+          <span className="home-agents-carousel__scheduling-peek-heading">This week</span>
+          <span className="home-agents-carousel__scheduling-peek-open-slots">4 open slots</span>
+        </div>
+
         <div className="home-agents-carousel__scheduling-peek-calendar">
           {WEEK_DAYS.map((day, dayIndex) => {
             const isActive = day.date === 10;
@@ -125,38 +130,43 @@ export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: 
                     const showApptText = !iphone || isHighlighted;
 
                     return (
-                    <div
-                      key={`${day.date}-${appt.name}-${appt.type}`}
-                      className={`home-agents-carousel__scheduling-peek-appt home-agents-carousel__scheduling-peek-appt--${appt.tone}${
-                        iphone && isHighlighted
-                          ? " home-agents-carousel__scheduling-peek-appt--highlighted"
-                          : ""
-                      }${
-                        iphone && !isHighlighted
-                          ? " home-agents-carousel__scheduling-peek-appt--iphone-fill"
-                          : ""
-                      }`}
-                      style={{
-                        opacity: getApptOpacity(spread),
-                        filter: !iphone && blur > 0 ? `blur(${blur}px)` : undefined,
-                      }}
-                    >
-                      {showApptText ? (
-                        <>
-                      <span className="home-agents-carousel__scheduling-peek-appt-title">{appt.name}</span>
-                      <span className="home-agents-carousel__scheduling-peek-appt-type">
-                        {formatApptType(appt.type)}
-                      </span>
-                      <span className="home-agents-carousel__scheduling-peek-appt-meta">{appt.meta}</span>
-                        </>
-                      ) : null}
-                    </div>
+                      <div
+                        key={`${day.date}-${appt.name}-${appt.type}`}
+                        className={`home-agents-carousel__scheduling-peek-appt home-agents-carousel__scheduling-peek-appt--${appt.tone}${
+                          iphone && isHighlighted
+                            ? " home-agents-carousel__scheduling-peek-appt--highlighted"
+                            : ""
+                        }${
+                          iphone && !isHighlighted
+                            ? " home-agents-carousel__scheduling-peek-appt--iphone-fill"
+                            : ""
+                        }`}
+                        style={{
+                          opacity: getApptOpacity(spread),
+                          filter: !iphone && blur > 0 ? `blur(${blur}px)` : undefined,
+                        }}
+                      >
+                        {showApptText ? (
+                          <>
+                            <span className="home-agents-carousel__scheduling-peek-appt-title">{appt.name}</span>
+                            <span className="home-agents-carousel__scheduling-peek-appt-type">
+                              {formatApptType(appt.type)}
+                            </span>
+                            <span className="home-agents-carousel__scheduling-peek-appt-meta">{appt.meta}</span>
+                          </>
+                        ) : null}
+                      </div>
                     );
                   })}
                 </div>
               </div>
             );
           })}
+        </div>
+
+        <div className="home-agents-carousel__scheduling-peek-focus">
+          <span className="home-agents-carousel__scheduling-peek-focus-label">Confirming intake</span>
+          <span className="home-agents-carousel__scheduling-peek-focus-meta">Brooks · Wed 3:15p</span>
         </div>
       </div>
     </div>

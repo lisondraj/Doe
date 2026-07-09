@@ -2,23 +2,28 @@
 
 import { suisseIntl } from "@/lib/home/fonts";
 
-const INTAKE_ROWS = [
-  { label: "Reason for visit", value: "Chest tightness", tone: "accent" as const, highlight: true as const },
-  { label: "Insurance", value: "Verified", tone: "neutral" as const },
-  { label: "Pharmacy", value: "On file", tone: "warm" as const },
-  { label: "Allergies", value: "None reported", tone: "neutral" as const },
-  { label: "Preferred slot", value: "Thu 2:30p", tone: "warm" as const },
-  { label: "Callback", value: "Mobile", tone: "neutral" as const },
+const APPOINTMENT = {
+  patient: "Martinez, L.",
+  visit: "Cardiology follow-up",
+  slot: "Thu 2:30p",
+} as const;
+
+const EVIDENCE_ITEMS = [
+  { label: "Recent labs", value: "HbA1c trend pulled", status: "done" as const },
+  { label: "Visit summary", value: "Feb cardiology note", status: "done" as const },
+  { label: "Medications", value: "Reconciling 12 active", status: "active" as const, highlight: true as const },
+  { label: "Prior auth", value: "PA-88214 approved", status: "done" as const },
+  { label: "Imaging", value: "Chest X-ray · Mar 8", status: "pending" as const },
 ] as const;
 
-const LIVE_CLEAR_ROW_COUNT = 2;
+const LIVE_FOCUS_INDEX = 2;
 
-function getLiveRowSpread(rowIndex: number) {
-  if (rowIndex < LIVE_CLEAR_ROW_COUNT) {
+function getEvidenceSpread(rowIndex: number, isHighlighted: boolean) {
+  if (isHighlighted) {
     return 0;
   }
 
-  return rowIndex - (LIVE_CLEAR_ROW_COUNT - 1);
+  return Math.abs(rowIndex - LIVE_FOCUS_INDEX);
 }
 
 function getPeekFadeOpacity(spread: number) {
@@ -37,40 +42,79 @@ function getPeekFadeBlur(spread: number) {
   return Math.min(1.3, spread * 0.4);
 }
 
-/** Desktop agents carousel — Live Appointment call intake peek. */
-export function HomeAgentsCarouselLivePeek() {
+function EvidenceStatusIcon({ status }: { status: (typeof EVIDENCE_ITEMS)[number]["status"] }) {
+  if (status === "done") {
+    return (
+      <span className="home-agents-carousel__live-peek-evidence-icon home-agents-carousel__live-peek-evidence-icon--done">
+        <svg viewBox="0 0 12 12" fill="none" aria-hidden>
+          <path
+            d="M3.1 6.1l1.9 1.9 4-4.1"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </span>
+    );
+  }
+
+  if (status === "active") {
+    return (
+      <span className="home-agents-carousel__live-peek-evidence-icon home-agents-carousel__live-peek-evidence-icon--active">
+        <svg viewBox="0 0 12 12" fill="none" aria-hidden className="home-agents-carousel__live-peek-evidence-spinner">
+          <circle cx="6" cy="6" r="4.75" stroke="currentColor" strokeWidth="1.2" opacity="0.22" />
+          <path d="M6 1.25a4.75 4.75 0 014.75 4.75" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+        </svg>
+      </span>
+    );
+  }
+
+  return <span className="home-agents-carousel__live-peek-evidence-icon home-agents-carousel__live-peek-evidence-icon--pending" />;
+}
+
+/** Agents carousel — Live Appointment call + clinical evidence peek. */
+export function HomeAgentsCarouselLivePeek({ iphone = false }: { iphone?: boolean }) {
   return (
     <div className="home-agents-carousel__live-peek" aria-hidden>
       <div className={`home-agents-carousel__live-peek-card ${suisseIntl.className}`}>
         <div className="home-agents-carousel__live-peek-status">
           <span className="home-agents-carousel__live-peek-live-dot" aria-hidden />
           <span className="home-agents-carousel__live-peek-status-label">On call</span>
+          <span className="home-agents-carousel__live-peek-status-phase">Preparing chart</span>
           <span className="home-agents-carousel__live-peek-status-time">04:12</span>
         </div>
 
-        <div className="home-agents-carousel__live-peek-patient">
-          <span className="home-agents-carousel__live-peek-patient-name">Nguyen, S.</span>
-          <span className="home-agents-carousel__live-peek-patient-type">New patient intake</span>
+        <div className="home-agents-carousel__live-peek-appointment">
+          <span className="home-agents-carousel__live-peek-patient-name">{APPOINTMENT.patient}</span>
+          <span className="home-agents-carousel__live-peek-patient-type">{APPOINTMENT.visit}</span>
+          <span className="home-agents-carousel__live-peek-appointment-slot">{APPOINTMENT.slot}</span>
         </div>
 
-        <ul className="home-agents-carousel__live-peek-list">
-          {INTAKE_ROWS.map((row, rowIndex) => {
-            const spread = getLiveRowSpread(rowIndex);
+        <p className="home-agents-carousel__live-peek-evidence-heading">Clinical evidence</p>
+
+        <ul className="home-agents-carousel__live-peek-evidence-list">
+          {EVIDENCE_ITEMS.map((item, rowIndex) => {
+            const isHighlighted = "highlight" in item && item.highlight;
+            const spread = getEvidenceSpread(rowIndex, isHighlighted);
             const blur = getPeekFadeBlur(spread);
 
             return (
               <li
-                key={row.label}
-                className={`home-agents-carousel__live-peek-row home-agents-carousel__live-peek-row--${row.tone}${
-                  "highlight" in row && row.highlight ? " home-agents-carousel__live-peek-row--highlighted" : ""
+                key={item.label}
+                className={`home-agents-carousel__live-peek-evidence-row home-agents-carousel__live-peek-evidence-row--${item.status}${
+                  isHighlighted ? " home-agents-carousel__live-peek-evidence-row--highlighted" : ""
                 }`}
                 style={{
                   opacity: getPeekFadeOpacity(spread),
-                  filter: blur > 0 ? `blur(${blur}px)` : undefined,
+                  filter: !iphone && blur > 0 ? `blur(${blur}px)` : undefined,
                 }}
               >
-                <span className="home-agents-carousel__live-peek-row-label">{row.label}</span>
-                <span className="home-agents-carousel__live-peek-row-value">{row.value}</span>
+                <EvidenceStatusIcon status={item.status} />
+                <span className="home-agents-carousel__live-peek-evidence-copy">
+                  <span className="home-agents-carousel__live-peek-evidence-label">{item.label}</span>
+                  <span className="home-agents-carousel__live-peek-evidence-value">{item.value}</span>
+                </span>
               </li>
             );
           })}
