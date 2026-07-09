@@ -18,20 +18,6 @@ const STEPS = [
   { id: "pharmacy", label: "Pharmacy", status: "upcoming" as const },
 ] as const;
 
-function PhoneIcon() {
-  return (
-    <svg viewBox="0 0 16 16" fill="none" aria-hidden className="home-agents-carousel__refill-peek-phone-icon h-[0.9em] w-[0.9em] shrink-0">
-      <path
-        d="M4 6.5a4 4 0 018 0v2.2l1.4 1.1H2.6L4 8.7V6.5z"
-        stroke="currentColor"
-        strokeWidth="1.1"
-        strokeLinejoin="round"
-      />
-      <path d="M6.5 12.2h3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 function StepMark({ status }: { status: (typeof STEPS)[number]["status"] }) {
   if (status === "done") {
     return (
@@ -53,16 +39,14 @@ export function HomeAgentsCarouselRefillPeek() {
   return (
     <div className="home-agents-carousel__refill-peek" aria-hidden>
       <div className={`home-agents-carousel__refill-peek-surface ${suisseIntl.className}`}>
-        <div className="home-agents-carousel__refill-peek-agent">
-          <div className="home-agents-carousel__refill-peek-agent-row">
-            <span className="home-agents-carousel__refill-peek-phone-badge" aria-hidden>
-              <PhoneIcon />
+        <div className="home-agents-carousel__refill-peek-hero">
+          <div className="home-agents-carousel__refill-peek-hero-copy">
+            <span className="home-agents-carousel__refill-peek-drug">{RX.drug}</span>
+            <span className={`home-agents-carousel__refill-peek-meta ${inter.className}`}>
+              {RX.visit} · {RX.patient}
             </span>
-            <span className={`home-agents-carousel__refill-peek-subheading ${inter.className}`}>
-              {RX.patient} · {RX.visit}
-            </span>
-            <span className={`home-agents-carousel__refill-peek-live ${inter.className}`}>1:42</span>
           </div>
+          <span className={`home-agents-carousel__refill-peek-live ${inter.className}`}>1:42</span>
         </div>
 
         <div className={`home-agents-carousel__refill-peek-call ${inter.className}`}>
@@ -79,11 +63,6 @@ export function HomeAgentsCarouselRefillPeek() {
             <span className="home-agents-carousel__refill-peek-quote-line">&ldquo;{RX.requestLine1}</span>
             <span className="home-agents-carousel__refill-peek-quote-line">{RX.requestLine2}&rdquo;</span>
           </p>
-        </div>
-
-        <div className="home-agents-carousel__refill-peek-rx">
-          <span className="home-agents-carousel__refill-peek-drug">{RX.drug}</span>
-          <span className={`home-agents-carousel__refill-peek-patient ${inter.className}`}>{RX.patient}</span>
         </div>
 
         <div className="home-agents-carousel__refill-peek-steps" aria-hidden>
