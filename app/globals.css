@@ -6711,7 +6711,7 @@ html[data-home-page] .home-call-history-visual__details {
   flex-direction: column;
   gap: clamp(0.18rem, 0.52vmin, 0.22rem);
   margin: clamp(0.38rem, 1.08vmin, 0.46rem) 0 0;
-  padding: 0 0 0 calc(clamp(1.55rem, 4.4vmin, 1.75rem) + clamp(0.48rem, 1.35vmin, 0.58rem));
+  padding: 0 0 0 calc(clamp(1.55rem, 4.4vmin, 1.75rem) + clamp(0.48rem, 1.35vmin, 0.58rem) + clamp(0.3rem, 0.85vmin, 0.42rem));
   list-style: none;
 }
 

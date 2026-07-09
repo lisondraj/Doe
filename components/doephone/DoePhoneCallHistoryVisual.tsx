@@ -102,17 +102,6 @@ function CallLogRow({ call, isLast }: { call: CallEntry; isLast: boolean }) {
           <div className="home-call-history-visual__identity-line home-call-history-visual__identity-line--sub">
             <p className={`home-call-history-visual__phone ${inter.className}`}>
               {call.phone}
-              {call.agent === "Inbox" ? (
-                <span className="home-call-history-visual__phone-route">
-                  <span className="home-call-history-visual__phone-route-sep" aria-hidden>
-                    ·
-                  </span>
-                  <span className="home-call-history-visual__phone-route-agent">{call.agent}</span>
-                  <span className="home-call-history-visual__phone-route-sep" aria-hidden>
-                    ·
-                  </span>
-                </span>
-              ) : null}
             </p>
             <span className={`home-call-history-visual__duration ${inter.className}`}>{call.duration}</span>
           </div>
