@@ -4836,12 +4836,12 @@ html[data-home-page] .home-call-logic-diagram__fork-rail-line {
 }
 
 html[data-home-page] .home-call-logic-diagram__fork-rail-line--left {
-  left: 14%;
+  left: calc(clamp(0.1rem, 0.28vmin, 0.12rem) + min(38%, 11.5rem) / 2 - 0.75px);
   width: 1.5px;
 }
 
 html[data-home-page] .home-call-logic-diagram__fork-rail-line--right {
-  right: 14%;
+  right: calc(clamp(0.1rem, 0.28vmin, 0.12rem) + min(38%, 11.5rem) / 2 - 0.75px);
   width: 1.5px;
 }
 
@@ -4849,8 +4849,8 @@ html[data-home-page] .home-call-logic-diagram__fork-rail::before {
   content: "";
   position: absolute;
   top: 0;
-  left: 14%;
-  right: 14%;
+  left: calc(clamp(0.1rem, 0.28vmin, 0.12rem) + min(38%, 11.5rem) / 2);
+  right: calc(clamp(0.1rem, 0.28vmin, 0.12rem) + min(38%, 11.5rem) / 2);
   height: 1.5px;
   border-radius: 999px;
   background: color-mix(in srgb, #1e343a 14%, #ebe7e0);

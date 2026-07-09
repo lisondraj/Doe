@@ -15,7 +15,7 @@ const TRUNK_NODES = [
     id: "verify",
     kind: "action" as const,
     label: "Verify patient",
-    align: "start" as const,
+    align: "center" as const,
   },
   {
     id: "condition",
