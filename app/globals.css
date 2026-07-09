@@ -4737,6 +4737,233 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workf
   animation: none !important;
 }
 
+/* Customize agents — call logic diagram (workflow band). */
+html[data-home-page] .home-feature-shader-band--workflow .home-feature-section__call-logic-diagram {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+  padding-left: var(--proto-phone-gutter-left, 1.65rem);
+  padding-right: var(--proto-phone-gutter-right, 1.65rem);
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-section__call-logic-diagram {
+  padding-left: var(--desktop-page-inset-x) !important;
+  padding-right: var(--desktop-page-inset-x) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-call-logic-diagram-scale {
+  --home-call-logic-scale: 0.9;
+  width: calc(100% / var(--home-call-logic-scale));
+  max-width: calc(100% / var(--home-call-logic-scale));
+  margin-inline: auto;
+  transform: scale(var(--home-call-logic-scale));
+  transform-origin: center center;
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-call-logic-diagram-scale {
+  --home-call-logic-scale: 0.94;
+  width: min(calc(28rem / var(--home-call-logic-scale)), calc(100% / var(--home-call-logic-scale)));
+  max-width: min(calc(28rem / var(--home-call-logic-scale)), calc(100% / var(--home-call-logic-scale)));
+  margin-inline: auto;
+  transform: scale(var(--home-call-logic-scale));
+  transform-origin: center center;
+}
+
+html[data-home-page] .home-call-logic-diagram__card {
+  border-radius: clamp(0.86rem, 2.5vmin, 1.05rem);
+  border: 0.5px solid color-mix(in srgb, #1e343a 8%, #ebe7e0);
+  background: linear-gradient(180deg, #ffffff 0%, #faf9f7 100%);
+  box-shadow:
+    0 12px 32px rgba(30, 52, 58, 0.09),
+    0 1px 6px rgba(30, 52, 58, 0.04);
+  overflow: hidden;
+}
+
+html[data-home-page] .home-call-logic-diagram__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: clamp(0.65rem, 1.9vmin, 0.85rem);
+  padding: clamp(0.82rem, 2.4vmin, 1rem) clamp(0.88rem, 2.55vmin, 1.05rem);
+  border-bottom: 0.5px solid color-mix(in srgb, #1e343a 7%, #ebe7e0);
+}
+
+html[data-home-page] .home-call-logic-diagram__eyebrow {
+  margin: 0;
+  color: #e88f5c;
+  font-size: clamp(0.68rem, 1.95vmin, 0.8rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+html[data-home-page] .home-call-logic-diagram__title {
+  margin: clamp(0.18rem, 0.5vmin, 0.22rem) 0 0;
+  color: #1e343a;
+  font-size: clamp(0.92rem, 2.65vmin, 1.08rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+html[data-home-page] .home-call-logic-diagram__type-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(0.22rem, 0.65vmin, 0.28rem);
+  flex-shrink: 0;
+  padding: clamp(0.28rem, 0.8vmin, 0.34rem) clamp(0.48rem, 1.35vmin, 0.58rem);
+  border-radius: clamp(0.38rem, 1.1vmin, 0.46rem);
+  background: rgba(210, 119, 76, 0.12);
+  color: #d2774c;
+  font-size: clamp(0.68rem, 1.95vmin, 0.8rem);
+  font-weight: 500;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+html[data-home-page] .home-call-logic-diagram__flow {
+  display: flex;
+  flex-direction: column;
+  padding: clamp(0.72rem, 2.1vmin, 0.88rem) clamp(0.72rem, 2.1vmin, 0.88rem) clamp(0.58rem, 1.65vmin, 0.72rem);
+}
+
+html[data-home-page] .home-call-logic-diagram__step {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+html[data-home-page] .home-call-logic-diagram__connector {
+  align-self: center;
+  width: 1.5px;
+  height: clamp(0.55rem, 1.55vmin, 0.68rem);
+  margin-block: clamp(0.08rem, 0.22vmin, 0.1rem);
+  border-radius: 999px;
+  background: color-mix(in srgb, #1e343a 14%, #ebe7e0);
+}
+
+html[data-home-page] .home-call-logic-diagram__node {
+  border-radius: clamp(0.55rem, 1.55vmin, 0.65rem);
+  border: 0.5px solid color-mix(in srgb, #1e343a 7%, #ebe7e0);
+  background: #f7f6f3;
+  padding: clamp(0.52rem, 1.5vmin, 0.62rem) clamp(0.58rem, 1.65vmin, 0.68rem);
+}
+
+html[data-home-page] .home-call-logic-diagram__node--trigger {
+  background: #ffffff;
+}
+
+html[data-home-page] .home-call-logic-diagram__node--condition {
+  background: #f3f1ed;
+}
+
+html[data-home-page] .home-call-logic-diagram__node--active {
+  border-color: rgba(210, 119, 76, 0.42);
+  background: rgba(210, 119, 76, 0.08);
+  box-shadow: 0 0 0 1px rgba(210, 119, 76, 0.12);
+}
+
+html[data-home-page] .home-call-logic-diagram__node-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(0.45rem, 1.25vmin, 0.55rem);
+  margin-bottom: clamp(0.28rem, 0.8vmin, 0.34rem);
+}
+
+html[data-home-page] .home-call-logic-diagram__node-kind {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(0.28rem, 0.8vmin, 0.34rem);
+  color: #6b7280;
+}
+
+html[data-home-page] .home-call-logic-diagram__node-kind-label {
+  font-size: clamp(0.62rem, 1.75vmin, 0.72rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+html[data-home-page] .home-call-logic-diagram__edit-badge {
+  padding: clamp(0.14rem, 0.4vmin, 0.17rem) clamp(0.34rem, 0.95vmin, 0.4rem);
+  border-radius: 999px;
+  background: rgba(210, 119, 76, 0.14);
+  color: #d2774c;
+  font-size: clamp(0.58rem, 1.65vmin, 0.68rem);
+  font-weight: 500;
+  line-height: 1;
+}
+
+html[data-home-page] .home-call-logic-diagram__node-label {
+  margin: 0;
+  color: #1e343a;
+  font-size: clamp(0.78rem, 2.2vmin, 0.9rem);
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+}
+
+html[data-home-page] .home-call-logic-diagram__node-meta {
+  margin: clamp(0.18rem, 0.5vmin, 0.22rem) 0 0;
+  color: #6b7280;
+  font-size: clamp(0.64rem, 1.82vmin, 0.74rem);
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+html[data-home-page] .home-call-logic-diagram__branches {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.22rem, 0.62vmin, 0.28rem);
+  margin-top: clamp(0.38rem, 1.05vmin, 0.45rem);
+}
+
+html[data-home-page] .home-call-logic-diagram__branch {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: clamp(0.45rem, 1.25vmin, 0.55rem);
+  padding: clamp(0.24rem, 0.68vmin, 0.28rem) clamp(0.34rem, 0.95vmin, 0.4rem);
+  border-radius: clamp(0.32rem, 0.9vmin, 0.38rem);
+  background: rgba(30, 52, 58, 0.04);
+}
+
+html[data-home-page] .home-call-logic-diagram__branch-key {
+  color: #d2774c;
+  font-size: clamp(0.62rem, 1.75vmin, 0.72rem);
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+html[data-home-page] .home-call-logic-diagram__branch-value {
+  color: #6b7280;
+  font-size: clamp(0.62rem, 1.75vmin, 0.72rem);
+  font-weight: 400;
+  line-height: 1.1;
+  text-align: right;
+}
+
+html[data-home-page] .home-call-logic-diagram__add-step {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.28rem, 0.8vmin, 0.34rem);
+  width: calc(100% - clamp(1.44rem, 4.2vmin, 1.76rem));
+  margin: 0 auto clamp(0.72rem, 2.1vmin, 0.88rem);
+  padding: clamp(0.42rem, 1.2vmin, 0.5rem) clamp(0.55rem, 1.55vmin, 0.65rem);
+  border-radius: clamp(0.42rem, 1.2vmin, 0.5rem);
+  border: 0.5px dashed color-mix(in srgb, #1e343a 16%, #ebe7e0);
+  background: transparent;
+  color: #6b7280;
+  font-size: clamp(0.68rem, 1.95vmin, 0.8rem);
+  font-weight: 500;
+  line-height: 1.1;
+}
+
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow {
   position: relative !important;
   min-height: 100dvh !important;
@@ -5164,6 +5391,124 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   svg
   path[stroke="#D2774C"] {
   stroke: var(--home-dusk-ui-horizon) !important;
+}
+
+/* iPhone home — call logic diagram (dusk mock UI). */
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--workflow
+  .home-call-logic-diagram__card {
+  background: var(--home-dusk-ui-surface) !important;
+  border-color: var(--home-dusk-ui-border) !important;
+  box-shadow: var(--home-dusk-ui-shadow) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--workflow
+  .home-call-logic-diagram__header {
+  border-bottom-color: var(--home-dusk-ui-border) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--workflow
+  .home-call-logic-diagram__eyebrow,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--workflow
+  .home-call-logic-diagram__type-chip,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--workflow
+  .home-call-logic-diagram__edit-badge,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--workflow
+  .home-call-logic-diagram__branch-key {
+  color: var(--home-dusk-ui-horizon) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--workflow
+  .home-call-logic-diagram__title,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--workflow
+  .home-call-logic-diagram__node-label {
+  color: var(--home-dusk-ui-ink) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--workflow
+  .home-call-logic-diagram__type-chip,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--workflow
+  .home-call-logic-diagram__edit-badge {
+  background: var(--home-dusk-ui-surface-raised) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--workflow
+  .home-call-logic-diagram__node {
+  background: var(--home-dusk-ui-surface-sunken) !important;
+  border-color: var(--home-dusk-ui-border) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--workflow
+  .home-call-logic-diagram__node--trigger {
+  background: var(--home-dusk-ui-surface) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--workflow
+  .home-call-logic-diagram__node--active {
+  border-color: rgba(232, 143, 92, 0.45) !important;
+  background: rgba(232, 143, 92, 0.1) !important;
+  box-shadow: 0 0 0 1px rgba(232, 143, 92, 0.14) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--workflow
+  .home-call-logic-diagram__node-kind,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--workflow
+  .home-call-logic-diagram__node-meta,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--workflow
+  .home-call-logic-diagram__branch-value,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--workflow
+  .home-call-logic-diagram__add-step {
+  color: var(--home-dusk-ui-muted) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--workflow
+  .home-call-logic-diagram__connector {
+  background: var(--home-dusk-ui-border) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--workflow
+  .home-call-logic-diagram__branch {
+  background: rgba(242, 216, 168, 0.06) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--workflow
+  .home-call-logic-diagram__add-step {
+  border-color: var(--home-dusk-ui-border) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--workflow
+  .home-call-logic-diagram__node-icon,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--workflow
+  .home-call-logic-diagram__chevron {
+  color: var(--home-dusk-ui-muted) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--workflow
+  .home-call-logic-diagram__node-icon
+  [stroke]:not([stroke="none"]) {
+  stroke: currentColor !important;
 }
 
 /* iPhone home — active agents shader band (dusk mock UI). */

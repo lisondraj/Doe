@@ -1,6 +1,6 @@
 "use client";
 
-import { DoePhoneHomeSectionWorkflowInput } from "@/components/doephone/DoePhoneHomeSectionWorkflowInput";
+import { DoePhoneHomeCallLogicDiagram } from "@/components/doephone/DoePhoneHomeCallLogicDiagram";
 import { DoePhoneReviewPackageVisual } from "@/components/doephone/DoePhoneReviewPackageVisual";
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import type { DoePhoneCommunicationSlide } from "@/lib/doephone/communication-carousel";
@@ -66,8 +66,12 @@ export function DoePhoneHomeShaderBandSection({
             <span className="block">Customize agents</span>
             <span className="block">to fix your needs.</span>
           </h2>
-          <div className="flex min-h-0 flex-1 flex-col items-stretch justify-center">
-            <DoePhoneHomeSectionWorkflowInput />
+          <div className="home-feature-shader-band__call-logic-shell flex min-h-0 flex-1 flex-col items-stretch justify-center">
+            <div className="home-feature-section__call-logic-diagram relative z-[20] w-full shrink-0">
+              <div className="home-call-logic-diagram-scale">
+                <DoePhoneHomeCallLogicDiagram />
+              </div>
+            </div>
           </div>
         </div>
       ) : null}
