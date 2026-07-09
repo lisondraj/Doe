@@ -140,10 +140,12 @@ export function DoePhoneHomeCallLogicDiagram() {
           <p className="home-call-logic-diagram__eyebrow">Call logic editor</p>
           <p className="home-call-logic-diagram__title">When this call is answered</p>
         </div>
-        <span className={`home-call-logic-diagram__type-chip ${inter.className}`}>
-          {CALL_TYPE}
-          <ChevronDownIcon />
-        </span>
+        <div className="home-call-logic-diagram__toolbar-actions">
+          <span className={`home-call-logic-diagram__type-chip ${inter.className}`}>
+            {CALL_TYPE}
+            <ChevronDownIcon />
+          </span>
+        </div>
       </div>
 
       <div className="home-call-logic-diagram__canvas">
