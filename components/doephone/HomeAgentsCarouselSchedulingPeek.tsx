@@ -1,6 +1,6 @@
 "use client";
 
-import { suisseIntl } from "@/lib/home/fonts";
+import { inter, suisseIntl } from "@/lib/home/fonts";
 
 const WEEK_DAYS = [
   {
@@ -57,6 +57,13 @@ const WEEK_DAYS = [
 
 const BROOKS_DAY_INDEX = 2;
 const BROOKS_APPT_INDEX = 1;
+
+function formatApptType(type: string) {
+  return type
+    .split("-")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join("-");
+}
 
 function getApptSpread(dayIndex: number, apptIndex: number, isHighlighted: boolean) {
   if (isHighlighted) {
@@ -115,12 +122,11 @@ export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: 
                     const isHighlighted = "highlight" in appt && appt.highlight;
                     const spread = getApptSpread(dayIndex, apptIndex, isHighlighted);
                     const blur = getApptBlur(spread);
-                    const showApptText = isHighlighted;
 
                     return (
                       <div
                         key={`${day.date}-${appt.name}-${appt.type}`}
-                        className={`home-agents-carousel__scheduling-peek-appt home-agents-carousel__scheduling-peek-appt--${appt.tone}${
+                        className={`home-agents-carousel__scheduling-peek-appt${
                           isHighlighted ? " home-agents-carousel__scheduling-peek-appt--highlighted" : ""
                         }${
                           !isHighlighted ? " home-agents-carousel__scheduling-peek-appt--fill" : ""
@@ -130,8 +136,16 @@ export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: 
                           filter: !iphone && blur > 0 ? `blur(${blur}px)` : undefined,
                         }}
                       >
-                        {showApptText ? (
-                          <span className="home-agents-carousel__scheduling-peek-appt-title">{appt.name}</span>
+                        {isHighlighted ? (
+                          <>
+                            <span className="home-agents-carousel__scheduling-peek-appt-title">{appt.name}</span>
+                            <span className={`home-agents-carousel__scheduling-peek-appt-type ${inter.className}`}>
+                              {formatApptType(appt.type)}
+                            </span>
+                            <span className={`home-agents-carousel__scheduling-peek-appt-meta ${inter.className}`}>
+                              {appt.meta}
+                            </span>
+                          </>
                         ) : null}
                       </div>
                     );
