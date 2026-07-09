@@ -4859,15 +4859,15 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workf
   width: 100%;
   max-width: none;
   margin-inline: 0;
-  padding-inline: var(--home-workflow-stack-padding-x) !important;
+  padding-inline: 0 !important;
   transform: none !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-workflow-prompt__body {
   max-width: none;
   text-wrap: pretty;
-  font-size: clamp(1.22rem, 3.65vmin, 1.42rem) !important;
-  line-height: 1.65 !important;
+  font-size: clamp(1.12rem, 3.35vmin, 1.32rem) !important;
+  line-height: 1.62 !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-workflow-prompt__body span.inline-flex {
@@ -4877,19 +4877,11 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workf
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-section__workflow-input .build-workflow-ui-scale {
-  --build-workflow-ui-scale: var(--home-workflow-input-scale, 0.86);
-  width: min(
-    calc(var(--home-workflow-stack-max-width) / var(--build-workflow-ui-scale)),
-    calc(100% / var(--build-workflow-ui-scale))
-  );
-  max-width: min(
-    calc(var(--home-workflow-stack-max-width) / var(--build-workflow-ui-scale)),
-    calc(100% / var(--build-workflow-ui-scale))
-  );
-  margin-inline: auto;
-  margin-block: calc((var(--build-workflow-ui-scale) - 1) * 3.25rem);
-  transform: scale(var(--build-workflow-ui-scale));
-  transform-origin: center center;
+  width: 100%;
+  max-width: 100%;
+  margin-inline: 0;
+  margin-block: 0;
+  transform: none;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .doephone-section-reveal--input {
@@ -4910,18 +4902,25 @@ html[data-home-page] .home-feature-shader-band--workflow .home-feature-shader-ba
 }
 
 html[data-home-page] .home-feature-shader-band--workflow .home-feature-shader-band__workflow-content {
-  --home-workflow-band-scale: 1.05;
-  --home-workflow-input-scale: 0.86;
   --home-workflow-stack-padding-x: clamp(0.85rem, 3.1vw, 1.2rem);
   --home-workflow-stack-max-width: 100%;
+  box-sizing: border-box;
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: var(--home-workflow-stack-padding-x);
+  overflow-x: clip;
+}
+
+html[data-home-page] .home-feature-shader-band--workflow .home-feature-shader-band__workflow-stack {
   display: flex;
   flex-direction: column;
   align-items: stretch;
   justify-content: center;
   gap: clamp(1.35rem, 3.4vmin, 1.65rem);
   width: 100%;
-  margin-block: auto;
+  max-width: var(--home-workflow-stack-max-width);
   margin-inline: auto;
+  margin-block: auto;
 }
 
 html[data-home-page] .home-feature-shader-band--workflow .home-feature-section__call-logic-diagram {
@@ -4933,62 +4932,47 @@ html[data-home-page] .home-feature-shader-band--workflow .home-feature-section__
   min-height: 0;
   width: 100%;
   max-width: none;
-  margin-inline: auto;
-  padding-inline: var(--home-workflow-stack-padding-x);
+  margin-inline: 0;
+  padding-inline: 0;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-section__call-logic-diagram {
-  padding-inline: var(--home-workflow-stack-padding-x) !important;
+  padding-inline: 0 !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-call-logic-diagram-scale {
-  --home-call-logic-scale: var(--home-workflow-band-scale, 1.05);
   display: flex;
   flex: 0 0 auto;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
-  width: min(
-    calc(var(--home-workflow-stack-max-width) / var(--home-call-logic-scale)),
-    calc(100% / var(--home-call-logic-scale))
-  );
-  max-width: min(
-    calc(var(--home-workflow-stack-max-width) / var(--home-call-logic-scale)),
-    calc(100% / var(--home-call-logic-scale))
-  );
-  margin-inline: auto;
-  margin-bottom: calc((var(--home-call-logic-scale) - 1) * 4.75rem);
-  transform: scale(var(--home-call-logic-scale));
-  transform-origin: center center;
+  width: 100%;
+  max-width: 100%;
+  margin-inline: 0;
+  margin-bottom: 0;
+  transform: none;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-shader-band__workflow-content {
-  --home-workflow-band-scale: 1.08;
-  --home-workflow-input-scale: 0.88;
   --home-workflow-stack-max-width: 36rem;
   --home-workflow-stack-padding-x: max(var(--desktop-page-inset-x), clamp(0.85rem, 1.8vw, 1.35rem));
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-shader-band__workflow-stack {
   gap: clamp(1.45rem, 2.6vmin, 1.75rem);
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-call-logic-diagram-scale {
-  --home-call-logic-scale: var(--home-workflow-band-scale, 1.08);
   display: flex;
   flex: 0 0 auto;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
-  width: min(
-    calc(var(--home-workflow-stack-max-width) / var(--home-call-logic-scale)),
-    calc(100% / var(--home-call-logic-scale))
-  );
-  max-width: min(
-    calc(var(--home-workflow-stack-max-width) / var(--home-call-logic-scale)),
-    calc(100% / var(--home-call-logic-scale))
-  );
-  margin-inline: auto;
-  margin-bottom: calc((var(--home-call-logic-scale) - 1) * 5.25rem);
-  transform: scale(var(--home-call-logic-scale));
-  transform-origin: center center;
+  width: 100%;
+  max-width: 100%;
+  margin-inline: 0;
+  margin-bottom: 0;
+  transform: none;
 }
 
 html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__node {
@@ -4999,7 +4983,7 @@ html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagra
 }
 
 html[data-home-page] .home-call-logic-diagram {
-  width: min(100%, 28rem);
+  width: 100%;
   margin-inline: auto;
   display: flex;
   flex-direction: column;
@@ -5067,16 +5051,7 @@ html[data-home-page] .home-call-logic-diagram__trunk-step--center {
 }
 
 html[data-home-page] .home-call-logic-diagram__trunk-step--center .home-call-logic-diagram__node {
-  width: min(100%, 15.5rem);
-}
-
-html[data-home-page] .home-call-logic-diagram__trunk-step--start {
-  align-items: flex-start;
-  padding-left: clamp(0.35rem, 1vmin, 0.5rem);
-}
-
-html[data-home-page] .home-call-logic-diagram__trunk-step--start .home-call-logic-diagram__node {
-  width: min(100%, 13.5rem);
+  width: min(100%, 16.5rem);
 }
 
 html[data-home-page] .home-call-logic-diagram__connector {
@@ -5088,21 +5063,23 @@ html[data-home-page] .home-call-logic-diagram__connector {
 html[data-home-page] .home-call-logic-diagram__connector--vertical {
   align-self: center;
   width: 1.5px;
-  height: clamp(0.58rem, 1.65vmin, 0.7rem);
-  margin-block: clamp(0.08rem, 0.22vmin, 0.1rem);
+  height: clamp(0.52rem, 1.48vmin, 0.64rem);
+  margin-block: clamp(0.06rem, 0.18vmin, 0.08rem);
 }
 
 html[data-home-page] .home-call-logic-diagram__connector--branch {
   align-self: center;
   width: 1.5px;
-  height: clamp(0.65rem, 1.85vmin, 0.76rem);
-  margin-block: clamp(0.06rem, 0.18vmin, 0.08rem);
+  height: clamp(0.58rem, 1.65vmin, 0.68rem);
+  margin-block: clamp(0.04rem, 0.12vmin, 0.06rem);
 }
 
 html[data-home-page] .home-call-logic-diagram__fork-rail {
   position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   width: 100%;
-  height: clamp(0.7rem, 2vmin, 0.82rem);
+  height: clamp(0.64rem, 1.82vmin, 0.76rem);
   margin-inline: auto;
 }
 
@@ -5115,53 +5092,53 @@ html[data-home-page] .home-call-logic-diagram__fork-rail-line {
 }
 
 html[data-home-page] .home-call-logic-diagram__fork-rail-line--left {
-  left: calc(clamp(0.1rem, 0.28vmin, 0.12rem) + min(38%, 11.5rem) / 2 - 0.75px);
+  left: 25%;
   width: 1.5px;
+  transform: translateX(-50%);
 }
 
 html[data-home-page] .home-call-logic-diagram__fork-rail-line--right {
-  right: calc(clamp(0.1rem, 0.28vmin, 0.12rem) + min(38%, 11.5rem) / 2 - 0.75px);
+  left: 75%;
   width: 1.5px;
+  transform: translateX(-50%);
 }
 
 html[data-home-page] .home-call-logic-diagram__fork-rail::before {
   content: "";
   position: absolute;
   top: 0;
-  left: calc(clamp(0.1rem, 0.28vmin, 0.12rem) + min(38%, 11.5rem) / 2);
-  right: calc(clamp(0.1rem, 0.28vmin, 0.12rem) + min(38%, 11.5rem) / 2);
+  left: 25%;
+  right: 25%;
   height: 1.5px;
   border-radius: 999px;
   background: color-mix(in srgb, #1e343a 14%, #ebe7e0);
 }
 
 html[data-home-page] .home-call-logic-diagram__branches {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: clamp(1.65rem, 5.5vmin, 2.75rem);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+  gap: clamp(0.85rem, 2.4vmin, 1.35rem);
   width: 100%;
-  margin-top: clamp(0.1rem, 0.28vmin, 0.12rem);
-  padding-inline: clamp(0.1rem, 0.28vmin, 0.12rem);
+  margin-top: 0;
 }
 
 html[data-home-page] .home-call-logic-diagram__branch-col {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  flex: 0 1 38%;
   min-width: 0;
-  max-width: 11.5rem;
+  max-width: none;
 }
 
-html[data-home-page] .home-call-logic-diagram__branch-col--yes {
-  align-self: flex-start;
-  margin-right: auto;
-}
-
+html[data-home-page] .home-call-logic-diagram__branch-col--yes,
 html[data-home-page] .home-call-logic-diagram__branch-col--no {
-  align-self: flex-end;
-  margin-left: auto;
+  align-self: stretch;
+  margin: 0;
+}
+
+html[data-home-page] .home-call-logic-diagram__branch-col .home-call-logic-diagram__node {
+  width: 100%;
 }
 
 html[data-home-page] .home-call-logic-diagram__branch-key {
@@ -5236,9 +5213,9 @@ html[data-home-page] .home-call-logic-diagram__add-step {
   align-items: center;
   justify-content: center;
   gap: clamp(0.26rem, 0.74vmin, 0.3rem);
-  width: min(100%, 13.5rem);
-  margin: clamp(0.22rem, 0.62vmin, 0.28rem) auto 0;
-  padding: clamp(0.42rem, 1.2vmin, 0.5rem) clamp(0.55rem, 1.55vmin, 0.64rem);
+  width: min(100%, 16.5rem);
+  margin: clamp(0.18rem, 0.52vmin, 0.24rem) auto 0;
+  padding: clamp(0.4rem, 1.14vmin, 0.48rem) clamp(0.55rem, 1.55vmin, 0.64rem);
   border-radius: clamp(0.46rem, 1.32vmin, 0.54rem);
   border: 0.5px dashed color-mix(in srgb, #1e343a 16%, #ebe7e0);
   background: rgba(255, 255, 255, 0.72);
@@ -6016,15 +5993,15 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow 
   width: 100% !important;
   max-width: none !important;
   margin-inline: 0 !important;
-  padding-inline: var(--home-workflow-stack-padding-x) !important;
+  padding-inline: 0 !important;
   transform: none !important;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-workflow-prompt__body {
   max-width: none;
   text-wrap: pretty;
-  font-size: 1.2rem !important;
-  line-height: 1.62 !important;
+  font-size: 1.12rem !important;
+  line-height: 1.6 !important;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-workflow-prompt__body span.inline-flex {
@@ -6034,19 +6011,19 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow 
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-section__workflow-input .build-workflow-ui-scale {
-  --build-workflow-ui-scale: var(--home-workflow-input-scale, 0.88);
-  width: min(
-    calc(var(--home-workflow-stack-max-width) / var(--build-workflow-ui-scale)),
-    calc(100% / var(--build-workflow-ui-scale))
-  );
-  max-width: min(
-    calc(var(--home-workflow-stack-max-width) / var(--build-workflow-ui-scale)),
-    calc(100% / var(--build-workflow-ui-scale))
-  );
-  margin-inline: auto;
-  margin-block: calc((var(--build-workflow-ui-scale) - 1) * 3.5rem);
-  transform: scale(var(--build-workflow-ui-scale));
-  transform-origin: center center;
+  width: 100%;
+  max-width: 100%;
+  margin-inline: 0;
+  margin-block: 0;
+  transform: none;
+}
+
+html[data-home-page] .home-feature-shader-band--workflow .home-feature-section__workflow-input .build-workflow-ui-scale > div {
+  padding: clamp(1.28rem, 3.7vmin, 1.48rem) clamp(1.32rem, 3.8vmin, 1.52rem) !important;
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-section__workflow-input .build-workflow-ui-scale > div {
+  padding: 1.45rem 1.55rem !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-feature-card-section__title--specialties {

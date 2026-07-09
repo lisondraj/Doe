@@ -9,19 +9,16 @@ const TRUNK_NODES = [
     id: "trigger",
     kind: "trigger" as const,
     label: "Call answered",
-    align: "center" as const,
   },
   {
     id: "verify",
     kind: "action" as const,
     label: "Verify patient",
-    align: "center" as const,
   },
   {
     id: "condition",
     kind: "condition" as const,
     label: "On active med list?",
-    align: "center" as const,
   },
 ] as const;
 
@@ -128,12 +125,12 @@ export function DoePhoneHomeCallLogicDiagram() {
         </div>
       </div>
 
-      <div className="home-call-logic-diagram__canvas">
+        <div className="home-call-logic-diagram__canvas">
         <div className="home-call-logic-diagram__trunk">
           {TRUNK_NODES.map((node, index) => (
             <div
               key={node.id}
-              className={`home-call-logic-diagram__trunk-step home-call-logic-diagram__trunk-step--${node.align}`}
+              className="home-call-logic-diagram__trunk-step home-call-logic-diagram__trunk-step--center"
             >
               {index > 0 ? <div className="home-call-logic-diagram__connector home-call-logic-diagram__connector--vertical" aria-hidden /> : null}
               <FlowNodeCard node={node} />
