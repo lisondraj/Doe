@@ -61,10 +61,6 @@ export function DoePhoneHomeRecallQueueVisual({ layout = "phone" }: { layout?: V
             ))}
           </ul>
         </div>
-
-        <p className={`home-recall-queue-visual__footer ${inter.className}`}>
-          Agent dials patients · openings matched automatically
-        </p>
       </div>
     </div>
   );
