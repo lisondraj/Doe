@@ -258,7 +258,7 @@ export function DoePhoneHomeAgentsCarousel() {
   const active = AGENTS_CAROUSEL_LOOP_ORBS[focusedPosition];
   const prevActiveLabelRef = useRef<string | null>(null);
   const [animatePeekLift, setAnimatePeekLift] = useState(false);
-  const trackSliding = !trackInstant;
+  const [isTrackAnimating, setIsTrackAnimating] = useState(false);
 
   useLayoutEffect(() => {
     positionRef.current = position;
@@ -282,11 +282,13 @@ export function DoePhoneHomeAgentsCarousel() {
 
   const goPrev = useCallback(() => {
     setTrackInstant(false);
+    setIsTrackAnimating(true);
     setPosition((current) => current - 1);
   }, []);
 
   const goNext = useCallback(() => {
     setTrackInstant(false);
+    setIsTrackAnimating(true);
     setPosition((current) => current + 1);
   }, []);
 
@@ -338,9 +340,11 @@ export function DoePhoneHomeAgentsCarousel() {
         currentPosition < AGENTS_CAROUSEL_ORB_COUNT * 2
       ) {
         setFocusedPosition(currentPosition);
+        setIsTrackAnimating(false);
         return;
       }
 
+      setIsTrackAnimating(false);
       setTrackInstant(true);
       setPosition((current) => {
         if (current < AGENTS_CAROUSEL_ORB_COUNT) {
@@ -391,7 +395,7 @@ export function DoePhoneHomeAgentsCarousel() {
           <div
             className={`home-agents-carousel__track${
               trackInstant ? " home-agents-carousel__track--instant" : ""
-            }${trackSliding ? " home-agents-carousel__track--sliding" : ""}`}
+            }${isTrackAnimating ? " home-agents-carousel__track--sliding" : ""}`}
             onTransitionEnd={handleTrackTransitionEnd}
             style={{
               transform: `translate3d(calc(50% - var(--home-agents-orb-half) - ${position} * var(--home-agents-orb-step)), 0, 0)`,
