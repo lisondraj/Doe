@@ -42,11 +42,11 @@ const ALL_SPECIALTIES = [
   "Behavioral Health",
 ] as const;
 
-const PHONE_ROW_COUNT = 6;
-const DESKTOP_ROW_COUNT = 8;
+const PHONE_ROW_COUNT = 8;
+const DESKTOP_ROW_COUNT = 10;
 const CHIP_TONE_COUNT = 4;
 
-const MARQUEE_DURATIONS = [54, 68, 48, 62, 58, 72, 52, 64] as const;
+const MARQUEE_DURATIONS = [54, 68, 48, 62, 58, 72, 52, 64, 56, 70] as const;
 
 function buildSpecialtyRows(rowCount: number): readonly (readonly string[])[] {
   const buckets = Array.from({ length: rowCount }, () => [] as string[]);
@@ -67,10 +67,9 @@ export function DoePhoneHomeSpecialtyPillColumns({
 
   return (
     <div
-      className="home-feature-specialties__tapestry relative min-h-0 flex-1 overflow-hidden"
+      className="home-feature-specialties__tapestry relative min-h-0 flex-1"
       data-specialty-rows={rowCount}
     >
-      <div className="home-feature-specialties__vignette" aria-hidden />
       <div className="home-feature-specialties__rows">
         {rows.map((row, rowIndex) => {
           const sequence = [...row, ...row];
@@ -78,8 +77,6 @@ export function DoePhoneHomeSpecialtyPillColumns({
 
           return (
             <div key={`specialty-row-${rowIndex}`} className="home-feature-specialties__row">
-              <div className="home-feature-specialties__row-edge home-feature-specialties__row-edge--left" aria-hidden />
-              <div className="home-feature-specialties__row-edge home-feature-specialties__row-edge--right" aria-hidden />
               <div
                 className={`home-feature-specialties__marquee${
                   reverse ? " home-feature-specialties__marquee--reverse" : ""
