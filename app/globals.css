@@ -3425,6 +3425,15 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   transform-origin: center center;
 }
 
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__grain-shell--paper
+  canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb .hero-speaking-orb__core::after {
   content: "";
   position: absolute;

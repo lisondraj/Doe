@@ -8,6 +8,7 @@ import { HomeAgentsCarouselReferralsPeek } from "@/components/doephone/HomeAgent
 import { HomeAgentsCarouselRefillPeek } from "@/components/doephone/HomeAgentsCarouselRefillPeek";
 import { HomeAgentsCarouselSchedulingPeek } from "@/components/doephone/HomeAgentsCarouselSchedulingPeek";
 import { HeroDialOrbGrainShader } from "@/components/doephone/HeroDialOrbGrainShader";
+import { HeroDialOrbPaperShader } from "@/components/doephone/HeroDialOrbPaperShader";
 import {
   useCallback,
   useEffect,
@@ -28,11 +29,15 @@ import {
 } from "@/lib/doephone/resolve-doe-phone-variant";
 import { AGENTS_CAROUSEL_DESCRIPTIONS } from "@/lib/doephone/agents-carousel-copy";
 import {
+  HERO_DIAL_ORB_CAROUSEL_IPHONE_SHADER,
   HERO_DIAL_ORB_CAROUSEL_SHADER,
   HERO_DIAL_ORBS,
   heroDialOrbCarouselScheme,
   type HeroDialOrbScheme,
 } from "@/lib/doephone/hero-dial-orbs";
+import {
+  SHADER_WEBGL_SLOT_PRIORITY,
+} from "@/lib/doephone/shader-webgl-budget";
 
 function orbAccentStyle(scheme: HeroDialOrbScheme): CSSProperties {
   const [dark, mid, light] = scheme.colors;
@@ -133,6 +138,11 @@ function AgentCarouselOrb({
 }) {
   const displayScheme = heroDialOrbCarouselScheme(scheme);
   const blur = isDesktop ? getOrbBlur(distance, focused) : 0;
+  const isPhone = layoutReady && !isDesktop;
+  const mountPaperShader = isPhone && distance <= 2;
+  const paperSlotPriority = focused
+    ? SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_FOCUSED
+    : SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_ADJACENT;
   const showPeek = focused && layoutReady;
   const [peekLifted, setPeekLifted] = useState(false);
 
@@ -199,10 +209,19 @@ function AgentCarouselOrb({
       >
         <div className="hero-speaking-orb__progress-shell">
           <div className="hero-speaking-orb__core relative overflow-hidden rounded-full">
-            <HeroDialOrbGrainShader
-              scheme={displayScheme}
-              shaderConfig={HERO_DIAL_ORB_CAROUSEL_SHADER}
-            />
+            {isPhone ? (
+              <HeroDialOrbPaperShader
+                scheme={displayScheme}
+                shaderConfig={HERO_DIAL_ORB_CAROUSEL_IPHONE_SHADER}
+                slotPriority={paperSlotPriority}
+                active={mountPaperShader}
+              />
+            ) : (
+              <HeroDialOrbGrainShader
+                scheme={displayScheme}
+                shaderConfig={HERO_DIAL_ORB_CAROUSEL_SHADER}
+              />
+            )}
             {showPeek ? (
               <div className="home-agents-carousel__orb-peek-reveal">
                 {isDesktop ? (
