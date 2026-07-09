@@ -5369,6 +5369,11 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
     cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-input-delay, 2.85s) both;
 }
 
+.doephone-section-reveal--in.doephone-section-reveal--agents-carousel {
+  animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 1.75s)
+    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-agents-carousel-delay, 0ms) both;
+}
+
 .doephone-section-reveal--in.doephone-section-reveal--agents-orbs {
   animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 1.75s)
     cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-agents-orbs-delay, 0ms) both;
@@ -5405,12 +5410,14 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
   transform: translateY(-7px);
 }
 
+html[data-home-page][data-layout="desktop"] .doephone-section-reveal--agents-carousel,
 html[data-home-page]:has(.doephone-mobile-root) .doephone-section-reveal--agents-orbs,
 html[data-home-page]:has(.doephone-mobile-root) .doephone-section-reveal--agents-label,
 html[data-home-page]:has(.doephone-mobile-root) .doephone-section-reveal--agents-nav {
   transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+html[data-home-page][data-layout="desktop"] .doephone-section-reveal--in.doephone-section-reveal--agents-carousel:hover,
 html[data-home-page]:has(.doephone-mobile-root) .doephone-section-reveal--in.doephone-section-reveal--agents-orbs:hover,
 html[data-home-page]:has(.doephone-mobile-root) .doephone-section-reveal--in.doephone-section-reveal--agents-label:hover,
 html[data-home-page]:has(.doephone-mobile-root) .doephone-section-reveal--in.doephone-section-reveal--agents-nav:hover {

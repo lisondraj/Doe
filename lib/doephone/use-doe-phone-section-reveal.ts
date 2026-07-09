@@ -50,7 +50,16 @@ export function useDoePhoneSectionReveal(threshold = 0.12) {
 }
 
 export function doePhoneSectionRevealSegmentClass(
-  segment: "title" | "carousel" | "menu" | "badge" | "input" | "agents-orbs" | "agents-label" | "agents-nav",
+  segment:
+    | "title"
+    | "carousel"
+    | "menu"
+    | "badge"
+    | "input"
+    | "agents-carousel"
+    | "agents-orbs"
+    | "agents-label"
+    | "agents-nav",
   revealed: boolean,
 ) {
   return [

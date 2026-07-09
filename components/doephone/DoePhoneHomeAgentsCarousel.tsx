@@ -8,9 +8,29 @@ import { HomeAgentsCarouselReferralsPeek } from "@/components/doephone/HomeAgent
 import { HomeAgentsCarouselRefillPeek } from "@/components/doephone/HomeAgentsCarouselRefillPeek";
 import { HomeAgentsCarouselSchedulingPeek } from "@/components/doephone/HomeAgentsCarouselSchedulingPeek";
 import { HeroDialOrbGrainShader } from "@/components/doephone/HeroDialOrbGrainShader";
-import { useCallback, useEffect, useRef, useState, type CSSProperties, type TouchEvent, type TransitionEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type TouchEvent,
+  type TransitionEvent,
+} from "react";
 
 import { suisseIntl, suisseIntlLight } from "@/lib/home/fonts";
+import {
+  DOEPHONE_DESKTOP_MEDIA_QUERY,
+  readBootstrappedDoePhoneVariant,
+  resolveDoePhoneVariant,
+  type DoePhoneVariant,
+} from "@/lib/doephone/resolve-doe-phone-variant";
+import { doephoneAgentsRevealStyleVars } from "@/lib/doephone/section-reveal-timing";
+import {
+  doePhoneSectionRevealSegmentClass,
+  useDoePhoneSectionReveal,
+} from "@/lib/doephone/use-doe-phone-section-reveal";
 import { AGENTS_CAROUSEL_DESCRIPTIONS } from "@/lib/doephone/agents-carousel-copy";
 import {
   HERO_DIAL_ORB_CAROUSEL_SHADER,
@@ -166,12 +186,23 @@ const AGENTS_CAROUSEL_SWIPE_THRESHOLD_PX = 44;
 
 /** Hero agent orbs — horizontal carousel with chevrons and label. */
 export function DoePhoneHomeAgentsCarousel() {
+  const [layoutVariant, setLayoutVariant] = useState<DoePhoneVariant>(readBootstrappedDoePhoneVariant);
+  const isDesktop = layoutVariant === "desktop";
+  const { ref: sectionRef, revealed } = useDoePhoneSectionReveal(0.15);
   const [position, setPosition] = useState(AGENTS_CAROUSEL_LOOP_START);
   const [trackInstant, setTrackInstant] = useState(true);
   const reenableTransitionRef = useRef<number | null>(null);
   const swipeStartRef = useRef<{ x: number; y: number } | null>(null);
 
   const active = AGENTS_CAROUSEL_LOOP_ORBS[position];
+
+  useLayoutEffect(() => {
+    setLayoutVariant(readBootstrappedDoePhoneVariant());
+    const sync = () => setLayoutVariant(resolveDoePhoneVariant());
+    const mq = window.matchMedia(DOEPHONE_DESKTOP_MEDIA_QUERY);
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
 
   const goPrev = useCallback(() => {
     setTrackInstant(false);
@@ -263,7 +294,14 @@ export function DoePhoneHomeAgentsCarousel() {
   }, [trackInstant, position]);
 
   return (
-    <div className={`home-agents-carousel ${suisseIntl.className}`} aria-hidden>
+    <div
+      ref={sectionRef}
+      className={`home-agents-carousel ${suisseIntl.className}${
+        isDesktop ? ` ${doePhoneSectionRevealSegmentClass("agents-carousel", revealed)}` : ""
+      }`}
+      style={isDesktop ? doephoneAgentsRevealStyleVars() : undefined}
+      aria-hidden
+    >
       <div className="home-agents-carousel__stage">
         <div
           className="home-agents-carousel__viewport"
