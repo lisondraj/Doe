@@ -1319,7 +1319,7 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-surface {
   left: 50%;
   top: 50%;
   transform-origin: center center;
-  transform: translate(-50%, -26%) scale(calc(1.46 * var(--home-agents-peek-orb-scale)));
+  transform: translate(-50%, -43%) scale(calc(1.46 * var(--home-agents-peek-orb-scale)));
   display: flex;
   flex-direction: column;
   width: clamp(19.5rem, 29vmin, 24.5rem);
@@ -1348,7 +1348,7 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-day {
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-day--active {
-  background: transparent;
+  background: rgba(255, 220, 190, 0.16);
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-day-head {
@@ -1363,9 +1363,15 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-day--active .home-ag
   position: relative;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-day--active .home-agents-carousel__scheduling-peek-day-date {
-  color: #fff8f0;
-  font-weight: 600;
+html[data-home-page] .home-agents-carousel__scheduling-peek-day--active .home-agents-carousel__scheduling-peek-day-head::after {
+  content: "";
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  bottom: 0;
+  height: 1.5px;
+  border-radius: 9999px;
+  background: rgba(255, 236, 220, 0.72);
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-day-label {
@@ -1379,12 +1385,17 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-day-label {
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-day-date {
-  color: rgba(255, 248, 240, 0.82);
+  color: rgba(255, 248, 240, 0.88);
   font-size: clamp(0.68rem, 1.02vmin, 0.78rem);
   font-weight: 500;
   line-height: 1;
   text-align: center;
   font-variant-numeric: tabular-nums;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-day--active .home-agents-carousel__scheduling-peek-day-date {
+  color: #fff0e2;
+  font-weight: 600;
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-day-appts {
@@ -1398,43 +1409,53 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-appt {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: clamp(0.05rem, 0.08vmin, 0.06rem);
+  gap: clamp(0.06rem, 0.1vmin, 0.08rem);
   width: 100%;
   min-width: 0;
   min-height: clamp(1.28rem, 1.92vmin, 1.48rem);
   padding: clamp(0.22rem, 0.34vmin, 0.26rem) clamp(0.16rem, 0.24vmin, 0.2rem);
-  border-radius: clamp(0.22rem, 0.34vmin, 0.26rem);
+  border-radius: clamp(0.18rem, 0.28vmin, 0.22rem);
   border: none;
-  box-shadow: none;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-appt--fill {
   min-height: clamp(1.28rem, 1.92vmin, 1.48rem);
-  background: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.32);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.26);
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-appt--highlighted {
-  min-height: clamp(1.48rem, 2.22vmin, 1.68rem);
-  padding: clamp(0.24rem, 0.36vmin, 0.28rem) clamp(0.18rem, 0.28vmin, 0.22rem);
-  background: rgba(255, 236, 220, 0.36);
+  min-height: clamp(1.72rem, 2.58vmin, 1.98rem);
+  padding: clamp(0.28rem, 0.42vmin, 0.34rem) clamp(0.18rem, 0.28vmin, 0.22rem);
+  background: rgba(255, 220, 190, 0.42);
+  box-shadow: inset 0 0 0 1px rgba(255, 236, 220, 0.38);
   opacity: 1 !important;
   filter: none !important;
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-appt-title {
   color: #ffffff;
-  font-size: clamp(0.6rem, 0.9vmin, 0.7rem);
+  font-size: clamp(0.58rem, 0.88vmin, 0.68rem);
   font-weight: 600;
-  line-height: 1.1;
+  line-height: 1.15;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   text-shadow: 0 1px 10px rgba(30, 52, 58, 0.28);
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-appt-meta {
-  color: rgba(255, 248, 240, 0.82);
+html[data-home-page] .home-agents-carousel__scheduling-peek-appt-type {
+  color: rgba(255, 250, 245, 0.92);
   font-size: clamp(0.5rem, 0.75vmin, 0.58rem);
+  font-weight: 500;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-appt-meta {
+  color: rgba(255, 248, 240, 0.78);
+  font-size: clamp(0.48rem, 0.72vmin, 0.56rem);
   font-weight: 500;
   line-height: 1.1;
   white-space: nowrap;
@@ -1449,7 +1470,8 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__scheduling-peek-appt--fill {
   min-height: clamp(1.42rem, calc(var(--app-vw, 100vw) * 0.042), 1.72rem);
   padding-block: clamp(0.28rem, calc(var(--app-vw, 100vw) * 0.0085), 0.34rem);
-  background: rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.34);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
 }
 
 /* Desktop agents carousel — Labs Agent dual UI peek (centered, top/bottom clip). */
@@ -2621,6 +2643,14 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
   .home-agents-carousel__scheduling-peek-day--active
+  .home-agents-carousel__scheduling-peek-day-head::after {
+  background: var(--carousel-peek-dusk-horizon);
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-day--active
   .home-agents-carousel__scheduling-peek-day-date {
   color: var(--carousel-peek-dusk-horizon);
 }
@@ -2629,14 +2659,15 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
   .home-agents-carousel__scheduling-peek-appt--fill {
-  background: rgba(232, 160, 96, 0.16);
+  background: rgba(232, 160, 96, 0.2);
+  box-shadow: inset 0 0 0 1px rgba(232, 160, 96, 0.24);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
   .home-agents-carousel__scheduling-peek-appt--highlighted {
-  background: rgba(232, 160, 96, 0.28);
+  background: var(--carousel-peek-dusk-highlight);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
@@ -2652,6 +2683,21 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__scheduling-peek-appt--highlighted
   .home-agents-carousel__scheduling-peek-appt-title {
   color: var(--carousel-peek-dusk-ink);
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-appt-type {
+  color: var(--carousel-peek-dusk-muted);
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-appt--highlighted
+  .home-agents-carousel__scheduling-peek-appt-type {
+  color: var(--carousel-peek-dusk-ink-secondary);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
@@ -3194,16 +3240,30 @@ html[data-home-page][data-layout="desktop"] .home-agents-carousel__caption {
   max-width: min(40rem, 62vw);
   padding-inline: max(var(--proto-phone-gutter-left), var(--proto-phone-gutter-right));
   flex: 0 0 auto;
+  min-height: calc(
+    var(--home-agents-caption-control-size) + clamp(0.87rem, 2.1vmin, 1.37rem) + calc(1.48em * 4)
+  );
 }
 
 html[data-home-page][data-layout="desktop"] .home-agents-carousel__label-row {
-  display: flex;
-  width: 100%;
+  display: grid;
+  grid-template-columns: var(--home-agents-caption-control-size) minmax(0, 1fr) var(--home-agents-caption-control-size);
   align-items: center;
-  justify-content: center;
-  gap: clamp(0.65rem, 1.8vmin, 1.05rem);
+  justify-items: center;
+  width: 100%;
+  column-gap: clamp(0.65rem, 1.8vmin, 1.05rem);
   padding-inline: clamp(0.85rem, 2.5vw, 1.65rem);
   margin-bottom: clamp(0.32rem, 0.75vmin, 0.52rem);
+}
+
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__label-row .home-agents-carousel__nav--left {
+  grid-column: 1;
+  justify-self: center;
+}
+
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__label-row .home-agents-carousel__nav--right {
+  grid-column: 3;
+  justify-self: center;
 }
 
 html[data-home-page][data-layout="desktop"] .home-agents-carousel__label-row .hero-speaking-orb__tag--carousel {
@@ -3211,9 +3271,11 @@ html[data-home-page][data-layout="desktop"] .home-agents-carousel__label-row .he
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  grid-column: 2;
+  justify-self: center;
   flex: 0 0 auto;
   width: max-content;
-  max-width: none;
+  max-width: 100%;
   min-height: var(--home-agents-caption-control-size);
   padding: 0 clamp(1.75rem, 3.5vmin, 2.15rem);
   border-color: rgba(255, 255, 255, 0.82);
@@ -3223,7 +3285,6 @@ html[data-home-page][data-layout="desktop"] .home-agents-carousel__label-row .he
   pointer-events: none;
   transform: none;
   will-change: auto;
-  transition: opacity 360ms ease;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.88),
     inset 0 -1px 0 rgba(237, 235, 232, 0.42);
@@ -3239,6 +3300,7 @@ html[data-home-page][data-layout="desktop"] .home-agents-carousel__description {
   margin: 0;
   width: 100%;
   max-width: min(28rem, 46vw);
+  min-height: calc(1.48em * 4);
   color: rgba(26, 18, 8, 0.72);
   font-size: clamp(1.05rem, 1.5vmin, 1.22rem);
   font-weight: 300;
@@ -3252,7 +3314,6 @@ html[data-home-page][data-layout="desktop"] .home-agents-carousel__description {
   line-clamp: 4;
   overflow: hidden;
   max-height: calc(1.48em * 4);
-  transition: opacity 360ms ease;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -4514,16 +4575,35 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   max-width: min(30rem, calc(var(--app-vw, 100vw) * 0.96));
   padding-inline: max(var(--proto-phone-gutter-left), var(--proto-phone-gutter-right));
   flex: 0 0 auto;
+  min-height: calc(
+    var(--home-agents-caption-control-size) + clamp(0.76rem, calc(var(--app-vw, 100vw) * 0.023), 1.26rem) +
+      calc(1.48em * 4)
+  );
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__label-row {
-  display: flex;
-  width: 100%;
+  display: grid;
+  grid-template-columns: var(--home-agents-caption-control-size) minmax(0, 1fr) var(--home-agents-caption-control-size);
   align-items: center;
-  justify-content: center;
-  gap: clamp(0.45rem, calc(var(--app-vw, 100vw) * 0.015), 0.75rem);
+  justify-items: center;
+  width: 100%;
+  column-gap: clamp(0.45rem, calc(var(--app-vw, 100vw) * 0.015), 0.75rem);
   padding-inline: clamp(0.35rem, calc(var(--app-vw, 100vw) * 0.015), 0.85rem);
   margin-bottom: clamp(0.28rem, calc(var(--app-vw, 100vw) * 0.0085), 0.48rem);
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__label-row
+  .home-agents-carousel__nav--left {
+  grid-column: 1;
+  justify-self: center;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__label-row
+  .home-agents-carousel__nav--right {
+  grid-column: 3;
+  justify-self: center;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__label-row .hero-speaking-orb__tag--carousel {
@@ -4531,9 +4611,11 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  grid-column: 2;
+  justify-self: center;
   flex: 0 0 auto;
   width: max-content;
-  max-width: none;
+  max-width: 100%;
   min-height: var(--home-agents-caption-control-size);
   padding: 0 clamp(1.65rem, calc(var(--app-vw, 100vw) * 0.0485), 2rem);
   border-color: rgba(255, 255, 255, 0.82);
@@ -4557,6 +4639,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   margin: 0;
   width: 100%;
   max-width: min(22rem, calc(var(--app-vw, 100vw) * 0.72));
+  min-height: calc(1.48em * 4);
   color: rgba(26, 18, 8, 0.72);
   font-size: clamp(1rem, calc(var(--app-vw, 100vw) * 0.032), 1.14rem);
   font-weight: 300;

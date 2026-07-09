@@ -286,13 +286,15 @@ export function DoePhoneHomeAgentsCarousel() {
 
   const active = AGENTS_CAROUSEL_LOOP_ORBS[position];
   const prevActiveLabelRef = useRef<string | null>(null);
+  const isInitialCaptionRef = useRef(true);
   const [animatePeekLift, setAnimatePeekLift] = useState(false);
 
   useLayoutEffect(() => {
     const labelChanged =
       prevActiveLabelRef.current === null || prevActiveLabelRef.current !== active.label;
-    setAnimatePeekLift(isDesktop && labelChanged);
+    setAnimatePeekLift(isDesktop && labelChanged && !isInitialCaptionRef.current);
     prevActiveLabelRef.current = active.label;
+    isInitialCaptionRef.current = false;
   }, [position, active.label, isDesktop]);
 
   useLayoutEffect(() => {
