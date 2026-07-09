@@ -126,16 +126,12 @@ function AgentCarouselOrb({
   distance,
   isDesktop,
   isPhoneLayout,
-  layoutReady,
-  animatePeekLift,
 }: {
   scheme: HeroDialOrbScheme;
   focused: boolean;
   distance: number;
   isDesktop: boolean;
   isPhoneLayout: boolean;
-  layoutReady: boolean;
-  animatePeekLift: boolean;
 }) {
   const displayScheme = isPhoneLayout
     ? heroDialOrbCarouselIphonePaperScheme(scheme)
@@ -144,55 +140,12 @@ function AgentCarouselOrb({
   const paperSlotPriority = focused
     ? SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_FOCUSED
     : SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_ADJACENT;
-  const mountPeek = isPhoneLayout || (focused && layoutReady);
+  const mountPeek = isPhoneLayout || focused;
   const peekVisible = isPhoneLayout || focused;
-  const [peekLifted, setPeekLifted] = useState(false);
-
-  useLayoutEffect(() => {
-    if (!focused) {
-      setPeekLifted(false);
-      return;
-    }
-
-    if (!isDesktop) {
-      setPeekLifted(true);
-      return;
-    }
-
-    if (!animatePeekLift) {
-      setPeekLifted(true);
-      return;
-    }
-
-    setPeekLifted(false);
-    let cancelled = false;
-    const frame = window.requestAnimationFrame(() => {
-      if (!cancelled) {
-        setPeekLifted(true);
-      }
-    });
-
-    return () => {
-      cancelled = true;
-      window.cancelAnimationFrame(frame);
-    };
-  }, [focused, isDesktop, animatePeekLift, scheme.label]);
-
-  const peekLiftClass = (() => {
-    if (!mountPeek || !peekVisible) {
-      return "";
-    }
-
-    if (!isDesktop) {
-      return "";
-    }
-
-    if (!animatePeekLift) {
-      return "home-agents-carousel__orb-peek-lift home-agents-carousel__orb-peek-lift--in home-agents-carousel__orb-peek-lift--instant";
-    }
-
-    return `home-agents-carousel__orb-peek-lift${peekLifted ? " home-agents-carousel__orb-peek-lift--in" : ""}`;
-  })();
+  const peekLiftClass =
+    mountPeek && peekVisible && isDesktop
+      ? "home-agents-carousel__orb-peek-lift home-agents-carousel__orb-peek-lift--in home-agents-carousel__orb-peek-lift--instant"
+      : "";
 
   return (
     <div
@@ -276,7 +229,7 @@ const AGENTS_CAROUSEL_SWIPE_THRESHOLD_PX = 44;
 /** Hero agent orbs — horizontal carousel with chevrons and label. */
 export function DoePhoneHomeAgentsCarousel() {
   const [layoutVariant, setLayoutVariant] = useState<DoePhoneVariant>(readBootstrappedDoePhoneVariant);
-  const [layoutReady, setLayoutReady] = useState(false);
+  const [layoutReady, setLayoutReady] = useState(true);
   const isDesktop = layoutReady && layoutVariant === "desktop";
   const isPhoneLayout = layoutVariant === "phone";
   const [position, setPosition] = useState(AGENTS_CAROUSEL_LOOP_START);
@@ -285,17 +238,6 @@ export function DoePhoneHomeAgentsCarousel() {
   const swipeStartRef = useRef<{ x: number; y: number } | null>(null);
 
   const active = AGENTS_CAROUSEL_LOOP_ORBS[position];
-  const prevActiveLabelRef = useRef<string | null>(null);
-  const isInitialCaptionRef = useRef(true);
-  const [animatePeekLift, setAnimatePeekLift] = useState(false);
-
-  useLayoutEffect(() => {
-    const labelChanged =
-      prevActiveLabelRef.current === null || prevActiveLabelRef.current !== active.label;
-    setAnimatePeekLift(isDesktop && labelChanged && !isInitialCaptionRef.current);
-    prevActiveLabelRef.current = active.label;
-    isInitialCaptionRef.current = false;
-  }, [position, active.label, isDesktop]);
 
   useLayoutEffect(() => {
     setLayoutVariant(readBootstrappedDoePhoneVariant());
@@ -423,8 +365,6 @@ export function DoePhoneHomeAgentsCarousel() {
                 distance={Math.abs(orbIndex - position)}
                 isDesktop={isDesktop}
                 isPhoneLayout={isPhoneLayout}
-                layoutReady={layoutReady}
-                animatePeekLift={animatePeekLift}
               />
             ))}
           </div>
