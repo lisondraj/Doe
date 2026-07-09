@@ -3369,7 +3369,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   flex: 0 0 var(--home-agents-orb-size);
   overflow: visible;
   filter: none;
-  contain: layout style;
+  contain: none;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb-shell .home-agents-carousel__orb {
@@ -3420,9 +3420,13 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   box-shadow: none;
 }
 
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb .hero-speaking-orb__grain-shell {
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb .hero-speaking-orb__grain-shell--css {
   transform: scale(1.05);
   transform-origin: center center;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb .hero-speaking-orb__grain-shell--paper {
+  transform: none;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
@@ -3430,8 +3434,17 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .hero-speaking-orb__grain-shell--paper
   canvas {
   display: block !important;
-  width: 100%;
-  height: 100%;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+    .home-agents-carousel__orb
+    .hero-speaking-orb__grain-shell--paper
+    canvas {
+    display: block !important;
+  }
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])

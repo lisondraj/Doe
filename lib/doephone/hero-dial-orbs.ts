@@ -109,14 +109,14 @@ export type HeroDialOrbPaperShaderConfig = {
 };
 
 export const HERO_DIAL_ORB_CAROUSEL_IPHONE_SHADER = {
-  shape: "ripple",
-  softness: 0.74,
-  intensity: 0.15,
+  shape: "sphere",
+  softness: 0.68,
+  intensity: 0.2,
   fit: "cover",
-  scale: 1.64,
-  rotation: 166,
-  offsetX: 0.18,
-  offsetY: -0.24,
+  scale: 1.62,
+  rotation: 132,
+  offsetX: 0.12,
+  offsetY: -0.16,
   worldWidth: 960,
   worldHeight: 960,
   speed: 0,

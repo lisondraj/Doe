@@ -126,6 +126,7 @@ function AgentCarouselOrb({
   focused,
   distance,
   isDesktop,
+  isPhoneLayout,
   layoutReady,
   animatePeekLift,
 }: {
@@ -133,15 +134,12 @@ function AgentCarouselOrb({
   focused: boolean;
   distance: number;
   isDesktop: boolean;
+  isPhoneLayout: boolean;
   layoutReady: boolean;
   animatePeekLift: boolean;
 }) {
   const displayScheme = heroDialOrbCarouselScheme(scheme);
   const blur = isDesktop ? getOrbBlur(distance, focused) : 0;
-  const isPhone = layoutReady && !isDesktop;
-  const paperSlotPriority = focused
-    ? SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_FOCUSED
-    : SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_ADJACENT;
   const showPeek = focused && layoutReady;
   const [peekLifted, setPeekLifted] = useState(false);
 
@@ -208,17 +206,19 @@ function AgentCarouselOrb({
       >
         <div className="hero-speaking-orb__progress-shell">
           <div className="hero-speaking-orb__core relative overflow-hidden rounded-full">
-            {isPhone ? (
+            {isPhoneLayout ? (
               <>
                 <HeroDialOrbGrainShader
                   scheme={displayScheme}
                   shaderConfig={HERO_DIAL_ORB_CAROUSEL_SHADER}
                 />
-                <HeroDialOrbPaperShader
-                  scheme={displayScheme}
-                  shaderConfig={HERO_DIAL_ORB_CAROUSEL_IPHONE_SHADER}
-                  slotPriority={paperSlotPriority}
-                />
+                {focused ? (
+                  <HeroDialOrbPaperShader
+                    scheme={displayScheme}
+                    shaderConfig={HERO_DIAL_ORB_CAROUSEL_IPHONE_SHADER}
+                    slotPriority={SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_FOCUSED}
+                  />
+                ) : null}
               </>
             ) : (
               <HeroDialOrbGrainShader
@@ -268,9 +268,10 @@ const AGENTS_CAROUSEL_SWIPE_THRESHOLD_PX = 44;
 
 /** Hero agent orbs — horizontal carousel with chevrons and label. */
 export function DoePhoneHomeAgentsCarousel() {
-  const [layoutVariant, setLayoutVariant] = useState<DoePhoneVariant>("phone");
+  const [layoutVariant, setLayoutVariant] = useState<DoePhoneVariant>(readBootstrappedDoePhoneVariant);
   const [layoutReady, setLayoutReady] = useState(false);
   const isDesktop = layoutReady && layoutVariant === "desktop";
+  const isPhoneLayout = layoutVariant === "phone";
   const [position, setPosition] = useState(AGENTS_CAROUSEL_LOOP_START);
   const [trackInstant, setTrackInstant] = useState(true);
   const reenableTransitionRef = useRef<number | null>(null);
@@ -412,6 +413,7 @@ export function DoePhoneHomeAgentsCarousel() {
                 focused={orbIndex === position}
                 distance={Math.abs(orbIndex - position)}
                 isDesktop={isDesktop}
+                isPhoneLayout={isPhoneLayout}
                 layoutReady={layoutReady}
                 animatePeekLift={animatePeekLift}
               />

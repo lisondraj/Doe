@@ -84,7 +84,8 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
   return (
     <div
       ref={shellRef}
-      className="hero-speaking-orb__grain-shell hero-speaking-orb__grain-shell--paper hero-speaking-orb__grain-shell--painted pointer-events-none absolute inset-0 z-[1] overflow-hidden rounded-full"
+      className="hero-speaking-orb__grain-shell hero-speaking-orb__grain-shell--paper hero-speaking-orb__grain-shell--painted pointer-events-none absolute inset-0 overflow-hidden rounded-full"
+      style={{ background: "transparent" }}
       aria-hidden
     >
       {showShader ? (
