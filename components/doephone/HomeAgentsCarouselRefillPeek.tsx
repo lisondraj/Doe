@@ -5,7 +5,8 @@ import { inter, suisseIntl } from "@/lib/home/fonts";
 const RX = {
   patient: "Patel, M.",
   drug: "Lisinopril 10 mg",
-  request: "Need my blood pressure refill called in",
+  requestLine1: "Need my blood pressure refill",
+  requestLine2: "called in",
   pharmacy: "CVS #4821",
   eta: "Ready 4:30 PM",
 } as const;
@@ -71,7 +72,10 @@ export function HomeAgentsCarouselRefillPeek() {
               />
             ))}
           </div>
-          <p className="home-agents-carousel__refill-peek-quote">&ldquo;{RX.request}&rdquo;</p>
+          <p className="home-agents-carousel__refill-peek-quote">
+            <span className="home-agents-carousel__refill-peek-quote-line">&ldquo;{RX.requestLine1}</span>
+            <span className="home-agents-carousel__refill-peek-quote-line">{RX.requestLine2}&rdquo;</span>
+          </p>
         </div>
 
         <div className="home-agents-carousel__refill-peek-rx">
