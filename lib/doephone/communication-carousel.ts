@@ -52,7 +52,7 @@ export const DOEPHONE_COMMUNICATION_SLIDES: readonly DoePhoneCommunicationSlide[
     id: "ambient",
     menuLabel: "Ambient",
     description:
-      "Clinical questions should not require hunting through tabs or rebuilding context from scratch. Ambient lets you ask in natural language with the patient already in frame, so trends, labs, and history come back while you stay in flow at the point of care.",
+      "Care gaps should not sit in a spreadsheet until someone has time to chase them. Recall surfaces overdue patients automatically, prioritizes who needs outreach first, and keeps every campaign visible in one queue.",
     backdrop: {
       slideIndex: 4,
       label: "Ambient",

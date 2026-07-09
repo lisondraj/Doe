@@ -24,7 +24,7 @@ export function DoePhoneCommunicationSlideVisual({
     case "front-desk":
       return <DoePhoneFrontDeskInboxVisual />;
     case "ambient":
-      return <DoePhoneAmbientVisual />;
+      return <DoePhoneAmbientVisual layout={layout} />;
     case "integrate":
       return <DoePhoneIntegrateVisual />;
     case "billing":

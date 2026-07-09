@@ -23,8 +23,8 @@ export const HOME_FEATURE_SECTION_TITLES: Record<
     line2: "call histories.",
   },
   ambient: {
-    line1: "Ambient at the",
-    line2: "point of care.",
+    line1: "Overdue patients",
+    line2: "surface automatically.",
   },
   billing: {
     line1: "Billing without the",
