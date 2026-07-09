@@ -58,13 +58,6 @@ const WEEK_DAYS = [
 const BROOKS_DAY_INDEX = 2;
 const BROOKS_APPT_INDEX = 1;
 
-function formatApptType(type: string) {
-  return type
-    .split("-")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join("-");
-}
-
 function getApptSpread(dayIndex: number, apptIndex: number, isHighlighted: boolean) {
   if (isHighlighted) {
     return 0;
@@ -139,9 +132,6 @@ export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: 
                         {isHighlighted ? (
                           <>
                             <span className="home-agents-carousel__scheduling-peek-appt-title">{appt.name}</span>
-                            <span className={`home-agents-carousel__scheduling-peek-appt-type ${inter.className}`}>
-                              {formatApptType(appt.type)}
-                            </span>
                             <span className={`home-agents-carousel__scheduling-peek-appt-meta ${inter.className}`}>
                               {appt.meta}
                             </span>

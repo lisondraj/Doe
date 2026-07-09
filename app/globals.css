@@ -1319,7 +1319,7 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-surface {
   left: 50%;
   top: 50%;
   transform-origin: center center;
-  transform: translate(-50%, -43%) scale(calc(1.46 * var(--home-agents-peek-orb-scale)));
+  transform: translate(-50%, -26%) scale(calc(1.46 * var(--home-agents-peek-orb-scale)));
   display: flex;
   flex-direction: column;
   width: clamp(19.5rem, 29vmin, 24.5rem);
@@ -1348,7 +1348,7 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-day {
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-day--active {
-  background: rgba(255, 220, 190, 0.16);
+  background: transparent;
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-day-head {
@@ -1363,15 +1363,9 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-day--active .home-ag
   position: relative;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-day--active .home-agents-carousel__scheduling-peek-day-head::after {
-  content: "";
-  position: absolute;
-  left: 18%;
-  right: 18%;
-  bottom: 0;
-  height: 1.5px;
-  border-radius: 9999px;
-  background: rgba(255, 236, 220, 0.72);
+html[data-home-page] .home-agents-carousel__scheduling-peek-day--active .home-agents-carousel__scheduling-peek-day-date {
+  color: #fff8f0;
+  font-weight: 600;
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-day-label {
@@ -1385,17 +1379,12 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-day-label {
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-day-date {
-  color: rgba(255, 248, 240, 0.88);
+  color: rgba(255, 248, 240, 0.82);
   font-size: clamp(0.68rem, 1.02vmin, 0.78rem);
   font-weight: 500;
   line-height: 1;
   text-align: center;
   font-variant-numeric: tabular-nums;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-day--active .home-agents-carousel__scheduling-peek-day-date {
-  color: #fff0e2;
-  font-weight: 600;
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-day-appts {
@@ -1409,53 +1398,43 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-appt {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: clamp(0.06rem, 0.1vmin, 0.08rem);
+  gap: clamp(0.05rem, 0.08vmin, 0.06rem);
   width: 100%;
   min-width: 0;
   min-height: clamp(1.28rem, 1.92vmin, 1.48rem);
   padding: clamp(0.22rem, 0.34vmin, 0.26rem) clamp(0.16rem, 0.24vmin, 0.2rem);
-  border-radius: clamp(0.18rem, 0.28vmin, 0.22rem);
+  border-radius: clamp(0.22rem, 0.34vmin, 0.26rem);
   border: none;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  box-shadow: none;
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-appt--fill {
   min-height: clamp(1.28rem, 1.92vmin, 1.48rem);
-  background: rgba(255, 255, 255, 0.32);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.26);
+  background: rgba(255, 255, 255, 0.22);
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-appt--highlighted {
-  min-height: clamp(1.72rem, 2.58vmin, 1.98rem);
-  padding: clamp(0.28rem, 0.42vmin, 0.34rem) clamp(0.18rem, 0.28vmin, 0.22rem);
-  background: rgba(255, 220, 190, 0.42);
-  box-shadow: inset 0 0 0 1px rgba(255, 236, 220, 0.38);
+  min-height: clamp(1.48rem, 2.22vmin, 1.68rem);
+  padding: clamp(0.24rem, 0.36vmin, 0.28rem) clamp(0.18rem, 0.28vmin, 0.22rem);
+  background: rgba(255, 236, 220, 0.36);
   opacity: 1 !important;
   filter: none !important;
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-appt-title {
   color: #ffffff;
-  font-size: clamp(0.58rem, 0.88vmin, 0.68rem);
+  font-size: clamp(0.6rem, 0.9vmin, 0.7rem);
   font-weight: 600;
-  line-height: 1.15;
+  line-height: 1.1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   text-shadow: 0 1px 10px rgba(30, 52, 58, 0.28);
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-appt-type {
-  color: rgba(255, 250, 245, 0.92);
-  font-size: clamp(0.5rem, 0.75vmin, 0.58rem);
-  font-weight: 500;
-  line-height: 1.1;
-  white-space: nowrap;
-}
-
 html[data-home-page] .home-agents-carousel__scheduling-peek-appt-meta {
-  color: rgba(255, 248, 240, 0.78);
-  font-size: clamp(0.48rem, 0.72vmin, 0.56rem);
+  color: rgba(255, 248, 240, 0.82);
+  font-size: clamp(0.5rem, 0.75vmin, 0.58rem);
   font-weight: 500;
   line-height: 1.1;
   white-space: nowrap;
@@ -1470,8 +1449,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__scheduling-peek-appt--fill {
   min-height: clamp(1.42rem, calc(var(--app-vw, 100vw) * 0.042), 1.72rem);
   padding-block: clamp(0.28rem, calc(var(--app-vw, 100vw) * 0.0085), 0.34rem);
-  background: rgba(255, 255, 255, 0.34);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.24);
 }
 
 /* Desktop agents carousel — Labs Agent dual UI peek (centered, top/bottom clip). */
@@ -2618,14 +2596,6 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
   .home-agents-carousel__scheduling-peek-day--active
-  .home-agents-carousel__scheduling-peek-day-head::after {
-  background: var(--carousel-peek-dusk-horizon);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-day--active
   .home-agents-carousel__scheduling-peek-day-date {
   color: var(--carousel-peek-dusk-horizon);
 }
@@ -2634,15 +2604,14 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
   .home-agents-carousel__scheduling-peek-appt--fill {
-  background: rgba(232, 160, 96, 0.2);
-  box-shadow: inset 0 0 0 1px rgba(232, 160, 96, 0.24);
+  background: rgba(232, 160, 96, 0.16);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
   .home-agents-carousel__scheduling-peek-appt--highlighted {
-  background: var(--carousel-peek-dusk-highlight);
+  background: rgba(232, 160, 96, 0.28);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
@@ -2658,21 +2627,6 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__scheduling-peek-appt--highlighted
   .home-agents-carousel__scheduling-peek-appt-title {
   color: var(--carousel-peek-dusk-ink);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-appt-type {
-  color: var(--carousel-peek-dusk-muted);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-appt--highlighted
-  .home-agents-carousel__scheduling-peek-appt-type {
-  color: var(--carousel-peek-dusk-ink-secondary);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
