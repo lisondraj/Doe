@@ -4579,14 +4579,20 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workf
 }
 
 /* Customize agents — call logic diagram (workflow band). */
+html[data-home-page] .home-feature-shader-band--workflow .home-feature-shader-band__call-logic-shell {
+  padding-bottom: clamp(1.35rem, 0.9rem + 2.1vmin, 2.1rem);
+}
+
 html[data-home-page] .home-feature-shader-band--workflow .home-feature-section__call-logic-diagram {
   box-sizing: border-box;
   flex: 0 0 auto;
   width: 100%;
   max-width: none;
-  margin-inline: 0;
+  margin-inline: auto;
   padding-left: var(--proto-phone-gutter-left, 1.65rem);
   padding-right: var(--proto-phone-gutter-right, 1.65rem);
+  display: flex;
+  justify-content: center;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-section__call-logic-diagram {
@@ -4595,7 +4601,7 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow 
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-call-logic-diagram-scale {
-  --home-call-logic-scale: 0.9;
+  --home-call-logic-scale: 1.02;
   width: calc(100% / var(--home-call-logic-scale));
   max-width: calc(100% / var(--home-call-logic-scale));
   margin-inline: auto;
@@ -4604,37 +4610,34 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workf
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-call-logic-diagram-scale {
-  --home-call-logic-scale: 0.94;
-  width: min(calc(28rem / var(--home-call-logic-scale)), calc(100% / var(--home-call-logic-scale)));
-  max-width: min(calc(28rem / var(--home-call-logic-scale)), calc(100% / var(--home-call-logic-scale)));
+  --home-call-logic-scale: 1.08;
+  width: min(calc(36rem / var(--home-call-logic-scale)), calc(100% / var(--home-call-logic-scale)));
+  max-width: min(calc(36rem / var(--home-call-logic-scale)), calc(100% / var(--home-call-logic-scale)));
   margin-inline: auto;
   transform: scale(var(--home-call-logic-scale));
   transform-origin: center center;
 }
 
-html[data-home-page] .home-call-logic-diagram__card {
-  border-radius: clamp(0.86rem, 2.5vmin, 1.05rem);
-  border: 0.5px solid color-mix(in srgb, #1e343a 8%, #ebe7e0);
-  background: linear-gradient(180deg, #ffffff 0%, #faf9f7 100%);
-  box-shadow:
-    0 12px 32px rgba(30, 52, 58, 0.09),
-    0 1px 6px rgba(30, 52, 58, 0.04);
-  overflow: hidden;
+html[data-home-page] .home-call-logic-diagram {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: clamp(0.82rem, 2.35vmin, 1rem);
 }
 
-html[data-home-page] .home-call-logic-diagram__header {
+html[data-home-page] .home-call-logic-diagram__toolbar {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: clamp(0.65rem, 1.9vmin, 0.85rem);
-  padding: clamp(0.82rem, 2.4vmin, 1rem) clamp(0.88rem, 2.55vmin, 1.05rem);
-  border-bottom: 0.5px solid color-mix(in srgb, #1e343a 7%, #ebe7e0);
+  padding: 0 clamp(0.08rem, 0.22vmin, 0.12rem);
 }
 
 html[data-home-page] .home-call-logic-diagram__eyebrow {
   margin: 0;
   color: #e88f5c;
-  font-size: clamp(0.68rem, 1.95vmin, 0.8rem);
+  font-size: clamp(0.74rem, 2.1vmin, 0.86rem);
   font-weight: 500;
   line-height: 1.1;
   letter-spacing: -0.01em;
@@ -4643,7 +4646,7 @@ html[data-home-page] .home-call-logic-diagram__eyebrow {
 html[data-home-page] .home-call-logic-diagram__title {
   margin: clamp(0.18rem, 0.5vmin, 0.22rem) 0 0;
   color: #1e343a;
-  font-size: clamp(0.92rem, 2.65vmin, 1.08rem);
+  font-size: clamp(1rem, 2.85vmin, 1.16rem);
   font-weight: 500;
   line-height: 1.15;
   letter-spacing: -0.02em;
@@ -4654,42 +4657,133 @@ html[data-home-page] .home-call-logic-diagram__type-chip {
   align-items: center;
   gap: clamp(0.22rem, 0.65vmin, 0.28rem);
   flex-shrink: 0;
-  padding: clamp(0.28rem, 0.8vmin, 0.34rem) clamp(0.48rem, 1.35vmin, 0.58rem);
-  border-radius: clamp(0.38rem, 1.1vmin, 0.46rem);
-  background: rgba(210, 119, 76, 0.12);
+  padding: clamp(0.32rem, 0.9vmin, 0.38rem) clamp(0.52rem, 1.45vmin, 0.62rem);
+  border-radius: clamp(0.42rem, 1.2vmin, 0.5rem);
+  border: 0.5px solid color-mix(in srgb, #1e343a 8%, #ebe7e0);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 8px 22px rgba(30, 52, 58, 0.08);
   color: #d2774c;
-  font-size: clamp(0.68rem, 1.95vmin, 0.8rem);
+  font-size: clamp(0.72rem, 2.05vmin, 0.84rem);
   font-weight: 500;
   line-height: 1.1;
   white-space: nowrap;
 }
 
-html[data-home-page] .home-call-logic-diagram__flow {
+html[data-home-page] .home-call-logic-diagram__canvas {
   display: flex;
   flex-direction: column;
-  padding: clamp(0.72rem, 2.1vmin, 0.88rem) clamp(0.72rem, 2.1vmin, 0.88rem) clamp(0.58rem, 1.65vmin, 0.72rem);
+  align-items: center;
+  gap: 0;
 }
 
-html[data-home-page] .home-call-logic-diagram__step {
+html[data-home-page] .home-call-logic-diagram__trunk {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(100%, 15.5rem);
+}
+
+html[data-home-page] .home-call-logic-diagram__trunk-step,
+html[data-home-page] .home-call-logic-diagram__branch-step {
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  width: 100%;
 }
 
 html[data-home-page] .home-call-logic-diagram__connector {
-  align-self: center;
-  width: 1.5px;
-  height: clamp(0.55rem, 1.55vmin, 0.68rem);
-  margin-block: clamp(0.08rem, 0.22vmin, 0.1rem);
+  flex-shrink: 0;
   border-radius: 999px;
   background: color-mix(in srgb, #1e343a 14%, #ebe7e0);
 }
 
+html[data-home-page] .home-call-logic-diagram__connector--vertical {
+  align-self: center;
+  width: 1.5px;
+  height: clamp(0.62rem, 1.75vmin, 0.76rem);
+  margin-block: clamp(0.1rem, 0.28vmin, 0.12rem);
+}
+
+html[data-home-page] .home-call-logic-diagram__connector--branch {
+  align-self: center;
+  width: 1.5px;
+  height: clamp(0.72rem, 2vmin, 0.86rem);
+  margin-block: clamp(0.08rem, 0.22vmin, 0.1rem);
+}
+
+html[data-home-page] .home-call-logic-diagram__fork-rail {
+  position: relative;
+  width: min(100%, 24.5rem);
+  height: clamp(0.72rem, 2vmin, 0.86rem);
+  margin-inline: auto;
+}
+
+html[data-home-page] .home-call-logic-diagram__fork-rail-line {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border-radius: 999px;
+  background: color-mix(in srgb, #1e343a 14%, #ebe7e0);
+}
+
+html[data-home-page] .home-call-logic-diagram__fork-rail-line--left {
+  left: 25%;
+  width: 1.5px;
+}
+
+html[data-home-page] .home-call-logic-diagram__fork-rail-line--right {
+  right: 25%;
+  width: 1.5px;
+}
+
+html[data-home-page] .home-call-logic-diagram__fork-rail::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 25%;
+  right: 25%;
+  height: 1.5px;
+  border-radius: 999px;
+  background: color-mix(in srgb, #1e343a 14%, #ebe7e0);
+}
+
+html[data-home-page] .home-call-logic-diagram__branches {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.72rem, 2.05vmin, 0.9rem);
+  width: min(100%, 24.5rem);
+  margin-top: clamp(0.08rem, 0.22vmin, 0.1rem);
+}
+
+html[data-home-page] .home-call-logic-diagram__branch-col {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 0;
+}
+
+html[data-home-page] .home-call-logic-diagram__branch-key {
+  align-self: center;
+  margin-bottom: clamp(0.12rem, 0.34vmin, 0.14rem);
+  padding: clamp(0.16rem, 0.45vmin, 0.18rem) clamp(0.42rem, 1.2vmin, 0.5rem);
+  border-radius: 999px;
+  background: rgba(210, 119, 76, 0.12);
+  color: #d2774c;
+  font-size: clamp(0.66rem, 1.88vmin, 0.76rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
 html[data-home-page] .home-call-logic-diagram__node {
-  border-radius: clamp(0.55rem, 1.55vmin, 0.65rem);
+  border-radius: clamp(0.62rem, 1.75vmin, 0.72rem);
   border: 0.5px solid color-mix(in srgb, #1e343a 7%, #ebe7e0);
-  background: #f7f6f3;
-  padding: clamp(0.52rem, 1.5vmin, 0.62rem) clamp(0.58rem, 1.65vmin, 0.68rem);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow:
+    0 10px 28px rgba(30, 52, 58, 0.08),
+    0 1px 5px rgba(30, 52, 58, 0.04);
+  padding: clamp(0.58rem, 1.65vmin, 0.68rem) clamp(0.64rem, 1.82vmin, 0.74rem);
 }
 
 html[data-home-page] .home-call-logic-diagram__node--trigger {
@@ -4703,7 +4797,9 @@ html[data-home-page] .home-call-logic-diagram__node--condition {
 html[data-home-page] .home-call-logic-diagram__node--active {
   border-color: rgba(210, 119, 76, 0.42);
   background: rgba(210, 119, 76, 0.08);
-  box-shadow: 0 0 0 1px rgba(210, 119, 76, 0.12);
+  box-shadow:
+    0 0 0 1px rgba(210, 119, 76, 0.12),
+    0 10px 28px rgba(30, 52, 58, 0.08);
 }
 
 html[data-home-page] .home-call-logic-diagram__node-head {
@@ -4711,7 +4807,7 @@ html[data-home-page] .home-call-logic-diagram__node-head {
   align-items: center;
   justify-content: space-between;
   gap: clamp(0.45rem, 1.25vmin, 0.55rem);
-  margin-bottom: clamp(0.28rem, 0.8vmin, 0.34rem);
+  margin-bottom: clamp(0.3rem, 0.85vmin, 0.36rem);
 }
 
 html[data-home-page] .home-call-logic-diagram__node-kind {
@@ -4722,7 +4818,7 @@ html[data-home-page] .home-call-logic-diagram__node-kind {
 }
 
 html[data-home-page] .home-call-logic-diagram__node-kind-label {
-  font-size: clamp(0.62rem, 1.75vmin, 0.72rem);
+  font-size: clamp(0.66rem, 1.88vmin, 0.76rem);
   font-weight: 500;
   line-height: 1;
   letter-spacing: 0.02em;
@@ -4734,7 +4830,7 @@ html[data-home-page] .home-call-logic-diagram__edit-badge {
   border-radius: 999px;
   background: rgba(210, 119, 76, 0.14);
   color: #d2774c;
-  font-size: clamp(0.58rem, 1.65vmin, 0.68rem);
+  font-size: clamp(0.62rem, 1.75vmin, 0.72rem);
   font-weight: 500;
   line-height: 1;
 }
@@ -4742,7 +4838,7 @@ html[data-home-page] .home-call-logic-diagram__edit-badge {
 html[data-home-page] .home-call-logic-diagram__node-label {
   margin: 0;
   color: #1e343a;
-  font-size: clamp(0.78rem, 2.2vmin, 0.9rem);
+  font-size: clamp(0.86rem, 2.45vmin, 0.98rem);
   font-weight: 500;
   line-height: 1.25;
   letter-spacing: -0.015em;
@@ -4751,41 +4847,9 @@ html[data-home-page] .home-call-logic-diagram__node-label {
 html[data-home-page] .home-call-logic-diagram__node-meta {
   margin: clamp(0.18rem, 0.5vmin, 0.22rem) 0 0;
   color: #6b7280;
-  font-size: clamp(0.64rem, 1.82vmin, 0.74rem);
+  font-size: clamp(0.7rem, 1.98vmin, 0.8rem);
   font-weight: 400;
   line-height: 1.2;
-}
-
-html[data-home-page] .home-call-logic-diagram__branches {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(0.22rem, 0.62vmin, 0.28rem);
-  margin-top: clamp(0.38rem, 1.05vmin, 0.45rem);
-}
-
-html[data-home-page] .home-call-logic-diagram__branch {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: clamp(0.45rem, 1.25vmin, 0.55rem);
-  padding: clamp(0.24rem, 0.68vmin, 0.28rem) clamp(0.34rem, 0.95vmin, 0.4rem);
-  border-radius: clamp(0.32rem, 0.9vmin, 0.38rem);
-  background: rgba(30, 52, 58, 0.04);
-}
-
-html[data-home-page] .home-call-logic-diagram__branch-key {
-  color: #d2774c;
-  font-size: clamp(0.62rem, 1.75vmin, 0.72rem);
-  font-weight: 500;
-  line-height: 1.1;
-}
-
-html[data-home-page] .home-call-logic-diagram__branch-value {
-  color: #6b7280;
-  font-size: clamp(0.62rem, 1.75vmin, 0.72rem);
-  font-weight: 400;
-  line-height: 1.1;
-  text-align: right;
 }
 
 html[data-home-page] .home-call-logic-diagram__add-step {
@@ -4793,14 +4857,14 @@ html[data-home-page] .home-call-logic-diagram__add-step {
   align-items: center;
   justify-content: center;
   gap: clamp(0.28rem, 0.8vmin, 0.34rem);
-  width: calc(100% - clamp(1.44rem, 4.2vmin, 1.76rem));
-  margin: 0 auto clamp(0.72rem, 2.1vmin, 0.88rem);
-  padding: clamp(0.42rem, 1.2vmin, 0.5rem) clamp(0.55rem, 1.55vmin, 0.65rem);
-  border-radius: clamp(0.42rem, 1.2vmin, 0.5rem);
+  width: min(100%, 15.5rem);
+  margin: clamp(0.12rem, 0.34vmin, 0.14rem) auto 0;
+  padding: clamp(0.46rem, 1.3vmin, 0.54rem) clamp(0.58rem, 1.65vmin, 0.68rem);
+  border-radius: clamp(0.46rem, 1.3vmin, 0.54rem);
   border: 0.5px dashed color-mix(in srgb, #1e343a 16%, #ebe7e0);
-  background: transparent;
+  background: rgba(255, 255, 255, 0.72);
   color: #6b7280;
-  font-size: clamp(0.68rem, 1.95vmin, 0.8rem);
+  font-size: clamp(0.72rem, 2.05vmin, 0.84rem);
   font-weight: 500;
   line-height: 1.1;
 }
@@ -5679,16 +5743,13 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 /* iPhone home — call logic diagram (dusk mock UI). */
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--workflow
-  .home-call-logic-diagram__card {
+  .home-call-logic-diagram__type-chip,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--workflow
+  .home-call-logic-diagram__add-step {
   background: var(--home-dusk-ui-surface) !important;
   border-color: var(--home-dusk-ui-border) !important;
   box-shadow: var(--home-dusk-ui-shadow) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--workflow
-  .home-call-logic-diagram__header {
-  border-bottom-color: var(--home-dusk-ui-border) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
@@ -5717,24 +5778,31 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--workflow
-  .home-call-logic-diagram__type-chip,
+  .home-call-logic-diagram__edit-badge,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--workflow
-  .home-call-logic-diagram__edit-badge {
+  .home-call-logic-diagram__branch-key {
   background: var(--home-dusk-ui-surface-raised) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--workflow
   .home-call-logic-diagram__node {
-  background: var(--home-dusk-ui-surface-sunken) !important;
+  background: var(--home-dusk-ui-surface) !important;
   border-color: var(--home-dusk-ui-border) !important;
+  box-shadow: var(--home-dusk-ui-shadow) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--workflow
   .home-call-logic-diagram__node--trigger {
   background: var(--home-dusk-ui-surface) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--workflow
+  .home-call-logic-diagram__node--condition {
+  background: var(--home-dusk-ui-surface-sunken) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
@@ -5753,23 +5821,20 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-call-logic-diagram__node-meta,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--workflow
-  .home-call-logic-diagram__branch-value,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--workflow
   .home-call-logic-diagram__add-step {
   color: var(--home-dusk-ui-muted) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--workflow
-  .home-call-logic-diagram__connector {
-  background: var(--home-dusk-ui-border) !important;
-}
-
+  .home-call-logic-diagram__connector,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--workflow
-  .home-call-logic-diagram__branch {
-  background: rgba(242, 216, 168, 0.06) !important;
+  .home-call-logic-diagram__fork-rail-line,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--workflow
+  .home-call-logic-diagram__fork-rail::before {
+  background: var(--home-dusk-ui-border) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])

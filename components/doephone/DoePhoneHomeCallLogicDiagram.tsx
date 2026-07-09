@@ -1,16 +1,15 @@
 "use client";
 
 import { inter, suisseIntl } from "@/lib/home/fonts";
-import { CAROUSEL_MENU_UI } from "@/lib/doephone/carousel-menu-visual-styles";
 
 const CALL_TYPE = "Refill request";
 
-const FLOW_NODES = [
+const TRUNK_NODES = [
   {
     id: "trigger",
     kind: "trigger" as const,
     label: "Incoming call answered",
-    meta: CALL_TYPE,
+    meta: "Front desk line",
   },
   {
     id: "verify",
@@ -22,23 +21,46 @@ const FLOW_NODES = [
     id: "condition",
     kind: "condition" as const,
     label: "Medication on active list?",
-    branches: [
-      { label: "Yes", target: "continue" },
-      { label: "No", target: "Transfer to front desk" },
+  },
+] as const;
+
+const BRANCH_COLUMNS = [
+  {
+    id: "yes",
+    key: "Yes",
+    nodes: [
+      {
+        id: "eligibility",
+        kind: "action" as const,
+        label: "Check last refill date",
+        meta: "Editing rule",
+        active: true,
+      },
+      {
+        id: "route",
+        kind: "action" as const,
+        label: "Route to pharmacy queue",
+        meta: "Notify Dr. Chen",
+      },
     ],
   },
   {
-    id: "eligibility",
-    kind: "action" as const,
-    label: "Check last refill date",
-    meta: "Editing rule",
-    active: true,
-  },
-  {
-    id: "route",
-    kind: "action" as const,
-    label: "Route to pharmacy queue",
-    meta: "Notify Dr. Chen",
+    id: "no",
+    key: "No",
+    nodes: [
+      {
+        id: "transfer",
+        kind: "action" as const,
+        label: "Transfer to front desk",
+        meta: "Warm handoff",
+      },
+      {
+        id: "escalate",
+        kind: "action" as const,
+        label: "Flag for chart review",
+        meta: "Same-day callback",
+      },
+    ],
   },
 ] as const;
 
@@ -50,7 +72,7 @@ function ChevronDownIcon() {
   );
 }
 
-function NodeKindIcon({ kind }: { kind: (typeof FLOW_NODES)[number]["kind"] }) {
+function NodeKindIcon({ kind }: { kind: "trigger" | "action" | "condition" }) {
   if (kind === "trigger") {
     return (
       <svg viewBox="0 0 16 16" fill="none" aria-hidden className="home-call-logic-diagram__node-icon h-[0.95em] w-[0.95em] shrink-0">
@@ -77,76 +99,93 @@ function NodeKindIcon({ kind }: { kind: (typeof FLOW_NODES)[number]["kind"] }) {
   );
 }
 
-/** Mock call-logic editor — workflow diagram for a specific answered call type. */
-export function DoePhoneHomeCallLogicDiagram() {
+type FlowNode = {
+  id: string;
+  kind: "trigger" | "action" | "condition";
+  label: string;
+  meta?: string;
+  active?: boolean;
+};
+
+function FlowNodeCard({ node }: { node: FlowNode }) {
   return (
     <div
-      className={`home-call-logic-diagram mx-auto w-full ${suisseIntl.className}`}
-      style={{ maxWidth: CAROUSEL_MENU_UI.maxWidthPhone }}
-      aria-hidden
+      className={`home-call-logic-diagram__node home-call-logic-diagram__node--${node.kind}${
+        node.active ? " home-call-logic-diagram__node--active" : ""
+      }`}
     >
-      <div className="home-call-logic-diagram__card">
-        <div className="home-call-logic-diagram__header">
-          <div className="home-call-logic-diagram__header-copy">
-            <p className="home-call-logic-diagram__eyebrow">Call logic editor</p>
-            <p className="home-call-logic-diagram__title">When this call is answered</p>
-          </div>
-          <span className={`home-call-logic-diagram__type-chip ${inter.className}`}>
-            {CALL_TYPE}
-            <ChevronDownIcon />
+      <div className="home-call-logic-diagram__node-head">
+        <span className="home-call-logic-diagram__node-kind">
+          <NodeKindIcon kind={node.kind} />
+          <span className={`${inter.className} home-call-logic-diagram__node-kind-label`}>
+            {node.kind === "trigger" ? "Trigger" : node.kind === "condition" ? "If" : "Then"}
           </span>
+        </span>
+        {node.active ? <span className={`home-call-logic-diagram__edit-badge ${inter.className}`}>Editing</span> : null}
+      </div>
+
+      <p className="home-call-logic-diagram__node-label">{node.label}</p>
+
+      {node.meta ? <p className={`home-call-logic-diagram__node-meta ${inter.className}`}>{node.meta}</p> : null}
+    </div>
+  );
+}
+
+/** Mock call-logic editor — branching workflow placed directly on the shader band. */
+export function DoePhoneHomeCallLogicDiagram() {
+  return (
+    <div className={`home-call-logic-diagram ${suisseIntl.className}`} aria-hidden>
+      <div className="home-call-logic-diagram__toolbar">
+        <div className="home-call-logic-diagram__toolbar-copy">
+          <p className="home-call-logic-diagram__eyebrow">Call logic editor</p>
+          <p className="home-call-logic-diagram__title">When this call is answered</p>
+        </div>
+        <span className={`home-call-logic-diagram__type-chip ${inter.className}`}>
+          {CALL_TYPE}
+          <ChevronDownIcon />
+        </span>
+      </div>
+
+      <div className="home-call-logic-diagram__canvas">
+        <div className="home-call-logic-diagram__trunk">
+          {TRUNK_NODES.map((node, index) => (
+            <div key={node.id} className="home-call-logic-diagram__trunk-step">
+              {index > 0 ? <div className="home-call-logic-diagram__connector home-call-logic-diagram__connector--vertical" aria-hidden /> : null}
+              <FlowNodeCard node={node} />
+            </div>
+          ))}
+
+          <div className="home-call-logic-diagram__connector home-call-logic-diagram__connector--vertical" aria-hidden />
+          <div className="home-call-logic-diagram__fork-rail" aria-hidden>
+            <span className="home-call-logic-diagram__fork-rail-line home-call-logic-diagram__fork-rail-line--left" />
+            <span className="home-call-logic-diagram__fork-rail-line home-call-logic-diagram__fork-rail-line--right" />
+          </div>
         </div>
 
-        <div className="home-call-logic-diagram__flow">
-          {FLOW_NODES.map((node, index) => (
-            <div key={node.id} className="home-call-logic-diagram__step">
-              {index > 0 ? <div className="home-call-logic-diagram__connector" aria-hidden /> : null}
+        <div className="home-call-logic-diagram__branches">
+          {BRANCH_COLUMNS.map((column) => (
+            <div key={column.id} className={`home-call-logic-diagram__branch-col home-call-logic-diagram__branch-col--${column.id}`}>
+              <span className={`home-call-logic-diagram__branch-key ${inter.className}`}>{column.key}</span>
 
-              <div
-                className={`home-call-logic-diagram__node home-call-logic-diagram__node--${node.kind}${
-                  "active" in node && node.active ? " home-call-logic-diagram__node--active" : ""
-                }`}
-              >
-                <div className="home-call-logic-diagram__node-head">
-                  <span className="home-call-logic-diagram__node-kind">
-                    <NodeKindIcon kind={node.kind} />
-                    <span className={`${inter.className} home-call-logic-diagram__node-kind-label`}>
-                      {node.kind === "trigger" ? "Trigger" : node.kind === "condition" ? "If" : "Then"}
-                    </span>
-                  </span>
-                  {"active" in node && node.active ? (
-                    <span className={`home-call-logic-diagram__edit-badge ${inter.className}`}>Editing</span>
-                  ) : null}
+              {column.nodes.map((node, index) => (
+                <div key={node.id} className="home-call-logic-diagram__branch-step">
+                  {index === 0 ? (
+                    <div className="home-call-logic-diagram__connector home-call-logic-diagram__connector--branch" aria-hidden />
+                  ) : (
+                    <div className="home-call-logic-diagram__connector home-call-logic-diagram__connector--vertical" aria-hidden />
+                  )}
+                  <FlowNodeCard node={node} />
                 </div>
-
-                <p className="home-call-logic-diagram__node-label">{node.label}</p>
-
-                {"meta" in node && node.meta ? (
-                  <p className={`home-call-logic-diagram__node-meta ${inter.className}`}>{node.meta}</p>
-                ) : null}
-
-                {"branches" in node && node.branches ? (
-                  <div className="home-call-logic-diagram__branches">
-                    {node.branches.map((branch) => (
-                      <span key={branch.label} className={`home-call-logic-diagram__branch ${inter.className}`}>
-                        <span className="home-call-logic-diagram__branch-key">{branch.label}</span>
-                        <span className="home-call-logic-diagram__branch-value">
-                          {branch.target === "continue" ? "Continue flow" : branch.target}
-                        </span>
-                      </span>
-                    ))}
-                  </div>
-                ) : null}
-              </div>
+              ))}
             </div>
           ))}
         </div>
-
-        <button type="button" className={`home-call-logic-diagram__add-step ${inter.className}`} tabIndex={-1}>
-          <span aria-hidden>+</span>
-          Add step
-        </button>
       </div>
+
+      <button type="button" className={`home-call-logic-diagram__add-step ${inter.className}`} tabIndex={-1}>
+        <span aria-hidden>+</span>
+        Add step
+      </button>
     </div>
   );
 }
