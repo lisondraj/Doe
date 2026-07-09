@@ -11,10 +11,27 @@ const CALL = {
   confirmed: "Wed 3:15p",
 } as const;
 
-const SLOTS = [
-  { id: "tue", day: "Tue", time: "2:30p", status: "passed" as const },
-  { id: "wed", day: "Wed", time: "3:15p", status: "selected" as const },
-  { id: "thu", day: "Thu", time: "9:00a", status: "alt" as const },
+const WEEK = [
+  { id: "mon", label: "Mon", date: 7, slots: [] as const },
+  {
+    id: "tue",
+    label: "Tue",
+    date: 8,
+    slots: [{ id: "tue-230", time: "2:30p", status: "passed" as const }],
+  },
+  {
+    id: "wed",
+    label: "Wed",
+    date: 9,
+    slots: [{ id: "wed-315", time: "3:15p", status: "selected" as const }],
+  },
+  {
+    id: "thu",
+    label: "Thu",
+    date: 10,
+    slots: [{ id: "thu-900", time: "9:00a", status: "alt" as const }],
+  },
+  { id: "fri", label: "Fri", date: 11, slots: [] as const },
 ] as const;
 
 function PhoneIcon() {
@@ -31,25 +48,9 @@ function PhoneIcon() {
   );
 }
 
-function SlotMark({ status }: { status: (typeof SLOTS)[number]["status"] }) {
-  if (status === "selected") {
-    return (
-      <span className="home-agents-carousel__scheduling-peek-slot-mark home-agents-carousel__scheduling-peek-slot-mark--selected" aria-hidden>
-        ✓
-      </span>
-    );
-  }
-
-  if (status === "passed") {
-    return <span className="home-agents-carousel__scheduling-peek-slot-mark home-agents-carousel__scheduling-peek-slot-mark--passed" aria-hidden />;
-  }
-
-  return <span className="home-agents-carousel__scheduling-peek-slot-mark home-agents-carousel__scheduling-peek-slot-mark--alt" aria-hidden />;
-}
-
 /** Agents carousel — Scheduling Agent live call peek (content on shader, no outer card). */
 export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: boolean }) {
-  const visibleSlots = iphone ? SLOTS.filter((slot) => slot.status === "selected") : SLOTS;
+  const visibleWeek = iphone ? WEEK.filter((day) => day.slots.some((slot) => slot.status === "selected")) : WEEK;
 
   return (
     <div className="home-agents-carousel__scheduling-peek" aria-hidden>
@@ -59,12 +60,11 @@ export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: 
             <span className="home-agents-carousel__scheduling-peek-phone-badge" aria-hidden>
               <PhoneIcon />
             </span>
-            <span className="home-agents-carousel__scheduling-peek-heading">Scheduling Agent</span>
+            <span className={`home-agents-carousel__scheduling-peek-subheading ${inter.className}`}>
+              {CALL.patient} · {CALL.visit}
+            </span>
             <span className={`home-agents-carousel__scheduling-peek-live ${inter.className}`}>2:18</span>
           </div>
-          <span className={`home-agents-carousel__scheduling-peek-subheading ${inter.className}`}>
-            {CALL.patient} · {CALL.visit}
-          </span>
         </div>
 
         <div className={`home-agents-carousel__scheduling-peek-call ${inter.className}`}>
@@ -83,20 +83,46 @@ export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: 
           </p>
         </div>
 
-        <div className="home-agents-carousel__scheduling-peek-slots" aria-hidden>
-          {visibleSlots.map((slot) => (
-            <div
-              key={slot.id}
-              className={`home-agents-carousel__scheduling-peek-slot home-agents-carousel__scheduling-peek-slot--${slot.status}`}
-            >
-              <SlotMark status={slot.status} />
-              <span className={`home-agents-carousel__scheduling-peek-slot-day ${inter.className}`}>{slot.day}</span>
-              <span className={`home-agents-carousel__scheduling-peek-slot-time ${inter.className}`}>{slot.time}</span>
-              {slot.status === "selected" ? (
-                <span className={`home-agents-carousel__scheduling-peek-slot-tag ${inter.className}`}>Selected</span>
-              ) : null}
-            </div>
-          ))}
+        <div
+          className={`home-agents-carousel__scheduling-peek-calendar${iphone ? " home-agents-carousel__scheduling-peek-calendar--iphone" : ""}`}
+          aria-hidden
+        >
+          <div className="home-agents-carousel__scheduling-peek-calendar-head">
+            {visibleWeek.map((day) => (
+              <div
+                key={day.id}
+                className={`home-agents-carousel__scheduling-peek-calendar-dayhead home-agents-carousel__scheduling-peek-calendar-dayhead--${day.slots.some((slot) => slot.status === "selected") ? "selected" : "default"}`}
+              >
+                <span className={`home-agents-carousel__scheduling-peek-calendar-label ${inter.className}`}>{day.label}</span>
+                <span className={`home-agents-carousel__scheduling-peek-calendar-date ${inter.className}`}>{day.date}</span>
+              </div>
+            ))}
+          </div>
+          <div className="home-agents-carousel__scheduling-peek-calendar-grid">
+            {visibleWeek.map((day) => (
+              <div key={`${day.id}-slots`} className="home-agents-carousel__scheduling-peek-calendar-col">
+                {day.slots.length > 0 ? (
+                  day.slots.map((slot) => (
+                    <div
+                      key={slot.id}
+                      className={`home-agents-carousel__scheduling-peek-calendar-slot home-agents-carousel__scheduling-peek-calendar-slot--${slot.status}`}
+                    >
+                      <span className={`home-agents-carousel__scheduling-peek-calendar-slot-time ${inter.className}`}>
+                        {slot.time}
+                      </span>
+                      {slot.status === "selected" ? (
+                        <span className={`home-agents-carousel__scheduling-peek-calendar-slot-tag ${inter.className}`}>
+                          ✓
+                        </span>
+                      ) : null}
+                    </div>
+                  ))
+                ) : (
+                  <span className={`home-agents-carousel__scheduling-peek-calendar-empty ${inter.className}`}>—</span>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className={`home-agents-carousel__scheduling-peek-footer ${inter.className}`}>

@@ -4,6 +4,7 @@ import { inter, suisseIntl } from "@/lib/home/fonts";
 
 const RX = {
   patient: "Patel, M.",
+  visit: "Blood pressure",
   drug: "Lisinopril 10 mg",
   requestLine1: "Need my blood pressure refill",
   requestLine2: "called in",
@@ -57,7 +58,9 @@ export function HomeAgentsCarouselRefillPeek() {
             <span className="home-agents-carousel__refill-peek-phone-badge" aria-hidden>
               <PhoneIcon />
             </span>
-            <span className="home-agents-carousel__refill-peek-heading">Refill Agent</span>
+            <span className={`home-agents-carousel__refill-peek-subheading ${inter.className}`}>
+              {RX.patient} · {RX.visit}
+            </span>
             <span className={`home-agents-carousel__refill-peek-live ${inter.className}`}>1:42</span>
           </div>
         </div>
@@ -80,7 +83,7 @@ export function HomeAgentsCarouselRefillPeek() {
 
         <div className="home-agents-carousel__refill-peek-rx">
           <span className="home-agents-carousel__refill-peek-drug">{RX.drug}</span>
-          <span className={`home-agents-carousel__refill-peek-rx-meta ${inter.className}`}>{RX.patient}</span>
+          <span className={`home-agents-carousel__refill-peek-patient ${inter.className}`}>{RX.patient}</span>
         </div>
 
         <div className="home-agents-carousel__refill-peek-steps" aria-hidden>
