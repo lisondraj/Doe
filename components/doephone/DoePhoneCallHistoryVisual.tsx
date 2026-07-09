@@ -8,6 +8,10 @@ type CallEntry = {
   time: string;
   duration: string;
   direction: "inbound" | "outbound";
+  agent: string;
+  expanded?: boolean;
+  highlight?: string;
+  outcomes?: readonly string[];
 };
 
 const FILTERS = [
@@ -25,6 +29,8 @@ const CALL_HISTORY: readonly CallEntry[] = [
     time: "2:41 PM",
     duration: "3m 08s",
     direction: "inbound",
+    agent: "Inbox",
+    highlight: "Note drafted",
   },
   {
     callerName: "Dr. Patel's office",
@@ -32,6 +38,10 @@ const CALL_HISTORY: readonly CallEntry[] = [
     time: "1:18 PM",
     duration: "6m 44s",
     direction: "inbound",
+    agent: "Referrals",
+    expanded: true,
+    highlight: "Tue 2:30 PM held",
+    outcomes: ["Referral queued", "Callback 4 PM"],
   },
   {
     callerName: "James Chen",
@@ -39,6 +49,8 @@ const CALL_HISTORY: readonly CallEntry[] = [
     time: "11:52 AM",
     duration: "2m 15s",
     direction: "outbound",
+    agent: "Scheduling",
+    highlight: "SMS queued",
   },
 ] as const;
 
@@ -69,8 +81,14 @@ function CallDirectionIcon({ direction }: { direction: CallEntry["direction"] })
 }
 
 function CallLogRow({ call, isLast }: { call: CallEntry; isLast: boolean }) {
+  const isExpanded = Boolean(call.expanded);
+
   return (
-    <article className={`home-call-history-visual__row${isLast ? " home-call-history-visual__row--last" : ""}`}>
+    <article
+      className={`home-call-history-visual__row${
+        isExpanded ? " home-call-history-visual__row--expanded" : ""
+      }${isLast ? " home-call-history-visual__row--last" : ""}`}
+    >
       <div className="home-call-history-visual__row-top">
         <span className="home-call-history-visual__direction">
           <CallDirectionIcon direction={call.direction} />
@@ -87,6 +105,28 @@ function CallLogRow({ call, isLast }: { call: CallEntry; isLast: boolean }) {
           </div>
         </div>
       </div>
+
+      <p className={`home-call-history-visual__route ${inter.className}`}>
+        <span className="home-call-history-visual__route-agent">{call.agent}</span>
+        {call.highlight ? (
+          <>
+            <span className="home-call-history-visual__route-sep" aria-hidden>
+              ·
+            </span>
+            <span className="home-call-history-visual__route-outcome">{call.highlight}</span>
+          </>
+        ) : null}
+      </p>
+
+      {isExpanded && call.outcomes && call.outcomes.length > 0 ? (
+        <ul className={`home-call-history-visual__details ${inter.className}`}>
+          {call.outcomes.map((outcome) => (
+            <li key={outcome} className="home-call-history-visual__detail">
+              {outcome}
+            </li>
+          ))}
+        </ul>
+      ) : null}
     </article>
   );
 }
