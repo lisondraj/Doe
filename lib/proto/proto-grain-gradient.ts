@@ -379,6 +379,11 @@ export function doeHomeShaderBandVariant(
   return protoGrainGradientVariant(slideId);
 }
 
+/** iPhone agents carousel orb — static flow matched to shader band below agents. */
+export function doeHomeAgentsCarouselOrbShaderVariant(): ProtoGrainGradientVariant {
+  return doeHomeShaderBandVariant("agents") ?? "agents";
+}
+
 export function protoGrainGradientVariant(
   slideId: string,
 ): ProtoGrainGradientVariant | undefined {

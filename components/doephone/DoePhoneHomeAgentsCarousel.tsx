@@ -29,7 +29,6 @@ import {
 } from "@/lib/doephone/resolve-doe-phone-variant";
 import { AGENTS_CAROUSEL_DESCRIPTIONS } from "@/lib/doephone/agents-carousel-copy";
 import {
-  HERO_DIAL_ORB_CAROUSEL_IPHONE_SHADER,
   HERO_DIAL_ORB_CAROUSEL_SHADER,
   HERO_DIAL_ORBS,
   heroDialOrbCarouselScheme,
@@ -38,6 +37,7 @@ import {
 import {
   SHADER_WEBGL_SLOT_PRIORITY,
 } from "@/lib/doephone/shader-webgl-budget";
+import { doeHomeAgentsCarouselOrbShaderVariant } from "@/lib/proto/proto-grain-gradient";
 
 function orbAccentStyle(scheme: HeroDialOrbScheme): CSSProperties {
   const [dark, mid, light] = scheme.colors;
@@ -113,6 +113,8 @@ function AgentCarouselPeek({ label, isPhone = false }: { label: string; isPhone?
   }
 }
 
+const AGENTS_CAROUSEL_IPHONE_SHADER_VARIANT = doeHomeAgentsCarouselOrbShaderVariant();
+
 function getOrbBlur(distance: number, focused: boolean) {
   if (focused || distance === 0) {
     return 0;
@@ -140,6 +142,9 @@ function AgentCarouselOrb({
 }) {
   const displayScheme = heroDialOrbCarouselScheme(scheme);
   const blur = isDesktop ? getOrbBlur(distance, focused) : 0;
+  const paperSlotPriority = focused
+    ? SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_FOCUSED
+    : SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_ADJACENT;
   const showPeek = focused && layoutReady;
   const [peekLifted, setPeekLifted] = useState(false);
 
@@ -212,13 +217,11 @@ function AgentCarouselOrb({
                   scheme={displayScheme}
                   shaderConfig={HERO_DIAL_ORB_CAROUSEL_SHADER}
                 />
-                {focused ? (
-                  <HeroDialOrbPaperShader
-                    scheme={displayScheme}
-                    shaderConfig={HERO_DIAL_ORB_CAROUSEL_IPHONE_SHADER}
-                    slotPriority={SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_FOCUSED}
-                  />
-                ) : null}
+                <HeroDialOrbPaperShader
+                  scheme={displayScheme}
+                  variant={AGENTS_CAROUSEL_IPHONE_SHADER_VARIANT}
+                  slotPriority={paperSlotPriority}
+                />
               </>
             ) : (
               <HeroDialOrbGrainShader

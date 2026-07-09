@@ -3,27 +3,31 @@
 import { GrainGradient } from "@paper-design/shaders-react";
 import { memo, useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 
-import { PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_CAROUSEL_ORB } from "@/lib/proto/proto-grain-gradient";
+import {
+  PROTO_GRAIN_GRADIENT_PRESETS,
+  PROTO_GRAIN_GRADIENT_WORLD_HEIGHT,
+  PROTO_GRAIN_GRADIENT_WORLD_WIDTH,
+  PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_CAROUSEL_ORB,
+  type ProtoGrainGradientVariant,
+} from "@/lib/proto/proto-grain-gradient";
 import {
   acquireShaderWebGLSlot,
   releaseShaderWebGLSlot,
 } from "@/lib/doephone/shader-webgl-budget";
 import { useShaderContextRecovery } from "@/lib/doephone/use-shader-context-recovery";
-import {
-  type HeroDialOrbPaperShaderConfig,
-  type HeroDialOrbScheme,
-} from "@/lib/doephone/hero-dial-orbs";
+import type { HeroDialOrbScheme } from "@/lib/doephone/hero-dial-orbs";
 
-/** iPhone carousel orb overlay — static Paper grain shader over CSS base fill. */
+/** iPhone carousel orb — static section-band Paper shader with orb palette. */
 export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
   scheme,
-  shaderConfig,
+  variant,
   slotPriority,
 }: {
   scheme: HeroDialOrbScheme;
-  shaderConfig: HeroDialOrbPaperShaderConfig;
+  variant: ProtoGrainGradientVariant;
   slotPriority: number;
 }) {
+  const preset = PROTO_GRAIN_GRADIENT_PRESETS[variant];
   const slotId = useId();
   const shellRef = useRef<HTMLDivElement>(null);
   const [budgetGranted, setBudgetGranted] = useState(false);
@@ -31,7 +35,7 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
   const [containerReady, setContainerReady] = useState(false);
 
   const colors = [scheme.colors[0], scheme.colors[1], scheme.colors[2]];
-  const intensity = scheme.intensity ?? shaderConfig.intensity;
+  const intensity = Math.max(preset.intensity, scheme.intensity ?? preset.intensity);
 
   const resetShader = useCallback(() => {
     setBudgetGranted(false);
@@ -93,20 +97,20 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
           key={shaderGeneration}
           width="100%"
           height="100%"
-          fit={shaderConfig.fit ?? "cover"}
-          worldWidth={shaderConfig.worldWidth ?? 960}
-          worldHeight={shaderConfig.worldHeight ?? 960}
+          fit={preset.fit ?? "cover"}
+          worldWidth={preset.worldWidth ?? PROTO_GRAIN_GRADIENT_WORLD_WIDTH}
+          worldHeight={preset.worldHeight ?? PROTO_GRAIN_GRADIENT_WORLD_HEIGHT}
           colors={colors}
           colorBack={scheme.colorBack}
-          softness={shaderConfig.softness}
+          softness={preset.softness}
           intensity={intensity}
           noise={0}
-          shape={shaderConfig.shape}
+          shape={preset.shape}
           speed={0}
-          rotation={shaderConfig.rotation}
-          offsetX={shaderConfig.offsetX}
-          offsetY={shaderConfig.offsetY}
-          scale={shaderConfig.scale}
+          rotation={preset.rotation}
+          offsetX={preset.offsetX}
+          offsetY={preset.offsetY}
+          scale={preset.scale}
           maxPixelCount={PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_CAROUSEL_ORB}
         />
       ) : null}

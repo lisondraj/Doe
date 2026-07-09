@@ -1,5 +1,3 @@
-import type { GrainGradientShape } from "@paper-design/shaders";
-
 import { DOE_HOME_HERO_DUSK_PALETTE } from "@/lib/proto/proto-shader-backdrop-colors";
 
 const DUSK = DOE_HOME_HERO_DUSK_PALETTE;
@@ -92,35 +90,6 @@ export const HERO_DIAL_ORB_CAROUSEL_SHADER = {
   scale: 1.58,
   softness: 0.68,
 } as const;
-
-/** iPhone agents carousel — page-family ripple flow, static, same orb palette. */
-export type HeroDialOrbPaperShaderConfig = {
-  shape: GrainGradientShape;
-  softness: number;
-  intensity: number;
-  fit?: "none" | "contain" | "cover";
-  rotation?: number;
-  offsetX?: number;
-  offsetY?: number;
-  scale?: number;
-  worldWidth?: number;
-  worldHeight?: number;
-  speed?: number;
-};
-
-export const HERO_DIAL_ORB_CAROUSEL_IPHONE_SHADER = {
-  shape: "sphere",
-  softness: 0.68,
-  intensity: 0.2,
-  fit: "cover",
-  scale: 1.62,
-  rotation: 132,
-  offsetX: 0.12,
-  offsetY: -0.16,
-  worldWidth: 960,
-  worldHeight: 960,
-  speed: 0,
-} as const satisfies HeroDialOrbPaperShaderConfig;
 
 export type HeroDialOrbShaderConfig =
   | typeof HERO_DIAL_ORB_SHADER
