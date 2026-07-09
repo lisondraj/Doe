@@ -2,7 +2,7 @@
 
 import { inter, suisseIntl } from "@/lib/home/fonts";
 
-const CALL_TYPE = "Refill";
+const CALL_TYPE = "Refill request";
 
 const TRUNK_NODES = [
   {
@@ -17,13 +17,12 @@ const TRUNK_NODES = [
     label: "Verify patient in chart",
     meta: "Match DOB + phone",
   },
+  {
+    id: "condition",
+    kind: "condition" as const,
+    label: "Medication on active list?",
+  },
 ] as const;
-
-const CONDITION_NODE = {
-  id: "condition",
-  kind: "condition" as const,
-  label: "Medication on active list?",
-} as const;
 
 const BRANCH_COLUMNS = [
   {
@@ -34,7 +33,7 @@ const BRANCH_COLUMNS = [
         id: "eligibility",
         kind: "action" as const,
         label: "Check last refill date",
-        meta: "7-day window",
+        meta: "Editing rule",
         active: true,
       },
       {
@@ -113,7 +112,7 @@ function FlowNodeCard({ node }: { node: FlowNode }) {
     <div
       className={`home-call-logic-diagram__node home-call-logic-diagram__node--${node.kind}${
         node.active ? " home-call-logic-diagram__node--active" : ""
-      } ${suisseIntl.className}`}
+      }`}
     >
       <div className="home-call-logic-diagram__node-head">
         <span className="home-call-logic-diagram__node-kind">
@@ -122,6 +121,7 @@ function FlowNodeCard({ node }: { node: FlowNode }) {
             {node.kind === "trigger" ? "Trigger" : node.kind === "condition" ? "If" : "Then"}
           </span>
         </span>
+        {node.active ? <span className={`home-call-logic-diagram__edit-badge ${inter.className}`}>Editing</span> : null}
       </div>
 
       <p className="home-call-logic-diagram__node-label">{node.label}</p>
@@ -131,96 +131,61 @@ function FlowNodeCard({ node }: { node: FlowNode }) {
   );
 }
 
-function BranchGate({ branchKey, branchId }: { branchKey: string; branchId: string }) {
-  return (
-    <div
-      className={`home-call-logic-diagram__branch-gate home-call-logic-diagram__branch-gate--${branchId} ${inter.className}`}
-    >
-      <span className="home-call-logic-diagram__branch-gate-mark" aria-hidden>
-        {branchId === "yes" ? "Y" : "N"}
-      </span>
-      <span className="home-call-logic-diagram__branch-gate-label">{branchKey}</span>
-    </div>
-  );
-}
-
-function ForkConnector() {
-  return (
-    <svg
-      className="home-call-logic-diagram__fork-svg"
-      viewBox="0 0 280 32"
-      preserveAspectRatio="none"
-      aria-hidden
-    >
-      <path
-        d="M140 0V10H70V32M140 10H210V32"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        vectorEffect="non-scaling-stroke"
-      />
-    </svg>
-  );
-}
-
 /** Mock call-logic editor — branching workflow placed directly on the shader band. */
 export function DoePhoneHomeCallLogicDiagram() {
   return (
-    <div className={`home-call-logic-diagram ${inter.className}`} aria-hidden>
-      <header className="home-call-logic-diagram__toolbar">
-        <p className={`home-call-logic-diagram__title ${suisseIntl.className}`}>Call flow</p>
-        <span className="home-call-logic-diagram__type-chip">
+    <div className={`home-call-logic-diagram ${suisseIntl.className}`} aria-hidden>
+      <div className="home-call-logic-diagram__toolbar">
+        <div className="home-call-logic-diagram__toolbar-copy">
+          <p className="home-call-logic-diagram__eyebrow">Call logic editor</p>
+          <p className="home-call-logic-diagram__title">When this call is answered</p>
+        </div>
+        <span className={`home-call-logic-diagram__type-chip ${inter.className}`}>
           {CALL_TYPE}
           <ChevronDownIcon />
         </span>
-      </header>
+      </div>
 
-      <div className="home-call-logic-diagram__body">
-        <div className="home-call-logic-diagram__flow">
-          <div className="home-call-logic-diagram__trunk">
-            {TRUNK_NODES.map((node, index) => (
-              <div key={node.id} className="home-call-logic-diagram__trunk-step">
-                {index > 0 ? (
-                  <div className="home-call-logic-diagram__connector home-call-logic-diagram__connector--vertical" aria-hidden />
-                ) : null}
-                <FlowNodeCard node={node} />
-              </div>
-            ))}
+      <div className="home-call-logic-diagram__canvas">
+        <div className="home-call-logic-diagram__trunk">
+          {TRUNK_NODES.map((node, index) => (
+            <div key={node.id} className="home-call-logic-diagram__trunk-step">
+              {index > 0 ? <div className="home-call-logic-diagram__connector home-call-logic-diagram__connector--vertical" aria-hidden /> : null}
+              <FlowNodeCard node={node} />
+            </div>
+          ))}
 
-            <div className="home-call-logic-diagram__connector home-call-logic-diagram__connector--vertical" aria-hidden />
-            <FlowNodeCard node={CONDITION_NODE} />
+          <div className="home-call-logic-diagram__connector home-call-logic-diagram__connector--vertical" aria-hidden />
+          <div className="home-call-logic-diagram__fork-rail" aria-hidden>
+            <span className="home-call-logic-diagram__fork-rail-line home-call-logic-diagram__fork-rail-line--left" />
+            <span className="home-call-logic-diagram__fork-rail-line home-call-logic-diagram__fork-rail-line--right" />
           </div>
+        </div>
 
-          <ForkConnector />
+        <div className="home-call-logic-diagram__branches">
+          {BRANCH_COLUMNS.map((column) => (
+            <div key={column.id} className={`home-call-logic-diagram__branch-col home-call-logic-diagram__branch-col--${column.id}`}>
+              <span className={`home-call-logic-diagram__branch-key ${inter.className}`}>{column.key}</span>
 
-          <div className="home-call-logic-diagram__branches">
-            {BRANCH_COLUMNS.map((column) => (
-              <div
-                key={column.id}
-                className={`home-call-logic-diagram__branch-col home-call-logic-diagram__branch-col--${column.id}`}
-              >
-                <BranchGate branchKey={column.key} branchId={column.id} />
-
-                {column.nodes.map((node, index) => (
-                  <div key={node.id} className="home-call-logic-diagram__branch-step">
-                    {index > 0 ? (
-                      <div className="home-call-logic-diagram__connector home-call-logic-diagram__connector--vertical" aria-hidden />
-                    ) : null}
-                    <FlowNodeCard node={node} />
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-
-          <button type="button" className="home-call-logic-diagram__add-step" tabIndex={-1}>
-            <span aria-hidden>+</span>
-            Add step
-          </button>
+              {column.nodes.map((node, index) => (
+                <div key={node.id} className="home-call-logic-diagram__branch-step">
+                  {index === 0 ? (
+                    <div className="home-call-logic-diagram__connector home-call-logic-diagram__connector--branch" aria-hidden />
+                  ) : (
+                    <div className="home-call-logic-diagram__connector home-call-logic-diagram__connector--vertical" aria-hidden />
+                  )}
+                  <FlowNodeCard node={node} />
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
       </div>
+
+      <button type="button" className={`home-call-logic-diagram__add-step ${inter.className}`} tabIndex={-1}>
+        <span aria-hidden>+</span>
+        Add step
+      </button>
     </div>
   );
 }

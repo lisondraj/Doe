@@ -4939,6 +4939,10 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workf
 html[data-home-page] .home-feature-shader-band--workflow .home-feature-shader-band__call-logic-shell {
   flex: 1 1 auto;
   min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   padding-bottom: clamp(1.35rem, 0.9rem + 2.1vmin, 2.1rem);
 }
 
@@ -4946,74 +4950,91 @@ html[data-home-page] .home-feature-shader-band--workflow .home-feature-section__
   box-sizing: border-box;
   flex: 1 1 auto;
   display: flex;
+  align-items: center;
+  justify-content: center;
   min-height: 0;
   width: 100%;
   max-width: none;
   margin-inline: auto;
-  padding-left: var(--proto-phone-gutter-left, 1.65rem);
-  padding-right: var(--proto-phone-gutter-right, 1.65rem);
+  padding-left: 0;
+  padding-right: 0;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-section__call-logic-diagram {
-  padding-left: var(--desktop-page-inset-x) !important;
-  padding-right: var(--desktop-page-inset-x) !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-call-logic-diagram-scale {
-  --home-call-logic-scale: 1.14;
+  --home-call-logic-scale: 1.02;
   display: flex;
-  flex: 1 1 auto;
+  flex: 0 0 auto;
   flex-direction: column;
-  min-height: 0;
+  align-items: center;
+  justify-content: center;
   width: calc(100% / var(--home-call-logic-scale));
   max-width: calc(100% / var(--home-call-logic-scale));
   margin-inline: auto;
   transform: scale(var(--home-call-logic-scale));
-  transform-origin: top center;
+  transform-origin: center center;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-call-logic-diagram-scale {
-  --home-call-logic-scale: 1.2;
+  --home-call-logic-scale: 1.08;
   display: flex;
-  flex: 1 1 auto;
+  flex: 0 0 auto;
   flex-direction: column;
-  min-height: 0;
-  width: min(calc(40rem / var(--home-call-logic-scale)), calc(100% / var(--home-call-logic-scale)));
-  max-width: min(calc(40rem / var(--home-call-logic-scale)), calc(100% / var(--home-call-logic-scale)));
+  align-items: center;
+  justify-content: center;
+  width: min(calc(36rem / var(--home-call-logic-scale)), calc(100% / var(--home-call-logic-scale)));
+  max-width: min(calc(36rem / var(--home-call-logic-scale)), calc(100% / var(--home-call-logic-scale)));
   margin-inline: auto;
   transform: scale(var(--home-call-logic-scale));
-  transform-origin: top center;
+  transform-origin: center center;
 }
 
 html[data-home-page] .home-call-logic-diagram {
+  width: min(100%, 24.5rem);
+  margin-inline: auto;
   display: flex;
-  flex: 1 1 auto;
   flex-direction: column;
-  min-height: 0;
-  width: 100%;
-  gap: 0;
+  align-items: stretch;
+  gap: clamp(0.32rem, 0.9vmin, 0.44rem);
 }
 
 html[data-home-page] .home-call-logic-diagram__toolbar {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
-  gap: clamp(0.75rem, 2.1vmin, 1rem);
-  flex: 0 0 auto;
+  gap: clamp(0.55rem, 1.55vmin, 0.72rem);
   width: 100%;
   padding: 0;
 }
 
-html[data-home-page] .home-call-logic-diagram__title {
-  margin: 0;
+html[data-home-page] .home-call-logic-diagram__toolbar-copy {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.08rem, 0.22vmin, 0.1rem);
   flex: 1 1 auto;
   min-width: 0;
-  color: #1e343a;
-  font-size: clamp(0.92rem, 2.55vmin, 1.04rem);
+}
+
+html[data-home-page] .home-call-logic-diagram__eyebrow {
+  margin: 0;
+  color: #e88f5c;
+  font-size: clamp(0.74rem, 2.1vmin, 0.86rem);
   font-weight: 500;
   line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+html[data-home-page] .home-call-logic-diagram__title {
+  margin: 0;
+  color: #1e343a;
+  font-size: clamp(1rem, 2.85vmin, 1.16rem);
+  font-weight: 500;
+  line-height: 1.15;
   letter-spacing: -0.02em;
-  text-align: left;
 }
 
 html[data-home-page] .home-call-logic-diagram__type-chip {
@@ -5022,35 +5043,24 @@ html[data-home-page] .home-call-logic-diagram__type-chip {
   gap: clamp(0.22rem, 0.65vmin, 0.28rem);
   flex: 0 0 auto;
   margin-left: auto;
-  padding: clamp(0.34rem, 0.95vmin, 0.4rem) clamp(0.56rem, 1.55vmin, 0.66rem);
-  border-radius: clamp(0.38rem, 1.05vmin, 0.44rem);
+  padding: clamp(0.32rem, 0.9vmin, 0.38rem) clamp(0.52rem, 1.45vmin, 0.62rem);
+  border-radius: clamp(0.42rem, 1.2vmin, 0.5rem);
   border: 0.5px solid color-mix(in srgb, #1e343a 8%, #ebe7e0);
   background: rgba(255, 255, 255, 0.92);
   box-shadow: 0 8px 22px rgba(30, 52, 58, 0.08);
-  color: #8b5a3c;
-  font-size: clamp(0.68rem, 1.92vmin, 0.78rem);
+  color: #d2774c;
+  font-size: clamp(0.72rem, 2.05vmin, 0.84rem);
   font-weight: 500;
   line-height: 1.1;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
   white-space: nowrap;
 }
 
-html[data-home-page] .home-call-logic-diagram__body {
-  display: flex;
-  flex: 1 1 auto;
-  align-items: center;
-  justify-content: center;
-  min-height: 0;
-  width: 100%;
-  padding-top: clamp(0.95rem, 2.7vmin, 1.2rem);
-}
-
-html[data-home-page] .home-call-logic-diagram__flow {
+html[data-home-page] .home-call-logic-diagram__canvas {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  width: min(100%, 17.5rem);
+  gap: 0;
+  width: 100%;
 }
 
 html[data-home-page] .home-call-logic-diagram__trunk {
@@ -5070,27 +5080,66 @@ html[data-home-page] .home-call-logic-diagram__branch-step {
 
 html[data-home-page] .home-call-logic-diagram__connector {
   flex-shrink: 0;
-  align-self: center;
-  width: 1.5px;
-  height: clamp(0.62rem, 1.75vmin, 0.76rem);
-  margin-block: clamp(0.1rem, 0.28vmin, 0.12rem);
   border-radius: 999px;
   background: color-mix(in srgb, #1e343a 14%, #ebe7e0);
 }
 
-html[data-home-page] .home-call-logic-diagram__fork-svg {
-  display: block;
+html[data-home-page] .home-call-logic-diagram__connector--vertical {
+  align-self: center;
+  width: 1.5px;
+  height: clamp(0.52rem, 1.45vmin, 0.62rem);
+  margin-block: clamp(0.06rem, 0.16vmin, 0.08rem);
+}
+
+html[data-home-page] .home-call-logic-diagram__connector--branch {
+  align-self: center;
+  width: 1.5px;
+  height: clamp(0.58rem, 1.65vmin, 0.68rem);
+  margin-block: clamp(0.05rem, 0.14vmin, 0.06rem);
+}
+
+html[data-home-page] .home-call-logic-diagram__fork-rail {
+  position: relative;
   width: 100%;
-  height: clamp(1.55rem, 4.2vmin, 1.85rem);
-  flex-shrink: 0;
-  color: color-mix(in srgb, #1e343a 14%, #ebe7e0);
+  height: clamp(0.62rem, 1.75vmin, 0.72rem);
+  margin-inline: auto;
+}
+
+html[data-home-page] .home-call-logic-diagram__fork-rail-line {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border-radius: 999px;
+  background: color-mix(in srgb, #1e343a 14%, #ebe7e0);
+}
+
+html[data-home-page] .home-call-logic-diagram__fork-rail-line--left {
+  left: 25%;
+  width: 1.5px;
+}
+
+html[data-home-page] .home-call-logic-diagram__fork-rail-line--right {
+  right: 25%;
+  width: 1.5px;
+}
+
+html[data-home-page] .home-call-logic-diagram__fork-rail::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 25%;
+  right: 25%;
+  height: 1.5px;
+  border-radius: 999px;
+  background: color-mix(in srgb, #1e343a 14%, #ebe7e0);
 }
 
 html[data-home-page] .home-call-logic-diagram__branches {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(0.62rem, 1.75vmin, 0.78rem);
+  gap: clamp(0.72rem, 2.05vmin, 0.9rem);
   width: 100%;
+  margin-top: clamp(0.05rem, 0.14vmin, 0.06rem);
 }
 
 html[data-home-page] .home-call-logic-diagram__branch-col {
@@ -5100,64 +5149,18 @@ html[data-home-page] .home-call-logic-diagram__branch-col {
   min-width: 0;
 }
 
-html[data-home-page] .home-call-logic-diagram__branch-gate {
-  display: flex;
-  align-items: center;
-  gap: clamp(0.34rem, 0.95vmin, 0.4rem);
-  width: 100%;
-  margin-bottom: clamp(0.18rem, 0.5vmin, 0.22rem);
-  padding: clamp(0.38rem, 1.05vmin, 0.44rem) clamp(0.48rem, 1.35vmin, 0.56rem);
-  border-radius: clamp(0.42rem, 1.15vmin, 0.48rem);
-  border: 1px solid color-mix(in srgb, #1e343a 9%, #ebe7e0);
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 6px 18px rgba(30, 52, 58, 0.06);
-}
-
-html[data-home-page] .home-call-logic-diagram__branch-gate--yes {
-  border-color: rgba(210, 119, 76, 0.28);
-  background: linear-gradient(180deg, rgba(255, 252, 248, 0.98) 0%, rgba(248, 236, 226, 0.92) 100%);
-}
-
-html[data-home-page] .home-call-logic-diagram__branch-gate--no {
-  border-color: color-mix(in srgb, #1e343a 11%, #ebe7e0);
-  background: rgba(255, 255, 255, 0.72);
-}
-
-html[data-home-page] .home-call-logic-diagram__branch-gate-mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: clamp(1.15rem, 3.1vmin, 1.28rem);
-  height: clamp(1.15rem, 3.1vmin, 1.28rem);
-  border-radius: clamp(0.28rem, 0.78vmin, 0.32rem);
-  font-size: clamp(0.62rem, 1.75vmin, 0.72rem);
+html[data-home-page] .home-call-logic-diagram__branch-key {
+  align-self: center;
+  margin-bottom: clamp(0.1rem, 0.28vmin, 0.12rem);
+  padding: clamp(0.16rem, 0.45vmin, 0.18rem) clamp(0.42rem, 1.2vmin, 0.5rem);
+  border-radius: 999px;
+  background: rgba(210, 119, 76, 0.12);
+  color: #d2774c;
+  font-size: clamp(0.66rem, 1.88vmin, 0.76rem);
   font-weight: 600;
   line-height: 1;
-  letter-spacing: 0;
-}
-
-html[data-home-page] .home-call-logic-diagram__branch-gate--yes .home-call-logic-diagram__branch-gate-mark {
-  background: rgba(210, 119, 76, 0.16);
-  color: #c46848;
-}
-
-html[data-home-page] .home-call-logic-diagram__branch-gate--no .home-call-logic-diagram__branch-gate-mark {
-  background: color-mix(in srgb, #1e343a 7%, #ebe7e0);
-  color: #6b7280;
-}
-
-html[data-home-page] .home-call-logic-diagram__branch-gate-label {
-  color: #1e343a;
-  font-size: clamp(0.72rem, 2.05vmin, 0.82rem);
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
-}
-
-html[data-home-page] .home-call-logic-diagram__branch-gate--yes .home-call-logic-diagram__branch-gate-label {
-  color: #8b5a3c;
 }
 
 html[data-home-page] .home-call-logic-diagram__node {
@@ -5179,17 +5182,17 @@ html[data-home-page] .home-call-logic-diagram__node--condition {
 }
 
 html[data-home-page] .home-call-logic-diagram__node--active {
-  border-color: rgba(210, 119, 76, 0.34);
-  background: rgba(255, 252, 248, 0.96);
+  border-color: rgba(210, 119, 76, 0.42);
+  background: rgba(210, 119, 76, 0.08);
   box-shadow:
-    0 0 0 1px rgba(210, 119, 76, 0.1),
+    0 0 0 1px rgba(210, 119, 76, 0.12),
     0 10px 28px rgba(30, 52, 58, 0.08);
 }
 
 html[data-home-page] .home-call-logic-diagram__node-head {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
   gap: clamp(0.45rem, 1.25vmin, 0.55rem);
   margin-bottom: clamp(0.3rem, 0.85vmin, 0.36rem);
 }
@@ -5202,17 +5205,27 @@ html[data-home-page] .home-call-logic-diagram__node-kind {
 }
 
 html[data-home-page] .home-call-logic-diagram__node-kind-label {
+  font-size: clamp(0.66rem, 1.88vmin, 0.76rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+html[data-home-page] .home-call-logic-diagram__edit-badge {
+  padding: clamp(0.14rem, 0.4vmin, 0.17rem) clamp(0.34rem, 0.95vmin, 0.4rem);
+  border-radius: 999px;
+  background: rgba(210, 119, 76, 0.14);
+  color: #d2774c;
   font-size: clamp(0.62rem, 1.75vmin, 0.72rem);
   font-weight: 500;
   line-height: 1;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
 }
 
 html[data-home-page] .home-call-logic-diagram__node-label {
   margin: 0;
   color: #1e343a;
-  font-size: clamp(0.84rem, 2.35vmin, 0.94rem);
+  font-size: clamp(0.86rem, 2.45vmin, 0.98rem);
   font-weight: 500;
   line-height: 1.25;
   letter-spacing: -0.015em;
@@ -5221,7 +5234,7 @@ html[data-home-page] .home-call-logic-diagram__node-label {
 html[data-home-page] .home-call-logic-diagram__node-meta {
   margin: clamp(0.18rem, 0.5vmin, 0.22rem) 0 0;
   color: #6b7280;
-  font-size: clamp(0.68rem, 1.92vmin, 0.76rem);
+  font-size: clamp(0.7rem, 1.98vmin, 0.8rem);
   font-weight: 400;
   line-height: 1.2;
 }
@@ -5232,7 +5245,7 @@ html[data-home-page] .home-call-logic-diagram__add-step {
   justify-content: center;
   gap: clamp(0.28rem, 0.8vmin, 0.34rem);
   width: 100%;
-  margin: clamp(0.72rem, 2vmin, 0.86rem) 0 0;
+  margin: clamp(0.12rem, 0.34vmin, 0.14rem) auto 0;
   padding: clamp(0.46rem, 1.3vmin, 0.54rem) clamp(0.58rem, 1.65vmin, 0.68rem);
   border-radius: clamp(0.46rem, 1.3vmin, 0.54rem);
   border: 0.5px dashed color-mix(in srgb, #1e343a 16%, #ebe7e0);
@@ -6353,10 +6366,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-call-logic-diagram__type-chip,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--workflow
-  .home-call-logic-diagram__add-step,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--workflow
-  .home-call-logic-diagram__branch-gate {
+  .home-call-logic-diagram__add-step {
   background: var(--home-dusk-ui-surface) !important;
   border-color: var(--home-dusk-ui-border) !important;
   box-shadow: var(--home-dusk-ui-shadow) !important;
@@ -6364,15 +6374,16 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--workflow
+  .home-call-logic-diagram__eyebrow,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--workflow
   .home-call-logic-diagram__type-chip,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--workflow
-  .home-call-logic-diagram__branch-gate--yes
-  .home-call-logic-diagram__branch-gate-mark,
+  .home-call-logic-diagram__edit-badge,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--workflow
-  .home-call-logic-diagram__branch-gate--yes
-  .home-call-logic-diagram__branch-gate-label {
+  .home-call-logic-diagram__branch-key {
   color: var(--home-dusk-ui-horizon) !important;
 }
 
@@ -6381,33 +6392,17 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-call-logic-diagram__title,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--workflow
-  .home-call-logic-diagram__node-label,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--workflow
-  .home-call-logic-diagram__branch-gate-label {
+  .home-call-logic-diagram__node-label {
   color: var(--home-dusk-ui-ink) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--workflow
-  .home-call-logic-diagram__branch-gate--yes {
+  .home-call-logic-diagram__edit-badge,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--workflow
+  .home-call-logic-diagram__branch-key {
   background: var(--home-dusk-ui-surface-raised) !important;
-  border-color: rgba(232, 143, 92, 0.34) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--workflow
-  .home-call-logic-diagram__branch-gate--yes
-  .home-call-logic-diagram__branch-gate-mark {
-  background: rgba(232, 143, 92, 0.16) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--workflow
-  .home-call-logic-diagram__branch-gate--no
-  .home-call-logic-diagram__branch-gate-mark {
-  background: var(--home-dusk-ui-surface-sunken) !important;
-  color: var(--home-dusk-ui-muted) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
@@ -6455,8 +6450,11 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-call-logic-diagram__connector,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--workflow
-  .home-call-logic-diagram__fork-svg {
-  color: var(--home-dusk-ui-border) !important;
+  .home-call-logic-diagram__fork-rail-line,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--workflow
+  .home-call-logic-diagram__fork-rail::before {
+  background: var(--home-dusk-ui-border) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
