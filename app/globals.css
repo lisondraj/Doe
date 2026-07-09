@@ -1391,25 +1391,34 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-appt--neutral {
   background: #f4f3f1;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-appt--highlighted {
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__scheduling-peek-appt--highlighted {
   background: #e88f5c;
   opacity: 1 !important;
   filter: none !important;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-appt--highlighted
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__scheduling-peek-appt--highlighted
   .home-agents-carousel__scheduling-peek-appt-title {
   color: #ffffff;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-appt--highlighted
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__scheduling-peek-appt--highlighted
   .home-agents-carousel__scheduling-peek-appt-type {
   color: rgba(255, 255, 255, 0.92);
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-appt--highlighted
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__scheduling-peek-appt--highlighted
   .home-agents-carousel__scheduling-peek-appt-meta {
   color: rgba(255, 255, 255, 0.78);
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-appt--highlighted {
+  opacity: 1 !important;
+  filter: none !important;
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-appt-title {
@@ -1440,6 +1449,20 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-appt-meta {
   line-height: 1.1;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
+}
+
+/* iPhone — scheduling peek: no blur, empty event fills, Brooks text + orange only. */
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__scheduling-peek-day-head,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__scheduling-peek-appt {
+  filter: none !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__scheduling-peek-appt--iphone-fill {
+  min-height: clamp(1.42rem, calc(var(--app-vw, 100vw) * 0.042), 1.72rem);
+  padding-block: clamp(0.28rem, calc(var(--app-vw, 100vw) * 0.0085), 0.34rem);
 }
 
 /* Desktop agents carousel — Labs Agent dual UI peek (centered, top/bottom clip). */
