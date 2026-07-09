@@ -3376,12 +3376,11 @@ html[data-home-page][data-layout="desktop"] .home-feature-specialties__marquee {
   width: max-content;
   gap: var(--specialty-chip-gap);
   min-width: 100%;
-  will-change: transform;
-  animation: home-specialty-marquee var(--specialty-marquee-duration, 58s) linear infinite;
+  transform: translateX(-8%);
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-specialties__marquee--reverse {
-  animation-direction: reverse;
+  transform: translateX(-24%);
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-specialties__chip {
@@ -3430,7 +3429,9 @@ html[data-home-page][data-layout="desktop"] .home-feature-specialties__chip-labe
 
 @media (prefers-reduced-motion: reduce) {
   html[data-home-page][data-layout="desktop"] .home-feature-specialties__marquee,
-  html[data-home-page][data-layout="desktop"] .home-feature-specialties__marquee--reverse {
+  html[data-home-page][data-layout="desktop"] .home-feature-specialties__marquee--reverse,
+  html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__marquee,
+  html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__marquee--reverse {
     animation: none;
   }
 }
@@ -5835,12 +5836,11 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__marqu
   width: max-content;
   gap: var(--specialty-chip-gap);
   min-width: 100%;
-  will-change: transform;
-  animation: home-specialty-marquee var(--specialty-marquee-duration, 58s) linear infinite;
+  transform: translateX(-8%);
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__marquee--reverse {
-  animation-direction: reverse;
+  transform: translateX(-24%);
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__chip {
@@ -5885,23 +5885,6 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__chip-
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__chip-label {
   white-space: nowrap;
-}
-
-@keyframes home-specialty-marquee {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-
-  to {
-    transform: translate3d(-50%, 0, 0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__marquee,
-  html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__marquee--reverse {
-    animation: none;
-  }
 }
 
 /* iPhone home — dusk mock UI (specialty chips, feature cards, workflow input). */
