@@ -82,6 +82,11 @@ function getApptOpacity(spread: number) {
   return Math.max(0.54, 1 - eased * 0.1);
 }
 
+function getApptBlur(spread: number) {
+  const eased = Math.pow(spread, 0.78);
+  return Math.min(0.95, eased * 0.42);
+}
+
 /** Desktop agents carousel — Scheduling Agent week calendar peek. */
 export function HomeAgentsCarouselSchedulingPeek() {
   return (
@@ -91,6 +96,7 @@ export function HomeAgentsCarouselSchedulingPeek() {
           {WEEK_DAYS.map((day, dayIndex) => {
             const isActive = day.date === 10;
             const daySpread = Math.abs(dayIndex - BROOKS_DAY_INDEX);
+            const dayBlur = getApptBlur(daySpread * 0.42);
 
             return (
               <div
@@ -104,6 +110,7 @@ export function HomeAgentsCarouselSchedulingPeek() {
                   aria-hidden
                   style={{
                     opacity: getApptOpacity(daySpread * 0.34),
+                    filter: dayBlur > 0 ? `blur(${dayBlur}px)` : undefined,
                   }}
                 >
                   <span className="home-agents-carousel__scheduling-peek-day-label">{day.label}</span>
@@ -114,6 +121,7 @@ export function HomeAgentsCarouselSchedulingPeek() {
                   {day.appts.map((appt, apptIndex) => {
                     const isHighlighted = "highlight" in appt && appt.highlight;
                     const spread = getApptSpread(dayIndex, apptIndex, isHighlighted);
+                    const blur = getApptBlur(spread);
 
                     return (
                     <div
@@ -125,6 +133,7 @@ export function HomeAgentsCarouselSchedulingPeek() {
                       }`}
                       style={{
                         opacity: getApptOpacity(spread),
+                        filter: blur > 0 ? `blur(${blur}px)` : undefined,
                       }}
                     >
                       <span className="home-agents-carousel__scheduling-peek-appt-title">{appt.name}</span>
