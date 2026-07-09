@@ -87,7 +87,7 @@ function CarouselChevron({
   );
 }
 
-function AgentCarouselPeek({ label }: { label: string }) {
+function AgentCarouselPeek({ label, isPhone = false }: { label: string; isPhone?: boolean }) {
   switch (label) {
     case "Inbox Agent":
       return <HomeAgentsCarouselInboxPeek />;
@@ -96,7 +96,7 @@ function AgentCarouselPeek({ label }: { label: string }) {
     case "Referrals Agent":
       return <HomeAgentsCarouselReferralsPeek />;
     case "Scheduling Agent":
-      return <HomeAgentsCarouselSchedulingPeek />;
+      return <HomeAgentsCarouselSchedulingPeek iphone={isPhone} />;
     case "Live Appointment":
       return <HomeAgentsCarouselLivePeek />;
     case "Billing Agent":
@@ -207,10 +207,10 @@ function AgentCarouselOrb({
               <div className="home-agents-carousel__orb-peek-reveal">
                 {isDesktop ? (
                   <div className={peekLiftClass}>
-                    <AgentCarouselPeek label={scheme.label} />
+                    <AgentCarouselPeek label={scheme.label} isPhone={!isDesktop} />
                   </div>
                 ) : (
-                  <AgentCarouselPeek label={scheme.label} />
+                  <AgentCarouselPeek label={scheme.label} isPhone={!isDesktop} />
                 )}
               </div>
             ) : null}
