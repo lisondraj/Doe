@@ -78,11 +78,13 @@ function getApptSpread(dayIndex: number, apptIndex: number, isHighlighted: boole
 }
 
 function getApptOpacity(spread: number) {
-  return Math.max(0.38, 1 - spread * 0.19);
+  const eased = Math.pow(spread, 0.72);
+  return Math.max(0.54, 1 - eased * 0.1);
 }
 
 function getApptBlur(spread: number) {
-  return Math.min(2.4, spread * 0.9);
+  const eased = Math.pow(spread, 0.78);
+  return Math.min(0.95, eased * 0.42);
 }
 
 /** Desktop agents carousel — Scheduling Agent week calendar peek. */
@@ -94,7 +96,7 @@ export function HomeAgentsCarouselSchedulingPeek() {
           {WEEK_DAYS.map((day, dayIndex) => {
             const isActive = day.date === 10;
             const daySpread = Math.abs(dayIndex - BROOKS_DAY_INDEX);
-            const dayBlur = getApptBlur(daySpread * 0.65);
+            const dayBlur = getApptBlur(daySpread * 0.42);
 
             return (
               <div
@@ -107,7 +109,7 @@ export function HomeAgentsCarouselSchedulingPeek() {
                   className="home-agents-carousel__scheduling-peek-day-head"
                   aria-hidden
                   style={{
-                    opacity: getApptOpacity(daySpread * 0.5),
+                    opacity: getApptOpacity(daySpread * 0.34),
                     filter: dayBlur > 0 ? `blur(${dayBlur}px)` : undefined,
                   }}
                 >
