@@ -84,8 +84,8 @@ function getApptOpacity(spread: number) {
 
 function getApptBlur(spread: number, iphone = false) {
   if (iphone) {
-    const eased = Math.pow(spread, 0.96);
-    return Math.min(0.42, eased * 0.16);
+    const eased = Math.pow(spread, 0.9);
+    return Math.min(0.3, eased * 0.11);
   }
 
   const eased = Math.pow(spread, 0.78);
