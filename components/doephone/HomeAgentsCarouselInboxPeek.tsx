@@ -122,9 +122,9 @@ export function HomeAgentsCarouselInboxPeek() {
             return (
             <li
               key={row.label}
-              className={`home-agents-carousel__inbox-peek-row${
-                row.active ? " home-agents-carousel__inbox-peek-row--active" : ""
-              }`}
+                className={`home-agents-carousel__inbox-peek-row${
+                  "active" in row && row.active ? " home-agents-carousel__inbox-peek-row--active" : ""
+                }`}
               style={{
                 opacity: getPeekFadeOpacity(spread),
                 filter: blur > 0 ? `blur(${blur}px)` : undefined,

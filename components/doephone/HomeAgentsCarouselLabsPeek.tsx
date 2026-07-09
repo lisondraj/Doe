@@ -120,14 +120,18 @@ export function HomeAgentsCarouselLabsPeek() {
       <div className={`home-agents-carousel__labs-peek-card home-agents-carousel__labs-peek-card--routing ${suisseIntl.className}`}>
         <ul className="home-agents-carousel__labs-peek-list">
           {ROUTING_ROWS.map((row, rowIndex) => {
-            const spread = getLabsRowSpread(rowIndex, LABS_ROUTING_FOCUS_INDEX, row.active);
+            const spread = getLabsRowSpread(
+              rowIndex,
+              LABS_ROUTING_FOCUS_INDEX,
+              "active" in row && row.active,
+            );
             const blur = getRoutingFadeBlur(spread);
 
             return (
               <li
                 key={row.label}
                 className={`home-agents-carousel__labs-peek-row home-agents-carousel__labs-peek-row--routing${
-                  row.active ? " home-agents-carousel__labs-peek-row--active" : ""
+                  "active" in row && row.active ? " home-agents-carousel__labs-peek-row--active" : ""
                 }`}
                 style={{
                   opacity: getRoutingFadeOpacity(spread),
