@@ -106,3 +106,12 @@ export function heroDialOrbCarouselScheme(scheme: HeroDialOrbScheme): HeroDialOr
     colors: [RIM_SAND, mid, light],
   };
 }
+
+/** iPhone carousel Paper shader — dusk hero palette on dark brown (section-band family). */
+export function heroDialOrbCarouselIphonePaperScheme(scheme: HeroDialOrbScheme): HeroDialOrbScheme {
+  return {
+    ...scheme,
+    colorBack: DUSK.back,
+    colors: [DUSK.horizon, DUSK.clay, DUSK.sand],
+  };
+}

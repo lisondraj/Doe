@@ -31,13 +31,14 @@ import { AGENTS_CAROUSEL_DESCRIPTIONS } from "@/lib/doephone/agents-carousel-cop
 import {
   HERO_DIAL_ORB_CAROUSEL_SHADER,
   HERO_DIAL_ORBS,
+  heroDialOrbCarouselIphonePaperScheme,
   heroDialOrbCarouselScheme,
   type HeroDialOrbScheme,
 } from "@/lib/doephone/hero-dial-orbs";
 import {
   SHADER_WEBGL_SLOT_PRIORITY,
 } from "@/lib/doephone/shader-webgl-budget";
-import { doeHomeAgentsCarouselOrbShaderVariant } from "@/lib/proto/proto-grain-gradient";
+import { doeHomeAgentsCarouselOrbShaderVariantForLabel } from "@/lib/proto/proto-grain-gradient";
 
 function orbAccentStyle(scheme: HeroDialOrbScheme): CSSProperties {
   const [dark, mid, light] = scheme.colors;
@@ -113,8 +114,6 @@ function AgentCarouselPeek({ label, isPhone = false }: { label: string; isPhone?
   }
 }
 
-const AGENTS_CAROUSEL_IPHONE_SHADER_VARIANT = doeHomeAgentsCarouselOrbShaderVariant();
-
 function getOrbBlur(distance: number, focused: boolean) {
   if (focused || distance === 0) {
     return 0;
@@ -140,7 +139,9 @@ function AgentCarouselOrb({
   layoutReady: boolean;
   animatePeekLift: boolean;
 }) {
-  const displayScheme = heroDialOrbCarouselScheme(scheme);
+  const displayScheme = isPhoneLayout
+    ? heroDialOrbCarouselIphonePaperScheme(scheme)
+    : heroDialOrbCarouselScheme(scheme);
   const blur = isDesktop ? getOrbBlur(distance, focused) : 0;
   const paperSlotPriority = focused
     ? SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_FOCUSED
@@ -219,7 +220,7 @@ function AgentCarouselOrb({
                 />
                 <HeroDialOrbPaperShader
                   scheme={displayScheme}
-                  variant={AGENTS_CAROUSEL_IPHONE_SHADER_VARIANT}
+                  variant={doeHomeAgentsCarouselOrbShaderVariantForLabel(scheme.label)}
                   slotPriority={paperSlotPriority}
                 />
               </>

@@ -384,6 +384,23 @@ export function doeHomeAgentsCarouselOrbShaderVariant(): ProtoGrainGradientVaria
   return doeHomeShaderBandVariant("agents") ?? "agents";
 }
 
+/** iPhone agents carousel — per-orb static section-band flows (varied shape/direction). */
+const AGENTS_CAROUSEL_IPHONE_ORB_SHADER_VARIANTS: Record<string, ProtoGrainGradientVariant> = {
+  "Scheduling Agent": "front-desk-band",
+  "Inbox Agent": "front-desk",
+  "Labs Agent": "agents",
+  "Referrals Agent": "ambient",
+  "Live Appointment": "validate",
+  "Billing Agent": "billing",
+  "Refill Agent": "home-footer",
+};
+
+export function doeHomeAgentsCarouselOrbShaderVariantForLabel(
+  label: string,
+): ProtoGrainGradientVariant {
+  return AGENTS_CAROUSEL_IPHONE_ORB_SHADER_VARIANTS[label] ?? "agents";
+}
+
 export function protoGrainGradientVariant(
   slideId: string,
 ): ProtoGrainGradientVariant | undefined {
