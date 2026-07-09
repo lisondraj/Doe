@@ -1,6 +1,8 @@
 "use client";
 
 import { HomeAgentsCarouselInboxPeek } from "@/components/doephone/HomeAgentsCarouselInboxPeek";
+import { HomeAgentsCarouselLabsPeek } from "@/components/doephone/HomeAgentsCarouselLabsPeek";
+import { HomeAgentsCarouselReferralsPeek } from "@/components/doephone/HomeAgentsCarouselReferralsPeek";
 import { HeroDialOrbGrainShader } from "@/components/doephone/HeroDialOrbGrainShader";
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type TouchEvent, type TransitionEvent } from "react";
 
@@ -75,6 +77,8 @@ function AgentCarouselOrb({
 }) {
   const displayScheme = heroDialOrbCarouselScheme(scheme);
   const showInboxPeek = focused && scheme.label === "Inbox Agent";
+  const showLabsPeek = focused && scheme.label === "Labs Agent";
+  const showReferralsPeek = focused && scheme.label === "Referrals Agent";
 
   return (
     <div
@@ -94,10 +98,12 @@ function AgentCarouselOrb({
               scheme={displayScheme}
               shaderConfig={HERO_DIAL_ORB_CAROUSEL_SHADER}
             />
+            {showInboxPeek ? <HomeAgentsCarouselInboxPeek /> : null}
+            {showLabsPeek ? <HomeAgentsCarouselLabsPeek /> : null}
+            {showReferralsPeek ? <HomeAgentsCarouselReferralsPeek /> : null}
           </div>
         </div>
       </div>
-      {showInboxPeek ? <HomeAgentsCarouselInboxPeek /> : null}
     </div>
   );
 }

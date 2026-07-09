@@ -1,18 +1,19 @@
 "use client";
 
 import { suisseIntl } from "@/lib/home/fonts";
-import { DOE_HOME_HERO_DUSK_PALETTE } from "@/lib/proto/proto-shader-backdrop-colors";
 
 const INK = "#3D4549";
 const MUTED = "#9AA3A8";
-const ROW_ACTIVE = "#F6F6F4";
 const BADGE_BG = "#6E8EAE";
 
 const INBOX_ROWS = [
   { label: "New referrals", count: 24, badge: "New" as const, active: true, icon: "check" as const },
-  { label: "Lab results", count: 18, icon: "person" as const },
+  { label: "Re-admits", count: 13, icon: "person" as const },
+  { label: "Lab results", count: 18, icon: "labs" as const },
   { label: "Prior auth", count: 12, icon: "chart" as const },
   { label: "Imaging", count: 9, icon: "calendar" as const },
+  { label: "Patient intake", count: 7, icon: "intake" as const },
+  { label: "Insurance EOB", count: 5, icon: "billing" as const },
 ] as const;
 
 function RowIcon({ kind }: { kind: (typeof INBOX_ROWS)[number]["icon"] }) {
@@ -43,41 +44,44 @@ function RowIcon({ kind }: { kind: (typeof INBOX_ROWS)[number]["icon"] }) {
           <path d="M4.5 8.5h11M7.25 4v2.25M12.75 4v2.25" stroke={stroke} strokeWidth="1.35" strokeLinecap="round" />
         </>
       )}
+      {kind === "labs" && (
+        <>
+          <path d="M8 2.5h4" stroke={stroke} strokeWidth="1.35" strokeLinecap="round" />
+          <path
+            d="M7.5 4.5h5l-1.1 10.2c0 .85-.75 1.5-1.65 1.5h-.7c-.9 0-1.65-.65-1.65-1.5L7.5 4.5z"
+            stroke={stroke}
+            strokeWidth="1.35"
+            strokeLinejoin="round"
+          />
+        </>
+      )}
+      {kind === "intake" && (
+        <>
+          <path d="M5 4.5h10v11H5V4.5z" stroke={stroke} strokeWidth="1.35" strokeLinejoin="round" />
+          <path d="M7.5 8h5M7.5 10.5h5M7.5 13h3.5" stroke={stroke} strokeWidth="1.35" strokeLinecap="round" />
+        </>
+      )}
+      {kind === "billing" && (
+        <>
+          <path d="M5 4.5h10v11H5V4.5z" stroke={stroke} strokeWidth="1.35" strokeLinejoin="round" />
+          <path d="M7.5 8h5M7.5 10.5h3.5" stroke={stroke} strokeWidth="1.35" strokeLinecap="round" />
+        </>
+      )}
     </svg>
   );
 }
 
 /** Desktop agents carousel — inbox UI peek from focused Inbox Agent orb (bottom-right). */
 export function HomeAgentsCarouselInboxPeek() {
-  const { horizon, clay, sand } = DOE_HOME_HERO_DUSK_PALETTE;
-
   return (
     <div className="home-agents-carousel__inbox-peek" aria-hidden>
       <div className={`home-agents-carousel__inbox-peek-card ${suisseIntl.className}`}>
         <div
-          className="home-agents-carousel__inbox-peek-logo"
-          style={{
-            background: `radial-gradient(circle at 32% 28%, ${sand} 0%, ${horizon} 42%, ${clay} 88%)`,
-          }}
-        >
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden className="home-agents-carousel__inbox-peek-logo-mark">
-            <path
-              d="M7.5 16.5C9.8 13.8 11.2 11.2 12 8.5c.8 2.7 2.2 5.3 4.5 8"
-              stroke="#1A1208"
-              strokeWidth="1.65"
-              strokeLinecap="round"
-            />
-            <path
-              d="M9 14.8c1.5-1.8 2.5-3.6 3-5.5"
-              stroke="#1A1208"
-              strokeWidth="1.35"
-              strokeLinecap="round"
-              opacity="0.72"
-            />
-          </svg>
-        </div>
+          className="home-agents-carousel__inbox-peek-logo bg-gradient-to-br from-[#E7A944] via-[#D2774C] to-[#1E343A]"
+          aria-hidden
+        />
 
-        <p className="home-agents-carousel__inbox-peek-title">Doe Inbox</p>
+        <p className="home-agents-carousel__inbox-peek-title">Inbox</p>
 
         <ul className="home-agents-carousel__inbox-peek-list">
           {INBOX_ROWS.map((row) => (
@@ -88,14 +92,21 @@ export function HomeAgentsCarouselInboxPeek() {
               }`}
             >
               <RowIcon kind={row.icon} />
-              <span className="home-agents-carousel__inbox-peek-label">{row.label}</span>
-              {"badge" in row && row.badge ? (
-                <span className="home-agents-carousel__inbox-peek-badge">{row.badge}</span>
-              ) : null}
-              <span className="home-agents-carousel__inbox-peek-count">{row.count}</span>
+              <span className="home-agents-carousel__inbox-peek-label-block">
+                <span className="home-agents-carousel__inbox-peek-label">{row.label}</span>
+                <span className="home-agents-carousel__inbox-peek-count">{row.count}</span>
+                {"badge" in row && row.badge ? (
+                  <span className="home-agents-carousel__inbox-peek-badge">{row.badge}</span>
+                ) : null}
+              </span>
             </li>
           ))}
         </ul>
+
+        <div className="home-agents-carousel__inbox-peek-footer">
+          <span className="home-agents-carousel__inbox-peek-footer-stat">142 routed today</span>
+          <span className="home-agents-carousel__inbox-peek-footer-pill">Auto-sort on</span>
+        </div>
       </div>
     </div>
   );
