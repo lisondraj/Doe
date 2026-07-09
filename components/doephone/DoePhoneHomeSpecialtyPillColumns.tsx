@@ -1,104 +1,105 @@
 "use client";
 
-import { suisseIntl } from "@/lib/home/fonts";
-import { CAROUSEL_MENU_UI } from "@/lib/doephone/carousel-menu-visual-styles";
+import type { CSSProperties } from "react";
 
-const { ink: INK } = CAROUSEL_MENU_UI;
+import { inter } from "@/lib/home/fonts";
 
-const SPECIALTY_COLUMNS = [
-  [
-    "Primary Care",
-    "Internal Medicine",
-    "Family Medicine",
-    "Pediatrics",
-    "Urgent Care",
-    "Emergency Medicine",
-    "Geriatrics",
-    "Hospital Medicine",
-    "Infectious Disease",
-    "Nephrology",
-    "Pulmonology",
-    "Rheumatology",
-  ],
-  [
-    "Cardiology",
-    "Dermatology",
-    "Endocrinology",
-    "Hematology",
-    "Neurology",
-    "Oncology",
-    "Ophthalmology",
-    "Psychiatry",
-    "Radiology",
-    "Sleep Medicine",
-    "Urology",
-  ],
-  [
-    "Obstetrics",
-    "Gynecology",
-    "Orthopedics",
-    "ENT",
-    "Pain Medicine",
-    "Physical Therapy",
-    "Plastic Surgery",
-    "Podiatry",
-    "Sports Medicine",
-    "Surgery",
-    "Vascular Care",
-    "Behavioral Health",
-  ],
+const ALL_SPECIALTIES = [
+  "Primary Care",
+  "Internal Medicine",
+  "Family Medicine",
+  "Pediatrics",
+  "Urgent Care",
+  "Emergency Medicine",
+  "Geriatrics",
+  "Hospital Medicine",
+  "Infectious Disease",
+  "Nephrology",
+  "Pulmonology",
+  "Rheumatology",
+  "Cardiology",
+  "Dermatology",
+  "Endocrinology",
+  "Hematology",
+  "Neurology",
+  "Oncology",
+  "Ophthalmology",
+  "Psychiatry",
+  "Radiology",
+  "Sleep Medicine",
+  "Urology",
+  "Obstetrics",
+  "Gynecology",
+  "Orthopedics",
+  "ENT",
+  "Pain Medicine",
+  "Physical Therapy",
+  "Plastic Surgery",
+  "Podiatry",
+  "Sports Medicine",
+  "Surgery",
+  "Vascular Care",
+  "Behavioral Health",
 ] as const;
 
-const ALL_SPECIALTIES = SPECIALTY_COLUMNS.flat();
+const PHONE_ROW_COUNT = 3;
+const DESKTOP_ROW_COUNT = 4;
+const CHIP_TONE_COUNT = 4;
 
-const DESKTOP_SPECIALTY_COLUMN_COUNT = 4;
-const PILL_HUE_COUNT = 6;
+const MARQUEE_DURATIONS = [54, 68, 48, 62] as const;
 
-function buildSpecialtyColumns(columnCount: number): readonly (readonly string[])[] {
-  const buckets = Array.from({ length: columnCount }, () => [] as string[]);
+function buildSpecialtyRows(rowCount: number): readonly (readonly string[])[] {
+  const buckets = Array.from({ length: rowCount }, () => [] as string[]);
   ALL_SPECIALTIES.forEach((label, index) => {
-    buckets[index % columnCount].push(label);
+    buckets[index % rowCount].push(label);
   });
   return buckets;
 }
 
-/** Infinite-scrolling specialty pills — three columns on phone, four on desktop. */
+/** Infinite horizontal marquee rows — warm editorial chips on beige. */
 export function DoePhoneHomeSpecialtyPillColumns({
   variant = "phone",
 }: {
   variant?: "phone" | "desktop";
 }) {
-  const columns =
-    variant === "desktop"
-      ? buildSpecialtyColumns(DESKTOP_SPECIALTY_COLUMN_COUNT)
-      : SPECIALTY_COLUMNS;
+  const rowCount = variant === "desktop" ? DESKTOP_ROW_COUNT : PHONE_ROW_COUNT;
+  const rows = buildSpecialtyRows(rowCount);
 
   return (
-    <div className="home-feature-specialties__pill-stage relative min-h-0 flex-1 overflow-hidden">
-      <div className="home-feature-specialties__fade home-feature-specialties__fade--top" />
-      <div className="home-feature-specialties__fade home-feature-specialties__fade--bottom" />
-      <div className="home-feature-specialties__columns h-full">
-        {columns.map((column, columnIndex) => {
-          const sequence = [...column, ...column];
-          const directionClass =
-            columnIndex % 2 === 1
-              ? "home-feature-specialties__track--down"
-              : "home-feature-specialties__track--up";
+    <div
+      className="home-feature-specialties__tapestry relative min-h-0 flex-1 overflow-hidden"
+      data-specialty-rows={rowCount}
+    >
+      <div className="home-feature-specialties__vignette" aria-hidden />
+      <div className="home-feature-specialties__rows">
+        {rows.map((row, rowIndex) => {
+          const sequence = [...row, ...row];
+          const reverse = rowIndex % 2 === 1;
 
           return (
-            <div key={`specialty-column-${columnIndex}`} className="home-feature-specialties__column">
-              <div className={`home-feature-specialties__track ${directionClass}`}>
-                {sequence.map((label, pillIndex) => {
-                  const hueIndex = (columnIndex + pillIndex) % PILL_HUE_COUNT;
+            <div key={`specialty-row-${rowIndex}`} className="home-feature-specialties__row">
+              <div className="home-feature-specialties__row-edge home-feature-specialties__row-edge--left" aria-hidden />
+              <div className="home-feature-specialties__row-edge home-feature-specialties__row-edge--right" aria-hidden />
+              <div
+                className={`home-feature-specialties__marquee${
+                  reverse ? " home-feature-specialties__marquee--reverse" : ""
+                }`}
+                style={
+                  {
+                    "--specialty-marquee-duration": `${MARQUEE_DURATIONS[rowIndex % MARQUEE_DURATIONS.length]}s`,
+                  } as CSSProperties
+                }
+              >
+                {sequence.map((label, chipIndex) => {
+                  const toneIndex = (rowIndex + chipIndex) % CHIP_TONE_COUNT;
 
                   return (
-                    <div
-                      key={`${columnIndex}-${pillIndex}`}
-                      className={`home-feature-specialties__pill home-feature-specialties__pill--hue-${hueIndex} ${suisseIntl.className}`}
-                      style={{ color: INK }}
+                    <span
+                      key={`${rowIndex}-${chipIndex}-${label}`}
+                      className={`home-feature-specialties__chip home-feature-specialties__chip--tone-${toneIndex} ${inter.className}`}
                     >
-                      <span className="home-feature-specialties__pill-label">{label}</span>
-                    </div>
+                      <span className="home-feature-specialties__chip-label">{label}</span>
+                    </span>
                   );
                 })}
               </div>
