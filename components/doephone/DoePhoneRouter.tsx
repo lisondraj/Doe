@@ -62,24 +62,23 @@ function clearPhonePinchViewport(prevViewport: string) {
 }
 
 export function DoePhoneRouter() {
-  /** SSR stays phone; client reads bootstrap `data-layout` to avoid phone→desktop remount flash. */
-  const [variant, setVariant] = useState<DoePhoneVariant>(readBootstrappedDoePhoneVariant);
+  /** Defer until client reads bootstrap `data-layout` — avoids SSR phone shell flash on desktop. */
+  const [variant, setVariant] = useState<DoePhoneVariant | null>(null);
 
   useLayoutEffect(() => {
     const html = document.documentElement;
     html.setAttribute("data-home-page", "true");
     html.removeAttribute("data-about-page");
     html.removeAttribute("data-route-desktop");
+    setVariant(readBootstrappedDoePhoneVariant());
     return () => {
       html.removeAttribute("data-home-page");
     };
   }, []);
 
-  useLayoutEffect(() => {
-    setVariant(readBootstrappedDoePhoneVariant());
-  }, []);
-
   useEffect(() => {
+    if (variant === null) return;
+
     const sync = () => setVariant(resolveDoePhoneVariant());
     sync();
 
@@ -90,9 +89,11 @@ export function DoePhoneRouter() {
     const mq = window.matchMedia(DOEPHONE_DESKTOP_MEDIA_QUERY);
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
-  }, []);
+  }, [variant]);
 
   useLayoutEffect(() => {
+    if (variant === null) return;
+
     if (variant === "phone") {
       applyPhoneDocumentAttrs();
       applyPhoneLayoutViewportMeta();
@@ -122,6 +123,10 @@ export function DoePhoneRouter() {
       clearPhonePinchViewport(prevViewport);
     };
   }, [variant]);
+
+  if (variant === null) {
+    return null;
+  }
 
   if (variant === "desktop") {
     return <DoePhoneDesktopView />;

@@ -13,6 +13,14 @@
 }
 
 /*
+ * Home desktop bootstrap — hide any SSR/hydration phone shell before React mounts desktop.
+ */
+html[data-home-page][data-layout="desktop"] .doephone-mobile-root,
+html[data-home-page][data-layout="desktop"] .doe-home-top-banner {
+  display: none !important;
+}
+
+/*
  * /doeforvc — `.doeforvc-iphone-root` wraps the scaled phone-layout canvas (root `zoom`).
  * Restore full rem scale so typography stays readable after zoom.
  */
