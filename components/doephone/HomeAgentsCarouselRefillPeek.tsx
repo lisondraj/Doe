@@ -1,10 +1,9 @@
 "use client";
 
-import { inter, suisseIntl } from "@/lib/home/fonts";
+import { dmSans, inter, suisseIntl } from "@/lib/home/fonts";
 
 const RX = {
-  patient: "Patel, M.",
-  visit: "Blood pressure",
+  patient: "Sean Brown",
   drug: "Lisinopril 10 mg",
   requestLine1: "Need my blood pressure refill",
   requestLine2: "called in",
@@ -42,14 +41,11 @@ export function HomeAgentsCarouselRefillPeek() {
         <div className="home-agents-carousel__refill-peek-hero">
           <div className="home-agents-carousel__refill-peek-hero-copy">
             <span className="home-agents-carousel__refill-peek-drug">{RX.drug}</span>
-            <span className={`home-agents-carousel__refill-peek-meta ${inter.className}`}>
-              {RX.visit} · {RX.patient}
-            </span>
           </div>
           <span className={`home-agents-carousel__refill-peek-live ${inter.className}`}>1:42</span>
         </div>
 
-        <div className={`home-agents-carousel__refill-peek-call ${inter.className}`}>
+        <div className="home-agents-carousel__refill-peek-call">
           <div className="home-agents-carousel__refill-peek-waveform" aria-hidden>
             {Array.from({ length: 12 }, (_, index) => (
               <span
@@ -59,10 +55,13 @@ export function HomeAgentsCarouselRefillPeek() {
               />
             ))}
           </div>
-          <p className="home-agents-carousel__refill-peek-quote">
-            <span className="home-agents-carousel__refill-peek-quote-line">&ldquo;{RX.requestLine1}</span>
-            <span className="home-agents-carousel__refill-peek-quote-line">{RX.requestLine2}&rdquo;</span>
-          </p>
+          <div className={`home-agents-carousel__refill-peek-quote-panel ${dmSans.className}`}>
+            <p className="home-agents-carousel__refill-peek-quote">
+              <span className="home-agents-carousel__refill-peek-quote-line">&ldquo;{RX.requestLine1}</span>
+              <span className="home-agents-carousel__refill-peek-quote-line">{RX.requestLine2}&rdquo;</span>
+            </p>
+            <span className="home-agents-carousel__refill-peek-quote-name">{RX.patient}</span>
+          </div>
         </div>
 
         <div className="home-agents-carousel__refill-peek-steps" aria-hidden>

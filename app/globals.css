@@ -2188,14 +2188,14 @@ html[data-home-page] .home-agents-carousel__refill-peek-meta {
 html[data-home-page] .home-agents-carousel__refill-peek-call {
   display: grid;
   grid-template-columns: clamp(2.5rem, 3.75vmin, 3rem) minmax(0, 1fr);
-  align-items: start;
+  align-items: center;
   column-gap: clamp(0.42rem, 0.64vmin, 0.52rem);
   row-gap: 0;
   min-width: 0;
-  padding: clamp(0.38rem, 0.58vmin, 0.46rem) clamp(0.42rem, 0.64vmin, 0.52rem);
-  border-radius: clamp(0.34rem, 0.52vmin, 0.42rem);
-  background: rgba(255, 255, 255, 0.14);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 html[data-home-page] .home-agents-carousel__refill-peek-waveform {
@@ -2205,7 +2205,7 @@ html[data-home-page] .home-agents-carousel__refill-peek-waveform {
   width: 100%;
   height: clamp(1.28rem, 1.92vmin, 1.48rem);
   flex-shrink: 0;
-  margin-top: 0.12em;
+  align-self: center;
 }
 
 html[data-home-page] .home-agents-carousel__refill-peek-waveform-bar {
@@ -2216,25 +2216,50 @@ html[data-home-page] .home-agents-carousel__refill-peek-waveform-bar {
   opacity: 0.96;
 }
 
+html[data-home-page] .home-agents-carousel__refill-peek-quote-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: clamp(0.18rem, 0.28vmin, 0.22rem);
+  min-width: 0;
+  width: 100%;
+  padding: clamp(0.38rem, 0.58vmin, 0.46rem) clamp(0.42rem, 0.64vmin, 0.52rem);
+  border-radius: clamp(0.34rem, 0.52vmin, 0.42rem);
+  background: #4a3828;
+  border: 1px solid rgba(255, 248, 240, 0.12);
+  box-shadow: 0 8px 22px rgba(30, 52, 58, 0.14);
+}
+
 html[data-home-page] .home-agents-carousel__refill-peek-quote {
   margin: 0;
   width: 100%;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.08em;
-  align-self: center;
+  gap: 0.06em;
 }
 
 html[data-home-page] .home-agents-carousel__refill-peek-quote-line {
   display: block;
   color: rgba(255, 250, 245, 0.96);
-  font-size: clamp(0.56rem, 0.84vmin, 0.66rem);
-  font-weight: 400;
-  line-height: 1.28;
-  font-style: italic;
-  text-shadow: 0 1px 10px rgba(30, 52, 58, 0.28);
+  font-size: clamp(0.72rem, 1.08vmin, 0.86rem);
+  font-weight: 500;
+  line-height: 1.24;
+  letter-spacing: -0.02em;
+  font-style: normal;
+  text-shadow: 0 1px 10px rgba(30, 52, 58, 0.24);
   overflow-wrap: anywhere;
+}
+
+html[data-home-page] .home-agents-carousel__refill-peek-quote-name {
+  display: block;
+  color: #ffffff;
+  font-size: clamp(1rem, 1.5vmin, 1.16rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  text-shadow: 0 1px 12px rgba(30, 52, 58, 0.34);
 }
 
 html[data-home-page] .home-agents-carousel__refill-peek-steps {
@@ -3013,8 +3038,25 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
   .home-agents-carousel__refill-peek-quote-line {
+  color: rgba(255, 250, 245, 0.96);
+  text-shadow: none;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__refill-peek-quote-name {
   color: var(--carousel-peek-dusk-ink);
   text-shadow: none;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__refill-peek-quote-panel {
+  background: #4a3828;
+  border-color: rgba(255, 248, 240, 0.12);
+  box-shadow: 0 8px 22px rgba(28, 19, 9, 0.28);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
@@ -3037,8 +3079,8 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
   .home-agents-carousel__refill-peek-call {
-  background: rgba(232, 160, 96, 0.1);
-  box-shadow: inset 0 0 0 1px rgba(232, 160, 96, 0.16);
+  background: transparent;
+  box-shadow: none;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
