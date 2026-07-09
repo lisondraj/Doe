@@ -3488,6 +3488,8 @@ html[data-home-page][data-layout="desktop"] .home-feature-card-section__specialt
   align-items: stretch;
   justify-content: center;
   width: 100%;
+  padding-top: clamp(2.5rem, 5vmin, 4.25rem);
+  gap: clamp(2.15rem, 3.75vmin, 3.1rem);
   container-type: inline-size;
   container-name: specialty-title;
 }
@@ -3495,7 +3497,7 @@ html[data-home-page][data-layout="desktop"] .home-feature-card-section__specialt
 html[data-home-page][data-layout="desktop"] .home-feature-card-section__title--specialties {
   display: block !important;
   flex: 0 0 auto;
-  margin: 0 0 clamp(1.45rem, 2.65vmin, 2.05rem);
+  margin: 0;
   padding-top: 0;
   /* Hero headline is clamp(2rem, 10.75cqi, 5.85rem) — ~10% smaller for section band. */
   font-size: clamp(2rem, 9.65cqi, 5.2rem) !important;
@@ -3511,11 +3513,11 @@ body.desktop-route .home-feature-card-section__title--specialties {
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-specialties__tapestry {
-  --specialty-row-gap: clamp(1rem, 1.75vmin, 1.38rem);
-  --specialty-chip-gap: clamp(0.92rem, 1.55vmin, 1.18rem);
-  --specialty-chip-height: clamp(2.85rem, 5.1vmin, 4rem);
-  --specialty-edge-fade: clamp(3.4rem, 9vmin, 6.25rem);
-  --specialty-stage-rows: 4;
+  --specialty-row-gap: clamp(1.25rem, 2.2vmin, 1.72rem);
+  --specialty-chip-gap: clamp(1.15rem, 2vmin, 1.48rem);
+  --specialty-chip-height: clamp(3.35rem, 6.2vmin, 4.85rem);
+  --specialty-edge-fade: clamp(4.75rem, 13.5vmin, 9rem);
+  --specialty-stage-rows: 8;
   --specialty-stage-height: calc(
     var(--specialty-stage-rows) * var(--specialty-chip-height) +
       (var(--specialty-stage-rows) - 1) * var(--specialty-row-gap)
@@ -3530,9 +3532,9 @@ html[data-home-page][data-layout="desktop"] .home-feature-card-section--specialt
   margin-top: 0;
   padding-inline: 0;
   min-height: var(--specialty-stage-height);
-  height: auto;
-  max-height: none;
-  flex: 1 1 auto;
+  height: var(--specialty-stage-height);
+  max-height: var(--specialty-stage-height);
+  flex: 0 0 auto;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-specialties__rows {
@@ -3571,10 +3573,10 @@ html[data-home-page][data-layout="desktop"] .home-feature-specialties__chip {
   justify-content: center;
   flex: 0 0 auto;
   height: var(--specialty-chip-height);
-  padding: 0 clamp(1.28rem, 1.95vmin, 1.55rem);
-  border-radius: clamp(0.52rem, 0.82vmin, 0.64rem);
+  padding: 0 clamp(1.48rem, 2.35vmin, 1.85rem);
+  border-radius: clamp(0.62rem, 0.95vmin, 0.76rem);
   border: 1px solid color-mix(in srgb, #4a3524 11%, transparent);
-  font-size: clamp(0.92rem, 1.38vmin, 1.08rem);
+  font-size: clamp(1.05rem, 1.65vmin, 1.22rem);
   font-weight: 400;
   line-height: 1;
   letter-spacing: 0.045em;
@@ -3623,7 +3625,10 @@ html[data-home-page][data-layout="desktop"] .home-feature-specialties__row-edge-
   background: linear-gradient(
     90deg,
     var(--doe-page-surface, #ede8df) 0%,
-    color-mix(in srgb, var(--doe-page-surface, #ede8df) 82%, transparent) 52%,
+    color-mix(in srgb, var(--doe-page-surface, #ede8df) 94%, transparent) 14%,
+    color-mix(in srgb, var(--doe-page-surface, #ede8df) 72%, transparent) 32%,
+    color-mix(in srgb, var(--doe-page-surface, #ede8df) 42%, transparent) 52%,
+    color-mix(in srgb, var(--doe-page-surface, #ede8df) 16%, transparent) 72%,
     transparent 100%
   );
 }
@@ -3633,7 +3638,10 @@ html[data-home-page][data-layout="desktop"] .home-feature-specialties__row-edge-
   background: linear-gradient(
     270deg,
     var(--doe-page-surface, #ede8df) 0%,
-    color-mix(in srgb, var(--doe-page-surface, #ede8df) 82%, transparent) 52%,
+    color-mix(in srgb, var(--doe-page-surface, #ede8df) 94%, transparent) 14%,
+    color-mix(in srgb, var(--doe-page-surface, #ede8df) 72%, transparent) 32%,
+    color-mix(in srgb, var(--doe-page-surface, #ede8df) 42%, transparent) 52%,
+    color-mix(in srgb, var(--doe-page-surface, #ede8df) 16%, transparent) 72%,
     transparent 100%
   );
 }
@@ -3646,11 +3654,13 @@ html[data-home-page][data-layout="desktop"] .home-feature-specialties__vignette 
   background: linear-gradient(
     180deg,
     var(--doe-page-surface, #ede8df) 0%,
-    transparent 16%,
-    transparent 84%,
+    color-mix(in srgb, var(--doe-page-surface, #ede8df) 72%, transparent) 10%,
+    transparent 26%,
+    transparent 74%,
+    color-mix(in srgb, var(--doe-page-surface, #ede8df) 72%, transparent) 90%,
     var(--doe-page-surface, #ede8df) 100%
   );
-  opacity: 0.55;
+  opacity: 0.42;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -4450,6 +4460,8 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   align-items: stretch;
   justify-content: center;
   width: 100%;
+  padding-top: clamp(1.85rem, 1rem + 3.5vmin, 2.85rem);
+  gap: clamp(1.85rem, 1.1rem + 3.2vmin, 2.75rem);
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow {
@@ -5873,7 +5885,7 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow 
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-feature-card-section__title--specialties {
-  margin: 0 0 clamp(1.75rem, 1.1rem + 2.8vmin, 2.65rem);
+  margin: 0;
   padding-top: 0;
   font-size: clamp(2.35rem, 1.15rem + 6.8vmin, 3.85rem) !important;
   line-height: 1.02 !important;
@@ -5881,11 +5893,11 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__tapestry {
-  --specialty-row-gap: clamp(0.82rem, 0.45rem + 1.85vmin, 1.15rem);
-  --specialty-chip-gap: clamp(0.72rem, 0.38rem + 1.55vmin, 1rem);
-  --specialty-chip-height: clamp(2.45rem, 1.35rem + 3.2vmin, 3.15rem);
-  --specialty-edge-fade: clamp(2.35rem, 6.8vmin, 3.85rem);
-  --specialty-stage-rows: 3;
+  --specialty-row-gap: clamp(1rem, 0.55rem + 2.25vmin, 1.42rem);
+  --specialty-chip-gap: clamp(0.88rem, 0.48rem + 1.85vmin, 1.22rem);
+  --specialty-chip-height: clamp(2.95rem, 1.65rem + 3.85vmin, 3.75rem);
+  --specialty-edge-fade: clamp(3.15rem, 9.5vmin, 5.25rem);
+  --specialty-stage-rows: 6;
   --specialty-stage-height: calc(
     var(--specialty-stage-rows) * var(--specialty-chip-height) +
       (var(--specialty-stage-rows) - 1) * var(--specialty-row-gap)
@@ -5900,9 +5912,9 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section--spec
   margin-top: 0;
   padding-inline: 0;
   min-height: var(--specialty-stage-height);
-  height: auto;
-  max-height: none;
-  flex: 1 1 auto;
+  height: var(--specialty-stage-height);
+  max-height: var(--specialty-stage-height);
+  flex: 0 0 auto;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__rows {
@@ -5941,10 +5953,10 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__chip 
   justify-content: center;
   flex: 0 0 auto;
   height: var(--specialty-chip-height);
-  padding: 0 clamp(1rem, 2.85vmin, 1.22rem);
-  border-radius: clamp(0.42rem, 1.15vmin, 0.52rem);
+  padding: 0 clamp(1.18rem, 3.35vmin, 1.42rem);
+  border-radius: clamp(0.52rem, 1.42vmin, 0.62rem);
   border: 1px solid color-mix(in srgb, #4a3524 11%, transparent);
-  font-size: clamp(0.78rem, 2.05vmin, 0.92rem);
+  font-size: clamp(0.9rem, 2.45vmin, 1.05rem);
   font-weight: 400;
   line-height: 1;
   letter-spacing: 0.05em;
@@ -5993,7 +6005,10 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__row-e
   background: linear-gradient(
     90deg,
     var(--doe-page-surface, #ede8df) 0%,
-    color-mix(in srgb, var(--doe-page-surface, #ede8df) 82%, transparent) 52%,
+    color-mix(in srgb, var(--doe-page-surface, #ede8df) 94%, transparent) 14%,
+    color-mix(in srgb, var(--doe-page-surface, #ede8df) 72%, transparent) 32%,
+    color-mix(in srgb, var(--doe-page-surface, #ede8df) 42%, transparent) 52%,
+    color-mix(in srgb, var(--doe-page-surface, #ede8df) 16%, transparent) 72%,
     transparent 100%
   );
 }
@@ -6003,7 +6018,10 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__row-e
   background: linear-gradient(
     270deg,
     var(--doe-page-surface, #ede8df) 0%,
-    color-mix(in srgb, var(--doe-page-surface, #ede8df) 82%, transparent) 52%,
+    color-mix(in srgb, var(--doe-page-surface, #ede8df) 94%, transparent) 14%,
+    color-mix(in srgb, var(--doe-page-surface, #ede8df) 72%, transparent) 32%,
+    color-mix(in srgb, var(--doe-page-surface, #ede8df) 42%, transparent) 52%,
+    color-mix(in srgb, var(--doe-page-surface, #ede8df) 16%, transparent) 72%,
     transparent 100%
   );
 }
@@ -6016,11 +6034,13 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__vigne
   background: linear-gradient(
     180deg,
     var(--doe-page-surface, #ede8df) 0%,
-    transparent 18%,
-    transparent 82%,
+    color-mix(in srgb, var(--doe-page-surface, #ede8df) 72%, transparent) 10%,
+    transparent 26%,
+    transparent 74%,
+    color-mix(in srgb, var(--doe-page-surface, #ede8df) 72%, transparent) 90%,
     var(--doe-page-surface, #ede8df) 100%
   );
-  opacity: 0.5;
+  opacity: 0.4;
 }
 
 @keyframes home-specialty-marquee {
@@ -6088,7 +6108,10 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   background: linear-gradient(
     90deg,
     var(--doe-page-surface, #ede8df) 0%,
-    color-mix(in srgb, var(--doe-page-surface, #ede8df) 78%, transparent) 55%,
+    color-mix(in srgb, var(--doe-page-surface, #ede8df) 94%, transparent) 14%,
+    color-mix(in srgb, var(--doe-page-surface, #ede8df) 72%, transparent) 32%,
+    color-mix(in srgb, var(--doe-page-surface, #ede8df) 42%, transparent) 52%,
+    color-mix(in srgb, var(--doe-page-surface, #ede8df) 16%, transparent) 72%,
     transparent 100%
   );
 }
@@ -6099,7 +6122,10 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   background: linear-gradient(
     270deg,
     var(--doe-page-surface, #ede8df) 0%,
-    color-mix(in srgb, var(--doe-page-surface, #ede8df) 78%, transparent) 55%,
+    color-mix(in srgb, var(--doe-page-surface, #ede8df) 94%, transparent) 14%,
+    color-mix(in srgb, var(--doe-page-surface, #ede8df) 72%, transparent) 32%,
+    color-mix(in srgb, var(--doe-page-surface, #ede8df) 42%, transparent) 52%,
+    color-mix(in srgb, var(--doe-page-surface, #ede8df) 16%, transparent) 72%,
     transparent 100%
   );
 }

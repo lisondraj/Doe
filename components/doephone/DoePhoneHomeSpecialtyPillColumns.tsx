@@ -42,11 +42,11 @@ const ALL_SPECIALTIES = [
   "Behavioral Health",
 ] as const;
 
-const PHONE_ROW_COUNT = 3;
-const DESKTOP_ROW_COUNT = 4;
+const PHONE_ROW_COUNT = 6;
+const DESKTOP_ROW_COUNT = 8;
 const CHIP_TONE_COUNT = 4;
 
-const MARQUEE_DURATIONS = [54, 68, 48, 62] as const;
+const MARQUEE_DURATIONS = [54, 68, 48, 62, 58, 72, 52, 64] as const;
 
 function buildSpecialtyRows(rowCount: number): readonly (readonly string[])[] {
   const buckets = Array.from({ length: rowCount }, () => [] as string[]);
