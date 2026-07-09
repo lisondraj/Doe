@@ -851,31 +851,30 @@ html[data-home-page] .home-agents-carousel__orb-peek-reveal {
   pointer-events: none;
 }
 
-html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb-peek-reveal.doephone-section-reveal {
+/* Desktop — slow rise for focused orb peek only (no scroll reveal). */
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb-peek-lift {
   opacity: 0;
-  filter: blur(20px);
-  transform: translateY(1.1rem);
-  will-change: opacity, filter, transform;
+  filter: blur(10px);
+  transform: translateY(0.75rem);
+  transition:
+    opacity 1.1s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 1.1s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1.1s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb-peek-reveal--settled {
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb-peek-lift--in {
+  opacity: 1;
+  filter: none;
+  transform: translateY(-5px);
+}
+
+/* iPhone — instant peek, no lift/blur animation. */
+html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb-peek-lift,
+html[data-home-page]:has(.doephone-mobile-root) .home-agents-carousel__orb-peek-lift--in {
   opacity: 1;
   filter: none;
   transform: none;
-}
-
-@keyframes home-agents-carousel-peek-reveal-in {
-  0% {
-    opacity: 0;
-    filter: blur(20px);
-    transform: translateY(1.1rem);
-  }
-
-  100% {
-    opacity: 1;
-    filter: blur(0);
-    transform: translateY(0);
-  }
+  transition: none;
 }
 
 /* Agents carousel — agent peek UIs inside orb (desktop + iPhone). */
@@ -1027,8 +1026,7 @@ html[data-home-page] .home-agents-carousel__referrals-peek-card {
   left: 50%;
   top: 50%;
   transform-origin: center center;
-  transform: translate(-50%, calc(-50% + clamp(3.75rem, 7.5vmin, 6rem) * var(--home-agents-peek-orb-scale)))
-    scale(calc(1.42 * var(--home-agents-peek-orb-scale)));
+  transform: translate(-50%, -50%) scale(calc(1.42 * var(--home-agents-peek-orb-scale)));
   min-width: clamp(17.5rem, 26vmin, 22rem);
   background: #ffffff;
   border-radius: clamp(0.85rem, 1.35vmin, 1.15rem);
@@ -1425,8 +1423,7 @@ html[data-home-page] .home-agents-carousel__labs-peek-stack {
   flex-direction: column;
   gap: clamp(0.55rem, 0.85vmin, 0.72rem);
   width: min(100%, clamp(17.5rem, 26vmin, 22rem));
-  transform: translate(-50%, calc(-50% + clamp(4.25rem, 8.5vmin, 6.5rem) * var(--home-agents-peek-orb-scale)))
-    scale(calc(1.14 * var(--home-agents-peek-orb-scale)));
+  transform: translate(-50%, -50%) scale(calc(1.14 * var(--home-agents-peek-orb-scale)));
   transform-origin: center center;
   isolation: isolate;
 }
@@ -5372,25 +5369,6 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
     cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-agents-carousel-delay, 0ms) both;
 }
 
-.doephone-section-reveal--in.doephone-section-reveal--agents-peek {
-  animation: home-agents-carousel-peek-reveal-in var(--doephone-section-reveal-duration, 1.75s)
-    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-agents-peek-delay, 280ms) both;
-}
-
-.doephone-section-reveal--in.doephone-section-reveal--agents-orbs {
-  animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 1.75s)
-    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-agents-orbs-delay, 0ms) both;
-}
-
-.doephone-section-reveal--in.doephone-section-reveal--agents-label {
-  animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 1.75s)
-    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-agents-label-delay, 420ms) both;
-}
-
-.doephone-section-reveal--in.doephone-section-reveal--agents-nav {
-  animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 1.75s)
-    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-agents-nav-delay, 560ms) both;
-}
 
 /* Shared unblur + rise with optional hover lift (hero orbs, carousel chrome). */
 .doephone-reveal-lift {
@@ -5411,21 +5389,6 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
 
 .doephone-reveal-lift--in.doephone-reveal-lift--hoverable:hover {
   transform: translateY(-7px);
-}
-
-html[data-home-page][data-layout="desktop"] .doephone-section-reveal--agents-carousel,
-html[data-home-page]:has(.doephone-mobile-root) .doephone-section-reveal--agents-orbs,
-html[data-home-page]:has(.doephone-mobile-root) .doephone-section-reveal--agents-label,
-html[data-home-page]:has(.doephone-mobile-root) .doephone-section-reveal--agents-nav {
-  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-html[data-home-page][data-layout="desktop"] .doephone-section-reveal--in.doephone-section-reveal--agents-carousel:hover,
-html[data-home-page]:has(.doephone-mobile-root) .doephone-section-reveal--in.doephone-section-reveal--agents-orbs:hover,
-html[data-home-page]:has(.doephone-mobile-root) .doephone-section-reveal--in.doephone-section-reveal--agents-label:hover,
-html[data-home-page]:has(.doephone-mobile-root) .doephone-section-reveal--in.doephone-section-reveal--agents-nav:hover {
-  transform: translateY(-7px);
-  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 html[data-home-page] .hero-speaking-orbs__node-reveal {

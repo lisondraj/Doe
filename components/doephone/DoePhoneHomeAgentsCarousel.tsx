@@ -26,11 +26,6 @@ import {
   resolveDoePhoneVariant,
   type DoePhoneVariant,
 } from "@/lib/doephone/resolve-doe-phone-variant";
-import { doephoneAgentsRevealStyleVars } from "@/lib/doephone/section-reveal-timing";
-import {
-  doePhoneSectionRevealSegmentClass,
-  useDoePhoneSectionReveal,
-} from "@/lib/doephone/use-doe-phone-section-reveal";
 import { AGENTS_CAROUSEL_DESCRIPTIONS } from "@/lib/doephone/agents-carousel-copy";
 import {
   HERO_DIAL_ORB_CAROUSEL_SHADER,
@@ -126,23 +121,40 @@ function AgentCarouselOrb({
   focused,
   distance,
   isDesktop,
-  peekRevealed,
-  peekRevealSettled,
 }: {
   scheme: HeroDialOrbScheme;
   focused: boolean;
   distance: number;
   isDesktop: boolean;
-  peekRevealed: boolean;
-  peekRevealSettled: boolean;
 }) {
   const displayScheme = heroDialOrbCarouselScheme(scheme);
   const blur = getOrbBlur(distance, focused);
-  const showPeek = !isDesktop || focused;
-  const peekRevealClass = isDesktop
-    ? peekRevealSettled
-      ? "home-agents-carousel__orb-peek-reveal--settled"
-      : doePhoneSectionRevealSegmentClass("agents-peek", peekRevealed)
+  const showPeek = focused;
+  const [peekLifted, setPeekLifted] = useState(false);
+
+  useEffect(() => {
+    if (!focused) {
+      setPeekLifted(false);
+      return;
+    }
+
+    if (!isDesktop) {
+      setPeekLifted(true);
+      return;
+    }
+
+    setPeekLifted(false);
+    const frame = window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        setPeekLifted(true);
+      });
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [focused, isDesktop]);
+
+  const peekLiftClass = showPeek
+    ? `home-agents-carousel__orb-peek-lift${peekLifted ? " home-agents-carousel__orb-peek-lift--in" : ""}`
     : "";
 
   return (
@@ -167,7 +179,7 @@ function AgentCarouselOrb({
               shaderConfig={HERO_DIAL_ORB_CAROUSEL_SHADER}
             />
             {showPeek ? (
-              <div className={`home-agents-carousel__orb-peek-reveal${peekRevealClass ? ` ${peekRevealClass}` : ""}`}>
+              <div className={`home-agents-carousel__orb-peek-reveal${peekLiftClass ? ` ${peekLiftClass}` : ""}`}>
                 <AgentCarouselPeek label={scheme.label} />
               </div>
             ) : null}
@@ -205,8 +217,6 @@ export function DoePhoneHomeAgentsCarousel() {
   const [layoutVariant, setLayoutVariant] = useState<DoePhoneVariant>("phone");
   const [layoutReady, setLayoutReady] = useState(false);
   const isDesktop = layoutReady && layoutVariant === "desktop";
-  const { ref: sectionRef, revealed } = useDoePhoneSectionReveal(isDesktop ? 0.15 : 1);
-  const [peekRevealSettled, setPeekRevealSettled] = useState(false);
   const [position, setPosition] = useState(AGENTS_CAROUSEL_LOOP_START);
   const [trackInstant, setTrackInstant] = useState(true);
   const reenableTransitionRef = useRef<number | null>(null);
@@ -222,18 +232,6 @@ export function DoePhoneHomeAgentsCarousel() {
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
   }, []);
-
-  useEffect(() => {
-    if (!revealed || !isDesktop) {
-      return;
-    }
-
-    const settleTimer = window.setTimeout(() => {
-      setPeekRevealSettled(true);
-    }, 1900);
-
-    return () => window.clearTimeout(settleTimer);
-  }, [isDesktop, revealed]);
 
   const goPrev = useCallback(() => {
     setTrackInstant(false);
@@ -325,12 +323,7 @@ export function DoePhoneHomeAgentsCarousel() {
   }, [trackInstant, position]);
 
   return (
-    <div
-      ref={sectionRef}
-      className={`home-agents-carousel ${suisseIntl.className}`}
-      style={isDesktop ? doephoneAgentsRevealStyleVars() : undefined}
-      aria-hidden
-    >
+    <div className={`home-agents-carousel ${suisseIntl.className}`} aria-hidden>
       <div className="home-agents-carousel__stage">
         <div
           className="home-agents-carousel__viewport"
@@ -356,8 +349,6 @@ export function DoePhoneHomeAgentsCarousel() {
                 focused={orbIndex === position}
                 distance={Math.abs(orbIndex - position)}
                 isDesktop={isDesktop}
-                peekRevealed={revealed}
-                peekRevealSettled={peekRevealSettled}
               />
             ))}
           </div>
