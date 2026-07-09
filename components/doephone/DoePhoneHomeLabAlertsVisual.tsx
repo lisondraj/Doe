@@ -4,55 +4,48 @@ import { inter, suisseIntl } from "@/lib/home/fonts";
 
 const OUTREACH = {
   patient: "James Chen",
-  chartLine: "Annual wellness · 14 mo overdue · Dr. Walsh",
-  booked: "Thu 2:15 PM booked · front desk synced",
+  meta: "Annual wellness · overdue",
+  booked: "Thu 2:15 PM booked",
 } as const;
-
-const CHART_FACTS = [
-  { id: "last", label: "Last visit", value: "Apr 12, 2024" },
-  { id: "gap", label: "Care gap", value: "Annual due" },
-  { id: "pcp", label: "PCP", value: "Dr. Walsh" },
-] as const;
 
 const MESSAGES = [
   {
     id: "open",
     role: "out" as const,
-    text: "Hi James — you're due for your annual wellness visit. Last seen Apr 12, 2024 at Main Clinic.",
-  },
-  {
-    id: "context",
-    role: "out" as const,
-    text: "Chart shows BP 128/82 and A1c 5.8 at that visit. I have Thu 2:15 PM or Fri 10:30 AM open.",
+    text: "You're due for your annual — Thu 2:15 or Fri 10:30?",
   },
   {
     id: "reply",
     role: "in" as const,
-    text: "Thursday at 2:15 works for me.",
+    text: "Thursday works.",
   },
   {
     id: "confirm",
     role: "out" as const,
-    text: "You're booked Thu 2:15 PM with Dr. Walsh. We'll text a reminder the day before.",
+    text: "Booked Thu 2:15 with Dr. Walsh.",
   },
 ] as const;
 
-/** Patient outreach thread — recall conversation on the outreach shader band. */
+/** Patient outreach — voice recall thread on the outreach shader band. */
 export function DoePhoneHomeLabAlertsVisual() {
   return (
     <div className={`home-patient-outreach-visual ${suisseIntl.className}`} aria-hidden>
       <div className="home-patient-outreach-visual__lead">
         <p className="home-patient-outreach-visual__patient">{OUTREACH.patient}</p>
-        <p className={`home-patient-outreach-visual__chart-line ${inter.className}`}>{OUTREACH.chartLine}</p>
+        <p className={`home-patient-outreach-visual__meta ${inter.className}`}>{OUTREACH.meta}</p>
       </div>
 
-      <div className="home-patient-outreach-visual__chart-facts" aria-hidden>
-        {CHART_FACTS.map((fact) => (
-          <span key={fact.id} className={`home-patient-outreach-visual__chart-fact ${inter.className}`}>
-            <span className="home-patient-outreach-visual__chart-fact-label">{fact.label}</span>
-            <span className="home-patient-outreach-visual__chart-fact-value">{fact.value}</span>
-          </span>
-        ))}
+      <div className={`home-patient-outreach-visual__voice ${inter.className}`}>
+        <div className="home-patient-outreach-visual__waveform" aria-hidden>
+          {Array.from({ length: 10 }, (_, index) => (
+            <span
+              key={index}
+              className="home-patient-outreach-visual__waveform-bar"
+              style={{ height: `${34 + ((index * 19) % 48)}%` }}
+            />
+          ))}
+        </div>
+        <span className="home-patient-outreach-visual__voice-label">Outreach call</span>
       </div>
 
       <div className="home-patient-outreach-visual__thread">
