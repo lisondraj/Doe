@@ -5172,6 +5172,11 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--lab-a
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-content,
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--guardrails .home-feature-shader-band__feature-content {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
   padding-bottom: clamp(1.35rem, 0.9rem + 2.1vmin, 2.1rem);
 }
 
@@ -5218,24 +5223,25 @@ html[data-home-page] .home-feature-shader-band--lab-alerts .home-feature-section
   justify-content: center;
 }
 
-html[data-home-page] .home-feature-shader-band--call-summaries .home-feature-section__call-summaries,
+html[data-home-page] .home-feature-shader-band--call-summaries .home-feature-section__prior-auth,
 html[data-home-page] .home-feature-shader-band--guardrails .home-feature-section__guardrails {
   box-sizing: border-box;
   flex: 0 0 auto;
   width: 100%;
   max-width: none;
   margin-inline: auto;
-  padding-left: var(--proto-phone-gutter-left, 1.65rem);
-  padding-right: var(--proto-phone-gutter-right, 1.65rem);
+  padding-left: clamp(0.9rem, 2.8vw, 1.35rem);
+  padding-right: clamp(0.9rem, 2.8vw, 1.35rem);
   display: flex;
+  align-items: center;
   justify-content: center;
 }
 
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-feature-section__call-summaries,
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-feature-section__prior-auth,
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alerts .home-feature-section__lab-alerts,
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--guardrails .home-feature-section__guardrails {
-  padding-left: var(--desktop-page-inset-x) !important;
-  padding-right: var(--desktop-page-inset-x) !important;
+  padding-left: max(calc(var(--desktop-page-inset-x) + 0.35rem), clamp(1rem, 1.6vw, 1.45rem)) !important;
+  padding-right: max(calc(var(--desktop-page-inset-x) + 0.35rem), clamp(1rem, 1.6vw, 1.45rem)) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--lab-alerts .home-lab-alerts-scale,
@@ -5248,8 +5254,8 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--guard
   transform-origin: center center;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--call-summaries .home-call-summaries-scale {
-  --home-shader-feature-scale: 1.12;
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--call-summaries .home-prior-auth-scale {
+  --home-shader-feature-scale: 1.18;
   width: calc(92% / var(--home-shader-feature-scale));
   max-width: calc(92% / var(--home-shader-feature-scale));
   margin-inline: auto;
@@ -5266,7 +5272,7 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--lab-a
   transform-origin: center center;
 }
 
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-call-summaries-scale,
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-prior-auth-scale,
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--guardrails .home-guardrails-scale {
   --home-shader-feature-scale: 1.08;
   width: min(calc(34rem / var(--home-shader-feature-scale)), calc(100% / var(--home-shader-feature-scale)));
@@ -5276,8 +5282,8 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--guardrail
   transform-origin: center center;
 }
 
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-call-summaries-scale {
-  --home-shader-feature-scale: 1.16;
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-prior-auth-scale {
+  --home-shader-feature-scale: 1.2;
   width: min(calc(32rem / var(--home-shader-feature-scale)), calc(92% / var(--home-shader-feature-scale)));
   max-width: min(calc(32rem / var(--home-shader-feature-scale)), calc(92% / var(--home-shader-feature-scale)));
 }
@@ -5291,28 +5297,22 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alert
   transform-origin: center center;
 }
 
-/* Phone chart capture — inbox shader band. */
-html[data-home-page] .home-phone-capture-visual {
+/* Prior auth agent — inbox shader band. */
+html[data-home-page] .home-prior-auth-visual {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: clamp(0.72rem, 2.05vmin, 0.88rem);
+  gap: clamp(0.62rem, 1.75vmin, 0.76rem);
 }
 
-html[data-home-page] .home-phone-capture-visual__agent {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(0.14rem, 0.4vmin, 0.18rem);
-}
-
-html[data-home-page] .home-phone-capture-visual__agent-row {
+html[data-home-page] .home-prior-auth-visual__agent-row {
   display: flex;
   align-items: center;
   gap: clamp(0.32rem, 0.92vmin, 0.38rem);
   min-width: 0;
 }
 
-html[data-home-page] .home-phone-capture-visual__phone-badge {
+html[data-home-page] .home-prior-auth-visual__phone-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -5325,16 +5325,20 @@ html[data-home-page] .home-phone-capture-visual__phone-badge {
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
 }
 
-html[data-home-page] .home-phone-capture-visual__agent-title {
-  color: #ffffff;
-  font-size: clamp(0.92rem, 2.65vmin, 1.06rem);
+html[data-home-page] .home-prior-auth-visual__context {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: rgba(255, 248, 240, 0.9);
+  font-size: clamp(0.74rem, 2.1vmin, 0.86rem);
   font-weight: 500;
   line-height: 1.1;
-  letter-spacing: -0.015em;
-  text-shadow: 0 1px 12px rgba(30, 52, 58, 0.32);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 10px rgba(30, 52, 58, 0.28);
 }
 
-html[data-home-page] .home-phone-capture-visual__live {
+html[data-home-page] .home-prior-auth-visual__live {
   flex-shrink: 0;
   margin-left: auto;
   padding: 0.24em 0.52em;
@@ -5349,158 +5353,184 @@ html[data-home-page] .home-phone-capture-visual__live {
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
 }
 
-html[data-home-page] .home-phone-capture-visual__meta {
-  margin: 0;
-  color: rgba(255, 248, 240, 0.9);
-  font-size: clamp(0.72rem, 2.05vmin, 0.82rem);
-  font-weight: 500;
-  line-height: 1.15;
-  text-shadow: 0 1px 10px rgba(30, 52, 58, 0.28);
+html[data-home-page] .home-prior-auth-visual__call {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: clamp(0.28rem, 0.8vmin, 0.34rem);
+  min-width: 0;
 }
 
-html[data-home-page] .home-phone-capture-visual__quote {
+html[data-home-page] .home-prior-auth-visual__waveform {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  width: clamp(2.5rem, 7.1vmin, 2.9rem);
+  height: clamp(1.15rem, 3.28vmin, 1.32rem);
+  flex-shrink: 0;
+}
+
+html[data-home-page] .home-prior-auth-visual__waveform-bar {
+  flex: 1 1 0;
+  min-width: 2px;
+  border-radius: 1px;
+  background: linear-gradient(180deg, #fff8f0 0%, rgba(255, 210, 170, 0.98) 100%);
+}
+
+html[data-home-page] .home-prior-auth-visual__quote {
   margin: 0;
-  padding: clamp(0.48rem, 1.35vmin, 0.58rem) clamp(0.58rem, 1.65vmin, 0.68rem);
-  border-radius: clamp(0.42rem, 1.2vmin, 0.5rem);
-  border: 0.5px solid rgba(255, 255, 255, 0.28);
-  background: rgba(255, 255, 255, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 0.1em;
+  min-width: 0;
+}
+
+html[data-home-page] .home-prior-auth-visual__quote-line {
+  display: block;
   color: #fffaf5;
   font-size: clamp(0.78rem, 2.22vmin, 0.9rem);
   font-weight: 400;
   font-style: italic;
-  line-height: 1.35;
+  line-height: 1.32;
   text-shadow: 0 1px 10px rgba(30, 52, 58, 0.28);
+  overflow-wrap: anywhere;
 }
 
-html[data-home-page] .home-phone-capture-visual__ledger {
-  border-radius: clamp(0.62rem, 1.75vmin, 0.72rem);
-  border: 0.5px solid color-mix(in srgb, #1e343a 7%, #ebe7e0);
-  background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 10px 28px rgba(30, 52, 58, 0.08);
-  padding: clamp(0.62rem, 1.75vmin, 0.72rem) clamp(0.68rem, 1.92vmin, 0.78rem);
-}
-
-html[data-home-page] .home-phone-capture-visual__ledger-heading {
-  margin: 0 0 clamp(0.42rem, 1.2vmin, 0.5rem);
-  color: #9ca3af;
-  font-size: clamp(0.62rem, 1.75vmin, 0.72rem);
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-html[data-home-page] .home-phone-capture-visual__ledger-list {
+html[data-home-page] .home-prior-auth-visual__packet {
   display: flex;
   flex-direction: column;
-  gap: 0;
-  margin: 0;
-  padding: 0;
-  list-style: none;
+  gap: clamp(0.42rem, 1.2vmin, 0.5rem);
+  padding: clamp(0.55rem, 1.55vmin, 0.64rem);
+  border-radius: clamp(0.58rem, 1.65vmin, 0.68rem);
+  background: rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
 }
 
-html[data-home-page] .home-phone-capture-visual__ledger-item {
+html[data-home-page] .home-prior-auth-visual__fields {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.28rem, 0.8vmin, 0.34rem);
+}
+
+html[data-home-page] .home-prior-auth-visual__field {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: clamp(0.48rem, 1.35vmin, 0.58rem);
-  align-items: stretch;
-}
-
-html[data-home-page] .home-phone-capture-visual__ledger-rail {
-  display: flex;
-  flex-direction: column;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  width: clamp(0.82rem, 2.32vmin, 0.94rem);
-  padding-top: 0.18em;
-}
-
-html[data-home-page] .home-phone-capture-visual__ledger-dot {
-  flex-shrink: 0;
-  width: clamp(0.58rem, 1.65vmin, 0.66rem);
-  height: clamp(0.58rem, 1.65vmin, 0.66rem);
-  border-radius: 999px;
-  background: #d1d5db;
-  box-shadow: inset 0 0 0 1px rgba(30, 52, 58, 0.06);
-}
-
-html[data-home-page] .home-phone-capture-visual__ledger-item--done .home-phone-capture-visual__ledger-dot {
-  background: #d2774c;
-  box-shadow: 0 0 0 3px rgba(210, 119, 76, 0.14);
-}
-
-html[data-home-page] .home-phone-capture-visual__ledger-item--active .home-phone-capture-visual__ledger-dot {
-  background: #d2774c;
-  box-shadow:
-    0 0 0 3px rgba(210, 119, 76, 0.18),
-    0 0 0 6px rgba(210, 119, 76, 0.08);
-}
-
-html[data-home-page] .home-phone-capture-visual__ledger-line {
-  flex: 1 1 auto;
-  width: 1.5px;
-  min-height: clamp(0.72rem, 2.05vmin, 0.84rem);
-  margin-block: clamp(0.12rem, 0.34vmin, 0.14rem);
-  border-radius: 999px;
-  background: color-mix(in srgb, #1e343a 12%, #ebe7e0);
-}
-
-html[data-home-page] .home-phone-capture-visual__ledger-item--done .home-phone-capture-visual__ledger-line {
-  background: linear-gradient(180deg, #d2774c 0%, rgba(210, 119, 76, 0.24) 100%);
-}
-
-html[data-home-page] .home-phone-capture-visual__ledger-copy {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(0.1rem, 0.28vmin, 0.12rem);
+  gap: clamp(0.38rem, 1.08vmin, 0.45rem);
   min-width: 0;
-  padding-bottom: clamp(0.52rem, 1.48vmin, 0.62rem);
+  padding: clamp(0.34rem, 0.96vmin, 0.4rem) clamp(0.42rem, 1.2vmin, 0.48rem);
+  border-radius: clamp(0.34rem, 0.96vmin, 0.4rem);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
 }
 
-html[data-home-page] .home-phone-capture-visual__ledger-item--last .home-phone-capture-visual__ledger-copy {
-  padding-bottom: 0;
+html[data-home-page] .home-prior-auth-visual__field--active {
+  background: rgba(255, 220, 190, 0.22);
+  box-shadow: inset 0 0 0 1px rgba(255, 236, 220, 0.28);
 }
 
-html[data-home-page] .home-phone-capture-visual__ledger-phase {
-  color: #d2774c;
-  font-size: clamp(0.6rem, 1.7vmin, 0.68rem);
+html[data-home-page] .home-prior-auth-visual__field-label {
+  color: rgba(255, 250, 245, 0.82);
+  font-size: clamp(0.62rem, 1.75vmin, 0.72rem);
   font-weight: 600;
   line-height: 1;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
-html[data-home-page] .home-phone-capture-visual__ledger-item--active .home-phone-capture-visual__ledger-phase {
-  color: #c46848;
-}
-
-html[data-home-page] .home-phone-capture-visual__ledger-detail {
-  color: #1e343a;
-  font-size: clamp(0.82rem, 2.32vmin, 0.94rem);
+html[data-home-page] .home-prior-auth-visual__field-value {
+  color: #ffffff;
+  font-size: clamp(0.78rem, 2.22vmin, 0.9rem);
   font-weight: 500;
-  line-height: 1.25;
+  line-height: 1.2;
   letter-spacing: -0.01em;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-html[data-home-page] .home-phone-capture-visual__footer {
+html[data-home-page] .home-prior-auth-visual__field-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(0.76rem, 2.15vmin, 0.86rem);
+  height: clamp(0.76rem, 2.15vmin, 0.86rem);
+  flex-shrink: 0;
+  border-radius: clamp(0.18rem, 0.52vmin, 0.22rem);
+  font-size: clamp(0.5rem, 1.42vmin, 0.58rem);
+  font-weight: 700;
+  line-height: 1;
+}
+
+html[data-home-page] .home-prior-auth-visual__field-mark--done {
+  background: rgba(255, 255, 255, 0.28);
+  color: #ffffff;
+}
+
+html[data-home-page] .home-prior-auth-visual__field-mark--active {
+  background: #fff6ee;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+}
+
+html[data-home-page] .home-prior-auth-visual__steps {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.28rem, 0.8vmin, 0.34rem);
+}
+
+html[data-home-page] .home-prior-auth-visual__step {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: clamp(0.24rem, 0.68vmin, 0.28rem) clamp(0.34rem, 0.96vmin, 0.4rem);
+  border-radius: clamp(0.28rem, 0.8vmin, 0.34rem);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  color: rgba(255, 248, 240, 0.82);
+  font-size: clamp(0.62rem, 1.75vmin, 0.72rem);
+  font-weight: 500;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+html[data-home-page] .home-prior-auth-visual__step--done {
+  color: rgba(255, 248, 240, 0.9);
+}
+
+html[data-home-page] .home-prior-auth-visual__step--active {
+  background: rgba(255, 220, 190, 0.24);
+  box-shadow: inset 0 0 0 1px rgba(255, 236, 220, 0.28);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+html[data-home-page] .home-prior-auth-visual__footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.55rem;
+  min-width: 0;
 }
 
-html[data-home-page] .home-phone-capture-visual__footer-ehr {
+html[data-home-page] .home-prior-auth-visual__footer-payer {
   color: rgba(255, 248, 240, 0.86);
   font-size: clamp(0.72rem, 2.05vmin, 0.82rem);
   font-weight: 500;
   line-height: 1.1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-html[data-home-page] .home-phone-capture-visual__footer-sync {
+html[data-home-page] .home-prior-auth-visual__footer-status {
   color: #fff0e2;
   font-size: clamp(0.72rem, 2.05vmin, 0.82rem);
   font-weight: 600;
   line-height: 1.1;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* No-show callback queue — ambient feature shader card. */
@@ -6722,48 +6752,58 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   color: var(--home-dusk-ui-ink-secondary) !important;
 }
 
-/* iPhone home — phone chart capture shader band (dusk mock UI). */
+/* iPhone home — prior auth shader band (dusk mock UI). */
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--call-summaries
-  .home-phone-capture-visual__ledger {
-  background: var(--home-dusk-ui-surface) !important;
+  .home-prior-auth-visual__packet,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--call-summaries
+  .home-prior-auth-visual__field {
+  background: var(--home-dusk-ui-surface-sunken) !important;
   border-color: var(--home-dusk-ui-border) !important;
-  box-shadow: var(--home-dusk-ui-shadow) !important;
+  box-shadow: inset 0 0 0 1px rgba(232, 160, 96, 0.14) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--call-summaries
-  .home-phone-capture-visual__agent-title,
+  .home-prior-auth-visual__field-value,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--call-summaries
-  .home-phone-capture-visual__ledger-detail {
+  .home-prior-auth-visual__step--active {
   color: var(--home-dusk-ui-ink) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--call-summaries
-  .home-phone-capture-visual__meta,
+  .home-prior-auth-visual__context,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--call-summaries
-  .home-phone-capture-visual__quote,
+  .home-prior-auth-visual__quote-line,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--call-summaries
-  .home-phone-capture-visual__footer-ehr {
+  .home-prior-auth-visual__footer-payer {
   color: var(--home-dusk-ui-ink-secondary) !important;
+  text-shadow: none !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--call-summaries
-  .home-phone-capture-visual__ledger-heading {
+  .home-prior-auth-visual__field-label,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--call-summaries
+  .home-prior-auth-visual__step,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--call-summaries
+  .home-prior-auth-visual__step--done {
   color: var(--home-dusk-ui-muted) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--call-summaries
-  .home-phone-capture-visual__phone-badge,
+  .home-prior-auth-visual__phone-badge,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--call-summaries
-  .home-phone-capture-visual__live {
+  .home-prior-auth-visual__live {
   background: rgba(232, 160, 96, 0.16) !important;
   color: var(--home-dusk-ui-horizon) !important;
   box-shadow: inset 0 0 0 1px rgba(232, 160, 96, 0.22) !important;
@@ -6771,45 +6811,42 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--call-summaries
-  .home-phone-capture-visual__quote {
-  background: rgba(232, 160, 96, 0.12) !important;
-  border-color: rgba(232, 160, 96, 0.24) !important;
+  .home-prior-auth-visual__waveform-bar {
+  background: linear-gradient(
+    180deg,
+    var(--home-dusk-ui-ink-secondary) 0%,
+    var(--home-dusk-ui-horizon) 100%
+  ) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--call-summaries
-  .home-phone-capture-visual__ledger-phase,
+  .home-prior-auth-visual__field--active,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--call-summaries
-  .home-phone-capture-visual__footer-sync {
-  color: var(--home-dusk-ui-horizon) !important;
+  .home-prior-auth-visual__step--active {
+  background: rgba(232, 160, 96, 0.2) !important;
+  box-shadow: inset 0 0 0 1px rgba(232, 160, 96, 0.28) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--call-summaries
-  .home-phone-capture-visual__ledger-item--done .home-phone-capture-visual__ledger-dot,
+  .home-prior-auth-visual__field-mark--done {
+  background: rgba(232, 160, 96, 0.28) !important;
+  color: var(--home-dusk-ui-ink) !important;
+}
+
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--call-summaries
-  .home-phone-capture-visual__ledger-item--active .home-phone-capture-visual__ledger-dot,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--call-summaries
-  .home-phone-capture-visual__ledger-item--done .home-phone-capture-visual__ledger-line {
+  .home-prior-auth-visual__field-mark--active {
   background: var(--home-dusk-ui-horizon) !important;
-  box-shadow: 0 0 0 3px rgba(232, 160, 96, 0.16) !important;
+  box-shadow: 0 0 0 2px rgba(28, 19, 9, 0.42) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--call-summaries
-  .home-phone-capture-visual__ledger-item--active .home-phone-capture-visual__ledger-dot {
-  box-shadow:
-    0 0 0 3px color-mix(in srgb, var(--home-dusk-ui-horizon) 22%, transparent),
-    0 0 0 6px color-mix(in srgb, var(--home-dusk-ui-horizon) 10%, transparent) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--call-summaries
-  .home-phone-capture-visual__ledger-line {
-  background: var(--home-dusk-ui-border) !important;
+  .home-prior-auth-visual__footer-status {
+  color: var(--home-dusk-ui-horizon) !important;
 }
 
 /* iPhone home — patient outreach shader band (dusk mock UI). */

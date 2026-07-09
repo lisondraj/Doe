@@ -3,7 +3,7 @@
 import { DoePhoneHomeCallLogicDiagram } from "@/components/doephone/DoePhoneHomeCallLogicDiagram";
 import { DoePhoneHomeGuardrailsVisual } from "@/components/doephone/DoePhoneHomeGuardrailsVisual";
 import { DoePhoneHomeLabAlertsVisual } from "@/components/doephone/DoePhoneHomeLabAlertsVisual";
-import { DoePhoneHomeVoiceCallSummaryVisual } from "@/components/doephone/DoePhoneHomeVoiceCallSummaryVisual";
+import { DoePhoneHomePriorAuthVisual } from "@/components/doephone/DoePhoneHomePriorAuthVisual";
 import { DoePhoneReviewPackageVisual } from "@/components/doephone/DoePhoneReviewPackageVisual";
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import type { DoePhoneCommunicationSlide } from "@/lib/doephone/communication-carousel";
@@ -29,7 +29,7 @@ const SHADER_BAND_FEATURES: Partial<Record<DoePhoneCommunicationSlide["id"], Sha
 const SHADER_BAND_TITLES: Record<ShaderBandFeature, readonly [string, string]> = {
   workflow: ["Customize agents", "to fit your needs."],
   "active-agents": ["Active Agents", ""],
-  "call-summaries": ["Doe on the line.", "Charts fill in."],
+  "call-summaries": ["Prior auth ships.", "From the chart."],
   "lab-alerts": ["Outreach lands.", "Visits get booked."],
   guardrails: ["Roll out agents", "with guardrails."],
 };
@@ -37,7 +37,7 @@ const SHADER_BAND_TITLES: Record<ShaderBandFeature, readonly [string, string]> =
 const SHADER_BAND_LABELS: Record<ShaderBandFeature, string> = {
   workflow: "Customize agents",
   "active-agents": "Active Agents",
-  "call-summaries": "Phone chart capture",
+  "call-summaries": "Prior auth agent",
   "lab-alerts": "Patient recall outreach",
   guardrails: "Agent guardrails",
 };
@@ -118,9 +118,9 @@ export function DoePhoneHomeShaderBandSection({
             <span className="block">{titleLine2}</span>
           </h2>
           <div className="home-feature-shader-band__feature-content flex min-h-0 flex-1 flex-col items-center justify-center">
-            <div className="home-feature-section__call-summaries relative z-[20] w-full shrink-0">
-              <div className="home-call-summaries-scale">
-                <DoePhoneHomeVoiceCallSummaryVisual />
+            <div className="home-feature-section__prior-auth relative z-[20] w-full shrink-0">
+              <div className="home-prior-auth-scale">
+                <DoePhoneHomePriorAuthVisual />
               </div>
             </div>
           </div>
