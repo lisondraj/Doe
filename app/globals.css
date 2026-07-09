@@ -3121,7 +3121,7 @@ body.proto-route {
 html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop {
   --hero-dial-radius: 44vmin;
   --hero-dial-shift-x: 8vmin;
-  --hero-pill-scale: 1.28;
+  --hero-pill-scale: 1.12;
   padding-top: clamp(2rem, 5.5vmin, 3.25rem);
   padding-bottom: clamp(4rem, 12vmin, 6.5rem);
 }
