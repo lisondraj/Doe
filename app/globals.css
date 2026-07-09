@@ -3550,7 +3550,7 @@ html[data-home-page][data-layout="desktop"] .home-feature-card-section--specialt
 
 html[data-home-page][data-layout="desktop"] .home-feature-card-section__specialties-main {
   min-height: 0;
-  flex: 0 0 auto;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -3579,25 +3579,28 @@ body.desktop-route .home-feature-card-section__title--specialties {
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-specialties__tapestry {
-  --specialty-row-gap: clamp(0.62rem, 1.05vmin, 0.82rem);
-  --specialty-chip-gap: clamp(0.58rem, 0.92vmin, 0.72rem);
-  --specialty-chip-height: clamp(1.72rem, 2.35vmin, 1.95rem);
-  --specialty-edge-fade: clamp(2.4rem, 6.5vmin, 4.5rem);
+  --specialty-row-gap: clamp(1rem, 1.75vmin, 1.38rem);
+  --specialty-chip-gap: clamp(0.92rem, 1.55vmin, 1.18rem);
+  --specialty-chip-height: clamp(2.85rem, 5.1vmin, 4rem);
+  --specialty-edge-fade: clamp(3.4rem, 9vmin, 6.25rem);
   --specialty-stage-rows: 4;
   --specialty-stage-height: calc(
     var(--specialty-stage-rows) * var(--specialty-chip-height) +
       (var(--specialty-stage-rows) - 1) * var(--specialty-row-gap)
   );
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-card-section--specialties .home-feature-specialties__tapestry {
   margin-top: 0;
   padding-inline: 0;
-  height: var(--specialty-stage-height);
   min-height: var(--specialty-stage-height);
-  max-height: var(--specialty-stage-height);
-  flex: 0 0 auto;
+  height: auto;
+  max-height: none;
+  flex: 1 1 auto;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-specialties__rows {
@@ -3636,10 +3639,10 @@ html[data-home-page][data-layout="desktop"] .home-feature-specialties__chip {
   justify-content: center;
   flex: 0 0 auto;
   height: var(--specialty-chip-height);
-  padding: 0 clamp(0.82rem, 1.25vmin, 0.98rem);
-  border-radius: clamp(0.34rem, 0.52vmin, 0.42rem);
+  padding: 0 clamp(1.28rem, 1.95vmin, 1.55rem);
+  border-radius: clamp(0.52rem, 0.82vmin, 0.64rem);
   border: 1px solid color-mix(in srgb, #4a3524 11%, transparent);
-  font-size: clamp(0.68rem, 0.98vmin, 0.76rem);
+  font-size: clamp(0.92rem, 1.38vmin, 1.08rem);
   font-weight: 400;
   line-height: 1;
   letter-spacing: 0.045em;
@@ -4499,7 +4502,7 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section--spec
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-feature-card-section--specialties .home-feature-card-section__content--specialties {
-  flex: 0 0 auto !important;
+  flex: 1 1 auto !important;
   min-height: 0;
   display: flex !important;
   flex-direction: column !important;
@@ -4509,7 +4512,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-feature-card-section__specialties-main {
   min-height: 0;
-  flex: 0 0 auto;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -5933,25 +5936,28 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__tapestry {
-  --specialty-row-gap: clamp(0.52rem, 0.28rem + 1.1vmin, 0.72rem);
-  --specialty-chip-gap: clamp(0.48rem, 0.24rem + 1vmin, 0.62rem);
-  --specialty-chip-height: clamp(1.48rem, 0.92rem + 1.45vmin, 1.72rem);
-  --specialty-edge-fade: clamp(1.65rem, 4.8vmin, 2.75rem);
+  --specialty-row-gap: clamp(0.82rem, 0.45rem + 1.85vmin, 1.15rem);
+  --specialty-chip-gap: clamp(0.72rem, 0.38rem + 1.55vmin, 1rem);
+  --specialty-chip-height: clamp(2.45rem, 1.35rem + 3.2vmin, 3.15rem);
+  --specialty-edge-fade: clamp(2.35rem, 6.8vmin, 3.85rem);
   --specialty-stage-rows: 3;
   --specialty-stage-height: calc(
     var(--specialty-stage-rows) * var(--specialty-chip-height) +
       (var(--specialty-stage-rows) - 1) * var(--specialty-row-gap)
   );
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-card-section--specialties .home-feature-specialties__tapestry {
   margin-top: 0;
   padding-inline: 0;
-  height: var(--specialty-stage-height);
   min-height: var(--specialty-stage-height);
-  max-height: var(--specialty-stage-height);
-  flex: 0 0 auto;
+  height: auto;
+  max-height: none;
+  flex: 1 1 auto;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__rows {
@@ -5990,10 +5996,10 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__chip 
   justify-content: center;
   flex: 0 0 auto;
   height: var(--specialty-chip-height);
-  padding: 0 clamp(0.68rem, 2.1vmin, 0.82rem);
-  border-radius: clamp(0.28rem, 0.82vmin, 0.36rem);
+  padding: 0 clamp(1rem, 2.85vmin, 1.22rem);
+  border-radius: clamp(0.42rem, 1.15vmin, 0.52rem);
   border: 1px solid color-mix(in srgb, #4a3524 11%, transparent);
-  font-size: clamp(0.58rem, 1.55vmin, 0.68rem);
+  font-size: clamp(0.78rem, 2.05vmin, 0.92rem);
   font-weight: 400;
   line-height: 1;
   letter-spacing: 0.05em;
