@@ -1656,6 +1656,12 @@ body.proto-route {
   --hero-dial-shift-x: 5.75vmin;
 }
 
+/* iPhone — lock dial geometry to stable viewport width (not live vmin). */
+html[data-doeforvc-always-phone] .hero-speaking-orbs:not(.hero-speaking-orbs--desktop) {
+  --hero-dial-radius: calc(var(--app-vw, 100vw) * 0.47);
+  --hero-dial-shift-x: calc(var(--app-vw, 100vw) * 0.0575);
+}
+
 /* Desktop home hero — larger dial so orbs fill the wide viewport band. */
 html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop {
   --hero-dial-radius: 62vmin;
@@ -1675,7 +1681,13 @@ html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop .hero-s
   max-height: calc(100% - clamp(1.5rem, 4vmin, 2.5rem));
   flex-shrink: 0;
   overflow: visible;
-  transform: translateX(var(--hero-dial-shift-x));
+  transform: translate3d(var(--hero-dial-shift-x), 0, 0);
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+.hero-speaking-orbs__stage--stepping {
+  animation: hero-dial-step-dip 920ms cubic-bezier(0.34, 1.18, 0.64, 1) both;
 }
 
 .hero-speaking-orbs__dial {
@@ -1684,10 +1696,7 @@ html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop .hero-s
   top: 50%;
   width: 0;
   height: 0;
-}
-
-.hero-speaking-orbs__dial--stepping {
-  animation: hero-dial-step-dip 920ms cubic-bezier(0.34, 1.18, 0.64, 1) both;
+  transform: translate3d(0, -50%, 0);
 }
 
 @keyframes hero-dial-step-dip {
@@ -1709,9 +1718,8 @@ html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop .hero-s
   left: 0;
   top: 0;
   transform-origin: center center;
-  will-change: transform, opacity;
   backface-visibility: hidden;
-  contain: layout style;
+  -webkit-font-smoothing: antialiased;
 }
 
 .hero-speaking-orb {
@@ -1736,9 +1744,16 @@ html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop .hero-s
     0 0 16px color-mix(in srgb, var(--orb-halo-mid) 16%, transparent);
   opacity: 0;
   pointer-events: none;
-  will-change: opacity, transform;
   transform: translate3d(-50%, -50%, 0) scale(1);
   transition: opacity 480ms ease, transform 480ms ease;
+}
+
+.hero-speaking-orb--stepping .hero-speaking-orb__halo-ring,
+.hero-speaking-orb--stepping .hero-speaking-orb__halo-ring--echo,
+.hero-speaking-orb--stepping .hero-speaking-orb__core,
+.hero-speaking-orb--stepping .hero-speaking-orb__play-icon,
+.hero-speaking-orb--stepping .hero-speaking-orb__tag {
+  transition: none !important;
 }
 
 .hero-speaking-orb__halo-ring--echo {
@@ -1836,8 +1851,7 @@ html[data-layout="desktop"][data-home-page] .hero-speaking-orbs--desktop .hero-s
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  will-change: opacity, transform, visibility;
-  transform: translateY(6px) scale(0.94);
+  transform: translate3d(0, 6px, 0) scale(0.94);
   transition: none;
 }
 

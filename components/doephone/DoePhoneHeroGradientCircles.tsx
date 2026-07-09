@@ -32,8 +32,8 @@ const PILL_OUT_MS = 220;
 const CENTER_SLOT_ANGLE = Math.PI;
 
 type DialOrbPose = {
-  xVmin: number;
-  yVmin: number;
+  xPercent: number;
+  yPercent: number;
   scale: number;
   opacity: number;
   zIndex: number;
@@ -73,39 +73,40 @@ function angularDistance(a: number, b: number) {
   return diff;
 }
 
-function buildDialLayout(dialRotation: number, dialRadiusVmin: number): DialOrbPose[] {
-  const focusedIndex = focusedIndexForRotation(dialRotation);
+function focusProximity(angle: number) {
+  const dist = angularDistance(angle, CENTER_SLOT_ANGLE);
+  const t = Math.min(1, dist / (DIAL_STEP * 0.72));
+  return 1 - t;
+}
 
+function buildDialLayout(
+  dialRotation: number,
+  visualFocusedIndex: number,
+): DialOrbPose[] {
   return HERO_DIAL_ORBS.map((_, index) => {
     const angle = CENTER_SLOT_ANGLE + index * DIAL_STEP + dialRotation;
-    const xVmin = Math.cos(angle) * dialRadiusVmin;
-    const yVmin = Math.sin(angle) * dialRadiusVmin;
-    const isFocused = index === focusedIndex;
-    const dist = angularDistance(angle, CENTER_SLOT_ANGLE);
-    const t = Math.min(1, dist / (DIAL_STEP * 0.72));
-    const scale = isFocused ? 1.05 : 0.91 - t * 0.05;
-    const opacity = isFocused ? 1 : 0.62 + (1 - t) * 0.22;
+    const xPercent = Math.cos(angle) * 100;
+    const yPercent = Math.sin(angle) * 50;
+    const proximity = focusProximity(angle);
+    const isFocused = index === visualFocusedIndex;
+    const scale = 0.91 + proximity * 0.14;
+    const opacity = 0.62 + proximity * 0.38;
 
     return {
-      xVmin,
-      yVmin,
+      xPercent,
+      yPercent,
       scale,
       opacity,
-      zIndex: isFocused ? 20 : 10 + Math.round((1 - t) * 6),
+      zIndex: isFocused ? 20 : 10 + Math.round(proximity * 6),
       isFocused,
     };
   });
 }
 
 function dialNodeStyle(pose: DialOrbPose) {
-  const x = Math.round(pose.xVmin * 100) / 100;
-  const y = Math.round(pose.yVmin * 100) / 100;
-  const scale = Math.round(pose.scale * 1000) / 1000;
-  const opacity = Math.round(pose.opacity * 1000) / 1000;
-
   return {
-    transform: `translate(calc(${x}vmin - 50%), calc(${y}vmin - 50%)) scale(${scale})`,
-    opacity,
+    transform: `translate3d(calc(${pose.xPercent}% - 50%), calc(${pose.yPercent}% - 50%), 0) scale(${pose.scale})`,
+    opacity: pose.opacity,
     zIndex: pose.zIndex,
   } as const;
 }
@@ -115,17 +116,21 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
   isFocused,
   showPill,
   orbSize,
+  stepping,
 }: {
   scheme: HeroDialOrbScheme;
   isFocused: boolean;
   showPill: boolean;
   orbSize: string;
+  stepping: boolean;
 }) {
   const intensity = scheme.intensity ?? HERO_DIAL_ORB_SHADER.intensity;
 
   return (
     <div
-      className={`hero-speaking-orb${isFocused ? " hero-speaking-orb--focused" : ""}`}
+      className={`hero-speaking-orb${isFocused ? " hero-speaking-orb--focused" : ""}${
+        stepping ? " hero-speaking-orb--stepping" : ""
+      }`}
       style={orbAccentStyle(scheme, orbSize)}
     >
       <div
@@ -192,6 +197,7 @@ export function DoePhoneHeroGradientCircles({
   const [dialRotation, setDialRotation] = useState(0);
   const [pillVisible, setPillVisible] = useState(true);
   const [stepping, setStepping] = useState(false);
+  const [committedFocusedIndex, setCommittedFocusedIndex] = useState(0);
   const dialRotationRef = useRef(0);
   const switchRafRef = useRef<number | undefined>(undefined);
   const pillTimerRef = useRef<number | undefined>(undefined);
@@ -199,12 +205,13 @@ export function DoePhoneHeroGradientCircles({
   const reducedMotionRef = useRef(false);
   const tabVisibleRef = useRef(true);
 
+  const visualFocusedIndex = stepping ? committedFocusedIndex : focusedIndexForRotation(dialRotation);
+
   const layout = useMemo(
-    () => buildDialLayout(dialRotation, dialLayout.radiusVmin),
-    [dialRotation, dialLayout.radiusVmin],
+    () => buildDialLayout(dialRotation, visualFocusedIndex),
+    [dialRotation, visualFocusedIndex],
   );
-  const focusedIndex = focusedIndexForRotation(dialRotation);
-  const focusedLabel = HERO_DIAL_ORBS[focusedIndex]?.label ?? "Agent";
+  const focusedLabel = HERO_DIAL_ORBS[visualFocusedIndex]?.label ?? "Agent";
 
   const animateStep = useCallback((from: number, to: number, onDone: () => void) => {
     if (switchRafRef.current !== undefined) {
@@ -214,6 +221,7 @@ export function DoePhoneHeroGradientCircles({
     if (reducedMotionRef.current) {
       dialRotationRef.current = to;
       setDialRotation(to);
+      setCommittedFocusedIndex(focusedIndexForRotation(to));
       onDone();
       return;
     }
@@ -232,6 +240,7 @@ export function DoePhoneHeroGradientCircles({
       } else {
         switchRafRef.current = undefined;
         setStepping(false);
+        setCommittedFocusedIndex(focusedIndexForRotation(to));
         onDone();
       }
     };
@@ -282,8 +291,8 @@ export function DoePhoneHeroGradientCircles({
       className={`hero-speaking-orbs${variant === "desktop" ? " hero-speaking-orbs--desktop" : ""}`}
       aria-hidden
     >
-      <div className="hero-speaking-orbs__stage">
-        <div className={`hero-speaking-orbs__dial${stepping ? " hero-speaking-orbs__dial--stepping" : ""}`}>
+      <div className={`hero-speaking-orbs__stage${stepping ? " hero-speaking-orbs__stage--stepping" : ""}`}>
+        <div className="hero-speaking-orbs__dial">
           {HERO_DIAL_ORBS.map((scheme, index) => {
             const pose = layout[index];
             const style = dialNodeStyle(pose);
@@ -300,8 +309,9 @@ export function DoePhoneHeroGradientCircles({
                 <SpeakingGradientOrb
                   scheme={scheme}
                   isFocused={pose.isFocused}
-                  showPill={pose.isFocused && pillVisible}
+                  showPill={pose.isFocused && pillVisible && !stepping}
                   orbSize={dialLayout.orbSize}
+                  stepping={stepping}
                 />
               </div>
             );
