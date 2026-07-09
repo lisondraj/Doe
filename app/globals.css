@@ -3059,6 +3059,57 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   color: var(--carousel-peek-dusk-ink);
 }
 
+/* iPhone — billing peek centered in orb; claims card layout only (balance unchanged). */
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__billing-peek-stack {
+  transform: translate(-50%, -50%) scale(calc(1.26 * var(--home-agents-peek-orb-scale)));
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__billing-peek-card--claims {
+  padding: clamp(0.58rem, 0.88vmin, 0.72rem) clamp(0.68rem, 1.02vmin, 0.82rem)
+    clamp(0.52rem, 0.78vmin, 0.64rem);
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__billing-peek-claims-title {
+  margin-bottom: clamp(0.28rem, 0.42vmin, 0.34rem);
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__billing-peek-claims-list {
+  gap: clamp(0.12rem, 0.18vmin, 0.15rem);
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__billing-peek-claim {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(0.22rem, 0.34vmin, 0.28rem);
+  padding: clamp(0.2rem, 0.3vmin, 0.24rem) clamp(0.18rem, 0.28vmin, 0.22rem);
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__billing-peek-claim-status {
+  text-align: left;
+  justify-self: start;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* Refill peek */
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
