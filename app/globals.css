@@ -853,6 +853,8 @@ html[data-home-page] .home-agents-carousel__orb-peek-reveal {
   border-radius: 50%;
   clip-path: circle(50.2% at 50% 50%);
   pointer-events: none;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 html[data-home-page] .home-agents-carousel__orb-peek-lift {
@@ -3279,10 +3281,13 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel {
-  --home-agents-orb-size: clamp(24rem, 94vw, 32.5rem);
-  --home-agents-orb-gap: clamp(1.2rem, 3.85vmin, 2rem);
-  --home-agents-halo-bleed: clamp(0.42rem, 1.35vmin, 0.78rem);
-  --home-agents-glow-bleed: clamp(1.8rem, 5vmin, 2.85rem);
+  --home-agents-orb-size: clamp(24rem, calc(var(--app-vw, 100vw) * 0.94), 32.5rem);
+  --home-agents-orb-gap: clamp(1.2rem, calc(var(--app-vw, 100vw) * 0.0385), 2rem);
+  --home-agents-halo-bleed: clamp(0.42rem, calc(var(--app-vw, 100vw) * 0.0135), 0.78rem);
+  --home-agents-glow-bleed: clamp(1.8rem, calc(var(--app-vw, 100vw) * 0.05), 2.85rem);
+  --home-agents-peek-orb-scale: calc(
+    var(--home-agents-orb-size) / clamp(24rem, calc(var(--app-vw, 100vw) * 0.94), 32.5rem)
+  );
   --home-agents-orb-step: calc(var(--home-agents-orb-size) + var(--home-agents-orb-gap));
   --home-agents-orb-half: calc(var(--home-agents-orb-size) / 2);
   --home-agents-carousel-duration: 720ms;
@@ -3327,11 +3332,24 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   align-items: center;
   gap: var(--home-agents-orb-gap);
   transition: transform var(--home-agents-carousel-duration) var(--home-agents-carousel-ease);
-  will-change: transform;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__track--instant {
   transition: none;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__track--sliding .home-agents-carousel__orb,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__track--sliding .home-agents-carousel__orb-shell,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__track--sliding .hero-speaking-orb__progress-shell::after,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__track--sliding .hero-speaking-orb__tag--carousel,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__track--sliding .home-agents-carousel__description {
+  transition: none !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__track--sliding .home-agents-carousel__orb-peek-reveal {
+  visibility: hidden;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb-shell {
@@ -3341,6 +3359,8 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   flex: 0 0 var(--home-agents-orb-size);
   overflow: visible;
   filter: none;
+  backface-visibility: hidden;
+  transform: translateZ(0);
   transition: opacity var(--home-agents-carousel-duration) var(--home-agents-carousel-ease);
 }
 
@@ -3375,6 +3395,8 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   isolation: isolate;
   box-shadow: none;
   overflow: hidden;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb .hero-speaking-orb__progress-shell {
@@ -3463,7 +3485,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
     inset 0 -1px 0 rgba(237, 235, 232, 0.42);
   color: var(--hero-pill-ink);
   cursor: pointer;
-  transform: none;
+  transform: translateZ(0);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__nav-hit {
@@ -3517,8 +3539,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   opacity: 1;
   visibility: visible;
   pointer-events: none;
-  transform: none;
-  will-change: auto;
+  transform: translateZ(0);
   transition: opacity 360ms ease;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.88),

@@ -249,20 +249,27 @@ export function DoePhoneHomeAgentsCarousel() {
   const [layoutReady, setLayoutReady] = useState(false);
   const isDesktop = layoutReady && layoutVariant === "desktop";
   const [position, setPosition] = useState(AGENTS_CAROUSEL_LOOP_START);
+  const [focusedPosition, setFocusedPosition] = useState(AGENTS_CAROUSEL_LOOP_START);
   const [trackInstant, setTrackInstant] = useState(true);
   const reenableTransitionRef = useRef<number | null>(null);
   const swipeStartRef = useRef<{ x: number; y: number } | null>(null);
+  const positionRef = useRef(AGENTS_CAROUSEL_LOOP_START);
 
-  const active = AGENTS_CAROUSEL_LOOP_ORBS[position];
+  const active = AGENTS_CAROUSEL_LOOP_ORBS[focusedPosition];
   const prevActiveLabelRef = useRef<string | null>(null);
   const [animatePeekLift, setAnimatePeekLift] = useState(false);
+  const trackSliding = !trackInstant;
+
+  useLayoutEffect(() => {
+    positionRef.current = position;
+  }, [position]);
 
   useLayoutEffect(() => {
     const labelChanged =
       prevActiveLabelRef.current === null || prevActiveLabelRef.current !== active.label;
     setAnimatePeekLift(isDesktop && labelChanged);
     prevActiveLabelRef.current = active.label;
-  }, [position, active.label, isDesktop]);
+  }, [focusedPosition, active.label, isDesktop]);
 
   useLayoutEffect(() => {
     setLayoutVariant(readBootstrappedDoePhoneVariant());
@@ -324,7 +331,13 @@ export function DoePhoneHomeAgentsCarousel() {
         return;
       }
 
-      if (position >= AGENTS_CAROUSEL_ORB_COUNT && position < AGENTS_CAROUSEL_ORB_COUNT * 2) {
+      const currentPosition = positionRef.current;
+
+      if (
+        currentPosition >= AGENTS_CAROUSEL_ORB_COUNT &&
+        currentPosition < AGENTS_CAROUSEL_ORB_COUNT * 2
+      ) {
+        setFocusedPosition(currentPosition);
         return;
       }
 
@@ -341,13 +354,15 @@ export function DoePhoneHomeAgentsCarousel() {
         return current;
       });
     },
-    [position, trackInstant],
+    [trackInstant],
   );
 
   useEffect(() => {
     if (!trackInstant) {
       return;
     }
+
+    setFocusedPosition(position);
 
     reenableTransitionRef.current = window.requestAnimationFrame(() => {
       reenableTransitionRef.current = window.requestAnimationFrame(() => {
@@ -376,18 +391,18 @@ export function DoePhoneHomeAgentsCarousel() {
           <div
             className={`home-agents-carousel__track${
               trackInstant ? " home-agents-carousel__track--instant" : ""
-            }`}
+            }${trackSliding ? " home-agents-carousel__track--sliding" : ""}`}
             onTransitionEnd={handleTrackTransitionEnd}
             style={{
-              transform: `translateX(calc(50% - var(--home-agents-orb-half) - ${position} * var(--home-agents-orb-step)))`,
+              transform: `translate3d(calc(50% - var(--home-agents-orb-half) - ${position} * var(--home-agents-orb-step)), 0, 0)`,
             }}
           >
             {AGENTS_CAROUSEL_LOOP_ORBS.map((scheme, orbIndex) => (
               <AgentCarouselOrb
                 key={`${scheme.label}-${orbIndex}`}
                 scheme={scheme}
-                focused={orbIndex === position}
-                distance={Math.abs(orbIndex - position)}
+                focused={orbIndex === focusedPosition}
+                distance={Math.abs(orbIndex - focusedPosition)}
                 isDesktop={isDesktop}
                 layoutReady={layoutReady}
                 animatePeekLift={animatePeekLift}
