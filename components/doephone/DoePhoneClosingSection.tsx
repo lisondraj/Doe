@@ -11,11 +11,15 @@ import {
 } from "@/lib/doephone/section-styles";
 
 /** Closing beige section — title and stacked feature cards. */
-export function DoePhoneClosingSection() {
+export function DoePhoneClosingSection({ suppressTitleReveal = false }: { suppressTitleReveal?: boolean }) {
   return (
     <div className="flex h-full min-h-0 flex-col">
       <div className={`shrink-0 ${DOEPHONE_SECTION_CONTENT_INSET} ${DOEPHONE_SECTION_TITLE_PT}`}>
-        <DoePhoneSectionTitle line1="More about" line2="the Doe vision." />
+        <DoePhoneSectionTitle
+          line1="More about"
+          line2="the Doe vision."
+          suppressReveal={suppressTitleReveal}
+        />
       </div>
 
       <div

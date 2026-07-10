@@ -9024,6 +9024,24 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
   transform: translateY(-7px);
 }
 
+html[data-home-page] .doephone-scroll-reveal-lift {
+  width: 100%;
+  display: block;
+}
+
+html[data-home-page] .doephone-scroll-reveal-lift.doephone-reveal-lift--in.doephone-reveal-lift--hoverable {
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html[data-home-page] .doephone-scroll-reveal-lift.doephone-reveal-lift--in.doephone-reveal-lift--hoverable:hover {
+  transform: translateY(-7px);
+}
+
+html[data-home-page] .home-feature-shader-band.doephone-scroll-reveal-lift,
+html[data-home-page] .home-feature-card-section.doephone-scroll-reveal-lift {
+  display: block;
+}
+
 html[data-home-page] .hero-speaking-orbs__node-reveal {
   width: 100%;
   height: 100%;

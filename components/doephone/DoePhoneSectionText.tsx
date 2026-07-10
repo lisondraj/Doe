@@ -16,6 +16,7 @@ export function DoePhoneSectionTitle({
   copyClassName = DOEPHONE_SECTION_COPY_TW,
   segmentedReveal = false,
   revealed = false,
+  suppressReveal = false,
 }: {
   line1: ReactNode;
   line2?: ReactNode;
@@ -25,12 +26,14 @@ export function DoePhoneSectionTitle({
   /** Section 2 — parent drives staggered title → carousel → menu reveal. */
   segmentedReveal?: boolean;
   revealed?: boolean;
+  /** Parent scroll-reveal wrapper already animates this block. */
+  suppressReveal?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (segmentedReveal) return;
+    if (segmentedReveal || suppressReveal) return;
 
     const el = ref.current;
     if (!el) return;
@@ -51,18 +54,20 @@ export function DoePhoneSectionTitle({
     );
     obs.observe(el);
     return () => obs.disconnect();
-  }, [segmentedReveal]);
+  }, [segmentedReveal, suppressReveal]);
 
-  const showCopy = segmentedReveal ? revealed : visible;
+  const showCopy = suppressReveal ? true : segmentedReveal ? revealed : visible;
 
   return (
     <div ref={ref}>
       <p
         className={`${
-          segmentedReveal
-            ? `doephone-section-reveal doephone-section-reveal--title${showCopy ? " doephone-section-reveal--in" : ""}`
-            : `doephone-section-copy${showCopy ? " doephone-section-copy-visible" : ""}`
-        } ${copyClassName} ${color} ${suisseIntl.className}`.trim()}
+          suppressReveal
+            ? copyClassName
+            : segmentedReveal
+              ? `doephone-section-reveal doephone-section-reveal--title${showCopy ? " doephone-section-reveal--in" : ""} ${copyClassName}`
+              : `doephone-section-copy${showCopy ? " doephone-section-copy-visible" : ""} ${copyClassName}`
+        } ${color} ${suisseIntl.className}`.trim()}
       >
         <span className="block">{line1}</span>
         {line2 ? <span className="block">{line2}</span> : null}

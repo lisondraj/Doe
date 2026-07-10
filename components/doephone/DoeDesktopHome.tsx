@@ -3,6 +3,7 @@
 import { DoePhoneClosingSection } from "@/components/doephone/DoePhoneClosingSection";
 import { DoePhoneHeroSection } from "@/components/doephone/DoePhoneHeroSection";
 import { DoePhoneHomeFeatureStack } from "@/components/doephone/DoePhoneHomeFeatureStack";
+import { DoePhoneScrollRevealLift } from "@/components/doephone/DoePhoneScrollRevealLift";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
 import { DesktopPunchedSiteNav } from "@/components/nav/DesktopPunchedSiteNav";
 import { DOEPHONE_BEIGE_SECTION } from "@/lib/doephone/section-styles";
@@ -29,11 +30,15 @@ export function DoeDesktopHome({
       <div className="relative z-10">
         <DoePhoneHomeFeatureStack shaderTheme="dusk" />
 
-        <section className={DOEPHONE_BEIGE_SECTION} aria-label="Closing">
-          <DoePhoneClosingSection />
-        </section>
+        <DoePhoneScrollRevealLift className="w-full shrink-0">
+          <section className={DOEPHONE_BEIGE_SECTION} aria-label="Closing">
+            <DoePhoneClosingSection suppressTitleReveal />
+          </section>
+        </DoePhoneScrollRevealLift>
 
-        <HomeFooter linksDisabled={!navActionLinksEnabled} shaderTheme="dusk" />
+        <DoePhoneScrollRevealLift className="w-full shrink-0">
+          <HomeFooter linksDisabled={!navActionLinksEnabled} shaderTheme="dusk" />
+        </DoePhoneScrollRevealLift>
       </div>
     </div>
   );
