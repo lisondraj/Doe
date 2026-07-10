@@ -84,7 +84,7 @@ export type ProtoGrainGradientVariant =
   | "agents"
   | "front-desk"
   | "front-desk-band"
-  | "front-desk-band-flipped"
+  | "customize-agents-band"
   | "inbox"
   | "ambient"
   | "ambient-band"
@@ -227,16 +227,16 @@ export const PROTO_GRAIN_GRADIENT_PRESETS: Record<ProtoGrainGradientVariant, Pro
     worldHeight: 960,
     speed: 0,
   },
-  /** Customize agents band — lit sphere gradient (unused elsewhere on home). */
-  "front-desk-band-flipped": {
-    shape: "sphere",
-    softness: 0.76,
-    intensity: 0.12,
+  /** Customize agents band — soft truchet tile flow for logic-building. */
+  "customize-agents-band": {
+    shape: "truchet",
+    softness: 0.7,
+    intensity: 0.13,
     fit: "cover",
-    rotation: 142,
-    offsetX: 0.1,
-    offsetY: -0.24,
-    scale: 1.2,
+    rotation: 72,
+    offsetX: 0.08,
+    offsetY: 0.28,
+    scale: 1.16,
     worldWidth: 1280,
     worldHeight: 960,
     speed: 0,
@@ -399,7 +399,7 @@ export const PROTO_GRAIN_GRADIENT_PRESETS: Record<ProtoGrainGradientVariant, Pro
 export function doeHomeShaderBandVariant(
   slideId: string,
 ): ProtoGrainGradientVariant | undefined {
-  if (slideId === "front-desk") return "front-desk-band-flipped";
+  if (slideId === "front-desk") return "customize-agents-band";
   // Care → finance: flipped integrate flow for outreach, then structured card.
   if (slideId === "ambient") return "ambient-band";
   // Finance → stack: structured card, then teal footer pool into Integrate.
