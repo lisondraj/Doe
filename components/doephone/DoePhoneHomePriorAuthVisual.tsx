@@ -1,132 +1,129 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import { dmSans } from "@/lib/home/fonts";
 
 const ORDER = {
-  procedure: "MRI lumbar spine",
-  patient: "Brooks, J.",
+  procedure: "MRI Lumbar",
+  patient: "Jackson Brooks",
   payer: "UHC",
+  callMinutes: 2,
+  callSeconds: 14,
 } as const;
 
 const PIPELINE_STEPS = [
   { id: "chart", label: "Chart", status: "done" as const },
-  { id: "call", label: "Call payer", status: "done" as const },
-  { id: "approved", label: "Approved", status: "done" as const },
-  { id: "filed", label: "Filed", status: "active" as const },
+  { id: "call", label: "Call payer", status: "active" as const },
+  { id: "approved", label: "Approved", status: "upcoming" as const },
+  { id: "filed", label: "Filed", status: "upcoming" as const },
 ] as const;
 
 const DETAILS = [
-  { label: "Auth ref", value: "PA-482917" },
+  { label: "Auth ref", value: "Pending" },
   { label: "Valid", value: "90 days" },
   { label: "Payer", value: "UHC Prior Auth" },
 ] as const;
 
-const WAVE_HEIGHTS = [0.34, 0.58, 0.44, 0.72, 0.4, 0.62] as const;
+const CAPTION =
+  "Hi there, I am requesting prior auth for MRI lumbar, member J Brooks.";
 
-function PhoneIcon() {
-  return (
-    <svg viewBox="0 0 16 16" fill="none" aria-hidden className="home-prior-auth-visual__phone-icon">
-      <path
-        d="M4 6.5a4 4 0 018 0v2.2l1.4 1.1H2.6L4 8.7V6.5z"
-        stroke="currentColor"
-        strokeWidth="1.1"
-        strokeLinejoin="round"
-      />
-      <path d="M6.5 12.2h3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
-    </svg>
-  );
-}
+const SPEAKING_PEAKS = [0.52, 0.84, 0.44, 0.96, 0.62, 0.9, 0.48, 0.78, 0.58] as const;
+const LISTENING_LEVELS = [0.18, 0.24, 0.16, 0.22, 0.14, 0.2, 0.17] as const;
 
-function VoiceWaveform() {
+function LevelMeter({
+  levels,
+  variant,
+}: {
+  levels?: readonly number[];
+  variant: "speaking" | "listening";
+}) {
+  if (variant === "speaking") {
+    return (
+      <div className="home-prior-auth-visual__meter home-prior-auth-visual__meter--speaking" aria-hidden>
+        {SPEAKING_PEAKS.map((peak, index) => (
+          <span
+            key={index}
+            className="home-prior-auth-visual__meter-bar"
+            style={
+              {
+                "--meter-min": Math.max(0.16, peak * 0.28),
+                "--meter-mid": peak * 0.68,
+                "--meter-max": peak,
+                "--meter-delay": `${index * 0.1}s`,
+                "--meter-duration": `${0.68 + (index % 3) * 0.14}s`,
+              } as CSSProperties
+            }
+          />
+        ))}
+      </div>
+    );
+  }
+
   return (
-    <div className="home-prior-auth-visual__waveform" aria-hidden>
-      {WAVE_HEIGHTS.map((height, index) => (
+    <div className="home-prior-auth-visual__meter home-prior-auth-visual__meter--listening" aria-hidden>
+      {(levels ?? LISTENING_LEVELS).map((level, index) => (
         <span
           key={index}
-          className="home-prior-auth-visual__waveform-bar"
-          style={{ height: `${Math.round(height * 100)}%` }}
+          className="home-prior-auth-visual__meter-bar"
+          style={
+            {
+              "--meter-height": level,
+            } as CSSProperties
+          }
         />
       ))}
     </div>
   );
 }
 
-function StepIndicator({ status }: { status: (typeof PIPELINE_STEPS)[number]["status"] }) {
-  if (status === "done") {
-    return (
-      <span className="home-prior-auth-visual__step-mark home-prior-auth-visual__step-mark--done" aria-hidden>
-        <svg viewBox="0 0 12 12" fill="none">
-          <path
-            d="M3.1 6.1l1.9 1.9 4-4.1"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </span>
-    );
-  }
+function CallBridge() {
+  return (
+    <div className="home-prior-auth-visual__bridge">
+      <div className="home-prior-auth-visual__bridge-parties">
+        <div className="home-prior-auth-visual__bridge-party home-prior-auth-visual__bridge-party--speaking">
+          <span className="home-prior-auth-visual__bridge-party-label">Prior Auth Agent</span>
+          <LevelMeter variant="speaking" />
+          <span className="home-prior-auth-visual__bridge-party-state">Speaking</span>
+        </div>
 
-  if (status === "active") {
-    return <span className="home-prior-auth-visual__step-mark home-prior-auth-visual__step-mark--active" aria-hidden />;
-  }
+        <span className="home-prior-auth-visual__bridge-link" aria-hidden />
 
-  return <span className="home-prior-auth-visual__step-mark home-prior-auth-visual__step-mark--upcoming" aria-hidden />;
+        <div className="home-prior-auth-visual__bridge-party home-prior-auth-visual__bridge-party--listening">
+          <span className="home-prior-auth-visual__bridge-party-label">{ORDER.payer} rep</span>
+          <LevelMeter levels={LISTENING_LEVELS} variant="listening" />
+          <span className="home-prior-auth-visual__bridge-party-state">Listening</span>
+        </div>
+      </div>
+
+      <p className="home-prior-auth-visual__bridge-caption">&ldquo;{CAPTION}&rdquo;</p>
+    </div>
+  );
 }
 
-/** Prior auth workflow board on shader band (no transcript bubbles). */
+const PIPELINE_ACTIVE_INDEX = PIPELINE_STEPS.findIndex((step) => step.status === "active");
+const PIPELINE_FILL_PERCENT =
+  PIPELINE_ACTIVE_INDEX <= 0
+    ? 0
+    : (PIPELINE_ACTIVE_INDEX / (PIPELINE_STEPS.length - 1)) * 100;
+
+/** Prior auth workflow board with live call-bridge voice monitor. */
 export function DoePhoneHomePriorAuthVisual() {
   return (
     <div className={`home-prior-auth-visual ${dmSans.className}`} aria-hidden>
-      <div className="home-prior-auth-visual__card">
-        <header className="home-prior-auth-visual__header">
-          <div className="home-prior-auth-visual__header-copy">
-            <p className="home-prior-auth-visual__eyebrow">From chart</p>
-            <h3 className="home-prior-auth-visual__title">{ORDER.procedure}</h3>
-            <p className="home-prior-auth-visual__meta">
-              {ORDER.patient} · {ORDER.payer}
-            </p>
-          </div>
-          <span className="home-prior-auth-visual__status-badge">Approved</span>
-        </header>
-
-        <div className="home-prior-auth-visual__activity">
-          <span className="home-prior-auth-visual__phone-badge" aria-hidden>
-            <PhoneIcon />
-          </span>
-          <VoiceWaveform />
-          <div className="home-prior-auth-visual__activity-copy">
-            <p className="home-prior-auth-visual__activity-line">Prior Auth Agent</p>
-            <p className="home-prior-auth-visual__activity-subline">Filing PA-482917 to chart</p>
-          </div>
-          <span className="home-prior-auth-visual__activity-live">Live</span>
+      <header className="home-prior-auth-visual__header">
+        <div className="home-prior-auth-visual__header-copy">
+          <h3 className="home-prior-auth-visual__title">{ORDER.procedure}</h3>
+          <p className="home-prior-auth-visual__meta">{ORDER.patient}</p>
         </div>
+        <span className="home-prior-auth-visual__call-timer">
+          {ORDER.callMinutes}
+          <span className="home-prior-auth-visual__call-timer-unit">m</span> {ORDER.callSeconds}
+          <span className="home-prior-auth-visual__call-timer-unit">s</span>
+        </span>
+      </header>
 
-        <div className="home-prior-auth-visual__pipeline" aria-hidden>
-          <div className="home-prior-auth-visual__pipeline-track">
-            <div className="home-prior-auth-visual__pipeline-rail">
-              <span className="home-prior-auth-visual__pipeline-fill" />
-            </div>
-            <div className="home-prior-auth-visual__pipeline-marks">
-              {PIPELINE_STEPS.map((step) => (
-                <StepIndicator key={step.id} status={step.status} />
-              ))}
-            </div>
-          </div>
-          <div className="home-prior-auth-visual__pipeline-labels">
-            {PIPELINE_STEPS.map((step) => (
-              <span
-                key={step.id}
-                className={`home-prior-auth-visual__pipeline-label${
-                  step.status === "active" ? " home-prior-auth-visual__pipeline-label--active" : ""
-                }`}
-              >
-                {step.label}
-              </span>
-            ))}
-          </div>
-        </div>
+      <div className="home-prior-auth-visual__panel">
+        <CallBridge />
 
         <dl className="home-prior-auth-visual__details">
           {DETAILS.map((item) => (
@@ -136,11 +133,27 @@ export function DoePhoneHomePriorAuthVisual() {
             </div>
           ))}
         </dl>
+      </div>
 
-        <footer className="home-prior-auth-visual__footer">
-          <span className="home-prior-auth-visual__footer-stat">Completed in 4m 12s</span>
-          <span className="home-prior-auth-visual__footer-pill">Auto-file on</span>
-        </footer>
+      <div className="home-prior-auth-visual__pipeline" aria-hidden>
+        <div className="home-prior-auth-visual__pipeline-rail">
+          <span
+            className="home-prior-auth-visual__pipeline-fill"
+            style={{ width: `${PIPELINE_FILL_PERCENT}%` }}
+          />
+        </div>
+        <div className="home-prior-auth-visual__pipeline-labels">
+          {PIPELINE_STEPS.map((step) => (
+            <span
+              key={step.id}
+              className={`home-prior-auth-visual__pipeline-label${
+                step.status === "active" ? " home-prior-auth-visual__pipeline-label--active" : ""
+              }`}
+            >
+              {step.label}
+            </span>
+          ))}
+        </div>
       </div>
     </div>
   );

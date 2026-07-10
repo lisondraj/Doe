@@ -4568,6 +4568,7 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--activ
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--lab-alerts,
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--call-summaries,
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--guardrails {
   position: relative !important;
   min-height: var(--doe-section-band-vh, var(--app-vh, 100lvh)) !important;
@@ -5079,47 +5080,68 @@ html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagra
   align-items: center;
   justify-content: center;
   text-align: center;
+  border-radius: clamp(0.52rem, 1.48vmin, 0.62rem);
+  border: 1px solid var(--home-dusk-ui-border);
+  background: var(--home-dusk-ui-surface-sunken);
+  box-shadow: none;
+  padding: clamp(0.44rem, 1.25vmin, 0.52rem) clamp(0.52rem, 1.48vmin, 0.6rem);
 }
 
-html[data-home-page] .home-call-logic-diagram {
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.62rem, 1.75vmin, 0.76rem);
   width: 100%;
+  max-width: min(100%, 21.5rem);
   margin-inline: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 0;
+  padding-inline: 0;
 }
 
-html[data-home-page] .home-call-logic-diagram__toolbar {
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-call-logic-diagram {
+  max-width: 100%;
+}
+
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__header {
   display: flex;
-  flex-direction: column;
   align-items: flex-start;
-  gap: 0;
+  box-sizing: border-box;
   width: 100%;
-  padding: 0 0 clamp(0.62rem, 1.75vmin, 0.78rem);
+  padding-inline: clamp(0.88rem, 2.5vmin, 1rem);
 }
 
-html[data-home-page] .home-call-logic-diagram__toolbar-actions {
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__header-copy {
   display: flex;
-  align-items: center;
-  width: auto;
+  flex-direction: column;
+  gap: clamp(0.12rem, 0.34vmin, 0.16rem);
+  min-width: 0;
 }
 
-html[data-home-page] .home-call-logic-diagram__type-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: clamp(0.22rem, 0.62vmin, 0.28rem);
-  flex: 0 0 auto;
-  padding: clamp(0.32rem, 0.92vmin, 0.38rem) clamp(0.52rem, 1.48vmin, 0.62rem);
-  border-radius: clamp(0.42rem, 1.2vmin, 0.5rem);
-  border: 0.5px solid color-mix(in srgb, #1e343a 8%, #ebe7e0);
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 8px 22px rgba(30, 52, 58, 0.08);
-  color: #d2774c;
-  font-size: clamp(0.74rem, 2.1vmin, 0.86rem);
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__title {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(1.14rem, 3.25vmin, 1.32rem);
   font-weight: 500;
-  line-height: 1.1;
-  white-space: nowrap;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__meta {
+  margin: 0;
+  color: rgba(255, 248, 240, 0.72);
+  font-size: clamp(0.82rem, 2.32vmin, 0.92rem);
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: clamp(0.82rem, 2.32vmin, 0.96rem) clamp(0.88rem, 2.5vmin, 1rem);
+  border-radius: clamp(0.78rem, 2.22vmin, 0.92rem);
+  background: var(--home-dusk-ui-surface);
+  border: 1px solid var(--home-dusk-ui-border);
+  box-shadow: var(--home-dusk-ui-shadow);
 }
 
 html[data-home-page] .home-call-logic-diagram__canvas {
@@ -5153,24 +5175,24 @@ html[data-home-page] .home-call-logic-diagram__trunk-step--center .home-call-log
   width: min(100%, 16.5rem);
 }
 
-html[data-home-page] .home-call-logic-diagram__connector {
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__connector {
   flex-shrink: 0;
   border-radius: 999px;
-  background: color-mix(in srgb, #1e343a 14%, #ebe7e0);
+  background: var(--home-dusk-ui-border);
 }
 
-html[data-home-page] .home-call-logic-diagram__connector--vertical {
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__connector--vertical {
   align-self: center;
-  width: 1.5px;
-  height: clamp(0.52rem, 1.48vmin, 0.64rem);
-  margin-block: clamp(0.06rem, 0.18vmin, 0.08rem);
-}
-
-html[data-home-page] .home-call-logic-diagram__connector--branch {
-  align-self: center;
-  width: 1.5px;
-  height: clamp(0.58rem, 1.65vmin, 0.68rem);
+  width: 1px;
+  height: clamp(0.46rem, 1.32vmin, 0.56rem);
   margin-block: clamp(0.04rem, 0.12vmin, 0.06rem);
+}
+
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__connector--branch {
+  align-self: center;
+  width: 1px;
+  height: clamp(0.5rem, 1.42vmin, 0.6rem);
+  margin-block: clamp(0.03rem, 0.1vmin, 0.05rem);
 }
 
 html[data-home-page] .home-call-logic-diagram__fork-rail {
@@ -5182,35 +5204,35 @@ html[data-home-page] .home-call-logic-diagram__fork-rail {
   margin-inline: auto;
 }
 
-html[data-home-page] .home-call-logic-diagram__fork-rail-line {
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__fork-rail-line {
   position: absolute;
   top: 0;
   height: 100%;
   border-radius: 999px;
-  background: color-mix(in srgb, #1e343a 14%, #ebe7e0);
+  background: var(--home-dusk-ui-border);
 }
 
-html[data-home-page] .home-call-logic-diagram__fork-rail-line--left {
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__fork-rail-line--left {
   left: 25%;
-  width: 1.5px;
+  width: 1px;
   transform: translateX(-50%);
 }
 
-html[data-home-page] .home-call-logic-diagram__fork-rail-line--right {
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__fork-rail-line--right {
   left: 75%;
-  width: 1.5px;
+  width: 1px;
   transform: translateX(-50%);
 }
 
-html[data-home-page] .home-call-logic-diagram__fork-rail::before {
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__fork-rail::before {
   content: "";
   position: absolute;
   top: 0;
   left: 25%;
   right: 25%;
-  height: 1.5px;
+  height: 1px;
   border-radius: 999px;
-  background: color-mix(in srgb, #1e343a 14%, #ebe7e0);
+  background: var(--home-dusk-ui-border);
 }
 
 html[data-home-page] .home-call-logic-diagram__branches {
@@ -5240,85 +5262,72 @@ html[data-home-page] .home-call-logic-diagram__branch-col .home-call-logic-diagr
   width: 100%;
 }
 
-html[data-home-page] .home-call-logic-diagram__branch-key {
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__branch-key {
   align-self: center;
-  margin-bottom: clamp(0.14rem, 0.4vmin, 0.18rem);
-  padding: clamp(0.12rem, 0.34vmin, 0.14rem) clamp(0.36rem, 1.02vmin, 0.42rem);
-  border-radius: 999px;
-  background: rgba(210, 119, 76, 0.12);
-  color: #d2774c;
+  margin-bottom: clamp(0.12rem, 0.34vmin, 0.16rem);
+  padding: 0;
+  color: var(--home-dusk-ui-muted);
   font-size: clamp(0.58rem, 1.65vmin, 0.66rem);
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
-html[data-home-page] .home-call-logic-diagram__node {
-  border-radius: clamp(0.58rem, 1.65vmin, 0.68rem);
-  border: 0.5px solid color-mix(in srgb, #1e343a 7%, #ebe7e0);
-  background: rgba(255, 255, 255, 0.94);
-  box-shadow:
-    0 8px 22px rgba(30, 52, 58, 0.07),
-    0 1px 4px rgba(30, 52, 58, 0.04);
-  padding: clamp(0.5rem, 1.42vmin, 0.58rem) clamp(0.58rem, 1.65vmin, 0.66rem);
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__branch-col--yes .home-call-logic-diagram__branch-key {
+  color: var(--home-dusk-ui-horizon);
 }
 
-html[data-home-page] .home-call-logic-diagram__node--trigger {
-  background: #ffffff;
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__node--trigger {
+  background: var(--home-dusk-ui-surface-sunken);
 }
 
-html[data-home-page] .home-call-logic-diagram__node--condition {
-  background: #f3f1ed;
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__node--condition {
+  background: rgba(242, 216, 168, 0.06);
 }
 
-html[data-home-page] .home-call-logic-diagram__node--active {
-  border-color: rgba(210, 119, 76, 0.42);
-  background: rgba(210, 119, 76, 0.08);
-  box-shadow:
-    0 0 0 1px rgba(210, 119, 76, 0.12),
-    0 8px 22px rgba(30, 52, 58, 0.07);
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__node--active {
+  border-color: rgba(232, 143, 92, 0.45);
+  background: rgba(232, 143, 92, 0.1);
+  box-shadow: 0 0 0 1px rgba(232, 143, 92, 0.14);
 }
 
-html[data-home-page] .home-call-logic-diagram__node-label {
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__node-label {
   margin: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: clamp(0.28rem, 0.8vmin, 0.34rem);
   width: 100%;
-  color: #1e343a;
-  font-size: clamp(0.82rem, 2.34vmin, 0.94rem);
+  color: var(--home-dusk-ui-ink);
+  font-size: clamp(0.78rem, 2.22vmin, 0.88rem);
   font-weight: 500;
   line-height: 1.22;
   letter-spacing: -0.012em;
   text-align: center;
 }
 
-html[data-home-page] .home-call-logic-diagram__node-kind {
-  display: inline-flex;
-  align-items: center;
-  gap: clamp(0.28rem, 0.8vmin, 0.34rem);
-  color: #6b7280;
-}
-
-html[data-home-page] .home-call-logic-diagram__node-icon {
-  color: #8b9199;
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__node-icon {
+  color: var(--home-dusk-ui-muted);
   flex-shrink: 0;
 }
 
-html[data-home-page] .home-call-logic-diagram__add-step {
-  display: flex;
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__node-icon [stroke]:not([stroke="none"]) {
+  stroke: currentColor;
+}
+
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__add-step {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(0.26rem, 0.74vmin, 0.3rem);
-  width: min(100%, 16.5rem);
-  margin: clamp(0.18rem, 0.52vmin, 0.24rem) auto 0;
-  padding: clamp(0.4rem, 1.14vmin, 0.48rem) clamp(0.55rem, 1.55vmin, 0.64rem);
-  border-radius: clamp(0.46rem, 1.32vmin, 0.54rem);
-  border: 0.5px dashed color-mix(in srgb, #1e343a 16%, #ebe7e0);
-  background: rgba(255, 255, 255, 0.72);
-  color: #6b7280;
+  align-self: center;
+  gap: clamp(0.22rem, 0.62vmin, 0.28rem);
+  margin: 0;
+  padding: clamp(0.18rem, 0.52vmin, 0.22rem) clamp(0.42rem, 1.2vmin, 0.52rem);
+  border: none;
+  border-radius: clamp(0.32rem, 0.92vmin, 0.38rem);
+  background: transparent;
+  color: rgba(255, 248, 240, 0.58);
   font-size: clamp(0.72rem, 2.05vmin, 0.82rem);
   font-weight: 500;
   line-height: 1.1;
@@ -5332,13 +5341,7 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--guard
   ) !important;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-shell {
-  padding-inline: 0;
-  padding-block: var(--proto-phone-gutter-y) !important;
-  justify-content: center;
-  gap: clamp(2rem, 5.5vmin, 2.75rem);
-}
-
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-shell,
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--lab-alerts .home-feature-shader-band__feature-shell {
   padding-inline: 0;
   padding-block: var(--proto-phone-gutter-y) !important;
@@ -5346,25 +5349,18 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--lab-a
   gap: clamp(2rem, 5.5vmin, 2.75rem);
 }
 
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--guardrails .home-feature-shader-band__feature-shell {
-  padding-inline: 0;
-  padding-top: calc(var(--desktop-nav-height) + var(--desktop-section-pad-y));
-}
-
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-shell {
-  padding-inline: 0;
-  padding-top: calc(var(--desktop-nav-height) + var(--desktop-section-pad-y)) !important;
-  padding-bottom: var(--desktop-section-pad-y) !important;
-  justify-content: center;
-  gap: clamp(2rem, 3.2vmin, 2.75rem);
-}
-
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-shell,
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alerts .home-feature-shader-band__feature-shell {
   padding-inline: 0;
   padding-top: calc(var(--desktop-nav-height) + var(--desktop-section-pad-y)) !important;
   padding-bottom: var(--desktop-section-pad-y) !important;
   justify-content: center;
   gap: clamp(2rem, 3.2vmin, 2.75rem);
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--guardrails .home-feature-shader-band__feature-shell {
+  padding-inline: 0;
+  padding-top: calc(var(--desktop-nav-height) + var(--desktop-section-pad-y));
 }
 
 html[data-home-page] .home-feature-shader-band--lab-alerts .home-feature-shader-band__feature-content,
@@ -5725,65 +5721,64 @@ html[data-home-page] .home-feature-shader-band--lab-alerts .home-outreach-voice-
 
 /* Prior auth workflow board — call-summaries shader band. */
 html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.62rem, 1.75vmin, 0.76rem);
   width: 100%;
   max-width: min(100%, 21.5rem);
   margin-inline: auto;
   padding-inline: 0;
 }
 
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__card {
+html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__panel {
   display: flex;
   flex-direction: column;
   gap: clamp(0.62rem, 1.75vmin, 0.76rem);
   padding: clamp(0.82rem, 2.32vmin, 0.96rem) clamp(0.88rem, 2.5vmin, 1rem);
   border-radius: clamp(0.78rem, 2.22vmin, 0.92rem);
-  border: 1px solid var(--home-dusk-ui-border);
   background: var(--home-dusk-ui-surface);
+  border: 1px solid var(--home-dusk-ui-border);
   box-shadow: var(--home-dusk-ui-shadow);
+  min-width: 0;
 }
 
 html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
   gap: clamp(0.55rem, 1.55vmin, 0.68rem);
+  box-sizing: border-box;
+  width: 100%;
+  padding-inline: clamp(0.88rem, 2.5vmin, 1rem);
 }
 
 html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__header-copy {
   display: flex;
   flex-direction: column;
-  gap: clamp(0.12rem, 0.34vmin, 0.15rem);
+  gap: clamp(0.12rem, 0.34vmin, 0.16rem);
   min-width: 0;
-}
-
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__eyebrow {
-  margin: 0;
-  color: var(--home-dusk-ui-horizon);
-  font-size: clamp(0.72rem, 2.05vmin, 0.82rem);
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: 0.01em;
 }
 
 html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__title {
   margin: 0;
-  color: var(--home-dusk-ui-ink);
-  font-size: clamp(1rem, 2.85vmin, 1.14rem);
+  color: #ffffff;
+  font-size: clamp(1.14rem, 3.25vmin, 1.32rem);
   font-weight: 500;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
 }
 
 html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__meta {
   margin: 0;
-  color: var(--home-dusk-ui-muted);
-  font-size: clamp(0.78rem, 2.22vmin, 0.88rem);
+  color: rgba(255, 248, 240, 0.72);
+  font-size: clamp(0.82rem, 2.32vmin, 0.92rem);
   font-weight: 400;
   line-height: 1.2;
 }
 
 html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__status-badge {
   flex-shrink: 0;
+  align-self: flex-start;
   padding: clamp(0.18rem, 0.52vmin, 0.22rem) clamp(0.42rem, 1.2vmin, 0.52rem);
   border-radius: clamp(0.22rem, 0.62vmin, 0.28rem);
   background: rgba(232, 160, 96, 0.16);
@@ -5794,178 +5789,197 @@ html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-
   white-space: nowrap;
 }
 
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__activity {
-  display: flex;
-  align-items: center;
-  gap: clamp(0.38rem, 1.08vmin, 0.46rem);
-  padding: clamp(0.48rem, 1.36vmin, 0.58rem) clamp(0.52rem, 1.48vmin, 0.62rem);
-  border-radius: clamp(0.42rem, 1.2vmin, 0.52rem);
-  background: var(--home-dusk-ui-surface-sunken);
-}
-
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__phone-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: clamp(1.28rem, 3.65vmin, 1.48rem);
-  height: clamp(1.28rem, 3.65vmin, 1.48rem);
-  border-radius: 999px;
-  background: rgba(232, 160, 96, 0.14);
-  color: var(--home-dusk-ui-horizon);
-}
-
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__phone-icon {
-  width: 0.72em;
-  height: 0.72em;
-}
-
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__waveform {
-  display: flex;
-  align-items: flex-end;
-  gap: clamp(0.1rem, 0.28vmin, 0.12rem);
-  height: clamp(1.12rem, 3.18vmin, 1.28rem);
-  flex-shrink: 0;
-}
-
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__waveform-bar {
-  display: block;
-  width: clamp(0.1rem, 0.28vmin, 0.12rem);
-  border-radius: 9999px;
-  background: var(--home-dusk-ui-horizon);
-  opacity: 0.72;
-}
-
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__activity-copy {
+html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__bridge {
   display: flex;
   flex-direction: column;
-  gap: clamp(0.08rem, 0.22vmin, 0.1rem);
+  gap: clamp(0.52rem, 1.48vmin, 0.64rem);
   min-width: 0;
-  flex: 1 1 auto;
 }
 
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__activity-line {
+html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__call-timer {
+  justify-self: end;
   margin: 0;
+  padding-top: 0.04em;
+  color: #ffffff;
+  font-size: clamp(1.38rem, 3.92vmin, 1.62rem);
+  font-weight: 500;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  letter-spacing: -0.03em;
+  text-align: right;
+}
+
+html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__call-timer-unit {
+  margin-inline: 0.04em;
+  color: rgba(255, 248, 240, 0.58);
+  font-size: 0.62em;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__bridge-parties {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(0.38rem, 1.08vmin, 0.48rem);
+}
+
+html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__bridge-party {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.28rem, 0.8vmin, 0.34rem);
+  min-width: 0;
+}
+
+html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__bridge-party-label {
   color: var(--home-dusk-ui-ink);
-  font-size: clamp(0.82rem, 2.32vmin, 0.92rem);
+  font-size: clamp(0.68rem, 1.94vmin, 0.78rem);
   font-weight: 500;
   line-height: 1.15;
-  white-space: nowrap;
+  text-align: center;
+  max-width: 100%;
 }
 
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__activity-subline {
-  margin: 0;
+html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__bridge-party-state {
   color: var(--home-dusk-ui-muted);
-  font-size: clamp(0.72rem, 2.05vmin, 0.82rem);
+  font-size: clamp(0.6rem, 1.7vmin, 0.68rem);
   font-weight: 400;
-  line-height: 1.1;
-  white-space: nowrap;
+  line-height: 1;
 }
 
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__activity-live {
-  flex-shrink: 0;
-  padding: clamp(0.14rem, 0.4vmin, 0.18rem) clamp(0.34rem, 0.96vmin, 0.42rem);
-  border-radius: 999px;
-  background: rgba(232, 160, 96, 0.14);
+html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__bridge-party--speaking .home-prior-auth-visual__bridge-party-state {
   color: var(--home-dusk-ui-horizon);
-  font-size: clamp(0.62rem, 1.76vmin, 0.72rem);
-  font-weight: 600;
-  line-height: 1;
-  white-space: nowrap;
+  font-weight: 500;
+}
+
+html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__meter {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: clamp(0.14rem, 0.4vmin, 0.18rem);
+  width: 100%;
+  max-width: clamp(4.8rem, 13.5vmin, 5.65rem);
+  height: clamp(1.45rem, 4.12vmin, 1.72rem);
+}
+
+html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__meter-bar {
+  display: block;
+  flex: 0 0 clamp(0.16rem, 0.45vmin, 0.2rem);
+  width: clamp(0.16rem, 0.45vmin, 0.2rem);
+  border-radius: 999px;
+  transform-origin: bottom center;
+}
+
+html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__meter--speaking .home-prior-auth-visual__meter-bar {
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 206, 156, 0.98) 0%,
+    rgba(232, 160, 96, 0.92) 55%,
+    rgba(196, 118, 58, 0.88) 100%
+  );
+  box-shadow: 0 0 clamp(0.28rem, 0.8vmin, 0.36rem) rgba(232, 160, 96, 0.22);
+  transform: scaleY(var(--meter-min, 0.3));
+  animation: home-prior-auth-meter-pulse var(--meter-duration, 0.82s) cubic-bezier(0.42, 0.08, 0.58, 0.92)
+    infinite;
+  animation-delay: var(--meter-delay, 0s);
+  will-change: transform, opacity;
+}
+
+html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__meter--listening .home-prior-auth-visual__meter-bar {
+  height: calc(var(--meter-height, 0.5) * 100%);
+  background: var(--home-dusk-ui-horizon);
+  opacity: 0.24;
+}
+
+html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__bridge-link {
+  display: block;
+  flex-shrink: 0;
+  width: clamp(1rem, 2.85vmin, 1.25rem);
+  height: 1px;
+  background: rgba(232, 160, 96, 0.35);
+}
+
+html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__bridge-caption {
+  margin: 0;
+  padding-top: clamp(0.42rem, 1.2vmin, 0.52rem);
+  border-top: 1px solid rgba(242, 216, 168, 0.1);
+  color: var(--home-dusk-ui-ink);
+  font-size: clamp(0.78rem, 2.22vmin, 0.88rem);
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  min-width: 0;
+}
+
+@keyframes home-prior-auth-meter-pulse {
+  0%,
+  100% {
+    transform: scaleY(var(--meter-min, 0.3));
+    opacity: 0.72;
+  }
+
+  32% {
+    transform: scaleY(var(--meter-mid, 0.62));
+    opacity: 0.9;
+  }
+
+  58% {
+    transform: scaleY(var(--meter-max, 0.85));
+    opacity: 1;
+  }
+
+  78% {
+    transform: scaleY(calc(var(--meter-min, 0.3) * 1.08));
+    opacity: 0.82;
+  }
 }
 
 html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__pipeline {
   display: flex;
   flex-direction: column;
-  gap: clamp(0.32rem, 0.92vmin, 0.4rem);
-}
-
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__pipeline-track {
-  position: relative;
-  padding-inline: clamp(0.18rem, 0.52vmin, 0.22rem);
+  gap: clamp(0.28rem, 0.8vmin, 0.34rem);
+  box-sizing: border-box;
+  width: 100%;
+  padding-inline: clamp(0.88rem, 2.5vmin, 1rem);
 }
 
 html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__pipeline-rail {
-  position: absolute;
-  left: clamp(0.62rem, 1.76vmin, 0.72rem);
-  right: clamp(0.62rem, 1.76vmin, 0.72rem);
-  top: 50%;
-  height: 2px;
-  transform: translateY(-50%);
+  width: 100%;
+  height: 1px;
   border-radius: 9999px;
-  background: rgba(242, 216, 168, 0.12);
+  background: rgba(255, 248, 240, 0.14);
   overflow: hidden;
 }
 
 html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__pipeline-fill {
   display: block;
-  width: 82%;
   height: 100%;
   border-radius: inherit;
-  background: var(--home-dusk-ui-horizon);
-}
-
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__pipeline-marks {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__step-mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: clamp(0.92rem, 2.62vmin, 1.06rem);
-  height: clamp(0.92rem, 2.62vmin, 1.06rem);
-  border-radius: 999px;
-  background: var(--home-dusk-ui-surface);
-  box-shadow: 0 0 0 1px var(--home-dusk-ui-border);
-}
-
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__step-mark svg {
-  width: 62%;
-  height: 62%;
-}
-
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__step-mark--done {
-  background: rgba(232, 160, 96, 0.16);
-  box-shadow: 0 0 0 1px rgba(232, 160, 96, 0.28);
-  color: var(--home-dusk-ui-horizon);
-}
-
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__step-mark--active {
-  background: var(--home-dusk-ui-highlight);
-  box-shadow:
-    0 0 0 1px rgba(232, 160, 96, 0.34),
-    0 0 0 3px rgba(232, 160, 96, 0.12);
-}
-
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__step-mark--upcoming {
-  background: var(--home-dusk-ui-surface);
-  box-shadow: 0 0 0 1px var(--home-dusk-ui-border);
+  background: rgba(255, 248, 240, 0.72);
 }
 
 html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__pipeline-labels {
-  display: flex;
-  justify-content: space-between;
-  gap: clamp(0.22rem, 0.62vmin, 0.28rem);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  justify-items: center;
+  gap: clamp(0.12rem, 0.34vmin, 0.16rem);
 }
 
 html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__pipeline-label {
-  flex: 1 1 0;
-  min-width: 0;
-  color: var(--home-dusk-ui-muted);
-  font-size: clamp(0.62rem, 1.76vmin, 0.72rem);
+  max-width: 100%;
+  padding-inline: clamp(0.08rem, 0.22vmin, 0.12rem);
+  color: rgba(255, 248, 240, 0.42);
+  font-size: clamp(0.6rem, 1.7vmin, 0.68rem);
   font-weight: 400;
-  line-height: 1.1;
+  line-height: 1.15;
   text-align: center;
-  white-space: nowrap;
 }
 
 html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__pipeline-label--active {
-  color: var(--home-dusk-ui-ink);
+  color: rgba(255, 248, 240, 0.88);
   font-weight: 500;
 }
 
@@ -5974,9 +5988,8 @@ html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-
   flex-direction: column;
   gap: clamp(0.22rem, 0.62vmin, 0.28rem);
   margin: 0;
-  padding: clamp(0.48rem, 1.36vmin, 0.58rem) clamp(0.52rem, 1.48vmin, 0.62rem);
-  border-radius: clamp(0.42rem, 1.2vmin, 0.52rem);
-  background: var(--home-dusk-ui-surface-sunken);
+  padding-top: clamp(0.48rem, 1.36vmin, 0.58rem);
+  border-top: 1px solid rgba(242, 216, 168, 0.1);
 }
 
 html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__detail-row {
@@ -6001,35 +6014,6 @@ html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-
   font-weight: 500;
   line-height: 1.15;
   text-align: right;
-  white-space: nowrap;
-}
-
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: clamp(0.55rem, 1.55vmin, 0.68rem);
-  padding-top: clamp(0.12rem, 0.34vmin, 0.15rem);
-  border-top: 1px solid var(--home-dusk-ui-border);
-}
-
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__footer-stat {
-  color: var(--home-dusk-ui-muted);
-  font-size: clamp(0.72rem, 2.05vmin, 0.82rem);
-  font-weight: 400;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__footer-pill {
-  flex-shrink: 0;
-  padding: clamp(0.14rem, 0.4vmin, 0.18rem) clamp(0.34rem, 0.96vmin, 0.42rem);
-  border-radius: clamp(0.18rem, 0.52vmin, 0.22rem);
-  background: rgba(232, 160, 96, 0.14);
-  color: var(--home-dusk-ui-horizon);
-  font-size: clamp(0.62rem, 1.76vmin, 0.72rem);
-  font-weight: 500;
-  line-height: 1;
   white-space: nowrap;
 }
 
@@ -6324,6 +6308,7 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow 
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alerts,
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries,
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--guardrails {
   position: relative !important;
   min-height: 100dvh !important;
@@ -6729,110 +6714,6 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   svg
   path[stroke="#D2774C"] {
   stroke: var(--home-dusk-ui-horizon) !important;
-}
-
-/* iPhone home — call logic diagram (dusk mock UI). */
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--workflow
-  .home-call-logic-diagram__type-chip,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--workflow
-  .home-call-logic-diagram__add-step {
-  background: var(--home-dusk-ui-surface) !important;
-  border-color: var(--home-dusk-ui-border) !important;
-  box-shadow: var(--home-dusk-ui-shadow) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--workflow
-  .home-call-logic-diagram__type-chip,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--workflow
-  .home-call-logic-diagram__branch-key {
-  color: var(--home-dusk-ui-horizon) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--workflow
-  .home-call-logic-diagram__node-label {
-  color: var(--home-dusk-ui-ink) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--workflow
-  .home-call-logic-diagram__branch-key {
-  background: var(--home-dusk-ui-surface-raised) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--workflow
-  .home-call-logic-diagram__node {
-  background: var(--home-dusk-ui-surface) !important;
-  border-color: var(--home-dusk-ui-border) !important;
-  box-shadow: var(--home-dusk-ui-shadow) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--workflow
-  .home-call-logic-diagram__node--trigger {
-  background: var(--home-dusk-ui-surface) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--workflow
-  .home-call-logic-diagram__node--condition {
-  background: var(--home-dusk-ui-surface-sunken) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--workflow
-  .home-call-logic-diagram__node--active {
-  border-color: rgba(232, 143, 92, 0.45) !important;
-  background: rgba(232, 143, 92, 0.1) !important;
-  box-shadow: 0 0 0 1px rgba(232, 143, 92, 0.14) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--workflow
-  .home-call-logic-diagram__node-kind,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--workflow
-  .home-call-logic-diagram__add-step {
-  color: var(--home-dusk-ui-muted) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--workflow
-  .home-call-logic-diagram__connector,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--workflow
-  .home-call-logic-diagram__fork-rail-line,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--workflow
-  .home-call-logic-diagram__fork-rail::before {
-  background: var(--home-dusk-ui-border) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--workflow
-  .home-call-logic-diagram__add-step {
-  border-color: var(--home-dusk-ui-border) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--workflow
-  .home-call-logic-diagram__node-icon,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--workflow
-  .home-call-logic-diagram__chevron {
-  color: var(--home-dusk-ui-muted) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--workflow
-  .home-call-logic-diagram__node-icon
-  [stroke]:not([stroke="none"]) {
-  stroke: currentColor !important;
 }
 
 /* iPhone home — active agents shader band (dusk mock UI). */
