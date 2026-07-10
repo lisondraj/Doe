@@ -80,14 +80,16 @@ export function DoePhoneReviewPackageVisual({
         </div>
 
         <div className="home-active-agents-visual__pills">
-          {WORKFLOW_PILLS.map((label) => (
-            <div key={label} className="home-active-agents-visual__workflow-pill">
-              <span className="home-active-agents-visual__workflow-pill-icon" aria-hidden>
-                <VolumeIcon />
-              </span>
-              <span className={`home-active-agents-visual__workflow-pill-label ${inter.className}`}>{label}</span>
-            </div>
-          ))}
+          <div className="home-active-agents-pills-scale">
+            {WORKFLOW_PILLS.map((label) => (
+              <div key={label} className="home-active-agents-visual__workflow-pill">
+                <span className="home-active-agents-visual__workflow-pill-icon" aria-hidden>
+                  <VolumeIcon />
+                </span>
+                <span className={`home-active-agents-visual__workflow-pill-label ${inter.className}`}>{label}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
