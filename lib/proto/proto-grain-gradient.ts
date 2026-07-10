@@ -85,6 +85,7 @@ export type ProtoGrainGradientVariant =
   | "front-desk"
   | "front-desk-band"
   | "customize-agents-band"
+  | "active-agents-band"
   | "inbox"
   | "ambient"
   | "ambient-band"
@@ -237,6 +238,20 @@ export const PROTO_GRAIN_GRADIENT_PRESETS: Record<ProtoGrainGradientVariant, Pro
     offsetX: -0.14,
     offsetY: -0.2,
     scale: 1.22,
+    worldWidth: 1280,
+    worldHeight: 960,
+    speed: 0,
+  },
+  /** Active agents band — front-desk flow flipped vertically for Built by doctors section. */
+  "active-agents-band": {
+    shape: "corners",
+    softness: 0.75,
+    intensity: 0.12,
+    fit: "cover",
+    rotation: 270,
+    offsetX: -0.16,
+    offsetY: -0.2,
+    scale: 0.96,
     worldWidth: 1280,
     worldHeight: 960,
     speed: 0,
@@ -400,6 +415,7 @@ export function doeHomeShaderBandVariant(
   slideId: string,
 ): ProtoGrainGradientVariant | undefined {
   if (slideId === "front-desk") return "customize-agents-band";
+  if (slideId === "agents") return "active-agents-band";
   // Care → finance: flipped integrate flow for outreach, then structured card.
   if (slideId === "ambient") return "ambient-band";
   // Finance → stack: structured card, then teal footer pool into Integrate.
