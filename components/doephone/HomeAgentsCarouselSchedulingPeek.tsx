@@ -9,7 +9,7 @@ const WEEK_DATES = [7, 8, 9, 10, 11, 12, 13] as const;
 const SELECTED_DATE = 9;
 
 const SLOT_ROWS = [
-  { time: "3:15 PM", patient: "Physical", visit: "Annual physical", active: true, badge: "Calling" as const },
+  { time: "3:15 PM", patient: "Brooks", visit: "Physical", active: true, live: true },
   { time: "9:00 AM", patient: "Nguyen", visit: "Follow-up" },
   { time: "11:30 AM", patient: "Open slot", visit: "Friday" },
   { time: "2:00 PM", patient: "Kowalski", visit: "Labs review" },
@@ -31,7 +31,7 @@ function getPeekFadeOpacity(spread: number) {
     return 1;
   }
 
-  return Math.max(0.58, 1 - spread * 0.1);
+  return Math.max(0.64, 1 - spread * 0.08);
 }
 
 function getPeekFadeBlur(spread: number) {
@@ -39,7 +39,8 @@ function getPeekFadeBlur(spread: number) {
     return 0;
   }
 
-  return Math.min(1.4, spread * 0.42);
+  const eased = spread * (0.14 + spread * 0.1);
+  return Math.min(0.95, eased);
 }
 
 function ChevronIcon() {
@@ -76,15 +77,17 @@ export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: 
     <div className="home-agents-carousel__scheduling-peek" aria-hidden>
       <div className={`home-agents-carousel__scheduling-peek-card ${dmSans.className}`}>
         <div className="home-agents-carousel__scheduling-peek-head">
-          <button type="button" className="home-agents-carousel__scheduling-peek-clinic" tabIndex={-1}>
-            <span className="home-agents-carousel__scheduling-peek-clinic-label">Dr. Brown&apos;s Clinic</span>
-            <ChevronIcon />
-          </button>
+          <div className="home-agents-carousel__scheduling-peek-head-right">
+            <button type="button" className="home-agents-carousel__scheduling-peek-clinic" tabIndex={-1}>
+              <span className="home-agents-carousel__scheduling-peek-clinic-label">Dr. Brown&apos;s Clinic</span>
+              <ChevronIcon />
+            </button>
 
-          <div
-            className="home-agents-carousel__scheduling-peek-logo bg-gradient-to-br from-[#E7A944] via-[#D2774C] to-[#1E343A]"
-            aria-hidden
-          />
+            <div
+              className="home-agents-carousel__scheduling-peek-logo bg-gradient-to-br from-[#E7A944] via-[#D2774C] to-[#1E343A]"
+              aria-hidden
+            />
+          </div>
         </div>
 
         <p className="home-agents-carousel__scheduling-peek-title">Schedule</p>
@@ -134,8 +137,11 @@ export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: 
                     <span className="home-agents-carousel__scheduling-peek-visit"> · {row.visit}</span>
                   </span>
                   <span className="home-agents-carousel__scheduling-peek-time">{row.time}</span>
-                  {"badge" in row && row.badge ? (
-                    <span className="home-agents-carousel__scheduling-peek-badge">{row.badge}</span>
+                  {"live" in row && row.live ? (
+                    <span className="home-agents-carousel__scheduling-peek-live">
+                      <span className="home-agents-carousel__scheduling-peek-live-dot" aria-hidden />
+                      On call
+                    </span>
                   ) : null}
                 </span>
               </li>
