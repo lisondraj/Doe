@@ -64,6 +64,21 @@ export const ABOUT_DESKTOP_TITLE_TW = `text-left font-light leading-[1.02] track
 
 export const ABOUT_DESKTOP_SUBHEADING_TW = `mt-5 md:mt-6 text-[clamp(1.32rem,1.2vw,1.55rem)] md:text-[clamp(1.4rem,1.28vw,1.65rem)] font-normal leading-[1.44] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
 
+/** Desktop /about — byline between subheading and hero (matches iPhone). */
+export const ABOUT_DESKTOP_HERO_BYLINE_OUTSIDE_TW = `font-medium text-[#BE8660] text-[clamp(0.92rem,0.85vw,1.06rem)] md:text-[clamp(0.98rem,0.9vw,1.12rem)] ${dmSans.className}`;
+
+export const ABOUT_DESKTOP_HERO_BYLINE_OUTSIDE_GAP = "mt-3 md:mt-4";
+
+export const ABOUT_DESKTOP_HERO_AFTER_BYLINE = "mt-4 md:mt-5";
+
+/** Desktop /about — section headlines (assistant, founders). */
+export const ABOUT_DESKTOP_SECTION_HEADLINE_TW = `text-left font-light leading-[1.02] tracking-[-0.03em] text-[clamp(2.35rem,3.25vw,3.55rem)] md:text-[clamp(2.55rem,3.05vw,3.75rem)] lg:text-[clamp(2.75rem,3.15vw,3.95rem)] text-[#1E343A] ${suisseIntl.className}`;
+
+export const ABOUT_DESKTOP_PIE_CHART_TITLE_TW =
+  "text-[clamp(1.22rem,1.05vw,1.42rem)] md:text-[clamp(1.32rem,1.12vw,1.52rem)]";
+
+export const ABOUT_DESKTOP_CHART_JOINT_CAPTION_TW = `mt-4 md:mt-5 font-normal leading-snug text-[#BE8660] text-[clamp(0.98rem,0.9vw,1.12rem)] md:text-[clamp(1.05rem,0.95vw,1.18rem)] ${inter.className}`;
+
 /** Desktop /about — author + date inside the orange hero box (bottom-right inset). */
 export const ABOUT_DESKTOP_HERO_BYLINE_WRAP_TW =
   "pointer-events-none absolute bottom-6 right-6 z-10 text-right md:bottom-8 md:right-8 lg:bottom-10 lg:right-10";

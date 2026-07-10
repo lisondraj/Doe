@@ -5,6 +5,7 @@ import {
   ABOUT_DESKTOP_ARTICLE_BODY_TW,
   ABOUT_DESKTOP_ARTICLE_LIST_GAP,
   ABOUT_DESKTOP_ARTICLE_QUOTE_TW,
+  ABOUT_DESKTOP_SECTION_HEADLINE_TW,
   ABOUT_DESKTOP_STACK_GAP,
 } from "@/lib/about/about-layout-styles";
 import { ABOUT_IPHONE_SHADER_CHART_SECONDARY } from "@/lib/home/doe-page-colors";
@@ -17,6 +18,24 @@ export function AboutDesktopParagraph({
   className?: string;
 }) {
   return <p className={`${ABOUT_DESKTOP_ARTICLE_BODY_TW} ${className}`.trim()}>{text}</p>;
+}
+
+export function AboutDesktopSectionHeadline({
+  lines,
+  className = "",
+}: {
+  lines: readonly string[];
+  className?: string;
+}) {
+  return (
+    <h2 className={`${ABOUT_DESKTOP_SECTION_HEADLINE_TW} ${className}`.trim()}>
+      {lines.map((line) => (
+        <span key={line} className="block">
+          {line}
+        </span>
+      ))}
+    </h2>
+  );
 }
 
 export function AboutDesktopBulletList({

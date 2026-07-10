@@ -465,15 +465,6 @@ html[data-about-page][data-layout="desktop"] .about-desktop-section__inner {
   padding-bottom: var(--desktop-section-pad-y) !important;
 }
 
-html[data-about-page][data-layout="desktop"] .about-desktop-contact-section {
-  box-sizing: border-box !important;
-  min-height: 100dvh !important;
-  height: 100dvh !important;
-  max-height: 100dvh !important;
-  padding-top: calc(var(--desktop-nav-height) + var(--desktop-section-pad-y)) !important;
-  padding-bottom: var(--desktop-section-pad-y) !important;
-}
-
 /* Desktop /about — dusk ink, beige panels, contact card (match home + iPhone about). */
 html[data-about-page][data-layout="desktop"] .about-desktop-root [class*="text-[#1E343A]"] {
   color: var(--doe-page-ink) !important;
@@ -489,9 +480,26 @@ html[data-about-page][data-layout="desktop"] .about-desktop-root [class*="border
 
 html[data-about-page][data-layout="desktop"] .about-desktop-beige-panel,
 html[data-about-page][data-layout="desktop"] .about-desktop-faq-panel,
-html[data-about-page][data-layout="desktop"] .about-desktop-root [class*="aspect-square"] {
+html[data-about-page][data-layout="desktop"] .about-desktop-content-panel {
   background-color: #f0e4d0 !important;
   border-color: #d8c8b0 !important;
+}
+
+html[data-about-page][data-layout="desktop"] .about-desktop-beige-panel svg {
+  transform: scale(0.88);
+  transform-origin: center center;
+}
+
+html[data-about-page][data-layout="desktop"] .about-desktop-section-scroll {
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+html[data-about-page][data-layout="desktop"] .about-desktop-root .about-hero-visual {
+  width: 100%;
+  max-width: 100%;
 }
 
 html[data-about-page][data-layout="desktop"] .about-desktop-contact-card {
@@ -506,6 +514,15 @@ html[data-about-page][data-layout="desktop"] .about-desktop-contact-action {
 
 html[data-about-page][data-layout="desktop"] .about-desktop-contact-action:hover {
   color: #1a1208 !important;
+}
+
+html[data-about-page][data-layout="desktop"] .about-desktop-contact-section {
+  box-sizing: border-box !important;
+  min-height: min(100dvh, 52rem) !important;
+  height: auto !important;
+  max-height: none !important;
+  padding-top: calc(var(--desktop-nav-height) + var(--desktop-section-pad-y)) !important;
+  padding-bottom: calc(var(--desktop-section-pad-y) + 1.5rem) !important;
 }
 
 html[data-about-page][data-layout="desktop"] footer.home-footer--dusk {
