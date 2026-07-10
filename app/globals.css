@@ -2728,6 +2728,12 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
+  .home-active-agents-visual__stats-stage {
+  padding-top: clamp(0.42rem, 1.25vmin, 0.62rem);
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
   .home-active-agents-scale {
   --home-shader-feature-scale: 1.06;
 }
