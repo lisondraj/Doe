@@ -3732,18 +3732,28 @@ html[data-home-page][data-layout="desktop"] .home-feature-specialties__chip--ton
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-specialties__chip--tone-1 {
-  background: color-mix(in srgb, #f3ece3 68%, #e3d4c4);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.36);
+  background: color-mix(in srgb, #f6f0ea 68%, #ead9cf);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.38);
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-specialties__chip--tone-2 {
-  background: color-mix(in srgb, #efe6da 64%, #dcccb8);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  background: color-mix(in srgb, #f4efe4 66%, #e5dcc8);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.34);
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-specialties__chip--tone-3 {
-  background: color-mix(in srgb, #ebe1d3 60%, #d6c4ae);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.26);
+  background: color-mix(in srgb, #f0efe8 64%, #d8ddd0);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32);
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-specialties__chip--tone-4 {
+  background: color-mix(in srgb, #f6eee6 64%, #e8d4c4);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-specialties__chip--tone-5 {
+  background: color-mix(in srgb, #f5eedf 62%, #e8d8b8);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-specialties__chip-label {
@@ -6859,18 +6869,28 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__chip-
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__chip--tone-1 {
-  background: color-mix(in srgb, #f3ece3 68%, #e3d4c4);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.36);
+  background: color-mix(in srgb, #f6f0ea 68%, #ead9cf);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.38);
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__chip--tone-2 {
-  background: color-mix(in srgb, #efe6da 64%, #dcccb8);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  background: color-mix(in srgb, #f4efe4 66%, #e5dcc8);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.34);
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__chip--tone-3 {
-  background: color-mix(in srgb, #ebe1d3 60%, #d6c4ae);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.26);
+  background: color-mix(in srgb, #f0efe8 64%, #d8ddd0);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32);
+}
+
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__chip--tone-4 {
+  background: color-mix(in srgb, #f6eee6 64%, #e8d4c4);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__chip--tone-5 {
+  background: color-mix(in srgb, #f5eedf 62%, #e8d8b8);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__chip-label {
@@ -6908,19 +6928,31 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-card-section--specialties
   .home-feature-specialties__chip--tone-1 {
-  background: rgba(34, 22, 11, 0.92);
+  background: rgba(32, 22, 14, 0.92);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-card-section--specialties
   .home-feature-specialties__chip--tone-2 {
-  background: rgba(40, 26, 13, 0.9);
+  background: rgba(30, 24, 12, 0.92);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-card-section--specialties
   .home-feature-specialties__chip--tone-3 {
-  background: rgba(32, 24, 14, 0.92);
+  background: rgba(24, 26, 18, 0.9);
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-card-section--specialties
+  .home-feature-specialties__chip--tone-4 {
+  background: rgba(34, 22, 16, 0.92);
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-card-section--specialties
+  .home-feature-specialties__chip--tone-5 {
+  background: rgba(32, 26, 14, 0.92);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])

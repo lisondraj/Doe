@@ -44,7 +44,7 @@ const ALL_SPECIALTIES = [
 
 const PHONE_ROW_COUNT = 8;
 const DESKTOP_ROW_COUNT = 10;
-const CHIP_TONE_COUNT = 4;
+const CHIP_TONE_COUNT = 6;
 
 const MARQUEE_DURATIONS = [74, 92, 65, 84, 78, 97, 70, 86, 76, 95] as const;
 
