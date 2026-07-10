@@ -1,6 +1,6 @@
 "use client";
 
-import { DoePhoneReviewPackageVisual } from "@/components/doephone/DoePhoneReviewPackageVisual";
+import { DoePhoneActiveAgentsCarousel } from "@/components/doephone/DoePhoneActiveAgentsCarousel";
 import { DoePhoneDesktopPanelSection } from "@/components/doephone/DoePhoneDesktopPanelSection";
 import { DOEPHONE_COMMUNICATION_SLIDES } from "@/lib/doephone/communication-carousel";
 
@@ -14,7 +14,7 @@ const DEPLOYMENT_SLIDE =
 export function DoePhoneDesktopIntelligenceSection() {
   return (
     <DoePhoneDesktopPanelSection slide={DEPLOYMENT_SLIDE}>
-      <DoePhoneReviewPackageVisual layout="desktop" />
+      <DoePhoneActiveAgentsCarousel layout="desktop" />
     </DoePhoneDesktopPanelSection>
   );
 }
