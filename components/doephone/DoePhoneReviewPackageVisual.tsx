@@ -1,6 +1,6 @@
 "use client";
 
-import { inter, suisseIntl } from "@/lib/home/fonts";
+import { inter, lora, suisseIntl } from "@/lib/home/fonts";
 import {
   DOEPHONE_DISPLAY_WEIGHT_TW,
   DOEPHONE_SECTION_CAROUSEL_INSET_X,
@@ -65,25 +65,27 @@ export function DoePhoneReviewPackageVisual({
         </h2>
       ) : null}
 
-      <div className="home-active-agents-visual__body min-h-0 flex-1">
-        <div className="home-active-agents-visual__stats">
-          {DOCTOR_STATS.map((stat) => (
-            <div key={stat.label} className="home-active-agents-visual__stat">
-              <p className="home-active-agents-visual__stat-value">{stat.value}</p>
-              <p className={`home-active-agents-visual__stat-label ${inter.className}`}>{stat.label}</p>
-            </div>
-          ))}
-        </div>
+      <div className="home-active-agents-scale min-h-0 flex-1">
+        <div className="home-active-agents-visual__body min-h-0 h-full">
+          <div className="home-active-agents-visual__stats">
+            {DOCTOR_STATS.map((stat) => (
+              <div key={stat.label} className="home-active-agents-visual__stat">
+                <p className={`home-active-agents-visual__stat-value ${lora.className}`}>{stat.value}</p>
+                <p className={`home-active-agents-visual__stat-label ${inter.className}`}>{stat.label}</p>
+              </div>
+            ))}
+          </div>
 
-        <div className="home-active-agents-visual__pills">
-          {WORKFLOW_PILLS.map((label) => (
-            <div key={label} className="home-active-agents-visual__workflow-pill">
-              <span className="home-active-agents-visual__workflow-pill-icon" aria-hidden>
-                <VolumeIcon />
-              </span>
-              <span className={`home-active-agents-visual__workflow-pill-label ${inter.className}`}>{label}</span>
-            </div>
-          ))}
+          <div className="home-active-agents-visual__pills">
+            {WORKFLOW_PILLS.map((label) => (
+              <div key={label} className="home-active-agents-visual__workflow-pill">
+                <span className="home-active-agents-visual__workflow-pill-icon" aria-hidden>
+                  <VolumeIcon />
+                </span>
+                <span className={`home-active-agents-visual__workflow-pill-label ${inter.className}`}>{label}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
