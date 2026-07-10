@@ -4,10 +4,10 @@ import { dmSans } from "@/lib/home/fonts";
 
 const WEEK_DAYS = [
   { label: "M", date: 7 },
-  { label: "T", date: 8, busy: true },
-  { label: "W", date: 9, selected: true, appt: "Brooks", apptTime: "3:15p" },
+  { label: "T", date: 8 },
+  { label: "W", date: 9, selected: true },
   { label: "T", date: 10 },
-  { label: "F", date: 11, appt: "Open" },
+  { label: "F", date: 11 },
   { label: "S", date: 12 },
 ] as const;
 
@@ -89,21 +89,6 @@ export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: 
               >
                 <span className="home-agents-carousel__scheduling-peek-day-label">{day.label}</span>
                 <span className="home-agents-carousel__scheduling-peek-day-date">{day.date}</span>
-                {"appt" in day && day.appt ? (
-                  <span
-                    className={`home-agents-carousel__scheduling-peek-day-appt${
-                      "selected" in day && day.selected
-                        ? " home-agents-carousel__scheduling-peek-day-appt--active"
-                        : " home-agents-carousel__scheduling-peek-day-appt--muted"
-                    }`}
-                  >
-                    {"apptTime" in day && day.apptTime ? `${day.appt} · ${day.apptTime}` : day.appt}
-                  </span>
-                ) : "busy" in day && day.busy ? (
-                  <span className="home-agents-carousel__scheduling-peek-day-dot" aria-hidden />
-                ) : (
-                  <span className="home-agents-carousel__scheduling-peek-day-spacer" aria-hidden />
-                )}
               </div>
             ))}
           </div>
