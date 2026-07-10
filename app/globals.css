@@ -5067,13 +5067,28 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow 
   overflow: visible;
 }
 
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-section__call-logic-diagram {
-  --home-call-logic-scale: 1.82;
-  --home-call-logic-base-width: min(27rem, 38vw);
-  justify-content: flex-end;
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-section__call-logic-diagram,
+body.desktop-route .home-feature-shader-band--workflow .home-feature-section__call-logic-diagram {
+  --home-call-logic-scale: 2.05;
+  --home-call-logic-base-width: 28rem;
+  --home-call-logic-bleed: calc(
+    var(--home-call-logic-base-width) * var(--home-call-logic-scale) * 0.5
+  );
+  position: relative;
+  width: 100vw;
+  max-width: 100vw;
+  margin-inline: calc(50% - 50vw);
+  min-height: clamp(34rem, 58vh, 46rem);
+  justify-content: flex-start;
   padding-inline: 0;
   padding-bottom: 0;
   overflow: visible;
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-shader-band__workflow-stack,
+body.desktop-route .home-feature-shader-band--workflow .home-feature-shader-band__workflow-stack {
+  gap: 0;
+  max-width: none;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-call-logic-diagram-scale {
@@ -5102,13 +5117,16 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow 
   overflow: visible;
 }
 
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-shader-band__workflow-stack {
-  gap: clamp(1.45rem, 2.6vmin, 1.75rem);
-}
-
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-call-logic-diagram-scale {
-  --home-call-logic-scale: 1.82;
-  --home-call-logic-base-width: min(27rem, 38vw);
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-call-logic-diagram-scale,
+body.desktop-route .home-feature-shader-band--workflow .home-call-logic-diagram-scale {
+  --home-call-logic-scale: 2.05;
+  --home-call-logic-base-width: 28rem;
+  --home-call-logic-bleed: calc(
+    var(--home-call-logic-base-width) * var(--home-call-logic-scale) * 0.5
+  );
+  position: absolute;
+  right: calc(-1 * var(--home-call-logic-bleed));
+  top: 50%;
   display: flex;
   flex: 0 0 auto;
   flex-direction: column;
@@ -5116,10 +5134,8 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow 
   justify-content: center;
   width: var(--home-call-logic-base-width);
   max-width: var(--home-call-logic-base-width);
-  margin-inline: 0;
-  margin-right: calc(-0.5 * var(--home-call-logic-base-width) * var(--home-call-logic-scale));
-  margin-bottom: 0;
-  transform: scale(var(--home-call-logic-scale));
+  margin: 0;
+  transform: translateY(-50%) scale(var(--home-call-logic-scale));
   transform-origin: right center;
 }
 
