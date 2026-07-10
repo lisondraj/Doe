@@ -1301,220 +1301,190 @@ html[data-home-page] .home-agents-carousel__referrals-peek-detail-value {
   text-overflow: ellipsis;
 }
 
-/* Agents carousel — Scheduling Agent calendar + phone booking peek (inbox-style card). */
+/* Agents carousel — Scheduling Agent peek (left-edge corner bleed, simple day list). */
 html[data-home-page] .home-agents-carousel__orb .hero-speaking-orb__core .home-agents-carousel__scheduling-peek {
   position: absolute;
-  right: 0;
+  left: 0;
   bottom: 0;
   z-index: 4;
   width: 92%;
   height: 90%;
   overflow: hidden;
   pointer-events: none;
-  transform: none;
-  border-top-left-radius: clamp(0.85rem, 1.35vmin, 1.15rem);
+  border-top-right-radius: clamp(0.85rem, 1.35vmin, 1.15rem);
   box-shadow: none;
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-card {
   position: absolute;
-  right: 0;
+  left: 0;
   bottom: 0;
-  transform-origin: 100% 100%;
-  transform: translate(clamp(1%, 2vmin, 2.5%), clamp(1.5%, 3vmin, 4.5%))
-    scale(calc(1.14 * var(--home-agents-peek-orb-scale)));
-  min-width: clamp(18.5rem, 28vmin, 23.5rem);
+  box-sizing: border-box;
+  width: clamp(17rem, 25.5vmin, 20.5rem);
+  min-width: clamp(17rem, 25.5vmin, 20.5rem);
+  max-width: clamp(17rem, 25.5vmin, 20.5rem);
+  transform-origin: 0% 100%;
+  transform: translate(clamp(-18%, -5.5vmin, -10%), clamp(1.5%, 3vmin, 4.5%))
+    scale(calc(1.08 * var(--home-agents-peek-orb-scale)));
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.42rem, 0.64vmin, 0.52rem);
   background: #ffffff;
   border: none;
   box-shadow: none;
-  border-top-left-radius: clamp(0.85rem, 1.35vmin, 1.15rem);
-  padding: clamp(0.68rem, 1.05vmin, 0.82rem) clamp(0.88rem, 1.35vmin, 1.05rem)
+  border-top-right-radius: clamp(0.85rem, 1.35vmin, 1.15rem);
+  padding: clamp(0.68rem, 1.05vmin, 0.82rem) clamp(0.82rem, 1.25vmin, 0.98rem)
     clamp(0.72rem, 1.1vmin, 0.88rem);
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-logo {
-  width: clamp(1.95rem, 2.95vmin, 2.35rem);
-  height: clamp(1.95rem, 2.95vmin, 2.35rem);
-  margin-bottom: clamp(0.48rem, 0.72vmin, 0.58rem);
-  border-radius: 9999px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42);
+html[data-home-page] .home-agents-carousel__scheduling-peek-head {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.34rem, 0.52vmin, 0.42rem);
+  min-width: 0;
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-title {
-  margin: 0 0 clamp(0.45rem, 0.68vmin, 0.55rem);
+  margin: 0;
   color: #3d4549;
-  font-size: clamp(0.98rem, 1.48vmin, 1.12rem);
+  font-size: clamp(0.92rem, 1.38vmin, 1.06rem);
   font-weight: 500;
   line-height: 1.1;
   letter-spacing: -0.02em;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-call {
-  display: flex;
+html[data-home-page] .home-agents-carousel__scheduling-peek-agent {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: clamp(0.35rem, 0.55vmin, 0.45rem);
-  margin-bottom: clamp(0.45rem, 0.68vmin, 0.55rem);
-  padding: clamp(0.36rem, 0.55vmin, 0.44rem) clamp(0.34rem, 0.52vmin, 0.42rem);
-  border-radius: clamp(0.32rem, 0.5vmin, 0.42rem);
+  gap: clamp(0.32rem, 0.48vmin, 0.4rem);
+  padding: clamp(0.34rem, 0.52vmin, 0.42rem) clamp(0.38rem, 0.58vmin, 0.46rem);
+  border-radius: clamp(0.34rem, 0.52vmin, 0.42rem);
   background: #f6f6f4;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-phone-badge {
+html[data-home-page] .home-agents-carousel__scheduling-peek-agent-phone {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  width: clamp(1.15rem, 1.72vmin, 1.32rem);
-  height: clamp(1.15rem, 1.72vmin, 1.32rem);
-  border-radius: 999px;
+  width: clamp(1.12rem, 1.68vmin, 1.28rem);
+  height: clamp(1.12rem, 1.68vmin, 1.28rem);
+  border-radius: 9999px;
   background: rgba(210, 119, 76, 0.12);
-  color: #c46848;
+  color: #d2774c;
+  flex-shrink: 0;
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-phone-icon {
-  width: 0.72em;
-  height: 0.72em;
+  width: clamp(0.68rem, 1.02vmin, 0.78rem);
+  height: clamp(0.68rem, 1.02vmin, 0.78rem);
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-waveform {
-  display: flex;
-  align-items: flex-end;
-  align-self: center;
-  gap: clamp(0.1rem, 0.15vmin, 0.12rem);
-  height: clamp(1.05rem, 1.58vmin, 1.22rem);
+html[data-home-page] .home-agents-carousel__scheduling-peek-agent-label {
+  color: #3d4549;
+  font-size: clamp(0.62rem, 0.94vmin, 0.72rem);
+  font-weight: 500;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-agent-live {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(0.18rem, 0.28vmin, 0.22rem);
+  flex-shrink: 0;
+  color: #9aa3a8;
+  font-size: clamp(0.52rem, 0.78vmin, 0.62rem);
+  font-weight: 400;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-agent-live-dot {
+  width: clamp(0.32rem, 0.48vmin, 0.38rem);
+  height: clamp(0.32rem, 0.48vmin, 0.38rem);
+  border-radius: 9999px;
+  background: #d2774c;
   flex-shrink: 0;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-waveform-bar {
-  display: block;
-  width: clamp(0.1rem, 0.15vmin, 0.12rem);
-  border-radius: 9999px;
-  background: rgba(210, 119, 76, 0.55);
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-call-copy {
+html[data-home-page] .home-agents-carousel__scheduling-peek-day {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: clamp(0.1rem, 0.15vmin, 0.12rem);
+  gap: clamp(0.28rem, 0.42vmin, 0.34rem);
   min-width: 0;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-call-line {
-  margin: 0;
-  color: #3d4549;
-  font-size: clamp(0.72rem, 1.08vmin, 0.84rem);
-  font-weight: 500;
-  line-height: 1.15;
-  white-space: nowrap;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-call-subline {
-  margin: 0;
-  color: #9aa3a8;
-  font-size: clamp(0.64rem, 0.96vmin, 0.74rem);
-  font-weight: 400;
-  line-height: 1.1;
-  white-space: nowrap;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-calendar {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  column-gap: clamp(0.18rem, 0.28vmin, 0.22rem);
-  margin-bottom: clamp(0.38rem, 0.58vmin, 0.46rem);
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-day-col {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: clamp(0.22rem, 0.34vmin, 0.28rem);
-  min-width: 0;
-  padding: clamp(0.12rem, 0.18vmin, 0.15rem) clamp(0.06rem, 0.1vmin, 0.08rem);
-  border-radius: clamp(0.28rem, 0.42vmin, 0.34rem);
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-day-col--active {
-  background: #f6f6f4;
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-day-head {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: clamp(0.08rem, 0.12vmin, 0.1rem);
+  align-items: baseline;
+  gap: clamp(0.28rem, 0.42vmin, 0.34rem);
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-day-label {
-  color: #9aa3a8;
-  font-size: clamp(0.56rem, 0.84vmin, 0.64rem);
-  font-weight: 500;
+  color: #d2774c;
+  font-size: clamp(0.58rem, 0.88vmin, 0.68rem);
+  font-weight: 600;
   line-height: 1;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-day-col--active .home-agents-carousel__scheduling-peek-day-label {
-  color: #c46848;
-}
-
 html[data-home-page] .home-agents-carousel__scheduling-peek-day-date {
-  color: #3d4549;
-  font-size: clamp(0.68rem, 1.02vmin, 0.78rem);
-  font-weight: 500;
+  color: #9aa3a8;
+  font-size: clamp(0.56rem, 0.84vmin, 0.66rem);
+  font-weight: 400;
   line-height: 1;
-  font-variant-numeric: tabular-nums;
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-slots {
   display: flex;
   flex-direction: column;
   gap: clamp(0.14rem, 0.22vmin, 0.18rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-slot {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: clamp(3.4rem, 5.1vmin, 4rem) minmax(0, 1fr);
   align-items: center;
-  justify-content: center;
-  gap: clamp(0.04rem, 0.06vmin, 0.05rem);
-  width: 100%;
-  min-height: clamp(1.18rem, 1.78vmin, 1.36rem);
-  padding: clamp(0.14rem, 0.22vmin, 0.18rem) clamp(0.08rem, 0.12vmin, 0.1rem);
-  border-radius: clamp(0.16rem, 0.24vmin, 0.2rem);
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-slot--fill {
-  background: #ebe9e4;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-slot--booked {
-  background: #f0eeea;
-  box-shadow: inset 0 0 0 1px #ebe9e4;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-slot--open {
-  background: rgba(110, 142, 174, 0.1);
-  box-shadow: inset 0 0 0 1px rgba(110, 142, 174, 0.18);
+  gap: clamp(0.32rem, 0.48vmin, 0.4rem);
+  padding: clamp(0.28rem, 0.42vmin, 0.34rem) clamp(0.32rem, 0.48vmin, 0.4rem);
+  border-radius: clamp(0.28rem, 0.42vmin, 0.34rem);
+  background: #f6f6f4;
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-slot--active {
   background: rgba(210, 119, 76, 0.14);
   box-shadow: inset 0 0 0 1px rgba(210, 119, 76, 0.28);
-  opacity: 1 !important;
-  filter: none !important;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-slot-time {
+  color: #9aa3a8;
+  font-size: clamp(0.52rem, 0.78vmin, 0.62rem);
+  font-weight: 400;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-slot--active .home-agents-carousel__scheduling-peek-slot-time {
+  color: #d2774c;
+  font-weight: 500;
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-slot-name {
   color: #3d4549;
-  font-size: clamp(0.52rem, 0.78vmin, 0.6rem);
+  font-size: clamp(0.58rem, 0.88vmin, 0.68rem);
   font-weight: 500;
   line-height: 1.1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100%;
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-slot--active .home-agents-carousel__scheduling-peek-slot-name {
@@ -1522,86 +1492,21 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-slot--active .home-a
   font-weight: 600;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-slot-time {
-  color: #9aa3a8;
-  font-size: clamp(0.48rem, 0.72vmin, 0.56rem);
-  font-weight: 400;
-  line-height: 1;
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-slot--active .home-agents-carousel__scheduling-peek-slot-time {
-  color: #c46848;
-  font-weight: 500;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-open-list {
+html[data-home-page] .home-agents-carousel__scheduling-peek-booking {
   margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-open-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.45rem;
-  padding: clamp(0.28rem, 0.42vmin, 0.34rem) clamp(0.3rem, 0.48vmin, 0.4rem);
-  color: #3d4549;
-  font-size: clamp(0.72rem, 1.08vmin, 0.84rem);
-  font-weight: 400;
-  line-height: 1.15;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-open-label {
-  min-width: 0;
-  white-space: nowrap;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-open-meta {
-  flex-shrink: 0;
+  padding-top: clamp(0.08rem, 0.12vmin, 0.1rem);
   color: #9aa3a8;
-  font-size: clamp(0.68rem, 1.02vmin, 0.78rem);
-  white-space: nowrap;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  margin-top: clamp(0.42rem, 0.64vmin, 0.52rem);
-  padding-top: clamp(0.48rem, 0.72vmin, 0.58rem);
-  border-top: 1px solid #ebe9e4;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-footer-stat {
-  color: #9aa3a8;
-  font-size: clamp(0.68rem, 1.02vmin, 0.8rem);
+  font-size: clamp(0.52rem, 0.78vmin, 0.62rem);
   font-weight: 400;
   line-height: 1.2;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-footer-pill {
-  flex-shrink: 0;
-  padding: clamp(0.14rem, 0.22vmin, 0.18rem) clamp(0.36rem, 0.55vmin, 0.46rem);
-  border-radius: clamp(0.22rem, 0.34vmin, 0.28rem);
-  background: rgba(210, 119, 76, 0.12);
-  color: #c46848;
-  font-size: clamp(0.62rem, 0.92vmin, 0.72rem);
+html[data-home-page] .home-agents-carousel__scheduling-peek-booking-patient {
+  color: #3d4549;
   font-weight: 500;
-  line-height: 1;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__scheduling-peek-day-col,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__scheduling-peek-open-row {
-  filter: none !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__scheduling-peek-slot--fill {
-  min-height: clamp(1.28rem, calc(var(--app-vw, 100vw) * 0.038), 1.52rem);
 }
 
 /* Desktop agents carousel — Labs Agent dual UI peek (centered, top/bottom clip). */
@@ -2822,36 +2727,19 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-logo {
-  background: linear-gradient(
-    135deg,
-    var(--carousel-peek-dusk-horizon) 0%,
-    var(--carousel-peek-dusk-clay) 52%,
-    var(--carousel-peek-dusk-back) 100%
-  ) !important;
-  box-shadow: inset 0 1px 0 rgba(242, 216, 168, 0.28);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
   .home-agents-carousel__scheduling-peek-title,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-call-line,
+  .home-agents-carousel__scheduling-peek-agent-label,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-open-label,
+  .home-agents-carousel__scheduling-peek-slot-name,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-day-date,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-slot-name {
+  .home-agents-carousel__scheduling-peek-booking-patient {
   color: var(--carousel-peek-dusk-ink);
   font-weight: 500;
 }
@@ -2859,34 +2747,30 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-call,
+  .home-agents-carousel__scheduling-peek-agent,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-day-col--active {
+  .home-agents-carousel__scheduling-peek-slot {
   background: var(--carousel-peek-dusk-surface-raised);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-call-subline,
+  .home-agents-carousel__scheduling-peek-agent-live,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-open-meta,
+  .home-agents-carousel__scheduling-peek-day-date,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-footer-stat,
+  .home-agents-carousel__scheduling-peek-slot-time,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-day-label,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-slot-time {
+  .home-agents-carousel__scheduling-peek-booking {
   color: var(--carousel-peek-dusk-muted);
   font-weight: 400;
 }
@@ -2894,24 +2778,19 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-day-col--active
   .home-agents-carousel__scheduling-peek-day-label,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
   .home-agents-carousel__scheduling-peek-slot--active
-  .home-agents-carousel__scheduling-peek-slot-time,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-footer-pill {
+  .home-agents-carousel__scheduling-peek-slot-time {
   color: var(--carousel-peek-dusk-horizon);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-phone-badge {
+  .home-agents-carousel__scheduling-peek-agent-phone {
   background: rgba(232, 160, 96, 0.16);
   color: var(--carousel-peek-dusk-horizon);
 }
@@ -2919,24 +2798,8 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-slot--fill {
-  background: var(--carousel-peek-dusk-surface-sunken);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-slot--booked {
-  background: rgba(232, 160, 96, 0.12);
-  box-shadow: inset 0 0 0 1px var(--carousel-peek-dusk-border);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-slot--open {
-  background: rgba(232, 160, 96, 0.08);
-  box-shadow: inset 0 0 0 1px rgba(232, 160, 96, 0.18);
+  .home-agents-carousel__scheduling-peek-agent-live-dot {
+  background: var(--carousel-peek-dusk-horizon);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
@@ -2954,27 +2817,6 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__scheduling-peek-slot-name {
   color: var(--carousel-peek-dusk-ink);
   font-weight: 600;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-footer {
-  border-top-color: var(--carousel-peek-dusk-border);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-footer-pill {
-  background: rgba(232, 160, 96, 0.16);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-waveform-bar {
-  background: rgba(232, 160, 96, 0.55);
 }
 
 /* Labs peek */
