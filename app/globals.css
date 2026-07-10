@@ -9345,7 +9345,7 @@ html[data-home-page] .hero-speaking-orbs__node-reveal {
 
 /* Customize agents — bleed half the diagram off the viewport right edge. */
 html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram-scale--bleed {
-  --home-call-logic-bleed-scale: 1.7;
+  --home-call-logic-bleed-scale: 1.6;
   --home-call-logic-bleed-width: 25rem;
   position: absolute !important;
   right: calc(var(--home-call-logic-bleed-width) * var(--home-call-logic-bleed-scale) * -0.5) !important;
