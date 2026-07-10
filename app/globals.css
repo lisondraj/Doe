@@ -2499,34 +2499,156 @@ html[data-home-page] .home-agents-carousel__refill-peek-status-fill {
 }
 
 /* Active agents — shader band mock UI. */
-html[data-home-page] .home-active-agents-visual__steps {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+html[data-home-page] .home-active-agents-visual__carousel-shell {
+  width: 100%;
 }
 
-html[data-home-page] .home-active-agents-visual__step-icon {
+html[data-home-page] .home-active-agents-visual__carousel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.42rem, 1.25vmin, 0.55rem);
+  width: 100%;
+}
+
+html[data-home-page] .home-active-agents-visual__carousel-nav {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: clamp(0.52rem, 0.78vmin, 0.62rem);
-  height: clamp(0.52rem, 0.78vmin, 0.62rem);
+  width: clamp(1.85rem, 5.4vmin, 2.2rem);
+  height: clamp(1.85rem, 5.4vmin, 2.2rem);
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 9999px;
+  background: #f3f4f6;
+  color: #6b7280;
+  cursor: pointer;
   flex-shrink: 0;
+  transition:
+    background 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
 }
 
-html[data-home-page] .home-active-agents-visual__step-icon--done {
+html[data-home-page] .home-active-agents-visual__carousel-nav:hover {
+  background: #ebe9e4;
+  color: #3d4549;
+}
+
+html[data-home-page] .home-active-agents-visual__carousel-nav:active {
+  transform: scale(0.96);
+}
+
+html[data-home-page] .home-active-agents-visual__carousel-viewport {
+  position: relative;
+  width: 100%;
+  height: clamp(13.5rem, 40vmin, 16.5rem);
+  overflow: hidden;
+  touch-action: pan-x;
+  perspective: clamp(28rem, 84vmin, 34rem);
+  perspective-origin: 50% 50%;
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    transparent 0%,
+    #000 16%,
+    #000 84%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
+}
+
+html[data-home-page] .home-active-agents-visual__carousel-stage {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+html[data-home-page] .home-active-agents-visual__pill {
+  --pill-step: clamp(3.15rem, 9.4vmin, 3.85rem);
+  --pill-depth: clamp(0.85rem, 2.55vmin, 1.05rem);
+
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  display: flex;
+  align-items: center;
+  gap: clamp(0.55rem, 1.65vmin, 0.72rem);
+  width: 100%;
+  min-height: clamp(2.55rem, 7.6vmin, 3.05rem);
+  padding: clamp(0.48rem, 1.45vmin, 0.62rem) clamp(0.62rem, 1.85vmin, 0.78rem);
+  border-radius: 9999px;
+  background: #fafaf8;
+  border: 1px solid #ebe9e4;
+  box-shadow: 0 2px 8px rgba(30, 52, 58, 0.04);
+  color: #6b7280;
+  transform-origin: 50% 50%;
+  transition:
+    transform 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 420ms ease,
+    background 420ms ease,
+    border-color 420ms ease,
+    box-shadow 420ms ease,
+    color 420ms ease;
+  will-change: transform, opacity;
+}
+
+html[data-home-page] .home-active-agents-visual__pill--focused {
+  background: #ffffff;
+  border-color: #e5e7eb;
+  box-shadow:
+    0 10px 24px rgba(30, 52, 58, 0.1),
+    0 1px 4px rgba(30, 52, 58, 0.05);
+  color: #1e343a;
+}
+
+html[data-home-page] .home-active-agents-visual__pill-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(1.85rem, 5.5vmin, 2.2rem);
+  height: clamp(1.85rem, 5.5vmin, 2.2rem);
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: #f3f4f6;
+  color: #9aa3a8;
+  transition:
+    background 420ms ease,
+    color 420ms ease,
+    transform 420ms ease;
+}
+
+html[data-home-page] .home-active-agents-visual__pill--focused .home-active-agents-visual__pill-icon {
+  background: rgba(210, 119, 76, 0.12);
   color: #d2774c;
+  transform: scale(1.04);
 }
 
-html[data-home-page] .home-active-agents-visual__step-icon--active {
-  border-radius: 9999px;
-  background: #d2774c;
+html[data-home-page] .home-active-agents-visual__pill-volume-icon {
+  width: clamp(0.92rem, 2.75vmin, 1.08rem);
+  height: clamp(0.92rem, 2.75vmin, 1.08rem);
 }
 
-html[data-home-page] .home-active-agents-visual__step-icon--upcoming {
-  border-radius: 9999px;
-  border: 1px solid #d8d4ce;
-  background: transparent;
+html[data-home-page] .home-active-agents-visual__pill-label {
+  min-width: 0;
+  font-size: clamp(0.82rem, 2.45vmin, 0.98rem);
+  font-weight: 400;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+html[data-home-page] .home-active-agents-visual__pill--focused .home-active-agents-visual__pill-label {
+  font-size: clamp(0.92rem, 2.75vmin, 1.08rem);
+  font-weight: 500;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-home-page] .home-active-agents-visual__pill {
+    transition: none;
+  }
 }
 
 /* iPhone agents carousel — dusk peek UI theme (shader-matched surfaces + warm ink). */
@@ -6719,65 +6841,72 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-active-agents-visual__action-label,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
-  .home-active-agents-visual__row-name {
+  .home-active-agents-visual__pill--focused
+  .home-active-agents-visual__pill-label {
   color: var(--home-dusk-ui-ink) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
-  .home-active-agents-visual__badge,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--active-agents
-  .home-active-agents-visual__row-status {
+  .home-active-agents-visual__badge {
   background: rgba(232, 160, 96, 0.16) !important;
   color: var(--home-dusk-ui-horizon) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
-  .home-active-agents-visual__collapse {
+  .home-active-agents-visual__collapse,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .home-active-agents-visual__carousel-nav {
   background: var(--home-dusk-ui-surface-raised) !important;
   color: var(--home-dusk-ui-muted) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
-  .home-active-agents-visual__row,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--active-agents
-  .home-active-agents-visual__row--expanded {
+  .home-active-agents-visual__pill {
   background: var(--home-dusk-ui-surface-sunken) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--active-agents
-  .home-active-agents-visual__steps {
-  border-left-color: var(--home-dusk-ui-border) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--active-agents
-  .home-active-agents-visual__step-label {
+  border-color: var(--home-dusk-ui-border) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
   color: var(--home-dusk-ui-muted) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
-  .home-active-agents-visual__step-icon--done {
+  .home-active-agents-visual__pill--focused {
+  background: var(--home-dusk-ui-surface) !important;
+  border-color: var(--home-dusk-ui-border) !important;
+  box-shadow: var(--home-dusk-ui-shadow) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .home-active-agents-visual__pill-icon {
+  background: var(--home-dusk-ui-surface-raised) !important;
+  color: var(--home-dusk-ui-muted) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .home-active-agents-visual__pill--focused
+  .home-active-agents-visual__pill-icon {
+  background: rgba(232, 160, 96, 0.16) !important;
   color: var(--home-dusk-ui-horizon) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
-  .home-active-agents-visual__step-icon--active {
-  background: var(--home-dusk-ui-horizon) !important;
+  .home-active-agents-visual__pill-label {
+  color: var(--home-dusk-ui-muted) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
-  .home-active-agents-visual__step-icon--upcoming {
-  border: 1px solid rgba(232, 160, 96, 0.34) !important;
-  background: transparent !important;
+  .home-active-agents-visual__pill--focused
+  .home-active-agents-visual__pill-volume-icon
+  [stroke] {
+  stroke: var(--home-dusk-ui-horizon) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
