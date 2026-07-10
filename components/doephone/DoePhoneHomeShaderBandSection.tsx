@@ -94,10 +94,10 @@ export function DoePhoneHomeShaderBandSection({
             <span className="block">{titleLine1}</span>
             <span className="block">{titleLine2}</span>
           </h2>
-          <div className="home-feature-shader-band__call-logic-shell flex min-h-0 flex-1 flex-col items-center justify-center">
+          <div className="home-feature-shader-band__call-logic-shell flex min-h-0 flex-1 flex-col items-center justify-start">
             <div className="home-feature-shader-band__workflow-content w-full">
               <div className="home-feature-shader-band__workflow-stack">
-                <div className="home-feature-section__call-logic-diagram relative z-[20] w-full shrink-0">
+                <div className="home-feature-section__call-logic-diagram relative w-full shrink-0">
                   <div className="home-call-logic-diagram-scale">
                     <DoePhoneHomeCallLogicDiagram />
                   </div>

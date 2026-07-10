@@ -16,7 +16,7 @@ export function DoePhoneHomeSectionWorkflowInput() {
   }, []);
 
   return (
-    <div className="home-feature-section__workflow-input relative z-[20] w-full shrink-0">
+    <div className="home-feature-section__workflow-input relative w-full shrink-0">
       <div className="build-workflow-ui-scale">
         <DoePhoneBuildWorkflowPrompt
           size={isDesktop ? "desktop" : "large"}

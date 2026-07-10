@@ -190,6 +190,7 @@ function WorkflowToolIcons({ large = false }: { large?: boolean }) {
     : "clamp(1.22rem,3.75vmin,1.48rem)";
   const sw = 1.25;
   const cap = "round" as const;
+  const join = "round" as const;
 
   return (
     <div
@@ -198,23 +199,30 @@ function WorkflowToolIcons({ large = false }: { large?: boolean }) {
       aria-hidden
     >
       <svg viewBox="0 0 16 16" fill="none" style={{ width: iconSize, height: iconSize }}>
-        <circle cx="8" cy="8" r="4.75" stroke={MUTED} strokeWidth={sw} />
-        <circle cx="8" cy="8" r="1.35" fill={MUTED} />
-      </svg>
-
-      <svg viewBox="0 0 16 16" fill="none" style={{ width: iconSize, height: iconSize }}>
-        <rect x="3" y="3" width="10" height="10" rx="1.5" stroke={MUTED} strokeWidth={sw} />
-        <path d="M3 8h10M8 3v10" stroke={MUTED} strokeWidth={sw} strokeLinecap={cap} />
-      </svg>
-
-      <svg viewBox="0 0 16 16" fill="none" style={{ width: iconSize, height: iconSize }}>
         <path
-          d="M3.5 12.5L12.5 3.5M12.5 3.5H7M12.5 3.5V9"
+          d="M4.5 3.5h7v9h-7z"
           stroke={MUTED}
           strokeWidth={sw}
-          strokeLinecap={cap}
-          strokeLinejoin={cap}
+          strokeLinejoin={join}
         />
+        <path d="M6.5 3.5V2.5M9.5 3.5V2.5" stroke={MUTED} strokeWidth={sw * 0.9} strokeLinecap={cap} />
+        <path d="M7 8.5h2" stroke={DOE_ORANGE} strokeWidth={sw * 0.95} strokeLinecap={cap} />
+      </svg>
+
+      <svg viewBox="0 0 16 16" fill="none" style={{ width: iconSize, height: iconSize }}>
+        <rect x="5.25" y="2.5" width="5.5" height="3.25" rx="0.9" stroke={MUTED} strokeWidth={sw} />
+        <path d="M8 5.75v1.75" stroke={MUTED} strokeWidth={sw} strokeLinecap={cap} />
+        <path d="M5 7.5h6" stroke={MUTED} strokeWidth={sw} strokeLinecap={cap} />
+        <path d="M5 7.5v1.75M11 7.5v1.75" stroke={MUTED} strokeWidth={sw} strokeLinecap={cap} />
+        <rect x="2.75" y="9.25" width="4.5" height="3.25" rx="0.9" stroke={MUTED} strokeWidth={sw} />
+        <rect x="8.75" y="9.25" width="4.5" height="3.25" rx="0.9" stroke={MUTED} strokeWidth={sw} />
+      </svg>
+
+      <svg viewBox="0 0 16 16" fill="none" style={{ width: iconSize, height: iconSize }}>
+        <path d="M6 4.5V3M10 4.5V3" stroke={MUTED} strokeWidth={sw} strokeLinecap={cap} />
+        <rect x="5.25" y="4.5" width="5.5" height="4.25" rx="1" stroke={MUTED} strokeWidth={sw} />
+        <path d="M8 8.75v2.25" stroke={MUTED} strokeWidth={sw} strokeLinecap={cap} />
+        <circle cx="8" cy="12.25" r="0.85" fill={DOE_ORANGE} />
       </svg>
     </div>
   );
