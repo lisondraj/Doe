@@ -2315,26 +2315,7 @@ html[data-home-page] .home-agents-carousel__refill-peek-card {
 }
 
 html[data-home-page] .home-agents-carousel__refill-peek-slip-head {
-  display: flex;
-  align-items: flex-start;
-  gap: clamp(0.48rem, 0.72vmin, 0.58rem);
   min-width: 0;
-}
-
-html[data-home-page] .home-agents-carousel__refill-peek-rx-mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: clamp(1.48rem, 2.22vmin, 1.72rem);
-  height: clamp(1.48rem, 2.22vmin, 1.72rem);
-  border-radius: clamp(0.34rem, 0.52vmin, 0.42rem);
-  background: #f4f3f1;
-  color: #d2774c;
-  font-size: clamp(0.58rem, 0.88vmin, 0.68rem);
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: 0.04em;
 }
 
 html[data-home-page] .home-agents-carousel__refill-peek-slip-copy {
@@ -2353,7 +2334,6 @@ html[data-home-page] .home-agents-carousel__refill-peek-slip-drug {
   letter-spacing: -0.02em;
 }
 
-html[data-home-page] .home-agents-carousel__refill-peek-slip-sub,
 html[data-home-page] .home-agents-carousel__refill-peek-slip-patient {
   margin: 0;
   color: #9aa3a8;
@@ -2367,29 +2347,12 @@ html[data-home-page] .home-agents-carousel__refill-peek-slip-patient {
 
 html[data-home-page] .home-agents-carousel__refill-peek-agent {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: clamp(0.38rem, 0.58vmin, 0.46rem);
   padding: clamp(0.42rem, 0.64vmin, 0.52rem) clamp(0.46rem, 0.7vmin, 0.56rem);
   border-radius: clamp(0.48rem, 0.72vmin, 0.58rem);
   background: #f6f6f4;
-}
-
-html[data-home-page] .home-agents-carousel__refill-peek-agent-phone {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: clamp(1.42rem, 2.14vmin, 1.66rem);
-  height: clamp(1.42rem, 2.14vmin, 1.66rem);
-  border-radius: 9999px;
-  background: rgba(210, 119, 76, 0.12);
-  color: #d2774c;
-  flex-shrink: 0;
-}
-
-html[data-home-page] .home-agents-carousel__refill-peek-phone-icon {
-  width: clamp(0.82rem, 1.24vmin, 0.96rem);
-  height: clamp(0.82rem, 1.24vmin, 0.96rem);
 }
 
 html[data-home-page] .home-agents-carousel__refill-peek-agent-copy {
@@ -3284,10 +3247,6 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__refill-peek-slip-sub,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
   .home-agents-carousel__refill-peek-slip-patient,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
@@ -3307,24 +3266,8 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__refill-peek-rx-mark {
-  background: var(--carousel-peek-dusk-surface-raised);
-  color: var(--carousel-peek-dusk-horizon);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
   .home-agents-carousel__refill-peek-agent {
   background: var(--carousel-peek-dusk-surface-sunken);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__refill-peek-agent-phone {
-  background: rgba(232, 160, 96, 0.16);
-  color: var(--carousel-peek-dusk-horizon);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
