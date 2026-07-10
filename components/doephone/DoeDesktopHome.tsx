@@ -16,7 +16,7 @@ export function DoeDesktopHome({
   navActionLinksEnabled?: boolean;
 } = {}) {
   return (
-    <div className="doe-desktop-root relative overflow-x-hidden bg-[var(--doe-page-surface,#EDE8DF)]">
+    <div className="doe-desktop-root relative overflow-x-hidden bg-[#faf0d8]">
       <div className="relative z-[40] overflow-x-clip overflow-y-visible">
         <DoePhoneHeroSection variant="desktop" iphoneBackdrop />
 
