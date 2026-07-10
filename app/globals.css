@@ -1100,12 +1100,12 @@ html[data-home-page] .home-agents-carousel__referrals-peek-card {
   left: 50%;
   top: 50%;
   transform-origin: center center;
-  transform: translate(-50%, -50%) scale(calc(1.42 * var(--home-agents-peek-orb-scale)));
-  min-width: clamp(17.5rem, 26vmin, 22rem);
+  transform: translate(-50%, -54%) scale(calc(1.34 * var(--home-agents-peek-orb-scale)));
+  min-width: clamp(17.75rem, 26.5vmin, 22.25rem);
   background: #ffffff;
   border-radius: clamp(0.85rem, 1.35vmin, 1.15rem);
-  padding: clamp(0.78rem, 1.2vmin, 0.95rem) clamp(0.88rem, 1.35vmin, 1.05rem)
-    clamp(0.95rem, 1.45vmin, 1.15rem);
+  padding: clamp(0.82rem, 1.25vmin, 0.98rem) clamp(0.9rem, 1.38vmin, 1.08rem)
+    clamp(0.78rem, 1.2vmin, 0.94rem);
   box-shadow: none;
   border: none;
 }
@@ -1113,35 +1113,40 @@ html[data-home-page] .home-agents-carousel__referrals-peek-card {
 html[data-home-page] .home-agents-carousel__referrals-peek-lead {
   display: flex;
   align-items: center;
-  gap: clamp(0.55rem, 0.82vmin, 0.65rem);
-  margin-bottom: clamp(0.58rem, 0.88vmin, 0.72rem);
-  padding: clamp(0.5rem, 0.75vmin, 0.6rem) clamp(0.55rem, 0.82vmin, 0.65rem);
+  gap: clamp(0.5rem, 0.75vmin, 0.62rem);
+  margin-bottom: clamp(0.52rem, 0.8vmin, 0.64rem);
+  padding: clamp(0.46rem, 0.7vmin, 0.56rem) clamp(0.52rem, 0.78vmin, 0.62rem);
   border-radius: clamp(0.42rem, 0.65vmin, 0.52rem);
   background: #f6f6f4;
+  box-shadow: inset 0 0 0 1px #ebe9e4;
 }
 
 html[data-home-page] .home-agents-carousel__referrals-peek-waveform {
   display: flex;
   align-items: flex-end;
+  justify-content: center;
   align-self: center;
-  gap: clamp(0.12rem, 0.18vmin, 0.15rem);
-  height: clamp(1.28rem, 1.9vmin, 1.48rem);
+  gap: clamp(0.1rem, 0.15vmin, 0.12rem);
+  width: clamp(1.72rem, 2.58vmin, 2rem);
+  height: clamp(1.22rem, 1.82vmin, 1.42rem);
   flex-shrink: 0;
 }
 
 html[data-home-page] .home-agents-carousel__referrals-peek-waveform-bar {
   display: block;
-  width: clamp(0.12rem, 0.18vmin, 0.15rem);
+  width: clamp(0.11rem, 0.17vmin, 0.14rem);
+  min-height: 18%;
   border-radius: 9999px;
-  background: rgba(210, 119, 76, 0.55);
+  background: rgba(210, 119, 76, 0.62);
 }
 
 html[data-home-page] .home-agents-carousel__referrals-peek-voice-copy {
   display: flex;
+  flex: 1;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  gap: clamp(0.14rem, 0.22vmin, 0.18rem);
+  gap: clamp(0.1rem, 0.15vmin, 0.12rem);
   min-width: 0;
   text-align: left;
 }
@@ -1149,10 +1154,13 @@ html[data-home-page] .home-agents-carousel__referrals-peek-voice-copy {
 html[data-home-page] .home-agents-carousel__referrals-peek-voice-line {
   margin: 0;
   color: #3d4549;
-  font-size: clamp(0.72rem, 1.08vmin, 0.84rem);
+  font-size: clamp(0.74rem, 1.1vmin, 0.86rem);
   font-weight: 500;
-  line-height: 1.2;
+  line-height: 1.15;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
   text-align: left;
 }
 
@@ -1167,6 +1175,9 @@ html[data-home-page] .home-agents-carousel__referrals-peek-voice-subline {
   font-weight: 400;
   line-height: 1.15;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
   text-align: left;
 }
 
@@ -1174,7 +1185,8 @@ html[data-home-page] .home-agents-carousel__referrals-peek-progress {
   --referrals-peek-dot-size: clamp(0.52rem, 0.78vmin, 0.62rem);
   --referrals-peek-indicator-ring: clamp(0.18rem, 0.28vmin, 0.22rem);
   --referrals-peek-indicator-size: calc(var(--referrals-peek-dot-size) + (2 * var(--referrals-peek-indicator-ring)));
-  margin-bottom: clamp(0.62rem, 0.95vmin, 0.78rem);
+  margin-bottom: clamp(0.54rem, 0.82vmin, 0.66rem);
+  padding-inline: clamp(0.08rem, 0.12vmin, 0.1rem);
 }
 
 html[data-home-page] .home-agents-carousel__referrals-peek-progress-track {
@@ -1188,9 +1200,9 @@ html[data-home-page] .home-agents-carousel__referrals-peek-progress-track {
 html[data-home-page] .home-agents-carousel__referrals-peek-progress-rail {
   position: absolute;
   top: 50%;
-  left: 16.666%;
-  right: 16.666%;
-  height: 2px;
+  left: calc(100% / 6);
+  right: calc(100% / 6);
+  height: clamp(0.1rem, 0.15vmin, 0.12rem);
   border-radius: 9999px;
   background: #ebe9e4;
   overflow: hidden;
@@ -1213,6 +1225,7 @@ html[data-home-page] .home-agents-carousel__referrals-peek-progress-indicators {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   justify-items: center;
+  align-items: center;
   gap: clamp(0.25rem, 0.38vmin, 0.32rem);
 }
 
@@ -1220,8 +1233,9 @@ html[data-home-page] .home-agents-carousel__referrals-peek-progress-labels {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   justify-items: center;
-  gap: clamp(0.25rem, 0.38vmin, 0.32rem);
-  margin-top: clamp(0.32rem, 0.48vmin, 0.4rem);
+  gap: clamp(0.18rem, 0.28vmin, 0.22rem);
+  margin-top: clamp(0.28rem, 0.42vmin, 0.34rem);
+  padding-inline: clamp(0.04rem, 0.06vmin, 0.05rem);
 }
 
 html[data-home-page] .home-agents-carousel__referrals-peek-indicator {
@@ -1261,42 +1275,50 @@ html[data-home-page] .home-agents-carousel__referrals-peek-indicator--upcoming {
 }
 
 html[data-home-page] .home-agents-carousel__referrals-peek-progress-label {
+  width: 100%;
+  max-width: 100%;
   color: #9aa3a8;
-  font-size: clamp(0.6rem, 0.9vmin, 0.7rem);
+  font-size: clamp(0.58rem, 0.88vmin, 0.68rem);
   font-weight: 400;
   line-height: 1.1;
   text-align: center;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 html[data-home-page] .home-agents-carousel__referrals-peek-details {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(0.35rem, 0.55vmin, 0.45rem);
+  gap: clamp(0.28rem, 0.42vmin, 0.34rem);
   margin: 0;
-  padding: clamp(0.48rem, 0.72vmin, 0.58rem) clamp(0.42rem, 0.65vmin, 0.52rem);
+  padding: clamp(0.44rem, 0.66vmin, 0.54rem) clamp(0.38rem, 0.58vmin, 0.46rem);
   border-radius: clamp(0.42rem, 0.65vmin, 0.52rem);
   background: #f6f6f4;
+  box-shadow: inset 0 0 0 1px #ebe9e4;
 }
 
 html[data-home-page] .home-agents-carousel__referrals-peek-detail-row {
   min-width: 0;
+  text-align: center;
 }
 
 html[data-home-page] .home-agents-carousel__referrals-peek-detail-label {
-  margin: 0 0 clamp(0.12rem, 0.18vmin, 0.15rem);
+  margin: 0 0 clamp(0.1rem, 0.15vmin, 0.12rem);
   color: #9aa3a8;
-  font-size: clamp(0.58rem, 0.86vmin, 0.68rem);
+  font-size: clamp(0.56rem, 0.84vmin, 0.66rem);
   font-weight: 400;
   line-height: 1.1;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 html[data-home-page] .home-agents-carousel__referrals-peek-detail-value {
   margin: 0;
   color: #3d4549;
-  font-size: clamp(0.66rem, 0.98vmin, 0.76rem);
-  font-weight: 400;
+  font-size: clamp(0.64rem, 0.96vmin, 0.74rem);
+  font-weight: 500;
   line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
@@ -2670,6 +2692,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .hero-speaking-orb__core
   .home-agents-carousel__referrals-peek-details {
   background: var(--carousel-peek-dusk-surface-sunken);
+  box-shadow: inset 0 0 0 1px var(--carousel-peek-dusk-border);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
