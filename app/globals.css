@@ -5075,19 +5075,8 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow 
   transform: none;
 }
 
-html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__node {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  border-radius: clamp(0.52rem, 1.48vmin, 0.62rem);
-  border: 1px solid var(--home-dusk-ui-border);
-  background: var(--home-dusk-ui-surface-sunken);
-  box-shadow: none;
-  padding: clamp(0.44rem, 1.25vmin, 0.52rem) clamp(0.52rem, 1.48vmin, 0.6rem);
-}
-
 html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram {
+  --call-logic-marker-size: clamp(0.34rem, 0.96vmin, 0.4rem);
   display: flex;
   flex-direction: column;
   gap: clamp(0.62rem, 1.75vmin, 0.76rem);
@@ -5102,8 +5091,10 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow 
 }
 
 html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__header {
-  display: flex;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: clamp(0.55rem, 1.55vmin, 0.68rem);
   box-sizing: border-box;
   width: 100%;
   padding-inline: clamp(0.88rem, 2.5vmin, 1rem);
@@ -5133,9 +5124,31 @@ html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagra
   line-height: 1.2;
 }
 
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__step-count {
+  justify-self: end;
+  margin: 0;
+  padding-top: 0.04em;
+  color: #ffffff;
+  font-size: clamp(1.02rem, 2.9vmin, 1.18rem);
+  font-weight: 500;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  letter-spacing: -0.02em;
+  text-align: right;
+}
+
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__step-count-unit {
+  color: rgba(255, 248, 240, 0.58);
+  font-size: 0.72em;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
 html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__panel {
   display: flex;
   flex-direction: column;
+  gap: clamp(0.62rem, 1.75vmin, 0.76rem);
   min-width: 0;
   padding: clamp(0.82rem, 2.32vmin, 0.96rem) clamp(0.88rem, 2.5vmin, 1rem);
   border-radius: clamp(0.78rem, 2.22vmin, 0.92rem);
@@ -5144,128 +5157,94 @@ html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagra
   box-shadow: var(--home-dusk-ui-shadow);
 }
 
-html[data-home-page] .home-call-logic-diagram__canvas {
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__trunk {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
   gap: 0;
-  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-html[data-home-page] .home-call-logic-diagram__trunk {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  width: 100%;
-}
-
-html[data-home-page] .home-call-logic-diagram__trunk-step,
-html[data-home-page] .home-call-logic-diagram__branch-step {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  width: 100%;
-}
-
-html[data-home-page] .home-call-logic-diagram__trunk-step--center {
-  align-items: center;
-}
-
-html[data-home-page] .home-call-logic-diagram__trunk-step--center .home-call-logic-diagram__node {
-  width: min(100%, 16.5rem);
-}
-
-html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__connector {
-  flex-shrink: 0;
-  border-radius: 999px;
-  background: var(--home-dusk-ui-border);
-}
-
-html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__connector--vertical {
-  align-self: center;
-  width: 1px;
-  height: clamp(0.46rem, 1.32vmin, 0.56rem);
-  margin-block: clamp(0.04rem, 0.12vmin, 0.06rem);
-}
-
-html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__connector--branch {
-  align-self: center;
-  width: 1px;
-  height: clamp(0.5rem, 1.42vmin, 0.6rem);
-  margin-block: clamp(0.03rem, 0.1vmin, 0.05rem);
-}
-
-html[data-home-page] .home-call-logic-diagram__fork-rail {
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__trunk-step {
   position: relative;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  width: 100%;
-  height: clamp(0.64rem, 1.82vmin, 0.76rem);
-  margin-inline: auto;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(0.48rem, 1.35vmin, 0.58rem);
+  padding-block: clamp(0.22rem, 0.62vmin, 0.28rem);
 }
 
-html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__fork-rail-line {
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__trunk-line {
   position: absolute;
-  top: 0;
-  height: 100%;
+  top: calc(50% + var(--call-logic-marker-size) * 0.5);
+  left: calc(var(--call-logic-marker-size) * 0.5);
+  width: 1px;
+  height: calc(100% - var(--call-logic-marker-size) * 0.5);
+  transform: translateX(-50%);
+  background: var(--home-dusk-ui-border);
+}
+
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__marker {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  width: var(--call-logic-marker-size);
+  height: var(--call-logic-marker-size);
   border-radius: 999px;
   background: var(--home-dusk-ui-border);
 }
 
-html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__fork-rail-line--left {
-  left: 25%;
-  width: 1px;
-  transform: translateX(-50%);
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__marker--done {
+  background: rgba(242, 216, 168, 0.28);
 }
 
-html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__fork-rail-line--right {
-  left: 75%;
-  width: 1px;
-  transform: translateX(-50%);
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__marker--current,
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__marker--condition {
+  background: rgba(232, 160, 96, 0.18);
+  box-shadow: 0 0 0 2px rgba(232, 143, 92, 0.38);
 }
 
-html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__fork-rail::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 25%;
-  right: 25%;
-  height: 1px;
-  border-radius: 999px;
-  background: var(--home-dusk-ui-border);
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__trunk-label {
+  color: var(--home-dusk-ui-ink);
+  font-size: clamp(0.78rem, 2.22vmin, 0.88rem);
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.012em;
 }
 
-html[data-home-page] .home-call-logic-diagram__branches {
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__trunk-step--done .home-call-logic-diagram__trunk-label {
+  color: var(--home-dusk-ui-ink-secondary);
+}
+
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__trunk-step--current .home-call-logic-diagram__trunk-label,
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__trunk-step--condition .home-call-logic-diagram__trunk-label {
+  color: var(--home-dusk-ui-horizon);
+}
+
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__fork {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  align-items: start;
-  gap: clamp(0.85rem, 2.4vmin, 1.35rem);
-  width: 100%;
-  margin-top: 0;
+  gap: clamp(0.48rem, 1.35vmin, 0.58rem);
+  padding-top: clamp(0.12rem, 0.34vmin, 0.16rem);
+  border-top: 1px solid var(--home-dusk-ui-border);
 }
 
-html[data-home-page] .home-call-logic-diagram__branch-col {
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__path {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  gap: clamp(0.28rem, 0.8vmin, 0.34rem);
   min-width: 0;
-  max-width: none;
+  padding: clamp(0.48rem, 1.35vmin, 0.56rem);
+  border-radius: clamp(0.52rem, 1.48vmin, 0.62rem);
+  background: var(--home-dusk-ui-surface-sunken);
 }
 
-html[data-home-page] .home-call-logic-diagram__branch-col--yes,
-html[data-home-page] .home-call-logic-diagram__branch-col--no {
-  align-self: stretch;
-  margin: 0;
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__path--yes {
+  border: 1px solid rgba(232, 143, 92, 0.22);
 }
 
-html[data-home-page] .home-call-logic-diagram__branch-col .home-call-logic-diagram__node {
-  width: 100%;
-}
-
-html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__branch-key {
-  align-self: center;
-  margin-bottom: clamp(0.12rem, 0.34vmin, 0.16rem);
-  padding: 0;
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__path-label {
   color: var(--home-dusk-ui-muted);
   font-size: clamp(0.58rem, 1.65vmin, 0.66rem);
   font-weight: 500;
@@ -5274,46 +5253,100 @@ html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagra
   text-transform: uppercase;
 }
 
-html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__branch-col--yes .home-call-logic-diagram__branch-key {
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__path--yes .home-call-logic-diagram__path-label {
   color: var(--home-dusk-ui-horizon);
 }
 
-html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__node--trigger {
-  background: var(--home-dusk-ui-surface-sunken);
-}
-
-html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__node--condition {
-  background: rgba(242, 216, 168, 0.06);
-}
-
-html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__node--active {
-  border-color: rgba(232, 143, 92, 0.45);
-  background: rgba(232, 143, 92, 0.1);
-  box-shadow: 0 0 0 1px rgba(232, 143, 92, 0.14);
-}
-
-html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__node-label {
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__path-steps {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.18rem, 0.52vmin, 0.22rem);
   margin: 0;
-  display: inline-flex;
+  padding: 0;
+  list-style: none;
+}
+
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__path-step {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
-  justify-content: center;
-  gap: clamp(0.28rem, 0.8vmin, 0.34rem);
-  width: 100%;
-  color: var(--home-dusk-ui-ink);
-  font-size: clamp(0.78rem, 2.22vmin, 0.88rem);
+  gap: clamp(0.34rem, 0.96vmin, 0.4rem);
+  min-width: 0;
+}
+
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__path-marker {
+  flex-shrink: 0;
+  width: clamp(0.22rem, 0.62vmin, 0.26rem);
+  height: clamp(0.22rem, 0.62vmin, 0.26rem);
+  border-radius: 999px;
+  background: var(--home-dusk-ui-border);
+}
+
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__path-marker--active {
+  background: var(--home-dusk-ui-horizon);
+  box-shadow: 0 0 0 2px rgba(232, 143, 92, 0.24);
+}
+
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__path-step-label {
+  color: var(--home-dusk-ui-ink-secondary);
+  font-size: clamp(0.72rem, 2.05vmin, 0.82rem);
   font-weight: 500;
-  line-height: 1.22;
-  letter-spacing: -0.012em;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__path-step--active .home-call-logic-diagram__path-step-label {
+  color: var(--home-dusk-ui-ink);
+}
+
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__path-step--upcoming .home-call-logic-diagram__path-step-label {
+  color: var(--home-dusk-ui-muted);
+}
+
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__track {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.28rem, 0.8vmin, 0.34rem);
+  box-sizing: border-box;
+  width: 100%;
+  padding-inline: clamp(0.88rem, 2.5vmin, 1rem);
+}
+
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__track-rail {
+  width: 100%;
+  height: 1px;
+  border-radius: 9999px;
+  background: rgba(255, 248, 240, 0.14);
+  overflow: hidden;
+}
+
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__track-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: rgba(255, 248, 240, 0.72);
+}
+
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__track-labels {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  justify-items: center;
+  gap: clamp(0.12rem, 0.34vmin, 0.16rem);
+}
+
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__track-label {
+  max-width: 100%;
+  padding-inline: clamp(0.08rem, 0.22vmin, 0.12rem);
+  color: rgba(255, 248, 240, 0.42);
+  font-size: clamp(0.6rem, 1.7vmin, 0.68rem);
+  font-weight: 400;
+  line-height: 1.15;
   text-align: center;
 }
 
-html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__node-icon {
-  color: var(--home-dusk-ui-muted);
-  flex-shrink: 0;
-}
-
-html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__node-icon [stroke]:not([stroke="none"]) {
-  stroke: currentColor;
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__track-label--active {
+  color: rgba(255, 248, 240, 0.88);
+  font-weight: 500;
 }
 
 html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram__add-step {
