@@ -109,13 +109,9 @@ export function DoePhoneHomeShaderBandSection({
           </DoePhoneScrollRevealContent>
           <div className="home-feature-shader-band__call-logic-bleed-stage">
             <div className="home-call-logic-diagram-scale home-call-logic-diagram-scale--bleed">
-              <div
-                className={`transition-opacity duration-[1.75s] ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                  revealed ? "opacity-100" : "opacity-0"
-                }`}
-              >
+              <DoePhoneScrollRevealContent revealed={revealed} segment="carousel" className="h-full w-full">
                 <DoePhoneHomeCallLogicDiagram />
-              </div>
+              </DoePhoneScrollRevealContent>
             </div>
           </div>
         </div>

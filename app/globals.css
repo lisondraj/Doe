@@ -5008,11 +5008,6 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workf
   transform-origin: top center;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .doephone-section-reveal--input {
-  opacity: 1 !important;
-  animation: none !important;
-}
-
 /* Customize agents — call logic diagram (workflow band). */
 html[data-home-page] .home-feature-shader-band--workflow .home-feature-shader-band__call-logic-shell {
   flex: 1 1 auto;
@@ -9484,4 +9479,9 @@ html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagra
 html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram-scale--bleed .home-call-logic-diagram {
   --call-logic-node-max: var(--home-call-logic-bleed-width);
   --call-logic-node-radius: clamp(0.54rem, 1.54vmin, 0.64rem);
+}
+
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram-scale--bleed .doephone-section-reveal--carousel {
+  width: 100%;
+  height: 100%;
 }
