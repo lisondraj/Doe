@@ -1,6 +1,6 @@
 "use client";
 
-import { inter, suisseIntl, suisseIntlLight } from "@/lib/home/fonts";
+import { dmSans, inter, suisseIntl } from "@/lib/home/fonts";
 import {
   DOEPHONE_DISPLAY_WEIGHT_TW,
   DOEPHONE_SECTION_CAROUSEL_INSET_X,
@@ -17,8 +17,8 @@ const WORKFLOW_PILLS = [
 const DOCTOR_STATS = [
   { value: "<1s", label: "Latency" },
   { value: "30+", label: "languages" },
-  { value: "99.9%", label: "uptime" },
-  { value: "24/7", label: "coverage" },
+  { value: "98%", label: "accuracy" },
+  { value: "10M+", label: "calls" },
 ] as const;
 
 type VisualLayout = "phone" | "desktop";
@@ -71,8 +71,8 @@ export function DoePhoneReviewPackageVisual({
             <div className="home-active-agents-visual__stats">
               {DOCTOR_STATS.map((stat) => (
                 <div key={stat.label} className="home-active-agents-visual__stat">
+                  <p className={`home-active-agents-visual__stat-value ${dmSans.className}`}>{stat.value}</p>
                   <p className={`home-active-agents-visual__stat-label ${inter.className}`}>{stat.label}</p>
-                  <p className={`home-active-agents-visual__stat-value ${suisseIntlLight.className}`}>{stat.value}</p>
                 </div>
               ))}
             </div>
