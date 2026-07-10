@@ -5,85 +5,137 @@ import { dmSans } from "@/lib/home/fonts";
 const WEEK_DAYS = [
   { label: "M", date: 7 },
   { label: "T", date: 8 },
-  { label: "W", date: 9, active: true },
+  { label: "W", date: 9, selected: true },
   { label: "T", date: 10 },
   { label: "F", date: 11 },
   { label: "S", date: 12 },
+  { label: "S", date: 13 },
 ] as const;
 
-const BOOKING = {
-  patient: "Brooks",
-  time: "3:15p",
-  visit: "Annual",
-} as const;
+const SLOT_ROWS = [
+  { time: "3:15 PM", patient: "Brooks", visit: "Physical", active: true },
+  { time: "9:00 AM", patient: "Nguyen", visit: "Follow-up" },
+  { time: "11:30 AM", patient: "Open slot", visit: "Friday" },
+  { time: "2:00 PM", patient: "Kowalski", visit: "Labs review" },
+] as const;
 
-function PhoneIcon() {
+const SLOT_CLEAR_ROW_COUNT = 2;
+
+function getSlotRowSpread(rowIndex: number) {
+  if (rowIndex < SLOT_CLEAR_ROW_COUNT) {
+    return 0;
+  }
+
+  return rowIndex - (SLOT_CLEAR_ROW_COUNT - 1);
+}
+
+function getPeekFadeOpacity(spread: number) {
+  if (spread === 0) {
+    return 1;
+  }
+
+  return Math.max(0.64, 1 - spread * 0.08);
+}
+
+function getPeekFadeBlur(spread: number) {
+  if (spread === 0) {
+    return 0;
+  }
+
+  const eased = spread * (0.14 + spread * 0.1);
+  return Math.min(0.95, eased);
+}
+
+function ChevronIcon() {
   return (
-    <svg viewBox="0 0 16 16" fill="none" aria-hidden className="home-agents-carousel__scheduling-peek-phone-icon">
-      <path
-        d="M4 6.5a4 4 0 018 0v2.2l1.4 1.1H2.6L4 8.7V6.5z"
-        stroke="currentColor"
-        strokeWidth="1.1"
-        strokeLinejoin="round"
-      />
-      <path d="M6.5 12.2h3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+    <svg viewBox="0 0 12 12" fill="none" aria-hidden className="home-agents-carousel__scheduling-peek-clinic-chevron">
+      <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
 
-/** Agents carousel — scheduling peek with visual calendar + phone agent thinking (left-edge bleed). */
+/** Agents carousel — scheduling peek styled like inbox (left-edge bleed, scaled + clipped). */
 export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: boolean }) {
   void iphone;
 
   return (
     <div className="home-agents-carousel__scheduling-peek" aria-hidden>
       <div className={`home-agents-carousel__scheduling-peek-card ${dmSans.className}`}>
-        <div className="home-agents-carousel__scheduling-peek-think">
-          <span className="home-agents-carousel__scheduling-peek-think-phone" aria-hidden>
-            <PhoneIcon />
-          </span>
-          <span className="home-agents-carousel__scheduling-peek-think-label">Thinking</span>
-          <span className="home-agents-carousel__scheduling-peek-think-dots" aria-hidden>
-            <span />
-            <span />
-            <span />
-          </span>
+        <div className="home-agents-carousel__scheduling-peek-head">
+          <div className="home-agents-carousel__scheduling-peek-head-right">
+            <button type="button" className="home-agents-carousel__scheduling-peek-clinic" tabIndex={-1}>
+              <span className="home-agents-carousel__scheduling-peek-clinic-label">Dr. Brown&apos;s Clinic</span>
+              <ChevronIcon />
+            </button>
+
+            <div
+              className="home-agents-carousel__scheduling-peek-logo bg-gradient-to-br from-[#E7A944] via-[#D2774C] to-[#1E343A]"
+              aria-hidden
+            />
+          </div>
         </div>
 
-        <p className="home-agents-carousel__scheduling-peek-month">March</p>
+        <p className="home-agents-carousel__scheduling-peek-title">Schedule</p>
 
-        <div className="home-agents-carousel__scheduling-peek-calendar">
-          <div className="home-agents-carousel__scheduling-peek-week-head">
+        <div className="home-agents-carousel__scheduling-peek-week" aria-hidden>
+          <span className="home-agents-carousel__scheduling-peek-week-range">Mar 7 – 13</span>
+
+          <div className="home-agents-carousel__scheduling-peek-week-grid">
             {WEEK_DAYS.map((day) => (
-              <span
-                key={`head-${day.label}-${day.date}`}
-                className={`home-agents-carousel__scheduling-peek-week-day${
-                  "active" in day && day.active ? " home-agents-carousel__scheduling-peek-week-day--active" : ""
+              <div
+                key={`${day.label}-${day.date}`}
+                className={`home-agents-carousel__scheduling-peek-week-cell${
+                  "selected" in day && day.selected ? " home-agents-carousel__scheduling-peek-week-cell--selected" : ""
                 }`}
               >
                 <span className="home-agents-carousel__scheduling-peek-week-label">{day.label}</span>
                 <span className="home-agents-carousel__scheduling-peek-week-date">{day.date}</span>
-              </span>
+              </div>
             ))}
-          </div>
-
-          <div className="home-agents-carousel__scheduling-peek-week-body">
-            <span className="home-agents-carousel__scheduling-peek-appt home-agents-carousel__scheduling-peek-appt--tue">
-              Nguyen
-            </span>
-            <span className="home-agents-carousel__scheduling-peek-appt home-agents-carousel__scheduling-peek-appt--wed home-agents-carousel__scheduling-peek-appt--booking">
-              {BOOKING.patient}
-              <span className="home-agents-carousel__scheduling-peek-appt-time">{BOOKING.time}</span>
-            </span>
-            <span className="home-agents-carousel__scheduling-peek-appt home-agents-carousel__scheduling-peek-appt--fri">
-              Open
-            </span>
           </div>
         </div>
 
-        <p className="home-agents-carousel__scheduling-peek-caption">
-          Booking {BOOKING.visit.toLowerCase()} · {BOOKING.patient}
-        </p>
+        <div className="home-agents-carousel__scheduling-peek-status" aria-hidden>
+          <span className="home-agents-carousel__scheduling-peek-status-title">Confirming booking</span>
+          <span className="home-agents-carousel__scheduling-peek-status-meta">Brooks · Physical · 3:15 PM</span>
+          <span className="home-agents-carousel__scheduling-peek-status-timer">1:24</span>
+        </div>
+
+        <ul className="home-agents-carousel__scheduling-peek-list">
+          {SLOT_ROWS.map((row, rowIndex) => {
+            const spread = getSlotRowSpread(rowIndex);
+            const blur = getPeekFadeBlur(spread);
+
+            return (
+              <li
+                key={`${row.time}-${row.patient}`}
+                className={`home-agents-carousel__scheduling-peek-row${
+                  "active" in row && row.active ? " home-agents-carousel__scheduling-peek-row--active" : ""
+                }`}
+                style={{
+                  opacity: getPeekFadeOpacity(spread),
+                  filter: blur > 0 ? `blur(${blur}px)` : undefined,
+                }}
+              >
+                <span className="home-agents-carousel__scheduling-peek-label">
+                  {row.patient}
+                  <span className="home-agents-carousel__scheduling-peek-visit"> · {row.visit}</span>
+                </span>
+                <span className="home-agents-carousel__scheduling-peek-time">{row.time}</span>
+              </li>
+            );
+          })}
+        </ul>
+
+        <div
+          className="home-agents-carousel__scheduling-peek-footer"
+          style={{
+            opacity: getPeekFadeOpacity(2),
+            filter: getPeekFadeBlur(2) > 0 ? `blur(${getPeekFadeBlur(2)}px)` : undefined,
+          }}
+        >
+          <span className="home-agents-carousel__scheduling-peek-footer-stat">3 open this week</span>
+        </div>
       </div>
     </div>
   );

@@ -1345,8 +1345,8 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-card {
   left: 0;
   bottom: 0;
   transform-origin: 0% 100%;
-  transform: translate(clamp(-2.5%, -2vmin, -1%), clamp(1.5%, 3vmin, 4.5%))
-    scale(calc(1.14 * var(--home-agents-peek-orb-scale)));
+  transform: translate(clamp(-2.5%, -2vmin, -1%), clamp(0.5%, 1.4vmin, 1.8%))
+    scale(calc(1.22 * var(--home-agents-peek-orb-scale)));
   min-width: clamp(18.5rem, 28vmin, 23.5rem);
   background: #ffffff;
   border: none;
@@ -1356,82 +1356,67 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-card {
     clamp(0.72rem, 1.1vmin, 0.88rem);
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-think {
+html[data-home-page] .home-agents-carousel__scheduling-peek-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  min-height: clamp(1.62rem, 2.45vmin, 1.92rem);
+  margin-bottom: clamp(0.42rem, 0.64vmin, 0.52rem);
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-head-right {
   display: inline-flex;
   align-items: center;
-  gap: clamp(0.28rem, 0.42vmin, 0.34rem);
-  margin-bottom: clamp(0.42rem, 0.64vmin, 0.52rem);
-  padding: clamp(0.28rem, 0.42vmin, 0.34rem) clamp(0.34rem, 0.52vmin, 0.42rem);
+  justify-content: flex-end;
+  gap: clamp(0.34rem, 0.52vmin, 0.42rem);
+  max-width: 100%;
+  min-width: 0;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-clinic {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(0.22rem, 0.34vmin, 0.28rem);
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: clamp(0.24rem, 0.36vmin, 0.3rem) clamp(0.34rem, 0.52vmin, 0.42rem);
+  border: none;
   border-radius: clamp(0.34rem, 0.52vmin, 0.42rem);
   background: #f6f6f4;
-  max-width: fit-content;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-think-phone {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: clamp(1.15rem, 1.72vmin, 1.32rem);
-  height: clamp(1.15rem, 1.72vmin, 1.32rem);
-  border-radius: 9999px;
-  background: rgba(210, 119, 76, 0.12);
-  color: #d2774c;
-  flex-shrink: 0;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-phone-icon {
-  width: 0.72em;
-  height: 0.72em;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-think-label {
   color: #3d4549;
-  font-size: clamp(0.72rem, 1.08vmin, 0.84rem);
+  font: inherit;
+  font-size: clamp(0.68rem, 1.02vmin, 0.8rem);
   font-weight: 500;
   line-height: 1.1;
   white-space: nowrap;
+  cursor: default;
+  pointer-events: none;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-think-dots {
-  display: inline-flex;
-  align-items: center;
-  gap: clamp(0.1rem, 0.15vmin, 0.12rem);
-  padding-left: clamp(0.04rem, 0.06vmin, 0.05rem);
+html[data-home-page] .home-agents-carousel__scheduling-peek-clinic-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-think-dots span {
-  display: block;
-  width: clamp(0.18rem, 0.28vmin, 0.22rem);
-  height: clamp(0.18rem, 0.28vmin, 0.22rem);
+html[data-home-page] .home-agents-carousel__scheduling-peek-clinic-chevron {
+  width: clamp(0.58rem, 0.88vmin, 0.7rem);
+  height: clamp(0.58rem, 0.88vmin, 0.7rem);
+  flex-shrink: 0;
+  color: #9aa3a8;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-logo {
+  width: clamp(1.62rem, 2.45vmin, 1.92rem);
+  height: clamp(1.62rem, 2.45vmin, 1.92rem);
+  margin: 0;
   border-radius: 9999px;
-  background: #9aa3a8;
-  animation: home-scheduling-peek-think-dot 1.2s ease-in-out infinite;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42);
+  flex-shrink: 0;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-think-dots span:nth-child(2) {
-  animation-delay: 0.18s;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-think-dots span:nth-child(3) {
-  animation-delay: 0.36s;
-}
-
-@keyframes home-scheduling-peek-think-dot {
-  0%,
-  80%,
-  100% {
-    opacity: 0.28;
-    transform: translateY(0);
-  }
-
-  40% {
-    opacity: 1;
-    transform: translateY(clamp(-0.08rem, -0.12vmin, -0.1rem));
-  }
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-month {
-  margin: 0 0 clamp(0.34rem, 0.52vmin, 0.42rem);
+html[data-home-page] .home-agents-carousel__scheduling-peek-title {
+  margin: 0 0 clamp(0.45rem, 0.68vmin, 0.55rem);
   color: #3d4549;
   font-size: clamp(0.98rem, 1.48vmin, 1.12rem);
   font-weight: 500;
@@ -1439,130 +1424,173 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-month {
   letter-spacing: -0.02em;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-calendar {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(0.28rem, 0.42vmin, 0.34rem);
-  min-width: 0;
+html[data-home-page] .home-agents-carousel__scheduling-peek-week {
+  margin: 0 0 clamp(0.38rem, 0.58vmin, 0.46rem);
+  padding: clamp(0.34rem, 0.52vmin, 0.42rem) clamp(0.38rem, 0.58vmin, 0.46rem)
+    clamp(0.32rem, 0.48vmin, 0.4rem);
+  border-radius: clamp(0.48rem, 0.72vmin, 0.58rem);
+  background: #f6f6f4;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-week-head {
+html[data-home-page] .home-agents-carousel__scheduling-peek-week-range {
+  display: block;
+  margin-bottom: clamp(0.28rem, 0.42vmin, 0.34rem);
+  color: #3d4549;
+  font-size: clamp(0.72rem, 1.08vmin, 0.84rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-week-grid {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: clamp(0.14rem, 0.22vmin, 0.18rem);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: clamp(0.08rem, 0.12vmin, 0.1rem);
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-week-day {
+html[data-home-page] .home-agents-carousel__scheduling-peek-week-cell {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: clamp(0.08rem, 0.12vmin, 0.1rem);
-  padding: clamp(0.14rem, 0.22vmin, 0.18rem) clamp(0.06rem, 0.1vmin, 0.08rem);
-  border-radius: clamp(0.24rem, 0.36vmin, 0.3rem);
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-week-day--active {
-  background: #f6f6f4;
+  min-width: 0;
+  padding: clamp(0.08rem, 0.12vmin, 0.1rem) 0;
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-week-label {
   color: #9aa3a8;
-  font-size: clamp(0.5rem, 0.76vmin, 0.58rem);
+  font-size: clamp(0.48rem, 0.72vmin, 0.56rem);
   font-weight: 500;
   line-height: 1;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-week-day--active .home-agents-carousel__scheduling-peek-week-label {
-  color: #d2774c;
-}
-
 html[data-home-page] .home-agents-carousel__scheduling-peek-week-date {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(1.12rem, 1.68vmin, 1.32rem);
+  height: clamp(1.12rem, 1.68vmin, 1.32rem);
+  border-radius: 9999px;
   color: #3d4549;
-  font-size: clamp(0.62rem, 0.94vmin, 0.72rem);
+  font-size: clamp(0.58rem, 0.88vmin, 0.68rem);
   font-weight: 500;
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-week-body {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: clamp(0.14rem, 0.22vmin, 0.18rem);
-  min-height: clamp(2.4rem, 3.6vmin, 2.85rem);
-  padding-top: clamp(0.08rem, 0.12vmin, 0.1rem);
+html[data-home-page] .home-agents-carousel__scheduling-peek-week-cell--selected .home-agents-carousel__scheduling-peek-week-date {
+  background: #ffffff;
+  color: #d2774c;
+  font-weight: 600;
+  box-shadow:
+    inset 0 0 0 1.5px #d2774c,
+    0 1px 2px rgba(30, 52, 58, 0.06);
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-appt {
-  display: flex;
-  flex-direction: column;
+html[data-home-page] .home-agents-carousel__scheduling-peek-status {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  justify-content: center;
-  gap: clamp(0.04rem, 0.06vmin, 0.05rem);
-  min-height: clamp(1.42rem, 2.14vmin, 1.68rem);
-  padding: clamp(0.16rem, 0.24vmin, 0.2rem) clamp(0.1rem, 0.15vmin, 0.12rem);
-  border-radius: clamp(0.2rem, 0.3vmin, 0.24rem);
+  gap: clamp(0.06rem, 0.1vmin, 0.08rem) clamp(0.35rem, 0.52vmin, 0.42rem);
+  margin: 0 0 clamp(0.38rem, 0.58vmin, 0.46rem);
+  padding: clamp(0.32rem, 0.48vmin, 0.4rem) clamp(0.38rem, 0.58vmin, 0.46rem);
+  border-radius: clamp(0.38rem, 0.58vmin, 0.46rem);
+  background: rgba(210, 119, 76, 0.08);
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-status-title {
+  grid-column: 1;
   color: #3d4549;
-  font-size: clamp(0.48rem, 0.72vmin, 0.56rem);
+  font-size: clamp(0.68rem, 1.02vmin, 0.8rem);
   font-weight: 500;
-  line-height: 1.1;
-  text-align: center;
+  line-height: 1.15;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100%;
-  background: #f0eeea;
-  box-shadow: inset 0 0 0 1px #ebe9e4;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-appt--tue {
+html[data-home-page] .home-agents-carousel__scheduling-peek-status-meta {
+  grid-column: 1;
+  color: #9aa3a8;
+  font-size: clamp(0.56rem, 0.84vmin, 0.66rem);
+  font-weight: 400;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-status-timer {
   grid-column: 2;
-  grid-row: 1;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-appt--wed {
-  grid-column: 3;
-  grid-row: 1;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-appt--fri {
-  grid-column: 5;
-  grid-row: 2;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-appt--booking {
-  background: rgba(210, 119, 76, 0.14);
-  box-shadow: inset 0 0 0 1px rgba(210, 119, 76, 0.28);
-  color: #1e343a;
-  font-weight: 600;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-appt-time {
+  grid-row: 1 / span 2;
+  align-self: center;
   color: #d2774c;
-  font-size: clamp(0.44rem, 0.66vmin, 0.52rem);
+  font-size: clamp(0.62rem, 0.94vmin, 0.72rem);
   font-weight: 500;
   line-height: 1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-caption {
-  margin: clamp(0.38rem, 0.58vmin, 0.46rem) 0 0;
-  padding-top: clamp(0.42rem, 0.64vmin, 0.52rem);
+html[data-home-page] .home-agents-carousel__scheduling-peek-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(0.35rem, 0.55vmin, 0.45rem);
+  padding: clamp(0.32rem, 0.5vmin, 0.4rem) clamp(0.3rem, 0.48vmin, 0.4rem);
+  border-radius: clamp(0.32rem, 0.5vmin, 0.42rem);
+  color: #3d4549;
+  font-size: clamp(0.76rem, 1.12vmin, 0.88rem);
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-row--active {
+  background: #f6f6f4;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-label {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-visit {
+  color: #9aa3a8;
+  font-weight: 400;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-time {
+  color: #9aa3a8;
+  font-size: clamp(0.76rem, 1.12vmin, 0.88rem);
+  font-weight: 400;
+  line-height: 1.15;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-footer {
+  margin-top: clamp(0.55rem, 0.85vmin, 0.68rem);
+  padding-top: clamp(0.48rem, 0.72vmin, 0.58rem);
   border-top: 1px solid #ebe9e4;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-footer-stat {
   color: #9aa3a8;
   font-size: clamp(0.68rem, 1.02vmin, 0.8rem);
   font-weight: 400;
   line-height: 1.2;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html[data-home-page] .home-agents-carousel__scheduling-peek-think-dots span {
-    animation: none;
-  }
 }
 
 /* Desktop agents carousel — Labs Agent dual UI peek (centered, top/bottom clip). */
@@ -2869,26 +2897,58 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-think {
+  .home-agents-carousel__scheduling-peek-logo {
+  background: linear-gradient(
+    135deg,
+    var(--carousel-peek-dusk-horizon) 0%,
+    var(--carousel-peek-dusk-clay) 52%,
+    var(--carousel-peek-dusk-back) 100%
+  ) !important;
+  box-shadow: inset 0 1px 0 rgba(242, 216, 168, 0.28);
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-clinic {
+  background: var(--carousel-peek-dusk-surface-raised);
+  color: var(--carousel-peek-dusk-ink);
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-clinic-chevron {
+  color: var(--carousel-peek-dusk-muted);
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-week {
   background: var(--carousel-peek-dusk-surface-raised);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-think-label,
+  .home-agents-carousel__scheduling-peek-title,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-month,
+  .home-agents-carousel__scheduling-peek-week-range,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-week-date,
+  .home-agents-carousel__scheduling-peek-status-title,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-appt {
+  .home-agents-carousel__scheduling-peek-row,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-label {
   color: var(--carousel-peek-dusk-ink);
   font-weight: 500;
 }
@@ -2896,15 +2956,30 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-think-dots span,
+  .home-agents-carousel__scheduling-peek-row--active {
+  background: var(--carousel-peek-dusk-surface-sunken);
+}
+
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-week-label,
+  .home-agents-carousel__scheduling-peek-time,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-caption {
+  .home-agents-carousel__scheduling-peek-visit,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-status-meta,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-footer-stat,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-week-label {
   color: var(--carousel-peek-dusk-muted);
   font-weight: 400;
 }
@@ -2912,56 +2987,34 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-think-phone {
-  background: rgba(232, 160, 96, 0.16);
+  .home-agents-carousel__scheduling-peek-status {
+  background: rgba(232, 160, 96, 0.12);
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-status-timer {
   color: var(--carousel-peek-dusk-horizon);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-week-day--active {
-  background: var(--carousel-peek-dusk-surface-raised);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-week-day--active
-  .home-agents-carousel__scheduling-peek-week-label {
-  color: var(--carousel-peek-dusk-horizon);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-appt {
-  background: var(--carousel-peek-dusk-surface-sunken);
-  box-shadow: inset 0 0 0 1px var(--carousel-peek-dusk-border);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-appt--booking {
-  background: var(--carousel-peek-dusk-highlight);
-  box-shadow: inset 0 0 0 1px rgba(232, 160, 96, 0.34);
-  color: var(--carousel-peek-dusk-ink);
-  font-weight: 600;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-appt-time {
-  color: var(--carousel-peek-dusk-horizon);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-caption {
+  .home-agents-carousel__scheduling-peek-footer {
   border-top-color: var(--carousel-peek-dusk-border);
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-week-cell--selected
+  .home-agents-carousel__scheduling-peek-week-date {
+  background: var(--carousel-peek-dusk-surface);
+  color: var(--carousel-peek-dusk-horizon);
+  box-shadow:
+    inset 0 0 0 1.5px var(--carousel-peek-dusk-horizon),
+    0 1px 2px rgba(0, 0, 0, 0.12);
 }
 
 /* Labs peek */
