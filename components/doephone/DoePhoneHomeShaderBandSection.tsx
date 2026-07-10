@@ -1,6 +1,6 @@
 "use client";
 
-import { DoePhoneHomeRefillAgentVisual } from "@/components/doephone/DoePhoneHomeRefillAgentVisual";
+import { DoePhoneHomeCallLogicDiagram } from "@/components/doephone/DoePhoneHomeCallLogicDiagram";
 import { DoePhoneHomeGuardrailsVisual } from "@/components/doephone/DoePhoneHomeGuardrailsVisual";
 import { DoePhoneHomeLabAlertsVisual } from "@/components/doephone/DoePhoneHomeLabAlertsVisual";
 import { DoePhoneHomePriorAuthVisual } from "@/components/doephone/DoePhoneHomePriorAuthVisual";
@@ -96,25 +96,27 @@ export function DoePhoneHomeShaderBandSection({
       {feature === "workflow" ? (
         <div
           ref={revealRef}
-          className="home-feature-shader-band__feature-shell relative z-[10] flex h-full min-h-0 w-full flex-col"
+          className="home-feature-shader-band__workflow-shell relative z-[10] flex h-full min-h-0 w-full flex-col"
           style={revealStyle}
         >
           <DoePhoneScrollRevealContent revealed={revealed} segment="title">
             <h2
-              className={`home-feature-shader-band__feature-title home-feature-card-section__title home-feature-card-section__title--feature-lead text-left ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${suisseIntl.className}`}
+              className={`home-feature-shader-band__workflow-title home-feature-card-section__title home-feature-card-section__title--feature-lead text-left ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${suisseIntl.className}`}
             >
               <span className="block">{titleLine1}</span>
               <span className="block">{titleLine2}</span>
             </h2>
           </DoePhoneScrollRevealContent>
-          <div className="home-feature-shader-band__feature-content flex min-h-0 flex-1 flex-col items-center justify-center">
-            <DoePhoneScrollRevealContent revealed={revealed} segment="carousel" className="w-full">
-              <div className="home-feature-section__refill-agent relative z-[20] w-full shrink-0">
-                <div className="home-refill-agent-scale">
-                  <DoePhoneHomeRefillAgentVisual />
-                </div>
+          <div className="home-feature-shader-band__call-logic-bleed-stage">
+            <div className="home-call-logic-diagram-scale home-call-logic-diagram-scale--bleed">
+              <div
+                className={`transition-opacity duration-[1.75s] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                  revealed ? "opacity-100" : "opacity-0"
+                }`}
+              >
+                <DoePhoneHomeCallLogicDiagram />
               </div>
-            </DoePhoneScrollRevealContent>
+            </div>
           </div>
         </div>
       ) : null}
