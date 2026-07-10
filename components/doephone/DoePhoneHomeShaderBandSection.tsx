@@ -19,6 +19,25 @@ import { doephoneHomeScrollRevealStyleVars } from "@/lib/doephone/section-reveal
 import { useDoePhoneSectionReveal } from "@/lib/doephone/use-doe-phone-section-reveal";
 import { doeHomeDuskShaderBandSurface, doeHomeShaderBandSurface } from "@/lib/proto/proto-shader-backdrop-colors";
 import type { CSSProperties } from "react";
+import { useEffect, useState } from "react";
+
+const CALL_LOGIC_BLEED_SCALE = 2.5;
+const CALL_LOGIC_BLEED_BASE_WIDTH = "28rem";
+
+/** Wide layouts — half the scaled diagram extends past the viewport right edge. */
+function callLogicBleedStyle(): CSSProperties {
+  return {
+    position: "absolute",
+    right: `calc(${CALL_LOGIC_BLEED_BASE_WIDTH} * ${CALL_LOGIC_BLEED_SCALE} * -0.5)`,
+    top: "50%",
+    width: CALL_LOGIC_BLEED_BASE_WIDTH,
+    maxWidth: CALL_LOGIC_BLEED_BASE_WIDTH,
+    margin: 0,
+    transform: `translateY(-50%) scale(${CALL_LOGIC_BLEED_SCALE})`,
+    transformOrigin: "right center",
+    zIndex: 5,
+  };
+}
 
 type ShaderBandFeature = "workflow" | "active-agents" | "call-summaries" | "lab-alerts" | "guardrails";
 
@@ -75,6 +94,15 @@ export function DoePhoneHomeShaderBandSection({
     rootMargin: "0px 0px 8% 0px",
   });
   const revealStyle = doephoneHomeScrollRevealStyleVars() as CSSProperties;
+  const [callLogicBleed, setCallLogicBleed] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const sync = () => setCallLogicBleed(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
 
   return (
     <section
@@ -107,11 +135,18 @@ export function DoePhoneHomeShaderBandSection({
               <span className="block">{titleLine2}</span>
             </h2>
           </DoePhoneScrollRevealContent>
-          <div className="home-feature-shader-band__call-logic-shell flex min-h-0 flex-1 flex-col items-center justify-center">
-            <div className="home-call-logic-diagram-scale">
-              <DoePhoneScrollRevealContent revealed={revealed} segment="carousel">
+          <div className="home-feature-shader-band__call-logic-shell relative flex min-h-0 flex-1 flex-col items-center justify-center">
+            <div
+              className="home-call-logic-diagram-scale"
+              style={callLogicBleed ? callLogicBleedStyle() : undefined}
+            >
+              <div
+                className={`transition-opacity duration-[1.75s] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                  revealed ? "opacity-100" : "opacity-0"
+                }`}
+              >
                 <DoePhoneHomeCallLogicDiagram />
-              </DoePhoneScrollRevealContent>
+              </div>
             </div>
           </div>
         </div>

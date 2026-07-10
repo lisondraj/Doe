@@ -4999,10 +4999,12 @@ html[data-home-page] .home-feature-shader-band--workflow .home-feature-shader-ba
   min-height: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
   padding-top: 0;
   padding-bottom: clamp(0.85rem, 2.4vmin, 1.2rem);
+  position: relative;
+  overflow: visible;
 }
 
 html[data-home-page] .home-feature-shader-band--workflow .home-feature-shader-band__workflow-content {
@@ -5054,82 +5056,25 @@ html[data-home-page] .home-feature-shader-band--workflow .home-feature-section__
   padding-bottom: calc((var(--home-call-logic-scale) - 1) * clamp(32rem, 92vmin, 38rem));
 }
 
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow,
-body.desktop-route .home-feature-shader-band--workflow {
-  overflow: visible !important;
+html[data-home-page] .home-feature-shader-band--workflow {
+  overflow-x: clip !important;
+  overflow-y: visible !important;
 }
 
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-shader-band__call-logic-shell,
-body.desktop-route .home-feature-shader-band--workflow .home-feature-shader-band__call-logic-shell {
-  position: relative;
-  align-items: stretch;
-  overflow: visible;
-}
-
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-call-logic-diagram-scale,
-body.desktop-route .home-feature-shader-band--workflow .home-call-logic-diagram-scale {
-  --home-call-logic-scale: 2.35;
-  --home-call-logic-base-width: 28rem;
-  position: absolute;
-  right: calc(var(--home-call-logic-base-width) * var(--home-call-logic-scale) * -0.5);
-  top: 50%;
-  display: flex;
-  flex: 0 0 auto;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: center;
-  width: var(--home-call-logic-base-width);
-  max-width: var(--home-call-logic-base-width);
-  margin: 0;
-  transform: translateY(-50%) scale(var(--home-call-logic-scale));
-  transform-origin: right center;
-  z-index: 5;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-feature-shader-band--workflow .home-call-logic-diagram-scale {
-  --home-call-logic-scale: 1.2;
-  display: flex;
-  flex: 0 0 auto;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: center;
-  width: calc(100% / var(--home-call-logic-scale));
-  max-width: calc(100% / var(--home-call-logic-scale));
-  margin-inline: auto;
-  margin-bottom: 0;
-  transform: scale(var(--home-call-logic-scale));
-  transform-origin: top center;
-}
-
-@media (min-width: 768px) {
-  html[data-home-page] .home-feature-shader-band--workflow {
-    overflow-x: clip !important;
-    overflow-y: visible !important;
-  }
-
-  html[data-home-page] .home-feature-shader-band--workflow .home-feature-shader-band__call-logic-shell {
-    position: relative;
-    align-items: stretch;
-    overflow: visible;
-  }
-
-  html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram-scale {
-    --home-call-logic-scale: 2.35;
-    --home-call-logic-base-width: 28rem;
-    position: absolute;
-    right: calc(var(--home-call-logic-base-width) * var(--home-call-logic-scale) * -0.5);
-    top: 50%;
+@media (max-width: 767px) {
+  html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-feature-shader-band--workflow .home-call-logic-diagram-scale {
+    --home-call-logic-scale: 1.2;
     display: flex;
     flex: 0 0 auto;
     flex-direction: column;
     align-items: stretch;
     justify-content: center;
-    width: var(--home-call-logic-base-width);
-    max-width: var(--home-call-logic-base-width);
-    margin: 0;
-    transform: translateY(-50%) scale(var(--home-call-logic-scale));
-    transform-origin: right center;
-    z-index: 5;
+    width: calc(100% / var(--home-call-logic-scale));
+    max-width: calc(100% / var(--home-call-logic-scale));
+    margin-inline: auto;
+    margin-bottom: 0;
+    transform: scale(var(--home-call-logic-scale));
+    transform-origin: top center;
   }
 }
 
