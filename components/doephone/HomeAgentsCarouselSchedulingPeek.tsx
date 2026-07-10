@@ -4,8 +4,8 @@ import { dmSans } from "@/lib/home/fonts";
 
 const WEEK_DAYS = [
   { label: "M", date: 7 },
-  { label: "T", date: 8, appt: "Nguyen" },
-  { label: "W", date: 9, selected: true, appt: "Brooks", apptTime: "3:15p", booking: true },
+  { label: "T", date: 8, busy: true },
+  { label: "W", date: 9, selected: true, appt: "Brooks", apptTime: "3:15p" },
   { label: "T", date: 10 },
   { label: "F", date: 11, appt: "Open" },
   { label: "S", date: 12 },
@@ -77,41 +77,35 @@ export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: 
         <p className="home-agents-carousel__scheduling-peek-title">Schedule</p>
 
         <div className="home-agents-carousel__scheduling-peek-week" aria-hidden>
-          <span className="home-agents-carousel__scheduling-peek-week-range">Mar 7 – 12</span>
+          <p className="home-agents-carousel__scheduling-peek-week-range">Mar 7 – 12</p>
 
-          <div className="home-agents-carousel__scheduling-peek-calendar">
-            <div className="home-agents-carousel__scheduling-peek-week-head">
-              {WEEK_DAYS.map((day) => (
-                <div
-                  key={`${day.label}-${day.date}`}
-                  className={`home-agents-carousel__scheduling-peek-week-cell${
-                    "selected" in day && day.selected ? " home-agents-carousel__scheduling-peek-week-cell--selected" : ""
-                  }`}
-                >
-                  <span className="home-agents-carousel__scheduling-peek-week-label">{day.label}</span>
-                  <span className="home-agents-carousel__scheduling-peek-week-date">{day.date}</span>
-                </div>
-              ))}
-            </div>
-
-            <div className="home-agents-carousel__scheduling-peek-week-body">
-              {WEEK_DAYS.map((day) => (
-                <div key={`appt-${day.label}-${day.date}`} className="home-agents-carousel__scheduling-peek-week-slot">
-                  {"appt" in day && day.appt ? (
-                    <span
-                      className={`home-agents-carousel__scheduling-peek-appt${
-                        "booking" in day && day.booking ? " home-agents-carousel__scheduling-peek-appt--booking" : ""
-                      }`}
-                    >
-                      {day.appt}
-                      {"apptTime" in day && day.apptTime ? (
-                        <span className="home-agents-carousel__scheduling-peek-appt-time">{day.apptTime}</span>
-                      ) : null}
-                    </span>
-                  ) : null}
-                </div>
-              ))}
-            </div>
+          <div className="home-agents-carousel__scheduling-peek-days">
+            {WEEK_DAYS.map((day) => (
+              <div
+                key={`${day.label}-${day.date}`}
+                className={`home-agents-carousel__scheduling-peek-day${
+                  "selected" in day && day.selected ? " home-agents-carousel__scheduling-peek-day--selected" : ""
+                }`}
+              >
+                <span className="home-agents-carousel__scheduling-peek-day-label">{day.label}</span>
+                <span className="home-agents-carousel__scheduling-peek-day-date">{day.date}</span>
+                {"appt" in day && day.appt ? (
+                  <span
+                    className={`home-agents-carousel__scheduling-peek-day-appt${
+                      "selected" in day && day.selected
+                        ? " home-agents-carousel__scheduling-peek-day-appt--active"
+                        : " home-agents-carousel__scheduling-peek-day-appt--muted"
+                    }`}
+                  >
+                    {"apptTime" in day && day.apptTime ? `${day.appt} · ${day.apptTime}` : day.appt}
+                  </span>
+                ) : "busy" in day && day.busy ? (
+                  <span className="home-agents-carousel__scheduling-peek-day-dot" aria-hidden />
+                ) : (
+                  <span className="home-agents-carousel__scheduling-peek-day-spacer" aria-hidden />
+                )}
+              </div>
+            ))}
           </div>
         </div>
 
