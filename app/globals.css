@@ -9017,22 +9017,22 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
 }
 
 .doephone-section-reveal--in.doephone-section-reveal--agents-orbs {
-  animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 2.4s)
+  animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 2.15s)
     cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-agents-orbs-delay, 0ms) both;
 }
 
 .doephone-section-reveal--in.doephone-section-reveal--agents-label {
-  animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 2.4s)
-    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-agents-label-delay, 620ms) both;
+  animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 2.15s)
+    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-agents-label-delay, 540ms) both;
 }
 
 .doephone-section-reveal--in.doephone-section-reveal--agents-nav {
-  animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 2.4s)
-    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-agents-nav-delay, 1180ms) both;
+  animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 2.15s)
+    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-agents-nav-delay, 1040ms) both;
 }
 
 .doephone-section-reveal--in.doephone-section-reveal--hoverable {
-  transition: transform var(--doephone-scroll-reveal-hover-duration, 0.46s)
+  transition: transform var(--doephone-scroll-reveal-hover-duration, 0.4s)
     cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -9050,12 +9050,12 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
 }
 
 .doephone-reveal-lift--in {
-  animation: doephone-scroll-reveal-lift-in var(--doephone-scroll-reveal-lift-duration, 2.4s)
+  animation: doephone-scroll-reveal-lift-in var(--doephone-scroll-reveal-lift-duration, 2.15s)
     cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-reveal-lift-delay, 0ms) both;
 }
 
 .doephone-reveal-lift--in.doephone-reveal-lift--hoverable {
-  transition: transform var(--doephone-scroll-reveal-hover-duration, 0.46s)
+  transition: transform var(--doephone-scroll-reveal-hover-duration, 0.4s)
     cubic-bezier(0.22, 1, 0.36, 1);
 }
 
