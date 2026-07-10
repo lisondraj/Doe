@@ -1,66 +1,96 @@
 "use client";
 
-import { inter, suisseIntl } from "@/lib/home/fonts";
+import { dmSans } from "@/lib/home/fonts";
 
-const WEEK_DAYS = [
+type SlotBlock =
+  | "fill"
+  | {
+      name: string;
+      time: string;
+      active?: boolean;
+      open?: boolean;
+    };
+
+type WeekDay = {
+  label: string;
+  date: number;
+  active?: boolean;
+  slots: readonly SlotBlock[];
+};
+
+const ACTIVE_DAY_INDEX = 2;
+
+const WEEK_DAYS: readonly WeekDay[] = [
   {
     label: "Mon",
     date: 7,
-    appts: [
-      { name: "Chen", type: "labs", meta: "8:30", tone: "neutral" as const },
-      { name: "Okafor", type: "follow-up", meta: "10:00", tone: "warm" as const },
-      { name: "Walsh", type: "consult", meta: "1:30p", tone: "accent" as const },
-    ],
+    slots: ["fill", "fill", "fill"],
   },
   {
     label: "Tue",
     date: 8,
-    appts: [
-      { name: "Nguyen", type: "follow-up", meta: "9:00", tone: "accent" as const },
-      { name: "Peters", type: "intake", meta: "11:30", tone: "warm" as const },
-      { name: "Cho", type: "telehealth", meta: "3:00", tone: "neutral" as const },
-      { name: "Fischer", type: "consult", meta: "3:45p", tone: "warm" as const },
-      { name: "Grant", type: "labs", meta: "4:30p", tone: "accent" as const },
+    slots: [
+      { name: "Nguyen", time: "9:00" },
+      "fill",
+      "fill",
     ],
   },
   {
     label: "Wed",
     date: 9,
-    appts: [
-      { name: "Kowalski", type: "consult", meta: "11:00", tone: "warm" as const },
-      { name: "Brooks", type: "intake", meta: "3:15p", tone: "neutral" as const, highlight: true as const },
-      { name: "Rivera", type: "annual", meta: "4:45p", tone: "neutral" as const },
-      { name: "Sato", type: "follow-up", meta: "5:15p", tone: "warm" as const },
-      { name: "Webb", type: "intake", meta: "5:45p", tone: "accent" as const },
+    active: true,
+    slots: [
+      { name: "Kowalski", time: "11:00" },
+      { name: "Brooks", time: "3:15p", active: true },
+      "fill",
     ],
   },
   {
     label: "Thu",
     date: 10,
-    appts: [
-      { name: "Haley", type: "follow-up", meta: "9:30", tone: "warm" as const },
-      { name: "Martinez", type: "intake", meta: "2:30p", tone: "accent" as const },
-      { name: "Shah", type: "telehealth", meta: "4:00", tone: "neutral" as const },
-      { name: "Lam", type: "labs", meta: "4:45p", tone: "accent" as const },
+    slots: [
+      { name: "Haley", time: "9:30" },
+      "fill",
+      { name: "Open", time: "2:15p", open: true },
     ],
   },
   {
     label: "Fri",
     date: 11,
-    appts: [
-      { name: "Patel", type: "annual", meta: "10:15", tone: "warm" as const },
-      { name: "Simmons", type: "consult", meta: "12:00", tone: "accent" as const },
-      { name: "Yu", type: "follow-up", meta: "2:00p", tone: "neutral" as const },
+    slots: [
+      "fill",
+      { name: "Patel", time: "10:15" },
+      { name: "Open", time: "10:30", open: true },
     ],
   },
 ] as const;
 
-const BROOKS_DAY_INDEX = 2;
-const BROOKS_APPT_INDEX = 1;
+const OPEN_ROWS = [
+  { label: "Thu 2:15p", meta: "Open slot" },
+  { label: "Fri 10:30", meta: "Open slot" },
+] as const;
+
+const WAVE_HEIGHTS = [0.38, 0.68, 0.52, 0.82, 0.46, 0.62] as const;
+
+function getPeekFadeOpacity(spread: number) {
+  if (spread === 0) {
+    return 1;
+  }
+
+  return Math.max(0.58, 1 - spread * 0.1);
+}
+
+function getPeekFadeBlur(spread: number) {
+  if (spread === 0) {
+    return 0;
+  }
+
+  return Math.min(1.4, spread * 0.42);
+}
 
 function PhoneIcon() {
   return (
-    <svg viewBox="0 0 16 16" fill="none" aria-hidden className="home-agents-carousel__scheduling-peek-phone-icon h-[0.9em] w-[0.9em] shrink-0">
+    <svg viewBox="0 0 16 16" fill="none" aria-hidden className="home-agents-carousel__scheduling-peek-phone-icon">
       <path
         d="M4 6.5a4 4 0 018 0v2.2l1.4 1.1H2.6L4 8.7V6.5z"
         stroke="currentColor"
@@ -72,133 +102,124 @@ function PhoneIcon() {
   );
 }
 
-function formatApptType(type: string) {
-  return type
-    .split("-")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join("-");
+function VoiceWaveform() {
+  return (
+    <div className="home-agents-carousel__scheduling-peek-waveform" aria-hidden>
+      {WAVE_HEIGHTS.map((height, index) => (
+        <span
+          key={index}
+          className="home-agents-carousel__scheduling-peek-waveform-bar"
+          style={{ height: `${Math.round(height * 100)}%` }}
+        />
+      ))}
+    </div>
+  );
 }
 
-function getApptSpread(dayIndex: number, apptIndex: number, isHighlighted: boolean) {
-  if (isHighlighted) {
-    return 0;
+function SlotCell({ slot, iphone }: { slot: SlotBlock; iphone: boolean }) {
+  if (slot === "fill") {
+    return <span className="home-agents-carousel__scheduling-peek-slot home-agents-carousel__scheduling-peek-slot--fill" />;
   }
 
-  const columnDistance = Math.abs(dayIndex - BROOKS_DAY_INDEX);
-  const verticalDistance =
-    dayIndex === BROOKS_DAY_INDEX ? Math.abs(apptIndex - BROOKS_APPT_INDEX) : 0;
+  const showText = !iphone || slot.active || slot.open;
 
-  return columnDistance + verticalDistance * 0.4;
+  return (
+    <span
+      className={`home-agents-carousel__scheduling-peek-slot${
+        slot.active
+          ? " home-agents-carousel__scheduling-peek-slot--active"
+          : slot.open
+            ? " home-agents-carousel__scheduling-peek-slot--open"
+            : " home-agents-carousel__scheduling-peek-slot--booked"
+      }`}
+    >
+      {showText ? (
+        <>
+          <span className="home-agents-carousel__scheduling-peek-slot-name">{slot.name}</span>
+          <span className="home-agents-carousel__scheduling-peek-slot-time">{slot.time}</span>
+        </>
+      ) : null}
+    </span>
+  );
 }
 
-function getApptOpacity(spread: number) {
-  const eased = Math.pow(spread, 0.72);
-  return Math.max(0.54, 1 - eased * 0.1);
-}
-
-function getApptBlur(spread: number) {
-  const eased = Math.pow(spread, 0.78);
-  return Math.min(0.95, eased * 0.42);
-}
-
-/** Agents carousel — Scheduling Agent week calendar peek (Brooks highlighted on solid brown panel). */
+/** Agents carousel — Scheduling Agent calendar + phone booking peek (inbox-style card). */
 export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: boolean }) {
   return (
     <div className="home-agents-carousel__scheduling-peek" aria-hidden>
-      <div className={`home-agents-carousel__scheduling-peek-card ${suisseIntl.className}`}>
-        <div className="home-agents-carousel__scheduling-peek-header">
-          <div className="home-agents-carousel__scheduling-peek-agent">
-            <div className="home-agents-carousel__scheduling-peek-agent-row">
-              <span className="home-agents-carousel__scheduling-peek-phone-badge" aria-hidden>
-                <PhoneIcon />
-              </span>
-              <span className="home-agents-carousel__scheduling-peek-heading">Scheduling Agent</span>
-              <span className={`home-agents-carousel__scheduling-peek-live ${inter.className}`}>On call</span>
-            </div>
-            <span className={`home-agents-carousel__scheduling-peek-subheading ${inter.className}`}>
-              Voice booking · Dr. Chen&apos;s week
-            </span>
+      <div className={`home-agents-carousel__scheduling-peek-card ${dmSans.className}`}>
+        <div
+          className="home-agents-carousel__scheduling-peek-logo bg-gradient-to-br from-[#E7A944] via-[#D2774C] to-[#1E343A]"
+          aria-hidden
+        />
+
+        <p className="home-agents-carousel__scheduling-peek-title">Schedule</p>
+
+        <div className="home-agents-carousel__scheduling-peek-call">
+          <span className="home-agents-carousel__scheduling-peek-phone-badge" aria-hidden>
+            <PhoneIcon />
+          </span>
+          <VoiceWaveform />
+          <div className="home-agents-carousel__scheduling-peek-call-copy">
+            <p className="home-agents-carousel__scheduling-peek-call-line">Booking by phone</p>
+            <p className="home-agents-carousel__scheduling-peek-call-subline">Brooks · Wed 3:15p annual</p>
           </div>
-          <span className="home-agents-carousel__scheduling-peek-open-slots">4 open</span>
         </div>
 
         <div className="home-agents-carousel__scheduling-peek-calendar">
           {WEEK_DAYS.map((day, dayIndex) => {
-            const isActive = dayIndex === BROOKS_DAY_INDEX;
-            const daySpread = Math.abs(dayIndex - BROOKS_DAY_INDEX);
-            const dayBlur = getApptBlur(daySpread * 0.42);
+            const daySpread = Math.abs(dayIndex - ACTIVE_DAY_INDEX);
+            const blur = getPeekFadeBlur(daySpread * 0.38);
 
             return (
               <div
                 key={`${day.label}-${day.date}`}
-                className={`home-agents-carousel__scheduling-peek-day${
-                  isActive ? " home-agents-carousel__scheduling-peek-day--active" : ""
+                className={`home-agents-carousel__scheduling-peek-day-col${
+                  day.active ? " home-agents-carousel__scheduling-peek-day-col--active" : ""
                 }`}
+                style={{
+                  opacity: getPeekFadeOpacity(daySpread * 0.28),
+                  filter: !iphone && blur > 0 ? `blur(${blur}px)` : undefined,
+                }}
               >
-                <div
-                  className="home-agents-carousel__scheduling-peek-day-head"
-                  aria-hidden
-                  style={{
-                    opacity: getApptOpacity(daySpread * 0.34),
-                    filter: !iphone && dayBlur > 0 ? `blur(${dayBlur}px)` : undefined,
-                  }}
-                >
+                <div className="home-agents-carousel__scheduling-peek-day-head">
                   <span className="home-agents-carousel__scheduling-peek-day-label">{day.label}</span>
                   <span className="home-agents-carousel__scheduling-peek-day-date">{day.date}</span>
                 </div>
-
-                <div className="home-agents-carousel__scheduling-peek-day-appts">
-                  {day.appts.map((appt, apptIndex) => {
-                    const isHighlighted = "highlight" in appt && appt.highlight;
-                    const spread = getApptSpread(dayIndex, apptIndex, isHighlighted);
-                    const blur = getApptBlur(spread);
-                    const showApptText = !iphone || isHighlighted;
-
-                    return (
-                      <div
-                        key={`${day.date}-${appt.name}-${appt.type}`}
-                        className={`home-agents-carousel__scheduling-peek-appt${
-                          isHighlighted ? " home-agents-carousel__scheduling-peek-appt--highlighted" : ""
-                        }${
-                          !isHighlighted ? " home-agents-carousel__scheduling-peek-appt--fill" : ""
-                        }${
-                          iphone && !isHighlighted
-                            ? " home-agents-carousel__scheduling-peek-appt--iphone-fill"
-                            : ""
-                        }`}
-                        style={{
-                          opacity: getApptOpacity(spread),
-                          filter: !iphone && blur > 0 ? `blur(${blur}px)` : undefined,
-                        }}
-                      >
-                        {showApptText ? (
-                          <>
-                            <span className="home-agents-carousel__scheduling-peek-appt-title">{appt.name}</span>
-                            <span className={`home-agents-carousel__scheduling-peek-appt-type ${inter.className}`}>
-                              {formatApptType(appt.type)}
-                            </span>
-                            <span className={`home-agents-carousel__scheduling-peek-appt-meta ${inter.className}`}>
-                              {appt.meta}
-                            </span>
-                          </>
-                        ) : null}
-                      </div>
-                    );
-                  })}
+                <div className="home-agents-carousel__scheduling-peek-slots">
+                  {day.slots.map((slot, slotIndex) => (
+                    <SlotCell key={`${day.date}-${slotIndex}`} slot={slot} iphone={iphone} />
+                  ))}
                 </div>
               </div>
             );
           })}
         </div>
 
-        <div className="home-agents-carousel__scheduling-peek-focus">
-          <div className="home-agents-carousel__scheduling-peek-focus-copy">
-            <span className="home-agents-carousel__scheduling-peek-focus-label">Confirming by phone</span>
-            <span className={`home-agents-carousel__scheduling-peek-focus-meta ${inter.className}`}>
-              Brooks · Wed 3:15p
-            </span>
-          </div>
-          <span className={`home-agents-carousel__scheduling-peek-focus-status ${inter.className}`}>Live</span>
+        <ul className="home-agents-carousel__scheduling-peek-open-list">
+          {OPEN_ROWS.map((row, rowIndex) => {
+            const spread = rowIndex + 1;
+            const blur = getPeekFadeBlur(spread);
+
+            return (
+              <li
+                key={row.label}
+                className="home-agents-carousel__scheduling-peek-open-row"
+                style={{
+                  opacity: getPeekFadeOpacity(spread),
+                  filter: blur > 0 ? `blur(${blur}px)` : undefined,
+                }}
+              >
+                <span className="home-agents-carousel__scheduling-peek-open-label">{row.label}</span>
+                <span className="home-agents-carousel__scheduling-peek-open-meta">{row.meta}</span>
+              </li>
+            );
+          })}
+        </ul>
+
+        <div className="home-agents-carousel__scheduling-peek-footer">
+          <span className="home-agents-carousel__scheduling-peek-footer-stat">4 booked today</span>
+          <span className="home-agents-carousel__scheduling-peek-footer-pill">On call</span>
         </div>
       </div>
     </div>

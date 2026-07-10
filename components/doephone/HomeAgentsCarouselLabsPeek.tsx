@@ -1,6 +1,6 @@
 "use client";
 
-import { suisseIntl } from "@/lib/home/fonts";
+import { dmSans } from "@/lib/home/fonts";
 
 const INK = "#3D4549";
 
@@ -77,7 +77,7 @@ function RoutingStatusIcon({ status }: { status: (typeof ROUTING_ROWS)[number]["
 export function HomeAgentsCarouselLabsPeek() {
   return (
     <div className="home-agents-carousel__labs-peek" aria-hidden>
-      <div className={`home-agents-carousel__labs-peek-stack ${suisseIntl.className}`}>
+      <div className={`home-agents-carousel__labs-peek-stack ${dmSans.className}`}>
         <div className="home-agents-carousel__labs-peek-card home-agents-carousel__labs-peek-card--results">
           <div className="home-agents-carousel__labs-peek-header home-agents-carousel__labs-peek-header--results">
             <div className="home-agents-carousel__labs-peek-heading">

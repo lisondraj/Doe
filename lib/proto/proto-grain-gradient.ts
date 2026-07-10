@@ -86,6 +86,7 @@ export type ProtoGrainGradientVariant =
   | "front-desk-band"
   | "inbox"
   | "ambient"
+  | "ambient-band"
   | "billing"
   | "sandbox-build"
   | "prototype"
@@ -244,6 +245,18 @@ export const PROTO_GRAIN_GRADIENT_PRESETS: Record<ProtoGrainGradientVariant, Pro
     offsetY: 0.18,
     scale: 1.14,
   },
+  /** Home iPhone — full-viewport band after Recall (Outreach lands…). */
+  "ambient-band": {
+    shape: "wave",
+    softness: 0.72,
+    intensity: 0.17,
+    fit: "cover",
+    rotation: 348,
+    offsetX: -0.06,
+    offsetY: 0.36,
+    scale: 1.12,
+    speed: 0,
+  },
   billing: {
     shape: "corners",
     softness: 0.72,
@@ -372,8 +385,8 @@ export function doeHomeShaderBandVariant(
   slideId: string,
 ): ProtoGrainGradientVariant | undefined {
   if (slideId === "front-desk") return "front-desk-band";
-  // Care → finance: ripple card, then horizontal flow tightens.
-  if (slideId === "ambient") return "integrate";
+  // Care → finance: flipped integrate flow for outreach, then structured card.
+  if (slideId === "ambient") return "ambient-band";
   // Finance → stack: structured card, then teal footer pool into Integrate.
   if (slideId === "billing") return "home-footer";
   return protoGrainGradientVariant(slideId);

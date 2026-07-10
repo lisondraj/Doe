@@ -1,6 +1,6 @@
 "use client";
 
-import { suisseIntl } from "@/lib/home/fonts";
+import { dmSans } from "@/lib/home/fonts";
 
 const INK = "#3D4549";
 const MUTED = "#9AA3A8";
@@ -101,7 +101,7 @@ function RowIcon({ kind }: { kind: (typeof INBOX_ROWS)[number]["icon"] }) {
 export function HomeAgentsCarouselInboxPeek() {
   return (
     <div className="home-agents-carousel__inbox-peek" aria-hidden>
-      <div className={`home-agents-carousel__inbox-peek-card ${suisseIntl.className}`}>
+      <div className={`home-agents-carousel__inbox-peek-card ${dmSans.className}`}>
         <div
           className="home-agents-carousel__inbox-peek-logo bg-gradient-to-br from-[#E7A944] via-[#D2774C] to-[#1E343A]"
           aria-hidden

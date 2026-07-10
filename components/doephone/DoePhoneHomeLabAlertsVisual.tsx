@@ -1,53 +1,79 @@
 "use client";
 
-import { inter, suisseIntl } from "@/lib/home/fonts";
+import { dmSans } from "@/lib/home/fonts";
 
-const OUTREACH = {
+const CALL = {
   patient: "James Chen",
-  meta: "Annual wellness · overdue",
-  booked: "Thu 2:15 PM booked",
+  firstName: "James",
 } as const;
 
 const MESSAGES = [
   {
-    id: "open",
-    role: "out" as const,
-    text: "You're due for your annual — Thu 2:15 or Fri 10:30?",
+    id: "offer",
+    role: "agent" as const,
+    text: "You're due for your annual. Thu 2:15 or Fri 10:30?",
   },
   {
     id: "reply",
-    role: "in" as const,
+    role: "patient" as const,
     text: "Thursday works.",
   },
   {
     id: "confirm",
-    role: "out" as const,
+    role: "agent" as const,
     text: "Booked Thu 2:15 with Dr. Walsh.",
   },
 ] as const;
 
-/** Patient outreach — voice recall thread on the outreach shader band. */
+function PlainNote({ label, detail }: { label: string; detail: string }) {
+  return (
+    <div className="home-outreach-voice-visual__note">
+      <p className="home-outreach-voice-visual__note-label">{label}</p>
+      <p className="home-outreach-voice-visual__note-detail">{detail}</p>
+    </div>
+  );
+}
+
+function VoiceWaveform() {
+  return (
+    <div className="home-outreach-voice-visual__waveform" aria-hidden>
+      {Array.from({ length: 9 }, (_, index) => (
+        <span
+          key={index}
+          className="home-outreach-voice-visual__waveform-bar"
+          style={{ height: `${28 + ((index * 17) % 52)}%` }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/** Patient recall outreach — active-agents dusk panels on shader, voice transcript thread. */
 export function DoePhoneHomeLabAlertsVisual() {
   return (
-    <div className={`home-patient-outreach-visual ${suisseIntl.className}`} aria-hidden>
-      <div className="home-patient-outreach-visual__surface">
-        <div className="home-patient-outreach-visual__lead">
-          <p className="home-patient-outreach-visual__patient">{OUTREACH.patient}</p>
-          <p className={`home-patient-outreach-visual__meta ${inter.className}`}>{OUTREACH.meta}</p>
-        </div>
+    <div className={`home-outreach-voice-visual ${dmSans.className}`} aria-hidden>
+      <div className="home-outreach-voice-visual__thread">
+        <PlainNote label="Pulling from EMR" detail={`${CALL.firstName} is overdue for appointment`} />
 
-        <div className={`home-patient-outreach-visual__thread ${inter.className}`}>
-          {MESSAGES.map((message) => (
-            <div
-              key={message.id}
-              className={`home-patient-outreach-visual__bubble home-patient-outreach-visual__bubble--${message.role}`}
-            >
-              <p className="home-patient-outreach-visual__bubble-text">{message.text}</p>
+        {MESSAGES.map((message) =>
+          message.role === "agent" ? (
+            <div key={message.id} className="home-outreach-voice-visual__panel home-outreach-voice-visual__panel--agent">
+              <div className="home-outreach-voice-visual__agent-meta">
+                <VoiceWaveform />
+                <span className="home-outreach-voice-visual__agent-label">Doe Agent</span>
+              </div>
+              <p className="home-outreach-voice-visual__panel-text">{message.text}</p>
             </div>
-          ))}
-        </div>
-
-        <p className={`home-patient-outreach-visual__booked ${inter.className}`}>{OUTREACH.booked}</p>
+          ) : (
+            <div key={message.id} className="home-outreach-voice-visual__panel home-outreach-voice-visual__panel--patient">
+              <div className="home-outreach-voice-visual__agent-meta">
+                <VoiceWaveform />
+                <span className="home-outreach-voice-visual__agent-label">{CALL.patient}</span>
+              </div>
+              <p className="home-outreach-voice-visual__panel-text">{message.text}</p>
+            </div>
+          ),
+        )}
       </div>
     </div>
   );

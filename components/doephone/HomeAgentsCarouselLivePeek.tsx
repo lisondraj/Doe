@@ -1,6 +1,6 @@
 "use client";
 
-import { suisseIntl } from "@/lib/home/fonts";
+import { dmSans } from "@/lib/home/fonts";
 
 const APPOINTMENT = {
   patient: "Martinez, L.",
@@ -77,7 +77,7 @@ function EvidenceStatusIcon({ status }: { status: (typeof EVIDENCE_ITEMS)[number
 export function HomeAgentsCarouselLivePeek({ iphone = false }: { iphone?: boolean }) {
   return (
     <div className="home-agents-carousel__live-peek" aria-hidden>
-      <div className={`home-agents-carousel__live-peek-card ${suisseIntl.className}`}>
+      <div className={`home-agents-carousel__live-peek-card ${dmSans.className}`}>
         <div className="home-agents-carousel__live-peek-status">
           <span className="home-agents-carousel__live-peek-live-dot" aria-hidden />
           <span className="home-agents-carousel__live-peek-status-label">On call</span>

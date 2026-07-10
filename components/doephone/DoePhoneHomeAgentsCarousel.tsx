@@ -20,7 +20,7 @@ import {
   type TransitionEvent,
 } from "react";
 
-import { suisseIntl, suisseIntlLight } from "@/lib/home/fonts";
+import { dmSans } from "@/lib/home/fonts";
 import {
   DOEPHONE_DESKTOP_MEDIA_QUERY,
   readBootstrappedDoePhoneVariant,
@@ -338,7 +338,7 @@ export function DoePhoneHomeAgentsCarousel() {
   }, [trackInstant, position]);
 
   return (
-    <div className={`home-agents-carousel ${suisseIntl.className}`} aria-hidden>
+    <div className={`home-agents-carousel ${dmSans.className}`} aria-hidden>
       <div className="home-agents-carousel__stage">
         <div
           className="home-agents-carousel__viewport"
@@ -378,7 +378,7 @@ export function DoePhoneHomeAgentsCarousel() {
             label="Previous agent"
           />
           <div
-            className={`hero-speaking-orb__tag hero-speaking-orb__tag--carousel hero-speaking-orb__tag--visible ${suisseIntl.className}`}
+            className={`hero-speaking-orb__tag hero-speaking-orb__tag--carousel hero-speaking-orb__tag--visible ${dmSans.className}`}
             aria-hidden
           >
             <span className="hero-speaking-orb__tag-text">{active.label}</span>
@@ -390,7 +390,7 @@ export function DoePhoneHomeAgentsCarousel() {
           />
         </div>
         <p
-          className={`home-agents-carousel__description ${suisseIntlLight.className}`}
+          className={`home-agents-carousel__description ${dmSans.className}`}
           aria-hidden
         >
           {AGENTS_CAROUSEL_DESCRIPTIONS[active.label] ?? ""}

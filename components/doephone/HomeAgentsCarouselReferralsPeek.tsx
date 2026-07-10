@@ -1,6 +1,6 @@
 "use client";
 
-import { suisseIntl } from "@/lib/home/fonts";
+import { dmSans } from "@/lib/home/fonts";
 
 const ORANGE = "#D2774C";
 
@@ -68,7 +68,7 @@ function StepIndicator({ status }: { status: (typeof REFERRAL_STEPS)[number]["st
 export function HomeAgentsCarouselReferralsPeek() {
   return (
     <div className="home-agents-carousel__referrals-peek" aria-hidden>
-      <div className={`home-agents-carousel__referrals-peek-card ${suisseIntl.className}`}>
+      <div className={`home-agents-carousel__referrals-peek-card ${dmSans.className}`}>
         <div className="home-agents-carousel__referrals-peek-lead">
           <VoiceWaveform />
           <div className="home-agents-carousel__referrals-peek-voice-copy">

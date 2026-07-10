@@ -1,6 +1,6 @@
 "use client";
 
-import { dmSans, inter, suisseIntl } from "@/lib/home/fonts";
+import { dmSans } from "@/lib/home/fonts";
 
 const QUEUE_ROWS = [
   {
@@ -34,9 +34,9 @@ export function DoePhoneHomeRecallQueueVisual({ layout = "phone" }: { layout?: V
       className={`home-recall-queue-scale${isDesktop ? " home-recall-queue-scale--desktop" : ""}`}
       aria-hidden
     >
-      <div className={`home-recall-queue-visual mx-auto flex h-full w-full flex-col justify-center ${suisseIntl.className}`}>
+      <div className={`home-recall-queue-visual mx-auto flex h-full w-full flex-col justify-center ${dmSans.className}`}>
         <header className="home-recall-queue-visual__header">
-          <p className={`home-recall-queue-visual__summary ${dmSans.className}`}>8 no-shows today</p>
+          <p className="home-recall-queue-visual__summary">8 no-shows today</p>
         </header>
 
         <div className="home-recall-queue-visual__card">
@@ -50,11 +50,9 @@ export function DoePhoneHomeRecallQueueVisual({ layout = "phone" }: { layout?: V
               >
                 <div className="home-recall-queue-visual__row-copy">
                   <p className="home-recall-queue-visual__name">{row.name}</p>
-                  <p className={`home-recall-queue-visual__detail ${inter.className}`}>{row.detail}</p>
+                  <p className="home-recall-queue-visual__detail">{row.detail}</p>
                 </div>
-                <span
-                  className={`home-recall-queue-visual__status home-recall-queue-visual__status--${row.tone} ${inter.className}`}
-                >
+                <span className={`home-recall-queue-visual__status home-recall-queue-visual__status--${row.tone}`}>
                   {row.status}
                 </span>
               </li>

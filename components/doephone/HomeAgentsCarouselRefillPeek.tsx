@@ -1,6 +1,6 @@
 "use client";
 
-import { dmSans, inter, suisseIntl } from "@/lib/home/fonts";
+import { dmSans } from "@/lib/home/fonts";
 
 const RX = {
   patient: "Sean Brown",
@@ -37,12 +37,12 @@ function StepMark({ status }: { status: (typeof STEPS)[number]["status"] }) {
 export function HomeAgentsCarouselRefillPeek() {
   return (
     <div className="home-agents-carousel__refill-peek" aria-hidden>
-      <div className={`home-agents-carousel__refill-peek-surface ${suisseIntl.className}`}>
+      <div className={`home-agents-carousel__refill-peek-surface ${dmSans.className}`}>
         <div className="home-agents-carousel__refill-peek-hero">
           <div className="home-agents-carousel__refill-peek-hero-copy">
             <span className="home-agents-carousel__refill-peek-drug">{RX.drug}</span>
           </div>
-          <span className={`home-agents-carousel__refill-peek-live ${inter.className}`}>1:42</span>
+          <span className="home-agents-carousel__refill-peek-live">1:42</span>
         </div>
 
         <div className="home-agents-carousel__refill-peek-call">
@@ -55,7 +55,7 @@ export function HomeAgentsCarouselRefillPeek() {
               />
             ))}
           </div>
-          <div className={`home-agents-carousel__refill-peek-quote-panel ${dmSans.className}`}>
+          <div className="home-agents-carousel__refill-peek-quote-panel">
             <p className="home-agents-carousel__refill-peek-quote">
               <span className="home-agents-carousel__refill-peek-quote-line">&ldquo;{RX.requestLine1}</span>
               <span className="home-agents-carousel__refill-peek-quote-line">{RX.requestLine2}&rdquo;</span>
@@ -71,12 +71,12 @@ export function HomeAgentsCarouselRefillPeek() {
               className={`home-agents-carousel__refill-peek-step home-agents-carousel__refill-peek-step--${step.status}`}
             >
               <StepMark status={step.status} />
-              <span className={`home-agents-carousel__refill-peek-step-label ${inter.className}`}>{step.label}</span>
+              <span className="home-agents-carousel__refill-peek-step-label">{step.label}</span>
             </div>
           ))}
         </div>
 
-        <div className={`home-agents-carousel__refill-peek-footer ${inter.className}`}>
+        <div className="home-agents-carousel__refill-peek-footer">
           <span className="home-agents-carousel__refill-peek-footer-pharmacy">{RX.pharmacy}</span>
           <span className="home-agents-carousel__refill-peek-footer-eta">{RX.eta}</span>
         </div>
