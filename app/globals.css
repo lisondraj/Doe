@@ -2740,7 +2740,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .home-active-agents-visual__stats-stage {
-  padding-top: clamp(1.65rem, 5vmin, 2.35rem);
+  padding-top: clamp(1.85rem, 5.25vmin, 2.55rem);
   max-width: min(100%, calc(100% - clamp(11.5rem, 34vmin, 15rem)));
 }
 
@@ -4673,9 +4673,9 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workf
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents {
   position: relative !important;
-  min-height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.92) !important;
-  height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.92) !important;
-  max-height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.92) !important;
+  min-height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.95) !important;
+  height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.95) !important;
+  max-height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.95) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root)[data-layout="desktop"]
@@ -5595,7 +5595,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band__feature-title {
   flex: 0 0 auto;
   margin: 0 0 clamp(0.45rem, 0.28rem + 0.75vmin, 0.72rem) !important;
-  padding-top: max(2.65rem, calc(env(safe-area-inset-top, 0px) + calc(var(--app-vh, 100lvh) * 0.092))) !important;
+  padding-top: max(2.85rem, calc(env(safe-area-inset-top, 0px) + calc(var(--app-vh, 100lvh) * 0.096))) !important;
   font-size: clamp(2.35rem, 1.15rem + 6.8vmin, 3.85rem) !important;
   line-height: 1.02 !important;
   letter-spacing: -0.035em !important;
