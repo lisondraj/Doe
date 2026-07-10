@@ -1,15 +1,32 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import { dmSans } from "@/lib/home/fonts";
 
 const INK = "#3D4549";
 
-const WEEK_LABELS = ["M", "T", "W", "T", "F", "S", "S"] as const;
-const WEEK_DATES = [7, 8, 9, 10, 11, 12, 13] as const;
-const SELECTED_DATE = 9;
+const WEEK_DAYS = [
+  { label: "M", date: 7 },
+  { label: "T", date: 8, event: true },
+  { label: "W", date: 9, selected: true, event: true, booking: true },
+  { label: "T", date: 10 },
+  { label: "F", date: 11, event: true },
+  { label: "S", date: 12 },
+  { label: "S", date: 13 },
+] as const;
+
+const CALL_STRIP = {
+  title: "Confirming booking",
+  patient: "Brooks",
+  visit: "Physical",
+  time: "3:15 PM",
+  duration: "1:24",
+} as const;
+
+const CALL_WAVE_HEIGHTS = [0.36, 0.62, 0.48, 0.74, 0.42] as const;
 
 const SLOT_ROWS = [
-  { time: "3:15 PM", patient: "Brooks", visit: "Physical", active: true, live: true },
+  { time: "3:15 PM", patient: "Brooks", visit: "Physical", active: true },
   { time: "9:00 AM", patient: "Nguyen", visit: "Follow-up" },
   { time: "11:30 AM", patient: "Open slot", visit: "Friday" },
   { time: "2:00 PM", patient: "Kowalski", visit: "Labs review" },
@@ -69,6 +86,31 @@ function ClockIcon() {
   );
 }
 
+function CallStrip() {
+  return (
+    <div className="home-agents-carousel__scheduling-peek-callstrip" aria-hidden>
+      <div className="home-agents-carousel__scheduling-peek-callstrip-wave">
+        {CALL_WAVE_HEIGHTS.map((height, index) => (
+          <span
+            key={index}
+            className="home-agents-carousel__scheduling-peek-callstrip-bar"
+            style={{ "--callstrip-height": height } as CSSProperties}
+          />
+        ))}
+      </div>
+
+      <div className="home-agents-carousel__scheduling-peek-callstrip-copy">
+        <span className="home-agents-carousel__scheduling-peek-callstrip-title">{CALL_STRIP.title}</span>
+        <span className="home-agents-carousel__scheduling-peek-callstrip-meta">
+          {CALL_STRIP.patient} · {CALL_STRIP.visit} · {CALL_STRIP.time}
+        </span>
+      </div>
+
+      <span className="home-agents-carousel__scheduling-peek-callstrip-timer">{CALL_STRIP.duration}</span>
+    </div>
+  );
+}
+
 /** Agents carousel — scheduling peek styled like inbox (left-edge bleed, scaled + clipped). */
 export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: boolean }) {
   void iphone;
@@ -93,26 +135,41 @@ export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: 
         <p className="home-agents-carousel__scheduling-peek-title">Schedule</p>
 
         <div className="home-agents-carousel__scheduling-peek-week" aria-hidden>
-          <p className="home-agents-carousel__scheduling-peek-week-range">Mar 7 – 13</p>
-          <div className="home-agents-carousel__scheduling-peek-week-grid">
-            {WEEK_LABELS.map((label, index) => {
-              const date = WEEK_DATES[index];
-              const selected = date === SELECTED_DATE;
+          <div className="home-agents-carousel__scheduling-peek-week-toolbar">
+            <span className="home-agents-carousel__scheduling-peek-week-month">March</span>
+            <span className="home-agents-carousel__scheduling-peek-week-focus">Wed 9</span>
+          </div>
 
-              return (
+          <div className="home-agents-carousel__scheduling-peek-week-sheet">
+            <div className="home-agents-carousel__scheduling-peek-week-labels">
+              {WEEK_DAYS.map((day) => (
+                <span key={`label-${day.label}-${day.date}`} className="home-agents-carousel__scheduling-peek-week-label">
+                  {day.label}
+                </span>
+              ))}
+            </div>
+
+            <div className="home-agents-carousel__scheduling-peek-week-dates">
+              {WEEK_DAYS.map((day) => (
                 <div
-                  key={`week-${label}-${date}`}
+                  key={`date-${day.label}-${day.date}`}
                   className={`home-agents-carousel__scheduling-peek-week-cell${
-                    selected ? " home-agents-carousel__scheduling-peek-week-cell--selected" : ""
-                  }`}
+                    "selected" in day && day.selected ? " home-agents-carousel__scheduling-peek-week-cell--selected" : ""
+                  }${"booking" in day && day.booking ? " home-agents-carousel__scheduling-peek-week-cell--booking" : ""}`}
                 >
-                  <span className="home-agents-carousel__scheduling-peek-week-label">{label}</span>
-                  <span className="home-agents-carousel__scheduling-peek-week-date">{date}</span>
+                  <span className="home-agents-carousel__scheduling-peek-week-date">{day.date}</span>
+                  <span
+                    className={`home-agents-carousel__scheduling-peek-week-marker${
+                      "event" in day && day.event ? " home-agents-carousel__scheduling-peek-week-marker--event" : ""
+                    }${"booking" in day && day.booking ? " home-agents-carousel__scheduling-peek-week-marker--booking" : ""}`}
+                  />
                 </div>
-              );
-            })}
+              ))}
+            </div>
           </div>
         </div>
+
+        <CallStrip />
 
         <ul className="home-agents-carousel__scheduling-peek-list">
           {SLOT_ROWS.map((row, rowIndex) => {
@@ -137,12 +194,6 @@ export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: 
                     <span className="home-agents-carousel__scheduling-peek-visit"> · {row.visit}</span>
                   </span>
                   <span className="home-agents-carousel__scheduling-peek-time">{row.time}</span>
-                  {"live" in row && row.live ? (
-                    <span className="home-agents-carousel__scheduling-peek-live">
-                      <span className="home-agents-carousel__scheduling-peek-live-dot" aria-hidden />
-                      On call
-                    </span>
-                  ) : null}
                 </span>
               </li>
             );
