@@ -9471,10 +9471,9 @@ html[data-home-page] .hero-speaking-orbs__node-reveal {
 
 /* Customize agents — bleed half the diagram off the viewport right edge. */
 html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram-scale--bleed {
-  --home-call-logic-bleed-scale: 2.5;
-  --home-call-logic-bleed-width: 28rem;
+  --home-call-logic-bleed-width: clamp(12.5rem, 28vmin, 17rem);
   position: absolute !important;
-  right: calc(var(--home-call-logic-bleed-width) * var(--home-call-logic-bleed-scale) * -0.5) !important;
+  right: calc(var(--home-call-logic-bleed-width) * -0.5) !important;
   top: 50% !important;
   width: var(--home-call-logic-bleed-width) !important;
   max-width: var(--home-call-logic-bleed-width) !important;
@@ -9483,7 +9482,12 @@ html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagra
   flex-direction: column !important;
   align-items: stretch !important;
   justify-content: center !important;
-  transform: translateY(-50%) scale(var(--home-call-logic-bleed-scale)) !important;
+  transform: translateY(-50%) !important;
   transform-origin: right center !important;
   z-index: 5 !important;
+}
+
+html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram-scale--bleed .home-call-logic-diagram {
+  --call-logic-node-max: var(--home-call-logic-bleed-width);
+  --call-logic-node-radius: clamp(0.48rem, 1.35vmin, 0.58rem);
 }
