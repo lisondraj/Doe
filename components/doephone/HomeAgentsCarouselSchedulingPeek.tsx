@@ -9,7 +9,7 @@ const WEEK_DATES = [7, 8, 9, 10, 11, 12, 13] as const;
 const SELECTED_DATE = 9;
 
 const SLOT_ROWS = [
-  { time: "3:15 PM", patient: "Brooks", visit: "Annual physical", active: true, badge: "Booking" as const },
+  { time: "3:15 PM", patient: "Physical", visit: "Annual physical", active: true, badge: "Calling" as const },
   { time: "9:00 AM", patient: "Nguyen", visit: "Follow-up" },
   { time: "11:30 AM", patient: "Open slot", visit: "Friday" },
   { time: "2:00 PM", patient: "Kowalski", visit: "Labs review" },
@@ -42,17 +42,10 @@ function getPeekFadeBlur(spread: number) {
   return Math.min(1.4, spread * 0.42);
 }
 
-function PhoneIcon() {
+function ChevronIcon() {
   return (
-    <svg viewBox="0 0 20 20" fill="none" aria-hidden className="home-agents-carousel__scheduling-peek-phone-icon">
-      <path
-        d="M6.2 4.5h7.6c.72 0 1.3.58 1.3 1.3v8.4c0 .72-.58 1.3-1.3 1.3H6.2c-.72 0-1.3-.58-1.3-1.3V5.8c0-.72.58-1.3 1.3-1.3z"
-        stroke="currentColor"
-        strokeWidth="1.35"
-        strokeLinejoin="round"
-      />
-      <path d="M8.4 14.1h3.2" stroke="currentColor" strokeWidth="1.35" strokeLinecap="round" />
-      <circle cx="10" cy="7.1" r="0.85" fill="currentColor" />
+    <svg viewBox="0 0 12 12" fill="none" aria-hidden className="home-agents-carousel__scheduling-peek-clinic-chevron">
+      <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -82,22 +75,17 @@ export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: 
   return (
     <div className="home-agents-carousel__scheduling-peek" aria-hidden>
       <div className={`home-agents-carousel__scheduling-peek-card ${dmSans.className}`}>
-        <div className="home-agents-carousel__scheduling-peek-think">
-          <span className="home-agents-carousel__scheduling-peek-think-phone" aria-hidden>
-            <PhoneIcon />
-          </span>
-          <span className="home-agents-carousel__scheduling-peek-think-label">Thinking</span>
-          <span className="home-agents-carousel__scheduling-peek-think-dots" aria-hidden>
-            <span />
-            <span />
-            <span />
-          </span>
-        </div>
+        <div className="home-agents-carousel__scheduling-peek-head">
+          <button type="button" className="home-agents-carousel__scheduling-peek-clinic" tabIndex={-1}>
+            <span className="home-agents-carousel__scheduling-peek-clinic-label">Dr. Brown&apos;s Clinic</span>
+            <ChevronIcon />
+          </button>
 
-        <div
-          className="home-agents-carousel__scheduling-peek-logo bg-gradient-to-br from-[#E7A944] via-[#D2774C] to-[#1E343A]"
-          aria-hidden
-        />
+          <div
+            className="home-agents-carousel__scheduling-peek-logo bg-gradient-to-br from-[#E7A944] via-[#D2774C] to-[#1E343A]"
+            aria-hidden
+          />
+        </div>
 
         <p className="home-agents-carousel__scheduling-peek-title">Schedule</p>
 
@@ -163,7 +151,6 @@ export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: 
           }}
         >
           <span className="home-agents-carousel__scheduling-peek-footer-stat">3 open this week</span>
-          <span className="home-agents-carousel__scheduling-peek-footer-pill">Agent booking</span>
         </div>
       </div>
     </div>

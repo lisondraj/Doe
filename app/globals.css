@@ -1334,89 +1334,58 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-card {
     clamp(0.72rem, 1.1vmin, 0.88rem);
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-think {
-  position: absolute;
-  top: clamp(0.52rem, 0.8vmin, 0.64rem);
-  left: clamp(0.52rem, 0.8vmin, 0.64rem);
-  z-index: 2;
+html[data-home-page] .home-agents-carousel__scheduling-peek-head {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  min-height: clamp(1.95rem, 2.95vmin, 2.35rem);
+  margin-bottom: clamp(0.42rem, 0.64vmin, 0.52rem);
+  padding-right: clamp(2.35rem, 3.55vmin, 2.85rem);
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-clinic {
   display: inline-flex;
   align-items: center;
-  gap: clamp(0.28rem, 0.42vmin, 0.34rem);
-  padding: clamp(0.28rem, 0.42vmin, 0.34rem) clamp(0.34rem, 0.52vmin, 0.42rem);
+  gap: clamp(0.22rem, 0.34vmin, 0.28rem);
+  max-width: 100%;
+  margin: 0;
+  padding: clamp(0.28rem, 0.42vmin, 0.34rem) clamp(0.38rem, 0.58vmin, 0.46rem);
+  border: none;
   border-radius: clamp(0.34rem, 0.52vmin, 0.42rem);
   background: #f6f6f4;
-  max-width: fit-content;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-think-phone {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: clamp(1.15rem, 1.72vmin, 1.32rem);
-  height: clamp(1.15rem, 1.72vmin, 1.32rem);
-  border-radius: 9999px;
-  background: rgba(210, 119, 76, 0.12);
-  color: #d2774c;
-  flex-shrink: 0;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-phone-icon {
-  width: 0.68em;
-  height: 0.68em;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-think-label {
   color: #3d4549;
+  font: inherit;
   font-size: clamp(0.72rem, 1.08vmin, 0.84rem);
   font-weight: 500;
   line-height: 1.1;
   white-space: nowrap;
+  cursor: default;
+  pointer-events: none;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-think-dots {
-  display: inline-flex;
-  align-items: center;
-  gap: clamp(0.1rem, 0.15vmin, 0.12rem);
-  padding-left: clamp(0.04rem, 0.06vmin, 0.05rem);
+html[data-home-page] .home-agents-carousel__scheduling-peek-clinic-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-think-dots span {
-  display: block;
-  width: clamp(0.18rem, 0.28vmin, 0.22rem);
-  height: clamp(0.18rem, 0.28vmin, 0.22rem);
-  border-radius: 9999px;
-  background: #9aa3a8;
-  animation: home-scheduling-peek-think-dot 1.2s ease-in-out infinite;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-think-dots span:nth-child(2) {
-  animation-delay: 0.18s;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-think-dots span:nth-child(3) {
-  animation-delay: 0.36s;
-}
-
-@keyframes home-scheduling-peek-think-dot {
-  0%,
-  80%,
-  100% {
-    opacity: 0.28;
-    transform: translateY(0);
-  }
-
-  40% {
-    opacity: 1;
-    transform: translateY(clamp(-0.08rem, -0.12vmin, -0.1rem));
-  }
+html[data-home-page] .home-agents-carousel__scheduling-peek-clinic-chevron {
+  width: clamp(0.62rem, 0.94vmin, 0.74rem);
+  height: clamp(0.62rem, 0.94vmin, 0.74rem);
+  flex-shrink: 0;
+  color: #9aa3a8;
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-logo {
+  position: absolute;
+  top: 0;
+  right: 0;
   width: clamp(1.95rem, 2.95vmin, 2.35rem);
   height: clamp(1.95rem, 2.95vmin, 2.35rem);
-  margin-bottom: clamp(0.48rem, 0.72vmin, 0.58rem);
+  margin: 0;
   border-radius: 9999px;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42);
+  flex-shrink: 0;
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-title {
@@ -1430,15 +1399,16 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-title {
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-week {
   margin: 0 0 clamp(0.42rem, 0.64vmin, 0.52rem);
-  padding: clamp(0.38rem, 0.58vmin, 0.46rem) clamp(0.34rem, 0.52vmin, 0.42rem);
+  padding: clamp(0.42rem, 0.64vmin, 0.52rem) clamp(0.38rem, 0.58vmin, 0.46rem);
   border-radius: clamp(0.42rem, 0.65vmin, 0.52rem);
-  background: #f6f6f4;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px #dfe5ea;
   overflow: hidden;
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-week-range {
   margin: 0 0 clamp(0.3rem, 0.46vmin, 0.38rem);
-  color: #3d4549;
+  color: #5c6b74;
   font-size: clamp(0.76rem, 1.12vmin, 0.88rem);
   font-weight: 500;
   line-height: 1.1;
@@ -1464,7 +1434,7 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-week-cell {
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-week-label {
-  color: #9aa3a8;
+  color: #8fa0aa;
   font-size: clamp(0.5rem, 0.76vmin, 0.58rem);
   font-weight: 500;
   line-height: 1;
@@ -1487,11 +1457,11 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-week-date {
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-week-cell--selected .home-agents-carousel__scheduling-peek-week-label {
-  color: #d2774c;
+  color: #6e8eae;
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-week-cell--selected .home-agents-carousel__scheduling-peek-week-date {
-  background: #d2774c;
+  background: #6e8eae;
   color: #ffffff;
   font-weight: 600;
 }
@@ -1563,10 +1533,6 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-badge {
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
   margin-top: clamp(0.55rem, 0.85vmin, 0.68rem);
   padding-top: clamp(0.48rem, 0.72vmin, 0.58rem);
   border-top: 1px solid #ebe9e4;
@@ -1578,23 +1544,6 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-footer-stat {
   font-weight: 400;
   line-height: 1.2;
   white-space: nowrap;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-footer-pill {
-  padding: clamp(0.18rem, 0.28vmin, 0.22rem) clamp(0.34rem, 0.52vmin, 0.42rem);
-  border-radius: 9999px;
-  background: rgba(210, 119, 76, 0.12);
-  color: #d2774c;
-  font-size: clamp(0.62rem, 0.92vmin, 0.72rem);
-  font-weight: 500;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html[data-home-page] .home-agents-carousel__scheduling-peek-think-dots span {
-    animation: none;
-  }
 }
 
 /* Desktop agents carousel — Labs Agent dual UI peek (centered, top/bottom clip). */
@@ -2828,12 +2777,24 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-think,
+  .home-agents-carousel__scheduling-peek-clinic {
+  background: var(--carousel-peek-dusk-surface-raised);
+  color: var(--carousel-peek-dusk-ink);
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-clinic-chevron {
+  color: var(--carousel-peek-dusk-muted);
+}
+
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
   .home-agents-carousel__scheduling-peek-week {
-  background: var(--carousel-peek-dusk-surface-raised);
+  background: var(--carousel-peek-dusk-surface);
+  box-shadow: inset 0 0 0 1px var(--carousel-peek-dusk-border);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
@@ -2843,21 +2804,20 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-week-range,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
   .home-agents-carousel__scheduling-peek-row,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-label,
+  .home-agents-carousel__scheduling-peek-label {
+  color: var(--carousel-peek-dusk-ink);
+  font-weight: 500;
+}
+
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-think-label {
-  color: var(--carousel-peek-dusk-ink);
-  font-weight: 500;
+  .home-agents-carousel__scheduling-peek-week-range {
+  color: var(--carousel-peek-dusk-ink-secondary);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
@@ -2879,10 +2839,6 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
   .home-agents-carousel__scheduling-peek-footer-stat,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-think-dots span,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
@@ -2909,21 +2865,9 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-footer-pill,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-think-phone {
-  background: rgba(232, 160, 96, 0.16);
-  color: var(--carousel-peek-dusk-horizon);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
   .home-agents-carousel__scheduling-peek-week-cell--selected
   .home-agents-carousel__scheduling-peek-week-label {
-  color: var(--carousel-peek-dusk-horizon);
+  color: #9eb4c8;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
@@ -2931,7 +2875,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .hero-speaking-orb__core
   .home-agents-carousel__scheduling-peek-week-cell--selected
   .home-agents-carousel__scheduling-peek-week-date {
-  background: var(--carousel-peek-dusk-horizon);
+  background: #7a94ad;
   color: var(--carousel-peek-dusk-surface);
 }
 
