@@ -1,10 +1,10 @@
 "use client";
 
+import { DoePhoneActiveAgentsCarousel } from "@/components/doephone/DoePhoneActiveAgentsCarousel";
 import { DoePhoneHomeCallLogicDiagram } from "@/components/doephone/DoePhoneHomeCallLogicDiagram";
 import { DoePhoneHomeGuardrailsVisual } from "@/components/doephone/DoePhoneHomeGuardrailsVisual";
 import { DoePhoneHomeLabAlertsVisual } from "@/components/doephone/DoePhoneHomeLabAlertsVisual";
 import { DoePhoneHomePriorAuthVisual } from "@/components/doephone/DoePhoneHomePriorAuthVisual";
-import { DoePhoneReviewPackageVisual } from "@/components/doephone/DoePhoneReviewPackageVisual";
 import { DoePhoneScrollRevealContent, DoePhoneScrollRevealLift } from "@/components/doephone/DoePhoneScrollRevealLift";
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import type { DoePhoneCommunicationSlide } from "@/lib/doephone/communication-carousel";
@@ -123,7 +123,7 @@ export function DoePhoneHomeShaderBandSection({
 
       {feature === "active-agents" ? (
         <DoePhoneScrollRevealLift className="home-feature-shader-band__active-agents-shell relative z-[10] flex h-full min-h-0 w-full flex-1 flex-col items-center justify-center">
-          <DoePhoneReviewPackageVisual />
+          <DoePhoneActiveAgentsCarousel />
         </DoePhoneScrollRevealLift>
       ) : null}
 
