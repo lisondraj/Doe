@@ -4,7 +4,6 @@ import { DoePhoneHomeCallLogicDiagram } from "@/components/doephone/DoePhoneHome
 import { DoePhoneHomeGuardrailsVisual } from "@/components/doephone/DoePhoneHomeGuardrailsVisual";
 import { DoePhoneHomeLabAlertsVisual } from "@/components/doephone/DoePhoneHomeLabAlertsVisual";
 import { DoePhoneHomePriorAuthVisual } from "@/components/doephone/DoePhoneHomePriorAuthVisual";
-import { DoePhoneHomeSectionWorkflowInput } from "@/components/doephone/DoePhoneHomeSectionWorkflowInput";
 import { DoePhoneReviewPackageVisual } from "@/components/doephone/DoePhoneReviewPackageVisual";
 import { DoePhoneScrollRevealContent, DoePhoneScrollRevealLift } from "@/components/doephone/DoePhoneScrollRevealLift";
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
@@ -117,7 +116,6 @@ export function DoePhoneHomeShaderBandSection({
                       <DoePhoneHomeCallLogicDiagram />
                     </div>
                   </div>
-                  <DoePhoneHomeSectionWorkflowInput />
                 </div>
               </div>
             </DoePhoneScrollRevealContent>
