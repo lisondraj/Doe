@@ -2631,10 +2631,10 @@ html[data-home-page] .home-active-agents-pills-scale {
   --home-active-agents-pills-scale: 1.18;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: flex-end;
   gap: clamp(0.42rem, 1.25vmin, 0.58rem);
-  width: min(calc(100% / var(--home-active-agents-pills-scale)), clamp(16rem, 48vmin, 20.5rem));
-  max-width: calc((100% - clamp(0.25rem, 1vmin, 0.5rem)) / var(--home-active-agents-pills-scale));
+  width: max-content;
+  max-width: min(calc((100vw - var(--proto-phone-gutter-left, 1.65rem) * 2) / var(--home-active-agents-pills-scale)), 22.5rem);
   transform: scale(var(--home-active-agents-pills-scale));
   transform-origin: bottom right;
   pointer-events: auto;
@@ -2644,12 +2644,13 @@ html[data-home-page] .home-active-agents-visual__workflow-pill {
   display: inline-flex;
   align-items: center;
   align-self: flex-end;
+  box-sizing: border-box;
   gap: clamp(0.42rem, 1.25vmin, 0.55rem);
-  width: max-content;
-  max-width: 100%;
+  width: auto;
+  max-width: none;
   min-height: clamp(2.15rem, 6.45vmin, 2.58rem);
-  padding: clamp(0.3rem, 0.9vmin, 0.42rem) clamp(0.85rem, 2.55vmin, 1.05rem)
-    clamp(0.3rem, 0.9vmin, 0.42rem) clamp(0.3rem, 0.9vmin, 0.42rem);
+  padding: clamp(0.34rem, 1vmin, 0.46rem) clamp(0.92rem, 2.75vmin, 1.12rem)
+    clamp(0.34rem, 1vmin, 0.46rem) clamp(0.34rem, 1vmin, 0.46rem);
   border-radius: 9999px;
   background: var(--home-active-agents-pill-back);
   border: 1px solid var(--home-active-agents-pill-border);
@@ -2676,8 +2677,7 @@ html[data-home-page] .home-active-agents-visual__workflow-pill-volume {
 }
 
 html[data-home-page] .home-active-agents-visual__workflow-pill-label {
-  flex: 1 1 auto;
-  min-width: 0;
+  flex: 0 0 auto;
   color: var(--home-active-agents-pill-ink);
   font-size: clamp(0.82rem, 2.45vmin, 0.98rem);
   font-weight: 500;
@@ -2693,7 +2693,7 @@ html[data-home-page] .home-feature-shader-band--active-agents .home-active-agent
 html[data-home-page] .home-feature-shader-band__active-agents-content {
   padding-inline: var(--proto-phone-gutter-left, clamp(1.25rem, 4vw, 2.5rem));
   padding-bottom: clamp(1rem, 3vmin, 1.75rem);
-  overflow: hidden;
+  overflow: visible;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band__active-agents-content {
@@ -2726,72 +2726,79 @@ html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .home-feature-shader-band__active-agents-content {
-  padding-bottom: clamp(0.35rem, 1.05vmin, 0.55rem);
+  overflow: visible;
+  padding-bottom: clamp(0.85rem, 2.5vmin, 1.15rem);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .home-active-agents-visual__body {
   overflow: visible;
+  padding-bottom: clamp(1.1rem, 3.25vmin, 1.5rem);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .home-active-agents-visual__stats-stage {
-  padding-top: clamp(0.42rem, 1.25vmin, 0.62rem);
+  padding-top: clamp(1.65rem, 5vmin, 2.35rem);
+  max-width: min(100%, calc(100% - clamp(11.5rem, 34vmin, 15rem)));
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .home-active-agents-scale {
-  --home-shader-feature-scale: 1.2;
+  --home-shader-feature-scale: 1.08;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .home-active-agents-visual__stats {
-  gap: clamp(1rem, 3.1vmin, 1.65rem) clamp(1.35rem, 4.15vmin, 2rem);
-  width: min(100%, clamp(16.5rem, 49vmin, 22.5rem));
+  gap: clamp(0.78rem, 2.4vmin, 1.25rem) clamp(1.1rem, 3.4vmin, 1.65rem);
+  width: min(100%, clamp(15.5rem, 46vmin, 21rem));
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .home-active-agents-visual__stat-value {
-  font-size: clamp(2.15rem, 6.35vmin, 3.05rem);
+  font-size: clamp(1.95rem, 5.75vmin, 2.75rem);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .home-active-agents-visual__stat-label {
-  font-size: clamp(0.78rem, 2.35vmin, 0.92rem);
+  font-size: clamp(0.72rem, 2.15vmin, 0.86rem);
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .home-active-agents-visual__pills {
+  bottom: clamp(2.35rem, 7.25vmin, 3.25rem);
+  padding-bottom: clamp(1.1rem, 3.25vmin, 1.45rem);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .home-active-agents-pills-scale {
   --home-active-agents-pills-scale: 1.42;
+  align-items: flex-end;
   gap: clamp(0.32rem, 0.95vmin, 0.45rem);
-  width: min(calc(100% / var(--home-active-agents-pills-scale)), clamp(17.5rem, 52vmin, 22rem));
+  width: max-content;
+  max-width: min(calc((100vw - var(--proto-phone-gutter-left, 1.65rem) * 2) / var(--home-active-agents-pills-scale)), 22.5rem);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .home-active-agents-visual__workflow-pill {
+  max-width: none;
   min-height: clamp(2rem, 5.95vmin, 2.38rem);
-  padding: clamp(0.32rem, 0.95vmin, 0.44rem) clamp(0.92rem, 2.75vmin, 1.12rem)
-    clamp(0.32rem, 0.95vmin, 0.44rem) clamp(0.32rem, 0.95vmin, 0.44rem);
+  padding: clamp(0.36rem, 1.05vmin, 0.48rem) clamp(1rem, 3vmin, 1.2rem)
+    clamp(0.36rem, 1.05vmin, 0.48rem) clamp(0.36rem, 1.05vmin, 0.48rem);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .home-active-agents-visual__workflow-pill-label {
   font-size: clamp(0.76rem, 2.25vmin, 0.9rem);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--active-agents
-  .home-active-agents-visual__stats-stage {
-  max-width: min(100%, calc(100% - clamp(11.5rem, 34vmin, 15rem)));
 }
 
 /* iPhone agents carousel — dusk peek UI theme (shader-matched surfaces + warm ink). */
@@ -4663,7 +4670,16 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workf
   max-height: var(--doe-section-band-vh, var(--app-vh, 100lvh)) !important;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--active-agents {
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents {
+  position: relative !important;
+  min-height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.88) !important;
+  height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.88) !important;
+  max-height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.88) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root)[data-layout="desktop"]
+  .home-feature-shader-band--active-agents {
   position: relative !important;
   min-height: var(--doe-section-band-vh, var(--app-vh, 100lvh)) !important;
   height: var(--doe-section-band-vh, var(--app-vh, 100lvh)) !important;
@@ -4679,9 +4695,12 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--guard
   max-height: var(--doe-section-band-vh, var(--app-vh, 100lvh)) !important;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--active-agents .home-feature-shader-band__feature-shell {
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .home-feature-shader-band__feature-shell {
   padding-inline: var(--proto-phone-gutter-left);
-  padding-block: clamp(0.35rem, 1.05vmin, 0.55rem);
+  padding-block: clamp(0.2rem, 0.65vmin, 0.38rem);
+  overflow: visible;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-feature-card-section:has(.home-agents-carousel) {
@@ -5575,8 +5594,8 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .home-feature-shader-band__feature-title {
   flex: 0 0 auto;
-  margin: 0 0 clamp(0.55rem, 0.35rem + 0.95vmin, 0.88rem) !important;
-  padding-top: max(1.45rem, calc(env(safe-area-inset-top, 0px) + calc(var(--app-vh, 100lvh) * 0.058))) !important;
+  margin: 0 0 clamp(0.45rem, 0.28rem + 0.75vmin, 0.72rem) !important;
+  padding-top: max(2.65rem, calc(env(safe-area-inset-top, 0px) + calc(var(--app-vh, 100lvh) * 0.092))) !important;
   font-size: clamp(2.35rem, 1.15rem + 6.8vmin, 3.85rem) !important;
   line-height: 1.02 !important;
   letter-spacing: -0.035em !important;
