@@ -2591,16 +2591,12 @@ html[data-home-page] .home-agents-carousel__refill-peek-status-fill {
   }
 }
 
-/* Active agents — shader band mock UI. */
-html[data-home-page] .home-active-agents-visual__carousel-shell {
-  width: 100%;
-}
-
+/* Active agents — shader band workflow carousel. */
 html[data-home-page] .home-active-agents-visual__carousel {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(0.42rem, 1.25vmin, 0.55rem);
+  gap: clamp(0.55rem, 1.65vmin, 0.72rem);
   width: 100%;
 }
 
@@ -2608,47 +2604,45 @@ html[data-home-page] .home-active-agents-visual__carousel-nav {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: clamp(1.85rem, 5.4vmin, 2.2rem);
-  height: clamp(1.85rem, 5.4vmin, 2.2rem);
   margin: 0;
-  padding: 0;
+  padding: clamp(0.18rem, 0.55vmin, 0.24rem);
   border: none;
-  border-radius: 9999px;
-  background: #f3f4f6;
-  color: #6b7280;
+  background: transparent;
+  color: rgba(30, 52, 58, 0.42);
   cursor: pointer;
   flex-shrink: 0;
-  transition:
-    background 180ms ease,
-    color 180ms ease,
-    transform 180ms ease;
+  transition: color 180ms ease, opacity 180ms ease;
 }
 
 html[data-home-page] .home-active-agents-visual__carousel-nav:hover {
-  background: #ebe9e4;
-  color: #3d4549;
+  color: rgba(30, 52, 58, 0.72);
 }
 
 html[data-home-page] .home-active-agents-visual__carousel-nav:active {
-  transform: scale(0.96);
+  opacity: 0.65;
+}
+
+html[data-home-page] .home-active-agents-visual__carousel-nav-icon {
+  width: clamp(1.15rem, 3.45vmin, 1.38rem);
+  height: clamp(1.15rem, 3.45vmin, 1.38rem);
 }
 
 html[data-home-page] .home-active-agents-visual__carousel-viewport {
   position: relative;
   width: 100%;
-  height: clamp(13.5rem, 40vmin, 16.5rem);
+  height: clamp(16.5rem, 49vmin, 20.5rem);
   overflow: hidden;
   touch-action: pan-x;
-  perspective: clamp(28rem, 84vmin, 34rem);
+  perspective: clamp(32rem, 96vmin, 40rem);
   perspective-origin: 50% 50%;
   -webkit-mask-image: linear-gradient(
     180deg,
     transparent 0%,
-    #000 16%,
-    #000 84%,
+    #000 14%,
+    #000 86%,
     transparent 100%
   );
-  mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 14%, #000 86%, transparent 100%);
 }
 
 html[data-home-page] .home-active-agents-visual__carousel-stage {
@@ -2658,8 +2652,8 @@ html[data-home-page] .home-active-agents-visual__carousel-stage {
 }
 
 html[data-home-page] .home-active-agents-visual__pill {
-  --pill-step: clamp(3.15rem, 9.4vmin, 3.85rem);
-  --pill-depth: clamp(0.85rem, 2.55vmin, 1.05rem);
+  --pill-step: clamp(3.85rem, 11.5vmin, 4.65rem);
+  --pill-depth: clamp(1rem, 3vmin, 1.25rem);
 
   position: absolute;
   left: 0;
@@ -2667,74 +2661,88 @@ html[data-home-page] .home-active-agents-visual__pill {
   top: 50%;
   display: flex;
   align-items: center;
-  gap: clamp(0.55rem, 1.65vmin, 0.72rem);
+  gap: clamp(0.62rem, 1.85vmin, 0.78rem);
   width: 100%;
-  min-height: clamp(2.55rem, 7.6vmin, 3.05rem);
-  padding: clamp(0.48rem, 1.45vmin, 0.62rem) clamp(0.62rem, 1.85vmin, 0.78rem);
-  border-radius: 9999px;
-  background: #fafaf8;
-  border: 1px solid #ebe9e4;
-  box-shadow: 0 2px 8px rgba(30, 52, 58, 0.04);
-  color: #6b7280;
   transform-origin: 50% 50%;
   transition:
     transform 520ms cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 420ms ease,
-    background 420ms ease,
-    border-color 420ms ease,
-    box-shadow 420ms ease,
-    color 420ms ease;
+    opacity 420ms ease;
   will-change: transform, opacity;
 }
 
-html[data-home-page] .home-active-agents-visual__pill--focused {
-  background: #ffffff;
-  border-color: #e5e7eb;
-  box-shadow:
-    0 10px 24px rgba(30, 52, 58, 0.1),
-    0 1px 4px rgba(30, 52, 58, 0.05);
-  color: #1e343a;
-}
-
-html[data-home-page] .home-active-agents-visual__pill-icon {
+html[data-home-page] .home-active-agents-visual__pill-circle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: clamp(1.85rem, 5.5vmin, 2.2rem);
-  height: clamp(1.85rem, 5.5vmin, 2.2rem);
+  width: clamp(2.45rem, 7.35vmin, 2.95rem);
+  height: clamp(2.45rem, 7.35vmin, 2.95rem);
   flex-shrink: 0;
   border-radius: 9999px;
-  background: #f3f4f6;
-  color: #9aa3a8;
+  background: rgba(255, 255, 255, 0.52);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  color: rgba(30, 52, 58, 0.46);
+  box-shadow: 0 4px 14px rgba(30, 52, 58, 0.08);
   transition:
     background 420ms ease,
+    border-color 420ms ease,
     color 420ms ease,
-    transform 420ms ease;
+    box-shadow 420ms ease;
 }
 
-html[data-home-page] .home-active-agents-visual__pill--focused .home-active-agents-visual__pill-icon {
-  background: rgba(210, 119, 76, 0.12);
+html[data-home-page] .home-active-agents-visual__pill-body {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  min-height: clamp(2.85rem, 8.5vmin, 3.45rem);
+  padding: clamp(0.62rem, 1.85vmin, 0.78rem) clamp(0.95rem, 2.85vmin, 1.15rem);
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.38);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 4px 16px rgba(30, 52, 58, 0.06);
+  transition:
+    background 420ms ease,
+    border-color 420ms ease,
+    box-shadow 420ms ease;
+}
+
+html[data-home-page] .home-active-agents-visual__pill--focused .home-active-agents-visual__pill-circle {
+  background: rgba(255, 248, 242, 0.96);
+  border-color: rgba(210, 119, 76, 0.28);
   color: #d2774c;
-  transform: scale(1.04);
+  box-shadow:
+    0 8px 20px rgba(210, 119, 76, 0.16),
+    0 2px 6px rgba(30, 52, 58, 0.06);
+}
+
+html[data-home-page] .home-active-agents-visual__pill--focused .home-active-agents-visual__pill-body {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(255, 255, 255, 0.92);
+  box-shadow:
+    0 14px 32px rgba(30, 52, 58, 0.14),
+    0 2px 8px rgba(30, 52, 58, 0.06);
 }
 
 html[data-home-page] .home-active-agents-visual__pill-volume-icon {
-  width: clamp(0.92rem, 2.75vmin, 1.08rem);
-  height: clamp(0.92rem, 2.75vmin, 1.08rem);
+  width: clamp(1.05rem, 3.15vmin, 1.25rem);
+  height: clamp(1.05rem, 3.15vmin, 1.25rem);
 }
 
 html[data-home-page] .home-active-agents-visual__pill-label {
   min-width: 0;
-  font-size: clamp(0.82rem, 2.45vmin, 0.98rem);
+  color: rgba(30, 52, 58, 0.58);
+  font-size: clamp(0.92rem, 2.75vmin, 1.1rem);
   font-weight: 400;
   line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: color 420ms ease, font-size 420ms ease;
 }
 
 html[data-home-page] .home-active-agents-visual__pill--focused .home-active-agents-visual__pill-label {
-  font-size: clamp(0.92rem, 2.75vmin, 1.08rem);
+  color: #1e343a;
+  font-size: clamp(1.02rem, 3.05vmin, 1.22rem);
   font-weight: 500;
 }
 
@@ -6988,10 +6996,47 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 /* iPhone home — active agents shader band (dusk mock UI). */
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
-  .home-active-agents-visual__card,
+  .home-active-agents-visual__carousel-nav {
+  color: rgba(242, 216, 168, 0.46) !important;
+}
+
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
-  .home-active-agents-visual__action {
+  .home-active-agents-visual__carousel-nav:hover {
+  color: rgba(242, 216, 168, 0.78) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .home-active-agents-visual__pill-circle {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color: var(--home-dusk-ui-muted) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .home-active-agents-visual__pill-body {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .home-active-agents-visual__pill--focused
+  .home-active-agents-visual__pill-circle {
+  background: rgba(232, 160, 96, 0.18) !important;
+  border-color: rgba(232, 160, 96, 0.34) !important;
+  color: var(--home-dusk-ui-horizon) !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .home-active-agents-visual__pill--focused
+  .home-active-agents-visual__pill-body {
   background: var(--home-dusk-ui-surface) !important;
   border-color: var(--home-dusk-ui-border) !important;
   box-shadow: var(--home-dusk-ui-shadow) !important;
@@ -6999,10 +7044,10 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
-  .home-active-agents-visual__title,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--active-agents
-  .home-active-agents-visual__action-label,
+  .home-active-agents-visual__pill-label {
+  color: var(--home-dusk-ui-muted) !important;
+}
+
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .home-active-agents-visual__pill--focused
@@ -7012,71 +7057,10 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
-  .home-active-agents-visual__badge {
-  background: rgba(232, 160, 96, 0.16) !important;
-  color: var(--home-dusk-ui-horizon) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--active-agents
-  .home-active-agents-visual__collapse,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--active-agents
-  .home-active-agents-visual__carousel-nav {
-  background: var(--home-dusk-ui-surface-raised) !important;
-  color: var(--home-dusk-ui-muted) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--active-agents
-  .home-active-agents-visual__pill {
-  background: var(--home-dusk-ui-surface-sunken) !important;
-  border-color: var(--home-dusk-ui-border) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
-  color: var(--home-dusk-ui-muted) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--active-agents
-  .home-active-agents-visual__pill--focused {
-  background: var(--home-dusk-ui-surface) !important;
-  border-color: var(--home-dusk-ui-border) !important;
-  box-shadow: var(--home-dusk-ui-shadow) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--active-agents
-  .home-active-agents-visual__pill-icon {
-  background: var(--home-dusk-ui-surface-raised) !important;
-  color: var(--home-dusk-ui-muted) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--active-agents
-  .home-active-agents-visual__pill--focused
-  .home-active-agents-visual__pill-icon {
-  background: rgba(232, 160, 96, 0.16) !important;
-  color: var(--home-dusk-ui-horizon) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--active-agents
-  .home-active-agents-visual__pill-label {
-  color: var(--home-dusk-ui-muted) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--active-agents
   .home-active-agents-visual__pill--focused
   .home-active-agents-visual__pill-volume-icon
   [stroke] {
   stroke: var(--home-dusk-ui-horizon) !important;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--active-agents
-  .home-active-agents-visual__plus-icon {
-  color: var(--home-dusk-ui-ink-secondary) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
