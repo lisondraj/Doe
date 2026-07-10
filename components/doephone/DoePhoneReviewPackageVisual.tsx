@@ -44,7 +44,7 @@ function getPillTransform(offset: number): CSSProperties {
   const translateY = offset;
   const translateZ = (1 - absOffset) * 1.15;
   const rotateX = offset * -20;
-  const scale = absOffset === 0 ? 1.06 : Math.max(0.86, 1 - absOffset * 0.09);
+  const scale = absOffset === 0 ? 1.1 : Math.max(0.88, 1 - absOffset * 0.08);
 
   return {
     opacity: hidden ? 0 : Math.max(0.32, 1 - absOffset * 0.3),

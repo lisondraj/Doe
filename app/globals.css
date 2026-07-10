@@ -2585,30 +2585,31 @@ html[data-home-page] .home-active-agents-visual__carousel {
 html[data-home-page] .home-active-agents-visual__carousel-viewport {
   position: relative;
   width: 100%;
-  height: clamp(16.5rem, 49vmin, 20.5rem);
+  height: clamp(20.5rem, 61vmin, 25.5rem);
+  padding-inline: clamp(0.18rem, 0.55vmin, 0.28rem);
   overflow: hidden;
   touch-action: pan-x;
-  perspective: clamp(32rem, 96vmin, 40rem);
+  perspective: clamp(36rem, 108vmin, 46rem);
   perspective-origin: 50% 50%;
   -webkit-mask-image: linear-gradient(
     180deg,
     transparent 0%,
-    #000 14%,
-    #000 86%,
+    #000 9%,
+    #000 91%,
     transparent 100%
   );
-  mask-image: linear-gradient(180deg, transparent 0%, #000 14%, #000 86%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 9%, #000 91%, transparent 100%);
 }
 
 html[data-home-page] .home-active-agents-visual__carousel-stage {
   position: absolute;
-  inset: 0;
+  inset: clamp(0.55rem, 1.65vmin, 0.72rem) 0;
   transform-style: preserve-3d;
 }
 
 html[data-home-page] .home-active-agents-visual__pill {
-  --pill-step: clamp(3.85rem, 11.5vmin, 4.65rem);
-  --pill-depth: clamp(1rem, 3vmin, 1.25rem);
+  --pill-step: clamp(4.45rem, 13.3vmin, 5.35rem);
+  --pill-depth: clamp(1.05rem, 3.15vmin, 1.3rem);
 
   position: absolute;
   left: 0;
@@ -2616,7 +2617,7 @@ html[data-home-page] .home-active-agents-visual__pill {
   top: 50%;
   display: flex;
   align-items: center;
-  gap: clamp(0.62rem, 1.85vmin, 0.78rem);
+  gap: clamp(0.72rem, 2.15vmin, 0.88rem);
   width: 100%;
   transform-origin: 50% 50%;
   transition:
@@ -2629,14 +2630,14 @@ html[data-home-page] .home-active-agents-visual__pill-circle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: clamp(2.45rem, 7.35vmin, 2.95rem);
-  height: clamp(2.45rem, 7.35vmin, 2.95rem);
+  width: clamp(2.85rem, 8.5vmin, 3.45rem);
+  height: clamp(2.85rem, 8.5vmin, 3.45rem);
   flex-shrink: 0;
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.52);
-  border: 1px solid rgba(255, 255, 255, 0.72);
-  color: rgba(30, 52, 58, 0.46);
-  box-shadow: 0 4px 14px rgba(30, 52, 58, 0.08);
+  background: linear-gradient(180deg, #b89470 0%, #8f6d4d 100%);
+  border: 1px solid rgba(255, 236, 210, 0.22);
+  color: rgba(255, 248, 238, 0.82);
+  box-shadow: 0 1px 3px rgba(45, 32, 20, 0.14);
   transition:
     background 420ms ease,
     border-color 420ms ease,
@@ -2648,15 +2649,15 @@ html[data-home-page] .home-active-agents-visual__pill-body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: clamp(0.42rem, 1.25vmin, 0.55rem);
+  gap: clamp(0.48rem, 1.45vmin, 0.62rem);
   flex: 1;
   min-width: 0;
-  min-height: clamp(2.85rem, 8.5vmin, 3.45rem);
-  padding: clamp(0.62rem, 1.85vmin, 0.78rem) clamp(0.72rem, 2.15vmin, 0.88rem);
+  min-height: clamp(3.25rem, 9.7vmin, 3.95rem);
+  padding: clamp(0.72rem, 2.15vmin, 0.88rem) clamp(0.82rem, 2.45vmin, 0.98rem);
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.38);
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  box-shadow: 0 4px 16px rgba(30, 52, 58, 0.06);
+  background: linear-gradient(180deg, #c4a882 0%, #a68462 52%, #866a4f 100%);
+  border: 1px solid rgba(255, 236, 210, 0.18);
+  box-shadow: 0 1px 4px rgba(45, 32, 20, 0.1);
   transition:
     transform 360ms cubic-bezier(0.22, 1, 0.36, 1),
     filter 360ms ease,
@@ -2670,20 +2671,16 @@ html[data-home-page] .home-active-agents-visual__pill-body--dimmed {
 }
 
 html[data-home-page] .home-active-agents-visual__pill--focused .home-active-agents-visual__pill-body {
-  background: rgba(255, 255, 255, 0.94);
-  border-color: rgba(255, 255, 255, 0.92);
-  box-shadow:
-    0 14px 32px rgba(30, 52, 58, 0.14),
-    0 2px 8px rgba(30, 52, 58, 0.06);
+  background: linear-gradient(180deg, #ddc29a 0%, #c2a078 46%, #a68462 100%);
+  border-color: rgba(255, 242, 220, 0.34);
+  box-shadow: 0 2px 6px rgba(45, 32, 20, 0.12);
   filter: blur(0);
 }
 
 html[data-home-page] .home-active-agents-visual__pill--focused .home-active-agents-visual__pill-body:hover {
   transform: translate3d(0, clamp(-0.34rem, -1vmin, -0.42rem), 0);
   filter: blur(0);
-  box-shadow:
-    0 18px 38px rgba(30, 52, 58, 0.18),
-    0 4px 12px rgba(30, 52, 58, 0.08);
+  box-shadow: 0 3px 8px rgba(45, 32, 20, 0.14);
 }
 
 html[data-home-page] .home-active-agents-visual__pill-nav {
@@ -2695,13 +2692,13 @@ html[data-home-page] .home-active-agents-visual__pill-nav {
   padding: clamp(0.12rem, 0.36vmin, 0.16rem);
   border: none;
   background: transparent;
-  color: rgba(30, 52, 58, 0.38);
+  color: rgba(255, 248, 238, 0.46);
   cursor: pointer;
   transition: color 180ms ease, opacity 180ms ease;
 }
 
 html[data-home-page] .home-active-agents-visual__pill-nav:hover {
-  color: rgba(30, 52, 58, 0.72);
+  color: rgba(255, 248, 238, 0.82);
 }
 
 html[data-home-page] .home-active-agents-visual__pill-nav:active {
@@ -2709,39 +2706,37 @@ html[data-home-page] .home-active-agents-visual__pill-nav:active {
 }
 
 html[data-home-page] .home-active-agents-visual__pill-nav-icon {
-  width: clamp(0.92rem, 2.75vmin, 1.08rem);
-  height: clamp(0.92rem, 2.75vmin, 1.08rem);
+  width: clamp(1rem, 3vmin, 1.18rem);
+  height: clamp(1rem, 3vmin, 1.18rem);
 }
 
 html[data-home-page] .home-active-agents-visual__pill--focused .home-active-agents-visual__pill-nav {
-  color: rgba(30, 52, 58, 0.46);
+  color: rgba(255, 248, 238, 0.56);
 }
 
 html[data-home-page] .home-active-agents-visual__pill--focused .home-active-agents-visual__pill-body:hover
   .home-active-agents-visual__pill-nav {
-  color: rgba(30, 52, 58, 0.68);
+  color: rgba(255, 248, 238, 0.9);
 }
 
 html[data-home-page] .home-active-agents-visual__pill-volume-icon {
-  width: clamp(1.05rem, 3.15vmin, 1.25rem);
-  height: clamp(1.05rem, 3.15vmin, 1.25rem);
+  width: clamp(1.18rem, 3.55vmin, 1.42rem);
+  height: clamp(1.18rem, 3.55vmin, 1.42rem);
 }
 
 html[data-home-page] .home-active-agents-visual__pill--focused .home-active-agents-visual__pill-circle {
-  background: rgba(255, 248, 242, 0.96);
-  border-color: rgba(210, 119, 76, 0.28);
-  color: #d2774c;
-  box-shadow:
-    0 8px 20px rgba(210, 119, 76, 0.16),
-    0 2px 6px rgba(30, 52, 58, 0.06);
+  background: linear-gradient(180deg, #d8bc94 0%, #b8946c 100%);
+  border-color: rgba(255, 242, 220, 0.36);
+  color: #fff8ee;
+  box-shadow: 0 2px 5px rgba(45, 32, 20, 0.14);
 }
 
 html[data-home-page] .home-active-agents-visual__pill-label {
   flex: 1;
   min-width: 0;
   text-align: center;
-  color: rgba(30, 52, 58, 0.58);
-  font-size: clamp(0.92rem, 2.75vmin, 1.1rem);
+  color: rgba(255, 248, 238, 0.68);
+  font-size: clamp(1rem, 3vmin, 1.2rem);
   font-weight: 400;
   line-height: 1.2;
   white-space: nowrap;
@@ -2751,8 +2746,8 @@ html[data-home-page] .home-active-agents-visual__pill-label {
 }
 
 html[data-home-page] .home-active-agents-visual__pill--focused .home-active-agents-visual__pill-label {
-  color: #1e343a;
-  font-size: clamp(1.02rem, 3.05vmin, 1.22rem);
+  color: #fff8ee;
+  font-size: clamp(1.1rem, 3.3vmin, 1.32rem);
   font-weight: 500;
 }
 
@@ -7002,7 +6997,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .home-active-agents-visual__pill-nav {
-  color: rgba(242, 216, 168, 0.42) !important;
+  color: rgba(242, 216, 168, 0.44) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
@@ -7010,56 +7005,63 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-active-agents-visual__pill--focused
   .home-active-agents-visual__pill-body:hover
   .home-active-agents-visual__pill-nav {
-  color: rgba(242, 216, 168, 0.78) !important;
+  color: rgba(255, 244, 224, 0.9) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .home-active-agents-visual__pill-circle {
-  background: rgba(255, 255, 255, 0.08) !important;
-  border-color: rgba(255, 255, 255, 0.14) !important;
-  color: var(--home-dusk-ui-muted) !important;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18) !important;
+  background: linear-gradient(180deg, rgba(168, 124, 82, 0.92) 0%, rgba(118, 84, 54, 0.96) 100%) !important;
+  border-color: rgba(255, 220, 176, 0.2) !important;
+  color: rgba(255, 244, 224, 0.78) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .home-active-agents-visual__pill-body {
-  background: rgba(255, 255, 255, 0.06) !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16) !important;
+  background: linear-gradient(180deg, rgba(154, 112, 74, 0.9) 0%, rgba(108, 76, 50, 0.94) 100%) !important;
+  border-color: rgba(255, 220, 176, 0.16) !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .home-active-agents-visual__pill--focused
   .home-active-agents-visual__pill-circle {
-  background: rgba(232, 160, 96, 0.18) !important;
-  border-color: rgba(232, 160, 96, 0.34) !important;
-  color: var(--home-dusk-ui-horizon) !important;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22) !important;
+  background: linear-gradient(180deg, rgba(196, 148, 98, 0.96) 0%, rgba(142, 100, 64, 0.98) 100%) !important;
+  border-color: rgba(255, 228, 188, 0.28) !important;
+  color: #fff4e0 !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .home-active-agents-visual__pill--focused
   .home-active-agents-visual__pill-body {
-  background: var(--home-dusk-ui-surface) !important;
-  border-color: var(--home-dusk-ui-border) !important;
-  box-shadow: var(--home-dusk-ui-shadow) !important;
+  background: linear-gradient(180deg, rgba(188, 142, 96, 0.96) 0%, rgba(132, 94, 62, 0.98) 100%) !important;
+  border-color: rgba(255, 228, 188, 0.24) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .home-active-agents-visual__pill--focused
+  .home-active-agents-visual__pill-body:hover {
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.22) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .home-active-agents-visual__pill-label {
-  color: var(--home-dusk-ui-muted) !important;
+  color: rgba(255, 244, 224, 0.62) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .home-active-agents-visual__pill--focused
   .home-active-agents-visual__pill-label {
-  color: var(--home-dusk-ui-ink) !important;
+  color: #fff4e0 !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
@@ -7067,7 +7069,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-active-agents-visual__pill--focused
   .home-active-agents-visual__pill-volume-icon
   [stroke] {
-  stroke: var(--home-dusk-ui-horizon) !important;
+  stroke: #fff4e0 !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
