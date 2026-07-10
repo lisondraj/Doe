@@ -51,14 +51,15 @@ function getPillTransform(offset: number): CSSProperties {
     pointerEvents: absOffset === 0 ? "auto" : "none",
     zIndex: 10 - absOffset,
     transform: `translate3d(0, calc(-50% + ${translateY} * var(--pill-step)), calc(${translateZ} * var(--pill-depth))) rotateX(${rotateX}deg) scale(${scale})`,
-  };
+    "--pill-blur": `${Math.min(1.1, absOffset * 0.45)}px`,
+  } as CSSProperties;
 }
 
-function ArrowIcon({ direction }: { direction: "up" | "down" }) {
+function PillNavIcon({ direction }: { direction: "left" | "right" }) {
   return (
-    <svg viewBox="0 0 16 16" fill="none" aria-hidden className="home-active-agents-visual__carousel-nav-icon">
+    <svg viewBox="0 0 16 16" fill="none" aria-hidden className="home-active-agents-visual__pill-nav-icon">
       <path
-        d={direction === "up" ? "M4 10.5L8 6.5l4 4" : "M4 5.5l4 4 4-4"}
+        d={direction === "left" ? "M10 3.5L6 8l4 4.5" : "M6 3.5l4 4.5 4-4.5"}
         stroke="currentColor"
         strokeWidth="1.25"
         strokeLinecap="round"
@@ -88,23 +89,26 @@ function VolumeIcon() {
   );
 }
 
-function CarouselArrow({
+function PillNavButton({
   direction,
   onClick,
   label,
 }: {
-  direction: "up" | "down";
+  direction: "left" | "right";
   onClick: () => void;
   label: string;
 }) {
   return (
     <button
       type="button"
-      className={`home-active-agents-visual__carousel-nav home-active-agents-visual__carousel-nav--${direction}`}
+      className={`home-active-agents-visual__pill-nav home-active-agents-visual__pill-nav--${direction}`}
       aria-label={label}
-      onClick={onClick}
+      onClick={(event) => {
+        event.stopPropagation();
+        onClick();
+      }}
     >
-      <ArrowIcon direction={direction} />
+      <PillNavIcon direction={direction} />
     </button>
   );
 }
@@ -154,8 +158,6 @@ function ActiveAgentsWorkflowCarousel() {
 
   return (
     <div className="home-active-agents-visual__carousel">
-      <CarouselArrow direction="up" onClick={goPrev} label="Previous workflow" />
-
       <div
         className="home-active-agents-visual__carousel-viewport"
         onTouchStart={handleViewportTouchStart}
@@ -180,16 +182,24 @@ function ActiveAgentsWorkflowCarousel() {
                 <span className="home-active-agents-visual__pill-circle" aria-hidden>
                   <VolumeIcon />
                 </span>
-                <span className={`home-active-agents-visual__pill-body ${inter.className}`}>
+                <span
+                  className={`home-active-agents-visual__pill-body ${inter.className}${
+                    isFocused ? "" : " home-active-agents-visual__pill-body--dimmed"
+                  }`}
+                >
+                  {isFocused ? (
+                    <PillNavButton direction="left" onClick={goPrev} label="Previous workflow" />
+                  ) : null}
                   <span className="home-active-agents-visual__pill-label">{label}</span>
+                  {isFocused ? (
+                    <PillNavButton direction="right" onClick={goNext} label="Next workflow" />
+                  ) : null}
                 </span>
               </div>
             );
           })}
         </div>
       </div>
-
-      <CarouselArrow direction="down" onClick={goNext} label="Next workflow" />
     </div>
   );
 }
