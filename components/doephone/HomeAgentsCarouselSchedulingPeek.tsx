@@ -2,21 +2,45 @@
 
 import { dmSans } from "@/lib/home/fonts";
 
-const WEEK_DAYS = [
-  { label: "M", date: 7 },
-  { label: "T", date: 8, chip: { label: "Nguyen" } },
-  { label: "W", date: 9, selected: true, chip: { label: "Brooks", time: "3:15p", booking: true } },
-  { label: "T", date: 10 },
-  { label: "F", date: 11, chip: { label: "Open", open: true } },
-  { label: "S", date: 12 },
+const INK = "#3D4549";
+
+const WEEK_LABELS = ["M", "T", "W", "T", "F", "S", "S"] as const;
+const WEEK_DATES = [7, 8, 9, 10, 11, 12, 13] as const;
+const SELECTED_DATE = 9;
+
+const SLOT_ROWS = [
+  { time: "3:15 PM", patient: "Brooks", visit: "Annual physical", active: true, badge: "Booking" as const },
+  { time: "9:00 AM", patient: "Nguyen", visit: "Follow-up" },
+  { time: "11:30 AM", patient: "Open slot", visit: "Friday" },
+  { time: "2:00 PM", patient: "Kowalski", visit: "Labs review" },
+  { time: "4:15 PM", patient: "Open slot", visit: "Same day" },
 ] as const;
 
-const NEXT_ROW_DATES = [14, 15, 16, 17, 18, 19] as const;
+const SLOT_CLEAR_ROW_COUNT = 3;
 
-const BOOKING = {
-  patient: "Brooks",
-  visit: "Annual",
-} as const;
+function getSlotRowSpread(rowIndex: number) {
+  if (rowIndex < SLOT_CLEAR_ROW_COUNT) {
+    return 0;
+  }
+
+  return rowIndex - (SLOT_CLEAR_ROW_COUNT - 1);
+}
+
+function getPeekFadeOpacity(spread: number) {
+  if (spread === 0) {
+    return 1;
+  }
+
+  return Math.max(0.58, 1 - spread * 0.1);
+}
+
+function getPeekFadeBlur(spread: number) {
+  if (spread === 0) {
+    return 0;
+  }
+
+  return Math.min(1.4, spread * 0.42);
+}
 
 function PhoneIcon() {
   return (
@@ -33,7 +57,25 @@ function PhoneIcon() {
   );
 }
 
-/** Agents carousel — scheduling peek with visual calendar + phone agent thinking (left-edge bleed). */
+function CalendarIcon() {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" aria-hidden className="home-agents-carousel__scheduling-peek-row-icon">
+      <rect x="4.5" y="5.5" width="11" height="10" rx="1.5" stroke={INK} strokeWidth="1.35" />
+      <path d="M4.5 8.5h11M7.25 4v2.25M12.75 4v2.25" stroke={INK} strokeWidth="1.35" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function ClockIcon() {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" aria-hidden className="home-agents-carousel__scheduling-peek-row-icon">
+      <circle cx="10" cy="10" r="5.75" stroke={INK} strokeWidth="1.35" />
+      <path d="M10 7.25V10l2.1 1.35" stroke={INK} strokeWidth="1.35" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+/** Agents carousel — scheduling peek styled like inbox (left-edge bleed, scaled + clipped). */
 export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: boolean }) {
   void iphone;
 
@@ -52,56 +94,77 @@ export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: 
           </span>
         </div>
 
-        <div className="home-agents-carousel__scheduling-peek-calendar">
-          <p className="home-agents-carousel__scheduling-peek-range">Mar 7 – 12</p>
+        <div
+          className="home-agents-carousel__scheduling-peek-logo bg-gradient-to-br from-[#E7A944] via-[#D2774C] to-[#1E343A]"
+          aria-hidden
+        />
 
-          <div className="home-agents-carousel__scheduling-peek-days">
-            {WEEK_DAYS.map((day) => (
-              <div
-                key={`day-${day.label}-${day.date}`}
-                className={`home-agents-carousel__scheduling-peek-day${
-                  "selected" in day && day.selected ? " home-agents-carousel__scheduling-peek-day--selected" : ""
-                }`}
-              >
-                <div className="home-agents-carousel__scheduling-peek-day-head">
-                  <span className="home-agents-carousel__scheduling-peek-day-label">{day.label}</span>
-                  <span className="home-agents-carousel__scheduling-peek-day-date">{day.date}</span>
+        <p className="home-agents-carousel__scheduling-peek-title">Schedule</p>
+
+        <div className="home-agents-carousel__scheduling-peek-week" aria-hidden>
+          <p className="home-agents-carousel__scheduling-peek-week-range">Mar 7 – 13</p>
+          <div className="home-agents-carousel__scheduling-peek-week-grid">
+            {WEEK_LABELS.map((label, index) => {
+              const date = WEEK_DATES[index];
+              const selected = date === SELECTED_DATE;
+
+              return (
+                <div
+                  key={`week-${label}-${date}`}
+                  className={`home-agents-carousel__scheduling-peek-week-cell${
+                    selected ? " home-agents-carousel__scheduling-peek-week-cell--selected" : ""
+                  }`}
+                >
+                  <span className="home-agents-carousel__scheduling-peek-week-label">{label}</span>
+                  <span className="home-agents-carousel__scheduling-peek-week-date">{date}</span>
                 </div>
-
-                {"chip" in day && day.chip ? (
-                  <span
-                    className={`home-agents-carousel__scheduling-peek-chip${
-                      "booking" in day.chip && day.chip.booking
-                        ? " home-agents-carousel__scheduling-peek-chip--booking"
-                        : ""
-                    }${
-                      "open" in day.chip && day.chip.open ? " home-agents-carousel__scheduling-peek-chip--open" : ""
-                    }`}
-                  >
-                    <span className="home-agents-carousel__scheduling-peek-chip-label">{day.chip.label}</span>
-                    {"time" in day.chip && day.chip.time ? (
-                      <span className="home-agents-carousel__scheduling-peek-chip-time">{day.chip.time}</span>
-                    ) : null}
-                  </span>
-                ) : (
-                  <span className="home-agents-carousel__scheduling-peek-chip home-agents-carousel__scheduling-peek-chip--empty" />
-                )}
-              </div>
-            ))}
-          </div>
-
-          <div className="home-agents-carousel__scheduling-peek-next-row" aria-hidden>
-            {NEXT_ROW_DATES.map((date) => (
-              <span key={`next-${date}`} className="home-agents-carousel__scheduling-peek-next-date">
-                {date}
-              </span>
-            ))}
+              );
+            })}
           </div>
         </div>
 
-        <p className="home-agents-carousel__scheduling-peek-caption">
-          Booking {BOOKING.visit.toLowerCase()} · {BOOKING.patient}
-        </p>
+        <ul className="home-agents-carousel__scheduling-peek-list">
+          {SLOT_ROWS.map((row, rowIndex) => {
+            const spread = getSlotRowSpread(rowIndex);
+            const blur = getPeekFadeBlur(spread);
+
+            return (
+              <li
+                key={`${row.time}-${row.patient}`}
+                className={`home-agents-carousel__scheduling-peek-row${
+                  "active" in row && row.active ? " home-agents-carousel__scheduling-peek-row--active" : ""
+                }`}
+                style={{
+                  opacity: getPeekFadeOpacity(spread),
+                  filter: blur > 0 ? `blur(${blur}px)` : undefined,
+                }}
+              >
+                {"active" in row && row.active ? <CalendarIcon /> : <ClockIcon />}
+                <span className="home-agents-carousel__scheduling-peek-label-block">
+                  <span className="home-agents-carousel__scheduling-peek-label">
+                    {row.patient}
+                    <span className="home-agents-carousel__scheduling-peek-visit"> · {row.visit}</span>
+                  </span>
+                  <span className="home-agents-carousel__scheduling-peek-time">{row.time}</span>
+                  {"badge" in row && row.badge ? (
+                    <span className="home-agents-carousel__scheduling-peek-badge">{row.badge}</span>
+                  ) : null}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+
+        <div
+          className="home-agents-carousel__scheduling-peek-footer"
+          style={{
+            opacity: getPeekFadeOpacity(2),
+            filter: getPeekFadeBlur(2) > 0 ? `blur(${getPeekFadeBlur(2)}px)` : undefined,
+          }}
+        >
+          <span className="home-agents-carousel__scheduling-peek-footer-stat">3 open this week</span>
+          <span className="home-agents-carousel__scheduling-peek-footer-pill">Agent booking</span>
+        </div>
       </div>
     </div>
   );

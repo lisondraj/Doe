@@ -1323,8 +1323,8 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-card {
   left: 0;
   bottom: 0;
   transform-origin: 0% 100%;
-  transform: translate(clamp(-2.5%, -2vmin, -1%), clamp(1.5%, 3vmin, 4.5%))
-    scale(calc(1.14 * var(--home-agents-peek-orb-scale)));
+  transform: translate(clamp(-2.5%, -2vmin, -1%), clamp(0.5%, 1.4vmin, 1.8%))
+    scale(calc(1.22 * var(--home-agents-peek-orb-scale)));
   min-width: clamp(18.5rem, 28vmin, 23.5rem);
   background: #ffffff;
   border: none;
@@ -1335,10 +1335,13 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-card {
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-think {
+  position: absolute;
+  top: clamp(0.52rem, 0.8vmin, 0.64rem);
+  left: clamp(0.52rem, 0.8vmin, 0.64rem);
+  z-index: 2;
   display: inline-flex;
   align-items: center;
   gap: clamp(0.28rem, 0.42vmin, 0.34rem);
-  margin-bottom: clamp(0.38rem, 0.58vmin, 0.46rem);
   padding: clamp(0.28rem, 0.42vmin, 0.34rem) clamp(0.34rem, 0.52vmin, 0.42rem);
   border-radius: clamp(0.34rem, 0.52vmin, 0.42rem);
   background: #f6f6f4;
@@ -1408,65 +1411,73 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-think-dots span:nth-
   }
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-calendar {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  min-width: 0;
-  padding: clamp(0.42rem, 0.64vmin, 0.52rem) clamp(0.38rem, 0.58vmin, 0.46rem)
-    clamp(0.34rem, 0.52vmin, 0.42rem);
-  border-radius: clamp(0.42rem, 0.65vmin, 0.52rem);
-  background: #f6f6f4;
-  box-shadow: inset 0 0 0 1px #ebe9e4;
-  overflow: hidden;
+html[data-home-page] .home-agents-carousel__scheduling-peek-logo {
+  width: clamp(1.95rem, 2.95vmin, 2.35rem);
+  height: clamp(1.95rem, 2.95vmin, 2.35rem);
+  margin-bottom: clamp(0.48rem, 0.72vmin, 0.58rem);
+  border-radius: 9999px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42);
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-range {
-  margin: 0 0 clamp(0.34rem, 0.52vmin, 0.42rem);
+html[data-home-page] .home-agents-carousel__scheduling-peek-title {
+  margin: 0 0 clamp(0.45rem, 0.68vmin, 0.55rem);
   color: #3d4549;
-  font-size: clamp(0.82rem, 1.24vmin, 0.96rem);
+  font-size: clamp(0.98rem, 1.48vmin, 1.12rem);
   font-weight: 500;
   line-height: 1.1;
   letter-spacing: -0.02em;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-week {
+  margin: 0 0 clamp(0.42rem, 0.64vmin, 0.52rem);
+  padding: clamp(0.38rem, 0.58vmin, 0.46rem) clamp(0.34rem, 0.52vmin, 0.42rem);
+  border-radius: clamp(0.42rem, 0.65vmin, 0.52rem);
+  background: #f6f6f4;
+  overflow: hidden;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-week-range {
+  margin: 0 0 clamp(0.3rem, 0.46vmin, 0.38rem);
+  color: #3d4549;
+  font-size: clamp(0.76rem, 1.12vmin, 0.88rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
   white-space: nowrap;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-days {
+html[data-home-page] .home-agents-carousel__scheduling-peek-week-grid {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: clamp(0.12rem, 0.18vmin, 0.15rem);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: clamp(0.1rem, 0.15vmin, 0.12rem);
+  margin-left: clamp(-0.42rem, -0.64vmin, -0.52rem);
+  padding-left: clamp(0.18rem, 0.28vmin, 0.22rem);
+  min-width: calc(100% + clamp(0.72rem, 1.1vmin, 0.88rem));
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-day {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: clamp(0.14rem, 0.22vmin, 0.18rem);
-  min-width: 0;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-day-head {
+html[data-home-page] .home-agents-carousel__scheduling-peek-week-cell {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(0.1rem, 0.15vmin, 0.12rem);
+  gap: clamp(0.08rem, 0.12vmin, 0.1rem);
+  min-width: 0;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-day-label {
+html[data-home-page] .home-agents-carousel__scheduling-peek-week-label {
   color: #9aa3a8;
-  font-size: clamp(0.48rem, 0.72vmin, 0.56rem);
+  font-size: clamp(0.5rem, 0.76vmin, 0.58rem);
   font-weight: 500;
   line-height: 1;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-day-date {
+html[data-home-page] .home-agents-carousel__scheduling-peek-week-date {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: clamp(1.12rem, 1.68vmin, 1.28rem);
-  height: clamp(1.12rem, 1.68vmin, 1.28rem);
+  width: clamp(1.08rem, 1.62vmin, 1.24rem);
+  height: clamp(1.08rem, 1.62vmin, 1.24rem);
   border-radius: 9999px;
   color: #3d4549;
   font-size: clamp(0.58rem, 0.88vmin, 0.68rem);
@@ -1475,104 +1486,109 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-day-date {
   font-variant-numeric: tabular-nums;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-day--selected .home-agents-carousel__scheduling-peek-day-label {
+html[data-home-page] .home-agents-carousel__scheduling-peek-week-cell--selected .home-agents-carousel__scheduling-peek-week-label {
   color: #d2774c;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-day--selected .home-agents-carousel__scheduling-peek-day-date {
+html[data-home-page] .home-agents-carousel__scheduling-peek-week-cell--selected .home-agents-carousel__scheduling-peek-week-date {
   background: #d2774c;
   color: #ffffff;
   font-weight: 600;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-chip {
+html[data-home-page] .home-agents-carousel__scheduling-peek-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-row {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: clamp(0.04rem, 0.06vmin, 0.05rem);
-  min-height: clamp(1.48rem, 2.22vmin, 1.74rem);
-  padding: clamp(0.14rem, 0.22vmin, 0.18rem) clamp(0.08rem, 0.12vmin, 0.1rem);
-  border-radius: clamp(0.2rem, 0.3vmin, 0.24rem);
-  background: #ffffff;
-  box-shadow: inset 0 0 0 1px #ebe9e4;
+  gap: clamp(0.35rem, 0.55vmin, 0.45rem);
+  padding: clamp(0.32rem, 0.5vmin, 0.4rem) clamp(0.3rem, 0.48vmin, 0.4rem);
+  border-radius: clamp(0.32rem, 0.5vmin, 0.42rem);
+  color: #3d4549;
+  font-size: clamp(0.76rem, 1.12vmin, 0.88rem);
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-row--active {
+  background: #f6f6f4;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-row-icon {
+  width: clamp(1.05rem, 1.58vmin, 1.22rem);
+  height: clamp(1.05rem, 1.58vmin, 1.22rem);
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-label-block {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(0.42rem, 0.62vmin, 0.52rem);
   min-width: 0;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-chip--empty {
-  visibility: hidden;
-  background: transparent;
-  box-shadow: none;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-chip-label {
-  color: #3d4549;
-  font-size: clamp(0.46rem, 0.7vmin, 0.54rem);
-  font-weight: 500;
-  line-height: 1.1;
-  text-align: center;
+html[data-home-page] .home-agents-carousel__scheduling-peek-label {
+  min-width: 0;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-chip--booking {
-  background: rgba(210, 119, 76, 0.14);
-  box-shadow: inset 0 0 0 1px rgba(210, 119, 76, 0.28);
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-chip--booking .home-agents-carousel__scheduling-peek-chip-label {
-  color: #1e343a;
-  font-weight: 600;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-chip--open .home-agents-carousel__scheduling-peek-chip-label {
+html[data-home-page] .home-agents-carousel__scheduling-peek-visit {
   color: #9aa3a8;
   font-weight: 400;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-chip-time {
-  color: #d2774c;
-  font-size: clamp(0.42rem, 0.64vmin, 0.5rem);
+html[data-home-page] .home-agents-carousel__scheduling-peek-time {
+  color: #9aa3a8;
+  font-size: clamp(0.76rem, 1.12vmin, 0.88rem);
+  font-weight: 400;
+  line-height: 1.15;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-badge {
+  padding: clamp(0.14rem, 0.22vmin, 0.18rem) clamp(0.38rem, 0.58vmin, 0.48rem);
+  border-radius: clamp(0.22rem, 0.34vmin, 0.28rem);
+  background: #d2774c;
+  color: #ffffff;
+  font-size: clamp(0.62rem, 0.92vmin, 0.72rem);
   font-weight: 500;
   line-height: 1;
+  letter-spacing: 0.01em;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-next-row {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: clamp(0.12rem, 0.18vmin, 0.15rem);
-  margin-top: clamp(0.28rem, 0.42vmin, 0.34rem);
-  padding-top: clamp(0.22rem, 0.34vmin, 0.28rem);
-  border-top: 1px solid #ebe9e4;
-  opacity: 0.42;
-  transform: translateY(clamp(0.12rem, 0.18vmin, 0.15rem));
-  clip-path: inset(0 0 42% 0);
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-next-date {
+html[data-home-page] .home-agents-carousel__scheduling-peek-footer {
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: #9aa3a8;
-  font-size: clamp(0.54rem, 0.82vmin, 0.64rem);
-  font-weight: 500;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: clamp(0.55rem, 0.85vmin, 0.68rem);
+  padding-top: clamp(0.48rem, 0.72vmin, 0.58rem);
+  border-top: 1px solid #ebe9e4;
 }
 
-html[data-home-page] .home-agents-carousel__scheduling-peek-caption {
-  margin: clamp(0.38rem, 0.58vmin, 0.46rem) 0 0;
-  padding-top: clamp(0.42rem, 0.64vmin, 0.52rem);
-  border-top: 1px solid #ebe9e4;
+html[data-home-page] .home-agents-carousel__scheduling-peek-footer-stat {
   color: #9aa3a8;
   font-size: clamp(0.68rem, 1.02vmin, 0.8rem);
   font-weight: 400;
   line-height: 1.2;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-footer-pill {
+  padding: clamp(0.18rem, 0.28vmin, 0.22rem) clamp(0.34rem, 0.52vmin, 0.42rem);
+  border-radius: 9999px;
+  background: rgba(210, 119, 76, 0.12);
+  color: #d2774c;
+  font-size: clamp(0.62rem, 0.92vmin, 0.72rem);
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2799,31 +2815,47 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-think,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-calendar {
-  background: var(--carousel-peek-dusk-surface-raised);
-  box-shadow: inset 0 0 0 1px var(--carousel-peek-dusk-border);
+  .home-agents-carousel__scheduling-peek-logo {
+  background: linear-gradient(
+    135deg,
+    var(--carousel-peek-dusk-horizon) 0%,
+    var(--carousel-peek-dusk-clay) 52%,
+    var(--carousel-peek-dusk-back) 100%
+  ) !important;
+  box-shadow: inset 0 1px 0 rgba(242, 216, 168, 0.28);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-think-label,
+  .home-agents-carousel__scheduling-peek-think,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-range,
+  .home-agents-carousel__scheduling-peek-week {
+  background: var(--carousel-peek-dusk-surface-raised);
+}
+
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-day-date,
+  .home-agents-carousel__scheduling-peek-title,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-chip-label {
+  .home-agents-carousel__scheduling-peek-week-range,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-row,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-label,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-think-label {
   color: var(--carousel-peek-dusk-ink);
   font-weight: 500;
 }
@@ -2831,23 +2863,53 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-row--active {
+  background: var(--carousel-peek-dusk-surface-raised);
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-time,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-visit,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-footer-stat,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
   .home-agents-carousel__scheduling-peek-think-dots span,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-day-label,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-next-date,
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-caption {
+  .home-agents-carousel__scheduling-peek-week-label {
   color: var(--carousel-peek-dusk-muted);
   font-weight: 400;
 }
 
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-badge {
+  background: rgba(196, 92, 66, 0.88);
+  color: var(--carousel-peek-dusk-ink);
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-footer {
+  border-top-color: var(--carousel-peek-dusk-border);
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core
+  .home-agents-carousel__scheduling-peek-footer-pill,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
@@ -2859,14 +2921,16 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-day--selected .home-agents-carousel__scheduling-peek-day-label {
+  .home-agents-carousel__scheduling-peek-week-cell--selected
+  .home-agents-carousel__scheduling-peek-week-label {
   color: var(--carousel-peek-dusk-horizon);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-day--selected .home-agents-carousel__scheduling-peek-day-date {
+  .home-agents-carousel__scheduling-peek-week-cell--selected
+  .home-agents-carousel__scheduling-peek-week-date {
   background: var(--carousel-peek-dusk-horizon);
   color: var(--carousel-peek-dusk-surface);
 }
@@ -2874,53 +2938,10 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-chip {
-  background: var(--carousel-peek-dusk-surface);
-  box-shadow: inset 0 0 0 1px var(--carousel-peek-dusk-border);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-chip--booking {
-  background: var(--carousel-peek-dusk-highlight);
-  box-shadow: inset 0 0 0 1px rgba(232, 160, 96, 0.34);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-chip--booking .home-agents-carousel__scheduling-peek-chip-label {
-  color: var(--carousel-peek-dusk-ink);
-  font-weight: 600;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-chip--open .home-agents-carousel__scheduling-peek-chip-label {
-  color: var(--carousel-peek-dusk-muted);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-chip-time {
-  color: var(--carousel-peek-dusk-horizon);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-next-row {
-  border-top-color: var(--carousel-peek-dusk-border);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-caption {
-  border-top-color: var(--carousel-peek-dusk-border);
+  .home-agents-carousel__scheduling-peek-row
+  svg
+  [stroke] {
+  stroke: var(--carousel-peek-dusk-ink-secondary) !important;
 }
 
 /* Labs peek */
