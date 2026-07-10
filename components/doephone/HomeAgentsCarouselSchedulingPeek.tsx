@@ -18,7 +18,7 @@ const SLOT_ROWS = [
   { time: "2:00 PM", patient: "Kowalski", visit: "Labs review" },
 ] as const;
 
-const SLOT_CLEAR_ROW_COUNT = 2;
+const SLOT_CLEAR_ROW_COUNT = 1;
 
 function getSlotRowSpread(rowIndex: number) {
   if (rowIndex < SLOT_CLEAR_ROW_COUNT) {
@@ -33,7 +33,7 @@ function getPeekFadeOpacity(spread: number) {
     return 1;
   }
 
-  return Math.max(0.64, 1 - spread * 0.08);
+  return Math.max(0.7, 1 - spread * 0.06);
 }
 
 function getPeekFadeBlur(spread: number) {
@@ -41,8 +41,8 @@ function getPeekFadeBlur(spread: number) {
     return 0;
   }
 
-  const eased = spread * (0.14 + spread * 0.1);
-  return Math.min(0.95, eased);
+  const eased = spread * (0.22 + spread * 0.06);
+  return Math.min(0.72, eased);
 }
 
 function ChevronIcon() {
@@ -95,45 +95,47 @@ export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: 
         </div>
 
         <div className="home-agents-carousel__scheduling-peek-status" aria-hidden>
-          <span className="home-agents-carousel__scheduling-peek-status-title">Confirming booking</span>
+          <span className="home-agents-carousel__scheduling-peek-status-title">Calling to confirm…</span>
           <span className="home-agents-carousel__scheduling-peek-status-meta">Brooks · Physical · 3:15 PM</span>
           <span className="home-agents-carousel__scheduling-peek-status-timer">1:24</span>
         </div>
 
-        <ul className="home-agents-carousel__scheduling-peek-list">
-          {SLOT_ROWS.map((row, rowIndex) => {
-            const spread = getSlotRowSpread(rowIndex);
-            const blur = getPeekFadeBlur(spread);
+        <div className="home-agents-carousel__scheduling-peek-fade">
+          <ul className="home-agents-carousel__scheduling-peek-list">
+            {SLOT_ROWS.map((row, rowIndex) => {
+              const spread = getSlotRowSpread(rowIndex);
+              const blur = getPeekFadeBlur(spread);
 
-            return (
-              <li
-                key={`${row.time}-${row.patient}`}
-                className={`home-agents-carousel__scheduling-peek-row${
-                  "active" in row && row.active ? " home-agents-carousel__scheduling-peek-row--active" : ""
-                }`}
-                style={{
-                  opacity: getPeekFadeOpacity(spread),
-                  filter: blur > 0 ? `blur(${blur}px)` : undefined,
-                }}
-              >
-                <span className="home-agents-carousel__scheduling-peek-label">
-                  {row.patient}
-                  <span className="home-agents-carousel__scheduling-peek-visit"> · {row.visit}</span>
-                </span>
-                <span className="home-agents-carousel__scheduling-peek-time">{row.time}</span>
-              </li>
-            );
-          })}
-        </ul>
+              return (
+                <li
+                  key={`${row.time}-${row.patient}`}
+                  className={`home-agents-carousel__scheduling-peek-row${
+                    "active" in row && row.active ? " home-agents-carousel__scheduling-peek-row--active" : ""
+                  }`}
+                  style={{
+                    opacity: getPeekFadeOpacity(spread),
+                    filter: blur > 0 ? `blur(${blur}px)` : undefined,
+                  }}
+                >
+                  <span className="home-agents-carousel__scheduling-peek-label">
+                    {row.patient}
+                    <span className="home-agents-carousel__scheduling-peek-visit"> · {row.visit}</span>
+                  </span>
+                  <span className="home-agents-carousel__scheduling-peek-time">{row.time}</span>
+                </li>
+              );
+            })}
+          </ul>
 
-        <div
-          className="home-agents-carousel__scheduling-peek-footer"
-          style={{
-            opacity: getPeekFadeOpacity(2),
-            filter: getPeekFadeBlur(2) > 0 ? `blur(${getPeekFadeBlur(2)}px)` : undefined,
-          }}
-        >
-          <span className="home-agents-carousel__scheduling-peek-footer-stat">3 open this week</span>
+          <div
+            className="home-agents-carousel__scheduling-peek-footer"
+            style={{
+              opacity: getPeekFadeOpacity(3),
+              filter: getPeekFadeBlur(3) > 0 ? `blur(${getPeekFadeBlur(3)}px)` : undefined,
+            }}
+          >
+            <span className="home-agents-carousel__scheduling-peek-footer-stat">3 open this week</span>
+          </div>
         </div>
       </div>
     </div>

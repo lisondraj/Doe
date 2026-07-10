@@ -1459,7 +1459,7 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-day {
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-day--selected {
-  background: #f6f6f4;
+  background: transparent;
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-day-label {
@@ -1469,10 +1469,6 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-day-label {
   line-height: 1;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-}
-
-html[data-home-page] .home-agents-carousel__scheduling-peek-day--selected .home-agents-carousel__scheduling-peek-day-label {
-  color: #d2774c;
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-day-date {
@@ -1539,6 +1535,11 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-status-timer {
   line-height: 1;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+}
+
+html[data-home-page] .home-agents-carousel__scheduling-peek-fade {
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 42%, rgba(0, 0, 0, 0.92) 68%, rgba(0, 0, 0, 0.55) 84%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 42%, rgba(0, 0, 0, 0.92) 68%, rgba(0, 0, 0, 0.55) 84%, transparent 100%);
 }
 
 html[data-home-page] .home-agents-carousel__scheduling-peek-list {
@@ -3044,21 +3045,6 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .hero-speaking-orb__core
   .home-agents-carousel__scheduling-peek-footer {
   border-top-color: var(--carousel-peek-dusk-border);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-day--selected {
-  background: var(--carousel-peek-dusk-surface-raised);
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
-  .hero-speaking-orb__core
-  .home-agents-carousel__scheduling-peek-day--selected
-  .home-agents-carousel__scheduling-peek-day-label {
-  color: var(--carousel-peek-dusk-horizon);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
