@@ -8965,6 +8965,20 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
   }
 }
 
+@keyframes doephone-scroll-reveal-lift-in {
+  0% {
+    opacity: 0;
+    filter: blur(16px);
+    transform: translateY(1.75rem);
+  }
+
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
 .doephone-section-reveal {
   opacity: 0;
   filter: blur(24px);
@@ -9002,6 +9016,30 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
     cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-agents-carousel-delay, 0ms) both;
 }
 
+.doephone-section-reveal--in.doephone-section-reveal--agents-orbs {
+  animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 2.4s)
+    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-agents-orbs-delay, 0ms) both;
+}
+
+.doephone-section-reveal--in.doephone-section-reveal--agents-label {
+  animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 2.4s)
+    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-agents-label-delay, 620ms) both;
+}
+
+.doephone-section-reveal--in.doephone-section-reveal--agents-nav {
+  animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 2.4s)
+    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-agents-nav-delay, 1180ms) both;
+}
+
+.doephone-section-reveal--in.doephone-section-reveal--hoverable {
+  transition: transform var(--doephone-scroll-reveal-hover-duration, 0.46s)
+    cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.doephone-section-reveal--in.doephone-section-reveal--hoverable:hover {
+  transform: translateY(-7px);
+}
+
 
 /* Shared unblur + rise with optional hover lift (hero orbs, carousel chrome). */
 .doephone-reveal-lift {
@@ -9012,12 +9050,13 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
 }
 
 .doephone-reveal-lift--in {
-  animation: doephone-hero-headline-in 1.45s cubic-bezier(0.22, 1, 0.36, 1)
-    var(--doephone-reveal-lift-delay, 0ms) both;
+  animation: doephone-scroll-reveal-lift-in var(--doephone-scroll-reveal-lift-duration, 2.4s)
+    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-reveal-lift-delay, 0ms) both;
 }
 
 .doephone-reveal-lift--in.doephone-reveal-lift--hoverable {
-  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform var(--doephone-scroll-reveal-hover-duration, 0.46s)
+    cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .doephone-reveal-lift--in.doephone-reveal-lift--hoverable:hover {
@@ -9026,19 +9065,6 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
 
 html[data-home-page] .doephone-scroll-reveal-lift {
   width: 100%;
-  display: block;
-}
-
-html[data-home-page] .doephone-scroll-reveal-lift.doephone-reveal-lift--in.doephone-reveal-lift--hoverable {
-  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-html[data-home-page] .doephone-scroll-reveal-lift.doephone-reveal-lift--in.doephone-reveal-lift--hoverable:hover {
-  transform: translateY(-7px);
-}
-
-html[data-home-page] .home-feature-shader-band.doephone-scroll-reveal-lift,
-html[data-home-page] .home-feature-card-section.doephone-scroll-reveal-lift {
   display: block;
 }
 

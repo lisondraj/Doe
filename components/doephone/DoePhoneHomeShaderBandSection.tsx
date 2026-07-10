@@ -6,6 +6,7 @@ import { DoePhoneHomeLabAlertsVisual } from "@/components/doephone/DoePhoneHomeL
 import { DoePhoneHomePriorAuthVisual } from "@/components/doephone/DoePhoneHomePriorAuthVisual";
 import { DoePhoneHomeSectionWorkflowInput } from "@/components/doephone/DoePhoneHomeSectionWorkflowInput";
 import { DoePhoneReviewPackageVisual } from "@/components/doephone/DoePhoneReviewPackageVisual";
+import { DoePhoneScrollRevealContent, DoePhoneScrollRevealLift } from "@/components/doephone/DoePhoneScrollRevealLift";
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import type { DoePhoneCommunicationSlide } from "@/lib/doephone/communication-carousel";
 import {
@@ -15,7 +16,10 @@ import {
   DOEPHONE_VIEWPORT_SECTION,
 } from "@/lib/doephone/section-styles";
 import { suisseIntl } from "@/lib/home/fonts";
+import { doephoneHomeScrollRevealStyleVars } from "@/lib/doephone/section-reveal-timing";
+import { useDoePhoneSectionReveal } from "@/lib/doephone/use-doe-phone-section-reveal";
 import { doeHomeDuskShaderBandSurface, doeHomeShaderBandSurface } from "@/lib/proto/proto-shader-backdrop-colors";
+import type { CSSProperties } from "react";
 
 type ShaderBandFeature = "workflow" | "active-agents" | "call-summaries" | "lab-alerts" | "guardrails";
 
@@ -68,6 +72,10 @@ export function DoePhoneHomeShaderBandSection({
   const sectionShell = feature ? `${DOEPHONE_VIEWPORT_SECTION} flex flex-col` : DOEPHONE_MAIN_PAGE_VIEWPORT_SECTION;
   const sectionLabel = feature ? SHADER_BAND_LABELS[feature] : undefined;
   const [titleLine1, titleLine2] = feature ? SHADER_BAND_TITLES[feature] : ["", ""];
+  const { ref: revealRef, revealed } = useDoePhoneSectionReveal(0.18, {
+    rootMargin: "0px 0px 8% 0px",
+  });
+  const revealStyle = doephoneHomeScrollRevealStyleVars() as CSSProperties;
 
   return (
     <section
@@ -87,84 +95,116 @@ export function DoePhoneHomeShaderBandSection({
       ) : null}
 
       {feature === "workflow" ? (
-        <div className="home-feature-shader-band__workflow-shell relative z-[10] flex h-full min-h-0 w-full flex-col">
-          <h2
-            className={`home-feature-shader-band__workflow-title home-feature-card-section__title home-feature-card-section__title--feature-lead text-left ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${suisseIntl.className}`}
-          >
-            <span className="block">{titleLine1}</span>
-            <span className="block">{titleLine2}</span>
-          </h2>
+        <div
+          ref={revealRef}
+          className="home-feature-shader-band__workflow-shell relative z-[10] flex h-full min-h-0 w-full flex-col"
+          style={revealStyle}
+        >
+          <DoePhoneScrollRevealContent revealed={revealed} segment="title">
+            <h2
+              className={`home-feature-shader-band__workflow-title home-feature-card-section__title home-feature-card-section__title--feature-lead text-left ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${suisseIntl.className}`}
+            >
+              <span className="block">{titleLine1}</span>
+              <span className="block">{titleLine2}</span>
+            </h2>
+          </DoePhoneScrollRevealContent>
           <div className="home-feature-shader-band__call-logic-shell flex min-h-0 flex-1 flex-col items-center justify-center">
-            <div className="home-feature-shader-band__workflow-content w-full">
-              <div className="home-feature-shader-band__workflow-stack">
-                <div className="home-feature-section__call-logic-diagram relative w-full shrink-0">
-                  <div className="home-call-logic-diagram-scale">
-                    <DoePhoneHomeCallLogicDiagram />
+            <DoePhoneScrollRevealContent revealed={revealed} segment="carousel" className="w-full">
+              <div className="home-feature-shader-band__workflow-content w-full">
+                <div className="home-feature-shader-band__workflow-stack">
+                  <div className="home-feature-section__call-logic-diagram relative w-full shrink-0">
+                    <div className="home-call-logic-diagram-scale">
+                      <DoePhoneHomeCallLogicDiagram />
+                    </div>
                   </div>
+                  <DoePhoneHomeSectionWorkflowInput />
                 </div>
-                <DoePhoneHomeSectionWorkflowInput />
               </div>
-            </div>
+            </DoePhoneScrollRevealContent>
           </div>
         </div>
       ) : null}
 
       {feature === "active-agents" ? (
-        <div className="home-feature-shader-band__active-agents-shell relative z-[10] flex h-full min-h-0 w-full flex-1 flex-col items-center justify-center">
+        <DoePhoneScrollRevealLift className="home-feature-shader-band__active-agents-shell relative z-[10] flex h-full min-h-0 w-full flex-1 flex-col items-center justify-center">
           <DoePhoneReviewPackageVisual />
-        </div>
+        </DoePhoneScrollRevealLift>
       ) : null}
 
       {feature === "call-summaries" ? (
-        <div className="home-feature-shader-band__feature-shell relative z-[10] flex h-full min-h-0 w-full flex-col">
-          <h2
-            className={`home-feature-shader-band__feature-title home-feature-card-section__title home-feature-card-section__title--feature-lead text-left ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${suisseIntl.className}`}
-          >
-            <span className="block">{titleLine1}</span>
-            <span className="block">{titleLine2}</span>
-          </h2>
+        <div
+          ref={revealRef}
+          className="home-feature-shader-band__feature-shell relative z-[10] flex h-full min-h-0 w-full flex-col"
+          style={revealStyle}
+        >
+          <DoePhoneScrollRevealContent revealed={revealed} segment="title">
+            <h2
+              className={`home-feature-shader-band__feature-title home-feature-card-section__title home-feature-card-section__title--feature-lead text-left ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${suisseIntl.className}`}
+            >
+              <span className="block">{titleLine1}</span>
+              <span className="block">{titleLine2}</span>
+            </h2>
+          </DoePhoneScrollRevealContent>
           <div className="home-feature-shader-band__feature-content flex min-h-0 flex-1 flex-col items-center justify-center">
-            <div className="home-feature-section__prior-auth relative z-[20] w-full shrink-0">
-              <div className="home-prior-auth-scale">
-                <DoePhoneHomePriorAuthVisual />
+            <DoePhoneScrollRevealContent revealed={revealed} segment="carousel" className="w-full">
+              <div className="home-feature-section__prior-auth relative z-[20] w-full shrink-0">
+                <div className="home-prior-auth-scale">
+                  <DoePhoneHomePriorAuthVisual />
+                </div>
               </div>
-            </div>
+            </DoePhoneScrollRevealContent>
           </div>
         </div>
       ) : null}
 
       {feature === "lab-alerts" ? (
-        <div className="home-feature-shader-band__feature-shell relative z-[10] flex h-full min-h-0 w-full flex-col">
-          <h2
-            className={`home-feature-shader-band__feature-title home-feature-card-section__title home-feature-card-section__title--feature-lead text-left ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${suisseIntl.className}`}
-          >
-            <span className="block">{titleLine1}</span>
-            <span className="block">{titleLine2}</span>
-          </h2>
+        <div
+          ref={revealRef}
+          className="home-feature-shader-band__feature-shell relative z-[10] flex h-full min-h-0 w-full flex-col"
+          style={revealStyle}
+        >
+          <DoePhoneScrollRevealContent revealed={revealed} segment="title">
+            <h2
+              className={`home-feature-shader-band__feature-title home-feature-card-section__title home-feature-card-section__title--feature-lead text-left ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${suisseIntl.className}`}
+            >
+              <span className="block">{titleLine1}</span>
+              <span className="block">{titleLine2}</span>
+            </h2>
+          </DoePhoneScrollRevealContent>
           <div className="home-feature-shader-band__feature-content flex min-h-0 flex-1 flex-col items-center justify-center">
-            <div className="home-feature-section__lab-alerts relative z-[20] w-full shrink-0">
-              <div className="home-lab-alerts-scale">
-                <DoePhoneHomeLabAlertsVisual />
+            <DoePhoneScrollRevealContent revealed={revealed} segment="carousel" className="w-full">
+              <div className="home-feature-section__lab-alerts relative z-[20] w-full shrink-0">
+                <div className="home-lab-alerts-scale">
+                  <DoePhoneHomeLabAlertsVisual />
+                </div>
               </div>
-            </div>
+            </DoePhoneScrollRevealContent>
           </div>
         </div>
       ) : null}
 
       {feature === "guardrails" ? (
-        <div className="home-feature-shader-band__feature-shell relative z-[10] flex h-full min-h-0 w-full flex-col">
-          <h2
-            className={`home-feature-shader-band__feature-title home-feature-card-section__title home-feature-card-section__title--feature-lead text-left ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${suisseIntl.className}`}
-          >
-            <span className="block">{titleLine1}</span>
-            <span className="block">{titleLine2}</span>
-          </h2>
+        <div
+          ref={revealRef}
+          className="home-feature-shader-band__feature-shell relative z-[10] flex h-full min-h-0 w-full flex-col"
+          style={revealStyle}
+        >
+          <DoePhoneScrollRevealContent revealed={revealed} segment="title">
+            <h2
+              className={`home-feature-shader-band__feature-title home-feature-card-section__title home-feature-card-section__title--feature-lead text-left ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${suisseIntl.className}`}
+            >
+              <span className="block">{titleLine1}</span>
+              <span className="block">{titleLine2}</span>
+            </h2>
+          </DoePhoneScrollRevealContent>
           <div className="home-feature-shader-band__feature-content flex min-h-0 flex-1 flex-col items-center justify-center">
-            <div className="home-feature-section__guardrails relative z-[20] w-full shrink-0">
-              <div className="home-guardrails-scale">
-                <DoePhoneHomeGuardrailsVisual />
+            <DoePhoneScrollRevealContent revealed={revealed} segment="carousel" className="w-full">
+              <div className="home-feature-section__guardrails relative z-[20] w-full shrink-0">
+                <div className="home-guardrails-scale">
+                  <DoePhoneHomeGuardrailsVisual />
+                </div>
               </div>
-            </div>
+            </DoePhoneScrollRevealContent>
           </div>
         </div>
       ) : null}

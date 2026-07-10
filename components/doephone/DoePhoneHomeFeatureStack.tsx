@@ -4,7 +4,6 @@ import { Fragment } from "react";
 
 import { DoePhoneHomeFeatureCardSection } from "@/components/doephone/DoePhoneHomeFeatureCardSection";
 import { DoePhoneHomeShaderBandSection } from "@/components/doephone/DoePhoneHomeShaderBandSection";
-import { DoePhoneScrollRevealLift } from "@/components/doephone/DoePhoneScrollRevealLift";
 import { DOEPHONE_HOME_FEATURE_SLIDES } from "@/lib/doephone/communication-carousel";
 import { HOME_FEATURE_SECTION_TITLES } from "@/lib/doephone/home-feature-sections";
 
@@ -16,26 +15,23 @@ export function DoePhoneHomeFeatureStack({
 }) {
   return (
     <>
-      {DOEPHONE_HOME_FEATURE_SLIDES.map((slide) => {
+      {DOEPHONE_HOME_FEATURE_SLIDES.map((slide, index) => {
         const title = HOME_FEATURE_SECTION_TITLES[slide.id];
         const showSpecialtyColumns = slide.id === "front-desk";
         const showAgentsCarousel = slide.id === "agents";
 
         return (
           <Fragment key={slide.id}>
-            <DoePhoneScrollRevealLift className="w-full shrink-0">
-              <DoePhoneHomeFeatureCardSection
-                slide={slide}
-                titleLine1={title.line1}
-                titleLine2={title.line2}
-                shaderTheme={shaderTheme}
-                showSpecialtyColumns={showSpecialtyColumns}
-                showAgentsCarousel={showAgentsCarousel}
-              />
-            </DoePhoneScrollRevealLift>
-            <DoePhoneScrollRevealLift className="w-full shrink-0">
-              <DoePhoneHomeShaderBandSection slideId={slide.id} shaderTheme={shaderTheme} />
-            </DoePhoneScrollRevealLift>
+            <DoePhoneHomeFeatureCardSection
+              slide={slide}
+              titleLine1={title.line1}
+              titleLine2={title.line2}
+              shaderTheme={shaderTheme}
+              showSpecialtyColumns={showSpecialtyColumns}
+              showAgentsCarousel={showAgentsCarousel}
+              isFirstBelowHero={index === 0}
+            />
+            <DoePhoneHomeShaderBandSection slideId={slide.id} shaderTheme={shaderTheme} />
           </Fragment>
         );
       })}

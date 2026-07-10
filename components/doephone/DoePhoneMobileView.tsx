@@ -6,7 +6,6 @@ import DoeIphoneSiteNav from "@/components/DoeIphoneSiteNav";
 import { DoePhoneClosingSection } from "@/components/doephone/DoePhoneClosingSection";
 import { DoePhoneHeroSection } from "@/components/doephone/DoePhoneHeroSection";
 import { DoePhoneHomeFeatureStack } from "@/components/doephone/DoePhoneHomeFeatureStack";
-import { DoePhoneScrollRevealLift } from "@/components/doephone/DoePhoneScrollRevealLift";
 import { ProtoCommunicationStack } from "@/components/proto/ProtoCommunicationStack";
 import { ProtoFooter } from "@/components/proto/ProtoFooter";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
@@ -105,15 +104,11 @@ export function DoePhoneMobileView({ variant = "home" }: { variant?: "home" | "p
         <ProtoFooter />
       ) : (
         <>
-          <DoePhoneScrollRevealLift className="w-full shrink-0">
-            <section className={DOEPHONE_BEIGE_SECTION} aria-label="Closing">
-              <DoePhoneClosingSection suppressTitleReveal />
-            </section>
-          </DoePhoneScrollRevealLift>
+          <section className={DOEPHONE_BEIGE_SECTION} aria-label="Closing">
+            <DoePhoneClosingSection />
+          </section>
 
-          <DoePhoneScrollRevealLift className="w-full shrink-0">
-            <HomeFooter shaderTheme="dusk" />
-          </DoePhoneScrollRevealLift>
+          <HomeFooter shaderTheme="dusk" />
         </>
       )}
     </div>

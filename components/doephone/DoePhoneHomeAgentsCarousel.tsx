@@ -35,6 +35,7 @@ import {
   heroDialOrbCarouselScheme,
   type HeroDialOrbScheme,
 } from "@/lib/doephone/hero-dial-orbs";
+import { doePhoneSectionRevealSegmentClass } from "@/lib/doephone/use-doe-phone-section-reveal";
 import { SHADER_WEBGL_SLOT_PRIORITY } from "@/lib/doephone/shader-webgl-budget";
 import { doeHomeAgentsCarouselOrbShaderVariantForLabel } from "@/lib/proto/proto-grain-gradient";
 
@@ -227,7 +228,7 @@ const AGENTS_CAROUSEL_LOOP_START =
 const AGENTS_CAROUSEL_SWIPE_THRESHOLD_PX = 44;
 
 /** Hero agent orbs — horizontal carousel with chevrons and label. */
-export function DoePhoneHomeAgentsCarousel() {
+export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: boolean }) {
   const [layoutVariant, setLayoutVariant] = useState<DoePhoneVariant>(readBootstrappedDoePhoneVariant);
   const [layoutReady, setLayoutReady] = useState(true);
   const isDesktop = layoutReady && layoutVariant === "desktop";
@@ -339,7 +340,9 @@ export function DoePhoneHomeAgentsCarousel() {
 
   return (
     <div className={`home-agents-carousel ${dmSans.className}`} aria-hidden>
-      <div className="home-agents-carousel__stage">
+      <div
+        className={`home-agents-carousel__stage ${doePhoneSectionRevealSegmentClass("agents-orbs", revealed)}`}
+      >
         <div
           className="home-agents-carousel__viewport"
           onTouchStart={handleViewportTouchStart}
@@ -376,9 +379,10 @@ export function DoePhoneHomeAgentsCarousel() {
             direction="left"
             onClick={goPrev}
             label="Previous agent"
+            className={doePhoneSectionRevealSegmentClass("agents-nav", revealed)}
           />
           <div
-            className={`hero-speaking-orb__tag hero-speaking-orb__tag--carousel hero-speaking-orb__tag--visible ${dmSans.className}`}
+            className={`hero-speaking-orb__tag hero-speaking-orb__tag--carousel hero-speaking-orb__tag--visible ${dmSans.className} ${doePhoneSectionRevealSegmentClass("agents-label", revealed)}`}
             aria-hidden
           >
             <span className="hero-speaking-orb__tag-text">{active.label}</span>
@@ -387,10 +391,11 @@ export function DoePhoneHomeAgentsCarousel() {
             direction="right"
             onClick={goNext}
             label="Next agent"
+            className={doePhoneSectionRevealSegmentClass("agents-nav", revealed)}
           />
         </div>
         <p
-          className={`home-agents-carousel__description ${dmSans.className}`}
+          className={`home-agents-carousel__description ${dmSans.className} ${doePhoneSectionRevealSegmentClass("agents-nav", revealed)}`}
           aria-hidden
         >
           {AGENTS_CAROUSEL_DESCRIPTIONS[active.label] ?? ""}

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import { DoePhoneScrollRevealLift } from "@/components/doephone/DoePhoneScrollRevealLift";
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import { DOEPHONE_FOOTER_CONTENT_INSET } from "@/lib/doephone/section-styles";
 import { inter, lora } from "@/lib/home/fonts";
@@ -50,7 +51,7 @@ export function HomeFooter({
           />
         </div>
 
-        <div className="relative z-10 flex w-full flex-1 flex-col justify-end pt-10 md:pt-16">
+        <DoePhoneScrollRevealLift className="relative z-10 flex w-full flex-1 flex-col justify-end pt-10 md:pt-16">
           <div
             className={`mb-14 flex w-full items-end justify-between gap-8 md:mb-16 iphone-page:mb-12 iphone-page:gap-6 ${DOEPHONE_FOOTER_CONTENT_INSET}`}
           >
@@ -116,7 +117,7 @@ export function HomeFooter({
               Doe
             </Link>
           </div>
-        </div>
+        </DoePhoneScrollRevealLift>
       </footer>
     </>
   );

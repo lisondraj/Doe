@@ -3,6 +3,11 @@
 export const DOEPHONE_SECTION_REVEAL_DURATION_MS = 1750;
 export const DOEPHONE_SECTION_REVEAL_GAP_MS = 400;
 
+/** Home scroll content reveal — slower unblur + rise below hero. */
+export const DOEPHONE_HOME_SCROLL_REVEAL_DURATION_MS = 2400;
+export const DOEPHONE_HOME_SCROLL_REVEAL_GAP_MS = 520;
+export const DOEPHONE_HOME_SCROLL_REVEAL_HOVER_MS = 460;
+
 export const DOEPHONE_SECTION_REVEAL_TITLE_DELAY_MS = 0;
 export const DOEPHONE_SECTION_REVEAL_CAROUSEL_DELAY_MS = 700;
 
@@ -32,14 +37,25 @@ export function doephoneSectionRevealStyleVars(): Record<string, string> {
   };
 }
 
+export function doephoneHomeScrollRevealStyleVars(): Record<string, string> {
+  return {
+    "--doephone-section-reveal-duration": `${DOEPHONE_HOME_SCROLL_REVEAL_DURATION_MS}ms`,
+    "--doephone-scroll-reveal-lift-duration": `${DOEPHONE_HOME_SCROLL_REVEAL_DURATION_MS}ms`,
+    "--doephone-scroll-reveal-hover-duration": `${DOEPHONE_HOME_SCROLL_REVEAL_HOVER_MS}ms`,
+    "--doephone-section-reveal-title-delay": "0ms",
+    "--doephone-section-reveal-carousel-delay": `${DOEPHONE_HOME_SCROLL_REVEAL_GAP_MS}ms`,
+    "--doephone-section-reveal-menu-delay": `${DOEPHONE_HOME_SCROLL_REVEAL_GAP_MS * 2}ms`,
+  };
+}
+
 /** Agents carousel — focused orb peek unblur on scroll. */
 export const DOEPHONE_AGENTS_REVEAL_PEEK_DELAY_MS = 280;
 
 /** Agents carousel — orbs → label + chevrons. */
 export const DOEPHONE_AGENTS_REVEAL_CAROUSEL_DELAY_MS = 0;
 export const DOEPHONE_AGENTS_REVEAL_ORBS_DELAY_MS = 0;
-export const DOEPHONE_AGENTS_REVEAL_LABEL_DELAY_MS = 420;
-export const DOEPHONE_AGENTS_REVEAL_NAV_DELAY_MS = 560;
+export const DOEPHONE_AGENTS_REVEAL_LABEL_DELAY_MS = 620;
+export const DOEPHONE_AGENTS_REVEAL_NAV_DELAY_MS = 1180;
 
 /** Hero dial orbs — load-in after headline begins settling. */
 export const DOEPHONE_HERO_ORB_REVEAL_BASE_DELAY_MS = 720;
@@ -47,7 +63,9 @@ export const DOEPHONE_HERO_ORB_REVEAL_STAGGER_MS = 0;
 
 export function doephoneAgentsRevealStyleVars(): Record<string, string> {
   return {
-    "--doephone-section-reveal-duration": `${DOEPHONE_SECTION_REVEAL_DURATION_MS}ms`,
+    "--doephone-section-reveal-duration": `${DOEPHONE_HOME_SCROLL_REVEAL_DURATION_MS}ms`,
+    "--doephone-scroll-reveal-lift-duration": `${DOEPHONE_HOME_SCROLL_REVEAL_DURATION_MS}ms`,
+    "--doephone-scroll-reveal-hover-duration": `${DOEPHONE_HOME_SCROLL_REVEAL_HOVER_MS}ms`,
     "--doephone-section-reveal-agents-carousel-delay": `${DOEPHONE_AGENTS_REVEAL_CAROUSEL_DELAY_MS}ms`,
     "--doephone-section-reveal-agents-peek-delay": `${DOEPHONE_AGENTS_REVEAL_PEEK_DELAY_MS}ms`,
     "--doephone-section-reveal-agents-orbs-delay": `${DOEPHONE_AGENTS_REVEAL_ORBS_DELAY_MS}ms`,

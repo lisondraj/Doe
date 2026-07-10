@@ -2,8 +2,18 @@
 
 import { useEffect, useRef, useState } from "react";
 
+type DoePhoneSectionRevealOptions = {
+  /** Wait for scroll intersection — do not reveal when already in view on mount. */
+  skipInitialReveal?: boolean;
+  rootMargin?: string;
+};
+
 /** Scroll-triggered reveal for /doephone section 2 — title → carousel → menu. */
-export function useDoePhoneSectionReveal(threshold = 0.12) {
+export function useDoePhoneSectionReveal(
+  threshold = 0.12,
+  options: DoePhoneSectionRevealOptions = {},
+) {
+  const { skipInitialReveal = false, rootMargin = "0px 0px 10% 0px" } = options;
   const ref = useRef<HTMLDivElement>(null);
   const [revealed, setRevealed] = useState(false);
 
@@ -22,29 +32,31 @@ export function useDoePhoneSectionReveal(threshold = 0.12) {
       obs.disconnect();
     };
 
-    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-    const rect = el.getBoundingClientRect();
-    const visiblePx = Math.max(0, Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0));
-    const visibleRatio = visiblePx / Math.max(rect.height, 1);
-    if (visibleRatio >= Math.min(threshold, 0.08)) {
-      setRevealed(true);
-      return;
+    if (!skipInitialReveal) {
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+      const rect = el.getBoundingClientRect();
+      const visiblePx = Math.max(0, Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0));
+      const visibleRatio = visiblePx / Math.max(rect.height, 1);
+      if (visibleRatio >= threshold) {
+        setRevealed(true);
+        return;
+      }
     }
 
     const obs = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting && entry.intersectionRatio >= threshold) {
           reveal();
         }
       },
       {
-        threshold: [0, Math.min(threshold, 0.08), threshold],
-        rootMargin: "12% 0px 12% 0px",
+        threshold: [0, threshold],
+        rootMargin,
       },
     );
     obs.observe(el);
     return () => obs.disconnect();
-  }, [threshold]);
+  }, [rootMargin, skipInitialReveal, threshold]);
 
   return { ref, revealed };
 }
@@ -62,10 +74,12 @@ export function doePhoneSectionRevealSegmentClass(
     | "agents-label"
     | "agents-nav",
   revealed: boolean,
+  hoverable = true,
 ) {
   return [
     "doephone-section-reveal",
     `doephone-section-reveal--${segment}`,
+    hoverable ? "doephone-section-reveal--hoverable" : "",
     revealed ? "doephone-section-reveal--in" : "",
   ]
     .filter(Boolean)
@@ -76,6 +90,7 @@ export function doePhoneSectionRevealSegmentClass(
 export function doePhoneRevealLiftClass(revealed: boolean, hoverable = true) {
   return [
     "doephone-reveal-lift",
+    "doephone-scroll-reveal-lift",
     hoverable ? "doephone-reveal-lift--hoverable" : "",
     revealed ? "doephone-reveal-lift--in" : "",
   ]
