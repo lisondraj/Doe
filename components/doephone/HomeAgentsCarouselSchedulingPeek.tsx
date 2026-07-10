@@ -2,20 +2,20 @@
 
 import { dmSans } from "@/lib/home/fonts";
 
-const BOOKING = {
-  dayLabel: "Wed",
-  dayDate: "Mar 9",
-  patient: "Brooks",
-  visit: "Annual physical",
-  time: "3:15 PM",
-  callTime: "1:24",
-} as const;
-
-const DAY_SLOTS = [
-  { time: "9:00 AM", label: "Nguyen" },
-  { time: "11:00 AM", label: "Kowalski" },
-  { time: "3:15 PM", label: "Brooks", active: true },
+const WEEK_DAYS = [
+  { label: "M", date: 7 },
+  { label: "T", date: 8 },
+  { label: "W", date: 9, active: true },
+  { label: "T", date: 10 },
+  { label: "F", date: 11 },
+  { label: "S", date: 12 },
 ] as const;
+
+const BOOKING = {
+  patient: "Brooks",
+  time: "3:15p",
+  visit: "Annual",
+} as const;
 
 function PhoneIcon() {
   return (
@@ -31,52 +31,58 @@ function PhoneIcon() {
   );
 }
 
-/** Agents carousel — simple phone-agent calendar booking peek (left-edge bleed). */
+/** Agents carousel — scheduling peek with visual calendar + phone agent thinking (left-edge bleed). */
 export function HomeAgentsCarouselSchedulingPeek({ iphone = false }: { iphone?: boolean }) {
   void iphone;
 
   return (
     <div className="home-agents-carousel__scheduling-peek" aria-hidden>
       <div className={`home-agents-carousel__scheduling-peek-card ${dmSans.className}`}>
-        <div className="home-agents-carousel__scheduling-peek-head">
-          <p className="home-agents-carousel__scheduling-peek-title">Schedule</p>
-          <div className="home-agents-carousel__scheduling-peek-agent">
-            <span className="home-agents-carousel__scheduling-peek-agent-phone" aria-hidden>
-              <PhoneIcon />
-            </span>
-            <span className="home-agents-carousel__scheduling-peek-agent-label">Agent booking</span>
-            <span className="home-agents-carousel__scheduling-peek-agent-live">
-              <span className="home-agents-carousel__scheduling-peek-agent-live-dot" aria-hidden />
-              {BOOKING.callTime}
-            </span>
-          </div>
+        <div className="home-agents-carousel__scheduling-peek-think">
+          <span className="home-agents-carousel__scheduling-peek-think-phone" aria-hidden>
+            <PhoneIcon />
+          </span>
+          <span className="home-agents-carousel__scheduling-peek-think-label">Thinking</span>
+          <span className="home-agents-carousel__scheduling-peek-think-dots" aria-hidden>
+            <span />
+            <span />
+            <span />
+          </span>
         </div>
 
-        <div className="home-agents-carousel__scheduling-peek-day">
-          <div className="home-agents-carousel__scheduling-peek-day-head">
-            <span className="home-agents-carousel__scheduling-peek-day-label">{BOOKING.dayLabel}</span>
-            <span className="home-agents-carousel__scheduling-peek-day-date">{BOOKING.dayDate}</span>
-          </div>
+        <p className="home-agents-carousel__scheduling-peek-month">March</p>
 
-          <ul className="home-agents-carousel__scheduling-peek-slots">
-            {DAY_SLOTS.map((slot) => (
-              <li
-                key={slot.time}
-                className={`home-agents-carousel__scheduling-peek-slot${
-                  "active" in slot && slot.active ? " home-agents-carousel__scheduling-peek-slot--active" : ""
+        <div className="home-agents-carousel__scheduling-peek-calendar">
+          <div className="home-agents-carousel__scheduling-peek-week-head">
+            {WEEK_DAYS.map((day) => (
+              <span
+                key={`head-${day.label}-${day.date}`}
+                className={`home-agents-carousel__scheduling-peek-week-day${
+                  "active" in day && day.active ? " home-agents-carousel__scheduling-peek-week-day--active" : ""
                 }`}
               >
-                <span className="home-agents-carousel__scheduling-peek-slot-time">{slot.time}</span>
-                <span className="home-agents-carousel__scheduling-peek-slot-name">{slot.label}</span>
-              </li>
+                <span className="home-agents-carousel__scheduling-peek-week-label">{day.label}</span>
+                <span className="home-agents-carousel__scheduling-peek-week-date">{day.date}</span>
+              </span>
             ))}
-          </ul>
+          </div>
+
+          <div className="home-agents-carousel__scheduling-peek-week-body">
+            <span className="home-agents-carousel__scheduling-peek-appt home-agents-carousel__scheduling-peek-appt--tue">
+              Nguyen
+            </span>
+            <span className="home-agents-carousel__scheduling-peek-appt home-agents-carousel__scheduling-peek-appt--wed home-agents-carousel__scheduling-peek-appt--booking">
+              {BOOKING.patient}
+              <span className="home-agents-carousel__scheduling-peek-appt-time">{BOOKING.time}</span>
+            </span>
+            <span className="home-agents-carousel__scheduling-peek-appt home-agents-carousel__scheduling-peek-appt--fri">
+              Open
+            </span>
+          </div>
         </div>
 
-        <p className="home-agents-carousel__scheduling-peek-booking">
-          Booking <span className="home-agents-carousel__scheduling-peek-booking-patient">{BOOKING.patient}</span>
-          {" · "}
-          {BOOKING.time}
+        <p className="home-agents-carousel__scheduling-peek-caption">
+          Booking {BOOKING.visit.toLowerCase()} · {BOOKING.patient}
         </p>
       </div>
     </div>
