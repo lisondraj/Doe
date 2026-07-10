@@ -5595,7 +5595,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band__feature-title {
   flex: 0 0 auto;
   margin: 0 0 clamp(0.45rem, 0.28rem + 0.75vmin, 0.72rem) !important;
-  padding-top: max(2.85rem, calc(env(safe-area-inset-top, 0px) + calc(var(--app-vh, 100lvh) * 0.096))) !important;
+  padding-top: max(3.15rem, calc(env(safe-area-inset-top, 0px) + calc(var(--app-vh, 100lvh) * 0.105))) !important;
   font-size: clamp(2.35rem, 1.15rem + 6.8vmin, 3.85rem) !important;
   line-height: 1.02 !important;
   letter-spacing: -0.035em !important;
