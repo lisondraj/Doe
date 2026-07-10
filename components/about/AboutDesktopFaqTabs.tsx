@@ -16,7 +16,7 @@ export function AboutDesktopFaqTabs() {
   const [openIndex, setOpenIndex] = useState(0);
 
   return (
-    <div className={`${ABOUT_DESKTOP_FAQ_PANEL_TW} min-h-0`}>
+    <div className={`about-desktop-faq-panel ${ABOUT_DESKTOP_FAQ_PANEL_TW} min-h-0`}>
       <div className={ABOUT_DESKTOP_FAQ_LIST_TW}>
         {ABOUT_DESKTOP_FAQ_ITEMS.map((item, index) => {
           const isOpen = openIndex === index;

@@ -7,7 +7,7 @@ import { ABOUT_DESKTOP_BEIGE_PANEL_TW } from "@/lib/about/about-layout-styles";
 export function AboutDesktopBeigePanel({ graphic }: { graphic: 0 | 1 | 2 | 3 }) {
   return (
     <div
-      className={`relative overflow-hidden ${ABOUT_DESKTOP_BEIGE_PANEL_TW}`}
+      className={`about-desktop-beige-panel relative overflow-hidden ${ABOUT_DESKTOP_BEIGE_PANEL_TW}`}
       aria-hidden
     >
       <JoinInternLineGraphic variant={graphic} brandAccent />

@@ -10,14 +10,13 @@ import { AboutDesktopSplitSection } from "@/components/about/AboutDesktopSplitSe
 import { ArticleBarChart } from "@/components/blog/ArticleBarChart";
 import { ArticlePieChart } from "@/components/blog/ArticlePieChart";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
-import { DesktopRouteLayout } from "@/components/DesktopRouteLayout";
 import { AboutDesktopContactSection } from "@/components/about/AboutDesktopContactSection";
+import { HomeFooter } from "@/components/home/sections/HomeFooter";
 import {
   ABOUT_DESKTOP_CONTENT_STACK_GAP,
   ABOUT_DESKTOP_HERO_BOX_TW,
   ABOUT_DESKTOP_HERO_WRAP,
   ABOUT_HERO_HEADLINE_WRAP,
-  ABOUT_DESKTOP_PAGE_INSET,
   ABOUT_DESKTOP_SECTION_1_H,
   ABOUT_DESKTOP_SECTION_1_LAYOUT,
   ABOUT_DESKTOP_HERO_BYLINE_TW,
@@ -41,17 +40,6 @@ import {
   ABOUT_PAGE_MOBILE_DATE,
 } from "@/lib/about/about-page-article";
 import type { ArticleBlock } from "@/lib/blog/articles";
-import { lora } from "@/lib/home/fonts";
-
-const DESKTOP_FOOTER_GRADIENT = `
-  radial-gradient(circle at center, #D49D4F 0%, #D2774C 18%, #BF593D 32%, #C88A5F 45%, #7B5C4B 55%, #8B6F47 65%, #6D5B41 72%, #5C4A3A 78%, #4A3D32 85%, #1E343A 95%, rgba(30, 52, 58, 0.6) 100%),
-  radial-gradient(ellipse 60% 60% at 0% 0%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
-  radial-gradient(ellipse 60% 60% at 100% 0%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
-  radial-gradient(ellipse 60% 60% at 0% 100%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
-  radial-gradient(ellipse 60% 60% at 100% 100%, #5C4A3A 0%, rgba(92, 74, 58, 0.8) 50%, transparent 80%),
-  linear-gradient(to right, #1E343A 0%, rgba(30, 52, 58, 0.8) 15%, transparent 25%),
-  linear-gradient(to left, #1E343A 0%, rgba(30, 52, 58, 0.8) 15%, transparent 25%)
-`;
 
 function getAboutDesktopArticleSections(body: readonly ArticleBlock[]) {
   const intro = body[0];
@@ -93,17 +81,13 @@ export function AboutDesktopView() {
   const [foundersOne, foundersTwo] = ABOUT_DESKTOP_FOUNDERS_PARAGRAPHS;
 
   return (
-    <DesktopRouteLayout>
-      <div
-        className="about-desktop-root relative min-h-[100dvh] overflow-x-hidden bg-[var(--doe-page-surface,#faf0d8)]"
-        data-doeforvc-view="desktop"
-      >
-        <AboutDesktopNav />
-
-        <main>
-          <section className={ABOUT_DESKTOP_SECTION_1_H}>
-            <div className={ABOUT_DESKTOP_SECTION_1_LAYOUT}>
-            <div className={`${ABOUT_HERO_HEADLINE_WRAP} min-w-0 px-[var(--desktop-page-inset-x,2.5rem)] ${ABOUT_DESKTOP_HERO_HEADLINE_TOP}`}>
+    <div className="about-desktop-root relative overflow-x-hidden bg-[#faf0d8]" data-doeforvc-view="desktop">
+      <div className="relative z-[40] overflow-x-clip overflow-y-visible">
+        <section className={ABOUT_DESKTOP_SECTION_1_H}>
+          <div className={ABOUT_DESKTOP_SECTION_1_LAYOUT}>
+            <div
+              className={`${ABOUT_HERO_HEADLINE_WRAP} min-w-0 px-[var(--desktop-page-inset-x,2.5rem)] ${ABOUT_DESKTOP_HERO_HEADLINE_TOP}`}
+            >
               <h1 className={ABOUT_DESKTOP_TITLE_TW}>
                 <span className="block">Doe is on a mission</span>
                 <span className="block">to redefine healthcare.</span>
@@ -121,7 +105,7 @@ export function AboutDesktopView() {
                 variant="hero"
                 boxClassName={ABOUT_DESKTOP_HERO_BOX_TW}
                 gapClassName=""
-                useHomeHeroShader
+                useHomeHeroDuskShader
               >
                 <div className={ABOUT_DESKTOP_HERO_BYLINE_WRAP_TW}>
                   <p className={ABOUT_DESKTOP_HERO_BYLINE_TW}>{ABOUT_PAGE_MOBILE_BYLINE}</p>
@@ -129,13 +113,20 @@ export function AboutDesktopView() {
                 </div>
               </BlogHeroVisual>
             </div>
-            </div>
-          </section>
+          </div>
+        </section>
 
+        <AboutDesktopNav />
+      </div>
+
+      <div className="relative z-10">
+        <main>
           <AboutDesktopSplitSection boxSide="right" graphic={0} textFill boxBleedToMargin>
             <div className={`${ABOUT_DESKTOP_SQUARE_PANEL_TW} min-h-0`}>
               <div className={ABOUT_DESKTOP_SECTION_2_STACK}>
-                <div className={`flex min-h-0 flex-1 flex-col justify-center ${ABOUT_DESKTOP_SECTION_2_CONTENT_GAP}`}>
+                <div
+                  className={`flex min-h-0 flex-1 flex-col justify-center ${ABOUT_DESKTOP_SECTION_2_CONTENT_GAP}`}
+                >
                   <AboutDesktopParagraph text={ABOUT_DESKTOP_SECTION_2_INTRO} />
                   <AboutDesktopBulletList items={ABOUT_DESKTOP_SECTION_2_BULLETS} />
                 </div>
@@ -183,25 +174,8 @@ export function AboutDesktopView() {
 
         <AboutDesktopContactSection />
 
-        <footer
-          className="relative left-1/2 w-screen -translate-x-1/2 overflow-hidden py-20"
-          style={{ background: DESKTOP_FOOTER_GRADIENT }}
-        >
-          <div
-            className="pointer-events-none absolute inset-0"
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E")`,
-              backgroundSize: "200px 200px",
-              opacity: 1,
-              mixBlendMode: "overlay",
-            }}
-            aria-hidden
-          />
-          <div className={`relative z-10 flex items-center justify-between ${ABOUT_DESKTOP_PAGE_INSET}`}>
-            <h2 className={`text-4xl font-normal text-white ${lora.className}`}>Doe</h2>
-          </div>
-        </footer>
+        <HomeFooter linksDisabled shaderTheme="dusk" />
       </div>
-    </DesktopRouteLayout>
+    </div>
   );
 }

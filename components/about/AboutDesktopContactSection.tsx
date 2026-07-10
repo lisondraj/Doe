@@ -87,7 +87,7 @@ export function AboutDesktopContactSection() {
         <div className={`${JOIN_DESKTOP_APPLY_TITLE_CARD_GAP} w-full`}>
           <JoinInternTrackReveal variant="desktop" className="w-full">
             <div
-              className={`relative flex w-full items-center justify-center overflow-hidden border ${JOIN_DESKTOP_APPLY_CARD_HEIGHT} ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
+              className={`about-desktop-contact-card relative flex w-full items-center justify-center overflow-hidden border ${JOIN_DESKTOP_APPLY_CARD_HEIGHT} ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
               style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
             >
               <div
@@ -107,7 +107,7 @@ export function AboutDesktopContactSection() {
                 <div className="flex items-center justify-center gap-3 md:gap-4">
                   <a
                     href={`mailto:${ABOUT_CONTACT_EMAIL}`}
-                    className={ABOUT_CONTACT_ACTION_TW}
+                    className={`about-desktop-contact-action ${ABOUT_CONTACT_ACTION_TW}`}
                     style={{ backgroundColor: JOIN_FORM_BEIGE.fieldMuted }}
                     aria-label={`Email ${ABOUT_CONTACT_EMAIL}`}
                   >
@@ -117,7 +117,7 @@ export function AboutDesktopContactSection() {
                   <button
                     type="button"
                     onClick={handleCopy}
-                    className={ABOUT_CONTACT_ACTION_TW}
+                    className={`about-desktop-contact-action ${ABOUT_CONTACT_ACTION_TW}`}
                     style={{ backgroundColor: JOIN_FORM_BEIGE.fieldMuted }}
                   >
                     <ClipboardIcon className="h-5 w-5 shrink-0 md:h-6 md:w-6" />

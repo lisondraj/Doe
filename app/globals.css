@@ -441,6 +441,11 @@ html[data-layout="desktop"] {
 html[data-about-page][data-layout="desktop"] {
   --proto-nav-frost-progress: 1;
   --proto-nav-frost-shell-progress: 1;
+  --doe-chart-bar: #9a5d31;
+  --doe-chart-pie-1: #9a5d31;
+  --doe-chart-pie-2: #b27449;
+  --doe-chart-pie-3: #c98b62;
+  --doe-chart-track: rgba(154, 93, 49, 0.16);
 }
 
 /* Desktop /about — full viewport bands with punched nav overlay clearance */
@@ -467,6 +472,59 @@ html[data-about-page][data-layout="desktop"] .about-desktop-contact-section {
   max-height: 100dvh !important;
   padding-top: calc(var(--desktop-nav-height) + var(--desktop-section-pad-y)) !important;
   padding-bottom: var(--desktop-section-pad-y) !important;
+}
+
+/* Desktop /about — dusk ink, beige panels, contact card (match home + iPhone about). */
+html[data-about-page][data-layout="desktop"] .about-desktop-root [class*="text-[#1E343A]"] {
+  color: var(--doe-page-ink) !important;
+}
+
+html[data-about-page][data-layout="desktop"] .about-desktop-root [class*="text-[#9A8F82]"] {
+  color: var(--doe-muted-ink) !important;
+}
+
+html[data-about-page][data-layout="desktop"] .about-desktop-root [class*="border-[#DDD9D2]"] {
+  border-color: #d8c8b0 !important;
+}
+
+html[data-about-page][data-layout="desktop"] .about-desktop-beige-panel,
+html[data-about-page][data-layout="desktop"] .about-desktop-faq-panel,
+html[data-about-page][data-layout="desktop"] .about-desktop-root [class*="aspect-square"] {
+  background-color: #f0e4d0 !important;
+  border-color: #d8c8b0 !important;
+}
+
+html[data-about-page][data-layout="desktop"] .about-desktop-contact-card {
+  background-color: #f0e4d0 !important;
+  border-color: #d8c8b0 !important;
+}
+
+html[data-about-page][data-layout="desktop"] .about-desktop-contact-action {
+  background-color: #e8d8c0 !important;
+  color: rgba(26, 18, 8, 0.72) !important;
+}
+
+html[data-about-page][data-layout="desktop"] .about-desktop-contact-action:hover {
+  color: #1a1208 !important;
+}
+
+html[data-about-page][data-layout="desktop"] footer.home-footer--dusk {
+  min-height: min(74vh, 46rem);
+}
+
+html[data-about-page][data-layout="desktop"] footer.home-footer--dusk .home-footer-contact {
+  font-size: clamp(1.12rem, 1.15vw, 1.32rem) !important;
+}
+
+html[data-about-page][data-layout="desktop"] footer.home-footer--dusk .home-footer-links {
+  font-size: clamp(1.28rem, 1.85vw, 1.88rem) !important;
+  gap: clamp(0.65rem, 1vw, 0.85rem) !important;
+}
+
+html[data-about-page][data-layout="desktop"] footer.home-footer--dusk .relative.z-10.flex.w-full.flex-1 > div:first-child {
+  padding-left: var(--desktop-page-inset-x) !important;
+  padding-right: var(--desktop-page-inset-x) !important;
+  margin-bottom: clamp(2.75rem, 4vw, 3.75rem) !important;
 }
 
 html[data-layout="desktop"] nav.desktop-punched-nav {
