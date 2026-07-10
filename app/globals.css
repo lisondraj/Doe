@@ -315,6 +315,19 @@ html[data-home-page] .home-feature-card-ui-scale--no-shows {
   transform: scale(0.92);
 }
 
+html[data-home-page][data-layout="desktop"] .home-feature-card-ui-scale {
+  transform: scale(1);
+  transform-origin: center center;
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-card-ui-scale--call-history {
+  transform: scale(1.06);
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-card-ui-scale--no-shows {
+  transform: scale(1.04);
+}
+
 html[data-home-page] .home-feature-card-section__title {
   font-size: clamp(1.72rem, 1.02rem + 4.85vmin, 2.85rem) !important;
   font-weight: 350 !important;
@@ -352,6 +365,20 @@ html[data-about-page][data-layout="desktop"] {
   --doe-nav-frost-scrolled-cta-bg: #f5e6d0;
   --doe-nav-frost-scrolled-cta-text: #1a1208;
   --doe-nav-frost-scrolled-cta-divider: rgba(26, 18, 8, 0.14);
+  --home-dusk-ui-back: #1a1208;
+  --home-dusk-ui-surface: rgba(28, 19, 9, 0.9);
+  --home-dusk-ui-surface-raised: rgba(232, 160, 96, 0.14);
+  --home-dusk-ui-surface-sunken: rgba(242, 216, 168, 0.08);
+  --home-dusk-ui-ink: #f2d8a8;
+  --home-dusk-ui-ink-secondary: rgba(242, 216, 168, 0.84);
+  --home-dusk-ui-muted: rgba(232, 160, 96, 0.62);
+  --home-dusk-ui-border: rgba(242, 216, 168, 0.14);
+  --home-dusk-ui-horizon: #e8a060;
+  --home-dusk-ui-clay: #c45c42;
+  --home-dusk-ui-highlight: #e88f5c;
+  --home-dusk-ui-shadow:
+    inset 0 1px 0 rgba(242, 216, 168, 0.08),
+    0 10px 28px -16px rgba(0, 0, 0, 0.42);
   background-color: #faf0d8;
 }
 
@@ -572,6 +599,14 @@ body.desktop-route .home-feature-card-section__title {
 html[data-layout="desktop"] .home-feature-card-section__title,
 html[data-route-desktop="true"] .home-feature-card-section__title {
   display: none !important;
+}
+
+html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] {
+  box-sizing: border-box;
+  min-height: 100dvh;
+  padding-top: calc(var(--desktop-nav-height) + var(--desktop-section-pad-y));
+  padding-bottom: var(--desktop-section-pad-y);
+  padding-inline: var(--desktop-page-inset-x);
 }
 
 html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] [aria-hidden].border {
@@ -2698,29 +2733,90 @@ html[data-home-page] .home-feature-shader-band__active-agents-content {
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band__active-agents-content {
   padding-inline: var(--desktop-page-inset-x);
+  overflow: visible;
+  padding-bottom: clamp(1.25rem, 2vw, 1.75rem);
 }
 
 html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop {
-  padding-inline: clamp(1.5rem, 3vw, 3rem);
-  padding-block: clamp(1rem, 2vw, 1.75rem);
+  padding-inline: 0;
+  padding-block: 0;
+}
+
+html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop .home-active-agents-visual__body {
+  overflow: visible;
+  padding-bottom: clamp(1.25rem, 2vw, 1.75rem);
+}
+
+html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop .home-active-agents-visual__stats-stage {
+  padding-top: clamp(1.5rem, 2.5vw, 2.35rem);
+  max-width: min(100%, calc(100% - clamp(14rem, 22vw, 19rem)));
 }
 
 html[data-home-page][data-layout="desktop"] .home-active-agents-scale {
-  --home-shader-feature-scale: 1.28;
+  --home-shader-feature-scale: 1.14;
 }
 
 html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop .home-active-agents-visual__stats {
-  width: min(100%, clamp(18rem, 27vw, 24rem));
-  gap: clamp(1.55rem, 2.4vw, 2.15rem) clamp(2rem, 3vw, 2.75rem);
+  width: min(100%, clamp(16.5rem, 24vw, 22rem));
+  gap: clamp(1rem, 1.6vw, 1.45rem) clamp(1.35rem, 2.1vw, 1.85rem);
 }
 
 html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop .home-active-agents-visual__stat-value {
-  font-size: clamp(2.65rem, 3.25vw, 3.65rem);
+  font-size: clamp(2.35rem, 3vw, 3.35rem);
+}
+
+html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop .home-active-agents-visual__stat-label {
+  font-size: clamp(0.78rem, 0.95vw, 0.92rem);
+}
+
+html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop .home-active-agents-visual__pills {
+  bottom: clamp(2rem, 3.5vw, 3rem);
+  padding-bottom: clamp(1rem, 1.75vw, 1.35rem);
 }
 
 html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop .home-active-agents-pills-scale {
-  --home-active-agents-pills-scale: 1.1;
-  width: min(calc(100% / var(--home-active-agents-pills-scale)), clamp(14.5rem, 19vw, 17.5rem));
+  --home-active-agents-pills-scale: 1.12;
+  align-items: flex-end;
+  gap: clamp(0.38rem, 0.65vw, 0.52rem);
+  width: max-content;
+  max-width: min(
+    calc((100vw - var(--desktop-page-inset-x) * 2) / var(--home-active-agents-pills-scale)),
+    24rem
+  );
+}
+
+html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop .home-active-agents-visual__workflow-pill {
+  max-width: none;
+  min-height: clamp(2.15rem, 2.6vw, 2.45rem);
+  padding: clamp(0.38rem, 0.55vw, 0.48rem) clamp(1rem, 1.35vw, 1.18rem)
+    clamp(0.38rem, 0.55vw, 0.48rem) clamp(0.38rem, 0.55vw, 0.48rem);
+}
+
+html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop .home-active-agents-visual__workflow-pill-label {
+  font-size: clamp(0.82rem, 0.95vw, 0.94rem);
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--active-agents .home-active-agents-visual {
+  --home-active-agents-stat-ink: var(--home-dusk-ui-ink);
+  --home-active-agents-stat-muted: var(--home-dusk-ui-muted);
+  --home-active-agents-pill-back: rgba(36, 24, 12, 0.96);
+  --home-active-agents-pill-border: rgba(242, 216, 168, 0.18);
+  --home-active-agents-pill-ink: var(--home-dusk-ui-ink);
+  --home-active-agents-pill-icon-back: rgba(242, 216, 168, 0.14);
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--active-agents .home-active-agents-visual__stat-value {
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.35);
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--active-agents .home-active-agents-visual__workflow-pill {
+  box-shadow:
+    inset 0 1px 0 rgba(242, 216, 168, 0.1),
+    0 10px 26px rgba(0, 0, 0, 0.32) !important;
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--active-agents .home-active-agents-visual__workflow-pill-icon {
+  color: var(--home-dusk-ui-horizon) !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
@@ -2740,7 +2836,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .home-active-agents-visual__stats-stage {
-  padding-top: clamp(1.85rem, 5.25vmin, 2.55rem);
+  padding-top: clamp(2.25rem, 6.1vmin, 3rem);
   max-width: min(100%, calc(100% - clamp(11.5rem, 34vmin, 15rem)));
 }
 
@@ -3873,6 +3969,9 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band {
   min-height: 100dvh !important;
   height: 100dvh !important;
   max-height: 100dvh !important;
+  width: 100vw !important;
+  margin-left: calc(50% - 50vw) !important;
+  margin-right: calc(50% - 50vw) !important;
 }
 
 /* /desktop legacy route — full viewport bands */
@@ -5073,6 +5172,9 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow 
   padding-left: var(--desktop-page-inset-x) !important;
   padding-right: var(--desktop-page-inset-x) !important;
   padding-top: clamp(2rem, 2.85vmin, 2.75rem) !important;
+  font-size: clamp(2.35rem, 1.15rem + 3.2vw, 3.85rem) !important;
+  line-height: 1.02 !important;
+  letter-spacing: -0.035em !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-section__workflow-input {
@@ -5627,6 +5729,9 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--active-ag
   padding-left: var(--desktop-page-inset-x) !important;
   padding-right: var(--desktop-page-inset-x) !important;
   padding-top: clamp(2rem, 2.85vmin, 2.75rem) !important;
+  font-size: clamp(2.35rem, 1.15rem + 3.2vw, 3.85rem) !important;
+  line-height: 1.02 !important;
+  letter-spacing: -0.035em !important;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--guardrails .home-feature-shader-band__feature-title {
@@ -9597,4 +9702,760 @@ html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagra
 html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram-scale--bleed .doephone-section-reveal--carousel {
   width: 100%;
   height: 100%;
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-call-logic-diagram-scale--bleed {
+  --home-call-logic-bleed-scale: 2.05;
+  --home-call-logic-bleed-width: 27rem;
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--active-agents .home-feature-shader-band__feature-shell {
+  overflow: visible;
+}
+
+/* Desktop home — dusk mock UI parity (mirrors iPhone feature cards + shader bands). */
+html[data-home-page][data-layout="desktop"]
+  .home-feature-shader-band--workflow
+  .home-feature-section__workflow-input
+  .bg-white,
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .proto-feature-box-ui
+  :is(.bg-white, .bg-white\/90) {
+  background: var(--home-dusk-ui-surface) !important;
+  border-color: var(--home-dusk-ui-border) !important;
+  box-shadow: var(--home-dusk-ui-shadow) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-shader-band--workflow
+  .home-feature-section__workflow-input
+  .border,
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .proto-feature-box-ui
+  .border {
+  border-color: var(--home-dusk-ui-border) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-shader-band--workflow
+  .home-feature-section__workflow-input
+  :is(h3, .font-semibold),
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .proto-feature-box-ui
+  :is(h3, .font-semibold) {
+  color: var(--home-dusk-ui-ink) !important;
+  font-weight: 500 !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-shader-band--workflow
+  .home-feature-section__workflow-input
+  .font-medium,
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .proto-feature-box-ui
+  .font-medium {
+  color: var(--home-dusk-ui-ink) !important;
+  font-weight: 500 !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-shader-band--workflow
+  .home-feature-section__workflow-input
+  .font-normal,
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .proto-feature-box-ui
+  .font-normal {
+  color: var(--home-dusk-ui-muted) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-shader-band--workflow
+  .home-feature-section__workflow-input
+  .home-feature-workflow-prompt__body,
+html[data-home-page][data-layout="desktop"]
+  .home-feature-shader-band--workflow
+  .home-feature-section__workflow-input
+  .home-feature-workflow-prompt__line,
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .proto-feature-box-ui
+  p {
+  color: var(--home-dusk-ui-ink-secondary) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-shader-band--workflow
+  .home-feature-section__workflow-input
+  .bg-white
+  > div:first-child
+  span.font-medium,
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .proto-feature-box-ui
+  .bg-white
+  > div:first-child
+  span.font-medium {
+  color: var(--home-dusk-ui-horizon) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-shader-band--workflow
+  .home-feature-section__workflow-input
+  span.inline-flex.items-center.font-normal,
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .proto-feature-box-ui
+  span.inline-flex.items-center.font-normal {
+  background: rgba(232, 160, 96, 0.16) !important;
+  color: var(--home-dusk-ui-horizon) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-shader-band--workflow
+  .home-feature-section__workflow-input
+  .bg-white
+  > div:last-child
+  span.inline-flex.font-medium,
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .proto-feature-box-ui
+  .bg-white
+  > div:last-child
+  span.inline-flex.font-medium {
+  background: var(--home-dusk-ui-surface-raised) !important;
+  color: var(--home-dusk-ui-ink) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .proto-feature-box-ui
+  .bg-white
+  > div:last-child
+  > div:last-child
+  > span:last-child {
+  background: var(--home-dusk-ui-horizon) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .proto-feature-box-ui
+  .tabular-nums.font-medium {
+  color: var(--home-dusk-ui-horizon) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .proto-feature-box-ui
+  .border-l-\[2px\] {
+  border-left-color: var(--home-dusk-ui-horizon) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .proto-feature-box-ui
+  [style*="linear-gradient"] {
+  background: var(--home-dusk-ui-surface-raised) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .proto-feature-box-ui
+  span.rounded-full[aria-hidden] {
+  background: var(--home-dusk-ui-horizon) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-shader-band--workflow
+  .home-feature-section__workflow-input
+  svg
+  [stroke]:not([stroke="none"]),
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .proto-feature-box-ui
+  svg
+  [stroke]:not([stroke="none"]) {
+  stroke: var(--home-dusk-ui-muted) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-shader-band--workflow
+  .home-feature-section__workflow-input
+  svg
+  path[stroke="#D2774C"],
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .proto-feature-box-ui
+  svg
+  path[stroke="#D2774C"] {
+  stroke: var(--home-dusk-ui-horizon) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-shader-band--workflow
+  .home-feature-section__workflow-input
+  .bg-white
+  > div:last-child
+  > div:last-child
+  > span:last-child
+  svg
+  path {
+  stroke: var(--home-dusk-ui-horizon) !important;
+}
+
+
+/* iPhone home — active agents shader band (dusk mock UI). */
+html[data-home-page][data-layout="desktop"]
+  .home-feature-shader-band--active-agents
+  .home-active-agents-visual {
+  --home-active-agents-stat-ink: var(--home-dusk-ui-ink);
+  --home-active-agents-stat-muted: var(--home-dusk-ui-muted);
+  --home-active-agents-pill-back: rgba(36, 24, 12, 0.96);
+  --home-active-agents-pill-border: rgba(242, 216, 168, 0.18);
+  --home-active-agents-pill-ink: var(--home-dusk-ui-ink);
+  --home-active-agents-pill-icon-back: rgba(242, 216, 168, 0.14);
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-recall-queue-visual__card {
+  background: var(--home-dusk-ui-surface) !important;
+  border-color: var(--home-dusk-ui-border) !important;
+  box-shadow: var(--home-dusk-ui-shadow) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-recall-queue-visual__detail,
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-recall-queue-visual__status,
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-recall-queue-visual__footer {
+  color: var(--home-dusk-ui-muted) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-recall-queue-visual__status--active,
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-recall-queue-visual__status--done {
+  color: var(--home-dusk-ui-horizon) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-recall-queue-visual__row--active {
+  background: rgba(232, 160, 96, 0.06) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-recall-queue-visual__summary,
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-recall-queue-visual__name {
+  color: var(--home-dusk-ui-ink) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-recall-queue-visual__row {
+  border-bottom-color: var(--home-dusk-ui-border) !important;
+}
+
+
+/* iPhone home — guardrails shader band (dusk mock UI). */
+html[data-home-page][data-layout="desktop"]
+  .home-feature-shader-band--guardrails
+  .home-guardrails-visual__card {
+  background: var(--home-dusk-ui-surface) !important;
+  border-color: var(--home-dusk-ui-border) !important;
+  box-shadow: var(--home-dusk-ui-shadow) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-shader-band--guardrails
+  .home-guardrails-visual__header,
+html[data-home-page][data-layout="desktop"]
+  .home-feature-shader-band--guardrails
+  .home-guardrails-visual__footer {
+  background: rgba(242, 216, 168, 0.06) !important;
+  border-color: var(--home-dusk-ui-border) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-shader-band--guardrails
+  .home-guardrails-visual__title,
+html[data-home-page][data-layout="desktop"]
+  .home-feature-shader-band--guardrails
+  .home-guardrails-visual__rule {
+  color: var(--home-dusk-ui-ink) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-shader-band--guardrails
+  .home-guardrails-visual__eyebrow,
+html[data-home-page][data-layout="desktop"]
+  .home-feature-shader-band--guardrails
+  .home-guardrails-visual__table-head,
+html[data-home-page][data-layout="desktop"]
+  .home-feature-shader-band--guardrails
+  .home-guardrails-visual__footer {
+  color: var(--home-dusk-ui-muted) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-shader-band--guardrails
+  .home-guardrails-visual__live {
+  background: rgba(82, 168, 112, 0.14) !important;
+  color: #7fd0a0 !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-shader-band--guardrails
+  .home-guardrails-visual__risk--high {
+  background: rgba(196, 92, 66, 0.14) !important;
+  color: #f08a72 !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-shader-band--guardrails
+  .home-guardrails-visual__risk--medium {
+  background: var(--home-dusk-ui-surface-raised) !important;
+  color: var(--home-dusk-ui-horizon) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-shader-band--guardrails
+  .home-guardrails-visual__row--editing {
+  background: var(--home-dusk-ui-surface-sunken) !important;
+  box-shadow: inset 0 0 0 1px rgba(232, 143, 92, 0.28) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-shader-band--guardrails
+  .home-guardrails-visual__toggle {
+  background: rgba(242, 216, 168, 0.14) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-shader-band--guardrails
+  .home-guardrails-visual__toggle--on {
+  background: rgba(106, 144, 152, 0.55) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-shader-band--guardrails
+  .home-guardrails-visual__toggle--editing {
+  box-shadow: 0 0 0 2px rgba(232, 143, 92, 0.28) !important;
+}
+
+
+/* Call history feature card — compact routed log on shader. */
+html[data-home-page] .home-call-history-visual {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.62rem, 1.8vmin, 0.76rem);
+  padding-inline: clamp(0.45rem, 1.45vmin, 0.65rem);
+}
+
+
+html[data-home-page] .home-call-history-visual__header {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.42rem, 1.2vmin, 0.52rem);
+}
+
+
+html[data-home-page] .home-call-history-visual__header-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+}
+
+
+html[data-home-page] .home-call-history-visual__summary {
+  margin: 0;
+  color: #1e343a;
+  font-size: clamp(0.96rem, 2.75vmin, 1.08rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px 12px rgba(255, 255, 255, 0.42);
+}
+
+
+html[data-home-page] .home-call-history-visual__filters {
+  display: inline-flex;
+  align-self: flex-start;
+  gap: clamp(0.18rem, 0.52vmin, 0.22rem);
+  padding: clamp(0.2rem, 0.58vmin, 0.24rem);
+  border-radius: 999px;
+  border: 0.5px solid rgba(255, 255, 255, 0.82);
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow:
+    0 8px 22px rgba(30, 52, 58, 0.12),
+    inset 0 0 0 1px rgba(30, 52, 58, 0.05);
+}
+
+
+html[data-home-page] .home-call-history-visual__filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32em;
+  padding: 0.38em 0.68em;
+  border-radius: 999px;
+  color: #374151;
+  font-size: clamp(0.72rem, 2.05vmin, 0.82rem);
+  font-weight: 500;
+  line-height: 1;
+}
+
+
+html[data-home-page] .home-call-history-visual__filter--active {
+  background: rgba(210, 119, 76, 0.16);
+  color: #c46848;
+  font-weight: 600;
+}
+
+
+html[data-home-page] .home-call-history-visual__filter-count {
+  font-variant-numeric: tabular-nums;
+  opacity: 1;
+}
+
+
+html[data-home-page] .home-call-history-visual__card {
+  border-radius: clamp(0.62rem, 1.75vmin, 0.72rem);
+  border: 0.5px solid color-mix(in srgb, #1e343a 7%, #ebe7e0);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 10px 28px rgba(30, 52, 58, 0.08);
+  overflow: hidden;
+}
+
+
+html[data-home-page] .home-call-history-visual__row {
+  padding: clamp(0.68rem, 1.95vmin, 0.78rem) clamp(0.72rem, 2.05vmin, 0.82rem);
+  border-bottom: 0.5px solid #e5e7eb;
+}
+
+
+html[data-home-page] .home-call-history-visual__row--last {
+  border-bottom: none;
+}
+
+
+html[data-home-page] .home-call-history-visual__row--expanded {
+  background: rgba(210, 119, 76, 0.04);
+}
+
+
+html[data-home-page] .home-call-history-visual__row-top {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(0.48rem, 1.35vmin, 0.58rem);
+}
+
+
+html[data-home-page] .home-call-history-visual__direction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: clamp(1.55rem, 4.4vmin, 1.75rem);
+  height: clamp(1.55rem, 4.4vmin, 1.75rem);
+  margin-top: 0.06em;
+  border-radius: 999px;
+  background: rgba(210, 119, 76, 0.12);
+  color: #d2774c;
+}
+
+
+html[data-home-page] .home-call-history-visual__direction-icon {
+  width: 0.88em;
+  height: 0.88em;
+  flex-shrink: 0;
+}
+
+
+html[data-home-page] .home-call-history-visual__identity {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.14rem, 0.4vmin, 0.18rem);
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+
+html[data-home-page] .home-call-history-visual__identity-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+
+html[data-home-page] .home-call-history-visual__name {
+  margin: 0;
+  min-width: 0;
+  color: #1e343a;
+  font-size: clamp(0.86rem, 2.45vmin, 0.98rem);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+
+
+html[data-home-page] .home-call-history-visual__name-bold {
+  font-weight: 600;
+}
+
+
+html[data-home-page] .home-call-history-visual__time,
+html[data-home-page] .home-call-history-visual__duration {
+  flex-shrink: 0;
+  color: #9ca3af;
+  font-size: clamp(0.66rem, 1.88vmin, 0.76rem);
+  font-weight: 400;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+
+html[data-home-page] .home-call-history-visual__phone {
+  margin: 0;
+  min-width: 0;
+  color: #6b7280;
+  font-size: clamp(0.7rem, 2vmin, 0.8rem);
+  font-weight: 400;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+
+html[data-home-page] .home-call-history-visual__phone-route {
+  white-space: nowrap;
+}
+
+
+html[data-home-page] .home-call-history-visual__phone-route-sep {
+  margin-inline: 0.28em;
+  opacity: 0.55;
+}
+
+
+html[data-home-page] .home-call-history-visual__phone-route-agent {
+  color: #1e343a;
+  font-weight: 400;
+}
+
+
+html[data-home-page] .home-call-history-visual__route {
+  margin: clamp(0.34rem, 0.96vmin, 0.4rem) 0 0;
+  padding-left: calc(clamp(1.55rem, 4.4vmin, 1.75rem) + clamp(0.48rem, 1.35vmin, 0.58rem));
+  color: #6b7280;
+  font-size: clamp(0.68rem, 1.92vmin, 0.76rem);
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+}
+
+
+html[data-home-page] .home-call-history-visual__route-outcome {
+  color: #d2774c;
+  font-weight: 500;
+}
+
+
+html[data-home-page] .home-call-history-visual__details {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.18rem, 0.52vmin, 0.22rem);
+  margin: clamp(0.38rem, 1.08vmin, 0.46rem) 0 0;
+  padding: 0 0 0 calc(clamp(1.55rem, 4.4vmin, 1.75rem) + clamp(0.48rem, 1.35vmin, 0.58rem) + clamp(0.3rem, 0.85vmin, 0.42rem));
+  list-style: none;
+}
+
+
+html[data-home-page] .home-call-history-visual__detail {
+  position: relative;
+  padding-left: 0.85em;
+  color: #1e343a;
+  font-size: clamp(0.68rem, 1.92vmin, 0.76rem);
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+
+html[data-home-page] .home-call-history-visual__detail::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.52em;
+  width: 0.28em;
+  height: 0.28em;
+  border-radius: 999px;
+  background: #d2774c;
+}
+
+
+/* iPhone home — call history feature card (dusk mock UI). */
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-call-history-visual__summary,
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-call-history-visual__name,
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-call-history-visual__phone-route-agent,
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-call-history-visual__detail {
+  color: var(--home-dusk-ui-ink) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-call-history-visual__summary {
+  text-shadow: 0 1px 16px rgba(10, 18, 22, 0.34);
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-call-history-visual__phone,
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-call-history-visual__time,
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-call-history-visual__duration,
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-call-history-visual__route,
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-call-history-visual__filter:not(.home-call-history-visual__filter--active) {
+  color: var(--home-dusk-ui-ink-secondary) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-call-history-visual__filter--active,
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-call-history-visual__route-outcome {
+  color: var(--home-dusk-ui-horizon) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-call-history-visual__filters,
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-call-history-visual__filter--active,
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-call-history-visual__direction {
+  background: var(--home-dusk-ui-surface-raised) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-call-history-visual__card {
+  background: var(--home-dusk-ui-surface) !important;
+  border-color: var(--home-dusk-ui-border) !important;
+  box-shadow: var(--home-dusk-ui-shadow) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-call-history-visual__row {
+  border-bottom-color: var(--home-dusk-ui-border) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-call-history-visual__row--expanded {
+  background: rgba(232, 160, 96, 0.06) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-call-history-visual__filters {
+  background: var(--home-dusk-ui-surface) !important;
+  border-color: rgba(232, 160, 96, 0.32) !important;
+  box-shadow:
+    var(--home-dusk-ui-shadow),
+    inset 0 0 0 1px rgba(232, 160, 96, 0.12) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-call-history-visual__detail::before {
+  background: var(--home-dusk-ui-horizon) !important;
+}
+
+
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-call-history-visual__direction-icon,
+html[data-home-page][data-layout="desktop"]
+  .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel)
+  .home-call-history-visual__direction-icon
+  [stroke]:not([stroke="none"]) {
+  color: var(--home-dusk-ui-horizon) !important;
+  stroke: currentColor !important;
 }

@@ -18,7 +18,13 @@ import { suisseIntl } from "@/lib/home/fonts";
 import { doephoneHomeScrollRevealStyleVars } from "@/lib/doephone/section-reveal-timing";
 import { useDoePhoneSectionReveal } from "@/lib/doephone/use-doe-phone-section-reveal";
 import { doeHomeDuskShaderBandSurface, doeHomeShaderBandSurface } from "@/lib/proto/proto-shader-backdrop-colors";
-import type { CSSProperties } from "react";
+import { useLayoutEffect, useState, type CSSProperties } from "react";
+import {
+  DOEPHONE_DESKTOP_MEDIA_QUERY,
+  readBootstrappedDoePhoneVariant,
+  resolveDoePhoneVariant,
+  type DoePhoneVariant,
+} from "@/lib/doephone/resolve-doe-phone-variant";
 
 type ShaderBandFeature = "workflow" | "active-agents" | "call-summaries" | "lab-alerts" | "guardrails";
 
@@ -71,10 +77,20 @@ export function DoePhoneHomeShaderBandSection({
   const sectionShell = feature ? `${DOEPHONE_VIEWPORT_SECTION} flex flex-col` : DOEPHONE_MAIN_PAGE_VIEWPORT_SECTION;
   const sectionLabel = feature ? SHADER_BAND_LABELS[feature] : undefined;
   const [titleLine1, titleLine2] = feature ? SHADER_BAND_TITLES[feature] : ["", ""];
+  const [layoutVariant, setLayoutVariant] = useState<DoePhoneVariant>(readBootstrappedDoePhoneVariant);
   const { ref: revealRef, revealed } = useDoePhoneSectionReveal(0.18, {
     rootMargin: "0px 0px 8% 0px",
   });
   const revealStyle = doephoneHomeScrollRevealStyleVars() as CSSProperties;
+  const visualLayout = layoutVariant === "desktop" ? "desktop" : "phone";
+
+  useLayoutEffect(() => {
+    setLayoutVariant(readBootstrappedDoePhoneVariant());
+    const sync = () => setLayoutVariant(resolveDoePhoneVariant());
+    const mq = window.matchMedia(DOEPHONE_DESKTOP_MEDIA_QUERY);
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
 
   return (
     <section
@@ -133,7 +149,7 @@ export function DoePhoneHomeShaderBandSection({
           </DoePhoneScrollRevealContent>
           <div className="home-feature-shader-band__feature-content home-feature-shader-band__active-agents-content flex min-h-0 flex-1 flex-col">
             <DoePhoneScrollRevealContent revealed={revealed} segment="carousel" className="h-full min-h-0 w-full flex-1">
-              <DoePhoneReviewPackageVisual />
+              <DoePhoneReviewPackageVisual layout={visualLayout} showTitle={false} />
             </DoePhoneScrollRevealContent>
           </div>
         </div>
