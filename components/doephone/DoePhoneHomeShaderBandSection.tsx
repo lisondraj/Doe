@@ -5,7 +5,7 @@ import { DoePhoneHomeGuardrailsVisual } from "@/components/doephone/DoePhoneHome
 import { DoePhoneHomeLabAlertsVisual } from "@/components/doephone/DoePhoneHomeLabAlertsVisual";
 import { DoePhoneHomePriorAuthVisual } from "@/components/doephone/DoePhoneHomePriorAuthVisual";
 import { DoePhoneReviewPackageVisual } from "@/components/doephone/DoePhoneReviewPackageVisual";
-import { DoePhoneScrollRevealContent, DoePhoneScrollRevealLift } from "@/components/doephone/DoePhoneScrollRevealLift";
+import { DoePhoneScrollRevealContent } from "@/components/doephone/DoePhoneScrollRevealLift";
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import type { DoePhoneCommunicationSlide } from "@/lib/doephone/communication-carousel";
 import {
@@ -32,7 +32,7 @@ const SHADER_BAND_FEATURES: Partial<Record<DoePhoneCommunicationSlide["id"], Sha
 
 const SHADER_BAND_TITLES: Record<ShaderBandFeature, readonly [string, string]> = {
   workflow: ["Customize agents", "to fit your needs."],
-  "active-agents": ["Active Agents", ""],
+  "active-agents": ["Built by doctors,", "for doctors"],
   "call-summaries": ["Prior auth ships.", "From the chart."],
   "lab-alerts": ["Outreach lands.", "Visits get booked."],
   guardrails: ["Roll out agents", "with guardrails."],
@@ -40,7 +40,7 @@ const SHADER_BAND_TITLES: Record<ShaderBandFeature, readonly [string, string]> =
 
 const SHADER_BAND_LABELS: Record<ShaderBandFeature, string> = {
   workflow: "Customize agents",
-  "active-agents": "Active Agents",
+  "active-agents": "Built by doctors",
   "call-summaries": "Prior auth agent",
   "lab-alerts": "Patient recall outreach",
   guardrails: "Agent guardrails",
@@ -122,9 +122,25 @@ export function DoePhoneHomeShaderBandSection({
       ) : null}
 
       {feature === "active-agents" ? (
-        <DoePhoneScrollRevealLift className="home-feature-shader-band__active-agents-shell relative z-[10] flex h-full min-h-0 w-full flex-1 flex-col items-center justify-center">
-          <DoePhoneReviewPackageVisual />
-        </DoePhoneScrollRevealLift>
+        <div
+          ref={revealRef}
+          className="home-feature-shader-band__feature-shell relative z-[10] flex h-full min-h-0 w-full flex-col"
+          style={revealStyle}
+        >
+          <DoePhoneScrollRevealContent revealed={revealed} segment="title">
+            <h2
+              className={`home-feature-shader-band__feature-title home-feature-card-section__title home-feature-card-section__title--feature-lead text-left ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${suisseIntl.className}`}
+            >
+              <span className="block">{titleLine1}</span>
+              <span className="block">{titleLine2}</span>
+            </h2>
+          </DoePhoneScrollRevealContent>
+          <div className="home-feature-shader-band__feature-content home-feature-shader-band__active-agents-content flex min-h-0 flex-1 flex-col">
+            <DoePhoneScrollRevealContent revealed={revealed} segment="carousel" className="h-full min-h-0 w-full flex-1">
+              <DoePhoneReviewPackageVisual />
+            </DoePhoneScrollRevealContent>
+          </div>
+        </div>
       ) : null}
 
       {feature === "call-summaries" ? (
