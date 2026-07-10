@@ -2554,74 +2554,89 @@ html[data-home-page] .home-active-agents-visual__title {
 }
 
 html[data-home-page] .home-active-agents-scale {
-  --home-shader-feature-scale: 1.28;
+  --home-shader-feature-scale: 1.22;
   width: calc(100% / var(--home-shader-feature-scale));
   max-width: calc(100% / var(--home-shader-feature-scale));
-  min-height: 0;
-  flex: 1 1 auto;
   transform: scale(var(--home-shader-feature-scale));
   transform-origin: top left;
 }
 
 html[data-home-page] .home-active-agents-visual__body {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: clamp(2rem, 6vmin, 3.25rem);
   width: 100%;
   height: 100%;
   min-height: 0;
+  overflow: hidden;
+}
+
+html[data-home-page] .home-active-agents-visual__stats-stage {
+  position: relative;
+  z-index: 1;
+  max-width: min(100%, calc(100% - clamp(8.5rem, 26vmin, 11rem)));
 }
 
 html[data-home-page] .home-active-agents-visual__stats {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(2.65rem, 8vmin, 4.5rem) clamp(2.1rem, 6.5vmin, 3.75rem);
-  align-self: flex-start;
-  width: min(100%, clamp(17.5rem, 52vmin, 24rem));
+  gap: clamp(1.35rem, 4.2vmin, 2.15rem) clamp(1.65rem, 5vmin, 2.65rem);
+  width: min(100%, clamp(15.5rem, 46vmin, 21.5rem));
   text-align: left;
+}
+
+html[data-home-page] .home-active-agents-visual__stat {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.28rem, 0.85vmin, 0.42rem);
+  min-width: 0;
+  padding-top: clamp(0.55rem, 1.65vmin, 0.78rem);
+  border-top: 1px solid rgba(255, 244, 228, 0.16);
 }
 
 html[data-home-page] .home-active-agents-visual__stat-value {
   margin: 0;
   color: var(--home-active-agents-stat-ink);
-  font-size: clamp(2.65rem, 7.8vmin, 3.85rem);
-  font-weight: 400;
-  line-height: 0.96;
-  letter-spacing: -0.03em;
+  font-size: clamp(2.45rem, 7.2vmin, 3.55rem);
+  font-weight: 300;
+  line-height: 0.94;
+  letter-spacing: -0.045em;
+  font-variant-numeric: tabular-nums;
   text-shadow: 0 2px 24px rgba(26, 18, 8, 0.3);
 }
 
 html[data-home-page] .home-active-agents-visual__stat-label {
-  margin: clamp(0.34rem, 1vmin, 0.52rem) 0 0;
+  margin: 0;
   color: var(--home-active-agents-stat-muted);
-  font-size: clamp(0.92rem, 2.75vmin, 1.08rem);
-  font-weight: 500;
-  line-height: 1.15;
-  letter-spacing: 0.02em;
-  text-transform: lowercase;
+  font-size: clamp(0.68rem, 2.05vmin, 0.8rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 html[data-home-page] .home-active-agents-visual__pills {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  align-self: flex-end;
-  gap: clamp(0.52rem, 1.55vmin, 0.72rem);
-  width: min(100%, clamp(16.5rem, 49vmin, 21rem));
-  margin-top: auto;
+  gap: clamp(0.4rem, 1.2vmin, 0.56rem);
+  width: min(100%, clamp(12.75rem, 38vmin, 16.25rem));
+  max-width: calc(100% - clamp(0.25rem, 1vmin, 0.5rem));
+  max-height: min(58%, calc(100% - clamp(7.5rem, 22vmin, 9.5rem)));
+  overflow: hidden;
 }
 
 html[data-home-page] .home-active-agents-visual__workflow-pill {
   display: inline-flex;
   align-items: center;
-  gap: clamp(0.48rem, 1.45vmin, 0.62rem);
-  width: 100%;
+  gap: clamp(0.4rem, 1.2vmin, 0.52rem);
+  width: fit-content;
   max-width: 100%;
-  min-height: clamp(2.35rem, 7vmin, 2.85rem);
-  padding: clamp(0.32rem, 0.95vmin, 0.44rem) clamp(0.72rem, 2.15vmin, 0.95rem)
-    clamp(0.32rem, 0.95vmin, 0.44rem) clamp(0.32rem, 0.95vmin, 0.44rem);
+  min-height: clamp(2.05rem, 6.1vmin, 2.45rem);
+  padding: clamp(0.26rem, 0.78vmin, 0.36rem) clamp(0.62rem, 1.85vmin, 0.82rem)
+    clamp(0.26rem, 0.78vmin, 0.36rem) clamp(0.26rem, 0.78vmin, 0.36rem);
   border-radius: 9999px;
   background: var(--home-active-agents-pill-back);
   border: 1px solid var(--home-active-agents-pill-border);
@@ -2666,6 +2681,7 @@ html[data-home-page] .home-feature-shader-band--active-agents .home-active-agent
 html[data-home-page] .home-feature-shader-band__active-agents-content {
   padding-inline: var(--proto-phone-gutter-left, clamp(1.25rem, 4vw, 2.5rem));
   padding-bottom: clamp(1rem, 3vmin, 1.75rem);
+  overflow: hidden;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band__active-agents-content {
@@ -2678,26 +2694,21 @@ html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop 
 }
 
 html[data-home-page][data-layout="desktop"] .home-active-agents-scale {
-  --home-shader-feature-scale: 1.36;
-  transform-origin: top left;
-}
-
-html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop .home-active-agents-scale {
-  transform-origin: center center;
-  margin-inline: auto;
+  --home-shader-feature-scale: 1.28;
 }
 
 html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop .home-active-agents-visual__stats {
-  width: min(100%, clamp(20rem, 30vw, 27rem));
-  gap: clamp(3rem, 4.5vw, 4.25rem) clamp(2.35rem, 3.75vw, 3.5rem);
+  width: min(100%, clamp(18rem, 27vw, 24rem));
+  gap: clamp(1.55rem, 2.4vw, 2.15rem) clamp(2rem, 3vw, 2.75rem);
 }
 
 html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop .home-active-agents-visual__stat-value {
-  font-size: clamp(2.85rem, 3.55vw, 3.95rem);
+  font-size: clamp(2.65rem, 3.25vw, 3.65rem);
 }
 
 html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop .home-active-agents-visual__pills {
-  width: min(100%, clamp(18rem, 24vw, 22.5rem));
+  width: min(100%, clamp(14.5rem, 19vw, 17.5rem));
+  max-height: min(54%, calc(100% - clamp(8rem, 18vh, 10rem)));
 }
 
 /* iPhone agents carousel — dusk peek UI theme (shader-matched surfaces + warm ink). */
@@ -5583,7 +5594,7 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--lab-a
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--active-agents .home-active-agents-scale {
-  --home-shader-feature-scale: 1.32;
+  --home-shader-feature-scale: 1.26;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--call-summaries .home-prior-auth-scale {
