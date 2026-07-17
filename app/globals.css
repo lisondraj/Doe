@@ -989,6 +989,18 @@ html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb .hero-spe
   display: none;
 }
 
+html[data-home-page][data-layout="desktop"]
+  .home-agents-carousel__track--animating
+  .home-agents-carousel__orb-peek-reveal,
+html[data-home-page][data-layout="desktop"]
+  .home-agents-carousel__track--instant
+  .home-agents-carousel__orb-shell--focused
+  .home-agents-carousel__orb-peek-reveal {
+  transition: none !important;
+  filter: none !important;
+  transform: none !important;
+}
+
 html[data-home-page] .home-agents-carousel__orb-peek-reveal {
   position: absolute;
   inset: 0;
@@ -999,15 +1011,26 @@ html[data-home-page] .home-agents-carousel__orb-peek-reveal {
   border-radius: 50%;
   clip-path: circle(50.2% at 50% 50%);
   pointer-events: none;
+  contain: none;
+  content-visibility: visible;
 }
 
 /* Desktop — peek DOM stays mounted; only the focused orb shows UI. */
 html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb-peek-reveal {
   opacity: 0;
+  visibility: visible;
   transition: none;
 }
 
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb-shell--focused .home-agents-carousel__orb-peek-reveal {
+  opacity: 1;
+}
+
 html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb-peek-reveal--visible {
+  opacity: 0;
+}
+
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb-shell--focused .home-agents-carousel__orb-peek-reveal--visible {
   opacity: 1;
 }
 
@@ -1059,6 +1082,28 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   opacity: 1;
   visibility: visible;
   transition: none;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__track--animating
+  .home-agents-carousel__orb-peek-reveal,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__track--instant
+  .home-agents-carousel__orb-peek-reveal {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transition: none !important;
+  filter: none !important;
+  transform: none !important;
+}
+
+/* Agents carousel orbs — no scroll-reveal blur on the stage; peeks must paint instantly. */
+html[data-home-page] .home-agents-carousel__stage.doephone-section-reveal,
+html[data-home-page] .home-agents-carousel__stage.doephone-section-reveal--in {
+  animation: none !important;
+  opacity: 1 !important;
+  filter: none !important;
+  transform: none !important;
 }
 
 /* Peek roots — slight bottom bleed so circular clip has no seam. */

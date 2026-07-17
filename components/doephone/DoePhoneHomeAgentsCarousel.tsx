@@ -161,81 +161,106 @@ function agentsCarouselPaperSlotKey(orbIndex: number) {
   return `agents-carousel-paper:orb-${orbIndex}`;
 }
 
-const AgentCarouselOrb = memo(function AgentCarouselOrb({
-  orbIndex,
-  scheme,
-  focused,
-  blurPx,
-  isDesktop,
-  isPhoneLayout,
-  showPaperLayer,
-  paperEnabled,
-  paperSlotPriority,
-}: {
-  orbIndex: number;
-  scheme: HeroDialOrbScheme;
-  focused: boolean;
-  blurPx: number;
-  isDesktop: boolean;
-  isPhoneLayout: boolean;
-  showPaperLayer: boolean;
-  paperEnabled: boolean;
-  paperSlotPriority: number;
-}) {
-  const displayScheme = isPhoneLayout
-    ? heroDialOrbCarouselIphonePaperScheme(scheme)
-    : heroDialOrbCarouselScheme(scheme);
-  const peekLiftClass = isDesktop
-    ? "home-agents-carousel__orb-peek-lift home-agents-carousel__orb-peek-lift--in home-agents-carousel__orb-peek-lift--instant"
-    : "";
+/** Peek UI — stable per orb slot; never remounts when focus or paper warm-state changes. */
+const AgentCarouselPeekSlot = memo(
+  function AgentCarouselPeekSlot({
+    label,
+    isDesktop,
+  }: {
+    label: string;
+    isDesktop: boolean;
+  }) {
+    const peekLiftClass = isDesktop
+      ? "home-agents-carousel__orb-peek-lift home-agents-carousel__orb-peek-lift--in home-agents-carousel__orb-peek-lift--instant"
+      : "";
 
-  return (
-    <div
-      className={`home-agents-carousel__orb-shell${
-        focused ? " home-agents-carousel__orb-shell--focused" : ""
-      }`}
-      style={blurPx > 0 ? { filter: `blur(${blurPx}px)` } : undefined}
-    >
+    return (
+      <div className="home-agents-carousel__orb-peek-reveal home-agents-carousel__orb-peek-reveal--visible">
+        {isDesktop ? (
+          <div className={peekLiftClass}>
+            <AgentCarouselPeek label={label} isPhone={false} />
+          </div>
+        ) : (
+          <AgentCarouselPeek label={label} isPhone />
+        )}
+      </div>
+    );
+  },
+  (prev, next) => prev.label === next.label && prev.isDesktop === next.isDesktop,
+);
+
+const AgentCarouselOrb = memo(
+  function AgentCarouselOrb({
+    orbIndex,
+    scheme,
+    focused,
+    blurPx,
+    isDesktop,
+    isPhoneLayout,
+    mountPaperShell,
+    paperEnabled,
+    paperSlotPriority,
+  }: {
+    orbIndex: number;
+    scheme: HeroDialOrbScheme;
+    focused: boolean;
+    blurPx: number;
+    isDesktop: boolean;
+    isPhoneLayout: boolean;
+    mountPaperShell: boolean;
+    paperEnabled: boolean;
+    paperSlotPriority: number;
+  }) {
+    const displayScheme = isPhoneLayout
+      ? heroDialOrbCarouselIphonePaperScheme(scheme)
+      : heroDialOrbCarouselScheme(scheme);
+
+    return (
       <div
-        className={`home-agents-carousel__orb hero-speaking-orb${
-          focused ? " home-agents-carousel__orb--focused" : ""
+        className={`home-agents-carousel__orb-shell${
+          focused ? " home-agents-carousel__orb-shell--focused" : ""
         }`}
-        style={orbAccentStyle(displayScheme)}
+        style={blurPx > 0 ? { filter: `blur(${blurPx}px)` } : undefined}
       >
-        <div className="hero-speaking-orb__progress-shell">
-          <div className="hero-speaking-orb__core relative overflow-hidden rounded-full">
-            <HeroDialOrbGrainShader
-              scheme={displayScheme}
-              shaderConfig={HERO_DIAL_ORB_CAROUSEL_SHADER}
-            />
-            {showPaperLayer ? (
-              <HeroDialOrbPaperShader
+        <div
+          className={`home-agents-carousel__orb hero-speaking-orb${
+            focused ? " home-agents-carousel__orb--focused" : ""
+          }`}
+          style={orbAccentStyle(displayScheme)}
+        >
+          <div className="hero-speaking-orb__progress-shell">
+            <div className="hero-speaking-orb__core relative overflow-hidden rounded-full">
+              <HeroDialOrbGrainShader
                 scheme={displayScheme}
-                variant={doeHomeAgentsCarouselOrbShaderVariantForLabel(scheme.label)}
-                slotPriority={paperSlotPriority}
-                slotKey={agentsCarouselPaperSlotKey(orbIndex)}
-                enabled={paperEnabled}
+                shaderConfig={HERO_DIAL_ORB_CAROUSEL_SHADER}
               />
-            ) : null}
-            <div
-              className={`home-agents-carousel__orb-peek-reveal${
-                isPhoneLayout || focused ? " home-agents-carousel__orb-peek-reveal--visible" : ""
-              }`}
-            >
-              {isDesktop ? (
-                <div className={peekLiftClass}>
-                  <AgentCarouselPeek label={scheme.label} isPhone={false} />
-                </div>
-              ) : (
-                <AgentCarouselPeek label={scheme.label} isPhone />
-              )}
+              {mountPaperShell ? (
+                <HeroDialOrbPaperShader
+                  scheme={displayScheme}
+                  variant={doeHomeAgentsCarouselOrbShaderVariantForLabel(scheme.label)}
+                  slotPriority={paperSlotPriority}
+                  slotKey={agentsCarouselPaperSlotKey(orbIndex)}
+                  enabled={paperEnabled}
+                />
+              ) : null}
+              <AgentCarouselPeekSlot label={scheme.label} isDesktop={isDesktop} />
             </div>
           </div>
         </div>
       </div>
-    </div>
-  );
-});
+    );
+  },
+  (prev, next) =>
+    prev.orbIndex === next.orbIndex &&
+    prev.scheme === next.scheme &&
+    prev.focused === next.focused &&
+    prev.blurPx === next.blurPx &&
+    prev.isDesktop === next.isDesktop &&
+    prev.isPhoneLayout === next.isPhoneLayout &&
+    prev.mountPaperShell === next.mountPaperShell &&
+    prev.paperEnabled === next.paperEnabled &&
+    prev.paperSlotPriority === next.paperSlotPriority,
+);
 
 function trackTransform(trackIndex: number) {
   return `translate3d(calc(50% - var(--home-agents-orb-half) - ${trackIndex} * var(--home-agents-orb-step)), 0, 0)`;
@@ -367,7 +392,7 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
   return (
     <div className={`home-agents-carousel ${dmSans.className}`} aria-hidden>
       <div
-        className={`home-agents-carousel__stage ${doePhoneSectionRevealSegmentClass("agents-orbs", revealed)}`}
+        className="home-agents-carousel__stage"
       >
         <div
           className="home-agents-carousel__viewport"
@@ -397,8 +422,8 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
                   blurPx={isDesktop ? getOrbBlur(distance) : 0}
                   isDesktop={isDesktop}
                   isPhoneLayout={isPhoneLayout}
-                  showPaperLayer={warmPaperLayer}
-                  paperEnabled={heroShaderReady}
+                  mountPaperShell={onMainStrip}
+                  paperEnabled={heroShaderReady && warmPaperLayer}
                   paperSlotPriority={
                     focused
                       ? SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_FOCUSED
