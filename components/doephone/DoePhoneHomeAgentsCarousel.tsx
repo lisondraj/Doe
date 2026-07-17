@@ -144,9 +144,8 @@ function AgentCarouselOrb({
   const paperSlotPriority = focused
     ? SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_FOCUSED
     : SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_ADJACENT;
-  /** Hero background must mount first — only focused + neighbors get WebGL. */
-  const mountPaperShader =
-    isPhoneLayout && heroShaderReady && (focused || distance <= 1);
+  /** Hero background must mount first — only the focused orb gets WebGL paper. */
+  const mountPaperShader = isPhoneLayout && heroShaderReady && focused;
   const mountPeek = isPhoneLayout || focused;
   const peekVisible = isPhoneLayout || focused;
   const peekLiftClass =

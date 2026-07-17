@@ -2,7 +2,7 @@
 
 import { DoePhoneHeroGradientCircles } from "@/components/doephone/DoePhoneHeroGradientCircles";
 import { DoePhoneHeroHeadline } from "@/components/doephone/DoePhoneHeroHeadline";
-import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
+import { DoePhoneHomeHeroGrainShader } from "@/components/doephone/DoePhoneHomeHeroGrainShader";
 import { ProtoHomeHeroGradient } from "@/components/proto/ProtoHomeHeroGradient";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import {
@@ -114,7 +114,7 @@ export function DoePhoneHeroSection({
       {isProto && isMobile ? (
         <ProtoHomeHeroGradient />
       ) : renderIphoneHero ? (
-        <ProtoGrainGradient
+        <DoePhoneHomeHeroGrainShader
           variant={homeHeroShader.variant}
           colors={homeHeroShader.colors}
           colorBack={homeHeroShader.colorBack}

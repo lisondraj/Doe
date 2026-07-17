@@ -1,6 +1,9 @@
 /** iPhone WebGL context budget — avoids black shader loss when the page exceeds GPU limits. */
 
-import { DOEPHONE_HOME_HERO_SHADER_SLOT } from "@/lib/doephone/home-hero-shader-gate";
+import {
+  DOEPHONE_HOME_HERO_SHADER_SLOT,
+  setHomeHeroBackgroundReady,
+} from "@/lib/doephone/home-hero-shader-gate";
 
 export const SHADER_WEBGL_SLOT_PRIORITY = {
   HERO_BACKGROUND: 1000,
@@ -128,6 +131,30 @@ export function acquireShaderWebGLSlot(
   return true;
 }
 
+/** Reserve the home hero background slot — evicts lower-priority holders when needed. */
+export function acquireHomeHeroBackgroundSlot(evict: () => void): boolean {
+  if (!isDoePhoneWebGLBudgetActive()) {
+    return true;
+  }
+
+  const priority = SHADER_WEBGL_SLOT_PRIORITY.HERO_BACKGROUND;
+  const existing = slots.get(DOEPHONE_HOME_HERO_SHADER_SLOT);
+  if (existing) {
+    slots.set(DOEPHONE_HOME_HERO_SHADER_SLOT, { priority, evict });
+    return true;
+  }
+
+  while (slots.size >= PHONE_MAX_WEBGL_SLOTS && !tryEvictForSlot(priority, false)) {
+    return false;
+  }
+
+  slots.set(DOEPHONE_HOME_HERO_SHADER_SLOT, { priority, evict });
+  return true;
+}
+
 export function releaseShaderWebGLSlot(id: string) {
+  if (id === DOEPHONE_HOME_HERO_SHADER_SLOT) {
+    setHomeHeroBackgroundReady(false);
+  }
   slots.delete(id);
 }
