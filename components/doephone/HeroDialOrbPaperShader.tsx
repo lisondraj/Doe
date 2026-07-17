@@ -68,16 +68,21 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
   scheme,
   variant,
   slotPriority,
+  slotKey,
 }: {
   scheme: HeroDialOrbScheme;
   variant: ProtoGrainGradientVariant;
   slotPriority: number;
+  /** Stable budget id — avoids remount churn when focus priority changes. */
+  slotKey?: string;
 }) {
   const preset = PROTO_GRAIN_GRADIENT_PRESETS[variant];
-  const slotId = useId();
+  const reactId = useId();
+  const slotId = slotKey ?? reactId;
   const noiseTexture = useReadyShaderNoiseTexture();
   const shellRef = useRef<HTMLDivElement>(null);
   const mountRef = useRef<ShaderMount | null>(null);
+  const containerReadyRef = useRef(false);
   const [shaderGeneration, setShaderGeneration] = useState(0);
   const [containerReady, setContainerReady] = useState(false);
 
@@ -89,6 +94,7 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
     mountRef.current?.dispose();
     mountRef.current = null;
     releaseShaderWebGLSlot(slotId);
+    shellRef.current?.classList.remove("hero-speaking-orb__grain-shell--shader-ready");
     setShaderGeneration((current) => current + 1);
   }, [slotId]);
 
@@ -101,13 +107,19 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
   useLayoutEffect(() => {
     const node = shellRef.current;
     if (!node) {
+      containerReadyRef.current = false;
       setContainerReady(false);
       return;
     }
 
     const syncReady = () => {
       const rect = node.getBoundingClientRect();
-      setContainerReady(rect.width > 1 && rect.height > 1);
+      const ready = rect.width > 1 && rect.height > 1;
+      if (ready === containerReadyRef.current) {
+        return;
+      }
+      containerReadyRef.current = ready;
+      setContainerReady(ready);
     };
 
     syncReady();
@@ -117,18 +129,31 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
   }, []);
 
   useLayoutEffect(() => {
+    if (!mountRef.current) {
+      return;
+    }
+
+    acquireShaderWebGLSlot(slotId, slotPriority, evictShader);
+  }, [evictShader, slotId, slotPriority]);
+
+  useLayoutEffect(() => {
     const node = shellRef.current;
-    if (!node || !containerReady || !noiseTexture) {
-      mountRef.current?.dispose();
-      mountRef.current = null;
-      node?.classList.remove("hero-speaking-orb__grain-shell--shader-ready");
-      releaseShaderWebGLSlot(slotId);
+    if (!node || !noiseTexture) {
+      if (mountRef.current) {
+        resetShader();
+      }
+      return;
+    }
+
+    if (!containerReady) {
+      return;
+    }
+
+    if (mountRef.current) {
       return;
     }
 
     if (!acquireShaderWebGLSlot(slotId, slotPriority, evictShader)) {
-      mountRef.current?.dispose();
-      mountRef.current = null;
       node.classList.remove("hero-speaking-orb__grain-shell--shader-ready");
       return;
     }
@@ -173,10 +198,10 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
     intensity,
     noiseTexture,
     preset,
+    resetShader,
     scheme.colorBack,
     shaderGeneration,
     slotId,
-    slotPriority,
   ]);
 
   return (

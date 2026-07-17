@@ -998,14 +998,20 @@ html[data-home-page] .home-agents-carousel__orb-peek-reveal {
   pointer-events: none;
 }
 
-/* Desktop — peek UI stays mounted; visibility toggles with focus (no mount delay on swap). */
+/* Desktop — peek UI stays mounted and painted; side orbs stay clipped + shell-blurred. */
 html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb-peek-reveal {
-  opacity: 0;
+  opacity: 1;
   transition: none;
 }
 
 html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb-peek-reveal--visible {
   opacity: 1;
+}
+
+/* Carousel inbox peek — drop per-row filter blur (major scroll jank on Inbox Agent). */
+html[data-home-page] .home-agents-carousel__inbox-peek-row,
+html[data-home-page] .home-agents-carousel__inbox-peek-footer {
+  filter: none !important;
 }
 
 html[data-home-page] .home-agents-carousel__orb-peek-lift {
@@ -5093,7 +5099,13 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
   .hero-speaking-orb__grain-shell--paper.hero-speaking-orb__grain-shell--shader-ready {
   opacity: 1;
-  transition: opacity 120ms ease-out;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core:has(.hero-speaking-orb__grain-shell--paper.hero-speaking-orb__grain-shell--shader-ready)
+  .hero-speaking-orb__grain-shell--css {
+  opacity: 0;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
