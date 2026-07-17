@@ -509,6 +509,23 @@ export function isProtoShaderHeroVariant(variant: ProtoGrainGradientVariant) {
   );
 }
 
+/** Home hero background — full phone hero cap; dial orbs are CSS-only on iPhone home. */
+export function protoHomeHeroBackgroundMaxPixelCount(variant: ProtoGrainGradientVariant) {
+  if (variant !== "home-hero" && variant !== "home-hero-phone") {
+    return protoShaderMaxPixelCount(variant);
+  }
+
+  if (isDoePhoneShaderContext()) {
+    return PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO;
+  }
+
+  if (isDesktopHomeLayout()) {
+    return PROTO_SHADER_MAX_PIXEL_COUNT_DESKTOP_HERO;
+  }
+
+  return PROTO_SHADER_MAX_PIXEL_COUNT_HERO;
+}
+
 export function protoShaderMaxPixelCount(variant: ProtoGrainGradientVariant) {
   if (isDoePhoneShaderContext()) {
     if (isProtoShaderHeroVariant(variant) || variant === "home-footer" || variant === "home-integrations") {

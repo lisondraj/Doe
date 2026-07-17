@@ -23,6 +23,7 @@ import { useShaderContextRecovery } from "@/lib/doephone/use-shader-context-reco
 import { useReadyShaderNoiseTexture } from "@/lib/doephone/use-ready-shader-noise-texture";
 import {
   PROTO_GRAIN_SHADER_MIN_PIXEL_RATIO,
+  isShaderMountContainerReady,
   protoGrainColorStopsKey,
 } from "@/lib/doephone/shader-grain-mount";
 import {
@@ -32,7 +33,7 @@ import {
   PROTO_GRAIN_GRADIENT_SPEED,
   PROTO_GRAIN_GRADIENT_WORLD_HEIGHT,
   PROTO_GRAIN_GRADIENT_WORLD_WIDTH,
-  protoShaderMaxPixelCount,
+  protoHomeHeroBackgroundMaxPixelCount,
   type ProtoGrainGradientVariant,
 } from "@/lib/proto/proto-grain-gradient";
 
@@ -88,6 +89,7 @@ export function DoePhoneHomeHeroGrainShader({
   const containerRef = useRef<HTMLDivElement>(null);
   const mountRef = useRef<ShaderMount | null>(null);
   const [shaderGeneration, setShaderGeneration] = useState(0);
+  const [containerReady, setContainerReady] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [tabVisible, setTabVisible] = useState(true);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -105,7 +107,24 @@ export function DoePhoneHomeHeroGrainShader({
 
   useLayoutEffect(() => {
     const node = containerRef.current;
-    if (!node || !noiseTexture) return;
+    if (!node) {
+      setContainerReady(false);
+      return;
+    }
+
+    const syncReady = () => {
+      setContainerReady(isShaderMountContainerReady(node));
+    };
+
+    syncReady();
+    const observer = new ResizeObserver(syncReady);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [shaderGeneration]);
+
+  useLayoutEffect(() => {
+    const node = containerRef.current;
+    if (!node || !noiseTexture || !containerReady) return;
 
     if (isDoePhoneWebGLBudgetActive() && !acquireHomeHeroBackgroundSlot(resetShader)) {
       setHomeHeroBackgroundReady(false);
@@ -119,6 +138,8 @@ export function DoePhoneHomeHeroGrainShader({
       noiseTexture,
     });
 
+    const maxPixelCount = protoHomeHeroBackgroundMaxPixelCount(variant);
+
     try {
       mountRef.current = new ShaderMount(
         node,
@@ -128,7 +149,7 @@ export function DoePhoneHomeHeroGrainShader({
         shouldAnimate ? targetSpeed : 0,
         0,
         PROTO_GRAIN_SHADER_MIN_PIXEL_RATIO,
-        protoShaderMaxPixelCount(variant),
+        maxPixelCount,
       );
     } catch {
       releaseShaderWebGLSlot(DOEPHONE_HOME_HERO_SHADER_SLOT);
@@ -146,6 +167,7 @@ export function DoePhoneHomeHeroGrainShader({
     };
   }, [
     colorStopsKey,
+    containerReady,
     noiseTexture,
     resetShader,
     resolvedColorBack,
@@ -154,10 +176,18 @@ export function DoePhoneHomeHeroGrainShader({
   ]);
 
   useEffect(() => {
+    if (!mountRef.current) {
+      return;
+    }
+
+    mountRef.current.setMaxPixelCount(protoHomeHeroBackgroundMaxPixelCount(variant));
+  }, [variant]);
+
+  useEffect(() => {
     mountRef.current?.setSpeed(shouldAnimate ? targetSpeed : 0);
   }, [shouldAnimate, targetSpeed]);
 
-  useShaderContextRecovery(containerRef, true, resetShader);
+  useShaderContextRecovery(containerRef, containerReady && noiseTexture != null, resetShader);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
