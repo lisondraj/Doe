@@ -869,7 +869,10 @@ html[data-home-page][data-layout="desktop"] .home-agents-carousel__track--instan
 
 html[data-home-page][data-layout="desktop"] .home-agents-carousel__track--sliding .home-agents-carousel__orb-shell,
 html[data-home-page][data-layout="desktop"] .home-agents-carousel__track--sliding .home-agents-carousel__orb,
-html[data-home-page][data-layout="desktop"] .home-agents-carousel__track--sliding .home-agents-carousel__orb .hero-speaking-orb__progress-shell::after {
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__track--sliding .home-agents-carousel__orb .hero-speaking-orb__progress-shell::after,
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__track--animating .home-agents-carousel__orb-shell,
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__track--animating .home-agents-carousel__orb,
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__track--animating .home-agents-carousel__orb .hero-speaking-orb__progress-shell::after {
   transition: none !important;
 }
 
@@ -5017,6 +5020,9 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__track--sliding
+  .home-agents-carousel__orb,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__track--animating
   .home-agents-carousel__orb {
   transition: none !important;
 }
