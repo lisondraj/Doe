@@ -136,7 +136,7 @@ export function DoePhoneHeroSection({
         <div className="doephone-hero-copy w-full min-w-0">
           <DoePhoneHeroHeadline
             line1={isProto ? "Recruiting for the" : "Voice Agents."}
-            line2={isProto ? "intelligence era." : isMobile ? "for Healthcare." : "for Healthcare"}
+            line2={isProto ? "intelligence era." : "for Healthcare."}
             fontClass={isProto ? PROTO_FONT_CLASS : undefined}
           />
         </div>
