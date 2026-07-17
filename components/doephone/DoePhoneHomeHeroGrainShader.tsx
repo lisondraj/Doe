@@ -3,7 +3,6 @@
 import {
   grainGradientFragmentShader,
   getShaderColorFromString,
-  getShaderNoiseTexture,
   GrainGradientShapes,
   ShaderFitOptions,
   ShaderMount,
@@ -21,6 +20,7 @@ import {
   releaseShaderWebGLSlot,
 } from "@/lib/doephone/shader-webgl-budget";
 import { useShaderContextRecovery } from "@/lib/doephone/use-shader-context-recovery";
+import { useReadyShaderNoiseTexture } from "@/lib/doephone/use-ready-shader-noise-texture";
 import {
   PROTO_GRAIN_GRADIENT_COLOR_BACK,
   PROTO_GRAIN_GRADIENT_COLORS,
@@ -36,10 +36,12 @@ function buildGrainGradientUniforms({
   colors,
   colorBack,
   preset,
+  noiseTexture,
 }: {
   colors: readonly string[];
   colorBack: string;
   preset: (typeof PROTO_GRAIN_GRADIENT_PRESETS)[ProtoGrainGradientVariant];
+  noiseTexture: HTMLImageElement;
 }): ShaderMountUniforms {
   return {
     u_colorBack: getShaderColorFromString(colorBack),
@@ -49,7 +51,7 @@ function buildGrainGradientUniforms({
     u_intensity: preset.intensity,
     u_noise: 0,
     u_shape: GrainGradientShapes[preset.shape],
-    u_noiseTexture: getShaderNoiseTexture(),
+    u_noiseTexture: noiseTexture,
     u_fit: ShaderFitOptions[preset.fit ?? "cover"],
     u_scale: preset.scale ?? 1,
     u_rotation: preset.rotation ?? 0,
@@ -77,6 +79,7 @@ export function DoePhoneHomeHeroGrainShader({
   const preset = PROTO_GRAIN_GRADIENT_PRESETS[variant];
   const resolvedColors = colors ?? PROTO_GRAIN_GRADIENT_COLORS;
   const resolvedColorBack = colorBack ?? PROTO_GRAIN_GRADIENT_COLOR_BACK;
+  const noiseTexture = useReadyShaderNoiseTexture();
   const containerRef = useRef<HTMLDivElement>(null);
   const mountRef = useRef<ShaderMount | null>(null);
   const [shaderGeneration, setShaderGeneration] = useState(0);
@@ -97,7 +100,7 @@ export function DoePhoneHomeHeroGrainShader({
 
   useLayoutEffect(() => {
     const node = containerRef.current;
-    if (!node) return;
+    if (!node || !noiseTexture) return;
 
     if (isDoePhoneWebGLBudgetActive() && !acquireHomeHeroBackgroundSlot(resetShader)) {
       setHomeHeroBackgroundReady(false);
@@ -108,18 +111,25 @@ export function DoePhoneHomeHeroGrainShader({
       colors: resolvedColors,
       colorBack: resolvedColorBack,
       preset,
+      noiseTexture,
     });
 
-    mountRef.current = new ShaderMount(
-      node,
-      grainGradientFragmentShader,
-      uniforms,
-      undefined,
-      shouldAnimate ? targetSpeed : 0,
-      0,
-      undefined,
-      protoShaderMaxPixelCount(variant),
-    );
+    try {
+      mountRef.current = new ShaderMount(
+        node,
+        grainGradientFragmentShader,
+        uniforms,
+        undefined,
+        shouldAnimate ? targetSpeed : 0,
+        0,
+        undefined,
+        protoShaderMaxPixelCount(variant),
+      );
+    } catch {
+      releaseShaderWebGLSlot(DOEPHONE_HOME_HERO_SHADER_SLOT);
+      setHomeHeroBackgroundReady(false);
+      return;
+    }
 
     setHomeHeroBackgroundReady(true);
 
@@ -130,6 +140,7 @@ export function DoePhoneHomeHeroGrainShader({
       setHomeHeroBackgroundReady(false);
     };
   }, [
+    noiseTexture,
     preset,
     resetShader,
     resolvedColorBack,

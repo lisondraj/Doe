@@ -10,6 +10,7 @@ import { ProtoCommunicationStack } from "@/components/proto/ProtoCommunicationSt
 import { ProtoFooter } from "@/components/proto/ProtoFooter";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
 import { applyPhoneOverflowChrome } from "@/lib/doephone/phone-layout-viewport";
+import { preloadShaderNoiseTexture } from "@/lib/doephone/shader-noise-texture";
 import {
   DOEPHONE_BEIGE_SECTION,
 } from "@/lib/doephone/section-styles";
@@ -44,6 +45,7 @@ export function DoePhoneMobileView({ variant = "home" }: { variant?: "home" | "p
     if (variant === "home") {
       html.setAttribute("data-home-page", "true");
       applyPhoneOverflowChrome(DOE_HOME_DUSK_OVERFLOW_SURFACE);
+      preloadShaderNoiseTexture();
     }
 
     if (isProto || variant === "home") {

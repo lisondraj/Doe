@@ -3,7 +3,6 @@
 import {
   grainGradientFragmentShader,
   getShaderColorFromString,
-  getShaderNoiseTexture,
   GrainGradientShapes,
   ShaderFitOptions,
   ShaderMount,
@@ -16,6 +15,7 @@ import {
   releaseShaderWebGLSlot,
 } from "@/lib/doephone/shader-webgl-budget";
 import { useShaderContextRecovery } from "@/lib/doephone/use-shader-context-recovery";
+import { useReadyShaderNoiseTexture } from "@/lib/doephone/use-ready-shader-noise-texture";
 import {
   PROTO_GRAIN_GRADIENT_PRESETS,
   PROTO_GRAIN_GRADIENT_WORLD_HEIGHT,
@@ -30,11 +30,13 @@ function buildOrbGrainUniforms({
   colorBack,
   preset,
   intensity,
+  noiseTexture,
 }: {
   colors: readonly string[];
   colorBack: string;
   preset: (typeof PROTO_GRAIN_GRADIENT_PRESETS)[ProtoGrainGradientVariant];
   intensity: number;
+  noiseTexture: HTMLImageElement;
 }): ShaderMountUniforms {
   return {
     u_colorBack: getShaderColorFromString(colorBack),
@@ -44,7 +46,7 @@ function buildOrbGrainUniforms({
     u_intensity: intensity,
     u_noise: 0,
     u_shape: GrainGradientShapes[preset.shape],
-    u_noiseTexture: getShaderNoiseTexture(),
+    u_noiseTexture: noiseTexture,
     u_fit: ShaderFitOptions[preset.fit ?? "cover"],
     u_scale: preset.scale ?? 1,
     u_rotation: preset.rotation ?? 0,
@@ -69,6 +71,7 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
 }) {
   const preset = PROTO_GRAIN_GRADIENT_PRESETS[variant];
   const slotId = useId();
+  const noiseTexture = useReadyShaderNoiseTexture();
   const shellRef = useRef<HTMLDivElement>(null);
   const mountRef = useRef<ShaderMount | null>(null);
   const [shaderGeneration, setShaderGeneration] = useState(0);
@@ -110,7 +113,7 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
 
   useLayoutEffect(() => {
     const node = shellRef.current;
-    if (!node || !containerReady) {
+    if (!node || !containerReady || !noiseTexture) {
       mountRef.current?.dispose();
       mountRef.current = null;
       releaseShaderWebGLSlot(slotId);
@@ -128,18 +131,25 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
       colorBack: scheme.colorBack,
       preset,
       intensity,
+      noiseTexture,
     });
 
-    mountRef.current = new ShaderMount(
-      node,
-      grainGradientFragmentShader,
-      uniforms,
-      undefined,
-      0,
-      0,
-      undefined,
-      PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_CAROUSEL_ORB,
-    );
+    try {
+      mountRef.current = new ShaderMount(
+        node,
+        grainGradientFragmentShader,
+        uniforms,
+        undefined,
+        0,
+        0,
+        undefined,
+        PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_CAROUSEL_ORB,
+      );
+    } catch {
+      releaseShaderWebGLSlot(slotId);
+      mountRef.current = null;
+      return;
+    }
 
     return () => {
       mountRef.current?.dispose();
@@ -147,9 +157,11 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
       releaseShaderWebGLSlot(slotId);
     };
   }, [
+    colors,
     containerReady,
     evictShader,
     intensity,
+    noiseTexture,
     preset,
     scheme.colorBack,
     scheme.colors,
