@@ -144,14 +144,15 @@ function AgentCarouselOrb({
   const paperSlotPriority = focused
     ? SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_FOCUSED
     : SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_ADJACENT;
-  /** Hero background must mount first — only the focused orb gets WebGL paper. */
-  const mountPaperShader = isPhoneLayout && heroShaderReady && focused;
-  const mountPeek = isPhoneLayout || focused;
-  const peekVisible = isPhoneLayout || focused;
-  const peekLiftClass =
-    mountPeek && peekVisible && isDesktop
-      ? "home-agents-carousel__orb-peek-lift home-agents-carousel__orb-peek-lift--in home-agents-carousel__orb-peek-lift--instant"
-      : "";
+  /** Hero background must mount first — focused + adjacent orbs keep paper warm for smooth swaps. */
+  const mountPaperShader = isPhoneLayout && heroShaderReady && distance <= 1;
+  const peekLiftClass = isDesktop
+    ? `home-agents-carousel__orb-peek-lift${
+        focused
+          ? " home-agents-carousel__orb-peek-lift--in home-agents-carousel__orb-peek-lift--instant"
+          : ""
+      }`
+    : "";
 
   return (
     <div
@@ -190,21 +191,19 @@ function AgentCarouselOrb({
                 shaderConfig={HERO_DIAL_ORB_CAROUSEL_SHADER}
               />
             )}
-            {mountPeek ? (
-              <div
-                className={`home-agents-carousel__orb-peek-reveal${
-                  peekVisible ? " home-agents-carousel__orb-peek-reveal--visible" : ""
-                }`}
-              >
-                {isDesktop ? (
-                  <div className={peekLiftClass}>
-                    <AgentCarouselPeek label={scheme.label} isPhone={!isDesktop} />
-                  </div>
-                ) : (
+            <div
+              className={`home-agents-carousel__orb-peek-reveal${
+                focused || isPhoneLayout ? " home-agents-carousel__orb-peek-reveal--visible" : ""
+              }`}
+            >
+              {isDesktop ? (
+                <div className={peekLiftClass}>
                   <AgentCarouselPeek label={scheme.label} isPhone={!isDesktop} />
-                )}
-              </div>
-            ) : null}
+                </div>
+              ) : (
+                <AgentCarouselPeek label={scheme.label} isPhone={!isDesktop} />
+              )}
+            </div>
           </div>
         </div>
       </div>

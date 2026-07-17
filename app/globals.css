@@ -991,6 +991,18 @@ html[data-home-page] .home-agents-carousel__orb-peek-reveal {
   pointer-events: none;
 }
 
+/* Desktop — peek UI stays mounted; visibility toggles with focus (no mount delay on swap). */
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb-peek-reveal {
+  opacity: 0;
+  visibility: hidden;
+  transition: none;
+}
+
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb-peek-reveal--visible {
+  opacity: 1;
+  visibility: visible;
+}
+
 html[data-home-page] .home-agents-carousel__orb-peek-lift {
   position: absolute;
   inset: 0;
@@ -4984,6 +4996,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   gap: var(--home-agents-orb-gap);
   transition: transform var(--home-agents-carousel-duration) var(--home-agents-carousel-ease);
   backface-visibility: hidden;
+  will-change: transform;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__track--instant {
