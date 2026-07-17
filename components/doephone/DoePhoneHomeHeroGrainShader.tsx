@@ -22,6 +22,10 @@ import {
 import { useShaderContextRecovery } from "@/lib/doephone/use-shader-context-recovery";
 import { useReadyShaderNoiseTexture } from "@/lib/doephone/use-ready-shader-noise-texture";
 import {
+  PROTO_GRAIN_SHADER_MIN_PIXEL_RATIO,
+  protoGrainColorStopsKey,
+} from "@/lib/doephone/shader-grain-mount";
+import {
   PROTO_GRAIN_GRADIENT_COLOR_BACK,
   PROTO_GRAIN_GRADIENT_COLORS,
   PROTO_GRAIN_GRADIENT_PRESETS,
@@ -79,6 +83,7 @@ export function DoePhoneHomeHeroGrainShader({
   const preset = PROTO_GRAIN_GRADIENT_PRESETS[variant];
   const resolvedColors = colors ?? PROTO_GRAIN_GRADIENT_COLORS;
   const resolvedColorBack = colorBack ?? PROTO_GRAIN_GRADIENT_COLOR_BACK;
+  const colorStopsKey = protoGrainColorStopsKey(resolvedColors);
   const noiseTexture = useReadyShaderNoiseTexture();
   const containerRef = useRef<HTMLDivElement>(null);
   const mountRef = useRef<ShaderMount | null>(null);
@@ -122,7 +127,7 @@ export function DoePhoneHomeHeroGrainShader({
         undefined,
         shouldAnimate ? targetSpeed : 0,
         0,
-        undefined,
+        PROTO_GRAIN_SHADER_MIN_PIXEL_RATIO,
         protoShaderMaxPixelCount(variant),
       );
     } catch {
@@ -140,14 +145,11 @@ export function DoePhoneHomeHeroGrainShader({
       setHomeHeroBackgroundReady(false);
     };
   }, [
+    colorStopsKey,
     noiseTexture,
-    preset,
     resetShader,
     resolvedColorBack,
-    resolvedColors,
     shaderGeneration,
-    shouldAnimate,
-    targetSpeed,
     variant,
   ]);
 

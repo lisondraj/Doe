@@ -17,6 +17,10 @@ import {
 import { useShaderContextRecovery } from "@/lib/doephone/use-shader-context-recovery";
 import { useReadyShaderNoiseTexture } from "@/lib/doephone/use-ready-shader-noise-texture";
 import {
+  PROTO_GRAIN_SHADER_MIN_PIXEL_RATIO,
+  protoGrainColorStopsKey,
+} from "@/lib/doephone/shader-grain-mount";
+import {
   PROTO_GRAIN_GRADIENT_PRESETS,
   PROTO_GRAIN_GRADIENT_WORLD_HEIGHT,
   PROTO_GRAIN_GRADIENT_WORLD_WIDTH,
@@ -78,6 +82,7 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
   const [containerReady, setContainerReady] = useState(false);
 
   const colors = [scheme.colors[0], scheme.colors[1], scheme.colors[2]];
+  const colorStopsKey = protoGrainColorStopsKey(colors);
   const intensity = Math.max(preset.intensity, scheme.intensity ?? preset.intensity);
 
   const resetShader = useCallback(() => {
@@ -142,7 +147,7 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
         undefined,
         0,
         0,
-        undefined,
+        PROTO_GRAIN_SHADER_MIN_PIXEL_RATIO,
         PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_CAROUSEL_ORB,
       );
     } catch {
@@ -157,14 +162,13 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
       releaseShaderWebGLSlot(slotId);
     };
   }, [
-    colors,
+    colorStopsKey,
     containerReady,
     evictShader,
     intensity,
     noiseTexture,
     preset,
     scheme.colorBack,
-    scheme.colors,
     shaderGeneration,
     slotId,
     slotPriority,

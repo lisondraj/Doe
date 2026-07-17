@@ -7,6 +7,25 @@ function isShaderNoiseTextureReady(image: HTMLImageElement) {
   return image.complete && image.naturalWidth > 0;
 }
 
+/** Match @paper-design/shaders-react — upscale grain noise for sharper WebGL sampling. */
+function ensureShaderNoiseTextureSamplingSize(image: HTMLImageElement) {
+  if (image.naturalWidth < 1024 && image.naturalHeight < 1024) {
+    if (image.naturalWidth < 1 || image.naturalHeight < 1) {
+      return;
+    }
+
+    const aspect = image.naturalWidth / image.naturalHeight;
+    image.width = Math.round(aspect > 1 ? 1024 * aspect : 1024);
+    image.height = Math.round(aspect > 1 ? 1024 : 1024 / aspect);
+  }
+}
+
+function finalizeShaderNoiseTexture(image: HTMLImageElement) {
+  ensureShaderNoiseTextureSamplingSize(image);
+  cachedNoiseTexture = image;
+  return image;
+}
+
 /** Cached Paper noise texture — ShaderMount throws if this is not fully decoded. */
 export function getReadyShaderNoiseTexture() {
   if (cachedNoiseTexture && isShaderNoiseTextureReady(cachedNoiseTexture)) {
@@ -35,15 +54,13 @@ export function preloadShaderNoiseTexture() {
       }
 
       if (isShaderNoiseTextureReady(image)) {
-        cachedNoiseTexture = image;
-        resolve(image);
+        resolve(finalizeShaderNoiseTexture(image));
         return;
       }
 
       const finish = () => {
         if (isShaderNoiseTextureReady(image)) {
-          cachedNoiseTexture = image;
-          resolve(image);
+          resolve(finalizeShaderNoiseTexture(image));
           return;
         }
         reject(new Error("Paper Shaders: failed to load noise texture"));
