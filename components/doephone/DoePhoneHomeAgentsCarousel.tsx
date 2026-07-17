@@ -37,6 +37,7 @@ import {
 } from "@/lib/doephone/hero-dial-orbs";
 import { doePhoneSectionRevealSegmentClass } from "@/lib/doephone/use-doe-phone-section-reveal";
 import { SHADER_WEBGL_SLOT_PRIORITY } from "@/lib/doephone/shader-webgl-budget";
+import { useHomeHeroShaderReady } from "@/lib/doephone/use-home-hero-shader-ready";
 import { doeHomeAgentsCarouselOrbShaderVariantForLabel } from "@/lib/proto/proto-grain-gradient";
 
 function orbAccentStyle(scheme: HeroDialOrbScheme): CSSProperties {
@@ -127,12 +128,14 @@ function AgentCarouselOrb({
   distance,
   isDesktop,
   isPhoneLayout,
+  heroShaderReady,
 }: {
   scheme: HeroDialOrbScheme;
   focused: boolean;
   distance: number;
   isDesktop: boolean;
   isPhoneLayout: boolean;
+  heroShaderReady: boolean;
 }) {
   const displayScheme = isPhoneLayout
     ? heroDialOrbCarouselIphonePaperScheme(scheme)
@@ -141,8 +144,9 @@ function AgentCarouselOrb({
   const paperSlotPriority = focused
     ? SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_FOCUSED
     : SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_ADJACENT;
-  /** Only focused + neighbors get WebGL — the track renders every orb in the DOM. */
-  const mountPaperShader = isPhoneLayout && (focused || distance <= 1);
+  /** Hero background must mount first — only focused + neighbors get WebGL. */
+  const mountPaperShader =
+    isPhoneLayout && heroShaderReady && (focused || distance <= 1);
   const mountPeek = isPhoneLayout || focused;
   const peekVisible = isPhoneLayout || focused;
   const peekLiftClass =
@@ -233,6 +237,7 @@ const AGENTS_CAROUSEL_SWIPE_THRESHOLD_PX = 44;
 
 /** Hero agent orbs — horizontal carousel with chevrons and label. */
 export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: boolean }) {
+  const heroShaderReady = useHomeHeroShaderReady();
   const [layoutVariant, setLayoutVariant] = useState<DoePhoneVariant>(readBootstrappedDoePhoneVariant);
   const [layoutReady, setLayoutReady] = useState(true);
   const isDesktop = layoutReady && layoutVariant === "desktop";
@@ -372,6 +377,7 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
                 distance={Math.abs(orbIndex - position)}
                 isDesktop={isDesktop}
                 isPhoneLayout={isPhoneLayout}
+                heroShaderReady={heroShaderReady}
               />
             ))}
           </div>
