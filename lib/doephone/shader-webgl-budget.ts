@@ -8,10 +8,10 @@ import {
 export const SHADER_WEBGL_SLOT_PRIORITY = {
   HERO_BACKGROUND: 1000,
   HERO_ORB_FOCUSED: 900,
-  CAROUSEL_FOCUSED: 875,
-  CAROUSEL_ORB: 870,
-  CAROUSEL_ADJACENT: 850,
-  SECTION_BAND: 800,
+  /** Full-bleed section bands beat carousel orbs when both want a slot. */
+  SECTION_BAND: 850,
+  CAROUSEL_FOCUSED: 820,
+  CAROUSEL_ADJACENT: 810,
   HERO_ORB: 650,
 } as const;
 

@@ -104,9 +104,12 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     setShaderGeneration((current) => current + 1);
   }, [slotId]);
 
+  /** Budget eviction — drop the slot but keep mount intent so we can re-acquire in viewport. */
   const evictShader = useCallback(() => {
-    resetShader();
-  }, [resetShader]);
+    releaseShaderWebGLSlot(slotId);
+    setBudgetGranted(false);
+    setShaderGeneration((current) => current + 1);
+  }, [slotId]);
 
   const requestMount = () => {
     if (hasMountedRef.current) return;
@@ -174,6 +177,41 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     hasMounted,
     homeHeroBackground,
     inViewport,
+    shaderPriority,
+    slotId,
+  ]);
+
+  useEffect(() => {
+    if (!phone || hero) return;
+    if (!hasMounted || !containerReady || !inViewport || budgetGranted) return;
+
+    let cancelled = false;
+    let retryFrame = 0;
+
+    const tryAcquire = () => {
+      if (cancelled) return;
+      const granted = acquireShaderWebGLSlot(slotId, shaderPriority, evictShader);
+      if (granted) {
+        setBudgetGranted(true);
+        return;
+      }
+      retryFrame = window.requestAnimationFrame(tryAcquire);
+    };
+
+    retryFrame = window.requestAnimationFrame(tryAcquire);
+
+    return () => {
+      cancelled = true;
+      window.cancelAnimationFrame(retryFrame);
+    };
+  }, [
+    budgetGranted,
+    containerReady,
+    evictShader,
+    hasMounted,
+    hero,
+    inViewport,
+    phone,
     shaderPriority,
     slotId,
   ]);
