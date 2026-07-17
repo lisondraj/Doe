@@ -170,6 +170,7 @@ const AgentCarouselOrb = memo(function AgentCarouselOrb({
   isPhoneLayout,
   showPaperLayer,
   paperEnabled,
+  paperSlotPriority,
 }: {
   orbIndex: number;
   scheme: HeroDialOrbScheme;
@@ -179,6 +180,7 @@ const AgentCarouselOrb = memo(function AgentCarouselOrb({
   isPhoneLayout: boolean;
   showPaperLayer: boolean;
   paperEnabled: boolean;
+  paperSlotPriority: number;
 }) {
   const displayScheme = isPhoneLayout
     ? heroDialOrbCarouselIphonePaperScheme(scheme)
@@ -210,14 +212,14 @@ const AgentCarouselOrb = memo(function AgentCarouselOrb({
               <HeroDialOrbPaperShader
                 scheme={displayScheme}
                 variant={doeHomeAgentsCarouselOrbShaderVariantForLabel(scheme.label)}
-                slotPriority={SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_FOCUSED}
+                slotPriority={paperSlotPriority}
                 slotKey={agentsCarouselPaperSlotKey(orbIndex)}
                 enabled={paperEnabled}
               />
             ) : null}
             <div
               className={`home-agents-carousel__orb-peek-reveal${
-                focused || isPhoneLayout ? " home-agents-carousel__orb-peek-reveal--visible" : ""
+                isPhoneLayout || focused ? " home-agents-carousel__orb-peek-reveal--visible" : ""
               }`}
             >
               {isDesktop ? (
@@ -383,7 +385,8 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
             {AGENTS_CAROUSEL_TRACK_ORBS.map((scheme, orbIndex) => {
               const distance = Math.abs(orbIndex - trackIndex);
               const focused = orbIndex === trackIndex;
-              const showPaperLayer = isPhoneLayout && isMainStripOrbIndex(orbIndex);
+              const onMainStrip = isPhoneLayout && isMainStripOrbIndex(orbIndex);
+              const warmPaperLayer = onMainStrip && distance <= 1;
 
               return (
                 <AgentCarouselOrb
@@ -394,8 +397,13 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
                   blurPx={isDesktop ? getOrbBlur(distance) : 0}
                   isDesktop={isDesktop}
                   isPhoneLayout={isPhoneLayout}
-                  showPaperLayer={showPaperLayer}
+                  showPaperLayer={warmPaperLayer}
                   paperEnabled={heroShaderReady}
+                  paperSlotPriority={
+                    focused
+                      ? SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_FOCUSED
+                      : SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_ADJACENT
+                  }
                 />
               );
             })}
