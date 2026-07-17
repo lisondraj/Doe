@@ -161,7 +161,7 @@ function agentsCarouselPaperSlotKey(orbIndex: number) {
   return `agents-carousel-paper:orb-${orbIndex}`;
 }
 
-/** Peek UI — stable per orb slot; never remounts when focus or paper warm-state changes. */
+/** Peek UI — isolated from paper/grain so WebGL work never blocks peek paint. */
 const AgentCarouselPeekSlot = memo(
   function AgentCarouselPeekSlot({
     label,
@@ -189,6 +189,51 @@ const AgentCarouselPeekSlot = memo(
   (prev, next) => prev.label === next.label && prev.isDesktop === next.isDesktop,
 );
 
+/** Orb fill — CSS grain on desktop, Paper WebGL on iPhone main strip. */
+const AgentCarouselOrbSurface = memo(
+  function AgentCarouselOrbSurface({
+    orbIndex,
+    scheme,
+    isPhoneLayout,
+    paperEnabled,
+  }: {
+    orbIndex: number;
+    scheme: HeroDialOrbScheme;
+    isPhoneLayout: boolean;
+    paperEnabled: boolean;
+  }) {
+    const displayScheme = isPhoneLayout
+      ? heroDialOrbCarouselIphonePaperScheme(scheme)
+      : heroDialOrbCarouselScheme(scheme);
+    const usePaper = isPhoneLayout && paperEnabled;
+
+    return (
+      <>
+        {!usePaper ? (
+          <HeroDialOrbGrainShader
+            scheme={displayScheme}
+            shaderConfig={HERO_DIAL_ORB_CAROUSEL_SHADER}
+          />
+        ) : null}
+        {usePaper ? (
+          <HeroDialOrbPaperShader
+            scheme={displayScheme}
+            variant={doeHomeAgentsCarouselOrbShaderVariantForLabel(scheme.label)}
+            slotPriority={SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_ORB}
+            slotKey={agentsCarouselPaperSlotKey(orbIndex)}
+            enabled={paperEnabled}
+          />
+        ) : null}
+      </>
+    );
+  },
+  (prev, next) =>
+    prev.orbIndex === next.orbIndex &&
+    prev.scheme === next.scheme &&
+    prev.isPhoneLayout === next.isPhoneLayout &&
+    prev.paperEnabled === next.paperEnabled,
+);
+
 const AgentCarouselOrb = memo(
   function AgentCarouselOrb({
     orbIndex,
@@ -197,9 +242,7 @@ const AgentCarouselOrb = memo(
     blurPx,
     isDesktop,
     isPhoneLayout,
-    mountPaperShell,
     paperEnabled,
-    paperSlotPriority,
   }: {
     orbIndex: number;
     scheme: HeroDialOrbScheme;
@@ -207,9 +250,7 @@ const AgentCarouselOrb = memo(
     blurPx: number;
     isDesktop: boolean;
     isPhoneLayout: boolean;
-    mountPaperShell: boolean;
     paperEnabled: boolean;
-    paperSlotPriority: number;
   }) {
     const displayScheme = isPhoneLayout
       ? heroDialOrbCarouselIphonePaperScheme(scheme)
@@ -230,19 +271,12 @@ const AgentCarouselOrb = memo(
         >
           <div className="hero-speaking-orb__progress-shell">
             <div className="hero-speaking-orb__core relative overflow-hidden rounded-full">
-              <HeroDialOrbGrainShader
-                scheme={displayScheme}
-                shaderConfig={HERO_DIAL_ORB_CAROUSEL_SHADER}
+              <AgentCarouselOrbSurface
+                orbIndex={orbIndex}
+                scheme={scheme}
+                isPhoneLayout={isPhoneLayout}
+                paperEnabled={paperEnabled}
               />
-              {mountPaperShell ? (
-                <HeroDialOrbPaperShader
-                  scheme={displayScheme}
-                  variant={doeHomeAgentsCarouselOrbShaderVariantForLabel(scheme.label)}
-                  slotPriority={paperSlotPriority}
-                  slotKey={agentsCarouselPaperSlotKey(orbIndex)}
-                  enabled={paperEnabled}
-                />
-              ) : null}
               <AgentCarouselPeekSlot label={scheme.label} isDesktop={isDesktop} />
             </div>
           </div>
@@ -257,9 +291,7 @@ const AgentCarouselOrb = memo(
     prev.blurPx === next.blurPx &&
     prev.isDesktop === next.isDesktop &&
     prev.isPhoneLayout === next.isPhoneLayout &&
-    prev.mountPaperShell === next.mountPaperShell &&
-    prev.paperEnabled === next.paperEnabled &&
-    prev.paperSlotPriority === next.paperSlotPriority,
+    prev.paperEnabled === next.paperEnabled,
 );
 
 function trackTransform(trackIndex: number) {
@@ -411,7 +443,6 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
               const distance = Math.abs(orbIndex - trackIndex);
               const focused = orbIndex === trackIndex;
               const onMainStrip = isPhoneLayout && isMainStripOrbIndex(orbIndex);
-              const warmPaperLayer = onMainStrip && distance <= 1;
 
               return (
                 <AgentCarouselOrb
@@ -422,13 +453,7 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
                   blurPx={isDesktop ? getOrbBlur(distance) : 0}
                   isDesktop={isDesktop}
                   isPhoneLayout={isPhoneLayout}
-                  mountPaperShell={onMainStrip}
-                  paperEnabled={heroShaderReady && warmPaperLayer}
-                  paperSlotPriority={
-                    focused
-                      ? SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_FOCUSED
-                      : SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_ADJACENT
-                  }
+                  paperEnabled={heroShaderReady && onMainStrip}
                 />
               );
             })}

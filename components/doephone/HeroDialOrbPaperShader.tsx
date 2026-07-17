@@ -8,7 +8,7 @@ import {
   ShaderMount,
   type ShaderMountUniforms,
 } from "@paper-design/shaders";
-import { memo, useCallback, useId, useLayoutEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 
 import {
   acquireShaderWebGLSlot,
@@ -63,7 +63,7 @@ function buildOrbGrainUniforms({
   };
 }
 
-/** iPhone carousel orb — Paper shader via layout-effect WebGL init. */
+/** iPhone carousel orb — Paper shader; mount deferred so peek UI paints first. */
 export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
   scheme,
   variant,
@@ -76,7 +76,7 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
   slotPriority: number;
   /** Stable budget id — avoids remount churn when focus priority changes. */
   slotKey?: string;
-  /** When false, keeps the shell but defers WebGL init (hero-first gate). */
+  /** When false, defers first mount; after mount the WebGL context stays alive. */
   enabled?: boolean;
 }) {
   const preset = PROTO_GRAIN_GRADIENT_PRESETS[variant];
@@ -85,6 +85,7 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
   const noiseTexture = useReadyShaderNoiseTexture();
   const shellRef = useRef<HTMLDivElement>(null);
   const mountRef = useRef<ShaderMount | null>(null);
+  const slotPriorityRef = useRef(slotPriority);
   const containerReadyRef = useRef(false);
   const [shaderGeneration, setShaderGeneration] = useState(0);
   const [containerReady, setContainerReady] = useState(false);
@@ -93,6 +94,8 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
   const colors = [scheme.colors[0], scheme.colors[1], scheme.colors[2]];
   const colorStopsKey = protoGrainColorStopsKey(colors);
   const intensity = Math.max(preset.intensity, scheme.intensity ?? preset.intensity);
+
+  slotPriorityRef.current = slotPriority;
 
   const resetShader = useCallback(() => {
     mountRef.current?.dispose();
@@ -137,19 +140,18 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
       return;
     }
 
-    acquireShaderWebGLSlot(slotId, slotPriority, evictShader);
+    acquireShaderWebGLSlot(slotId, slotPriorityRef.current, evictShader);
   }, [evictShader, slotId, slotPriority]);
 
-  useLayoutEffect(() => {
-    const node = shellRef.current;
-    if (!node || !enabled || !noiseTexture) {
-      if (mountRef.current) {
-        resetShader();
-      }
-      return;
-    }
+  useEffect(() => {
+    return () => {
+      resetShader();
+    };
+  }, [resetShader]);
 
-    if (!containerReady) {
+  useEffect(() => {
+    const node = shellRef.current;
+    if (!node || !enabled || !noiseTexture || !containerReady) {
       return;
     }
 
@@ -157,53 +159,56 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
       return;
     }
 
-    if (!acquireShaderWebGLSlot(slotId, slotPriority, evictShader)) {
-      node.classList.remove("hero-speaking-orb__grain-shell--shader-ready");
-      const retryId = window.requestAnimationFrame(() => {
-        setMountAttempt((current) => current + 1);
-      });
-      return () => {
-        window.cancelAnimationFrame(retryId);
-      };
-    }
+    let cancelled = false;
+    let raf2 = 0;
 
-    const uniforms = buildOrbGrainUniforms({
-      colors,
-      colorBack: scheme.colorBack,
-      preset,
-      intensity,
-      noiseTexture,
+    const raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => {
+        if (cancelled || mountRef.current || !shellRef.current) {
+          return;
+        }
+
+        const mountNode = shellRef.current;
+
+        if (!acquireShaderWebGLSlot(slotId, slotPriorityRef.current, evictShader)) {
+          mountNode.classList.remove("hero-speaking-orb__grain-shell--shader-ready");
+          setMountAttempt((current) => current + 1);
+          return;
+        }
+
+        const uniforms = buildOrbGrainUniforms({
+          colors,
+          colorBack: scheme.colorBack,
+          preset,
+          intensity,
+          noiseTexture,
+        });
+
+        try {
+          mountRef.current = new ShaderMount(
+            mountNode,
+            grainGradientFragmentShader,
+            uniforms,
+            undefined,
+            0,
+            0,
+            PROTO_GRAIN_SHADER_MIN_PIXEL_RATIO,
+            PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_CAROUSEL_ORB,
+          );
+          mountNode.classList.add("hero-speaking-orb__grain-shell--shader-ready");
+        } catch {
+          mountNode.classList.remove("hero-speaking-orb__grain-shell--shader-ready");
+          releaseShaderWebGLSlot(slotId);
+          mountRef.current = null;
+          setMountAttempt((current) => current + 1);
+        }
+      });
     });
 
-    try {
-      mountRef.current = new ShaderMount(
-        node,
-        grainGradientFragmentShader,
-        uniforms,
-        undefined,
-        0,
-        0,
-        PROTO_GRAIN_SHADER_MIN_PIXEL_RATIO,
-        PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_CAROUSEL_ORB,
-      );
-      node.classList.add("hero-speaking-orb__grain-shell--shader-ready");
-    } catch {
-      node.classList.remove("hero-speaking-orb__grain-shell--shader-ready");
-      releaseShaderWebGLSlot(slotId);
-      mountRef.current = null;
-      const retryId = window.requestAnimationFrame(() => {
-        setMountAttempt((current) => current + 1);
-      });
-      return () => {
-        window.cancelAnimationFrame(retryId);
-      };
-    }
-
     return () => {
-      mountRef.current?.dispose();
-      mountRef.current = null;
-      node.classList.remove("hero-speaking-orb__grain-shell--shader-ready");
-      releaseShaderWebGLSlot(slotId);
+      cancelled = true;
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
     };
   }, [
     colorStopsKey,
@@ -214,18 +219,16 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
     mountAttempt,
     noiseTexture,
     preset,
-    resetShader,
     scheme.colorBack,
     shaderGeneration,
     slotId,
-    slotPriority,
   ]);
 
   return (
     <div
       ref={shellRef}
       className="hero-speaking-orb__grain-shell hero-speaking-orb__grain-shell--paper hero-speaking-orb__grain-shell--painted pointer-events-none absolute inset-0 overflow-hidden rounded-full"
-      style={{ background: "transparent" }}
+      style={{ backgroundColor: scheme.colorBack }}
       aria-hidden
     />
   );
