@@ -8,6 +8,7 @@ import { HomeAgentsCarouselReferralsPeek } from "@/components/doephone/HomeAgent
 import { HomeAgentsCarouselRefillPeek } from "@/components/doephone/HomeAgentsCarouselRefillPeek";
 import { HomeAgentsCarouselSchedulingPeek } from "@/components/doephone/HomeAgentsCarouselSchedulingPeek";
 import { HeroDialOrbGrainShader } from "@/components/doephone/HeroDialOrbGrainShader";
+import { HeroDialOrbPaperShader } from "@/components/doephone/HeroDialOrbPaperShader";
 import {
   memo,
   useCallback,
@@ -35,6 +36,9 @@ import {
   type HeroDialOrbScheme,
 } from "@/lib/doephone/hero-dial-orbs";
 import { doePhoneSectionRevealSegmentClass } from "@/lib/doephone/use-doe-phone-section-reveal";
+import { SHADER_WEBGL_SLOT_PRIORITY } from "@/lib/doephone/shader-webgl-budget";
+import { useHomeHeroShaderReady } from "@/lib/doephone/use-home-hero-shader-ready";
+import { doeHomeAgentsCarouselOrbShaderVariantForLabel } from "@/lib/proto/proto-grain-gradient";
 
 function orbAccentStyle(scheme: HeroDialOrbScheme): CSSProperties {
   const [dark, mid, light] = scheme.colors;
@@ -149,18 +153,28 @@ const AGENTS_CAROUSEL_TRACK_START =
 const AGENTS_CAROUSEL_TRACK_TRAILING_CLONE = AGENTS_CAROUSEL_TRACK_ORBS.length - 1;
 const AGENTS_CAROUSEL_SWIPE_THRESHOLD_PX = 44;
 
+function isMainStripOrbIndex(orbIndex: number) {
+  return orbIndex >= AGENTS_CAROUSEL_TRACK_START && orbIndex < AGENTS_CAROUSEL_TRACK_TRAILING_CLONE;
+}
+
+function agentsCarouselPaperSlotKey(label: string) {
+  return `agents-carousel-paper:${label}`;
+}
+
 const AgentCarouselOrb = memo(function AgentCarouselOrb({
   scheme,
   focused,
   blurPx,
   isDesktop,
   isPhoneLayout,
+  mountPaperShader,
 }: {
   scheme: HeroDialOrbScheme;
   focused: boolean;
   blurPx: number;
   isDesktop: boolean;
   isPhoneLayout: boolean;
+  mountPaperShader: boolean;
 }) {
   const displayScheme = isPhoneLayout
     ? heroDialOrbCarouselIphonePaperScheme(scheme)
@@ -188,6 +202,14 @@ const AgentCarouselOrb = memo(function AgentCarouselOrb({
               scheme={displayScheme}
               shaderConfig={HERO_DIAL_ORB_CAROUSEL_SHADER}
             />
+            {mountPaperShader ? (
+              <HeroDialOrbPaperShader
+                scheme={displayScheme}
+                variant={doeHomeAgentsCarouselOrbShaderVariantForLabel(scheme.label)}
+                slotPriority={SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_FOCUSED}
+                slotKey={agentsCarouselPaperSlotKey(scheme.label)}
+              />
+            ) : null}
             <div className="home-agents-carousel__orb-peek-reveal home-agents-carousel__orb-peek-reveal--visible">
               {isDesktop ? (
                 <div className={peekLiftClass}>
@@ -210,6 +232,7 @@ function trackTransform(trackIndex: number) {
 
 /** Hero agent orbs — fixed peek/grain per physical orb, smooth translate, invisible clone reset. */
 export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: boolean }) {
+  const heroShaderReady = useHomeHeroShaderReady();
   const [layoutVariant, setLayoutVariant] = useState<DoePhoneVariant>(readBootstrappedDoePhoneVariant);
   const [layoutReady, setLayoutReady] = useState(true);
   const isDesktop = layoutReady && layoutVariant === "desktop";
@@ -351,6 +374,8 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
             {AGENTS_CAROUSEL_TRACK_ORBS.map((scheme, orbIndex) => {
               const distance = Math.abs(orbIndex - trackIndex);
               const focused = orbIndex === trackIndex;
+              const mountPaperShader =
+                isPhoneLayout && heroShaderReady && isMainStripOrbIndex(orbIndex);
 
               return (
                 <AgentCarouselOrb
@@ -360,6 +385,7 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
                   blurPx={isDesktop ? getOrbBlur(distance) : 0}
                   isDesktop={isDesktop}
                   isPhoneLayout={isPhoneLayout}
+                  mountPaperShader={mountPaperShader}
                 />
               );
             })}
