@@ -121,6 +121,7 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
     if (!node || !containerReady || !noiseTexture) {
       mountRef.current?.dispose();
       mountRef.current = null;
+      node?.classList.remove("hero-speaking-orb__grain-shell--shader-ready");
       releaseShaderWebGLSlot(slotId);
       return;
     }
@@ -128,6 +129,7 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
     if (!acquireShaderWebGLSlot(slotId, slotPriority, evictShader)) {
       mountRef.current?.dispose();
       mountRef.current = null;
+      node.classList.remove("hero-speaking-orb__grain-shell--shader-ready");
       return;
     }
 
@@ -150,7 +152,9 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
         PROTO_GRAIN_SHADER_MIN_PIXEL_RATIO,
         PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_CAROUSEL_ORB,
       );
+      node.classList.add("hero-speaking-orb__grain-shell--shader-ready");
     } catch {
+      node.classList.remove("hero-speaking-orb__grain-shell--shader-ready");
       releaseShaderWebGLSlot(slotId);
       mountRef.current = null;
       return;
@@ -159,6 +163,7 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
     return () => {
       mountRef.current?.dispose();
       mountRef.current = null;
+      node.classList.remove("hero-speaking-orb__grain-shell--shader-ready");
       releaseShaderWebGLSlot(slotId);
     };
   }, [

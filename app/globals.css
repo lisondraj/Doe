@@ -859,10 +859,18 @@ html[data-home-page][data-layout="desktop"] .home-agents-carousel__track {
   gap: var(--home-agents-orb-gap);
   transition: transform var(--home-agents-carousel-duration) var(--home-agents-carousel-ease);
   will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 html[data-home-page][data-layout="desktop"] .home-agents-carousel__track--instant {
   transition: none;
+}
+
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__track--sliding .home-agents-carousel__orb-shell,
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__track--sliding .home-agents-carousel__orb,
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__track--sliding .home-agents-carousel__orb .hero-speaking-orb__progress-shell::after {
+  transition: none !important;
 }
 
 html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb-shell {
@@ -871,7 +879,6 @@ html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb-shell {
   height: var(--home-agents-orb-size);
   flex: 0 0 var(--home-agents-orb-size);
   overflow: visible;
-  transition: filter var(--home-agents-carousel-duration) var(--home-agents-carousel-ease);
 }
 
 html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb-shell--focused {
@@ -994,13 +1001,11 @@ html[data-home-page] .home-agents-carousel__orb-peek-reveal {
 /* Desktop — peek UI stays mounted; visibility toggles with focus (no mount delay on swap). */
 html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb-peek-reveal {
   opacity: 0;
-  visibility: hidden;
   transition: none;
 }
 
 html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb-peek-reveal--visible {
   opacity: 1;
-  visibility: visible;
 }
 
 html[data-home-page] .home-agents-carousel__orb-peek-lift {
@@ -4997,10 +5002,17 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   transition: transform var(--home-agents-carousel-duration) var(--home-agents-carousel-ease);
   backface-visibility: hidden;
   will-change: transform;
+  transform: translateZ(0);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__track--instant {
   transition: none;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__track--sliding
+  .home-agents-carousel__orb {
+  transition: none !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb-shell {
@@ -5069,6 +5081,19 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb .hero-speaking-orb__grain-shell--paper {
   transform: none;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__grain-shell--paper:not(.hero-speaking-orb__grain-shell--shader-ready) {
+  opacity: 0;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__grain-shell--paper.hero-speaking-orb__grain-shell--shader-ready {
+  opacity: 1;
+  transition: opacity 120ms ease-out;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])

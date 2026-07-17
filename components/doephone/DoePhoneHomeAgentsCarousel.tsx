@@ -10,6 +10,7 @@ import { HomeAgentsCarouselSchedulingPeek } from "@/components/doephone/HomeAgen
 import { HeroDialOrbGrainShader } from "@/components/doephone/HeroDialOrbGrainShader";
 import { HeroDialOrbPaperShader } from "@/components/doephone/HeroDialOrbPaperShader";
 import {
+  memo,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -122,36 +123,30 @@ function getOrbBlur(distance: number, focused: boolean) {
   return Math.min(3.2, distance * 1.05);
 }
 
-function AgentCarouselOrb({
+function isMiddleLoopOrbIndex(orbIndex: number, orbCount: number) {
+  return orbIndex >= orbCount && orbIndex < orbCount * 2;
+}
+
+const AgentCarouselOrb = memo(function AgentCarouselOrb({
   scheme,
   focused,
-  distance,
+  blurPx,
   isDesktop,
   isPhoneLayout,
-  heroShaderReady,
+  mountPaperShader,
 }: {
   scheme: HeroDialOrbScheme;
   focused: boolean;
-  distance: number;
+  blurPx: number;
   isDesktop: boolean;
   isPhoneLayout: boolean;
-  heroShaderReady: boolean;
+  mountPaperShader: boolean;
 }) {
   const displayScheme = isPhoneLayout
     ? heroDialOrbCarouselIphonePaperScheme(scheme)
     : heroDialOrbCarouselScheme(scheme);
-  const blur = isDesktop ? getOrbBlur(distance, focused) : 0;
-  const paperSlotPriority = focused
-    ? SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_FOCUSED
-    : SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_ADJACENT;
-  /** Hero background must mount first — focused + adjacent orbs keep paper warm for smooth swaps. */
-  const mountPaperShader = isPhoneLayout && heroShaderReady && distance <= 1;
   const peekLiftClass = isDesktop
-    ? `home-agents-carousel__orb-peek-lift${
-        focused
-          ? " home-agents-carousel__orb-peek-lift--in home-agents-carousel__orb-peek-lift--instant"
-          : ""
-      }`
+    ? "home-agents-carousel__orb-peek-lift home-agents-carousel__orb-peek-lift--in home-agents-carousel__orb-peek-lift--instant"
     : "";
 
   return (
@@ -160,7 +155,7 @@ function AgentCarouselOrb({
         focused ? " home-agents-carousel__orb-shell--focused" : ""
       }`}
       style={{
-        filter: blur > 0 ? `blur(${blur}px)` : undefined,
+        filter: blurPx > 0 ? `blur(${blurPx}px)` : undefined,
       }}
     >
       <div
@@ -181,7 +176,11 @@ function AgentCarouselOrb({
                   <HeroDialOrbPaperShader
                     scheme={displayScheme}
                     variant={doeHomeAgentsCarouselOrbShaderVariantForLabel(scheme.label)}
-                    slotPriority={paperSlotPriority}
+                    slotPriority={
+                      focused
+                        ? SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_FOCUSED
+                        : SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_ADJACENT
+                    }
                   />
                 ) : null}
               </>
@@ -208,6 +207,34 @@ function AgentCarouselOrb({
         </div>
       </div>
     </div>
+  );
+}, areAgentCarouselOrbPropsEqual);
+
+function areAgentCarouselOrbPropsEqual(
+  prev: {
+    scheme: HeroDialOrbScheme;
+    focused: boolean;
+    blurPx: number;
+    isDesktop: boolean;
+    isPhoneLayout: boolean;
+    mountPaperShader: boolean;
+  },
+  next: {
+    scheme: HeroDialOrbScheme;
+    focused: boolean;
+    blurPx: number;
+    isDesktop: boolean;
+    isPhoneLayout: boolean;
+    mountPaperShader: boolean;
+  },
+) {
+  return (
+    prev.scheme.label === next.scheme.label &&
+    prev.focused === next.focused &&
+    prev.blurPx === next.blurPx &&
+    prev.isDesktop === next.isDesktop &&
+    prev.isPhoneLayout === next.isPhoneLayout &&
+    prev.mountPaperShader === next.mountPaperShader
   );
 }
 
@@ -242,6 +269,7 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
   const isPhoneLayout = layoutVariant === "phone";
   const [position, setPosition] = useState(AGENTS_CAROUSEL_LOOP_START);
   const [trackInstant, setTrackInstant] = useState(true);
+  const [isSliding, setIsSliding] = useState(false);
   const reenableTransitionRef = useRef<number | null>(null);
   const swipeStartRef = useRef<{ x: number; y: number } | null>(null);
 
@@ -258,11 +286,13 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
 
   const goPrev = useCallback(() => {
     setTrackInstant(false);
+    setIsSliding(true);
     setPosition((current) => current - 1);
   }, []);
 
   const goNext = useCallback(() => {
     setTrackInstant(false);
+    setIsSliding(true);
     setPosition((current) => current + 1);
   }, []);
 
@@ -307,11 +337,14 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
         return;
       }
 
+      setIsSliding(false);
+
       if (position >= AGENTS_CAROUSEL_ORB_COUNT && position < AGENTS_CAROUSEL_ORB_COUNT * 2) {
         return;
       }
 
       setTrackInstant(true);
+      setIsSliding(false);
       setPosition((current) => {
         if (current < AGENTS_CAROUSEL_ORB_COUNT) {
           return current + AGENTS_CAROUSEL_ORB_COUNT;
@@ -343,7 +376,15 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
         window.cancelAnimationFrame(reenableTransitionRef.current);
       }
     };
-  }, [trackInstant, position]);
+  }, [trackInstant]);
+
+  const trackClassName = [
+    "home-agents-carousel__track",
+    trackInstant ? "home-agents-carousel__track--instant" : "",
+    isSliding && !trackInstant ? "home-agents-carousel__track--sliding" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <div className={`home-agents-carousel ${dmSans.className}`} aria-hidden>
@@ -359,25 +400,33 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
           }}
         >
           <div
-            className={`home-agents-carousel__track${
-              trackInstant ? " home-agents-carousel__track--instant" : ""
-            }`}
+            className={trackClassName}
             onTransitionEnd={handleTrackTransitionEnd}
             style={{
               transform: `translate3d(calc(50% - var(--home-agents-orb-half) - ${position} * var(--home-agents-orb-step)), 0, 0)`,
             }}
           >
-            {AGENTS_CAROUSEL_LOOP_ORBS.map((scheme, orbIndex) => (
-              <AgentCarouselOrb
-                key={`${scheme.label}-${orbIndex}`}
-                scheme={scheme}
-                focused={orbIndex === position}
-                distance={Math.abs(orbIndex - position)}
-                isDesktop={isDesktop}
-                isPhoneLayout={isPhoneLayout}
-                heroShaderReady={heroShaderReady}
-              />
-            ))}
+            {AGENTS_CAROUSEL_LOOP_ORBS.map((scheme, orbIndex) => {
+              const distance = Math.abs(orbIndex - position);
+              const focused = orbIndex === position;
+              const blurPx = isDesktop ? getOrbBlur(distance, focused) : 0;
+              const mountPaperShader =
+                isPhoneLayout &&
+                heroShaderReady &&
+                isMiddleLoopOrbIndex(orbIndex, AGENTS_CAROUSEL_ORB_COUNT);
+
+              return (
+                <AgentCarouselOrb
+                  key={`${scheme.label}-${orbIndex}`}
+                  scheme={scheme}
+                  focused={focused}
+                  blurPx={blurPx}
+                  isDesktop={isDesktop}
+                  isPhoneLayout={isPhoneLayout}
+                  mountPaperShader={mountPaperShader}
+                />
+              );
+            })}
           </div>
         </div>
       </div>
