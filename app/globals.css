@@ -4542,9 +4542,9 @@ html[data-about-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-na
   overflow: hidden !important;
 }
 
-html[data-proto-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell > div:not([role="menu"]) > a, html[data-proto-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell > div:not([role="menu"]) > button,
-html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell > div:not([role="menu"]) > a, html[data-proto-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell > div:not([role="menu"]) > button,
-html[data-about-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell > div:not([role="menu"]) > a, html[data-proto-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell > div:not([role="menu"]) > button {
+html[data-proto-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell > div:not([role="menu"]) > a, html[data-proto-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell > div:not([role="menu"]) > button, html[data-proto-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell > div:not([role="menu"]) > .proto-nav-cta-label,
+html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell > div:not([role="menu"]) > a, html[data-proto-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell > div:not([role="menu"]) > button, html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell > div:not([role="menu"]) > .proto-nav-cta-label,
+html[data-about-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell > div:not([role="menu"]) > a, html[data-proto-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell > div:not([role="menu"]) > button, html[data-about-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell > div:not([role="menu"]) > .proto-nav-cta-label {
   border-radius: 0 !important;
   transition: none !important;
 }
@@ -7835,10 +7835,13 @@ html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav.proto-nav--sc
 
 html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell a,
 html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell button,
+html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell .proto-nav-cta-label,
 html[data-about-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell a,
 html[data-about-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell button,
+html[data-about-page]:has(.doephone-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell .proto-nav-cta-label,
 html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell a,
-html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell button {
+html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell button,
+html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav .proto-nav-cta-shell .proto-nav-cta-label {
   background-color: color-mix(
     in srgb,
     var(--proto-nav-cta-bg) calc((1 - var(--proto-nav-frost-progress, 0)) * 100%),
@@ -7966,10 +7969,13 @@ html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav:not(.proto-na
 /* Home + /about — frosted punch-out nav: clip CTA corners on shell. */
 html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav--scrolled .proto-nav-cta-shell a,
 html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav--scrolled .proto-nav-cta-shell button,
+html[data-home-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav--scrolled .proto-nav-cta-shell .proto-nav-cta-label,
 html[data-about-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav--scrolled .proto-nav-cta-shell a,
 html[data-about-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav--scrolled .proto-nav-cta-shell button,
+html[data-about-page]:has(.doephone-mobile-root) nav.doephone-site-nav.proto-nav--scrolled .proto-nav-cta-shell .proto-nav-cta-label,
 html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav.proto-nav--scrolled .proto-nav-cta-shell a,
-html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav.proto-nav--scrolled .proto-nav-cta-shell button {
+html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav.proto-nav--scrolled .proto-nav-cta-shell button,
+html[data-about-page]:has(.blog-mobile-root) nav.doephone-site-nav.proto-nav--scrolled .proto-nav-cta-shell .proto-nav-cta-label {
   background-image: var(--proto-nav-cta-sheen-light) !important;
 }
 

@@ -29,3 +29,26 @@ export const MOBILE_NAV_DROPDOWN_ATTACH_TW =
 
 export const MOBILE_NAV_CTA_DROPDOWN_ATTACH_TW =
   "absolute left-0 right-0 top-[calc(100%+0.5rem)] z-[60] overflow-hidden rounded-md py-1 iphone-page:py-1.5";
+
+/** Shared label class — home dusk CSS targets this on links and static spans (doehealth.care). */
+export const MOBILE_NAV_CTA_LABEL_CLASS = `${MOBILE_NAV_SPLIT_LINK_TW} proto-nav-cta-label no-underline`;
+
+export function mobileNavCtaInlineStyle({
+  bg,
+  fg,
+  shadow,
+}: {
+  bg?: string;
+  fg?: string;
+  shadow?: string;
+}) {
+  if (bg == null && fg == null && (shadow == null || shadow === "none")) {
+    return undefined;
+  }
+
+  return {
+    backgroundColor: bg ?? "#000000",
+    color: fg ?? "#ffffff",
+    ...(shadow && shadow !== "none" ? { boxShadow: shadow } : {}),
+  } as const;
+}

@@ -13,7 +13,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const response = NextResponse.next();
+  const requestHeaders = new Headers(request.headers);
+  /** doehealth.care — same home chrome as doe.care; nav links disabled client-side. */
+  requestHeaders.set("x-doe-designers-site", "1");
+
+  const response = NextResponse.next({
+    request: { headers: requestHeaders },
+  });
 
   /** Bust edge/browser caches of the old permanent redirect to /join. */
   response.headers.set(

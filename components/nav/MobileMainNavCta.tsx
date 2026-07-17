@@ -5,10 +5,11 @@ import { useEffect, useRef, useState } from "react";
 
 import {
   MOBILE_NAV_CTA_DROPDOWN_ATTACH_TW,
+  MOBILE_NAV_CTA_LABEL_CLASS,
   MOBILE_NAV_SPLIT_INNER_TW,
-  MOBILE_NAV_SPLIT_LINK_TW,
   MOBILE_NAV_SPLIT_SHELL_TW,
   MOBILE_NAV_SPLIT_TOGGLE_TW,
+  mobileNavCtaInlineStyle,
 } from "@/lib/subpage/mobile-nav-styles";
 import {
   MOBILE_NAV_CTA_DROPDOWN_ITEM_TW,
@@ -19,14 +20,12 @@ import {
 } from "@/lib/subpage/subpage-nav";
 import { DESKTOP_INVESTORS_CTA_LABEL } from "@/lib/subpage/desktop-nav-styles";
 
-const NAV_CTA_BG = "#000000";
-const NAV_CTA_FG = "#ffffff";
 const NAV_CTA_DIVIDER = "rgba(255, 255, 255, 0.22)";
 
 /** iPhone nav — investors split button with chevron dropdown. */
 export function MobileMainNavCta({
-  bg = NAV_CTA_BG,
-  fg = NAV_CTA_FG,
+  bg,
+  fg,
   shadow = "none",
   divider = NAV_CTA_DIVIDER,
   linksEnabled = true,
@@ -41,6 +40,7 @@ export function MobileMainNavCta({
 }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const chromeStyle = mobileNavCtaInlineStyle({ bg, fg, shadow });
   const primary = {
     ...DESKTOP_MAIN_CTA_MENU_ITEMS[0],
     href: investorsHref ?? DESKTOP_MAIN_CTA_MENU_ITEMS[0].href,
@@ -70,37 +70,54 @@ export function MobileMainNavCta({
   }, [open]);
 
   const dropdownHoverClass =
-    fg.toLowerCase() === "#fff" || fg.toLowerCase() === "#ffffff"
+    fg != null && (fg.toLowerCase() === "#fff" || fg.toLowerCase() === "#ffffff")
       ? "hover:bg-white/10"
-      : "hover:bg-black/[0.04]";
+      : fg == null
+        ? "hover:bg-white/10"
+        : "hover:bg-black/[0.04]";
+
+  const menuItemStyle = fg != null ? { color: fg } : undefined;
+  const dropdownStyle =
+    bg != null || fg != null
+      ? {
+          backgroundColor: bg ?? "#000000",
+          color: fg ?? "#ffffff",
+          border: `1px solid ${divider}`,
+          boxShadow: shadow === "none" ? "0 8px 24px rgba(0, 0, 0, 0.12)" : shadow,
+        }
+      : undefined;
 
   return (
     <div ref={rootRef} className="relative flex shrink-0 items-center">
       <div
         className={`${MOBILE_NAV_SPLIT_SHELL_TW} proto-nav-cta-shell${open ? " proto-nav-cta-shell--open" : ""}`}
-        style={{ boxShadow: shadow }}
+        style={shadow !== "none" ? { boxShadow: shadow } : undefined}
       >
         <div className={MOBILE_NAV_SPLIT_INNER_TW}>
           {linksEnabled ? (
             <Link
               href={primary.href}
-              className={`${MOBILE_NAV_SPLIT_LINK_TW} no-underline transition-[opacity,background-color,color] duration-300`}
-              style={{ backgroundColor: bg, color: fg }}
+              className={`${MOBILE_NAV_CTA_LABEL_CLASS} transition-[opacity,background-color,color] duration-300`}
+              style={chromeStyle}
             >
               {DESKTOP_INVESTORS_CTA_LABEL}
             </Link>
           ) : (
             <span
-              className={`${MOBILE_NAV_SPLIT_LINK_TW} transition-[opacity,background-color,color] duration-300`}
-              style={{ backgroundColor: bg, color: fg }}
+              className={`${MOBILE_NAV_CTA_LABEL_CLASS} transition-[opacity,background-color,color] duration-300`}
+              style={chromeStyle}
+              aria-disabled="true"
             >
               {DESKTOP_INVESTORS_CTA_LABEL}
             </span>
           )}
           <button
             type="button"
-            className={`${MOBILE_NAV_SPLIT_TOGGLE_TW} transition-[opacity,background-color,color] duration-300`}
-            style={{ backgroundColor: bg, color: fg, borderColor: divider }}
+            className={`${MOBILE_NAV_SPLIT_TOGGLE_TW} proto-nav-cta-label transition-[opacity,background-color,color] duration-300`}
+            style={{
+              ...chromeStyle,
+              borderColor: divider,
+            }}
             aria-expanded={open}
             aria-haspopup="menu"
             aria-label="Open navigation menu"
@@ -124,12 +141,7 @@ export function MobileMainNavCta({
           <div
             role="menu"
             className={`${MOBILE_NAV_CTA_DROPDOWN_ATTACH_TW} proto-nav-cta-dropdown`}
-            style={{
-              backgroundColor: bg,
-              color: fg,
-              border: `1px solid ${divider}`,
-              boxShadow: shadow === "none" ? "0 8px 24px rgba(0, 0, 0, 0.12)" : shadow,
-            }}
+            style={dropdownStyle}
           >
             {DESKTOP_MAIN_CTA_DROPDOWN_ITEMS.map((item) =>
               linksEnabled ? (
@@ -137,8 +149,8 @@ export function MobileMainNavCta({
                   key={item.href}
                   href={item.href}
                   role="menuitem"
-                  className={`${MOBILE_NAV_CTA_DROPDOWN_ITEM_TW} ${dropdownHoverClass}`}
-                  style={{ color: fg }}
+                  className={`${MOBILE_NAV_CTA_DROPDOWN_ITEM_TW} proto-nav-cta-menuitem ${dropdownHoverClass}`}
+                  style={menuItemStyle}
                   onClick={() => setOpen(false)}
                 >
                   {item.label}
@@ -147,8 +159,9 @@ export function MobileMainNavCta({
                 <span
                   key={item.href}
                   role="menuitem"
-                  className={`${MOBILE_NAV_CTA_DROPDOWN_ITEM_TW} ${dropdownHoverClass}`}
-                  style={{ color: fg }}
+                  className={`${MOBILE_NAV_CTA_DROPDOWN_ITEM_TW} proto-nav-cta-menuitem ${dropdownHoverClass}`}
+                  style={menuItemStyle}
+                  aria-disabled="true"
                 >
                   {item.label}
                 </span>

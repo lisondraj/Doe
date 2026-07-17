@@ -70,22 +70,23 @@ export function DesktopMainNavCta({
           {linksEnabled ? (
             <Link
               href={primary.href}
-              className={`flex ${DESKTOP_NAV_ACTION_HEIGHT_TW} items-center px-7 text-[0.9375rem] font-medium no-underline transition-opacity hover:opacity-90`}
+              className={`flex ${DESKTOP_NAV_ACTION_HEIGHT_TW} items-center px-7 text-[0.9375rem] font-medium proto-nav-cta-label no-underline transition-opacity hover:opacity-90`}
               style={{ backgroundColor: bg, color: fg }}
             >
               {primary.label}
             </Link>
           ) : (
             <span
-              className={`flex ${DESKTOP_NAV_ACTION_HEIGHT_TW} items-center px-7 text-[0.9375rem] font-medium`}
+              className={`flex ${DESKTOP_NAV_ACTION_HEIGHT_TW} items-center px-7 text-[0.9375rem] font-medium proto-nav-cta-label`}
               style={{ backgroundColor: bg, color: fg }}
+              aria-disabled="true"
             >
               {primary.label}
             </span>
           )}
           <button
             type="button"
-            className={`flex ${DESKTOP_NAV_ACTION_HEIGHT_TW} items-center justify-center border-l transition-opacity hover:opacity-90`}
+            className={`flex ${DESKTOP_NAV_ACTION_HEIGHT_TW} items-center justify-center border-l proto-nav-cta-label transition-opacity hover:opacity-90`}
             style={{
               backgroundColor: bg,
               color: fg,
