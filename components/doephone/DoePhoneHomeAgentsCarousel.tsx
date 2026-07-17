@@ -141,6 +141,8 @@ function AgentCarouselOrb({
   const paperSlotPriority = focused
     ? SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_FOCUSED
     : SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_ADJACENT;
+  /** Only focused + neighbors get WebGL — the track renders every orb in the DOM. */
+  const mountPaperShader = isPhoneLayout && (focused || distance <= 1);
   const mountPeek = isPhoneLayout || focused;
   const peekVisible = isPhoneLayout || focused;
   const peekLiftClass =
@@ -171,11 +173,13 @@ function AgentCarouselOrb({
                   scheme={displayScheme}
                   shaderConfig={HERO_DIAL_ORB_CAROUSEL_SHADER}
                 />
-                <HeroDialOrbPaperShader
-                  scheme={displayScheme}
-                  variant={doeHomeAgentsCarouselOrbShaderVariantForLabel(scheme.label)}
-                  slotPriority={paperSlotPriority}
-                />
+                {mountPaperShader ? (
+                  <HeroDialOrbPaperShader
+                    scheme={displayScheme}
+                    variant={doeHomeAgentsCarouselOrbShaderVariantForLabel(scheme.label)}
+                    slotPriority={paperSlotPriority}
+                  />
+                ) : null}
               </>
             ) : (
               <HeroDialOrbGrainShader

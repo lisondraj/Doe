@@ -67,21 +67,44 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!containerReady) {
       setBudgetGranted(false);
       releaseShaderWebGLSlot(slotId);
       return;
     }
 
-    const granted = acquireShaderWebGLSlot(slotId, slotPriority, evictShader);
-    setBudgetGranted(granted);
-    if (!granted) {
-      return;
+    let cancelled = false;
+    let retryTimer = 0;
+
+    const tryAcquire = () => {
+      if (cancelled) return true;
+      const granted = acquireShaderWebGLSlot(slotId, slotPriority, evictShader);
+      setBudgetGranted(granted);
+      return granted;
+    };
+
+    if (tryAcquire()) {
+      return () => {
+        cancelled = true;
+        window.clearTimeout(retryTimer);
+        releaseShaderWebGLSlot(slotId);
+      };
     }
 
-    return () => releaseShaderWebGLSlot(slotId);
-  }, [containerReady, slotId, slotPriority, evictShader]);
+    const retry = () => {
+      if (cancelled || tryAcquire()) return;
+      retryTimer = window.setTimeout(retry, 96);
+    };
+
+    retryTimer = window.setTimeout(retry, 96);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(retryTimer);
+      releaseShaderWebGLSlot(slotId);
+    };
+  }, [containerReady, evictShader, slotId, slotPriority]);
 
   const showShader = containerReady && budgetGranted;
 

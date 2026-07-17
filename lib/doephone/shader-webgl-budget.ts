@@ -11,6 +11,9 @@ export const SHADER_WEBGL_SLOT_PRIORITY = {
 
 const PHONE_MAX_WEBGL_SLOTS = 8;
 
+/** Hero-class shaders always keep headroom — carousel orbs cannot consume the last slot. */
+const HERO_CLASS_PRIORITY = SHADER_WEBGL_SLOT_PRIORITY.HERO_BACKGROUND;
+
 type ShaderWebGLSlot = {
   priority: number;
   evict: () => void;
@@ -26,6 +29,54 @@ export function isDoePhoneWebGLBudgetActive() {
   );
 }
 
+function isHeroClassPriority(priority: number) {
+  return priority >= HERO_CLASS_PRIORITY;
+}
+
+function countHeroClassSlots() {
+  let count = 0;
+  for (const slot of Array.from(slots.values())) {
+    if (isHeroClassPriority(slot.priority)) count++;
+  }
+  return count;
+}
+
+function countNonHeroClassSlots() {
+  return slots.size - countHeroClassSlots();
+}
+
+function findLowestSlot(filter?: (priority: number) => boolean) {
+  let lowestId: string | null = null;
+  let lowestPriority = Number.POSITIVE_INFINITY;
+
+  for (const [slotId, slot] of Array.from(slots.entries())) {
+    if (filter && !filter(slot.priority)) continue;
+    if (slot.priority < lowestPriority) {
+      lowestPriority = slot.priority;
+      lowestId = slotId;
+    }
+  }
+
+  return lowestId;
+}
+
+function maxNonHeroSlots() {
+  const heroCount = countHeroClassSlots();
+  return Math.max(0, PHONE_MAX_WEBGL_SLOTS - heroCount - (heroCount > 0 ? 0 : 1));
+}
+
+function tryEvictForSlot(priority: number, onlyNonHero: boolean) {
+  const lowestId = findLowestSlot(onlyNonHero ? (slotPriority) => !isHeroClassPriority(slotPriority) : undefined);
+  if (lowestId == null) return false;
+
+  const lowestPriority = slots.get(lowestId)?.priority ?? Number.NEGATIVE_INFINITY;
+  if (priority <= lowestPriority) return false;
+
+  slots.get(lowestId)?.evict();
+  slots.delete(lowestId);
+  return true;
+}
+
 export function acquireShaderWebGLSlot(
   id: string,
   priority: number,
@@ -39,29 +90,26 @@ export function acquireShaderWebGLSlot(
     return true;
   }
 
-  if (slots.size < PHONE_MAX_WEBGL_SLOTS) {
+  if (isHeroClassPriority(priority)) {
+    if (slots.size >= PHONE_MAX_WEBGL_SLOTS && !tryEvictForSlot(priority, false)) {
+      return false;
+    }
     slots.set(id, { priority, evict });
     return true;
   }
 
-  let lowestId: string | null = null;
-  let lowestPriority = Number.POSITIVE_INFINITY;
-
-  for (const [slotId, slot] of Array.from(slots.entries())) {
-    if (slot.priority < lowestPriority) {
-      lowestPriority = slot.priority;
-      lowestId = slotId;
+  if (countNonHeroClassSlots() >= maxNonHeroSlots()) {
+    if (!tryEvictForSlot(priority, true)) {
+      return false;
     }
   }
 
-  if (lowestId != null && priority > lowestPriority) {
-    slots.get(lowestId)?.evict();
-    slots.delete(lowestId);
-    slots.set(id, { priority, evict });
-    return true;
+  if (slots.size >= PHONE_MAX_WEBGL_SLOTS) {
+    return false;
   }
 
-  return false;
+  slots.set(id, { priority, evict });
+  return true;
 }
 
 export function releaseShaderWebGLSlot(id: string) {
