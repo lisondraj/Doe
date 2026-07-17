@@ -69,12 +69,15 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
   variant,
   slotPriority,
   slotKey,
+  enabled = true,
 }: {
   scheme: HeroDialOrbScheme;
   variant: ProtoGrainGradientVariant;
   slotPriority: number;
   /** Stable budget id — avoids remount churn when focus priority changes. */
   slotKey?: string;
+  /** When false, keeps the shell but defers WebGL init (hero-first gate). */
+  enabled?: boolean;
 }) {
   const preset = PROTO_GRAIN_GRADIENT_PRESETS[variant];
   const reactId = useId();
@@ -85,6 +88,7 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
   const containerReadyRef = useRef(false);
   const [shaderGeneration, setShaderGeneration] = useState(0);
   const [containerReady, setContainerReady] = useState(false);
+  const [mountAttempt, setMountAttempt] = useState(0);
 
   const colors = [scheme.colors[0], scheme.colors[1], scheme.colors[2]];
   const colorStopsKey = protoGrainColorStopsKey(colors);
@@ -138,7 +142,7 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
 
   useLayoutEffect(() => {
     const node = shellRef.current;
-    if (!node || !noiseTexture) {
+    if (!node || !enabled || !noiseTexture) {
       if (mountRef.current) {
         resetShader();
       }
@@ -155,7 +159,12 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
 
     if (!acquireShaderWebGLSlot(slotId, slotPriority, evictShader)) {
       node.classList.remove("hero-speaking-orb__grain-shell--shader-ready");
-      return;
+      const retryId = window.requestAnimationFrame(() => {
+        setMountAttempt((current) => current + 1);
+      });
+      return () => {
+        window.cancelAnimationFrame(retryId);
+      };
     }
 
     const uniforms = buildOrbGrainUniforms({
@@ -182,7 +191,12 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
       node.classList.remove("hero-speaking-orb__grain-shell--shader-ready");
       releaseShaderWebGLSlot(slotId);
       mountRef.current = null;
-      return;
+      const retryId = window.requestAnimationFrame(() => {
+        setMountAttempt((current) => current + 1);
+      });
+      return () => {
+        window.cancelAnimationFrame(retryId);
+      };
     }
 
     return () => {
@@ -194,14 +208,17 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
   }, [
     colorStopsKey,
     containerReady,
+    enabled,
     evictShader,
     intensity,
+    mountAttempt,
     noiseTexture,
     preset,
     resetShader,
     scheme.colorBack,
     shaderGeneration,
     slotId,
+    slotPriority,
   ]);
 
   return (

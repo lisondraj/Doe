@@ -157,24 +157,28 @@ function isMainStripOrbIndex(orbIndex: number) {
   return orbIndex >= AGENTS_CAROUSEL_TRACK_START && orbIndex < AGENTS_CAROUSEL_TRACK_TRAILING_CLONE;
 }
 
-function agentsCarouselPaperSlotKey(label: string) {
-  return `agents-carousel-paper:${label}`;
+function agentsCarouselPaperSlotKey(orbIndex: number) {
+  return `agents-carousel-paper:orb-${orbIndex}`;
 }
 
 const AgentCarouselOrb = memo(function AgentCarouselOrb({
+  orbIndex,
   scheme,
   focused,
   blurPx,
   isDesktop,
   isPhoneLayout,
-  mountPaperShader,
+  showPaperLayer,
+  paperEnabled,
 }: {
+  orbIndex: number;
   scheme: HeroDialOrbScheme;
   focused: boolean;
   blurPx: number;
   isDesktop: boolean;
   isPhoneLayout: boolean;
-  mountPaperShader: boolean;
+  showPaperLayer: boolean;
+  paperEnabled: boolean;
 }) {
   const displayScheme = isPhoneLayout
     ? heroDialOrbCarouselIphonePaperScheme(scheme)
@@ -202,15 +206,20 @@ const AgentCarouselOrb = memo(function AgentCarouselOrb({
               scheme={displayScheme}
               shaderConfig={HERO_DIAL_ORB_CAROUSEL_SHADER}
             />
-            {mountPaperShader ? (
+            {showPaperLayer ? (
               <HeroDialOrbPaperShader
                 scheme={displayScheme}
                 variant={doeHomeAgentsCarouselOrbShaderVariantForLabel(scheme.label)}
                 slotPriority={SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_FOCUSED}
-                slotKey={agentsCarouselPaperSlotKey(scheme.label)}
+                slotKey={agentsCarouselPaperSlotKey(orbIndex)}
+                enabled={paperEnabled}
               />
             ) : null}
-            <div className="home-agents-carousel__orb-peek-reveal home-agents-carousel__orb-peek-reveal--visible">
+            <div
+              className={`home-agents-carousel__orb-peek-reveal${
+                focused || isPhoneLayout ? " home-agents-carousel__orb-peek-reveal--visible" : ""
+              }`}
+            >
               {isDesktop ? (
                 <div className={peekLiftClass}>
                   <AgentCarouselPeek label={scheme.label} isPhone={false} />
@@ -374,18 +383,19 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
             {AGENTS_CAROUSEL_TRACK_ORBS.map((scheme, orbIndex) => {
               const distance = Math.abs(orbIndex - trackIndex);
               const focused = orbIndex === trackIndex;
-              const mountPaperShader =
-                isPhoneLayout && heroShaderReady && isMainStripOrbIndex(orbIndex);
+              const showPaperLayer = isPhoneLayout && isMainStripOrbIndex(orbIndex);
 
               return (
                 <AgentCarouselOrb
                   key={`orb-${orbIndex}`}
+                  orbIndex={orbIndex}
                   scheme={scheme}
                   focused={focused}
                   blurPx={isDesktop ? getOrbBlur(distance) : 0}
                   isDesktop={isDesktop}
                   isPhoneLayout={isPhoneLayout}
-                  mountPaperShader={mountPaperShader}
+                  showPaperLayer={showPaperLayer}
+                  paperEnabled={heroShaderReady}
                 />
               );
             })}

@@ -1001,9 +1001,9 @@ html[data-home-page] .home-agents-carousel__orb-peek-reveal {
   pointer-events: none;
 }
 
-/* Desktop — peek UI stays mounted and painted; side orbs stay clipped + shell-blurred. */
+/* Desktop — peek DOM stays mounted; only the focused orb shows UI. */
 html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb-peek-reveal {
-  opacity: 1;
+  opacity: 0;
   transition: none;
 }
 
@@ -5089,10 +5089,16 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb .hero-speaking-orb__grain-shell--css {
   transform: none;
   transform-origin: center center;
+  z-index: 1;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb .hero-speaking-orb__grain-shell--paper {
   transform: none;
+  z-index: 2;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__orb .home-agents-carousel__orb-peek-reveal {
+  z-index: 5;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
@@ -5109,13 +5115,6 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
-  .hero-speaking-orb__core:has(.hero-speaking-orb__grain-shell--paper.hero-speaking-orb__grain-shell--shader-ready)
-  .hero-speaking-orb__grain-shell--css {
-  opacity: 0;
-}
-
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-agents-carousel__orb
   .hero-speaking-orb__grain-shell--paper
   canvas {
   display: block !important;
@@ -5123,17 +5122,17 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   height: 100% !important;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-    .home-agents-carousel__orb
-    .hero-speaking-orb__grain-shell--paper
-    canvas {
-    display: block !important;
-  }
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-agents-carousel__orb
+  .hero-speaking-orb__core:has(.hero-speaking-orb__grain-shell--paper.hero-speaking-orb__grain-shell--shader-ready)
+  .hero-speaking-orb__grain-shell--css {
+  opacity: 0;
+  pointer-events: none;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-agents-carousel__orb
+  .hero-speaking-orb__core:has(.hero-speaking-orb__grain-shell--paper.hero-speaking-orb__grain-shell--shader-ready)
   .hero-speaking-orb__grain-shell--css
   canvas {
   display: none;
