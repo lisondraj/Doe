@@ -132,17 +132,17 @@ const inboxThreads = [
     id: "t1",
     from: "Riverside Cardiology",
     kind: "Referral" as const,
-    subject: "Re: J. Ortiz — echo follow-up",
+    subject: "Re: J. Ortiz, echo follow-up",
     preview: "We can see him Apr 9 at 2:30. Please attach last lipid panel.",
     time: "8:12 AM",
     unread: true,
     messages: [
       {
         id: "t1-m1",
-        from: "Jamie Chen, MD — Northside",
+        from: "Jamie Chen, MD, Northside",
         time: "Mar 28 · 7:41 AM",
         email: "jamie.chen@northside.health",
-        body: `Referral for J. Ortiz (DOB 1964) — please confirm echo availability and whether you need a lipid panel on file before we send him over. Chart ref 448291.`,
+        body: `Referral for J. Ortiz (DOB 1964), please confirm echo availability and whether you need a lipid panel on file before we send him over. Chart ref 448291.`,
         attachments: [
           { name: "referral_ortiz.pdf", size: "128 KB" },
           { name: "insurance_snapshot.jpg", size: "214 KB" },
@@ -157,7 +157,7 @@ const inboxThreads = [
 
 If the lipid panel from last week isn’t in the chart, please have them fax to our usual line before the visit.
 
-— R. Okonkwo, MD`,
+R. Okonkwo, MD`,
         attachments: [
           { name: "scheduling_instructions.pdf", size: "42 KB" },
           { name: "intake_checklist.pdf", size: "56 KB" },
@@ -165,14 +165,14 @@ If the lipid panel from last week isn’t in the chart, please have them fax to 
       },
       {
         id: "t1-m3",
-        from: "Jamie Chen, MD — Northside",
+        from: "Jamie Chen, MD, Northside",
         time: "Mar 28 · 4:02 PM",
         email: "jamie.chen@northside.health",
-        body: `Acknowledged — we’ll pull lipids from 3/22 and confirm the patient has Apr 9 on their calendar. Will fax if anything is missing.`,
+        body: `Acknowledged, we’ll pull lipids from 3/22 and confirm the patient has Apr 9 on their calendar. Will fax if anything is missing.`,
       },
       {
         id: "t1-m4",
-        from: "R. Okonkwo, MD — Riverside",
+        from: "R. Okonkwo, MD, Riverside",
         time: "Mar 29 · 9:00 AM",
         email: "r.okonkwo@riversidecardiology.org",
         body: `Thanks for the update. If the patient’s LDL is still above goal on your panel, we’ll re-check in clinic before adjusting meds.`,
@@ -180,7 +180,7 @@ If the lipid panel from last week isn’t in the chart, please have them fax to 
       },
       {
         id: "t1-m5",
-        from: "Jamie Chen, MD — Northside",
+        from: "Jamie Chen, MD, Northside",
         time: "Mar 29 · 11:30 AM",
         email: "jamie.chen@northside.health",
         body: `Lipids from 3/22 faxed to your number on file. Patient is aware of the Apr 9 appointment and prep instructions.`,
@@ -191,12 +191,12 @@ If the lipid panel from last week isn’t in the chart, please have them fax to 
         from: "Riverside Cardiology",
         time: "Mar 30 · 8:12 AM",
         email: "referrals@riversidecardiology.org",
-        body: `Received — we’re all set for Apr 9 at 2:30. Echo orders are in the chart; we’ll see him then.`,
+        body: `Received, we’re all set for Apr 9 at 2:30. Echo orders are in the chart; we’ll see him then.`,
         attachments: [{ name: "echo_order_packet.pdf", size: "95 KB" }],
       },
       {
         id: "t1-m7",
-        from: "Jamie Chen, MD — Northside",
+        from: "Jamie Chen, MD, Northside",
         time: "Mar 30 · 10:06 AM",
         email: "jamie.chen@northside.health",
         body: `Great, thank you. Patient asked whether fasting is needed day-of; we advised standard meds unless instructed otherwise.`,
@@ -213,7 +213,7 @@ If the lipid panel from last week isn’t in the chart, please have them fax to 
   },
   {
     id: "t2",
-    from: "Pathology — Central Lab",
+    from: "Pathology, Central Lab",
     kind: "Lab" as const,
     subject: "Hemoglobin A1c resulted",
     preview: "Hgb A1c 6.9% (Mar 28). Flagged per your protocol.",
@@ -228,7 +228,7 @@ If the lipid panel from last week isn’t in the chart, please have them fax to 
       },
       {
         id: "t2-m2",
-        from: "Pathology — Central Lab",
+        from: "Pathology, Central Lab",
         time: "Mar 28 · 9:18 AM",
         body: `Hemoglobin A1c: 6.9% (Mar 28, 2026). Result auto-released to chart per protocol.`,
         attachments: [{ name: "A1c_result.pdf", size: "64 KB" }],
@@ -237,13 +237,13 @@ If the lipid panel from last week isn’t in the chart, please have them fax to 
         id: "t2-m3",
         from: "Clinical staff",
         time: "Mar 28 · 10:05 AM",
-        body: "Flag reviewed — consider counseling if ADA targets not documented this quarter.",
+        body: "Flag reviewed, consider counseling if ADA targets not documented this quarter.",
       },
       {
         id: "t2-m4",
-        from: "Pathology — Central Lab",
+        from: "Pathology, Central Lab",
         time: "Mar 28 · 2:40 PM",
-        body: "Corrected reference range note appended to result per QC review — no value change.",
+        body: "Corrected reference range note appended to result per QC review, no value change.",
       },
       {
         id: "t2-m5",
@@ -272,7 +272,7 @@ If the lipid panel from last week isn’t in the chart, please have them fax to 
         id: "t3-m2",
         from: "Nurse triage",
         time: "Mar 29 · 6:45 PM",
-        body: "Thanks for the note — a clinician will review and reply during business hours.",
+        body: "Thanks for the note, a clinician will review and reply during business hours.",
       },
       {
         id: "t3-m3",
@@ -284,22 +284,22 @@ If the lipid panel from last week isn’t in the chart, please have them fax to 
   },
   {
     id: "t4",
-    from: "PriorAuth — Central",
+    from: "PriorAuth, Central",
     kind: "Admin" as const,
-    subject: "Humira — documentation requested",
+    subject: "Humira, documentation requested",
     preview: "Carrier needs progress notes from last visit.",
     time: "Mar 27",
     unread: false,
     messages: [
       {
         id: "t4-m1",
-        from: "PriorAuth — Central",
+        from: "PriorAuth, Central",
         time: "Mar 26 · 11:20 AM",
-        body: "Prior authorization submitted — carrier review in progress.",
+        body: "Prior authorization submitted, carrier review in progress.",
       },
       {
         id: "t4-m2",
-        from: "PriorAuth — Central",
+        from: "PriorAuth, Central",
         time: "Mar 27 · 8:03 AM",
         body: "Documentation requested: progress notes from visit on Mar 12.",
       },
@@ -313,7 +313,7 @@ If the lipid panel from last week isn’t in the chart, please have them fax to 
   },
   {
     id: "t5",
-    from: "Dermatology — South",
+    from: "Dermatology, South",
     kind: "Referral" as const,
     subject: "Biopsy scheduled",
     preview: "Lesion shave scheduled Apr 4. Path to follow.",
@@ -322,19 +322,19 @@ If the lipid panel from last week isn’t in the chart, please have them fax to 
     messages: [
       {
         id: "t5-m1",
-        from: "Dermatology — South",
+        from: "Dermatology, South",
         time: "Mar 25 · 3:10 PM",
         body: "Referral accepted. Scheduling will reach out with biopsy options.",
       },
       {
         id: "t5-m2",
-        from: "Dermatology — South",
+        from: "Dermatology, South",
         time: "Mar 26 · 9:00 AM",
         body: "Shave biopsy scheduled Apr 4, 10:20 AM. Prep instructions sent to patient.",
       },
       {
         id: "t5-m3",
-        from: "Dermatology — South",
+        from: "Dermatology, South",
         time: "Mar 26 · 9:15 AM",
         body: "Path results will route to your inbox when finalized.",
       },
@@ -365,27 +365,27 @@ If the lipid panel from last week isn’t in the chart, please have them fax to 
         id: "t6-m3",
         from: "Provider line",
         time: "Mar 26 · 10:42 AM",
-        body: "Callback placed — will see after med reconciliation.",
+        body: "Callback placed, will see after med reconciliation.",
       },
     ],
   },
   {
     id: "t7",
-    from: "Radiology — Imaging",
+    from: "Radiology, Imaging",
     kind: "Referral" as const,
-    subject: "MRI lumbar spine — precert",
+    subject: "MRI lumbar spine, precert",
     preview: "Precert number attached. Patient to call scheduling.",
     time: "Mar 25",
     unread: false,
     messages: [
       { id: "t7-m1", from: "Radiology", time: "Mar 24 · 2:00 PM", body: "Precert submitted." },
-      { id: "t7-m2", from: "Radiology", time: "Mar 25 · 9:00 AM", body: "Approved — auth #RZ-99281." },
+      { id: "t7-m2", from: "Radiology", time: "Mar 25 · 9:00 AM", body: "Approved, auth #RZ-99281." },
       { id: "t7-m3", from: "Scheduling", time: "Mar 25 · 11:15 AM", body: "Patient given direct line to book." },
     ],
   },
   {
     id: "t8",
-    from: "Pharmacy — Retail",
+    from: "Pharmacy, Retail",
     kind: "Message" as const,
     subject: "Substitute available for atorvastatin",
     preview: "Insurance prefers generic 20 mg. OK to switch?",
@@ -399,15 +399,15 @@ If the lipid panel from last week isn’t in the chart, please have them fax to 
   },
   {
     id: "t9",
-    from: "Endocrinology — North",
+    from: "Endocrinology, North",
     kind: "Referral" as const,
-    subject: "Thyroid nodule — FNA coordination",
+    subject: "Thyroid nodule, FNA coordination",
     preview: "We can slot them Apr 14. Please send ultrasound.",
     time: "Mar 24",
     unread: true,
     messages: [
       { id: "t9-m1", from: "Endocrinology", time: "Mar 23 · 4:30 PM", body: "Referral received." },
-      { id: "t9-m2", from: "Endocrinology", time: "Mar 24 · 10:00 AM", body: "Apr 14 available — need ultrasound images." },
+      { id: "t9-m2", from: "Endocrinology", time: "Mar 24 · 10:00 AM", body: "Apr 14 available, need ultrasound images." },
       { id: "t9-m3", from: "Staff", time: "Mar 24 · 11:00 AM", body: "Uploading imaging to shared folder." },
     ],
   },
@@ -415,13 +415,13 @@ If the lipid panel from last week isn’t in the chart, please have them fax to 
     id: "t10",
     from: "Care coordination",
     kind: "Admin" as const,
-    subject: "Discharge summary — L. Ortiz",
+    subject: "Discharge summary, L. Ortiz",
     preview: "Final summary ready for PCP. CC you on send.",
     time: "Mar 24",
     unread: false,
     messages: [
       { id: "t10-m1", from: "Hospitalist", time: "Mar 23 · 6:00 PM", body: "Draft discharge summary." },
-      { id: "t10-m2", from: "Care coordination", time: "Mar 24 · 8:00 AM", body: "Finalized — routing to PCP." },
+      { id: "t10-m2", from: "Care coordination", time: "Mar 24 · 8:00 AM", body: "Finalized, routing to PCP." },
       { id: "t10-m3", from: "Care coordination", time: "Mar 24 · 8:30 AM", body: "PCP fax confirmed." },
     ],
   },
@@ -429,21 +429,21 @@ If the lipid panel from last week isn’t in the chart, please have them fax to 
     id: "t11",
     from: "Ophthalmology",
     kind: "Referral" as const,
-    subject: "Diabetic eye exam — annual",
+    subject: "Diabetic eye exam, annual",
     preview: "Next opening May 6. Dilated exam required.",
     time: "Mar 23",
     unread: false,
     messages: [
       { id: "t11-m1", from: "Ophthalmology", time: "Mar 22 · 3:00 PM", body: "Referral in queue." },
-      { id: "t11-m2", from: "Ophthalmology", time: "Mar 23 · 9:00 AM", body: "May 6 first slot — dilated exam." },
-      { id: "t11-m3", from: "Staff", time: "Mar 23 · 10:00 AM", body: "Patient prefers afternoon — noted." },
+      { id: "t11-m2", from: "Ophthalmology", time: "Mar 23 · 9:00 AM", body: "May 6 first slot, dilated exam." },
+      { id: "t11-m3", from: "Staff", time: "Mar 23 · 10:00 AM", body: "Patient prefers afternoon, noted." },
     ],
   },
   {
     id: "t12",
     from: "Infection control",
     kind: "Message" as const,
-    subject: "Exposure notification — low risk",
+    subject: "Exposure notification, low risk",
     preview: "Routine exposure logged. No action needed unless symptoms.",
     time: "Mar 23",
     unread: true,
@@ -455,7 +455,7 @@ If the lipid panel from last week isn’t in the chart, please have them fax to 
   },
   {
     id: "t13",
-    from: "Cardiology — Echo lab",
+    from: "Cardiology, Echo lab",
     kind: "Lab" as const,
     subject: "Stress test resulted",
     preview: "Negative for ischemia. Dr. Patel CC’d.",
@@ -471,7 +471,7 @@ If the lipid panel from last week isn’t in the chart, please have them fax to 
     id: "t14",
     from: "Social work",
     kind: "Message" as const,
-    subject: "Transport assistance — follow-up",
+    subject: "Transport assistance, follow-up",
     preview: "Ride vouchers approved for 4 visits.",
     time: "Mar 22",
     unread: false,
@@ -483,7 +483,7 @@ If the lipid panel from last week isn’t in the chart, please have them fax to 
   },
   {
     id: "t15",
-    from: "GI — Procedures",
+    from: "GI, Procedures",
     kind: "Referral" as const,
     subject: "Colonoscopy prep kit",
     preview: "Kit mailed. Reminder call scheduled.",
@@ -499,7 +499,7 @@ If the lipid panel from last week isn’t in the chart, please have them fax to 
     id: "t16",
     from: "Quality & safety",
     kind: "Admin" as const,
-    subject: "Chart audit — random sample",
+    subject: "Chart audit, random sample",
     preview: "Please close 2 open tasks by Apr 4.",
     time: "Mar 21",
     unread: true,
@@ -513,7 +513,7 @@ If the lipid panel from last week isn’t in the chart, please have them fax to 
     id: "t17",
     from: "Allergy & Immunology",
     kind: "Referral" as const,
-    subject: "Patch testing — scheduling",
+    subject: "Patch testing, scheduling",
     preview: "Three-day series available starting Apr 2.",
     time: "Mar 20",
     unread: false,
@@ -540,7 +540,7 @@ If the lipid panel from last week isn’t in the chart, please have them fax to 
 ] as const;
 
 function inboxSenderInitials(from: string): string {
-  const parts = from.split(/[\s—]+/).filter(Boolean);
+  const parts = from.split(/[\s,]+/).filter(Boolean);
   const a = parts[0]?.[0] ?? "?";
   const b = parts[1]?.[0] ?? "";
   return (a + b).toUpperCase();
@@ -577,15 +577,23 @@ function inboxMessageAvatarClass(from: string, brownPalette = false): string {
 }
 
 function inboxSenderNameLine(from: string): string {
-  const before = from.split(/[—–]/)[0].split(",")[0].trim();
-  return before || from;
+  const commaParts = from.split(",").map((part) => part.trim());
+  if (commaParts.length >= 2 && /^(MD|DO|NP|PA)$/i.test(commaParts[1])) {
+    return `${commaParts[0]}, ${commaParts[1]}`;
+  }
+  return commaParts[0] || from;
 }
 
 function inboxSenderAffiliation(from: string): string | null {
-  const parts = from.split(/[—–]/);
-  if (parts.length < 2) return null;
-  const rest = parts.slice(1).join("—").trim();
-  return rest || null;
+  const commaParts = from.split(",").map((part) => part.trim());
+  if (commaParts.length >= 2 && /^(MD|DO|NP|PA)$/i.test(commaParts[1])) {
+    const affiliation = commaParts.slice(2).join(", ").trim();
+    return affiliation || null;
+  }
+  if (commaParts.length >= 2) {
+    return commaParts.slice(1).join(", ").trim() || null;
+  }
+  return null;
 }
 
 function inboxDerivedEmail(from: string): string {
@@ -595,8 +603,7 @@ function inboxDerivedEmail(from: string): string {
   if (lower.includes("lab")) return "results@pathology.central.health";
   if (lower.includes("pharmacy")) return "rx@pharmacy.retail.health";
   const slug = from
-    .replace(/[—–].*$/, "")
-    .replace(/,[^,]*$/, "")
+    .split(",")[0]
     .trim()
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, ".")
@@ -675,17 +682,17 @@ function InboxThreadListRow({
       } ${
         isActive
           ? darkBrown
-            ? "product-brown-inbox-row--active border-l-2 border-l-[#D4A574] bg-[#3d2e1f]"
+            ? "product-brown-inbox-row--active border-l-2 border-l-transparent bg-[#3d2e1f]"
             : lightBrown
-              ? "product-brown-inbox-row--active border-l-2 border-l-[var(--pi-ink-soft)] bg-[var(--pi-highlight)]"
+              ? "product-brown-inbox-row--active border-l-2 border-l-transparent bg-[var(--pi-highlight)]"
               : brownTheme
                 ? "product-brown-inbox-row--active border-l-2 border-l-[#D4A574] bg-[#f8edd8]"
                 : "border-l-2 border-l-[#D4A574] bg-[#FFF9F1]"
           : showUnreadAccent
             ? darkBrown
-              ? "product-brown-inbox-row--default border-l-2 border-l-[#D4A574]/45 bg-[#322618] hover:bg-[#3a2a1c]"
+              ? "product-brown-inbox-row--default border-l-2 border-l-transparent bg-[#322618] hover:bg-[#3a2a1c]"
               : lightBrown
-                ? "product-brown-inbox-row--default border-l-2 border-l-[var(--pi-ink-soft)]/35 bg-[var(--pi-sand)] hover:bg-[var(--pi-well)]"
+                ? "product-brown-inbox-row--default border-l-2 border-l-transparent bg-[var(--pi-sand)] hover:bg-[var(--pi-well)]"
                 : brownTheme
                   ? "product-brown-inbox-row--default border-l-2 border-l-[#D4A574]/45 bg-[#f5e6d0] hover:bg-[rgba(26,18,8,0.05)]"
                   : "border-l-2 border-l-[#D4A574]/45 bg-white hover:bg-neutral-50/80"
@@ -1262,9 +1269,9 @@ export function DoeSchedulesAppMock({
     productBrownWorkspace && workspaceView !== "inbox";
   const inboxUi = productBrownInbox
     ? {
-        cream: "bg-[var(--pi-cream)]",
-        sand: "bg-[var(--pi-sand)]",
-        sandDeep: "bg-[var(--pi-sand-deep)]",
+        cream: "bg-[var(--pi-highlight)]",
+        sand: "bg-[var(--pi-highlight)]",
+        sandDeep: "bg-[var(--pi-well)]",
         well: "bg-[var(--pi-well)]",
         highlight: "bg-[var(--pi-highlight)]",
         ink: "text-[var(--pi-ink)]",
@@ -1299,7 +1306,7 @@ export function DoeSchedulesAppMock({
           "bg-[var(--pi-highlight)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.06)]",
         agentInactive: "bg-[rgba(38,32,28,0.04)] text-[var(--pi-muted)]",
         emailQuote:
-          "border-[var(--pi-line)] border-l-[var(--pi-ink-soft)] bg-[var(--pi-highlight)]",
+          "rounded-md border border-[var(--pi-line)] bg-[var(--pi-highlight)]",
         emailQuoteText: "text-[rgba(38,32,28,0.62)]",
         divider: "bg-[var(--pi-line)]",
         messageBorder: "border-[rgba(38,32,28,0.08)]",
@@ -2878,12 +2885,12 @@ export function DoeSchedulesAppMock({
                                                   </p>
                                                 ) : null}
                                                 <div
-                                                  className={`mt-2.5 max-w-md rounded-r-md border border-l-[3px] px-2.5 py-1.5 ${
+                                                  className={`mt-2.5 max-w-md rounded-md border px-2.5 py-1.5 ${
                                                     productBrownInbox
                                                       ? inboxUi!.emailQuote
                                                       : productBrownDarkWorkspace
-                                                        ? "border-[rgba(245,230,208,0.1)] border-l-[#D4A574] bg-[#322618]"
-                                                        : "border-[#EDEAE6] border-l-[#D4A574] bg-[#FAFAF8]"
+                                                        ? "border-[rgba(245,230,208,0.1)] bg-[#322618]"
+                                                        : "border-[#EDEAE6] bg-[#FAFAF8]"
                                                   }`}
                                                 >
                                                   <p
