@@ -9863,13 +9863,13 @@ html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] > .hom
   width: 100%;
 }
 html[data-home-page][data-layout="desktop"] .home-closing-section__layout {
+  position: relative;
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
   min-height: 0;
   height: 100%;
   gap: clamp(1.15rem, 2vw, 1.75rem);
-  position: relative;
 }
 html[data-home-page][data-layout="desktop"] .home-closing-section__title-wrap {
   flex: 0 0 auto;
@@ -9881,7 +9881,6 @@ html[data-home-page][data-layout="desktop"] .home-closing-section__carousel-wrap
   min-height: 0;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
   width: 100vw;
   max-width: 100vw;
   margin-left: calc(50% - 50vw);
@@ -9891,16 +9890,18 @@ html[data-home-page][data-layout="desktop"] .home-closing-section__fundraise-wra
   position: absolute;
   right: 0;
   bottom: 0;
-  z-index: 4;
+  z-index: 3;
+  flex: 0 0 auto;
   align-self: auto;
-  width: min(100%, 38rem);
+  width: min(100%, 42rem);
   margin: 0 !important;
   padding: 0 !important;
-  text-align: right;
+  pointer-events: none;
 }
 html[data-home-page][data-layout="desktop"] .home-closing-section__fundraise {
   width: 100%;
   text-align: right;
+  pointer-events: auto;
 }
 html[data-home-page][data-layout="desktop"] .home-closing-section__fundraise-headline {
   margin: 0;
@@ -9910,6 +9911,7 @@ html[data-home-page][data-layout="desktop"] .home-closing-section__fundraise-hea
   font-weight: 350 !important;
   line-height: 1.02 !important;
   letter-spacing: -0.034em !important;
+  text-align: right;
 }
 html[data-home-page][data-layout="desktop"] .home-closing-section__fundraise-headline-line {
   display: block;
@@ -9989,12 +9991,12 @@ html[data-home-page][data-layout="desktop"] .home-closing-section__fundraise-cop
 html[data-home-page][data-layout="desktop"] .home-closing-section__fundraise-description {
   margin: clamp(0.95rem, 1.15vw, 1.15rem) 0 0 auto;
   max-width: 30rem;
-  text-align: right;
   color: rgba(26, 18, 8, 0.58) !important;
   font-size: clamp(1.15rem, 1.28vw, 1.32rem) !important;
   font-weight: 400 !important;
   line-height: 1.52 !important;
   letter-spacing: -0.012em !important;
+  text-align: right;
 }
 html[data-home-page][data-layout="desktop"] .home-feature-card-section__title--closing {
   display: block !important;
@@ -10011,13 +10013,14 @@ html[data-home-page][data-layout="desktop"] .home-closing-section__carousel {
   --home-closing-carousel-control-size: clamp(3.25rem, 4.2vw, 4.15rem);
   --home-closing-carousel-gap: clamp(1rem, 1.65vw, 1.35rem);
   --home-closing-carousel-slide-width: clamp(36rem, 76vw, 62rem);
+  --home-closing-card-v-trim: clamp(0.35rem, 0.65vw, 0.55rem);
   --home-closing-carousel-pill-bg:
     linear-gradient(180deg, rgba(255, 255, 255, 0.48) 0%, transparent 34%),
     linear-gradient(152deg, #ffffff 0%, #fbfaf8 64%, #f7f6f4 100%);
   position: relative;
-  flex: 0 0 auto;
+  flex: 1 1 auto;
   min-height: 0;
-  height: 94%;
+  height: 100%;
   width: 100%;
 }
 html[data-home-page][data-layout="desktop"] .home-closing-section__carousel-viewport {
@@ -10102,11 +10105,20 @@ html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] a.home
   min-height: 0;
   margin-top: 0 !important;
 }
+html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] .home-closing-section__card-shell {
+  position: relative;
+  height: 100%;
+  min-height: 0;
+}
 html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] .home-closing-section__card-box {
   display: block;
   min-height: 0 !important;
   height: 100% !important;
   max-height: none !important;
+}
+html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] .home-closing-section__card-box--carousel {
+  height: calc(100% - (var(--home-closing-card-v-trim) * 2)) !important;
+  margin-block: var(--home-closing-card-v-trim);
 }
 html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] .home-closing-section__card-art {
   inset: 0;
@@ -10126,6 +10138,9 @@ html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] .home-
   text-overflow: ellipsis;
   color: #4a3828 !important;
   transition: opacity 160ms ease;
+}
+html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] .home-closing-section__card-shell .home-closing-section__card-caption {
+  pointer-events: none;
 }
 html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] a.home-closing-section__card:active .home-closing-section__card-caption {
   opacity: 0.7;
