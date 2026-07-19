@@ -321,18 +321,43 @@ const AgentCarouselOrb = memo(
     prev.paperSlotPriority === next.paperSlotPriority,
 );
 
-function trackTransform(trackIndex: number, isPhoneLayout: boolean) {
-  const center = isPhoneLayout ? "var(--app-vw, 100vw) / 2" : "50vw";
-  return `translate3d(calc(${center} - var(--home-agents-orb-half) - ${trackIndex} * var(--home-agents-orb-step)), 0, 0)`;
+function trackTransform(trackIndex: number) {
+  return `translate3d(calc(50vw - var(--home-agents-orb-half) - ${trackIndex} * var(--home-agents-orb-step)), 0, 0)`;
+}
+
+function readPhoneAgentsTrackTranslateX(
+  viewport: HTMLElement,
+  stage: HTMLElement,
+  trackIndex: number,
+): number | null {
+  const pill = stage.querySelector<HTMLElement>(".hero-speaking-orb__tag--carousel");
+  if (!pill) {
+    return null;
+  }
+
+  const viewportRect = viewport.getBoundingClientRect();
+  const pillRect = pill.getBoundingClientRect();
+  const targetCenterX = pillRect.left + pillRect.width / 2 - viewportRect.left;
+
+  const styles = getComputedStyle(viewport);
+  const orbHalf = parseFloat(styles.getPropertyValue("--home-agents-orb-half"));
+  const orbStep = parseFloat(styles.getPropertyValue("--home-agents-orb-step"));
+  if (!Number.isFinite(orbHalf) || !Number.isFinite(orbStep)) {
+    return null;
+  }
+
+  return targetCenterX - orbHalf - trackIndex * orbStep;
 }
 
 /** Hero agent orbs — fixed peek/grain per physical orb, smooth translate, invisible clone reset. */
 export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: boolean }) {
   const heroShaderReady = useHomeHeroShaderReady();
   const carouselStageRef = useRef<HTMLDivElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
   const carouselInView = useShaderViewportGate(carouselStageRef, "50% 0px");
   const [layoutVariant, setLayoutVariant] = useState<DoePhoneVariant>(readBootstrappedDoePhoneVariant);
   const [layoutReady, setLayoutReady] = useState(true);
+  const [phoneTrackTranslateX, setPhoneTrackTranslateX] = useState<number | null>(null);
   const isDesktop = layoutReady && layoutVariant === "desktop";
   const isPhoneLayout = layoutVariant === "phone";
 
@@ -361,6 +386,59 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
   }, []);
+
+  const syncPhoneTrackPosition = useCallback(() => {
+    const viewport = viewportRef.current;
+    const stage = carouselStageRef.current;
+    if (!viewport || !stage || !isPhoneLayout) {
+      return;
+    }
+
+    const nextTranslateX = readPhoneAgentsTrackTranslateX(viewport, stage, trackIndex);
+    if (nextTranslateX == null) {
+      return;
+    }
+
+    setPhoneTrackTranslateX(nextTranslateX);
+  }, [isPhoneLayout, trackIndex]);
+
+  useLayoutEffect(() => {
+    if (!isPhoneLayout || !layoutReady) {
+      setPhoneTrackTranslateX(null);
+      return;
+    }
+
+    let cancelled = false;
+    const run = () => {
+      if (cancelled) {
+        return;
+      }
+      syncPhoneTrackPosition();
+    };
+
+    run();
+    requestAnimationFrame(() => requestAnimationFrame(run));
+
+    const viewport = viewportRef.current;
+    const stage = carouselStageRef.current;
+    if (!viewport || !stage) {
+      return;
+    }
+
+    const resizeObserver = new ResizeObserver(run);
+    resizeObserver.observe(viewport);
+    resizeObserver.observe(stage);
+
+    window.addEventListener("orientationchange", run);
+    window.addEventListener("resize", run);
+
+    return () => {
+      cancelled = true;
+      resizeObserver.disconnect();
+      window.removeEventListener("orientationchange", run);
+      window.removeEventListener("resize", run);
+    };
+  }, [isPhoneLayout, layoutReady, syncPhoneTrackPosition, active.label]);
 
   useLayoutEffect(() => {
     if (!layoutReady) {
@@ -514,6 +592,15 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
     </div>
   );
 
+  const trackStyle: CSSProperties = {
+    ["--home-agents-track-index" as string]: trackIndex,
+    ...(isPhoneLayout
+      ? phoneTrackTranslateX != null
+        ? { transform: `translate3d(${phoneTrackTranslateX}px, 0, 0)` }
+        : {}
+      : { transform: trackTransform(trackIndex) }),
+  };
+
   return (
     <div className={`home-agents-carousel ${dmSans.className}`} aria-hidden>
       <div
@@ -521,6 +608,7 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
         className="home-agents-carousel__stage"
       >
         <div
+          ref={viewportRef}
           className="home-agents-carousel__viewport"
           onTouchStart={handleViewportTouchStart}
           onTouchEnd={handleViewportTouchEnd}
@@ -531,7 +619,7 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
           <div
             className={trackClassName}
             onTransitionEnd={handleTrackTransitionEnd}
-            style={{ transform: trackTransform(trackIndex, isPhoneLayout) }}
+            style={trackStyle}
           >
             {trackOrbs.map((scheme, orbIndex) => {
               const distance = Math.abs(orbIndex - trackIndex);
