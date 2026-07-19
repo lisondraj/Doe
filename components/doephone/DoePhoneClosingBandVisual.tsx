@@ -14,7 +14,7 @@ export function DoePhoneClosingBandVisual({
   /** Fill parent carousel slide height instead of fixed band height. */
   fillHeight?: boolean;
 }) {
-  const cardBox = (
+  return (
     <div
       className={`home-closing-section__card-box relative w-full overflow-hidden border border-[#D9D4CC] bg-[#EBE7E0] ${DOEPHONE_SECTION_CAROUSEL_RADIUS}${
         fillHeight
@@ -25,20 +25,7 @@ export function DoePhoneClosingBandVisual({
       <div className="home-closing-section__card-art pointer-events-none absolute inset-0" aria-hidden>
         <JoinInternLineGraphic variant={graphic} brandAccent />
       </div>
-      {!fillHeight && title ? (
-        <p className={`home-closing-section__card-caption ${inter.className}`}>{title}</p>
-      ) : null}
+      {title ? <p className={`home-closing-section__card-caption ${inter.className}`}>{title}</p> : null}
     </div>
   );
-
-  if (fillHeight) {
-    return (
-      <div className="home-closing-section__card-shell relative h-full min-h-0 w-full">
-        {cardBox}
-        {title ? <p className={`home-closing-section__card-caption ${inter.className}`}>{title}</p> : null}
-      </div>
-    );
-  }
-
-  return cardBox;
 }

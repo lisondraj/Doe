@@ -10013,7 +10013,7 @@ html[data-home-page][data-layout="desktop"] .home-closing-section__carousel {
   --home-closing-carousel-control-size: clamp(3.25rem, 4.2vw, 4.15rem);
   --home-closing-carousel-gap: clamp(1rem, 1.65vw, 1.35rem);
   --home-closing-carousel-slide-width: clamp(36rem, 76vw, 62rem);
-  --home-closing-card-v-trim: clamp(0.35rem, 0.65vw, 0.55rem);
+  --home-closing-card-v-trim: clamp(0.85rem, 1.65vh, 1.35rem);
   --home-closing-carousel-pill-bg:
     linear-gradient(180deg, rgba(255, 255, 255, 0.48) 0%, transparent 34%),
     linear-gradient(152deg, #ffffff 0%, #fbfaf8 64%, #f7f6f4 100%);
@@ -10047,7 +10047,9 @@ html[data-home-page][data-layout="desktop"] .home-closing-section__carousel-trac
 html[data-home-page][data-layout="desktop"] .home-closing-section__carousel-slide {
   flex: 0 0 var(--home-closing-carousel-slide-width);
   min-width: 0;
+  box-sizing: border-box;
   height: 100%;
+  padding-block: var(--home-closing-card-v-trim);
 }
 html[data-home-page][data-layout="desktop"] .home-closing-section__carousel-nav {
   position: absolute;
@@ -10105,11 +10107,6 @@ html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] a.home
   min-height: 0;
   margin-top: 0 !important;
 }
-html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] .home-closing-section__card-shell {
-  position: relative;
-  height: 100%;
-  min-height: 0;
-}
 html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] .home-closing-section__card-box {
   display: block;
   min-height: 0 !important;
@@ -10117,8 +10114,8 @@ html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] .home-
   max-height: none !important;
 }
 html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] .home-closing-section__card-box--carousel {
-  height: calc(100% - (var(--home-closing-card-v-trim) * 2)) !important;
-  margin-block: var(--home-closing-card-v-trim);
+  height: 100% !important;
+  margin-block: 0 !important;
 }
 html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] .home-closing-section__card-art {
   inset: 0;
@@ -10138,9 +10135,6 @@ html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] .home-
   text-overflow: ellipsis;
   color: #4a3828 !important;
   transition: opacity 160ms ease;
-}
-html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] .home-closing-section__card-shell .home-closing-section__card-caption {
-  pointer-events: none;
 }
 html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] a.home-closing-section__card:active .home-closing-section__card-caption {
   opacity: 0.7;
