@@ -5,9 +5,6 @@ import { useCallback, useState } from "react";
 import { ABOUT_CONTACT_EMAIL } from "@/lib/about/about-contact";
 import { dmSans, suisseIntl } from "@/lib/home/fonts";
 
-const FUNDRAISE_DESCRIPTION =
-  "We are meeting with US and Canadian backers who share our vision for provider-built clinical AI.";
-
 function CheckIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 20 20" fill="none" aria-hidden className={className}>
@@ -82,9 +79,6 @@ export function DoePhoneClosingFundraiseCallout() {
             ) : null}
           </span>
         </span>
-      </p>
-      <p className={`home-closing-section__fundraise-description ${dmSans.className}`}>
-        {FUNDRAISE_DESCRIPTION}
       </p>
     </aside>
   );
