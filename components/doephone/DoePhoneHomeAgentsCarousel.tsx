@@ -210,27 +210,34 @@ const AgentCarouselOrbSurface = memo(
   function AgentCarouselOrbSurface({
     orbIndex,
     scheme,
+    isDesktop,
     isPhoneLayout,
     paperEnabled,
     paperSlotPriority,
   }: {
     orbIndex: number;
     scheme: HeroDialOrbScheme;
+    isDesktop: boolean;
     isPhoneLayout: boolean;
     paperEnabled: boolean;
     paperSlotPriority: number;
   }) {
-    const paperScheme = heroDialOrbCarouselIphonePaperScheme(scheme);
+    const grainScheme = isDesktop
+      ? heroDialOrbCarouselIphonePaperScheme(scheme)
+      : isPhoneLayout
+        ? heroDialOrbCarouselIphonePaperScheme(scheme)
+        : heroDialOrbCarouselScheme(scheme);
+    const showPaper = isDesktop ? paperEnabled : isPhoneLayout && paperEnabled;
 
     return (
       <>
         <HeroDialOrbGrainShader
-          scheme={paperScheme}
+          scheme={grainScheme}
           shaderConfig={HERO_DIAL_ORB_CAROUSEL_SHADER}
         />
-        {paperEnabled ? (
+        {showPaper ? (
           <HeroDialOrbPaperShader
-            scheme={paperScheme}
+            scheme={grainScheme}
             variant={doeHomeAgentsCarouselOrbShaderVariantForLabel(scheme.label)}
             slotPriority={paperSlotPriority}
             slotKey={agentsCarouselPaperSlotKey(orbIndex)}
@@ -243,6 +250,7 @@ const AgentCarouselOrbSurface = memo(
   (prev, next) =>
     prev.orbIndex === next.orbIndex &&
     prev.scheme === next.scheme &&
+    prev.isDesktop === next.isDesktop &&
     prev.isPhoneLayout === next.isPhoneLayout &&
     prev.paperEnabled === next.paperEnabled &&
     prev.paperSlotPriority === next.paperSlotPriority,
@@ -290,6 +298,7 @@ const AgentCarouselOrb = memo(
               <AgentCarouselOrbSurface
                 orbIndex={orbIndex}
                 scheme={scheme}
+                isDesktop={isDesktop}
                 isPhoneLayout={isPhoneLayout}
                 paperEnabled={paperEnabled}
                 paperSlotPriority={paperSlotPriority}
@@ -312,8 +321,9 @@ const AgentCarouselOrb = memo(
     prev.paperSlotPriority === next.paperSlotPriority,
 );
 
-function trackTransform(trackIndex: number) {
-  return `translate3d(calc(50vw - var(--home-agents-orb-half) - ${trackIndex} * var(--home-agents-orb-step)), 0, 0)`;
+function trackTransform(trackIndex: number, isDesktop: boolean) {
+  const anchor = isDesktop ? "50vw" : "50%";
+  return `translate3d(calc(${anchor} - var(--home-agents-orb-half) - ${trackIndex} * var(--home-agents-orb-step)), 0, 0)`;
 }
 
 /** Hero agent orbs — fixed peek/grain per physical orb, smooth translate, invisible clone reset. */
@@ -498,7 +508,7 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
           <div
             className={trackClassName}
             onTransitionEnd={handleTrackTransitionEnd}
-            style={{ transform: trackTransform(trackIndex) }}
+            style={{ transform: trackTransform(trackIndex, isDesktop) }}
           >
             {trackOrbs.map((scheme, orbIndex) => {
               const distance = Math.abs(orbIndex - trackIndex);

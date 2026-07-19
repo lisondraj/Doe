@@ -1,24 +1,66 @@
 "use client";
 
 import { DoePhoneClosingBlogCarousel } from "@/components/doephone/DoePhoneClosingBlogCarousel";
+import { DoePhoneClosingFeatureStack } from "@/components/doephone/DoePhoneClosingFeatureStack";
 import { DoePhoneClosingFundraiseCallout } from "@/components/doephone/DoePhoneClosingFundraiseCallout";
 import { DoePhoneScrollRevealContent } from "@/components/doephone/DoePhoneScrollRevealLift";
+import { DoePhoneSectionTitle } from "@/components/doephone/DoePhoneSectionText";
 import {
   DOEPHONE_DISPLAY_WEIGHT_TW,
+  DOEPHONE_SECTION_CAROUSEL_INSET_X,
   DOEPHONE_SECTION_CONTENT_INSET,
+  DOEPHONE_SECTION_TITLE_CAROUSEL_GAP,
   DOEPHONE_SECTION_TITLE_PB,
   DOEPHONE_SECTION_TITLE_PT,
 } from "@/lib/doephone/section-styles";
 import { doephoneHomeScrollRevealStyleVars } from "@/lib/doephone/section-reveal-timing";
+import {
+  DOEPHONE_DESKTOP_MEDIA_QUERY,
+  readBootstrappedDoePhoneVariant,
+  resolveDoePhoneVariant,
+} from "@/lib/doephone/resolve-doe-phone-variant";
 import { useDoePhoneSectionReveal } from "@/lib/doephone/use-doe-phone-section-reveal";
 import { suisseIntl } from "@/lib/home/fonts";
-import type { CSSProperties } from "react";
+import { useLayoutEffect, useState, type CSSProperties } from "react";
 
-/** Closing beige section — title, blog carousel, fundraise note. */
+/** Closing beige section — stacked posts on iPhone; carousel + fundraise on desktop. */
 export function DoePhoneClosingSection() {
   const { ref: revealRef, revealed } = useDoePhoneSectionReveal(0.18, {
     rootMargin: "0px 0px 8% 0px",
   });
+  const [isDesktop, setIsDesktop] = useState(() => readBootstrappedDoePhoneVariant() === "desktop");
+
+  useLayoutEffect(() => {
+    setIsDesktop(readBootstrappedDoePhoneVariant() === "desktop");
+    const sync = () => setIsDesktop(resolveDoePhoneVariant() === "desktop");
+    const mq = window.matchMedia(DOEPHONE_DESKTOP_MEDIA_QUERY);
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
+  if (!isDesktop) {
+    return (
+      <div
+        ref={revealRef}
+        className="flex h-full min-h-0 flex-col"
+        style={doephoneHomeScrollRevealStyleVars() as CSSProperties}
+      >
+        <div className={`shrink-0 ${DOEPHONE_SECTION_CONTENT_INSET} ${DOEPHONE_SECTION_TITLE_PT}`}>
+          <DoePhoneScrollRevealContent revealed={revealed} segment="title">
+            <DoePhoneSectionTitle line1="More about" line2="the Doe vision." suppressReveal />
+          </DoePhoneScrollRevealContent>
+        </div>
+
+        <div
+          className={`shrink-0 ${DOEPHONE_SECTION_TITLE_CAROUSEL_GAP} ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${DOEPHONE_SECTION_TITLE_PB}`}
+        >
+          <DoePhoneScrollRevealContent revealed={revealed} segment="carousel">
+            <DoePhoneClosingFeatureStack />
+          </DoePhoneScrollRevealContent>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

@@ -100,16 +100,11 @@ function pickCommunicationSlides(ids: readonly CommunicationSlideId[]): DoePhone
   });
 }
 
-/** Home (iPhone + desktop) — feature stack stops before closing; billing → integrate omitted. */
-const DOEPHONE_HOME_FEATURE_SLIDE_IDS = [
-  "agents",
-  "inbox",
-  "front-desk",
-  "ambient",
-] as const satisfies readonly CommunicationSlideId[];
-
+/** Home iPhone — feature stack stops before closing; billing → integrate omitted. */
 export const DOEPHONE_HOME_FEATURE_SLIDES: readonly DoePhoneCommunicationSlide[] =
-  pickCommunicationSlides(DOEPHONE_HOME_FEATURE_SLIDE_IDS);
+  DOEPHONE_COMMUNICATION_SLIDES.filter(
+    (slide) => slide.id !== "billing" && slide.id !== "integrate",
+  );
 
 export const DOEPHONE_HOME_FEATURE_SLIDE_COUNT = DOEPHONE_HOME_FEATURE_SLIDES.length;
 
