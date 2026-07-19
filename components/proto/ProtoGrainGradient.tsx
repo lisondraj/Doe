@@ -15,6 +15,7 @@ import {
 } from "@/lib/proto/proto-grain-gradient";
 import {
   acquireShaderWebGLSlot,
+  isDesktopHomeWebGLBudgetActive,
   releaseShaderWebGLSlot,
   SHADER_WEBGL_SLOT_PRIORITY,
 } from "@/lib/doephone/shader-webgl-budget";
@@ -77,6 +78,8 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   const containerRef = useRef<HTMLDivElement>(null);
   const hero = isHeroVariant(variant);
   const phone = isPhoneLayout();
+  const desktopHome = isDesktopHomeWebGLBudgetActive();
+  const viewportGated = phone || desktopHome;
   const reactSlotId = useId();
   const homeHeroBackground = hero && phone && variant === "home-hero";
   const slotId = homeHeroBackground ? DOEPHONE_HOME_HERO_SHADER_SLOT : reactSlotId;
@@ -118,25 +121,25 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   };
 
   const releaseMount = useCallback(() => {
-    if (!phone || hero) return;
+    if (hero || !viewportGated) return;
     hasMountedRef.current = false;
     setHasMounted(false);
     setBudgetGranted(false);
     releaseShaderWebGLSlot(slotId);
-  }, [hero, phone, slotId]);
+  }, [hero, slotId, viewportGated]);
 
   useLayoutEffect(() => {
     if (hero) requestMount();
   }, [hero]);
 
   useEffect(() => {
-    if (!phone || hero) return;
+    if (hero || !viewportGated) return;
     if (inViewport) {
       requestMount();
       return;
     }
     releaseMount();
-  }, [hero, inViewport, phone, releaseMount]);
+  }, [hero, inViewport, releaseMount, viewportGated]);
 
   useLayoutEffect(() => {
     if (!hasMounted || !containerReady) {

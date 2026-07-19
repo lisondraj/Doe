@@ -24,9 +24,6 @@ const DETAILS = [
   { label: "Payer", value: "UHC Prior Auth" },
 ] as const;
 
-const CAPTION =
-  "Hi there, I am requesting prior auth for MRI lumbar, member J Brooks.";
-
 const SPEAKING_PEAKS = [0.52, 0.84, 0.44, 0.96, 0.62, 0.9, 0.48, 0.78, 0.58] as const;
 const LISTENING_LEVELS = [0.18, 0.24, 0.16, 0.22, 0.14, 0.2, 0.17] as const;
 
@@ -95,7 +92,14 @@ function CallBridge() {
         </div>
       </div>
 
-      <p className="home-prior-auth-visual__bridge-caption">&ldquo;{CAPTION}&rdquo;</p>
+      <div className="home-prior-auth-visual__bridge-meta">
+        <span className="home-prior-auth-visual__bridge-meta-title">{ORDER.procedure}</span>
+        <span className="home-prior-auth-visual__bridge-meta-timer">
+          {ORDER.callMinutes}
+          <span className="home-prior-auth-visual__call-timer-unit">m</span> {ORDER.callSeconds}
+          <span className="home-prior-auth-visual__call-timer-unit">s</span>
+        </span>
+      </div>
     </div>
   );
 }
@@ -109,50 +113,52 @@ const PIPELINE_FILL_PERCENT =
 /** Prior auth workflow board with live call-bridge voice monitor. */
 export function DoePhoneHomePriorAuthVisual() {
   return (
-    <div className={`home-prior-auth-visual ${dmSans.className}`} aria-hidden>
-      <header className="home-prior-auth-visual__header">
-        <div className="home-prior-auth-visual__header-copy">
-          <h3 className="home-prior-auth-visual__title">{ORDER.procedure}</h3>
-          <p className="home-prior-auth-visual__meta">{ORDER.patient}</p>
-        </div>
-        <span className="home-prior-auth-visual__call-timer">
-          {ORDER.callMinutes}
-          <span className="home-prior-auth-visual__call-timer-unit">m</span> {ORDER.callSeconds}
-          <span className="home-prior-auth-visual__call-timer-unit">s</span>
-        </span>
-      </header>
+    <div className="home-prior-auth-visual-shell">
+      <div className="home-prior-auth-visual__body">
+        <div className="home-prior-auth-visual__stage">
+          <div className="home-prior-auth-scale">
+            <div className={`home-prior-auth-visual ${dmSans.className}`} aria-hidden>
+              <header className="home-prior-auth-visual__header">
+                <div className="home-prior-auth-visual__header-copy">
+                  <p className="home-prior-auth-visual__meta">{ORDER.patient}</p>
+                </div>
+              </header>
 
-      <div className="home-prior-auth-visual__panel">
-        <CallBridge />
+              <div className="home-prior-auth-visual__panel">
+                <CallBridge />
 
-        <dl className="home-prior-auth-visual__details">
-          {DETAILS.map((item) => (
-            <div key={item.label} className="home-prior-auth-visual__detail-row">
-              <dt className="home-prior-auth-visual__detail-label">{item.label}</dt>
-              <dd className="home-prior-auth-visual__detail-value">{item.value}</dd>
+                <dl className="home-prior-auth-visual__details">
+                  {DETAILS.map((item) => (
+                    <div key={item.label} className="home-prior-auth-visual__detail-row">
+                      <dt className="home-prior-auth-visual__detail-label">{item.label}</dt>
+                      <dd className="home-prior-auth-visual__detail-value">{item.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+
+              <div className="home-prior-auth-visual__pipeline" aria-hidden>
+                <div className="home-prior-auth-visual__pipeline-rail">
+                  <span
+                    className="home-prior-auth-visual__pipeline-fill"
+                    style={{ width: `${PIPELINE_FILL_PERCENT}%` }}
+                  />
+                </div>
+                <div className="home-prior-auth-visual__pipeline-labels">
+                  {PIPELINE_STEPS.map((step) => (
+                    <span
+                      key={step.id}
+                      className={`home-prior-auth-visual__pipeline-label${
+                        step.status === "active" ? " home-prior-auth-visual__pipeline-label--active" : ""
+                      }`}
+                    >
+                      {step.label}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
-          ))}
-        </dl>
-      </div>
-
-      <div className="home-prior-auth-visual__pipeline" aria-hidden>
-        <div className="home-prior-auth-visual__pipeline-rail">
-          <span
-            className="home-prior-auth-visual__pipeline-fill"
-            style={{ width: `${PIPELINE_FILL_PERCENT}%` }}
-          />
-        </div>
-        <div className="home-prior-auth-visual__pipeline-labels">
-          {PIPELINE_STEPS.map((step) => (
-            <span
-              key={step.id}
-              className={`home-prior-auth-visual__pipeline-label${
-                step.status === "active" ? " home-prior-auth-visual__pipeline-label--active" : ""
-              }`}
-            >
-              {step.label}
-            </span>
-          ))}
+          </div>
         </div>
       </div>
     </div>

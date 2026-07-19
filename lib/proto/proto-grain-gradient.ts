@@ -25,6 +25,9 @@ export const PROTO_SHADER_MAX_PIXEL_COUNT_DESKTOP_HERO = Math.floor(2560 * 1440 
 /** Cap feature boxes — headroom for taller fit-shader cards at 2–3× DPR. */
 export const PROTO_SHADER_MAX_PIXEL_COUNT_FEATURE = Math.floor(1920 * 1080 * 3);
 
+/** Desktop home shader bands — 2× 1080p cap keeps quality while lowering GPU fill. */
+export const PROTO_SHADER_MAX_PIXEL_COUNT_DESKTOP_BAND = Math.floor(1920 * 1080 * 2);
+
 /** iPhone hero speaking orbs — tiny cap so all 11 instances fit in WebGL budget. */
 export const PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_ORB = Math.floor(320 * 320 * 1.5);
 
@@ -565,6 +568,10 @@ export function protoShaderMaxPixelCount(variant: ProtoGrainGradientVariant) {
 
   if (variant.startsWith("meet-proto-stack")) {
     return PROTO_SHADER_MAX_PIXEL_COUNT_STACK;
+  }
+
+  if (isDesktopHomeLayout()) {
+    return PROTO_SHADER_MAX_PIXEL_COUNT_DESKTOP_BAND;
   }
 
   return PROTO_SHADER_MAX_PIXEL_COUNT_FEATURE;

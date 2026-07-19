@@ -311,7 +311,7 @@ html[data-home-page] .home-feature-card-ui-scale--call-history {
 }
 
 html[data-home-page] .home-feature-card-ui-scale--no-shows {
-  transform: scale(0.92);
+  transform: scale(0.93);
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-card-ui-scale {
@@ -324,7 +324,7 @@ html[data-home-page][data-layout="desktop"] .home-feature-card-ui-scale--call-hi
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-card-ui-scale--no-shows {
-  transform: scale(1.08);
+  transform: scale(1.1);
 }
 
 html[data-home-page] .home-feature-card-section__title {
@@ -826,17 +826,16 @@ html[data-home-page][data-layout="desktop"] .home-feature-card-section--ui-panel
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-card-section--ui-panel .home-feature-card-ui-scale--no-shows {
-  transform: scale(1.28);
+  transform: scale(1.3);
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-card-section--ui-panel .home-call-history-visual {
   max-width: min(100%, clamp(30rem, 44vw, 44rem)) !important;
 }
 
-html[data-home-page][data-layout="desktop"] .home-feature-card-section--ui-panel .home-recall-queue-scale--desktop {
-  --home-recall-queue-scale: 1.72;
-  width: min(calc(26rem / var(--home-recall-queue-scale)), calc(88% / var(--home-recall-queue-scale)));
-  max-width: min(calc(26rem / var(--home-recall-queue-scale)), calc(88% / var(--home-recall-queue-scale)));
+html[data-home-page] .home-feature-card-section__card:not(.home-feature-card-section__card--agents-carousel) .home-recall-queue-visual {
+  width: 72%;
+  max-width: 72%;
 }
 
 /*
@@ -5641,9 +5640,9 @@ html[data-home-page] .home-feature-shader-band--workflow .home-feature-shader-ba
   position: relative;
   flex: 1 1 auto;
   min-height: 0;
-  width: 100vw;
-  max-width: 100vw;
-  margin-inline: calc(50% - 50vw);
+  width: 100%;
+  max-width: 100%;
+  margin-inline: 0;
   overflow: visible;
 }
 
@@ -6049,7 +6048,13 @@ html[data-home-page] .home-feature-shader-band--lab-alerts .home-feature-shader-
   justify-content: stretch;
 }
 
-html[data-home-page] .home-feature-shader-band--lab-alerts .home-feature-shader-band__feature-content > .doephone-section-reveal--carousel {
+html[data-home-page] .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-content {
+  align-items: stretch;
+  justify-content: stretch;
+}
+
+html[data-home-page] .home-feature-shader-band--lab-alerts .home-feature-shader-band__feature-content > .doephone-section-reveal--carousel,
+html[data-home-page] .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-content > .doephone-section-reveal--carousel {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
@@ -6065,11 +6070,32 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--guardrail
   padding-top: 0 !important;
 }
 
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--lab-alerts .home-feature-shader-band__feature-title,
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-title {
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--lab-alerts .home-feature-shader-band__feature-title {
   flex: 0 0 auto;
   margin: 0 0 clamp(1.15rem, 0.75rem + 1.85vmin, 1.85rem) !important;
   padding-top: max(2.15rem, calc(env(safe-area-inset-top, 0px) + calc(var(--app-vh, 100lvh) * 0.085))) !important;
+  color: #ffffff !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-shell {
+  position: relative;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-shell > .doephone-section-reveal--title {
+  position: absolute;
+  right: clamp(1.15rem, 3.25vw, 1.65rem);
+  bottom: clamp(0.85rem, 2.4vmin, 1.2rem);
+  left: auto;
+  z-index: 3;
+  width: auto;
+  max-width: min(100%, 28rem);
+}
+
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-title {
+  flex: 0 0 auto;
+  margin: 0 !important;
+  padding-top: 0 !important;
+  text-align: right;
   color: #ffffff !important;
 }
 
@@ -6118,6 +6144,11 @@ html[data-home-page] .home-feature-shader-band--call-summaries .home-feature-sec
 
 html[data-home-page] .home-feature-shader-band--call-summaries .home-feature-section__prior-auth {
   flex: 1 1 auto;
+  position: relative;
+  align-items: stretch;
+  justify-content: stretch;
+  min-height: 0;
+  height: 100%;
 }
 
 html[data-home-page] .home-feature-shader-band--lab-alerts .home-feature-section__lab-alerts {
@@ -6165,18 +6196,24 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--lab-a
   --home-shader-feature-scale: 1.32;
   width: calc(100% / var(--home-shader-feature-scale));
   max-width: calc(100% / var(--home-shader-feature-scale));
-  margin-inline: auto;
   margin-block: 0;
   transform: scale(var(--home-shader-feature-scale));
-  transform-origin: top center;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--call-summaries .home-prior-auth-scale {
+  margin-inline: 0;
+  margin-right: auto;
+  transform-origin: top left;
+}
+
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--lab-alerts .home-lab-alerts-scale {
+  margin-inline: 0;
+  margin-left: auto;
+  transform-origin: bottom right;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--active-agents .home-active-agents-scale {
   --home-shader-feature-scale: 1.2;
-}
-
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--call-summaries .home-prior-auth-scale {
-  transform-origin: center center;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--guardrails .home-guardrails-scale {
@@ -6195,11 +6232,18 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alert
   max-width: min(calc(30rem / var(--home-shader-feature-scale)), calc(100% / var(--home-shader-feature-scale)));
   margin-block: 0;
   transform: scale(var(--home-shader-feature-scale));
-  transform-origin: top center;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-prior-auth-scale {
-  transform-origin: center center;
+  margin-inline: 0;
+  margin-right: auto;
+  transform-origin: top left;
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alerts .home-lab-alerts-scale {
+  margin-inline: 0;
+  margin-left: auto;
+  transform-origin: bottom right;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--guardrails .home-guardrails-scale {
@@ -6341,26 +6385,25 @@ html[data-home-page] .home-feature-shader-band--lab-alerts .home-outreach-voice-
 }
 
 html[data-home-page] .home-feature-shader-band--lab-alerts .home-outreach-voice-visual__thread-stage {
-  display: flex;
-  flex: 1 1 auto;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  min-height: 0;
-  padding-bottom: clamp(4.25rem, 11.5vmin, 5.75rem);
-}
-
-html[data-home-page] .home-feature-shader-band--lab-alerts .home-outreach-voice-visual__emr-stage {
   position: absolute;
   right: 0;
   bottom: 0;
+  left: 0;
   z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  width: 100%;
+  max-width: 100%;
+  min-height: 0;
   pointer-events: none;
 }
 
-html[data-home-page] .home-outreach-emr-scale {
-  --home-outreach-emr-scale: 1;
-  transform: scale(var(--home-outreach-emr-scale));
+html[data-home-page] .home-feature-shader-band--lab-alerts .home-outreach-voice-visual__thread-stage .home-lab-alerts-scale {
+  width: calc(100% / var(--home-shader-feature-scale, 1.32));
+  max-width: calc(100% / var(--home-shader-feature-scale, 1.32));
+  margin-inline: 0;
+  margin-left: auto;
   transform-origin: bottom right;
   pointer-events: auto;
 }
@@ -6369,9 +6412,10 @@ html[data-home-page] .home-feature-shader-band--lab-alerts .home-outreach-voice-
   display: flex;
   flex-direction: column;
   gap: clamp(0.62rem, 1.75vmin, 0.76rem);
-  width: 100%;
+  width: min(100%, 21.5rem);
   max-width: min(100%, 21.5rem);
-  margin-inline: auto;
+  margin-inline: 0;
+  margin-left: auto;
   min-width: 0;
 }
 
@@ -6449,12 +6493,6 @@ html[data-home-page] .home-feature-shader-band--lab-alerts .home-outreach-voice-
   align-items: flex-start;
   gap: clamp(0.12rem, 0.34vmin, 0.16rem);
   min-width: 0;
-  max-width: min(100%, 15.5rem);
-  padding: clamp(0.72rem, 2.05vmin, 0.86rem) clamp(0.82rem, 2.32vmin, 0.94rem);
-  border-radius: clamp(0.45rem, 1.28vmin, 0.55rem);
-  background: var(--home-dusk-ui-surface);
-  border: 1px solid var(--home-dusk-ui-border);
-  box-shadow: var(--home-dusk-ui-shadow);
 }
 
 html[data-home-page] .home-feature-shader-band--lab-alerts .home-outreach-voice-visual__note-label {
@@ -6478,13 +6516,50 @@ html[data-home-page] .home-feature-shader-band--lab-alerts .home-outreach-voice-
 }
 
 /* Prior auth workflow board — call-summaries shader band. */
+html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual-shell {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__body {
+  position: relative;
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: visible;
+}
+
+html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__stage {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: 100%;
+  min-height: 0;
+  pointer-events: none;
+}
+
+html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__stage .home-prior-auth-scale {
+  margin-inline: 0;
+  margin-right: auto;
+  transform-origin: top left;
+  pointer-events: auto;
+}
+
 html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual {
   display: flex;
   flex-direction: column;
   gap: clamp(0.62rem, 1.75vmin, 0.76rem);
   width: 100%;
   max-width: min(100%, 21.5rem);
-  margin-inline: auto;
+  margin-inline: 0;
+  margin-right: auto;
   padding-inline: 0;
 }
 
@@ -6660,16 +6735,35 @@ html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-
   background: rgba(232, 160, 96, 0.35);
 }
 
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__bridge-caption {
+html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__bridge-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.14rem, 0.4vmin, 0.18rem);
   margin: 0;
   padding-top: clamp(0.42rem, 1.2vmin, 0.52rem);
   border-top: 1px solid rgba(242, 216, 168, 0.1);
+  min-width: 0;
+  text-align: center;
+}
+
+html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__bridge-meta-title {
   color: var(--home-dusk-ui-ink);
   font-size: clamp(0.78rem, 2.22vmin, 0.88rem);
-  font-weight: 400;
-  line-height: 1.35;
-  letter-spacing: -0.01em;
-  min-width: 0;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+
+html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__bridge-meta-timer {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(0.98rem, 2.78vmin, 1.12rem);
+  font-weight: 500;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  letter-spacing: -0.03em;
 }
 
 @keyframes home-prior-auth-meter-pulse {
@@ -6776,24 +6870,6 @@ html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-
 }
 
 /* No-show callback queue — ambient feature shader card. */
-html[data-home-page] .home-recall-queue-scale {
-  --home-recall-queue-scale: 1.16;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: calc(72% / var(--home-recall-queue-scale));
-  max-width: calc(72% / var(--home-recall-queue-scale));
-  margin-inline: auto;
-  transform: scale(var(--home-recall-queue-scale));
-  transform-origin: center center;
-}
-
-html[data-home-page] .home-recall-queue-scale--desktop {
-  --home-recall-queue-scale: 1.2;
-  width: min(calc(17.5rem / var(--home-recall-queue-scale)), calc(72% / var(--home-recall-queue-scale)));
-  max-width: min(calc(17.5rem / var(--home-recall-queue-scale)), calc(72% / var(--home-recall-queue-scale)));
-}
-
 html[data-home-page] .home-recall-queue-visual {
   display: flex;
   flex-direction: column;
@@ -6812,7 +6888,7 @@ html[data-home-page] .home-recall-queue-visual__header {
 html[data-home-page] .home-recall-queue-visual__summary {
   margin: 0;
   color: #1e343a;
-  font-size: clamp(1.02rem, 2.92vmin, 1.16rem);
+  font-size: clamp(0.96rem, 2.75vmin, 1.08rem);
   font-weight: 500;
   line-height: 1.1;
   letter-spacing: -0.015em;
@@ -9673,6 +9749,61 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
   transform: translateY(-7px);
 }
 
+/* Desktop home — scroll reveals without blur (same motion, less compositing cost). */
+@keyframes doephone-section-reveal-in-desktop {
+  0% {
+    opacity: 0;
+    transform: translateY(2.75rem);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes doephone-scroll-reveal-lift-in-desktop {
+  0% {
+    opacity: 0;
+    transform: translateY(1.75rem);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+html[data-home-page][data-layout="desktop"] .doephone-section-reveal,
+html[data-home-page][data-layout="desktop"] .doephone-reveal-lift {
+  filter: none;
+  will-change: opacity, transform;
+}
+
+html[data-home-page][data-layout="desktop"] .doephone-section-reveal--in.doephone-section-reveal--title,
+html[data-home-page][data-layout="desktop"] .doephone-section-reveal--in.doephone-section-reveal--carousel,
+html[data-home-page][data-layout="desktop"] .doephone-section-reveal--in.doephone-section-reveal--menu,
+html[data-home-page][data-layout="desktop"] .doephone-section-reveal--in.doephone-section-reveal--badge,
+html[data-home-page][data-layout="desktop"] .doephone-section-reveal--in.doephone-section-reveal--input,
+html[data-home-page][data-layout="desktop"] .doephone-section-reveal--in.doephone-section-reveal--agents-carousel,
+html[data-home-page][data-layout="desktop"] .doephone-section-reveal--in.doephone-section-reveal--agents-orbs,
+html[data-home-page][data-layout="desktop"] .doephone-section-reveal--in.doephone-section-reveal--agents-label,
+html[data-home-page][data-layout="desktop"] .doephone-section-reveal--in.doephone-section-reveal--agents-nav {
+  animation-name: doephone-section-reveal-in-desktop;
+}
+
+html[data-home-page][data-layout="desktop"] .doephone-reveal-lift--in {
+  animation-name: doephone-scroll-reveal-lift-in-desktop;
+}
+
+html[data-home-page][data-layout="desktop"] .home-prior-auth-scale,
+html[data-home-page][data-layout="desktop"] .home-lab-alerts-scale,
+html[data-home-page][data-layout="desktop"] .home-active-agents-scale,
+html[data-home-page][data-layout="desktop"] .home-active-agents-pills-scale,
+html[data-home-page][data-layout="desktop"] .home-call-logic-diagram-scale--bleed {
+  contain: layout paint;
+}
+
 html[data-home-page] .doephone-scroll-reveal-lift {
   width: 100%;
   display: block;
@@ -10095,28 +10226,31 @@ html[data-home-page] .hero-speaking-orbs__node-reveal {
   transform-origin: top center;
 }
 
-/* Customize agents — bleed half the diagram off the viewport right edge. */
+/* Customize agents — full diagram scaled to fit, anchored bottom-right. */
 html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram-scale--bleed {
-  --home-call-logic-bleed-scale: 1.6;
-  --home-call-logic-bleed-width: 25rem;
+  --home-call-logic-bleed-scale: 1.08;
+  --home-call-logic-bleed-width: 27rem;
   position: absolute !important;
-  right: calc(var(--home-call-logic-bleed-width) * var(--home-call-logic-bleed-scale) * -0.5) !important;
-  top: 50% !important;
-  width: var(--home-call-logic-bleed-width) !important;
-  max-width: var(--home-call-logic-bleed-width) !important;
+  right: clamp(1.15rem, 3.25vw, 1.65rem) !important;
+  bottom: clamp(0.85rem, 2.4vmin, 1.2rem) !important;
+  top: auto !important;
+  left: auto !important;
+  width: min(100%, var(--home-call-logic-bleed-width)) !important;
+  max-width: min(100%, var(--home-call-logic-bleed-width)) !important;
+  max-height: min(82vh, 48rem) !important;
   margin: 0 !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: stretch !important;
-  justify-content: center !important;
-  transform: translateY(-50%) scale(var(--home-call-logic-bleed-scale)) !important;
-  transform-origin: right center !important;
+  justify-content: flex-end !important;
+  transform: scale(var(--home-call-logic-bleed-scale)) !important;
+  transform-origin: bottom right !important;
   z-index: 5 !important;
 }
 
 html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram-scale--bleed .home-call-logic-diagram {
-  --call-logic-node-max: var(--home-call-logic-bleed-width);
-  --call-logic-node-radius: clamp(0.54rem, 1.54vmin, 0.64rem);
+  --call-logic-node-max: min(100%, 13.25rem);
+  --call-logic-node-radius: clamp(0.48rem, 1.38vmin, 0.58rem);
 }
 
 html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagram-scale--bleed .doephone-section-reveal--carousel {
@@ -10125,8 +10259,15 @@ html[data-home-page] .home-feature-shader-band--workflow .home-call-logic-diagra
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-call-logic-diagram-scale--bleed {
-  --home-call-logic-bleed-scale: 2.05;
-  --home-call-logic-bleed-width: 27rem;
+  --home-call-logic-bleed-scale: 1.32;
+  --home-call-logic-bleed-width: 30rem;
+  right: var(--desktop-page-inset-x) !important;
+  bottom: clamp(0.85rem, 1.5vw, 1.25rem) !important;
+  max-height: min(78vh, 50rem) !important;
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-call-logic-diagram-scale--bleed .home-call-logic-diagram {
+  --call-logic-node-max: min(100%, 14rem);
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--active-agents .home-feature-shader-band__feature-shell {
@@ -10963,24 +11104,53 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow 
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-shader-band__call-logic-bleed-stage {
-  min-height: clamp(22rem, 52vh, 34rem);
+  min-height: clamp(24rem, 58vh, 38rem);
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-prior-auth-visual {
   max-width: min(100%, 24rem);
 }
 
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-shell {
+  position: relative;
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-shell > .doephone-section-reveal--title {
+  position: absolute;
+  right: var(--desktop-page-inset-x);
+  bottom: clamp(0.85rem, 1.5vw, 1.25rem);
+  left: auto;
+  z-index: 3;
+  width: auto;
+  max-width: min(52%, 36rem);
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-title {
+  margin: 0 !important;
+  padding-top: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  text-align: right;
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-prior-auth-visual__stage {
+  left: 0;
+  top: clamp(0.85rem, 1.5vw, 1.25rem);
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alerts .home-outreach-voice-visual__thread-stage .home-lab-alerts-scale {
+  width: min(calc(30rem / var(--home-shader-feature-scale, 1.44)), calc(100% / var(--home-shader-feature-scale, 1.44)));
+  max-width: min(calc(30rem / var(--home-shader-feature-scale, 1.44)), calc(100% / var(--home-shader-feature-scale, 1.44)));
+}
+
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alerts .home-outreach-voice-visual__thread {
+  width: min(100%, 24rem);
   max-width: min(100%, 24rem);
 }
 
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alerts .home-outreach-voice-visual__emr-stage {
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alerts .home-outreach-voice-visual__thread-stage {
   right: 0;
   bottom: clamp(0.85rem, 1.5vw, 1.25rem);
-}
-
-html[data-home-page][data-layout="desktop"] .home-outreach-emr-scale {
-  --home-outreach-emr-scale: 1.44;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alerts .home-feature-section__lab-alerts,
@@ -11046,8 +11216,12 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band__workflow-
 
 @media (min-width: 1280px) {
   html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-call-logic-diagram-scale--bleed {
-    --home-call-logic-bleed-scale: 2.25;
-    --home-call-logic-bleed-width: 29rem;
+    --home-call-logic-bleed-scale: 1.42;
+    --home-call-logic-bleed-width: 32rem;
+  }
+
+  html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-call-logic-diagram-scale--bleed .home-call-logic-diagram {
+    --call-logic-node-max: min(100%, 14.5rem);
   }
 
   html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop .home-active-agents-pills-scale {
@@ -11744,10 +11918,6 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alert
   html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alerts .home-lab-alerts-scale {
     --home-shader-feature-scale: 1.48;
   }
-
-  html[data-home-page][data-layout="desktop"] .home-outreach-emr-scale {
-    --home-outreach-emr-scale: 1.48;
-  }
 }
 
 @media (min-width: 1536px) {
@@ -11756,7 +11926,11 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alert
   }
 
   html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-call-logic-diagram-scale--bleed {
-    --home-call-logic-bleed-scale: 2.4;
-    --home-call-logic-bleed-width: 31rem;
+    --home-call-logic-bleed-scale: 1.52;
+    --home-call-logic-bleed-width: 33rem;
+  }
+
+  html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-call-logic-diagram-scale--bleed .home-call-logic-diagram {
+    --call-logic-node-max: min(100%, 15rem);
   }
 }

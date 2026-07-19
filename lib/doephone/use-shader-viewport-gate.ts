@@ -2,9 +2,9 @@
 
 import { useEffect, useState, type RefObject } from "react";
 
-import { isDoePhoneWebGLBudgetActive } from "@/lib/doephone/shader-webgl-budget";
+import { isDesktopHomeWebGLBudgetActive, isDoePhoneWebGLBudgetActive } from "@/lib/doephone/shader-webgl-budget";
 
-/** Gate WebGL mounts to elements near the viewport on iPhone. */
+/** Gate WebGL mounts to elements near the viewport on iPhone and desktop home. */
 export function useShaderViewportGate(
   nodeRef: RefObject<HTMLElement | null>,
   rootMargin = "85% 0px",
@@ -12,7 +12,8 @@ export function useShaderViewportGate(
   const [inRange, setInRange] = useState(true);
 
   useEffect(() => {
-    if (!isDoePhoneWebGLBudgetActive()) {
+    const gateActive = isDoePhoneWebGLBudgetActive() || isDesktopHomeWebGLBudgetActive();
+    if (!gateActive) {
       setInRange(true);
       return;
     }

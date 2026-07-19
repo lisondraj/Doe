@@ -504,7 +504,9 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
               const distance = Math.abs(orbIndex - trackIndex);
               const focused = orbIndex === trackIndex;
               const onMainStrip = isPhoneLayout && isMainStripOrbIndex(orbIndex, trailingCloneIndex);
-              const warmPaper = (isPhoneLayout ? onMainStrip : true) && distance <= 1 && carouselInView;
+              const warmPaper =
+                carouselInView &&
+                (isPhoneLayout ? onMainStrip && distance <= 1 : focused);
               const paperEnabled = warmPaper && (isPhoneLayout ? heroShaderReady : true);
               const paperSlotPriority = focused
                 ? SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_FOCUSED
@@ -516,7 +518,7 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
                   orbIndex={orbIndex}
                   scheme={scheme}
                   focused={focused}
-                  blurPx={isDesktop ? getOrbBlur(distance) : 0}
+                  blurPx={isDesktop ? 0 : getOrbBlur(distance)}
                   isDesktop={isDesktop}
                   isPhoneLayout={isPhoneLayout}
                   paperEnabled={paperEnabled}

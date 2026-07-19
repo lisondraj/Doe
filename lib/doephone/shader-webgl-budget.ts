@@ -16,6 +16,7 @@ export const SHADER_WEBGL_SLOT_PRIORITY = {
 } as const;
 
 const PHONE_MAX_WEBGL_SLOTS = 8;
+const DESKTOP_HOME_MAX_WEBGL_SLOTS = 5;
 
 /** Hero-class shaders always keep headroom — carousel orbs cannot consume the last slot. */
 const HERO_CLASS_PRIORITY = SHADER_WEBGL_SLOT_PRIORITY.HERO_BACKGROUND;
@@ -33,6 +34,23 @@ export function isDoePhoneWebGLBudgetActive() {
     document.documentElement.getAttribute("data-doeforvc-always-phone") === "true" ||
     document.querySelector("[data-doeforvc-view='iphone']") != null
   );
+}
+
+export function isDesktopHomeWebGLBudgetActive() {
+  if (typeof document === "undefined") return false;
+  return (
+    document.documentElement.getAttribute("data-layout") === "desktop" &&
+    document.documentElement.getAttribute("data-home-page") === "true"
+  );
+}
+
+function isShaderWebGLBudgetActive() {
+  return isDoePhoneWebGLBudgetActive() || isDesktopHomeWebGLBudgetActive();
+}
+
+function maxWebGLSlots() {
+  if (isDesktopHomeWebGLBudgetActive()) return DESKTOP_HOME_MAX_WEBGL_SLOTS;
+  return PHONE_MAX_WEBGL_SLOTS;
 }
 
 function isHomePhoneRoute() {
@@ -78,7 +96,7 @@ function findLowestSlot(filter?: (priority: number) => boolean) {
 function maxNonHeroSlots() {
   const heroCount = countHeroClassSlots();
   const reserveForHero = isHomePhoneRoute() && !hasHomeHeroBackgroundSlot() ? 1 : 0;
-  return Math.max(0, PHONE_MAX_WEBGL_SLOTS - heroCount - reserveForHero);
+  return Math.max(0, maxWebGLSlots() - heroCount - reserveForHero);
 }
 
 function tryEvictForSlot(priority: number, onlyNonHero: boolean) {
@@ -98,7 +116,7 @@ export function acquireShaderWebGLSlot(
   priority: number,
   evict: () => void,
 ): boolean {
-  if (!isDoePhoneWebGLBudgetActive()) return true;
+  if (!isShaderWebGLBudgetActive()) return true;
 
   const existing = slots.get(id);
   if (existing) {
@@ -107,7 +125,7 @@ export function acquireShaderWebGLSlot(
   }
 
   if (isHeroClassPriority(priority)) {
-    if (slots.size >= PHONE_MAX_WEBGL_SLOTS && !tryEvictForSlot(priority, false)) {
+    if (slots.size >= maxWebGLSlots() && !tryEvictForSlot(priority, false)) {
       return false;
     }
     slots.set(id, { priority, evict });
@@ -124,7 +142,7 @@ export function acquireShaderWebGLSlot(
     }
   }
 
-  if (slots.size >= PHONE_MAX_WEBGL_SLOTS) {
+  if (slots.size >= maxWebGLSlots()) {
     return false;
   }
 
@@ -145,7 +163,7 @@ export function acquireHomeHeroBackgroundSlot(evict: () => void): boolean {
     return true;
   }
 
-  while (slots.size >= PHONE_MAX_WEBGL_SLOTS && !tryEvictForSlot(priority, false)) {
+  while (slots.size >= maxWebGLSlots() && !tryEvictForSlot(priority, false)) {
     return false;
   }
 

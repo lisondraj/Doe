@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 
 import { DesktopNavActionRow } from "@/components/nav/DesktopNavActionRow";
 import { DOE_DESKTOP_NAV_LOGO_TW } from "@/lib/doephone/doe-desktop-layout-styles";
@@ -56,13 +56,26 @@ export function DesktopPunchedSiteNav({
   /** About (and similar) — stay punched; home morphs after hero. */
   alwaysPunched?: boolean;
 } = {}) {
-  const [punchProgress, setPunchProgress] = useState(alwaysPunched ? 1 : 0);
+  const navRef = useRef<HTMLElement>(null);
   const targetRef = useRef(alwaysPunched ? 1 : 0);
   const displayRef = useRef(alwaysPunched ? 1 : 0);
   const rafRef = useRef(0);
 
+  const applyPunchProgress = useCallback((progress: number) => {
+    const nav = navRef.current;
+    if (!nav) return;
+
+    const shellProgress = progress * progress;
+    nav.style.setProperty("--proto-nav-frost-progress", String(progress));
+    nav.style.setProperty("--proto-nav-frost-shell-progress", String(shellProgress));
+    nav.classList.toggle("proto-nav--scrolled", progress > 0.02);
+  }, []);
+
   useLayoutEffect(() => {
-    if (alwaysPunched) return;
+    if (alwaysPunched) {
+      applyPunchProgress(1);
+      return;
+    }
 
     if (window.scrollY !== 0) {
       window.scrollTo(0, 0);
@@ -70,14 +83,14 @@ export function DesktopPunchedSiteNav({
 
     targetRef.current = 0;
     displayRef.current = 0;
-    setPunchProgress(0);
-  }, [alwaysPunched]);
+    applyPunchProgress(0);
+  }, [alwaysPunched, applyPunchProgress]);
 
   useEffect(() => {
     if (alwaysPunched) {
       targetRef.current = 1;
       displayRef.current = 1;
-      setPunchProgress(1);
+      applyPunchProgress(1);
       return;
     }
 
@@ -99,7 +112,7 @@ export function DesktopPunchedSiteNav({
           : current + (target - current) * PUNCH_LERP;
 
       displayRef.current = next;
-      setPunchProgress((prev) => (Math.abs(prev - next) < PUNCH_SNAP_EPS ? prev : next));
+      applyPunchProgress(next);
 
       if (Math.abs(target - next) >= PUNCH_SNAP_EPS) {
         rafRef.current = requestAnimationFrame(tick);
@@ -117,7 +130,7 @@ export function DesktopPunchedSiteNav({
 
     readTarget();
     displayRef.current = targetRef.current;
-    setPunchProgress(targetRef.current);
+    applyPunchProgress(targetRef.current);
 
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule);
@@ -126,23 +139,16 @@ export function DesktopPunchedSiteNav({
       window.removeEventListener("resize", schedule);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [alwaysPunched]);
+  }, [alwaysPunched, applyPunchProgress]);
 
-  const shellProgress = punchProgress * punchProgress;
-  const scrolled = punchProgress > 0.02;
   const cta = alwaysPunched ? ABOUT_PUNCHED_CTA : HOME_CTA;
-
-  const navStyle = {
-    ["--proto-nav-frost-progress" as string]: punchProgress,
-    ["--proto-nav-frost-shell-progress" as string]: shellProgress,
-  } as CSSProperties;
 
   return (
     <nav
+      ref={navRef}
       className={`desktop-punched-nav desktop-home-nav fixed top-0 left-0 right-0 z-[50] proto-nav-scroll-frost proto-nav--motion-ready ${
         alwaysPunched ? "proto-nav-always-punched desktop-punched-nav--punched " : ""
-      }${scrolled ? "proto-nav--scrolled " : ""}${className}`.trim()}
-      style={navStyle}
+      }${className}`.trim()}
       aria-label={ariaLabel}
     >
       <div className="proto-nav-frost-shell">

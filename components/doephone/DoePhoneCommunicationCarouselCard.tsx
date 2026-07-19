@@ -322,6 +322,7 @@ export function DoePhoneCommunicationCarouselCard({
           variant={shaderSurface.variant}
           colors={shaderSurface.colors}
           colorBack={shaderSurface.colorBack}
+          static={layout === "desktop"}
           className={`${DOEPHONE_SECTION_CAROUSEL_RADIUS} ${backdropClassName}`.trim()}
         />
       ) : (
