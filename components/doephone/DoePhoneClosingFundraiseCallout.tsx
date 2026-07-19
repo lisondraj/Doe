@@ -8,18 +8,18 @@ import { dmSans, suisseIntl } from "@/lib/home/fonts";
 const FUNDRAISE_DESCRIPTION =
   "We are meeting with US and Canadian backers who share our vision for provider-built clinical AI.";
 
-function MailIcon({ className }: { className?: string }) {
+function MailOutlineIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" aria-hidden className={className}>
       <path
         d="M4 7.25h16c.69 0 1.25.56 1.25 1.25v9c0 .69-.56 1.25-1.25 1.25H4c-.69 0-1.25-.56-1.25-1.25v-9c0-.69.56-1.25 1.25-1.25Z"
         stroke="currentColor"
-        strokeWidth="1.5"
+        strokeWidth="1.35"
       />
       <path
         d="m5.25 8.5 6.75 4.75L18.75 8.5"
         stroke="currentColor"
-        strokeWidth="1.5"
+        strokeWidth="1.35"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -43,29 +43,25 @@ export function DoePhoneClosingFundraiseCallout() {
 
   return (
     <aside className="home-closing-section__fundraise" aria-label="Fundraising">
-      <div className="home-closing-section__fundraise-headline-row">
-        <p className={`home-closing-section__fundraise-headline ${suisseIntl.className}`}>
-          <span className="home-closing-section__fundraise-headline-line">We are actively raising</span>
-          <span className="home-closing-section__fundraise-headline-line home-closing-section__fundraise-headline-line--accent">
-            a pre-seed round.
-          </span>
-        </p>
-        <div className="home-closing-section__fundraise-mail-wrap">
+      <p className={`home-closing-section__fundraise-headline ${suisseIntl.className}`}>
+        <span className="home-closing-section__fundraise-headline-line">We are actively raising</span>
+        <span className="home-closing-section__fundraise-headline-line home-closing-section__fundraise-headline-line--accent home-closing-section__fundraise-headline-line--with-mail">
+          <span className="home-closing-section__fundraise-headline-text">a pre-seed round.</span>
           <button
             type="button"
-            className="home-closing-section__fundraise-mail"
+            className="home-closing-section__fundraise-mail-outline"
             onClick={handleCopyEmail}
             aria-label={`Copy ${ABOUT_CONTACT_EMAIL} to clipboard`}
           >
-            <MailIcon className="home-closing-section__fundraise-mail-icon" />
+            <MailOutlineIcon className="home-closing-section__fundraise-mail-outline-icon" />
           </button>
           {copied ? (
             <span className={`home-closing-section__fundraise-copied ${dmSans.className}`} role="status">
               Copied
             </span>
           ) : null}
-        </div>
-      </div>
+        </span>
+      </p>
       <p className={`home-closing-section__fundraise-description ${dmSans.className}`}>
         {FUNDRAISE_DESCRIPTION}
       </p>
