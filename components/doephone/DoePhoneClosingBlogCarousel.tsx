@@ -66,7 +66,11 @@ function CarouselChevron({
 /** Infinite horizontal blog carousel — fills space between title and fundraise note. */
 export function DoePhoneClosingBlogCarousel() {
   const viewportRef = useRef<HTMLDivElement>(null);
-  const [slideStepPx, setSlideStepPx] = useState(0);
+  const [metrics, setMetrics] = useState({
+    slideStepPx: 0,
+    slideWidthPx: 0,
+    viewportWidthPx: 0,
+  });
   const [position, setPosition] = useState(CLOSING_ARTICLE_COUNT);
   const [transitionEnabled, setTransitionEnabled] = useState(true);
   const loopingRef = useRef(false);
@@ -85,7 +89,12 @@ export function DoePhoneClosingBlogCarousel() {
     if (!track) return;
     const styles = getComputedStyle(track);
     const gap = Number.parseFloat(styles.columnGap || styles.gap || "0") || 0;
-    setSlideStepPx(firstSlide.offsetWidth + gap);
+    const slideWidthPx = firstSlide.offsetWidth;
+    setMetrics({
+      slideStepPx: slideWidthPx + gap,
+      slideWidthPx,
+      viewportWidthPx: viewport.offsetWidth,
+    });
   }, []);
 
   useLayoutEffect(() => {
@@ -153,7 +162,10 @@ export function DoePhoneClosingBlogCarousel() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [goNext, goPrev]);
 
-  const translateX = slideStepPx > 0 ? -position * slideStepPx : 0;
+  const translateX =
+    metrics.slideStepPx > 0 && metrics.viewportWidthPx > 0
+      ? metrics.viewportWidthPx / 2 - metrics.slideWidthPx / 2 - position * metrics.slideStepPx
+      : 0;
 
   return (
     <div className="home-closing-section__carousel" aria-label="Featured updates">
