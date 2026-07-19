@@ -4835,7 +4835,9 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__caption--controls {
   z-index: 6;
   gap: 0;
-  margin-top: clamp(0.62rem, calc(var(--app-vw, 100vw) * 0.018), 0.88rem);
+  width: 100%;
+  max-width: min(30rem, calc(var(--app-vw, 100vw) * 0.96));
+  margin-top: clamp(1.15rem, calc(var(--app-vw, 100vw) * 0.034), 1.55rem);
 }
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__caption--description {
   gap: 0;
