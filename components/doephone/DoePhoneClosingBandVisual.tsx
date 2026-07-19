@@ -18,7 +18,7 @@ export function DoePhoneClosingBandVisual({
     <div
       className={`home-closing-section__card-box relative w-full overflow-hidden border border-[#D9D4CC] bg-[#EBE7E0] ${DOEPHONE_SECTION_CAROUSEL_RADIUS}${
         fillHeight
-          ? " home-closing-section__card-box--carousel min-h-0"
+          ? " home-closing-section__card-box--carousel h-full min-h-0"
           : ` ${DOEPHONE_SECTION_CLOSING_FEATURE_HEIGHT}`
       }`}
     >
