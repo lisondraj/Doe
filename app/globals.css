@@ -161,6 +161,9 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) {
   --home-dusk-ui-shadow:
     inset 0 1px 0 rgba(242, 216, 168, 0.08),
     0 10px 28px -16px rgba(0, 0, 0, 0.42);
+  --home-iphone-section-title-size: clamp(2.35rem, 1.15rem + 6.8vmin, 3.85rem);
+  --home-iphone-section-title-leading: 1.02;
+  --home-iphone-section-title-tracking: -0.035em;
 }
 html[data-home-page]:has(.doephone-mobile-root) body,
 html[data-about-page]:has(.blog-mobile-root) body,
@@ -5334,9 +5337,6 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--lab-a
   justify-content: flex-start;
   gap: 0;
 }
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-shell {
-  padding-bottom: 0 !important;
-}
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-shell,
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alerts .home-feature-shader-band__feature-shell {
   padding-inline: 0;
@@ -5367,13 +5367,13 @@ html[data-home-page] .home-feature-shader-band--call-summaries .home-feature-sha
   padding-top: clamp(0.2rem, 0.65vmin, 0.45rem) !important;
   padding-bottom: clamp(0.85rem, 2.4vmin, 1.2rem) !important;
 }
-html[data-home-page] .home-feature-shader-band--lab-alerts .home-feature-shader-band__feature-content,
-html[data-home-page] .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-content {
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alerts .home-feature-shader-band__feature-content,
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-content {
   align-items: stretch;
   justify-content: stretch;
 }
-html[data-home-page] .home-feature-shader-band--lab-alerts .home-feature-shader-band__feature-content > .doephone-section-reveal--carousel,
-html[data-home-page] .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-content > .doephone-section-reveal--carousel {
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alerts .home-feature-shader-band__feature-content > .doephone-section-reveal--carousel,
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-content > .doephone-section-reveal--carousel {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
@@ -5392,14 +5392,21 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--guardrail
   padding-top: 0 !important;
 }
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band__feature-title,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band__workflow-title,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-card-section__title:not(.home-feature-card-section__title--closing) {
+  font-size: var(--home-iphone-section-title-size) !important;
+  line-height: var(--home-iphone-section-title-leading) !important;
+  letter-spacing: var(--home-iphone-section-title-tracking) !important;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .home-feature-shader-band__feature-title {
   flex: 0 0 auto;
   margin: 0 0 clamp(0.45rem, 0.28rem + 0.75vmin, 0.72rem) !important;
   padding-top: max(3.15rem, calc(env(safe-area-inset-top, 0px) + calc(var(--app-vh, 100lvh) * 0.105))) !important;
-  font-size: clamp(2.35rem, 1.15rem + 6.8vmin, 3.85rem) !important;
-  line-height: 1.02 !important;
-  letter-spacing: -0.035em !important;
   color: #ffffff !important;
 }
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--guardrails .home-feature-shader-band__feature-title {
@@ -5432,13 +5439,18 @@ html[data-home-page] .home-feature-shader-band--call-summaries .home-feature-sec
 }
 html[data-home-page] .home-feature-shader-band--call-summaries .home-feature-section__prior-auth {
   flex: 1 1 auto;
+}
+html[data-home-page] .home-feature-shader-band--lab-alerts .home-feature-section__lab-alerts {
+  flex: 0 0 auto;
+}
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-feature-section__prior-auth {
   position: relative;
   align-items: stretch;
   justify-content: stretch;
   min-height: 0;
   height: 100%;
 }
-html[data-home-page] .home-feature-shader-band--lab-alerts .home-feature-section__lab-alerts {
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alerts .home-feature-section__lab-alerts {
   flex: 1 1 auto;
   position: relative;
   align-items: stretch;
@@ -5478,18 +5490,36 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--lab-a
   --home-shader-feature-scale: 1.32;
   width: calc(100% / var(--home-shader-feature-scale));
   max-width: calc(100% / var(--home-shader-feature-scale));
+  margin-inline: auto;
   margin-block: 0;
   transform: scale(var(--home-shader-feature-scale));
+  transform-origin: top center;
 }
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--call-summaries .home-prior-auth-scale {
-  margin-inline: 0;
-  margin-right: auto;
-  transform-origin: top left;
+  transform-origin: center center;
 }
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--lab-alerts .home-lab-alerts-scale {
-  margin-inline: 0;
-  margin-left: auto;
-  transform-origin: bottom right;
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--call-summaries .home-feature-section__prior-auth {
+  flex: 1 1 auto;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  height: auto;
+}
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--lab-alerts .home-feature-section__lab-alerts {
+  flex: 0 0 auto;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  height: auto;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--call-summaries
+  .home-feature-shader-band__feature-content,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--lab-alerts
+  .home-feature-shader-band__feature-content {
+  align-items: center;
+  justify-content: center;
 }
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--active-agents .home-active-agents-scale {
   --home-shader-feature-scale: 1.2;
@@ -6393,9 +6423,6 @@ html[data-home-page] .home-feature-shader-band--workflow .home-feature-section__
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-feature-card-section__title--specialties {
   margin: 0;
   padding-top: 0;
-  font-size: clamp(2.35rem, 1.15rem + 6.8vmin, 3.85rem) !important;
-  line-height: 1.02 !important;
-  letter-spacing: -0.035em !important;
 }
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__tapestry {
   --specialty-row-gap: clamp(1rem, 0.55rem + 2.25vmin, 1.42rem);
@@ -8707,37 +8734,95 @@ html[data-home-page][data-layout="desktop"] .home-feature-card-section__specialt
 }
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--lab-alerts
+  .home-feature-shader-band__feature-title,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--call-summaries
   .home-feature-shader-band__feature-title {
   flex: 0 0 auto;
   margin: 0 0 clamp(1.15rem, 0.75rem + 1.85vmin, 1.85rem) !important;
   padding-top: max(2.15rem, calc(env(safe-area-inset-top, 0px) + calc(var(--app-vh, 100lvh) * 0.085))) !important;
   color: #ffffff !important;
+  text-align: left;
 }
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--call-summaries
-  .home-feature-shader-band__feature-shell {
-  position: relative;
+  .home-prior-auth-visual-shell {
+  width: 100%;
+  height: auto;
+  min-height: 0;
 }
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--call-summaries
-  .home-feature-shader-band__feature-shell
-  > .doephone-section-reveal--title {
-  position: absolute;
-  right: clamp(1.15rem, 3.25vw, 1.65rem);
-  bottom: var(--proto-phone-gutter-y);
-  left: auto;
-  z-index: 3;
-  width: auto;
-  max-width: min(100%, 28rem);
-}
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .home-feature-shader-band--call-summaries
-  .home-feature-shader-band__feature-title {
+  .home-prior-auth-visual__body {
+  position: static;
   flex: 0 0 auto;
-  margin: 0 !important;
-  padding: 0 !important;
-  text-align: right;
-  color: #ffffff !important;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--call-summaries
+  .home-prior-auth-visual__stage {
+  position: static;
+  display: block;
+  width: 100%;
+  pointer-events: auto;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--call-summaries
+  .home-prior-auth-visual__stage
+  .home-prior-auth-scale {
+  margin-inline: auto;
+  transform-origin: center center;
+  pointer-events: auto;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--call-summaries
+  .home-prior-auth-visual {
+  margin-inline: auto;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--lab-alerts
+  .home-outreach-voice-visual {
+  gap: clamp(0.62rem, 1.75vmin, 0.76rem);
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  max-width: min(100%, 21.5rem);
+  margin-inline: auto;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--lab-alerts
+  .home-outreach-voice-visual__body {
+  position: static;
+  flex: 0 0 auto;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--lab-alerts
+  .home-outreach-voice-visual__thread-stage {
+  position: static;
+  display: block;
+  width: 100%;
+  pointer-events: auto;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--lab-alerts
+  .home-outreach-voice-visual__thread-stage
+  .home-lab-alerts-scale {
+  margin-inline: auto;
+  transform-origin: top center;
+  pointer-events: auto;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--lab-alerts
+  .home-outreach-voice-visual__thread {
+  width: 100%;
+  max-width: none;
+  margin-inline: auto;
+  margin-left: auto;
 }
 html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Closing"] [aria-hidden].border {
   border-color: #d8c8b0 !important;
