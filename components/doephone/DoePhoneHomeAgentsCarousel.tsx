@@ -491,6 +491,29 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
     .filter(Boolean)
     .join(" ");
 
+  const labelRow = (
+    <div className="home-agents-carousel__label-row">
+      <CarouselChevron
+        direction="left"
+        onClick={goPrev}
+        label="Previous agent"
+        className={doePhoneSectionRevealSegmentClass("agents-nav", revealed)}
+      />
+      <div
+        className={`hero-speaking-orb__tag hero-speaking-orb__tag--carousel hero-speaking-orb__tag--visible ${dmSans.className} ${doePhoneSectionRevealSegmentClass("agents-label", revealed)}`}
+        aria-hidden
+      >
+        <span className="hero-speaking-orb__tag-text">{active.label}</span>
+      </div>
+      <CarouselChevron
+        direction="right"
+        onClick={goNext}
+        label="Next agent"
+        className={doePhoneSectionRevealSegmentClass("agents-nav", revealed)}
+      />
+    </div>
+  );
+
   return (
     <div className={`home-agents-carousel ${dmSans.className}`} aria-hidden>
       <div
@@ -538,28 +561,16 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
             })}
           </div>
         </div>
-      </div>
-      <div className="home-agents-carousel__caption">
-        <div className="home-agents-carousel__label-row">
-          <CarouselChevron
-            direction="left"
-            onClick={goPrev}
-            label="Previous agent"
-            className={doePhoneSectionRevealSegmentClass("agents-nav", revealed)}
-          />
-          <div
-            className={`hero-speaking-orb__tag hero-speaking-orb__tag--carousel hero-speaking-orb__tag--visible ${dmSans.className} ${doePhoneSectionRevealSegmentClass("agents-label", revealed)}`}
-            aria-hidden
-          >
-            <span className="hero-speaking-orb__tag-text">{active.label}</span>
+        {isPhoneLayout ? (
+          <div className="home-agents-carousel__caption home-agents-carousel__caption--controls">
+            {labelRow}
           </div>
-          <CarouselChevron
-            direction="right"
-            onClick={goNext}
-            label="Next agent"
-            className={doePhoneSectionRevealSegmentClass("agents-nav", revealed)}
-          />
-        </div>
+        ) : null}
+      </div>
+      <div
+        className={`home-agents-carousel__caption${isPhoneLayout ? " home-agents-carousel__caption--description" : ""}`}
+      >
+        {isDesktop ? labelRow : null}
         <p
           className={`home-agents-carousel__description ${dmSans.className} ${doePhoneSectionRevealSegmentClass("agents-nav", revealed)}`}
           aria-hidden
