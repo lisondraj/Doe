@@ -2,7 +2,6 @@ import { DoeHealthHome } from "@/components/doehealth/DoeHealthHome";
 
 export const dynamic = "force-dynamic";
 
-/** Legacy preview — same landing as /doehealth. */
-export default function DesignersPage() {
+export default function DoeHealthPage() {
   return <DoeHealthHome />;
 }

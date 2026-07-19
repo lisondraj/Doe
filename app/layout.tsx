@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { RootChrome } from "@/components/RootChrome";
 import { aboutRouteBootstrapScript } from "@/lib/about/about-route-bootstrap-script";
-import { designersTouchPhoneBootstrapScript } from "@/lib/designers/designers-touch-phone-bootstrap-script";
+import { doeHealthLandingTouchBootstrapScript } from "@/lib/doehealth/doehealth-landing-bootstrap-script";
 import { homeRouteBootstrapScript } from "@/lib/home/home-route-bootstrap-script";
 import { DESIGNERS_SITE_HOST } from "@/lib/site-domains";
 
@@ -33,7 +33,7 @@ export const viewport: Viewport = {
   themeColor: DOE_PAGE_SURFACE,
 };
 
-const designersTouchBootstrap = designersTouchPhoneBootstrapScript(DESIGNERS_SITE_HOST);
+const designersTouchBootstrap = doeHealthLandingTouchBootstrapScript(DESIGNERS_SITE_HOST);
 const homeBootstrap = homeRouteBootstrapScript();
 const aboutBootstrap = aboutRouteBootstrapScript();
 

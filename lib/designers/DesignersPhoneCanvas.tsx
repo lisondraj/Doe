@@ -4,7 +4,7 @@ import { useLayoutEffect } from "react";
 
 import { useDesignersPhoneVmin } from "@/lib/designers/use-designers-phone-vmin";
 
-/** Designers route — iPhone canvas corrections scoped to /designers only. */
+/** Designers route — iPhone canvas corrections scoped to /doehealth and /designers. */
 export function DesignersPhoneCanvas({ children }: { children: React.ReactNode }) {
   useDesignersPhoneVmin();
 

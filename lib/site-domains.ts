@@ -2,7 +2,7 @@
 export const PRIMARY_SITE_HOST =
   process.env.PRIMARY_SITE_HOST ?? "doe.care";
 
-/** Designers landing domain — serves /designers at the site root. */
+/** Designers landing domain — rewrites site root to /doehealth (default: doehealth.care). */
 export const DESIGNERS_SITE_HOST =
   process.env.DESIGNERS_SITE_HOST ?? process.env.JOIN_SITE_HOST ?? "doehealth.care";
 
@@ -14,6 +14,8 @@ export const WAITLIST_PATH = "/waitlist";
 export const ABOUT_PATH = "/about";
 export const PROTO_INVEST_PATH = "/proto-invest";
 export const DESIGNERS_PATH = "/designers";
+/** Editable landing served at doehealth.care root via middleware rewrite. */
+export const DOEHEALTH_PATH = "/doehealth";
 
 const LOCAL_DEV_HOSTS = new Set(["localhost", "127.0.0.1"]);
 
@@ -85,7 +87,11 @@ export function designersSiteOrigin(protocol: "http" | "https" = "https"): strin
 }
 
 export function designersPageUrl(protocol: "http" | "https" = "https"): string {
-  return `${designersSiteOrigin(protocol)}${DESIGNERS_PATH}`;
+  return `${designersSiteOrigin(protocol)}${DOEHEALTH_PATH}`;
+}
+
+export function doeHealthPageUrl(protocol: "http" | "https" = "https"): string {
+  return `${designersSiteOrigin(protocol)}${DOEHEALTH_PATH}`;
 }
 
 export function joinPageUrl(protocol: "http" | "https" = "https"): string {
