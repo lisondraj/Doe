@@ -197,10 +197,8 @@ export function DoePhoneHomeShaderBandSection({
           </DoePhoneScrollRevealContent>
           <div className="home-feature-shader-band__feature-content flex min-h-0 flex-1 flex-col items-center justify-center">
             <DoePhoneScrollRevealContent revealed={revealed} segment="carousel" className="w-full">
-              <div className="home-feature-section__lab-alerts relative z-[20] w-full shrink-0">
-                <div className="home-lab-alerts-scale">
-                  <DoePhoneHomeLabAlertsVisual />
-                </div>
+              <div className="home-feature-section__lab-alerts relative z-[20] w-full min-h-0 flex-1">
+                <DoePhoneHomeLabAlertsVisual />
               </div>
             </DoePhoneScrollRevealContent>
           </div>

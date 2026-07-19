@@ -59,7 +59,7 @@ export function HomeFooter({
               className={`home-footer-contact min-w-0 shrink text-left text-white ${inter.className} text-[clamp(1.08rem,0.92rem+0.62vmin,1.32rem)] font-normal leading-[1.38] tracking-[-0.01em] iphone-page:text-[clamp(1.02rem,0.88rem+0.56vmin,1.22rem)]`}
             >
               <p className="text-[clamp(1.22rem,1.02rem+0.72vmin,1.48rem)] font-semibold leading-[1.16] iphone-page:text-[clamp(1.14rem,0.98rem+0.65vmin,1.36rem)]">
-                Doe Corporation
+                Doe Intelligence Inc
               </p>
               <address className="mt-2.5 space-y-0.5 not-italic text-white/88">
                 <span className="block">250 Hudson Street</span>
@@ -67,10 +67,10 @@ export function HomeFooter({
                 <span className="block">United States</span>
               </address>
               <a
-                href="mailto:ask@doehealth.care"
+                href="mailto:james@doe.care"
                 className="mt-2.5 inline-block text-white/88 no-underline transition-colors hover:text-white"
               >
-                ask@doehealth.care
+                james@doe.care
               </a>
             </div>
 
@@ -106,7 +106,7 @@ export function HomeFooter({
           >
             <Link
               href="/"
-              className={`pointer-events-auto inline-block shrink-0 text-center font-normal leading-[0.65] tracking-tight no-underline transition-opacity hover:opacity-90 ${lora.className}`}
+              className={`home-footer-wordmark pointer-events-auto inline-block shrink-0 text-center font-normal leading-[0.65] tracking-tight no-underline transition-opacity hover:opacity-90 ${lora.className}`}
               style={{
                 color: footerWordmarkColor,
                 /** Giant: wide enough that “d” / “e” bleed past L/R edges; milder bottom bleed. */

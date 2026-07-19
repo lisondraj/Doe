@@ -64,9 +64,12 @@ export function DoePhoneHomeFeatureCardSection({
     return () => mq.removeEventListener("change", sync);
   }, []);
 
+  const isUiPanel = !showSpecialtyColumns && !showAgentsCarousel;
+  const isDesktop = layoutVariant === "desktop";
+
   return (
     <section
-      className={`home-feature-card-section${showSpecialtyColumns ? " home-feature-card-section--specialties" : ""} ${DOEPHONE_MAIN_PAGE_BEIGE_SECTION}`}
+      className={`home-feature-card-section${showSpecialtyColumns ? " home-feature-card-section--specialties" : ""}${isUiPanel ? " home-feature-card-section--ui-panel" : ""} ${DOEPHONE_MAIN_PAGE_BEIGE_SECTION}`}
       aria-label={slide.menuLabel}
     >
       <div className={`${DOEPHONE_SECTION_CONTENT_CENTER} home-feature-card-section__inner`}>
@@ -95,12 +98,17 @@ export function DoePhoneHomeFeatureCardSection({
             </div>
           ) : (
             <>
-              <DoePhoneScrollRevealContent revealed={revealed} segment="title">
+              <DoePhoneScrollRevealContent
+                revealed={revealed}
+                segment="title"
+                className={isDesktop ? "home-feature-card-section__ui-panel-reveal" : ""}
+              >
                 <div
                   className={`home-feature-card-section__card w-full ${DOEPHONE_SECTION_CAROUSEL_HEIGHT} layout-desktop:!h-full layout-desktop:!min-h-0 layout-desktop:!max-h-none layout-desktop:!flex-1 layout-desktop:!shrink`}
                 >
                   <DoePhoneCommunicationCarouselCard
                     slide={slide}
+                    layout={layoutVariant}
                     showExpandControls={false}
                     uiInteractive={false}
                     heroShaderColors
@@ -117,14 +125,16 @@ export function DoePhoneHomeFeatureCardSection({
                 </div>
               </DoePhoneScrollRevealContent>
 
-              <DoePhoneScrollRevealContent revealed={revealed} segment="carousel">
-                <h2
-                  className={`home-feature-card-section__title mt-[clamp(1.35rem,0.9rem+1.85vmin,2.15rem)] text-left ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] text-[#1E343A] ${suisseIntl.className}`}
-                >
-                  <span className="block">{titleLine1}</span>
-                  <span className="block">{titleLine2}</span>
-                </h2>
-              </DoePhoneScrollRevealContent>
+              {!isDesktop ? (
+                <DoePhoneScrollRevealContent revealed={revealed} segment="carousel">
+                  <h2
+                    className={`home-feature-card-section__title mt-[clamp(1.35rem,0.9rem+1.85vmin,2.15rem)] text-left ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] text-[#1E343A] ${suisseIntl.className}`}
+                  >
+                    <span className="block">{titleLine1}</span>
+                    <span className="block">{titleLine2}</span>
+                  </h2>
+                </DoePhoneScrollRevealContent>
+              ) : null}
             </>
           )}
         </div>

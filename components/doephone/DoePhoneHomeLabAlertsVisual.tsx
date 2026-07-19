@@ -52,28 +52,38 @@ function VoiceWaveform() {
 export function DoePhoneHomeLabAlertsVisual() {
   return (
     <div className={`home-outreach-voice-visual ${dmSans.className}`} aria-hidden>
-      <div className="home-outreach-voice-visual__thread">
-        <PlainNote label="Pulling from EMR" detail={`${CALL.firstName} is overdue for appointment`} />
+      <div className="home-outreach-voice-visual__body">
+        <div className="home-outreach-voice-visual__thread-stage">
+          <div className="home-lab-alerts-scale">
+            <div className="home-outreach-voice-visual__thread">
+              {MESSAGES.map((message) =>
+                message.role === "agent" ? (
+                  <div key={message.id} className="home-outreach-voice-visual__panel home-outreach-voice-visual__panel--agent">
+                    <div className="home-outreach-voice-visual__agent-meta">
+                      <VoiceWaveform />
+                      <span className="home-outreach-voice-visual__agent-label">Doe Agent</span>
+                    </div>
+                    <p className="home-outreach-voice-visual__panel-text">{message.text}</p>
+                  </div>
+                ) : (
+                  <div key={message.id} className="home-outreach-voice-visual__panel home-outreach-voice-visual__panel--patient">
+                    <div className="home-outreach-voice-visual__agent-meta">
+                      <VoiceWaveform />
+                      <span className="home-outreach-voice-visual__agent-label">{CALL.patient}</span>
+                    </div>
+                    <p className="home-outreach-voice-visual__panel-text">{message.text}</p>
+                  </div>
+                ),
+              )}
+            </div>
+          </div>
+        </div>
 
-        {MESSAGES.map((message) =>
-          message.role === "agent" ? (
-            <div key={message.id} className="home-outreach-voice-visual__panel home-outreach-voice-visual__panel--agent">
-              <div className="home-outreach-voice-visual__agent-meta">
-                <VoiceWaveform />
-                <span className="home-outreach-voice-visual__agent-label">Doe Agent</span>
-              </div>
-              <p className="home-outreach-voice-visual__panel-text">{message.text}</p>
-            </div>
-          ) : (
-            <div key={message.id} className="home-outreach-voice-visual__panel home-outreach-voice-visual__panel--patient">
-              <div className="home-outreach-voice-visual__agent-meta">
-                <VoiceWaveform />
-                <span className="home-outreach-voice-visual__agent-label">{CALL.patient}</span>
-              </div>
-              <p className="home-outreach-voice-visual__panel-text">{message.text}</p>
-            </div>
-          ),
-        )}
+        <div className="home-outreach-voice-visual__emr-stage">
+          <div className="home-outreach-emr-scale">
+            <PlainNote label="Pulling from EMR" detail={`${CALL.firstName} is overdue for appointment`} />
+          </div>
+        </div>
       </div>
     </div>
   );

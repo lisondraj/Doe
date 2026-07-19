@@ -303,7 +303,7 @@ export function DoePhoneCommunicationCarouselCard({
   }, [expandable, panelPhase]);
 
   const shaderSurface =
-    layout === "phone" && protoShaderVariant
+    protoShaderVariant && (layout === "phone" || heroShaderColors)
       ? heroShaderColors
         ? heroShaderDusk
           ? doeHomeDuskLabsShaderSurface(slide.id)
