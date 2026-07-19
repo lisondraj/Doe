@@ -13,9 +13,10 @@ import {
 
 import { DoePhoneClosingBandVisual } from "@/components/doephone/DoePhoneClosingBandVisual";
 import { JOIN_INTERN_TRACKS } from "@/components/join/join-intern-tracks";
+import { CLOSING_SECTION_CAROUSEL_ARTICLE_COUNT } from "@/lib/doephone/closing-section-styles";
 import { BLOG_ARTICLES } from "@/lib/blog/articles";
 
-const CLOSING_ARTICLE_COUNT = 5;
+const CLOSING_ARTICLE_COUNT = CLOSING_SECTION_CAROUSEL_ARTICLE_COUNT;
 const CLOSING_FEATURE_ARTICLES = BLOG_ARTICLES.slice(0, CLOSING_ARTICLE_COUNT);
 
 function graphicForIndex(index: number): 0 | 1 | 2 | 3 {
