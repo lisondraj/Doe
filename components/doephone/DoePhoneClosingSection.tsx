@@ -5,6 +5,8 @@ import { DoePhoneClosingFundraiseCallout } from "@/components/doephone/DoePhoneC
 import { DoePhoneScrollRevealContent } from "@/components/doephone/DoePhoneScrollRevealLift";
 import {
   DOEPHONE_DISPLAY_WEIGHT_TW,
+  DOEPHONE_SECTION_CAROUSEL_INSET_X,
+  DOEPHONE_SECTION_CONTENT_CENTER,
   DOEPHONE_SECTION_CONTENT_INSET,
   DOEPHONE_SECTION_TITLE_PB,
   DOEPHONE_SECTION_TITLE_PT,
@@ -39,6 +41,7 @@ export function DoePhoneClosingSection() {
     rootMargin: revealObserver.rootMargin,
   });
   const [variant, setVariant] = useState<DoePhoneVariant>(() => bootVariant);
+  const isDesktop = variant === "desktop";
 
   useLayoutEffect(() => {
     setVariant(readBootstrappedDoePhoneVariant());
@@ -48,6 +51,48 @@ export function DoePhoneClosingSection() {
     return () => mq.removeEventListener("change", sync);
   }, []);
 
+  const titleBlock = (
+    <DoePhoneScrollRevealContent
+      revealed={revealed}
+      segment="title"
+      className={
+        isDesktop
+          ? `home-closing-section__title-wrap shrink-0 ${DOEPHONE_SECTION_CONTENT_INSET} ${DOEPHONE_SECTION_TITLE_PT} layout-desktop:px-0 layout-desktop:pt-0`
+          : `home-closing-section__title-wrap shrink-0 ${DOEPHONE_SECTION_CAROUSEL_INSET_X}`
+      }
+    >
+      <ClosingSectionTitle />
+    </DoePhoneScrollRevealContent>
+  );
+
+  const carouselBlock = (
+    <DoePhoneScrollRevealContent
+      revealed={revealed}
+      segment="carousel"
+      className={
+        isDesktop
+          ? "home-closing-section__carousel-wrap flex min-h-0 flex-1 flex-col"
+          : "home-closing-section__carousel-wrap shrink-0"
+      }
+    >
+      <DoePhoneClosingBlogCarousel />
+    </DoePhoneScrollRevealContent>
+  );
+
+  const fundraiseBlock = (
+    <DoePhoneScrollRevealContent
+      revealed={revealed}
+      segment="menu"
+      className={
+        isDesktop
+          ? `home-closing-section__fundraise-wrap shrink-0 ${DOEPHONE_SECTION_CONTENT_INSET} ${DOEPHONE_SECTION_TITLE_PB} layout-desktop:px-0 layout-desktop:pb-0`
+          : `home-closing-section__fundraise-wrap shrink-0 ${DOEPHONE_SECTION_CONTENT_INSET} ${DOEPHONE_SECTION_TITLE_PB}`
+      }
+    >
+      <DoePhoneClosingFundraiseCallout />
+    </DoePhoneScrollRevealContent>
+  );
+
   return (
     <div
       ref={revealRef}
@@ -55,29 +100,23 @@ export function DoePhoneClosingSection() {
       style={doephoneHomeScrollRevealStyleVars(variant) as CSSProperties}
     >
       <div className="home-closing-section__layout flex min-h-0 flex-1 flex-col">
-        <DoePhoneScrollRevealContent
-          revealed={revealed}
-          segment="title"
-          className={`home-closing-section__title-wrap shrink-0 ${DOEPHONE_SECTION_CONTENT_INSET} ${DOEPHONE_SECTION_TITLE_PT} layout-desktop:px-0 layout-desktop:pt-0`}
-        >
-          <ClosingSectionTitle />
-        </DoePhoneScrollRevealContent>
-
-        <DoePhoneScrollRevealContent
-          revealed={revealed}
-          segment="carousel"
-          className="home-closing-section__carousel-wrap flex min-h-0 flex-1 flex-col"
-        >
-          <DoePhoneClosingBlogCarousel />
-        </DoePhoneScrollRevealContent>
-
-        <DoePhoneScrollRevealContent
-          revealed={revealed}
-          segment="menu"
-          className={`home-closing-section__fundraise-wrap shrink-0 ${DOEPHONE_SECTION_CONTENT_INSET} ${DOEPHONE_SECTION_TITLE_PB} layout-desktop:px-0 layout-desktop:pb-0`}
-        >
-          <DoePhoneClosingFundraiseCallout />
-        </DoePhoneScrollRevealContent>
+        {isDesktop ? (
+          <>
+            {titleBlock}
+            {carouselBlock}
+            {fundraiseBlock}
+          </>
+        ) : (
+          <>
+            <div className={`home-closing-section__inner ${DOEPHONE_SECTION_CONTENT_CENTER}`}>
+              <div className="home-closing-section__content flex w-full shrink-0 flex-col">
+                {carouselBlock}
+                {titleBlock}
+              </div>
+            </div>
+            {fundraiseBlock}
+          </>
+        )}
       </div>
     </div>
   );
