@@ -692,14 +692,14 @@ function InboxThreadListRow({
             ? darkBrown
               ? "product-brown-inbox-row--default border-l-2 border-l-transparent bg-[#322618] hover:bg-[#3a2a1c]"
               : lightBrown
-                ? "product-brown-inbox-row--default border-l-2 border-l-transparent bg-[var(--pi-sand)] hover:bg-[var(--pi-well)]"
+                ? "product-brown-inbox-row--default border-l-2 border-l-transparent bg-[var(--pi-cream)] hover:bg-[var(--pi-sand)]"
                 : brownTheme
                   ? "product-brown-inbox-row--default border-l-2 border-l-[#D4A574]/45 bg-[#f5e6d0] hover:bg-[rgba(26,18,8,0.05)]"
                   : "border-l-2 border-l-[#D4A574]/45 bg-white hover:bg-neutral-50/80"
             : darkBrown
               ? "product-brown-inbox-row--default border-l-2 border-l-transparent bg-[#2a1f12] hover:bg-[#322618]"
               : lightBrown
-                ? "product-brown-inbox-row--default border-l-2 border-l-transparent bg-[var(--pi-sand)] hover:bg-[var(--pi-well)]"
+                ? "product-brown-inbox-row--default border-l-2 border-l-transparent bg-[var(--pi-cream)] hover:bg-[var(--pi-sand)]"
                 : brownTheme
                   ? "product-brown-inbox-row--default border-l-2 border-l-transparent bg-[#f5e6d0] hover:bg-[rgba(26,18,8,0.05)]"
                   : "border-l-2 border-l-transparent bg-white hover:bg-neutral-50/80"
@@ -1269,6 +1269,10 @@ export function DoeSchedulesAppMock({
     productBrownWorkspace && workspaceView !== "inbox";
   const inboxUi = productBrownInbox
     ? {
+        canvas: "bg-[var(--pi-cream)]",
+        toolbar: "bg-[var(--pi-sand)]",
+        recess: "bg-[var(--pi-well)]",
+        elevated: "bg-[var(--pi-highlight)]",
         cream: "bg-[var(--pi-cream)]",
         sand: "bg-[var(--pi-sand)]",
         sandDeep: "bg-[var(--pi-sand-deep)]",
@@ -1280,12 +1284,13 @@ export function DoeSchedulesAppMock({
         lineStrong: "border-[var(--pi-line-strong)]",
         iconMuted: "text-[var(--pi-muted-soft)]",
         filterActive:
-          "bg-[var(--pi-highlight)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.06)] ring-1 ring-[var(--pi-line-strong)]",
+          "bg-[var(--pi-highlight)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.05)] ring-1 ring-[var(--pi-line)]",
         filterInactive: "text-[rgba(38,32,28,0.52)] hover:text-[var(--pi-ink)]",
-        track: "bg-[var(--pi-track)]",
+        track: "bg-[var(--pi-well)]",
         tabIndicator: "bg-[var(--pi-ink-soft)]",
+        tabIndicatorMuted: "bg-[var(--pi-line)]",
         composeBtn:
-          "border-[var(--pi-line-strong)] bg-[var(--pi-highlight)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.04)] hover:bg-[var(--pi-sand-deep)]",
+          "border-[var(--pi-line)] bg-[var(--pi-highlight)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.04)] hover:bg-[var(--pi-cream)]",
         avatarRing: "border-[rgba(58,50,44,0.28)] bg-[rgba(58,50,44,0.1)]",
         chip: "border-[var(--pi-line)] bg-[var(--pi-highlight)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.04)]",
         chipHover: "hover:border-[rgba(38,32,28,0.14)] hover:bg-[var(--pi-sand)]",
@@ -1303,8 +1308,8 @@ export function DoeSchedulesAppMock({
         pinIcon: "h-3 w-3 shrink-0 text-[var(--pi-ink-soft)] opacity-90",
         mutedText: "text-[var(--pi-muted)]",
         agentActive:
-          "bg-[var(--pi-highlight)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.06)]",
-        agentInactive: "bg-[rgba(38,32,28,0.04)] text-[var(--pi-muted)]",
+          "bg-[var(--pi-highlight)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.05)] ring-1 ring-[var(--pi-line)]",
+        agentInactive: "bg-transparent text-[var(--pi-muted)]",
         emailQuote:
           "rounded-md border border-[var(--pi-line)] bg-[var(--pi-highlight)]",
         emailQuoteText: "text-[rgba(38,32,28,0.62)]",
@@ -2513,7 +2518,7 @@ export function DoeSchedulesAppMock({
                     <header
                       className={`flex items-center gap-2 border-b px-4 py-3 ${
                         productBrownInbox
-                          ? `${inboxUi!.line} ${inboxUi!.highlight}`
+                          ? `${inboxUi!.line} ${inboxUi!.canvas}`
                           : productBrown
                             ? "border-[rgba(61,46,31,0.14)] bg-[#f5e6d0]"
                             : "border-[#EFEFEF]"
@@ -2542,7 +2547,7 @@ export function DoeSchedulesAppMock({
                     <div
                       className={`shrink-0 w-full border-b border-dashed px-4 py-2 ${
                         productBrownInbox
-                          ? `${inboxUi!.line} ${inboxUi!.cream}`
+                          ? `${inboxUi!.line} ${inboxUi!.toolbar}`
                           : productBrown
                             ? "border-[rgba(61,46,31,0.14)] bg-[#faf0d8]"
                             : "border-[#E8E8E8] bg-white"
@@ -2647,7 +2652,7 @@ export function DoeSchedulesAppMock({
                                         ? inboxUi!.tabIndicator
                                         : "bg-gradient-to-r from-[#8A7B6E] to-[#5C5048]"
                                       : productBrownInbox
-                                        ? "bg-[rgba(38,32,28,0.12)]"
+                                        ? inboxUi!.tabIndicatorMuted
                                         : "bg-[#E6E6E6]"
                                   }`}
                                   aria-hidden
@@ -2672,7 +2677,7 @@ export function DoeSchedulesAppMock({
                         <div
                           className={`sticky top-0 z-10 flex h-[58px] shrink-0 items-center justify-between gap-2 border-b px-3 sm:px-4 ${
                             productBrownInbox
-                              ? `${inboxUi!.line} ${inboxUi!.highlight}`
+                              ? `${inboxUi!.line} ${inboxUi!.canvas}`
                               : productBrownDarkWorkspace
                                 ? "border-[rgba(245,230,208,0.08)] bg-[#322618]"
                                 : "border-[#F2F2F2] bg-white"
@@ -2735,7 +2740,7 @@ export function DoeSchedulesAppMock({
                         <div
                           className={`min-h-0 flex-1 overflow-y-auto ${
                             productBrownInbox
-                              ? inboxUi!.sand
+                              ? inboxUi!.canvas
                               : productBrownDarkWorkspace
                                 ? "bg-[#2a1f12]"
                                 : "bg-white"
@@ -2764,7 +2769,7 @@ export function DoeSchedulesAppMock({
                                 <div
                                   className={`sticky top-0 z-[5] ${
                                     productBrownInbox
-                                      ? inboxUi!.sand
+                                      ? inboxUi!.canvas
                                       : productBrownDarkWorkspace
                                         ? "bg-[#322618]"
                                         : productBrown
@@ -2797,7 +2802,7 @@ export function DoeSchedulesAppMock({
                       <div
                         className={`relative flex min-h-0 min-w-0 flex-col ${
                           productBrownInbox
-                            ? inboxUi!.cream
+                            ? inboxUi!.elevated
                             : productBrownDarkWorkspace
                               ? "bg-[#241910]"
                               : "bg-white"
@@ -2807,7 +2812,7 @@ export function DoeSchedulesAppMock({
                           <div
                             className={`flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden ${
                               productBrownInbox
-                                ? inboxUi!.cream
+                                ? inboxUi!.elevated
                                 : productBrownDarkWorkspace
                                   ? "bg-[#241910]"
                                   : "bg-white"
@@ -2816,7 +2821,7 @@ export function DoeSchedulesAppMock({
                             <div
                               className={`flex h-[86px] shrink-0 flex-col justify-center border-b px-3 sm:px-4 ${
                                 productBrownInbox
-                                  ? `${inboxUi!.line} ${inboxUi!.sand}`
+                                  ? `${inboxUi!.line} ${inboxUi!.toolbar}`
                                   : productBrownDarkWorkspace
                                     ? "border-[rgba(245,230,208,0.08)] bg-[#322618]"
                                     : "border-[#F2F2F2] bg-[#FAFAFA]/50"

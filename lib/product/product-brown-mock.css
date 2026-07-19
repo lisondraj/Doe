@@ -417,20 +417,20 @@
   --tw-shadow-color: rgba(26, 18, 8, 0.08) !important;
 }
 
-/* Inbox rows */
-.product-brown-mock .product-brown-inbox-row {
+/* Inbox rows — landing palette only outside inbox mode */
+.product-brown-mock:not(.product-brown-inbox-mode) .product-brown-inbox-row {
   border-bottom-color: var(--pb-line) !important;
 }
 
-.product-brown-mock .product-brown-inbox-row--active {
+.product-brown-mock:not(.product-brown-inbox-mode) .product-brown-inbox-row--active {
   background-color: var(--pb-highlight) !important;
 }
 
-.product-brown-mock .product-brown-inbox-row--default {
+.product-brown-mock:not(.product-brown-inbox-mode) .product-brown-inbox-row--default {
   background-color: var(--pb-sand) !important;
 }
 
-.product-brown-mock .product-brown-inbox-row--default:hover {
+.product-brown-mock:not(.product-brown-inbox-mode) .product-brown-inbox-row--default:hover {
   background-color: var(--pb-hover) !important;
 }
 
@@ -819,14 +819,14 @@ html[data-product-page="true"] .product-call-preview__bubble--agent {
 
 /* ── Inbox: stone/taupe browns (lighter than schedule/patients, less yellow than landing) ── */
 .product-brown-mock.product-brown-inbox-mode {
-  --pi-cream: #f5f2ed;
-  --pi-sand: #ece7df;
-  --pi-sand-deep: #e0dcd6;
-  --pi-well: #e8e4de;
-  --pi-highlight: #faf9f6;
+  --pi-cream: #f6f3ee;
+  --pi-sand: #edeae4;
+  --pi-sand-deep: #ddd8d0;
+  --pi-well: #e5e1da;
+  --pi-highlight: #fcfbfa;
   --pi-accent: #6e6258;
   --pi-accent-deep: #4a4038;
-  --pi-track: #e4e0da;
+  --pi-track: #dedad3;
   --pi-ink: #1e1612;
   --pi-ink-soft: #3a322c;
   --pi-muted: rgba(38, 32, 28, 0.58);
@@ -842,14 +842,14 @@ html[data-product-page="true"] .product-call-preview__bubble--agent {
   color: var(--pi-ink) !important;
 }
 
-/* Inbox chrome: use stone taupe tokens, not landing pb-sand (#f5e6d0) */
+/* Inbox chrome: stone taupe ladder (canvas → toolbar → recess → elevated) */
 .product-brown-mock.product-brown-inbox-mode
   :is(.product-brown-main, .product-brown-main-panel)
   header,
 .product-brown-mock.product-brown-inbox-mode
   :is(.product-brown-main, .product-brown-main-panel)
   .sticky.top-0 {
-  background-color: var(--pi-highlight) !important;
+  background-color: var(--pi-cream) !important;
   border-color: var(--pi-line) !important;
 }
 
@@ -888,16 +888,22 @@ html[data-product-page="true"] .product-call-preview__bubble--agent {
   background-color: var(--pi-highlight) !important;
 }
 
+.product-brown-mock.product-brown-inbox-mode .product-brown-inbox-row {
+  border-left-color: transparent !important;
+  border-bottom-color: var(--pi-line) !important;
+}
+
 .product-brown-mock.product-brown-inbox-mode .product-brown-inbox-row--default {
-  background-color: var(--pi-sand) !important;
+  background-color: var(--pi-cream) !important;
 }
 
 .product-brown-mock.product-brown-inbox-mode .product-brown-inbox-row--active {
   background-color: var(--pi-highlight) !important;
+  box-shadow: inset 0 0 0 1px var(--pi-line-strong);
 }
 
 .product-brown-mock.product-brown-inbox-mode .product-brown-inbox-row--default:hover {
-  background-color: var(--pi-sand-deep) !important;
+  background-color: var(--pi-sand) !important;
 }
 
 .product-brown-mock.product-brown-inbox-mode .product-brown-inbox-row[class*="border-l-[var(--pi-ink-soft)]"] {
