@@ -325,40 +325,32 @@ function trackTransform(trackIndex: number) {
   return `translate3d(calc(50vw - var(--home-agents-orb-half) - ${trackIndex} * var(--home-agents-orb-step)), 0, 0)`;
 }
 
-function readPhoneAgentsTrackTranslateX(
-  viewport: HTMLElement,
-  stage: HTMLElement,
-  trackIndex: number,
-): number | null {
-  const viewportRect = viewport.getBoundingClientRect();
-  const viewportWidth = viewportRect.width;
-  if (viewportWidth <= 0) {
-    return null;
+function readTrackTranslateX(track: HTMLElement): number {
+  const transform = getComputedStyle(track).transform;
+  if (!transform || transform === "none") {
+    return 0;
   }
+  return new DOMMatrix(transform).m41;
+}
 
-  const pill = stage.querySelector<HTMLElement>(".hero-speaking-orb__tag--carousel");
-  let targetCenterX = viewportWidth / 2;
-  if (pill) {
-    const pillRect = pill.getBoundingClientRect();
-    if (pillRect.width > 0) {
-      targetCenterX = pillRect.left + pillRect.width / 2 - viewportRect.left;
-    }
-  }
-
+/** Nudge the live track so the focused orb center matches the title pill. */
+function readPhoneAgentsTrackTranslateX(viewport: HTMLElement, stage: HTMLElement): number | null {
+  const track = viewport.querySelector<HTMLElement>(".home-agents-carousel__track");
   const focusedShell = viewport.querySelector<HTMLElement>(".home-agents-carousel__orb-shell--focused");
-  const styles = getComputedStyle(viewport);
-  const orbHalfFromVar = parseFloat(styles.getPropertyValue("--home-agents-orb-half"));
-  const orbStepFromVar = parseFloat(styles.getPropertyValue("--home-agents-orb-step"));
-  const orbHalf = focusedShell
-    ? focusedShell.getBoundingClientRect().width / 2
-    : orbHalfFromVar;
-  const orbStep = orbStepFromVar;
-
-  if (!Number.isFinite(orbHalf) || !Number.isFinite(orbStep) || orbHalf <= 0 || orbStep <= 0) {
+  const pill = stage.querySelector<HTMLElement>(".hero-speaking-orb__tag--carousel");
+  if (!track || !focusedShell || !pill) {
     return null;
   }
 
-  return targetCenterX - orbHalf - trackIndex * orbStep;
+  const pillRect = pill.getBoundingClientRect();
+  const shellRect = focusedShell.getBoundingClientRect();
+  if (pillRect.width <= 0 || shellRect.width <= 0) {
+    return null;
+  }
+
+  const targetCenterX = pillRect.left + pillRect.width / 2;
+  const currentOrbCenterX = shellRect.left + shellRect.width / 2;
+  return readTrackTranslateX(track) + (targetCenterX - currentOrbCenterX);
 }
 
 const PHONE_AGENTS_TRACK_RESYNC_DELAYS_MS = [80, 180, 420, 720, 1100, 1700, 2400, 3200] as const;
@@ -410,25 +402,40 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
         return;
       }
 
-      const nextTranslateX = readPhoneAgentsTrackTranslateX(viewport, stage, trackIndex);
+      const nextTranslateX = readPhoneAgentsTrackTranslateX(viewport, stage);
       if (nextTranslateX == null) {
         return;
       }
 
+      const applyTranslateX = (translateX: number, snapInstant: boolean) => {
+        if (snapInstant) {
+          setInstantTransition(true);
+          setPhoneTrackTranslateX(translateX);
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              setInstantTransition(false);
+            });
+          });
+          return;
+        }
+        setPhoneTrackTranslateX(translateX);
+      };
+
       const shouldSnapInstant = options?.snapInstant || needsInitialPhoneSnapRef.current;
       if (shouldSnapInstant) {
         needsInitialPhoneSnapRef.current = false;
-        setInstantTransition(true);
-        setPhoneTrackTranslateX(nextTranslateX);
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            setInstantTransition(false);
-          });
-        });
-        return;
       }
+      applyTranslateX(nextTranslateX, shouldSnapInstant);
 
-      setPhoneTrackTranslateX(nextTranslateX);
+      requestAnimationFrame(() => {
+        const refinedTranslateX = readPhoneAgentsTrackTranslateX(viewport, stage);
+        if (refinedTranslateX == null) {
+          return;
+        }
+        if (Math.abs(refinedTranslateX - nextTranslateX) > 0.5) {
+          applyTranslateX(refinedTranslateX, shouldSnapInstant);
+        }
+      });
     },
     [isPhoneLayout, trackIndex],
   );
@@ -510,6 +517,13 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
       delays.forEach((delayId) => window.clearTimeout(delayId));
     };
   }, [isPhoneLayout, layoutReady, revealed, syncPhoneTrackPosition, carouselInView, heroShaderReady]);
+
+  useLayoutEffect(() => {
+    if (!isPhoneLayout || !layoutReady) {
+      return;
+    }
+    syncPhoneTrackPosition({ snapInstant: instantTransition });
+  }, [instantTransition, isPhoneLayout, layoutReady, syncPhoneTrackPosition, trackIndex]);
 
   useLayoutEffect(() => {
     if (!layoutReady) {
@@ -636,6 +650,7 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
     "home-agents-carousel__track",
     instantTransition ? "home-agents-carousel__track--instant" : "",
     isAnimating ? "home-agents-carousel__track--animating" : "",
+    isPhoneLayout && phoneTrackTranslateX != null ? "home-agents-carousel__track--phone-aligned" : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -663,14 +678,12 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
     </div>
   );
 
-  const trackStyle: CSSProperties = {
-    ["--home-agents-track-index" as string]: trackIndex,
-    ...(isPhoneLayout
+  const trackStyle: CSSProperties =
+    isPhoneLayout
       ? phoneTrackTranslateX != null
         ? { transform: `translate3d(${phoneTrackTranslateX}px, 0, 0)` }
-        : {}
-      : { transform: trackTransform(trackIndex) }),
-  };
+        : { transform: "translate3d(0, 0, 0)" }
+      : { transform: trackTransform(trackIndex) };
 
   return (
     <div className={`home-agents-carousel ${dmSans.className}`} aria-hidden>

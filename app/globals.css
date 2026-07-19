@@ -4670,12 +4670,12 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   gap: var(--home-agents-orb-gap);
   transition: transform var(--home-agents-carousel-duration) var(--home-agents-carousel-ease);
   backface-visibility: hidden;
-  will-change: transform;
-  transform: translate3d(
-    calc(50cqw - var(--home-agents-orb-half) - var(--home-agents-track-index, 0) * var(--home-agents-orb-step)),
-    0,
-    0
-  );
+  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0);
+  opacity: 0;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__track--phone-aligned {
+  opacity: 1;
 }
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__track--instant {
   transition: none;
@@ -4858,7 +4858,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   width: max-content;
   max-width: calc(100% - 1.5rem);
   margin-inline: auto;
-  gap: clamp(0.28rem, calc(var(--app-vw, 100vw) * 0.012), 0.5rem);
+  gap: 0.12rem;
   padding-inline: 0;
   margin-bottom: 0;
 }
