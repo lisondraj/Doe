@@ -3,7 +3,7 @@ export const AGENTS_CAROUSEL_DESCRIPTIONS: Record<string, string> = {
   "Inbox Agent":
     "Every referral, lab, and prior auth lands in one queue instead of scattered inboxes. The Inbox Agent routes documents to the right workflow and keeps status visible for your team.",
   "Scheduling Agent":
-    "The Scheduling Agent keeps booking moving while your front desk stays with patients in the room. It finds open slots, confirms details, and fills gaps without manual back-and-forth.",
+    "The Scheduling Agent keeps booking moving while your front desk stays with patients in the room. It finds open slots, confirms details, and fills gaps without manual back-and-forth..",
   "Labs Agent":
     "The Labs Agent matches orders to charts and flags abnormal values as results arrive. Follow-ups route to the right clinician instead of sitting unread across systems.",
   "Referrals Agent":
