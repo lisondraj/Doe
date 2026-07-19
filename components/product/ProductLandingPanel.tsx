@@ -5,13 +5,14 @@ import { useState } from "react";
 import {
   PRODUCT_LANDING_AI_INPUT,
   PRODUCT_LANDING_ATTENTION,
-  PRODUCT_LANDING_BRIEF,
   PRODUCT_LANDING_CONSOLE,
   PRODUCT_LANDING_GREETING,
   PRODUCT_LANDING_HEADLINE,
+  PRODUCT_LANDING_LINES,
   PRODUCT_LANDING_PRIMARY_CTA,
-  PRODUCT_LANDING_PULSE,
+  PRODUCT_LANDING_QUEUE,
   PRODUCT_LANDING_SECONDARY_CTA,
+  PRODUCT_LANDING_SHIFT,
   PRODUCT_LANDING_STATUS_NOTE,
   PRODUCT_LANDING_STATUS_VALUE,
   PRODUCT_LANDING_SUBHEAD,
@@ -61,25 +62,34 @@ function SendIcon({ className }: { className?: string }) {
 function WaveformBars() {
   return (
     <div className="product-voice-waveform" aria-hidden>
-      {Array.from({ length: 18 }).map((_, i) => (
+      {Array.from({ length: 20 }).map((_, i) => (
         <span key={i} className="product-voice-waveform__bar" />
       ))}
     </div>
   );
 }
 
-/** Physician entry view: live voice agent console on clinic open. */
+function ShiftStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="product-landing-stat">
+      <span className={`product-landing-stat__value ${suisseIntl.className}`}>{value}</span>
+      <span className={`product-landing-stat__label ${inter.className}`}>{label}</span>
+    </div>
+  );
+}
+
+/** Physician morning command center for the clinic voice agent. */
 export function ProductLandingPanel() {
   const [prompt, setPrompt] = useState("");
 
   return (
     <div className="product-landing-panel flex min-h-0 flex-1 flex-col overflow-hidden">
-      <header className="product-landing-header flex shrink-0 items-center justify-between gap-3 px-4 py-3">
+      <header className="product-landing-header flex shrink-0 items-center justify-between gap-3 px-4 py-2.5">
         <div className="flex min-w-0 items-center gap-2.5">
-          <MicIcon className="product-landing-header__icon h-[18px] w-[18px] shrink-0" />
+          <MicIcon className="product-landing-header__icon h-[17px] w-[17px] shrink-0" />
           <div className="min-w-0">
             <h1
-              className={`product-landing-header__title m-0 text-[15px] font-semibold tracking-tight ${suisseIntl.className}`}
+              className={`product-landing-header__title m-0 text-[14px] font-semibold tracking-tight ${suisseIntl.className}`}
             >
               Voice
             </h1>
@@ -88,9 +98,25 @@ export function ProductLandingPanel() {
             </p>
           </div>
         </div>
+
+        <div className="hidden min-w-0 flex-1 items-center justify-center gap-2 md:flex">
+          {PRODUCT_LANDING_LINES.map((line) => (
+            <span
+              key={line.id}
+              className={`product-landing-line-pill product-landing-line-pill--${line.status} inline-flex max-w-[14rem] items-center gap-2 rounded-full px-2.5 py-1 ${inter.className}`}
+            >
+              <span className="product-landing-line-pill__dot" aria-hidden />
+              <span className="truncate text-[10px] font-medium">{line.label}</span>
+              <span className="product-landing-line-pill__meta hidden truncate text-[10px] lg:inline">
+                {line.status === "live" ? line.detail : line.number}
+              </span>
+            </span>
+          ))}
+        </div>
+
         <div className="flex shrink-0 items-center gap-2">
           <span
-            className={`product-landing-line-note hidden text-[11px] font-medium tabular-nums sm:inline ${inter.className}`}
+            className={`product-landing-line-note hidden text-[11px] font-medium tabular-nums xl:inline ${inter.className}`}
           >
             {PRODUCT_LANDING_STATUS_NOTE}
           </span>
@@ -102,7 +128,7 @@ export function ProductLandingPanel() {
           </span>
           <button
             type="button"
-            className={`product-landing-cta-primary inline-flex h-[34px] items-center justify-center rounded-[10px] px-3 text-[11px] font-medium leading-none tracking-[-0.01em] transition-colors ${suisseIntl.className}`}
+            className={`product-landing-cta-primary inline-flex h-[32px] items-center justify-center rounded-[10px] px-3 text-[11px] font-medium leading-none tracking-[-0.01em] transition-colors ${suisseIntl.className}`}
           >
             {PRODUCT_LANDING_PRIMARY_CTA}
           </button>
@@ -110,174 +136,185 @@ export function ProductLandingPanel() {
       </header>
 
       <div className="product-landing-body min-h-0 flex-1 overflow-y-auto">
-        <div className="product-landing-intro px-4 pt-[clamp(1rem,1.6vw,1.35rem)] pb-3">
-          <p
-            className={`product-landing-intro__greeting m-0 text-[11px] font-semibold uppercase tracking-[0.12em] ${suisseIntl.className}`}
-          >
-            {PRODUCT_LANDING_GREETING}
-          </p>
-          <h2
-            className={`product-landing-intro__headline m-0 mt-1.5 max-w-[36rem] text-[clamp(1.35rem,1rem+1.1vw,1.85rem)] font-normal leading-[1.1] tracking-[-0.028em] ${suisseIntl.className}`}
-          >
-            {PRODUCT_LANDING_HEADLINE}
-          </h2>
-          <p
-            className={`product-landing-intro__subhead m-0 mt-2 max-w-[40rem] text-[13px] leading-[1.5] ${inter.className}`}
-          >
-            {PRODUCT_LANDING_SUBHEAD}
-          </p>
-          <p className={`product-landing-intro__brief m-0 mt-2 max-w-[42rem] text-[12px] leading-[1.45] ${inter.className}`}>
-            {PRODUCT_LANDING_BRIEF}
-          </p>
-        </div>
+        <section className="product-landing-hero px-4 py-[clamp(1rem,1.8vw,1.5rem)]">
+          <div className="product-landing-hero__card rounded-[18px] px-[clamp(1rem,2vw,1.35rem)] py-[clamp(1rem,2vw,1.25rem)]">
+            <p
+              className={`product-landing-hero__greeting m-0 text-[10px] font-semibold uppercase tracking-[0.14em] ${suisseIntl.className}`}
+            >
+              {PRODUCT_LANDING_GREETING}
+            </p>
+            <h2
+              className={`product-landing-hero__headline m-0 mt-2 max-w-[34rem] text-[clamp(1.45rem,1rem+1.2vw,2rem)] font-normal leading-[1.08] tracking-[-0.03em] ${suisseIntl.className}`}
+            >
+              {PRODUCT_LANDING_HEADLINE}
+            </h2>
+            <p
+              className={`product-landing-hero__subhead m-0 mt-2.5 max-w-[42rem] text-[13px] leading-[1.5] ${inter.className}`}
+            >
+              {PRODUCT_LANDING_SUBHEAD}
+            </p>
+            <p className={`product-landing-hero__overnight m-0 mt-2 text-[12px] leading-[1.45] ${inter.className}`}>
+              {PRODUCT_LANDING_SHIFT.overnight}
+            </p>
 
-        <div className="product-landing-stage grid min-h-0 flex-1 gap-0 xl:grid-cols-[minmax(0,1.45fr)_minmax(17rem,0.9fr)]">
-          <section className="product-landing-console flex min-h-0 flex-col" aria-labelledby="product-live-call-title">
-            <div className="product-landing-console__stage relative flex flex-col px-4 py-[clamp(1.1rem,2vw,1.6rem)]">
-              <div className="relative z-[1] flex flex-wrap items-start justify-between gap-3">
-                <div>
-                  <p
-                    id="product-live-call-title"
-                    className={`product-landing-console__state m-0 text-[10px] font-semibold uppercase tracking-[0.14em] ${suisseIntl.className}`}
-                  >
-                    {PRODUCT_LANDING_CONSOLE.stateLabel}
-                  </p>
-                  <p
-                    className={`product-landing-console__caller m-0 mt-1.5 text-[clamp(1.2rem,0.95rem+0.8vw,1.55rem)] font-normal leading-none tracking-[-0.03em] ${suisseIntl.className}`}
-                  >
-                    {PRODUCT_LANDING_CONSOLE.caller}
-                  </p>
-                  <p className={`product-landing-console__reason m-0 mt-1.5 text-[13px] ${inter.className}`}>
-                    {PRODUCT_LANDING_CONSOLE.reason}
-                  </p>
-                  <p className={`product-landing-console__meta m-0 mt-1 text-[11px] ${inter.className}`}>
-                    {PRODUCT_LANDING_CONSOLE.line}
-                  </p>
-                </div>
-                <span
-                  className={`product-landing-console__duration rounded-md px-2 py-1 text-[11px] font-medium tabular-nums ${inter.className}`}
-                >
-                  {PRODUCT_LANDING_CONSOLE.duration}
-                </span>
-              </div>
-
-              <div className="relative z-[1] mt-[clamp(1.25rem,2.2vw,1.85rem)] flex flex-col items-center">
-                <WaveformBars />
-                <p
-                  className={`product-landing-console__agent-line m-0 mt-4 max-w-[28rem] text-center text-[13px] leading-[1.4] ${dmSans.className}`}
-                >
-                  {PRODUCT_LANDING_CONSOLE.agentLine}
-                </p>
-              </div>
+            <div className="product-landing-hero__stats mt-4 flex flex-wrap gap-2">
+              <ShiftStat label="Calls today" value={PRODUCT_LANDING_SHIFT.callsToday} />
+              <ShiftStat label="Resolved by Doe" value={PRODUCT_LANDING_SHIFT.resolvedPct} />
+              <ShiftStat label="In queue" value={PRODUCT_LANDING_SHIFT.waiting} />
+              <ShiftStat label="Needs you" value={PRODUCT_LANDING_SHIFT.forYou} />
             </div>
+          </div>
+        </section>
 
-            <div className="product-landing-transcript flex min-h-0 flex-1 flex-col">
-              <div className="product-landing-transcript__toolbar flex shrink-0 items-center justify-between gap-3 px-4 py-2.5">
-                <p
-                  className={`product-landing-transcript__label m-0 text-[10px] font-semibold uppercase tracking-[0.12em] ${suisseIntl.className}`}
-                >
-                  Live transcript
-                </p>
-                <button
-                  type="button"
-                  className={`product-landing-cta-secondary inline-flex h-[30px] items-center justify-center rounded-[8px] px-2.5 text-[10px] font-medium transition-colors ${suisseIntl.className}`}
-                >
-                  {PRODUCT_LANDING_SECONDARY_CTA}
-                </button>
-              </div>
-              <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
-                <div className="product-voice-timeline mx-auto max-w-[34rem]">
-                  {PRODUCT_LANDING_TRANSCRIPT.map((line) => {
-                    const isAgent = line.speaker === "Doe";
-                    return (
-                      <div
-                        key={`${line.time}-${line.text}`}
-                        className={`product-voice-timeline__item ${isAgent ? "product-voice-timeline__item--agent" : ""}`}
+        <div className="product-landing-grid grid min-h-0 gap-4 px-4 pb-4 xl:grid-cols-[minmax(0,1.55fr)_minmax(18rem,0.95fr)]">
+          <div className="product-landing-main flex min-h-0 flex-col gap-4">
+            <section className="product-landing-call" aria-labelledby="product-live-call-title">
+              <div className="product-landing-call__stage relative overflow-hidden rounded-[18px] px-[clamp(1rem,2vw,1.35rem)] py-[clamp(1.1rem,2.2vw,1.55rem)]">
+                <div className="relative z-[1] flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p
+                        id="product-live-call-title"
+                        className={`product-landing-call__state m-0 text-[10px] font-semibold uppercase tracking-[0.14em] ${suisseIntl.className}`}
                       >
-                        <span className="product-voice-timeline__dot" aria-hidden />
-                        <div className="flex items-baseline justify-between gap-3">
-                          <p
-                            className={`product-voice-timeline__speaker m-0 text-[10px] font-semibold uppercase tracking-[0.1em] ${
-                              isAgent ? "product-voice-timeline__speaker--agent" : ""
-                            } ${suisseIntl.className}`}
-                          >
-                            {line.speaker}
-                          </p>
-                          <span
-                            className={`product-voice-timeline__time shrink-0 text-[10px] tabular-nums ${inter.className}`}
-                          >
-                            {line.time}
-                          </span>
-                        </div>
-                        <p
-                          className={`product-voice-timeline__text m-0 mt-1 text-[13px] leading-[1.42] tracking-[-0.01em] ${
-                            isAgent ? `product-voice-timeline__text--agent ${dmSans.className}` : inter.className
-                          }`}
-                        >
-                          {line.text}
-                        </p>
-                      </div>
-                    );
-                  })}
+                        {PRODUCT_LANDING_CONSOLE.stateLabel}
+                      </p>
+                      <span
+                        className={`product-landing-call__status inline-flex rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.08em] ${suisseIntl.className}`}
+                      >
+                        {PRODUCT_LANDING_CONSOLE.agentStatus}
+                      </span>
+                    </div>
+                    <p
+                      className={`product-landing-call__caller m-0 mt-2 text-[clamp(1.25rem,0.95rem+0.85vw,1.65rem)] font-normal leading-none tracking-[-0.03em] ${suisseIntl.className}`}
+                    >
+                      {PRODUCT_LANDING_CONSOLE.caller}
+                    </p>
+                    <p className={`product-landing-call__context m-0 mt-1.5 text-[11px] ${inter.className}`}>
+                      {PRODUCT_LANDING_CONSOLE.patientContext}
+                    </p>
+                    <p className={`product-landing-call__reason m-0 mt-1 text-[13px] ${inter.className}`}>
+                      {PRODUCT_LANDING_CONSOLE.reason}
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    <span
+                      className={`product-landing-call__duration rounded-md px-2 py-1 text-[11px] font-medium tabular-nums ${inter.className}`}
+                    >
+                      {PRODUCT_LANDING_CONSOLE.duration}
+                    </span>
+                    <span className={`product-landing-call__line text-[10px] ${inter.className}`}>
+                      {PRODUCT_LANDING_CONSOLE.line}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="relative z-[1] mt-[clamp(1.1rem,2vw,1.5rem)] flex flex-col items-center">
+                  <WaveformBars />
+                  <p
+                    className={`product-landing-call__agent-line m-0 mt-3.5 max-w-[30rem] text-center text-[13px] leading-[1.42] ${dmSans.className}`}
+                  >
+                    {PRODUCT_LANDING_CONSOLE.agentLine}
+                  </p>
                 </div>
               </div>
-            </div>
-          </section>
 
-          <aside className="product-landing-rail flex flex-col border-t xl:border-l xl:border-t-0">
-            <div className="product-landing-rail__pulse px-4 py-3">
-              <p
-                className={`product-landing-rail__label m-0 text-[10px] font-semibold uppercase tracking-[0.14em] ${suisseIntl.className}`}
-              >
-                Today so far
-              </p>
-              <dl className="mt-2.5 flex flex-wrap gap-x-5 gap-y-2">
-                {PRODUCT_LANDING_PULSE.map((item) => (
-                  <div key={item.label} className="min-w-[4.5rem]">
-                    <dt className={`product-landing-rail__pulse-label m-0 text-[10px] ${inter.className}`}>
-                      {item.label}
-                    </dt>
-                    <dd
-                      className={`product-landing-rail__pulse-value m-0 mt-0.5 text-[1.15rem] font-normal leading-none tracking-[-0.02em] ${suisseIntl.className}`}
-                    >
-                      {item.value}
-                    </dd>
+              <div className="product-landing-chat mt-3 rounded-[18px]">
+                <div className="product-landing-chat__toolbar flex items-center justify-between gap-3 px-4 py-2.5">
+                  <p
+                    className={`product-landing-chat__label m-0 text-[10px] font-semibold uppercase tracking-[0.12em] ${suisseIntl.className}`}
+                  >
+                    Live conversation
+                  </p>
+                  <button
+                    type="button"
+                    className={`product-landing-cta-secondary inline-flex h-[30px] items-center justify-center rounded-[8px] px-2.5 text-[10px] font-medium transition-colors ${suisseIntl.className}`}
+                  >
+                    {PRODUCT_LANDING_SECONDARY_CTA}
+                  </button>
+                </div>
+                <div className="product-landing-chat__thread px-4 py-4">
+                  <div className="product-voice-chat mx-auto flex max-w-[36rem] flex-col gap-3">
+                    {PRODUCT_LANDING_TRANSCRIPT.map((line) => {
+                      const isAgent = line.speaker === "Doe";
+                      return (
+                        <div
+                          key={`${line.time}-${line.text}`}
+                          className={`product-voice-chat__row ${isAgent ? "product-voice-chat__row--agent" : "product-voice-chat__row--patient"}`}
+                        >
+                          <div className="product-voice-chat__bubble">
+                            <div className="flex items-baseline justify-between gap-3">
+                              <p
+                                className={`product-voice-chat__speaker m-0 text-[10px] font-semibold uppercase tracking-[0.1em] ${suisseIntl.className}`}
+                              >
+                                {line.speaker}
+                              </p>
+                              <span
+                                className={`product-voice-chat__time shrink-0 text-[10px] tabular-nums ${inter.className}`}
+                              >
+                                {line.time}
+                              </span>
+                            </div>
+                            <p
+                              className={`product-voice-chat__text m-0 mt-1 text-[13px] leading-[1.42] tracking-[-0.01em] ${
+                                isAgent ? dmSans.className : inter.className
+                              }`}
+                            >
+                              {line.text}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                ))}
-              </dl>
-            </div>
+                </div>
+              </div>
+            </section>
+          </div>
 
-            <div className="product-landing-rail__attention flex min-h-0 flex-1 flex-col px-4 py-3">
-              <p
-                className={`product-landing-rail__label m-0 text-[10px] font-semibold uppercase tracking-[0.14em] ${suisseIntl.className}`}
-              >
-                Needs your eye
-              </p>
-              <p className={`product-landing-rail__hint m-0 mt-1 text-[12px] ${inter.className}`}>
-                Doe finished these. You decide the next move.
-              </p>
-              <ul className="product-landing-attention m-0 mt-3 flex list-none flex-col gap-0 p-0">
+          <aside className="product-landing-sidebar flex min-h-0 flex-col gap-4">
+            <section className="product-landing-sidebar__block rounded-[18px]">
+              <div className="px-4 py-3">
+                <p
+                  className={`product-landing-sidebar__label m-0 text-[10px] font-semibold uppercase tracking-[0.14em] ${suisseIntl.className}`}
+                >
+                  Needs your eye
+                </p>
+                <p className={`product-landing-sidebar__hint m-0 mt-1 text-[12px] ${inter.className}`}>
+                  Doe finished these. You decide the next move.
+                </p>
+              </div>
+              <ul className="product-landing-attention m-0 flex list-none flex-col gap-2 px-3 pb-3 pt-0">
                 {PRODUCT_LANDING_ATTENTION.map((item) => (
-                  <li key={item.id} className="product-landing-attention__item">
+                  <li key={item.id} className={`product-landing-attention__card product-landing-attention__card--${item.urgency}`}>
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <span
-                          className={`product-landing-attention__badge inline-flex text-[9px] font-semibold uppercase tracking-[0.08em] ${suisseIntl.className}`}
-                        >
-                          {item.label}
-                        </span>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span
+                            className={`product-landing-attention__badge inline-flex text-[9px] font-semibold uppercase tracking-[0.08em] ${suisseIntl.className}`}
+                          >
+                            {item.label}
+                          </span>
+                          {item.urgency === "high" ? (
+                            <span
+                              className={`product-landing-attention__urgency inline-flex text-[9px] font-semibold uppercase tracking-[0.08em] ${suisseIntl.className}`}
+                            >
+                              Priority
+                            </span>
+                          ) : null}
+                        </div>
                         <p
-                          className={`product-landing-attention__title m-0 mt-1 text-[13px] font-semibold leading-snug tracking-[-0.015em] ${suisseIntl.className}`}
+                          className={`product-landing-attention__title m-0 mt-1.5 text-[13px] font-semibold leading-snug tracking-[-0.015em] ${suisseIntl.className}`}
                         >
                           {item.title}
                         </p>
-                        <p className={`product-landing-attention__detail m-0 mt-1 text-[11px] leading-[1.4] ${inter.className}`}>
+                        <p className={`product-landing-attention__detail m-0 mt-1 text-[11px] leading-[1.42] ${inter.className}`}>
                           {item.detail}
                         </p>
                       </div>
                       <button
                         type="button"
-                        className={`product-landing-attention__action shrink-0 text-[10px] font-medium transition-colors ${suisseIntl.className}`}
+                        className={`product-landing-attention__action shrink-0 rounded-[8px] px-2 py-1 text-[10px] font-medium transition-colors ${suisseIntl.className}`}
                       >
                         {item.action}
                       </button>
@@ -285,13 +322,97 @@ export function ProductLandingPanel() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </section>
+
+            <section className="product-landing-sidebar__block rounded-[18px]">
+              <div className="flex items-center justify-between gap-3 px-4 py-3">
+                <div>
+                  <p
+                    className={`product-landing-sidebar__label m-0 text-[10px] font-semibold uppercase tracking-[0.14em] ${suisseIntl.className}`}
+                  >
+                    Call queue
+                  </p>
+                  <p className={`product-landing-sidebar__hint m-0 mt-1 text-[12px] ${inter.className}`}>
+                    {PRODUCT_LANDING_SHIFT.waiting} callers waiting after the active line
+                  </p>
+                </div>
+              </div>
+              <ul className="product-landing-queue m-0 list-none px-3 pb-3 pt-0">
+                {PRODUCT_LANDING_QUEUE.map((item, index) => (
+                  <li key={item.id} className="product-landing-queue__item">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p
+                          className={`product-landing-queue__position m-0 text-[10px] font-semibold uppercase tracking-[0.1em] ${suisseIntl.className}`}
+                        >
+                          Next {index + 1}
+                        </p>
+                        <p
+                          className={`product-landing-queue__caller m-0 mt-1 text-[13px] font-semibold tracking-[-0.015em] ${suisseIntl.className}`}
+                        >
+                          {item.caller}
+                        </p>
+                        <p className={`product-landing-queue__reason m-0 mt-0.5 text-[11px] ${inter.className}`}>
+                          {item.reason}
+                        </p>
+                      </div>
+                      <span
+                        className={`product-landing-queue__wait shrink-0 rounded-md px-2 py-1 text-[10px] font-medium tabular-nums ${inter.className}`}
+                      >
+                        {item.wait}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            <section className="product-landing-sidebar__block rounded-[18px]">
+              <div className="px-4 py-3">
+                <p
+                  className={`product-landing-sidebar__label m-0 text-[10px] font-semibold uppercase tracking-[0.14em] ${suisseIntl.className}`}
+                >
+                  Your lines
+                </p>
+              </div>
+              <ul className="product-landing-lines m-0 list-none px-3 pb-3 pt-0">
+                {PRODUCT_LANDING_LINES.map((line) => (
+                  <li key={line.id} className={`product-landing-lines__item product-landing-lines__item--${line.status}`}>
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p
+                          className={`product-landing-lines__label m-0 text-[13px] font-semibold tracking-[-0.015em] ${suisseIntl.className}`}
+                        >
+                          {line.label}
+                        </p>
+                        <p className={`product-landing-lines__number m-0 mt-0.5 text-[11px] ${inter.className}`}>
+                          {line.number}
+                        </p>
+                        <p className={`product-landing-lines__detail m-0 mt-1 text-[11px] ${inter.className}`}>
+                          {line.detail}
+                        </p>
+                      </div>
+                      <span
+                        className={`product-landing-lines__status shrink-0 rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.08em] ${suisseIntl.className}`}
+                      >
+                        {line.status}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </section>
           </aside>
         </div>
       </div>
 
       <footer className="product-landing-ai-dock shrink-0 border-t px-4 py-3">
         <div className="product-landing-ai-dock__inner mx-auto max-w-[72rem]">
+          <p
+            className={`product-landing-ai-dock__title m-0 mb-2 text-[10px] font-semibold uppercase tracking-[0.12em] ${suisseIntl.className}`}
+          >
+            {PRODUCT_LANDING_AI_INPUT.title}
+          </p>
           <div className="product-landing-ai-suggestions mb-2 flex flex-wrap gap-1.5">
             {PRODUCT_LANDING_AI_INPUT.suggestions.map((suggestion) => (
               <button

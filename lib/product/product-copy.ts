@@ -1,30 +1,54 @@
 import type { ProductNavTab } from "@/lib/product/product-nav";
 
-export const PRODUCT_LANDING_HEADLINE = "Doe is answering your clinic line.";
+export const PRODUCT_LANDING_GREETING = "Good morning, Dr. Chen";
+
+export const PRODUCT_LANDING_HEADLINE = "Your clinic line is covered.";
 
 export const PRODUCT_LANDING_SUBHEAD =
-  "You open Doe and see the agent live: who is on the phone, what was decided, and what still needs you.";
+  "Doe is on the main line now. Review what came in overnight, see who is waiting, and steer the next call in plain language.";
 
 export const PRODUCT_LANDING_PRIMARY_CTA = "Listen in";
 
-export const PRODUCT_LANDING_SECONDARY_CTA = "Open inbox notes";
+export const PRODUCT_LANDING_SECONDARY_CTA = "Open call log";
 
 export const PRODUCT_LANDING_STATUS_VALUE = "Live";
 
 export const PRODUCT_LANDING_STATUS_NOTE = "Main line · (512) 555-0140";
 
-export const PRODUCT_LANDING_GREETING = "Good morning, Dr. Chen";
+export const PRODUCT_LANDING_SHIFT = {
+  overnight: "4 after-hours calls handled overnight · 2 notes waiting for you",
+  callsToday: "47",
+  resolvedPct: "83%",
+  waiting: "2",
+  forYou: "3",
+} as const;
 
-export const PRODUCT_LANDING_BRIEF =
-  "Overnight, Doe handled 4 after-hours calls and left 2 notes for your review. Right now it is booking a follow-up on the main line.";
+export const PRODUCT_LANDING_LINES = [
+  {
+    id: "main",
+    label: "Main clinic line",
+    number: "(512) 555-0140",
+    status: "live" as const,
+    detail: "Active call · M. Nguyen",
+  },
+  {
+    id: "after-hours",
+    label: "After-hours line",
+    number: "(512) 555-0141",
+    status: "standby" as const,
+    detail: "Routes to Doe when clinic is closed",
+  },
+] as const;
 
 export const PRODUCT_LANDING_CONSOLE = {
-  stateLabel: "On a call",
+  stateLabel: "Live on main line",
   caller: "M. Nguyen",
-  reason: "Reschedule lab review",
+  patientContext: "Established patient · last visit Feb 12",
+  reason: "Reschedule lab review with Dr. Chen",
   line: "Main clinic line",
   duration: "1:14",
-  agentLine: "Checking Thursday openings with Dr. Chen…",
+  agentLine: "Checking Thursday afternoon openings with your schedule…",
+  agentStatus: "Booking",
 } as const;
 
 export const PRODUCT_LANDING_TRANSCRIPT = [
@@ -35,7 +59,7 @@ export const PRODUCT_LANDING_TRANSCRIPT = [
   },
   {
     speaker: "Doe" as const,
-    text: "I can help with that. Are you looking for later this week or next?",
+    text: "Of course. Are you looking for later this week, or would next week work better?",
     time: "0:14",
   },
   {
@@ -45,31 +69,48 @@ export const PRODUCT_LANDING_TRANSCRIPT = [
   },
   {
     speaker: "Doe" as const,
-    text: "I have 2:30 or 4:00 on Thursday. Which would you prefer?",
+    text: "I have 2:30 PM or 4:00 PM on Thursday. Which would you prefer?",
     time: "0:31",
   },
   {
     speaker: "Patient" as const,
-    text: "2:30 works. Do I still need to fast?",
+    text: "2:30 works. Do I still need to fast for the labs?",
     time: "0:38",
   },
   {
     speaker: "Doe" as const,
-    text: "For this visit, no fasting. I will send a confirmation to your phone.",
+    text: "No fasting for this visit. I will text a confirmation and include prep instructions.",
     time: "0:46",
+  },
+] as const;
+
+export const PRODUCT_LANDING_QUEUE = [
+  {
+    id: "queue-1",
+    caller: "S. Patel",
+    reason: "Prior auth status for MRI",
+    wait: "~2 min",
+  },
+  {
+    id: "queue-2",
+    caller: "Unknown caller",
+    reason: "New patient scheduling inquiry",
+    wait: "~4 min",
   },
 ] as const;
 
 export const PRODUCT_LANDING_ATTENTION = [
   {
     id: "attn-1",
+    urgency: "high" as const,
     label: "Overnight",
     title: "Metformin refill captured",
-    detail: "Pharmacy review queued · left at 7:52 AM",
+    detail: "Pharmacy review queued · chart note ready · left at 7:52 AM",
     action: "Review note",
   },
   {
     id: "attn-2",
+    urgency: "normal" as const,
     label: "Handoff",
     title: "Billing question waiting",
     detail: "J. Ortiz · transcript and account flags attached",
@@ -77,6 +118,7 @@ export const PRODUCT_LANDING_ATTENTION = [
   },
   {
     id: "attn-3",
+    urgency: "normal" as const,
     label: "Referral",
     title: "Spanish intake completed",
     detail: "R. Delgado · cardiology referral ready to send",
@@ -85,24 +127,33 @@ export const PRODUCT_LANDING_ATTENTION = [
 ] as const;
 
 export const PRODUCT_LANDING_PULSE = [
-  { label: "Calls today", value: "47" },
-  { label: "Resolved by Doe", value: "83%" },
-  { label: "Waiting on you", value: "3" },
+  { label: "Calls today", value: PRODUCT_LANDING_SHIFT.callsToday },
+  { label: "Resolved by Doe", value: PRODUCT_LANDING_SHIFT.resolvedPct },
+  { label: "Waiting on you", value: PRODUCT_LANDING_SHIFT.forYou },
 ] as const;
 
 export const PRODUCT_LANDING_AI_INPUT = {
-  placeholder: "Tell Doe how to handle the next call…",
+  title: "Brief Doe before the next call",
+  placeholder: "Tell Doe how to handle the next caller…",
   suggestions: [
     "If they ask about refills, verify DOB then route to pharmacy",
-    "After 6pm, run bilingual intake before booking",
+    "After 6 PM, run bilingual intake before booking",
     "Warm-transfer prior auth questions to care coordination",
   ],
 } as const;
 
-/** @deprecated Landing redesign no longer uses line tabs. */
-export const PRODUCT_LANDING_LINES = [
-  { id: "main", label: "Main clinic line", detail: "(512) 555-0140", active: true },
-] as const;
+/** @deprecated Use PRODUCT_LANDING_SHIFT. */
+export const PRODUCT_LANDING_BRIEF = PRODUCT_LANDING_SHIFT.overnight;
+
+export const PRODUCT_PLACEHOLDER_COPY: Record<"calls" | "agents" | "settings", string> = {
+  calls: "Call history and live monitoring will live here.",
+  agents: "Agent configuration and rollout controls will live here.",
+  settings: "Clinic settings and integrations will live here.",
+};
+
+export function isProductPlaceholderTab(tab: ProductNavTab): tab is "calls" | "agents" | "settings" {
+  return tab !== "landing";
+}
 
 /** @deprecated Landing redesign no longer uses capability cards. */
 export const PRODUCT_LANDING_CAPABILITIES = [
@@ -122,13 +173,3 @@ export const PRODUCT_LANDING_CALL_PREVIEW = {
   duration: PRODUCT_LANDING_CONSOLE.duration,
   transcript: PRODUCT_LANDING_TRANSCRIPT,
 } as const;
-
-export const PRODUCT_PLACEHOLDER_COPY: Record<"calls" | "agents" | "settings", string> = {
-  calls: "Call history and live monitoring will live here.",
-  agents: "Agent configuration and rollout controls will live here.",
-  settings: "Clinic settings and integrations will live here.",
-};
-
-export function isProductPlaceholderTab(tab: ProductNavTab): tab is "calls" | "agents" | "settings" {
-  return tab !== "landing";
-}

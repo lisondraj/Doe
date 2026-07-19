@@ -1,4 +1,4 @@
-/* Voice landing — physician entry into live clinic agent */
+/* Voice landing — physician morning command center */
 
 .product-landing-panel {
   --pl-canvas: #f2efe8;
@@ -7,6 +7,8 @@
   --pl-surface-deep: #d0ccc3;
   --pl-selected: #e3dfd6;
   --pl-reading: #f4f1ea;
+  --pl-card: #ebe8e0;
+  --pl-card-deep: #e3dfd6;
   --pl-ink: #1e1612;
   --pl-ink-soft: #3a322c;
   --pl-ink-muted: rgba(38, 32, 28, 0.58);
@@ -16,6 +18,7 @@
   --pl-accent: #6e6258;
   --pl-accent-deep: #4a4038;
   --pl-accent-soft: rgba(110, 98, 88, 0.12);
+  --pl-urgent-soft: rgba(110, 98, 88, 0.18);
   --pl-console-from: #2a2118;
   --pl-console-to: #1a1208;
   --pl-console-text: #f2e8da;
@@ -37,6 +40,34 @@
 .product-landing-header__icon,
 .product-landing-line-note {
   color: var(--pl-ink-muted);
+}
+
+.product-landing-line-pill {
+  border: 1px solid var(--pl-line);
+  background: var(--pl-reading);
+  color: var(--pl-ink-soft);
+}
+
+.product-landing-line-pill--live {
+  border-color: rgba(110, 98, 88, 0.24);
+  background: var(--pl-accent-soft);
+}
+
+.product-landing-line-pill__dot {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 999px;
+  background: var(--pl-surface-deep);
+  flex-shrink: 0;
+}
+
+.product-landing-line-pill--live .product-landing-line-pill__dot {
+  background: var(--pl-accent);
+  animation: product-landing-pulse 2.4s ease-in-out infinite;
+}
+
+.product-landing-line-pill__meta {
+  color: var(--pl-ink-faint);
 }
 
 .product-landing-live-pill {
@@ -86,71 +117,112 @@
   background: var(--pl-canvas);
 }
 
-.product-landing-intro__greeting {
+.product-landing-hero__card {
+  background: linear-gradient(180deg, var(--pl-surface-raised) 0%, var(--pl-card) 100%);
+  border: 1px solid var(--pl-line);
+  box-shadow:
+    0 1px 2px rgba(30, 22, 18, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.product-landing-hero__greeting {
   color: var(--pl-ink-faint);
 }
 
-.product-landing-intro__headline {
+.product-landing-hero__headline {
   color: var(--pl-ink);
 }
 
-.product-landing-intro__subhead {
+.product-landing-hero__subhead {
   color: rgba(38, 32, 28, 0.68);
 }
 
-.product-landing-intro__brief {
+.product-landing-hero__overnight {
   color: var(--pl-ink-muted);
 }
 
-.product-landing-stage {
-  border-top: 1px solid var(--pl-line);
-  min-height: min(52vh, 36rem);
+.product-landing-hero__stats {
+  gap: 0.5rem;
 }
 
-.product-landing-console {
+.product-landing-stat {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 5.5rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 12px;
+  border: 1px solid var(--pl-line);
   background: var(--pl-reading);
-  min-height: 0;
 }
 
-.product-landing-console__stage {
-  overflow: hidden;
+.product-landing-stat__value {
+  color: var(--pl-ink);
+  font-size: 1.05rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.product-landing-stat__label {
+  color: var(--pl-ink-faint);
+  font-size: 10px;
+}
+
+.product-landing-grid {
+  min-height: min(56vh, 38rem);
+}
+
+.product-landing-call__stage {
   background: linear-gradient(168deg, var(--pl-console-from) 0%, var(--pl-console-to) 100%);
   color: var(--pl-console-text);
+  box-shadow:
+    0 10px 28px rgba(26, 18, 8, 0.18),
+    inset 0 1px 0 rgba(242, 232, 218, 0.08);
 }
 
-.product-landing-console__stage::before {
+.product-landing-call__stage::before {
   content: "";
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 70% 55% at 50% 0%, rgba(245, 230, 208, 0.12), transparent 65%),
-    radial-gradient(ellipse 40% 40% at 85% 80%, rgba(168, 118, 84, 0.12), transparent 60%);
+    radial-gradient(ellipse 72% 58% at 50% 0%, rgba(245, 230, 208, 0.14), transparent 68%),
+    radial-gradient(ellipse 42% 42% at 88% 82%, rgba(168, 118, 84, 0.14), transparent 62%);
   pointer-events: none;
 }
 
-.product-landing-console__state {
+.product-landing-call__state {
   color: rgba(242, 232, 218, 0.55);
 }
 
-.product-landing-console__caller {
-  color: var(--pl-console-text);
-}
-
-.product-landing-console__reason {
+.product-landing-call__status {
+  border: 1px solid rgba(242, 232, 218, 0.16);
+  background: rgba(26, 18, 8, 0.28);
   color: rgba(242, 232, 218, 0.82);
 }
 
-.product-landing-console__meta {
+.product-landing-call__caller {
+  color: var(--pl-console-text);
+}
+
+.product-landing-call__context {
   color: rgba(242, 232, 218, 0.48);
 }
 
-.product-landing-console__duration {
+.product-landing-call__reason {
+  color: rgba(242, 232, 218, 0.82);
+}
+
+.product-landing-call__duration {
   border: 1px solid rgba(242, 232, 218, 0.16);
   background: rgba(26, 18, 8, 0.35);
   color: rgba(242, 232, 218, 0.78);
 }
 
-.product-landing-console__agent-line {
+.product-landing-call__line {
+  color: rgba(242, 232, 218, 0.42);
+}
+
+.product-landing-call__agent-line {
   color: rgba(242, 232, 218, 0.78);
 }
 
@@ -159,8 +231,8 @@
   align-items: flex-end;
   justify-content: center;
   gap: 3px;
-  height: 2.75rem;
-  width: min(100%, 18rem);
+  height: 2.85rem;
+  width: min(100%, 19rem);
 }
 
 .product-voice-waveform__bar {
@@ -207,110 +279,101 @@
   }
 }
 
-.product-landing-transcript {
+.product-landing-chat {
   background: var(--pl-reading);
-  border-top: 1px solid var(--pl-line);
+  border: 1px solid var(--pl-line);
 }
 
-.product-landing-transcript__toolbar {
+.product-landing-chat__toolbar {
   background: var(--pl-surface-raised);
   border-bottom: 1px solid var(--pl-line);
+  border-radius: 18px 18px 0 0;
 }
 
-.product-landing-transcript__label {
+.product-landing-chat__label {
   color: var(--pl-ink-faint);
 }
 
-.product-voice-timeline {
-  position: relative;
+.product-voice-chat__row {
   display: flex;
-  flex-direction: column;
-  gap: 1.1rem;
-  padding-left: 1.1rem;
 }
 
-.product-voice-timeline::before {
-  content: "";
-  position: absolute;
-  top: 0.35rem;
-  bottom: 0.35rem;
-  left: 0.2rem;
-  width: 1px;
-  background: var(--pl-line);
+.product-voice-chat__row--patient {
+  justify-content: flex-start;
 }
 
-.product-voice-timeline__item {
-  position: relative;
+.product-voice-chat__row--agent {
+  justify-content: flex-end;
 }
 
-.product-voice-timeline__dot {
-  position: absolute;
-  left: -1.02rem;
-  top: 0.35rem;
-  width: 0.45rem;
-  height: 0.45rem;
-  border-radius: 999px;
-  background: var(--pl-surface-deep);
-  box-shadow: 0 0 0 3px var(--pl-reading);
+.product-voice-chat__bubble {
+  max-width: min(100%, 28rem);
+  padding: 0.75rem 0.85rem;
+  border-radius: 14px;
+  border: 1px solid var(--pl-line);
 }
 
-.product-voice-timeline__item--agent .product-voice-timeline__dot {
-  background: var(--pl-accent);
+.product-voice-chat__row--patient .product-voice-chat__bubble {
+  background: var(--pl-surface-raised);
 }
 
-.product-voice-timeline__speaker {
+.product-voice-chat__row--agent .product-voice-chat__bubble {
+  background: var(--pl-selected);
+  border-color: rgba(110, 98, 88, 0.16);
+}
+
+.product-voice-chat__speaker {
   color: var(--pl-ink-faint);
 }
 
-.product-voice-timeline__speaker--agent {
+.product-voice-chat__row--agent .product-voice-chat__speaker {
   color: var(--pl-accent-deep);
 }
 
-.product-voice-timeline__time {
+.product-voice-chat__time {
   color: var(--pl-ink-faint);
 }
 
-.product-voice-timeline__text {
-  color: rgba(38, 32, 28, 0.72);
+.product-voice-chat__text {
+  color: rgba(38, 32, 28, 0.76);
 }
 
-.product-voice-timeline__text--agent {
+.product-voice-chat__row--agent .product-voice-chat__text {
   color: var(--pl-ink);
 }
 
-.product-landing-rail {
-  background: var(--pl-canvas);
+.product-landing-sidebar__block {
+  background: var(--pl-reading);
+  border: 1px solid var(--pl-line);
 }
 
-.product-landing-rail__pulse {
-  background: var(--pl-surface);
-  border-bottom: 1px solid var(--pl-line);
-}
-
-.product-landing-rail__label {
+.product-landing-sidebar__label {
   color: var(--pl-ink-faint);
 }
 
-.product-landing-rail__hint,
-.product-landing-rail__pulse-label {
+.product-landing-sidebar__hint {
   color: var(--pl-ink-muted);
 }
 
-.product-landing-rail__pulse-value {
-  color: var(--pl-ink);
+.product-landing-attention__card {
+  padding: 0.85rem;
+  border-radius: 14px;
+  border: 1px solid var(--pl-line);
+  background: var(--pl-surface-raised);
 }
 
-.product-landing-attention__item {
-  padding: 0.85rem 0;
-  border-bottom: 1px solid var(--pl-line);
+.product-landing-attention__card--high {
+  background: linear-gradient(180deg, var(--pl-urgent-soft) 0%, var(--pl-surface-raised) 100%);
+  border-color: rgba(110, 98, 88, 0.2);
 }
 
-.product-landing-attention__item:last-child {
-  border-bottom: 0;
-}
-
-.product-landing-attention__badge {
+.product-landing-attention__badge,
+.product-landing-attention__urgency {
   color: var(--pl-ink-faint);
+}
+
+.product-landing-attention__urgency {
+  color: var(--pl-accent-deep);
 }
 
 .product-landing-attention__title {
@@ -322,21 +385,78 @@
 }
 
 .product-landing-attention__action {
-  border: 0;
-  background: transparent;
+  border: 1px solid var(--pl-line);
+  background: var(--pl-reading);
   color: var(--pl-accent-deep);
-  padding: 0;
   cursor: pointer;
 }
 
 .product-landing-attention__action:hover {
+  border-color: rgba(38, 32, 28, 0.16);
+  background: var(--pl-selected);
   color: var(--pl-ink);
+}
+
+.product-landing-queue__item,
+.product-landing-lines__item {
+  padding: 0.8rem 0.85rem;
+  border-radius: 14px;
+  border: 1px solid var(--pl-line);
+  background: var(--pl-surface-raised);
+}
+
+.product-landing-queue__item + .product-landing-queue__item,
+.product-landing-lines__item + .product-landing-lines__item {
+  margin-top: 0.5rem;
+}
+
+.product-landing-queue__position {
+  color: var(--pl-ink-faint);
+}
+
+.product-landing-queue__caller,
+.product-landing-lines__label {
+  color: var(--pl-ink);
+}
+
+.product-landing-queue__reason,
+.product-landing-lines__number,
+.product-landing-lines__detail {
+  color: var(--pl-ink-muted);
+}
+
+.product-landing-queue__wait {
+  border: 1px solid var(--pl-line);
+  background: var(--pl-reading);
+  color: var(--pl-ink-soft);
+}
+
+.product-landing-lines__item--live {
+  background: linear-gradient(180deg, var(--pl-accent-soft) 0%, var(--pl-surface-raised) 100%);
+  border-color: rgba(110, 98, 88, 0.18);
+}
+
+.product-landing-lines__status {
+  border: 1px solid var(--pl-line);
+  background: var(--pl-reading);
+  color: var(--pl-ink-soft);
+  text-transform: uppercase;
+}
+
+.product-landing-lines__item--live .product-landing-lines__status {
+  border-color: rgba(110, 98, 88, 0.22);
+  background: var(--pl-accent-soft);
+  color: var(--pl-accent-deep);
 }
 
 .product-landing-ai-dock {
   background: linear-gradient(to top, var(--pl-surface) 0%, rgba(220, 216, 207, 0.96) 100%);
   border-color: var(--pl-line);
   box-shadow: 0 -8px 24px rgba(30, 22, 18, 0.04);
+}
+
+.product-landing-ai-dock__title {
+  color: var(--pl-ink-faint);
 }
 
 .product-landing-ai-suggestion {
@@ -391,6 +511,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .product-landing-live-pill__dot,
+  .product-landing-line-pill--live .product-landing-line-pill__dot,
   .product-voice-waveform__bar {
     animation: none;
   }
