@@ -1,4 +1,5 @@
 import { JoinInternLineGraphic } from "@/components/join/JoinInternLineGraphic";
+import { DOEPHONE_SECTION_CLOSING_FEATURE_HEIGHT } from "@/lib/doephone/closing-section-styles";
 import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
 import { inter } from "@/lib/home/fonts";
 
@@ -16,7 +17,7 @@ export function DoePhoneClosingBandVisual({
   return (
     <div
       className={`home-closing-section__card-box relative w-full overflow-hidden border border-[#D9D4CC] bg-[#EBE7E0] ${DOEPHONE_SECTION_CAROUSEL_RADIUS}${
-        fillHeight ? " h-full min-h-0" : ""
+        fillHeight ? " h-full min-h-0" : ` ${DOEPHONE_SECTION_CLOSING_FEATURE_HEIGHT}`
       }`}
     >
       <div className="home-closing-section__card-art pointer-events-none absolute inset-0" aria-hidden>

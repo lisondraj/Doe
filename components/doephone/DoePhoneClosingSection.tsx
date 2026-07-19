@@ -13,7 +13,7 @@ import {
   DOEPHONE_SECTION_TITLE_PB,
   DOEPHONE_SECTION_TITLE_PT,
 } from "@/lib/doephone/section-styles";
-import { doephoneHomeScrollRevealStyleVars } from "@/lib/doephone/section-reveal-timing";
+import { doephoneHomeScrollRevealStyleVars, doephoneHomeSectionRevealObserverOptions } from "@/lib/doephone/section-reveal-timing";
 import {
   DOEPHONE_DESKTOP_MEDIA_QUERY,
   readBootstrappedDoePhoneVariant,
@@ -25,10 +25,12 @@ import { useLayoutEffect, useState, type CSSProperties } from "react";
 
 /** Closing beige section — stacked posts on iPhone; carousel + fundraise on desktop. */
 export function DoePhoneClosingSection() {
-  const { ref: revealRef, revealed } = useDoePhoneSectionReveal(0.14, {
-    rootMargin: "0px 0px 12% 0px",
+  const bootVariant = readBootstrappedDoePhoneVariant();
+  const revealObserver = doephoneHomeSectionRevealObserverOptions(bootVariant);
+  const { ref: revealRef, revealed } = useDoePhoneSectionReveal(revealObserver.threshold, {
+    rootMargin: revealObserver.rootMargin,
   });
-  const [isDesktop, setIsDesktop] = useState(() => readBootstrappedDoePhoneVariant() === "desktop");
+  const [isDesktop, setIsDesktop] = useState(() => bootVariant === "desktop");
 
   useLayoutEffect(() => {
     setIsDesktop(readBootstrappedDoePhoneVariant() === "desktop");
@@ -43,7 +45,7 @@ export function DoePhoneClosingSection() {
       <div
         ref={revealRef}
         className="flex h-full min-h-0 flex-col"
-        style={doephoneHomeScrollRevealStyleVars() as CSSProperties}
+        style={doephoneHomeScrollRevealStyleVars("phone") as CSSProperties}
       >
         <div className={`shrink-0 ${DOEPHONE_SECTION_CONTENT_INSET} ${DOEPHONE_SECTION_TITLE_PT}`}>
           <DoePhoneScrollRevealContent revealed={revealed} segment="title">
@@ -66,7 +68,7 @@ export function DoePhoneClosingSection() {
     <div
       ref={revealRef}
       className="home-closing-section flex h-full min-h-0 flex-1 flex-col"
-      style={doephoneHomeScrollRevealStyleVars() as CSSProperties}
+      style={doephoneHomeScrollRevealStyleVars("desktop") as CSSProperties}
     >
       <div className="home-closing-section__layout flex min-h-0 flex-1 flex-col">
         <DoePhoneScrollRevealContent

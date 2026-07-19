@@ -15,7 +15,7 @@ import {
   DOEPHONE_VIEWPORT_SECTION,
 } from "@/lib/doephone/section-styles";
 import { suisseIntl } from "@/lib/home/fonts";
-import { doephoneHomeScrollRevealStyleVars } from "@/lib/doephone/section-reveal-timing";
+import { doephoneHomeScrollRevealStyleVars, doephoneHomeSectionRevealObserverOptions } from "@/lib/doephone/section-reveal-timing";
 import { useDoePhoneSectionReveal } from "@/lib/doephone/use-doe-phone-section-reveal";
 import { doeHomeDuskShaderBandSurface, doeHomeShaderBandSurface } from "@/lib/proto/proto-shader-backdrop-colors";
 import { useLayoutEffect, useState, type CSSProperties } from "react";
@@ -77,11 +77,13 @@ export function DoePhoneHomeShaderBandSection({
   const sectionShell = feature ? `${DOEPHONE_VIEWPORT_SECTION} flex flex-col` : DOEPHONE_MAIN_PAGE_VIEWPORT_SECTION;
   const sectionLabel = feature ? SHADER_BAND_LABELS[feature] : undefined;
   const [titleLine1, titleLine2] = feature ? SHADER_BAND_TITLES[feature] : ["", ""];
-  const [layoutVariant, setLayoutVariant] = useState<DoePhoneVariant>(readBootstrappedDoePhoneVariant);
-  const { ref: revealRef, revealed } = useDoePhoneSectionReveal(0.14, {
-    rootMargin: "0px 0px 12% 0px",
+  const bootVariant = readBootstrappedDoePhoneVariant();
+  const revealObserver = doephoneHomeSectionRevealObserverOptions(bootVariant);
+  const [layoutVariant, setLayoutVariant] = useState<DoePhoneVariant>(bootVariant);
+  const { ref: revealRef, revealed } = useDoePhoneSectionReveal(revealObserver.threshold, {
+    rootMargin: revealObserver.rootMargin,
   });
-  const revealStyle = doephoneHomeScrollRevealStyleVars() as CSSProperties;
+  const revealStyle = doephoneHomeScrollRevealStyleVars(layoutVariant) as CSSProperties;
   const visualLayout = layoutVariant === "desktop" ? "desktop" : "phone";
 
   useLayoutEffect(() => {

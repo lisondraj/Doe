@@ -1059,14 +1059,11 @@ html[data-home-page] .home-agents-carousel__orb-peek-reveal > [class*="home-agen
   min-height: calc(100% + 3%);
 }
 html[data-home-page] .home-agents-carousel__orb-peek-lift > .home-agents-carousel__inbox-peek,
-html[data-home-page] .home-agents-carousel__orb-peek-reveal > .home-agents-carousel__inbox-peek {
-  height: 94%;
-  min-height: 94%;
-}
+html[data-home-page] .home-agents-carousel__orb-peek-reveal > .home-agents-carousel__inbox-peek,
 html[data-home-page] .home-agents-carousel__orb-peek-lift > .home-agents-carousel__scheduling-peek,
 html[data-home-page] .home-agents-carousel__orb-peek-reveal > .home-agents-carousel__scheduling-peek {
-  height: 100%;
-  min-height: 100%;
+  height: 94%;
+  min-height: 94%;
 }
 /* iPhone — no stacked peek backdrop blur. */
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__labs-peek-edge-blur,
@@ -1415,14 +1412,15 @@ html[data-home-page] .home-agents-carousel__referrals-peek-detail-value {
 /* Agents carousel — Scheduling Agent peek (left-edge corner bleed, mirrors inbox). */
 html[data-home-page] .home-agents-carousel__orb .hero-speaking-orb__core .home-agents-carousel__scheduling-peek {
   position: absolute;
-  left: 50%;
-  top: 0;
+  left: 0;
+  bottom: 0;
   z-index: 4;
-  width: 100%;
-  height: 100%;
+  width: 92%;
+  height: 90%;
   overflow: hidden;
   pointer-events: none;
-  transform: translateX(-50%);
+  transform: none;
+  border-top-right-radius: clamp(0.85rem, 1.35vmin, 1.15rem);
   box-shadow: none;
 }
 html[data-home-page] .home-agents-carousel__scheduling-peek-card {
@@ -1430,8 +1428,8 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-card {
   left: 0;
   bottom: 0;
   transform-origin: 0% 100%;
-  transform: translate(clamp(4%, 5.5vmin, 7%), clamp(1%, 1.8vmin, 2.2%))
-    scale(calc(1.12 * var(--home-agents-peek-orb-scale)));
+  transform: translate(clamp(-2.5%, -2vmin, -1%), clamp(0.5%, 1.4vmin, 1.8%))
+    scale(calc(1.22 * var(--home-agents-peek-orb-scale)));
   min-width: clamp(18.5rem, 28vmin, 23.5rem);
   background: #ffffff;
   border: none;
@@ -1439,6 +1437,24 @@ html[data-home-page] .home-agents-carousel__scheduling-peek-card {
   border-top-right-radius: clamp(0.85rem, 1.35vmin, 1.15rem);
   padding: clamp(0.68rem, 1.05vmin, 0.82rem) clamp(0.88rem, 1.35vmin, 1.05rem)
     clamp(0.72rem, 1.1vmin, 0.88rem);
+}
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb-peek-lift > .home-agents-carousel__scheduling-peek,
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb-peek-reveal > .home-agents-carousel__scheduling-peek {
+  height: 100%;
+  min-height: 100%;
+}
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb .hero-speaking-orb__core .home-agents-carousel__scheduling-peek {
+  left: 50%;
+  top: 0;
+  bottom: auto;
+  width: 100%;
+  height: 100%;
+  transform: translateX(-50%);
+  border-top-right-radius: 0;
+}
+html[data-home-page][data-layout="desktop"] .home-agents-carousel__scheduling-peek-card {
+  transform: translate(clamp(4%, 5.5vmin, 7%), clamp(1%, 1.8vmin, 2.2%))
+    scale(calc(1.12 * var(--home-agents-peek-orb-scale)));
 }
 html[data-home-page] .home-agents-carousel__scheduling-peek-head {
   display: flex;
@@ -8553,15 +8569,101 @@ html[data-home-page] .doephone-scroll-reveal-lift {
   display: block;
   overflow: visible;
 }
-html[data-home-page] .home-feature-card-section__content,
-html[data-home-page] .home-feature-shader-band__feature-shell,
-html[data-home-page] .home-feature-shader-band__feature-content,
-html[data-home-page] .home-feature-shader-band__active-agents-content,
-html[data-home-page] .home-feature-card-section__specialties-main {
+html[data-home-page][data-layout="desktop"] .home-feature-card-section__content,
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band__feature-shell,
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band__feature-content,
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band__active-agents-content,
+html[data-home-page][data-layout="desktop"] .home-feature-card-section__specialties-main {
   overflow: visible;
 }
-html[data-home-page]:not([data-layout="desktop"]) .home-feature-card-section--ui-panel .doephone-section-reveal--carousel {
-  animation-delay: var(--doephone-section-reveal-title-delay, 0ms) !important;
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--lab-alerts
+  .home-feature-shader-band__feature-title,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--call-summaries
+  .home-feature-shader-band__feature-title {
+  flex: 0 0 auto;
+  margin: 0 0 clamp(1.15rem, 0.75rem + 1.85vmin, 1.85rem) !important;
+  padding-top: max(2.15rem, calc(env(safe-area-inset-top, 0px) + calc(var(--app-vh, 100lvh) * 0.085))) !important;
+  color: #ffffff !important;
+}
+html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Closing"] [aria-hidden].border {
+  border-color: #d8c8b0 !important;
+  background-color: #f0e4d0 !important;
+}
+html[data-home-page]:has(.doephone-mobile-root) section[aria-label="Closing"] p {
+  color: #4a3828 !important;
+}
+/* iPhone home — preserve pre-desktop-refactor scroll reveal motion. */
+@keyframes doephone-section-reveal-in-phone {
+  0% {
+    opacity: 0;
+    filter: blur(24px);
+    transform: translateY(2.75rem);
+  }
+
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+@keyframes doephone-scroll-reveal-lift-in-phone {
+  0% {
+    opacity: 0;
+    filter: blur(16px);
+    transform: translateY(1.75rem);
+  }
+
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doephone-section-reveal {
+  filter: blur(24px);
+  transform: translateY(2.75rem);
+  overflow: visible;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doephone-reveal-lift {
+  filter: blur(16px);
+  transform: translateY(1.75rem);
+  overflow: visible;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doephone-section-reveal--in.doephone-section-reveal--title,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doephone-section-reveal--in.doephone-section-reveal--carousel,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doephone-section-reveal--in.doephone-section-reveal--menu,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doephone-section-reveal--in.doephone-section-reveal--badge,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doephone-section-reveal--in.doephone-section-reveal--input,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doephone-section-reveal--in.doephone-section-reveal--agents-carousel,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doephone-section-reveal--in.doephone-section-reveal--agents-orbs,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doephone-section-reveal--in.doephone-section-reveal--agents-label,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doephone-section-reveal--in.doephone-section-reveal--agents-nav {
+  animation-name: doephone-section-reveal-in-phone;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doephone-reveal-lift--in {
+  animation-name: doephone-scroll-reveal-lift-in-phone;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doephone-section-reveal--in.doephone-section-reveal--hoverable {
+  transition: transform var(--doephone-scroll-reveal-hover-duration, 0.4s)
+    cubic-bezier(0.22, 1, 0.36, 1);
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doephone-section-reveal--in.doephone-section-reveal--hoverable:hover {
+  transform: translateY(-7px);
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doephone-reveal-lift--in.doephone-reveal-lift--hoverable {
+  transition: transform var(--doephone-scroll-reveal-hover-duration, 0.4s)
+    cubic-bezier(0.22, 1, 0.36, 1);
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doephone-reveal-lift--in.doephone-reveal-lift--hoverable:hover {
+  transform: translateY(-7px);
 }
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--active-agents .home-feature-shader-band__active-agents-content {
   overflow: visible;

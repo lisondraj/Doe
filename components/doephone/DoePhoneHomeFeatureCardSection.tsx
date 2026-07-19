@@ -24,6 +24,7 @@ import {
 import {
   doephoneAgentsRevealStyleVars,
   doephoneHomeScrollRevealStyleVars,
+  doephoneHomeSectionRevealObserverOptions,
 } from "@/lib/doephone/section-reveal-timing";
 import { useDoePhoneSectionReveal } from "@/lib/doephone/use-doe-phone-section-reveal";
 import { protoGrainGradientVariant } from "@/lib/proto/proto-grain-gradient";
@@ -47,13 +48,17 @@ export function DoePhoneHomeFeatureCardSection({
   isFirstBelowHero?: boolean;
 }) {
   const shaderVariant = protoGrainGradientVariant(slide.id);
-  const [layoutVariant, setLayoutVariant] = useState<DoePhoneVariant>(readBootstrappedDoePhoneVariant);
-  const { ref: revealRef, revealed } = useDoePhoneSectionReveal(0.14, {
+  const bootVariant = readBootstrappedDoePhoneVariant();
+  const revealObserver = doephoneHomeSectionRevealObserverOptions(bootVariant);
+  const [layoutVariant, setLayoutVariant] = useState<DoePhoneVariant>(bootVariant);
+  const { ref: revealRef, revealed } = useDoePhoneSectionReveal(revealObserver.threshold, {
     skipInitialReveal: isFirstBelowHero,
-    rootMargin: "0px 0px 12% 0px",
+    rootMargin: revealObserver.rootMargin,
   });
   const revealStyle = (
-    showAgentsCarousel ? doephoneAgentsRevealStyleVars() : doephoneHomeScrollRevealStyleVars()
+    showAgentsCarousel
+      ? doephoneAgentsRevealStyleVars(layoutVariant)
+      : doephoneHomeScrollRevealStyleVars(layoutVariant)
   ) as CSSProperties;
 
   useLayoutEffect(() => {

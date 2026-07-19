@@ -13,7 +13,7 @@ export function useDoePhoneSectionReveal(
   threshold = 0.12,
   options: DoePhoneSectionRevealOptions = {},
 ) {
-  const { skipInitialReveal = false, rootMargin = "0px 0px 12% 0px" } = options;
+  const { skipInitialReveal = false, rootMargin = "0px 0px 8% 0px" } = options;
   const ref = useRef<HTMLDivElement>(null);
   const [revealed, setRevealed] = useState(false);
 
