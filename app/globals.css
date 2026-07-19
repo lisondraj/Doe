@@ -11708,3 +11708,213 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alert
     --call-logic-node-max: min(100%, 15rem);
   }
 }
+/* Desktop — /doehealth landing (mirrors iPhone section order + copy bands). */
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth {
+  --doehealth-intro-ink: #3d2e1f;
+  --doehealth-intro-ink-body: rgba(61, 46, 31, 0.9);
+  --doehealth-intro-ink-muted: rgba(61, 46, 31, 0.66);
+  --doehealth-intro-ink-faint: rgba(61, 46, 31, 0.46);
+}
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-intro-band {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  box-sizing: border-box;
+  min-height: 100dvh !important;
+  height: 100dvh !important;
+  max-height: 100dvh !important;
+  padding-top: calc(var(--desktop-nav-height) + var(--desktop-section-pad-y)) !important;
+  padding-bottom: var(--desktop-section-pad-y) !important;
+  background-color: #faf0d8 !important;
+}
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-intro-band__shell {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  padding-inline: var(--desktop-page-inset-x);
+  overflow: visible;
+}
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-intro-band__title {
+  flex: 0 0 auto;
+  margin: 0 0 clamp(0.85rem, 1.25vw, 1.15rem) !important;
+  padding: 0 !important;
+  color: var(--doehealth-intro-ink) !important;
+  font-size: clamp(3rem, 1.5rem + 4.5vw, 4.75rem) !important;
+  line-height: 1.02 !important;
+  letter-spacing: -0.035em !important;
+}
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-intro-band__content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(1.35rem, 1.85vw, 2rem);
+  padding-inline: 0 !important;
+}
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-intro-band__body {
+  width: 100%;
+  max-width: min(28rem, 42vw);
+  margin: 0;
+  color: var(--doehealth-intro-ink-body);
+  font-size: clamp(1.08rem, 0.72rem + 0.55vw, 1.38rem);
+  font-weight: 400;
+  letter-spacing: -0.014em;
+  line-height: 1.18;
+  text-wrap: pretty;
+}
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-founder-circles {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(1.35rem, 2.1vw, 2.25rem);
+  width: 100%;
+  margin: clamp(0.15rem, 0.35vw, 0.35rem) 0;
+}
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-founder-circles__item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(0.55rem, 0.75vw, 0.85rem);
+  min-width: 0;
+}
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-founder-circles__orb {
+  width: clamp(5.25rem, 7.5vw, 6.75rem);
+  height: clamp(5.25rem, 7.5vw, 6.75rem);
+  border-radius: 999px;
+  overflow: hidden;
+}
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-founder-circles__name {
+  color: var(--doehealth-intro-ink);
+}
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-founder-circles__role {
+  color: var(--doehealth-intro-ink-muted);
+}
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-founder-circles__linkedin {
+  color: var(--doehealth-intro-ink-faint);
+}
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-founder-circles__linkedin:hover {
+  color: var(--doehealth-intro-ink-muted);
+}
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .home-feature-shader-band--active-agents .home-feature-shader-band__feature-title,
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .home-feature-shader-band--active-agents .home-feature-shader-band__feature-description,
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .home-feature-shader-band--active-agents .home-feature-shader-band__feature-subheading,
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .home-feature-shader-band--active-agents .doehealth-voice-roadmap,
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .home-feature-shader-band--active-agents .home-feature-shader-band__feature-closing {
+  padding-left: var(--desktop-page-inset-x) !important;
+  padding-right: var(--desktop-page-inset-x) !important;
+}
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .home-feature-shader-band--active-agents .home-feature-shader-band__feature-description {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: min(32rem, 46vw);
+  margin: 0 0 clamp(1.15rem, 1.65vw, 1.65rem);
+  color: rgba(255, 248, 240, 0.88);
+  font-size: clamp(1.08rem, 0.72rem + 0.55vw, 1.38rem);
+  font-weight: 400;
+  letter-spacing: -0.018em;
+  line-height: 1.18;
+  text-wrap: pretty;
+}
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .home-feature-shader-band--active-agents .home-feature-shader-band__feature-subheading:not(.home-feature-shader-band__feature-subheading--closing) {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: min(36rem, 52vw);
+  margin: 0 0 clamp(1.35rem, 1.85vw, 1.85rem);
+  padding-top: 0 !important;
+  color: #ffffff !important;
+  font-size: clamp(1.65rem, 1.05rem + 1.35vw, 2.15rem) !important;
+  font-weight: 400 !important;
+  line-height: 1.06 !important;
+  letter-spacing: -0.026em !important;
+}
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .home-feature-shader-band--active-agents .doehealth-voice-roadmap {
+  --doehealth-roadmap-ink-deep: #1a1208;
+  --doehealth-roadmap-sand: #f5e6d0;
+  --doehealth-roadmap-sand-soft: rgba(245, 230, 208, 0.78);
+  --doehealth-roadmap-line: rgba(245, 230, 208, 0.38);
+  --doehealth-roadmap-drop: clamp(0.82rem, 0.95vw, 1.05rem);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: min(42rem, 58vw);
+  margin: 0 0 clamp(2rem, 2.75vw, 2.85rem);
+}
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .home-feature-shader-band--active-agents .doehealth-voice-roadmap__focus {
+  min-height: clamp(4rem, 5.5vw, 4.85rem);
+  padding: clamp(1.05rem, 1.25vw, 1.35rem) clamp(2rem, 2.75vw, 2.65rem);
+  border-radius: clamp(0.42rem, 0.55vw, 0.58rem);
+  background: linear-gradient(168deg, #322618 0%, var(--doehealth-roadmap-ink-deep) 100%);
+  border: 1px solid rgba(245, 230, 208, 0.26);
+  color: var(--doehealth-roadmap-sand);
+  font-size: clamp(1.35rem, 0.95rem + 0.75vw, 1.72rem);
+  font-weight: 500;
+}
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .home-feature-shader-band--active-agents .home-feature-shader-band__feature-closing {
+  align-items: stretch;
+  width: 100%;
+  max-width: none;
+  gap: clamp(0.65rem, 0.95vw, 0.95rem);
+  margin: 0 0 clamp(1.75rem, 2.35vw, 2.35rem);
+}
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .home-feature-shader-band--active-agents .home-feature-shader-band__feature-subheading--closing {
+  width: 100%;
+  max-width: none;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: right;
+  color: #3d2e1f !important;
+  font-size: clamp(1.65rem, 1.05rem + 1.35vw, 2.15rem) !important;
+}
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .home-feature-shader-band--active-agents .home-feature-shader-band__feature-closing-brand-row {
+  --doehealth-closing-row-h: clamp(4.15rem, 5.25vw, 5.35rem);
+  --doehealth-closing-pill-h: clamp(2.75rem, 3.45vw, 3.45rem);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  overflow: visible;
+}
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .home-feature-shader-band--active-agents .doehealth-closing-label-carousel,
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .home-feature-shader-band--active-agents .doehealth-closing-label-carousel__shell,
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .home-feature-shader-band--active-agents .doehealth-closing-label-carousel__viewport {
+  width: 100%;
+  max-width: 100%;
+  height: var(--doehealth-closing-row-h);
+  overflow: hidden;
+}
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .home-feature-shader-band--active-agents .doehealth-closing-label-carousel__chip {
+  min-width: clamp(9rem, 12vw, 12.5rem);
+  height: var(--doehealth-closing-pill-h);
+  max-height: var(--doehealth-closing-pill-h);
+  padding: 0 clamp(1.15rem, 1.45vw, 1.55rem);
+  border-radius: clamp(0.42rem, 0.55vw, 0.58rem);
+  background: linear-gradient(168deg, #322618 0%, #1a1208 100%);
+  border: 1px solid rgba(245, 230, 208, 0.28);
+  color: #f5e6d0;
+  font-size: clamp(1.22rem, 0.92rem + 0.55vw, 1.62rem);
+}
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .home-feature-card-section--specialties .home-feature-card-section__specialties-main .doephone-section-reveal--title {
+  position: static;
+  right: auto;
+  bottom: auto;
+  left: auto;
+  width: 100%;
+  max-width: none;
+  margin-bottom: clamp(1rem, 1.45vw, 1.35rem);
+}
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .home-feature-card-section--specialties .home-feature-card-section__title--specialties {
+  text-align: left;
+}
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .home-feature-card-section--specialties .home-feature-card-section__inner {
+  justify-content: flex-start !important;
+}
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .home-feature-card-section__specialties-main {
+  position: relative;
+  min-height: clamp(22rem, calc(var(--desktop-below-nav-height) - 8rem), 42rem);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: clamp(1.25rem, 1.75vw, 1.85rem);
+}

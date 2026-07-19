@@ -164,14 +164,12 @@ export function DoePhoneRouter({
     return null;
   }
 
-  /** Forked slide lists (/doehealth) always use the phone feature stack + bands. */
-  const usePhoneFeatureStack = featureSlidesPhone !== undefined;
-
-  if (variant === "desktop" && !usePhoneFeatureStack) {
+  if (variant === "desktop") {
     return (
       <DoePhoneDesktopView
         TopBanner={TopBanner}
         heroHeadline={heroHeadline}
+        afterHero={afterHero}
         shaderBeforeCardSlideIds={shaderBeforeCardSlideIds}
         disableCarouselInteractions={disableCarouselInteractions}
         hideActiveAgentsVisual={hideActiveAgentsVisual}
@@ -180,6 +178,10 @@ export function DoePhoneRouter({
         activeAgentsSubheading={activeAgentsSubheading}
         activeAgentsRoadmapDiagram={activeAgentsRoadmapDiagram}
         activeAgentsClosingLabelCarousel={activeAgentsClosingLabelCarousel}
+        featureSlidesPhone={featureSlidesPhone}
+        specialtyBeforeAgentsWorkflow={specialtyBeforeAgentsWorkflow}
+        freezeSpecialtyMarquee={freezeSpecialtyMarquee}
+        priorAuthAfterSpecialty={priorAuthAfterSpecialty}
       />
     );
   }
