@@ -1269,9 +1269,9 @@ export function DoeSchedulesAppMock({
     productBrownWorkspace && workspaceView !== "inbox";
   const inboxUi = productBrownInbox
     ? {
-        cream: "bg-[var(--pi-highlight)]",
-        sand: "bg-[var(--pi-highlight)]",
-        sandDeep: "bg-[var(--pi-well)]",
+        cream: "bg-[var(--pi-cream)]",
+        sand: "bg-[var(--pi-sand)]",
+        sandDeep: "bg-[var(--pi-sand-deep)]",
         well: "bg-[var(--pi-well)]",
         highlight: "bg-[var(--pi-highlight)]",
         ink: "text-[var(--pi-ink)]",
@@ -2513,7 +2513,7 @@ export function DoeSchedulesAppMock({
                     <header
                       className={`flex items-center gap-2 border-b px-4 py-3 ${
                         productBrownInbox
-                          ? `${inboxUi!.line} ${inboxUi!.sand}`
+                          ? `${inboxUi!.line} ${inboxUi!.highlight}`
                           : productBrown
                             ? "border-[rgba(61,46,31,0.14)] bg-[#f5e6d0]"
                             : "border-[#EFEFEF]"
@@ -2672,7 +2672,7 @@ export function DoeSchedulesAppMock({
                         <div
                           className={`sticky top-0 z-10 flex h-[58px] shrink-0 items-center justify-between gap-2 border-b px-3 sm:px-4 ${
                             productBrownInbox
-                              ? `${inboxUi!.line} ${inboxUi!.sand}`
+                              ? `${inboxUi!.line} ${inboxUi!.highlight}`
                               : productBrownDarkWorkspace
                                 ? "border-[rgba(245,230,208,0.08)] bg-[#322618]"
                                 : "border-[#F2F2F2] bg-white"
