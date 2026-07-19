@@ -13,11 +13,10 @@ import type { DoePhoneCommunicationSlide } from "@/lib/doephone/communication-ca
 import {
   DOEPHONE_DISPLAY_WEIGHT_TW,
   DOEPHONE_MAIN_PAGE_VIEWPORT_SECTION,
-  DOEPHONE_CLOSING_FUNDRAISE_INSET_X,
   DOEPHONE_SECTION_CAROUSEL_INSET_X,
   DOEPHONE_VIEWPORT_SECTION,
 } from "@/lib/doephone/section-styles";
-import { dmSans, lora, suisseIntl } from "@/lib/home/fonts";
+import { dmSans, suisseIntl } from "@/lib/home/fonts";
 import { doephoneHomeScrollRevealStyleVars, doephoneHomeSectionRevealObserverOptions } from "@/lib/doephone/section-reveal-timing";
 import { useDoePhoneSectionReveal } from "@/lib/doephone/use-doe-phone-section-reveal";
 import { doeHomeDuskShaderBandSurface, doeHomeShaderBandSurface } from "@/lib/proto/proto-shader-backdrop-colors";
@@ -182,7 +181,7 @@ export function DoePhoneHomeShaderBandSection({
             ) : null}
             {activeAgentsBeyond ? (
               <div
-                className={`home-feature-shader-band__feature-closing flex w-full min-w-0 flex-col items-end ${DOEPHONE_CLOSING_FUNDRAISE_INSET_X}`}
+                className={`home-feature-shader-band__feature-closing flex w-full min-w-0 flex-col items-stretch ${DOEPHONE_SECTION_CAROUSEL_INSET_X}`}
               >
                 <p
                   className={`home-feature-shader-band__feature-subheading home-feature-shader-band__feature-subheading--closing m-0 text-right font-normal leading-[1.06] tracking-[-0.026em] ${dmSans.className}`}
@@ -190,7 +189,6 @@ export function DoePhoneHomeShaderBandSection({
                   {activeAgentsBeyond}
                 </p>
                 <div className="home-feature-shader-band__feature-closing-brand-row">
-                  <p className={`home-feature-shader-band__feature-brand m-0 text-right ${lora.className}`}>Doe</p>
                   {activeAgentsClosingLabelCarousel ? <DoeHealthClosingLabelCarousel /> : null}
                 </div>
               </div>

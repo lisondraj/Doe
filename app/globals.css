@@ -5605,19 +5605,22 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .home-feature-shader-band__feature-closing {
-  align-items: flex-end;
+  align-items: stretch;
+  box-sizing: border-box;
   width: 100%;
   max-width: none;
-  overflow: visible;
+  overflow: hidden;
   gap: clamp(0.55rem, 0.38rem + 0.72vmin, 0.88rem);
   margin: 0 0 clamp(2rem, 1.25rem + 2.65vmin, 2.85rem);
 }
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .home-feature-shader-band__feature-subheading--closing {
-  width: auto;
-  max-width: min(28rem, calc(var(--app-vw, 100vw) * 0.84));
+  align-self: stretch;
+  width: 100%;
+  max-width: none;
   margin: 0 !important;
+  padding: 0;
   text-align: right;
   color: #3d2e1f !important;
 }
@@ -5627,13 +5630,12 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   --doehealth-closing-row-h: clamp(3.95rem, 2.35rem + 7.35vmin, 5.45rem);
   --doehealth-closing-brand-size: clamp(2.45rem, 1.38rem + 4.45vmin, 3.5rem);
   --doehealth-closing-pill-h: clamp(2.55rem, 1.52rem + 4.65vmin, 3.35rem);
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: max-content;
+  display: flex;
+  flex-direction: row;
   align-items: center;
-  justify-content: end;
-  column-gap: clamp(0.85rem, 0.55rem + 1.05vmin, 1.25rem);
-  max-width: 100%;
+  justify-content: flex-end;
+  width: 100%;
+  max-width: none;
   overflow: visible;
 }
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
@@ -5654,22 +5656,29 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .doehealth-closing-label-carousel {
-  flex: 0 1 auto;
-  min-width: 0;
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
   height: var(--doehealth-closing-row-h);
-  overflow: visible;
+  overflow: hidden;
 }
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .doehealth-closing-label-carousel__shell {
   display: block;
-  height: var(--doehealth-closing-row-h);
+  width: 100%;
   max-width: 100%;
-  overflow: visible;
+  margin: 0;
+  height: var(--doehealth-closing-row-h);
+  overflow: hidden;
 }
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .doehealth-closing-label-carousel__viewport {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
   height: var(--doehealth-closing-row-h);
   overflow: hidden;
 }
@@ -5679,13 +5688,18 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   margin: 0;
   padding: 0;
   list-style: none;
+  width: 100%;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .doehealth-closing-label-carousel__slide {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: flex-end;
+  width: 100%;
   height: var(--doehealth-closing-row-h);
   margin: 0;
   padding: 0;

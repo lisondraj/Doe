@@ -6,7 +6,8 @@ import { DOEHEALTH_CLOSING_LABEL_CAROUSEL_ITEMS } from "@/lib/doehealth/doehealt
 import { dmSans } from "@/lib/home/fonts";
 
 const INTERVAL_MS = 5200;
-const TRANSITION_MS = 680;
+const TRANSITION_MS = 980;
+const TRANSITION_EASING = "cubic-bezier(0.22, 1, 0.36, 1)";
 
 /** Vertical switch carousel — DM Sans labels in brown pills beside Doe. */
 export function DoeHealthClosingLabelCarousel({ className = "" }: { className?: string }) {
@@ -68,7 +69,7 @@ export function DoeHealthClosingLabelCarousel({ className = "" }: { className?: 
               transform: `translateY(calc(-1 * ${activeIndex} * var(--doehealth-closing-row-h, 4rem)))`,
               transition:
                 motionOk && transitionOn
-                  ? `transform ${TRANSITION_MS}ms cubic-bezier(0.32, 0.72, 0, 1)`
+                  ? `transform ${TRANSITION_MS}ms ${TRANSITION_EASING}`
                   : "none",
             }}
           >
