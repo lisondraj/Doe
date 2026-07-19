@@ -1,83 +1,84 @@
-/* Voice landing — physician morning command center */
+/* Voice landing — uses inbox taupe tokens; live call stage keeps its own dark palette */
 
 .product-landing-panel {
-  --pl-canvas: #f2efe8;
-  --pl-surface: #dcd8cf;
-  --pl-surface-raised: #ebe8e0;
-  --pl-surface-deep: #d0ccc3;
-  --pl-selected: #e3dfd6;
-  --pl-reading: #f4f1ea;
-  --pl-card: #ebe8e0;
-  --pl-card-deep: #e3dfd6;
-  --pl-ink: #1e1612;
-  --pl-ink-soft: #3a322c;
-  --pl-ink-muted: rgba(38, 32, 28, 0.58);
-  --pl-ink-faint: rgba(38, 32, 28, 0.42);
-  --pl-line: rgba(38, 32, 28, 0.09);
-  --pl-line-strong: rgba(38, 32, 28, 0.14);
-  --pl-accent: #6e6258;
-  --pl-accent-deep: #4a4038;
-  --pl-accent-soft: rgba(110, 98, 88, 0.12);
-  --pl-urgent-soft: rgba(110, 98, 88, 0.18);
+  --pi-cream: #f2efe8;
+  --pi-sand: #dcd8cf;
+  --pi-sand-deep: #c4c0b7;
+  --pi-well: #d0ccc3;
+  --pi-selected: #e3dfd6;
+  --pi-raised: #ebe8e0;
+  --pi-reading: #f4f1ea;
+  --pi-accent: #6e6258;
+  --pi-accent-deep: #4a4038;
+  --pi-ink: #1e1612;
+  --pi-ink-soft: #3a322c;
+  --pi-muted: rgba(38, 32, 28, 0.58);
+  --pi-muted-soft: rgba(38, 32, 28, 0.42);
+  --pi-line: rgba(38, 32, 28, 0.09);
+  --pi-line-strong: rgba(38, 32, 28, 0.14);
+  --pi-accent-soft: rgba(110, 98, 88, 0.12);
+  --pi-urgent-soft: rgba(110, 98, 88, 0.18);
+
+  /* Live call stage — preserved separately from inbox taupe */
   --pl-console-from: #2a2118;
   --pl-console-to: #1a1208;
   --pl-console-text: #f2e8da;
 
-  background: var(--pl-canvas);
-  color: var(--pl-ink);
+  background: var(--pi-cream);
+  color: var(--pi-ink);
 }
 
 .product-landing-header {
-  background: var(--pl-surface);
-  border-bottom: 1px solid var(--pl-line);
+  background: var(--pi-sand);
+  border-bottom: 1px solid var(--pi-line);
 }
 
 .product-landing-header__title {
-  color: var(--pl-ink);
+  color: var(--pi-ink);
 }
 
 .product-landing-header__clinic,
 .product-landing-header__icon,
 .product-landing-line-note {
-  color: var(--pl-ink-muted);
+  color: var(--pi-muted);
 }
 
 .product-landing-line-pill {
-  border: 1px solid var(--pl-line);
-  background: var(--pl-reading);
-  color: var(--pl-ink-soft);
+  border: 1px solid var(--pi-line);
+  background: var(--pi-reading);
+  color: var(--pi-ink-soft);
 }
 
 .product-landing-line-pill--live {
   border-color: rgba(110, 98, 88, 0.24);
-  background: var(--pl-accent-soft);
+  background: var(--pi-accent-soft);
 }
 
 .product-landing-line-pill__dot {
   width: 0.4rem;
   height: 0.4rem;
   border-radius: 999px;
-  background: var(--pl-surface-deep);
+  background: var(--pi-well);
   flex-shrink: 0;
 }
 
 .product-landing-line-pill--live .product-landing-line-pill__dot {
-  background: var(--pl-accent);
+  background: var(--pi-accent);
   animation: product-landing-pulse 2.4s ease-in-out infinite;
 }
 
 .product-landing-line-pill__meta {
-  color: var(--pl-ink-faint);
+  color: var(--pi-muted-soft);
 }
 
 .product-landing-live-pill {
   border: 1px solid rgba(110, 98, 88, 0.28);
-  background: var(--pl-accent-soft);
-  color: var(--pl-accent-deep);
+  background: var(--pi-accent-soft);
+  color: var(--pi-accent-deep);
 }
 
 .product-landing-live-pill__dot {
-  background: var(--pl-accent);
+  background: var(--pi-accent);
   animation: product-landing-pulse 2.4s ease-in-out infinite;
 }
 
@@ -93,7 +94,7 @@
 
 .product-landing-cta-primary {
   border: 1px solid rgba(30, 22, 18, 0.12);
-  background: var(--pl-ink);
+  background: var(--pi-ink);
   color: var(--pl-console-text);
 }
 
@@ -102,35 +103,33 @@
 }
 
 .product-landing-cta-secondary {
-  border: 1px solid var(--pl-line);
-  background: var(--pl-surface-raised);
-  color: var(--pl-ink-soft);
+  border: 1px solid var(--pi-line);
+  background: var(--pi-raised);
+  color: var(--pi-ink-soft);
 }
 
 .product-landing-cta-secondary:hover {
   border-color: rgba(38, 32, 28, 0.16);
-  background: var(--pl-selected);
-  color: var(--pl-ink);
+  background: var(--pi-selected);
+  color: var(--pi-ink);
 }
 
 .product-landing-body {
-  background: var(--pl-canvas);
+  background: var(--pi-cream);
 }
 
 .product-landing-hero__card {
-  background: linear-gradient(180deg, var(--pl-surface-raised) 0%, var(--pl-card) 100%);
-  border: 1px solid var(--pl-line);
-  box-shadow:
-    0 1px 2px rgba(30, 22, 18, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  background: var(--pi-reading);
+  border: 1px solid var(--pi-line);
+  box-shadow: 0 1px 2px rgba(30, 22, 18, 0.03);
 }
 
 .product-landing-hero__greeting {
-  color: var(--pl-ink-faint);
+  color: var(--pi-muted-soft);
 }
 
 .product-landing-hero__headline {
-  color: var(--pl-ink);
+  color: var(--pi-ink);
 }
 
 .product-landing-hero__subhead {
@@ -138,7 +137,7 @@
 }
 
 .product-landing-hero__overnight {
-  color: var(--pl-ink-muted);
+  color: var(--pi-muted);
 }
 
 .product-landing-hero__stats {
@@ -152,19 +151,20 @@
   min-width: 5.5rem;
   padding: 0.55rem 0.75rem;
   border-radius: 12px;
-  border: 1px solid var(--pl-line);
-  background: var(--pl-reading);
+  border: 1px solid var(--pi-line);
+  background: var(--pi-raised);
+  box-shadow: 0 1px 2px rgba(30, 22, 18, 0.03);
 }
 
 .product-landing-stat__value {
-  color: var(--pl-ink);
+  color: var(--pi-ink);
   font-size: 1.05rem;
   line-height: 1;
   letter-spacing: -0.02em;
 }
 
 .product-landing-stat__label {
-  color: var(--pl-ink-faint);
+  color: var(--pi-muted-soft);
   font-size: 10px;
 }
 
@@ -172,6 +172,7 @@
   min-height: min(56vh, 38rem);
 }
 
+/* M. Nguyen live call box — dark console palette unchanged */
 .product-landing-call__stage {
   background: linear-gradient(168deg, var(--pl-console-from) 0%, var(--pl-console-to) 100%);
   color: var(--pl-console-text);
@@ -280,18 +281,18 @@
 }
 
 .product-landing-chat {
-  background: var(--pl-reading);
-  border: 1px solid var(--pl-line);
+  background: var(--pi-reading);
+  border: 1px solid var(--pi-line);
 }
 
 .product-landing-chat__toolbar {
-  background: var(--pl-surface-raised);
-  border-bottom: 1px solid var(--pl-line);
+  background: var(--pi-sand);
+  border-bottom: 1px solid var(--pi-line);
   border-radius: 18px 18px 0 0;
 }
 
 .product-landing-chat__label {
-  color: var(--pl-ink-faint);
+  color: var(--pi-muted-soft);
 }
 
 .product-voice-chat__row {
@@ -310,28 +311,29 @@
   max-width: min(100%, 28rem);
   padding: 0.75rem 0.85rem;
   border-radius: 14px;
-  border: 1px solid var(--pl-line);
+  border: 1px solid var(--pi-line);
+  box-shadow: 0 1px 2px rgba(30, 22, 18, 0.03);
 }
 
 .product-voice-chat__row--patient .product-voice-chat__bubble {
-  background: var(--pl-surface-raised);
+  background: var(--pi-raised);
 }
 
 .product-voice-chat__row--agent .product-voice-chat__bubble {
-  background: var(--pl-selected);
+  background: var(--pi-selected);
   border-color: rgba(110, 98, 88, 0.16);
 }
 
 .product-voice-chat__speaker {
-  color: var(--pl-ink-faint);
+  color: var(--pi-muted-soft);
 }
 
 .product-voice-chat__row--agent .product-voice-chat__speaker {
-  color: var(--pl-accent-deep);
+  color: var(--pi-accent-deep);
 }
 
 .product-voice-chat__time {
-  color: var(--pl-ink-faint);
+  color: var(--pi-muted-soft);
 }
 
 .product-voice-chat__text {
@@ -339,70 +341,72 @@
 }
 
 .product-voice-chat__row--agent .product-voice-chat__text {
-  color: var(--pl-ink);
+  color: var(--pi-ink);
 }
 
 .product-landing-sidebar__block {
-  background: var(--pl-reading);
-  border: 1px solid var(--pl-line);
+  background: var(--pi-reading);
+  border: 1px solid var(--pi-line);
 }
 
 .product-landing-sidebar__label {
-  color: var(--pl-ink-faint);
+  color: var(--pi-muted-soft);
 }
 
 .product-landing-sidebar__hint {
-  color: var(--pl-ink-muted);
+  color: var(--pi-muted);
 }
 
 .product-landing-attention__card {
   padding: 0.85rem;
   border-radius: 14px;
-  border: 1px solid var(--pl-line);
-  background: var(--pl-surface-raised);
+  border: 1px solid var(--pi-line);
+  background: var(--pi-raised);
+  box-shadow: 0 1px 2px rgba(30, 22, 18, 0.03);
 }
 
 .product-landing-attention__card--high {
-  background: linear-gradient(180deg, var(--pl-urgent-soft) 0%, var(--pl-surface-raised) 100%);
+  background: linear-gradient(180deg, var(--pi-urgent-soft) 0%, var(--pi-raised) 100%);
   border-color: rgba(110, 98, 88, 0.2);
 }
 
 .product-landing-attention__badge,
 .product-landing-attention__urgency {
-  color: var(--pl-ink-faint);
+  color: var(--pi-muted-soft);
 }
 
 .product-landing-attention__urgency {
-  color: var(--pl-accent-deep);
+  color: var(--pi-accent-deep);
 }
 
 .product-landing-attention__title {
-  color: var(--pl-ink);
+  color: var(--pi-ink);
 }
 
 .product-landing-attention__detail {
-  color: rgba(38, 32, 28, 0.58);
+  color: var(--pi-muted);
 }
 
 .product-landing-attention__action {
-  border: 1px solid var(--pl-line);
-  background: var(--pl-reading);
-  color: var(--pl-accent-deep);
+  border: 1px solid var(--pi-line);
+  background: var(--pi-reading);
+  color: var(--pi-accent-deep);
   cursor: pointer;
 }
 
 .product-landing-attention__action:hover {
   border-color: rgba(38, 32, 28, 0.16);
-  background: var(--pl-selected);
-  color: var(--pl-ink);
+  background: var(--pi-selected);
+  color: var(--pi-ink);
 }
 
 .product-landing-queue__item,
 .product-landing-lines__item {
   padding: 0.8rem 0.85rem;
   border-radius: 14px;
-  border: 1px solid var(--pl-line);
-  background: var(--pl-surface-raised);
+  border: 1px solid var(--pi-line);
+  background: var(--pi-raised);
+  box-shadow: 0 1px 2px rgba(30, 22, 18, 0.03);
 }
 
 .product-landing-queue__item + .product-landing-queue__item,
@@ -411,83 +415,84 @@
 }
 
 .product-landing-queue__position {
-  color: var(--pl-ink-faint);
+  color: var(--pi-muted-soft);
 }
 
 .product-landing-queue__caller,
 .product-landing-lines__label {
-  color: var(--pl-ink);
+  color: var(--pi-ink);
 }
 
 .product-landing-queue__reason,
 .product-landing-lines__number,
 .product-landing-lines__detail {
-  color: var(--pl-ink-muted);
+  color: var(--pi-muted);
 }
 
 .product-landing-queue__wait {
-  border: 1px solid var(--pl-line);
-  background: var(--pl-reading);
-  color: var(--pl-ink-soft);
+  border: 1px solid var(--pi-line);
+  background: var(--pi-reading);
+  color: var(--pi-ink-soft);
 }
 
 .product-landing-lines__item--live {
-  background: linear-gradient(180deg, var(--pl-accent-soft) 0%, var(--pl-surface-raised) 100%);
+  background: linear-gradient(180deg, var(--pi-accent-soft) 0%, var(--pi-raised) 100%);
   border-color: rgba(110, 98, 88, 0.18);
 }
 
 .product-landing-lines__status {
-  border: 1px solid var(--pl-line);
-  background: var(--pl-reading);
-  color: var(--pl-ink-soft);
+  border: 1px solid var(--pi-line);
+  background: var(--pi-reading);
+  color: var(--pi-ink-soft);
   text-transform: uppercase;
 }
 
 .product-landing-lines__item--live .product-landing-lines__status {
   border-color: rgba(110, 98, 88, 0.22);
-  background: var(--pl-accent-soft);
-  color: var(--pl-accent-deep);
+  background: var(--pi-accent-soft);
+  color: var(--pi-accent-deep);
 }
 
 .product-landing-ai-dock {
-  background: linear-gradient(to top, var(--pl-surface) 0%, rgba(220, 216, 207, 0.96) 100%);
-  border-color: var(--pl-line);
+  background: var(--pi-sand);
+  border-color: var(--pi-line);
   box-shadow: 0 -8px 24px rgba(30, 22, 18, 0.04);
 }
 
 .product-landing-ai-dock__title {
-  color: var(--pl-ink-faint);
+  color: var(--pi-muted-soft);
 }
 
 .product-landing-ai-suggestion {
-  border: 1px solid var(--pl-line);
-  background: var(--pl-reading);
+  border: 1px solid var(--pi-line);
+  background: var(--pi-raised);
   color: rgba(38, 32, 28, 0.62);
+  box-shadow: 0 1px 2px rgba(30, 22, 18, 0.03);
 }
 
 .product-landing-ai-suggestion:hover {
   border-color: rgba(38, 32, 28, 0.16);
-  background: var(--pl-selected);
-  color: var(--pl-ink);
+  background: var(--pi-selected);
+  color: var(--pi-ink);
 }
 
 .product-landing-ai-input {
-  border-color: var(--pl-line-strong);
-  background: var(--pl-reading);
+  border-color: var(--pi-line-strong);
+  background: var(--pi-reading);
   box-shadow:
     0 1px 2px rgba(30, 22, 18, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .product-landing-ai-input:focus-within {
   border-color: rgba(74, 64, 56, 0.35);
   box-shadow:
-    0 0 0 3px var(--pl-accent-soft),
+    0 0 0 3px var(--pi-accent-soft),
     0 1px 2px rgba(30, 22, 18, 0.04);
 }
 
 .product-landing-ai-input__field {
-  color: var(--pl-ink);
+  color: var(--pi-ink);
 }
 
 .product-landing-ai-input__field::placeholder {
@@ -496,7 +501,7 @@
 
 .product-landing-ai-input__send {
   border: 1px solid rgba(30, 22, 18, 0.12);
-  background: var(--pl-ink);
+  background: var(--pi-ink);
   color: var(--pl-console-text);
 }
 

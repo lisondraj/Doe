@@ -1265,6 +1265,7 @@ export function DoeSchedulesAppMock({
   const productBrownWorkspace =
     productBrown && workspaceView !== "landing";
   const productBrownInbox = productBrown && workspaceView === "inbox";
+  const productBrownLanding = productBrown && workspaceView === "landing";
   const productBrownDarkWorkspace =
     productBrownWorkspace && workspaceView !== "inbox";
   const inboxUi = productBrownInbox
@@ -1827,7 +1828,8 @@ export function DoeSchedulesAppMock({
         (hero ? ` pointer-events-none select-none touch-none ${suisseIntlUi.className}` : "") +
         (productBrown ? " product-brown-mock" : "") +
         (productBrownDarkWorkspace ? " product-brown-workspace-mode" : "") +
-        (productBrownInbox ? " product-brown-inbox-mode" : "")
+        (productBrownInbox ? " product-brown-inbox-mode" : "") +
+        (productBrownLanding ? " product-brown-landing-mode" : "")
       }
       aria-hidden={hero ? true : undefined}
     >

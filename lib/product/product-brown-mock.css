@@ -107,6 +107,11 @@
   background: var(--pi-cream);
 }
 
+.product-brown-mock.product-brown-landing-mode .product-brown-inner-row__content,
+.product-brown-mock.product-brown-landing-mode .product-brown-inner-row::after {
+  background: var(--pi-cream);
+}
+
 .product-brown-mock.product-brown-inbox-mode .product-brown-inner-row::after {
   box-shadow:
     -4px 0 20px rgba(0, 0, 0, 0.14),
@@ -118,9 +123,9 @@
   background: var(--pb-surface-deep);
 }
 
-.product-brown-mock:not(.product-brown-workspace-mode):not(.product-brown-inbox-mode)
+.product-brown-mock:not(.product-brown-workspace-mode):not(.product-brown-inbox-mode):not(.product-brown-landing-mode)
   .product-brown-inner-row__content,
-.product-brown-mock:not(.product-brown-workspace-mode):not(.product-brown-inbox-mode)
+.product-brown-mock:not(.product-brown-workspace-mode):not(.product-brown-inbox-mode):not(.product-brown-landing-mode)
   .product-brown-inner-row::after {
   background: #f8f4ec;
 }
@@ -261,7 +266,7 @@
 }
 
 .product-brown-mock .product-landing-panel {
-  color: var(--pb-ink);
+  color: var(--pi-ink, var(--pb-ink));
 }
 
 .product-brown-mock :is(.product-brown-main, .product-brown-main-panel) [class*="bg-white"] {
@@ -1005,4 +1010,84 @@ html[data-product-page="true"] .product-call-preview__bubble--agent {
 
 .product-brown-mock.product-brown-inbox-mode .product-brown-inbox-row[class*="hover:bg-[#ebe3d6]"]:hover {
   background-color: var(--pi-well) !important;
+}
+
+/* ── Landing: same taupe palette as inbox ── */
+.product-brown-mock.product-brown-landing-mode {
+  --pi-cream: #f2efe8;
+  --pi-sand: #dcd8cf;
+  --pi-sand-deep: #c4c0b7;
+  --pi-well: #d0ccc3;
+  --pi-selected: #e3dfd6;
+  --pi-raised: #ebe8e0;
+  --pi-reading: #f4f1ea;
+  --pi-highlight: var(--pi-reading);
+  --pi-accent: #6e6258;
+  --pi-accent-deep: #4a4038;
+  --pi-track: var(--pi-well);
+  --pi-ink: #1e1612;
+  --pi-ink-soft: #3a322c;
+  --pi-muted: rgba(38, 32, 28, 0.58);
+  --pi-muted-soft: rgba(38, 32, 28, 0.42);
+  --pi-line: rgba(38, 32, 28, 0.09);
+  --pi-line-strong: rgba(38, 32, 28, 0.14);
+  --pi-divider: rgba(38, 32, 28, 0.07);
+}
+
+.product-brown-mock.product-brown-landing-mode .product-brown-inner-row::after {
+  box-shadow:
+    -4px 0 20px rgba(0, 0, 0, 0.14),
+    0 0 0 1px rgba(38, 32, 28, 0.05);
+}
+
+.product-brown-mock.product-brown-landing-mode .product-brown-frame:not(.product-brown-layered-layout),
+.product-brown-mock.product-brown-landing-mode .product-brown-main {
+  background: var(--pi-cream) !important;
+  color: var(--pi-ink) !important;
+}
+
+.product-brown-mock.product-brown-landing-mode .product-landing-panel {
+  color: var(--pi-ink);
+}
+
+.product-brown-mock.product-brown-landing-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  header:not(.product-landing-header) {
+  background-color: var(--pi-cream) !important;
+  border-color: var(--pi-line) !important;
+}
+
+.product-brown-mock.product-brown-landing-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  .sticky.top-0 {
+  background-color: var(--pi-sand) !important;
+  border-color: var(--pi-line) !important;
+}
+
+.product-brown-mock.product-brown-landing-mode .product-brown-main [class*="bg-white"],
+.product-brown-mock.product-brown-landing-mode .product-brown-main [class*="bg-[#FAFAFA]"],
+.product-brown-mock.product-brown-landing-mode .product-brown-main [class*="bg-[#F7F7F7]"],
+.product-brown-mock.product-brown-landing-mode .product-brown-main [class*="bg-[#FBFBFB]"] {
+  background-color: var(--pi-sand) !important;
+}
+
+.product-brown-mock.product-brown-landing-mode .product-brown-main [class*="bg-[#faf0d8]"],
+.product-brown-mock.product-brown-landing-mode .product-brown-main [class*="bg-[#f5e6d0]"],
+.product-brown-mock.product-brown-landing-mode .product-brown-main [class*="bg-[#ede0c8]"] {
+  background-color: var(--pi-cream) !important;
+}
+
+.product-brown-mock.product-brown-landing-mode .product-brown-main [class*="hover:bg-neutral-50"]:hover,
+.product-brown-mock.product-brown-landing-mode .product-brown-main [class*="hover:bg-white"]:hover {
+  background-color: var(--pi-raised) !important;
+}
+
+.product-brown-mock.product-brown-landing-mode .product-landing-header {
+  background-color: var(--pi-sand) !important;
+  border-color: var(--pi-line) !important;
+}
+
+.product-brown-mock.product-brown-landing-mode .product-landing-ai-dock {
+  background: var(--pi-sand) !important;
+  border-color: var(--pi-line) !important;
 }
