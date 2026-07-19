@@ -9874,7 +9874,7 @@ html[data-home-page][data-layout="desktop"] .home-closing-section__carousel-wrap
 html[data-home-page][data-layout="desktop"] .home-closing-section__fundraise-wrap {
   flex: 0 0 auto;
   align-self: start;
-  width: min(100%, 30rem);
+  width: min(100%, 38rem);
   margin: 0 !important;
   padding: 0 !important;
 }
@@ -9891,11 +9891,11 @@ html[data-home-page][data-layout="desktop"] .home-closing-section__fundraise-hea
   margin: 0;
   flex: 0 1 auto;
   min-width: 0;
-  color: #1a1208;
-  font-size: clamp(2.65rem, 3.35vw, 3.75rem);
-  font-weight: 350;
-  line-height: 1.02;
-  letter-spacing: -0.032em;
+  color: #1a1208 !important;
+  font-size: clamp(2.85rem, 3.65vw, 4.15rem) !important;
+  font-weight: 350 !important;
+  line-height: 1.02 !important;
+  letter-spacing: -0.034em !important;
 }
 html[data-home-page][data-layout="desktop"] .home-closing-section__fundraise-headline-line {
   display: block;
@@ -9949,13 +9949,13 @@ html[data-home-page][data-layout="desktop"] .home-closing-section__fundraise-cop
   white-space: nowrap;
 }
 html[data-home-page][data-layout="desktop"] .home-closing-section__fundraise-description {
-  margin: clamp(0.95rem, 1.15vw, 1.1rem) 0 0;
-  max-width: 26rem;
-  color: rgba(26, 18, 8, 0.58);
-  font-size: clamp(0.78rem, 0.82vw, 0.86rem);
-  font-weight: 400;
-  line-height: 1.5;
-  letter-spacing: -0.01em;
+  margin: clamp(0.85rem, 1vw, 1rem) 0 0;
+  max-width: 28rem;
+  color: rgba(26, 18, 8, 0.56) !important;
+  font-size: clamp(0.8125rem, 0.88vw, 0.9375rem) !important;
+  font-weight: 400 !important;
+  line-height: 1.55 !important;
+  letter-spacing: -0.012em !important;
 }
 html[data-home-page][data-layout="desktop"] .home-feature-card-section__title--closing {
   display: block !important;
@@ -10052,7 +10052,7 @@ html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] .doeph
   letter-spacing: -0.035em !important;
   color: #1a1208 !important;
 }
-html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] p:not(.doephone-section-copy):not(.doephone-section-reveal--title),
+html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] p:not(.doephone-section-copy):not(.doephone-section-reveal--title):not(.home-closing-section__fundraise-headline):not(.home-closing-section__fundraise-description),
 html[data-home-page][data-layout="desktop"] section[aria-label="Closing"] .home-closing-section__card-caption {
   font-size: clamp(1.32rem, 1.58vw, 1.72rem) !important;
   line-height: 1.12 !important;

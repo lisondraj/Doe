@@ -3,7 +3,7 @@
 import { useCallback, useState } from "react";
 
 import { ABOUT_CONTACT_EMAIL } from "@/lib/about/about-contact";
-import { dmSans, inter, suisseIntl } from "@/lib/home/fonts";
+import { dmSans, suisseIntl } from "@/lib/home/fonts";
 
 const FUNDRAISE_DESCRIPTION =
   "We are meeting with US and Canadian backers who share our vision for provider-built clinical AI.";
@@ -66,7 +66,7 @@ export function DoePhoneClosingFundraiseCallout() {
           ) : null}
         </div>
       </div>
-      <p className={`home-closing-section__fundraise-description ${inter.className}`}>
+      <p className={`home-closing-section__fundraise-description ${dmSans.className}`}>
         {FUNDRAISE_DESCRIPTION}
       </p>
     </aside>
