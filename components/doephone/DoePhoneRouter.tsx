@@ -164,7 +164,10 @@ export function DoePhoneRouter({
     return null;
   }
 
-  if (variant === "desktop") {
+  /** Forked slide lists (/doehealth) always use the phone feature stack + bands. */
+  const usePhoneFeatureStack = featureSlidesPhone !== undefined;
+
+  if (variant === "desktop" && !usePhoneFeatureStack) {
     return (
       <DoePhoneDesktopView
         TopBanner={TopBanner}

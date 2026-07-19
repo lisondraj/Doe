@@ -44,18 +44,16 @@ export function DoePhoneHomeFeatureStack({
   /** /doehealth — specialty band between Built by doctors shader and workflow carousel. */
   specialtyBeforeAgentsWorkflow?: boolean;
   freezeSpecialtyMarquee?: boolean;
-  /** /doehealth — inbox card + prior auth shader immediately after specialty band. */
+  /** /doehealth — prior auth shader band immediately after specialty pills. */
   priorAuthAfterSpecialty?: boolean;
 }) {
   const slides =
-    variant === "desktop"
-      ? DOEPHONE_HOME_FEATURE_SLIDES_DESKTOP
-      : (featureSlidesPhone ?? DOEPHONE_HOME_FEATURE_SLIDES);
+    featureSlidesPhone ??
+    (variant === "desktop" ? DOEPHONE_HOME_FEATURE_SLIDES_DESKTOP : DOEPHONE_HOME_FEATURE_SLIDES);
 
   const frontDeskSlide = slides.find((entry) => entry.id === "front-desk");
   const frontDeskTitle = HOME_FEATURE_SECTION_TITLES["front-desk"];
   const inboxSlide = slides.find((entry) => entry.id === "inbox");
-  const inboxTitle = inboxSlide ? HOME_FEATURE_SECTION_TITLES[inboxSlide.id] : undefined;
 
   return (
     <>
@@ -115,17 +113,12 @@ export function DoePhoneHomeFeatureStack({
           ) : null;
 
         const priorAuthAfterSpecialtyBlock =
-          priorAuthAfterSpecialty && inboxSlide && inboxTitle ? (
-            <Fragment key="inbox-after-specialty">
-              <DoePhoneHomeFeatureCardSection
-                slide={inboxSlide}
-                titleLine1={inboxTitle.line1}
-                titleLine2={inboxTitle.line2}
-                shaderTheme={shaderTheme}
-                disableCarouselInteractions={disableCarouselInteractions}
-              />
-              <DoePhoneHomeShaderBandSection slideId={inboxSlide.id} shaderTheme={shaderTheme} />
-            </Fragment>
+          priorAuthAfterSpecialty && inboxSlide ? (
+            <DoePhoneHomeShaderBandSection
+              key="inbox-prior-auth-after-specialty"
+              slideId={inboxSlide.id}
+              shaderTheme={shaderTheme}
+            />
           ) : null;
 
         if (specialtyBeforeAgentsWorkflow && slide.id === "agents" && shaderFirst) {
