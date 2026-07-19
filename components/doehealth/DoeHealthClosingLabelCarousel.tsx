@@ -1,18 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { DOEHEALTH_CLOSING_LABEL_CAROUSEL_ITEMS } from "@/lib/doehealth/doehealth-closing-label-carousel";
-import { sourceSerif4 } from "@/lib/home/fonts";
+import { dmSans } from "@/lib/home/fonts";
 
-const INTERVAL_MS = 2800;
-const TRANSITION_MS = 520;
+const INTERVAL_MS = 5200;
+const TRANSITION_MS = 680;
 
-/** Vertical switch carousel — one serif label visible at a time. */
+/** Vertical switch carousel — DM Sans labels in brown pills beside Doe. */
 export function DoeHealthClosingLabelCarousel({ className = "" }: { className?: string }) {
   const items = DOEHEALTH_CLOSING_LABEL_CAROUSEL_ITEMS;
+  const loopCount = items.length;
+  const slides = useMemo(
+    () => (loopCount > 0 ? [...items, items[0]!] : []),
+    [items, loopCount],
+  );
+
   const [index, setIndex] = useState(0);
   const [motionOk, setMotionOk] = useState(true);
+  const [transitionOn, setTransitionOn] = useState(true);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -23,33 +30,59 @@ export function DoeHealthClosingLabelCarousel({ className = "" }: { className?: 
   }, []);
 
   useEffect(() => {
-    if (!motionOk) return;
+    if (loopCount <= 1) return;
     const id = window.setInterval(() => {
-      setIndex((current) => (current + 1) % items.length);
+      if (motionOk) {
+        setIndex((current) => (current >= loopCount ? current : current + 1));
+      } else {
+        setIndex((current) => (current + 1) % loopCount);
+      }
     }, INTERVAL_MS);
     return () => window.clearInterval(id);
-  }, [items.length, motionOk]);
+  }, [loopCount, motionOk]);
+
+  const onTrackTransitionEnd = useCallback(
+    (event: React.TransitionEvent<HTMLUListElement>) => {
+      if (!motionOk || event.propertyName !== "transform") return;
+      if (index !== loopCount) return;
+      setTransitionOn(false);
+      setIndex(0);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => setTransitionOn(true));
+      });
+    },
+    [index, loopCount, motionOk],
+  );
+
+  const trackItems = motionOk ? slides : items;
+  const activeIndex = motionOk ? index : index % loopCount;
 
   return (
-    <div
-      className={`doehealth-closing-label-carousel ${sourceSerif4.className}${className ? ` ${className}` : ""}`}
-      aria-live="polite"
-      aria-atomic
-    >
-      <div className="doehealth-closing-label-carousel__viewport">
-        <ul
-          className="doehealth-closing-label-carousel__track"
-          style={{
-            transform: `translateY(calc(-1 * ${index} * var(--doehealth-closing-label-step, 1.12rem)))`,
-            transition: motionOk ? `transform ${TRANSITION_MS}ms cubic-bezier(0.32, 0.72, 0, 1)` : "none",
-          }}
-        >
-          {items.map((label) => (
-            <li key={label} className="doehealth-closing-label-carousel__slide">
-              {label}
-            </li>
-          ))}
-        </ul>
+    <div className={`doehealth-closing-label-carousel ${dmSans.className}${className ? ` ${className}` : ""}`}>
+      <div className="doehealth-closing-label-carousel__shell">
+        <div className="doehealth-closing-label-carousel__viewport" aria-live="polite" aria-atomic>
+          <ul
+            className="doehealth-closing-label-carousel__track"
+            onTransitionEnd={onTrackTransitionEnd}
+            style={{
+              transform: `translateY(calc(-1 * ${activeIndex} * var(--doehealth-closing-row-h, 4rem)))`,
+              transition:
+                motionOk && transitionOn
+                  ? `transform ${TRANSITION_MS}ms cubic-bezier(0.32, 0.72, 0, 1)`
+                  : "none",
+            }}
+          >
+            {trackItems.map((label, slideIndex) => (
+              <li
+                key={motionOk && slideIndex === loopCount ? `${label}-loop` : label}
+                className="doehealth-closing-label-carousel__slide"
+                aria-hidden={motionOk && slideIndex === loopCount ? true : undefined}
+              >
+                <span className="doehealth-closing-label-carousel__chip">{label}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );
