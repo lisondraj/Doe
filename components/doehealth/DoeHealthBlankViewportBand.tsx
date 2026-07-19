@@ -12,11 +12,11 @@ export function DoeHealthBlankViewportBand() {
 
   return (
     <section
-      className="doehealth-intro-band relative z-10 flex w-full shrink-0 flex-col bg-[var(--doe-page-surface,#EDE8DF)]"
+      className="doehealth-intro-band relative z-10 flex w-full shrink-0 flex-col justify-center bg-[var(--doe-page-surface,#EDE8DF)]"
       aria-label={`${DOEHEALTH_INTRO_COPY.title.line1} ${DOEHEALTH_INTRO_COPY.title.line2}`}
       style={{ minHeight: "var(--app-vh, 100lvh)" }}
     >
-      <div className="doehealth-intro-band__shell relative z-[10] flex h-full min-h-0 w-full flex-col">
+      <div className="doehealth-intro-band__shell relative z-[10] flex w-full flex-col">
         <h2
           className={`doehealth-intro-band__title home-feature-card-section__title home-feature-card-section__title--feature-lead m-0 text-left ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${suisseIntl.className}`}
         >

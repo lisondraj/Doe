@@ -34,12 +34,14 @@ export function DoePhoneMobileView({
   afterHero,
   shaderBeforeCardSlideIds,
   disableCarouselInteractions,
+  activeAgentsDescription,
 }: {
   variant?: "home" | "proto";
   heroHeadline?: DoeHomeHeroHeadline;
   afterHero?: ReactNode;
   shaderBeforeCardSlideIds?: readonly string[];
   disableCarouselInteractions?: boolean;
+  activeAgentsDescription?: string;
 }) {
   const isProto = variant === "proto";
 
@@ -132,6 +134,7 @@ export function DoePhoneMobileView({
           shaderTheme="dusk"
           shaderBeforeCardSlideIds={shaderBeforeCardSlideIds}
           disableCarouselInteractions={disableCarouselInteractions}
+          activeAgentsDescription={activeAgentsDescription}
         />
       )}
 

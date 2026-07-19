@@ -11,11 +11,13 @@ export function DoePhoneDesktopView({
   heroHeadline,
   shaderBeforeCardSlideIds,
   disableCarouselInteractions,
+  activeAgentsDescription,
 }: {
   TopBanner?: DoeHomeTopBannerComponent;
   heroHeadline?: DoeHomeHeroHeadline;
   shaderBeforeCardSlideIds?: readonly string[];
   disableCarouselInteractions?: boolean;
+  activeAgentsDescription?: string;
 } = {}) {
   const staticNav = useDesignersStaticNav();
   return (
@@ -27,6 +29,7 @@ export function DoePhoneDesktopView({
         heroHeadline={heroHeadline}
         shaderBeforeCardSlideIds={shaderBeforeCardSlideIds}
         disableCarouselInteractions={disableCarouselInteractions}
+        activeAgentsDescription={activeAgentsDescription}
       />
     </>
   );

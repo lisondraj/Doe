@@ -15,12 +15,14 @@ export function DoeDesktopHome({
   heroHeadline,
   shaderBeforeCardSlideIds,
   disableCarouselInteractions,
+  activeAgentsDescription,
 }: {
   logoLink?: boolean;
   navActionLinksEnabled?: boolean;
   heroHeadline?: DoeHomeHeroHeadline;
   shaderBeforeCardSlideIds?: readonly string[];
   disableCarouselInteractions?: boolean;
+  activeAgentsDescription?: string;
 } = {}) {
   return (
     <div className="doe-desktop-root relative overflow-x-hidden bg-[#faf0d8]">
@@ -47,6 +49,7 @@ export function DoeDesktopHome({
           variant="desktop"
           shaderBeforeCardSlideIds={shaderBeforeCardSlideIds}
           disableCarouselInteractions={disableCarouselInteractions}
+          activeAgentsDescription={activeAgentsDescription}
         />
 
         <section id="doe-vision" className={DOEPHONE_BEIGE_SECTION} aria-label="Closing">

@@ -17,11 +17,13 @@ export function DoePhoneHomeFeatureStack({
   variant = "phone",
   shaderBeforeCardSlideIds = [],
   disableCarouselInteractions = false,
+  activeAgentsDescription,
 }: {
   shaderTheme?: "default" | "dusk";
   variant?: DoePhoneVariant;
   shaderBeforeCardSlideIds?: readonly string[];
   disableCarouselInteractions?: boolean;
+  activeAgentsDescription?: string;
 }) {
   const slides = variant === "desktop" ? DOEPHONE_HOME_FEATURE_SLIDES_DESKTOP : DOEPHONE_HOME_FEATURE_SLIDES;
 
@@ -46,7 +48,11 @@ export function DoePhoneHomeFeatureStack({
           />
         );
         const shaderSection = (
-          <DoePhoneHomeShaderBandSection slideId={slide.id} shaderTheme={shaderTheme} />
+          <DoePhoneHomeShaderBandSection
+            slideId={slide.id}
+            shaderTheme={shaderTheme}
+            activeAgentsDescription={slide.id === "agents" ? activeAgentsDescription : undefined}
+          />
         );
 
         return (

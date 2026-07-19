@@ -14,7 +14,7 @@ import {
   DOEPHONE_SECTION_CAROUSEL_INSET_X,
   DOEPHONE_VIEWPORT_SECTION,
 } from "@/lib/doephone/section-styles";
-import { suisseIntl } from "@/lib/home/fonts";
+import { suisseIntl, inter } from "@/lib/home/fonts";
 import { doephoneHomeScrollRevealStyleVars, doephoneHomeSectionRevealObserverOptions } from "@/lib/doephone/section-reveal-timing";
 import { useDoePhoneSectionReveal } from "@/lib/doephone/use-doe-phone-section-reveal";
 import { doeHomeDuskShaderBandSurface, doeHomeShaderBandSurface } from "@/lib/proto/proto-shader-backdrop-colors";
@@ -64,9 +64,11 @@ const SHADER_BAND_MODIFIER: Record<ShaderBandFeature, string> = {
 export function DoePhoneHomeShaderBandSection({
   slideId,
   shaderTheme = "default",
+  activeAgentsDescription,
 }: {
   slideId: DoePhoneCommunicationSlide["id"];
   shaderTheme?: "default" | "dusk";
+  activeAgentsDescription?: string;
 }) {
   const feature = SHADER_BAND_FEATURES[slideId];
   const shader =
@@ -148,6 +150,13 @@ export function DoePhoneHomeShaderBandSection({
               <span className="block">{titleLine1}</span>
               <span className="block">{titleLine2}</span>
             </h2>
+            {activeAgentsDescription ? (
+              <p
+                className={`home-feature-shader-band__feature-description m-0 text-left ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${inter.className}`}
+              >
+                {activeAgentsDescription}
+              </p>
+            ) : null}
           </DoePhoneScrollRevealContent>
           <div className="home-feature-shader-band__feature-content home-feature-shader-band__active-agents-content flex min-h-0 flex-1 flex-col">
             <DoePhoneScrollRevealContent revealed={revealed} segment="carousel" className="h-full min-h-0 w-full flex-1">

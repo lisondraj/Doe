@@ -4933,7 +4933,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .do
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doehealth-intro-band__title {
   flex: 0 0 auto;
   margin: 0 0 clamp(0.45rem, 0.28rem + 0.75vmin, 0.72rem) !important;
-  padding-top: max(3.15rem, calc(env(safe-area-inset-top, 0px) + calc(var(--app-vh, 100lvh) * 0.105))) !important;
+  padding-top: 0 !important;
   color: #1a1208 !important;
   font-size: var(--home-iphone-section-title-size) !important;
   line-height: var(--home-iphone-section-title-leading) !important;
@@ -5493,6 +5493,24 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   margin: 0 0 clamp(0.45rem, 0.28rem + 0.75vmin, 0.72rem) !important;
   padding-top: max(3.15rem, calc(env(safe-area-inset-top, 0px) + calc(var(--app-vh, 100lvh) * 0.105))) !important;
   color: #ffffff !important;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents:has(.home-feature-shader-band__feature-description)
+  .home-feature-shader-band__feature-title {
+  padding-top: max(4.35rem, calc(env(safe-area-inset-top, 0px) + calc(var(--app-vh, 100lvh) * 0.145))) !important;
+  margin-bottom: clamp(0.65rem, 0.42rem + 1vmin, 0.95rem) !important;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .home-feature-shader-band__feature-description {
+  flex: 0 0 auto;
+  margin: 0 0 clamp(1rem, 0.65rem + 1.35vmin, 1.45rem);
+  color: rgba(255, 248, 240, 0.88);
+  font-size: clamp(1.08rem, 0.73rem + 1.64vmin, 1.43rem);
+  font-weight: 400;
+  letter-spacing: -0.014em;
+  line-height: 1.18;
+  text-wrap: pretty;
 }
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--guardrails .home-feature-shader-band__feature-title {
   flex: 0 0 auto;

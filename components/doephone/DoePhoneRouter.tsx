@@ -69,12 +69,14 @@ export function DoePhoneRouter({
   afterHero,
   shaderBeforeCardSlideIds,
   disableCarouselInteractions,
+  activeAgentsDescription,
 }: {
   TopBanner?: DoeHomeTopBannerComponent;
   heroHeadline?: DoeHomeHeroHeadline;
   afterHero?: ReactNode;
   shaderBeforeCardSlideIds?: readonly string[];
   disableCarouselInteractions?: boolean;
+  activeAgentsDescription?: string;
 } = {}) {
   /** Defer until client reads bootstrap `data-layout` — avoids SSR phone shell flash on desktop. */
   const [variant, setVariant] = useState<DoePhoneVariant | null>(null);
@@ -149,6 +151,7 @@ export function DoePhoneRouter({
         heroHeadline={heroHeadline}
         shaderBeforeCardSlideIds={shaderBeforeCardSlideIds}
         disableCarouselInteractions={disableCarouselInteractions}
+        activeAgentsDescription={activeAgentsDescription}
       />
     );
   }
@@ -161,6 +164,7 @@ export function DoePhoneRouter({
         afterHero={afterHero}
         shaderBeforeCardSlideIds={shaderBeforeCardSlideIds}
         disableCarouselInteractions={disableCarouselInteractions}
+        activeAgentsDescription={activeAgentsDescription}
       />
     </>
   );

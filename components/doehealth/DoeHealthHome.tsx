@@ -2,6 +2,7 @@ import { DoeHealthBlankViewportBand } from "@/components/doehealth/DoeHealthBlan
 import { DoePhoneRouter } from "@/components/doephone/DoePhoneRouter";
 import { DoeHealthTopBanner } from "@/components/doehealth/DoeHealthTopBanner";
 import { DesignersPhoneCanvas } from "@/lib/designers/DesignersPhoneCanvas";
+import { DOEHEALTH_ACTIVE_AGENTS_DESCRIPTION } from "@/lib/doehealth/doehealth-built-by-doctors-copy";
 import { DOEHEALTH_DISABLE_CAROUSEL_INTERACTIONS, DOEHEALTH_SHADER_BEFORE_CARD_SLIDE_IDS } from "@/lib/doehealth/doehealth-feature-stack";
 import { DOEHEALTH_HERO_HEADLINE } from "@/lib/doehealth/doehealth-hero-copy";
 
@@ -18,6 +19,7 @@ export function DoeHealthHome() {
         afterHero={<DoeHealthBlankViewportBand />}
         shaderBeforeCardSlideIds={DOEHEALTH_SHADER_BEFORE_CARD_SLIDE_IDS}
         disableCarouselInteractions={DOEHEALTH_DISABLE_CAROUSEL_INTERACTIONS}
+        activeAgentsDescription={DOEHEALTH_ACTIVE_AGENTS_DESCRIPTION}
       />
     </DesignersPhoneCanvas>
   );
