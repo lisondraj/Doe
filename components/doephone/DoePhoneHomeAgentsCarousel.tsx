@@ -330,24 +330,38 @@ function readPhoneAgentsTrackTranslateX(
   stage: HTMLElement,
   trackIndex: number,
 ): number | null {
-  const pill = stage.querySelector<HTMLElement>(".hero-speaking-orb__tag--carousel");
-  if (!pill) {
+  const viewportRect = viewport.getBoundingClientRect();
+  const viewportWidth = viewportRect.width;
+  if (viewportWidth <= 0) {
     return null;
   }
 
-  const viewportRect = viewport.getBoundingClientRect();
-  const pillRect = pill.getBoundingClientRect();
-  const targetCenterX = pillRect.left + pillRect.width / 2 - viewportRect.left;
+  const pill = stage.querySelector<HTMLElement>(".hero-speaking-orb__tag--carousel");
+  let targetCenterX = viewportWidth / 2;
+  if (pill) {
+    const pillRect = pill.getBoundingClientRect();
+    if (pillRect.width > 0) {
+      targetCenterX = pillRect.left + pillRect.width / 2 - viewportRect.left;
+    }
+  }
 
+  const focusedShell = viewport.querySelector<HTMLElement>(".home-agents-carousel__orb-shell--focused");
   const styles = getComputedStyle(viewport);
-  const orbHalf = parseFloat(styles.getPropertyValue("--home-agents-orb-half"));
-  const orbStep = parseFloat(styles.getPropertyValue("--home-agents-orb-step"));
-  if (!Number.isFinite(orbHalf) || !Number.isFinite(orbStep)) {
+  const orbHalfFromVar = parseFloat(styles.getPropertyValue("--home-agents-orb-half"));
+  const orbStepFromVar = parseFloat(styles.getPropertyValue("--home-agents-orb-step"));
+  const orbHalf = focusedShell
+    ? focusedShell.getBoundingClientRect().width / 2
+    : orbHalfFromVar;
+  const orbStep = orbStepFromVar;
+
+  if (!Number.isFinite(orbHalf) || !Number.isFinite(orbStep) || orbHalf <= 0 || orbStep <= 0) {
     return null;
   }
 
   return targetCenterX - orbHalf - trackIndex * orbStep;
 }
+
+const PHONE_AGENTS_TRACK_RESYNC_DELAYS_MS = [80, 180, 420, 720, 1100, 1700, 2400, 3200] as const;
 
 /** Hero agent orbs — fixed peek/grain per physical orb, smooth translate, invisible clone reset. */
 export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: boolean }) {
@@ -375,6 +389,7 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
   const animatingRef = useRef(false);
   const swipeStartRef = useRef<{ x: number; y: number } | null>(null);
   const hasSectionRevealResetRef = useRef(false);
+  const needsInitialPhoneSnapRef = useRef(true);
 
   const active = trackOrbs[trackIndex];
 
@@ -387,37 +402,54 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
     return () => mq.removeEventListener("change", sync);
   }, []);
 
-  const syncPhoneTrackPosition = useCallback(() => {
-    const viewport = viewportRef.current;
-    const stage = carouselStageRef.current;
-    if (!viewport || !stage || !isPhoneLayout) {
-      return;
-    }
+  const syncPhoneTrackPosition = useCallback(
+    (options?: { snapInstant?: boolean }) => {
+      const viewport = viewportRef.current;
+      const stage = carouselStageRef.current;
+      if (!viewport || !stage || !isPhoneLayout) {
+        return;
+      }
 
-    const nextTranslateX = readPhoneAgentsTrackTranslateX(viewport, stage, trackIndex);
-    if (nextTranslateX == null) {
-      return;
-    }
+      const nextTranslateX = readPhoneAgentsTrackTranslateX(viewport, stage, trackIndex);
+      if (nextTranslateX == null) {
+        return;
+      }
 
-    setPhoneTrackTranslateX(nextTranslateX);
-  }, [isPhoneLayout, trackIndex]);
+      const shouldSnapInstant = options?.snapInstant || needsInitialPhoneSnapRef.current;
+      if (shouldSnapInstant) {
+        needsInitialPhoneSnapRef.current = false;
+        setInstantTransition(true);
+        setPhoneTrackTranslateX(nextTranslateX);
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            setInstantTransition(false);
+          });
+        });
+        return;
+      }
+
+      setPhoneTrackTranslateX(nextTranslateX);
+    },
+    [isPhoneLayout, trackIndex],
+  );
 
   useLayoutEffect(() => {
     if (!isPhoneLayout || !layoutReady) {
       setPhoneTrackTranslateX(null);
+      needsInitialPhoneSnapRef.current = true;
       return;
     }
 
     let cancelled = false;
-    const run = () => {
+    const run = (snapInstant = false) => {
       if (cancelled) {
         return;
       }
-      syncPhoneTrackPosition();
+      syncPhoneTrackPosition({ snapInstant });
     };
 
-    run();
-    requestAnimationFrame(() => requestAnimationFrame(run));
+    run(true);
+    requestAnimationFrame(() => requestAnimationFrame(() => run(true)));
 
     const viewport = viewportRef.current;
     const stage = carouselStageRef.current;
@@ -425,20 +457,59 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
       return;
     }
 
-    const resizeObserver = new ResizeObserver(run);
+    const resizeObserver = new ResizeObserver(() => run(false));
     resizeObserver.observe(viewport);
     resizeObserver.observe(stage);
 
-    window.addEventListener("orientationchange", run);
-    window.addEventListener("resize", run);
+    const onOrientationChange = () => run(true);
+    const onResize = () => run(false);
+    const onRevealAnimationEnd = (event: Event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) {
+        return;
+      }
+      if (
+        target.classList.contains("doephone-section-reveal--agents-label") ||
+        target.classList.contains("doephone-section-reveal--agents-nav")
+      ) {
+        run(false);
+      }
+    };
+
+    stage.addEventListener("animationend", onRevealAnimationEnd, true);
+
+    window.addEventListener("orientationchange", onOrientationChange);
+    window.addEventListener("resize", onResize);
 
     return () => {
       cancelled = true;
       resizeObserver.disconnect();
-      window.removeEventListener("orientationchange", run);
-      window.removeEventListener("resize", run);
+      stage.removeEventListener("animationend", onRevealAnimationEnd, true);
+      window.removeEventListener("orientationchange", onOrientationChange);
+      window.removeEventListener("resize", onResize);
     };
   }, [isPhoneLayout, layoutReady, syncPhoneTrackPosition, active.label]);
+
+  useLayoutEffect(() => {
+    if (!isPhoneLayout || !layoutReady || !revealed) {
+      return;
+    }
+
+    let cancelled = false;
+    const run = () => {
+      if (!cancelled) {
+        syncPhoneTrackPosition();
+      }
+    };
+
+    run();
+    const delays = PHONE_AGENTS_TRACK_RESYNC_DELAYS_MS.map((delayMs) => window.setTimeout(run, delayMs));
+
+    return () => {
+      cancelled = true;
+      delays.forEach((delayId) => window.clearTimeout(delayId));
+    };
+  }, [isPhoneLayout, layoutReady, revealed, syncPhoneTrackPosition, carouselInView, heroShaderReady]);
 
   useLayoutEffect(() => {
     if (!layoutReady) {
