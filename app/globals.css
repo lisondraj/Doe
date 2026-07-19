@@ -9877,34 +9877,20 @@ html[data-home-page][data-layout="desktop"] .home-closing-section__fundraise-wra
 html[data-home-page][data-layout="desktop"] .home-closing-section__fundraise {
   width: 100%;
 }
-html[data-home-page][data-layout="desktop"] .home-closing-section__fundraise-status {
+html[data-home-page][data-layout="desktop"] .home-closing-section__fundraise-headline-row {
   display: flex;
-  align-items: center;
-  gap: 0.62rem;
-  margin: 0 0 clamp(1rem, 1.25vw, 1.15rem);
-}
-html[data-home-page][data-layout="desktop"] .home-closing-section__fundraise-dot {
-  flex: 0 0 auto;
-  width: 0.52rem;
-  height: 0.52rem;
-  border-radius: 999px;
-  background: #d2774c;
-  box-shadow: 0 0 0 4px rgba(210, 119, 76, 0.18);
-}
-html[data-home-page][data-layout="desktop"] .home-closing-section__fundraise-label {
-  color: rgba(26, 18, 8, 0.52);
-  font-size: clamp(0.88rem, 1vw, 1rem);
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: clamp(0.85rem, 1.25vw, 1.15rem);
 }
 html[data-home-page][data-layout="desktop"] .home-closing-section__fundraise-headline {
   margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
   color: #1a1208;
-  font-size: clamp(1.85rem, 2.15vw, 2.45rem);
+  font-size: clamp(2.25rem, 2.85vw, 3.15rem);
   font-weight: 350;
-  line-height: 1.06;
+  line-height: 1.04;
   letter-spacing: -0.032em;
 }
 html[data-home-page][data-layout="desktop"] .home-closing-section__fundraise-headline-line {
@@ -9913,11 +9899,55 @@ html[data-home-page][data-layout="desktop"] .home-closing-section__fundraise-hea
 html[data-home-page][data-layout="desktop"] .home-closing-section__fundraise-headline-line--accent {
   color: #a85f3a;
 }
+html[data-home-page][data-layout="desktop"] .home-closing-section__fundraise-mail-wrap {
+  position: relative;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding-top: 0.2rem;
+}
+html[data-home-page][data-layout="desktop"] .home-closing-section__fundraise-mail {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(2.65rem, 3vw, 2.95rem);
+  height: clamp(2.65rem, 3vw, 2.95rem);
+  margin: 0;
+  padding: 0;
+  border: 1px solid rgba(26, 18, 8, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  color: rgba(26, 18, 8, 0.78);
+  cursor: pointer;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease,
+    border-color 180ms ease;
+}
+html[data-home-page][data-layout="desktop"] .home-closing-section__fundraise-mail:hover {
+  background: rgba(255, 255, 255, 0.92);
+  color: #1a1208;
+  border-color: rgba(26, 18, 8, 0.2);
+}
+html[data-home-page][data-layout="desktop"] .home-closing-section__fundraise-mail-icon {
+  width: clamp(1.15rem, 1.35vw, 1.28rem);
+  height: clamp(1.15rem, 1.35vw, 1.28rem);
+}
+html[data-home-page][data-layout="desktop"] .home-closing-section__fundraise-copied {
+  color: rgba(26, 18, 8, 0.52);
+  font-size: clamp(0.72rem, 0.82vw, 0.8rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
 html[data-home-page][data-layout="desktop"] .home-closing-section__fundraise-description {
   margin: clamp(0.95rem, 1.15vw, 1.1rem) 0 0;
   max-width: 26rem;
   color: rgba(26, 18, 8, 0.58);
-  font-size: clamp(0.92rem, 1vw, 1.02rem);
+  font-size: clamp(0.88rem, 0.95vw, 0.98rem);
   font-weight: 400;
   line-height: 1.5;
   letter-spacing: -0.01em;
