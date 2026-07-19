@@ -3527,9 +3527,9 @@ html[data-home-page][data-layout="desktop"] .home-agents-carousel__caption {
   flex-direction: column;
   align-items: center;
   gap: clamp(0.55rem, 1.35vmin, 0.85rem);
-  width: 100%;
-  max-width: min(52rem, 78vw);
-  padding-inline: max(var(--proto-phone-gutter-left), var(--proto-phone-gutter-right));
+  width: 100vw;
+  max-width: 100vw;
+  padding-inline: 0;
   flex: 0 0 auto;
   min-height: calc(var(--home-agents-caption-control-size) + clamp(0.32rem, 0.75vmin, 0.52rem));
 }
@@ -3538,7 +3538,10 @@ html[data-home-page][data-layout="desktop"] .home-agents-carousel__label-row {
   grid-template-columns: var(--home-agents-caption-control-size) auto var(--home-agents-caption-control-size);
   align-items: center;
   justify-items: center;
-  width: 100%;
+  justify-content: center;
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
   column-gap: clamp(0.85rem, 2vmin, 1.25rem);
   padding-inline: clamp(0.85rem, 2.5vw, 1.65rem);
   margin-bottom: clamp(0.32rem, 0.75vmin, 0.52rem);
@@ -10786,10 +10789,6 @@ html[data-home-page][data-layout="desktop"] .home-feature-card-section--specialt
 }
 html[data-home-page][data-layout="desktop"] .home-agents-carousel__description {
   display: none !important;
-}
-html[data-home-page][data-layout="desktop"] .home-agents-carousel__caption {
-  padding-inline: var(--desktop-page-inset-x);
-  max-width: min(40rem, 58vw);
 }
 html[data-home-page][data-layout="desktop"] footer.home-footer--dusk .relative.z-10.flex.w-full.flex-1 > div:first-child {
   padding-left: var(--desktop-page-inset-x) !important;
