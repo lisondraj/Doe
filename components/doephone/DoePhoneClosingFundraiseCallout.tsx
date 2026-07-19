@@ -8,6 +8,20 @@ import { dmSans, suisseIntl } from "@/lib/home/fonts";
 const FUNDRAISE_DESCRIPTION =
   "We are meeting with US and Canadian backers who share our vision for provider-built clinical AI.";
 
+function CheckIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" aria-hidden className={className}>
+      <path
+        d="m5.5 10.25 2.75 2.75 6.25-6.75"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 function MailOutlineIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" aria-hidden className={className}>
@@ -47,19 +61,26 @@ export function DoePhoneClosingFundraiseCallout() {
         <span className="home-closing-section__fundraise-headline-line">We are actively raising</span>
         <span className="home-closing-section__fundraise-headline-line home-closing-section__fundraise-headline-line--accent home-closing-section__fundraise-headline-line--with-mail">
           <span className="home-closing-section__fundraise-headline-text">a pre-seed round.</span>
-          <button
-            type="button"
-            className="home-closing-section__fundraise-mail-outline"
-            onClick={handleCopyEmail}
-            aria-label={`Copy ${ABOUT_CONTACT_EMAIL} to clipboard`}
-          >
-            <MailOutlineIcon className="home-closing-section__fundraise-mail-outline-icon" />
-          </button>
-          {copied ? (
-            <span className={`home-closing-section__fundraise-copied ${dmSans.className}`} role="status">
-              Copied
-            </span>
-          ) : null}
+          <span className="home-closing-section__fundraise-mail-wrap">
+            <button
+              type="button"
+              className={`home-closing-section__fundraise-mail-outline${copied ? " home-closing-section__fundraise-mail-outline--copied" : ""}`}
+              onClick={handleCopyEmail}
+              aria-label={copied ? `${ABOUT_CONTACT_EMAIL} copied to clipboard` : `Copy ${ABOUT_CONTACT_EMAIL} to clipboard`}
+            >
+              {copied ? (
+                <CheckIcon className="home-closing-section__fundraise-mail-outline-icon" />
+              ) : (
+                <MailOutlineIcon className="home-closing-section__fundraise-mail-outline-icon" />
+              )}
+            </button>
+            {copied ? (
+              <span className={`home-closing-section__fundraise-copied ${dmSans.className}`} role="status">
+                <CheckIcon className="home-closing-section__fundraise-copied-icon" aria-hidden />
+                Copied to clipboard
+              </span>
+            ) : null}
+          </span>
         </span>
       </p>
       <p className={`home-closing-section__fundraise-description ${dmSans.className}`}>
