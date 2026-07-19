@@ -1266,62 +1266,63 @@ export function DoeSchedulesAppMock({
     productBrown && workspaceView !== "landing";
   const productBrownInbox = productBrown && workspaceView === "inbox";
   const productBrownLanding = productBrown && workspaceView === "landing";
+  const productBrownSchedule = productBrown && workspaceView === "schedule";
   const productBrownDarkWorkspace =
-    productBrownWorkspace && workspaceView !== "inbox";
-  const inboxUi = productBrownInbox
-    ? {
-        canvas: "bg-[var(--pi-cream)]",
-        toolbar: "bg-[var(--pi-sand)]",
-        recess: "bg-[var(--pi-well)]",
-        selected: "bg-[var(--pi-selected)]",
-        raised: "bg-[var(--pi-raised)]",
-        reading: "bg-[var(--pi-reading)]",
-        elevated: "bg-[var(--pi-reading)]",
-        messageSurface: "product-brown-inbox-message bg-[var(--pi-raised)]",
-        cream: "bg-[var(--pi-cream)]",
-        sand: "bg-[var(--pi-sand)]",
-        sandDeep: "bg-[var(--pi-sand-deep)]",
-        well: "bg-[var(--pi-well)]",
-        highlight: "bg-[var(--pi-raised)]",
-        ink: "text-[var(--pi-ink)]",
-        inkSoft: "text-[var(--pi-ink-soft)]",
-        line: "border-[var(--pi-line)]",
-        lineStrong: "border-[var(--pi-line-strong)]",
-        iconMuted: "text-[var(--pi-muted-soft)]",
-        filterActive:
-          "bg-[var(--pi-raised)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.03)] ring-1 ring-[rgba(38,32,28,0.07)]",
-        filterInactive: "text-[rgba(38,32,28,0.5)] hover:bg-[var(--pi-raised)] hover:text-[var(--pi-ink)]",
-        track: "bg-[var(--pi-well)]",
-        tabIndicator: "bg-[var(--pi-ink-soft)]",
-        tabIndicatorMuted: "bg-[rgba(38,32,28,0.1)]",
-        composeBtn:
-          "border-[var(--pi-line)] bg-[var(--pi-raised)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.04)] hover:bg-[var(--pi-selected)]",
-        avatarRing: "border-[rgba(58,50,44,0.28)] bg-[rgba(58,50,44,0.1)]",
-        chip: "border-[var(--pi-line)] bg-[var(--pi-raised)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.03)]",
-        chipHover: "hover:border-[rgba(38,32,28,0.12)] hover:bg-[var(--pi-selected)]",
-        actionBar:
-          "inline-flex items-center gap-0.5 rounded-full border border-[var(--pi-line)] bg-[var(--pi-well)] p-0.5 shadow-[0_1px_2px_rgba(30,22,18,0.03)]",
-        actionBtn:
-          "text-[rgba(38,32,28,0.68)] transition-colors hover:bg-[var(--pi-raised)] hover:text-[var(--pi-ink)]",
-        iconBtn:
-          "inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--pi-line)] bg-[var(--pi-raised)] text-[var(--pi-muted-soft)] shadow-[0_1px_2px_rgba(30,22,18,0.03)] transition-colors hover:bg-[var(--pi-selected)] hover:text-[var(--pi-ink-soft)]",
-        iconBtnNeutral:
-          "inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--pi-line)] bg-[var(--pi-raised)] text-[var(--pi-muted-soft)] shadow-[0_1px_2px_rgba(30,22,18,0.03)] transition-colors hover:bg-[var(--pi-selected)] hover:text-[var(--pi-ink)]",
-        emptyIcon:
-          "rounded-full border border-[var(--pi-line)] bg-[var(--pi-raised)] p-3 shadow-[0_1px_2px_rgba(30,22,18,0.03)]",
-        emptyIconGlyph: "h-6 w-6 text-[rgba(30,22,18,0.28)]",
-        pinIcon: "h-3 w-3 shrink-0 text-[var(--pi-ink-soft)] opacity-90",
-        mutedText: "text-[var(--pi-muted)]",
-        agentActive:
-          "bg-[var(--pi-raised)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.03)] ring-1 ring-[rgba(38,32,28,0.07)]",
-        agentInactive: "bg-transparent text-[var(--pi-muted)] hover:bg-[var(--pi-raised)] hover:text-[var(--pi-ink-soft)]",
-        emailQuote:
-          "rounded-md border border-[var(--pi-line)] bg-[var(--pi-well)]",
-        emailQuoteText: "text-[rgba(38,32,28,0.62)]",
-        divider: "bg-[var(--pi-divider)]",
-        messageBorder: "border-[var(--pi-line)]",
-      }
-    : null;
+    productBrownWorkspace && workspaceView === "patients";
+  const productBrownTaupeUi = {
+    canvas: "bg-[var(--pi-cream)]",
+    toolbar: "bg-[var(--pi-sand)]",
+    recess: "bg-[var(--pi-well)]",
+    selected: "bg-[var(--pi-selected)]",
+    raised: "bg-[var(--pi-raised)]",
+    reading: "bg-[var(--pi-reading)]",
+    elevated: "bg-[var(--pi-reading)]",
+    messageSurface: "product-brown-inbox-message bg-[var(--pi-raised)]",
+    cream: "bg-[var(--pi-cream)]",
+    sand: "bg-[var(--pi-sand)]",
+    sandDeep: "bg-[var(--pi-sand-deep)]",
+    well: "bg-[var(--pi-well)]",
+    highlight: "bg-[var(--pi-raised)]",
+    ink: "text-[var(--pi-ink)]",
+    inkSoft: "text-[var(--pi-ink-soft)]",
+    line: "border-[var(--pi-line)]",
+    lineStrong: "border-[var(--pi-line-strong)]",
+    iconMuted: "text-[var(--pi-muted-soft)]",
+    filterActive:
+      "bg-[var(--pi-raised)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.03)] ring-1 ring-[rgba(38,32,28,0.07)]",
+    filterInactive: "text-[rgba(38,32,28,0.5)] hover:bg-[var(--pi-raised)] hover:text-[var(--pi-ink)]",
+    track: "bg-[var(--pi-well)]",
+    tabIndicator: "bg-[var(--pi-ink-soft)]",
+    tabIndicatorMuted: "bg-[rgba(38,32,28,0.1)]",
+    composeBtn:
+      "border-[var(--pi-line)] bg-[var(--pi-raised)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.04)] hover:bg-[var(--pi-selected)]",
+    avatarRing: "border-[rgba(58,50,44,0.28)] bg-[rgba(58,50,44,0.1)]",
+    chip: "border-[var(--pi-line)] bg-[var(--pi-raised)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.03)]",
+    chipHover: "hover:border-[rgba(38,32,28,0.12)] hover:bg-[var(--pi-selected)]",
+    actionBar:
+      "inline-flex items-center gap-0.5 rounded-full border border-[var(--pi-line)] bg-[var(--pi-well)] p-0.5 shadow-[0_1px_2px_rgba(30,22,18,0.03)]",
+    actionBtn:
+      "text-[rgba(38,32,28,0.68)] transition-colors hover:bg-[var(--pi-raised)] hover:text-[var(--pi-ink)]",
+    iconBtn:
+      "inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--pi-line)] bg-[var(--pi-raised)] text-[var(--pi-muted-soft)] shadow-[0_1px_2px_rgba(30,22,18,0.03)] transition-colors hover:bg-[var(--pi-selected)] hover:text-[var(--pi-ink-soft)]",
+    iconBtnNeutral:
+      "inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--pi-line)] bg-[var(--pi-raised)] text-[var(--pi-muted-soft)] shadow-[0_1px_2px_rgba(30,22,18,0.03)] transition-colors hover:bg-[var(--pi-selected)] hover:text-[var(--pi-ink)]",
+    emptyIcon:
+      "rounded-full border border-[var(--pi-line)] bg-[var(--pi-raised)] p-3 shadow-[0_1px_2px_rgba(30,22,18,0.03)]",
+    emptyIconGlyph: "h-6 w-6 text-[rgba(30,22,18,0.28)]",
+    pinIcon: "h-3 w-3 shrink-0 text-[var(--pi-ink-soft)] opacity-90",
+    mutedText: "text-[var(--pi-muted)]",
+    agentActive:
+      "bg-[var(--pi-raised)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.03)] ring-1 ring-[rgba(38,32,28,0.07)]",
+    agentInactive: "bg-transparent text-[var(--pi-muted)] hover:bg-[var(--pi-raised)] hover:text-[var(--pi-ink-soft)]",
+    emailQuote:
+      "rounded-md border border-[var(--pi-line)] bg-[var(--pi-well)]",
+    emailQuoteText: "text-[rgba(38,32,28,0.62)]",
+    divider: "bg-[var(--pi-divider)]",
+    messageBorder: "border-[var(--pi-line)]",
+  } as const;
+  const inboxUi = productBrownInbox ? productBrownTaupeUi : null;
+  const scheduleUi = productBrownSchedule ? productBrownTaupeUi : null;
   const fullWidthWorkspace =
     hero || workspaceView === "inbox" || (productBrown && workspaceView === "landing");
   const patientBentoCard = productBrownDarkWorkspace
@@ -1850,7 +1851,8 @@ export function DoeSchedulesAppMock({
         (productBrown ? " product-brown-mock" : "") +
         (productBrownDarkWorkspace ? " product-brown-workspace-mode" : "") +
         (productBrownInbox ? " product-brown-inbox-mode" : "") +
-        (productBrownLanding ? " product-brown-landing-mode" : "")
+        (productBrownLanding ? " product-brown-landing-mode" : "") +
+        (productBrownSchedule ? " product-brown-schedule-mode" : "")
       }
       aria-hidden={hero ? true : undefined}
     >
@@ -1868,7 +1870,9 @@ export function DoeSchedulesAppMock({
         <div
           className={`min-h-0 flex-1 overflow-hidden ${
             productBrown
-              ? "product-brown-frame product-brown-layered-layout bg-[#1a1208]"
+              ? productBrownInbox || productBrownSchedule || productBrownLanding
+                ? "product-brown-frame product-brown-layered-layout bg-[var(--pi-cream)]"
+                : "product-brown-frame product-brown-layered-layout bg-[#1a1208]"
               : productBrownInbox
                 ? "product-brown-frame product-brown-inbox bg-[var(--pi-cream)]"
                 : productBrownDarkWorkspace
@@ -1918,6 +1922,8 @@ export function DoeSchedulesAppMock({
                 className={`product-brown-main flex min-h-0 min-w-0 flex-1 flex-col ${
                   productBrownInbox
                     ? inboxUi!.cream
+                    : productBrownSchedule
+                      ? scheduleUi!.cream
                     : productBrownDarkWorkspace
                       ? "bg-[#2a1f12] shadow-[inset_1px_0_0_rgba(245,230,208,0.07)]"
                       : productBrown
@@ -1931,7 +1937,9 @@ export function DoeSchedulesAppMock({
                   <>
                 <header
                   className={`flex items-center gap-2 border-b px-4 py-3 ${
-                    productBrownDarkWorkspace
+                    productBrownSchedule
+                      ? `${scheduleUi!.line} ${scheduleUi!.sand}`
+                      : productBrownDarkWorkspace
                       ? "border-[rgba(245,230,208,0.1)] bg-[#322618]"
                       : productBrown
                         ? "border-[rgba(61,46,31,0.14)] bg-[#f5e6d0]"
@@ -1940,7 +1948,9 @@ export function DoeSchedulesAppMock({
                 >
                   <Icon
                     className={`h-5 w-5 ${
-                      productBrownDarkWorkspace
+                      productBrownSchedule
+                        ? scheduleUi!.iconMuted
+                        : productBrownDarkWorkspace
                         ? "text-[rgba(245,230,208,0.48)]"
                         : productBrown
                           ? "text-[rgba(61,46,31,0.48)]"
@@ -1954,7 +1964,11 @@ export function DoeSchedulesAppMock({
                   </Icon>
                   <h1
                     className={`text-[15px] font-semibold tracking-tight ${
-                      productBrownDarkWorkspace || productBrown ? "text-[#f5e6d0]" : "text-neutral-900"
+                      productBrownSchedule
+                        ? scheduleUi!.ink
+                        : productBrownDarkWorkspace || productBrown
+                          ? "text-[#f5e6d0]"
+                          : "text-neutral-900"
                     }`}
                   >
                     Schedules
@@ -1962,7 +1976,9 @@ export function DoeSchedulesAppMock({
                 </header>
                 <div
                   className={`border-b border-dashed px-4 py-2 ${
-                    productBrownDarkWorkspace
+                    productBrownSchedule
+                      ? `${scheduleUi!.line} ${scheduleUi!.canvas}`
+                      : productBrownDarkWorkspace
                       ? "border-[rgba(245,230,208,0.1)] bg-[#2a1f12]"
                       : productBrown
                         ? "border-[rgba(61,46,31,0.14)] bg-[#faf0d8]"
@@ -1979,7 +1995,9 @@ export function DoeSchedulesAppMock({
                     >
                       <div
                         className={`inline-flex h-[38px] min-w-0 max-w-[min(100%,280px)] items-center gap-1 rounded-[14px] border px-1 sm:max-w-[320px] ${
-                          productBrownDarkWorkspace
+                          productBrownSchedule
+                            ? `${scheduleUi!.line} ${scheduleUi!.raised}`
+                            : productBrownDarkWorkspace
                             ? "border-[rgba(245,230,208,0.12)] bg-[#322618]"
                             : productBrown
                               ? "border-[rgba(61,46,31,0.14)] bg-[#f5e6d0]"
@@ -1990,7 +2008,9 @@ export function DoeSchedulesAppMock({
                           type="button"
                           aria-label={periodSelector.prevAria}
                           className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors ${
-                            productBrownDarkWorkspace
+                            productBrownSchedule
+                              ? `${scheduleUi!.iconMuted} hover:bg-[var(--pi-selected)] hover:text-[var(--pi-ink)]`
+                              : productBrownDarkWorkspace
                               ? "text-[rgba(245,230,208,0.48)] hover:bg-[#3d2e1f] hover:text-[#f5e6d0]"
                               : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-700"
                           }`}
@@ -2001,7 +2021,11 @@ export function DoeSchedulesAppMock({
                         </button>
                         <span
                           className={`min-w-0 flex-1 truncate px-1 text-center text-[12px] font-semibold ${
-                            productBrownDarkWorkspace ? "text-[#f5e6d0]" : "text-neutral-800"
+                            productBrownSchedule
+                              ? scheduleUi!.ink
+                              : productBrownDarkWorkspace
+                                ? "text-[#f5e6d0]"
+                                : "text-neutral-800"
                           }`}
                         >
                           {periodSelector.label}
@@ -2010,7 +2034,9 @@ export function DoeSchedulesAppMock({
                           type="button"
                           aria-label={periodSelector.nextAria}
                           className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors ${
-                            productBrownDarkWorkspace
+                            productBrownSchedule
+                              ? `${scheduleUi!.iconMuted} hover:bg-[var(--pi-selected)] hover:text-[var(--pi-ink)]`
+                              : productBrownDarkWorkspace
                               ? "text-[rgba(245,230,208,0.48)] hover:bg-[#3d2e1f] hover:text-[#f5e6d0]"
                               : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-700"
                           }`}
@@ -2025,7 +2051,9 @@ export function DoeSchedulesAppMock({
                           type="button"
                           onClick={() => setCategoryMenuOpen((open) => !open)}
                           className={`inline-flex h-[38px] min-w-[190px] items-center gap-2 rounded-[14px] border px-3 text-[12px] font-medium ${
-                            productBrownDarkWorkspace
+                            productBrownSchedule
+                              ? `${scheduleUi!.line} ${scheduleUi!.raised} ${scheduleUi!.ink} hover:bg-[var(--pi-selected)]`
+                              : productBrownDarkWorkspace
                               ? "border-[rgba(245,230,208,0.12)] bg-[#322618] text-[#f5e6d0] hover:bg-[#3d2e1f]"
                               : productBrown
                                 ? "border-[rgba(61,46,31,0.14)] bg-[#f5e6d0] text-[#2a1f12] hover:bg-[rgba(26,18,8,0.04)]"
@@ -2075,7 +2103,9 @@ export function DoeSchedulesAppMock({
                     </div>
                     <div
                       className={`relative grid w-[min(100%,360px)] shrink-0 grid-cols-4 rounded-[22px] border p-1 sm:w-[360px] ${
-                        productBrownDarkWorkspace
+                        productBrownSchedule
+                          ? `${scheduleUi!.line} ${scheduleUi!.well}`
+                          : productBrownDarkWorkspace
                           ? "border-[rgba(245,230,208,0.12)] bg-[#241910]"
                           : productBrown
                             ? "border-[rgba(61,46,31,0.14)] bg-[#ede0c8]"
@@ -2084,7 +2114,9 @@ export function DoeSchedulesAppMock({
                     >
                       <span
                         className={`pointer-events-none absolute top-1 h-[30px] rounded-[16px] border shadow-[0_1px_0_rgba(0,0,0,0.04)] transition-[left] duration-200 ${
-                          productBrownDarkWorkspace
+                          productBrownSchedule
+                            ? `${scheduleUi!.line} ${scheduleUi!.selected}`
+                            : productBrownDarkWorkspace
                             ? "border-[rgba(245,230,208,0.14)] bg-[#3d2e1f]"
                             : productBrown
                               ? "border-[rgba(61,46,31,0.14)] bg-[#f5e6d0]"
@@ -2102,10 +2134,14 @@ export function DoeSchedulesAppMock({
                           onClick={() => setTimeView(option)}
                           className={`relative z-10 rounded-[16px] px-2 py-1.5 text-[12px] font-medium transition-colors ${
                             timeView === option
-                              ? productBrownDarkWorkspace
+                              ? productBrownSchedule
+                                ? scheduleUi!.ink
+                                : productBrownDarkWorkspace
                                 ? "text-[#f5e6d0]"
                                 : "text-neutral-900"
-                              : productBrownDarkWorkspace
+                              : productBrownSchedule
+                                ? `${scheduleUi!.mutedText} hover:text-[var(--pi-ink)]`
+                                : productBrownDarkWorkspace
                                 ? "text-[rgba(245,230,208,0.48)] hover:text-[#f5e6d0]"
                                 : "text-neutral-500 hover:text-neutral-700"
                           }`}
@@ -4494,7 +4530,9 @@ export function DoeSchedulesAppMock({
             {workspaceView !== "inbox" && workspaceView !== "landing" && !hero ? (
               <div
                 className={`product-brown-main-panel flex h-full w-1/2 shrink-0 flex-col border-l ${
-                  productBrownDarkWorkspace
+                  productBrownSchedule
+                    ? `${scheduleUi!.line} ${scheduleUi!.reading}`
+                    : productBrownDarkWorkspace
                     ? "border-[rgba(245,230,208,0.08)] bg-[#241910] shadow-[inset_1px_0_0_rgba(245,230,208,0.05)]"
                     : productBrown
                       ? "border-[rgba(61,46,31,0.14)]"
@@ -4506,6 +4544,8 @@ export function DoeSchedulesAppMock({
                       : productBrown
                         ? "bg-[#faf0d8]"
                         : "bg-white"
+                    : productBrownSchedule
+                      ? scheduleUi!.reading
                     : productBrownDarkWorkspace
                       ? "bg-[#241910]"
                       : productBrown
@@ -4517,7 +4557,9 @@ export function DoeSchedulesAppMock({
                   <>
                     <header
                       className={`flex items-center justify-between border-b px-4 py-3 ${
-                        productBrownDarkWorkspace
+                        productBrownSchedule
+                          ? `${scheduleUi!.line} ${scheduleUi!.sand}`
+                          : productBrownDarkWorkspace
                           ? "border-[rgba(245,230,208,0.1)] bg-[#322618]"
                           : "border-[#E8E8ED] bg-white"
                       }`}
@@ -4525,14 +4567,22 @@ export function DoeSchedulesAppMock({
                       <div>
                         <p
                           className={`text-[10px] font-semibold uppercase tracking-wider ${
-                            productBrownDarkWorkspace ? "text-[rgba(245,230,208,0.48)]" : "text-neutral-400"
+                            productBrownSchedule
+                              ? scheduleUi!.mutedText
+                              : productBrownDarkWorkspace
+                                ? "text-[rgba(245,230,208,0.48)]"
+                                : "text-neutral-400"
                           }`}
                         >
                           Schedule
                         </p>
                         <h2
                           className={`text-[15px] font-semibold ${
-                            productBrownDarkWorkspace ? "text-[#f5e6d0]" : "text-neutral-800"
+                            productBrownSchedule
+                              ? scheduleUi!.ink
+                              : productBrownDarkWorkspace
+                                ? "text-[#f5e6d0]"
+                                : "text-neutral-800"
                           }`}
                         >
                           Day summary

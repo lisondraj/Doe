@@ -112,6 +112,11 @@
   background: var(--pi-cream);
 }
 
+.product-brown-mock.product-brown-schedule-mode .product-brown-inner-row__content,
+.product-brown-mock.product-brown-schedule-mode .product-brown-inner-row::after {
+  background: var(--pi-cream);
+}
+
 .product-brown-mock.product-brown-inbox-mode .product-brown-inner-row::after {
   box-shadow:
     -4px 0 20px rgba(0, 0, 0, 0.14),
@@ -123,9 +128,9 @@
   background: var(--pb-surface-deep);
 }
 
-.product-brown-mock:not(.product-brown-workspace-mode):not(.product-brown-inbox-mode):not(.product-brown-landing-mode)
+.product-brown-mock:not(.product-brown-workspace-mode):not(.product-brown-inbox-mode):not(.product-brown-landing-mode):not(.product-brown-schedule-mode)
   .product-brown-inner-row__content,
-.product-brown-mock:not(.product-brown-workspace-mode):not(.product-brown-inbox-mode):not(.product-brown-landing-mode)
+.product-brown-mock:not(.product-brown-workspace-mode):not(.product-brown-inbox-mode):not(.product-brown-landing-mode):not(.product-brown-schedule-mode)
   .product-brown-inner-row::after {
   background: #f8f4ec;
 }
@@ -1090,4 +1095,119 @@ html[data-product-page="true"] .product-call-preview__bubble--agent {
 .product-brown-mock.product-brown-landing-mode .product-landing-ai-dock {
   background: var(--pi-sand) !important;
   border-color: var(--pi-line) !important;
+}
+
+/* ── Schedule: same taupe palette as inbox / today ── */
+.product-brown-mock.product-brown-schedule-mode {
+  --pi-cream: #f2efe8;
+  --pi-sand: #dcd8cf;
+  --pi-sand-deep: #c4c0b7;
+  --pi-well: #d0ccc3;
+  --pi-selected: #e3dfd6;
+  --pi-raised: #ebe8e0;
+  --pi-reading: #f4f1ea;
+  --pi-highlight: var(--pi-reading);
+  --pi-accent: #6e6258;
+  --pi-accent-deep: #4a4038;
+  --pi-track: var(--pi-well);
+  --pi-ink: #1e1612;
+  --pi-ink-soft: #3a322c;
+  --pi-muted: rgba(38, 32, 28, 0.58);
+  --pi-muted-soft: rgba(38, 32, 28, 0.42);
+  --pi-line: rgba(38, 32, 28, 0.09);
+  --pi-line-strong: rgba(38, 32, 28, 0.14);
+  --pi-divider: rgba(38, 32, 28, 0.07);
+}
+
+.product-brown-mock.product-brown-schedule-mode .product-brown-inner-row::after {
+  box-shadow:
+    -4px 0 20px rgba(0, 0, 0, 0.14),
+    0 0 0 1px rgba(38, 32, 28, 0.05);
+}
+
+.product-brown-mock.product-brown-schedule-mode .product-brown-frame:not(.product-brown-layered-layout),
+.product-brown-mock.product-brown-schedule-mode .product-brown-main,
+.product-brown-mock.product-brown-schedule-mode .product-brown-main-panel {
+  background: var(--pi-cream) !important;
+  color: var(--pi-ink) !important;
+}
+
+.product-brown-mock.product-brown-schedule-mode .product-brown-main-panel {
+  background: var(--pi-reading) !important;
+}
+
+.product-brown-mock.product-brown-schedule-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  header {
+  background-color: var(--pi-sand) !important;
+  border-color: var(--pi-line) !important;
+}
+
+.product-brown-mock.product-brown-schedule-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  .sticky.top-0 {
+  background-color: var(--pi-sand) !important;
+  border-color: var(--pi-line) !important;
+}
+
+.product-brown-mock.product-brown-schedule-mode .product-brown-main [class*="bg-white"],
+.product-brown-mock.product-brown-schedule-mode .product-brown-main-panel [class*="bg-white"],
+.product-brown-mock.product-brown-schedule-mode .product-brown-main [class*="bg-[#FAFAFA]"],
+.product-brown-mock.product-brown-schedule-mode .product-brown-main-panel [class*="bg-[#FAFAFA]"],
+.product-brown-mock.product-brown-schedule-mode .product-brown-main [class*="bg-[#F7F7F7]"],
+.product-brown-mock.product-brown-schedule-mode .product-brown-main-panel [class*="bg-[#F7F7F7]"],
+.product-brown-mock.product-brown-schedule-mode .product-brown-main [class*="bg-[#FBFBFB]"],
+.product-brown-mock.product-brown-schedule-mode .product-brown-main-panel [class*="bg-[#FBFBFB]"] {
+  background-color: var(--pi-raised) !important;
+}
+
+.product-brown-mock.product-brown-schedule-mode .product-brown-main [class*="bg-[#faf0d8]"],
+.product-brown-mock.product-brown-schedule-mode .product-brown-main [class*="bg-[#f5e6d0]"],
+.product-brown-mock.product-brown-schedule-mode .product-brown-main [class*="bg-[#ede0c8]"],
+.product-brown-mock.product-brown-schedule-mode .product-brown-main-panel [class*="bg-[#faf0d8]"],
+.product-brown-mock.product-brown-schedule-mode .product-brown-main-panel [class*="bg-[#f5e6d0]"],
+.product-brown-mock.product-brown-schedule-mode .product-brown-main-panel [class*="bg-[#ede0c8]"] {
+  background-color: var(--pi-cream) !important;
+}
+
+.product-brown-mock.product-brown-schedule-mode .product-brown-main .text-neutral-900,
+.product-brown-mock.product-brown-schedule-mode .product-brown-main .text-neutral-800,
+.product-brown-mock.product-brown-schedule-mode .product-brown-main .text-neutral-950,
+.product-brown-mock.product-brown-schedule-mode .product-brown-main-panel .text-neutral-900,
+.product-brown-mock.product-brown-schedule-mode .product-brown-main-panel .text-neutral-800,
+.product-brown-mock.product-brown-schedule-mode .product-brown-main-panel .text-neutral-950 {
+  color: var(--pi-ink) !important;
+}
+
+.product-brown-mock.product-brown-schedule-mode .product-brown-main .text-neutral-700,
+.product-brown-mock.product-brown-schedule-mode .product-brown-main .text-neutral-600,
+.product-brown-mock.product-brown-schedule-mode .product-brown-main-panel .text-neutral-700,
+.product-brown-mock.product-brown-schedule-mode .product-brown-main-panel .text-neutral-600 {
+  color: var(--pi-muted) !important;
+}
+
+.product-brown-mock.product-brown-schedule-mode .product-brown-main .text-neutral-500,
+.product-brown-mock.product-brown-schedule-mode .product-brown-main .text-neutral-400,
+.product-brown-mock.product-brown-schedule-mode .product-brown-main-panel .text-neutral-500,
+.product-brown-mock.product-brown-schedule-mode .product-brown-main-panel .text-neutral-400 {
+  color: rgba(58, 50, 44, 0.45) !important;
+}
+
+.product-brown-mock.product-brown-schedule-mode .product-brown-main [class*="border-[#E"],
+.product-brown-mock.product-brown-schedule-mode .product-brown-main-panel [class*="border-[#E"],
+.product-brown-mock.product-brown-schedule-mode .product-brown-main .border-neutral-200,
+.product-brown-mock.product-brown-schedule-mode .product-brown-main-panel .border-neutral-200 {
+  border-color: var(--pi-line) !important;
+}
+
+.product-brown-mock.product-brown-schedule-mode .product-brown-main [class*="text-[#f5e6d0]"],
+.product-brown-mock.product-brown-schedule-mode .product-brown-main-panel [class*="text-[#f5e6d0]"] {
+  color: var(--pi-ink) !important;
+}
+
+.product-brown-mock.product-brown-schedule-mode .product-brown-main [class*="hover:bg-neutral-50"]:hover,
+.product-brown-mock.product-brown-schedule-mode .product-brown-main [class*="hover:bg-white"]:hover,
+.product-brown-mock.product-brown-schedule-mode .product-brown-main-panel [class*="hover:bg-neutral-50"]:hover,
+.product-brown-mock.product-brown-schedule-mode .product-brown-main-panel [class*="hover:bg-white"]:hover {
+  background-color: var(--pi-raised) !important;
 }
