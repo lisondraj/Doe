@@ -15,6 +15,7 @@ import {
   DOEPHONE_BEIGE_SECTION,
 } from "@/lib/doephone/section-styles";
 import { DOE_HOME_DUSK_OVERFLOW_SURFACE } from "@/lib/home/doe-page-colors";
+import type { DoePhoneCommunicationSlide } from "@/lib/doephone/communication-carousel";
 import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-viewport";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 import { useDesignersStaticNav } from "@/lib/designers/use-designers-static-nav";
@@ -41,6 +42,10 @@ export function DoePhoneMobileView({
   activeAgentsSubheading,
   activeAgentsRoadmapDiagram,
   activeAgentsClosingLabelCarousel,
+  featureSlidesPhone,
+  specialtyBeforeAgentsWorkflow = false,
+  freezeSpecialtyMarquee = false,
+  priorAuthAfterSpecialty = false,
 }: {
   variant?: "home" | "proto";
   heroHeadline?: DoeHomeHeroHeadline;
@@ -53,6 +58,10 @@ export function DoePhoneMobileView({
   activeAgentsSubheading?: string;
   activeAgentsRoadmapDiagram?: boolean;
   activeAgentsClosingLabelCarousel?: boolean;
+  featureSlidesPhone?: readonly DoePhoneCommunicationSlide[];
+  specialtyBeforeAgentsWorkflow?: boolean;
+  freezeSpecialtyMarquee?: boolean;
+  priorAuthAfterSpecialty?: boolean;
 }) {
   const isProto = variant === "proto";
 
@@ -157,6 +166,10 @@ export function DoePhoneMobileView({
           activeAgentsSubheading={activeAgentsSubheading}
           activeAgentsRoadmapDiagram={activeAgentsRoadmapDiagram}
           activeAgentsClosingLabelCarousel={activeAgentsClosingLabelCarousel}
+          featureSlidesPhone={featureSlidesPhone}
+          specialtyBeforeAgentsWorkflow={specialtyBeforeAgentsWorkflow}
+          freezeSpecialtyMarquee={freezeSpecialtyMarquee}
+          priorAuthAfterSpecialty={priorAuthAfterSpecialty}
         />
       )}
 

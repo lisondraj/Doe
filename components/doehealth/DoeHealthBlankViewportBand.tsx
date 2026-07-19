@@ -14,7 +14,6 @@ export function DoeHealthBlankViewportBand() {
     <section
       className="doehealth-intro-band relative z-10 flex w-full shrink-0 flex-col justify-center bg-[var(--doe-page-surface,#EDE8DF)]"
       aria-label={`${DOEHEALTH_INTRO_COPY.title.line1} ${DOEHEALTH_INTRO_COPY.title.line2}`}
-      style={{ minHeight: "var(--app-vh, 100lvh)" }}
     >
       <div className="doehealth-intro-band__shell relative z-[10] flex w-full flex-col">
         <h2

@@ -63,6 +63,8 @@ function clearPhonePinchViewport(prevViewport: string) {
   }
 }
 
+import type { DoePhoneCommunicationSlide } from "@/lib/doephone/communication-carousel";
+
 export function DoePhoneRouter({
   TopBanner = DoeHomeTopBanner,
   heroHeadline,
@@ -75,6 +77,10 @@ export function DoePhoneRouter({
   activeAgentsSubheading,
   activeAgentsRoadmapDiagram,
   activeAgentsClosingLabelCarousel,
+  featureSlidesPhone,
+  specialtyBeforeAgentsWorkflow,
+  freezeSpecialtyMarquee,
+  priorAuthAfterSpecialty,
 }: {
   TopBanner?: DoeHomeTopBannerComponent;
   heroHeadline?: DoeHomeHeroHeadline;
@@ -87,6 +93,10 @@ export function DoePhoneRouter({
   activeAgentsSubheading?: string;
   activeAgentsRoadmapDiagram?: boolean;
   activeAgentsClosingLabelCarousel?: boolean;
+  featureSlidesPhone?: readonly DoePhoneCommunicationSlide[];
+  specialtyBeforeAgentsWorkflow?: boolean;
+  freezeSpecialtyMarquee?: boolean;
+  priorAuthAfterSpecialty?: boolean;
 } = {}) {
   /** Defer until client reads bootstrap `data-layout` — avoids SSR phone shell flash on desktop. */
   const [variant, setVariant] = useState<DoePhoneVariant | null>(null);
@@ -185,6 +195,10 @@ export function DoePhoneRouter({
         activeAgentsSubheading={activeAgentsSubheading}
         activeAgentsRoadmapDiagram={activeAgentsRoadmapDiagram}
         activeAgentsClosingLabelCarousel={activeAgentsClosingLabelCarousel}
+        featureSlidesPhone={featureSlidesPhone}
+        specialtyBeforeAgentsWorkflow={specialtyBeforeAgentsWorkflow}
+        freezeSpecialtyMarquee={freezeSpecialtyMarquee}
+        priorAuthAfterSpecialty={priorAuthAfterSpecialty}
       />
     </>
   );

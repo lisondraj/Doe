@@ -92,7 +92,7 @@ export const DOEPHONE_COMMUNICATION_SLIDE_COUNT = DOEPHONE_COMMUNICATION_SLIDES.
 
 type CommunicationSlideId = (typeof DOEPHONE_COMMUNICATION_SLIDES)[number]["id"];
 
-function pickCommunicationSlides(ids: readonly CommunicationSlideId[]): DoePhoneCommunicationSlide[] {
+export function pickCommunicationSlides(ids: readonly CommunicationSlideId[]): DoePhoneCommunicationSlide[] {
   return ids.map((id) => {
     const slide = DOEPHONE_COMMUNICATION_SLIDES.find((entry) => entry.id === id);
     if (!slide) throw new Error(`Unknown communication slide: ${id}`);

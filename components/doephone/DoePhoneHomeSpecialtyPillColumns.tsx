@@ -137,10 +137,13 @@ function SpecialtyChip({
 /** Infinite horizontal marquee rows — warm editorial chips on beige. */
 export function DoePhoneHomeSpecialtyPillColumns({
   variant = "phone",
+  freezeMarquee = false,
 }: {
   variant?: "phone" | "desktop";
+  freezeMarquee?: boolean;
 }) {
   const isDesktop = variant === "desktop";
+  const staticMarquee = isDesktop || freezeMarquee;
   const desktopLayout = isDesktop ? buildDesktopSpecialtyLayout(DESKTOP_SPECIALTIES) : null;
   const rows = isDesktop
     ? [
@@ -158,21 +161,21 @@ export function DoePhoneHomeSpecialtyPillColumns({
     >
       <div className="home-feature-specialties__rows">
         {rows.map((row, rowIndex) => {
-          const sequence = isDesktop ? row : [...row, ...row];
-          const reverse = !isDesktop && rowIndex % 2 === 1;
+          const sequence = staticMarquee ? row : [...row, ...row];
+          const reverse = !staticMarquee && rowIndex % 2 === 1;
 
           return (
             <div key={`specialty-row-${rowIndex}`} className="home-feature-specialties__row">
               <div
                 className={`home-feature-specialties__marquee${
-                  isDesktop
+                  staticMarquee
                     ? " home-feature-specialties__marquee--static"
                     : reverse
                       ? " home-feature-specialties__marquee--reverse"
                       : ""
                 }`}
                 style={
-                  isDesktop
+                  staticMarquee
                     ? undefined
                     : ({
                         "--specialty-marquee-duration": `${MARQUEE_DURATIONS[rowIndex % MARQUEE_DURATIONS.length]}s`,
