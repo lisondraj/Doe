@@ -72,19 +72,26 @@ export function DoePhoneHomeSpecialtyPillColumns({
     >
       <div className="home-feature-specialties__rows">
         {rows.map((row, rowIndex) => {
-          const sequence = [...row, ...row];
-          const reverse = rowIndex % 2 === 1;
+          const isDesktop = variant === "desktop";
+          const sequence = isDesktop ? row : [...row, ...row];
+          const reverse = !isDesktop && rowIndex % 2 === 1;
 
           return (
             <div key={`specialty-row-${rowIndex}`} className="home-feature-specialties__row">
               <div
                 className={`home-feature-specialties__marquee${
-                  reverse ? " home-feature-specialties__marquee--reverse" : ""
+                  isDesktop
+                    ? " home-feature-specialties__marquee--static"
+                    : reverse
+                      ? " home-feature-specialties__marquee--reverse"
+                      : ""
                 }`}
                 style={
-                  {
-                    "--specialty-marquee-duration": `${MARQUEE_DURATIONS[rowIndex % MARQUEE_DURATIONS.length]}s`,
-                  } as CSSProperties
+                  isDesktop
+                    ? undefined
+                    : ({
+                        "--specialty-marquee-duration": `${MARQUEE_DURATIONS[rowIndex % MARQUEE_DURATIONS.length]}s`,
+                      } as CSSProperties)
                 }
               >
                 {sequence.map((label, chipIndex) => {

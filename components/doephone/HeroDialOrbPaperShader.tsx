@@ -24,7 +24,7 @@ import {
   PROTO_GRAIN_GRADIENT_PRESETS,
   PROTO_GRAIN_GRADIENT_WORLD_HEIGHT,
   PROTO_GRAIN_GRADIENT_WORLD_WIDTH,
-  PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_CAROUSEL_ORB,
+  protoAgentsCarouselOrbMaxPixelCount,
   type ProtoGrainGradientVariant,
 } from "@/lib/proto/proto-grain-gradient";
 import type { HeroDialOrbScheme } from "@/lib/doephone/hero-dial-orbs";
@@ -185,7 +185,7 @@ export const HeroDialOrbPaperShader = memo(function HeroDialOrbPaperShader({
         0,
         0,
         PROTO_GRAIN_SHADER_MIN_PIXEL_RATIO,
-        PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_CAROUSEL_ORB,
+        protoAgentsCarouselOrbMaxPixelCount(),
       );
       node.classList.add("hero-speaking-orb__grain-shell--shader-ready");
     } catch {

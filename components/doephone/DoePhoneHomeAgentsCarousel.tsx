@@ -205,19 +205,17 @@ const AgentCarouselOrbSurface = memo(
     paperEnabled: boolean;
     paperSlotPriority: number;
   }) {
-    const displayScheme = isPhoneLayout
-      ? heroDialOrbCarouselIphonePaperScheme(scheme)
-      : heroDialOrbCarouselScheme(scheme);
+    const paperScheme = heroDialOrbCarouselIphonePaperScheme(scheme);
 
     return (
       <>
         <HeroDialOrbGrainShader
-          scheme={displayScheme}
+          scheme={paperScheme}
           shaderConfig={HERO_DIAL_ORB_CAROUSEL_SHADER}
         />
-        {isPhoneLayout && paperEnabled ? (
+        {paperEnabled ? (
           <HeroDialOrbPaperShader
-            scheme={displayScheme}
+            scheme={paperScheme}
             variant={doeHomeAgentsCarouselOrbShaderVariantForLabel(scheme.label)}
             slotPriority={paperSlotPriority}
             slotKey={agentsCarouselPaperSlotKey(orbIndex)}
@@ -300,7 +298,7 @@ const AgentCarouselOrb = memo(
 );
 
 function trackTransform(trackIndex: number) {
-  return `translate3d(calc(50% - var(--home-agents-orb-half) - ${trackIndex} * var(--home-agents-orb-step)), 0, 0)`;
+  return `translate3d(calc(50vw - var(--home-agents-orb-half) - ${trackIndex} * var(--home-agents-orb-step)), 0, 0)`;
 }
 
 /** Hero agent orbs — fixed peek/grain per physical orb, smooth translate, invisible clone reset. */
@@ -451,8 +449,8 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
               const distance = Math.abs(orbIndex - trackIndex);
               const focused = orbIndex === trackIndex;
               const onMainStrip = isPhoneLayout && isMainStripOrbIndex(orbIndex);
-              const warmPaper = onMainStrip && distance <= 1 && carouselInView;
-              const paperEnabled = heroShaderReady && warmPaper;
+              const warmPaper = (isPhoneLayout ? onMainStrip : true) && distance <= 1 && carouselInView;
+              const paperEnabled = warmPaper && (isPhoneLayout ? heroShaderReady : true);
               const paperSlotPriority = focused
                 ? SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_FOCUSED
                 : SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_ADJACENT;

@@ -34,6 +34,18 @@ export const PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO_DIAL_ORB = Math.floor(420 *
 /** iPhone agents carousel — larger orbs need a higher cap for crisp Retina edges. */
 export const PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_CAROUSEL_ORB = Math.floor(480 * 480 * 2.25);
 
+/** Desktop agents carousel — match large orb sizing at 2× DPR. */
+export const PROTO_SHADER_MAX_PIXEL_COUNT_DESKTOP_CAROUSEL_ORB = Math.floor(736 * 736 * 4);
+
+/** Cap WebGL resolution for agents carousel orb paper shaders. */
+export function protoAgentsCarouselOrbMaxPixelCount() {
+  if (isDesktopHomeLayout()) {
+    return PROTO_SHADER_MAX_PIXEL_COUNT_DESKTOP_CAROUSEL_ORB;
+  }
+
+  return PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_CAROUSEL_ORB;
+}
+
 /** iPhone — hero full-bleed bands; raised cap for Retina without desktop cost. */
 export const PROTO_SHADER_MAX_PIXEL_COUNT_PHONE_HERO = Math.floor(1920 * 1080 * 2.25);
 
