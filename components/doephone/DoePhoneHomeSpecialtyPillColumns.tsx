@@ -142,9 +142,13 @@ export function DoePhoneHomeSpecialtyPillColumns({
 }) {
   const isDesktop = variant === "desktop";
   const desktopLayout = isDesktop ? buildDesktopSpecialtyLayout(DESKTOP_SPECIALTIES) : null;
-  const rows = desktopLayout?.mainRows ?? buildSpecialtyRows(PHONE_ROW_COUNT, ALL_SPECIALTIES);
-  const overflowRow = desktopLayout?.overflowRow ?? [];
-  const rowCount = rows.length + (overflowRow.length > 0 ? 1 : 0);
+  const rows = isDesktop
+    ? [
+        ...(desktopLayout?.mainRows ?? []),
+        ...(desktopLayout?.overflowRow.length ? [desktopLayout.overflowRow] : []),
+      ]
+    : buildSpecialtyRows(PHONE_ROW_COUNT, ALL_SPECIALTIES);
+  const rowCount = rows.length;
 
   return (
     <div
@@ -187,20 +191,6 @@ export function DoePhoneHomeSpecialtyPillColumns({
             </div>
           );
         })}
-        {overflowRow.length > 0 ? (
-          <div className="home-feature-specialties__row home-feature-specialties__row--overflow">
-            <div className="home-feature-specialties__marquee home-feature-specialties__marquee--static home-feature-specialties__marquee--overflow">
-              {overflowRow.map((label, chipIndex) => (
-                <SpecialtyChip
-                  key={`overflow-${chipIndex}-${label}`}
-                  label={label}
-                  rowIndex={rows.length}
-                  chipIndex={chipIndex}
-                />
-              ))}
-            </div>
-          </div>
-        ) : null}
       </div>
     </div>
   );

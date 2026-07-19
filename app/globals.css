@@ -2926,9 +2926,7 @@ html[data-home-page] .home-active-agents-visual__workflow-pill {
   border-radius: 9999px;
   background: var(--home-active-agents-pill-back);
   border: 1px solid var(--home-active-agents-pill-border);
-  box-shadow:
-    inset 0 1px 0 rgba(245, 230, 208, 0.08),
-    0 10px 26px rgba(26, 18, 8, 0.28);
+  box-shadow: var(--home-dusk-ui-shadow);
 }
 
 html[data-home-page] .home-active-agents-visual__workflow-pill-icon {
@@ -3077,9 +3075,7 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--active-ag
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--active-agents .home-active-agents-visual__workflow-pill {
-  box-shadow:
-    inset 0 1px 0 rgba(242, 216, 168, 0.1),
-    0 10px 26px rgba(0, 0, 0, 0.32) !important;
+  box-shadow: var(--home-dusk-ui-shadow) !important;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--active-agents .home-active-agents-visual__workflow-pill-icon {
@@ -3973,9 +3969,9 @@ html[data-home-page][data-layout="desktop"] .home-agents-carousel__caption {
 
 html[data-home-page][data-layout="desktop"] .home-agents-carousel__label-row {
   display: grid;
-  grid-template-columns: var(--home-agents-caption-control-size) minmax(0, 1fr) var(--home-agents-caption-control-size);
+  grid-template-columns: var(--home-agents-caption-control-size) auto var(--home-agents-caption-control-size);
   align-items: center;
-  justify-items: stretch;
+  justify-items: center;
   width: 100%;
   column-gap: clamp(0.85rem, 2vmin, 1.25rem);
   padding-inline: clamp(0.85rem, 2.5vw, 1.65rem);
@@ -3994,15 +3990,16 @@ html[data-home-page][data-layout="desktop"] .home-agents-carousel__label-row .ho
 
 html[data-home-page][data-layout="desktop"] .home-agents-carousel__label-row .hero-speaking-orb__tag--carousel {
   position: static;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   grid-column: 2;
-  justify-self: stretch;
+  justify-self: center;
   box-sizing: border-box;
-  width: 100%;
-  min-width: 0;
-  max-width: none !important;
+  flex: 0 0 auto;
+  width: auto;
+  min-width: max-content;
+  max-width: none;
   min-height: var(--home-agents-caption-control-size);
   padding: 0 clamp(1.35rem, 2.5vmin, 1.85rem);
   border-color: rgba(255, 255, 255, 0.82);
@@ -4012,7 +4009,7 @@ html[data-home-page][data-layout="desktop"] .home-agents-carousel__label-row .he
   pointer-events: none;
   transform: none;
   will-change: auto;
-  overflow: hidden;
+  overflow: visible;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.88),
     inset 0 -1px 0 rgba(237, 235, 232, 0.42);
@@ -4020,16 +4017,17 @@ html[data-home-page][data-layout="desktop"] .home-agents-carousel__label-row .he
 
 html[data-home-page][data-layout="desktop"] .home-agents-carousel__label-row .hero-speaking-orb__tag--carousel .hero-speaking-orb__tag-text {
   display: block;
-  width: 100%;
-  max-width: 100%;
+  flex: 0 0 auto;
+  width: auto;
+  max-width: none;
   font-size: clamp(1.42rem, 2.15vmin, 1.88rem);
   font-weight: 500;
   letter-spacing: -0.028em;
   line-height: 1.08;
   text-align: center;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow: visible;
+  text-overflow: clip;
 }
 
 html[data-home-page][data-layout="desktop"] .home-agents-carousel__description {
@@ -4161,7 +4159,7 @@ html[data-home-page][data-layout="desktop"] .home-feature-specialties__row {
   align-items: center;
   overflow: visible;
   width: auto;
-  height: var(--specialty-chip-height);
+  height: auto;
   min-height: var(--specialty-chip-height);
 }
 
@@ -4193,8 +4191,8 @@ html[data-home-page][data-layout="desktop"] .home-feature-specialties__chip {
   font-size: clamp(0.74rem, 0.96vw, 0.85rem);
   font-weight: 400;
   line-height: 1;
-  letter-spacing: -0.01em;
-  text-transform: none;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
   color: #4a3828;
   -webkit-font-smoothing: antialiased;
   backdrop-filter: blur(10px);
@@ -4231,22 +4229,10 @@ html[data-home-page][data-layout="desktop"] .home-feature-specialties__chip--ton
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 
-html[data-home-page][data-layout="desktop"] .home-feature-specialties__row--overflow {
-  width: 100%;
-  max-width: calc(
-    4 * var(--specialty-chip-min-width, 8rem) + 3 * var(--specialty-chip-gap, 0.62rem)
-  );
-}
-
-html[data-home-page][data-layout="desktop"] .home-feature-specialties__marquee--overflow {
-  flex-wrap: wrap;
-  row-gap: var(--specialty-chip-gap);
-}
-
 html[data-home-page][data-layout="desktop"] .home-feature-specialties__chip-label {
   white-space: nowrap;
-  text-transform: none;
-  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  letter-spacing: 0.045em;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -5450,7 +5436,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-agents-carousel__label-row {
   display: grid;
-  grid-template-columns: var(--home-agents-caption-control-size) minmax(0, 1fr) var(--home-agents-caption-control-size);
+  grid-template-columns: var(--home-agents-caption-control-size) auto var(--home-agents-caption-control-size);
   align-items: center;
   justify-items: center;
   width: 100%;
@@ -5481,8 +5467,9 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   grid-column: 2;
   justify-self: center;
   flex: 0 0 auto;
-  width: max-content;
-  max-width: 100%;
+  width: auto;
+  min-width: max-content;
+  max-width: none;
   min-height: var(--home-agents-caption-control-size);
   padding: 0 clamp(1.85rem, calc(var(--app-vw, 100vw) * 0.054), 2.25rem);
   border-color: rgba(255, 255, 255, 0.82);
@@ -6027,6 +6014,10 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--lab-a
   gap: 0;
 }
 
+html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-shell {
+  padding-bottom: 0 !important;
+}
+
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-shell,
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alerts .home-feature-shader-band__feature-shell {
   padding-inline: 0;
@@ -6034,6 +6025,10 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alert
   padding-bottom: var(--desktop-section-pad-y) !important;
   justify-content: flex-start;
   gap: 0;
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-shell {
+  padding-bottom: 0 !important;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--guardrails .home-feature-shader-band__feature-shell {
@@ -6098,7 +6093,7 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--call-
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-shell > .doephone-section-reveal--title {
   position: absolute;
   right: clamp(1.15rem, 3.25vw, 1.65rem);
-  bottom: clamp(0.85rem, 2.4vmin, 1.2rem);
+  bottom: var(--proto-phone-gutter-y);
   left: auto;
   z-index: 3;
   width: auto;
@@ -6108,7 +6103,7 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--call-
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-title {
   flex: 0 0 auto;
   margin: 0 !important;
-  padding-top: 0 !important;
+  padding: 0 !important;
   text-align: right;
   color: #ffffff !important;
 }
@@ -7325,8 +7320,8 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__chip 
   font-size: clamp(0.9rem, 2.45vmin, 1.05rem);
   font-weight: 400;
   line-height: 1;
-  letter-spacing: -0.01em;
-  text-transform: none;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   color: #4a3828;
   -webkit-font-smoothing: antialiased;
   backdrop-filter: blur(8px);
@@ -7365,8 +7360,8 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__chip-
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__chip-label {
   white-space: nowrap;
-  text-transform: none;
-  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 @keyframes home-specialty-marquee {
@@ -9815,9 +9810,12 @@ html[data-home-page][data-layout="desktop"] .doephone-reveal-lift--in {
 html[data-home-page][data-layout="desktop"] .home-prior-auth-scale,
 html[data-home-page][data-layout="desktop"] .home-lab-alerts-scale,
 html[data-home-page][data-layout="desktop"] .home-active-agents-scale,
-html[data-home-page][data-layout="desktop"] .home-active-agents-pills-scale,
 html[data-home-page][data-layout="desktop"] .home-call-logic-diagram-scale--bleed {
   contain: layout paint;
+}
+
+html[data-home-page][data-layout="desktop"] .home-active-agents-pills-scale {
+  contain: none;
 }
 
 html[data-home-page] .doephone-scroll-reveal-lift {
@@ -11134,7 +11132,7 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summ
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-shell > .doephone-section-reveal--title {
   position: absolute;
   right: var(--desktop-page-inset-x);
-  bottom: clamp(0.85rem, 1.5vw, 1.25rem);
+  bottom: var(--desktop-section-pad-y);
   left: auto;
   z-index: 3;
   width: auto;
@@ -11143,9 +11141,7 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summ
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-title {
   margin: 0 !important;
-  padding-top: 0 !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
+  padding: 0 !important;
   text-align: right;
 }
 
@@ -11228,6 +11224,11 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band__workflow-
   line-height: 1.02 !important;
   letter-spacing: -0.035em !important;
   color: #ffffff !important;
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-title {
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 @media (min-width: 1280px) {
