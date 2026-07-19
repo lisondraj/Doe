@@ -1503,50 +1503,89 @@ export function DoeSchedulesAppMock({
       </div>
 
       <nav className="flex flex-col gap-0.5 px-2 pb-2">
-        {[
-          { label: "Today", icon: <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /> },
-          { label: "Updates", badge: "44", icon: <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /> },
-          {
-            label: "Inbox",
-            badge: "20",
-            icon: (
-              <>
-                <path d="M22 12h-6l-2 3h-4l-2-3H2" />
-                <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
-              </>
-            ),
-          },
-          {
-            label: "My tasks",
-            icon: (
-              <>
-                <path d="M9 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h4" />
-                <path d="M15 7V3a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v4" />
-                <rect width="8" height="14" x="13" y="7" rx="2" />
-              </>
-            ),
-            action: "+",
-          },
-        ].map((item) => (
+        {(
+          [
+            {
+              label: "Today",
+              destination: productBrown ? ("landing" as const) : ("schedule" as const),
+              icon: <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />,
+            },
+            { label: "Updates", badge: "44", icon: <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /> },
+            {
+              label: "Inbox",
+              badge: "20",
+              destination: "inbox" as const,
+              icon: (
+                <>
+                  <path d="M22 12h-6l-2 3h-4l-2-3H2" />
+                  <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
+                </>
+              ),
+            },
+            {
+              label: "My tasks",
+              icon: (
+                <>
+                  <path d="M9 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h4" />
+                  <path d="M15 7V3a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v4" />
+                  <rect width="8" height="14" x="13" y="7" rx="2" />
+                </>
+              ),
+              action: "+",
+            },
+          ] as const
+        ).map((item) => {
+          const isActive =
+            "destination" in item && item.destination ? workspaceView === item.destination : false;
+
+          return (
           <button
             key={item.label}
             type="button"
-            className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-[13px] text-neutral-700 hover:bg-neutral-50"
+            onClick={
+              "destination" in item && item.destination
+                ? () => setWorkspaceView(item.destination)
+                : undefined
+            }
+            className={`flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-[13px] ${
+              isActive
+                ? productBrown
+                  ? "bg-[rgba(245,230,208,0.12)] font-medium text-[#f5e6d0]"
+                  : "bg-neutral-100 font-medium text-neutral-900"
+                : productBrown
+                  ? "text-[rgba(245,230,208,0.78)] hover:bg-[rgba(245,230,208,0.08)]"
+                  : "text-neutral-700 hover:bg-neutral-50"
+            }`}
           >
             <Icon className="h-[18px] w-[18px]">{item.icon}</Icon>
             <span className="min-w-0 flex-1 truncate">{item.label}</span>
             {"badge" in item && item.badge ? (
-              <span className="rounded-full bg-neutral-100 px-1.5 py-0.5 text-[11px] font-medium text-neutral-600">
+              <span
+                className={`rounded-full px-1.5 py-0.5 text-[11px] font-medium ${
+                  productBrown
+                    ? isActive
+                      ? "bg-[rgba(245,230,208,0.16)] text-[#f5e6d0]"
+                      : "bg-[rgba(245,230,208,0.08)] text-[rgba(245,230,208,0.72)]"
+                    : "bg-neutral-100 text-neutral-600"
+                }`}
+              >
                 {item.badge}
               </span>
             ) : null}
             {"action" in item && item.action ? (
-              <span className="rounded-md border border-neutral-200 px-1.5 text-xs text-neutral-500">
+              <span
+                className={`rounded-md border px-1.5 text-xs ${
+                  productBrown
+                    ? "border-[rgba(245,230,208,0.14)] text-[rgba(245,230,208,0.48)]"
+                    : "border-neutral-200 text-neutral-500"
+                }`}
+              >
                 {item.action}
               </span>
             ) : null}
           </button>
-        ))}
+          );
+        })}
       </nav>
 
       <div className="px-2 pb-1 pt-1">
@@ -1558,22 +1597,15 @@ export function DoeSchedulesAppMock({
           </span>
         </div>
         <div className="mt-1 flex flex-col gap-0.5">
-          {(productBrown
-            ? (["Landing", "Inbox", "Schedule", "Patients"] as const)
-            : (["Inbox", "Schedule", "Patients"] as const)
-          ).map((label) => (
+          {(["Schedule", "Patients"] as const).map((label) => (
             <button
               key={label}
               type="button"
               onClick={() => {
-                if (label === "Landing") setWorkspaceView("landing");
-                else if (label === "Inbox") setWorkspaceView("inbox");
-                else if (label === "Schedule") setWorkspaceView("schedule");
+                if (label === "Schedule") setWorkspaceView("schedule");
                 else setWorkspaceView("patients");
               }}
               className={`flex items-center gap-2 rounded-lg px-2 py-2 text-[13px] ${
-                (label === "Landing" && workspaceView === "landing") ||
-                (label === "Inbox" && workspaceView === "inbox") ||
                 (label === "Schedule" && workspaceView === "schedule") ||
                 (label === "Patients" && workspaceView === "patients")
                   ? productBrown
@@ -1585,18 +1617,7 @@ export function DoeSchedulesAppMock({
               }`}
             >
               <Icon className="h-[18px] w-[18px]">
-                {label === "Landing" ? (
-                  <>
-                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
-                    <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                    <line x1="12" x2="12" y1="19" y2="22" />
-                  </>
-                ) : label === "Inbox" ? (
-                  <>
-                    <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
-                    <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
-                  </>
-                ) : label === "Schedule" ? (
+                {label === "Schedule" ? (
                   <>
                     <rect width="18" height="18" x="3" y="4" rx="2" />
                     <line x1="16" x2="16" y1="2" y2="6" />
