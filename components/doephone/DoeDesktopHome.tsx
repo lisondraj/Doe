@@ -27,7 +27,7 @@ export function DoeDesktopHome({
       </div>
 
       <div className="relative z-10">
-        <DoePhoneHomeFeatureStack shaderTheme="dusk" />
+        <DoePhoneHomeFeatureStack shaderTheme="dusk" variant="desktop" />
 
         <section className={DOEPHONE_BEIGE_SECTION} aria-label="Closing">
           <DoePhoneClosingSection />
