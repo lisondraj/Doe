@@ -190,8 +190,8 @@ export function DoePhoneHomeShaderBandSection({
                   {activeAgentsBeyond}
                 </p>
                 <div className="home-feature-shader-band__feature-closing-brand-row">
-                  {activeAgentsClosingLabelCarousel ? <DoeHealthClosingLabelCarousel /> : null}
                   <p className={`home-feature-shader-band__feature-brand m-0 text-right ${lora.className}`}>Doe</p>
+                  {activeAgentsClosingLabelCarousel ? <DoeHealthClosingLabelCarousel /> : null}
                 </div>
               </div>
             ) : null}

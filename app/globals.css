@@ -5639,7 +5639,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .home-feature-shader-band__feature-brand {
-  color: #ffffff;
+  color: #3d2e1f;
   font-size: var(--doehealth-closing-brand-size);
   font-weight: 400;
   letter-spacing: -0.02em;
