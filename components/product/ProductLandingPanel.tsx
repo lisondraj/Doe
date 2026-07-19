@@ -12,11 +12,8 @@ import {
   PRODUCT_LANDING_PRIMARY_CTA,
   PRODUCT_LANDING_QUEUE,
   PRODUCT_LANDING_SECONDARY_CTA,
-  PRODUCT_LANDING_STATUS_NOTE,
-  PRODUCT_LANDING_STATUS_VALUE,
   PRODUCT_LANDING_TRANSCRIPT,
 } from "@/lib/product/product-copy";
-import { PRODUCT_CLINIC_LABEL } from "@/lib/product/product-nav";
 import "@/lib/product/product-landing.css";
 import { dmSans, inter, suisseIntl } from "@/lib/home/fonts";
 
@@ -274,55 +271,27 @@ export function ProductLandingPanel() {
 
   return (
     <div className="product-landing-panel flex min-h-0 flex-1 flex-col overflow-hidden">
-      <header className="product-landing-header flex shrink-0 items-center justify-between gap-3 px-4 py-2.5">
-        <div className="flex min-w-0 items-center gap-2.5">
-          <MicIcon className="product-landing-header__icon h-[17px] w-[17px] shrink-0" />
-          <div className="min-w-0">
-            <h1
-              className={`product-landing-header__title m-0 text-[14px] font-semibold tracking-tight ${suisseIntl.className}`}
-            >
-              Voice
-            </h1>
-            <p className={`product-landing-header__clinic m-0 mt-0.5 truncate text-[11px] ${inter.className}`}>
-              {PRODUCT_CLINIC_LABEL}
-            </p>
-          </div>
+      <header className="product-landing-header">
+        <div className="product-landing-header__brand">
+          <MicIcon className="product-landing-header__icon h-[16px] w-[16px] shrink-0" />
+          <h1 className={`product-landing-header__title m-0 text-[13px] font-semibold tracking-tight ${suisseIntl.className}`}>
+            Voice
+          </h1>
         </div>
 
-        <div className="hidden min-w-0 flex-1 items-center justify-center gap-2 md:flex">
-          {PRODUCT_LANDING_LINES.map((line) => (
-            <span
-              key={line.id}
-              className={`product-landing-line-pill product-landing-line-pill--${line.status} inline-flex max-w-[14rem] items-center gap-2 rounded-full px-2.5 py-1 ${inter.className}`}
-            >
-              <span className="product-landing-line-pill__dot" aria-hidden />
-              <span className="truncate text-[10px] font-medium">{line.label}</span>
-              <span className="product-landing-line-pill__meta hidden truncate text-[10px] lg:inline">
-                {line.status === "live" ? line.detail : line.number}
-              </span>
-            </span>
-          ))}
+        <div className="product-landing-header__status min-w-0">
+          <span className="product-landing-header__status-dot" aria-hidden />
+          <p className={`product-landing-header__status-text m-0 truncate ${inter.className}`}>
+            Live · {PRODUCT_LANDING_CONSOLE.caller} · {PRODUCT_LANDING_CONSOLE.line}
+          </p>
         </div>
 
-        <div className="flex shrink-0 items-center gap-2">
-          <span
-            className={`product-landing-line-note hidden text-[11px] font-medium tabular-nums xl:inline ${inter.className}`}
-          >
-            {PRODUCT_LANDING_STATUS_NOTE}
-          </span>
-          <span
-            className={`product-landing-live-pill inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.12em] ${suisseIntl.className}`}
-          >
-            <span className="product-landing-live-pill__dot inline-flex h-1.5 w-1.5 rounded-full" aria-hidden />
-            {PRODUCT_LANDING_STATUS_VALUE}
-          </span>
-          <button
-            type="button"
-            className={`product-landing-cta-primary inline-flex h-[32px] items-center justify-center rounded-[10px] px-3 text-[11px] font-medium leading-none tracking-[-0.01em] transition-colors ${suisseIntl.className}`}
-          >
-            {PRODUCT_LANDING_PRIMARY_CTA}
-          </button>
-        </div>
+        <button
+          type="button"
+          className={`product-landing-cta-primary product-landing-header__action ${suisseIntl.className}`}
+        >
+          {PRODUCT_LANDING_PRIMARY_CTA}
+        </button>
       </header>
 
       <div className="product-landing-body min-h-0 flex-1 overflow-y-auto">
