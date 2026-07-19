@@ -4943,6 +4943,8 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .do
   gap: clamp(1.2rem, 0.75rem + 2vmin, 1.9rem);
 }
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doehealth-intro-band__body {
+  width: 100%;
+  max-width: min(22rem, calc(var(--app-vw, 100vw) * 0.72));
   color: rgba(26, 18, 8, 0.88);
   font-size: clamp(1.08rem, 0.73rem + 1.64vmin, 1.43rem);
   font-weight: 400;
@@ -4969,13 +4971,33 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .do
   width: clamp(5.09rem, calc(var(--app-vw, 100vw) * 0.301), 6.51rem);
   height: clamp(5.09rem, calc(var(--app-vw, 100vw) * 0.301), 6.51rem);
   border-radius: 999px;
-  background:
-    radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.42) 0%, transparent 42%),
-    radial-gradient(circle at 68% 78%, rgba(26, 18, 8, 0.22) 0%, transparent 48%),
-    linear-gradient(145deg, #b8b3ab 0%, #8f8a83 46%, #6e6a64 100%);
+  overflow: hidden;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doehealth-founder-circles__orb-shell {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doehealth-founder-circles__orb .hero-speaking-orb__progress-shell::after {
+  content: none;
+  display: none;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doehealth-founder-circles__orb .hero-speaking-orb__core {
+  width: 100%;
+  height: 100%;
+  background-color: var(--orb-halo-back);
+  isolation: isolate;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.28),
     0 10px 24px rgba(26, 18, 8, 0.08);
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doehealth-founder-circles__orb .hero-speaking-orb__core::after {
+  content: none;
+  display: none;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doehealth-founder-circles__orb .hero-speaking-orb__grain-shell--css {
+  transform: none;
+  transform-origin: center center;
 }
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doehealth-founder-circles__name {
   color: #1a1208;
@@ -5504,6 +5526,8 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .home-feature-shader-band--active-agents
   .home-feature-shader-band__feature-description {
   flex: 0 0 auto;
+  width: 100%;
+  max-width: min(28rem, calc(var(--app-vw, 100vw) * 0.84));
   margin: 0 0 clamp(1rem, 0.65rem + 1.35vmin, 1.45rem);
   color: rgba(255, 248, 240, 0.88);
   font-size: clamp(1.08rem, 0.73rem + 1.64vmin, 1.43rem);
