@@ -27,17 +27,24 @@ function CarouselChevron({
   direction,
   onClick,
   label,
+  disabled = false,
 }: {
   direction: "left" | "right";
   onClick: () => void;
   label: string;
+  disabled?: boolean;
 }) {
   return (
     <button
       type="button"
-      className={`home-closing-section__carousel-nav home-closing-section__carousel-nav--${direction}`}
+      className={`home-closing-section__carousel-nav home-closing-section__carousel-nav--${direction}${
+        disabled ? " home-closing-section__carousel-nav--disabled" : ""
+      }`}
       aria-label={label}
-      onClick={onClick}
+      aria-disabled={disabled || undefined}
+      disabled={disabled}
+      tabIndex={disabled ? -1 : undefined}
+      onClick={disabled ? undefined : onClick}
     >
       <span className="home-closing-section__carousel-nav-hit">
         <svg viewBox="0 0 16 16" fill="none" aria-hidden className="home-closing-section__carousel-nav-icon">
@@ -65,7 +72,11 @@ function CarouselChevron({
 }
 
 /** Infinite horizontal blog carousel — fills space between title and fundraise note. */
-export function DoePhoneClosingBlogCarousel() {
+export function DoePhoneClosingBlogCarousel({
+  disableInteractions = false,
+}: {
+  disableInteractions?: boolean;
+} = {}) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const [metrics, setMetrics] = useState({
     slideStepPx: 0,
@@ -155,13 +166,15 @@ export function DoePhoneClosingBlogCarousel() {
   );
 
   useEffect(() => {
+    if (disableInteractions) return;
+
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "ArrowRight") goNext();
       if (event.key === "ArrowLeft") goPrev();
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [goNext, goPrev]);
+  }, [disableInteractions, goNext, goPrev]);
 
   const translateX =
     metrics.slideStepPx > 0 && metrics.viewportWidthPx > 0
@@ -191,8 +204,8 @@ export function DoePhoneClosingBlogCarousel() {
           ))}
         </div>
       </div>
-      <CarouselChevron direction="left" onClick={goPrev} label="Previous article" />
-      <CarouselChevron direction="right" onClick={goNext} label="Next article" />
+      <CarouselChevron direction="left" onClick={goPrev} label="Previous article" disabled={disableInteractions} />
+      <CarouselChevron direction="right" onClick={goNext} label="Next article" disabled={disableInteractions} />
     </div>
   );
 }

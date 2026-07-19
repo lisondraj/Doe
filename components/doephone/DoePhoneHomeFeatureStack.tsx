@@ -15,9 +15,13 @@ import type { DoePhoneVariant } from "@/lib/doephone/resolve-doe-phone-variant";
 export function DoePhoneHomeFeatureStack({
   shaderTheme = "default",
   variant = "phone",
+  shaderBeforeCardSlideIds = [],
+  disableCarouselInteractions = false,
 }: {
   shaderTheme?: "default" | "dusk";
   variant?: DoePhoneVariant;
+  shaderBeforeCardSlideIds?: readonly string[];
+  disableCarouselInteractions?: boolean;
 }) {
   const slides = variant === "desktop" ? DOEPHONE_HOME_FEATURE_SLIDES_DESKTOP : DOEPHONE_HOME_FEATURE_SLIDES;
 
@@ -27,19 +31,28 @@ export function DoePhoneHomeFeatureStack({
         const title = HOME_FEATURE_SECTION_TITLES[slide.id];
         const showSpecialtyColumns = slide.id === "front-desk";
         const showAgentsCarousel = slide.id === "agents";
+        const shaderFirst = shaderBeforeCardSlideIds.includes(slide.id);
+
+        const cardSection = (
+          <DoePhoneHomeFeatureCardSection
+            slide={slide}
+            titleLine1={title.line1}
+            titleLine2={title.line2}
+            shaderTheme={shaderTheme}
+            showSpecialtyColumns={showSpecialtyColumns}
+            showAgentsCarousel={showAgentsCarousel}
+            isFirstBelowHero={index === 0 && !shaderFirst}
+            disableCarouselInteractions={disableCarouselInteractions}
+          />
+        );
+        const shaderSection = (
+          <DoePhoneHomeShaderBandSection slideId={slide.id} shaderTheme={shaderTheme} />
+        );
 
         return (
           <Fragment key={slide.id}>
-            <DoePhoneHomeFeatureCardSection
-              slide={slide}
-              titleLine1={title.line1}
-              titleLine2={title.line2}
-              shaderTheme={shaderTheme}
-              showSpecialtyColumns={showSpecialtyColumns}
-              showAgentsCarousel={showAgentsCarousel}
-              isFirstBelowHero={index === 0}
-            />
-            <DoePhoneHomeShaderBandSection slideId={slide.id} shaderTheme={shaderTheme} />
+            {shaderFirst ? shaderSection : cardSection}
+            {shaderFirst ? cardSection : shaderSection}
           </Fragment>
         );
       })}

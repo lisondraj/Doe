@@ -38,6 +38,7 @@ export function DoePhoneHomeFeatureCardSection({
   showSpecialtyColumns = false,
   showAgentsCarousel = false,
   isFirstBelowHero = false,
+  disableCarouselInteractions = false,
 }: {
   slide: DoePhoneCommunicationSlide;
   titleLine1: string;
@@ -46,6 +47,7 @@ export function DoePhoneHomeFeatureCardSection({
   showSpecialtyColumns?: boolean;
   showAgentsCarousel?: boolean;
   isFirstBelowHero?: boolean;
+  disableCarouselInteractions?: boolean;
 }) {
   const shaderVariant = protoGrainGradientVariant(slide.id);
   const bootVariant = readBootstrappedDoePhoneVariant();
@@ -99,7 +101,10 @@ export function DoePhoneHomeFeatureCardSection({
             </div>
           ) : showAgentsCarousel ? (
             <div className="home-feature-card-section__card home-feature-card-section__card--agents-carousel flex w-full items-center justify-center layout-desktop:!h-full layout-desktop:!min-h-0 layout-desktop:!max-h-none layout-desktop:!flex-1 layout-desktop:!shrink">
-              <DoePhoneHomeAgentsCarousel revealed={revealed} />
+              <DoePhoneHomeAgentsCarousel
+                revealed={revealed}
+                disableInteractions={disableCarouselInteractions}
+              />
             </div>
           ) : (
             <>

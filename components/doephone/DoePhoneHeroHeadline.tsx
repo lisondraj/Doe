@@ -59,10 +59,14 @@ export function DoePhoneHeroHeadline({
   line1 = "Voice Agents",
   line2 = "for Healthcare",
   fontClass,
+  className,
+  fitToContainer = false,
 }: {
   line1?: string;
   line2?: string;
   fontClass?: string;
+  className?: string;
+  fitToContainer?: boolean;
 }) {
   const headlineRef = useRef<HTMLHeadingElement>(null);
 
@@ -72,7 +76,10 @@ export function DoePhoneHeroHeadline({
     if (!headline || !container) return;
 
     const html = document.documentElement;
-    if (html.hasAttribute("data-proto-page") || html.hasAttribute("data-home-page")) {
+    if (
+      !fitToContainer &&
+      (html.hasAttribute("data-proto-page") || html.hasAttribute("data-home-page"))
+    ) {
       return;
     }
 
@@ -105,12 +112,12 @@ export function DoePhoneHeroHeadline({
       window.removeEventListener("resize", onResize);
       window.visualViewport?.removeEventListener("resize", onVisualViewportResize);
     };
-  }, []);
+  }, [fitToContainer, line1, line2]);
 
   return (
     <h1
       ref={headlineRef}
-      className={`doephone-hero-headline flex w-full min-w-0 max-w-full flex-col items-start ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] text-white ${fontClass ?? suisseIntl.className}`}
+      className={`doephone-hero-headline flex w-full min-w-0 max-w-full flex-col items-start ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] text-white ${fontClass ?? suisseIntl.className}${className ? ` ${className}` : ""}`}
     >
       <span className="doephone-hero-headline-line block">{line1}</span>
       <span className="doephone-hero-headline-line doephone-hero-headline-line--second block">{line2}</span>

@@ -35,7 +35,11 @@ function ClosingSectionTitle() {
 }
 
 /** Closing beige section — title, blog carousel, fundraise note (phone + desktop). */
-export function DoePhoneClosingSection() {
+export function DoePhoneClosingSection({
+  disableCarouselInteractions = false,
+}: {
+  disableCarouselInteractions?: boolean;
+} = {}) {
   const bootVariant = readBootstrappedDoePhoneVariant();
   const revealObserver = doephoneHomeSectionRevealObserverOptions(bootVariant);
   const { ref: revealRef, revealed } = useDoePhoneSectionReveal(revealObserver.threshold, {
@@ -76,7 +80,7 @@ export function DoePhoneClosingSection() {
           : "home-closing-section__carousel-wrap shrink-0"
       }
     >
-      <DoePhoneClosingBlogCarousel />
+      <DoePhoneClosingBlogCarousel disableInteractions={disableCarouselInteractions} />
     </DoePhoneScrollRevealContent>
   );
 

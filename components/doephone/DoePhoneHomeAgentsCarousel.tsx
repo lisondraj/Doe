@@ -57,18 +57,25 @@ function CarouselChevron({
   onClick,
   label,
   className,
+  disabled = false,
 }: {
   direction: "left" | "right";
   onClick: () => void;
   label: string;
   className?: string;
+  disabled?: boolean;
 }) {
   return (
     <button
       type="button"
-      className={`home-agents-carousel__nav home-agents-carousel__nav--${direction}${className ? ` ${className}` : ""}`}
+      className={`home-agents-carousel__nav home-agents-carousel__nav--${direction}${
+        disabled ? " home-agents-carousel__nav--disabled" : ""
+      }${className ? ` ${className}` : ""}`}
       aria-label={label}
-      onClick={onClick}
+      aria-disabled={disabled || undefined}
+      disabled={disabled}
+      tabIndex={disabled ? -1 : undefined}
+      onClick={disabled ? undefined : onClick}
     >
       <span className="home-agents-carousel__nav-hit">
         <svg viewBox="0 0 16 16" fill="none" aria-hidden className="home-agents-carousel__nav-icon">
@@ -325,45 +332,19 @@ function trackTransform(trackIndex: number) {
   return `translate3d(calc(50vw - var(--home-agents-orb-half) - ${trackIndex} * var(--home-agents-orb-step)), 0, 0)`;
 }
 
-function readTrackTranslateX(track: HTMLElement): number {
-  const transform = getComputedStyle(track).transform;
-  if (!transform || transform === "none") {
-    return 0;
-  }
-  return new DOMMatrix(transform).m41;
-}
-
-/** Nudge the live track so the focused orb center matches the title pill. */
-function readPhoneAgentsTrackTranslateX(viewport: HTMLElement, stage: HTMLElement): number | null {
-  const track = viewport.querySelector<HTMLElement>(".home-agents-carousel__track");
-  const focusedShell = viewport.querySelector<HTMLElement>(".home-agents-carousel__orb-shell--focused");
-  const pill = stage.querySelector<HTMLElement>(".hero-speaking-orb__tag--carousel");
-  if (!track || !focusedShell || !pill) {
-    return null;
-  }
-
-  const pillRect = pill.getBoundingClientRect();
-  const shellRect = focusedShell.getBoundingClientRect();
-  if (pillRect.width <= 0 || shellRect.width <= 0) {
-    return null;
-  }
-
-  const targetCenterX = pillRect.left + pillRect.width / 2;
-  const currentOrbCenterX = shellRect.left + shellRect.width / 2;
-  return readTrackTranslateX(track) + (targetCenterX - currentOrbCenterX);
-}
-
-const PHONE_AGENTS_TRACK_RESYNC_DELAYS_MS = [80, 180, 420, 720, 1100, 1700, 2400, 3200] as const;
-
 /** Hero agent orbs — fixed peek/grain per physical orb, smooth translate, invisible clone reset. */
-export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: boolean }) {
+export function DoePhoneHomeAgentsCarousel({
+  revealed = false,
+  disableInteractions = false,
+}: {
+  revealed?: boolean;
+  disableInteractions?: boolean;
+}) {
   const heroShaderReady = useHomeHeroShaderReady();
   const carouselStageRef = useRef<HTMLDivElement>(null);
-  const viewportRef = useRef<HTMLDivElement>(null);
   const carouselInView = useShaderViewportGate(carouselStageRef, "50% 0px");
   const [layoutVariant, setLayoutVariant] = useState<DoePhoneVariant>(readBootstrappedDoePhoneVariant);
   const [layoutReady, setLayoutReady] = useState(true);
-  const [phoneTrackTranslateX, setPhoneTrackTranslateX] = useState<number | null>(null);
   const isDesktop = layoutReady && layoutVariant === "desktop";
   const isPhoneLayout = layoutVariant === "phone";
 
@@ -381,8 +362,6 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
   const animatingRef = useRef(false);
   const swipeStartRef = useRef<{ x: number; y: number } | null>(null);
   const hasSectionRevealResetRef = useRef(false);
-  const needsInitialPhoneSnapRef = useRef(true);
-  const phoneTrackSyncRafRef = useRef<number | null>(null);
 
   const active = trackOrbs[trackIndex];
 
@@ -393,161 +372,6 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
     const mq = window.matchMedia(DOEPHONE_DESKTOP_MEDIA_QUERY);
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
-  }, []);
-
-  const syncPhoneTrackPosition = useCallback(
-    (options?: { snapInstant?: boolean }) => {
-      const viewport = viewportRef.current;
-      const stage = carouselStageRef.current;
-      if (!viewport || !stage || !isPhoneLayout) {
-        return;
-      }
-
-      const nextTranslateX = readPhoneAgentsTrackTranslateX(viewport, stage);
-      if (nextTranslateX == null) {
-        return;
-      }
-
-      const applyTranslateX = (translateX: number, snapInstant: boolean) => {
-        if (snapInstant) {
-          setInstantTransition(true);
-          setPhoneTrackTranslateX(translateX);
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              setInstantTransition(false);
-            });
-          });
-          return;
-        }
-        setInstantTransition(false);
-        setPhoneTrackTranslateX(translateX);
-      };
-
-      const shouldSnapInstant = options?.snapInstant || needsInitialPhoneSnapRef.current;
-      if (shouldSnapInstant) {
-        needsInitialPhoneSnapRef.current = false;
-      }
-      applyTranslateX(nextTranslateX, shouldSnapInstant);
-
-      if (shouldSnapInstant || animatingRef.current) {
-        return;
-      }
-
-      requestAnimationFrame(() => {
-        const refinedTranslateX = readPhoneAgentsTrackTranslateX(viewport, stage);
-        if (refinedTranslateX == null) {
-          return;
-        }
-        if (Math.abs(refinedTranslateX - nextTranslateX) > 0.5) {
-          applyTranslateX(refinedTranslateX, false);
-        }
-      });
-    },
-    [isPhoneLayout],
-  );
-
-  const schedulePhoneTrackGlide = useCallback(() => {
-    if (phoneTrackSyncRafRef.current != null) {
-      cancelAnimationFrame(phoneTrackSyncRafRef.current);
-    }
-
-    phoneTrackSyncRafRef.current = requestAnimationFrame(() => {
-      phoneTrackSyncRafRef.current = null;
-      syncPhoneTrackPosition({ snapInstant: false });
-    });
-  }, [syncPhoneTrackPosition]);
-
-  useLayoutEffect(() => {
-    if (!isPhoneLayout || !layoutReady) {
-      setPhoneTrackTranslateX(null);
-      needsInitialPhoneSnapRef.current = true;
-      return;
-    }
-
-    let cancelled = false;
-    const run = (snapInstant = false) => {
-      if (cancelled) {
-        return;
-      }
-      syncPhoneTrackPosition({ snapInstant });
-    };
-
-    run(true);
-    requestAnimationFrame(() => requestAnimationFrame(() => run(true)));
-
-    const viewport = viewportRef.current;
-    const stage = carouselStageRef.current;
-    if (!viewport || !stage) {
-      return;
-    }
-
-    const resizeObserver = new ResizeObserver(() => run(false));
-    resizeObserver.observe(viewport);
-    resizeObserver.observe(stage);
-
-    const onOrientationChange = () => run(true);
-    const onResize = () => run(false);
-    const onRevealAnimationEnd = (event: Event) => {
-      const target = event.target;
-      if (!(target instanceof HTMLElement)) {
-        return;
-      }
-      if (
-        target.classList.contains("doephone-section-reveal--agents-label") ||
-        target.classList.contains("doephone-section-reveal--agents-nav")
-      ) {
-        run(false);
-      }
-    };
-
-    stage.addEventListener("animationend", onRevealAnimationEnd, true);
-
-    window.addEventListener("orientationchange", onOrientationChange);
-    window.addEventListener("resize", onResize);
-
-    return () => {
-      cancelled = true;
-      resizeObserver.disconnect();
-      stage.removeEventListener("animationend", onRevealAnimationEnd, true);
-      window.removeEventListener("orientationchange", onOrientationChange);
-      window.removeEventListener("resize", onResize);
-    };
-  }, [isPhoneLayout, layoutReady, syncPhoneTrackPosition, active.label]);
-
-  useLayoutEffect(() => {
-    if (!isPhoneLayout || !layoutReady || !revealed) {
-      return;
-    }
-
-    let cancelled = false;
-    const run = () => {
-      if (!cancelled) {
-        syncPhoneTrackPosition();
-      }
-    };
-
-    run();
-    const delays = PHONE_AGENTS_TRACK_RESYNC_DELAYS_MS.map((delayMs) => window.setTimeout(run, delayMs));
-
-    return () => {
-      cancelled = true;
-      delays.forEach((delayId) => window.clearTimeout(delayId));
-    };
-  }, [isPhoneLayout, layoutReady, revealed, syncPhoneTrackPosition, carouselInView, heroShaderReady]);
-
-  useLayoutEffect(() => {
-    if (!isPhoneLayout || !layoutReady || !instantTransition) {
-      return;
-    }
-    syncPhoneTrackPosition({ snapInstant: true });
-  }, [instantTransition, isPhoneLayout, layoutReady, syncPhoneTrackPosition, trackIndex]);
-
-  useLayoutEffect(() => {
-    return () => {
-      if (phoneTrackSyncRafRef.current != null) {
-        cancelAnimationFrame(phoneTrackSyncRafRef.current);
-      }
-    };
   }, []);
 
   useLayoutEffect(() => {
@@ -603,8 +427,7 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
     setIsAnimating(true);
     setInstantTransition(false);
     setTrackIndex((current) => current - 1);
-    schedulePhoneTrackGlide();
-  }, [schedulePhoneTrackGlide]);
+  }, []);
 
   const goNext = useCallback(() => {
     if (animatingRef.current) {
@@ -614,8 +437,7 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
     setIsAnimating(true);
     setInstantTransition(false);
     setTrackIndex((current) => current + 1);
-    schedulePhoneTrackGlide();
-  }, [schedulePhoneTrackGlide]);
+  }, []);
 
   const handleTrackTransitionEnd = useCallback(
     (event: TransitionEvent<HTMLDivElement>) => {
@@ -677,7 +499,6 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
     "home-agents-carousel__track",
     instantTransition ? "home-agents-carousel__track--instant" : "",
     isAnimating ? "home-agents-carousel__track--animating" : "",
-    isPhoneLayout && phoneTrackTranslateX != null ? "home-agents-carousel__track--phone-aligned" : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -688,6 +509,7 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
         direction="left"
         onClick={goPrev}
         label="Previous agent"
+        disabled={disableInteractions}
         className={doePhoneSectionRevealSegmentClass("agents-nav", revealed)}
       />
       <div
@@ -700,17 +522,11 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
         direction="right"
         onClick={goNext}
         label="Next agent"
+        disabled={disableInteractions}
         className={doePhoneSectionRevealSegmentClass("agents-nav", revealed)}
       />
     </div>
   );
-
-  const trackStyle: CSSProperties =
-    isPhoneLayout
-      ? phoneTrackTranslateX != null
-        ? { transform: `translate3d(${phoneTrackTranslateX}px, 0, 0)` }
-        : { transform: "translate3d(0, 0, 0)" }
-      : { transform: trackTransform(trackIndex) };
 
   return (
     <div className={`home-agents-carousel ${dmSans.className}`} aria-hidden>
@@ -719,18 +535,21 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
         className="home-agents-carousel__stage"
       >
         <div
-          ref={viewportRef}
           className="home-agents-carousel__viewport"
-          onTouchStart={handleViewportTouchStart}
-          onTouchEnd={handleViewportTouchEnd}
-          onTouchCancel={() => {
-            swipeStartRef.current = null;
-          }}
+          onTouchStart={disableInteractions ? undefined : handleViewportTouchStart}
+          onTouchEnd={disableInteractions ? undefined : handleViewportTouchEnd}
+          onTouchCancel={
+            disableInteractions
+              ? undefined
+              : () => {
+                  swipeStartRef.current = null;
+                }
+          }
         >
           <div
             className={trackClassName}
             onTransitionEnd={handleTrackTransitionEnd}
-            style={trackStyle}
+            style={{ transform: trackTransform(trackIndex) }}
           >
             {trackOrbs.map((scheme, orbIndex) => {
               const distance = Math.abs(orbIndex - trackIndex);

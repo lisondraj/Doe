@@ -34,6 +34,11 @@ export function DoePhoneHeroSection({
   variant = "mobile",
   proto = false,
   iphoneBackdrop = false,
+  heroLine1,
+  heroLine2,
+  heroHeadlineClassName,
+  heroHeadlineFitToContainer,
+  disableHeroOrbInteractions,
 }: {
   /** Desktop home uses full viewport height and wider copy gutters. */
   variant?: "mobile" | "desktop";
@@ -41,6 +46,11 @@ export function DoePhoneHeroSection({
   proto?: boolean;
   /** Desktop — render the iPhone hero background (dusk shader + agent orb dial). */
   iphoneBackdrop?: boolean;
+  heroLine1?: string;
+  heroLine2?: string;
+  heroHeadlineClassName?: string;
+  heroHeadlineFitToContainer?: boolean;
+  disableHeroOrbInteractions?: boolean;
 }) {
   const [introZoom, setIntroZoom] = useState(DOEPHONE_HERO_INTRO_GRADIENT_START);
   const [introDone, setIntroDone] = useState(false);
@@ -128,16 +138,23 @@ export function DoePhoneHeroSection({
         />
       )}
 
-      {renderIphoneHero ? <DoePhoneHeroGradientCircles variant={variant} /> : null}
+      {renderIphoneHero ? (
+        <DoePhoneHeroGradientCircles
+          variant={variant}
+          disableInteractions={disableHeroOrbInteractions}
+        />
+      ) : null}
 
       <div
         className={`pointer-events-none absolute left-0 right-0 z-[3] ${copyInset} ${copyBottom}`}
       >
         <div className="doephone-hero-copy w-full min-w-0">
           <DoePhoneHeroHeadline
-            line1={isProto ? "Recruiting for the" : "Voice Agents"}
-            line2={isProto ? "intelligence era." : "for Healthcare"}
+            line1={isProto ? "Recruiting for the" : heroLine1 ?? "Voice Agents"}
+            line2={isProto ? "intelligence era." : heroLine2 ?? "for Healthcare"}
             fontClass={isProto ? PROTO_FONT_CLASS : undefined}
+            className={heroHeadlineClassName}
+            fitToContainer={heroHeadlineFitToContainer}
           />
         </div>
       </div>

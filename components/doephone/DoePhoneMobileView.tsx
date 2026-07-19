@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, type ReactNode } from "react";
 
 import DoeIphoneSiteNav from "@/components/DoeIphoneSiteNav";
 import { DoePhoneClosingSection } from "@/components/doephone/DoePhoneClosingSection";
@@ -21,7 +21,26 @@ import { useDesignersStaticNav } from "@/lib/designers/use-designers-static-nav"
 import { PROTO_FONT_CLASS, PROTO_NAV_LOGO_FONT_CLASS } from "@/lib/proto/proto-font";
 import { PROTO_INVEST_PATH } from "@/lib/site-domains";
 
-export function DoePhoneMobileView({ variant = "home" }: { variant?: "home" | "proto" }) {
+export type DoeHomeHeroHeadline = {
+  line1?: string;
+  line2?: string;
+  className?: string;
+  fitToContainer?: boolean;
+};
+
+export function DoePhoneMobileView({
+  variant = "home",
+  heroHeadline,
+  afterHero,
+  shaderBeforeCardSlideIds,
+  disableCarouselInteractions,
+}: {
+  variant?: "home" | "proto";
+  heroHeadline?: DoeHomeHeroHeadline;
+  afterHero?: ReactNode;
+  shaderBeforeCardSlideIds?: readonly string[];
+  disableCarouselInteractions?: boolean;
+}) {
   const isProto = variant === "proto";
 
   useDoePhoneLayoutViewport();
@@ -94,20 +113,34 @@ export function DoePhoneMobileView({ variant = "home" }: { variant?: "home" | "p
         frostedNavAlwaysPunched={variant === "home"}
       />
 
-      <DoePhoneHeroSection variant="mobile" proto={isProto} />
+      <DoePhoneHeroSection
+        variant="mobile"
+        proto={isProto}
+        heroLine1={heroHeadline?.line1}
+        heroLine2={heroHeadline?.line2}
+        heroHeadlineClassName={heroHeadline?.className}
+        heroHeadlineFitToContainer={heroHeadline?.fitToContainer}
+        disableHeroOrbInteractions={disableCarouselInteractions}
+      />
+
+      {afterHero}
 
       {isProto ? (
         <ProtoCommunicationStack />
       ) : (
-        <DoePhoneHomeFeatureStack shaderTheme="dusk" />
+        <DoePhoneHomeFeatureStack
+          shaderTheme="dusk"
+          shaderBeforeCardSlideIds={shaderBeforeCardSlideIds}
+          disableCarouselInteractions={disableCarouselInteractions}
+        />
       )}
 
       {isProto ? (
         <ProtoFooter />
       ) : (
         <>
-          <section className={DOEPHONE_BEIGE_SECTION} aria-label="Closing">
-            <DoePhoneClosingSection />
+          <section id="doe-vision" className={DOEPHONE_BEIGE_SECTION} aria-label="Closing">
+            <DoePhoneClosingSection disableCarouselInteractions={disableCarouselInteractions} />
           </section>
 
           <HomeFooter shaderTheme="dusk" />

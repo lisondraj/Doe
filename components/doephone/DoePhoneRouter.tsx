@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState, type ReactNode } from "react";
 
 import {
   DOEPHONE_DESKTOP_MEDIA_QUERY,
@@ -17,8 +17,10 @@ import {
 } from "@/lib/doephone/phone-layout-viewport";
 
 import { DoePhoneDesktopView } from "./DoePhoneDesktopView";
-import { DoePhoneMobileView } from "./DoePhoneMobileView";
+import { DoePhoneMobileView, type DoeHomeHeroHeadline } from "./DoePhoneMobileView";
 import { DoeHomeTopBanner } from "./DoeHomeTopBanner";
+
+export type DoeHomeTopBannerComponent = typeof DoeHomeTopBanner;
 
 function applyPhoneDocumentAttrs() {
   const html = document.documentElement;
@@ -61,7 +63,19 @@ function clearPhonePinchViewport(prevViewport: string) {
   }
 }
 
-export function DoePhoneRouter() {
+export function DoePhoneRouter({
+  TopBanner = DoeHomeTopBanner,
+  heroHeadline,
+  afterHero,
+  shaderBeforeCardSlideIds,
+  disableCarouselInteractions,
+}: {
+  TopBanner?: DoeHomeTopBannerComponent;
+  heroHeadline?: DoeHomeHeroHeadline;
+  afterHero?: ReactNode;
+  shaderBeforeCardSlideIds?: readonly string[];
+  disableCarouselInteractions?: boolean;
+} = {}) {
   /** Defer until client reads bootstrap `data-layout` — avoids SSR phone shell flash on desktop. */
   const [variant, setVariant] = useState<DoePhoneVariant | null>(null);
 
@@ -129,13 +143,25 @@ export function DoePhoneRouter() {
   }
 
   if (variant === "desktop") {
-    return <DoePhoneDesktopView />;
+    return (
+      <DoePhoneDesktopView
+        TopBanner={TopBanner}
+        heroHeadline={heroHeadline}
+        shaderBeforeCardSlideIds={shaderBeforeCardSlideIds}
+        disableCarouselInteractions={disableCarouselInteractions}
+      />
+    );
   }
 
   return (
     <>
-      <DoeHomeTopBanner />
-      <DoePhoneMobileView />
+      <TopBanner />
+      <DoePhoneMobileView
+        heroHeadline={heroHeadline}
+        afterHero={afterHero}
+        shaderBeforeCardSlideIds={shaderBeforeCardSlideIds}
+        disableCarouselInteractions={disableCarouselInteractions}
+      />
     </>
   );
 }

@@ -223,11 +223,13 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
 /** Hero — half-circle dial on the right edge; auto-steps down every 5s. */
 export function DoePhoneHeroGradientCircles({
   variant = "mobile",
+  disableInteractions = false,
 }: {
   variant?: "mobile" | "desktop";
+  disableInteractions?: boolean;
 }) {
   const dialLayout = HERO_DIAL_LAYOUT[variant];
-  const isMobileInteractive = variant === "mobile";
+  const isMobileInteractive = variant === "mobile" && !disableInteractions;
   const [dialRotation, setDialRotation] = useState(0);
   const [pillVisible, setPillVisible] = useState(true);
   const [expandedOrbIndex, setExpandedOrbIndex] = useState<number | null>(null);
