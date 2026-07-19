@@ -78,6 +78,7 @@ export function DoePhoneHomeFeatureStack({
             shaderTheme={shaderTheme}
             showSpecialtyColumns={showSpecialtyColumns}
             showAgentsCarousel={showAgentsCarousel}
+            showAgentsCarouselTitle={specialtyBeforeAgentsWorkflow && showAgentsCarousel}
             isFirstBelowHero={index === 0 && !shaderFirst}
             disableCarouselInteractions={disableCarouselInteractions}
             freezeSpecialtyMarquee={freezeSpecialtyMarquee}

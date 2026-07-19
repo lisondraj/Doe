@@ -37,6 +37,7 @@ export function DoePhoneHomeFeatureCardSection({
   shaderTheme = "default",
   showSpecialtyColumns = false,
   showAgentsCarousel = false,
+  showAgentsCarouselTitle = false,
   isFirstBelowHero = false,
   disableCarouselInteractions = false,
   freezeSpecialtyMarquee = false,
@@ -47,6 +48,8 @@ export function DoePhoneHomeFeatureCardSection({
   shaderTheme?: "default" | "dusk";
   showSpecialtyColumns?: boolean;
   showAgentsCarousel?: boolean;
+  /** /doehealth workflow band — title above carousel; main home keeps carousel-only layout. */
+  showAgentsCarouselTitle?: boolean;
   isFirstBelowHero?: boolean;
   disableCarouselInteractions?: boolean;
   freezeSpecialtyMarquee?: boolean;
@@ -102,24 +105,33 @@ export function DoePhoneHomeFeatureCardSection({
               </DoePhoneScrollRevealContent>
             </div>
           ) : showAgentsCarousel ? (
-            <div className="home-feature-card-section__agents-main flex w-full min-w-0 flex-col items-stretch">
-              <DoePhoneScrollRevealContent revealed={revealed} segment="title">
-                <h2
-                  className={`home-feature-card-section__title home-feature-card-section__title--agents-lead home-feature-card-section__title--section-lead text-left ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] text-[#1E343A] ${suisseIntl.className}`}
-                >
-                  <span className="block">{titleLine1}</span>
-                  <span className="block">{titleLine2}</span>
-                </h2>
-              </DoePhoneScrollRevealContent>
-              <div className="home-feature-card-section__card home-feature-card-section__card--agents-carousel flex w-full items-center justify-center layout-desktop:!h-full layout-desktop:!min-h-0 layout-desktop:!max-h-none layout-desktop:!flex-1 layout-desktop:!shrink">
-                <DoePhoneScrollRevealContent revealed={revealed} segment="carousel" className="w-full">
-                  <DoePhoneHomeAgentsCarousel
-                    revealed={revealed}
-                    disableInteractions={disableCarouselInteractions}
-                  />
+            showAgentsCarouselTitle ? (
+              <div className="home-feature-card-section__agents-main flex w-full min-w-0 flex-col items-stretch">
+                <DoePhoneScrollRevealContent revealed={revealed} segment="title">
+                  <h2
+                    className={`home-feature-card-section__title home-feature-card-section__title--agents-lead home-feature-card-section__title--section-lead text-left ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] text-[#1E343A] ${suisseIntl.className}`}
+                  >
+                    <span className="block">{titleLine1}</span>
+                    <span className="block">{titleLine2}</span>
+                  </h2>
                 </DoePhoneScrollRevealContent>
+                <div className="home-feature-card-section__card home-feature-card-section__card--agents-carousel flex w-full items-center justify-center layout-desktop:!h-full layout-desktop:!min-h-0 layout-desktop:!max-h-none layout-desktop:!flex-1 layout-desktop:!shrink">
+                  <DoePhoneScrollRevealContent revealed={revealed} segment="carousel" className="w-full">
+                    <DoePhoneHomeAgentsCarousel
+                      revealed={revealed}
+                      disableInteractions={disableCarouselInteractions}
+                    />
+                  </DoePhoneScrollRevealContent>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="home-feature-card-section__card home-feature-card-section__card--agents-carousel flex w-full items-center justify-center layout-desktop:!h-full layout-desktop:!min-h-0 layout-desktop:!max-h-none layout-desktop:!flex-1 layout-desktop:!shrink">
+                <DoePhoneHomeAgentsCarousel
+                  revealed={revealed}
+                  disableInteractions={disableCarouselInteractions}
+                />
+              </div>
+            )
           ) : (
             <>
               <DoePhoneScrollRevealContent

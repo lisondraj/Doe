@@ -68,9 +68,10 @@ export function DoePhoneMobileView({
   useDoePhoneLayoutViewport();
   useDoePhoneStableViewport(true);
   const staticNav = useDesignersStaticNav();
+  const isDoeHealthLanding = featureSlidesPhone !== undefined;
   const isDoeHealthNav = useDoeHealthLandingNavContext();
   const doeHomeNavChrome =
-    variant === "home"
+    variant === "home" && isDoeHealthLanding
       ? { navShowInvestorsCta: false as const, navShowMailIcon: isDoeHealthNav }
       : {};
 
@@ -119,7 +120,7 @@ export function DoePhoneMobileView({
     <div
       className={`doephone-mobile-root relative z-0 min-h-[var(--doe-section-band-vh,var(--app-vh,100lvh))] overflow-x-hidden ${
         isProto ? `bg-[#121819] ${PROTO_FONT_CLASS}` : "bg-[var(--doe-page-surface,#EDE8DF)]"
-      }`}
+      }${isDoeHealthLanding ? " doephone-mobile-root--doehealth" : ""}`}
       suppressHydrationWarning
       data-doeforvc-view="iphone"
     >
