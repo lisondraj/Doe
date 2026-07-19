@@ -94,6 +94,10 @@ export const DOEPHONE_SECTION_UNIFORM_PAD =
 export const DOEPHONE_SECTION_CAROUSEL_INSET_X =
   `px-11 iphone-page:px-[${phoneGutterLeft}] md:px-20 lg:px-28 xl:px-36`;
 
+/** Closing fundraise — left gutter matches sections; right includes safe-area for mail icon. */
+export const DOEPHONE_CLOSING_FUNDRAISE_INSET_X =
+  `pl-11 pr-11 iphone-page:pl-[${phoneGutterLeft}] iphone-page:pr-[${phoneGutterRight}] md:px-20 lg:px-28 xl:px-36`;
+
 /** Fixed nav chrome — matches page content edge inside `.doephone-mobile-root`. */
 export const DOEPHONE_FIXED_NAV_CONTENT_LEFT =
   `left-[calc(env(safe-area-inset-left,0px)+${phoneGutterLeft})]`;

@@ -5,6 +5,7 @@ import { DoePhoneClosingFundraiseCallout } from "@/components/doephone/DoePhoneC
 import { DoePhoneScrollRevealContent } from "@/components/doephone/DoePhoneScrollRevealLift";
 import {
   DOEPHONE_DISPLAY_WEIGHT_TW,
+  DOEPHONE_CLOSING_FUNDRAISE_INSET_X,
   DOEPHONE_SECTION_CAROUSEL_INSET_X,
   DOEPHONE_SECTION_CONTENT_CENTER,
   DOEPHONE_SECTION_CONTENT_INSET,
@@ -86,7 +87,7 @@ export function DoePhoneClosingSection() {
       className={
         isDesktop
           ? `home-closing-section__fundraise-wrap shrink-0 ${DOEPHONE_SECTION_CONTENT_INSET} ${DOEPHONE_SECTION_TITLE_PB} layout-desktop:px-0 layout-desktop:pb-0`
-          : `home-closing-section__fundraise-wrap shrink-0 ${DOEPHONE_SECTION_CAROUSEL_INSET_X}`
+          : `home-closing-section__fundraise-wrap shrink-0 ${DOEPHONE_CLOSING_FUNDRAISE_INSET_X}`
       }
     >
       <DoePhoneClosingFundraiseCallout />

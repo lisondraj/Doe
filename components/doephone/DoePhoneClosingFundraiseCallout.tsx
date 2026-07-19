@@ -55,9 +55,9 @@ export function DoePhoneClosingFundraiseCallout() {
   return (
     <aside className="home-closing-section__fundraise" aria-label="Fundraising">
       <p className={`home-closing-section__fundraise-headline ${suisseIntl.className}`}>
-        <span className="home-closing-section__fundraise-headline-line">We are actively</span>
+        <span className="home-closing-section__fundraise-headline-line">We are actively raising</span>
         <span className="home-closing-section__fundraise-headline-line home-closing-section__fundraise-headline-line--accent home-closing-section__fundraise-headline-line--with-mail">
-          <span className="home-closing-section__fundraise-headline-text">raising a pre-seed round.</span>
+          <span className="home-closing-section__fundraise-headline-text">a pre-seed round.</span>
           <span className="home-closing-section__fundraise-mail-wrap">
             <button
               type="button"

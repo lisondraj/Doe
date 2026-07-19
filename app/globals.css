@@ -10298,7 +10298,6 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   z-index: auto;
   width: 100%;
   max-width: none;
-  padding: 0 !important;
   pointer-events: auto;
 }
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-closing-section__fundraise-headline {
