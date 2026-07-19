@@ -659,19 +659,38 @@ body.desktop-route .home-feature-shader-band {
   max-height: 100dvh !important;
 }
 
-html[data-home-page][data-layout="desktop"] .home-feature-card-section__title {
+html[data-home-page][data-layout="desktop"] .home-feature-card-section__title:not(
+    .home-feature-shader-band__feature-title,
+    .home-feature-shader-band__workflow-title,
+    .home-feature-card-section__title--specialties
+  ) {
   display: none !important;
   color: #1a1208 !important;
 }
 
 /* /desktop route — DesktopHome uses desktop-route without data-home-page attrs. */
-body.desktop-route .home-feature-card-section__title {
+body.desktop-route
+  .home-feature-card-section__title:not(
+    .home-feature-shader-band__feature-title,
+    .home-feature-shader-band__workflow-title,
+    .home-feature-card-section__title--specialties
+  ) {
   display: none !important;
 }
 
 /* Robust desktop selectors (handles /, /desktop, and any desktop-route variants). */
-html[data-layout="desktop"] .home-feature-card-section__title,
-html[data-route-desktop="true"] .home-feature-card-section__title {
+html[data-layout="desktop"]
+  .home-feature-card-section__title:not(
+    .home-feature-shader-band__feature-title,
+    .home-feature-shader-band__workflow-title,
+    .home-feature-card-section__title--specialties
+  ),
+html[data-route-desktop="true"]
+  .home-feature-card-section__title:not(
+    .home-feature-shader-band__feature-title,
+    .home-feature-shader-band__workflow-title,
+    .home-feature-card-section__title--specialties
+  ) {
   display: none !important;
 }
 
@@ -2731,7 +2750,6 @@ html[data-home-page] .home-active-agents-visual {
   --home-active-agents-pill-icon-back: rgba(245, 230, 208, 0.14);
 }
 
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--active-agents .home-feature-shader-band__feature-title,
 html[data-home-page] .home-active-agents-visual__title {
   font-size: clamp(2.35rem, 1.15rem + 6.8vmin, 3.85rem) !important;
   line-height: 1.02 !important;
@@ -2884,65 +2902,95 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band__active-ag
   padding-inline: var(--desktop-page-inset-x);
   overflow: visible;
   padding-bottom: clamp(1.25rem, 2vw, 1.75rem);
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop {
   padding-inline: 0;
   padding-block: 0;
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
 }
 
 html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop .home-active-agents-visual__body {
+  position: relative;
   overflow: visible;
-  padding-bottom: clamp(1.25rem, 2vw, 1.75rem);
+  flex: 1 1 auto;
+  min-height: clamp(22rem, calc(var(--desktop-below-nav-height) - 12rem), 42rem);
+  padding-bottom: 0;
 }
 
 html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop .home-active-agents-visual__stats-stage {
-  padding-top: clamp(0.35rem, 0.85vw, 0.75rem);
-  max-width: min(100%, calc(100% - clamp(14rem, 22vw, 19rem)));
+  position: absolute;
+  left: 0;
+  bottom: clamp(1rem, 1.75vw, 1.35rem);
+  z-index: 2;
+  padding-top: 0;
+  max-width: min(50%, 28rem);
 }
 
 html[data-home-page][data-layout="desktop"] .home-active-agents-scale {
-  --home-shader-feature-scale: 1.14;
+  --home-shader-feature-scale: 1.28;
+  transform-origin: bottom left;
 }
 
 html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop .home-active-agents-visual__stats {
-  width: min(100%, clamp(16.5rem, 24vw, 22rem));
-  gap: clamp(1rem, 1.6vw, 1.45rem) clamp(1.35rem, 2.1vw, 1.85rem);
+  width: min(100%, clamp(16.5rem, 26vw, 24rem));
+  gap: clamp(1.25rem, 1.75vw, 1.55rem) clamp(1.45rem, 2.1vw, 1.95rem);
 }
 
 html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop .home-active-agents-visual__stat-value {
-  font-size: clamp(2.35rem, 3vw, 3.35rem);
+  font-size: clamp(2.85rem, 3.75vw, 4.05rem);
 }
 
 html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop .home-active-agents-visual__stat-label {
-  font-size: clamp(0.78rem, 0.95vw, 0.92rem);
+  font-size: clamp(0.92rem, 1.12vw, 1.05rem);
 }
 
 html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop .home-active-agents-visual__pills {
-  bottom: clamp(2rem, 3.5vw, 3rem);
-  padding-bottom: clamp(1rem, 1.75vw, 1.35rem);
+  position: absolute;
+  top: auto;
+  right: 0;
+  bottom: clamp(1rem, 1.75vw, 1.35rem);
+  left: auto;
+  width: auto;
+  max-width: min(50%, calc((100vw - var(--desktop-page-inset-x) * 2) * 0.52));
+  max-height: 100%;
+  padding-bottom: 0;
+  overflow: visible;
 }
 
 html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop .home-active-agents-pills-scale {
-  --home-active-agents-pills-scale: 1.12;
+  --home-active-agents-pills-scale: 1.34;
+  display: flex;
+  flex-direction: column;
   align-items: flex-end;
-  gap: clamp(0.38rem, 0.65vw, 0.52rem);
+  justify-content: flex-end;
+  gap: clamp(0.42rem, 0.72vw, 0.56rem);
   width: max-content;
   max-width: min(
     calc((100vw - var(--desktop-page-inset-x) * 2) / var(--home-active-agents-pills-scale)),
-    24rem
+    26rem
   );
+  height: auto;
+  transform: scale(var(--home-active-agents-pills-scale));
+  transform-origin: bottom right;
 }
 
 html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop .home-active-agents-visual__workflow-pill {
+  align-self: flex-end;
+  width: auto;
   max-width: none;
-  min-height: clamp(2.15rem, 2.6vw, 2.45rem);
-  padding: clamp(0.38rem, 0.55vw, 0.48rem) clamp(1rem, 1.35vw, 1.18rem)
-    clamp(0.38rem, 0.55vw, 0.48rem) clamp(0.38rem, 0.55vw, 0.48rem);
+  flex: 0 0 auto;
+  min-height: clamp(2.15rem, 2.55vw, 2.48rem);
 }
 
 html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop .home-active-agents-visual__workflow-pill-label {
-  font-size: clamp(0.82rem, 0.95vw, 0.94rem);
+  white-space: nowrap;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--active-agents .home-active-agents-visual {
@@ -3838,7 +3886,7 @@ html[data-home-page][data-layout="desktop"] .home-agents-carousel__nav-icon {
 }
 
 html[data-home-page][data-layout="desktop"] .home-agents-carousel__caption {
-  --home-agents-caption-control-size: clamp(3.75rem, 5.5vmin, 4.85rem);
+  --home-agents-caption-control-size: clamp(4.15rem, 6.2vmin, 5.35rem);
   --home-agents-caption-pill-bg:
     linear-gradient(180deg, rgba(255, 255, 255, 0.48) 0%, transparent 34%),
     linear-gradient(152deg, #ffffff 0%, #fbfaf8 64%, #f7f6f4 100%);
@@ -3885,7 +3933,7 @@ html[data-home-page][data-layout="desktop"] .home-agents-carousel__label-row .he
   width: max-content;
   max-width: 100%;
   min-height: var(--home-agents-caption-control-size);
-  padding: 0 clamp(1.75rem, 3.5vmin, 2.15rem);
+  padding: 0 clamp(2rem, 3.85vmin, 2.45rem);
   border-color: rgba(255, 255, 255, 0.82);
   background: var(--home-agents-caption-pill-bg);
   opacity: 1;
@@ -3899,7 +3947,7 @@ html[data-home-page][data-layout="desktop"] .home-agents-carousel__label-row .he
 }
 
 html[data-home-page][data-layout="desktop"] .home-agents-carousel__label-row .hero-speaking-orb__tag--carousel .hero-speaking-orb__tag-text {
-  font-size: clamp(1.25rem, 2vmin, 1.65rem);
+  font-size: clamp(1.52rem, 2.45vmin, 2rem);
   overflow: visible;
   text-overflow: clip;
 }
@@ -3915,15 +3963,15 @@ html[data-home-page][data-layout="desktop"] .home-agents-carousel__description {
 }
 
 /*
- * Desktop home — specialty marquee tapestry (Agents for every specialty).
- * Title + horizontal chip rows centered as one block in the viewport band.
+ * Desktop home — specialty section (Agents for every specialty).
+ * Square chip block top-left; title bottom-right.
  */
 html[data-home-page][data-layout="desktop"] .home-feature-card-section--specialties {
   overflow: visible !important;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-card-section--specialties .home-feature-card-section__inner {
-  justify-content: center !important;
+  justify-content: flex-start !important;
   flex-direction: column !important;
   overflow: visible !important;
   padding-top: calc(var(--desktop-nav-height) + var(--desktop-section-pad-y)) !important;
@@ -3938,31 +3986,45 @@ html[data-home-page][data-layout="desktop"] .home-feature-card-section--specialt
   display: flex !important;
   flex-direction: column !important;
   align-items: stretch !important;
-  justify-content: center !important;
+  justify-content: flex-start !important;
   padding-bottom: 0;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-card-section__specialties-main {
-  min-height: 0;
+  position: relative;
+  min-height: clamp(22rem, calc(var(--desktop-below-nav-height) - 8rem), 42rem);
   flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: center;
   width: 100%;
-  padding-top: clamp(1.15rem, 2.1vmin, 1.85rem);
-  gap: clamp(1.35rem, 2.35vmin, 2rem);
-  container-type: inline-size;
-  container-name: specialty-title;
+  padding-top: 0;
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-card-section__specialties-main .doephone-section-reveal--title {
+  position: absolute;
+  right: 0;
+  bottom: clamp(1rem, 1.75vw, 1.35rem);
+  left: auto;
+  z-index: 2;
+  display: block !important;
+  width: auto;
+  max-width: min(52%, calc((100vw - var(--desktop-page-inset-x) * 2) * 0.54));
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-card-section__specialties-main .doephone-section-reveal--carousel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: auto;
+  max-width: min(58%, calc((100vw - var(--desktop-page-inset-x) * 2) * 0.58));
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-card-section__title--specialties {
   display: block !important;
   flex: 0 0 auto;
-  margin: 0;
+  margin: 0 !important;
   padding-top: 0;
-  /* Hero headline is clamp(2rem, 10.75cqi, 5.85rem) — ~10% smaller for section band. */
-  font-size: clamp(2rem, 9.65cqi, 5.2rem) !important;
+  text-align: right;
+  font-size: clamp(3rem, 1.5rem + 4.5vw, 4.75rem) !important;
   line-height: 1.02 !important;
   letter-spacing: -0.035em !important;
   color: #1a1208 !important;
@@ -3975,23 +4037,19 @@ body.desktop-route .home-feature-card-section__title--specialties {
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-specialties__tapestry {
-  --specialty-row-gap: clamp(0.72rem, 1.2vmin, 0.95rem);
-  --specialty-chip-gap: clamp(0.62rem, 1.05vmin, 0.82rem);
-  --specialty-chip-height: clamp(2.35rem, 3.85vmin, 2.95rem);
-  --specialty-stage-rows: 10;
-  --specialty-stage-height: calc(
-    var(--specialty-stage-rows) * var(--specialty-chip-height) +
-      (var(--specialty-stage-rows) - 1) * var(--specialty-row-gap)
-  );
+  --specialty-row-gap: clamp(0.52rem, 0.82vw, 0.68rem);
+  --specialty-chip-gap: clamp(0.48rem, 0.72vw, 0.58rem);
+  --specialty-chip-height: clamp(2.28rem, 3.1vw, 2.72rem);
+  --specialty-chip-min-width: clamp(6.85rem, 8.2vw, 7.85rem);
+  --specialty-stage-rows: 8;
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  max-width: 100%;
-  margin-left: 0;
-  margin-right: 0;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: auto;
+  max-width: none;
+  margin-inline: 0;
   overflow: visible;
 }
 
@@ -4001,7 +4059,7 @@ html[data-home-page][data-layout="desktop"] .home-feature-card-section--specialt
   min-height: 0;
   height: auto;
   max-height: none;
-  flex: 0 1 auto;
+  flex: 0 0 auto;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-specialties__rows {
@@ -4009,45 +4067,36 @@ html[data-home-page][data-layout="desktop"] .home-feature-specialties__rows {
   z-index: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-start;
   gap: var(--specialty-row-gap);
-  width: 100%;
+  width: auto;
   height: auto;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-specialties__row {
   position: relative;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   overflow: visible;
-  width: 100%;
+  width: auto;
   height: var(--specialty-chip-height);
   min-height: var(--specialty-chip-height);
 }
 
-html[data-home-page][data-layout="desktop"] .home-feature-specialties__marquee {
+html[data-home-page][data-layout="desktop"] .home-feature-specialties__marquee--static {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: max-content;
-  max-width: 100%;
-  gap: var(--specialty-chip-gap);
-  min-width: 0;
-  will-change: auto;
-  animation: home-specialty-marquee var(--specialty-marquee-duration, 78s) linear infinite;
-}
-
-html[data-home-page][data-layout="desktop"] .home-feature-specialties__marquee--static {
   animation: none;
   transform: none;
   flex-wrap: nowrap;
-  justify-content: center;
-}
-
-html[data-home-page][data-layout="desktop"] .home-feature-specialties__marquee--reverse {
-  animation-direction: reverse;
+  justify-content: flex-start;
+  gap: var(--specialty-chip-gap);
+  width: auto;
+  max-width: none;
+  min-width: 0;
+  will-change: auto;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-specialties__chip {
@@ -4055,11 +4104,13 @@ html[data-home-page][data-layout="desktop"] .home-feature-specialties__chip {
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
+  box-sizing: border-box;
+  min-width: var(--specialty-chip-min-width, auto);
   height: var(--specialty-chip-height);
-  padding: 0 clamp(0.92rem, 1.25vmin, 1.08rem);
-  border-radius: clamp(0.48rem, 0.72vmin, 0.58rem);
+  padding: 0 clamp(0.72rem, 1vw, 0.92rem);
+  border-radius: clamp(0.52rem, 0.78vmin, 0.62rem);
   border: 1px solid color-mix(in srgb, #4a3524 11%, transparent);
-  font-size: clamp(0.76rem, 1.02vmin, 0.88rem);
+  font-size: clamp(0.72rem, 0.92vw, 0.82rem);
   font-weight: 400;
   line-height: 1;
   letter-spacing: 0.045em;
@@ -5402,16 +5453,6 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow 
   padding-top: calc(var(--desktop-nav-height) + var(--desktop-section-pad-y));
 }
 
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-shader-band__workflow-title {
-  color: #ffffff !important;
-  padding-left: var(--desktop-page-inset-x) !important;
-  padding-right: var(--desktop-page-inset-x) !important;
-  padding-top: clamp(2rem, 2.85vmin, 2.75rem) !important;
-  font-size: clamp(2.35rem, 1.15rem + 3.2vw, 3.85rem) !important;
-  line-height: 1.02 !important;
-  letter-spacing: -0.035em !important;
-}
-
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--workflow .home-feature-section__workflow-input {
   box-sizing: border-box;
   flex: 0 0 auto;
@@ -5903,7 +5944,10 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alert
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--guardrails .home-feature-shader-band__feature-shell {
   padding-inline: 0;
-  padding-top: calc(var(--desktop-nav-height) + var(--desktop-section-pad-y));
+  padding-top: calc(var(--desktop-nav-height) + var(--desktop-section-pad-y)) !important;
+  padding-bottom: var(--desktop-section-pad-y) !important;
+  justify-content: flex-start;
+  gap: 0;
 }
 
 html[data-home-page] .home-feature-shader-band--lab-alerts .home-feature-shader-band__feature-content,
@@ -5917,6 +5961,13 @@ html[data-home-page] .home-feature-shader-band--call-summaries .home-feature-sha
   width: 100%;
   padding-top: clamp(0.2rem, 0.65vmin, 0.45rem) !important;
   padding-bottom: clamp(0.85rem, 2.4vmin, 1.2rem) !important;
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alerts .home-feature-shader-band__feature-content,
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-content,
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--guardrails .home-feature-shader-band__feature-content {
+  justify-content: flex-start;
+  padding-top: 0 !important;
 }
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--lab-alerts .home-feature-shader-band__feature-title,
@@ -5953,27 +6004,6 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--guard
   justify-content: center;
   min-height: 0;
   padding-bottom: clamp(1.35rem, 0.9rem + 2.1vmin, 2.1rem);
-}
-
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alerts .home-feature-shader-band__feature-title,
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-title,
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--active-agents .home-feature-shader-band__feature-title {
-  color: #ffffff !important;
-  flex: 0 0 auto;
-  margin: 0 0 clamp(1.15rem, 0.75rem + 1.85vmin, 1.85rem) !important;
-  padding-left: var(--desktop-page-inset-x) !important;
-  padding-right: var(--desktop-page-inset-x) !important;
-  padding-top: clamp(2rem, 2.85vmin, 2.75rem) !important;
-  font-size: clamp(2.35rem, 1.15rem + 3.2vw, 3.85rem) !important;
-  line-height: 1.02 !important;
-  letter-spacing: -0.035em !important;
-}
-
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--guardrails .home-feature-shader-band__feature-title {
-  color: #ffffff !important;
-  padding-left: var(--desktop-page-inset-x) !important;
-  padding-right: var(--desktop-page-inset-x) !important;
-  padding-top: clamp(1.35rem, 2vmin, 2rem) !important;
 }
 
 html[data-home-page] .home-feature-shader-band--lab-alerts .home-feature-section__lab-alerts,
@@ -6905,11 +6935,12 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--active-ag
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--active-agents .home-feature-shader-band__feature-shell {
-  padding-inline: var(--desktop-page-inset-x);
+  padding-inline: 0;
   padding-top: calc(var(--desktop-nav-height) + var(--desktop-section-pad-y)) !important;
   padding-bottom: var(--desktop-section-pad-y) !important;
   justify-content: flex-start;
   gap: 0;
+  min-height: 100%;
 }
 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-section__workflow-input {
@@ -10826,12 +10857,24 @@ html[data-home-page][data-layout="desktop"] .home-agents-carousel__orb .hero-spe
 }
 
 html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop .home-active-agents-visual__stats-stage {
-  padding-top: clamp(0.35rem, 0.85vw, 0.75rem);
+  left: 0;
+  bottom: clamp(1rem, 1.75vw, 1.35rem);
+  padding-top: 0;
 }
 
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--active-agents .home-feature-shader-band__feature-title {
-  margin-bottom: clamp(0.85rem, 1.25vw, 1.15rem) !important;
+/* Desktop full shader bands — section titles match Built by doctors scale/position. */
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band__feature-title,
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band__workflow-title {
+  display: block !important;
+  flex: 0 0 auto;
+  margin: 0 0 clamp(0.85rem, 1.25vw, 1.15rem) !important;
   padding-top: 0 !important;
+  padding-left: var(--desktop-page-inset-x) !important;
+  padding-right: var(--desktop-page-inset-x) !important;
+  font-size: clamp(3rem, 1.5rem + 4.5vw, 4.75rem) !important;
+  line-height: 1.02 !important;
+  letter-spacing: -0.035em !important;
+  color: #ffffff !important;
 }
 
 @media (min-width: 1280px) {
@@ -10841,7 +10884,7 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--active-ag
   }
 
   html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop .home-active-agents-pills-scale {
-    --home-active-agents-pills-scale: 1.18;
+    --home-active-agents-pills-scale: 1.42;
   }
 }
 
@@ -11524,15 +11567,6 @@ html[data-home-page][data-layout="desktop"] footer.home-footer--dusk .relative.z
   margin-bottom: clamp(2.75rem, 4vw, 3.75rem) !important;
 }
 
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-shader-band__workflow-title {
-  margin-bottom: clamp(0.85rem, 1.25vw, 1.15rem) !important;
-}
-
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-content,
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alerts .home-feature-shader-band__feature-content {
-  padding-top: clamp(0.35rem, 0.85vw, 0.65rem) !important;
-}
-
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-prior-auth-visual__title,
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alerts .home-outreach-voice-visual__panel-text {
   color: var(--home-dusk-ui-ink) !important;
@@ -11547,7 +11581,7 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alert
 
 @media (min-width: 1536px) {
   html[data-home-page][data-layout="desktop"] .home-active-agents-visual--desktop .home-active-agents-visual__stat-value {
-    font-size: clamp(2.65rem, 2.75vw, 3.55rem);
+    font-size: clamp(3.05rem, 3.25vw, 4.2rem);
   }
 
   html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-call-logic-diagram-scale--bleed {

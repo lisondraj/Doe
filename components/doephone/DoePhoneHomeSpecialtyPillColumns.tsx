@@ -42,18 +42,51 @@ const ALL_SPECIALTIES = [
   "Behavioral Health",
 ] as const;
 
+/** Desktop grid — extra labels before Occupational Therapy. */
+const DESKTOP_EXTRA_SPECIALTIES = [
+  "Allergy & Immunology",
+  "Anesthesiology",
+  "Bariatric Surgery",
+  "Critical Care",
+  "Gastroenterology",
+  "Genetics",
+  "Hepatology",
+  "Interventional Radiology",
+  "Medical Oncology",
+  "Neonatology",
+  "Neurosurgery",
+] as const;
+
 const PHONE_ROW_COUNT = 8;
-const DESKTOP_ROW_COUNT = 10;
+const PLASTIC_SURGERY_INDEX = ALL_SPECIALTIES.indexOf("Plastic Surgery");
+const DESKTOP_GRID_COLS = 5;
+const DESKTOP_SPECIALTIES = [
+  ...ALL_SPECIALTIES.slice(0, PLASTIC_SURGERY_INDEX),
+  ...DESKTOP_EXTRA_SPECIALTIES,
+] as const;
 const CHIP_TONE_COUNT = 6;
 
 const MARQUEE_DURATIONS = [74, 92, 65, 84, 78, 97, 70, 86, 76, 95] as const;
 
-function buildSpecialtyRows(rowCount: number): readonly (readonly string[])[] {
+function buildSpecialtyRows(rowCount: number, labels: readonly string[]): readonly (readonly string[])[] {
   const buckets = Array.from({ length: rowCount }, () => [] as string[]);
-  ALL_SPECIALTIES.forEach((label, index) => {
+  labels.forEach((label, index) => {
     buckets[index % rowCount].push(label);
   });
   return buckets;
+}
+
+/** Desktop — fill fixed-width rows so the tapestry reads as a centered rectangle. */
+function buildDesktopSpecialtyRows(
+  labels: readonly string[],
+  colCount: number,
+): readonly (readonly string[])[] {
+  const rowCount = Math.ceil(labels.length / colCount);
+  const rows = Array.from({ length: rowCount }, () => [] as string[]);
+  labels.forEach((label, index) => {
+    rows[Math.floor(index / colCount)].push(label);
+  });
+  return rows;
 }
 
 /** Infinite horizontal marquee rows — warm editorial chips on beige. */
@@ -62,17 +95,20 @@ export function DoePhoneHomeSpecialtyPillColumns({
 }: {
   variant?: "phone" | "desktop";
 }) {
-  const rowCount = variant === "desktop" ? DESKTOP_ROW_COUNT : PHONE_ROW_COUNT;
-  const rows = buildSpecialtyRows(rowCount);
+  const isDesktop = variant === "desktop";
+  const rows = isDesktop
+    ? buildDesktopSpecialtyRows(DESKTOP_SPECIALTIES, DESKTOP_GRID_COLS)
+    : buildSpecialtyRows(PHONE_ROW_COUNT, ALL_SPECIALTIES);
+  const rowCount = rows.length;
 
   return (
     <div
       className="home-feature-specialties__tapestry relative min-h-0 flex-1"
       data-specialty-rows={rowCount}
+      data-specialty-cols={isDesktop ? DESKTOP_GRID_COLS : undefined}
     >
       <div className="home-feature-specialties__rows">
         {rows.map((row, rowIndex) => {
-          const isDesktop = variant === "desktop";
           const sequence = isDesktop ? row : [...row, ...row];
           const reverse = !isDesktop && rowIndex % 2 === 1;
 

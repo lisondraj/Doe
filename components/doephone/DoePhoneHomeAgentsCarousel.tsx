@@ -13,11 +13,12 @@ import {
   memo,
   useCallback,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
   type CSSProperties,
-  type TouchEvent,
   type TransitionEvent,
+  type TouchEvent,
 } from "react";
 
 import { dmSans } from "@/lib/home/fonts";
@@ -128,8 +129,8 @@ function getOrbBlur(distance: number) {
   return Math.min(3.2, distance * 1.05);
 }
 
-/** Agents band order — Scheduling first so it is centered on page load. */
-const AGENTS_CAROUSEL_ORBS: readonly HeroDialOrbScheme[] = [
+/** iPhone band order — Scheduling first so it is centered on page load. */
+const AGENTS_CAROUSEL_ORBS_PHONE: readonly HeroDialOrbScheme[] = [
   HERO_DIAL_ORBS[1],
   HERO_DIAL_ORBS[0],
   HERO_DIAL_ORBS[2],
@@ -139,23 +140,37 @@ const AGENTS_CAROUSEL_ORBS: readonly HeroDialOrbScheme[] = [
   HERO_DIAL_ORBS[6],
 ];
 
-const AGENTS_CAROUSEL_ORB_COUNT = AGENTS_CAROUSEL_ORBS.length;
-
-/** Leading/trailing clones — loop reset swaps to the twin index with no visible jump. */
-const AGENTS_CAROUSEL_TRACK_ORBS: readonly HeroDialOrbScheme[] = [
-  AGENTS_CAROUSEL_ORBS[AGENTS_CAROUSEL_ORB_COUNT - 1],
-  ...AGENTS_CAROUSEL_ORBS,
-  AGENTS_CAROUSEL_ORBS[0],
+/** Desktop band order — Scheduling third; section opens focused there. */
+const AGENTS_CAROUSEL_ORBS_DESKTOP: readonly HeroDialOrbScheme[] = [
+  HERO_DIAL_ORBS[0],
+  HERO_DIAL_ORBS[2],
+  HERO_DIAL_ORBS[1],
+  HERO_DIAL_ORBS[3],
+  HERO_DIAL_ORBS[4],
+  HERO_DIAL_ORBS[5],
+  HERO_DIAL_ORBS[6],
 ];
 
+const DESKTOP_CAROUSEL_INITIAL_ORB_INDEX = 2;
+
 const AGENTS_CAROUSEL_TRACK_LEADING_CLONE = 0;
-const AGENTS_CAROUSEL_TRACK_START =
-  AGENTS_CAROUSEL_TRACK_LEADING_CLONE + 1;
-const AGENTS_CAROUSEL_TRACK_TRAILING_CLONE = AGENTS_CAROUSEL_TRACK_ORBS.length - 1;
+const AGENTS_CAROUSEL_TRACK_START = AGENTS_CAROUSEL_TRACK_LEADING_CLONE + 1;
 const AGENTS_CAROUSEL_SWIPE_THRESHOLD_PX = 44;
 
-function isMainStripOrbIndex(orbIndex: number) {
-  return orbIndex >= AGENTS_CAROUSEL_TRACK_START && orbIndex < AGENTS_CAROUSEL_TRACK_TRAILING_CLONE;
+function buildAgentsCarouselTrack(orbs: readonly HeroDialOrbScheme[]) {
+  return [orbs[orbs.length - 1], ...orbs, orbs[0]] as const;
+}
+
+function getAgentsCarouselInitialOrbIndex(isDesktop: boolean) {
+  return isDesktop ? DESKTOP_CAROUSEL_INITIAL_ORB_INDEX : 0;
+}
+
+function getAgentsCarouselInitialTrackIndex(isDesktop: boolean) {
+  return AGENTS_CAROUSEL_TRACK_START + getAgentsCarouselInitialOrbIndex(isDesktop);
+}
+
+function isMainStripOrbIndex(orbIndex: number, trailingCloneIndex: number) {
+  return orbIndex >= AGENTS_CAROUSEL_TRACK_START && orbIndex < trailingCloneIndex;
 }
 
 function agentsCarouselPaperSlotKey(orbIndex: number) {
@@ -311,14 +326,22 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
   const isDesktop = layoutReady && layoutVariant === "desktop";
   const isPhoneLayout = layoutVariant === "phone";
 
-  const [trackIndex, setTrackIndex] = useState(AGENTS_CAROUSEL_TRACK_START);
+  const carouselOrbs = isDesktop ? AGENTS_CAROUSEL_ORBS_DESKTOP : AGENTS_CAROUSEL_ORBS_PHONE;
+  const trackOrbs = useMemo(() => buildAgentsCarouselTrack(carouselOrbs), [carouselOrbs]);
+  const orbCount = carouselOrbs.length;
+  const trailingCloneIndex = trackOrbs.length - 1;
+
+  const [trackIndex, setTrackIndex] = useState(() =>
+    getAgentsCarouselInitialTrackIndex(readBootstrappedDoePhoneVariant() === "desktop"),
+  );
   const [instantTransition, setInstantTransition] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
   const animatingRef = useRef(false);
   const swipeStartRef = useRef<{ x: number; y: number } | null>(null);
+  const hasSectionRevealResetRef = useRef(false);
 
-  const active = AGENTS_CAROUSEL_TRACK_ORBS[trackIndex];
+  const active = trackOrbs[trackIndex];
 
   useLayoutEffect(() => {
     setLayoutVariant(readBootstrappedDoePhoneVariant());
@@ -328,6 +351,38 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
   }, []);
+
+  useLayoutEffect(() => {
+    if (!layoutReady) {
+      return;
+    }
+    setTrackIndex(getAgentsCarouselInitialTrackIndex(isDesktop));
+    hasSectionRevealResetRef.current = false;
+  }, [isDesktop, layoutReady]);
+
+  useLayoutEffect(() => {
+    if (!revealed) {
+      hasSectionRevealResetRef.current = false;
+    }
+  }, [revealed]);
+
+  useLayoutEffect(() => {
+    if (!isDesktop || !revealed || hasSectionRevealResetRef.current) {
+      return;
+    }
+
+    hasSectionRevealResetRef.current = true;
+    setInstantTransition(true);
+    setTrackIndex(getAgentsCarouselInitialTrackIndex(true));
+    animatingRef.current = false;
+    setIsAnimating(false);
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setInstantTransition(false);
+      });
+    });
+  }, [isDesktop, revealed]);
 
   const resetTrackIndex = useCallback((nextIndex: number) => {
     setInstantTransition(true);
@@ -371,20 +426,20 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
         return;
       }
 
-      if (trackIndex === AGENTS_CAROUSEL_TRACK_TRAILING_CLONE) {
+      if (trackIndex === trailingCloneIndex) {
         resetTrackIndex(AGENTS_CAROUSEL_TRACK_START);
         return;
       }
 
       if (trackIndex === AGENTS_CAROUSEL_TRACK_LEADING_CLONE) {
-        resetTrackIndex(AGENTS_CAROUSEL_TRACK_START + AGENTS_CAROUSEL_ORB_COUNT - 1);
+        resetTrackIndex(AGENTS_CAROUSEL_TRACK_START + orbCount - 1);
         return;
       }
 
       animatingRef.current = false;
       setIsAnimating(false);
     },
-    [instantTransition, resetTrackIndex, trackIndex],
+    [instantTransition, orbCount, resetTrackIndex, trackIndex, trailingCloneIndex],
   );
 
   const handleViewportTouchStart = useCallback((event: TouchEvent<HTMLDivElement>) => {
@@ -445,10 +500,10 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
             onTransitionEnd={handleTrackTransitionEnd}
             style={{ transform: trackTransform(trackIndex) }}
           >
-            {AGENTS_CAROUSEL_TRACK_ORBS.map((scheme, orbIndex) => {
+            {trackOrbs.map((scheme, orbIndex) => {
               const distance = Math.abs(orbIndex - trackIndex);
               const focused = orbIndex === trackIndex;
-              const onMainStrip = isPhoneLayout && isMainStripOrbIndex(orbIndex);
+              const onMainStrip = isPhoneLayout && isMainStripOrbIndex(orbIndex, trailingCloneIndex);
               const warmPaper = (isPhoneLayout ? onMainStrip : true) && distance <= 1 && carouselInView;
               const paperEnabled = warmPaper && (isPhoneLayout ? heroShaderReady : true);
               const paperSlotPriority = focused

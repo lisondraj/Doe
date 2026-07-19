@@ -14,6 +14,16 @@ const WORKFLOW_PILLS = [
   "Reviewing lab results",
 ] as const;
 
+const DESKTOP_EXTRA_WORKFLOW_PILLS = [
+  "Scheduling follow-ups",
+  "Coordinating imaging",
+  "Returning patient calls",
+  "Updating care plans",
+  "Verifying insurance",
+  "Dictating clinical notes",
+  "Managing refill requests",
+] as const;
+
 const DOCTOR_STATS = [
   { value: "<1s", label: "Latency" },
   { value: "30+", label: "languages" },
@@ -51,6 +61,9 @@ export function DoePhoneReviewPackageVisual({
   layout?: VisualLayout;
   showTitle?: boolean;
 }) {
+  const workflowPills =
+    layout === "desktop" ? [...WORKFLOW_PILLS, ...DESKTOP_EXTRA_WORKFLOW_PILLS] : WORKFLOW_PILLS;
+
   return (
     <div
       className={`home-active-agents-visual home-active-agents-visual--${layout} flex h-full min-h-0 w-full flex-col ${suisseIntl.className}`}
@@ -81,7 +94,7 @@ export function DoePhoneReviewPackageVisual({
 
         <div className="home-active-agents-visual__pills">
           <div className="home-active-agents-pills-scale">
-            {WORKFLOW_PILLS.map((label) => (
+            {workflowPills.map((label) => (
               <div key={label} className="home-active-agents-visual__workflow-pill">
                 <span className="home-active-agents-visual__workflow-pill-icon" aria-hidden>
                   <VolumeIcon />
