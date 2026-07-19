@@ -17,6 +17,8 @@ export const PRODUCT_LANDING_DAY_SUMMARY = {
     resolvedPct: 83,
     notesWaiting: "2",
     volume: [14, 10, 8, 6, 12, 22, 38, 52, 68, 74, 58, 42],
+    volumeLabels: ["12a", "4a", "8a", "12p", "4p", "8p"],
+    split: { overnight: 4, clinicHours: 43 },
     tiles: [
       { id: "overnight", label: "Overnight", value: "4", detail: "after-hours calls" },
       { id: "resolved", label: "Resolved", value: "83%", detail: "by Doe" },
