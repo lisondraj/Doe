@@ -559,10 +559,10 @@ function inboxCalendarGradientClass(seed: string): string {
 
 function inboxBrownAvatarGradientClass(seed: string): string {
   const gradients = [
-    "bg-gradient-to-br from-[#A87654] to-[#7A5640]",
-    "bg-gradient-to-br from-[#9E7860] to-[#6E5242]",
-    "bg-gradient-to-br from-[#917865] to-[#5E4A3E]",
-    "bg-gradient-to-br from-[#867565] to-[#52483F]",
+    "bg-gradient-to-br from-[#8A7B6E] to-[#5C5048]",
+    "bg-gradient-to-br from-[#7D7168] to-[#554C45]",
+    "bg-gradient-to-br from-[#8F8278] to-[#5E564F]",
+    "bg-gradient-to-br from-[#867A70] to-[#524A44]",
   ] as const;
   const hash = seed.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
   return gradients[hash % gradients.length];
@@ -1276,6 +1276,7 @@ export function DoeSchedulesAppMock({
         raised: "bg-[var(--pi-raised)]",
         reading: "bg-[var(--pi-reading)]",
         elevated: "bg-[var(--pi-reading)]",
+        messageSurface: "product-brown-inbox-message bg-[var(--pi-raised)]",
         cream: "bg-[var(--pi-cream)]",
         sand: "bg-[var(--pi-sand)]",
         sandDeep: "bg-[var(--pi-sand-deep)]",
@@ -1287,8 +1288,8 @@ export function DoeSchedulesAppMock({
         lineStrong: "border-[var(--pi-line-strong)]",
         iconMuted: "text-[var(--pi-muted-soft)]",
         filterActive:
-          "bg-[var(--pi-raised)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.04)] ring-1 ring-[rgba(38,32,28,0.08)]",
-        filterInactive: "text-[rgba(38,32,28,0.52)] hover:text-[var(--pi-ink)]",
+          "bg-[var(--pi-raised)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.03)] ring-1 ring-[rgba(38,32,28,0.07)]",
+        filterInactive: "text-[rgba(38,32,28,0.5)] hover:bg-[var(--pi-raised)] hover:text-[var(--pi-ink)]",
         track: "bg-[var(--pi-well)]",
         tabIndicator: "bg-[var(--pi-ink-soft)]",
         tabIndicatorMuted: "bg-[rgba(38,32,28,0.1)]",
@@ -1311,13 +1312,13 @@ export function DoeSchedulesAppMock({
         pinIcon: "h-3 w-3 shrink-0 text-[var(--pi-ink-soft)] opacity-90",
         mutedText: "text-[var(--pi-muted)]",
         agentActive:
-          "bg-[var(--pi-raised)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.04)] ring-1 ring-[rgba(38,32,28,0.08)]",
-        agentInactive: "bg-transparent text-[var(--pi-muted)]",
+          "bg-[var(--pi-raised)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.03)] ring-1 ring-[rgba(38,32,28,0.07)]",
+        agentInactive: "bg-transparent text-[var(--pi-muted)] hover:bg-[var(--pi-raised)] hover:text-[var(--pi-ink-soft)]",
         emailQuote:
           "rounded-md border border-[var(--pi-line)] bg-[var(--pi-well)]",
         emailQuoteText: "text-[rgba(38,32,28,0.62)]",
-        divider: "bg-[var(--pi-line)]",
-        messageBorder: "border-[rgba(38,32,28,0.08)]",
+        divider: "bg-[var(--pi-divider)]",
+        messageBorder: "border-[var(--pi-line)]",
       }
     : null;
   const fullWidthWorkspace =
@@ -2671,7 +2672,7 @@ export function DoeSchedulesAppMock({
                       <div
                         className={`flex min-h-0 min-w-0 flex-col border-r ${
                           productBrownInbox
-                            ? `${inboxUi!.line} ${inboxUi!.sand}`
+                            ? `${inboxUi!.line} ${inboxUi!.canvas}`
                             : productBrownDarkWorkspace
                               ? "border-[rgba(245,230,208,0.08)] bg-[#2a1f12]"
                               : "border-[#F2F2F2] bg-white"
@@ -2680,7 +2681,7 @@ export function DoeSchedulesAppMock({
                         <div
                           className={`sticky top-0 z-10 flex h-[58px] shrink-0 items-center justify-between gap-2 border-b px-3 sm:px-4 ${
                             productBrownInbox
-                              ? `${inboxUi!.line} ${inboxUi!.canvas}`
+                              ? `${inboxUi!.line} ${inboxUi!.toolbar}`
                               : productBrownDarkWorkspace
                                 ? "border-[rgba(245,230,208,0.08)] bg-[#322618]"
                                 : "border-[#F2F2F2] bg-white"
@@ -2860,7 +2861,7 @@ export function DoeSchedulesAppMock({
                                       key={msg.id}
                                       className={`border-b last:border-b-0 ${
                                         productBrownInbox
-                                          ? `${inboxUi!.messageBorder} ${inboxUi!.cream}`
+                                          ? `${inboxUi!.messageSurface} ${inboxUi!.messageBorder}`
                                           : productBrownDarkWorkspace
                                             ? "border-[rgba(245,230,208,0.08)] bg-[#241910]"
                                             : "border-[#F0F0F0] bg-white"

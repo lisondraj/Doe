@@ -109,8 +109,8 @@
 
 .product-brown-mock.product-brown-inbox-mode .product-brown-inner-row::after {
   box-shadow:
-    -4px 0 20px rgba(0, 0, 0, 0.18),
-    0 0 0 1px rgba(30, 22, 18, 0.06);
+    -4px 0 20px rgba(0, 0, 0, 0.14),
+    0 0 0 1px rgba(38, 32, 28, 0.05);
 }
 
 .product-brown-mock.product-brown-workspace-mode .product-brown-inner-row__content,
@@ -819,13 +819,13 @@ html[data-product-page="true"] .product-call-preview__bubble--agent {
 
 /* ── Inbox: stone/taupe browns (lighter than schedule/patients, less yellow than landing) ── */
 .product-brown-mock.product-brown-inbox-mode {
-  --pi-cream: #f3f0e9;
-  --pi-sand: #e8e4dc;
-  --pi-sand-deep: #d2cdc4;
-  --pi-well: #ddd9d1;
-  --pi-selected: #e5e1d8;
-  --pi-raised: #ece9e1;
-  --pi-reading: #f1eee7;
+  --pi-cream: #f2efe8;
+  --pi-sand: #dcd8cf;
+  --pi-sand-deep: #c4c0b7;
+  --pi-well: #d0ccc3;
+  --pi-selected: #e3dfd6;
+  --pi-raised: #ebe8e0;
+  --pi-reading: #f4f1ea;
   --pi-highlight: var(--pi-reading);
   --pi-accent: #6e6258;
   --pi-accent-deep: #4a4038;
@@ -834,8 +834,9 @@ html[data-product-page="true"] .product-call-preview__bubble--agent {
   --pi-ink-soft: #3a322c;
   --pi-muted: rgba(38, 32, 28, 0.58);
   --pi-muted-soft: rgba(38, 32, 28, 0.42);
-  --pi-line: rgba(38, 32, 28, 0.1);
-  --pi-line-strong: rgba(38, 32, 28, 0.12);
+  --pi-line: rgba(38, 32, 28, 0.09);
+  --pi-line-strong: rgba(38, 32, 28, 0.14);
+  --pi-divider: rgba(38, 32, 28, 0.07);
 }
 
 .product-brown-mock.product-brown-inbox-mode .product-brown-frame:not(.product-brown-layered-layout),
@@ -845,14 +846,18 @@ html[data-product-page="true"] .product-call-preview__bubble--agent {
   color: var(--pi-ink) !important;
 }
 
-/* Inbox chrome: stone taupe ladder (canvas → toolbar → recess → elevated) */
+/* Inbox chrome: canvas title, toolbar filter strip */
 .product-brown-mock.product-brown-inbox-mode
   :is(.product-brown-main, .product-brown-main-panel)
-  header,
+  header {
+  background-color: var(--pi-cream) !important;
+  border-color: var(--pi-line) !important;
+}
+
 .product-brown-mock.product-brown-inbox-mode
   :is(.product-brown-main, .product-brown-main-panel)
   .sticky.top-0 {
-  background-color: var(--pi-cream) !important;
+  background-color: var(--pi-sand) !important;
   border-color: var(--pi-line) !important;
 }
 
@@ -902,11 +907,20 @@ html[data-product-page="true"] .product-call-preview__bubble--agent {
 
 .product-brown-mock.product-brown-inbox-mode .product-brown-inbox-row--active {
   background-color: var(--pi-selected) !important;
-  box-shadow: inset 0 0 0 1px rgba(38, 32, 28, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(38, 32, 28, 0.07);
 }
 
 .product-brown-mock.product-brown-inbox-mode .product-brown-inbox-row--default:hover {
   background-color: var(--pi-raised) !important;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-inbox-message {
+  background-color: var(--pi-raised) !important;
+  border-color: var(--pi-line) !important;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-inbox-message:hover {
+  background-color: var(--pi-selected) !important;
 }
 
 .product-brown-mock.product-brown-inbox-mode .product-brown-inbox-row[class*="border-l-[var(--pi-ink-soft)]"] {
