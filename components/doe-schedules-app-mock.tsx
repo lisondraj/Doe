@@ -684,7 +684,7 @@ function InboxThreadListRow({
           ? darkBrown
             ? "product-brown-inbox-row--active border-l-2 border-l-transparent bg-[#3d2e1f]"
             : lightBrown
-              ? "product-brown-inbox-row--active border-l-2 border-l-transparent bg-[var(--pi-highlight)]"
+              ? "product-brown-inbox-row--active border-l-2 border-l-transparent bg-[var(--pi-selected)]"
               : brownTheme
                 ? "product-brown-inbox-row--active border-l-2 border-l-[#D4A574] bg-[#f8edd8]"
                 : "border-l-2 border-l-[#D4A574] bg-[#FFF9F1]"
@@ -692,14 +692,14 @@ function InboxThreadListRow({
             ? darkBrown
               ? "product-brown-inbox-row--default border-l-2 border-l-transparent bg-[#322618] hover:bg-[#3a2a1c]"
               : lightBrown
-                ? "product-brown-inbox-row--default border-l-2 border-l-transparent bg-[var(--pi-cream)] hover:bg-[var(--pi-sand)]"
+                ? "product-brown-inbox-row--default border-l-2 border-l-transparent bg-[var(--pi-cream)] hover:bg-[var(--pi-raised)]"
                 : brownTheme
                   ? "product-brown-inbox-row--default border-l-2 border-l-[#D4A574]/45 bg-[#f5e6d0] hover:bg-[rgba(26,18,8,0.05)]"
                   : "border-l-2 border-l-[#D4A574]/45 bg-white hover:bg-neutral-50/80"
             : darkBrown
               ? "product-brown-inbox-row--default border-l-2 border-l-transparent bg-[#2a1f12] hover:bg-[#322618]"
               : lightBrown
-                ? "product-brown-inbox-row--default border-l-2 border-l-transparent bg-[var(--pi-cream)] hover:bg-[var(--pi-sand)]"
+                ? "product-brown-inbox-row--default border-l-2 border-l-transparent bg-[var(--pi-cream)] hover:bg-[var(--pi-raised)]"
                 : brownTheme
                   ? "product-brown-inbox-row--default border-l-2 border-l-transparent bg-[#f5e6d0] hover:bg-[rgba(26,18,8,0.05)]"
                   : "border-l-2 border-l-transparent bg-white hover:bg-neutral-50/80"
@@ -1272,46 +1272,49 @@ export function DoeSchedulesAppMock({
         canvas: "bg-[var(--pi-cream)]",
         toolbar: "bg-[var(--pi-sand)]",
         recess: "bg-[var(--pi-well)]",
-        elevated: "bg-[var(--pi-highlight)]",
+        selected: "bg-[var(--pi-selected)]",
+        raised: "bg-[var(--pi-raised)]",
+        reading: "bg-[var(--pi-reading)]",
+        elevated: "bg-[var(--pi-reading)]",
         cream: "bg-[var(--pi-cream)]",
         sand: "bg-[var(--pi-sand)]",
         sandDeep: "bg-[var(--pi-sand-deep)]",
         well: "bg-[var(--pi-well)]",
-        highlight: "bg-[var(--pi-highlight)]",
+        highlight: "bg-[var(--pi-raised)]",
         ink: "text-[var(--pi-ink)]",
         inkSoft: "text-[var(--pi-ink-soft)]",
         line: "border-[var(--pi-line)]",
         lineStrong: "border-[var(--pi-line-strong)]",
         iconMuted: "text-[var(--pi-muted-soft)]",
         filterActive:
-          "bg-[var(--pi-highlight)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.05)] ring-1 ring-[var(--pi-line)]",
+          "bg-[var(--pi-raised)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.04)] ring-1 ring-[rgba(38,32,28,0.08)]",
         filterInactive: "text-[rgba(38,32,28,0.52)] hover:text-[var(--pi-ink)]",
         track: "bg-[var(--pi-well)]",
         tabIndicator: "bg-[var(--pi-ink-soft)]",
-        tabIndicatorMuted: "bg-[var(--pi-line)]",
+        tabIndicatorMuted: "bg-[rgba(38,32,28,0.1)]",
         composeBtn:
-          "border-[var(--pi-line)] bg-[var(--pi-highlight)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.04)] hover:bg-[var(--pi-cream)]",
+          "border-[var(--pi-line)] bg-[var(--pi-raised)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.04)] hover:bg-[var(--pi-selected)]",
         avatarRing: "border-[rgba(58,50,44,0.28)] bg-[rgba(58,50,44,0.1)]",
-        chip: "border-[var(--pi-line)] bg-[var(--pi-highlight)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.04)]",
-        chipHover: "hover:border-[rgba(38,32,28,0.14)] hover:bg-[var(--pi-sand)]",
+        chip: "border-[var(--pi-line)] bg-[var(--pi-raised)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.03)]",
+        chipHover: "hover:border-[rgba(38,32,28,0.12)] hover:bg-[var(--pi-selected)]",
         actionBar:
-          "inline-flex items-center gap-0.5 rounded-full border border-[var(--pi-line)] bg-[var(--pi-well)] p-0.5 shadow-[0_1px_2px_rgba(30,22,18,0.04)]",
+          "inline-flex items-center gap-0.5 rounded-full border border-[var(--pi-line)] bg-[var(--pi-well)] p-0.5 shadow-[0_1px_2px_rgba(30,22,18,0.03)]",
         actionBtn:
-          "text-[rgba(38,32,28,0.68)] transition-colors hover:bg-[var(--pi-highlight)] hover:text-[var(--pi-ink)]",
+          "text-[rgba(38,32,28,0.68)] transition-colors hover:bg-[var(--pi-raised)] hover:text-[var(--pi-ink)]",
         iconBtn:
-          "inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--pi-line)] bg-[var(--pi-highlight)] text-[var(--pi-muted-soft)] shadow-[0_1px_2px_rgba(30,22,18,0.04)] transition-colors hover:bg-[var(--pi-sand)] hover:text-[var(--pi-ink-soft)]",
+          "inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--pi-line)] bg-[var(--pi-raised)] text-[var(--pi-muted-soft)] shadow-[0_1px_2px_rgba(30,22,18,0.03)] transition-colors hover:bg-[var(--pi-selected)] hover:text-[var(--pi-ink-soft)]",
         iconBtnNeutral:
-          "inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--pi-line)] bg-[var(--pi-highlight)] text-[var(--pi-muted-soft)] shadow-[0_1px_2px_rgba(30,22,18,0.04)] transition-colors hover:bg-[var(--pi-sand)] hover:text-[var(--pi-ink)]",
+          "inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--pi-line)] bg-[var(--pi-raised)] text-[var(--pi-muted-soft)] shadow-[0_1px_2px_rgba(30,22,18,0.03)] transition-colors hover:bg-[var(--pi-selected)] hover:text-[var(--pi-ink)]",
         emptyIcon:
-          "rounded-full border border-[var(--pi-line)] bg-[var(--pi-highlight)] p-3 shadow-[0_1px_2px_rgba(30,22,18,0.04)]",
+          "rounded-full border border-[var(--pi-line)] bg-[var(--pi-raised)] p-3 shadow-[0_1px_2px_rgba(30,22,18,0.03)]",
         emptyIconGlyph: "h-6 w-6 text-[rgba(30,22,18,0.28)]",
         pinIcon: "h-3 w-3 shrink-0 text-[var(--pi-ink-soft)] opacity-90",
         mutedText: "text-[var(--pi-muted)]",
         agentActive:
-          "bg-[var(--pi-highlight)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.05)] ring-1 ring-[var(--pi-line)]",
+          "bg-[var(--pi-raised)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.04)] ring-1 ring-[rgba(38,32,28,0.08)]",
         agentInactive: "bg-transparent text-[var(--pi-muted)]",
         emailQuote:
-          "rounded-md border border-[var(--pi-line)] bg-[var(--pi-highlight)]",
+          "rounded-md border border-[var(--pi-line)] bg-[var(--pi-well)]",
         emailQuoteText: "text-[rgba(38,32,28,0.62)]",
         divider: "bg-[var(--pi-line)]",
         messageBorder: "border-[rgba(38,32,28,0.08)]",
@@ -2802,7 +2805,7 @@ export function DoeSchedulesAppMock({
                       <div
                         className={`relative flex min-h-0 min-w-0 flex-col ${
                           productBrownInbox
-                            ? inboxUi!.elevated
+                            ? inboxUi!.reading
                             : productBrownDarkWorkspace
                               ? "bg-[#241910]"
                               : "bg-white"
@@ -2812,7 +2815,7 @@ export function DoeSchedulesAppMock({
                           <div
                             className={`flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden ${
                               productBrownInbox
-                                ? inboxUi!.elevated
+                                ? inboxUi!.reading
                                 : productBrownDarkWorkspace
                                   ? "bg-[#241910]"
                                   : "bg-white"

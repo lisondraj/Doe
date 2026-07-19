@@ -819,14 +819,17 @@ html[data-product-page="true"] .product-call-preview__bubble--agent {
 
 /* ── Inbox: stone/taupe browns (lighter than schedule/patients, less yellow than landing) ── */
 .product-brown-mock.product-brown-inbox-mode {
-  --pi-cream: #f6f3ee;
-  --pi-sand: #edeae4;
-  --pi-sand-deep: #ddd8d0;
-  --pi-well: #e5e1da;
-  --pi-highlight: #fcfbfa;
+  --pi-cream: #f3f0e9;
+  --pi-sand: #e8e4dc;
+  --pi-sand-deep: #d2cdc4;
+  --pi-well: #ddd9d1;
+  --pi-selected: #e5e1d8;
+  --pi-raised: #ece9e1;
+  --pi-reading: #f1eee7;
+  --pi-highlight: var(--pi-reading);
   --pi-accent: #6e6258;
   --pi-accent-deep: #4a4038;
-  --pi-track: #dedad3;
+  --pi-track: var(--pi-well);
   --pi-ink: #1e1612;
   --pi-ink-soft: #3a322c;
   --pi-muted: rgba(38, 32, 28, 0.58);
@@ -885,7 +888,7 @@ html[data-product-page="true"] .product-call-preview__bubble--agent {
 
 .product-brown-mock.product-brown-inbox-mode .product-brown-main .hover\:bg-neutral-50:hover,
 .product-brown-mock.product-brown-inbox-mode .product-brown-main .hover\:bg-white:hover {
-  background-color: var(--pi-highlight) !important;
+  background-color: var(--pi-raised) !important;
 }
 
 .product-brown-mock.product-brown-inbox-mode .product-brown-inbox-row {
@@ -898,12 +901,12 @@ html[data-product-page="true"] .product-call-preview__bubble--agent {
 }
 
 .product-brown-mock.product-brown-inbox-mode .product-brown-inbox-row--active {
-  background-color: var(--pi-highlight) !important;
-  box-shadow: inset 0 0 0 1px var(--pi-line-strong);
+  background-color: var(--pi-selected) !important;
+  box-shadow: inset 0 0 0 1px rgba(38, 32, 28, 0.08);
 }
 
 .product-brown-mock.product-brown-inbox-mode .product-brown-inbox-row--default:hover {
-  background-color: var(--pi-sand) !important;
+  background-color: var(--pi-raised) !important;
 }
 
 .product-brown-mock.product-brown-inbox-mode .product-brown-inbox-row[class*="border-l-[var(--pi-ink-soft)]"] {
@@ -934,7 +937,7 @@ html[data-product-page="true"] .product-call-preview__bubble--agent {
 /* Inbox chips, attachment boxes, action icon buttons */
 .product-brown-mock.product-brown-inbox-mode .product-brown-main [class*="bg-[#FAFAFA]"],
 .product-brown-mock.product-brown-inbox-mode .product-brown-main [class*="bg-[#f8edd8]"] {
-  background-color: var(--pi-highlight) !important;
+  background-color: var(--pi-raised) !important;
 }
 
 .product-brown-mock.product-brown-inbox-mode .product-brown-main [class*="border-[#E8E4E0]"],
