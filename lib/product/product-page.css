@@ -1,0 +1,18 @@
+html[data-product-page="true"] {
+  --product-ink: #1a1208;
+  --product-sand: #f5e6d0;
+  --product-sand-soft: rgba(245, 230, 208, 0.72);
+  --product-line: rgba(245, 230, 208, 0.14);
+}
+
+html[data-product-page="true"] .product-call-preview__bubble--patient {
+  background: rgba(26, 18, 8, 0.06);
+  border: 1px solid rgba(26, 18, 8, 0.08);
+  color: #3d2e1f;
+}
+
+html[data-product-page="true"] .product-call-preview__bubble--agent {
+  background: linear-gradient(168deg, #322618 0%, var(--product-ink) 100%);
+  border: 1px solid rgba(245, 230, 208, 0.18);
+  color: var(--product-sand);
+}

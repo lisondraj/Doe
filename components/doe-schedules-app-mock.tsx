@@ -5,6 +5,8 @@ import type { CSSProperties } from "react";
 import { Inter, Lora } from "next/font/google";
 import localFont from "next/font/local";
 
+import { ProductLandingPanel } from "@/components/product/ProductLandingPanel";
+
 export const weekSchedule = [
   {
     day: "Mon",
@@ -555,8 +557,23 @@ function inboxCalendarGradientClass(seed: string): string {
   return gradients[hash % gradients.length];
 }
 
-function inboxMessageAvatarClass(from: string): string {
-  return `${inboxCalendarGradientClass(from)} text-white`;
+function inboxBrownAvatarGradientClass(seed: string): string {
+  const gradients = [
+    "bg-gradient-to-br from-[#A87654] to-[#7A5640]",
+    "bg-gradient-to-br from-[#9E7860] to-[#6E5242]",
+    "bg-gradient-to-br from-[#917865] to-[#5E4A3E]",
+    "bg-gradient-to-br from-[#867565] to-[#52483F]",
+  ] as const;
+  const hash = seed.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  return gradients[hash % gradients.length];
+}
+
+function inboxAvatarGradientClass(seed: string, brownPalette = false): string {
+  return brownPalette ? inboxBrownAvatarGradientClass(seed) : inboxCalendarGradientClass(seed);
+}
+
+function inboxMessageAvatarClass(from: string, brownPalette = false): string {
+  return `${inboxAvatarGradientClass(from, brownPalette)} ${brownPalette ? "text-[#f5efe8]" : "text-white"}`;
 }
 
 function inboxSenderNameLine(from: string): string {
@@ -632,29 +649,60 @@ function InboxThreadListRow({
   isActive,
   onSelect,
   showPin,
+  brownTheme = false,
 }: {
   t: InboxThreadData;
   isActive: boolean;
   onSelect: () => void;
   showPin?: boolean;
+  brownTheme?: boolean | "dark";
 }) {
   const showUnreadAccent = !isActive && t.unread;
+  const darkBrown = brownTheme === "dark";
+  const lightBrown = brownTheme === true;
   return (
     <button
       type="button"
       onClick={onSelect}
-      className={`relative flex w-full gap-3 border-b border-[#F2F2F2] px-3.5 py-3 text-left transition-colors ${
+      className={`product-brown-inbox-row relative flex w-full gap-3 border-b px-3.5 py-3 text-left transition-colors ${
+        darkBrown
+          ? "border-[rgba(245,230,208,0.08)]"
+          : brownTheme
+            ? lightBrown
+              ? "border-[var(--pi-line)]"
+              : "border-[rgba(61,46,31,0.14)]"
+            : "border-[#F2F2F2]"
+      } ${
         isActive
-          ? "border-l-2 border-l-[#D4A574] bg-[#FFF9F1]"
+          ? darkBrown
+            ? "product-brown-inbox-row--active border-l-2 border-l-[#D4A574] bg-[#3d2e1f]"
+            : lightBrown
+              ? "product-brown-inbox-row--active border-l-2 border-l-[var(--pi-accent)] bg-[var(--pi-highlight)]"
+              : brownTheme
+                ? "product-brown-inbox-row--active border-l-2 border-l-[#D4A574] bg-[#f8edd8]"
+                : "border-l-2 border-l-[#D4A574] bg-[#FFF9F1]"
           : showUnreadAccent
-            ? "border-l-2 border-l-[#D4A574]/45 bg-white hover:bg-neutral-50/80"
-            : "border-l-2 border-l-transparent bg-white hover:bg-neutral-50/80"
-      }`}
+            ? darkBrown
+              ? "product-brown-inbox-row--default border-l-2 border-l-[#D4A574]/45 bg-[#322618] hover:bg-[#3a2a1c]"
+              : lightBrown
+                ? "product-brown-inbox-row--default border-l-2 border-l-[#C4894A]/45 bg-[var(--pi-sand)] hover:bg-[var(--pi-well)]"
+                : brownTheme
+                  ? "product-brown-inbox-row--default border-l-2 border-l-[#D4A574]/45 bg-[#f5e6d0] hover:bg-[rgba(26,18,8,0.05)]"
+                  : "border-l-2 border-l-[#D4A574]/45 bg-white hover:bg-neutral-50/80"
+            : darkBrown
+              ? "product-brown-inbox-row--default border-l-2 border-l-transparent bg-[#2a1f12] hover:bg-[#322618]"
+              : lightBrown
+                ? "product-brown-inbox-row--default border-l-2 border-l-transparent bg-[var(--pi-sand)] hover:bg-[var(--pi-well)]"
+                : brownTheme
+                  ? "product-brown-inbox-row--default border-l-2 border-l-transparent bg-[#f5e6d0] hover:bg-[rgba(26,18,8,0.05)]"
+                  : "border-l-2 border-l-transparent bg-white hover:bg-neutral-50/80"
+      } ${darkBrown ? "product-brown-inbox-row--dark" : ""}`}
     >
       <div
-        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold text-white ${inboxCalendarGradientClass(
+        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold ${inboxAvatarGradientClass(
           t.from,
-        )}`}
+          lightBrown,
+        )} ${lightBrown ? "text-[#f5efe8]" : "text-white"}`}
       >
         {inboxSenderInitials(t.from)}
       </div>
@@ -670,7 +718,7 @@ function InboxThreadListRow({
           <span className="flex shrink-0 items-center gap-1 pt-0.5 text-[10px] font-medium tabular-nums tracking-tight text-neutral-400">
             {showPin ? (
               <span className="inline-flex shrink-0" title="Pinned">
-                <InboxPinIcon className="h-3 w-3 text-[#B8956A]" />
+                <InboxPinIcon className={`h-3 w-3 ${lightBrown ? "text-[var(--pi-accent)]" : brownTheme && !darkBrown ? "text-[#8b6914]" : "text-[#B8956A]"}`} />
               </span>
             ) : null}
             {t.time}
@@ -898,7 +946,20 @@ function getAppointmentReason(tone: string, label: string): string {
   return summary.secondary || getEventCategory(tone, label);
 }
 
-function eventCardGradientClass(tone: string): string {
+function eventCardGradientClass(tone: string, brownOnly = false): string {
+  if (brownOnly) {
+    switch (tone) {
+      case "amber":
+        return "bg-gradient-to-br from-[#C4A574] to-[#8B6914]";
+      case "purple":
+        return "bg-gradient-to-br from-[#A67B5B] to-[#6B4423]";
+      case "green":
+        return "bg-gradient-to-br from-[#9A8565] to-[#5C4A32]";
+      default:
+        return "bg-gradient-to-br from-[#D4A574] to-[#8B6914]";
+    }
+  }
+
   switch (tone) {
     case "blue":
       return "bg-gradient-to-br from-[#E3B468] to-[#A8794B]";
@@ -1041,7 +1102,7 @@ function Icon({
   );
 }
 
-export type DoeSchedulesAppMockVariant = "framed" | "fullscreen" | "hero";
+export type DoeSchedulesAppMockVariant = "framed" | "fullscreen" | "hero" | "product-brown";
 
 const PERIOD_SELECTOR_COPY: Record<
   "Today" | "This week" | "Month" | "Year",
@@ -1077,7 +1138,10 @@ export function DoeSchedulesAppMock({
   const viewOptions = ["Today", "This week", "Month", "Year"] as const;
   const [timeView, setTimeView] = useState<(typeof viewOptions)[number]>("This week");
   const categoryOptions = [
-    { label: "All categories", swatch: "bg-neutral-300" },
+    {
+      label: "All categories",
+      swatch: variant === "product-brown" ? "bg-[#a89070]" : "bg-neutral-300",
+    },
     { label: "Clinic", swatch: "bg-gradient-to-br from-[#E3B468] to-[#A8794B]" },
     { label: "Research", swatch: "bg-gradient-to-br from-[#E5AF63] to-[#BC6948]" },
     { label: "Director/Residency", swatch: "bg-gradient-to-br from-[#D38964] to-[#906A54]" },
@@ -1095,7 +1159,16 @@ export function DoeSchedulesAppMock({
     clinicOptions[0],
   );
   const [clinicMenuOpen, setClinicMenuOpen] = useState(false);
-  const [workspaceView, setWorkspaceView] = useState<"inbox" | "schedule" | "patients">("schedule");
+  const userOptions = [
+    { name: "Dr. Sarah Chen", role: "Physician" },
+    { name: "James Lisondra", role: "Practice admin" },
+    { name: "Morgan Ellis", role: "Front desk" },
+  ] as const;
+  const [selectedUser, setSelectedUser] = useState<(typeof userOptions)[number]>(userOptions[0]);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [workspaceView, setWorkspaceView] = useState<
+    "inbox" | "schedule" | "patients" | "landing"
+  >(variant === "product-brown" ? "landing" : "schedule");
   const [selectedInboxId, setSelectedInboxId] = useState<string>(inboxThreads[0].id);
   const [inboxFilter, setInboxFilter] = useState<"all" | "unread" | "pinned">("all");
   const [patientListScope, setPatientListScope] = useState<"all" | "today">("today");
@@ -1156,8 +1229,6 @@ export function DoeSchedulesAppMock({
     }
   }, [patientDayRows, selectedPatientId]);
   const activeViewIndex = viewOptions.indexOf(timeView);
-  const patientBentoCard =
-    "rounded-xl border border-[#E8E8E8] bg-white p-3 shadow-[0_1px_2px_rgba(0,0,0,0.04)]";
 
   const filteredInbox = useMemo(() => {
     return inboxThreads.filter((t) => {
@@ -1181,8 +1252,63 @@ export function DoeSchedulesAppMock({
     return hit ?? filteredInbox[0];
   }, [filteredInbox, selectedInboxId]);
 
-  const full = variant === "fullscreen";
+  const full = variant === "fullscreen" || variant === "product-brown";
+  const productBrown = variant === "product-brown";
   const hero = variant === "hero";
+  const productBrownWorkspace =
+    productBrown && workspaceView !== "landing";
+  const productBrownInbox = productBrown && workspaceView === "inbox";
+  const productBrownDarkWorkspace =
+    productBrownWorkspace && workspaceView !== "inbox";
+  const inboxUi = productBrownInbox
+    ? {
+        cream: "bg-[var(--pi-cream)]",
+        sand: "bg-[var(--pi-sand)]",
+        sandDeep: "bg-[var(--pi-sand-deep)]",
+        well: "bg-[var(--pi-well)]",
+        highlight: "bg-[var(--pi-highlight)]",
+        ink: "text-[var(--pi-ink)]",
+        inkSoft: "text-[var(--pi-ink-soft)]",
+        line: "border-[var(--pi-line)]",
+        lineStrong: "border-[var(--pi-line-strong)]",
+        iconMuted: "text-[var(--pi-muted-soft)]",
+        filterActive: "bg-[var(--pi-ink)] text-[var(--pi-highlight)] shadow-[0_1px_2px_rgba(30,22,18,0.1)]",
+        filterInactive: "text-[rgba(38,32,28,0.52)] hover:text-[var(--pi-ink)]",
+        composeBtn:
+          "border-[var(--pi-line-strong)] bg-[var(--pi-highlight)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.04)] hover:bg-[var(--pi-sand-deep)]",
+        avatarRing: "border-[rgba(168,118,84,0.42)] bg-[rgba(168,118,84,0.18)]",
+        chip: "border-[var(--pi-line)] bg-[var(--pi-highlight)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.04)]",
+        chipHover: "hover:border-[rgba(38,32,28,0.14)] hover:bg-[var(--pi-sand)]",
+        actionBar:
+          "inline-flex items-center gap-0.5 rounded-full border border-[var(--pi-line)] bg-[var(--pi-well)] p-0.5 shadow-[0_1px_2px_rgba(30,22,18,0.04)]",
+        actionBtn:
+          "text-[rgba(38,32,28,0.68)] transition-colors hover:bg-[var(--pi-highlight)] hover:text-[var(--pi-ink)]",
+        iconBtn:
+          "inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--pi-line)] bg-[var(--pi-highlight)] text-[var(--pi-muted-soft)] shadow-[0_1px_2px_rgba(30,22,18,0.04)] transition-colors hover:bg-[var(--pi-sand)] hover:text-[var(--pi-accent)]",
+        iconBtnNeutral:
+          "inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--pi-line)] bg-[var(--pi-highlight)] text-[var(--pi-muted-soft)] shadow-[0_1px_2px_rgba(30,22,18,0.04)] transition-colors hover:bg-[var(--pi-sand)] hover:text-[var(--pi-ink)]",
+        emptyIcon:
+          "rounded-full border border-[var(--pi-line)] bg-[var(--pi-highlight)] p-3 shadow-[0_1px_2px_rgba(30,22,18,0.04)]",
+        emptyIconGlyph: "h-6 w-6 text-[rgba(30,22,18,0.28)]",
+        pinIcon: "h-3 w-3 shrink-0 text-[var(--pi-accent)] opacity-90",
+        mutedText: "text-[var(--pi-muted)]",
+        agentActive:
+          "bg-[var(--pi-highlight)] text-[var(--pi-ink)] shadow-[0_1px_2px_rgba(30,22,18,0.06)]",
+        agentInactive: "bg-[rgba(38,32,28,0.04)] text-[var(--pi-muted)]",
+        emailQuote:
+          "border-[var(--pi-line)] border-l-[var(--pi-accent)] bg-[var(--pi-highlight)]",
+        emailQuoteText: "text-[rgba(38,32,28,0.62)]",
+        divider: "bg-[var(--pi-line)]",
+        messageBorder: "border-[rgba(38,32,28,0.08)]",
+      }
+    : null;
+  const fullWidthWorkspace =
+    hero || workspaceView === "inbox" || (productBrown && workspaceView === "landing");
+  const patientBentoCard = productBrownDarkWorkspace
+    ? "rounded-xl border border-[rgba(245,230,208,0.1)] bg-[#322618] p-3 shadow-[0_1px_2px_rgba(0,0,0,0.18)]"
+    : productBrown
+      ? "rounded-xl border border-[rgba(61,46,31,0.14)] bg-[#f5e6d0] p-3 shadow-[0_1px_2px_rgba(26,18,8,0.04)]"
+      : "rounded-xl border border-[#E8E8E8] bg-white p-3 shadow-[0_1px_2px_rgba(0,0,0,0.04)]";
   const earlyEventCount = weekSchedule.reduce((count, day) => {
     return (
       count +
@@ -1209,345 +1335,598 @@ export function DoeSchedulesAppMock({
 
   const periodSelector = PERIOD_SELECTOR_COPY[timeView];
 
+  const appSidebar = (
+    <aside
+      className={`flex h-full shrink-0 flex-col ${
+        productBrown
+          ? "product-brown-sidebar bg-[#1a1208]"
+          : "w-[220px] border-r border-[#EFEFEF] bg-white"
+      }`}
+    >
+      <div className="flex items-center justify-between gap-2 px-3 pt-3 pb-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div
+            className={`h-8 w-8 shrink-0 rounded-lg shadow-sm ${
+              productBrown
+                ? "bg-gradient-to-br from-[#D4A574] via-[#A67B5B] to-[#3d2e1f]"
+                : "bg-gradient-to-br from-[#E7A944] via-[#D2774C] to-[#1E343A]"
+            }`}
+          />
+          <div className="min-w-0">
+            <div
+              className={`truncate text-[1.15rem] font-normal leading-none tracking-tight ${
+                productBrown ? "text-[#f5e6d0]" : "text-neutral-900"
+              } ${lora.className}`}
+            >
+              Doe
+            </div>
+          </div>
+        </div>
+        <button
+          type="button"
+          className="rounded-md p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600"
+          aria-label="Collapse sidebar"
+        >
+          <Icon className="h-4 w-4">
+            <rect width="18" height="18" x="3" y="3" rx="2" />
+            <path d="M9 3v18" />
+          </Icon>
+        </button>
+      </div>
+
+      <div className="px-3 pb-2">
+        <div className="flex h-9 items-center gap-2 rounded-lg border border-[#ECECEC] bg-[#FAFAFA] px-2.5">
+          <Icon className="h-4 w-4 text-neutral-400">
+            <circle cx="11" cy="11" r="7" />
+            <path d="m21 21-4.35-4.35" />
+          </Icon>
+          <span className="flex-1 text-[13px] text-neutral-400">Search</span>
+          <span className="rounded border border-[#E5E5E5] bg-white px-1.5 py-0.5 text-[10px] font-medium text-neutral-500">
+            ⌘
+          </span>
+        </div>
+      </div>
+
+      <div className="px-3 pb-2">
+        <div className="relative">
+          {clinicMenuOpen ? (
+            <div
+              role="menu"
+              className={`absolute top-full left-0 right-0 z-30 mt-1.5 overflow-hidden rounded-xl border p-1 opacity-100 ${
+                productBrown
+                  ? "border-[rgba(245,230,208,0.14)] bg-[#241910] shadow-[0_8px_24px_rgba(0,0,0,0.45)]"
+                  : "border-[#E5E5E5] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
+              }`}
+            >
+              {clinicOptions.map((clinic) => (
+                <button
+                  key={clinic.name}
+                  type="button"
+                  role="menuitem"
+                  onClick={() => {
+                    setSelectedClinic(clinic);
+                    setClinicMenuOpen(false);
+                  }}
+                  className={`flex w-full items-start gap-2 rounded-lg px-2 py-1.5 text-left ${
+                    selectedClinic.name === clinic.name
+                      ? productBrown
+                        ? "bg-[rgba(245,230,208,0.1)]"
+                        : "bg-neutral-100"
+                      : productBrown
+                        ? "hover:bg-[rgba(245,230,208,0.08)]"
+                        : "hover:bg-neutral-50"
+                  }`}
+                >
+                  <span
+                    className={`mt-1 h-2 w-2 shrink-0 rounded-full ${
+                      productBrown
+                        ? "bg-gradient-to-br from-[#D4A574] to-[#A67B5B]"
+                        : "bg-gradient-to-br from-[#E7A944] to-[#BF593D]"
+                    }`}
+                  />
+                  <span className="min-w-0 flex-1">
+                    <span
+                      className={`block truncate text-[12px] font-medium ${
+                        productBrown ? "text-[#f5e6d0]" : "text-neutral-700"
+                      }`}
+                    >
+                      {clinic.name}
+                    </span>
+                    <span
+                      className={`block truncate text-[10px] ${
+                        productBrown ? "text-[rgba(245,230,208,0.48)]" : "text-neutral-500"
+                      }`}
+                    >
+                      {clinic.address}
+                    </span>
+                  </span>
+                </button>
+              ))}
+            </div>
+          ) : null}
+          <button
+            type="button"
+            onClick={() => {
+              setClinicMenuOpen((open) => !open);
+              setUserMenuOpen(false);
+            }}
+            className={`flex w-full items-center gap-2 rounded-lg border px-2 py-2 text-left text-[12px] font-medium hover:bg-neutral-50 ${
+              productBrown
+                ? "border-[rgba(245,230,208,0.12)] bg-[rgba(245,230,208,0.06)] text-[#f5e6d0] hover:bg-[rgba(245,230,208,0.1)]"
+                : "border-[#E6E6E6] bg-white text-neutral-700"
+            }`}
+            aria-haspopup="menu"
+            aria-expanded={clinicMenuOpen}
+          >
+            <span
+              className={`h-2 w-2 shrink-0 rounded-full ${
+                productBrown
+                  ? "bg-gradient-to-br from-[#D4A574] to-[#A67B5B]"
+                  : "bg-gradient-to-br from-[#E7A944] to-[#BF593D]"
+              }`}
+            />
+            <span className="min-w-0 flex-1">
+              <span className="block truncate">{selectedClinic.name}</span>
+              <span
+                className={`block truncate text-[10px] font-normal ${
+                  productBrown ? "text-[rgba(245,230,208,0.48)]" : "text-neutral-500"
+                }`}
+              >
+                {selectedClinic.address}
+              </span>
+            </span>
+            <Icon className="h-3.5 w-3.5 text-neutral-400">
+              <path d="m6 9 6 6 6-6" />
+            </Icon>
+          </button>
+        </div>
+      </div>
+
+      <nav className="flex flex-col gap-0.5 px-2 pb-2">
+        {[
+          { label: "Today", icon: <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /> },
+          { label: "Updates", badge: "44", icon: <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /> },
+          {
+            label: "Inbox",
+            badge: "20",
+            icon: (
+              <>
+                <path d="M22 12h-6l-2 3h-4l-2-3H2" />
+                <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
+              </>
+            ),
+          },
+          {
+            label: "My tasks",
+            icon: (
+              <>
+                <path d="M9 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h4" />
+                <path d="M15 7V3a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v4" />
+                <rect width="8" height="14" x="13" y="7" rx="2" />
+              </>
+            ),
+            action: "+",
+          },
+        ].map((item) => (
+          <button
+            key={item.label}
+            type="button"
+            className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-[13px] text-neutral-700 hover:bg-neutral-50"
+          >
+            <Icon className="h-[18px] w-[18px]">{item.icon}</Icon>
+            <span className="min-w-0 flex-1 truncate">{item.label}</span>
+            {"badge" in item && item.badge ? (
+              <span className="rounded-full bg-neutral-100 px-1.5 py-0.5 text-[11px] font-medium text-neutral-600">
+                {item.badge}
+              </span>
+            ) : null}
+            {"action" in item && item.action ? (
+              <span className="rounded-md border border-neutral-200 px-1.5 text-xs text-neutral-500">
+                {item.action}
+              </span>
+            ) : null}
+          </button>
+        ))}
+      </nav>
+
+      <div className="px-2 pb-1 pt-1">
+        <div className="flex items-center justify-between px-1 text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
+          <span>Workspace</span>
+          <span className="flex gap-1">
+            <span className="cursor-pointer">⋯</span>
+            <span className="cursor-pointer">+</span>
+          </span>
+        </div>
+        <div className="mt-1 flex flex-col gap-0.5">
+          {(productBrown
+            ? (["Landing", "Inbox", "Schedule", "Patients"] as const)
+            : (["Inbox", "Schedule", "Patients"] as const)
+          ).map((label) => (
+            <button
+              key={label}
+              type="button"
+              onClick={() => {
+                if (label === "Landing") setWorkspaceView("landing");
+                else if (label === "Inbox") setWorkspaceView("inbox");
+                else if (label === "Schedule") setWorkspaceView("schedule");
+                else setWorkspaceView("patients");
+              }}
+              className={`flex items-center gap-2 rounded-lg px-2 py-2 text-[13px] ${
+                (label === "Landing" && workspaceView === "landing") ||
+                (label === "Inbox" && workspaceView === "inbox") ||
+                (label === "Schedule" && workspaceView === "schedule") ||
+                (label === "Patients" && workspaceView === "patients")
+                  ? productBrown
+                    ? "bg-[rgba(245,230,208,0.12)] font-medium text-[#f5e6d0]"
+                    : "bg-neutral-100 font-medium text-neutral-900"
+                  : productBrown
+                    ? "text-[rgba(245,230,208,0.78)] hover:bg-[rgba(245,230,208,0.08)]"
+                    : "text-neutral-700 hover:bg-neutral-50"
+              }`}
+            >
+              <Icon className="h-[18px] w-[18px]">
+                {label === "Landing" ? (
+                  <>
+                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                    <line x1="12" x2="12" y1="19" y2="22" />
+                  </>
+                ) : label === "Inbox" ? (
+                  <>
+                    <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
+                    <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
+                  </>
+                ) : label === "Schedule" ? (
+                  <>
+                    <rect width="18" height="18" x="3" y="4" rx="2" />
+                    <line x1="16" x2="16" y1="2" y2="6" />
+                    <line x1="8" x2="8" y1="2" y2="6" />
+                    <line x1="3" x2="21" y1="10" y2="10" />
+                  </>
+                ) : (
+                  <>
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                  </>
+                )}
+              </Icon>
+              <span className="flex-1 truncate text-left">{label}</span>
+            </button>
+          ))}
+          <button
+            type="button"
+            className="flex items-center gap-2 rounded-lg px-2 py-2 text-[13px] text-neutral-700 hover:bg-neutral-50"
+          >
+            <Icon className="h-[18px] w-[18px]">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <path d="M14 2v6h6" />
+            </Icon>
+            <span className="min-w-0 flex-1 truncate text-left">Documents</span>
+            <span className="rounded-md border border-neutral-200 bg-white px-1.5 text-xs text-neutral-500">
+              +
+            </span>
+          </button>
+          {["Billing"].map((label) => (
+            <button
+              key={label}
+              type="button"
+              className="flex items-center gap-2 rounded-lg px-2 py-2 text-[13px] text-neutral-700 hover:bg-neutral-50"
+            >
+              <Icon className="h-[18px] w-[18px]">
+                {label === "Billing" ? (
+                  <>
+                    <rect width="20" height="14" x="2" y="5" rx="2" />
+                    <line x1="2" x2="22" y1="10" y2="10" />
+                  </>
+                ) : (
+                  <>
+                    <path d="m3 11 18-5v12L3 14v-3z" />
+                    <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6" />
+                  </>
+                )}
+              </Icon>
+              <span className="flex-1 truncate text-left">{label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="px-2 pb-2 pt-2">
+        <div className="flex items-center justify-between px-1 text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
+          <span>Intelligence</span>
+        </div>
+        <div className="mt-1 flex flex-col gap-0.5">
+          {["Agents", "Design", "Marketing", "Franchise"].map((label) => (
+            <button
+              key={label}
+              type="button"
+              className="flex items-center gap-2 rounded-lg px-2 py-2 text-[13px] text-neutral-700 hover:bg-neutral-50"
+            >
+              <Icon className="h-[18px] w-[18px]">
+                {label === "Agents" ? (
+                  <>
+                    <circle cx="9" cy="8" r="3" />
+                    <path d="M3 20a6 6 0 0 1 12 0" />
+                    <path d="M18 8h3" />
+                    <path d="M19.5 6.5v3" />
+                  </>
+                ) : label === "Design" ? (
+                  <>
+                    <path d="m3 17 6-6 4 4 6-6" />
+                    <circle cx="9" cy="11" r="1.2" />
+                    <circle cx="13" cy="15" r="1.2" />
+                  </>
+                ) : label === "Marketing" ? (
+                  <>
+                    <path d="m3 11 18-5v12L3 14v-3z" />
+                    <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6" />
+                  </>
+                ) : (
+                  <>
+                    <path d="M4 10h16v10H4z" />
+                    <path d="M4 14h16" />
+                    <path d="M9 10V7a3 3 0 0 1 6 0v3" />
+                  </>
+                )}
+              </Icon>
+              <span className="flex-1 truncate text-left">{label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-auto border-t border-[#EFEFEF] px-2 py-2">
+        <div className="px-1">
+          <div className="relative">
+            {userMenuOpen ? (
+              <div
+                role="menu"
+                className={`absolute bottom-full left-0 right-0 z-30 mb-1.5 overflow-hidden rounded-xl border p-1 opacity-100 ${
+                  productBrown
+                    ? "border-[rgba(245,230,208,0.14)] bg-[#241910] shadow-[0_8px_24px_rgba(0,0,0,0.45)]"
+                    : "border-[#E5E5E5] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
+                }`}
+              >
+                {userOptions.map((user) => (
+                  <button
+                    key={user.name}
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setSelectedUser(user);
+                      setUserMenuOpen(false);
+                    }}
+                    className={`flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left ${
+                      selectedUser.name === user.name
+                        ? productBrown
+                          ? "bg-[rgba(245,230,208,0.1)]"
+                          : "bg-neutral-100"
+                        : productBrown
+                          ? "hover:bg-[rgba(245,230,208,0.08)]"
+                          : "hover:bg-neutral-50"
+                    }`}
+                  >
+                    <span
+                      className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold ${
+                        productBrown
+                          ? "bg-[rgba(245,230,208,0.12)] text-[#f5e6d0]"
+                          : "bg-neutral-100 text-neutral-700"
+                      }`}
+                    >
+                      {user.name
+                        .split(" ")
+                        .map((part) => part[0])
+                        .join("")
+                        .slice(0, 2)}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span
+                        className={`block truncate text-[12px] font-medium ${
+                          productBrown ? "text-[#f5e6d0]" : "text-neutral-700"
+                        }`}
+                      >
+                        {user.name}
+                      </span>
+                      <span
+                        className={`block truncate text-[10px] ${
+                          productBrown ? "text-[rgba(245,230,208,0.48)]" : "text-neutral-500"
+                        }`}
+                      >
+                        {user.role}
+                      </span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+            ) : null}
+            <button
+              type="button"
+              onClick={() => {
+                setUserMenuOpen((open) => !open);
+                setClinicMenuOpen(false);
+              }}
+              className={`flex w-full items-center gap-2 rounded-lg border px-2 py-2 text-left text-[12px] font-medium hover:bg-neutral-50 ${
+                productBrown
+                  ? "border-[rgba(245,230,208,0.12)] bg-[rgba(245,230,208,0.06)] text-[#f5e6d0] hover:bg-[rgba(245,230,208,0.1)]"
+                  : "border-[#E6E6E6] bg-white text-neutral-700"
+              }`}
+              aria-haspopup="menu"
+              aria-expanded={userMenuOpen}
+            >
+              <span
+                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold ${
+                  productBrown
+                    ? "bg-[rgba(245,230,208,0.12)] text-[#f5e6d0]"
+                    : "bg-neutral-100 text-neutral-700"
+                }`}
+              >
+                {selectedUser.name
+                  .split(" ")
+                  .map((part) => part[0])
+                  .join("")
+                  .slice(0, 2)}
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate">{selectedUser.name}</span>
+                <span
+                  className={`block truncate text-[10px] font-normal ${
+                    productBrown ? "text-[rgba(245,230,208,0.48)]" : "text-neutral-500"
+                  }`}
+                >
+                  {selectedUser.role}
+                </span>
+              </span>
+              <Icon className="h-3.5 w-3.5 text-neutral-400">
+                <path d="m18 15-6-6-6 6" />
+              </Icon>
+            </button>
+          </div>
+          <button
+            type="button"
+            className="mt-2 flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-[12px] font-medium text-neutral-600 hover:bg-neutral-50 hover:text-neutral-800"
+          >
+            <Icon className="h-4 w-4 text-neutral-400">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" x2="9" y1="12" y2="12" />
+            </Icon>
+            Logout
+          </button>
+        </div>
+      </div>
+    </aside>
+  );
+
   return (
     <div
       className={
         (full || hero
           ? "flex h-full min-h-0 w-full flex-col"
           : "flex h-full min-h-0 w-full flex-col p-4 sm:p-5") +
-        (hero ? ` pointer-events-none select-none touch-none ${suisseIntlUi.className}` : "")
+        (hero ? ` pointer-events-none select-none touch-none ${suisseIntlUi.className}` : "") +
+        (productBrown ? " product-brown-mock" : "") +
+        (productBrownDarkWorkspace ? " product-brown-workspace-mode" : "") +
+        (productBrownInbox ? " product-brown-inbox-mode" : "")
       }
       aria-hidden={hero ? true : undefined}
     >
       <div
         className={`flex min-h-0 flex-1 flex-col overflow-hidden ${
           full
-            ? "rounded-none border-0 bg-[#F4F4F5] shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]"
+            ? productBrown
+              ? "product-brown-shell rounded-none border-0 bg-[#1a1208]"
+              : "rounded-none border-0 bg-[#F4F4F5] shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]"
             : hero
               ? "rounded-none border-0 bg-white"
               : "rounded-2xl border border-[#E8E8E8] bg-[#F4F4F5] shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]"
         }`}
       >
         <div
-          className={`min-h-0 flex-1 overflow-hidden bg-white ${
-            full || hero ? "rounded-none" : "rounded-[14px]"
-          }`}
+          className={`min-h-0 flex-1 overflow-hidden ${
+            productBrown
+              ? "product-brown-frame product-brown-layered-layout bg-[#1a1208]"
+              : productBrownInbox
+                ? "product-brown-frame product-brown-inbox bg-[var(--pi-cream)]"
+                : productBrownDarkWorkspace
+                  ? "product-brown-frame product-brown-workspace bg-[#1a1208]"
+                  : "bg-white"
+          } ${full || hero ? "rounded-none" : "rounded-[14px]"}`}
         >
           <div
-            className={`flex h-full max-w-none ${hero ? "min-h-[580px]" : "min-h-[520px]"} ${
-              hero || workspaceView === "inbox" ? "w-full" : "w-[200%]"
-            }`}
+            className={
+              productBrown
+                ? "product-brown-workspace-row h-full max-w-none"
+                : `flex h-full max-w-none ${hero ? "min-h-[580px]" : "min-h-[520px]"} ${
+                    fullWidthWorkspace ? "w-full" : "w-[200%]"
+                  }`
+            }
           >
+            {productBrown && appSidebar}
+            <div className={productBrown ? "product-brown-inner-row" : "contents"}>
             <div
-              className={`flex h-full shrink-0 border-r border-[#EBEBEB] ${
-                hero || workspaceView === "inbox" ? "w-full min-w-0" : "w-1/2"
-              }`}
+              className={
+                productBrown
+                  ? "product-brown-inner-row__content h-full min-w-0 overflow-hidden"
+                  : "contents"
+              }
             >
-              <aside className="flex h-full w-[220px] shrink-0 flex-col border-r border-[#EFEFEF] bg-white">
-                <div className="flex items-center justify-between gap-2 px-3 pt-3 pb-2">
-                  <div className="flex min-w-0 items-center gap-2">
-                    <div className="h-8 w-8 shrink-0 rounded-lg bg-gradient-to-br from-[#E7A944] via-[#D2774C] to-[#1E343A] shadow-sm" />
-                    <div className="min-w-0">
-                      <div
-                        className={`truncate text-[1.15rem] font-normal leading-none tracking-tight text-neutral-900 ${lora.className}`}
-                      >
-                        Doe
-                      </div>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    className="rounded-md p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600"
-                    aria-label="Collapse sidebar"
-                  >
-                    <Icon className="h-4 w-4">
-                      <rect width="18" height="18" x="3" y="3" rx="2" />
-                      <path d="M9 3v18" />
-                    </Icon>
-                  </button>
-                </div>
+            <div
+              className={`flex h-full ${productBrown ? "min-w-0 max-w-full w-full" : "max-w-none"} ${
+                hero ? "min-h-[580px]" : "min-h-[520px]"
+              } ${productBrown ? "w-full" : fullWidthWorkspace ? "w-full" : "w-[200%]"}`}
+            >
+            <div
+              className={`product-brown-primary-col flex h-full shrink-0 ${
+                productBrownDarkWorkspace ? "bg-[#1a1208]" : ""
+              } ${
+                productBrown
+                  ? ""
+                  : productBrownInbox
+                    ? "border-r border-[rgba(61,46,31,0.1)]"
+                    : productBrownDarkWorkspace
+                      ? ""
+                      : "border-r border-[#EBEBEB]"
+              } ${fullWidthWorkspace ? "w-full min-w-0" : "w-1/2"}`}
+            >
+              {!productBrown && appSidebar}
 
-                <div className="px-3 pb-2">
-                  <div className="flex h-9 items-center gap-2 rounded-lg border border-[#ECECEC] bg-[#FAFAFA] px-2.5">
-                    <Icon className="h-4 w-4 text-neutral-400">
-                      <circle cx="11" cy="11" r="7" />
-                      <path d="m21 21-4.35-4.35" />
-                    </Icon>
-                    <span className="flex-1 text-[13px] text-neutral-400">Search</span>
-                    <span className="rounded border border-[#E5E5E5] bg-white px-1.5 py-0.5 text-[10px] font-medium text-neutral-500">
-                      ⌘
-                    </span>
-                  </div>
-                </div>
-
-                <nav className="flex flex-col gap-0.5 px-2 pb-2">
-                  {[
-                    { label: "Today", icon: <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /> },
-                    { label: "Updates", badge: "44", icon: <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /> },
-                    {
-                      label: "Inbox",
-                      badge: "20",
-                      icon: (
-                        <>
-                          <path d="M22 12h-6l-2 3h-4l-2-3H2" />
-                          <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
-                        </>
-                      ),
-                    },
-                    {
-                      label: "My tasks",
-                      icon: (
-                        <>
-                          <path d="M9 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h4" />
-                          <path d="M15 7V3a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v4" />
-                          <rect width="8" height="14" x="13" y="7" rx="2" />
-                        </>
-                      ),
-                      action: "+",
-                    },
-                  ].map((item) => (
-                    <button
-                      key={item.label}
-                      type="button"
-                      className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-[13px] text-neutral-700 hover:bg-neutral-50"
-                    >
-                      <Icon className="h-[18px] w-[18px]">{item.icon}</Icon>
-                      <span className="min-w-0 flex-1 truncate">{item.label}</span>
-                      {"badge" in item && item.badge ? (
-                        <span className="rounded-full bg-neutral-100 px-1.5 py-0.5 text-[11px] font-medium text-neutral-600">
-                          {item.badge}
-                        </span>
-                      ) : null}
-                      {"action" in item && item.action ? (
-                        <span className="rounded-md border border-neutral-200 px-1.5 text-xs text-neutral-500">
-                          {item.action}
-                        </span>
-                      ) : null}
-                    </button>
-                  ))}
-                </nav>
-
-                <div className="px-2 pb-1 pt-1">
-                  <div className="flex items-center justify-between px-1 text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
-                    <span>Workspace</span>
-                    <span className="flex gap-1">
-                      <span className="cursor-pointer">⋯</span>
-                      <span className="cursor-pointer">+</span>
-                    </span>
-                  </div>
-                  <div className="mt-1 flex flex-col gap-0.5">
-                    {(["Inbox", "Schedule", "Patients"] as const).map((label) => (
-                      <button
-                        key={label}
-                        type="button"
-                        onClick={() => {
-                          if (label === "Inbox") setWorkspaceView("inbox");
-                          else if (label === "Schedule") setWorkspaceView("schedule");
-                          else setWorkspaceView("patients");
-                        }}
-                        className={`flex items-center gap-2 rounded-lg px-2 py-2 text-[13px] ${
-                          (label === "Inbox" && workspaceView === "inbox") ||
-                          (label === "Schedule" && workspaceView === "schedule") ||
-                          (label === "Patients" && workspaceView === "patients")
-                            ? "bg-neutral-100 font-medium text-neutral-900"
-                            : "text-neutral-700 hover:bg-neutral-50"
-                        }`}
-                      >
-                        <Icon className="h-[18px] w-[18px]">
-                          {label === "Inbox" ? (
-                            <>
-                              <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
-                              <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
-                            </>
-                          ) : label === "Schedule" ? (
-                            <>
-                              <rect width="18" height="18" x="3" y="4" rx="2" />
-                              <line x1="16" x2="16" y1="2" y2="6" />
-                              <line x1="8" x2="8" y1="2" y2="6" />
-                              <line x1="3" x2="21" y1="10" y2="10" />
-                            </>
-                          ) : (
-                            <>
-                              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                              <circle cx="9" cy="7" r="4" />
-                              <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                            </>
-                          )}
-                        </Icon>
-                        <span className="flex-1 truncate text-left">{label}</span>
-                      </button>
-                    ))}
-                    <button
-                      type="button"
-                      className="flex items-center gap-2 rounded-lg px-2 py-2 text-[13px] text-neutral-700 hover:bg-neutral-50"
-                    >
-                      <Icon className="h-[18px] w-[18px]">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                        <path d="M14 2v6h6" />
-                      </Icon>
-                      <span className="min-w-0 flex-1 truncate text-left">Documents</span>
-                      <span className="rounded-md border border-neutral-200 bg-white px-1.5 text-xs text-neutral-500">
-                        +
-                      </span>
-                    </button>
-                    {["Billing"].map((label) => (
-                      <button
-                        key={label}
-                        type="button"
-                        className="flex items-center gap-2 rounded-lg px-2 py-2 text-[13px] text-neutral-700 hover:bg-neutral-50"
-                      >
-                        <Icon className="h-[18px] w-[18px]">
-                          {label === "Billing" ? (
-                            <>
-                              <rect width="20" height="14" x="2" y="5" rx="2" />
-                              <line x1="2" x2="22" y1="10" y2="10" />
-                            </>
-                          ) : (
-                            <>
-                              <path d="m3 11 18-5v12L3 14v-3z" />
-                              <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6" />
-                            </>
-                          )}
-                        </Icon>
-                        <span className="flex-1 truncate text-left">{label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="px-2 pb-2 pt-2">
-                  <div className="flex items-center justify-between px-1 text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
-                    <span>Intelligence</span>
-                  </div>
-                  <div className="mt-1 flex flex-col gap-0.5">
-                    {["Agents", "Design", "Marketing", "Franchise"].map((label) => (
-                      <button
-                        key={label}
-                        type="button"
-                        className="flex items-center gap-2 rounded-lg px-2 py-2 text-[13px] text-neutral-700 hover:bg-neutral-50"
-                      >
-                        <Icon className="h-[18px] w-[18px]">
-                          {label === "Agents" ? (
-                            <>
-                              <circle cx="9" cy="8" r="3" />
-                              <path d="M3 20a6 6 0 0 1 12 0" />
-                              <path d="M18 8h3" />
-                              <path d="M19.5 6.5v3" />
-                            </>
-                          ) : label === "Design" ? (
-                            <>
-                              <path d="m3 17 6-6 4 4 6-6" />
-                              <circle cx="9" cy="11" r="1.2" />
-                              <circle cx="13" cy="15" r="1.2" />
-                            </>
-                          ) : label === "Marketing" ? (
-                            <>
-                              <path d="m3 11 18-5v12L3 14v-3z" />
-                              <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6" />
-                            </>
-                          ) : (
-                            <>
-                              <path d="M4 10h16v10H4z" />
-                              <path d="M4 14h16" />
-                              <path d="M9 10V7a3 3 0 0 1 6 0v3" />
-                            </>
-                          )}
-                        </Icon>
-                        <span className="flex-1 truncate text-left">{label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="mt-auto border-t border-[#EFEFEF] px-2 py-2">
-                  <div className="px-1">
-                    <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
-                      Clinic
-                    </p>
-                    <div className="relative">
-                      {clinicMenuOpen ? (
-                        <div
-                          role="menu"
-                          className="absolute bottom-full left-0 right-0 z-20 mb-1.5 overflow-hidden rounded-xl border border-[#E5E5E5] bg-white p-1 shadow-[0_8px_24px_rgba(0,0,0,0.08)]"
-                        >
-                          {clinicOptions.map((clinic) => (
-                            <button
-                              key={clinic.name}
-                              type="button"
-                              role="menuitem"
-                              onClick={() => {
-                                setSelectedClinic(clinic);
-                                setClinicMenuOpen(false);
-                              }}
-                              className={`flex w-full items-start gap-2 rounded-lg px-2 py-1.5 text-left ${
-                                selectedClinic.name === clinic.name
-                                  ? "bg-neutral-100"
-                                  : "hover:bg-neutral-50"
-                              }`}
-                            >
-                              <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-gradient-to-br from-[#E7A944] to-[#BF593D]" />
-                              <span className="min-w-0 flex-1">
-                                <span className="block truncate text-[12px] font-medium text-neutral-700">
-                                  {clinic.name}
-                                </span>
-                                <span className="block truncate text-[10px] text-neutral-500">
-                                  {clinic.address}
-                                </span>
-                              </span>
-                            </button>
-                          ))}
-                        </div>
-                      ) : null}
-                      <button
-                        type="button"
-                        onClick={() => setClinicMenuOpen((open) => !open)}
-                        className="flex w-full items-center gap-2 rounded-lg border border-[#E6E6E6] bg-white px-2 py-2 text-left text-[12px] font-medium text-neutral-700 hover:bg-neutral-50"
-                        aria-haspopup="menu"
-                        aria-expanded={clinicMenuOpen}
-                      >
-                        <span className="h-2 w-2 rounded-full bg-gradient-to-br from-[#E7A944] to-[#BF593D]" />
-                        <span className="min-w-0 flex-1">
-                          <span className="block truncate">{selectedClinic.name}</span>
-                          <span className="block truncate text-[10px] font-normal text-neutral-500">
-                            {selectedClinic.address}
-                          </span>
-                        </span>
-                        <Icon className="h-3.5 w-3.5 text-neutral-400">
-                          <path d="m6 9 6 6 6-6" />
-                        </Icon>
-                      </button>
-                    </div>
-                    <button
-                      type="button"
-                      className="mt-2 flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-[12px] font-medium text-neutral-600 hover:bg-neutral-50 hover:text-neutral-800"
-                    >
-                      <Icon className="h-4 w-4 text-neutral-400">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                        <polyline points="16 17 21 12 16 7" />
-                        <line x1="21" x2="9" y1="12" y2="12" />
-                      </Icon>
-                      Logout
-                    </button>
-                  </div>
-                </div>
-              </aside>
-
-              <div className="flex min-h-0 min-w-0 flex-1 flex-col bg-white">
-                {workspaceView === "schedule" ? (
+              <div
+                className={`product-brown-main flex min-h-0 min-w-0 flex-1 flex-col ${
+                  productBrownInbox
+                    ? inboxUi!.cream
+                    : productBrownDarkWorkspace
+                      ? "bg-[#2a1f12] shadow-[inset_1px_0_0_rgba(245,230,208,0.07)]"
+                      : productBrown
+                        ? "bg-[#faf0d8]"
+                        : "bg-white"
+                }`}
+              >
+                {workspaceView === "landing" && productBrown ? (
+                  <ProductLandingPanel />
+                ) : workspaceView === "schedule" ? (
                   <>
-                <header className="flex items-center gap-2 border-b border-[#EFEFEF] px-4 py-3">
-                  <Icon className="h-5 w-5 text-neutral-500">
+                <header
+                  className={`flex items-center gap-2 border-b px-4 py-3 ${
+                    productBrownDarkWorkspace
+                      ? "border-[rgba(245,230,208,0.1)] bg-[#322618]"
+                      : productBrown
+                        ? "border-[rgba(61,46,31,0.14)] bg-[#f5e6d0]"
+                        : "border-[#EFEFEF]"
+                  }`}
+                >
+                  <Icon
+                    className={`h-5 w-5 ${
+                      productBrownDarkWorkspace
+                        ? "text-[rgba(245,230,208,0.48)]"
+                        : productBrown
+                          ? "text-[rgba(61,46,31,0.48)]"
+                          : "text-neutral-500"
+                    }`}
+                  >
                     <rect width="18" height="18" x="3" y="4" rx="2" />
                     <line x1="16" x2="16" y1="2" y2="6" />
                     <line x1="8" x2="8" y1="2" y2="6" />
                     <line x1="3" x2="21" y1="10" y2="10" />
                   </Icon>
-                  <h1 className="text-[15px] font-semibold tracking-tight text-neutral-900">
+                  <h1
+                    className={`text-[15px] font-semibold tracking-tight ${
+                      productBrownDarkWorkspace || productBrown ? "text-[#f5e6d0]" : "text-neutral-900"
+                    }`}
+                  >
                     Schedules
                   </h1>
                 </header>
-                <div className="border-b border-dashed border-[#E8E8E8] px-4 py-2">
+                <div
+                  className={`border-b border-dashed px-4 py-2 ${
+                    productBrownDarkWorkspace
+                      ? "border-[rgba(245,230,208,0.1)] bg-[#2a1f12]"
+                      : productBrown
+                        ? "border-[rgba(61,46,31,0.14)] bg-[#faf0d8]"
+                        : "border-[#E8E8E8]"
+                  }`}
+                >
                   <div
                     className={`flex w-full min-w-0 flex-wrap items-center gap-3 ${
                       hero ? "justify-start" : "justify-between"
@@ -1556,23 +1935,43 @@ export function DoeSchedulesAppMock({
                     <div
                       className={`flex min-w-0 flex-wrap items-center gap-3 ${hero ? "order-2" : ""}`}
                     >
-                      <div className="inline-flex h-[38px] min-w-0 max-w-[min(100%,280px)] items-center gap-1 rounded-[14px] border border-[#E2E2E2] bg-white px-1 sm:max-w-[320px]">
+                      <div
+                        className={`inline-flex h-[38px] min-w-0 max-w-[min(100%,280px)] items-center gap-1 rounded-[14px] border px-1 sm:max-w-[320px] ${
+                          productBrownDarkWorkspace
+                            ? "border-[rgba(245,230,208,0.12)] bg-[#322618]"
+                            : productBrown
+                              ? "border-[rgba(61,46,31,0.14)] bg-[#f5e6d0]"
+                              : "border-[#E2E2E2] bg-white"
+                        }`}
+                      >
                         <button
                           type="button"
                           aria-label={periodSelector.prevAria}
-                          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-neutral-500 hover:bg-neutral-50 hover:text-neutral-700"
+                          className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors ${
+                            productBrownDarkWorkspace
+                              ? "text-[rgba(245,230,208,0.48)] hover:bg-[#3d2e1f] hover:text-[#f5e6d0]"
+                              : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-700"
+                          }`}
                         >
                           <Icon className="h-3.5 w-3.5 text-current">
                             <path d="m15 18-6-6 6-6" />
                           </Icon>
                         </button>
-                        <span className="min-w-0 flex-1 truncate px-1 text-center text-[12px] font-semibold text-neutral-800">
+                        <span
+                          className={`min-w-0 flex-1 truncate px-1 text-center text-[12px] font-semibold ${
+                            productBrownDarkWorkspace ? "text-[#f5e6d0]" : "text-neutral-800"
+                          }`}
+                        >
                           {periodSelector.label}
                         </span>
                         <button
                           type="button"
                           aria-label={periodSelector.nextAria}
-                          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-neutral-500 hover:bg-neutral-50 hover:text-neutral-700"
+                          className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors ${
+                            productBrownDarkWorkspace
+                              ? "text-[rgba(245,230,208,0.48)] hover:bg-[#3d2e1f] hover:text-[#f5e6d0]"
+                              : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-700"
+                          }`}
                         >
                           <Icon className="h-3.5 w-3.5 text-current">
                             <path d="m9 18 6-6-6-6" />
@@ -1583,7 +1982,13 @@ export function DoeSchedulesAppMock({
                         <button
                           type="button"
                           onClick={() => setCategoryMenuOpen((open) => !open)}
-                          className="inline-flex h-[38px] min-w-[190px] items-center gap-2 rounded-[14px] border border-[#E2E2E2] bg-white px-3 text-[12px] font-medium text-neutral-700 hover:bg-neutral-50"
+                          className={`inline-flex h-[38px] min-w-[190px] items-center gap-2 rounded-[14px] border px-3 text-[12px] font-medium ${
+                            productBrownDarkWorkspace
+                              ? "border-[rgba(245,230,208,0.12)] bg-[#322618] text-[#f5e6d0] hover:bg-[#3d2e1f]"
+                              : productBrown
+                                ? "border-[rgba(61,46,31,0.14)] bg-[#f5e6d0] text-[#2a1f12] hover:bg-[rgba(26,18,8,0.04)]"
+                                : "border-[#E2E2E2] bg-white text-neutral-700 hover:bg-neutral-50"
+                          }`}
                           aria-haspopup="menu"
                           aria-expanded={categoryMenuOpen}
                         >
@@ -1627,12 +2032,22 @@ export function DoeSchedulesAppMock({
                       </div>
                     </div>
                     <div
-                      className={`relative grid w-[min(100%,360px)] shrink-0 grid-cols-4 rounded-[22px] border border-[#E2E2E2] bg-[#F7F7F7] p-1 sm:w-[360px] ${
-                        hero ? "order-1" : "ml-auto"
-                      }`}
+                      className={`relative grid w-[min(100%,360px)] shrink-0 grid-cols-4 rounded-[22px] border p-1 sm:w-[360px] ${
+                        productBrownDarkWorkspace
+                          ? "border-[rgba(245,230,208,0.12)] bg-[#241910]"
+                          : productBrown
+                            ? "border-[rgba(61,46,31,0.14)] bg-[#ede0c8]"
+                            : "border-[#E2E2E2] bg-[#F7F7F7]"
+                      } ${hero ? "order-1" : "ml-auto"}`}
                     >
                       <span
-                        className="pointer-events-none absolute top-1 h-[30px] rounded-[16px] border border-[#E6E6E6] bg-white shadow-[0_1px_0_rgba(0,0,0,0.03)] transition-[left] duration-200"
+                        className={`pointer-events-none absolute top-1 h-[30px] rounded-[16px] border shadow-[0_1px_0_rgba(0,0,0,0.04)] transition-[left] duration-200 ${
+                          productBrownDarkWorkspace
+                            ? "border-[rgba(245,230,208,0.14)] bg-[#3d2e1f]"
+                            : productBrown
+                              ? "border-[rgba(61,46,31,0.14)] bg-[#f5e6d0]"
+                              : "border-[#E6E6E6] bg-white shadow-[0_1px_0_rgba(0,0,0,0.03)]"
+                        }`}
                         style={{
                           left: `calc(${activeViewIndex * 25}% + 4px)`,
                           width: "calc(25% - 4px)",
@@ -1645,8 +2060,12 @@ export function DoeSchedulesAppMock({
                           onClick={() => setTimeView(option)}
                           className={`relative z-10 rounded-[16px] px-2 py-1.5 text-[12px] font-medium transition-colors ${
                             timeView === option
-                              ? "text-neutral-900"
-                              : "text-neutral-500 hover:text-neutral-700"
+                              ? productBrownDarkWorkspace
+                                ? "text-[#f5e6d0]"
+                                : "text-neutral-900"
+                              : productBrownDarkWorkspace
+                                ? "text-[rgba(245,230,208,0.48)] hover:text-[#f5e6d0]"
+                                : "text-neutral-500 hover:text-neutral-700"
                           }`}
                         >
                           {option}
@@ -1717,7 +2136,7 @@ export function DoeSchedulesAppMock({
                                     return (
                                       <div
                                         key={`${day.key}-${event.time}-${event.label}`}
-                                        className={`overflow-hidden rounded-md px-1.5 py-1.5 shadow-[0_1px_2px_rgba(0,0,0,0.05)] ${eventCardGradientClass(event.tone)}`}
+                                        className={`overflow-hidden rounded-md px-1.5 py-1.5 shadow-[0_1px_2px_rgba(0,0,0,0.05)] ${eventCardGradientClass(event.tone, productBrown)}`}
                                       >
                                         <div className="flex items-start justify-between gap-1.5">
                                           <p className="min-w-0 flex-1 truncate text-[11px] font-semibold leading-snug tracking-tight text-white">
@@ -1872,7 +2291,7 @@ export function DoeSchedulesAppMock({
                                 return (
                                   <div
                                     key={`${day.day}-${event.time}-${event.label}`}
-                                    className={`absolute left-1.5 right-1.5 ${hero ? "overflow-visible" : "overflow-hidden"} rounded-[10px] px-2 py-1.5 shadow-[0_1px_3px_rgba(0,0,0,0.1)] ${eventCardGradientClass(event.tone)}`}
+                                    className={`absolute left-1.5 right-1.5 ${hero ? "overflow-visible" : "overflow-hidden"} rounded-[10px] px-2 py-1.5 shadow-[0_1px_3px_rgba(0,0,0,0.1)] ${eventCardGradientClass(event.tone, productBrown)}`}
                                     style={{ top, height }}
                                   >
                                     <div className="flex min-h-0 flex-col gap-0.5">
@@ -1989,7 +2408,7 @@ export function DoeSchedulesAppMock({
                               return (
                                 <div
                                   key={`today-${event.time}-${event.label}`}
-                                  className={`absolute left-2 right-2 overflow-hidden rounded-[10px] px-2 py-1.5 shadow-[0_1px_3px_rgba(0,0,0,0.1)] ${eventCardGradientClass(event.tone)}`}
+                                  className={`absolute left-2 right-2 overflow-hidden rounded-[10px] px-2 py-1.5 shadow-[0_1px_3px_rgba(0,0,0,0.1)] ${eventCardGradientClass(event.tone, productBrown)}`}
                                   style={{ top, height }}
                                 >
                                   <div className="flex min-h-0 flex-col gap-0.5">
@@ -2081,61 +2500,145 @@ export function DoeSchedulesAppMock({
                   </>
                 ) : workspaceView === "inbox" ? (
                   <>
-                    <header className="flex items-center gap-2 border-b border-[#EFEFEF] px-4 py-3">
-                      <Icon className="h-[18px] w-[18px] text-neutral-500">
+                    <header
+                      className={`flex items-center gap-2 border-b px-4 py-3 ${
+                        productBrownInbox
+                          ? `${inboxUi!.line} ${inboxUi!.sand}`
+                          : productBrown
+                            ? "border-[rgba(61,46,31,0.14)] bg-[#f5e6d0]"
+                            : "border-[#EFEFEF]"
+                      }`}
+                    >
+                      <Icon
+                        className={`h-[18px] w-[18px] ${
+                          productBrownInbox
+                            ? inboxUi!.iconMuted
+                            : productBrown
+                              ? "text-[rgba(61,46,31,0.48)]"
+                              : "text-neutral-500"
+                        }`}
+                      >
                         <path d="M22 12h-6l-2 3h-4l-2-3H2" />
                         <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
                       </Icon>
-                      <h1 className="text-[15px] font-semibold tracking-tight text-neutral-900">Inbox</h1>
+                      <h1
+                        className={`text-[15px] font-semibold tracking-tight ${
+                          productBrownInbox ? inboxUi!.ink : productBrown ? "text-[#1a1208]" : "text-neutral-900"
+                        }`}
+                      >
+                        Inbox
+                      </h1>
                     </header>
-                    <div className="shrink-0 w-full border-b border-dashed border-[#E8E8E8] bg-white px-4 py-2">
+                    <div
+                      className={`shrink-0 w-full border-b border-dashed px-4 py-2 ${
+                        productBrownInbox
+                          ? `${inboxUi!.line} ${inboxUi!.cream}`
+                          : productBrown
+                            ? "border-[rgba(61,46,31,0.14)] bg-[#faf0d8]"
+                            : "border-[#E8E8E8] bg-white"
+                      }`}
+                    >
                       <div className="grid gap-2 sm:grid-cols-2 sm:gap-3">
-                        <div className="rounded-[14px] border border-[#ECECEC] bg-[#F7F7F7] p-0.5">
+                        <div
+                          className={`rounded-[14px] border p-0.5 ${
+                            productBrownInbox
+                              ? `${inboxUi!.line} ${inboxUi!.sandDeep}`
+                              : "border-[#ECECEC] bg-[#F7F7F7]"
+                          }`}
+                        >
                           <div className="overflow-x-auto">
                             <div className="flex min-w-max gap-0.5 pr-0.5">
-                              {[
-                                { name: "Jamie Chen", team: "Northside", swatch: "from-[#E3B468] to-[#A8794B]" },
-                                { name: "R. Okonkwo", team: "Riverside", swatch: "from-[#E5AF63] to-[#BC6948]" },
-                                { name: "Ana Lopez", team: "Labs desk", swatch: "from-[#D38964] to-[#906A54]" },
-                                { name: "M. Patel", team: "Front office", swatch: "from-[#9A936F] to-[#6D654C]" },
-                              ].map((agent, idx) => (
+                              {(productBrownInbox
+                                ? [
+                                    { name: "Jamie Chen", team: "Northside", swatch: "from-[#A87654] to-[#7A5640]" },
+                                    { name: "R. Okonkwo", team: "Riverside", swatch: "from-[#9E7860] to-[#6E5242]" },
+                                    { name: "Ana Lopez", team: "Labs desk", swatch: "from-[#917865] to-[#5E4A3E]" },
+                                    { name: "M. Patel", team: "Front office", swatch: "from-[#867565] to-[#52483F]" },
+                                  ]
+                                : [
+                                    { name: "Jamie Chen", team: "Northside", swatch: "from-[#E3B468] to-[#A8794B]" },
+                                    { name: "R. Okonkwo", team: "Riverside", swatch: "from-[#E5AF63] to-[#BC6948]" },
+                                    { name: "Ana Lopez", team: "Labs desk", swatch: "from-[#D38964] to-[#906A54]" },
+                                    { name: "M. Patel", team: "Front office", swatch: "from-[#9A936F] to-[#6D654C]" },
+                                  ]
+                              ).map((agent, idx) => (
                                 <div
                                   key={agent.name}
                                   className={`flex h-[54px] min-w-[168px] items-center gap-2.5 rounded-[12px] px-3 ${
                                     idx === 0
-                                      ? "bg-white text-neutral-900 shadow-[0_1px_2px_rgba(0,0,0,0.05)]"
-                                      : "bg-[#FBFBFB] text-neutral-700"
+                                      ? productBrownInbox
+                                        ? inboxUi!.agentActive
+                                        : productBrownDarkWorkspace
+                                          ? "bg-[#3d2e1f] text-[#f5e6d0] shadow-[0_1px_2px_rgba(0,0,0,0.18)]"
+                                          : "bg-white text-neutral-900 shadow-[0_1px_2px_rgba(0,0,0,0.05)]"
+                                      : productBrownInbox
+                                        ? inboxUi!.agentInactive
+                                        : productBrownDarkWorkspace
+                                          ? "bg-[#322618] text-[rgba(245,230,208,0.78)]"
+                                          : "bg-[#FBFBFB] text-neutral-700"
                                   }`}
                                 >
                                   <span
                                     className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br ${agent.swatch}`}
                                     aria-hidden
                                   >
-                                    <span className="h-3 w-3 rounded-full border border-white/70 bg-white/35" />
+                                    <span
+                                      className={`h-3 w-3 rounded-full border ${
+                                        productBrownInbox
+                                          ? inboxUi!.avatarRing
+                                          : "border-white/70 bg-white/35"
+                                      }`}
+                                    />
                                   </span>
                                   <span className="min-w-0">
                                     <span className="block truncate text-[11px] font-semibold">{agent.name}</span>
-                                    <span className="block truncate text-[10px] text-neutral-500">{agent.team}</span>
+                                    <span
+                                      className={`block truncate text-[10px] ${
+                                        productBrownInbox ? inboxUi!.mutedText : "text-neutral-500"
+                                      }`}
+                                    >
+                                      {agent.team}
+                                    </span>
                                   </span>
                                 </div>
                               ))}
                             </div>
                           </div>
                         </div>
-                        <div className="rounded-[14px] border border-[#ECECEC] bg-[#F7F7F7] p-0.5">
+                        <div
+                          className={`rounded-[14px] border p-0.5 ${
+                            productBrownInbox
+                              ? `${inboxUi!.line} ${inboxUi!.sandDeep}`
+                              : "border-[#ECECEC] bg-[#F7F7F7]"
+                          }`}
+                        >
                           <div className="grid grid-cols-4 gap-0.5">
                             {(["Labs", "Referrals", "Office", "Patients"] as const).map((label, idx) => (
                               <div
                                 key={label}
                                 className={`flex h-[54px] flex-col items-center justify-center rounded-[12px] px-2 text-[10px] font-medium sm:text-[11px] ${
                                   idx === 1
-                                    ? "bg-white text-neutral-900 shadow-[0_1px_2px_rgba(0,0,0,0.05)]"
-                                    : "text-neutral-500"
+                                    ? productBrownInbox
+                                      ? inboxUi!.agentActive
+                                      : productBrownDarkWorkspace
+                                        ? "bg-[#3d2e1f] text-[#f5e6d0] shadow-[0_1px_2px_rgba(0,0,0,0.18)]"
+                                        : "bg-white text-neutral-900 shadow-[0_1px_2px_rgba(0,0,0,0.05)]"
+                                    : productBrownInbox
+                                      ? inboxUi!.agentInactive
+                                      : productBrownDarkWorkspace
+                                        ? "text-[rgba(245,230,208,0.48)]"
+                                        : "text-neutral-500"
                                 }`}
                               >
                                 <span
                                   className={`mb-1 h-1.5 w-10 rounded-full ${
-                                    idx === 1 ? "bg-gradient-to-r from-[#E5AF63] to-[#BC6948]" : "bg-[#E6E6E6]"
+                                    idx === 1
+                                      ? productBrownInbox
+                                        ? "bg-gradient-to-r from-[var(--pi-accent)] to-[var(--pi-accent-deep)]"
+                                        : "bg-gradient-to-r from-[#E5AF63] to-[#BC6948]"
+                                      : productBrownInbox
+                                        ? "bg-[rgba(38,32,28,0.12)]"
+                                        : "bg-[#E6E6E6]"
                                   }`}
                                   aria-hidden
                                 />
@@ -2147,9 +2650,33 @@ export function DoeSchedulesAppMock({
                       </div>
                     </div>
                     <div className="grid min-h-0 min-w-0 flex-1 grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
-                      <div className="flex min-h-0 min-w-0 flex-col border-r border-[#F2F2F2] bg-white">
-                        <div className="sticky top-0 z-10 flex h-[58px] shrink-0 items-center justify-between gap-2 border-b border-[#F2F2F2] bg-white px-3 sm:px-4">
-                          <div className="inline-flex h-[38px] min-w-0 flex-1 rounded-[14px] border border-[#ECECEC] bg-[#F7F7F7] p-0.5">
+                      <div
+                        className={`flex min-h-0 min-w-0 flex-col border-r ${
+                          productBrownInbox
+                            ? `${inboxUi!.line} ${inboxUi!.sand}`
+                            : productBrownDarkWorkspace
+                              ? "border-[rgba(245,230,208,0.08)] bg-[#2a1f12]"
+                              : "border-[#F2F2F2] bg-white"
+                        }`}
+                      >
+                        <div
+                          className={`sticky top-0 z-10 flex h-[58px] shrink-0 items-center justify-between gap-2 border-b px-3 sm:px-4 ${
+                            productBrownInbox
+                              ? `${inboxUi!.line} ${inboxUi!.sand}`
+                              : productBrownDarkWorkspace
+                                ? "border-[rgba(245,230,208,0.08)] bg-[#322618]"
+                                : "border-[#F2F2F2] bg-white"
+                          }`}
+                        >
+                          <div
+                            className={`inline-flex h-[38px] min-w-0 flex-1 rounded-[14px] border p-0.5 ${
+                              productBrownInbox
+                                ? `${inboxUi!.line} ${inboxUi!.sandDeep}`
+                                : productBrownDarkWorkspace
+                                  ? "border-[rgba(245,230,208,0.12)] bg-[#241910]"
+                                  : "border-[#ECECEC] bg-[#F7F7F7]"
+                            }`}
+                          >
                             {(["all", "unread", "pinned"] as const).map((key) => (
                               <button
                                 key={key}
@@ -2157,12 +2684,26 @@ export function DoeSchedulesAppMock({
                                 onClick={() => setInboxFilter(key)}
                                 className={`flex h-full min-w-0 flex-1 items-center justify-center gap-1 rounded-[12px] px-1.5 text-center text-[10px] font-medium transition-all sm:px-3 sm:text-[11px] ${
                                   inboxFilter === key
-                                    ? "bg-white text-neutral-900 shadow-[0_1px_2px_rgba(0,0,0,0.06)]"
-                                    : "text-neutral-500 hover:text-neutral-700"
+                                    ? productBrownInbox
+                                      ? inboxUi!.filterActive
+                                      : productBrownDarkWorkspace
+                                        ? "bg-[#3d2e1f] text-[#f5e6d0] shadow-[0_1px_2px_rgba(0,0,0,0.18)]"
+                                        : "bg-white text-neutral-900 shadow-[0_1px_2px_rgba(0,0,0,0.06)]"
+                                    : productBrownInbox
+                                      ? inboxUi!.filterInactive
+                                      : productBrownDarkWorkspace
+                                        ? "text-[rgba(245,230,208,0.48)] hover:text-[#f5e6d0]"
+                                        : "text-neutral-500 hover:text-neutral-700"
                                 }`}
                               >
                                 {key === "pinned" ? (
-                                  <InboxPinIcon className="h-3 w-3 shrink-0 opacity-80" />
+                                  <InboxPinIcon
+                                    className={
+                                      productBrownInbox
+                                        ? inboxUi!.pinIcon
+                                        : "h-3 w-3 shrink-0 opacity-80"
+                                    }
+                                  />
                                 ) : null}
                                 {key === "all" ? "All" : key === "unread" ? "Unread" : "Pinned"}
                               </button>
@@ -2170,28 +2711,63 @@ export function DoeSchedulesAppMock({
                           </div>
                           <button
                             type="button"
-                            className="inline-flex h-[38px] shrink-0 items-center justify-center rounded-[14px] border border-[#E2E2E2] bg-white px-3.5 text-[12px] font-medium text-neutral-800 shadow-[0_1px_0_rgba(0,0,0,0.03)] transition-colors hover:bg-neutral-50"
+                            className={`inline-flex h-[38px] shrink-0 items-center justify-center rounded-[14px] border px-3.5 text-[12px] font-medium transition-colors ${
+                              productBrownInbox
+                                ? inboxUi!.composeBtn
+                                : productBrownDarkWorkspace
+                                  ? "border-[rgba(245,230,208,0.12)] bg-[#322618] text-[#f5e6d0] shadow-[0_1px_0_rgba(0,0,0,0.03)] hover:bg-[#3d2e1f]"
+                                  : "border-[#E2E2E2] bg-white text-neutral-800 shadow-[0_1px_0_rgba(0,0,0,0.03)] hover:bg-neutral-50"
+                            }`}
                           >
                             Compose
                           </button>
                         </div>
-                        <div className="min-h-0 flex-1 overflow-y-auto bg-white">
+                        <div
+                          className={`min-h-0 flex-1 overflow-y-auto ${
+                            productBrownInbox
+                              ? inboxUi!.sand
+                              : productBrownDarkWorkspace
+                                ? "bg-[#2a1f12]"
+                                : "bg-white"
+                          }`}
+                        >
                           {filteredInbox.length === 0 ? (
                             <div className="flex flex-col items-center justify-center px-4 py-14 text-center">
-                              <p className="text-[13px] font-semibold tracking-tight text-neutral-900">All caught up</p>
-                              <p className="mt-1 max-w-[200px] text-[12px] leading-relaxed text-neutral-500">
+                              <p
+                                className={`text-[13px] font-semibold tracking-tight ${
+                                  productBrownInbox ? inboxUi!.ink : "text-neutral-900"
+                                }`}
+                              >
+                                All caught up
+                              </p>
+                              <p
+                                className={`mt-1 max-w-[200px] text-[12px] leading-relaxed ${
+                                  productBrownInbox ? inboxUi!.mutedText : "text-neutral-500"
+                                }`}
+                              >
                                 Nothing matches this filter.
                               </p>
                             </div>
                           ) : (
                             <>
                               {pinnedInboxThread ? (
-                                <div className="sticky top-0 z-[5] bg-white">
+                                <div
+                                  className={`sticky top-0 z-[5] ${
+                                    productBrownInbox
+                                      ? inboxUi!.sand
+                                      : productBrownDarkWorkspace
+                                        ? "bg-[#322618]"
+                                        : productBrown
+                                          ? "bg-[#f5e6d0]"
+                                          : "bg-white"
+                                  }`}
+                                >
                                   <InboxThreadListRow
                                     t={pinnedInboxThread}
                                     isActive={selectedInbox?.id === pinnedInboxThread.id}
                                     onSelect={() => setSelectedInboxId(pinnedInboxThread.id)}
                                     showPin
+                                    brownTheme={productBrownInbox ? true : productBrownDarkWorkspace ? "dark" : productBrown}
                                   />
                                 </div>
                               ) : null}
@@ -2201,20 +2777,53 @@ export function DoeSchedulesAppMock({
                                   t={t}
                                   isActive={selectedInbox?.id === t.id}
                                   onSelect={() => setSelectedInboxId(t.id)}
+                                  brownTheme={productBrownInbox ? true : productBrownDarkWorkspace ? "dark" : productBrown}
                                 />
                               ))}
                             </>
                           )}
                         </div>
                       </div>
-                      <div className="relative flex min-h-0 min-w-0 flex-col bg-white">
+                      <div
+                        className={`relative flex min-h-0 min-w-0 flex-col ${
+                          productBrownInbox
+                            ? inboxUi!.cream
+                            : productBrownDarkWorkspace
+                              ? "bg-[#241910]"
+                              : "bg-white"
+                        }`}
+                      >
                         {selectedInbox ? (
-                          <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-white">
-                            <div className="flex h-[86px] shrink-0 flex-col justify-center border-b border-[#F2F2F2] bg-[#FAFAFA]/50 px-3 sm:px-4">
-                              <h2 className="line-clamp-1 min-w-0 text-[16px] font-semibold leading-tight tracking-tight text-neutral-950">
+                          <div
+                            className={`flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden ${
+                              productBrownInbox
+                                ? inboxUi!.cream
+                                : productBrownDarkWorkspace
+                                  ? "bg-[#241910]"
+                                  : "bg-white"
+                            }`}
+                          >
+                            <div
+                              className={`flex h-[86px] shrink-0 flex-col justify-center border-b px-3 sm:px-4 ${
+                                productBrownInbox
+                                  ? `${inboxUi!.line} ${inboxUi!.sand}`
+                                  : productBrownDarkWorkspace
+                                    ? "border-[rgba(245,230,208,0.08)] bg-[#322618]"
+                                    : "border-[#F2F2F2] bg-[#FAFAFA]/50"
+                              }`}
+                            >
+                              <h2
+                                className={`line-clamp-1 min-w-0 text-[16px] font-semibold leading-tight tracking-tight ${
+                                  productBrownInbox ? inboxUi!.ink : "text-neutral-950"
+                                }`}
+                              >
                                 {selectedInbox.subject}
                               </h2>
-                              <p className="mt-1 truncate text-[12px] font-medium tabular-nums text-neutral-400">
+                              <p
+                                className={`mt-1 truncate text-[12px] font-medium tabular-nums ${
+                                  productBrownInbox ? inboxUi!.mutedText : "text-neutral-400"
+                                }`}
+                              >
                                 {selectedInbox.messages.length} messages ·{" "}
                                 {selectedInbox.messages.reduce(
                                   (sum, msg) => sum + inboxMessageAttachmentsList(msg).length,
@@ -2231,40 +2840,83 @@ export function DoeSchedulesAppMock({
                                   return (
                                     <div
                                       key={msg.id}
-                                      className="border-b border-[#F0F0F0] bg-white last:border-b-0"
+                                      className={`border-b last:border-b-0 ${
+                                        productBrownInbox
+                                          ? `${inboxUi!.messageBorder} ${inboxUi!.cream}`
+                                          : productBrownDarkWorkspace
+                                            ? "border-[rgba(245,230,208,0.08)] bg-[#241910]"
+                                            : "border-[#F0F0F0] bg-white"
+                                      }`}
                                     >
                                       <div className="px-3 py-4 sm:px-4">
                                         <div className="flex gap-3">
                                           <div
-                                            className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold ${inboxMessageAvatarClass(msg.from)}`}
+                                            className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold ${inboxMessageAvatarClass(msg.from, productBrownInbox)}`}
                                           >
                                             {inboxSenderInitials(msg.from)}
                                           </div>
                                           <div className="min-w-0 flex-1">
                                             <div className="flex items-start justify-between gap-3">
                                               <div className="min-w-0">
-                                                <p className="text-[14px] font-semibold leading-snug text-neutral-900">
+                                                <p
+                                                  className={`text-[14px] font-semibold leading-snug ${
+                                                    productBrownInbox ? inboxUi!.ink : "text-neutral-900"
+                                                  }`}
+                                                >
                                                   {inboxSenderNameLine(msg.from)}
                                                 </p>
                                                 {affiliation ? (
-                                                  <p className="mt-0.5 text-[12px] leading-snug text-neutral-500">
+                                                  <p
+                                                    className={`mt-0.5 text-[12px] leading-snug ${
+                                                      productBrownInbox ? inboxUi!.mutedText : "text-neutral-500"
+                                                    }`}
+                                                  >
                                                     {affiliation}
                                                   </p>
                                                 ) : null}
-                                                <div className="mt-2.5 max-w-md rounded-r-md border border-[#EDEAE6] border-l-[3px] border-l-[#D4A574] bg-[#FAFAF8] px-2.5 py-1.5">
+                                                <div
+                                                  className={`mt-2.5 max-w-md rounded-r-md border border-l-[3px] px-2.5 py-1.5 ${
+                                                    productBrownInbox
+                                                      ? inboxUi!.emailQuote
+                                                      : productBrownDarkWorkspace
+                                                        ? "border-[rgba(245,230,208,0.1)] border-l-[#D4A574] bg-[#322618]"
+                                                        : "border-[#EDEAE6] border-l-[#D4A574] bg-[#FAFAF8]"
+                                                  }`}
+                                                >
                                                   <p
-                                                    className={`break-all text-[11px] leading-relaxed text-neutral-600 ${inter.className}`}
+                                                    className={`break-all text-[11px] leading-relaxed ${
+                                                      productBrownInbox
+                                                        ? inboxUi!.emailQuoteText
+                                                        : "text-neutral-600"
+                                                    } ${inter.className}`}
                                                   >
                                                     {inboxMessageEmail(msg)}
                                                   </p>
                                                 </div>
                                               </div>
-                                              <p className="shrink-0 pt-0.5 text-right text-[11px] font-medium tabular-nums text-neutral-400">
+                                              <p
+                                                className={`shrink-0 pt-0.5 text-right text-[11px] font-medium tabular-nums ${
+                                                  productBrownInbox ? inboxUi!.mutedText : "text-neutral-400"
+                                                }`}
+                                              >
                                                 {msg.time}
                                               </p>
                                             </div>
-                                            <div className="mt-3 h-px w-full bg-[#ECE8E2]" aria-hidden />
-                                            <div className="mt-3 max-w-none whitespace-pre-wrap text-[14px] leading-[1.75] text-neutral-800">
+                                            <div
+                                              className={`mt-3 h-px w-full ${
+                                                productBrownInbox
+                                                  ? inboxUi!.divider
+                                                  : productBrownDarkWorkspace
+                                                    ? "bg-[rgba(245,230,208,0.1)]"
+                                                    : "bg-[#ECE8E2]"
+                                              }`}
+                                              aria-hidden
+                                            />
+                                            <div
+                                              className={`mt-3 max-w-none whitespace-pre-wrap text-[14px] leading-[1.75] ${
+                                                productBrownInbox ? inboxUi!.inkSoft : "text-neutral-800"
+                                              }`}
+                                            >
                                               {msg.body}
                                             </div>
                                             {attachments.length > 0 ? (
@@ -2273,19 +2925,29 @@ export function DoeSchedulesAppMock({
                                                   <li key={file.name}>
                                                     <button
                                                       type="button"
-                                                      className="inline-flex max-w-full items-center gap-2.5 rounded-xl border border-[#E8E4E0] bg-white px-3 py-2 text-left text-[12px] text-neutral-800 shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-colors hover:border-[#D4CFC8] hover:bg-[#FAFAF8]"
+                                                      className={`inline-flex max-w-full items-center gap-2.5 rounded-xl border px-3 py-2 text-left text-[12px] shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-colors ${
+                                                        productBrownInbox
+                                                          ? `${inboxUi!.chip} ${inboxUi!.chipHover}`
+                                                          : "border-[#E8E4E0] bg-white text-neutral-800 hover:border-[#D4CFC8] hover:bg-[#FAFAF8]"
+                                                      }`}
                                                     >
                                                       <span
-                                                        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${inboxCalendarGradientClass(file.name)}`}
+                                                        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${inboxAvatarGradientClass(file.name, productBrownInbox)}`}
                                                         aria-hidden
                                                       >
-                                                        <Icon className="h-4 w-4 text-white">
+                                                        <Icon className={`h-4 w-4 ${productBrownInbox ? "text-[#f5efe8]" : "text-white"}`}>
                                                           <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.38-8.38a4 4 0 0 1 5.66 5.66l-8.38 8.38a2 2 0 0 1-2.83-2.83l7.07-7.07" />
                                                         </Icon>
                                                       </span>
                                                       <span className="min-w-0 flex items-center gap-2">
                                                         <span className="truncate font-medium">{file.name}</span>
-                                                        <span className="shrink-0 text-[11px] font-medium text-neutral-400">
+                                                        <span
+                                                          className={`shrink-0 text-[11px] font-medium ${
+                                                            productBrownInbox
+                                                              ? inboxUi!.mutedText
+                                                              : "text-neutral-400"
+                                                          }`}
+                                                        >
                                                           {file.size}
                                                         </span>
                                                       </span>
@@ -2295,11 +2957,21 @@ export function DoeSchedulesAppMock({
                                               </ul>
                                             ) : null}
                                             <div className="mt-5 flex flex-wrap items-center justify-end gap-1.5">
-                                              <div className="inline-flex items-center gap-0.5 rounded-full border border-[#E8E4E0] bg-[#FAFAFA] p-0.5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+                                              <div
+                                                className={
+                                                  productBrownInbox
+                                                    ? inboxUi!.actionBar
+                                                    : "inline-flex items-center gap-0.5 rounded-full border border-[#E8E4E0] bg-[#FAFAFA] p-0.5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+                                                }
+                                              >
                                                 <button
                                                   type="button"
                                                   title="Reply to this message"
-                                                  className="inline-flex h-8 items-center gap-1 rounded-full px-3 text-[11px] font-semibold text-neutral-700 transition-colors hover:bg-white hover:text-neutral-900"
+                                                  className={`inline-flex h-8 items-center gap-1 rounded-full px-3 text-[11px] font-semibold ${
+                                                    productBrownInbox
+                                                      ? inboxUi!.actionBtn
+                                                      : "text-neutral-700 transition-colors hover:bg-white hover:text-neutral-900"
+                                                  }`}
                                                 >
                                                   <Icon className="h-3.5 w-3.5">
                                                     <path d="M9 14 4 9l5-5" />
@@ -2310,7 +2982,11 @@ export function DoeSchedulesAppMock({
                                                 <button
                                                   type="button"
                                                   title="Forward this message"
-                                                  className="inline-flex h-8 items-center gap-1 rounded-full px-3 text-[11px] font-semibold text-neutral-700 transition-colors hover:bg-white hover:text-neutral-900"
+                                                  className={`inline-flex h-8 items-center gap-1 rounded-full px-3 text-[11px] font-semibold ${
+                                                    productBrownInbox
+                                                      ? inboxUi!.actionBtn
+                                                      : "text-neutral-700 transition-colors hover:bg-white hover:text-neutral-900"
+                                                  }`}
                                                 >
                                                   <Icon className="h-3.5 w-3.5">
                                                     <path d="M4 12v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-8" />
@@ -2323,7 +2999,11 @@ export function DoeSchedulesAppMock({
                                               <button
                                                 type="button"
                                                 title="Flag for follow-up"
-                                                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#E8E4E0] bg-[#FAFAFA] text-neutral-400 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-colors hover:bg-white hover:text-[#9B6A3F]"
+                                                className={
+                                                  productBrownInbox
+                                                    ? inboxUi!.iconBtn
+                                                    : "inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#E8E4E0] bg-[#FAFAFA] text-neutral-400 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-colors hover:bg-white hover:text-[#9B6A3F]"
+                                                }
                                               >
                                                 <Icon className="h-3.5 w-3.5">
                                                   <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
@@ -2333,7 +3013,11 @@ export function DoeSchedulesAppMock({
                                               <button
                                                 type="button"
                                                 title="Print this message"
-                                                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#E8E4E0] bg-[#FAFAFA] text-neutral-400 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-colors hover:bg-white hover:text-neutral-700"
+                                                className={
+                                                  productBrownInbox
+                                                    ? inboxUi!.iconBtnNeutral
+                                                    : "inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#E8E4E0] bg-[#FAFAFA] text-neutral-400 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-colors hover:bg-white hover:text-neutral-700"
+                                                }
                                               >
                                                 <Icon className="h-3.5 w-3.5">
                                                   <polyline points="6 9 6 2 18 2 18 9" />
@@ -2353,15 +3037,33 @@ export function DoeSchedulesAppMock({
                           </div>
                         ) : (
                           <div className="flex flex-1 flex-col items-center justify-center px-8 py-16 text-center">
-                            <span className="rounded-full border border-[#ECECEC] bg-white p-3 shadow-sm">
-                              <Icon className="h-6 w-6 text-neutral-300">
+                            <span
+                              className={
+                                productBrownInbox
+                                  ? inboxUi!.emptyIcon
+                                  : "rounded-full border border-[#ECECEC] bg-white p-3 shadow-sm"
+                              }
+                            >
+                              <Icon
+                                className={
+                                  productBrownInbox ? inboxUi!.emptyIconGlyph : "h-6 w-6 text-neutral-300"
+                                }
+                              >
                                 <path d="M22 12h-6l-2 3h-4l-2-3H2" />
                               </Icon>
                             </span>
-                            <p className="mt-4 text-[15px] font-semibold tracking-tight text-neutral-900">
+                            <p
+                              className={`mt-4 text-[15px] font-semibold tracking-tight ${
+                                productBrownInbox ? inboxUi!.ink : "text-neutral-900"
+                              }`}
+                            >
                               Select a message
                             </p>
-                            <p className="mt-1 max-w-[220px] text-[12px] leading-relaxed text-neutral-500">
+                            <p
+                              className={`mt-1 max-w-[220px] text-[12px] leading-relaxed ${
+                                productBrownInbox ? inboxUi!.mutedText : "text-neutral-500"
+                              }`}
+                            >
                               Choose a thread on the left to read the full note.
                             </p>
                           </div>
@@ -2371,17 +3073,37 @@ export function DoeSchedulesAppMock({
                   </>
                 ) : (
                   <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-                    <header className="flex shrink-0 items-center gap-2 border-b border-[#EFEFEF] px-4 py-3">
-                      <Icon className="h-5 w-5 text-neutral-500">
+                    <header
+                      className={`flex shrink-0 items-center gap-2 border-b px-4 py-3 ${
+                        productBrownDarkWorkspace
+                          ? "border-[rgba(245,230,208,0.1)] bg-[#322618]"
+                          : "border-[#EFEFEF]"
+                      }`}
+                    >
+                      <Icon
+                        className={`h-5 w-5 ${
+                          productBrownDarkWorkspace ? "text-[rgba(245,230,208,0.48)]" : "text-neutral-500"
+                        }`}
+                      >
                         <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                         <circle cx="9" cy="7" r="4" />
                         <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
                         <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                       </Icon>
-                      <h1 className="text-[15px] font-semibold tracking-tight text-neutral-900">Patients</h1>
+                      <h1
+                        className={`text-[15px] font-semibold tracking-tight ${
+                          productBrownDarkWorkspace ? "text-[#f5e6d0]" : "text-neutral-900"
+                        }`}
+                      >
+                        Patients
+                      </h1>
                     </header>
                     <div
-                      className={`flex shrink-0 flex-wrap items-center gap-x-4 gap-y-2 border-b border-dashed border-[#E8E8E8] bg-white px-4 py-2 text-[12px] ${inter.className}`}
+                      className={`flex shrink-0 flex-wrap items-center gap-x-4 gap-y-2 border-b border-dashed px-4 py-2 text-[12px] ${inter.className} ${
+                        productBrownDarkWorkspace
+                          ? "border-[rgba(245,230,208,0.1)] bg-[#2a1f12]"
+                          : "border-[#E8E8E8] bg-white"
+                      }`}
                     >
                       <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
                         {(
@@ -2430,7 +3152,11 @@ export function DoeSchedulesAppMock({
                             </button>
                             {patientPickerOpen ? (
                               <div
-                                className="absolute left-0 top-full z-50 mt-1 w-[min(calc(100vw-2rem),18rem)] overflow-hidden rounded-md border border-neutral-200 bg-white py-1 shadow-md"
+                                className={`absolute left-0 top-full z-50 mt-1 w-[min(calc(100vw-2rem),18rem)] overflow-hidden rounded-md border py-1 shadow-md ${
+                                  productBrownDarkWorkspace
+                                    ? "border-[rgba(245,230,208,0.12)] bg-[#322618]"
+                                    : "border-neutral-200 bg-white"
+                                }`}
                                 role="listbox"
                               >
                                 <ul className="max-h-[min(50vh,240px)] overflow-y-auto">
@@ -2448,8 +3174,12 @@ export function DoeSchedulesAppMock({
                                           }}
                                           className={`w-full px-3 py-2 text-left text-[12px] transition-colors ${
                                             selected
-                                              ? "bg-neutral-100 text-neutral-900"
-                                              : "text-neutral-800 hover:bg-neutral-50"
+                                              ? productBrownDarkWorkspace
+                                                ? "bg-[#3d2e1f] text-[#f5e6d0]"
+                                                : "bg-neutral-100 text-neutral-900"
+                                              : productBrownDarkWorkspace
+                                                ? "text-[rgba(245,230,208,0.78)] hover:bg-[#3a2a1c]"
+                                                : "text-neutral-800 hover:bg-neutral-50"
                                           }`}
                                         >
                                           <div className="truncate font-medium">{row.name}</div>
@@ -3694,8 +4424,16 @@ export function DoeSchedulesAppMock({
                           <div
                             className={
                               patientIdentityMinimized
-                                ? `${patientBentoCard} border-l-2 border-neutral-300 pl-4 sm:col-span-2 lg:col-span-4`
-                                : "border-l-2 border-neutral-300 pl-4"
+                                ? `${patientBentoCard} border-l-2 pl-4 sm:col-span-2 lg:col-span-4 ${
+                                    productBrownDarkWorkspace
+                                      ? "border-[rgba(245,230,208,0.18)]"
+                                      : "border-neutral-300"
+                                  }`
+                                : `border-l-2 pl-4 ${
+                                    productBrownDarkWorkspace
+                                      ? "border-[rgba(245,230,208,0.18)]"
+                                      : "border-neutral-300"
+                                  }`
                             }
                           >
                             <p className="text-[10px] font-normal uppercase tracking-[0.12em] text-neutral-400">
@@ -3711,20 +4449,52 @@ export function DoeSchedulesAppMock({
               </div>
             </div>
 
-            {workspaceView !== "inbox" && !hero ? (
+            {workspaceView !== "inbox" && workspaceView !== "landing" && !hero ? (
               <div
-                className={`flex h-full w-1/2 shrink-0 flex-col border-l border-[#EFEFEF] ${
-                  workspaceView === "patients" ? "bg-white" : "bg-[#FAFAFA]"
+                className={`product-brown-main-panel flex h-full w-1/2 shrink-0 flex-col border-l ${
+                  productBrownDarkWorkspace
+                    ? "border-[rgba(245,230,208,0.08)] bg-[#241910] shadow-[inset_1px_0_0_rgba(245,230,208,0.05)]"
+                    : productBrown
+                      ? "border-[rgba(61,46,31,0.14)]"
+                      : "border-[#EFEFEF]"
+                } ${
+                  workspaceView === "patients"
+                    ? productBrownDarkWorkspace
+                      ? "bg-[#241910]"
+                      : productBrown
+                        ? "bg-[#faf0d8]"
+                        : "bg-white"
+                    : productBrownDarkWorkspace
+                      ? "bg-[#241910]"
+                      : productBrown
+                        ? "bg-[#ede0c8]"
+                        : "bg-[#FAFAFA]"
                 }`}
               >
                 {workspaceView === "schedule" ? (
                   <>
-                    <header className="flex items-center justify-between border-b border-[#E8E8ED] bg-white px-4 py-3">
+                    <header
+                      className={`flex items-center justify-between border-b px-4 py-3 ${
+                        productBrownDarkWorkspace
+                          ? "border-[rgba(245,230,208,0.1)] bg-[#322618]"
+                          : "border-[#E8E8ED] bg-white"
+                      }`}
+                    >
                       <div>
-                        <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
+                        <p
+                          className={`text-[10px] font-semibold uppercase tracking-wider ${
+                            productBrownDarkWorkspace ? "text-[rgba(245,230,208,0.48)]" : "text-neutral-400"
+                          }`}
+                        >
                           Schedule
                         </p>
-                        <h2 className="text-[15px] font-semibold text-neutral-800">Day summary</h2>
+                        <h2
+                          className={`text-[15px] font-semibold ${
+                            productBrownDarkWorkspace ? "text-[#f5e6d0]" : "text-neutral-800"
+                          }`}
+                        >
+                          Day summary
+                        </h2>
                       </div>
                     </header>
                   <div className="min-h-0 flex-1 space-y-3 overflow-auto p-4">
@@ -3778,11 +4548,33 @@ export function DoeSchedulesAppMock({
                 </>
               ) : workspaceView === "patients" ? (
                 <>
-                  <header className="border-b border-[#E8E8ED] bg-white px-4 py-3">
-                    <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">Reference</p>
-                    <h2 className="mt-0.5 text-[15px] font-semibold text-neutral-800">James Lisondra</h2>
+                  <header
+                    className={`border-b px-4 py-3 ${
+                      productBrownDarkWorkspace
+                        ? "border-[rgba(245,230,208,0.1)] bg-[#322618]"
+                        : "border-[#E8E8ED] bg-white"
+                    }`}
+                  >
+                    <p
+                      className={`text-[10px] font-semibold uppercase tracking-wider ${
+                        productBrownDarkWorkspace ? "text-[rgba(245,230,208,0.48)]" : "text-neutral-400"
+                      }`}
+                    >
+                      Reference
+                    </p>
+                    <h2
+                      className={`mt-0.5 text-[15px] font-semibold ${
+                        productBrownDarkWorkspace ? "text-[#f5e6d0]" : "text-neutral-800"
+                      }`}
+                    >
+                      James Lisondra
+                    </h2>
                   </header>
-                  <div className="min-h-0 flex-1 space-y-3 overflow-auto bg-white p-4">
+                  <div
+                    className={`min-h-0 flex-1 space-y-3 overflow-auto p-4 ${
+                      productBrownDarkWorkspace ? "bg-[#241910]" : "bg-white"
+                    }`}
+                  >
                     <div className="rounded-xl border border-[#EAEAEA] bg-white p-3 shadow-sm">
                       <p className="text-[11px] font-semibold text-neutral-500">Coverage</p>
                       <p className="mt-2 text-[13px] font-medium leading-snug text-neutral-800">
@@ -3797,9 +4589,27 @@ export function DoeSchedulesAppMock({
                       </p>
                       <p className="mt-1.5 text-[12px] tabular-nums text-neutral-600">(415) 555‑0142</p>
                     </div>
-                    <div className="rounded-xl border border-amber-200/80 bg-amber-50/40 p-3 shadow-sm">
-                      <p className="text-[11px] font-semibold text-amber-900/90">Open item</p>
-                      <p className="mt-2 text-[12px] leading-relaxed text-neutral-800">
+                    <div
+                      className={`rounded-xl border p-3 shadow-sm ${
+                        productBrownDarkWorkspace
+                          ? "border-[rgba(139,105,20,0.35)] bg-[rgba(212,165,116,0.12)]"
+                          : productBrown
+                            ? "border-[rgba(139,105,20,0.35)] bg-[rgba(212,165,116,0.18)]"
+                            : "border-amber-200/80 bg-amber-50/40"
+                      }`}
+                    >
+                      <p
+                        className={`text-[11px] font-semibold ${
+                          productBrown ? "text-[#f5e6d0]" : "text-amber-900/90"
+                        }`}
+                      >
+                        Open item
+                      </p>
+                      <p
+                        className={`mt-2 text-[12px] leading-relaxed ${
+                          productBrown ? "text-[rgba(245,230,208,0.78)]" : "text-neutral-800"
+                        }`}
+                      >
                         A1c goal documentation due this quarter if not on file.
                       </p>
                     </div>
@@ -3807,19 +4617,42 @@ export function DoeSchedulesAppMock({
                 </>
               ) : (
                 <>
-                  <header className="border-b border-[#E8E8ED] bg-white px-4 py-3">
-                    <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
+                  <header
+                    className={`border-b px-4 py-3 ${
+                      productBrownDarkWorkspace
+                        ? "border-[rgba(245,230,208,0.1)] bg-[#322618]"
+                        : "border-[#E8E8ED] bg-white"
+                    }`}
+                  >
+                    <p
+                      className={`text-[10px] font-semibold uppercase tracking-wider ${
+                        productBrownDarkWorkspace ? "text-[rgba(245,230,208,0.48)]" : "text-neutral-400"
+                      }`}
+                    >
                       Chart
                     </p>
-                    <h2 className="text-[15px] font-semibold text-neutral-800">Details</h2>
+                    <h2
+                      className={`text-[15px] font-semibold ${
+                        productBrownDarkWorkspace ? "text-[#f5e6d0]" : "text-neutral-800"
+                      }`}
+                    >
+                      Details
+                    </h2>
                   </header>
-                  <div className="flex min-h-0 flex-1 items-center justify-center p-6">
+                  <div
+                    className={`flex min-h-0 flex-1 items-center justify-center p-6 ${
+                      productBrownDarkWorkspace ? "bg-[#241910]" : ""
+                    }`}
+                  >
                     <p className="text-center text-[13px] text-neutral-500">Select a patient to preview.</p>
                   </div>
                 </>
               )}
               </div>
             ) : null}
+            </div>
+            </div>
+            </div>
           </div>
         </div>
       </div>

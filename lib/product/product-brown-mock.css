@@ -1,0 +1,967 @@
+/* Brown-only theme for DoeSchedulesAppMock on /product */
+.product-brown-mock {
+  --pb-ink: #1a1208;
+  --pb-ink-mid: #2a1f12;
+  --pb-ink-soft: #3d2e1f;
+  --pb-sand: #f5e6d0;
+  --pb-cream: #faf0d8;
+  --pb-cream-deep: #ede0c8;
+  --pb-highlight: #f8edd8;
+  --pb-line-dark: rgba(245, 230, 208, 0.14);
+  --pb-line: rgba(61, 46, 31, 0.14);
+  --pb-line-strong: rgba(61, 46, 31, 0.22);
+  --pb-muted: rgba(61, 46, 31, 0.62);
+  --pb-muted-soft: rgba(61, 46, 31, 0.48);
+  --pb-hover: rgba(26, 18, 8, 0.06);
+  --pb-nav-width: 264px;
+  --pb-nav-pad-outer: 1rem;
+  --pb-nav-pad-section: 0.75rem;
+  --pb-nav-pad-item: 0.625rem;
+  --pb-nav-pad-label: 0.375rem;
+}
+
+.product-brown-mock .product-brown-shell {
+  background: var(--pb-ink) !important;
+  box-shadow: none !important;
+}
+
+.product-brown-mock .product-brown-frame {
+  background: var(--pb-cream) !important;
+}
+
+/* Layered tab panel — nav outside left, content panel bleeds off the right */
+.product-brown-mock .product-brown-layered-layout {
+  position: relative;
+  background: var(--pb-ink) !important;
+  overflow: hidden !important;
+}
+
+.product-brown-mock .product-brown-workspace-row {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  height: 100%;
+  overflow: visible;
+}
+
+.product-brown-mock .product-brown-layered-layout .product-brown-sidebar {
+  position: relative;
+  flex-shrink: 0;
+  z-index: 1;
+  width: var(--pb-nav-width);
+  border-right: none !important;
+}
+
+.product-brown-mock .product-brown-inner-row {
+  position: relative;
+  z-index: 2;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: calc(100% - 1.75rem);
+  margin: 0.875rem 0;
+  overflow: visible;
+  isolation: isolate;
+}
+
+.product-brown-mock .product-brown-inner-row::after {
+  content: "";
+  position: absolute;
+  inset: 0 -6rem 0 0;
+  border-radius: 1.75rem 0 0 1.75rem;
+  z-index: 0;
+  pointer-events: none;
+  box-shadow:
+    -4px 0 24px rgba(0, 0, 0, 0.28),
+    0 0 0 1px rgba(245, 230, 208, 0.07);
+}
+
+.product-brown-mock .product-brown-inner-row__content {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 1.75rem 0 0 1.75rem;
+}
+
+.product-brown-mock .product-brown-inner-row__content > .flex {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.product-brown-mock .product-brown-inner-row .product-brown-primary-col,
+.product-brown-mock .product-brown-inner-row .product-brown-main,
+.product-brown-mock .product-brown-inner-row .product-brown-main-panel,
+.product-brown-mock .product-brown-inner-row .product-landing-panel {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-inner-row__content,
+.product-brown-mock.product-brown-inbox-mode .product-brown-inner-row::after {
+  background: var(--pi-cream);
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-inner-row::after {
+  box-shadow:
+    -4px 0 20px rgba(0, 0, 0, 0.18),
+    0 0 0 1px rgba(30, 22, 18, 0.06);
+}
+
+.product-brown-mock.product-brown-workspace-mode .product-brown-inner-row__content,
+.product-brown-mock.product-brown-workspace-mode .product-brown-inner-row::after {
+  background: var(--pb-surface-deep);
+}
+
+.product-brown-mock:not(.product-brown-workspace-mode):not(.product-brown-inbox-mode)
+  .product-brown-inner-row__content,
+.product-brown-mock:not(.product-brown-workspace-mode):not(.product-brown-inbox-mode)
+  .product-brown-inner-row::after {
+  background: #f8f4ec;
+}
+
+/* ── Sidebar (nav — already tuned) ── */
+.product-brown-mock .product-brown-sidebar {
+  width: var(--pb-nav-width) !important;
+  min-width: var(--pb-nav-width);
+  max-width: var(--pb-nav-width);
+  background: var(--pb-ink) !important;
+  border-color: var(--pb-line-dark) !important;
+  color: var(--pb-sand);
+}
+
+/* Outer rail — header + search */
+.product-brown-mock .product-brown-sidebar > div.px-3 {
+  padding-left: var(--pb-nav-pad-outer) !important;
+  padding-right: var(--pb-nav-pad-outer) !important;
+}
+
+.product-brown-mock .product-brown-sidebar > div.px-3:first-child {
+  padding-top: 0.875rem !important;
+  padding-bottom: 0.5rem !important;
+}
+
+.product-brown-mock .product-brown-sidebar > div.px-3:nth-child(2) {
+  padding-bottom: 0.625rem !important;
+}
+
+/* Section rails — main nav, workspace, intelligence */
+.product-brown-mock .product-brown-sidebar > nav.px-2,
+.product-brown-mock .product-brown-sidebar > div.px-2:not(.mt-auto) {
+  padding-left: var(--pb-nav-pad-section) !important;
+  padding-right: var(--pb-nav-pad-section) !important;
+}
+
+.product-brown-mock .product-brown-sidebar > nav.px-2 {
+  padding-bottom: 0.5rem !important;
+}
+
+.product-brown-mock .product-brown-sidebar > div.px-2.pb-1 {
+  padding-top: 0.375rem !important;
+  padding-bottom: 0.375rem !important;
+}
+
+.product-brown-mock .product-brown-sidebar > div.px-2.pt-2 {
+  padding-top: 0.625rem !important;
+  padding-bottom: 0.625rem !important;
+}
+
+/* Clinic footer */
+.product-brown-mock .product-brown-sidebar > div.mt-auto {
+  padding-left: var(--pb-nav-pad-section) !important;
+  padding-right: var(--pb-nav-pad-section) !important;
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.625rem !important;
+}
+
+.product-brown-mock .product-brown-sidebar > div.mt-auto > .px-1 {
+  padding-left: var(--pb-nav-pad-label) !important;
+  padding-right: var(--pb-nav-pad-label) !important;
+}
+
+/* Nav items — section buttons only, not badges/chips/menus */
+.product-brown-mock .product-brown-sidebar > nav.px-2 > button,
+.product-brown-mock .product-brown-sidebar > div.px-2 .mt-1.flex-col > button,
+.product-brown-mock .product-brown-sidebar > div.mt-auto > .px-1 button {
+  padding-left: var(--pb-nav-pad-item) !important;
+  padding-right: var(--pb-nav-pad-item) !important;
+}
+
+/* Section labels */
+.product-brown-mock .product-brown-sidebar > div.px-2 > .px-1 {
+  padding-left: var(--pb-nav-pad-label) !important;
+  padding-right: var(--pb-nav-pad-label) !important;
+}
+
+/* Search field */
+.product-brown-mock .product-brown-sidebar > div.px-3:nth-child(2) > div {
+  padding-left: 0.6875rem !important;
+  padding-right: 0.6875rem !important;
+}
+
+.product-brown-mock .product-brown-sidebar .text-neutral-900,
+.product-brown-mock .product-brown-sidebar .text-neutral-800,
+.product-brown-mock .product-brown-sidebar .font-semibold.text-neutral-900 {
+  color: var(--pb-sand) !important;
+}
+
+.product-brown-mock .product-brown-sidebar .text-neutral-700,
+.product-brown-mock .product-brown-sidebar .text-neutral-600 {
+  color: rgba(245, 230, 208, 0.78) !important;
+}
+
+.product-brown-mock .product-brown-sidebar .text-neutral-500,
+.product-brown-mock .product-brown-sidebar .text-neutral-400 {
+  color: rgba(245, 230, 208, 0.48) !important;
+}
+
+.product-brown-mock .product-brown-sidebar .bg-neutral-100,
+.product-brown-mock .product-brown-sidebar .bg-\[\#FAFAFA\],
+.product-brown-mock .product-brown-sidebar .bg-\[\#F7F7F7\] {
+  background: rgba(245, 230, 208, 0.1) !important;
+}
+
+.product-brown-mock .product-brown-sidebar .hover\:bg-neutral-50:hover,
+.product-brown-mock .product-brown-sidebar .hover\:bg-neutral-100:hover {
+  background: rgba(245, 230, 208, 0.08) !important;
+}
+
+.product-brown-mock .product-brown-sidebar .bg-white {
+  background: rgba(245, 230, 208, 0.08) !important;
+}
+
+.product-brown-mock .product-brown-sidebar [role="menu"] {
+  background: #241910 !important;
+  opacity: 1 !important;
+}
+
+.product-brown-mock .product-brown-sidebar .border-\[\#ECECEC\],
+.product-brown-mock .product-brown-sidebar .border-\[\#E5E5E5\],
+.product-brown-mock .product-brown-sidebar .border-\[\#E6E6E6\],
+.product-brown-mock .product-brown-sidebar .border-\[\#EFEFEF\],
+.product-brown-mock .product-brown-sidebar .border-neutral-200 {
+  border-color: var(--pb-line-dark) !important;
+}
+
+.product-brown-mock .product-brown-sidebar .hover\:text-neutral-600:hover,
+.product-brown-mock .product-brown-sidebar .hover\:text-neutral-700:hover,
+.product-brown-mock .product-brown-sidebar .hover\:text-neutral-800:hover {
+  color: var(--pb-sand) !important;
+}
+
+/* ── Main workspace surfaces ── */
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) {
+  background: var(--pb-cream) !important;
+  color: var(--pb-ink);
+}
+
+.product-brown-mock .product-landing-panel {
+  color: var(--pb-ink);
+}
+
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) [class*="bg-white"] {
+  background-color: var(--pb-sand) !important;
+}
+
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) [class*="bg-[#FAFAFA]"],
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) [class*="bg-[#F7F7F7]"],
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) [class*="bg-[#F4F4F5]"],
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) [class*="bg-[#FBFBFB]"],
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) [class*="bg-[#F9F9FA]"] {
+  background-color: var(--pb-cream-deep) !important;
+}
+
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) [class*="bg-[#FFF9F1]"],
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) [class*="bg-[#FAFAF8]"] {
+  background-color: var(--pb-highlight) !important;
+}
+
+/* Neutral background utilities */
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) .bg-neutral-100,
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) .bg-neutral-100\/90,
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) [class*="bg-neutral-100"] {
+  background-color: rgba(26, 18, 8, 0.07) !important;
+}
+
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) .hover\:bg-neutral-50:hover,
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) .hover\:bg-neutral-50\/80:hover,
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) .hover\:bg-neutral-100:hover {
+  background-color: var(--pb-hover) !important;
+}
+
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) .hover\:bg-white:hover {
+  background-color: var(--pb-sand) !important;
+}
+
+/* Borders */
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) [class*="border-[#E"],
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) [class*="border-[#F"],
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) .border-neutral-200,
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) .border-neutral-300,
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) [class*="border-[#EDEAE6]"],
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) [class*="border-[#E8E4E0]"],
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) [class*="border-[#D4CFC8]"] {
+  border-color: var(--pb-line) !important;
+}
+
+/* Keep gold accent borders */
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) [class*="border-[#E8D4B5]"],
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) [class*="border-l-[#D4A574]"] {
+  border-color: rgba(212, 165, 116, 0.55) !important;
+}
+
+/* Text */
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) .text-neutral-900,
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) .text-neutral-800 {
+  color: var(--pb-ink) !important;
+}
+
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) .text-neutral-700,
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) .text-neutral-600 {
+  color: var(--pb-muted) !important;
+}
+
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) .text-neutral-500,
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) .text-neutral-400 {
+  color: var(--pb-muted-soft) !important;
+}
+
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) .hover\:text-neutral-700:hover,
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) .hover\:text-neutral-800:hover,
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) .hover\:text-neutral-900:hover {
+  color: var(--pb-ink) !important;
+}
+
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) .hover\:text-\[\#9B6A3F\]:hover {
+  color: #8b6914 !important;
+}
+
+/* Headers & toolbars */
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) header {
+  background-color: var(--pb-sand) !important;
+  border-color: var(--pb-line) !important;
+}
+
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) .sticky.top-0 {
+  background-color: var(--pb-sand) !important;
+}
+
+/* Dividers */
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) .bg-neutral-200\/90,
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) .h-px.bg-neutral-200 {
+  background-color: var(--pb-line) !important;
+}
+
+/* Inactive tab pill track */
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) [class*="bg-[#E6E6E6]"] {
+  background-color: rgba(61, 46, 31, 0.18) !important;
+}
+
+/* Amber alert → warm brown alert */
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) [class*="border-amber"],
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) [class*="bg-amber"] {
+  border-color: rgba(139, 105, 20, 0.35) !important;
+  background-color: rgba(212, 165, 116, 0.18) !important;
+}
+
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) [class*="text-amber"] {
+  color: var(--pb-ink-soft) !important;
+}
+
+/* Category / neutral swatches */
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) .bg-neutral-300 {
+  background-color: #a89070 !important;
+}
+
+/* Teal marketing surfaces → deep brown */
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) [class*="bg-[#1E343A]"] {
+  background-color: var(--pb-ink-mid) !important;
+}
+
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) [class*="from-[#E7A944]"] {
+  --tw-gradient-from: #c4a574 var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgb(196 165 116 / 0) var(--tw-gradient-to-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) [class*="via-[#D2774C]"] {
+  --tw-gradient-via: #a67b5b var(--tw-gradient-via-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to) !important;
+}
+
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) [class*="to-[#1E343A]"] {
+  --tw-gradient-to: #3d2e1f var(--tw-gradient-to-position) !important;
+}
+
+/* SVG chart accents */
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) stop[stop-color="#1E343A"] {
+  stop-color: #3d2e1f !important;
+}
+
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) circle[stroke="#1E343A"],
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) [stroke="#1E343A"] {
+  stroke: #3d2e1f !important;
+}
+
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) circle[fill="white"] {
+  fill: var(--pb-sand) !important;
+}
+
+/* Shadows — warm tint */
+.product-brown-mock :is(.product-brown-main, .product-brown-main-panel) [class*="shadow-["] {
+  --tw-shadow-color: rgba(26, 18, 8, 0.08) !important;
+}
+
+/* Inbox rows */
+.product-brown-mock .product-brown-inbox-row {
+  border-bottom-color: var(--pb-line) !important;
+}
+
+.product-brown-mock .product-brown-inbox-row--active {
+  background-color: var(--pb-highlight) !important;
+}
+
+.product-brown-mock .product-brown-inbox-row--default {
+  background-color: var(--pb-sand) !important;
+}
+
+.product-brown-mock .product-brown-inbox-row--default:hover {
+  background-color: var(--pb-hover) !important;
+}
+
+.product-brown-mock .product-call-preview {
+  background: var(--pb-sand) !important;
+}
+
+.product-brown-mock .product-call-preview__status-dot {
+  background: #8b6914 !important;
+  box-shadow: 0 0 0 4px rgba(139, 105, 20, 0.22) !important;
+}
+
+html[data-product-page="true"] .product-call-preview__bubble--patient {
+  background: rgba(26, 18, 8, 0.06);
+  border: 1px solid rgba(26, 18, 8, 0.08);
+  color: #3d2e1f;
+}
+
+html[data-product-page="true"] .product-call-preview__bubble--agent {
+  background: linear-gradient(168deg, #322618 0%, var(--pb-ink) 100%);
+  border: 1px solid rgba(245, 230, 208, 0.18);
+  color: var(--pb-sand);
+}
+
+/* ── Dark brown workspace (Inbox / Schedule / Patients) ── */
+.product-brown-mock.product-brown-workspace-mode {
+  --pb-workspace: #2a1f12;
+  --pb-workspace-panel: #241910;
+  --pb-surface: #322618;
+  --pb-surface-raised: #3d2e1f;
+  --pb-surface-deep: #1a1208;
+}
+
+.product-brown-mock.product-brown-workspace-mode .product-brown-frame:not(.product-brown-layered-layout),
+.product-brown-mock.product-brown-workspace-mode .product-brown-workspace {
+  background: var(--pb-surface-deep) !important;
+}
+
+.product-brown-mock.product-brown-workspace-mode .product-brown-main,
+.product-brown-mock.product-brown-workspace-mode .product-brown-main-panel {
+  background: var(--pb-workspace) !important;
+  color: var(--pb-sand) !important;
+}
+
+.product-brown-mock.product-brown-workspace-mode .product-brown-main-panel {
+  background: var(--pb-workspace-panel) !important;
+}
+
+/* Surfaces: white / cream / sand → layered browns */
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="bg-white"],
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="bg-[#f5e6d0]"],
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="bg-[#faf0d8]"],
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="bg-[#ede0c8]"],
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="bg-[#FFF9F1]"],
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="bg-[#FAFAF8]"] {
+  background-color: var(--pb-surface) !important;
+}
+
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="bg-[#FAFAFA]"],
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="bg-[#F7F7F7]"],
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="bg-[#F4F4F5]"],
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="bg-[#FBFBFB]"],
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="bg-[#F9F9FA]"] {
+  background-color: var(--pb-workspace-panel) !important;
+}
+
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  .bg-neutral-100,
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="bg-neutral-100"] {
+  background-color: rgba(245, 230, 208, 0.08) !important;
+}
+
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  .hover\:bg-neutral-50:hover,
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  .hover\:bg-neutral-50\/80:hover,
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  .hover\:bg-neutral-100:hover,
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  .hover\:bg-white:hover {
+  background-color: var(--pb-surface-raised) !important;
+}
+
+/* Borders */
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="border-[#E"],
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="border-[#F"],
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  .border-neutral-200,
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  .border-neutral-300,
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="border-[#EDEAE6]"],
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="border-[#E8E4E0]"],
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="border-[#D4CFC8]"] {
+  border-color: rgba(245, 230, 208, 0.1) !important;
+}
+
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="border-[#E8D4B5]"],
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="border-l-[#D4A574]"] {
+  border-color: rgba(212, 165, 116, 0.45) !important;
+}
+
+/* Text on dark */
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  .text-neutral-900,
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  .text-neutral-800 {
+  color: var(--pb-sand) !important;
+}
+
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  .text-neutral-700,
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  .text-neutral-600 {
+  color: rgba(245, 230, 208, 0.72) !important;
+}
+
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  .text-neutral-500,
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  .text-neutral-400 {
+  color: rgba(245, 230, 208, 0.48) !important;
+}
+
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  .hover\:text-neutral-700:hover,
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  .hover\:text-neutral-800:hover,
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  .hover\:text-neutral-900:hover {
+  color: var(--pb-sand) !important;
+}
+
+/* Headers */
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  header,
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  .sticky.top-0 {
+  background-color: var(--pb-surface) !important;
+  border-color: rgba(245, 230, 208, 0.1) !important;
+}
+
+/* Dividers & tracks */
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  .bg-neutral-200\/90,
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  .h-px.bg-neutral-200,
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="bg-[#E6E6E6]"] {
+  background-color: rgba(245, 230, 208, 0.12) !important;
+}
+
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  .bg-neutral-300 {
+  background-color: #6b5340 !important;
+}
+
+/* Inbox dark rows */
+.product-brown-mock .product-brown-inbox-row--dark .text-neutral-900,
+.product-brown-mock .product-brown-inbox-row--dark .text-neutral-800 {
+  color: var(--pb-sand) !important;
+}
+
+.product-brown-mock .product-brown-inbox-row--dark .text-neutral-600,
+.product-brown-mock .product-brown-inbox-row--dark .text-neutral-500,
+.product-brown-mock .product-brown-inbox-row--dark .text-neutral-400 {
+  color: rgba(245, 230, 208, 0.52) !important;
+}
+
+.product-brown-mock .product-brown-inbox-row--dark.product-brown-inbox-row--active {
+  background-color: var(--pb-surface-raised) !important;
+}
+
+.product-brown-mock .product-brown-inbox-row--dark.product-brown-inbox-row--default {
+  background-color: var(--pb-workspace) !important;
+}
+
+.product-brown-mock .product-brown-inbox-row--dark.product-brown-inbox-row--default:hover {
+  background-color: var(--pb-surface) !important;
+}
+
+/* Schedule today highlight cells */
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="bg-[#FFF9F1]"] {
+  background-color: rgba(212, 165, 116, 0.12) !important;
+}
+
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="bg-white/80"] {
+  background-color: rgba(50, 38, 24, 0.92) !important;
+}
+
+/* Amber alert on dark */
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="border-amber"],
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="bg-amber"],
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="rgba(212,165,116"] {
+  border-color: rgba(212, 165, 116, 0.35) !important;
+  background-color: rgba(212, 165, 116, 0.12) !important;
+}
+
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="text-[#3d2e1f]"],
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="text-[#2a1f12]"] {
+  color: var(--pb-sand) !important;
+}
+
+/* Extra light grays → brown surfaces */
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="bg-[#FCFCFC]"],
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="bg-[#F1F1F1]"] {
+  background-color: var(--pb-workspace-panel) !important;
+}
+
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="bg-[#FAFAFA]/50"],
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="bg-[#FAFAFA]"] {
+  background-color: var(--pb-surface) !important;
+}
+
+/* Message / thread dividers */
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="bg-[#ECE8E2]"] {
+  background-color: rgba(245, 230, 208, 0.1) !important;
+}
+
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="border-[#F0F0F0]"] {
+  border-color: rgba(245, 230, 208, 0.08) !important;
+}
+
+/* Muted separators & icons */
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  .text-neutral-300,
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  .text-neutral-950 {
+  color: rgba(245, 230, 208, 0.38) !important;
+}
+
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  .text-neutral-950 {
+  color: var(--pb-sand) !important;
+}
+
+/* Gold accent labels — brighter on dark */
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="text-[#9B6A3F]"],
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="text-[#B8956A]"] {
+  color: #d4a574 !important;
+}
+
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="bg-[#E8D4B5]"] {
+  background-color: rgba(212, 165, 116, 0.18) !important;
+}
+
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="ring-[#E8D4B5]"] {
+  --tw-ring-color: rgba(212, 165, 116, 0.35) !important;
+}
+
+/* Schedule event dots */
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="bg-[#C9A06E]"] {
+  background-color: #c9a06e !important;
+}
+
+/* Agent avatar inner ring */
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="border-white/70"] {
+  border-color: rgba(245, 230, 208, 0.45) !important;
+}
+
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="bg-white/35"] {
+  background-color: rgba(245, 230, 208, 0.22) !important;
+}
+
+/* Dropdowns & popovers */
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="shadow-md"],
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  [class*="shadow-[0_8px_24px"] {
+  --tw-shadow-color: rgba(0, 0, 0, 0.28) !important;
+}
+
+/* Patient chart SVG muted strokes */
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  .text-neutral-300.h-6,
+.product-brown-mock.product-brown-workspace-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  .text-neutral-300.h-9 {
+  color: rgba(245, 230, 208, 0.22) !important;
+}
+
+/* ── Inbox: stone/taupe browns (lighter than schedule/patients, less yellow than landing) ── */
+.product-brown-mock.product-brown-inbox-mode {
+  --pi-cream: #f5f2ed;
+  --pi-sand: #ece7df;
+  --pi-sand-deep: #ddd6cc;
+  --pi-well: #e2dcd3;
+  --pi-highlight: #faf9f6;
+  --pi-accent: #a87654;
+  --pi-accent-deep: #7a5640;
+  --pi-ink: #1e1612;
+  --pi-ink-soft: #3a322c;
+  --pi-muted: rgba(38, 32, 28, 0.58);
+  --pi-muted-soft: rgba(38, 32, 28, 0.42);
+  --pi-line: rgba(38, 32, 28, 0.1);
+  --pi-line-strong: rgba(38, 32, 28, 0.12);
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-frame:not(.product-brown-layered-layout),
+.product-brown-mock.product-brown-inbox-mode .product-brown-inbox,
+.product-brown-mock.product-brown-inbox-mode .product-brown-main {
+  background: var(--pi-cream) !important;
+  color: var(--pi-ink) !important;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-main [class*="bg-white"],
+.product-brown-mock.product-brown-inbox-mode .product-brown-main [class*="bg-[#FAFAFA]"],
+.product-brown-mock.product-brown-inbox-mode .product-brown-main [class*="bg-[#F7F7F7]"],
+.product-brown-mock.product-brown-inbox-mode .product-brown-main [class*="bg-[#FBFBFB]"] {
+  background-color: var(--pi-sand) !important;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-main .text-neutral-900,
+.product-brown-mock.product-brown-inbox-mode .product-brown-main .text-neutral-800,
+.product-brown-mock.product-brown-inbox-mode .product-brown-main .text-neutral-950 {
+  color: var(--pi-ink) !important;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-main .text-neutral-700,
+.product-brown-mock.product-brown-inbox-mode .product-brown-main .text-neutral-600 {
+  color: var(--pi-muted) !important;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-main .text-neutral-500,
+.product-brown-mock.product-brown-inbox-mode .product-brown-main .text-neutral-400,
+.product-brown-mock.product-brown-inbox-mode .product-brown-main .text-neutral-300 {
+  color: rgba(58, 50, 44, 0.45) !important;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-main [class*="border-[#E"],
+.product-brown-mock.product-brown-inbox-mode .product-brown-main [class*="border-[#F"],
+.product-brown-mock.product-brown-inbox-mode .product-brown-main .border-neutral-200 {
+  border-color: var(--pi-line) !important;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-main .hover\:bg-neutral-50:hover,
+.product-brown-mock.product-brown-inbox-mode .product-brown-main .hover\:bg-white:hover {
+  background-color: var(--pi-highlight) !important;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-inbox-row--default {
+  background-color: var(--pi-sand) !important;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-inbox-row--active {
+  background-color: var(--pi-highlight) !important;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-inbox-row--default:hover {
+  background-color: var(--pi-sand-deep) !important;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-inbox-row[class*="border-l-[#C4894A]"] {
+  border-left-color: var(--pi-accent) !important;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-inbox-row[class*="border-l-[#C4894A]/45"] {
+  border-left-color: rgba(168, 118, 84, 0.45) !important;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-inbox-row .text-neutral-900,
+.product-brown-mock.product-brown-inbox-mode .product-brown-inbox-row .text-neutral-800 {
+  color: var(--pi-ink) !important;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-inbox-row .text-neutral-600,
+.product-brown-mock.product-brown-inbox-mode .product-brown-inbox-row .text-neutral-500,
+.product-brown-mock.product-brown-inbox-mode .product-brown-inbox-row .text-neutral-400 {
+  color: var(--pi-muted) !important;
+}
+
+/* Inbox chips, attachment boxes, action icon buttons */
+.product-brown-mock.product-brown-inbox-mode .product-brown-main [class*="bg-[#FAFAFA]"],
+.product-brown-mock.product-brown-inbox-mode .product-brown-main [class*="bg-[#f8edd8]"] {
+  background-color: var(--pi-highlight) !important;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-main [class*="border-[#E8E4E0]"],
+.product-brown-mock.product-brown-inbox-mode .product-brown-main [class*="border-[#ECECEC]"] {
+  border-color: var(--pi-line) !important;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-main [class*="hover:bg-[#FAFAF8]"]:hover,
+.product-brown-mock.product-brown-inbox-mode .product-brown-main [class*="hover:bg-white"]:hover {
+  background-color: var(--pi-sand-deep) !important;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-main [class*="hover:text-[#9B6A3F]"]:hover {
+  color: var(--pi-accent-deep) !important;
+}
+
+/* Remap any leftover landing-tab hex values inside inbox */
+.product-brown-mock.product-brown-inbox-mode .product-brown-main [class*="bg-[#faf0d8]"],
+.product-brown-mock.product-brown-inbox-mode .product-brown-frame[class*="bg-[#faf0d8]"] {
+  background-color: var(--pi-cream) !important;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-main [class*="bg-[#f5e6d0]"] {
+  background-color: var(--pi-sand) !important;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-main [class*="bg-[#ede0c8]"] {
+  background-color: var(--pi-sand-deep) !important;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-main [class*="text-[#1a1208]"],
+.product-brown-mock.product-brown-inbox-mode .product-brown-main [class*="text-[#1e1612]"] {
+  color: var(--pi-ink) !important;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-main [class*="text-[#2a1f12]"] {
+  color: var(--pi-ink-soft) !important;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-main [class*="border-[rgba(61,46,31"] {
+  border-color: var(--pi-line) !important;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-inbox-row[class*="border-[rgba(61,46,31"] {
+  border-color: var(--pi-line) !important;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-main [class*="hover:bg-[#ede0c8]"]:hover {
+  background-color: var(--pi-sand-deep) !important;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-inbox-row[class*="hover:bg-[#ebe3d6]"]:hover {
+  background-color: var(--pi-well) !important;
+}

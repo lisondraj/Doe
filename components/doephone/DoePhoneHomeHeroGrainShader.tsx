@@ -34,6 +34,7 @@ import {
   PROTO_GRAIN_GRADIENT_WORLD_HEIGHT,
   PROTO_GRAIN_GRADIENT_WORLD_WIDTH,
   protoHomeHeroBackgroundMaxPixelCount,
+  type ProtoGrainGradientPreset,
   type ProtoGrainGradientVariant,
 } from "@/lib/proto/proto-grain-gradient";
 
@@ -45,7 +46,7 @@ function buildGrainGradientUniforms({
 }: {
   colors: readonly string[];
   colorBack: string;
-  preset: (typeof PROTO_GRAIN_GRADIENT_PRESETS)[ProtoGrainGradientVariant];
+  preset: ProtoGrainGradientPreset;
   noiseTexture: HTMLImageElement;
 }): ShaderMountUniforms {
   return {
@@ -75,13 +76,16 @@ export function DoePhoneHomeHeroGrainShader({
   className = "",
   colors,
   colorBack,
+  presetOverrides,
 }: {
   variant: ProtoGrainGradientVariant;
   className?: string;
   colors?: readonly string[];
   colorBack?: string;
+  presetOverrides?: Partial<ProtoGrainGradientPreset>;
 }) {
-  const preset = PROTO_GRAIN_GRADIENT_PRESETS[variant];
+  const preset = { ...PROTO_GRAIN_GRADIENT_PRESETS[variant], ...presetOverrides };
+  const presetFlowKey = JSON.stringify(presetOverrides ?? {});
   const resolvedColors = colors ?? PROTO_GRAIN_GRADIENT_COLORS;
   const resolvedColorBack = colorBack ?? PROTO_GRAIN_GRADIENT_COLOR_BACK;
   const colorStopsKey = protoGrainColorStopsKey(resolvedColors);
@@ -169,6 +173,7 @@ export function DoePhoneHomeHeroGrainShader({
     colorStopsKey,
     containerReady,
     noiseTexture,
+    presetFlowKey,
     resetShader,
     resolvedColorBack,
     shaderGeneration,
