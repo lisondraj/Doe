@@ -2,10 +2,43 @@ import type { ProductNavTab } from "@/lib/product/product-nav";
 
 export const PRODUCT_LANDING_GREETING = "Good morning, Dr. Chen";
 
-export const PRODUCT_LANDING_HEADLINE = "Your clinic line is covered.";
+/** @deprecated Use PRODUCT_LANDING_DAY_SUMMARY panels. */
+export const PRODUCT_LANDING_HEADLINE = "Last 24 hours · Today ahead";
 
+/** @deprecated Use PRODUCT_LANDING_DAY_SUMMARY panels. */
 export const PRODUCT_LANDING_SUBHEAD =
-  "Doe is on the main line now. Review what came in overnight, see who is waiting, and steer the next call in plain language.";
+  "A visual summary of overnight activity and what is coming on the clinic line today.";
+
+export const PRODUCT_LANDING_DAY_SUMMARY = {
+  last24h: {
+    label: "Last 24 hours",
+    totalCalls: "47",
+    overnightCalls: "4",
+    resolvedPct: 83,
+    notesWaiting: "2",
+    volume: [14, 10, 8, 6, 12, 22, 38, 52, 68, 74, 58, 42],
+    tiles: [
+      { id: "overnight", label: "Overnight", value: "4", detail: "after-hours calls" },
+      { id: "resolved", label: "Resolved", value: "83%", detail: "by Doe" },
+      { id: "notes", label: "Notes", value: "2", detail: "left for you" },
+    ],
+  },
+  todayAhead: {
+    label: "Today ahead",
+    liveCaller: "M. Nguyen",
+    liveDetail: "Reschedule on main line",
+    queue: "2",
+    needsYou: "3",
+    peakWindow: "10–11 AM",
+    peakDetail: "Expected call peak",
+    timeline: [
+      { id: "now", time: "Now", label: "Live", detail: "M. Nguyen · booking", state: "active" as const },
+      { id: "queue-1", time: "+2m", label: "Queue", detail: "S. Patel · prior auth", state: "queued" as const },
+      { id: "queue-2", time: "+4m", label: "Queue", detail: "New patient inquiry", state: "queued" as const },
+      { id: "review", time: "8:15", label: "Review", detail: "Metformin refill note", state: "pending" as const },
+    ],
+  },
+} as const;
 
 export const PRODUCT_LANDING_PRIMARY_CTA = "Listen in";
 

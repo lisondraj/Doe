@@ -118,54 +118,212 @@
   background: var(--pi-cream);
 }
 
-.product-landing-hero__card {
+.product-landing-day-summary__card {
   background: var(--pi-reading);
   border: 1px solid var(--pi-line);
   box-shadow: 0 1px 2px rgba(30, 22, 18, 0.03);
 }
 
-.product-landing-hero__greeting {
+.product-landing-day-summary__greeting {
+  color: var(--pi-ink);
+}
+
+.product-landing-day-summary__eyebrow {
   color: var(--pi-muted-soft);
 }
 
-.product-landing-hero__headline {
-  color: var(--pi-ink);
-}
-
-.product-landing-hero__subhead {
-  color: rgba(38, 32, 28, 0.68);
-}
-
-.product-landing-hero__overnight {
-  color: var(--pi-muted);
-}
-
-.product-landing-hero__stats {
-  gap: 0.5rem;
-}
-
-.product-landing-stat {
-  display: inline-flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  min-width: 5.5rem;
-  padding: 0.55rem 0.75rem;
-  border-radius: 12px;
-  border: 1px solid var(--pi-line);
+.product-landing-day-summary__panel {
   background: var(--pi-raised);
-  box-shadow: 0 1px 2px rgba(30, 22, 18, 0.03);
+  border: 1px solid var(--pi-line);
 }
 
-.product-landing-stat__value {
+.product-landing-day-summary__panel-label {
+  color: var(--pi-muted-soft);
+}
+
+.product-landing-day-summary__total-value {
+  display: block;
   color: var(--pi-ink);
-  font-size: 1.05rem;
+  font-size: clamp(2rem, 1.4rem + 1.8vw, 2.75rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
+.product-landing-day-summary__total-label {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--pi-muted-soft);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.product-landing-volume {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+  height: 3.25rem;
+  padding-bottom: 0.15rem;
+}
+
+.product-landing-volume__bar {
+  flex: 1 1 0;
+  min-width: 3px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--pi-accent) 0%, rgba(110, 98, 88, 0.45) 100%);
+  opacity: 0.88;
+}
+
+.product-landing-ring {
+  position: relative;
+  width: 3.35rem;
+  height: 3.35rem;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.product-landing-ring__inner {
+  position: absolute;
+  inset: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--pi-raised);
+}
+
+.product-landing-ring__value {
+  color: var(--pi-ink);
+  font-size: 11px;
   line-height: 1;
   letter-spacing: -0.02em;
 }
 
-.product-landing-stat__label {
+.product-landing-day-summary__tile,
+.product-landing-day-summary__metric {
+  background: var(--pi-reading);
+  border: 1px solid var(--pi-line);
+}
+
+.product-landing-day-summary__tile-value,
+.product-landing-day-summary__metric-value {
+  display: block;
+  color: var(--pi-ink);
+  font-size: 1rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.product-landing-day-summary__tile-label,
+.product-landing-day-summary__metric-label {
+  display: block;
+  margin-top: 0.25rem;
   color: var(--pi-muted-soft);
-  font-size: 10px;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.product-landing-day-summary__tile-detail {
+  display: block;
+  margin-top: 0.15rem;
+  color: var(--pi-muted);
+  font-size: 9px;
+  line-height: 1.2;
+}
+
+.product-landing-day-summary__live {
+  background: var(--pi-reading);
+  border: 1px solid rgba(110, 98, 88, 0.16);
+}
+
+.product-landing-day-summary__live-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: var(--pi-accent);
+  animation: product-landing-pulse 2.4s ease-in-out infinite;
+}
+
+.product-landing-day-summary__live-label {
+  color: var(--pi-accent-deep);
+}
+
+.product-landing-day-summary__live-caller {
+  color: var(--pi-ink);
+}
+
+.product-landing-day-summary__live-detail {
+  color: var(--pi-muted);
+}
+
+.product-landing-day-summary__metric--peak .product-landing-day-summary__metric-value {
+  font-size: 0.82rem;
+}
+
+.product-landing-day-summary__timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-landing-day-summary__timeline-item {
+  display: grid;
+  grid-template-columns: 1.1rem minmax(0, 1fr);
+  gap: 0.65rem;
+}
+
+.product-landing-day-summary__timeline-track {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding-top: 0.2rem;
+}
+
+.product-landing-day-summary__timeline-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: var(--pi-well);
+  box-shadow: 0 0 0 3px var(--pi-raised);
+}
+
+.product-landing-day-summary__timeline-item--active .product-landing-day-summary__timeline-dot {
+  background: var(--pi-accent);
+  animation: product-landing-pulse 2.4s ease-in-out infinite;
+}
+
+.product-landing-day-summary__timeline-item--queued .product-landing-day-summary__timeline-dot {
+  background: var(--pi-sand-deep);
+}
+
+.product-landing-day-summary__timeline-line {
+  position: absolute;
+  top: 0.65rem;
+  bottom: -0.35rem;
+  width: 1px;
+  background: var(--pi-line);
+}
+
+.product-landing-day-summary__timeline-label {
+  color: var(--pi-muted-soft);
+}
+
+.product-landing-day-summary__timeline-item--active .product-landing-day-summary__timeline-label {
+  color: var(--pi-accent-deep);
+}
+
+.product-landing-day-summary__timeline-time {
+  color: var(--pi-muted-soft);
+}
+
+.product-landing-day-summary__timeline-detail {
+  color: var(--pi-muted);
+}
+
+.product-landing-day-summary__timeline-item--active .product-landing-day-summary__timeline-detail {
+  color: var(--pi-ink-soft);
 }
 
 .product-landing-grid {
@@ -517,6 +675,8 @@
 @media (prefers-reduced-motion: reduce) {
   .product-landing-live-pill__dot,
   .product-landing-line-pill--live .product-landing-line-pill__dot,
+  .product-landing-day-summary__live-dot,
+  .product-landing-day-summary__timeline-item--active .product-landing-day-summary__timeline-dot,
   .product-voice-waveform__bar {
     animation: none;
   }

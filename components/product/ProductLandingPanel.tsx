@@ -6,16 +6,14 @@ import {
   PRODUCT_LANDING_AI_INPUT,
   PRODUCT_LANDING_ATTENTION,
   PRODUCT_LANDING_CONSOLE,
+  PRODUCT_LANDING_DAY_SUMMARY,
   PRODUCT_LANDING_GREETING,
-  PRODUCT_LANDING_HEADLINE,
   PRODUCT_LANDING_LINES,
   PRODUCT_LANDING_PRIMARY_CTA,
   PRODUCT_LANDING_QUEUE,
   PRODUCT_LANDING_SECONDARY_CTA,
-  PRODUCT_LANDING_SHIFT,
   PRODUCT_LANDING_STATUS_NOTE,
   PRODUCT_LANDING_STATUS_VALUE,
-  PRODUCT_LANDING_SUBHEAD,
   PRODUCT_LANDING_TRANSCRIPT,
 } from "@/lib/product/product-copy";
 import { PRODUCT_CLINIC_LABEL } from "@/lib/product/product-nav";
@@ -69,12 +67,158 @@ function WaveformBars() {
   );
 }
 
-function ShiftStat({ label, value }: { label: string; value: string }) {
+function VolumeChart({ values }: { values: readonly number[] }) {
+  const max = Math.max(...values, 1);
   return (
-    <div className="product-landing-stat">
-      <span className={`product-landing-stat__value ${suisseIntl.className}`}>{value}</span>
-      <span className={`product-landing-stat__label ${inter.className}`}>{label}</span>
+    <div className="product-landing-volume" aria-hidden>
+      {values.map((value, index) => (
+        <span
+          key={index}
+          className="product-landing-volume__bar"
+          style={{ height: `${Math.max(12, (value / max) * 100)}%` }}
+        />
+      ))}
     </div>
+  );
+}
+
+function ResolutionRing({ pct }: { pct: number }) {
+  return (
+    <div
+      className="product-landing-ring"
+      style={{ background: `conic-gradient(var(--pi-accent) ${pct}%, var(--pi-well) ${pct}%)` }}
+      aria-hidden
+    >
+      <div className="product-landing-ring__inner">
+        <span className={`product-landing-ring__value ${suisseIntl.className}`}>{pct}%</span>
+      </div>
+    </div>
+  );
+}
+
+function DaySummaryHero() {
+  const { last24h, todayAhead } = PRODUCT_LANDING_DAY_SUMMARY;
+
+  return (
+    <section className="product-landing-day-summary px-4 py-[clamp(1rem,1.8vw,1.5rem)]" aria-labelledby="day-summary-title">
+      <div className="product-landing-day-summary__card rounded-[18px] p-[clamp(0.85rem,1.6vw,1.15rem)]">
+        <div className="product-landing-day-summary__header flex flex-wrap items-end justify-between gap-3 px-1 pb-3">
+          <p
+            className={`product-landing-day-summary__greeting m-0 text-[clamp(1.1rem,0.9rem+0.7vw,1.45rem)] font-normal leading-none tracking-[-0.025em] ${suisseIntl.className}`}
+          >
+            {PRODUCT_LANDING_GREETING}
+          </p>
+          <p
+            id="day-summary-title"
+            className={`product-landing-day-summary__eyebrow m-0 text-[10px] font-semibold uppercase tracking-[0.14em] ${suisseIntl.className}`}
+          >
+            Last 24 hours · Today ahead
+          </p>
+        </div>
+
+        <div className="product-landing-day-summary__grid grid gap-3 md:grid-cols-2">
+          <div className="product-landing-day-summary__panel product-landing-day-summary__panel--past rounded-[14px] p-3">
+            <p
+              className={`product-landing-day-summary__panel-label m-0 text-[10px] font-semibold uppercase tracking-[0.12em] ${suisseIntl.className}`}
+            >
+              {last24h.label}
+            </p>
+
+            <div className="product-landing-day-summary__hero-metric mt-3 flex items-end gap-3">
+              <div className="product-landing-day-summary__total shrink-0">
+                <span className={`product-landing-day-summary__total-value ${suisseIntl.className}`}>
+                  {last24h.totalCalls}
+                </span>
+                <span className={`product-landing-day-summary__total-label ${inter.className}`}>calls</span>
+              </div>
+              <VolumeChart values={last24h.volume} />
+            </div>
+
+            <div className="product-landing-day-summary__visual-row mt-3 flex items-center gap-3">
+              <ResolutionRing pct={last24h.resolvedPct} />
+              <div className="product-landing-day-summary__tiles grid min-w-0 flex-1 grid-cols-3 gap-1.5">
+                {last24h.tiles.map((tile) => (
+                  <div key={tile.id} className="product-landing-day-summary__tile rounded-[10px] px-2 py-2">
+                    <span className={`product-landing-day-summary__tile-value ${suisseIntl.className}`}>
+                      {tile.value}
+                    </span>
+                    <span className={`product-landing-day-summary__tile-label ${inter.className}`}>{tile.label}</span>
+                    <span className={`product-landing-day-summary__tile-detail ${inter.className}`}>{tile.detail}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="product-landing-day-summary__panel product-landing-day-summary__panel--today rounded-[14px] p-3">
+            <p
+              className={`product-landing-day-summary__panel-label m-0 text-[10px] font-semibold uppercase tracking-[0.12em] ${suisseIntl.className}`}
+            >
+              {todayAhead.label}
+            </p>
+
+            <div className="product-landing-day-summary__live mt-3 rounded-[12px] px-3 py-2.5">
+              <div className="flex items-center gap-2">
+                <span className="product-landing-day-summary__live-dot" aria-hidden />
+                <span className={`product-landing-day-summary__live-label text-[10px] font-semibold uppercase tracking-[0.1em] ${suisseIntl.className}`}>
+                  Live now
+                </span>
+              </div>
+              <p className={`product-landing-day-summary__live-caller m-0 mt-1 text-[1.15rem] leading-none tracking-[-0.02em] ${suisseIntl.className}`}>
+                {todayAhead.liveCaller}
+              </p>
+              <p className={`product-landing-day-summary__live-detail m-0 mt-1 text-[11px] ${inter.className}`}>
+                {todayAhead.liveDetail}
+              </p>
+            </div>
+
+            <div className="product-landing-day-summary__today-metrics mt-3 grid grid-cols-3 gap-1.5">
+              <div className="product-landing-day-summary__metric rounded-[10px] px-2 py-2">
+                <span className={`product-landing-day-summary__metric-value ${suisseIntl.className}`}>{todayAhead.queue}</span>
+                <span className={`product-landing-day-summary__metric-label ${inter.className}`}>In queue</span>
+              </div>
+              <div className="product-landing-day-summary__metric rounded-[10px] px-2 py-2">
+                <span className={`product-landing-day-summary__metric-value ${suisseIntl.className}`}>{todayAhead.needsYou}</span>
+                <span className={`product-landing-day-summary__metric-label ${inter.className}`}>Need you</span>
+              </div>
+              <div className="product-landing-day-summary__metric product-landing-day-summary__metric--peak rounded-[10px] px-2 py-2">
+                <span className={`product-landing-day-summary__metric-value ${suisseIntl.className}`}>{todayAhead.peakWindow}</span>
+                <span className={`product-landing-day-summary__metric-label ${inter.className}`}>{todayAhead.peakDetail}</span>
+              </div>
+            </div>
+
+            <div className="product-landing-day-summary__timeline mt-3">
+              {todayAhead.timeline.map((item, index) => (
+                <div
+                  key={item.id}
+                  className={`product-landing-day-summary__timeline-item product-landing-day-summary__timeline-item--${item.state}`}
+                >
+                  <div className="product-landing-day-summary__timeline-track">
+                    <span className="product-landing-day-summary__timeline-dot" aria-hidden />
+                    {index < todayAhead.timeline.length - 1 ? (
+                      <span className="product-landing-day-summary__timeline-line" aria-hidden />
+                    ) : null}
+                  </div>
+                  <div className="product-landing-day-summary__timeline-body min-w-0 pb-2.5">
+                    <div className="flex items-baseline justify-between gap-2">
+                      <span className={`product-landing-day-summary__timeline-label text-[10px] font-semibold uppercase tracking-[0.08em] ${suisseIntl.className}`}>
+                        {item.label}
+                      </span>
+                      <span className={`product-landing-day-summary__timeline-time shrink-0 text-[10px] tabular-nums ${inter.className}`}>
+                        {item.time}
+                      </span>
+                    </div>
+                    <p className={`product-landing-day-summary__timeline-detail m-0 mt-0.5 truncate text-[11px] ${inter.className}`}>
+                      {item.detail}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -136,35 +280,7 @@ export function ProductLandingPanel() {
       </header>
 
       <div className="product-landing-body min-h-0 flex-1 overflow-y-auto">
-        <section className="product-landing-hero px-4 py-[clamp(1rem,1.8vw,1.5rem)]">
-          <div className="product-landing-hero__card rounded-[18px] px-[clamp(1rem,2vw,1.35rem)] py-[clamp(1rem,2vw,1.25rem)]">
-            <p
-              className={`product-landing-hero__greeting m-0 text-[10px] font-semibold uppercase tracking-[0.14em] ${suisseIntl.className}`}
-            >
-              {PRODUCT_LANDING_GREETING}
-            </p>
-            <h2
-              className={`product-landing-hero__headline m-0 mt-2 max-w-[34rem] text-[clamp(1.45rem,1rem+1.2vw,2rem)] font-normal leading-[1.08] tracking-[-0.03em] ${suisseIntl.className}`}
-            >
-              {PRODUCT_LANDING_HEADLINE}
-            </h2>
-            <p
-              className={`product-landing-hero__subhead m-0 mt-2.5 max-w-[42rem] text-[13px] leading-[1.5] ${inter.className}`}
-            >
-              {PRODUCT_LANDING_SUBHEAD}
-            </p>
-            <p className={`product-landing-hero__overnight m-0 mt-2 text-[12px] leading-[1.45] ${inter.className}`}>
-              {PRODUCT_LANDING_SHIFT.overnight}
-            </p>
-
-            <div className="product-landing-hero__stats mt-4 flex flex-wrap gap-2">
-              <ShiftStat label="Calls today" value={PRODUCT_LANDING_SHIFT.callsToday} />
-              <ShiftStat label="Resolved by Doe" value={PRODUCT_LANDING_SHIFT.resolvedPct} />
-              <ShiftStat label="In queue" value={PRODUCT_LANDING_SHIFT.waiting} />
-              <ShiftStat label="Needs you" value={PRODUCT_LANDING_SHIFT.forYou} />
-            </div>
-          </div>
-        </section>
+        <DaySummaryHero />
 
         <div className="product-landing-grid grid min-h-0 gap-4 px-4 pb-4 xl:grid-cols-[minmax(0,1.55fr)_minmax(18rem,0.95fr)]">
           <div className="product-landing-main flex min-h-0 flex-col gap-4">
@@ -333,7 +449,7 @@ export function ProductLandingPanel() {
                     Call queue
                   </p>
                   <p className={`product-landing-sidebar__hint m-0 mt-1 text-[12px] ${inter.className}`}>
-                    {PRODUCT_LANDING_SHIFT.waiting} callers waiting after the active line
+                    {PRODUCT_LANDING_DAY_SUMMARY.todayAhead.queue} callers waiting after the active line
                   </p>
                 </div>
               </div>
