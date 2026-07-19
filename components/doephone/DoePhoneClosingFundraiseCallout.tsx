@@ -41,7 +41,7 @@ function MailOutlineIcon({ className }: { className?: string }) {
   );
 }
 
-/** Bottom-left closing note — open typographic stack, no frame. */
+/** Bottom-right closing note — open typographic stack, no frame. */
 export function DoePhoneClosingFundraiseCallout() {
   const [copied, setCopied] = useState(false);
 
