@@ -321,9 +321,8 @@ const AgentCarouselOrb = memo(
     prev.paperSlotPriority === next.paperSlotPriority,
 );
 
-function trackTransform(trackIndex: number, isDesktop: boolean) {
-  const anchor = isDesktop ? "50vw" : "50%";
-  return `translate3d(calc(${anchor} - var(--home-agents-orb-half) - ${trackIndex} * var(--home-agents-orb-step)), 0, 0)`;
+function trackTransform(trackIndex: number) {
+  return `translate3d(calc(50vw - var(--home-agents-orb-half) - ${trackIndex} * var(--home-agents-orb-step)), 0, 0)`;
 }
 
 /** Hero agent orbs — fixed peek/grain per physical orb, smooth translate, invisible clone reset. */
@@ -508,7 +507,7 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
           <div
             className={trackClassName}
             onTransitionEnd={handleTrackTransitionEnd}
-            style={{ transform: trackTransform(trackIndex, isDesktop) }}
+            style={{ transform: trackTransform(trackIndex) }}
           >
             {trackOrbs.map((scheme, orbIndex) => {
               const distance = Math.abs(orbIndex - trackIndex);
