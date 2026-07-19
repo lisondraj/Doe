@@ -16,7 +16,6 @@ export const SHADER_WEBGL_SLOT_PRIORITY = {
 } as const;
 
 const PHONE_MAX_WEBGL_SLOTS = 8;
-const DESKTOP_HOME_MAX_WEBGL_SLOTS = 5;
 
 /** Hero-class shaders always keep headroom — carousel orbs cannot consume the last slot. */
 const HERO_CLASS_PRIORITY = SHADER_WEBGL_SLOT_PRIORITY.HERO_BACKGROUND;
@@ -36,20 +35,11 @@ export function isDoePhoneWebGLBudgetActive() {
   );
 }
 
-export function isDesktopHomeWebGLBudgetActive() {
-  if (typeof document === "undefined") return false;
-  return (
-    document.documentElement.getAttribute("data-layout") === "desktop" &&
-    document.documentElement.getAttribute("data-home-page") === "true"
-  );
-}
-
 function isShaderWebGLBudgetActive() {
-  return isDoePhoneWebGLBudgetActive() || isDesktopHomeWebGLBudgetActive();
+  return isDoePhoneWebGLBudgetActive();
 }
 
 function maxWebGLSlots() {
-  if (isDesktopHomeWebGLBudgetActive()) return DESKTOP_HOME_MAX_WEBGL_SLOTS;
   return PHONE_MAX_WEBGL_SLOTS;
 }
 
@@ -132,7 +122,7 @@ export function acquireShaderWebGLSlot(
     return true;
   }
 
-  if (isHomePhoneRoute() && !hasHomeHeroBackgroundSlot()) {
+  if (isDoePhoneWebGLBudgetActive() && isHomePhoneRoute() && !hasHomeHeroBackgroundSlot()) {
     return false;
   }
 

@@ -4193,8 +4193,8 @@ html[data-home-page][data-layout="desktop"] .home-feature-specialties__chip {
   font-size: clamp(0.74rem, 0.96vw, 0.85rem);
   font-weight: 400;
   line-height: 1;
-  letter-spacing: 0.045em;
-  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  text-transform: none;
   color: #4a3828;
   -webkit-font-smoothing: antialiased;
   backdrop-filter: blur(10px);
@@ -4231,8 +4231,22 @@ html[data-home-page][data-layout="desktop"] .home-feature-specialties__chip--ton
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 
+html[data-home-page][data-layout="desktop"] .home-feature-specialties__row--overflow {
+  width: 100%;
+  max-width: calc(
+    4 * var(--specialty-chip-min-width, 8rem) + 3 * var(--specialty-chip-gap, 0.62rem)
+  );
+}
+
+html[data-home-page][data-layout="desktop"] .home-feature-specialties__marquee--overflow {
+  flex-wrap: wrap;
+  row-gap: var(--specialty-chip-gap);
+}
+
 html[data-home-page][data-layout="desktop"] .home-feature-specialties__chip-label {
   white-space: nowrap;
+  text-transform: none;
+  letter-spacing: -0.01em;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -7311,8 +7325,8 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__chip 
   font-size: clamp(0.9rem, 2.45vmin, 1.05rem);
   font-weight: 400;
   line-height: 1;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  text-transform: none;
   color: #4a3828;
   -webkit-font-smoothing: antialiased;
   backdrop-filter: blur(8px);
@@ -7351,6 +7365,8 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__chip-
 
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-specialties__chip-label {
   white-space: nowrap;
+  text-transform: none;
+  letter-spacing: -0.01em;
 }
 
 @keyframes home-specialty-marquee {

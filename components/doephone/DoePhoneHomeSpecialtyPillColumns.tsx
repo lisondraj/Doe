@@ -42,24 +42,28 @@ const ALL_SPECIALTIES = [
   "Behavioral Health",
 ] as const;
 
-/** Desktop grid — extra labels before Occupational Therapy. */
+/** Desktop grid — extra labels; trimmed to avoid overflow on the wrap row. */
 const DESKTOP_EXTRA_SPECIALTIES = [
-  "Allergy & Immunology",
   "Anesthesiology",
   "Bariatric Surgery",
   "Critical Care",
   "Gastroenterology",
-  "Genetics",
-  "Hepatology",
-  "Interventional Radiology",
-  "Medical Oncology",
-  "Neonatology",
-  "Neurosurgery",
 ] as const;
 
 const PHONE_ROW_COUNT = 8;
 const PLASTIC_SURGERY_INDEX = ALL_SPECIALTIES.indexOf("Plastic Surgery");
-const DESKTOP_GRID_COLS = 5;
+const DESKTOP_GRID_COLS = 4;
+/** Former 5th column (right of Ophthalmology column) — chips move to the wrap row. */
+const DESKTOP_LEGACY_COLS = 5;
+const DESKTOP_OVERFLOW_DROP = new Set([
+  "Allergy & Immunology",
+  "Genetics",
+  "Neonatology",
+  "Interventional Radiology",
+  "Medical Oncology",
+  "Hepatology",
+  "Neurosurgery",
+]);
 const DESKTOP_SPECIALTIES = [
   ...ALL_SPECIALTIES.slice(0, PLASTIC_SURGERY_INDEX),
   ...DESKTOP_EXTRA_SPECIALTIES,
@@ -76,7 +80,6 @@ function buildSpecialtyRows(rowCount: number, labels: readonly string[]): readon
   return buckets;
 }
 
-/** Desktop — fill fixed-width rows so the tapestry reads as a centered rectangle. */
 function buildDesktopSpecialtyRows(
   labels: readonly string[],
   colCount: number,
@@ -89,6 +92,48 @@ function buildDesktopSpecialtyRows(
   return rows;
 }
 
+/** Desktop — 4-column grid; former 5th column wraps to a row beneath. */
+function buildDesktopSpecialtyLayout(labels: readonly string[]): {
+  mainRows: readonly (readonly string[])[];
+  overflowRow: readonly string[];
+} {
+  const mainLabels: string[] = [];
+  const overflowLabels: string[] = [];
+
+  labels.forEach((label, index) => {
+    if (index % DESKTOP_LEGACY_COLS === DESKTOP_LEGACY_COLS - 1) {
+      overflowLabels.push(label);
+    } else {
+      mainLabels.push(label);
+    }
+  });
+
+  return {
+    mainRows: buildDesktopSpecialtyRows(mainLabels, DESKTOP_GRID_COLS),
+    overflowRow: overflowLabels.filter((label) => !DESKTOP_OVERFLOW_DROP.has(label)).slice(0, 4),
+  };
+}
+
+function SpecialtyChip({
+  label,
+  rowIndex,
+  chipIndex,
+}: {
+  label: string;
+  rowIndex: number;
+  chipIndex: number;
+}) {
+  const toneIndex = (rowIndex + chipIndex) % CHIP_TONE_COUNT;
+
+  return (
+    <span
+      className={`home-feature-specialties__chip home-feature-specialties__chip--tone-${toneIndex} ${inter.className}`}
+    >
+      <span className="home-feature-specialties__chip-label">{label}</span>
+    </span>
+  );
+}
+
 /** Infinite horizontal marquee rows — warm editorial chips on beige. */
 export function DoePhoneHomeSpecialtyPillColumns({
   variant = "phone",
@@ -96,10 +141,10 @@ export function DoePhoneHomeSpecialtyPillColumns({
   variant?: "phone" | "desktop";
 }) {
   const isDesktop = variant === "desktop";
-  const rows = isDesktop
-    ? buildDesktopSpecialtyRows(DESKTOP_SPECIALTIES, DESKTOP_GRID_COLS)
-    : buildSpecialtyRows(PHONE_ROW_COUNT, ALL_SPECIALTIES);
-  const rowCount = rows.length;
+  const desktopLayout = isDesktop ? buildDesktopSpecialtyLayout(DESKTOP_SPECIALTIES) : null;
+  const rows = desktopLayout?.mainRows ?? buildSpecialtyRows(PHONE_ROW_COUNT, ALL_SPECIALTIES);
+  const overflowRow = desktopLayout?.overflowRow ?? [];
+  const rowCount = rows.length + (overflowRow.length > 0 ? 1 : 0);
 
   return (
     <div
@@ -130,22 +175,32 @@ export function DoePhoneHomeSpecialtyPillColumns({
                       } as CSSProperties)
                 }
               >
-                {sequence.map((label, chipIndex) => {
-                  const toneIndex = (rowIndex + chipIndex) % CHIP_TONE_COUNT;
-
-                  return (
-                    <span
-                      key={`${rowIndex}-${chipIndex}-${label}`}
-                      className={`home-feature-specialties__chip home-feature-specialties__chip--tone-${toneIndex} ${inter.className}`}
-                    >
-                      <span className="home-feature-specialties__chip-label">{label}</span>
-                    </span>
-                  );
-                })}
+                {sequence.map((label, chipIndex) => (
+                  <SpecialtyChip
+                    key={`${rowIndex}-${chipIndex}-${label}`}
+                    label={label}
+                    rowIndex={rowIndex}
+                    chipIndex={chipIndex}
+                  />
+                ))}
               </div>
             </div>
           );
         })}
+        {overflowRow.length > 0 ? (
+          <div className="home-feature-specialties__row home-feature-specialties__row--overflow">
+            <div className="home-feature-specialties__marquee home-feature-specialties__marquee--static home-feature-specialties__marquee--overflow">
+              {overflowRow.map((label, chipIndex) => (
+                <SpecialtyChip
+                  key={`overflow-${chipIndex}-${label}`}
+                  label={label}
+                  rowIndex={rows.length}
+                  chipIndex={chipIndex}
+                />
+              ))}
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );
