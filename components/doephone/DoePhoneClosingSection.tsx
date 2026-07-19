@@ -6,6 +6,7 @@ import { DoePhoneScrollRevealContent } from "@/components/doephone/DoePhoneScrol
 import {
   DOEPHONE_DISPLAY_WEIGHT_TW,
   DOEPHONE_SECTION_CAROUSEL_INSET_X,
+  DOEPHONE_SECTION_CONTENT_CENTER,
   DOEPHONE_SECTION_CONTENT_INSET,
   DOEPHONE_SECTION_TITLE_PB,
   DOEPHONE_SECTION_TITLE_PT,
@@ -85,7 +86,7 @@ export function DoePhoneClosingSection() {
       className={
         isDesktop
           ? `home-closing-section__fundraise-wrap shrink-0 ${DOEPHONE_SECTION_CONTENT_INSET} ${DOEPHONE_SECTION_TITLE_PB} layout-desktop:px-0 layout-desktop:pb-0`
-          : `home-closing-section__fundraise-wrap shrink-0 ${DOEPHONE_SECTION_CONTENT_INSET} ${DOEPHONE_SECTION_TITLE_PB}`
+          : `home-closing-section__fundraise-wrap shrink-0 ${DOEPHONE_SECTION_CAROUSEL_INSET_X}`
       }
     >
       <DoePhoneClosingFundraiseCallout />
@@ -98,7 +99,7 @@ export function DoePhoneClosingSection() {
       className={`home-closing-section home-closing-section--${variant} flex h-full min-h-0 flex-1 flex-col`}
       style={doephoneHomeScrollRevealStyleVars(variant) as CSSProperties}
     >
-      <div className="home-closing-section__layout flex min-h-0 flex-1 flex-col">
+      <div className={`home-closing-section__layout flex min-h-0 flex-1 flex-col${isDesktop ? "" : ` ${DOEPHONE_SECTION_CONTENT_CENTER}`}`}>
         {isDesktop ? (
           <>
             {titleBlock}
@@ -106,11 +107,11 @@ export function DoePhoneClosingSection() {
             {fundraiseBlock}
           </>
         ) : (
-          <>
+          <div className="home-closing-section__stack flex w-full shrink-0 flex-col">
             {titleBlock}
             {carouselBlock}
             {fundraiseBlock}
-          </>
+          </div>
         )}
       </div>
     </div>

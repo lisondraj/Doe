@@ -10265,34 +10265,45 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   height: 100%;
   gap: 0;
 }
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-closing-section__stack {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: clamp(0.85rem, 0.55rem + 1.15vmin, 1.25rem);
+  width: 100%;
+  flex: 0 0 auto;
+  min-height: 0;
+}
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-closing-section__title-wrap {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 4;
+  position: static;
   flex: 0 0 auto;
   margin: 0;
-  padding-top: max(1.95rem, calc(env(safe-area-inset-top, 0px) + calc(var(--app-vh, 100lvh) * 0.0725))) !important;
+  padding-top: 0 !important;
 }
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-closing-section__carousel-wrap {
-  flex: 1 1 auto !important;
+  flex: 0 0 auto !important;
   min-height: 0;
-  padding-top: clamp(7.25rem, calc(var(--app-vh, 100lvh) * 0.145), 8.75rem);
-  padding-bottom: clamp(4.5rem, calc(var(--app-vh, 100lvh) * 0.105), 5.75rem);
+  padding-top: 0;
+  padding-bottom: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-closing-section__fundraise-wrap {
-  width: min(100%, 17.5rem);
-  padding-bottom: max(1.95rem, calc(env(safe-area-inset-bottom, 0px) + calc(var(--app-vh, 100lvh) * 0.0725))) !important;
-  padding-right: max(var(--proto-phone-gutter-right), var(--proto-phone-gutter-left)) !important;
+  position: static;
+  right: auto;
+  bottom: auto;
+  z-index: auto;
+  width: 100%;
+  max-width: none;
+  padding: 0 !important;
+  pointer-events: auto;
 }
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-closing-section__fundraise-headline {
   margin: 0;
   min-width: 0;
   color: #1a1208 !important;
-  font-size: clamp(1.52rem, 4.65vw, 2.05rem) !important;
+  font-size: clamp(1.72rem, 5.15vw, 2.35rem) !important;
   font-weight: 350 !important;
   line-height: 1.04 !important;
   letter-spacing: -0.032em !important;
@@ -10310,8 +10321,8 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   position: relative;
 }
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-closing-section__fundraise-mail-outline-icon {
-  width: clamp(1.45rem, 4.35vw, 1.85rem);
-  height: clamp(1.45rem, 4.35vw, 1.85rem);
+  width: clamp(1.65rem, 4.85vw, 2.05rem);
+  height: clamp(1.65rem, 4.85vw, 2.05rem);
 }
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-closing-section__fundraise-copied {
   position: absolute;
