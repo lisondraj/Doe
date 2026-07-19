@@ -4668,7 +4668,9 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   display: flex;
   align-items: center;
   gap: var(--home-agents-orb-gap);
-  transition: transform var(--home-agents-carousel-duration) var(--home-agents-carousel-ease);
+  transition:
+    transform var(--home-agents-carousel-duration) var(--home-agents-carousel-ease),
+    opacity 180ms ease;
   backface-visibility: hidden;
   will-change: transform, opacity;
   transform: translate3d(0, 0, 0);

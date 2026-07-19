@@ -382,6 +382,7 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
   const swipeStartRef = useRef<{ x: number; y: number } | null>(null);
   const hasSectionRevealResetRef = useRef(false);
   const needsInitialPhoneSnapRef = useRef(true);
+  const phoneTrackSyncRafRef = useRef<number | null>(null);
 
   const active = trackOrbs[trackIndex];
 
@@ -418,6 +419,7 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
           });
           return;
         }
+        setInstantTransition(false);
         setPhoneTrackTranslateX(translateX);
       };
 
@@ -427,18 +429,33 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
       }
       applyTranslateX(nextTranslateX, shouldSnapInstant);
 
+      if (shouldSnapInstant || animatingRef.current) {
+        return;
+      }
+
       requestAnimationFrame(() => {
         const refinedTranslateX = readPhoneAgentsTrackTranslateX(viewport, stage);
         if (refinedTranslateX == null) {
           return;
         }
         if (Math.abs(refinedTranslateX - nextTranslateX) > 0.5) {
-          applyTranslateX(refinedTranslateX, shouldSnapInstant);
+          applyTranslateX(refinedTranslateX, false);
         }
       });
     },
-    [isPhoneLayout, trackIndex],
+    [isPhoneLayout],
   );
+
+  const schedulePhoneTrackGlide = useCallback(() => {
+    if (phoneTrackSyncRafRef.current != null) {
+      cancelAnimationFrame(phoneTrackSyncRafRef.current);
+    }
+
+    phoneTrackSyncRafRef.current = requestAnimationFrame(() => {
+      phoneTrackSyncRafRef.current = null;
+      syncPhoneTrackPosition({ snapInstant: false });
+    });
+  }, [syncPhoneTrackPosition]);
 
   useLayoutEffect(() => {
     if (!isPhoneLayout || !layoutReady) {
@@ -519,11 +536,19 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
   }, [isPhoneLayout, layoutReady, revealed, syncPhoneTrackPosition, carouselInView, heroShaderReady]);
 
   useLayoutEffect(() => {
-    if (!isPhoneLayout || !layoutReady) {
+    if (!isPhoneLayout || !layoutReady || !instantTransition) {
       return;
     }
-    syncPhoneTrackPosition({ snapInstant: instantTransition });
+    syncPhoneTrackPosition({ snapInstant: true });
   }, [instantTransition, isPhoneLayout, layoutReady, syncPhoneTrackPosition, trackIndex]);
+
+  useLayoutEffect(() => {
+    return () => {
+      if (phoneTrackSyncRafRef.current != null) {
+        cancelAnimationFrame(phoneTrackSyncRafRef.current);
+      }
+    };
+  }, []);
 
   useLayoutEffect(() => {
     if (!layoutReady) {
@@ -578,7 +603,8 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
     setIsAnimating(true);
     setInstantTransition(false);
     setTrackIndex((current) => current - 1);
-  }, []);
+    schedulePhoneTrackGlide();
+  }, [schedulePhoneTrackGlide]);
 
   const goNext = useCallback(() => {
     if (animatingRef.current) {
@@ -588,7 +614,8 @@ export function DoePhoneHomeAgentsCarousel({ revealed = false }: { revealed?: bo
     setIsAnimating(true);
     setInstantTransition(false);
     setTrackIndex((current) => current + 1);
-  }, []);
+    schedulePhoneTrackGlide();
+  }, [schedulePhoneTrackGlide]);
 
   const handleTrackTransitionEnd = useCallback(
     (event: TransitionEvent<HTMLDivElement>) => {
