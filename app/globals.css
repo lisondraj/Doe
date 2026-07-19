@@ -2623,7 +2623,7 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--active-ag
   min-height: 0;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible;
 }
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--active-agents .home-feature-shader-band__active-agents-content > .doephone-section-reveal--carousel {
   display: flex;
@@ -8377,8 +8377,13 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
 @keyframes doephone-section-reveal-in {
   0% {
     opacity: 0;
-    filter: blur(24px);
-    transform: translateY(2.75rem);
+    filter: blur(14px);
+    transform: translateY(1.35rem);
+  }
+
+  42% {
+    opacity: 0.92;
+    filter: blur(4px);
   }
 
   100% {
@@ -8390,8 +8395,13 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
 @keyframes doephone-scroll-reveal-lift-in {
   0% {
     opacity: 0;
-    filter: blur(16px);
-    transform: translateY(1.75rem);
+    filter: blur(12px);
+    transform: translateY(1.1rem);
+  }
+
+  40% {
+    opacity: 0.9;
+    filter: blur(3px);
   }
 
   100% {
@@ -8402,76 +8412,90 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
 }
 .doephone-section-reveal {
   opacity: 0;
-  filter: blur(24px);
-  transform: translateY(2.75rem);
+  filter: blur(14px);
+  transform: translateY(1.35rem);
   will-change: opacity, filter, transform;
+  overflow: visible;
+  padding-bottom: 0.35rem;
+  margin-bottom: -0.35rem;
 }
 .doephone-section-reveal--in.doephone-section-reveal--title {
   animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 1.75s)
-    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-title-delay, 0ms) both;
+    cubic-bezier(0.16, 1, 0.3, 1) var(--doephone-section-reveal-title-delay, 0ms) both;
 }
 .doephone-section-reveal--in.doephone-section-reveal--carousel {
   animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 1.75s)
-    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-carousel-delay, 700ms) both;
+    cubic-bezier(0.16, 1, 0.3, 1) var(--doephone-section-reveal-carousel-delay, 700ms) both;
 }
 .doephone-section-reveal--in.doephone-section-reveal--menu {
   animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 1.75s)
-    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-menu-delay, 2.85s) both;
+    cubic-bezier(0.16, 1, 0.3, 1) var(--doephone-section-reveal-menu-delay, 2.85s) both;
 }
 .doephone-section-reveal--in.doephone-section-reveal--badge {
   animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 1.75s)
-    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-badge-delay, 700ms) both;
+    cubic-bezier(0.16, 1, 0.3, 1) var(--doephone-section-reveal-badge-delay, 700ms) both;
 }
 .doephone-section-reveal--in.doephone-section-reveal--input {
   animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 1.75s)
-    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-input-delay, 2.85s) both;
+    cubic-bezier(0.16, 1, 0.3, 1) var(--doephone-section-reveal-input-delay, 2.85s) both;
 }
 .doephone-section-reveal--in.doephone-section-reveal--agents-carousel {
   animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 1.75s)
-    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-agents-carousel-delay, 0ms) both;
+    cubic-bezier(0.16, 1, 0.3, 1) var(--doephone-section-reveal-agents-carousel-delay, 0ms) both;
 }
 .doephone-section-reveal--in.doephone-section-reveal--agents-orbs {
   animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 2.15s)
-    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-agents-orbs-delay, 0ms) both;
+    cubic-bezier(0.16, 1, 0.3, 1) var(--doephone-section-reveal-agents-orbs-delay, 0ms) both;
 }
 .doephone-section-reveal--in.doephone-section-reveal--agents-label {
   animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 2.15s)
-    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-agents-label-delay, 540ms) both;
+    cubic-bezier(0.16, 1, 0.3, 1) var(--doephone-section-reveal-agents-label-delay, 540ms) both;
 }
 .doephone-section-reveal--in.doephone-section-reveal--agents-nav {
   animation: doephone-section-reveal-in var(--doephone-section-reveal-duration, 2.15s)
-    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-section-reveal-agents-nav-delay, 1040ms) both;
+    cubic-bezier(0.16, 1, 0.3, 1) var(--doephone-section-reveal-agents-nav-delay, 1040ms) both;
 }
 .doephone-section-reveal--in.doephone-section-reveal--hoverable {
-  transition: transform var(--doephone-scroll-reveal-hover-duration, 0.4s)
-    cubic-bezier(0.22, 1, 0.36, 1);
+  overflow: visible;
+  transition:
+    transform var(--doephone-scroll-reveal-hover-duration, 0.32s) cubic-bezier(0.16, 1, 0.3, 1),
+    filter var(--doephone-scroll-reveal-hover-duration, 0.32s) ease;
 }
 .doephone-section-reveal--in.doephone-section-reveal--hoverable:hover {
-  transform: translateY(-7px);
+  transform: translateY(-5px);
 }
 /* Shared unblur + rise with optional hover lift (hero orbs, carousel chrome). */
 .doephone-reveal-lift {
   opacity: 0;
-  filter: blur(16px);
-  transform: translateY(1.75rem);
+  filter: blur(12px);
+  transform: translateY(1.1rem);
   will-change: opacity, filter, transform;
+  overflow: visible;
+  padding-bottom: 0.35rem;
+  margin-bottom: -0.35rem;
 }
 .doephone-reveal-lift--in {
   animation: doephone-scroll-reveal-lift-in var(--doephone-scroll-reveal-lift-duration, 2.15s)
-    cubic-bezier(0.22, 1, 0.36, 1) var(--doephone-reveal-lift-delay, 0ms) both;
+    cubic-bezier(0.16, 1, 0.3, 1) var(--doephone-reveal-lift-delay, 0ms) both;
 }
 .doephone-reveal-lift--in.doephone-reveal-lift--hoverable {
-  transition: transform var(--doephone-scroll-reveal-hover-duration, 0.4s)
-    cubic-bezier(0.22, 1, 0.36, 1);
+  overflow: visible;
+  transition:
+    transform var(--doephone-scroll-reveal-hover-duration, 0.32s) cubic-bezier(0.16, 1, 0.3, 1),
+    filter var(--doephone-scroll-reveal-hover-duration, 0.32s) ease;
 }
 .doephone-reveal-lift--in.doephone-reveal-lift--hoverable:hover {
-  transform: translateY(-7px);
+  transform: translateY(-5px);
 }
 /* Desktop home — scroll reveals without blur (same motion, less compositing cost). */
 @keyframes doephone-section-reveal-in-desktop {
   0% {
     opacity: 0;
-    transform: translateY(2.75rem);
+    transform: translateY(1.35rem);
+  }
+
+  55% {
+    opacity: 0.94;
   }
 
   100% {
@@ -8482,7 +8506,11 @@ html[data-doeforvc-always-phone="true"] .doephone-hero-headline {
 @keyframes doephone-scroll-reveal-lift-in-desktop {
   0% {
     opacity: 0;
-    transform: translateY(1.75rem);
+    transform: translateY(1.1rem);
+  }
+
+  55% {
+    opacity: 0.94;
   }
 
   100% {
@@ -8521,6 +8549,26 @@ html[data-home-page][data-layout="desktop"] .home-active-agents-pills-scale {
 html[data-home-page] .doephone-scroll-reveal-lift {
   width: 100%;
   display: block;
+  overflow: visible;
+}
+html[data-home-page] .home-feature-card-section__content,
+html[data-home-page] .home-feature-shader-band__feature-shell,
+html[data-home-page] .home-feature-shader-band__feature-content,
+html[data-home-page] .home-feature-shader-band__active-agents-content,
+html[data-home-page] .home-feature-card-section__specialties-main {
+  overflow: visible;
+}
+html[data-home-page]:not([data-layout="desktop"]) .home-feature-card-section--ui-panel .doephone-section-reveal--carousel {
+  animation-delay: var(--doephone-section-reveal-title-delay, 0ms) !important;
+}
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band--active-agents .home-feature-shader-band__active-agents-content {
+  overflow: visible;
+}
+html[data-home-page][data-layout="desktop"] .home-feature-card-section__inner {
+  padding-bottom: calc(var(--desktop-section-pad-y) + 0.65rem) !important;
+}
+html[data-home-page][data-layout="desktop"] .home-feature-shader-band__feature-shell {
+  padding-bottom: calc(var(--desktop-section-pad-y) + 0.35rem) !important;
 }
 html[data-home-page] .hero-speaking-orbs__node-reveal {
   width: 100%;

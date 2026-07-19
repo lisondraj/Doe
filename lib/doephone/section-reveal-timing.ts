@@ -3,10 +3,10 @@
 export const DOEPHONE_SECTION_REVEAL_DURATION_MS = 1750;
 export const DOEPHONE_SECTION_REVEAL_GAP_MS = 400;
 
-/** Home scroll content reveal — slower unblur + rise below hero. */
-export const DOEPHONE_HOME_SCROLL_REVEAL_DURATION_MS = 2150;
-export const DOEPHONE_HOME_SCROLL_REVEAL_GAP_MS = 460;
-export const DOEPHONE_HOME_SCROLL_REVEAL_HOVER_MS = 400;
+/** Home scroll content reveal — unblur + rise below hero. */
+export const DOEPHONE_HOME_SCROLL_REVEAL_DURATION_MS = 1520;
+export const DOEPHONE_HOME_SCROLL_REVEAL_GAP_MS = 120;
+export const DOEPHONE_HOME_SCROLL_REVEAL_HOVER_MS = 320;
 
 export const DOEPHONE_SECTION_REVEAL_TITLE_DELAY_MS = 0;
 export const DOEPHONE_SECTION_REVEAL_CAROUSEL_DELAY_MS = 700;
@@ -54,8 +54,8 @@ export const DOEPHONE_AGENTS_REVEAL_PEEK_DELAY_MS = 280;
 /** Agents carousel — orbs → label + chevrons. */
 export const DOEPHONE_AGENTS_REVEAL_CAROUSEL_DELAY_MS = 0;
 export const DOEPHONE_AGENTS_REVEAL_ORBS_DELAY_MS = 0;
-export const DOEPHONE_AGENTS_REVEAL_LABEL_DELAY_MS = 540;
-export const DOEPHONE_AGENTS_REVEAL_NAV_DELAY_MS = 1040;
+export const DOEPHONE_AGENTS_REVEAL_LABEL_DELAY_MS = 280;
+export const DOEPHONE_AGENTS_REVEAL_NAV_DELAY_MS = 520;
 
 /** Hero dial orbs — load-in after headline begins settling. */
 export const DOEPHONE_HERO_ORB_REVEAL_BASE_DELAY_MS = 720;

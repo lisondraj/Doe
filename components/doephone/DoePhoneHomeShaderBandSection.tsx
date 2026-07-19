@@ -78,8 +78,8 @@ export function DoePhoneHomeShaderBandSection({
   const sectionLabel = feature ? SHADER_BAND_LABELS[feature] : undefined;
   const [titleLine1, titleLine2] = feature ? SHADER_BAND_TITLES[feature] : ["", ""];
   const [layoutVariant, setLayoutVariant] = useState<DoePhoneVariant>(readBootstrappedDoePhoneVariant);
-  const { ref: revealRef, revealed } = useDoePhoneSectionReveal(0.18, {
-    rootMargin: "0px 0px 8% 0px",
+  const { ref: revealRef, revealed } = useDoePhoneSectionReveal(0.14, {
+    rootMargin: "0px 0px 12% 0px",
   });
   const revealStyle = doephoneHomeScrollRevealStyleVars() as CSSProperties;
   const visualLayout = layoutVariant === "desktop" ? "desktop" : "phone";

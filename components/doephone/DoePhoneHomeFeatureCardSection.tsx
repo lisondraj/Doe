@@ -48,9 +48,9 @@ export function DoePhoneHomeFeatureCardSection({
 }) {
   const shaderVariant = protoGrainGradientVariant(slide.id);
   const [layoutVariant, setLayoutVariant] = useState<DoePhoneVariant>(readBootstrappedDoePhoneVariant);
-  const { ref: revealRef, revealed } = useDoePhoneSectionReveal(0.18, {
+  const { ref: revealRef, revealed } = useDoePhoneSectionReveal(0.14, {
     skipInitialReveal: isFirstBelowHero,
-    rootMargin: "0px 0px 8% 0px",
+    rootMargin: "0px 0px 12% 0px",
   });
   const revealStyle = (
     showAgentsCarousel ? doephoneAgentsRevealStyleVars() : doephoneHomeScrollRevealStyleVars()

@@ -25,8 +25,8 @@ import { useLayoutEffect, useState, type CSSProperties } from "react";
 
 /** Closing beige section — stacked posts on iPhone; carousel + fundraise on desktop. */
 export function DoePhoneClosingSection() {
-  const { ref: revealRef, revealed } = useDoePhoneSectionReveal(0.18, {
-    rootMargin: "0px 0px 8% 0px",
+  const { ref: revealRef, revealed } = useDoePhoneSectionReveal(0.14, {
+    rootMargin: "0px 0px 12% 0px",
   });
   const [isDesktop, setIsDesktop] = useState(() => readBootstrappedDoePhoneVariant() === "desktop");
 
