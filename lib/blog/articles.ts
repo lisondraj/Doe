@@ -1,5 +1,6 @@
 import type { WorkflowCarouselDesignBackdrop } from "@/lib/workflow-carousel-design-backdrops";
 import {
+  CARE_COORDINATION_BACKDROP,
   DOEPHONE_HERO_BACKDROP,
   HEY_CAROUSEL_BACKDROP,
   DESIGN3_BACKDROP,
@@ -180,6 +181,46 @@ export const BLOG_ARTICLES: readonly BlogArticle[] = [
       { type: "p", text: "Doe consolidates these streams without requiring practices to abandon any of them. The patient portal, fax line, and phone queue all feed into the same triage layer. Doe assigns priority, drafts a suggested response, and routes each item to the right person. When the nurse opens the inbox in the morning, she sees her work—not everyone's work with no way to tell which items need her specifically." },
       { type: "p-link", text: "The drafts Doe writes are not generic. They reference the patient's chart, use the practice's tone, and anticipate follow-up questions. Learn more about how Doe personalizes every response on our features page.", linkAnchor: "features page", linkHref: "/features" },
       { type: "p", text: "The unified inbox is included in all Doe plans. Fax integration requires a one-time setup with your existing fax number or a new number provisioned through Doe. Phone integration is available in beta." },
+    ],
+  },
+  {
+    slug: "agents-built-for-clinical-workflows",
+    eyebrow: "2026 / Product",
+    title: "Agents Built for Clinical Workflows",
+    author: "Sarah Kim",
+    date: "February 20, 2026",
+    backdrop: CARE_COORDINATION_BACKDROP,
+    body: [
+      {
+        type: "p",
+        text: "General-purpose assistants break down the moment a task touches a payer rule, a scope-of-practice boundary, or a chart that spans three systems. Doe agents are purpose-built for the workflows clinics run every day.",
+      },
+      {
+        type: "p",
+        text: "Each agent inherits the same patient context, triage rules, and audit trail as the inbox and chart. Scheduling agents know which slots are held for urgent visits. Prior auth agents know which labs a payer will reject without a recent A1c. Front-desk agents know when to escalate to a nurse instead of guessing.",
+      },
+      { type: "h2", text: "Specialty Without Silos" },
+      {
+        type: "ul",
+        items: [
+          "Agents share one patient thread—no duplicate context across tools",
+          "Escalations respect license and scope before routing work",
+          "Every action is cited back to chart facts and payer criteria",
+          "Teams configure tone, templates, and guardrails per specialty",
+          "New workflows ship as agents, not one-off scripts",
+        ],
+      },
+      { type: "image", design: 1 },
+      {
+        type: "p",
+        text: "We designed agents as composable layers on top of the same infrastructure that powers ambient documentation and unified messaging. When a referral fax arrives, the inbox agent can summarize it, the scheduling agent can offer times, and the prior auth agent can begin a packet—all without the patient story splitting across tabs.",
+      },
+      {
+        type: "p-link",
+        text: "Clinical workflow agents are rolling out specialty by specialty through 2026. See which agents are live for your practice on the agents page.",
+        linkAnchor: "agents page",
+        linkHref: "/features",
+      },
     ],
   },
 ] as const;

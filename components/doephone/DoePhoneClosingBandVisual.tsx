@@ -1,15 +1,28 @@
 import { JoinInternLineGraphic } from "@/components/join/JoinInternLineGraphic";
-import { DOEPHONE_SECTION_CLOSING_FEATURE_HEIGHT } from "@/lib/doephone/closing-section-styles";
 import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
+import { inter } from "@/lib/home/fonts";
 
-/** Join intern track line art — beige fill, sized for closing section cards. */
-export function DoePhoneClosingBandVisual({ graphic }: { graphic: 0 | 1 | 2 | 3 }) {
+/** Join intern track line art — beige card with optional bottom-left caption. */
+export function DoePhoneClosingBandVisual({
+  graphic,
+  title,
+  fillHeight = false,
+}: {
+  graphic: 0 | 1 | 2 | 3;
+  title?: string;
+  /** Fill parent carousel slide height instead of fixed band height. */
+  fillHeight?: boolean;
+}) {
   return (
     <div
-      className={`relative w-full overflow-hidden border border-[#D9D4CC] bg-[#EBE7E0] ${DOEPHONE_SECTION_CLOSING_FEATURE_HEIGHT} ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
-      aria-hidden
+      className={`home-closing-section__card-box relative w-full overflow-hidden border border-[#D9D4CC] bg-[#EBE7E0] ${DOEPHONE_SECTION_CAROUSEL_RADIUS}${
+        fillHeight ? " h-full min-h-0" : ""
+      }`}
     >
-      <JoinInternLineGraphic variant={graphic} brandAccent />
+      <div className="home-closing-section__card-art pointer-events-none absolute inset-0" aria-hidden>
+        <JoinInternLineGraphic variant={graphic} brandAccent />
+      </div>
+      {title ? <p className={`home-closing-section__card-caption ${inter.className}`}>{title}</p> : null}
     </div>
   );
 }

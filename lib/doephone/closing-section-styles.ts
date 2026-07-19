@@ -1,3 +1,3 @@
-/** Closing section featured cards — taller than footer carousel default. */
+/** Closing section featured cards — caption sits inside the box at bottom-left. */
 export const DOEPHONE_SECTION_CLOSING_FEATURE_HEIGHT =
-  "min-h-[clamp(24.75rem,64vmin,36.3rem)] h-[clamp(24.75rem,64vmin,36.3rem)] iphone-page:min-h-[clamp(23.1rem,60.5vmin,34.1rem)] iphone-page:h-[clamp(23.1rem,60.5vmin,34.1rem)]";
+  "min-h-[clamp(22rem,58vmin,32rem)] h-[clamp(22rem,58vmin,32rem)] iphone-page:min-h-[clamp(20.5rem,54.5vmin,30rem)] iphone-page:h-[clamp(20.5rem,54.5vmin,30rem)]";

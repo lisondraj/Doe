@@ -90,11 +90,26 @@ export const DOEPHONE_COMMUNICATION_SLIDES: readonly DoePhoneCommunicationSlide[
 
 export const DOEPHONE_COMMUNICATION_SLIDE_COUNT = DOEPHONE_COMMUNICATION_SLIDES.length;
 
+type CommunicationSlideId = (typeof DOEPHONE_COMMUNICATION_SLIDES)[number]["id"];
+
+function pickCommunicationSlides(ids: readonly CommunicationSlideId[]): DoePhoneCommunicationSlide[] {
+  return ids.map((id) => {
+    const slide = DOEPHONE_COMMUNICATION_SLIDES.find((entry) => entry.id === id);
+    if (!slide) throw new Error(`Unknown communication slide: ${id}`);
+    return slide;
+  });
+}
+
 /** Home (iPhone + desktop) — feature stack stops before closing; billing → integrate omitted. */
+const DOEPHONE_HOME_FEATURE_SLIDE_IDS = [
+  "agents",
+  "inbox",
+  "front-desk",
+  "ambient",
+] as const satisfies readonly CommunicationSlideId[];
+
 export const DOEPHONE_HOME_FEATURE_SLIDES: readonly DoePhoneCommunicationSlide[] =
-  DOEPHONE_COMMUNICATION_SLIDES.filter(
-    (slide) => slide.id !== "billing" && slide.id !== "integrate",
-  );
+  pickCommunicationSlides(DOEPHONE_HOME_FEATURE_SLIDE_IDS);
 
 export const DOEPHONE_HOME_FEATURE_SLIDE_COUNT = DOEPHONE_HOME_FEATURE_SLIDES.length;
 
@@ -108,11 +123,16 @@ export const DOEPHONE_COMMUNICATION_SLIDES_DESKTOP: readonly DoePhoneCommunicati
   DOEPHONE_COMMUNICATION_SLIDES[5],
 ];
 
-/** Desktop home feature stack — same omissions as {@link DOEPHONE_HOME_FEATURE_SLIDES}. */
+/** Desktop home feature stack — inbox before ambient; specialty after ambient. */
+const DOEPHONE_HOME_FEATURE_SLIDE_IDS_DESKTOP = [
+  "agents",
+  "inbox",
+  "ambient",
+  "front-desk",
+] as const satisfies readonly CommunicationSlideId[];
+
 export const DOEPHONE_HOME_FEATURE_SLIDES_DESKTOP: readonly DoePhoneCommunicationSlide[] =
-  DOEPHONE_COMMUNICATION_SLIDES_DESKTOP.filter(
-    (slide) => slide.id !== "billing" && slide.id !== "integrate",
-  );
+  pickCommunicationSlides(DOEPHONE_HOME_FEATURE_SLIDE_IDS_DESKTOP);
 
 /** Lookup slide backdrop by id — stable when slide order changes. */
 export function doephoneCommunicationBackdrop(id: (typeof DOEPHONE_COMMUNICATION_SLIDES)[number]["id"]) {
