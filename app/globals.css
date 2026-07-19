@@ -10308,6 +10308,12 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   width: clamp(1.45rem, 4.35vw, 1.85rem);
   height: clamp(1.45rem, 4.35vw, 1.85rem);
 }
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-closing-section__fundraise-copied {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 0.35rem);
+  font-size: clamp(0.72rem, 0.58rem + 0.55vmin, 0.82rem);
+}
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .home-closing-section__fundraise-copied-icon {
   width: 0.82rem;
   height: 0.82rem;
