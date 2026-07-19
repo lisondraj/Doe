@@ -101,6 +101,9 @@ function NavChromeStrip({
   ctaLayout = "single",
   mobileNavChrome,
   navActionLinksEnabled = true,
+  investorsDropdownEnabled = true,
+  navShowMailIcon = true,
+  navShowInvestorsCta = true,
   brandName = "Doe",
   brandFontClass,
   investorsHref,
@@ -120,6 +123,9 @@ function NavChromeStrip({
   ctaLayout?: SiteNavCtaLayout;
   mobileNavChrome?: MobileNavActionChrome;
   navActionLinksEnabled?: boolean;
+  investorsDropdownEnabled?: boolean;
+  navShowMailIcon?: boolean;
+  navShowInvestorsCta?: boolean;
   brandName?: string;
   brandFontClass?: string;
   investorsHref?: string;
@@ -179,7 +185,14 @@ function NavChromeStrip({
         {subpageVariant ? (
           <SubpageMobileNavRow variant={subpageVariant} showLinks={!showMenu || !subpageWithButton} />
         ) : ctaLayout === "main-home" || ctaLayout === "subpage-about" ? (
-          <MobileNavActionRow {...mobileNavChrome} linksEnabled={navActionLinksEnabled} investorsHref={investorsHref} />
+          <MobileNavActionRow
+            {...mobileNavChrome}
+            linksEnabled={navActionLinksEnabled}
+            investorsHref={investorsHref}
+            dropdownEnabled={investorsDropdownEnabled}
+            showMailIcon={navShowMailIcon}
+            showInvestorsCta={navShowInvestorsCta}
+          />
         ) : ctaLayout === "triple" ? (
           <>
             <Link href={WAITLIST_PATH} className={DOEPHONE_NAV_TRIPLE_CTA_CLASS}>
@@ -287,6 +300,9 @@ export default function DoeIphoneSiteNav({
   navSheetItems,
   mobileNavChrome,
   navActionLinksEnabled = true,
+  investorsDropdownEnabled = true,
+  navShowMailIcon = true,
+  navShowInvestorsCta = true,
   brandName = "Doe",
   brandFontClass,
   navChromeTheme = "light",
@@ -306,6 +322,9 @@ export default function DoeIphoneSiteNav({
   navSheetItems?: readonly NavSheetItem[];
   mobileNavChrome?: MobileNavActionChrome;
   navActionLinksEnabled?: boolean;
+  investorsDropdownEnabled?: boolean;
+  navShowMailIcon?: boolean;
+  navShowInvestorsCta?: boolean;
   brandName?: string;
   brandFontClass?: string;
   navChromeTheme?: "light" | "dark";
@@ -665,6 +684,9 @@ export default function DoeIphoneSiteNav({
       ctaLayout={ctaLayout}
       mobileNavChrome={mobileNavChrome}
       navActionLinksEnabled={navActionLinksEnabled}
+      investorsDropdownEnabled={investorsDropdownEnabled}
+      navShowMailIcon={navShowMailIcon}
+      navShowInvestorsCta={navShowInvestorsCta}
       brandName={brandName}
       brandFontClass={brandFontClass}
       investorsHref={investorsHref}
@@ -850,6 +872,9 @@ export default function DoeIphoneSiteNav({
           ctaLayout={ctaLayout}
           mobileNavChrome={mobileNavChrome}
           navActionLinksEnabled={navActionLinksEnabled}
+          investorsDropdownEnabled={investorsDropdownEnabled}
+          navShowMailIcon={navShowMailIcon}
+          navShowInvestorsCta={navShowInvestorsCta}
           brandName={brandName}
           brandFontClass={brandFontClass}
           investorsHref={investorsHref}

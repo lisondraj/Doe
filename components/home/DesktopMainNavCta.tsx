@@ -18,6 +18,7 @@ export function DesktopMainNavCta({
   divider,
   linksEnabled = true,
   punched = false,
+  dropdownEnabled = true,
 }: {
   bg: string;
   fg: string;
@@ -25,13 +26,15 @@ export function DesktopMainNavCta({
   divider: string;
   linksEnabled?: boolean;
   punched?: boolean;
+  dropdownEnabled?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const primary = DESKTOP_MAIN_CTA_MENU_ITEMS[0];
+  const radius = punched ? "rounded-full" : "rounded-md";
 
   useEffect(() => {
-    if (!open) return;
+    if (!dropdownEnabled || !open) return;
 
     const onPointerDown = (event: MouseEvent) => {
       if (!rootRef.current?.contains(event.target as Node)) {
@@ -51,14 +54,41 @@ export function DesktopMainNavCta({
       document.removeEventListener("mousedown", onPointerDown);
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [open]);
+  }, [dropdownEnabled, open]);
+
+  if (!dropdownEnabled) {
+    return (
+      <div className="relative flex shrink-0 items-center">
+        <div
+          className={`relative flex items-stretch overflow-visible ${radius}${punched ? " proto-nav-cta-shell" : ""}`}
+          style={{ boxShadow: shadow }}
+        >
+          {linksEnabled ? (
+            <Link
+              href={primary.href}
+              className={`flex ${DESKTOP_NAV_ACTION_HEIGHT_TW} items-center px-7 text-[0.9375rem] font-medium proto-nav-cta-label no-underline transition-opacity hover:opacity-90 ${radius}`}
+              style={{ backgroundColor: bg, color: fg }}
+            >
+              {primary.label}
+            </Link>
+          ) : (
+            <span
+              className={`flex ${DESKTOP_NAV_ACTION_HEIGHT_TW} items-center px-7 text-[0.9375rem] font-medium proto-nav-cta-label ${radius}`}
+              style={{ backgroundColor: bg, color: fg }}
+              aria-disabled="true"
+            >
+              {primary.label}
+            </span>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   const dropdownHoverClass =
     fg.toLowerCase() === "#fff" || fg.toLowerCase() === "#ffffff"
       ? "hover:bg-white/10"
       : "hover:bg-black/[0.04]";
-
-  const radius = punched ? "rounded-full" : "rounded-md";
 
   return (
     <div ref={rootRef} className="relative flex shrink-0 items-center">

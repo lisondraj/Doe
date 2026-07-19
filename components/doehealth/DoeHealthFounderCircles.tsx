@@ -1,5 +1,6 @@
 "use client";
 
+import { HeroLinkedInIcon } from "@/components/home/icons/HeroSocialIcons";
 import { HeroDialOrbGrainShader } from "@/components/doephone/HeroDialOrbGrainShader";
 import { DOEHEALTH_FOUNDERS } from "@/lib/doehealth/doehealth-founders";
 import {
@@ -47,7 +48,18 @@ export function DoeHealthFounderCircles() {
       {DOEHEALTH_FOUNDERS.map((founder) => (
         <div key={founder.name} className="doehealth-founder-circles__item">
           <DoeHealthFounderOrb scheme={founder.orb} />
-          <p className={`doehealth-founder-circles__name m-0 ${suisseIntl.className}`}>{founder.name}</p>
+          <div className="doehealth-founder-circles__name-row">
+            <p className={`doehealth-founder-circles__name m-0 ${suisseIntl.className}`}>{founder.name}</p>
+            <a
+              href={founder.linkedinUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${founder.name} on LinkedIn`}
+              className="doehealth-founder-circles__linkedin"
+            >
+              <HeroLinkedInIcon />
+            </a>
+          </div>
           <p className={`doehealth-founder-circles__role m-0 ${inter.className}`}>{founder.role}</p>
         </div>
       ))}

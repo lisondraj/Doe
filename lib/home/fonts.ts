@@ -1,10 +1,17 @@
-import { DM_Sans, Inter, Lora, Outfit, Plus_Jakarta_Sans } from "next/font/google";
+import { DM_Sans, Inter, Lora, Outfit, Plus_Jakarta_Sans, Source_Serif_4 } from "next/font/google";
 import localFont from "next/font/local";
 
 export const lora = Lora({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   style: ["normal", "italic"],
+});
+
+/** doehealth closing carousel — serif distinct from Lora wordmark. */
+export const sourceSerif4 = Source_Serif_4({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  display: "swap",
 });
 
 /** Hero career carousel — lightest available Lora italic. */

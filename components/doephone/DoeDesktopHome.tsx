@@ -12,17 +12,31 @@ import type { DoeHomeHeroHeadline } from "@/components/doephone/DoePhoneMobileVi
 export function DoeDesktopHome({
   logoLink = true,
   navActionLinksEnabled = true,
+  navShowMailIcon = true,
+  navShowInvestorsCta = true,
   heroHeadline,
   shaderBeforeCardSlideIds,
   disableCarouselInteractions,
+  hideActiveAgentsVisual,
   activeAgentsDescription,
+  activeAgentsBeyond,
+  activeAgentsSubheading,
+  activeAgentsRoadmapDiagram,
+  activeAgentsClosingLabelCarousel,
 }: {
   logoLink?: boolean;
   navActionLinksEnabled?: boolean;
+  navShowMailIcon?: boolean;
+  navShowInvestorsCta?: boolean;
   heroHeadline?: DoeHomeHeroHeadline;
   shaderBeforeCardSlideIds?: readonly string[];
   disableCarouselInteractions?: boolean;
+  hideActiveAgentsVisual?: boolean;
   activeAgentsDescription?: string;
+  activeAgentsBeyond?: string;
+  activeAgentsSubheading?: string;
+  activeAgentsRoadmapDiagram?: boolean;
+  activeAgentsClosingLabelCarousel?: boolean;
 } = {}) {
   return (
     <div className="doe-desktop-root relative overflow-x-hidden bg-[#faf0d8]">
@@ -40,6 +54,8 @@ export function DoeDesktopHome({
         <DesktopPunchedSiteNav
           logoLink={logoLink}
           navActionLinksEnabled={navActionLinksEnabled}
+          navShowMailIcon={navShowMailIcon}
+          navShowInvestorsCta={navShowInvestorsCta}
         />
       </div>
 
@@ -49,7 +65,12 @@ export function DoeDesktopHome({
           variant="desktop"
           shaderBeforeCardSlideIds={shaderBeforeCardSlideIds}
           disableCarouselInteractions={disableCarouselInteractions}
+          hideActiveAgentsVisual={hideActiveAgentsVisual}
           activeAgentsDescription={activeAgentsDescription}
+          activeAgentsBeyond={activeAgentsBeyond}
+          activeAgentsSubheading={activeAgentsSubheading}
+          activeAgentsRoadmapDiagram={activeAgentsRoadmapDiagram}
+          activeAgentsClosingLabelCarousel={activeAgentsClosingLabelCarousel}
         />
 
         <section id="doe-vision" className={DOEPHONE_BEIGE_SECTION} aria-label="Closing">

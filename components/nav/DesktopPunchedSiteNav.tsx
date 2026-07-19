@@ -45,12 +45,16 @@ function easeInOutCubic(t: number) {
 export function DesktopPunchedSiteNav({
   logoLink = true,
   navActionLinksEnabled = true,
+  navShowMailIcon = true,
+  navShowInvestorsCta = true,
   className = "",
   ariaLabel = "Primary",
   alwaysPunched = false,
 }: {
   logoLink?: boolean;
   navActionLinksEnabled?: boolean;
+  navShowMailIcon?: boolean;
+  navShowInvestorsCta?: boolean;
   className?: string;
   ariaLabel?: string;
   /** About (and similar) — stay punched; home morphs after hero. */
@@ -171,6 +175,8 @@ export function DesktopPunchedSiteNav({
               {...cta}
               punched={alwaysPunched}
               linksEnabled={navActionLinksEnabled}
+              showMailIcon={navShowMailIcon}
+              showInvestorsCta={navShowInvestorsCta}
             />
           </div>
         </div>

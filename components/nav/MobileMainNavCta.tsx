@@ -30,6 +30,7 @@ export function MobileMainNavCta({
   divider = NAV_CTA_DIVIDER,
   linksEnabled = true,
   investorsHref,
+  dropdownEnabled = true,
 }: {
   bg?: string;
   fg?: string;
@@ -37,6 +38,7 @@ export function MobileMainNavCta({
   divider?: string;
   linksEnabled?: boolean;
   investorsHref?: string;
+  dropdownEnabled?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -47,7 +49,7 @@ export function MobileMainNavCta({
   };
 
   useEffect(() => {
-    if (!open) return;
+    if (!dropdownEnabled || !open) return;
 
     const onPointerDown = (event: MouseEvent) => {
       if (!rootRef.current?.contains(event.target as Node)) {
@@ -67,7 +69,36 @@ export function MobileMainNavCta({
       document.removeEventListener("mousedown", onPointerDown);
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [open]);
+  }, [dropdownEnabled, open]);
+
+  if (!dropdownEnabled) {
+    return (
+      <div className="relative flex shrink-0 items-center">
+        <div
+          className={`${MOBILE_NAV_SPLIT_SHELL_TW} proto-nav-cta-shell`}
+          style={shadow !== "none" ? { boxShadow: shadow } : undefined}
+        >
+          {linksEnabled ? (
+            <Link
+              href={primary.href}
+              className={`${MOBILE_NAV_CTA_LABEL_CLASS} rounded-md transition-[opacity,background-color,color] duration-300`}
+              style={chromeStyle}
+            >
+              {DESKTOP_INVESTORS_CTA_LABEL}
+            </Link>
+          ) : (
+            <span
+              className={`${MOBILE_NAV_CTA_LABEL_CLASS} rounded-md transition-[opacity,background-color,color] duration-300`}
+              style={chromeStyle}
+              aria-disabled="true"
+            >
+              {DESKTOP_INVESTORS_CTA_LABEL}
+            </span>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   const dropdownHoverClass =
     fg != null && (fg.toLowerCase() === "#fff" || fg.toLowerCase() === "#ffffff")

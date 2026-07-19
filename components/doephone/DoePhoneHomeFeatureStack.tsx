@@ -17,13 +17,23 @@ export function DoePhoneHomeFeatureStack({
   variant = "phone",
   shaderBeforeCardSlideIds = [],
   disableCarouselInteractions = false,
+  hideActiveAgentsVisual = false,
   activeAgentsDescription,
+  activeAgentsBeyond,
+  activeAgentsSubheading,
+  activeAgentsRoadmapDiagram,
+  activeAgentsClosingLabelCarousel,
 }: {
   shaderTheme?: "default" | "dusk";
   variant?: DoePhoneVariant;
   shaderBeforeCardSlideIds?: readonly string[];
   disableCarouselInteractions?: boolean;
+  hideActiveAgentsVisual?: boolean;
   activeAgentsDescription?: string;
+  activeAgentsBeyond?: string;
+  activeAgentsSubheading?: string;
+  activeAgentsRoadmapDiagram?: boolean;
+  activeAgentsClosingLabelCarousel?: boolean;
 }) {
   const slides = variant === "desktop" ? DOEPHONE_HOME_FEATURE_SLIDES_DESKTOP : DOEPHONE_HOME_FEATURE_SLIDES;
 
@@ -52,6 +62,13 @@ export function DoePhoneHomeFeatureStack({
             slideId={slide.id}
             shaderTheme={shaderTheme}
             activeAgentsDescription={slide.id === "agents" ? activeAgentsDescription : undefined}
+            activeAgentsBeyond={slide.id === "agents" ? activeAgentsBeyond : undefined}
+            activeAgentsSubheading={slide.id === "agents" ? activeAgentsSubheading : undefined}
+            activeAgentsRoadmapDiagram={slide.id === "agents" ? activeAgentsRoadmapDiagram : undefined}
+            activeAgentsClosingLabelCarousel={
+              slide.id === "agents" ? activeAgentsClosingLabelCarousel : undefined
+            }
+            hideActiveAgentsVisual={slide.id === "agents" ? hideActiveAgentsVisual : undefined}
           />
         );
 

@@ -5,16 +5,19 @@ import { DoePhoneHomeGuardrailsVisual } from "@/components/doephone/DoePhoneHome
 import { DoePhoneHomeLabAlertsVisual } from "@/components/doephone/DoePhoneHomeLabAlertsVisual";
 import { DoePhoneHomePriorAuthVisual } from "@/components/doephone/DoePhoneHomePriorAuthVisual";
 import { DoePhoneReviewPackageVisual } from "@/components/doephone/DoePhoneReviewPackageVisual";
+import { DoeHealthVoiceRoadmapDiagram } from "@/components/doehealth/DoeHealthVoiceRoadmapDiagram";
+import { DoeHealthClosingLabelCarousel } from "@/components/doehealth/DoeHealthClosingLabelCarousel";
 import { DoePhoneScrollRevealContent } from "@/components/doephone/DoePhoneScrollRevealLift";
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import type { DoePhoneCommunicationSlide } from "@/lib/doephone/communication-carousel";
 import {
   DOEPHONE_DISPLAY_WEIGHT_TW,
   DOEPHONE_MAIN_PAGE_VIEWPORT_SECTION,
+  DOEPHONE_CLOSING_FUNDRAISE_INSET_X,
   DOEPHONE_SECTION_CAROUSEL_INSET_X,
   DOEPHONE_VIEWPORT_SECTION,
 } from "@/lib/doephone/section-styles";
-import { suisseIntl, inter } from "@/lib/home/fonts";
+import { dmSans, lora, suisseIntl } from "@/lib/home/fonts";
 import { doephoneHomeScrollRevealStyleVars, doephoneHomeSectionRevealObserverOptions } from "@/lib/doephone/section-reveal-timing";
 import { useDoePhoneSectionReveal } from "@/lib/doephone/use-doe-phone-section-reveal";
 import { doeHomeDuskShaderBandSurface, doeHomeShaderBandSurface } from "@/lib/proto/proto-shader-backdrop-colors";
@@ -65,10 +68,20 @@ export function DoePhoneHomeShaderBandSection({
   slideId,
   shaderTheme = "default",
   activeAgentsDescription,
+  activeAgentsBeyond,
+  activeAgentsSubheading,
+  hideActiveAgentsVisual = false,
+  activeAgentsRoadmapDiagram = false,
+  activeAgentsClosingLabelCarousel = false,
 }: {
   slideId: DoePhoneCommunicationSlide["id"];
   shaderTheme?: "default" | "dusk";
   activeAgentsDescription?: string;
+  activeAgentsBeyond?: string;
+  activeAgentsSubheading?: string;
+  hideActiveAgentsVisual?: boolean;
+  activeAgentsRoadmapDiagram?: boolean;
+  activeAgentsClosingLabelCarousel?: boolean;
 }) {
   const feature = SHADER_BAND_FEATURES[slideId];
   const shader =
@@ -152,17 +165,49 @@ export function DoePhoneHomeShaderBandSection({
             </h2>
             {activeAgentsDescription ? (
               <p
-                className={`home-feature-shader-band__feature-description m-0 text-left ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${inter.className}`}
+                className={`home-feature-shader-band__feature-description m-0 text-left ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${suisseIntl.className}`}
               >
                 {activeAgentsDescription}
               </p>
             ) : null}
+            {activeAgentsSubheading ? (
+              <p
+                className={`home-feature-shader-band__feature-subheading m-0 text-left font-normal leading-[1.06] tracking-[-0.026em] ${DOEPHONE_SECTION_CAROUSEL_INSET_X} ${dmSans.className}`}
+              >
+                {activeAgentsSubheading}
+              </p>
+            ) : null}
+            {activeAgentsRoadmapDiagram ? (
+              <DoeHealthVoiceRoadmapDiagram className={DOEPHONE_SECTION_CAROUSEL_INSET_X} />
+            ) : null}
+            {activeAgentsBeyond ? (
+              <div
+                className={`home-feature-shader-band__feature-closing flex w-full min-w-0 flex-col items-end ${DOEPHONE_CLOSING_FUNDRAISE_INSET_X}`}
+              >
+                <p
+                  className={`home-feature-shader-band__feature-subheading home-feature-shader-band__feature-subheading--closing m-0 text-right font-normal leading-[1.06] tracking-[-0.026em] ${dmSans.className}`}
+                >
+                  {activeAgentsBeyond}
+                </p>
+                <div className="home-feature-shader-band__feature-closing-brand-row">
+                  <p
+                    className={`home-feature-shader-band__feature-brand m-0 text-right ${lora.className}`}
+                    aria-hidden
+                  >
+                    Doe
+                  </p>
+                  {activeAgentsClosingLabelCarousel ? <DoeHealthClosingLabelCarousel /> : null}
+                </div>
+              </div>
+            ) : null}
           </DoePhoneScrollRevealContent>
-          <div className="home-feature-shader-band__feature-content home-feature-shader-band__active-agents-content flex min-h-0 flex-1 flex-col">
-            <DoePhoneScrollRevealContent revealed={revealed} segment="carousel" className="h-full min-h-0 w-full flex-1">
-              <DoePhoneReviewPackageVisual layout={visualLayout} showTitle={false} />
-            </DoePhoneScrollRevealContent>
-          </div>
+          {hideActiveAgentsVisual ? null : (
+            <div className="home-feature-shader-band__feature-content home-feature-shader-band__active-agents-content flex min-h-0 flex-1 flex-col">
+              <DoePhoneScrollRevealContent revealed={revealed} segment="carousel" className="h-full min-h-0 w-full flex-1">
+                <DoePhoneReviewPackageVisual layout={visualLayout} showTitle={false} />
+              </DoePhoneScrollRevealContent>
+            </div>
+          )}
         </div>
       ) : null}
 

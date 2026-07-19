@@ -18,6 +18,7 @@ import { DOE_HOME_DUSK_OVERFLOW_SURFACE } from "@/lib/home/doe-page-colors";
 import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-viewport";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 import { useDesignersStaticNav } from "@/lib/designers/use-designers-static-nav";
+import { useDoeHealthLandingNavContext } from "@/lib/doehealth/doehealth-nav-chrome";
 import { PROTO_FONT_CLASS, PROTO_NAV_LOGO_FONT_CLASS } from "@/lib/proto/proto-font";
 import { PROTO_INVEST_PATH } from "@/lib/site-domains";
 
@@ -34,20 +35,35 @@ export function DoePhoneMobileView({
   afterHero,
   shaderBeforeCardSlideIds,
   disableCarouselInteractions,
+  hideActiveAgentsVisual,
   activeAgentsDescription,
+  activeAgentsBeyond,
+  activeAgentsSubheading,
+  activeAgentsRoadmapDiagram,
+  activeAgentsClosingLabelCarousel,
 }: {
   variant?: "home" | "proto";
   heroHeadline?: DoeHomeHeroHeadline;
   afterHero?: ReactNode;
   shaderBeforeCardSlideIds?: readonly string[];
   disableCarouselInteractions?: boolean;
+  hideActiveAgentsVisual?: boolean;
   activeAgentsDescription?: string;
+  activeAgentsBeyond?: string;
+  activeAgentsSubheading?: string;
+  activeAgentsRoadmapDiagram?: boolean;
+  activeAgentsClosingLabelCarousel?: boolean;
 }) {
   const isProto = variant === "proto";
 
   useDoePhoneLayoutViewport();
   useDoePhoneStableViewport(true);
   const staticNav = useDesignersStaticNav();
+  const isDoeHealthNav = useDoeHealthLandingNavContext();
+  const doeHomeNavChrome =
+    variant === "home"
+      ? { navShowInvestorsCta: false as const, navShowMailIcon: isDoeHealthNav }
+      : {};
 
   useLayoutEffect(() => {
     const html = document.documentElement;
@@ -110,6 +126,7 @@ export function DoePhoneMobileView({
         logoLink={isProto ? true : !staticNav}
         navActionLinksEnabled={isProto ? true : !staticNav}
         investorsHref={isProto ? PROTO_INVEST_PATH : undefined}
+        {...doeHomeNavChrome}
         frostedScrollNav
         frostedScrollPastHero={isProto}
         frostedNavAlwaysPunched={variant === "home"}
@@ -134,7 +151,12 @@ export function DoePhoneMobileView({
           shaderTheme="dusk"
           shaderBeforeCardSlideIds={shaderBeforeCardSlideIds}
           disableCarouselInteractions={disableCarouselInteractions}
+          hideActiveAgentsVisual={hideActiveAgentsVisual}
           activeAgentsDescription={activeAgentsDescription}
+          activeAgentsBeyond={activeAgentsBeyond}
+          activeAgentsSubheading={activeAgentsSubheading}
+          activeAgentsRoadmapDiagram={activeAgentsRoadmapDiagram}
+          activeAgentsClosingLabelCarousel={activeAgentsClosingLabelCarousel}
         />
       )}
 

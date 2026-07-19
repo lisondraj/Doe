@@ -4925,6 +4925,12 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   }
 }
 /* iPhone — /doehealth intro band (Suisse sans, left-aligned). */
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doehealth-intro-band {
+  --doehealth-intro-ink: #3d2e1f;
+  --doehealth-intro-ink-body: rgba(61, 46, 31, 0.9);
+  --doehealth-intro-ink-muted: rgba(61, 46, 31, 0.66);
+  --doehealth-intro-ink-faint: rgba(61, 46, 31, 0.46);
+}
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doehealth-intro-band__shell {
   padding-inline: var(--proto-phone-gutter-left);
   padding-block: clamp(0.2rem, 0.65vmin, 0.38rem);
@@ -4934,7 +4940,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .do
   flex: 0 0 auto;
   margin: 0 0 clamp(0.45rem, 0.28rem + 0.75vmin, 0.72rem) !important;
   padding-top: 0 !important;
-  color: #1a1208 !important;
+  color: var(--doehealth-intro-ink) !important;
   font-size: var(--home-iphone-section-title-size) !important;
   line-height: var(--home-iphone-section-title-leading) !important;
   letter-spacing: var(--home-iphone-section-title-tracking) !important;
@@ -4945,7 +4951,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .do
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doehealth-intro-band__body {
   width: 100%;
   max-width: min(22rem, calc(var(--app-vw, 100vw) * 0.72));
-  color: rgba(26, 18, 8, 0.88);
+  color: var(--doehealth-intro-ink-body);
   font-size: clamp(1.08rem, 0.73rem + 1.64vmin, 1.43rem);
   font-weight: 400;
   letter-spacing: -0.014em;
@@ -4999,15 +5005,42 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .do
   transform: none;
   transform-origin: center center;
 }
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doehealth-founder-circles__name-row {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(0.38rem, 0.24rem + 0.55vmin, 0.52rem);
+  min-width: 0;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doehealth-founder-circles__linkedin {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  color: var(--doehealth-intro-ink-faint);
+  transition: color 160ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doehealth-founder-circles__linkedin:hover {
+  color: var(--doehealth-intro-ink-muted);
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doehealth-founder-circles__linkedin:focus-visible {
+  outline: 2px solid rgba(61, 46, 31, 0.28);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doehealth-founder-circles__linkedin svg {
+  width: 0.92em;
+  height: 0.92em;
+}
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doehealth-founder-circles__name {
-  color: #1a1208;
+  color: var(--doehealth-intro-ink);
   font-size: clamp(0.96rem, 0.73rem + 0.93vmin, 1.17rem);
   font-weight: 350;
   letter-spacing: -0.02em;
   line-height: 1.08;
 }
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doehealth-founder-circles__role {
-  color: rgba(26, 18, 8, 0.62);
+  color: var(--doehealth-intro-ink-muted);
   font-size: clamp(0.81rem, 0.69rem + 0.49vmin, 0.93rem);
   font-weight: 400;
   letter-spacing: -0.012em;
@@ -5528,13 +5561,256 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   flex: 0 0 auto;
   width: 100%;
   max-width: min(28rem, calc(var(--app-vw, 100vw) * 0.84));
-  margin: 0 0 clamp(1rem, 0.65rem + 1.35vmin, 1.45rem);
+  margin: 0 0 clamp(1.45rem, 0.95rem + 1.95vmin, 2.05rem);
   color: rgba(255, 248, 240, 0.88);
-  font-size: clamp(1.08rem, 0.73rem + 1.64vmin, 1.43rem);
+  font-size: clamp(1.04rem, 0.70rem + 1.52vmin, 1.38rem);
   font-weight: 400;
-  letter-spacing: -0.014em;
+  letter-spacing: -0.018em;
   line-height: 1.18;
   text-wrap: pretty;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .home-feature-shader-band__feature-subheading {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: min(28rem, calc(var(--app-vw, 100vw) * 0.84));
+  margin: 0 0 clamp(2.35rem, 1.45rem + 3.1vmin, 3.25rem);
+  padding-top: 0 !important;
+  color: #ffffff !important;
+  font-size: clamp(1.58rem, 0.92rem + 2.35vmin, 2.06rem) !important;
+  font-weight: 400 !important;
+  line-height: 1.06 !important;
+  letter-spacing: -0.026em !important;
+  text-wrap: pretty;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents:has(.doehealth-voice-roadmap)
+  .home-feature-shader-band__feature-subheading:not(.home-feature-shader-band__feature-subheading--closing) {
+  margin-bottom: clamp(1.05rem, 0.68rem + 1.15vmin, 1.45rem);
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .home-feature-shader-band__feature-closing {
+  align-items: flex-end;
+  width: 100%;
+  max-width: none;
+  gap: clamp(0.55rem, 0.38rem + 0.72vmin, 0.88rem);
+  margin: 0 0 clamp(2rem, 1.25rem + 2.65vmin, 2.85rem);
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .home-feature-shader-band__feature-subheading--closing {
+  width: auto;
+  max-width: min(28rem, calc(var(--app-vw, 100vw) * 0.84));
+  margin: 0 !important;
+  text-align: right;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .home-feature-shader-band__feature-brand {
+  color: #ffffff;
+  font-size: clamp(2.75rem, 1.55rem + 5.25vmin, 4.15rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+  text-align: right;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .home-feature-shader-band__feature-closing-brand-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: clamp(0.72rem, 0.48rem + 0.95vmin, 1.05rem);
+  max-width: 100%;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .doehealth-closing-label-carousel {
+  --doehealth-closing-label-step: clamp(2.35rem, 1.85rem + 1.35vmin, 2.75rem);
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: min(10.5rem, calc(var(--app-vw, 100vw) * 0.38));
+  color: rgba(255, 248, 240, 0.82);
+  font-size: clamp(0.92rem, 0.76rem + 0.58vmin, 1.08rem);
+  font-weight: 400;
+  letter-spacing: -0.012em;
+  line-height: 1.08;
+  text-align: left;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .doehealth-closing-label-carousel__viewport {
+  height: var(--doehealth-closing-label-step);
+  overflow: hidden;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .doehealth-closing-label-carousel__track {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .doehealth-closing-label-carousel__slide {
+  display: flex;
+  align-items: flex-end;
+  height: var(--doehealth-closing-label-step);
+  padding-bottom: 0.06em;
+  text-wrap: balance;
+  line-height: 1.12;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents:has(.home-feature-shader-band__feature-closing)
+  .doehealth-voice-roadmap {
+  margin-bottom: clamp(1.35rem, 0.88rem + 1.45vmin, 1.85rem);
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .doehealth-voice-roadmap {
+  --doehealth-roadmap-ink-deep: #1a1208;
+  --doehealth-roadmap-ink: #3d2e1f;
+  --doehealth-roadmap-sand: #f5e6d0;
+  --doehealth-roadmap-sand-soft: rgba(245, 230, 208, 0.78);
+  --doehealth-roadmap-line: rgba(245, 230, 208, 0.38);
+  --doehealth-roadmap-drop: clamp(0.62rem, 0.42rem + 0.75vmin, 0.82rem);
+  width: 100%;
+  max-width: min(28rem, calc(var(--app-vw, 100vw) * 0.84));
+  margin: 0 0 clamp(2rem, 1.25rem + 2.65vmin, 2.85rem);
+  padding-top: clamp(0.15rem, 0.08rem + 0.35vmin, 0.35rem);
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .doehealth-voice-roadmap__focus-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .doehealth-voice-roadmap__focus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(100%, 15.25rem);
+  min-height: clamp(3.15rem, 2.55rem + 2.05vmin, 3.85rem);
+  margin: 0 auto;
+  padding: clamp(0.88rem, 0.58rem + 1.05vmin, 1.15rem) clamp(1.65rem, 1.15rem + 1.55vmin, 2.15rem);
+  border-radius: clamp(0.42rem, 0.34rem + 0.32vmin, 0.58rem);
+  background: linear-gradient(168deg, #322618 0%, var(--doehealth-roadmap-ink-deep) 100%);
+  border: 1px solid rgba(245, 230, 208, 0.26);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 12px 32px rgba(26, 18, 8, 0.32);
+  color: var(--doehealth-roadmap-sand);
+  font-size: clamp(1.18rem, 0.88rem + 1.05vmin, 1.42rem);
+  font-weight: 500;
+  letter-spacing: -0.024em;
+  line-height: 1;
+  text-align: center;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .doehealth-voice-roadmap__focus-stem {
+  display: block;
+  width: 1px;
+  height: clamp(1.05rem, 0.72rem + 1.05vmin, 1.35rem);
+  margin: 0;
+  background: var(--doehealth-roadmap-line);
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .doehealth-voice-roadmap__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .doehealth-voice-roadmap__row {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .doehealth-voice-roadmap__row-link {
+  display: block;
+  width: 1px;
+  height: clamp(0.85rem, 0.58rem + 0.85vmin, 1.05rem);
+  margin: 0 auto;
+  background: var(--doehealth-roadmap-line);
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .doehealth-voice-roadmap__row-bar {
+  display: block;
+  width: calc(100% * 2 / 3);
+  height: 1px;
+  margin: 0 auto;
+  background: var(--doehealth-roadmap-line);
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .doehealth-voice-roadmap__next {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.42rem, 0.26rem + 0.62vmin, 0.62rem);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .doehealth-voice-roadmap__row + .doehealth-voice-roadmap__row {
+  margin-top: clamp(0.42rem, 0.28rem + 0.55vmin, 0.58rem);
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .doehealth-voice-roadmap__next-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .doehealth-voice-roadmap__next-drop {
+  display: block;
+  width: 1px;
+  height: var(--doehealth-roadmap-drop);
+  margin: 0;
+  background: var(--doehealth-roadmap-line);
+  flex-shrink: 0;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .home-feature-shader-band--active-agents
+  .doehealth-voice-roadmap__next-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: clamp(2.05rem, 1.62rem + 1.35vmin, 2.45rem);
+  padding: clamp(0.38rem, 0.26rem + 0.48vmin, 0.52rem) clamp(0.28rem, 0.18rem + 0.38vmin, 0.42rem);
+  border-radius: clamp(0.28rem, 0.22rem + 0.22vmin, 0.38rem);
+  background: rgba(26, 18, 8, 0.42);
+  border: 1px solid rgba(245, 230, 208, 0.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  color: var(--doehealth-roadmap-sand-soft);
+  font-size: clamp(0.64rem, 0.52rem + 0.42vmin, 0.76rem);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.08;
+  text-align: center;
+  text-wrap: balance;
 }
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--guardrails .home-feature-shader-band__feature-title {
   flex: 0 0 auto;

@@ -6,7 +6,10 @@ import { ABOUT_CONTACT_EMAIL } from "@/lib/about/about-contact";
 import { MobileMainNavCta } from "@/components/nav/MobileMainNavCta";
 import { MobileNavEmailButton } from "@/components/nav/MobileNavEmailButton";
 import { NavEmailCopyDropdown } from "@/components/nav/NavEmailCopyDropdown";
-import { NAV_EMAIL_DROPDOWN_ATTACH_RIGHT_TW } from "@/lib/subpage/nav-email-dropdown-styles";
+import {
+  NAV_EMAIL_DROPDOWN_ATTACH_RIGHT_TW,
+  NAV_EMAIL_DROPDOWN_ATTACH_TW,
+} from "@/lib/subpage/nav-email-dropdown-styles";
 
 const MOBILE_NAV_ACTION_ROW_GAP =
   "gap-3 iphone-page:gap-[clamp(0.55rem,0.42rem+0.72vmin,0.82rem)]";
@@ -26,7 +29,16 @@ export function MobileNavActionRow({
   divider,
   linksEnabled = true,
   investorsHref,
-}: MobileNavActionChrome & { linksEnabled?: boolean; investorsHref?: string } = {}) {
+  dropdownEnabled = true,
+  showMailIcon = true,
+  showInvestorsCta = true,
+}: MobileNavActionChrome & {
+  linksEnabled?: boolean;
+  investorsHref?: string;
+  dropdownEnabled?: boolean;
+  showMailIcon?: boolean;
+  showInvestorsCta?: boolean;
+} = {}) {
   const chrome = { bg, fg, shadow, divider };
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -78,17 +90,34 @@ export function MobileNavActionRow({
     }
   }, [copyEmail, open]);
 
+  if (!showMailIcon && !showInvestorsCta) {
+    return null;
+  }
+
+  const emailDropdownAttach = showInvestorsCta
+    ? NAV_EMAIL_DROPDOWN_ATTACH_RIGHT_TW
+    : NAV_EMAIL_DROPDOWN_ATTACH_TW;
+
   return (
     <div
       ref={rowRef}
       className={`relative flex shrink-0 items-center ${MOBILE_NAV_ACTION_ROW_GAP}${open ? " proto-nav-action-row--open" : ""}`}
     >
-      <MobileNavEmailButton {...chrome} open={open} onToggle={handleMailToggle} />
-      <MobileMainNavCta {...chrome} linksEnabled={linksEnabled} investorsHref={investorsHref} />
-      {open ? (
+      {showMailIcon ? (
+        <MobileNavEmailButton {...chrome} open={open} onToggle={handleMailToggle} />
+      ) : null}
+      {showInvestorsCta ? (
+        <MobileMainNavCta
+          {...chrome}
+          linksEnabled={linksEnabled}
+          investorsHref={investorsHref}
+          dropdownEnabled={dropdownEnabled}
+        />
+      ) : null}
+      {showMailIcon && open ? (
         <NavEmailCopyDropdown
           copied={copied}
-          attachClassName={NAV_EMAIL_DROPDOWN_ATTACH_RIGHT_TW}
+          attachClassName={emailDropdownAttach}
           bg={bg}
           fg={fg}
           divider={divider}

@@ -69,14 +69,24 @@ export function DoePhoneRouter({
   afterHero,
   shaderBeforeCardSlideIds,
   disableCarouselInteractions,
+  hideActiveAgentsVisual,
   activeAgentsDescription,
+  activeAgentsBeyond,
+  activeAgentsSubheading,
+  activeAgentsRoadmapDiagram,
+  activeAgentsClosingLabelCarousel,
 }: {
   TopBanner?: DoeHomeTopBannerComponent;
   heroHeadline?: DoeHomeHeroHeadline;
   afterHero?: ReactNode;
   shaderBeforeCardSlideIds?: readonly string[];
   disableCarouselInteractions?: boolean;
+  hideActiveAgentsVisual?: boolean;
   activeAgentsDescription?: string;
+  activeAgentsBeyond?: string;
+  activeAgentsSubheading?: string;
+  activeAgentsRoadmapDiagram?: boolean;
+  activeAgentsClosingLabelCarousel?: boolean;
 } = {}) {
   /** Defer until client reads bootstrap `data-layout` — avoids SSR phone shell flash on desktop. */
   const [variant, setVariant] = useState<DoePhoneVariant | null>(null);
@@ -151,7 +161,12 @@ export function DoePhoneRouter({
         heroHeadline={heroHeadline}
         shaderBeforeCardSlideIds={shaderBeforeCardSlideIds}
         disableCarouselInteractions={disableCarouselInteractions}
+        hideActiveAgentsVisual={hideActiveAgentsVisual}
         activeAgentsDescription={activeAgentsDescription}
+        activeAgentsBeyond={activeAgentsBeyond}
+        activeAgentsSubheading={activeAgentsSubheading}
+        activeAgentsRoadmapDiagram={activeAgentsRoadmapDiagram}
+        activeAgentsClosingLabelCarousel={activeAgentsClosingLabelCarousel}
       />
     );
   }
@@ -164,7 +179,12 @@ export function DoePhoneRouter({
         afterHero={afterHero}
         shaderBeforeCardSlideIds={shaderBeforeCardSlideIds}
         disableCarouselInteractions={disableCarouselInteractions}
+        hideActiveAgentsVisual={hideActiveAgentsVisual}
         activeAgentsDescription={activeAgentsDescription}
+        activeAgentsBeyond={activeAgentsBeyond}
+        activeAgentsSubheading={activeAgentsSubheading}
+        activeAgentsRoadmapDiagram={activeAgentsRoadmapDiagram}
+        activeAgentsClosingLabelCarousel={activeAgentsClosingLabelCarousel}
       />
     </>
   );
