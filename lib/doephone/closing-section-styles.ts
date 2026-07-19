@@ -6,11 +6,11 @@ export const CLOSING_SECTION_DESKTOP_SLIDE_HEIGHT = "clamp(22rem, 58vmin, 32rem)
 
 export const CLOSING_SECTION_PHONE_SLIDE_WIDTH = "calc(var(--app-vw, 100vw) * 0.88)";
 
-/** iPhone — match feature-card carousel height so the closing band aligns with sections above. */
+/** iPhone — fit title, carousel, and fundraise inside one section band. */
 export const CLOSING_SECTION_PHONE_SLIDE_HEIGHT =
-  "clamp(calc(23rem + var(--app-vh, 100lvh) / 8), calc(var(--app-vh, 100lvh) * 0.56), calc(40rem + var(--app-vh, 100lvh) / 8))";
+  "clamp(calc(15.5rem + var(--app-vh, 100lvh) / 10), calc(var(--app-vh, 100lvh) * 0.4), calc(26rem + var(--app-vh, 100lvh) / 10))";
 
-export const CLOSING_SECTION_PHONE_SLIDE_MAX_HEIGHT = "calc(var(--app-vh, 100lvh) * 0.62)";
+export const CLOSING_SECTION_PHONE_SLIDE_MAX_HEIGHT = "calc(var(--app-vh, 100lvh) * 0.44)";
 
 /** Legacy stacked cards — caption sits inside the box at bottom-left. */
 export const DOEPHONE_SECTION_CLOSING_FEATURE_HEIGHT =

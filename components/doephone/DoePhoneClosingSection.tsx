@@ -6,7 +6,6 @@ import { DoePhoneScrollRevealContent } from "@/components/doephone/DoePhoneScrol
 import {
   DOEPHONE_DISPLAY_WEIGHT_TW,
   DOEPHONE_SECTION_CAROUSEL_INSET_X,
-  DOEPHONE_SECTION_CONTENT_CENTER,
   DOEPHONE_SECTION_CONTENT_INSET,
   DOEPHONE_SECTION_TITLE_PB,
   DOEPHONE_SECTION_TITLE_PT,
@@ -108,12 +107,8 @@ export function DoePhoneClosingSection() {
           </>
         ) : (
           <>
-            <div className={`home-closing-section__inner ${DOEPHONE_SECTION_CONTENT_CENTER}`}>
-              <div className="home-closing-section__content flex w-full shrink-0 flex-col">
-                {carouselBlock}
-                {titleBlock}
-              </div>
-            </div>
+            {titleBlock}
+            {carouselBlock}
             {fundraiseBlock}
           </>
         )}
