@@ -71,7 +71,7 @@
 .product-landing-console-shell .product-landing-header {
   position: relative;
   z-index: 1;
-  padding: 0.75rem var(--pl-gutter);
+  padding: clamp(1.05rem, 1.65vw, 1.3rem) var(--pl-gutter) clamp(0.48rem, 0.8vw, 0.62rem);
   background: transparent;
   border-bottom: 0;
 }
@@ -83,15 +83,19 @@
   bottom: 0;
   left: var(--pl-gutter);
   height: 1px;
-  background: rgba(242, 232, 218, 0.12);
+  background: rgba(242, 232, 218, 0.1);
 }
 
 .product-landing-console-shell .product-landing-header__title {
   color: var(--pl-console-text);
+  font-size: 13px;
+  line-height: 1;
 }
 
 .product-landing-console-shell .product-landing-header__icon {
   color: rgba(242, 232, 218, 0.48);
+  width: 15px;
+  height: 15px;
 }
 
 .product-landing-console-shell .product-landing-call__stage {
@@ -1516,7 +1520,7 @@
   background: transparent;
   border-top: 0;
   border-bottom: 0;
-  padding: clamp(1.35rem, 2.2vw, 1.85rem) clamp(1rem, 2vw, 1.35rem) clamp(0.85rem, 1.25vw, 1.1rem);
+  padding: clamp(1rem, 1.55vw, 1.35rem) clamp(1rem, 2vw, 1.35rem) clamp(0.85rem, 1.25vw, 1.1rem);
 }
 
 .product-landing-call__stage .product-landing-day-summary__header {

@@ -573,11 +573,11 @@ export function ProductLandingPanel() {
             strokeLinecap="round"
             strokeLinejoin="round"
             aria-hidden
-            className="product-landing-header__icon h-[18px] w-[18px] shrink-0"
+            className="product-landing-header__icon shrink-0"
           >
             <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
           </svg>
-          <h1 className="product-landing-header__title m-0 text-[15px] font-normal tracking-tight">
+          <h1 className="product-landing-header__title m-0 font-normal tracking-tight">
             {PRODUCT_LANDING_TAB_LABEL}
           </h1>
         </header>
