@@ -18,7 +18,7 @@ export function ProductPage() {
   }, []);
 
   return (
-    <main className="h-dvh min-h-0 w-full overflow-hidden bg-[#1a1208]">
+    <main className="product-page-root h-dvh min-h-0 w-full overflow-hidden bg-transparent">
       <DoeSchedulesAppMock variant="product-brown" />
     </main>
   );
