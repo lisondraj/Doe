@@ -957,13 +957,15 @@ function eventCardGradientClass(tone: string, brownOnly = false): string {
   if (brownOnly) {
     switch (tone) {
       case "amber":
-        return "bg-gradient-to-br from-[#C4A574] to-[#8B6914]";
+        return "bg-gradient-to-br from-[#8a8076] to-[#6e6258]";
       case "purple":
-        return "bg-gradient-to-br from-[#A67B5B] to-[#6B4423]";
+        return "bg-gradient-to-br from-[#6e6258] to-[#4a4038]";
       case "green":
-        return "bg-gradient-to-br from-[#9A8565] to-[#5C4A32]";
+        return "bg-gradient-to-br from-[#7a7568] to-[#5a534c]";
+      case "neutral":
+        return "bg-[var(--pi-well)] ring-1 ring-[var(--pi-line)]";
       default:
-        return "bg-gradient-to-br from-[#D4A574] to-[#8B6914]";
+        return "bg-gradient-to-br from-[#7a7168] to-[#6e6258]";
     }
   }
 
@@ -979,6 +981,18 @@ function eventCardGradientClass(tone: string, brownOnly = false): string {
     default:
       return "bg-gradient-to-br from-[#E3B468] to-[#A8794B]";
   }
+}
+
+function eventCardTextClass(tone: string, brownOnly = false): string {
+  if (brownOnly && tone === "neutral") return "text-[var(--pi-ink-soft)]";
+  if (brownOnly) return "text-[var(--pi-reading)]";
+  return "text-white";
+}
+
+function eventCardSubtextClass(tone: string, brownOnly = false): string {
+  if (brownOnly && tone === "neutral") return "text-[var(--pi-muted)]";
+  if (brownOnly) return "text-[var(--pi-reading)]/90";
+  return "text-white/90";
 }
 
 /**
@@ -1147,12 +1161,36 @@ export function DoeSchedulesAppMock({
   const categoryOptions = [
     {
       label: "All categories",
-      swatch: variant === "product-brown" ? "bg-[#a89070]" : "bg-neutral-300",
+      swatch: variant === "product-brown" ? "bg-[var(--pi-accent)]" : "bg-neutral-300",
     },
-    { label: "Clinic", swatch: "bg-gradient-to-br from-[#E3B468] to-[#A8794B]" },
-    { label: "Research", swatch: "bg-gradient-to-br from-[#E5AF63] to-[#BC6948]" },
-    { label: "Director/Residency", swatch: "bg-gradient-to-br from-[#D38964] to-[#906A54]" },
-    { label: "Family/Kids", swatch: "bg-gradient-to-br from-[#9A936F] to-[#6D654C]" },
+    {
+      label: "Clinic",
+      swatch:
+        variant === "product-brown"
+          ? "bg-gradient-to-br from-[#7a7168] to-[#6e6258]"
+          : "bg-gradient-to-br from-[#E3B468] to-[#A8794B]",
+    },
+    {
+      label: "Research",
+      swatch:
+        variant === "product-brown"
+          ? "bg-gradient-to-br from-[#8a8076] to-[#6e6258]"
+          : "bg-gradient-to-br from-[#E5AF63] to-[#BC6948]",
+    },
+    {
+      label: "Director/Residency",
+      swatch:
+        variant === "product-brown"
+          ? "bg-gradient-to-br from-[#6e6258] to-[#4a4038]"
+          : "bg-gradient-to-br from-[#D38964] to-[#906A54]",
+    },
+    {
+      label: "Family/Kids",
+      swatch:
+        variant === "product-brown"
+          ? "bg-gradient-to-br from-[#7a7568] to-[#5a534c]"
+          : "bg-gradient-to-br from-[#9A936F] to-[#6D654C]",
+    },
   ] as const;
   const [selectedCategory, setSelectedCategory] =
     useState<(typeof categoryOptions)[number]["label"]>("All categories");
@@ -1324,7 +1362,10 @@ export function DoeSchedulesAppMock({
   const inboxUi = productBrownInbox ? productBrownTaupeUi : null;
   const scheduleUi = productBrownSchedule ? productBrownTaupeUi : null;
   const fullWidthWorkspace =
-    hero || workspaceView === "inbox" || (productBrown && workspaceView === "landing");
+    hero ||
+    workspaceView === "inbox" ||
+    workspaceView === "schedule" ||
+    (productBrown && workspaceView === "landing");
   const patientBentoCard = productBrownDarkWorkspace
     ? "rounded-xl border border-[rgba(245,230,208,0.1)] bg-[#322618] p-3 shadow-[0_1px_2px_rgba(0,0,0,0.18)]"
     : productBrown
@@ -1343,16 +1384,6 @@ export function DoeSchedulesAppMock({
   const earlyTodayCount = todayScheduleDay.events.filter(
     (event) => parseEventRangeToMinutes(event.time).start < WEEK_VISIBLE_START_MINUTES,
   ).length;
-  const todayTimelineEvents = [...todayScheduleDay.events].sort((a, b) => {
-    return parseEventRangeToMinutes(a.time).start - parseEventRangeToMinutes(b.time).start;
-  });
-  const summaryChips: { label: string; count: number }[] = [
-    { label: "Clinic", count: todaySummary.counts.clinic },
-    { label: "Research", count: todaySummary.counts.research },
-    { label: "Residency", count: todaySummary.counts.residency },
-    { label: "Family", count: todaySummary.counts.family },
-    { label: "Admin", count: todaySummary.counts.admin },
-  ].filter((row) => row.count > 0);
 
   const periodSelector = PERIOD_SELECTOR_COPY[timeView];
 
@@ -2217,10 +2248,10 @@ export function DoeSchedulesAppMock({
                                         className={`overflow-hidden rounded-md px-1.5 py-1.5 shadow-[0_1px_2px_rgba(0,0,0,0.05)] ${eventCardGradientClass(event.tone, productBrown)}`}
                                       >
                                         <div className="flex items-start justify-between gap-1.5">
-                                          <p className="min-w-0 flex-1 truncate text-[11px] font-semibold leading-snug tracking-tight text-white">
+                                          <p className={`min-w-0 flex-1 truncate text-[11px] font-semibold leading-snug tracking-tight ${eventCardTextClass(event.tone, productBrown)}`}>
                                             {shortenEventLabel(summary.primary, 22)}
                                           </p>
-                                          <span className="shrink-0 text-right text-[10px] font-medium tabular-nums leading-snug text-white/90">
+                                          <span className={`shrink-0 text-right text-[10px] font-medium tabular-nums leading-snug ${eventCardSubtextClass(event.tone, productBrown)}`}>
                                             {formatEventRangeStartLabel(event.time)}
                                           </span>
                                         </div>
@@ -2373,11 +2404,11 @@ export function DoeSchedulesAppMock({
                                     style={{ top, height }}
                                   >
                                     <div className="flex min-h-0 flex-col gap-0.5">
-                                      <p className="truncate text-[11px] font-semibold leading-snug tracking-tight text-white">
+                                      <p className={`truncate text-[11px] font-semibold leading-snug tracking-tight ${eventCardTextClass(event.tone, productBrown)}`}>
                                         {summary.primary}
                                       </p>
                                       <p
-                                        className={`text-[10px] font-medium leading-snug text-[#F7EFE4] ${
+                                        className={`text-[10px] font-medium leading-snug ${eventCardSubtextClass(event.tone, productBrown)} ${
                                           height < SLOT_HEIGHT * 1.75 ? "truncate" : "line-clamp-2"
                                         }`}
                                       >
@@ -2490,11 +2521,11 @@ export function DoeSchedulesAppMock({
                                   style={{ top, height }}
                                 >
                                   <div className="flex min-h-0 flex-col gap-0.5">
-                                    <p className="truncate text-[11px] font-semibold leading-snug tracking-tight text-white">
+                                    <p className={`truncate text-[11px] font-semibold leading-snug tracking-tight ${eventCardTextClass(event.tone, productBrown)}`}>
                                       {summary.primary}
                                     </p>
                                     <p
-                                      className={`text-[10px] font-medium leading-snug text-[#F7EFE4] ${
+                                      className={`text-[10px] font-medium leading-snug ${eventCardSubtextClass(event.tone, productBrown)} ${
                                         height < SLOT_HEIGHT * 1.75 ? "truncate" : "line-clamp-2"
                                       }`}
                                     >
@@ -4527,119 +4558,16 @@ export function DoeSchedulesAppMock({
               </div>
             </div>
 
-            {workspaceView !== "inbox" && workspaceView !== "landing" && !hero ? (
+            {workspaceView === "patients" && !hero ? (
               <div
                 className={`product-brown-main-panel flex h-full w-1/2 shrink-0 flex-col border-l ${
-                  productBrownSchedule
-                    ? `${scheduleUi!.line} ${scheduleUi!.reading}`
-                    : productBrownDarkWorkspace
+                  productBrownDarkWorkspace
                     ? "border-[rgba(245,230,208,0.08)] bg-[#241910] shadow-[inset_1px_0_0_rgba(245,230,208,0.05)]"
                     : productBrown
-                      ? "border-[rgba(61,46,31,0.14)]"
-                      : "border-[#EFEFEF]"
-                } ${
-                  workspaceView === "patients"
-                    ? productBrownDarkWorkspace
-                      ? "bg-[#241910]"
-                      : productBrown
-                        ? "bg-[#faf0d8]"
-                        : "bg-white"
-                    : productBrownSchedule
-                      ? scheduleUi!.reading
-                    : productBrownDarkWorkspace
-                      ? "bg-[#241910]"
-                      : productBrown
-                        ? "bg-[#ede0c8]"
-                        : "bg-[#FAFAFA]"
+                      ? "border-[rgba(61,46,31,0.14)] bg-[#faf0d8]"
+                      : "border-[#EFEFEF] bg-white"
                 }`}
               >
-                {workspaceView === "schedule" ? (
-                  <>
-                    <header
-                      className={`flex items-center justify-between border-b px-4 py-3 ${
-                        productBrownSchedule
-                          ? `${scheduleUi!.line} ${scheduleUi!.sand}`
-                          : productBrownDarkWorkspace
-                          ? "border-[rgba(245,230,208,0.1)] bg-[#322618]"
-                          : "border-[#E8E8ED] bg-white"
-                      }`}
-                    >
-                      <div>
-                        <p
-                          className={`text-[10px] font-semibold uppercase tracking-wider ${
-                            productBrownSchedule
-                              ? scheduleUi!.mutedText
-                              : productBrownDarkWorkspace
-                                ? "text-[rgba(245,230,208,0.48)]"
-                                : "text-neutral-400"
-                          }`}
-                        >
-                          Schedule
-                        </p>
-                        <h2
-                          className={`text-[15px] font-semibold ${
-                            productBrownSchedule
-                              ? scheduleUi!.ink
-                              : productBrownDarkWorkspace
-                                ? "text-[#f5e6d0]"
-                                : "text-neutral-800"
-                          }`}
-                        >
-                          Day summary
-                        </h2>
-                      </div>
-                    </header>
-                  <div className="min-h-0 flex-1 space-y-3 overflow-auto p-4">
-                    <div className="rounded-xl border border-[#EAEAEA] bg-white p-3 shadow-sm">
-                      <p className="text-[11px] font-medium text-neutral-500">
-                        {todayScheduleDay.day}, {todayScheduleDay.date}
-                      </p>
-                      <p className="mt-1 text-[13px] font-semibold text-neutral-800">
-                        {todaySummary.total} appointment{todaySummary.total > 1 ? "s" : ""}
-                        {todaySummary.timeSpan ? ` · ${todaySummary.timeSpan}` : ""}
-                      </p>
-                      {summaryChips.length > 0 ? (
-                        <div className="mt-2 flex flex-wrap gap-1.5">
-                          {summaryChips.map((row) => (
-                            <span
-                              key={row.label}
-                              className="rounded-md border border-[#ECECEC] bg-[#FAFAFA] px-2 py-0.5 text-[10px] font-medium text-neutral-600"
-                            >
-                              {row.label} {row.count}
-                            </span>
-                          ))}
-                        </div>
-                      ) : null}
-                    </div>
-
-                    <div className="rounded-xl border border-[#EAEAEA] bg-white p-3 shadow-sm">
-                      <p className="text-[11px] font-semibold text-neutral-700">Calendar order</p>
-                      <ul className="mt-2 space-y-2">
-                        {todayTimelineEvents.slice(0, 8).map((event) => {
-                          const summary = getEventSummary(event.label);
-                          return (
-                            <li
-                              key={`sum-${event.time}-${event.label}`}
-                              className="flex gap-2 text-[11px] leading-snug text-neutral-600"
-                            >
-                              <span className="w-[88px] shrink-0 font-medium tabular-nums text-neutral-500">
-                                {event.time.replaceAll("-", "–")}
-                              </span>
-                              <span className="min-w-0 text-neutral-700">
-                                <span className="font-medium text-neutral-800">{summary.primary}</span>
-                                {summary.secondary ? (
-                                  <span className="text-neutral-500"> · {summary.secondary}</span>
-                                ) : null}
-                              </span>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
-                  </div>
-                </>
-              ) : workspaceView === "patients" ? (
-                <>
                   <header
                     className={`border-b px-4 py-3 ${
                       productBrownDarkWorkspace
@@ -4706,40 +4634,6 @@ export function DoeSchedulesAppMock({
                       </p>
                     </div>
                   </div>
-                </>
-              ) : (
-                <>
-                  <header
-                    className={`border-b px-4 py-3 ${
-                      productBrownDarkWorkspace
-                        ? "border-[rgba(245,230,208,0.1)] bg-[#322618]"
-                        : "border-[#E8E8ED] bg-white"
-                    }`}
-                  >
-                    <p
-                      className={`text-[10px] font-semibold uppercase tracking-wider ${
-                        productBrownDarkWorkspace ? "text-[rgba(245,230,208,0.48)]" : "text-neutral-400"
-                      }`}
-                    >
-                      Chart
-                    </p>
-                    <h2
-                      className={`text-[15px] font-semibold ${
-                        productBrownDarkWorkspace ? "text-[#f5e6d0]" : "text-neutral-800"
-                      }`}
-                    >
-                      Details
-                    </h2>
-                  </header>
-                  <div
-                    className={`flex min-h-0 flex-1 items-center justify-center p-6 ${
-                      productBrownDarkWorkspace ? "bg-[#241910]" : ""
-                    }`}
-                  >
-                    <p className="text-center text-[13px] text-neutral-500">Select a patient to preview.</p>
-                  </div>
-                </>
-              )}
               </div>
             ) : null}
             </div>
