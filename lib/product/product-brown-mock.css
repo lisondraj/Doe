@@ -54,7 +54,8 @@
   flex-direction: row;
   align-items: stretch;
   height: 100%;
-  overflow: visible;
+  overflow: hidden;
+  background: var(--pb-console-gradient);
 }
 
 .product-brown-mock .product-brown-layered-layout .product-brown-sidebar {
@@ -65,11 +66,11 @@
   width: var(--pb-nav-width);
   min-width: var(--pb-nav-width);
   max-width: var(--pb-nav-width);
-  height: calc(100% - 0.875rem) !important;
-  max-height: calc(100% - 0.875rem);
-  margin: 0.875rem 0 0 0.875rem;
+  height: calc(100% - 1.75rem) !important;
+  max-height: calc(100% - 1.75rem);
+  margin: 0.875rem 0 0.875rem 0.875rem;
   border-right: none !important;
-  border-radius: 1.75rem 0 0 1.75rem;
+  border-radius: 1.75rem;
   overflow: hidden;
   color: var(--pl-console-text);
   background: var(--pb-nav-surface) !important;
@@ -81,18 +82,6 @@
   display: none;
 }
 
-.product-brown-mock .product-brown-layered-layout .product-brown-sidebar::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: -3px;
-  bottom: 0;
-  width: 4px;
-  background: var(--pb-nav-surface);
-  pointer-events: none;
-  z-index: 2;
-}
-
 .product-brown-mock .product-brown-layered-layout .product-brown-sidebar > * {
   position: relative;
   z-index: 1;
@@ -100,13 +89,15 @@
 
 .product-brown-mock .product-brown-inner-row {
   position: relative;
-  z-index: 1;
+  z-index: 3;
   flex: 1 1 auto;
   min-width: 0;
   height: 100%;
-  margin: 0 0 0 -2px;
-  overflow: visible;
+  margin: 0 0 0 -3px;
+  padding-left: 3px;
+  overflow: hidden;
   isolation: isolate;
+  background: var(--pb-console-gradient);
 }
 
 .product-brown-mock .product-brown-inner-row::after {
@@ -315,6 +306,7 @@
   padding-right: var(--pb-nav-pad-section) !important;
   padding-top: 0.5rem !important;
   padding-bottom: 0.625rem !important;
+  border-top: 0 !important;
   border-top-color: transparent !important;
 }
 
@@ -1200,9 +1192,6 @@ html[data-product-page="true"] .product-call-preview__bubble--agent {
 .product-brown-mock.product-brown-landing-mode .product-landing-panel {
   color: var(--pl-console-text, #f2e8da);
   background: var(--pb-console-gradient) !important;
-  --pl-live-fade-base: var(--pb-console-to);
-  --pl-live-fade-mid: rgba(21, 16, 8, 0.76);
-  --pl-live-fade-soft: rgba(21, 16, 8, 0.28);
   border-top-left-radius: 0;
   overflow: visible;
 }
