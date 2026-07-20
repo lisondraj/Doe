@@ -1382,10 +1382,10 @@ export function DoeSchedulesAppMock({
 
   const appSidebar = (
     <aside
-      className={`flex h-full shrink-0 flex-col ${
+      className={`flex shrink-0 flex-col ${
         productBrown
           ? `product-brown-sidebar ${suisseIntlUi.className}`
-          : "w-[220px] border-r border-[#EFEFEF] bg-white"
+          : "h-full w-[220px] border-r border-[#EFEFEF] bg-white"
       }`}
     >
       <div className="flex items-center justify-between gap-2 px-3 pt-3 pb-2">
