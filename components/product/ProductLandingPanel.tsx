@@ -142,9 +142,9 @@ function DaySummaryHero() {
   const { last24h, todayAhead } = PRODUCT_LANDING_DAY_SUMMARY;
 
   return (
-    <section className="product-landing-day-summary px-4 py-[clamp(1rem,1.8vw,1.5rem)]" aria-labelledby="day-summary-title">
-      <div className="product-landing-day-summary__card rounded-[18px] p-[clamp(0.85rem,1.6vw,1.15rem)]">
-        <div className="product-landing-day-summary__header flex flex-wrap items-end justify-between gap-3 px-1 pb-3">
+    <section className="product-landing-day-summary" aria-labelledby="day-summary-title">
+      <div className="product-landing-day-summary__shell">
+        <div className="product-landing-day-summary__header flex flex-wrap items-end justify-between gap-3 pb-3">
           <p
             className={`product-landing-day-summary__greeting m-0 text-[clamp(1.1rem,0.9rem+0.7vw,1.45rem)] font-normal leading-none tracking-[-0.025em] ${suisseIntl.className}`}
           >
@@ -158,105 +158,101 @@ function DaySummaryHero() {
           </p>
         </div>
 
-        <div className="product-landing-day-summary__grid">
-          <div className="product-landing-day-summary__panel product-landing-day-summary__panel--past rounded-[14px]">
+        <div className="product-landing-day-summary__columns">
+          <div className="product-landing-day-summary__column">
             <p
-              className={`product-landing-day-summary__panel-label m-0 text-[10px] font-semibold uppercase tracking-[0.12em] ${suisseIntl.className}`}
+              className={`product-landing-day-summary__section-label m-0 text-[10px] font-semibold uppercase tracking-[0.12em] ${suisseIntl.className}`}
             >
               {last24h.label}
             </p>
 
-            <div className="product-landing-day-summary__panel-body">
-              <div className="product-landing-day-summary__hero-row">
-                <div className="product-landing-day-summary__total">
-                  <span className={`product-landing-day-summary__total-value ${suisseIntl.className}`}>
-                    {last24h.totalCalls}
-                  </span>
-                  <span className={`product-landing-day-summary__total-label ${inter.className}`}>calls</span>
-                </div>
-                <VolumeChart values={last24h.volume} labels={last24h.volumeLabels} />
+            <div className="product-landing-day-summary__hero-row">
+              <div className="product-landing-day-summary__total">
+                <span className={`product-landing-day-summary__total-value ${suisseIntl.className}`}>
+                  {last24h.totalCalls}
+                </span>
+                <span className={`product-landing-day-summary__total-label ${inter.className}`}>calls</span>
               </div>
-
-              <div className="product-landing-day-summary__visual-row">
-                <ResolutionRing pct={last24h.resolvedPct} />
-                <div className="product-landing-day-summary__tiles">
-                  {last24h.tiles.map((tile) => (
-                    <div key={tile.id} className="product-landing-day-summary__tile">
-                      <span className={`product-landing-day-summary__tile-value ${suisseIntl.className}`}>
-                        {tile.value}
-                      </span>
-                      <span className={`product-landing-day-summary__tile-label ${inter.className}`}>{tile.label}</span>
-                      <span className={`product-landing-day-summary__tile-detail ${inter.className}`}>{tile.detail}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <DayNightSplit overnight={last24h.split.overnight} clinicHours={last24h.split.clinicHours} />
+              <VolumeChart values={last24h.volume} labels={last24h.volumeLabels} />
             </div>
+
+            <div className="product-landing-day-summary__visual-row">
+              <ResolutionRing pct={last24h.resolvedPct} />
+              <div className="product-landing-stat-strip">
+                {last24h.tiles.map((tile) => (
+                  <div key={tile.id} className="product-landing-stat-strip__item">
+                    <span className={`product-landing-stat-strip__value ${suisseIntl.className}`}>{tile.value}</span>
+                    <span className={`product-landing-stat-strip__label ${inter.className}`}>{tile.label}</span>
+                    <span className={`product-landing-stat-strip__detail ${inter.className}`}>{tile.detail}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <DayNightSplit overnight={last24h.split.overnight} clinicHours={last24h.split.clinicHours} />
           </div>
 
-          <div className="product-landing-day-summary__panel product-landing-day-summary__panel--today rounded-[14px]">
+          <div className="product-landing-day-summary__column">
             <p
-              className={`product-landing-day-summary__panel-label m-0 text-[10px] font-semibold uppercase tracking-[0.12em] ${suisseIntl.className}`}
+              className={`product-landing-day-summary__section-label m-0 text-[10px] font-semibold uppercase tracking-[0.12em] ${suisseIntl.className}`}
             >
               {todayAhead.label}
             </p>
 
-            <div className="product-landing-day-summary__panel-body">
-              <div className="product-landing-day-summary__live">
-                <div className="product-landing-day-summary__live-top">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="product-landing-day-summary__live-dot" aria-hidden />
-                      <span className={`product-landing-day-summary__live-label text-[10px] font-semibold uppercase tracking-[0.1em] ${suisseIntl.className}`}>
-                        Live now
-                      </span>
-                    </div>
-                    <p className={`product-landing-day-summary__live-caller m-0 mt-1.5 ${suisseIntl.className}`}>
-                      {todayAhead.liveCaller}
-                    </p>
-                    <p className={`product-landing-day-summary__live-detail m-0 mt-1 ${inter.className}`}>
-                      {todayAhead.liveDetail}
-                    </p>
+            <div className="product-landing-day-summary__live-strip">
+              <div className="product-landing-day-summary__live-top">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="product-landing-day-summary__live-dot" aria-hidden />
+                    <span className={`product-landing-day-summary__live-label text-[10px] font-semibold uppercase tracking-[0.1em] ${suisseIntl.className}`}>
+                      Live now
+                    </span>
                   </div>
-                  <MiniWaveform />
+                  <p className={`product-landing-day-summary__live-caller m-0 mt-1.5 ${suisseIntl.className}`}>
+                    {todayAhead.liveCaller}
+                  </p>
+                  <p className={`product-landing-day-summary__live-detail m-0 mt-1 ${inter.className}`}>
+                    {todayAhead.liveDetail}
+                  </p>
                 </div>
+                <MiniWaveform />
               </div>
+            </div>
 
-              <div className="product-landing-day-summary__today-metrics">
-                <div className="product-landing-day-summary__metric">
-                  <span className={`product-landing-day-summary__metric-value ${suisseIntl.className}`}>{todayAhead.queue}</span>
-                  <span className={`product-landing-day-summary__metric-label ${inter.className}`}>In queue</span>
-                </div>
-                <div className="product-landing-day-summary__metric">
-                  <span className={`product-landing-day-summary__metric-value ${suisseIntl.className}`}>{todayAhead.needsYou}</span>
-                  <span className={`product-landing-day-summary__metric-label ${inter.className}`}>Need you</span>
-                </div>
-                <div className="product-landing-day-summary__metric product-landing-day-summary__metric--peak">
-                  <span className={`product-landing-day-summary__metric-value ${suisseIntl.className}`}>{todayAhead.peakWindow}</span>
-                  <span className={`product-landing-day-summary__metric-label ${inter.className}`}>{todayAhead.peakDetail}</span>
-                </div>
+            <div className="product-landing-stat-strip product-landing-stat-strip--compact">
+              <div className="product-landing-stat-strip__item">
+                <span className={`product-landing-stat-strip__value ${suisseIntl.className}`}>{todayAhead.queue}</span>
+                <span className={`product-landing-stat-strip__label ${inter.className}`}>In queue</span>
               </div>
+              <div className="product-landing-stat-strip__item">
+                <span className={`product-landing-stat-strip__value ${suisseIntl.className}`}>{todayAhead.needsYou}</span>
+                <span className={`product-landing-stat-strip__label ${inter.className}`}>Need you</span>
+              </div>
+              <div className="product-landing-stat-strip__item">
+                <span className={`product-landing-stat-strip__value product-landing-stat-strip__value--small ${suisseIntl.className}`}>
+                  {todayAhead.peakWindow}
+                </span>
+                <span className={`product-landing-stat-strip__label ${inter.className}`}>{todayAhead.peakDetail}</span>
+              </div>
+            </div>
 
-              <div className="product-landing-day-summary__timeline-h" aria-label="Today's call flow">
-                {todayAhead.timeline.map((item, index) => (
-                  <div
-                    key={item.id}
-                    className={`product-landing-day-summary__timeline-h-step product-landing-day-summary__timeline-h-step--${item.state}`}
-                  >
-                    <div className="product-landing-day-summary__timeline-h-node-wrap">
-                      <span className="product-landing-day-summary__timeline-h-dot" aria-hidden />
-                      {index < todayAhead.timeline.length - 1 ? (
-                        <span className="product-landing-day-summary__timeline-h-line" aria-hidden />
-                      ) : null}
-                    </div>
-                    <span className={`product-landing-day-summary__timeline-h-time ${inter.className}`}>{item.time}</span>
-                    <span className={`product-landing-day-summary__timeline-h-label ${suisseIntl.className}`}>{item.label}</span>
-                    <span className={`product-landing-day-summary__timeline-h-detail ${inter.className}`}>{item.detail}</span>
+            <div className="product-landing-day-summary__timeline-h" aria-label="Today's call flow">
+              {todayAhead.timeline.map((item, index) => (
+                <div
+                  key={item.id}
+                  className={`product-landing-day-summary__timeline-h-step product-landing-day-summary__timeline-h-step--${item.state}`}
+                >
+                  <div className="product-landing-day-summary__timeline-h-node-wrap">
+                    <span className="product-landing-day-summary__timeline-h-dot" aria-hidden />
+                    {index < todayAhead.timeline.length - 1 ? (
+                      <span className="product-landing-day-summary__timeline-h-line" aria-hidden />
+                    ) : null}
                   </div>
-                ))}
-              </div>
+                  <span className={`product-landing-day-summary__timeline-h-time ${inter.className}`}>{item.time}</span>
+                  <span className={`product-landing-day-summary__timeline-h-label ${suisseIntl.className}`}>{item.label}</span>
+                  <span className={`product-landing-day-summary__timeline-h-detail ${inter.className}`}>{item.detail}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -297,10 +293,10 @@ export function ProductLandingPanel() {
       <div className="product-landing-body min-h-0 flex-1 overflow-y-auto">
         <DaySummaryHero />
 
-        <div className="product-landing-grid grid min-h-0 gap-4 px-4 pb-4 xl:grid-cols-[minmax(0,1.55fr)_minmax(18rem,0.95fr)]">
-          <div className="product-landing-main flex min-h-0 flex-col gap-4">
+        <div className="product-landing-grid grid min-h-0 gap-0 px-0 pb-0 xl:grid-cols-[minmax(0,1.55fr)_minmax(18rem,0.95fr)]">
+          <div className="product-landing-main flex min-h-0 flex-col">
             <section className="product-landing-call" aria-labelledby="product-live-call-title">
-              <div className="product-landing-call__stage relative overflow-hidden rounded-[18px] px-[clamp(1rem,2vw,1.35rem)] py-[clamp(1.1rem,2.2vw,1.55rem)]">
+              <div className="product-landing-call__stage relative overflow-hidden px-[clamp(1rem,2vw,1.35rem)] py-[clamp(1.1rem,2.2vw,1.55rem)]">
                 <div className="relative z-[1] flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
@@ -350,7 +346,7 @@ export function ProductLandingPanel() {
                 </div>
               </div>
 
-              <div className="product-landing-chat mt-3 rounded-[18px]">
+              <div className="product-landing-chat mt-0 rounded-none border-t border-[var(--pi-line)] xl:mx-4 xl:mb-4 xl:mt-3 xl:rounded-[18px] xl:border">
                 <div className="product-landing-chat__toolbar flex items-center justify-between gap-3 px-4 py-2.5">
                   <p
                     className={`product-landing-chat__label m-0 text-[10px] font-semibold uppercase tracking-[0.12em] ${suisseIntl.className}`}
@@ -403,9 +399,9 @@ export function ProductLandingPanel() {
             </section>
           </div>
 
-          <aside className="product-landing-sidebar flex min-h-0 flex-col gap-4">
-            <section className="product-landing-sidebar__block rounded-[18px]">
-              <div className="px-4 py-3">
+          <aside className="product-landing-sidebar">
+            <section className="product-landing-sidebar__section">
+              <div className="product-landing-sidebar__section-head">
                 <p
                   className={`product-landing-sidebar__label m-0 text-[10px] font-semibold uppercase tracking-[0.14em] ${suisseIntl.className}`}
                 >
@@ -415,9 +411,9 @@ export function ProductLandingPanel() {
                   Doe finished these. You decide the next move.
                 </p>
               </div>
-              <ul className="product-landing-attention m-0 flex list-none flex-col gap-2 px-3 pb-3 pt-0">
+              <ul className="product-landing-attention m-0 list-none p-0">
                 {PRODUCT_LANDING_ATTENTION.map((item) => (
-                  <li key={item.id} className={`product-landing-attention__card product-landing-attention__card--${item.urgency}`}>
+                  <li key={item.id} className={`product-landing-attention__row product-landing-attention__row--${item.urgency}`}>
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
@@ -445,7 +441,7 @@ export function ProductLandingPanel() {
                       </div>
                       <button
                         type="button"
-                        className={`product-landing-attention__action shrink-0 rounded-[8px] px-2 py-1 text-[10px] font-medium transition-colors ${suisseIntl.className}`}
+                        className={`product-landing-attention__action shrink-0 text-[10px] font-medium transition-colors ${suisseIntl.className}`}
                       >
                         {item.action}
                       </button>
@@ -455,22 +451,20 @@ export function ProductLandingPanel() {
               </ul>
             </section>
 
-            <section className="product-landing-sidebar__block rounded-[18px]">
-              <div className="flex items-center justify-between gap-3 px-4 py-3">
-                <div>
-                  <p
-                    className={`product-landing-sidebar__label m-0 text-[10px] font-semibold uppercase tracking-[0.14em] ${suisseIntl.className}`}
-                  >
-                    Call queue
-                  </p>
-                  <p className={`product-landing-sidebar__hint m-0 mt-1 text-[12px] ${inter.className}`}>
-                    {PRODUCT_LANDING_DAY_SUMMARY.todayAhead.queue} callers waiting after the active line
-                  </p>
-                </div>
+            <section className="product-landing-sidebar__section">
+              <div className="product-landing-sidebar__section-head">
+                <p
+                  className={`product-landing-sidebar__label m-0 text-[10px] font-semibold uppercase tracking-[0.14em] ${suisseIntl.className}`}
+                >
+                  Call queue
+                </p>
+                <p className={`product-landing-sidebar__hint m-0 mt-1 text-[12px] ${inter.className}`}>
+                  {PRODUCT_LANDING_DAY_SUMMARY.todayAhead.queue} callers waiting after the active line
+                </p>
               </div>
-              <ul className="product-landing-queue m-0 list-none px-3 pb-3 pt-0">
+              <ul className="product-landing-queue m-0 list-none p-0">
                 {PRODUCT_LANDING_QUEUE.map((item, index) => (
-                  <li key={item.id} className="product-landing-queue__item">
+                  <li key={item.id} className="product-landing-queue__row">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         <p
@@ -488,7 +482,7 @@ export function ProductLandingPanel() {
                         </p>
                       </div>
                       <span
-                        className={`product-landing-queue__wait shrink-0 rounded-md px-2 py-1 text-[10px] font-medium tabular-nums ${inter.className}`}
+                        className={`product-landing-queue__wait shrink-0 text-[10px] font-medium tabular-nums ${inter.className}`}
                       >
                         {item.wait}
                       </span>
@@ -498,17 +492,17 @@ export function ProductLandingPanel() {
               </ul>
             </section>
 
-            <section className="product-landing-sidebar__block rounded-[18px]">
-              <div className="px-4 py-3">
+            <section className="product-landing-sidebar__section">
+              <div className="product-landing-sidebar__section-head">
                 <p
                   className={`product-landing-sidebar__label m-0 text-[10px] font-semibold uppercase tracking-[0.14em] ${suisseIntl.className}`}
                 >
                   Your lines
                 </p>
               </div>
-              <ul className="product-landing-lines m-0 list-none px-3 pb-3 pt-0">
+              <ul className="product-landing-lines m-0 list-none p-0">
                 {PRODUCT_LANDING_LINES.map((line) => (
-                  <li key={line.id} className={`product-landing-lines__item product-landing-lines__item--${line.status}`}>
+                  <li key={line.id} className={`product-landing-lines__row product-landing-lines__row--${line.status}`}>
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         <p
@@ -524,7 +518,7 @@ export function ProductLandingPanel() {
                         </p>
                       </div>
                       <span
-                        className={`product-landing-lines__status shrink-0 rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.08em] ${suisseIntl.className}`}
+                        className={`product-landing-lines__status shrink-0 text-[9px] font-semibold uppercase tracking-[0.08em] ${suisseIntl.className}`}
                       >
                         {line.status}
                       </span>
