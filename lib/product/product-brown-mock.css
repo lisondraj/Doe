@@ -13,6 +13,20 @@
   --pb-muted: rgba(61, 46, 31, 0.62);
   --pb-muted-soft: rgba(61, 46, 31, 0.48);
   --pb-hover: rgba(26, 18, 8, 0.06);
+  /* Nav — medium taupe: darker than content cream, not near-black */
+  --pb-nav-bg: #5c564f;
+  --pb-nav-bg-deep: #504b45;
+  --pb-nav-bg-raised: #67615a;
+  --pb-nav-text: #ece8e0;
+  --pb-nav-text-muted: rgba(236, 232, 224, 0.74);
+  --pb-nav-text-soft: rgba(236, 232, 224, 0.48);
+  --pb-nav-line: rgba(236, 232, 224, 0.14);
+  --pb-nav-hover: rgba(255, 255, 255, 0.08);
+  --pb-nav-active: rgba(255, 255, 255, 0.14);
+  --pb-nav-search: rgba(0, 0, 0, 0.14);
+  --pb-nav-badge: rgba(255, 255, 255, 0.1);
+  --pb-nav-badge-active: rgba(255, 255, 255, 0.16);
+  --pb-nav-menu-shadow: 0 8px 24px rgba(30, 22, 18, 0.28);
   --pb-nav-width: 264px;
   --pb-nav-pad-outer: 1rem;
   --pb-nav-pad-section: 0.75rem;
@@ -21,7 +35,7 @@
 }
 
 .product-brown-mock .product-brown-shell {
-  background: var(--pb-ink) !important;
+  background: var(--pb-nav-bg) !important;
   box-shadow: none !important;
 }
 
@@ -32,7 +46,7 @@
 /* Layered tab panel — nav outside left, content panel bleeds off the right */
 .product-brown-mock .product-brown-layered-layout {
   position: relative;
-  background: var(--pb-ink) !important;
+  background: var(--pb-nav-bg) !important;
   overflow: hidden !important;
 }
 
@@ -117,10 +131,12 @@
   background: var(--pi-cream);
 }
 
-.product-brown-mock.product-brown-inbox-mode .product-brown-inner-row::after {
+.product-brown-mock.product-brown-inbox-mode .product-brown-inner-row::after,
+.product-brown-mock.product-brown-landing-mode .product-brown-inner-row::after,
+.product-brown-mock.product-brown-schedule-mode .product-brown-inner-row::after {
   box-shadow:
-    -4px 0 20px rgba(0, 0, 0, 0.14),
-    0 0 0 1px rgba(38, 32, 28, 0.05);
+    -4px 0 20px rgba(30, 22, 18, 0.12),
+    0 0 0 1px rgba(38, 32, 28, 0.06);
 }
 
 .product-brown-mock.product-brown-workspace-mode .product-brown-inner-row__content,
@@ -135,14 +151,14 @@
   background: #f8f4ec;
 }
 
-/* ── Sidebar (nav — already tuned) ── */
+/* ── Sidebar (nav) ── */
 .product-brown-mock .product-brown-sidebar {
   width: var(--pb-nav-width) !important;
   min-width: var(--pb-nav-width);
   max-width: var(--pb-nav-width);
-  background: var(--pb-ink) !important;
-  border-color: var(--pb-line-dark) !important;
-  color: var(--pb-sand);
+  background: var(--pb-nav-bg) !important;
+  border-color: var(--pb-nav-line) !important;
+  color: var(--pb-nav-text);
 }
 
 /* Outer rail — header + search */
@@ -217,36 +233,36 @@
 .product-brown-mock .product-brown-sidebar .text-neutral-900,
 .product-brown-mock .product-brown-sidebar .text-neutral-800,
 .product-brown-mock .product-brown-sidebar .font-semibold.text-neutral-900 {
-  color: var(--pb-sand) !important;
+  color: var(--pb-nav-text) !important;
 }
 
 .product-brown-mock .product-brown-sidebar .text-neutral-700,
 .product-brown-mock .product-brown-sidebar .text-neutral-600 {
-  color: rgba(245, 230, 208, 0.78) !important;
+  color: var(--pb-nav-text-muted) !important;
 }
 
 .product-brown-mock .product-brown-sidebar .text-neutral-500,
 .product-brown-mock .product-brown-sidebar .text-neutral-400 {
-  color: rgba(245, 230, 208, 0.48) !important;
+  color: var(--pb-nav-text-soft) !important;
 }
 
 .product-brown-mock .product-brown-sidebar .bg-neutral-100,
 .product-brown-mock .product-brown-sidebar .bg-\[\#FAFAFA\],
 .product-brown-mock .product-brown-sidebar .bg-\[\#F7F7F7\] {
-  background: rgba(245, 230, 208, 0.1) !important;
+  background: var(--pb-nav-active) !important;
 }
 
 .product-brown-mock .product-brown-sidebar .hover\:bg-neutral-50:hover,
 .product-brown-mock .product-brown-sidebar .hover\:bg-neutral-100:hover {
-  background: rgba(245, 230, 208, 0.08) !important;
+  background: var(--pb-nav-hover) !important;
 }
 
 .product-brown-mock .product-brown-sidebar .bg-white {
-  background: rgba(245, 230, 208, 0.08) !important;
+  background: var(--pb-nav-hover) !important;
 }
 
 .product-brown-mock .product-brown-sidebar [role="menu"] {
-  background: #241910 !important;
+  background: var(--pb-nav-bg-deep) !important;
   opacity: 1 !important;
 }
 
@@ -255,13 +271,13 @@
 .product-brown-mock .product-brown-sidebar .border-\[\#E6E6E6\],
 .product-brown-mock .product-brown-sidebar .border-\[\#EFEFEF\],
 .product-brown-mock .product-brown-sidebar .border-neutral-200 {
-  border-color: var(--pb-line-dark) !important;
+  border-color: var(--pb-nav-line) !important;
 }
 
 .product-brown-mock .product-brown-sidebar .hover\:text-neutral-600:hover,
 .product-brown-mock .product-brown-sidebar .hover\:text-neutral-700:hover,
 .product-brown-mock .product-brown-sidebar .hover\:text-neutral-800:hover {
-  color: var(--pb-sand) !important;
+  color: var(--pb-nav-text) !important;
 }
 
 /* ── Main workspace surfaces ── */

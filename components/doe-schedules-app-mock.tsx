@@ -1321,6 +1321,31 @@ export function DoeSchedulesAppMock({
     divider: "bg-[var(--pi-divider)]",
     messageBorder: "border-[var(--pi-line)]",
   } as const;
+  const productBrownNavUi = {
+    sidebar: "product-brown-sidebar bg-[var(--pb-nav-bg)]",
+    text: "text-[var(--pb-nav-text)]",
+    textMuted: "text-[var(--pb-nav-text-muted)]",
+    textSoft: "text-[var(--pb-nav-text-soft)]",
+    line: "border-[var(--pb-nav-line)]",
+    logo: "bg-gradient-to-br from-[#9a928a] via-[#6e6258] to-[#4a4038]",
+    collapseBtn:
+      "rounded-md p-1 text-[var(--pb-nav-text-soft)] hover:bg-[var(--pb-nav-hover)] hover:text-[var(--pb-nav-text)]",
+    search: "border-[var(--pb-nav-line)] bg-[var(--pb-nav-search)]",
+    searchKbd: "border-[var(--pb-nav-line)] bg-[var(--pb-nav-hover)] text-[var(--pb-nav-text-muted)]",
+    menu: "border-[var(--pb-nav-line)] bg-[var(--pb-nav-bg-deep)] shadow-[var(--pb-nav-menu-shadow)]",
+    menuItemActive: "bg-[var(--pb-nav-active)]",
+    menuItemHover: "hover:bg-[var(--pb-nav-hover)]",
+    clinicBtn:
+      "border-[var(--pb-nav-line)] bg-[var(--pb-nav-hover)] text-[var(--pb-nav-text)] hover:bg-[var(--pb-nav-active)]",
+    navItemActive: "bg-[var(--pb-nav-active)] font-medium text-[var(--pb-nav-text)]",
+    navItem: "text-[var(--pb-nav-text-muted)] hover:bg-[var(--pb-nav-hover)]",
+    badge: "bg-[var(--pb-nav-badge)] text-[var(--pb-nav-text-muted)]",
+    badgeActive: "bg-[var(--pb-nav-badge-active)] text-[var(--pb-nav-text)]",
+    actionChip: "border-[var(--pb-nav-line)] text-[var(--pb-nav-text-soft)]",
+    avatar: "bg-[var(--pb-nav-active)] text-[var(--pb-nav-text)]",
+    dot: "bg-gradient-to-br from-[#9a928a] to-[#6e6258]",
+    footerBorder: "border-[var(--pb-nav-line)]",
+  } as const;
   const inboxUi = productBrownInbox ? productBrownTaupeUi : null;
   const scheduleUi = productBrownSchedule ? productBrownTaupeUi : null;
   const fullWidthWorkspace =
@@ -1359,9 +1384,7 @@ export function DoeSchedulesAppMock({
   const appSidebar = (
     <aside
       className={`flex h-full shrink-0 flex-col ${
-        productBrown
-          ? "product-brown-sidebar bg-[#1a1208]"
-          : "w-[220px] border-r border-[#EFEFEF] bg-white"
+        productBrown ? productBrownNavUi.sidebar : "w-[220px] border-r border-[#EFEFEF] bg-white"
       }`}
     >
       <div className="flex items-center justify-between gap-2 px-3 pt-3 pb-2">
@@ -1369,14 +1392,14 @@ export function DoeSchedulesAppMock({
           <div
             className={`h-8 w-8 shrink-0 rounded-lg shadow-sm ${
               productBrown
-                ? "bg-gradient-to-br from-[#D4A574] via-[#A67B5B] to-[#3d2e1f]"
+                ? productBrownNavUi.logo
                 : "bg-gradient-to-br from-[#E7A944] via-[#D2774C] to-[#1E343A]"
             }`}
           />
           <div className="min-w-0">
             <div
               className={`truncate text-[1.15rem] font-normal leading-none tracking-tight ${
-                productBrown ? "text-[#f5e6d0]" : "text-neutral-900"
+                productBrown ? productBrownNavUi.text : "text-neutral-900"
               } ${lora.className}`}
             >
               Doe
@@ -1385,7 +1408,11 @@ export function DoeSchedulesAppMock({
         </div>
         <button
           type="button"
-          className="rounded-md p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600"
+          className={
+            productBrown
+              ? productBrownNavUi.collapseBtn
+              : "rounded-md p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600"
+          }
           aria-label="Collapse sidebar"
         >
           <Icon className="h-4 w-4">
@@ -1396,13 +1423,23 @@ export function DoeSchedulesAppMock({
       </div>
 
       <div className="px-3 pb-2">
-        <div className="flex h-9 items-center gap-2 rounded-lg border border-[#ECECEC] bg-[#FAFAFA] px-2.5">
-          <Icon className="h-4 w-4 text-neutral-400">
+        <div
+          className={`flex h-9 items-center gap-2 rounded-lg border px-2.5 ${
+            productBrown ? productBrownNavUi.search : "border-[#ECECEC] bg-[#FAFAFA]"
+          }`}
+        >
+          <Icon className={`h-4 w-4 ${productBrown ? productBrownNavUi.textSoft : "text-neutral-400"}`}>
             <circle cx="11" cy="11" r="7" />
             <path d="m21 21-4.35-4.35" />
           </Icon>
-          <span className="flex-1 text-[13px] text-neutral-400">Search</span>
-          <span className="rounded border border-[#E5E5E5] bg-white px-1.5 py-0.5 text-[10px] font-medium text-neutral-500">
+          <span className={`flex-1 text-[13px] ${productBrown ? productBrownNavUi.textSoft : "text-neutral-400"}`}>
+            Search
+          </span>
+          <span
+            className={`rounded border px-1.5 py-0.5 text-[10px] font-medium ${
+              productBrown ? productBrownNavUi.searchKbd : "border-[#E5E5E5] bg-white text-neutral-500"
+            }`}
+          >
             ⌘
           </span>
         </div>
@@ -1415,7 +1452,7 @@ export function DoeSchedulesAppMock({
               role="menu"
               className={`absolute top-full left-0 right-0 z-30 mt-1.5 overflow-hidden rounded-xl border p-1 opacity-100 ${
                 productBrown
-                  ? "border-[rgba(245,230,208,0.14)] bg-[#241910] shadow-[0_8px_24px_rgba(0,0,0,0.45)]"
+                  ? productBrownNavUi.menu
                   : "border-[#E5E5E5] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
               }`}
             >
@@ -1431,31 +1468,31 @@ export function DoeSchedulesAppMock({
                   className={`flex w-full items-start gap-2 rounded-lg px-2 py-1.5 text-left ${
                     selectedClinic.name === clinic.name
                       ? productBrown
-                        ? "bg-[rgba(245,230,208,0.1)]"
+                        ? productBrownNavUi.menuItemActive
                         : "bg-neutral-100"
                       : productBrown
-                        ? "hover:bg-[rgba(245,230,208,0.08)]"
+                        ? productBrownNavUi.menuItemHover
                         : "hover:bg-neutral-50"
                   }`}
                 >
                   <span
                     className={`mt-1 h-2 w-2 shrink-0 rounded-full ${
                       productBrown
-                        ? "bg-gradient-to-br from-[#D4A574] to-[#A67B5B]"
+                        ? productBrownNavUi.dot
                         : "bg-gradient-to-br from-[#E7A944] to-[#BF593D]"
                     }`}
                   />
                   <span className="min-w-0 flex-1">
                     <span
                       className={`block truncate text-[12px] font-medium ${
-                        productBrown ? "text-[#f5e6d0]" : "text-neutral-700"
+                        productBrown ? productBrownNavUi.text : "text-neutral-700"
                       }`}
                     >
                       {clinic.name}
                     </span>
                     <span
                       className={`block truncate text-[10px] ${
-                        productBrown ? "text-[rgba(245,230,208,0.48)]" : "text-neutral-500"
+                        productBrown ? productBrownNavUi.textSoft : "text-neutral-500"
                       }`}
                     >
                       {clinic.address}
@@ -1473,7 +1510,7 @@ export function DoeSchedulesAppMock({
             }}
             className={`flex w-full items-center gap-2 rounded-lg border px-2 py-2 text-left text-[12px] font-medium hover:bg-neutral-50 ${
               productBrown
-                ? "border-[rgba(245,230,208,0.12)] bg-[rgba(245,230,208,0.06)] text-[#f5e6d0] hover:bg-[rgba(245,230,208,0.1)]"
+                ? productBrownNavUi.clinicBtn
                 : "border-[#E6E6E6] bg-white text-neutral-700"
             }`}
             aria-haspopup="menu"
@@ -1482,7 +1519,7 @@ export function DoeSchedulesAppMock({
             <span
               className={`h-2 w-2 shrink-0 rounded-full ${
                 productBrown
-                  ? "bg-gradient-to-br from-[#D4A574] to-[#A67B5B]"
+                  ? productBrownNavUi.dot
                   : "bg-gradient-to-br from-[#E7A944] to-[#BF593D]"
               }`}
             />
@@ -1490,7 +1527,7 @@ export function DoeSchedulesAppMock({
               <span className="block truncate">{selectedClinic.name}</span>
               <span
                 className={`block truncate text-[10px] font-normal ${
-                  productBrown ? "text-[rgba(245,230,208,0.48)]" : "text-neutral-500"
+                  productBrown ? productBrownNavUi.textSoft : "text-neutral-500"
                 }`}
               >
                 {selectedClinic.address}
@@ -1551,10 +1588,10 @@ export function DoeSchedulesAppMock({
             className={`flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-[13px] ${
               isActive
                 ? productBrown
-                  ? "bg-[rgba(245,230,208,0.12)] font-medium text-[#f5e6d0]"
+                  ? productBrownNavUi.navItemActive
                   : "bg-neutral-100 font-medium text-neutral-900"
                 : productBrown
-                  ? "text-[rgba(245,230,208,0.78)] hover:bg-[rgba(245,230,208,0.08)]"
+                  ? productBrownNavUi.navItem
                   : "text-neutral-700 hover:bg-neutral-50"
             }`}
           >
@@ -1565,8 +1602,8 @@ export function DoeSchedulesAppMock({
                 className={`rounded-full px-1.5 py-0.5 text-[11px] font-medium ${
                   productBrown
                     ? isActive
-                      ? "bg-[rgba(245,230,208,0.16)] text-[#f5e6d0]"
-                      : "bg-[rgba(245,230,208,0.08)] text-[rgba(245,230,208,0.72)]"
+                      ? productBrownNavUi.badgeActive
+                      : productBrownNavUi.badge
                     : "bg-neutral-100 text-neutral-600"
                 }`}
               >
@@ -1576,9 +1613,7 @@ export function DoeSchedulesAppMock({
             {"action" in item && item.action ? (
               <span
                 className={`rounded-md border px-1.5 text-xs ${
-                  productBrown
-                    ? "border-[rgba(245,230,208,0.14)] text-[rgba(245,230,208,0.48)]"
-                    : "border-neutral-200 text-neutral-500"
+                  productBrown ? productBrownNavUi.actionChip : "border-neutral-200 text-neutral-500"
                 }`}
               >
                 {item.action}
@@ -1610,10 +1645,10 @@ export function DoeSchedulesAppMock({
                 (label === "Schedule" && workspaceView === "schedule") ||
                 (label === "Patients" && workspaceView === "patients")
                   ? productBrown
-                    ? "bg-[rgba(245,230,208,0.12)] font-medium text-[#f5e6d0]"
+                    ? productBrownNavUi.navItemActive
                     : "bg-neutral-100 font-medium text-neutral-900"
                   : productBrown
-                    ? "text-[rgba(245,230,208,0.78)] hover:bg-[rgba(245,230,208,0.08)]"
+                    ? productBrownNavUi.navItem
                     : "text-neutral-700 hover:bg-neutral-50"
               }`}
             >
@@ -1719,7 +1754,7 @@ export function DoeSchedulesAppMock({
         </div>
       </div>
 
-      <div className="mt-auto border-t border-[#EFEFEF] px-2 py-2">
+      <div className={`mt-auto border-t px-2 py-2 ${productBrown ? productBrownNavUi.footerBorder : "border-[#EFEFEF]"}`}>
         <div className="px-1">
           <div className="relative">
             {userMenuOpen ? (
@@ -1727,7 +1762,7 @@ export function DoeSchedulesAppMock({
                 role="menu"
                 className={`absolute bottom-full left-0 right-0 z-30 mb-1.5 overflow-hidden rounded-xl border p-1 opacity-100 ${
                   productBrown
-                    ? "border-[rgba(245,230,208,0.14)] bg-[#241910] shadow-[0_8px_24px_rgba(0,0,0,0.45)]"
+                    ? productBrownNavUi.menu
                     : "border-[#E5E5E5] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
                 }`}
               >
@@ -1743,18 +1778,16 @@ export function DoeSchedulesAppMock({
                     className={`flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left ${
                       selectedUser.name === user.name
                         ? productBrown
-                          ? "bg-[rgba(245,230,208,0.1)]"
+                          ? productBrownNavUi.menuItemActive
                           : "bg-neutral-100"
                         : productBrown
-                          ? "hover:bg-[rgba(245,230,208,0.08)]"
+                          ? productBrownNavUi.menuItemHover
                           : "hover:bg-neutral-50"
                     }`}
                   >
                     <span
                       className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold ${
-                        productBrown
-                          ? "bg-[rgba(245,230,208,0.12)] text-[#f5e6d0]"
-                          : "bg-neutral-100 text-neutral-700"
+                        productBrown ? productBrownNavUi.avatar : "bg-neutral-100 text-neutral-700"
                       }`}
                     >
                       {user.name
@@ -1766,14 +1799,14 @@ export function DoeSchedulesAppMock({
                     <span className="min-w-0 flex-1">
                       <span
                         className={`block truncate text-[12px] font-medium ${
-                          productBrown ? "text-[#f5e6d0]" : "text-neutral-700"
+                          productBrown ? productBrownNavUi.text : "text-neutral-700"
                         }`}
                       >
                         {user.name}
                       </span>
                       <span
                         className={`block truncate text-[10px] ${
-                          productBrown ? "text-[rgba(245,230,208,0.48)]" : "text-neutral-500"
+                          productBrown ? productBrownNavUi.textSoft : "text-neutral-500"
                         }`}
                       >
                         {user.role}
@@ -1790,18 +1823,14 @@ export function DoeSchedulesAppMock({
                 setClinicMenuOpen(false);
               }}
               className={`flex w-full items-center gap-2 rounded-lg border px-2 py-2 text-left text-[12px] font-medium hover:bg-neutral-50 ${
-                productBrown
-                  ? "border-[rgba(245,230,208,0.12)] bg-[rgba(245,230,208,0.06)] text-[#f5e6d0] hover:bg-[rgba(245,230,208,0.1)]"
-                  : "border-[#E6E6E6] bg-white text-neutral-700"
+                productBrown ? productBrownNavUi.clinicBtn : "border-[#E6E6E6] bg-white text-neutral-700"
               }`}
               aria-haspopup="menu"
               aria-expanded={userMenuOpen}
             >
               <span
                 className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold ${
-                  productBrown
-                    ? "bg-[rgba(245,230,208,0.12)] text-[#f5e6d0]"
-                    : "bg-neutral-100 text-neutral-700"
+                  productBrown ? productBrownNavUi.avatar : "bg-neutral-100 text-neutral-700"
                 }`}
               >
                 {selectedUser.name
@@ -1814,7 +1843,7 @@ export function DoeSchedulesAppMock({
                 <span className="block truncate">{selectedUser.name}</span>
                 <span
                   className={`block truncate text-[10px] font-normal ${
-                    productBrown ? "text-[rgba(245,230,208,0.48)]" : "text-neutral-500"
+                    productBrown ? productBrownNavUi.textSoft : "text-neutral-500"
                   }`}
                 >
                   {selectedUser.role}
@@ -1860,7 +1889,7 @@ export function DoeSchedulesAppMock({
         className={`flex min-h-0 flex-1 flex-col overflow-hidden ${
           full
             ? productBrown
-              ? "product-brown-shell rounded-none border-0 bg-[#1a1208]"
+              ? "product-brown-shell rounded-none border-0"
               : "rounded-none border-0 bg-[#F4F4F5] shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]"
             : hero
               ? "rounded-none border-0 bg-white"
@@ -1871,8 +1900,8 @@ export function DoeSchedulesAppMock({
           className={`min-h-0 flex-1 overflow-hidden ${
             productBrown
               ? productBrownInbox || productBrownSchedule || productBrownLanding
-                ? "product-brown-frame product-brown-layered-layout bg-[var(--pi-cream)]"
-                : "product-brown-frame product-brown-layered-layout bg-[#1a1208]"
+                ? "product-brown-frame product-brown-layered-layout"
+                : "product-brown-frame product-brown-layered-layout"
               : productBrownInbox
                 ? "product-brown-frame product-brown-inbox bg-[var(--pi-cream)]"
                 : productBrownDarkWorkspace
