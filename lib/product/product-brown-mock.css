@@ -1207,41 +1207,6 @@ html[data-product-page="true"] .product-call-preview__bubble--agent {
   background-color: var(--pi-raised) !important;
 }
 
-/* Schedule: retune gold “today” highlights and stray neutrals to taupe */
-.product-brown-mock.product-brown-schedule-mode .product-brown-main [class*="bg-[#FFF9F1]"],
-.product-brown-mock.product-brown-schedule-mode .product-brown-main-panel [class*="bg-[#FFF9F1]"] {
-  background-color: var(--pi-selected) !important;
-}
-
-.product-brown-mock.product-brown-schedule-mode .product-brown-main [class*="border-[#E8D4B5]"],
-.product-brown-mock.product-brown-schedule-mode .product-brown-main-panel [class*="border-[#E8D4B5]"] {
-  border-color: var(--pi-line-strong) !important;
-}
-
-.product-brown-mock.product-brown-schedule-mode .product-brown-main [class*="text-[#9B6A3F]"],
-.product-brown-mock.product-brown-schedule-mode .product-brown-main-panel [class*="text-[#9B6A3F]"] {
-  color: var(--pi-accent-deep) !important;
-}
-
-.product-brown-mock.product-brown-schedule-mode .product-brown-main [class*="bg-[#E8D4B5]"],
-.product-brown-mock.product-brown-schedule-mode .product-brown-main-panel [class*="bg-[#E8D4B5]"] {
-  background-color: var(--pi-well) !important;
-}
-
-.product-brown-mock.product-brown-schedule-mode .product-brown-main [class*="ring-[#E8D4B5]"],
-.product-brown-mock.product-brown-schedule-mode .product-brown-main-panel [class*="ring-[#E8D4B5]"] {
-  --tw-ring-color: var(--pi-line-strong) !important;
-}
-
-.product-brown-mock.product-brown-schedule-mode
-  .product-brown-main
-  [class*="shadow-[inset_3px_0_0_0_#D4A574]"],
-.product-brown-mock.product-brown-schedule-mode
-  .product-brown-main-panel
-  [class*="shadow-[inset_3px_0_0_0_#D4A574]"] {
-  box-shadow: inset 3px 0 0 0 var(--pi-accent) !important;
-}
-
 .product-brown-mock.product-brown-schedule-mode .product-brown-main [class*="bg-[#FCFCFC]"],
 .product-brown-mock.product-brown-schedule-mode .product-brown-main-panel [class*="bg-[#FCFCFC]"],
 .product-brown-mock.product-brown-schedule-mode .product-brown-main [class*="bg-[#F9F9FA]"],
@@ -1252,11 +1217,6 @@ html[data-product-page="true"] .product-call-preview__bubble--agent {
 .product-brown-mock.product-brown-schedule-mode .product-brown-main [class*="bg-[#EBEBEB]"],
 .product-brown-mock.product-brown-schedule-mode .product-brown-main-panel [class*="bg-[#EBEBEB]"] {
   background-color: var(--pi-sand) !important;
-}
-
-.product-brown-mock.product-brown-schedule-mode .product-brown-main [class*="bg-[#C9A06E]"],
-.product-brown-mock.product-brown-schedule-mode .product-brown-main-panel [class*="bg-[#C9A06E]"] {
-  background-color: var(--pi-accent) !important;
 }
 
 .product-brown-mock.product-brown-schedule-mode .product-brown-main .bg-neutral-100\/90,

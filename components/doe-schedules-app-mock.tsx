@@ -871,6 +871,21 @@ const WEEK_VISIBLE_SLOT_COUNT = ((24 * 60) - WEEK_VISIBLE_START_MINUTES) / SLOT_
 const TODAY_DATE_LABEL = "Mar 30";
 const TODAY_DATE_KEY = "2026-03-30";
 
+/** Warm caramel highlight for the current day in schedule grids */
+const SCHEDULE_TODAY = {
+  cell: "border-[#C9956A] bg-[#F5E4CC] shadow-[inset_3px_0_0_0_#B87333]",
+  column: "border-[#C9956A] bg-[#F5E4CC]",
+  dayNum: "bg-[#E3B468]/45 text-[#7A4E1F]",
+  ink: "text-[#7A4E1F]",
+  inkMuted: "text-[#7A4E1F]/85",
+  tagSm:
+    "shrink-0 rounded-full bg-[#A8794B] px-1.5 py-0.5 text-[8px] font-semibold uppercase tracking-wide text-[#FFF8F0]",
+  tagMd:
+    "shrink-0 rounded-full bg-[#A8794B] px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#FFF8F0]",
+  tagLg:
+    "rounded-full bg-[#A8794B] px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#FFF8F0]",
+} as const;
+
 function parseTimeToMinutes(time: string): number {
   const [hourText, minuteText] = time.split(":");
   const hour = Number(hourText);
@@ -954,21 +969,6 @@ function getAppointmentReason(tone: string, label: string): string {
 }
 
 function eventCardGradientClass(tone: string, brownOnly = false): string {
-  if (brownOnly) {
-    switch (tone) {
-      case "amber":
-        return "bg-gradient-to-br from-[#8a8076] to-[#6e6258]";
-      case "purple":
-        return "bg-gradient-to-br from-[#6e6258] to-[#4a4038]";
-      case "green":
-        return "bg-gradient-to-br from-[#7a7568] to-[#5a534c]";
-      case "neutral":
-        return "bg-[var(--pi-well)] ring-1 ring-[var(--pi-line)]";
-      default:
-        return "bg-gradient-to-br from-[#7a7168] to-[#6e6258]";
-    }
-  }
-
   switch (tone) {
     case "blue":
       return "bg-gradient-to-br from-[#E3B468] to-[#A8794B]";
@@ -978,6 +978,10 @@ function eventCardGradientClass(tone: string, brownOnly = false): string {
       return "bg-gradient-to-br from-[#D38964] to-[#906A54]";
     case "green":
       return "bg-gradient-to-br from-[#9A936F] to-[#6D654C]";
+    case "neutral":
+      return brownOnly
+        ? "bg-[var(--pi-well)] ring-1 ring-[var(--pi-line)]"
+        : "bg-gradient-to-br from-[#C4A882] to-[#8B7355]";
     default:
       return "bg-gradient-to-br from-[#E3B468] to-[#A8794B]";
   }
@@ -985,13 +989,11 @@ function eventCardGradientClass(tone: string, brownOnly = false): string {
 
 function eventCardTextClass(tone: string, brownOnly = false): string {
   if (brownOnly && tone === "neutral") return "text-[var(--pi-ink-soft)]";
-  if (brownOnly) return "text-[var(--pi-reading)]";
   return "text-white";
 }
 
 function eventCardSubtextClass(tone: string, brownOnly = false): string {
   if (brownOnly && tone === "neutral") return "text-[var(--pi-muted)]";
-  if (brownOnly) return "text-[var(--pi-reading)]/90";
   return "text-white/90";
 }
 
@@ -1165,31 +1167,19 @@ export function DoeSchedulesAppMock({
     },
     {
       label: "Clinic",
-      swatch:
-        variant === "product-brown"
-          ? "bg-gradient-to-br from-[#7a7168] to-[#6e6258]"
-          : "bg-gradient-to-br from-[#E3B468] to-[#A8794B]",
+      swatch: "bg-gradient-to-br from-[#E3B468] to-[#A8794B]",
     },
     {
       label: "Research",
-      swatch:
-        variant === "product-brown"
-          ? "bg-gradient-to-br from-[#8a8076] to-[#6e6258]"
-          : "bg-gradient-to-br from-[#E5AF63] to-[#BC6948]",
+      swatch: "bg-gradient-to-br from-[#E5AF63] to-[#BC6948]",
     },
     {
       label: "Director/Residency",
-      swatch:
-        variant === "product-brown"
-          ? "bg-gradient-to-br from-[#6e6258] to-[#4a4038]"
-          : "bg-gradient-to-br from-[#D38964] to-[#906A54]",
+      swatch: "bg-gradient-to-br from-[#D38964] to-[#906A54]",
     },
     {
       label: "Family/Kids",
-      swatch:
-        variant === "product-brown"
-          ? "bg-gradient-to-br from-[#7a7568] to-[#5a534c]"
-          : "bg-gradient-to-br from-[#9A936F] to-[#6D654C]",
+      swatch: "bg-gradient-to-br from-[#9A936F] to-[#6D654C]",
     },
   ] as const;
   const [selectedCategory, setSelectedCategory] =
@@ -2211,7 +2201,7 @@ export function DoeSchedulesAppMock({
                                 key={day.key}
                                 className={`flex min-h-[118px] flex-col rounded-lg border p-1.5 ${
                                   isToday
-                                    ? "border-[#E8D4B5] bg-[#FFF9F1] shadow-[inset_3px_0_0_0_#D4A574]"
+                                    ? SCHEDULE_TODAY.cell
                                     : day.inApril
                                       ? "border-[#EDEDED] bg-white"
                                       : "border-[#F0F0F0] bg-[#F9F9FA]"
@@ -2221,7 +2211,7 @@ export function DoeSchedulesAppMock({
                                   <span
                                     className={`flex h-6 min-w-[1.5rem] items-center justify-center rounded-md text-[12px] font-semibold tabular-nums ${
                                       isToday
-                                        ? "bg-[#E8D4B5]/35 text-[#9B6A3F]"
+                                        ? SCHEDULE_TODAY.dayNum
                                         : day.inApril
                                           ? "text-neutral-800"
                                           : "text-neutral-400"
@@ -2230,9 +2220,7 @@ export function DoeSchedulesAppMock({
                                     {day.day}
                                   </span>
                                   {isToday && !hero ? (
-                                    <span className="shrink-0 rounded-full bg-white/80 px-1.5 py-0.5 text-[8px] font-semibold uppercase tracking-wide text-[#9B6A3F] ring-1 ring-[#E8D4B5]/80">
-                                      Today
-                                    </span>
+                                    <span className={SCHEDULE_TODAY.tagSm}>Today</span>
                                   ) : !day.inApril ? (
                                     <span className="truncate text-[9px] font-medium text-neutral-400">
                                       {day.month}
@@ -2283,27 +2271,25 @@ export function DoeSchedulesAppMock({
                             key={`head-${day.day}`}
                             className={`border-r px-2 py-2 last:border-r-0 ${
                               day.date === TODAY_DATE_LABEL
-                                ? "border-[#E8D4B5] bg-[#FFF9F1]"
+                                ? SCHEDULE_TODAY.column
                                 : "border-[#EAEAEA]"
                             }`}
                           >
                             <div className="flex items-center justify-between gap-1">
                               <p
                                 className={`text-[12px] font-semibold ${
-                                  day.date === TODAY_DATE_LABEL ? "text-[#9B6A3F]" : "text-neutral-900"
+                                  day.date === TODAY_DATE_LABEL ? SCHEDULE_TODAY.ink : "text-neutral-900"
                                 }`}
                               >
                                 {day.day}
                               </p>
                               {day.date === TODAY_DATE_LABEL && !hero ? (
-                                <span className="shrink-0 rounded-full border border-[#E8D4B5] bg-white px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#9B6A3F]">
-                                  Today
-                                </span>
+                                <span className={SCHEDULE_TODAY.tagMd}>Today</span>
                               ) : null}
                             </div>
                             <p
                               className={`text-[10px] ${
-                                day.date === TODAY_DATE_LABEL ? "text-[#9B6A3F]" : "text-neutral-500"
+                                day.date === TODAY_DATE_LABEL ? SCHEDULE_TODAY.inkMuted : "text-neutral-500"
                               }`}
                             >
                               {day.date}
@@ -2360,7 +2346,7 @@ export function DoeSchedulesAppMock({
                               key={`col-${day.day}`}
                               className={`relative border-r last:border-r-0 ${
                                 isTodayCol
-                                  ? "border-[#E8D4B5] bg-[#FFF9F1]"
+                                  ? SCHEDULE_TODAY.column
                                   : "border-[#EAEAEA] bg-white"
                               } ${hero ? "overflow-hidden" : ""}`}
                             >
@@ -2430,15 +2416,13 @@ export function DoeSchedulesAppMock({
                         <div className="border-r border-[#EAEAEA] px-2 py-2 text-[10px] font-semibold uppercase tracking-wide text-neutral-400">
                           Time
                         </div>
-                        <div className="border-[#E8D4B5] bg-[#FFF9F1] px-3 py-2">
+                        <div className={`${SCHEDULE_TODAY.column} px-3 py-2`}>
                           <div className="flex flex-wrap items-center gap-2">
-                            <p className="text-[13px] font-semibold text-[#9B6A3F]">{todayScheduleDay.day}</p>
+                            <p className={`text-[13px] font-semibold ${SCHEDULE_TODAY.ink}`}>{todayScheduleDay.day}</p>
                             {!hero ? (
-                              <span className="rounded-full border border-[#E8D4B5] bg-white px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#9B6A3F]">
-                                Today
-                              </span>
+                              <span className={SCHEDULE_TODAY.tagLg}>Today</span>
                             ) : null}
-                            <span className="text-[12px] text-[#9B6A3F]/90">{todayScheduleDay.date}</span>
+                            <span className={`text-[12px] ${SCHEDULE_TODAY.inkMuted}`}>{todayScheduleDay.date}</span>
                           </div>
                           <p className="mt-0.5 text-[11px] text-neutral-500">
                             {todaySummary.total} on the calendar
@@ -2582,7 +2566,7 @@ export function DoeSchedulesAppMock({
                                         <span
                                           className={`flex h-6 w-6 items-center justify-center rounded-md text-[10px] font-semibold tabular-nums ${
                                             isToday
-                                              ? "bg-[#E8D4B5]/35 text-[#9B6A3F]"
+                                              ? SCHEDULE_TODAY.dayNum
                                               : "text-neutral-700"
                                           }`}
                                         >
@@ -2590,7 +2574,7 @@ export function DoeSchedulesAppMock({
                                         </span>
                                         <div className="flex h-2 flex-col items-center justify-end">
                                           {hasEvents ? (
-                                            <span className="h-1 w-1 rounded-full bg-[#C9A06E]" aria-hidden />
+                                            <span className="h-1 w-1 rounded-full bg-[#A8794B]" aria-hidden />
                                           ) : null}
                                         </div>
                                       </div>
