@@ -1,9 +1,6 @@
 "use client";
 
-import { useState } from "react";
-
 import {
-  PRODUCT_LANDING_AI_INPUT,
   PRODUCT_LANDING_ATTENTION,
   PRODUCT_LANDING_CONSOLE,
   PRODUCT_LANDING_DAY_SUMMARY,
@@ -31,24 +28,6 @@ function MicIcon({ className }: { className?: string }) {
       <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
       <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
       <line x1="12" x2="12" y1="19" y2="22" />
-    </svg>
-  );
-}
-
-function SendIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      aria-hidden
-    >
-      <path d="m22 2-7 20-4-9-9-4Z" />
-      <path d="M22 2 11 13" />
     </svg>
   );
 }
@@ -262,8 +241,6 @@ function DaySummaryHero() {
 
 /** Physician morning command center for the clinic voice agent. */
 export function ProductLandingPanel() {
-  const [prompt, setPrompt] = useState("");
-
   return (
     <div className="product-landing-panel flex min-h-0 flex-1 flex-col overflow-hidden">
       <header className="product-landing-header flex items-center gap-2 border-b px-4 py-3">
@@ -513,51 +490,6 @@ export function ProductLandingPanel() {
           </aside>
         </div>
       </div>
-
-      <footer className="product-landing-ai-dock shrink-0 border-t px-4 py-3">
-        <div className="product-landing-ai-dock__inner mx-auto max-w-[72rem]">
-          <p
-            className={`product-landing-ai-dock__title m-0 mb-2 text-[10px] font-semibold uppercase tracking-[0.12em] ${suisseIntl.className}`}
-          >
-            {PRODUCT_LANDING_AI_INPUT.title}
-          </p>
-          <div className="product-landing-ai-suggestions mb-2 flex flex-wrap gap-1.5">
-            {PRODUCT_LANDING_AI_INPUT.suggestions.map((suggestion) => (
-              <button
-                key={suggestion}
-                type="button"
-                onClick={() => setPrompt(suggestion)}
-                className={`product-landing-ai-suggestion rounded-full px-2.5 py-1 text-left text-[10px] font-medium leading-snug transition-colors ${inter.className}`}
-              >
-                {suggestion}
-              </button>
-            ))}
-          </div>
-          <form
-            className="product-landing-ai-input flex items-end gap-2 rounded-[14px] border p-2"
-            onSubmit={(event) => event.preventDefault()}
-          >
-            <label htmlFor="product-voice-ai-input" className="sr-only">
-              Tell Doe how to handle the next call
-            </label>
-            <textarea
-              id="product-voice-ai-input"
-              rows={2}
-              value={prompt}
-              onChange={(event) => setPrompt(event.target.value)}
-              placeholder={PRODUCT_LANDING_AI_INPUT.placeholder}
-              className={`product-landing-ai-input__field min-h-[2.75rem] flex-1 resize-none border-0 bg-transparent px-1 py-1 text-[12px] leading-[1.45] outline-none ${inter.className}`}
-            />
-            <button
-              type="submit"
-              aria-label="Send prompt"
-              className="product-landing-ai-input__send inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] transition-colors"
-            >
-              <SendIcon className="h-4 w-4" />
-            </button>
-          </form>
-        </div>
-      </footer>
     </div>
   );
 }

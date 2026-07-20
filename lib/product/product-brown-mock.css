@@ -1092,11 +1092,6 @@ html[data-product-page="true"] .product-call-preview__bubble--agent {
   border-color: var(--pi-line) !important;
 }
 
-.product-brown-mock.product-brown-landing-mode .product-landing-ai-dock {
-  background: var(--pi-sand) !important;
-  border-color: var(--pi-line) !important;
-}
-
 /* ── Schedule: same taupe palette as inbox / today ── */
 .product-brown-mock.product-brown-schedule-mode {
   --pi-cream: #f2efe8;

@@ -167,16 +167,6 @@ export const PRODUCT_LANDING_PULSE = [
   { label: "Waiting on you", value: PRODUCT_LANDING_SHIFT.forYou },
 ] as const;
 
-export const PRODUCT_LANDING_AI_INPUT = {
-  title: "Brief Doe before the next call",
-  placeholder: "Tell Doe how to handle the next caller…",
-  suggestions: [
-    "If they ask about refills, verify DOB then route to pharmacy",
-    "After 6 PM, run bilingual intake before booking",
-    "Warm-transfer prior auth questions to care coordination",
-  ],
-} as const;
-
 /** @deprecated Use PRODUCT_LANDING_SHIFT. */
 export const PRODUCT_LANDING_BRIEF = PRODUCT_LANDING_SHIFT.overnight;
 
