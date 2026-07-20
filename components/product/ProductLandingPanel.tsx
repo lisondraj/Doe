@@ -9,7 +9,6 @@ import {
   PRODUCT_LANDING_DAY_SUMMARY,
   PRODUCT_LANDING_GREETING,
   PRODUCT_LANDING_LINES,
-  PRODUCT_LANDING_PRIMARY_CTA,
   PRODUCT_LANDING_QUEUE,
   PRODUCT_LANDING_SECONDARY_CTA,
   PRODUCT_LANDING_TRANSCRIPT,
@@ -267,27 +266,11 @@ export function ProductLandingPanel() {
 
   return (
     <div className="product-landing-panel flex min-h-0 flex-1 flex-col overflow-hidden">
-      <header className="product-landing-header">
-        <div className="product-landing-header__brand">
-          <MicIcon className="product-landing-header__icon h-[16px] w-[16px] shrink-0" />
-          <h1 className={`product-landing-header__title m-0 text-[13px] font-semibold tracking-tight ${suisseIntl.className}`}>
-            Voice
-          </h1>
-        </div>
-
-        <div className="product-landing-header__status min-w-0">
-          <span className="product-landing-header__status-dot" aria-hidden />
-          <p className={`product-landing-header__status-text m-0 truncate ${inter.className}`}>
-            Live · {PRODUCT_LANDING_CONSOLE.caller} · {PRODUCT_LANDING_CONSOLE.line}
-          </p>
-        </div>
-
-        <button
-          type="button"
-          className={`product-landing-cta-primary product-landing-header__action ${suisseIntl.className}`}
-        >
-          {PRODUCT_LANDING_PRIMARY_CTA}
-        </button>
+      <header className="product-landing-header flex items-center gap-2 border-b px-4 py-3">
+        <MicIcon className="product-landing-header__icon h-5 w-5 shrink-0" />
+        <h1 className={`product-landing-header__title m-0 text-[15px] font-semibold tracking-tight ${suisseIntl.className}`}>
+          Voice
+        </h1>
       </header>
 
       <div className="product-landing-body min-h-0 flex-1 overflow-y-auto">

@@ -29,20 +29,9 @@
 }
 
 .product-landing-header {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 0.75rem;
   flex-shrink: 0;
-  padding: 0.6rem 1rem;
   background: var(--pi-sand);
-  border-bottom: 1px solid var(--pi-line);
-}
-
-.product-landing-header__brand {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
+  border-color: var(--pi-line);
 }
 
 .product-landing-header__title {
@@ -51,56 +40,6 @@
 
 .product-landing-header__icon {
   color: var(--pi-muted);
-}
-
-.product-landing-header__status {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.45rem;
-  padding: 0.4rem 0.75rem;
-  border-radius: 999px;
-  background: var(--pi-reading);
-  border: 1px solid var(--pi-line);
-}
-
-.product-landing-header__status-dot {
-  width: 0.4rem;
-  height: 0.4rem;
-  border-radius: 999px;
-  background: var(--pi-accent);
-  flex-shrink: 0;
-  animation: product-landing-pulse 2.4s ease-in-out infinite;
-}
-
-.product-landing-header__status-text {
-  color: var(--pi-ink-soft);
-  font-size: 11px;
-  line-height: 1;
-}
-
-.product-landing-header__action {
-  display: inline-flex;
-  height: 2rem;
-  align-items: center;
-  justify-content: center;
-  padding: 0 0.75rem;
-  border-radius: 9px;
-  font-size: 11px;
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: -0.01em;
-  transition: background-color 0.15s ease;
-}
-
-.product-landing-cta-primary {
-  border: 1px solid rgba(30, 22, 18, 0.12);
-  background: var(--pi-ink);
-  color: var(--pl-console-text);
-}
-
-.product-landing-cta-primary:hover {
-  background: #2a2118;
 }
 
 @keyframes product-landing-pulse {
@@ -910,7 +849,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .product-landing-header__status-dot,
   .product-landing-day-summary__live-dot,
   .product-landing-day-summary__timeline-h-step--active .product-landing-day-summary__timeline-h-dot,
   .product-landing-mini-waveform__bar,
