@@ -26,6 +26,7 @@
   --pl-console-text: #f2e8da;
   --pi-bar-gradient: linear-gradient(180deg, #d4a574 0%, rgba(212, 165, 116, 0.38) 100%);
   --pl-gutter: clamp(1rem, 2vw, 1.35rem);
+  --pl-workspace-pad-top: clamp(0.7rem, 1.15vw, 0.9rem);
   position: relative;
   isolation: isolate;
   background: var(--pl-console-to);
