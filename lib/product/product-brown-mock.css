@@ -74,7 +74,7 @@
   overflow: hidden;
   color: var(--pl-console-text);
   background: var(--pb-nav-surface) !important;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.14);
+  box-shadow: none;
 }
 
 .product-brown-mock .product-brown-layered-layout .product-brown-sidebar::before {
