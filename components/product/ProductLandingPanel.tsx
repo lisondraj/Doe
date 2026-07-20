@@ -563,7 +563,7 @@ function DaySummaryHero({ inConsole = false }: { inConsole?: boolean }) {
 export function ProductLandingPanel() {
   return (
     <div className="product-landing-panel flex min-h-0 flex-1 flex-col overflow-hidden">
-      <div className="product-landing-console-shell min-h-0 overflow-hidden">
+      <div className="product-landing-console-shell shrink-0">
         <header className={`product-landing-header flex items-center gap-2 ${suisseIntl.className}`}>
           <svg
             viewBox="0 0 24 24"
@@ -582,8 +582,8 @@ export function ProductLandingPanel() {
           </h1>
         </header>
 
-        <section className="product-landing-call min-h-0" aria-label="Voice summary">
-          <div className="product-landing-call__stage relative overflow-hidden">
+        <section className="product-landing-call shrink-0" aria-label="Voice summary">
+          <div className="product-landing-call__stage relative">
             <DaySummaryHero inConsole />
           </div>
         </section>
