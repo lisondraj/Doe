@@ -4,6 +4,7 @@ import { useLayoutEffect } from "react";
 
 import { DoeSchedulesAppMock } from "@/components/doe-schedules-app-mock";
 import "@/lib/product/product-brown-mock.css";
+import "@/lib/product/product-landing.css";
 
 /** /product — doebuildnew app shell in brown-only theme with voice landing. */
 export function ProductPage() {

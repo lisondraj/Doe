@@ -2,6 +2,12 @@ import type { ProductNavTab } from "@/lib/product/product-nav";
 
 export const PRODUCT_LANDING_GREETING = "Good morning, Dr. Chen";
 
+export const PRODUCT_LANDING_GREETING_LINE = "Good morning,";
+
+export const PRODUCT_LANDING_GREETING_NAME = "Dr. Chen";
+
+export const PRODUCT_LANDING_TAB_LABEL = "Today";
+
 /** @deprecated Use PRODUCT_LANDING_DAY_SUMMARY panels. */
 export const PRODUCT_LANDING_HEADLINE = "Last 24 hours · Today ahead";
 
@@ -20,9 +26,9 @@ export const PRODUCT_LANDING_DAY_SUMMARY = {
     volumeLabels: ["12a", "4a", "8a", "12p", "4p", "8p"],
     split: { overnight: 4, clinicHours: 43 },
     tiles: [
-      { id: "overnight", label: "Overnight", value: "4", detail: "after-hours calls" },
-      { id: "resolved", label: "Resolved", value: "83%", detail: "by Doe" },
-      { id: "notes", label: "Notes", value: "2", detail: "left for you" },
+      { id: "scheduling", label: "Scheduling", value: "18", detail: "appointments & slots" },
+      { id: "refills", label: "Refills", value: "11", detail: "medication requests" },
+      { id: "admin", label: "Admin", value: "18", detail: "billing & prior auth" },
     ],
   },
   todayAhead: {
@@ -33,6 +39,14 @@ export const PRODUCT_LANDING_DAY_SUMMARY = {
     needsYou: "3",
     peakWindow: "10–11 AM",
     peakDetail: "Expected call peak",
+    nextAppointment: {
+      label: "Next appointment",
+      time: "9:30 AM",
+      relative: "In 47 min",
+      patient: "Elena Ruiz",
+      detail: "Annual physical",
+      location: "Room 204",
+    },
     timeline: [
       { id: "now", time: "Now", label: "Live", detail: "M. Nguyen · booking", state: "active" as const },
       { id: "queue-1", time: "+2m", label: "Queue", detail: "S. Patel · prior auth", state: "queued" as const },
@@ -41,6 +55,63 @@ export const PRODUCT_LANDING_DAY_SUMMARY = {
     ],
   },
 } as const;
+
+export const PRODUCT_LANDING_LIVE_QUOTE = {
+  caller: "Sarah Westfield",
+  callDuration: "0m6s",
+  line1: {
+    beforeName: "Hello this is ",
+    name: "Sarah",
+    afterName: ", I would like",
+  },
+  line2: {
+    beforeSubject: "to book an ",
+    subject: "appointment",
+  },
+} as const;
+
+export const PRODUCT_LANDING_AGENT_REPLY = {
+  caller: "Doe Agent",
+  callDuration: "0m9s",
+  line1: "Before we begin, please read the",
+  line2: "code sent to your phone",
+} as const;
+
+export const PRODUCT_LANDING_AGENT_STEPS = [
+  "Sarah's chart",
+  "Auth code",
+  "Calendar",
+] as const;
+
+export const PRODUCT_LANDING_CALL_OUTCOME = {
+  caller: "Sarah Westfield",
+  phone: "(512) 555-0192",
+  totalCallTime: "1m18s",
+  status: "Appointment Booked",
+} as const;
+
+export const PRODUCT_LANDING_CALL_HISTORY_LABEL = "Last call history";
+
+export const PRODUCT_LANDING_CALL_HISTORY_ORBIT_AGENTS = [
+  { id: "voice", icon: "voice", nameLines: ["Voice", "Agent"] },
+  { id: "research", icon: "research", nameLines: ["Research", "Agent"] },
+  { id: "scheduling", icon: "calendar", nameLines: ["Scheduling", "Agent"] },
+  { id: "inbox", icon: "inbox", nameLines: ["Inbox", "Agent"] },
+  { id: "billing", icon: "billing", nameLines: ["Billing", "Agent"] },
+  { id: "referrals", icon: "referrals", nameLines: ["Referrals", "Agent"] },
+  { id: "prior-auth", icon: "prior-auth", nameLines: ["Prior", "Auth"] },
+] as const;
+
+export const PRODUCT_LANDING_CALL_HISTORY_ORBIT = {
+  labelLines: ["Active", "Agents"],
+  editAgentsLabel: "Edit Agents",
+} as const;
+
+export const PRODUCT_LANDING_CALL_HISTORY_ACTIONS = [
+  "Call Back",
+  "See Transcript",
+  "Review Actions",
+] as const;
 
 export const PRODUCT_LANDING_PRIMARY_CTA = "Listen in";
 

@@ -5,6 +5,7 @@ import type { CSSProperties } from "react";
 import { Inter, Lora } from "next/font/google";
 import localFont from "next/font/local";
 
+import { ProductAgentsPanel } from "@/components/product/ProductAgentsPanel";
 import { ProductLandingPanel } from "@/components/product/ProductLandingPanel";
 
 export const weekSchedule = [
@@ -1202,7 +1203,7 @@ export function DoeSchedulesAppMock({
   const [selectedUser, setSelectedUser] = useState<(typeof userOptions)[number]>(userOptions[0]);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [workspaceView, setWorkspaceView] = useState<
-    "inbox" | "schedule" | "patients" | "landing"
+    "inbox" | "schedule" | "patients" | "landing" | "agents"
   >(variant === "product-brown" ? "landing" : "schedule");
   const [selectedInboxId, setSelectedInboxId] = useState<string>(inboxThreads[0].id);
   const [inboxFilter, setInboxFilter] = useState<"all" | "unread" | "pinned">("all");
@@ -1295,6 +1296,7 @@ export function DoeSchedulesAppMock({
   const productBrownInbox = productBrown && workspaceView === "inbox";
   const productBrownLanding = productBrown && workspaceView === "landing";
   const productBrownSchedule = productBrown && workspaceView === "schedule";
+  const productBrownAgents = productBrown && workspaceView === "agents";
   const productBrownDarkWorkspace =
     productBrownWorkspace && workspaceView === "patients";
   const productBrownTaupeUi = {
@@ -1355,6 +1357,7 @@ export function DoeSchedulesAppMock({
     hero ||
     workspaceView === "inbox" ||
     workspaceView === "schedule" ||
+    workspaceView === "agents" ||
     (productBrown && workspaceView === "landing");
   const patientBentoCard = productBrownDarkWorkspace
     ? "rounded-xl border border-[rgba(245,230,208,0.1)] bg-[#322618] p-3 shadow-[0_1px_2px_rgba(0,0,0,0.18)]"
@@ -1381,35 +1384,41 @@ export function DoeSchedulesAppMock({
     <aside
       className={`flex h-full shrink-0 flex-col ${
         productBrown
-          ? "product-brown-sidebar bg-[#1a1208]"
+          ? `product-brown-sidebar ${suisseIntlUi.className}`
           : "w-[220px] border-r border-[#EFEFEF] bg-white"
       }`}
     >
       <div className="flex items-center justify-between gap-2 px-3 pt-3 pb-2">
-        <div className="flex min-w-0 items-center gap-2">
+        <div className="flex min-w-0 items-center gap-2.5">
           <div
-            className={`h-8 w-8 shrink-0 rounded-lg shadow-sm ${
+            className={`shrink-0 rounded-lg shadow-sm ${
+              productBrown ? "h-9 w-9" : "h-8 w-8"
+            } ${
               productBrown
                 ? "bg-gradient-to-br from-[#D4A574] via-[#A67B5B] to-[#3d2e1f]"
                 : "bg-gradient-to-br from-[#E7A944] via-[#D2774C] to-[#1E343A]"
             }`}
           />
           <div className="min-w-0">
-            <div
-              className={`truncate text-[1.15rem] font-normal leading-none tracking-tight ${
-                productBrown ? "text-[#f5e6d0]" : "text-neutral-900"
-              } ${lora.className}`}
-            >
-              Doe
-            </div>
+          <div
+            className={`truncate font-normal leading-[2.25rem] tracking-tight ${
+              productBrown ? "h-9 text-[1.65rem]" : "text-[1.15rem]"
+            } ${
+              productBrown ? "text-[#f5e6d0]" : "text-neutral-900"
+            } ${lora.className}`}
+          >
+            Doe
+          </div>
           </div>
         </div>
         <button
           type="button"
-          className="rounded-md p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600"
+          className={`rounded-md hover:bg-neutral-100 hover:text-neutral-600 ${
+            productBrown ? "p-1.5 text-[rgba(245,230,208,0.52)] hover:bg-[rgba(245,230,208,0.08)] hover:text-[#f5e6d0]" : "p-1 text-neutral-400"
+          }`}
           aria-label="Collapse sidebar"
         >
-          <Icon className="h-4 w-4">
+          <Icon className={productBrown ? "h-5 w-5" : "h-4 w-4"}>
             <rect width="18" height="18" x="3" y="3" rx="2" />
             <path d="M9 3v18" />
           </Icon>
@@ -1579,7 +1588,7 @@ export function DoeSchedulesAppMock({
                   : "text-neutral-700 hover:bg-neutral-50"
             }`}
           >
-            <Icon className="h-[18px] w-[18px]">{item.icon}</Icon>
+            <Icon className={productBrown ? "h-5 w-5" : "h-[18px] w-[18px]"}>{item.icon}</Icon>
             <span className="min-w-0 flex-1 truncate">{item.label}</span>
             {"badge" in item && item.badge ? (
               <span
@@ -1638,7 +1647,7 @@ export function DoeSchedulesAppMock({
                     : "text-neutral-700 hover:bg-neutral-50"
               }`}
             >
-              <Icon className="h-[18px] w-[18px]">
+              <Icon className={productBrown ? "h-5 w-5" : "h-[18px] w-[18px]"}>
                 {label === "Schedule" ? (
                   <>
                     <rect width="18" height="18" x="3" y="4" rx="2" />
@@ -1662,7 +1671,7 @@ export function DoeSchedulesAppMock({
             type="button"
             className="flex items-center gap-2 rounded-lg px-2 py-2 text-[13px] text-neutral-700 hover:bg-neutral-50"
           >
-            <Icon className="h-[18px] w-[18px]">
+            <Icon className={productBrown ? "h-5 w-5" : "h-[18px] w-[18px]"}>
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
               <path d="M14 2v6h6" />
             </Icon>
@@ -1677,7 +1686,7 @@ export function DoeSchedulesAppMock({
               type="button"
               className="flex items-center gap-2 rounded-lg px-2 py-2 text-[13px] text-neutral-700 hover:bg-neutral-50"
             >
-              <Icon className="h-[18px] w-[18px]">
+              <Icon className={productBrown ? "h-5 w-5" : "h-[18px] w-[18px]"}>
                 {label === "Billing" ? (
                   <>
                     <rect width="20" height="14" x="2" y="5" rx="2" />
@@ -1701,13 +1710,24 @@ export function DoeSchedulesAppMock({
           <span>Intelligence</span>
         </div>
         <div className="mt-1 flex flex-col gap-0.5">
-          {["Agents", "Design", "Marketing", "Franchise"].map((label) => (
+          {(["Agents", "Design", "Marketing", "Franchise"] as const).map((label) => (
             <button
               key={label}
               type="button"
-              className="flex items-center gap-2 rounded-lg px-2 py-2 text-[13px] text-neutral-700 hover:bg-neutral-50"
+              onClick={() => {
+                if (label === "Agents") setWorkspaceView("agents");
+              }}
+              className={`flex items-center gap-2 rounded-lg px-2 py-2 text-[13px] ${
+                label === "Agents" && workspaceView === "agents"
+                  ? productBrown
+                    ? "bg-[rgba(245,230,208,0.12)] font-medium text-[#f5e6d0]"
+                    : "bg-neutral-100 font-medium text-neutral-900"
+                  : productBrown
+                    ? "text-[rgba(245,230,208,0.78)] hover:bg-[rgba(245,230,208,0.08)]"
+                    : "text-neutral-700 hover:bg-neutral-50"
+              }`}
             >
-              <Icon className="h-[18px] w-[18px]">
+              <Icon className={productBrown ? "h-5 w-5" : "h-[18px] w-[18px]"}>
                 {label === "Agents" ? (
                   <>
                     <circle cx="9" cy="8" r="3" />
@@ -1873,7 +1893,8 @@ export function DoeSchedulesAppMock({
         (productBrownDarkWorkspace ? " product-brown-workspace-mode" : "") +
         (productBrownInbox ? " product-brown-inbox-mode" : "") +
         (productBrownLanding ? " product-brown-landing-mode" : "") +
-        (productBrownSchedule ? " product-brown-schedule-mode" : "")
+        (productBrownSchedule ? " product-brown-schedule-mode" : "") +
+        (productBrownAgents ? " product-brown-agents-mode" : "")
       }
       aria-hidden={hero ? true : undefined}
     >
@@ -1881,7 +1902,7 @@ export function DoeSchedulesAppMock({
         className={`flex min-h-0 flex-1 flex-col overflow-hidden ${
           full
             ? productBrown
-              ? "product-brown-shell rounded-none border-0 bg-[#1a1208]"
+              ? "product-brown-shell rounded-none border-0"
               : "rounded-none border-0 bg-[#F4F4F5] shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]"
             : hero
               ? "rounded-none border-0 bg-white"
@@ -1891,9 +1912,9 @@ export function DoeSchedulesAppMock({
         <div
           className={`min-h-0 flex-1 overflow-hidden ${
             productBrown
-              ? productBrownInbox || productBrownSchedule || productBrownLanding
+              ? productBrownInbox || productBrownSchedule || productBrownLanding || productBrownAgents
                 ? "product-brown-frame product-brown-layered-layout bg-[var(--pi-cream)]"
-                : "product-brown-frame product-brown-layered-layout bg-[#1a1208]"
+                : "product-brown-frame product-brown-layered-layout bg-[#151008]"
               : productBrownInbox
                 ? "product-brown-frame product-brown-inbox bg-[var(--pi-cream)]"
                 : productBrownDarkWorkspace
@@ -1945,52 +1966,60 @@ export function DoeSchedulesAppMock({
                     ? inboxUi!.cream
                     : productBrownSchedule
                       ? scheduleUi!.cream
-                    : productBrownDarkWorkspace
-                      ? "bg-[#2a1f12] shadow-[inset_1px_0_0_rgba(245,230,208,0.07)]"
-                      : productBrown
-                        ? "bg-[#faf0d8]"
-                        : "bg-white"
+                      : productBrownAgents
+                        ? "bg-[var(--pi-cream)]"
+                        : productBrownDarkWorkspace
+                          ? "bg-[#2a1f12] shadow-[inset_1px_0_0_rgba(245,230,208,0.07)]"
+                          : productBrown
+                            ? "bg-[#faf0d8]"
+                            : "bg-white"
                 }`}
               >
                 {workspaceView === "landing" && productBrown ? (
                   <ProductLandingPanel />
+                ) : workspaceView === "agents" && productBrown ? (
+                  <ProductAgentsPanel />
                 ) : workspaceView === "schedule" ? (
                   <>
                 <header
-                  className={`flex items-center gap-2 border-b px-4 py-3 ${
+                  className={
                     productBrownSchedule
-                      ? `${scheduleUi!.line} ${scheduleUi!.sand}`
-                      : productBrownDarkWorkspace
-                      ? "border-[rgba(245,230,208,0.1)] bg-[#322618]"
-                      : productBrown
-                        ? "border-[rgba(61,46,31,0.14)] bg-[#f5e6d0]"
-                        : "border-[#EFEFEF]"
-                  }`}
+                      ? `product-landing-header flex shrink-0 items-center px-4 py-3 ${suisseIntlUi.className}`
+                      : `flex items-center gap-2 border-b px-4 py-3 ${
+                          productBrownDarkWorkspace
+                            ? "border-[rgba(245,230,208,0.1)] bg-[#322618]"
+                            : productBrown
+                              ? "border-[rgba(61,46,31,0.14)] bg-[#f5e6d0]"
+                              : "border-[#EFEFEF]"
+                        }`
+                  }
                 >
-                  <Icon
-                    className={`h-5 w-5 ${
-                      productBrownSchedule
-                        ? scheduleUi!.iconMuted
-                        : productBrownDarkWorkspace
-                        ? "text-[rgba(245,230,208,0.48)]"
-                        : productBrown
-                          ? "text-[rgba(61,46,31,0.48)]"
-                          : "text-neutral-500"
-                    }`}
-                  >
-                    <rect width="18" height="18" x="3" y="4" rx="2" />
-                    <line x1="16" x2="16" y1="2" y2="6" />
-                    <line x1="8" x2="8" y1="2" y2="6" />
-                    <line x1="3" x2="21" y1="10" y2="10" />
-                  </Icon>
+                  {!productBrownSchedule ? (
+                    <Icon
+                      className={`h-5 w-5 ${
+                        productBrownDarkWorkspace
+                          ? "text-[rgba(245,230,208,0.48)]"
+                          : productBrown
+                            ? "text-[rgba(61,46,31,0.48)]"
+                            : "text-neutral-500"
+                      }`}
+                    >
+                      <rect width="18" height="18" x="3" y="4" rx="2" />
+                      <line x1="16" x2="16" y1="2" y2="6" />
+                      <line x1="8" x2="8" y1="2" y2="6" />
+                      <line x1="3" x2="21" y1="10" y2="10" />
+                    </Icon>
+                  ) : null}
                   <h1
-                    className={`text-[15px] font-semibold tracking-tight ${
+                    className={
                       productBrownSchedule
-                        ? scheduleUi!.ink
-                        : productBrownDarkWorkspace || productBrown
-                          ? "text-[#f5e6d0]"
-                          : "text-neutral-900"
-                    }`}
+                        ? "product-landing-header__title m-0 text-[15px] font-normal tracking-tight"
+                        : `text-[15px] font-semibold tracking-tight ${
+                            productBrownDarkWorkspace || productBrown
+                              ? "text-[#f5e6d0]"
+                              : "text-neutral-900"
+                          }`
+                    }
                   >
                     Schedules
                   </h1>
