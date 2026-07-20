@@ -1200,6 +1200,9 @@ html[data-product-page="true"] .product-call-preview__bubble--agent {
 .product-brown-mock.product-brown-landing-mode .product-landing-panel {
   color: var(--pl-console-text, #f2e8da);
   background: var(--pb-console-gradient) !important;
+  --pl-live-fade-base: var(--pb-console-to);
+  --pl-live-fade-mid: rgba(21, 16, 8, 0.76);
+  --pl-live-fade-soft: rgba(21, 16, 8, 0.28);
   border-top-left-radius: 0;
   overflow: visible;
 }
