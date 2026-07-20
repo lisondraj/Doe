@@ -128,12 +128,212 @@ function ResolutionRing({ pct }: { pct: number }) {
   );
 }
 
-function MiniWaveform() {
+function MiniWaveform({ tall }: { tall?: boolean }) {
   return (
-    <div className="product-landing-mini-waveform" aria-hidden>
-      {Array.from({ length: 12 }).map((_, i) => (
+    <div className={`product-landing-mini-waveform ${tall ? "product-landing-mini-waveform--tall" : ""}`} aria-hidden>
+      {Array.from({ length: tall ? 20 : 12 }).map((_, i) => (
         <span key={i} className="product-landing-mini-waveform__bar" />
       ))}
+    </div>
+  );
+}
+
+function LiveAvatar({ initials }: { initials: string }) {
+  return (
+    <div className="product-landing-live-avatar" aria-hidden>
+      <span className="product-landing-live-avatar__ring" />
+      <span className={`product-landing-live-avatar__initials ${suisseIntl.className}`}>{initials}</span>
+      <span className="product-landing-live-avatar__dot" />
+    </div>
+  );
+}
+
+function QueueLanes({
+  items,
+  total,
+}: {
+  items: readonly { id: string; initials: string; progress: number }[];
+  total: string;
+}) {
+  return (
+    <div className="product-landing-queue-lanes" aria-hidden>
+      <span className={`product-landing-queue-lanes__count ${suisseIntl.className}`}>{total}</span>
+      <div className="product-landing-queue-lanes__stack">
+        {items.map((item) => (
+          <div key={item.id} className="product-landing-queue-lanes__lane">
+            <span className={`product-landing-queue-lanes__initials ${suisseIntl.className}`}>{item.initials}</span>
+            <span className="product-landing-queue-lanes__track">
+              <span className="product-landing-queue-lanes__fill" style={{ width: `${item.progress}%` }} />
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function NeedsYouDots({ count, max = 5 }: { count: number; max?: number }) {
+  return (
+    <div className="product-landing-needs-dots product-landing-needs-dots--inline" aria-hidden>
+      <span className={`product-landing-needs-dots__count ${suisseIntl.className}`}>{count}</span>
+      <div className="product-landing-needs-dots__row">
+        {Array.from({ length: max }).map((_, i) => (
+          <span
+            key={i}
+            className={`product-landing-needs-dots__dot ${i < count ? "product-landing-needs-dots__dot--filled" : ""}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function DayRibbon({
+  values,
+  labels,
+  peakIndex,
+  nowIndex,
+  peakWindow,
+  peakDetail,
+}: {
+  values: readonly number[];
+  labels: readonly string[];
+  peakIndex: number;
+  nowIndex: number;
+  peakWindow: string;
+  peakDetail: string;
+}) {
+  const max = Math.max(...values, 1);
+  const width = 100;
+  const height = 38;
+  const pad = 2;
+
+  const coords = values.map((value, index) => ({
+    x: (index / (values.length - 1)) * width,
+    y: height - pad - (value / max) * (height - pad * 2),
+  }));
+
+  const linePath = coords.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x.toFixed(2)} ${point.y.toFixed(2)}`).join(" ");
+  const areaPath = `${linePath} L ${width} ${height} L 0 ${height} Z`;
+
+  const nowX = coords[nowIndex]?.x ?? 0;
+  const nowY = coords[nowIndex]?.y ?? height / 2;
+  const peakStartX = coords[Math.max(0, peakIndex - 1)]?.x ?? 0;
+  const peakEndX = coords[Math.min(values.length - 1, peakIndex + 1)]?.x ?? width;
+
+  return (
+    <div className="product-landing-day-ribbon" aria-hidden>
+      <svg className="product-landing-day-ribbon__svg" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="product-day-ribbon-fill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="rgba(110, 98, 88, 0.28)" />
+            <stop offset="100%" stopColor="rgba(110, 98, 88, 0.02)" />
+          </linearGradient>
+        </defs>
+        <rect
+          className="product-landing-day-ribbon__peak-zone"
+          x={peakStartX}
+          y={0}
+          width={Math.max(peakEndX - peakStartX, 8)}
+          height={height}
+        />
+        <path className="product-landing-day-ribbon__area" d={areaPath} fill="url(#product-day-ribbon-fill)" />
+        <path className="product-landing-day-ribbon__line" d={linePath} />
+        <line className="product-landing-day-ribbon__now" x1={nowX} y1={0} x2={nowX} y2={height} />
+        <circle className="product-landing-day-ribbon__now-dot" cx={nowX} cy={nowY} r="1.75" />
+      </svg>
+      <div className="product-landing-day-ribbon__footer">
+        <div className="product-landing-day-ribbon__labels">
+          {labels.map((label) => (
+            <span key={label} className={`product-landing-day-ribbon__label ${inter.className}`}>
+              {label}
+            </span>
+          ))}
+        </div>
+        <div className="product-landing-day-ribbon__peak">
+          <span className={`product-landing-day-ribbon__peak-window ${suisseIntl.className}`}>{peakWindow}</span>
+          <span className={`product-landing-day-ribbon__peak-detail ${inter.className}`}>{peakDetail}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FlowPipeline({
+  items,
+}: {
+  items: readonly {
+    id: string;
+    initials: string;
+    label: string;
+    detail: string;
+    state: "active" | "queued" | "pending";
+  }[];
+}) {
+  return (
+    <div className="product-landing-flow" aria-label="Call flow pipeline">
+      {items.map((item, index) => (
+        <div key={item.id} className={`product-landing-flow__step product-landing-flow__step--${item.state}`}>
+          <div className="product-landing-flow__node-wrap">
+            {index > 0 ? <span className="product-landing-flow__connector product-landing-flow__connector--before" aria-hidden /> : null}
+            <span className={`product-landing-flow__node ${suisseIntl.className}`}>{item.initials}</span>
+            {index < items.length - 1 ? (
+              <span className="product-landing-flow__connector product-landing-flow__connector--after" aria-hidden />
+            ) : null}
+          </div>
+          <span className={`product-landing-flow__label ${suisseIntl.className}`}>{item.label}</span>
+          <span className={`product-landing-flow__detail ${inter.className}`}>{item.detail}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function TodayAheadColumn({ today }: { today: (typeof PRODUCT_LANDING_DAY_SUMMARY)["todayAhead"] }) {
+  return (
+    <div className="product-landing-day-summary__column product-landing-today-ahead">
+      <p
+        className={`product-landing-day-summary__section-label m-0 text-[10px] font-semibold uppercase tracking-[0.12em] ${suisseIntl.className}`}
+      >
+        {today.label}
+      </p>
+
+      <div className="product-landing-today-ahead__live">
+        <LiveAvatar initials={today.liveInitials} />
+        <div className="product-landing-today-ahead__live-body min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="product-landing-today-ahead__live-dot" aria-hidden />
+            <span className={`product-landing-today-ahead__live-label text-[10px] font-semibold uppercase tracking-[0.1em] ${suisseIntl.className}`}>
+              Live now
+            </span>
+          </div>
+          <p className={`product-landing-today-ahead__live-caller m-0 mt-1.5 ${suisseIntl.className}`}>{today.liveCaller}</p>
+          <p className={`product-landing-today-ahead__live-detail m-0 mt-1 ${inter.className}`}>{today.liveDetail}</p>
+          <MiniWaveform tall />
+        </div>
+      </div>
+
+      <FlowPipeline items={today.flow} />
+
+      <DayRibbon
+        values={today.forecastVolume}
+        labels={today.forecastLabels}
+        peakIndex={today.peakBarIndex}
+        nowIndex={today.nowIndex}
+        peakWindow={today.peakWindow}
+        peakDetail={today.peakDetail}
+      />
+
+      <div className="product-landing-today-ahead__signals">
+        <div className="product-landing-today-ahead__signal">
+          <QueueLanes items={today.queueStack} total={today.queue} />
+          <span className={`product-landing-today-ahead__signal-caption ${inter.className}`}>In queue</span>
+        </div>
+        <div className="product-landing-today-ahead__signal">
+          <NeedsYouDots count={Number(today.needsYou)} />
+          <span className={`product-landing-today-ahead__signal-caption ${inter.className}`}>Need you</span>
+        </div>
+      </div>
     </div>
   );
 }
@@ -192,69 +392,7 @@ function DaySummaryHero() {
             <DayNightSplit overnight={last24h.split.overnight} clinicHours={last24h.split.clinicHours} />
           </div>
 
-          <div className="product-landing-day-summary__column">
-            <p
-              className={`product-landing-day-summary__section-label m-0 text-[10px] font-semibold uppercase tracking-[0.12em] ${suisseIntl.className}`}
-            >
-              {todayAhead.label}
-            </p>
-
-            <div className="product-landing-day-summary__live-strip">
-              <div className="product-landing-day-summary__live-top">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="product-landing-day-summary__live-dot" aria-hidden />
-                    <span className={`product-landing-day-summary__live-label text-[10px] font-semibold uppercase tracking-[0.1em] ${suisseIntl.className}`}>
-                      Live now
-                    </span>
-                  </div>
-                  <p className={`product-landing-day-summary__live-caller m-0 mt-1.5 ${suisseIntl.className}`}>
-                    {todayAhead.liveCaller}
-                  </p>
-                  <p className={`product-landing-day-summary__live-detail m-0 mt-1 ${inter.className}`}>
-                    {todayAhead.liveDetail}
-                  </p>
-                </div>
-                <MiniWaveform />
-              </div>
-            </div>
-
-            <div className="product-landing-stat-strip product-landing-stat-strip--compact">
-              <div className="product-landing-stat-strip__item">
-                <span className={`product-landing-stat-strip__value ${suisseIntl.className}`}>{todayAhead.queue}</span>
-                <span className={`product-landing-stat-strip__label ${inter.className}`}>In queue</span>
-              </div>
-              <div className="product-landing-stat-strip__item">
-                <span className={`product-landing-stat-strip__value ${suisseIntl.className}`}>{todayAhead.needsYou}</span>
-                <span className={`product-landing-stat-strip__label ${inter.className}`}>Need you</span>
-              </div>
-              <div className="product-landing-stat-strip__item">
-                <span className={`product-landing-stat-strip__value product-landing-stat-strip__value--small ${suisseIntl.className}`}>
-                  {todayAhead.peakWindow}
-                </span>
-                <span className={`product-landing-stat-strip__label ${inter.className}`}>{todayAhead.peakDetail}</span>
-              </div>
-            </div>
-
-            <div className="product-landing-day-summary__timeline-h" aria-label="Today's call flow">
-              {todayAhead.timeline.map((item, index) => (
-                <div
-                  key={item.id}
-                  className={`product-landing-day-summary__timeline-h-step product-landing-day-summary__timeline-h-step--${item.state}`}
-                >
-                  <div className="product-landing-day-summary__timeline-h-node-wrap">
-                    <span className="product-landing-day-summary__timeline-h-dot" aria-hidden />
-                    {index < todayAhead.timeline.length - 1 ? (
-                      <span className="product-landing-day-summary__timeline-h-line" aria-hidden />
-                    ) : null}
-                  </div>
-                  <span className={`product-landing-day-summary__timeline-h-time ${inter.className}`}>{item.time}</span>
-                  <span className={`product-landing-day-summary__timeline-h-label ${suisseIntl.className}`}>{item.label}</span>
-                  <span className={`product-landing-day-summary__timeline-h-detail ${inter.className}`}>{item.detail}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+          <TodayAheadColumn today={todayAhead} />
         </div>
       </div>
     </section>

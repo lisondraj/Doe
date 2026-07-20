@@ -28,19 +28,30 @@ export const PRODUCT_LANDING_DAY_SUMMARY = {
   todayAhead: {
     label: "Today ahead",
     liveCaller: "M. Nguyen",
+    liveInitials: "MN",
     liveDetail: "Reschedule on main line",
     queue: "2",
     needsYou: "3",
-    peakWindow: "10–11 AM",
-    peakDetail: "Expected call peak",
-    timeline: [
-      { id: "now", time: "Now", label: "Live", detail: "M. Nguyen · booking", state: "active" as const },
-      { id: "queue-1", time: "+2m", label: "Queue", detail: "S. Patel · prior auth", state: "queued" as const },
-      { id: "queue-2", time: "+4m", label: "Queue", detail: "New patient inquiry", state: "queued" as const },
-      { id: "review", time: "8:15", label: "Review", detail: "Metformin refill note", state: "pending" as const },
+    peakWindow: "10–11",
+    peakDetail: "AM peak",
+    forecastVolume: [6, 12, 22, 38, 58, 52, 36, 24, 16, 10, 8, 6],
+    forecastLabels: ["8a", "10a", "12p", "2p", "4p", "6p"],
+    peakBarIndex: 4,
+    nowIndex: 3,
+    queueStack: [
+      { id: "q1", initials: "SP", progress: 38 },
+      { id: "q2", initials: "NC", progress: 62 },
+    ],
+    flow: [
+      { id: "now", initials: "MN", label: "Live", detail: "Booking", state: "active" as const },
+      { id: "queue-1", initials: "SP", label: "Queue", detail: "Prior auth", state: "queued" as const },
+      { id: "queue-2", initials: "NC", label: "Queue", detail: "New patient", state: "queued" as const },
+      { id: "review", initials: "Rx", label: "Review", detail: "Refill note", state: "pending" as const },
     ],
   },
 } as const;
+
+export const PRODUCT_LANDING_TODAY_AHEAD = PRODUCT_LANDING_DAY_SUMMARY.todayAhead;
 
 export const PRODUCT_LANDING_PRIMARY_CTA = "Listen in";
 
