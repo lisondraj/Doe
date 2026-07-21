@@ -7,7 +7,6 @@ import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import {
   PITCH_ASK,
   PITCH_CLOSING,
-  PITCH_COMPETITION,
   PITCH_MARKET,
   PITCH_PROBLEM,
   PITCH_PRODUCT_ROADMAP,
@@ -465,23 +464,7 @@ function ProductRoadmapSlide() {
 }
 
 function ProductBlankSlide() {
-  return <div className={slideFrameClassName("light")} aria-label="Blank product slide" />;
-}
-
-function CompetitionSlide() {
-  return (
-    <div className={slideFrameClassName("dark")}>
-      <Eyebrow tone="dark">{PITCH_COMPETITION.eyebrow}</Eyebrow>
-      <Headline lines={PITCH_COMPETITION.headline} tone="dark" />
-      <Body tone="dark" className="mt-[clamp(1rem,1.35vw,1.2rem)] max-w-[40rem]">
-        {PITCH_COMPETITION.intro}
-      </Body>
-      <BulletList items={PITCH_COMPETITION.bullets} tone="dark" />
-      <Body tone="dark" className="mt-[clamp(1rem,1.35vw,1.2rem)] max-w-[38rem] italic">
-        {PITCH_COMPETITION.integrate}
-      </Body>
-    </div>
-  );
+  return <div className={slideFrameClassName("light")} aria-label="Product 3 slide" />;
 }
 
 function AskSlide() {
@@ -527,7 +510,6 @@ function ClosingSlide() {
 const SLIDE_RENDERERS: Record<Exclude<PitchSlideId, "welcome">, () => ReactNode> = {
   problem: ProblemSlide,
   solution: SolutionSlide,
-  competition: CompetitionSlide,
   "product-voice": ProductVoiceSlide,
   "product-roadmap": ProductRoadmapSlide,
   "product-blank": ProductBlankSlide,

@@ -18,7 +18,6 @@ import {
 } from "@/lib/product/product-copy";
 
 const missionBand = JOIN_HERO_EXTRA_BANDS.find((band) => band.id === "incoming");
-const toolsBand = JOIN_HERO_EXTRA_BANDS.find((band) => band.id === "tools");
 const integrateBand = JOIN_HERO_EXTRA_BANDS.find((band) => band.id === "integrate");
 
 export const PITCH_WELCOME = {
@@ -78,7 +77,7 @@ export const PITCH_MARKET = {
 };
 
 export const PITCH_PRODUCT_VOICE = {
-  eyebrow: "Product",
+  eyebrow: "Product 1",
   headline: ["Voice agents,", "live today."],
   lead: DESIGNERS_PRODUCT_VOICE_LEAD,
   stats: {
@@ -90,27 +89,11 @@ export const PITCH_PRODUCT_VOICE = {
 } as const;
 
 export const PITCH_PRODUCT_ROADMAP = {
-  eyebrow: "Product",
+  eyebrow: "Product 2",
   headline: [DESIGNERS_PRODUCT_NEXT_HEADLINE.replace(".", ""), "the full journey."],
   body: DESIGNERS_PRODUCT_NEXT_BODY,
   focus: DOEHEALTH_VOICE_ROADMAP.focus,
   rows: DOEHEALTH_VOICE_ROADMAP.nextRows,
-};
-
-export const PITCH_COMPETITION = {
-  eyebrow: "Competition",
-  headline: ["Our advantages."],
-  intro:
-    toolsBand?.description?.[0] ??
-    "Doe differentiates by letting providers fully customize their experience through a no-code, visual-first interface.",
-  bullets: [
-    "Purpose-built for clinical workflows — not a general-purpose assistant.",
-    "Runs on top of the EHR, inbox, and phone systems clinics already use.",
-    "Providers shape agents around their own workflow with full autonomy.",
-    "Built by a clinician-founder and a technical co-founder from day one.",
-  ],
-  integrate:
-    "Doe meets your team where they work instead of asking them to rip out what is already in place.",
 };
 
 export const PITCH_ASK = {

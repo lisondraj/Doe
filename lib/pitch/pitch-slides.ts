@@ -6,7 +6,6 @@ export type PitchSlideId =
   | "welcome"
   | "problem"
   | "solution"
-  | "competition"
   | "product-voice"
   | "product-roadmap"
   | "product-blank"
@@ -52,23 +51,15 @@ export const PITCH_SLIDES: readonly PitchSlideDefinition[] = [
     theme: "active-agents-band",
   },
   {
-    slideId: "competition",
-    label: "Competition",
-    theme: "dark",
-    backgroundStyle: {
-      background: `radial-gradient(circle at 72% 18%, #4a6878 0%, #1e343a 52%, #142428 100%)`,
-    },
-  },
-  {
     slideId: "product-voice",
-    label: "Product · Voice",
+    label: "Product 1",
     theme: "panel",
     background: "#EDE8DF",
     numberTone: "dark",
   },
   {
     slideId: "product-roadmap",
-    label: "Product · Roadmap",
+    label: "Product 2",
     theme: "gradient",
     backgroundStyle: {
       background: "linear-gradient(168deg, #5c4330 0%, #3d2e1f 42%, #1a1208 100%)",
@@ -76,7 +67,7 @@ export const PITCH_SLIDES: readonly PitchSlideDefinition[] = [
   },
   {
     slideId: "product-blank",
-    label: "Product",
+    label: "Product 3",
     theme: "panel",
     background: "#EDE8DF",
     numberTone: "dark",
