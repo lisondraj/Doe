@@ -51,9 +51,6 @@ export function PitchSlideThumbnail({ slide }: { slide: PitchSlideInstance }) {
           Doe
         </span>
       ) : null}
-      {slide.theme === "panel" ? (
-        <div className="absolute inset-x-[18%] top-[28%] h-[8%] rounded-[1px] bg-[rgba(26,18,8,0.12)]" aria-hidden />
-      ) : null}
     </div>
   );
 }

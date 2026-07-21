@@ -6,11 +6,12 @@ export type PitchSlideId =
   | "welcome"
   | "problem"
   | "solution"
-  | "team"
-  | "market"
+  | "competition"
   | "product-voice"
   | "product-roadmap"
-  | "competition"
+  | "product-blank"
+  | "team"
+  | "market"
   | "ask"
   | "closing";
 
@@ -51,17 +52,12 @@ export const PITCH_SLIDES: readonly PitchSlideDefinition[] = [
     theme: "active-agents-band",
   },
   {
-    slideId: "team",
-    label: "Team",
-    theme: "panel",
-    background: "#EBE5DA",
-    numberTone: "dark",
-  },
-  {
-    slideId: "market",
-    label: "Market",
+    slideId: "competition",
+    label: "Competition",
     theme: "dark",
-    background: DOE_HOME_HERO_DUSK_PALETTE.back,
+    backgroundStyle: {
+      background: `radial-gradient(circle at 72% 18%, #4a6878 0%, #1e343a 52%, #142428 100%)`,
+    },
   },
   {
     slideId: "product-voice",
@@ -79,12 +75,24 @@ export const PITCH_SLIDES: readonly PitchSlideDefinition[] = [
     },
   },
   {
-    slideId: "competition",
-    label: "Competition",
+    slideId: "product-blank",
+    label: "Product",
+    theme: "panel",
+    background: "#EDE8DF",
+    numberTone: "dark",
+  },
+  {
+    slideId: "team",
+    label: "Team",
+    theme: "panel",
+    background: "#EBE5DA",
+    numberTone: "dark",
+  },
+  {
+    slideId: "market",
+    label: "Market",
     theme: "dark",
-    backgroundStyle: {
-      background: `radial-gradient(circle at 72% 18%, #4a6878 0%, #1e343a 52%, #142428 100%)`,
-    },
+    background: DOE_HOME_HERO_DUSK_PALETTE.back,
   },
   {
     slideId: "ask",

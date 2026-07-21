@@ -150,11 +150,12 @@ function StatCard({
 
 const customizeAgentsShader = doeHomeDuskShaderBandSurface("front-desk");
 const priorAuthShader = doeHomeDuskShaderBandSurface("inbox");
-const problemShader = doeHomeDuskShaderBandSurface("integrate");
+const problemShader = doeHomeDuskShaderBandSurface("ambient");
+const problemBoxInsetClassName = "p-[clamp(0.85rem,1.15vw,1.1rem)]";
 
 function ProblemSlide() {
   return (
-    <div className="pitch-slide-content relative z-[10] flex h-full w-full flex-col px-[clamp(2.25rem,4.5vw,4.75rem)] py-[clamp(2.25rem,4vh,3.25rem)] pb-[clamp(4.75rem,7vh,5.75rem)]">
+    <div className="pitch-slide-content relative z-[10] flex h-full w-full flex-col p-[clamp(1.35rem,2.5vw,2.65rem)]">
       <div className="relative min-h-0 flex-1 overflow-hidden rounded-[clamp(1.1rem,1.6vw,1.85rem)]">
         {problemShader ? (
           <ProtoGrainGradient
@@ -164,15 +165,19 @@ function ProblemSlide() {
             static
           />
         ) : null}
-        <h2
-          className={`pitch-slide-content__headline pointer-events-none absolute left-0 top-0 z-[2] m-0 p-[clamp(1rem,1.4vw,1.35rem)] text-left text-[clamp(3.35rem,1.55rem+4.8vw,5.75rem)] font-normal leading-[1.02] tracking-[-0.036em] text-[#FFF8F0] ${suisseIntl.className}`}
+        <div
+          className={`pointer-events-none absolute inset-0 z-[2] flex items-start justify-start ${problemBoxInsetClassName}`}
         >
-          {PITCH_PROBLEM.headline.map((line) => (
-            <span key={line} className="block whitespace-nowrap">
-              {line}
-            </span>
-          ))}
-        </h2>
+          <p
+            className={`pitch-slide-content__headline m-0 text-left text-[clamp(3.35rem,1.55rem+4.8vw,5.75rem)] font-normal leading-[0.98] tracking-[-0.036em] text-[#FFF8F0] ${suisseIntl.className}`}
+          >
+            {PITCH_PROBLEM.headline.map((line) => (
+              <span key={line} className="block whitespace-nowrap">
+                {line}
+              </span>
+            ))}
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -459,6 +464,10 @@ function ProductRoadmapSlide() {
   );
 }
 
+function ProductBlankSlide() {
+  return <div className={slideFrameClassName("light")} aria-label="Blank product slide" />;
+}
+
 function CompetitionSlide() {
   return (
     <div className={slideFrameClassName("dark")}>
@@ -518,11 +527,12 @@ function ClosingSlide() {
 const SLIDE_RENDERERS: Record<Exclude<PitchSlideId, "welcome">, () => ReactNode> = {
   problem: ProblemSlide,
   solution: SolutionSlide,
-  team: TeamSlide,
-  market: MarketSlide,
+  competition: CompetitionSlide,
   "product-voice": ProductVoiceSlide,
   "product-roadmap": ProductRoadmapSlide,
-  competition: CompetitionSlide,
+  "product-blank": ProductBlankSlide,
+  team: TeamSlide,
+  market: MarketSlide,
   ask: AskSlide,
   closing: ClosingSlide,
 };

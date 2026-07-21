@@ -1,9 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 
 import { PitchSlideSurface } from "@/components/pitch/PitchSlideSurface";
 import { PitchSlideThumbnail } from "@/components/pitch/PitchSlideThumbnail";
+import { exportPitchDeckPdf, waitForPitchExportFrame } from "@/lib/pitch/export-pitch-pdf";
 import { exportPitchSlides } from "@/lib/pitch/export-pitch-slides";
 import {
   createPitchSlideInstance,
@@ -43,6 +45,26 @@ function DownloadIcon({ className }: { className?: string }) {
   );
 }
 
+function PdfIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" aria-hidden className={className}>
+      <path
+        d="M5.75 3.5h5.35l3.4 3.4v9.1c0 .69-.56 1.25-1.25 1.25H5.75c-.69 0-1.25-.56-1.25-1.25V4.75c0-.69.56-1.25 1.25-1.25Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M11.1 3.5v3.15c0 .69.56 1.25 1.25 1.25H15.5M6.75 11.25h6.5M6.75 14h4.5"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 function ChevronIcon({ direction }: { direction: "left" | "right" }) {
   return (
     <svg viewBox="0 0 20 20" fill="none" aria-hidden className="h-[0.95rem] w-[0.95rem]">
@@ -76,27 +98,43 @@ const controlButtonClass = `inline-flex min-h-[2.35rem] min-w-[2.35rem] items-ce
 function PitchControls({
   onPresentation,
   onDownload,
+  onExportPdf,
   downloading,
+  exportingPdf,
 }: {
   onPresentation: () => void;
   onDownload: () => void;
+  onExportPdf: () => void;
   downloading: boolean;
+  exportingPdf: boolean;
 }) {
+  const exportBusy = downloading || exportingPdf;
+
   return (
     <div className="pitch-deck-controls pointer-events-none fixed bottom-[clamp(1rem,1.75vw,1.5rem)] right-[clamp(1rem,1.75vw,1.5rem)] z-[200] flex flex-col items-end gap-[0.45rem]">
       <button
         type="button"
         onClick={onPresentation}
+        disabled={exportBusy}
         aria-label="Enter presentation mode"
-        className={`pitch-deck-controls__button pointer-events-auto ${controlButtonClass}`}
+        className={`pitch-deck-controls__button pointer-events-auto ${controlButtonClass} disabled:cursor-not-allowed`}
       >
         <PresentationIcon className="h-[1rem] w-[1rem]" />
       </button>
       <button
         type="button"
+        onClick={onExportPdf}
+        disabled={exportBusy}
+        aria-label={exportingPdf ? "Exporting PDF" : "Download PDF deck"}
+        className={`pitch-deck-controls__button pointer-events-auto ${controlButtonClass} disabled:cursor-wait`}
+      >
+        <PdfIcon className="h-[1rem] w-[1rem]" />
+      </button>
+      <button
+        type="button"
         onClick={onDownload}
-        disabled={downloading}
-        aria-label={downloading ? "Exporting slides" : "Download slides"}
+        disabled={exportBusy}
+        aria-label={downloading ? "Exporting slides" : "Download slide PNGs"}
         className={`pitch-deck-controls__button pointer-events-auto ${controlButtonClass} disabled:cursor-wait`}
       >
         <DownloadIcon className="h-[1rem] w-[1rem]" />
@@ -289,16 +327,12 @@ function PitchPreviewPanel({
                 }`}
               >
                 <PitchSlideThumbnail slide={slide} />
-                <div
-                  className={`pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-[0.35rem] bg-gradient-to-t from-[rgba(26,18,8,0.82)] via-[rgba(26,18,8,0.52)] to-transparent px-[0.45rem] pb-[0.38rem] pt-[1.35rem] ${
-                    slide.numberTone === "dark"
-                      ? "from-[rgba(250,240,216,0.88)] via-[rgba(250,240,216,0.55)]"
-                      : ""
-                  }`}
-                >
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-[0.35rem] px-[0.45rem] pb-[0.38rem] pt-[0.45rem]">
                   <span
                     className={`shrink-0 text-[0.62rem] font-normal leading-none tracking-[0.06em] ${
-                      slide.numberTone === "dark" ? "text-[#1a1208]/72" : "text-[rgba(245,230,208,0.72)]"
+                      slide.numberTone === "dark"
+                        ? "text-[#1a1208]/72"
+                        : "text-[rgba(245,230,208,0.82)] [text-shadow:0_1px_4px_rgba(26,18,8,0.55)]"
                     } ${suisseIntl.className}`}
                   >
                     {String(index + 1).padStart(2, "0")}
@@ -310,8 +344,8 @@ function PitchPreviewPanel({
                           ? "text-[#1a1208]/92"
                           : "text-[#1a1208]/68"
                         : isActive
-                          ? "text-[rgba(245,230,208,0.92)]"
-                          : "text-[rgba(245,230,208,0.62)]"
+                          ? "text-[rgba(245,230,208,0.92)] [text-shadow:0_1px_4px_rgba(26,18,8,0.55)]"
+                          : "text-[rgba(245,230,208,0.72)] [text-shadow:0_1px_4px_rgba(26,18,8,0.55)]"
                     } ${suisseIntl.className}`}
                   >
                     {slide.label}
@@ -344,6 +378,8 @@ export function PitchDeck() {
   );
   const [activeSlide, setActiveSlide] = useState(0);
   const [downloading, setDownloading] = useState(false);
+  const [exportingPdf, setExportingPdf] = useState(false);
+  const [pdfExportProgress, setPdfExportProgress] = useState<string | null>(null);
   const slideCount = orderedSlides.length;
 
   useLayoutEffect(() => {
@@ -515,12 +551,67 @@ export function PitchDeck() {
     }
   }, [orderedSlides]);
 
+  const handleExportPdf = useCallback(async () => {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    const savedActiveSlide = activeSlide;
+    const savedPreviewOpen = previewOpen;
+    const slideElements = Array.from(
+      container.querySelectorAll<HTMLElement>(".pitch-deck-slide"),
+    );
+
+    if (slideElements.length !== orderedSlides.length) {
+      throw new Error("Could not locate all pitch slides for PDF export.");
+    }
+
+    setExportingPdf(true);
+
+    try {
+      if (previewOpen) {
+        flushSync(() => {
+          setPreviewOpen(false);
+        });
+        await waitForPitchExportFrame(250);
+      }
+
+      await exportPitchDeckPdf(slideElements, async (index) => {
+        setPdfExportProgress(`${index + 1} / ${slideElements.length}`);
+
+        flushSync(() => {
+          setActiveSlide(index);
+        });
+
+        container.scrollTo({
+          left: index * container.clientWidth,
+          behavior: "auto",
+        });
+
+        const isHeroSlide = orderedSlides[index]?.slideId === "welcome";
+        await waitForPitchExportFrame(isHeroSlide ? 1200 : 900);
+      });
+    } finally {
+      flushSync(() => {
+        setActiveSlide(savedActiveSlide);
+        setPreviewOpen(savedPreviewOpen);
+      });
+
+      container.scrollTo({
+        left: savedActiveSlide * container.clientWidth,
+        behavior: "auto",
+      });
+
+      setPdfExportProgress(null);
+      setExportingPdf(false);
+    }
+  }, [activeSlide, orderedSlides, previewOpen]);
+
   const visibleSlides = presentationMode ? [orderedSlides[activeSlide]] : orderedSlides;
   const activeSlideData = orderedSlides[activeSlide];
 
   return (
     <div
-      className={`pitch-deck-root flex min-h-[100dvh] bg-[#1A1208]${presentationMode ? " pitch-deck-root--presentation" : ""}`}
+      className={`pitch-deck-root flex min-h-[100dvh] bg-[#1A1208]${presentationMode ? " pitch-deck-root--presentation" : ""}${exportingPdf ? " pitch-deck-root--exporting" : ""}`}
     >
       {!presentationMode ? (
         <PitchPreviewPanel
@@ -579,9 +670,22 @@ export function PitchDeck() {
             <PitchControls
               onPresentation={() => void enterPresentation()}
               onDownload={() => void handleDownload()}
+              onExportPdf={() => void handleExportPdf()}
               downloading={downloading}
+              exportingPdf={exportingPdf}
             />
           </>
+        ) : null}
+
+        {pdfExportProgress ? (
+          <div
+            className={`pointer-events-none fixed inset-x-0 top-[clamp(1rem,1.75vw,1.5rem)] z-[220] flex justify-center ${suisseIntl.className}`}
+            aria-live="polite"
+          >
+            <span className="rounded-[0.45rem] border border-[rgba(26,18,8,0.1)] bg-white px-[0.95rem] py-[0.55rem] text-[0.82rem] font-normal leading-none tracking-[-0.012em] text-[#1a1208] shadow-[0_8px_24px_rgba(26,18,8,0.12)]">
+              Exporting PDF · slide {pdfExportProgress}
+            </span>
+          </div>
         ) : null}
       </div>
     </div>
