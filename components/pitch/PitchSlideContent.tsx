@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { ThinkingOrb } from "thinking-orbs";
 
 import { PitchBoxCenterLines } from "@/components/pitch/PitchBoxCenterLines";
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
@@ -10,7 +11,6 @@ import {
   PITCH_MARKET,
   PITCH_PROBLEM,
   PITCH_PRODUCT_ROADMAP,
-  PITCH_PRODUCT_VOICE,
   PITCH_SOLUTION,
   PITCH_TEAM,
 } from "@/lib/pitch/pitch-deck-copy";
@@ -109,41 +109,6 @@ function BulletList({
         </li>
       ))}
     </ul>
-  );
-}
-
-function StatCard({
-  label,
-  value,
-  tone,
-}: {
-  label: string;
-  value: string;
-  tone: PitchTone;
-}) {
-  return (
-    <div
-      className={`rounded-[0.65rem] border px-[1rem] py-[0.85rem] ${
-        tone === "light"
-          ? "border-[rgba(26,18,8,0.1)] bg-[rgba(255,255,255,0.55)]"
-          : "border-[rgba(245,230,208,0.12)] bg-[rgba(245,230,208,0.05)]"
-      }`}
-    >
-      <p
-        className={`m-0 text-[0.72rem] uppercase tracking-[0.12em] ${
-          tone === "light" ? "text-[rgba(61,46,31,0.52)]" : "text-[rgba(245,230,208,0.52)]"
-        } ${suisseIntl.className}`}
-      >
-        {label}
-      </p>
-      <p
-        className={`m-0 mt-[0.35rem] text-[clamp(1.65rem,1rem+1.5vw,2.35rem)] font-normal leading-none tracking-[-0.03em] ${
-          tone === "light" ? "text-[#1a1208]" : "text-[#f5e6d0]"
-        } ${suisseIntl.className}`}
-      >
-        {value}
-      </p>
-    </div>
   );
 }
 
@@ -391,35 +356,12 @@ function MarketSlide() {
 
 function ProductVoiceSlide() {
   return (
-    <div className={`${slideFrameClassName("light")} lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)] lg:items-center lg:gap-[clamp(1.5rem,3vw,2.5rem)]`}>
-      <div className="min-w-0">
-        <Eyebrow tone="light">{PITCH_PRODUCT_VOICE.eyebrow}</Eyebrow>
-        <Headline lines={PITCH_PRODUCT_VOICE.headline} tone="light" />
-        <Body tone="light" className="mt-[clamp(1rem,1.35vw,1.2rem)] max-w-[34rem]">
-          {PITCH_PRODUCT_VOICE.lead}
-        </Body>
-        <div className="mt-[clamp(1rem,1.35vw,1.2rem)] grid grid-cols-3 gap-[0.55rem]">
-          <StatCard tone="light" label="Calls / 24h" value={PITCH_PRODUCT_VOICE.stats.calls} />
-          <StatCard tone="light" label="Resolved" value={PITCH_PRODUCT_VOICE.stats.resolved} />
-          <StatCard tone="light" label="Overnight" value={PITCH_PRODUCT_VOICE.stats.overnight} />
-        </div>
-      </div>
-      <div className="mt-[clamp(1.25rem,2vw,1.5rem)] lg:mt-0">
-        <div className="grid gap-[0.45rem] sm:grid-cols-2">
-          {PITCH_PRODUCT_VOICE.features.map((feature) => (
-            <div
-              key={feature.label}
-              className="rounded-[0.55rem] border border-[rgba(26,18,8,0.1)] bg-[rgba(255,255,255,0.45)] px-[0.85rem] py-[0.7rem]"
-            >
-              <p className={`m-0 text-[0.82rem] leading-none tracking-[-0.012em] text-[#1a1208] ${suisseIntl.className}`}>
-                {feature.label}
-              </p>
-              <p className={`m-0 mt-[0.3rem] text-[0.76rem] leading-[1.35] text-[rgba(61,46,31,0.68)] ${inter.className}`}>
-                {feature.note}
-              </p>
-            </div>
-          ))}
-        </div>
+    <div
+      className="pitch-slide-content relative z-[10] flex h-full w-full items-center justify-center"
+      aria-label="Product 1 slide"
+    >
+      <div className="origin-center scale-[clamp(3.5,8vw,5.5)]">
+        <ThinkingOrb state="composing" size={64} theme="light" aria-label="Composing" />
       </div>
     </div>
   );

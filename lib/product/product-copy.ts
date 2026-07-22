@@ -8,6 +8,60 @@ export const PRODUCT_LANDING_GREETING_NAME = "Dr. Chen";
 
 export const PRODUCT_LANDING_TAB_LABEL = "Today";
 
+export const PRODUCT_CALL_HISTORY_TAB_LABEL = "Call History";
+
+export const PRODUCT_CALL_HISTORY_CONVO_VIEW_FULL = "Full";
+export const PRODUCT_CALL_HISTORY_CONVO_VIEW_AGENT_ONLY = "Agent Only";
+
+export const PRODUCT_CALL_HISTORY_RAIL_ACTIONS = [
+  "Call Back",
+  "Actions",
+  "Download Transcript",
+] as const;
+
+export const PRODUCT_CALL_HISTORY_COMPOSER_PLACEHOLDER = "Ask about this call…";
+
+export const PRODUCT_CALL_HISTORY_COMPOSER_MODEL = "Fable 5";
+
+export const PRODUCT_CALL_HISTORY_HERO_NAME = {
+  topLine: "Sarah",
+  bottomLine: "Westfield",
+} as const;
+
+export const PRODUCT_CALL_HISTORY_VISIT_TITLE = {
+  topLine: "Metformin Refill",
+  bottomLine: "Appointment",
+} as const;
+
+export const PRODUCT_CALL_HISTORY_VISIT_BOOKED = {
+  prefix: "Booked for",
+  datetime: "Tuesday, Jul 22 · 10:30 AM",
+} as const;
+
+export const PRODUCT_CALL_HISTORY_HERO_DETAILS = [
+  { label: "DOB", value: "Mar 14, 1988" },
+  { label: "Insurance", value: "Blue Cross PPO" },
+  { label: "Last Seen", value: "Feb 12, 2026" },
+] as const;
+
+export const PRODUCT_CALL_HISTORY_A1C_TREND = {
+  label: "Last A1C",
+  readings: [
+    { date: "Jul '24", value: 6.5 },
+    { date: "Oct '24", value: 6.9 },
+    { date: "Jan '25", value: 7.3 },
+    { date: "Apr '25", value: 6.8 },
+    { date: "Jul '25", value: 6.4 },
+    { date: "Oct '25", value: 6.5 },
+    { date: "Jul '26", value: 6.9 },
+  ],
+  doseChanges: [
+    { atIndex: 1, dose: 500 },
+    { atIndex: 3, dose: 750 },
+    { atIndex: 5, dose: 500 },
+  ],
+} as const;
+
 /** @deprecated Use PRODUCT_LANDING_DAY_SUMMARY panels. */
 export const PRODUCT_LANDING_HEADLINE = "Last 24 hours · Today ahead";
 
@@ -56,38 +110,162 @@ export const PRODUCT_LANDING_DAY_SUMMARY = {
   },
 } as const;
 
+export const PRODUCT_LANDING_LIVE_CONVO = [
+  {
+    id: "caller-open",
+    role: "caller" as const,
+    caller: "Sarah Westfield",
+    callDuration: "0m6s",
+    callDurationIso: "PT0M6S",
+    lines: [
+      { before: "Hi, this is ", tag: "Sarah", after: ". I need a" },
+      { before: "refill visit for my ", tag: "Metformin" },
+    ],
+  },
+  {
+    id: "agent-intake",
+    role: "agent" as const,
+    caller: "Doe Agent",
+    callDuration: "0m14s",
+    callDurationIso: "PT0M14S",
+    steps: ["Generated confirmation code"],
+    lines: [
+      "Before we begin, please state your date of birth",
+      "and read the code sent to your phone",
+    ],
+  },
+  {
+    id: "caller-verify",
+    role: "caller" as const,
+    caller: "Sarah Westfield",
+    callDuration: "0m22s",
+    callDurationIso: "PT0M22S",
+    lines: [
+      { before: "Sure, my date of birth is ", tag: "March 14, 1988", after: " and" },
+      { before: "the code is ", tag: "482931" },
+    ],
+  },
+  {
+    id: "agent-verified",
+    role: "agent" as const,
+    caller: "Doe Agent",
+    callDuration: "0m26s",
+    callDurationIso: "PT0M26S",
+    chartProfile: {
+      name: "Sarah Westfield",
+      tags: ["March 14, 1988", "Blue Cross PPO"],
+      highlights: [
+        { title: "Metformin Started", value: "Jan 14, 2024" },
+        { title: "Current Dose", value: "500mg" },
+        { title: "Blood Pressure", value: "128/82", trend: "up" },
+      ],
+      a1cTrend: {
+        label: "Last A1C",
+        readings: [
+          { date: "Jul '24", value: 6.5 },
+          { date: "Oct '24", value: 6.9 },
+          { date: "Jan '25", value: 7.3 },
+          { date: "Apr '25", value: 6.8 },
+          { date: "Jul '25", value: 6.4 },
+          { date: "Oct '25", value: 6.5 },
+          { date: "Jul '26", value: 6.9 },
+        ],
+        doseChanges: [
+          { atIndex: 1, dose: 500 },
+          { atIndex: 3, dose: 750 },
+          { atIndex: 5, dose: 500 },
+        ],
+      },
+    },
+    steps: ["Confirmed patient identity", "Accessed chart"],
+    lines: ["Thank you, Sarah.", "I've pulled up your chart."],
+  },
+  {
+    id: "agent-side-effects",
+    role: "agent" as const,
+    caller: "Doe Agent",
+    callDuration: "0m34s",
+    callDurationIso: "PT0M34S",
+    steps: ["Side effect check", "Symptom log", "Visit slots"],
+    lines: ["Any side effects since", "your last refill?"],
+  },
+  {
+    id: "caller-side-effects",
+    role: "caller" as const,
+    caller: "Sarah Westfield",
+    callDuration: "0m42s",
+    callDurationIso: "PT0M42S",
+    lines: [
+      { before: "Just mild ", tag: "nausea", after: ", nothing new" },
+      { before: "and no ", tag: "dizziness" },
+    ],
+  },
+  {
+    id: "agent-schedule",
+    role: "agent" as const,
+    caller: "Doe Agent",
+    callDuration: "0m54s",
+    callDurationIso: "PT0M54S",
+    steps: ["Booking refill visit", "Prior auth pending", "Rx routing"],
+    lines: [
+      { before: "I have ", tag: "Tuesday", after: " at 10:30 AM" },
+      { before: "with ", tag: "Dr. Chen", after: " for the refill visit." },
+    ],
+  },
+  {
+    id: "caller-confirm",
+    role: "caller" as const,
+    caller: "Sarah Westfield",
+    callDuration: "1m02s",
+    callDurationIso: "PT1M2S",
+    lines: [{ before: "", tag: "Tuesday works", after: " for me" }],
+  },
+  {
+    id: "agent-close",
+    role: "agent" as const,
+    caller: "Doe Agent",
+    callDuration: "1m14s",
+    callDurationIso: "PT1M14S",
+    steps: ["Visit booked", "Confirmation sent", "Chart updated"],
+    lines: ["Confirmation sent by text.", "Dr. Chen will review your prior auth."],
+  },
+] as const;
+
+/** @deprecated Use PRODUCT_LANDING_LIVE_CONVO. */
 export const PRODUCT_LANDING_LIVE_QUOTE = {
   caller: "Sarah Westfield",
   callDuration: "0m6s",
   line1: {
-    beforeName: "Hello this is ",
+    beforeName: "Hi, this is ",
     name: "Sarah",
-    afterName: ", I would like",
+    afterName: ". I need a",
   },
   line2: {
-    beforeSubject: "to book an ",
-    subject: "appointment",
+    beforeSubject: "refill visit for my ",
+    subject: "Metformin",
   },
 } as const;
 
+/** @deprecated Use PRODUCT_LANDING_LIVE_CONVO. */
 export const PRODUCT_LANDING_AGENT_REPLY = {
   caller: "Doe Agent",
-  callDuration: "0m9s",
-  line1: "Before we begin, please read the",
-  line2: "code sent to your phone",
+  callDuration: "0m14s",
+  line1: "Before we begin, please state your date of birth",
+  line2: "and read the code sent to your phone",
 } as const;
 
+/** @deprecated Use PRODUCT_LANDING_LIVE_CONVO. */
 export const PRODUCT_LANDING_AGENT_STEPS = [
-  "Sarah's chart",
-  "Auth code",
-  "Calendar",
+  "Side effect check",
+  "Symptom log",
+  "Visit slots",
 ] as const;
 
 export const PRODUCT_LANDING_CALL_OUTCOME = {
   caller: "Sarah Westfield",
   phone: "(512) 555-0192",
-  totalCallTime: "1m18s",
-  status: "Appointment Booked",
+  totalCallTime: "1m14s",
+  status: "Refill visit scheduled",
 } as const;
 
 export const PRODUCT_LANDING_CALL_HISTORY_LABEL = "Last call history";

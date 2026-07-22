@@ -2,20 +2,16 @@
 
 import type { CSSProperties, ReactNode } from "react";
 import {
-  PRODUCT_LANDING_AGENT_REPLY,
-  PRODUCT_LANDING_AGENT_STEPS,
-  PRODUCT_LANDING_CALL_HISTORY_ACTIONS,
   PRODUCT_LANDING_CALL_HISTORY_LABEL,
   PRODUCT_LANDING_CALL_HISTORY_ORBIT,
   PRODUCT_LANDING_CALL_HISTORY_ORBIT_AGENTS,
-  PRODUCT_LANDING_CALL_OUTCOME,
   PRODUCT_LANDING_DAY_SUMMARY,
   PRODUCT_LANDING_GREETING_LINE,
   PRODUCT_LANDING_GREETING_NAME,
-  PRODUCT_LANDING_LIVE_QUOTE,
   PRODUCT_LANDING_TAB_LABEL,
 } from "@/lib/product/product-copy";
 import "@/lib/product/product-landing.css";
+import { ProductLandingLiveThread } from "@/components/product/ProductLandingLiveThread";
 import { dmSans, suisseIntl } from "@/lib/home/fonts";
 
 const CALL_HISTORY_ORBIT_AGENTS = PRODUCT_LANDING_CALL_HISTORY_ORBIT_AGENTS;
@@ -242,20 +238,25 @@ function NextAppointmentLead({
   return (
     <div className="product-landing-ahead-carousel__appointment">
       <div className="product-landing-ahead-carousel__appointment-head">
-        <span className={`product-landing-ahead-carousel__appointment-eyebrow ${dmSans.className}`}>
+        <span className={`product-landing-ahead-carousel__appointment-eyebrow ${suisseIntl.className}`}>
           {appointment.label}
         </span>
-        <span className={`product-landing-ahead-carousel__appointment-time ${dmSans.className}`}>{appointment.time}</span>
-      </div>
-      <p className={`product-landing-ahead-carousel__appointment-patient m-0 ${dmSans.className}`}>{appointment.patient}</p>
-      <p className={`product-landing-ahead-carousel__appointment-detail m-0 ${dmSans.className}`}>
-        {appointment.detail}
-        <span className="product-landing-ahead-carousel__appointment-sep" aria-hidden>
-          {" · "}
+        <span className={`product-landing-ahead-carousel__appointment-relative ${suisseIntl.className}`}>
+          {appointment.relative}
         </span>
-        {appointment.location}
+      </div>
+      <p className={`product-landing-ahead-carousel__appointment-time m-0 ${dmSans.className}`}>{appointment.time}</p>
+      <p className={`product-landing-ahead-carousel__appointment-patient m-0 ${dmSans.className}`}>
+        {appointment.patient}
       </p>
-      <span className={`product-landing-ahead-carousel__appointment-relative ${dmSans.className}`}>{appointment.relative}</span>
+      <div className="product-landing-ahead-carousel__appointment-meta">
+        <span className={`product-landing-ahead-carousel__appointment-detail ${dmSans.className}`}>
+          {appointment.detail}
+        </span>
+        <span className={`product-landing-ahead-carousel__appointment-location ${dmSans.className}`}>
+          {appointment.location}
+        </span>
+      </div>
     </div>
   );
 }
@@ -292,174 +293,6 @@ function TodayAheadCarousel({
         ))}
       </div>
     </div>
-  );
-}
-
-function VoiceConvoChevron({ direction }: { direction: "up" | "down" }) {
-  return (
-    <svg className="product-landing-live-convo__chevron" viewBox="0 0 12 12" fill="none" aria-hidden>
-      <path
-        d={direction === "up" ? "M2.5 8 6 4.5 9.5 8" : "M2.5 4 6 7.5 9.5 4"}
-        stroke="currentColor"
-        strokeWidth="1.35"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function VoiceLiveConvo() {
-  return (
-    <div className="product-landing-live-convo">
-      <VoiceLiveQuote />
-      <VoiceAgentReply />
-    </div>
-  );
-}
-
-function VoiceCallHistoryNav() {
-  return (
-    <div className="product-landing-live-convo__nav-stack" aria-hidden>
-      <VoiceConvoChevron direction="up" />
-      <VoiceConvoChevron direction="down" />
-    </div>
-  );
-}
-
-function VoiceCallHistoryActions() {
-  return (
-    <div className="product-landing-live-actions" role="group" aria-label="Call history actions">
-      {PRODUCT_LANDING_CALL_HISTORY_ACTIONS.map((label) => (
-        <button key={label} type="button" className={`product-landing-live-actions__btn ${dmSans.className}`}>
-          {label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function VoiceCallOutcomeBar() {
-  const outcome = PRODUCT_LANDING_CALL_OUTCOME;
-
-  return (
-    <section className="product-landing-live-outcome" aria-label="Call outcome">
-      <div className="product-landing-live-outcome__top">
-        <p className={`product-landing-live-outcome__phone m-0 ${dmSans.className}`}>{outcome.phone}</p>
-        <p className={`product-landing-live-outcome__duration m-0 ${dmSans.className}`}>{outcome.totalCallTime}</p>
-      </div>
-      <div className="product-landing-live-outcome__row">
-        <p className={`product-landing-live-outcome__name m-0 ${dmSans.className}`}>{outcome.caller}</p>
-        <p className={`product-landing-live-outcome__status m-0 ${dmSans.className}`}>{outcome.status}</p>
-      </div>
-    </section>
-  );
-}
-
-function LiveQuoteCheckIcon() {
-  return (
-    <svg
-      className="product-landing-live-quote__step-check"
-      viewBox="0 0 12 12"
-      fill="none"
-      aria-hidden
-    >
-      <path
-        d="M2.25 6.1 4.65 8.5 9.75 3.4"
-        stroke="currentColor"
-        strokeWidth="1.35"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function VoiceAgentSteps() {
-  return (
-    <ul className={`product-landing-live-quote__steps m-0 ${dmSans.className}`}>
-      {PRODUCT_LANDING_AGENT_STEPS.map((step) => (
-        <li key={step} className="product-landing-live-quote__step">
-          <span>{step}</span>
-          <LiveQuoteCheckIcon />
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function VoiceQuoteTurn({
-  ariaLabel,
-  caller,
-  callDuration,
-  callDurationIso,
-  variant = "default",
-  header,
-  children,
-}: {
-  ariaLabel: string;
-  caller: string;
-  callDuration: string;
-  callDurationIso: string;
-  variant?: "default" | "reply";
-  header?: ReactNode;
-  children: ReactNode;
-}) {
-  return (
-    <section
-      className={`product-landing-live-quote${variant === "reply" ? " product-landing-live-quote--reply" : ""}`}
-      aria-label={ariaLabel}
-    >
-      {header}
-      <p className={`product-landing-live-quote__text m-0 ${dmSans.className}`}>{children}</p>
-      <div className="product-landing-live-quote__meta">
-        <p className={`product-landing-live-quote__caller m-0 ${dmSans.className}`}>{caller}</p>
-        <time className={`product-landing-live-quote__duration ${dmSans.className}`} dateTime={callDurationIso}>
-          {callDuration}
-        </time>
-      </div>
-    </section>
-  );
-}
-
-function VoiceLiveQuote() {
-  const quote = PRODUCT_LANDING_LIVE_QUOTE;
-
-  return (
-    <VoiceQuoteTurn
-      ariaLabel="Live caller"
-      caller={quote.caller}
-      callDuration={quote.callDuration}
-      callDurationIso="PT0M6S"
-    >
-      <span className="product-landing-live-quote__line">
-        {quote.line1.beforeName}
-        <span className="product-landing-live-quote__tag">{quote.line1.name}</span>
-        {quote.line1.afterName}
-      </span>
-      <span className="product-landing-live-quote__line">
-        {quote.line2.beforeSubject}
-        <span className="product-landing-live-quote__tag">{quote.line2.subject}</span>
-      </span>
-    </VoiceQuoteTurn>
-  );
-}
-
-function VoiceAgentReply() {
-  const reply = PRODUCT_LANDING_AGENT_REPLY;
-
-  return (
-    <VoiceQuoteTurn
-      ariaLabel="Agent reply"
-      caller={reply.caller}
-      callDuration={reply.callDuration}
-      callDurationIso="PT0M9S"
-      variant="reply"
-      header={<VoiceAgentSteps />}
-    >
-      <span className="product-landing-live-quote__line">{reply.line1}</span>
-      <span className="product-landing-live-quote__line">{reply.line2}</span>
-    </VoiceQuoteTurn>
   );
 }
 
@@ -598,16 +431,7 @@ export function ProductLandingPanel() {
         >
           {PRODUCT_LANDING_CALL_HISTORY_LABEL}
         </p>
-        <div className="product-landing-live-thread">
-          <div className="product-landing-live-thread__head">
-            <VoiceCallOutcomeBar />
-          </div>
-          <div className="product-landing-live-convo-stage">
-            <VoiceCallHistoryNav />
-            <VoiceLiveConvo />
-          </div>
-          <VoiceCallHistoryActions />
-        </div>
+        <ProductLandingLiveThread />
       </div>
     </div>
   );

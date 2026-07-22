@@ -5,18 +5,12 @@ import {
   DESIGNERS_PRODUCT_LEAD,
   DESIGNERS_PRODUCT_NEXT_BODY,
   DESIGNERS_PRODUCT_NEXT_HEADLINE,
-  DESIGNERS_PRODUCT_VOICE_FEATURES,
-  DESIGNERS_PRODUCT_VOICE_LEAD,
 } from "@/lib/designers/designers-product-copy";
 import { DOEHEALTH_CLOSING_LABEL_CAROUSEL_ITEMS } from "@/lib/doehealth/doehealth-closing-label-carousel";
 import { DOEHEALTH_HERO_HEADLINE } from "@/lib/doehealth/doehealth-hero-copy";
 import { DOEHEALTH_INTRO_COPY } from "@/lib/doehealth/doehealth-intro-copy";
 import { DOEHEALTH_VOICE_ROADMAP } from "@/lib/doehealth/doehealth-voice-roadmap";
 import { JOIN_HERO_EXTRA_BANDS } from "@/lib/join/join-hero-backdrops";
-import {
-  PRODUCT_LANDING_DAY_SUMMARY,
-} from "@/lib/product/product-copy";
-
 const missionBand = JOIN_HERO_EXTRA_BANDS.find((band) => band.id === "incoming");
 const integrateBand = JOIN_HERO_EXTRA_BANDS.find((band) => band.id === "integrate");
 
@@ -75,18 +69,6 @@ export const PITCH_MARKET = {
   bars: ABOUT_MOBILE_TAM_CHART.bars,
   gtm: missionBand?.description?.[1] ?? "",
 };
-
-export const PITCH_PRODUCT_VOICE = {
-  eyebrow: "Product 1",
-  headline: ["Voice agents,", "live today."],
-  lead: DESIGNERS_PRODUCT_VOICE_LEAD,
-  stats: {
-    calls: PRODUCT_LANDING_DAY_SUMMARY.last24h.totalCalls,
-    resolved: `${PRODUCT_LANDING_DAY_SUMMARY.last24h.resolvedPct}%`,
-    overnight: PRODUCT_LANDING_DAY_SUMMARY.last24h.overnightCalls,
-  },
-  features: DESIGNERS_PRODUCT_VOICE_FEATURES,
-} as const;
 
 export const PITCH_PRODUCT_ROADMAP = {
   eyebrow: "Product 2",
