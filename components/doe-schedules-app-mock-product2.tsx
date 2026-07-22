@@ -5,10 +5,10 @@ import type { CSSProperties } from "react";
 import { Inter, Lora } from "next/font/google";
 import localFont from "next/font/local";
 
-import { ProductAgentsPanel } from "@/components/product/ProductAgentsPanel";
-import { ProductCallHistoryPanel } from "@/components/product/ProductCallHistoryPanel";
-import { ProductCallHistoryRightRail } from "@/components/product/ProductCallHistoryRightRail";
-import { ProductLandingPanel } from "@/components/product/ProductLandingPanel";
+import { Product2AgentsPanel } from "@/components/product2/Product2AgentsPanel";
+import { Product2CallHistoryPanel } from "@/components/product2/Product2CallHistoryPanel";
+import { Product2CallHistoryRightRail } from "@/components/product2/Product2CallHistoryRightRail";
+import { Product2LandingPanel } from "@/components/product2/Product2LandingPanel";
 
 export const weekSchedule = [
   {
@@ -1128,7 +1128,7 @@ function Icon({
   );
 }
 
-export type DoeSchedulesAppMockVariant = "framed" | "fullscreen" | "hero" | "product-brown";
+export type DoeSchedulesAppMockProduct2Variant = "framed" | "fullscreen" | "hero" | "product-brown";
 
 const PERIOD_SELECTOR_COPY: Record<
   "Today" | "This week" | "Month" | "Year",
@@ -1156,10 +1156,10 @@ const PERIOD_SELECTOR_COPY: Record<
   },
 };
 
-export function DoeSchedulesAppMock({
+export function DoeSchedulesAppMockProduct2({
   variant = "framed",
 }: {
-  variant?: DoeSchedulesAppMockVariant;
+  variant?: DoeSchedulesAppMockProduct2Variant;
 }) {
   const viewOptions = ["Today", "This week", "Month", "Year"] as const;
   const [timeView, setTimeView] = useState<(typeof viewOptions)[number]>("This week");
@@ -1215,12 +1215,6 @@ export function DoeSchedulesAppMock({
   const [workspaceView, setWorkspaceView] = useState<
     "inbox" | "schedule" | "patients" | "landing" | "agents" | "call-history"
   >(variant === "product-brown" ? "landing" : "schedule");
-  useEffect(() => {
-    if (variant !== "product-brown") return;
-    if (workspaceView !== "landing" && workspaceView !== "call-history") {
-      setWorkspaceView("landing");
-    }
-  }, [variant, workspaceView]);
   const [selectedInboxId, setSelectedInboxId] = useState<string>(inboxThreads[0].id);
   const [inboxFilter, setInboxFilter] = useState<"all" | "unread" | "pinned">("all");
   const [patientListScope, setPatientListScope] = useState<"all" | "today">("today");
@@ -1555,41 +1549,6 @@ export function DoeSchedulesAppMock({
         </div>
       </div>
 
-      {productBrown ? (
-        <nav className="flex flex-col gap-0.5 px-2 pb-2">
-          {(
-            [
-              {
-                label: "Today",
-                view: "landing" as const,
-                icon: <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />,
-              },
-              {
-                label: "Call History",
-                view: "call-history" as const,
-                icon: (
-                  <path d="M5.5 4.5h2.75l1.25 2.75L8.5 9a11.5 11.5 0 0 0 5.5 5.5l1.75-1.25 2.75 1.25v2.75a1 1 0 0 1-1 1A13.5 13.5 0 0 1 4.5 5.5a1 1 0 0 1 1-1Z" />
-                ),
-              },
-            ] as const
-          ).map((item) => (
-            <button
-              key={item.label}
-              type="button"
-              onClick={() => setWorkspaceView(item.view)}
-              className={`flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-[13px] ${
-                workspaceView === item.view
-                  ? "bg-[rgba(245,230,208,0.12)] font-medium text-[#f5e6d0]"
-                  : "text-[rgba(245,230,208,0.78)] hover:bg-[rgba(245,230,208,0.08)]"
-              }`}
-            >
-              <Icon className="h-5 w-5">{item.icon}</Icon>
-              <span className="min-w-0 flex-1 truncate">{item.label}</span>
-            </button>
-          ))}
-        </nav>
-      ) : (
-        <>
       <nav className="flex flex-col gap-0.5 px-2 pb-2">
         {(
           [
@@ -1830,8 +1789,6 @@ export function DoeSchedulesAppMock({
           ))}
         </div>
       </div>
-        </>
-      )}
 
       <div className="mt-auto border-t border-[#EFEFEF] px-2 py-2">
         <div className="px-1">
@@ -1958,7 +1915,7 @@ export function DoeSchedulesAppMock({
   );
 
   const appSidebar = renderAppSidebar();
-  const callHistoryRightRail = productBrownCallHistory ? <ProductCallHistoryRightRail /> : null;
+  const callHistoryRightRail = productBrownCallHistory ? <Product2CallHistoryRightRail /> : null;
 
   return (
     <div
@@ -2056,11 +2013,11 @@ export function DoeSchedulesAppMock({
                 }`}
               >
                 {workspaceView === "landing" && productBrown ? (
-                  <ProductLandingPanel />
+                  <Product2LandingPanel />
                 ) : workspaceView === "agents" && productBrown ? (
-                  <ProductAgentsPanel />
+                  <Product2AgentsPanel />
                 ) : workspaceView === "call-history" && productBrown ? (
-                  <ProductCallHistoryPanel />
+                  <Product2CallHistoryPanel />
                 ) : workspaceView === "schedule" ? (
                   <>
                 <header
