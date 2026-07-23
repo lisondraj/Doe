@@ -47,18 +47,31 @@ export const PRODUCT2_CALL_HISTORY_HERO_DETAILS = [
 export const PRODUCT2_CALL_HISTORY_A1C_TREND = {
   label: "Last A1C",
   readings: [
-    { date: "Jul '24", value: 6.5 },
-    { date: "Oct '24", value: 6.9 },
-    { date: "Jan '25", value: 7.3 },
-    { date: "Apr '25", value: 6.8 },
-    { date: "Jul '25", value: 6.4 },
-    { date: "Oct '25", value: 6.5 },
-    { date: "Jul '26", value: 6.9 },
+    { date: "7/24", value: 6.5 },
+    { date: "10/24", value: 6.9 },
+    { date: "1/25", value: 7.3 },
+    { date: "4/25", value: 6.8 },
+    { date: "7/25", value: 6.4 },
+    { date: "10/25", value: 6.5 },
+    { date: "7/26", value: 6.9 },
   ],
   doseChanges: [
     { atIndex: 1, dose: 500 },
     { atIndex: 3, dose: 750 },
     { atIndex: 5, dose: 500 },
+  ],
+} as const;
+
+export const PRODUCT2_CALL_HISTORY_BP_TREND = {
+  label: "Last BP",
+  readings: [
+    { date: "7/24", systolic: 142, diastolic: 92 },
+    { date: "10/24", systolic: 138, diastolic: 88 },
+    { date: "1/25", systolic: 135, diastolic: 86 },
+    { date: "4/25", systolic: 132, diastolic: 84 },
+    { date: "7/25", systolic: 130, diastolic: 82 },
+    { date: "10/25", systolic: 128, diastolic: 80 },
+    { date: "7/26", systolic: 128, diastolic: 82 },
   ],
 } as const;
 
@@ -162,13 +175,13 @@ export const PRODUCT2_LANDING_LIVE_CONVO = [
       a1cTrend: {
         label: "Last A1C",
         readings: [
-          { date: "Jul '24", value: 6.5 },
-          { date: "Oct '24", value: 6.9 },
-          { date: "Jan '25", value: 7.3 },
-          { date: "Apr '25", value: 6.8 },
-          { date: "Jul '25", value: 6.4 },
-          { date: "Oct '25", value: 6.5 },
-          { date: "Jul '26", value: 6.9 },
+          { date: "7/24", value: 6.5 },
+          { date: "10/24", value: 6.9 },
+          { date: "1/25", value: 7.3 },
+          { date: "4/25", value: 6.8 },
+          { date: "7/25", value: 6.4 },
+          { date: "10/25", value: 6.5 },
+          { date: "7/26", value: 6.9 },
         ],
         doseChanges: [
           { atIndex: 1, dose: 500 },

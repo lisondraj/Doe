@@ -25,19 +25,29 @@ function isTaggedLine(line: LiveConvoLine): line is LiveConvoTaggedLine {
 function VoiceLiveConvo({
   convoView = "full",
   showAgentSteps = true,
+  showChartProfile = true,
+  turns: turnsOverride,
 }: {
   convoView?: "full" | "agent-only";
   showAgentSteps?: boolean;
+  showChartProfile?: boolean;
+  turns?: readonly (typeof PRODUCT2_LANDING_LIVE_CONVO)[number][];
 }) {
   const turns =
-    convoView === "agent-only"
+    turnsOverride ??
+    (convoView === "agent-only"
       ? PRODUCT2_LANDING_LIVE_CONVO.filter((turn) => turn.role === "agent")
-      : PRODUCT2_LANDING_LIVE_CONVO;
+      : PRODUCT2_LANDING_LIVE_CONVO);
 
   return (
     <div className="product-landing-live-convo">
       {turns.map((turn) => (
-        <VoiceConvoTurn key={turn.id} turn={turn} showAgentSteps={showAgentSteps} />
+        <VoiceConvoTurn
+          key={turn.id}
+          turn={turn}
+          showAgentSteps={showAgentSteps}
+          showChartProfile={showChartProfile}
+        />
       ))}
     </div>
   );
@@ -224,13 +234,15 @@ function VoiceQuoteTurn({
 function VoiceConvoTurn({
   turn,
   showAgentSteps = true,
+  showChartProfile = true,
 }: {
   turn: (typeof PRODUCT2_LANDING_LIVE_CONVO)[number];
   showAgentSteps?: boolean;
+  showChartProfile?: boolean;
 }) {
   const isAgent = turn.role === "agent";
   const steps = "steps" in turn ? turn.steps : undefined;
-  const chartProfile = "chartProfile" in turn ? turn.chartProfile : undefined;
+  const chartProfile = showChartProfile && "chartProfile" in turn ? turn.chartProfile : undefined;
 
   const header =
     showAgentSteps && (steps || chartProfile) ? (
@@ -262,13 +274,17 @@ export function Product2LandingLiveThread({
   showOutcome = true,
   showActions = true,
   showAgentSteps = true,
+  showChartProfile = true,
   convoView = "full",
+  turns,
 }: {
   className?: string;
   showOutcome?: boolean;
   showActions?: boolean;
   showAgentSteps?: boolean;
+  showChartProfile?: boolean;
   convoView?: "full" | "agent-only";
+  turns?: readonly (typeof PRODUCT2_LANDING_LIVE_CONVO)[number][];
 }) {
   return (
     <div className={`product-landing-live-thread${className ? ` ${className}` : ""}`}>
@@ -278,7 +294,12 @@ export function Product2LandingLiveThread({
         </div>
       ) : null}
       <div className="product-landing-live-convo-stage">
-        <VoiceLiveConvo convoView={convoView} showAgentSteps={showAgentSteps} />
+        <VoiceLiveConvo
+          convoView={convoView}
+          showAgentSteps={showAgentSteps}
+          showChartProfile={showChartProfile}
+          turns={turns}
+        />
       </div>
       {showActions ? <VoiceCallHistoryActions /> : null}
     </div>

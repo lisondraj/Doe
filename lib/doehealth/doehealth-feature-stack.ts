@@ -1,5 +1,8 @@
 import { pickCommunicationSlides } from "@/lib/doephone/communication-carousel";
 
+/** /doehealth — intro band only; feature slides and closing section hidden (footer remains). */
+export const DOEHEALTH_HIDE_SECTIONS_BELOW_INTRO = true;
+
 /** /doehealth — slide list (agents shader band includes specialty before workflow carousel). */
 export const DOEHEALTH_HOME_FEATURE_SLIDE_IDS = [
   "agents",
@@ -27,6 +30,9 @@ export const DOEHEALTH_DISABLE_CAROUSEL_INTERACTIONS = true;
 
 /** /doehealth — hide the 2×2 stats grid and workflow pills under Built by doctors. */
 export const DOEHEALTH_HIDE_ACTIVE_AGENTS_VISUAL = true;
+
+/** /doehealth — Sarah Westfield call history card on Built by doctors shader band. */
+export const DOEHEALTH_SHOW_CALL_HISTORY_IN_ACTIVE_AGENTS = true;
 
 /** /doehealth — voice-first roadmap diagram under Built by doctors copy. */
 export const DOEHEALTH_SHOW_VOICE_ROADMAP_DIAGRAM = true;

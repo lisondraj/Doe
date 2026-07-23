@@ -4973,6 +4973,12 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   }
 }
 /* iPhone — /doehealth intro band (Suisse sans, left-aligned). */
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doehealth-blank-brown-band {
+  min-height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.95) !important;
+  height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.95) !important;
+  max-height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.95) !important;
+  box-sizing: border-box;
+}
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doehealth-intro-band {
   --doehealth-intro-ink: #3d2e1f;
   --doehealth-intro-ink-body: rgba(61, 46, 31, 0.9);
@@ -4985,7 +4991,8 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .do
   box-sizing: border-box;
   display: flex !important;
   flex-direction: column !important;
-  justify-content: center !important;
+  justify-content: flex-start !important;
+  overflow: visible !important;
 }
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doehealth-intro-band__shell {
   flex: 1 1 auto;
@@ -4994,7 +5001,6 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .do
   justify-content: center;
   min-height: 0;
   width: 100%;
-  height: 100%;
   padding-inline: var(--proto-phone-gutter-left);
   padding-block: clamp(0.2rem, 0.65vmin, 0.38rem);
   overflow: visible;
@@ -11713,16 +11719,23 @@ html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth {
   --doehealth-intro-ink-muted: rgba(61, 46, 31, 0.66);
   --doehealth-intro-ink-faint: rgba(61, 46, 31, 0.46);
 }
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-blank-brown-band {
+  min-height: 100dvh !important;
+  height: 100dvh !important;
+  max-height: 100dvh !important;
+  box-sizing: border-box;
+}
 html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-intro-band {
   display: flex !important;
   flex-direction: column !important;
-  justify-content: center !important;
+  justify-content: flex-start !important;
   box-sizing: border-box;
   min-height: 100dvh !important;
   height: 100dvh !important;
   max-height: 100dvh !important;
   padding-top: calc(var(--desktop-nav-height) + var(--desktop-section-pad-y)) !important;
-  padding-bottom: var(--desktop-section-pad-y) !important;
+  padding-bottom: 0 !important;
+  overflow: visible !important;
   background-color: #faf0d8 !important;
 }
 html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-intro-band__shell {

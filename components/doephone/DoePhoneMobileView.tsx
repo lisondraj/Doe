@@ -41,11 +41,13 @@ export function DoePhoneMobileView({
   activeAgentsBeyond,
   activeAgentsSubheading,
   activeAgentsRoadmapDiagram,
+  activeAgentsCallHistoryDiagram,
   activeAgentsClosingLabelCarousel,
   featureSlidesPhone,
   specialtyBeforeAgentsWorkflow = false,
   freezeSpecialtyMarquee = false,
   priorAuthAfterSpecialty = false,
+  hideSectionsBelowIntro = false,
 }: {
   variant?: "home" | "proto";
   heroHeadline?: DoeHomeHeroHeadline;
@@ -57,11 +59,13 @@ export function DoePhoneMobileView({
   activeAgentsBeyond?: string;
   activeAgentsSubheading?: string;
   activeAgentsRoadmapDiagram?: boolean;
+  activeAgentsCallHistoryDiagram?: boolean;
   activeAgentsClosingLabelCarousel?: boolean;
   featureSlidesPhone?: readonly DoePhoneCommunicationSlide[];
   specialtyBeforeAgentsWorkflow?: boolean;
   freezeSpecialtyMarquee?: boolean;
   priorAuthAfterSpecialty?: boolean;
+  hideSectionsBelowIntro?: boolean;
 }) {
   const isProto = variant === "proto";
 
@@ -154,7 +158,7 @@ export function DoePhoneMobileView({
 
       {afterHero}
 
-      {isProto ? (
+      {hideSectionsBelowIntro ? null : isProto ? (
         <ProtoCommunicationStack />
       ) : (
         <DoePhoneHomeFeatureStack
@@ -166,6 +170,7 @@ export function DoePhoneMobileView({
           activeAgentsBeyond={activeAgentsBeyond}
           activeAgentsSubheading={activeAgentsSubheading}
           activeAgentsRoadmapDiagram={activeAgentsRoadmapDiagram}
+          activeAgentsCallHistoryDiagram={activeAgentsCallHistoryDiagram}
           activeAgentsClosingLabelCarousel={activeAgentsClosingLabelCarousel}
           featureSlidesPhone={featureSlidesPhone}
           specialtyBeforeAgentsWorkflow={specialtyBeforeAgentsWorkflow}
@@ -176,6 +181,8 @@ export function DoePhoneMobileView({
 
       {isProto ? (
         <ProtoFooter />
+      ) : hideSectionsBelowIntro ? (
+        <HomeFooter shaderTheme="dusk" />
       ) : (
         <>
           <section id="doe-vision" className={DOEPHONE_BEIGE_SECTION} aria-label="Closing">

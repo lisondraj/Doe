@@ -47,13 +47,13 @@ export const PRODUCT_CALL_HISTORY_HERO_DETAILS = [
 export const PRODUCT_CALL_HISTORY_A1C_TREND = {
   label: "Last A1C",
   readings: [
-    { date: "Jul '24", value: 6.5 },
-    { date: "Oct '24", value: 6.9 },
-    { date: "Jan '25", value: 7.3 },
-    { date: "Apr '25", value: 6.8 },
-    { date: "Jul '25", value: 6.4 },
-    { date: "Oct '25", value: 6.5 },
-    { date: "Jul '26", value: 6.9 },
+    { date: "7/24", value: 6.5 },
+    { date: "10/24", value: 6.9 },
+    { date: "1/25", value: 7.3 },
+    { date: "4/25", value: 6.8 },
+    { date: "7/25", value: 6.4 },
+    { date: "10/25", value: 6.5 },
+    { date: "7/26", value: 6.9 },
   ],
   doseChanges: [
     { atIndex: 1, dose: 500 },
@@ -162,13 +162,13 @@ export const PRODUCT_LANDING_LIVE_CONVO = [
       a1cTrend: {
         label: "Last A1C",
         readings: [
-          { date: "Jul '24", value: 6.5 },
-          { date: "Oct '24", value: 6.9 },
-          { date: "Jan '25", value: 7.3 },
-          { date: "Apr '25", value: 6.8 },
-          { date: "Jul '25", value: 6.4 },
-          { date: "Oct '25", value: 6.5 },
-          { date: "Jul '26", value: 6.9 },
+          { date: "7/24", value: 6.5 },
+          { date: "10/24", value: 6.9 },
+          { date: "1/25", value: 7.3 },
+          { date: "4/25", value: 6.8 },
+          { date: "7/25", value: 6.4 },
+          { date: "10/25", value: 6.5 },
+          { date: "7/26", value: 6.9 },
         ],
         doseChanges: [
           { atIndex: 1, dose: 500 },

@@ -76,11 +76,13 @@ export function DoePhoneRouter({
   activeAgentsBeyond,
   activeAgentsSubheading,
   activeAgentsRoadmapDiagram,
+  activeAgentsCallHistoryDiagram,
   activeAgentsClosingLabelCarousel,
   featureSlidesPhone,
   specialtyBeforeAgentsWorkflow,
   freezeSpecialtyMarquee,
   priorAuthAfterSpecialty,
+  hideSectionsBelowIntro,
 }: {
   TopBanner?: DoeHomeTopBannerComponent;
   heroHeadline?: DoeHomeHeroHeadline;
@@ -92,11 +94,13 @@ export function DoePhoneRouter({
   activeAgentsBeyond?: string;
   activeAgentsSubheading?: string;
   activeAgentsRoadmapDiagram?: boolean;
+  activeAgentsCallHistoryDiagram?: boolean;
   activeAgentsClosingLabelCarousel?: boolean;
   featureSlidesPhone?: readonly DoePhoneCommunicationSlide[];
   specialtyBeforeAgentsWorkflow?: boolean;
   freezeSpecialtyMarquee?: boolean;
   priorAuthAfterSpecialty?: boolean;
+  hideSectionsBelowIntro?: boolean;
 } = {}) {
   /** Defer until client reads bootstrap `data-layout` — avoids SSR phone shell flash on desktop. */
   const [variant, setVariant] = useState<DoePhoneVariant | null>(null);
@@ -177,11 +181,13 @@ export function DoePhoneRouter({
         activeAgentsBeyond={activeAgentsBeyond}
         activeAgentsSubheading={activeAgentsSubheading}
         activeAgentsRoadmapDiagram={activeAgentsRoadmapDiagram}
+        activeAgentsCallHistoryDiagram={activeAgentsCallHistoryDiagram}
         activeAgentsClosingLabelCarousel={activeAgentsClosingLabelCarousel}
         featureSlidesPhone={featureSlidesPhone}
         specialtyBeforeAgentsWorkflow={specialtyBeforeAgentsWorkflow}
         freezeSpecialtyMarquee={freezeSpecialtyMarquee}
         priorAuthAfterSpecialty={priorAuthAfterSpecialty}
+        hideSectionsBelowIntro={hideSectionsBelowIntro}
       />
     );
   }
@@ -199,11 +205,13 @@ export function DoePhoneRouter({
         activeAgentsBeyond={activeAgentsBeyond}
         activeAgentsSubheading={activeAgentsSubheading}
         activeAgentsRoadmapDiagram={activeAgentsRoadmapDiagram}
+        activeAgentsCallHistoryDiagram={activeAgentsCallHistoryDiagram}
         activeAgentsClosingLabelCarousel={activeAgentsClosingLabelCarousel}
         featureSlidesPhone={featureSlidesPhone}
         specialtyBeforeAgentsWorkflow={specialtyBeforeAgentsWorkflow}
         freezeSpecialtyMarquee={freezeSpecialtyMarquee}
         priorAuthAfterSpecialty={priorAuthAfterSpecialty}
+        hideSectionsBelowIntro={hideSectionsBelowIntro}
       />
     </>
   );

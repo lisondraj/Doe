@@ -23,6 +23,7 @@ export function DoePhoneHomeFeatureStack({
   activeAgentsBeyond,
   activeAgentsSubheading,
   activeAgentsRoadmapDiagram,
+  activeAgentsCallHistoryDiagram,
   activeAgentsClosingLabelCarousel,
   featureSlidesPhone,
   specialtyBeforeAgentsWorkflow = false,
@@ -38,6 +39,7 @@ export function DoePhoneHomeFeatureStack({
   activeAgentsBeyond?: string;
   activeAgentsSubheading?: string;
   activeAgentsRoadmapDiagram?: boolean;
+  activeAgentsCallHistoryDiagram?: boolean;
   activeAgentsClosingLabelCarousel?: boolean;
   /** Overrides default phone feature slide order (e.g. /doehealth). */
   featureSlidesPhone?: readonly DoePhoneCommunicationSlide[];
@@ -92,6 +94,9 @@ export function DoePhoneHomeFeatureStack({
             activeAgentsBeyond={slide.id === "agents" ? activeAgentsBeyond : undefined}
             activeAgentsSubheading={slide.id === "agents" ? activeAgentsSubheading : undefined}
             activeAgentsRoadmapDiagram={slide.id === "agents" ? activeAgentsRoadmapDiagram : undefined}
+            activeAgentsCallHistoryDiagram={
+              slide.id === "agents" ? activeAgentsCallHistoryDiagram : undefined
+            }
             activeAgentsClosingLabelCarousel={
               slide.id === "agents" ? activeAgentsClosingLabelCarousel : undefined
             }

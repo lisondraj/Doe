@@ -21,11 +21,13 @@ export function DoePhoneDesktopView({
   activeAgentsBeyond,
   activeAgentsSubheading,
   activeAgentsRoadmapDiagram,
+  activeAgentsCallHistoryDiagram,
   activeAgentsClosingLabelCarousel,
   featureSlidesPhone,
   specialtyBeforeAgentsWorkflow,
   freezeSpecialtyMarquee,
   priorAuthAfterSpecialty,
+  hideSectionsBelowIntro,
 }: {
   TopBanner?: DoeHomeTopBannerComponent;
   heroHeadline?: DoeHomeHeroHeadline;
@@ -37,11 +39,13 @@ export function DoePhoneDesktopView({
   activeAgentsBeyond?: string;
   activeAgentsSubheading?: string;
   activeAgentsRoadmapDiagram?: boolean;
+  activeAgentsCallHistoryDiagram?: boolean;
   activeAgentsClosingLabelCarousel?: boolean;
   featureSlidesPhone?: readonly DoePhoneCommunicationSlide[];
   specialtyBeforeAgentsWorkflow?: boolean;
   freezeSpecialtyMarquee?: boolean;
   priorAuthAfterSpecialty?: boolean;
+  hideSectionsBelowIntro?: boolean;
 } = {}) {
   const staticNav = useDesignersStaticNav();
   const isDoeHealthNav = useDoeHealthLandingNavContext();
@@ -62,11 +66,13 @@ export function DoePhoneDesktopView({
         activeAgentsBeyond={activeAgentsBeyond}
         activeAgentsSubheading={activeAgentsSubheading}
         activeAgentsRoadmapDiagram={activeAgentsRoadmapDiagram}
+        activeAgentsCallHistoryDiagram={activeAgentsCallHistoryDiagram}
         activeAgentsClosingLabelCarousel={activeAgentsClosingLabelCarousel}
         featureSlidesPhone={featureSlidesPhone}
         specialtyBeforeAgentsWorkflow={specialtyBeforeAgentsWorkflow}
         freezeSpecialtyMarquee={freezeSpecialtyMarquee}
         priorAuthAfterSpecialty={priorAuthAfterSpecialty}
+        hideSectionsBelowIntro={hideSectionsBelowIntro}
       />
     </>
   );

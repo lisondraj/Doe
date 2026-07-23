@@ -6,6 +6,7 @@ import { DoePhoneHomeLabAlertsVisual } from "@/components/doephone/DoePhoneHomeL
 import { DoePhoneHomePriorAuthVisual } from "@/components/doephone/DoePhoneHomePriorAuthVisual";
 import { DoePhoneReviewPackageVisual } from "@/components/doephone/DoePhoneReviewPackageVisual";
 import { DoeHealthVoiceRoadmapDiagram } from "@/components/doehealth/DoeHealthVoiceRoadmapDiagram";
+import { DoeHealthCallHistoryDiagram } from "@/components/doehealth/DoeHealthCallHistoryDiagram";
 import { DoeHealthClosingLabelCarousel } from "@/components/doehealth/DoeHealthClosingLabelCarousel";
 import { DoePhoneScrollRevealContent } from "@/components/doephone/DoePhoneScrollRevealLift";
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
@@ -71,6 +72,7 @@ export function DoePhoneHomeShaderBandSection({
   activeAgentsSubheading,
   hideActiveAgentsVisual = false,
   activeAgentsRoadmapDiagram = false,
+  activeAgentsCallHistoryDiagram = false,
   activeAgentsClosingLabelCarousel = false,
 }: {
   slideId: DoePhoneCommunicationSlide["id"];
@@ -80,6 +82,7 @@ export function DoePhoneHomeShaderBandSection({
   activeAgentsSubheading?: string;
   hideActiveAgentsVisual?: boolean;
   activeAgentsRoadmapDiagram?: boolean;
+  activeAgentsCallHistoryDiagram?: boolean;
   activeAgentsClosingLabelCarousel?: boolean;
 }) {
   const feature = SHADER_BAND_FEATURES[slideId];
@@ -201,6 +204,13 @@ export function DoePhoneHomeShaderBandSection({
               </DoePhoneScrollRevealContent>
             </div>
           )}
+          {activeAgentsCallHistoryDiagram ? (
+            <div className="home-feature-shader-band__feature-content home-feature-shader-band__active-agents-call-history flex min-h-0 flex-1 flex-col items-center justify-center">
+              <DoePhoneScrollRevealContent revealed={revealed} segment="carousel" className="w-full">
+                <DoeHealthCallHistoryDiagram className={DOEPHONE_SECTION_CAROUSEL_INSET_X} />
+              </DoePhoneScrollRevealContent>
+            </div>
+          ) : null}
         </div>
       ) : null}
 
