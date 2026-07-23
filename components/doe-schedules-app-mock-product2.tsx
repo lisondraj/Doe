@@ -9,6 +9,9 @@ import { Product2AgentsPanel } from "@/components/product2/Product2AgentsPanel";
 import { Product2CallHistoryPanel } from "@/components/product2/Product2CallHistoryPanel";
 import { Product2CallHistoryRightRail } from "@/components/product2/Product2CallHistoryRightRail";
 import { Product2LandingPanel } from "@/components/product2/Product2LandingPanel";
+import { dmSans } from "@/lib/home/fonts";
+import "@/lib/product2/product2-inbox.css";
+import "@/lib/product2/product2-schedule.css";
 
 export const weekSchedule = [
   {
@@ -660,13 +663,47 @@ function InboxThreadListRow({
   onSelect,
   showPin,
   brownTheme = false,
+  editorial = false,
 }: {
   t: InboxThreadData;
   isActive: boolean;
   onSelect: () => void;
   showPin?: boolean;
   brownTheme?: boolean | "dark";
+  editorial?: boolean;
 }) {
+  if (editorial) {
+    return (
+      <button
+        type="button"
+        onClick={onSelect}
+        className={`product-inbox-thread${
+          isActive ? " product-inbox-thread--active" : ""
+        }${!isActive && t.unread ? " product-inbox-thread--unread" : ""}`}
+      >
+        <div className="product-inbox-thread__head">
+          <p className="product-inbox-thread__from">{t.from}</p>
+          <span className="product-inbox-thread__meta">
+            {showPin ? (
+              <span className="inline-flex shrink-0" title="Pinned">
+                <InboxPinIcon className="product-inbox-thread__pin" />
+              </span>
+            ) : null}
+            {t.time}
+          </span>
+        </div>
+        <p className="product-inbox-thread__subject">{t.subject}</p>
+        <div className="product-inbox-thread__foot">
+          <span className="product-inbox-thread__kind">{t.kind}</span>
+          {!isActive && t.unread ? (
+            <span className="product-inbox-thread__unread" aria-label="Unread" />
+          ) : null}
+        </div>
+        <p className="product-inbox-thread__preview">{t.preview}</p>
+      </button>
+    );
+  }
+
   const showUnreadAccent = !isActive && t.unread;
   const darkBrown = brownTheme === "dark";
   const lightBrown = brownTheme === true;
@@ -998,6 +1035,21 @@ function eventCardTextClass(tone: string, brownOnly = false): string {
 function eventCardSubtextClass(tone: string, brownOnly = false): string {
   if (brownOnly && tone === "neutral") return "text-[var(--pi-muted)]";
   return "text-white/90";
+}
+
+function scheduleEditorialEventToneClass(tone: string): string {
+  switch (tone) {
+    case "amber":
+      return "product-schedule-event--amber";
+    case "purple":
+      return "product-schedule-event--purple";
+    case "green":
+      return "product-schedule-event--green";
+    case "neutral":
+      return "product-schedule-event--neutral";
+    default:
+      return "product-schedule-event--blue";
+  }
 }
 
 /**
@@ -2019,22 +2071,138 @@ export function DoeSchedulesAppMockProduct2({
                 ) : workspaceView === "call-history" && productBrown ? (
                   <Product2CallHistoryPanel />
                 ) : workspaceView === "schedule" ? (
+                  <div
+                    className={
+                      productBrownSchedule
+                        ? "product-schedule-panel product-schedule-panel--editorial product-landing-panel flex min-h-0 flex-1 flex-col overflow-hidden"
+                        : "flex min-h-0 flex-1 flex-col"
+                    }
+                  >
+                {productBrownSchedule ? (
                   <>
+                  <div className="product-landing-console-shell shrink-0">
+                    <header className={`product-landing-header flex items-center gap-2 ${suisseIntlUi.className}`}>
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden
+                        className="product-landing-header__icon shrink-0"
+                      >
+                        <rect width="18" height="18" x="3" y="4" rx="2" />
+                        <line x1="16" x2="16" y1="2" y2="6" />
+                        <line x1="8" x2="8" y1="2" y2="6" />
+                        <line x1="3" x2="21" y1="10" y2="10" />
+                      </svg>
+                      <h1 className="product-landing-header__title m-0 font-normal tracking-tight">
+                        Schedules
+                      </h1>
+                    </header>
+                  </div>
+                  <div className={`product-schedule-masthead ${suisseIntlUi.className}`}>
+                    <div className="product-schedule-masthead__period">
+                      <button
+                        type="button"
+                        aria-label={periodSelector.prevAria}
+                        className="product-schedule-masthead__period-nav"
+                      >
+                        <Icon className="h-3.5 w-3.5 text-current">
+                          <path d="m15 18-6-6 6-6" />
+                        </Icon>
+                      </button>
+                      <h2 className={`product-schedule-masthead__period-label ${dmSans.className}`}>
+                        {periodSelector.label}
+                      </h2>
+                      <button
+                        type="button"
+                        aria-label={periodSelector.nextAria}
+                        className="product-schedule-masthead__period-nav"
+                      >
+                        <Icon className="h-3.5 w-3.5 text-current">
+                          <path d="m9 18 6-6-6-6" />
+                        </Icon>
+                      </button>
+                    </div>
+                    <div className="product-schedule-masthead__controls">
+                      <div className="product-schedule-masthead__filter-wrap">
+                        <button
+                          type="button"
+                          onClick={() => setCategoryMenuOpen((open) => !open)}
+                          className="product-schedule-masthead__filter"
+                          aria-haspopup="menu"
+                          aria-expanded={categoryMenuOpen}
+                        >
+                          <span
+                            className={`product-schedule-masthead__filter-dot ${
+                              categoryOptions.find((option) => option.label === selectedCategory)
+                                ?.swatch ?? "bg-neutral-300"
+                            }`}
+                          />
+                          <span className="truncate">{selectedCategory}</span>
+                          <Icon className="product-schedule-masthead__filter-chevron">
+                            <path d="m6 9 6 6 6-6" />
+                          </Icon>
+                        </button>
+                        {categoryMenuOpen ? (
+                          <div role="menu" className="product-schedule-masthead__menu">
+                            {categoryOptions.map((option) => (
+                              <button
+                                key={option.label}
+                                type="button"
+                                role="menuitem"
+                                onClick={() => {
+                                  setSelectedCategory(option.label);
+                                  setCategoryMenuOpen(false);
+                                }}
+                                className={`product-schedule-masthead__menu-item${
+                                  selectedCategory === option.label
+                                    ? " product-schedule-masthead__menu-item--active"
+                                    : ""
+                                }`}
+                              >
+                                <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${option.swatch}`} />
+                                <span className="truncate">{option.label}</span>
+                              </button>
+                            ))}
+                          </div>
+                        ) : null}
+                      </div>
+                      <nav
+                        className={`product-schedule-masthead__views${hero ? " order-first w-full" : ""}`}
+                        aria-label="Schedule view"
+                      >
+                        {viewOptions.map((option) => (
+                          <button
+                            key={option}
+                            type="button"
+                            onClick={() => setTimeView(option)}
+                            className={`product-schedule-masthead__view-tab${
+                              timeView === option ? " product-schedule-masthead__view-tab--active" : ""
+                            }`}
+                          >
+                            {option}
+                          </button>
+                        ))}
+                      </nav>
+                    </div>
+                  </div>
+                  </>
+                ) : (
+                  <>
+                <div className="shrink-0">
                 <header
-                  className={
-                    productBrownSchedule
-                      ? `product-landing-header flex shrink-0 items-center px-4 py-3 ${suisseIntlUi.className}`
-                      : `flex items-center gap-2 border-b px-4 py-3 ${
+                  className={`flex items-center gap-2 border-b px-4 py-3 ${
                           productBrownDarkWorkspace
                             ? "border-[rgba(245,230,208,0.1)] bg-[#322618]"
                             : productBrown
                               ? "border-[rgba(61,46,31,0.14)] bg-[#f5e6d0]"
                               : "border-[#EFEFEF]"
-                        }`
-                  }
+                        }`}
                 >
-                  {!productBrownSchedule ? (
-                    <Icon
+                  <Icon
                       className={`h-5 w-5 ${
                         productBrownDarkWorkspace
                           ? "text-[rgba(245,230,208,0.48)]"
@@ -2048,61 +2216,52 @@ export function DoeSchedulesAppMockProduct2({
                       <line x1="8" x2="8" y1="2" y2="6" />
                       <line x1="3" x2="21" y1="10" y2="10" />
                     </Icon>
-                  ) : null}
                   <h1
-                    className={
-                      productBrownSchedule
-                        ? "product-landing-header__title m-0 text-[15px] font-normal tracking-tight"
-                        : `text-[15px] font-semibold tracking-tight ${
+                    className={`text-[15px] font-semibold tracking-tight ${
                             productBrownDarkWorkspace || productBrown
                               ? "text-[#f5e6d0]"
                               : "text-neutral-900"
-                          }`
-                    }
+                          }`}
                   >
                     Schedules
                   </h1>
                 </header>
                 <div
                   className={`border-b border-dashed px-4 py-2 ${
-                    productBrownSchedule
-                      ? `${scheduleUi!.line} ${scheduleUi!.canvas}`
-                      : productBrownDarkWorkspace
-                      ? "border-[rgba(245,230,208,0.1)] bg-[#2a1f12]"
-                      : productBrown
-                        ? "border-[rgba(61,46,31,0.14)] bg-[#faf0d8]"
-                        : "border-[#E8E8E8]"
-                  }`}
+                          productBrownDarkWorkspace
+                            ? "border-[rgba(245,230,208,0.1)] bg-[#2a1f12]"
+                            : productBrown
+                              ? "border-[rgba(61,46,31,0.14)] bg-[#faf0d8]"
+                              : "border-[#E8E8E8]"
+                        }`}
                 >
                   <div
                     className={`flex w-full min-w-0 flex-wrap items-center gap-3 ${
-                      hero ? "justify-start" : "justify-between"
-                    }`}
+                            hero ? "justify-start" : "justify-between"
+                          }`}
                   >
                     <div
                       className={`flex min-w-0 flex-wrap items-center gap-3 ${hero ? "order-2" : ""}`}
                     >
                       <div
                         className={`inline-flex h-[38px] min-w-0 max-w-[min(100%,280px)] items-center gap-1 rounded-[14px] border px-1 sm:max-w-[320px] ${
-                          productBrownSchedule
-                            ? `${scheduleUi!.line} ${scheduleUi!.raised}`
-                            : productBrownDarkWorkspace
-                            ? "border-[rgba(245,230,208,0.12)] bg-[#322618]"
-                            : productBrown
-                              ? "border-[rgba(61,46,31,0.14)] bg-[#f5e6d0]"
-                              : "border-[#E2E2E2] bg-white"
-                        }`}
+                                productBrownDarkWorkspace
+                                  ? "border-[rgba(245,230,208,0.12)] bg-[#322618]"
+                                  : productBrown
+                                    ? "border-[rgba(61,46,31,0.14)] bg-[#f5e6d0]"
+                                    : "border-[#E2E2E2] bg-white"
+                              }`}
                       >
                         <button
                           type="button"
                           aria-label={periodSelector.prevAria}
                           className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors ${
-                            productBrownSchedule
-                              ? `${scheduleUi!.iconMuted} hover:bg-[var(--pi-selected)] hover:text-[var(--pi-ink)]`
-                              : productBrownDarkWorkspace
-                              ? "text-[rgba(245,230,208,0.48)] hover:bg-[#3d2e1f] hover:text-[#f5e6d0]"
-                              : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-700"
-                          }`}
+                                  productBrownDarkWorkspace
+                                    ? "text-[rgba(245,230,208,0.48)] hover:bg-[#3d2e1f] hover:text-[#f5e6d0]"
+                                    : productBrown
+                                      ? "text-[rgba(61,46,31,0.48)] hover:bg-[rgba(26,18,8,0.04)] hover:text-[#1a1208]"
+                                      : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-700"
+                                }`}
                         >
                           <Icon className="h-3.5 w-3.5 text-current">
                             <path d="m15 18-6-6 6-6" />
@@ -2110,12 +2269,12 @@ export function DoeSchedulesAppMockProduct2({
                         </button>
                         <span
                           className={`min-w-0 flex-1 truncate px-1 text-center text-[12px] font-semibold ${
-                            productBrownSchedule
-                              ? scheduleUi!.ink
-                              : productBrownDarkWorkspace
-                                ? "text-[#f5e6d0]"
-                                : "text-neutral-800"
-                          }`}
+                                  productBrownDarkWorkspace
+                                    ? "text-[#f5e6d0]"
+                                    : productBrown
+                                      ? "text-[#1a1208]"
+                                      : "text-neutral-800"
+                                }`}
                         >
                           {periodSelector.label}
                         </span>
@@ -2123,12 +2282,12 @@ export function DoeSchedulesAppMockProduct2({
                           type="button"
                           aria-label={periodSelector.nextAria}
                           className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors ${
-                            productBrownSchedule
-                              ? `${scheduleUi!.iconMuted} hover:bg-[var(--pi-selected)] hover:text-[var(--pi-ink)]`
-                              : productBrownDarkWorkspace
-                              ? "text-[rgba(245,230,208,0.48)] hover:bg-[#3d2e1f] hover:text-[#f5e6d0]"
-                              : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-700"
-                          }`}
+                                  productBrownDarkWorkspace
+                                    ? "text-[rgba(245,230,208,0.48)] hover:bg-[#3d2e1f] hover:text-[#f5e6d0]"
+                                    : productBrown
+                                      ? "text-[rgba(61,46,31,0.48)] hover:bg-[rgba(26,18,8,0.04)] hover:text-[#1a1208]"
+                                      : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-700"
+                                }`}
                         >
                           <Icon className="h-3.5 w-3.5 text-current">
                             <path d="m9 18 6-6-6-6" />
@@ -2140,14 +2299,12 @@ export function DoeSchedulesAppMockProduct2({
                           type="button"
                           onClick={() => setCategoryMenuOpen((open) => !open)}
                           className={`inline-flex h-[38px] min-w-[190px] items-center gap-2 rounded-[14px] border px-3 text-[12px] font-medium ${
-                            productBrownSchedule
-                              ? `${scheduleUi!.line} ${scheduleUi!.raised} ${scheduleUi!.ink} hover:bg-[var(--pi-selected)]`
-                              : productBrownDarkWorkspace
-                              ? "border-[rgba(245,230,208,0.12)] bg-[#322618] text-[#f5e6d0] hover:bg-[#3d2e1f]"
-                              : productBrown
-                                ? "border-[rgba(61,46,31,0.14)] bg-[#f5e6d0] text-[#2a1f12] hover:bg-[rgba(26,18,8,0.04)]"
-                                : "border-[#E2E2E2] bg-white text-neutral-700 hover:bg-neutral-50"
-                          }`}
+                                  productBrownDarkWorkspace
+                                    ? "border-[rgba(245,230,208,0.12)] bg-[#322618] text-[#f5e6d0] hover:bg-[#3d2e1f]"
+                                    : productBrown
+                                      ? "border-[rgba(61,46,31,0.14)] bg-[#f5e6d0] text-[#2a1f12] hover:bg-[rgba(26,18,8,0.04)]"
+                                      : "border-[#E2E2E2] bg-white text-neutral-700 hover:bg-neutral-50"
+                                }`}
                           aria-haspopup="menu"
                           aria-expanded={categoryMenuOpen}
                         >
@@ -2177,10 +2334,10 @@ export function DoeSchedulesAppMockProduct2({
                                   setCategoryMenuOpen(false);
                                 }}
                                 className={`flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-[12px] ${
-                                  selectedCategory === option.label
-                                    ? "bg-neutral-100 text-neutral-900"
-                                    : "text-neutral-700 hover:bg-neutral-50"
-                                }`}
+                                        selectedCategory === option.label
+                                          ? "bg-neutral-100 text-neutral-900"
+                                          : "text-neutral-700 hover:bg-neutral-50"
+                                      }`}
                               >
                                 <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${option.swatch}`} />
                                 <span className="truncate">{option.label}</span>
@@ -2192,25 +2349,21 @@ export function DoeSchedulesAppMockProduct2({
                     </div>
                     <div
                       className={`relative grid w-[min(100%,360px)] shrink-0 grid-cols-4 rounded-[22px] border p-1 sm:w-[360px] ${
-                        productBrownSchedule
-                          ? `${scheduleUi!.line} ${scheduleUi!.well}`
-                          : productBrownDarkWorkspace
-                          ? "border-[rgba(245,230,208,0.12)] bg-[#241910]"
-                          : productBrown
-                            ? "border-[rgba(61,46,31,0.14)] bg-[#ede0c8]"
-                            : "border-[#E2E2E2] bg-[#F7F7F7]"
-                      } ${hero ? "order-1" : "ml-auto"}`}
+                              productBrownDarkWorkspace
+                                ? "border-[rgba(245,230,208,0.12)] bg-[#241910]"
+                                : productBrown
+                                  ? "border-[rgba(61,46,31,0.14)] bg-[#ede0c8]"
+                                  : "border-[#E2E2E2] bg-[#F7F7F7]"
+                            } ${hero ? "order-1" : "ml-auto"}`}
                     >
                       <span
                         className={`pointer-events-none absolute top-1 h-[30px] rounded-[16px] border shadow-[0_1px_0_rgba(0,0,0,0.04)] transition-[left] duration-200 ${
-                          productBrownSchedule
-                            ? `${scheduleUi!.line} ${scheduleUi!.selected}`
-                            : productBrownDarkWorkspace
-                            ? "border-[rgba(245,230,208,0.14)] bg-[#3d2e1f]"
-                            : productBrown
-                              ? "border-[rgba(61,46,31,0.14)] bg-[#f5e6d0]"
-                              : "border-[#E6E6E6] bg-white shadow-[0_1px_0_rgba(0,0,0,0.03)]"
-                        }`}
+                                productBrownDarkWorkspace
+                                  ? "border-[rgba(245,230,208,0.14)] bg-[#3d2e1f]"
+                                  : productBrown
+                                    ? "border-[rgba(61,46,31,0.14)] bg-[#f5e6d0]"
+                                    : "border-[#E6E6E6] bg-white shadow-[0_1px_0_rgba(0,0,0,0.03)]"
+                              }`}
                         style={{
                           left: `calc(${activeViewIndex * 25}% + 4px)`,
                           width: "calc(25% - 4px)",
@@ -2222,18 +2375,18 @@ export function DoeSchedulesAppMockProduct2({
                           type="button"
                           onClick={() => setTimeView(option)}
                           className={`relative z-10 rounded-[16px] px-2 py-1.5 text-[12px] font-medium transition-colors ${
-                            timeView === option
-                              ? productBrownSchedule
-                                ? scheduleUi!.ink
-                                : productBrownDarkWorkspace
-                                ? "text-[#f5e6d0]"
-                                : "text-neutral-900"
-                              : productBrownSchedule
-                                ? `${scheduleUi!.mutedText} hover:text-[var(--pi-ink)]`
-                                : productBrownDarkWorkspace
-                                ? "text-[rgba(245,230,208,0.48)] hover:text-[#f5e6d0]"
-                                : "text-neutral-500 hover:text-neutral-700"
-                          }`}
+                                  timeView === option
+                                    ? productBrownDarkWorkspace
+                                      ? "text-[#f5e6d0]"
+                                      : productBrown
+                                        ? "text-[#1a1208]"
+                                        : "text-neutral-900"
+                                    : productBrownDarkWorkspace
+                                      ? "text-[rgba(245,230,208,0.48)] hover:text-[#f5e6d0]"
+                                      : productBrown
+                                        ? "text-[rgba(61,46,31,0.48)] hover:text-[#1a1208]"
+                                        : "text-neutral-500 hover:text-neutral-700"
+                                }`}
                         >
                           {option}
                         </button>
@@ -2241,10 +2394,82 @@ export function DoeSchedulesAppMockProduct2({
                     </div>
                   </div>
                 </div>
+                </div>
+                  </>
+                )}
                 <div
-                  className={`flex min-h-0 flex-1 flex-col px-4 py-3 ${hero ? "overflow-hidden" : "overflow-auto"}`}
+                  className={`flex min-h-0 flex-1 flex-col ${hero ? "overflow-hidden" : "overflow-auto"} ${
+                    productBrownSchedule ? "product-schedule-stage" : "px-4 py-3"
+                  }`}
                 >
+                  <div
+                    className={
+                      productBrownSchedule
+                        ? `product-schedule-stage__scroll ${suisseIntlUi.className}`
+                        : "flex min-h-0 min-w-[980px] flex-1 flex-col"
+                    }
+                  >
                   {timeView === "Month" ? (
+                    productBrownSchedule ? (
+                    <div className="product-schedule-month">
+                      <div className="product-schedule-month__weekdays">
+                        {monthWeekdays.map((weekday) => (
+                          <div key={weekday} className="product-schedule-month__weekday">
+                            {weekday}
+                          </div>
+                        ))}
+                      </div>
+                      <div className="product-schedule-month__grid">
+                          {(full ? monthGrid.slice(0, 35) : monthGrid).map((day) => {
+                            const monthLimit = 4;
+                            const visibleEvents = day.events.slice(0, monthLimit);
+                            const overflowCount = Math.max(0, day.events.length - monthLimit);
+                            const isToday = day.key === TODAY_DATE_KEY;
+
+                            return (
+                              <div
+                                key={day.key}
+                                className={`product-schedule-day${
+                                  isToday ? " product-schedule-day--today" : ""
+                                }${!day.inApril ? " product-schedule-day--muted" : ""}`}
+                              >
+                                <div className="product-schedule-day__head">
+                                  <span className={`product-schedule-day__num ${dmSans.className}`}>
+                                    {day.day}
+                                  </span>
+                                  {isToday && !hero ? (
+                                    <span className="product-schedule-day__today-mark">Today</span>
+                                  ) : !day.inApril ? (
+                                    <span className="product-schedule-day__meta">{day.month}</span>
+                                  ) : null}
+                                </div>
+                                <div className="product-schedule-day__events">
+                                  {visibleEvents.map((event) => {
+                                    const summary = getEventSummary(event.label);
+                                    return (
+                                      <div
+                                        key={`${day.key}-${event.time}-${event.label}`}
+                                        className={`product-schedule-event ${scheduleEditorialEventToneClass(event.tone)}`}
+                                      >
+                                        <span className="product-schedule-event__time">
+                                          {formatEventRangeStartLabel(event.time)}
+                                        </span>
+                                        <span className="product-schedule-event__title">
+                                          {shortenEventLabel(summary.primary, 22)}
+                                        </span>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                                {overflowCount > 0 ? (
+                                  <div className="product-schedule-day__overflow">+{overflowCount} more</div>
+                                ) : null}
+                              </div>
+                            );
+                          })}
+                      </div>
+                    </div>
+                    ) : (
                     <div className="flex min-h-0 min-w-[980px] flex-1 flex-col overflow-hidden rounded-xl border border-[#EAEAEA] bg-white">
                       <div className="grid shrink-0 grid-cols-7 border-b border-[#EAEAEA] bg-[#FAFAFA]">
                         {monthWeekdays.map((weekday) => (
@@ -2268,21 +2493,21 @@ export function DoeSchedulesAppMockProduct2({
                               <div
                                 key={day.key}
                                 className={`flex min-h-[118px] flex-col rounded-lg border p-1.5 ${
-                                  isToday
-                                    ? SCHEDULE_TODAY.cell
-                                    : day.inApril
-                                      ? "border-[#EDEDED] bg-white"
-                                      : "border-[#F0F0F0] bg-[#F9F9FA]"
+                                    isToday
+                                      ? SCHEDULE_TODAY.cell
+                                      : day.inApril
+                                        ? "border-[#EDEDED] bg-white"
+                                        : "border-[#F0F0F0] bg-[#F9F9FA]"
                                 }`}
                               >
                                 <div className="mb-1 flex items-center justify-between gap-1">
                                   <span
                                     className={`flex h-6 min-w-[1.5rem] items-center justify-center rounded-md text-[12px] font-semibold tabular-nums ${
-                                      isToday
-                                        ? SCHEDULE_TODAY.dayNum
-                                        : day.inApril
-                                          ? "text-neutral-800"
-                                          : "text-neutral-400"
+                                        isToday
+                                          ? SCHEDULE_TODAY.dayNum
+                                          : day.inApril
+                                            ? "text-neutral-800"
+                                            : "text-neutral-400"
                                     }`}
                                   >
                                     {day.day}
@@ -2328,7 +2553,138 @@ export function DoeSchedulesAppMockProduct2({
                         </div>
                       </div>
                     </div>
+                    )
                   ) : timeView === "This week" ? (
+                    productBrownSchedule ? (
+                    <div className="product-schedule-week">
+                      <div className="product-schedule-week__head">
+                        <div className="product-schedule-week__head-time">Time</div>
+                        {weekSchedule.map((day) => {
+                          const isTodayCol = day.date === TODAY_DATE_LABEL;
+                          return (
+                            <div
+                              key={`head-${day.day}`}
+                              className={`product-schedule-week__head-col${
+                                isTodayCol ? " product-schedule-week__head-col--today" : ""
+                              }`}
+                            >
+                              <p className="product-schedule-week__head-day">
+                                {day.day}
+                                {isTodayCol && !hero ? (
+                                  <span className="product-schedule-week__today-mark">Today</span>
+                                ) : null}
+                              </p>
+                              <p className="product-schedule-week__head-date">{day.date}</p>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      {!hero ? (
+                        <div className="product-schedule-week__banner">
+                          <span aria-hidden>↑ </span>
+                          {earlyEventCount} events before 8:00 AM
+                        </div>
+                      ) : null}
+                      <div
+                        className="product-schedule-week__grid"
+                        style={{ height: WEEK_VISIBLE_SLOT_COUNT * SLOT_HEIGHT + WEEK_TOP_BUFFER }}
+                      >
+                        <div className="product-schedule-week__time-col">
+                          <div style={{ height: WEEK_TOP_BUFFER }} aria-hidden />
+                          {Array.from({ length: WEEK_VISIBLE_SLOT_COUNT }).map((_, slotIndex) => {
+                            const minutes = WEEK_VISIBLE_START_MINUTES + slotIndex * SLOT_MINUTES;
+                            const isHour = minutes % 60 === 0;
+                            return (
+                              <div
+                                key={`time-${minutes}`}
+                                className={`product-schedule-week__time-slot ${
+                                  slotIndex === 0
+                                    ? ""
+                                    : isHour
+                                      ? "product-schedule-week__time-slot--hour"
+                                      : "product-schedule-week__time-slot--half"
+                                }`}
+                                style={{ height: SLOT_HEIGHT }}
+                              >
+                                {isHour ? (
+                                  <span className="product-schedule-week__time-label">
+                                    {formatMinutesLabel(minutes)}
+                                  </span>
+                                ) : null}
+                              </div>
+                            );
+                          })}
+                        </div>
+                        {weekSchedule.map((day) => {
+                          const isTodayCol = day.date === TODAY_DATE_LABEL;
+                          return (
+                            <div
+                              key={`col-${day.day}`}
+                              className={`product-schedule-week__col${
+                                isTodayCol ? " product-schedule-week__col--today" : ""
+                              } ${hero ? "overflow-hidden" : ""}`}
+                            >
+                              <div
+                                className="product-schedule-week__col-lines"
+                                style={{ top: WEEK_TOP_BUFFER, bottom: 0, position: "absolute", insetInline: 0 }}
+                              >
+                                {Array.from({ length: WEEK_VISIBLE_SLOT_COUNT }).map((_, slotIndex) => {
+                                  const minutes = WEEK_VISIBLE_START_MINUTES + slotIndex * SLOT_MINUTES;
+                                  const isHour = minutes % 60 === 0;
+                                  return (
+                                    <div
+                                      key={`line-${day.day}-${slotIndex}`}
+                                      className={
+                                        slotIndex === 0
+                                          ? ""
+                                          : isHour
+                                            ? "product-schedule-week__line--hour"
+                                            : "product-schedule-week__line--half"
+                                      }
+                                      style={{ height: SLOT_HEIGHT }}
+                                    />
+                                  );
+                                })}
+                              </div>
+                              {day.events.map((event) => {
+                                const { start, end } = parseEventRangeToMinutes(event.time);
+                                const clippedStart = Math.max(start, WEEK_VISIBLE_START_MINUTES);
+                                const clippedEnd = Math.min(end, 24 * 60);
+                                if (clippedEnd <= clippedStart) return null;
+                                const top =
+                                  ((clippedStart - WEEK_VISIBLE_START_MINUTES) / SLOT_MINUTES) *
+                                    SLOT_HEIGHT +
+                                  WEEK_TOP_BUFFER;
+                                const height = Math.max(
+                                  SLOT_HEIGHT - 2,
+                                  ((clippedEnd - clippedStart) / SLOT_MINUTES) * SLOT_HEIGHT - 2,
+                                );
+                                const summary = getEventSummary(event.label);
+                                const reason = getAppointmentReason(event.tone, event.label);
+
+                                return (
+                                  <div
+                                    key={`${day.day}-${event.time}-${event.label}`}
+                                    className={`product-schedule-event product-schedule-event--block ${scheduleEditorialEventToneClass(event.tone)} absolute left-1 right-1 ${hero ? "overflow-visible" : "overflow-hidden"}`}
+                                    style={{ top, height }}
+                                  >
+                                    <span className="product-schedule-event__title">{summary.primary}</span>
+                                    <span
+                                      className={`product-schedule-event__sub ${
+                                        height < SLOT_HEIGHT * 1.75 ? "truncate" : "line-clamp-2"
+                                      }`}
+                                    >
+                                      {shortenEventLabel(reason, height < SLOT_HEIGHT * 2 ? 42 : 120)}
+                                    </span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                    ) : (
                     <div className="flex min-h-0 min-w-[980px] flex-1 flex-col overflow-hidden rounded-xl border border-[#EAEAEA] bg-white">
                       <div className="grid shrink-0 grid-cols-[72px_repeat(7,minmax(120px,1fr))] border-b border-[#EAEAEA] bg-[#FAFAFA]">
                         <div className="border-r border-[#EAEAEA] px-2 py-2 text-[10px] font-semibold uppercase tracking-wide text-neutral-400">
@@ -2338,15 +2694,17 @@ export function DoeSchedulesAppMockProduct2({
                           <div
                             key={`head-${day.day}`}
                             className={`border-r px-2 py-2 last:border-r-0 ${
-                              day.date === TODAY_DATE_LABEL
-                                ? SCHEDULE_TODAY.column
-                                : "border-[#EAEAEA]"
+                                day.date === TODAY_DATE_LABEL
+                                  ? SCHEDULE_TODAY.column
+                                  : "border-[#EAEAEA]"
                             }`}
                           >
                             <div className="flex items-center justify-between gap-1">
                               <p
                                 className={`text-[12px] font-semibold ${
-                                  day.date === TODAY_DATE_LABEL ? SCHEDULE_TODAY.ink : "text-neutral-900"
+                                    day.date === TODAY_DATE_LABEL
+                                      ? SCHEDULE_TODAY.ink
+                                      : "text-neutral-900"
                                 }`}
                               >
                                 {day.day}
@@ -2357,8 +2715,10 @@ export function DoeSchedulesAppMockProduct2({
                             </div>
                             <p
                               className={`text-[10px] ${
-                                day.date === TODAY_DATE_LABEL ? SCHEDULE_TODAY.inkMuted : "text-neutral-500"
-                              }`}
+                                  day.date === TODAY_DATE_LABEL
+                                    ? SCHEDULE_TODAY.inkMuted
+                                    : "text-neutral-500"
+                                }`}
                             >
                               {day.date}
                             </p>
@@ -2383,11 +2743,7 @@ export function DoeSchedulesAppMockProduct2({
                           style={{ height: WEEK_VISIBLE_SLOT_COUNT * SLOT_HEIGHT + WEEK_TOP_BUFFER }}
                         >
                           <div className="border-r border-[#EAEAEA] bg-[#FCFCFC]">
-                            <div
-                              className="bg-[#FCFCFC]"
-                              style={{ height: WEEK_TOP_BUFFER }}
-                              aria-hidden
-                            />
+                            <div className="bg-[#FCFCFC]" style={{ height: WEEK_TOP_BUFFER }} aria-hidden />
                             {Array.from({ length: WEEK_VISIBLE_SLOT_COUNT }).map((_, slotIndex) => {
                               const minutes = WEEK_VISIBLE_START_MINUTES + slotIndex * SLOT_MINUTES;
                               const isHour = minutes % 60 === 0;
@@ -2413,9 +2769,9 @@ export function DoeSchedulesAppMockProduct2({
                             <div
                               key={`col-${day.day}`}
                               className={`relative border-r last:border-r-0 ${
-                                isTodayCol
-                                  ? SCHEDULE_TODAY.column
-                                  : "border-[#EAEAEA] bg-white"
+                                  isTodayCol
+                                    ? SCHEDULE_TODAY.column
+                                    : "border-[#EAEAEA] bg-white"
                               } ${hero ? "overflow-hidden" : ""}`}
                             >
                               <div
@@ -2478,7 +2834,120 @@ export function DoeSchedulesAppMockProduct2({
                         </div>
                       </div>
                     </div>
+                    )
                   ) : timeView === "Today" ? (
+                    productBrownSchedule ? (
+                    <div className="product-schedule-today">
+                      <div className="product-schedule-today__head">
+                        <div className="product-schedule-today__head-row">
+                          <p className={`product-schedule-today__head-day ${dmSans.className}`}>
+                            {todayScheduleDay.day}
+                          </p>
+                          {!hero ? (
+                            <span className="product-schedule-day__today-mark">Today</span>
+                          ) : null}
+                          <span className="product-schedule-today__head-date">{todayScheduleDay.date}</span>
+                        </div>
+                        <p className="product-schedule-today__summary">
+                          {todaySummary.total} on the calendar
+                          {todaySummary.timeSpan ? ` · ${todaySummary.timeSpan}` : null}
+                        </p>
+                      </div>
+                      {!hero ? (
+                        <div className="product-schedule-week__banner">
+                          <span aria-hidden>↑ </span>
+                          {earlyTodayCount} events before 8:00 AM
+                        </div>
+                      ) : null}
+                      <div
+                        className="product-schedule-today__grid"
+                        style={{ height: WEEK_VISIBLE_SLOT_COUNT * SLOT_HEIGHT + WEEK_TOP_BUFFER }}
+                      >
+                        <div className="product-schedule-week__time-col">
+                          <div style={{ height: WEEK_TOP_BUFFER }} aria-hidden />
+                          {Array.from({ length: WEEK_VISIBLE_SLOT_COUNT }).map((_, slotIndex) => {
+                            const minutes = WEEK_VISIBLE_START_MINUTES + slotIndex * SLOT_MINUTES;
+                            const isHour = minutes % 60 === 0;
+                            return (
+                              <div
+                                key={`today-time-${minutes}`}
+                                className={`product-schedule-week__time-slot ${
+                                  slotIndex === 0
+                                    ? ""
+                                    : isHour
+                                      ? "product-schedule-week__time-slot--hour"
+                                      : "product-schedule-week__time-slot--half"
+                                }`}
+                                style={{ height: SLOT_HEIGHT }}
+                              >
+                                {isHour ? (
+                                  <span className="product-schedule-week__time-label">
+                                    {formatMinutesLabel(minutes)}
+                                  </span>
+                                ) : null}
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <div className="product-schedule-week__col product-schedule-week__col--today relative">
+                          <div
+                            className="product-schedule-week__col-lines"
+                            style={{ top: WEEK_TOP_BUFFER, bottom: 0, position: "absolute", insetInline: 0 }}
+                          >
+                            {Array.from({ length: WEEK_VISIBLE_SLOT_COUNT }).map((_, slotIndex) => {
+                              const minutes = WEEK_VISIBLE_START_MINUTES + slotIndex * SLOT_MINUTES;
+                              const isHour = minutes % 60 === 0;
+                              return (
+                                <div
+                                  key={`today-line-${slotIndex}`}
+                                  className={
+                                    slotIndex === 0
+                                      ? ""
+                                      : isHour
+                                        ? "product-schedule-week__line--hour"
+                                        : "product-schedule-week__line--half"
+                                  }
+                                  style={{ height: SLOT_HEIGHT }}
+                                />
+                              );
+                            })}
+                          </div>
+                          {todayScheduleDay.events.map((event) => {
+                            const { start, end } = parseEventRangeToMinutes(event.time);
+                            const clippedStart = Math.max(start, WEEK_VISIBLE_START_MINUTES);
+                            const clippedEnd = Math.min(end, 24 * 60);
+                            if (clippedEnd <= clippedStart) return null;
+                            const top =
+                              ((clippedStart - WEEK_VISIBLE_START_MINUTES) / SLOT_MINUTES) * SLOT_HEIGHT +
+                              WEEK_TOP_BUFFER;
+                            const height = Math.max(
+                              SLOT_HEIGHT - 2,
+                              ((clippedEnd - clippedStart) / SLOT_MINUTES) * SLOT_HEIGHT - 2,
+                            );
+                            const summary = getEventSummary(event.label);
+                            const reason = getAppointmentReason(event.tone, event.label);
+
+                            return (
+                              <div
+                                key={`today-${event.time}-${event.label}`}
+                                className={`product-schedule-event product-schedule-event--block ${scheduleEditorialEventToneClass(event.tone)} absolute left-1.5 right-1.5 overflow-hidden`}
+                                style={{ top, height }}
+                              >
+                                <span className="product-schedule-event__title">{summary.primary}</span>
+                                <span
+                                  className={`product-schedule-event__sub ${
+                                    height < SLOT_HEIGHT * 1.75 ? "truncate" : "line-clamp-2"
+                                  }`}
+                                >
+                                  {shortenEventLabel(reason, height < SLOT_HEIGHT * 2 ? 42 : 120)}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                    ) : (
                     <div className="flex min-h-0 min-w-[560px] flex-1 flex-col overflow-hidden rounded-xl border border-[#EAEAEA] bg-white">
                       <div className="grid shrink-0 grid-cols-[72px_minmax(0,1fr)] border-b border-[#EAEAEA] bg-[#FAFAFA]">
                         <div className="border-r border-[#EAEAEA] px-2 py-2 text-[10px] font-semibold uppercase tracking-wide text-neutral-400">
@@ -2591,7 +3060,56 @@ export function DoeSchedulesAppMockProduct2({
                         </div>
                       </div>
                     </div>
+                    )
                   ) : timeView === "Year" ? (
+                    productBrownSchedule ? (
+                    <div className="product-schedule-year">
+                      <p className="product-schedule-year__label">{YEAR_VIEW_YEAR}</p>
+                      <div className="product-schedule-year__grid">
+                          {YEAR_MONTH_LABELS.map((monthName, monthIndex) => {
+                            const cells = buildYearMonthCells(YEAR_VIEW_YEAR, monthIndex);
+                            return (
+                              <div key={monthName} className="product-schedule-year__month">
+                                <p className="product-schedule-year__month-name">{monthName}</p>
+                                <div className="product-schedule-year__weekdays">
+                                  {monthWeekdays.map((wd) => (
+                                    <div key={wd} className="product-schedule-year__weekday">
+                                      {wd.slice(0, 1)}
+                                    </div>
+                                  ))}
+                                </div>
+                                <div className="product-schedule-year__days">
+                                  {cells.map((cell, idx) => {
+                                    if (!cell) {
+                                      return <div key={`e-${idx}`} className="product-schedule-year__day" />;
+                                    }
+                                    const evs = eventsByDateKey.get(cell.dateKey);
+                                    const hasEvents = evs != null && evs.length > 0;
+                                    const isToday = cell.dateKey === TODAY_DATE_KEY;
+                                    return (
+                                      <div key={cell.dateKey} className="product-schedule-year__day">
+                                        <span
+                                          className={`product-schedule-year__day-num${
+                                            isToday ? " product-schedule-year__day-num--today" : ""
+                                          }`}
+                                        >
+                                          {cell.day}
+                                        </span>
+                                        <div className="flex h-2 flex-col items-center justify-end">
+                                          {hasEvents ? (
+                                            <span className="product-schedule-year__dot" aria-hidden />
+                                          ) : null}
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            );
+                          })}
+                      </div>
+                    </div>
+                    ) : (
                     <div className="flex min-h-0 min-w-[980px] flex-1 flex-col overflow-hidden rounded-xl border border-[#EAEAEA] bg-white">
                       <div className="shrink-0 border-b border-[#EAEAEA] bg-[#FAFAFA] px-4 py-2.5">
                         <p className="text-center text-[10px] font-semibold uppercase tracking-wide text-neutral-400">
@@ -2633,9 +3151,9 @@ export function DoeSchedulesAppMockProduct2({
                                       >
                                         <span
                                           className={`flex h-6 w-6 items-center justify-center rounded-md text-[10px] font-semibold tabular-nums ${
-                                            isToday
-                                              ? SCHEDULE_TODAY.dayNum
-                                              : "text-neutral-700"
+                                              isToday
+                                                ? SCHEDULE_TODAY.dayNum
+                                                : "text-neutral-700"
                                           }`}
                                         >
                                           {cell.day}
@@ -2656,10 +3174,274 @@ export function DoeSchedulesAppMockProduct2({
                         </div>
                       </div>
                     </div>
+                    )
                   ) : null}
+                  </div>
                 </div>
-                  </>
+                  </div>
                 ) : workspaceView === "inbox" ? (
+                  productBrownInbox ? (
+                  <div className="product-inbox-panel product-inbox-panel--editorial product-landing-panel flex min-h-0 flex-1 flex-col overflow-hidden">
+                    <div className="product-landing-console-shell shrink-0">
+                      <header className={`product-landing-header flex items-center gap-2 ${suisseIntlUi.className}`}>
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          aria-hidden
+                          className="product-landing-header__icon shrink-0"
+                        >
+                          <path d="M22 12h-6l-2 3h-4l-2-3H2" />
+                          <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
+                        </svg>
+                        <h1 className="product-landing-header__title m-0 font-normal tracking-tight">
+                          Inbox
+                        </h1>
+                      </header>
+                    </div>
+                    <div className={`product-inbox-masthead ${suisseIntlUi.className}`}>
+                      <div className="product-inbox-masthead__grid">
+                        <div className="product-inbox-masthead__hero">
+                          <h2 className={`product-inbox-masthead__desk ${dmSans.className}`}>Referrals</h2>
+                          <p className={`product-inbox-masthead__agent ${dmSans.className}`}>Jamie Chen · Northside</p>
+                        </div>
+                        <div className="product-inbox-masthead__side">
+                          <div className="product-inbox-masthead__agents" aria-label="Desk agents">
+                            {(
+                              [
+                                { name: "Jamie Chen", team: "Northside" },
+                                { name: "R. Okonkwo", team: "Riverside" },
+                                { name: "Ana Lopez", team: "Labs desk" },
+                                { name: "M. Patel", team: "Front office" },
+                              ] as const
+                            ).map((agent, idx) => (
+                              <span
+                                key={agent.name}
+                                className={`product-inbox-masthead__agent-chip${
+                                  idx === 0 ? " product-inbox-masthead__agent-chip--active" : ""
+                                }`}
+                              >
+                                <span className="product-inbox-masthead__agent-dot" aria-hidden />
+                                <span className="product-inbox-masthead__agent-name">{agent.name}</span>
+                                <span className="product-inbox-masthead__agent-team">{agent.team}</span>
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="product-inbox-masthead__categories" aria-label="Inbox categories">
+                        {(["Labs", "Referrals", "Office", "Patients"] as const).map((label, idx) => (
+                          <span
+                            key={label}
+                            className={`product-inbox-masthead__category${
+                              idx === 1 ? " product-inbox-masthead__category--active" : ""
+                            }`}
+                          >
+                            {label}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="product-landing-panel__divider" role="separator" aria-hidden />
+                    <div className="product-inbox-stage">
+                      <aside className="product-inbox-index">
+                        <div className="product-inbox-index__head">
+                          <p className="product-inbox-index__label">
+                            Threads
+                            <span className="product-inbox-index__count">{filteredInbox.length}</span>
+                          </p>
+                          <button type="button" className="product-inbox-index__compose">
+                            Compose
+                          </button>
+                        </div>
+                        <div
+                          className="product-inbox-index__filters"
+                          role="tablist"
+                          aria-label="Inbox filter"
+                        >
+                          {(["all", "unread", "pinned"] as const).map((key) => (
+                            <button
+                              key={key}
+                              type="button"
+                              role="tab"
+                              aria-selected={inboxFilter === key}
+                              onClick={() => setInboxFilter(key)}
+                              className={`product-inbox-index__filter${
+                                inboxFilter === key ? " product-inbox-index__filter--active" : ""
+                              }`}
+                            >
+                              {key === "pinned" ? (
+                                <>
+                                  <InboxPinIcon className="h-3 w-3 shrink-0 opacity-70" />
+                                  Pinned
+                                </>
+                              ) : key === "all" ? (
+                                "All"
+                              ) : (
+                                "Unread"
+                              )}
+                            </button>
+                          ))}
+                        </div>
+                        <div className="product-inbox-index__list">
+                          {filteredInbox.length === 0 ? (
+                            <div className="product-inbox-index__empty">
+                              <p className="product-inbox-index__empty-title">All caught up</p>
+                              <p className="product-inbox-index__empty-body">Nothing matches this filter.</p>
+                            </div>
+                          ) : (
+                            <>
+                              {pinnedInboxThread ? (
+                                <div className="product-inbox-index__pinned">
+                                  <p className="product-inbox-index__pinned-label">Pinned</p>
+                                  <InboxThreadListRow
+                                    t={pinnedInboxThread}
+                                    isActive={selectedInbox?.id === pinnedInboxThread.id}
+                                    onSelect={() => setSelectedInboxId(pinnedInboxThread.id)}
+                                    showPin
+                                    editorial
+                                  />
+                                </div>
+                              ) : null}
+                              {inboxThreadsScrollList.map((t) => (
+                                <InboxThreadListRow
+                                  key={t.id}
+                                  t={t}
+                                  isActive={selectedInbox?.id === t.id}
+                                  onSelect={() => setSelectedInboxId(t.id)}
+                                  editorial
+                                />
+                              ))}
+                            </>
+                          )}
+                        </div>
+                      </aside>
+                      <main className="product-inbox-reading">
+                        {selectedInbox ? (
+                          <>
+                            <div className="product-inbox-reading__header">
+                              <p className="product-inbox-reading__kind">{selectedInbox.kind}</p>
+                              <h2 className={`product-inbox-reading__subject ${dmSans.className}`}>
+                                {selectedInbox.subject}
+                              </h2>
+                              <div className="product-inbox-reading__stats">
+                                <span className="product-inbox-reading__stat">
+                                  {selectedInbox.messages.length} messages
+                                </span>
+                                <span className="product-inbox-reading__stat">
+                                  {selectedInbox.messages.reduce(
+                                    (sum, msg) => sum + inboxMessageAttachmentsList(msg).length,
+                                    0,
+                                  )}{" "}
+                                  attachments
+                                </span>
+                                <span className="product-inbox-reading__stat">
+                                  Thread activity {selectedInbox.time}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="product-inbox-reading__scroll">
+                              <div className="product-inbox-correspondence">
+                              {selectedInbox.messages.map((msg, msgIndex) => {
+                                const attachments = inboxMessageAttachmentsList(msg);
+                                const affiliation = inboxSenderAffiliation(msg.from);
+                                const isLatest = msgIndex === selectedInbox.messages.length - 1;
+                                return (
+                                  <article
+                                    key={msg.id}
+                                    className={`product-inbox-message${
+                                      isLatest ? " product-inbox-message--latest" : ""
+                                    }`}
+                                  >
+                                    <div className="product-inbox-message__rail" aria-hidden>
+                                      <span className="product-inbox-message__node" />
+                                    </div>
+                                    <div className="product-inbox-message__content">
+                                      <div className="product-inbox-message__head">
+                                        <div className="min-w-0">
+                                          <p className="product-inbox-message__sender">
+                                            {inboxSenderNameLine(msg.from)}
+                                          </p>
+                                          {affiliation ? (
+                                            <p className="product-inbox-message__affiliation">{affiliation}</p>
+                                          ) : null}
+                                        </div>
+                                        <time className="product-inbox-message__time">{msg.time}</time>
+                                      </div>
+                                      <p className={`product-inbox-message__quote ${inter.className}`}>
+                                        {inboxMessageEmail(msg)}
+                                      </p>
+                                      <div className="product-inbox-message__body">{msg.body}</div>
+                                      {attachments.length > 0 ? (
+                                        <ul className="product-inbox-message__attachments">
+                                          {attachments.map((file) => (
+                                            <li key={file.name}>
+                                              <button type="button" className="product-inbox-message__attachment">
+                                                <span className="truncate font-medium">{file.name}</span>
+                                                <span className="product-inbox-message__attachment-size">
+                                                  {file.size}
+                                                </span>
+                                              </button>
+                                            </li>
+                                          ))}
+                                        </ul>
+                                      ) : null}
+                                      {isLatest ? (
+                                        <div className="product-inbox-message__actions">
+                                          <button type="button" className="product-inbox-message__action">
+                                            Reply
+                                          </button>
+                                          <button type="button" className="product-inbox-message__action">
+                                            Forward
+                                          </button>
+                                          <button
+                                            type="button"
+                                            title="Flag for follow-up"
+                                            className="product-inbox-message__action-icon"
+                                          >
+                                            <Icon className="h-3.5 w-3.5">
+                                              <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+                                              <line x1="4" x2="4" y1="22" y2="15" />
+                                            </Icon>
+                                          </button>
+                                          <button
+                                            type="button"
+                                            title="Print this message"
+                                            className="product-inbox-message__action-icon"
+                                          >
+                                            <Icon className="h-3.5 w-3.5">
+                                              <polyline points="6 9 6 2 18 2 18 9" />
+                                              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                                              <rect width="12" height="8" x="6" y="14" />
+                                            </Icon>
+                                          </button>
+                                        </div>
+                                      ) : null}
+                                    </div>
+                                  </article>
+                                );
+                              })}
+                              </div>
+                            </div>
+                          </>
+                        ) : (
+                          <div className="product-inbox-reading__empty">
+                            <Icon className="product-inbox-reading__empty-icon h-8 w-8">
+                              <path d="M22 12h-6l-2 3h-4l-2-3H2" />
+                            </Icon>
+                            <p className="product-inbox-reading__empty-title">Select a message</p>
+                            <p className="product-inbox-reading__empty-body">
+                              Choose a thread on the left to read the full note.
+                            </p>
+                          </div>
+                        )}
+                      </main>
+                    </div>
+                  </div>
+                  ) : (
                   <>
                     <header
                       className={`flex items-center gap-2 border-b px-4 py-3 ${
@@ -3232,6 +4014,7 @@ export function DoeSchedulesAppMockProduct2({
                       </div>
                     </div>
                   </>
+                  )
                 ) : (
                   <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
                     <header

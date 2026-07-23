@@ -622,7 +622,66 @@ html[data-product2-page="true"]::before,
 }
 
 .product-brown-mock.product-brown-inbox-mode .product-brown-inner-row__content {
-  background: var(--pi-cream);
+  background: transparent;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-inbox-panel.product-landing-panel::before {
+  content: none;
+  display: none;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-inbox-panel--editorial.product-landing-panel {
+  color: var(--pl-console-text, #f2e8da);
+  background: transparent !important;
+  border-top-left-radius: 0;
+  overflow: hidden;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-shell,
+.product-brown-mock.product-brown-inbox-mode .product-brown-frame:not(.product-brown-layered-layout),
+.product-brown-mock.product-brown-inbox-mode .product-brown-frame.product-brown-layered-layout,
+.product-brown-mock.product-brown-inbox-mode .product-brown-layered-layout,
+.product-brown-mock.product-brown-inbox-mode .product-brown-workspace-row,
+.product-brown-mock.product-brown-inbox-mode .product-brown-inner-row,
+.product-brown-mock.product-brown-inbox-mode .product-brown-primary-col,
+.product-brown-mock.product-brown-inbox-mode .product-brown-main {
+  background: transparent !important;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-brown-main {
+  color: var(--pl-console-text, #f2e8da) !important;
+  border-top-left-radius: 0;
+  overflow: visible;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-landing-console-shell {
+  border-top-left-radius: 0;
+  overflow: visible;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-landing-console-shell .product-landing-header {
+  background-color: transparent !important;
+  border-bottom: 0 !important;
+  padding-inline: clamp(1.35rem, 2vw, 2rem);
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-landing-console-shell .product-landing-header::after {
+  right: clamp(1.35rem, 2vw, 2rem);
+  left: clamp(1.35rem, 2vw, 2rem);
+  background: rgba(242, 232, 218, 0.12);
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-landing-console-shell .product-landing-header__title {
+  color: var(--pl-console-text, #f2e8da) !important;
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-landing-console-shell .product-landing-header__icon {
+  color: rgba(242, 232, 218, 0.48);
+}
+
+.product-brown-mock.product-brown-inbox-mode .product-inbox-stage,
+.product-brown-mock.product-brown-inbox-mode .product-inbox-reading {
+  background: transparent;
 }
 
 .product-brown-mock.product-brown-landing-mode .product-brown-inner-row__content {
@@ -630,7 +689,7 @@ html[data-product2-page="true"]::before,
 }
 
 .product-brown-mock.product-brown-schedule-mode .product-brown-inner-row__content {
-  background: var(--pi-cream);
+  background: transparent;
 }
 
 .product-brown-mock.product-brown-call-history-mode .product-brown-inner-row__content {
@@ -1563,7 +1622,8 @@ html[data-product2-page="true"] .product-call-preview__bubble--agent {
 
 .product-brown-mock.product-brown-inbox-mode .product-brown-frame:not(.product-brown-layered-layout),
 .product-brown-mock.product-brown-inbox-mode .product-brown-inbox,
-.product-brown-mock.product-brown-inbox-mode .product-brown-main {
+.product-brown-mock.product-brown-inbox-mode
+  .product-brown-main:not(:has(.product-inbox-panel--editorial)) {
   background: var(--pi-cream) !important;
   color: var(--pi-ink) !important;
 }
@@ -1571,7 +1631,7 @@ html[data-product2-page="true"] .product-call-preview__bubble--agent {
 /* Inbox chrome: canvas title, toolbar filter strip */
 .product-brown-mock.product-brown-inbox-mode
   :is(.product-brown-main, .product-brown-main-panel)
-  header {
+  header:not(.product-landing-header) {
   background-color: var(--pi-cream) !important;
   border-color: var(--pi-line) !important;
 }
@@ -1815,7 +1875,6 @@ html[data-product2-page="true"] .product-call-preview__bubble--agent {
 }
 
 .product-brown-mock.product-brown-landing-mode .product-landing-header,
-.product-brown-mock.product-brown-schedule-mode .product-landing-header,
 .product-brown-mock.product-brown-agents-mode .product-landing-header {
   background-color: var(--pi-landing-header-bg, #e2ded6) !important;
   border-bottom: 1px solid rgba(38, 32, 28, 0.045) !important;
@@ -2255,8 +2314,9 @@ html[data-product2-page="true"] .product-call-preview__bubble--agent {
   text-transform: uppercase;
 }
 
-/* ── Schedule: same taupe palette as inbox / today ── */
+/* ── Schedule: same transparent shell as Today / Call History ── */
 .product-brown-mock.product-brown-schedule-mode {
+  background: transparent;
   --pi-cream: #f2efe8;
   --pi-sand: #dcd8cf;
   --pi-sand-deep: #c4c0b7;
@@ -2278,29 +2338,74 @@ html[data-product2-page="true"] .product-call-preview__bubble--agent {
   --pi-landing-header-bg: #e2ded6;
 }
 
+.product-brown-mock.product-brown-schedule-mode .product-brown-shell,
 .product-brown-mock.product-brown-schedule-mode .product-brown-frame:not(.product-brown-layered-layout),
-.product-brown-mock.product-brown-schedule-mode .product-brown-main,
-.product-brown-mock.product-brown-schedule-mode .product-brown-main-panel {
-  background: var(--pi-cream) !important;
-  color: var(--pi-ink) !important;
+.product-brown-mock.product-brown-schedule-mode .product-brown-frame.product-brown-layered-layout,
+.product-brown-mock.product-brown-schedule-mode .product-brown-layered-layout,
+.product-brown-mock.product-brown-schedule-mode .product-brown-workspace-row,
+.product-brown-mock.product-brown-schedule-mode .product-brown-inner-row,
+.product-brown-mock.product-brown-schedule-mode .product-brown-inner-row__content,
+.product-brown-mock.product-brown-schedule-mode .product-brown-primary-col,
+.product-brown-mock.product-brown-schedule-mode .product-brown-main {
+  background: transparent !important;
 }
 
-.product-brown-mock.product-brown-schedule-mode .product-brown-main-panel {
-  background: var(--pi-reading) !important;
+.product-brown-mock.product-brown-schedule-mode .product-brown-main {
+  color: var(--pl-console-text, #f2e8da) !important;
+  border-top-left-radius: 0;
+  overflow: visible;
 }
 
-.product-brown-mock.product-brown-schedule-mode
-  :is(.product-brown-main, .product-brown-main-panel)
-  header {
-  background-color: var(--pi-sand) !important;
-  border-color: var(--pi-line) !important;
+.product-brown-mock.product-brown-schedule-mode .product-schedule-panel.product-landing-panel::before {
+  content: none;
+  display: none;
 }
 
-.product-brown-mock.product-brown-schedule-mode
-  :is(.product-brown-main, .product-brown-main-panel)
-  .sticky.top-0 {
-  background-color: var(--pi-sand) !important;
-  border-color: var(--pi-line) !important;
+.product-brown-mock.product-brown-schedule-mode .product-schedule-panel.product-landing-panel {
+  color: var(--pl-console-text, #f2e8da);
+  background: transparent !important;
+  border-top-left-radius: 0;
+  overflow: hidden;
+}
+
+.product-brown-mock.product-brown-schedule-mode .product-schedule-panel--editorial {
+  overflow: hidden;
+}
+
+.product-brown-mock.product-brown-schedule-mode .product-schedule-stage {
+  background: transparent;
+}
+
+.product-brown-mock.product-brown-schedule-mode .product-landing-console-shell {
+  border-top-left-radius: 0;
+  overflow: visible;
+}
+
+.product-brown-mock.product-brown-schedule-mode .product-landing-console-shell .product-landing-header {
+  background-color: transparent !important;
+  border-bottom: 0 !important;
+}
+
+.product-brown-mock.product-brown-schedule-mode .product-landing-console-shell .product-landing-header::after {
+  background: rgba(242, 232, 218, 0.12);
+}
+
+.product-brown-mock.product-brown-schedule-mode .product-landing-console-shell .product-landing-header__title {
+  color: var(--pl-console-text, #f2e8da) !important;
+}
+
+.product-brown-mock.product-brown-schedule-mode .product-landing-console-shell .product-landing-header__icon {
+  color: rgba(242, 232, 218, 0.48);
+}
+
+.product-brown-mock.product-brown-schedule-mode .product-schedule-panel__toolbar {
+  background: transparent !important;
+  border: 0 !important;
+}
+
+.product-brown-mock.product-brown-schedule-mode .product-schedule-stage,
+.product-brown-mock.product-brown-schedule-mode .product-schedule-stage__scroll {
+  background: transparent;
 }
 
 .product-brown-mock.product-brown-schedule-mode .product-brown-main [class*="bg-white"],
