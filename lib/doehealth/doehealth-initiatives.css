@@ -56,19 +56,15 @@
   max-width: none;
 }
 
-html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
-  .doehealth-intro-band--initiatives
-  .doehealth-intro-band__shell {
-  padding-left: var(--proto-phone-gutter-left) !important;
-  padding-right: var(--proto-phone-gutter-right) !important;
-}
-
+/* Brown band stack — horizontal inset lives on content-rail, not shell (avoids double gutter). */
+html[data-home-page] .doehealth-brown-band-stack .doehealth-intro-band--initiatives .doehealth-intro-band__shell,
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
+  .doehealth-brown-band-stack
   .doehealth-intro-band--initiatives
   .doehealth-intro-band__shell {
-  padding-left: var(--desktop-page-inset-x) !important;
-  padding-right: var(--desktop-page-inset-x) !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
 
 .doehealth-initiatives__hero {
@@ -534,6 +530,8 @@ html[data-home-page][data-layout="desktop"]
     var(--proto-phone-gutter-left) + var(--proto-nav-frost-pad-x-max, clamp(1.12rem, 0.82rem + 1.45vmin, 1.45rem))
   );
   --doehealth-ui-rail-right: var(--proto-phone-gutter-right);
+  /* Matches legacy shell-padded rail box so intro call summary stays put. */
+  --doehealth-rail-viewport-trim-x: var(--proto-phone-gutter-right);
   overflow: visible;
 }
 
@@ -565,7 +563,8 @@ html[data-home-page][data-layout="desktop"]
   flex-direction: column;
   align-items: flex-start;
   box-sizing: border-box;
-  width: 100%;
+  width: calc(100vw - 2 * var(--doehealth-rail-viewport-trim-x, 0px));
+  max-width: calc(100vw - 2 * var(--doehealth-rail-viewport-trim-x, 0px));
   margin-inline: calc(50% - 50vw);
   padding:
     clamp(0.12rem, 0.28vw, 0.22rem)
@@ -594,6 +593,7 @@ html[data-home-page][data-layout="desktop"]
   .doehealth-intro-band--initiatives {
   --doehealth-intro-title-inset-x: calc(var(--desktop-page-inset-x, 2.5rem) + 1.45rem);
   --doehealth-ui-rail-right: var(--desktop-page-inset-x, 2.5rem);
+  --doehealth-rail-viewport-trim-x: var(--desktop-page-inset-x, 2.5rem);
 }
 
 html[data-home-page][data-layout="desktop"]
@@ -617,20 +617,24 @@ html[data-home-page][data-layout="desktop"]
   position: relative;
   box-sizing: border-box;
   overflow: visible;
-  width: 100%;
+  width: calc(100vw - 2 * var(--doehealth-rail-viewport-trim-x, 0px));
+  max-width: calc(100vw - 2 * var(--doehealth-rail-viewport-trim-x, 0px));
   margin-inline: calc(50% - 50vw);
   padding-left: var(--doehealth-intro-title-inset-x);
   padding-right: var(--doehealth-ui-rail-right);
 }
 
 /*
- * Cards that should meet the call-summary right edge sit in the padded rail but
- * extend through padding-right (summary uses absolute right: 0 on the padding box).
+ * Full-width cards extend through padding-right to the call-summary right edge.
+ * Higher specificity than sequence __stage max-width caps (those load later).
  */
-.doehealth-content-rail__summary-edge {
+.doehealth-content-rail__summary-edge,
+.doehealth-day-summary-sequence__stage.doehealth-content-rail__summary-edge,
+.doehealth-routed-calls-sequence__stage.doehealth-content-rail__summary-edge,
+.doehealth-active-agents-sequence__stage.doehealth-content-rail__summary-edge {
   box-sizing: border-box;
   width: calc(100% + var(--doehealth-ui-rail-right));
-  max-width: calc(100% + var(--doehealth-ui-rail-right));
+  max-width: none;
   margin-right: calc(-1 * var(--doehealth-ui-rail-right));
 }
 
