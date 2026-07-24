@@ -10,6 +10,7 @@ import {
   DESKTOP_NAV_ACTION_SIZE,
 } from "@/lib/subpage/desktop-nav-styles";
 import { NavMailIcon } from "@/components/nav/NavMailIcon";
+import { useDoeHealthLandingNavContext } from "@/lib/doehealth/doehealth-nav-chrome";
 
 /** Desktop nav — square email button (dropdown rendered by DesktopNavActionRow). */
 export function DesktopNavEmailButton({
@@ -27,19 +28,23 @@ export function DesktopNavEmailButton({
   onToggle?: () => void;
   punched?: boolean;
 }) {
-  const radius = punched ? "rounded-full" : "rounded-md";
+  const isDoeHealthNav = useDoeHealthLandingNavContext();
+  const useGoldShell = punched || isDoeHealthNav;
+  const radius = useGoldShell ? "rounded-full" : "rounded-md";
 
   return (
     <div className="relative flex shrink-0 items-center">
       <div
-        className={`relative flex items-stretch overflow-visible ${radius}${punched ? " proto-nav-cta-shell" : ""}`}
+        className={`relative flex items-stretch overflow-visible ${radius}${
+          useGoldShell ? " proto-nav-cta-shell doehealth-nav-mail-shell" : ""
+        }${open ? " proto-nav-cta-shell--open" : ""}`}
         style={{ boxShadow: shadow }}
       >
         <button
           type="button"
           className={`flex ${DESKTOP_NAV_ACTION_HEIGHT_TW} items-center justify-center ${radius} transition-[opacity,background-color,color,box-shadow] duration-300 hover:opacity-90`}
           style={{
-            backgroundColor: bg,
+            backgroundColor: useGoldShell ? "transparent" : bg,
             color: fg,
             width: DESKTOP_NAV_ACTION_SIZE,
           }}
