@@ -11757,6 +11757,12 @@ html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehea
   overflow: visible !important;
   background-color: #faf0d8 !important;
 }
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-brown-band-stack
+  > .doehealth-intro-band {
+  background-color: transparent !important;
+}
 html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-intro-band__shell {
   display: flex;
   flex-direction: column;

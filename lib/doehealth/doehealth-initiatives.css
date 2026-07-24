@@ -1447,13 +1447,7 @@ html[data-home-page][data-layout="desktop"]
 
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
-  .doehealth-routed-calls-shader-panel__ui {
-  transform: scale(1.1);
-}
-
-html[data-home-page][data-layout="desktop"]
-  .doe-desktop-root--doehealth
-  .doehealth-routed-calls-shader-panel__ui--sarah {
+  .doehealth-routed-calls-shader-panel__ui:not(.doehealth-routed-calls-shader-panel__ui--sarah) {
   transform: none;
 }
 
@@ -1642,17 +1636,15 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-active-agents__stage {
-  min-height: min(
-    calc(60vw * var(--doehealth-section-height-scale, 1)),
-    calc(40rem * var(--doehealth-section-height-scale, 1))
-  );
+  min-height: min(46vw, 30rem);
+  max-height: min(46vw, 30rem);
 }
 
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-active-agents__orbit.product-landing-workspace__orbit
   .product-landing-workspace__orbit-ring {
-  --orbit-size: clamp(10.5rem, 30cqw, 15.5rem);
+  --orbit-size: clamp(9.5rem, 26cqw, 14rem);
   --orbit-overlap: 1;
 }
 
@@ -2159,7 +2151,133 @@ html[data-home-page][data-layout="desktop"]
 }
 
 html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-brown-band-stack {
+  --doehealth-section-height-scale: 1;
+  --doehealth-routed-calls-shader-height-scale: 1;
+  --doehealth-ui-before-title-space: clamp(1.85rem, 2.5vw, 2.75rem);
   --doehealth-brown-band-height: calc(100dvh * var(--doehealth-section-height-scale));
+}
+
+/* Desktop brown stack — content-driven height; globals locks 84.375dvh on all intro bands. */
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-brown-band-stack
+  > .doehealth-intro-band {
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-brown-band-stack
+  > .doehealth-intro-band:not(:first-child) {
+  min-height: 84.375dvh !important;
+  padding-top: var(--desktop-section-pad-y) !important;
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-brown-band-stack
+  > .doehealth-intro-band--routed-calls,
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-brown-band-stack
+  > .doehealth-intro-band--routed-calls-right,
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-brown-band-stack
+  > .doehealth-intro-band--routed-calls-left-2,
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-brown-band-stack
+  > .doehealth-intro-band--active-agents {
+  min-height: 100dvh !important;
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-brown-band-stack
+  > .doehealth-intro-band--routed-calls
+  .doehealth-intro-band__shell,
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-brown-band-stack
+  > .doehealth-intro-band--routed-calls-right
+  .doehealth-intro-band__shell,
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-brown-band-stack
+  > .doehealth-intro-band--routed-calls-left-2
+  .doehealth-intro-band__shell,
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-brown-band-stack
+  > .doehealth-intro-band--active-agents
+  .doehealth-intro-band__shell {
+  justify-content: flex-start !important;
+  padding-top: clamp(0.35rem, 0.85vw, 0.85rem);
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-brown-band-stack
+  > .doehealth-intro-band--routed-calls
+  .doehealth-intro-stage,
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-brown-band-stack
+  > .doehealth-intro-band--routed-calls-right
+  .doehealth-intro-stage,
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-brown-band-stack
+  > .doehealth-intro-band--routed-calls-left-2
+  .doehealth-intro-stage {
+  padding-top: 0;
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-routed-calls__shader-card {
+  height: clamp(24rem, 54dvh, 36rem);
+  min-height: clamp(22rem, 50dvh, 34rem);
+  max-height: min(38rem, calc(100dvh - var(--desktop-nav-height) - 14rem));
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-call-sequence {
+  --dhi-intro-call-card-width: min(30rem, 42vw);
+  --dhi-intro-summary-card-width: min(18rem, 28vw);
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-brown-band-stack
+  > .doehealth-intro-band:first-child
+  .doehealth-initiatives__call-history-scroll {
+  --dhi-call-history-scroll-max: clamp(19rem, 42vh, 24rem);
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-day-summary
+  .product-landing-day-summary--last24h
+  .product-landing-day-summary__greeting-name {
+  font-size: clamp(2.35rem, 1.35rem + 1.85vw, 3.35rem);
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-day-summary
+  .product-landing-day-summary--last24h
+  .product-landing-day-summary__hero-row,
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-day-summary
+  .product-landing-day-summary--last24h
+  .product-landing-volume-wrap {
+  min-height: clamp(7.25rem, 11vw, 9.5rem);
 }
 
 /* Last band — match desktop bottom pad to top (nav clearance + section pad) before footer. */
