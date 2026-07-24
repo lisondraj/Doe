@@ -1,5 +1,4 @@
 import type { ProtoGrainGradientSurface } from "@/lib/proto/proto-grain-gradient";
-import { doeHomeIntegrationsShaderSurface } from "@/lib/proto/proto-shader-backdrop-colors";
 
 /** /doehealth — left-bleed routed calls (warm amber ripple). */
 export const DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE = {
@@ -20,6 +19,13 @@ export const DOEHEALTH_ROUTED_CALLS_LEFT_SHADER: ProtoGrainGradientSurface = {
   colorBack: DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE.back,
 };
 
-/** Right-bleed shader — main-page Integrations band flow (home-integrations, animated wave). */
-export const DOEHEALTH_ROUTED_CALLS_RIGHT_SHADER: ProtoGrainGradientSurface =
-  doeHomeIntegrationsShaderSurface();
+/** Right-bleed shader — same dusk palette as left, wave drift upper-right. */
+export const DOEHEALTH_ROUTED_CALLS_RIGHT_SHADER: ProtoGrainGradientSurface = {
+  variant: "doehealth-routed-calls-right",
+  colors: [
+    DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE.ember,
+    DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE.clay,
+    DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE.sand,
+  ],
+  colorBack: DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE.back,
+};
