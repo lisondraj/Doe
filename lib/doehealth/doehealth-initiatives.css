@@ -184,7 +184,7 @@ html[data-home-page][data-layout="desktop"]
     calc(22rem * var(--doehealth-section-height-scale, 1))
   );
   --dhi-call-history-fade-size: clamp(1.35rem, 2.4vw, 2rem);
-  --dhi-call-history-bleed-x: 0.65rem;
+  --dhi-call-history-bleed-x: 0;
   --dhi-scroll-travel: 0px;
   --dhi-scroll-duration: 24s;
   box-sizing: border-box;
@@ -295,9 +295,11 @@ html[data-home-page][data-layout="desktop"]
 }
 
 .doehealth-initiatives__call-history.product-call-history-rail__thread {
+  /* Keep vertical pads tight for the scroll viewport; restore side inset so
+     convo text is not flush to the Sarah card edges (7493649 had crushed this). */
   padding:
     clamp(0.35rem, 0.75vw, 0.55rem)
-    clamp(0.15rem, 0.35vw, 0.35rem)
+    clamp(0.95rem, 0.75rem + 1.1vw, 1.45rem)
     clamp(1.35rem, 2.4vw, 1.85rem);
 }
 
@@ -805,7 +807,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   box-sizing: border-box;
   overflow: visible;
   --dhi-intro-reveal-duration: 1.4s;
-  --dhi-intro-call-card-width: 22.5rem;
+  --dhi-intro-call-card-width: 26.75rem;
   --dhi-intro-summary-card-width: min(16.25rem, 54vw);
   --dhi-intro-summary-overlap-y: var(--doehealth-ui-before-title-space, clamp(2.35rem, 8.5vw, 3.65rem));
   padding-bottom: var(--dhi-intro-summary-overlap-y);
