@@ -185,6 +185,8 @@ html[data-home-page][data-layout="desktop"]
   );
   --dhi-call-history-fade-size: clamp(1.35rem, 2.4vw, 2rem);
   --dhi-call-history-bleed-x: 0.65rem;
+  --dhi-scroll-travel: 0px;
+  --dhi-scroll-duration: 24s;
   box-sizing: border-box;
   width: calc(100% + (var(--dhi-call-history-bleed-x) * 2));
   height: var(--dhi-call-history-scroll-max);
@@ -192,14 +194,12 @@ html[data-home-page][data-layout="desktop"]
   max-height: var(--dhi-call-history-scroll-max);
   margin-inline: calc(-1 * var(--dhi-call-history-bleed-x));
   overflow-x: hidden;
-  overflow-y: scroll;
+  overflow-y: hidden;
   overscroll-behavior: none;
   touch-action: none;
   pointer-events: none;
   user-select: none;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  -webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling: auto;
   -webkit-mask-image: linear-gradient(
     to bottom,
     transparent 0,
@@ -220,10 +220,40 @@ html[data-home-page][data-layout="desktop"]
   mask-repeat: no-repeat;
 }
 
-.doehealth-initiatives__call-history-scroll::-webkit-scrollbar {
-  display: none;
-  width: 0;
-  height: 0;
+@keyframes doehealth-call-history-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(0, calc(-1 * var(--dhi-scroll-travel, 0px)), 0);
+  }
+}
+
+.doehealth-initiatives__call-history-scroll__track {
+  display: block;
+  width: 100%;
+  will-change: transform;
+}
+
+.doehealth-initiatives__call-history-scroll__track--drift {
+  animation: doehealth-call-history-drift var(--dhi-scroll-duration, 24s) ease-in-out infinite alternate;
+}
+
+.doehealth-initiatives__call-history-scroll__track > .product-landing-live-thread {
+  flex: none;
+  height: auto;
+  min-height: min-content;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doehealth-initiatives__call-history-scroll__track--drift {
+    animation: none;
+  }
+
+  .doehealth-initiatives__call-history-scroll__track {
+    will-change: auto;
+  }
 }
 
 .doehealth-initiatives__call-history.product-landing-live-thread {
