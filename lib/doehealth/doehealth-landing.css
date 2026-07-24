@@ -36,7 +36,7 @@ html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav .pro
   text-shadow: none !important;
 }
 
-/* Desktop /doehealth — dark brown logo on hero; gold after scrolling past hero. */
+/* Desktop /doehealth — dark brown logo on hero; gold fades in with punched nav shell. */
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   nav.desktop-punched-nav
@@ -44,46 +44,49 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   nav.desktop-punched-nav
-  .proto-nav-chrome-logo
-  a {
+  a.proto-nav-chrome-logo {
+  position: relative;
+  isolation: isolate;
+  display: inline-block;
   background: none !important;
   background-clip: border-box !important;
   -webkit-background-clip: border-box !important;
   color: #1a1208 !important;
   -webkit-text-fill-color: #1a1208 !important;
   text-shadow: none !important;
-  transition:
-    color 0.24s ease,
-    -webkit-text-fill-color 0.24s ease,
-    background 0.24s ease;
+  transition: none !important;
 }
 
-html[data-home-page][data-layout="desktop"][data-home-banner-dismissed="true"]
+html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   nav.desktop-punched-nav
-  .proto-nav-chrome-logo,
-html[data-home-page][data-layout="desktop"][data-home-banner-dismissed="true"]
+  .proto-nav-chrome-logo::after,
+html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   nav.desktop-punched-nav
-  .proto-nav-chrome-logo
-  a {
-  background: var(--doehealth-gold-text-gradient) !important;
-  background-clip: text !important;
-  -webkit-background-clip: text !important;
-  color: transparent !important;
-  -webkit-text-fill-color: transparent !important;
+  a.proto-nav-chrome-logo::after {
+  content: "Doe";
+  position: absolute;
+  inset: 0;
+  background: var(--doehealth-gold-text-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  opacity: var(--proto-nav-frost-shell-progress, 0);
+  pointer-events: none;
+  transition: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html[data-home-page][data-layout="desktop"]
     .doe-desktop-root--doehealth
     nav.desktop-punched-nav
-    .proto-nav-chrome-logo,
+    .proto-nav-chrome-logo::after,
   html[data-home-page][data-layout="desktop"]
     .doe-desktop-root--doehealth
     nav.desktop-punched-nav
-    .proto-nav-chrome-logo
-    a {
+    a.proto-nav-chrome-logo::after {
     transition: none;
   }
 }
