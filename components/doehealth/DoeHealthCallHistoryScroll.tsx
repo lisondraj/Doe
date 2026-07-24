@@ -2,26 +2,41 @@
 
 import { type ReactNode, useLayoutEffect, useRef } from "react";
 
-/** Slow auto-drift through embedded call history convo — scrollTop-driven, no manual scroll. */
+/** Slow auto-drift through embedded call history convo — transform-driven, no manual scroll. */
 export function DoeHealthCallHistoryScroll({ children }: { children: ReactNode }) {
   const viewportRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     const viewport = viewportRef.current;
-    if (!viewport) return;
+    const track = trackRef.current;
+    if (!viewport || !track) return;
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const driftClass = "doehealth-initiatives__call-history-scroll__track--drift";
 
-    let frame = 0;
-    let lastTime = performance.now();
-    let direction = 1;
-    let pauseUntil = performance.now() + 700;
-    /** ~11px/s — slow, clearly perceptible drift */
-    const speedPxPerMs = 0.011;
-    const edgePauseMs = 2400;
-    let running = true;
+    const measureContentHeight = () => {
+      const content = track.firstElementChild as HTMLElement | null;
+      if (!content) return track.scrollHeight;
+      return Math.max(content.scrollHeight, content.getBoundingClientRect().height, track.scrollHeight);
+    };
 
-    const travel = () => Math.max(0, viewport.scrollHeight - viewport.clientHeight);
+    const sync = () => {
+      const viewportHeight = viewport.clientHeight;
+      const contentHeight = measureContentHeight();
+      const travel = Math.max(0, contentHeight - viewportHeight);
+
+      viewport.style.setProperty("--dhi-scroll-travel", `${travel}px`);
+      /** ~7px/s — slow but clearly visible */
+      viewport.style.setProperty("--dhi-scroll-duration", `${Math.max(16, travel / 7)}s`);
+
+      const shouldDrift = !reducedMotion.matches && travel > 12;
+      track.classList.toggle(driftClass, shouldDrift);
+
+      if (!shouldDrift) {
+        track.style.transform = "";
+      }
+    };
 
     const preventManualScroll = (event: Event) => {
       event.preventDefault();
@@ -30,56 +45,9 @@ export function DoeHealthCallHistoryScroll({ children }: { children: ReactNode }
     viewport.addEventListener("wheel", preventManualScroll, { passive: false });
     viewport.addEventListener("touchmove", preventManualScroll, { passive: false });
 
-    const tick = (now: number) => {
-      if (!running) return;
-
-      if (reducedMotion.matches) {
-        viewport.scrollTop = 0;
-        frame = requestAnimationFrame(tick);
-        return;
-      }
-
-      const scrollRange = travel();
-
-      if (scrollRange > 2 && now >= pauseUntil) {
-        const delta = Math.min(now - lastTime, 48);
-        lastTime = now;
-
-        let next = viewport.scrollTop + delta * speedPxPerMs * direction;
-
-        if (next >= scrollRange - 0.5) {
-          next = scrollRange;
-          direction = -1;
-          pauseUntil = now + edgePauseMs;
-        } else if (next <= 0.5) {
-          next = 0;
-          direction = 1;
-          pauseUntil = now + edgePauseMs;
-        }
-
-        viewport.scrollTop = next;
-      } else {
-        lastTime = now;
-      }
-
-      frame = requestAnimationFrame(tick);
-    };
-
-    const sync = () => {
-      if (reducedMotion.matches) {
-        viewport.scrollTop = 0;
-      } else {
-        viewport.scrollTop = Math.min(viewport.scrollTop, travel());
-        pauseUntil = performance.now() + 700;
-      }
-      lastTime = performance.now();
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(tick);
-    };
-
     const resizeObserver = new ResizeObserver(sync);
     resizeObserver.observe(viewport);
-    const content = viewport.firstElementChild;
+    const content = track.firstElementChild;
     if (content) resizeObserver.observe(content);
 
     const intersectionObserver = new IntersectionObserver(
@@ -90,18 +58,18 @@ export function DoeHealthCallHistoryScroll({ children }: { children: ReactNode }
     );
     intersectionObserver.observe(viewport);
 
+    const onReducedMotionChange = () => sync();
+    reducedMotion.addEventListener("change", onReducedMotionChange);
+
     void document.fonts.ready.then(sync);
     requestAnimationFrame(() => {
       requestAnimationFrame(sync);
     });
     sync();
 
-    const onReducedMotionChange = () => sync();
-    reducedMotion.addEventListener("change", onReducedMotionChange);
-
     return () => {
-      running = false;
-      cancelAnimationFrame(frame);
+      track.classList.remove(driftClass);
+      track.style.transform = "";
       resizeObserver.disconnect();
       intersectionObserver.disconnect();
       reducedMotion.removeEventListener("change", onReducedMotionChange);
@@ -112,7 +80,9 @@ export function DoeHealthCallHistoryScroll({ children }: { children: ReactNode }
 
   return (
     <div ref={viewportRef} className="doehealth-initiatives__call-history-scroll">
-      {children}
+      <div ref={trackRef} className="doehealth-initiatives__call-history-scroll__track">
+        {children}
+      </div>
     </div>
   );
 }
