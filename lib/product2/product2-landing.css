@@ -1479,6 +1479,19 @@
   color: var(--pi-muted-soft);
 }
 
+.product-landing-day-summary--last24h .product-landing-day-summary__section-labels,
+.product-landing-day-summary--last24h .product-landing-day-summary__columns--last24h {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.product-landing-day-summary--last24h .product-landing-day-summary__section-labels .product-landing-day-summary__section-label {
+  padding-right: 0;
+}
+
+.product-landing-day-summary--last24h .product-landing-day-summary__column--last24h {
+  padding-right: 0;
+}
+
 .product-landing-day-summary__hero-row {
   position: relative;
   flex: 1;

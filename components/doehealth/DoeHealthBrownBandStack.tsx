@@ -1,13 +1,15 @@
-import { DoeHealthBlankBrownBand } from "@/components/doehealth/DoeHealthBlankBrownBand";
+import { DoeHealthActiveAgentsBand } from "@/components/doehealth/DoeHealthActiveAgentsBand";
 import { DoeHealthBlankViewportBand } from "@/components/doehealth/DoeHealthBlankViewportBand";
+import { DoeHealthDaySummaryBand } from "@/components/doehealth/DoeHealthDaySummaryBand";
 import "@/lib/doehealth/doehealth-initiatives.css";
 
-/** Intro + blank band — one continuous brown gradient across both viewport-height sections. */
+/** Intro + day summary + active agents — one continuous brown gradient stack. */
 export function DoeHealthBrownBandStack() {
   return (
     <div className="doehealth-brown-band-stack">
       <DoeHealthBlankViewportBand />
-      <DoeHealthBlankBrownBand />
+      <DoeHealthDaySummaryBand />
+      <DoeHealthActiveAgentsBand />
     </div>
   );
 }

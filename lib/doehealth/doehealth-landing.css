@@ -19,7 +19,8 @@
   -webkit-background-clip: text;
   color: transparent !important;
   -webkit-text-fill-color: transparent !important;
-  filter: drop-shadow(0 2px 16px rgba(212, 165, 116, 0.14));
+  font-weight: 400 !important;
+  letter-spacing: -0.035em;
 }
 
 /* Doe logo — page gold text treatment, keep existing Lora/font classes */
@@ -35,7 +36,6 @@ html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth nav.des
   color: transparent !important;
   -webkit-text-fill-color: transparent !important;
   text-shadow: none !important;
-  filter: drop-shadow(0 1px 12px rgba(212, 165, 116, 0.12));
 }
 
 /* Mail circle — full gold pill like page text, dark icon inside */
@@ -84,4 +84,45 @@ html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav.prot
 html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth nav.desktop-punched-nav .proto-nav-chrome-actions .proto-nav-cta-shell > button svg path,
 html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth nav.desktop-punched-nav .proto-nav-chrome-actions .proto-nav-cta-shell button svg path {
   stroke: #1a1208 !important;
+}
+
+/* Flat gold type — no glow under gradient text (hero, nav, titles, cards, convo UI). */
+.doephone-mobile-root--doehealth :where(
+    .doehealth-hero-headline,
+    .doehealth-hero-headline .doephone-hero-headline-line,
+    .doehealth-initiatives__hero,
+    .doehealth-initiatives__condition,
+    .doehealth-initiatives__section-title,
+    .doehealth-initiatives__group .doehealth-initiatives__parent .doehealth-initiatives__count,
+    .doehealth-intro-band__section-title,
+    .doehealth-call-summary__title,
+    .doehealth-intro-call-sequence__a1c-title,
+    .doehealth-intro-call-sequence__bp-latest,
+    .doehealth-call-incoming__duration,
+    .doehealth-call-progress__duration,
+    .product-landing-live-quote__chart-profile-a1c-line,
+    .product-landing-live-quote__chart-profile-highlight-value,
+    nav.doephone-site-nav .proto-nav-chrome-logo,
+    nav.doephone-site-nav .proto-nav-chrome-logo a
+  ),
+.doe-desktop-root--doehealth :where(
+    .doehealth-hero-headline,
+    .doehealth-hero-headline .doephone-hero-headline-line,
+    .doehealth-initiatives__hero,
+    .doehealth-initiatives__condition,
+    .doehealth-initiatives__section-title,
+    .doehealth-initiatives__group .doehealth-initiatives__parent .doehealth-initiatives__count,
+    .doehealth-intro-band__section-title,
+    .doehealth-call-summary__title,
+    .doehealth-intro-call-sequence__a1c-title,
+    .doehealth-intro-call-sequence__bp-latest,
+    .doehealth-call-incoming__duration,
+    .doehealth-call-progress__duration,
+    .product-landing-live-quote__chart-profile-a1c-line,
+    .product-landing-live-quote__chart-profile-highlight-value,
+    nav.desktop-punched-nav .proto-nav-chrome-logo,
+    nav.desktop-punched-nav .proto-nav-chrome-logo a
+  ) {
+  filter: none !important;
+  text-shadow: none !important;
 }

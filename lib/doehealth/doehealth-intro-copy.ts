@@ -7,6 +7,14 @@ export const DOEHEALTH_INTRO_COPY = {
     line1: "Automate Your",
     line2: "Front Desk",
   },
+  daySummarySectionTitle: {
+    line1: "Your Clinic",
+    line2: "At a Glance",
+  },
+  activeAgentsSectionTitle: {
+    line1: "Seven Active",
+    line2: "Agents",
+  },
   body: [
     "We're two brothers mixing domain, technical, and operational expertise in artificial intelligence & health.",
     "We're bringing together doctors, designers, and engineers to build AI-native tools for clinicians",
