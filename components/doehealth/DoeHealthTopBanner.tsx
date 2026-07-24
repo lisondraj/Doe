@@ -72,8 +72,8 @@ export function DoeHealthTopBanner({
       aria-label="Learn more about Doe's vision"
     >
       <p className={`doe-home-top-banner__text ${inter.className}`}>
-        <span>Learn more about Doe&apos;s vision</span>
-        <Link href="#doe-vision" className="doe-home-top-banner__link">
+        <span className="doehealth-top-banner__label">Learn more about Doe&apos;s vision</span>
+        <Link href="#doe-vision" className="doe-home-top-banner__link doehealth-top-banner__link">
           Read more
           <ReadMoreArrow />
         </Link>

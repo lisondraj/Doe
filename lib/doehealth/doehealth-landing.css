@@ -10,70 +10,91 @@
   --doehealth-gold-fill-gradient: linear-gradient(180deg, #e8c08e 0%, #d4a574 58%, #b8845c 100%);
 }
 
-/* Desktop /doehealth — espresso vision strip with gold CTA pill. */
+/* Desktop /doehealth — sand vision ribbon, gold rule + gradient link. */
 html[data-home-page][data-layout="desktop"]:has(.doehealth-top-banner) {
-  --doe-home-top-banner-height: clamp(2.45rem, 2rem + 0.48vw, 2.8rem);
+  --doe-home-top-banner-height: clamp(2.12rem, 1.72rem + 0.4vw, 2.42rem);
 }
 
 html[data-home-page][data-layout="desktop"] .doehealth-top-banner.doe-home-top-banner {
-  background-color: #1a1208;
-  background-image:
-    radial-gradient(ellipse 90% 160% at 50% -55%, rgba(212, 165, 116, 0.16) 0%, transparent 68%),
-    linear-gradient(180deg, #221910 0%, #1a1208 100%);
-  border-bottom: 1px solid rgba(212, 165, 116, 0.24);
-  box-shadow: inset 0 1px 0 rgba(255, 245, 230, 0.05);
+  position: fixed;
+  background-color: #faf0d8;
+  background-image: linear-gradient(180deg, #fff9ef 0%, #faf0d8 100%);
+  border-bottom: none;
+  box-shadow: none;
+}
+
+html[data-home-page][data-layout="desktop"] .doehealth-top-banner.doe-home-top-banner::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(212, 165, 116, 0.16) 14%,
+    rgba(212, 165, 116, 0.48) 50%,
+    rgba(212, 165, 116, 0.16) 86%,
+    transparent 100%
+  );
 }
 
 html[data-home-page][data-layout="desktop"] .doehealth-top-banner .doe-home-top-banner__text {
-  gap: 0.55rem 0.85rem;
-  padding: 0.52rem 0 0.58rem;
-  font-size: clamp(0.8125rem, 0.74rem + 0.16vw, 0.9375rem);
+  box-sizing: border-box;
+  width: 100%;
+  gap: 0.38rem 0.62rem;
+  padding:
+    0.42rem
+    max(var(--desktop-page-inset-x, 2.5rem), env(safe-area-inset-right, 0px))
+    0.46rem
+    max(var(--desktop-page-inset-x, 2.5rem), env(safe-area-inset-left, 0px));
+  font-size: clamp(0.8125rem, 0.76rem + 0.13vw, 0.9rem);
   font-weight: 500;
-  letter-spacing: 0.012em;
-  color: rgba(245, 230, 208, 0.74);
+  letter-spacing: 0.004em;
+  color: rgba(26, 18, 8, 0.58);
 }
 
-html[data-home-page][data-layout="desktop"] .doehealth-top-banner .doe-home-top-banner__text > span {
-  color: rgba(245, 230, 208, 0.68);
+html[data-home-page][data-layout="desktop"] .doehealth-top-banner .doehealth-top-banner__label {
+  color: rgba(26, 18, 8, 0.54);
 }
 
-html[data-home-page][data-layout="desktop"] .doehealth-top-banner .doe-home-top-banner__link {
+html[data-home-page][data-layout="desktop"] .doehealth-top-banner .doehealth-top-banner__link {
   display: inline-flex;
   align-items: center;
-  gap: 0.34rem;
-  padding: 0.26rem 0.68rem 0.26rem 0.74rem;
-  border-radius: 9999px;
-  border: 1px solid rgba(212, 165, 116, 0.44);
-  background:
-    linear-gradient(180deg, rgba(255, 245, 230, 0.1) 0%, transparent 52%),
-    rgba(212, 165, 116, 0.1);
-  color: #e8c08e;
+  gap: 0.28rem;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  background-image: var(--doehealth-gold-text-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   text-decoration: none;
   font-weight: 600;
-  letter-spacing: -0.012em;
-  transition:
-    background-color 180ms ease,
-    border-color 180ms ease,
-    color 180ms ease;
+  letter-spacing: -0.016em;
+  transition: opacity 160ms ease, filter 160ms ease;
 }
 
-html[data-home-page][data-layout="desktop"] .doehealth-top-banner .doe-home-top-banner__link:hover {
+html[data-home-page][data-layout="desktop"] .doehealth-top-banner .doehealth-top-banner__link:hover {
   opacity: 1;
-  background:
-    linear-gradient(180deg, rgba(255, 245, 230, 0.14) 0%, transparent 52%),
-    rgba(212, 165, 116, 0.18);
-  border-color: rgba(232, 192, 142, 0.62);
-  color: #f2e0c6;
+  filter: brightness(1.08);
 }
 
-html[data-home-page][data-layout="desktop"] .doehealth-top-banner .doe-home-top-banner__arrow {
-  width: 12px;
-  height: 12px;
-  margin-top: 0;
+html[data-home-page][data-layout="desktop"] .doehealth-top-banner .doehealth-top-banner__link .doe-home-top-banner__arrow {
+  flex-shrink: 0;
+  width: 11px;
+  height: 11px;
+  margin-top: 0.02em;
+  color: #c99862;
+  stroke: #c99862;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html[data-home-page][data-layout="desktop"] .doehealth-top-banner .doe-home-top-banner__link {
+  html[data-home-page][data-layout="desktop"] .doehealth-top-banner .doehealth-top-banner__link {
     transition: none;
   }
 }
