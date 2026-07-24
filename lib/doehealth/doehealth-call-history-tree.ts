@@ -8,7 +8,6 @@ const DOEHEALTH_CALL_HISTORY_INTRO_TURN_IDS = [
   "agent-verified",
   "agent-side-effects",
   "caller-side-effects",
-  "agent-schedule",
 ] as const;
 
 /** Opening call history turns through identity verification — matches /product2 call history rail. */
