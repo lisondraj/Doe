@@ -1030,16 +1030,16 @@ html[data-home-page][data-layout="desktop"]
   width: calc(100% + var(--doehealth-routed-calls-shader-bleed-left));
   margin-left: calc(-1 * var(--doehealth-routed-calls-shader-bleed-left));
   height: clamp(
-    calc((23rem + var(--app-vh, 100lvh) / 8) * var(--doehealth-section-height-scale, 1)),
-    calc(var(--app-vh, 100lvh) * 0.56 * var(--doehealth-section-height-scale, 1)),
-    calc((40rem + var(--app-vh, 100lvh) / 8) * var(--doehealth-section-height-scale, 1))
+    calc((23rem + var(--app-vh, 100lvh) / 8) * var(--doehealth-routed-calls-shader-height-scale, 1)),
+    calc(var(--app-vh, 100lvh) * 0.56 * var(--doehealth-routed-calls-shader-height-scale, 1)),
+    calc((40rem + var(--app-vh, 100lvh) / 8) * var(--doehealth-routed-calls-shader-height-scale, 1))
   );
   min-height: clamp(
-    calc((23rem + var(--app-vh, 100lvh) / 8) * var(--doehealth-section-height-scale, 1)),
-    calc(var(--app-vh, 100lvh) * 0.56 * var(--doehealth-section-height-scale, 1)),
-    calc((40rem + var(--app-vh, 100lvh) / 8) * var(--doehealth-section-height-scale, 1))
+    calc((23rem + var(--app-vh, 100lvh) / 8) * var(--doehealth-routed-calls-shader-height-scale, 1)),
+    calc(var(--app-vh, 100lvh) * 0.56 * var(--doehealth-routed-calls-shader-height-scale, 1)),
+    calc((40rem + var(--app-vh, 100lvh) / 8) * var(--doehealth-routed-calls-shader-height-scale, 1))
   );
-  max-height: calc(var(--app-vh, 100lvh) * 0.62 * var(--doehealth-section-height-scale, 1));
+  max-height: calc(var(--app-vh, 100lvh) * 0.62 * var(--doehealth-routed-calls-shader-height-scale, 1));
   border-radius: 0 clamp(1.1rem, 0.95rem + 0.75vmin, 1.45rem) clamp(1.1rem, 0.95rem + 0.75vmin, 1.45rem)
     0;
   box-shadow:
@@ -1717,7 +1717,8 @@ html[data-home-page][data-layout="desktop"] .doehealth-intro-call-sequence--pick
 }
 
 .doehealth-brown-band-stack {
-  --doehealth-section-height-scale: 0.75;
+  --doehealth-section-height-scale: 0.84375;
+  --doehealth-routed-calls-shader-height-scale: 1;
   --doehealth-brown-band-height: calc(
     var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.95 * var(--doehealth-section-height-scale)
   );

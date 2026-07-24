@@ -4974,9 +4974,9 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
 }
 /* iPhone — /doehealth intro band (Suisse sans, left-aligned). */
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doehealth-blank-brown-band {
-  min-height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.7125) !important;
-  height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.7125) !important;
-  max-height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.7125) !important;
+  min-height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.8015625) !important;
+  height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.8015625) !important;
+  max-height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.8015625) !important;
   box-sizing: border-box;
 }
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doehealth-intro-band {
@@ -4985,9 +4985,9 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .do
   --doehealth-intro-ink-muted: rgba(61, 46, 31, 0.66);
   --doehealth-intro-ink-faint: rgba(61, 46, 31, 0.46);
   position: relative !important;
-  min-height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.7125) !important;
-  height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.7125) !important;
-  max-height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.7125) !important;
+  min-height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.8015625) !important;
+  height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.8015625) !important;
+  max-height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.8015625) !important;
   box-sizing: border-box;
   display: flex !important;
   flex-direction: column !important;
@@ -11724,9 +11724,9 @@ html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth {
   --doehealth-intro-ink-faint: rgba(61, 46, 31, 0.46);
 }
 html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-blank-brown-band {
-  min-height: 75dvh !important;
-  height: 75dvh !important;
-  max-height: 75dvh !important;
+  min-height: 84.375dvh !important;
+  height: 84.375dvh !important;
+  max-height: 84.375dvh !important;
   box-sizing: border-box;
 }
 html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-intro-band {
@@ -11734,9 +11734,9 @@ html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehea
   flex-direction: column !important;
   justify-content: center !important;
   box-sizing: border-box;
-  min-height: 75dvh !important;
-  height: 75dvh !important;
-  max-height: 75dvh !important;
+  min-height: 84.375dvh !important;
+  height: 84.375dvh !important;
+  max-height: 84.375dvh !important;
   padding-top: calc(var(--desktop-nav-height) + var(--desktop-section-pad-y)) !important;
   padding-bottom: var(--desktop-section-pad-y) !important;
   overflow: visible !important;
