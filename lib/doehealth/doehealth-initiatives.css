@@ -1490,12 +1490,17 @@ html[data-home-page][data-layout="desktop"]
 
 /* ── Active agents band (orbit on brown band — no outer console shell) ── */
 
-.doehealth-active-agents-sequence,
-.doehealth-active-agents-sequence__stage,
-.doehealth-intro-band--active-agents .doehealth-intro-stage,
-.doehealth-intro-band--active-agents .doehealth-intro-band__cluster,
-.doehealth-intro-band--active-agents .doehealth-intro-band__shell {
-  overflow: visible;
+/* Animate a custom angle so circle placement transforms stay composed, not replaced. */
+@property --doehealth-orbit-spin {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 0deg;
+}
+
+@keyframes doehealth-active-agents-orbit-spin {
+  to {
+    --doehealth-orbit-spin: 360deg;
+  }
 }
 
 .doehealth-active-agents-sequence__stage {
@@ -1509,7 +1514,6 @@ html[data-home-page][data-layout="desktop"]
 .doehealth-active-agents {
   width: 100%;
   max-width: 100%;
-  overflow: visible;
 }
 
 .doehealth-active-agents__stage {
@@ -1519,8 +1523,6 @@ html[data-home-page][data-layout="desktop"]
   max-width: 100%;
   margin-inline: 0;
   aspect-ratio: 1;
-  /* Room around the ring so outward-spread agents are not clipped at the bottom. */
-  padding: clamp(0.75rem, 2.8vw, 1.55rem);
   min-height: min(
     calc(
       (100vw - var(--doehealth-intro-title-inset-x) - var(--doehealth-ui-rail-right))
@@ -1543,20 +1545,20 @@ html[data-home-page][data-layout="desktop"]
   display: grid;
   place-items: center;
   pointer-events: none;
-  overflow: visible;
 }
 
 .doehealth-active-agents__orbit.product-landing-workspace__orbit .product-landing-workspace__orbit-ring {
   width: min(100cqw, 100cqh);
   max-width: 100%;
   margin-inline: auto;
-  overflow: visible;
-  /* Higher overlap factor pushes rings outward without changing circle size. */
+  /* Scaled orbit — centered in rail, open middle. Higher overlap pushes rings outward. */
   --orbit-size: clamp(8.5rem, 38cqw, 14.25rem);
-  --orbit-edge-gap: 0;
-  --orbit-overlap: 1.07;
+  --orbit-edge-gap: clamp(0rem, 0.28vw, 0.16rem);
+  --orbit-overlap: 1;
   --orbit-distance: calc((50cqw - var(--orbit-size) / 2 - var(--orbit-edge-gap)) * var(--orbit-overlap));
   --orbit-inner: calc(var(--orbit-distance) * 2 - var(--orbit-size));
+  --doehealth-orbit-spin: 0deg;
+  animation: doehealth-active-agents-orbit-spin 96s linear infinite;
 }
 
 .doehealth-active-agents__orbit .product-landing-workspace__orbit-center {
@@ -1564,22 +1566,32 @@ html[data-home-page][data-layout="desktop"]
   height: max(var(--orbit-inner), calc(var(--orbit-size) * 0.72));
 }
 
+/* Compose spin into existing angle + radius transform (do not replace it). */
+.doehealth-active-agents__orbit .product-landing-workspace__orbit-circle {
+  transform: rotate(calc(var(--orbit-angle) + var(--doehealth-orbit-spin)))
+    translateY(calc(var(--orbit-distance) * -1));
+}
+
 .doehealth-active-agents__orbit .product-landing-workspace__orbit-circle::before {
   border: 1px solid rgba(212, 165, 116, 0.14);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.035),
     0 10px 24px rgba(26, 18, 8, 0.22);
+  /* Keep disc fill upright while the ring turns. */
+  transform: rotate(calc((var(--orbit-angle) + var(--doehealth-orbit-spin)) * -1));
 }
 
 .doehealth-active-agents__orbit .product-landing-workspace__orbit-circle-content {
-  gap: clamp(0.22rem, 0.55vw, 0.36rem);
-  padding: clamp(0.52rem, 1.15vw, 0.78rem);
+  gap: clamp(0.2rem, 0.5vw, 0.32rem);
+  padding: clamp(0.58rem, 1.25vw, 0.82rem);
   color: #f2e8da;
+  /* Keep labels/icons upright while the ring turns. */
+  transform: rotate(calc((var(--orbit-angle) + var(--doehealth-orbit-spin)) * -1));
 }
 
 .doehealth-active-agents__orbit .product-landing-workspace__orbit-circle-icon {
-  width: clamp(1.95rem, 5.4vw, 2.85rem);
-  height: clamp(1.95rem, 5.4vw, 2.85rem);
+  width: clamp(1.72rem, 4.85vw, 2.45rem);
+  height: clamp(1.72rem, 4.85vw, 2.45rem);
   color: #d4a574;
 }
 
@@ -1589,7 +1601,7 @@ html[data-home-page][data-layout="desktop"]
   -webkit-background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
-  font-size: clamp(0.82rem, 2vw, 1.12rem);
+  font-size: clamp(0.72rem, 1.75vw, 0.98rem);
   line-height: 1.06;
 }
 
@@ -1611,10 +1623,16 @@ html[data-home-page][data-layout="desktop"]
   opacity: 0.92;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .doehealth-active-agents__orbit.product-landing-workspace__orbit .product-landing-workspace__orbit-ring {
+    animation: none;
+    --doehealth-orbit-spin: 0deg;
+  }
+}
+
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-active-agents__stage {
-  padding: clamp(1rem, 1.6vw, 1.85rem);
   min-height: min(
     calc(60vw * var(--doehealth-section-height-scale, 1)),
     calc(40rem * var(--doehealth-section-height-scale, 1))
@@ -1626,22 +1644,7 @@ html[data-home-page][data-layout="desktop"]
   .doehealth-active-agents__orbit.product-landing-workspace__orbit
   .product-landing-workspace__orbit-ring {
   --orbit-size: clamp(10.5rem, 30cqw, 15.5rem);
-  --orbit-overlap: 1.07;
-}
-
-html[data-home-page][data-layout="desktop"]
-  .doe-desktop-root--doehealth
-  .doehealth-active-agents__orbit
-  .product-landing-workspace__orbit-circle-icon {
-  width: clamp(2.15rem, 2.4vw, 3rem);
-  height: clamp(2.15rem, 2.4vw, 3rem);
-}
-
-html[data-home-page][data-layout="desktop"]
-  .doe-desktop-root--doehealth
-  .doehealth-active-agents__orbit
-  .product-landing-workspace__orbit-circle-name-line {
-  font-size: clamp(0.9rem, 0.72rem + 0.45vw, 1.2rem);
+  --orbit-overlap: 1;
 }
 
 .doehealth-intro-call-sequence__call-reveal,
