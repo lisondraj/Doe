@@ -4,7 +4,9 @@ import { useLayoutEffect, useState } from "react";
 
 import { DoePhoneCallHistoryVisual } from "@/components/doephone/DoePhoneCallHistoryVisual";
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
+import type { ProtoGrainGradientSurface } from "@/lib/proto/proto-grain-gradient";
 import {
+  DOEHEALTH_ROUTED_CALLS_LEFT_2_SHADER,
   DOEHEALTH_ROUTED_CALLS_LEFT_SHADER,
   DOEHEALTH_ROUTED_CALLS_RIGHT_SHADER,
 } from "@/lib/doehealth/doehealth-routed-calls-shader";
@@ -14,8 +16,25 @@ import {
   resolveDoePhoneVariant,
 } from "@/lib/doephone/resolve-doe-phone-variant";
 
+export type DoeHealthRoutedCallsShaderPreset = "left" | "left-2" | "right";
+
+const DOEHEALTH_ROUTED_CALLS_SHADERS: Record<
+  DoeHealthRoutedCallsShaderPreset,
+  ProtoGrainGradientSurface
+> = {
+  left: DOEHEALTH_ROUTED_CALLS_LEFT_SHADER,
+  "left-2": DOEHEALTH_ROUTED_CALLS_LEFT_2_SHADER,
+  right: DOEHEALTH_ROUTED_CALLS_RIGHT_SHADER,
+};
+
 /** /doehealth — standalone shader + call history UI (not wired through main-page carousel card). */
-export function DoeHealthRoutedCallsShaderPanel({ bleedRight = false }: { bleedRight?: boolean }) {
+export function DoeHealthRoutedCallsShaderPanel({
+  bleedRight = false,
+  shaderPreset,
+}: {
+  bleedRight?: boolean;
+  shaderPreset?: DoeHealthRoutedCallsShaderPreset;
+}) {
   const [layout, setLayout] = useState<"phone" | "desktop">(() =>
     readBootstrappedDoePhoneVariant() === "desktop" ? "desktop" : "phone",
   );
@@ -28,7 +47,9 @@ export function DoeHealthRoutedCallsShaderPanel({ bleedRight = false }: { bleedR
     return () => mq.removeEventListener("change", sync);
   }, []);
 
-  const shader = bleedRight ? DOEHEALTH_ROUTED_CALLS_RIGHT_SHADER : DOEHEALTH_ROUTED_CALLS_LEFT_SHADER;
+  const preset: DoeHealthRoutedCallsShaderPreset =
+    shaderPreset ?? (bleedRight ? "right" : "left");
+  const shader = DOEHEALTH_ROUTED_CALLS_SHADERS[preset];
   const { variant, colors, colorBack } = shader;
 
   return (

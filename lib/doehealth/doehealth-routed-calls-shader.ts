@@ -19,6 +19,17 @@ export const DOEHEALTH_ROUTED_CALLS_LEFT_SHADER: ProtoGrainGradientSurface = {
   colorBack: DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE.back,
 };
 
+/** Second left-bleed shader — same dusk palette, blob drift from the left edge. */
+export const DOEHEALTH_ROUTED_CALLS_LEFT_2_SHADER: ProtoGrainGradientSurface = {
+  variant: "doehealth-routed-calls-left-2",
+  colors: [
+    DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE.ember,
+    DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE.clay,
+    DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE.sand,
+  ],
+  colorBack: DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE.back,
+};
+
 /** Right-bleed shader — same dusk palette, Integrations-band wave flow. */
 export const DOEHEALTH_ROUTED_CALLS_RIGHT_SHADER: ProtoGrainGradientSurface = {
   variant: "home-integrations",

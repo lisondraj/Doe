@@ -104,6 +104,7 @@ export type ProtoGrainGradientVariant =
   | "inbox"
   | "doehealth-routed-calls"
   | "doehealth-routed-calls-left"
+  | "doehealth-routed-calls-left-2"
   | "doehealth-routed-calls-right"
   | "ambient"
   | "ambient-band"
@@ -306,6 +307,20 @@ export const PROTO_GRAIN_GRADIENT_PRESETS: Record<ProtoGrainGradientVariant, Pro
     worldWidth: 1280,
     worldHeight: 960,
     speed: 0.28,
+  },
+  /** /doehealth — second left-bleed routed calls (warm blob drift mid-left). */
+  "doehealth-routed-calls-left-2": {
+    shape: "blob",
+    softness: 0.68,
+    intensity: 0.17,
+    fit: "cover",
+    rotation: 118,
+    offsetX: -0.28,
+    offsetY: 0.08,
+    scale: 1.16,
+    worldWidth: 1280,
+    worldHeight: 960,
+    speed: 0.32,
   },
   /** /doehealth — right-bleed routed calls (cool wave drift upper-right). */
   "doehealth-routed-calls-right": {
