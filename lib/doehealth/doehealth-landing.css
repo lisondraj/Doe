@@ -86,6 +86,21 @@ html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth nav.des
   stroke: #1a1208 !important;
 }
 
+/* Hero agent title pills — gold fill + border like nav mail icon */
+.doephone-mobile-root--doehealth .hero-speaking-orb__tag,
+.doe-desktop-root--doehealth .hero-speaking-orb__tag {
+  border: 1px solid rgba(212, 165, 116, 0.42);
+  background: var(--doehealth-gold-fill-gradient);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.24);
+}
+
+.doephone-mobile-root--doehealth .hero-speaking-orb__tag-text,
+.doe-desktop-root--doehealth .hero-speaking-orb__tag-text {
+  color: #1a1208;
+}
+
 /* Flat gold type — no glow under gradient text (hero, nav, titles, cards, convo UI). */
 .doephone-mobile-root--doehealth :where(
     .doehealth-hero-headline,
