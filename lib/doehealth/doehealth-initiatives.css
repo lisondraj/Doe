@@ -555,6 +555,8 @@ html[data-home-page][data-layout="desktop"]
   --doehealth-ui-rail-right: var(--proto-phone-gutter-right);
   /* Matches legacy shell-padded rail box so intro call summary stays put. */
   --doehealth-rail-viewport-trim-x: var(--proto-phone-gutter-right);
+  /* Space under UI before gold section title — matches intro call-summary overlap. */
+  --doehealth-ui-before-title-space: clamp(2.35rem, 8.5vw, 3.65rem);
   overflow: visible;
 }
 
@@ -633,6 +635,13 @@ html[data-home-page][data-layout="desktop"]
   align-items: stretch;
   justify-content: flex-start;
   overflow: visible;
+}
+
+/* Match Automate Your Front Desk — UI-to-title breathing room on lower bands. */
+.doehealth-intro-band--day-summary .doehealth-intro-stage,
+.doehealth-intro-band--active-agents .doehealth-intro-stage,
+.doehealth-intro-band--routed-calls .doehealth-intro-stage {
+  padding-bottom: var(--doehealth-ui-before-title-space);
 }
 
 /* Shared full-bleed rail — left title inset + right UI gutter (matches call summary box). */
@@ -750,7 +759,7 @@ html[data-home-page][data-layout="desktop"]
   --dhi-intro-reveal-duration: 1.4s;
   --dhi-intro-call-card-width: 26.75rem;
   --dhi-intro-summary-card-width: min(16.25rem, 54vw);
-  --dhi-intro-summary-overlap-y: clamp(2.35rem, 8.5vw, 3.65rem);
+  --dhi-intro-summary-overlap-y: var(--doehealth-ui-before-title-space, clamp(2.35rem, 8.5vw, 3.65rem));
   padding-bottom: var(--dhi-intro-summary-overlap-y);
 }
 
