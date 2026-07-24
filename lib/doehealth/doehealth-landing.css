@@ -23,19 +23,69 @@
   letter-spacing: -0.035em;
 }
 
-/* Doe logo — page gold text treatment, keep existing Lora/font classes */
+/* Doe logo — mobile /doehealth always uses page gold */
 html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav.proto-nav-scroll-frost .proto-nav-chrome-logo,
 html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav.proto-nav-scroll-frost .proto-nav-chrome-logo a,
 html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav .proto-nav-chrome-logo,
-html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav .proto-nav-chrome-logo a,
-html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth nav.desktop-punched-nav .proto-nav-chrome-logo,
-html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth nav.desktop-punched-nav .proto-nav-chrome-logo a {
+html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav .proto-nav-chrome-logo a {
   background: var(--doehealth-gold-text-gradient) !important;
   background-clip: text !important;
   -webkit-background-clip: text !important;
   color: transparent !important;
   -webkit-text-fill-color: transparent !important;
   text-shadow: none !important;
+}
+
+/* Desktop /doehealth — dark brown logo on hero; gold after scrolling past hero. */
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  nav.desktop-punched-nav
+  .proto-nav-chrome-logo,
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  nav.desktop-punched-nav
+  .proto-nav-chrome-logo
+  a {
+  background: none !important;
+  background-clip: border-box !important;
+  -webkit-background-clip: border-box !important;
+  color: #1a1208 !important;
+  -webkit-text-fill-color: #1a1208 !important;
+  text-shadow: none !important;
+  transition:
+    color 0.24s ease,
+    -webkit-text-fill-color 0.24s ease,
+    background 0.24s ease;
+}
+
+html[data-home-page][data-layout="desktop"][data-home-banner-dismissed="true"]
+  .doe-desktop-root--doehealth
+  nav.desktop-punched-nav
+  .proto-nav-chrome-logo,
+html[data-home-page][data-layout="desktop"][data-home-banner-dismissed="true"]
+  .doe-desktop-root--doehealth
+  nav.desktop-punched-nav
+  .proto-nav-chrome-logo
+  a {
+  background: var(--doehealth-gold-text-gradient) !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-home-page][data-layout="desktop"]
+    .doe-desktop-root--doehealth
+    nav.desktop-punched-nav
+    .proto-nav-chrome-logo,
+  html[data-home-page][data-layout="desktop"]
+    .doe-desktop-root--doehealth
+    nav.desktop-punched-nav
+    .proto-nav-chrome-logo
+    a {
+    transition: none;
+  }
 }
 
 /* Hero dial ball — soft gold rim glow so spheres sit in the page gold system */

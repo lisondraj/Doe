@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 
 import { inter } from "@/lib/home/fonts";
 
@@ -34,7 +34,7 @@ export function DoeHealthTopBanner({
 } = {}) {
   const [dismissed, setDismissed] = useState(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!dismissPastHero) return undefined;
 
     const html = document.documentElement;
