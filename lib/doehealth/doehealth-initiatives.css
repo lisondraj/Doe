@@ -638,9 +638,12 @@ html[data-home-page][data-layout="desktop"]
 }
 
 /* Match Automate Your Front Desk — UI-to-title breathing room on lower bands. */
+.doehealth-brown-band-stack .doehealth-intro-band--initiatives:not(:first-child) .doehealth-intro-stage {
+  padding-top: var(--doehealth-ui-before-title-space);
+}
+
 .doehealth-intro-band--day-summary .doehealth-intro-stage,
-.doehealth-intro-band--active-agents .doehealth-intro-stage,
-.doehealth-intro-band--routed-calls .doehealth-intro-stage {
+.doehealth-intro-band--active-agents .doehealth-intro-stage {
   padding-bottom: var(--doehealth-ui-before-title-space);
 }
 
@@ -987,7 +990,8 @@ html[data-home-page][data-layout="desktop"]
 .doehealth-routed-calls-sequence,
 .doehealth-routed-calls-sequence__stage,
 .doehealth-routed-calls,
-.doehealth-intro-band--routed-calls .doehealth-intro-stage {
+.doehealth-intro-band--routed-calls .doehealth-intro-stage,
+.doehealth-intro-band--routed-calls-right .doehealth-intro-stage {
   overflow: visible;
 }
 
@@ -1021,6 +1025,16 @@ html[data-home-page][data-layout="desktop"]
   box-shadow:
     0 10px 32px rgba(0, 0, 0, 0.14),
     0 24px 56px rgba(26, 18, 8, 0.12);
+}
+
+.doehealth-routed-calls__shader-card--bleed-right {
+  --doehealth-routed-calls-shader-bleed-right: calc(
+    var(--doehealth-rail-viewport-trim-x, 0px) + var(--doehealth-ui-rail-right)
+  );
+  width: calc(100% + var(--doehealth-routed-calls-shader-bleed-right));
+  margin-right: calc(-1 * var(--doehealth-routed-calls-shader-bleed-right));
+  border-radius: clamp(1.1rem, 0.95rem + 0.75vmin, 1.45rem) 0 0
+    clamp(1.1rem, 0.95rem + 0.75vmin, 1.45rem);
 }
 
 .doehealth-routed-calls-shader-panel {
@@ -1061,6 +1075,12 @@ html[data-home-page][data-layout="desktop"]
   min-height: 100%;
   transform: scale(0.93);
   transform-origin: center center;
+}
+
+.doehealth-routed-calls-shader-panel__ui--bleed-right {
+  box-sizing: border-box;
+  width: calc(100% - var(--doehealth-routed-calls-shader-bleed-right, 0px));
+  margin-right: auto;
 }
 
 .doehealth-routed-calls-shader-panel .home-call-history-visual__summary,
@@ -1128,6 +1148,12 @@ html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-routed-calls__shader-card {
   border-radius: clamp(1.35rem, 1.05rem + 0.9vw, 2rem);
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-routed-calls__shader-card--bleed-right {
+  border-radius: clamp(1.35rem, 1.05rem + 0.9vw, 2rem) 0 0 clamp(1.35rem, 1.05rem + 0.9vw, 2rem);
 }
 
 html[data-home-page][data-layout="desktop"]

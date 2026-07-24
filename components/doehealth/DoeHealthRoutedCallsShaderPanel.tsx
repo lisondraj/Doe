@@ -12,7 +12,7 @@ import {
 } from "@/lib/doephone/resolve-doe-phone-variant";
 
 /** /doehealth — standalone shader + call history UI (not wired through main-page carousel card). */
-export function DoeHealthRoutedCallsShaderPanel() {
+export function DoeHealthRoutedCallsShaderPanel({ bleedRight = false }: { bleedRight?: boolean }) {
   const [layout, setLayout] = useState<"phone" | "desktop">(() =>
     readBootstrappedDoePhoneVariant() === "desktop" ? "desktop" : "phone",
   );
@@ -28,7 +28,9 @@ export function DoeHealthRoutedCallsShaderPanel() {
   const { variant, colors, colorBack } = DOEHEALTH_ROUTED_CALLS_SHADER;
 
   return (
-    <div className="doehealth-routed-calls-shader-panel">
+    <div
+      className={`doehealth-routed-calls-shader-panel${bleedRight ? " doehealth-routed-calls-shader-panel--bleed-right" : ""}`}
+    >
       <ProtoGrainGradient
         variant={variant}
         colors={colors}
@@ -36,7 +38,10 @@ export function DoeHealthRoutedCallsShaderPanel() {
         static={layout === "desktop"}
         className="doehealth-routed-calls-shader-panel__gradient"
       />
-      <div className="doehealth-routed-calls-shader-panel__ui" aria-hidden>
+      <div
+        className={`doehealth-routed-calls-shader-panel__ui${bleedRight ? " doehealth-routed-calls-shader-panel__ui--bleed-right" : ""}`}
+        aria-hidden
+      >
         <DoePhoneCallHistoryVisual layout={layout} />
       </div>
     </div>

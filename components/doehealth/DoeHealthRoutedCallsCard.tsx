@@ -2,11 +2,21 @@ import { DoeHealthRoutedCallsShaderPanel } from "@/components/doehealth/DoeHealt
 import "@/lib/doehealth/doehealth-initiatives.css";
 
 /** /doehealth — routed calls shader shell on the brown band. */
-export function DoeHealthRoutedCallsCard({ className = "" }: { className?: string }) {
+export function DoeHealthRoutedCallsCard({
+  className = "",
+  bleedRight = false,
+}: {
+  className?: string;
+  bleedRight?: boolean;
+}) {
   return (
-    <div className={`doehealth-routed-calls${className ? ` ${className}` : ""}`}>
-      <div className="doehealth-routed-calls__shader-card">
-        <DoeHealthRoutedCallsShaderPanel />
+    <div
+      className={`doehealth-routed-calls${bleedRight ? " doehealth-routed-calls--bleed-right" : ""}${className ? ` ${className}` : ""}`}
+    >
+      <div
+        className={`doehealth-routed-calls__shader-card${bleedRight ? " doehealth-routed-calls__shader-card--bleed-right" : ""}`}
+      >
+        <DoeHealthRoutedCallsShaderPanel bleedRight={bleedRight} />
       </div>
     </div>
   );
