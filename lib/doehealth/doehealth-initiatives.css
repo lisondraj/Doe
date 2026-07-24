@@ -1636,16 +1636,40 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-active-agents__stage {
-  min-height: min(81.9vw, 53.4375rem);
-  max-height: min(81.9vw, 53.4375rem);
+  width: min(100%, min(73.75vw, 48rem));
+  margin-inline: auto;
+  min-height: min(73.75vw, 48rem);
+  max-height: min(73.75vw, 48rem);
 }
 
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-active-agents__orbit.product-landing-workspace__orbit
   .product-landing-workspace__orbit-ring {
-  --orbit-size: clamp(9.5rem, 26cqw, 14rem);
-  --orbit-overlap: 1;
+  --orbit-size: clamp(8.75rem, 24cqw, 12.85rem);
+  --orbit-overlap: 0.92;
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-active-agents__orbit
+  .product-landing-workspace__orbit-stat-value {
+  font-size: clamp(1.55rem, 1rem + 1.4vw, 2.15rem);
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-active-agents__orbit
+  .product-landing-workspace__orbit-circle-name-line {
+  font-size: clamp(0.68rem, 1.55vw, 0.9rem);
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-active-agents__orbit
+  .product-landing-workspace__orbit-circle-icon {
+  width: clamp(1.55rem, 4.25vw, 2.15rem);
+  height: clamp(1.55rem, 4.25vw, 2.15rem);
 }
 
 .doehealth-intro-call-sequence__call-reveal,
@@ -2221,6 +2245,44 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-brown-band-stack
+  > .doehealth-intro-band--active-agents
+  .doehealth-intro-band__shell {
+  justify-content: center !important;
+  padding-top: clamp(0.35rem, 0.85vw, 0.85rem);
+  padding-bottom: clamp(0.35rem, 0.85vw, 0.85rem);
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-brown-band-stack
+  > .doehealth-intro-band--active-agents
+  .doehealth-intro-band__cluster {
+  flex: 1;
+  min-height: 0;
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-band--active-agents
+  .doehealth-intro-stage {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding-top: 0;
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-band--active-agents
+  .doehealth-intro-band__section-title {
+  flex-shrink: 0;
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-brown-band-stack
   > .doehealth-intro-band--routed-calls
   .doehealth-intro-stage,
 html[data-home-page][data-layout="desktop"]
@@ -2553,7 +2615,7 @@ html[data-home-page][data-layout="desktop"]
     clamp(1.28rem, 1.05rem + 0.55vw, 1.55rem) + clamp(1.34rem, 1.1rem + 0.55vw, 1.62rem) +
       clamp(5.1rem, 4.25rem + 2.8vh, 6.5rem) + clamp(24rem, 44vh, 31rem)
   );
-  --dhi-intro-ui-fade-start: 72%;
+  --dhi-intro-ui-fade-start: 58%;
   display: flex;
   flex-direction: column;
   align-items: center;
