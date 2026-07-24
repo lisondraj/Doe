@@ -16,43 +16,73 @@ export function DoeHealthCallHistoryScroll({ children }: { children: ReactNode }
     let frame = 0;
     let lastTime = performance.now();
     let direction = 1;
-    let pauseUntil = performance.now() + 2400;
-    const speedPxPerMs = 0.0018;
-    const edgePauseMs = 3200;
+    let pauseUntil = performance.now() + 1800;
+    /** ~3.2px/s — slow drift, perceptible within a few seconds */
+    const speedPxPerMs = 0.0032;
+    const edgePauseMs = 2800;
+    let running = true;
+
+    const maxScroll = () => Math.max(0, el.scrollHeight - el.clientHeight);
 
     const tick = (now: number) => {
-      if (reducedMotion.matches) return;
+      if (!running || reducedMotion.matches) return;
 
-      const maxScroll = el.scrollHeight - el.clientHeight;
-      if (maxScroll <= 4) return;
+      const scrollRange = maxScroll();
 
-      if (now < pauseUntil) {
-        frame = requestAnimationFrame(tick);
-        return;
+      if (scrollRange > 2) {
+        if (now >= pauseUntil) {
+          const delta = Math.min(now - lastTime, 48);
+          lastTime = now;
+
+          let next = el.scrollTop + delta * speedPxPerMs * direction;
+
+          if (next >= scrollRange - 0.5) {
+            next = scrollRange;
+            direction = -1;
+            pauseUntil = now + edgePauseMs;
+          } else if (next <= 0.5) {
+            next = 0;
+            direction = 1;
+            pauseUntil = now + edgePauseMs;
+          }
+
+          el.scrollTop = next;
+        }
+      } else {
+        lastTime = now;
       }
 
-      const delta = Math.min(now - lastTime, 48);
-      lastTime = now;
-
-      let next = el.scrollTop + delta * speedPxPerMs * direction;
-
-      if (next >= maxScroll) {
-        next = maxScroll;
-        direction = -1;
-        pauseUntil = now + edgePauseMs;
-      } else if (next <= 0) {
-        next = 0;
-        direction = 1;
-        pauseUntil = now + edgePauseMs;
-      }
-
-      el.scrollTop = next;
       frame = requestAnimationFrame(tick);
     };
 
-    frame = requestAnimationFrame(tick);
+    const kick = () => {
+      lastTime = performance.now();
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(tick);
+    };
 
-    return () => cancelAnimationFrame(frame);
+    const resizeObserver = new ResizeObserver(kick);
+    resizeObserver.observe(el);
+    const content = el.firstElementChild;
+    if (content) resizeObserver.observe(content);
+
+    void document.fonts.ready.then(kick);
+    kick();
+
+    const onReducedMotionChange = () => {
+      if (reducedMotion.matches) {
+        running = false;
+        cancelAnimationFrame(frame);
+      }
+    };
+    reducedMotion.addEventListener("change", onReducedMotionChange);
+
+    return () => {
+      running = false;
+      cancelAnimationFrame(frame);
+      resizeObserver.disconnect();
+      reducedMotion.removeEventListener("change", onReducedMotionChange);
+    };
   }, []);
 
   return (

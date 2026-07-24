@@ -17,6 +17,12 @@ export const DOEHEALTH_CALL_HISTORY_INTRO_TURNS = DOEHEALTH_CALL_HISTORY_INTRO_T
   return turn;
 });
 
+export const DOEHEALTH_CALL_SUMMARY = {
+  title: "Call Summary",
+  answeredBy: "Answered by Doe Agent",
+  points: ["Appointment booked", "Prior auth confirmed", "Notified Dr. Chen"] as const,
+} as const;
+
 export const DOEHEALTH_CALL_HISTORY_TREE = {
   heroName: "Sarah Westfield",
   phone: "(512) 555-0192",

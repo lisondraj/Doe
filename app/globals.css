@@ -4991,7 +4991,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .do
   box-sizing: border-box;
   display: flex !important;
   flex-direction: column !important;
-  justify-content: flex-start !important;
+  justify-content: center !important;
   overflow: visible !important;
 }
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doehealth-intro-band__shell {
@@ -4999,11 +4999,15 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .do
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: stretch;
   min-height: 0;
   width: 100%;
   padding-inline: var(--proto-phone-gutter-left);
   padding-block: clamp(0.2rem, 0.65vmin, 0.38rem);
   overflow: visible;
+}
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doehealth-intro-band__cluster {
+  padding-bottom: max(clamp(0.35rem, 0.8vw, 0.55rem), env(safe-area-inset-bottom, 0px));
 }
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doehealth-intro-band__title {
   flex: 0 0 auto;
@@ -11728,13 +11732,13 @@ html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehea
 html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-intro-band {
   display: flex !important;
   flex-direction: column !important;
-  justify-content: flex-start !important;
+  justify-content: center !important;
   box-sizing: border-box;
   min-height: 100dvh !important;
   height: 100dvh !important;
   max-height: 100dvh !important;
   padding-top: calc(var(--desktop-nav-height) + var(--desktop-section-pad-y)) !important;
-  padding-bottom: 0 !important;
+  padding-bottom: var(--desktop-section-pad-y) !important;
   overflow: visible !important;
   background-color: #faf0d8 !important;
 }
@@ -11742,6 +11746,7 @@ html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehea
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: stretch;
   flex: 1 1 auto;
   min-height: 0;
   width: 100%;

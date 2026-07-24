@@ -183,18 +183,20 @@ html[data-home-page][data-layout="desktop"]
 }
 
 .doehealth-initiatives__call-history-scroll {
-  --dhi-call-history-scroll-max: clamp(19rem, 52vw, 23rem);
+  --dhi-call-history-scroll-max: clamp(21rem, 56vw, 25.5rem);
   --dhi-call-history-fade-size: clamp(1.35rem, 2.4vw, 2rem);
   --dhi-call-history-bleed-x: 0.65rem;
   box-sizing: border-box;
   width: calc(100% + (var(--dhi-call-history-bleed-x) * 2));
+  height: var(--dhi-call-history-scroll-max);
   min-height: var(--dhi-call-history-scroll-max);
   max-height: var(--dhi-call-history-scroll-max);
   margin-inline: calc(-1 * var(--dhi-call-history-bleed-x));
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: scroll;
   overscroll-behavior: contain;
   scroll-behavior: auto;
+  -webkit-overflow-scrolling: touch;
   -webkit-mask-image: linear-gradient(
     to bottom,
     transparent 0,
@@ -249,13 +251,14 @@ html[data-home-page][data-layout="desktop"]
 .doehealth-initiatives__call-history .product-landing-live-convo-stage {
   margin-top: 0;
   padding-bottom: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .doehealth-initiatives__call-history .product-landing-live-convo {
   -webkit-mask-image: none;
   mask-image: none;
   gap: 0;
+  padding-bottom: clamp(1.75rem, 4.5vw, 2.65rem);
 }
 
 /* Sarah card — caller flush left, agent flush right (not product2 rail 50% left-column replies). */
@@ -539,9 +542,18 @@ html[data-home-page][data-layout="desktop"]
   min-height: 0;
   display: flex;
   flex-direction: column;
-  align-items: center !important;
+  align-items: stretch !important;
   justify-content: center !important;
   position: relative;
+}
+
+.doehealth-intro-band__cluster {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  flex: 0 0 auto;
+  gap: clamp(0.42rem, 0.95vw, 0.68rem);
 }
 
 .doehealth-intro-band__section-title {
@@ -556,9 +568,9 @@ html[data-home-page][data-layout="desktop"]
   width: 100%;
   margin: 0;
   padding:
-    clamp(0.35rem, 0.75vw, 0.55rem)
+    clamp(0.12rem, 0.28vw, 0.22rem)
     var(--proto-phone-gutter-right)
-    max(clamp(0.85rem, 1.8vw, 1.45rem), env(safe-area-inset-bottom, 0px))
+    0
     var(--doehealth-intro-title-inset-x);
   background: linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%);
   background-clip: text;
@@ -589,18 +601,16 @@ html[data-home-page][data-layout="desktop"]
   .doehealth-intro-band__section-title {
   padding-left: var(--doehealth-intro-title-inset-x);
   padding-right: var(--desktop-page-inset-x, 2.5rem);
-  padding-bottom: max(
-    calc(var(--desktop-section-pad-y, 1.5rem) + clamp(0.35rem, 0.8vw, 0.65rem)),
-    env(safe-area-inset-bottom, 0px)
-  );
+  padding-bottom: 0;
   font-size: clamp(3rem, 1.5rem + 4.5vw, 4.75rem);
   line-height: 1.02;
 }
 
 .doehealth-intro-band--initiatives .doehealth-intro-stage {
-  flex: 1 1 auto;
+  flex: 0 0 auto;
   min-height: 0;
-  justify-content: center;
+  align-items: stretch;
+  justify-content: flex-start;
   overflow: visible;
 }
 
@@ -688,53 +698,165 @@ html[data-home-page][data-layout="desktop"]
 
 .doehealth-intro-call-sequence {
   position: relative;
-  width: min(100%, 22.5rem);
-  max-width: min(100%, 22.5rem);
   box-sizing: border-box;
   overflow: visible;
   --dhi-intro-reveal-duration: 1.4s;
-  --dhi-intro-call-card-width: 28rem;
+  --dhi-intro-call-card-width: 26.75rem;
+  --dhi-intro-summary-card-width: min(16.25rem, 54vw);
+  --dhi-intro-summary-overlap-y: clamp(2.35rem, 8.5vw, 3.65rem);
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(50% - 50vw);
+  padding-left: var(--doehealth-intro-title-inset-x);
+  padding-right: var(--proto-phone-gutter-right);
+  padding-bottom: var(--dhi-intro-summary-overlap-y);
 }
 
-.doehealth-intro-call-sequence__stack {
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  align-items: stretch;
-  gap: clamp(0.72rem, 0.58rem + 0.45vw, 0.92rem);
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-call-sequence {
+  padding-left: var(--doehealth-intro-title-inset-x);
+  padding-right: var(--desktop-page-inset-x, 2.5rem);
+}
+
+.doehealth-intro-call-sequence__call-card.doehealth-initiatives {
+  justify-content: flex-start;
+}
+
+.doehealth-intro-call-sequence__stage {
+  position: relative;
+  width: min(100%, var(--dhi-intro-call-card-width));
+  max-width: min(var(--dhi-intro-call-card-width), 100%);
   overflow: visible;
 }
 
 .doehealth-intro-call-sequence__call-card {
   --dhi-card-max: var(--dhi-intro-call-card-width);
-  align-self: center;
-  width: var(--dhi-intro-call-card-width);
-  max-width: min(var(--dhi-intro-call-card-width), calc(100vw - 3.3rem));
+  position: relative;
+  z-index: 2;
+  align-self: flex-start;
+  width: 100%;
+  max-width: 100%;
   flex-shrink: 0;
+}
+
+.doehealth-intro-call-sequence__summary-card {
+  position: absolute;
+  right: 0;
+  bottom: calc(var(--dhi-intro-summary-overlap-y) * 0.58);
+  z-index: 4;
+  width: var(--dhi-intro-summary-card-width);
+  max-width: var(--dhi-intro-summary-card-width);
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .doehealth-intro-call-sequence__call-card {
-  max-width: min(
-    var(--dhi-intro-call-card-width),
-    calc(
-      100vw - var(--proto-phone-gutter-left, 1.65rem) - var(--proto-phone-gutter-right, 1.65rem)
-    )
-  );
+  max-width: 100%;
 }
 
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-intro-call-sequence__call-card {
-  max-width: min(
-    var(--dhi-intro-call-card-width),
-    calc(100vw - var(--desktop-page-inset-x, 2rem) * 2)
-  );
+  max-width: min(var(--dhi-intro-call-card-width), 100%);
 }
 
 .doehealth-intro-call-sequence__call-card .doehealth-initiatives__card {
   width: 100%;
   max-width: none;
+}
+
+.doehealth-call-summary.doehealth-initiatives__card {
+  --dhi-card-from: #2a2118;
+  --dhi-card-to: #171008;
+  --dhi-card-border: rgba(212, 165, 116, 0.14);
+  --dhi-text: #f2e8da;
+  --dhi-text-soft: rgba(242, 232, 218, 0.72);
+  --dhi-text-muted: rgba(242, 232, 218, 0.48);
+  box-sizing: border-box;
+  border: 1px solid var(--dhi-card-border);
+  border-radius: 0.85rem;
+  background-color: #171008;
+  background-image: linear-gradient(168deg, var(--dhi-card-from) 0%, var(--dhi-card-to) 100%);
+  isolation: isolate;
+  padding: clamp(0.92rem, 0.78rem + 0.45vw, 1.08rem) clamp(0.95rem, 0.82rem + 0.42vw, 1.1rem)
+    clamp(0.95rem, 0.82rem + 0.45vw, 1.12rem);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.035),
+    0 16px 42px rgba(26, 18, 8, 0.28);
+}
+
+.doehealth-intro-call-sequence__summary-card.doehealth-call-summary.doehealth-initiatives__card {
+  width: var(--dhi-intro-summary-card-width);
+  max-width: var(--dhi-intro-summary-card-width);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.035),
+    0 20px 46px rgba(26, 18, 8, 0.34);
+}
+
+.doehealth-call-summary__title {
+  margin: 0 0 clamp(0.34rem, 0.28rem + 0.18vw, 0.42rem);
+  background: linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  font-size: clamp(1.55rem, 1.08rem + 1.45vw, 2.05rem);
+  font-weight: 600;
+  letter-spacing: -0.038em;
+  line-height: 0.98;
+  text-wrap: balance;
+  filter: drop-shadow(0 2px 14px rgba(212, 165, 116, 0.12));
+}
+
+.doehealth-call-summary__agent {
+  margin: 0 0 clamp(0.72rem, 0.58rem + 0.38vw, 0.88rem);
+  color: var(--dhi-text-muted);
+  font-size: clamp(0.72rem, 0.68rem + 0.14vw, 0.8rem);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+}
+
+.doehealth-call-summary__points {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.42rem, 0.34rem + 0.22vw, 0.52rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.doehealth-call-summary__point {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.48rem;
+  min-height: 1.55rem;
+  color: var(--dhi-text-soft);
+  font-size: clamp(0.78rem, 0.72rem + 0.18vw, 0.88rem);
+  font-weight: 600;
+  letter-spacing: -0.016em;
+  line-height: 1.15;
+}
+
+.doehealth-call-summary__point-check-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.05rem;
+  height: 1.05rem;
+  border-radius: 999px;
+  color: rgba(212, 165, 116, 0.92);
+  background: rgba(212, 165, 116, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.doehealth-call-summary__point-check {
+  width: 0.62rem;
+  height: 0.62rem;
+}
+
+.doehealth-call-summary__point-label {
+  color: rgba(242, 232, 218, 0.84);
 }
 
 .doehealth-intro-call-sequence__call-reveal,
