@@ -19,9 +19,9 @@ export const DOEHEALTH_ROUTED_CALLS_LEFT_SHADER: ProtoGrainGradientSurface = {
   colorBack: DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE.back,
 };
 
-/** Right-bleed shader — same dusk palette as left, wave drift upper-right. */
+/** Right-bleed shader — same dusk palette, Integrations-band wave flow. */
 export const DOEHEALTH_ROUTED_CALLS_RIGHT_SHADER: ProtoGrainGradientSurface = {
-  variant: "doehealth-routed-calls-right",
+  variant: "home-integrations",
   colors: [
     DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE.ember,
     DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE.clay,
