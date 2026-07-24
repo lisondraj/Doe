@@ -1259,14 +1259,14 @@ html[data-home-page][data-layout="desktop"]
   pointer-events: none;
 }
 
-.doehealth-active-agents__orbit .product-landing-workspace__orbit-ring {
+.doehealth-active-agents__orbit.product-landing-workspace__orbit .product-landing-workspace__orbit-ring {
   width: min(100cqw, 100cqh);
   max-width: 100%;
   margin-inline: auto;
-  /* Scaled orbit — centered in rail, open middle. */
+  /* Scaled orbit — centered in rail, open middle. Higher overlap pushes rings outward. */
   --orbit-size: clamp(8.5rem, 38cqw, 14.25rem);
   --orbit-edge-gap: clamp(0.08rem, 0.42vw, 0.28rem);
-  --orbit-overlap: 0.78;
+  --orbit-overlap: 0.95;
   --orbit-distance: calc((50cqw - var(--orbit-size) / 2 - var(--orbit-edge-gap)) * var(--orbit-overlap));
   --orbit-inner: calc(var(--orbit-distance) * 2 - var(--orbit-size));
 }
@@ -1311,9 +1311,10 @@ html[data-home-page][data-layout="desktop"]
 
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
-  .doehealth-active-agents__orbit
+  .doehealth-active-agents__orbit.product-landing-workspace__orbit
   .product-landing-workspace__orbit-ring {
   --orbit-size: clamp(10.5rem, 30cqw, 15.5rem);
+  --orbit-overlap: 0.95;
 }
 
 .doehealth-intro-call-sequence__call-reveal,
@@ -1745,6 +1746,11 @@ html[data-home-page][data-layout="desktop"] .doehealth-intro-call-sequence--pick
 /* First brown band — Sarah call card UI at original height/position (unscaled). */
 .doehealth-brown-band-stack > .doehealth-intro-band:first-child .doehealth-intro-call-sequence {
   --dhi-intro-summary-overlap-y: clamp(2.35rem, 8.5vw, 3.65rem);
+  padding-bottom: calc(var(--dhi-intro-summary-overlap-y) + 0.7rem);
+}
+
+.doehealth-brown-band-stack > .doehealth-intro-band:first-child .doehealth-intro-call-sequence__summary-card {
+  bottom: calc(var(--dhi-intro-summary-overlap-y) * 0.34);
 }
 
 .doehealth-brown-band-stack > .doehealth-intro-band:first-child .doehealth-initiatives__call-history-scroll {
