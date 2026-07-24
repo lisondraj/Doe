@@ -626,11 +626,13 @@ html[data-home-page][data-layout="desktop"]
   width: calc(100vw - 2 * var(--doehealth-rail-viewport-trim-x, 0px));
   max-width: calc(100vw - 2 * var(--doehealth-rail-viewport-trim-x, 0px));
   margin-inline: calc(50% - 50vw);
+  /* Bottom pad keeps descenders (e.g. “y” in “every”) inside the paint box. */
   padding:
     clamp(0.12rem, 0.28vw, 0.22rem)
     var(--doehealth-ui-rail-right)
-    0
+    0.18em
     var(--doehealth-intro-title-inset-x);
+  overflow: visible;
   background: linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%);
   background-clip: text;
   -webkit-background-clip: text;
@@ -638,7 +640,7 @@ html[data-home-page][data-layout="desktop"]
   font-size: clamp(2.35rem, 1.15rem + 6.8vmin, 3.85rem);
   font-weight: 400;
   letter-spacing: -0.035em;
-  line-height: 1.02;
+  line-height: 1.08;
   text-align: left;
   text-wrap: balance;
   pointer-events: none;
@@ -646,6 +648,7 @@ html[data-home-page][data-layout="desktop"]
 
 .doehealth-intro-band__section-title-line {
   display: block;
+  overflow: visible;
 }
 
 html[data-home-page][data-layout="desktop"]
@@ -659,9 +662,9 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-intro-band__section-title {
-  padding-bottom: 0;
+  padding-bottom: 0.18em;
   font-size: clamp(3rem, 1.5rem + 4.5vw, 4.75rem);
-  line-height: 1.02;
+  line-height: 1.08;
 }
 
 .doehealth-intro-band--initiatives .doehealth-intro-stage {
