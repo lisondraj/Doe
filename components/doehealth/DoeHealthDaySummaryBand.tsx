@@ -14,8 +14,8 @@ export function DoeHealthDaySummaryBand() {
       <div className="doehealth-intro-band__shell relative z-[10] flex min-h-0 w-full flex-1 flex-col items-stretch justify-center">
         <div className="doehealth-intro-band__cluster">
           <div className="doehealth-intro-stage">
-            <div className="doehealth-day-summary-sequence">
-              <div className="doehealth-day-summary-sequence__stage">
+            <div className="doehealth-day-summary-sequence doehealth-content-rail">
+              <div className="doehealth-day-summary-sequence__stage doehealth-content-rail__summary-edge">
                 <DoeHealthDaySummaryCard className="doehealth-day-summary-sequence__card" />
               </div>
             </div>

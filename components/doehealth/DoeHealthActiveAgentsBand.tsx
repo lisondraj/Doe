@@ -14,8 +14,8 @@ export function DoeHealthActiveAgentsBand() {
       <div className="doehealth-intro-band__shell relative z-[10] flex min-h-0 w-full flex-1 flex-col items-stretch justify-center">
         <div className="doehealth-intro-band__cluster">
           <div className="doehealth-intro-stage">
-            <div className="doehealth-active-agents-sequence">
-              <div className="doehealth-active-agents-sequence__stage">
+            <div className="doehealth-active-agents-sequence doehealth-content-rail">
+              <div className="doehealth-active-agents-sequence__stage doehealth-content-rail__summary-edge">
                 <DoeHealthActiveAgentsCard className="doehealth-active-agents-sequence__card" />
               </div>
             </div>

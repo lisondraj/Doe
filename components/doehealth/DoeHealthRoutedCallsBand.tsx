@@ -14,8 +14,8 @@ export function DoeHealthRoutedCallsBand() {
       <div className="doehealth-intro-band__shell relative z-[10] flex min-h-0 w-full flex-1 flex-col items-stretch justify-center">
         <div className="doehealth-intro-band__cluster">
           <div className="doehealth-intro-stage">
-            <div className="doehealth-routed-calls-sequence">
-              <div className="doehealth-routed-calls-sequence__stage">
+            <div className="doehealth-routed-calls-sequence doehealth-content-rail">
+              <div className="doehealth-routed-calls-sequence__stage doehealth-content-rail__summary-edge">
                 <DoeHealthRoutedCallsCard className="doehealth-routed-calls-sequence__card" />
               </div>
             </div>

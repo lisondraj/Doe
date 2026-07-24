@@ -612,6 +612,28 @@ html[data-home-page][data-layout="desktop"]
   overflow: visible;
 }
 
+/* Shared full-bleed rail — left title inset + right UI gutter (matches call summary box). */
+.doehealth-content-rail {
+  position: relative;
+  box-sizing: border-box;
+  overflow: visible;
+  width: 100%;
+  margin-inline: calc(50% - 50vw);
+  padding-left: var(--doehealth-intro-title-inset-x);
+  padding-right: var(--doehealth-ui-rail-right);
+}
+
+/*
+ * Cards that should meet the call-summary right edge sit in the padded rail but
+ * extend through padding-right (summary uses absolute right: 0 on the padding box).
+ */
+.doehealth-content-rail__summary-edge {
+  box-sizing: border-box;
+  width: calc(100% + var(--doehealth-ui-rail-right));
+  max-width: calc(100% + var(--doehealth-ui-rail-right));
+  margin-right: calc(-1 * var(--doehealth-ui-rail-right));
+}
+
 /* ── Intro call sequence (incoming + A1C + restart) ── */
 
 @keyframes doehealth-intro-reveal-lift-in {
@@ -702,10 +724,6 @@ html[data-home-page][data-layout="desktop"]
   --dhi-intro-call-card-width: 26.75rem;
   --dhi-intro-summary-card-width: min(16.25rem, 54vw);
   --dhi-intro-summary-overlap-y: clamp(2.35rem, 8.5vw, 3.65rem);
-  width: 100%;
-  margin-inline: calc(50% - 50vw);
-  padding-left: var(--doehealth-intro-title-inset-x);
-  padding-right: var(--doehealth-ui-rail-right);
   padding-bottom: var(--dhi-intro-summary-overlap-y);
 }
 
@@ -847,24 +865,19 @@ html[data-home-page][data-layout="desktop"]
 
 /* ── Day summary band (/product2 Today card in brown console shell) ── */
 
-.doehealth-day-summary-sequence {
-  position: relative;
-  box-sizing: border-box;
-  overflow: visible;
-  width: 100%;
-  margin-inline: calc(50% - 50vw);
-  padding-left: var(--doehealth-intro-title-inset-x);
-  padding-right: var(--doehealth-ui-rail-right);
-}
-
 .doehealth-day-summary-sequence__stage {
   width: 100%;
   max-width: 100%;
 }
 
-.doehealth-day-summary__card {
+.doehealth-day-summary-sequence .doehealth-day-summary,
+.doehealth-day-summary-sequence .doehealth-day-summary__card {
   width: 100%;
   max-width: none;
+  box-sizing: border-box;
+}
+
+.doehealth-day-summary__card {
   overflow: hidden;
 }
 
@@ -935,16 +948,6 @@ html[data-home-page][data-layout="desktop"]
 
 /* ── Routed calls band (main-page inbox shader + 18 routed today UI) ── */
 
-.doehealth-routed-calls-sequence {
-  position: relative;
-  box-sizing: border-box;
-  overflow: visible;
-  width: 100%;
-  margin-inline: calc(50% - 50vw);
-  padding-left: var(--doehealth-intro-title-inset-x);
-  padding-right: var(--doehealth-ui-rail-right);
-}
-
 .doehealth-routed-calls-sequence__stage {
   width: 100%;
   max-width: 100%;
@@ -984,17 +987,9 @@ html[data-home-page][data-layout="desktop"]
 
 /* ── Active agents band (orbit on brown band — no outer console shell) ── */
 
-.doehealth-active-agents-sequence {
-  position: relative;
-  box-sizing: border-box;
-  overflow: visible;
-  width: 100%;
-  margin-inline: calc(50% - 50vw);
-  padding-left: var(--doehealth-intro-title-inset-x);
-  padding-right: var(--doehealth-ui-rail-right);
-}
-
 .doehealth-active-agents-sequence__stage {
+  display: flex;
+  justify-content: center;
   width: 100%;
   max-width: 100%;
   overflow: visible;
@@ -1012,7 +1007,10 @@ html[data-home-page][data-layout="desktop"]
   max-width: 100%;
   margin-inline: 0;
   aspect-ratio: 1;
-  min-height: min(calc(100vw - var(--doehealth-intro-title-inset-x) - var(--doehealth-ui-rail-right)), 32rem);
+  min-height: min(
+    calc(100vw - var(--doehealth-intro-title-inset-x) - var(--doehealth-ui-rail-right)),
+    36rem
+  );
   overflow: visible;
 }
 
@@ -1025,16 +1023,19 @@ html[data-home-page][data-layout="desktop"]
   left: auto;
   width: 100%;
   height: 100%;
+  display: grid;
+  place-items: center;
   pointer-events: none;
 }
 
 .doehealth-active-agents__orbit .product-landing-workspace__orbit-ring {
   width: min(100cqw, 100cqh);
   max-width: 100%;
-  /* Large agent circles on a wide ring — open center for the active-agent stat. */
-  --orbit-size: clamp(7.75rem, 34cqw, 12.75rem);
+  margin-inline: auto;
+  /* Scaled orbit — centered in rail, open middle. */
+  --orbit-size: clamp(8.5rem, 38cqw, 14.25rem);
   --orbit-edge-gap: clamp(0.08rem, 0.42vw, 0.28rem);
-  --orbit-overlap: 0.9;
+  --orbit-overlap: 0.92;
   --orbit-distance: calc((50cqw - var(--orbit-size) / 2 - var(--orbit-edge-gap)) * var(--orbit-overlap));
   --orbit-inner: calc(var(--orbit-distance) * 2 - var(--orbit-size));
 }
@@ -1071,14 +1072,14 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-active-agents__stage {
-  min-height: min(56vw, 36rem);
+  min-height: min(60vw, 40rem);
 }
 
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-active-agents__orbit
   .product-landing-workspace__orbit-ring {
-  --orbit-size: clamp(9.25rem, 28cqw, 14.75rem);
+  --orbit-size: clamp(10.5rem, 30cqw, 15.5rem);
 }
 
 .doehealth-intro-call-sequence__call-reveal,
