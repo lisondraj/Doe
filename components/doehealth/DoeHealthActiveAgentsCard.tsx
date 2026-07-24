@@ -13,7 +13,7 @@ export function DoeHealthActiveAgentsCard({ className = "" }: { className?: stri
       <div className="doehealth-active-agents__stage">
         <Product2ActiveAgentsOrbit
           showEditButton={false}
-          showAgentIcons={false}
+          showAgentIcons
           variant="brown-console"
           className="doehealth-active-agents__orbit"
         />
