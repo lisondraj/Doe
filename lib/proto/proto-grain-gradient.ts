@@ -102,6 +102,7 @@ export type ProtoGrainGradientVariant =
   | "customize-agents-band"
   | "active-agents-band"
   | "inbox"
+  | "doehealth-routed-calls"
   | "ambient"
   | "ambient-band"
   | "billing"
@@ -272,6 +273,16 @@ export const PROTO_GRAIN_GRADIENT_PRESETS: Record<ProtoGrainGradientVariant, Pro
     speed: 0,
   },
   inbox: {
+    shape: "truchet",
+    softness: 0.55,
+    intensity: 0.22,
+    fit: "cover",
+    offsetX: -0.12,
+    offsetY: -0.1,
+    scale: 1.12,
+  },
+  /** /doehealth — routed calls band shader (independent from main-page inbox card). */
+  "doehealth-routed-calls": {
     shape: "truchet",
     softness: 0.55,
     intensity: 0.22,

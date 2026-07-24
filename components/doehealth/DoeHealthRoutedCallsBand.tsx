@@ -2,7 +2,7 @@ import { DoeHealthRoutedCallsCard } from "@/components/doehealth/DoeHealthRouted
 import { DOEHEALTH_INTRO_COPY } from "@/lib/doehealth/doehealth-intro-copy";
 import { suisseIntl } from "@/lib/home/fonts";
 
-/** Brown band — inbox shader card (18 routed today) + gold section title underneath. */
+/** Brown band — doehealth routed-calls shader + gold section title underneath. */
 export function DoeHealthRoutedCallsBand() {
   const { line1, line2 } = DOEHEALTH_INTRO_COPY.routedCallsSectionTitle;
 

@@ -946,7 +946,7 @@ html[data-home-page][data-layout="desktop"]
   opacity: 0.78;
 }
 
-/* ── Routed calls band (main-page inbox shader + 18 routed today UI) ── */
+/* ── Routed calls band (/doehealth-only shader + 18 routed today UI) ── */
 
 .doehealth-routed-calls-sequence__stage {
   width: 100%;
@@ -964,15 +964,118 @@ html[data-home-page][data-layout="desktop"]
   isolation: isolate;
   overflow: hidden;
   width: 100%;
+  height: clamp(
+    calc(23rem + var(--app-vh, 100lvh) / 8),
+    calc(var(--app-vh, 100lvh) * 0.56),
+    calc(40rem + var(--app-vh, 100lvh) / 8)
+  );
+  min-height: clamp(
+    calc(23rem + var(--app-vh, 100lvh) / 8),
+    calc(var(--app-vh, 100lvh) * 0.56),
+    calc(40rem + var(--app-vh, 100lvh) / 8)
+  );
+  max-height: calc(var(--app-vh, 100lvh) * 0.62);
   border-radius: clamp(1.1rem, 0.95rem + 0.75vmin, 1.45rem);
   box-shadow:
     0 10px 32px rgba(0, 0, 0, 0.14),
     0 24px 56px rgba(26, 18, 8, 0.12);
 }
 
-.doehealth-routed-calls__shader-card > * {
-  height: 100% !important;
-  min-height: 100% !important;
+.doehealth-routed-calls-shader-panel {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+  border-radius: inherit;
+  --doehealth-routed-calls-ink: #f2d8a8;
+  --doehealth-routed-calls-ink-secondary: rgba(242, 216, 168, 0.84);
+  --doehealth-routed-calls-muted: rgba(232, 160, 96, 0.62);
+  --doehealth-routed-calls-surface: rgba(28, 19, 9, 0.9);
+  --doehealth-routed-calls-surface-raised: rgba(232, 160, 96, 0.14);
+  --doehealth-routed-calls-border: rgba(242, 216, 168, 0.14);
+  --doehealth-routed-calls-horizon: #e8a060;
+  --doehealth-routed-calls-shadow:
+    inset 0 1px 0 rgba(242, 216, 168, 0.08),
+    0 10px 28px -16px rgba(0, 0, 0, 0.42);
+}
+
+.doehealth-routed-calls-shader-panel__gradient {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+}
+
+.doehealth-routed-calls-shader-panel__ui {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  transform: scale(0.93);
+  transform-origin: center center;
+}
+
+.doehealth-routed-calls-shader-panel .home-call-history-visual__summary,
+.doehealth-routed-calls-shader-panel .home-call-history-visual__name,
+.doehealth-routed-calls-shader-panel .home-call-history-visual__phone-route-agent,
+.doehealth-routed-calls-shader-panel .home-call-history-visual__detail {
+  color: var(--doehealth-routed-calls-ink) !important;
+}
+
+.doehealth-routed-calls-shader-panel .home-call-history-visual__summary {
+  text-shadow: 0 1px 16px rgba(10, 18, 22, 0.34);
+}
+
+.doehealth-routed-calls-shader-panel .home-call-history-visual__phone,
+.doehealth-routed-calls-shader-panel .home-call-history-visual__time,
+.doehealth-routed-calls-shader-panel .home-call-history-visual__duration,
+.doehealth-routed-calls-shader-panel .home-call-history-visual__route,
+.doehealth-routed-calls-shader-panel
+  .home-call-history-visual__filter:not(.home-call-history-visual__filter--active) {
+  color: var(--doehealth-routed-calls-ink-secondary) !important;
+}
+
+.doehealth-routed-calls-shader-panel .home-call-history-visual__filter--active,
+.doehealth-routed-calls-shader-panel .home-call-history-visual__route-outcome {
+  color: var(--doehealth-routed-calls-horizon) !important;
+}
+
+.doehealth-routed-calls-shader-panel .home-call-history-visual__filters,
+.doehealth-routed-calls-shader-panel .home-call-history-visual__filter--active,
+.doehealth-routed-calls-shader-panel .home-call-history-visual__direction {
+  background: var(--doehealth-routed-calls-surface-raised) !important;
+}
+
+.doehealth-routed-calls-shader-panel .home-call-history-visual__card {
+  background: var(--doehealth-routed-calls-surface) !important;
+  border-color: var(--doehealth-routed-calls-border) !important;
+  box-shadow: var(--doehealth-routed-calls-shadow) !important;
+}
+
+.doehealth-routed-calls-shader-panel .home-call-history-visual__row {
+  border-bottom-color: var(--doehealth-routed-calls-border) !important;
+}
+
+.doehealth-routed-calls-shader-panel .home-call-history-visual__row--expanded {
+  background: rgba(232, 160, 96, 0.06) !important;
+}
+
+.doehealth-routed-calls-shader-panel .home-call-history-visual__filters {
+  background: var(--doehealth-routed-calls-surface) !important;
+  border-color: rgba(232, 160, 96, 0.32) !important;
+  box-shadow:
+    var(--doehealth-routed-calls-shadow),
+    inset 0 0 0 1px rgba(232, 160, 96, 0.12) !important;
+}
+
+.doehealth-routed-calls-shader-panel .home-call-history-visual__detail::before {
+  background: var(--doehealth-routed-calls-horizon) !important;
 }
 
 .doehealth-intro-band--routed-calls .doehealth-intro-band__cluster {
@@ -983,6 +1086,12 @@ html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-routed-calls__shader-card {
   border-radius: clamp(1.35rem, 1.05rem + 0.9vw, 2rem);
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-routed-calls-shader-panel__ui {
+  transform: scale(1.1);
 }
 
 /* ── Active agents band (orbit on brown band — no outer console shell) ── */
@@ -1059,13 +1168,13 @@ html[data-home-page][data-layout="desktop"]
 }
 
 .doehealth-active-agents__orbit .product-landing-workspace__orbit-circle-icon {
-  width: clamp(1.55rem, 4.35vw, 2.2rem);
-  height: clamp(1.55rem, 4.35vw, 2.2rem);
+  width: clamp(1.72rem, 4.85vw, 2.45rem);
+  height: clamp(1.72rem, 4.85vw, 2.45rem);
 }
 
 .doehealth-active-agents__orbit .product-landing-workspace__orbit-circle-name-line {
   color: rgba(242, 232, 218, 0.92);
-  font-size: clamp(0.68rem, 1.62vw, 0.92rem);
+  font-size: clamp(0.72rem, 1.75vw, 0.98rem);
   line-height: 1.06;
 }
 
