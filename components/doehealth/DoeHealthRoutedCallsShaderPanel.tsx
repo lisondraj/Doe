@@ -2,9 +2,9 @@
 
 import { useLayoutEffect, useState } from "react";
 
+import { DoeHealthRoutedCallsSarahUi } from "@/components/doehealth/DoeHealthRoutedCallsSarahUi";
 import { DoePhoneCallHistoryVisual } from "@/components/doephone/DoePhoneCallHistoryVisual";
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
-import type { ProtoGrainGradientSurface } from "@/lib/proto/proto-grain-gradient";
 import {
   DOEHEALTH_ROUTED_CALLS_LEFT_2_SHADER,
   DOEHEALTH_ROUTED_CALLS_LEFT_SHADER,
@@ -15,6 +15,7 @@ import {
   readBootstrappedDoePhoneVariant,
   resolveDoePhoneVariant,
 } from "@/lib/doephone/resolve-doe-phone-variant";
+import type { ProtoGrainGradientSurface } from "@/lib/proto/proto-grain-gradient";
 
 export type DoeHealthRoutedCallsShaderPreset = "left" | "left-2" | "right";
 
@@ -51,6 +52,7 @@ export function DoeHealthRoutedCallsShaderPanel({
     shaderPreset ?? (bleedRight ? "right" : "left");
   const shader = DOEHEALTH_ROUTED_CALLS_SHADERS[preset];
   const { variant, colors, colorBack } = shader;
+  const showSarahUi = preset === "left";
 
   return (
     <div
@@ -58,7 +60,7 @@ export function DoeHealthRoutedCallsShaderPanel({
         bleedRight
           ? " doehealth-routed-calls-shader-panel--bleed-right"
           : " doehealth-routed-calls-shader-panel--bleed-left"
-      }`}
+      }${showSarahUi ? " doehealth-routed-calls-shader-panel--sarah" : ""}`}
     >
       <ProtoGrainGradient
         variant={variant}
@@ -68,10 +70,12 @@ export function DoeHealthRoutedCallsShaderPanel({
         className="doehealth-routed-calls-shader-panel__gradient"
       />
       <div
-        className={`doehealth-routed-calls-shader-panel__ui${bleedRight ? " doehealth-routed-calls-shader-panel__ui--bleed-right" : ""}`}
-        aria-hidden
+        className={`doehealth-routed-calls-shader-panel__ui${
+          bleedRight ? " doehealth-routed-calls-shader-panel__ui--bleed-right" : ""
+        }${showSarahUi ? " doehealth-routed-calls-shader-panel__ui--sarah" : ""}`}
+        aria-hidden={showSarahUi ? undefined : true}
       >
-        <DoePhoneCallHistoryVisual layout={layout} />
+        {showSarahUi ? <DoeHealthRoutedCallsSarahUi /> : <DoePhoneCallHistoryVisual layout={layout} />}
       </div>
     </div>
   );

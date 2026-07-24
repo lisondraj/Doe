@@ -1164,6 +1164,194 @@ html[data-home-page][data-layout="desktop"]
   margin-right: auto;
 }
 
+.doehealth-routed-calls-shader-panel__ui--sarah {
+  align-items: stretch;
+  justify-content: stretch;
+  transform: none;
+  transform-origin: center center;
+  padding: 0;
+}
+
+/* First left-bleed — Last A1C (vertical center) + Sarah Westfield bottom-right. */
+.doehealth-routed-calls-sarah {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  padding:
+    clamp(0.85rem, 1.4vw, 1.35rem)
+    clamp(0.85rem, 1.5vw, 1.45rem)
+    clamp(1.05rem, 1.8vw, 1.75rem)
+    clamp(0.85rem, 1.4vw, 1.35rem);
+  overflow: hidden;
+  container-type: size;
+}
+
+.doehealth-routed-calls-sarah__center {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding:
+    clamp(0.75rem, 1.4vh, 1.25rem)
+    clamp(0.85rem, 1.5vw, 1.45rem)
+    clamp(7.5rem, 28cqh, 11rem);
+  pointer-events: none;
+}
+
+.doehealth-routed-calls-sarah__a1c {
+  --pb-chart-axis-width: 2.65rem;
+  --pb-chart-axis-gap: 0.58rem;
+  --pb-chart-height: clamp(7.25rem, 22cqh, 10.5rem);
+  position: relative;
+  z-index: 1;
+  width: min(100%, clamp(18rem, 72cqw, 31rem));
+  flex-shrink: 0;
+  gap: 0.72rem;
+  padding: clamp(0.95rem, 1.1vw, 1.12rem) clamp(1rem, 1.15vw, 1.18rem) clamp(0.92rem, 1vw, 1.05rem);
+  pointer-events: none;
+}
+
+.doehealth-routed-calls-sarah__a1c .product-landing-live-quote__chart-profile-a1c {
+  gap: 0.42rem;
+  padding-top: 0.08rem;
+}
+
+.doehealth-routed-calls-sarah__a1c .product-landing-live-quote__chart-profile-a1c-axis-label {
+  font-size: 9px;
+}
+
+.doehealth-routed-calls-sarah__a1c
+  .product-landing-live-quote__chart-profile-a1c-x-axis-labels
+  .product-landing-live-quote__chart-profile-a1c-axis-label {
+  overflow: visible;
+  text-overflow: clip;
+}
+
+.doehealth-routed-calls-sarah__a1c .product-landing-live-quote__chart-profile-a1c-label {
+  font-size: 10px;
+}
+
+.doehealth-routed-calls-sarah__a1c .product-landing-live-quote__chart-profile-a1c-point {
+  width: 0.48rem;
+  height: 0.48rem;
+}
+
+.doehealth-routed-calls-sarah__a1c .product-landing-live-quote__chart-profile-a1c-point--dose-change {
+  width: 0.56rem;
+  height: 0.56rem;
+}
+
+.doehealth-routed-calls-sarah__a1c .product-landing-live-quote__chart-profile-a1c-dose-label {
+  font-size: 0.625rem;
+  transform: translate(-50%, calc(-100% - 0.56rem));
+}
+
+.doehealth-routed-calls-sarah__hero {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  width: fit-content;
+  max-width: 100%;
+  text-align: right;
+}
+
+.doehealth-routed-calls-sarah__hero-name-block {
+  display: inline-grid;
+  justify-items: end;
+  max-width: 100%;
+}
+
+.doehealth-routed-calls-sarah__hero-name {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.doehealth-routed-calls-sarah__hero-line {
+  color: #f2e8da;
+  font-size: clamp(2.35rem, 1.15rem + 8.5cqw, 5.25rem);
+  font-weight: 400;
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+  text-align: right;
+  text-shadow: 0 2px 24px rgba(26, 18, 8, 0.42);
+  white-space: nowrap;
+}
+
+.doehealth-routed-calls-sarah__hero-line + .doehealth-routed-calls-sarah__hero-line {
+  margin-top: -0.06em;
+}
+
+.doehealth-routed-calls-sarah__hero-details {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow: visible;
+  margin-top: clamp(0.62rem, 0.42rem + 0.55vw, 0.95rem);
+}
+
+.doehealth-routed-calls-sarah__hero-col {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.34rem;
+  min-width: 0;
+  text-align: center;
+}
+
+.doehealth-routed-calls-sarah__hero-divider {
+  align-self: stretch;
+  flex-shrink: 0;
+  width: 1px;
+  margin: 0.1rem clamp(0.28rem, 0.18rem + 0.35cqw, 0.48rem);
+  background: rgba(212, 165, 116, 0.24);
+}
+
+.doehealth-routed-calls-sarah__hero-value {
+  width: 100%;
+  max-width: 100%;
+  background: linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  font-size: clamp(0.72rem, 0.58rem + 1.1cqw, 1.05rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.doehealth-routed-calls-sarah__hero-label {
+  width: 100%;
+  max-width: 100%;
+  color: rgba(228, 210, 184, 0.58);
+  font-size: clamp(0.5rem, 0.46rem + 0.18cqw, 0.62rem);
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
 .doehealth-routed-calls-shader-panel .home-call-history-visual__summary,
 .doehealth-routed-calls-shader-panel .home-call-history-visual__name,
 .doehealth-routed-calls-shader-panel .home-call-history-visual__phone-route-agent,
@@ -1241,6 +1429,37 @@ html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-routed-calls-shader-panel__ui {
   transform: scale(1.1);
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-routed-calls-shader-panel__ui--sarah {
+  transform: none;
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-routed-calls-sarah__a1c {
+  --pb-chart-height: clamp(8rem, 24cqh, 11.5rem);
+  width: min(100%, clamp(22rem, 58cqw, 34rem));
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-routed-calls-sarah__hero-line {
+  font-size: clamp(3rem, 1.4rem + 4.2vw, 5.75rem);
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-routed-calls-sarah__hero-value {
+  font-size: clamp(0.82rem, 0.66rem + 0.55vw, 1.12rem);
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-routed-calls-sarah__hero-label {
+  font-size: clamp(0.54rem, 0.5rem + 0.12vw, 0.64rem);
 }
 
 /* ── Active agents band (orbit on brown band — no outer console shell) ── */
