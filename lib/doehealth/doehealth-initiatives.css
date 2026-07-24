@@ -178,9 +178,11 @@ html[data-home-page][data-layout="desktop"]
 }
 
 .doehealth-initiatives__call-history-scroll {
-  --dhi-call-history-scroll-max: clamp(18rem, 48vw, 22rem);
+  --dhi-call-history-scroll-max: clamp(12.5rem, 34vw, 15.5rem);
   --dhi-call-history-fade-size: clamp(1.35rem, 2.4vw, 2rem);
   --dhi-call-history-bleed-x: 0.65rem;
+  --dhi-scroll-travel: 0px;
+  --dhi-scroll-duration: 24s;
   box-sizing: border-box;
   width: calc(100% + (var(--dhi-call-history-bleed-x) * 2));
   height: var(--dhi-call-history-scroll-max);
@@ -214,16 +216,39 @@ html[data-home-page][data-layout="desktop"]
   mask-repeat: no-repeat;
 }
 
+@keyframes doehealth-call-history-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(0, calc(-1 * var(--dhi-scroll-travel, 0px)), 0);
+  }
+}
+
 .doehealth-initiatives__call-history-scroll__track {
   display: block;
   width: 100%;
   will-change: transform;
 }
 
+.doehealth-initiatives__call-history-scroll__track--drift {
+  animation: doehealth-call-history-drift var(--dhi-scroll-duration, 24s) ease-in-out infinite alternate;
+}
+
+.doehealth-initiatives__call-history-scroll__track > .product-landing-live-thread {
+  flex: none;
+  height: auto;
+  min-height: min-content;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .doehealth-initiatives__call-history-scroll__track--drift {
+    animation: none;
+  }
+
   .doehealth-initiatives__call-history-scroll__track {
     will-change: auto;
-    transform: none !important;
   }
 }
 
@@ -263,6 +288,7 @@ html[data-home-page][data-layout="desktop"]
   padding-bottom: 0;
   overflow: visible;
   max-height: none;
+  height: auto;
 }
 
 .doehealth-initiatives__call-history.product-call-history-rail__thread {
@@ -276,7 +302,9 @@ html[data-home-page][data-layout="desktop"]
   -webkit-mask-image: none;
   mask-image: none;
   gap: 0;
-  padding-bottom: clamp(1.75rem, 4.5vw, 2.65rem);
+  padding-bottom: clamp(2rem, 5vw, 3rem);
+  height: auto;
+  min-height: min-content;
 }
 
 /* Sarah card — caller flush left, agent flush right (not product2 rail 50% left-column replies). */
