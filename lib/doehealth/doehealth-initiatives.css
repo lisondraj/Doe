@@ -2548,7 +2548,12 @@ html[data-home-page][data-layout="desktop"]
   .doehealth-intro-band--day-summary
   .doehealth-day-summary-sequence.doehealth-content-rail {
   --dhi-day-summary-card-width: clamp(50rem, 60vw, 66rem);
-  --dhi-intro-ui-fade-start: 58%;
+  /* Match Sarah intro card: padding + hero block + call-history scroll height. */
+  --dhi-day-summary-card-height: calc(
+    clamp(1.28rem, 1.05rem + 0.55vw, 1.55rem) + clamp(1.34rem, 1.1rem + 0.55vw, 1.62rem) +
+      clamp(5.1rem, 4.25rem + 2.8vh, 6.5rem) + clamp(24rem, 44vh, 31rem)
+  );
+  --dhi-intro-ui-fade-start: 72%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2605,9 +2610,76 @@ html[data-home-page][data-layout="desktop"]
   .doehealth-intro-band--day-summary
   .doehealth-day-summary-sequence__card.doehealth-day-summary
   .doehealth-day-summary__card {
-  min-height: clamp(28rem, 52vh, 38rem);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: var(--dhi-day-summary-card-height);
+  height: var(--dhi-day-summary-card-height);
   padding: clamp(1.28rem, 1.05rem + 0.55vw, 1.55rem) clamp(1.28rem, 1.08rem + 0.45vw, 1.5rem)
     clamp(1.34rem, 1.1rem + 0.55vw, 1.62rem);
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-band--day-summary
+  .doehealth-day-summary-sequence__card.doehealth-day-summary
+  .doehealth-day-summary__stage {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-band--day-summary
+  .doehealth-day-summary
+  .product-landing-day-summary--last24h,
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-band--day-summary
+  .doehealth-day-summary
+  .product-landing-day-summary--last24h
+  .product-landing-day-summary__shell {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-band--day-summary
+  .doehealth-day-summary
+  .product-landing-day-summary--last24h
+  .product-landing-day-summary__header {
+  padding-bottom: clamp(0.55rem, 0.95vh, 0.72rem) !important;
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-band--day-summary
+  .doehealth-day-summary
+  .product-landing-day-summary--last24h
+  .product-landing-day-summary__split--last24h {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.42rem, 0.75vh, 0.58rem);
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-band--day-summary
+  .doehealth-day-summary
+  .product-landing-day-summary--last24h
+  .product-landing-day-summary__column--last24h {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.55rem, 1vh, 0.72rem);
 }
 
 html[data-home-page][data-layout="desktop"]
@@ -2655,7 +2727,37 @@ html[data-home-page][data-layout="desktop"]
   .doehealth-day-summary
   .product-landing-day-summary--last24h
   .product-landing-volume-wrap {
-  min-height: clamp(18rem, 34vh, 24rem);
+  flex: 0 0 auto;
+  min-height: clamp(10.5rem, 20vh, 13.25rem);
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-band--day-summary
+  .doehealth-day-summary
+  .product-landing-day-summary--last24h
+  .product-landing-volume {
+  min-height: clamp(8.75rem, 16.5vh, 11.25rem);
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-band--day-summary
+  .doehealth-day-summary
+  .product-landing-day-summary--last24h
+  .product-landing-day-summary__visual-row {
+  flex: 0 0 auto;
+  gap: clamp(0.72rem, 1.2vw, 0.92rem);
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-band--day-summary
+  .doehealth-day-summary
+  .product-landing-day-summary--last24h
+  .product-landing-split {
+  flex: 0 0 auto;
+  margin-top: 0;
 }
 
 html[data-home-page][data-layout="desktop"]
