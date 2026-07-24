@@ -15,6 +15,10 @@ export const DOEHEALTH_INTRO_COPY = {
     line1: "Seven Active",
     line2: "Agents",
   },
+  routedCallsSectionTitle: {
+    line1: "Review detailed",
+    line2: "call histories.",
+  },
   body: [
     "We're two brothers mixing domain, technical, and operational expertise in artificial intelligence & health.",
     "We're bringing together doctors, designers, and engineers to build AI-native tools for clinicians",
