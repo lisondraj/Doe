@@ -67,7 +67,7 @@ export function DoeHealthTopBanner({
 
   return (
     <div
-      className={`doe-home-top-banner${dismissed ? " doe-home-top-banner--dismissed" : ""}`}
+      className={`doe-home-top-banner doehealth-top-banner${dismissed ? " doe-home-top-banner--dismissed" : ""}`}
       role="region"
       aria-label="Learn more about Doe's vision"
     >
