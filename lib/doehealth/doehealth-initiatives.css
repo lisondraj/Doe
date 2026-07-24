@@ -1342,7 +1342,7 @@ html[data-home-page][data-layout="desktop"]
 }
 
 .doehealth-active-agents__orbit .product-landing-workspace__orbit-stat-label {
-  color: var(--dhi-gold-soft);
+  color: rgba(212, 165, 116, 0.82);
 }
 
 html[data-home-page][data-layout="desktop"]
