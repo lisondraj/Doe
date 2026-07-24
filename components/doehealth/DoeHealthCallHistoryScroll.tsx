@@ -2,7 +2,7 @@
 
 import { type ReactNode, useLayoutEffect, useRef } from "react";
 
-/** Slow auto-drift through embedded call history convo — transform-driven, no manual scroll. */
+/** Slow auto-drift through embedded call history convo — scrolls once to bottom, then pauses. */
 export function DoeHealthCallHistoryScroll({ children }: { children: ReactNode }) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);

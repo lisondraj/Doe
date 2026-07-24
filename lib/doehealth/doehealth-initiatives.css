@@ -237,7 +237,8 @@ html[data-home-page][data-layout="desktop"]
 }
 
 .doehealth-initiatives__call-history-scroll__track--drift {
-  animation: doehealth-call-history-drift var(--dhi-scroll-duration, 24s) ease-in-out infinite alternate;
+  /* One pass to the bottom, then hold — do not alternate back up. */
+  animation: doehealth-call-history-drift var(--dhi-scroll-duration, 24s) ease-in-out 1 forwards;
 }
 
 .doehealth-initiatives__call-history-scroll__track > .product-landing-live-thread {
