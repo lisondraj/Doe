@@ -29,22 +29,21 @@ export function DesktopNavEmailButton({
   punched?: boolean;
 }) {
   const isDoeHealthNav = useDoeHealthLandingNavContext();
-  const useGoldShell = punched || isDoeHealthNav;
-  const radius = useGoldShell ? "rounded-full" : "rounded-md";
+  const radius = punched ? "rounded-full" : "rounded-md";
 
   return (
     <div className="relative flex shrink-0 items-center">
       <div
         className={`relative flex items-stretch overflow-visible ${radius}${
-          useGoldShell ? " proto-nav-cta-shell doehealth-nav-mail-shell" : ""
-        }${open ? " proto-nav-cta-shell--open" : ""}`}
+          punched ? " proto-nav-cta-shell" : ""
+        }${isDoeHealthNav ? " doehealth-nav-mail-shell" : ""}${open ? " proto-nav-cta-shell--open" : ""}`}
         style={{ boxShadow: shadow }}
       >
         <button
           type="button"
           className={`flex ${DESKTOP_NAV_ACTION_HEIGHT_TW} items-center justify-center ${radius} transition-[opacity,background-color,color,box-shadow] duration-300 hover:opacity-90`}
           style={{
-            backgroundColor: useGoldShell ? "transparent" : bg,
+            backgroundColor: bg,
             color: fg,
             width: DESKTOP_NAV_ACTION_SIZE,
           }}
