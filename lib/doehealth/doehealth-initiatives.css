@@ -2303,6 +2303,16 @@ html[data-home-page][data-layout="desktop"]
   flex-direction: column;
   align-items: center;
   padding-bottom: calc(var(--dhi-intro-summary-overlap-y) * 0.34);
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-brown-band-stack
+  > .doehealth-intro-band:first-child
+  .doehealth-intro-call-sequence__stage {
+  width: min(100%, var(--dhi-intro-call-card-width));
+  max-width: min(var(--dhi-intro-call-card-width), 100%);
+  margin-inline: auto;
   -webkit-mask-image: linear-gradient(
     to bottom,
     #000 0%,
@@ -2327,16 +2337,6 @@ html[data-home-page][data-layout="desktop"]
   mask-size: 100% 100%;
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
-}
-
-html[data-home-page][data-layout="desktop"]
-  .doe-desktop-root--doehealth
-  .doehealth-brown-band-stack
-  > .doehealth-intro-band:first-child
-  .doehealth-intro-call-sequence__stage {
-  width: min(100%, var(--dhi-intro-call-card-width));
-  max-width: min(var(--dhi-intro-call-card-width), 100%);
-  margin-inline: auto;
 }
 
 html[data-home-page][data-layout="desktop"]
@@ -2445,6 +2445,28 @@ html[data-home-page][data-layout="desktop"]
   left: auto;
   bottom: calc(var(--dhi-intro-summary-overlap-y) * -0.26);
   z-index: 5;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 80%,
+    rgba(0, 0, 0, 0.97) 88%,
+    rgba(0, 0, 0, 0.84) 93%,
+    rgba(0, 0, 0, 0.52) 97%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 80%,
+    rgba(0, 0, 0, 0.97) 88%,
+    rgba(0, 0, 0, 0.84) 93%,
+    rgba(0, 0, 0, 0.52) 97%,
+    transparent 100%
+  );
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
 }
 
 html[data-home-page][data-layout="desktop"]
