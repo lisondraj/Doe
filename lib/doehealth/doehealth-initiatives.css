@@ -1080,15 +1080,15 @@ html[data-home-page][data-layout="desktop"]
 }
 
 .doehealth-routed-calls-shader-panel--bleed-right {
-  --doehealth-routed-calls-ink: #f2e8da;
-  --doehealth-routed-calls-ink-secondary: rgba(242, 232, 218, 0.82);
-  --doehealth-routed-calls-muted: rgba(212, 165, 116, 0.58);
-  --doehealth-routed-calls-surface: rgba(22, 36, 42, 0.92);
-  --doehealth-routed-calls-surface-raised: rgba(231, 169, 68, 0.14);
-  --doehealth-routed-calls-border: rgba(242, 232, 218, 0.14);
-  --doehealth-routed-calls-horizon: #e7a944;
+  --doehealth-routed-calls-ink: #f2d8a8;
+  --doehealth-routed-calls-ink-secondary: rgba(242, 216, 168, 0.84);
+  --doehealth-routed-calls-muted: rgba(232, 160, 96, 0.62);
+  --doehealth-routed-calls-surface: rgba(28, 19, 9, 0.9);
+  --doehealth-routed-calls-surface-raised: rgba(232, 160, 96, 0.14);
+  --doehealth-routed-calls-border: rgba(242, 216, 168, 0.14);
+  --doehealth-routed-calls-horizon: #e8a060;
   --doehealth-routed-calls-shadow:
-    inset 0 1px 0 rgba(242, 232, 218, 0.08),
+    inset 0 1px 0 rgba(242, 216, 168, 0.08),
     0 10px 28px -16px rgba(0, 0, 0, 0.42);
 }
 
@@ -1266,7 +1266,7 @@ html[data-home-page][data-layout="desktop"]
   /* Scaled orbit — centered in rail, open middle. */
   --orbit-size: clamp(8.5rem, 38cqw, 14.25rem);
   --orbit-edge-gap: clamp(0.08rem, 0.42vw, 0.28rem);
-  --orbit-overlap: 0.86;
+  --orbit-overlap: 0.78;
   --orbit-distance: calc((50cqw - var(--orbit-size) / 2 - var(--orbit-edge-gap)) * var(--orbit-overlap));
   --orbit-inner: calc(var(--orbit-distance) * 2 - var(--orbit-size));
 }
