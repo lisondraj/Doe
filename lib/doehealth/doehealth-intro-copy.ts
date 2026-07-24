@@ -12,8 +12,8 @@ export const DOEHEALTH_INTRO_COPY = {
     line2: "At a Glance",
   },
   activeAgentsSectionTitle: {
-    line1: "Seven Active",
-    line2: "Agents",
+    line1: "Agents for",
+    line2: "every workflow",
   },
   body: [
     "We're two brothers mixing domain, technical, and operational expertise in artificial intelligence & health.",
