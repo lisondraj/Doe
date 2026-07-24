@@ -1295,8 +1295,8 @@ html[data-home-page][data-layout="desktop"]
   margin-inline: auto;
   /* Scaled orbit — centered in rail, open middle. Higher overlap pushes rings outward. */
   --orbit-size: clamp(8.5rem, 38cqw, 14.25rem);
-  --orbit-edge-gap: clamp(0.08rem, 0.42vw, 0.28rem);
-  --orbit-overlap: 0.98;
+  --orbit-edge-gap: clamp(0rem, 0.28vw, 0.16rem);
+  --orbit-overlap: 1;
   --orbit-distance: calc((50cqw - var(--orbit-size) / 2 - var(--orbit-edge-gap)) * var(--orbit-overlap));
   --orbit-inner: calc(var(--orbit-distance) * 2 - var(--orbit-size));
 }
@@ -1326,23 +1326,31 @@ html[data-home-page][data-layout="desktop"]
 }
 
 .doehealth-active-agents__orbit .product-landing-workspace__orbit-circle-name-line {
-  background: linear-gradient(180deg, #e8c08e 0%, #d4a574 58%, rgba(212, 165, 116, 0.78) 100%);
+  background: var(--doehealth-gold-text-gradient);
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: clamp(0.72rem, 1.75vw, 0.98rem);
   line-height: 1.06;
 }
 
 .doehealth-active-agents__orbit .product-landing-workspace__orbit-stat-value {
-  background: linear-gradient(180deg, #e8c08e 0%, #d4a574 58%, rgba(212, 165, 116, 0.78) 100%);
+  background: var(--doehealth-gold-text-gradient);
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
 }
 
 .doehealth-active-agents__orbit .product-landing-workspace__orbit-stat-label {
-  color: rgba(212, 165, 116, 0.82);
+  background: linear-gradient(180deg, #e8c08e 0%, #d4a574 72%, rgba(212, 165, 116, 0.62) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  opacity: 0.92;
 }
 
 html[data-home-page][data-layout="desktop"]
@@ -1359,7 +1367,7 @@ html[data-home-page][data-layout="desktop"]
   .doehealth-active-agents__orbit.product-landing-workspace__orbit
   .product-landing-workspace__orbit-ring {
   --orbit-size: clamp(10.5rem, 30cqw, 15.5rem);
-  --orbit-overlap: 0.98;
+  --orbit-overlap: 1;
 }
 
 .doehealth-intro-call-sequence__call-reveal,
