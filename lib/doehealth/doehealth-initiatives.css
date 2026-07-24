@@ -793,7 +793,7 @@ html[data-home-page][data-layout="desktop"]
 .doehealth-intro-call-sequence__summary-card {
   position: absolute;
   right: 0;
-  bottom: calc(var(--dhi-intro-summary-overlap-y) * 0.58);
+  bottom: calc(var(--dhi-intro-summary-overlap-y) * 0.48);
   z-index: 4;
   width: min(var(--dhi-intro-summary-card-width), 100%);
   max-width: 100%;
@@ -1080,15 +1080,15 @@ html[data-home-page][data-layout="desktop"]
 }
 
 .doehealth-routed-calls-shader-panel--bleed-right {
-  --doehealth-routed-calls-ink: #d8e8f0;
-  --doehealth-routed-calls-ink-secondary: rgba(200, 212, 224, 0.84);
-  --doehealth-routed-calls-muted: rgba(127, 168, 192, 0.62);
-  --doehealth-routed-calls-surface: rgba(14, 20, 28, 0.9);
-  --doehealth-routed-calls-surface-raised: rgba(95, 142, 168, 0.16);
-  --doehealth-routed-calls-border: rgba(200, 212, 224, 0.14);
-  --doehealth-routed-calls-horizon: #7a9e78;
+  --doehealth-routed-calls-ink: #f2e8da;
+  --doehealth-routed-calls-ink-secondary: rgba(242, 232, 218, 0.82);
+  --doehealth-routed-calls-muted: rgba(212, 165, 116, 0.58);
+  --doehealth-routed-calls-surface: rgba(22, 36, 42, 0.92);
+  --doehealth-routed-calls-surface-raised: rgba(231, 169, 68, 0.14);
+  --doehealth-routed-calls-border: rgba(242, 232, 218, 0.14);
+  --doehealth-routed-calls-horizon: #e7a944;
   --doehealth-routed-calls-shadow:
-    inset 0 1px 0 rgba(200, 212, 224, 0.08),
+    inset 0 1px 0 rgba(242, 232, 218, 0.08),
     0 10px 28px -16px rgba(0, 0, 0, 0.42);
 }
 
@@ -1266,7 +1266,7 @@ html[data-home-page][data-layout="desktop"]
   /* Scaled orbit — centered in rail, open middle. */
   --orbit-size: clamp(8.5rem, 38cqw, 14.25rem);
   --orbit-edge-gap: clamp(0.08rem, 0.42vw, 0.28rem);
-  --orbit-overlap: 0.92;
+  --orbit-overlap: 0.86;
   --orbit-distance: calc((50cqw - var(--orbit-size) / 2 - var(--orbit-edge-gap)) * var(--orbit-overlap));
   --orbit-inner: calc(var(--orbit-distance) * 2 - var(--orbit-size));
 }
@@ -1757,7 +1757,7 @@ html[data-home-page][data-layout="desktop"] .doehealth-intro-call-sequence--pick
 
 .doehealth-brown-band-stack {
   --doehealth-section-height-scale: 0.84375;
-  --doehealth-routed-calls-shader-height-scale: 1.25;
+  --doehealth-routed-calls-shader-height-scale: 1.40625;
   --doehealth-brown-band-height: calc(
     var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.95 * var(--doehealth-section-height-scale)
   );

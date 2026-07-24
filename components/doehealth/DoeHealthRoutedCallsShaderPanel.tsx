@@ -43,7 +43,7 @@ export function DoeHealthRoutedCallsShaderPanel({ bleedRight = false }: { bleedR
         variant={variant}
         colors={colors}
         colorBack={colorBack}
-        static={layout === "desktop"}
+        static={bleedRight ? false : layout === "desktop"}
         className="doehealth-routed-calls-shader-panel__gradient"
       />
       <div
