@@ -2448,19 +2448,21 @@ html[data-home-page][data-layout="desktop"]
   -webkit-mask-image: linear-gradient(
     to bottom,
     #000 0%,
-    #000 80%,
-    rgba(0, 0, 0, 0.97) 88%,
-    rgba(0, 0, 0, 0.82) 93%,
-    rgba(0, 0, 0, 0.48) 97.5%,
+    #000 68%,
+    rgba(0, 0, 0, 0.96) 76%,
+    rgba(0, 0, 0, 0.84) 84%,
+    rgba(0, 0, 0, 0.58) 91%,
+    rgba(0, 0, 0, 0.24) 96%,
     transparent 100%
   );
   mask-image: linear-gradient(
     to bottom,
     #000 0%,
-    #000 80%,
-    rgba(0, 0, 0, 0.97) 88%,
-    rgba(0, 0, 0, 0.82) 93%,
-    rgba(0, 0, 0, 0.48) 97.5%,
+    #000 68%,
+    rgba(0, 0, 0, 0.96) 76%,
+    rgba(0, 0, 0, 0.84) 84%,
+    rgba(0, 0, 0, 0.58) 91%,
+    rgba(0, 0, 0, 0.24) 96%,
     transparent 100%
   );
   -webkit-mask-size: 100% 100%;
