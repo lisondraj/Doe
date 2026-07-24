@@ -178,7 +178,11 @@ html[data-home-page][data-layout="desktop"]
 }
 
 .doehealth-initiatives__call-history-scroll {
-  --dhi-call-history-scroll-max: clamp(18rem, 48vw, 22rem);
+  --dhi-call-history-scroll-max: clamp(
+    calc(18rem * var(--doehealth-section-height-scale, 1)),
+    calc(48vw * var(--doehealth-section-height-scale, 1)),
+    calc(22rem * var(--doehealth-section-height-scale, 1))
+  );
   --dhi-call-history-fade-size: clamp(1.35rem, 2.4vw, 2rem);
   --dhi-call-history-bleed-x: 0.65rem;
   box-sizing: border-box;
@@ -551,7 +555,11 @@ html[data-home-page][data-layout="desktop"]
   /* Matches legacy shell-padded rail box so intro call summary stays put. */
   --doehealth-rail-viewport-trim-x: var(--proto-phone-gutter-right);
   /* Space under UI before gold section title — matches intro call-summary overlap. */
-  --doehealth-ui-before-title-space: clamp(2.35rem, 8.5vw, 3.65rem);
+  --doehealth-ui-before-title-space: clamp(
+    calc(2.35rem * var(--doehealth-section-height-scale, 1)),
+    calc(8.5vw * var(--doehealth-section-height-scale, 1)),
+    calc(3.65rem * var(--doehealth-section-height-scale, 1))
+  );
   overflow: visible;
 }
 
@@ -958,16 +966,28 @@ html[data-home-page][data-layout="desktop"]
 }
 
 .doehealth-day-summary .product-landing-day-summary--last24h .product-landing-day-summary__hero-row {
-  min-height: clamp(6.75rem, 13vw, 9.25rem);
+  min-height: clamp(
+    calc(6.75rem * var(--doehealth-section-height-scale, 1)),
+    calc(13vw * var(--doehealth-section-height-scale, 1)),
+    calc(9.25rem * var(--doehealth-section-height-scale, 1))
+  );
 }
 
 .doehealth-day-summary .product-landing-day-summary--last24h .product-landing-volume-wrap {
   width: 100%;
-  min-height: clamp(6.75rem, 13vw, 9.25rem);
+  min-height: clamp(
+    calc(6.75rem * var(--doehealth-section-height-scale, 1)),
+    calc(13vw * var(--doehealth-section-height-scale, 1)),
+    calc(9.25rem * var(--doehealth-section-height-scale, 1))
+  );
 }
 
 .doehealth-day-summary .product-landing-day-summary--last24h .product-landing-volume {
-  min-height: clamp(5.75rem, 11vw, 8.25rem);
+  min-height: clamp(
+    calc(5.75rem * var(--doehealth-section-height-scale, 1)),
+    calc(11vw * var(--doehealth-section-height-scale, 1)),
+    calc(8.25rem * var(--doehealth-section-height-scale, 1))
+  );
 }
 
 .doehealth-day-summary .product-landing-day-summary--last24h .product-landing-volume__bar {
@@ -1010,16 +1030,16 @@ html[data-home-page][data-layout="desktop"]
   width: calc(100% + var(--doehealth-routed-calls-shader-bleed-left));
   margin-left: calc(-1 * var(--doehealth-routed-calls-shader-bleed-left));
   height: clamp(
-    calc(23rem + var(--app-vh, 100lvh) / 8),
-    calc(var(--app-vh, 100lvh) * 0.56),
-    calc(40rem + var(--app-vh, 100lvh) / 8)
+    calc((23rem + var(--app-vh, 100lvh) / 8) * var(--doehealth-section-height-scale, 1)),
+    calc(var(--app-vh, 100lvh) * 0.56 * var(--doehealth-section-height-scale, 1)),
+    calc((40rem + var(--app-vh, 100lvh) / 8) * var(--doehealth-section-height-scale, 1))
   );
   min-height: clamp(
-    calc(23rem + var(--app-vh, 100lvh) / 8),
-    calc(var(--app-vh, 100lvh) * 0.56),
-    calc(40rem + var(--app-vh, 100lvh) / 8)
+    calc((23rem + var(--app-vh, 100lvh) / 8) * var(--doehealth-section-height-scale, 1)),
+    calc(var(--app-vh, 100lvh) * 0.56 * var(--doehealth-section-height-scale, 1)),
+    calc((40rem + var(--app-vh, 100lvh) / 8) * var(--doehealth-section-height-scale, 1))
   );
-  max-height: calc(var(--app-vh, 100lvh) * 0.62);
+  max-height: calc(var(--app-vh, 100lvh) * 0.62 * var(--doehealth-section-height-scale, 1));
   border-radius: 0 clamp(1.1rem, 0.95rem + 0.75vmin, 1.45rem) clamp(1.1rem, 0.95rem + 0.75vmin, 1.45rem)
     0;
   box-shadow:
@@ -1190,8 +1210,11 @@ html[data-home-page][data-layout="desktop"]
   margin-inline: 0;
   aspect-ratio: 1;
   min-height: min(
-    calc(100vw - var(--doehealth-intro-title-inset-x) - var(--doehealth-ui-rail-right)),
-    36rem
+    calc(
+      (100vw - var(--doehealth-intro-title-inset-x) - var(--doehealth-ui-rail-right))
+        * var(--doehealth-section-height-scale, 1)
+    ),
+    calc(36rem * var(--doehealth-section-height-scale, 1))
   );
   overflow: visible;
 }
@@ -1254,7 +1277,10 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-active-agents__stage {
-  min-height: min(60vw, 40rem);
+  min-height: min(
+    calc(60vw * var(--doehealth-section-height-scale, 1)),
+    calc(40rem * var(--doehealth-section-height-scale, 1))
+  );
 }
 
 html[data-home-page][data-layout="desktop"]
@@ -1348,7 +1374,11 @@ html[data-home-page][data-layout="desktop"] .doehealth-intro-call-sequence--pick
 .doehealth-intro-call-sequence__a1c {
   --pb-chart-axis-width: 2.65rem;
   --pb-chart-axis-gap: 0.58rem;
-  --pb-chart-height: clamp(6.75rem, 9vh, 8.5rem);
+  --pb-chart-height: clamp(
+    calc(6.75rem * var(--doehealth-section-height-scale, 1)),
+    calc(9vh * var(--doehealth-section-height-scale, 1)),
+    calc(8.5rem * var(--doehealth-section-height-scale, 1))
+  );
   width: 100%;
   flex-shrink: 0;
   gap: 0;
@@ -1687,7 +1717,10 @@ html[data-home-page][data-layout="desktop"] .doehealth-intro-call-sequence--pick
 }
 
 .doehealth-brown-band-stack {
-  --doehealth-brown-band-height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.95);
+  --doehealth-section-height-scale: 0.75;
+  --doehealth-brown-band-height: calc(
+    var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.95 * var(--doehealth-section-height-scale)
+  );
   --doehealth-brown-top: #271f17;
   --doehealth-brown-mid: #1b1410;
   --doehealth-brown-bottom: #130e09;
@@ -1741,5 +1774,5 @@ html[data-home-page][data-layout="desktop"]
 }
 
 html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-brown-band-stack {
-  --doehealth-brown-band-height: 100dvh;
+  --doehealth-brown-band-height: calc(100dvh * var(--doehealth-section-height-scale));
 }
