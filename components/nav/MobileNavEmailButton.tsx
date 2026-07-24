@@ -10,25 +10,7 @@ import {
   NAV_EMAIL_DROPDOWN_BG,
   NAV_EMAIL_DROPDOWN_FG,
 } from "@/lib/subpage/nav-email-dropdown-styles";
-
-function MailIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden className={className}>
-      <path
-        d="M4 7.25h16c.69 0 1.25.56 1.25 1.25v9c0 .69-.56 1.25-1.25 1.25H4c-.69 0-1.25-.56-1.25-1.25v-9c0-.69.56-1.25 1.25-1.25Z"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      />
-      <path
-        d="m5.25 8.5 6.75 4.75L18.75 8.5"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
+import { NavMailIcon } from "@/components/nav/NavMailIcon";
 
 /** iPhone nav — square email button (dropdown rendered by MobileNavActionRow). */
 export function MobileNavEmailButton({
@@ -59,7 +41,7 @@ export function MobileNavEmailButton({
           aria-label={`Email ${ABOUT_CONTACT_EMAIL}`}
           onClick={onToggle}
         >
-          <MailIcon className={MOBILE_NAV_MAIL_ICON_TW} />
+          <NavMailIcon className={MOBILE_NAV_MAIL_ICON_TW} />
         </button>
       </div>
     </div>

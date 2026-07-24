@@ -38,24 +38,29 @@ html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth nav.des
   text-shadow: none !important;
 }
 
-/* Mail circle — full gold pill like page text, dark icon inside */
+/* Mail circle — gold rim + gold fill; flap cutout reveals gold through the glyph */
 html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav .proto-nav-chrome-actions .proto-nav-cta-shell,
 html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth nav.desktop-punched-nav .proto-nav-chrome-actions .proto-nav-cta-shell {
-  border: 1px solid rgba(212, 165, 116, 0.42) !important;
+  border: 1.5px solid rgba(232, 192, 142, 0.72) !important;
   background: transparent !important;
   background-color: transparent !important;
   background-image: none !important;
   overflow: visible !important;
   border-radius: 9999px !important;
-  box-shadow: none !important;
+  box-shadow:
+    0 0 0 1px rgba(184, 132, 92, 0.28),
+    0 6px 16px rgba(26, 18, 8, 0.18) !important;
 }
 
 html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav.proto-nav-scroll-frost.proto-nav--scrolled .proto-nav-chrome-actions .proto-nav-cta-shell,
 html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth nav.desktop-punched-nav .proto-nav-chrome-actions .proto-nav-cta-shell {
-  border: 1px solid rgba(212, 165, 116, 0.42) !important;
+  border: 1.5px solid rgba(232, 192, 142, 0.72) !important;
   background: transparent !important;
   background-color: transparent !important;
   background-image: none !important;
+  box-shadow:
+    0 0 0 1px rgba(184, 132, 92, 0.28),
+    0 6px 16px rgba(26, 18, 8, 0.18) !important;
 }
 
 html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav .proto-nav-chrome-actions .proto-nav-cta-shell > button,
@@ -66,10 +71,12 @@ html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth nav.des
   background-color: transparent !important;
   background-image: var(--doehealth-gold-fill-gradient) !important;
   border-radius: 9999px !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.24) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 245, 230, 0.34),
+    inset 0 -1px 0 rgba(140, 96, 58, 0.22) !important;
 }
 
-/* Mail glyph only — warm espresso on gold fill; do not restyle the circle shell/button. */
+/* Mail glyph — espresso silhouette; gold fill shows through the flap cutout */
 html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav .proto-nav-chrome-actions .proto-nav-cta-shell > button svg,
 html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav.proto-nav-scroll-frost .proto-nav-chrome-actions .proto-nav-cta-shell > button svg,
 html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav.proto-nav-scroll-frost.proto-nav--scrolled .proto-nav-chrome-actions .proto-nav-cta-shell > button svg,
@@ -83,7 +90,8 @@ html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav.prot
 html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav.proto-nav-scroll-frost.proto-nav--scrolled .proto-nav-chrome-actions .proto-nav-cta-shell > button svg path,
 html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth nav.desktop-punched-nav .proto-nav-chrome-actions .proto-nav-cta-shell > button svg path,
 html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth nav.desktop-punched-nav .proto-nav-chrome-actions .proto-nav-cta-shell button svg path {
-  stroke: #1a1208 !important;
+  fill: #1a1208 !important;
+  stroke: none !important;
 }
 
 /* Flat gold type — no glow under gradient text (hero, nav, titles, cards, convo UI). */

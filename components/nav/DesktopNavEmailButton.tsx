@@ -9,25 +9,7 @@ import {
   DESKTOP_NAV_ACTION_HEIGHT_TW,
   DESKTOP_NAV_ACTION_SIZE,
 } from "@/lib/subpage/desktop-nav-styles";
-
-function MailIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden className={className}>
-      <path
-        d="M4 7.25h16c.69 0 1.25.56 1.25 1.25v9c0 .69-.56 1.25-1.25 1.25H4c-.69 0-1.25-.56-1.25-1.25v-9c0-.69.56-1.25 1.25-1.25Z"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      />
-      <path
-        d="m5.25 8.5 6.75 4.75L18.75 8.5"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
+import { NavMailIcon } from "@/components/nav/NavMailIcon";
 
 /** Desktop nav — square email button (dropdown rendered by DesktopNavActionRow). */
 export function DesktopNavEmailButton({
@@ -66,7 +48,7 @@ export function DesktopNavEmailButton({
           aria-label={`Email ${ABOUT_CONTACT_EMAIL}`}
           onClick={onToggle}
         >
-          <MailIcon className="h-[1.25rem] w-[1.25rem]" />
+          <NavMailIcon className="h-[1.25rem] w-[1.25rem]" />
         </button>
       </div>
     </div>
