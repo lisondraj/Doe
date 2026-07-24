@@ -680,6 +680,14 @@ html[data-home-page][data-layout="desktop"]
   padding-bottom: var(--doehealth-ui-before-title-space);
 }
 
+/*
+ * Last band above the footer — mirror the stage's top breathing room below the title
+ * so space under the section matches space above the UI.
+ */
+.doehealth-brown-band-stack > .doehealth-intro-band:last-child .doehealth-intro-band__cluster {
+  padding-bottom: var(--doehealth-ui-before-title-space);
+}
+
 /* Shared full-bleed rail — left title inset + right UI gutter (matches call summary box). */
 .doehealth-content-rail {
   position: relative;
@@ -2093,4 +2101,12 @@ html[data-home-page][data-layout="desktop"]
 
 html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-brown-band-stack {
   --doehealth-brown-band-height: calc(100dvh * var(--doehealth-section-height-scale));
+}
+
+/* Last band — match desktop bottom pad to top (nav clearance + section pad) before footer. */
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-brown-band-stack
+  > .doehealth-intro-band:last-child {
+  padding-bottom: calc(var(--desktop-nav-height) + var(--desktop-section-pad-y)) !important;
 }
