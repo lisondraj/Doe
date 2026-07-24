@@ -1636,8 +1636,8 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-active-agents__stage {
-  min-height: min(64.7vw, 42.2rem);
-  max-height: min(64.7vw, 42.2rem);
+  min-height: min(72.8vw, 47.5rem);
+  max-height: min(72.8vw, 47.5rem);
 }
 
 html[data-home-page][data-layout="desktop"]
@@ -2152,7 +2152,7 @@ html[data-home-page][data-layout="desktop"]
 
 html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-brown-band-stack {
   --doehealth-section-height-scale: 1;
-  --doehealth-routed-calls-shader-height-scale: 1.40625;
+  --doehealth-routed-calls-shader-height-scale: 1.58203125;
   --doehealth-ui-before-title-space: clamp(1.85rem, 2.5vw, 2.75rem);
   --doehealth-brown-band-height: calc(100dvh * var(--doehealth-section-height-scale));
 }
@@ -2239,9 +2239,9 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-routed-calls__shader-card {
-  height: clamp(33.75rem, 76dvh, 50.625rem);
-  min-height: clamp(31rem, 70dvh, 48rem);
-  max-height: min(53.5rem, calc(100dvh - var(--desktop-nav-height) - 9.25rem));
+  height: clamp(38rem, 85.5dvh, 57rem);
+  min-height: clamp(35rem, 79dvh, 54rem);
+  max-height: min(60.2rem, calc(100dvh - var(--desktop-nav-height) - 8.2rem));
 }
 
 html[data-home-page][data-layout="desktop"]
