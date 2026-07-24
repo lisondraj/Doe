@@ -178,7 +178,7 @@ html[data-home-page][data-layout="desktop"]
 }
 
 .doehealth-initiatives__call-history-scroll {
-  --dhi-call-history-scroll-max: clamp(21rem, 56vw, 25.5rem);
+  --dhi-call-history-scroll-max: clamp(18rem, 48vw, 22rem);
   --dhi-call-history-fade-size: clamp(1.35rem, 2.4vw, 2rem);
   --dhi-call-history-bleed-x: 0.65rem;
   box-sizing: border-box;
@@ -188,10 +188,12 @@ html[data-home-page][data-layout="desktop"]
   max-height: var(--dhi-call-history-scroll-max);
   margin-inline: calc(-1 * var(--dhi-call-history-bleed-x));
   overflow-x: hidden;
-  overflow-y: scroll;
-  overscroll-behavior: contain;
-  scroll-behavior: auto;
-  -webkit-overflow-scrolling: touch;
+  overflow-y: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
+  pointer-events: none;
+  user-select: none;
+  -webkit-overflow-scrolling: auto;
   -webkit-mask-image: linear-gradient(
     to bottom,
     transparent 0,
@@ -210,6 +212,19 @@ html[data-home-page][data-layout="desktop"]
   mask-size: 100% 100%;
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
+}
+
+.doehealth-initiatives__call-history-scroll__track {
+  display: block;
+  width: 100%;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doehealth-initiatives__call-history-scroll__track {
+    will-change: auto;
+    transform: none !important;
+  }
 }
 
 .doehealth-initiatives__call-history.product-landing-live-thread {
@@ -247,6 +262,14 @@ html[data-home-page][data-layout="desktop"]
   margin-top: 0;
   padding-bottom: 0;
   overflow: visible;
+  max-height: none;
+}
+
+.doehealth-initiatives__call-history.product-call-history-rail__thread {
+  padding:
+    clamp(0.35rem, 0.75vw, 0.55rem)
+    clamp(0.15rem, 0.35vw, 0.35rem)
+    clamp(1.35rem, 2.4vw, 1.85rem);
 }
 
 .doehealth-initiatives__call-history .product-landing-live-convo {
