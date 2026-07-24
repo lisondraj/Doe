@@ -1079,6 +1079,32 @@ html[data-home-page][data-layout="desktop"]
     0 10px 28px -16px rgba(0, 0, 0, 0.42);
 }
 
+.doehealth-routed-calls-shader-panel--bleed-right {
+  --doehealth-routed-calls-ink: #d8e8f0;
+  --doehealth-routed-calls-ink-secondary: rgba(200, 212, 224, 0.84);
+  --doehealth-routed-calls-muted: rgba(127, 168, 192, 0.62);
+  --doehealth-routed-calls-surface: rgba(14, 20, 28, 0.9);
+  --doehealth-routed-calls-surface-raised: rgba(95, 142, 168, 0.16);
+  --doehealth-routed-calls-border: rgba(200, 212, 224, 0.14);
+  --doehealth-routed-calls-horizon: #7a9e78;
+  --doehealth-routed-calls-shadow:
+    inset 0 1px 0 rgba(200, 212, 224, 0.08),
+    0 10px 28px -16px rgba(0, 0, 0, 0.42);
+}
+
+.doehealth-routed-calls-shader-panel--bleed-left {
+  --doehealth-routed-calls-ink: #f2d8a8;
+  --doehealth-routed-calls-ink-secondary: rgba(242, 216, 168, 0.84);
+  --doehealth-routed-calls-muted: rgba(232, 160, 96, 0.62);
+  --doehealth-routed-calls-surface: rgba(28, 19, 9, 0.9);
+  --doehealth-routed-calls-surface-raised: rgba(232, 160, 96, 0.14);
+  --doehealth-routed-calls-border: rgba(242, 216, 168, 0.14);
+  --doehealth-routed-calls-horizon: #e8a060;
+  --doehealth-routed-calls-shadow:
+    inset 0 1px 0 rgba(242, 216, 168, 0.08),
+    0 10px 28px -16px rgba(0, 0, 0, 0.42);
+}
+
 .doehealth-routed-calls-shader-panel__gradient {
   position: absolute;
   inset: 0;
@@ -1716,9 +1742,22 @@ html[data-home-page][data-layout="desktop"] .doehealth-intro-call-sequence--pick
   color: rgba(232, 192, 142, 0.92);
 }
 
+/* First brown band — Sarah call card UI at original height/position (unscaled). */
+.doehealth-brown-band-stack > .doehealth-intro-band:first-child .doehealth-intro-call-sequence {
+  --dhi-intro-summary-overlap-y: clamp(2.35rem, 8.5vw, 3.65rem);
+}
+
+.doehealth-brown-band-stack > .doehealth-intro-band:first-child .doehealth-initiatives__call-history-scroll {
+  --dhi-call-history-scroll-max: clamp(18rem, 48vw, 22rem);
+}
+
+.doehealth-brown-band-stack > .doehealth-intro-band:first-child .doehealth-intro-call-sequence__a1c {
+  --pb-chart-height: clamp(6.75rem, 9vh, 8.5rem);
+}
+
 .doehealth-brown-band-stack {
   --doehealth-section-height-scale: 0.84375;
-  --doehealth-routed-calls-shader-height-scale: 1;
+  --doehealth-routed-calls-shader-height-scale: 1.25;
   --doehealth-brown-band-height: calc(
     var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.95 * var(--doehealth-section-height-scale)
   );

@@ -4973,6 +4973,13 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
   }
 }
 /* iPhone — /doehealth intro band (Suisse sans, left-aligned). */
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .doehealth-brown-band-stack
+  > .doehealth-intro-band:first-child {
+  min-height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.95) !important;
+  height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.95) !important;
+  max-height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.95) !important;
+}
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .doehealth-blank-brown-band {
   min-height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.8015625) !important;
   height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.8015625) !important;
@@ -11722,6 +11729,14 @@ html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth {
   --doehealth-intro-ink-body: rgba(61, 46, 31, 0.9);
   --doehealth-intro-ink-muted: rgba(61, 46, 31, 0.66);
   --doehealth-intro-ink-faint: rgba(61, 46, 31, 0.46);
+}
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-brown-band-stack
+  > .doehealth-intro-band:first-child {
+  min-height: 100dvh !important;
+  height: 100dvh !important;
+  max-height: 100dvh !important;
 }
 html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-blank-brown-band {
   min-height: 84.375dvh !important;

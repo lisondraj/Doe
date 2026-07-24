@@ -1,20 +1,39 @@
 import type { ProtoGrainGradientSurface } from "@/lib/proto/proto-grain-gradient";
 
-/** /doehealth routed-calls band — palette (decoupled from main-page hero/card shaders). */
-export const DOEHEALTH_ROUTED_CALLS_PALETTE = {
+/** /doehealth — left-bleed routed calls (warm amber ripple). */
+export const DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE = {
   back: "#1A1208",
-  horizon: "#E8A060",
+  ember: "#E8A060",
   clay: "#C45C42",
   sand: "#F2D8A8",
 } as const;
 
-/** Shader surface for the doehealth routed-calls panel only. */
-export const DOEHEALTH_ROUTED_CALLS_SHADER: ProtoGrainGradientSurface = {
-  variant: "doehealth-routed-calls",
+/** /doehealth — right-bleed routed calls (cool teal wave). */
+export const DOEHEALTH_ROUTED_CALLS_RIGHT_PALETTE = {
+  back: "#121820",
+  slate: "#5F8EA8",
+  sage: "#7A9E78",
+  mist: "#C8D4E0",
+} as const;
+
+/** Left-bleed shader — warm pool drifting from the left edge. */
+export const DOEHEALTH_ROUTED_CALLS_LEFT_SHADER: ProtoGrainGradientSurface = {
+  variant: "doehealth-routed-calls-left",
   colors: [
-    DOEHEALTH_ROUTED_CALLS_PALETTE.horizon,
-    DOEHEALTH_ROUTED_CALLS_PALETTE.clay,
-    DOEHEALTH_ROUTED_CALLS_PALETTE.sand,
+    DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE.ember,
+    DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE.clay,
+    DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE.sand,
   ],
-  colorBack: DOEHEALTH_ROUTED_CALLS_PALETTE.back,
+  colorBack: DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE.back,
+};
+
+/** Right-bleed shader — cool clinical wave anchored upper-right. */
+export const DOEHEALTH_ROUTED_CALLS_RIGHT_SHADER: ProtoGrainGradientSurface = {
+  variant: "doehealth-routed-calls-right",
+  colors: [
+    DOEHEALTH_ROUTED_CALLS_RIGHT_PALETTE.slate,
+    DOEHEALTH_ROUTED_CALLS_RIGHT_PALETTE.sage,
+    DOEHEALTH_ROUTED_CALLS_RIGHT_PALETTE.mist,
+  ],
+  colorBack: DOEHEALTH_ROUTED_CALLS_RIGHT_PALETTE.back,
 };

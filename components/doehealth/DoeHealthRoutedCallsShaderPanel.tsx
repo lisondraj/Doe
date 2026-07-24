@@ -4,7 +4,10 @@ import { useLayoutEffect, useState } from "react";
 
 import { DoePhoneCallHistoryVisual } from "@/components/doephone/DoePhoneCallHistoryVisual";
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
-import { DOEHEALTH_ROUTED_CALLS_SHADER } from "@/lib/doehealth/doehealth-routed-calls-shader";
+import {
+  DOEHEALTH_ROUTED_CALLS_LEFT_SHADER,
+  DOEHEALTH_ROUTED_CALLS_RIGHT_SHADER,
+} from "@/lib/doehealth/doehealth-routed-calls-shader";
 import {
   DOEPHONE_DESKTOP_MEDIA_QUERY,
   readBootstrappedDoePhoneVariant,
@@ -25,11 +28,16 @@ export function DoeHealthRoutedCallsShaderPanel({ bleedRight = false }: { bleedR
     return () => mq.removeEventListener("change", sync);
   }, []);
 
-  const { variant, colors, colorBack } = DOEHEALTH_ROUTED_CALLS_SHADER;
+  const shader = bleedRight ? DOEHEALTH_ROUTED_CALLS_RIGHT_SHADER : DOEHEALTH_ROUTED_CALLS_LEFT_SHADER;
+  const { variant, colors, colorBack } = shader;
 
   return (
     <div
-      className={`doehealth-routed-calls-shader-panel${bleedRight ? " doehealth-routed-calls-shader-panel--bleed-right" : ""}`}
+      className={`doehealth-routed-calls-shader-panel${
+        bleedRight
+          ? " doehealth-routed-calls-shader-panel--bleed-right"
+          : " doehealth-routed-calls-shader-panel--bleed-left"
+      }`}
     >
       <ProtoGrainGradient
         variant={variant}

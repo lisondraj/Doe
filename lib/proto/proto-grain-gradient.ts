@@ -103,6 +103,8 @@ export type ProtoGrainGradientVariant =
   | "active-agents-band"
   | "inbox"
   | "doehealth-routed-calls"
+  | "doehealth-routed-calls-left"
+  | "doehealth-routed-calls-right"
   | "ambient"
   | "ambient-band"
   | "billing"
@@ -290,6 +292,32 @@ export const PROTO_GRAIN_GRADIENT_PRESETS: Record<ProtoGrainGradientVariant, Pro
     offsetX: -0.12,
     offsetY: -0.1,
     scale: 1.12,
+  },
+  /** /doehealth — left-bleed routed calls (warm ripple pooled lower-left). */
+  "doehealth-routed-calls-left": {
+    shape: "ripple",
+    softness: 0.76,
+    intensity: 0.16,
+    fit: "cover",
+    rotation: 212,
+    offsetX: -0.22,
+    offsetY: 0.34,
+    scale: 1.2,
+    worldWidth: 1280,
+    worldHeight: 960,
+    speed: 0.28,
+  },
+  /** /doehealth — right-bleed routed calls (cool wave drift upper-right). */
+  "doehealth-routed-calls-right": {
+    shape: "wave",
+    softness: 0.68,
+    intensity: 0.19,
+    fit: "cover",
+    rotation: 24,
+    offsetX: 0.2,
+    offsetY: -0.16,
+    scale: 1.14,
+    speed: 0.38,
   },
   ambient: {
     shape: "ripple",
