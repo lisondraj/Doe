@@ -1644,10 +1644,71 @@ html[data-home-page][data-layout="desktop"]
 
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
+  .doehealth-intro-band--active-agents
+  .doehealth-active-agents-sequence.doehealth-content-rail {
+  box-sizing: border-box;
+  width: min(92rem, calc(100vw - 2 * var(--doehealth-rail-viewport-trim-x, 2.5rem)));
+  max-width: min(92rem, calc(100vw - 2 * var(--doehealth-rail-viewport-trim-x, 2.5rem)));
+  margin-inline: auto;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-band--active-agents
+  .doehealth-active-agents-sequence__stage.doehealth-content-rail__summary-edge {
+  width: 100%;
+  max-width: 100%;
+  margin-inline: auto;
+  margin-right: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
   .doehealth-active-agents__orbit.product-landing-workspace__orbit
   .product-landing-workspace__orbit-ring {
-  --orbit-size: clamp(8.75rem, 24cqw, 12.85rem);
-  --orbit-overlap: 0.92;
+  --orbit-size: clamp(9.85rem, 28.5cqw, 13.85rem);
+  --orbit-overlap: 0.89;
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-active-agents__orbit
+  .product-landing-workspace__orbit-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 50%;
+  left: 50%;
+  width: max(var(--orbit-inner), calc(var(--orbit-size) * 0.66));
+  height: max(var(--orbit-inner), calc(var(--orbit-size) * 0.66));
+  padding: clamp(0.35rem, 0.85vw, 0.65rem);
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-active-agents__orbit
+  .product-landing-workspace__orbit-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  text-align: center;
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-active-agents__orbit
+  .product-landing-workspace__orbit-stat-label-stack {
+  align-items: center;
+  text-align: center;
 }
 
 html[data-home-page][data-layout="desktop"]
@@ -2259,6 +2320,7 @@ html[data-home-page][data-layout="desktop"]
   .doehealth-intro-band__cluster {
   flex: 1;
   min-height: 0;
+  gap: clamp(0.32rem, 0.6vw, 0.48rem);
 }
 
 html[data-home-page][data-layout="desktop"]
@@ -2271,6 +2333,7 @@ html[data-home-page][data-layout="desktop"]
   justify-content: center;
   min-height: 0;
   padding-top: 0;
+  padding-bottom: 0;
 }
 
 html[data-home-page][data-layout="desktop"]
