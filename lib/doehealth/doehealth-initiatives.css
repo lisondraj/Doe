@@ -684,7 +684,11 @@ html[data-home-page][data-layout="desktop"]
  * Last band above the footer — mirror the stage's top breathing room below the title
  * so space under the section matches space above the UI.
  */
-.doehealth-brown-band-stack > .doehealth-intro-band:last-child .doehealth-intro-band__cluster {
+.doehealth-brown-band-stack > .doehealth-intro-band:last-child .doehealth-intro-band__cluster,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .doehealth-brown-band-stack
+  > .doehealth-intro-band:last-child
+  .doehealth-intro-band__cluster {
   padding-bottom: var(--doehealth-ui-before-title-space);
 }
 
