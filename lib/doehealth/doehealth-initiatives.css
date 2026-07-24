@@ -952,10 +952,16 @@ html[data-home-page][data-layout="desktop"]
 
 /* ── Routed calls band (/doehealth-only shader + 18 routed today UI) ── */
 
+.doehealth-routed-calls-sequence,
+.doehealth-routed-calls-sequence__stage,
+.doehealth-routed-calls,
+.doehealth-intro-band--routed-calls .doehealth-intro-stage {
+  overflow: visible;
+}
+
 .doehealth-routed-calls-sequence__stage {
   width: 100%;
   max-width: 100%;
-  overflow: visible;
 }
 
 .doehealth-routed-calls {
@@ -964,22 +970,27 @@ html[data-home-page][data-layout="desktop"]
 }
 
 .doehealth-routed-calls__shader-card {
+  --doehealth-routed-calls-shader-bleed-left: calc(
+    var(--doehealth-rail-viewport-trim-x, 0px) + var(--doehealth-intro-title-inset-x)
+  );
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  width: 100%;
+  width: calc(100% + var(--doehealth-routed-calls-shader-bleed-left));
+  margin-left: calc(-1 * var(--doehealth-routed-calls-shader-bleed-left));
   height: clamp(
-    calc(23rem + var(--app-vh, 100lvh) / 8),
-    calc(var(--app-vh, 100lvh) * 0.56),
-    calc(40rem + var(--app-vh, 100lvh) / 8)
+    calc(34rem + var(--app-vh, 100lvh) / 5),
+    calc(var(--app-vh, 100lvh) * 0.78),
+    calc(58rem + var(--app-vh, 100lvh) / 5)
   );
   min-height: clamp(
-    calc(23rem + var(--app-vh, 100lvh) / 8),
-    calc(var(--app-vh, 100lvh) * 0.56),
-    calc(40rem + var(--app-vh, 100lvh) / 8)
+    calc(34rem + var(--app-vh, 100lvh) / 5),
+    calc(var(--app-vh, 100lvh) * 0.78),
+    calc(58rem + var(--app-vh, 100lvh) / 5)
   );
-  max-height: calc(var(--app-vh, 100lvh) * 0.62);
-  border-radius: clamp(1.1rem, 0.95rem + 0.75vmin, 1.45rem);
+  max-height: calc(var(--app-vh, 100lvh) * 0.88);
+  border-radius: 0 clamp(1.1rem, 0.95rem + 0.75vmin, 1.45rem) clamp(1.1rem, 0.95rem + 0.75vmin, 1.45rem)
+    0;
   box-shadow:
     0 10px 32px rgba(0, 0, 0, 0.14),
     0 24px 56px rgba(26, 18, 8, 0.12);
@@ -1018,7 +1029,9 @@ html[data-home-page][data-layout="desktop"]
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
+  box-sizing: border-box;
+  width: calc(100% - var(--doehealth-routed-calls-shader-bleed-left, 0px));
+  margin-left: var(--doehealth-routed-calls-shader-bleed-left, 0px);
   height: 100%;
   min-height: 100%;
   transform: scale(0.93);
@@ -1089,7 +1102,7 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-routed-calls__shader-card {
-  border-radius: clamp(1.35rem, 1.05rem + 0.9vw, 2rem);
+  border-radius: 0 clamp(1.35rem, 1.05rem + 0.9vw, 2rem) clamp(1.35rem, 1.05rem + 0.9vw, 2rem) 0;
 }
 
 html[data-home-page][data-layout="desktop"]
