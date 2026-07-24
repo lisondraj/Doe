@@ -38,6 +38,45 @@ html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth nav.des
   text-shadow: none !important;
 }
 
+/* Hero dial ball — soft gold rim glow so spheres sit in the page gold system */
+.doephone-mobile-root--doehealth .hero-speaking-orb__core,
+.doe-desktop-root--doehealth .hero-speaking-orb__core {
+  box-shadow:
+    0 18px 48px rgba(26, 18, 8, 0.42),
+    0 0 0 1px color-mix(in srgb, var(--orb-halo-light) 22%, transparent),
+    0 0 36px color-mix(in srgb, var(--orb-halo-mid) 22%, transparent);
+}
+
+.doephone-mobile-root--doehealth .hero-speaking-orb--focused .hero-speaking-orb__core,
+.doe-desktop-root--doehealth .hero-speaking-orb--focused .hero-speaking-orb__core {
+  box-shadow:
+    0 22px 56px rgba(26, 18, 8, 0.46),
+    0 0 52px color-mix(in srgb, var(--orb-halo-mid) 36%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--orb-halo-light) 32%, transparent);
+}
+
+/* Hero agent pill — warm sand + gold rim (matches titles / mail chrome, not cold white) */
+.doephone-mobile-root--doehealth .hero-speaking-orb__tag,
+.doe-desktop-root--doehealth .hero-speaking-orb__tag {
+  --hero-pill-ink: #1a1208;
+  border: 1px solid rgba(212, 165, 116, 0.58);
+  background:
+    linear-gradient(180deg, rgba(255, 248, 236, 0.88) 0%, transparent 46%),
+    linear-gradient(152deg, #faf0d8 0%, #f0e0c4 54%, #e4c89a 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow:
+    0 14px 32px rgba(26, 18, 8, 0.24),
+    0 4px 12px rgba(184, 132, 92, 0.18),
+    inset 0 1px 0 rgba(255, 250, 240, 0.95),
+    inset 0 -1px 0 rgba(184, 132, 92, 0.2);
+}
+
+.doephone-mobile-root--doehealth .hero-speaking-orb__tag-text,
+.doe-desktop-root--doehealth .hero-speaking-orb__tag-text {
+  color: #1a1208;
+}
+
 /* Mail circle — gold rim + gold fill; flap cutout reveals gold through the glyph */
 html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav .proto-nav-chrome-actions .proto-nav-cta-shell,
 html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth nav.desktop-punched-nav .proto-nav-chrome-actions .proto-nav-cta-shell {

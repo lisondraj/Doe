@@ -224,9 +224,12 @@ const SpeakingGradientOrb = memo(function SpeakingGradientOrb({
 export function DoePhoneHeroGradientCircles({
   variant = "mobile",
   disableInteractions = false,
+  orbSchemes = HERO_DIAL_ORBS,
 }: {
   variant?: "mobile" | "desktop";
   disableInteractions?: boolean;
+  /** Optional dial palette — /doehealth passes gold-aligned schemes. */
+  orbSchemes?: readonly HeroDialOrbScheme[];
 }) {
   const dialLayout = HERO_DIAL_LAYOUT[variant];
   const isMobileInteractive = variant === "mobile" && !disableInteractions;
@@ -257,9 +260,9 @@ export function DoePhoneHeroGradientCircles({
     [dialRotation, dialLayout.radiusVmin],
   );
   const focusedIndex = focusedIndexForRotation(dialRotation);
-  const focusedLabel = HERO_DIAL_ORBS[focusedIndex]?.label ?? "Agent";
+  const focusedLabel = orbSchemes[focusedIndex]?.label ?? "Agent";
   const expandedScheme =
-    expandedOrbIndex === null ? null : HERO_DIAL_ORBS[expandedOrbIndex] ?? null;
+    expandedOrbIndex === null ? null : orbSchemes[expandedOrbIndex] ?? null;
 
   const applyDialLayoutToDom = useCallback(
     (
@@ -496,7 +499,7 @@ export function DoePhoneHeroGradientCircles({
     >
       <div className="hero-speaking-orbs__stage">
         <div ref={dialRef} className="hero-speaking-orbs__dial">
-          {HERO_DIAL_ORBS.map((scheme, index) => {
+          {orbSchemes.map((scheme, index) => {
             const pose = layout[index];
             const style = dialNodeStyle(pose);
             const isExpandedSource = expandedOrbIndex === index;

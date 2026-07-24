@@ -22,6 +22,7 @@ import {
   DOE_HOME_HERO_DUSK_PALETTE,
   doeHomeHeroDuskShaderSurface,
 } from "@/lib/proto/proto-shader-backdrop-colors";
+import type { HeroDialOrbScheme } from "@/lib/doephone/hero-dial-orbs";
 import { useEffect, useState, type CSSProperties } from "react";
 
 /** Hero — slightly below full viewport so Safari bottom bar does not clip; section 2 stays full height. */
@@ -39,6 +40,7 @@ export function DoePhoneHeroSection({
   heroHeadlineClassName,
   heroHeadlineFitToContainer,
   disableHeroOrbInteractions,
+  heroOrbSchemes,
 }: {
   /** Desktop home uses full viewport height and wider copy gutters. */
   variant?: "mobile" | "desktop";
@@ -51,6 +53,8 @@ export function DoePhoneHeroSection({
   heroHeadlineClassName?: string;
   heroHeadlineFitToContainer?: boolean;
   disableHeroOrbInteractions?: boolean;
+  /** Optional hero dial orb palette (e.g. /doehealth gold schemes). */
+  heroOrbSchemes?: readonly HeroDialOrbScheme[];
 }) {
   const [introZoom, setIntroZoom] = useState(DOEPHONE_HERO_INTRO_GRADIENT_START);
   const [introDone, setIntroDone] = useState(false);
@@ -142,6 +146,7 @@ export function DoePhoneHeroSection({
         <DoePhoneHeroGradientCircles
           variant={variant}
           disableInteractions={disableHeroOrbInteractions}
+          orbSchemes={heroOrbSchemes}
         />
       ) : null}
 

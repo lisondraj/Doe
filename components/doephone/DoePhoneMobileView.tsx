@@ -20,6 +20,7 @@ import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-v
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 import { useDesignersStaticNav } from "@/lib/designers/use-designers-static-nav";
 import { useDoeHealthLandingNavContext } from "@/lib/doehealth/doehealth-nav-chrome";
+import { DOEHEALTH_HERO_DIAL_ORBS } from "@/lib/doehealth/doehealth-hero-dial-orbs";
 import { PROTO_FONT_CLASS, PROTO_NAV_LOGO_FONT_CLASS } from "@/lib/proto/proto-font";
 import { PROTO_INVEST_PATH } from "@/lib/site-domains";
 
@@ -154,6 +155,7 @@ export function DoePhoneMobileView({
         heroHeadlineClassName={heroHeadline?.className}
         heroHeadlineFitToContainer={heroHeadline?.fitToContainer}
         disableHeroOrbInteractions={disableCarouselInteractions}
+        heroOrbSchemes={isDoeHealthLanding ? DOEHEALTH_HERO_DIAL_ORBS : undefined}
       />
 
       {afterHero}

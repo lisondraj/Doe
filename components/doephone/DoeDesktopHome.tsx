@@ -10,6 +10,7 @@ import { DesktopPunchedSiteNav } from "@/components/nav/DesktopPunchedSiteNav";
 import type { DoePhoneCommunicationSlide } from "@/lib/doephone/communication-carousel";
 import { DOEPHONE_BEIGE_SECTION } from "@/lib/doephone/section-styles";
 import type { DoeHomeHeroHeadline } from "@/components/doephone/DoePhoneMobileView";
+import { DOEHEALTH_HERO_DIAL_ORBS } from "@/lib/doehealth/doehealth-hero-dial-orbs";
 
 /** Desktop home — light Doe layout mirroring /proto, driven by the iPhone home content. */
 export function DoeDesktopHome({
@@ -70,6 +71,7 @@ export function DoeDesktopHome({
           heroHeadlineClassName={heroHeadline?.className}
           heroHeadlineFitToContainer={heroHeadline?.fitToContainer}
           disableHeroOrbInteractions={disableCarouselInteractions}
+          heroOrbSchemes={isDoeHealthLanding ? DOEHEALTH_HERO_DIAL_ORBS : undefined}
         />
 
         <DesktopPunchedSiteNav
