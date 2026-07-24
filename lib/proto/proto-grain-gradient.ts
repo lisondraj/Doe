@@ -470,6 +470,8 @@ export function doeHomeShaderBandVariant(
 ): ProtoGrainGradientVariant | undefined {
   if (slideId === "front-desk") return "customize-agents-band";
   if (slideId === "agents") return "active-agents-band";
+  // Prior auth / call-summaries band — match Built by doctors dusk palette and flow.
+  if (slideId === "inbox") return "active-agents-band";
   // Care → finance: flipped integrate flow for outreach, then structured card.
   if (slideId === "ambient") return "ambient-band";
   // Finance → stack: structured card, then teal footer pool into Integrate.
