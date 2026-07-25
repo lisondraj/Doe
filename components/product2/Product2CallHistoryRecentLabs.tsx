@@ -64,9 +64,11 @@ function LabRow({
 }
 
 /** Diabetes-focused recent labs with target-range visuals for call history aside column. */
-export function Product2CallHistoryRecentLabs() {
-  const { items } = PRODUCT2_CALL_HISTORY_RECENT_LABS;
-
+export function Product2CallHistoryRecentLabs({
+  items = PRODUCT2_CALL_HISTORY_RECENT_LABS.items,
+}: {
+  items?: readonly LabItem[];
+} = {}) {
   return (
     <div className="product-call-history-panel__labs-shell">
       <div className="product-call-history-panel__labs-visuals">

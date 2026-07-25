@@ -110,15 +110,53 @@ export const PRODUCT2_CALL_HISTORY_MOSAIC_IPHONE = {
   visits: {
     label: PRODUCT2_CALL_HISTORY_RECENT_VISITS.label,
     items: [
-      { title: "Annual Physical", when: "6 mo ago", month: "Jan", day: 14, weekday: "Tue" },
-      { title: "Diabetes F/U", when: "3 mo ago", month: "Apr", day: 9, weekday: "Wed" },
+      { title: "Annual Physical", when: "", month: "Jan", day: 14, weekday: "Tue" },
+      { title: "Diabetes F/U", when: "", month: "Apr", day: 9, weekday: "Wed" },
+      { title: "Virtual Visit", when: "", month: "Jun", day: 24, weekday: "Tue" },
     ],
   },
   tasks: {
     label: PRODUCT2_CALL_HISTORY_OPEN_TASKS.label,
     items: [
       { title: "Metformin refill", when: "Due today", tone: "due" as const, icon: "rx" as const },
-      { title: "Eye exam", when: "Overdue", tone: "overdue" as const, icon: "eye" as const },
+      { title: "Diabetic eye exam", when: "Overdue", tone: "overdue" as const, icon: "eye" as const },
+    ],
+  },
+  labs: {
+    items: [
+      {
+        shortLabel: "A1C",
+        value: "6.9",
+        unit: "%",
+        trend: "↑ 0.4",
+        reading: 6.9,
+        scaleMin: 5.5,
+        scaleMax: 9.5,
+        targetMin: 5.5,
+        targetMax: 7.0,
+      },
+      {
+        shortLabel: "LDL",
+        value: "98",
+        unit: "mg/dL",
+        trend: "At goal",
+        reading: 98,
+        scaleMin: 50,
+        scaleMax: 160,
+        targetMin: 50,
+        targetMax: 100,
+      },
+      {
+        shortLabel: "UACR",
+        value: "18",
+        unit: "mg/g",
+        trend: "Normal",
+        reading: 18,
+        scaleMin: 0,
+        scaleMax: 60,
+        targetMin: 0,
+        targetMax: 30,
+      },
     ],
   },
   conditions: {

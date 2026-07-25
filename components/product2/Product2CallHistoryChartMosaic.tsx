@@ -64,7 +64,9 @@ function MosaicVisitsList({ visits, className = "" }: { visits: readonly MosaicV
           </div>
           <div className="product-call-history-panel__visits-item-copy">
             <span className="product-call-history-panel__visits-item-title">{visit.title}</span>
-            <span className="product-call-history-panel__visits-item-when">{visit.when}</span>
+            {visit.when ? (
+              <span className="product-call-history-panel__visits-item-when">{visit.when}</span>
+            ) : null}
           </div>
         </li>
       ))}
@@ -225,7 +227,12 @@ export function Product2CallHistoryChartMosaic() {
             className="product-call-history-panel__labs-card product-landing-live-quote__chart-profile"
             aria-label="Recent labs"
           >
-            <Product2CallHistoryRecentLabs />
+            <div className="product-call-history-mosaic__copy--desktop">
+              <Product2CallHistoryRecentLabs />
+            </div>
+            <div className="product-call-history-mosaic__copy--mobile">
+              <Product2CallHistoryRecentLabs items={PRODUCT2_CALL_HISTORY_MOSAIC_IPHONE.labs.items} />
+            </div>
           </div>
         </div>
 
