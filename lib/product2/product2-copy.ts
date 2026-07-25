@@ -8,7 +8,14 @@ export const PRODUCT2_LANDING_GREETING_NAME = "Dr. Chen";
 
 export const PRODUCT2_LANDING_TAB_LABEL = "Today";
 
+export const PRODUCT2_AGENT_BUILDER_TAB_LABEL = "Agent Builder";
+
 export const PRODUCT2_CALL_HISTORY_TAB_LABEL = "Call History";
+
+export const PRODUCT2_CALL_HISTORY_HEADER = {
+  crumbs: ["Call History", "Tues Mar 21st", "Sarah Westfield"] as const,
+  backAria: "Back",
+} as const;
 
 export const PRODUCT2_CALL_HISTORY_CONVO_VIEW_FULL = "Full";
 export const PRODUCT2_CALL_HISTORY_CONVO_VIEW_AGENT_ONLY = "Agent Only";
@@ -62,6 +69,115 @@ export const PRODUCT2_CALL_HISTORY_A1C_TREND = {
   ],
 } as const;
 
+export const PRODUCT2_CALL_HISTORY_MEDICATIONS = {
+  label: "Medications",
+  items: ["Metformin XR 500mg BID", "Atorvastatin 20mg", "Lisinopril 10mg", "Vitamin D"],
+} as const;
+
+export const PRODUCT2_CALL_HISTORY_RECENT_VISITS = {
+  label: "Recent Visits",
+  items: [
+    { title: "Annual Physical", when: "6 months ago", month: "Jan", day: 14, weekday: "Tue" },
+    { title: "Diabetes Follow-up", when: "3 months ago", month: "Apr", day: 9, weekday: "Wed" },
+    { title: "Virtual Visit", when: "1 month ago", month: "Jun", day: 24, weekday: "Tue" },
+  ],
+} as const;
+
+export const PRODUCT2_CALL_HISTORY_CONDITIONS = {
+  label: "Conditions",
+  items: ["Type 2 Diabetes", "Hypertension", "Hyperlipidemia"],
+} as const;
+
+export const PRODUCT2_CALL_HISTORY_ALLERGIES = {
+  label: "Allergies",
+  items: ["Penicillin"],
+} as const;
+
+export const PRODUCT2_CALL_HISTORY_OPEN_TASKS = {
+  label: "Open Tasks",
+  items: [
+    { title: "Metformin refill", when: "Due today", tone: "due", icon: "rx" as const },
+    { title: "Diabetic eye exam", when: "Overdue 2 wk", tone: "overdue", icon: "eye" as const },
+  ],
+} as const;
+
+/** /doehealth iPhone mosaic — shorter labels that fit square tiles. */
+export const PRODUCT2_CALL_HISTORY_MOSAIC_IPHONE = {
+  medications: {
+    label: PRODUCT2_CALL_HISTORY_MEDICATIONS.label,
+    items: ["Metformin XR", "Atorvastatin 20mg"] as const,
+  },
+  visits: {
+    label: PRODUCT2_CALL_HISTORY_RECENT_VISITS.label,
+    items: [
+      { title: "Annual Physical", when: "6 mo ago", month: "Jan", day: 14, weekday: "Tue" },
+      { title: "Diabetes F/U", when: "3 mo ago", month: "Apr", day: 9, weekday: "Wed" },
+    ],
+  },
+  tasks: {
+    label: PRODUCT2_CALL_HISTORY_OPEN_TASKS.label,
+    items: [
+      { title: "Metformin refill", when: "Due today", tone: "due" as const, icon: "rx" as const },
+    ],
+  },
+  conditions: {
+    label: PRODUCT2_CALL_HISTORY_CONDITIONS.label,
+    items: ["Type 2 Diabetes", "Hypertension"] as const,
+  },
+  allergies: PRODUCT2_CALL_HISTORY_ALLERGIES,
+} as const;
+
+export const PRODUCT2_CALL_HISTORY_RECENT_LABS = {
+  label: "Recent Labs",
+  collected: "Collected Mar 14",
+  items: [
+    {
+      shortLabel: "A1C",
+      value: "6.9",
+      unit: "%",
+      trend: "↑ 0.4",
+      reading: 6.9,
+      scaleMin: 5.5,
+      scaleMax: 9.5,
+      targetMin: 5.5,
+      targetMax: 7.0,
+    },
+    {
+      shortLabel: "LDL",
+      value: "98",
+      unit: "mg/dL",
+      trend: "At goal",
+      reading: 98,
+      scaleMin: 50,
+      scaleMax: 160,
+      targetMin: 50,
+      targetMax: 100,
+    },
+    {
+      shortLabel: "UACR",
+      value: "18",
+      unit: "mg/g",
+      trend: "Normal",
+      reading: 18,
+      scaleMin: 0,
+      scaleMax: 60,
+      targetMin: 0,
+      targetMax: 30,
+    },
+    {
+      shortLabel: "eGFR",
+      value: "88",
+      unit: "mL/min",
+      trend: "Stable",
+      reading: 88,
+      scaleMin: 40,
+      scaleMax: 120,
+      targetMin: 60,
+      targetMax: 120,
+    },
+  ],
+} as const;
+
 export const PRODUCT2_CALL_HISTORY_BP_TREND = {
   label: "Last BP",
   readings: [
@@ -73,6 +189,37 @@ export const PRODUCT2_CALL_HISTORY_BP_TREND = {
     { date: "10/25", systolic: 128, diastolic: 80 },
     { date: "7/26", systolic: 128, diastolic: 82 },
   ],
+} as const;
+
+export const PRODUCT2_CALL_HISTORY_RECENT_VITALS = {
+  label: "Recent Vitals",
+  bp: PRODUCT2_CALL_HISTORY_BP_TREND,
+  heartRate: {
+    shortLabel: "HR",
+    latest: 72,
+    unit: "bpm",
+    trend: "Stable",
+    readings: [
+      { value: 68 },
+      { value: 70 },
+      { value: 74 },
+      { value: 71 },
+      { value: 72 },
+    ],
+  },
+  weight: {
+    shortLabel: "Wt",
+    latest: 184,
+    unit: "lb",
+    trend: "↓ 4 lb",
+    readings: [
+      { value: 188 },
+      { value: 187 },
+      { value: 186 },
+      { value: 185 },
+      { value: 184 },
+    ],
+  },
 } as const;
 
 /** @deprecated Use PRODUCT2_LANDING_DAY_SUMMARY panels. */

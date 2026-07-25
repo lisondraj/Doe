@@ -682,6 +682,7 @@ html[data-home-page][data-layout="desktop"]
 }
 
 .doehealth-intro-band--day-summary .doehealth-intro-stage,
+.doehealth-intro-band--patient-chart .doehealth-intro-stage,
 .doehealth-intro-band--active-agents .doehealth-intro-stage {
   padding-bottom: var(--doehealth-ui-before-title-space);
 }
@@ -716,6 +717,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
  */
 .doehealth-content-rail__summary-edge,
 .doehealth-day-summary-sequence__stage.doehealth-content-rail__summary-edge,
+.doehealth-patient-chart-sequence__stage.doehealth-content-rail__summary-edge,
 .doehealth-routed-calls-sequence__stage.doehealth-content-rail__summary-edge,
 .doehealth-active-agents-sequence__stage.doehealth-content-rail__summary-edge {
   box-sizing: border-box;
@@ -2900,4 +2902,223 @@ html[data-home-page][data-layout="desktop"]
   .doehealth-brown-band-stack
   > .doehealth-intro-band:last-child {
   padding-bottom: calc(var(--desktop-nav-height) + var(--desktop-section-pad-y)) !important;
+}
+
+/* ── Patient chart mosaic band (Sarah call-history boxes, square grid) ── */
+
+.doehealth-patient-chart-sequence__stage {
+  width: 100%;
+  max-width: 100%;
+}
+
+.doehealth-patient-chart-sequence .doehealth-patient-chart,
+.doehealth-patient-chart-sequence .doehealth-patient-chart__stage {
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+}
+
+.doehealth-patient-chart__stage {
+  overflow: visible;
+  --pi-cream: #f2e8da;
+  --pi-sand: rgba(242, 232, 218, 0.14);
+  --pi-sand-deep: rgba(212, 165, 116, 0.22);
+  --pi-well: rgba(26, 18, 8, 0.34);
+  --pi-selected: rgba(212, 165, 116, 0.12);
+  --pi-raised: rgba(42, 33, 24, 0.72);
+  --pi-reading: rgba(26, 18, 8, 0.22);
+  --pi-highlight: rgba(212, 165, 116, 0.1);
+  --pi-accent: #d4a574;
+  --pi-accent-deep: #e8c08e;
+  --pi-accent-soft: rgba(212, 165, 116, 0.16);
+  --pi-ink: #f2e8da;
+  --pi-ink-soft: rgba(242, 232, 218, 0.84);
+  --pi-muted: rgba(242, 232, 218, 0.48);
+  --pi-muted-soft: rgba(242, 232, 218, 0.62);
+  --pi-line: rgba(242, 232, 218, 0.1);
+  --pi-line-faint: rgba(242, 232, 218, 0.06);
+  --pl-console-text: #f2e8da;
+  position: relative;
+  isolation: isolate;
+}
+
+.doehealth-patient-chart-sequence .product-call-history-mosaic__grid {
+  width: min(100%, clamp(18.5rem, 78vw, 24rem));
+  margin-inline: auto;
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-band--patient-chart
+  .doehealth-intro-band__cluster {
+  gap: clamp(0.5rem, 1vw, 0.75rem);
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-band--patient-chart
+  .doehealth-intro-stage {
+  align-items: center;
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-band--patient-chart
+  .doehealth-patient-chart-sequence.doehealth-content-rail {
+  --dhi-patient-chart-size: clamp(28rem, 36vw, 38rem);
+  --dhi-intro-ui-fade-start: 58%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(92rem, calc(100vw - 2 * var(--doehealth-rail-viewport-trim-x, 2.5rem)));
+  max-width: min(92rem, calc(100vw - 2 * var(--doehealth-rail-viewport-trim-x, 2.5rem)));
+  margin-inline: auto;
+  padding-left: 0;
+  padding-right: 0;
+  padding-bottom: clamp(1.85rem, 3.2vh, 2.65rem);
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-band--patient-chart
+  .doehealth-patient-chart-sequence__stage.doehealth-content-rail__summary-edge {
+  box-sizing: border-box;
+  width: min(100%, var(--dhi-patient-chart-size, clamp(28rem, 36vw, 38rem)));
+  max-width: min(var(--dhi-patient-chart-size, clamp(28rem, 36vw, 38rem)), 100%);
+  margin-inline: auto;
+  margin-right: auto;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 var(--dhi-intro-ui-fade-start),
+    rgba(0, 0, 0, 0.94) calc(var(--dhi-intro-ui-fade-start) + 8%),
+    rgba(0, 0, 0, 0.72) calc(var(--dhi-intro-ui-fade-start) + 16%),
+    rgba(0, 0, 0, 0.38) calc(var(--dhi-intro-ui-fade-start) + 26%),
+    rgba(0, 0, 0, 0.1) calc(var(--dhi-intro-ui-fade-start) + 34%),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 var(--dhi-intro-ui-fade-start),
+    rgba(0, 0, 0, 0.94) calc(var(--dhi-intro-ui-fade-start) + 8%),
+    rgba(0, 0, 0, 0.72) calc(var(--dhi-intro-ui-fade-start) + 16%),
+    rgba(0, 0, 0, 0.38) calc(var(--dhi-intro-ui-fade-start) + 26%),
+    rgba(0, 0, 0, 0.1) calc(var(--dhi-intro-ui-fade-start) + 34%),
+    transparent 100%
+  );
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-band--patient-chart
+  .doehealth-patient-chart-sequence__card.doehealth-patient-chart
+  .doehealth-patient-chart__stage {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow: hidden;
+  min-height: var(--dhi-patient-chart-size, clamp(28rem, 36vw, 38rem));
+  height: var(--dhi-patient-chart-size, clamp(28rem, 36vw, 38rem));
+  border: 1px solid var(--dhi-card-border);
+  border-radius: 0.85rem;
+  background: linear-gradient(168deg, var(--dhi-card-from) 0%, var(--dhi-card-to) 100%);
+  padding: clamp(1.1rem, 0.95rem + 0.45vw, 1.35rem) clamp(1.1rem, 0.95rem + 0.4vw, 1.28rem)
+    clamp(1.15rem, 1rem + 0.45vw, 1.38rem);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    0 10px 28px rgba(26, 18, 8, 0.16),
+    0 24px 56px rgba(26, 18, 8, 0.1);
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-band--patient-chart
+  .doehealth-patient-chart-sequence__card.doehealth-patient-chart
+  .doehealth-patient-chart__stage
+  .product-call-history-mosaic {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-band--patient-chart
+  .doehealth-patient-chart-sequence
+  .product-call-history-mosaic__grid {
+  width: min(100%, calc(var(--dhi-patient-chart-size, clamp(28rem, 36vw, 38rem)) - 2.4rem));
+  max-height: min(100%, calc(var(--dhi-patient-chart-size, clamp(28rem, 36vw, 38rem)) - 2.4rem));
+}
+
+/* iPhone /doehealth — bare mosaic on brown band (no console shell), larger 6×6 interlock. */
+html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
+  .doehealth-intro-band--patient-chart
+  .doehealth-patient-chart-sequence.doehealth-content-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding-bottom: clamp(0.35rem, 1.2vmin, 0.65rem);
+}
+
+html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
+  .doehealth-intro-band--patient-chart
+  .doehealth-patient-chart-sequence__stage.doehealth-content-rail__summary-edge {
+  width: 100%;
+  max-width: 100%;
+  margin-right: 0;
+}
+
+html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
+  .doehealth-patient-chart-sequence__card.doehealth-patient-chart
+  .doehealth-patient-chart__stage {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 100%;
+  margin-inline: 0;
+  aspect-ratio: 1;
+  min-height: min(
+    calc(100vw - var(--doehealth-intro-title-inset-x) - var(--doehealth-ui-rail-right)),
+    calc(26.5rem * var(--doehealth-section-height-scale, 1))
+  );
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
+  .doehealth-patient-chart-sequence
+  .product-call-history-mosaic {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
+  .doehealth-patient-chart-sequence
+  .product-call-history-mosaic__grid {
+  width: min(
+    100%,
+    calc(100vw - var(--doehealth-intro-title-inset-x) - var(--doehealth-ui-rail-right))
+  );
+  max-width: min(
+    100%,
+    calc(100vw - var(--doehealth-intro-title-inset-x) - var(--doehealth-ui-rail-right))
+  );
+  margin-inline: auto;
 }
