@@ -2943,8 +2943,9 @@ html[data-home-page][data-layout="desktop"]
 }
 
 .doehealth-patient-chart-sequence .product-call-history-mosaic__grid {
-  width: min(100%, clamp(18.5rem, 78vw, 24rem));
-  margin-inline: auto;
+  width: 100%;
+  max-width: 100%;
+  margin-inline: 0;
 }
 
 html[data-home-page][data-layout="desktop"]
@@ -3059,7 +3060,7 @@ html[data-home-page][data-layout="desktop"]
   max-height: min(100%, calc(var(--dhi-patient-chart-size, clamp(28rem, 36vw, 38rem)) - 2.4rem));
 }
 
-/* iPhone /doehealth — bare mosaic on brown band (no console shell), larger 6×6 interlock. */
+/* iPhone /doehealth — bare mosaic on brown band; match upper-band right bleed. */
 html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
   .doehealth-intro-band--patient-chart
   .doehealth-patient-chart-sequence.doehealth-content-rail {
@@ -3067,14 +3068,6 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="des
   flex-direction: column;
   align-items: stretch;
   padding-bottom: clamp(0.35rem, 1.2vmin, 0.65rem);
-}
-
-html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
-  .doehealth-intro-band--patient-chart
-  .doehealth-patient-chart-sequence__stage.doehealth-content-rail__summary-edge {
-  width: 100%;
-  max-width: 100%;
-  margin-right: 0;
 }
 
 html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
@@ -3088,10 +3081,7 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="des
   max-width: 100%;
   margin-inline: 0;
   aspect-ratio: 1;
-  min-height: min(
-    calc(100vw - var(--doehealth-intro-title-inset-x) - var(--doehealth-ui-rail-right)),
-    calc(26.5rem * var(--doehealth-section-height-scale, 1))
-  );
+  min-height: 0;
   overflow: visible;
   border: 0;
   background: transparent;
@@ -3112,13 +3102,7 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="des
 html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
   .doehealth-patient-chart-sequence
   .product-call-history-mosaic__grid {
-  width: min(
-    100%,
-    calc(100vw - var(--doehealth-intro-title-inset-x) - var(--doehealth-ui-rail-right))
-  );
-  max-width: min(
-    100%,
-    calc(100vw - var(--doehealth-intro-title-inset-x) - var(--doehealth-ui-rail-right))
-  );
-  margin-inline: auto;
+  width: 100%;
+  max-width: 100%;
+  margin-inline: 0;
 }

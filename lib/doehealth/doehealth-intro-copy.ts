@@ -13,7 +13,7 @@ export const DOEHEALTH_INTRO_COPY = {
   },
   patientChartSectionTitle: {
     line1: "Knows your patient",
-    line2: "before you do.",
+    line2: "before you",
   },
   activeAgentsSectionTitle: {
     line1: "Agents for",
