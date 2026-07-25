@@ -2,6 +2,7 @@
 
 import { useLayoutEffect, useState } from "react";
 
+import { DoeHealthRoutedCallsBleedRightScene } from "@/components/doehealth/DoeHealthRoutedCallsBleedRightScene";
 import { DoeHealthRoutedCallsSarahUi } from "@/components/doehealth/DoeHealthRoutedCallsSarahUi";
 import { DoePhoneCallHistoryVisual } from "@/components/doephone/DoePhoneCallHistoryVisual";
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
@@ -75,7 +76,13 @@ export function DoeHealthRoutedCallsShaderPanel({
         }${showSarahUi ? " doehealth-routed-calls-shader-panel__ui--sarah" : ""}`}
         aria-hidden={showSarahUi ? undefined : true}
       >
-        {showSarahUi ? <DoeHealthRoutedCallsSarahUi /> : <DoePhoneCallHistoryVisual layout={layout} />}
+        {showSarahUi ? (
+          <DoeHealthRoutedCallsSarahUi />
+        ) : bleedRight ? (
+          <DoeHealthRoutedCallsBleedRightScene layout={layout} />
+        ) : (
+          <DoePhoneCallHistoryVisual layout={layout} />
+        )}
       </div>
     </div>
   );
