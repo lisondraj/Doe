@@ -118,6 +118,7 @@ export const PRODUCT2_CALL_HISTORY_MOSAIC_IPHONE = {
     label: PRODUCT2_CALL_HISTORY_OPEN_TASKS.label,
     items: [
       { title: "Metformin refill", when: "Due today", tone: "due" as const, icon: "rx" as const },
+      { title: "Eye exam", when: "Overdue", tone: "overdue" as const, icon: "eye" as const },
     ],
   },
   conditions: {

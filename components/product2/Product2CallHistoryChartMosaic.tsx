@@ -16,7 +16,12 @@ import "@/lib/product2/product2-brown-mock.css";
 import "@/lib/product2/product2-call-history-mosaic.css";
 import "@/lib/product2/product2-landing.css";
 
-type MosaicTask = (typeof PRODUCT2_CALL_HISTORY_OPEN_TASKS.items)[number];
+type MosaicTask = {
+  title: string;
+  when: string;
+  tone: "due" | "overdue";
+  icon: "rx" | "eye";
+};
 
 function MosaicTasksList({ tasks, className = "" }: { tasks: readonly MosaicTask[]; className?: string }) {
   return (
@@ -64,6 +69,49 @@ function MosaicVisitsList({ visits, className = "" }: { visits: readonly MosaicV
         </li>
       ))}
     </ul>
+  );
+}
+
+function MosaicProfilePanel() {
+  const { medications, conditions, allergies } = PRODUCT2_CALL_HISTORY_MOSAIC_IPHONE;
+
+  return (
+    <div className="product-call-history-panel__profile-shell">
+      <section className="product-call-history-panel__profile-section" aria-label={medications.label}>
+        <p className={`product-call-history-panel__meds-label m-0 ${suisseIntl.className}`}>{medications.label}</p>
+        <ul className={`product-call-history-panel__meds-list m-0 ${dmSans.className}`}>
+          {medications.items.map((medication) => (
+            <li key={medication} className="product-call-history-panel__meds-item">
+              {medication}
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section className="product-call-history-panel__profile-section" aria-label={conditions.label}>
+        <p className={`product-call-history-panel__conditions-label m-0 ${suisseIntl.className}`}>
+          {conditions.label}
+        </p>
+        <ul className={`product-call-history-panel__conditions-list m-0 ${dmSans.className}`}>
+          {conditions.items.map((condition) => (
+            <li key={condition} className="product-call-history-panel__conditions-item">
+              {condition}
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section className="product-call-history-panel__profile-section" aria-label={allergies.label}>
+        <p className={`product-call-history-panel__allergies-label m-0 ${suisseIntl.className}`}>
+          {allergies.label}
+        </p>
+        <ul className={`product-call-history-panel__allergies-list m-0 ${dmSans.className}`}>
+          {allergies.items.map((allergy) => (
+            <li key={allergy} className="product-call-history-panel__allergies-item">
+              {allergy}
+            </li>
+          ))}
+        </ul>
+      </section>
+    </div>
   );
 }
 
@@ -118,7 +166,20 @@ export function Product2CallHistoryChartMosaic() {
           </div>
         </div>
 
-        <div className="product-call-history-mosaic__cell product-call-history-mosaic__cell--meds">
+        <div
+          className="product-call-history-mosaic__cell product-call-history-mosaic__cell--profile product-call-history-mosaic__cell--mobile-only"
+        >
+          <div
+            className="product-call-history-panel__profile-card product-landing-live-quote__chart-profile"
+            aria-label="Medications, conditions, and allergies"
+          >
+            <MosaicProfilePanel />
+          </div>
+        </div>
+
+        <div
+          className="product-call-history-mosaic__cell product-call-history-mosaic__cell--meds product-call-history-mosaic__cell--desktop-only"
+        >
           <div
             className="product-call-history-panel__meds-card product-landing-live-quote__chart-profile"
             aria-label={PRODUCT2_CALL_HISTORY_MEDICATIONS.label}
@@ -127,19 +188,8 @@ export function Product2CallHistoryChartMosaic() {
               <p className={`product-call-history-panel__meds-label m-0 ${suisseIntl.className}`}>
                 {PRODUCT2_CALL_HISTORY_MEDICATIONS.label}
               </p>
-              <ul
-                className={`product-call-history-panel__meds-list m-0 ${dmSans.className} product-call-history-mosaic__copy--desktop`}
-              >
+              <ul className={`product-call-history-panel__meds-list m-0 ${dmSans.className}`}>
                 {PRODUCT2_CALL_HISTORY_MEDICATIONS.items.map((medication) => (
-                  <li key={medication} className="product-call-history-panel__meds-item">
-                    {medication}
-                  </li>
-                ))}
-              </ul>
-              <ul
-                className={`product-call-history-panel__meds-list m-0 ${dmSans.className} product-call-history-mosaic__copy--mobile`}
-              >
-                {PRODUCT2_CALL_HISTORY_MOSAIC_IPHONE.medications.items.map((medication) => (
                   <li key={medication} className="product-call-history-panel__meds-item">
                     {medication}
                   </li>
@@ -179,7 +229,9 @@ export function Product2CallHistoryChartMosaic() {
           </div>
         </div>
 
-        <div className="product-call-history-mosaic__cell product-call-history-mosaic__cell--conditions">
+        <div
+          className="product-call-history-mosaic__cell product-call-history-mosaic__cell--conditions product-call-history-mosaic__cell--desktop-only"
+        >
           <div
             className="product-call-history-panel__conditions-card product-landing-live-quote__chart-profile"
             aria-label={PRODUCT2_CALL_HISTORY_CONDITIONS.label}
@@ -188,19 +240,8 @@ export function Product2CallHistoryChartMosaic() {
               <p className={`product-call-history-panel__conditions-label m-0 ${suisseIntl.className}`}>
                 {PRODUCT2_CALL_HISTORY_CONDITIONS.label}
               </p>
-              <ul
-                className={`product-call-history-panel__conditions-list m-0 ${dmSans.className} product-call-history-mosaic__copy--desktop`}
-              >
+              <ul className={`product-call-history-panel__conditions-list m-0 ${dmSans.className}`}>
                 {PRODUCT2_CALL_HISTORY_CONDITIONS.items.map((condition) => (
-                  <li key={condition} className="product-call-history-panel__conditions-item">
-                    {condition}
-                  </li>
-                ))}
-              </ul>
-              <ul
-                className={`product-call-history-panel__conditions-list m-0 ${dmSans.className} product-call-history-mosaic__copy--mobile`}
-              >
-                {PRODUCT2_CALL_HISTORY_MOSAIC_IPHONE.conditions.items.map((condition) => (
                   <li key={condition} className="product-call-history-panel__conditions-item">
                     {condition}
                   </li>
@@ -210,7 +251,9 @@ export function Product2CallHistoryChartMosaic() {
           </div>
         </div>
 
-        <div className="product-call-history-mosaic__cell product-call-history-mosaic__cell--allergies">
+        <div
+          className="product-call-history-mosaic__cell product-call-history-mosaic__cell--allergies product-call-history-mosaic__cell--desktop-only"
+        >
           <div
             className="product-call-history-panel__allergies-card product-landing-live-quote__chart-profile"
             aria-label={PRODUCT2_CALL_HISTORY_ALLERGIES.label}
