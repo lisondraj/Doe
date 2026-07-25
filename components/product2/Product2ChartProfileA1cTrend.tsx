@@ -32,10 +32,12 @@ export function Product2ChartProfileA1cTrend({
   label,
   readings,
   doseChanges = [],
+  labelPosition = "bottom",
 }: {
   label: string;
   readings: readonly { date: string; value: number }[];
   doseChanges?: readonly { atIndex: number; dose: number }[];
+  labelPosition?: "top" | "bottom";
 }) {
   const gradientId = useId();
   const fillGradientId = `${gradientId}-fill`;
@@ -77,8 +79,19 @@ export function Product2ChartProfileA1cTrend({
     y: valueToY(tick),
   }));
 
+  const labelNode = (
+    <span
+      className={`product-landing-live-quote__chart-profile-a1c-label product-landing-live-quote__chart-profile-a1c-label--${labelPosition} ${dmSans.className}`}
+    >
+      {label}
+    </span>
+  );
+
   return (
-    <div className="product-landing-live-quote__chart-profile-a1c">
+    <div
+      className={`product-landing-live-quote__chart-profile-a1c product-landing-live-quote__chart-profile-a1c--label-${labelPosition}`}
+    >
+      {labelPosition === "top" ? labelNode : null}
       <div className="product-landing-live-quote__chart-profile-a1c-plot">
         <div className={`product-landing-live-quote__chart-profile-a1c-y-axis ${dmSans.className}`} aria-hidden>
           {yTicks.map((tick) => (
@@ -201,7 +214,7 @@ export function Product2ChartProfileA1cTrend({
           ))}
         </div>
       </div>
-      <span className={`product-landing-live-quote__chart-profile-a1c-label ${dmSans.className}`}>{label}</span>
+      {labelPosition === "bottom" ? labelNode : null}
     </div>
   );
 }

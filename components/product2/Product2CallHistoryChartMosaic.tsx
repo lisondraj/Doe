@@ -134,6 +134,7 @@ export function Product2CallHistoryChartMosaic() {
               label={PRODUCT2_CALL_HISTORY_A1C_TREND.label}
               readings={PRODUCT2_CALL_HISTORY_A1C_TREND.readings}
               doseChanges={PRODUCT2_CALL_HISTORY_A1C_TREND.doseChanges}
+              labelPosition="top"
             />
           </div>
         </div>

@@ -111,6 +111,62 @@
   color: var(--pi-muted);
 }
 
+.product-landing-header__back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0.35rem;
+  background: transparent;
+  color: rgba(242, 232, 218, 0.48);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.product-landing-header__back-icon {
+  width: 15px;
+  height: 15px;
+}
+
+.product-landing-header__back:hover {
+  background: rgba(242, 232, 218, 0.06);
+  color: rgba(242, 232, 218, 0.72);
+}
+
+.product-landing-header__back:focus-visible {
+  outline: 1px solid rgba(212, 165, 116, 0.45);
+  outline-offset: 2px;
+}
+
+.product-landing-header__trail {
+  display: flex;
+  align-items: center;
+  gap: 0.38rem;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.product-landing-header__crumb {
+  flex-shrink: 0;
+  color: rgba(242, 232, 218, 0.52);
+}
+
+.product-landing-header__crumb--current {
+  color: var(--pl-console-text, #f2e8da);
+}
+
+.product-landing-header__crumb-separator {
+  flex-shrink: 0;
+  color: rgba(242, 232, 218, 0.28);
+}
+
 @keyframes product-landing-pulse {
   0%,
   100% {
@@ -1091,19 +1147,36 @@
 }
 
 .product-landing-live-quote__chart-profile-a1c-x-axis-labels {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  align-items: start;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   gap: 0;
   min-width: 0;
   padding-top: 0.04rem;
 }
 
 .product-landing-live-quote__chart-profile-a1c-x-axis-labels .product-landing-live-quote__chart-profile-a1c-axis-label {
+  flex: 0 1 auto;
+  min-width: 0;
   justify-self: center;
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.product-landing-live-quote__chart-profile-a1c-x-axis-labels
+  .product-landing-live-quote__chart-profile-a1c-axis-label:first-child {
+  text-align: left;
+}
+
+.product-landing-live-quote__chart-profile-a1c-x-axis-labels
+  .product-landing-live-quote__chart-profile-a1c-axis-label:last-child {
+  text-align: right;
+}
+
+.product-landing-live-quote__chart-profile-a1c-label--top {
+  padding-left: 0;
+  margin: 0 0 0.06rem;
 }
 
 .product-landing-live-quote__chart-profile-a1c-axis-label {

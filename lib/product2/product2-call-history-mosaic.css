@@ -441,6 +441,7 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="des
   flex: 1 1 auto;
   align-items: center;
   padding-block: clamp(0.34rem, 1.1vmin, 0.52rem);
+  border-bottom: 0;
 }
 
 html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
@@ -461,8 +462,8 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="des
   justify-content: center;
   gap: clamp(0.22rem, 0.75vmin, 0.34rem);
   min-height: 0;
-  padding-bottom: clamp(0.18rem, 0.55vmin, 0.28rem);
-  border-bottom: 1px solid rgba(242, 232, 218, 0.06);
+  padding-bottom: 0;
+  border-bottom: 0;
 }
 
 html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
@@ -475,8 +476,8 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="des
 html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__tasks-shell {
-  justify-content: space-between;
-  gap: clamp(0.18rem, 0.55vmin, 0.28rem);
+  justify-content: flex-start;
+  gap: clamp(0.14rem, 0.45vmin, 0.22rem);
 }
 
 html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
@@ -485,7 +486,7 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="des
   flex: 1 1 auto;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(0.22rem, 0.68vmin, 0.34rem);
+  gap: clamp(0.28rem, 0.82vmin, 0.42rem);
   align-items: stretch;
   min-height: 0;
 }
@@ -497,10 +498,21 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="des
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
-  gap: clamp(0.22rem, 0.68vmin, 0.32rem);
+  gap: clamp(0.24rem, 0.72vmin, 0.34rem);
   min-height: 0;
-  height: auto;
-  padding: clamp(0.24rem, 0.72vmin, 0.34rem) clamp(0.28rem, 0.82vmin, 0.38rem);
+  height: 100%;
+  padding: clamp(0.18rem, 0.55vmin, 0.28rem) clamp(0.22rem, 0.68vmin, 0.32rem);
+  border: 0;
+  border-radius: 0.52rem;
+  background: rgba(14, 10, 7, 0.24);
+  box-shadow: none;
+}
+
+html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
+  .product-call-history-mosaic--doehealth
+  .product-call-history-panel__tasks-list.product-call-history-mosaic__copy--mobile
+  .product-call-history-panel__tasks-item--overdue {
+  background: rgba(28, 12, 8, 0.28);
 }
 
 html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
@@ -516,8 +528,8 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="des
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__tasks-list.product-call-history-mosaic__copy--mobile
   .product-call-history-panel__tasks-item-title {
-  font-size: clamp(0.56rem, 1.85vmin, 0.68rem);
-  line-height: 1.12;
+  font-size: clamp(0.62rem, 2.1vmin, 0.76rem);
+  line-height: 1.14;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -647,7 +659,16 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="des
   .product-landing-live-quote__chart-profile-a1c {
   flex: 1 1 auto;
   min-height: 0;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: clamp(0.12rem, 0.38vmin, 0.2rem);
+}
+
+html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
+  .product-call-history-mosaic--doehealth
+  .product-call-history-panel__a1c-card
+  .product-landing-live-quote__chart-profile-a1c-plot {
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
@@ -666,6 +687,22 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="des
 html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__a1c-card
+  .product-landing-live-quote__chart-profile-a1c-x-axis {
+  flex-shrink: 0;
+}
+
+html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
+  .product-call-history-mosaic--doehealth
+  .product-call-history-panel__a1c-card
+  .product-landing-live-quote__chart-profile-a1c-x-axis-labels
+  .product-landing-live-quote__chart-profile-a1c-axis-label {
+  font-size: clamp(6px, 1.85vmin, 7.5px);
+  letter-spacing: 0;
+}
+
+html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
+  .product-call-history-mosaic--doehealth
+  .product-call-history-panel__a1c-card
   .product-landing-live-quote__chart-profile-a1c-axis-label {
   font-size: clamp(7px, 2.1vmin, 9px);
 }
@@ -673,13 +710,21 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="des
 html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__a1c-card
-  .product-landing-live-quote__chart-profile-a1c-label {
-  font-size: clamp(8px, 2.35vmin, 10px);
-}
-
+  .product-landing-live-quote__chart-profile-a1c-label,
 html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
   .product-call-history-mosaic--doehealth
-  .product-call-history-panel__vitals-label,
+  .product-call-history-panel__vitals-label {
+  background: linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  font-size: clamp(9px, 2.45vmin, 11px);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
 html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__meds-label,
@@ -695,7 +740,12 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="des
 html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__tasks-label {
-  font-size: clamp(9px, 2.45vmin, 11px);
+  color: rgba(228, 210, 184, 0.44);
+  font-size: clamp(7px, 1.95vmin, 8.5px);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1.15;
+  text-transform: uppercase;
 }
 
 html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
@@ -734,14 +784,14 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="des
 html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__allergies-item {
-  font-size: clamp(0.66rem, 2.35vmin, 0.82rem);
-  line-height: 1.22;
+  font-size: clamp(0.72rem, 2.55vmin, 0.88rem);
+  line-height: 1.2;
 }
 
 html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__tasks-item-title {
-  font-size: clamp(0.64rem, 2.2vmin, 0.78rem);
+  font-size: clamp(0.68rem, 2.35vmin, 0.82rem);
 }
 
 html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
@@ -801,7 +851,8 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="des
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__vitals-label {
   order: -1;
-  margin-bottom: 0.08rem;
+  margin: 0 0 0.06rem;
+  padding-top: 0;
 }
 
 html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
