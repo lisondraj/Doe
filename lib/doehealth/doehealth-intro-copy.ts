@@ -12,8 +12,8 @@ export const DOEHEALTH_INTRO_COPY = {
     line2: "At a Glance",
   },
   patientChartSectionTitle: {
-    line1: "Knows your patient",
-    line2: "before you",
+    line1: "Prepares your",
+    line2: "appointments",
   },
   activeAgentsSectionTitle: {
     line1: "Agents for",
