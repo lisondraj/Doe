@@ -1,9 +1,9 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useCallback, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
-import type { RenderPoster } from "@remotion/player";
+import type { PlayerRef } from "@remotion/player";
 
 import { DOEHEALTH_INTRO_COPY } from "@/lib/doehealth/doehealth-intro-copy";
 import { inter, lora, suisseIntl } from "@/lib/home/fonts";
@@ -29,34 +29,36 @@ const Player = dynamic(
   { ssr: false },
 );
 
-const Thumbnail = dynamic(
-  () => import("@remotion/player").then((mod) => mod.Thumbnail),
-  { ssr: false },
-);
-
-/** Idle preview — mid-composition (Sarah call). Playback still starts at frame 0. */
+/** Idle preview — mid-composition (Sarah call). First play seeks back to frame 0. */
 const DOE_INTRO_PREVIEW_FRAME = Math.round(DOE_INTRO_DURATION_FRAMES * 0.5);
 
 /** Full viewport band — live /motion4 Remotion preview + gold section title. */
 export function DoeHealthIntroVideoBand() {
   const { line1, line2 } = DOEHEALTH_INTRO_COPY.introVideoSectionTitle;
-  const playerInputProps = useMemo(() => ({}), []);
+  const playerRef = useRef<PlayerRef>(null);
+  const hasStartedRef = useRef(false);
+  const playerInputProps = useMemo(() => ({ embedPreview: true as const }), []);
 
-  const renderPoster: RenderPoster = useCallback(
-    () => (
-      <Thumbnail
-        component={DoeIntroComposition}
-        inputProps={playerInputProps}
-        durationInFrames={DOE_INTRO_DURATION_FRAMES}
-        compositionWidth={DOE_INTRO_WIDTH}
-        compositionHeight={DOE_INTRO_HEIGHT}
-        fps={DOE_INTRO_FPS}
-        frameToDisplay={DOE_INTRO_PREVIEW_FRAME}
-        style={{ width: "100%", height: "100%" }}
-      />
-    ),
-    [playerInputProps],
-  );
+  useEffect(() => {
+    const player = playerRef.current;
+    if (!player) {
+      return undefined;
+    }
+
+    const onPlay = () => {
+      if (hasStartedRef.current) {
+        return;
+      }
+
+      hasStartedRef.current = true;
+      player.pause();
+      player.seekTo(0);
+      player.play();
+    };
+
+    player.addEventListener("play", onPlay);
+    return () => player.removeEventListener("play", onPlay);
+  }, []);
 
   return (
     <section
@@ -70,6 +72,7 @@ export function DoeHealthIntroVideoBand() {
               <div className="doehealth-intro-video-sequence__stage">
                 <div className="doehealth-intro-video__player-wrap">
                   <Player
+                    ref={playerRef}
                     component={DoeIntroComposition}
                     inputProps={playerInputProps}
                     durationInFrames={DOE_INTRO_DURATION_FRAMES}
@@ -77,15 +80,16 @@ export function DoeHealthIntroVideoBand() {
                     compositionHeight={DOE_INTRO_HEIGHT}
                     fps={DOE_INTRO_FPS}
                     numberOfSharedAudioTags={DOE_INTRO_SHARED_AUDIO_TAGS}
-                    initialFrame={0}
-                    renderPoster={renderPoster}
-                    showPosterWhenUnplayed
-                    posterFillMode="composition-size"
+                    initialFrame={DOE_INTRO_PREVIEW_FRAME}
+                    className="doehealth-intro-video__player"
                     style={{ width: "100%", height: "100%" }}
                     controls
+                    showVolumeControls
+                    hideControlsWhenPointerDoesntMove={false}
                     allowFullscreen
-                    doubleClickToFullscreen
+                    doubleClickToFullscreen={false}
                     loop
+                    volumePersistenceKey="doehealth-intro-video-volume"
                     acknowledgeRemotionLicense
                   />
                 </div>

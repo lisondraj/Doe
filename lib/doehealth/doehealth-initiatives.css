@@ -3479,7 +3479,7 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="des
   max-width: 100%;
   max-height: min(56vh, 32rem);
   aspect-ratio: 16 / 9;
-  overflow: hidden;
+  overflow: visible;
   border: 1px solid rgba(242, 232, 218, 0.1);
   border-radius: clamp(0.72rem, 2.4vw, 1.12rem);
   background: #1a1208;
@@ -3489,10 +3489,25 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="des
     0 36px 72px rgba(26, 18, 8, 0.28);
 }
 
+.doehealth-intro-video__player {
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+/* iPhone — vertical volume popup must not clip above the control bar */
+.doehealth-intro-video__player-wrap .__remotion-player {
+  overflow: visible !important;
+}
+
+.doehealth-intro-video__player-wrap [class*="__remotion-volume-slider"] {
+  z-index: 30;
+}
+
 html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
   .doehealth-intro-band--intro-video
   .doehealth-intro-video__player-wrap {
   max-height: min(58vh, 34rem);
+  padding-top: clamp(2.75rem, 8vw, 3.5rem);
 }
 
 html[data-home-page][data-layout="desktop"]

@@ -28,7 +28,7 @@ export {
 };
 
 /** Doe intro — opening, logo, Sarah call, shader outro. */
-export function DoeIntroComposition() {
+export function DoeIntroComposition(_props: { embedPreview?: boolean } = {}) {
   const s = DOE_INTRO_SCENES;
 
   return (
