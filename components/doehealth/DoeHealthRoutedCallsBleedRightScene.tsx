@@ -1,3 +1,6 @@
+"use client";
+
+import { DoeHealthPhoneReveal } from "@/components/doehealth/DoeHealthPhoneBandReveal";
 import { DoePhoneCallHistoryVisual } from "@/components/doephone/DoePhoneCallHistoryVisual";
 import { suisseIntl } from "@/lib/home/fonts";
 
@@ -28,19 +31,23 @@ function RoutedCallsCursor({ label, motionClass }: { label: string; motionClass:
 export function DoeHealthRoutedCallsBleedRightScene({ layout = "phone" }: { layout?: "phone" | "desktop" }) {
   return (
     <div className="doehealth-routed-calls-bleed-right" aria-hidden>
-      <div className="doehealth-routed-calls-bleed-right__ui">
-        <DoePhoneCallHistoryVisual layout={layout} />
-      </div>
+      <DoeHealthPhoneReveal segment="title" className="doehealth-routed-calls-bleed-right__reveal-ui">
+        <div className="doehealth-routed-calls-bleed-right__ui">
+          <DoePhoneCallHistoryVisual layout={layout} />
+        </div>
 
-      <div className="doehealth-routed-calls-cursors">
-        <RoutedCallsCursor label="Agent" motionClass="doehealth-routed-calls-cursor--agent" />
-        <RoutedCallsCursor label="Human" motionClass="doehealth-routed-calls-cursor--human" />
-      </div>
+        <div className="doehealth-routed-calls-cursors">
+          <RoutedCallsCursor label="Agent" motionClass="doehealth-routed-calls-cursor--agent" />
+          <RoutedCallsCursor label="Human" motionClass="doehealth-routed-calls-cursor--human" />
+        </div>
+      </DoeHealthPhoneReveal>
 
-      <h2 className={`doehealth-routed-calls-bleed-right__title ${suisseIntl.className}`}>
-        <span className="doehealth-routed-calls-bleed-right__title-line">Agents &amp; humans,</span>
-        <span className="doehealth-routed-calls-bleed-right__title-line">together</span>
-      </h2>
+      <DoeHealthPhoneReveal segment="carousel" className="doehealth-routed-calls-bleed-right__title">
+        <h2 className={`doehealth-routed-calls-bleed-right__title-text ${suisseIntl.className}`}>
+          <span className="doehealth-routed-calls-bleed-right__title-line">Agents &amp; humans,</span>
+          <span className="doehealth-routed-calls-bleed-right__title-line">together</span>
+        </h2>
+      </DoeHealthPhoneReveal>
     </div>
   );
 }

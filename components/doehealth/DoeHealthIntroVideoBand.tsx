@@ -3,6 +3,10 @@
 import Link from "next/link";
 import { useEffect, useId, useRef } from "react";
 
+import {
+  DoeHealthPhoneBandCluster,
+  DoeHealthPhoneReveal,
+} from "@/components/doehealth/DoeHealthPhoneBandReveal";
 import { DOEHEALTH_INTRO_COPY } from "@/lib/doehealth/doehealth-intro-copy";
 import { inter, lora, suisseIntl } from "@/lib/home/fonts";
 
@@ -90,39 +94,43 @@ export function DoeHealthIntroVideoBand() {
       aria-label={`${line1} ${line2}, Doe intro video`}
     >
       <div className="doehealth-intro-band__shell relative z-[10] flex min-h-0 w-full flex-1 flex-col items-stretch justify-center">
-        <div className="doehealth-intro-band__cluster">
-          <div className="doehealth-intro-stage">
-            <div className="doehealth-intro-video-sequence">
-              <div className="doehealth-intro-video-sequence__stage">
-                <div className="doehealth-intro-video__player-wrap">
-                  <video
-                    ref={videoRef}
-                    className="doehealth-intro-video__video"
-                    src={DOE_INTRO_VIDEO_SRC}
-                    controls
-                    playsInline
-                    loop
-                    preload="metadata"
-                    aria-label={`${line1} ${line2}, Doe intro video`}
-                  />
+        <DoeHealthPhoneBandCluster>
+          <DoeHealthPhoneReveal segment="title">
+            <div className="doehealth-intro-stage">
+              <div className="doehealth-intro-video-sequence">
+                <div className="doehealth-intro-video-sequence__stage">
+                  <div className="doehealth-intro-video__player-wrap">
+                    <video
+                      ref={videoRef}
+                      className="doehealth-intro-video__video"
+                      src={DOE_INTRO_VIDEO_SRC}
+                      controls
+                      playsInline
+                      loop
+                      preload="metadata"
+                      aria-label={`${line1} ${line2}, Doe intro video`}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </DoeHealthPhoneReveal>
 
-          <h2
-            className={`doehealth-intro-band__section-title doehealth-intro-band__section-title--about-link ${suisseIntl.className}`}
-            aria-label={`${line1} ${line2}`}
-          >
-            <Link href="/about" className="doehealth-intro-band__section-title-link">
-              <span className="doehealth-intro-band__section-title-line">{line1}</span>
-              <span className="doehealth-intro-band__section-title-line doehealth-intro-band__section-title-line--with-arrow">
-                <span className="doehealth-intro-band__section-title-line-text">{line2}</span>
-                <SectionTitleArrow gradientId={`doehealth-intro-title-arrow-${arrowGradientId}`} />
-              </span>
-            </Link>
-          </h2>
-        </div>
+          <DoeHealthPhoneReveal segment="carousel">
+            <h2
+              className={`doehealth-intro-band__section-title doehealth-intro-band__section-title--about-link ${suisseIntl.className}`}
+              aria-label={`${line1} ${line2}`}
+            >
+              <Link href="/about" className="doehealth-intro-band__section-title-link">
+                <span className="doehealth-intro-band__section-title-line">{line1}</span>
+                <span className="doehealth-intro-band__section-title-line doehealth-intro-band__section-title-line--with-arrow">
+                  <span className="doehealth-intro-band__section-title-line-text">{line2}</span>
+                  <SectionTitleArrow gradientId={`doehealth-intro-title-arrow-${arrowGradientId}`} />
+                </span>
+              </Link>
+            </h2>
+          </DoeHealthPhoneReveal>
+        </DoeHealthPhoneBandCluster>
       </div>
     </section>
   );

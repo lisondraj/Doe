@@ -1,3 +1,6 @@
+"use client";
+
+import { DoeHealthPhoneBandCluster } from "@/components/doehealth/DoeHealthPhoneBandReveal";
 import { DoeHealthRoutedCallsCard } from "@/components/doehealth/DoeHealthRoutedCallsCard";
 
 /** Brown band — doehealth routed-calls shader + Sarah Westfield / Last A1C UI. */
@@ -8,7 +11,7 @@ export function DoeHealthRoutedCallsBand() {
       aria-label="Sarah Westfield call history, last A1C"
     >
       <div className="doehealth-intro-band__shell relative z-[10] flex min-h-0 w-full flex-1 flex-col items-stretch justify-center">
-        <div className="doehealth-intro-band__cluster">
+        <DoeHealthPhoneBandCluster>
           <div className="doehealth-intro-stage">
             <div className="doehealth-routed-calls-sequence doehealth-content-rail">
               <div className="doehealth-routed-calls-sequence__stage doehealth-content-rail__summary-edge">
@@ -16,7 +19,7 @@ export function DoeHealthRoutedCallsBand() {
               </div>
             </div>
           </div>
-        </div>
+        </DoeHealthPhoneBandCluster>
       </div>
     </section>
   );

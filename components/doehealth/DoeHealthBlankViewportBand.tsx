@@ -1,3 +1,9 @@
+"use client";
+
+import {
+  DoeHealthPhoneBandCluster,
+  DoeHealthPhoneReveal,
+} from "@/components/doehealth/DoeHealthPhoneBandReveal";
 import { DoeHealthIncomingCallDiagram } from "@/components/doehealth/DoeHealthIncomingCallDiagram";
 import { DOEHEALTH_CALL_HISTORY_TREE } from "@/lib/doehealth/doehealth-call-history-tree";
 import { DOEHEALTH_INTRO_COPY } from "@/lib/doehealth/doehealth-intro-copy";
@@ -13,19 +19,23 @@ export function DoeHealthBlankViewportBand() {
       aria-label={`${line1} ${line2}, ${DOEHEALTH_CALL_HISTORY_TREE.heroName}`}
     >
       <div className="doehealth-intro-band__shell relative z-[10] flex min-h-0 w-full flex-1 flex-col items-stretch justify-center">
-        <div className="doehealth-intro-band__cluster">
-          <div className="doehealth-intro-stage">
-            <DoeHealthIncomingCallDiagram />
-          </div>
+        <DoeHealthPhoneBandCluster skipInitialReveal>
+          <DoeHealthPhoneReveal segment="title">
+            <div className="doehealth-intro-stage">
+              <DoeHealthIncomingCallDiagram />
+            </div>
+          </DoeHealthPhoneReveal>
 
-          <h2
-            className={`doehealth-intro-band__section-title ${suisseIntl.className}`}
-            aria-label={`${line1} ${line2}`}
-          >
-            <span className="doehealth-intro-band__section-title-line">{line1}</span>
-            <span className="doehealth-intro-band__section-title-line">{line2}</span>
-          </h2>
-        </div>
+          <DoeHealthPhoneReveal segment="carousel">
+            <h2
+              className={`doehealth-intro-band__section-title ${suisseIntl.className}`}
+              aria-label={`${line1} ${line2}`}
+            >
+              <span className="doehealth-intro-band__section-title-line">{line1}</span>
+              <span className="doehealth-intro-band__section-title-line">{line2}</span>
+            </h2>
+          </DoeHealthPhoneReveal>
+        </DoeHealthPhoneBandCluster>
       </div>
     </section>
   );

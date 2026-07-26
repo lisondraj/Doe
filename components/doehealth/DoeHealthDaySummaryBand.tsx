@@ -1,4 +1,10 @@
+"use client";
+
 import { DoeHealthDaySummaryCard } from "@/components/doehealth/DoeHealthDaySummaryCard";
+import {
+  DoeHealthPhoneBandCluster,
+  DoeHealthPhoneReveal,
+} from "@/components/doehealth/DoeHealthPhoneBandReveal";
 import { DOEHEALTH_INTRO_COPY } from "@/lib/doehealth/doehealth-intro-copy";
 import { suisseIntl } from "@/lib/home/fonts";
 
@@ -12,23 +18,27 @@ export function DoeHealthDaySummaryBand() {
       aria-label={`${line1} ${line2}, clinic day summary`}
     >
       <div className="doehealth-intro-band__shell relative z-[10] flex min-h-0 w-full flex-1 flex-col items-stretch justify-center">
-        <div className="doehealth-intro-band__cluster">
-          <div className="doehealth-intro-stage">
-            <div className="doehealth-day-summary-sequence doehealth-content-rail">
-              <div className="doehealth-day-summary-sequence__stage doehealth-content-rail__summary-edge">
-                <DoeHealthDaySummaryCard className="doehealth-day-summary-sequence__card" />
+        <DoeHealthPhoneBandCluster>
+          <DoeHealthPhoneReveal segment="title">
+            <div className="doehealth-intro-stage">
+              <div className="doehealth-day-summary-sequence doehealth-content-rail">
+                <div className="doehealth-day-summary-sequence__stage doehealth-content-rail__summary-edge">
+                  <DoeHealthDaySummaryCard className="doehealth-day-summary-sequence__card" />
+                </div>
               </div>
             </div>
-          </div>
+          </DoeHealthPhoneReveal>
 
-          <h2
-            className={`doehealth-intro-band__section-title ${suisseIntl.className}`}
-            aria-label={`${line1} ${line2}`}
-          >
-            <span className="doehealth-intro-band__section-title-line">{line1}</span>
-            <span className="doehealth-intro-band__section-title-line">{line2}</span>
-          </h2>
-        </div>
+          <DoeHealthPhoneReveal segment="carousel">
+            <h2
+              className={`doehealth-intro-band__section-title ${suisseIntl.className}`}
+              aria-label={`${line1} ${line2}`}
+            >
+              <span className="doehealth-intro-band__section-title-line">{line1}</span>
+              <span className="doehealth-intro-band__section-title-line">{line2}</span>
+            </h2>
+          </DoeHealthPhoneReveal>
+        </DoeHealthPhoneBandCluster>
       </div>
     </section>
   );

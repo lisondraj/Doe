@@ -1,3 +1,6 @@
+"use client";
+
+import { DoeHealthPhoneBandCluster } from "@/components/doehealth/DoeHealthPhoneBandReveal";
 import { DoeHealthRoutedCallsCard } from "@/components/doehealth/DoeHealthRoutedCallsCard";
 
 /** Brown band — second left-bleed; iPhone shows prior auth UI, desktop keeps routed today. */
@@ -8,7 +11,7 @@ export function DoeHealthRoutedCallsLeft2Band() {
       aria-label="Prior auth agent"
     >
       <div className="doehealth-intro-band__shell relative z-[10] flex min-h-0 w-full flex-1 flex-col items-stretch justify-center">
-        <div className="doehealth-intro-band__cluster">
+        <DoeHealthPhoneBandCluster>
           <div className="doehealth-intro-stage">
             <div className="doehealth-routed-calls-sequence doehealth-content-rail">
               <div className="doehealth-routed-calls-sequence__stage doehealth-content-rail__summary-edge">
@@ -19,7 +22,7 @@ export function DoeHealthRoutedCallsLeft2Band() {
               </div>
             </div>
           </div>
-        </div>
+        </DoeHealthPhoneBandCluster>
       </div>
     </section>
   );

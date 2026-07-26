@@ -1,3 +1,6 @@
+"use client";
+
+import { DoeHealthPhoneBandCluster } from "@/components/doehealth/DoeHealthPhoneBandReveal";
 import { DoeHealthRoutedCallsCard } from "@/components/doehealth/DoeHealthRoutedCallsCard";
 
 /** Brown band — 18 routed today shader bleeding off the right edge. */
@@ -8,7 +11,7 @@ export function DoeHealthRoutedCallsRightBand() {
       aria-label="Routed call history, 18 routed today"
     >
       <div className="doehealth-intro-band__shell relative z-[10] flex min-h-0 w-full flex-1 flex-col items-stretch justify-center">
-        <div className="doehealth-intro-band__cluster">
+        <DoeHealthPhoneBandCluster>
           <div className="doehealth-intro-stage">
             <div className="doehealth-routed-calls-sequence doehealth-content-rail">
               <div className="doehealth-routed-calls-sequence__stage doehealth-content-rail__summary-edge">
@@ -19,7 +22,7 @@ export function DoeHealthRoutedCallsRightBand() {
               </div>
             </div>
           </div>
-        </div>
+        </DoeHealthPhoneBandCluster>
       </div>
     </section>
   );
