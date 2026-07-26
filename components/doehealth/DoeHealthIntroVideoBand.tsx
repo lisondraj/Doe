@@ -1,7 +1,8 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 import type { PlayerRef } from "@remotion/player";
 
@@ -31,6 +32,17 @@ const Player = dynamic(
 
 /** Idle preview — mid-composition (Sarah call). First play seeks back to frame 0. */
 const DOE_INTRO_PREVIEW_FRAME = Math.round(DOE_INTRO_DURATION_FRAMES * 0.5);
+
+function supportsNativeFullscreen() {
+  if (typeof document === "undefined") {
+    return false;
+  }
+
+  return Boolean(
+    document.fullscreenEnabled ||
+      (document as Document & { webkitFullscreenEnabled?: boolean }).webkitFullscreenEnabled,
+  );
+}
 
 function DoeHealthIntroFullscreenIcon({ expanded }: { expanded: boolean }) {
   const strokeWidth = 1.5;
@@ -91,48 +103,60 @@ function DoeHealthIntroFullscreenIcon({ expanded }: { expanded: boolean }) {
 export function DoeHealthIntroVideoBand() {
   const { line1, line2 } = DOEHEALTH_INTRO_COPY.introVideoSectionTitle;
   const playerRef = useRef<PlayerRef>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const theaterHostRef = useRef<HTMLDivElement>(null);
+  const placeholderRef = useRef<Comment | null>(null);
   const hasStartedRef = useRef(false);
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [theaterMode, setTheaterMode] = useState(false);
+  const [isFullscreenUi, setIsFullscreenUi] = useState(false);
   const playerInputProps = useMemo(() => ({ embedPreview: true as const }), []);
 
-  const toggleExpanded = useCallback(() => {
-    setIsExpanded((value) => !value);
+  const syncFullscreenUi = useCallback(() => {
+    const player = playerRef.current;
+    setIsFullscreenUi(Boolean(player?.isFullscreen()) || theaterMode);
+  }, [theaterMode]);
+
+  const exitTheaterMode = useCallback(() => {
+    setTheaterMode(false);
   }, []);
 
   const onFullscreenClick = useCallback(() => {
     const player = playerRef.current;
-    const supportsNative =
-      typeof document !== "undefined" &&
-      Boolean(
-        document.fullscreenEnabled ||
-          (document as Document & { webkitFullscreenEnabled?: boolean }).webkitFullscreenEnabled,
-      );
-
-    if (supportsNative && player) {
-      if (player.isFullscreen()) {
-        player.exitFullscreen();
-      } else {
-        player.requestFullscreen();
-      }
+    if (!player) {
       return;
     }
 
-    toggleExpanded();
-  }, [toggleExpanded]);
+    if (player.isFullscreen()) {
+      player.exitFullscreen();
+      return;
+    }
+
+    if (theaterMode) {
+      exitTheaterMode();
+      return;
+    }
+
+    if (supportsNativeFullscreen()) {
+      player.requestFullscreen();
+      return;
+    }
+
+    setTheaterMode(true);
+  }, [exitTheaterMode, theaterMode]);
 
   const renderCustomControls = useCallback(
     () => (
       <button
         type="button"
         className="doehealth-intro-video__fullscreen-btn"
-        aria-label={isExpanded ? "Exit fullscreen" : "Enter fullscreen"}
-        title={isExpanded ? "Exit fullscreen" : "Enter fullscreen"}
+        aria-label={isFullscreenUi ? "Exit fullscreen" : "Enter fullscreen"}
+        title={isFullscreenUi ? "Exit fullscreen" : "Enter fullscreen"}
         onClick={onFullscreenClick}
       >
-        <DoeHealthIntroFullscreenIcon expanded={isExpanded} />
+        <DoeHealthIntroFullscreenIcon expanded={isFullscreenUi} />
       </button>
     ),
-    [isExpanded, onFullscreenClick],
+    [isFullscreenUi, onFullscreenClick],
   );
 
   useEffect(() => {
@@ -157,39 +181,102 @@ export function DoeHealthIntroVideoBand() {
   }, []);
 
   useEffect(() => {
-    if (!isExpanded) {
+    const player = playerRef.current;
+    if (!player) {
+      return undefined;
+    }
+
+    const onFullscreenChange = () => {
+      syncFullscreenUi();
+    };
+
+    player.addEventListener("fullscreenchange", onFullscreenChange);
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    document.addEventListener("webkitfullscreenchange", onFullscreenChange as EventListener);
+
+    return () => {
+      player.removeEventListener("fullscreenchange", onFullscreenChange);
+      document.removeEventListener("fullscreenchange", onFullscreenChange);
+      document.removeEventListener("webkitfullscreenchange", onFullscreenChange as EventListener);
+    };
+  }, [syncFullscreenUi]);
+
+  useEffect(() => {
+    syncFullscreenUi();
+  }, [syncFullscreenUi, theaterMode]);
+
+  useLayoutEffect(() => {
+    const wrap = wrapRef.current;
+    const theaterHost = theaterHostRef.current;
+    if (!wrap || !theaterHost) {
+      return undefined;
+    }
+
+    if (theaterMode) {
+      const placeholder = document.createComment("doehealth-intro-video-anchor");
+      wrap.parentNode?.insertBefore(placeholder, wrap);
+      placeholderRef.current = placeholder;
+      theaterHost.appendChild(wrap);
+      wrap.classList.add("doehealth-intro-video__player-wrap--theater");
+      document.body.style.overflow = "hidden";
+    } else if (placeholderRef.current?.parentNode) {
+      wrap.classList.remove("doehealth-intro-video__player-wrap--theater");
+      placeholderRef.current.parentNode.insertBefore(wrap, placeholderRef.current);
+      placeholderRef.current.remove();
+      placeholderRef.current = null;
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      wrap.classList.remove("doehealth-intro-video__player-wrap--theater");
+      if (placeholderRef.current?.parentNode) {
+        placeholderRef.current.parentNode.insertBefore(wrap, placeholderRef.current);
+        placeholderRef.current.remove();
+        placeholderRef.current = null;
+      }
+      document.body.style.overflow = "";
+    };
+  }, [theaterMode]);
+
+  useEffect(() => {
+    if (!theaterMode) {
       return undefined;
     }
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setIsExpanded(false);
+        exitTheaterMode();
       }
     };
 
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
     document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [exitTheaterMode, theaterMode]);
 
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, [isExpanded]);
+  const theaterPortal =
+    typeof document !== "undefined"
+      ? createPortal(
+          <div
+            ref={theaterHostRef}
+            className={`doehealth-intro-video-theater${theaterMode ? " doehealth-intro-video-theater--open" : ""}`}
+            aria-hidden={!theaterMode}
+          />,
+          document.body,
+        )
+      : null;
 
   return (
     <section
       className={`doehealth-intro-band doehealth-intro-band--initiatives doehealth-intro-band--intro-video relative z-10 flex w-full shrink-0 flex-col ${suisseIntl.className} ${inter.className} ${lora.className}`}
       aria-label={`${line1} ${line2}, Doe intro video`}
     >
+      {theaterPortal}
       <div className="doehealth-intro-band__shell relative z-[10] flex min-h-0 w-full flex-1 flex-col items-stretch justify-center">
         <div className="doehealth-intro-band__cluster">
           <div className="doehealth-intro-stage">
             <div className="doehealth-intro-video-sequence">
               <div className="doehealth-intro-video-sequence__stage">
-                <div
-                  className={`doehealth-intro-video__player-wrap${isExpanded ? " doehealth-intro-video__player-wrap--expanded" : ""}`}
-                >
+                <div ref={wrapRef} className="doehealth-intro-video__player-wrap">
                   <Player
                     ref={playerRef}
                     component={DoeIntroComposition}
@@ -205,7 +292,7 @@ export function DoeHealthIntroVideoBand() {
                     controls
                     showVolumeControls
                     hideControlsWhenPointerDoesntMove={false}
-                    allowFullscreen={false}
+                    allowFullscreen
                     doubleClickToFullscreen={false}
                     overflowVisible
                     renderCustomControls={renderCustomControls}
