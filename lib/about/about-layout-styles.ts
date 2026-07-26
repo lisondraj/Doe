@@ -14,12 +14,12 @@ export const ABOUT_PAGE_TITLE_TW = `${DOEPHONE_SECTION_COPY_TW} text-[#1E343A] $
 
 /** Fundraising subheading — single paragraph under the mission title. */
 export const ABOUT_PAGE_SUBHEADING =
-  "We are in the process of registering as a Delaware C-corporation and are preparing to open our pre-seed funding round.";
+  "We are registering as a Delaware C-corporation and preparing to raise a pre-seed round.";
 
 /** @deprecated Prefer ABOUT_PAGE_SUBHEADING — kept for any two-line call sites. */
 export const ABOUT_PAGE_SUBHEADING_LINES = [
-  "We are in the process of registering as a Delaware C-corporation",
-  "and are preparing to open our pre-seed funding round.",
+  "We are registering as a Delaware C-corporation",
+  "and preparing to raise a pre-seed round.",
 ] as const;
 
 /** About subheading — customization-section description style, scaled up. */
