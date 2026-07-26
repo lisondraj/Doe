@@ -5,6 +5,7 @@ import type { CSSProperties } from "react";
 import { Inter, Lora } from "next/font/google";
 import localFont from "next/font/local";
 
+import { Product2AgentBuilderPanel } from "@/components/product2/Product2AgentBuilderPanel";
 import { Product2AgentsPanel } from "@/components/product2/Product2AgentsPanel";
 import { Product2CallHistoryPanel } from "@/components/product2/Product2CallHistoryPanel";
 import { Product2CallHistoryRightRail } from "@/components/product2/Product2CallHistoryRightRail";
@@ -1265,7 +1266,7 @@ export function DoeSchedulesAppMockProduct2({
   const [selectedUser, setSelectedUser] = useState<(typeof userOptions)[number]>(userOptions[0]);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [workspaceView, setWorkspaceView] = useState<
-    "inbox" | "schedule" | "patients" | "landing" | "agents" | "call-history"
+    "inbox" | "schedule" | "patients" | "landing" | "agents" | "call-history" | "agent-builder"
   >(variant === "product-brown" ? "landing" : "schedule");
   const [selectedInboxId, setSelectedInboxId] = useState<string>(inboxThreads[0].id);
   const [inboxFilter, setInboxFilter] = useState<"all" | "unread" | "pinned">("all");
@@ -1354,9 +1355,11 @@ export function DoeSchedulesAppMockProduct2({
   const productBrown = variant === "product-brown";
   const hero = variant === "hero";
   const productBrownWorkspace =
-    productBrown && workspaceView !== "landing";
+    productBrown && workspaceView !== "landing" && workspaceView !== "agent-builder";
   const productBrownInbox = productBrown && workspaceView === "inbox";
   const productBrownLanding = productBrown && workspaceView === "landing";
+  const productBrownAgentBuilder = productBrown && workspaceView === "agent-builder";
+  const productBrownLandingStyle = productBrownLanding || productBrownAgentBuilder;
   const productBrownSchedule = productBrown && workspaceView === "schedule";
   const productBrownCallHistory = productBrown && workspaceView === "call-history";
   const productBrownAgents = productBrown && workspaceView === "agents";
@@ -1422,6 +1425,7 @@ export function DoeSchedulesAppMockProduct2({
     workspaceView === "schedule" ||
     workspaceView === "call-history" ||
     workspaceView === "agents" ||
+    workspaceView === "agent-builder" ||
     (productBrown && workspaceView === "landing");
   const patientBentoCard = productBrownDarkWorkspace
     ? "rounded-xl border border-[rgba(245,230,208,0.1)] bg-[#322618] p-3 shadow-[0_1px_2px_rgba(0,0,0,0.18)]"
@@ -1729,6 +1733,13 @@ export function DoeSchedulesAppMockProduct2({
                   <path d="M5.5 4.5h2.75l1.25 2.75L8.5 9a11.5 11.5 0 0 0 5.5 5.5l1.75-1.25 2.75 1.25v2.75a1 1 0 0 1-1 1A13.5 13.5 0 0 1 4.5 5.5a1 1 0 0 1 1-1Z" />
                 ),
               },
+              {
+                label: "Agent Builder",
+                view: "agent-builder" as const,
+                icon: (
+                  <path d="m12 3 1.912 5.813L20 12l-6.088 3.187L12 21l-1.912-5.813L4 12l6.088-3.187L12 3Z" />
+                ),
+              },
             ] as const
           ).map((item) => (
             <button
@@ -1979,7 +1990,7 @@ export function DoeSchedulesAppMockProduct2({
         (productBrown ? " product-brown-mock" : "") +
         (productBrownDarkWorkspace ? " product-brown-workspace-mode" : "") +
         (productBrownInbox ? " product-brown-inbox-mode" : "") +
-        (productBrownLanding ? " product-brown-landing-mode" : "") +
+        (productBrownLandingStyle ? " product-brown-landing-mode" : "") +
         (productBrownSchedule ? " product-brown-schedule-mode" : "") +
         (productBrownCallHistory ? " product-brown-call-history-mode" : "") +
         (productBrownAgents ? " product-brown-agents-mode" : "")
@@ -2000,7 +2011,7 @@ export function DoeSchedulesAppMockProduct2({
         <div
           className={`min-h-0 flex-1 overflow-hidden ${
             productBrown
-              ? productBrownInbox || productBrownSchedule || productBrownLanding || productBrownAgents
+              ? productBrownInbox || productBrownSchedule || productBrownLandingStyle || productBrownAgents
                 || productBrownCallHistory
                 ? "product-brown-frame product-brown-layered-layout bg-[var(--pi-cream)]"
                 : "product-brown-frame product-brown-layered-layout bg-[#151008]"
@@ -2055,7 +2066,7 @@ export function DoeSchedulesAppMockProduct2({
                     ? inboxUi!.cream
                     : productBrownSchedule
                       ? scheduleUi!.cream
-                      : productBrownAgents
+                      : productBrownAgents || productBrownAgentBuilder
                         ? "bg-[var(--pi-cream)]"
                         : productBrownDarkWorkspace
                           ? "bg-[#2a1f12] shadow-[inset_1px_0_0_rgba(245,230,208,0.07)]"
@@ -2066,10 +2077,12 @@ export function DoeSchedulesAppMockProduct2({
               >
                 {workspaceView === "landing" && productBrown ? (
                   <Product2LandingPanel />
+                ) : workspaceView === "agent-builder" && productBrown ? (
+                  <Product2AgentBuilderPanel />
                 ) : workspaceView === "agents" && productBrown ? (
                   <Product2AgentsPanel />
                 ) : workspaceView === "call-history" && productBrown ? (
-                  <Product2CallHistoryPanel />
+                  <Product2CallHistoryPanel onBack={() => setWorkspaceView("landing")} />
                 ) : workspaceView === "schedule" ? (
                   <div
                     className={

@@ -1,0 +1,310 @@
+/* /motion3 — Remotion player shell + composition styling */
+
+html[data-motion3-page],
+html[data-motion3-page] body {
+  min-height: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+.motion3-viewport {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+}
+
+.motion3-player-wrap {
+  width: 100%;
+  height: 100%;
+  max-width: 100vw;
+  max-height: 100vh;
+}
+
+.motion3-remotion-root {
+  font-synthesis: none;
+}
+
+.motion3-scene-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 56px 72px 44px;
+  gap: 22px;
+}
+
+.motion3-section-title {
+  margin: 0 auto;
+  max-width: 1240px;
+  width: 100%;
+  font-size: 72px;
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+  text-align: left;
+  overflow: hidden;
+}
+
+.motion3-scene-panel {
+  width: min(1180px, 92%);
+  transform-origin: center center;
+}
+
+.motion3-day-summary.doehealth-day-summary {
+  width: 100%;
+}
+
+.motion3-day-summary .doehealth-day-summary__card {
+  border-radius: 16px;
+}
+
+.motion3-call-card .doehealth-initiatives__card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.motion3-call-card .product-landing-live-thread {
+  padding: 28px 32px 32px;
+}
+
+.motion3-agents.doehealth-active-agents {
+  width: 100%;
+}
+
+.motion3-agents .doehealth-active-agents__stage {
+  min-height: 520px;
+}
+
+/* Frame-accurate orbit — driven by Remotion, not CSS wall-clock animation */
+.motion3-orbit-stage .product-landing-workspace__orbit-circles {
+  animation: none !important;
+}
+
+.motion3-outro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  text-align: center;
+}
+
+/* ── Logo UI motion ── */
+.motion3-ui-drive--logo {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.motion3-logo-glow {
+  position: absolute;
+  width: 520px;
+  height: 520px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(212, 165, 116, 0.28) 0%, transparent 68%);
+  pointer-events: none;
+}
+
+.motion3-logo-mark {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Summary UI motion ── */
+.motion3-ui-drive--summary .product-landing-day-summary__greeting-line {
+  opacity: var(--m3-greet-1-o, 1);
+  transform: translateY(var(--m3-greet-1-y, 0));
+}
+
+.motion3-ui-drive--summary .product-landing-day-summary__greeting-name {
+  opacity: var(--m3-greet-2-o, 1);
+  transform: translateY(var(--m3-greet-2-y, 0));
+}
+
+.motion3-ui-drive--summary .product-landing-day-summary__section-label {
+  opacity: var(--m3-label-o, 1);
+}
+
+.motion3-ui-drive--summary .product-landing-day-summary__total-value {
+  opacity: var(--m3-total-o, 1);
+  transform: scale(var(--m3-total-scale, 1));
+  transform-origin: left bottom;
+  display: inline-block;
+}
+
+.motion3-ui-drive--summary .product-landing-volume__bar {
+  transform: scaleY(var(--m3-bar-scale, 1));
+  transform-origin: 50% 100%;
+}
+
+.motion3-ui-drive--summary .product-landing-volume__bar:nth-child(1) { transform: scaleY(var(--m3-bar-0, 1)); }
+.motion3-ui-drive--summary .product-landing-volume__bar:nth-child(2) { transform: scaleY(var(--m3-bar-1, 1)); }
+.motion3-ui-drive--summary .product-landing-volume__bar:nth-child(3) { transform: scaleY(var(--m3-bar-2, 1)); }
+.motion3-ui-drive--summary .product-landing-volume__bar:nth-child(4) { transform: scaleY(var(--m3-bar-3, 1)); }
+.motion3-ui-drive--summary .product-landing-volume__bar:nth-child(5) { transform: scaleY(var(--m3-bar-4, 1)); }
+.motion3-ui-drive--summary .product-landing-volume__bar:nth-child(6) { transform: scaleY(var(--m3-bar-5, 1)); }
+.motion3-ui-drive--summary .product-landing-volume__bar:nth-child(7) { transform: scaleY(var(--m3-bar-6, 1)); }
+.motion3-ui-drive--summary .product-landing-volume__bar:nth-child(8) { transform: scaleY(var(--m3-bar-7, 1)); }
+.motion3-ui-drive--summary .product-landing-volume__bar:nth-child(9) { transform: scaleY(var(--m3-bar-8, 1)); }
+.motion3-ui-drive--summary .product-landing-volume__bar:nth-child(10) { transform: scaleY(var(--m3-bar-9, 1)); }
+.motion3-ui-drive--summary .product-landing-volume__bar:nth-child(11) { transform: scaleY(var(--m3-bar-10, 1)); }
+.motion3-ui-drive--summary .product-landing-volume__bar:nth-child(12) { transform: scaleY(var(--m3-bar-11, 1)); }
+
+.motion3-ui-drive--summary .product-landing-ring {
+  opacity: var(--m3-ring-o, 1);
+  transform: scale(var(--m3-ring-scale, 1));
+}
+
+.motion3-ui-drive--summary .product-landing-ring__progress {
+  stroke-dashoffset: var(--m3-ring-offset, 44.86);
+}
+
+.motion3-ui-drive--summary .product-landing-stat-strip__item:nth-child(1) {
+  opacity: var(--m3-tile-0-o, 1);
+  transform: translateY(var(--m3-tile-0-y, 0));
+}
+
+.motion3-ui-drive--summary .product-landing-stat-strip__item:nth-child(2) {
+  opacity: var(--m3-tile-1-o, 1);
+  transform: translateY(var(--m3-tile-1-y, 0));
+}
+
+.motion3-ui-drive--summary .product-landing-stat-strip__item:nth-child(3) {
+  opacity: var(--m3-tile-2-o, 1);
+  transform: translateY(var(--m3-tile-2-y, 0));
+}
+
+.motion3-ui-drive--summary .product-landing-split {
+  opacity: var(--m3-split-o, 1);
+  transform: scaleX(var(--m3-split-scale-x, 1));
+  transform-origin: left center;
+}
+
+/* ── Call UI motion ── */
+.motion3-ui-drive--call .product-landing-live-convo .product-landing-live-quote:nth-child(1) {
+  opacity: var(--m3-turn-0-o, 1);
+  transform: translateX(var(--m3-turn-0-x, 0));
+}
+
+.motion3-ui-drive--call .product-landing-live-convo .product-landing-live-quote:nth-child(2) {
+  opacity: var(--m3-turn-1-o, 1);
+  transform: translateX(var(--m3-turn-1-x, 0));
+}
+
+.motion3-ui-drive--call .product-landing-live-convo .product-landing-live-quote:nth-child(3) {
+  opacity: var(--m3-turn-2-o, 1);
+  transform: translateX(var(--m3-turn-2-x, 0));
+}
+
+.motion3-ui-drive--call .product-landing-live-convo .product-landing-live-quote:nth-child(4) {
+  opacity: var(--m3-turn-3-o, 1);
+  transform: translateX(var(--m3-turn-3-x, 0));
+}
+
+.motion3-ui-drive--call .product-landing-live-convo .product-landing-live-quote:nth-child(5) {
+  opacity: var(--m3-turn-4-o, 1);
+  transform: translateX(var(--m3-turn-4-x, 0));
+}
+
+.motion3-ui-drive--call .product-landing-live-convo .product-landing-live-quote:nth-child(6) {
+  opacity: var(--m3-turn-5-o, 1);
+  transform: translateX(var(--m3-turn-5-x, 0));
+}
+
+.motion3-ui-drive--call .product-landing-live-convo .product-landing-live-quote:nth-child(1) .product-landing-live-quote__tag {
+  opacity: var(--m3-tag-0-o, 1);
+}
+
+.motion3-ui-drive--call .product-landing-live-convo .product-landing-live-quote:nth-child(2) .product-landing-live-quote__tag {
+  opacity: var(--m3-tag-1-o, 1);
+}
+
+.motion3-ui-drive--call .product-landing-live-convo .product-landing-live-quote:nth-child(3) .product-landing-live-quote__tag {
+  opacity: var(--m3-tag-2-o, 1);
+}
+
+.motion3-ui-drive--call .product-landing-live-convo .product-landing-live-quote:nth-child(4) .product-landing-live-quote__tag {
+  opacity: var(--m3-tag-3-o, 1);
+}
+
+.motion3-ui-drive--call .product-landing-live-convo .product-landing-live-quote:nth-child(5) .product-landing-live-quote__tag {
+  opacity: var(--m3-tag-4-o, 1);
+}
+
+.motion3-ui-drive--call .product-landing-live-convo .product-landing-live-quote:nth-child(6) .product-landing-live-quote__tag {
+  opacity: var(--m3-tag-5-o, 1);
+}
+
+.motion3-ui-drive--call .product-landing-live-quote__tag {
+  box-shadow: 0 0 0 calc((var(--m3-tag-glow, 1) - 1) * 12px) rgba(212, 165, 116, 0.35);
+}
+
+.motion3-ui-drive--call .product-landing-live-quote__meta,
+.motion3-ui-drive--call .product-landing-live-quote__text {
+  transition: none;
+}
+
+/* ── Agents UI motion ── */
+.motion3-ui-drive--agents .product-landing-workspace__orbit-stat {
+  opacity: var(--m3-orbit-center-o, 1);
+  transform: scale(var(--m3-orbit-center-s, 1));
+}
+
+.motion3-ui-drive--agents .product-landing-workspace__orbit-circle:nth-child(1) .product-landing-workspace__orbit-circle-content {
+  opacity: var(--m3-orbit-0-o, 1);
+  transform: scale(var(--m3-orbit-0-s, 1));
+}
+
+.motion3-ui-drive--agents .product-landing-workspace__orbit-circle:nth-child(2) .product-landing-workspace__orbit-circle-content {
+  opacity: var(--m3-orbit-1-o, 1);
+  transform: scale(var(--m3-orbit-1-s, 1));
+}
+
+.motion3-ui-drive--agents .product-landing-workspace__orbit-circle:nth-child(3) .product-landing-workspace__orbit-circle-content {
+  opacity: var(--m3-orbit-2-o, 1);
+  transform: scale(var(--m3-orbit-2-s, 1));
+}
+
+.motion3-ui-drive--agents .product-landing-workspace__orbit-circle:nth-child(4) .product-landing-workspace__orbit-circle-content {
+  opacity: var(--m3-orbit-3-o, 1);
+  transform: scale(var(--m3-orbit-3-s, 1));
+}
+
+.motion3-ui-drive--agents .product-landing-workspace__orbit-circle:nth-child(5) .product-landing-workspace__orbit-circle-content {
+  opacity: var(--m3-orbit-4-o, 1);
+  transform: scale(var(--m3-orbit-4-s, 1));
+}
+
+.motion3-ui-drive--agents .product-landing-workspace__orbit-circle:nth-child(6) .product-landing-workspace__orbit-circle-content {
+  opacity: var(--m3-orbit-5-o, 1);
+  transform: scale(var(--m3-orbit-5-s, 1));
+}
+
+.motion3-ui-drive--agents .product-landing-workspace__orbit-circle:nth-child(7) .product-landing-workspace__orbit-circle-content {
+  opacity: var(--m3-orbit-6-o, 1);
+  transform: scale(var(--m3-orbit-6-s, 1));
+}
+
+/* ── Outro UI motion ── */
+.motion3-outro-headline__line {
+  display: block;
+  overflow: hidden;
+}
+
+.motion3-outro-headline__line--1 {
+  opacity: var(--m3-outro-line-1-o, 1);
+  transform: translateY(var(--m3-outro-line-1-y, 0));
+}
+
+.motion3-outro-headline__line--2 {
+  opacity: var(--m3-outro-line-2-o, 1);
+  transform: translateY(var(--m3-outro-line-2-y, 0));
+}
+
+.motion3-outro-url {
+  opacity: var(--m3-outro-url-o, 1);
+  transform: translateY(var(--m3-outro-url-y, 0));
+}

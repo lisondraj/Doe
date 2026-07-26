@@ -6,10 +6,16 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "remotion:studio": "remotion studio remotion/index.ts",
+    "remotion:render": "remotion render remotion/index.ts DoeLaunch public/motion/doe-launch-remotion.mp4",
+    "remotion:intro": "remotion render remotion/index.ts DoeIntro public/motion/doe-intro.mp4 --width=1920 --height=1080 --crf=12"
   },
   "dependencies": {
     "@paper-design/shaders-react": "^0.0.76",
+    "@remotion/cli": "^4.0.499",
+    "@remotion/google-fonts": "^4.0.499",
+    "@remotion/player": "^4.0.499",
     "@supabase/supabase-js": "^2.108.2",
     "html-to-image": "^1.11.13",
     "jspdf": "^4.2.1",
@@ -17,6 +23,7 @@
     "next": "^14.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "remotion": "^4.0.499",
     "resend": "^6.14.0",
     "thinking-orbs": "^0.1.1"
   },

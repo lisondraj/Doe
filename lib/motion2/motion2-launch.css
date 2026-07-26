@@ -1,0 +1,460 @@
+/* /motion2 — 20s Doe launch composition (1920×1080 canvas) */
+
+.motion2-root {
+  --motion2-brown: #1a1208;
+  --motion2-brown-mid: #241c14;
+  --motion2-cream: #faf0d8;
+  --motion2-gold: #d4a574;
+  --motion2-gold-light: #e8c08e;
+  --motion2-on-dark: #f2e8da;
+  --motion2-gold-gradient: linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%);
+  --motion2-duration: 20s;
+}
+
+html[data-motion2-page],
+html[data-motion2-page] body {
+  min-height: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+.motion2-viewport {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #000;
+}
+
+.motion2-canvas {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+  transform-origin: center center;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.motion2-canvas::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 72% 58% at 50% 0%, rgba(245, 230, 208, 0.1), transparent 68%),
+    radial-gradient(ellipse 42% 42% at 88% 82%, rgba(168, 118, 84, 0.12), transparent 62%),
+    linear-gradient(168deg, var(--motion2-brown-mid) 0%, var(--motion2-brown) 100%);
+  pointer-events: none;
+}
+
+.motion2-scene {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  animation-duration: var(--motion2-duration);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+
+.motion2-scene--cream {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255, 255, 255, 0.55), transparent 70%),
+    linear-gradient(180deg, #f7f6f3 0%, var(--motion2-cream) 100%);
+}
+
+.motion2-scene--cream::before {
+  display: none;
+}
+
+/* Scene visibility windows (20s loop) */
+.motion2-scene--s1 {
+  animation-name: motion2-scene-s1;
+}
+
+.motion2-scene--s2 {
+  animation-name: motion2-scene-s2;
+}
+
+.motion2-scene--s3 {
+  animation-name: motion2-scene-s3;
+}
+
+.motion2-scene--s4 {
+  animation-name: motion2-scene-s4;
+}
+
+.motion2-scene--s5 {
+  animation-name: motion2-scene-s5;
+}
+
+@keyframes motion2-scene-s1 {
+  0%,
+  19% {
+    opacity: 1;
+    visibility: visible;
+  }
+  20%,
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes motion2-scene-s2 {
+  0%,
+  19% {
+    opacity: 0;
+    visibility: hidden;
+  }
+  20%,
+  21% {
+    opacity: 1;
+    visibility: visible;
+  }
+  42%,
+  43% {
+    opacity: 1;
+    visibility: visible;
+  }
+  44%,
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes motion2-scene-s3 {
+  0%,
+  41% {
+    opacity: 0;
+    visibility: hidden;
+  }
+  42%,
+  43% {
+    opacity: 1;
+    visibility: visible;
+  }
+  64%,
+  65% {
+    opacity: 1;
+    visibility: visible;
+  }
+  66%,
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes motion2-scene-s4 {
+  0%,
+  63% {
+    opacity: 0;
+    visibility: hidden;
+  }
+  64%,
+  65% {
+    opacity: 1;
+    visibility: visible;
+  }
+  84%,
+  85% {
+    opacity: 1;
+    visibility: visible;
+  }
+  86%,
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes motion2-scene-s5 {
+  0%,
+  84% {
+    opacity: 0;
+    visibility: hidden;
+  }
+  85%,
+  100% {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+.motion2-logo {
+  position: relative;
+  z-index: 2;
+  font-size: 320px;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  background: var(--motion2-gold-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  transform-origin: center center;
+}
+
+.motion2-logo--animate {
+  animation:
+    motion2-logo-zoom var(--motion2-duration) cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite both,
+    motion2-logo-fade var(--motion2-duration) linear infinite both;
+}
+
+@keyframes motion2-logo-zoom {
+  0% {
+    transform: scale(0.18);
+  }
+  20%,
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes motion2-logo-fade {
+  0% {
+    opacity: 0.35;
+  }
+  12%,
+  20%,
+  100% {
+    opacity: 1;
+  }
+}
+
+.motion2-scene-stack {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 56px 72px 44px;
+  gap: 22px;
+}
+
+.motion2-scene-stack--animate {
+  animation: motion2-stack-enter var(--motion2-duration) linear infinite both;
+}
+
+@keyframes motion2-stack-enter {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.motion2-scene--s2 .motion2-scene-stack--animate {
+  animation-name: motion2-stack-enter-s2;
+}
+
+.motion2-scene--s3 .motion2-scene-stack--animate {
+  animation-name: motion2-stack-enter-s3;
+}
+
+.motion2-scene--s4 .motion2-scene-stack--animate {
+  animation-name: motion2-stack-enter-s4;
+}
+
+@keyframes motion2-stack-enter-s2 {
+  0%,
+  19% {
+    transform: translateY(28px);
+    opacity: 0;
+  }
+  21%,
+  42% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  44%,
+  100% {
+    transform: translateY(-12px);
+    opacity: 0;
+  }
+}
+
+@keyframes motion2-stack-enter-s3 {
+  0%,
+  41% {
+    transform: translateY(28px);
+    opacity: 0;
+  }
+  43%,
+  64% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  66%,
+  100% {
+    transform: translateY(-12px);
+    opacity: 0;
+  }
+}
+
+@keyframes motion2-stack-enter-s4 {
+  0%,
+  63% {
+    transform: translateY(28px);
+    opacity: 0;
+  }
+  65%,
+  84% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  86%,
+  100% {
+    transform: translateY(-12px);
+    opacity: 0;
+  }
+}
+
+.motion2-section-title {
+  margin: 0 auto;
+  max-width: 1240px;
+  width: 100%;
+  font-size: 72px;
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+  text-align: left;
+  background: var(--motion2-gold-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.motion2-section-title span {
+  display: block;
+}
+
+.motion2-scene-panel {
+  width: min(1180px, 92%);
+  transform-origin: center center;
+}
+
+.motion2-scene-panel--summary {
+  transform: scale(1.08);
+}
+
+.motion2-scene-panel--call {
+  transform: scale(1.02);
+}
+
+.motion2-scene-panel--agents {
+  transform: scale(1.12);
+}
+
+.motion2-day-summary.doehealth-day-summary {
+  width: 100%;
+}
+
+.motion2-day-summary .doehealth-day-summary__card {
+  border-radius: 16px;
+}
+
+.motion2-call-card .doehealth-initiatives__card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.motion2-call-card .product-landing-live-thread {
+  padding: 28px 32px 32px;
+}
+
+.motion2-agents.doehealth-active-agents {
+  width: 100%;
+}
+
+.motion2-agents .doehealth-active-agents__stage {
+  min-height: 520px;
+}
+
+.motion2-outro {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  text-align: center;
+}
+
+.motion2-outro--animate {
+  animation: motion2-outro-enter var(--motion2-duration) cubic-bezier(0.22, 1, 0.36, 1) infinite both;
+}
+
+@keyframes motion2-outro-enter {
+  0%,
+  84% {
+    transform: scale(0.82);
+    opacity: 0;
+  }
+  87%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.motion2-outro__logo {
+  font-size: 128px;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  background: var(--motion2-gold-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.motion2-outro__headline {
+  margin: 8px 0 0;
+  font-size: 56px;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1.06;
+  background: var(--motion2-gold-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.motion2-outro__headline span {
+  display: block;
+}
+
+.motion2-outro__url {
+  margin: 4px 0 0;
+  font-size: 22px;
+  letter-spacing: 0.04em;
+  color: rgba(26, 18, 8, 0.52);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion2-scene,
+  .motion2-logo--animate,
+  .motion2-scene-stack--animate,
+  .motion2-outro--animate {
+    animation: none !important;
+  }
+
+  .motion2-scene--s1 {
+    opacity: 1;
+    visibility: visible;
+  }
+}

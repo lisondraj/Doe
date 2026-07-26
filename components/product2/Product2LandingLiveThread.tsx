@@ -202,6 +202,7 @@ function VoiceQuoteTurn({
   caller,
   callDuration,
   callDurationIso,
+  turnId,
   variant = "default",
   header,
   children,
@@ -210,13 +211,14 @@ function VoiceQuoteTurn({
   caller: string;
   callDuration: string;
   callDurationIso: string;
+  turnId: string;
   variant?: "default" | "reply";
   header?: ReactNode;
   children: ReactNode;
 }) {
   return (
     <section
-      className={`product-landing-live-quote${variant === "reply" ? " product-landing-live-quote--reply" : ""}`}
+      className={`product-landing-live-quote product-landing-live-quote--${turnId}${variant === "reply" ? " product-landing-live-quote--reply" : ""}`}
       aria-label={ariaLabel}
     >
       {header}
@@ -258,6 +260,7 @@ function VoiceConvoTurn({
       caller={turn.caller}
       callDuration={turn.callDuration}
       callDurationIso={turn.callDurationIso}
+      turnId={turn.id}
       variant={isAgent ? "reply" : "default"}
       header={header}
     >

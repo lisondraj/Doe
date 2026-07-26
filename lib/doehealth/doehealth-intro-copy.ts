@@ -15,6 +15,10 @@ export const DOEHEALTH_INTRO_COPY = {
     line1: "Prepares your",
     line2: "appointments",
   },
+  introVideoSectionTitle: {
+    line1: "Learn more",
+    line2: "about Doe",
+  },
   activeAgentsSectionTitle: {
     line1: "Agents for",
     line2: "every workflow",

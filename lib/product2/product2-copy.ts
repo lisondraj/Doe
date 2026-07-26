@@ -345,6 +345,14 @@ export const PRODUCT2_LANDING_LIVE_CONVO = [
     ],
   },
   {
+    id: "agent-open-chart",
+    role: "agent" as const,
+    caller: "Doe Agent",
+    callDuration: "0m24s",
+    callDurationIso: "PT0M24S",
+    lines: ["Thank you, let me open your chart"],
+  },
+  {
     id: "agent-verified",
     role: "agent" as const,
     caller: "Doe Agent",

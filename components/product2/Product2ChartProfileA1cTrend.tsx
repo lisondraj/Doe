@@ -33,11 +33,13 @@ export function Product2ChartProfileA1cTrend({
   readings,
   doseChanges = [],
   labelPosition = "bottom",
+  plotCanvasHeight,
 }: {
   label: string;
   readings: readonly { date: string; value: number }[];
   doseChanges?: readonly { atIndex: number; dose: number }[];
   labelPosition?: "top" | "bottom";
+  plotCanvasHeight?: string;
 }) {
   const gradientId = useId();
   const fillGradientId = `${gradientId}-fill`;
@@ -87,20 +89,28 @@ export function Product2ChartProfileA1cTrend({
     </span>
   );
 
+  const plotSizeStyle = plotCanvasHeight
+    ? ({ height: plotCanvasHeight, minHeight: plotCanvasHeight } as const)
+    : undefined;
+
   return (
     <div
       className={`product-landing-live-quote__chart-profile-a1c product-landing-live-quote__chart-profile-a1c--label-${labelPosition}`}
     >
       {labelPosition === "top" ? labelNode : null}
       <div className="product-landing-live-quote__chart-profile-a1c-plot">
-        <div className={`product-landing-live-quote__chart-profile-a1c-y-axis ${dmSans.className}`} aria-hidden>
+        <div
+          className={`product-landing-live-quote__chart-profile-a1c-y-axis ${dmSans.className}`}
+          style={plotSizeStyle}
+          aria-hidden
+        >
           {yTicks.map((tick) => (
             <span key={tick} className="product-landing-live-quote__chart-profile-a1c-axis-label">
               {tick.toFixed(1)}%
             </span>
           ))}
         </div>
-        <div className="product-landing-live-quote__chart-profile-a1c-canvas">
+        <div className="product-landing-live-quote__chart-profile-a1c-canvas" style={plotSizeStyle}>
           <svg
             className="product-landing-live-quote__chart-profile-a1c-chart"
             viewBox={`0 0 ${width} ${height}`}

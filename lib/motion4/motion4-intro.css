@@ -1,0 +1,2307 @@
+/* /motion4 — 45s Doe intro (Remotion) */
+
+html[data-motion4-page],
+html[data-motion4-page] body {
+  min-height: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+.motion4-viewport {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+}
+
+.motion4-player-wrap {
+  width: 100%;
+  height: 100%;
+  max-width: 100vw;
+  max-height: 100vh;
+}
+
+.motion4-remotion-root {
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  font-weight: 400;
+}
+
+.motion4-remotion-root p,
+.motion4-remotion-root ul {
+  margin: 0;
+}
+
+@font-face {
+  font-family: "Suisse Intl";
+  src: url("../../fonts/suisse/SuisseIntlTrial-Light.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Suisse Intl";
+  src: url("../../fonts/suisse/SuisseIntlTrial-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Suisse Intl";
+  src: url("../../fonts/suisse/SuisseIntlTrial-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Suisse Intl";
+  src: url("../../fonts/suisse/SuisseIntlTrial-Semibold.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+.motion4-remotion-font-lora {
+  font-family: "Lora", Georgia, "Times New Roman", serif;
+}
+
+.motion4-remotion-font-inter {
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+.motion4-remotion-font-suisse {
+  font-family: "Suisse Intl", system-ui, sans-serif;
+  font-weight: 400;
+}
+
+.motion4-remotion-font-dm-sans {
+  font-family: "DM Sans", system-ui, sans-serif;
+}
+
+/* Gold display type — doehealth / motion3 hierarchy */
+.motion4-remotion-root .motion4-title-below,
+.motion4-remotion-root .doehealth-hero-headline {
+  background: linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  font-weight: 350;
+  letter-spacing: -0.035em;
+}
+
+.motion4-title-below__line {
+  display: block;
+  overflow: visible;
+}
+
+/* ── Launch-video modern patterns (Doe brown/gold) ── */
+
+.motion4-scene--hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 0 96px;
+  text-align: center;
+}
+
+.motion4-scene--split-stage {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  align-items: stretch;
+  justify-items: center;
+  gap: 20px;
+  padding: 36px 56px 40px;
+  height: 100%;
+}
+
+.motion4-scene--call-center {
+  --motion4-call-column-width: 580px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 96px;
+  height: 100%;
+  position: relative;
+}
+
+.motion4-call-center-hero {
+  width: var(--motion4-call-column-width);
+  max-width: var(--motion4-call-column-width);
+  min-width: 0;
+  flex: 0 0 var(--motion4-call-column-width);
+  min-height: calc((1 - var(--m4-call-settle, 0)) * min(72vh, 640px));
+  max-height: min(56vh, 440px);
+  margin: 0 auto;
+  overflow: visible;
+}
+
+.motion4-scene--call-center .motion4-stage-chat-slot {
+  position: absolute;
+  left: 50%;
+  bottom: 40px;
+  width: min(100%, 480px);
+  max-width: 480px;
+}
+
+.motion4-scene--editor-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 32px 48px 36px;
+  height: 100%;
+  gap: 16px;
+}
+
+.motion4-editor-stage__rail {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  z-index: 3;
+}
+
+.motion4-editor-stage__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+}
+
+.motion4-ui-hero--editor-fill {
+  width: 100%;
+  max-width: 980px;
+  height: 100%;
+}
+
+.motion4-console-shell--fill {
+  width: 100%;
+  max-width: none;
+  min-height: 420px;
+}
+
+.motion4-console-shell--fill .product-voice-agent-editor {
+  min-height: 420px;
+}
+
+.motion4-scene--safety-stage {
+  display: flex;
+  flex-direction: column;
+  padding: 32px 48px 40px;
+  height: 100%;
+  gap: 12px;
+}
+
+.motion4-safety-stage__rail {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  z-index: 3;
+}
+
+.motion4-safety-stage__body {
+  flex: 1 1 auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 0;
+}
+
+.motion4-safety-badge-grid {
+  position: absolute;
+  inset: 8% 6%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px 20px;
+  align-content: center;
+  justify-items: center;
+  z-index: 1;
+}
+
+.motion4-safety-badge {
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(212, 165, 116, 0.16);
+  background: rgba(23, 16, 8, 0.42);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: rgba(242, 232, 218, 0.62);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.motion4-shield--stage {
+  position: relative;
+  z-index: 2;
+  width: 168px;
+  height: 200px;
+  filter: drop-shadow(0 0 48px rgba(212, 165, 116, 0.22));
+}
+
+.motion4-shield--stage svg {
+  width: 100%;
+  height: 100%;
+}
+
+.motion4-scene--lang-wall {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 40px 32px;
+  height: 100%;
+  overflow: hidden;
+}
+
+.motion4-lang-wall {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  max-width: 1680px;
+  gap: 16px;
+}
+
+.motion4-lang-wall__eyebrow {
+  margin: 0;
+  flex: 0 0 auto;
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  background: linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.motion4-lang-wall__grid {
+  flex: 1 1 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+  gap: 10px 12px;
+  width: 100%;
+  min-height: 0;
+}
+
+.motion4-lang-wall__chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(212, 165, 116, 0.18);
+  background: rgba(23, 16, 8, 0.5);
+  font-size: clamp(13px, 1.15vw, 17px);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: rgba(242, 232, 218, 0.78);
+  white-space: nowrap;
+}
+
+.motion4-lang-wall__chip--gold {
+  border-color: rgba(212, 165, 116, 0.42);
+  background: rgba(42, 28, 14, 0.62);
+  color: #f2e8da;
+  box-shadow: 0 0 20px rgba(212, 165, 116, 0.12);
+}
+
+.motion4-scene--stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 36px;
+  padding: 52px 72px 48px;
+}
+
+.motion4-scene--future-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 80px;
+  overflow: hidden;
+}
+
+.motion4-scene--future-stack,
+.motion4-scene--safety-stack {
+  gap: 0;
+}
+
+.motion4-intro-stage {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.motion4-safety-stack {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 56px;
+  width: 100%;
+}
+
+.motion4-closing-stack {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+}
+
+.motion4-stage-rail-slot {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-bottom: 8px;
+}
+
+.motion4-stage-chat-slot {
+  width: 100%;
+  max-width: 920px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  min-height: 0;
+  z-index: 4;
+}
+
+.motion4-ui-hero--stage-top {
+  align-self: center;
+  width: 100%;
+  max-width: 1280px;
+  margin-bottom: auto;
+  padding-top: 8px;
+}
+
+.motion4-ui-hero--stage-main {
+  align-self: center;
+  width: 100%;
+  max-width: 900px;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.motion4-scene--opening {
+  padding: 0;
+  position: relative;
+}
+
+/* Signal contour accent (opening) */
+.motion4-curvy-lines,
+.motion4-signal-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  transform-origin: center center;
+}
+
+.motion4-curvy-lines path,
+.motion4-signal-lines path {
+  vector-effect: non-scaling-stroke;
+  shape-rendering: geometricPrecision;
+}
+
+/* Geometric line accent (opening) */
+.motion4-geo-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Kinetic scroll — active line pinned to vertical center */
+.motion4-kinetic-viewport--scroll {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 2;
+  transform-origin: center center;
+  will-change: transform, filter, opacity;
+}
+
+.motion4-kinetic-track {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 1400px;
+  will-change: transform;
+}
+
+.motion4-kinetic__line--slot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  transform-origin: center center;
+}
+
+.motion4-kinetic-track.motion4-kinetic--hero .motion4-kinetic__line--slot {
+  font-size: clamp(72px, 8vw, 108px);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: rgba(242, 232, 218, 0.36);
+}
+
+/* Flowing wave lines */
+.motion4-wave-lines {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  width: 100%;
+  height: 280px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Kinetic type stack — depth-of-field blur */
+.motion4-kinetic {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.12em;
+  width: 100%;
+  max-width: 1400px;
+}
+
+.motion4-hero-stack {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 1400px;
+  min-height: 0;
+}
+
+.motion4-kinetic--center {
+  align-items: center;
+  text-align: center;
+}
+
+.motion4-kinetic--left {
+  align-items: flex-start;
+  text-align: left;
+  max-width: 920px;
+  margin-inline: auto;
+}
+
+.motion4-kinetic--hero .motion4-kinetic__line {
+  font-size: clamp(72px, 8vw, 108px);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1.02;
+  margin: 0;
+  color: rgba(242, 232, 218, 0.38);
+  transform-origin: center center;
+  will-change: transform, opacity, filter;
+}
+
+.motion4-kinetic--lg .motion4-kinetic__line {
+  font-size: clamp(52px, 5.5vw, 76px);
+  font-weight: 350;
+  letter-spacing: -0.035em;
+  line-height: 1.04;
+  margin: 0;
+  color: rgba(242, 232, 218, 0.42);
+}
+
+.motion4-kinetic__line--active {
+  font-weight: 400;
+}
+
+.motion4-kinetic__cursor {
+  display: inline-block;
+  width: 5px;
+  height: 0.88em;
+  margin-left: 6px;
+  vertical-align: -0.06em;
+  border-radius: 2px;
+  background: #d4a574;
+  box-shadow: 0 0 18px rgba(212, 165, 116, 0.55);
+}
+
+/* Focus rail — opacity falloff nav */
+.motion4-focus-rail {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: clamp(24px, 3.5vw, 48px);
+  width: 100%;
+  max-width: 1100px;
+  z-index: 3;
+  padding-bottom: 6px;
+}
+
+.motion4-focus-rail__item {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: clamp(18px, 2vw, 26px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: rgba(242, 232, 218, 0.45);
+  transform-origin: center bottom;
+  white-space: nowrap;
+  padding-bottom: 14px;
+}
+
+.motion4-focus-rail__item--active {
+  color: #f2e8da;
+}
+
+.motion4-focus-rail__underline {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: 0;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, #d4a574 20%, #e8c08e 50%, #d4a574 80%, transparent);
+  transform-origin: center center;
+}
+
+.motion4-focus-rail__item--active::after {
+  content: none;
+}
+
+/* Wave hero — headline + gradient bars */
+.motion4-wave-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  z-index: 2;
+  width: 100%;
+  max-width: 1100px;
+}
+
+.motion4-wave-hero__headline {
+  margin: 0;
+  font-size: clamp(64px, 7vw, 96px);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.motion4-wave-hero__subhead {
+  margin: 0;
+  font-size: clamp(18px, 2vw, 24px);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: rgba(242, 232, 218, 0.52);
+}
+
+.motion4-wave-hero__bars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 5px;
+  height: 100px;
+  width: min(880px, 92%);
+  margin-top: 12px;
+}
+
+.motion4-wave-hero__bar {
+  flex: 1;
+  max-width: 8px;
+  border-radius: 999px;
+  transform-origin: bottom center;
+}
+
+/* Hero pill card */
+.motion4-hero-pill-wrap {
+  position: relative;
+  z-index: 2;
+}
+
+.motion4-hero-pill-wrap--glow::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  background: radial-gradient(ellipse, rgba(212, 165, 116, 0.18) 0%, transparent 65%);
+  z-index: -1;
+}
+
+.motion4-hero-pill {
+  padding: 28px 48px;
+  border-radius: 999px;
+  border: 1px solid rgba(212, 165, 116, 0.22);
+  background: linear-gradient(180deg, rgba(250, 240, 216, 0.96) 0%, rgba(245, 230, 208, 0.92) 100%);
+  box-shadow:
+    0 24px 64px rgba(26, 18, 8, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  font-size: clamp(36px, 4vw, 56px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: #1a1208;
+}
+
+/* Chat moment — minimal conversation UI */
+.motion4-chat-moment {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 22px;
+  width: min(840px, 100%);
+  padding: 0 8px;
+}
+
+.motion4-chat-moment__user {
+  align-self: flex-end;
+  max-width: 78%;
+  padding: 14px 22px;
+  border-radius: 999px;
+  border: 1px solid rgba(212, 165, 116, 0.18);
+  background: rgba(250, 240, 216, 0.94);
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: #1a1208;
+  box-shadow: 0 12px 32px rgba(26, 18, 8, 0.18);
+}
+
+.motion4-chat-moment__ai-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  align-self: flex-start;
+  max-width: 82%;
+}
+
+.motion4-chat-moment__avatar {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 30%, #3a2a18 0%, #1a1208 55%, #0d0906 100%);
+  box-shadow: inset 0 0 0 1px rgba(212, 165, 116, 0.28);
+}
+
+.motion4-chat-moment__ai {
+  margin: 6px 0 0;
+  font-size: 21px;
+  line-height: 1.45;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: rgba(242, 232, 218, 0.88);
+}
+
+.motion4-chat-moment__tool {
+  align-self: flex-start;
+  margin-left: 54px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: rgba(242, 232, 218, 0.48);
+}
+
+.motion4-chat-moment__tool-icon {
+  opacity: 0.7;
+}
+
+.motion4-stage-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 12%;
+  z-index: 4;
+  pointer-events: none;
+  background: radial-gradient(ellipse 75% 50% at 50% 75%, rgba(26, 18, 8, 0.5) 0%, transparent 68%);
+}
+
+/* Intro label */
+.motion4-intro-label {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  font-size: clamp(36px, 4vw, 52px);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  color: rgba(242, 232, 218, 0.72);
+}
+
+.motion4-logo-mark--intro {
+  font-size: clamp(180px, 20vw, 300px);
+  margin: -8px 0 0;
+  line-height: 0.92;
+  z-index: 2;
+}
+
+.motion4-future-bg-ui {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 0;
+}
+
+.motion4-future-orb--ambient {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: 440px;
+  height: 440px;
+  margin-left: -220px;
+  margin-top: -220px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.motion4-scene--closing .motion4-wave-lines {
+  top: 48%;
+}
+
+.motion4-scene--closing .motion4-closing__tagline {
+  margin: 0;
+  font-size: clamp(32px, 3.6vw, 48px);
+  font-weight: 350;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+}
+
+.motion4-ui-hero--call {
+  width: var(--motion4-call-column-width, 580px);
+  max-width: var(--motion4-call-column-width, 580px);
+  min-width: 0;
+  flex: 0 0 var(--motion4-call-column-width, 580px);
+  z-index: 1;
+  overflow: visible;
+}
+
+.motion4-ui-hero--call .motion4-ui-reveal,
+.motion4-ui-hero--call .motion3-ui-drive--call-reveal,
+.motion4-ui-hero--call .motion4-ui-reveal--call-enter {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: visible;
+}
+
+.motion4-ui-hero--call .motion3-ui-drive--call-reveal,
+.motion4-ui-hero--call .motion4-call-history-reveal,
+.motion4-ui-hero--call .doehealth-initiatives,
+.motion4-ui-hero--call .doehealth-initiatives__card,
+.motion4-ui-hero--call .doehealth-initiatives__call-history,
+.motion4-ui-hero--call .product-landing-live-thread,
+.motion4-ui-hero--call .product-landing-live-convo-stage,
+.motion4-ui-hero--call .product-landing-live-convo {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.motion4-ui-hero--call .doehealth-initiatives--bare {
+  width: 100%;
+  max-width: 100%;
+  --dhi-card-max: var(--motion4-call-column-width, 580px);
+}
+
+.motion4-ui-hero--call .doehealth-initiatives--bare .doehealth-initiatives__card {
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.motion4-ui-hero--call .product-landing-live-quote {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  flex-shrink: 1;
+}
+
+.motion4-remotion-root .motion4-ui-hero--call .doehealth-initiatives__call-history.product-call-history-rail__thread .product-landing-live-quote__text,
+.motion4-remotion-root .motion4-ui-hero--call .doehealth-initiatives__call-history.product-call-history-rail__thread .product-landing-live-quote__line {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.motion4-ui-hero--call .doehealth-initiatives--bare .doehealth-initiatives__hero {
+  font-size: clamp(2.35rem, 1.55rem + 1.65vw, 3.15rem);
+}
+
+.motion4-ui-hero--call .doehealth-initiatives--bare .doehealth-initiatives__hero-block:not(.motion4-call-header__block) {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: visible;
+  margin-bottom: clamp(0.3rem, 0.24rem + 0.18vw, 0.45rem);
+}
+
+/* Sarah card — big centered hero → compact header → convo */
+.motion4-remotion-root .motion4-call-header {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.motion4-remotion-root .motion4-call-header__card {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  justify-content: flex-start;
+  min-height: 0;
+}
+
+.motion4-remotion-root .motion4-call-header__hero-zone {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 auto;
+  width: 100%;
+  min-height: calc((1 - var(--m4-call-settle, 0)) * min(72vh, 640px));
+  overflow: visible;
+  transform: translateY(var(--m4-call-hero-y, 0px));
+}
+
+.motion4-remotion-root .motion4-call-header__hero-zone::before,
+.motion4-remotion-root .motion4-call-header__hero-zone::after {
+  content: "";
+  display: block;
+  flex: calc(1 - var(--m4-call-settle, 0)) 1 0;
+  min-height: 0;
+  pointer-events: none;
+}
+
+.motion4-remotion-root .motion4-ui-hero--call .motion4-call-header__block {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: visible;
+  margin-bottom: calc(var(--m4-call-settle, 0) * clamp(0.3rem, 0.24rem + 0.18vw, 0.45rem));
+}
+
+.motion4-remotion-root .motion4-call-header__shell {
+  transform: scale(calc(1 + (1 - var(--m4-call-settle, 0)) * 0.28));
+  transform-origin: top center;
+  width: 100%;
+  overflow: visible;
+}
+
+.motion4-remotion-root .motion4-call-header__name {
+  font-size: calc(clamp(2.35rem, 1.55rem + 1.65vw, 3.15rem) * (1 + (1 - var(--m4-call-settle, 0)) * 0.1));
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-shrink: 0;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+.motion4-remotion-root .motion4-call-header__row {
+  align-items: last baseline;
+  overflow: visible;
+  min-width: 0;
+}
+
+.motion4-remotion-root .motion4-call-header__status-slot {
+  position: relative;
+  flex: 0 0 auto;
+  min-width: clamp(5.5rem, 14vw, 7.5rem);
+  min-height: clamp(1.62rem, 1.2rem + 0.9vw, 2.05rem);
+  overflow: visible;
+}
+
+.motion4-remotion-root .motion4-call-header__incoming,
+.motion4-remotion-root .motion4-call-header__duration {
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin: 0;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.motion4-remotion-root .motion4-call-header__incoming {
+  font-size: calc(clamp(1.28rem, 0.98rem + 0.72vw, 1.72rem) * (1 + (1 - var(--m4-call-settle, 0)) * 0.14));
+  font-weight: 600;
+  letter-spacing: -0.018em;
+  color: rgba(232, 192, 142, 0.88);
+  opacity: calc(1 - var(--m4-call-morph-status, var(--m4-call-morph, 0)));
+}
+
+.motion4-remotion-root .motion4-call-header__duration {
+  opacity: var(--m4-call-morph-status, var(--m4-call-morph, 0));
+}
+
+.motion4-remotion-root .motion4-call-header__subline {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0;
+  margin-top: calc(clamp(0.35rem, 0.28rem + 0.2vw, 0.5rem) + (1 - var(--m4-call-settle, 0)) * 0.4rem);
+  font-size: calc(clamp(1.02rem, 0.94rem + 0.38vw, 1.24rem) * (1 + (1 - var(--m4-call-settle, 0)) * 0.12));
+  line-height: 1;
+  overflow: visible;
+  white-space: nowrap;
+}
+
+.motion4-remotion-root .motion4-call-header__prefix {
+  position: relative;
+  flex: 0 0 6.85em;
+  width: 6.85em;
+  height: 1.2em;
+  overflow: visible;
+}
+
+.motion4-remotion-root .motion4-call-header__calling-from,
+.motion4-remotion-root .motion4-call-header__answered {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.motion4-remotion-root .motion4-call-header__calling-from {
+  font-weight: 500;
+  color: rgba(242, 232, 218, 0.58);
+  opacity: calc(1 - var(--m4-call-morph-subline, var(--m4-call-morph, 0)));
+  transform: translateY(-50%);
+}
+
+.motion4-remotion-root .motion4-call-header__answered {
+  font-weight: 600;
+  color: rgba(232, 192, 142, 0.82);
+  opacity: var(--m4-call-morph-subline, var(--m4-call-morph, 0));
+  transform: translateY(-50%);
+}
+
+.motion4-ui-hero--call .doehealth-initiatives--bare .doehealth-initiatives__called-number:not(.motion4-call-header__phone) {
+  font-size: clamp(1.18rem, 1.02rem + 0.55vw, 1.45rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: rgba(242, 232, 218, 0.82);
+}
+
+.motion4-remotion-root .motion4-ui-hero--call .motion4-call-header__phone {
+  flex: 0 0 auto;
+  font-size: calc(clamp(1.02rem, 0.94rem + 0.38vw, 1.24rem) * (1 + (1 - var(--m4-call-settle, 0)) * 0.12));
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  color: rgba(242, 232, 218, 0.82);
+  transform: translateX(calc(var(--m4-call-morph-subline, var(--m4-call-morph, 0)) * -1.6em));
+}
+
+.motion4-remotion-root .motion4-call-history-reveal {
+  opacity: var(--m4-call-history-o, 1);
+  flex: var(--m4-call-settle, 0) 0 auto;
+  max-height: calc(var(--m4-call-settle, 0) * 999px);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.motion4-ui-hero--call .doehealth-initiatives--bare .doehealth-initiatives__hero-row:not(.motion4-call-header__row) {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.motion4-ui-hero--call .doehealth-initiatives--bare .doehealth-initiatives__hero-duration {
+  font-size: clamp(1.62rem, 1.2rem + 0.9vw, 2.05rem);
+  flex-shrink: 0;
+}
+
+.motion4-remotion-root .motion4-ui-hero--call .doehealth-initiatives__call-history.product-call-history-rail__thread .product-landing-live-quote__meta {
+  min-width: 0;
+  flex-wrap: wrap;
+  row-gap: 0.2rem;
+}
+
+.motion4-remotion-root .motion4-ui-hero--call .doehealth-initiatives__call-history.product-call-history-rail__thread .product-landing-live-quote__caller {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.motion4-remotion-root .motion4-ui-hero--call .doehealth-initiatives__call-history.product-call-history-rail__thread .product-landing-live-quote__tag {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.motion4-ui-hero--call .doehealth-initiatives--bare .doehealth-initiatives__called-line {
+  font-size: clamp(1.02rem, 0.94rem + 0.38vw, 1.24rem);
+  margin-top: clamp(0.35rem, 0.28rem + 0.2vw, 0.5rem);
+  line-height: 1.2;
+}
+
+.motion4-ui-hero--call .doehealth-initiatives--bare .doehealth-initiatives__called-prefix {
+  font-size: inherit;
+  font-weight: 500;
+  color: rgba(242, 232, 218, 0.58);
+}
+
+.motion4-remotion-root .motion4-ui-hero--call .doehealth-initiatives__call-history-scroll {
+  --dhi-call-history-scroll-max: clamp(13rem, 34vh, 17.5rem);
+}
+
+.motion4-remotion-root .motion4-ui-hero--call .doehealth-initiatives__call-history.product-call-history-rail__thread .product-landing-live-quote__text {
+  font-size: clamp(1.62rem, 1.3rem + 0.8vw, 2.05rem);
+}
+
+.motion4-remotion-root .motion4-ui-hero--call .doehealth-initiatives__call-history.product-call-history-rail__thread .product-landing-live-quote__caller {
+  font-size: clamp(1.12rem, 0.98rem + 0.36vw, 1.32rem);
+}
+
+.motion4-remotion-root .motion4-ui-hero--call .doehealth-initiatives__call-history.product-call-history-rail__thread .product-landing-live-quote__duration {
+  font-size: 16px;
+}
+
+.motion4-remotion-root .motion4-ui-hero--call .doehealth-initiatives__call-history.product-call-history-rail__thread .product-landing-live-quote__step {
+  font-size: 15px;
+}
+
+.motion4-remotion-root .motion4-ui-hero--call .doehealth-initiatives__call-history.product-call-history-rail__thread .product-landing-live-quote__meta {
+  margin-top: 0.65rem;
+}
+
+/* Call history — stacked turn reveal (earlier lines stay visible) */
+.motion4-call-history-reveal {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  margin-top: 0;
+}
+
+.motion3-ui-drive--call-reveal .product-landing-live-convo-stage {
+  position: relative;
+  min-height: clamp(7.5rem, 18vh, 9.5rem);
+  max-height: clamp(7.5rem, 18vh, 9.5rem);
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / calc(1 - var(--m3-convo-top-fade, 0) * 0.92)) 0%,
+    rgb(0 0 0 / calc(1 - var(--m3-convo-top-fade, 0) * 0.55)) 12%,
+    rgb(0 0 0 / calc(1 - var(--m3-convo-top-fade, 0) * 0.12)) 24%,
+    #000 34%,
+    #000 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / calc(1 - var(--m3-convo-top-fade, 0) * 0.92)) 0%,
+    rgb(0 0 0 / calc(1 - var(--m3-convo-top-fade, 0) * 0.55)) 12%,
+    rgb(0 0 0 / calc(1 - var(--m3-convo-top-fade, 0) * 0.12)) 24%,
+    #000 34%,
+    #000 100%
+  );
+}
+
+.motion3-ui-drive--call-reveal .product-landing-live-convo {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: clamp(1.35rem, 2vw, 1.75rem) !important;
+  width: 100%;
+  padding-bottom: 0;
+  transform: translateY(var(--m3-convo-y, 0));
+  transition: none;
+  will-change: transform;
+}
+
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history.product-call-history-rail__thread .product-landing-live-convo {
+  gap: clamp(1.35rem, 2vw, 1.75rem) !important;
+}
+
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote__text {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.34em !important;
+}
+
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote__line {
+  display: block !important;
+  width: 100%;
+}
+
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--reply .product-landing-live-quote__text {
+  max-width: min(88%, 19.5rem);
+}
+
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-intake.product-landing-live-quote--reply .product-landing-live-quote__text {
+  width: 100%;
+  max-width: 100%;
+  overflow: visible;
+}
+
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-intake.product-landing-live-quote--reply .product-landing-live-quote__meta {
+  width: 100%;
+  max-width: 100%;
+}
+
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-intake .product-landing-live-quote__line {
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-intake {
+  overflow: visible;
+}
+
+.motion4-remotion-root .motion3-ui-drive--call-reveal .product-landing-live-quote__duration {
+  display: none;
+}
+
+.motion4-remotion-root .motion3-ui-drive--call-reveal .product-landing-live-quote__meta {
+  gap: 0;
+}
+
+.motion3-ui-drive--call-reveal .product-landing-live-quote {
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
+  width: 100%;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-top: none !important;
+  pointer-events: none;
+  transform: translateY(var(--m3-turn-0-y, 0));
+  opacity: var(--m3-turn-0-o, 0);
+}
+
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-convo .product-landing-live-quote + .product-landing-live-quote {
+  padding-top: 0 !important;
+  border-top: none !important;
+}
+
+.motion3-ui-drive--call-reveal .product-landing-live-convo .product-landing-live-quote:nth-child(1) {
+  transform: translateY(var(--m3-turn-0-y, 0));
+  opacity: var(--m3-turn-0-o, 0);
+}
+
+.motion3-ui-drive--call-reveal .product-landing-live-convo .product-landing-live-quote:nth-child(2) {
+  transform: translateY(var(--m3-turn-1-y, 0));
+  opacity: var(--m3-turn-1-o, 0);
+}
+
+.motion3-ui-drive--call-reveal .product-landing-live-convo .product-landing-live-quote:nth-child(3) {
+  transform: translateY(var(--m3-turn-2-y, 0));
+  opacity: var(--m3-turn-2-o, 0);
+}
+
+.motion3-ui-drive--call-reveal .product-landing-live-convo .product-landing-live-quote:nth-child(4) {
+  transform: translateY(var(--m3-turn-3-y, 0));
+  opacity: var(--m3-turn-3-o, 0);
+}
+
+.motion3-ui-drive--call-reveal .product-landing-live-convo .product-landing-live-quote:nth-child(5) {
+  transform: translateY(var(--m3-turn-4-y, 0));
+  opacity: var(--m3-turn-4-o, 0);
+}
+
+.motion3-ui-drive--call-reveal .product-landing-live-convo .product-landing-live-quote:nth-child(6) {
+  transform: translateY(var(--m3-turn-5-y, 0));
+  opacity: var(--m3-turn-5-o, 0);
+}
+
+.motion3-ui-drive--call-reveal .product-landing-live-convo .product-landing-live-quote:nth-child(1) .product-landing-live-quote__tag {
+  opacity: var(--m3-tag-0-o, 0);
+}
+
+.motion3-ui-drive--call-reveal .product-landing-live-convo .product-landing-live-quote:nth-child(2) .product-landing-live-quote__tag {
+  opacity: var(--m3-tag-1-o, 0);
+}
+
+.motion3-ui-drive--call-reveal .product-landing-live-convo .product-landing-live-quote:nth-child(3) .product-landing-live-quote__tag {
+  opacity: var(--m3-tag-2-o, 0);
+}
+
+.motion3-ui-drive--call-reveal .product-landing-live-convo .product-landing-live-quote:nth-child(4) .product-landing-live-quote__tag {
+  opacity: var(--m3-tag-3-o, 0);
+}
+
+.motion3-ui-drive--call-reveal .product-landing-live-convo .product-landing-live-quote:nth-child(5) .product-landing-live-quote__tag {
+  opacity: var(--m3-tag-4-o, 0);
+}
+
+.motion3-ui-drive--call-reveal .product-landing-live-convo .product-landing-live-quote:nth-child(6) .product-landing-live-quote__tag {
+  opacity: var(--m3-tag-5-o, 0);
+}
+
+/* Call history — highlight tagged entities (Sarah, Metformin, etc.) */
+.motion4-remotion-root .doehealth-initiatives__call-history .product-landing-live-quote__text:has(.product-landing-live-quote__tag) {
+  gap: 0.22em;
+  line-height: 1.36;
+}
+
+.motion4-remotion-root .doehealth-initiatives__call-history .product-landing-live-quote__line {
+  background: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  color: rgba(242, 232, 218, 0.72);
+}
+
+.motion4-remotion-root .doehealth-initiatives__call-history .product-landing-live-quote__tag {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: baseline;
+  padding: 0.06em 0.34em;
+  margin-inline: 0.06em;
+  border: 1px solid rgba(212, 165, 116, 0.42);
+  border-radius: 0.34em;
+  background: rgba(212, 165, 116, 0.18);
+  color: #f0dcc4;
+  font-size: 0.88em;
+  font-weight: 600;
+  white-space: nowrap;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+}
+
+.motion4-remotion-root .motion4-ui-hero--call .doehealth-initiatives__call-history .product-landing-live-quote__tag {
+  font-size: 0.9em;
+}
+
+.motion4-ui-hero--editor {
+  max-width: 900px;
+  margin-left: 0;
+  align-self: center;
+}
+
+/* Scene layouts — UI first, title below (doehealth band rhythm) */
+.motion4-scene {
+  padding: 44px 64px 52px;
+}
+
+.motion4-scene--stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}
+
+.motion4-scene--logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 36px;
+}
+
+.motion4-scene--split {
+  display: grid;
+  grid-template-columns: 1fr 0.85fr;
+  align-items: center;
+  gap: 40px;
+  padding: 56px 80px;
+}
+
+.motion4-scene--editor {
+  align-items: stretch;
+}
+
+.motion4-scene--closing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  text-align: center;
+}
+
+.motion4-scene--safety,
+.motion4-scene--patient {
+  gap: 32px;
+}
+
+/* UI hero panels */
+.motion4-ui-hero {
+  width: 100%;
+  max-width: 1180px;
+  transform-origin: center center;
+}
+
+.motion4-ui-hero.motion4-ui-hero--call,
+.motion4-ui-hero.motion4-call-center-hero {
+  width: var(--motion4-call-column-width, 580px);
+  max-width: var(--motion4-call-column-width, 580px);
+  min-width: 0;
+  flex: 0 0 var(--motion4-call-column-width, 580px);
+  overflow: visible;
+}
+
+.motion4-ui-hero--wide {
+  max-width: 1160px;
+}
+
+.motion4-ui-hero--wide .doehealth-intro-call-sequence {
+  transform: scale(0.92);
+  transform-origin: center center;
+}
+
+.motion4-ui-hero--wide .doehealth-intro-call-sequence__stage {
+  filter: drop-shadow(0 28px 48px rgba(26, 18, 8, 0.35));
+}
+
+.motion4-ui-hero--call .doehealth-initiatives--wide {
+  transform-origin: center top;
+}
+
+.motion4-ui-hero--editor {
+  max-width: 860px;
+  align-self: flex-start;
+  margin-left: 56px;
+}
+
+.motion4-ui-hero--orbit {
+  max-width: 480px;
+}
+
+.motion4-ui-reveal {
+  transform-origin: center center;
+}
+
+.motion4-call-drive {
+  width: 100%;
+}
+
+/* Generating confirmation code — kinetic carousel over blurred call UI */
+.motion4-confirm-interlude {
+  position: absolute;
+  inset: 0;
+  z-index: 12;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: var(--m4-confirm-interlude-o, 0);
+  font-family: "DM Sans", system-ui, sans-serif;
+}
+
+.motion4-confirm-interlude__stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: min(92vw, 860px);
+  transform: scale(var(--m4-confirm-interlude-scale, 2.85));
+  transform-origin: center center;
+}
+
+.motion4-confirm-interlude__row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.motion4-confirm-interlude__step {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: "DM Sans", system-ui, sans-serif;
+  font-size: clamp(22px, 2.05vw, 34px);
+  font-weight: 400;
+  letter-spacing: 0.015em;
+  line-height: 1.2;
+  color: rgba(242, 232, 218, 0.82);
+  white-space: nowrap;
+}
+
+.motion4-confirm-interlude__icon {
+  flex-shrink: 0;
+  width: clamp(1.05rem, 1.5vw, 1.45rem);
+  height: clamp(1.05rem, 1.5vw, 1.45rem);
+  transform-origin: center center;
+}
+
+.motion4-confirm-interlude__check {
+  color: rgba(212, 165, 116, 0.88);
+}
+
+.motion4-confirm-interlude__spinner {
+  display: block;
+}
+
+/* Chart access — Accessing → Accessed + big A1C trend */
+.motion4-chart-interlude {
+  position: absolute;
+  inset: 0;
+  z-index: 13;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: var(--m4-chart-interlude-o, 0);
+  font-family: "DM Sans", system-ui, sans-serif;
+}
+
+.motion4-chart-interlude__stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 100%;
+}
+
+.motion4-chart-interlude__stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  width: min(100%, calc(clamp(22px, 2.05vw, 34px) * var(--m4-confirm-interlude-scale, 2.85) * 9.6));
+  max-width: 84%;
+}
+
+.motion4-chart-interlude__stack--paired {
+  gap: clamp(0.45rem, 0.9vw, 0.65rem);
+}
+
+.motion4-chart-interlude__step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  width: 100%;
+  font-family: "DM Sans", system-ui, sans-serif;
+  font-size: clamp(22px, 2.05vw, 34px);
+  font-weight: 400;
+  letter-spacing: 0.015em;
+  line-height: 1.2;
+  color: rgba(242, 232, 218, 0.82);
+  white-space: nowrap;
+  transform-origin: center center;
+  will-change: transform, opacity;
+}
+
+.motion4-remotion-root .motion4-chart-interlude__chart .product-landing-live-quote__chart-profile-a1c-canvas,
+.motion4-remotion-root .motion4-chart-interlude__chart .product-landing-live-quote__chart-profile-a1c-y-axis {
+  height: var(--pb-chart-height, 30rem);
+  min-height: var(--pb-chart-height, 30rem);
+}
+
+.motion4-chart-interlude__chart {
+  position: relative;
+  top: auto;
+  left: auto;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  flex-shrink: 0;
+  transform-origin: center top;
+  will-change: transform, opacity, filter;
+  --m4-chart-interlude-scale: 1.32;
+  --pb-chart-height: 30rem;
+  --pb-chart-axis-width: 3.75rem;
+  --pb-chart-axis-gap: 0.75rem;
+  padding: clamp(1.05rem, 1.22vw, 1.18rem) clamp(1.08rem, 1.28vw, 1.2rem) clamp(0.95rem, 1.12vw, 1.05rem);
+}
+
+.motion4-chart-interlude__chart .product-landing-live-quote__chart-profile-a1c {
+  gap: 0.5rem;
+  width: 100%;
+  padding-top: 0.08rem;
+}
+
+.motion4-chart-interlude__chart .product-landing-live-quote__chart-profile-a1c-canvas {
+  height: var(--pb-chart-height, 30rem);
+  min-height: var(--pb-chart-height, 30rem);
+  width: 100%;
+}
+
+.motion4-chart-interlude__chart .product-landing-live-quote__chart-profile-a1c-y-axis {
+  min-height: var(--pb-chart-height, 30rem);
+}
+
+.motion4-chart-interlude__chart .product-landing-live-quote__chart-profile-a1c-chart {
+  width: 100%;
+  height: 100%;
+}
+
+.motion4-chart-interlude__chart .product-landing-live-quote__chart-profile-a1c-label {
+  font-size: clamp(0.98rem, 1.35vw, 1.15rem);
+  letter-spacing: 0.04em;
+}
+
+.motion4-chart-interlude__chart .product-landing-live-quote__chart-profile-a1c-axis-label {
+  font-size: clamp(0.76rem, 1.02vw, 0.9rem);
+}
+
+.motion4-chart-interlude__chart .product-landing-live-quote__chart-profile-a1c-point {
+  width: 0.66rem;
+  height: 0.66rem;
+}
+
+.motion4-chart-interlude__chart .product-landing-live-quote__chart-profile-a1c-point--dose-change {
+  width: 0.74rem;
+  height: 0.74rem;
+}
+
+.motion4-chart-interlude__chart .product-landing-live-quote__chart-profile-a1c-dose-label {
+  font-size: clamp(0.76rem, 1vw, 0.88rem);
+}
+
+.motion4-chart-interlude__icon {
+  flex-shrink: 0;
+  width: clamp(1.05rem, 1.5vw, 1.45rem);
+  height: clamp(1.05rem, 1.5vw, 1.45rem);
+  transform-origin: center center;
+}
+
+.motion4-chart-interlude__check {
+  color: rgba(212, 165, 116, 0.88);
+}
+
+.motion4-chart-interlude__spinner {
+  display: block;
+}
+
+/* Title below UI — gold display hierarchy */
+.motion4-title-below {
+  margin: 0;
+  line-height: 1.06;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.motion4-title-below--left {
+  text-align: left;
+  align-self: flex-start;
+  margin-left: 56px;
+}
+
+.motion4-title-below--center {
+  text-align: center;
+}
+
+.motion4-title-below--xl {
+  font-size: 76px;
+  line-height: 1.04;
+}
+
+.motion4-title-below--lg {
+  font-size: 64px;
+}
+
+.motion4-title-below--md {
+  font-size: 52px;
+}
+
+/* Logo intro */
+.motion4-logo-mark {
+  font-size: 300px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  position: relative;
+  z-index: 2;
+}
+
+.motion4-logo-halo {
+  position: absolute;
+  width: 480px;
+  height: 480px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(212, 165, 116, 0.22) 0%, transparent 68%);
+  filter: blur(2px);
+  z-index: 1;
+}
+
+/* Opening signals */
+.motion4-signal-rail {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  max-width: 720px;
+}
+
+.motion4-signal-pill {
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(212, 165, 116, 0.22);
+  background: rgba(23, 16, 8, 0.55);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: rgba(242, 232, 218, 0.86);
+}
+
+.motion4-signal-pill--alert {
+  border-color: rgba(232, 192, 142, 0.48);
+  background: rgba(42, 28, 14, 0.72);
+  box-shadow: 0 0 24px rgba(212, 165, 116, 0.12);
+}
+
+/* Integration orbit */
+.motion4-integration-orbit {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.motion4-orbit-chip {
+  position: absolute;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(212, 165, 116, 0.24);
+  background: rgba(23, 16, 8, 0.62);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(242, 232, 218, 0.78);
+  backdrop-filter: blur(4px);
+}
+
+/* Safety */
+.motion4-safety-visual {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.motion4-shield--hero {
+  width: 108px;
+  height: 128px;
+  z-index: 2;
+}
+
+.motion4-badge-orbit {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.motion4-badge--orbit {
+  position: absolute;
+}
+
+/* Patient / languages */
+.motion4-patient-visual {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  min-height: 340px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.motion4-waveform--hero {
+  height: 120px;
+  gap: 4px;
+  z-index: 2;
+}
+
+.motion4-lang-orbit {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.motion4-lang-chip {
+  position: absolute;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid rgba(212, 165, 116, 0.28);
+  background: rgba(23, 16, 8, 0.58);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: rgba(242, 232, 218, 0.88);
+}
+
+/* Future stage — orb + agents orbit layered */
+.motion4-future-stage {
+  position: relative;
+  width: 100%;
+  max-width: 980px;
+  min-height: 440px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.motion4-scene--future .motion4-future-orb--hero {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  left: 50%;
+  top: 50%;
+  margin-left: -260px;
+  margin-top: -160px;
+  opacity: 0.85;
+}
+
+.motion4-scene--future .motion4-ui-hero--orbit {
+  position: relative;
+  z-index: 2;
+  margin-left: 100px;
+}
+
+.motion4-agents-card {
+  transform-origin: center center;
+}
+
+.motion4-eyebrow {
+  margin: 0 0 14px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(232, 192, 142, 0.58);
+}
+
+.motion4-headline {
+  margin: 0;
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1.04;
+  overflow: hidden;
+}
+
+.motion4-headline--xl {
+  font-size: 78px;
+}
+
+.motion4-headline--lg {
+  font-size: 64px;
+}
+
+.motion4-headline--md {
+  font-size: 52px;
+}
+
+.motion4-body {
+  margin: 18px 0 0;
+  max-width: 680px;
+  font-size: 22px;
+  line-height: 1.45;
+  color: #f2e8da;
+}
+
+.motion4-body--muted {
+  font-size: 18px;
+  color: rgba(242, 232, 218, 0.68);
+}
+
+.motion4-chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+  max-width: 620px;
+}
+
+.motion4-chip-grid--center {
+  justify-content: center;
+  max-width: 920px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.motion4-chip-grid--stack {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.motion4-chip {
+  display: inline-flex;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(212, 165, 116, 0.28);
+  background: rgba(23, 16, 8, 0.45);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(242, 232, 218, 0.88);
+}
+
+.motion4-badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 28px;
+}
+
+.motion4-badge {
+  padding: 9px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(212, 165, 116, 0.32);
+  background: rgba(23, 16, 8, 0.55);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #f2e8da;
+}
+
+.motion4-opening {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+}
+
+.motion4-opening__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 8px;
+  max-width: 1180px;
+}
+
+.motion4-opening__card {
+  padding: 16px 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(212, 165, 116, 0.16);
+  background: rgba(23, 16, 8, 0.52);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.motion4-opening__card--alert {
+  border-color: rgba(212, 165, 116, 0.42);
+  background: rgba(42, 28, 14, 0.62);
+}
+
+.motion4-opening__card-label {
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  color: rgba(242, 232, 218, 0.82);
+}
+
+.motion4-scene--intro-shader {
+  background: #1a1208;
+}
+
+.motion4-scene--doe-type {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: transparent;
+  overflow: hidden;
+}
+
+.motion4-doe-type-shader {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  transform-origin: center center;
+}
+
+.motion4-doe-type-viewport {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 1;
+  transform-origin: center center;
+  will-change: opacity;
+}
+
+.motion4-handoff-pulse {
+  pointer-events: none;
+  z-index: 3;
+  mix-blend-mode: screen;
+}
+
+.motion4-handoff-pulse svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.motion4-handoff-pulse circle {
+  transform-origin: center center;
+  transform-box: fill-box;
+}
+
+.motion4-ui-reveal--call-enter {
+  transform-origin: center center;
+  will-change: opacity;
+}
+
+.motion4-doe-type {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+  max-width: 100%;
+  margin: 0 auto;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.motion4-doe-type__word {
+  display: inline-block;
+  font-size: 248px;
+  font-weight: 400;
+  line-height: 0.88;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+  transform-origin: center center;
+  will-change: mask-image, transform, filter;
+}
+
+.motion4-intro-shader-root,
+.motion4-intro-shader-wrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.motion4-intro-shader-wrap {
+  transform-origin: center;
+}
+
+.motion4-intro-doe {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
+  gap: 20px;
+}
+
+.motion4-intro-doe__logo {
+  position: relative;
+  z-index: 2;
+  font-size: clamp(112px, 10vw, 156px);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: #f5e6d0;
+}
+
+.motion4-outro-doe__stack {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.motion4-outro-doe__stack > * {
+  grid-area: 1 / 1;
+}
+
+.motion4-outro-doe__logo {
+  position: relative;
+  z-index: 2;
+  font-size: clamp(128px, 11vw, 176px);
+  font-weight: 400;
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  color: #f5e6d0;
+  text-shadow: 0 0 42px rgba(242, 216, 168, 0.28);
+  transform-origin: center center;
+  will-change: transform, opacity, filter;
+}
+
+.motion4-outro-doe__url {
+  margin: 0;
+  font-size: clamp(92px, 8vw, 128px);
+  font-weight: 400;
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  color: #f5e6d0;
+  transform-origin: center center;
+  white-space: nowrap;
+}
+
+.motion4-outro-bridge {
+  pointer-events: none;
+  z-index: 3;
+  background:
+    radial-gradient(
+      ellipse 64% 54% at 50% 52%,
+      rgba(242, 216, 168, 0.34) 0%,
+      rgba(232, 160, 96, 0.16) 42%,
+      rgba(26, 18, 8, 0.72) 78%,
+      rgba(26, 18, 8, 0.92) 100%
+    );
+  mix-blend-mode: normal;
+}
+
+.motion4-scene--outro-shader {
+  z-index: 4;
+}
+
+.motion4-intro-doe__automate {
+  margin: 16px 0 0;
+  font-size: 28px;
+  letter-spacing: -0.02em;
+  color: rgba(242, 232, 218, 0.78);
+}
+
+.motion4-split-scene {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+  height: 100%;
+}
+
+.motion4-split-scene--reverse {
+  grid-template-columns: 1.05fr 0.95fr;
+}
+
+.motion4-split-scene__copy {
+  min-width: 0;
+}
+
+.motion4-split-scene__ui {
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.motion4-split-scene__ui--scaled {
+  transform: scale(0.88);
+  transform-origin: center center;
+}
+
+.motion4-split-scene__ui--editor {
+  transform: scale(0.78);
+  transform-origin: center left;
+}
+
+.motion4-console-shell {
+  width: 100%;
+  max-width: 600px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(212, 165, 116, 0.2);
+  box-shadow: 0 20px 48px rgba(26, 18, 8, 0.32);
+}
+
+.motion4-bullet-list {
+  margin-top: 8px;
+}
+
+.motion4-bullet-list .motion4-body {
+  margin-top: 10px;
+}
+
+.motion4-center-scene {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
+}
+
+.motion4-shield {
+  margin: 8px 0 20px;
+  width: 88px;
+  height: 104px;
+}
+
+.motion4-shield svg path {
+  stroke: #d4a574;
+}
+
+.motion4-waveform {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 5px;
+  height: 88px;
+  margin: 24px 0;
+}
+
+.motion4-waveform__bar {
+  width: 6px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #e8c08e 0%, rgba(212, 165, 116, 0.35) 100%);
+}
+
+.motion4-future-orb-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.motion4-future-orb {
+  position: relative;
+  width: 280px;
+  height: 280px;
+}
+
+.motion4-future-orb__core {
+  position: absolute;
+  inset: 30%;
+  border-radius: 999px;
+  background: radial-gradient(circle, #e8c08e 0%, #d4a574 45%, rgba(212, 165, 116, 0.2) 72%);
+  box-shadow: 0 0 60px rgba(212, 165, 116, 0.35);
+}
+
+.motion4-future-orb__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  border: 1px solid rgba(212, 165, 116, 0.28);
+}
+
+.motion4-future-orb__ring--1 {
+  inset: 8%;
+}
+
+.motion4-future-orb__ring--2 {
+  inset: 18%;
+  border-style: dashed;
+}
+
+.motion4-future-caption {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(242, 232, 218, 0.52);
+}
+
+.motion4-cap-list {
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 12px;
+}
+
+.motion4-cap-list li {
+  font-size: 20px;
+  color: rgba(242, 232, 218, 0.78);
+  padding-left: 18px;
+  border-left: 2px solid rgba(212, 165, 116, 0.35);
+}
+
+.motion4-closing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
+  gap: 12px;
+}
+
+.motion4-closing__logo {
+  margin-top: 8px;
+  font-size: 96px;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.motion4-closing__tagline {
+  margin: 4px 0 0;
+  font-size: 32px;
+  letter-spacing: -0.02em;
+  color: rgba(26, 18, 8, 0.72);
+}
+
+.motion4-closing__url {
+  margin: 10px 0 0;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  color: rgba(26, 18, 8, 0.52);
+}
+
+.motion4-scene--closing .motion4-closing__logo {
+  margin-top: 0;
+  font-size: clamp(112px, 13vw, 156px);
+  font-weight: 400;
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+}
+
+.motion4-remotion-root .doehealth-initiatives__card,
+.motion4-remotion-root .product-voice-agent-editor {
+  border-radius: 16px;
+}

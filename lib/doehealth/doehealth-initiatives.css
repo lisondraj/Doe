@@ -683,6 +683,7 @@ html[data-home-page][data-layout="desktop"]
 
 .doehealth-intro-band--day-summary .doehealth-intro-stage,
 .doehealth-intro-band--patient-chart .doehealth-intro-stage,
+.doehealth-intro-band--intro-video .doehealth-intro-stage,
 .doehealth-intro-band--active-agents .doehealth-intro-stage {
   padding-bottom: var(--doehealth-ui-before-title-space);
 }
@@ -3438,3 +3439,79 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="des
   max-width: 100%;
   margin-inline: 0;
 }
+
+/* Intro video — /motion4 export, centered above gold title */
+.doehealth-intro-band--intro-video .doehealth-intro-stage {
+  align-items: center;
+  justify-content: center;
+}
+
+.doehealth-intro-video-sequence {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.doehealth-intro-video-sequence__stage {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(100%, calc(100vw - 2 * var(--doehealth-rail-viewport-trim-x, 0px)));
+  max-width: min(100%, calc(100vw - 2 * var(--doehealth-rail-viewport-trim-x, 0px)));
+  margin-inline: auto;
+}
+
+.doehealth-intro-video__player {
+  display: block;
+  width: 100%;
+  max-height: min(56vh, 32rem);
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border: 1px solid rgba(242, 232, 218, 0.1);
+  border-radius: clamp(0.72rem, 2.4vw, 1.12rem);
+  background: #1a1208;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 16px 44px rgba(26, 18, 8, 0.42),
+    0 36px 72px rgba(26, 18, 8, 0.28);
+}
+
+html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
+  .doehealth-intro-band--intro-video
+  .doehealth-intro-video__player {
+  max-height: min(62vh, 36rem);
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-band--intro-video
+  .doehealth-intro-band__cluster {
+  gap: clamp(0.5rem, 1vw, 0.75rem);
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-band--intro-video
+  .doehealth-intro-video-sequence.doehealth-content-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(92rem, calc(100vw - 2 * var(--doehealth-rail-viewport-trim-x, 2.5rem)));
+  max-width: min(92rem, calc(100vw - 2 * var(--doehealth-rail-viewport-trim-x, 2.5rem)));
+  margin-inline: auto;
+  padding-left: 0;
+  padding-right: 0;
+  padding-bottom: clamp(1.85rem, 3.2vh, 2.65rem);
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-band--intro-video
+  .doehealth-intro-video__player {
+  max-height: min(68vh, 42rem);
+  max-width: min(100%, 64rem);
+}
+

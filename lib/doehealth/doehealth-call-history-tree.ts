@@ -5,12 +5,12 @@ const DOEHEALTH_CALL_HISTORY_INTRO_TURN_IDS = [
   "caller-open",
   "agent-intake",
   "caller-verify",
-  "agent-verified",
+  "agent-open-chart",
   "agent-side-effects",
   "caller-side-effects",
 ] as const;
 
-/** Opening call history turns through identity verification — matches /product2 call history rail. */
+/** Opening call history through Sarah's side-effects reply. */
 export const DOEHEALTH_CALL_HISTORY_INTRO_TURNS = DOEHEALTH_CALL_HISTORY_INTRO_TURN_IDS.map((id) => {
   const turn = PRODUCT2_LANDING_LIVE_CONVO.find((entry) => entry.id === id);
   if (!turn) {

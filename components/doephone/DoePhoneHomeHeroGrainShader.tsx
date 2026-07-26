@@ -77,12 +77,15 @@ export function DoePhoneHomeHeroGrainShader({
   colors,
   colorBack,
   presetOverrides,
+  animate = true,
 }: {
   variant: ProtoGrainGradientVariant;
   className?: string;
   colors?: readonly string[];
   colorBack?: string;
   presetOverrides?: Partial<ProtoGrainGradientPreset>;
+  /** When false, grain stays paused (Remotion intro handoff). */
+  animate?: boolean;
 }) {
   const preset = { ...PROTO_GRAIN_GRADIENT_PRESETS[variant], ...presetOverrides };
   const presetFlowKey = JSON.stringify(presetOverrides ?? {});
@@ -99,7 +102,7 @@ export function DoePhoneHomeHeroGrainShader({
   const [reducedMotion, setReducedMotion] = useState(false);
 
   const targetSpeed = preset.speed ?? PROTO_GRAIN_GRADIENT_SPEED;
-  const shouldAnimate = !reducedMotion && targetSpeed > 0 && isVisible && tabVisible;
+  const shouldAnimate = animate && !reducedMotion && targetSpeed > 0 && isVisible && tabVisible;
 
   const resetShader = useCallback(() => {
     mountRef.current?.dispose();
