@@ -313,6 +313,58 @@ function ChartAccessTile({ id }: { id: (typeof CHART_TILES)[number]["id"] }) {
   }
 }
 
+/** Mid-scroll strip snapshot — questionnaire beat fades these boxes out before the card. */
+export function IntroSarahChartStripSnapshot({
+  opacity,
+  translateY = 0,
+  scrollX = -920,
+}: {
+  opacity: number;
+  translateY?: number;
+  scrollX?: number;
+}) {
+  if (opacity < 0.01) {
+    return null;
+  }
+
+  return (
+    <div
+      className="motion4-chart-interlude__strip product-brown-mock product-brown-call-history-mode"
+      style={{
+        opacity,
+        transform: `translateY(${translateY}px)`,
+      }}
+    >
+      <div className="motion4-chart-interlude__strip-viewport">
+        <div
+          className="motion4-chart-interlude__strip-track"
+          style={{
+            width: TRACK_WIDTH_PX,
+            gap: TILE_GAP_PX,
+            transform: `translateX(${scrollX}px)`,
+            ["--pb-chart-height" as string]: TILE_PLOT_HEIGHT,
+          }}
+        >
+          {CHART_TILES.map((tile) => (
+            <div
+              key={tile.id}
+              className={`motion4-chart-interlude__tile motion4-chart-interlude__tile--${tile.id}`}
+              style={{
+                width: tile.width,
+                height: TILE_HEIGHT_PX,
+                minHeight: TILE_HEIGHT_PX,
+                maxHeight: TILE_HEIGHT_PX,
+              }}
+            >
+              <ChartAccessTile id={tile.id} />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /** Chart access — Accessed label + same-height Sarah chart boxes scrolling left. */
 export function IntroChartAccessInterlude() {
   const frame = useCurrentFrame();

@@ -94,9 +94,9 @@ export const DOE_SARAH_CHART_ACCESS_INTERLUDE_FRAMES = 510;
 export const DOE_SARAH_CHART_ACCESS_FADE_OUT_FRAMES = 28;
 /** Turn index for agent-side-effects — chart interlude plays before this turn. */
 export const DOE_SARAH_CHART_ACCESS_INTERLUDE_BEFORE_TURN = 4;
-/** Pre-visit questionnaire + metformin side-effects card after the side-effects ask — ~9s @ 30fps. */
-export const DOE_SARAH_QUESTIONNAIRE_INTERLUDE_FRAMES = 270;
-export const DOE_SARAH_QUESTIONNAIRE_FADE_OUT_FRAMES = 24;
+/** Accessed chart → boxes exit → pull rises → side-effects card — ~12s @ 30fps. */
+export const DOE_SARAH_QUESTIONNAIRE_INTERLUDE_FRAMES = 360;
+export const DOE_SARAH_QUESTIONNAIRE_FADE_OUT_FRAMES = 26;
 /** Turn index for caller-side-effects — questionnaire interlude plays before this turn. */
 export const DOE_SARAH_QUESTIONNAIRE_INTERLUDE_BEFORE_TURN = 5;
 /** Booking appointment + calendar card after Sarah picks a slot — ~8s @ 30fps. */

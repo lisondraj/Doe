@@ -1,6 +1,6 @@
 import { Easing, interpolate, useCurrentFrame } from "remotion";
 
-import { dmSans, suisseIntl } from "@/remotion/fonts";
+import { dmSans } from "@/remotion/fonts";
 
 import {
   DOE_SARAH_CALL_INTERLUDES,
@@ -15,13 +15,19 @@ import {
   DOE_SARAH_INTRO_TURN_COUNT,
 } from "../constants";
 import { buildCallTurnRevealTiming, findCallInterludeWindow } from "../../motion-ui";
+import { IntroSarahChartStripSnapshot } from "./IntroChartAccessInterlude";
 
 const CONVO_UI_OFFSET = DOE_SARAH_CONVO_START_FRAMES + DOE_SARAH_CONVO_UI_OFFSET;
 
 const FADE_IN_END = 12;
-const PULL_DONE = 52;
-const CARD_APPEAR = 68;
-const CARD_REVEAL = 22;
+/** Chart boxes hold, then exit while the pull line rises underneath Accessed. */
+const STRIP_HOLD_END = 34;
+const STRIP_EXIT_END = 62;
+const PULL_STEP_START = 38;
+const PULL_STEP_REVEAL = 26;
+const PULL_DONE = 78;
+const CARD_APPEAR = 88;
+const CARD_REVEAL = 28;
 const REVEAL_EASE = Easing.bezier(0.33, 0, 0.18, 1);
 
 const METFORMIN_SIDE_EFFECTS = [
@@ -60,7 +66,7 @@ function InterludeStepIcon({ state, spinDeg }: { state: "spinner" | "check"; spi
   );
 }
 
-/** Pre-visit questionnaire — Pulling → Pulled + metformin side-effects card. */
+/** Accessed chart → boxes exit → pull line rises → side-effects card in place. */
 export function IntroQuestionnaireInterlude() {
   const frame = useCurrentFrame();
   const t = frame - CONVO_UI_OFFSET;
@@ -84,10 +90,48 @@ export function IntroQuestionnaireInterlude() {
   const spinDeg = local * 4;
   const pullDone = local >= PULL_DONE;
 
-  const stepOpacity = interpolate(local, [0, FADE_IN_END], [0, 1], {
+  const stageOpacity = interpolate(local, [0, FADE_IN_END], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: Easing.out(Easing.cubic),
+  });
+
+  const stripExit =
+    local <= STRIP_HOLD_END
+      ? 0
+      : interpolate(local, [STRIP_HOLD_END, STRIP_EXIT_END], [0, 1], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+          easing: REVEAL_EASE,
+        });
+
+  const stripOpacity = (1 - stripExit) * stageOpacity;
+  const stripY = interpolate(stripExit, [0, 1], [0, 36], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: REVEAL_EASE,
+  });
+
+  const pullProgress =
+    local >= PULL_STEP_START
+      ? interpolate(local, [PULL_STEP_START, PULL_STEP_START + PULL_STEP_REVEAL], [0, 1], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+          easing: REVEAL_EASE,
+        })
+      : 0;
+
+  const pullOpacity =
+    interpolate(pullProgress, [0, 0.28, 1], [0, 0.9, 1], {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+      easing: REVEAL_EASE,
+    }) * stageOpacity;
+
+  const pullY = interpolate(pullProgress, [0, 1], [72, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: REVEAL_EASE,
   });
 
   const cardProgress =
@@ -101,62 +145,82 @@ export function IntroQuestionnaireInterlude() {
 
   const cardOpacity =
     local >= CARD_APPEAR
-      ? interpolate(cardProgress, [0, 0.3, 1], [0, 0.88, 1], {
+      ? interpolate(cardProgress, [0, 0.28, 1], [0, 0.9, 1], {
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp",
           easing: REVEAL_EASE,
-        }) * stepOpacity
+        }) * stageOpacity
       : 0;
 
-  const cardY = interpolate(cardProgress, [0, 1], [18, 0], {
+  const cardY = interpolate(cardProgress, [0, 1], [48, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: REVEAL_EASE,
   });
 
-  const accessLabel = pullDone ? "Pulled pre-visit questionnaire" : "Pulling pre-visit questionnaire";
-  const accessIcon: "spinner" | "check" = pullDone ? "check" : "spinner";
+  const pullLabel = pullDone ? "Pulled pre-visit questionnaire" : "Pulling pre-visit questionnaire";
+  const pullIcon: "spinner" | "check" = pullDone ? "check" : "spinner";
+  const pullVisible = pullOpacity > 0.01;
   const cardVisible = local >= CARD_APPEAR && cardOpacity > 0.01;
+  const stripVisible = stripOpacity > 0.01;
 
   return (
     <div className={`motion4-questionnaire-interlude ${dmSans.className}`} aria-hidden>
       <div className="motion4-questionnaire-interlude__stage">
         <div
           className={`motion4-questionnaire-interlude__stack${
-            cardVisible ? " motion4-questionnaire-interlude__stack--paired" : ""
+            stripVisible || cardVisible || pullVisible ? " motion4-questionnaire-interlude__stack--paired" : ""
           }`}
         >
-          <div className="motion4-questionnaire-interlude__step" style={{ opacity: stepOpacity }}>
-            <span className="motion4-questionnaire-interlude__label">{accessLabel}</span>
-            <InterludeStepIcon state={accessIcon} spinDeg={spinDeg} />
+          <div className="motion4-questionnaire-interlude__steps">
+            <div className="motion4-questionnaire-interlude__step" style={{ opacity: stageOpacity }}>
+              <span className="motion4-questionnaire-interlude__label">Accessed Sarah&apos;s chart</span>
+              <InterludeStepIcon state="check" spinDeg={0} />
+            </div>
+
+            {pullVisible ? (
+              <div
+                className="motion4-questionnaire-interlude__step motion4-questionnaire-interlude__step--pull"
+                style={{
+                  opacity: pullOpacity,
+                  transform: `translateY(${pullY}px)`,
+                }}
+              >
+                <span className="motion4-questionnaire-interlude__label">{pullLabel}</span>
+                <InterludeStepIcon state={pullIcon} spinDeg={spinDeg} />
+              </div>
+            ) : null}
           </div>
 
-          {cardVisible ? (
-            <div
-              className="motion4-questionnaire-interlude__card"
-              style={{
-                opacity: cardOpacity,
-                transform: `translateY(${cardY}px)`,
-              }}
-            >
-              <div className="motion4-questionnaire-interlude__card-head">
-                <p className={`motion4-questionnaire-interlude__card-eyebrow m-0 ${suisseIntl.className}`}>
-                  Pre-visit · Metformin
-                </p>
-                <p className={`motion4-questionnaire-interlude__card-title m-0 ${dmSans.className}`}>
-                  Common side effects
-                </p>
+          <div className="motion4-questionnaire-interlude__content">
+            {stripVisible ? (
+              <IntroSarahChartStripSnapshot opacity={stripOpacity} translateY={stripY} />
+            ) : null}
+
+            {cardVisible ? (
+              <div
+                className="motion4-questionnaire-interlude__card"
+                style={{
+                  opacity: cardOpacity,
+                  transform: `translateY(${cardY}px)`,
+                }}
+              >
+                <div className="motion4-questionnaire-interlude__card-head">
+                  <p className={`motion4-questionnaire-interlude__card-title m-0 ${dmSans.className}`}>
+                    Common side effects
+                  </p>
+                </div>
+                <ul className={`motion4-questionnaire-interlude__list m-0 ${dmSans.className}`}>
+                  {METFORMIN_SIDE_EFFECTS.map((item) => (
+                    <li key={item.label} className="motion4-questionnaire-interlude__item">
+                      <span className="motion4-questionnaire-interlude__item-label">{item.label}</span>
+                      <span className="motion4-questionnaire-interlude__item-detail">{item.detail}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <ul className={`motion4-questionnaire-interlude__list m-0 ${dmSans.className}`}>
-                {METFORMIN_SIDE_EFFECTS.map((item) => (
-                  <li key={item.label} className="motion4-questionnaire-interlude__item">
-                    <span className="motion4-questionnaire-interlude__item-label">{item.label}</span>
-                    <span className="motion4-questionnaire-interlude__item-detail">{item.detail}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
+            ) : null}
+          </div>
         </div>
       </div>
     </div>

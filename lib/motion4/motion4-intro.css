@@ -2166,7 +2166,7 @@ html[data-motion4-page] body {
   display: block;
 }
 
-/* Pre-visit questionnaire — Pulling → Pulled + metformin side-effects card */
+/* Pre-visit questionnaire — Accessed chart → boxes exit → pull rises → card */
 .motion4-questionnaire-interlude {
   position: absolute;
   inset: 0;
@@ -2196,11 +2196,21 @@ html[data-motion4-page] body {
   align-items: center;
   justify-content: center;
   gap: 0;
-  width: min(92%, 520px);
+  width: 100%;
+  max-width: 100%;
 }
 
 .motion4-questionnaire-interlude__stack--paired {
   gap: 28px;
+}
+
+.motion4-questionnaire-interlude__steps {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  width: min(92%, 720px);
 }
 
 .motion4-questionnaire-interlude__step {
@@ -2209,7 +2219,7 @@ html[data-motion4-page] body {
   justify-content: center;
   gap: 10px;
   width: auto;
-  max-width: 92%;
+  max-width: 100%;
   font-family: "DM Sans", system-ui, sans-serif;
   font-size: 36px;
   font-weight: 400;
@@ -2218,7 +2228,20 @@ html[data-motion4-page] body {
   color: rgba(242, 232, 218, 0.82);
   white-space: nowrap;
   transform-origin: center center;
-  will-change: opacity;
+  will-change: opacity, transform;
+}
+
+.motion4-questionnaire-interlude__step--pull {
+  will-change: opacity, transform;
+}
+
+.motion4-questionnaire-interlude__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 300px;
 }
 
 .motion4-questionnaire-interlude__icon {
@@ -2240,7 +2263,7 @@ html[data-motion4-page] body {
   box-sizing: border-box;
   width: 440px;
   max-width: 92%;
-  padding: 22px 24px 20px;
+  padding: 24px 24px 20px;
   border: 1px solid rgba(212, 165, 116, 0.22);
   border-radius: 18px;
   background: linear-gradient(168deg, rgba(36, 28, 20, 0.96) 0%, rgba(20, 14, 8, 0.98) 100%);
@@ -2251,17 +2274,8 @@ html[data-motion4-page] body {
 .motion4-questionnaire-interlude__card-head {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0;
   margin-bottom: 16px;
-}
-
-.motion4-questionnaire-interlude__card-eyebrow {
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  line-height: 1.2;
-  text-transform: uppercase;
-  color: rgba(228, 210, 184, 0.55);
 }
 
 .motion4-questionnaire-interlude__card-title {
