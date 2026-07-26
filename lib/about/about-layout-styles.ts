@@ -12,10 +12,14 @@ import { dmSans, inter, lora, suisseIntl } from "@/lib/home/fonts";
 /** About page mission headline — matches iPhone main page section titles. */
 export const ABOUT_PAGE_TITLE_TW = `${DOEPHONE_SECTION_COPY_TW} text-[#1E343A] ${suisseIntl.className}`;
 
-/** Fundraising subheading — fixed two-line break aligned to mission title. */
+/** Fundraising subheading — single paragraph under the mission title. */
+export const ABOUT_PAGE_SUBHEADING =
+  "We are in the process of registering as a Delaware C-corporation and are preparing to open our pre-seed funding round.";
+
+/** @deprecated Prefer ABOUT_PAGE_SUBHEADING — kept for any two-line call sites. */
 export const ABOUT_PAGE_SUBHEADING_LINES = [
-  "We intend to register as a Delaware C-corporation",
-  "and are actively raising a pre-seed round.",
+  "We are in the process of registering as a Delaware C-corporation",
+  "and are preparing to open our pre-seed funding round.",
 ] as const;
 
 /** About subheading — customization-section description style, scaled up. */
@@ -144,10 +148,10 @@ export const ABOUT_DESKTOP_SPLIT_BOX_COLUMN_RIGHT_BLEED = `grid min-h-0 min-w-0 
 /** Beige square column — flush to the left page margin (section 3). */
 export const ABOUT_DESKTOP_SPLIT_BOX_COLUMN_LEFT_BLEED = `grid min-h-0 min-w-0 h-full items-center justify-items-start ${DOEPHONE_DESKTOP_PAGE_INSET_LEFT} ${ABOUT_DESKTOP_SPLIT_BLEED_INNER_X_RIGHT} ${ABOUT_DESKTOP_SPLIT_BLEED_INNER_Y}`;
 
-export const ABOUT_DESKTOP_BEIGE_PANEL_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} aspect-square max-h-full max-w-full w-full border border-[var(--doe-page-border,rgba(26,18,8,0.14))] bg-[var(--doe-page-surface-raised,#f5e6d0)]`;
+export const ABOUT_DESKTOP_BEIGE_PANEL_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} aspect-square max-h-full max-w-full w-full border border-[rgba(212,165,116,0.28)] bg-[#271F17]`;
 
-/** FAQ accordion — same max square as the beige panel in the adjacent column. */
-export const ABOUT_DESKTOP_SQUARE_PANEL_TW = ABOUT_DESKTOP_BEIGE_PANEL_TW;
+/** FAQ / content accordion — sand island beside the line graphic card. */
+export const ABOUT_DESKTOP_SQUARE_PANEL_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} aspect-square max-h-full max-w-full w-full border border-[rgba(212,165,116,0.32)] bg-[#f0e4d0]`;
 
 export const ABOUT_DESKTOP_FAQ_PANEL_TW = ABOUT_DESKTOP_SQUARE_PANEL_TW;
 
@@ -183,9 +187,9 @@ export const ABOUT_DESKTOP_ARTICLE_VISUAL_GAP = "mt-12 md:mt-14";
 
 export const ABOUT_DESKTOP_ARTICLE_H2_TW = `text-left font-semibold leading-[1.15] tracking-[-0.01em] text-[#1E343A] text-[clamp(1.55rem,1.35vw,1.95rem)] md:text-[clamp(1.72rem,1.45vw,2.1rem)] ${dmSans.className}`;
 
-export const ABOUT_DESKTOP_ARTICLE_QUOTE_TW = `font-normal leading-[1.22] tracking-[-0.025em] text-[#1E343A] text-[clamp(1.85rem,1.65vw,2.35rem)] md:text-[clamp(2.05rem,1.85vw,2.65rem)] ${lora.className}`;
+export const ABOUT_DESKTOP_ARTICLE_QUOTE_TW = `about-page-quote font-normal leading-[1.22] tracking-[-0.025em] text-[clamp(1.85rem,1.65vw,2.35rem)] md:text-[clamp(2.05rem,1.85vw,2.65rem)] ${lora.className}`;
 
-export const ABOUT_DESKTOP_ARTICLE_ATTRIBUTION_TW = `mt-5 md:mt-6 font-medium text-[#D4A574] text-[clamp(1.12rem,1vw,1.32rem)] md:text-[clamp(1.22rem,1.05vw,1.42rem)] ${dmSans.className}`;
+export const ABOUT_DESKTOP_ARTICLE_ATTRIBUTION_TW = `about-page-quote-attr mt-5 md:mt-6 font-medium text-[#D4A574] text-[clamp(1.12rem,1vw,1.32rem)] md:text-[clamp(1.22rem,1.05vw,1.42rem)] ${dmSans.className}`;
 
 export const ABOUT_DESKTOP_ARTICLE_LIST_GAP = "space-y-3 md:space-y-3.5";
 
@@ -200,7 +204,7 @@ export const ABOUT_MOBILE_BODY_TW = BLOG_ARTICLE_BODY_TW;
 export const ABOUT_MOBILE_LIST_GAP = "space-y-4 iphone-page:space-y-5";
 
 /** iPhone /about beige panel — same footprint as the hero gradient box. */
-export const ABOUT_MOBILE_BEIGE_PANEL_TW = `relative w-full overflow-hidden border border-[#D9D4CC] bg-[#EBE7E0] ${ABOUT_PAGE_HERO_BOX_TW}`;
+export const ABOUT_MOBILE_BEIGE_PANEL_TW = `relative w-full overflow-hidden border border-[rgba(212,165,116,0.28)] bg-[#271F17] ${ABOUT_PAGE_HERO_BOX_TW}`;
 
 /** iPhone /about FAQ accordion — single column within page margins. */
 export const ABOUT_MOBILE_FAQ_LIST_TW = "flex w-full flex-col";
@@ -222,6 +226,6 @@ export const ABOUT_MOBILE_CHART_JOINT_CAPTION_TW = `mt-4 font-normal leading-snu
 
 export const ABOUT_MOBILE_CHART_CITATION_TW = `mt-3 font-normal leading-snug text-[#D4A574] text-[clamp(0.92rem,0.86rem+0.5vmin,1.05rem)] ${inter.className}`;
 
-export const ABOUT_MOBILE_ARTICLE_QUOTE_TW = `font-normal leading-[1.22] tracking-[-0.025em] text-[#1E343A] text-[clamp(1.62rem,1.3rem+1.45vmin,2.1rem)] iphone-page:text-[clamp(1.85rem,1.45rem+2vmin,2.6rem)] ${lora.className}`;
+export const ABOUT_MOBILE_ARTICLE_QUOTE_TW = `about-page-quote font-normal leading-[1.22] tracking-[-0.025em] text-[clamp(1.62rem,1.3rem+1.45vmin,2.1rem)] iphone-page:text-[clamp(1.85rem,1.45rem+2vmin,2.6rem)] ${lora.className}`;
 
-export const ABOUT_MOBILE_ARTICLE_QUOTE_ATTRIBUTION_TW = `mt-4 font-medium text-[#D4A574] iphone-page:mt-5 text-[clamp(1.08rem,0.95rem+0.55vmin,1.28rem)] iphone-page:text-[clamp(1.22rem,1.05rem+0.8vmin,1.48rem)] ${dmSans.className}`;
+export const ABOUT_MOBILE_ARTICLE_QUOTE_ATTRIBUTION_TW = `about-page-quote-attr mt-4 font-medium text-[#D4A574] iphone-page:mt-5 text-[clamp(1.08rem,0.95rem+0.55vmin,1.28rem)] iphone-page:text-[clamp(1.22rem,1.05rem+0.8vmin,1.48rem)] ${dmSans.className}`;

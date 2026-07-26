@@ -32,7 +32,7 @@ import {
   ABOUT_DESKTOP_SQUARE_PANEL_TW,
   ABOUT_DESKTOP_SUBHEADING_TW,
   ABOUT_DESKTOP_TITLE_TW,
-  ABOUT_PAGE_SUBHEADING_LINES,
+  ABOUT_PAGE_SUBHEADING,
 } from "@/lib/about/about-layout-styles";
 import {
   ABOUT_PAGE_ARTICLE,
@@ -79,10 +79,7 @@ export function AboutDesktopView() {
                 <span className="block">to redefine healthcare.</span>
               </h1>
 
-              <p className={ABOUT_DESKTOP_SUBHEADING_TW}>
-                <span className="block">{ABOUT_PAGE_SUBHEADING_LINES[0]}</span>
-                <span className="block">{ABOUT_PAGE_SUBHEADING_LINES[1]}</span>
-              </p>
+              <p className={`${ABOUT_DESKTOP_SUBHEADING_TW} max-w-[42rem]`}>{ABOUT_PAGE_SUBHEADING}</p>
 
               <p
                 className={`${ABOUT_DESKTOP_HERO_BYLINE_OUTSIDE_TW} ${ABOUT_DESKTOP_HERO_BYLINE_OUTSIDE_GAP}`}

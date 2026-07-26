@@ -165,8 +165,12 @@ export function ArticleBarChart({
                 aria-hidden
               >
                 <div
-                  className="about-chart-bar-fill h-full rounded-full transition-[width] duration-500 ease-out"
-                  style={{ width, background: barColor }}
+                  className={`about-chart-bar-fill h-full rounded-full transition-[width] duration-500 ease-out${isAbout ? " about-chart-bar-fill--gold" : ""}`}
+                  style={
+                    isAbout
+                      ? { width }
+                      : { width, background: barColor }
+                  }
                   data-chart-bar-color={
                     isAbout ? ABOUT_IPHONE_SHADER_CHART_PRIMARY : isDusk ? DOE_HOME_DUSK_CHART_BAR : undefined
                   }

@@ -39,6 +39,12 @@ const SLICE_COLORS_ABOUT_FALLBACK = [
   ABOUT_IPHONE_SHADER_CHART_SECONDARY,
   ABOUT_IPHONE_SHADER_CHART_MUTED,
 ] as const;
+/** Per-slice gold gradients for /about conic pie. */
+const SLICE_GOLD_GRADIENTS = [
+  ["#f2e0c6", "#e8c08e", "#d4a574"],
+  ["#e8c08e", "#d4a574", "#b8845c"],
+  ["#d4a574", "#b8845c", "#9a6a45"],
+] as const;
 const SLICE_COLORS_DARK = PROTO_CHART_SLICE_COLORS;
 const SLICE_COLORS_PROTO = PROTO_CHART_SLICE_COLORS;
 
@@ -52,6 +58,23 @@ function pieGradient(slices: readonly { value: number }[], sliceColors: readonly
       cursor += slice.value;
       const end = (cursor / total) * 100;
       return `${sliceColors[index % sliceColors.length]} ${start}% ${end}%`;
+    })
+    .join(", ");
+}
+
+/** Gold gradient fills within each pie slice (about theme). */
+function pieGoldGradient(slices: readonly { value: number }[]) {
+  const total = slices.reduce((sum, slice) => sum + slice.value, 0) || 1;
+  let cursor = 0;
+
+  return slices
+    .map((slice, index) => {
+      const start = (cursor / total) * 100;
+      cursor += slice.value;
+      const end = (cursor / total) * 100;
+      const mid = start + (end - start) * 0.5;
+      const [a, b, c] = SLICE_GOLD_GRADIENTS[index % SLICE_GOLD_GRADIENTS.length];
+      return `${a} ${start}%, ${b} ${mid}%, ${c} ${end}%`;
     })
     .join(", ");
 }
@@ -174,7 +197,9 @@ export function ArticlePieChart({
         >
           <div
             className="about-chart-pie-ring absolute inset-0 rounded-full"
-            style={{ background: `conic-gradient(${pieGradient(slices, sliceColors)})` }}
+            style={{
+              background: `conic-gradient(${isAbout ? pieGoldGradient(slices) : pieGradient(slices, sliceColors)})`,
+            }}
           />
           <div className={`absolute inset-[28%] rounded-full ${donutCenter}`} />
         </div>

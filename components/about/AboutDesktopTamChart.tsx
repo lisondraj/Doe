@@ -7,7 +7,6 @@ import { ABOUT_MOBILE_TAM_CHART } from "@/lib/about/about-page-article";
 import {
   ABOUT_IPHONE_SHADER_CHART_MUTED,
   ABOUT_IPHONE_SHADER_CHART_PRIMARY,
-  ABOUT_IPHONE_SHADER_CHART_SECONDARY,
 } from "@/lib/home/doe-page-colors";
 import { dmSans, inter, suisseIntl } from "@/lib/home/fonts";
 
@@ -72,8 +71,8 @@ export function AboutDesktopTamChart() {
                   <div key={bar.label} className="h-full max-w-[2.5rem] flex-1 md:max-w-[2.85rem]" aria-hidden>
                     <div className="flex h-full flex-col justify-end">
                       <div
-                        className="about-chart-tam-bar w-full rounded-t-[0.35rem] transition-[height] duration-500 ease-out md:rounded-t-[0.42rem]"
-                        style={{ height: heightPct, background: ABOUT_IPHONE_SHADER_CHART_SECONDARY }}
+                        className="about-chart-tam-bar about-chart-bar-fill--gold w-full rounded-t-[0.35rem] transition-[height] duration-500 ease-out md:rounded-t-[0.42rem]"
+                        style={{ height: heightPct }}
                       />
                     </div>
                   </div>

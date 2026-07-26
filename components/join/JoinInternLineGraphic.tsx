@@ -12,6 +12,7 @@ type LinePalette = {
 };
 
 const DOE_LINE_ACCENT_GRADIENT_ID = "doe-line-accent";
+const DOE_LINE_GOLD_GRADIENT_ID = "doe-line-gold";
 
 function DoeLineAccentGradientDef() {
   return (
@@ -20,6 +21,11 @@ function DoeLineAccentGradientDef() {
         <stop offset="0%" stopColor="#C47A5A" />
         <stop offset="48%" stopColor="#D2774C" />
         <stop offset="100%" stopColor="#D49D4F" />
+      </linearGradient>
+      <linearGradient id={DOE_LINE_GOLD_GRADIENT_ID} x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stopColor="#E8C08E" />
+        <stop offset="52%" stopColor="#D4A574" />
+        <stop offset="100%" stopColor="#B8845C" />
       </linearGradient>
     </defs>
   );
@@ -38,6 +44,16 @@ const BRAND_ACCENT_BEIGE_PALETTE: LinePalette = {
   accent: "#D2774C",
   accentWarm: "#D49D4F",
   accentStroke: `url(#${DOE_LINE_ACCENT_GRADIENT_ID})`,
+};
+
+/** Gold strokes on raised brown /about panels. */
+const GOLD_ON_BROWN_PALETTE: LinePalette = {
+  lineSoft: "rgba(232, 192, 142, 0.22)",
+  line: "rgba(232, 192, 142, 0.4)",
+  lineStrong: "rgba(232, 192, 142, 0.58)",
+  accent: "#E8C08E",
+  accentWarm: "#D4A574",
+  accentStroke: `url(#${DOE_LINE_GOLD_GRADIENT_ID})`,
 };
 
 const ORANGE_PALETTE: LinePalette = {
@@ -345,17 +361,26 @@ export function JoinInternLineGraphic({
   variant,
   onOrange = false,
   brandAccent = false,
+  goldOnBrown = false,
   fullBleed = false,
 }: {
   variant: 0 | 1 | 2 | 3;
   onOrange?: boolean;
   /** Doe orange gradient on central/accent line strokes (beige backgrounds). */
   brandAccent?: boolean;
+  /** Gold gradient strokes for raised brown /about panels. */
+  goldOnBrown?: boolean;
   /** Converging lines extend to the SVG edges (apply card). */
   fullBleed?: boolean;
 }) {
-  const palette = onOrange ? ORANGE_PALETTE : brandAccent ? BRAND_ACCENT_BEIGE_PALETTE : BEIGE_PALETTE;
-  const showAccentGradient = brandAccent && !onOrange;
+  const palette = onOrange
+    ? ORANGE_PALETTE
+    : goldOnBrown
+      ? GOLD_ON_BROWN_PALETTE
+      : brandAccent
+        ? BRAND_ACCENT_BEIGE_PALETTE
+        : BEIGE_PALETTE;
+  const showAccentGradient = (brandAccent || goldOnBrown) && !onOrange;
   if (variant === 2) {
     return (
       <ConvergingLinesGraphic palette={palette} fullBleed={fullBleed} showAccentGradient={showAccentGradient} />

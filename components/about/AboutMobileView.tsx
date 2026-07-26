@@ -24,7 +24,7 @@ import {
   ABOUT_PAGE_HERO_HEADLINE_PT,
   ABOUT_PAGE_MOBILE_BYLINE_GAP,
   ABOUT_PAGE_MOBILE_BYLINE_TW,
-  ABOUT_PAGE_SUBHEADING_LINES,
+  ABOUT_PAGE_SUBHEADING,
   ABOUT_PAGE_SUBHEADING_TW,
   ABOUT_PAGE_TITLE_TW,
 } from "@/lib/about/about-layout-styles";
@@ -81,7 +81,7 @@ export function AboutMobileView() {
       footerShaderTheme="dusk"
       topBanner={
         <DoeHealthTopBanner
-          message="Doe is gearing up to raise pre-seed"
+          message="Doe is gearing up to raise pre-seed!"
           linkLabel="Contact us"
           linkHref={`mailto:${ABOUT_CONTACT_EMAIL}`}
         />
@@ -97,10 +97,7 @@ export function AboutMobileView() {
             <span className="block">to redefine healthcare.</span>
           </h1>
 
-          <p className={ABOUT_PAGE_SUBHEADING_TW}>
-            <span className="block">{ABOUT_PAGE_SUBHEADING_LINES[0]}</span>
-            <span className="block">{ABOUT_PAGE_SUBHEADING_LINES[1]}</span>
-          </p>
+          <p className={`${ABOUT_PAGE_SUBHEADING_TW} max-w-[36ch]`}>{ABOUT_PAGE_SUBHEADING}</p>
         </div>
 
         <p className={`${ABOUT_PAGE_MOBILE_BYLINE_TW} ${ABOUT_PAGE_MOBILE_BYLINE_GAP}`}>

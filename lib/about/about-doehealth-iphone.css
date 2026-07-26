@@ -283,10 +283,6 @@ html[data-about-page]:has(.doephone-mobile-root--doehealth) main [class*="text-[
   color: #e8c08e !important;
 }
 
-html[data-about-page]:has(.doephone-mobile-root--doehealth) main blockquote {
-  color: #f2e8da !important;
-}
-
 html[data-about-page]:has(.doephone-mobile-root--doehealth) main figcaption {
   color: #d4a574 !important;
 }
@@ -300,17 +296,52 @@ html[data-about-page]:has(.doephone-mobile-root--doehealth) main [class*="border
   border-color: rgba(212, 165, 116, 0.22) !important;
 }
 
-/* Raised sand panels — light islands on brown. */
+/* Raised brown panels + gold line graphics. */
 html[data-about-page]:has(.doephone-mobile-root--doehealth) .about-mobile-beige-panel {
   border-color: rgba(212, 165, 116, 0.28) !important;
-  background-color: #f0e4d0 !important;
+  background-color: #271f17 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 245, 230, 0.06),
+    0 18px 40px rgba(0, 0, 0, 0.28);
 }
 
-/* Gold chart fills (reinforce CSS vars). */
+/* Gold gradient quote on brown. */
+html[data-about-page]:has(.doephone-mobile-root--doehealth) main blockquote.about-page-quote,
+html[data-about-page]:has(.doephone-mobile-root--doehealth) main .about-page-quote {
+  background: var(--doehealth-gold-text-gradient, linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+html[data-about-page]:has(.doephone-mobile-root--doehealth) main .about-page-quote-attr {
+  color: #e8c08e !important;
+}
+
+/* Gold gradient bar / TAM fills. */
+html[data-about-page]:has(.doephone-mobile-root--doehealth) .about-chart-bar-fill--gold,
 html[data-about-page]:has(.doephone-mobile-root--doehealth) .about-stat-charts .about-chart-bar-fill,
 html[data-about-page]:has(.doephone-mobile-root--doehealth) .about-stat-chart .about-chart-bar-fill,
 html[data-about-page]:has(.doephone-mobile-root--doehealth) .about-stat-charts .about-chart-tam-bar {
-  background: var(--doe-chart-bar, #d4a574) !important;
+  background-color: transparent !important;
+  background-image: var(
+    --doehealth-gold-fill-gradient,
+    linear-gradient(180deg, #e8c08e 0%, #d4a574 58%, #b8845c 100%)
+  ) !important;
+}
+
+html[data-about-page]:has(.doephone-mobile-root--doehealth) .about-stat-charts .about-chart-bar-fill {
+  background-image: var(
+    --doehealth-gold-fill-gradient,
+    linear-gradient(90deg, #e8c08e 0%, #d4a574 58%, #b8845c 100%)
+  ) !important;
+}
+
+/* Gold axis / grid lines on charts. */
+html[data-about-page]:has(.doephone-mobile-root--doehealth) .about-stat-charts [class*="border-t"],
+html[data-about-page]:has(.doephone-mobile-root--doehealth) .about-stat-chart [class*="border-t"] {
+  border-color: rgba(232, 192, 142, 0.14) !important;
 }
 
 html[data-about-page]:has(.doephone-mobile-root--doehealth)
@@ -319,7 +350,7 @@ html[data-about-page]:has(.doephone-mobile-root--doehealth)
 html[data-about-page]:has(.doephone-mobile-root--doehealth)
   .about-stat-chart
   .about-chart-pie-legend[data-chart-slice-index="0"] {
-  background: var(--doe-chart-pie-1, #e8c08e) !important;
+  background: linear-gradient(180deg, #f2e0c6 0%, #e8c08e 100%) !important;
 }
 
 html[data-about-page]:has(.doephone-mobile-root--doehealth)
@@ -328,7 +359,7 @@ html[data-about-page]:has(.doephone-mobile-root--doehealth)
 html[data-about-page]:has(.doephone-mobile-root--doehealth)
   .about-stat-chart
   .about-chart-pie-legend[data-chart-slice-index="1"] {
-  background: var(--doe-chart-pie-2, #d4a574) !important;
+  background: linear-gradient(180deg, #e8c08e 0%, #d4a574 100%) !important;
 }
 
 html[data-about-page]:has(.doephone-mobile-root--doehealth)
@@ -337,7 +368,7 @@ html[data-about-page]:has(.doephone-mobile-root--doehealth)
 html[data-about-page]:has(.doephone-mobile-root--doehealth)
   .about-stat-chart
   .about-chart-pie-legend[data-chart-slice-index="2"] {
-  background: var(--doe-chart-pie-3, #b8845c) !important;
+  background: linear-gradient(180deg, #d4a574 0%, #b8845c 100%) !important;
 }
 
 /* ── Desktop /about brown page ── */
@@ -383,12 +414,18 @@ html[data-about-page][data-layout="desktop"] .about-desktop-root li {
   color: rgba(242, 232, 218, 0.72);
 }
 
-html[data-about-page][data-layout="desktop"] .about-desktop-root blockquote {
-  color: #f2e8da !important;
+html[data-about-page][data-layout="desktop"] .about-desktop-root blockquote.about-page-quote,
+html[data-about-page][data-layout="desktop"] .about-desktop-root .about-page-quote {
+  background: var(--doehealth-gold-text-gradient, linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
 }
 
+html[data-about-page][data-layout="desktop"] .about-desktop-root .about-page-quote-attr,
 html[data-about-page][data-layout="desktop"] .about-desktop-root figcaption {
-  color: #d4a574 !important;
+  color: #e8c08e !important;
 }
 
 html[data-about-page][data-layout="desktop"] .about-desktop-root [class*="border-[#1E343A]"],
@@ -396,11 +433,43 @@ html[data-about-page][data-layout="desktop"] .about-desktop-root [class*="border
   border-color: rgba(212, 165, 116, 0.28) !important;
 }
 
-html[data-about-page][data-layout="desktop"] .about-desktop-beige-panel,
+/* Line graphic cards — raised brown + gold strokes. */
+html[data-about-page][data-layout="desktop"] .about-desktop-beige-panel {
+  background-color: #271f17 !important;
+  border-color: rgba(212, 165, 116, 0.28) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 245, 230, 0.06),
+    0 18px 40px rgba(0, 0, 0, 0.28);
+}
+
+/* Content / FAQ sand islands — keep dark ink for contrast. */
 html[data-about-page][data-layout="desktop"] .about-desktop-faq-panel,
 html[data-about-page][data-layout="desktop"] .about-desktop-content-panel {
   background-color: #f0e4d0 !important;
   border-color: rgba(212, 165, 116, 0.32) !important;
+}
+
+html[data-about-page][data-layout="desktop"] .about-desktop-content-panel [class*="text-[#1E343A]"],
+html[data-about-page][data-layout="desktop"] .about-desktop-content-panel [class*="text-[#1A1208]"],
+html[data-about-page][data-layout="desktop"] .about-desktop-faq-panel [class*="text-[#1E343A]"],
+html[data-about-page][data-layout="desktop"] .about-desktop-faq-panel [class*="text-[#1A1208]"] {
+  color: #1a1208 !important;
+  -webkit-text-fill-color: #1a1208 !important;
+}
+
+html[data-about-page][data-layout="desktop"] .about-desktop-content-panel [class*="text-[#1E343A]/72"],
+html[data-about-page][data-layout="desktop"] .about-desktop-content-panel p,
+html[data-about-page][data-layout="desktop"] .about-desktop-content-panel li,
+html[data-about-page][data-layout="desktop"] .about-desktop-faq-panel [class*="text-[#1E343A]/72"],
+html[data-about-page][data-layout="desktop"] .about-desktop-faq-panel p,
+html[data-about-page][data-layout="desktop"] .about-desktop-faq-panel li {
+  color: rgba(26, 18, 8, 0.72) !important;
+  -webkit-text-fill-color: rgba(26, 18, 8, 0.72) !important;
+}
+
+html[data-about-page][data-layout="desktop"] .about-desktop-content-panel [class*="text-[#9A8F82]"],
+html[data-about-page][data-layout="desktop"] .about-desktop-faq-panel [class*="text-[#9A8F82]"] {
+  color: #8a7868 !important;
 }
 
 html[data-about-page][data-layout="desktop"] .about-desktop-contact-card {
@@ -417,10 +486,22 @@ html[data-about-page][data-layout="desktop"] .about-desktop-contact-action:hover
   color: #e8c08e !important;
 }
 
+html[data-about-page][data-layout="desktop"] .about-chart-bar-fill--gold,
 html[data-about-page][data-layout="desktop"] .about-stat-charts .about-chart-bar-fill,
 html[data-about-page][data-layout="desktop"] .about-stat-chart .about-chart-bar-fill,
 html[data-about-page][data-layout="desktop"] .about-stat-charts .about-chart-tam-bar {
-  background: var(--doe-chart-bar, #d4a574) !important;
+  background-color: transparent !important;
+  background-image: var(
+    --doehealth-gold-fill-gradient,
+    linear-gradient(180deg, #e8c08e 0%, #d4a574 58%, #b8845c 100%)
+  ) !important;
+}
+
+html[data-about-page][data-layout="desktop"] .about-stat-charts .about-chart-bar-fill {
+  background-image: var(
+    --doehealth-gold-fill-gradient,
+    linear-gradient(90deg, #e8c08e 0%, #d4a574 58%, #b8845c 100%)
+  ) !important;
 }
 
 html[data-about-page][data-layout="desktop"]
@@ -429,7 +510,7 @@ html[data-about-page][data-layout="desktop"]
 html[data-about-page][data-layout="desktop"]
   .about-stat-chart
   .about-chart-pie-legend[data-chart-slice-index="0"] {
-  background: var(--doe-chart-pie-1, #e8c08e) !important;
+  background: linear-gradient(180deg, #f2e0c6 0%, #e8c08e 100%) !important;
 }
 
 html[data-about-page][data-layout="desktop"]
@@ -438,7 +519,7 @@ html[data-about-page][data-layout="desktop"]
 html[data-about-page][data-layout="desktop"]
   .about-stat-chart
   .about-chart-pie-legend[data-chart-slice-index="1"] {
-  background: var(--doe-chart-pie-2, #d4a574) !important;
+  background: linear-gradient(180deg, #e8c08e 0%, #d4a574 100%) !important;
 }
 
 html[data-about-page][data-layout="desktop"]
@@ -447,5 +528,5 @@ html[data-about-page][data-layout="desktop"]
 html[data-about-page][data-layout="desktop"]
   .about-stat-chart
   .about-chart-pie-legend[data-chart-slice-index="2"] {
-  background: var(--doe-chart-pie-3, #b8845c) !important;
+  background: linear-gradient(180deg, #d4a574 0%, #b8845c 100%) !important;
 }
