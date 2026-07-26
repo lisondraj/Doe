@@ -84,6 +84,9 @@ export const DOE_SARAH_TURN_REPLY_HOLDS = [
   { turnIndex: 5, frames: DOE_SARAH_CONVO_REPLY_HOLD_EXTRA + 36 },
   { turnIndex: DOE_SARAH_CALLER_PREFER_TIME_TURN, frames: DOE_SARAH_CALLER_PREFER_TIME_HOLD },
 ] as const;
+/** Interlude backdrop + loading row fade-in — shared across all Sarah call interludes. */
+export const DOE_SARAH_INTERLUDE_FADE_IN_FRAMES = 12;
+
 /** Full-screen confirmation-code beat before Sarah’s DOB reply — ~7s @ 30fps. */
 export const DOE_SARAH_CONFIRM_CODE_INTERLUDE_FRAMES = 210;
 /** Turn index for caller-verify (“Sure, my date of birth…”) — interlude plays before this turn. */

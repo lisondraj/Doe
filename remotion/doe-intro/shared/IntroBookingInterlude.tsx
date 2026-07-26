@@ -18,7 +18,6 @@ import { buildCallTurnRevealTiming, findCallInterludeWindow } from "../../motion
 
 const CONVO_UI_OFFSET = DOE_SARAH_CONVO_START_FRAMES + DOE_SARAH_CONVO_UI_OFFSET;
 
-const FADE_IN_END = 12;
 const BOOKING_DONE = 54;
 const CAL_APPEAR = 72;
 const CAL_REVEAL = 24;
@@ -89,11 +88,7 @@ export function IntroBookingInterlude() {
   const spinDeg = local * 4;
   const bookingDone = local >= BOOKING_DONE;
 
-  const stepOpacity = interpolate(local, [0, FADE_IN_END], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: Easing.out(Easing.cubic),
-  });
+  const stepOpacity = 1;
 
   const calProgress =
     local >= CAL_APPEAR

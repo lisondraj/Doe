@@ -19,8 +19,6 @@ import { IntroSarahChartStripSnapshot } from "./IntroChartAccessInterlude";
 
 const CONVO_UI_OFFSET = DOE_SARAH_CONVO_START_FRAMES + DOE_SARAH_CONVO_UI_OFFSET;
 
-const FADE_IN_END = 12;
-/** Chart strip visible; Pulling loads underneath it. */
 const PULL_UNDER_START = 18;
 const PULL_UNDER_REVEAL = 22;
 /** Hold Pulling under the chart UI, then mark Pulled and rise. */
@@ -95,11 +93,7 @@ export function IntroQuestionnaireInterlude() {
   const spinDeg = local * 4;
   const pullDone = local >= PULL_DONE;
 
-  const stageOpacity = interpolate(local, [0, FADE_IN_END], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: Easing.out(Easing.cubic),
-  });
+  const stageOpacity = 1;
 
   const pullUnderProgress =
     local >= PULL_UNDER_START

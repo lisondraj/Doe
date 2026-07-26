@@ -33,7 +33,6 @@ import "@/lib/product2/product2-landing.css";
 
 const CONVO_UI_OFFSET = DOE_SARAH_CONVO_START_FRAMES + DOE_SARAH_CONVO_UI_OFFSET;
 
-const FADE_IN_END = 12;
 const ACCESS_DONE = 48;
 /** Mount + start scrolling before fade-in so there is no post-appear hold. */
 const SCROLL_START = 52;
@@ -391,11 +390,7 @@ export function IntroChartAccessInterlude() {
   const accessDone = local >= ACCESS_DONE;
   const scrollEnd = Math.max(SCROLL_START + 1, windowFrames - SCROLL_END_PAD);
 
-  const stepOpacity = interpolate(local, [0, FADE_IN_END], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: Easing.out(Easing.cubic),
-  });
+  const stepOpacity = 1;
 
   const stripProgress =
     local >= STRIP_APPEAR

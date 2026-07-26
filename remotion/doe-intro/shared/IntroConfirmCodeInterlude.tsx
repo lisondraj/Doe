@@ -20,9 +20,7 @@ import { buildCallTurnRevealTiming, findCallInterludeWindow } from "../../motion
 const ROW_GAP = 0.35;
 const CONVO_UI_OFFSET = DOE_SARAH_CONVO_START_FRAMES + DOE_SARAH_CONVO_UI_OFFSET;
 
-/** Fade in generating row. */
-const FADE_IN_END = 12;
-/** Spinner → “Generated confirmation code” + check, then solo hold. */
+/** Fade in generating row — backdrop fade lives in motion-ui (DOE_SARAH_INTERLUDE_FADE_IN_FRAMES). */
 const GENERATING_DONE = 54;
 /** Sending row appears (~1.3s hold on Generated solo). */
 const SENDING_APPEAR = 94;
@@ -105,11 +103,7 @@ export function IntroConfirmCodeInterlude() {
   const local = t - window.start;
   const spinDeg = local * 4;
 
-  const generatingOpacity = interpolate(local, [0, FADE_IN_END], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: Easing.out(Easing.cubic),
-  });
+  const generatingOpacity = 1;
 
   const sendingOpacity =
     local >= SENDING_APPEAR

@@ -1,6 +1,8 @@
 import type { CSSProperties } from "react";
 import { Easing, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 
+import { DOE_SARAH_INTERLUDE_FADE_IN_FRAMES } from "./doe-intro/constants";
+
 export const MOTION3_RING_CIRCUMFERENCE = 263.89;
 
 const SNAP = { damping: 200, stiffness: 130 };
@@ -271,11 +273,16 @@ export function useCallTurnRevealMotion(
   styles["--m4-interlude-blur"] = 0;
 
   for (const interlude of interludeWindows) {
-    const interludeIn = interpolate(t, [interlude.start, interlude.start + 10], [0, 1], {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-      easing: enterEase,
-    });
+    const interludeIn = interpolate(
+      t,
+      [interlude.start, interlude.start + DOE_SARAH_INTERLUDE_FADE_IN_FRAMES],
+      [0, 1],
+      {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+        easing: enterEase,
+      },
+    );
     const fadeOutFrames = Math.max(1, interlude.fadeOutFrames ?? 8);
     const interludeOut = interpolate(t, [interlude.end - fadeOutFrames, interlude.end], [1, 0], {
       extrapolateLeft: "clamp",
