@@ -622,6 +622,14 @@ export function IntroChartAccessInterlude() {
   const cardVisible = local >= CARD_APPEAR && cardOpacity > 0.01;
   const stackPaired = showStripSlot || showPullRow || cardVisible;
   const stackCenteredTrio = accessLocked && showPullRow && cardVisible && !showStripSlot;
+  const pullRowEnterY = stackCenteredTrio ? 0 : pullEnterY;
+  const trioCardY = stackCenteredTrio
+    ? interpolate(cardProgress, [0, 1], [28, 0], {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+        easing: REVEAL_EASE,
+      })
+    : cardY;
   const stackY =
     stackCenteredTrio
       ? 0
@@ -640,7 +648,7 @@ export function IntroChartAccessInterlude() {
       <div className="motion4-chart-interlude__stage">
         <div
           className={`motion4-chart-interlude__stack motion4-chart-interlude__stack--strip${
-            stackPaired ? " motion4-chart-interlude__stack--paired" : ""
+            stackPaired && !stackCenteredTrio ? " motion4-chart-interlude__stack--paired" : ""
           }${stackCenteredTrio ? " motion4-chart-interlude__stack--trio" : ""}`}
           style={{ transform: `translateY(${stackY}px)` }}
         >
@@ -717,17 +725,29 @@ export function IntroChartAccessInterlude() {
             </div>
           ) : null}
 
-          {showPullRow ? <PullStatusRow local={local} pullSpinDeg={pullSpinDeg} enterY={pullEnterY} /> : null}
+          {showPullRow ? (
+            <PullStatusRow local={local} pullSpinDeg={pullSpinDeg} enterY={pullRowEnterY} />
+          ) : null}
 
           {cardVisible ? (
             <div
-              className="motion4-chart-interlude__card motion4-chart-interlude__card--side-effects"
-              style={{
-                opacity: cardOpacity,
-                transform: `translateY(${cardY}px) scale(${SIDE_EFFECTS_CARD_SCALE})`,
-                ["--m4-side-effects-scale" as string]: String(SIDE_EFFECTS_CARD_SCALE),
-              }}
+              className={`motion4-chart-interlude__card-slot${
+                stackCenteredTrio ? " motion4-chart-interlude__card-slot--trio" : ""
+              }`}
+              style={
+                stackCenteredTrio
+                  ? ({ ["--m4-side-effects-scale" as string]: String(SIDE_EFFECTS_CARD_SCALE) } as const)
+                  : undefined
+              }
             >
+              <div
+                className="motion4-chart-interlude__card motion4-chart-interlude__card--side-effects"
+                style={{
+                  opacity: cardOpacity,
+                  transform: `translateY(${trioCardY}px) scale(${SIDE_EFFECTS_CARD_SCALE})`,
+                  ["--m4-side-effects-scale" as string]: String(SIDE_EFFECTS_CARD_SCALE),
+                }}
+              >
               <div className="motion4-chart-interlude__card-head">
                 <p className={`motion4-chart-interlude__card-title m-0 ${suisseIntl.className}`}>
                   Side effects
@@ -743,6 +763,7 @@ export function IntroChartAccessInterlude() {
                   </li>
                 ))}
               </ul>
+            </div>
             </div>
           ) : null}
         </div>
