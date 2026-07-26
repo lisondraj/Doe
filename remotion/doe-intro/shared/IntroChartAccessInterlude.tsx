@@ -26,7 +26,7 @@ const ACCESS_DONE = 54;
 const GRAPH_APPEAR = 92;
 const GRAPH_REVEAL = 48;
 const CHART_BLUR_MAX = 18;
-const CHART_PLOT_HEIGHT = "30rem";
+const CHART_PLOT_HEIGHT = "26rem";
 const REVEAL_EASE = Easing.bezier(0.33, 0, 0.18, 1);
 
 function InterludeStepIcon({ state, spinDeg }: { state: "spinner" | "check"; spinDeg: number }) {
@@ -121,7 +121,6 @@ export function IntroChartAccessInterlude() {
             className="motion4-chart-interlude__step"
             style={{
               opacity: stepOpacity,
-              transform: "scale(var(--m4-confirm-interlude-scale, 2.85))",
             }}
           >
             <span className="motion4-chart-interlude__label">{accessLabel}</span>
@@ -133,7 +132,7 @@ export function IntroChartAccessInterlude() {
               style={{
                 opacity: chartOpacity,
                 filter: chartBlur > 0.35 ? `blur(${chartBlur}px)` : undefined,
-                transform: "scale(var(--m4-chart-interlude-scale, 1.32))",
+                transform: "scale(var(--m4-chart-interlude-scale, 1.18))",
                 ["--pb-chart-height" as string]: CHART_PLOT_HEIGHT,
               }}
               aria-label={PRODUCT2_CALL_HISTORY_A1C_TREND.label}

@@ -222,7 +222,8 @@ export function useCallTurnRevealMotion(
   for (let i = 1; i < turnCount; i++) {
     const turnStart = turnStarts[i]!;
     const fadeInEnd = turnStart + fade;
-    const lift = 34 + (i % 2 === 1 ? 4 : 0);
+    /* Larger reply lifts center the highlighted agent turn in the shorter convo viewport. */
+    const lift = i % 2 === 1 ? 76 : 50;
 
     if (t >= fadeInEnd) {
       stackLift -= lift;

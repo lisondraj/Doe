@@ -1102,7 +1102,15 @@ html[data-motion4-page] body {
 }
 
 .motion4-remotion-root .motion4-ui-hero--call .doehealth-initiatives__call-history.product-call-history-rail__thread .product-landing-live-quote__text {
-  font-size: clamp(1.62rem, 1.3rem + 0.8vw, 2.05rem);
+  font-size: clamp(1.48rem, 1.18rem + 0.65vw, 1.82rem);
+}
+
+.motion4-remotion-root
+  .motion4-ui-hero--call
+  .doehealth-initiatives__call-history.product-call-history-rail__thread
+  .product-landing-live-quote--agent-intake.product-landing-live-quote--reply
+  .product-landing-live-quote__text {
+  font-size: clamp(1.28rem, 1.05rem + 0.48vw, 1.52rem);
 }
 
 .motion4-remotion-root .motion4-ui-hero--call .doehealth-initiatives__call-history.product-call-history-rail__thread .product-landing-live-quote__caller {
@@ -1131,9 +1139,11 @@ html[data-motion4-page] body {
 
 .motion3-ui-drive--call-reveal .product-landing-live-convo-stage {
   position: relative;
-  min-height: clamp(7.5rem, 18vh, 9.5rem);
-  max-height: clamp(7.5rem, 18vh, 9.5rem);
-  overflow: visible;
+  /* Shorter viewport so the active reply sits near vertical center; card chrome stays unchanged. */
+  min-height: clamp(6.35rem, 14.5vh, 7.85rem);
+  max-height: clamp(6.35rem, 14.5vh, 7.85rem);
+  height: clamp(6.35rem, 14.5vh, 7.85rem);
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -1184,7 +1194,7 @@ html[data-motion4-page] body {
 }
 
 .motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--reply .product-landing-live-quote__text {
-  max-width: min(88%, 19.5rem);
+  max-width: min(96%, 28rem);
 }
 
 .motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-intake.product-landing-live-quote--reply .product-landing-live-quote__text {
@@ -1199,8 +1209,11 @@ html[data-motion4-page] body {
 }
 
 .motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-intake .product-landing-live-quote__line {
-  white-space: nowrap;
+  /* Keep authored line breaks; allow soft wrap if the column is still too narrow. */
+  white-space: normal;
   overflow: visible;
+  overflow-wrap: normal;
+  word-break: normal;
   text-overflow: clip;
 }
 
@@ -1532,12 +1545,13 @@ html[data-motion4-page] body {
   align-items: center;
   justify-content: center;
   gap: 0;
-  width: min(100%, calc(clamp(22px, 2.05vw, 34px) * var(--m4-confirm-interlude-scale, 2.85) * 9.6));
-  max-width: 84%;
+  width: min(92%, 38rem);
+  max-width: 92%;
 }
 
 .motion4-chart-interlude__stack--paired {
-  gap: clamp(0.45rem, 0.9vw, 0.65rem);
+  /* Real layout gap — label is no longer transform-scaled over the chart. */
+  gap: clamp(1.45rem, 2.6vw, 2.15rem);
 }
 
 .motion4-chart-interlude__step {
@@ -1547,20 +1561,20 @@ html[data-motion4-page] body {
   gap: 0.55rem;
   width: 100%;
   font-family: "DM Sans", system-ui, sans-serif;
-  font-size: clamp(22px, 2.05vw, 34px);
+  font-size: clamp(30px, 2.85vw, 46px);
   font-weight: 400;
   letter-spacing: 0.015em;
   line-height: 1.2;
   color: rgba(242, 232, 218, 0.82);
   white-space: nowrap;
   transform-origin: center center;
-  will-change: transform, opacity;
+  will-change: opacity;
 }
 
 .motion4-remotion-root .motion4-chart-interlude__chart .product-landing-live-quote__chart-profile-a1c-canvas,
 .motion4-remotion-root .motion4-chart-interlude__chart .product-landing-live-quote__chart-profile-a1c-y-axis {
-  height: var(--pb-chart-height, 30rem);
-  min-height: var(--pb-chart-height, 30rem);
+  height: var(--pb-chart-height, 26rem);
+  min-height: var(--pb-chart-height, 26rem);
 }
 
 .motion4-chart-interlude__chart {
@@ -1573,8 +1587,8 @@ html[data-motion4-page] body {
   flex-shrink: 0;
   transform-origin: center top;
   will-change: transform, opacity, filter;
-  --m4-chart-interlude-scale: 1.32;
-  --pb-chart-height: 30rem;
+  --m4-chart-interlude-scale: 1.18;
+  --pb-chart-height: 26rem;
   --pb-chart-axis-width: 3.75rem;
   --pb-chart-axis-gap: 0.75rem;
   padding: clamp(1.05rem, 1.22vw, 1.18rem) clamp(1.08rem, 1.28vw, 1.2rem) clamp(0.95rem, 1.12vw, 1.05rem);
@@ -1587,13 +1601,13 @@ html[data-motion4-page] body {
 }
 
 .motion4-chart-interlude__chart .product-landing-live-quote__chart-profile-a1c-canvas {
-  height: var(--pb-chart-height, 30rem);
-  min-height: var(--pb-chart-height, 30rem);
+  height: var(--pb-chart-height, 26rem);
+  min-height: var(--pb-chart-height, 26rem);
   width: 100%;
 }
 
 .motion4-chart-interlude__chart .product-landing-live-quote__chart-profile-a1c-y-axis {
-  min-height: var(--pb-chart-height, 30rem);
+  min-height: var(--pb-chart-height, 26rem);
 }
 
 .motion4-chart-interlude__chart .product-landing-live-quote__chart-profile-a1c-chart {
@@ -2343,8 +2357,10 @@ html[data-motion4-page] body {
 }
 
 .motion4-remotion-root .motion3-ui-drive--call-reveal .product-landing-live-convo-stage {
-  max-height: none;
-  min-height: clamp(7.5rem, 18vh, 9.5rem);
+  min-height: clamp(6.35rem, 14.5vh, 7.85rem);
+  max-height: clamp(6.35rem, 14.5vh, 7.85rem);
+  height: clamp(6.35rem, 14.5vh, 7.85rem);
+  overflow: hidden;
   -webkit-mask-image: linear-gradient(
     to bottom,
     rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.92) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0))))) 0%,
