@@ -1657,9 +1657,9 @@ html[data-motion4-page] body {
 
 .motion4-chart-interlude__tile {
   flex: 0 0 auto;
-  height: 312px;
-  min-height: 312px;
-  max-height: 312px;
+  height: 300px;
+  min-height: 300px;
+  max-height: 300px;
 }
 
 .motion4-chart-interlude__tile-card {
@@ -1672,14 +1672,15 @@ html[data-motion4-page] body {
   min-height: 100%;
   margin: 0;
   overflow: hidden;
-  --pb-chart-axis-width: 38px;
+  --pb-chart-axis-width: 36px;
   --pb-chart-axis-gap: 8px;
-  --pb-chart-height: 148px;
+  --pb-chart-height: 210px;
 }
 
 /*
  * Beat product brown-mock vh/vw card rules so Player preview matches export
- * at any browser size (composition pixels only).
+ * at any browser size (composition pixels only). Content is scaled to fill
+ * the fixed tile — no sparse blank regions, no viewport-relative drift.
  */
 .motion4-chart-interlude
   .product-brown-mock.product-brown-call-history-mode
@@ -1708,14 +1709,15 @@ html[data-motion4-page] body {
 .motion4-chart-interlude
   .product-brown-mock.product-brown-call-history-mode
   .motion4-chart-interlude__tile-card.product-landing-live-quote__chart-profile {
-  --pb-chart-axis-width: 38px;
+  --pb-chart-axis-width: 36px;
   --pb-chart-axis-gap: 8px;
-  --pb-chart-height: 148px;
+  --pb-chart-height: 210px;
   width: 100% !important;
   max-width: none !important;
-  flex-shrink: 0;
+  flex: 1 1 auto;
+  flex-shrink: 1;
   gap: 12px;
-  padding: 16px 18px 14px;
+  padding: 14px 16px 12px;
   pointer-events: none;
 }
 
@@ -1723,23 +1725,8 @@ html[data-motion4-page] body {
   font-size: 16px;
 }
 
-.motion4-chart-interlude
-  .product-brown-mock.product-brown-call-history-mode
-  .product-call-history-panel__lab-range {
-  height: 20px;
-}
-
-.motion4-chart-interlude
-  .product-brown-mock.product-brown-call-history-mode
-  .product-call-history-panel__lab-caption-value {
-  font-size: 13px;
-}
-
 .motion4-chart-interlude__tile--a1c .motion4-chart-interlude__tile-card,
-.motion4-chart-interlude__tile--bp .motion4-chart-interlude__tile-card {
-  justify-content: flex-start;
-}
-
+.motion4-chart-interlude__tile--bp .motion4-chart-interlude__tile-card,
 .motion4-chart-interlude__tile--vitals .motion4-chart-interlude__tile-card,
 .motion4-chart-interlude__tile--labs .motion4-chart-interlude__tile-card,
 .motion4-chart-interlude__tile--visits .motion4-chart-interlude__tile-card,
@@ -1747,7 +1734,7 @@ html[data-motion4-page] body {
 .motion4-chart-interlude__tile--meds .motion4-chart-interlude__tile-card,
 .motion4-chart-interlude__tile--conditions .motion4-chart-interlude__tile-card,
 .motion4-chart-interlude__tile--allergies .motion4-chart-interlude__tile-card {
-  justify-content: flex-start;
+  justify-content: stretch;
 }
 
 .motion4-chart-interlude__bp-shell {
@@ -1764,19 +1751,78 @@ html[data-motion4-page] body {
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
-  font-size: 17px;
-  font-weight: 400;
-  letter-spacing: 0.04em;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
   line-height: 1.15;
   text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.motion4-chart-interlude__bp-plot {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.motion4-chart-interlude__bp-plot .product-landing-live-quote__chart-profile-a1c,
+.motion4-chart-interlude__tile--a1c .product-landing-live-quote__chart-profile-a1c {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.motion4-chart-interlude__tile .product-landing-live-quote__chart-profile-a1c-plot {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
 }
 
 .motion4-chart-interlude__tile .product-landing-live-quote__chart-profile-a1c-canvas,
 .motion4-chart-interlude__tile .product-landing-live-quote__chart-profile-a1c-y-axis {
-  height: var(--pb-chart-height, 148px);
-  min-height: var(--pb-chart-height, 148px);
+  height: 100% !important;
+  min-height: 0 !important;
+  flex: 1 1 auto;
 }
 
+.motion4-chart-interlude__tile .product-landing-live-quote__chart-profile-a1c-label,
+.motion4-chart-interlude__tile .product-landing-live-quote__chart-profile-a1c-label--top,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__vitals-label,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__visits-label,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__tasks-label,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__meds-label,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__conditions-label,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__allergies-label {
+  flex-shrink: 0;
+  margin: 0;
+  font-size: 15px !important;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1.15;
+}
+
+.motion4-chart-interlude__tile .product-landing-live-quote__chart-profile-a1c-axis-label {
+  font-size: 12px;
+}
+
+.motion4-chart-interlude__tile .product-call-history-panel__vitals-shell,
+.motion4-chart-interlude__tile .product-call-history-panel__labs-shell,
 .motion4-chart-interlude__tile .product-call-history-panel__visits-shell,
 .motion4-chart-interlude__tile .product-call-history-panel__tasks-shell,
 .motion4-chart-interlude__tile .product-call-history-panel__meds-shell,
@@ -1787,17 +1833,185 @@ html[data-motion4-page] body {
   flex: 1 1 auto;
   min-height: 0;
   width: 100%;
+  height: 100%;
+  gap: 12px;
   overflow: hidden;
 }
 
+.motion4-chart-interlude__tile .product-call-history-panel__vitals-label {
+  order: -1;
+}
+
+.motion4-chart-interlude__tile .product-call-history-panel__labs-footer {
+  display: none;
+}
+
+.motion4-chart-interlude__tile .product-call-history-panel__vitals-visuals,
+.motion4-chart-interlude__tile .product-call-history-panel__labs-visuals {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.motion4-chart-interlude__tile .product-call-history-panel__vital-row,
+.motion4-chart-interlude__tile .product-call-history-panel__lab-row {
+  flex: 1 1 0;
+  min-height: 0;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  grid-template-columns: 2.4rem minmax(0, 1fr) auto;
+}
+
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__lab-range {
+  height: 22px;
+}
+
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__lab-caption-label,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__vital-caption-label {
+  font-size: 13px;
+}
+
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__lab-caption-value,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__vital-caption-value {
+  font-size: 18px;
+}
+
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__lab-caption-unit,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__vital-caption-unit,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__lab-caption-trend,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__vital-caption-trend {
+  font-size: 12px;
+}
+
 .motion4-chart-interlude__tile .product-call-history-panel__visits-list,
-.motion4-chart-interlude__tile .product-call-history-panel__tasks-list,
 .motion4-chart-interlude__tile .product-call-history-panel__meds-list,
 .motion4-chart-interlude__tile .product-call-history-panel__conditions-list,
 .motion4-chart-interlude__tile .product-call-history-panel__allergies-list {
+  display: flex;
+  flex-direction: column;
   flex: 1 1 auto;
   min-height: 0;
+  justify-content: space-between;
+  gap: 8px;
   overflow: hidden;
+  padding: 0;
+  list-style: none;
+}
+
+.motion4-chart-interlude__tile .product-call-history-panel__tasks-list {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  justify-content: space-between;
+  gap: 8px;
+  overflow: hidden;
+  padding: 0;
+  list-style: none;
+  grid-template-columns: none;
+}
+
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__meds-item,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__conditions-item,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__allergies-item {
+  font-size: 17px;
+  line-height: 1.2;
+}
+
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__visits-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 0;
+  flex: 1 1 0;
+}
+
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__visits-date-month,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__visits-date-weekday {
+  font-size: 11px;
+}
+
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__visits-date-day {
+  font-size: 20px;
+}
+
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__visits-item-title {
+  font-size: 16px;
+}
+
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__visits-item-when {
+  font-size: 12px;
+}
+
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__tasks-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 0;
+  min-height: 0;
+  padding: 10px 12px;
+}
+
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__tasks-item-icon {
+  width: 28px;
+  height: 28px;
+}
+
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__tasks-item-title {
+  font-size: 15px;
+}
+
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__tasks-item-badge {
+  font-size: 12px;
 }
 
 .motion4-chart-interlude__icon {

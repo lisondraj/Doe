@@ -7,12 +7,9 @@ import { Product2ChartProfileA1cTrend } from "@/components/product2/Product2Char
 import { Product2ChartProfileBpTrend } from "@/components/product2/Product2ChartProfileBpTrend";
 import {
   PRODUCT2_CALL_HISTORY_A1C_TREND,
-  PRODUCT2_CALL_HISTORY_ALLERGIES,
   PRODUCT2_CALL_HISTORY_BP_TREND,
-  PRODUCT2_CALL_HISTORY_CONDITIONS,
-  PRODUCT2_CALL_HISTORY_MEDICATIONS,
-  PRODUCT2_CALL_HISTORY_OPEN_TASKS,
-  PRODUCT2_CALL_HISTORY_RECENT_VISITS,
+  PRODUCT2_CALL_HISTORY_RECENT_LABS,
+  PRODUCT2_CALL_HISTORY_RECENT_VITALS,
 } from "@/lib/product2/product2-copy";
 import { dmSans, suisseIntl } from "@/remotion/fonts";
 
@@ -37,31 +34,65 @@ import "@/lib/product2/product2-landing.css";
 const CONVO_UI_OFFSET = DOE_SARAH_CONVO_START_FRAMES + DOE_SARAH_CONVO_UI_OFFSET;
 
 const FADE_IN_END = 12;
-const ACCESS_DONE = 54;
-const STRIP_APPEAR = 88;
-const STRIP_REVEAL = 40;
-const SCROLL_START = 136;
+const ACCESS_DONE = 48;
+/** Mount + start scrolling before fade-in so there is no post-appear hold. */
+const SCROLL_START = 52;
+const STRIP_APPEAR = 64;
+const STRIP_REVEAL = 28;
 const FADE_OUT_PAD = 18;
-const CHART_BLUR_MAX = 16;
+const CHART_BLUR_MAX = 14;
 /** Composition pixels — preview Player scale must not change relative tile size. */
-const TILE_PLOT_HEIGHT = "148px";
-const TILE_HEIGHT_PX = 312;
-const TILE_GAP_PX = 18;
+const TILE_PLOT_HEIGHT = "210px";
+const TILE_HEIGHT_PX = 300;
+const TILE_GAP_PX = 16;
 const VIEWPORT_INSET_PX = 72;
 const REVEAL_EASE = Easing.bezier(0.33, 0, 0.18, 1);
 const SCROLL_EASE = Easing.bezier(0.22, 0.08, 0.18, 1);
 
-/** Same-height row — different widths from Sarah call-history chart boxes. */
+/** Densified strip copy — fills same-height boxes without sparse blank regions. */
+const STRIP_COPY = {
+  visits: {
+    label: "Recent Visits",
+    items: [
+      { title: "Annual Physical", when: "Jan 14 · Dr. Chen", month: "Jan", day: 14, weekday: "Tue" },
+      { title: "Diabetes Follow-up", when: "Apr 9 · Clinic", month: "Apr", day: 9, weekday: "Wed" },
+      { title: "Virtual Check-in", when: "Jun 24 · Video", month: "Jun", day: 24, weekday: "Tue" },
+      { title: "Lab Review", when: "Jul 8 · Nurse", month: "Jul", day: 8, weekday: "Tue" },
+    ],
+  },
+  tasks: {
+    label: "Open Tasks",
+    items: [
+      { title: "Metformin refill", when: "Due today", tone: "due" as const, icon: "rx" as const },
+      { title: "Diabetic eye exam", when: "Overdue 2 wk", tone: "overdue" as const, icon: "eye" as const },
+      { title: "A1C recheck", when: "Due Fri", tone: "due" as const, icon: "rx" as const },
+    ],
+  },
+  meds: {
+    label: "Medications",
+    items: ["Metformin XR 500mg", "Atorvastatin 20mg", "Lisinopril 10mg", "Aspirin 81mg", "Vitamin D 2000"],
+  },
+  conditions: {
+    label: "Conditions",
+    items: ["Type 2 Diabetes", "Hypertension", "Hyperlipidemia", "Obesity"],
+  },
+  allergies: {
+    label: "Allergies",
+    items: ["Penicillin", "Sulfa drugs", "Shellfish"],
+  },
+} as const;
+
+/** Same-height row — widths tuned so denser copy still reads cleanly. */
 const CHART_TILES = [
-  { id: "a1c", width: 460 },
-  { id: "vitals", width: 360 },
-  { id: "bp", width: 400 },
-  { id: "labs", width: 340 },
-  { id: "visits", width: 300 },
-  { id: "tasks", width: 280 },
-  { id: "meds", width: 250 },
-  { id: "conditions", width: 230 },
-  { id: "allergies", width: 210 },
+  { id: "a1c", width: 440 },
+  { id: "vitals", width: 340 },
+  { id: "bp", width: 380 },
+  { id: "labs", width: 320 },
+  { id: "visits", width: 320 },
+  { id: "tasks", width: 300 },
+  { id: "meds", width: 270 },
+  { id: "conditions", width: 250 },
+  { id: "allergies", width: 230 },
 ] as const;
 
 const TRACK_WIDTH_PX =
@@ -117,7 +148,7 @@ function ChartAccessTile({ id }: { id: (typeof CHART_TILES)[number]["id"] }) {
       return (
         <div
           className="motion4-chart-interlude__tile-card product-call-history-panel__vitals-card product-landing-live-quote__chart-profile"
-          aria-label="Recent vitals"
+          aria-label={PRODUCT2_CALL_HISTORY_RECENT_VITALS.label}
         >
           <Product2CallHistoryRecentVitals />
         </div>
@@ -132,7 +163,9 @@ function ChartAccessTile({ id }: { id: (typeof CHART_TILES)[number]["id"] }) {
             <p className={`motion4-chart-interlude__bp-label m-0 ${suisseIntl.className}`}>
               {PRODUCT2_CALL_HISTORY_BP_TREND.label}
             </p>
-            <Product2ChartProfileBpTrend readings={PRODUCT2_CALL_HISTORY_BP_TREND.readings} />
+            <div className="motion4-chart-interlude__bp-plot">
+              <Product2ChartProfileBpTrend readings={PRODUCT2_CALL_HISTORY_BP_TREND.readings} />
+            </div>
           </div>
         </div>
       );
@@ -140,7 +173,7 @@ function ChartAccessTile({ id }: { id: (typeof CHART_TILES)[number]["id"] }) {
       return (
         <div
           className="motion4-chart-interlude__tile-card product-call-history-panel__labs-card product-landing-live-quote__chart-profile"
-          aria-label="Recent labs"
+          aria-label={PRODUCT2_CALL_HISTORY_RECENT_LABS.label}
         >
           <Product2CallHistoryRecentLabs />
         </div>
@@ -149,14 +182,14 @@ function ChartAccessTile({ id }: { id: (typeof CHART_TILES)[number]["id"] }) {
       return (
         <div
           className="motion4-chart-interlude__tile-card product-call-history-panel__visits-card product-landing-live-quote__chart-profile"
-          aria-label={PRODUCT2_CALL_HISTORY_RECENT_VISITS.label}
+          aria-label={STRIP_COPY.visits.label}
         >
           <div className="product-call-history-panel__visits-shell">
             <p className={`product-call-history-panel__visits-label m-0 ${suisseIntl.className}`}>
-              {PRODUCT2_CALL_HISTORY_RECENT_VISITS.label}
+              {STRIP_COPY.visits.label}
             </p>
             <ul className={`product-call-history-panel__visits-list m-0 ${dmSans.className}`}>
-              {PRODUCT2_CALL_HISTORY_RECENT_VISITS.items.map((visit) => (
+              {STRIP_COPY.visits.items.map((visit) => (
                 <li key={visit.title} className="product-call-history-panel__visits-item">
                   <div className="product-call-history-panel__visits-date" aria-hidden>
                     <span className="product-call-history-panel__visits-date-month">{visit.month}</span>
@@ -165,9 +198,7 @@ function ChartAccessTile({ id }: { id: (typeof CHART_TILES)[number]["id"] }) {
                   </div>
                   <div className="product-call-history-panel__visits-item-copy">
                     <span className="product-call-history-panel__visits-item-title">{visit.title}</span>
-                    {visit.when ? (
-                      <span className="product-call-history-panel__visits-item-when">{visit.when}</span>
-                    ) : null}
+                    <span className="product-call-history-panel__visits-item-when">{visit.when}</span>
                   </div>
                 </li>
               ))}
@@ -179,14 +210,14 @@ function ChartAccessTile({ id }: { id: (typeof CHART_TILES)[number]["id"] }) {
       return (
         <div
           className="motion4-chart-interlude__tile-card product-call-history-panel__tasks-card product-landing-live-quote__chart-profile"
-          aria-label={PRODUCT2_CALL_HISTORY_OPEN_TASKS.label}
+          aria-label={STRIP_COPY.tasks.label}
         >
           <div className="product-call-history-panel__tasks-shell">
             <p className={`product-call-history-panel__tasks-label m-0 ${suisseIntl.className}`}>
-              {PRODUCT2_CALL_HISTORY_OPEN_TASKS.label}
+              {STRIP_COPY.tasks.label}
             </p>
             <ul className={`product-call-history-panel__tasks-list m-0 ${dmSans.className}`}>
-              {PRODUCT2_CALL_HISTORY_OPEN_TASKS.items.map((task) => (
+              {STRIP_COPY.tasks.items.map((task) => (
                 <li
                   key={task.title}
                   className={`product-call-history-panel__tasks-item product-call-history-panel__tasks-item--${task.tone}`}
@@ -208,14 +239,14 @@ function ChartAccessTile({ id }: { id: (typeof CHART_TILES)[number]["id"] }) {
       return (
         <div
           className="motion4-chart-interlude__tile-card product-call-history-panel__meds-card product-landing-live-quote__chart-profile"
-          aria-label={PRODUCT2_CALL_HISTORY_MEDICATIONS.label}
+          aria-label={STRIP_COPY.meds.label}
         >
           <div className="product-call-history-panel__meds-shell">
             <p className={`product-call-history-panel__meds-label m-0 ${suisseIntl.className}`}>
-              {PRODUCT2_CALL_HISTORY_MEDICATIONS.label}
+              {STRIP_COPY.meds.label}
             </p>
             <ul className={`product-call-history-panel__meds-list m-0 ${dmSans.className}`}>
-              {PRODUCT2_CALL_HISTORY_MEDICATIONS.items.map((medication) => (
+              {STRIP_COPY.meds.items.map((medication) => (
                 <li key={medication} className="product-call-history-panel__meds-item">
                   {medication}
                 </li>
@@ -228,14 +259,14 @@ function ChartAccessTile({ id }: { id: (typeof CHART_TILES)[number]["id"] }) {
       return (
         <div
           className="motion4-chart-interlude__tile-card product-call-history-panel__conditions-card product-landing-live-quote__chart-profile"
-          aria-label={PRODUCT2_CALL_HISTORY_CONDITIONS.label}
+          aria-label={STRIP_COPY.conditions.label}
         >
           <div className="product-call-history-panel__conditions-shell">
             <p className={`product-call-history-panel__conditions-label m-0 ${suisseIntl.className}`}>
-              {PRODUCT2_CALL_HISTORY_CONDITIONS.label}
+              {STRIP_COPY.conditions.label}
             </p>
             <ul className={`product-call-history-panel__conditions-list m-0 ${dmSans.className}`}>
-              {PRODUCT2_CALL_HISTORY_CONDITIONS.items.map((condition) => (
+              {STRIP_COPY.conditions.items.map((condition) => (
                 <li key={condition} className="product-call-history-panel__conditions-item">
                   {condition}
                 </li>
@@ -248,14 +279,14 @@ function ChartAccessTile({ id }: { id: (typeof CHART_TILES)[number]["id"] }) {
       return (
         <div
           className="motion4-chart-interlude__tile-card product-call-history-panel__allergies-card product-landing-live-quote__chart-profile"
-          aria-label={PRODUCT2_CALL_HISTORY_ALLERGIES.label}
+          aria-label={STRIP_COPY.allergies.label}
         >
           <div className="product-call-history-panel__allergies-shell">
             <p className={`product-call-history-panel__allergies-label m-0 ${suisseIntl.className}`}>
-              {PRODUCT2_CALL_HISTORY_ALLERGIES.label}
+              {STRIP_COPY.allergies.label}
             </p>
             <ul className={`product-call-history-panel__allergies-list m-0 ${dmSans.className}`}>
-              {PRODUCT2_CALL_HISTORY_ALLERGIES.items.map((allergy) => (
+              {STRIP_COPY.allergies.items.map((allergy) => (
                 <li key={allergy} className="product-call-history-panel__allergies-item">
                   {allergy}
                 </li>
@@ -322,6 +353,7 @@ export function IntroChartAccessInterlude() {
 
   const viewportWidth = DOE_LAUNCH_WIDTH - VIEWPORT_INSET_PX * 2;
   const maxScroll = Math.max(0, TRACK_WIDTH_PX - viewportWidth);
+  /** Scroll begins before fade-in so the strip is already moving when it appears. */
   const scrollX =
     local >= SCROLL_START
       ? interpolate(local, [SCROLL_START, scrollEnd], [0, -maxScroll], {
@@ -333,14 +365,14 @@ export function IntroChartAccessInterlude() {
 
   const accessLabel = accessDone ? "Accessed Sarah's chart" : "Accessing Sarah's chart";
   const accessIcon: "spinner" | "check" = accessDone ? "check" : "spinner";
-  const stripVisible = local >= STRIP_APPEAR && stripOpacity > 0.01;
+  const stripMounted = local >= SCROLL_START;
 
   return (
     <div className={`motion4-chart-interlude ${dmSans.className}`} aria-hidden>
       <div className="motion4-chart-interlude__stage">
         <div
           className={`motion4-chart-interlude__stack motion4-chart-interlude__stack--strip${
-            stripVisible ? " motion4-chart-interlude__stack--paired" : ""
+            stripMounted ? " motion4-chart-interlude__stack--paired" : ""
           }`}
         >
           <div
@@ -353,7 +385,7 @@ export function IntroChartAccessInterlude() {
             <InterludeStepIcon state={accessIcon} spinDeg={spinDeg} />
           </div>
 
-          {stripVisible ? (
+          {stripMounted ? (
             <div
               className="motion4-chart-interlude__strip product-brown-mock product-brown-call-history-mode"
               style={{
@@ -375,7 +407,12 @@ export function IntroChartAccessInterlude() {
                     <div
                       key={tile.id}
                       className={`motion4-chart-interlude__tile motion4-chart-interlude__tile--${tile.id}`}
-                      style={{ width: tile.width, height: TILE_HEIGHT_PX, minHeight: TILE_HEIGHT_PX, maxHeight: TILE_HEIGHT_PX }}
+                      style={{
+                        width: tile.width,
+                        height: TILE_HEIGHT_PX,
+                        minHeight: TILE_HEIGHT_PX,
+                        maxHeight: TILE_HEIGHT_PX,
+                      }}
                     >
                       <ChartAccessTile id={tile.id} />
                     </div>
