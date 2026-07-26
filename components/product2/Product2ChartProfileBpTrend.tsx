@@ -40,15 +40,19 @@ export function Product2ChartProfileBpTrend({
       }`}
     >
       {labelPosition === "top" ? labelNode : null}
-      <div className="product-landing-live-quote__chart-profile-a1c-plot" style={plotSizeStyle}>
-        <div className={`product-landing-live-quote__chart-profile-a1c-y-axis ${dmSans.className}`} aria-hidden>
+      <div className="product-landing-live-quote__chart-profile-a1c-plot">
+        <div
+          className={`product-landing-live-quote__chart-profile-a1c-y-axis ${dmSans.className}`}
+          style={plotSizeStyle}
+          aria-hidden
+        >
           {yTicks.map((tick) => (
             <span key={tick} className="product-landing-live-quote__chart-profile-a1c-axis-label">
               {tick}
             </span>
           ))}
         </div>
-        <div className="product-landing-live-quote__chart-profile-bp-columns">
+        <div className="product-landing-live-quote__chart-profile-bp-columns" style={plotSizeStyle}>
           {readings.map((reading, index) => {
             const isLatest = index === latestIndex;
             const sysHeight = bpHeightPercent(reading.systolic);

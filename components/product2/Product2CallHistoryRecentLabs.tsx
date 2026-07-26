@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { dmSans } from "@/lib/home/fonts";
+import { dmSans, suisseIntl } from "@/lib/home/fonts";
 import { PRODUCT2_CALL_HISTORY_RECENT_LABS } from "@/lib/product2/product2-copy";
 
 type LabItem = (typeof PRODUCT2_CALL_HISTORY_RECENT_LABS.items)[number];
@@ -84,6 +84,9 @@ export function Product2CallHistoryRecentLabs({
           </LabRow>
         ))}
       </div>
+      <p className={`product-call-history-panel__labs-label m-0 ${suisseIntl.className}`}>
+        {PRODUCT2_CALL_HISTORY_RECENT_LABS.label}
+      </p>
       <div className="product-call-history-panel__labs-footer" aria-hidden />
     </div>
   );

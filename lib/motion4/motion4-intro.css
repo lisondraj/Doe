@@ -2102,9 +2102,40 @@ html[data-motion4-page] body {
 .motion4-chart-interlude__tile--bp .product-landing-live-quote__chart-profile-bp-columns {
   flex: 1 1 auto;
   min-height: 0;
-  height: 100%;
+  height: var(--pb-chart-height) !important;
+  min-height: var(--pb-chart-height) !important;
   align-items: stretch;
   padding-top: 0;
+  gap: calc(10px * var(--m4-cs, 1));
+}
+
+.motion4-chart-interlude__tile--bp .product-landing-live-quote__chart-profile-a1c-plot {
+  flex: 1 1 auto;
+  min-height: 0;
+  align-items: stretch;
+}
+
+.motion4-chart-interlude__tile--bp .product-landing-live-quote__chart-profile-a1c-y-axis {
+  height: var(--pb-chart-height) !important;
+  min-height: var(--pb-chart-height) !important;
+}
+
+.motion4-chart-interlude__tile--bp .product-landing-live-quote__chart-profile-bp-column-body {
+  max-width: calc(2.75rem * var(--m4-cs, 1));
+}
+
+.motion4-chart-interlude__tile--bp .product-landing-live-quote__chart-profile-bp-column-shell {
+  min-height: calc(1.25rem * var(--m4-cs, 1));
+  border-radius: calc(0.44rem * var(--m4-cs, 1));
+}
+
+.motion4-chart-interlude__tile--bp .product-landing-live-quote__chart-profile-bp-column-core {
+  border-radius: 0 0 calc(0.34rem * var(--m4-cs, 1)) calc(0.34rem * var(--m4-cs, 1));
+}
+
+.motion4-chart-interlude__tile--bp .product-landing-live-quote__chart-profile-bp-column-reading {
+  font-size: calc(14px * var(--m4-cs, 1));
+  bottom: calc(100% + 8px * var(--m4-cs, 1));
 }
 
 .motion4-chart-interlude__tile .product-landing-live-quote__chart-profile-a1c-plot {
@@ -2136,6 +2167,9 @@ html[data-motion4-page] body {
 .motion4-chart-interlude
   .product-brown-mock.product-brown-call-history-mode
   .product-call-history-panel__vitals-label,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__labs-label,
 .motion4-chart-interlude
   .product-brown-mock.product-brown-call-history-mode
   .product-call-history-panel__visits-label,
@@ -2192,6 +2226,10 @@ html[data-motion4-page] body {
   order: -1;
 }
 
+.motion4-chart-interlude__tile .product-call-history-panel__labs-label {
+  order: -1;
+}
+
 .motion4-chart-interlude__tile .product-call-history-panel__labs-footer {
   display: none;
 }
@@ -2213,13 +2251,59 @@ html[data-motion4-page] body {
   align-items: center;
   gap: calc(10px * var(--m4-cs, 1));
   padding: calc(6px * var(--m4-cs, 1)) 0;
-  grid-template-columns: calc(2.4rem * var(--m4-cs, 1)) minmax(0, 1fr) auto;
+  grid-template-columns:
+    calc(3.2rem * var(--m4-cs, 1))
+    minmax(0, 1fr)
+    calc(6.2rem * var(--m4-cs, 1));
+}
+
+.motion4-chart-interlude__tile .product-call-history-panel__lab-caption-label,
+.motion4-chart-interlude__tile .product-call-history-panel__vital-caption-label {
+  align-self: center;
+  width: 100%;
+  text-align: left;
+}
+
+.motion4-chart-interlude__tile .product-call-history-panel__lab-visual,
+.motion4-chart-interlude__tile .product-call-history-panel__vital-visual {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  min-height: calc(28px * var(--m4-cs, 1));
+  padding: calc(6px * var(--m4-cs, 1)) calc(8px * var(--m4-cs, 1));
+}
+
+.motion4-chart-interlude__tile .product-call-history-panel__lab-value-stack,
+.motion4-chart-interlude__tile .product-call-history-panel__vital-value-stack {
+  justify-self: end;
+  width: calc(6.2rem * var(--m4-cs, 1));
+  flex-shrink: 0;
 }
 
 .motion4-chart-interlude
   .product-brown-mock.product-brown-call-history-mode
   .product-call-history-panel__lab-range {
-  height: calc(22px * var(--m4-cs, 1));
+  height: calc(26px * var(--m4-cs, 1));
+}
+
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__lab-range-track::before {
+  height: calc(4px * var(--m4-cs, 1));
+}
+
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__lab-range-target {
+  height: calc(6px * var(--m4-cs, 1));
+}
+
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__lab-range-marker {
+  width: calc(10px * var(--m4-cs, 1));
+  height: calc(10px * var(--m4-cs, 1));
+  border-width: calc(1.5px * var(--m4-cs, 1));
 }
 
 .motion4-chart-interlude

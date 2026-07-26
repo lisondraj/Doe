@@ -126,9 +126,9 @@ const STRIP_COPY = {
 
 /** Same-height row — right tiles widened so denser copy fills without crush. */
 const CHART_TILES = [
-  { id: "a1c", width: Math.round(440 * CHART_STRIP_SCALE) },
+  { id: "bp", width: Math.round(440 * CHART_STRIP_SCALE) },
   { id: "vitals", width: Math.round(340 * CHART_STRIP_SCALE) },
-  { id: "bp", width: Math.round(380 * CHART_STRIP_SCALE) },
+  { id: "a1c", width: Math.round(380 * CHART_STRIP_SCALE) },
   { id: "labs", width: Math.round(320 * CHART_STRIP_SCALE) },
   { id: "visits", width: Math.round(320 * CHART_STRIP_SCALE) },
   { id: "tasks", width: Math.round(318 * CHART_STRIP_SCALE) },
