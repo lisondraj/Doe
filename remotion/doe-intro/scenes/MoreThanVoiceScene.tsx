@@ -9,7 +9,7 @@ import {
   DOE_INTRO_FPS,
   DOE_OUTRO_SHADER_HANDOFF_FRAMES,
   DOE_SARAH_CALL_INTERLUDES,
-  DOE_SARAH_CALLER_TURN_HOLDS,
+  DOE_SARAH_TURN_HOLDS_AFTER,
   DOE_SARAH_TURN_REPLY_HOLDS,
   DOE_SARAH_CONVO_START_FRAMES,
   DOE_SARAH_CONVO_TURN_FADE,
@@ -33,6 +33,7 @@ import {
 import { handoffMotionStyle, useIntroDoeSarahHandoff, DOE_PREMIUM_EASE } from "../intro-transitions";
 import { IntroChartAccessInterlude } from "../shared/IntroChartAccessInterlude";
 import { IntroConfirmCodeInterlude } from "../shared/IntroConfirmCodeInterlude";
+import { IntroQuestionnaireInterlude } from "../shared/IntroQuestionnaireInterlude";
 import { IntroUiHero } from "../shared/IntroUiHero";
 
 const SETTLE_START_FRAME = DOE_SARAH_SETTLE_START_FRAMES;
@@ -54,7 +55,7 @@ export function MoreThanVoiceScene() {
     DOE_SARAH_CONVO_TURN_START,
     DOE_SARAH_CONVO_REPLY_HOLD_EXTRA,
     DOE_SARAH_CALL_INTERLUDES,
-    DOE_SARAH_CALLER_TURN_HOLDS,
+    DOE_SARAH_TURN_HOLDS_AFTER,
     DOE_SARAH_TURN_REPLY_HOLDS,
   );
 
@@ -201,6 +202,7 @@ export function MoreThanVoiceScene() {
       </IntroUiHero>
       <IntroConfirmCodeInterlude />
       <IntroChartAccessInterlude />
+      <IntroQuestionnaireInterlude />
       <Sequence from={DOE_SARAH_CALL_HEADER_APPEAR_FRAME} premountFor={DOE_INTRO_FPS}>
         <Audio
           src={staticFile(DOE_SARAH_INCOMING_CALL_AUDIO_SRC)}

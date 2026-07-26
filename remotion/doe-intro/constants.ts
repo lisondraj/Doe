@@ -68,9 +68,16 @@ export const DOE_SARAH_AGENT_OPEN_CHART_PRE_INTERLUDE_HOLD = Math.max(
   8,
   Math.ceil(DOE_SARAH_AGENT_OPEN_CHART_AUDIO_SEC * DOE_INTRO_FPS) - DOE_SARAH_CONVO_TURN_STEP + 8,
 );
+/** agent-side-effects — hold the ask before the questionnaire interlude. */
+export const DOE_SARAH_AGENT_SIDE_EFFECTS_TURN = 4;
+export const DOE_SARAH_AGENT_SIDE_EFFECTS_HOLD = 48;
+/** agent-prefer-time — “Which day and time would you prefer?” — extra beat after reply. */
+export const DOE_SARAH_AGENT_PREFER_TIME_TURN = 6;
+export const DOE_SARAH_AGENT_PREFER_TIME_HOLD = DOE_SARAH_CONVO_REPLY_HOLD_EXTRA + 90;
 export const DOE_SARAH_TURN_REPLY_HOLDS = [
   { turnIndex: DOE_SARAH_AGENT_INTAKE_TURN, frames: DOE_SARAH_AGENT_INTAKE_REPLY_HOLD },
   { turnIndex: DOE_SARAH_AGENT_OPEN_CHART_TURN, frames: DOE_SARAH_AGENT_OPEN_CHART_PRE_INTERLUDE_HOLD },
+  { turnIndex: 5, frames: DOE_SARAH_CONVO_REPLY_HOLD_EXTRA + 36 },
 ] as const;
 /** Full-screen confirmation-code beat before Sarah’s DOB reply — ~7s @ 30fps. */
 export const DOE_SARAH_CONFIRM_CODE_INTERLUDE_FRAMES = 210;
@@ -82,6 +89,11 @@ export const DOE_SARAH_CHART_ACCESS_INTERLUDE_FRAMES = 450;
 export const DOE_SARAH_CHART_ACCESS_FADE_OUT_FRAMES = 28;
 /** Turn index for agent-side-effects — chart interlude plays before this turn. */
 export const DOE_SARAH_CHART_ACCESS_INTERLUDE_BEFORE_TURN = 4;
+/** Pre-visit questionnaire + metformin side-effects card after the side-effects ask — ~9s @ 30fps. */
+export const DOE_SARAH_QUESTIONNAIRE_INTERLUDE_FRAMES = 270;
+export const DOE_SARAH_QUESTIONNAIRE_FADE_OUT_FRAMES = 24;
+/** Turn index for caller-side-effects — questionnaire interlude plays before this turn. */
+export const DOE_SARAH_QUESTIONNAIRE_INTERLUDE_BEFORE_TURN = 5;
 export const DOE_SARAH_CALL_INTERLUDES = [
   {
     beforeTurn: DOE_SARAH_CONFIRM_CODE_INTERLUDE_BEFORE_TURN,
@@ -91,6 +103,11 @@ export const DOE_SARAH_CALL_INTERLUDES = [
     beforeTurn: DOE_SARAH_CHART_ACCESS_INTERLUDE_BEFORE_TURN,
     frames: DOE_SARAH_CHART_ACCESS_INTERLUDE_FRAMES,
     fadeOutFrames: DOE_SARAH_CHART_ACCESS_FADE_OUT_FRAMES,
+  },
+  {
+    beforeTurn: DOE_SARAH_QUESTIONNAIRE_INTERLUDE_BEFORE_TURN,
+    frames: DOE_SARAH_QUESTIONNAIRE_INTERLUDE_FRAMES,
+    fadeOutFrames: DOE_SARAH_QUESTIONNAIRE_FADE_OUT_FRAMES,
   },
 ] as const;
 export const DOE_SARAH_HERO_HOLD_FRAMES = 46;
@@ -103,19 +120,25 @@ export const DOE_SARAH_INCOMING_CALL_AUDIO_TRIM_FRAMES = Math.ceil(
 );
 export const DOE_SARAH_INCOMING_CALL_AUDIO_SRC = "motion/sarah-incoming-call.wav";
 export const DOE_SARAH_INCOMING_CALL_VOLUME = 26;
-export const DOE_SARAH_INTRO_TURN_COUNT = 6;
+export const DOE_SARAH_INTRO_TURN_COUNT = 8;
 export const DOE_SARAH_CONVO_UI_OFFSET = 4;
 
-/** Sarah call ends the intro — opening → Doe → Sarah side-effects reply. */
+/** Sarah call ends the intro — opening → Doe → preferred day/time reply. */
 export const DOE_SARAH_SETTLE_START_FRAMES = DOE_SARAH_HANDOFF_FRAMES + DOE_SARAH_HERO_HOLD_FRAMES;
 export const DOE_SARAH_CONVO_START_FRAMES = DOE_SARAH_SETTLE_START_FRAMES + DOE_SARAH_HEADER_SETTLE_FRAMES;
+/** Per-turn holds after a turn (caller audio + side-effects/prefer-time beats). */
+export const DOE_SARAH_TURN_HOLDS_AFTER = [
+  ...DOE_SARAH_CALLER_TURN_HOLDS,
+  { turnIndex: DOE_SARAH_AGENT_SIDE_EFFECTS_TURN, frames: DOE_SARAH_AGENT_SIDE_EFFECTS_HOLD },
+  { turnIndex: DOE_SARAH_AGENT_PREFER_TIME_TURN, frames: DOE_SARAH_AGENT_PREFER_TIME_HOLD },
+] as const;
 const DOE_SARAH_CONVO_TIMING = buildCallTurnRevealTiming(
   DOE_SARAH_INTRO_TURN_COUNT,
   DOE_SARAH_CONVO_TURN_START,
   DOE_SARAH_CONVO_TURN_STEP,
   DOE_SARAH_CONVO_REPLY_HOLD_EXTRA,
   DOE_SARAH_CALL_INTERLUDES,
-  DOE_SARAH_CALLER_TURN_HOLDS,
+  DOE_SARAH_TURN_HOLDS_AFTER,
   DOE_SARAH_TURN_REPLY_HOLDS,
 );
 export const DOE_SARAH_CALLER_OPEN_AUDIO_FROM =
@@ -143,15 +166,9 @@ export const DOE_SARAH_VOICE_VOLUME = 4.5;
 export const DOE_INTRO_SHARED_AUDIO_TAGS = 8;
 export const DOE_SARAH_CONVO_LAST_TURN_END =
   DOE_SARAH_CONVO_UI_OFFSET +
-  DOE_SARAH_CONVO_TURN_START +
-  (DOE_SARAH_INTRO_TURN_COUNT - 1) * DOE_SARAH_CONVO_TURN_STEP +
-  DOE_SARAH_AGENT_INTAKE_REPLY_HOLD +
-  DOE_SARAH_AGENT_OPEN_CHART_PRE_INTERLUDE_HOLD +
-  DOE_SARAH_CALLER_OPEN_HOLD_EXTRA +
-  DOE_SARAH_CALLER_VERIFY_HOLD_EXTRA +
+  DOE_SARAH_CONVO_TIMING.turnStarts[DOE_SARAH_INTRO_TURN_COUNT - 1]! +
   DOE_SARAH_CONVO_TURN_FADE +
-  DOE_SARAH_CONFIRM_CODE_INTERLUDE_FRAMES +
-  DOE_SARAH_CHART_ACCESS_INTERLUDE_FRAMES;
+  42;
 export const DOE_SARAH_MORE_THAN_VOICE_FRAMES =
   DOE_SARAH_CONVO_START_FRAMES + DOE_SARAH_CONVO_LAST_TURN_END + DOE_SARAH_CONVO_END_HOLD;
 

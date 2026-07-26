@@ -1132,6 +1132,26 @@ html[data-motion4-page] body {
   .motion4-ui-hero--call
   .doehealth-initiatives__call-history.product-call-history-rail__thread
   .product-landing-live-quote--agent-open-chart.product-landing-live-quote--reply
+  .product-landing-live-quote__text,
+.motion4-remotion-root
+  .motion4-ui-hero--call
+  .doehealth-initiatives__call-history.product-call-history-rail__thread
+  .product-landing-live-quote--agent-side-effects.product-landing-live-quote--reply
+  .product-landing-live-quote__text,
+.motion4-remotion-root
+  .motion4-ui-hero--call
+  .doehealth-initiatives__call-history.product-call-history-rail__thread
+  .product-landing-live-quote--caller-side-effects
+  .product-landing-live-quote__text,
+.motion4-remotion-root
+  .motion4-ui-hero--call
+  .doehealth-initiatives__call-history.product-call-history-rail__thread
+  .product-landing-live-quote--agent-prefer-time.product-landing-live-quote--reply
+  .product-landing-live-quote__text,
+.motion4-remotion-root
+  .motion4-ui-hero--call
+  .doehealth-initiatives__call-history.product-call-history-rail__thread
+  .product-landing-live-quote--caller-prefer-time
   .product-landing-live-quote__text {
   font-size: 24px;
   line-height: 1.22;
@@ -1167,14 +1187,14 @@ html[data-motion4-page] body {
   position: relative;
   /*
    * Composition px — preview Player scale must not change relative stage size.
-   * Top inset pulls the stack down so the active reply + speaker sit mid-stage.
+   * Tall enough for two-line replies + speaker name without clipping.
    */
   box-sizing: border-box;
-  min-height: 200px;
-  max-height: 200px;
-  height: 200px;
-  padding-top: 36px;
-  padding-bottom: 10px;
+  min-height: 220px;
+  max-height: 220px;
+  height: 220px;
+  padding-top: 28px;
+  padding-bottom: 14px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -1231,7 +1251,11 @@ html[data-motion4-page] body {
 
 .motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-intake.product-landing-live-quote--reply .product-landing-live-quote__text,
 .motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-verify .product-landing-live-quote__text,
-.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-open-chart.product-landing-live-quote--reply .product-landing-live-quote__text {
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-open-chart.product-landing-live-quote--reply .product-landing-live-quote__text,
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-side-effects.product-landing-live-quote--reply .product-landing-live-quote__text,
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-side-effects .product-landing-live-quote__text,
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-prefer-time.product-landing-live-quote--reply .product-landing-live-quote__text,
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-prefer-time .product-landing-live-quote__text {
   width: 100%;
   max-width: 100%;
   overflow: visible;
@@ -1239,14 +1263,22 @@ html[data-motion4-page] body {
 
 .motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-intake.product-landing-live-quote--reply .product-landing-live-quote__meta,
 .motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-verify .product-landing-live-quote__meta,
-.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-open-chart.product-landing-live-quote--reply .product-landing-live-quote__meta {
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-open-chart.product-landing-live-quote--reply .product-landing-live-quote__meta,
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-side-effects.product-landing-live-quote--reply .product-landing-live-quote__meta,
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-side-effects .product-landing-live-quote__meta,
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-prefer-time.product-landing-live-quote--reply .product-landing-live-quote__meta,
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-prefer-time .product-landing-live-quote__meta {
   width: 100%;
   max-width: 100%;
 }
 
 .motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-intake .product-landing-live-quote__line,
 .motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-verify .product-landing-live-quote__line,
-.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-open-chart .product-landing-live-quote__line {
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-open-chart .product-landing-live-quote__line,
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-side-effects .product-landing-live-quote__line,
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-side-effects .product-landing-live-quote__line,
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-prefer-time .product-landing-live-quote__line,
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-prefer-time .product-landing-live-quote__line {
   /* Keep authored line breaks; allow soft wrap if the column is still too narrow. */
   white-space: normal;
   overflow: visible;
@@ -1257,7 +1289,11 @@ html[data-motion4-page] body {
 
 .motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-intake,
 .motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-verify,
-.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-open-chart {
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-open-chart,
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-side-effects,
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-side-effects,
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-prefer-time,
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-prefer-time {
   overflow: visible;
 }
 
@@ -1343,6 +1379,16 @@ html[data-motion4-page] body {
   opacity: var(--m3-turn-5-o, 0);
 }
 
+.motion3-ui-drive--call-reveal .product-landing-live-convo .product-landing-live-quote:nth-child(7) {
+  transform: translateY(var(--m3-turn-6-y, 0));
+  opacity: var(--m3-turn-6-o, 0);
+}
+
+.motion3-ui-drive--call-reveal .product-landing-live-convo .product-landing-live-quote:nth-child(8) {
+  transform: translateY(var(--m3-turn-7-y, 0));
+  opacity: var(--m3-turn-7-o, 0);
+}
+
 .motion3-ui-drive--call-reveal .product-landing-live-convo .product-landing-live-quote:nth-child(1) .product-landing-live-quote__tag {
   opacity: var(--m3-tag-0-o, 0);
 }
@@ -1365,6 +1411,14 @@ html[data-motion4-page] body {
 
 .motion3-ui-drive--call-reveal .product-landing-live-convo .product-landing-live-quote:nth-child(6) .product-landing-live-quote__tag {
   opacity: var(--m3-tag-5-o, 0);
+}
+
+.motion3-ui-drive--call-reveal .product-landing-live-convo .product-landing-live-quote:nth-child(7) .product-landing-live-quote__tag {
+  opacity: var(--m3-tag-6-o, 0);
+}
+
+.motion3-ui-drive--call-reveal .product-landing-live-convo .product-landing-live-quote:nth-child(8) .product-landing-live-quote__tag {
+  opacity: var(--m3-tag-7-o, 0);
 }
 
 /* Call history — highlight tagged entities (Sarah, Metformin, etc.) */
@@ -1520,7 +1574,8 @@ html[data-motion4-page] body {
 }
 
 .motion4-confirm-interlude::before,
-.motion4-chart-interlude::before {
+.motion4-chart-interlude::before,
+.motion4-questionnaire-interlude::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -2058,6 +2113,149 @@ html[data-motion4-page] body {
 
 .motion4-chart-interlude__spinner {
   display: block;
+}
+
+/* Pre-visit questionnaire — Pulling → Pulled + metformin side-effects card */
+.motion4-questionnaire-interlude {
+  position: absolute;
+  inset: 0;
+  z-index: 13;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: var(--m4-questionnaire-interlude-o, 0);
+  font-family: "DM Sans", system-ui, sans-serif;
+  isolation: isolate;
+}
+
+.motion4-questionnaire-interlude__stage {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 100%;
+}
+
+.motion4-questionnaire-interlude__stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  width: min(92%, 520px);
+}
+
+.motion4-questionnaire-interlude__stack--paired {
+  gap: 28px;
+}
+
+.motion4-questionnaire-interlude__step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: auto;
+  max-width: 92%;
+  font-family: "DM Sans", system-ui, sans-serif;
+  font-size: 36px;
+  font-weight: 400;
+  letter-spacing: 0.015em;
+  line-height: 1.2;
+  color: rgba(242, 232, 218, 0.82);
+  white-space: nowrap;
+  transform-origin: center center;
+  will-change: opacity;
+}
+
+.motion4-questionnaire-interlude__icon {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  transform-origin: center center;
+}
+
+.motion4-questionnaire-interlude__check {
+  color: rgba(212, 165, 116, 0.88);
+}
+
+.motion4-questionnaire-interlude__spinner {
+  display: block;
+}
+
+.motion4-questionnaire-interlude__card {
+  box-sizing: border-box;
+  width: 440px;
+  max-width: 92%;
+  padding: 22px 24px 20px;
+  border: 1px solid rgba(212, 165, 116, 0.22);
+  border-radius: 18px;
+  background: linear-gradient(168deg, rgba(36, 28, 20, 0.96) 0%, rgba(20, 14, 8, 0.98) 100%);
+  box-shadow: 0 24px 48px rgba(10, 6, 2, 0.35);
+  will-change: opacity, transform;
+}
+
+.motion4-questionnaire-interlude__card-head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.motion4-questionnaire-interlude__card-eyebrow {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: rgba(228, 210, 184, 0.55);
+}
+
+.motion4-questionnaire-interlude__card-title {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: rgba(242, 232, 218, 0.92);
+}
+
+.motion4-questionnaire-interlude__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0;
+  list-style: none;
+}
+
+.motion4-questionnaire-interlude__item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border: 1px solid rgba(212, 165, 116, 0.14);
+  border-radius: 12px;
+  background: rgba(14, 10, 7, 0.42);
+}
+
+.motion4-questionnaire-interlude__item-label {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  background: linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.motion4-questionnaire-interlude__item-detail {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1.25;
+  color: rgba(228, 210, 184, 0.52);
 }
 
 /* Title below UI — gold display hierarchy */
@@ -2766,25 +2964,25 @@ html[data-motion4-page] body {
 
 .motion4-remotion-root .motion3-ui-drive--call-reveal .product-landing-live-convo-stage {
   box-sizing: border-box;
-  min-height: 200px;
-  max-height: 200px;
-  height: 200px;
-  padding-top: 36px;
-  padding-bottom: 10px;
+  min-height: 220px;
+  max-height: 220px;
+  height: 220px;
+  padding-top: 28px;
+  padding-bottom: 14px;
   overflow: hidden;
   -webkit-mask-image: linear-gradient(
     to bottom,
-    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.92) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0))))) 0%,
-    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.55) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0))))) 12%,
-    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.12) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0))))) 24%,
+    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.92) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0))))) 0%,
+    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.55) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0))))) 12%,
+    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.12) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0))))) 24%,
     #000 34%,
     #000 100%
   );
   mask-image: linear-gradient(
     to bottom,
-    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.92) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0))))) 0%,
-    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.55) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0))))) 12%,
-    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.12) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0))))) 24%,
+    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.92) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0))))) 0%,
+    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.55) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0))))) 12%,
+    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.12) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0))))) 24%,
     #000 34%,
     #000 100%
   );

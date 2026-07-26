@@ -226,10 +226,10 @@ export function useCallTurnRevealMotion(
     const turnStart = turnStarts[i]!;
     const fadeInEnd = turnStart + fade;
     /*
-     * Composition-px lifts matched to pinned remotion convo stage (200px + top inset):
-     * keep the active reply + speaker name vertically centered in the viewport.
+     * Composition-px lifts matched to pinned remotion convo stage:
+     * keep the active reply + speaker name vertically centered (not too low).
      */
-    const lift = i % 2 === 1 ? 70 : 56;
+    const lift = i % 2 === 1 ? 68 : 54;
 
     if (t >= fadeInEnd) {
       stackLift -= lift;
@@ -255,11 +255,13 @@ export function useCallTurnRevealMotion(
   const interludeOpacityKeys: Record<number, string> = {
     2: "--m4-confirm-interlude-o",
     4: "--m4-chart-interlude-o",
+    5: "--m4-questionnaire-interlude-o",
   };
 
   let interludeBlur = 0;
   styles["--m4-confirm-interlude-o"] = 0;
   styles["--m4-chart-interlude-o"] = 0;
+  styles["--m4-questionnaire-interlude-o"] = 0;
   styles["--m4-interlude-blur"] = 0;
 
   for (const interlude of interludeWindows) {
