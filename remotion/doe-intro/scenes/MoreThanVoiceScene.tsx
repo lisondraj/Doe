@@ -88,8 +88,8 @@ export function MoreThanVoiceScene() {
     },
   );
 
-  /** Incoming hold: true vertical center. Settle: ease to top inset (unchanged). */
-  const heroZoneY = interpolate(headerSettle, [0, 1], [0, 18], {
+  /** Keep Sarah + Answered + convo on vertical center through settle (no top bias). */
+  const heroZoneY = interpolate(headerSettle, [0, 1], [0, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: Easing.bezier(0.33, 0, 0.18, 1),

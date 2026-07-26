@@ -903,10 +903,10 @@ html[data-motion4-page] body {
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
-  justify-content: flex-start;
+  /* Scene flex-centers this card — Sarah + Answered + convo stay mid-frame. */
+  justify-content: center;
   min-height: 0;
-  /* Settle: keep Sarah Westfield below the top edge of the frame. */
-  padding-top: calc(var(--m4-call-settle, 0) * 44px);
+  padding-top: 0;
 }
 
 .motion4-remotion-root .motion4-call-header__hero-zone {
@@ -1000,7 +1000,7 @@ html[data-motion4-page] body {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 0;
+  gap: 0.28em;
   margin-top: calc(8px + (1 - var(--m4-call-settle, 0)) * 6px);
   font-size: calc(20px * (1 + (1 - var(--m4-call-settle, 0)) * 0.12));
   line-height: 1;
@@ -1010,18 +1010,25 @@ html[data-motion4-page] body {
 
 .motion4-remotion-root .motion4-call-header__prefix {
   position: relative;
+  display: inline-grid;
   flex: 0 0 auto;
-  /* Calling from → Answered: shrink slot so the # tracks left without overlap. */
-  width: calc(6.9em - var(--m4-call-morph-subline, var(--m4-call-morph, 0)) * 2.1em);
+  align-items: center;
+  /*
+   * Calling from (~12.4ch) → Answered (~8.8ch). Subline gap separates the #
+   * so Answered never collides with the number.
+   */
+  width: calc(
+    (1 - var(--m4-call-morph-subline, var(--m4-call-morph, 0))) * 12.4ch
+    + var(--m4-call-morph-subline, var(--m4-call-morph, 0)) * 8.8ch
+  );
   height: 1.2em;
   overflow: hidden;
 }
 
 .motion4-remotion-root .motion4-call-header__calling-from,
 .motion4-remotion-root .motion4-call-header__answered {
-  position: absolute;
-  left: 0;
-  top: 50%;
+  grid-area: 1 / 1;
+  justify-self: start;
   white-space: nowrap;
   line-height: 1;
 }
@@ -1030,14 +1037,12 @@ html[data-motion4-page] body {
   font-weight: 500;
   color: rgba(242, 232, 218, 0.58);
   opacity: calc(1 - var(--m4-call-morph-subline, var(--m4-call-morph, 0)));
-  transform: translateY(-50%);
 }
 
 .motion4-remotion-root .motion4-call-header__answered {
   font-weight: 600;
   color: rgba(232, 192, 142, 0.82);
   opacity: var(--m4-call-morph-subline, var(--m4-call-morph, 0));
-  transform: translateY(-50%);
 }
 
 .motion4-ui-hero--call .doehealth-initiatives--bare .doehealth-initiatives__called-number:not(.motion4-call-header__phone) {
@@ -1054,7 +1059,6 @@ html[data-motion4-page] body {
   letter-spacing: 0.04em;
   line-height: 1;
   color: rgba(242, 232, 218, 0.82);
-  /* Prefix width animation positions the # — no translateX overlap. */
   transform: none;
 }
 

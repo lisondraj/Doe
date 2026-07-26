@@ -168,8 +168,8 @@ export function DoeHealthCallHistoryDiagram({
               </div>
               <p className={`doehealth-initiatives__called-line motion4-call-header__subline ${suisseIntl.className}`}>
                 <span className="motion4-call-header__prefix">
-                  <span className={`motion4-call-header__calling-from ${suisseIntl.className}`}>Calling from </span>
-                  <span className={`motion4-call-header__answered ${suisseIntl.className}`}>Answered </span>
+                  <span className={`motion4-call-header__calling-from ${suisseIntl.className}`}>Calling from</span>
+                  <span className={`motion4-call-header__answered ${suisseIntl.className}`}>Answered</span>
                 </span>
                 <span className={`doehealth-initiatives__called-number motion4-call-header__phone ${dmSans.className}`}>{phone}</span>
               </p>
