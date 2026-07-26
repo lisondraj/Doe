@@ -2172,7 +2172,7 @@ html[data-motion4-page] body {
   display: block;
 }
 
-/* Pre-visit questionnaire — Accessed chart → boxes exit → pull rises → card */
+/* Pre-visit questionnaire — chart UI → Pulling under strip → Pulled rises + card */
 .motion4-questionnaire-interlude {
   position: absolute;
   inset: 0;
@@ -2201,22 +2201,13 @@ html[data-motion4-page] body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0;
+  gap: 18px;
   width: 100%;
   max-width: 100%;
 }
 
 .motion4-questionnaire-interlude__stack--paired {
-  gap: 28px;
-}
-
-.motion4-questionnaire-interlude__steps {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  width: min(92%, 720px);
+  gap: 18px;
 }
 
 .motion4-questionnaire-interlude__step {
@@ -2225,7 +2216,7 @@ html[data-motion4-page] body {
   justify-content: center;
   gap: 10px;
   width: auto;
-  max-width: 100%;
+  max-width: min(92%, 720px);
   font-family: "DM Sans", system-ui, sans-serif;
   font-size: 36px;
   font-weight: 400;
@@ -2234,20 +2225,21 @@ html[data-motion4-page] body {
   color: rgba(242, 232, 218, 0.82);
   white-space: nowrap;
   transform-origin: center center;
-  will-change: opacity, transform;
+  will-change: opacity;
 }
 
 .motion4-questionnaire-interlude__step--pull {
-  will-change: opacity, transform;
+  will-change: opacity;
 }
 
-.motion4-questionnaire-interlude__content {
+/* Chart strip slot — collapses on Pulled so the pull line rises under Accessed. */
+.motion4-questionnaire-interlude__strip-slot {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;
   width: 100%;
-  min-height: 300px;
+  overflow: hidden;
+  will-change: opacity, transform, max-height;
 }
 
 .motion4-questionnaire-interlude__icon {

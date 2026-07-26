@@ -20,14 +20,16 @@ import { IntroSarahChartStripSnapshot } from "./IntroChartAccessInterlude";
 const CONVO_UI_OFFSET = DOE_SARAH_CONVO_START_FRAMES + DOE_SARAH_CONVO_UI_OFFSET;
 
 const FADE_IN_END = 12;
-/** Chart boxes hold, then exit while the pull line rises underneath Accessed. */
-const STRIP_HOLD_END = 34;
-const STRIP_EXIT_END = 62;
-const PULL_STEP_START = 38;
-const PULL_STEP_REVEAL = 26;
+/** Chart strip visible; Pulling loads underneath it. */
+const PULL_UNDER_START = 18;
+const PULL_UNDER_REVEAL = 22;
+/** Hold Pulling under the chart UI, then mark Pulled and rise. */
 const PULL_DONE = 78;
-const CARD_APPEAR = 88;
+const STRIP_EXIT_START = 78;
+const STRIP_EXIT_END = 108;
+const CARD_APPEAR = 96;
 const CARD_REVEAL = 28;
+const STRIP_HEIGHT_PX = 300;
 const REVEAL_EASE = Easing.bezier(0.33, 0, 0.18, 1);
 
 const METFORMIN_SIDE_EFFECTS = [
@@ -66,7 +68,10 @@ function InterludeStepIcon({ state, spinDeg }: { state: "spinner" | "check"; spi
   );
 }
 
-/** Accessed chart → boxes exit → pull line rises → side-effects card in place. */
+/**
+ * Accessed chart + boxes → Pulling under the strip → Pulled rises as boxes exit
+ * and the side-effects card lands in place → close.
+ */
 export function IntroQuestionnaireInterlude() {
   const frame = useCurrentFrame();
   const t = frame - CONVO_UI_OFFSET;
@@ -96,25 +101,9 @@ export function IntroQuestionnaireInterlude() {
     easing: Easing.out(Easing.cubic),
   });
 
-  const stripExit =
-    local <= STRIP_HOLD_END
-      ? 0
-      : interpolate(local, [STRIP_HOLD_END, STRIP_EXIT_END], [0, 1], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-          easing: REVEAL_EASE,
-        });
-
-  const stripOpacity = (1 - stripExit) * stageOpacity;
-  const stripY = interpolate(stripExit, [0, 1], [0, 36], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: REVEAL_EASE,
-  });
-
-  const pullProgress =
-    local >= PULL_STEP_START
-      ? interpolate(local, [PULL_STEP_START, PULL_STEP_START + PULL_STEP_REVEAL], [0, 1], {
+  const pullUnderProgress =
+    local >= PULL_UNDER_START
+      ? interpolate(local, [PULL_UNDER_START, PULL_UNDER_START + PULL_UNDER_REVEAL], [0, 1], {
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp",
           easing: REVEAL_EASE,
@@ -122,13 +111,33 @@ export function IntroQuestionnaireInterlude() {
       : 0;
 
   const pullOpacity =
-    interpolate(pullProgress, [0, 0.28, 1], [0, 0.9, 1], {
+    interpolate(pullUnderProgress, [0, 0.3, 1], [0, 0.9, 1], {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
       easing: REVEAL_EASE,
     }) * stageOpacity;
 
-  const pullY = interpolate(pullProgress, [0, 1], [72, 0], {
+  const stripExit =
+    local <= STRIP_EXIT_START
+      ? 0
+      : interpolate(local, [STRIP_EXIT_START, STRIP_EXIT_END], [0, 1], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+          easing: REVEAL_EASE,
+        });
+
+  const stripOpacity = (1 - stripExit) * stageOpacity;
+  const stripY = interpolate(stripExit, [0, 1], [0, 28], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: REVEAL_EASE,
+  });
+  const stripMaxHeight = interpolate(stripExit, [0, 1], [STRIP_HEIGHT_PX, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: REVEAL_EASE,
+  });
+  const stripGap = interpolate(stripExit, [0, 1], [28, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: REVEAL_EASE,
@@ -152,7 +161,7 @@ export function IntroQuestionnaireInterlude() {
         }) * stageOpacity
       : 0;
 
-  const cardY = interpolate(cardProgress, [0, 1], [48, 0], {
+  const cardY = interpolate(cardProgress, [0, 1], [36, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: REVEAL_EASE,
@@ -162,7 +171,7 @@ export function IntroQuestionnaireInterlude() {
   const pullIcon: "spinner" | "check" = pullDone ? "check" : "spinner";
   const pullVisible = pullOpacity > 0.01;
   const cardVisible = local >= CARD_APPEAR && cardOpacity > 0.01;
-  const stripVisible = stripOpacity > 0.01;
+  const stripVisible = stripOpacity > 0.01 || stripMaxHeight > 1;
 
   return (
     <div className={`motion4-questionnaire-interlude ${dmSans.className}`} aria-hidden>
@@ -172,55 +181,59 @@ export function IntroQuestionnaireInterlude() {
             stripVisible || cardVisible || pullVisible ? " motion4-questionnaire-interlude__stack--paired" : ""
           }`}
         >
-          <div className="motion4-questionnaire-interlude__steps">
-            <div className="motion4-questionnaire-interlude__step" style={{ opacity: stageOpacity }}>
-              <span className="motion4-questionnaire-interlude__label">Accessed Sarah&apos;s chart</span>
-              <InterludeStepIcon state="check" spinDeg={0} />
+          <div className="motion4-questionnaire-interlude__step" style={{ opacity: stageOpacity }}>
+            <span className="motion4-questionnaire-interlude__label">Accessed Sarah&apos;s chart</span>
+            <InterludeStepIcon state="check" spinDeg={0} />
+          </div>
+
+          {/* Chart UI — Pulling sits underneath; collapses so Pulled rises into place. */}
+          {stripVisible ? (
+            <div
+              className="motion4-questionnaire-interlude__strip-slot"
+              style={{
+                opacity: stripOpacity,
+                maxHeight: stripMaxHeight,
+                marginBottom: stripGap,
+                transform: `translateY(${stripY}px)`,
+              }}
+            >
+              <IntroSarahChartStripSnapshot opacity={1} translateY={0} />
             </div>
+          ) : null}
 
-            {pullVisible ? (
-              <div
-                className="motion4-questionnaire-interlude__step motion4-questionnaire-interlude__step--pull"
-                style={{
-                  opacity: pullOpacity,
-                  transform: `translateY(${pullY}px)`,
-                }}
-              >
-                <span className="motion4-questionnaire-interlude__label">{pullLabel}</span>
-                <InterludeStepIcon state={pullIcon} spinDeg={spinDeg} />
+          {pullVisible ? (
+            <div
+              className="motion4-questionnaire-interlude__step motion4-questionnaire-interlude__step--pull"
+              style={{ opacity: pullOpacity }}
+            >
+              <span className="motion4-questionnaire-interlude__label">{pullLabel}</span>
+              <InterludeStepIcon state={pullIcon} spinDeg={spinDeg} />
+            </div>
+          ) : null}
+
+          {cardVisible ? (
+            <div
+              className="motion4-questionnaire-interlude__card"
+              style={{
+                opacity: cardOpacity,
+                transform: `translateY(${cardY}px)`,
+              }}
+            >
+              <div className="motion4-questionnaire-interlude__card-head">
+                <p className={`motion4-questionnaire-interlude__card-title m-0 ${dmSans.className}`}>
+                  Common side effects
+                </p>
               </div>
-            ) : null}
-          </div>
-
-          <div className="motion4-questionnaire-interlude__content">
-            {stripVisible ? (
-              <IntroSarahChartStripSnapshot opacity={stripOpacity} translateY={stripY} />
-            ) : null}
-
-            {cardVisible ? (
-              <div
-                className="motion4-questionnaire-interlude__card"
-                style={{
-                  opacity: cardOpacity,
-                  transform: `translateY(${cardY}px)`,
-                }}
-              >
-                <div className="motion4-questionnaire-interlude__card-head">
-                  <p className={`motion4-questionnaire-interlude__card-title m-0 ${dmSans.className}`}>
-                    Common side effects
-                  </p>
-                </div>
-                <ul className={`motion4-questionnaire-interlude__list m-0 ${dmSans.className}`}>
-                  {METFORMIN_SIDE_EFFECTS.map((item) => (
-                    <li key={item.label} className="motion4-questionnaire-interlude__item">
-                      <span className="motion4-questionnaire-interlude__item-label">{item.label}</span>
-                      <span className="motion4-questionnaire-interlude__item-detail">{item.detail}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ) : null}
-          </div>
+              <ul className={`motion4-questionnaire-interlude__list m-0 ${dmSans.className}`}>
+                {METFORMIN_SIDE_EFFECTS.map((item) => (
+                  <li key={item.label} className="motion4-questionnaire-interlude__item">
+                    <span className="motion4-questionnaire-interlude__item-label">{item.label}</span>
+                    <span className="motion4-questionnaire-interlude__item-detail">{item.detail}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
         </div>
       </div>
     </div>

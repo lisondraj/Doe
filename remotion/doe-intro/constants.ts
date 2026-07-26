@@ -94,8 +94,8 @@ export const DOE_SARAH_CHART_ACCESS_INTERLUDE_FRAMES = 510;
 export const DOE_SARAH_CHART_ACCESS_FADE_OUT_FRAMES = 28;
 /** Turn index for agent-side-effects — chart interlude plays before this turn. */
 export const DOE_SARAH_CHART_ACCESS_INTERLUDE_BEFORE_TURN = 4;
-/** Accessed chart → boxes exit → pull rises → side-effects card — ~12s @ 30fps. */
-export const DOE_SARAH_QUESTIONNAIRE_INTERLUDE_FRAMES = 360;
+/** Chart UI → Pulling under strip → Pulled rises + side-effects card — ~12.5s @ 30fps. */
+export const DOE_SARAH_QUESTIONNAIRE_INTERLUDE_FRAMES = 375;
 export const DOE_SARAH_QUESTIONNAIRE_FADE_OUT_FRAMES = 26;
 /** Turn index for caller-side-effects — questionnaire interlude plays before this turn. */
 export const DOE_SARAH_QUESTIONNAIRE_INTERLUDE_BEFORE_TURN = 5;
