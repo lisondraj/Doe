@@ -2392,21 +2392,23 @@ html[data-motion4-page] body {
   .product-brown-mock.product-brown-call-history-mode
   .product-call-history-panel__visits-item {
   display: flex;
-  align-items: stretch;
-  gap: calc(10px * var(--m4-cs, 1));
+  align-items: center;
+  gap: calc(14px * var(--m4-cs, 1));
   min-height: 0;
   flex: 1 1 0;
 }
 
 .motion4-chart-interlude__tile--visits .product-call-history-panel__visits-date {
-  flex: 0 0 calc(3.35rem * var(--m4-cs, 1));
-  width: calc(3.35rem * var(--m4-cs, 1));
-  align-self: stretch;
+  flex: 0 0 calc(4.65rem * var(--m4-cs, 1));
+  width: calc(4.65rem * var(--m4-cs, 1));
+  min-height: calc(4.55rem * var(--m4-cs, 1));
+  align-self: center;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   border: 1px solid rgba(212, 165, 116, 0.22);
-  border-radius: calc(0.44rem * var(--m4-cs, 1));
+  border-radius: calc(0.5rem * var(--m4-cs, 1));
   background: rgba(14, 10, 7, 0.52);
   overflow: hidden;
 }
@@ -2416,13 +2418,44 @@ html[data-motion4-page] body {
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: calc(4px * var(--m4-cs, 1)) calc(3px * var(--m4-cs, 1));
+  flex-shrink: 0;
+  padding: calc(7px * var(--m4-cs, 1)) calc(6px * var(--m4-cs, 1)) calc(6px * var(--m4-cs, 1));
   border-bottom: 1px solid rgba(212, 165, 116, 0.14);
   background: linear-gradient(180deg, rgba(212, 165, 116, 0.2) 0%, rgba(212, 165, 116, 0.1) 100%);
   color: rgba(232, 192, 142, 0.78);
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.motion4-chart-interlude__tile--visits .product-call-history-panel__visits-date-day {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  padding: calc(8px * var(--m4-cs, 1)) calc(4px * var(--m4-cs, 1)) calc(6px * var(--m4-cs, 1));
+  background: linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
   line-height: 1;
+}
+
+.motion4-chart-interlude__tile--visits .product-call-history-panel__visits-date-weekday {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  flex-shrink: 0;
+  padding: calc(4px * var(--m4-cs, 1)) calc(4px * var(--m4-cs, 1)) calc(8px * var(--m4-cs, 1));
+  color: rgba(228, 210, 184, 0.42);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  line-height: 1.1;
   text-transform: uppercase;
 }
 
@@ -2441,13 +2474,13 @@ html[data-motion4-page] body {
 .motion4-chart-interlude
   .product-brown-mock.product-brown-call-history-mode
   .product-call-history-panel__visits-date-weekday {
-  font-size: calc(11px * var(--m4-cs, 1));
+  font-size: calc(12px * var(--m4-cs, 1));
 }
 
 .motion4-chart-interlude
   .product-brown-mock.product-brown-call-history-mode
   .product-call-history-panel__visits-date-day {
-  font-size: calc(20px * var(--m4-cs, 1));
+  font-size: calc(24px * var(--m4-cs, 1));
 }
 
 .motion4-chart-interlude
