@@ -99,6 +99,42 @@ export function DoeHealthIntroVideoBand() {
     setIsExpanded((value) => !value);
   }, []);
 
+  const onFullscreenClick = useCallback(() => {
+    const player = playerRef.current;
+    const supportsNative =
+      typeof document !== "undefined" &&
+      Boolean(
+        document.fullscreenEnabled ||
+          (document as Document & { webkitFullscreenEnabled?: boolean }).webkitFullscreenEnabled,
+      );
+
+    if (supportsNative && player) {
+      if (player.isFullscreen()) {
+        player.exitFullscreen();
+      } else {
+        player.requestFullscreen();
+      }
+      return;
+    }
+
+    toggleExpanded();
+  }, [toggleExpanded]);
+
+  const renderCustomControls = useCallback(
+    () => (
+      <button
+        type="button"
+        className="doehealth-intro-video__fullscreen-btn"
+        aria-label={isExpanded ? "Exit fullscreen" : "Enter fullscreen"}
+        title={isExpanded ? "Exit fullscreen" : "Enter fullscreen"}
+        onClick={onFullscreenClick}
+      >
+        <DoeHealthIntroFullscreenIcon expanded={isExpanded} />
+      </button>
+    ),
+    [isExpanded, onFullscreenClick],
+  );
+
   useEffect(() => {
     const player = playerRef.current;
     if (!player) {
@@ -169,22 +205,14 @@ export function DoeHealthIntroVideoBand() {
                     controls
                     showVolumeControls
                     hideControlsWhenPointerDoesntMove={false}
-                    allowFullscreen
+                    allowFullscreen={false}
                     doubleClickToFullscreen={false}
                     overflowVisible
+                    renderCustomControls={renderCustomControls}
                     loop
                     volumePersistenceKey="doehealth-intro-video-volume"
                     acknowledgeRemotionLicense
                   />
-                  <button
-                    type="button"
-                    className="doehealth-intro-video__fullscreen-btn"
-                    aria-label={isExpanded ? "Exit fullscreen" : "Enter fullscreen"}
-                    title={isExpanded ? "Exit fullscreen" : "Enter fullscreen"}
-                    onClick={toggleExpanded}
-                  >
-                    <DoeHealthIntroFullscreenIcon expanded={isExpanded} />
-                  </button>
                 </div>
               </div>
             </div>

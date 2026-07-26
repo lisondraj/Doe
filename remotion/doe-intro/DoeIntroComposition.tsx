@@ -28,7 +28,7 @@ export {
 };
 
 /** Doe intro — opening, logo, Sarah call, shader outro. */
-export function DoeIntroComposition(_props: { embedPreview?: boolean } = {}) {
+export function DoeIntroComposition({ embedPreview = false }: { embedPreview?: boolean } = {}) {
   const s = DOE_INTRO_SCENES;
 
   return (
@@ -51,7 +51,7 @@ export function DoeIntroComposition(_props: { embedPreview?: boolean } = {}) {
         <MoreThanVoiceScene />
       </Sequence>
       <Sequence from={s.outroShader.from} durationInFrames={s.outroShader.duration} premountFor={60}>
-        <OutroDoeShaderScene />
+        <OutroDoeShaderScene embedPreview={embedPreview} />
       </Sequence>
     </AbsoluteFill>
   );

@@ -20,7 +20,7 @@ const OUTRO_DOE_CREAM = "#f5e6d0";
 const URL_SWITCH_FRAME = DOE_OUTRO_SHADER_HANDOFF_FRAMES + DOE_OUTRO_DOE_HOLD_FRAMES;
 
 /** Final outro — shader, Doe hold, then doehealth.care. */
-export function OutroDoeShaderScene() {
+export function OutroDoeShaderScene({ embedPreview = false }: { embedPreview?: boolean } = {}) {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const showUrl = frame >= URL_SWITCH_FRAME;
@@ -88,7 +88,7 @@ export function OutroDoeShaderScene() {
           transform: `scale(${shaderScale})`,
         }}
       >
-        <IntroDesignersHeroShader />
+        <IntroDesignersHeroShader embedPreview={embedPreview} />
       </div>
       <div className="motion4-intro-doe motion4-outro-doe">
         <div className="motion4-outro-doe__stack">
