@@ -222,8 +222,11 @@ export function useCallTurnRevealMotion(
   for (let i = 1; i < turnCount; i++) {
     const turnStart = turnStarts[i]!;
     const fadeInEnd = turnStart + fade;
-    /* Larger reply lifts center the highlighted agent turn in the shorter convo viewport. */
-    const lift = i % 2 === 1 ? 76 : 50;
+    /*
+     * Composition-px lifts matched to pinned remotion convo type/stage (172px):
+     * keep the active reply + speaker name vertically centered in the viewport.
+     */
+    const lift = i % 2 === 1 ? 64 : 54;
 
     if (t >= fadeInEnd) {
       stackLift -= lift;

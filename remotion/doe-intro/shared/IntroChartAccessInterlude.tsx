@@ -43,7 +43,8 @@ const STRIP_REVEAL = 40;
 const SCROLL_START = 136;
 const FADE_OUT_PAD = 18;
 const CHART_BLUR_MAX = 16;
-const TILE_PLOT_HEIGHT = "9.25rem";
+/** Composition pixels — preview Player scale must not change relative tile size. */
+const TILE_PLOT_HEIGHT = "148px";
 const TILE_GAP_PX = 18;
 const VIEWPORT_INSET_PX = 72;
 const REVEAL_EASE = Easing.bezier(0.33, 0, 0.18, 1);

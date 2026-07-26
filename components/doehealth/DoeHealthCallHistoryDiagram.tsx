@@ -71,6 +71,7 @@ export function DoeHealthCallHistoryDiagram({
             className="product-call-history-rail__thread doehealth-initiatives__call-history"
             showOutcome={false}
             showActions={false}
+            showAgentSteps={false}
             showChartProfile={false}
             turns={DOEHEALTH_CALL_HISTORY_INTRO_TURNS}
           />
