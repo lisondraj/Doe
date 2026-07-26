@@ -21,11 +21,12 @@ const CONVO_UI_OFFSET = DOE_SARAH_CONVO_START_FRAMES + DOE_SARAH_CONVO_UI_OFFSET
 
 const PULL_UNDER_START = 0;
 const PULL_UNDER_REVEAL = 18;
-/** Hold Pulling under the chart UI, then mark Pulled and rise. */
-const PULL_DONE = 78;
-const STRIP_EXIT_START = 78;
-const STRIP_EXIT_END = 108;
-const CARD_APPEAR = 96;
+/** Hold Pulling spinner before Pulled + strip collapse. */
+const PULL_DONE = 132;
+const STRIP_EXIT_START = 132;
+const STRIP_EXIT_END = 168;
+/** Side-effects card removed — reply lands in convo after interlude closes. */
+const CARD_APPEAR = Number.POSITIVE_INFINITY;
 const CARD_REVEAL = 28;
 const STRIP_HEIGHT_PX = CHART_STRIP_TILE_HEIGHT_PX;
 const REVEAL_EASE = Easing.bezier(0.33, 0, 0.18, 1);
@@ -67,8 +68,8 @@ function InterludeStepIcon({ state, spinDeg }: { state: "spinner" | "check"; spi
 }
 
 /**
- * Accessed chart + boxes → Pulling under the strip → Pulled rises as boxes exit
- * and the side-effects card lands in place → close.
+ * Accessed chart + boxes → Pulling under the strip → Pulled rises → close,
+ * then caller side-effects reply appears in the convo thread.
  */
 export function IntroQuestionnaireInterlude() {
   const frame = useCurrentFrame();
