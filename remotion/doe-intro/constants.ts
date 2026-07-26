@@ -125,7 +125,8 @@ export const DOE_SARAH_CALL_INTERLUDES = [
     fadeOutFrames: DOE_SARAH_BOOKING_FADE_OUT_FRAMES,
   },
 ] as const;
-export const DOE_SARAH_HERO_HOLD_FRAMES = 46;
+/** Incoming “Sarah Westfield / Calling from” hold — ~3.5s @ 30fps. */
+export const DOE_SARAH_HERO_HOLD_FRAMES = 106;
 export const DOE_SARAH_HEADER_SETTLE_FRAMES = 34;
 /** Incoming call SFX — “Sarah Westfield / Calling from” when handoff completes. */
 export const DOE_SARAH_CALL_HEADER_APPEAR_FRAME = DOE_SARAH_HANDOFF_FRAMES;

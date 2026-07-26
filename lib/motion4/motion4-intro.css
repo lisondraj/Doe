@@ -945,7 +945,8 @@ html[data-motion4-page] body {
 
 .motion4-remotion-root .motion4-call-header__shell {
   transform: scale(calc(1 + (1 - var(--m4-call-settle, 0)) * 0.28));
-  transform-origin: top center;
+  /* Hero: scale from center so Calling from sits mid-frame; settle: top origin. */
+  transform-origin: center calc((1 - var(--m4-call-settle, 0)) * 50%);
   width: 100%;
   overflow: visible;
 }
