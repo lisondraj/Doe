@@ -905,6 +905,8 @@ html[data-motion4-page] body {
   flex: 1 1 auto;
   justify-content: flex-start;
   min-height: 0;
+  /* Settle: keep Sarah Westfield below the top edge of the frame. */
+  padding-top: calc(var(--m4-call-settle, 0) * 44px);
 }
 
 .motion4-remotion-root .motion4-call-header__hero-zone {
@@ -1120,6 +1122,16 @@ html[data-motion4-page] body {
   .motion4-ui-hero--call
   .doehealth-initiatives__call-history.product-call-history-rail__thread
   .product-landing-live-quote--agent-intake.product-landing-live-quote--reply
+  .product-landing-live-quote__text,
+.motion4-remotion-root
+  .motion4-ui-hero--call
+  .doehealth-initiatives__call-history.product-call-history-rail__thread
+  .product-landing-live-quote--caller-verify
+  .product-landing-live-quote__text,
+.motion4-remotion-root
+  .motion4-ui-hero--call
+  .doehealth-initiatives__call-history.product-call-history-rail__thread
+  .product-landing-live-quote--agent-open-chart.product-landing-live-quote--reply
   .product-landing-live-quote__text {
   font-size: 24px;
   line-height: 1.22;
@@ -1217,18 +1229,24 @@ html[data-motion4-page] body {
   max-width: min(96%, 448px);
 }
 
-.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-intake.product-landing-live-quote--reply .product-landing-live-quote__text {
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-intake.product-landing-live-quote--reply .product-landing-live-quote__text,
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-verify .product-landing-live-quote__text,
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-open-chart.product-landing-live-quote--reply .product-landing-live-quote__text {
   width: 100%;
   max-width: 100%;
   overflow: visible;
 }
 
-.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-intake.product-landing-live-quote--reply .product-landing-live-quote__meta {
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-intake.product-landing-live-quote--reply .product-landing-live-quote__meta,
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-verify .product-landing-live-quote__meta,
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-open-chart.product-landing-live-quote--reply .product-landing-live-quote__meta {
   width: 100%;
   max-width: 100%;
 }
 
-.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-intake .product-landing-live-quote__line {
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-intake .product-landing-live-quote__line,
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-verify .product-landing-live-quote__line,
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-open-chart .product-landing-live-quote__line {
   /* Keep authored line breaks; allow soft wrap if the column is still too narrow. */
   white-space: normal;
   overflow: visible;
@@ -1237,7 +1255,9 @@ html[data-motion4-page] body {
   text-overflow: clip;
 }
 
-.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-intake {
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-intake,
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-verify,
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-open-chart {
   overflow: visible;
 }
 

@@ -86,8 +86,8 @@ export function MoreThanVoiceScene() {
     },
   );
 
-  /** Incoming hold: nudge to viewport center. Settle: release as zone collapses to top. */
-  const heroZoneY = interpolate(headerSettle, [0, 1], [96, 0], {
+  /** Incoming hold: nudge to viewport center. Settle: ease down, keep a little top inset. */
+  const heroZoneY = interpolate(headerSettle, [0, 1], [96, 18], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: Easing.bezier(0.33, 0, 0.18, 1),

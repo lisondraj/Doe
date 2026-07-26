@@ -340,8 +340,8 @@ export const PRODUCT2_LANDING_LIVE_CONVO = [
     callDuration: "0m22s",
     callDurationIso: "PT0M22S",
     lines: [
-      { before: "Sure, my date of birth is ", tag: "March 14, 1988", after: " and" },
-      { before: "the code is ", tag: "482931" },
+      { before: "Sure, my date of birth is ", tag: "March 14, 1988" },
+      { before: "and the code is ", tag: "482931" },
     ],
   },
   {
@@ -350,7 +350,7 @@ export const PRODUCT2_LANDING_LIVE_CONVO = [
     caller: "Doe Agent",
     callDuration: "0m24s",
     callDurationIso: "PT0M24S",
-    lines: ["Thank you, let me open your chart"],
+    lines: ["Thank you, let me open", "your chart"],
   },
   {
     id: "agent-verified",
