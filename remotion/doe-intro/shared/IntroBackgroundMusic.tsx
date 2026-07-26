@@ -3,6 +3,7 @@
 import { Audio, interpolate, staticFile, useCurrentFrame } from "remotion";
 
 import {
+  DOE_INTRO_BG_MUSIC_GAIN,
   DOE_INTRO_BG_MUSIC_SRC,
   DOE_INTRO_DURATION_FRAMES,
   DOE_INTRO_MUSIC_DUCK_FADE_FRAMES,
@@ -28,7 +29,7 @@ export function IntroBackgroundMusic() {
     <Audio
       src={staticFile(DOE_INTRO_BG_MUSIC_SRC)}
       trimAfter={DOE_INTRO_DURATION_FRAMES}
-      volume={volume}
+      volume={volume * DOE_INTRO_BG_MUSIC_GAIN}
     />
   );
 }
