@@ -1707,6 +1707,11 @@ html[data-motion4-page] body {
   gap: 10px;
 }
 
+.motion4-chart-interlude__stack--trio {
+  gap: 18px;
+  justify-content: center;
+}
+
 .motion4-chart-interlude__strip-slot {
   display: flex;
   flex-direction: column;
@@ -1730,7 +1735,7 @@ html[data-motion4-page] body {
   background: linear-gradient(168deg, rgba(36, 28, 20, 0.96) 0%, rgba(20, 14, 8, 0.98) 100%);
   box-shadow: 0 24px 48px rgba(10, 6, 2, 0.35);
   will-change: opacity, transform;
-  transform-origin: center top;
+  transform-origin: center center;
 }
 
 .motion4-chart-interlude__card--side-effects {
@@ -1742,6 +1747,7 @@ html[data-motion4-page] body {
   box-shadow:
     0 32px 64px rgba(10, 6, 2, 0.42),
     inset 0 1px 0 rgba(242, 232, 218, 0.06);
+  transform-origin: center center;
 }
 
 .motion4-chart-interlude__card-head {
@@ -1752,13 +1758,13 @@ html[data-motion4-page] body {
 }
 
 .motion4-chart-interlude__card--side-effects .motion4-chart-interlude__card-head {
-  flex-direction: row;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 24px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 8px;
   margin-bottom: 22px;
-  padding-bottom: 18px;
-  border-bottom: 1px solid rgba(212, 165, 116, 0.16);
+  padding-bottom: 0;
+  border-bottom: none;
 }
 
 .motion4-chart-interlude__card-kicker {
@@ -1779,18 +1785,31 @@ html[data-motion4-page] body {
 }
 
 .motion4-chart-interlude__card--side-effects .motion4-chart-interlude__card-title {
-  flex-shrink: 0;
-  font-size: 42px;
-  font-weight: 500;
-  letter-spacing: -0.03em;
-  line-height: 1;
-  color: rgba(242, 232, 218, 0.96);
+  font-size: 38px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  background: linear-gradient(180deg, #f0d4a8 0%, #d4a574 55%, rgba(212, 165, 116, 0.82) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.motion4-chart-interlude__card-subtitle {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  background: linear-gradient(180deg, rgba(240, 212, 168, 0.92) 0%, rgba(212, 165, 116, 0.78) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
 }
 
 .motion4-chart-interlude__effect-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px 14px;
   padding: 0;
   list-style: none;
 }
@@ -1798,74 +1817,25 @@ html[data-motion4-page] body {
 .motion4-chart-interlude__effect {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  min-height: 92px;
-  padding: 18px 20px 16px;
+  align-items: center;
+  justify-content: center;
+  min-height: 72px;
+  padding: 14px 16px;
   border: 1px solid rgba(212, 165, 116, 0.18);
-  border-radius: 16px;
+  border-radius: 14px;
   background: linear-gradient(155deg, rgba(18, 12, 8, 0.72) 0%, rgba(10, 7, 4, 0.88) 100%);
 }
 
-.motion4-chart-interlude__effect-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
 .motion4-chart-interlude__effect-label {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 600;
-  letter-spacing: -0.025em;
-  line-height: 1.1;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  text-align: center;
   background: linear-gradient(180deg, #f0d4a8 0%, #d4a574 55%, rgba(212, 165, 116, 0.78) 100%);
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
-}
-
-.motion4-chart-interlude__effect-badge {
-  flex-shrink: 0;
-  padding: 5px 11px;
-  border-radius: 999px;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  line-height: 1;
-  text-transform: uppercase;
-  border: 1px solid transparent;
-}
-
-.motion4-chart-interlude__effect-badge--mild {
-  color: rgba(196, 220, 180, 0.88);
-  background: rgba(72, 96, 58, 0.32);
-  border-color: rgba(140, 176, 120, 0.28);
-}
-
-.motion4-chart-interlude__effect-badge--common {
-  color: rgba(232, 192, 142, 0.92);
-  background: rgba(120, 88, 48, 0.36);
-  border-color: rgba(212, 165, 116, 0.32);
-}
-
-.motion4-chart-interlude__effect-badge--monitor {
-  color: rgba(240, 196, 148, 0.94);
-  background: rgba(140, 72, 40, 0.38);
-  border-color: rgba(220, 140, 80, 0.34);
-}
-
-.motion4-chart-interlude__effect-badge--longterm {
-  color: rgba(184, 196, 228, 0.86);
-  background: rgba(56, 68, 104, 0.34);
-  border-color: rgba(120, 140, 196, 0.28);
-}
-
-.motion4-chart-interlude__effect-detail {
-  font-size: 17px;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  line-height: 1.25;
-  color: rgba(228, 210, 184, 0.58);
 }
 
 .motion4-chart-interlude__list {

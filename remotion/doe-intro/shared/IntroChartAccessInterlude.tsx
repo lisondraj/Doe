@@ -72,11 +72,18 @@ const TILE_STAGGER = 0.055;
 const REVEAL_EASE = Easing.bezier(0.33, 0, 0.18, 1);
 const SCROLL_EASE = Easing.bezier(0.16, 0.12, 0.22, 1);
 
+const METFORMIN_DOSE = "Metformin XR 500mg";
+
 const METFORMIN_SIDE_EFFECTS = [
-  { label: "Nausea", severity: "Mild", severityTone: "mild" as const, detail: "After morning dose" },
-  { label: "Stomach upset", severity: "Common", severityTone: "common" as const, detail: "Take with food" },
-  { label: "Diarrhea", severity: "Monitor", severityTone: "monitor" as const, detail: "Log if worsens" },
-  { label: "Low B12 risk", severity: "Long-term", severityTone: "longterm" as const, detail: "Annual check" },
+  "Nausea",
+  "Stomach upset",
+  "Diarrhea",
+  "Gas & bloating",
+  "Loss of appetite",
+  "Metallic taste",
+  "Weight loss",
+  "Low B12 risk",
+  "Abdominal pain",
 ] as const;
 
 /** Landscape side-effects panel — wide rectangle, scaled up in CSS. */
@@ -614,16 +621,19 @@ export function IntroChartAccessInterlude() {
 
   const cardVisible = local >= CARD_APPEAR && cardOpacity > 0.01;
   const stackPaired = showStripSlot || showPullRow || cardVisible;
+  const stackCenteredTrio = accessLocked && showPullRow && cardVisible && !showStripSlot;
   const stackY =
-    showStripSlot && stripExit <= 0
-      ? -6
-      : stripExit > 0 && stripExit < 1
-        ? interpolate(stripExit, [0, 1], [-6, 0], {
-            extrapolateLeft: "clamp",
-            extrapolateRight: "clamp",
-            easing: REVEAL_EASE,
-          })
-        : 0;
+    stackCenteredTrio
+      ? 0
+      : showStripSlot && stripExit <= 0
+        ? -6
+        : stripExit > 0 && stripExit < 1
+          ? interpolate(stripExit, [0, 1], [-6, 0], {
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp",
+              easing: REVEAL_EASE,
+            })
+          : 0;
 
   return (
     <div className={`motion4-chart-interlude ${dmSans.className}`} aria-hidden>
@@ -631,7 +641,7 @@ export function IntroChartAccessInterlude() {
         <div
           className={`motion4-chart-interlude__stack motion4-chart-interlude__stack--strip${
             stackPaired ? " motion4-chart-interlude__stack--paired" : ""
-          }`}
+          }${stackCenteredTrio ? " motion4-chart-interlude__stack--trio" : ""}`}
           style={{ transform: `translateY(${stackY}px)` }}
         >
           {accessLocked ? (
@@ -719,25 +729,17 @@ export function IntroChartAccessInterlude() {
               }}
             >
               <div className="motion4-chart-interlude__card-head">
-                <p className={`motion4-chart-interlude__card-kicker m-0 ${dmSans.className}`}>
-                  Metformin XR 500mg · Pre-visit questionnaire
-                </p>
                 <p className={`motion4-chart-interlude__card-title m-0 ${suisseIntl.className}`}>
                   Side effects
                 </p>
+                <p className={`motion4-chart-interlude__card-subtitle m-0 ${dmSans.className}`}>
+                  {METFORMIN_DOSE}
+                </p>
               </div>
               <ul className={`motion4-chart-interlude__effect-grid m-0 ${dmSans.className}`}>
-                {METFORMIN_SIDE_EFFECTS.map((item) => (
-                  <li key={item.label} className="motion4-chart-interlude__effect">
-                    <div className="motion4-chart-interlude__effect-top">
-                      <span className="motion4-chart-interlude__effect-label">{item.label}</span>
-                      <span
-                        className={`motion4-chart-interlude__effect-badge motion4-chart-interlude__effect-badge--${item.severityTone}`}
-                      >
-                        {item.severity}
-                      </span>
-                    </div>
-                    <span className="motion4-chart-interlude__effect-detail">{item.detail}</span>
+                {METFORMIN_SIDE_EFFECTS.map((label) => (
+                  <li key={label} className="motion4-chart-interlude__effect">
+                    <span className="motion4-chart-interlude__effect-label">{label}</span>
                   </li>
                 ))}
               </ul>
