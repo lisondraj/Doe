@@ -39,7 +39,8 @@ const ACCESS_DONE = 48;
 const SCROLL_START = 52;
 const STRIP_APPEAR = 64;
 const STRIP_REVEAL = 28;
-const FADE_OUT_PAD = 18;
+/** Keep scrolling through close — modal fade starts earlier in motion-ui. */
+const SCROLL_END_PAD = 2;
 const CHART_BLUR_MAX = 14;
 /** Composition pixels — preview Player scale must not change relative tile size. */
 const TILE_PLOT_HEIGHT = "210px";
@@ -324,7 +325,7 @@ export function IntroChartAccessInterlude() {
   const windowFrames = window.end - window.start;
   const spinDeg = local * 4;
   const accessDone = local >= ACCESS_DONE;
-  const scrollEnd = Math.max(SCROLL_START + 1, windowFrames - FADE_OUT_PAD);
+  const scrollEnd = Math.max(SCROLL_START + 1, windowFrames - SCROLL_END_PAD);
 
   const stepOpacity = interpolate(local, [0, FADE_IN_END], [0, 1], {
     extrapolateLeft: "clamp",

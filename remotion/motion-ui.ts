@@ -94,6 +94,8 @@ export function useCallUiMotion(frameOffset = 10, turnCount = 6): CSSProperties 
 export type CallInterludeSpec = {
   beforeTurn: number;
   frames: number;
+  /** Frames before `end` to begin fading the interlude out (default 8). */
+  fadeOutFrames?: number;
 };
 
 export type CallInterludeWindow = CallInterludeSpec & {
@@ -145,6 +147,7 @@ export function buildCallTurnRevealTiming(
     windows.push({
       beforeTurn: spec.beforeTurn,
       frames: spec.frames,
+      fadeOutFrames: spec.fadeOutFrames,
       start: end - spec.frames,
       end,
     });
@@ -265,7 +268,8 @@ export function useCallTurnRevealMotion(
       extrapolateRight: "clamp",
       easing: enterEase,
     });
-    const interludeOut = interpolate(t, [interlude.end - 8, interlude.end], [1, 0], {
+    const fadeOutFrames = Math.max(1, interlude.fadeOutFrames ?? 8);
+    const interludeOut = interpolate(t, [interlude.end - fadeOutFrames, interlude.end], [1, 0], {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
       easing: enterEase,
