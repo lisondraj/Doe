@@ -1731,29 +1731,8 @@ html[data-motion4-page] body {
 
 .motion4-chart-interlude
   .product-brown-mock.product-brown-call-history-mode
-  .product-call-history-panel__lab-caption-value,
-.motion4-chart-interlude
-  .product-brown-mock.product-brown-call-history-mode
-  .product-landing-live-quote__chart-profile-a1c-label,
-.motion4-chart-interlude
-  .product-brown-mock.product-brown-call-history-mode
-  .product-call-history-panel__vitals-label,
-.motion4-chart-interlude
-  .product-brown-mock.product-brown-call-history-mode
-  .product-call-history-panel__visits-label,
-.motion4-chart-interlude
-  .product-brown-mock.product-brown-call-history-mode
-  .product-call-history-panel__tasks-label,
-.motion4-chart-interlude
-  .product-brown-mock.product-brown-call-history-mode
-  .product-call-history-panel__meds-label,
-.motion4-chart-interlude
-  .product-brown-mock.product-brown-call-history-mode
-  .product-call-history-panel__conditions-label,
-.motion4-chart-interlude
-  .product-brown-mock.product-brown-call-history-mode
-  .product-call-history-panel__allergies-label {
-  font-size: 15px;
+  .product-call-history-panel__lab-caption-value {
+  font-size: 13px;
 }
 
 .motion4-chart-interlude__tile--a1c .motion4-chart-interlude__tile-card,
