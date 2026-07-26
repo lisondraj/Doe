@@ -1707,8 +1707,17 @@ html[data-motion4-page] body {
   gap: 22px;
 }
 
+.motion4-chart-interlude__strip-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  overflow: hidden;
+  will-change: max-height, margin-bottom, opacity;
+}
+
 .motion4-chart-interlude__step--pull {
-  will-change: opacity;
+  will-change: transform;
 }
 
 .motion4-chart-interlude__card {

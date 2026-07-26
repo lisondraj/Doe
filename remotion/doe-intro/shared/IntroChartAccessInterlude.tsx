@@ -59,7 +59,7 @@ const CHART_SCROLL_MAX_RATIO = 0.4;
 const STRIP_EXIT_START = 210;
 const STRIP_EXIT_DURATION = 36;
 const PULL_START = STRIP_EXIT_START;
-const PULL_REVEAL = 18;
+const PULL_LABEL_SWIPE = 16;
 /** Hold Pulling spinner before Pulled checkmark. */
 const PULL_DONE = PULL_START + 132;
 const CARD_APPEAR = PULL_DONE + 8;
@@ -216,6 +216,52 @@ function ChartAccessStatusRow({ local, spinDeg }: { local: number; spinDeg: numb
       <div className="motion4-chart-interlude__icon-slot" aria-hidden>
         <span className="motion4-chart-interlude__icon-layer" style={{ opacity: 1 - iconSwap }}>
           <InterludeStepIcon state="spinner" spinDeg={spinDeg} />
+        </span>
+        <span className="motion4-chart-interlude__icon-layer" style={{ opacity: iconSwap }}>
+          <InterludeStepIcon state="check" spinDeg={0} />
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function PullStatusRow({
+  local,
+  pullSpinDeg,
+  enterY,
+}: {
+  local: number;
+  pullSpinDeg: number;
+  enterY: number;
+}) {
+  const pullLabelSwipe = interpolate(local, [PULL_DONE, PULL_DONE + PULL_LABEL_SWIPE], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: REVEAL_EASE,
+  });
+  const iconSwap = interpolate(local, [PULL_DONE, PULL_DONE + 10], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: REVEAL_EASE,
+  });
+
+  return (
+    <div
+      className="motion4-chart-interlude__step motion4-chart-interlude__step--pull"
+      style={{ transform: `translateY(${enterY}px)` }}
+    >
+      <div className="motion4-chart-interlude__label-slot" aria-live="polite">
+        <div
+          className="motion4-chart-interlude__label-track"
+          style={{ transform: `translateY(${-pullLabelSwipe * ACCESS_LABEL_LINE_PX}px)` }}
+        >
+          <span className="motion4-chart-interlude__label">Pulling pre-visit questionnaire</span>
+          <span className="motion4-chart-interlude__label">Pulled pre-visit questionnaire</span>
+        </div>
+      </div>
+      <div className="motion4-chart-interlude__icon-slot" aria-hidden>
+        <span className="motion4-chart-interlude__icon-layer" style={{ opacity: 1 - iconSwap }}>
+          <InterludeStepIcon state="spinner" spinDeg={pullSpinDeg} />
         </span>
         <span className="motion4-chart-interlude__icon-layer" style={{ opacity: iconSwap }}>
           <InterludeStepIcon state="check" spinDeg={0} />
@@ -506,6 +552,18 @@ export function IntroChartAccessInterlude() {
     easing: REVEAL_EASE,
   });
 
+  const stripSlotHeightPx = TILE_HEIGHT_PX + 22;
+  const stripSlotMaxHeight = interpolate(stripExit, [0, 1], [stripSlotHeightPx, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: REVEAL_EASE,
+  });
+  const stripSlotMargin = interpolate(stripExit, [0, 1], [22, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: REVEAL_EASE,
+  });
+
   const scrollTarget = CHART_STRIP_SCROLL_TARGET_PX;
   /** Partial pan — enough to read chart boxes, then hand off to pre-visit beat. */
   const scrollX =
@@ -517,27 +575,13 @@ export function IntroChartAccessInterlude() {
         })
       : 0;
 
-  const stripMounted = local >= SCROLL_START && stripOpacity > 0.01;
-
-  const pullIn =
-    local >= PULL_START
-      ? interpolate(local, [PULL_START, PULL_START + PULL_REVEAL], [0, 1], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-          easing: REVEAL_EASE,
-        })
-      : 0;
-
-  const pullOpacity = interpolate(pullIn, [0, 0.3, 1], [0, 0.9, 1], {
+  const showStripSlot = local >= SCROLL_START && stripExit < 1;
+  const showPullRow = local >= PULL_START;
+  const pullEnterY = interpolate(stripExit, [0, 1], [ACCESS_LABEL_LINE_PX, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: REVEAL_EASE,
   });
-
-  const pullDone = local >= PULL_DONE;
-  const pullLabel = pullDone ? "Pulled pre-visit questionnaire" : "Pulling pre-visit questionnaire";
-  const pullIcon: "spinner" | "check" = pullDone ? "check" : "spinner";
-  const pullVisible = pullOpacity > 0.01;
 
   const cardProgress =
     local >= CARD_APPEAR
@@ -561,11 +605,11 @@ export function IntroChartAccessInterlude() {
   });
 
   const cardVisible = local >= CARD_APPEAR && cardOpacity > 0.01;
-  const stackPaired = stripMounted || pullVisible || cardVisible;
+  const stackPaired = showStripSlot || showPullRow || cardVisible;
   const stackY =
-    stripMounted && stripExit <= 0
+    showStripSlot && stripExit <= 0
       ? -16
-      : stripExit > 0
+      : stripExit > 0 && stripExit < 1
         ? interpolate(stripExit, [0, 1], [-16, 0], {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
@@ -588,72 +632,73 @@ export function IntroChartAccessInterlude() {
             <ChartAccessStatusRow local={local} spinDeg={spinDeg} />
           )}
 
-          {stripMounted ? (
+          {showStripSlot ? (
             <div
-              className="motion4-chart-interlude__strip product-brown-mock product-brown-call-history-mode"
-              style={chartStripRootStyle({ opacity: stripOpacity, liftY: stripLiftY })}
+              className="motion4-chart-interlude__strip-slot"
+              style={{
+                maxHeight: stripSlotMaxHeight,
+                marginBottom: stripSlotMargin,
+                opacity: 1 - stripExit * 0.85,
+              }}
             >
-              <div className="motion4-chart-interlude__strip-viewport">
-                <div
-                  className="motion4-chart-interlude__strip-track"
-                  style={{
-                    width: TRACK_WIDTH_PX,
-                    gap: TILE_GAP_PX,
-                    transform: `translateX(${scrollX}px)`,
-                    ["--pb-chart-height" as string]: TILE_PLOT_HEIGHT,
-                  }}
-                >
-                  {CHART_TILES.map((tile, index) => {
-                    const tileStart = index * TILE_STAGGER;
-                    const tileEnd = Math.min(1, tileStart + 0.42);
-                    const tileProgress =
-                      stripProgress <= 0
-                        ? 0
-                        : interpolate(stripProgress, [tileStart, tileEnd], [0, 1], {
-                            extrapolateLeft: "clamp",
-                            extrapolateRight: "clamp",
-                            easing: REVEAL_EASE,
-                          });
-                    const tileBlur = (1 - tileProgress) * CHART_BLUR_MAX;
-                    const tileY = (1 - tileProgress) * TILE_LIFT_PX;
-                    const tileOpacity = interpolate(tileProgress, [0, 0.35, 1], [0, 0.86, 1], {
-                      extrapolateLeft: "clamp",
-                      extrapolateRight: "clamp",
-                      easing: REVEAL_EASE,
-                    });
+              <div
+                className="motion4-chart-interlude__strip product-brown-mock product-brown-call-history-mode"
+                style={chartStripRootStyle({ opacity: stripOpacity, liftY: stripLiftY })}
+              >
+                <div className="motion4-chart-interlude__strip-viewport">
+                  <div
+                    className="motion4-chart-interlude__strip-track"
+                    style={{
+                      width: TRACK_WIDTH_PX,
+                      gap: TILE_GAP_PX,
+                      transform: `translateX(${scrollX}px)`,
+                      ["--pb-chart-height" as string]: TILE_PLOT_HEIGHT,
+                    }}
+                  >
+                    {CHART_TILES.map((tile, index) => {
+                      const tileStart = index * TILE_STAGGER;
+                      const tileEnd = Math.min(1, tileStart + 0.42);
+                      const tileProgress =
+                        stripProgress <= 0
+                          ? 0
+                          : interpolate(stripProgress, [tileStart, tileEnd], [0, 1], {
+                              extrapolateLeft: "clamp",
+                              extrapolateRight: "clamp",
+                              easing: REVEAL_EASE,
+                            });
+                      const tileBlur = (1 - tileProgress) * CHART_BLUR_MAX;
+                      const tileY = (1 - tileProgress) * TILE_LIFT_PX;
+                      const tileOpacity = interpolate(tileProgress, [0, 0.35, 1], [0, 0.86, 1], {
+                        extrapolateLeft: "clamp",
+                        extrapolateRight: "clamp",
+                        easing: REVEAL_EASE,
+                      });
 
-                    return (
-                      <div
-                        key={tile.id}
-                        className={`motion4-chart-interlude__tile motion4-chart-interlude__tile--${tile.id}`}
-                        style={{
-                          width: tile.width,
-                          height: TILE_HEIGHT_PX,
-                          minHeight: TILE_HEIGHT_PX,
-                          maxHeight: TILE_HEIGHT_PX,
-                          opacity: tileOpacity,
-                          transform: `translateY(${tileY}px)`,
-                          filter: tileBlur > 0.35 ? `blur(${tileBlur}px)` : undefined,
-                        }}
-                      >
-                        <ChartAccessTile id={tile.id} />
-                      </div>
-                    );
-                  })}
+                      return (
+                        <div
+                          key={tile.id}
+                          className={`motion4-chart-interlude__tile motion4-chart-interlude__tile--${tile.id}`}
+                          style={{
+                            width: tile.width,
+                            height: TILE_HEIGHT_PX,
+                            minHeight: TILE_HEIGHT_PX,
+                            maxHeight: TILE_HEIGHT_PX,
+                            opacity: tileOpacity * (1 - stripExit),
+                            transform: `translateY(${tileY - stripExit * 24}px)`,
+                            filter: tileBlur > 0.35 ? `blur(${tileBlur}px)` : undefined,
+                          }}
+                        >
+                          <ChartAccessTile id={tile.id} />
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </div>
           ) : null}
 
-          {pullVisible ? (
-            <div
-              className="motion4-chart-interlude__step motion4-chart-interlude__step--pull"
-              style={{ opacity: pullOpacity }}
-            >
-              <span className="motion4-chart-interlude__label">{pullLabel}</span>
-              <InterludeStepIcon state={pullIcon} spinDeg={pullSpinDeg} />
-            </div>
-          ) : null}
+          {showPullRow ? <PullStatusRow local={local} pullSpinDeg={pullSpinDeg} enterY={pullEnterY} /> : null}
 
           {cardVisible ? (
             <div
