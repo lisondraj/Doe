@@ -11740,13 +11740,13 @@ html[data-home-page][data-layout="desktop"]
   .doehealth-brown-band-stack
   > .doehealth-intro-band:first-child {
   min-height: 100dvh !important;
-  height: 100dvh !important;
-  max-height: 100dvh !important;
+  height: auto !important;
+  max-height: none !important;
 }
 html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-blank-brown-band {
-  min-height: 84.375dvh !important;
-  height: 84.375dvh !important;
-  max-height: 84.375dvh !important;
+  min-height: 100dvh !important;
+  height: auto !important;
+  max-height: none !important;
   box-sizing: border-box;
 }
 html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-intro-band {
@@ -11754,9 +11754,9 @@ html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehea
   flex-direction: column !important;
   justify-content: center !important;
   box-sizing: border-box;
-  min-height: 84.375dvh !important;
-  height: 84.375dvh !important;
-  max-height: 84.375dvh !important;
+  min-height: 100dvh !important;
+  height: auto !important;
+  max-height: none !important;
   padding-top: calc(var(--desktop-nav-height) + var(--desktop-section-pad-y)) !important;
   padding-bottom: var(--desktop-section-pad-y) !important;
   overflow: visible !important;

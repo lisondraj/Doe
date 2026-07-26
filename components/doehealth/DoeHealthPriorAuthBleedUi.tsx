@@ -4,7 +4,7 @@ import { DoeHealthPhoneReveal } from "@/components/doehealth/DoeHealthPhoneBandR
 import { DoePhoneHomePriorAuthVisual } from "@/components/doephone/DoePhoneHomePriorAuthVisual";
 import { suisseIntl } from "@/lib/home/fonts";
 
-/** Last left-bleed overlay — main-page prior auth brown UI (iPhone). */
+/** Last left-bleed overlay — main-page prior auth brown UI. */
 export function DoeHealthPriorAuthBleedUi() {
   return (
     <div className="doehealth-prior-auth-bleed" aria-hidden>

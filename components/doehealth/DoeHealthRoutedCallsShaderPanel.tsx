@@ -55,8 +55,8 @@ export function DoeHealthRoutedCallsShaderPanel({
   const shader = DOEHEALTH_ROUTED_CALLS_SHADERS[preset];
   const { variant, colors, colorBack } = shader;
   const showSarahUi = preset === "left";
-  /** iPhone-only — last left bleed swaps routed-today for main-page prior auth UI. */
-  const showPriorAuthUi = preset === "left-2" && layout === "phone";
+  /** Last left bleed — prior auth UI (phone + desktop), matching iPhone composition. */
+  const showPriorAuthUi = preset === "left-2";
 
   return (
     <div

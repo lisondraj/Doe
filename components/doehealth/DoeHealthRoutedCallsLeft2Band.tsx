@@ -3,7 +3,7 @@
 import { DoeHealthPhoneBandCluster } from "@/components/doehealth/DoeHealthPhoneBandReveal";
 import { DoeHealthRoutedCallsCard } from "@/components/doehealth/DoeHealthRoutedCallsCard";
 
-/** Brown band — second left-bleed; iPhone shows prior auth UI, desktop keeps routed today. */
+/** Brown band — second left-bleed with prior auth UI (phone + desktop). */
 export function DoeHealthRoutedCallsLeft2Band() {
   return (
     <section
