@@ -49,6 +49,8 @@ const ACCESS_DONE = 48;
 const SCROLL_START = 52;
 const STRIP_APPEAR = 64;
 const STRIP_REVEAL = 28;
+/** Fraction of strip width to pan — stop before meds/conditions/allergies. */
+const CHART_SCROLL_MAX_RATIO = 0.4;
 /** Keep scrolling through close — modal fade starts earlier in motion-ui. */
 const SCROLL_END_PAD = 2;
 const CHART_BLUR_MAX = 16;
@@ -115,9 +117,9 @@ const VIEWPORT_INSET_PX = 72;
 const TRACK_WIDTH_PX =
   CHART_TILES.reduce((sum, tile) => sum + tile.width, 0) + TILE_GAP_PX * (CHART_TILES.length - 1);
 const CHART_STRIP_VIEWPORT_WIDTH_PX = DOE_LAUNCH_WIDTH - VIEWPORT_INSET_PX * 2;
-export const CHART_STRIP_SNAPSHOT_SCROLL_X = -Math.round(
-  Math.max(0, TRACK_WIDTH_PX - CHART_STRIP_VIEWPORT_WIDTH_PX) * 0.5,
-);
+const CHART_STRIP_MAX_SCROLL_PX = Math.max(0, TRACK_WIDTH_PX - CHART_STRIP_VIEWPORT_WIDTH_PX);
+const CHART_STRIP_SCROLL_TARGET_PX = Math.round(CHART_STRIP_MAX_SCROLL_PX * CHART_SCROLL_MAX_RATIO);
+export const CHART_STRIP_SNAPSHOT_SCROLL_X = -CHART_STRIP_SCROLL_TARGET_PX;
 
 function InterludeStepIcon({ state, spinDeg }: { state: "spinner" | "check"; spinDeg: number }) {
   if (state === "check") {
@@ -420,12 +422,11 @@ export function IntroChartAccessInterlude() {
         }) * stepOpacity
       : 0;
 
-  const viewportWidth = CHART_STRIP_VIEWPORT_WIDTH_PX;
-  const maxScroll = Math.max(0, TRACK_WIDTH_PX - viewportWidth);
-  /** Scroll begins before fade-in so the strip is already moving when it appears. */
+  const scrollTarget = CHART_STRIP_SCROLL_TARGET_PX;
+  /** Partial pan — enough to read chart boxes, then hand off to pre-visit beat. */
   const scrollX =
     local >= SCROLL_START
-      ? interpolate(local, [SCROLL_START, scrollEnd], [0, -maxScroll], {
+      ? interpolate(local, [SCROLL_START, scrollEnd], [0, -scrollTarget], {
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp",
           easing: SCROLL_EASE,

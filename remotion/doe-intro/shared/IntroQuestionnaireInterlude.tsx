@@ -19,8 +19,8 @@ import { IntroSarahChartStripSnapshot, CHART_STRIP_TILE_HEIGHT_PX } from "./Intr
 
 const CONVO_UI_OFFSET = DOE_SARAH_CONVO_START_FRAMES + DOE_SARAH_CONVO_UI_OFFSET;
 
-const PULL_UNDER_START = 18;
-const PULL_UNDER_REVEAL = 22;
+const PULL_UNDER_START = 0;
+const PULL_UNDER_REVEAL = 18;
 /** Hold Pulling under the chart UI, then mark Pulled and rise. */
 const PULL_DONE = 78;
 const STRIP_EXIT_START = 78;

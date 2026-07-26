@@ -91,8 +91,8 @@ export const DOE_SARAH_INTERLUDE_FADE_IN_FRAMES = 12;
 export const DOE_SARAH_CONFIRM_CODE_INTERLUDE_FRAMES = 210;
 /** Turn index for caller-verify (“Sure, my date of birth…”) — interlude plays before this turn. */
 export const DOE_SARAH_CONFIRM_CODE_INTERLUDE_BEFORE_TURN = 2;
-/** Chart access + scrolling Sarah chart boxes after “Thank you, let me open your chart” — ~21s @ 30fps. */
-export const DOE_SARAH_CHART_ACCESS_INTERLUDE_FRAMES = 630;
+/** Chart access + partial Sarah chart strip pan — ~13s @ 30fps. */
+export const DOE_SARAH_CHART_ACCESS_INTERLUDE_FRAMES = 390;
 /** Chart modal begins closing this many frames before the interlude ends (while strip still scrolls). */
 export const DOE_SARAH_CHART_ACCESS_FADE_OUT_FRAMES = 28;
 /** Turn index for agent-side-effects — chart interlude plays before this turn. */
