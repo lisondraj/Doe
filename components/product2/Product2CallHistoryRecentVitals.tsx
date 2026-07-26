@@ -47,9 +47,9 @@ function VitalBpVisual({ readings }: { readings: readonly BpReading[] }) {
   }
 
   const width = 120;
-  const height = 36;
+  const height = 44;
   const padX = 6;
-  const padY = 5;
+  const padY = 8;
 
   const sysValues = readings.map((reading) => reading.systolic);
   const diaValues = readings.map((reading) => reading.diastolic);
@@ -109,13 +109,13 @@ function VitalBpVisual({ readings }: { readings: readonly BpReading[] }) {
         <circle
           cx={latestSys.x}
           cy={latestSys.y}
-          r="2.15"
+          r="3"
           className="product-call-history-panel__vital-bp-dot product-call-history-panel__vital-bp-dot--sys"
         />
         <circle
           cx={latestDia.x}
           cy={latestDia.y}
-          r="2.15"
+          r="2.5"
           className="product-call-history-panel__vital-bp-dot product-call-history-panel__vital-bp-dot--dia"
         />
       </svg>
