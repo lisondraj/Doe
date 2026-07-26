@@ -5982,7 +5982,7 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--guard
   padding-bottom: clamp(1.35rem, 0.9rem + 2.1vmin, 2.1rem);
 }
 html[data-home-page] .home-feature-shader-band--lab-alerts .home-feature-section__lab-alerts,
-html[data-home-page] .home-feature-shader-band--call-summaries .home-feature-section__prior-auth {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-feature-section__prior-auth {
   box-sizing: border-box;
   width: 100%;
   max-width: none;
@@ -5995,13 +5995,13 @@ html[data-home-page] .home-feature-shader-band--call-summaries .home-feature-sec
   justify-content: center;
   min-height: 0;
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-feature-section__prior-auth {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-feature-section__prior-auth {
   flex: 1 1 auto;
 }
 html[data-home-page] .home-feature-shader-band--lab-alerts .home-feature-section__lab-alerts {
   flex: 0 0 auto;
 }
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-feature-section__prior-auth {
+html[data-home-page][data-layout="desktop"] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-feature-section__prior-auth {
   position: relative;
   align-items: stretch;
   justify-content: stretch;
@@ -6031,7 +6031,7 @@ html[data-home-page] .home-feature-shader-band--guardrails .home-feature-section
   min-height: 0;
 }
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alerts .home-feature-section__lab-alerts,
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-feature-section__prior-auth {
+html[data-home-page][data-layout="desktop"] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-feature-section__prior-auth {
   padding-left: max(calc(var(--desktop-page-inset-x) + 0.85rem), clamp(1.35rem, 2.2vw, 2rem)) !important;
   padding-right: max(calc(var(--desktop-page-inset-x) + 0.85rem), clamp(1.35rem, 2.2vw, 2rem)) !important;
 }
@@ -6043,7 +6043,7 @@ html[data-home-page] .home-feature-shader-band--call-summaries .home-feature-sha
   padding-top: 0 !important;
   padding-bottom: 0 !important;
 }
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--call-summaries .home-prior-auth-scale,
+html[data-home-page]:has(.doephone-mobile-root) :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-scale,
 html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--lab-alerts .home-lab-alerts-scale {
   --home-shader-feature-scale: 1.32;
   width: calc(100% / var(--home-shader-feature-scale));
@@ -6053,10 +6053,10 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--lab-a
   transform: scale(var(--home-shader-feature-scale));
   transform-origin: top center;
 }
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--call-summaries .home-prior-auth-scale {
+html[data-home-page]:has(.doephone-mobile-root) :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-scale {
   transform-origin: center center;
 }
-html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--call-summaries .home-feature-section__prior-auth {
+html[data-home-page]:has(.doephone-mobile-root) :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-feature-section__prior-auth {
   flex: 1 1 auto;
   position: relative;
   align-items: center;
@@ -6090,7 +6090,7 @@ html[data-home-page]:has(.doephone-mobile-root) .home-feature-shader-band--guard
   transform: scale(var(--home-shader-feature-scale));
   transform-origin: center center;
 }
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-prior-auth-scale,
+html[data-home-page][data-layout="desktop"] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-scale,
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alerts .home-lab-alerts-scale {
   --home-shader-feature-scale: 1.44;
   width: min(calc(30rem / var(--home-shader-feature-scale)), calc(100% / var(--home-shader-feature-scale)));
@@ -6098,7 +6098,7 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alert
   margin-block: 0;
   transform: scale(var(--home-shader-feature-scale));
 }
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-prior-auth-scale {
+html[data-home-page][data-layout="desktop"] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-scale {
   margin-inline: 0;
   margin-right: auto;
   transform-origin: top left;
@@ -6348,12 +6348,12 @@ html[data-home-page] .home-feature-shader-band--lab-alerts .home-outreach-voice-
   overflow-wrap: anywhere;
 }
 /* Prior auth workflow board — call-summaries shader band. */
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual-shell {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual-shell {
   width: 100%;
   height: 100%;
   min-height: 0;
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__body {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__body {
   position: relative;
   flex: 1 1 auto;
   width: 100%;
@@ -6361,7 +6361,7 @@ html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-
   min-height: 0;
   overflow: visible;
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__stage {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__stage {
   position: absolute;
   left: 0;
   top: 0;
@@ -6374,13 +6374,13 @@ html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-
   min-height: 0;
   pointer-events: none;
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__stage .home-prior-auth-scale {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__stage .home-prior-auth-scale {
   margin-inline: 0;
   margin-right: auto;
   transform-origin: top left;
   pointer-events: auto;
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual {
   display: flex;
   flex-direction: column;
   gap: clamp(0.62rem, 1.75vmin, 0.76rem);
@@ -6390,7 +6390,7 @@ html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-
   margin-right: auto;
   padding-inline: 0;
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__panel {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__panel {
   display: flex;
   flex-direction: column;
   gap: clamp(0.62rem, 1.75vmin, 0.76rem);
@@ -6401,7 +6401,7 @@ html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-
   box-shadow: var(--home-dusk-ui-shadow);
   min-width: 0;
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__header {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__header {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: start;
@@ -6410,13 +6410,13 @@ html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-
   width: 100%;
   padding-inline: clamp(0.88rem, 2.5vmin, 1rem);
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__header-copy {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__header-copy {
   display: flex;
   flex-direction: column;
   gap: clamp(0.12rem, 0.34vmin, 0.16rem);
   min-width: 0;
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__title {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__title {
   margin: 0;
   color: #ffffff;
   font-size: clamp(1.14rem, 3.25vmin, 1.32rem);
@@ -6424,14 +6424,14 @@ html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-
   line-height: 1.08;
   letter-spacing: -0.025em;
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__meta {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__meta {
   margin: 0;
   color: rgba(255, 248, 240, 0.72);
   font-size: clamp(0.82rem, 2.32vmin, 0.92rem);
   font-weight: 400;
   line-height: 1.2;
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__status-badge {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__status-badge {
   flex-shrink: 0;
   align-self: flex-start;
   padding: clamp(0.18rem, 0.52vmin, 0.22rem) clamp(0.42rem, 1.2vmin, 0.52rem);
@@ -6443,13 +6443,13 @@ html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-
   line-height: 1;
   white-space: nowrap;
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__bridge {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__bridge {
   display: flex;
   flex-direction: column;
   gap: clamp(0.52rem, 1.48vmin, 0.64rem);
   min-width: 0;
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__call-timer {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__call-timer {
   justify-self: end;
   margin: 0;
   padding-top: 0.04em;
@@ -6462,27 +6462,27 @@ html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-
   letter-spacing: -0.03em;
   text-align: right;
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__call-timer-unit {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__call-timer-unit {
   margin-inline: 0.04em;
   color: rgba(255, 248, 240, 0.58);
   font-size: 0.62em;
   font-weight: 500;
   letter-spacing: 0;
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__bridge-parties {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__bridge-parties {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   gap: clamp(0.38rem, 1.08vmin, 0.48rem);
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__bridge-party {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__bridge-party {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: clamp(0.28rem, 0.8vmin, 0.34rem);
   min-width: 0;
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__bridge-party-label {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__bridge-party-label {
   color: var(--home-dusk-ui-ink);
   font-size: clamp(0.68rem, 1.94vmin, 0.78rem);
   font-weight: 500;
@@ -6490,17 +6490,17 @@ html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-
   text-align: center;
   max-width: 100%;
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__bridge-party-state {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__bridge-party-state {
   color: var(--home-dusk-ui-muted);
   font-size: clamp(0.6rem, 1.7vmin, 0.68rem);
   font-weight: 400;
   line-height: 1;
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__bridge-party--speaking .home-prior-auth-visual__bridge-party-state {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__bridge-party--speaking .home-prior-auth-visual__bridge-party-state {
   color: var(--home-dusk-ui-horizon);
   font-weight: 500;
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__meter {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__meter {
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -6509,14 +6509,14 @@ html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-
   max-width: clamp(4.8rem, 13.5vmin, 5.65rem);
   height: clamp(1.45rem, 4.12vmin, 1.72rem);
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__meter-bar {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__meter-bar {
   display: block;
   flex: 0 0 clamp(0.16rem, 0.45vmin, 0.2rem);
   width: clamp(0.16rem, 0.45vmin, 0.2rem);
   border-radius: 999px;
   transform-origin: bottom center;
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__meter--speaking .home-prior-auth-visual__meter-bar {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__meter--speaking .home-prior-auth-visual__meter-bar {
   height: 100%;
   background: linear-gradient(
     180deg,
@@ -6531,19 +6531,19 @@ html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-
   animation-delay: var(--meter-delay, 0s);
   will-change: transform, opacity;
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__meter--listening .home-prior-auth-visual__meter-bar {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__meter--listening .home-prior-auth-visual__meter-bar {
   height: calc(var(--meter-height, 0.5) * 100%);
   background: var(--home-dusk-ui-horizon);
   opacity: 0.24;
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__bridge-link {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__bridge-link {
   display: block;
   flex-shrink: 0;
   width: clamp(1rem, 2.85vmin, 1.25rem);
   height: 1px;
   background: rgba(232, 160, 96, 0.35);
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__bridge-meta {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__bridge-meta {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -6554,14 +6554,14 @@ html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-
   min-width: 0;
   text-align: center;
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__bridge-meta-title {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__bridge-meta-title {
   color: var(--home-dusk-ui-ink);
   font-size: clamp(0.78rem, 2.22vmin, 0.88rem);
   font-weight: 600;
   line-height: 1.2;
   letter-spacing: -0.015em;
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__bridge-meta-timer {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__bridge-meta-timer {
   margin: 0;
   color: #ffffff;
   font-size: clamp(0.98rem, 2.78vmin, 1.12rem);
@@ -6593,7 +6593,7 @@ html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-
     opacity: 0.82;
   }
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__pipeline {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__pipeline {
   display: flex;
   flex-direction: column;
   gap: clamp(0.28rem, 0.8vmin, 0.34rem);
@@ -6601,26 +6601,26 @@ html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-
   width: 100%;
   padding-inline: clamp(0.88rem, 2.5vmin, 1rem);
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__pipeline-rail {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__pipeline-rail {
   width: 100%;
   height: 1px;
   border-radius: 9999px;
   background: rgba(255, 248, 240, 0.14);
   overflow: hidden;
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__pipeline-fill {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__pipeline-fill {
   display: block;
   height: 100%;
   border-radius: inherit;
   background: rgba(255, 248, 240, 0.72);
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__pipeline-labels {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__pipeline-labels {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   justify-items: center;
   gap: clamp(0.12rem, 0.34vmin, 0.16rem);
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__pipeline-label {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__pipeline-label {
   max-width: 100%;
   padding-inline: clamp(0.08rem, 0.22vmin, 0.12rem);
   color: rgba(255, 248, 240, 0.42);
@@ -6629,11 +6629,11 @@ html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-
   line-height: 1.15;
   text-align: center;
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__pipeline-label--active {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__pipeline-label--active {
   color: rgba(255, 248, 240, 0.88);
   font-weight: 500;
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__details {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__details {
   display: flex;
   flex-direction: column;
   gap: clamp(0.22rem, 0.62vmin, 0.28rem);
@@ -6641,20 +6641,20 @@ html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-
   padding-top: clamp(0.48rem, 1.36vmin, 0.58rem);
   border-top: 1px solid rgba(242, 216, 168, 0.1);
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__detail-row {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__detail-row {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: clamp(0.55rem, 1.55vmin, 0.68rem);
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__detail-label {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__detail-label {
   margin: 0;
   color: var(--home-dusk-ui-muted);
   font-size: clamp(0.72rem, 2.05vmin, 0.82rem);
   font-weight: 400;
   line-height: 1.2;
 }
-html[data-home-page] .home-feature-shader-band--call-summaries .home-prior-auth-visual__detail-value {
+html[data-home-page] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__detail-value {
   margin: 0;
   color: var(--home-dusk-ui-ink);
   font-size: clamp(0.78rem, 2.22vmin, 0.88rem);
@@ -10993,7 +10993,7 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow 
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--workflow .home-feature-shader-band__call-logic-bleed-stage {
   min-height: clamp(24rem, 58vh, 38rem);
 }
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-prior-auth-visual {
+html[data-home-page][data-layout="desktop"] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual {
   max-width: min(100%, 24rem);
 }
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-feature-shader-band__feature-shell {
@@ -11013,7 +11013,7 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summ
   padding: 0 !important;
   text-align: right;
 }
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-prior-auth-visual__stage {
+html[data-home-page][data-layout="desktop"] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__stage {
   left: 0;
   top: clamp(0.85rem, 1.5vw, 1.25rem);
 }
@@ -11030,7 +11030,7 @@ html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alert
   bottom: clamp(0.85rem, 1.5vw, 1.25rem);
 }
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alerts .home-feature-section__lab-alerts,
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-feature-section__prior-auth {
+html[data-home-page][data-layout="desktop"] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-feature-section__prior-auth {
   padding-left: var(--desktop-page-inset-x) !important;
   padding-right: var(--desktop-page-inset-x) !important;
 }
@@ -11699,12 +11699,12 @@ html[data-home-page][data-layout="desktop"] footer.home-footer--dusk .relative.z
   padding-right: var(--desktop-page-inset-x) !important;
   margin-bottom: clamp(2.75rem, 4vw, 3.75rem) !important;
 }
-html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-prior-auth-visual__title,
+html[data-home-page][data-layout="desktop"] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-visual__title,
 html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alerts .home-outreach-voice-visual__panel-text {
   color: var(--home-dusk-ui-ink) !important;
 }
 @media (min-width: 1024px) {
-  html[data-home-page][data-layout="desktop"] .home-feature-shader-band--call-summaries .home-prior-auth-scale,
+  html[data-home-page][data-layout="desktop"] :is(.home-feature-shader-band--call-summaries, .doehealth-prior-auth-bleed) .home-prior-auth-scale,
   html[data-home-page][data-layout="desktop"] .home-feature-shader-band--lab-alerts .home-lab-alerts-scale {
     --home-shader-feature-scale: 1.48;
   }

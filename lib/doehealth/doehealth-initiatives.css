@@ -1192,6 +1192,52 @@ html[data-home-page][data-layout="desktop"]
   padding: 0;
 }
 
+/* Last left-bleed (iPhone) — main-page prior auth brown UI. */
+.doehealth-routed-calls-shader-panel__ui--prior-auth {
+  align-items: stretch;
+  justify-content: stretch;
+  transform: none;
+  transform-origin: center center;
+  padding: 0;
+}
+
+.doehealth-prior-auth-bleed {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+}
+
+.doehealth-prior-auth-bleed .home-feature-section__prior-auth {
+  height: 100%;
+  min-height: 0;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .doehealth-prior-auth-bleed
+  .home-prior-auth-visual__stage {
+  position: relative;
+  inset: auto;
+  left: auto;
+  top: auto;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .doehealth-prior-auth-bleed
+  .home-prior-auth-visual__stage
+  .home-prior-auth-scale {
+  margin-inline: auto;
+  transform-origin: center center;
+}
+
 /* First left-bleed — Last A1C (vertical center) + Sarah Westfield bottom-right. */
 .doehealth-routed-calls-sarah {
   --doehealth-sarah-inset-x: clamp(1.35rem, 1.05rem + 2.2cqw, 2.35rem);

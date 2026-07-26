@@ -2,6 +2,7 @@
 
 import { useLayoutEffect, useState } from "react";
 
+import { DoeHealthPriorAuthBleedUi } from "@/components/doehealth/DoeHealthPriorAuthBleedUi";
 import { DoeHealthRoutedCallsBleedRightScene } from "@/components/doehealth/DoeHealthRoutedCallsBleedRightScene";
 import { DoeHealthRoutedCallsSarahUi } from "@/components/doehealth/DoeHealthRoutedCallsSarahUi";
 import { DoePhoneCallHistoryVisual } from "@/components/doephone/DoePhoneCallHistoryVisual";
@@ -54,6 +55,8 @@ export function DoeHealthRoutedCallsShaderPanel({
   const shader = DOEHEALTH_ROUTED_CALLS_SHADERS[preset];
   const { variant, colors, colorBack } = shader;
   const showSarahUi = preset === "left";
+  /** iPhone-only — last left bleed swaps routed-today for main-page prior auth UI. */
+  const showPriorAuthUi = preset === "left-2" && layout === "phone";
 
   return (
     <div
@@ -61,7 +64,9 @@ export function DoeHealthRoutedCallsShaderPanel({
         bleedRight
           ? " doehealth-routed-calls-shader-panel--bleed-right"
           : " doehealth-routed-calls-shader-panel--bleed-left"
-      }${showSarahUi ? " doehealth-routed-calls-shader-panel--sarah" : ""}`}
+      }${showSarahUi ? " doehealth-routed-calls-shader-panel--sarah" : ""}${
+        showPriorAuthUi ? " doehealth-routed-calls-shader-panel--prior-auth" : ""
+      }`}
     >
       <ProtoGrainGradient
         variant={variant}
@@ -73,11 +78,15 @@ export function DoeHealthRoutedCallsShaderPanel({
       <div
         className={`doehealth-routed-calls-shader-panel__ui${
           bleedRight ? " doehealth-routed-calls-shader-panel__ui--bleed-right" : ""
-        }${showSarahUi ? " doehealth-routed-calls-shader-panel__ui--sarah" : ""}`}
-        aria-hidden={showSarahUi ? undefined : true}
+        }${showSarahUi ? " doehealth-routed-calls-shader-panel__ui--sarah" : ""}${
+          showPriorAuthUi ? " doehealth-routed-calls-shader-panel__ui--prior-auth" : ""
+        }`}
+        aria-hidden={showSarahUi || showPriorAuthUi ? undefined : true}
       >
         {showSarahUi ? (
           <DoeHealthRoutedCallsSarahUi />
+        ) : showPriorAuthUi ? (
+          <DoeHealthPriorAuthBleedUi />
         ) : bleedRight ? (
           <DoeHealthRoutedCallsBleedRightScene layout={layout} />
         ) : (
