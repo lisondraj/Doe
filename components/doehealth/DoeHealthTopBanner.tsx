@@ -29,8 +29,11 @@ function ReadMoreArrow() {
 /** doehealth.care landing banner — pinned above nav; desktop dismisses after the hero. */
 export function DoeHealthTopBanner({
   dismissPastHero = false,
+  readMoreHref = "#doe-vision",
 }: {
   dismissPastHero?: boolean;
+  /** Override when the vision anchor is not on the current page. */
+  readMoreHref?: string;
 } = {}) {
   const [dismissed, setDismissed] = useState(false);
 
@@ -73,7 +76,7 @@ export function DoeHealthTopBanner({
     >
       <p className={`doe-home-top-banner__text ${inter.className}`}>
         <span>Learn more about Doe&apos;s vision</span>
-        <Link href="#doe-vision" className="doe-home-top-banner__link">
+        <Link href={readMoreHref} className="doe-home-top-banner__link">
           Read more
           <ReadMoreArrow />
         </Link>

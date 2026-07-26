@@ -10,6 +10,7 @@ import { AboutMobileAiAdoptionChart } from "@/components/about/AboutMobileAiAdop
 import { AboutMobileTamChart } from "@/components/about/AboutMobileTamChart";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
+import { DoeHealthTopBanner } from "@/components/doehealth/DoeHealthTopBanner";
 import {
   ABOUT_HERO_HEADLINE_WRAP,
   ABOUT_MOBILE_BODY_TW,
@@ -38,7 +39,9 @@ import {
   ABOUT_PAGE_MOBILE_BYLINE,
   ABOUT_PAGE_MOBILE_DATE,
 } from "@/lib/about/about-page-article";
+import "@/lib/about/about-doehealth-iphone.css";
 import { BLOG_CONTENT_PT } from "@/lib/blog/blog-layout-styles";
+import "@/lib/doehealth/doehealth-landing.css";
 import { applyPhoneOverflowChrome } from "@/lib/doephone/phone-layout-viewport";
 import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-viewport";
 import { ABOUT_IPHONE_SHADER_CHART_SECONDARY, DOE_HOME_DUSK_OVERFLOW_SURFACE } from "@/lib/home/doe-page-colors";
@@ -72,6 +75,10 @@ export function AboutMobileView() {
       frostedScrollNav
       frostedNavAlwaysPunched
       footerShaderTheme="dusk"
+      topBanner={<DoeHealthTopBanner readMoreHref="/doehealth#doe-vision" />}
+      rootClassName="doephone-mobile-root--doehealth"
+      navShowMailIcon
+      navShowInvestorsCta={false}
     >
       <main className={`w-full ${BLOG_CONTENT_PT}`}>
         <div className={`${ABOUT_HERO_HEADLINE_WRAP} ${ABOUT_PAGE_HERO_HEADLINE_PT}`}>

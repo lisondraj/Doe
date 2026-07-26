@@ -1,7 +1,5 @@
 "use client";
 
-import { useLayoutEffect } from "react";
-
 import type { ReactNode } from "react";
 
 import DoeIphoneSiteNav, { type SiteNavCtaLayout } from "@/components/DoeIphoneSiteNav";
@@ -25,6 +23,12 @@ type BlogMobileShellProps = {
   frostedScrollPastHero?: boolean;
   frostedNavAlwaysPunched?: boolean;
   footerShaderTheme?: "default" | "dusk";
+  /** Optional fixed strip above the nav (e.g. doehealth top banner). */
+  topBanner?: ReactNode;
+  /** Extra root classes — e.g. `doephone-mobile-root--doehealth` for gold chrome. */
+  rootClassName?: string;
+  navShowMailIcon?: boolean;
+  navShowInvestorsCta?: boolean;
 };
 
 export function BlogMobileShell({
@@ -43,30 +47,39 @@ export function BlogMobileShell({
   frostedScrollPastHero = false,
   frostedNavAlwaysPunched = false,
   footerShaderTheme = "default",
+  topBanner = null,
+  rootClassName = "",
+  navShowMailIcon = true,
+  navShowInvestorsCta = true,
 }: BlogMobileShellProps) {
   return (
-    <div
-      className={`blog-mobile-root${frostedScrollNav ? " doephone-mobile-root" : ""} relative z-0 overflow-x-hidden bg-[var(--doe-page-surface,#EDE8DF)] ${shellMinHeightClass}`}
-      suppressHydrationWarning
-      data-doeforvc-view="iphone"
-    >
-      <DoeIphoneSiteNav
-        pinchSafe
-        homeHref={homeHref}
-        joinHref={joinHref}
-        showJoinCta={showJoinCta}
-        showApplyScrollCta={showApplyScrollCta}
-        logoLink={logoLink}
-        showMenu={showMenu}
-        ctaLayout={ctaLayout}
-        frostedScrollNav={frostedScrollNav}
-        frostedScrollPastHero={frostedScrollPastHero}
-        frostedNavAlwaysPunched={frostedNavAlwaysPunched}
-      />
-      <div className={`blog-page-root relative z-0 ${BLOG_PAGE_INSET_X} ${showFooter ? BLOG_FOOTER_GAP : ""}`}>
-        {children}
+    <>
+      {topBanner}
+      <div
+        className={`blog-mobile-root${frostedScrollNav ? " doephone-mobile-root" : ""}${rootClassName ? ` ${rootClassName}` : ""} relative z-0 overflow-x-hidden bg-[var(--doe-page-surface,#EDE8DF)] ${shellMinHeightClass}`}
+        suppressHydrationWarning
+        data-doeforvc-view="iphone"
+      >
+        <DoeIphoneSiteNav
+          pinchSafe
+          homeHref={homeHref}
+          joinHref={joinHref}
+          showJoinCta={showJoinCta}
+          showApplyScrollCta={showApplyScrollCta}
+          logoLink={logoLink}
+          showMenu={showMenu}
+          ctaLayout={ctaLayout}
+          frostedScrollNav={frostedScrollNav}
+          frostedScrollPastHero={frostedScrollPastHero}
+          frostedNavAlwaysPunched={frostedNavAlwaysPunched}
+          navShowMailIcon={navShowMailIcon}
+          navShowInvestorsCta={navShowInvestorsCta}
+        />
+        <div className={`blog-page-root relative z-0 ${BLOG_PAGE_INSET_X} ${showFooter ? BLOG_FOOTER_GAP : ""}`}>
+          {children}
+        </div>
+        {showFooter ? <HomeFooter linksDisabled={footerLinksDisabled} shaderTheme={footerShaderTheme} /> : null}
       </div>
-      {showFooter ? <HomeFooter linksDisabled={footerLinksDisabled} shaderTheme={footerShaderTheme} /> : null}
-    </div>
+    </>
   );
 }

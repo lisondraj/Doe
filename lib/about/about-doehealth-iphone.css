@@ -1,0 +1,222 @@
+/*
+ * iPhone /about — doehealth chrome: espresso top banner, gold nav logo/mail,
+ * sand page surface clearance under the banner. Desktop /about is unchanged.
+ */
+
+/* Banner height + espresso html strip (matches /doehealth iPhone). */
+html[data-about-page]:has(.doephone-mobile-root--doehealth):has(.doehealth-top-banner):not([data-layout="desktop"]) {
+  --doe-home-top-banner-height: calc(
+    env(safe-area-inset-top, 0px) + clamp(2.25rem, 6.35vmin, 2.85rem)
+  );
+  --doe-home-banner-surface: #1a1208;
+  --proto-about-nav-clearance: calc(
+    var(--doe-home-top-banner-height) + clamp(5.25rem, 4.45rem + 4.2vmin, 6.75rem)
+  );
+  background-color: #1a1208;
+}
+
+html[data-about-page]:has(.doephone-mobile-root--doehealth):has(.doehealth-top-banner):not([data-layout="desktop"])
+  body {
+  background-color: #faf0d8;
+}
+
+html[data-about-page]:has(.doe-home-top-banner) nav.doephone-site-nav {
+  top: var(--doe-home-top-banner-height, 0px);
+  transition: top 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-about-page]:has(.doe-home-top-banner) nav.doephone-site-nav {
+    transition: none;
+  }
+}
+
+/* Espresso banner + gold Read more (parallel to doehealth-landing.css iPhone rules). */
+html[data-about-page]:has(.doephone-mobile-root--doehealth) .doehealth-top-banner.doe-home-top-banner {
+  background-color: #1a1208;
+  background-image: none;
+  border-top: 0;
+  border-bottom: 1px solid rgba(212, 165, 116, 0.24);
+  box-shadow: none;
+}
+
+html[data-about-page]:has(.doephone-mobile-root--doehealth) .doehealth-top-banner .doe-home-top-banner__text {
+  gap: 0.5rem 0.75rem;
+  padding: 0.52rem 0 0.58rem;
+  font-size: clamp(0.8125rem, 2.4vmin, 0.9375rem);
+  font-weight: 500;
+  letter-spacing: 0.012em;
+  color: rgba(245, 230, 208, 0.74);
+}
+
+html[data-about-page]:has(.doephone-mobile-root--doehealth)
+  .doehealth-top-banner
+  .doe-home-top-banner__text
+  > span {
+  color: rgba(245, 230, 208, 0.68);
+}
+
+html[data-about-page]:has(.doephone-mobile-root--doehealth) .doehealth-top-banner .doe-home-top-banner__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  color: #e8c08e;
+  text-decoration: underline;
+  text-decoration-color: rgba(232, 192, 142, 0.52);
+  text-underline-offset: 0.18em;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  transition: color 180ms ease, text-decoration-color 180ms ease, opacity 180ms ease;
+}
+
+html[data-about-page]:has(.doephone-mobile-root--doehealth)
+  .doehealth-top-banner
+  .doe-home-top-banner__link:hover {
+  opacity: 0.88;
+  color: #f2e0c6;
+  text-decoration-color: rgba(232, 192, 142, 0.82);
+}
+
+html[data-about-page]:has(.doephone-mobile-root--doehealth) .doehealth-top-banner .doe-home-top-banner__arrow {
+  width: 12px;
+  height: 12px;
+  margin-top: 0.02em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-about-page]:has(.doephone-mobile-root--doehealth)
+    .doehealth-top-banner
+    .doe-home-top-banner__link {
+    transition: none;
+  }
+}
+
+/* Gold Doe wordmark — punch through cream frosted-nav logo rules. */
+html[data-about-page] .doephone-mobile-root--doehealth nav.doephone-site-nav.proto-nav-scroll-frost .proto-nav-chrome-logo,
+html[data-about-page] .doephone-mobile-root--doehealth nav.doephone-site-nav.proto-nav-scroll-frost .proto-nav-chrome-logo a,
+html[data-about-page] .doephone-mobile-root--doehealth nav.doephone-site-nav .proto-nav-chrome-logo,
+html[data-about-page] .doephone-mobile-root--doehealth nav.doephone-site-nav .proto-nav-chrome-logo a {
+  background: var(--doehealth-gold-text-gradient) !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  text-shadow: none !important;
+}
+
+/* Circular gold mail CTA (mail-only; investors CTA hidden via props). */
+html[data-about-page]
+  .doephone-mobile-root--doehealth
+  nav.doephone-site-nav
+  .proto-nav-chrome-actions
+  .proto-nav-cta-shell {
+  border: 1.5px solid rgba(232, 192, 142, 0.82) !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  overflow: visible !important;
+  border-radius: 9999px !important;
+  box-shadow:
+    0 0 0 1px rgba(212, 165, 116, 0.34),
+    0 0 18px rgba(212, 165, 116, 0.14),
+    0 6px 16px rgba(26, 18, 8, 0.18) !important;
+}
+
+html[data-about-page]
+  .doephone-mobile-root--doehealth
+  nav.doephone-site-nav.proto-nav-scroll-frost.proto-nav--scrolled
+  .proto-nav-chrome-actions
+  .proto-nav-cta-shell {
+  border: 1.5px solid rgba(232, 192, 142, 0.88) !important;
+  box-shadow:
+    0 0 0 1px rgba(212, 165, 116, 0.38),
+    0 0 20px rgba(212, 165, 116, 0.18),
+    0 6px 16px rgba(26, 18, 8, 0.2) !important;
+}
+
+html[data-about-page]
+  .doephone-mobile-root--doehealth
+  nav.doephone-site-nav
+  .proto-nav-chrome-actions
+  .proto-nav-cta-shell
+  > button,
+html[data-about-page]
+  .doephone-mobile-root--doehealth
+  nav.doephone-site-nav.proto-nav-scroll-frost
+  .proto-nav-chrome-actions
+  .proto-nav-cta-shell
+  > button,
+html[data-about-page]
+  .doephone-mobile-root--doehealth
+  nav.doephone-site-nav.proto-nav-scroll-frost.proto-nav--scrolled
+  .proto-nav-chrome-actions
+  .proto-nav-cta-shell
+  > button {
+  background-color: transparent !important;
+  background-image: var(--doehealth-gold-fill-gradient) !important;
+  border-radius: 9999px !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 245, 230, 0.42),
+    inset 0 -1px 0 rgba(140, 96, 58, 0.24) !important;
+}
+
+html[data-about-page]
+  .doephone-mobile-root--doehealth
+  nav.doephone-site-nav
+  .proto-nav-chrome-actions
+  .proto-nav-cta-shell
+  > button
+  svg,
+html[data-about-page]
+  .doephone-mobile-root--doehealth
+  nav.doephone-site-nav.proto-nav-scroll-frost
+  .proto-nav-chrome-actions
+  .proto-nav-cta-shell
+  > button
+  svg,
+html[data-about-page]
+  .doephone-mobile-root--doehealth
+  nav.doephone-site-nav.proto-nav-scroll-frost.proto-nav--scrolled
+  .proto-nav-chrome-actions
+  .proto-nav-cta-shell
+  > button
+  svg {
+  color: #1a1208 !important;
+}
+
+html[data-about-page]
+  .doephone-mobile-root--doehealth
+  nav.doephone-site-nav
+  .proto-nav-chrome-actions
+  .proto-nav-cta-shell
+  > button
+  svg
+  path,
+html[data-about-page]
+  .doephone-mobile-root--doehealth
+  nav.doephone-site-nav.proto-nav-scroll-frost
+  .proto-nav-chrome-actions
+  .proto-nav-cta-shell
+  > button
+  svg
+  path,
+html[data-about-page]
+  .doephone-mobile-root--doehealth
+  nav.doephone-site-nav.proto-nav-scroll-frost.proto-nav--scrolled
+  .proto-nav-chrome-actions
+  .proto-nav-cta-shell
+  > button
+  svg
+  path {
+  fill: #1a1208 !important;
+  stroke: none !important;
+}
+
+/* Accent copy — warm gold instead of muted taupe / copper. */
+html[data-about-page]:has(.doephone-mobile-root--doehealth) main p.about-page-byline {
+  color: #b8845c !important;
+}
+
+html[data-about-page]:has(.doephone-mobile-root--doehealth) main [class*="text-[#BE8660]"] {
+  color: #b8845c !important;
+}
