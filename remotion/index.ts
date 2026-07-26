@@ -8,7 +8,11 @@ import "@/lib/product2/product2-agents.css";
 import "@/lib/product2/product2-brown-mock.css";
 import "@/lib/product2/product2-landing.css";
 
+import { preloadShaderNoiseTexture } from "@/lib/doephone/shader-noise-texture";
+
 import "./load-fonts";
 import { RemotionRoot } from "./Root";
+
+preloadShaderNoiseTexture();
 
 registerRoot(RemotionRoot);

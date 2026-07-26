@@ -9,7 +9,7 @@
     "lint": "next lint",
     "remotion:studio": "remotion studio remotion/index.ts",
     "remotion:render": "remotion render remotion/index.ts DoeLaunch public/motion/doe-launch-remotion.mp4",
-    "remotion:intro": "remotion render remotion/index.ts DoeIntro public/motion/doe-intro.mp4 --width=1920 --height=1080 --crf=12"
+    "remotion:intro": "remotion render remotion/index.ts DoeIntro public/motion/doe-intro.mp4 --width=1920 --height=1080 --crf=10 --scale=2 --gl=angle --concurrency=2"
   },
   "dependencies": {
     "@paper-design/shaders-react": "^0.0.76",

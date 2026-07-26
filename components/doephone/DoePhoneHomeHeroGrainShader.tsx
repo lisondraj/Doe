@@ -78,6 +78,8 @@ export function DoePhoneHomeHeroGrainShader({
   colorBack,
   presetOverrides,
   animate = true,
+  forceVisible = false,
+  onMount,
 }: {
   variant: ProtoGrainGradientVariant;
   className?: string;
@@ -86,6 +88,10 @@ export function DoePhoneHomeHeroGrainShader({
   presetOverrides?: Partial<ProtoGrainGradientPreset>;
   /** When false, grain stays paused (Remotion intro handoff). */
   animate?: boolean;
+  /** Remotion export — skip IntersectionObserver visibility gate. */
+  forceVisible?: boolean;
+  /** Fired once ShaderMount succeeds (Remotion delayRender handshake). */
+  onMount?: () => void;
 }) {
   const preset = { ...PROTO_GRAIN_GRADIENT_PRESETS[variant], ...presetOverrides };
   const presetFlowKey = JSON.stringify(presetOverrides ?? {});
@@ -97,7 +103,7 @@ export function DoePhoneHomeHeroGrainShader({
   const mountRef = useRef<ShaderMount | null>(null);
   const [shaderGeneration, setShaderGeneration] = useState(0);
   const [containerReady, setContainerReady] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(forceVisible);
   const [tabVisible, setTabVisible] = useState(true);
   const [reducedMotion, setReducedMotion] = useState(false);
 
@@ -165,6 +171,7 @@ export function DoePhoneHomeHeroGrainShader({
     }
 
     setHomeHeroBackgroundReady(true);
+    onMount?.();
 
     return () => {
       mountRef.current?.dispose();
@@ -213,6 +220,11 @@ export function DoePhoneHomeHeroGrainShader({
   }, []);
 
   useEffect(() => {
+    if (forceVisible) {
+      setIsVisible(true);
+      return undefined;
+    }
+
     const node = containerRef.current;
     if (!node) return;
 
@@ -223,7 +235,7 @@ export function DoePhoneHomeHeroGrainShader({
 
     observer.observe(node);
     return () => observer.disconnect();
-  }, [shaderGeneration]);
+  }, [forceVisible, shaderGeneration]);
 
   return (
     <div

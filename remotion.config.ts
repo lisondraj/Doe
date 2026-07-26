@@ -4,6 +4,9 @@ import { Config } from "@remotion/cli/config";
 import webpack from "webpack";
 
 Config.setEntryPoint("./remotion/index.ts");
+Config.setChromiumOpenGlRenderer("angle");
+Config.setDelayRenderTimeoutInMilliseconds(120_000);
+Config.setVideoImageFormat("jpeg");
 
 const remotionFonts = path.resolve(process.cwd(), "remotion/fonts.ts");
 

@@ -155,8 +155,8 @@ export function DoePhoneHeroSection({
       >
         <div className="doephone-hero-copy w-full min-w-0">
           <DoePhoneHeroHeadline
-            line1={isProto ? "Recruiting for the" : heroLine1 ?? "Voice Agents"}
-            line2={isProto ? "intelligence era." : heroLine2 ?? "for Healthcare"}
+            line1={isProto ? "Recruiting for the" : heroLine1 ?? "Voice Agents."}
+            line2={isProto ? "intelligence era." : heroLine2 ?? "for Healthcare."}
             fontClass={isProto ? PROTO_FONT_CLASS : undefined}
             className={heroHeadlineClassName}
             fitToContainer={heroHeadlineFitToContainer}

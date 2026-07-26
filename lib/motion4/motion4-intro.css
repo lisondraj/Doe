@@ -2305,3 +2305,41 @@ html[data-motion4-page] body {
 .motion4-remotion-root .product-voice-agent-editor {
   border-radius: 16px;
 }
+
+/* Remotion export — full convo visibility, no interlude mask tearing */
+.motion4-remotion-root .motion4-call-center-hero {
+  max-height: none;
+}
+
+.motion4-remotion-root .motion4-call-history-reveal {
+  overflow: visible;
+  max-height: none;
+}
+
+.motion4-remotion-root .motion4-ui-hero--call .doehealth-initiatives__call-history-scroll {
+  --dhi-call-history-scroll-max: clamp(16rem, 42vh, 22rem);
+  height: auto;
+  min-height: var(--dhi-call-history-scroll-max);
+  max-height: none;
+}
+
+.motion4-remotion-root .motion3-ui-drive--call-reveal .product-landing-live-convo-stage {
+  max-height: none;
+  min-height: clamp(7.5rem, 18vh, 9.5rem);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.92) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0))))) 0%,
+    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.55) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0))))) 12%,
+    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.12) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0))))) 24%,
+    #000 34%,
+    #000 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.92) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0))))) 0%,
+    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.55) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0))))) 12%,
+    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.12) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0))))) 24%,
+    #000 34%,
+    #000 100%
+  );
+}

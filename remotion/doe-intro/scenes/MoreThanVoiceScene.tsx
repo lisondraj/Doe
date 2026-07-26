@@ -154,15 +154,12 @@ export function MoreThanVoiceScene() {
     ...uiMotion,
   } as CSSProperties;
 
-  const interludeBlur = uiMotion["--m4-interlude-blur"] as number | undefined;
-
   return (
     <AbsoluteFill
       className="motion4-scene motion4-scene--call-center"
       style={{
         opacity: outroExit,
-        "--m4-confirm-interlude-o": uiMotion["--m4-confirm-interlude-o"] ?? 0,
-        "--m4-chart-interlude-o": uiMotion["--m4-chart-interlude-o"] ?? 0,
+        ...uiMotion,
       } as CSSProperties}
     >
       <IntroUiHero
@@ -180,12 +177,7 @@ export function MoreThanVoiceScene() {
             opacity: handoff.active ? undefined : 1,
             transform: outroY !== 0 ? `translateY(${outroY}px)` : undefined,
             ...handoffStyle,
-            filter:
-              outroBlur > 0.05
-                ? `blur(${outroBlur}px)`
-                : interludeBlur && interludeBlur > 0.05
-                  ? `blur(${interludeBlur}px)`
-                  : undefined,
+            filter: outroBlur > 0.05 ? `blur(${outroBlur}px)` : undefined,
             ...headerVars,
           }}
         >

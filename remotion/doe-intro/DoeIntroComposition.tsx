@@ -50,7 +50,7 @@ export function DoeIntroComposition() {
       <Sequence from={s.moreThanVoice.from} durationInFrames={s.moreThanVoice.duration} premountFor={12}>
         <MoreThanVoiceScene />
       </Sequence>
-      <Sequence from={s.outroShader.from} durationInFrames={s.outroShader.duration} premountFor={20}>
+      <Sequence from={s.outroShader.from} durationInFrames={s.outroShader.duration} premountFor={60}>
         <OutroDoeShaderScene />
       </Sequence>
     </AbsoluteFill>
