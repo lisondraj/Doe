@@ -268,6 +268,7 @@ export function useCallTurnRevealMotion(
   styles["--m4-confirm-interlude-o"] = 0;
   styles["--m4-chart-interlude-o"] = 0;
   styles["--m4-booking-interlude-o"] = 0;
+  styles["--m4-interlude-o"] = 0;
   styles["--m4-interlude-blur"] = 0;
 
   for (const interlude of interludeWindows) {
@@ -290,7 +291,9 @@ export function useCallTurnRevealMotion(
     const interludeActive = t >= interlude.start && t < interlude.end;
     const opacityKey = interludeOpacityKeys[interlude.beforeTurn];
     if (opacityKey && interludeActive) {
-      styles[opacityKey] = Math.min(interludeIn, interludeOut);
+      const interludeOpacity = Math.min(interludeIn, interludeOut);
+      styles[opacityKey] = interludeOpacity;
+      styles["--m4-interlude-o"] = interludeOpacity;
       interludeBlur = 6;
     }
   }

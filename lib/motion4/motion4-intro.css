@@ -125,23 +125,34 @@ html[data-motion4-page] body {
 }
 
 .motion4-scene--call-center {
-  --motion4-call-column-width: 650px;
+  --motion4-call-convo-width: 720px;
+  --motion4-call-incoming-width: 580px;
+  --motion4-call-header-answered-width: 600px;
+  --motion4-call-active-width: calc(
+    var(--motion4-call-incoming-width)
+    + (var(--motion4-call-convo-width) - var(--motion4-call-incoming-width)) * var(--m4-call-settle, 0)
+  );
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
   padding: 48px 96px;
   height: 100%;
   position: relative;
+  overflow: visible;
 }
 
 .motion4-call-center-hero {
-  width: var(--motion4-call-column-width);
-  max-width: var(--motion4-call-column-width);
+  width: var(--motion4-call-active-width);
+  max-width: var(--motion4-call-active-width);
   min-width: 0;
-  flex: 0 0 var(--motion4-call-column-width);
-  /* Composition px — avoid preview vh drift vs export. */
-  min-height: calc((1 - var(--m4-call-settle, 0)) * 520px);
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  min-height: 0;
   max-height: none;
   margin: 0 auto;
   overflow: visible;
@@ -817,10 +828,14 @@ html[data-motion4-page] body {
 }
 
 .motion4-ui-hero--call {
-  width: var(--motion4-call-column-width, 580px);
-  max-width: var(--motion4-call-column-width, 580px);
+  width: var(--motion4-call-active-width, var(--motion4-call-convo-width, 720px));
+  max-width: var(--motion4-call-active-width, var(--motion4-call-convo-width, 720px));
   min-width: 0;
-  flex: 0 0 var(--motion4-call-column-width, 580px);
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 0;
   z-index: 1;
   overflow: visible;
 }
@@ -830,7 +845,9 @@ html[data-motion4-page] body {
 .motion4-ui-hero--call .motion4-ui-reveal--call-enter {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 0 0 auto;
+  min-height: 0;
+  justify-content: flex-start;
   overflow: visible;
 }
 
@@ -851,7 +868,7 @@ html[data-motion4-page] body {
 .motion4-ui-hero--call .doehealth-initiatives--bare {
   width: 100%;
   max-width: 100%;
-  --dhi-card-max: var(--motion4-call-column-width, 580px);
+  --dhi-card-max: var(--motion4-call-active-width, var(--motion4-call-convo-width, 720px));
 }
 
 .motion4-ui-hero--call .doehealth-initiatives--bare .doehealth-initiatives__card {
@@ -896,17 +913,19 @@ html[data-motion4-page] body {
 .motion4-remotion-root .motion4-call-header {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 0 0 auto;
+  min-height: 0;
+  justify-content: flex-start;
 }
 
 .motion4-remotion-root .motion4-call-header__card {
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
-  /* Scene flex-centers this card — Sarah + Answered + convo stay mid-frame. */
-  justify-content: center;
+  flex: 0 0 auto;
+  justify-content: flex-start;
   min-height: 0;
   padding-top: 0;
+  overflow: visible;
 }
 
 .motion4-remotion-root .motion4-call-header__hero-zone {
@@ -914,19 +933,14 @@ html[data-motion4-page] body {
   flex-direction: column;
   flex: 0 0 auto;
   width: 100%;
-  /* Composition px — avoid preview vh drift vs export. */
-  min-height: calc((1 - var(--m4-call-settle, 0)) * 520px);
+  min-height: 0;
   overflow: visible;
-  transform: translateY(var(--m4-call-hero-y, 0px));
 }
 
 .motion4-remotion-root .motion4-call-header__hero-zone::before,
 .motion4-remotion-root .motion4-call-header__hero-zone::after {
-  content: "";
-  display: block;
-  flex: calc(1 - var(--m4-call-settle, 0)) 1 0;
-  min-height: 0;
-  pointer-events: none;
+  content: none;
+  display: none;
 }
 
 .motion4-remotion-root .motion4-ui-hero--call .motion4-call-header__block {
@@ -937,16 +951,18 @@ html[data-motion4-page] body {
   justify-content: flex-start;
   flex: 0 0 auto;
   width: 100%;
-  max-width: 100%;
+  max-width: calc(
+    (1 - var(--m4-call-settle, 0)) * 100% + var(--m4-call-settle, 0) * var(--motion4-call-header-answered-width, 600px)
+  );
   min-width: 0;
+  margin-inline: auto;
   overflow: visible;
   margin-bottom: calc(var(--m4-call-settle, 0) * 7px);
 }
 
 .motion4-remotion-root .motion4-call-header__shell {
-  transform: scale(calc(1 + (1 - var(--m4-call-settle, 0)) * 0.28));
-  /* Hero: scale from center so Calling from sits mid-frame; settle: top origin. */
-  transform-origin: center calc((1 - var(--m4-call-settle, 0)) * 50%);
+  transform: none;
+  transform-origin: center top;
   width: 100%;
   overflow: visible;
 }
@@ -958,6 +974,8 @@ html[data-motion4-page] body {
   flex-shrink: 0;
   overflow: visible;
   text-overflow: clip;
+  padding-top: calc(var(--m4-call-settle, 0) * 6px);
+  line-height: 1.08;
 }
 
 .motion4-remotion-root .motion4-call-header__row {
@@ -1000,8 +1018,8 @@ html[data-motion4-page] body {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 0.28em;
-  margin-top: calc(8px + (1 - var(--m4-call-settle, 0)) * 6px);
+  gap: 0.12em;
+  margin-top: calc(6px + (1 - var(--m4-call-settle, 0)) * 2px);
   font-size: calc(20px * (1 + (1 - var(--m4-call-settle, 0)) * 0.12));
   line-height: 1;
   overflow: visible;
@@ -1014,11 +1032,11 @@ html[data-motion4-page] body {
   flex: 0 0 auto;
   align-items: center;
   /*
-   * Calling from (~12.4ch) → Answered (~8.8ch). Subline gap separates the #
-   * so Answered never collides with the number.
+   * Calling from (~10.6ch) → Answered (~8.8ch). Tight prefix keeps the # close;
+   * subline gap still separates Answered from the number.
    */
   width: calc(
-    (1 - var(--m4-call-morph-subline, var(--m4-call-morph, 0))) * 12.4ch
+    (1 - var(--m4-call-morph-subline, var(--m4-call-morph, 0))) * 10.6ch
     + var(--m4-call-morph-subline, var(--m4-call-morph, 0)) * 8.8ch
   );
   height: 1.2em;
@@ -1063,9 +1081,11 @@ html[data-motion4-page] body {
 }
 
 .motion4-remotion-root .motion4-call-history-reveal {
-  opacity: var(--m4-call-history-o, 1);
-  flex: var(--m4-call-settle, 0) 0 auto;
-  max-height: calc(var(--m4-call-settle, 0) * 999px);
+  opacity: var(--m4-call-history-o, 0);
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 100%;
+  max-height: calc(var(--m4-call-history-o, 0) * 999px);
   overflow: hidden;
   pointer-events: none;
 }
@@ -1301,6 +1321,10 @@ html[data-motion4-page] body {
   overflow-wrap: normal;
   word-break: normal;
   text-overflow: clip;
+}
+
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-open-chart .product-landing-live-quote__line {
+  white-space: nowrap;
 }
 
 .motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-intake,
@@ -1543,11 +1567,16 @@ html[data-motion4-page] body {
 
 .motion4-ui-hero.motion4-ui-hero--call,
 .motion4-ui-hero.motion4-call-center-hero {
-  width: var(--motion4-call-column-width, 580px);
-  max-width: var(--motion4-call-column-width, 580px);
+  width: var(--motion4-call-active-width, var(--motion4-call-convo-width, 720px));
+  max-width: var(--motion4-call-active-width, var(--motion4-call-convo-width, 720px));
   min-width: 0;
-  flex: 0 0 var(--motion4-call-column-width, 580px);
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 0;
   overflow: visible;
+  transform-origin: center top;
 }
 
 .motion4-ui-hero--wide {
@@ -1594,7 +1623,6 @@ html[data-motion4-page] body {
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  opacity: var(--m4-confirm-interlude-o, 0);
   font-family: "DM Sans", system-ui, sans-serif;
   isolation: isolate;
 }
@@ -1609,9 +1637,9 @@ html[data-motion4-page] body {
   z-index: 0;
   pointer-events: none;
   opacity: 1;
-  background: rgba(26, 18, 8, 0.14);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
+  background: rgba(26, 18, 8, calc(0.14 * var(--m4-interlude-o, 0)));
+  -webkit-backdrop-filter: blur(calc(6px * var(--m4-interlude-o, 0)));
+  backdrop-filter: blur(calc(6px * var(--m4-interlude-o, 0)));
   transform: translateZ(0);
 }
 
@@ -1623,6 +1651,7 @@ html[data-motion4-page] body {
   align-items: center;
   justify-content: center;
   width: min(92vw, 860px);
+  opacity: var(--m4-confirm-interlude-o, 0);
   transform: scale(var(--m4-confirm-interlude-scale, 2.85));
   transform-origin: center center;
 }
@@ -1671,7 +1700,6 @@ html[data-motion4-page] body {
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  opacity: var(--m4-chart-interlude-o, 0);
   font-family: "DM Sans", system-ui, sans-serif;
   isolation: isolate;
   overflow: visible;
@@ -1686,6 +1714,7 @@ html[data-motion4-page] body {
   width: 100%;
   height: 100%;
   min-height: 100%;
+  opacity: var(--m4-chart-interlude-o, 0);
   overflow: visible;
 }
 
@@ -2046,6 +2075,47 @@ html[data-motion4-page] body {
   gap: calc(12px * var(--m4-cs, 1));
   padding: calc(14px * var(--m4-cs, 1)) calc(16px * var(--m4-cs, 1)) calc(12px * var(--m4-cs, 1));
   pointer-events: none;
+  border: 1px solid rgba(212, 165, 116, 0.22);
+  border-radius: calc(0.62rem * var(--m4-cs, 1));
+  background: linear-gradient(168deg, #241c14 0%, #140e08 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+/* Inner chart micro-panels — solid fills (not rgba shells). */
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .motion4-chart-interlude__tile
+  .product-call-history-panel__vital-spark-cell,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .motion4-chart-interlude__tile
+  .product-call-history-panel__lab-visual,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .motion4-chart-interlude__tile
+  .product-call-history-panel__vital-visual,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .motion4-chart-interlude__tile
+  .product-call-history-panel__tasks-item,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .motion4-chart-interlude__tile
+  .product-landing-live-quote__chart-profile-bp-column-shell {
+  background: #1a1208;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .motion4-chart-interlude__tile
+  .product-call-history-panel__vital-spark-cell--latest,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .motion4-chart-interlude__tile
+  .product-landing-live-quote__chart-profile-bp-column--latest
+  .product-landing-live-quote__chart-profile-bp-column-shell {
+  background: #221810;
 }
 
 .motion4-chart-interlude .product-brown-mock.product-brown-call-history-mode {
@@ -2460,11 +2530,11 @@ html[data-motion4-page] body {
   .motion4-chart-interlude__tile--labs
   .product-call-history-panel__lab-row {
   grid-template-columns:
-    calc(56px * var(--m4-cs, 1))
+    calc(44px * var(--m4-cs, 1))
     minmax(0, 1fr)
-    calc(120px * var(--m4-cs, 1));
-  column-gap: calc(14px * var(--m4-cs, 1));
-  padding: calc(8px * var(--m4-cs, 1)) 0;
+    calc(92px * var(--m4-cs, 1));
+  column-gap: calc(10px * var(--m4-cs, 1));
+  padding: calc(6px * var(--m4-cs, 1)) 0;
   overflow: hidden;
 }
 
@@ -2478,8 +2548,8 @@ html[data-motion4-page] body {
   justify-self: start;
   align-self: center;
   width: auto;
-  min-width: calc(56px * var(--m4-cs, 1));
-  padding-right: calc(4px * var(--m4-cs, 1));
+  min-width: calc(44px * var(--m4-cs, 1));
+  padding-right: calc(2px * var(--m4-cs, 1));
   white-space: nowrap;
   text-align: left;
 }
@@ -2497,7 +2567,7 @@ html[data-motion4-page] body {
   min-width: 0;
   overflow: hidden;
   isolation: isolate;
-  padding: calc(8px * var(--m4-cs, 1)) calc(10px * var(--m4-cs, 1));
+  padding: calc(5px * var(--m4-cs, 1)) calc(6px * var(--m4-cs, 1));
 }
 
 .motion4-chart-interlude
@@ -2508,10 +2578,22 @@ html[data-motion4-page] body {
   grid-row: 1;
   justify-self: end;
   align-self: center;
-  width: calc(120px * var(--m4-cs, 1));
-  min-width: calc(120px * var(--m4-cs, 1));
-  padding-left: calc(6px * var(--m4-cs, 1));
+  width: calc(92px * var(--m4-cs, 1));
+  min-width: calc(92px * var(--m4-cs, 1));
+  padding-left: calc(4px * var(--m4-cs, 1));
   overflow: hidden;
+}
+
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .motion4-chart-interlude__tile--labs
+  .product-call-history-panel__lab-range,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .motion4-chart-interlude__tile--labs
+  .product-call-history-panel__lab-range-track {
+  width: 100%;
+  min-width: 0;
 }
 
 .motion4-chart-interlude__tile .product-call-history-panel__lab-caption-label {
@@ -2594,7 +2676,18 @@ html[data-motion4-page] body {
   font-size: calc(12px * var(--m4-cs, 1));
 }
 
-.motion4-chart-interlude__tile .product-call-history-panel__visits-list,
+.motion4-chart-interlude__tile .product-call-history-panel__visits-list {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  justify-content: flex-start;
+  gap: calc(5px * var(--m4-cs, 1));
+  overflow: hidden;
+  padding: 0;
+  list-style: none;
+}
+
 .motion4-chart-interlude__tile .product-call-history-panel__meds-list,
 .motion4-chart-interlude__tile .product-call-history-panel__conditions-list,
 .motion4-chart-interlude__tile .product-call-history-panel__allergies-list {
@@ -2607,6 +2700,13 @@ html[data-motion4-page] body {
   overflow: hidden;
   padding: 0;
   list-style: none;
+}
+
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .motion4-chart-interlude__tile--visits
+  .product-call-history-panel__visits-list::before {
+  display: none;
 }
 
 .motion4-chart-interlude__tile .product-call-history-panel__tasks-list {
@@ -2649,9 +2749,9 @@ html[data-motion4-page] body {
   .product-call-history-panel__visits-item {
   display: flex;
   align-items: center;
-  gap: calc(14px * var(--m4-cs, 1));
+  gap: calc(10px * var(--m4-cs, 1));
+  flex: 0 0 auto;
   min-height: 0;
-  flex: 1 1 0;
   min-width: 0;
 }
 
@@ -2672,19 +2772,20 @@ html[data-motion4-page] body {
   .product-brown-mock.product-brown-call-history-mode
   .motion4-chart-interlude__tile--visits
   .product-call-history-panel__visits-date {
-  flex: 0 0 calc(76px * var(--m4-cs, 1)) !important;
-  width: calc(76px * var(--m4-cs, 1)) !important;
-  min-width: calc(76px * var(--m4-cs, 1)) !important;
-  max-width: calc(76px * var(--m4-cs, 1));
-  min-height: calc(72px * var(--m4-cs, 1));
+  flex: 0 0 calc(54px * var(--m4-cs, 1)) !important;
+  width: calc(54px * var(--m4-cs, 1)) !important;
+  min-width: calc(54px * var(--m4-cs, 1)) !important;
+  max-width: calc(54px * var(--m4-cs, 1));
+  height: calc(54px * var(--m4-cs, 1));
+  min-height: 0;
   align-self: center;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   border: 1px solid rgba(212, 165, 116, 0.22);
-  border-radius: calc(0.5rem * var(--m4-cs, 1));
-  background: rgba(14, 10, 7, 0.52);
+  border-radius: calc(0.42rem * var(--m4-cs, 1));
+  background: #140e08;
   overflow: hidden;
 }
 
@@ -2697,13 +2798,13 @@ html[data-motion4-page] body {
   justify-content: center;
   width: 100%;
   flex-shrink: 0;
-  padding: calc(7px * var(--m4-cs, 1)) calc(4px * var(--m4-cs, 1)) calc(6px * var(--m4-cs, 1));
+  padding: calc(4px * var(--m4-cs, 1)) calc(3px * var(--m4-cs, 1)) calc(3px * var(--m4-cs, 1));
   border-bottom: 1px solid rgba(212, 165, 116, 0.14);
   background: linear-gradient(180deg, rgba(212, 165, 116, 0.2) 0%, rgba(212, 165, 116, 0.1) 100%);
   color: rgba(232, 192, 142, 0.78);
   font-weight: 700;
   letter-spacing: 0.06em;
-  line-height: 1.1;
+  line-height: 1;
   text-transform: uppercase;
   white-space: nowrap;
 }
@@ -2716,7 +2817,7 @@ html[data-motion4-page] body {
   flex: 1 1 auto;
   align-items: center;
   justify-content: center;
-  padding: calc(8px * var(--m4-cs, 1)) calc(4px * var(--m4-cs, 1)) calc(6px * var(--m4-cs, 1));
+  padding: calc(2px * var(--m4-cs, 1)) calc(3px * var(--m4-cs, 1));
   background: linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%);
   background-clip: text;
   -webkit-background-clip: text;
@@ -2737,7 +2838,7 @@ html[data-motion4-page] body {
   justify-content: center;
   width: 100%;
   flex-shrink: 0;
-  padding: calc(4px * var(--m4-cs, 1)) calc(4px * var(--m4-cs, 1)) calc(8px * var(--m4-cs, 1));
+  padding: calc(2px * var(--m4-cs, 1)) calc(3px * var(--m4-cs, 1)) calc(4px * var(--m4-cs, 1));
   color: rgba(228, 210, 184, 0.42);
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -2752,13 +2853,13 @@ html[data-motion4-page] body {
 .motion4-chart-interlude
   .product-brown-mock.product-brown-call-history-mode
   .product-call-history-panel__visits-date-weekday {
-  font-size: calc(12px * var(--m4-cs, 1));
+  font-size: calc(10px * var(--m4-cs, 1));
 }
 
 .motion4-chart-interlude
   .product-brown-mock.product-brown-call-history-mode
   .product-call-history-panel__visits-date-day {
-  font-size: calc(24px * var(--m4-cs, 1));
+  font-size: calc(17px * var(--m4-cs, 1));
 }
 
 .motion4-chart-interlude
@@ -2841,7 +2942,6 @@ html[data-motion4-page] body {
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  opacity: var(--m4-questionnaire-interlude-o, 0);
   font-family: "DM Sans", system-ui, sans-serif;
   isolation: isolate;
   overflow: visible;
@@ -2855,6 +2955,7 @@ html[data-motion4-page] body {
   justify-content: center;
   width: 100%;
   min-height: 100%;
+  opacity: var(--m4-questionnaire-interlude-o, 0);
   overflow: visible;
 }
 
@@ -2995,7 +3096,6 @@ html[data-motion4-page] body {
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  opacity: var(--m4-booking-interlude-o, 0);
   font-family: "DM Sans", system-ui, sans-serif;
   isolation: isolate;
 }
@@ -3008,6 +3108,7 @@ html[data-motion4-page] body {
   justify-content: center;
   width: 100%;
   min-height: 100%;
+  opacity: var(--m4-booking-interlude-o, 0);
 }
 
 .motion4-booking-interlude__stack {
@@ -3883,13 +3984,14 @@ html[data-motion4-page] body {
 
 /* Remotion export — composition-px call hero; no interlude mask tearing */
 .motion4-remotion-root .motion4-call-center-hero {
-  min-height: calc((1 - var(--m4-call-settle, 0)) * 520px);
+  flex: 0 0 auto;
+  min-height: 0;
   max-height: none;
 }
 
 .motion4-remotion-root .motion4-call-history-reveal {
   overflow: visible;
-  max-height: none;
+  max-height: calc(var(--m4-call-history-o, 0) * 999px);
 }
 
 .motion4-remotion-root .motion4-ui-hero--call .doehealth-initiatives__call-history-scroll {
