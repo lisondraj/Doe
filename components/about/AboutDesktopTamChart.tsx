@@ -4,13 +4,17 @@ import {
   ABOUT_DESKTOP_PIE_CHART_TITLE_TW,
 } from "@/lib/about/about-layout-styles";
 import { ABOUT_MOBILE_TAM_CHART } from "@/lib/about/about-page-article";
-import { ABOUT_IPHONE_SHADER_CHART_MUTED } from "@/lib/home/doe-page-colors";
-import { dmSans, inter } from "@/lib/home/fonts";
+import {
+  ABOUT_IPHONE_SHADER_CHART_MUTED,
+  ABOUT_IPHONE_SHADER_CHART_PRIMARY,
+  ABOUT_IPHONE_SHADER_CHART_SECONDARY,
+} from "@/lib/home/doe-page-colors";
+import { dmSans, inter, suisseIntl } from "@/lib/home/fonts";
 
 const TAM_Y_MAX = 28;
 const TAM_Y_TICKS = [0, 7, 14, 21, 28] as const;
-const TAM_LIGHT_BROWN_AXIS = "rgba(154, 93, 49, 0.24)";
-const TAM_LIGHT_BROWN_GRID = "rgba(154, 93, 49, 0.11)";
+const TAM_GOLD_AXIS = "rgba(232, 192, 142, 0.28)";
+const TAM_GOLD_GRID = "rgba(232, 192, 142, 0.12)";
 
 function formatTamAxis(value: number) {
   return value === 0 ? "0" : value >= 10 ? `$${value}B` : `$${value.toFixed(0)}B`;
@@ -23,7 +27,7 @@ export function AboutDesktopTamChart() {
   return (
     <figure className="about-stat-charts min-h-0">
       <figcaption
-        className={`mb-5 font-medium leading-snug tracking-[-0.01em] text-[#1A1208] md:mb-6 ${dmSans.className} ${ABOUT_DESKTOP_PIE_CHART_TITLE_TW}`}
+        className={`mb-5 font-medium leading-snug tracking-[-0.01em] text-[#F2E8DA] md:mb-6 ${dmSans.className} ${ABOUT_DESKTOP_PIE_CHART_TITLE_TW}`}
       >
         {ABOUT_MOBILE_TAM_CHART.title}
       </figcaption>
@@ -46,7 +50,7 @@ export function AboutDesktopTamChart() {
 
           <div
             className="relative col-start-2 row-start-1 min-h-0 border-b border-l"
-            style={{ borderColor: TAM_LIGHT_BROWN_AXIS }}
+            style={{ borderColor: TAM_GOLD_AXIS }}
           >
             {TAM_Y_TICKS.map((tick) => (
               <div
@@ -54,7 +58,7 @@ export function AboutDesktopTamChart() {
                 className="pointer-events-none absolute left-0 right-0 border-t"
                 style={{
                   bottom: `${(tick / TAM_Y_MAX) * 100}%`,
-                  borderColor: tick === 0 ? TAM_LIGHT_BROWN_AXIS : TAM_LIGHT_BROWN_GRID,
+                  borderColor: tick === 0 ? TAM_GOLD_AXIS : TAM_GOLD_GRID,
                 }}
                 aria-hidden
               />
@@ -69,7 +73,7 @@ export function AboutDesktopTamChart() {
                     <div className="flex h-full flex-col justify-end">
                       <div
                         className="about-chart-tam-bar w-full rounded-t-[0.35rem] transition-[height] duration-500 ease-out md:rounded-t-[0.42rem]"
-                        style={{ height: heightPct, background: "#9A5D31" }}
+                        style={{ height: heightPct, background: ABOUT_IPHONE_SHADER_CHART_SECONDARY }}
                       />
                     </div>
                   </div>
@@ -82,7 +86,7 @@ export function AboutDesktopTamChart() {
             {bars.map((bar) => (
               <span
                 key={`${bar.label}-label`}
-                className={`min-w-0 flex-1 text-center font-normal leading-[1.15] tracking-[-0.01em] text-[#1A1208]/72 ${inter.className} text-[clamp(0.78rem,0.72vw,0.92rem)] md:text-[clamp(0.84rem,0.76vw,0.98rem)]`}
+                className={`min-w-0 flex-1 text-center font-normal leading-[1.15] tracking-[-0.01em] text-[#F2E8DA]/72 ${inter.className} text-[clamp(0.78rem,0.72vw,0.92rem)] md:text-[clamp(0.84rem,0.76vw,0.98rem)]`}
               >
                 {bar.label}
               </span>
@@ -93,21 +97,28 @@ export function AboutDesktopTamChart() {
 
       <div
         className="mt-5 border px-4 py-4 md:mt-6 md:px-5 md:py-5"
-        style={{ borderColor: TAM_LIGHT_BROWN_AXIS }}
+        style={{ borderColor: TAM_GOLD_AXIS }}
       >
         <p
-          className={`font-medium leading-none tracking-[-0.03em] text-[#1A1208] ${dmSans.className} text-[clamp(2.35rem,2.15vw,3.05rem)] md:text-[clamp(2.65rem,2.35vw,3.35rem)]`}
+          className={`font-medium leading-none tracking-[-0.03em] ${suisseIntl.className} text-[clamp(2.35rem,2.15vw,3.05rem)] md:text-[clamp(2.65rem,2.35vw,3.35rem)]`}
+          style={{
+            background: "linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.82) 100%)",
+            backgroundClip: "text",
+            WebkitBackgroundClip: "text",
+            color: "transparent",
+            WebkitTextFillColor: "transparent",
+          }}
         >
           ${ABOUT_MOBILE_TAM_CHART.highlight.valueB}B
         </p>
         <p
-          className={`mt-2 font-medium leading-snug tracking-[-0.02em] text-[#1A1208] md:mt-2.5 ${dmSans.className} text-[clamp(1.08rem,1vw,1.28rem)] md:text-[clamp(1.18rem,1.05vw,1.38rem)]`}
+          className={`mt-2 font-medium leading-snug tracking-[-0.02em] text-[#F2E8DA] md:mt-2.5 ${dmSans.className} text-[clamp(1.08rem,1vw,1.28rem)] md:text-[clamp(1.18rem,1.05vw,1.38rem)]`}
         >
           {ABOUT_MOBILE_TAM_CHART.highlight.tamLabel}
         </p>
         <p
           className={`mt-1.5 font-normal leading-snug md:mt-2 ${inter.className} text-[clamp(0.98rem,0.9vw,1.12rem)] md:text-[clamp(1.05rem,0.95vw,1.18rem)]`}
-          style={{ color: ABOUT_IPHONE_SHADER_CHART_MUTED }}
+          style={{ color: ABOUT_IPHONE_SHADER_CHART_PRIMARY }}
         >
           {ABOUT_MOBILE_TAM_CHART.highlight.headline}
         </p>

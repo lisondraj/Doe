@@ -35,7 +35,7 @@ export const ABOUT_PAGE_HERO_BEFORE_ARTICLE = "mb-10 iphone-page:mb-12";
 export const ABOUT_PAGE_HERO_WRAP = `${ABOUT_PAGE_HERO_AFTER_SUBHEADING} ${ABOUT_PAGE_HERO_BEFORE_ARTICLE}`;
 
 /** iPhone /about — byline under subheading, before hero. */
-export const ABOUT_PAGE_MOBILE_BYLINE_TW = `about-page-byline text-[clamp(1.02rem,0.88rem+0.58vmin,1.22rem)] iphone-page:text-[clamp(1.08rem,0.92rem+0.62vmin,1.28rem)] font-medium text-[#BE8660] ${dmSans.className}`;
+export const ABOUT_PAGE_MOBILE_BYLINE_TW = `about-page-byline text-[clamp(1.02rem,0.88rem+0.58vmin,1.22rem)] iphone-page:text-[clamp(1.08rem,0.92rem+0.62vmin,1.28rem)] font-medium text-[#E8C08E] ${dmSans.className}`;
 
 export const ABOUT_PAGE_MOBILE_BYLINE_GAP = "mt-3 iphone-page:mt-4";
 
@@ -65,7 +65,7 @@ export const ABOUT_DESKTOP_TITLE_TW = `text-left font-light leading-[1.02] track
 export const ABOUT_DESKTOP_SUBHEADING_TW = `mt-5 md:mt-6 text-[clamp(1.32rem,1.2vw,1.55rem)] md:text-[clamp(1.4rem,1.28vw,1.65rem)] font-normal leading-[1.44] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
 
 /** Desktop /about — byline between subheading and hero (matches iPhone). */
-export const ABOUT_DESKTOP_HERO_BYLINE_OUTSIDE_TW = `font-medium text-[#BE8660] text-[clamp(0.92rem,0.85vw,1.06rem)] md:text-[clamp(0.98rem,0.9vw,1.12rem)] ${dmSans.className}`;
+export const ABOUT_DESKTOP_HERO_BYLINE_OUTSIDE_TW = `font-medium text-[#E8C08E] text-[clamp(0.92rem,0.85vw,1.06rem)] md:text-[clamp(0.98rem,0.9vw,1.12rem)] ${dmSans.className}`;
 
 export const ABOUT_DESKTOP_HERO_BYLINE_OUTSIDE_GAP = "mt-3 md:mt-4";
 
@@ -77,7 +77,7 @@ export const ABOUT_DESKTOP_SECTION_HEADLINE_TW = `text-left font-light leading-[
 export const ABOUT_DESKTOP_PIE_CHART_TITLE_TW =
   "text-[clamp(1.22rem,1.05vw,1.42rem)] md:text-[clamp(1.32rem,1.12vw,1.52rem)]";
 
-export const ABOUT_DESKTOP_CHART_JOINT_CAPTION_TW = `mt-4 md:mt-5 font-normal leading-snug text-[#BE8660] text-[clamp(0.98rem,0.9vw,1.12rem)] md:text-[clamp(1.05rem,0.95vw,1.18rem)] ${inter.className}`;
+export const ABOUT_DESKTOP_CHART_JOINT_CAPTION_TW = `mt-4 md:mt-5 font-normal leading-snug text-[#D4A574] text-[clamp(0.98rem,0.9vw,1.12rem)] md:text-[clamp(1.05rem,0.95vw,1.18rem)] ${inter.className}`;
 
 /** Desktop /about — author + date inside the orange hero box (bottom-right inset). */
 export const ABOUT_DESKTOP_HERO_BYLINE_WRAP_TW =
@@ -169,7 +169,7 @@ export const ABOUT_DESKTOP_CONTENT_STACK_GAP = "gap-8 md:gap-9 lg:gap-10";
 
 export const ABOUT_DESKTOP_STACK_GAP = "gap-12 md:gap-14";
 
-export const ABOUT_DESKTOP_CHART_CITATION_TW = `mt-3 md:mt-4 font-normal leading-snug text-[#BE8660] text-[clamp(0.92rem,0.85vw,1.05rem)] md:text-[clamp(0.98rem,0.9vw,1.1rem)] ${inter.className}`;
+export const ABOUT_DESKTOP_CHART_CITATION_TW = `mt-3 md:mt-4 font-normal leading-snug text-[#D4A574] text-[clamp(0.92rem,0.85vw,1.05rem)] md:text-[clamp(0.98rem,0.9vw,1.1rem)] ${inter.className}`;
 
 export const ABOUT_DESKTOP_ARTICLE_SECTION_GAP = "mt-12 md:mt-14";
 
@@ -185,7 +185,7 @@ export const ABOUT_DESKTOP_ARTICLE_H2_TW = `text-left font-semibold leading-[1.1
 
 export const ABOUT_DESKTOP_ARTICLE_QUOTE_TW = `font-normal leading-[1.22] tracking-[-0.025em] text-[#1E343A] text-[clamp(1.85rem,1.65vw,2.35rem)] md:text-[clamp(2.05rem,1.85vw,2.65rem)] ${lora.className}`;
 
-export const ABOUT_DESKTOP_ARTICLE_ATTRIBUTION_TW = `mt-5 md:mt-6 font-medium text-[#BE8660] text-[clamp(1.12rem,1vw,1.32rem)] md:text-[clamp(1.22rem,1.05vw,1.42rem)] ${dmSans.className}`;
+export const ABOUT_DESKTOP_ARTICLE_ATTRIBUTION_TW = `mt-5 md:mt-6 font-medium text-[#D4A574] text-[clamp(1.12rem,1vw,1.32rem)] md:text-[clamp(1.22rem,1.05vw,1.42rem)] ${dmSans.className}`;
 
 export const ABOUT_DESKTOP_ARTICLE_LIST_GAP = "space-y-3 md:space-y-3.5";
 
@@ -218,10 +218,10 @@ export const ABOUT_MOBILE_SECTION_HEADLINE_TW = `text-left font-light leading-[1
 export const ABOUT_MOBILE_PIE_CHART_TITLE_TW =
   "text-[clamp(1.32rem,1.12rem+0.95vmin,1.62rem)] iphone-page:text-[clamp(1.55rem,1.28rem+1.22vmin,1.92rem)]";
 
-export const ABOUT_MOBILE_CHART_JOINT_CAPTION_TW = `mt-4 font-normal leading-snug text-[#BE8660] iphone-page:mt-5 text-[clamp(0.98rem,0.86rem+0.55vmin,1.12rem)] iphone-page:text-[clamp(1.05rem,0.92rem+0.65vmin,1.2rem)] ${inter.className}`;
+export const ABOUT_MOBILE_CHART_JOINT_CAPTION_TW = `mt-4 font-normal leading-snug text-[#D4A574] iphone-page:mt-5 text-[clamp(0.98rem,0.86rem+0.55vmin,1.12rem)] iphone-page:text-[clamp(1.05rem,0.92rem+0.65vmin,1.2rem)] ${inter.className}`;
 
-export const ABOUT_MOBILE_CHART_CITATION_TW = `mt-3 font-normal leading-snug text-[#BE8660] text-[clamp(0.92rem,0.86rem+0.5vmin,1.05rem)] ${inter.className}`;
+export const ABOUT_MOBILE_CHART_CITATION_TW = `mt-3 font-normal leading-snug text-[#D4A574] text-[clamp(0.92rem,0.86rem+0.5vmin,1.05rem)] ${inter.className}`;
 
 export const ABOUT_MOBILE_ARTICLE_QUOTE_TW = `font-normal leading-[1.22] tracking-[-0.025em] text-[#1E343A] text-[clamp(1.62rem,1.3rem+1.45vmin,2.1rem)] iphone-page:text-[clamp(1.85rem,1.45rem+2vmin,2.6rem)] ${lora.className}`;
 
-export const ABOUT_MOBILE_ARTICLE_QUOTE_ATTRIBUTION_TW = `mt-4 font-medium text-[#BE8660] iphone-page:mt-5 text-[clamp(1.08rem,0.95rem+0.55vmin,1.28rem)] iphone-page:text-[clamp(1.22rem,1.05rem+0.8vmin,1.48rem)] ${dmSans.className}`;
+export const ABOUT_MOBILE_ARTICLE_QUOTE_ATTRIBUTION_TW = `mt-4 font-medium text-[#D4A574] iphone-page:mt-5 text-[clamp(1.08rem,0.95rem+0.55vmin,1.28rem)] iphone-page:text-[clamp(1.22rem,1.05rem+0.8vmin,1.48rem)] ${dmSans.className}`;

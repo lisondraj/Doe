@@ -22,13 +22,21 @@ export const DOE_HOME_DUSK_CHART_AXIS = "rgba(26, 18, 8, 0.22)";
 export const DOE_HOME_DUSK_CHART_GRID = "rgba(26, 18, 8, 0.07)";
 export const DOE_HOME_DUSK_CHART_PANEL_BORDER = "#D8C8B0";
 
-/** iPhone /about stats — centered on the wood-brown swatch (#895129). */
-export const ABOUT_IPHONE_SHADER_CHART_PRIMARY = "#895129";
-export const ABOUT_IPHONE_SHADER_CHART_SECONDARY = "#A4683C";
-export const ABOUT_IPHONE_SHADER_CHART_MUTED = "#BE8660";
-export const ABOUT_IPHONE_SHADER_CHART_TRACK = "rgba(137, 81, 41, 0.14)";
-export const ABOUT_IPHONE_SHADER_CHART_AXIS = "rgba(137, 81, 41, 0.2)";
-export const ABOUT_IPHONE_SHADER_CHART_GRID = "rgba(137, 81, 41, 0.09)";
+/** /about stats — doehealth gold on brown page surface. */
+export const ABOUT_IPHONE_SHADER_CHART_PRIMARY = "#E8C08E";
+export const ABOUT_IPHONE_SHADER_CHART_SECONDARY = "#D4A574";
+export const ABOUT_IPHONE_SHADER_CHART_MUTED = "#B8845C";
+export const ABOUT_IPHONE_SHADER_CHART_TRACK = "rgba(232, 192, 142, 0.16)";
+export const ABOUT_IPHONE_SHADER_CHART_AXIS = "rgba(232, 192, 142, 0.28)";
+export const ABOUT_IPHONE_SHADER_CHART_GRID = "rgba(232, 192, 142, 0.12)";
+/** /about brown page — matches /doehealth mid-band espresso. */
+export const ABOUT_BROWN_PAGE_SURFACE = "#1B1410";
+export const ABOUT_BROWN_PAGE_SURFACE_RAISED = "#271F17";
+export const ABOUT_BROWN_PAGE_SURFACE_SUNKEN = "#130E09";
+export const ABOUT_BROWN_PAGE_INK = "#F2E8DA";
+export const ABOUT_BROWN_PAGE_INK_MUTED = "rgba(242, 232, 218, 0.72)";
+export const ABOUT_BROWN_PAGE_GOLD = "#D4A574";
+export const ABOUT_BROWN_OVERFLOW_SURFACE = ABOUT_BROWN_PAGE_SURFACE;
 /** Home pre-seed strip — one step darker than overflow white. */
 export const DOE_HOME_BANNER_SURFACE = DOE_PAGE_SURFACE;
 /** Agents tray — clearly darker than page surface for nested feature cards. */

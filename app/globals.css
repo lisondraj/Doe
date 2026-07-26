@@ -108,7 +108,9 @@ html[data-about-page]:has(.blog-mobile-root) {
   --doe-nav-frost-scrolled-cta-divider: rgba(30, 52, 58, 0.14);
   background-color: var(--doe-page-surface);
 }
-/* iPhone home + /about — desert dusk page chrome + hero-brown nav capsule. */
+/* iPhone home + /about — desert dusk page chrome + hero-brown nav capsule.
+ * /about with doehealth chrome overrides surface to brown via about-doehealth-iphone.css.
+ */
 html[data-home-page]:has(.doephone-mobile-root),
 html[data-about-page]:has(.blog-mobile-root),
 html[data-about-page]:has(.doephone-mobile-root) {
@@ -395,11 +397,11 @@ html[data-layout="desktop"] {
 html[data-about-page][data-layout="desktop"] {
   --proto-nav-frost-progress: 1;
   --proto-nav-frost-shell-progress: 1;
-  --doe-chart-bar: #9a5d31;
-  --doe-chart-pie-1: #9a5d31;
-  --doe-chart-pie-2: #b27449;
-  --doe-chart-pie-3: #c98b62;
-  --doe-chart-track: rgba(154, 93, 49, 0.16);
+  --doe-chart-bar: #d4a574;
+  --doe-chart-pie-1: #e8c08e;
+  --doe-chart-pie-2: #d4a574;
+  --doe-chart-pie-3: #b8845c;
+  --doe-chart-track: rgba(232, 192, 142, 0.16);
 }
 /* Desktop /about — full viewport bands with punched nav overlay clearance */
 html[data-about-page][data-layout="desktop"] .about-desktop-section {

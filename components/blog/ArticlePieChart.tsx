@@ -30,9 +30,9 @@ const SLICE_COLORS_DUSK_FALLBACK = [
   DOE_HOME_DUSK_CHART_MUTED_STRONG,
 ] as const;
 const SLICE_COLORS_ABOUT = [
-  "var(--doe-chart-pie-1, #5C4E42)",
-  "var(--doe-chart-pie-2, #332B21)",
-  "var(--doe-chart-pie-3, #8A7868)",
+  "var(--doe-chart-pie-1, #E8C08E)",
+  "var(--doe-chart-pie-2, #D4A574)",
+  "var(--doe-chart-pie-3, #B8845C)",
 ] as const;
 const SLICE_COLORS_ABOUT_FALLBACK = [
   ABOUT_IPHONE_SHADER_CHART_PRIMARY,
@@ -101,11 +101,41 @@ export function ArticlePieChart({
     : isDusk
       ? SLICE_COLORS_DUSK_FALLBACK
       : sliceColors;
-  const titleColor = isDark ? "text-white" : isWarmChart ? "text-[#1A1208]" : "text-[#1E343A]";
-  const labelColor = isDark ? "text-white/72" : isWarmChart ? "text-[#1A1208]/72" : "text-[#1E343A]/72";
-  const valueColor = isDark ? "text-white" : isWarmChart ? "text-[#1A1208]" : "text-[#1E343A]";
-  const metaColor = isDark ? "text-white/55" : isWarmChart ? "text-[#8A7868]" : "text-[#9A8F82]";
-  const donutCenter = isDark ? "bg-[#121819]" : isWarmChart ? "bg-[#FAF0D8]" : "bg-[#F7F6F3]";
+  const titleColor = isDark
+    ? "text-white"
+    : isAbout
+      ? "text-[#F2E8DA]"
+      : isWarmChart
+        ? "text-[#1A1208]"
+        : "text-[#1E343A]";
+  const labelColor = isDark
+    ? "text-white/72"
+    : isAbout
+      ? "text-[#F2E8DA]/72"
+      : isWarmChart
+        ? "text-[#1A1208]/72"
+        : "text-[#1E343A]/72";
+  const valueColor = isDark
+    ? "text-white"
+    : isAbout
+      ? "text-[#E8C08E]"
+      : isWarmChart
+        ? "text-[#1A1208]"
+        : "text-[#1E343A]";
+  const metaColor = isDark
+    ? "text-white/55"
+    : isAbout
+      ? "text-[#D4A574]"
+      : isWarmChart
+        ? "text-[#8A7868]"
+        : "text-[#9A8F82]";
+  const donutCenter = isDark
+    ? "bg-[#121819]"
+    : isAbout
+      ? "bg-[#1B1410]"
+      : isWarmChart
+        ? "bg-[#FAF0D8]"
+        : "bg-[#F7F6F3]";
 
   return (
     <figure

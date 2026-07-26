@@ -45,7 +45,10 @@ import { BLOG_CONTENT_PT } from "@/lib/blog/blog-layout-styles";
 import "@/lib/doehealth/doehealth-landing.css";
 import { applyPhoneOverflowChrome } from "@/lib/doephone/phone-layout-viewport";
 import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-viewport";
-import { ABOUT_IPHONE_SHADER_CHART_SECONDARY, DOE_HOME_DUSK_OVERFLOW_SURFACE } from "@/lib/home/doe-page-colors";
+import {
+  ABOUT_BROWN_OVERFLOW_SURFACE,
+  ABOUT_IPHONE_SHADER_CHART_SECONDARY,
+} from "@/lib/home/doe-page-colors";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 
 /** iPhone /about — mission hero plus section copy, pie chart, FAQ, and founder bios. */
@@ -54,7 +57,7 @@ export function AboutMobileView() {
   useDoePhoneStableViewport(true);
 
   useLayoutEffect(() => {
-    applyPhoneOverflowChrome(DOE_HOME_DUSK_OVERFLOW_SURFACE);
+    applyPhoneOverflowChrome(ABOUT_BROWN_OVERFLOW_SURFACE);
 
     try {
       sessionStorage.removeItem(`doephone-app-viewport-lock:${location.hostname}`);

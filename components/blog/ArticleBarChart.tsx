@@ -56,7 +56,7 @@ export function ArticleBarChart({
     theme === "proto"
       ? TRACK_PROTO
       : isAbout
-        ? "var(--doe-chart-track, rgba(51, 43, 33, 0.16))"
+        ? "var(--doe-chart-track, rgba(232, 192, 142, 0.16))"
         : isWarmChart
           ? "var(--doe-chart-track, rgba(26, 18, 8, 0.1))"
           : isDark
@@ -66,17 +66,41 @@ export function ArticleBarChart({
     theme === "proto"
       ? BAR_PROTO
       : isAbout
-        ? "var(--doe-chart-bar, #5C4E42)"
+        ? "var(--doe-chart-bar, #D4A574)"
         : isWarmChart
           ? "var(--doe-chart-bar, #E8A060)"
           : isDark
             ? BAR_DARK
             : BAR;
   const gridLine = isAbout ? ABOUT_IPHONE_SHADER_CHART_GRID : isWarmChart ? DOE_HOME_DUSK_CHART_GRID : GRID_LINE;
-  const titleColor = isDark ? "text-white" : isWarmChart ? "text-[#1A1208]" : "text-[#1E343A]";
-  const labelColor = isDark ? "text-white/72" : isWarmChart ? "text-[#1A1208]/72" : "text-[#1E343A]/72";
-  const valueColor = isDark ? "text-white" : isWarmChart ? "text-[#1A1208]" : "text-[#1E343A]";
-  const metaColor = isDark ? "text-white/55" : isWarmChart ? "text-[#8A7868]" : "text-[#9A8F82]";
+  const titleColor = isDark
+    ? "text-white"
+    : isAbout
+      ? "text-[#F2E8DA]"
+      : isWarmChart
+        ? "text-[#1A1208]"
+        : "text-[#1E343A]";
+  const labelColor = isDark
+    ? "text-white/72"
+    : isAbout
+      ? "text-[#F2E8DA]/72"
+      : isWarmChart
+        ? "text-[#1A1208]/72"
+        : "text-[#1E343A]/72";
+  const valueColor = isDark
+    ? "text-white"
+    : isAbout
+      ? "text-[#E8C08E]"
+      : isWarmChart
+        ? "text-[#1A1208]"
+        : "text-[#1E343A]";
+  const metaColor = isDark
+    ? "text-white/55"
+    : isAbout
+      ? "text-[#D4A574]"
+      : isWarmChart
+        ? "text-[#8A7868]"
+        : "text-[#9A8F82]";
   const maxValue = Math.max(...bars.map((bar) => bar.value), 1);
 
   return (
