@@ -70,34 +70,42 @@ const STRIP_COPY = {
     items: [
       { title: "Metformin refill", when: "Due today", tone: "due" as const, icon: "rx" as const },
       { title: "Diabetic eye exam", when: "Overdue 2 wk", tone: "overdue" as const, icon: "eye" as const },
-      { title: "A1C recheck", when: "Due Fri", tone: "due" as const, icon: "rx" as const },
+      { title: "A1C lab recheck", when: "Due Fri", tone: "due" as const, icon: "rx" as const },
+      { title: "Foot exam", when: "Due Mon", tone: "due" as const, icon: "eye" as const },
     ],
   },
   meds: {
     label: "Medications",
-    items: ["Metformin XR 500mg", "Atorvastatin 20mg", "Lisinopril 10mg", "Aspirin 81mg", "Vitamin D 2000"],
+    items: [
+      "Metformin XR 500mg",
+      "Atorvastatin 20mg",
+      "Lisinopril 10mg",
+      "Empagliflozin 10mg",
+      "Aspirin 81mg",
+      "Vitamin D 2000 IU",
+    ],
   },
   conditions: {
     label: "Conditions",
-    items: ["Type 2 Diabetes", "Hypertension", "Hyperlipidemia", "Obesity"],
+    items: ["Type 2 Diabetes", "Hypertension", "Hyperlipidemia", "Obesity (BMI 32)", "Sleep apnea"],
   },
   allergies: {
     label: "Allergies",
-    items: ["Penicillin", "Sulfa drugs", "Shellfish"],
+    items: ["Penicillin — rash", "Sulfa drugs", "Shellfish", "Latex", "Ibuprofen — mild"],
   },
 } as const;
 
-/** Same-height row — widths tuned so denser copy still reads cleanly. */
+/** Same-height row — right tiles widened so denser copy fills without crush. */
 const CHART_TILES = [
   { id: "a1c", width: 440 },
   { id: "vitals", width: 340 },
   { id: "bp", width: 380 },
   { id: "labs", width: 320 },
   { id: "visits", width: 320 },
-  { id: "tasks", width: 300 },
-  { id: "meds", width: 270 },
-  { id: "conditions", width: 250 },
-  { id: "allergies", width: 230 },
+  { id: "tasks", width: 318 },
+  { id: "meds", width: 300 },
+  { id: "conditions", width: 280 },
+  { id: "allergies", width: 270 },
 ] as const;
 
 const TRACK_WIDTH_PX =
