@@ -428,11 +428,14 @@ html[data-about-page][data-layout="desktop"] .about-desktop-root [class*="text-[
 html[data-about-page][data-layout="desktop"] .about-desktop-root [class*="border-[#DDD9D2]"] {
   border-color: #d8c8b0 !important;
 }
-html[data-about-page][data-layout="desktop"] .about-desktop-beige-panel,
+html[data-about-page][data-layout="desktop"] .about-desktop-beige-panel {
+  background-color: #271f17 !important;
+  border-color: rgba(212, 165, 116, 0.28) !important;
+}
 html[data-about-page][data-layout="desktop"] .about-desktop-faq-panel,
 html[data-about-page][data-layout="desktop"] .about-desktop-content-panel {
   background-color: #f0e4d0 !important;
-  border-color: #d8c8b0 !important;
+  border-color: rgba(212, 165, 116, 0.32) !important;
 }
 html[data-about-page][data-layout="desktop"] .about-desktop-beige-panel svg {
   transform: scale(0.88);
@@ -3960,8 +3963,8 @@ html[data-about-page]:has(.blog-mobile-root) main li {
   line-height: 1.46 !important;
 }
 html[data-about-page]:has(.blog-mobile-root) .about-mobile-beige-panel {
-  border-color: #d8c8b0 !important;
-  background-color: #f0e4d0 !important;
+  border-color: rgba(212, 165, 116, 0.28) !important;
+  background-color: #271f17 !important;
 }
 html[data-about-page]:has(.blog-mobile-root) main h1,
 html[data-about-page]:has(.blog-mobile-root) main h2,
