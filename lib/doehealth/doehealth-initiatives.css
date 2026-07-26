@@ -3505,6 +3505,26 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="des
 
 html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
   .doehealth-intro-band--intro-video
+  .doehealth-intro-video__player-wrap
+  .motion4-scene--call-center {
+  isolation: isolate;
+}
+
+html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
+  .doehealth-intro-band--intro-video
+  .doehealth-intro-video__player-wrap
+  .motion4-confirm-interlude::before,
+html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
+  .doehealth-intro-band--intro-video
+  .doehealth-intro-video__player-wrap
+  .motion4-chart-interlude::before {
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  background: rgba(26, 18, 8, 0.22);
+}
+
+html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
+  .doehealth-intro-band--intro-video
   .doehealth-intro-video__player-wrap {
   max-height: min(58vh, 34rem);
   padding-top: clamp(2.75rem, 8vw, 3.5rem);

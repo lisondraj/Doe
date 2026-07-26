@@ -1438,9 +1438,26 @@ html[data-motion4-page] body {
   pointer-events: none;
   opacity: var(--m4-confirm-interlude-o, 0);
   font-family: "DM Sans", system-ui, sans-serif;
+  isolation: isolate;
+}
+
+.motion4-confirm-interlude::before,
+.motion4-chart-interlude::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 1;
+  background: rgba(26, 18, 8, 0.14);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  transform: translateZ(0);
 }
 
 .motion4-confirm-interlude__stack {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1496,10 +1513,12 @@ html[data-motion4-page] body {
   pointer-events: none;
   opacity: var(--m4-chart-interlude-o, 0);
   font-family: "DM Sans", system-ui, sans-serif;
+  isolation: isolate;
 }
 
 .motion4-chart-interlude__stage {
   position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
