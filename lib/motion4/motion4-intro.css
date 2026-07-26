@@ -1760,10 +1760,10 @@ html[data-motion4-page] body {
 
 .motion4-chart-interlude__tile {
   flex: 0 0 auto;
-  height: 300px;
-  min-height: 300px;
-  max-height: 300px;
-  transform-origin: center bottom;
+  height: var(--m4-chart-tile-height, 300px);
+  min-height: var(--m4-chart-tile-height, 300px);
+  max-height: var(--m4-chart-tile-height, 300px);
+  transform-origin: center center;
   will-change: transform, opacity, filter;
 }
 

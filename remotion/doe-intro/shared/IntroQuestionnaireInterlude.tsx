@@ -15,7 +15,7 @@ import {
   DOE_SARAH_INTRO_TURN_COUNT,
 } from "../constants";
 import { buildCallTurnRevealTiming, findCallInterludeWindow } from "../../motion-ui";
-import { IntroSarahChartStripSnapshot } from "./IntroChartAccessInterlude";
+import { IntroSarahChartStripSnapshot, CHART_STRIP_TILE_HEIGHT_PX } from "./IntroChartAccessInterlude";
 
 const CONVO_UI_OFFSET = DOE_SARAH_CONVO_START_FRAMES + DOE_SARAH_CONVO_UI_OFFSET;
 
@@ -27,7 +27,7 @@ const STRIP_EXIT_START = 78;
 const STRIP_EXIT_END = 108;
 const CARD_APPEAR = 96;
 const CARD_REVEAL = 28;
-const STRIP_HEIGHT_PX = 300;
+const STRIP_HEIGHT_PX = CHART_STRIP_TILE_HEIGHT_PX;
 const REVEAL_EASE = Easing.bezier(0.33, 0, 0.18, 1);
 
 const METFORMIN_SIDE_EFFECTS = [

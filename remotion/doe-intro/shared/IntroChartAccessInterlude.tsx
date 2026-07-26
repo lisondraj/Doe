@@ -33,6 +33,17 @@ import "@/lib/product2/product2-landing.css";
 
 const CONVO_UI_OFFSET = DOE_SARAH_CONVO_START_FRAMES + DOE_SARAH_CONVO_UI_OFFSET;
 
+/** Scale Sarah chart strip tiles — layout + snapshot stay in sync. */
+export const CHART_STRIP_SCALE = 1.18;
+const BASE_TILE_HEIGHT_PX = 300;
+const BASE_TILE_GAP_PX = 16;
+const BASE_TILE_PLOT_HEIGHT_PX = 210;
+export const CHART_STRIP_TILE_HEIGHT_PX = Math.round(BASE_TILE_HEIGHT_PX * CHART_STRIP_SCALE);
+const TILE_HEIGHT_PX = CHART_STRIP_TILE_HEIGHT_PX;
+const TILE_GAP_PX = Math.round(BASE_TILE_GAP_PX * CHART_STRIP_SCALE);
+const TILE_PLOT_HEIGHT = `${Math.round(BASE_TILE_PLOT_HEIGHT_PX * CHART_STRIP_SCALE)}px`;
+const TILE_LIFT_PX = Math.round(32 * CHART_STRIP_SCALE);
+
 const ACCESS_DONE = 48;
 /** Mount + start scrolling before fade-in so there is no post-appear hold. */
 const SCROLL_START = 52;
@@ -41,17 +52,10 @@ const STRIP_REVEAL = 28;
 /** Keep scrolling through close — modal fade starts earlier in motion-ui. */
 const SCROLL_END_PAD = 2;
 const CHART_BLUR_MAX = 16;
-/** Lift distance for chart boxes as they unblur into place. */
-const TILE_LIFT_PX = 32;
 /** Stagger each tile’s unblur/lift across the strip reveal. */
 const TILE_STAGGER = 0.055;
-/** Composition pixels — preview Player scale must not change relative tile size. */
-const TILE_PLOT_HEIGHT = "210px";
-const TILE_HEIGHT_PX = 300;
-const TILE_GAP_PX = 16;
-const VIEWPORT_INSET_PX = 72;
 const REVEAL_EASE = Easing.bezier(0.33, 0, 0.18, 1);
-const SCROLL_EASE = Easing.bezier(0.22, 0.08, 0.18, 1);
+const SCROLL_EASE = Easing.bezier(0.16, 0.12, 0.22, 1);
 
 /** Densified strip copy — fills same-height boxes without sparse blank regions. */
 const STRIP_COPY = {
@@ -96,19 +100,24 @@ const STRIP_COPY = {
 
 /** Same-height row — right tiles widened so denser copy fills without crush. */
 const CHART_TILES = [
-  { id: "a1c", width: 440 },
-  { id: "vitals", width: 340 },
-  { id: "bp", width: 380 },
-  { id: "labs", width: 320 },
-  { id: "visits", width: 320 },
-  { id: "tasks", width: 318 },
-  { id: "meds", width: 300 },
-  { id: "conditions", width: 280 },
-  { id: "allergies", width: 270 },
+  { id: "a1c", width: Math.round(440 * CHART_STRIP_SCALE) },
+  { id: "vitals", width: Math.round(340 * CHART_STRIP_SCALE) },
+  { id: "bp", width: Math.round(380 * CHART_STRIP_SCALE) },
+  { id: "labs", width: Math.round(320 * CHART_STRIP_SCALE) },
+  { id: "visits", width: Math.round(320 * CHART_STRIP_SCALE) },
+  { id: "tasks", width: Math.round(318 * CHART_STRIP_SCALE) },
+  { id: "meds", width: Math.round(300 * CHART_STRIP_SCALE) },
+  { id: "conditions", width: Math.round(280 * CHART_STRIP_SCALE) },
+  { id: "allergies", width: Math.round(270 * CHART_STRIP_SCALE) },
 ] as const;
 
+const VIEWPORT_INSET_PX = 72;
 const TRACK_WIDTH_PX =
   CHART_TILES.reduce((sum, tile) => sum + tile.width, 0) + TILE_GAP_PX * (CHART_TILES.length - 1);
+const CHART_STRIP_VIEWPORT_WIDTH_PX = DOE_LAUNCH_WIDTH - VIEWPORT_INSET_PX * 2;
+export const CHART_STRIP_SNAPSHOT_SCROLL_X = -Math.round(
+  Math.max(0, TRACK_WIDTH_PX - CHART_STRIP_VIEWPORT_WIDTH_PX) * 0.5,
+);
 
 function InterludeStepIcon({ state, spinDeg }: { state: "spinner" | "check"; spinDeg: number }) {
   if (state === "check") {
@@ -316,7 +325,7 @@ function ChartAccessTile({ id }: { id: (typeof CHART_TILES)[number]["id"] }) {
 export function IntroSarahChartStripSnapshot({
   opacity,
   translateY = 0,
-  scrollX = -920,
+  scrollX = CHART_STRIP_SNAPSHOT_SCROLL_X,
 }: {
   opacity: number;
   translateY?: number;
@@ -332,6 +341,7 @@ export function IntroSarahChartStripSnapshot({
       style={{
         opacity,
         transform: `translateY(${translateY}px)`,
+        ["--m4-chart-tile-height" as string]: `${TILE_HEIGHT_PX}px`,
       }}
     >
       <div className="motion4-chart-interlude__strip-viewport">
@@ -410,7 +420,7 @@ export function IntroChartAccessInterlude() {
         }) * stepOpacity
       : 0;
 
-  const viewportWidth = DOE_LAUNCH_WIDTH - VIEWPORT_INSET_PX * 2;
+  const viewportWidth = CHART_STRIP_VIEWPORT_WIDTH_PX;
   const maxScroll = Math.max(0, TRACK_WIDTH_PX - viewportWidth);
   /** Scroll begins before fade-in so the strip is already moving when it appears. */
   const scrollX =
@@ -449,6 +459,7 @@ export function IntroChartAccessInterlude() {
               className="motion4-chart-interlude__strip product-brown-mock product-brown-call-history-mode"
               style={{
                 opacity: stripOpacity,
+                ["--m4-chart-tile-height" as string]: `${TILE_HEIGHT_PX}px`,
               }}
             >
               <div className="motion4-chart-interlude__strip-viewport">
