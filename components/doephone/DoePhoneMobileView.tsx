@@ -14,7 +14,10 @@ import { preloadShaderNoiseTexture } from "@/lib/doephone/shader-noise-texture";
 import {
   DOEPHONE_BEIGE_SECTION,
 } from "@/lib/doephone/section-styles";
-import { DOE_HOME_DUSK_OVERFLOW_SURFACE } from "@/lib/home/doe-page-colors";
+import {
+  ABOUT_BROWN_OVERFLOW_SURFACE,
+  DOE_HOME_DUSK_OVERFLOW_SURFACE,
+} from "@/lib/home/doe-page-colors";
 import type { DoePhoneCommunicationSlide } from "@/lib/doephone/communication-carousel";
 import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-viewport";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
@@ -23,6 +26,23 @@ import { useDoeHealthLandingNavContext } from "@/lib/doehealth/doehealth-nav-chr
 import { DOEHEALTH_HERO_DIAL_ORBS } from "@/lib/doehealth/doehealth-hero-dial-orbs";
 import { PROTO_FONT_CLASS, PROTO_NAV_LOGO_FONT_CLASS } from "@/lib/proto/proto-font";
 import { PROTO_INVEST_PATH } from "@/lib/site-domains";
+
+/** iPhone /doehealth — brown overscroll under footer; keep sand page-surface tokens. */
+function applyDoeHealthPhoneOverflowChrome() {
+  if (typeof document === "undefined") return;
+
+  const html = document.documentElement;
+  const brown = ABOUT_BROWN_OVERFLOW_SURFACE.toLowerCase();
+  const sand = DOE_HOME_DUSK_OVERFLOW_SURFACE.toLowerCase();
+
+  html.style.setProperty("--doe-page-surface", sand);
+  html.style.setProperty("--proto-page-bg", sand);
+  html.style.backgroundColor = brown;
+  if (document.body) document.body.style.backgroundColor = brown;
+
+  const themeColor = document.querySelector('meta[name="theme-color"]');
+  if (themeColor) themeColor.setAttribute("content", brown);
+}
 
 export type DoeHomeHeroHeadline = {
   line1?: string;
@@ -96,7 +116,11 @@ export function DoePhoneMobileView({
 
     if (variant === "home") {
       html.setAttribute("data-home-page", "true");
-      applyPhoneOverflowChrome(DOE_HOME_DUSK_OVERFLOW_SURFACE);
+      if (isDoeHealthLanding) {
+        applyDoeHealthPhoneOverflowChrome();
+      } else {
+        applyPhoneOverflowChrome(DOE_HOME_DUSK_OVERFLOW_SURFACE);
+      }
       preloadShaderNoiseTexture();
     }
 
@@ -119,7 +143,7 @@ export function DoePhoneMobileView({
         html.removeAttribute("data-home-page");
       }
     };
-  }, [isProto, variant]);
+  }, [isProto, variant, isDoeHealthLanding]);
 
   return (
     <div
