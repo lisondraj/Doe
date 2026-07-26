@@ -1701,21 +1701,22 @@ html[data-motion4-page] body {
 }
 
 .motion4-chart-interlude__stack--paired {
-  gap: 34px;
+  gap: 40px;
 }
 
 .motion4-chart-interlude__step {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 16px;
   width: auto;
-  max-width: 92%;
+  max-width: 96%;
   font-family: "DM Sans", system-ui, sans-serif;
-  font-size: 42px;
+  /* Confirm code is ~97px effective (34×2.85); a bit smaller so longer labels fit. */
+  font-size: 82px;
   font-weight: 400;
   letter-spacing: 0.015em;
-  line-height: 1.2;
+  line-height: 1.15;
   color: rgba(242, 232, 218, 0.82);
   white-space: nowrap;
   transform-origin: center center;
@@ -2159,8 +2160,8 @@ html[data-motion4-page] body {
 
 .motion4-chart-interlude__icon {
   flex-shrink: 0;
-  width: 28px;
-  height: 28px;
+  width: 52px;
+  height: 52px;
   transform-origin: center center;
 }
 
@@ -2201,27 +2202,28 @@ html[data-motion4-page] body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 18px;
+  gap: 22px;
   width: 100%;
   max-width: 100%;
 }
 
 .motion4-questionnaire-interlude__stack--paired {
-  gap: 18px;
+  gap: 22px;
 }
 
 .motion4-questionnaire-interlude__step {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 16px;
   width: auto;
-  max-width: min(92%, 720px);
+  max-width: 96%;
   font-family: "DM Sans", system-ui, sans-serif;
-  font-size: 36px;
+  /* Match chart / booking — just under confirm-code scale. */
+  font-size: 82px;
   font-weight: 400;
   letter-spacing: 0.015em;
-  line-height: 1.2;
+  line-height: 1.15;
   color: rgba(242, 232, 218, 0.82);
   white-space: nowrap;
   transform-origin: center center;
@@ -2244,8 +2246,8 @@ html[data-motion4-page] body {
 
 .motion4-questionnaire-interlude__icon {
   flex-shrink: 0;
-  width: 26px;
-  height: 26px;
+  width: 52px;
+  height: 52px;
   transform-origin: center center;
 }
 
@@ -2355,21 +2357,22 @@ html[data-motion4-page] body {
 }
 
 .motion4-booking-interlude__stack--paired {
-  gap: 28px;
+  gap: 36px;
 }
 
 .motion4-booking-interlude__step {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 16px;
   width: auto;
-  max-width: 92%;
+  max-width: 96%;
   font-family: "DM Sans", system-ui, sans-serif;
-  font-size: 36px;
+  /* Match chart / questionnaire — just under confirm-code scale. */
+  font-size: 82px;
   font-weight: 400;
   letter-spacing: 0.015em;
-  line-height: 1.2;
+  line-height: 1.15;
   color: rgba(242, 232, 218, 0.82);
   white-space: nowrap;
   transform-origin: center center;
@@ -2378,8 +2381,8 @@ html[data-motion4-page] body {
 
 .motion4-booking-interlude__icon {
   flex-shrink: 0;
-  width: 26px;
-  height: 26px;
+  width: 52px;
+  height: 52px;
   transform-origin: center center;
 }
 
