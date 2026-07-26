@@ -5,7 +5,7 @@ import { useLayoutEffect, useState } from "react";
 
 import { inter } from "@/lib/home/fonts";
 
-function ReadMoreArrow() {
+function BannerArrow() {
   return (
     <svg
       className="doe-home-top-banner__arrow"
@@ -29,11 +29,15 @@ function ReadMoreArrow() {
 /** doehealth.care landing banner — pinned above nav; desktop dismisses after the hero. */
 export function DoeHealthTopBanner({
   dismissPastHero = false,
-  readMoreHref = "#doe-vision",
+  message = "Learn more about Doe's vision",
+  linkLabel = "Read more",
+  linkHref = "/about",
 }: {
   dismissPastHero?: boolean;
-  /** Override when the vision anchor is not on the current page. */
-  readMoreHref?: string;
+  message?: string;
+  linkLabel?: string;
+  /** Default /about — overrides the old #doe-vision hash. */
+  linkHref?: string;
 } = {}) {
   const [dismissed, setDismissed] = useState(false);
 
@@ -72,13 +76,13 @@ export function DoeHealthTopBanner({
     <div
       className={`doe-home-top-banner doehealth-top-banner${dismissed ? " doe-home-top-banner--dismissed" : ""}`}
       role="region"
-      aria-label="Learn more about Doe's vision"
+      aria-label={`${message} ${linkLabel}`}
     >
       <p className={`doe-home-top-banner__text ${inter.className}`}>
-        <span>Learn more about Doe&apos;s vision</span>
-        <Link href={readMoreHref} className="doe-home-top-banner__link">
-          Read more
-          <ReadMoreArrow />
+        <span>{message}</span>
+        <Link href={linkHref} className="doe-home-top-banner__link">
+          {linkLabel}
+          <BannerArrow />
         </Link>
       </p>
     </div>

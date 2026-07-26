@@ -187,6 +187,7 @@ export function MoreThanVoiceScene() {
               showConditions={false}
               showCallHistory
               bare
+              headerMode="motion"
               callHistoryMode="reveal"
               headerSettle={headerSettle}
               headerMorph={headerMorphStatus}

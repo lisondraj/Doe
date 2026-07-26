@@ -16,6 +16,8 @@ export function DoeHealthCallHistoryDiagram({
   bare = false,
   durationLabel,
   callHistoryMode = "scroll",
+  /** motion = Calling from / Answered morph (Remotion /motion4 only). */
+  headerMode = "static",
   headerSettle = 1,
   headerMorph = 1,
   headerMorphSubline = 1,
@@ -33,6 +35,8 @@ export function DoeHealthCallHistoryDiagram({
   durationLabel?: string;
   /** scroll = auto-drift viewport; reveal = one turn at a time (Remotion). */
   callHistoryMode?: "scroll" | "reveal";
+  /** static = /doehealth “Called”; motion = /motion4 Calling from → Answered. */
+  headerMode?: "static" | "motion";
   /** 0 = large hero centered; 1 = compact header above convo. */
   headerSettle?: number;
   /** 0 = Incoming… / timer hidden; 1 = timer visible. */
@@ -47,8 +51,84 @@ export function DoeHealthCallHistoryDiagram({
   const { heroName, phone, totalDuration, conditions } = DOEHEALTH_CALL_HISTORY_TREE;
   const conditionsLabel = conditions.join(", ");
   const resolvedDuration = durationLabel ?? totalDuration;
-  const statusLabel = headerMorph >= 0.5 ? resolvedDuration : "Incoming...";
-  const prefixLabel = headerMorphSubline >= 0.5 ? "Answered" : "Calling from";
+  const isMotionHeader = headerMode === "motion";
+  const statusLabel = isMotionHeader
+    ? headerMorph >= 0.5
+      ? resolvedDuration
+      : "Incoming..."
+    : resolvedDuration;
+  const prefixLabel = isMotionHeader
+    ? headerMorphSubline >= 0.5
+      ? "Answered"
+      : "Calling from"
+    : "Called";
+
+  const callHistory =
+    showCallHistory ? (
+      callHistoryMode === "reveal" ? (
+        <div className="motion4-call-history-reveal" style={{ opacity: callHistoryOpacity }}>
+          <Product2LandingLiveThread
+            className="product-call-history-rail__thread doehealth-initiatives__call-history"
+            showOutcome={false}
+            showActions={false}
+            showChartProfile={false}
+            turns={DOEHEALTH_CALL_HISTORY_INTRO_TURNS}
+          />
+        </div>
+      ) : (
+        <DoeHealthCallHistoryScroll>
+          <Product2LandingLiveThread
+            className="product-call-history-rail__thread doehealth-initiatives__call-history"
+            showOutcome={false}
+            showActions={false}
+            showChartProfile={false}
+            turns={DOEHEALTH_CALL_HISTORY_INTRO_TURNS}
+          />
+        </DoeHealthCallHistoryScroll>
+      )
+    ) : null;
+
+  const conditionsList = showConditions ? (
+    <ul className="doehealth-initiatives__conditions" aria-label="Active conditions">
+      {conditions.map((condition) => (
+        <li key={condition} className={`doehealth-initiatives__condition ${dmSans.className}`}>
+          {condition}
+        </li>
+      ))}
+    </ul>
+  ) : null;
+
+  if (!isMotionHeader) {
+    return (
+      <div
+        className={`doehealth-initiatives doehealth-initiatives--${width}${bare ? " doehealth-initiatives--bare" : ""} ${suisseIntl.className}${className ? ` ${className}` : ""}`}
+        style={style}
+        aria-label={
+          showConditions
+            ? `${heroName}, Called ${phone}, ${resolvedDuration}, ${conditionsLabel}`
+            : `${heroName}, Called ${phone}, ${resolvedDuration}`
+        }
+      >
+        <div className="doehealth-initiatives__card">
+          <div className="doehealth-initiatives__hero-block">
+            <div className="doehealth-initiatives__hero-row">
+              <h2 className={`doehealth-initiatives__hero doehealth-initiatives__hero--bold ${dmSans.className}`}>
+                {heroName}
+              </h2>
+              <span className={`doehealth-initiatives__hero-duration ${dmSans.className}`}>{resolvedDuration}</span>
+            </div>
+            <p className={`doehealth-initiatives__called-line ${suisseIntl.className}`}>
+              <span className="doehealth-initiatives__called-prefix">Called </span>
+              <span className={`doehealth-initiatives__called-number ${dmSans.className}`}>{phone}</span>
+            </p>
+          </div>
+
+          {conditionsList}
+          {callHistory}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -74,61 +154,30 @@ export function DoeHealthCallHistoryDiagram({
         <div className="motion4-call-header__hero-zone">
           <div className="doehealth-initiatives__hero-block motion4-call-header__block">
             <div className="motion4-call-header__shell">
-            <div className="doehealth-initiatives__hero-row motion4-call-header__row">
-              <h2 className={`doehealth-initiatives__hero doehealth-initiatives__hero--bold motion4-call-header__name ${dmSans.className}`}>
-                {heroName}
-              </h2>
-              <div className="motion4-call-header__status-slot">
-                <span className={`motion4-call-header__incoming ${dmSans.className}`}>Incoming...</span>
-                <span className={`doehealth-initiatives__hero-duration motion4-call-header__duration ${dmSans.className}`}>
-                  {resolvedDuration}
-                </span>
+              <div className="doehealth-initiatives__hero-row motion4-call-header__row">
+                <h2 className={`doehealth-initiatives__hero doehealth-initiatives__hero--bold motion4-call-header__name ${dmSans.className}`}>
+                  {heroName}
+                </h2>
+                <div className="motion4-call-header__status-slot">
+                  <span className={`motion4-call-header__incoming ${dmSans.className}`}>Incoming...</span>
+                  <span className={`doehealth-initiatives__hero-duration motion4-call-header__duration ${dmSans.className}`}>
+                    {resolvedDuration}
+                  </span>
+                </div>
               </div>
+              <p className={`doehealth-initiatives__called-line motion4-call-header__subline ${suisseIntl.className}`}>
+                <span className="motion4-call-header__prefix">
+                  <span className={`motion4-call-header__calling-from ${suisseIntl.className}`}>Calling from </span>
+                  <span className={`motion4-call-header__answered ${suisseIntl.className}`}>Answered </span>
+                </span>
+                <span className={`doehealth-initiatives__called-number motion4-call-header__phone ${dmSans.className}`}>{phone}</span>
+              </p>
             </div>
-            <p className={`doehealth-initiatives__called-line motion4-call-header__subline ${suisseIntl.className}`}>
-              <span className="motion4-call-header__prefix">
-                <span className={`motion4-call-header__calling-from ${suisseIntl.className}`}>Calling from </span>
-                <span className={`motion4-call-header__answered ${suisseIntl.className}`}>Answered </span>
-              </span>
-              <span className={`doehealth-initiatives__called-number motion4-call-header__phone ${dmSans.className}`}>{phone}</span>
-            </p>
           </div>
         </div>
-        </div>
 
-        {showConditions ? (
-          <ul className="doehealth-initiatives__conditions" aria-label="Active conditions">
-            {conditions.map((condition) => (
-              <li key={condition} className={`doehealth-initiatives__condition ${dmSans.className}`}>
-                {condition}
-              </li>
-            ))}
-          </ul>
-        ) : null}
-
-        {showCallHistory ? (
-          callHistoryMode === "reveal" ? (
-            <div className="motion4-call-history-reveal" style={{ opacity: callHistoryOpacity }}>
-              <Product2LandingLiveThread
-                className="product-call-history-rail__thread doehealth-initiatives__call-history"
-                showOutcome={false}
-                showActions={false}
-                showChartProfile={false}
-                turns={DOEHEALTH_CALL_HISTORY_INTRO_TURNS}
-              />
-            </div>
-          ) : (
-            <DoeHealthCallHistoryScroll>
-              <Product2LandingLiveThread
-                className="product-call-history-rail__thread doehealth-initiatives__call-history"
-                showOutcome={false}
-                showActions={false}
-                showChartProfile={false}
-                turns={DOEHEALTH_CALL_HISTORY_INTRO_TURNS}
-              />
-            </DoeHealthCallHistoryScroll>
-          )
-        ) : null}
+        {conditionsList}
+        {callHistory}
       </div>
     </div>
   );

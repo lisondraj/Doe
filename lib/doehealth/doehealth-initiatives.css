@@ -1203,6 +1203,7 @@ html[data-home-page][data-layout="desktop"]
 }
 
 .doehealth-prior-auth-bleed {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1216,6 +1217,33 @@ html[data-home-page][data-layout="desktop"]
 .doehealth-prior-auth-bleed .home-feature-section__prior-auth {
   height: 100%;
   min-height: 0;
+}
+
+.doehealth-prior-auth-bleed__title {
+  position: absolute;
+  z-index: 3;
+  right: clamp(1.25rem, 4vmin, 2.05rem);
+  bottom: clamp(1.25rem, 4.2vmin, 2.25rem);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin: 0;
+  padding: 0;
+  pointer-events: none;
+  text-align: right;
+}
+
+.doehealth-prior-auth-bleed__title-line {
+  display: block;
+  background: linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  font-size: clamp(2.05rem, 1.05rem + 5.6vmin, 3.25rem);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1.06;
+  text-wrap: balance;
 }
 
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])

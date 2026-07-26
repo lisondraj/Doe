@@ -28,6 +28,7 @@ import {
   ABOUT_PAGE_SUBHEADING_TW,
   ABOUT_PAGE_TITLE_TW,
 } from "@/lib/about/about-layout-styles";
+import { ABOUT_CONTACT_EMAIL } from "@/lib/about/about-contact";
 import {
   ABOUT_DESKTOP_FOUNDERS_PARAGRAPHS,
   ABOUT_DESKTOP_SECTION_2_BULLETS,
@@ -75,7 +76,13 @@ export function AboutMobileView() {
       frostedScrollNav
       frostedNavAlwaysPunched
       footerShaderTheme="dusk"
-      topBanner={<DoeHealthTopBanner readMoreHref="/doehealth#doe-vision" />}
+      topBanner={
+        <DoeHealthTopBanner
+          message="Doe is gearing up to raise pre-seed"
+          linkLabel="Contact us"
+          linkHref={`mailto:${ABOUT_CONTACT_EMAIL}`}
+        />
+      }
       rootClassName="doephone-mobile-root--doehealth"
       navShowMailIcon
       navShowInvestorsCta={false}
