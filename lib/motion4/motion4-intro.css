@@ -1199,14 +1199,15 @@ html[data-motion4-page] body {
   position: relative;
   /*
    * Composition px — preview Player scale must not change relative stage size.
-   * Extra bottom pad keeps speaker name clear; top inset centers the active reply.
+   * Top inset drops the active reply + speaker to true vertical center;
+   * bottom pad keeps the name from clipping. Lift math unchanged.
    */
   box-sizing: border-box;
-  min-height: 248px;
-  max-height: 248px;
-  height: 248px;
-  padding-top: 48px;
-  padding-bottom: 36px;
+  min-height: 268px;
+  max-height: 268px;
+  height: 268px;
+  padding-top: 78px;
+  padding-bottom: 42px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -1708,12 +1709,12 @@ html[data-motion4-page] body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 14px;
   width: auto;
   max-width: 96%;
   font-family: "DM Sans", system-ui, sans-serif;
-  /* Confirm code is ~97px effective (34×2.85); a bit smaller so longer labels fit. */
-  font-size: 82px;
+  /* Chart→booking only — under confirm-code (~97px), nudged down from 82 for fit. */
+  font-size: 68px;
   font-weight: 400;
   letter-spacing: 0.015em;
   line-height: 1.15;
@@ -2160,8 +2161,8 @@ html[data-motion4-page] body {
 
 .motion4-chart-interlude__icon {
   flex-shrink: 0;
-  width: 52px;
-  height: 52px;
+  width: 42px;
+  height: 42px;
   transform-origin: center center;
 }
 
@@ -2215,12 +2216,12 @@ html[data-motion4-page] body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 14px;
   width: auto;
   max-width: 96%;
   font-family: "DM Sans", system-ui, sans-serif;
-  /* Match chart / booking — just under confirm-code scale. */
-  font-size: 82px;
+  /* Chart→booking only — match Accessed scale (confirm-code unchanged). */
+  font-size: 68px;
   font-weight: 400;
   letter-spacing: 0.015em;
   line-height: 1.15;
@@ -2246,8 +2247,8 @@ html[data-motion4-page] body {
 
 .motion4-questionnaire-interlude__icon {
   flex-shrink: 0;
-  width: 52px;
-  height: 52px;
+  width: 42px;
+  height: 42px;
   transform-origin: center center;
 }
 
@@ -2364,12 +2365,12 @@ html[data-motion4-page] body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 14px;
   width: auto;
   max-width: 96%;
   font-family: "DM Sans", system-ui, sans-serif;
-  /* Match chart / questionnaire — just under confirm-code scale. */
-  font-size: 82px;
+  /* Chart→booking only — match Accessed scale (confirm-code unchanged). */
+  font-size: 68px;
   font-weight: 400;
   letter-spacing: 0.015em;
   line-height: 1.15;
@@ -2381,8 +2382,8 @@ html[data-motion4-page] body {
 
 .motion4-booking-interlude__icon {
   flex-shrink: 0;
-  width: 52px;
-  height: 52px;
+  width: 42px;
+  height: 42px;
   transform-origin: center center;
 }
 
@@ -3222,7 +3223,7 @@ html[data-motion4-page] body {
 }
 
 .motion4-remotion-root .motion4-ui-hero--call .doehealth-initiatives__call-history-scroll {
-  --dhi-call-history-scroll-max: 300px;
+  --dhi-call-history-scroll-max: 320px;
   height: auto;
   min-height: var(--dhi-call-history-scroll-max);
   max-height: none;
@@ -3231,11 +3232,11 @@ html[data-motion4-page] body {
 
 .motion4-remotion-root .motion3-ui-drive--call-reveal .product-landing-live-convo-stage {
   box-sizing: border-box;
-  min-height: 248px;
-  max-height: 248px;
-  height: 248px;
-  padding-top: 48px;
-  padding-bottom: 36px;
+  min-height: 268px;
+  max-height: 268px;
+  height: 268px;
+  padding-top: 78px;
+  padding-bottom: 42px;
   overflow: hidden;
   -webkit-mask-image: linear-gradient(
     to bottom,
