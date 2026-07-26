@@ -73,11 +73,14 @@ const REVEAL_EASE = Easing.bezier(0.33, 0, 0.18, 1);
 const SCROLL_EASE = Easing.bezier(0.16, 0.12, 0.22, 1);
 
 const METFORMIN_SIDE_EFFECTS = [
-  { label: "Nausea", detail: "Mild · after morning dose" },
-  { label: "Stomach upset", detail: "Common · with food" },
-  { label: "Diarrhea", detail: "Monitor · log if worsens" },
-  { label: "Low B12 risk", detail: "Long-term · annual check" },
+  { label: "Nausea", severity: "Mild", severityTone: "mild" as const, detail: "After morning dose" },
+  { label: "Stomach upset", severity: "Common", severityTone: "common" as const, detail: "Take with food" },
+  { label: "Diarrhea", severity: "Monitor", severityTone: "monitor" as const, detail: "Log if worsens" },
+  { label: "Low B12 risk", severity: "Long-term", severityTone: "longterm" as const, detail: "Annual check" },
 ] as const;
+
+/** Landscape side-effects panel — wide rectangle, scaled up in CSS. */
+const SIDE_EFFECTS_CARD_SCALE = 1.48;
 
 /** Densified strip copy — fills same-height boxes without sparse blank regions. */
 const STRIP_COPY = {
@@ -603,7 +606,7 @@ export function IntroChartAccessInterlude() {
     easing: REVEAL_EASE,
   });
 
-  const cardY = interpolate(cardProgress, [0, 1], [36, 0], {
+  const cardY = interpolate(cardProgress, [0, 1], [52, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: REVEAL_EASE,
@@ -708,22 +711,33 @@ export function IntroChartAccessInterlude() {
 
           {cardVisible ? (
             <div
-              className="motion4-chart-interlude__card"
+              className="motion4-chart-interlude__card motion4-chart-interlude__card--side-effects"
               style={{
                 opacity: cardOpacity,
-                transform: `translateY(${cardY}px)`,
+                transform: `translateY(${cardY}px) scale(${SIDE_EFFECTS_CARD_SCALE})`,
+                ["--m4-side-effects-scale" as string]: String(SIDE_EFFECTS_CARD_SCALE),
               }}
             >
               <div className="motion4-chart-interlude__card-head">
-                <p className={`motion4-chart-interlude__card-title m-0 ${dmSans.className}`}>
-                  Common side effects
+                <p className={`motion4-chart-interlude__card-kicker m-0 ${dmSans.className}`}>
+                  Metformin XR 500mg · Pre-visit questionnaire
+                </p>
+                <p className={`motion4-chart-interlude__card-title m-0 ${suisseIntl.className}`}>
+                  Side effects
                 </p>
               </div>
-              <ul className={`motion4-chart-interlude__list m-0 ${dmSans.className}`}>
+              <ul className={`motion4-chart-interlude__effect-grid m-0 ${dmSans.className}`}>
                 {METFORMIN_SIDE_EFFECTS.map((item) => (
-                  <li key={item.label} className="motion4-chart-interlude__item">
-                    <span className="motion4-chart-interlude__item-label">{item.label}</span>
-                    <span className="motion4-chart-interlude__item-detail">{item.detail}</span>
+                  <li key={item.label} className="motion4-chart-interlude__effect">
+                    <div className="motion4-chart-interlude__effect-top">
+                      <span className="motion4-chart-interlude__effect-label">{item.label}</span>
+                      <span
+                        className={`motion4-chart-interlude__effect-badge motion4-chart-interlude__effect-badge--${item.severityTone}`}
+                      >
+                        {item.severity}
+                      </span>
+                    </div>
+                    <span className="motion4-chart-interlude__effect-detail">{item.detail}</span>
                   </li>
                 ))}
               </ul>
