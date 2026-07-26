@@ -144,7 +144,7 @@ export function IntroBookingInterlude() {
             >
               <div className="motion4-booking-interlude__card-head">
                 <p className={`motion4-booking-interlude__card-title m-0 ${dmSans.className}`}>
-                  Tuesday · 10:30 AM
+                  Tuesday 10:30 AM
                 </p>
               </div>
 

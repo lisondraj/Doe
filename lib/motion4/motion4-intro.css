@@ -3088,7 +3088,10 @@ html[data-motion4-page] body {
   font-weight: 600;
   letter-spacing: -0.025em;
   line-height: 1.1;
-  color: rgba(242, 232, 218, 0.96);
+  background: linear-gradient(180deg, #f0d4a8 0%, #d4a574 55%, rgba(212, 165, 116, 0.82) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
 }
 
 .motion4-booking-interlude__cal {
