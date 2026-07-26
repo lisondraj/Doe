@@ -317,7 +317,7 @@ function ChartAccessTile({ id }: { id: (typeof CHART_TILES)[number]["id"] }) {
         >
           <Product2ChartProfileBpTrend
             label={PRODUCT2_CALL_HISTORY_BP_TREND.label}
-            readings={PRODUCT2_CALL_HISTORY_BP_TREND.readings}
+            readings={PRODUCT2_CALL_HISTORY_BP_TREND.readings.slice(-5)}
             labelPosition="top"
             plotCanvasHeight={TILE_PLOT_HEIGHT}
           />

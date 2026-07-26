@@ -1,7 +1,7 @@
 import { dmSans } from "@/lib/home/fonts";
 
-const BP_SCALE_MIN = 75;
-const BP_SCALE_MAX = 150;
+const BP_SCALE_MIN = 80;
+const BP_SCALE_MAX = 148;
 
 function bpHeightPercent(value: number) {
   return ((value - BP_SCALE_MIN) / (BP_SCALE_MAX - BP_SCALE_MIN)) * 100;
@@ -66,21 +66,23 @@ export function Product2ChartProfileBpTrend({
                   isLatest ? " product-landing-live-quote__chart-profile-bp-column--latest" : ""
                 }`}
               >
-                <div className="product-landing-live-quote__chart-profile-bp-column-body">
+                <div className="product-landing-live-quote__chart-profile-bp-column-track">
                   <div
                     className="product-landing-live-quote__chart-profile-bp-column-shell"
                     style={{ height: `${sysHeight}%` }}
                   >
+                    {isLatest ? (
+                      <span
+                        className={`product-landing-live-quote__chart-profile-bp-column-reading ${dmSans.className}`}
+                      >
+                        {reading.systolic}/{reading.diastolic}
+                      </span>
+                    ) : null}
                     <div
                       className="product-landing-live-quote__chart-profile-bp-column-core"
                       style={{ height: `${coreHeight}%` }}
                     />
                   </div>
-                  {isLatest ? (
-                    <span className={`product-landing-live-quote__chart-profile-bp-column-reading ${dmSans.className}`}>
-                      {reading.systolic}/{reading.diastolic}
-                    </span>
-                  ) : null}
                 </div>
               </div>
             );
