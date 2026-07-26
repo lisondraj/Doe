@@ -41,7 +41,11 @@ const STRIP_APPEAR = 64;
 const STRIP_REVEAL = 28;
 /** Keep scrolling through close — modal fade starts earlier in motion-ui. */
 const SCROLL_END_PAD = 2;
-const CHART_BLUR_MAX = 14;
+const CHART_BLUR_MAX = 16;
+/** Lift distance for chart boxes as they unblur into place. */
+const TILE_LIFT_PX = 32;
+/** Stagger each tile’s unblur/lift across the strip reveal. */
+const TILE_STAGGER = 0.055;
 /** Composition pixels — preview Player scale must not change relative tile size. */
 const TILE_PLOT_HEIGHT = "210px";
 const TILE_HEIGHT_PX = 300;
@@ -342,10 +346,9 @@ export function IntroChartAccessInterlude() {
         })
       : 0;
 
-  const stripBlur = (1 - stripProgress) * CHART_BLUR_MAX;
   const stripOpacity =
     local >= STRIP_APPEAR
-      ? interpolate(stripProgress, [0, 0.28, 1], [0, 0.84, 1], {
+      ? interpolate(stripProgress, [0, 0.2, 1], [0, 0.9, 1], {
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp",
           easing: REVEAL_EASE,
@@ -391,7 +394,6 @@ export function IntroChartAccessInterlude() {
               className="motion4-chart-interlude__strip product-brown-mock product-brown-call-history-mode"
               style={{
                 opacity: stripOpacity,
-                filter: stripBlur > 0.35 ? `blur(${stripBlur}px)` : undefined,
               }}
             >
               <div className="motion4-chart-interlude__strip-viewport">
@@ -404,20 +406,43 @@ export function IntroChartAccessInterlude() {
                     ["--pb-chart-height" as string]: TILE_PLOT_HEIGHT,
                   }}
                 >
-                  {CHART_TILES.map((tile) => (
-                    <div
-                      key={tile.id}
-                      className={`motion4-chart-interlude__tile motion4-chart-interlude__tile--${tile.id}`}
-                      style={{
-                        width: tile.width,
-                        height: TILE_HEIGHT_PX,
-                        minHeight: TILE_HEIGHT_PX,
-                        maxHeight: TILE_HEIGHT_PX,
-                      }}
-                    >
-                      <ChartAccessTile id={tile.id} />
-                    </div>
-                  ))}
+                  {CHART_TILES.map((tile, index) => {
+                    const tileStart = index * TILE_STAGGER;
+                    const tileEnd = Math.min(1, tileStart + 0.42);
+                    const tileProgress =
+                      stripProgress <= 0
+                        ? 0
+                        : interpolate(stripProgress, [tileStart, tileEnd], [0, 1], {
+                            extrapolateLeft: "clamp",
+                            extrapolateRight: "clamp",
+                            easing: REVEAL_EASE,
+                          });
+                    const tileBlur = (1 - tileProgress) * CHART_BLUR_MAX;
+                    const tileY = (1 - tileProgress) * TILE_LIFT_PX;
+                    const tileOpacity = interpolate(tileProgress, [0, 0.35, 1], [0, 0.86, 1], {
+                      extrapolateLeft: "clamp",
+                      extrapolateRight: "clamp",
+                      easing: REVEAL_EASE,
+                    });
+
+                    return (
+                      <div
+                        key={tile.id}
+                        className={`motion4-chart-interlude__tile motion4-chart-interlude__tile--${tile.id}`}
+                        style={{
+                          width: tile.width,
+                          height: TILE_HEIGHT_PX,
+                          minHeight: TILE_HEIGHT_PX,
+                          maxHeight: TILE_HEIGHT_PX,
+                          opacity: tileOpacity,
+                          transform: `translateY(${tileY}px)`,
+                          filter: tileBlur > 0.35 ? `blur(${tileBlur}px)` : undefined,
+                        }}
+                      >
+                        <ChartAccessTile id={tile.id} />
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>

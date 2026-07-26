@@ -1718,7 +1718,7 @@ html[data-motion4-page] body {
 .motion4-chart-interlude__strip {
   width: 100%;
   max-width: 100%;
-  will-change: opacity, filter;
+  will-change: opacity;
 }
 
 .motion4-chart-interlude__strip-viewport {
@@ -1754,6 +1754,8 @@ html[data-motion4-page] body {
   height: 300px;
   min-height: 300px;
   max-height: 300px;
+  transform-origin: center bottom;
+  will-change: transform, opacity, filter;
 }
 
 .motion4-chart-interlude__tile-card {
