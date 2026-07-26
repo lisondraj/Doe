@@ -1515,7 +1515,7 @@ html[data-motion4-page] body {
   display: block;
 }
 
-/* Chart access — Accessing → Accessed + big A1C trend */
+/* Chart access — Accessing → Accessed + scrolling same-height Sarah chart boxes */
 .motion4-chart-interlude {
   position: absolute;
   inset: 0;
@@ -1549,8 +1549,12 @@ html[data-motion4-page] body {
   max-width: 92%;
 }
 
+.motion4-chart-interlude__stack--strip {
+  width: 100%;
+  max-width: 100%;
+}
+
 .motion4-chart-interlude__stack--paired {
-  /* Real layout gap — label is no longer transform-scaled over the chart. */
   gap: clamp(1.45rem, 2.6vw, 2.15rem);
 }
 
@@ -1559,7 +1563,8 @@ html[data-motion4-page] body {
   align-items: center;
   justify-content: center;
   gap: 0.55rem;
-  width: 100%;
+  width: auto;
+  max-width: 92%;
   font-family: "DM Sans", system-ui, sans-serif;
   font-size: clamp(30px, 2.85vw, 46px);
   font-weight: 400;
@@ -1571,71 +1576,125 @@ html[data-motion4-page] body {
   will-change: opacity;
 }
 
-.motion4-remotion-root .motion4-chart-interlude__chart .product-landing-live-quote__chart-profile-a1c-canvas,
-.motion4-remotion-root .motion4-chart-interlude__chart .product-landing-live-quote__chart-profile-a1c-y-axis {
-  height: var(--pb-chart-height, 26rem);
-  min-height: var(--pb-chart-height, 26rem);
-}
-
-.motion4-chart-interlude__chart {
-  position: relative;
-  top: auto;
-  left: auto;
+.motion4-chart-interlude__strip {
   width: 100%;
   max-width: 100%;
-  margin: 0;
-  flex-shrink: 0;
-  transform-origin: center top;
-  will-change: transform, opacity, filter;
-  --m4-chart-interlude-scale: 1.18;
-  --pb-chart-height: 26rem;
-  --pb-chart-axis-width: 3.75rem;
-  --pb-chart-axis-gap: 0.75rem;
-  padding: clamp(1.05rem, 1.22vw, 1.18rem) clamp(1.08rem, 1.28vw, 1.2rem) clamp(0.95rem, 1.12vw, 1.05rem);
+  will-change: opacity, filter;
 }
 
-.motion4-chart-interlude__chart .product-landing-live-quote__chart-profile-a1c {
-  gap: 0.5rem;
+.motion4-chart-interlude__strip-viewport {
   width: 100%;
-  padding-top: 0.08rem;
+  max-width: 100%;
+  overflow: hidden;
+  padding-inline: 72px;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #000 4%,
+    #000 96%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #000 4%,
+    #000 96%,
+    transparent 100%
+  );
 }
 
-.motion4-chart-interlude__chart .product-landing-live-quote__chart-profile-a1c-canvas {
-  height: var(--pb-chart-height, 26rem);
-  min-height: var(--pb-chart-height, 26rem);
-  width: 100%;
+.motion4-chart-interlude__strip-track {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  will-change: transform;
 }
 
-.motion4-chart-interlude__chart .product-landing-live-quote__chart-profile-a1c-y-axis {
-  min-height: var(--pb-chart-height, 26rem);
+.motion4-chart-interlude__tile {
+  flex: 0 0 auto;
+  height: 20.5rem;
+  min-height: 20.5rem;
+  max-height: 20.5rem;
 }
 
-.motion4-chart-interlude__chart .product-landing-live-quote__chart-profile-a1c-chart {
-  width: 100%;
+.motion4-chart-interlude__tile-card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100% !important;
+  max-width: none !important;
   height: 100%;
+  min-height: 100%;
+  margin: 0;
+  overflow: hidden;
+  --pb-chart-axis-width: 2.35rem;
+  --pb-chart-axis-gap: 0.48rem;
+  --pb-chart-height: 9.25rem;
 }
 
-.motion4-chart-interlude__chart .product-landing-live-quote__chart-profile-a1c-label {
-  font-size: clamp(0.98rem, 1.35vw, 1.15rem);
+.motion4-chart-interlude__tile--a1c .motion4-chart-interlude__tile-card,
+.motion4-chart-interlude__tile--bp .motion4-chart-interlude__tile-card {
+  justify-content: flex-start;
+}
+
+.motion4-chart-interlude__tile--vitals .motion4-chart-interlude__tile-card,
+.motion4-chart-interlude__tile--labs .motion4-chart-interlude__tile-card,
+.motion4-chart-interlude__tile--visits .motion4-chart-interlude__tile-card,
+.motion4-chart-interlude__tile--tasks .motion4-chart-interlude__tile-card,
+.motion4-chart-interlude__tile--meds .motion4-chart-interlude__tile-card,
+.motion4-chart-interlude__tile--conditions .motion4-chart-interlude__tile-card,
+.motion4-chart-interlude__tile--allergies .motion4-chart-interlude__tile-card {
+  justify-content: flex-start;
+}
+
+.motion4-chart-interlude__bp-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  width: 100%;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.motion4-chart-interlude__bp-label {
+  background: linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  font-size: clamp(0.92rem, 1.15vw, 1.08rem);
+  font-weight: 400;
   letter-spacing: 0.04em;
+  line-height: 1.15;
+  text-transform: uppercase;
 }
 
-.motion4-chart-interlude__chart .product-landing-live-quote__chart-profile-a1c-axis-label {
-  font-size: clamp(0.76rem, 1.02vw, 0.9rem);
+.motion4-chart-interlude__tile .product-landing-live-quote__chart-profile-a1c-canvas,
+.motion4-chart-interlude__tile .product-landing-live-quote__chart-profile-a1c-y-axis {
+  height: var(--pb-chart-height, 9.25rem);
+  min-height: var(--pb-chart-height, 9.25rem);
 }
 
-.motion4-chart-interlude__chart .product-landing-live-quote__chart-profile-a1c-point {
-  width: 0.66rem;
-  height: 0.66rem;
+.motion4-chart-interlude__tile .product-call-history-panel__visits-shell,
+.motion4-chart-interlude__tile .product-call-history-panel__tasks-shell,
+.motion4-chart-interlude__tile .product-call-history-panel__meds-shell,
+.motion4-chart-interlude__tile .product-call-history-panel__conditions-shell,
+.motion4-chart-interlude__tile .product-call-history-panel__allergies-shell {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
 }
 
-.motion4-chart-interlude__chart .product-landing-live-quote__chart-profile-a1c-point--dose-change {
-  width: 0.74rem;
-  height: 0.74rem;
-}
-
-.motion4-chart-interlude__chart .product-landing-live-quote__chart-profile-a1c-dose-label {
-  font-size: clamp(0.76rem, 1vw, 0.88rem);
+.motion4-chart-interlude__tile .product-call-history-panel__visits-list,
+.motion4-chart-interlude__tile .product-call-history-panel__tasks-list,
+.motion4-chart-interlude__tile .product-call-history-panel__meds-list,
+.motion4-chart-interlude__tile .product-call-history-panel__conditions-list,
+.motion4-chart-interlude__tile .product-call-history-panel__allergies-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .motion4-chart-interlude__icon {
