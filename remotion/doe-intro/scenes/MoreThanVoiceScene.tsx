@@ -34,7 +34,6 @@ import { handoffMotionStyle, useIntroDoeSarahHandoff, DOE_PREMIUM_EASE } from ".
 import { IntroBookingInterlude } from "../shared/IntroBookingInterlude";
 import { IntroChartAccessInterlude } from "../shared/IntroChartAccessInterlude";
 import { IntroConfirmCodeInterlude } from "../shared/IntroConfirmCodeInterlude";
-import { IntroQuestionnaireInterlude } from "../shared/IntroQuestionnaireInterlude";
 import { IntroUiHero } from "../shared/IntroUiHero";
 
 const SETTLE_START_FRAME = DOE_SARAH_SETTLE_START_FRAMES;
@@ -203,7 +202,6 @@ export function MoreThanVoiceScene() {
       </IntroUiHero>
       <IntroConfirmCodeInterlude />
       <IntroChartAccessInterlude />
-      <IntroQuestionnaireInterlude />
       <IntroBookingInterlude />
       <Sequence from={DOE_SARAH_CALL_HEADER_APPEAR_FRAME} premountFor={DOE_INTRO_FPS}>
         <Audio

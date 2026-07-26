@@ -261,14 +261,12 @@ export function useCallTurnRevealMotion(
   const interludeOpacityKeys: Record<number, string> = {
     2: "--m4-confirm-interlude-o",
     4: "--m4-chart-interlude-o",
-    5: "--m4-questionnaire-interlude-o",
     8: "--m4-booking-interlude-o",
   };
 
   let interludeBlur = 0;
   styles["--m4-confirm-interlude-o"] = 0;
   styles["--m4-chart-interlude-o"] = 0;
-  styles["--m4-questionnaire-interlude-o"] = 0;
   styles["--m4-booking-interlude-o"] = 0;
   styles["--m4-interlude-blur"] = 0;
 

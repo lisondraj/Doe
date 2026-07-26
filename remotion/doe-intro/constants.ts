@@ -69,9 +69,9 @@ export const DOE_SARAH_AGENT_OPEN_CHART_PRE_INTERLUDE_HOLD = Math.max(
   8,
   Math.ceil(DOE_SARAH_AGENT_OPEN_CHART_AUDIO_SEC * DOE_INTRO_FPS) - DOE_SARAH_CONVO_TURN_STEP + 8,
 );
-/** agent-side-effects — hold on the ask in chat before the questionnaire interlude. */
+/** agent-side-effects — brief hold after ask before caller reply. */
 export const DOE_SARAH_AGENT_SIDE_EFFECTS_TURN = 4;
-export const DOE_SARAH_AGENT_SIDE_EFFECTS_HOLD = 168;
+export const DOE_SARAH_AGENT_SIDE_EFFECTS_HOLD = 48;
 /** agent-prefer-time — “Which day and time would you prefer?” — extra beat after reply. */
 export const DOE_SARAH_AGENT_PREFER_TIME_TURN = 6;
 export const DOE_SARAH_AGENT_PREFER_TIME_HOLD = DOE_SARAH_CONVO_REPLY_HOLD_EXTRA + 90;
@@ -91,17 +91,12 @@ export const DOE_SARAH_INTERLUDE_FADE_IN_FRAMES = 12;
 export const DOE_SARAH_CONFIRM_CODE_INTERLUDE_FRAMES = 210;
 /** Turn index for caller-verify (“Sure, my date of birth…”) — interlude plays before this turn. */
 export const DOE_SARAH_CONFIRM_CODE_INTERLUDE_BEFORE_TURN = 2;
-/** Chart access + partial Sarah chart strip pan — ~13s @ 30fps. */
-export const DOE_SARAH_CHART_ACCESS_INTERLUDE_FRAMES = 390;
-/** Chart modal begins closing this many frames before the interlude ends (while strip still scrolls). */
+/** Chart modal — strip scroll, pull loader, side-effects card, then agent ask in chat. */
+export const DOE_SARAH_CHART_ACCESS_INTERLUDE_FRAMES = 510;
+/** Modal fade-out before agent side-effects line in chat. */
 export const DOE_SARAH_CHART_ACCESS_FADE_OUT_FRAMES = 28;
-/** Turn index for agent-side-effects — chart interlude plays before this turn. */
+/** Turn index for agent-side-effects — chart modal plays before this turn. */
 export const DOE_SARAH_CHART_ACCESS_INTERLUDE_BEFORE_TURN = 4;
-/** Pre-visit pull loader after agent side-effects ask — ~6s @ 30fps. */
-export const DOE_SARAH_QUESTIONNAIRE_INTERLUDE_FRAMES = 180;
-export const DOE_SARAH_QUESTIONNAIRE_FADE_OUT_FRAMES = 28;
-/** Turn index for caller-side-effects — questionnaire interlude plays before this turn. */
-export const DOE_SARAH_QUESTIONNAIRE_INTERLUDE_BEFORE_TURN = 5;
 /** Booking appointment + calendar card after Sarah picks a slot — ~8s @ 30fps. */
 export const DOE_SARAH_BOOKING_INTERLUDE_FRAMES = 240;
 export const DOE_SARAH_BOOKING_FADE_OUT_FRAMES = 22;
@@ -116,11 +111,6 @@ export const DOE_SARAH_CALL_INTERLUDES = [
     beforeTurn: DOE_SARAH_CHART_ACCESS_INTERLUDE_BEFORE_TURN,
     frames: DOE_SARAH_CHART_ACCESS_INTERLUDE_FRAMES,
     fadeOutFrames: DOE_SARAH_CHART_ACCESS_FADE_OUT_FRAMES,
-  },
-  {
-    beforeTurn: DOE_SARAH_QUESTIONNAIRE_INTERLUDE_BEFORE_TURN,
-    frames: DOE_SARAH_QUESTIONNAIRE_INTERLUDE_FRAMES,
-    fadeOutFrames: DOE_SARAH_QUESTIONNAIRE_FADE_OUT_FRAMES,
   },
   {
     beforeTurn: DOE_SARAH_BOOKING_INTERLUDE_BEFORE_TURN,

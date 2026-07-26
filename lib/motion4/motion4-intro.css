@@ -1705,7 +1705,74 @@ html[data-motion4-page] body {
 
 .motion4-chart-interlude__stack--paired {
   gap: 22px;
-  transform: translateY(-16px);
+}
+
+.motion4-chart-interlude__step--pull {
+  will-change: opacity;
+}
+
+.motion4-chart-interlude__card {
+  box-sizing: border-box;
+  width: 440px;
+  max-width: 92%;
+  padding: 24px 24px 20px;
+  border: 1px solid rgba(212, 165, 116, 0.22);
+  border-radius: 18px;
+  background: linear-gradient(168deg, rgba(36, 28, 20, 0.96) 0%, rgba(20, 14, 8, 0.98) 100%);
+  box-shadow: 0 24px 48px rgba(10, 6, 2, 0.35);
+  will-change: opacity, transform;
+}
+
+.motion4-chart-interlude__card-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 16px;
+}
+
+.motion4-chart-interlude__card-title {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: rgba(242, 232, 218, 0.92);
+}
+
+.motion4-chart-interlude__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0;
+  list-style: none;
+}
+
+.motion4-chart-interlude__item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border: 1px solid rgba(212, 165, 116, 0.14);
+  border-radius: 12px;
+  background: rgba(14, 10, 7, 0.42);
+}
+
+.motion4-chart-interlude__item-label {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  background: linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.motion4-chart-interlude__item-detail {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1.25;
+  color: rgba(228, 210, 184, 0.52);
 }
 
 .motion4-chart-interlude__step {
@@ -3310,17 +3377,17 @@ html[data-motion4-page] body {
   overflow: hidden;
   -webkit-mask-image: linear-gradient(
     to bottom,
-    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.92) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0), var(--m4-booking-interlude-o, 0))))) 0%,
-    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.55) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0), var(--m4-booking-interlude-o, 0))))) 10%,
-    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.12) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0), var(--m4-booking-interlude-o, 0))))) 20%,
+    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.92) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-booking-interlude-o, 0))))) 0%,
+    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.55) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-booking-interlude-o, 0))))) 10%,
+    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.12) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-booking-interlude-o, 0))))) 20%,
     #000 30%,
     #000 100%
   );
   mask-image: linear-gradient(
     to bottom,
-    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.92) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0), var(--m4-booking-interlude-o, 0))))) 0%,
-    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.55) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0), var(--m4-booking-interlude-o, 0))))) 10%,
-    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.12) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0), var(--m4-booking-interlude-o, 0))))) 20%,
+    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.92) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-booking-interlude-o, 0))))) 0%,
+    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.55) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-booking-interlude-o, 0))))) 10%,
+    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.12) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-booking-interlude-o, 0))))) 20%,
     #000 30%,
     #000 100%
   );

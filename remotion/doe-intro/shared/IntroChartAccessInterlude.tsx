@@ -55,14 +55,27 @@ const STRIP_APPEAR = 64;
 const STRIP_REVEAL = 28;
 /** Fraction of strip width to pan — stop before meds/conditions/allergies. */
 const CHART_SCROLL_MAX_RATIO = 0.4;
-/** Collapse chart strip before interlude ends so chat can take over. */
-const STRIP_EXIT_PAD = 56;
+/** Strip scroll ends → boxes fade as pull loader starts. */
+const STRIP_EXIT_START = 210;
 const STRIP_EXIT_DURATION = 36;
+const PULL_START = STRIP_EXIT_START;
+const PULL_REVEAL = 18;
+/** Hold Pulling spinner before Pulled checkmark. */
+const PULL_DONE = PULL_START + 132;
+const CARD_APPEAR = PULL_DONE + 8;
+const CARD_REVEAL = 28;
 const CHART_BLUR_MAX = 16;
 /** Stagger each tile’s unblur/lift across the strip reveal. */
 const TILE_STAGGER = 0.055;
 const REVEAL_EASE = Easing.bezier(0.33, 0, 0.18, 1);
 const SCROLL_EASE = Easing.bezier(0.16, 0.12, 0.22, 1);
+
+const METFORMIN_SIDE_EFFECTS = [
+  { label: "Nausea", detail: "Mild · after morning dose" },
+  { label: "Stomach upset", detail: "Common · with food" },
+  { label: "Diarrhea", detail: "Monitor · log if worsens" },
+  { label: "Low B12 risk", detail: "Long-term · annual check" },
+] as const;
 
 /** Densified strip copy — fills same-height boxes without sparse blank regions. */
 const STRIP_COPY = {
@@ -165,6 +178,15 @@ function InterludeStepIcon({ state, spinDeg }: { state: "spinner" | "check"; spi
       <circle cx="8" cy="8" r="6.25" stroke="rgba(242, 232, 218, 0.18)" strokeWidth="1.75" />
       <path d="M14.25 8a6.25 6.25 0 0 0-6.25-6.25" stroke="#d4a574" strokeWidth="1.75" strokeLinecap="round" />
     </svg>
+  );
+}
+
+function AccessedStatusRow() {
+  return (
+    <div className="motion4-chart-interlude__step">
+      <span className="motion4-chart-interlude__label">Accessed Sarah&apos;s chart</span>
+      <InterludeStepIcon state="check" spinDeg={0} />
+    </div>
   );
 }
 
@@ -444,11 +466,12 @@ export function IntroChartAccessInterlude() {
   }
 
   const local = t - window.start;
-  const windowFrames = window.end - window.start;
   const spinDeg = local * 4;
-  const stripExitStart = Math.max(STRIP_APPEAR + STRIP_REVEAL, windowFrames - STRIP_EXIT_PAD);
-  const stripExitEnd = Math.min(windowFrames - 1, stripExitStart + STRIP_EXIT_DURATION);
+  const stripExitStart = STRIP_EXIT_START;
+  const stripExitEnd = STRIP_EXIT_START + STRIP_EXIT_DURATION;
   const scrollEnd = Math.max(SCROLL_START + 1, stripExitStart);
+  const accessLocked = local >= ACCESS_DONE + ACCESS_LABEL_SWIPE;
+  const pullSpinDeg = Math.max(0, local - PULL_START) * 4;
 
   const stripProgress =
     local >= STRIP_APPEAR
@@ -496,15 +519,74 @@ export function IntroChartAccessInterlude() {
 
   const stripMounted = local >= SCROLL_START && stripOpacity > 0.01;
 
+  const pullIn =
+    local >= PULL_START
+      ? interpolate(local, [PULL_START, PULL_START + PULL_REVEAL], [0, 1], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+          easing: REVEAL_EASE,
+        })
+      : 0;
+
+  const pullOpacity = interpolate(pullIn, [0, 0.3, 1], [0, 0.9, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: REVEAL_EASE,
+  });
+
+  const pullDone = local >= PULL_DONE;
+  const pullLabel = pullDone ? "Pulled pre-visit questionnaire" : "Pulling pre-visit questionnaire";
+  const pullIcon: "spinner" | "check" = pullDone ? "check" : "spinner";
+  const pullVisible = pullOpacity > 0.01;
+
+  const cardProgress =
+    local >= CARD_APPEAR
+      ? interpolate(local, [CARD_APPEAR, CARD_APPEAR + CARD_REVEAL], [0, 1], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+          easing: REVEAL_EASE,
+        })
+      : 0;
+
+  const cardOpacity = interpolate(cardProgress, [0, 0.28, 1], [0, 0.9, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: REVEAL_EASE,
+  });
+
+  const cardY = interpolate(cardProgress, [0, 1], [36, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: REVEAL_EASE,
+  });
+
+  const cardVisible = local >= CARD_APPEAR && cardOpacity > 0.01;
+  const stackPaired = stripMounted || pullVisible || cardVisible;
+  const stackY =
+    stripMounted && stripExit <= 0
+      ? -16
+      : stripExit > 0
+        ? interpolate(stripExit, [0, 1], [-16, 0], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+            easing: REVEAL_EASE,
+          })
+        : 0;
+
   return (
     <div className={`motion4-chart-interlude ${dmSans.className}`} aria-hidden>
       <div className="motion4-chart-interlude__stage">
         <div
           className={`motion4-chart-interlude__stack motion4-chart-interlude__stack--strip${
-            stripMounted ? " motion4-chart-interlude__stack--paired" : ""
+            stackPaired ? " motion4-chart-interlude__stack--paired" : ""
           }`}
+          style={{ transform: `translateY(${stackY}px)` }}
         >
-          <ChartAccessStatusRow local={local} spinDeg={spinDeg} />
+          {accessLocked ? (
+            <AccessedStatusRow />
+          ) : (
+            <ChartAccessStatusRow local={local} spinDeg={spinDeg} />
+          )}
 
           {stripMounted ? (
             <div
@@ -560,6 +642,40 @@ export function IntroChartAccessInterlude() {
                   })}
                 </div>
               </div>
+            </div>
+          ) : null}
+
+          {pullVisible ? (
+            <div
+              className="motion4-chart-interlude__step motion4-chart-interlude__step--pull"
+              style={{ opacity: pullOpacity }}
+            >
+              <span className="motion4-chart-interlude__label">{pullLabel}</span>
+              <InterludeStepIcon state={pullIcon} spinDeg={pullSpinDeg} />
+            </div>
+          ) : null}
+
+          {cardVisible ? (
+            <div
+              className="motion4-chart-interlude__card"
+              style={{
+                opacity: cardOpacity,
+                transform: `translateY(${cardY}px)`,
+              }}
+            >
+              <div className="motion4-chart-interlude__card-head">
+                <p className={`motion4-chart-interlude__card-title m-0 ${dmSans.className}`}>
+                  Common side effects
+                </p>
+              </div>
+              <ul className={`motion4-chart-interlude__list m-0 ${dmSans.className}`}>
+                {METFORMIN_SIDE_EFFECTS.map((item) => (
+                  <li key={item.label} className="motion4-chart-interlude__item">
+                    <span className="motion4-chart-interlude__item-label">{item.label}</span>
+                    <span className="motion4-chart-interlude__item-detail">{item.detail}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           ) : null}
         </div>
