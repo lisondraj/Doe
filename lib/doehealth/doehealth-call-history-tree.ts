@@ -10,9 +10,10 @@ const DOEHEALTH_CALL_HISTORY_INTRO_TURN_IDS = [
   "caller-side-effects",
   "agent-prefer-time",
   "caller-prefer-time",
+  "caller-thanks",
 ] as const;
 
-/** Opening call history through Sarah’s preferred day/time reply. */
+/** Opening call history through Sarah’s closing thank-you. */
 export const DOEHEALTH_CALL_HISTORY_INTRO_TURNS = DOEHEALTH_CALL_HISTORY_INTRO_TURN_IDS.map((id) => {
   const turn = PRODUCT2_LANDING_LIVE_CONVO.find((entry) => entry.id === id);
   if (!turn) {

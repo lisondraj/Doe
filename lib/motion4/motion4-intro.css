@@ -1152,6 +1152,11 @@ html[data-motion4-page] body {
   .motion4-ui-hero--call
   .doehealth-initiatives__call-history.product-call-history-rail__thread
   .product-landing-live-quote--caller-prefer-time
+  .product-landing-live-quote__text,
+.motion4-remotion-root
+  .motion4-ui-hero--call
+  .doehealth-initiatives__call-history.product-call-history-rail__thread
+  .product-landing-live-quote--caller-thanks
   .product-landing-live-quote__text {
   font-size: 24px;
   line-height: 1.22;
@@ -1255,7 +1260,8 @@ html[data-motion4-page] body {
 .motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-side-effects.product-landing-live-quote--reply .product-landing-live-quote__text,
 .motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-side-effects .product-landing-live-quote__text,
 .motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-prefer-time.product-landing-live-quote--reply .product-landing-live-quote__text,
-.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-prefer-time .product-landing-live-quote__text {
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-prefer-time .product-landing-live-quote__text,
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-thanks .product-landing-live-quote__text {
   width: 100%;
   max-width: 100%;
   overflow: visible;
@@ -1267,7 +1273,8 @@ html[data-motion4-page] body {
 .motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-side-effects.product-landing-live-quote--reply .product-landing-live-quote__meta,
 .motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-side-effects .product-landing-live-quote__meta,
 .motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-prefer-time.product-landing-live-quote--reply .product-landing-live-quote__meta,
-.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-prefer-time .product-landing-live-quote__meta {
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-prefer-time .product-landing-live-quote__meta,
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-thanks .product-landing-live-quote__meta {
   width: 100%;
   max-width: 100%;
 }
@@ -1278,7 +1285,8 @@ html[data-motion4-page] body {
 .motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-side-effects .product-landing-live-quote__line,
 .motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-side-effects .product-landing-live-quote__line,
 .motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-prefer-time .product-landing-live-quote__line,
-.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-prefer-time .product-landing-live-quote__line {
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-prefer-time .product-landing-live-quote__line,
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-thanks .product-landing-live-quote__line {
   /* Keep authored line breaks; allow soft wrap if the column is still too narrow. */
   white-space: normal;
   overflow: visible;
@@ -1293,7 +1301,8 @@ html[data-motion4-page] body {
 .motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-side-effects,
 .motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-side-effects,
 .motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--agent-prefer-time,
-.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-prefer-time {
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-prefer-time,
+.motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote--caller-thanks {
   overflow: visible;
 }
 
@@ -1389,6 +1398,11 @@ html[data-motion4-page] body {
   opacity: var(--m3-turn-7-o, 0);
 }
 
+.motion3-ui-drive--call-reveal .product-landing-live-convo .product-landing-live-quote:nth-child(9) {
+  transform: translateY(var(--m3-turn-8-y, 0));
+  opacity: var(--m3-turn-8-o, 0);
+}
+
 .motion3-ui-drive--call-reveal .product-landing-live-convo .product-landing-live-quote:nth-child(1) .product-landing-live-quote__tag {
   opacity: var(--m3-tag-0-o, 0);
 }
@@ -1419,6 +1433,10 @@ html[data-motion4-page] body {
 
 .motion3-ui-drive--call-reveal .product-landing-live-convo .product-landing-live-quote:nth-child(8) .product-landing-live-quote__tag {
   opacity: var(--m3-tag-7-o, 0);
+}
+
+.motion3-ui-drive--call-reveal .product-landing-live-convo .product-landing-live-quote:nth-child(9) .product-landing-live-quote__tag {
+  opacity: var(--m3-tag-8-o, 0);
 }
 
 /* Call history — highlight tagged entities (Sarah, Metformin, etc.) */
@@ -1575,7 +1593,8 @@ html[data-motion4-page] body {
 
 .motion4-confirm-interlude::before,
 .motion4-chart-interlude::before,
-.motion4-questionnaire-interlude::before {
+.motion4-questionnaire-interlude::before,
+.motion4-booking-interlude::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -2256,6 +2275,203 @@ html[data-motion4-page] body {
   letter-spacing: 0.01em;
   line-height: 1.25;
   color: rgba(228, 210, 184, 0.52);
+}
+
+/* Booking appointment — Booking → Booked + gold/brown calendar card */
+.motion4-booking-interlude {
+  position: absolute;
+  inset: 0;
+  z-index: 13;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: var(--m4-booking-interlude-o, 0);
+  font-family: "DM Sans", system-ui, sans-serif;
+  isolation: isolate;
+}
+
+.motion4-booking-interlude__stage {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 100%;
+}
+
+.motion4-booking-interlude__stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  width: min(92%, 520px);
+}
+
+.motion4-booking-interlude__stack--paired {
+  gap: 28px;
+}
+
+.motion4-booking-interlude__step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: auto;
+  max-width: 92%;
+  font-family: "DM Sans", system-ui, sans-serif;
+  font-size: 36px;
+  font-weight: 400;
+  letter-spacing: 0.015em;
+  line-height: 1.2;
+  color: rgba(242, 232, 218, 0.82);
+  white-space: nowrap;
+  transform-origin: center center;
+  will-change: opacity;
+}
+
+.motion4-booking-interlude__icon {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  transform-origin: center center;
+}
+
+.motion4-booking-interlude__check {
+  color: rgba(212, 165, 116, 0.88);
+}
+
+.motion4-booking-interlude__spinner {
+  display: block;
+}
+
+.motion4-booking-interlude__card {
+  box-sizing: border-box;
+  width: 420px;
+  max-width: 92%;
+  padding: 22px 24px 18px;
+  border: 1px solid rgba(212, 165, 116, 0.22);
+  border-radius: 18px;
+  background: linear-gradient(168deg, rgba(36, 28, 20, 0.96) 0%, rgba(20, 14, 8, 0.98) 100%);
+  box-shadow: 0 24px 48px rgba(10, 6, 2, 0.35);
+  will-change: opacity, transform;
+}
+
+.motion4-booking-interlude__card-head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.motion4-booking-interlude__card-eyebrow {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: rgba(228, 210, 184, 0.55);
+}
+
+.motion4-booking-interlude__card-title {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: rgba(242, 232, 218, 0.92);
+}
+
+.motion4-booking-interlude__cal {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.motion4-booking-interlude__cal-weekdays,
+.motion4-booking-interlude__cal-days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.motion4-booking-interlude__cal-weekday {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(228, 210, 184, 0.42);
+}
+
+.motion4-booking-interlude__cal-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 52px;
+  padding: 6px 2px;
+  border: 1px solid rgba(212, 165, 116, 0.1);
+  border-radius: 10px;
+  background: rgba(14, 10, 7, 0.36);
+}
+
+.motion4-booking-interlude__cal-day--booked {
+  border-color: rgba(212, 165, 116, 0.42);
+  background: linear-gradient(180deg, rgba(212, 165, 116, 0.22) 0%, rgba(212, 165, 116, 0.08) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.motion4-booking-interlude__cal-day-num {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: rgba(242, 232, 218, 0.72);
+}
+
+.motion4-booking-interlude__cal-day--booked .motion4-booking-interlude__cal-day-num {
+  background: linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.motion4-booking-interlude__cal-day-slot {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: rgba(232, 192, 142, 0.88);
+}
+
+.motion4-booking-interlude__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 7px 12px;
+  border: 1px solid rgba(212, 165, 116, 0.28);
+  border-radius: 999px;
+  background: rgba(212, 165, 116, 0.1);
+}
+
+.motion4-booking-interlude__badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #d4a574;
+  box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.18);
+}
+
+.motion4-booking-interlude__badge-text {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(232, 192, 142, 0.9);
 }
 
 /* Title below UI — gold display hierarchy */
@@ -2972,17 +3188,17 @@ html[data-motion4-page] body {
   overflow: hidden;
   -webkit-mask-image: linear-gradient(
     to bottom,
-    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.92) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0))))) 0%,
-    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.55) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0))))) 12%,
-    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.12) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0))))) 24%,
+    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.92) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0), var(--m4-booking-interlude-o, 0))))) 0%,
+    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.55) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0), var(--m4-booking-interlude-o, 0))))) 12%,
+    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.12) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0), var(--m4-booking-interlude-o, 0))))) 24%,
     #000 34%,
     #000 100%
   );
   mask-image: linear-gradient(
     to bottom,
-    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.92) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0))))) 0%,
-    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.55) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0))))) 12%,
-    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.12) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0))))) 24%,
+    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.92) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0), var(--m4-booking-interlude-o, 0))))) 0%,
+    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.55) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0), var(--m4-booking-interlude-o, 0))))) 12%,
+    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.12) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0), var(--m4-booking-interlude-o, 0))))) 24%,
     #000 34%,
     #000 100%
   );

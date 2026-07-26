@@ -33,7 +33,8 @@ export const DOE_TYPEWRITER_DURATION_FRAMES =
 export const DOE_SARAH_CONVO_TURN_STEP = 84;
 export const DOE_SARAH_CONVO_TURN_FADE = 14;
 export const DOE_SARAH_CONVO_TURN_START = 10;
-export const DOE_SARAH_CONVO_END_HOLD = 78;
+/** Hold after Sarah’s thank-you before dissolve into the final Doe screen. */
+export const DOE_SARAH_CONVO_END_HOLD = 96;
 /** Extra pause after each agent reply — 4× base post-fade hold (2× previous). */
 export const DOE_SARAH_CONVO_REPLY_HOLD_EXTRA = 2 * (DOE_SARAH_CONVO_TURN_STEP - DOE_SARAH_CONVO_TURN_FADE);
 export const DOE_SARAH_CONVO_REPLY_COUNT = 2;
@@ -74,10 +75,14 @@ export const DOE_SARAH_AGENT_SIDE_EFFECTS_HOLD = 48;
 /** agent-prefer-time — “Which day and time would you prefer?” — extra beat after reply. */
 export const DOE_SARAH_AGENT_PREFER_TIME_TURN = 6;
 export const DOE_SARAH_AGENT_PREFER_TIME_HOLD = DOE_SARAH_CONVO_REPLY_HOLD_EXTRA + 90;
+/** caller-prefer-time — brief hold on the date/time tags before booking modal. */
+export const DOE_SARAH_CALLER_PREFER_TIME_TURN = 7;
+export const DOE_SARAH_CALLER_PREFER_TIME_HOLD = 54;
 export const DOE_SARAH_TURN_REPLY_HOLDS = [
   { turnIndex: DOE_SARAH_AGENT_INTAKE_TURN, frames: DOE_SARAH_AGENT_INTAKE_REPLY_HOLD },
   { turnIndex: DOE_SARAH_AGENT_OPEN_CHART_TURN, frames: DOE_SARAH_AGENT_OPEN_CHART_PRE_INTERLUDE_HOLD },
   { turnIndex: 5, frames: DOE_SARAH_CONVO_REPLY_HOLD_EXTRA + 36 },
+  { turnIndex: DOE_SARAH_CALLER_PREFER_TIME_TURN, frames: DOE_SARAH_CALLER_PREFER_TIME_HOLD },
 ] as const;
 /** Full-screen confirmation-code beat before Sarah’s DOB reply — ~7s @ 30fps. */
 export const DOE_SARAH_CONFIRM_CODE_INTERLUDE_FRAMES = 210;
@@ -94,6 +99,11 @@ export const DOE_SARAH_QUESTIONNAIRE_INTERLUDE_FRAMES = 270;
 export const DOE_SARAH_QUESTIONNAIRE_FADE_OUT_FRAMES = 24;
 /** Turn index for caller-side-effects — questionnaire interlude plays before this turn. */
 export const DOE_SARAH_QUESTIONNAIRE_INTERLUDE_BEFORE_TURN = 5;
+/** Booking appointment + calendar card after Sarah picks a slot — ~8s @ 30fps. */
+export const DOE_SARAH_BOOKING_INTERLUDE_FRAMES = 240;
+export const DOE_SARAH_BOOKING_FADE_OUT_FRAMES = 22;
+/** Turn index for caller-thanks — booking interlude plays before this turn. */
+export const DOE_SARAH_BOOKING_INTERLUDE_BEFORE_TURN = 8;
 export const DOE_SARAH_CALL_INTERLUDES = [
   {
     beforeTurn: DOE_SARAH_CONFIRM_CODE_INTERLUDE_BEFORE_TURN,
@@ -109,6 +119,11 @@ export const DOE_SARAH_CALL_INTERLUDES = [
     frames: DOE_SARAH_QUESTIONNAIRE_INTERLUDE_FRAMES,
     fadeOutFrames: DOE_SARAH_QUESTIONNAIRE_FADE_OUT_FRAMES,
   },
+  {
+    beforeTurn: DOE_SARAH_BOOKING_INTERLUDE_BEFORE_TURN,
+    frames: DOE_SARAH_BOOKING_INTERLUDE_FRAMES,
+    fadeOutFrames: DOE_SARAH_BOOKING_FADE_OUT_FRAMES,
+  },
 ] as const;
 export const DOE_SARAH_HERO_HOLD_FRAMES = 46;
 export const DOE_SARAH_HEADER_SETTLE_FRAMES = 34;
@@ -120,10 +135,10 @@ export const DOE_SARAH_INCOMING_CALL_AUDIO_TRIM_FRAMES = Math.ceil(
 );
 export const DOE_SARAH_INCOMING_CALL_AUDIO_SRC = "motion/sarah-incoming-call.wav";
 export const DOE_SARAH_INCOMING_CALL_VOLUME = 26;
-export const DOE_SARAH_INTRO_TURN_COUNT = 8;
+export const DOE_SARAH_INTRO_TURN_COUNT = 9;
 export const DOE_SARAH_CONVO_UI_OFFSET = 4;
 
-/** Sarah call ends the intro — opening → Doe → preferred day/time reply. */
+/** Sarah call ends the intro — opening → Doe → thank-you → final Doe screen. */
 export const DOE_SARAH_SETTLE_START_FRAMES = DOE_SARAH_HANDOFF_FRAMES + DOE_SARAH_HERO_HOLD_FRAMES;
 export const DOE_SARAH_CONVO_START_FRAMES = DOE_SARAH_SETTLE_START_FRAMES + DOE_SARAH_HEADER_SETTLE_FRAMES;
 /** Per-turn holds after a turn (caller audio + side-effects/prefer-time beats). */

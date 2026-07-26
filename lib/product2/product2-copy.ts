@@ -428,6 +428,14 @@ export const PRODUCT2_LANDING_LIVE_CONVO = [
     ],
   },
   {
+    id: "caller-thanks",
+    role: "caller" as const,
+    caller: "Sarah Westfield",
+    callDuration: "1m08s",
+    callDurationIso: "PT1M8S",
+    lines: ["That is all, thank you"],
+  },
+  {
     id: "agent-schedule",
     role: "agent" as const,
     caller: "Doe Agent",
