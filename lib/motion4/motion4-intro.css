@@ -1010,10 +1010,11 @@ html[data-motion4-page] body {
 
 .motion4-remotion-root .motion4-call-header__prefix {
   position: relative;
-  flex: 0 0 6.85em;
-  width: 6.85em;
+  flex: 0 0 auto;
+  /* Calling from → Answered: shrink slot so the # tracks left without overlap. */
+  width: calc(6.9em - var(--m4-call-morph-subline, var(--m4-call-morph, 0)) * 2.1em);
   height: 1.2em;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .motion4-remotion-root .motion4-call-header__calling-from,
@@ -1053,7 +1054,8 @@ html[data-motion4-page] body {
   letter-spacing: 0.04em;
   line-height: 1;
   color: rgba(242, 232, 218, 0.82);
-  transform: translateX(calc(var(--m4-call-morph-subline, var(--m4-call-morph, 0)) * -1.6em));
+  /* Prefix width animation positions the # — no translateX overlap. */
+  transform: none;
 }
 
 .motion4-remotion-root .motion4-call-history-reveal {
@@ -1193,14 +1195,14 @@ html[data-motion4-page] body {
   position: relative;
   /*
    * Composition px — preview Player scale must not change relative stage size.
-   * Tall enough for two-line replies + speaker name without clipping.
+   * Extra bottom pad keeps speaker name clear; top inset centers the active reply.
    */
   box-sizing: border-box;
-  min-height: 220px;
-  max-height: 220px;
-  height: 220px;
-  padding-top: 28px;
-  padding-bottom: 14px;
+  min-height: 248px;
+  max-height: 248px;
+  height: 248px;
+  padding-top: 48px;
+  padding-bottom: 36px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -1208,17 +1210,17 @@ html[data-motion4-page] body {
   -webkit-mask-image: linear-gradient(
     to bottom,
     rgb(0 0 0 / calc(1 - var(--m3-convo-top-fade, 0) * 0.92)) 0%,
-    rgb(0 0 0 / calc(1 - var(--m3-convo-top-fade, 0) * 0.55)) 12%,
-    rgb(0 0 0 / calc(1 - var(--m3-convo-top-fade, 0) * 0.12)) 24%,
-    #000 34%,
+    rgb(0 0 0 / calc(1 - var(--m3-convo-top-fade, 0) * 0.55)) 10%,
+    rgb(0 0 0 / calc(1 - var(--m3-convo-top-fade, 0) * 0.12)) 20%,
+    #000 30%,
     #000 100%
   );
   mask-image: linear-gradient(
     to bottom,
     rgb(0 0 0 / calc(1 - var(--m3-convo-top-fade, 0) * 0.92)) 0%,
-    rgb(0 0 0 / calc(1 - var(--m3-convo-top-fade, 0) * 0.55)) 12%,
-    rgb(0 0 0 / calc(1 - var(--m3-convo-top-fade, 0) * 0.12)) 24%,
-    #000 34%,
+    rgb(0 0 0 / calc(1 - var(--m3-convo-top-fade, 0) * 0.55)) 10%,
+    rgb(0 0 0 / calc(1 - var(--m3-convo-top-fade, 0) * 0.12)) 20%,
+    #000 30%,
     #000 100%
   );
 }
@@ -3221,34 +3223,35 @@ html[data-motion4-page] body {
 }
 
 .motion4-remotion-root .motion4-ui-hero--call .doehealth-initiatives__call-history-scroll {
-  --dhi-call-history-scroll-max: 280px;
+  --dhi-call-history-scroll-max: 300px;
   height: auto;
   min-height: var(--dhi-call-history-scroll-max);
   max-height: none;
+  overflow: visible;
 }
 
 .motion4-remotion-root .motion3-ui-drive--call-reveal .product-landing-live-convo-stage {
   box-sizing: border-box;
-  min-height: 220px;
-  max-height: 220px;
-  height: 220px;
-  padding-top: 28px;
-  padding-bottom: 14px;
+  min-height: 248px;
+  max-height: 248px;
+  height: 248px;
+  padding-top: 48px;
+  padding-bottom: 36px;
   overflow: hidden;
   -webkit-mask-image: linear-gradient(
     to bottom,
     rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.92) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0), var(--m4-booking-interlude-o, 0))))) 0%,
-    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.55) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0), var(--m4-booking-interlude-o, 0))))) 12%,
-    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.12) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0), var(--m4-booking-interlude-o, 0))))) 24%,
-    #000 34%,
+    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.55) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0), var(--m4-booking-interlude-o, 0))))) 10%,
+    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.12) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0), var(--m4-booking-interlude-o, 0))))) 20%,
+    #000 30%,
     #000 100%
   );
   mask-image: linear-gradient(
     to bottom,
     rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.92) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0), var(--m4-booking-interlude-o, 0))))) 0%,
-    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.55) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0), var(--m4-booking-interlude-o, 0))))) 12%,
-    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.12) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0), var(--m4-booking-interlude-o, 0))))) 24%,
-    #000 34%,
+    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.55) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0), var(--m4-booking-interlude-o, 0))))) 10%,
+    rgb(0 0 0 / calc((1 - var(--m3-convo-top-fade, 0) * 0.12) * (1 - max(var(--m4-confirm-interlude-o, 0), var(--m4-chart-interlude-o, 0), var(--m4-questionnaire-interlude-o, 0), var(--m4-booking-interlude-o, 0))))) 20%,
+    #000 30%,
     #000 100%
   );
 }

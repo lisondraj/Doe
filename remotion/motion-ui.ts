@@ -221,15 +221,19 @@ export function useCallTurnRevealMotion(
     styles[`--m3-tag-${i}-o`] = opacity;
   }
 
+  /*
+   * Sarah intro roles — lift clears the *previous* turn (+ gap) so the active
+   * reply + speaker name stay vertically centered without clipping the bottom.
+   * caller-open, agent-intake, caller-verify, agent-open-chart, agent-side-effects,
+   * caller-side-effects, agent-prefer-time, caller-prefer-time, caller-thanks
+   */
+  const sarahPrevTurnClearPx = [0, 110, 110, 110, 110, 110, 110, 110, 102] as const;
+
   let stackLift = 0;
   for (let i = 1; i < turnCount; i++) {
     const turnStart = turnStarts[i]!;
     const fadeInEnd = turnStart + fade;
-    /*
-     * Composition-px lifts matched to pinned remotion convo stage:
-     * keep the active reply + speaker name vertically centered (not too low).
-     */
-    const lift = i % 2 === 1 ? 68 : 54;
+    const lift = sarahPrevTurnClearPx[i] ?? (i % 2 === 1 ? 110 : 102);
 
     if (t >= fadeInEnd) {
       stackLift -= lift;
