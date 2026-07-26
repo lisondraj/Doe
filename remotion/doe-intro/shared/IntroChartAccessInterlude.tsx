@@ -45,6 +45,7 @@ const FADE_OUT_PAD = 18;
 const CHART_BLUR_MAX = 16;
 /** Composition pixels — preview Player scale must not change relative tile size. */
 const TILE_PLOT_HEIGHT = "148px";
+const TILE_HEIGHT_PX = 312;
 const TILE_GAP_PX = 18;
 const VIEWPORT_INSET_PX = 72;
 const REVEAL_EASE = Easing.bezier(0.33, 0, 0.18, 1);
@@ -374,7 +375,7 @@ export function IntroChartAccessInterlude() {
                     <div
                       key={tile.id}
                       className={`motion4-chart-interlude__tile motion4-chart-interlude__tile--${tile.id}`}
-                      style={{ width: tile.width }}
+                      style={{ width: tile.width, height: TILE_HEIGHT_PX, minHeight: TILE_HEIGHT_PX, maxHeight: TILE_HEIGHT_PX }}
                     >
                       <ChartAccessTile id={tile.id} />
                     </div>

@@ -223,10 +223,10 @@ export function useCallTurnRevealMotion(
     const turnStart = turnStarts[i]!;
     const fadeInEnd = turnStart + fade;
     /*
-     * Composition-px lifts matched to pinned remotion convo type/stage (172px):
+     * Composition-px lifts matched to pinned remotion convo stage (200px + top inset):
      * keep the active reply + speaker name vertically centered in the viewport.
      */
-    const lift = i % 2 === 1 ? 64 : 54;
+    const lift = i % 2 === 1 ? 70 : 56;
 
     if (t >= fadeInEnd) {
       stackLift -= lift;

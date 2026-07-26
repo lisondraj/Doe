@@ -140,8 +140,9 @@ html[data-motion4-page] body {
   max-width: var(--motion4-call-column-width);
   min-width: 0;
   flex: 0 0 var(--motion4-call-column-width);
-  min-height: calc((1 - var(--m4-call-settle, 0)) * min(72vh, 640px));
-  max-height: min(56vh, 440px);
+  /* Composition px — avoid preview vh drift vs export. */
+  min-height: calc((1 - var(--m4-call-settle, 0)) * 640px);
+  max-height: none;
   margin: 0 auto;
   overflow: visible;
 }
@@ -1111,7 +1112,7 @@ html[data-motion4-page] body {
 }
 
 .motion4-remotion-root .motion4-ui-hero--call .doehealth-initiatives__call-history.product-call-history-rail__thread .product-landing-live-quote__text {
-  font-size: 26px;
+  font-size: 27px;
   line-height: 1.22;
 }
 
@@ -1120,12 +1121,12 @@ html[data-motion4-page] body {
   .doehealth-initiatives__call-history.product-call-history-rail__thread
   .product-landing-live-quote--agent-intake.product-landing-live-quote--reply
   .product-landing-live-quote__text {
-  font-size: 23px;
+  font-size: 24px;
   line-height: 1.22;
 }
 
 .motion4-remotion-root .motion4-ui-hero--call .doehealth-initiatives__call-history.product-call-history-rail__thread .product-landing-live-quote__caller {
-  font-size: 18px;
+  font-size: 19px;
   line-height: 1.2;
 }
 
@@ -1152,10 +1153,16 @@ html[data-motion4-page] body {
 
 .motion3-ui-drive--call-reveal .product-landing-live-convo-stage {
   position: relative;
-  /* Tall enough for highlighted reply + speaker name; card chrome unchanged. */
-  min-height: 172px;
-  max-height: 172px;
-  height: 172px;
+  /*
+   * Composition px — preview Player scale must not change relative stage size.
+   * Top inset pulls the stack down so the active reply + speaker sit mid-stage.
+   */
+  box-sizing: border-box;
+  min-height: 200px;
+  max-height: 200px;
+  height: 200px;
+  padding-top: 36px;
+  padding-bottom: 10px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -1183,16 +1190,16 @@ html[data-motion4-page] body {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  gap: 28px !important;
+  gap: 26px !important;
   width: 100%;
-  padding-bottom: 0;
+  padding-bottom: 4px;
   transform: translateY(var(--m3-convo-y, 0));
   transition: none;
   will-change: transform;
 }
 
 .motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history.product-call-history-rail__thread .product-landing-live-convo {
-  gap: 28px !important;
+  gap: 26px !important;
 }
 
 .motion4-remotion-root .motion3-ui-drive--call-reveal .doehealth-initiatives__call-history .product-landing-live-quote__text {
@@ -1243,7 +1250,10 @@ html[data-motion4-page] body {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  min-height: 22px;
+  flex-shrink: 0;
+  min-height: 24px;
+  margin-top: 10px;
+  overflow: visible;
 }
 
 .motion4-remotion-root .motion3-ui-drive--call-reveal .product-landing-live-quote:not(.product-landing-live-quote--reply) .product-landing-live-quote__meta {
@@ -1254,6 +1264,14 @@ html[data-motion4-page] body {
   display: block;
   opacity: 1;
   visibility: visible;
+  flex-shrink: 0;
+  overflow: visible;
+  white-space: nowrap;
+  text-overflow: clip;
+}
+
+.motion4-remotion-root .motion3-ui-drive--call-reveal .product-landing-live-quote {
+  overflow: visible;
 }
 
 .motion3-ui-drive--call-reveal .product-landing-live-quote {
@@ -1639,9 +1657,9 @@ html[data-motion4-page] body {
 
 .motion4-chart-interlude__tile {
   flex: 0 0 auto;
-  height: 328px;
-  min-height: 328px;
-  max-height: 328px;
+  height: 312px;
+  min-height: 312px;
+  max-height: 312px;
 }
 
 .motion4-chart-interlude__tile-card {
@@ -1657,6 +1675,85 @@ html[data-motion4-page] body {
   --pb-chart-axis-width: 38px;
   --pb-chart-axis-gap: 8px;
   --pb-chart-height: 148px;
+}
+
+/*
+ * Beat product brown-mock vh/vw card rules so Player preview matches export
+ * at any browser size (composition pixels only).
+ */
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .motion4-chart-interlude__tile-card.product-call-history-panel__a1c-card,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .motion4-chart-interlude__tile-card.product-call-history-panel__vitals-card,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .motion4-chart-interlude__tile-card.product-call-history-panel__labs-card,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .motion4-chart-interlude__tile-card.product-call-history-panel__visits-card,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .motion4-chart-interlude__tile-card.product-call-history-panel__tasks-card,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .motion4-chart-interlude__tile-card.product-call-history-panel__meds-card,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .motion4-chart-interlude__tile-card.product-call-history-panel__conditions-card,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .motion4-chart-interlude__tile-card.product-call-history-panel__allergies-card,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .motion4-chart-interlude__tile-card.product-landing-live-quote__chart-profile {
+  --pb-chart-axis-width: 38px;
+  --pb-chart-axis-gap: 8px;
+  --pb-chart-height: 148px;
+  width: 100% !important;
+  max-width: none !important;
+  flex-shrink: 0;
+  gap: 12px;
+  padding: 16px 18px 14px;
+  pointer-events: none;
+}
+
+.motion4-chart-interlude .product-brown-mock.product-brown-call-history-mode {
+  font-size: 16px;
+}
+
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__lab-range {
+  height: 20px;
+}
+
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__lab-caption-value,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-landing-live-quote__chart-profile-a1c-label,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__vitals-label,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__visits-label,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__tasks-label,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__meds-label,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__conditions-label,
+.motion4-chart-interlude
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__allergies-label {
+  font-size: 15px;
 }
 
 .motion4-chart-interlude__tile--a1c .motion4-chart-interlude__tile-card,
@@ -1677,7 +1774,7 @@ html[data-motion4-page] body {
 .motion4-chart-interlude__bp-shell {
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
+  gap: 10px;
   width: 100%;
   min-height: 0;
   flex: 1 1 auto;
@@ -2444,9 +2541,12 @@ html[data-motion4-page] body {
 }
 
 .motion4-remotion-root .motion3-ui-drive--call-reveal .product-landing-live-convo-stage {
-  min-height: 172px;
-  max-height: 172px;
-  height: 172px;
+  box-sizing: border-box;
+  min-height: 200px;
+  max-height: 200px;
+  height: 200px;
+  padding-top: 36px;
+  padding-bottom: 10px;
   overflow: hidden;
   -webkit-mask-image: linear-gradient(
     to bottom,
