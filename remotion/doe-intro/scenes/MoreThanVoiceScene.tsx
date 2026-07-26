@@ -168,7 +168,7 @@ export function MoreThanVoiceScene() {
         skipEnter
         skipSceneCrossfade
         skipSceneExit
-        heroScale={1.68}
+        heroScale={2.02}
         className="motion4-ui-hero--call motion4-call-center-hero"
         style={headerVars}
       >

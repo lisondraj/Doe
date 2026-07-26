@@ -125,7 +125,7 @@ html[data-motion4-page] body {
 }
 
 .motion4-scene--call-center {
-  --motion4-call-column-width: 580px;
+  --motion4-call-column-width: 650px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -141,7 +141,7 @@ html[data-motion4-page] body {
   min-width: 0;
   flex: 0 0 var(--motion4-call-column-width);
   /* Composition px — avoid preview vh drift vs export. */
-  min-height: calc((1 - var(--m4-call-settle, 0)) * 640px);
+  min-height: calc((1 - var(--m4-call-settle, 0)) * 520px);
   max-height: none;
   margin: 0 auto;
   overflow: visible;
@@ -915,7 +915,7 @@ html[data-motion4-page] body {
   flex: 0 0 auto;
   width: 100%;
   /* Composition px — avoid preview vh drift vs export. */
-  min-height: calc((1 - var(--m4-call-settle, 0)) * 640px);
+  min-height: calc((1 - var(--m4-call-settle, 0)) * 520px);
   overflow: visible;
   transform: translateY(var(--m4-call-hero-y, 0px));
 }
@@ -3883,7 +3883,7 @@ html[data-motion4-page] body {
 
 /* Remotion export — composition-px call hero; no interlude mask tearing */
 .motion4-remotion-root .motion4-call-center-hero {
-  min-height: calc((1 - var(--m4-call-settle, 0)) * 640px);
+  min-height: calc((1 - var(--m4-call-settle, 0)) * 520px);
   max-height: none;
 }
 
