@@ -26,6 +26,8 @@ import {
   DOE_SARAH_INCOMING_CALL_AUDIO_SRC,
   DOE_SARAH_INCOMING_CALL_AUDIO_TRIM_FRAMES,
   DOE_SARAH_INCOMING_CALL_VOLUME,
+  DOE_SARAH_INCOMING_RING_DELAY_FRAMES,
+  DOE_SARAH_INCOMING_RING_SWIPE_FRAMES,
   DOE_SARAH_INTRO_TURN_COUNT,
   DOE_SARAH_SETTLE_START_FRAMES,
   DOE_SARAH_VOICE_VOLUME,
@@ -42,6 +44,11 @@ const MORPH_STATUS_FRAMES = 24;
 const MORPH_SUBLINE_DELAY = 4;
 const MORPH_SUBLINE_FRAMES = 24;
 const MORPH_EASE = Easing.bezier(0.42, 0, 0.18, 1);
+/** Shared ease for incoming → answered settle — ease-out, no overshoot. */
+const CALL_SETTLE_EASE = Easing.bezier(0.33, 0, 0.2, 1);
+/** Incoming visual scale = former hero × shell (2.02 × 1.28). Shell scale removed from CSS. */
+const INCOMING_VISUAL_SCALE = 2.02 * 1.28;
+const ANSWERED_VISUAL_SCALE = 2.4;
 
 export function MoreThanVoiceScene() {
   const frame = useCurrentFrame();
@@ -59,11 +66,13 @@ export function MoreThanVoiceScene() {
     DOE_SARAH_TURN_REPLY_HOLDS,
   );
 
-  const headerSettle = interpolate(frame, [SETTLE_START_FRAME, CONVO_START_FRAME], [0, 1], {
+  const headerMotion = interpolate(frame, [SETTLE_START_FRAME, CONVO_START_FRAME], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
-    easing: Easing.bezier(0.33, 0, 0.18, 1),
+    easing: CALL_SETTLE_EASE,
   });
+
+  const headerSettle = headerMotion;
 
   const headerMorphStatus = interpolate(
     frame,
@@ -87,12 +96,30 @@ export function MoreThanVoiceScene() {
     },
   );
 
-  /** Keep Sarah + Answered + convo on vertical center through settle (no top bias). */
-  const heroZoneY = interpolate(headerSettle, [0, 1], [0, 0], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: Easing.bezier(0.33, 0, 0.18, 1),
-  });
+  const incomingRingStart = DOE_SARAH_CALL_HEADER_APPEAR_FRAME + DOE_SARAH_INCOMING_RING_DELAY_FRAMES;
+  const headerIncomingRing = interpolate(
+    frame,
+    [incomingRingStart, incomingRingStart + DOE_SARAH_INCOMING_RING_SWIPE_FRAMES],
+    [0, 1],
+    {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+      easing: MORPH_EASE,
+    },
+  );
+
+  /**
+   * Single transform path: Calling from (large, centered) → swipe up + scale down → answered.
+   * One translateY + one scale on IntroUiHero — no competing shell scale or padding animation.
+   */
+  const INCOMING_Y = 328;
+  const ANSWERED_Y = 16;
+  const heroPanelY = INCOMING_Y + (ANSWERED_Y - INCOMING_Y) * headerMotion;
+
+  const heroOrigin = "center top";
+
+  const heroScale =
+    INCOMING_VISUAL_SCALE + (ANSWERED_VISUAL_SCALE - INCOMING_VISUAL_SCALE) * headerMotion;
 
   const callHistoryOpacity = interpolate(frame, [CONVO_START_FRAME, CONVO_START_FRAME + 18], [0, 1], {
     extrapolateLeft: "clamp",
@@ -150,7 +177,8 @@ export function MoreThanVoiceScene() {
     "--m4-call-morph": headerMorphStatus,
     "--m4-call-morph-status": headerMorphStatus,
     "--m4-call-morph-subline": headerMorphSubline,
-    "--m4-call-hero-y": `${heroZoneY}px`,
+    "--m4-call-incoming-ring": headerIncomingRing,
+    "--m4-call-hero-y": "0px",
     "--m4-call-history-o": callHistoryOpacity,
     ...uiMotion,
   } as CSSProperties;
@@ -160,7 +188,10 @@ export function MoreThanVoiceScene() {
       className="motion4-scene motion4-scene--call-center"
       style={{
         opacity: outroExit,
+        justifyContent: "flex-start",
+        paddingTop: 48,
         ...uiMotion,
+        ...headerVars,
       } as CSSProperties}
     >
       <IntroUiHero
@@ -168,7 +199,9 @@ export function MoreThanVoiceScene() {
         skipEnter
         skipSceneCrossfade
         skipSceneExit
-        heroScale={2.02}
+        heroScale={heroScale}
+        origin={heroOrigin}
+        offsetY={heroPanelY}
         className="motion4-ui-hero--call motion4-call-center-hero"
         style={headerVars}
       >
@@ -193,7 +226,8 @@ export function MoreThanVoiceScene() {
               headerSettle={headerSettle}
               headerMorph={headerMorphStatus}
               headerMorphSubline={headerMorphSubline}
-              headerHeroY={`${heroZoneY}px`}
+              headerIncomingRing={headerIncomingRing}
+              headerHeroY="0px"
               callHistoryOpacity={callHistoryOpacity}
               durationLabel={durationLabel}
             />

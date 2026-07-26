@@ -992,22 +992,46 @@ html[data-motion4-page] body {
   overflow: visible;
 }
 
+.motion4-remotion-root .motion4-call-header__status-incoming-slot {
+  position: absolute;
+  right: 0;
+  top: 0;
+  overflow: hidden;
+  height: 1.15em;
+  opacity: calc(1 - var(--m4-call-morph-status, var(--m4-call-morph, 0)));
+}
+
+.motion4-remotion-root .motion4-call-header__status-incoming-track {
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+  transform: translateY(calc(var(--m4-call-incoming-ring, 0) * -50%));
+}
+
 .motion4-remotion-root .motion4-call-header__incoming,
+.motion4-remotion-root .motion4-call-header__ringing,
 .motion4-remotion-root .motion4-call-header__duration {
   position: absolute;
   right: 0;
   top: 0;
   margin: 0;
-  line-height: 1;
+  line-height: 1.15;
   white-space: nowrap;
 }
 
-.motion4-remotion-root .motion4-call-header__incoming {
+.motion4-remotion-root .motion4-call-header__status-incoming-track .motion4-call-header__incoming,
+.motion4-remotion-root .motion4-call-header__status-incoming-track .motion4-call-header__ringing {
+  position: static;
+  flex: 0 0 1.15em;
+  height: 1.15em;
+}
+
+.motion4-remotion-root .motion4-call-header__incoming,
+.motion4-remotion-root .motion4-call-header__ringing {
   font-size: calc(28px * (1 + (1 - var(--m4-call-settle, 0)) * 0.14));
   font-weight: 600;
   letter-spacing: -0.018em;
   color: rgba(232, 192, 142, 0.88);
-  opacity: calc(1 - var(--m4-call-morph-status, var(--m4-call-morph, 0)));
 }
 
 .motion4-remotion-root .motion4-call-header__duration {

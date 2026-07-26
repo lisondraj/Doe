@@ -21,6 +21,7 @@ export function DoeHealthCallHistoryDiagram({
   headerSettle = 1,
   headerMorph = 1,
   headerMorphSubline = 1,
+  headerIncomingRing = 0,
   headerHeroY = "0px",
   callHistoryOpacity = 1,
   style,
@@ -43,6 +44,8 @@ export function DoeHealthCallHistoryDiagram({
   headerMorph?: number;
   /** 0 = Calling from; 1 = Answered. */
   headerMorphSubline?: number;
+  /** 0 = Incoming…; 1 = Ringing…. */
+  headerIncomingRing?: number;
   /** Vertical anchor for incoming center → compact top settle. */
   headerHeroY?: string;
   callHistoryOpacity?: number;
@@ -55,7 +58,9 @@ export function DoeHealthCallHistoryDiagram({
   const statusLabel = isMotionHeader
     ? headerMorph >= 0.5
       ? resolvedDuration
-      : "Incoming..."
+      : headerIncomingRing >= 0.5
+        ? "Ringing..."
+        : "Incoming..."
     : resolvedDuration;
   const prefixLabel = isMotionHeader
     ? headerMorphSubline >= 0.5
@@ -141,6 +146,7 @@ export function DoeHealthCallHistoryDiagram({
           "--m4-call-morph": headerMorph,
           "--m4-call-morph-status": headerMorph,
           "--m4-call-morph-subline": headerMorphSubline,
+          "--m4-call-incoming-ring": headerIncomingRing,
           "--m4-call-hero-y": headerHeroY,
           "--m4-call-history-o": callHistoryOpacity,
         } as CSSProperties
@@ -160,7 +166,12 @@ export function DoeHealthCallHistoryDiagram({
                   {heroName}
                 </h2>
                 <div className="motion4-call-header__status-slot">
-                  <span className={`motion4-call-header__incoming ${dmSans.className}`}>Incoming...</span>
+                  <div className="motion4-call-header__status-incoming-slot">
+                    <div className="motion4-call-header__status-incoming-track">
+                      <span className={`motion4-call-header__incoming ${dmSans.className}`}>Incoming...</span>
+                      <span className={`motion4-call-header__ringing ${dmSans.className}`}>Ringing...</span>
+                    </div>
+                  </div>
                   <span className={`doehealth-initiatives__hero-duration motion4-call-header__duration ${dmSans.className}`}>
                     {resolvedDuration}
                   </span>

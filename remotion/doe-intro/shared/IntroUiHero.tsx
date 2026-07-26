@@ -12,6 +12,7 @@ export function IntroUiHero({
   skipSceneExit = false,
   style,
   origin = "center center",
+  offsetY = 0,
 }: {
   children: ReactNode;
   className?: string;
@@ -24,6 +25,8 @@ export function IntroUiHero({
   skipSceneExit?: boolean;
   style?: CSSProperties;
   origin?: string;
+  /** Extra translateY applied with enter/exit motion (e.g. settle nudge). */
+  offsetY?: number;
 }) {
   const sceneCrossfade = useIntroSceneCrossfade();
   const sceneOpacity = skipSceneCrossfade ? 1 : sceneCrossfade;
@@ -42,10 +45,10 @@ export function IntroUiHero({
       className={`motion4-ui-hero${className ? ` ${className}` : ""}`}
       style={{
         opacity: panelOpacity,
-        transform: `translateY(${enter.y + exit.y}px) scale(${panelScale})`,
+        transform: `translateY(${enter.y + exit.y + offsetY}px) scale(${panelScale})`,
         filter: blurExit.blur > 0 ? `blur(${blurExit.blur}px)` : undefined,
-        transformOrigin: origin,
         ...style,
+        transformOrigin: style?.transformOrigin ?? origin,
       }}
     >
       {children}

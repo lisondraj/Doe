@@ -120,7 +120,12 @@ export const DOE_SARAH_CALL_INTERLUDES = [
 ] as const;
 /** Incoming “Sarah Westfield / Calling from” hold — ~3.5s @ 30fps. */
 export const DOE_SARAH_HERO_HOLD_FRAMES = 106;
-export const DOE_SARAH_HEADER_SETTLE_FRAMES = 34;
+/** Begin incoming → answered settle this many frames before the hold ends (~100ms @ 30fps). */
+export const DOE_SARAH_SETTLE_LEAD_FRAMES = 3;
+export const DOE_SARAH_HEADER_SETTLE_FRAMES = 40 + DOE_SARAH_SETTLE_LEAD_FRAMES;
+/** Incoming… → Ringing… swipe during the hold, before settle. */
+export const DOE_SARAH_INCOMING_RING_DELAY_FRAMES = 54;
+export const DOE_SARAH_INCOMING_RING_SWIPE_FRAMES = 18;
 /** Incoming call SFX — “Sarah Westfield / Calling from” when handoff completes. */
 export const DOE_SARAH_CALL_HEADER_APPEAR_FRAME = DOE_SARAH_HANDOFF_FRAMES;
 export const DOE_SARAH_INCOMING_CALL_AUDIO_SEC = 2.5;
@@ -133,7 +138,8 @@ export const DOE_SARAH_INTRO_TURN_COUNT = 9;
 export const DOE_SARAH_CONVO_UI_OFFSET = 4;
 
 /** Sarah call ends the intro — opening → Doe → thank-you → final Doe screen. */
-export const DOE_SARAH_SETTLE_START_FRAMES = DOE_SARAH_HANDOFF_FRAMES + DOE_SARAH_HERO_HOLD_FRAMES;
+export const DOE_SARAH_SETTLE_START_FRAMES =
+  DOE_SARAH_HANDOFF_FRAMES + DOE_SARAH_HERO_HOLD_FRAMES - DOE_SARAH_SETTLE_LEAD_FRAMES;
 export const DOE_SARAH_CONVO_START_FRAMES = DOE_SARAH_SETTLE_START_FRAMES + DOE_SARAH_HEADER_SETTLE_FRAMES;
 /** Per-turn holds after a turn (caller audio + side-effects/prefer-time beats). */
 export const DOE_SARAH_TURN_HOLDS_AFTER = [
