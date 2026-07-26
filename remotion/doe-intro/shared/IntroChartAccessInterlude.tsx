@@ -33,8 +33,9 @@ import "@/lib/product2/product2-landing.css";
 
 const CONVO_UI_OFFSET = DOE_SARAH_CONVO_START_FRAMES + DOE_SARAH_CONVO_UI_OFFSET;
 
-/** Scale Sarah chart strip tiles — layout + snapshot stay in sync. */
-export const CHART_STRIP_SCALE = 1.18;
+/** Scale Sarah chart strip tiles — large enough to bleed off frame edges. */
+export const CHART_STRIP_SCALE = 1.65;
+export const CHART_STRIP_BLEED_Y_PX = 80;
 const BASE_TILE_HEIGHT_PX = 300;
 const BASE_TILE_GAP_PX = 16;
 const BASE_TILE_PLOT_HEIGHT_PX = 210;
@@ -113,7 +114,7 @@ const CHART_TILES = [
   { id: "allergies", width: Math.round(270 * CHART_STRIP_SCALE) },
 ] as const;
 
-const VIEWPORT_INSET_PX = 72;
+const VIEWPORT_INSET_PX = 0;
 const TRACK_WIDTH_PX =
   CHART_TILES.reduce((sum, tile) => sum + tile.width, 0) + TILE_GAP_PX * (CHART_TILES.length - 1);
 const CHART_STRIP_VIEWPORT_WIDTH_PX = DOE_LAUNCH_WIDTH - VIEWPORT_INSET_PX * 2;
@@ -342,7 +343,7 @@ export function IntroSarahChartStripSnapshot({
       className="motion4-chart-interlude__strip product-brown-mock product-brown-call-history-mode"
       style={{
         opacity,
-        transform: `translateY(${translateY}px)`,
+        transform: `translateY(${translateY + CHART_STRIP_BLEED_Y_PX}px)`,
         ["--m4-chart-tile-height" as string]: `${TILE_HEIGHT_PX}px`,
       }}
     >
@@ -460,6 +461,7 @@ export function IntroChartAccessInterlude() {
               className="motion4-chart-interlude__strip product-brown-mock product-brown-call-history-mode"
               style={{
                 opacity: stripOpacity,
+                transform: `translateY(${CHART_STRIP_BLEED_Y_PX}px)`,
                 ["--m4-chart-tile-height" as string]: `${TILE_HEIGHT_PX}px`,
               }}
             >

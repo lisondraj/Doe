@@ -1674,6 +1674,7 @@ html[data-motion4-page] body {
   opacity: var(--m4-chart-interlude-o, 0);
   font-family: "DM Sans", system-ui, sans-serif;
   isolation: isolate;
+  overflow: visible;
 }
 
 .motion4-chart-interlude__stage {
@@ -1684,6 +1685,7 @@ html[data-motion4-page] body {
   justify-content: center;
   width: 100%;
   min-height: 100%;
+  overflow: visible;
 }
 
 .motion4-chart-interlude__stack {
@@ -1726,29 +1728,16 @@ html[data-motion4-page] body {
 
 .motion4-chart-interlude__strip {
   width: 100%;
-  max-width: 100%;
-  will-change: opacity;
+  max-width: none;
+  overflow: visible;
+  will-change: opacity, transform;
 }
 
 .motion4-chart-interlude__strip-viewport {
   width: 100%;
-  max-width: 100%;
-  overflow: hidden;
-  padding-inline: 72px;
-  mask-image: linear-gradient(
-    to right,
-    transparent 0%,
-    #000 4%,
-    #000 96%,
-    transparent 100%
-  );
-  -webkit-mask-image: linear-gradient(
-    to right,
-    transparent 0%,
-    #000 4%,
-    #000 96%,
-    transparent 100%
-  );
+  max-width: none;
+  overflow: visible;
+  padding-inline: 0;
 }
 
 .motion4-chart-interlude__strip-track {
@@ -2186,6 +2175,7 @@ html[data-motion4-page] body {
   opacity: var(--m4-questionnaire-interlude-o, 0);
   font-family: "DM Sans", system-ui, sans-serif;
   isolation: isolate;
+  overflow: visible;
 }
 
 .motion4-questionnaire-interlude__stage {
@@ -2196,6 +2186,7 @@ html[data-motion4-page] body {
   justify-content: center;
   width: 100%;
   min-height: 100%;
+  overflow: visible;
 }
 
 .motion4-questionnaire-interlude__stack {
@@ -2241,7 +2232,7 @@ html[data-motion4-page] body {
   flex-direction: column;
   align-items: stretch;
   width: 100%;
-  overflow: hidden;
+  overflow: visible;
   will-change: opacity, transform, max-height;
 }
 
