@@ -22,6 +22,8 @@ const BOOKING_DONE = 54;
 const CAL_APPEAR = 72;
 const CAL_REVEAL = 24;
 const REVEAL_EASE = Easing.bezier(0.33, 0, 0.18, 1);
+/** Landscape booking card — match side-effects panel scale. */
+const BOOKING_CARD_SCALE = 1.48;
 
 /** July 2026 week grid — Tuesday 14 highlighted. */
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
@@ -108,7 +110,7 @@ export function IntroBookingInterlude() {
         }) * stepOpacity
       : 0;
 
-  const calY = interpolate(calProgress, [0, 1], [18, 0], {
+  const calY = interpolate(calProgress, [0, 1], [36, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: REVEAL_EASE,
@@ -136,7 +138,8 @@ export function IntroBookingInterlude() {
               className="motion4-booking-interlude__card"
               style={{
                 opacity: calOpacity,
-                transform: `translateY(${calY}px)`,
+                transform: `translateY(${calY}px) scale(${BOOKING_CARD_SCALE})`,
+                ["--m4-booking-card-scale" as string]: String(BOOKING_CARD_SCALE),
               }}
             >
               <div className="motion4-booking-interlude__card-head">
