@@ -1704,7 +1704,8 @@ html[data-motion4-page] body {
 }
 
 .motion4-chart-interlude__stack--paired {
-  gap: 36px;
+  gap: 22px;
+  transform: translateY(-16px);
 }
 
 .motion4-chart-interlude__step {
@@ -1715,15 +1716,48 @@ html[data-motion4-page] body {
   width: auto;
   max-width: 96%;
   font-family: "DM Sans", system-ui, sans-serif;
-  /* Chart→booking only — under confirm-code (~97px), nudged down from 82 for fit. */
+  transform-origin: center center;
+  will-change: transform, opacity;
+}
+
+.motion4-chart-interlude__label-slot {
+  overflow: hidden;
+  height: 78px;
+}
+
+.motion4-chart-interlude__label-track {
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+}
+
+.motion4-chart-interlude__label {
+  display: flex;
+  align-items: center;
+  flex: 0 0 78px;
+  height: 78px;
+  font-family: "DM Sans", system-ui, sans-serif;
   font-size: 68px;
   font-weight: 400;
   letter-spacing: 0.015em;
   line-height: 1.15;
   color: rgba(242, 232, 218, 0.82);
   white-space: nowrap;
-  transform-origin: center center;
-  will-change: opacity;
+}
+
+.motion4-chart-interlude__icon-slot {
+  position: relative;
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+}
+
+.motion4-chart-interlude__icon-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .motion4-chart-interlude__strip {
@@ -1731,6 +1765,7 @@ html[data-motion4-page] body {
   max-width: none;
   overflow: visible;
   will-change: opacity, transform;
+  --m4-cs: var(--m4-chart-strip-scale, 1);
 }
 
 .motion4-chart-interlude__strip-viewport {
@@ -1766,9 +1801,7 @@ html[data-motion4-page] body {
   min-height: 100%;
   margin: 0;
   overflow: hidden;
-  --pb-chart-axis-width: 36px;
-  --pb-chart-axis-gap: 8px;
-  --pb-chart-height: 210px;
+  --pb-chart-height: calc(210px * var(--m4-cs, 1));
 }
 
 /*
@@ -1803,24 +1836,21 @@ html[data-motion4-page] body {
 .motion4-chart-interlude
   .product-brown-mock.product-brown-call-history-mode
   .motion4-chart-interlude__tile-card.product-landing-live-quote__chart-profile {
-  --pb-chart-axis-width: 36px;
-  --pb-chart-axis-gap: 8px;
-  --pb-chart-height: 210px;
   width: 100% !important;
   max-width: none !important;
   flex: 1 1 auto;
   flex-shrink: 1;
-  gap: 12px;
-  padding: 14px 16px 12px;
+  gap: calc(12px * var(--m4-cs, 1));
+  padding: calc(14px * var(--m4-cs, 1)) calc(16px * var(--m4-cs, 1)) calc(12px * var(--m4-cs, 1));
   pointer-events: none;
 }
 
 .motion4-chart-interlude .product-brown-mock.product-brown-call-history-mode {
-  font-size: 16px;
+  font-size: calc(16px * var(--m4-cs, 1));
 }
 
-.motion4-chart-interlude__tile--a1c .motion4-chart-interlude__tile-card,
 .motion4-chart-interlude__tile--bp .motion4-chart-interlude__tile-card,
+.motion4-chart-interlude__tile--a1c .motion4-chart-interlude__tile-card,
 .motion4-chart-interlude__tile--vitals .motion4-chart-interlude__tile-card,
 .motion4-chart-interlude__tile--labs .motion4-chart-interlude__tile-card,
 .motion4-chart-interlude__tile--visits .motion4-chart-interlude__tile-card,
@@ -1834,7 +1864,7 @@ html[data-motion4-page] body {
 .motion4-chart-interlude__bp-shell {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: calc(10px * var(--m4-cs, 1));
   width: 100%;
   min-height: 0;
   flex: 1 1 auto;
@@ -1845,7 +1875,7 @@ html[data-motion4-page] body {
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
-  font-size: 15px;
+  font-size: calc(15px * var(--m4-cs, 1));
   font-weight: 600;
   letter-spacing: 0.06em;
   line-height: 1.15;
@@ -1861,13 +1891,23 @@ html[data-motion4-page] body {
 }
 
 .motion4-chart-interlude__bp-plot .product-landing-live-quote__chart-profile-bp,
-.motion4-chart-interlude__tile--a1c .product-landing-live-quote__chart-profile-a1c {
+.motion4-chart-interlude__tile--a1c .product-landing-live-quote__chart-profile-a1c,
+.motion4-chart-interlude__tile--bp .product-landing-live-quote__chart-profile-bp {
   flex: 1 1 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: calc(8px * var(--m4-cs, 1));
   height: 100%;
+  padding-top: 0;
+}
+
+.motion4-chart-interlude__tile--bp .product-landing-live-quote__chart-profile-bp-columns {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
+  align-items: stretch;
+  padding-top: 0;
 }
 
 .motion4-chart-interlude__tile .product-landing-live-quote__chart-profile-a1c-plot {
@@ -1916,14 +1956,14 @@ html[data-motion4-page] body {
   .product-call-history-panel__allergies-label {
   flex-shrink: 0;
   margin: 0;
-  font-size: 15px !important;
+  font-size: calc(15px * var(--m4-cs, 1)) !important;
   font-weight: 600;
   letter-spacing: 0.06em;
   line-height: 1.15;
 }
 
 .motion4-chart-interlude__tile .product-landing-live-quote__chart-profile-a1c-axis-label {
-  font-size: 12px;
+  font-size: calc(12px * var(--m4-cs, 1));
 }
 
 .motion4-chart-interlude__tile .product-call-history-panel__vitals-shell,
@@ -1932,14 +1972,14 @@ html[data-motion4-page] body {
 .motion4-chart-interlude__tile .product-call-history-panel__tasks-shell,
 .motion4-chart-interlude__tile .product-call-history-panel__meds-shell,
 .motion4-chart-interlude__tile .product-call-history-panel__conditions-shell,
-.motion4-chart-interlude__tile .product-call-history-panel__allergies-shell {
+.motion4-chart-interlude__tile   .product-call-history-panel__allergies-shell {
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
   min-height: 0;
   width: 100%;
   height: 100%;
-  gap: 10px;
+  gap: calc(10px * var(--m4-cs, 1));
   overflow: hidden;
 }
 
@@ -1948,7 +1988,7 @@ html[data-motion4-page] body {
 .motion4-chart-interlude__tile--meds .product-call-history-panel__meds-shell,
 .motion4-chart-interlude__tile--conditions .product-call-history-panel__conditions-shell,
 .motion4-chart-interlude__tile--allergies .product-call-history-panel__allergies-shell {
-  gap: 9px;
+  gap: calc(9px * var(--m4-cs, 1));
 }
 
 .motion4-chart-interlude__tile .product-call-history-panel__vitals-label {
@@ -1966,7 +2006,7 @@ html[data-motion4-page] body {
   flex: 1 1 auto;
   min-height: 0;
   justify-content: space-between;
-  gap: 8px;
+  gap: calc(8px * var(--m4-cs, 1));
 }
 
 .motion4-chart-interlude__tile .product-call-history-panel__vital-row,
@@ -1974,15 +2014,15 @@ html[data-motion4-page] body {
   flex: 1 1 0;
   min-height: 0;
   align-items: center;
-  gap: 10px;
-  padding: 6px 0;
-  grid-template-columns: 2.4rem minmax(0, 1fr) auto;
+  gap: calc(10px * var(--m4-cs, 1));
+  padding: calc(6px * var(--m4-cs, 1)) 0;
+  grid-template-columns: calc(2.4rem * var(--m4-cs, 1)) minmax(0, 1fr) auto;
 }
 
 .motion4-chart-interlude
   .product-brown-mock.product-brown-call-history-mode
   .product-call-history-panel__lab-range {
-  height: 22px;
+  height: calc(22px * var(--m4-cs, 1));
 }
 
 .motion4-chart-interlude
@@ -1991,7 +2031,7 @@ html[data-motion4-page] body {
 .motion4-chart-interlude
   .product-brown-mock.product-brown-call-history-mode
   .product-call-history-panel__vital-caption-label {
-  font-size: 13px;
+  font-size: calc(13px * var(--m4-cs, 1));
 }
 
 .motion4-chart-interlude
@@ -2000,7 +2040,7 @@ html[data-motion4-page] body {
 .motion4-chart-interlude
   .product-brown-mock.product-brown-call-history-mode
   .product-call-history-panel__vital-caption-value {
-  font-size: 18px;
+  font-size: calc(18px * var(--m4-cs, 1));
 }
 
 .motion4-chart-interlude
@@ -2015,7 +2055,7 @@ html[data-motion4-page] body {
 .motion4-chart-interlude
   .product-brown-mock.product-brown-call-history-mode
   .product-call-history-panel__vital-caption-trend {
-  font-size: 12px;
+  font-size: calc(12px * var(--m4-cs, 1));
 }
 
 .motion4-chart-interlude__tile .product-call-history-panel__visits-list,
@@ -2027,7 +2067,7 @@ html[data-motion4-page] body {
   flex: 1 1 auto;
   min-height: 0;
   justify-content: stretch;
-  gap: 6px;
+  gap: calc(6px * var(--m4-cs, 1));
   overflow: hidden;
   padding: 0;
   list-style: none;
@@ -2039,7 +2079,7 @@ html[data-motion4-page] body {
   flex: 1 1 auto;
   min-height: 0;
   justify-content: stretch;
-  gap: 7px;
+  gap: calc(7px * var(--m4-cs, 1));
   overflow: hidden;
   padding: 0;
   list-style: none;
@@ -2059,8 +2099,8 @@ html[data-motion4-page] body {
   align-items: center;
   flex: 1 1 0;
   min-height: 0;
-  padding: 2px 0;
-  font-size: 16px;
+  padding: calc(2px * var(--m4-cs, 1)) 0;
+  font-size: calc(16px * var(--m4-cs, 1));
   line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
@@ -2071,10 +2111,47 @@ html[data-motion4-page] body {
   .product-brown-mock.product-brown-call-history-mode
   .product-call-history-panel__visits-item {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  align-items: stretch;
+  gap: calc(10px * var(--m4-cs, 1));
   min-height: 0;
   flex: 1 1 0;
+}
+
+.motion4-chart-interlude__tile--visits .product-call-history-panel__visits-date {
+  flex: 0 0 calc(3.35rem * var(--m4-cs, 1));
+  width: calc(3.35rem * var(--m4-cs, 1));
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border: 1px solid rgba(212, 165, 116, 0.22);
+  border-radius: calc(0.44rem * var(--m4-cs, 1));
+  background: rgba(14, 10, 7, 0.52);
+  overflow: hidden;
+}
+
+.motion4-chart-interlude__tile--visits .product-call-history-panel__visits-date-month {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: calc(4px * var(--m4-cs, 1)) calc(3px * var(--m4-cs, 1));
+  border-bottom: 1px solid rgba(212, 165, 116, 0.14);
+  background: linear-gradient(180deg, rgba(212, 165, 116, 0.2) 0%, rgba(212, 165, 116, 0.1) 100%);
+  color: rgba(232, 192, 142, 0.78);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.motion4-chart-interlude__tile--visits .product-call-history-panel__visits-item-copy {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  justify-content: center;
+  gap: calc(4px * var(--m4-cs, 1));
+  min-width: 0;
 }
 
 .motion4-chart-interlude
@@ -2083,25 +2160,25 @@ html[data-motion4-page] body {
 .motion4-chart-interlude
   .product-brown-mock.product-brown-call-history-mode
   .product-call-history-panel__visits-date-weekday {
-  font-size: 11px;
+  font-size: calc(11px * var(--m4-cs, 1));
 }
 
 .motion4-chart-interlude
   .product-brown-mock.product-brown-call-history-mode
   .product-call-history-panel__visits-date-day {
-  font-size: 20px;
+  font-size: calc(20px * var(--m4-cs, 1));
 }
 
 .motion4-chart-interlude
   .product-brown-mock.product-brown-call-history-mode
   .product-call-history-panel__visits-item-title {
-  font-size: 16px;
+  font-size: calc(16px * var(--m4-cs, 1));
 }
 
 .motion4-chart-interlude
   .product-brown-mock.product-brown-call-history-mode
   .product-call-history-panel__visits-item-when {
-  font-size: 12px;
+  font-size: calc(12px * var(--m4-cs, 1));
 }
 
 .motion4-chart-interlude
@@ -2110,18 +2187,18 @@ html[data-motion4-page] body {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 10px;
+  gap: calc(10px * var(--m4-cs, 1));
   flex: 1 1 0;
   min-height: 0;
-  padding: 8px 12px;
+  padding: calc(8px * var(--m4-cs, 1)) calc(12px * var(--m4-cs, 1));
 }
 
 .motion4-chart-interlude
   .product-brown-mock.product-brown-call-history-mode
   .product-call-history-panel__tasks-item-icon {
   flex-shrink: 0;
-  width: 28px;
-  height: 28px;
+  width: calc(28px * var(--m4-cs, 1));
+  height: calc(28px * var(--m4-cs, 1));
 }
 
 .motion4-chart-interlude
@@ -2129,13 +2206,13 @@ html[data-motion4-page] body {
   .product-call-history-panel__tasks-item-copy {
   flex: 1 1 auto;
   min-width: 0;
-  gap: 3px;
+  gap: calc(3px * var(--m4-cs, 1));
 }
 
 .motion4-chart-interlude
   .product-brown-mock.product-brown-call-history-mode
   .product-call-history-panel__tasks-item-title {
-  font-size: 15px;
+  font-size: calc(15px * var(--m4-cs, 1));
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2144,8 +2221,8 @@ html[data-motion4-page] body {
 .motion4-chart-interlude
   .product-brown-mock.product-brown-call-history-mode
   .product-call-history-panel__tasks-item-badge {
-  font-size: 11px;
-  padding: 3px 8px;
+  font-size: calc(11px * var(--m4-cs, 1));
+  padding: calc(3px * var(--m4-cs, 1)) calc(8px * var(--m4-cs, 1));
 }
 
 .motion4-chart-interlude__icon {

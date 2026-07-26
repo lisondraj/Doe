@@ -34,8 +34,8 @@ import "@/lib/product2/product2-landing.css";
 const CONVO_UI_OFFSET = DOE_SARAH_CONVO_START_FRAMES + DOE_SARAH_CONVO_UI_OFFSET;
 
 /** Scale Sarah chart strip tiles — large enough to bleed off frame edges. */
-export const CHART_STRIP_SCALE = 1.65;
-export const CHART_STRIP_BLEED_Y_PX = 80;
+export const CHART_STRIP_SCALE = 2.5;
+export const CHART_STRIP_BLEED_Y_PX = 128;
 const BASE_TILE_HEIGHT_PX = 300;
 const BASE_TILE_GAP_PX = 16;
 const BASE_TILE_PLOT_HEIGHT_PX = 210;
@@ -46,14 +46,18 @@ const TILE_PLOT_HEIGHT = `${Math.round(BASE_TILE_PLOT_HEIGHT_PX * CHART_STRIP_SC
 const TILE_LIFT_PX = Math.round(32 * CHART_STRIP_SCALE);
 
 const ACCESS_DONE = 48;
+const ACCESS_LABEL_SWIPE = 16;
+/** Label row height — matches .motion4-chart-interlude__label-slot (68px × 1.15). */
+const ACCESS_LABEL_LINE_PX = 78;
 /** Mount + start scrolling before fade-in so there is no post-appear hold. */
 const SCROLL_START = 52;
 const STRIP_APPEAR = 64;
 const STRIP_REVEAL = 28;
 /** Fraction of strip width to pan — stop before meds/conditions/allergies. */
 const CHART_SCROLL_MAX_RATIO = 0.4;
-/** Keep scrolling through close — modal fade starts earlier in motion-ui. */
-const SCROLL_END_PAD = 2;
+/** Collapse chart strip before interlude ends so chat can take over. */
+const STRIP_EXIT_PAD = 56;
+const STRIP_EXIT_DURATION = 36;
 const CHART_BLUR_MAX = 16;
 /** Stagger each tile’s unblur/lift across the strip reveal. */
 const TILE_STAGGER = 0.055;
@@ -69,6 +73,7 @@ const STRIP_COPY = {
       { title: "Diabetes Follow-up", when: "Apr 9 · Clinic", month: "Apr", day: 9, weekday: "Wed" },
       { title: "Virtual Check-in", when: "Jun 24 · Video", month: "Jun", day: 24, weekday: "Tue" },
       { title: "Lab Review", when: "Jul 8 · Nurse", month: "Jul", day: 8, weekday: "Tue" },
+      { title: "Medication Sync", when: "Aug 19 · Dr. Chen", month: "Aug", day: 19, weekday: "Wed" },
     ],
   },
   tasks: {
@@ -122,6 +127,18 @@ const CHART_STRIP_MAX_SCROLL_PX = Math.max(0, TRACK_WIDTH_PX - CHART_STRIP_VIEWP
 const CHART_STRIP_SCROLL_TARGET_PX = Math.round(CHART_STRIP_MAX_SCROLL_PX * CHART_SCROLL_MAX_RATIO);
 export const CHART_STRIP_SNAPSHOT_SCROLL_X = -CHART_STRIP_SCROLL_TARGET_PX;
 
+function chartStripRootStyle(options: { opacity: number; translateY?: number; liftY?: number }) {
+  const bleedY = (options.translateY ?? 0) + CHART_STRIP_BLEED_Y_PX + (options.liftY ?? 0);
+  return {
+    opacity: options.opacity,
+    transform: `translateY(${bleedY}px)`,
+    ["--m4-chart-strip-scale" as string]: String(CHART_STRIP_SCALE),
+    ["--m4-chart-tile-height" as string]: `${TILE_HEIGHT_PX}px`,
+    ["--pb-chart-axis-width" as string]: `${Math.round(36 * CHART_STRIP_SCALE)}px`,
+    ["--pb-chart-axis-gap" as string]: `${Math.round(8 * CHART_STRIP_SCALE)}px`,
+  };
+}
+
 function InterludeStepIcon({ state, spinDeg }: { state: "spinner" | "check"; spinDeg: number }) {
   if (state === "check") {
     return (
@@ -148,6 +165,41 @@ function InterludeStepIcon({ state, spinDeg }: { state: "spinner" | "check"; spi
       <circle cx="8" cy="8" r="6.25" stroke="rgba(242, 232, 218, 0.18)" strokeWidth="1.75" />
       <path d="M14.25 8a6.25 6.25 0 0 0-6.25-6.25" stroke="#d4a574" strokeWidth="1.75" strokeLinecap="round" />
     </svg>
+  );
+}
+
+function ChartAccessStatusRow({ local, spinDeg }: { local: number; spinDeg: number }) {
+  const labelSwipe = interpolate(local, [ACCESS_DONE, ACCESS_DONE + ACCESS_LABEL_SWIPE], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: REVEAL_EASE,
+  });
+  const iconSwap = interpolate(local, [ACCESS_DONE, ACCESS_DONE + 10], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: REVEAL_EASE,
+  });
+
+  return (
+    <div className="motion4-chart-interlude__step">
+      <div className="motion4-chart-interlude__label-slot" aria-live="polite">
+        <div
+          className="motion4-chart-interlude__label-track"
+          style={{ transform: `translateY(${-labelSwipe * ACCESS_LABEL_LINE_PX}px)` }}
+        >
+          <span className="motion4-chart-interlude__label">Accessing Sarah&apos;s chart</span>
+          <span className="motion4-chart-interlude__label">Accessed Sarah&apos;s chart</span>
+        </div>
+      </div>
+      <div className="motion4-chart-interlude__icon-slot" aria-hidden>
+        <span className="motion4-chart-interlude__icon-layer" style={{ opacity: 1 - iconSwap }}>
+          <InterludeStepIcon state="spinner" spinDeg={spinDeg} />
+        </span>
+        <span className="motion4-chart-interlude__icon-layer" style={{ opacity: iconSwap }}>
+          <InterludeStepIcon state="check" spinDeg={0} />
+        </span>
+      </div>
+    </div>
   );
 }
 
@@ -183,14 +235,12 @@ function ChartAccessTile({ id }: { id: (typeof CHART_TILES)[number]["id"] }) {
           className="motion4-chart-interlude__tile-card product-call-history-panel__a1c-card product-landing-live-quote__chart-profile"
           aria-label={PRODUCT2_CALL_HISTORY_BP_TREND.label}
         >
-          <div className="motion4-chart-interlude__bp-shell">
-            <p className={`motion4-chart-interlude__bp-label m-0 ${suisseIntl.className}`}>
-              {PRODUCT2_CALL_HISTORY_BP_TREND.label}
-            </p>
-            <div className="motion4-chart-interlude__bp-plot">
-              <Product2ChartProfileBpTrend readings={PRODUCT2_CALL_HISTORY_BP_TREND.readings} />
-            </div>
-          </div>
+          <Product2ChartProfileBpTrend
+            label={PRODUCT2_CALL_HISTORY_BP_TREND.label}
+            readings={PRODUCT2_CALL_HISTORY_BP_TREND.readings}
+            labelPosition="top"
+            plotCanvasHeight={TILE_PLOT_HEIGHT}
+          />
         </div>
       );
     case "labs":
@@ -341,11 +391,7 @@ export function IntroSarahChartStripSnapshot({
   return (
     <div
       className="motion4-chart-interlude__strip product-brown-mock product-brown-call-history-mode"
-      style={{
-        opacity,
-        transform: `translateY(${translateY + CHART_STRIP_BLEED_Y_PX}px)`,
-        ["--m4-chart-tile-height" as string]: `${TILE_HEIGHT_PX}px`,
-      }}
+      style={chartStripRootStyle({ opacity, translateY })}
     >
       <div className="motion4-chart-interlude__strip-viewport">
         <div
@@ -400,10 +446,9 @@ export function IntroChartAccessInterlude() {
   const local = t - window.start;
   const windowFrames = window.end - window.start;
   const spinDeg = local * 4;
-  const accessDone = local >= ACCESS_DONE;
-  const scrollEnd = Math.max(SCROLL_START + 1, windowFrames - SCROLL_END_PAD);
-
-  const stepOpacity = 1;
+  const stripExitStart = Math.max(STRIP_APPEAR + STRIP_REVEAL, windowFrames - STRIP_EXIT_PAD);
+  const stripExitEnd = Math.min(windowFrames - 1, stripExitStart + STRIP_EXIT_DURATION);
+  const scrollEnd = Math.max(SCROLL_START + 1, stripExitStart);
 
   const stripProgress =
     local >= STRIP_APPEAR
@@ -414,14 +459,29 @@ export function IntroChartAccessInterlude() {
         })
       : 0;
 
+  const stripExit =
+    local <= stripExitStart
+      ? 0
+      : interpolate(local, [stripExitStart, stripExitEnd], [0, 1], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+          easing: REVEAL_EASE,
+        });
+
   const stripOpacity =
     local >= STRIP_APPEAR
       ? interpolate(stripProgress, [0, 0.2, 1], [0, 0.9, 1], {
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp",
           easing: REVEAL_EASE,
-        }) * stepOpacity
+        }) * (1 - stripExit)
       : 0;
+
+  const stripLiftY = interpolate(stripExit, [0, 1], [0, 28], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: REVEAL_EASE,
+  });
 
   const scrollTarget = CHART_STRIP_SCROLL_TARGET_PX;
   /** Partial pan — enough to read chart boxes, then hand off to pre-visit beat. */
@@ -434,9 +494,7 @@ export function IntroChartAccessInterlude() {
         })
       : 0;
 
-  const accessLabel = accessDone ? "Accessed Sarah's chart" : "Accessing Sarah's chart";
-  const accessIcon: "spinner" | "check" = accessDone ? "check" : "spinner";
-  const stripMounted = local >= SCROLL_START;
+  const stripMounted = local >= SCROLL_START && stripOpacity > 0.01;
 
   return (
     <div className={`motion4-chart-interlude ${dmSans.className}`} aria-hidden>
@@ -446,24 +504,12 @@ export function IntroChartAccessInterlude() {
             stripMounted ? " motion4-chart-interlude__stack--paired" : ""
           }`}
         >
-          <div
-            className="motion4-chart-interlude__step"
-            style={{
-              opacity: stepOpacity,
-            }}
-          >
-            <span className="motion4-chart-interlude__label">{accessLabel}</span>
-            <InterludeStepIcon state={accessIcon} spinDeg={spinDeg} />
-          </div>
+          <ChartAccessStatusRow local={local} spinDeg={spinDeg} />
 
           {stripMounted ? (
             <div
               className="motion4-chart-interlude__strip product-brown-mock product-brown-call-history-mode"
-              style={{
-                opacity: stripOpacity,
-                transform: `translateY(${CHART_STRIP_BLEED_Y_PX}px)`,
-                ["--m4-chart-tile-height" as string]: `${TILE_HEIGHT_PX}px`,
-              }}
+              style={chartStripRootStyle({ opacity: stripOpacity, liftY: stripLiftY })}
             >
               <div className="motion4-chart-interlude__strip-viewport">
                 <div

@@ -10,15 +10,37 @@ function bpHeightPercent(value: number) {
 /** BP history — vertical pressure columns per visit (no line graph). */
 export function Product2ChartProfileBpTrend({
   readings,
+  label,
+  labelPosition = "bottom",
+  plotCanvasHeight,
 }: {
   readings: readonly { date: string; systolic: number; diastolic: number }[];
+  label?: string;
+  labelPosition?: "top" | "bottom";
+  plotCanvasHeight?: string;
 }) {
   const latestIndex = readings.length - 1;
   const yTicks = [BP_SCALE_MAX, Math.round((BP_SCALE_MAX + BP_SCALE_MIN) / 2), BP_SCALE_MIN];
+  const plotSizeStyle = plotCanvasHeight
+    ? ({ height: plotCanvasHeight, minHeight: plotCanvasHeight } as const)
+    : undefined;
+
+  const labelNode = label ? (
+    <span
+      className={`product-landing-live-quote__chart-profile-a1c-label product-landing-live-quote__chart-profile-a1c-label--${labelPosition} ${dmSans.className}`}
+    >
+      {label}
+    </span>
+  ) : null;
 
   return (
-    <div className="product-landing-live-quote__chart-profile-bp">
-      <div className="product-landing-live-quote__chart-profile-a1c-plot">
+    <div
+      className={`product-landing-live-quote__chart-profile-bp${
+        label ? ` product-landing-live-quote__chart-profile-bp--label-${labelPosition}` : ""
+      }`}
+    >
+      {labelPosition === "top" ? labelNode : null}
+      <div className="product-landing-live-quote__chart-profile-a1c-plot" style={plotSizeStyle}>
         <div className={`product-landing-live-quote__chart-profile-a1c-y-axis ${dmSans.className}`} aria-hidden>
           {yTicks.map((tick) => (
             <span key={tick} className="product-landing-live-quote__chart-profile-a1c-axis-label">
@@ -71,6 +93,7 @@ export function Product2ChartProfileBpTrend({
           ))}
         </div>
       </div>
+      {labelPosition === "bottom" ? labelNode : null}
     </div>
   );
 }
