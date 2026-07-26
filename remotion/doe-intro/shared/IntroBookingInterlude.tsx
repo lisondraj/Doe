@@ -1,6 +1,6 @@
 import { Easing, interpolate, useCurrentFrame } from "remotion";
 
-import { dmSans, suisseIntl } from "@/remotion/fonts";
+import { dmSans } from "@/remotion/fonts";
 
 import {
   DOE_SARAH_BOOKING_INTERLUDE_BEFORE_TURN,
@@ -24,16 +24,16 @@ const CAL_APPEAR = 72;
 const CAL_REVEAL = 24;
 const REVEAL_EASE = Easing.bezier(0.33, 0, 0.18, 1);
 
-/** July 2026 week grid — Tuesday 14 highlighted as booked. */
+/** July 2026 week grid — Tuesday 14 highlighted. */
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
 const CALENDAR_DAYS = [
-  { day: 12, weekday: 0, booked: false },
-  { day: 13, weekday: 1, booked: false },
-  { day: 14, weekday: 2, booked: true },
-  { day: 15, weekday: 3, booked: false },
-  { day: 16, weekday: 4, booked: false },
-  { day: 17, weekday: 5, booked: false },
-  { day: 18, weekday: 6, booked: false },
+  { day: 12, booked: false },
+  { day: 13, booked: false },
+  { day: 14, booked: true },
+  { day: 15, booked: false },
+  { day: 16, booked: false },
+  { day: 17, booked: false },
+  { day: 18, booked: false },
 ] as const;
 
 function InterludeStepIcon({ state, spinDeg }: { state: "spinner" | "check"; spinDeg: number }) {
@@ -145,15 +145,16 @@ export function IntroBookingInterlude() {
               }}
             >
               <div className="motion4-booking-interlude__card-head">
-                <p className={`motion4-booking-interlude__card-eyebrow m-0 ${suisseIntl.className}`}>
-                  Refill visit · Dr. Chen
-                </p>
                 <p className={`motion4-booking-interlude__card-title m-0 ${dmSans.className}`}>
                   Tuesday · 10:30 AM
                 </p>
               </div>
 
               <div className="motion4-booking-interlude__cal">
+                <div className="motion4-booking-interlude__cal-month">
+                  <span className="motion4-booking-interlude__cal-month-label">July 2026</span>
+                  <span className="motion4-booking-interlude__cal-month-range">Week of the 12th</span>
+                </div>
                 <div className="motion4-booking-interlude__cal-weekdays">
                   {WEEKDAYS.map((label) => (
                     <span key={label} className="motion4-booking-interlude__cal-weekday">
@@ -170,17 +171,16 @@ export function IntroBookingInterlude() {
                       }`}
                     >
                       <span className="motion4-booking-interlude__cal-day-num">{cell.day}</span>
-                      {cell.booked ? (
-                        <span className="motion4-booking-interlude__cal-day-slot">10:30</span>
-                      ) : null}
+                      <span
+                        className={`motion4-booking-interlude__cal-day-slot${
+                          cell.booked ? "" : " motion4-booking-interlude__cal-day-slot--empty"
+                        }`}
+                      >
+                        {cell.booked ? "10:30" : "\u00a0"}
+                      </span>
                     </div>
                   ))}
                 </div>
-              </div>
-
-              <div className="motion4-booking-interlude__badge">
-                <span className="motion4-booking-interlude__badge-dot" />
-                <span className={`motion4-booking-interlude__badge-text ${dmSans.className}`}>Booked</span>
               </div>
             </div>
           ) : null}
