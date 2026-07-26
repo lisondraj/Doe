@@ -1766,13 +1766,14 @@ html[data-motion4-page] body {
   flex-direction: column;
 }
 
-.motion4-chart-interlude__bp-plot .product-landing-live-quote__chart-profile-a1c,
+.motion4-chart-interlude__bp-plot .product-landing-live-quote__chart-profile-bp,
 .motion4-chart-interlude__tile--a1c .product-landing-live-quote__chart-profile-a1c {
   flex: 1 1 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  height: 100%;
 }
 
 .motion4-chart-interlude__tile .product-landing-live-quote__chart-profile-a1c-plot {
@@ -1782,11 +1783,21 @@ html[data-motion4-page] body {
   align-items: stretch;
 }
 
+.motion4-chart-interlude__tile .product-landing-live-quote__chart-profile-bp-columns {
+  flex: 1 1 auto;
+  min-height: 0;
+  align-items: stretch;
+}
+
 .motion4-chart-interlude__tile .product-landing-live-quote__chart-profile-a1c-canvas,
 .motion4-chart-interlude__tile .product-landing-live-quote__chart-profile-a1c-y-axis {
   height: 100% !important;
   min-height: 0 !important;
   flex: 1 1 auto;
+}
+
+.motion4-chart-interlude__tile .product-landing-live-quote__chart-profile-a1c-x-axis {
+  flex-shrink: 0;
 }
 
 .motion4-chart-interlude__tile .product-landing-live-quote__chart-profile-a1c-label,
