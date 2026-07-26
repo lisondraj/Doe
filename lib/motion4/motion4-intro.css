@@ -2240,7 +2240,7 @@ html[data-motion4-page] body {
   display: block;
 }
 
-/* Pre-visit questionnaire — chart UI → Pulling under strip → Pulled rises + card */
+/* Pre-visit questionnaire — Accessed + Pulling/Pulled loader (no chart boxes). */
 .motion4-questionnaire-interlude {
   position: absolute;
   inset: 0;
@@ -2280,6 +2280,16 @@ html[data-motion4-page] body {
   gap: 22px;
 }
 
+.motion4-questionnaire-interlude__label {
+  font-family: "DM Sans", system-ui, sans-serif;
+  font-size: 68px;
+  font-weight: 400;
+  letter-spacing: 0.015em;
+  line-height: 1.15;
+  color: rgba(242, 232, 218, 0.82);
+  white-space: nowrap;
+}
+
 .motion4-questionnaire-interlude__step {
   display: inline-flex;
   align-items: center;
@@ -2287,14 +2297,6 @@ html[data-motion4-page] body {
   gap: 14px;
   width: auto;
   max-width: 96%;
-  font-family: "DM Sans", system-ui, sans-serif;
-  /* Chart→booking only — match Accessed scale (confirm-code unchanged). */
-  font-size: 68px;
-  font-weight: 400;
-  letter-spacing: 0.015em;
-  line-height: 1.15;
-  color: rgba(242, 232, 218, 0.82);
-  white-space: nowrap;
   transform-origin: center center;
   will-change: opacity;
 }

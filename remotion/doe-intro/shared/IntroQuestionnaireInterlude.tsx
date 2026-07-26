@@ -18,9 +18,11 @@ import { buildCallTurnRevealTiming, findCallInterludeWindow } from "../../motion
 
 const CONVO_UI_OFFSET = DOE_SARAH_CONVO_START_FRAMES + DOE_SARAH_CONVO_UI_OFFSET;
 
+/** Pull row fades in under the Accessed line — no chart UI in this beat. */
+const PULL_APPEAR = 12;
+const PULL_REVEAL = 18;
 /** Hold Pulling spinner before Pulled checkmark. */
 const PULL_DONE = 132;
-const PULL_REVEAL = 18;
 const REVEAL_EASE = Easing.bezier(0.33, 0, 0.18, 1);
 
 function InterludeStepIcon({ state, spinDeg }: { state: "spinner" | "check"; spinDeg: number }) {
@@ -53,8 +55,7 @@ function InterludeStepIcon({ state, spinDeg }: { state: "spinner" | "check"; spi
 }
 
 /**
- * Pre-visit pull loader only — chart access lives in IntroChartAccessInterlude;
- * agent side-effects question shows in chat before this overlay; caller reply after close.
+ * Accessed chart (check) + Pulling/Pulled pre-visit loader — vertically centered pair, no chart boxes.
  */
 export function IntroQuestionnaireInterlude() {
   const frame = useCurrentFrame();
@@ -79,11 +80,14 @@ export function IntroQuestionnaireInterlude() {
   const spinDeg = local * 4;
   const pullDone = local >= PULL_DONE;
 
-  const pullProgress = interpolate(local, [0, PULL_REVEAL], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: REVEAL_EASE,
-  });
+  const pullProgress =
+    local >= PULL_APPEAR
+      ? interpolate(local, [PULL_APPEAR, PULL_APPEAR + PULL_REVEAL], [0, 1], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+          easing: REVEAL_EASE,
+        })
+      : 0;
 
   const pullOpacity = interpolate(pullProgress, [0, 0.3, 1], [0, 0.9, 1], {
     extrapolateLeft: "clamp",
@@ -93,22 +97,26 @@ export function IntroQuestionnaireInterlude() {
 
   const pullLabel = pullDone ? "Pulled pre-visit questionnaire" : "Pulling pre-visit questionnaire";
   const pullIcon: "spinner" | "check" = pullDone ? "check" : "spinner";
-
-  if (pullOpacity < 0.01) {
-    return null;
-  }
+  const pullVisible = pullOpacity > 0.01;
 
   return (
     <div className={`motion4-questionnaire-interlude ${dmSans.className}`} aria-hidden>
       <div className="motion4-questionnaire-interlude__stage">
         <div className="motion4-questionnaire-interlude__stack motion4-questionnaire-interlude__stack--paired">
-          <div
-            className="motion4-questionnaire-interlude__step motion4-questionnaire-interlude__step--pull"
-            style={{ opacity: pullOpacity }}
-          >
-            <span className="motion4-questionnaire-interlude__label">{pullLabel}</span>
-            <InterludeStepIcon state={pullIcon} spinDeg={spinDeg} />
+          <div className="motion4-questionnaire-interlude__step">
+            <span className="motion4-questionnaire-interlude__label">Accessed Sarah&apos;s chart</span>
+            <InterludeStepIcon state="check" spinDeg={0} />
           </div>
+
+          {pullVisible ? (
+            <div
+              className="motion4-questionnaire-interlude__step motion4-questionnaire-interlude__step--pull"
+              style={{ opacity: pullOpacity }}
+            >
+              <span className="motion4-questionnaire-interlude__label">{pullLabel}</span>
+              <InterludeStepIcon state={pullIcon} spinDeg={spinDeg} />
+            </div>
+          ) : null}
         </div>
       </div>
     </div>
