@@ -35,7 +35,9 @@ const CONVO_UI_OFFSET = DOE_SARAH_CONVO_START_FRAMES + DOE_SARAH_CONVO_UI_OFFSET
 
 /** Scale Sarah chart strip tiles — large enough to bleed off frame edges. */
 export const CHART_STRIP_SCALE = 2.5;
-export const CHART_STRIP_BLEED_Y_PX = 128;
+export const CHART_STRIP_BLEED_Y_PX = 100;
+/** Gap between Accessed row and chart strip. */
+const STACK_PAIR_GAP_PX = 10;
 const BASE_TILE_HEIGHT_PX = 300;
 const BASE_TILE_GAP_PX = 16;
 const BASE_TILE_PLOT_HEIGHT_PX = 210;
@@ -552,17 +554,20 @@ export function IntroChartAccessInterlude() {
     easing: REVEAL_EASE,
   });
 
-  const stripSlotHeightPx = TILE_HEIGHT_PX + 22;
+  const stripSlotHeightPx = TILE_HEIGHT_PX + STACK_PAIR_GAP_PX;
   const stripSlotMaxHeight = interpolate(stripExit, [0, 1], [stripSlotHeightPx, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: REVEAL_EASE,
   });
-  const stripSlotMargin = interpolate(stripExit, [0, 1], [22, 0], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: REVEAL_EASE,
-  });
+  const stripSlotMargin =
+    stripExit > 0
+      ? interpolate(stripExit, [0, 1], [STACK_PAIR_GAP_PX, 0], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+          easing: REVEAL_EASE,
+        })
+      : 0;
 
   const scrollTarget = CHART_STRIP_SCROLL_TARGET_PX;
   /** Partial pan — enough to read chart boxes, then hand off to pre-visit beat. */
@@ -608,9 +613,9 @@ export function IntroChartAccessInterlude() {
   const stackPaired = showStripSlot || showPullRow || cardVisible;
   const stackY =
     showStripSlot && stripExit <= 0
-      ? -16
+      ? -6
       : stripExit > 0 && stripExit < 1
-        ? interpolate(stripExit, [0, 1], [-16, 0], {
+        ? interpolate(stripExit, [0, 1], [-6, 0], {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
             easing: REVEAL_EASE,
@@ -636,9 +641,10 @@ export function IntroChartAccessInterlude() {
             <div
               className="motion4-chart-interlude__strip-slot"
               style={{
-                maxHeight: stripSlotMaxHeight,
+                maxHeight: stripExit > 0 ? stripSlotMaxHeight : undefined,
                 marginBottom: stripSlotMargin,
                 opacity: 1 - stripExit * 0.85,
+                overflow: stripExit > 0 ? "hidden" : "visible",
               }}
             >
               <div
