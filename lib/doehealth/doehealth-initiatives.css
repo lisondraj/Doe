@@ -3491,7 +3491,70 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="des
 
 .doehealth-intro-video__player {
   border-radius: inherit;
-  overflow: hidden;
+  overflow: visible;
+}
+
+.doehealth-intro-video__fullscreen-btn {
+  display: none;
+}
+
+html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
+  .doehealth-intro-video__fullscreen-btn {
+  position: absolute;
+  right: 0.65rem;
+  bottom: 0.55rem;
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 0;
+  border-radius: 0.35rem;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.92);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
+  .doehealth-intro-video__player-wrap
+  .doehealth-intro-video__player
+  button[aria-label="Enter Fullscreen"],
+html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
+  .doehealth-intro-video__player-wrap
+  .doehealth-intro-video__player
+  button[aria-label="Exit fullscreen"] {
+  display: none !important;
+}
+
+html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
+  .doehealth-intro-video__player-wrap--expanded {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  aspect-ratio: auto;
+  padding:
+    env(safe-area-inset-top, 0)
+    env(safe-area-inset-right, 0)
+    env(safe-area-inset-bottom, 0)
+    env(safe-area-inset-left, 0);
+  padding-top: env(safe-area-inset-top, 0);
+  border-radius: 0;
+  border: 0;
+  box-shadow: none;
+}
+
+html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
+  .doehealth-intro-video__player-wrap--expanded
+  .doehealth-intro-video__fullscreen-btn {
+  right: calc(0.65rem + env(safe-area-inset-right, 0));
+  bottom: calc(0.55rem + env(safe-area-inset-bottom, 0));
 }
 
 /* iPhone — vertical volume popup must not clip above the control bar */

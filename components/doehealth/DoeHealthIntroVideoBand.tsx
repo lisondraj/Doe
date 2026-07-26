@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { PlayerRef } from "@remotion/player";
 
@@ -32,12 +32,72 @@ const Player = dynamic(
 /** Idle preview — mid-composition (Sarah call). First play seeks back to frame 0. */
 const DOE_INTRO_PREVIEW_FRAME = Math.round(DOE_INTRO_DURATION_FRAMES * 0.5);
 
+function DoeHealthIntroFullscreenIcon({ expanded }: { expanded: boolean }) {
+  const strokeWidth = 1.5;
+  const viewSize = 16;
+  const out = expanded ? 0 : strokeWidth / 2;
+  const middleInset = expanded ? strokeWidth * 1.6 : strokeWidth / 2;
+  const inset = expanded ? strokeWidth * 1.6 : strokeWidth * 2;
+
+  return (
+    <svg viewBox={`0 0 ${viewSize} ${viewSize}`} width={16} height={16} aria-hidden="true">
+      <path
+        d={`M${inset} ${middleInset}V${inset}H${middleInset}`}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={strokeWidth}
+      />
+      <path
+        d={`M${viewSize - inset} ${viewSize - middleInset}V${viewSize - inset}H${viewSize - middleInset}`}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={strokeWidth}
+      />
+      <path
+        d={`M${viewSize - inset} ${middleInset}V${inset}H${viewSize - middleInset}`}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={strokeWidth}
+      />
+      <path
+        d={`M${inset} ${viewSize - middleInset}V${viewSize - inset}H${middleInset}`}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={strokeWidth}
+      />
+      {!expanded ? (
+        <>
+          <path d={`M${out} ${viewSize / 2}H${viewSize / 2 - middleInset}`} fill="none" stroke="currentColor" strokeWidth={strokeWidth} />
+          <path d={`M${viewSize / 2} ${out}V${viewSize / 2 - middleInset}`} fill="none" stroke="currentColor" strokeWidth={strokeWidth} />
+          <path
+            d={`M${viewSize - out} ${viewSize / 2}H${viewSize / 2 + middleInset}`}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={strokeWidth}
+          />
+          <path
+            d={`M${viewSize / 2} ${viewSize - out}V${viewSize / 2 + middleInset}`}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={strokeWidth}
+          />
+        </>
+      ) : null}
+    </svg>
+  );
+}
+
 /** Full viewport band — live /motion4 Remotion preview + gold section title. */
 export function DoeHealthIntroVideoBand() {
   const { line1, line2 } = DOEHEALTH_INTRO_COPY.introVideoSectionTitle;
   const playerRef = useRef<PlayerRef>(null);
   const hasStartedRef = useRef(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const playerInputProps = useMemo(() => ({ embedPreview: true as const }), []);
+
+  const toggleExpanded = useCallback(() => {
+    setIsExpanded((value) => !value);
+  }, []);
 
   useEffect(() => {
     const player = playerRef.current;
@@ -60,6 +120,27 @@ export function DoeHealthIntroVideoBand() {
     return () => player.removeEventListener("play", onPlay);
   }, []);
 
+  useEffect(() => {
+    if (!isExpanded) {
+      return undefined;
+    }
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsExpanded(false);
+      }
+    };
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [isExpanded]);
+
   return (
     <section
       className={`doehealth-intro-band doehealth-intro-band--initiatives doehealth-intro-band--intro-video relative z-10 flex w-full shrink-0 flex-col ${suisseIntl.className} ${inter.className} ${lora.className}`}
@@ -70,7 +151,9 @@ export function DoeHealthIntroVideoBand() {
           <div className="doehealth-intro-stage">
             <div className="doehealth-intro-video-sequence">
               <div className="doehealth-intro-video-sequence__stage">
-                <div className="doehealth-intro-video__player-wrap">
+                <div
+                  className={`doehealth-intro-video__player-wrap${isExpanded ? " doehealth-intro-video__player-wrap--expanded" : ""}`}
+                >
                   <Player
                     ref={playerRef}
                     component={DoeIntroComposition}
@@ -88,10 +171,20 @@ export function DoeHealthIntroVideoBand() {
                     hideControlsWhenPointerDoesntMove={false}
                     allowFullscreen
                     doubleClickToFullscreen={false}
+                    overflowVisible
                     loop
                     volumePersistenceKey="doehealth-intro-video-volume"
                     acknowledgeRemotionLicense
                   />
+                  <button
+                    type="button"
+                    className="doehealth-intro-video__fullscreen-btn"
+                    aria-label={isExpanded ? "Exit fullscreen" : "Enter fullscreen"}
+                    title={isExpanded ? "Exit fullscreen" : "Enter fullscreen"}
+                    onClick={toggleExpanded}
+                  >
+                    <DoeHealthIntroFullscreenIcon expanded={isExpanded} />
+                  </button>
                 </div>
               </div>
             </div>
