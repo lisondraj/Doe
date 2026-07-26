@@ -1,7 +1,9 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
+
+import type { RenderPoster } from "@remotion/player";
 
 import { DOEHEALTH_INTRO_COPY } from "@/lib/doehealth/doehealth-intro-copy";
 import { inter, lora, suisseIntl } from "@/lib/home/fonts";
@@ -27,13 +29,34 @@ const Player = dynamic(
   { ssr: false },
 );
 
-/** Preview frame — mid-composition (Sarah call), not the opening frame. */
+const Thumbnail = dynamic(
+  () => import("@remotion/player").then((mod) => mod.Thumbnail),
+  { ssr: false },
+);
+
+/** Idle preview — mid-composition (Sarah call). Playback still starts at frame 0. */
 const DOE_INTRO_PREVIEW_FRAME = Math.round(DOE_INTRO_DURATION_FRAMES * 0.5);
 
 /** Full viewport band — live /motion4 Remotion preview + gold section title. */
 export function DoeHealthIntroVideoBand() {
   const { line1, line2 } = DOEHEALTH_INTRO_COPY.introVideoSectionTitle;
   const playerInputProps = useMemo(() => ({}), []);
+
+  const renderPoster: RenderPoster = useCallback(
+    () => (
+      <Thumbnail
+        component={DoeIntroComposition}
+        inputProps={playerInputProps}
+        durationInFrames={DOE_INTRO_DURATION_FRAMES}
+        compositionWidth={DOE_INTRO_WIDTH}
+        compositionHeight={DOE_INTRO_HEIGHT}
+        fps={DOE_INTRO_FPS}
+        frameToDisplay={DOE_INTRO_PREVIEW_FRAME}
+        style={{ width: "100%", height: "100%" }}
+      />
+    ),
+    [playerInputProps],
+  );
 
   return (
     <section
@@ -54,9 +77,14 @@ export function DoeHealthIntroVideoBand() {
                     compositionHeight={DOE_INTRO_HEIGHT}
                     fps={DOE_INTRO_FPS}
                     numberOfSharedAudioTags={DOE_INTRO_SHARED_AUDIO_TAGS}
-                    initialFrame={DOE_INTRO_PREVIEW_FRAME}
+                    initialFrame={0}
+                    renderPoster={renderPoster}
+                    showPosterWhenUnplayed
+                    posterFillMode="composition-size"
                     style={{ width: "100%", height: "100%" }}
                     controls
+                    allowFullscreen
+                    doubleClickToFullscreen
                     loop
                     acknowledgeRemotionLicense
                   />
