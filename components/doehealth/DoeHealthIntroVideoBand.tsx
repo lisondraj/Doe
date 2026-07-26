@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import Link from "next/link";
+import { useEffect, useId, useRef } from "react";
 
 import { DOEHEALTH_INTRO_COPY } from "@/lib/doehealth/doehealth-intro-copy";
 import { inter, lora, suisseIntl } from "@/lib/home/fonts";
@@ -10,11 +11,40 @@ import "@/lib/doehealth/doehealth-landing.css";
 
 const DOE_INTRO_VIDEO_SRC = "/motion/doe-intro.mp4";
 
+function SectionTitleArrow({ gradientId }: { gradientId: string }) {
+  return (
+    <svg
+      className="doehealth-intro-band__section-title-arrow"
+      width="28"
+      height="28"
+      viewBox="0 0 28 28"
+      fill="none"
+      aria-hidden
+    >
+      <defs>
+        <linearGradient id={gradientId} x1="14" y1="2" x2="14" y2="26" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#e8c08e" />
+          <stop offset="52%" stopColor="#d4a574" />
+          <stop offset="100%" stopColor="#d4a574" stopOpacity="0.72" />
+        </linearGradient>
+      </defs>
+      <path
+        d="M5.5 14h15.5M15.25 8.25 21.5 14l-6.25 5.75"
+        stroke={`url(#${gradientId})`}
+        strokeWidth="2.15"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 /** Exported Doe intro — idle preview at ~50%, first play starts at 0s. */
 export function DoeHealthIntroVideoBand() {
   const { line1, line2 } = DOEHEALTH_INTRO_COPY.introVideoSectionTitle;
   const videoRef = useRef<HTMLVideoElement>(null);
   const hasStartedRef = useRef(false);
+  const arrowGradientId = useId().replace(/:/g, "");
 
   useEffect(() => {
     const video = videoRef.current;
@@ -81,11 +111,16 @@ export function DoeHealthIntroVideoBand() {
           </div>
 
           <h2
-            className={`doehealth-intro-band__section-title ${suisseIntl.className}`}
+            className={`doehealth-intro-band__section-title doehealth-intro-band__section-title--about-link ${suisseIntl.className}`}
             aria-label={`${line1} ${line2}`}
           >
-            <span className="doehealth-intro-band__section-title-line">{line1}</span>
-            <span className="doehealth-intro-band__section-title-line">{line2}</span>
+            <Link href="/about" className="doehealth-intro-band__section-title-link">
+              <span className="doehealth-intro-band__section-title-line">{line1}</span>
+              <span className="doehealth-intro-band__section-title-line doehealth-intro-band__section-title-line--with-arrow">
+                <span className="doehealth-intro-band__section-title-line-text">{line2}</span>
+                <SectionTitleArrow gradientId={`doehealth-intro-title-arrow-${arrowGradientId}`} />
+              </span>
+            </Link>
           </h2>
         </div>
       </div>

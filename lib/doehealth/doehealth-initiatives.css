@@ -652,6 +652,79 @@ html[data-home-page][data-layout="desktop"]
   overflow: visible;
 }
 
+/* Intro video title → /about — gold arrow on iPhone only; no underline / layout shift. */
+.doehealth-intro-band--intro-video .doehealth-intro-band__section-title--about-link {
+  pointer-events: auto;
+  /* Keep gold type on text nodes only so the arrow SVG can paint its own gradient. */
+  background: none;
+  background-clip: border-box;
+  -webkit-background-clip: border-box;
+  color: inherit;
+  -webkit-text-fill-color: unset;
+}
+
+.doehealth-intro-band--intro-video
+  .doehealth-intro-band__section-title--about-link
+  .doehealth-intro-band__section-title-line:not(.doehealth-intro-band__section-title-line--with-arrow),
+.doehealth-intro-band--intro-video
+  .doehealth-intro-band__section-title--about-link
+  .doehealth-intro-band__section-title-line-text {
+  background: linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.doehealth-intro-band__section-title-link {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  color: inherit;
+  text-decoration: none !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.doehealth-intro-band__section-title-link:hover,
+.doehealth-intro-band__section-title-link:focus,
+.doehealth-intro-band__section-title-link:focus-visible,
+.doehealth-intro-band__section-title-link:active,
+.doehealth-intro-band__section-title-link:visited {
+  color: inherit;
+  text-decoration: none !important;
+}
+
+.doehealth-intro-band__section-title-line--with-arrow {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.28em;
+  max-width: 100%;
+  background: none !important;
+  -webkit-text-fill-color: unset !important;
+  color: inherit !important;
+}
+
+.doehealth-intro-band__section-title-line-text {
+  display: inline;
+}
+
+.doehealth-intro-band__section-title-arrow {
+  flex: 0 0 auto;
+  width: 0.72em;
+  height: 0.72em;
+  margin-top: 0.04em;
+  display: none;
+  overflow: visible;
+}
+
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .doehealth-intro-band--intro-video
+  .doehealth-intro-band__section-title-arrow {
+  display: block;
+}
+
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-intro-band--initiatives {
