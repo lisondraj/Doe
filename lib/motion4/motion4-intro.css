@@ -1640,8 +1640,8 @@ html[data-motion4-page] body {
 
 .motion4-chart-interlude__icon {
   flex-shrink: 0;
-  width: clamp(1.05rem, 1.5vw, 1.45rem);
-  height: clamp(1.05rem, 1.5vw, 1.45rem);
+  width: clamp(1.35rem, 1.85vw, 1.85rem);
+  height: clamp(1.35rem, 1.85vw, 1.85rem);
   transform-origin: center center;
 }
 
