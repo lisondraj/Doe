@@ -6,16 +6,17 @@ import { weekSchedule } from "@/components/doe-schedules-app-mock";
 import { ProductCallHistoryPanel } from "@/components/product/ProductCallHistoryPanel";
 import { ProductCallHistoryRightRail } from "@/components/product/ProductCallHistoryRightRail";
 import { ProductLandingPanel } from "@/components/product/ProductLandingPanel";
+import { ProductMobileInboxPanel } from "@/components/product/ProductMobileInboxPanel";
 import type { CallHistoryConvoView } from "@/components/product2/Product2CallHistoryRightRail";
 import { applyPhoneOverflowChrome } from "@/lib/doephone/phone-layout-viewport";
 import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-viewport";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 import { dmSans, lora, suisseIntl } from "@/lib/home/fonts";
 import {
-  PRODUCT_MOBILE_INBOX_THREADS,
   PRODUCT_MOBILE_NAV_ITEMS,
   type ProductMobileTab,
 } from "@/lib/product/product-mobile-nav";
+import type { ProductMobileInboxThread } from "@/lib/product/product-mobile-inbox";
 import {
   PRODUCT2_CALL_HISTORY_CONVO_VIEW_AGENT_ONLY,
   PRODUCT2_CALL_HISTORY_CONVO_VIEW_FULL,
@@ -189,28 +190,6 @@ function ProductMobileSchedulePanel() {
   );
 }
 
-function ProductMobileInboxPanel() {
-  return (
-    <section className="product-mobile-panel product-mobile-inbox" aria-label="Inbox">
-      <ul className="product-mobile-inbox__list">
-        {PRODUCT_MOBILE_INBOX_THREADS.map((thread) => (
-          <li
-            key={thread.id}
-            className={`product-mobile-inbox__row${thread.unread ? " product-mobile-inbox__row--unread" : ""}`}
-          >
-            <div className="product-mobile-inbox__row-top">
-              <span className={`product-mobile-inbox__from ${dmSans.className}`}>{thread.from}</span>
-              <span className={`product-mobile-inbox__time ${suisseIntl.className}`}>{thread.time}</span>
-            </div>
-            <p className={`product-mobile-inbox__subject ${dmSans.className}`}>{thread.subject}</p>
-            <p className={`product-mobile-inbox__preview ${suisseIntl.className}`}>{thread.preview}</p>
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
-
 /** iPhone /product — bottom-tab shell; desktop mock stays untouched. */
 export function ProductMobileView({ embed = false }: { embed?: boolean } = {}) {
   useDoePhoneLayoutViewport(!embed);
@@ -218,6 +197,7 @@ export function ProductMobileView({ embed = false }: { embed?: boolean } = {}) {
   const [tab, setTab] = useState<ProductMobileTab>("today");
   const [convoView, setConvoView] = useState<CallHistoryConvoView>("full");
   const [showFableComposer, setShowFableComposer] = useState(false);
+  const [inboxThread, setInboxThread] = useState<ProductMobileInboxThread | null>(null);
   const [selectedClinic, setSelectedClinic] = useState<(typeof PRODUCT_MOBILE_CLINICS)[number]>(
     PRODUCT_MOBILE_CLINICS[0],
   );
@@ -333,9 +313,19 @@ export function ProductMobileView({ embed = false }: { embed?: boolean } = {}) {
       ) : null}
       {activeTab === "inbox" ? (
         <ProductMobilePageHeader
-          crumbs={["Inbox", "Email", "Clinic queue"]}
+          crumbs={
+            inboxThread
+              ? ["Inbox", inboxThread.kind, inboxThread.subject]
+              : ["Inbox", "Email", "Clinic queue"]
+          }
           backAria="Back"
-          onBack={() => setTab("today")}
+          onBack={() => {
+            if (inboxThread) {
+              setInboxThread(null);
+              return;
+            }
+            setTab("today");
+          }}
         />
       ) : null}
 
@@ -397,7 +387,12 @@ export function ProductMobileView({ embed = false }: { embed?: boolean } = {}) {
           </div>
         ) : null}
         {activeTab === "schedule" ? <ProductMobileSchedulePanel /> : null}
-        {activeTab === "inbox" ? <ProductMobileInboxPanel /> : null}
+        {activeTab === "inbox" ? (
+          <ProductMobileInboxPanel
+            selectedThreadId={inboxThread?.id ?? null}
+            onThreadChange={setInboxThread}
+          />
+        ) : null}
       </main>
 
       <nav className="product-mobile-tabbar" aria-label="Product">
@@ -415,6 +410,7 @@ export function ProductMobileView({ embed = false }: { embed?: boolean } = {}) {
                   : () => {
                       setTab(item.id);
                       if (item.id !== "calls") setShowFableComposer(false);
+                      if (item.id !== "inbox") setInboxThread(null);
                     }
               }
               className={`product-mobile-tabbar__btn${active ? " product-mobile-tabbar__btn--active" : ""} ${suisseIntl.className}`}
