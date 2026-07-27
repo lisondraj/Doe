@@ -3,6 +3,8 @@
 import { DoeSchedulesAppMock } from "@/components/doe-schedules-app-mock";
 import "@/lib/product/product-brown-mock.css";
 import "@/lib/product/product-landing.css";
+import "@/lib/product2/product2-inbox.css";
+import "@/lib/product2/product2-schedule.css";
 
 /** Desktop /product — unchanged doebuildnew brown app shell. */
 export function ProductDesktopView() {
