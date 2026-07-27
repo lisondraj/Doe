@@ -18,7 +18,6 @@ import { buildCallTurnRevealTiming, findCallInterludeWindow } from "../../motion
 
 const CONVO_UI_OFFSET = DOE_SARAH_CONVO_START_FRAMES + DOE_SARAH_CONVO_UI_OFFSET;
 
-const BOOKING_DONE = 54;
 const CAL_APPEAR = 72;
 const CAL_REVEAL = 24;
 const REVEAL_EASE = Easing.bezier(0.33, 0, 0.18, 1);
@@ -88,7 +87,7 @@ export function IntroBookingInterlude() {
 
   const local = t - window.start;
   const spinDeg = local * 4;
-  const bookingDone = local >= BOOKING_DONE;
+  const bookingDone = local >= CAL_APPEAR;
 
   const stepOpacity = 1;
 

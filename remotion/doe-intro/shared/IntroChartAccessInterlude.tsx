@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { Easing, interpolate, useCurrentFrame } from "remotion";
 
 import { Product2CallHistoryOpenTaskIcon } from "@/components/product2/Product2CallHistoryOpenTaskIcon";
@@ -46,9 +47,7 @@ const TILE_PLOT_HEIGHT = `${Math.round(BASE_TILE_PLOT_HEIGHT_PX * CHART_STRIP_SC
 const TILE_LIFT_PX = Math.round(32 * CHART_STRIP_SCALE);
 
 const ACCESS_DONE = 56;
-const ACCESS_LABEL_SWIPE = 34;
-const ACCESS_ICON_SWAP = 22;
-/** Label row height — matches .motion4-chart-interlude__label-slot (68px × 1.15). */
+/** Label row height — used for pull row enter offset. */
 const ACCESS_LABEL_LINE_PX = 78;
 /** Let label settle before strip scroll begins. */
 const SCROLL_START = 82;
@@ -60,19 +59,17 @@ const CHART_SCROLL_MAX_RATIO = 0.4;
 const STRIP_EXIT_START = 300;
 const STRIP_EXIT_DURATION = 44;
 const PULL_START = STRIP_EXIT_START;
-const PULL_LABEL_SWIPE = 16;
-/** Hold Pulling spinner before Pulled checkmark. */
-const PULL_DONE = PULL_START + 132;
-const CARD_APPEAR = PULL_DONE + 8;
+/** Side-effects card and Pulled label swap fire together. */
+const CARD_APPEAR = PULL_START + 140;
+const PULL_DONE = CARD_APPEAR;
 const CARD_REVEAL = 28;
 const CHART_BLUR_MAX = 16;
 /** Stagger each tile’s unblur/lift across the strip reveal. */
 const TILE_STAGGER = 0.055;
 const REVEAL_EASE = Easing.bezier(0.33, 0, 0.18, 1);
-/** Smooth vertical label swipe — Accessing → Accessed. */
-const SWIPE_EASE = Easing.bezier(0.22, 0.03, 0.12, 1);
 /** Slow ease-out pan across chart tiles. */
 const SCROLL_EASE = Easing.bezier(0.42, 0, 0.18, 1);
+const STACK_SETTLE_EASE = Easing.bezier(0.22, 0.03, 0.12, 1);
 
 const METFORMIN_DOSE = "Metformin XR 500mg";
 
@@ -194,92 +191,23 @@ function InterludeStepIcon({ state, spinDeg }: { state: "spinner" | "check"; spi
   );
 }
 
-function AccessedStatusRow() {
-  return (
-    <div className="motion4-chart-interlude__step">
-      <span className="motion4-chart-interlude__label">Accessed Sarah&apos;s chart</span>
-      <InterludeStepIcon state="check" spinDeg={0} />
-    </div>
-  );
-}
-
-function ChartAccessStatusRow({ local, spinDeg }: { local: number; spinDeg: number }) {
-  const labelSwipe = interpolate(local, [ACCESS_DONE, ACCESS_DONE + ACCESS_LABEL_SWIPE], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: SWIPE_EASE,
-  });
-  const iconSwap = interpolate(local, [ACCESS_DONE, ACCESS_DONE + ACCESS_ICON_SWAP], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: SWIPE_EASE,
-  });
-
-  return (
-    <div className="motion4-chart-interlude__step">
-      <div className="motion4-chart-interlude__label-slot" aria-live="polite">
-        <div
-          className="motion4-chart-interlude__label-track"
-          style={{ transform: `translateY(${-labelSwipe * ACCESS_LABEL_LINE_PX}px)` }}
-        >
-          <span className="motion4-chart-interlude__label">Accessing Sarah&apos;s chart</span>
-          <span className="motion4-chart-interlude__label">Accessed Sarah&apos;s chart</span>
-        </div>
-      </div>
-      <div className="motion4-chart-interlude__icon-slot" aria-hidden>
-        <span className="motion4-chart-interlude__icon-layer" style={{ opacity: 1 - iconSwap }}>
-          <InterludeStepIcon state="spinner" spinDeg={spinDeg} />
-        </span>
-        <span className="motion4-chart-interlude__icon-layer" style={{ opacity: iconSwap }}>
-          <InterludeStepIcon state="check" spinDeg={0} />
-        </span>
-      </div>
-    </div>
-  );
-}
-
-function PullStatusRow({
-  local,
-  pullSpinDeg,
-  enterY,
+function InterludeStepRow({
+  label,
+  iconState,
+  spinDeg,
+  className = "motion4-chart-interlude__step",
+  style,
 }: {
-  local: number;
-  pullSpinDeg: number;
-  enterY: number;
+  label: string;
+  iconState: "spinner" | "check";
+  spinDeg: number;
+  className?: string;
+  style?: CSSProperties;
 }) {
-  const pullLabelSwipe = interpolate(local, [PULL_DONE, PULL_DONE + PULL_LABEL_SWIPE], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: REVEAL_EASE,
-  });
-  const iconSwap = interpolate(local, [PULL_DONE, PULL_DONE + 10], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: REVEAL_EASE,
-  });
-
   return (
-    <div
-      className="motion4-chart-interlude__step motion4-chart-interlude__step--pull"
-      style={{ transform: `translateY(${enterY}px)` }}
-    >
-      <div className="motion4-chart-interlude__label-slot" aria-live="polite">
-        <div
-          className="motion4-chart-interlude__label-track"
-          style={{ transform: `translateY(${-pullLabelSwipe * ACCESS_LABEL_LINE_PX}px)` }}
-        >
-          <span className="motion4-chart-interlude__label">Pulling pre-visit questionnaire</span>
-          <span className="motion4-chart-interlude__label">Pulled pre-visit questionnaire</span>
-        </div>
-      </div>
-      <div className="motion4-chart-interlude__icon-slot" aria-hidden>
-        <span className="motion4-chart-interlude__icon-layer" style={{ opacity: 1 - iconSwap }}>
-          <InterludeStepIcon state="spinner" spinDeg={pullSpinDeg} />
-        </span>
-        <span className="motion4-chart-interlude__icon-layer" style={{ opacity: iconSwap }}>
-          <InterludeStepIcon state="check" spinDeg={0} />
-        </span>
-      </div>
+    <div className={className} style={style}>
+      <span className="motion4-chart-interlude__label">{label}</span>
+      <InterludeStepIcon state={iconState} spinDeg={spinDeg} />
     </div>
   );
 }
@@ -515,7 +443,13 @@ export function IntroChartAccessInterlude() {
   const stripExitStart = STRIP_EXIT_START;
   const stripExitEnd = STRIP_EXIT_START + STRIP_EXIT_DURATION;
   const scrollEnd = Math.max(SCROLL_START + 1, stripExitStart);
-  const accessLocked = local >= ACCESS_DONE + ACCESS_LABEL_SWIPE;
+  const accessDone = local >= ACCESS_DONE;
+  const pullDone = local >= PULL_DONE;
+  const accessLabel = accessDone ? "Accessed Sarah's chart" : "Accessing Sarah's chart";
+  const accessIcon: "spinner" | "check" = accessDone ? "check" : "spinner";
+  const pullLabel = pullDone ? "Pulled pre-visit questionnaire" : "Pulling pre-visit questionnaire";
+  const pullIcon: "spinner" | "check" = pullDone ? "check" : "spinner";
+  const accessLocked = accessDone;
   const pullSpinDeg = Math.max(0, local - PULL_START) * 4;
 
   const stripProgress =
@@ -624,7 +558,7 @@ export function IntroChartAccessInterlude() {
         ? interpolate(local, [SCROLL_START, SCROLL_START + 24], [-6, 0], {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
-            easing: SWIPE_EASE,
+            easing: STACK_SETTLE_EASE,
           })
         : stripExit > 0 && stripExit < 1
           ? interpolate(stripExit, [0, 1], [-6, 0], {
@@ -643,11 +577,7 @@ export function IntroChartAccessInterlude() {
           }${stackCenteredTrio ? " motion4-chart-interlude__stack--trio" : ""}`}
           style={{ transform: `translateY(${stackY}px)` }}
         >
-          {accessLocked ? (
-            <AccessedStatusRow />
-          ) : (
-            <ChartAccessStatusRow local={local} spinDeg={spinDeg} />
-          )}
+          <InterludeStepRow label={accessLabel} iconState={accessIcon} spinDeg={spinDeg} />
 
           {showStripSlot ? (
             <div
@@ -717,7 +647,13 @@ export function IntroChartAccessInterlude() {
           ) : null}
 
           {showPullRow ? (
-            <PullStatusRow local={local} pullSpinDeg={pullSpinDeg} enterY={pullRowEnterY} />
+            <InterludeStepRow
+              label={pullLabel}
+              iconState={pullIcon}
+              spinDeg={pullSpinDeg}
+              className="motion4-chart-interlude__step motion4-chart-interlude__step--pull"
+              style={{ transform: `translateY(${pullRowEnterY}px)` }}
+            />
           ) : null}
 
           {cardVisible ? (
