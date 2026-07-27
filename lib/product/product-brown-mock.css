@@ -3154,28 +3154,84 @@ html[data-product-page="true"] .product-call-preview__bubble--agent {
 }
 
 /*
- * /product desktop Today — bottom call history is not clipped to a fixed box.
- * Workspace scrolls the full transcript (no stage overflow / fade mask).
+ * /product desktop Today — bottom call history stays height-restricted in a box.
+ * Thread fills remaining workspace; convo stage scrolls inside with fade mask.
  * Scoped to product page desktop only (not product2, not iPhone).
  */
 html[data-product-page="true"][data-layout="desktop"]
   .product-brown-mock.product-brown-landing-mode
+  .product-landing-workspace {
+  overflow: hidden;
+}
+
+html[data-product-page="true"][data-layout="desktop"]
+  .product-brown-mock.product-brown-landing-mode
   .product-landing-live-thread {
-  flex: 0 0 auto;
-  height: auto;
-  min-height: min-content;
-  grid-template-rows: auto auto auto;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  grid-template-rows: none;
+}
+
+html[data-product-page="true"][data-layout="desktop"]
+  .product-brown-mock.product-brown-landing-mode
+  .product-landing-live-thread__head,
+html[data-product-page="true"][data-layout="desktop"]
+  .product-brown-mock.product-brown-landing-mode
+  .product-landing-live-actions {
+  flex-shrink: 0;
 }
 
 html[data-product-page="true"][data-layout="desktop"]
   .product-brown-mock.product-brown-landing-mode
   .product-landing-live-convo-stage {
-  overflow: visible;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 html[data-product-page="true"][data-layout="desktop"]
   .product-brown-mock.product-brown-landing-mode
   .product-landing-live-convo {
-  -webkit-mask-image: none;
-  mask-image: none;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--pl-convo-fade-top, 0.75rem),
+    #000 calc(100% - var(--pl-convo-fade-bottom, 1.65rem)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--pl-convo-fade-top, 0.75rem),
+    #000 calc(100% - var(--pl-convo-fade-bottom, 1.65rem)),
+    transparent 100%
+  );
+}
+
+/* Extra air under M. Nguyen timeline before agents divider — product desktop Today */
+html[data-product-page="true"][data-layout="desktop"]
+  .product-brown-mock.product-brown-landing-mode
+  .product-landing-call__stage
+  .product-landing-day-summary__shell {
+  padding-bottom: clamp(1.15rem, 1.7vw, 1.55rem);
+}
+
+html[data-product-page="true"][data-layout="desktop"]
+  .product-brown-mock.product-brown-landing-mode
+  .product-landing-call__stage
+  .product-landing-day-summary__timeline-h {
+  padding-bottom: clamp(0.55rem, 0.9vw, 0.85rem);
+}
+
+html[data-product-page="true"][data-layout="desktop"]
+  .product-brown-mock.product-brown-landing-mode
+  .product-landing-panel__divider {
+  margin-top: clamp(0.15rem, 0.35vw, 0.35rem);
 }

@@ -6,6 +6,7 @@ import { weekSchedule } from "@/components/doe-schedules-app-mock";
 import { ProductCallHistoryPanel } from "@/components/product/ProductCallHistoryPanel";
 import { ProductCallHistoryRightRail } from "@/components/product/ProductCallHistoryRightRail";
 import { ProductLandingPanel } from "@/components/product/ProductLandingPanel";
+import type { CallHistoryConvoView } from "@/components/product2/Product2CallHistoryRightRail";
 import { applyPhoneOverflowChrome } from "@/lib/doephone/phone-layout-viewport";
 import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-viewport";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
@@ -15,6 +16,10 @@ import {
   PRODUCT_MOBILE_NAV_ITEMS,
   type ProductMobileTab,
 } from "@/lib/product/product-mobile-nav";
+import {
+  PRODUCT2_CALL_HISTORY_CONVO_VIEW_AGENT_ONLY,
+  PRODUCT2_CALL_HISTORY_CONVO_VIEW_FULL,
+} from "@/lib/product2/product2-copy";
 import "@/lib/product/product-brown-mock.css";
 import "@/lib/product/product-landing.css";
 import "@/lib/product/product-mobile.css";
@@ -28,7 +33,7 @@ function TabIcon({ id, active }: { id: ProductMobileTab; active: boolean }) {
     strokeWidth: 1.6,
     strokeLinecap: "round" as const,
     strokeLinejoin: "round" as const,
-    className: "h-[1.35rem] w-[1.35rem]",
+    className: "h-[1.25rem] w-[1.25rem]",
     "aria-hidden": true as const,
   };
 
@@ -60,6 +65,20 @@ function TabIcon({ id, active }: { id: ProductMobileTab; active: boolean }) {
     <svg {...common}>
       <path d="M22 12h-6l-2 3h-4l-2-3H2" />
       <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
+    </svg>
+  );
+}
+
+function SettingsIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden className="product-mobile-topbar__settings-icon">
+      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.6" />
+      <path
+        d="M12 3.5v1.6M12 18.9v1.6M3.5 12h1.6M18.9 12h1.6M6.05 6.05l1.13 1.13M16.82 16.82l1.13 1.13M6.05 17.95l1.13-1.13M16.82 7.18l1.13-1.13"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
@@ -118,6 +137,7 @@ export function ProductMobileView() {
   useDoePhoneLayoutViewport();
   useDoePhoneStableViewport(true);
   const [tab, setTab] = useState<ProductMobileTab>("today");
+  const [convoView, setConvoView] = useState<CallHistoryConvoView>("full");
 
   useLayoutEffect(() => {
     applyPhoneOverflowChrome("#1a1208");
@@ -135,8 +155,43 @@ export function ProductMobileView() {
     >
       <header className="product-mobile-topbar">
         <p className={`product-mobile-topbar__wordmark ${lora.className}`}>Doe</p>
-        <p className={`product-mobile-topbar__clinic ${suisseIntl.className}`}>Westside Family Clinic</p>
+        <div className="product-mobile-topbar__end">
+          <div className={`product-mobile-topbar__clinic-block ${suisseIntl.className}`}>
+            <span className="product-mobile-topbar__clinic-label">Clinic</span>
+            <span className="product-mobile-topbar__clinic">Westside Family</span>
+          </div>
+          <button type="button" className="product-mobile-topbar__settings" aria-label="Settings">
+            <SettingsIcon />
+          </button>
+        </div>
       </header>
+
+      {tab === "calls" ? (
+        <div className={`product-mobile-calls-view-tabs ${dmSans.className}`}>
+          <div
+            className={`product-mobile-calls-view-tabs__segmented product-mobile-calls-view-tabs__segmented--${convoView}`}
+            role="group"
+            aria-label="Conversation view"
+          >
+            <button
+              type="button"
+              className={`product-call-history-rail__segmented-btn${convoView === "full" ? " product-call-history-rail__segmented-btn--active" : ""}`}
+              aria-pressed={convoView === "full"}
+              onClick={() => setConvoView("full")}
+            >
+              {PRODUCT2_CALL_HISTORY_CONVO_VIEW_FULL}
+            </button>
+            <button
+              type="button"
+              className={`product-call-history-rail__segmented-btn${convoView === "agent-only" ? " product-call-history-rail__segmented-btn--active" : ""}`}
+              aria-pressed={convoView === "agent-only"}
+              onClick={() => setConvoView("agent-only")}
+            >
+              {PRODUCT2_CALL_HISTORY_CONVO_VIEW_AGENT_ONLY}
+            </button>
+          </div>
+        </div>
+      ) : null}
 
       <main className="product-mobile-main">
         {tab === "today" ? (
@@ -150,7 +205,12 @@ export function ProductMobileView() {
               className="product-mobile-calls-pane product-mobile-calls-pane--transcript"
               aria-label="Call transcript"
             >
-              <ProductCallHistoryRightRail />
+              <ProductCallHistoryRightRail
+                hideToolbar
+                hideActions
+                convoView={convoView}
+                onConvoViewChange={setConvoView}
+              />
             </section>
             <section
               className="product-mobile-calls-pane product-mobile-calls-pane--chart"

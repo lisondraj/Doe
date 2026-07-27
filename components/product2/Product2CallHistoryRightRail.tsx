@@ -13,7 +13,16 @@ import {
 } from "@/lib/product2/product2-copy";
 import "@/lib/product2/product2-landing.css";
 
-type CallHistoryConvoView = "full" | "agent-only";
+export type CallHistoryConvoView = "full" | "agent-only";
+
+export type Product2CallHistoryRightRailProps = {
+  className?: string;
+  hideToolbar?: boolean;
+  hideComposer?: boolean;
+  hideActions?: boolean;
+  convoView?: CallHistoryConvoView;
+  onConvoViewChange?: (view: CallHistoryConvoView) => void;
+};
 
 function ComposerChevronIcon() {
   return (
@@ -44,47 +53,66 @@ function ComposerSubmitIcon() {
 }
 
 /** Call History right rail — punched brown card with live transcript + view toggle. */
-export function Product2CallHistoryRightRail() {
-  const [convoView, setConvoView] = useState<CallHistoryConvoView>("full");
+export function Product2CallHistoryRightRail({
+  className = "",
+  hideToolbar = false,
+  hideComposer = false,
+  hideActions = false,
+  convoView: controlledConvoView,
+  onConvoViewChange,
+}: Product2CallHistoryRightRailProps = {}) {
+  const [uncontrolledConvoView, setUncontrolledConvoView] = useState<CallHistoryConvoView>("full");
   const [composerValue, setComposerValue] = useState("");
+  const convoView = controlledConvoView ?? uncontrolledConvoView;
+
+  const setConvoView = (view: CallHistoryConvoView) => {
+    onConvoViewChange?.(view);
+    if (controlledConvoView === undefined) {
+      setUncontrolledConvoView(view);
+    }
+  };
 
   return (
     <aside
-      className={`product-brown-sidebar product-brown-sidebar--call-history-rail product-brown-call-history-rail shrink-0 ${suisseIntl.className}`}
+      className={`product-brown-sidebar product-brown-sidebar--call-history-rail product-brown-call-history-rail shrink-0 ${suisseIntl.className}${className ? ` ${className}` : ""}`}
     >
       <div className="product-call-history-rail__surface flex h-full min-h-0 flex-col">
-        <div className={`product-call-history-rail__toolbar shrink-0 ${dmSans.className}`}>
-          <div
-            className={`product-call-history-rail__segmented product-call-history-rail__segmented--${convoView}`}
-            role="group"
-            aria-label="Conversation view"
-          >
-            <button
-              type="button"
-              className={`product-call-history-rail__segmented-btn${convoView === "full" ? " product-call-history-rail__segmented-btn--active" : ""}`}
-              aria-pressed={convoView === "full"}
-              onClick={() => setConvoView("full")}
+        {!hideToolbar ? (
+          <div className={`product-call-history-rail__toolbar shrink-0 ${dmSans.className}`}>
+            <div
+              className={`product-call-history-rail__segmented product-call-history-rail__segmented--${convoView}`}
+              role="group"
+              aria-label="Conversation view"
             >
-              {PRODUCT2_CALL_HISTORY_CONVO_VIEW_FULL}
-            </button>
-            <button
-              type="button"
-              className={`product-call-history-rail__segmented-btn${convoView === "agent-only" ? " product-call-history-rail__segmented-btn--active" : ""}`}
-              aria-pressed={convoView === "agent-only"}
-              onClick={() => setConvoView("agent-only")}
-            >
-              {PRODUCT2_CALL_HISTORY_CONVO_VIEW_AGENT_ONLY}
-            </button>
-          </div>
-
-          <div className="product-call-history-rail__actions" role="group" aria-label="Call history actions">
-            {PRODUCT2_CALL_HISTORY_RAIL_ACTIONS.map((label) => (
-              <button key={label} type="button" className="product-call-history-rail__action-btn">
-                {label}
+              <button
+                type="button"
+                className={`product-call-history-rail__segmented-btn${convoView === "full" ? " product-call-history-rail__segmented-btn--active" : ""}`}
+                aria-pressed={convoView === "full"}
+                onClick={() => setConvoView("full")}
+              >
+                {PRODUCT2_CALL_HISTORY_CONVO_VIEW_FULL}
               </button>
-            ))}
+              <button
+                type="button"
+                className={`product-call-history-rail__segmented-btn${convoView === "agent-only" ? " product-call-history-rail__segmented-btn--active" : ""}`}
+                aria-pressed={convoView === "agent-only"}
+                onClick={() => setConvoView("agent-only")}
+              >
+                {PRODUCT2_CALL_HISTORY_CONVO_VIEW_AGENT_ONLY}
+              </button>
+            </div>
+
+            {!hideActions ? (
+              <div className="product-call-history-rail__actions" role="group" aria-label="Call history actions">
+                {PRODUCT2_CALL_HISTORY_RAIL_ACTIONS.map((label) => (
+                  <button key={label} type="button" className="product-call-history-rail__action-btn">
+                    {label}
+                  </button>
+                ))}
+              </div>
+            ) : null}
           </div>
-        </div>
+        ) : null}
 
         <div className="product-call-history-rail__scroll min-h-0 flex-1">
           <Product2LandingLiveThread
@@ -95,35 +123,37 @@ export function Product2CallHistoryRightRail() {
           />
         </div>
 
-        <div className={`product-call-history-rail__composer shrink-0 ${dmSans.className}`}>
-          <div className="product-call-history-rail__composer-box">
-            <label className="sr-only" htmlFor="call-history-rail-composer">
-              Ask about this call
-            </label>
-            <textarea
-              id="call-history-rail-composer"
-              className="product-call-history-rail__composer-input"
-              rows={2}
-              placeholder={PRODUCT2_CALL_HISTORY_COMPOSER_PLACEHOLDER}
-              value={composerValue}
-              onChange={(event) => setComposerValue(event.target.value)}
-            />
-            <div className="product-call-history-rail__composer-footer">
-              <button type="button" className="product-call-history-rail__model-select" aria-haspopup="listbox">
-                <span>{PRODUCT2_CALL_HISTORY_COMPOSER_MODEL}</span>
-                <ComposerChevronIcon />
-              </button>
-              <button
-                type="button"
-                className="product-call-history-rail__composer-submit"
-                aria-label="Submit"
-                disabled={!composerValue.trim()}
-              >
-                <ComposerSubmitIcon />
-              </button>
+        {!hideComposer ? (
+          <div className={`product-call-history-rail__composer shrink-0 ${dmSans.className}`}>
+            <div className="product-call-history-rail__composer-box">
+              <label className="sr-only" htmlFor="call-history-rail-composer">
+                Ask about this call
+              </label>
+              <textarea
+                id="call-history-rail-composer"
+                className="product-call-history-rail__composer-input"
+                rows={2}
+                placeholder={PRODUCT2_CALL_HISTORY_COMPOSER_PLACEHOLDER}
+                value={composerValue}
+                onChange={(event) => setComposerValue(event.target.value)}
+              />
+              <div className="product-call-history-rail__composer-footer">
+                <button type="button" className="product-call-history-rail__model-select" aria-haspopup="listbox">
+                  <span>{PRODUCT2_CALL_HISTORY_COMPOSER_MODEL}</span>
+                  <ComposerChevronIcon />
+                </button>
+                <button
+                  type="button"
+                  className="product-call-history-rail__composer-submit"
+                  aria-label="Submit"
+                  disabled={!composerValue.trim()}
+                >
+                  <ComposerSubmitIcon />
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        ) : null}
       </div>
     </aside>
   );
