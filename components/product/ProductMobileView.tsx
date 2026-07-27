@@ -212,9 +212,9 @@ function ProductMobileInboxPanel() {
 }
 
 /** iPhone /product — bottom-tab shell; desktop mock stays untouched. */
-export function ProductMobileView() {
-  useDoePhoneLayoutViewport();
-  useDoePhoneStableViewport(true);
+export function ProductMobileView({ embed = false }: { embed?: boolean } = {}) {
+  useDoePhoneLayoutViewport(!embed);
+  useDoePhoneStableViewport(!embed);
   const [tab, setTab] = useState<ProductMobileTab>("today");
   const [convoView, setConvoView] = useState<CallHistoryConvoView>("full");
   const [selectedClinic, setSelectedClinic] = useState<(typeof PRODUCT_MOBILE_CLINICS)[number]>(
@@ -222,18 +222,20 @@ export function ProductMobileView() {
   );
   const [clinicMenuOpen, setClinicMenuOpen] = useState(false);
   const clinicMenuRef = useRef<HTMLDivElement>(null);
+  const activeTab = embed ? "today" : tab;
 
   useLayoutEffect(() => {
+    if (embed) return;
     applyPhoneOverflowChrome("#1a1208");
     try {
       sessionStorage.removeItem(`doephone-app-viewport-lock:${location.hostname}`);
     } catch {
       /* ignore */
     }
-  }, []);
+  }, [embed]);
 
   useEffect(() => {
-    if (!clinicMenuOpen) return;
+    if (embed || !clinicMenuOpen) return;
     const onPointerDown = (event: PointerEvent) => {
       if (!clinicMenuRef.current?.contains(event.target as Node)) {
         setClinicMenuOpen(false);
@@ -241,12 +243,16 @@ export function ProductMobileView() {
     };
     document.addEventListener("pointerdown", onPointerDown);
     return () => document.removeEventListener("pointerdown", onPointerDown);
-  }, [clinicMenuOpen]);
+  }, [clinicMenuOpen, embed]);
 
   return (
     <div
-      className={`product-mobile-root product-brown-mock${tab === "calls" ? " product-brown-call-history-mode" : ""} ${lora.className}`}
+      className={`product-mobile-root product-brown-mock${
+        activeTab === "calls" ? " product-brown-call-history-mode" : ""
+      }${embed ? " product-mobile-root--embed" : ""} ${lora.className}`}
       data-product-mobile="true"
+      data-product-mobile-embed={embed ? "true" : undefined}
+      aria-hidden={embed || undefined}
     >
       <header className="product-mobile-topbar">
         <p className={`product-mobile-topbar__wordmark ${lora.className}`}>Doe</p>
@@ -310,21 +316,21 @@ export function ProductMobileView() {
         </div>
       </header>
 
-      {tab === "calls" ? (
+      {activeTab === "calls" ? (
         <ProductMobilePageHeader
           crumbs={PRODUCT2_CALL_HISTORY_HEADER.crumbs}
           backAria={PRODUCT2_CALL_HISTORY_HEADER.backAria}
           onBack={() => setTab("today")}
         />
       ) : null}
-      {tab === "schedule" ? (
+      {activeTab === "schedule" ? (
         <ProductMobilePageHeader
           crumbs={["Schedule", weekSchedule[0].day, weekSchedule[0].date]}
           backAria="Back"
           onBack={() => setTab("today")}
         />
       ) : null}
-      {tab === "inbox" ? (
+      {activeTab === "inbox" ? (
         <ProductMobilePageHeader
           crumbs={["Inbox", "Email", "Clinic queue"]}
           backAria="Back"
@@ -332,7 +338,7 @@ export function ProductMobileView() {
         />
       ) : null}
 
-      {tab === "calls" ? (
+      {activeTab === "calls" ? (
         <div className={`product-mobile-calls-view-tabs ${dmSans.className}`}>
           <div
             className={`product-mobile-calls-view-tabs__segmented product-mobile-calls-view-tabs__segmented--${convoView}`}
@@ -360,12 +366,12 @@ export function ProductMobileView() {
       ) : null}
 
       <main className="product-mobile-main">
-        {tab === "today" ? (
+        {activeTab === "today" ? (
           <div className="product-mobile-embed product-mobile-embed--landing">
             <ProductLandingPanel />
           </div>
         ) : null}
-        {tab === "calls" ? (
+        {activeTab === "calls" ? (
           <div className="product-mobile-embed product-mobile-embed--calls">
             <section
               className="product-mobile-calls-pane product-mobile-calls-pane--transcript"
@@ -386,19 +392,20 @@ export function ProductMobileView() {
             </section>
           </div>
         ) : null}
-        {tab === "schedule" ? <ProductMobileSchedulePanel /> : null}
-        {tab === "inbox" ? <ProductMobileInboxPanel /> : null}
+        {activeTab === "schedule" ? <ProductMobileSchedulePanel /> : null}
+        {activeTab === "inbox" ? <ProductMobileInboxPanel /> : null}
       </main>
 
       <nav className="product-mobile-tabbar" aria-label="Product">
         {PRODUCT_MOBILE_NAV_ITEMS.map((item) => {
-          const active = item.id === tab;
+          const active = item.id === activeTab;
           return (
             <button
               key={item.id}
               type="button"
               aria-current={active ? "page" : undefined}
-              onClick={() => setTab(item.id)}
+              tabIndex={embed ? -1 : undefined}
+              onClick={embed ? undefined : () => setTab(item.id)}
               className={`product-mobile-tabbar__btn${active ? " product-mobile-tabbar__btn--active" : ""} ${suisseIntl.className}`}
             >
               <TabIcon id={item.id} active={active} />

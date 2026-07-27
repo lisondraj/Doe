@@ -40,3 +40,14 @@ export const DOEHEALTH_ROUTED_CALLS_RIGHT_SHADER: ProtoGrainGradientSurface = {
   ],
   colorBack: DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE.back,
 };
+
+/** Second right-bleed shader — same dusk palette for agents-anywhere phone scene. */
+export const DOEHEALTH_ROUTED_CALLS_RIGHT_2_SHADER: ProtoGrainGradientSurface = {
+  variant: "home-integrations",
+  colors: [
+    DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE.ember,
+    DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE.clay,
+    DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE.sand,
+  ],
+  colorBack: DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE.back,
+};

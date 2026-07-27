@@ -1135,7 +1135,8 @@ html[data-home-page][data-layout="desktop"]
 .doehealth-routed-calls-sequence__stage,
 .doehealth-routed-calls,
 .doehealth-intro-band--routed-calls .doehealth-intro-stage,
-.doehealth-intro-band--routed-calls-right .doehealth-intro-stage {
+.doehealth-intro-band--routed-calls-right .doehealth-intro-stage,
+.doehealth-intro-band--agents-anywhere .doehealth-intro-stage {
   overflow: visible;
 }
 
@@ -1961,6 +1962,200 @@ html[data-home-page][data-layout="desktop"]
   .doehealth-routed-calls-bleed-right__title {
   bottom: clamp(1.75rem, 2.2vw, 2.85rem);
   left: clamp(1.75rem, 2.4vw, 2.85rem);
+}
+
+/* Second right bleed — iPhone silhouette with /product Today. */
+.doehealth-routed-calls-shader-panel__ui--agents-anywhere {
+  align-items: stretch;
+  justify-content: stretch;
+  transform: none;
+  transform-origin: center center;
+  padding: 0;
+}
+
+.doehealth-agents-anywhere-bleed {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+}
+
+.doehealth-agents-anywhere-bleed__reveal-ui {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.doehealth-agents-anywhere-bleed__stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding:
+    clamp(1.1rem, 3.2vmin, 1.85rem)
+    clamp(1.35rem, 4vmin, 2.4rem)
+    clamp(4.75rem, 12vmin, 6.5rem);
+  box-sizing: border-box;
+}
+
+.doehealth-agents-anywhere-phone {
+  position: relative;
+  width: min(100%, clamp(11.5rem, 42vmin, 18.5rem));
+  aspect-ratio: 390 / 844;
+  max-height: 100%;
+  flex-shrink: 0;
+  filter: drop-shadow(0 18px 42px rgba(10, 7, 4, 0.55));
+}
+
+.doehealth-agents-anywhere-phone__bezel {
+  position: absolute;
+  inset: 0;
+  border-radius: clamp(1.55rem, 5.2vmin, 2.35rem);
+  background:
+    linear-gradient(160deg, #3a2f24 0%, #1a130c 42%, #0c0906 100%);
+  border: 1px solid rgba(232, 192, 142, 0.22);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 245, 230, 0.06),
+    inset 0 0 0 0.35rem #0a0705;
+  overflow: hidden;
+}
+
+.doehealth-agents-anywhere-phone__island {
+  position: absolute;
+  z-index: 3;
+  top: clamp(0.55rem, 1.8vmin, 0.78rem);
+  left: 50%;
+  width: clamp(4.1rem, 14vmin, 5.6rem);
+  height: clamp(0.95rem, 3.1vmin, 1.28rem);
+  border-radius: 999px;
+  background: #050403;
+  transform: translateX(-50%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.doehealth-agents-anywhere-phone__screen {
+  position: absolute;
+  z-index: 1;
+  inset: clamp(0.38rem, 1.25vmin, 0.52rem);
+  border-radius: clamp(1.2rem, 4.1vmin, 1.85rem);
+  overflow: hidden;
+  background: #1a1208;
+}
+
+.doehealth-agents-anywhere-phone__scale {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: top left;
+  pointer-events: none;
+}
+
+.doehealth-agents-anywhere-phone__btn {
+  position: absolute;
+  z-index: 2;
+  background: linear-gradient(90deg, #2a2118 0%, #1a130c 55%, #0f0b07 100%);
+  border-radius: 0.12rem;
+  box-shadow: inset 0 0 0 1px rgba(232, 192, 142, 0.08);
+}
+
+.doehealth-agents-anywhere-phone__btn--silent {
+  left: -0.14rem;
+  top: 14%;
+  width: 0.14rem;
+  height: 5.5%;
+}
+
+.doehealth-agents-anywhere-phone__btn--vol-up {
+  left: -0.14rem;
+  top: 24%;
+  width: 0.14rem;
+  height: 8%;
+}
+
+.doehealth-agents-anywhere-phone__btn--vol-down {
+  left: -0.14rem;
+  top: 35%;
+  width: 0.14rem;
+  height: 8%;
+}
+
+.doehealth-agents-anywhere-phone__btn--power {
+  right: -0.14rem;
+  top: 28%;
+  width: 0.14rem;
+  height: 11%;
+}
+
+.doehealth-agents-anywhere-bleed__title {
+  position: absolute;
+  z-index: 3;
+  bottom: clamp(1.25rem, 4.2vmin, 2.25rem);
+  left: clamp(1.25rem, 4vmin, 2.05rem);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 0;
+  padding: 0;
+  pointer-events: none;
+  text-align: left;
+}
+
+.doehealth-agents-anywhere-bleed__title-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+.doehealth-agents-anywhere-bleed__title-line {
+  display: block;
+  background: linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  font-size: clamp(2.05rem, 1.05rem + 5.6vmin, 3.25rem);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1.06;
+  text-wrap: balance;
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-agents-anywhere-bleed__title-line {
+  font-size: clamp(2.75rem, 1.45rem + 3.8vw, 4.35rem);
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-agents-anywhere-bleed__title {
+  bottom: clamp(1.75rem, 2.2vw, 2.85rem);
+  left: clamp(1.75rem, 2.4vw, 2.85rem);
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-agents-anywhere-phone {
+  width: min(100%, clamp(16rem, 22vw, 22rem));
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-agents-anywhere-bleed__stage {
+  padding:
+    clamp(1.5rem, 2.2vw, 2.4rem)
+    clamp(2rem, 3.5vw, 4rem)
+    clamp(5.5rem, 8vw, 7.5rem);
 }
 
 .doehealth-intro-band--routed-calls .doehealth-intro-band__cluster {
@@ -2841,6 +3036,11 @@ html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-brown-band-stack
   > .doehealth-intro-band--routed-calls-left-2
+  .doehealth-intro-band__shell,
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-brown-band-stack
+  > .doehealth-intro-band--agents-anywhere
   .doehealth-intro-band__shell {
   justify-content: center !important;
 }
@@ -2921,6 +3121,11 @@ html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-brown-band-stack
   > .doehealth-intro-band--routed-calls-left-2
+  .doehealth-intro-stage,
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-brown-band-stack
+  > .doehealth-intro-band--agents-anywhere
   .doehealth-intro-stage {
   padding-top: 0;
 }

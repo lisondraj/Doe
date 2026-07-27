@@ -7,8 +7,9 @@ import { applyPhoneLayoutViewportMeta } from "@/lib/doephone/phone-layout-viewpo
 const RESIZE_DEBOUNCE_MS = 140;
 
 /** Keeps phone-layout vmin/rem scaling aligned with a real iPhone when layout width is inflated. */
-export function useDoePhoneLayoutViewport() {
+export function useDoePhoneLayoutViewport(enabled = true) {
   useLayoutEffect(() => {
+    if (!enabled) return;
     applyPhoneLayoutViewportMeta();
     const raf = requestAnimationFrame(() => applyPhoneLayoutViewportMeta());
 
@@ -39,5 +40,5 @@ export function useDoePhoneLayoutViewport() {
       window.visualViewport?.removeEventListener("resize", sync);
       window.removeEventListener("orientationchange", syncAfterOrientation);
     };
-  }, []);
+  }, [enabled]);
 }

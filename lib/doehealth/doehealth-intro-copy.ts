@@ -23,6 +23,10 @@ export const DOEHEALTH_INTRO_COPY = {
     line1: "Agents for",
     line2: "every workflow",
   },
+  agentsAnywhereSectionTitle: {
+    line1: "Access your",
+    line2: "agents anywhere",
+  },
   body: [
     "We're two brothers mixing domain, technical, and operational expertise in artificial intelligence & health.",
     "We're bringing together doctors, designers, and engineers to build AI-native tools for clinicians",
