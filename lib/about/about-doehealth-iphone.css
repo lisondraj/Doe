@@ -373,11 +373,25 @@ html[data-about-page]:has(.doephone-mobile-root--doehealth)
 
 /* ── Desktop /about brown page ── */
 html[data-about-page][data-layout="desktop"] {
-  background-color: #1b1410;
+  --doe-page-surface: #1b1410;
+  --doe-page-surface-raised: #271f17;
+  --doe-page-surface-sunken: #130e09;
+  --doe-page-ink: #f2e8da;
+  --doe-page-border: rgba(212, 165, 116, 0.22);
+  --doe-muted-ink: #d4a574;
+  --proto-page-bg: #1b1410;
+  --doe-home-banner-surface: #1a1208;
+  --doe-nav-frost-scrolled-cta-bg: #271f17;
+  --doe-nav-frost-scrolled-cta-text: #f2e8da;
+  --doe-nav-frost-scrolled-cta-divider: rgba(212, 165, 116, 0.22);
+  background-color: #1b1410 !important;
+  scroll-padding-top: calc(
+    var(--doe-home-top-banner-height, 0px) + var(--desktop-nav-height, 6.25rem)
+  );
 }
 
 html[data-about-page][data-layout="desktop"] body {
-  background-color: #1b1410;
+  background-color: #1b1410 !important;
 }
 
 html[data-about-page][data-layout="desktop"] .about-desktop-root {
@@ -434,7 +448,8 @@ html[data-about-page][data-layout="desktop"] .about-desktop-root [class*="border
 }
 
 /* Line graphic cards — raised brown + gold strokes. */
-html[data-about-page][data-layout="desktop"] .about-desktop-beige-panel {
+html[data-about-page][data-layout="desktop"] .about-desktop-beige-panel,
+html[data-about-page][data-layout="desktop"] .about-mobile-beige-panel {
   background-color: #271f17 !important;
   border-color: rgba(212, 165, 116, 0.28) !important;
   box-shadow:
@@ -442,48 +457,9 @@ html[data-about-page][data-layout="desktop"] .about-desktop-beige-panel {
     0 18px 40px rgba(0, 0, 0, 0.28);
 }
 
-/* Content / FAQ sand islands — keep dark ink for contrast. */
-html[data-about-page][data-layout="desktop"] .about-desktop-faq-panel,
-html[data-about-page][data-layout="desktop"] .about-desktop-content-panel {
-  background-color: #f0e4d0 !important;
-  border-color: rgba(212, 165, 116, 0.32) !important;
-}
-
-html[data-about-page][data-layout="desktop"] .about-desktop-content-panel [class*="text-[#1E343A]"],
-html[data-about-page][data-layout="desktop"] .about-desktop-content-panel [class*="text-[#1A1208]"],
-html[data-about-page][data-layout="desktop"] .about-desktop-faq-panel [class*="text-[#1E343A]"],
-html[data-about-page][data-layout="desktop"] .about-desktop-faq-panel [class*="text-[#1A1208]"] {
-  color: #1a1208 !important;
-  -webkit-text-fill-color: #1a1208 !important;
-}
-
-html[data-about-page][data-layout="desktop"] .about-desktop-content-panel [class*="text-[#1E343A]/72"],
-html[data-about-page][data-layout="desktop"] .about-desktop-content-panel p,
-html[data-about-page][data-layout="desktop"] .about-desktop-content-panel li,
-html[data-about-page][data-layout="desktop"] .about-desktop-faq-panel [class*="text-[#1E343A]/72"],
-html[data-about-page][data-layout="desktop"] .about-desktop-faq-panel p,
-html[data-about-page][data-layout="desktop"] .about-desktop-faq-panel li {
-  color: rgba(26, 18, 8, 0.72) !important;
-  -webkit-text-fill-color: rgba(26, 18, 8, 0.72) !important;
-}
-
-html[data-about-page][data-layout="desktop"] .about-desktop-content-panel [class*="text-[#9A8F82]"],
-html[data-about-page][data-layout="desktop"] .about-desktop-faq-panel [class*="text-[#9A8F82]"] {
-  color: #8a7868 !important;
-}
-
-html[data-about-page][data-layout="desktop"] .about-desktop-contact-card {
-  background-color: #271f17 !important;
-  border-color: rgba(212, 165, 116, 0.28) !important;
-}
-
-html[data-about-page][data-layout="desktop"] .about-desktop-contact-action {
-  background-color: rgba(232, 192, 142, 0.14) !important;
-  color: #f2e8da !important;
-}
-
-html[data-about-page][data-layout="desktop"] .about-desktop-contact-action:hover {
-  color: #e8c08e !important;
+html[data-about-page][data-layout="desktop"] .about-mobile-beige-panel svg {
+  width: 100%;
+  height: 100%;
 }
 
 html[data-about-page][data-layout="desktop"] .about-chart-bar-fill--gold,
@@ -536,11 +512,41 @@ html[data-about-page][data-layout="desktop"]
 html[data-about-page][data-layout="desktop"]:has(.doehealth-top-banner) {
   --doe-home-top-banner-height: clamp(2.35rem, 1.9rem + 0.45vw, 2.75rem);
   --doe-home-banner-surface: #1a1208;
+  background-color: #1a1208;
+}
+
+html[data-about-page][data-layout="desktop"]:has(.doehealth-top-banner) body {
+  background-color: #1b1410 !important;
 }
 
 html[data-about-page][data-layout="desktop"]:has(.doehealth-top-banner) nav.desktop-punched-nav {
   top: var(--doe-home-top-banner-height, 0px);
   transition: top 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html[data-about-page][data-layout="desktop"] nav.desktop-punched-nav .proto-nav-frost-shell {
+  background-color: rgba(26, 18, 8, 0.94) !important;
+  border-color: rgba(212, 165, 116, 0.28) !important;
+  box-shadow:
+    0 10px 26px -8px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 245, 230, 0.06) !important;
+}
+
+html[data-about-page][data-layout="desktop"]
+  nav.desktop-punched-nav.proto-nav-always-punched
+  .proto-nav-cta-shell
+  a,
+html[data-about-page][data-layout="desktop"]
+  nav.desktop-punched-nav.proto-nav-always-punched
+  .proto-nav-cta-shell
+  button:not(:only-child) {
+  background-image: none !important;
+}
+
+html[data-about-page][data-layout="desktop"] nav.desktop-punched-nav .proto-nav-cta-shell [role="menu"] {
+  background-color: #271f17 !important;
+  color: #f2e8da !important;
+  border-color: rgba(212, 165, 116, 0.24) !important;
 }
 
 html[data-about-page][data-layout="desktop"] .about-desktop-main {
@@ -553,6 +559,21 @@ html[data-about-page][data-layout="desktop"] .about-desktop-main {
 
 html[data-about-page][data-layout="desktop"] .about-desktop-content {
   box-sizing: border-box;
+}
+
+html[data-about-page][data-layout="desktop"] .about-page-content .about-hero-visual,
+html[data-about-page][data-layout="desktop"] .about-page-content [class*="blog-hero"] {
+  width: 100%;
+  max-width: 100%;
+}
+
+html[data-about-page][data-layout="desktop"] .about-stat-charts [class*="border-t"],
+html[data-about-page][data-layout="desktop"] .about-stat-chart [class*="border-t"] {
+  border-color: rgba(232, 192, 142, 0.14) !important;
+}
+
+html[data-about-page][data-layout="desktop"] .about-desktop-main button[aria-expanded="true"] {
+  color: #f2e8da !important;
 }
 
 html[data-about-page][data-layout="desktop"] .about-desktop-main h1,
@@ -598,14 +619,6 @@ html[data-about-page][data-layout="desktop"] .about-desktop-main [class*="border
 
 html[data-about-page][data-layout="desktop"] .about-desktop-main [class*="border-[#DDD9D2]"] {
   border-color: rgba(212, 165, 116, 0.22) !important;
-}
-
-html[data-about-page][data-layout="desktop"] .about-mobile-beige-panel {
-  border-color: rgba(212, 165, 116, 0.28) !important;
-  background-color: #271f17 !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 245, 230, 0.06),
-    0 18px 40px rgba(0, 0, 0, 0.28);
 }
 
 html[data-about-page][data-layout="desktop"] .about-desktop-main blockquote.about-page-quote,
@@ -723,4 +736,14 @@ html[data-about-page][data-layout="desktop"] .doehealth-top-banner .doe-home-top
 
 html[data-about-page][data-layout="desktop"] footer.home-footer--dusk {
   min-height: min(74vh, 46rem);
+  margin-top: clamp(1rem, 2vw, 2rem);
+}
+
+html[data-about-page][data-layout="desktop"]
+  footer.home-footer--dusk
+  .relative.z-10.flex.w-full.flex-1
+  > div:first-child {
+  width: min(100%, 54rem);
+  max-width: min(54rem, calc(100vw - 2 * var(--desktop-page-inset-x, 2.5rem)));
+  margin-inline: auto;
 }

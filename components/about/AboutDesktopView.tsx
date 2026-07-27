@@ -26,7 +26,7 @@ export function AboutDesktopView() {
 
       <main className={`about-desktop-main ${ABOUT_DESKTOP_SCROLL_MAIN_TW}`}>
         <div className={`about-desktop-content ${ABOUT_DESKTOP_CONTENT_MAX_W}`}>
-          <AboutPageContent />
+          <AboutPageContent layout="desktop" />
         </div>
       </main>
 

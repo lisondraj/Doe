@@ -202,6 +202,24 @@ export const ABOUT_DESKTOP_ARTICLE_LIST_GAP = "space-y-3 md:space-y-3.5";
 /** iPhone /about — vertical rhythm between major bands. */
 export const ABOUT_MOBILE_SECTION_GAP = "space-y-14 iphone-page:space-y-16";
 
+/** Desktop /about scroll — wider band spacing between sections. */
+export const ABOUT_DESKTOP_SCROLL_SECTION_GAP = "space-y-16 md:space-y-20 lg:space-y-[5.5rem]";
+
+/** Desktop /about scroll — mission title in the content column. */
+export const ABOUT_DESKTOP_SCROLL_TITLE_TW = `${DOEPHONE_SECTION_COPY_TW} text-[#1E343A] text-[clamp(2.85rem,4.25vw,4.15rem)] ${suisseIntl.className}`;
+
+/** Desktop /about scroll — subheading under mission title. */
+export const ABOUT_DESKTOP_SCROLL_SUBHEADING_TW = `mt-[clamp(0.55rem,0.75vw,0.85rem)] text-[clamp(1.42rem,1.55vw,1.78rem)] font-normal leading-[1.44] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
+
+/** Desktop /about scroll — section headlines below the hero. */
+export const ABOUT_DESKTOP_SCROLL_SECTION_HEADLINE_TW = `text-left font-light leading-[1.02] tracking-[-0.03em] text-[clamp(2.65rem,3.85vw,3.95rem)] text-[#1E343A] ${suisseIntl.className}`;
+
+/** Desktop /about scroll — body copy and list items. */
+export const ABOUT_DESKTOP_SCROLL_BODY_TW = `text-[clamp(1.08rem,1.05vw,1.28rem)] font-normal leading-[1.5] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
+
+/** Desktop /about scroll — hero gradient box height in the content column. */
+export const ABOUT_DESKTOP_SCROLL_HERO_BOX_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} shadow-none min-h-[clamp(18rem,34vw,26rem)] h-[clamp(18rem,34vw,26rem)] w-full`;
+
 /** iPhone /about — copy blocks (intro, bullets, founder paragraphs). */
 export const ABOUT_MOBILE_CONTENT_GAP = "space-y-6 iphone-page:space-y-7";
 
