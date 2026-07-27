@@ -89,6 +89,168 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
   overflow: visible;
 }
 
+/*
+ * Today tab: one outer scroller —
+ * day summary → full-width agent orbit → call-history transcript.
+ * Keep desktop absolute orbit untouched (scoped to --landing only).
+ */
+.product-mobile-embed--landing .product-landing-panel {
+  display: flex;
+  flex-direction: column;
+  flex: none;
+}
+
+.product-mobile-embed--landing .product-landing-console-shell .product-landing-header {
+  display: none;
+}
+
+.product-mobile-embed--landing .product-landing-call__stage .product-landing-day-summary__shell {
+  padding: 0.7rem 1rem 0.8rem;
+}
+
+.product-mobile-embed--landing .product-landing-call__stage .product-landing-day-summary__header {
+  padding-bottom: 0.7rem;
+}
+
+.product-mobile-embed--landing .product-landing-call__stage .product-landing-day-summary__greeting-line {
+  font-size: 1.12rem;
+}
+
+.product-mobile-embed--landing .product-landing-call__stage .product-landing-day-summary__greeting-name {
+  font-size: 1.8rem;
+}
+
+.product-mobile-embed--landing .product-landing-call__stage .product-landing-day-summary__total-value {
+  font-size: 2.85rem;
+}
+
+.product-mobile-embed--landing .product-landing-call__stage .product-landing-day-summary__hero-row,
+.product-mobile-embed--landing .product-landing-call__stage .product-landing-volume-wrap {
+  min-height: 5.1rem;
+}
+
+.product-mobile-embed--landing .product-landing-call__stage .product-landing-volume {
+  min-height: 4.35rem;
+}
+
+.product-mobile-embed--landing .product-landing-call__stage .product-landing-ahead-carousel {
+  --carousel-lead-h: 7.75rem;
+  --carousel-card-h: 5.35rem;
+  --carousel-peek: 0.85rem;
+}
+
+.product-mobile-embed--landing .product-landing-workspace {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: none;
+  min-height: 0;
+  height: auto;
+  overflow: visible;
+  padding-bottom: 1.35rem;
+}
+
+.product-mobile-embed--landing .product-landing-workspace__orbit {
+  position: relative;
+  inset: auto;
+  top: auto;
+  right: auto;
+  bottom: auto;
+  left: auto;
+  width: 100%;
+  aspect-ratio: 1;
+  min-height: min(100vw, 24.5rem);
+  margin: 0.2rem 0 0.55rem;
+  container-type: size;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.product-mobile-embed--landing .product-landing-workspace__orbit-edit {
+  top: 0.1rem;
+  right: max(0.85rem, env(safe-area-inset-right, 0px));
+  font-size: 9px;
+  padding: 0.38rem 0.62rem;
+}
+
+.product-mobile-embed--landing .product-landing-workspace__orbit-ring {
+  width: min(100cqw, 100cqh);
+  max-width: 100%;
+  --orbit-size: clamp(4.2rem, 22cqw, 5.55rem);
+  --orbit-edge-gap: 0.12rem;
+  --orbit-overlap: 0.94;
+  --orbit-distance: calc((50cqw - var(--orbit-size) / 2 - var(--orbit-edge-gap)) * var(--orbit-overlap));
+  --orbit-inner: calc(var(--orbit-distance) * 2 - var(--orbit-size));
+}
+
+.product-mobile-embed--landing .product-landing-workspace__orbit-stat-value {
+  font-size: clamp(1.55rem, 8cqw, 2.1rem);
+}
+
+.product-mobile-embed--landing .product-landing-workspace__orbit-circle-icon {
+  width: clamp(1.05rem, 5cqw, 1.35rem);
+  height: clamp(1.05rem, 5cqw, 1.35rem);
+}
+
+.product-mobile-embed--landing .product-landing-workspace__orbit-circle-name-line {
+  font-size: clamp(0.5rem, 2.55cqw, 0.66rem);
+}
+
+.product-mobile-embed--landing .product-landing-workspace__label {
+  padding-top: 0.25rem;
+  padding-bottom: 0.35rem;
+}
+
+.product-mobile-embed--landing .product-landing-live-thread {
+  display: flex;
+  flex-direction: column;
+  flex: none;
+  grid-template-rows: none;
+  min-height: 0;
+  height: auto;
+  overflow: visible;
+  padding-bottom: 1.75rem;
+}
+
+.product-mobile-embed--landing .product-landing-live-outcome {
+  width: 100%;
+  max-width: 100%;
+}
+
+.product-mobile-embed--landing .product-landing-live-convo-stage {
+  overflow: visible;
+  margin-top: 0.85rem;
+}
+
+.product-mobile-embed--landing .product-landing-live-convo {
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+.product-mobile-embed--landing .product-landing-live-actions {
+  width: 100%;
+  max-width: 100%;
+  align-self: stretch;
+  margin-top: 1rem;
+}
+
+.product-mobile-embed--landing .product-landing-live-actions__btn {
+  font-size: 10px;
+  padding: 0.58rem 0.3rem;
+}
+
+.product-mobile-embed--landing .product-landing-live-quote__text {
+  font-size: clamp(1.15rem, 0.95rem + 2.2vw, 1.45rem);
+  line-height: 1.28;
+}
+
+.product-mobile-embed--landing .product-landing-live-quote__chart-profile-highlights {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.4rem;
+}
+
 .product-mobile-embed--calls .product-call-history-panel__body {
   position: relative;
   overflow: visible;
