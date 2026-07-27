@@ -4,10 +4,8 @@ import { Product2CallHistoryOpenTaskIcon } from "@/components/product2/Product2C
 import { Product2CallHistoryRecentLabs } from "@/components/product2/Product2CallHistoryRecentLabs";
 import { Product2CallHistoryRecentVitals } from "@/components/product2/Product2CallHistoryRecentVitals";
 import { Product2ChartProfileA1cTrend } from "@/components/product2/Product2ChartProfileA1cTrend";
-import { Product2ChartProfileBpTrend } from "@/components/product2/Product2ChartProfileBpTrend";
 import {
   PRODUCT2_CALL_HISTORY_A1C_TREND,
-  PRODUCT2_CALL_HISTORY_BP_TREND,
   PRODUCT2_CALL_HISTORY_RECENT_LABS,
   PRODUCT2_CALL_HISTORY_RECENT_VITALS,
 } from "@/lib/product2/product2-copy";
@@ -47,19 +45,20 @@ const TILE_GAP_PX = Math.round(BASE_TILE_GAP_PX * CHART_STRIP_SCALE);
 const TILE_PLOT_HEIGHT = `${Math.round(BASE_TILE_PLOT_HEIGHT_PX * CHART_STRIP_SCALE)}px`;
 const TILE_LIFT_PX = Math.round(32 * CHART_STRIP_SCALE);
 
-const ACCESS_DONE = 48;
-const ACCESS_LABEL_SWIPE = 16;
+const ACCESS_DONE = 56;
+const ACCESS_LABEL_SWIPE = 34;
+const ACCESS_ICON_SWAP = 22;
 /** Label row height — matches .motion4-chart-interlude__label-slot (68px × 1.15). */
 const ACCESS_LABEL_LINE_PX = 78;
-/** Mount + start scrolling before fade-in so there is no post-appear hold. */
-const SCROLL_START = 52;
-const STRIP_APPEAR = 64;
-const STRIP_REVEAL = 28;
+/** Let label settle before strip scroll begins. */
+const SCROLL_START = 82;
+const STRIP_APPEAR = 96;
+const STRIP_REVEAL = 40;
 /** Fraction of strip width to pan — stop before meds/conditions/allergies. */
 const CHART_SCROLL_MAX_RATIO = 0.4;
 /** Strip scroll ends → boxes fade as pull loader starts. */
-const STRIP_EXIT_START = 210;
-const STRIP_EXIT_DURATION = 36;
+const STRIP_EXIT_START = 300;
+const STRIP_EXIT_DURATION = 44;
 const PULL_START = STRIP_EXIT_START;
 const PULL_LABEL_SWIPE = 16;
 /** Hold Pulling spinner before Pulled checkmark. */
@@ -70,7 +69,10 @@ const CHART_BLUR_MAX = 16;
 /** Stagger each tile’s unblur/lift across the strip reveal. */
 const TILE_STAGGER = 0.055;
 const REVEAL_EASE = Easing.bezier(0.33, 0, 0.18, 1);
-const SCROLL_EASE = Easing.bezier(0.16, 0.12, 0.22, 1);
+/** Smooth vertical label swipe — Accessing → Accessed. */
+const SWIPE_EASE = Easing.bezier(0.22, 0.03, 0.12, 1);
+/** Slow ease-out pan across chart tiles. */
+const SCROLL_EASE = Easing.bezier(0.42, 0, 0.18, 1);
 
 const METFORMIN_DOSE = "Metformin XR 500mg";
 
@@ -131,12 +133,11 @@ const STRIP_COPY = {
   },
 } as const;
 
-/** Same-height row — right tiles widened so denser copy fills without crush. */
+/** Same-height row — vitals → A1C → labs → list tiles. */
 const CHART_TILES = [
-  { id: "bp", width: Math.round(440 * CHART_STRIP_SCALE) },
   { id: "vitals", width: Math.round(340 * CHART_STRIP_SCALE) },
   { id: "a1c", width: Math.round(380 * CHART_STRIP_SCALE) },
-  { id: "labs", width: Math.round(320 * CHART_STRIP_SCALE) },
+  { id: "labs", width: Math.round(420 * CHART_STRIP_SCALE) },
   { id: "visits", width: Math.round(320 * CHART_STRIP_SCALE) },
   { id: "tasks", width: Math.round(318 * CHART_STRIP_SCALE) },
   { id: "meds", width: Math.round(300 * CHART_STRIP_SCALE) },
@@ -206,12 +207,12 @@ function ChartAccessStatusRow({ local, spinDeg }: { local: number; spinDeg: numb
   const labelSwipe = interpolate(local, [ACCESS_DONE, ACCESS_DONE + ACCESS_LABEL_SWIPE], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
-    easing: REVEAL_EASE,
+    easing: SWIPE_EASE,
   });
-  const iconSwap = interpolate(local, [ACCESS_DONE, ACCESS_DONE + 10], [0, 1], {
+  const iconSwap = interpolate(local, [ACCESS_DONE, ACCESS_DONE + ACCESS_ICON_SWAP], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
-    easing: REVEAL_EASE,
+    easing: SWIPE_EASE,
   });
 
   return (
@@ -307,20 +308,6 @@ function ChartAccessTile({ id }: { id: (typeof CHART_TILES)[number]["id"] }) {
           aria-label={PRODUCT2_CALL_HISTORY_RECENT_VITALS.label}
         >
           <Product2CallHistoryRecentVitals />
-        </div>
-      );
-    case "bp":
-      return (
-        <div
-          className="motion4-chart-interlude__tile-card product-call-history-panel__a1c-card product-landing-live-quote__chart-profile"
-          aria-label={PRODUCT2_CALL_HISTORY_BP_TREND.label}
-        >
-          <Product2ChartProfileBpTrend
-            label={PRODUCT2_CALL_HISTORY_BP_TREND.label}
-            readings={PRODUCT2_CALL_HISTORY_BP_TREND.readings.slice(-5)}
-            labelPosition="top"
-            plotCanvasHeight={TILE_PLOT_HEIGHT}
-          />
         </div>
       );
     case "labs":
@@ -634,7 +621,11 @@ export function IntroChartAccessInterlude() {
     stackCenteredTrio
       ? 0
       : showStripSlot && stripExit <= 0
-        ? -6
+        ? interpolate(local, [SCROLL_START, SCROLL_START + 24], [-6, 0], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+            easing: SWIPE_EASE,
+          })
         : stripExit > 0 && stripExit < 1
           ? interpolate(stripExit, [0, 1], [-6, 0], {
               extrapolateLeft: "clamp",

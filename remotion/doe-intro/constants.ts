@@ -92,7 +92,7 @@ export const DOE_SARAH_CONFIRM_CODE_INTERLUDE_FRAMES = 210;
 /** Turn index for caller-verify (“Sure, my date of birth…”) — interlude plays before this turn. */
 export const DOE_SARAH_CONFIRM_CODE_INTERLUDE_BEFORE_TURN = 2;
 /** Chart modal — strip scroll, pull loader, side-effects card, then agent ask in chat. */
-export const DOE_SARAH_CHART_ACCESS_INTERLUDE_FRAMES = 510;
+export const DOE_SARAH_CHART_ACCESS_INTERLUDE_FRAMES = 600;
 /** Modal fade-out before agent side-effects line in chat. */
 export const DOE_SARAH_CHART_ACCESS_FADE_OUT_FRAMES = 28;
 /** Turn index for agent-side-effects — chart modal plays before this turn. */
@@ -123,9 +123,8 @@ export const DOE_SARAH_HERO_HOLD_FRAMES = 106;
 /** Begin incoming → answered settle this many frames before the hold ends (~100ms @ 30fps). */
 export const DOE_SARAH_SETTLE_LEAD_FRAMES = 3;
 export const DOE_SARAH_HEADER_SETTLE_FRAMES = 40 + DOE_SARAH_SETTLE_LEAD_FRAMES;
-/** Incoming… → Ringing… swipe during the hold, before settle. */
-export const DOE_SARAH_INCOMING_RING_DELAY_FRAMES = 54;
-export const DOE_SARAH_INCOMING_RING_SWIPE_FRAMES = 18;
+/** Incoming… label glow pulse during the hold (~1.5s cycle @ 30fps). */
+export const DOE_SARAH_INCOMING_GLOW_CYCLE_FRAMES = 45;
 /** Incoming call SFX — “Sarah Westfield / Calling from” when handoff completes. */
 export const DOE_SARAH_CALL_HEADER_APPEAR_FRAME = DOE_SARAH_HANDOFF_FRAMES;
 export const DOE_SARAH_INCOMING_CALL_AUDIO_SEC = 2.5;
