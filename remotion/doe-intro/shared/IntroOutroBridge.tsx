@@ -30,7 +30,7 @@ export function IntroOutroBridge() {
     easing: DOE_PREMIUM_EASE,
   });
 
-  const bloom = interpolate(progress, [0, 0.32, 0.58, 1], [0, 0.72, 1, 0.35], {
+  const bloom = interpolate(progress, [0, 0.18, 0.45, 1], [0, 0.85, 1, 0.35], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });

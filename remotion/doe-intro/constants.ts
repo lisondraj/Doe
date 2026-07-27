@@ -33,8 +33,10 @@ export const DOE_TYPEWRITER_DURATION_FRAMES =
 export const DOE_SARAH_CONVO_TURN_STEP = 84;
 export const DOE_SARAH_CONVO_TURN_FADE = 14;
 export const DOE_SARAH_CONVO_TURN_START = 10;
-/** Hold after Sarah’s thank-you before dissolve into the final Doe screen. */
-export const DOE_SARAH_CONVO_END_HOLD = 36;
+/** Outro crossfade — Sarah call dissolves into final Doe screen. */
+export const DOE_OUTRO_SHADER_HANDOFF_FRAMES = 38;
+/** Overlap-only tail — outro begins as thank-you clip ends, no dead hold. */
+export const DOE_SARAH_CONVO_END_HOLD = DOE_OUTRO_SHADER_HANDOFF_FRAMES;
 /** Extra pause after each agent reply — 4× base post-fade hold (2× previous). */
 export const DOE_SARAH_CONVO_REPLY_HOLD_EXTRA = 2 * (DOE_SARAH_CONVO_TURN_STEP - DOE_SARAH_CONVO_TURN_FADE);
 export const DOE_SARAH_CONVO_REPLY_COUNT = 2;
@@ -95,6 +97,9 @@ export const DOE_SARAH_CALLER_PREFER_TIME_HOLD =
 /** caller-thanks — “That is all, thank you” */
 export const DOE_SARAH_CALLER_THANKS_TURN = 8;
 export const DOE_SARAH_CALLER_THANKS_AUDIO_SEC = 1.488938;
+/** Tail after thank-you clip — scene ends as audio finishes. */
+export const DOE_SARAH_CALLER_THANKS_TAIL_FRAMES =
+  Math.ceil(DOE_SARAH_CALLER_THANKS_AUDIO_SEC * DOE_INTRO_FPS) + 4;
 export const DOE_SARAH_TURN_REPLY_HOLDS = [
   { turnIndex: DOE_SARAH_AGENT_INTAKE_TURN, frames: DOE_SARAH_AGENT_INTAKE_REPLY_HOLD },
   { turnIndex: DOE_SARAH_AGENT_OPEN_CHART_TURN, frames: DOE_SARAH_AGENT_OPEN_CHART_PRE_INTERLUDE_HOLD },
@@ -220,15 +225,13 @@ export const DOE_INTRO_SHARED_AUDIO_TAGS = 11;
 export const DOE_SARAH_CONVO_LAST_TURN_END =
   DOE_SARAH_CONVO_UI_OFFSET +
   DOE_SARAH_CONVO_TIMING.turnStarts[DOE_SARAH_INTRO_TURN_COUNT - 1]! +
-  DOE_SARAH_CONVO_TURN_FADE +
-  42;
+  DOE_SARAH_CALLER_THANKS_TAIL_FRAMES;
 export const DOE_SARAH_MORE_THAN_VOICE_FRAMES =
   DOE_SARAH_CONVO_START_FRAMES + DOE_SARAH_CONVO_LAST_TURN_END + DOE_SARAH_CONVO_END_HOLD;
 
 /** Outro — dissolve from Sarah into dusk shader + Doe logo. */
-export const DOE_OUTRO_SHADER_HANDOFF_FRAMES = 38;
 /** “Doe” logo spring — matches OutroDoeShaderScene logoEnter start. */
-export const DOE_OUTRO_DOE_LOGO_APPEAR_FRAME = Math.round(DOE_OUTRO_SHADER_HANDOFF_FRAMES * 0.52);
+export const DOE_OUTRO_DOE_LOGO_APPEAR_FRAME = Math.round(DOE_OUTRO_SHADER_HANDOFF_FRAMES * 0.22);
 export const DOE_OUTRO_DOE_AUDIO_SEC = 2.08975;
 export const DOE_OUTRO_DOE_AUDIO_FRAMES = Math.ceil(DOE_OUTRO_DOE_AUDIO_SEC * DOE_INTRO_FPS);
 export const DOE_OUTRO_DOE_AUDIO_SRC = "motion/doe-outro-logo.mp3";

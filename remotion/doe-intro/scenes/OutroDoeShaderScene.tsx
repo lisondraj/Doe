@@ -25,7 +25,7 @@ export function OutroDoeShaderScene({ embedPreview = false }: { embedPreview?: b
   const { fps } = useVideoConfig();
   const showUrl = frame >= URL_SWITCH_FRAME;
 
-  const fieldEnter = interpolate(frame, [0, Math.round(DOE_OUTRO_SHADER_HANDOFF_FRAMES * 0.45)], [0, 1], {
+  const fieldEnter = interpolate(frame, [0, Math.round(DOE_OUTRO_SHADER_HANDOFF_FRAMES * 0.28)], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: DOE_PREMIUM_EASE,
@@ -33,7 +33,7 @@ export function OutroDoeShaderScene({ embedPreview = false }: { embedPreview?: b
 
   const shaderEnter = interpolate(
     frame,
-    [Math.round(DOE_OUTRO_SHADER_HANDOFF_FRAMES * 0.18), DOE_OUTRO_SHADER_HANDOFF_FRAMES + 6],
+    [0, Math.round(DOE_OUTRO_SHADER_HANDOFF_FRAMES * 0.5)],
     [0, 1],
     {
       extrapolateLeft: "clamp",
@@ -49,7 +49,7 @@ export function OutroDoeShaderScene({ embedPreview = false }: { embedPreview?: b
   });
 
   const logoSpring = spring({
-    frame: frame - Math.round(DOE_OUTRO_SHADER_HANDOFF_FRAMES * 0.52),
+    frame: frame - Math.round(DOE_OUTRO_SHADER_HANDOFF_FRAMES * 0.22),
     fps,
     config: { damping: 200, stiffness: 68 },
   });

@@ -136,14 +136,12 @@ export function MoreThanVoiceScene() {
 
   const handoffStyle = handoff.active ? handoffMotionStyle(handoff) : undefined;
 
+  const handoffStart = durationInFrames - DOE_OUTRO_SHADER_HANDOFF_FRAMES;
+
   const outroExit = interpolate(
     frame,
-    [
-      durationInFrames - DOE_OUTRO_SHADER_HANDOFF_FRAMES,
-      durationInFrames - Math.round(DOE_OUTRO_SHADER_HANDOFF_FRAMES * 0.55),
-      durationInFrames,
-    ],
-    [1, 1, 0],
+    [handoffStart, durationInFrames],
+    [1, 0],
     {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
@@ -153,7 +151,7 @@ export function MoreThanVoiceScene() {
 
   const outroY = interpolate(
     frame,
-    [durationInFrames - DOE_OUTRO_SHADER_HANDOFF_FRAMES, durationInFrames],
+    [handoffStart, durationInFrames],
     [0, -14],
     {
       extrapolateLeft: "clamp",
@@ -164,10 +162,7 @@ export function MoreThanVoiceScene() {
 
   const outroBlur = interpolate(
     frame,
-    [
-      durationInFrames - Math.round(DOE_OUTRO_SHADER_HANDOFF_FRAMES * 0.5),
-      durationInFrames,
-    ],
+    [handoffStart + Math.round(DOE_OUTRO_SHADER_HANDOFF_FRAMES * 0.35), durationInFrames],
     [0, 8],
     {
       extrapolateLeft: "clamp",
