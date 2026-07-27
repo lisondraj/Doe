@@ -605,10 +605,10 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
 .product-mobile-embed--landing .product-landing-workspace__orbit-ring {
   width: min(100cqw, 100cqh);
   max-width: 100%;
-  /* Keep agent discs inside the visible orbit box — no horizontal swipe. */
-  --orbit-size: clamp(5.35rem, 28cqw, 6.85rem);
-  --orbit-edge-gap: 0.28rem;
-  --orbit-overlap: 0.86;
+  /* Bigger agent discs + tighter radius so neighbors overlap; text/icons stay put. */
+  --orbit-size: clamp(5.85rem, 31cqw, 7.35rem);
+  --orbit-edge-gap: -0.35rem;
+  --orbit-overlap: 0.82;
   --orbit-distance: calc((50cqw - var(--orbit-size) / 2 - var(--orbit-edge-gap)) * var(--orbit-overlap));
   --orbit-inner: calc(var(--orbit-distance) * 2 - var(--orbit-size));
 }
