@@ -14,6 +14,8 @@ type LiveConvoTaggedLine = {
   before: string;
   tag: string;
   after?: string;
+  tag2?: string;
+  after2?: string;
 };
 
 type LiveConvoLine = string | LiveConvoTaggedLine;
@@ -190,6 +192,8 @@ function VoiceQuoteLine({ line }: { line: LiveConvoLine }) {
         {line.before}
         <span className="product-landing-live-quote__tag">{line.tag}</span>
         {line.after ?? ""}
+        {line.tag2 ? <span className="product-landing-live-quote__tag">{line.tag2}</span> : null}
+        {line.after2 ?? ""}
       </span>
     );
   }

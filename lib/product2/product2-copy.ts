@@ -317,7 +317,7 @@ export const PRODUCT2_LANDING_LIVE_CONVO = [
     callDuration: "0m6s",
     callDurationIso: "PT0M6S",
     lines: [
-      { before: "Hi, this is ", tag: "Sarah", after: ". I need a" },
+      { before: "Hi, this is ", tag: "Sarah Westfield", after: ". I need a" },
       { before: "refill visit for my ", tag: "Metformin" },
     ],
   },
@@ -350,7 +350,7 @@ export const PRODUCT2_LANDING_LIVE_CONVO = [
     caller: "Doe Agent",
     callDuration: "0m24s",
     callDurationIso: "PT0M24S",
-    lines: ["Thank you, let me open", "your chart"],
+    lines: ["Thank you, let me open your chart"],
   },
   {
     id: "agent-verified",
@@ -422,10 +422,7 @@ export const PRODUCT2_LANDING_LIVE_CONVO = [
     caller: "Sarah Westfield",
     callDuration: "0m58s",
     callDurationIso: "PT0M58S",
-    lines: [
-      { before: "How about ", tag: "Tuesday", after: " at" },
-      { before: "", tag: "10:30 AM" },
-    ],
+    lines: [{ before: "How about ", tag: "Tuesday", after: " at ", tag2: "10:30 AM" }],
   },
   {
     id: "caller-thanks",
