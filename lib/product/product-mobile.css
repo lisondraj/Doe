@@ -336,8 +336,8 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
 }
 
 /*
- * Today tab: one outer scroller —
- * day summary → full-width agent orbit → call-history transcript.
+ * Today tab: outer scroll —
+ * day summary → full-width agent orbit → short boxed call-history preview.
  * Keep desktop absolute orbit untouched (scoped to --landing only).
  */
 .product-mobile-embed--landing .product-landing-panel {
