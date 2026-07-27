@@ -80,7 +80,9 @@ export const DOE_SARAH_CALLER_SIDE_EFFECTS_AUDIO_SEC = 3.056313;
 /** agent-prefer-time — “Which day and time would you prefer?” — extra beat after reply. */
 export const DOE_SARAH_AGENT_PREFER_TIME_TURN = 6;
 export const DOE_SARAH_AGENT_PREFER_TIME_AUDIO_SEC = 1.750187;
-export const DOE_SARAH_AGENT_PREFER_TIME_HOLD = DOE_SARAH_CONVO_REPLY_HOLD_EXTRA + 90;
+/** Brief beat after prefer-time question audio before caller reply. */
+export const DOE_SARAH_AGENT_PREFER_TIME_HOLD =
+  Math.ceil(DOE_SARAH_AGENT_PREFER_TIME_AUDIO_SEC * DOE_INTRO_FPS) + 4 - DOE_SARAH_CONVO_TURN_STEP;
 /** caller-prefer-time — “How about Tuesday at 10:30 AM” */
 export const DOE_SARAH_CALLER_PREFER_TIME_TURN = 7;
 export const DOE_SARAH_CALLER_PREFER_TIME_AUDIO_SEC = 2.324875;
