@@ -33,7 +33,7 @@ function TabIcon({ id, active }: { id: ProductMobileTab; active: boolean }) {
     strokeWidth: 1.6,
     strokeLinecap: "round" as const,
     strokeLinejoin: "round" as const,
-    className: "h-[1.25rem] w-[1.25rem]",
+    className: "h-[1.45rem] w-[1.45rem]",
     "aria-hidden": true as const,
   };
 
