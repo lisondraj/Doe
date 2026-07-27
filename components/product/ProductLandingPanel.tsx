@@ -322,21 +322,14 @@ function DaySummaryHero({ inConsole = false }: { inConsole?: boolean }) {
         </div>
 
         <div className="product-landing-day-summary__split">
-          <div className="product-landing-day-summary__section-labels">
-            <p
-              className={`product-landing-day-summary__section-label m-0 text-[10px] font-semibold uppercase tracking-[0.12em] ${suisseIntl.className}`}
-            >
-              {last24h.label}
-            </p>
-            <p
-              className={`product-landing-day-summary__section-label m-0 text-[10px] font-semibold uppercase tracking-[0.12em] ${suisseIntl.className}`}
-            >
-              {todayAhead.label}
-            </p>
-          </div>
-
           <div className="product-landing-day-summary__columns">
             <div className="product-landing-day-summary__column">
+              <p
+                className={`product-landing-day-summary__section-label m-0 text-[10px] font-semibold uppercase tracking-[0.12em] ${suisseIntl.className}`}
+              >
+                {last24h.label}
+              </p>
+
               <div className="product-landing-day-summary__hero-row">
                 <VolumeChart values={last24h.volume} labels={last24h.volumeLabels} />
                 <div className="product-landing-day-summary__total product-landing-day-summary__total--overlay">
@@ -364,6 +357,12 @@ function DaySummaryHero({ inConsole = false }: { inConsole?: boolean }) {
             </div>
 
             <div className="product-landing-day-summary__column product-landing-day-summary__column--ahead">
+              <p
+                className={`product-landing-day-summary__section-label m-0 text-[10px] font-semibold uppercase tracking-[0.12em] ${suisseIntl.className}`}
+              >
+                {todayAhead.label}
+              </p>
+
               <TodayAheadCarousel items={todayAhead.timeline} nextAppointment={todayAhead.nextAppointment} />
 
               <div className="product-landing-day-summary__timeline-h" aria-label="Today's call flow">

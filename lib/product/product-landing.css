@@ -1429,6 +1429,14 @@
   gap: 0;
 }
 
+.product-landing-day-summary__column--ahead > .product-landing-day-summary__section-label {
+  flex-shrink: 0;
+  width: clamp(82%, 88%, 90%);
+  max-width: 100%;
+  margin-bottom: 0.75rem;
+  align-self: center;
+}
+
 .product-landing-day-summary__column--ahead .product-landing-ahead-carousel {
   flex: 1;
   min-height: 0;
