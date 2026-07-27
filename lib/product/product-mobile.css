@@ -368,24 +368,27 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
 }
 
 .product-mobile-calls-view-tabs {
+  position: relative;
+  z-index: 12;
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  padding: 0.4rem var(--product-mobile-gutter-x) 0.58rem;
+  justify-content: space-between;
+  gap: 0.55rem;
+  padding: 0.22rem var(--product-mobile-gutter-x) 0.28rem;
   background: var(--product-mobile-chrome);
   border-bottom: 1px solid rgba(245, 230, 208, 0.08);
 }
 
 .product-mobile-calls-view-tabs__segmented {
-  --pb-call-history-toolbar-height: 1.85rem;
+  --pb-call-history-toolbar-height: 1.5rem;
   position: relative;
   display: inline-grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: center;
-  width: min(100%, 14.5rem);
+  width: min(100%, 12.75rem);
   min-height: var(--pb-call-history-toolbar-height);
-  padding: 0.14rem;
+  padding: 0.1rem;
   border: 1px solid rgba(242, 232, 218, 0.14);
   border-radius: 999px;
   background: rgba(26, 18, 8, 0.42);
@@ -395,11 +398,11 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
 .product-mobile-calls-view-tabs__segmented::before {
   content: "";
   position: absolute;
-  top: 0.14rem;
-  bottom: 0.14rem;
-  left: 0.14rem;
+  top: 0.1rem;
+  bottom: 0.1rem;
+  left: 0.1rem;
   z-index: 0;
-  width: calc(50% - 0.14rem);
+  width: calc(50% - 0.1rem);
   border-radius: 999px;
   background: rgba(212, 165, 116, 0.34);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
@@ -417,13 +420,13 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
   align-items: center;
   justify-content: center;
   min-width: 0;
-  min-height: calc(var(--pb-call-history-toolbar-height) - 0.28rem);
-  padding: 0.35rem 0.7rem;
+  min-height: calc(var(--pb-call-history-toolbar-height) - 0.2rem);
+  padding: 0.22rem 0.55rem;
   border: 0;
   border-radius: 999px;
   background: transparent;
   color: rgba(242, 232, 218, 0.52);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: -0.01em;
   line-height: 1;
@@ -432,6 +435,83 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
 
 .product-mobile-calls-view-tabs__segmented .product-call-history-rail__segmented-btn--active {
   color: rgba(242, 232, 218, 0.94);
+}
+
+.product-mobile-calls-view-tabs__actions {
+  position: relative;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.product-mobile-calls-view-tabs__actions-trigger {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.28rem;
+  min-height: 1.5rem;
+  margin: 0;
+  padding: 0.22rem 0.62rem;
+  border: 1px solid rgba(242, 232, 218, 0.14);
+  border-radius: 999px;
+  background: rgba(39, 31, 23, 0.72);
+  color: rgba(242, 232, 218, 0.82);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.product-mobile-calls-view-tabs__actions-trigger--open {
+  border-color: rgba(212, 165, 116, 0.34);
+  background: rgba(212, 165, 116, 0.14);
+  color: #e8c08e;
+}
+
+.product-mobile-calls-view-tabs__actions-caret {
+  font-size: 0.68rem;
+  line-height: 1;
+  opacity: 0.78;
+}
+
+.product-mobile-calls-view-tabs__menu {
+  position: absolute;
+  top: calc(100% + 0.28rem);
+  right: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  min-width: 11.5rem;
+  padding: 0.28rem;
+  border: 1px solid rgba(245, 230, 208, 0.14);
+  border-radius: 0.75rem;
+  background: #221a12;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.38);
+}
+
+.product-mobile-calls-view-tabs__menu-item {
+  appearance: none;
+  width: 100%;
+  margin: 0;
+  padding: 0.58rem 0.7rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: rgba(245, 230, 208, 0.9);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  text-align: left;
+  cursor: pointer;
+}
+
+.product-mobile-calls-view-tabs__menu-item:hover,
+.product-mobile-calls-view-tabs__menu-item:focus-visible {
+  background: rgba(212, 165, 116, 0.14);
+  color: #f5e6d0;
+  outline: none;
 }
 
 .product-mobile-main {

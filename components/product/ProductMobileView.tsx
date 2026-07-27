@@ -22,6 +22,7 @@ import {
   PRODUCT2_CALL_HISTORY_CONVO_VIEW_AGENT_ONLY,
   PRODUCT2_CALL_HISTORY_CONVO_VIEW_FULL,
   PRODUCT2_CALL_HISTORY_HEADER,
+  PRODUCT2_CALL_HISTORY_RAIL_ACTIONS,
 } from "@/lib/product2/product2-copy";
 import "@/lib/product/product-brown-mock.css";
 import "@/lib/product/product-landing.css";
@@ -185,11 +186,13 @@ export function ProductMobileView({ embed = false }: { embed?: boolean } = {}) {
   const [inboxCategory, setInboxCategory] = useState<ProductMobileInboxCategory>("Referrals");
   const [inboxComposing, setInboxComposing] = useState(false);
   const [scheduleDayIndex, setScheduleDayIndex] = useState(0);
+  const [callsActionsOpen, setCallsActionsOpen] = useState(false);
   const [selectedClinic, setSelectedClinic] = useState<(typeof PRODUCT_MOBILE_CLINICS)[number]>(
     PRODUCT_MOBILE_CLINICS[0],
   );
   const [clinicMenuOpen, setClinicMenuOpen] = useState(false);
   const clinicMenuRef = useRef<HTMLDivElement>(null);
+  const callsActionsRef = useRef<HTMLDivElement>(null);
   const activeTab = embed ? "today" : tab;
 
   useLayoutEffect(() => {
@@ -203,15 +206,23 @@ export function ProductMobileView({ embed = false }: { embed?: boolean } = {}) {
   }, [embed]);
 
   useEffect(() => {
-    if (embed || !clinicMenuOpen) return;
+    if (embed || (!clinicMenuOpen && !callsActionsOpen)) return;
     const onPointerDown = (event: PointerEvent) => {
-      if (!clinicMenuRef.current?.contains(event.target as Node)) {
+      const target = event.target as Node;
+      if (clinicMenuOpen && !clinicMenuRef.current?.contains(target)) {
         setClinicMenuOpen(false);
+      }
+      if (callsActionsOpen && !callsActionsRef.current?.contains(target)) {
+        setCallsActionsOpen(false);
       }
     };
     document.addEventListener("pointerdown", onPointerDown);
     return () => document.removeEventListener("pointerdown", onPointerDown);
-  }, [clinicMenuOpen, embed]);
+  }, [clinicMenuOpen, callsActionsOpen, embed]);
+
+  useEffect(() => {
+    if (activeTab !== "calls") setCallsActionsOpen(false);
+  }, [activeTab]);
 
   return (
     <div
@@ -350,6 +361,38 @@ export function ProductMobileView({ embed = false }: { embed?: boolean } = {}) {
               {PRODUCT2_CALL_HISTORY_CONVO_VIEW_AGENT_ONLY}
             </button>
           </div>
+
+          <div className="product-mobile-calls-view-tabs__actions" ref={callsActionsRef}>
+            <button
+              type="button"
+              className={`product-mobile-calls-view-tabs__actions-trigger${
+                callsActionsOpen ? " product-mobile-calls-view-tabs__actions-trigger--open" : ""
+              } ${suisseIntl.className}`}
+              aria-haspopup="menu"
+              aria-expanded={callsActionsOpen}
+              onClick={() => setCallsActionsOpen((open) => !open)}
+            >
+              Actions
+              <span className="product-mobile-calls-view-tabs__actions-caret" aria-hidden>
+                ▾
+              </span>
+            </button>
+            {callsActionsOpen ? (
+              <div className="product-mobile-calls-view-tabs__menu" role="menu" aria-label="Call history actions">
+                {PRODUCT2_CALL_HISTORY_RAIL_ACTIONS.map((label) => (
+                  <button
+                    key={label}
+                    type="button"
+                    role="menuitem"
+                    className={`product-mobile-calls-view-tabs__menu-item ${dmSans.className}`}
+                    onClick={() => setCallsActionsOpen(false)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
         </div>
       ) : null}
 
@@ -367,7 +410,7 @@ export function ProductMobileView({ embed = false }: { embed?: boolean } = {}) {
             >
               <ProductCallHistoryRightRail
                 hideToolbar
-                hideActions={false}
+                hideActions
                 composerCollapsed={!showFableComposer}
                 onComposerExpand={() => setShowFableComposer(true)}
                 hideComposer={false}
