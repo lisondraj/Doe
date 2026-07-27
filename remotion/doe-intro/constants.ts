@@ -118,8 +118,8 @@ export const DOE_SARAH_CALL_INTERLUDES = [
     fadeOutFrames: DOE_SARAH_BOOKING_FADE_OUT_FRAMES,
   },
 ] as const;
-/** Incoming “Sarah Westfield / Calling from” hold — ~3.5s @ 30fps. */
-export const DOE_SARAH_HERO_HOLD_FRAMES = 106;
+/** Incoming “Sarah Westfield / Calling from” hold — ~2.5s @ 30fps. */
+export const DOE_SARAH_HERO_HOLD_FRAMES = 76;
 /** Begin incoming → answered settle this many frames before the hold ends (~100ms @ 30fps). */
 export const DOE_SARAH_SETTLE_LEAD_FRAMES = 3;
 export const DOE_SARAH_HEADER_SETTLE_FRAMES = 40 + DOE_SARAH_SETTLE_LEAD_FRAMES;
