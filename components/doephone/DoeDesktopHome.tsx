@@ -111,7 +111,7 @@ export function DoeDesktopHome({
           </section>
         )}
 
-        <HomeFooter linksDisabled={!navActionLinksEnabled} shaderTheme="dusk" />
+        <HomeFooter linksDisabled shaderTheme="dusk" />
       </div>
     </div>
   );

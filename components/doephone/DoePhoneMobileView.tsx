@@ -208,14 +208,14 @@ export function DoePhoneMobileView({
       {isProto ? (
         <ProtoFooter />
       ) : hideSectionsBelowIntro ? (
-        <HomeFooter shaderTheme="dusk" />
+        <HomeFooter linksDisabled shaderTheme="dusk" />
       ) : (
         <>
           <section id="doe-vision" className={DOEPHONE_BEIGE_SECTION} aria-label="Closing">
             <DoePhoneClosingSection disableCarouselInteractions={disableCarouselInteractions} />
           </section>
 
-          <HomeFooter shaderTheme="dusk" />
+          <HomeFooter linksDisabled shaderTheme="dusk" />
         </>
       )}
     </div>
