@@ -22,8 +22,11 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
   --pi-muted-soft: rgba(245, 230, 208, 0.55);
   --product-mobile-chrome: #1a1208;
   --product-mobile-chrome-raised: #221a12;
+  --product-mobile-gutter-x: 1.05rem;
+  --product-mobile-gutter-y: 0.72rem;
+  --pl-gutter: var(--product-mobile-gutter-x);
   --product-mobile-tabbar-clearance: calc(
-    4.55rem + 0.55rem + env(safe-area-inset-bottom, 0px)
+    4.55rem + 0.62rem + env(safe-area-inset-bottom, 0px)
   );
   --product-mobile-gold-text: linear-gradient(
     180deg,
@@ -66,16 +69,18 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
   justify-content: space-between;
   gap: 0.75rem;
   padding:
-    calc(0.72rem + env(safe-area-inset-top, 0px))
-    max(0.8rem, env(safe-area-inset-right, 0px))
-    0.78rem
-    max(1rem, env(safe-area-inset-left, 0px));
+    calc(0.78rem + env(safe-area-inset-top, 0px))
+    max(var(--product-mobile-gutter-x), env(safe-area-inset-right, 0px))
+    0.82rem
+    max(var(--product-mobile-gutter-x), env(safe-area-inset-left, 0px));
   background:
     linear-gradient(180deg, #271f17 0%, var(--product-mobile-chrome) 58%, #151008 100%);
-  border-bottom: 1px solid rgba(245, 230, 208, 0.08);
+  border-bottom: 1px solid rgba(245, 230, 208, 0.1);
+  /* Tight bottom edge — avoid heavy smear under the nav. */
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.045),
-    0 10px 28px rgba(0, 0, 0, 0.22);
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 1px 0 rgba(0, 0, 0, 0.28),
+    0 8px 16px -12px rgba(0, 0, 0, 0.42);
 }
 
 .product-mobile-topbar__wordmark {
@@ -297,7 +302,10 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
 .product-mobile-page-header .product-mobile-page-header__bar.product-landing-header {
   position: relative;
   z-index: 1;
-  padding: 0.85rem 1rem 0.78rem;
+  padding:
+    calc(var(--product-mobile-gutter-y) + 0.08rem)
+    var(--product-mobile-gutter-x)
+    var(--product-mobile-gutter-y);
   gap: 0.55rem;
   background: transparent !important;
   border-bottom: 0 !important;
@@ -306,9 +314,9 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
 .product-mobile-page-header .product-mobile-page-header__bar.product-landing-header::after {
   content: "";
   position: absolute;
-  right: 1rem;
+  right: var(--product-mobile-gutter-x);
   bottom: 0;
-  left: 1rem;
+  left: var(--product-mobile-gutter-x);
   height: 1px;
   background: rgba(242, 232, 218, 0.12);
 }
@@ -364,7 +372,7 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding: 0.35rem 0.9rem 0.55rem;
+  padding: 0.4rem var(--product-mobile-gutter-x) 0.58rem;
   background: var(--product-mobile-chrome);
   border-bottom: 1px solid rgba(245, 230, 208, 0.08);
 }
@@ -491,7 +499,10 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
 }
 
 .product-mobile-embed--landing .product-landing-call__stage .product-landing-day-summary__shell {
-  padding: 0.7rem 1rem 1.15rem;
+  padding:
+    var(--product-mobile-gutter-y)
+    var(--product-mobile-gutter-x)
+    calc(var(--product-mobile-gutter-y) + 0.4rem);
 }
 
 .product-mobile-embed--landing .product-landing-call__stage .product-landing-day-summary__header {
@@ -586,7 +597,7 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
 
 .product-mobile-embed--landing .product-landing-workspace__orbit-edit {
   top: 0.1rem;
-  right: max(0.85rem, env(safe-area-inset-right, 0px));
+  right: max(var(--product-mobile-gutter-x), env(safe-area-inset-right, 0px));
   font-size: 9px;
   padding: 0.38rem 0.62rem;
 }
@@ -639,7 +650,7 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
   border: 1px solid rgba(242, 232, 218, 0.1);
   border-radius: 0.95rem;
   background: rgba(19, 14, 9, 0.42);
-  margin-inline: var(--pl-gutter, 1rem);
+  margin-inline: var(--product-mobile-gutter-x);
   padding-inline: 0.85rem;
   padding-top: 0.7rem;
   box-sizing: border-box;
@@ -774,9 +785,9 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
 .product-mobile-root.product-brown-mock
   .product-mobile-calls-pane--transcript
   .product-brown-call-history-rail {
-  --pb-call-history-thread-pad-top: 0.45rem;
-  --pb-call-history-thread-pad-x: 0.9rem;
-  --pb-call-history-thread-pad-bottom: 0.55rem;
+  --pb-call-history-thread-pad-top: 0.5rem;
+  --pb-call-history-thread-pad-x: var(--product-mobile-gutter-x);
+  --pb-call-history-thread-pad-bottom: 0.6rem;
   --pb-call-history-fade-size: 0.85rem;
 }
 
@@ -794,7 +805,7 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
 .product-mobile-root.product-brown-mock
   .product-mobile-calls-pane--transcript
   .product-call-history-rail__composer {
-  padding: 0.4rem 0.9rem 0.55rem;
+  padding: 0.45rem var(--product-mobile-gutter-x) 0.6rem;
 }
 
 .product-mobile-root.product-brown-mock
@@ -804,7 +815,7 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
   align-items: center;
   justify-content: flex-start;
   gap: 0.4rem;
-  padding: 0.45rem 0.9rem 0.35rem;
+  padding: 0.5rem var(--product-mobile-gutter-x) 0.4rem;
   --pb-call-history-toolbar-height: 2rem;
 }
 
@@ -843,7 +854,7 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
 .product-mobile-root.product-brown-mock
   .product-mobile-calls-pane--transcript
   .product-call-history-rail__composer--collapsed {
-  padding: 0.35rem 0.9rem 0.55rem;
+  padding: 0.4rem var(--product-mobile-gutter-x) 0.6rem;
 }
 
 .product-mobile-root.product-brown-mock
@@ -971,7 +982,10 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
   overflow-y: visible;
   container-type: normal;
   gap: 0.85rem;
-  padding: 0.55rem 0.9rem 1.65rem;
+  padding:
+    var(--product-mobile-gutter-y)
+    var(--product-mobile-gutter-x)
+    calc(var(--product-mobile-gutter-y) + 0.85rem);
 }
 
 .product-mobile-root.product-brown-mock.product-brown-call-history-mode
@@ -1243,7 +1257,10 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: none;
   touch-action: pan-y;
-  padding: 0.75rem 1rem 1.25rem;
+  padding:
+    var(--product-mobile-gutter-y)
+    var(--product-mobile-gutter-x)
+    calc(var(--product-mobile-gutter-y) + 0.45rem);
   box-sizing: border-box;
 }
 
@@ -1290,7 +1307,10 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
   display: flex;
   flex-direction: column;
   gap: 0.7rem;
-  padding: 0.55rem 0.75rem 1.15rem;
+  padding:
+    calc(var(--product-mobile-gutter-y) - 0.08rem)
+    var(--product-mobile-gutter-x)
+    calc(var(--product-mobile-gutter-y) + 0.35rem);
 }
 
 .product-mobile-inbox--detail {
@@ -1853,9 +1873,9 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
 .product-mobile-tabbar {
   position: absolute;
   z-index: 30;
-  left: max(0.72rem, env(safe-area-inset-left, 0px));
-  right: max(0.72rem, env(safe-area-inset-right, 0px));
-  bottom: calc(0.55rem + env(safe-area-inset-bottom, 0px));
+  left: max(var(--product-mobile-gutter-x), env(safe-area-inset-left, 0px));
+  right: max(var(--product-mobile-gutter-x), env(safe-area-inset-right, 0px));
+  bottom: calc(0.62rem + env(safe-area-inset-bottom, 0px));
   flex-shrink: 0;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
