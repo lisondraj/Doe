@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { weekSchedule } from "@/components/doe-schedules-app-mock";
 import { ProductCallHistoryPanel } from "@/components/product/ProductCallHistoryPanel";
@@ -83,6 +83,30 @@ function SettingsIcon() {
   );
 }
 
+function ClinicChevronIcon() {
+  return (
+    <svg viewBox="0 0 12 12" fill="none" aria-hidden className="product-mobile-topbar__clinic-chevron">
+      <path d="M3 4.5 6 7.5 9 4.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+const PRODUCT_MOBILE_CLINICS = [
+  { name: "Northside Family Clinic", address: "1200 Oak Ave, Austin, TX" },
+  { name: "Riverside Primary Care", address: "412 River St, Austin, TX" },
+  { name: "Westlake Medical Group", address: "89 Lakeview Dr, Austin, TX" },
+] as const;
+
+function clinicInitials(name: string) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase();
+}
+
 function ProductMobileSchedulePanel() {
   const day = weekSchedule[0];
 
@@ -138,6 +162,11 @@ export function ProductMobileView() {
   useDoePhoneStableViewport(true);
   const [tab, setTab] = useState<ProductMobileTab>("today");
   const [convoView, setConvoView] = useState<CallHistoryConvoView>("full");
+  const [selectedClinic, setSelectedClinic] = useState<(typeof PRODUCT_MOBILE_CLINICS)[number]>(
+    PRODUCT_MOBILE_CLINICS[0],
+  );
+  const [clinicMenuOpen, setClinicMenuOpen] = useState(false);
+  const clinicMenuRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     applyPhoneOverflowChrome("#1a1208");
@@ -148,6 +177,17 @@ export function ProductMobileView() {
     }
   }, []);
 
+  useEffect(() => {
+    if (!clinicMenuOpen) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (!clinicMenuRef.current?.contains(event.target as Node)) {
+        setClinicMenuOpen(false);
+      }
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [clinicMenuOpen]);
+
   return (
     <div
       className={`product-mobile-root product-brown-mock${tab === "calls" ? " product-brown-call-history-mode" : ""} ${lora.className}`}
@@ -156,9 +196,58 @@ export function ProductMobileView() {
       <header className="product-mobile-topbar">
         <p className={`product-mobile-topbar__wordmark ${lora.className}`}>Doe</p>
         <div className="product-mobile-topbar__end">
-          <div className={`product-mobile-topbar__clinic-block ${suisseIntl.className}`}>
-            <span className="product-mobile-topbar__clinic-label">Clinic</span>
-            <span className="product-mobile-topbar__clinic">Westside Family</span>
+          <div className="product-mobile-topbar__clinic-wrap" ref={clinicMenuRef}>
+            <button
+              type="button"
+              className={`product-mobile-topbar__clinic-btn ${suisseIntl.className}${
+                clinicMenuOpen ? " product-mobile-topbar__clinic-btn--open" : ""
+              }`}
+              aria-haspopup="menu"
+              aria-expanded={clinicMenuOpen}
+              onClick={() => setClinicMenuOpen((open) => !open)}
+            >
+              <span className="product-mobile-topbar__clinic-avatar" aria-hidden>
+                {clinicInitials(selectedClinic.name)}
+              </span>
+              <span className="product-mobile-topbar__clinic-copy">
+                <span className="product-mobile-topbar__clinic-label">Clinic</span>
+                <span className="product-mobile-topbar__clinic">{selectedClinic.name}</span>
+              </span>
+              <ClinicChevronIcon />
+            </button>
+            {clinicMenuOpen ? (
+              <div className="product-mobile-topbar__clinic-menu" role="menu" aria-label="Select clinic">
+                {PRODUCT_MOBILE_CLINICS.map((clinic) => {
+                  const active = clinic.name === selectedClinic.name;
+                  return (
+                    <button
+                      key={clinic.name}
+                      type="button"
+                      role="menuitem"
+                      className={`product-mobile-topbar__clinic-option${
+                        active ? " product-mobile-topbar__clinic-option--active" : ""
+                      }`}
+                      onClick={() => {
+                        setSelectedClinic(clinic);
+                        setClinicMenuOpen(false);
+                      }}
+                    >
+                      <span className="product-mobile-topbar__clinic-avatar" aria-hidden>
+                        {clinicInitials(clinic.name)}
+                      </span>
+                      <span className="product-mobile-topbar__clinic-option-copy">
+                        <span className={`product-mobile-topbar__clinic-option-name ${dmSans.className}`}>
+                          {clinic.name}
+                        </span>
+                        <span className={`product-mobile-topbar__clinic-option-address ${suisseIntl.className}`}>
+                          {clinic.address}
+                        </span>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            ) : null}
           </div>
           <button type="button" className="product-mobile-topbar__settings" aria-label="Settings">
             <SettingsIcon />
