@@ -467,6 +467,9 @@ html[data-motion4-page] body {
   z-index: 2;
   transform-origin: center center;
   will-change: transform, filter, opacity;
+  /* Descenders on gradient-clipped hero lines need a little room before the mask edge. */
+  padding-bottom: 12px;
+  box-sizing: border-box;
 }
 
 .motion4-kinetic-track {
@@ -487,13 +490,16 @@ html[data-motion4-page] body {
   justify-content: center;
   margin: 0;
   transform-origin: center center;
+  overflow: visible;
+  box-sizing: content-box;
+  padding-bottom: 0.08em;
 }
 
 .motion4-kinetic-track.motion4-kinetic--hero .motion4-kinetic__line--slot {
   font-size: clamp(72px, 8vw, 108px);
   font-weight: 400;
   letter-spacing: -0.04em;
-  line-height: 1;
+  line-height: 1.1;
   color: rgba(242, 232, 218, 0.36);
 }
 
@@ -3726,6 +3732,14 @@ html[data-motion4-page] body {
   position: absolute;
   inset: 0;
   overflow: hidden;
+}
+
+.motion4-remotion-root .motion4-intro-shader-root,
+.motion4-remotion-root .motion4-intro-shader-wrap .proto-shader-surface {
+  width: 100%;
+  height: 100%;
+  min-width: 100%;
+  min-height: 100%;
 }
 
 .motion4-intro-shader-wrap {

@@ -79,6 +79,8 @@ export function DoePhoneHomeHeroGrainShader({
   presetOverrides,
   animate = true,
   forceVisible = false,
+  /** Remotion export — drive ShaderMount time from the composition frame (ms). */
+  remotionFrameMs,
   onMount,
 }: {
   variant: ProtoGrainGradientVariant;
@@ -90,6 +92,8 @@ export function DoePhoneHomeHeroGrainShader({
   animate?: boolean;
   /** Remotion export — skip IntersectionObserver visibility gate. */
   forceVisible?: boolean;
+  /** Remotion export — seek-safe shader time in milliseconds. */
+  remotionFrameMs?: number;
   /** Fired once ShaderMount succeeds (Remotion delayRender handshake). */
   onMount?: () => void;
 }) {
@@ -108,7 +112,9 @@ export function DoePhoneHomeHeroGrainShader({
   const [reducedMotion, setReducedMotion] = useState(false);
 
   const targetSpeed = preset.speed ?? PROTO_GRAIN_GRADIENT_SPEED;
-  const shouldAnimate = animate && !reducedMotion && targetSpeed > 0 && isVisible && tabVisible;
+  const remotionDriven = remotionFrameMs != null;
+  const shouldAnimate =
+    !remotionDriven && animate && !reducedMotion && targetSpeed > 0 && isVisible && tabVisible;
 
   const resetShader = useCallback(() => {
     mountRef.current?.dispose();
@@ -125,6 +131,11 @@ export function DoePhoneHomeHeroGrainShader({
       return;
     }
 
+    if (forceVisible) {
+      setContainerReady(true);
+      return;
+    }
+
     const syncReady = () => {
       setContainerReady(isShaderMountContainerReady(node));
     };
@@ -133,7 +144,7 @@ export function DoePhoneHomeHeroGrainShader({
     const observer = new ResizeObserver(syncReady);
     observer.observe(node);
     return () => observer.disconnect();
-  }, [shaderGeneration]);
+  }, [forceVisible, shaderGeneration]);
 
   useLayoutEffect(() => {
     const node = containerRef.current;
@@ -152,21 +163,27 @@ export function DoePhoneHomeHeroGrainShader({
     });
 
     const maxPixelCount = protoHomeHeroBackgroundMaxPixelCount(variant);
+    const mountFrameMs = remotionFrameMs ?? 0;
 
     try {
       mountRef.current = new ShaderMount(
         node,
         grainGradientFragmentShader,
         uniforms,
-        undefined,
-        shouldAnimate ? targetSpeed : 0,
-        0,
+        forceVisible ? { preserveDrawingBuffer: true } : undefined,
+        remotionDriven ? 0 : shouldAnimate ? targetSpeed : 0,
+        mountFrameMs,
         PROTO_GRAIN_SHADER_MIN_PIXEL_RATIO,
         maxPixelCount,
       );
+      if (remotionDriven) {
+        mountRef.current.setFrame(mountFrameMs);
+        mountRef.current.setMaxPixelCount(maxPixelCount);
+      }
     } catch {
       releaseShaderWebGLSlot(DOEPHONE_HOME_HERO_SHADER_SLOT);
       setHomeHeroBackgroundReady(false);
+      onMount?.();
       return;
     }
 
@@ -188,7 +205,15 @@ export function DoePhoneHomeHeroGrainShader({
     resolvedColorBack,
     shaderGeneration,
     variant,
+    remotionFrameMs,
+    shouldAnimate,
+    targetSpeed,
   ]);
+
+  useLayoutEffect(() => {
+    if (!remotionDriven || !mountRef.current || remotionFrameMs == null) return;
+    mountRef.current.setFrame(remotionFrameMs);
+  }, [remotionDriven, remotionFrameMs, shaderGeneration]);
 
   useEffect(() => {
     if (!mountRef.current) {
@@ -199,8 +224,9 @@ export function DoePhoneHomeHeroGrainShader({
   }, [variant]);
 
   useEffect(() => {
-    mountRef.current?.setSpeed(shouldAnimate ? targetSpeed : 0);
-  }, [shouldAnimate, targetSpeed]);
+    if (!mountRef.current || remotionDriven) return;
+    mountRef.current.setSpeed(shouldAnimate ? targetSpeed : 0);
+  }, [remotionDriven, shouldAnimate, targetSpeed]);
 
   useShaderContextRecovery(containerRef, containerReady && noiseTexture != null, resetShader);
 
@@ -213,11 +239,13 @@ export function DoePhoneHomeHeroGrainShader({
   }, []);
 
   useEffect(() => {
+    if (forceVisible) return undefined;
+
     const sync = () => setTabVisible(document.visibilityState === "visible");
     sync();
     document.addEventListener("visibilitychange", sync);
     return () => document.removeEventListener("visibilitychange", sync);
-  }, []);
+  }, [forceVisible]);
 
   useEffect(() => {
     if (forceVisible) {
@@ -241,7 +269,11 @@ export function DoePhoneHomeHeroGrainShader({
     <div
       ref={containerRef}
       className={`proto-shader-surface pointer-events-none absolute inset-0 overflow-hidden ${className}`.trim()}
-      style={{ backgroundColor: resolvedColorBack }}
+      style={{
+        backgroundColor: resolvedColorBack,
+        width: forceVisible ? "100%" : undefined,
+        height: forceVisible ? "100%" : undefined,
+      }}
       aria-hidden
     />
   );

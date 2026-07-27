@@ -219,7 +219,7 @@ export const DOE_INTRO_MUSIC_DUCK_LEVEL = 0.22;
 /** Background music master — 1/3 quieter than prior bed level. */
 export const DOE_INTRO_BG_MUSIC_GAIN = 2 / 3;
 /** Sarah / agent voice clips — boosted above default so they sit above ducked bed. */
-export const DOE_SARAH_VOICE_VOLUME = 9;
+export const DOE_SARAH_VOICE_VOLUME = 2.25;
 /** Remotion Player shared `<Audio />` pool — bg + incoming SFX + 9 voice tags. */
 export const DOE_INTRO_SHARED_AUDIO_TAGS = 11;
 export const DOE_SARAH_CONVO_LAST_TURN_END =

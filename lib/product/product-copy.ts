@@ -118,7 +118,7 @@ export const PRODUCT_LANDING_LIVE_CONVO = [
     callDuration: "0m6s",
     callDurationIso: "PT0M6S",
     lines: [
-      { before: "Hi, this is ", tag: "Sarah", after: ". I need a" },
+      { before: "Hi, this is ", tag: "Sarah Westfield", after: ". I need a" },
       { before: "refill visit for my ", tag: "Metformin" },
     ],
   },

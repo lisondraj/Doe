@@ -5,7 +5,7 @@ import { suisseIntl } from "@/remotion/fonts";
 import { DOE_LAUNCH_GOLD_GRADIENT } from "../constants";
 import { DOE_KINETIC_SWIPE_EASE, DOE_PREMIUM_EASE } from "../intro-transitions";
 
-const LINE_HEIGHT = 112;
+const LINE_HEIGHT = 136;
 
 function computeScrollProgress(
   frame: number,
