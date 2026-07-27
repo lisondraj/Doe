@@ -252,7 +252,118 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
 }
 
 /*
- * Calls tab: desktop absolute mosaic → phone scroll stack.
+ * Calls tab: split screen —
+ * top = call transcript (rail scroll), bottom = Sarah chart (own scroll).
+ */
+.product-mobile-embed--calls {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  -webkit-overflow-scrolling: auto;
+}
+
+.product-mobile-calls-pane {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 50%;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.product-mobile-calls-pane--transcript {
+  flex: 1 1 48%;
+  border-bottom: 1px solid rgba(245, 230, 208, 0.12);
+}
+
+.product-mobile-calls-pane--chart {
+  flex: 1 1 52%;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.product-mobile-root.product-brown-mock
+  .product-mobile-calls-pane--transcript
+  .product-brown-sidebar.product-brown-call-history-rail,
+.product-mobile-root.product-brown-mock
+  .product-mobile-calls-pane--transcript
+  .product-brown-call-history-rail {
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  height: 100%;
+  align-self: stretch;
+  flex: 1 1 auto;
+  overflow: hidden;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.product-mobile-root.product-brown-mock
+  .product-mobile-calls-pane--transcript
+  .product-brown-call-history-rail {
+  --pb-call-history-thread-pad-top: 0.55rem;
+  --pb-call-history-thread-pad-x: 0.9rem;
+  --pb-call-history-thread-pad-bottom: 0.7rem;
+  --pb-call-history-fade-size: 1.15rem;
+}
+
+.product-mobile-root.product-brown-mock
+  .product-mobile-calls-pane--transcript
+  .product-call-history-rail__surface {
+  height: 100%;
+  min-height: 0;
+}
+
+.product-mobile-root.product-brown-mock
+  .product-mobile-calls-pane--transcript
+  .product-call-history-rail__toolbar {
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  padding: 0.55rem 0.9rem 0.45rem;
+  --pb-call-history-toolbar-height: auto;
+}
+
+.product-mobile-root.product-brown-mock
+  .product-mobile-calls-pane--transcript
+  .product-call-history-rail__actions {
+  display: none;
+}
+
+.product-mobile-root.product-brown-mock
+  .product-mobile-calls-pane--transcript
+  .product-call-history-rail__composer {
+  padding: 0.45rem 0.9rem 0.65rem;
+}
+
+.product-mobile-root.product-brown-mock
+  .product-mobile-calls-pane--transcript
+  .product-call-history-rail__scroll {
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.product-mobile-root.product-brown-mock
+  .product-mobile-calls-pane--transcript
+  .product-call-history-rail__thread.product-landing-live-thread {
+  padding-left: var(--pb-call-history-thread-pad-x) !important;
+  padding-right: var(--pb-call-history-thread-pad-x) !important;
+}
+
+.product-mobile-root.product-brown-mock
+  .product-mobile-calls-pane--transcript
+  .product-landing-live-quote__text {
+  font-size: clamp(1.05rem, 0.9rem + 1.8vw, 1.28rem);
+  line-height: 1.28;
+}
+
+/*
+ * Chart pane: desktop absolute mosaic → phone scroll stack.
  * Selectors beat .product-brown-mock.product-brown-call-history-mode rules.
  */
 .product-mobile-root.product-brown-mock.product-brown-call-history-mode

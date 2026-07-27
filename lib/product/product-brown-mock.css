@@ -3152,3 +3152,30 @@ html[data-product-page="true"] .product-call-preview__bubble--agent {
   --pi-divider: rgba(38, 32, 28, 0.07);
   --pi-landing-header-bg: #e2ded6;
 }
+
+/*
+ * /product desktop Today — bottom call history is not clipped to a fixed box.
+ * Workspace scrolls the full transcript (no stage overflow / fade mask).
+ * Scoped to product page desktop only (not product2, not iPhone).
+ */
+html[data-product-page="true"][data-layout="desktop"]
+  .product-brown-mock.product-brown-landing-mode
+  .product-landing-live-thread {
+  flex: 0 0 auto;
+  height: auto;
+  min-height: min-content;
+  grid-template-rows: auto auto auto;
+}
+
+html[data-product-page="true"][data-layout="desktop"]
+  .product-brown-mock.product-brown-landing-mode
+  .product-landing-live-convo-stage {
+  overflow: visible;
+}
+
+html[data-product-page="true"][data-layout="desktop"]
+  .product-brown-mock.product-brown-landing-mode
+  .product-landing-live-convo {
+  -webkit-mask-image: none;
+  mask-image: none;
+}

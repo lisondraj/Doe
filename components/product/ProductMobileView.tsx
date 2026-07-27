@@ -4,6 +4,7 @@ import { useLayoutEffect, useState } from "react";
 
 import { weekSchedule } from "@/components/doe-schedules-app-mock";
 import { ProductCallHistoryPanel } from "@/components/product/ProductCallHistoryPanel";
+import { ProductCallHistoryRightRail } from "@/components/product/ProductCallHistoryRightRail";
 import { ProductLandingPanel } from "@/components/product/ProductLandingPanel";
 import { applyPhoneOverflowChrome } from "@/lib/doephone/phone-layout-viewport";
 import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-viewport";
@@ -145,7 +146,18 @@ export function ProductMobileView() {
         ) : null}
         {tab === "calls" ? (
           <div className="product-mobile-embed product-mobile-embed--calls">
-            <ProductCallHistoryPanel onBack={() => setTab("today")} />
+            <section
+              className="product-mobile-calls-pane product-mobile-calls-pane--transcript"
+              aria-label="Call transcript"
+            >
+              <ProductCallHistoryRightRail />
+            </section>
+            <section
+              className="product-mobile-calls-pane product-mobile-calls-pane--chart"
+              aria-label="Patient chart"
+            >
+              <ProductCallHistoryPanel onBack={() => setTab("today")} />
+            </section>
           </div>
         ) : null}
         {tab === "schedule" ? <ProductMobileSchedulePanel /> : null}
