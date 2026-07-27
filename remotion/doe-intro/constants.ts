@@ -154,7 +154,7 @@ export const DOE_SARAH_INCOMING_CALL_AUDIO_TRIM_FRAMES = Math.ceil(
   DOE_SARAH_INCOMING_CALL_AUDIO_SEC * DOE_INTRO_FPS,
 );
 export const DOE_SARAH_INCOMING_CALL_AUDIO_SRC = "motion/sarah-incoming-call.wav";
-export const DOE_SARAH_INCOMING_CALL_VOLUME = 26;
+export const DOE_SARAH_INCOMING_CALL_VOLUME = 13;
 export const DOE_SARAH_INTRO_TURN_COUNT = 9;
 export const DOE_SARAH_CONVO_UI_OFFSET = 4;
 
@@ -216,10 +216,10 @@ export const DOE_SARAH_CALLER_THANKS_AUDIO_FROM =
 /** Background music ducks when Sarah’s opening line appears (scene-local frame). */
 export const DOE_INTRO_MUSIC_DUCK_FADE_FRAMES = 18;
 export const DOE_INTRO_MUSIC_DUCK_LEVEL = 0.22;
-/** Background music master — 1/3 quieter than prior bed level. */
-export const DOE_INTRO_BG_MUSIC_GAIN = 2 / 3;
+/** Background music master — half of prior bed level. */
+export const DOE_INTRO_BG_MUSIC_GAIN = 1 / 3;
 /** Sarah / agent voice clips — boosted above default so they sit above ducked bed. */
-export const DOE_SARAH_VOICE_VOLUME = 2.25;
+export const DOE_SARAH_VOICE_VOLUME = 1.125;
 /** Remotion Player shared `<Audio />` pool — bg + incoming SFX + 9 voice tags. */
 export const DOE_INTRO_SHARED_AUDIO_TAGS = 11;
 export const DOE_SARAH_CONVO_LAST_TURN_END =
