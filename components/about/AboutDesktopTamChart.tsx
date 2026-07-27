@@ -1,6 +1,5 @@
 import {
   ABOUT_DESKTOP_CHART_CITATION_TW,
-  ABOUT_DESKTOP_CHART_JOINT_CAPTION_TW,
   ABOUT_DESKTOP_PIE_CHART_TITLE_TW,
 } from "@/lib/about/about-layout-styles";
 import { ABOUT_MOBILE_TAM_CHART } from "@/lib/about/about-page-article";
@@ -15,6 +14,16 @@ const TAM_Y_TICKS = [0, 7, 14, 21, 28] as const;
 const TAM_GOLD_AXIS = "rgba(232, 192, 142, 0.28)";
 const TAM_GOLD_GRID = "rgba(232, 192, 142, 0.12)";
 
+/** Shorter axis labels so six bars fit the desktop half-column without overlap. */
+const DESKTOP_TAM_AXIS_LABELS: Record<string, string> = {
+  "Canadian doctors": "CA docs",
+  "Canadian health providers": "CA providers",
+  "U.S. doctors": "US docs",
+  "U.S. health providers": "US providers",
+  "Canada + U.S. doctors": "CA+US docs",
+  "Canada + U.S. health providers": "CA+US providers",
+};
+
 function formatTamAxis(value: number) {
   return value === 0 ? "0" : value >= 10 ? `$${value}B` : `$${value.toFixed(0)}B`;
 }
@@ -24,14 +33,14 @@ export function AboutDesktopTamChart() {
   const bars = ABOUT_MOBILE_TAM_CHART.bars;
 
   return (
-    <figure className="about-stat-charts min-h-0">
+    <figure className="about-stat-charts about-desktop-tam shrink-0">
       <figcaption
-        className={`mb-5 font-medium leading-snug tracking-[-0.01em] text-[#F2E8DA] md:mb-6 ${dmSans.className} ${ABOUT_DESKTOP_PIE_CHART_TITLE_TW}`}
+        className={`mb-4 font-medium leading-snug tracking-[-0.01em] text-[#F2E8DA] md:mb-5 ${dmSans.className} ${ABOUT_DESKTOP_PIE_CHART_TITLE_TW}`}
       >
         {ABOUT_MOBILE_TAM_CHART.title}
       </figcaption>
 
-      <div className="aspect-[5/4] w-full max-h-[min(100%,22rem)]">
+      <div className="aspect-[5/4] w-full max-h-[min(100%,20rem)]">
         <div className="grid h-full grid-cols-[clamp(2.75rem,2.2vw,3.35rem)_minmax(0,1fr)] grid-rows-[minmax(0,1fr)_auto] gap-x-3">
           <div className="relative col-start-1 row-start-1">
             {TAM_Y_TICKS.slice()
@@ -85,9 +94,10 @@ export function AboutDesktopTamChart() {
             {bars.map((bar) => (
               <span
                 key={`${bar.label}-label`}
-                className={`min-w-0 flex-1 text-center font-normal leading-[1.15] tracking-[-0.01em] text-[#F2E8DA]/72 ${inter.className} text-[clamp(0.78rem,0.72vw,0.92rem)] md:text-[clamp(0.84rem,0.76vw,0.98rem)]`}
+                className={`about-desktop-tam__axis-label min-w-0 flex-1 text-center font-normal leading-[1.15] tracking-[-0.01em] text-[#F2E8DA]/72 ${inter.className} text-[clamp(0.72rem,0.66vw,0.86rem)] md:text-[clamp(0.78rem,0.7vw,0.92rem)]`}
+                title={bar.label}
               >
-                {bar.label}
+                {DESKTOP_TAM_AXIS_LABELS[bar.label] ?? bar.label}
               </span>
             ))}
           </div>
@@ -95,11 +105,11 @@ export function AboutDesktopTamChart() {
       </div>
 
       <div
-        className="mt-5 border px-4 py-4 md:mt-6 md:px-5 md:py-5"
+        className="mt-4 border px-4 py-3.5 md:mt-5 md:px-5 md:py-4"
         style={{ borderColor: TAM_GOLD_AXIS }}
       >
         <p
-          className={`font-medium leading-none tracking-[-0.03em] ${suisseIntl.className} text-[clamp(2.35rem,2.15vw,3.05rem)] md:text-[clamp(2.65rem,2.35vw,3.35rem)]`}
+          className={`font-medium leading-none tracking-[-0.03em] ${suisseIntl.className} text-[clamp(2.15rem,1.95vw,2.75rem)] md:text-[clamp(2.35rem,2.1vw,2.95rem)]`}
           style={{
             background: "linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.82) 100%)",
             backgroundClip: "text",
@@ -111,19 +121,18 @@ export function AboutDesktopTamChart() {
           ${ABOUT_MOBILE_TAM_CHART.highlight.valueB}B
         </p>
         <p
-          className={`mt-2 font-medium leading-snug tracking-[-0.02em] text-[#F2E8DA] md:mt-2.5 ${dmSans.className} text-[clamp(1.08rem,1vw,1.28rem)] md:text-[clamp(1.18rem,1.05vw,1.38rem)]`}
+          className={`mt-1.5 font-medium leading-snug tracking-[-0.02em] text-[#F2E8DA] md:mt-2 ${dmSans.className} text-[clamp(1.02rem,0.95vw,1.18rem)] md:text-[clamp(1.08rem,0.98vw,1.28rem)]`}
         >
           {ABOUT_MOBILE_TAM_CHART.highlight.tamLabel}
         </p>
         <p
-          className={`mt-1.5 font-normal leading-snug md:mt-2 ${inter.className} text-[clamp(0.98rem,0.9vw,1.12rem)] md:text-[clamp(1.05rem,0.95vw,1.18rem)]`}
+          className={`mt-1 font-normal leading-snug md:mt-1.5 ${inter.className} text-[clamp(0.92rem,0.85vw,1.05rem)] md:text-[clamp(0.98rem,0.9vw,1.12rem)]`}
           style={{ color: ABOUT_IPHONE_SHADER_CHART_PRIMARY }}
         >
           {ABOUT_MOBILE_TAM_CHART.highlight.headline}
         </p>
       </div>
 
-      <p className={ABOUT_DESKTOP_CHART_JOINT_CAPTION_TW}>{ABOUT_MOBILE_TAM_CHART.caption}</p>
       <p className={ABOUT_DESKTOP_CHART_CITATION_TW}>{ABOUT_MOBILE_TAM_CHART.citation}</p>
     </figure>
   );

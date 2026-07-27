@@ -40,7 +40,6 @@ import {
   ABOUT_PAGE_SUBHEADING,
 } from "@/lib/about/about-layout-styles";
 import {
-  ABOUT_PAGE_ARTICLE,
   ABOUT_DESKTOP_FOUNDERS_PARAGRAPHS,
   ABOUT_DESKTOP_SECTION_2_BULLETS,
   ABOUT_DESKTOP_SECTION_2_INTRO,
@@ -51,24 +50,9 @@ import {
   ABOUT_PAGE_MOBILE_BYLINE,
   ABOUT_PAGE_MOBILE_DATE,
 } from "@/lib/about/about-page-article";
-import type { ArticleBlock } from "@/lib/blog/articles";
-
-function getAboutDesktopArticleSections(body: readonly ArticleBlock[]) {
-  const productCopy = body.slice(5, 8);
-
-  if (productCopy.length !== 3 || !productCopy.every((block) => block.type === "p")) {
-    throw new Error("About page article layout blocks are out of order");
-  }
-
-  return {
-    productParagraphs: productCopy.map((block) => (block.type === "p" ? block.text : "")),
-  };
-}
 
 /** Desktop /about — hero plus alternating beige-panel bands (pre-iPhone-scroll positioning). */
 export function AboutDesktopView() {
-  const sections = getAboutDesktopArticleSections(ABOUT_PAGE_ARTICLE.body);
-  const [productTwo, productThree] = sections.productParagraphs.slice(1);
   const [foundersOne, foundersTwo] = ABOUT_DESKTOP_FOUNDERS_PARAGRAPHS;
 
   return (
@@ -140,17 +124,17 @@ export function AboutDesktopView() {
             <AboutDesktopFaqTabs />
           </AboutDesktopSplitSection>
 
-          <AboutDesktopSplitSection boxSide="left" graphic={1} boxBleedToMargin>
-            <div className="about-desktop-section-scroll flex min-h-0 flex-col justify-center gap-8 md:gap-9 lg:gap-10">
+          <AboutDesktopSplitSection boxSide="left" graphic={1} boxBleedToMargin allowGrow>
+            <div className="about-desktop-section-scroll flex min-h-0 flex-col justify-center">
               <AboutDesktopTamChart />
-              <AboutDesktopAiAdoptionChart />
             </div>
           </AboutDesktopSplitSection>
 
-          <AboutDesktopSplitSection boxSide="left" graphic={3}>
+          <AboutDesktopSplitSection boxSide="left" graphic={3} allowGrow>
             <div
               className={`about-desktop-section-scroll flex min-h-0 flex-col justify-center ${ABOUT_DESKTOP_CONTENT_STACK_GAP}`}
             >
+              <AboutDesktopAiAdoptionChart />
               <AboutDesktopSectionHeadline lines={ABOUT_MOBILE_FOUNDERS_HEADLINE_LINES} />
               <AboutDesktopParagraph text={foundersOne} />
               <AboutDesktopParagraph text={foundersTwo} />
@@ -158,8 +142,6 @@ export function AboutDesktopView() {
                 text={ABOUT_MOBILE_FOUNDERS_QUOTE.text}
                 attribution={ABOUT_MOBILE_FOUNDERS_QUOTE.attribution}
               />
-              <AboutDesktopParagraph text={productTwo} />
-              <AboutDesktopParagraph text={productThree} />
             </div>
           </AboutDesktopSplitSection>
         </main>
