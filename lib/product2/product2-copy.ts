@@ -105,7 +105,7 @@ export const PRODUCT2_CALL_HISTORY_OPEN_TASKS = {
 export const PRODUCT2_CALL_HISTORY_MOSAIC_IPHONE = {
   medications: {
     label: PRODUCT2_CALL_HISTORY_MEDICATIONS.label,
-    items: ["Metformin XR", "Atorvastatin 20mg"] as const,
+    items: ["Metformin XR 500mg BID", "Atorvastatin 20mg", "Lisinopril 10mg"] as const,
   },
   visits: {
     label: PRODUCT2_CALL_HISTORY_RECENT_VISITS.label,
@@ -157,11 +157,22 @@ export const PRODUCT2_CALL_HISTORY_MOSAIC_IPHONE = {
         targetMin: 0,
         targetMax: 30,
       },
+      {
+        shortLabel: "eGFR",
+        value: "88",
+        unit: "mL/min",
+        trend: "Stable",
+        reading: 88,
+        scaleMin: 40,
+        scaleMax: 120,
+        targetMin: 60,
+        targetMax: 120,
+      },
     ],
   },
   conditions: {
     label: PRODUCT2_CALL_HISTORY_CONDITIONS.label,
-    items: ["Type 2 Diabetes", "Hypertension"] as const,
+    items: ["Type 2 Diabetes", "Hypertension", "Hyperlipidemia"] as const,
   },
   allergies: PRODUCT2_CALL_HISTORY_ALLERGIES,
 } as const;

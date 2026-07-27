@@ -291,9 +291,36 @@ html[data-home-page]:is(
   .product-call-history-mosaic--doehealth
   .product-call-history-mosaic__grid {
   container-type: size;
+  container-name: doehealth-mosaic;
   grid-template-columns: repeat(6, minmax(0, 1fr));
   grid-template-rows: repeat(6, minmax(0, 1fr));
-  gap: clamp(0.28rem, 0.82vmin, 0.42rem);
+  gap: clamp(0.28rem, 0.82cqmin, 0.52rem);
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  aspect-ratio: 1;
+}
+
+html[data-home-page]:is(
+    :has(.doephone-mobile-root--doehealth):not([data-layout="desktop"]),
+    [data-layout="desktop"]:has(.doe-desktop-root--doehealth)
+  )
+  .product-call-history-mosaic--doehealth {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+}
+
+html[data-home-page]:is(
+    :has(.doephone-mobile-root--doehealth):not([data-layout="desktop"]),
+    [data-layout="desktop"]:has(.doe-desktop-root--doehealth)
+  )
+  .product-call-history-mosaic--doehealth
+  .product-call-history-mosaic__cell {
+  display: flex;
+  flex-direction: column;
 }
 
 html[data-home-page]:is(
@@ -384,9 +411,11 @@ html[data-home-page]:is(
   .product-call-history-mosaic--doehealth
   .product-call-history-mosaic__cell
   > [class*="__"][class*="-card"] {
-  padding: clamp(0.58rem, 1.65vmin, 0.78rem) clamp(0.6rem, 1.7vmin, 0.82rem)
-    clamp(0.54rem, 1.55vmin, 0.72rem);
-  gap: clamp(0.28rem, 0.9vmin, 0.42rem);
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: clamp(0.52rem, 1.45cqmin, 0.88rem) clamp(0.54rem, 1.5cqmin, 0.92rem)
+    clamp(0.48rem, 1.35cqmin, 0.82rem);
+  gap: clamp(0.24rem, 0.82cqmin, 0.48rem);
   border-radius: 0.68rem;
 }
 
@@ -419,14 +448,46 @@ html[data-home-page]:is(
     [data-layout="desktop"]:has(.doe-desktop-root--doehealth)
   )
   .product-call-history-mosaic--doehealth
-  .product-call-history-panel__lab-row:nth-child(n + 4),
+  .product-call-history-panel__vitals-shell,
 html[data-home-page]:is(
     :has(.doephone-mobile-root--doehealth):not([data-layout="desktop"]),
     [data-layout="desktop"]:has(.doe-desktop-root--doehealth)
   )
   .product-call-history-mosaic--doehealth
-  .product-call-history-panel__vital-row:nth-child(n + 3) {
-  display: none;
+  .product-call-history-panel__labs-shell {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+html[data-home-page]:is(
+    :has(.doephone-mobile-root--doehealth):not([data-layout="desktop"]),
+    [data-layout="desktop"]:has(.doe-desktop-root--doehealth)
+  )
+  .product-call-history-mosaic--doehealth
+  .product-call-history-panel__vitals-visuals,
+html[data-home-page]:is(
+    :has(.doephone-mobile-root--doehealth):not([data-layout="desktop"]),
+    [data-layout="desktop"]:has(.doe-desktop-root--doehealth)
+  )
+  .product-call-history-mosaic--doehealth
+  .product-call-history-panel__labs-visuals {
+  justify-content: space-evenly;
+}
+
+html[data-home-page]:is(
+    :has(.doephone-mobile-root--doehealth):not([data-layout="desktop"]),
+    [data-layout="desktop"]:has(.doe-desktop-root--doehealth)
+  )
+  .product-call-history-mosaic--doehealth
+  .product-call-history-panel__vital-row,
+html[data-home-page]:is(
+    :has(.doephone-mobile-root--doehealth):not([data-layout="desktop"]),
+    [data-layout="desktop"]:has(.doe-desktop-root--doehealth)
+  )
+  .product-call-history-mosaic--doehealth
+  .product-call-history-panel__lab-row {
+  display: grid;
 }
 
 html[data-home-page]:is(
@@ -521,7 +582,7 @@ html[data-home-page]:is(
   .product-call-history-panel__visits-item {
   flex: 1 1 auto;
   align-items: center;
-  padding-block: clamp(0.34rem, 1.1vmin, 0.52rem);
+  padding-block: clamp(0.34rem, 1.1cqmin, 0.52rem);
   border-bottom: 0;
 }
 
@@ -534,7 +595,7 @@ html[data-home-page]:is(
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: clamp(0.34rem, 1vmin, 0.52rem);
+  gap: clamp(0.34rem, 1cqmin, 0.52rem);
 }
 
 html[data-home-page]:is(
@@ -547,7 +608,7 @@ html[data-home-page]:is(
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: clamp(0.22rem, 0.75vmin, 0.34rem);
+  gap: clamp(0.22rem, 0.75cqmin, 0.34rem);
   min-height: 0;
   padding-bottom: 0;
   border-bottom: 0;
@@ -570,7 +631,7 @@ html[data-home-page]:is(
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__tasks-shell {
   justify-content: flex-start;
-  gap: clamp(0.14rem, 0.45vmin, 0.22rem);
+  gap: clamp(0.14rem, 0.45cqmin, 0.22rem);
 }
 
 html[data-home-page]:is(
@@ -582,7 +643,7 @@ html[data-home-page]:is(
   flex: 1 1 auto;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(0.28rem, 0.82vmin, 0.42rem);
+  gap: clamp(0.28rem, 0.82cqmin, 0.42rem);
   align-items: stretch;
   min-height: 0;
 }
@@ -597,10 +658,10 @@ html[data-home-page]:is(
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
-  gap: clamp(0.24rem, 0.72vmin, 0.34rem);
+  gap: clamp(0.24rem, 0.72cqmin, 0.34rem);
   min-height: 0;
   height: 100%;
-  padding: clamp(0.18rem, 0.55vmin, 0.28rem) clamp(0.22rem, 0.68vmin, 0.32rem);
+  padding: clamp(0.18rem, 0.55cqmin, 0.28rem) clamp(0.22rem, 0.68cqmin, 0.32rem);
   border: 0;
   border-radius: 0.52rem;
   background: rgba(14, 10, 7, 0.24);
@@ -626,7 +687,7 @@ html[data-home-page]:is(
   .product-call-history-panel__tasks-item-copy {
   flex: 1 1 auto;
   min-width: 0;
-  gap: clamp(0.1rem, 0.32vmin, 0.16rem);
+  gap: clamp(0.1rem, 0.32cqmin, 0.16rem);
 }
 
 html[data-home-page]:is(
@@ -636,7 +697,7 @@ html[data-home-page]:is(
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__tasks-list.product-call-history-mosaic__copy--mobile
   .product-call-history-panel__tasks-item-title {
-  font-size: clamp(0.62rem, 2.1vmin, 0.76rem);
+  font-size: clamp(0.62rem, 2.1cqmin, 0.76rem);
   line-height: 1.14;
   white-space: nowrap;
   overflow: hidden;
@@ -650,7 +711,7 @@ html[data-home-page]:is(
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__tasks-list.product-call-history-mosaic__copy--mobile
   .product-call-history-panel__tasks-item-badge {
-  font-size: clamp(0.46rem, 1.45vmin, 0.54rem);
+  font-size: clamp(0.46rem, 1.45cqmin, 0.54rem);
   padding: 0.08rem 0.22rem;
   max-width: 100%;
   overflow: hidden;
@@ -664,8 +725,8 @@ html[data-home-page]:is(
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__tasks-list.product-call-history-mosaic__copy--mobile
   .product-call-history-panel__tasks-item-icon {
-  width: clamp(0.92rem, 2.85vmin, 1.08rem);
-  height: clamp(0.92rem, 2.85vmin, 1.08rem);
+  width: clamp(0.92rem, 2.85cqmin, 1.08rem);
+  height: clamp(0.92rem, 2.85cqmin, 1.08rem);
   flex-shrink: 0;
 }
 
@@ -677,8 +738,8 @@ html[data-home-page]:is(
   .product-call-history-panel__tasks-list.product-call-history-mosaic__copy--mobile
   .product-call-history-panel__tasks-item-icon
   svg {
-  width: clamp(0.54rem, 1.65vmin, 0.62rem);
-  height: clamp(0.54rem, 1.65vmin, 0.62rem);
+  width: clamp(0.54rem, 1.65cqmin, 0.62rem);
+  height: clamp(0.54rem, 1.65cqmin, 0.62rem);
 }
 
 html[data-home-page]:is(
@@ -698,8 +759,8 @@ html[data-home-page]:is(
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__visits-list.product-call-history-mosaic__copy--mobile
   .product-call-history-panel__visits-item {
-  gap: clamp(0.28rem, 0.82vmin, 0.4rem);
-  padding-block: clamp(0.18rem, 0.58vmin, 0.28rem);
+  gap: clamp(0.28rem, 0.82cqmin, 0.4rem);
+  padding-block: clamp(0.18rem, 0.58cqmin, 0.28rem);
 }
 
 html[data-home-page]:is(
@@ -709,8 +770,8 @@ html[data-home-page]:is(
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__visits-list.product-call-history-mosaic__copy--mobile
   .product-call-history-panel__visits-date {
-  width: clamp(1.55rem, 5.2vmin, 1.82rem);
-  flex: 0 0 clamp(1.55rem, 5.2vmin, 1.82rem);
+  width: clamp(1.55rem, 5.2cqmin, 1.82rem);
+  flex: 0 0 clamp(1.55rem, 5.2cqmin, 1.82rem);
 }
 
 html[data-home-page]:is(
@@ -727,7 +788,7 @@ html[data-home-page]:is(
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__visits-list.product-call-history-mosaic__copy--mobile
   .product-call-history-panel__visits-date-weekday {
-  font-size: clamp(0.38rem, 1.25vmin, 0.46rem);
+  font-size: clamp(0.38rem, 1.25cqmin, 0.46rem);
 }
 
 html[data-home-page]:is(
@@ -737,7 +798,7 @@ html[data-home-page]:is(
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__visits-list.product-call-history-mosaic__copy--mobile
   .product-call-history-panel__visits-date-day {
-  font-size: clamp(0.62rem, 2.05vmin, 0.74rem);
+  font-size: clamp(0.62rem, 2.05cqmin, 0.74rem);
 }
 
 html[data-home-page]:is(
@@ -747,7 +808,7 @@ html[data-home-page]:is(
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__visits-list.product-call-history-mosaic__copy--mobile
   .product-call-history-panel__visits-item-title {
-  font-size: clamp(0.56rem, 1.85vmin, 0.68rem);
+  font-size: clamp(0.56rem, 1.85cqmin, 0.68rem);
   line-height: 1.14;
 }
 
@@ -758,8 +819,8 @@ html[data-home-page]:is(
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__labs-visuals
   .product-call-history-panel__lab-row {
-  padding-block: clamp(0.16rem, 0.52vmin, 0.26rem);
-  gap: clamp(0.18rem, 0.55vmin, 0.28rem);
+  padding-block: clamp(0.16rem, 0.52cqmin, 0.26rem);
+  gap: clamp(0.18rem, 0.55cqmin, 0.28rem);
 }
 
 html[data-home-page]:is(
@@ -769,7 +830,7 @@ html[data-home-page]:is(
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__labs-visuals
   .product-call-history-panel__lab-caption-label {
-  font-size: clamp(0.5rem, 1.65vmin, 0.6rem);
+  font-size: clamp(0.5rem, 1.65cqmin, 0.6rem);
 }
 
 html[data-home-page]:is(
@@ -779,7 +840,7 @@ html[data-home-page]:is(
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__labs-visuals
   .product-call-history-panel__lab-caption-value {
-  font-size: clamp(0.6rem, 1.95vmin, 0.72rem);
+  font-size: clamp(0.6rem, 1.95cqmin, 0.72rem);
 }
 
 html[data-home-page]:is(
@@ -796,7 +857,7 @@ html[data-home-page]:is(
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__labs-visuals
   .product-call-history-panel__lab-caption-trend {
-  font-size: clamp(0.46rem, 1.45vmin, 0.54rem);
+  font-size: clamp(0.46rem, 1.45cqmin, 0.54rem);
 }
 
 html[data-home-page]:is(
@@ -806,7 +867,7 @@ html[data-home-page]:is(
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__labs-visuals
   .product-call-history-panel__lab-range {
-  height: clamp(0.72rem, 2.35vmin, 0.92rem);
+  height: clamp(0.72rem, 2.35cqmin, 0.92rem);
 }
 
 html[data-home-page]:is(
@@ -819,7 +880,7 @@ html[data-home-page]:is(
   flex: 1 1 auto;
   min-height: 0;
   justify-content: flex-start;
-  gap: clamp(0.12rem, 0.38vmin, 0.2rem);
+  gap: clamp(0.12rem, 0.38cqmin, 0.2rem);
 }
 
 html[data-home-page]:is(
@@ -870,7 +931,7 @@ html[data-home-page]:is(
   .product-call-history-panel__a1c-card
   .product-landing-live-quote__chart-profile-a1c-x-axis-labels
   .product-landing-live-quote__chart-profile-a1c-axis-label {
-  font-size: clamp(6px, 1.85vmin, 7.5px);
+  font-size: clamp(6px, 1.85cqmin, 7.5px);
   letter-spacing: 0;
 }
 
@@ -881,7 +942,7 @@ html[data-home-page]:is(
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__a1c-card
   .product-landing-live-quote__chart-profile-a1c-axis-label {
-  font-size: clamp(7px, 2.1vmin, 9px);
+  font-size: clamp(7px, 2.1cqmin, 9px);
 }
 
 html[data-home-page]:is(
@@ -901,7 +962,7 @@ html[data-home-page]:is(
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
-  font-size: clamp(9px, 2.45vmin, 11px);
+  font-size: clamp(9px, 2.45cqmin, 11px);
   font-weight: 600;
   letter-spacing: 0.08em;
   line-height: 1.2;
@@ -939,7 +1000,7 @@ html[data-home-page]:is(
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__tasks-label {
   color: rgba(228, 210, 184, 0.44);
-  font-size: clamp(7px, 1.95vmin, 8.5px);
+  font-size: clamp(7px, 1.95cqmin, 8.5px);
   font-weight: 600;
   letter-spacing: 0.1em;
   line-height: 1.15;
@@ -958,7 +1019,7 @@ html[data-home-page]:is(
   )
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__lab-caption-label {
-  font-size: clamp(0.58rem, 2vmin, 0.72rem);
+  font-size: clamp(0.58rem, 2cqmin, 0.72rem);
 }
 
 html[data-home-page]:is(
@@ -973,7 +1034,7 @@ html[data-home-page]:is(
   )
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__lab-caption-value {
-  font-size: clamp(0.72rem, 2.55vmin, 0.88rem);
+  font-size: clamp(0.72rem, 2.55cqmin, 0.88rem);
 }
 
 html[data-home-page]:is(
@@ -988,7 +1049,7 @@ html[data-home-page]:is(
   )
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__lab-caption-trend {
-  font-size: clamp(0.52rem, 1.85vmin, 0.64rem);
+  font-size: clamp(0.52rem, 1.85cqmin, 0.64rem);
 }
 
 html[data-home-page]:is(
@@ -1009,7 +1070,7 @@ html[data-home-page]:is(
   )
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__allergies-item {
-  font-size: clamp(0.72rem, 2.55vmin, 0.88rem);
+  font-size: clamp(0.72rem, 2.55cqmin, 0.88rem);
   line-height: 1.2;
 }
 
@@ -1019,7 +1080,7 @@ html[data-home-page]:is(
   )
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__tasks-item-title {
-  font-size: clamp(0.68rem, 2.35vmin, 0.82rem);
+  font-size: clamp(0.68rem, 2.35cqmin, 0.82rem);
 }
 
 html[data-home-page]:is(
@@ -1028,7 +1089,7 @@ html[data-home-page]:is(
   )
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__tasks-item-badge {
-  font-size: clamp(0.52rem, 1.85vmin, 0.62rem);
+  font-size: clamp(0.52rem, 1.85cqmin, 0.62rem);
 }
 
 html[data-home-page]:is(
@@ -1037,7 +1098,7 @@ html[data-home-page]:is(
   )
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__visits-item-title {
-  font-size: clamp(0.66rem, 2.35vmin, 0.8rem);
+  font-size: clamp(0.66rem, 2.35cqmin, 0.8rem);
 }
 
 html[data-home-page]:is(
@@ -1046,7 +1107,7 @@ html[data-home-page]:is(
   )
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__visits-item-when {
-  font-size: clamp(0.56rem, 2vmin, 0.68rem);
+  font-size: clamp(0.56rem, 2cqmin, 0.68rem);
 }
 
 html[data-home-page]:is(
@@ -1055,8 +1116,8 @@ html[data-home-page]:is(
   )
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__visits-date {
-  width: clamp(1.85rem, 6.5vmin, 2.2rem);
-  flex: 0 0 clamp(1.85rem, 6.5vmin, 2.2rem);
+  width: clamp(1.85rem, 6.5cqmin, 2.2rem);
+  flex: 0 0 clamp(1.85rem, 6.5cqmin, 2.2rem);
 }
 
 html[data-home-page]:is(
@@ -1065,7 +1126,7 @@ html[data-home-page]:is(
   )
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__visits-date-day {
-  font-size: clamp(0.76rem, 2.65vmin, 0.92rem);
+  font-size: clamp(0.76rem, 2.65cqmin, 0.92rem);
 }
 
 html[data-home-page]:is(
@@ -1074,8 +1135,8 @@ html[data-home-page]:is(
   )
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__tasks-item-icon {
-  width: clamp(1.12rem, 3.8vmin, 1.38rem);
-  height: clamp(1.12rem, 3.8vmin, 1.38rem);
+  width: clamp(1.12rem, 3.8cqmin, 1.38rem);
+  height: clamp(1.12rem, 3.8cqmin, 1.38rem);
 }
 
 html[data-home-page]:is(
@@ -1090,7 +1151,7 @@ html[data-home-page]:is(
   )
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__vital-spark {
-  height: clamp(1.15rem, 4.2vmin, 1.55rem);
+  height: clamp(1.15rem, 4.2cqmin, 1.55rem);
 }
 
 html[data-home-page]:is(
@@ -1099,7 +1160,7 @@ html[data-home-page]:is(
   )
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__lab-range {
-  height: clamp(1rem, 3.6vmin, 1.32rem);
+  height: clamp(1rem, 3.6cqmin, 1.32rem);
 }
 
 html[data-home-page]:is(
@@ -1120,4 +1181,173 @@ html[data-home-page]:is(
   .product-call-history-mosaic--doehealth
   .product-call-history-panel__labs-footer {
   display: none;
+}
+
+/* /doehealth — container-scaled density pass (fills tiles on desktop + mobile). */
+html[data-home-page]:is(
+    :has(.doephone-mobile-root--doehealth):not([data-layout="desktop"]),
+    [data-layout="desktop"]:has(.doe-desktop-root--doehealth)
+  )
+  .product-call-history-mosaic--doehealth
+  .product-call-history-panel__vital-row,
+html[data-home-page]:is(
+    :has(.doephone-mobile-root--doehealth):not([data-layout="desktop"]),
+    [data-layout="desktop"]:has(.doe-desktop-root--doehealth)
+  )
+  .product-call-history-mosaic--doehealth
+  .product-call-history-panel__lab-row {
+  grid-template-columns: clamp(1.4rem, 4.8cqmin, 2.15rem) minmax(0, 1fr) auto;
+  gap: clamp(0.24rem, 0.82cqmin, 0.46rem);
+}
+
+html[data-home-page]:is(
+    :has(.doephone-mobile-root--doehealth):not([data-layout="desktop"]),
+    [data-layout="desktop"]:has(.doe-desktop-root--doehealth)
+  )
+  .product-call-history-mosaic--doehealth
+  .product-call-history-panel__a1c-card {
+  --pb-chart-axis-width: clamp(1.35rem, 4.5cqmin, 2rem);
+  --pb-chart-axis-gap: clamp(0.22rem, 0.75cqmin, 0.4rem);
+}
+
+html[data-home-page]:is(
+    :has(.doephone-mobile-root--doehealth):not([data-layout="desktop"]),
+    [data-layout="desktop"]:has(.doe-desktop-root--doehealth)
+  )
+  .product-call-history-mosaic--doehealth
+  .product-call-history-panel__vitals-label {
+  font-size: clamp(9px, 2.85cqmin, 13px);
+}
+
+html[data-home-page]:is(
+    :has(.doephone-mobile-root--doehealth):not([data-layout="desktop"]),
+    [data-layout="desktop"]:has(.doe-desktop-root--doehealth)
+  )
+  .product-call-history-mosaic--doehealth
+  .product-call-history-panel__meds-label,
+html[data-home-page]:is(
+    :has(.doephone-mobile-root--doehealth):not([data-layout="desktop"]),
+    [data-layout="desktop"]:has(.doe-desktop-root--doehealth)
+  )
+  .product-call-history-mosaic--doehealth
+  .product-call-history-panel__visits-label,
+html[data-home-page]:is(
+    :has(.doephone-mobile-root--doehealth):not([data-layout="desktop"]),
+    [data-layout="desktop"]:has(.doe-desktop-root--doehealth)
+  )
+  .product-call-history-mosaic--doehealth
+  .product-call-history-panel__conditions-label,
+html[data-home-page]:is(
+    :has(.doephone-mobile-root--doehealth):not([data-layout="desktop"]),
+    [data-layout="desktop"]:has(.doe-desktop-root--doehealth)
+  )
+  .product-call-history-mosaic--doehealth
+  .product-call-history-panel__allergies-label,
+html[data-home-page]:is(
+    :has(.doephone-mobile-root--doehealth):not([data-layout="desktop"]),
+    [data-layout="desktop"]:has(.doe-desktop-root--doehealth)
+  )
+  .product-call-history-mosaic--doehealth
+  .product-call-history-panel__tasks-label {
+  font-size: clamp(7px, 2.2cqmin, 10px);
+}
+
+html[data-home-page]:is(
+    :has(.doephone-mobile-root--doehealth):not([data-layout="desktop"]),
+    [data-layout="desktop"]:has(.doe-desktop-root--doehealth)
+  )
+  .product-call-history-mosaic--doehealth
+  .product-call-history-panel__vital-caption-value,
+html[data-home-page]:is(
+    :has(.doephone-mobile-root--doehealth):not([data-layout="desktop"]),
+    [data-layout="desktop"]:has(.doe-desktop-root--doehealth)
+  )
+  .product-call-history-mosaic--doehealth
+  .product-call-history-panel__lab-caption-value {
+  font-size: clamp(0.74rem, 2.85cqmin, 1.08rem);
+}
+
+html[data-home-page]:is(
+    :has(.doephone-mobile-root--doehealth):not([data-layout="desktop"]),
+    [data-layout="desktop"]:has(.doe-desktop-root--doehealth)
+  )
+  .product-call-history-mosaic--doehealth
+  .product-call-history-panel__meds-item,
+html[data-home-page]:is(
+    :has(.doephone-mobile-root--doehealth):not([data-layout="desktop"]),
+    [data-layout="desktop"]:has(.doe-desktop-root--doehealth)
+  )
+  .product-call-history-mosaic--doehealth
+  .product-call-history-panel__conditions-item,
+html[data-home-page]:is(
+    :has(.doephone-mobile-root--doehealth):not([data-layout="desktop"]),
+    [data-layout="desktop"]:has(.doe-desktop-root--doehealth)
+  )
+  .product-call-history-mosaic--doehealth
+  .product-call-history-panel__allergies-item {
+  font-size: clamp(0.74rem, 2.85cqmin, 1.08rem);
+}
+
+html[data-home-page]:is(
+    :has(.doephone-mobile-root--doehealth):not([data-layout="desktop"]),
+    [data-layout="desktop"]:has(.doe-desktop-root--doehealth)
+  )
+  .product-call-history-mosaic--doehealth
+  .product-call-history-panel__tasks-list.product-call-history-mosaic__copy--mobile
+  .product-call-history-panel__tasks-item-title {
+  font-size: clamp(0.66rem, 2.35cqmin, 0.98rem);
+}
+
+html[data-home-page]:is(
+    :has(.doephone-mobile-root--doehealth):not([data-layout="desktop"]),
+    [data-layout="desktop"]:has(.doe-desktop-root--doehealth)
+  )
+  .product-call-history-mosaic--doehealth
+  .product-call-history-panel__visits-list.product-call-history-mosaic__copy--mobile
+  .product-call-history-panel__visits-item-title {
+  font-size: clamp(0.6rem, 2.05cqmin, 0.88rem);
+}
+
+html[data-home-page]:is(
+    :has(.doephone-mobile-root--doehealth):not([data-layout="desktop"]),
+    [data-layout="desktop"]:has(.doe-desktop-root--doehealth)
+  )
+  .product-call-history-mosaic--doehealth
+  .product-call-history-panel__vital-bp,
+html[data-home-page]:is(
+    :has(.doephone-mobile-root--doehealth):not([data-layout="desktop"]),
+    [data-layout="desktop"]:has(.doe-desktop-root--doehealth)
+  )
+  .product-call-history-mosaic--doehealth
+  .product-call-history-panel__vital-spark {
+  height: clamp(1.2rem, 4.8cqmin, 2rem);
+}
+
+html[data-home-page]:is(
+    :has(.doephone-mobile-root--doehealth):not([data-layout="desktop"]),
+    [data-layout="desktop"]:has(.doe-desktop-root--doehealth)
+  )
+  .product-call-history-mosaic--doehealth
+  .product-call-history-panel__lab-range {
+  height: clamp(1.05rem, 4.1cqmin, 1.72rem);
+}
+
+html[data-home-page]:is(
+    :has(.doephone-mobile-root--doehealth):not([data-layout="desktop"]),
+    [data-layout="desktop"]:has(.doe-desktop-root--doehealth)
+  )
+  .product-call-history-mosaic--doehealth
+  .product-call-history-panel__a1c-card
+  .product-landing-live-quote__chart-profile-a1c-axis-label {
+  font-size: clamp(7px, 2.35cqmin, 11px);
+}
+
+html[data-home-page]:is(
+    :has(.doephone-mobile-root--doehealth):not([data-layout="desktop"]),
+    [data-layout="desktop"]:has(.doe-desktop-root--doehealth)
+  )
+  .product-call-history-mosaic--doehealth
+  .product-call-history-panel__profile-shell {
+  justify-content: space-evenly;
+  gap: clamp(0.28rem, 0.95cqmin, 0.58rem);
 }
