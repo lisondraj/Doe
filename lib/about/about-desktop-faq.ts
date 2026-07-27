@@ -3,25 +3,26 @@ export type AboutDesktopFaqItem = {
   answer: string;
 };
 
+/** Shared /about four-tab accordion — iPhone + desktop. */
 export const ABOUT_DESKTOP_FAQ_ITEMS: readonly AboutDesktopFaqItem[] = [
   {
     question: "What is Doe?",
     answer:
-      "Doe is ambient clinical intelligence for frontline care. We listen during the visit, draft documentation with citations, and surface only what needs a clinician's eyes before sign-off, so teams spend less time charting and more time with patients.",
+      "Doe is a no-code agent builder for physicians. Clinicians design and deploy agents for their practice without writing code, so the tools that run the workday are shaped by the people who deliver care.",
   },
   {
-    question: "What makes us different?",
+    question: "Where do we start?",
     answer:
-      "Every sentence in a Doe draft links back to the moment in the conversation that supports it. Clinicians review evidence, not opaque output, with explicit pause, discard, and edit controls before anything lands in the record.",
+      "We start with voice agents. Physicians can stand up agents that listen, speak, and act across the visit and the inbox, then refine them as workflows change—without an engineering team in the loop.",
   },
   {
-    question: "Which countries do we serve?",
+    question: "What have we built?",
     answer:
-      "We are building for physicians and clinics in the United States and Canada first, where administrative load and documentation burden are reshaping how care is delivered on both sides of the border.",
+      "Once those voice agents are in place, Doe becomes a product with features built for doctors: documentation, scheduling, outreach, and chart-aware actions that sit beside the agents clinicians configure themselves.",
   },
   {
-    question: "Which professions do we support?",
+    question: "Where are we expanding?",
     answer:
-      "Doe starts with physicians in ambulatory and hospital-based practice, including primary care, internal medicine, and urgent care, with nursing and allied roles on the roadmap as triage and inbox workflows expand.",
+      "We plan to expand into more health-aligned agent categories—across clinical, administrative, and patient-facing work—so practices can grow a full agent stack on the same no-code foundation.",
   },
 ] as const;
