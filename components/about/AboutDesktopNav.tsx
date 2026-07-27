@@ -2,7 +2,14 @@
 
 import { DesktopPunchedSiteNav } from "@/components/nav/DesktopPunchedSiteNav";
 
-/** Desktop /about nav — always-punched dusk capsule (no hero morph). */
+/** Desktop /about nav — punched capsule with gold mail (matches iPhone /about). */
 export function AboutDesktopNav() {
-  return <DesktopPunchedSiteNav ariaLabel="Site" alwaysPunched />;
+  return (
+    <DesktopPunchedSiteNav
+      ariaLabel="Site"
+      alwaysPunched
+      navShowMailIcon
+      navShowInvestorsCta={false}
+    />
+  );
 }

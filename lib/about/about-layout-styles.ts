@@ -93,6 +93,12 @@ export const ABOUT_DESKTOP_HERO_DATE_TW = `mt-1 font-medium leading-none text-wh
 
 export const ABOUT_DESKTOP_ARTICLE_MAX_W = "max-w-[min(100%,54rem)]";
 
+/** Desktop /about — centered scroll column (mirrors iPhone section order). */
+export const ABOUT_DESKTOP_CONTENT_MAX_W = `${ABOUT_DESKTOP_ARTICLE_MAX_W} mx-auto w-full px-[var(--desktop-page-inset-x,2.5rem)]`;
+
+/** Desktop /about — scroll main clears banner + punched nav. */
+export const ABOUT_DESKTOP_SCROLL_MAIN_TW = "about-desktop-scroll w-full min-h-[100dvh]";
+
 /** One full-viewport /about desktop band. */
 export const ABOUT_DESKTOP_SECTION_H =
   "about-desktop-section box-border h-[100dvh] max-h-[100dvh] min-h-[100dvh] overflow-hidden";
