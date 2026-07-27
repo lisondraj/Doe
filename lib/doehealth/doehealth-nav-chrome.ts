@@ -5,10 +5,11 @@ import { useLayoutEffect, useState } from "react";
 import { isDoeHealthLandingPath } from "@/lib/doehealth/doehealth-landing-paths";
 import { isDesignersHost } from "@/lib/site-domains";
 
-/** /doehealth preview and doehealth.care root. */
+/** /doehealth, /about, and doehealth.care root — brown/gold nav chrome (mail morph, etc.). */
 export function isDoeHealthLandingNavContext(): boolean {
   if (typeof window === "undefined") return false;
   const path = window.location.pathname;
+  if (path === "/about") return true;
   if (isDoeHealthLandingPath(path)) return true;
   return isDesignersHost(window.location.hostname) && path === "/";
 }

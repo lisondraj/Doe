@@ -156,12 +156,12 @@ html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav .pro
   text-shadow: none !important;
 }
 
-/* Desktop /doehealth — dark brown logo on hero; gold fades in with punched nav shell. */
-html[data-home-page][data-layout="desktop"]
+/* Desktop /doehealth + /about — dark logo on hero; gold fades in with punched nav shell. */
+html[data-layout="desktop"]
   .doe-desktop-root--doehealth
   nav.desktop-punched-nav
   .proto-nav-chrome-logo,
-html[data-home-page][data-layout="desktop"]
+html[data-layout="desktop"]
   .doe-desktop-root--doehealth
   nav.desktop-punched-nav
   a.proto-nav-chrome-logo {
@@ -177,11 +177,11 @@ html[data-home-page][data-layout="desktop"]
   transition: none !important;
 }
 
-html[data-home-page][data-layout="desktop"]
+html[data-layout="desktop"]
   .doe-desktop-root--doehealth
   nav.desktop-punched-nav
   .proto-nav-chrome-logo::after,
-html[data-home-page][data-layout="desktop"]
+html[data-layout="desktop"]
   .doe-desktop-root--doehealth
   nav.desktop-punched-nav
   a.proto-nav-chrome-logo::after {
@@ -199,11 +199,11 @@ html[data-home-page][data-layout="desktop"]
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html[data-home-page][data-layout="desktop"]
+  html[data-layout="desktop"]
     .doe-desktop-root--doehealth
     nav.desktop-punched-nav
     .proto-nav-chrome-logo::after,
-  html[data-home-page][data-layout="desktop"]
+  html[data-layout="desktop"]
     .doe-desktop-root--doehealth
     nav.desktop-punched-nav
     a.proto-nav-chrome-logo::after {
@@ -297,10 +297,10 @@ html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav.prot
 }
 
 /*
- * Desktop /doehealth mail — hero: square brown box + gold icon only.
+ * Desktop /doehealth + /about mail — hero: square brown box + gold icon only.
  * Morphs to circular gold shell/fill with punched nav (--proto-nav-frost-shell-progress).
  */
-html[data-home-page][data-layout="desktop"]
+html[data-layout="desktop"]
   .doe-desktop-root--doehealth
   nav.desktop-punched-nav
   .proto-nav-chrome-actions
@@ -321,7 +321,7 @@ html[data-home-page][data-layout="desktop"]
   transition: none !important;
 }
 
-html[data-home-page][data-layout="desktop"]
+html[data-layout="desktop"]
   .doe-desktop-root--doehealth
   nav.desktop-punched-nav
   .proto-nav-chrome-actions
@@ -341,7 +341,7 @@ html[data-home-page][data-layout="desktop"]
   transition: none !important;
 }
 
-html[data-home-page][data-layout="desktop"]
+html[data-layout="desktop"]
   .doe-desktop-root--doehealth
   nav.desktop-punched-nav
   .proto-nav-chrome-actions
@@ -361,7 +361,7 @@ html[data-home-page][data-layout="desktop"]
   transition: none;
 }
 
-html[data-home-page][data-layout="desktop"]
+html[data-layout="desktop"]
   .doe-desktop-root--doehealth
   nav.desktop-punched-nav
   .proto-nav-chrome-actions
@@ -373,7 +373,7 @@ html[data-home-page][data-layout="desktop"]
   color: transparent !important;
 }
 
-html[data-home-page][data-layout="desktop"]
+html[data-layout="desktop"]
   .doe-desktop-root--doehealth
   nav.desktop-punched-nav
   .proto-nav-chrome-actions
@@ -391,18 +391,18 @@ html[data-home-page][data-layout="desktop"]
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html[data-home-page][data-layout="desktop"]
+  html[data-layout="desktop"]
     .doe-desktop-root--doehealth
     nav.desktop-punched-nav
     .proto-nav-chrome-actions
     .doehealth-nav-mail-shell,
-  html[data-home-page][data-layout="desktop"]
+  html[data-layout="desktop"]
     .doe-desktop-root--doehealth
     nav.desktop-punched-nav
     .proto-nav-chrome-actions
     .doehealth-nav-mail-shell
     > button,
-  html[data-home-page][data-layout="desktop"]
+  html[data-layout="desktop"]
     .doe-desktop-root--doehealth
     nav.desktop-punched-nav
     .proto-nav-chrome-actions

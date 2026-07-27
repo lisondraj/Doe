@@ -392,11 +392,9 @@ html[data-layout="desktop"] {
 /*
  * Desktop home + about — punched-out nav capsule (mirrors iPhone).
  * Home: --proto-nav-frost-progress driven by scroll (0 on hero → 1 beyond).
- * About: always punched via .proto-nav-always-punched.
+ * About: scroll-driven punch (same as home) via DesktopPunchedSiteNav.
  */
 html[data-about-page][data-layout="desktop"] {
-  --proto-nav-frost-progress: 1;
-  --proto-nav-frost-shell-progress: 1;
   --doe-chart-bar: #d4a574;
   --doe-chart-pie-1: #e8c08e;
   --doe-chart-pie-2: #d4a574;

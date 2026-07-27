@@ -2,12 +2,11 @@
 
 import { DesktopPunchedSiteNav } from "@/components/nav/DesktopPunchedSiteNav";
 
-/** Desktop /about nav — punched capsule with gold mail (matches iPhone /about). */
+/** Desktop /about nav — same scroll morph + gold mail as /doehealth. */
 export function AboutDesktopNav() {
   return (
     <DesktopPunchedSiteNav
       ariaLabel="Site"
-      alwaysPunched
       navShowMailIcon
       navShowInvestorsCta={false}
     />
