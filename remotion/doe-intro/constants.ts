@@ -34,7 +34,7 @@ export const DOE_SARAH_CONVO_TURN_STEP = 84;
 export const DOE_SARAH_CONVO_TURN_FADE = 14;
 export const DOE_SARAH_CONVO_TURN_START = 10;
 /** Hold after Sarah’s thank-you before dissolve into the final Doe screen. */
-export const DOE_SARAH_CONVO_END_HOLD = 96;
+export const DOE_SARAH_CONVO_END_HOLD = 36;
 /** Extra pause after each agent reply — 4× base post-fade hold (2× previous). */
 export const DOE_SARAH_CONVO_REPLY_HOLD_EXTRA = 2 * (DOE_SARAH_CONVO_TURN_STEP - DOE_SARAH_CONVO_TURN_FADE);
 export const DOE_SARAH_CONVO_REPLY_COUNT = 2;
