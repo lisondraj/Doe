@@ -12,9 +12,9 @@ import { dmSans, inter, lora, suisseIntl } from "@/lib/home/fonts";
 /** About page mission headline — matches iPhone main page section titles. */
 export const ABOUT_PAGE_TITLE_TW = `${DOEPHONE_SECTION_COPY_TW} text-[#1E343A] ${suisseIntl.className}`;
 
-/** Fundraising subheading — single paragraph under the mission title. */
+/** About page subheading — under the mission title (desktop + iPhone). */
 export const ABOUT_PAGE_SUBHEADING =
-  "We are registering as a Delaware C-corporation and preparing to raise a pre-seed round.";
+  "We believe intelligent tools can be used to reshape a patients access to care.";
 
 /** @deprecated Prefer ABOUT_PAGE_SUBHEADING — kept for any two-line call sites. */
 export const ABOUT_PAGE_SUBHEADING_LINES = [
