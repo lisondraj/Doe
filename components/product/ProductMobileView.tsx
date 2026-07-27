@@ -128,7 +128,10 @@ export function ProductMobileView() {
   }, []);
 
   return (
-    <div className={`product-mobile-root product-brown-mock ${lora.className}`} data-product-mobile="true">
+    <div
+      className={`product-mobile-root product-brown-mock${tab === "calls" ? " product-brown-call-history-mode" : ""} ${lora.className}`}
+      data-product-mobile="true"
+    >
       <header className="product-mobile-topbar">
         <p className={`product-mobile-topbar__wordmark ${lora.className}`}>Doe</p>
         <p className={`product-mobile-topbar__clinic ${suisseIntl.className}`}>Westside Family Clinic</p>
@@ -142,7 +145,7 @@ export function ProductMobileView() {
         ) : null}
         {tab === "calls" ? (
           <div className="product-mobile-embed product-mobile-embed--calls">
-            <ProductCallHistoryPanel />
+            <ProductCallHistoryPanel onBack={() => setTab("today")} />
           </div>
         ) : null}
         {tab === "schedule" ? <ProductMobileSchedulePanel /> : null}

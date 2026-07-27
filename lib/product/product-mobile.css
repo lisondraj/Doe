@@ -84,6 +84,46 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
 .product-mobile-embed--landing .product-landing-panel,
 .product-mobile-embed--calls .product-call-history-panel {
   background: transparent;
+  min-height: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.product-mobile-embed--calls .product-call-history-panel__body {
+  position: relative;
+  overflow: visible;
+  height: auto;
+  min-height: min(72vh, 40rem);
+}
+
+.product-mobile-embed--calls .product-call-history-panel__charts-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.product-mobile-embed--calls .product-call-history-panel__charts-col,
+.product-mobile-embed--calls .product-call-history-panel__charts-col--aside {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.product-mobile-embed--calls .product-call-history-panel__a1c-card,
+.product-mobile-embed--calls .product-call-history-panel__meds-card,
+.product-mobile-embed--calls .product-call-history-panel__visits-card,
+.product-mobile-embed--calls .product-call-history-panel__conditions-card,
+.product-mobile-embed--calls .product-call-history-panel__allergies-card,
+.product-mobile-embed--calls .product-call-history-panel__vitals-card,
+.product-mobile-embed--calls .product-call-history-panel__tasks-card,
+.product-mobile-embed--calls .product-call-history-panel__labs-card {
+  position: relative !important;
+  inset: auto !important;
+  width: 100% !important;
+  max-width: none !important;
+  height: auto !important;
+  min-height: 0 !important;
 }
 
 .product-mobile-panel {
