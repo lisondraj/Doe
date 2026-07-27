@@ -22,6 +22,9 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
   --pi-muted-soft: rgba(245, 230, 208, 0.55);
   --product-mobile-chrome: #1a1208;
   --product-mobile-chrome-raised: #221a12;
+  --product-mobile-tabbar-clearance: calc(
+    4.55rem + 0.55rem + env(safe-area-inset-bottom, 0px)
+  );
   --product-mobile-gold-text: linear-gradient(
     180deg,
     #f0d2a4 0%,
@@ -29,6 +32,7 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
     #d4a574 72%,
     rgba(212, 165, 116, 0.82) 100%
   );
+  position: relative;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -433,6 +437,8 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
   flex-direction: column;
   overscroll-behavior-x: none;
   touch-action: pan-y;
+  /* Clearance for floating pill tabbar — no full-width dock fill behind it. */
+  padding-bottom: var(--product-mobile-tabbar-clearance);
 }
 
 .product-mobile-embed {
@@ -1232,20 +1238,25 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
 }
 
 .product-mobile-tabbar {
+  position: absolute;
+  z-index: 30;
+  left: max(0.72rem, env(safe-area-inset-left, 0px));
+  right: max(0.72rem, env(safe-area-inset-right, 0px));
+  bottom: calc(0.55rem + env(safe-area-inset-bottom, 0px));
   flex-shrink: 0;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0.2rem;
-  margin:
-    0
-    max(0.72rem, env(safe-area-inset-right, 0px))
-    calc(0.55rem + env(safe-area-inset-bottom, 0px))
-    max(0.72rem, env(safe-area-inset-left, 0px));
+  margin: 0;
   padding: 0.42rem 0.4rem;
   border: 1px solid rgba(245, 230, 208, 0.12);
   border-radius: 9999px;
+  /* Clip fill/blur to the pill — do not paint the outside corners. */
+  overflow: hidden;
+  isolation: isolate;
   background:
     linear-gradient(180deg, rgba(39, 31, 23, 0.92) 0%, rgba(19, 14, 9, 0.96) 100%);
+  background-clip: padding-box;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.04),
     inset 0 -1px 0 rgba(0, 0, 0, 0.28),
