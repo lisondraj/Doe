@@ -1,7 +1,5 @@
-import { ProductPage } from "@/components/product/ProductPage";
-
-export const dynamic = "force-dynamic";
+import { ProductRouter } from "@/components/product/ProductRouter";
 
 export default function ProductRoute() {
-  return <ProductPage />;
+  return <ProductRouter />;
 }

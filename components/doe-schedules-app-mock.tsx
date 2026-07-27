@@ -1217,7 +1217,8 @@ export function DoeSchedulesAppMock({
   >(variant === "product-brown" ? "landing" : "schedule");
   useEffect(() => {
     if (variant !== "product-brown") return;
-    if (workspaceView !== "landing" && workspaceView !== "call-history") {
+    const allowed = new Set(["landing", "call-history", "schedule", "inbox"]);
+    if (!allowed.has(workspaceView)) {
       setWorkspaceView("landing");
     }
   }, [variant, workspaceView]);
@@ -1571,6 +1572,29 @@ export function DoeSchedulesAppMock({
                   <path d="M5.5 4.5h2.75l1.25 2.75L8.5 9a11.5 11.5 0 0 0 5.5 5.5l1.75-1.25 2.75 1.25v2.75a1 1 0 0 1-1 1A13.5 13.5 0 0 1 4.5 5.5a1 1 0 0 1 1-1Z" />
                 ),
               },
+              {
+                label: "Schedule",
+                view: "schedule" as const,
+                icon: (
+                  <>
+                    <rect width="18" height="18" x="3" y="4" rx="2" />
+                    <line x1="16" x2="16" y1="2" y2="6" />
+                    <line x1="8" x2="8" y1="2" y2="6" />
+                    <line x1="3" x2="21" y1="10" y2="10" />
+                  </>
+                ),
+              },
+              {
+                label: "Inbox",
+                view: "inbox" as const,
+                badge: "20",
+                icon: (
+                  <>
+                    <path d="M22 12h-6l-2 3h-4l-2-3H2" />
+                    <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
+                  </>
+                ),
+              },
             ] as const
           ).map((item) => (
             <button
@@ -1585,6 +1609,17 @@ export function DoeSchedulesAppMock({
             >
               <Icon className="h-5 w-5">{item.icon}</Icon>
               <span className="min-w-0 flex-1 truncate">{item.label}</span>
+              {"badge" in item && item.badge ? (
+                <span
+                  className={`rounded-full px-1.5 py-0.5 text-[11px] font-medium ${
+                    workspaceView === item.view
+                      ? "bg-[rgba(245,230,208,0.16)] text-[#f5e6d0]"
+                      : "bg-[rgba(245,230,208,0.08)] text-[rgba(245,230,208,0.72)]"
+                  }`}
+                >
+                  {item.badge}
+                </span>
+              ) : null}
             </button>
           ))}
         </nav>

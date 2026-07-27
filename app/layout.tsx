@@ -6,6 +6,7 @@ import { RootChrome } from "@/components/RootChrome";
 import { aboutRouteBootstrapScript } from "@/lib/about/about-route-bootstrap-script";
 import { doeHealthLandingTouchBootstrapScript } from "@/lib/doehealth/doehealth-landing-bootstrap-script";
 import { homeRouteBootstrapScript } from "@/lib/home/home-route-bootstrap-script";
+import { productRouteBootstrapScript } from "@/lib/product/product-route-bootstrap-script";
 import { DESIGNERS_SITE_HOST } from "@/lib/site-domains";
 
 const inter = Inter({
@@ -36,6 +37,7 @@ export const viewport: Viewport = {
 const designersTouchBootstrap = doeHealthLandingTouchBootstrapScript(DESIGNERS_SITE_HOST);
 const homeBootstrap = homeRouteBootstrapScript();
 const aboutBootstrap = aboutRouteBootstrapScript();
+const productBootstrap = productRouteBootstrapScript();
 
 export default function RootLayout({
   children,
@@ -48,6 +50,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: designersTouchBootstrap }} />
         <script dangerouslySetInnerHTML={{ __html: homeBootstrap }} />
         <script dangerouslySetInnerHTML={{ __html: aboutBootstrap }} />
+        <script dangerouslySetInnerHTML={{ __html: productBootstrap }} />
       </head>
       <body className={`${inter.variable} font-sans antialiased wide-desktop:overflow-hidden`}>
         <RootChrome>{children}</RootChrome>
