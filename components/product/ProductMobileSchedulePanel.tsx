@@ -15,9 +15,9 @@ type ScheduleEvent = {
 type ScheduleView = "day" | "week" | "month";
 
 const SLOT_MINUTES = 30;
-const SLOT_HEIGHT = 36;
-const WEEK_SLOT_HEIGHT = 28;
-const WEEK_TOP_BUFFER = 6;
+const SLOT_HEIGHT = 52;
+const WEEK_SLOT_HEIGHT = 38;
+const WEEK_TOP_BUFFER = 8;
 const WEEK_VISIBLE_START_MINUTES = 8 * 60;
 const WEEK_VISIBLE_SLOT_COUNT = (24 * 60 - WEEK_VISIBLE_START_MINUTES) / SLOT_MINUTES;
 const TODAY_DATE_LABEL = "Mar 30";

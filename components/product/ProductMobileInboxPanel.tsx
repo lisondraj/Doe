@@ -139,9 +139,8 @@ export function ProductMobileInboxPanel({
       productMobileInboxFilterThreads(threads, {
         filter,
         category,
-        agent: agentName,
       }),
-    [threads, filter, category, agentName],
+    [threads, filter, category],
   );
 
   const pinned = filtered.find((thread) => thread.id === PRODUCT_MOBILE_INBOX_PINNED_ID);
@@ -155,10 +154,9 @@ export function ProductMobileInboxPanel({
     const stillVisible = productMobileInboxFilterThreads(threads, {
       filter,
       category,
-      agent: agentName,
     }).some((thread) => thread.id === selectedThreadId);
     if (!stillVisible) onThreadChange?.(null);
-  }, [agentName, category, filter, onThreadChange, selectedThreadId, threads]);
+  }, [category, filter, onThreadChange, selectedThreadId, threads]);
 
   useEffect(() => {
     if (!composing) {
@@ -204,9 +202,6 @@ export function ProductMobileInboxPanel({
   const selectAgent = (name: (typeof PRODUCT_MOBILE_INBOX_AGENTS)[number]["name"]) => {
     setAgentName(name);
     onComposingChange(false);
-    if (selected && selected.agent !== name) {
-      onThreadChange?.(null);
-    }
   };
 
   const openCompose = () => {
@@ -531,7 +526,7 @@ export function ProductMobileInboxPanel({
           <div className="product-mobile-inbox__empty">
             <p className={`product-mobile-inbox__empty-title ${dmSans.className}`}>All caught up</p>
             <p className={`product-mobile-inbox__empty-copy ${suisseIntl.className}`}>
-              Nothing in {category} for {activeAgent.name}
+              Nothing in {category}
               {filter === "all" ? "" : ` · ${filter}`}.
             </p>
           </div>
