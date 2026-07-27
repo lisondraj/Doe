@@ -2,7 +2,7 @@ import { Easing, interpolate, spring, useCurrentFrame, useVideoConfig } from "re
 
 import { suisseIntl } from "@/remotion/fonts";
 
-import { DOE_LAUNCH_GOLD_GRADIENT } from "../constants";
+import { DOE_LAUNCH_GOLD_GRADIENT, f } from "../constants";
 import { DOE_KINETIC_SWIPE_EASE, DOE_PREMIUM_EASE } from "../intro-transitions";
 
 const LINE_HEIGHT = 136;
@@ -85,7 +85,7 @@ export function IntroKineticStack({
   const lineFraction = rawProgress - activeIndex;
 
   const enter = spring({
-    frame: frame - 4,
+    frame: frame - f(4),
     fps,
     config: { damping: 200, stiffness: 88 },
   });

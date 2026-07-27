@@ -7,14 +7,14 @@ cd "$ROOT"
 mkdir -p videos public/motion
 
 echo "Rendering DoeIntro (/motion4) at max quality…"
-echo "  1920×1080 @ 30fps, 2× supersample, ANGLE GL, CRF 1, AAC 320k"
+echo "  1920×1080 @ 60fps, 2× supersample, ANGLE GL, CRF 1, AAC 320k"
 echo "  Output: videos/motion4.mp4"
 echo
 
 ./node_modules/.bin/remotion render remotion/index.ts DoeIntro videos/motion4.mp4 \
   --width=1920 \
   --height=1080 \
-  --fps=30 \
+  --fps=60 \
   --crf=1 \
   --scale=2 \
   --gl=angle \

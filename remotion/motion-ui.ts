@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import { Easing, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 
-import { DOE_SARAH_INTERLUDE_FADE_IN_FRAMES } from "./doe-intro/constants";
+import { DOE_SARAH_INTERLUDE_FADE_IN_FRAMES, DOE_INTRO_FPS, f } from "./doe-intro/constants";
 
 export const MOTION3_RING_CIRCUMFERENCE = 263.89;
 
@@ -73,7 +73,7 @@ export function useCallUiMotion(frameOffset = 10, turnCount = 6): CSSProperties 
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = frame - frameOffset;
-  const pulse = interpolate((frame % 30), [0, 15, 30], [1, 1.06, 1]);
+  const pulse = interpolate((frame % DOE_INTRO_FPS), [0, DOE_INTRO_FPS / 2, DOE_INTRO_FPS], [1, 1.06, 1]);
 
   const styles: Record<string, string | number> = {
     "--m3-tag-glow": pulse,
@@ -282,7 +282,7 @@ export function useCallTurnRevealMotion(
         easing: enterEase,
       },
     );
-    const fadeOutFrames = Math.max(1, interlude.fadeOutFrames ?? 8);
+    const fadeOutFrames = Math.max(1, interlude.fadeOutFrames ?? f(8));
     const interludeOut = interpolate(t, [interlude.end - fadeOutFrames, interlude.end], [1, 0], {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",

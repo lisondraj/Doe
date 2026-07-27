@@ -13,13 +13,14 @@ import {
   DOE_SARAH_INTRO_TURN_COUNT,
   DOE_SARAH_TURN_HOLDS_AFTER,
   DOE_SARAH_TURN_REPLY_HOLDS,
+  f,
 } from "../constants";
 import { buildCallTurnRevealTiming, findCallInterludeWindow } from "../../motion-ui";
 
 const CONVO_UI_OFFSET = DOE_SARAH_CONVO_START_FRAMES + DOE_SARAH_CONVO_UI_OFFSET;
 
-const CAL_APPEAR = 72;
-const CAL_REVEAL = 24;
+const CAL_APPEAR = f(72);
+const CAL_REVEAL = f(24);
 const REVEAL_EASE = Easing.bezier(0.33, 0, 0.18, 1);
 /** Landscape booking card — match side-effects panel scale. */
 const BOOKING_CARD_SCALE = 1.48;

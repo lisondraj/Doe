@@ -10,6 +10,7 @@ import {
   DOE_INTRO_SCENES,
   DOE_LAUNCH_HEIGHT,
   DOE_LAUNCH_WIDTH,
+  f,
 } from "./constants";
 import { IntroBackdrop } from "./shared/IntroBackdrop";
 import { IntroBackgroundMusic } from "./shared/IntroBackgroundMusic";
@@ -41,16 +42,16 @@ export function DoeIntroComposition({ embedPreview = false }: { embedPreview?: b
       <IntroHandoffBridge />
       <IntroOutroBridge />
 
-      <Sequence from={s.opening.from} durationInFrames={s.opening.duration} premountFor={16}>
+      <Sequence from={s.opening.from} durationInFrames={s.opening.duration} premountFor={f(16)}>
         <OpeningScene />
       </Sequence>
-      <Sequence from={s.doeTypewriter.from} durationInFrames={s.doeTypewriter.duration} premountFor={28}>
+      <Sequence from={s.doeTypewriter.from} durationInFrames={s.doeTypewriter.duration} premountFor={f(28)}>
         <DoeTypewriterScene />
       </Sequence>
-      <Sequence from={s.moreThanVoice.from} durationInFrames={s.moreThanVoice.duration} premountFor={12}>
+      <Sequence from={s.moreThanVoice.from} durationInFrames={s.moreThanVoice.duration} premountFor={f(12)}>
         <MoreThanVoiceScene />
       </Sequence>
-      <Sequence from={s.outroShader.from} durationInFrames={s.outroShader.duration} premountFor={120}>
+      <Sequence from={s.outroShader.from} durationInFrames={s.outroShader.duration} premountFor={f(120)}>
         <OutroDoeShaderScene embedPreview={embedPreview} />
       </Sequence>
     </AbsoluteFill>

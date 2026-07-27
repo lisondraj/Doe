@@ -10,6 +10,7 @@ import {
   DOE_OUTRO_DOE_LOGO_APPEAR_FRAME,
   DOE_OUTRO_DOE_VOLUME,
   DOE_OUTRO_SHADER_HANDOFF_FRAMES,
+  f,
 } from "../constants";
 import { DOE_PREMIUM_EASE } from "../intro-transitions";
 import { IntroDesignersHeroShader } from "../shared/IntroDesignersHeroShader";
@@ -42,7 +43,7 @@ export function OutroDoeShaderScene({ embedPreview = false }: { embedPreview?: b
     },
   );
 
-  const shaderScale = interpolate(frame, [0, DOE_OUTRO_SHADER_HANDOFF_FRAMES + 10], [1.08, 1], {
+  const shaderScale = interpolate(frame, [0, DOE_OUTRO_SHADER_HANDOFF_FRAMES + f(10)], [1.08, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: Easing.out(Easing.cubic),

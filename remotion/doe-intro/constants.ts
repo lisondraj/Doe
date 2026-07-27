@@ -17,24 +17,28 @@ export {
   DOE_LAUNCH_WIDTH,
 };
 
-export const DOE_INTRO_FPS = DOE_LAUNCH_FPS;
-export const DOE_INTRO_TRANSITION_FRAMES = 20;
+/** Motion4 intro — native 60fps (launch video stays at DOE_LAUNCH_FPS). */
+export const DOE_INTRO_FPS = 60;
+/** Scale frame counts authored at the 30fps baseline. */
+export const f = (framesAt30: number) => Math.round(framesAt30 * DOE_INTRO_FPS / 30);
+
+export const DOE_INTRO_TRANSITION_FRAMES = f(20);
 /** Doe → Sarah overlap — connection pulse (see IntroHandoffBridge). */
-export const DOE_SARAH_HANDOFF_FRAMES = 36;
+export const DOE_SARAH_HANDOFF_FRAMES = f(36);
 
 /** Doe logo slit reveal length (local frames). */
-export const DOE_TYPE_REVEAL_FRAMES = 42;
-/** Hold full Doe logo before Sarah handoff — 1s @ 30fps. */
+export const DOE_TYPE_REVEAL_FRAMES = f(42);
+/** Hold full Doe logo before Sarah handoff — 1s. */
 export const DOE_LOGO_HOLD_FRAMES = DOE_INTRO_FPS;
 export const DOE_TYPEWRITER_DURATION_FRAMES =
   DOE_TYPE_REVEAL_FRAMES + DOE_LOGO_HOLD_FRAMES + DOE_SARAH_HANDOFF_FRAMES;
 
 /** Sarah call convo — cadence inside MoreThanVoiceScene. */
-export const DOE_SARAH_CONVO_TURN_STEP = 84;
-export const DOE_SARAH_CONVO_TURN_FADE = 14;
-export const DOE_SARAH_CONVO_TURN_START = 10;
+export const DOE_SARAH_CONVO_TURN_STEP = f(84);
+export const DOE_SARAH_CONVO_TURN_FADE = f(14);
+export const DOE_SARAH_CONVO_TURN_START = f(10);
 /** Outro crossfade — Sarah call dissolves into final Doe screen. */
-export const DOE_OUTRO_SHADER_HANDOFF_FRAMES = 38;
+export const DOE_OUTRO_SHADER_HANDOFF_FRAMES = f(38);
 /** Overlap-only tail — outro begins as thank-you clip ends, no dead hold. */
 export const DOE_SARAH_CONVO_END_HOLD = DOE_OUTRO_SHADER_HANDOFF_FRAMES;
 /** Extra pause after each agent reply — 4× base post-fade hold (2× previous). */
@@ -44,21 +48,21 @@ export const DOE_SARAH_CONVO_REPLY_COUNT = 2;
 export const DOE_SARAH_AGENT_INTAKE_TURN = 1;
 export const DOE_SARAH_AGENT_INTAKE_AUDIO_SEC = 5.093875;
 export const DOE_SARAH_AGENT_INTAKE_REPLY_HOLD =
-  Math.ceil(DOE_SARAH_AGENT_INTAKE_AUDIO_SEC * DOE_INTRO_FPS) - DOE_SARAH_CONVO_TURN_STEP + 8;
+  Math.ceil(DOE_SARAH_AGENT_INTAKE_AUDIO_SEC * DOE_INTRO_FPS) - DOE_SARAH_CONVO_TURN_STEP + f(8);
 /** Sarah voice clips — synced to convo turn reveals (see public/motion/sarah-*.mp3). */
 export const DOE_SARAH_CALLER_OPEN_TURN = 0;
 export const DOE_SARAH_CALLER_OPEN_AUDIO_SEC = 4.075062;
 export const DOE_SARAH_CALLER_OPEN_HOLD_EXTRA =
-  Math.ceil(DOE_SARAH_CALLER_OPEN_AUDIO_SEC * DOE_INTRO_FPS) - DOE_SARAH_CONVO_TURN_STEP + 8;
+  Math.ceil(DOE_SARAH_CALLER_OPEN_AUDIO_SEC * DOE_INTRO_FPS) - DOE_SARAH_CONVO_TURN_STEP + f(8);
 /** Hold on Sarah’s DOB reply before agent opens chart. */
 export const DOE_SARAH_CALLER_VERIFY_TURN = 2;
 export const DOE_SARAH_CALLER_VERIFY_AUDIO_SEC = 6.112625;
-/** Brief beat after DOB reply before open-chart line + 4.mp3 (~100ms @ 30fps). */
-export const DOE_SARAH_AGENT_OPEN_CHART_PRE_APPEAR_HOLD_FRAMES = 3;
+/** Brief beat after DOB reply before open-chart line + 4.mp3 (~100ms). */
+export const DOE_SARAH_AGENT_OPEN_CHART_PRE_APPEAR_HOLD_FRAMES = f(3);
 export const DOE_SARAH_CALLER_VERIFY_HOLD_EXTRA =
   Math.ceil(DOE_SARAH_CALLER_VERIFY_AUDIO_SEC * DOE_INTRO_FPS) -
   DOE_SARAH_CONVO_TURN_STEP +
-  8 +
+  f(8) +
   DOE_SARAH_AGENT_OPEN_CHART_PRE_APPEAR_HOLD_FRAMES;
 export const DOE_SARAH_CALLER_TURN_HOLDS = [
   { turnIndex: DOE_SARAH_CALLER_OPEN_TURN, frames: DOE_SARAH_CALLER_OPEN_HOLD_EXTRA },
@@ -69,37 +73,37 @@ export const DOE_SARAH_AGENT_OPEN_CHART_TURN = 3;
 export const DOE_SARAH_AGENT_OPEN_CHART_AUDIO_SEC = 1.671812;
 /** Gap after open-chart audio tail before chart modal — keep a short beat only. */
 export const DOE_SARAH_AGENT_OPEN_CHART_PRE_INTERLUDE_HOLD =
-  Math.ceil(DOE_SARAH_AGENT_OPEN_CHART_AUDIO_SEC * DOE_INTRO_FPS) + 4 - DOE_SARAH_CONVO_TURN_STEP;
+  Math.ceil(DOE_SARAH_AGENT_OPEN_CHART_AUDIO_SEC * DOE_INTRO_FPS) + f(4) - DOE_SARAH_CONVO_TURN_STEP;
 /** agent-side-effects — “Any side effects since your last refill?” */
 export const DOE_SARAH_AGENT_SIDE_EFFECTS_TURN = 4;
 export const DOE_SARAH_AGENT_SIDE_EFFECTS_AUDIO_SEC = 2.0375;
 /** Brief beat after side-effects question audio before caller reply. */
 export const DOE_SARAH_AGENT_SIDE_EFFECTS_HOLD =
-  Math.ceil(DOE_SARAH_AGENT_SIDE_EFFECTS_AUDIO_SEC * DOE_INTRO_FPS) + 4 - DOE_SARAH_CONVO_TURN_STEP;
+  Math.ceil(DOE_SARAH_AGENT_SIDE_EFFECTS_AUDIO_SEC * DOE_INTRO_FPS) + f(4) - DOE_SARAH_CONVO_TURN_STEP;
 /** caller-side-effects — “Just mild nausea…” */
 export const DOE_SARAH_CALLER_SIDE_EFFECTS_TURN = 5;
 export const DOE_SARAH_CALLER_SIDE_EFFECTS_AUDIO_SEC = 3.056313;
 /** Brief beat after nausea reply audio before prefer-time question. */
 export const DOE_SARAH_CALLER_SIDE_EFFECTS_REPLY_HOLD =
-  Math.ceil(DOE_SARAH_CALLER_SIDE_EFFECTS_AUDIO_SEC * DOE_INTRO_FPS) + 4 - DOE_SARAH_CONVO_TURN_STEP;
+  Math.ceil(DOE_SARAH_CALLER_SIDE_EFFECTS_AUDIO_SEC * DOE_INTRO_FPS) + f(4) - DOE_SARAH_CONVO_TURN_STEP;
 /** agent-prefer-time — “Which day and time would you prefer?” — extra beat after reply. */
 export const DOE_SARAH_AGENT_PREFER_TIME_TURN = 6;
 export const DOE_SARAH_AGENT_PREFER_TIME_AUDIO_SEC = 1.750187;
 /** Brief beat after prefer-time question audio before caller reply. */
 export const DOE_SARAH_AGENT_PREFER_TIME_HOLD =
-  Math.ceil(DOE_SARAH_AGENT_PREFER_TIME_AUDIO_SEC * DOE_INTRO_FPS) + 4 - DOE_SARAH_CONVO_TURN_STEP;
+  Math.ceil(DOE_SARAH_AGENT_PREFER_TIME_AUDIO_SEC * DOE_INTRO_FPS) + f(4) - DOE_SARAH_CONVO_TURN_STEP;
 /** caller-prefer-time — “How about Tuesday at 10:30 AM” */
 export const DOE_SARAH_CALLER_PREFER_TIME_TURN = 7;
 export const DOE_SARAH_CALLER_PREFER_TIME_AUDIO_SEC = 2.324875;
 /** Brief beat after Tuesday reply audio before booking modal. */
 export const DOE_SARAH_CALLER_PREFER_TIME_HOLD =
-  Math.ceil(DOE_SARAH_CALLER_PREFER_TIME_AUDIO_SEC * DOE_INTRO_FPS) + 4 - DOE_SARAH_CONVO_TURN_STEP;
+  Math.ceil(DOE_SARAH_CALLER_PREFER_TIME_AUDIO_SEC * DOE_INTRO_FPS) + f(4) - DOE_SARAH_CONVO_TURN_STEP;
 /** caller-thanks — “That is all, thank you” */
 export const DOE_SARAH_CALLER_THANKS_TURN = 8;
 export const DOE_SARAH_CALLER_THANKS_AUDIO_SEC = 1.488938;
 /** Tail after thank-you clip — scene ends as audio finishes. */
 export const DOE_SARAH_CALLER_THANKS_TAIL_FRAMES =
-  Math.ceil(DOE_SARAH_CALLER_THANKS_AUDIO_SEC * DOE_INTRO_FPS) + 4;
+  Math.ceil(DOE_SARAH_CALLER_THANKS_AUDIO_SEC * DOE_INTRO_FPS) + f(4);
 export const DOE_SARAH_TURN_REPLY_HOLDS = [
   { turnIndex: DOE_SARAH_AGENT_INTAKE_TURN, frames: DOE_SARAH_AGENT_INTAKE_REPLY_HOLD },
   { turnIndex: DOE_SARAH_AGENT_OPEN_CHART_TURN, frames: DOE_SARAH_AGENT_OPEN_CHART_PRE_INTERLUDE_HOLD },
@@ -107,21 +111,21 @@ export const DOE_SARAH_TURN_REPLY_HOLDS = [
   { turnIndex: DOE_SARAH_CALLER_PREFER_TIME_TURN, frames: DOE_SARAH_CALLER_PREFER_TIME_HOLD },
 ] as const;
 /** Interlude backdrop + loading row fade-in — shared across all Sarah call interludes. */
-export const DOE_SARAH_INTERLUDE_FADE_IN_FRAMES = 12;
+export const DOE_SARAH_INTERLUDE_FADE_IN_FRAMES = f(12);
 
-/** Full-screen confirmation-code beat before Sarah’s DOB reply — ~7s @ 30fps. */
-export const DOE_SARAH_CONFIRM_CODE_INTERLUDE_FRAMES = 210;
+/** Full-screen confirmation-code beat before Sarah’s DOB reply — ~7s. */
+export const DOE_SARAH_CONFIRM_CODE_INTERLUDE_FRAMES = f(210);
 /** Turn index for caller-verify (“Sure, my date of birth…”) — interlude plays before this turn. */
 export const DOE_SARAH_CONFIRM_CODE_INTERLUDE_BEFORE_TURN = 2;
 /** Chart modal — strip scroll, pull loader, side-effects card, then agent ask in chat. */
-export const DOE_SARAH_CHART_ACCESS_INTERLUDE_FRAMES = 600;
+export const DOE_SARAH_CHART_ACCESS_INTERLUDE_FRAMES = f(600);
 /** Modal fade-out before agent side-effects line in chat. */
-export const DOE_SARAH_CHART_ACCESS_FADE_OUT_FRAMES = 28;
+export const DOE_SARAH_CHART_ACCESS_FADE_OUT_FRAMES = f(28);
 /** Turn index for agent-side-effects — chart modal plays before this turn. */
 export const DOE_SARAH_CHART_ACCESS_INTERLUDE_BEFORE_TURN = 4;
-/** Booking appointment + calendar card after Sarah picks a slot — ~4.5s @ 30fps. */
-export const DOE_SARAH_BOOKING_INTERLUDE_FRAMES = 136;
-export const DOE_SARAH_BOOKING_FADE_OUT_FRAMES = 22;
+/** Booking appointment + calendar card after Sarah picks a slot — ~4.5s. */
+export const DOE_SARAH_BOOKING_INTERLUDE_FRAMES = f(136);
+export const DOE_SARAH_BOOKING_FADE_OUT_FRAMES = f(22);
 /** Turn index for caller-thanks — booking interlude plays before this turn. */
 export const DOE_SARAH_BOOKING_INTERLUDE_BEFORE_TURN = 8;
 export const DOE_SARAH_CALL_INTERLUDES = [
@@ -140,13 +144,13 @@ export const DOE_SARAH_CALL_INTERLUDES = [
     fadeOutFrames: DOE_SARAH_BOOKING_FADE_OUT_FRAMES,
   },
 ] as const;
-/** Incoming “Sarah Westfield / Calling from” hold — ~2.5s @ 30fps. */
-export const DOE_SARAH_HERO_HOLD_FRAMES = 76;
-/** Begin incoming → answered settle this many frames before the hold ends (~100ms @ 30fps). */
-export const DOE_SARAH_SETTLE_LEAD_FRAMES = 3;
-export const DOE_SARAH_HEADER_SETTLE_FRAMES = 40 + DOE_SARAH_SETTLE_LEAD_FRAMES;
-/** Incoming… label glow pulse during the hold (~1.5s cycle @ 30fps). */
-export const DOE_SARAH_INCOMING_GLOW_CYCLE_FRAMES = 45;
+/** Incoming “Sarah Westfield / Calling from” hold — ~2.5s. */
+export const DOE_SARAH_HERO_HOLD_FRAMES = f(76);
+/** Begin incoming → answered settle this many frames before the hold ends (~100ms). */
+export const DOE_SARAH_SETTLE_LEAD_FRAMES = f(3);
+export const DOE_SARAH_HEADER_SETTLE_FRAMES = f(40) + DOE_SARAH_SETTLE_LEAD_FRAMES;
+/** Incoming… label glow pulse during the hold (~1.5s cycle). */
+export const DOE_SARAH_INCOMING_GLOW_CYCLE_FRAMES = f(45);
 /** Incoming call SFX — “Sarah Westfield / Calling from” when handoff completes. */
 export const DOE_SARAH_CALL_HEADER_APPEAR_FRAME = DOE_SARAH_HANDOFF_FRAMES;
 export const DOE_SARAH_INCOMING_CALL_AUDIO_SEC = 2.5;
@@ -156,7 +160,7 @@ export const DOE_SARAH_INCOMING_CALL_AUDIO_TRIM_FRAMES = Math.ceil(
 export const DOE_SARAH_INCOMING_CALL_AUDIO_SRC = "motion/sarah-incoming-call.wav";
 export const DOE_SARAH_INCOMING_CALL_VOLUME = 13;
 export const DOE_SARAH_INTRO_TURN_COUNT = 9;
-export const DOE_SARAH_CONVO_UI_OFFSET = 4;
+export const DOE_SARAH_CONVO_UI_OFFSET = f(4);
 
 /** Sarah call ends the intro — opening → Doe → thank-you → final Doe screen. */
 export const DOE_SARAH_SETTLE_START_FRAMES =
@@ -214,7 +218,7 @@ export const DOE_SARAH_CALLER_THANKS_AUDIO_FROM =
   DOE_SARAH_CONVO_UI_OFFSET +
   DOE_SARAH_CONVO_TIMING.turnStarts[DOE_SARAH_CALLER_THANKS_TURN]!;
 /** Background music ducks when Sarah’s opening line appears (scene-local frame). */
-export const DOE_INTRO_MUSIC_DUCK_FADE_FRAMES = 18;
+export const DOE_INTRO_MUSIC_DUCK_FADE_FRAMES = f(18);
 export const DOE_INTRO_MUSIC_DUCK_LEVEL = 0.22;
 /** Background music master — half of prior bed level. */
 export const DOE_INTRO_BG_MUSIC_GAIN = 1 / 3;
@@ -237,27 +241,29 @@ export const DOE_OUTRO_DOE_AUDIO_FRAMES = Math.ceil(DOE_OUTRO_DOE_AUDIO_SEC * DO
 export const DOE_OUTRO_DOE_AUDIO_SRC = "motion/doe-outro-logo.mp3";
 export const DOE_OUTRO_DOE_VOLUME = DOE_SARAH_VOICE_VOLUME;
 /** Hold on “Doe” before URL swap. */
-export const DOE_OUTRO_DOE_HOLD_FRAMES = 36 + 2 * DOE_INTRO_FPS;
+export const DOE_OUTRO_DOE_HOLD_FRAMES = f(36) + 2 * DOE_INTRO_FPS;
 /** Hard cut Doe → doehealth.care (same frame as brown bg). */
 export const DOE_OUTRO_URL_CROSSFADE_FRAMES = 0;
 /** Hold on URL at end. */
-export const DOE_OUTRO_URL_HOLD_FRAMES = 48 + 2 * DOE_INTRO_FPS;
+export const DOE_OUTRO_URL_HOLD_FRAMES = f(48) + 2 * DOE_INTRO_FPS;
 export const DOE_OUTRO_SHADER_HOLD_FRAMES =
   DOE_OUTRO_DOE_HOLD_FRAMES + DOE_OUTRO_URL_CROSSFADE_FRAMES + DOE_OUTRO_URL_HOLD_FRAMES;
 export const DOE_OUTRO_SHADER_DURATION_FRAMES =
   DOE_OUTRO_SHADER_HANDOFF_FRAMES + DOE_OUTRO_SHADER_HOLD_FRAMES;
 
+const DOE_INTRO_SCENE_OVERLAP = f(164);
+
 export const DOE_INTRO_SCENES = {
-  opening: { from: 0, duration: 178 },
+  opening: { from: 0, duration: f(178) },
   /** Gold Doe center reveal, then handoff to Sarah. */
-  doeTypewriter: { from: 164, duration: DOE_TYPEWRITER_DURATION_FRAMES },
+  doeTypewriter: { from: DOE_INTRO_SCENE_OVERLAP, duration: DOE_TYPEWRITER_DURATION_FRAMES },
   moreThanVoice: {
-    from: 164 + DOE_TYPEWRITER_DURATION_FRAMES - DOE_SARAH_HANDOFF_FRAMES,
+    from: DOE_INTRO_SCENE_OVERLAP + DOE_TYPEWRITER_DURATION_FRAMES - DOE_SARAH_HANDOFF_FRAMES,
     duration: DOE_SARAH_MORE_THAN_VOICE_FRAMES,
   },
   outroShader: {
     from:
-      164 +
+      DOE_INTRO_SCENE_OVERLAP +
       DOE_TYPEWRITER_DURATION_FRAMES -
       DOE_SARAH_HANDOFF_FRAMES +
       DOE_SARAH_MORE_THAN_VOICE_FRAMES -

@@ -14,6 +14,7 @@ import {
   DOE_SARAH_CONVO_TURN_STEP,
   DOE_SARAH_CONVO_UI_OFFSET,
   DOE_SARAH_INTRO_TURN_COUNT,
+  f,
 } from "../constants";
 import { buildCallTurnRevealTiming, findCallInterludeWindow } from "../../motion-ui";
 
@@ -21,10 +22,10 @@ const ROW_GAP = 0.35;
 const CONVO_UI_OFFSET = DOE_SARAH_CONVO_START_FRAMES + DOE_SARAH_CONVO_UI_OFFSET;
 
 /** Fade in generating row — backdrop fade lives in motion-ui (DOE_SARAH_INTERLUDE_FADE_IN_FRAMES). */
-const GENERATING_DONE = 54;
+const GENERATING_DONE = f(54);
 /** Sending row appears (~1.3s hold on Generated solo). */
-const SENDING_APPEAR = 94;
-const SENDING_DONE = 138;
+const SENDING_APPEAR = f(94);
+const SENDING_DONE = f(138);
 
 function InterludeStepIcon({ state, spinDeg }: { state: "spinner" | "check"; spinDeg: number }) {
   if (state === "check") {
@@ -107,7 +108,7 @@ export function IntroConfirmCodeInterlude() {
 
   const sendingOpacity =
     local >= SENDING_APPEAR
-      ? interpolate(local, [SENDING_APPEAR, SENDING_APPEAR + 14], [0, 1], {
+      ? interpolate(local, [SENDING_APPEAR, SENDING_APPEAR + f(14)], [0, 1], {
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp",
           easing: Easing.out(Easing.cubic),

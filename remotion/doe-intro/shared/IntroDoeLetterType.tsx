@@ -2,7 +2,7 @@ import { Easing, interpolate, useCurrentFrame } from "remotion";
 
 import { lora } from "@/remotion/fonts";
 
-import { DOE_LOGO_HOLD_FRAMES, DOE_TYPE_REVEAL_FRAMES } from "../constants";
+import { DOE_LOGO_HOLD_FRAMES, DOE_TYPE_REVEAL_FRAMES, f } from "../constants";
 import { DOE_PREMIUM_EASE } from "../intro-transitions";
 import { buildHorizontalSlitMask } from "./intro-slit-mask";
 
@@ -10,7 +10,7 @@ export const DOE_TYPE_REVEAL_START = 0;
 export const DOE_TYPE_REVEAL_END = DOE_TYPE_REVEAL_FRAMES;
 /** Unblur + lift lead the slit reveal. */
 const DOE_TYPE_MOTION_START = 0;
-const DOE_TYPE_MOTION_END = DOE_TYPE_REVEAL_END - 8;
+const DOE_TYPE_MOTION_END = DOE_TYPE_REVEAL_END - f(8);
 
 /** Continuous push-in — same rate as the original 1s hold zoom (1 → 1.06). */
 const DOE_TYPE_ZOOM_MAX_DELTA = 0.06;

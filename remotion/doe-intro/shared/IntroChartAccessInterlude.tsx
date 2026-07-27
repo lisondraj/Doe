@@ -24,6 +24,7 @@ import {
   DOE_SARAH_CONVO_TURN_STEP,
   DOE_SARAH_CONVO_UI_OFFSET,
   DOE_SARAH_INTRO_TURN_COUNT,
+  f,
 } from "../constants";
 import { buildCallTurnRevealTiming, findCallInterludeWindow } from "../../motion-ui";
 
@@ -46,27 +47,27 @@ const TILE_GAP_PX = Math.round(BASE_TILE_GAP_PX * CHART_STRIP_SCALE);
 const TILE_PLOT_HEIGHT = `${Math.round(BASE_TILE_PLOT_HEIGHT_PX * CHART_STRIP_SCALE)}px`;
 const TILE_LIFT_PX = Math.round(32 * CHART_STRIP_SCALE);
 
-const ACCESS_DONE = 56;
-const ACCESS_CROSSFADE = 22;
+const ACCESS_DONE = f(56);
+const ACCESS_CROSSFADE = f(22);
 /** Eased lift once “Accessed Sarah’s chart” locks in. */
-const ACCESS_LIFT_FRAMES = 30;
+const ACCESS_LIFT_FRAMES = f(30);
 const ACCESS_LIFT_Y_PX = 14;
 /** Label row height — used for pull row enter offset. */
 const ACCESS_LABEL_LINE_PX = 78;
 /** Let label settle before strip scroll begins. */
-const SCROLL_START = 82;
-const STRIP_APPEAR = 90;
-const STRIP_REVEAL = 40;
+const SCROLL_START = f(82);
+const STRIP_APPEAR = f(90);
+const STRIP_REVEAL = f(40);
 /** Fraction of strip width to pan — stop before meds/conditions/allergies. */
 const CHART_SCROLL_MAX_RATIO = 0.4;
 /** Strip scroll ends as strip finishes closing — no decel hold before exit. */
-const STRIP_EXIT_START = 300;
-const STRIP_EXIT_DURATION = 44;
+const STRIP_EXIT_START = f(300);
+const STRIP_EXIT_DURATION = f(44);
 const PULL_START = STRIP_EXIT_START;
 /** Side-effects card and Pulled label swap fire together. */
-const CARD_APPEAR = PULL_START + 140;
+const CARD_APPEAR = PULL_START + f(140);
 const PULL_DONE = CARD_APPEAR;
-const CARD_REVEAL = 28;
+const CARD_REVEAL = f(28);
 const CHART_BLUR_MAX = 16;
 /** Stagger each tile’s unblur/lift across the strip reveal. */
 const TILE_STAGGER = 0.055;

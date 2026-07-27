@@ -4,9 +4,10 @@ import { DOE_PREMIUM_EASE } from "../intro-transitions";
 import { useIntroSceneCrossfade } from "../intro-transitions";
 import { IntroCurvyMotionLines } from "../shared/IntroCurvyMotionLines";
 import { getScrollLastLineStartFrame, IntroKineticStack } from "../shared/IntroKineticStack";
+import { f } from "../constants";
 
-const OPENING_CROSSFADE_FRAMES = 28;
-const ZOOM_FRAMES = 20;
+const OPENING_CROSSFADE_FRAMES = f(28);
+const ZOOM_FRAMES = f(20);
 
 const OPENING_LINES = [
   "Phones ringing.",
@@ -15,10 +16,10 @@ const OPENING_LINES = [
   "Not enough hands.",
 ] as const;
 
-const KINETIC_START = 6;
-const KINETIC_HOLD = 30;
-const KINETIC_SWIPE = 16;
-const ZOOM_HOLD = 6;
+const KINETIC_START = f(6);
+const KINETIC_HOLD = f(30);
+const KINETIC_SWIPE = f(16);
+const ZOOM_HOLD = f(6);
 
 const LAST_LINE_FRAME = getScrollLastLineStartFrame(
   OPENING_LINES.length,
@@ -32,7 +33,7 @@ const ZOOM_END = ZOOM_START + ZOOM_FRAMES;
 export function OpeningScene() {
   const frame = useCurrentFrame();
   const sceneOpacity = useIntroSceneCrossfade(OPENING_CROSSFADE_FRAMES);
-  const linesOpacity = interpolate(frame, [0, 18], [0, 1], {
+  const linesOpacity = interpolate(frame, [0, f(18)], [0, 1], {
     extrapolateRight: "clamp",
     easing: DOE_PREMIUM_EASE,
   });

@@ -35,6 +35,7 @@ import {
   DOE_SARAH_INTRO_TURN_COUNT,
   DOE_SARAH_SETTLE_START_FRAMES,
   DOE_SARAH_VOICE_VOLUME,
+  f,
 } from "../constants";
 import { handoffMotionStyle, useIntroDoeSarahHandoff, DOE_PREMIUM_EASE } from "../intro-transitions";
 import { IntroBookingInterlude } from "../shared/IntroBookingInterlude";
@@ -44,9 +45,9 @@ import { IntroUiHero } from "../shared/IntroUiHero";
 
 const SETTLE_START_FRAME = DOE_SARAH_SETTLE_START_FRAMES;
 const CONVO_START_FRAME = DOE_SARAH_CONVO_START_FRAMES;
-const MORPH_STATUS_FRAMES = 24;
-const MORPH_SUBLINE_DELAY = 4;
-const MORPH_SUBLINE_FRAMES = 24;
+const MORPH_STATUS_FRAMES = f(24);
+const MORPH_SUBLINE_DELAY = f(4);
+const MORPH_SUBLINE_FRAMES = f(24);
 const MORPH_EASE = Easing.bezier(0.42, 0, 0.18, 1);
 /** Shared ease for incoming → answered settle — ease-out, no overshoot. */
 const CALL_SETTLE_EASE = Easing.bezier(0.33, 0, 0.2, 1);
@@ -124,7 +125,7 @@ export function MoreThanVoiceScene() {
   const heroScale =
     INCOMING_VISUAL_SCALE + (ANSWERED_VISUAL_SCALE - INCOMING_VISUAL_SCALE) * headerMotion;
 
-  const callHistoryOpacity = interpolate(frame, [CONVO_START_FRAME, CONVO_START_FRAME + 18], [0, 1], {
+  const callHistoryOpacity = interpolate(frame, [CONVO_START_FRAME, CONVO_START_FRAME + f(18)], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: Easing.out(Easing.cubic),
