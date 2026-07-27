@@ -430,8 +430,8 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
   left: auto;
   width: 100%;
   aspect-ratio: 1;
-  min-height: min(100vw, 24.5rem);
-  margin: 0.2rem 0 0.55rem;
+  min-height: min(100vw, 26.5rem);
+  margin: 0.1rem 0 0.45rem;
   container-type: size;
   display: grid;
   place-items: center;
@@ -449,24 +449,30 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
 .product-mobile-embed--landing .product-landing-workspace__orbit-ring {
   width: min(100cqw, 100cqh);
   max-width: 100%;
-  --orbit-size: clamp(4.2rem, 22cqw, 5.55rem);
-  --orbit-edge-gap: 0.12rem;
-  --orbit-overlap: 0.94;
+  /* Bigger agent discs + tighter radius so neighbors visibly overlap. */
+  --orbit-size: clamp(5.85rem, 31cqw, 7.35rem);
+  --orbit-edge-gap: -0.35rem;
+  --orbit-overlap: 0.82;
   --orbit-distance: calc((50cqw - var(--orbit-size) / 2 - var(--orbit-edge-gap)) * var(--orbit-overlap));
   --orbit-inner: calc(var(--orbit-distance) * 2 - var(--orbit-size));
 }
 
 .product-mobile-embed--landing .product-landing-workspace__orbit-stat-value {
-  font-size: clamp(1.55rem, 8cqw, 2.1rem);
+  font-size: clamp(1.65rem, 8.5cqw, 2.25rem);
 }
 
 .product-mobile-embed--landing .product-landing-workspace__orbit-circle-icon {
-  width: clamp(1.05rem, 5cqw, 1.35rem);
-  height: clamp(1.05rem, 5cqw, 1.35rem);
+  width: clamp(1.35rem, 6.2cqw, 1.7rem);
+  height: clamp(1.35rem, 6.2cqw, 1.7rem);
 }
 
 .product-mobile-embed--landing .product-landing-workspace__orbit-circle-name-line {
-  font-size: clamp(0.5rem, 2.55cqw, 0.66rem);
+  font-size: clamp(0.58rem, 2.85cqw, 0.74rem);
+}
+
+.product-mobile-embed--landing .product-landing-workspace__orbit-circle-content {
+  padding: clamp(0.4rem, 1.1cqw, 0.58rem);
+  gap: clamp(0.16rem, 0.55cqw, 0.28rem);
 }
 
 .product-mobile-embed--landing .product-landing-workspace__label {
@@ -474,15 +480,29 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
   padding-bottom: 0.35rem;
 }
 
+/* Today preview: short boxed transcript scroller — not full history. */
 .product-mobile-embed--landing .product-landing-live-thread {
   display: flex;
   flex-direction: column;
   flex: none;
   grid-template-rows: none;
-  min-height: 0;
-  height: auto;
-  overflow: visible;
-  padding-bottom: 1.75rem;
+  height: min(34vh, 15.5rem);
+  max-height: 15.5rem;
+  min-height: 12.5rem;
+  overflow: hidden;
+  padding-bottom: 0.85rem;
+  border: 1px solid rgba(242, 232, 218, 0.1);
+  border-radius: 0.95rem;
+  background: rgba(19, 14, 9, 0.42);
+  margin-inline: var(--pl-gutter, 1rem);
+  padding-inline: 0.85rem;
+  padding-top: 0.7rem;
+  box-sizing: border-box;
+}
+
+.product-mobile-embed--landing .product-landing-live-thread__head,
+.product-mobile-embed--landing .product-landing-live-actions {
+  flex-shrink: 0;
 }
 
 .product-mobile-embed--landing .product-landing-live-outcome {
@@ -491,29 +511,49 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
 }
 
 .product-mobile-embed--landing .product-landing-live-convo-stage {
-  overflow: visible;
-  margin-top: 0.85rem;
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: 0.55rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
 }
 
 .product-mobile-embed--landing .product-landing-live-convo {
-  -webkit-mask-image: none;
-  mask-image: none;
+  --pl-convo-fade-top: 0.55rem;
+  --pl-convo-fade-bottom: 0.85rem;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--pl-convo-fade-top),
+    #000 calc(100% - var(--pl-convo-fade-bottom)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--pl-convo-fade-top),
+    #000 calc(100% - var(--pl-convo-fade-bottom)),
+    transparent 100%
+  );
 }
 
 .product-mobile-embed--landing .product-landing-live-actions {
   width: 100%;
   max-width: 100%;
   align-self: stretch;
-  margin-top: 1rem;
+  margin-top: 0.65rem;
 }
 
 .product-mobile-embed--landing .product-landing-live-actions__btn {
   font-size: 10px;
-  padding: 0.58rem 0.3rem;
+  padding: 0.5rem 0.28rem;
 }
 
 .product-mobile-embed--landing .product-landing-live-quote__text {
-  font-size: clamp(1.15rem, 0.95rem + 2.2vw, 1.45rem);
+  font-size: clamp(1rem, 0.88rem + 1.4vw, 1.18rem);
   line-height: 1.28;
 }
 
