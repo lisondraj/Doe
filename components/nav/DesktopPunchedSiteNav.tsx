@@ -6,7 +6,6 @@ import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import { DesktopNavActionRow } from "@/components/nav/DesktopNavActionRow";
 import { DOE_DESKTOP_NAV_LOGO_TW } from "@/lib/doephone/doe-desktop-layout-styles";
 import {
-  DOE_HOME_DUSK_INK,
   DOE_HOME_DUSK_SURFACE_RAISED,
 } from "@/lib/home/doe-page-colors";
 import { lora } from "@/lib/home/fonts";
@@ -17,14 +16,6 @@ const HOME_CTA = {
   fg: DOE_HOME_DUSK_SURFACE_RAISED,
   shadow: "0 2px 6px rgba(26, 18, 8, 0.18)",
   divider: "rgba(245, 230, 208, 0.24)",
-} as const;
-
-/** About always-punched — sand pills on dusk capsule. */
-const ABOUT_PUNCHED_CTA = {
-  bg: DOE_HOME_DUSK_SURFACE_RAISED,
-  fg: DOE_HOME_DUSK_INK,
-  shadow: "none",
-  divider: "rgba(26, 18, 8, 0.14)",
 } as const;
 
 /** Start punch morph after this × viewport height (prior navSolid threshold). */
@@ -145,7 +136,7 @@ export function DesktopPunchedSiteNav({
     };
   }, [alwaysPunched, applyPunchProgress]);
 
-  const cta = alwaysPunched ? ABOUT_PUNCHED_CTA : HOME_CTA;
+  const cta = HOME_CTA;
 
   return (
     <nav

@@ -409,6 +409,16 @@ html[data-about-page][data-layout="desktop"] .about-desktop-section {
   max-height: 100dvh !important;
   overflow: hidden !important;
 }
+html[data-about-page][data-layout="desktop"] .about-desktop-section.about-desktop-section--grow {
+  height: auto !important;
+  max-height: none !important;
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+}
+html[data-about-page][data-layout="desktop"] .about-desktop-section.about-desktop-section--grow .about-desktop-section__inner {
+  height: auto !important;
+  min-height: 100dvh !important;
+}
 html[data-about-page][data-layout="desktop"] .about-desktop-section__inner {
   box-sizing: border-box !important;
   min-height: 100% !important;
@@ -432,8 +442,8 @@ html[data-about-page][data-layout="desktop"] .about-desktop-beige-panel {
 }
 html[data-about-page][data-layout="desktop"] .about-desktop-faq-panel,
 html[data-about-page][data-layout="desktop"] .about-desktop-content-panel {
-  background-color: #f0e4d0 !important;
-  border-color: rgba(212, 165, 116, 0.32) !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
 }
 html[data-about-page][data-layout="desktop"] .about-desktop-beige-panel svg {
   transform: scale(0.88);

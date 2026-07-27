@@ -35,7 +35,6 @@ import {
   ABOUT_DESKTOP_SECTION_1_LAYOUT,
   ABOUT_DESKTOP_HERO_HEADLINE_TOP,
   ABOUT_DESKTOP_SECTION_2_CONTENT_GAP,
-  ABOUT_DESKTOP_SQUARE_PANEL_TW,
   ABOUT_DESKTOP_SUBHEADING_TW,
   ABOUT_DESKTOP_TITLE_TW,
   ABOUT_PAGE_SUBHEADING,
@@ -73,7 +72,10 @@ export function AboutDesktopView() {
   const [foundersOne, foundersTwo] = ABOUT_DESKTOP_FOUNDERS_PARAGRAPHS;
 
   return (
-    <div className="about-desktop-root relative overflow-x-hidden bg-[#1b1410]" data-doeforvc-view="desktop">
+    <div
+      className="about-desktop-root doe-desktop-root doe-desktop-root--doehealth relative overflow-x-hidden bg-[#1b1410]"
+      data-doeforvc-view="desktop"
+    >
       <div className="relative z-[40] overflow-x-clip overflow-y-visible">
         <DoeHealthTopBanner
           message={ABOUT_TOP_BANNER_MESSAGE}
@@ -123,20 +125,18 @@ export function AboutDesktopView() {
 
       <div className="relative z-10">
         <main>
-          <AboutDesktopSplitSection boxSide="right" graphic={0} textFill boxBleedToMargin>
-            <div className={`about-desktop-content-panel ${ABOUT_DESKTOP_SQUARE_PANEL_TW} min-h-0`}>
-              <div className="about-desktop-section-scroll flex h-full min-h-0 flex-col justify-center gap-6 md:gap-7">
-                <AboutDesktopSectionHeadline lines={ABOUT_MOBILE_ASSISTANT_HEADLINE_LINES} />
-                <div className={`flex flex-col ${ABOUT_DESKTOP_SECTION_2_CONTENT_GAP}`}>
-                  <AboutDesktopParagraph text={ABOUT_DESKTOP_SECTION_2_INTRO} />
-                  <AboutDesktopBulletList items={ABOUT_DESKTOP_SECTION_2_BULLETS} />
-                </div>
-                <AboutDesktopStatCharts />
+          <AboutDesktopSplitSection boxSide="right" graphic={0} boxBleedToMargin allowGrow>
+            <div className="about-desktop-section-scroll flex min-h-0 flex-col justify-center gap-6 md:gap-7">
+              <AboutDesktopSectionHeadline lines={ABOUT_MOBILE_ASSISTANT_HEADLINE_LINES} />
+              <div className={`flex flex-col ${ABOUT_DESKTOP_SECTION_2_CONTENT_GAP}`}>
+                <AboutDesktopParagraph text={ABOUT_DESKTOP_SECTION_2_INTRO} />
+                <AboutDesktopBulletList items={ABOUT_DESKTOP_SECTION_2_BULLETS} />
               </div>
+              <AboutDesktopStatCharts />
             </div>
           </AboutDesktopSplitSection>
 
-          <AboutDesktopSplitSection boxSide="right" graphic={2} textFill boxBleedToMargin>
+          <AboutDesktopSplitSection boxSide="right" graphic={2} boxBleedToMargin>
             <AboutDesktopFaqTabs />
           </AboutDesktopSplitSection>
 

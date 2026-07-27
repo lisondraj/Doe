@@ -3,6 +3,7 @@
 import { AboutDesktopBeigePanel } from "@/components/about/AboutDesktopBeigePanel";
 import {
   ABOUT_DESKTOP_SECTION_H,
+  ABOUT_DESKTOP_SECTION_H_GROW,
   ABOUT_DESKTOP_SPLIT_BOX_COLUMN,
   ABOUT_DESKTOP_SPLIT_BOX_COLUMN_LEFT_BLEED,
   ABOUT_DESKTOP_SPLIT_BOX_COLUMN_RIGHT_BLEED,
@@ -23,12 +24,15 @@ export function AboutDesktopSplitSection({
   graphic,
   textFill = false,
   boxBleedToMargin = false,
+  allowGrow = false,
   children,
 }: {
   boxSide: "left" | "right";
   graphic: 0 | 1 | 2 | 3;
   textFill?: boolean;
   boxBleedToMargin?: boolean;
+  /** Let the band grow past 100dvh when text/charts need more room. */
+  allowGrow?: boolean;
   children: ReactNode;
 }) {
   const gridClass = boxBleedToMargin
@@ -61,8 +65,8 @@ export function AboutDesktopSplitSection({
   );
 
   return (
-    <section className={ABOUT_DESKTOP_SECTION_H}>
-      <div className={gridClass}>
+    <section className={allowGrow ? ABOUT_DESKTOP_SECTION_H_GROW : ABOUT_DESKTOP_SECTION_H}>
+      <div className={`${gridClass}${allowGrow ? " min-h-[100dvh]" : ""}`}>
         {boxSide === "left" ? (
           <>
             {boxColumn}

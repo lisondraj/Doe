@@ -103,6 +103,10 @@ export const ABOUT_DESKTOP_SCROLL_MAIN_TW = "about-desktop-scroll w-full min-h-[
 export const ABOUT_DESKTOP_SECTION_H =
   "about-desktop-section box-border h-[100dvh] max-h-[100dvh] min-h-[100dvh] overflow-hidden";
 
+/** About desktop band that can grow past one viewport when content is tall. */
+export const ABOUT_DESKTOP_SECTION_H_GROW =
+  "about-desktop-section about-desktop-section--grow box-border min-h-[100dvh] overflow-x-hidden overflow-y-visible";
+
 /** Split bands — two equal columns; inner shell clears punched nav. */
 export const ABOUT_DESKTOP_SPLIT_SECTION_GRID =
   "about-desktop-section__inner grid h-full min-h-0 w-full grid-cols-2 gap-8 md:gap-10 lg:gap-12 xl:gap-14 px-[var(--desktop-page-inset-x,2.5rem)]";
@@ -155,11 +159,6 @@ export const ABOUT_DESKTOP_SPLIT_BOX_COLUMN_RIGHT_BLEED = `grid min-h-0 min-w-0 
 export const ABOUT_DESKTOP_SPLIT_BOX_COLUMN_LEFT_BLEED = `grid min-h-0 min-w-0 h-full items-center justify-items-start ${DOEPHONE_DESKTOP_PAGE_INSET_LEFT} ${ABOUT_DESKTOP_SPLIT_BLEED_INNER_X_RIGHT} ${ABOUT_DESKTOP_SPLIT_BLEED_INNER_Y}`;
 
 export const ABOUT_DESKTOP_BEIGE_PANEL_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} aspect-square max-h-full max-w-full w-full border border-[rgba(212,165,116,0.28)] bg-[#271F17]`;
-
-/** FAQ / content accordion — sand island beside the line graphic card. */
-export const ABOUT_DESKTOP_SQUARE_PANEL_TW = `${DOEPHONE_SECTION_CAROUSEL_RADIUS} aspect-square max-h-full max-w-full w-full border border-[rgba(212,165,116,0.32)] bg-[#f0e4d0]`;
-
-export const ABOUT_DESKTOP_FAQ_PANEL_TW = ABOUT_DESKTOP_SQUARE_PANEL_TW;
 
 /** Desktop /about section two — intro + chart aligned to beige square height. */
 export const ABOUT_DESKTOP_SECTION_2_STACK = "flex h-full min-h-0 w-full flex-col justify-between";

@@ -462,46 +462,15 @@ html[data-about-page][data-layout="desktop"] .about-mobile-beige-panel svg {
   height: 100%;
 }
 
-/* Content / FAQ sand islands — dark ink for contrast on light panels. */
+/* Content / FAQ — sit on the brown page surface (no sand islands). */
 html[data-about-page][data-layout="desktop"] .about-desktop-faq-panel,
 html[data-about-page][data-layout="desktop"] .about-desktop-content-panel {
-  background-color: #f0e4d0 !important;
-  border-color: rgba(212, 165, 116, 0.32) !important;
-}
-
-html[data-about-page][data-layout="desktop"] .about-desktop-content-panel [class*="text-[#1E343A]"],
-html[data-about-page][data-layout="desktop"] .about-desktop-content-panel [class*="text-[#1A1208]"],
-html[data-about-page][data-layout="desktop"] .about-desktop-faq-panel [class*="text-[#1E343A]"],
-html[data-about-page][data-layout="desktop"] .about-desktop-faq-panel [class*="text-[#1A1208]"] {
-  color: #1a1208 !important;
-  -webkit-text-fill-color: #1a1208 !important;
-}
-
-html[data-about-page][data-layout="desktop"] .about-desktop-content-panel [class*="text-[#1E343A]/72"],
-html[data-about-page][data-layout="desktop"] .about-desktop-content-panel p,
-html[data-about-page][data-layout="desktop"] .about-desktop-content-panel li,
-html[data-about-page][data-layout="desktop"] .about-desktop-faq-panel [class*="text-[#1E343A]/72"],
-html[data-about-page][data-layout="desktop"] .about-desktop-faq-panel p,
-html[data-about-page][data-layout="desktop"] .about-desktop-faq-panel li {
-  color: rgba(26, 18, 8, 0.72) !important;
-  -webkit-text-fill-color: rgba(26, 18, 8, 0.72) !important;
-}
-
-html[data-about-page][data-layout="desktop"] .about-desktop-content-panel [class*="text-[#9A8F82]"],
-html[data-about-page][data-layout="desktop"] .about-desktop-faq-panel [class*="text-[#9A8F82]"] {
-  color: #8a7868 !important;
-}
-
-html[data-about-page][data-layout="desktop"] .about-desktop-content-panel h2,
-html[data-about-page][data-layout="desktop"] .about-desktop-faq-panel h2,
-html[data-about-page][data-layout="desktop"] .about-desktop-content-panel button,
-html[data-about-page][data-layout="desktop"] .about-desktop-faq-panel button {
-  color: #1a1208 !important;
-  -webkit-text-fill-color: #1a1208 !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
 }
 
 html[data-about-page][data-layout="desktop"] .about-desktop-faq-panel button[aria-expanded="true"] {
-  color: #1a1208 !important;
+  color: #f2e8da !important;
 }
 
 html[data-about-page][data-layout="desktop"] .about-desktop-contact-card {
@@ -731,14 +700,13 @@ html[data-about-page][data-layout="desktop"] .doehealth-top-banner .doe-home-top
 
 html[data-about-page][data-layout="desktop"] footer.home-footer--dusk {
   min-height: min(74vh, 46rem);
-  margin-top: clamp(1rem, 2vw, 2rem);
 }
 
 html[data-about-page][data-layout="desktop"]
   footer.home-footer--dusk
   .relative.z-10.flex.w-full.flex-1
   > div:first-child {
-  width: min(100%, 54rem);
-  max-width: min(54rem, calc(100vw - 2 * var(--desktop-page-inset-x, 2.5rem)));
-  margin-inline: auto;
+  padding-left: var(--desktop-page-inset-x) !important;
+  padding-right: var(--desktop-page-inset-x) !important;
+  margin-bottom: clamp(2.75rem, 4vw, 3.75rem) !important;
 }

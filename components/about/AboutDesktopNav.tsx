@@ -2,7 +2,7 @@
 
 import { DesktopPunchedSiteNav } from "@/components/nav/DesktopPunchedSiteNav";
 
-/** Desktop /about nav — always-punched dusk capsule (hero-band positioning). */
+/** Desktop /about nav — always-punched gold Doe + mail chrome (matches /doehealth). */
 export function AboutDesktopNav() {
   return (
     <DesktopPunchedSiteNav
