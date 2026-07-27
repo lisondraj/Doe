@@ -114,8 +114,8 @@ export const DOE_SARAH_CHART_ACCESS_INTERLUDE_FRAMES = 600;
 export const DOE_SARAH_CHART_ACCESS_FADE_OUT_FRAMES = 28;
 /** Turn index for agent-side-effects — chart modal plays before this turn. */
 export const DOE_SARAH_CHART_ACCESS_INTERLUDE_BEFORE_TURN = 4;
-/** Booking appointment + calendar card after Sarah picks a slot — ~8s @ 30fps. */
-export const DOE_SARAH_BOOKING_INTERLUDE_FRAMES = 240;
+/** Booking appointment + calendar card after Sarah picks a slot — ~4.3s @ 30fps. */
+export const DOE_SARAH_BOOKING_INTERLUDE_FRAMES = 130;
 export const DOE_SARAH_BOOKING_FADE_OUT_FRAMES = 22;
 /** Turn index for caller-thanks — booking interlude plays before this turn. */
 export const DOE_SARAH_BOOKING_INTERLUDE_BEFORE_TURN = 8;
@@ -232,7 +232,7 @@ export const DOE_OUTRO_DOE_LOGO_APPEAR_FRAME = Math.round(DOE_OUTRO_SHADER_HANDO
 export const DOE_OUTRO_DOE_AUDIO_SEC = 2.08975;
 export const DOE_OUTRO_DOE_AUDIO_FRAMES = Math.ceil(DOE_OUTRO_DOE_AUDIO_SEC * DOE_INTRO_FPS);
 export const DOE_OUTRO_DOE_AUDIO_SRC = "motion/doe-outro-logo.mp3";
-export const DOE_OUTRO_DOE_VOLUME = 7.5;
+export const DOE_OUTRO_DOE_VOLUME = DOE_SARAH_VOICE_VOLUME;
 /** Hold on “Doe” before URL swap. */
 export const DOE_OUTRO_DOE_HOLD_FRAMES = 36 + 2 * DOE_INTRO_FPS;
 /** Hard cut Doe → doehealth.care (same frame as brown bg). */
