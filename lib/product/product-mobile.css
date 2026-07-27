@@ -251,41 +251,324 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
   gap: 0.4rem;
 }
 
-.product-mobile-embed--calls .product-call-history-panel__body {
-  position: relative;
-  overflow: visible;
+/*
+ * Calls tab: desktop absolute mosaic → phone scroll stack.
+ * Selectors beat .product-brown-mock.product-brown-call-history-mode rules.
+ */
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel.product-landing-panel {
+  display: flex;
+  flex-direction: column;
+  flex: none;
+  min-height: 100%;
   height: auto;
-  min-height: min(72vh, 40rem);
+  overflow: visible;
+  background: transparent;
 }
 
-.product-mobile-embed--calls .product-call-history-panel__charts-row {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-landing-console-shell
+  .product-landing-header {
+  padding: 0.7rem 1rem 0.55rem;
+  gap: 0.45rem;
 }
 
-.product-mobile-embed--calls .product-call-history-panel__charts-col,
-.product-mobile-embed--calls .product-call-history-panel__charts-col--aside {
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-landing-header__trail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.15rem 0.2rem;
+  font-size: 0.78rem;
+  line-height: 1.25;
+}
+
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-landing-header__crumb,
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-landing-header__crumb-separator {
+  white-space: nowrap;
+}
+
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__body {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  justify-content: flex-start;
+  align-items: stretch;
+  flex: none;
+  min-height: 0;
+  height: auto;
+  overflow: visible;
+  container-type: normal;
+  gap: 0.85rem;
+  padding: 0.55rem 0.9rem 1.65rem;
+}
+
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__center-stage {
+  display: none;
+}
+
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__visit-header {
+  position: relative;
+  inset: auto;
+  top: auto;
+  right: auto;
+  bottom: auto;
+  left: auto;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.7rem;
   width: 100%;
+  max-width: 100%;
+  pointer-events: auto;
 }
 
-.product-mobile-embed--calls .product-call-history-panel__a1c-card,
-.product-mobile-embed--calls .product-call-history-panel__meds-card,
-.product-mobile-embed--calls .product-call-history-panel__visits-card,
-.product-mobile-embed--calls .product-call-history-panel__conditions-card,
-.product-mobile-embed--calls .product-call-history-panel__allergies-card,
-.product-mobile-embed--calls .product-call-history-panel__vitals-card,
-.product-mobile-embed--calls .product-call-history-panel__tasks-card,
-.product-mobile-embed--calls .product-call-history-panel__labs-card {
-  position: relative !important;
-  inset: auto !important;
-  width: 100% !important;
-  max-width: none !important;
-  height: auto !important;
-  min-height: 0 !important;
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__visit-title {
+  max-width: 100%;
+}
+
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__visit-title-line {
+  font-size: clamp(1.45rem, 0.85rem + 5.2vw, 1.95rem);
+  white-space: normal;
+  overflow-wrap: anywhere;
+  filter: drop-shadow(0 2px 12px rgba(212, 165, 116, 0.14));
+}
+
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__visit-booked {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__visit-booked-datetime {
+  white-space: normal;
+  font-size: 0.82rem;
+}
+
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__charts-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  width: 100%;
+  max-width: 100%;
+  margin-top: 0.15rem;
+}
+
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__charts-col,
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__charts-col--aside {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__a1c-card,
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__meds-card,
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__visits-card,
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__conditions-card,
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__allergies-card,
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__vitals-card,
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__tasks-card,
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__labs-card,
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__profile-card {
+  position: relative;
+  inset: auto;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  flex: none;
+  width: 100%;
+  max-width: 100%;
+  min-height: 0;
+  height: auto;
+  align-self: stretch;
+  gap: 0.55rem;
+  padding: 0.78rem 0.82rem 0.72rem;
+  box-sizing: border-box;
+  --pb-chart-axis-width: 1.85rem;
+  --pb-chart-axis-gap: 0.4rem;
+  --pb-chart-height: 5.35rem;
+  pointer-events: auto;
+}
+
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__visit-header
+  .product-call-history-panel__vitals-card {
+  --pb-chart-axis-width: 0px;
+  --pb-chart-axis-gap: 0px;
+  --pb-chart-height: 4.5rem;
+}
+
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__visit-header
+  .product-call-history-panel__tasks-card,
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__visit-header
+  .product-call-history-panel__labs-card {
+  flex: none;
+  min-height: 0;
+  --pb-chart-height: auto;
+}
+
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__tasks-list {
+  grid-template-columns: 1fr;
+}
+
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__lab-row {
+  grid-template-columns: 1.55rem minmax(0, 1fr) auto;
+  gap: 0.35rem;
+}
+
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__vital-row {
+  grid-template-columns: 1.45rem minmax(0, 1fr) auto;
+  gap: 0.35rem;
+}
+
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__a1c-card
+  .product-landing-live-quote__chart-profile-a1c-axis-label {
+  font-size: 0.52rem;
+}
+
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__hero {
+  position: relative;
+  z-index: 1;
+  order: -1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 100%;
+  text-align: left;
+  margin: 0 0 0.15rem;
+}
+
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__hero-name-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-items: start;
+  width: 100%;
+  max-width: 100%;
+}
+
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__hero-name {
+  align-items: flex-start;
+  width: 100%;
+  max-width: 100%;
+}
+
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__hero-line {
+  font-size: clamp(2.15rem, 1.35rem + 6.5vw, 2.85rem);
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-shadow: 0 2px 16px rgba(26, 18, 8, 0.36);
+}
+
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__hero-details-row--stats {
+  width: 100%;
+  margin-top: 0.7rem;
+  justify-content: space-between;
+  gap: 0.25rem;
+}
+
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__hero-details-row--stats
+  .product-call-history-panel__hero-details-col {
+  align-items: center;
+  text-align: center;
+}
+
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__hero-details-row--stats
+  .product-call-history-panel__hero-details-value {
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__hero-details-row--stats
+  .product-call-history-panel__hero-details-label {
+  font-size: 0.52rem;
+  white-space: nowrap;
+}
+
+.product-mobile-root.product-brown-mock.product-brown-call-history-mode
+  .product-mobile-embed--calls
+  .product-call-history-panel__hero-details-row--stats
+  .product-call-history-panel__hero-details-divider {
+  margin: 0.1rem 0.2rem;
 }
 
 .product-mobile-panel {
