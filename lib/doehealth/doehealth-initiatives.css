@@ -2310,6 +2310,36 @@ html[data-home-page][data-layout="desktop"] .doehealth-intro-call-sequence--pick
   animation-name: doehealth-intro-reveal-lift-in-desktop;
 }
 
+/* /doehealth desktop — keep intro UI unblur like iPhone. */
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-call-sequence__call-reveal,
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-call-sequence__a1c-reveal {
+  filter: blur(12px);
+  will-change: opacity, filter, transform;
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-call-sequence--revealing
+  .doehealth-intro-call-sequence__call-reveal,
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-call-sequence--incoming-active
+  .doehealth-intro-call-sequence__call-reveal,
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-call-sequence--picked-up
+  .doehealth-intro-call-sequence__call-reveal,
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-intro-call-sequence--picked-up
+  .doehealth-intro-call-sequence__a1c-reveal {
+  animation-name: doehealth-intro-reveal-lift-in;
+}
+
 .doehealth-initiatives--incoming-active .doehealth-initiatives__card {
   animation: doehealth-incoming-gold-border 2.4s ease-in-out infinite;
 }

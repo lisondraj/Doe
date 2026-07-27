@@ -3,19 +3,11 @@
 import {
   createContext,
   useContext,
-  useLayoutEffect,
-  useState,
   type CSSProperties,
   type ReactNode,
 } from "react";
 
 import { DoePhoneScrollRevealContent } from "@/components/doephone/DoePhoneScrollRevealLift";
-import {
-  DOEPHONE_DESKTOP_MEDIA_QUERY,
-  readBootstrappedDoePhoneVariant,
-  resolveDoePhoneVariant,
-  type DoePhoneVariant,
-} from "@/lib/doephone/resolve-doe-phone-variant";
 import {
   doephoneHomeScrollRevealStyleVars,
   doephoneHomeSectionRevealObserverOptions,
@@ -46,23 +38,13 @@ export function DoeHealthPhoneBandCluster({
   skipInitialReveal?: boolean;
   className?: string;
 }) {
-  const [layoutVariant, setLayoutVariant] = useState<DoePhoneVariant>(() =>
-    readBootstrappedDoePhoneVariant(),
-  );
-  const observer = doephoneHomeSectionRevealObserverOptions(layoutVariant);
+  /** Phone cadence on both layouts — segmented unblur + hover lift match iPhone. */
+  const observer = doephoneHomeSectionRevealObserverOptions("phone");
   const { ref, revealed } = useDoePhoneSectionReveal(observer.threshold, {
     skipInitialReveal,
     rootMargin: observer.rootMargin,
   });
-  const style = doephoneHomeScrollRevealStyleVars(layoutVariant) as CSSProperties;
-
-  useLayoutEffect(() => {
-    const sync = () => setLayoutVariant(resolveDoePhoneVariant());
-    sync();
-    const mq = window.matchMedia(DOEPHONE_DESKTOP_MEDIA_QUERY);
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, []);
+  const style = doephoneHomeScrollRevealStyleVars("phone") as CSSProperties;
 
   return (
     <div ref={ref} className={className} style={style}>

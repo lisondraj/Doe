@@ -9319,6 +9319,86 @@ html[data-home-page][data-layout="desktop"] .doephone-section-reveal--in.doephon
 html[data-home-page][data-layout="desktop"] .doephone-reveal-lift--in {
   animation-name: doephone-scroll-reveal-lift-in-desktop;
 }
+
+/* /doehealth desktop — match iPhone segmented unblur + hover lift. */
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doephone-section-reveal {
+  filter: blur(24px);
+  transform: translateY(2.75rem);
+  will-change: opacity, filter, transform;
+  overflow: visible;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doephone-reveal-lift {
+  filter: blur(16px);
+  transform: translateY(1.75rem);
+  will-change: opacity, filter, transform;
+  overflow: visible;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doephone-section-reveal--in.doephone-section-reveal--title,
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doephone-section-reveal--in.doephone-section-reveal--carousel,
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doephone-section-reveal--in.doephone-section-reveal--menu,
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doephone-section-reveal--in.doephone-section-reveal--badge,
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doephone-section-reveal--in.doephone-section-reveal--input,
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doephone-section-reveal--in.doephone-section-reveal--agents-carousel,
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doephone-section-reveal--in.doephone-section-reveal--agents-orbs,
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doephone-section-reveal--in.doephone-section-reveal--agents-label,
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doephone-section-reveal--in.doephone-section-reveal--agents-nav {
+  animation-name: doephone-section-reveal-in-phone;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doephone-reveal-lift--in {
+  animation-name: doephone-scroll-reveal-lift-in-phone;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doephone-section-reveal--in.doephone-section-reveal--hoverable {
+  transition: transform var(--doephone-scroll-reveal-hover-duration, 0.4s)
+    cubic-bezier(0.22, 1, 0.36, 1);
+}
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doephone-section-reveal--in.doephone-section-reveal--hoverable:hover {
+  transform: translateY(-7px);
+}
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doephone-reveal-lift--in.doephone-reveal-lift--hoverable {
+  transition: transform var(--doephone-scroll-reveal-hover-duration, 0.4s)
+    cubic-bezier(0.22, 1, 0.36, 1);
+}
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doephone-reveal-lift--in.doephone-reveal-lift--hoverable:hover {
+  transform: translateY(-7px);
+}
+/* Titles use pointer-events:none for text selection chrome — keep hover on the reveal shell. */
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doephone-section-reveal--hoverable {
+  pointer-events: auto;
+}
 html[data-home-page][data-layout="desktop"] .home-prior-auth-scale,
 html[data-home-page][data-layout="desktop"] .home-lab-alerts-scale {
   contain: layout paint;
