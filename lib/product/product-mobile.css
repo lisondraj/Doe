@@ -1303,6 +1303,12 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
   -webkit-user-select: none;
 }
 
+/* Silhouette has no real safe-area; keep Doe chrome clear of the island band. */
+.product-mobile-root--embed .product-mobile-topbar {
+  padding-top: 0.85rem;
+  padding-bottom: 0.72rem;
+}
+
 .product-mobile-root--embed .product-mobile-topbar__clinic-menu {
   display: none;
 }

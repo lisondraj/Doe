@@ -2007,6 +2007,16 @@ html[data-home-page][data-layout="desktop"]
 }
 
 .doehealth-agents-anywhere-phone {
+  --doehealth-phone-bezel-x: clamp(0.38rem, 1.25vmin, 0.52rem);
+  --doehealth-phone-bezel-bottom: clamp(0.38rem, 1.25vmin, 0.52rem);
+  /* Keep Dynamic Island in the top bezel — screen content starts below it. */
+  --doehealth-phone-island-top: clamp(0.48rem, 1.55vmin, 0.68rem);
+  --doehealth-phone-island-height: clamp(0.95rem, 3.1vmin, 1.28rem);
+  --doehealth-phone-island-gap: clamp(0.28rem, 0.9vmin, 0.4rem);
+  --doehealth-phone-bezel-top: calc(
+    var(--doehealth-phone-island-top) + var(--doehealth-phone-island-height) +
+      var(--doehealth-phone-island-gap)
+  );
   position: relative;
   width: min(100%, clamp(11.5rem, 42vmin, 18.5rem));
   aspect-ratio: 390 / 844;
@@ -2031,10 +2041,10 @@ html[data-home-page][data-layout="desktop"]
 .doehealth-agents-anywhere-phone__island {
   position: absolute;
   z-index: 3;
-  top: clamp(0.55rem, 1.8vmin, 0.78rem);
+  top: var(--doehealth-phone-island-top);
   left: 50%;
   width: clamp(4.1rem, 14vmin, 5.6rem);
-  height: clamp(0.95rem, 3.1vmin, 1.28rem);
+  height: var(--doehealth-phone-island-height);
   border-radius: 999px;
   background: #050403;
   transform: translateX(-50%);
@@ -2044,8 +2054,11 @@ html[data-home-page][data-layout="desktop"]
 .doehealth-agents-anywhere-phone__screen {
   position: absolute;
   z-index: 1;
-  inset: clamp(0.38rem, 1.25vmin, 0.52rem);
-  border-radius: clamp(1.2rem, 4.1vmin, 1.85rem);
+  top: var(--doehealth-phone-bezel-top);
+  right: var(--doehealth-phone-bezel-x);
+  bottom: var(--doehealth-phone-bezel-bottom);
+  left: var(--doehealth-phone-bezel-x);
+  border-radius: clamp(1.05rem, 3.6vmin, 1.55rem);
   overflow: hidden;
   background: #1a1208;
 }
@@ -2147,6 +2160,11 @@ html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-agents-anywhere-phone {
   width: min(100%, clamp(16rem, 22vw, 22rem));
+  --doehealth-phone-bezel-x: clamp(0.45rem, 0.7vw, 0.62rem);
+  --doehealth-phone-bezel-bottom: clamp(0.45rem, 0.7vw, 0.62rem);
+  --doehealth-phone-island-top: clamp(0.55rem, 0.85vw, 0.78rem);
+  --doehealth-phone-island-height: clamp(1.05rem, 1.5vw, 1.35rem);
+  --doehealth-phone-island-gap: clamp(0.32rem, 0.5vw, 0.45rem);
 }
 
 html[data-home-page][data-layout="desktop"]
