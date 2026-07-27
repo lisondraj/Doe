@@ -7,6 +7,7 @@ import { ProductCallHistoryPanel } from "@/components/product/ProductCallHistory
 import { ProductCallHistoryRightRail } from "@/components/product/ProductCallHistoryRightRail";
 import { ProductLandingPanel } from "@/components/product/ProductLandingPanel";
 import { ProductMobileInboxPanel } from "@/components/product/ProductMobileInboxPanel";
+import { ProductMobileSchedulePanel } from "@/components/product/ProductMobileSchedulePanel";
 import type { CallHistoryConvoView } from "@/components/product2/Product2CallHistoryRightRail";
 import { applyPhoneOverflowChrome } from "@/lib/doephone/phone-layout-viewport";
 import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-viewport";
@@ -173,23 +174,6 @@ function clinicInitials(name: string) {
     .toUpperCase();
 }
 
-function ProductMobileSchedulePanel() {
-  const day = weekSchedule[0];
-
-  return (
-    <section className="product-mobile-panel product-mobile-schedule" aria-label="Schedule">
-      <ul className="product-mobile-schedule__list">
-        {day.events.map((event) => (
-          <li key={`${event.time}-${event.label}`} className="product-mobile-schedule__row">
-            <span className={`product-mobile-schedule__time ${suisseIntl.className}`}>{event.time}</span>
-            <span className={`product-mobile-schedule__label ${dmSans.className}`}>{event.label}</span>
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
-
 /** iPhone /product — bottom-tab shell; desktop mock stays untouched. */
 export function ProductMobileView({ embed = false }: { embed?: boolean } = {}) {
   useDoePhoneLayoutViewport(!embed);
@@ -198,6 +182,7 @@ export function ProductMobileView({ embed = false }: { embed?: boolean } = {}) {
   const [convoView, setConvoView] = useState<CallHistoryConvoView>("full");
   const [showFableComposer, setShowFableComposer] = useState(false);
   const [inboxThread, setInboxThread] = useState<ProductMobileInboxThread | null>(null);
+  const [scheduleDayIndex, setScheduleDayIndex] = useState(0);
   const [selectedClinic, setSelectedClinic] = useState<(typeof PRODUCT_MOBILE_CLINICS)[number]>(
     PRODUCT_MOBILE_CLINICS[0],
   );
@@ -306,7 +291,11 @@ export function ProductMobileView({ embed = false }: { embed?: boolean } = {}) {
       ) : null}
       {activeTab === "schedule" ? (
         <ProductMobilePageHeader
-          crumbs={["Schedule", weekSchedule[0].day, weekSchedule[0].date]}
+          crumbs={[
+            "Schedule",
+            weekSchedule[scheduleDayIndex]?.day ?? weekSchedule[0].day,
+            weekSchedule[scheduleDayIndex]?.date ?? weekSchedule[0].date,
+          ]}
           backAria="Back"
           onBack={() => setTab("today")}
         />
@@ -386,7 +375,12 @@ export function ProductMobileView({ embed = false }: { embed?: boolean } = {}) {
             </section>
           </div>
         ) : null}
-        {activeTab === "schedule" ? <ProductMobileSchedulePanel /> : null}
+        {activeTab === "schedule" ? (
+          <ProductMobileSchedulePanel
+            selectedDayIndex={scheduleDayIndex}
+            onSelectedDayIndexChange={setScheduleDayIndex}
+          />
+        ) : null}
         {activeTab === "inbox" ? (
           <ProductMobileInboxPanel
             selectedThreadId={inboxThread?.id ?? null}

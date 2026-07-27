@@ -764,9 +764,9 @@ const suisseIntlUi = localFont({
   weight: "300",
 });
 
-const monthWeekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
+export const monthWeekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
 
-const monthGrid = [
+export const monthGrid = [
   { key: "2026-03-29", day: 29, month: "Mar", inApril: false, events: [{ time: "9:00-11:00", label: "Weekend Rounds", tone: "neutral" }] },
   { key: "2026-03-30", day: 30, month: "Mar", inApril: false, events: weekSchedule[0].events },
   { key: "2026-03-31", day: 31, month: "Mar", inApril: false, events: weekSchedule[1].events },
