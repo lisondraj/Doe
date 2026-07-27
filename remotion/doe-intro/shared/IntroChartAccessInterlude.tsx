@@ -47,16 +47,17 @@ const TILE_PLOT_HEIGHT = `${Math.round(BASE_TILE_PLOT_HEIGHT_PX * CHART_STRIP_SC
 const TILE_LIFT_PX = Math.round(32 * CHART_STRIP_SCALE);
 
 const ACCESS_DONE = 56;
+const ACCESS_CROSSFADE = 22;
 /** Label row height — used for pull row enter offset. */
 const ACCESS_LABEL_LINE_PX = 78;
 /** Let label settle before strip scroll begins. */
 const SCROLL_START = 82;
-const STRIP_APPEAR = 96;
+const STRIP_APPEAR = 90;
 const STRIP_REVEAL = 40;
 /** Fraction of strip width to pan — stop before meds/conditions/allergies. */
 const CHART_SCROLL_MAX_RATIO = 0.4;
-/** Strip scroll ends → boxes fade as pull loader starts. */
-const STRIP_EXIT_START = 300;
+/** Strip scroll ends as strip finishes closing — no decel hold before exit. */
+const STRIP_EXIT_START = 335;
 const STRIP_EXIT_DURATION = 44;
 const PULL_START = STRIP_EXIT_START;
 /** Side-effects card and Pulled label swap fire together. */
@@ -67,8 +68,6 @@ const CHART_BLUR_MAX = 16;
 /** Stagger each tile’s unblur/lift across the strip reveal. */
 const TILE_STAGGER = 0.055;
 const REVEAL_EASE = Easing.bezier(0.33, 0, 0.18, 1);
-/** Slow ease-out pan across chart tiles. */
-const SCROLL_EASE = Easing.bezier(0.42, 0, 0.18, 1);
 const STACK_SETTLE_EASE = Easing.bezier(0.22, 0.03, 0.12, 1);
 
 const METFORMIN_DOSE = "Metformin XR 500mg";
@@ -188,6 +187,35 @@ function InterludeStepIcon({ state, spinDeg }: { state: "spinner" | "check"; spi
       <circle cx="8" cy="8" r="6.25" stroke="rgba(242, 232, 218, 0.18)" strokeWidth="1.75" />
       <path d="M14.25 8a6.25 6.25 0 0 0-6.25-6.25" stroke="#d4a574" strokeWidth="1.75" strokeLinecap="round" />
     </svg>
+  );
+}
+
+function ChartAccessStepRow({ local, spinDeg }: { local: number; spinDeg: number }) {
+  const crossfade = interpolate(local, [ACCESS_DONE, ACCESS_DONE + ACCESS_CROSSFADE], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: STACK_SETTLE_EASE,
+  });
+
+  return (
+    <div className="motion4-chart-interlude__step">
+      <div className="motion4-chart-interlude__label-pair" aria-live="polite">
+        <span className="motion4-chart-interlude__label" style={{ opacity: 1 - crossfade }}>
+          Accessing Sarah&apos;s chart
+        </span>
+        <span className="motion4-chart-interlude__label" style={{ opacity: crossfade }}>
+          Accessed Sarah&apos;s chart
+        </span>
+      </div>
+      <div className="motion4-chart-interlude__icon-slot" aria-hidden>
+        <span className="motion4-chart-interlude__icon-layer" style={{ opacity: 1 - crossfade }}>
+          <InterludeStepIcon state="spinner" spinDeg={spinDeg} />
+        </span>
+        <span className="motion4-chart-interlude__icon-layer" style={{ opacity: crossfade }}>
+          <InterludeStepIcon state="check" spinDeg={0} />
+        </span>
+      </div>
+    </div>
   );
 }
 
@@ -442,11 +470,10 @@ export function IntroChartAccessInterlude() {
   const spinDeg = local * 4;
   const stripExitStart = STRIP_EXIT_START;
   const stripExitEnd = STRIP_EXIT_START + STRIP_EXIT_DURATION;
-  const scrollEnd = Math.max(SCROLL_START + 1, stripExitStart);
-  const accessDone = local >= ACCESS_DONE;
+  /** Pan through strip close — constant rate, no ease-out stall before exit. */
+  const scrollEnd = stripExitEnd;
+  const accessDone = local >= ACCESS_DONE + ACCESS_CROSSFADE;
   const pullDone = local >= PULL_DONE;
-  const accessLabel = accessDone ? "Accessed Sarah's chart" : "Accessing Sarah's chart";
-  const accessIcon: "spinner" | "check" = accessDone ? "check" : "spinner";
   const pullLabel = pullDone ? "Pulled pre-visit questionnaire" : "Pulling pre-visit questionnaire";
   const pullIcon: "spinner" | "check" = pullDone ? "check" : "spinner";
   const accessLocked = accessDone;
@@ -507,7 +534,6 @@ export function IntroChartAccessInterlude() {
       ? interpolate(local, [SCROLL_START, scrollEnd], [0, -scrollTarget], {
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp",
-          easing: SCROLL_EASE,
         })
       : 0;
 
@@ -555,7 +581,7 @@ export function IntroChartAccessInterlude() {
     stackCenteredTrio
       ? 0
       : showStripSlot && stripExit <= 0
-        ? interpolate(local, [SCROLL_START, SCROLL_START + 24], [-6, 0], {
+        ? interpolate(local, [ACCESS_DONE, STRIP_APPEAR + 28], [-6, 0], {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
             easing: STACK_SETTLE_EASE,
@@ -577,7 +603,7 @@ export function IntroChartAccessInterlude() {
           }${stackCenteredTrio ? " motion4-chart-interlude__stack--trio" : ""}`}
           style={{ transform: `translateY(${stackY}px)` }}
         >
-          <InterludeStepRow label={accessLabel} iconState={accessIcon} spinDeg={spinDeg} />
+          <ChartAccessStepRow local={local} spinDeg={spinDeg} />
 
           {showStripSlot ? (
             <div
@@ -677,7 +703,7 @@ export function IntroChartAccessInterlude() {
               >
               <div className="motion4-chart-interlude__card-head">
                 <p className={`motion4-chart-interlude__card-title m-0 ${suisseIntl.className}`}>
-                  Side effects
+                  Ask about side effects
                 </p>
                 <p className={`motion4-chart-interlude__card-subtitle m-0 ${dmSans.className}`}>
                   {METFORMIN_DOSE}

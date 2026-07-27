@@ -1964,6 +1964,16 @@ html[data-motion4-page] body {
   height: 78px;
 }
 
+.motion4-chart-interlude__label-pair {
+  display: grid;
+  align-items: center;
+  min-height: 78px;
+}
+
+.motion4-chart-interlude__label-pair > .motion4-chart-interlude__label {
+  grid-area: 1 / 1;
+}
+
 .motion4-chart-interlude__label-track {
   display: flex;
   flex-direction: column;
@@ -3192,38 +3202,14 @@ html[data-motion4-page] body {
 }
 
 .motion4-booking-interlude__card-title {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.12em;
   font-size: 38px;
   font-weight: 600;
   letter-spacing: -0.025em;
   line-height: 1.1;
-}
-
-.motion4-booking-interlude__card-at {
   background: linear-gradient(180deg, #f0d4a8 0%, #d4a574 55%, rgba(212, 165, 116, 0.82) 100%);
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
-}
-
-.motion4-booking-interlude__card-tag {
-  display: inline-flex;
-  align-items: center;
-  vertical-align: baseline;
-  padding: 0.1em 0.36em;
-  border: 1px solid rgba(212, 165, 116, 0.42);
-  border-radius: 0.34em;
-  background: rgba(212, 165, 116, 0.18);
-  color: #f0dcc4;
-  font-size: 0.72em;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  white-space: nowrap;
-  -webkit-background-clip: border-box;
-  background-clip: border-box;
 }
 
 .motion4-booking-interlude__cal {
