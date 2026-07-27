@@ -1,5 +1,7 @@
 export type ProductMobileInboxKind = "Referral" | "Lab" | "Message" | "Admin";
 
+export type ProductMobileInboxCategory = (typeof PRODUCT_MOBILE_INBOX_CATEGORIES)[number];
+
 export type ProductMobileInboxAttachment = {
   name: string;
   size: string;
@@ -18,11 +20,13 @@ export type ProductMobileInboxThread = {
   id: string;
   from: string;
   kind: ProductMobileInboxKind;
+  /** Owning agent queue — matches PRODUCT_MOBILE_INBOX_AGENTS.name */
+  agent: string;
   subject: string;
   preview: string;
   time: string;
   unread: boolean;
-  messages: readonly ProductMobileInboxMessage[];
+  messages: ProductMobileInboxMessage[];
 };
 
 export type ProductMobileInboxFilter = "all" | "unread" | "pinned";
@@ -39,12 +43,27 @@ export const PRODUCT_MOBILE_INBOX_AGENTS = [
 
 export const PRODUCT_MOBILE_INBOX_CATEGORIES = ["Labs", "Referrals", "Office", "Patients"] as const;
 
-/** Richer clinic queue threads (aligned with desktop Inbox). */
+const CATEGORY_KIND: Record<ProductMobileInboxCategory, ProductMobileInboxKind> = {
+  Labs: "Lab",
+  Referrals: "Referral",
+  Office: "Admin",
+  Patients: "Message",
+};
+
+const KIND_CATEGORY: Record<ProductMobileInboxKind, ProductMobileInboxCategory> = {
+  Lab: "Labs",
+  Referral: "Referrals",
+  Admin: "Office",
+  Message: "Patients",
+};
+
+/** Seed clinic queue threads (aligned with desktop Inbox). */
 export const PRODUCT_MOBILE_INBOX_THREADS: readonly ProductMobileInboxThread[] = [
   {
     id: "t1",
     from: "Riverside Cardiology",
     kind: "Referral",
+    agent: "Jamie Chen",
     subject: "Re: J. Ortiz, echo follow-up",
     preview: "We can see him Apr 9 at 2:30. Please attach last lipid panel.",
     time: "8:12 AM",
@@ -93,6 +112,7 @@ export const PRODUCT_MOBILE_INBOX_THREADS: readonly ProductMobileInboxThread[] =
     id: "t2",
     from: "Pathology, Central Lab",
     kind: "Lab",
+    agent: "Ana Lopez",
     subject: "Hemoglobin A1c resulted",
     preview: "Hgb A1c 6.9% (Mar 28). Flagged per your protocol.",
     time: "Yesterday",
@@ -123,6 +143,7 @@ export const PRODUCT_MOBILE_INBOX_THREADS: readonly ProductMobileInboxThread[] =
     id: "t3",
     from: "M. Nguyen",
     kind: "Message",
+    agent: "Jamie Chen",
     subject: "Question about metformin dose",
     preview: "I started the new strength yesterday and feel a bit nauseous.",
     time: "Yesterday",
@@ -152,6 +173,7 @@ export const PRODUCT_MOBILE_INBOX_THREADS: readonly ProductMobileInboxThread[] =
     id: "t4",
     from: "PriorAuth, Central",
     kind: "Admin",
+    agent: "M. Patel",
     subject: "Humira, documentation requested",
     preview: "Carrier needs progress notes from last visit.",
     time: "Mar 27",
@@ -181,6 +203,7 @@ export const PRODUCT_MOBILE_INBOX_THREADS: readonly ProductMobileInboxThread[] =
     id: "t5",
     from: "Dermatology, South",
     kind: "Referral",
+    agent: "R. Okonkwo",
     subject: "Biopsy scheduled",
     preview: "Lesion shave scheduled Apr 4. Path to follow.",
     time: "Mar 26",
@@ -204,6 +227,7 @@ export const PRODUCT_MOBILE_INBOX_THREADS: readonly ProductMobileInboxThread[] =
     id: "t6",
     from: "Nursing",
     kind: "Message",
+    agent: "Jamie Chen",
     subject: "BP 168/94 at check-in",
     preview: "K. Patel in room 2. No chest pain. Requests callback.",
     time: "Mar 26",
@@ -229,7 +253,103 @@ export const PRODUCT_MOBILE_INBOX_THREADS: readonly ProductMobileInboxThread[] =
       },
     ],
   },
-] as const;
+  {
+    id: "t7",
+    from: "Quest Diagnostics",
+    kind: "Lab",
+    agent: "Ana Lopez",
+    subject: "Lipid panel complete",
+    preview: "LDL 118 mg/dL. Full panel attached.",
+    time: "Mar 25",
+    unread: false,
+    messages: [
+      {
+        id: "t7-m1",
+        from: "Quest Diagnostics",
+        time: "Mar 25 · 11:14 AM",
+        body: "Lipid panel resulted for J. Ortiz. LDL 118, HDL 49, Trig 142. Report attached.",
+        attachments: [{ name: "lipid_panel_ortiz.pdf", size: "71 KB" }],
+      },
+    ],
+  },
+  {
+    id: "t8",
+    from: "Billing, Central",
+    kind: "Admin",
+    agent: "M. Patel",
+    subject: "Claim hold — coding review",
+    preview: "99214 needs supporting documentation for Mar 12 visit.",
+    time: "Mar 24",
+    unread: true,
+    messages: [
+      {
+        id: "t8-m1",
+        from: "Billing, Central",
+        time: "Mar 24 · 3:40 PM",
+        body: "Claim for Mar 12 visit is on hold pending coding review. Please confirm MDM complexity notes are complete.",
+      },
+    ],
+  },
+  {
+    id: "t9",
+    from: "Ortho Partners",
+    kind: "Referral",
+    agent: "R. Okonkwo",
+    subject: "Knee MRI authorized",
+    preview: "Auth #OP-2291 valid through May 1.",
+    time: "Mar 24",
+    unread: false,
+    messages: [
+      {
+        id: "t9-m1",
+        from: "Ortho Partners",
+        time: "Mar 24 · 9:05 AM",
+        body: "MRI knee authorization approved. Patient can schedule at any networked imaging site.",
+        attachments: [{ name: "auth_OP-2291.pdf", size: "38 KB" }],
+      },
+    ],
+  },
+  {
+    id: "t10",
+    from: "A. Brooks",
+    kind: "Message",
+    agent: "Ana Lopez",
+    subject: "Lab fasting instructions?",
+    preview: "Do I need to fast before Thursday’s draw?",
+    time: "Mar 23",
+    unread: true,
+    messages: [
+      {
+        id: "t10-m1",
+        from: "A. Brooks",
+        time: "Mar 23 · 7:22 PM",
+        body: "I have a lipid and CMP draw Thursday morning. Do I need to fast, and for how long?",
+      },
+    ],
+  },
+];
+
+export function productMobileInboxCloneThreads(): ProductMobileInboxThread[] {
+  return PRODUCT_MOBILE_INBOX_THREADS.map((thread) => ({
+    ...thread,
+    messages: thread.messages.map((message) => ({
+      ...message,
+      attachments: message.attachments ? [...message.attachments] : undefined,
+    })),
+  }));
+}
+
+export function productMobileInboxCategoryForKind(
+  kind: ProductMobileInboxKind,
+): ProductMobileInboxCategory {
+  return KIND_CATEGORY[kind];
+}
+
+export function productMobileInboxKindForCategory(
+  category: ProductMobileInboxCategory,
+): ProductMobileInboxKind {
+  return CATEGORY_KIND[category];
+}
 
 export function productMobileInboxSenderInitials(from: string): string {
   const parts = from.split(/[\s,]+/).filter(Boolean);
@@ -249,11 +369,27 @@ export function productMobileInboxAttachmentCount(
 }
 
 export function productMobileInboxFilterThreads(
-  filter: ProductMobileInboxFilter,
+  threads: readonly ProductMobileInboxThread[],
+  {
+    filter = "all",
+    category,
+    agent,
+  }: {
+    filter?: ProductMobileInboxFilter;
+    category?: ProductMobileInboxCategory | null;
+    agent?: string | null;
+  } = {},
 ): ProductMobileInboxThread[] {
-  return PRODUCT_MOBILE_INBOX_THREADS.filter((thread) => {
-    if (filter === "unread") return thread.unread;
-    if (filter === "pinned") return thread.id === PRODUCT_MOBILE_INBOX_PINNED_ID;
+  const kind = category ? CATEGORY_KIND[category] : null;
+  return threads.filter((thread) => {
+    if (filter === "unread" && !thread.unread) return false;
+    if (filter === "pinned" && thread.id !== PRODUCT_MOBILE_INBOX_PINNED_ID) return false;
+    if (kind && thread.kind !== kind) return false;
+    if (agent && thread.agent !== agent) return false;
     return true;
   });
+}
+
+export function productMobileInboxNowLabel(): string {
+  return "Just now";
 }

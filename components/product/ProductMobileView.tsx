@@ -17,7 +17,7 @@ import {
   PRODUCT_MOBILE_NAV_ITEMS,
   type ProductMobileTab,
 } from "@/lib/product/product-mobile-nav";
-import type { ProductMobileInboxThread } from "@/lib/product/product-mobile-inbox";
+import type { ProductMobileInboxCategory, ProductMobileInboxThread } from "@/lib/product/product-mobile-inbox";
 import {
   PRODUCT2_CALL_HISTORY_CONVO_VIEW_AGENT_ONLY,
   PRODUCT2_CALL_HISTORY_CONVO_VIEW_FULL,
@@ -182,6 +182,8 @@ export function ProductMobileView({ embed = false }: { embed?: boolean } = {}) {
   const [convoView, setConvoView] = useState<CallHistoryConvoView>("full");
   const [showFableComposer, setShowFableComposer] = useState(false);
   const [inboxThread, setInboxThread] = useState<ProductMobileInboxThread | null>(null);
+  const [inboxCategory, setInboxCategory] = useState<ProductMobileInboxCategory>("Referrals");
+  const [inboxComposing, setInboxComposing] = useState(false);
   const [scheduleDayIndex, setScheduleDayIndex] = useState(0);
   const [selectedClinic, setSelectedClinic] = useState<(typeof PRODUCT_MOBILE_CLINICS)[number]>(
     PRODUCT_MOBILE_CLINICS[0],
@@ -305,12 +307,18 @@ export function ProductMobileView({ embed = false }: { embed?: boolean } = {}) {
           crumbs={
             inboxThread
               ? ["Inbox", inboxThread.kind, inboxThread.subject]
-              : ["Inbox", "Email", "Clinic queue"]
+              : inboxComposing
+                ? ["Inbox", "Compose", inboxCategory]
+                : ["Inbox", inboxCategory, "Queue"]
           }
           backAria="Back"
           onBack={() => {
             if (inboxThread) {
               setInboxThread(null);
+              return;
+            }
+            if (inboxComposing) {
+              setInboxComposing(false);
               return;
             }
             setTab("today");
@@ -385,6 +393,10 @@ export function ProductMobileView({ embed = false }: { embed?: boolean } = {}) {
           <ProductMobileInboxPanel
             selectedThreadId={inboxThread?.id ?? null}
             onThreadChange={setInboxThread}
+            category={inboxCategory}
+            onCategoryChange={setInboxCategory}
+            composing={inboxComposing}
+            onComposingChange={setInboxComposing}
           />
         ) : null}
       </main>
@@ -404,7 +416,10 @@ export function ProductMobileView({ embed = false }: { embed?: boolean } = {}) {
                   : () => {
                       setTab(item.id);
                       if (item.id !== "calls") setShowFableComposer(false);
-                      if (item.id !== "inbox") setInboxThread(null);
+                      if (item.id !== "inbox") {
+                        setInboxThread(null);
+                        setInboxComposing(false);
+                      }
                     }
               }
               className={`product-mobile-tabbar__btn${active ? " product-mobile-tabbar__btn--active" : ""} ${suisseIntl.className}`}
