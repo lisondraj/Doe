@@ -20,6 +20,9 @@ export type Product2CallHistoryRightRailProps = {
   hideToolbar?: boolean;
   hideComposer?: boolean;
   hideActions?: boolean;
+  /** iPhone: show a reveal control instead of the Fable composer until expanded. */
+  composerCollapsed?: boolean;
+  onComposerExpand?: () => void;
   convoView?: CallHistoryConvoView;
   onConvoViewChange?: (view: CallHistoryConvoView) => void;
 };
@@ -58,6 +61,8 @@ export function Product2CallHistoryRightRail({
   hideToolbar = false,
   hideComposer = false,
   hideActions = false,
+  composerCollapsed = false,
+  onComposerExpand,
   convoView: controlledConvoView,
   onConvoViewChange,
 }: Product2CallHistoryRightRailProps = {}) {
@@ -72,35 +77,43 @@ export function Product2CallHistoryRightRail({
     }
   };
 
+  const showToolbarChrome = !hideToolbar || !hideActions;
+
   return (
     <aside
       className={`product-brown-sidebar product-brown-sidebar--call-history-rail product-brown-call-history-rail shrink-0 ${suisseIntl.className}${className ? ` ${className}` : ""}`}
     >
       <div className="product-call-history-rail__surface flex h-full min-h-0 flex-col">
-        {!hideToolbar ? (
-          <div className={`product-call-history-rail__toolbar shrink-0 ${dmSans.className}`}>
-            <div
-              className={`product-call-history-rail__segmented product-call-history-rail__segmented--${convoView}`}
-              role="group"
-              aria-label="Conversation view"
-            >
-              <button
-                type="button"
-                className={`product-call-history-rail__segmented-btn${convoView === "full" ? " product-call-history-rail__segmented-btn--active" : ""}`}
-                aria-pressed={convoView === "full"}
-                onClick={() => setConvoView("full")}
+        {showToolbarChrome ? (
+          <div
+            className={`product-call-history-rail__toolbar shrink-0${
+              hideToolbar ? " product-call-history-rail__toolbar--actions-only" : ""
+            } ${dmSans.className}`}
+          >
+            {!hideToolbar ? (
+              <div
+                className={`product-call-history-rail__segmented product-call-history-rail__segmented--${convoView}`}
+                role="group"
+                aria-label="Conversation view"
               >
-                {PRODUCT2_CALL_HISTORY_CONVO_VIEW_FULL}
-              </button>
-              <button
-                type="button"
-                className={`product-call-history-rail__segmented-btn${convoView === "agent-only" ? " product-call-history-rail__segmented-btn--active" : ""}`}
-                aria-pressed={convoView === "agent-only"}
-                onClick={() => setConvoView("agent-only")}
-              >
-                {PRODUCT2_CALL_HISTORY_CONVO_VIEW_AGENT_ONLY}
-              </button>
-            </div>
+                <button
+                  type="button"
+                  className={`product-call-history-rail__segmented-btn${convoView === "full" ? " product-call-history-rail__segmented-btn--active" : ""}`}
+                  aria-pressed={convoView === "full"}
+                  onClick={() => setConvoView("full")}
+                >
+                  {PRODUCT2_CALL_HISTORY_CONVO_VIEW_FULL}
+                </button>
+                <button
+                  type="button"
+                  className={`product-call-history-rail__segmented-btn${convoView === "agent-only" ? " product-call-history-rail__segmented-btn--active" : ""}`}
+                  aria-pressed={convoView === "agent-only"}
+                  onClick={() => setConvoView("agent-only")}
+                >
+                  {PRODUCT2_CALL_HISTORY_CONVO_VIEW_AGENT_ONLY}
+                </button>
+              </div>
+            ) : null}
 
             {!hideActions ? (
               <div className="product-call-history-rail__actions" role="group" aria-label="Call history actions">
@@ -123,7 +136,24 @@ export function Product2CallHistoryRightRail({
           />
         </div>
 
-        {!hideComposer ? (
+        {composerCollapsed && onComposerExpand ? (
+          <div className={`product-call-history-rail__composer product-call-history-rail__composer--collapsed shrink-0 ${dmSans.className}`}>
+            <button
+              type="button"
+              className="product-call-history-rail__composer-reveal"
+              onClick={onComposerExpand}
+            >
+              <span className="product-call-history-rail__composer-reveal-label">
+                {PRODUCT2_CALL_HISTORY_COMPOSER_PLACEHOLDER}
+              </span>
+              <span className="product-call-history-rail__composer-reveal-model">
+                {PRODUCT2_CALL_HISTORY_COMPOSER_MODEL}
+              </span>
+            </button>
+          </div>
+        ) : null}
+
+        {!hideComposer && !composerCollapsed ? (
           <div className={`product-call-history-rail__composer shrink-0 ${dmSans.className}`}>
             <div className="product-call-history-rail__composer-box">
               <label className="sr-only" htmlFor="call-history-rail-composer">

@@ -217,6 +217,7 @@ export function ProductMobileView({ embed = false }: { embed?: boolean } = {}) {
   useDoePhoneStableViewport(!embed);
   const [tab, setTab] = useState<ProductMobileTab>("today");
   const [convoView, setConvoView] = useState<CallHistoryConvoView>("full");
+  const [showFableComposer, setShowFableComposer] = useState(false);
   const [selectedClinic, setSelectedClinic] = useState<(typeof PRODUCT_MOBILE_CLINICS)[number]>(
     PRODUCT_MOBILE_CLINICS[0],
   );
@@ -379,7 +380,10 @@ export function ProductMobileView({ embed = false }: { embed?: boolean } = {}) {
             >
               <ProductCallHistoryRightRail
                 hideToolbar
-                hideActions
+                hideActions={false}
+                composerCollapsed={!showFableComposer}
+                onComposerExpand={() => setShowFableComposer(true)}
+                hideComposer={false}
                 convoView={convoView}
                 onConvoViewChange={setConvoView}
               />
@@ -405,7 +409,14 @@ export function ProductMobileView({ embed = false }: { embed?: boolean } = {}) {
               type="button"
               aria-current={active ? "page" : undefined}
               tabIndex={embed ? -1 : undefined}
-              onClick={embed ? undefined : () => setTab(item.id)}
+              onClick={
+                embed
+                  ? undefined
+                  : () => {
+                      setTab(item.id);
+                      if (item.id !== "calls") setShowFableComposer(false);
+                    }
+              }
               className={`product-mobile-tabbar__btn${active ? " product-mobile-tabbar__btn--active" : ""} ${suisseIntl.className}`}
             >
               <TabIcon id={item.id} active={active} />
