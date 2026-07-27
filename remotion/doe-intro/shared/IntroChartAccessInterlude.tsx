@@ -60,7 +60,7 @@ const STRIP_REVEAL = 40;
 /** Fraction of strip width to pan — stop before meds/conditions/allergies. */
 const CHART_SCROLL_MAX_RATIO = 0.4;
 /** Strip scroll ends as strip finishes closing — no decel hold before exit. */
-const STRIP_EXIT_START = 335;
+const STRIP_EXIT_START = 300;
 const STRIP_EXIT_DURATION = 44;
 const PULL_START = STRIP_EXIT_START;
 /** Side-effects card and Pulled label swap fire together. */

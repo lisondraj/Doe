@@ -101,7 +101,7 @@ export const DOE_SARAH_CONFIRM_CODE_INTERLUDE_FRAMES = 210;
 /** Turn index for caller-verify (“Sure, my date of birth…”) — interlude plays before this turn. */
 export const DOE_SARAH_CONFIRM_CODE_INTERLUDE_BEFORE_TURN = 2;
 /** Chart modal — strip scroll, pull loader, side-effects card, then agent ask in chat. */
-export const DOE_SARAH_CHART_ACCESS_INTERLUDE_FRAMES = 635;
+export const DOE_SARAH_CHART_ACCESS_INTERLUDE_FRAMES = 600;
 /** Modal fade-out before agent side-effects line in chat. */
 export const DOE_SARAH_CHART_ACCESS_FADE_OUT_FRAMES = 28;
 /** Turn index for agent-side-effects — chart modal plays before this turn. */
