@@ -2,11 +2,12 @@
 
 import { DesktopPunchedSiteNav } from "@/components/nav/DesktopPunchedSiteNav";
 
-/** Desktop /about nav — same scroll morph + gold mail as /doehealth. */
+/** Desktop /about nav — always-punched dusk capsule (hero-band positioning). */
 export function AboutDesktopNav() {
   return (
     <DesktopPunchedSiteNav
       ariaLabel="Site"
+      alwaysPunched
       navShowMailIcon
       navShowInvestorsCta={false}
     />

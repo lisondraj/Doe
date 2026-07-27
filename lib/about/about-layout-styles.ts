@@ -57,8 +57,8 @@ export const ABOUT_DESKTOP_MAIN_PT = "pt-[6.25rem]";
 /** Hero band — exactly one viewport; headline + gradient box only. */
 export const ABOUT_DESKTOP_SECTION_1_H = "about-desktop-section box-border h-[100dvh] max-h-[100dvh] overflow-hidden";
 
-/** Space below nav before mission title — matches subheading-to-hero gap. */
-export const ABOUT_DESKTOP_HERO_HEADLINE_TOP = "mt-4 md:mt-6";
+/** Space below punched nav before mission title. */
+export const ABOUT_DESKTOP_HERO_HEADLINE_TOP = "mt-5 md:mt-7 lg:mt-8";
 
 /** Hero band — nav clearance + uniform vertical rhythm, gradient box fills remainder. */
 export const ABOUT_DESKTOP_SECTION_1_LAYOUT =
