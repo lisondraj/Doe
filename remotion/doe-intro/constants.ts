@@ -77,6 +77,9 @@ export const DOE_SARAH_AGENT_SIDE_EFFECTS_HOLD =
 /** caller-side-effects — “Just mild nausea…” */
 export const DOE_SARAH_CALLER_SIDE_EFFECTS_TURN = 5;
 export const DOE_SARAH_CALLER_SIDE_EFFECTS_AUDIO_SEC = 3.056313;
+/** Brief beat after nausea reply audio before prefer-time question. */
+export const DOE_SARAH_CALLER_SIDE_EFFECTS_REPLY_HOLD =
+  Math.ceil(DOE_SARAH_CALLER_SIDE_EFFECTS_AUDIO_SEC * DOE_INTRO_FPS) + 4 - DOE_SARAH_CONVO_TURN_STEP;
 /** agent-prefer-time — “Which day and time would you prefer?” — extra beat after reply. */
 export const DOE_SARAH_AGENT_PREFER_TIME_TURN = 6;
 export const DOE_SARAH_AGENT_PREFER_TIME_AUDIO_SEC = 1.750187;
@@ -95,7 +98,7 @@ export const DOE_SARAH_CALLER_THANKS_AUDIO_SEC = 1.488938;
 export const DOE_SARAH_TURN_REPLY_HOLDS = [
   { turnIndex: DOE_SARAH_AGENT_INTAKE_TURN, frames: DOE_SARAH_AGENT_INTAKE_REPLY_HOLD },
   { turnIndex: DOE_SARAH_AGENT_OPEN_CHART_TURN, frames: DOE_SARAH_AGENT_OPEN_CHART_PRE_INTERLUDE_HOLD },
-  { turnIndex: 5, frames: DOE_SARAH_CONVO_REPLY_HOLD_EXTRA + 36 },
+  { turnIndex: DOE_SARAH_CALLER_SIDE_EFFECTS_TURN, frames: DOE_SARAH_CALLER_SIDE_EFFECTS_REPLY_HOLD },
   { turnIndex: DOE_SARAH_CALLER_PREFER_TIME_TURN, frames: DOE_SARAH_CALLER_PREFER_TIME_HOLD },
 ] as const;
 /** Interlude backdrop + loading row fade-in — shared across all Sarah call interludes. */
