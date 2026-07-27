@@ -18,7 +18,12 @@ import {
   DOE_SARAH_CONVO_UI_OFFSET,
   DOE_SARAH_AGENT_INTAKE_AUDIO_FROM,
   DOE_SARAH_AGENT_OPEN_CHART_AUDIO_FROM,
+  DOE_SARAH_AGENT_PREFER_TIME_AUDIO_FROM,
+  DOE_SARAH_AGENT_SIDE_EFFECTS_AUDIO_FROM,
   DOE_SARAH_CALLER_OPEN_AUDIO_FROM,
+  DOE_SARAH_CALLER_PREFER_TIME_AUDIO_FROM,
+  DOE_SARAH_CALLER_SIDE_EFFECTS_AUDIO_FROM,
+  DOE_SARAH_CALLER_THANKS_AUDIO_FROM,
   DOE_SARAH_CALLER_VERIFY_AUDIO_FROM,
   DOE_SARAH_CALL_HEADER_APPEAR_FRAME,
   DOE_SARAH_CONVO_REPLY_HOLD_EXTRA,
@@ -26,8 +31,7 @@ import {
   DOE_SARAH_INCOMING_CALL_AUDIO_SRC,
   DOE_SARAH_INCOMING_CALL_AUDIO_TRIM_FRAMES,
   DOE_SARAH_INCOMING_CALL_VOLUME,
-  DOE_SARAH_INCOMING_RING_DELAY_FRAMES,
-  DOE_SARAH_INCOMING_RING_SWIPE_FRAMES,
+  DOE_SARAH_INCOMING_GLOW_CYCLE_FRAMES,
   DOE_SARAH_INTRO_TURN_COUNT,
   DOE_SARAH_SETTLE_START_FRAMES,
   DOE_SARAH_VOICE_VOLUME,
@@ -96,17 +100,16 @@ export function MoreThanVoiceScene() {
     },
   );
 
-  const incomingRingStart = DOE_SARAH_CALL_HEADER_APPEAR_FRAME + DOE_SARAH_INCOMING_RING_DELAY_FRAMES;
-  const headerIncomingRing = interpolate(
-    frame,
-    [incomingRingStart, incomingRingStart + DOE_SARAH_INCOMING_RING_SWIPE_FRAMES],
-    [0, 1],
-    {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-      easing: MORPH_EASE,
-    },
-  );
+  const incomingGlow =
+    frame >= DOE_SARAH_CALL_HEADER_APPEAR_FRAME && frame < CONVO_START_FRAME
+      ? 0.5 +
+        0.5 *
+          Math.sin(
+            ((frame - DOE_SARAH_CALL_HEADER_APPEAR_FRAME) / DOE_SARAH_INCOMING_GLOW_CYCLE_FRAMES) *
+              Math.PI *
+              2,
+          )
+      : 0;
 
   /**
    * Single transform path: Calling from (large, centered) → swipe up + scale down → answered.
@@ -177,7 +180,7 @@ export function MoreThanVoiceScene() {
     "--m4-call-morph": headerMorphStatus,
     "--m4-call-morph-status": headerMorphStatus,
     "--m4-call-morph-subline": headerMorphSubline,
-    "--m4-call-incoming-ring": headerIncomingRing,
+    "--m4-call-incoming-glow": incomingGlow,
     "--m4-call-hero-y": "0px",
     "--m4-call-history-o": callHistoryOpacity,
     ...uiMotion,
@@ -226,7 +229,7 @@ export function MoreThanVoiceScene() {
               headerSettle={headerSettle}
               headerMorph={headerMorphStatus}
               headerMorphSubline={headerMorphSubline}
-              headerIncomingRing={headerIncomingRing}
+              headerIncomingGlow={incomingGlow}
               headerHeroY="0px"
               callHistoryOpacity={callHistoryOpacity}
               durationLabel={durationLabel}
@@ -255,6 +258,21 @@ export function MoreThanVoiceScene() {
       </Sequence>
       <Sequence from={DOE_SARAH_AGENT_OPEN_CHART_AUDIO_FROM} premountFor={DOE_INTRO_FPS}>
         <Audio src={staticFile("motion/sarah-agent-open-chart.mp3")} volume={DOE_SARAH_VOICE_VOLUME} />
+      </Sequence>
+      <Sequence from={DOE_SARAH_AGENT_SIDE_EFFECTS_AUDIO_FROM} premountFor={DOE_INTRO_FPS}>
+        <Audio src={staticFile("motion/sarah-agent-side-effects.mp3")} volume={DOE_SARAH_VOICE_VOLUME} />
+      </Sequence>
+      <Sequence from={DOE_SARAH_CALLER_SIDE_EFFECTS_AUDIO_FROM} premountFor={DOE_INTRO_FPS}>
+        <Audio src={staticFile("motion/sarah-caller-side-effects.mp3")} volume={DOE_SARAH_VOICE_VOLUME} />
+      </Sequence>
+      <Sequence from={DOE_SARAH_AGENT_PREFER_TIME_AUDIO_FROM} premountFor={DOE_INTRO_FPS}>
+        <Audio src={staticFile("motion/sarah-agent-prefer-time.mp3")} volume={DOE_SARAH_VOICE_VOLUME} />
+      </Sequence>
+      <Sequence from={DOE_SARAH_CALLER_PREFER_TIME_AUDIO_FROM} premountFor={DOE_INTRO_FPS}>
+        <Audio src={staticFile("motion/sarah-caller-prefer-time.mp3")} volume={DOE_SARAH_VOICE_VOLUME} />
+      </Sequence>
+      <Sequence from={DOE_SARAH_CALLER_THANKS_AUDIO_FROM} premountFor={DOE_INTRO_FPS}>
+        <Audio src={staticFile("motion/sarah-caller-thanks.mp3")} volume={DOE_SARAH_VOICE_VOLUME} />
       </Sequence>
     </AbsoluteFill>
   );

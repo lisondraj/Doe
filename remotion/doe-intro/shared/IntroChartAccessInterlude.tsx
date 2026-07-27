@@ -48,6 +48,9 @@ const TILE_LIFT_PX = Math.round(32 * CHART_STRIP_SCALE);
 
 const ACCESS_DONE = 56;
 const ACCESS_CROSSFADE = 22;
+/** Eased lift once “Accessed Sarah’s chart” locks in. */
+const ACCESS_LIFT_FRAMES = 30;
+const ACCESS_LIFT_Y_PX = 14;
 /** Label row height — used for pull row enter offset. */
 const ACCESS_LABEL_LINE_PX = 78;
 /** Let label settle before strip scroll begins. */
@@ -196,14 +199,32 @@ function ChartAccessStepRow({ local, spinDeg }: { local: number; spinDeg: number
     extrapolateRight: "clamp",
     easing: STACK_SETTLE_EASE,
   });
+  const accessedLabelY = interpolate(crossfade, [0, 1], [8, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: STACK_SETTLE_EASE,
+  });
+  const accessRowY = interpolate(
+    local,
+    [ACCESS_DONE + ACCESS_CROSSFADE, ACCESS_DONE + ACCESS_CROSSFADE + ACCESS_LIFT_FRAMES],
+    [0, -ACCESS_LIFT_Y_PX],
+    {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+      easing: STACK_SETTLE_EASE,
+    },
+  );
 
   return (
-    <div className="motion4-chart-interlude__step">
+    <div className="motion4-chart-interlude__step" style={{ transform: `translateY(${accessRowY}px)` }}>
       <div className="motion4-chart-interlude__label-pair" aria-live="polite">
         <span className="motion4-chart-interlude__label" style={{ opacity: 1 - crossfade }}>
           Accessing Sarah&apos;s chart
         </span>
-        <span className="motion4-chart-interlude__label" style={{ opacity: crossfade }}>
+        <span
+          className="motion4-chart-interlude__label"
+          style={{ opacity: crossfade, transform: `translateY(${accessedLabelY}px)` }}
+        >
           Accessed Sarah&apos;s chart
         </span>
       </div>
@@ -577,22 +598,7 @@ export function IntroChartAccessInterlude() {
         easing: REVEAL_EASE,
       })
     : cardY;
-  const stackY =
-    stackCenteredTrio
-      ? 0
-      : showStripSlot && stripExit <= 0
-        ? interpolate(local, [ACCESS_DONE, STRIP_APPEAR + 28], [-6, 0], {
-            extrapolateLeft: "clamp",
-            extrapolateRight: "clamp",
-            easing: STACK_SETTLE_EASE,
-          })
-        : stripExit > 0 && stripExit < 1
-          ? interpolate(stripExit, [0, 1], [-6, 0], {
-              extrapolateLeft: "clamp",
-              extrapolateRight: "clamp",
-              easing: REVEAL_EASE,
-            })
-          : 0;
+  const stackY = 0;
 
   return (
     <div className={`motion4-chart-interlude ${dmSans.className}`} aria-hidden>

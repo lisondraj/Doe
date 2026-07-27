@@ -45,7 +45,7 @@ export const DOE_SARAH_AGENT_INTAKE_REPLY_HOLD =
   Math.ceil(DOE_SARAH_AGENT_INTAKE_AUDIO_SEC * DOE_INTRO_FPS) - DOE_SARAH_CONVO_TURN_STEP + 8;
 /** Sarah voice clips — synced to convo turn reveals (see public/motion/sarah-*.mp3). */
 export const DOE_SARAH_CALLER_OPEN_TURN = 0;
-export const DOE_SARAH_CALLER_OPEN_AUDIO_SEC = 3.47425;
+export const DOE_SARAH_CALLER_OPEN_AUDIO_SEC = 4.075062;
 export const DOE_SARAH_CALLER_OPEN_HOLD_EXTRA =
   Math.ceil(DOE_SARAH_CALLER_OPEN_AUDIO_SEC * DOE_INTRO_FPS) - DOE_SARAH_CONVO_TURN_STEP + 8;
 /** Hold on Sarah’s DOB reply before agent opens chart. */
@@ -69,15 +69,24 @@ export const DOE_SARAH_AGENT_OPEN_CHART_PRE_INTERLUDE_HOLD = Math.max(
   8,
   Math.ceil(DOE_SARAH_AGENT_OPEN_CHART_AUDIO_SEC * DOE_INTRO_FPS) - DOE_SARAH_CONVO_TURN_STEP + 8,
 );
-/** agent-side-effects — brief hold after ask before caller reply. */
+/** agent-side-effects — “Any side effects since your last refill?” */
 export const DOE_SARAH_AGENT_SIDE_EFFECTS_TURN = 4;
+export const DOE_SARAH_AGENT_SIDE_EFFECTS_AUDIO_SEC = 2.0375;
 export const DOE_SARAH_AGENT_SIDE_EFFECTS_HOLD = 48;
+/** caller-side-effects — “Just mild nausea…” */
+export const DOE_SARAH_CALLER_SIDE_EFFECTS_TURN = 5;
+export const DOE_SARAH_CALLER_SIDE_EFFECTS_AUDIO_SEC = 3.056313;
 /** agent-prefer-time — “Which day and time would you prefer?” — extra beat after reply. */
 export const DOE_SARAH_AGENT_PREFER_TIME_TURN = 6;
+export const DOE_SARAH_AGENT_PREFER_TIME_AUDIO_SEC = 1.750187;
 export const DOE_SARAH_AGENT_PREFER_TIME_HOLD = DOE_SARAH_CONVO_REPLY_HOLD_EXTRA + 90;
-/** caller-prefer-time — brief hold on the date/time tags before booking modal. */
+/** caller-prefer-time — “How about Tuesday at 10:30 AM” */
 export const DOE_SARAH_CALLER_PREFER_TIME_TURN = 7;
+export const DOE_SARAH_CALLER_PREFER_TIME_AUDIO_SEC = 2.324875;
 export const DOE_SARAH_CALLER_PREFER_TIME_HOLD = 54;
+/** caller-thanks — “That is all, thank you” */
+export const DOE_SARAH_CALLER_THANKS_TURN = 8;
+export const DOE_SARAH_CALLER_THANKS_AUDIO_SEC = 1.488938;
 export const DOE_SARAH_TURN_REPLY_HOLDS = [
   { turnIndex: DOE_SARAH_AGENT_INTAKE_TURN, frames: DOE_SARAH_AGENT_INTAKE_REPLY_HOLD },
   { turnIndex: DOE_SARAH_AGENT_OPEN_CHART_TURN, frames: DOE_SARAH_AGENT_OPEN_CHART_PRE_INTERLUDE_HOLD },
@@ -171,6 +180,26 @@ export const DOE_SARAH_AGENT_OPEN_CHART_AUDIO_FROM =
   DOE_SARAH_CONVO_START_FRAMES +
   DOE_SARAH_CONVO_UI_OFFSET +
   DOE_SARAH_CONVO_TIMING.turnStarts[DOE_SARAH_AGENT_OPEN_CHART_TURN]!;
+export const DOE_SARAH_AGENT_SIDE_EFFECTS_AUDIO_FROM =
+  DOE_SARAH_CONVO_START_FRAMES +
+  DOE_SARAH_CONVO_UI_OFFSET +
+  DOE_SARAH_CONVO_TIMING.turnStarts[DOE_SARAH_AGENT_SIDE_EFFECTS_TURN]!;
+export const DOE_SARAH_CALLER_SIDE_EFFECTS_AUDIO_FROM =
+  DOE_SARAH_CONVO_START_FRAMES +
+  DOE_SARAH_CONVO_UI_OFFSET +
+  DOE_SARAH_CONVO_TIMING.turnStarts[DOE_SARAH_CALLER_SIDE_EFFECTS_TURN]!;
+export const DOE_SARAH_AGENT_PREFER_TIME_AUDIO_FROM =
+  DOE_SARAH_CONVO_START_FRAMES +
+  DOE_SARAH_CONVO_UI_OFFSET +
+  DOE_SARAH_CONVO_TIMING.turnStarts[DOE_SARAH_AGENT_PREFER_TIME_TURN]!;
+export const DOE_SARAH_CALLER_PREFER_TIME_AUDIO_FROM =
+  DOE_SARAH_CONVO_START_FRAMES +
+  DOE_SARAH_CONVO_UI_OFFSET +
+  DOE_SARAH_CONVO_TIMING.turnStarts[DOE_SARAH_CALLER_PREFER_TIME_TURN]!;
+export const DOE_SARAH_CALLER_THANKS_AUDIO_FROM =
+  DOE_SARAH_CONVO_START_FRAMES +
+  DOE_SARAH_CONVO_UI_OFFSET +
+  DOE_SARAH_CONVO_TIMING.turnStarts[DOE_SARAH_CALLER_THANKS_TURN]!;
 /** Background music ducks when Sarah’s opening line appears (scene-local frame). */
 export const DOE_INTRO_MUSIC_DUCK_FADE_FRAMES = 18;
 export const DOE_INTRO_MUSIC_DUCK_LEVEL = 0.22;
@@ -178,8 +207,8 @@ export const DOE_INTRO_MUSIC_DUCK_LEVEL = 0.22;
 export const DOE_INTRO_BG_MUSIC_GAIN = 2 / 3;
 /** Sarah / agent voice clips — boosted above default so they sit above ducked bed. */
 export const DOE_SARAH_VOICE_VOLUME = 9;
-/** Remotion Player shared `<Audio />` pool — bg + 6 voice/SFX tags. */
-export const DOE_INTRO_SHARED_AUDIO_TAGS = 8;
+/** Remotion Player shared `<Audio />` pool — bg + incoming SFX + 9 voice tags. */
+export const DOE_INTRO_SHARED_AUDIO_TAGS = 11;
 export const DOE_SARAH_CONVO_LAST_TURN_END =
   DOE_SARAH_CONVO_UI_OFFSET +
   DOE_SARAH_CONVO_TIMING.turnStarts[DOE_SARAH_INTRO_TURN_COUNT - 1]! +

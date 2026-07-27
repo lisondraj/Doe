@@ -1972,6 +1972,7 @@ html[data-motion4-page] body {
 
 .motion4-chart-interlude__label-pair > .motion4-chart-interlude__label {
   grid-area: 1 / 1;
+  will-change: opacity, transform;
 }
 
 .motion4-chart-interlude__label-track {
