@@ -86,7 +86,9 @@ export const DOE_SARAH_AGENT_PREFER_TIME_HOLD =
 /** caller-prefer-time — “How about Tuesday at 10:30 AM” */
 export const DOE_SARAH_CALLER_PREFER_TIME_TURN = 7;
 export const DOE_SARAH_CALLER_PREFER_TIME_AUDIO_SEC = 2.324875;
-export const DOE_SARAH_CALLER_PREFER_TIME_HOLD = 54;
+/** Brief beat after Tuesday reply audio before booking modal. */
+export const DOE_SARAH_CALLER_PREFER_TIME_HOLD =
+  Math.ceil(DOE_SARAH_CALLER_PREFER_TIME_AUDIO_SEC * DOE_INTRO_FPS) + 4 - DOE_SARAH_CONVO_TURN_STEP;
 /** caller-thanks — “That is all, thank you” */
 export const DOE_SARAH_CALLER_THANKS_TURN = 8;
 export const DOE_SARAH_CALLER_THANKS_AUDIO_SEC = 1.488938;
