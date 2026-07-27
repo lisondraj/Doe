@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { weekSchedule } from "@/components/doe-schedules-app-mock";
 import { ProductCallHistoryPanel } from "@/components/product/ProductCallHistoryPanel";
@@ -19,10 +19,75 @@ import {
 import {
   PRODUCT2_CALL_HISTORY_CONVO_VIEW_AGENT_ONLY,
   PRODUCT2_CALL_HISTORY_CONVO_VIEW_FULL,
+  PRODUCT2_CALL_HISTORY_HEADER,
 } from "@/lib/product2/product2-copy";
 import "@/lib/product/product-brown-mock.css";
 import "@/lib/product/product-landing.css";
 import "@/lib/product/product-mobile.css";
+
+function PageHeaderBackIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      className="product-landing-header__back-icon"
+    >
+      <path d="m15 18-6-6 6-6" />
+    </svg>
+  );
+}
+
+/** Shared Calls / Schedule / Inbox page chrome — scaled crumb bar under the app topbar. */
+function ProductMobilePageHeader({
+  crumbs,
+  backAria,
+  onBack,
+}: {
+  crumbs: readonly string[];
+  backAria: string;
+  onBack: () => void;
+}) {
+  return (
+    <div className="product-mobile-page-header product-landing-console-shell shrink-0">
+      <header className={`product-landing-header product-mobile-page-header__bar flex items-center gap-2 ${suisseIntl.className}`}>
+        <button
+          type="button"
+          className="product-landing-header__back product-mobile-page-header__back shrink-0"
+          aria-label={backAria}
+          onClick={onBack}
+        >
+          <PageHeaderBackIcon />
+        </button>
+        <h1 className="product-landing-header__title product-landing-header__trail product-mobile-page-header__trail m-0 min-w-0 font-normal tracking-tight">
+          {crumbs.map((crumb, index) => {
+            const isLast = index === crumbs.length - 1;
+            return (
+              <Fragment key={`${crumb}-${index}`}>
+                {index > 0 ? (
+                  <span className="product-landing-header__crumb-separator" aria-hidden>
+                    /
+                  </span>
+                ) : null}
+                <span
+                  className={`product-landing-header__crumb${
+                    isLast ? " product-landing-header__crumb--current" : ""
+                  }`}
+                >
+                  {crumb}
+                </span>
+              </Fragment>
+            );
+          })}
+        </h1>
+      </header>
+    </div>
+  );
+}
 
 function TabIcon({ id, active }: { id: ProductMobileTab; active: boolean }) {
   const stroke = active ? "#f5e6d0" : "rgba(245,230,208,0.48)";
@@ -112,12 +177,6 @@ function ProductMobileSchedulePanel() {
 
   return (
     <section className="product-mobile-panel product-mobile-schedule" aria-label="Schedule">
-      <header className={`product-mobile-panel__header ${suisseIntl.className}`}>
-        <h1 className="product-mobile-panel__title">Schedule</h1>
-        <p className={`product-mobile-panel__meta ${dmSans.className}`}>
-          {day.day} · {day.date}
-        </p>
-      </header>
       <ul className="product-mobile-schedule__list">
         {day.events.map((event) => (
           <li key={`${event.time}-${event.label}`} className="product-mobile-schedule__row">
@@ -133,10 +192,6 @@ function ProductMobileSchedulePanel() {
 function ProductMobileInboxPanel() {
   return (
     <section className="product-mobile-panel product-mobile-inbox" aria-label="Inbox">
-      <header className={`product-mobile-panel__header ${suisseIntl.className}`}>
-        <h1 className="product-mobile-panel__title">Inbox</h1>
-        <p className={`product-mobile-panel__meta ${dmSans.className}`}>Email · clinic queue</p>
-      </header>
       <ul className="product-mobile-inbox__list">
         {PRODUCT_MOBILE_INBOX_THREADS.map((thread) => (
           <li
@@ -256,6 +311,28 @@ export function ProductMobileView() {
       </header>
 
       {tab === "calls" ? (
+        <ProductMobilePageHeader
+          crumbs={PRODUCT2_CALL_HISTORY_HEADER.crumbs}
+          backAria={PRODUCT2_CALL_HISTORY_HEADER.backAria}
+          onBack={() => setTab("today")}
+        />
+      ) : null}
+      {tab === "schedule" ? (
+        <ProductMobilePageHeader
+          crumbs={["Schedule", weekSchedule[0].day, weekSchedule[0].date]}
+          backAria="Back"
+          onBack={() => setTab("today")}
+        />
+      ) : null}
+      {tab === "inbox" ? (
+        <ProductMobilePageHeader
+          crumbs={["Inbox", "Email", "Clinic queue"]}
+          backAria="Back"
+          onBack={() => setTab("today")}
+        />
+      ) : null}
+
+      {tab === "calls" ? (
         <div className={`product-mobile-calls-view-tabs ${dmSans.className}`}>
           <div
             className={`product-mobile-calls-view-tabs__segmented product-mobile-calls-view-tabs__segmented--${convoView}`}
@@ -305,7 +382,7 @@ export function ProductMobileView() {
               className="product-mobile-calls-pane product-mobile-calls-pane--chart"
               aria-label="Patient chart"
             >
-              <ProductCallHistoryPanel onBack={() => setTab("today")} />
+              <ProductCallHistoryPanel hideHeader onBack={() => setTab("today")} />
             </section>
           </div>
         ) : null}

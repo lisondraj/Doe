@@ -22,45 +22,53 @@ import {
 import "@/lib/product2/product2-landing.css";
 import { Product2CallHistoryOpenTaskIcon } from "@/components/product2/Product2CallHistoryOpenTaskIcon";
 /** Call History workspace — blank canvas; whole-page brown gradient like Today tab. */
-export function Product2CallHistoryPanel({ onBack }: { onBack?: () => void }) {
+export function Product2CallHistoryPanel({
+  onBack,
+  hideHeader = false,
+}: {
+  onBack?: () => void;
+  hideHeader?: boolean;
+}) {
   const [rootCrumb, dateCrumb, patientCrumb] = PRODUCT2_CALL_HISTORY_HEADER.crumbs;
 
   return (
     <div className="product-call-history-panel product-landing-panel flex min-h-0 flex-1 flex-col overflow-hidden">
-      <div className="product-landing-console-shell shrink-0">
-        <header className={`product-landing-header flex items-center gap-2 ${suisseIntl.className}`}>
-          <button
-            type="button"
-            className="product-landing-header__back shrink-0"
-            aria-label={PRODUCT2_CALL_HISTORY_HEADER.backAria}
-            onClick={onBack}
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.75"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden
-              className="product-landing-header__back-icon"
+      {hideHeader ? null : (
+        <div className="product-landing-console-shell shrink-0">
+          <header className={`product-landing-header flex items-center gap-2 ${suisseIntl.className}`}>
+            <button
+              type="button"
+              className="product-landing-header__back shrink-0"
+              aria-label={PRODUCT2_CALL_HISTORY_HEADER.backAria}
+              onClick={onBack}
             >
-              <path d="m15 18-6-6 6-6" />
-            </svg>
-          </button>
-          <h1 className="product-landing-header__title product-landing-header__trail m-0 min-w-0 font-normal tracking-tight">
-            <span className="product-landing-header__crumb">{rootCrumb}</span>
-            <span className="product-landing-header__crumb-separator" aria-hidden>
-              /
-            </span>
-            <span className="product-landing-header__crumb">{dateCrumb}</span>
-            <span className="product-landing-header__crumb-separator" aria-hidden>
-              /
-            </span>
-            <span className="product-landing-header__crumb product-landing-header__crumb--current">{patientCrumb}</span>
-          </h1>
-        </header>
-      </div>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.75"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden
+                className="product-landing-header__back-icon"
+              >
+                <path d="m15 18-6-6 6-6" />
+              </svg>
+            </button>
+            <h1 className="product-landing-header__title product-landing-header__trail m-0 min-w-0 font-normal tracking-tight">
+              <span className="product-landing-header__crumb">{rootCrumb}</span>
+              <span className="product-landing-header__crumb-separator" aria-hidden>
+                /
+              </span>
+              <span className="product-landing-header__crumb">{dateCrumb}</span>
+              <span className="product-landing-header__crumb-separator" aria-hidden>
+                /
+              </span>
+              <span className="product-landing-header__crumb product-landing-header__crumb--current">{patientCrumb}</span>
+            </h1>
+          </header>
+        </div>
+      )}
 
       <div className="product-call-history-panel__body min-h-0 flex-1">
         <div className="product-call-history-panel__center-stage">
