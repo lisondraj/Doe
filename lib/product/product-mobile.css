@@ -146,7 +146,7 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
     linear-gradient(180deg, rgba(232, 192, 142, 0.34) 0%, rgba(212, 165, 116, 0.14) 100%);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
   color: #f0d2a4;
-  font-size: 0.62rem;
+  font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.02em;
 }
