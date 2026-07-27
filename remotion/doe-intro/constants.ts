@@ -65,10 +65,9 @@ export const DOE_SARAH_CALLER_TURN_HOLDS = [
 /** agent-open-chart — “Thank you, let me open your chart” */
 export const DOE_SARAH_AGENT_OPEN_CHART_TURN = 3;
 export const DOE_SARAH_AGENT_OPEN_CHART_AUDIO_SEC = 1.671812;
-export const DOE_SARAH_AGENT_OPEN_CHART_PRE_INTERLUDE_HOLD = Math.max(
-  8,
-  Math.ceil(DOE_SARAH_AGENT_OPEN_CHART_AUDIO_SEC * DOE_INTRO_FPS) - DOE_SARAH_CONVO_TURN_STEP + 8,
-);
+/** Gap after open-chart audio tail before chart modal — keep a short beat only. */
+export const DOE_SARAH_AGENT_OPEN_CHART_PRE_INTERLUDE_HOLD =
+  Math.ceil(DOE_SARAH_AGENT_OPEN_CHART_AUDIO_SEC * DOE_INTRO_FPS) + 4 - DOE_SARAH_CONVO_TURN_STEP;
 /** agent-side-effects — “Any side effects since your last refill?” */
 export const DOE_SARAH_AGENT_SIDE_EFFECTS_TURN = 4;
 export const DOE_SARAH_AGENT_SIDE_EFFECTS_AUDIO_SEC = 2.0375;
