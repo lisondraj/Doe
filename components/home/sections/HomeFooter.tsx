@@ -61,11 +61,6 @@ export function HomeFooter({
               <p className="text-[clamp(1.22rem,1.02rem+0.72vmin,1.48rem)] font-semibold leading-[1.16] iphone-page:text-[clamp(1.14rem,0.98rem+0.65vmin,1.36rem)]">
                 Doe Intelligence Inc
               </p>
-              <address className="mt-2.5 space-y-0.5 not-italic text-white/88">
-                <span className="block">250 Hudson Street</span>
-                <span className="block">New York, NY 10013</span>
-                <span className="block">United States</span>
-              </address>
               <a
                 href="mailto:james@doe.care"
                 className="mt-2.5 inline-block text-white/88 no-underline transition-colors hover:text-white"
