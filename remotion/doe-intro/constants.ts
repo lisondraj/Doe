@@ -119,8 +119,8 @@ export const DOE_SARAH_CHART_ACCESS_INTERLUDE_FRAMES = 600;
 export const DOE_SARAH_CHART_ACCESS_FADE_OUT_FRAMES = 28;
 /** Turn index for agent-side-effects — chart modal plays before this turn. */
 export const DOE_SARAH_CHART_ACCESS_INTERLUDE_BEFORE_TURN = 4;
-/** Booking appointment + calendar card after Sarah picks a slot — ~4.3s @ 30fps. */
-export const DOE_SARAH_BOOKING_INTERLUDE_FRAMES = 130;
+/** Booking appointment + calendar card after Sarah picks a slot — ~4.5s @ 30fps. */
+export const DOE_SARAH_BOOKING_INTERLUDE_FRAMES = 136;
 export const DOE_SARAH_BOOKING_FADE_OUT_FRAMES = 22;
 /** Turn index for caller-thanks — booking interlude plays before this turn. */
 export const DOE_SARAH_BOOKING_INTERLUDE_BEFORE_TURN = 8;
