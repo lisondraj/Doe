@@ -5,7 +5,7 @@ import { useLayoutEffect } from "react";
 import { AboutPageContent } from "@/components/about/AboutPageContent";
 import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
 import { DoeHealthTopBanner } from "@/components/doehealth/DoeHealthTopBanner";
-import { ABOUT_CONTACT_EMAIL } from "@/lib/about/about-contact";
+import { ABOUT_CONTACT_EMAIL, ABOUT_TOP_BANNER_LINK_LABEL, ABOUT_TOP_BANNER_MESSAGE } from "@/lib/about/about-contact";
 import "@/lib/about/about-doehealth-iphone.css";
 import { BLOG_CONTENT_PT } from "@/lib/blog/blog-layout-styles";
 import "@/lib/doehealth/doehealth-landing.css";
@@ -42,8 +42,8 @@ export function AboutMobileView() {
       footerShaderTheme="dusk"
       topBanner={
         <DoeHealthTopBanner
-          message="Doe is gearing up to raise pre-seed!"
-          linkLabel="Contact us"
+          message={ABOUT_TOP_BANNER_MESSAGE}
+          linkLabel={ABOUT_TOP_BANNER_LINK_LABEL}
           linkHref={`mailto:${ABOUT_CONTACT_EMAIL}`}
         />
       }

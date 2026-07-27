@@ -14,9 +14,15 @@ import { AboutDesktopStatCharts } from "@/components/about/AboutDesktopStatChart
 import { AboutDesktopTamChart } from "@/components/about/AboutDesktopTamChart";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import { AboutDesktopContactSection } from "@/components/about/AboutDesktopContactSection";
+import { DoeHealthTopBanner } from "@/components/doehealth/DoeHealthTopBanner";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
 import "@/lib/about/about-doehealth-iphone.css";
 import "@/lib/doehealth/doehealth-landing.css";
+import {
+  ABOUT_CONTACT_EMAIL,
+  ABOUT_TOP_BANNER_LINK_LABEL,
+  ABOUT_TOP_BANNER_MESSAGE,
+} from "@/lib/about/about-contact";
 import {
   ABOUT_DESKTOP_CONTENT_STACK_GAP,
   ABOUT_DESKTOP_HERO_AFTER_BYLINE,
@@ -69,6 +75,12 @@ export function AboutDesktopView() {
   return (
     <div className="about-desktop-root relative overflow-x-hidden bg-[#1b1410]" data-doeforvc-view="desktop">
       <div className="relative z-[40] overflow-x-clip overflow-y-visible">
+        <DoeHealthTopBanner
+          message={ABOUT_TOP_BANNER_MESSAGE}
+          linkLabel={ABOUT_TOP_BANNER_LINK_LABEL}
+          linkHref={`mailto:${ABOUT_CONTACT_EMAIL}`}
+        />
+
         <section className={ABOUT_DESKTOP_SECTION_1_H}>
           <div className={ABOUT_DESKTOP_SECTION_1_LAYOUT}>
             <div
