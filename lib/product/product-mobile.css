@@ -2381,6 +2381,10 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
   overflow: hidden;
 }
 
+.product-mobile-inbox__row--unread .product-mobile-inbox__subject {
+  color: #f0d2a4;
+}
+
 .product-mobile-inbox__time {
   display: inline-flex;
   align-items: center;
@@ -2475,10 +2479,14 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
 
 .product-mobile-inbox__detail-subject {
   margin: 0;
-  font-size: 1.05rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  color: #f5e6d0;
+  background: var(--product-mobile-gold-text);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  font-size: 1.12rem;
+  font-weight: 650;
+  letter-spacing: -0.03em;
 }
 
 .product-mobile-inbox__detail-meta {
