@@ -279,7 +279,9 @@ export function ProductAgentBuilderPanel() {
                       <span className={`product-agent-builder-panel__library-item-name ${dmSans.className}`}>
                         {item.name}
                       </span>
-                      <span className={`product-agent-builder-panel__status ${suisseIntl.className}`}>
+                      <span
+                        className={`product-agent-builder-panel__status product-agent-builder-panel__status--${item.status} ${suisseIntl.className}`}
+                      >
                         {PRODUCT_AGENT_BUILDER_STATUS_LABEL[item.status]}
                       </span>
                     </span>
@@ -288,7 +290,9 @@ export function ProductAgentBuilderPanel() {
                     </span>
                     <span className={`product-agent-builder-panel__library-item-foot ${suisseIntl.className}`}>
                       <span>{item.updated}</span>
-                      <span>{item.callsToday} calls today</span>
+                      <span className="product-agent-builder-panel__library-item-calls">
+                        {item.callsToday} calls today
+                      </span>
                     </span>
                   </button>
                 </li>
@@ -308,7 +312,9 @@ export function ProductAgentBuilderPanel() {
             </p>
           </div>
           <div className="product-agent-builder-panel__toolbar-actions">
-            <span className={`product-agent-builder-panel__status ${suisseIntl.className}`}>
+            <span
+              className={`product-agent-builder-panel__status product-agent-builder-panel__status--${agent.status} ${suisseIntl.className}`}
+            >
               {PRODUCT_AGENT_BUILDER_STATUS_LABEL[agent.status]}
             </span>
             <button type="button" className={`product-agent-builder-panel__tool-btn ${suisseIntl.className}`}>
@@ -340,7 +346,9 @@ export function ProductAgentBuilderPanel() {
               <p className={`product-agent-builder-panel__inspector-label ${suisseIntl.className}`}>
                 {PRODUCT_AGENT_BUILDER_TOOLBAR.editingLabel}
               </p>
-              <span className={`product-agent-builder-panel__status ${suisseIntl.className}`}>
+              <span
+                className={`product-agent-builder-panel__status product-agent-builder-panel__status--${agent.status} ${suisseIntl.className}`}
+              >
                 {PRODUCT_AGENT_BUILDER_STATUS_LABEL[agent.status]}
               </span>
             </div>
@@ -374,7 +382,7 @@ export function ProductAgentBuilderPanel() {
                 {PRODUCT_AGENT_BUILDER_TOOLBAR.integrationsTitle}
               </h2>
               <span className={`product-agent-builder-panel__integrations-count ${suisseIntl.className}`}>
-                {liveIntegrations} live
+                <span className="product-agent-builder-panel__integrations-count-value">{liveIntegrations}</span> live
               </span>
             </div>
             <ul className="product-agent-builder-panel__integrations-list">
