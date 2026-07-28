@@ -3,15 +3,21 @@
 html[data-product-page="true"]:not([data-layout="desktop"]) {
   background-color: #1a1208;
   max-width: 100%;
+  overflow: hidden;
   overflow-x: hidden;
+  overscroll-behavior: none;
   overscroll-behavior-x: none;
+  overscroll-behavior-y: none;
 }
 
 html[data-product-page="true"]:not([data-layout="desktop"]) body {
   background-color: #1a1208 !important;
   max-width: 100%;
+  overflow: hidden;
   overflow-x: hidden;
+  overscroll-behavior: none;
   overscroll-behavior-x: none;
+  overscroll-behavior-y: none;
   touch-action: pan-y;
 }
 
@@ -46,7 +52,9 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
   min-width: 0;
   overflow: hidden;
   overflow-x: hidden;
+  overscroll-behavior: none;
   overscroll-behavior-x: none;
+  overscroll-behavior-y: none;
   touch-action: pan-y;
   background:
     linear-gradient(
@@ -535,6 +543,13 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
   touch-action: pan-y;
 }
 
+/* Today: no rubber-band under the top nav — match Calls / Schedule chrome lock. */
+.product-mobile-embed--landing {
+  overscroll-behavior: none;
+  overscroll-behavior-x: none;
+  overscroll-behavior-y: none;
+}
+
 .product-mobile-embed .product-landing-panel,
 .product-mobile-embed .product-call-history-panel {
   min-height: 100%;
@@ -758,7 +773,7 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
   overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
+  overscroll-behavior: none;
   touch-action: pan-y;
 }
 

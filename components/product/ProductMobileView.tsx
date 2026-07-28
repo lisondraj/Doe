@@ -193,6 +193,7 @@ export function ProductMobileView({ embed = false }: { embed?: boolean } = {}) {
   const [clinicMenuOpen, setClinicMenuOpen] = useState(false);
   const clinicMenuRef = useRef<HTMLDivElement>(null);
   const callsActionsRef = useRef<HTMLDivElement>(null);
+  const todayScrollRef = useRef<HTMLDivElement>(null);
   const activeTab = embed ? "today" : tab;
 
   useLayoutEffect(() => {
@@ -204,6 +205,63 @@ export function ProductMobileView({ embed = false }: { embed?: boolean } = {}) {
       /* ignore */
     }
   }, [embed]);
+
+  /* Block Today rubber-band pull-down under the top nav (iOS ignores CSS alone). */
+  useEffect(() => {
+    if (activeTab !== "today") return;
+    const scroller = todayScrollRef.current;
+    if (!scroller) return;
+
+    let startY = 0;
+
+    const isScrollableY = (node: HTMLElement) => {
+      const { overflowY } = getComputedStyle(node);
+      return (
+        (overflowY === "auto" || overflowY === "scroll" || overflowY === "overlay") &&
+        node.scrollHeight > node.clientHeight + 1
+      );
+    };
+
+    /** True when a nested pane (not the Today page scroller) owns the gesture. */
+    const isNestedScrollerTarget = (target: EventTarget | null) => {
+      let node = target instanceof HTMLElement ? target : null;
+      while (node && node !== scroller) {
+        if (isScrollableY(node)) return true;
+        node = node.parentElement;
+      }
+      return false;
+    };
+
+    const onTouchStart = (event: TouchEvent) => {
+      startY = event.touches[0]?.clientY ?? 0;
+    };
+
+    const onTouchMove = (event: TouchEvent) => {
+      if (isNestedScrollerTarget(event.target)) return;
+
+      const y = event.touches[0]?.clientY ?? 0;
+      const deltaY = y - startY;
+
+      if (deltaY > 0 && scroller.scrollTop <= 0) {
+        event.preventDefault();
+        return;
+      }
+
+      if (
+        deltaY < 0 &&
+        scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 1
+      ) {
+        event.preventDefault();
+      }
+    };
+
+    scroller.addEventListener("touchstart", onTouchStart, { passive: true });
+    scroller.addEventListener("touchmove", onTouchMove, { passive: false });
+    return () => {
+      scroller.removeEventListener("touchstart", onTouchStart);
+      scroller.removeEventListener("touchmove", onTouchMove);
+    };
+  }, [activeTab]);
 
   useEffect(() => {
     if (embed || (!clinicMenuOpen && !callsActionsOpen)) return;
@@ -398,7 +456,10 @@ export function ProductMobileView({ embed = false }: { embed?: boolean } = {}) {
 
       <main className="product-mobile-main">
         {activeTab === "today" ? (
-          <div className="product-mobile-embed product-mobile-embed--landing">
+          <div
+            ref={todayScrollRef}
+            className="product-mobile-embed product-mobile-embed--landing"
+          >
             <ProductLandingPanel />
           </div>
         ) : null}
