@@ -649,6 +649,20 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
   border-top: 1px solid var(--pi-line);
 }
 
+.product-mobile-root--embed .product-landing-day-summary__column--ahead,
+.product-mobile-embed--landing .product-landing-day-summary__column--ahead {
+  align-items: stretch;
+}
+
+.product-mobile-root--embed .product-landing-day-summary__column--ahead > .product-landing-day-summary__section-label,
+.product-mobile-embed--landing .product-landing-day-summary__column--ahead > .product-landing-day-summary__section-label,
+.product-mobile-root--embed .product-landing-day-summary__column--ahead .product-landing-ahead-carousel,
+.product-mobile-embed--landing .product-landing-day-summary__column--ahead .product-landing-ahead-carousel {
+  width: 100%;
+  max-width: 100%;
+  align-self: stretch;
+}
+
 .product-mobile-embed--landing .product-landing-call__stage .product-landing-day-summary__total-value {
   font-size: 2.85rem;
 }
