@@ -1366,7 +1366,7 @@ export function DoeSchedulesAppMock({
   const productBrownInbox = productBrown && workspaceView === "inbox";
   const productBrownLanding = productBrown && workspaceView === "landing";
   const productBrownAgentBuilder = productBrown && workspaceView === "agent-builder";
-  const productBrownLandingStyle = productBrownLanding || productBrownAgentBuilder;
+  const productBrownLandingStyle = productBrownLanding;
   const productBrownSchedule = productBrown && workspaceView === "schedule";
   const productBrownCallHistory = productBrown && workspaceView === "call-history";
   const productBrownAgents = productBrown && workspaceView === "agents";
@@ -2069,6 +2069,7 @@ export function DoeSchedulesAppMock({
         (productBrownDarkWorkspace ? " product-brown-workspace-mode" : "") +
         (productBrownInbox ? " product-brown-inbox-mode" : "") +
         (productBrownLandingStyle ? " product-brown-landing-mode" : "") +
+        (productBrownAgentBuilder ? " product-brown-agent-builder-mode" : "") +
         (productBrownSchedule ? " product-brown-schedule-mode" : "") +
         (productBrownCallHistory ? " product-brown-call-history-mode" : "") +
         (productBrownAgents ? " product-brown-agents-mode" : "")
@@ -2090,7 +2091,7 @@ export function DoeSchedulesAppMock({
           className={`min-h-0 flex-1 overflow-hidden ${
             productBrown
               ? productBrownInbox || productBrownSchedule || productBrownLandingStyle || productBrownAgents
-                || productBrownCallHistory
+                || productBrownCallHistory || productBrownAgentBuilder
                 ? "product-brown-frame product-brown-layered-layout bg-[var(--pi-cream)]"
                 : "product-brown-frame product-brown-layered-layout bg-[#151008]"
               : productBrownInbox
@@ -2146,7 +2147,7 @@ export function DoeSchedulesAppMock({
                       ? scheduleUi!.cream
                       : productBrownAgents
                         ? "bg-[var(--pi-cream)]"
-                        : productBrownLandingStyle || productBrownCallHistory
+                        : productBrownLandingStyle || productBrownCallHistory || productBrownAgentBuilder
                           ? "bg-transparent"
                         : productBrownDarkWorkspace
                           ? "bg-[#2a1f12] shadow-[inset_1px_0_0_rgba(245,230,208,0.07)]"
