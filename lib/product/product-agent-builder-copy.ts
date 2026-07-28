@@ -26,7 +26,6 @@ export const PRODUCT_AGENT_BUILDER_TAB_LABEL = "Agent Builder";
 
 export const PRODUCT_AGENT_BUILDER_HEADER = {
   title: "Agent Builder",
-  eyebrow: "Voice logic",
   subtitle: "Main clinic line · draft flow",
   agentName: "Northside Front Desk",
   agentStatus: "Draft",

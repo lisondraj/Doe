@@ -1,5 +1,7 @@
 "use client";
 
+import { useCallback, useRef, useState, type PointerEvent } from "react";
+
 import { dmSans, suisseIntl } from "@/lib/home/fonts";
 import {
   PRODUCT_AGENT_BUILDER_EDGES,
@@ -16,6 +18,8 @@ import "@/lib/product/product-landing.css";
 const NODE_W = 208;
 const NODE_H = 98;
 const PORT = 10;
+const CANVAS_W = 1100;
+const CANVAS_H = 640;
 
 function nodeById(id: string): ProductAgentBuilderNode | undefined {
   return PRODUCT_AGENT_BUILDER_NODES.find((item) => item.id === id);
@@ -75,8 +79,56 @@ function edgeGeometry(fromId: string, toId: string) {
   };
 }
 
-/** Desktop /product Agent Builder — voice-agent logic canvas with integrations. */
+/** Desktop /product Agent Builder — pannable voice-agent canvas with floating inspectors. */
 export function ProductAgentBuilderPanel() {
+  const [pan, setPan] = useState({ x: 48, y: 36 });
+  const [dragging, setDragging] = useState(false);
+  const dragRef = useRef<{
+    pointerId: number;
+    startX: number;
+    startY: number;
+    originX: number;
+    originY: number;
+  } | null>(null);
+
+  const onPointerDown = useCallback(
+    (event: PointerEvent<HTMLDivElement>) => {
+      if (event.button !== 0) return;
+      const target = event.target as HTMLElement | null;
+      if (target?.closest("[data-pab-no-pan]")) return;
+
+      dragRef.current = {
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        originX: pan.x,
+        originY: pan.y,
+      };
+      setDragging(true);
+      event.currentTarget.setPointerCapture(event.pointerId);
+    },
+    [pan.x, pan.y],
+  );
+
+  const onPointerMove = useCallback((event: PointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    setPan({
+      x: drag.originX + (event.clientX - drag.startX),
+      y: drag.originY + (event.clientY - drag.startY),
+    });
+  }, []);
+
+  const endDrag = useCallback((event: PointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    dragRef.current = null;
+    setDragging(false);
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+  }, []);
+
   return (
     <div className="product-agent-builder-panel product-landing-panel flex min-h-0 flex-1 flex-col overflow-hidden">
       <div className="product-landing-console-shell shrink-0">
@@ -93,39 +145,31 @@ export function ProductAgentBuilderPanel() {
           >
             <path d="m12 3 1.912 5.813L20 12l-6.088 3.187L12 21l-1.912-5.813L4 12l6.088-3.187L12 3Z" />
           </svg>
-          <div className="product-agent-builder-panel__header-copy min-w-0">
-            <p className={`product-agent-builder-panel__eyebrow ${suisseIntl.className}`}>
-              {PRODUCT_AGENT_BUILDER_HEADER.eyebrow}
-            </p>
-            <h1 className={`product-landing-header__title product-agent-builder-panel__title m-0 ${dmSans.className}`}>
-              {PRODUCT_AGENT_BUILDER_HEADER.title}
-            </h1>
-          </div>
+          <h1 className="product-landing-header__title m-0 font-normal tracking-tight">
+            {PRODUCT_AGENT_BUILDER_HEADER.title}
+          </h1>
         </header>
       </div>
 
-      <div className={`product-agent-builder-panel__masthead ${suisseIntl.className}`}>
-        <div className="product-agent-builder-panel__masthead-main">
-          <h2 className={`product-agent-builder-panel__agent-name ${dmSans.className}`}>
-            {PRODUCT_AGENT_BUILDER_HEADER.agentName}
-          </h2>
-          <p className={`product-agent-builder-panel__agent-meta ${suisseIntl.className}`}>
-            {PRODUCT_AGENT_BUILDER_HEADER.subtitle}
-          </p>
-        </div>
-        <div className="product-agent-builder-panel__masthead-side">
-          <span className={`product-agent-builder-panel__status ${suisseIntl.className}`}>
-            {PRODUCT_AGENT_BUILDER_HEADER.agentStatus}
-          </span>
-          <span className={`product-agent-builder-panel__flow-hint ${suisseIntl.className}`}>
-            7 nodes · 6 connections
-          </span>
-        </div>
-      </div>
-
       <div className="product-agent-builder-panel__body">
-        <div className="product-agent-builder-panel__canvas-wrap" aria-label="Voice agent logic canvas">
-          <div className="product-agent-builder-panel__canvas">
+        <div
+          className={`product-agent-builder-panel__canvas-wrap${
+            dragging ? " product-agent-builder-panel__canvas-wrap--dragging" : ""
+          }`}
+          aria-label="Voice agent logic canvas"
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={endDrag}
+          onPointerCancel={endDrag}
+        >
+          <div
+            className="product-agent-builder-panel__canvas"
+            style={{
+              width: CANVAS_W,
+              height: CANVAS_H,
+              transform: `translate(${pan.x}px, ${pan.y}px)`,
+            }}
+          >
             <svg className="product-agent-builder-panel__edges" aria-hidden>
               <defs>
                 <marker
@@ -184,6 +228,7 @@ export function ProductAgentBuilderPanel() {
             {PRODUCT_AGENT_BUILDER_NODES.map((node) => (
               <article
                 key={node.id}
+                data-pab-no-pan
                 className={`product-agent-builder-panel__node product-agent-builder-panel__node--${node.kind}${
                   node.editing ? " product-agent-builder-panel__node--editing" : ""
                 }`}
@@ -215,11 +260,20 @@ export function ProductAgentBuilderPanel() {
           </div>
         </div>
 
-        <aside className="product-agent-builder-panel__inspector" aria-label="Node editor and integrations">
+        <aside
+          className="product-agent-builder-panel__inspector"
+          aria-label="Node editor and integrations"
+          data-pab-no-pan
+        >
           <section className="product-agent-builder-panel__inspector-card" aria-label="Editing node">
-            <p className={`product-agent-builder-panel__inspector-eyebrow ${suisseIntl.className}`}>
-              {PRODUCT_AGENT_BUILDER_EDITING.eyebrow}
-            </p>
+            <div className="product-agent-builder-panel__inspector-head">
+              <p className={`product-agent-builder-panel__inspector-eyebrow ${suisseIntl.className}`}>
+                {PRODUCT_AGENT_BUILDER_EDITING.eyebrow}
+              </p>
+              <span className={`product-agent-builder-panel__status ${suisseIntl.className}`}>
+                {PRODUCT_AGENT_BUILDER_HEADER.agentStatus}
+              </span>
+            </div>
             <p className={`product-agent-builder-panel__inspector-kind ${suisseIntl.className}`}>
               {PRODUCT_AGENT_BUILDER_EDITING.kind}
             </p>
@@ -228,6 +282,9 @@ export function ProductAgentBuilderPanel() {
             </h2>
             <p className={`product-agent-builder-panel__inspector-summary ${suisseIntl.className}`}>
               {PRODUCT_AGENT_BUILDER_EDITING.summary}
+            </p>
+            <p className={`product-agent-builder-panel__agent-meta ${suisseIntl.className}`}>
+              {PRODUCT_AGENT_BUILDER_HEADER.agentName} · {PRODUCT_AGENT_BUILDER_HEADER.subtitle}
             </p>
             <div className="product-agent-builder-panel__fields">
               {PRODUCT_AGENT_BUILDER_EDITING.fields.map((field) => (

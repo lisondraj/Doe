@@ -1,4 +1,4 @@
-/* /product Agent Builder — dark brown + gold console matching Schedule / Inbox */
+/* /product Agent Builder — full brown canvas with floating nav-style inspectors */
 
 .product-agent-builder-panel {
   --pl-console-from: #2a2118;
@@ -12,7 +12,8 @@
   --pab-gold-bright: #e8c08e;
   --pab-gold-soft: rgba(212, 165, 116, 0.16);
   --pab-gold-line: rgba(212, 165, 116, 0.38);
-  --pab-node: rgba(34, 26, 18, 0.94);
+  --pab-nav: #181410;
+  --pab-nav-raised: #1e1812;
   --pab-inset: clamp(0.85rem, 1.5vw, 1.2rem);
   --pab-gold-text: linear-gradient(
     180deg,
@@ -55,124 +56,46 @@
 }
 
 .product-agent-builder-panel .product-landing-header__icon {
-  color: rgba(232, 192, 142, 0.72);
+  color: rgba(242, 232, 218, 0.48);
 }
 
-.product-agent-builder-panel__header-copy {
-  display: flex;
-  flex-direction: column;
-  gap: 0.12rem;
-  min-width: 0;
-}
-
-.product-agent-builder-panel__eyebrow {
-  margin: 0;
-  color: var(--pab-gold-bright);
-  font-size: 0.62rem;
-  font-weight: 650;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  line-height: 1;
-}
-
-.product-agent-builder-panel__title.product-landing-header__title {
-  background: var(--pab-gold-text);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  font-size: clamp(1.35rem, 1.1rem + 0.65vw, 1.7rem);
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  line-height: 1.1;
-}
-
-.product-agent-builder-panel__masthead {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-shrink: 0;
-  padding: 0.55rem clamp(1.35rem, 2vw, 2rem) 0.95rem;
-  border-bottom: 1px solid var(--pab-line);
-}
-
-.product-agent-builder-panel__masthead-main {
-  min-width: 0;
-}
-
-.product-agent-builder-panel__agent-name {
-  margin: 0;
-  color: #f5e6d0;
-  font-size: clamp(1.15rem, 0.95rem + 0.55vw, 1.45rem);
-  font-weight: 650;
-  letter-spacing: -0.03em;
-  line-height: 1.15;
-}
-
-.product-agent-builder-panel__agent-meta {
-  margin: 0.28rem 0 0;
-  color: var(--pab-muted);
-  font-size: 0.78rem;
-  letter-spacing: 0.01em;
-}
-
-.product-agent-builder-panel__masthead-side {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.35rem;
-  flex-shrink: 0;
-}
-
-.product-agent-builder-panel__status {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.28rem 0.62rem;
-  border: 1px solid var(--pab-gold-line);
-  border-radius: 999px;
-  background: var(--pab-gold-soft);
-  color: var(--pab-gold-bright);
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.product-agent-builder-panel__flow-hint {
-  color: var(--pab-muted-soft);
-  font-size: 0.68rem;
-  letter-spacing: 0.04em;
+.product-agent-builder-panel .product-landing-header__title {
+  color: var(--pl-console-text, #f2e8da);
 }
 
 .product-agent-builder-panel__body {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) clamp(16.5rem, 22vw, 20.5rem);
-  gap: 0;
+  position: relative;
+  display: flex;
   min-height: 0;
   flex: 1 1 auto;
   overflow: hidden;
+  background: transparent;
 }
 
 .product-agent-builder-panel__canvas-wrap {
-  position: relative;
-  min-width: 0;
-  min-height: 0;
-  overflow: auto;
-  overscroll-behavior: contain;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  overscroll-behavior: none;
   isolation: isolate;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
   background:
-    radial-gradient(ellipse 55% 42% at 18% 12%, rgba(212, 165, 116, 0.08), transparent 70%),
-    radial-gradient(circle at 1px 1px, rgba(242, 232, 218, 0.07) 1px, transparent 0) 0 0 / 24px 24px;
+    radial-gradient(circle at 1px 1px, rgba(242, 232, 218, 0.075) 1px, transparent 0) 0 0 / 22px 22px;
+}
+
+.product-agent-builder-panel__canvas-wrap--dragging {
+  cursor: grabbing;
 }
 
 .product-agent-builder-panel__canvas {
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
   box-sizing: border-box;
-  width: max(100%, 980px);
-  height: 460px;
-  margin: 0;
-  padding: var(--pab-inset);
+  will-change: transform;
 }
 
 .product-agent-builder-panel__edges {
@@ -230,12 +153,14 @@
   border: 1px solid var(--pab-line-strong);
   border-radius: 0.95rem;
   background:
-    linear-gradient(180deg, rgba(55, 42, 30, 0.55) 0%, rgba(34, 26, 18, 0.98) 100%);
+    linear-gradient(180deg, rgba(55, 42, 30, 0.72) 0%, rgba(24, 20, 16, 0.96) 100%);
   box-shadow:
     0 14px 32px rgba(0, 0, 0, 0.28),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
   transform: translate(-50%, -50%);
   overflow: hidden;
+  cursor: default;
+  user-select: none;
 }
 
 .product-agent-builder-panel__node-accent {
@@ -300,7 +225,11 @@
 
 .product-agent-builder-panel__node-title {
   margin: 0;
-  color: #f7f0e6;
+  background: var(--pab-gold-text);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 0.98rem;
   font-weight: 650;
   letter-spacing: -0.025em;
@@ -346,30 +275,45 @@
   left: 100%;
 }
 
+/* Floating inspector stack — nav-bar surface language, over the canvas */
 .product-agent-builder-panel__inspector {
+  position: absolute;
+  z-index: 4;
+  top: clamp(0.85rem, 1.4vw, 1.15rem);
+  right: clamp(0.85rem, 1.4vw, 1.15rem);
+  bottom: clamp(0.85rem, 1.4vw, 1.15rem);
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
+  gap: 0.75rem;
+  width: min(20.5rem, calc(100% - 1.7rem));
+  max-width: 20.5rem;
   min-height: 0;
-  overflow: auto;
-  padding: var(--pab-inset);
-  border-left: 1px solid var(--pab-line);
-  background: rgba(12, 9, 6, 0.45);
+  pointer-events: none;
 }
 
 .product-agent-builder-panel__inspector-card,
 .product-agent-builder-panel__integrations {
-  border: 1px solid var(--pab-line);
-  border-radius: 1rem;
-  background:
-    linear-gradient(180deg, rgba(48, 36, 26, 0.55) 0%, rgba(28, 21, 14, 0.92) 100%);
+  pointer-events: auto;
+  border: 1px solid var(--pl-nav-line, var(--pab-line));
+  border-radius: 0.95rem;
+  background: var(--pab-nav);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    0 10px 28px rgba(0, 0, 0, 0.18);
+    0 16px 36px rgba(0, 0, 0, 0.34);
 }
 
 .product-agent-builder-panel__inspector-card {
+  flex: 0 0 auto;
   padding: 0.95rem 1rem 1.05rem;
+  max-height: min(52%, 22rem);
+  overflow: auto;
+}
+
+.product-agent-builder-panel__inspector-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
 }
 
 .product-agent-builder-panel__inspector-eyebrow {
@@ -381,8 +325,22 @@
   text-transform: uppercase;
 }
 
+.product-agent-builder-panel__status {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.24rem 0.52rem;
+  border: 1px solid var(--pab-gold-line);
+  border-radius: 999px;
+  background: var(--pab-gold-soft);
+  color: var(--pab-gold-bright);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
 .product-agent-builder-panel__inspector-kind {
-  margin: 0.45rem 0 0;
+  margin: 0.55rem 0 0;
   color: var(--pab-muted);
   font-size: 0.68rem;
   font-weight: 650;
@@ -392,7 +350,11 @@
 
 .product-agent-builder-panel__inspector-title {
   margin: 0.28rem 0 0;
-  color: #f7f0e6;
+  background: var(--pab-gold-text);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 1.18rem;
   font-weight: 650;
   letter-spacing: -0.03em;
@@ -404,6 +366,14 @@
   color: var(--pab-muted);
   font-size: 0.78rem;
   line-height: 1.45;
+}
+
+.product-agent-builder-panel__agent-meta {
+  margin: 0.7rem 0 0;
+  color: var(--pab-muted-soft);
+  font-size: 0.68rem;
+  letter-spacing: 0.01em;
+  line-height: 1.35;
 }
 
 .product-agent-builder-panel__fields {
@@ -440,6 +410,7 @@
   min-height: 0;
   overflow: hidden;
   flex: 1 1 auto;
+  background: var(--pab-nav-raised);
 }
 
 .product-agent-builder-panel__integrations-head {
@@ -449,8 +420,6 @@
   gap: 0.75rem;
   padding: 0.9rem 1rem 0.75rem;
   border-bottom: 1px solid var(--pab-line);
-  background:
-    linear-gradient(180deg, rgba(212, 165, 116, 0.1) 0%, transparent 100%);
 }
 
 .product-agent-builder-panel__integrations-eyebrow {
@@ -464,7 +433,11 @@
 
 .product-agent-builder-panel__integrations-title {
   margin: 0.28rem 0 0;
-  color: #f7f0e6;
+  background: var(--pab-gold-text);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 1rem;
   font-weight: 650;
   letter-spacing: -0.02em;
@@ -501,7 +474,7 @@
   padding: 0.65rem 0.7rem;
   border: 1px solid transparent;
   border-radius: 0.75rem;
-  background: rgba(18, 13, 9, 0.42);
+  background: rgba(12, 9, 6, 0.42);
 }
 
 .product-agent-builder-panel__integration--active {
@@ -608,14 +581,21 @@
 }
 
 .product-brown-mock.product-brown-agent-builder-mode .product-brown-shell,
+.product-brown-mock.product-brown-agent-builder-mode .product-brown-frame:not(.product-brown-layered-layout),
 .product-brown-mock.product-brown-agent-builder-mode .product-brown-frame.product-brown-layered-layout,
+.product-brown-mock.product-brown-agent-builder-mode .product-brown-layered-layout,
 .product-brown-mock.product-brown-agent-builder-mode .product-brown-workspace-row,
+.product-brown-mock.product-brown-agent-builder-mode .product-brown-inner-row,
+.product-brown-mock.product-brown-agent-builder-mode .product-brown-inner-row__content,
+.product-brown-mock.product-brown-agent-builder-mode .product-brown-primary-col,
 .product-brown-mock.product-brown-agent-builder-mode .product-brown-main {
   background: transparent !important;
 }
 
 .product-brown-mock.product-brown-agent-builder-mode .product-brown-main {
   color: var(--pl-console-text, #f2e8da) !important;
+  border-top-left-radius: 0;
+  overflow: hidden;
 }
 
 .product-brown-mock.product-brown-agent-builder-mode .product-landing-console-shell {
@@ -628,7 +608,10 @@
   border-bottom: 0 !important;
 }
 
-.product-brown-mock.product-brown-agent-builder-mode .product-agent-builder-panel__canvas-wrap {
-  /* Clip horizontal scroll to the content column only */
-  contain: paint;
+.product-brown-mock.product-brown-agent-builder-mode .product-landing-console-shell .product-landing-header__title {
+  color: var(--pl-console-text, #f2e8da) !important;
+}
+
+.product-brown-mock.product-brown-agent-builder-mode .product-landing-console-shell .product-landing-header__icon {
+  color: rgba(242, 232, 218, 0.48);
 }
