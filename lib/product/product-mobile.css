@@ -288,21 +288,21 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
 
 /*
  * Shared Calls / Schedule / Inbox page header —
- * lifted above transcript (Calls) and matched across tabs; scaled up.
+ * continuous with page chrome; hairline under the crumb bar only.
  */
 .product-mobile-page-header.product-landing-console-shell {
   flex-shrink: 0;
   max-width: 100%;
   min-width: 0;
   overflow-x: hidden;
-  background: var(--product-mobile-chrome);
-  border-bottom: 0;
+  background: transparent;
+  border-bottom: 1px solid rgba(245, 230, 208, 0.12);
 }
 
 .product-mobile-page-header .product-mobile-page-header__bar.product-landing-header {
   position: relative;
   z-index: 1;
-  padding: 0.42rem var(--product-mobile-gutter-x) 0.38rem;
+  padding: 0.42rem var(--product-mobile-gutter-x) 0.42rem;
   gap: 0.45rem;
   background: transparent !important;
   border-bottom: 0 !important;
@@ -1390,7 +1390,7 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
 
 .product-mobile-schedule__masthead {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: 0.65rem;
   flex-shrink: 0;
@@ -1403,30 +1403,25 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
 }
 
 .product-mobile-schedule__eyebrow {
-  margin: 0 0 0.28rem;
-  color: var(--ps-gold-bright);
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  line-height: 1;
+  display: none;
 }
 
 .product-mobile-schedule__heading {
   margin: 0;
+  min-width: 0;
+  flex: 1 1 auto;
   background: var(--ps-gold-text);
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
-  font-size: clamp(1.35rem, 1.15rem + 1.1vw, 1.7rem);
+  font-size: clamp(1.2rem, 1.05rem + 0.9vw, 1.45rem);
   font-weight: 650;
   letter-spacing: -0.035em;
-  line-height: 1.05;
+  line-height: 1.1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  filter: drop-shadow(0 2px 14px rgba(212, 165, 116, 0.14));
 }
 
 .product-mobile-schedule__toolbar {
@@ -2022,19 +2017,14 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
 .product-mobile-inbox__masthead {
   display: flex;
   flex-direction: column;
-  gap: 0.28rem;
+  gap: 0;
   flex-shrink: 0;
-  padding-bottom: 0.1rem;
+  padding-bottom: 0.05rem;
 }
 
-.product-mobile-inbox__eyebrow {
-  margin: 0;
-  color: var(--pi-gold-bright);
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  line-height: 1;
+.product-mobile-inbox__eyebrow,
+.product-mobile-inbox__agent-line {
+  display: none;
 }
 
 .product-mobile-inbox__heading {
@@ -2044,19 +2034,10 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
   -webkit-background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
-  font-size: clamp(1.55rem, 1.25rem + 1.4vw, 2rem);
+  font-size: clamp(1.45rem, 1.2rem + 1.2vw, 1.85rem);
   font-weight: 650;
   letter-spacing: -0.04em;
   line-height: 1;
-  filter: drop-shadow(0 2px 14px rgba(212, 165, 116, 0.14));
-}
-
-.product-mobile-inbox__agent-line {
-  margin: 0.1rem 0 0;
-  color: rgba(245, 230, 208, 0.62);
-  font-size: 0.78rem;
-  font-weight: 500;
-  letter-spacing: -0.01em;
 }
 
 .product-mobile-inbox__chrome {

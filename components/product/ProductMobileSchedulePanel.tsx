@@ -225,10 +225,7 @@ export function ProductMobileSchedulePanel({
   return (
     <section className="product-mobile-panel product-mobile-schedule" aria-label="Schedule calendar">
       <div className="product-mobile-schedule__masthead">
-        <div className="product-mobile-schedule__masthead-copy">
-          <p className={`product-mobile-schedule__eyebrow ${suisseIntl.className}`}>Clinic calendar</p>
-          <h2 className={`product-mobile-schedule__heading ${dmSans.className}`}>{periodLabel}</h2>
-        </div>
+        <h2 className={`product-mobile-schedule__heading ${dmSans.className}`}>{periodLabel}</h2>
         <div className="product-mobile-schedule__views" role="group" aria-label="Calendar view">
           {VIEW_OPTIONS.map((option) => (
             <button

@@ -459,11 +459,7 @@ export function ProductMobileInboxPanel({
   return (
     <section className="product-mobile-panel product-mobile-inbox" aria-label="Inbox">
       <div className="product-mobile-inbox__masthead">
-        <p className={`product-mobile-inbox__eyebrow ${suisseIntl.className}`}>Correspondence</p>
         <h2 className={`product-mobile-inbox__heading ${dmSans.className}`}>{category}</h2>
-        <p className={`product-mobile-inbox__agent-line ${suisseIntl.className}`}>
-          {activeAgent.name} · {activeAgent.team}
-        </p>
       </div>
 
       <div className="product-mobile-inbox__chrome">
