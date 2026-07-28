@@ -149,6 +149,7 @@
   position: absolute;
   box-sizing: border-box;
   width: 13rem;
+  margin: 0;
   padding: 0.78rem 0.88rem 0.82rem 0.95rem;
   border: 1px solid var(--pab-line-strong);
   border-radius: 0.95rem;
@@ -159,8 +160,17 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
   transform: translate(-50%, -50%);
   overflow: hidden;
-  cursor: default;
+  cursor: pointer;
   user-select: none;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  appearance: none;
+}
+
+.product-agent-builder-panel__node:focus-visible {
+  outline: 2px solid rgba(232, 192, 142, 0.55);
+  outline-offset: 2px;
 }
 
 .product-agent-builder-panel__node-accent {
@@ -279,7 +289,7 @@
 .product-agent-builder-panel__inspector {
   position: absolute;
   z-index: 4;
-  top: clamp(0.85rem, 1.4vw, 1.15rem);
+  top: clamp(4.35rem, 6.5vw, 5.1rem);
   right: clamp(0.85rem, 1.4vw, 1.15rem);
   bottom: clamp(0.85rem, 1.4vw, 1.15rem);
   display: flex;
@@ -289,6 +299,246 @@
   max-width: 20.5rem;
   min-height: 0;
   pointer-events: none;
+}
+
+/* Left library — clickable history of built agents */
+.product-agent-builder-panel__library {
+  position: absolute;
+  z-index: 4;
+  top: clamp(4.35rem, 6.5vw, 5.1rem);
+  left: clamp(0.85rem, 1.4vw, 1.15rem);
+  bottom: clamp(0.85rem, 1.4vw, 1.15rem);
+  display: flex;
+  flex-direction: column;
+  width: min(17.5rem, calc(100% - 1.7rem));
+  max-width: 17.5rem;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid var(--pl-nav-line, var(--pab-line));
+  border-radius: 0.95rem;
+  background: var(--pab-nav);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 16px 36px rgba(0, 0, 0, 0.34);
+  pointer-events: auto;
+}
+
+.product-agent-builder-panel__library-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-shrink: 0;
+  padding: 0.9rem 1rem 0.75rem;
+  border-bottom: 1px solid var(--pab-line);
+}
+
+.product-agent-builder-panel__library-eyebrow {
+  margin: 0;
+  color: var(--pab-gold-bright);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.product-agent-builder-panel__library-title {
+  margin: 0.28rem 0 0;
+  background: var(--pab-gold-text);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  font-size: 1rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.product-agent-builder-panel__library-count {
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+  padding: 0.24rem 0.5rem;
+  border: 1px solid var(--pab-gold-line);
+  border-radius: 999px;
+  background: rgba(212, 165, 116, 0.12);
+  color: var(--pab-gold-bright);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.product-agent-builder-panel__library-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0.65rem 0.7rem 0.8rem;
+  list-style: none;
+  overflow: auto;
+  min-height: 0;
+}
+
+.product-agent-builder-panel__library-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  width: 100%;
+  margin: 0;
+  padding: 0.7rem 0.72rem;
+  border: 1px solid transparent;
+  border-radius: 0.75rem;
+  background: rgba(12, 9, 6, 0.42);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  appearance: none;
+  font: inherit;
+}
+
+.product-agent-builder-panel__library-item:hover {
+  background: rgba(242, 232, 218, 0.06);
+}
+
+.product-agent-builder-panel__library-item--active {
+  border-color: rgba(212, 165, 116, 0.34);
+  background:
+    linear-gradient(135deg, rgba(212, 165, 116, 0.14) 0%, rgba(26, 18, 8, 0.4) 58%);
+}
+
+.product-agent-builder-panel__library-item:focus-visible {
+  outline: 2px solid rgba(232, 192, 142, 0.5);
+  outline-offset: 1px;
+}
+
+.product-agent-builder-panel__library-item-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.45rem;
+}
+
+.product-agent-builder-panel__library-item-name {
+  margin: 0;
+  color: rgba(247, 240, 230, 0.96);
+  font-size: 0.86rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.product-agent-builder-panel__library-item-meta {
+  color: var(--pab-muted);
+  font-size: 0.68rem;
+  line-height: 1.3;
+}
+
+.product-agent-builder-panel__library-item-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem;
+  color: var(--pab-muted-soft);
+  font-size: 0.6rem;
+  letter-spacing: 0.02em;
+}
+
+/* Center toolbar — active agent chrome */
+.product-agent-builder-panel__toolbar {
+  position: absolute;
+  z-index: 5;
+  top: clamp(0.85rem, 1.4vw, 1.15rem);
+  left: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: min(42rem, calc(100% - 38rem));
+  min-width: min(22rem, calc(100% - 2rem));
+  padding: 0.72rem 0.85rem 0.72rem 1rem;
+  border: 1px solid var(--pl-nav-line, var(--pab-line));
+  border-radius: 0.95rem;
+  background: var(--pab-nav);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 14px 32px rgba(0, 0, 0, 0.3);
+  transform: translateX(-50%);
+  pointer-events: auto;
+}
+
+.product-agent-builder-panel__toolbar-copy {
+  min-width: 0;
+}
+
+.product-agent-builder-panel__toolbar-eyebrow {
+  margin: 0;
+  color: var(--pab-gold-bright);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.product-agent-builder-panel__toolbar-title {
+  margin: 0.22rem 0 0;
+  background: var(--pab-gold-text);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  font-size: clamp(1rem, 0.9rem + 0.35vw, 1.2rem);
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.product-agent-builder-panel__toolbar-meta {
+  margin: 0.28rem 0 0;
+  color: var(--pab-muted-soft);
+  font-size: 0.66rem;
+  letter-spacing: 0.01em;
+}
+
+.product-agent-builder-panel__toolbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.product-agent-builder-panel__tool-btn {
+  margin: 0;
+  padding: 0.42rem 0.7rem;
+  border: 1px solid var(--pab-line-strong);
+  border-radius: 0.55rem;
+  background: rgba(242, 232, 218, 0.05);
+  color: rgba(247, 240, 230, 0.88);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  appearance: none;
+}
+
+.product-agent-builder-panel__tool-btn:hover {
+  background: rgba(242, 232, 218, 0.1);
+  color: #f7f0e6;
+}
+
+.product-agent-builder-panel__tool-btn--primary {
+  border-color: rgba(212, 165, 116, 0.45);
+  background: linear-gradient(180deg, rgba(232, 192, 142, 0.22) 0%, rgba(212, 165, 116, 0.14) 100%);
+  color: var(--pab-gold-bright);
+}
+
+.product-agent-builder-panel__tool-btn:focus-visible {
+  outline: 2px solid rgba(232, 192, 142, 0.5);
+  outline-offset: 1px;
 }
 
 .product-agent-builder-panel__inspector-card,
@@ -337,6 +587,25 @@
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.product-agent-builder-panel__status--live {
+  border-color: rgba(168, 196, 140, 0.42);
+  background: rgba(168, 196, 140, 0.14);
+  color: #cfe0b8;
+}
+
+.product-agent-builder-panel__status--paused {
+  border-color: rgba(242, 232, 218, 0.18);
+  background: rgba(242, 232, 218, 0.06);
+  color: rgba(242, 232, 218, 0.62);
+}
+
+.product-agent-builder-panel__status--draft {
+  border-color: var(--pab-gold-line);
+  background: var(--pab-gold-soft);
+  color: var(--pab-gold-bright);
 }
 
 .product-agent-builder-panel__inspector-kind {
@@ -614,4 +883,29 @@
 
 .product-brown-mock.product-brown-agent-builder-mode .product-landing-console-shell .product-landing-header__icon {
   color: rgba(242, 232, 218, 0.48);
+}
+
+@media (max-width: 1180px) {
+  .product-agent-builder-panel__toolbar {
+    left: clamp(0.85rem, 1.4vw, 1.15rem);
+    right: clamp(0.85rem, 1.4vw, 1.15rem);
+    width: auto;
+    min-width: 0;
+    transform: none;
+  }
+
+  .product-agent-builder-panel__library,
+  .product-agent-builder-panel__inspector {
+    top: clamp(7.1rem, 10vw, 8rem);
+  }
+}
+
+@media (max-width: 980px) {
+  .product-agent-builder-panel__library {
+    display: none;
+  }
+
+  .product-agent-builder-panel__toolbar {
+    width: auto;
+  }
 }
