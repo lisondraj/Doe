@@ -3380,3 +3380,24 @@ html[data-product-page="true"][data-layout="desktop"]
   background: transparent;
 }
 
+/*
+ * /product desktop Call History — left chart boxes rest quieter,
+ * then brighten on hover. Desktop product only (not iPhone / product2).
+ */
+html[data-product-page="true"][data-layout="desktop"]
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__visit-header
+  .product-landing-live-quote__chart-profile {
+  opacity: 0.48;
+  pointer-events: auto;
+  transition: opacity 0.18s ease;
+}
+
+html[data-product-page="true"][data-layout="desktop"]
+  .product-brown-mock.product-brown-call-history-mode
+  .product-call-history-panel__visit-header
+  .product-landing-live-quote__chart-profile:hover {
+  opacity: 1;
+  z-index: 2;
+}
+
