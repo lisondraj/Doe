@@ -7,6 +7,7 @@ import localFont from "next/font/local";
 
 import { ProductAgentBuilderPanel } from "@/components/product/ProductAgentBuilderPanel";
 import { ProductAgentsPanel } from "@/components/product/ProductAgentsPanel";
+import { ProductAppointmentsPanel } from "@/components/product/ProductAppointmentsPanel";
 import { ProductCallHistoryPanel } from "@/components/product/ProductCallHistoryPanel";
 import { ProductCallHistoryRightRail } from "@/components/product/ProductCallHistoryRightRail";
 import { ProductLandingPanel } from "@/components/product/ProductLandingPanel";
@@ -1266,11 +1267,25 @@ export function DoeSchedulesAppMock({
   const [selectedUser, setSelectedUser] = useState<(typeof userOptions)[number]>(userOptions[0]);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [workspaceView, setWorkspaceView] = useState<
-    "inbox" | "schedule" | "patients" | "landing" | "agents" | "call-history" | "agent-builder"
+    | "inbox"
+    | "schedule"
+    | "patients"
+    | "landing"
+    | "agents"
+    | "call-history"
+    | "agent-builder"
+    | "appointments"
   >(variant === "product-brown" ? "landing" : "schedule");
   useEffect(() => {
     if (variant !== "product-brown") return;
-    const allowed = new Set(["landing", "call-history", "schedule", "inbox", "agent-builder"]);
+    const allowed = new Set([
+      "landing",
+      "call-history",
+      "schedule",
+      "inbox",
+      "agent-builder",
+      "appointments",
+    ]);
     if (!allowed.has(workspaceView)) {
       setWorkspaceView("landing");
     }
@@ -1362,10 +1377,14 @@ export function DoeSchedulesAppMock({
   const productBrown = variant === "product-brown";
   const hero = variant === "hero";
   const productBrownWorkspace =
-    productBrown && workspaceView !== "landing" && workspaceView !== "agent-builder";
+    productBrown &&
+    workspaceView !== "landing" &&
+    workspaceView !== "agent-builder" &&
+    workspaceView !== "appointments";
   const productBrownInbox = productBrown && workspaceView === "inbox";
   const productBrownLanding = productBrown && workspaceView === "landing";
   const productBrownAgentBuilder = productBrown && workspaceView === "agent-builder";
+  const productBrownAppointments = productBrown && workspaceView === "appointments";
   const productBrownLandingStyle = productBrownLanding;
   const productBrownSchedule = productBrown && workspaceView === "schedule";
   const productBrownCallHistory = productBrown && workspaceView === "call-history";
@@ -1433,6 +1452,7 @@ export function DoeSchedulesAppMock({
     workspaceView === "call-history" ||
     workspaceView === "agents" ||
     workspaceView === "agent-builder" ||
+    workspaceView === "appointments" ||
     (productBrown && workspaceView === "landing");
   const patientBentoCard = productBrownDarkWorkspace
     ? "rounded-xl border border-[rgba(245,230,208,0.1)] bg-[#322618] p-3 shadow-[0_1px_2px_rgba(0,0,0,0.18)]"
@@ -1693,6 +1713,19 @@ export function DoeSchedulesAppMock({
                     view: "agent-builder" as const,
                     icon: (
                       <path d="m12 3 1.912 5.813L20 12l-6.088 3.187L12 21l-1.912-5.813L4 12l6.088-3.187L12 3Z" />
+                    ),
+                  },
+                  {
+                    label: "Appointments",
+                    view: "appointments" as const,
+                    icon: (
+                      <>
+                        <path d="M8 2v4" />
+                        <path d="M16 2v4" />
+                        <rect width="18" height="18" x="3" y="4" rx="2" />
+                        <path d="M3 10h18" />
+                        <path d="m9 16 2 2 4-4" />
+                      </>
                     ),
                   },
                 ] as const
@@ -2098,6 +2131,7 @@ export function DoeSchedulesAppMock({
         (productBrownInbox ? " product-brown-inbox-mode" : "") +
         (productBrownLandingStyle ? " product-brown-landing-mode" : "") +
         (productBrownAgentBuilder ? " product-brown-agent-builder-mode" : "") +
+        (productBrownAppointments ? " product-brown-appointments-mode" : "") +
         (productBrownSchedule ? " product-brown-schedule-mode" : "") +
         (productBrownCallHistory ? " product-brown-call-history-mode" : "") +
         (productBrownAgents ? " product-brown-agents-mode" : "")
@@ -2119,7 +2153,7 @@ export function DoeSchedulesAppMock({
           className={`min-h-0 flex-1 overflow-hidden ${
             productBrown
               ? productBrownInbox || productBrownSchedule || productBrownLandingStyle || productBrownAgents
-                || productBrownCallHistory || productBrownAgentBuilder
+                || productBrownCallHistory || productBrownAgentBuilder || productBrownAppointments
                 ? "product-brown-frame product-brown-layered-layout bg-[var(--pi-cream)]"
                 : "product-brown-frame product-brown-layered-layout bg-[#151008]"
               : productBrownInbox
@@ -2176,6 +2210,7 @@ export function DoeSchedulesAppMock({
                       : productBrownAgents
                         ? "bg-[var(--pi-cream)]"
                         : productBrownLandingStyle || productBrownCallHistory || productBrownAgentBuilder
+                          || productBrownAppointments
                           ? "bg-transparent"
                         : productBrownDarkWorkspace
                           ? "bg-[#2a1f12] shadow-[inset_1px_0_0_rgba(245,230,208,0.07)]"
@@ -2188,6 +2223,8 @@ export function DoeSchedulesAppMock({
                   <ProductLandingPanel />
                 ) : workspaceView === "agent-builder" && productBrown ? (
                   <ProductAgentBuilderPanel />
+                ) : workspaceView === "appointments" && productBrown ? (
+                  <ProductAppointmentsPanel />
                 ) : workspaceView === "agents" && productBrown ? (
                   <ProductAgentsPanel />
                 ) : workspaceView === "call-history" && productBrown ? (

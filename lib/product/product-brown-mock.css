@@ -633,6 +633,10 @@ html[data-product-page="true"]::before,
   background: transparent;
 }
 
+.product-brown-mock.product-brown-appointments-mode .product-brown-inner-row__content {
+  background: transparent;
+}
+
 .product-brown-mock.product-brown-schedule-mode .product-brown-inner-row__content {
   background: transparent;
 }
@@ -649,6 +653,7 @@ html[data-product-page="true"]::before,
 .product-brown-mock.product-brown-inbox-mode .product-brown-frame.product-brown-layered-layout,
 .product-brown-mock.product-brown-landing-mode .product-brown-frame.product-brown-layered-layout,
 .product-brown-mock.product-brown-agent-builder-mode .product-brown-frame.product-brown-layered-layout,
+.product-brown-mock.product-brown-appointments-mode .product-brown-frame.product-brown-layered-layout,
 .product-brown-mock.product-brown-schedule-mode .product-brown-frame.product-brown-layered-layout,
 .product-brown-mock.product-brown-agents-mode .product-brown-frame.product-brown-layered-layout {
   background: var(--pb-console-gradient) !important;
@@ -659,7 +664,7 @@ html[data-product-page="true"]::before,
   background: var(--pb-surface-deep);
 }
 
-.product-brown-mock:not(.product-brown-workspace-mode):not(.product-brown-inbox-mode):not(.product-brown-landing-mode):not(.product-brown-agent-builder-mode):not(.product-brown-schedule-mode):not(.product-brown-call-history-mode):not(.product-brown-agents-mode)
+.product-brown-mock:not(.product-brown-workspace-mode):not(.product-brown-inbox-mode):not(.product-brown-landing-mode):not(.product-brown-agent-builder-mode):not(.product-brown-appointments-mode):not(.product-brown-schedule-mode):not(.product-brown-call-history-mode):not(.product-brown-agents-mode)
   .product-brown-inner-row__content {
   background: #f8f4ec;
 }
