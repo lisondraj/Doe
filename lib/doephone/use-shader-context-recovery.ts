@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect, type RefObject } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 
-/** Remount grain canvases after mobile WebGL context loss (black fill). */
+/** Remount grain canvases after WebGL context loss — debounced to avoid remount storms. */
 export function useShaderContextRecovery(
   shellRef: RefObject<HTMLElement | null>,
   active: boolean,
   onRecover: () => void,
 ) {
+  const recoverRef = useRef(onRecover);
+  recoverRef.current = onRecover;
+
   useEffect(() => {
     if (!active) return;
 
@@ -15,6 +18,8 @@ export function useShaderContextRecovery(
     if (!shell) return;
 
     let cleanup: (() => void) | undefined;
+    let debounceTimer = 0;
+    let recovering = false;
 
     const attach = () => {
       cleanup?.();
@@ -25,7 +30,13 @@ export function useShaderContextRecovery(
 
       const onLost = (event: Event) => {
         event.preventDefault();
-        onRecover();
+        if (recovering) return;
+        recovering = true;
+        window.clearTimeout(debounceTimer);
+        debounceTimer = window.setTimeout(() => {
+          recovering = false;
+          recoverRef.current();
+        }, 160);
       };
 
       canvas.addEventListener("webglcontextlost", onLost, false);
@@ -42,6 +53,7 @@ export function useShaderContextRecovery(
     return () => {
       observer.disconnect();
       cleanup?.();
+      window.clearTimeout(debounceTimer);
     };
-  }, [active, onRecover, shellRef]);
+  }, [active, shellRef]);
 }

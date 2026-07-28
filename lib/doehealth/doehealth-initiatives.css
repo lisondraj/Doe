@@ -1701,6 +1701,7 @@ html[data-home-page][data-layout="desktop"]
   inset: 0;
   z-index: 4;
   pointer-events: none;
+  container-type: size;
 }
 
 .doehealth-routed-calls-cursor {
@@ -1710,14 +1711,12 @@ html[data-home-page][data-layout="desktop"]
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  transform: translate(-3px, -2px);
-  will-change: left, top, transform;
+  will-change: transform;
 }
 
 .doehealth-routed-calls-cursor__pointer {
   display: block;
   flex-shrink: 0;
-  filter: drop-shadow(0 3px 8px rgba(26, 18, 8, 0.42));
 }
 
 .doehealth-routed-calls-cursor__pill {
@@ -1778,150 +1777,102 @@ html[data-home-page][data-layout="desktop"]
 @keyframes doehealth-routed-calls-cursor-agent {
   0%,
   100% {
-    left: 12%;
-    top: 22%;
-    transform: translate(-3px, -2px) scale(1);
+    transform: translate3d(calc(12cqw - 3px), calc(22cqh - 2px), 0) scale(1);
   }
 
   14% {
-    left: 56%;
-    top: 17%;
-    transform: translate(-3px, -2px) scale(1);
+    transform: translate3d(calc(56cqw - 3px), calc(17cqh - 2px), 0) scale(1);
   }
 
   16% {
-    left: 56%;
-    top: 17%;
-    transform: translate(-3px, -2px) scale(0.84);
+    transform: translate3d(calc(56cqw - 3px), calc(17cqh - 2px), 0) scale(0.84);
   }
 
   18% {
-    left: 56%;
-    top: 17%;
-    transform: translate(-3px, -2px) scale(1);
+    transform: translate3d(calc(56cqw - 3px), calc(17cqh - 2px), 0) scale(1);
   }
 
   34% {
-    left: 34%;
-    top: 41%;
-    transform: translate(-3px, -2px) scale(1);
+    transform: translate3d(calc(34cqw - 3px), calc(41cqh - 2px), 0) scale(1);
   }
 
   36% {
-    left: 34%;
-    top: 41%;
-    transform: translate(-3px, -2px) scale(0.84);
+    transform: translate3d(calc(34cqw - 3px), calc(41cqh - 2px), 0) scale(0.84);
   }
 
   38% {
-    left: 34%;
-    top: 41%;
-    transform: translate(-3px, -2px) scale(1);
+    transform: translate3d(calc(34cqw - 3px), calc(41cqh - 2px), 0) scale(1);
   }
 
   54% {
-    left: 48%;
-    top: 58%;
-    transform: translate(-3px, -2px) scale(1);
+    transform: translate3d(calc(48cqw - 3px), calc(58cqh - 2px), 0) scale(1);
   }
 
   56% {
-    left: 48%;
-    top: 58%;
-    transform: translate(-3px, -2px) scale(0.84);
+    transform: translate3d(calc(48cqw - 3px), calc(58cqh - 2px), 0) scale(0.84);
   }
 
   58% {
-    left: 48%;
-    top: 58%;
-    transform: translate(-3px, -2px) scale(1);
+    transform: translate3d(calc(48cqw - 3px), calc(58cqh - 2px), 0) scale(1);
   }
 
   76% {
-    left: 22%;
-    top: 34%;
-    transform: translate(-3px, -2px) scale(1);
+    transform: translate3d(calc(22cqw - 3px), calc(34cqh - 2px), 0) scale(1);
   }
 }
 
 @keyframes doehealth-routed-calls-cursor-human {
   0%,
   100% {
-    left: 68%;
-    top: 32%;
-    transform: translate(-3px, -2px) scale(1);
+    transform: translate3d(calc(68cqw - 3px), calc(32cqh - 2px), 0) scale(1);
   }
 
   12% {
-    left: 82%;
-    top: 18%;
-    transform: translate(-3px, -2px) scale(1);
+    transform: translate3d(calc(82cqw - 3px), calc(18cqh - 2px), 0) scale(1);
   }
 
   14% {
-    left: 82%;
-    top: 18%;
-    transform: translate(-3px, -2px) scale(0.84);
+    transform: translate3d(calc(82cqw - 3px), calc(18cqh - 2px), 0) scale(0.84);
   }
 
   16% {
-    left: 82%;
-    top: 18%;
-    transform: translate(-3px, -2px) scale(1);
+    transform: translate3d(calc(82cqw - 3px), calc(18cqh - 2px), 0) scale(1);
   }
 
   32% {
-    left: 62%;
-    top: 36%;
-    transform: translate(-3px, -2px) scale(1);
+    transform: translate3d(calc(62cqw - 3px), calc(36cqh - 2px), 0) scale(1);
   }
 
   34% {
-    left: 62%;
-    top: 36%;
-    transform: translate(-3px, -2px) scale(0.84);
+    transform: translate3d(calc(62cqw - 3px), calc(36cqh - 2px), 0) scale(0.84);
   }
 
   36% {
-    left: 62%;
-    top: 36%;
-    transform: translate(-3px, -2px) scale(1);
+    transform: translate3d(calc(62cqw - 3px), calc(36cqh - 2px), 0) scale(1);
   }
 
   52% {
-    left: 44%;
-    top: 66%;
-    transform: translate(-3px, -2px) scale(1);
+    transform: translate3d(calc(44cqw - 3px), calc(66cqh - 2px), 0) scale(1);
   }
 
   54% {
-    left: 44%;
-    top: 66%;
-    transform: translate(-3px, -2px) scale(0.84);
+    transform: translate3d(calc(44cqw - 3px), calc(66cqh - 2px), 0) scale(0.84);
   }
 
   56% {
-    left: 44%;
-    top: 66%;
-    transform: translate(-3px, -2px) scale(1);
+    transform: translate3d(calc(44cqw - 3px), calc(66cqh - 2px), 0) scale(1);
   }
 
   72% {
-    left: 36%;
-    top: 78%;
-    transform: translate(-3px, -2px) scale(1);
+    transform: translate3d(calc(36cqw - 3px), calc(78cqh - 2px), 0) scale(1);
   }
 
   74% {
-    left: 36%;
-    top: 78%;
-    transform: translate(-3px, -2px) scale(0.84);
+    transform: translate3d(calc(36cqw - 3px), calc(78cqh - 2px), 0) scale(0.84);
   }
 
   76% {
-    left: 36%;
-    top: 78%;
-    transform: translate(-3px, -2px) scale(1);
+    transform: translate3d(calc(36cqw - 3px), calc(78cqh - 2px), 0) scale(1);
   }
 }
 
@@ -1932,6 +1883,11 @@ html[data-home-page][data-layout="desktop"]
 .doehealth-routed-calls-cursor--human {
   animation: doehealth-routed-calls-cursor-human 16s cubic-bezier(0.45, 0.05, 0.25, 1) infinite;
   animation-delay: -4.5s;
+}
+
+.doehealth-routed-calls-cursors--paused .doehealth-routed-calls-cursor--agent,
+.doehealth-routed-calls-cursors--paused .doehealth-routed-calls-cursor--human {
+  animation-play-state: paused;
 }
 
 @media (prefers-reduced-motion: reduce) {

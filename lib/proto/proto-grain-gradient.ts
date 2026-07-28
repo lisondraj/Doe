@@ -322,17 +322,19 @@ export const PROTO_GRAIN_GRADIENT_PRESETS: Record<ProtoGrainGradientVariant, Pro
     worldHeight: 960,
     speed: 0.32,
   },
-  /** /doehealth — right-bleed routed calls (cool wave drift upper-right). */
+  /** /doehealth — right-bleed routed calls (Integrations wave look, band pixel budget). */
   "doehealth-routed-calls-right": {
     shape: "wave",
-    softness: 0.68,
-    intensity: 0.19,
+    softness: 0.72,
+    intensity: 0.17,
     fit: "cover",
-    rotation: 24,
-    offsetX: 0.2,
-    offsetY: -0.16,
-    scale: 1.14,
-    speed: 0.38,
+    rotation: 168,
+    offsetX: 0.06,
+    offsetY: -0.08,
+    scale: 1.12,
+    worldWidth: 1280,
+    worldHeight: 960,
+    speed: 0.48,
   },
   ambient: {
     shape: "ripple",

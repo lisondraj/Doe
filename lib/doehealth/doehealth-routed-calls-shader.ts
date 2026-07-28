@@ -30,9 +30,9 @@ export const DOEHEALTH_ROUTED_CALLS_LEFT_2_SHADER: ProtoGrainGradientSurface = {
   colorBack: DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE.back,
 };
 
-/** Right-bleed shader — same dusk palette, Integrations-band wave flow. */
+/** Right-bleed shader — Integrations wave look on the band (not hero) pixel budget. */
 export const DOEHEALTH_ROUTED_CALLS_RIGHT_SHADER: ProtoGrainGradientSurface = {
-  variant: "home-integrations",
+  variant: "doehealth-routed-calls-right",
   colors: [
     DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE.ember,
     DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE.clay,
@@ -41,9 +41,9 @@ export const DOEHEALTH_ROUTED_CALLS_RIGHT_SHADER: ProtoGrainGradientSurface = {
   colorBack: DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE.back,
 };
 
-/** Second right-bleed shader — same dusk palette for agents-anywhere phone scene. */
+/** Second right-bleed shader — same dusk wave for agents-anywhere phone scene. */
 export const DOEHEALTH_ROUTED_CALLS_RIGHT_2_SHADER: ProtoGrainGradientSurface = {
-  variant: "home-integrations",
+  variant: "doehealth-routed-calls-right",
   colors: [
     DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE.ember,
     DOEHEALTH_ROUTED_CALLS_LEFT_PALETTE.clay,

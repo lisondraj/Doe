@@ -118,25 +118,25 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   };
 
   const releaseMount = useCallback(() => {
-    if (!phone || hero) return;
+    if (hero) return;
     hasMountedRef.current = false;
     setHasMounted(false);
     setBudgetGranted(false);
     releaseShaderWebGLSlot(slotId);
-  }, [hero, phone, slotId]);
+  }, [hero, slotId]);
 
   useLayoutEffect(() => {
     if (hero) requestMount();
   }, [hero]);
 
   useEffect(() => {
-    if (!phone || hero) return;
+    if (hero) return;
     if (inViewport) {
       requestMount();
       return;
     }
     releaseMount();
-  }, [hero, inViewport, phone, releaseMount]);
+  }, [hero, inViewport, releaseMount]);
 
   useLayoutEffect(() => {
     if (!hasMounted || !containerReady) {
