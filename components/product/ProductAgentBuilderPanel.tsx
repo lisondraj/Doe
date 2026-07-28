@@ -17,7 +17,6 @@ import "@/lib/product/product-landing.css";
 
 const NODE_W = 208;
 const NODE_H = 98;
-const PORT = 10;
 const CANVAS_W = 1100;
 const CANVAS_H = 640;
 const DEFAULT_PAN = { x: 56, y: 44 };
@@ -195,50 +194,34 @@ export function ProductAgentBuilderPanel() {
                 <marker
                   id="product-agent-builder-arrow"
                   viewBox="0 0 12 12"
-                  refX="10"
+                  refX="9"
                   refY="6"
-                  markerWidth="8"
-                  markerHeight="8"
+                  markerWidth="7"
+                  markerHeight="7"
                   orient="auto-start-reverse"
                 >
-                  <path d="M 1 1 L 10 6 L 1 11 Z" className="product-agent-builder-panel__arrow-head" />
+                  <path d="M 2 2 L 9 6 L 2 10" className="product-agent-builder-panel__arrow-head" />
                 </marker>
-                <linearGradient id="product-agent-builder-edge-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="rgba(232, 192, 142, 0.22)" />
-                  <stop offset="50%" stopColor="rgba(212, 165, 116, 0.72)" />
-                  <stop offset="100%" stopColor="rgba(232, 192, 142, 0.28)" />
-                </linearGradient>
               </defs>
               {agent.edges.map((edge) => {
                 const geo = edgeGeometry(agent.nodes, edge.from, edge.to);
                 return (
                   <g key={edge.id} className="product-agent-builder-panel__edge-group">
-                    <path className="product-agent-builder-panel__edge-glow" d={geo.path} />
                     <path
                       className="product-agent-builder-panel__edge"
                       d={geo.path}
                       markerEnd="url(#product-agent-builder-arrow)"
                     />
-                    <circle className="product-agent-builder-panel__port" cx={geo.x1} cy={geo.y1} r={3.2} />
-                    <circle className="product-agent-builder-panel__port" cx={geo.x2} cy={geo.y2} r={3.2} />
                     {edge.label ? (
-                      <g transform={`translate(${geo.labelX}, ${geo.labelY})`}>
-                        <rect
-                          className="product-agent-builder-panel__edge-label-bg"
-                          x={-34}
-                          y={-11}
-                          width={68}
-                          height={22}
-                          rx={11}
-                        />
-                        <text
-                          className={`product-agent-builder-panel__edge-label ${suisseIntl.className}`}
-                          textAnchor="middle"
-                          dominantBaseline="central"
-                        >
-                          {edge.label}
-                        </text>
-                      </g>
+                      <text
+                        className={`product-agent-builder-panel__edge-label ${suisseIntl.className}`}
+                        x={geo.labelX}
+                        y={geo.labelY}
+                        textAnchor="middle"
+                        dominantBaseline="central"
+                      >
+                        {edge.label}
+                      </text>
                     ) : null}
                   </g>
                 );
@@ -252,33 +235,18 @@ export function ProductAgentBuilderPanel() {
                   key={node.id}
                   type="button"
                   data-pab-no-pan
-                  className={`product-agent-builder-panel__node product-agent-builder-panel__node--${node.kind}${
+                  className={`product-agent-builder-panel__node${
                     selected ? " product-agent-builder-panel__node--editing" : ""
                   }`}
                   style={{ left: node.x, top: node.y, width: NODE_W, minHeight: NODE_H }}
                   aria-pressed={selected}
                   onClick={() => setSelectedNodeId(node.id)}
                 >
-                  <span className="product-agent-builder-panel__node-accent" aria-hidden />
                   <p className={`product-agent-builder-panel__node-kind m-0 ${suisseIntl.className}`}>
-                    <span className="product-agent-builder-panel__node-dot" />
                     {PRODUCT_AGENT_BUILDER_KIND_LABEL[node.kind]}
                   </p>
                   <h2 className={`product-agent-builder-panel__node-title ${dmSans.className}`}>{node.title}</h2>
                   <p className={`product-agent-builder-panel__node-detail ${suisseIntl.className}`}>{node.detail}</p>
-                  {selected ? (
-                    <span className={`product-agent-builder-panel__node-badge ${suisseIntl.className}`}>Editing</span>
-                  ) : null}
-                  <span
-                    className="product-agent-builder-panel__node-port product-agent-builder-panel__node-port--left"
-                    style={{ top: NODE_H / 2, width: PORT, height: PORT }}
-                    aria-hidden
-                  />
-                  <span
-                    className="product-agent-builder-panel__node-port product-agent-builder-panel__node-port--right"
-                    style={{ top: NODE_H / 2, width: PORT, height: PORT }}
-                    aria-hidden
-                  />
                 </button>
               );
             })}
@@ -287,14 +255,9 @@ export function ProductAgentBuilderPanel() {
 
         <aside className="product-agent-builder-panel__library" aria-label="Built agents" data-pab-no-pan>
           <div className="product-agent-builder-panel__library-head">
-            <div className="min-w-0">
-              <p className={`product-agent-builder-panel__library-eyebrow ${suisseIntl.className}`}>
-                {PRODUCT_AGENT_BUILDER_TOOLBAR.libraryEyebrow}
-              </p>
-              <h2 className={`product-agent-builder-panel__library-title ${dmSans.className}`}>
-                {PRODUCT_AGENT_BUILDER_TOOLBAR.libraryTitle}
-              </h2>
-            </div>
+            <h2 className={`product-agent-builder-panel__library-title ${dmSans.className}`}>
+              {PRODUCT_AGENT_BUILDER_TOOLBAR.libraryTitle}
+            </h2>
             <span className={`product-agent-builder-panel__library-count ${suisseIntl.className}`}>
               {PRODUCT_AGENT_BUILDER_AGENTS.length}
             </span>
@@ -316,14 +279,12 @@ export function ProductAgentBuilderPanel() {
                       <span className={`product-agent-builder-panel__library-item-name ${dmSans.className}`}>
                         {item.name}
                       </span>
-                      <span
-                        className={`product-agent-builder-panel__status product-agent-builder-panel__status--${item.status} ${suisseIntl.className}`}
-                      >
+                      <span className={`product-agent-builder-panel__status ${suisseIntl.className}`}>
                         {PRODUCT_AGENT_BUILDER_STATUS_LABEL[item.status]}
                       </span>
                     </span>
                     <span className={`product-agent-builder-panel__library-item-meta ${suisseIntl.className}`}>
-                      {item.line} · {item.version}
+                      {item.line}, {item.version}
                     </span>
                     <span className={`product-agent-builder-panel__library-item-foot ${suisseIntl.className}`}>
                       <span>{item.updated}</span>
@@ -338,18 +299,16 @@ export function ProductAgentBuilderPanel() {
 
         <div className="product-agent-builder-panel__toolbar" data-pab-no-pan>
           <div className="product-agent-builder-panel__toolbar-copy min-w-0">
-            <p className={`product-agent-builder-panel__toolbar-eyebrow ${suisseIntl.className}`}>
-              {agent.clinic} · {agent.line}
+            <p className={`product-agent-builder-panel__toolbar-meta ${suisseIntl.className}`}>
+              {agent.clinic}, {agent.line}
             </p>
             <h2 className={`product-agent-builder-panel__toolbar-title ${dmSans.className}`}>{agent.name}</h2>
             <p className={`product-agent-builder-panel__toolbar-meta ${suisseIntl.className}`}>
-              {agent.nodes.length} nodes · {agent.edges.length} connections · {agent.version}
+              {agent.nodes.length} nodes, {agent.edges.length} connections, {agent.version}
             </p>
           </div>
           <div className="product-agent-builder-panel__toolbar-actions">
-            <span
-              className={`product-agent-builder-panel__status product-agent-builder-panel__status--${agent.status} ${suisseIntl.className}`}
-            >
+            <span className={`product-agent-builder-panel__status ${suisseIntl.className}`}>
               {PRODUCT_AGENT_BUILDER_STATUS_LABEL[agent.status]}
             </span>
             <button type="button" className={`product-agent-builder-panel__tool-btn ${suisseIntl.className}`}>
@@ -378,12 +337,10 @@ export function ProductAgentBuilderPanel() {
         >
           <section className="product-agent-builder-panel__inspector-card" aria-label="Editing node">
             <div className="product-agent-builder-panel__inspector-head">
-              <p className={`product-agent-builder-panel__inspector-eyebrow ${suisseIntl.className}`}>
-                {PRODUCT_AGENT_BUILDER_TOOLBAR.editingEyebrow}
+              <p className={`product-agent-builder-panel__inspector-label ${suisseIntl.className}`}>
+                {PRODUCT_AGENT_BUILDER_TOOLBAR.editingLabel}
               </p>
-              <span
-                className={`product-agent-builder-panel__status product-agent-builder-panel__status--${agent.status} ${suisseIntl.className}`}
-              >
+              <span className={`product-agent-builder-panel__status ${suisseIntl.className}`}>
                 {PRODUCT_AGENT_BUILDER_STATUS_LABEL[agent.status]}
               </span>
             </div>
@@ -397,7 +354,7 @@ export function ProductAgentBuilderPanel() {
               {selectedNode.summary ?? selectedNode.detail}
             </p>
             <p className={`product-agent-builder-panel__agent-meta ${suisseIntl.className}`}>
-              {agent.name} · {agent.line}
+              {agent.name}, {agent.line}
             </p>
             {selectedNode.fields?.length ? (
               <div className="product-agent-builder-panel__fields">
@@ -413,14 +370,9 @@ export function ProductAgentBuilderPanel() {
 
           <section className="product-agent-builder-panel__integrations" aria-label="Integrations">
             <div className="product-agent-builder-panel__integrations-head">
-              <div className="min-w-0">
-                <p className={`product-agent-builder-panel__integrations-eyebrow ${suisseIntl.className}`}>
-                  {PRODUCT_AGENT_BUILDER_TOOLBAR.integrationsEyebrow}
-                </p>
-                <h2 className={`product-agent-builder-panel__integrations-title ${dmSans.className}`}>
-                  {PRODUCT_AGENT_BUILDER_TOOLBAR.integrationsTitle}
-                </h2>
-              </div>
+              <h2 className={`product-agent-builder-panel__integrations-title ${dmSans.className}`}>
+                {PRODUCT_AGENT_BUILDER_TOOLBAR.integrationsTitle}
+              </h2>
               <span className={`product-agent-builder-panel__integrations-count ${suisseIntl.className}`}>
                 {liveIntegrations} live
               </span>
@@ -433,12 +385,6 @@ export function ProductAgentBuilderPanel() {
                     item.active ? " product-agent-builder-panel__integration--active" : ""
                   }`}
                 >
-                  <span
-                    className={`product-agent-builder-panel__integration-swatch${
-                      item.active ? " product-agent-builder-panel__integration-swatch--on" : ""
-                    }`}
-                    aria-hidden
-                  />
                   <div className="product-agent-builder-panel__integration-copy min-w-0">
                     <div className="product-agent-builder-panel__integration-top">
                       <p className={`product-agent-builder-panel__integration-name ${dmSans.className}`}>{item.name}</p>
