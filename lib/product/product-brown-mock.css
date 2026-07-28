@@ -783,9 +783,14 @@ html[data-product-page="true"]::before,
 }
 
 .product-brown-mock .product-brown-sidebar > div.px-3:nth-child(3) .product-brown-nav-menu {
-  position: relative;
+  position: absolute;
+  top: calc(100% + 0.375rem);
+  bottom: auto;
+  left: 0;
+  right: 0;
   z-index: 52;
   isolation: isolate;
+  margin-top: 0;
   background-color: #181410 !important;
   background: #181410 !important;
 }

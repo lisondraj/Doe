@@ -1515,6 +1515,43 @@ export function DoeSchedulesAppMock({
 
       <div className={`px-3 pb-2${productBrown && clinicMenuOpen ? " product-brown-nav-selector-section--open" : ""}`}>
         <div className="product-brown-nav-selector-wrap relative">
+          <button
+            type="button"
+            onClick={() => {
+              setClinicMenuOpen((open) => !open);
+              setUserMenuOpen(false);
+            }}
+            className={`flex w-full items-center gap-2 rounded-lg border px-2 py-2 text-left text-[12px] font-medium hover:bg-neutral-50 ${
+              productBrown
+                ? "product-brown-nav-selector border-[rgba(245,230,208,0.12)] bg-[#141210] text-[#f2e8da] hover:bg-[#100f0d]"
+                : "border-[#E6E6E6] bg-white text-neutral-700"
+            }`}
+            aria-haspopup="menu"
+            aria-expanded={clinicMenuOpen}
+          >
+            <span
+              className={`h-2 w-2 shrink-0 rounded-full ${
+                productBrown
+                  ? "bg-gradient-to-br from-[#D4A574] to-[#A67B5B]"
+                  : "bg-gradient-to-br from-[#E7A944] to-[#BF593D]"
+              }`}
+            />
+            <span className="min-w-0 flex-1">
+              <span className="block truncate">{selectedClinic.name}</span>
+              <span
+                className={`block truncate text-[10px] font-normal ${
+                  productBrown ? "text-[rgba(242,232,218,0.48)]" : "text-neutral-500"
+                }`}
+              >
+                {selectedClinic.address}
+              </span>
+            </span>
+            <Icon
+              className={`h-3.5 w-3.5 ${productBrown ? "text-[rgba(242,232,218,0.48)]" : "text-neutral-400"}`}
+            >
+              <path d="m6 9 6 6 6-6" />
+            </Icon>
+          </button>
           {clinicMenuOpen ? (
             <div
               role="menu"
@@ -1572,43 +1609,6 @@ export function DoeSchedulesAppMock({
               ))}
             </div>
           ) : null}
-          <button
-            type="button"
-            onClick={() => {
-              setClinicMenuOpen((open) => !open);
-              setUserMenuOpen(false);
-            }}
-            className={`flex w-full items-center gap-2 rounded-lg border px-2 py-2 text-left text-[12px] font-medium hover:bg-neutral-50 ${
-              productBrown
-                ? "product-brown-nav-selector border-[rgba(245,230,208,0.12)] bg-[#141210] text-[#f2e8da] hover:bg-[#100f0d]"
-                : "border-[#E6E6E6] bg-white text-neutral-700"
-            }`}
-            aria-haspopup="menu"
-            aria-expanded={clinicMenuOpen}
-          >
-            <span
-              className={`h-2 w-2 shrink-0 rounded-full ${
-                productBrown
-                  ? "bg-gradient-to-br from-[#D4A574] to-[#A67B5B]"
-                  : "bg-gradient-to-br from-[#E7A944] to-[#BF593D]"
-              }`}
-            />
-            <span className="min-w-0 flex-1">
-              <span className="block truncate">{selectedClinic.name}</span>
-              <span
-                className={`block truncate text-[10px] font-normal ${
-                  productBrown ? "text-[rgba(242,232,218,0.48)]" : "text-neutral-500"
-                }`}
-              >
-                {selectedClinic.address}
-              </span>
-            </span>
-            <Icon
-              className={`h-3.5 w-3.5 ${productBrown ? "text-[rgba(242,232,218,0.48)]" : "text-neutral-400"}`}
-            >
-              <path d="m6 9 6 6 6-6" />
-            </Icon>
-          </button>
         </div>
       </div>
 
