@@ -7,12 +7,10 @@ import {
 } from "@/lib/about/about-layout-styles";
 import {
   ABOUT_SECTION_2_BAR_CHART,
-  ABOUT_SECTION_2_CHARTS_CAPTION,
-  ABOUT_SECTION_2_CHARTS_CITATION,
   ABOUT_SECTION_2_PIE_CHART,
 } from "@/lib/about/about-page-article";
 
-/** Desktop /about — pie and bar charts with a shared caption block. */
+/** Desktop /about — clinic-hour pie beside the first beige panel. */
 export function AboutDesktopStatCharts() {
   return (
     <div className="about-stat-charts shrink-0 space-y-6 md:space-y-7">
@@ -28,6 +26,18 @@ export function AboutDesktopStatCharts() {
         theme="about"
       />
 
+      <div>
+        <p className={ABOUT_DESKTOP_CHART_JOINT_CAPTION_TW}>{ABOUT_SECTION_2_PIE_CHART.caption}</p>
+        <p className={ABOUT_DESKTOP_CHART_CITATION_TW}>{ABOUT_SECTION_2_PIE_CHART.citation}</p>
+      </div>
+    </div>
+  );
+}
+
+/** Desktop /about — weekly admin hours, placed under the TAM chart. */
+export function AboutDesktopAdminHoursChart() {
+  return (
+    <div className="about-stat-charts shrink-0 space-y-4 md:space-y-5">
       <ArticleBarChart
         title={ABOUT_SECTION_2_BAR_CHART.title}
         bars={ABOUT_SECTION_2_BAR_CHART.bars}
@@ -40,8 +50,8 @@ export function AboutDesktopStatCharts() {
       />
 
       <div>
-        <p className={ABOUT_DESKTOP_CHART_JOINT_CAPTION_TW}>{ABOUT_SECTION_2_CHARTS_CAPTION}</p>
-        <p className={ABOUT_DESKTOP_CHART_CITATION_TW}>{ABOUT_SECTION_2_CHARTS_CITATION}</p>
+        <p className={ABOUT_DESKTOP_CHART_JOINT_CAPTION_TW}>{ABOUT_SECTION_2_BAR_CHART.caption}</p>
+        <p className={ABOUT_DESKTOP_CHART_CITATION_TW}>{ABOUT_SECTION_2_BAR_CHART.citation}</p>
       </div>
     </div>
   );

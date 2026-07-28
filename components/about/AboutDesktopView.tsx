@@ -1,5 +1,6 @@
 "use client";
 
+import { AboutDesktopAdminHoursChart } from "@/components/about/AboutDesktopStatCharts";
 import { AboutDesktopAiAdoptionChart } from "@/components/about/AboutDesktopAiAdoptionChart";
 import { AboutDesktopFaqTabs } from "@/components/about/AboutDesktopFaqTabs";
 import {
@@ -110,7 +111,7 @@ export function AboutDesktopView() {
       <div className="relative z-10">
         <main>
           <AboutDesktopSplitSection boxSide="right" graphic={0} boxBleedToMargin allowGrow>
-            <div className="about-desktop-section-scroll flex min-h-0 flex-col justify-center gap-6 md:gap-7">
+            <div className="about-desktop-section-scroll flex flex-col justify-center gap-6 md:gap-7">
               <AboutDesktopSectionHeadline lines={ABOUT_MOBILE_ASSISTANT_HEADLINE_LINES} />
               <div className={`flex flex-col ${ABOUT_DESKTOP_SECTION_2_CONTENT_GAP}`}>
                 <AboutDesktopParagraph text={ABOUT_DESKTOP_SECTION_2_INTRO} />
@@ -125,16 +126,24 @@ export function AboutDesktopView() {
           </AboutDesktopSplitSection>
 
           <AboutDesktopSplitSection boxSide="left" graphic={1} boxBleedToMargin allowGrow>
-            <div className="about-desktop-section-scroll flex min-h-0 flex-col justify-center">
+            <div
+              className={`about-desktop-section-scroll flex flex-col justify-center ${ABOUT_DESKTOP_CONTENT_STACK_GAP}`}
+            >
               <AboutDesktopTamChart />
+              <AboutDesktopAdminHoursChart />
             </div>
           </AboutDesktopSplitSection>
 
           <AboutDesktopSplitSection boxSide="left" graphic={3} allowGrow>
-            <div
-              className={`about-desktop-section-scroll flex min-h-0 flex-col justify-center ${ABOUT_DESKTOP_CONTENT_STACK_GAP}`}
-            >
+            <div className="about-desktop-section-scroll flex flex-col justify-center">
               <AboutDesktopAiAdoptionChart />
+            </div>
+          </AboutDesktopSplitSection>
+
+          <AboutDesktopSplitSection boxSide="right" graphic={0} boxBleedToMargin allowGrow>
+            <div
+              className={`about-desktop-section-scroll flex flex-col justify-center ${ABOUT_DESKTOP_CONTENT_STACK_GAP}`}
+            >
               <AboutDesktopSectionHeadline lines={ABOUT_MOBILE_FOUNDERS_HEADLINE_LINES} />
               <AboutDesktopParagraph text={foundersOne} />
               <AboutDesktopParagraph text={foundersTwo} />

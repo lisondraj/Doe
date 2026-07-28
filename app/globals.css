@@ -450,10 +450,8 @@ html[data-about-page][data-layout="desktop"] .about-desktop-beige-panel svg {
   transform-origin: center center;
 }
 html[data-about-page][data-layout="desktop"] .about-desktop-section-scroll {
-  overflow-x: hidden;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: thin;
+  overflow: visible;
+  overscroll-behavior: auto;
 }
 html[data-about-page][data-layout="desktop"] .about-desktop-root .about-hero-visual {
   width: 100%;

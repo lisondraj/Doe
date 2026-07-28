@@ -2,17 +2,18 @@ import { BLOG_LANDING_HERO } from "@/lib/blog/blog-landing-hero-colors";
 
 const { lineSoft, line, lineStrong, accentWarm } = BLOG_LANDING_HERO;
 
-/** Stacked arc rings from blog article design 1 — scaled for contact card footer band. */
+/** Stacked arc rings from blog article design 1 — large fill for contact card. */
 export function AboutContactRingsGraphic({ className = "" }: { className?: string }) {
   const cx = 200;
   const cy = 400;
   const arcs = [
-    { rx: 38, ry: 19, stroke: lineSoft, sw: "0.65" },
-    { rx: 58, ry: 29, stroke: lineSoft, sw: "0.7" },
-    { rx: 80, ry: 40, stroke: line, sw: "0.75" },
-    { rx: 104, ry: 52, stroke: line, sw: "0.8" },
-    { rx: 130, ry: 64, stroke: lineStrong, sw: "0.85" },
-    { rx: 158, ry: 78, stroke: lineStrong, sw: "0.82" },
+    { rx: 72, ry: 36, stroke: lineSoft, sw: "1.1" },
+    { rx: 110, ry: 55, stroke: lineSoft, sw: "1.15" },
+    { rx: 152, ry: 76, stroke: line, sw: "1.25" },
+    { rx: 198, ry: 99, stroke: line, sw: "1.35" },
+    { rx: 248, ry: 124, stroke: lineStrong, sw: "1.45" },
+    { rx: 304, ry: 152, stroke: lineStrong, sw: "1.4" },
+    { rx: 365, ry: 182, stroke: lineSoft, sw: "1.2" },
   ] as const;
 
   return (
@@ -34,9 +35,11 @@ export function AboutContactRingsGraphic({ className = "" }: { className?: strin
           strokeWidth={arc.sw}
         />
       ))}
-      <circle cx={cx} cy={cy - 19} r="2" fill={accentWarm} />
-      <circle cx={cx - 80} cy={cy} r="1.6" fill={line} />
-      <circle cx={cx + 80} cy={cy} r="1.6" fill={line} />
+      <circle cx={cx} cy={cy - 36} r="3.2" fill={accentWarm} />
+      <circle cx={cx - 152} cy={cy} r="2.4" fill={line} />
+      <circle cx={cx + 152} cy={cy} r="2.4" fill={line} />
+      <circle cx={cx - 248} cy={cy} r="2" fill={lineSoft} />
+      <circle cx={cx + 248} cy={cy} r="2" fill={lineSoft} />
     </svg>
   );
 }

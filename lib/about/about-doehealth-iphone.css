@@ -478,6 +478,18 @@ html[data-about-page][data-layout="desktop"] .about-desktop-contact-card {
   border-color: rgba(212, 165, 116, 0.28) !important;
 }
 
+html[data-about-page][data-layout="desktop"] .about-desktop-contact-card svg ellipse {
+  stroke: rgba(232, 192, 142, 0.42) !important;
+}
+
+html[data-about-page][data-layout="desktop"] .about-desktop-contact-card svg ellipse:nth-child(n + 4) {
+  stroke: rgba(232, 192, 142, 0.58) !important;
+}
+
+html[data-about-page][data-layout="desktop"] .about-desktop-contact-card svg circle[fill] {
+  fill: #e8c08e !important;
+}
+
 html[data-about-page][data-layout="desktop"] .about-desktop-contact-action {
   background-color: rgba(232, 192, 142, 0.14) !important;
   color: #f2e8da !important;

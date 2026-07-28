@@ -91,7 +91,7 @@ export function AboutDesktopContactSection() {
               style={{ backgroundColor: JOIN_FORM_BEIGE.field, borderColor: JOIN_FORM_BEIGE.border }}
             >
               <div
-                className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-[min(24%,9.5rem)]"
+                className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-[min(88%,34rem)]"
                 aria-hidden
               >
                 <AboutContactRingsGraphic />
