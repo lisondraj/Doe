@@ -1897,13 +1897,11 @@ html[data-home-page][data-layout="desktop"]
   }
 
   .doehealth-routed-calls-cursor--agent {
-    left: 34%;
-    top: 41%;
+    transform: translate3d(calc(34cqw - 3px), calc(41cqh - 2px), 0);
   }
 
   .doehealth-routed-calls-cursor--human {
-    left: 44%;
-    top: 66%;
+    transform: translate3d(calc(44cqw - 3px), calc(66cqh - 2px), 0);
   }
 }
 
