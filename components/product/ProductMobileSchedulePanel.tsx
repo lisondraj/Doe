@@ -215,9 +215,20 @@ export function ProductMobileSchedulePanel({
   const dayGridHeight = WEEK_VISIBLE_SLOT_COUNT * SLOT_HEIGHT + WEEK_TOP_BUFFER;
   const weekGridHeight = WEEK_VISIBLE_SLOT_COUNT * WEEK_SLOT_HEIGHT + WEEK_TOP_BUFFER;
 
+  const periodLabel =
+    view === "month"
+      ? "March – April 2026"
+      : view === "week"
+        ? "Mar 30 – Apr 5"
+        : `${selectedDay.day}, ${selectedDay.date}`;
+
   return (
     <section className="product-mobile-panel product-mobile-schedule" aria-label="Schedule calendar">
-      <div className="product-mobile-schedule__toolbar">
+      <div className="product-mobile-schedule__masthead">
+        <div className="product-mobile-schedule__masthead-copy">
+          <p className={`product-mobile-schedule__eyebrow ${suisseIntl.className}`}>Clinic calendar</p>
+          <h2 className={`product-mobile-schedule__heading ${dmSans.className}`}>{periodLabel}</h2>
+        </div>
         <div className="product-mobile-schedule__views" role="group" aria-label="Calendar view">
           {VIEW_OPTIONS.map((option) => (
             <button
@@ -233,13 +244,6 @@ export function ProductMobileSchedulePanel({
             </button>
           ))}
         </div>
-        <p className={`product-mobile-schedule__period ${dmSans.className}`}>
-          {view === "month"
-            ? "March – April 2026"
-            : view === "week"
-              ? "Mar 30 – Apr 5"
-              : `${selectedDay.day}, ${selectedDay.date}`}
-        </p>
       </div>
 
       {view === "day" ? (
