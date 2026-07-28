@@ -605,6 +605,50 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
   font-size: 2.1rem;
 }
 
+/*
+ * Marketing phone embed (e.g. desktop /doehealth) sits in a wide viewport, so
+ * @media (min-width: 768px) product-landing rules would otherwise force a
+ * two-column Today layout inside the silhouette. Keep iPhone stacking.
+ */
+.product-mobile-root--embed .product-landing-day-summary__section-labels,
+.product-mobile-root--embed .product-landing-day-summary__columns,
+.product-mobile-embed--landing .product-landing-day-summary__section-labels,
+.product-mobile-embed--landing .product-landing-day-summary__columns {
+  grid-template-columns: 1fr;
+}
+
+.product-mobile-root--embed .product-landing-day-summary__columns,
+.product-mobile-embed--landing .product-landing-day-summary__columns,
+.product-mobile-root--embed .product-landing-call__stage .product-landing-day-summary__columns,
+.product-mobile-embed--landing .product-landing-call__stage .product-landing-day-summary__columns {
+  min-height: 0;
+}
+
+.product-mobile-root--embed .product-landing-day-summary__split::after,
+.product-mobile-embed--landing .product-landing-day-summary__split::after {
+  content: none;
+  display: none;
+}
+
+.product-mobile-root--embed .product-landing-day-summary__section-labels .product-landing-day-summary__section-label:first-child,
+.product-mobile-root--embed .product-landing-day-summary__section-labels .product-landing-day-summary__section-label:last-child,
+.product-mobile-root--embed .product-landing-day-summary__column:first-child,
+.product-mobile-root--embed .product-landing-day-summary__column + .product-landing-day-summary__column,
+.product-mobile-embed--landing .product-landing-day-summary__section-labels .product-landing-day-summary__section-label:first-child,
+.product-mobile-embed--landing .product-landing-day-summary__section-labels .product-landing-day-summary__section-label:last-child,
+.product-mobile-embed--landing .product-landing-day-summary__column:first-child,
+.product-mobile-embed--landing .product-landing-day-summary__column + .product-landing-day-summary__column {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.product-mobile-root--embed .product-landing-day-summary__column + .product-landing-day-summary__column,
+.product-mobile-embed--landing .product-landing-day-summary__column + .product-landing-day-summary__column {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--pi-line);
+}
+
 .product-mobile-embed--landing .product-landing-call__stage .product-landing-day-summary__total-value {
   font-size: 2.85rem;
 }
@@ -2788,9 +2832,9 @@ html[data-product-page="true"]:not([data-layout="desktop"]) body {
   -webkit-user-select: none;
 }
 
-/* Silhouette has no real safe-area; keep Doe chrome clear of the island band. */
+/* Silhouette screen already clears the island; keep Doe chrome compact under it. */
 .product-mobile-root--embed .product-mobile-topbar {
-  padding-top: 0.85rem;
+  padding-top: 0.55rem;
   padding-bottom: 0.72rem;
 }
 

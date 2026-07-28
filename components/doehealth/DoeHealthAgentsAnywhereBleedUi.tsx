@@ -22,9 +22,11 @@ export function DoeHealthAgentsAnywhereBleedUi() {
     if (!screen) return;
 
     const sync = () => {
-      const { width, height } = screen.getBoundingClientRect();
-      if (width <= 0 || height <= 0) return;
-      setScale(Math.min(width / PRODUCT_PHONE_DESIGN_WIDTH, height / PRODUCT_PHONE_DESIGN_HEIGHT));
+      const { width } = screen.getBoundingClientRect();
+      if (width <= 0) return;
+      // Fill screen width so Today chrome is edge-aligned in the silhouette;
+      // height may clip slightly after Dynamic Island clearance.
+      setScale(width / PRODUCT_PHONE_DESIGN_WIDTH);
     };
 
     sync();

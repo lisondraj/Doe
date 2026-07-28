@@ -2071,6 +2071,11 @@ html[data-home-page][data-layout="desktop"]
   pointer-events: none;
 }
 
+/* Keep scaled /product canvas flush to the screen width after island clearance. */
+.doehealth-agents-anywhere-phone__scale .product-mobile-root--embed {
+  width: 100%;
+}
+
 .doehealth-agents-anywhere-phone__btn {
   position: absolute;
   z-index: 2;
