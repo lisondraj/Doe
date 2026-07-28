@@ -1613,79 +1613,107 @@ export function DoeSchedulesAppMock({
       </div>
 
       {productBrown ? (
-        <nav className="flex flex-col gap-0.5 px-2 pb-2">
-          {(
-            [
-              {
-                label: "Today",
-                view: "landing" as const,
-                icon: <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />,
-              },
-              {
-                label: "Call History",
-                view: "call-history" as const,
-                icon: (
-                  <path d="M5.5 4.5h2.75l1.25 2.75L8.5 9a11.5 11.5 0 0 0 5.5 5.5l1.75-1.25 2.75 1.25v2.75a1 1 0 0 1-1 1A13.5 13.5 0 0 1 4.5 5.5a1 1 0 0 1 1-1Z" />
-                ),
-              },
-              {
-                label: "Schedule",
-                view: "schedule" as const,
-                icon: (
-                  <>
-                    <rect width="18" height="18" x="3" y="4" rx="2" />
-                    <line x1="16" x2="16" y1="2" y2="6" />
-                    <line x1="8" x2="8" y1="2" y2="6" />
-                    <line x1="3" x2="21" y1="10" y2="10" />
-                  </>
-                ),
-              },
-              {
-                label: "Inbox",
-                view: "inbox" as const,
-                badge: "20",
-                icon: (
-                  <>
-                    <path d="M22 12h-6l-2 3h-4l-2-3H2" />
-                    <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
-                  </>
-                ),
-              },
-              {
-                label: "Agent Builder",
-                view: "agent-builder" as const,
-                icon: (
-                  <path d="m12 3 1.912 5.813L20 12l-6.088 3.187L12 21l-1.912-5.813L4 12l6.088-3.187L12 3Z" />
-                ),
-              },
-            ] as const
-          ).map((item) => (
-            <button
-              key={item.label}
-              type="button"
-              onClick={() => setWorkspaceView(item.view)}
-              className={`flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-[13px] ${
-                workspaceView === item.view
-                  ? "bg-[rgba(245,230,208,0.12)] font-medium text-[#f5e6d0]"
-                  : "text-[rgba(245,230,208,0.78)] hover:bg-[rgba(245,230,208,0.08)]"
-              }`}
-            >
-              <Icon className="h-5 w-5">{item.icon}</Icon>
-              <span className="min-w-0 flex-1 truncate">{item.label}</span>
-              {"badge" in item && item.badge ? (
-                <span
-                  className={`rounded-full px-1.5 py-0.5 text-[11px] font-medium ${
+        <>
+          <nav className="flex flex-col gap-0.5 px-2 pb-2">
+            {(
+              [
+                {
+                  label: "Today",
+                  view: "landing" as const,
+                  icon: <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />,
+                },
+                {
+                  label: "Schedule",
+                  view: "schedule" as const,
+                  icon: (
+                    <>
+                      <rect width="18" height="18" x="3" y="4" rx="2" />
+                      <line x1="16" x2="16" y1="2" y2="6" />
+                      <line x1="8" x2="8" y1="2" y2="6" />
+                      <line x1="3" x2="21" y1="10" y2="10" />
+                    </>
+                  ),
+                },
+                {
+                  label: "Inbox",
+                  view: "inbox" as const,
+                  badge: "20",
+                  icon: (
+                    <>
+                      <path d="M22 12h-6l-2 3h-4l-2-3H2" />
+                      <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
+                    </>
+                  ),
+                },
+              ] as const
+            ).map((item) => (
+              <button
+                key={item.label}
+                type="button"
+                onClick={() => setWorkspaceView(item.view)}
+                className={`flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-[13px] ${
+                  workspaceView === item.view
+                    ? "bg-[rgba(245,230,208,0.12)] font-medium text-[#f5e6d0]"
+                    : "text-[rgba(245,230,208,0.78)] hover:bg-[rgba(245,230,208,0.08)]"
+                }`}
+              >
+                <Icon className="h-5 w-5">{item.icon}</Icon>
+                <span className="min-w-0 flex-1 truncate">{item.label}</span>
+                {"badge" in item && item.badge ? (
+                  <span
+                    className={`rounded-full px-1.5 py-0.5 text-[11px] font-medium ${
+                      workspaceView === item.view
+                        ? "bg-[rgba(245,230,208,0.16)] text-[#f5e6d0]"
+                        : "bg-[rgba(245,230,208,0.08)] text-[rgba(245,230,208,0.72)]"
+                    }`}
+                  >
+                    {item.badge}
+                  </span>
+                ) : null}
+              </button>
+            ))}
+          </nav>
+
+          <div className="px-2 pb-1 pt-1">
+            <div className="flex items-center justify-between px-1 text-[10px] font-semibold uppercase tracking-wider text-[rgba(242,232,218,0.48)]">
+              <span>Tools</span>
+            </div>
+            <div className="mt-1 flex flex-col gap-0.5">
+              {(
+                [
+                  {
+                    label: "Call History",
+                    view: "call-history" as const,
+                    icon: (
+                      <path d="M5.5 4.5h2.75l1.25 2.75L8.5 9a11.5 11.5 0 0 0 5.5 5.5l1.75-1.25 2.75 1.25v2.75a1 1 0 0 1-1 1A13.5 13.5 0 0 1 4.5 5.5a1 1 0 0 1 1-1Z" />
+                    ),
+                  },
+                  {
+                    label: "Agent Builder",
+                    view: "agent-builder" as const,
+                    icon: (
+                      <path d="m12 3 1.912 5.813L20 12l-6.088 3.187L12 21l-1.912-5.813L4 12l6.088-3.187L12 3Z" />
+                    ),
+                  },
+                ] as const
+              ).map((item) => (
+                <button
+                  key={item.label}
+                  type="button"
+                  onClick={() => setWorkspaceView(item.view)}
+                  className={`flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-[13px] ${
                     workspaceView === item.view
-                      ? "bg-[rgba(245,230,208,0.16)] text-[#f5e6d0]"
-                      : "bg-[rgba(245,230,208,0.08)] text-[rgba(245,230,208,0.72)]"
+                      ? "bg-[rgba(245,230,208,0.12)] font-medium text-[#f5e6d0]"
+                      : "text-[rgba(245,230,208,0.78)] hover:bg-[rgba(245,230,208,0.08)]"
                   }`}
                 >
-                  {item.badge}
-                </span>
-              ) : null}
-            </button>
-          ))}
-        </nav>
+                  <Icon className="h-5 w-5">{item.icon}</Icon>
+                  <span className="min-w-0 flex-1 truncate">{item.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
       ) : (
         <>
       <nav className="flex flex-col gap-0.5 px-2 pb-2">
