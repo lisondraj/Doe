@@ -1,7 +1,12 @@
 node_modules
 .next
 out
+.env
 .env*.local
 *.log
 .DS_Store
 *.tsbuildinfo
+
+# Large media — keep locally, generate or host elsewhere
+videos/motion4.mp4
+public/motion/doe-intro.mp4

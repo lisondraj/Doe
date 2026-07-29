@@ -1,0 +1,421 @@
+/* /motion-test — Remotion player shell + title card */
+
+html[data-motion-test-page],
+html[data-motion-test-page] body {
+  min-height: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+.motion-test-viewport {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+}
+
+.motion-test-player-wrap {
+  width: 100%;
+  height: 100%;
+  max-width: 100vw;
+  max-height: 100vh;
+  transform: translateZ(0);
+}
+
+.motion-test-remotion-root {
+  font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  isolation: isolate;
+}
+
+.motion-test-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #1a1208;
+}
+
+.motion-test-title__gradient-wrap {
+  overflow: hidden;
+}
+
+.motion-test-title__gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.motion-test-title__white-overlay {
+  z-index: 0;
+  background: #ffffff;
+  pointer-events: none;
+}
+
+.motion-test-title__gradient-text-wrap {
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.motion-test-title__label--gradient-fill {
+  width: 100%;
+  z-index: 1;
+}
+
+.motion-test-title__label--here {
+  z-index: 1;
+}
+
+.motion-test-title__label {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  color: #ffffff;
+  font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+  font-size: 128px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  text-align: center;
+  transform-origin: center center;
+}
+
+.motion-test-title__label--doe {
+  font-family: "Lora", Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
+
+.motion-test-title__label--gradient {
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  display: inline-block;
+  overflow: visible;
+  line-height: 1.14;
+  padding-block: 0.12em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.motion-test-doe-stack {
+  z-index: 1;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.motion-test-doe-stack__motion {
+  position: absolute;
+  inset: 0;
+  transform-origin: center center;
+}
+
+.motion-test-doe-stack__layer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: 0;
+  white-space: nowrap;
+  transform-origin: center center;
+}
+
+.motion-test-very-big-doe {
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.motion-test-very-big-doe__word {
+  margin: 0;
+  text-align: center;
+  transform-origin: center center;
+}
+
+.motion-test-finale-type {
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  pointer-events: none;
+  user-select: none;
+}
+
+.motion-test-finale-type__row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+  font-weight: 400;
+  letter-spacing: -0.05em;
+  white-space: nowrap;
+}
+
+.motion-test-finale-type__typewriter-scale {
+  transform-origin: center center;
+}
+
+.motion-test-finale-type__intelligence-type-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.motion-test-finale-type__building-prefix {
+  position: absolute;
+  right: calc(100% + 0.14em);
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+}
+
+.motion-test-finale-type__gradient-text {
+  display: inline-block;
+  overflow: visible;
+  line-height: 1.14;
+  padding-block: 0.12em;
+}
+
+.motion-test-finale-type__cursor--gradient {
+  display: inline-block;
+  margin-left: 0.02em;
+}
+
+.motion-test-finale-type__cursor--gradient.motion-test-finale-type__cursor--ghost {
+  opacity: 0.35;
+}
+
+.motion-test-finale-type__cursor {
+  font-weight: 300;
+  margin-left: 0.04em;
+  opacity: 1;
+}
+
+.motion-test-finale-type__row--very-big {
+  letter-spacing: -0.045em;
+}
+
+.motion-test-finale-type__stack {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center center;
+}
+
+.motion-test-finale-type--stack-clip {
+  overflow: hidden;
+}
+
+.motion-test-finale-type__lines {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  overflow: visible;
+}
+
+.motion-test-finale-type__full-phrase-text {
+  display: inline-block;
+  overflow: visible;
+  line-height: 1.14;
+  padding-block: 0.12em;
+  padding-inline: 0.02em 0.1em;
+}
+
+.motion-test-finale-type__full-phrase-stack {
+  display: inline-grid;
+}
+
+.motion-test-finale-type__full-phrase-stack > .motion-test-finale-type__full-phrase-sizer,
+.motion-test-finale-type__full-phrase-stack > .motion-test-finale-type__full-phrase-layer {
+  grid-area: 1 / 1;
+}
+
+.motion-test-finale-type__full-phrase-sizer {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.motion-test-finale-type__full-phrase-layer--gradient {
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.motion-test-finale-type__row--full-phrase {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  margin: 0;
+  padding: 0;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+  transform-origin: center center;
+}
+
+.motion-test-finale-type__row--second {
+  margin: 0;
+  padding: 0;
+}
+
+.motion-test-finale-type__row--intelligence-isolate {
+  text-align: center;
+}
+
+.motion-test-finale-type__phrase-ghost {
+  visibility: hidden;
+}
+
+.motion-test-finale-type__intelligence-into-run {
+  display: inline;
+  white-space: nowrap;
+}
+
+.motion-test-finale-type__into-suffix {
+  display: inline;
+  white-space: nowrap;
+}
+
+.motion-test-finale-type__phrase-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  visibility: hidden;
+}
+
+.motion-test-finale-type__phrase-word {
+  display: inline-block;
+  position: relative;
+  z-index: 1;
+}
+
+.motion-test-finale-type__phrase-word--isolate {
+  overflow: visible;
+  line-height: 1.14;
+  padding-block: 0.12em 0.2em;
+  padding-inline: 0.02em 0.1em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.motion-test-finale-type__intelligence-border-wrap {
+  position: relative;
+  display: inline-block;
+  padding: 0;
+  overflow: visible;
+}
+
+.motion-test-intelligence-border {
+  position: absolute;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.motion-test-intelligence-stack-anchor {
+  position: relative;
+  display: inline-block;
+  vertical-align: baseline;
+  overflow: visible;
+}
+
+.motion-test-intelligence-stack__center {
+  position: relative;
+  z-index: 1;
+}
+
+.motion-test-intelligence-stack__layer {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin: 0;
+  white-space: nowrap;
+  transform-origin: center center;
+  font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
+
+.motion-test-finale-type__phrase-word--flipped {
+  line-height: 1.14;
+  padding-block: 0.12em 0.2em;
+  padding-inline: 0.02em 0.1em;
+}
+
+.motion-test-title--portal-hold {
+  overflow: visible;
+  background: transparent;
+}
+
+.motion-test-title--portal-zoom {
+  overflow: visible;
+  background: #ffffff;
+}
+
+.motion-test-finale-type--portal-zoom {
+  overflow: visible;
+}
+
+.motion-test-intelligence-flipped-portal--hold {
+  z-index: 1;
+}
+
+.motion-test-intelligence-flipped-stack__row {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: 0;
+  white-space: nowrap;
+  transform-origin: center center;
+  letter-spacing: -0.04em;
+}
+
+.motion-test-intelligence-flipped-portal {
+  z-index: 1;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.motion-test-intelligence-flipped-portal__gradient-clip {
+  z-index: 0;
+}
+
+.motion-test-intelligence-flipped-portal__text {
+  z-index: 1;
+  pointer-events: none;
+}
+
+.motion-test-intelligence-flipped-portal__gradient {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+}
+
+.motion-test-finale-type__cursor--ghost {
+  opacity: 0;
+}
+
+.motion-test-finale-type__cursor--hidden {
+  visibility: hidden;
+}

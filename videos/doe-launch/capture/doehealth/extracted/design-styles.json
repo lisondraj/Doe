@@ -1,0 +1,311 @@
+{
+  "typography": [
+    {
+      "role": "link",
+      "fontFamily": "__Lora_a0ef65",
+      "fontSize": "332.8px",
+      "fontWeight": "400",
+      "lineHeight": "216.32px",
+      "letterSpacing": "-8.32px",
+      "color": "#F5E6D0",
+      "sampleText": "Doe"
+    },
+    {
+      "role": "display",
+      "fontFamily": "__suisseIntl_e809d6",
+      "fontSize": "74.88px",
+      "fontWeight": "350",
+      "lineHeight": "76.3776px",
+      "letterSpacing": "-2.6208px",
+      "color": "transparent",
+      "sampleText": "The future ofhealthcare is here."
+    },
+    {
+      "role": "heading",
+      "fontFamily": "__suisseIntl_e809d6",
+      "fontSize": "60.8px",
+      "fontWeight": "400",
+      "lineHeight": "65.664px",
+      "letterSpacing": "-2.128px",
+      "color": "transparent",
+      "sampleText": "Automate YourFront Desk"
+    },
+    {
+      "role": "heading-2",
+      "fontFamily": "__DM_Sans_e64f39",
+      "fontSize": "39.04px",
+      "fontWeight": "600",
+      "lineHeight": "37.088px",
+      "letterSpacing": "-1.63968px",
+      "color": "transparent",
+      "sampleText": "Sarah Westfield"
+    },
+    {
+      "role": "heading-3",
+      "fontFamily": "__DM_Sans_e64f39",
+      "fontSize": "30.08px",
+      "fontWeight": "600",
+      "lineHeight": "29.4784px",
+      "letterSpacing": "-1.14304px",
+      "color": "transparent",
+      "sampleText": "Call Summary"
+    },
+    {
+      "role": "body",
+      "fontFamily": "__DM_Sans_e64f39",
+      "fontSize": "26.24px",
+      "fontWeight": "400",
+      "lineHeight": "35.1616px",
+      "letterSpacing": "-0.7872px",
+      "color": "#111827",
+      "sampleText": "Hi, this is Sarah. I need arefill visit for my Metformin"
+    },
+    {
+      "role": "heading-2",
+      "fontFamily": "__suisseIntl_e809d6",
+      "fontSize": "12.8px",
+      "fontWeight": "400",
+      "lineHeight": "19.2px",
+      "letterSpacing": "normal",
+      "color": "#111827",
+      "sampleText": "Agents & humans,together"
+    },
+    {
+      "role": "body-small",
+      "fontFamily": "__DM_Sans_e64f39",
+      "fontSize": "12.8px",
+      "fontWeight": "400",
+      "lineHeight": "19.2px",
+      "letterSpacing": "normal",
+      "color": "#111827",
+      "sampleText": "128/82mmHg"
+    },
+    {
+      "role": "label",
+      "fontFamily": "ui-sans-serif",
+      "fontSize": "12.8px",
+      "fontWeight": "400",
+      "lineHeight": "19.2px",
+      "letterSpacing": "normal",
+      "color": "#111827",
+      "sampleText": "Inbox AgentScheduling AgentLabs AgentReferrals AgentLive App"
+    }
+  ],
+  "spacing": {
+    "observed": [
+      1,
+      2,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      14,
+      15,
+      16,
+      19,
+      35
+    ],
+    "baseUnit": 8
+  },
+  "radius": [
+    "0px 25.6px 25.6px 0px",
+    "6.88538px",
+    "7.936px",
+    "9.216px",
+    "10.88px",
+    "999px"
+  ],
+  "shadows": [
+    {
+      "value": "rgba(255, 255, 255, 0.03) 0px 1px 0px 0px inset",
+      "count": 10
+    },
+    {
+      "value": "rgba(255, 255, 255, 0.05) 0px 1px 0px 0px inset",
+      "count": 10
+    },
+    {
+      "value": "rgba(255, 255, 255, 0.035) 0px 1px 0px 0px inset",
+      "count": 8
+    },
+    {
+      "value": "rgba(255, 255, 255, 0.03) 0px 1px 0px 0px inset, rgba(26, 18, 8, 0.16) 0px 10px 28px 0px, rgba(26, 18, 8, 0.1) 0px 24px 56px 0px",
+      "count": 3
+    },
+    {
+      "value": "rgba(0, 0, 0, 0.14) 0px 10px 32px 0px, rgba(26, 18, 8, 0.12) 0px 24px 56px 0px",
+      "count": 3
+    }
+  ],
+  "buttons": [
+    {
+      "label": "button",
+      "background": "color(srgb 0.101961 0.0705882 0.0313726 / 0.848459)",
+      "backgroundImage": "",
+      "backdropFilter": "",
+      "color": "#F5E6D0",
+      "padding": "0px",
+      "borderRadius": "1519.33px",
+      "border": "0px solid rgb(229, 231, 235)",
+      "boxShadow": "none",
+      "fontSize": "12.8px",
+      "fontWeight": "400",
+      "height": "36.7969px"
+    }
+  ],
+  "cards": [
+    {
+      "label": "card",
+      "background": "transparent",
+      "backgroundImage": "",
+      "backdropFilter": "",
+      "color": "#111827",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "border": "0px solid rgb(229, 231, 235)",
+      "boxShadow": "none",
+      "fontSize": "12.8px",
+      "fontWeight": "400",
+      "height": "509.547px"
+    },
+    {
+      "label": "card",
+      "background": "transparent",
+      "backgroundImage": "linear-gradient(168deg, rgb(42, 33, 24) 0%, rgb(23, 16, 8) 100%)",
+      "backdropFilter": "",
+      "color": "#111827",
+      "padding": "19.84px 19.2px 20.736px",
+      "borderRadius": "10.88px",
+      "border": "1px solid rgba(212, 165, 116, 0.14)",
+      "boxShadow": "rgba(255, 255, 255, 0.03) 0px 1px 0px 0px inset, rgba(26, 18, 8, 0.16) 0px 10px 28px 0px, rgba(26, 18, 8, 0.1) 0px 24px 56px 0px",
+      "fontSize": "12.8px",
+      "fontWeight": "400",
+      "height": "509.547px"
+    },
+    {
+      "label": "card",
+      "background": "#171008",
+      "backgroundImage": "linear-gradient(168deg, rgb(42, 33, 24) 0%, rgb(23, 16, 8) 100%)",
+      "backdropFilter": "",
+      "color": "#111827",
+      "padding": "15.616px 15.872px 16.128px",
+      "borderRadius": "10.88px",
+      "border": "1px solid rgba(212, 165, 116, 0.14)",
+      "boxShadow": "rgba(255, 255, 255, 0.03) 0px 1px 0px 0px inset, rgba(26, 18, 8, 0.16) 0px 10px 28px 0px, rgba(26, 18, 8, 0.1) 0px 24px 56px 0px",
+      "fontSize": "12.8px",
+      "fontWeight": "400",
+      "height": "166.719px"
+    },
+    {
+      "label": "card",
+      "background": "transparent",
+      "backgroundImage": "",
+      "backdropFilter": "",
+      "color": "#111827",
+      "padding": "0px",
+      "borderRadius": "0px 25.6px 25.6px 0px",
+      "border": "0px solid rgb(229, 231, 235)",
+      "boxShadow": "rgba(0, 0, 0, 0.14) 0px 10px 32px 0px, rgba(26, 18, 8, 0.12) 0px 24px 56px 0px",
+      "fontSize": "12.8px",
+      "fontWeight": "400",
+      "height": "775.188px"
+    }
+  ],
+  "nav": {
+    "label": "navigation",
+    "background": "transparent",
+    "backgroundImage": "",
+    "backdropFilter": "",
+    "color": "#111827",
+    "padding": "4.2354px 44.8454px 2.74055px",
+    "borderRadius": "0px",
+    "border": "0px none rgb(17, 24, 39)",
+    "boxShadow": "none",
+    "fontSize": "12.8px",
+    "fontWeight": "400",
+    "height": "76.6719px"
+  },
+  "chips": [
+    {
+      "label": "Labs Agent",
+      "background": "transparent",
+      "color": "#1A1208",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "border": "0px solid rgb(229, 231, 235)",
+      "boxShadow": "none",
+      "fontSize": "17.664px",
+      "fontWeight": "500",
+      "height": "19.0625px"
+    },
+    {
+      "label": "Sarah",
+      "background": "#D4A574",
+      "color": "#F0DCC4",
+      "padding": "1.07584px 6.45504px",
+      "borderRadius": "6.88538px",
+      "border": "1px solid rgba(212, 165, 116, 0.34)",
+      "boxShadow": "none",
+      "fontSize": "21.5168px",
+      "fontWeight": "600",
+      "height": "32.9531px"
+    },
+    {
+      "label": "Agent",
+      "background": "transparent",
+      "color": "#1A1208",
+      "padding": "2.56px 6.144px 2.304px",
+      "borderRadius": "9999px",
+      "border": "1px solid rgba(212, 165, 116, 0.58)",
+      "boxShadow": "rgba(255, 245, 230, 0.42) 0px 1px 0px 0px inset, rgba(26, 18, 8, 0.28) 0px 4px 12px 0px",
+      "fontSize": "8.192px",
+      "fontWeight": "600",
+      "height": "15.0312px"
+    },
+    {
+      "label": "Due today",
+      "background": "#D4A574",
+      "color": "#E8C08E",
+      "padding": "1.536px 3.584px",
+      "borderRadius": "999px",
+      "border": "1px solid rgba(232, 192, 142, 0.24)",
+      "boxShadow": "none",
+      "fontSize": "6.656px",
+      "fontWeight": "600",
+      "height": "11.7188px"
+    }
+  ],
+  "statCells": [],
+  "tabs": [],
+  "backgrounds": [
+    {
+      "value": "radial-gradient(130% 55% at 50% -8%, rgba(245, 230, 208, 0.11) 0%, rgba(0, 0, 0, 0) 58%), radial-gradient(95% 62% at 50% 36%, rgba(212, 165, 116, 0.055) 0%, rgba(0, 0, 0, 0) 62%), radial-gradient(52% 42% at 90% 92%, rgba(168, 118, 84, 0.07) 0%, rgba(0, 0, 0, 0) 74%), radial-gradient(38% 32% at 10% 78%, rgba(212, 165, 116, 0.04) 0%, rgba(0, 0, 0, 0) 72%), linear-gradient(rgb(39, 31, 23) 0%, rgb(27, 20, 16) 38%, rgb(19, 14, 9) 100%)",
+      "area": 12687630
+    },
+    {
+      "value": "linear-gradient(168deg, rgb(42, 33, 24) 0%, rgb(23, 16, 8) 100%)",
+      "area": 870233
+    },
+    {
+      "value": "linear-gradient(rgb(232, 192, 142) 0%, rgb(212, 165, 116) 52%, rgba(212, 165, 116, 0.72) 100%)",
+      "area": 377223
+    },
+    {
+      "value": "radial-gradient(circle at 56% 20%, color(srgb 0.996471 0.989412 0.972471) 0%, color(srgb 0.939451 0.832 0.678745) 31%, rgba(0, 0, 0, 0) 58%), radial-gradient(circle at 46% 44%, color(srgb 0.960627 0.888471 0.765804) 0%, rgb(232, 192, 142) 46%, color(srgb 0.949569 0.869176 0.758745) 77%, color(srgb 0.960784 0.901961 0.815686) 90%, rgb(245, 230, 208) 100%), radial-gradient(circle at 62% 68%, color(srgb 0.954667 0.884078 0.784627) 0%, rgba(0, 0, 0, 0) 52%)",
+      "area": 259235
+    },
+    {
+      "value": "radial-gradient(circle at 56% 20%, color(srgb 0.995059 0.986588 0.969647) 0%, color(srgb 0.917961 0.78902 0.567529) 31%, rgba(0, 0, 0, 0) 58%), radial-gradient(circle at 46% 44%, color(srgb 0.946196 0.859608 0.704) 0%, rgb(224, 176, 96) 46%, color(srgb 0.942667 0.855373 0.719059) 77%, color(srgb 0.960784 0.901961 0.815686) 90%, rgb(245, 230, 208) 100%), radial-gradient(circle at 62% 68%, color(srgb 0.950902 0.876549 0.76298) 0%, rgba(0, 0, 0, 0) 52%)",
+      "area": 173905
+    },
+    {
+      "value": "radial-gradient(circle at 56% 20%, color(srgb 0.990824 0.980941 0.961176) 0%, color(srgb 0.855765 0.721255 0.538667) 31%, rgba(0, 0, 0, 0) 58%), radial-gradient(circle at 46% 44%, color(srgb 0.904 0.810667 0.665726) 0%, rgb(201, 152, 92) 46%, color(srgb 0.922824 0.834667 0.715608) 77%, color(srgb 0.960784 0.901961 0.815686) 90%, rgb(245, 230, 208) 100%), radial-gradient(circle at 62% 68%, color(srgb 0.940078 0.865255 0.761098) 0%, rgba(0, 0, 0, 0) 52%)",
+      "area": 173905
+    }
+  ],
+  "glass": []
+}

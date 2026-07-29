@@ -14,6 +14,13 @@ import {
   DOE_LAUNCH_HEIGHT,
   DOE_LAUNCH_WIDTH,
 } from "./DoeLaunchComposition";
+import {
+  MotionTestComposition,
+  MOTION_TEST_DURATION_FRAMES,
+  MOTION_TEST_FPS,
+  MOTION_TEST_HEIGHT,
+  MOTION_TEST_WIDTH,
+} from "./motion-test/MotionTestComposition";
 
 export const RemotionRoot = () => (
   <>
@@ -32,6 +39,14 @@ export const RemotionRoot = () => (
       fps={DOE_INTRO_FPS}
       width={DOE_INTRO_WIDTH}
       height={DOE_INTRO_HEIGHT}
+    />
+    <Composition
+      id="MotionTest"
+      component={MotionTestComposition}
+      durationInFrames={MOTION_TEST_DURATION_FRAMES}
+      fps={MOTION_TEST_FPS}
+      width={MOTION_TEST_WIDTH}
+      height={MOTION_TEST_HEIGHT}
     />
   </>
 );

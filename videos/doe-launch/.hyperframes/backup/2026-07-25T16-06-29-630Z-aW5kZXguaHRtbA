@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>Doe Launch</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Inter:wght@400;500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Suisse Intl";
+        src: url("assets/fonts/SuisseIntlTrial-Light.otf") format("opentype");
+        font-weight: 300;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "Suisse Intl";
+        src: url("assets/fonts/SuisseIntlTrial-Regular.otf") format("opentype");
+        font-weight: 400;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "Suisse Intl";
+        src: url("assets/fonts/SuisseIntlTrial-Medium.otf") format("opentype");
+        font-weight: 500;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "Suisse Intl";
+        src: url("assets/fonts/SuisseIntlTrial-Semibold.otf") format("opentype");
+        font-weight: 600;
+        font-style: normal;
+      }
+
+      :root {
+        --page-cream: #faf0d8;
+        --ink: #3d2e1f;
+        --ink-soft: rgba(61, 46, 31, 0.88);
+        --on-dark: #f5e6d0;
+        --console-text: #f2e8da;
+        --gold-text: linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%);
+        --dusk-back: #1a1208;
+        --dusk-horizon: #e8a060;
+        --dusk-clay: #c45c42;
+        --dusk-sand: #f2d8a8;
+        --pi-reading: #f4f1ea;
+        --pi-ink: #1e1612;
+        --pi-ink-soft: #3a322c;
+        --pi-muted: rgba(38, 32, 28, 0.58);
+        --pi-line: rgba(38, 32, 28, 0.09);
+        --pi-bar: linear-gradient(180deg, #d4a574 0%, rgba(212, 165, 116, 0.38) 100%);
+        --card-from: #2a2118;
+        --card-to: #171008;
+        --card-border: rgba(212, 165, 116, 0.14);
+      }
+
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      html, body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #000;
+      }
+
+      #root {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        font-family: Inter, system-ui, sans-serif;
+        color: var(--ink);
+      }
+
+      .font-lora { font-family: Lora, Georgia, serif; }
+      .font-suisse { font-family: "Suisse Intl", Inter, system-ui, sans-serif; }
+      .font-dm { font-family: "DM Sans", Inter, system-ui, sans-serif; }
+      .font-inter { font-family: Inter, system-ui, sans-serif; }
+
+      .gold-text {
+        background: var(--gold-text);
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+      }
+
+      .clip-layer {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        will-change: transform, opacity;
+      }
+
+      .scene-shell {
+        position: absolute;
+        inset: 0;
+        will-change: transform, opacity;
+      }
+
+      .bg-hero {
+        background:
+          radial-gradient(ellipse 130% 95% at 50% 115%, rgba(232, 160, 96, 0.28), transparent 58%),
+          radial-gradient(ellipse 55% 45% at 18% 8%, rgba(196, 92, 66, 0.18), transparent 62%),
+          radial-gradient(ellipse 40% 35% at 82% 22%, rgba(242, 216, 168, 0.14), transparent 68%),
+          var(--dusk-back);
+      }
+
+      .bg-hero::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        opacity: 0.055;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        pointer-events: none;
+        mix-blend-mode: soft-light;
+      }
+
+      .bg-cream { background: var(--page-cream); }
+
+      .bg-console {
+        background:
+          radial-gradient(ellipse 72% 58% at 50% 0%, rgba(245, 230, 208, 0.1), transparent 68%),
+          radial-gradient(ellipse 42% 42% at 88% 82%, rgba(168, 118, 84, 0.12), transparent 62%),
+          linear-gradient(168deg, #241c14 0%, #151008 100%);
+      }
+
+      .grain {
+        display: none;
+      }
+
+      .bg-doe-brown {
+        background:
+          radial-gradient(ellipse 72% 58% at 50% 0%, rgba(245, 230, 208, 0.08), transparent 68%),
+          linear-gradient(168deg, #241c14 0%, #1a1208 55%, #151008 100%);
+      }
+
+      .logo-sting {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .logo-sting__mark {
+        font-size: 320px;
+        font-weight: 400;
+        letter-spacing: -0.04em;
+        line-height: 1;
+        transform-origin: center center;
+      }
+
+      /* ── Shared band layout ── */
+      .band {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 56px 88px 40px;
+        gap: 22px;
+      }
+
+      .console-card {
+        width: 100%;
+        max-width: 1240px;
+        margin: 0 auto;
+        border: 1px solid var(--card-border);
+        border-radius: 16px;
+        background: linear-gradient(168deg, var(--card-from), var(--card-to));
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035), 0 20px 48px rgba(26, 18, 8, 0.32);
+        overflow: hidden;
+      }
+
+      .section-title {
+        max-width: 1240px;
+        margin: 0 auto;
+        font-size: 78px;
+        font-weight: 400;
+        letter-spacing: -0.035em;
+        line-height: 1.02;
+      }
+
+      .section-title span { display: block; }
+
+      .eyebrow {
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: rgba(61, 46, 31, 0.52);
+        margin-bottom: 8px;
+      }
+
+      /* ── Day summary ── */
+      .day-summary {
+        padding: 30px 34px 34px;
+        background: var(--pi-reading);
+        color: var(--pi-ink);
+      }
+
+      .day-summary__greeting-line {
+        color: var(--pi-ink-soft);
+        font-size: 30px;
+        letter-spacing: -0.02em;
+        line-height: 1.05;
+      }
+
+      .day-summary__greeting-name {
+        color: var(--pi-ink);
+        font-size: 48px;
+        letter-spacing: -0.035em;
+        line-height: 0.95;
+        margin-top: 4px;
+      }
+
+      .day-summary__label {
+        margin-top: 20px;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(38, 32, 28, 0.48);
+      }
+
+      .day-summary__row {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 22px;
+        margin-top: 16px;
+        align-items: end;
+        min-height: 168px;
+      }
+
+      .day-summary__total-value {
+        font-size: 72px;
+        line-height: 1;
+        letter-spacing: -0.03em;
+      }
+
+      .day-summary__total-label {
+        margin-top: 6px;
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(38, 32, 28, 0.48);
+      }
+
+      .volume-bars {
+        display: flex;
+        align-items: flex-end;
+        gap: 4px;
+        height: 132px;
+      }
+
+      .volume-bar {
+        flex: 1;
+        min-width: 4px;
+        border-radius: 999px;
+        background: var(--pi-bar);
+      }
+
+      .volume-bar--night {
+        background: linear-gradient(180deg, #c4c0b7 0%, rgba(196, 192, 183, 0.55) 100%);
+        opacity: 0.78;
+      }
+
+      .volume-labels {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 8px;
+        font-size: 9px;
+        color: rgba(38, 32, 28, 0.58);
+      }
+
+      .day-summary__stats {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 22px;
+        margin-top: 20px;
+        align-items: center;
+      }
+
+      .ring {
+        position: relative;
+        width: 96px;
+        height: 96px;
+        flex-shrink: 0;
+      }
+
+      .ring svg { width: 100%; height: 100%; display: block; }
+
+      .ring__track, .ring__prog { fill: none; }
+
+      .ring__track { stroke: #d0ccc3; }
+
+      .ring__prog {
+        stroke: #6e6258;
+        stroke-width: 7;
+        stroke-linecap: round;
+      }
+
+      .ring__inner {
+        position: absolute;
+        inset: 5px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        background: var(--pi-reading);
+      }
+
+      .ring__val { font-size: 16px; letter-spacing: -0.02em; }
+
+      .ring__cap {
+        font-size: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: rgba(38, 32, 28, 0.48);
+      }
+
+      .stat-strip {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .stat-strip__item {
+        padding: 6px 14px;
+        border-left: 1px solid var(--pi-line);
+      }
+
+      .stat-strip__item:first-child { border-left: 0; padding-left: 0; }
+
+      .stat-strip__val {
+        font-size: 36px;
+        line-height: 1;
+        letter-spacing: -0.02em;
+      }
+
+      .stat-strip__label {
+        margin-top: 4px;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(38, 32, 28, 0.48);
+      }
+
+      .stat-strip__detail {
+        margin-top: 2px;
+        font-size: 12px;
+        color: var(--pi-muted);
+      }
+
+      /* ── Live call ── */
+      .live { padding: 26px 30px 30px; color: var(--console-text); }
+
+      .live__crumbs {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-bottom: 14px;
+        margin-bottom: 16px;
+        border-bottom: 1px solid rgba(242, 232, 218, 0.1);
+        font-size: 12px;
+      }
+
+      .live__crumb { color: rgba(242, 232, 218, 0.72); }
+
+      .live__crumb--on { color: var(--console-text); }
+
+      .live__sep { color: rgba(242, 232, 218, 0.28); }
+
+      .live-turn { margin-bottom: 18px; }
+
+      .live-turn__meta {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 6px;
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .live-turn__who { color: #d4a574; font-weight: 600; }
+
+      .live-turn__who--agent { color: #b8845c; }
+
+      .live-turn__time { color: rgba(242, 232, 218, 0.62); }
+
+      .live-turn__text {
+        font-size: 24px;
+        line-height: 1.38;
+        color: rgba(242, 232, 218, 0.94);
+        max-width: 980px;
+      }
+
+      .live-turn__tag { color: #e8c08e; font-weight: 500; }
+
+      .live-turn__steps {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 8px 0 10px;
+      }
+
+      .live-turn__step {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 10px;
+        border-radius: 999px;
+        background: rgba(212, 165, 116, 0.12);
+        border: 1px solid rgba(212, 165, 116, 0.22);
+        font-size: 10px;
+        color: rgba(242, 232, 218, 0.82);
+      }
+
+      /* ── Sarah + A1C ── */
+      .sarah-panel {
+        position: relative;
+        min-height: 500px;
+        padding: 26px 30px;
+      }
+
+      .sarah-chart {
+        position: absolute;
+        left: 50%;
+        top: 46%;
+        transform: translate(-50%, -50%);
+        width: 700px;
+        padding: 22px 24px;
+        border-radius: 14px;
+        background: rgba(244, 241, 234, 0.98);
+        border: 1px solid rgba(38, 32, 28, 0.08);
+      }
+
+      .sarah-chart__label {
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(38, 32, 28, 0.62);
+        margin-bottom: 10px;
+      }
+
+      .sarah-chart svg { width: 100%; height: 130px; display: block; }
+
+      .sarah-name {
+        position: absolute;
+        right: 42px;
+        bottom: 32px;
+        text-align: right;
+        color: var(--console-text);
+      }
+
+      .sarah-name__lines {
+        font-size: 56px;
+        line-height: 0.94;
+        letter-spacing: -0.035em;
+        font-weight: 500;
+      }
+
+      .sarah-name__meta {
+        display: flex;
+        justify-content: flex-end;
+        gap: 16px;
+        margin-top: 12px;
+        font-size: 12px;
+        color: rgba(242, 232, 218, 0.58);
+      }
+
+      .sarah-name__val {
+        color: rgba(242, 232, 218, 0.9);
+        font-size: 14px;
+        margin-bottom: 2px;
+      }
+
+      /* ── Agents orbit ── */
+      .orbit-wrap {
+        padding: 32px;
+        min-height: 440px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .orbit {
+        position: relative;
+        width: 500px;
+        height: 500px;
+      }
+
+      .orbit__hub {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: var(--console-text);
+      }
+
+      .orbit__hub-label {
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(242, 232, 218, 0.52);
+      }
+
+      .orbit__hub-num {
+        font-size: 44px;
+        line-height: 1;
+        margin-top: 2px;
+        color: #e8c08e;
+      }
+
+      .orbit-node {
+        position: absolute;
+        width: 102px;
+        height: 102px;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        border: 1px solid rgba(212, 165, 116, 0.22);
+        background: linear-gradient(168deg, rgb(42, 33, 24), rgb(23, 16, 8));
+        color: rgba(242, 232, 218, 0.9);
+        font-size: 10px;
+        line-height: 1.12;
+        text-align: center;
+      }
+
+      .orbit-node svg { width: 20px; height: 20px; color: #d4a574; }
+
+      /* ── Outro ── */
+      .outro {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .outro__wordmark {
+        font-size: 168px;
+        font-weight: 400;
+        letter-spacing: -0.04em;
+        line-height: 1;
+        color: #1a1208;
+      }
+
+      .outro__url {
+        margin-top: 6px;
+        font-size: 34px;
+        letter-spacing: 0.08em;
+        color: #856849;
+      }
+
+      .outro__line {
+        margin-top: 18px;
+        font-size: 28px;
+        letter-spacing: -0.018em;
+        color: rgba(61, 46, 31, 0.72);
+        max-width: 720px;
+      }
+
+      .flash {
+        position: absolute;
+        inset: 0;
+        background: var(--page-cream);
+        opacity: 0;
+        pointer-events: none;
+        z-index: 50;
+      }
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-3x1a" id="root" data-composition-id="main" data-start="0" data-width="1920" data-height="1080" data-duration="26">
+      <div data-hf-id="hf-tzhi" id="flash" class="clip flash" data-start="0" data-duration="26" data-track-index="99"></div>
+
+      <!-- S1 · Logo sting 0–4.5s -->
+      <div data-hf-id="hf-wtiw" id="s1-bg" class="clip clip-layer bg-doe-brown" data-start="0" data-duration="7.34" data-track-index="0" data-media-start="0"></div>
+      <div data-hf-id="hf-3uol" id="s1" class="clip clip-layer scene-shell" data-start="0" data-duration="4.5" data-track-index="1">
+        <div data-hf-id="hf-qs3h" class="logo-sting">
+          <div data-hf-id="hf-vm60" id="s1-logo" class="logo-sting__mark font-lora gold-text">Doe</div>
+        </div>
+      </div>
+
+      <!-- S2 · Day summary 4.5–9s -->
+      <div data-hf-id="hf-g9lp" id="s2-bg" class="clip clip-layer bg-cream" data-start="4.5" data-duration="4.5" data-track-index="0"></div>
+      <div data-hf-id="hf-4rr7" id="s2" class="clip clip-layer scene-shell" data-start="4.5" data-duration="4.5" data-track-index="1">
+        <div data-hf-id="hf-a71x" class="band">
+          <p data-hf-id="hf-08va" id="s2-eyebrow" class="eyebrow font-suisse">Clinic console</p>
+          <div data-hf-id="hf-wprm" id="s2-card" class="console-card">
+            <div data-hf-id="hf-wwqx" class="day-summary">
+              <p data-hf-id="hf-ote8" id="s2-gl" class="day-summary__greeting-line font-suisse">Good morning,</p>
+              <p data-hf-id="hf-79ld" id="s2-gn" class="day-summary__greeting-name font-dm">Dr. Chen</p>
+              <p data-hf-id="hf-lkod" class="day-summary__label font-suisse">Last 24 hours</p>
+              <div data-hf-id="hf-dr3x" class="day-summary__row">
+                <div data-hf-id="hf-yeow">
+                  <div data-hf-id="hf-hfl3" id="s2-total" class="day-summary__total-value font-dm">47</div>
+                  <div data-hf-id="hf-yrer" class="day-summary__total-label font-suisse">Calls</div>
+                </div>
+                <div data-hf-id="hf-y7yw">
+                  <div data-hf-id="hf-pt47" id="s2-bars" class="volume-bars">
+                    <span data-hf-id="hf-w2b3" class="volume-bar volume-bar--night" style="height:37%"></span>
+                    <span data-hf-id="hf-b81h" class="volume-bar volume-bar--night" style="height:26%"></span>
+                    <span data-hf-id="hf-fv6g" class="volume-bar volume-bar--night" style="height:21%"></span>
+                    <span data-hf-id="hf-cphe" class="volume-bar volume-bar--night" style="height:16%"></span>
+                    <span data-hf-id="hf-dlma" class="volume-bar" style="height:32%"></span>
+                    <span data-hf-id="hf-18ae" class="volume-bar" style="height:58%"></span>
+                    <span data-hf-id="hf-z0go" class="volume-bar" style="height:100%"></span>
+                    <span data-hf-id="hf-1tkq" class="volume-bar" style="height:76%"></span>
+                    <span data-hf-id="hf-czkr" class="volume-bar" style="height:62%"></span>
+                    <span data-hf-id="hf-jmq4" class="volume-bar" style="height:45%"></span>
+                    <span data-hf-id="hf-3vc1" class="volume-bar" style="height:55%"></span>
+                    <span data-hf-id="hf-5sdk" class="volume-bar" style="height:38%"></span>
+                  </div>
+                  <div data-hf-id="hf-qop0" class="volume-labels font-inter"><span data-hf-id="hf-ob7p">12a</span><span data-hf-id="hf-qasq">4a</span><span data-hf-id="hf-tdfy">8a</span><span data-hf-id="hf-icma">12p</span><span data-hf-id="hf-jjl9">4p</span><span data-hf-id="hf-zc1d">8p</span></div>
+                </div>
+              </div>
+              <div data-hf-id="hf-i3rs" class="day-summary__stats">
+                <div data-hf-id="hf-0qcu" class="ring">
+                  <svg data-hf-id="hf-demx" viewBox="0 0 100 100">
+                    <circle data-hf-id="hf-22tz" cx="50" cy="50" r="42" class="ring__track" stroke-width="7" />
+                    <circle data-hf-id="hf-npy0" cx="50" cy="50" r="42" class="ring__prog" stroke-dasharray="263.89" stroke-dashoffset="44.86" transform="rotate(-90 50 50)" />
+                  </svg>
+                  <div data-hf-id="hf-ywfk" class="ring__inner">
+                    <span data-hf-id="hf-ks99" class="ring__val font-dm">83%</span>
+                    <span data-hf-id="hf-z1w3" class="ring__cap font-suisse">resolved</span>
+                  </div>
+                </div>
+                <div data-hf-id="hf-qgez" class="stat-strip">
+                  <div data-hf-id="hf-d4ub" id="s2-t1" class="stat-strip__item"><div data-hf-id="hf-rg4m" class="stat-strip__val font-dm">18</div><div data-hf-id="hf-5tdf" class="stat-strip__label font-suisse">Scheduling</div><div data-hf-id="hf-drkt" class="stat-strip__detail font-inter">appointments &amp; slots</div></div>
+                  <div data-hf-id="hf-4gyg" id="s2-t2" class="stat-strip__item"><div data-hf-id="hf-nvdd" class="stat-strip__val font-dm">11</div><div data-hf-id="hf-lg6q" class="stat-strip__label font-suisse">Refills</div><div data-hf-id="hf-vt07" class="stat-strip__detail font-inter">medication requests</div></div>
+                  <div data-hf-id="hf-58m9" id="s2-t3" class="stat-strip__item"><div data-hf-id="hf-tfje" class="stat-strip__val font-dm">18</div><div data-hf-id="hf-50bs" class="stat-strip__label font-suisse">Admin</div><div data-hf-id="hf-jvbh" class="stat-strip__detail font-inter">billing &amp; prior auth</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <h2 data-hf-id="hf-y4m3" id="s2-title" class="section-title font-suisse gold-text"><span data-hf-id="hf-322y">Your Clinic</span><span data-hf-id="hf-nb2h">At a Glance</span></h2>
+        </div>
+      </div>
+
+      <!-- S3 · Live call 9–13.5s -->
+      <div data-hf-id="hf-po17" id="s3-bg" class="clip clip-layer bg-console" data-start="9" data-duration="4.5" data-track-index="0"></div>
+      <div data-hf-id="hf-qt54" id="s3" class="clip clip-layer scene-shell" data-start="9" data-duration="4.5" data-track-index="1">
+        <div data-hf-id="hf-dvmx" class="band">
+          <div data-hf-id="hf-wcat" id="s3-card" class="console-card">
+            <div data-hf-id="hf-rajy" class="live">
+              <div data-hf-id="hf-d284" id="s3-crumb" class="live__crumbs font-inter">
+                <span data-hf-id="hf-vib2" class="live__crumb">Call History</span><span data-hf-id="hf-2934" class="live__sep">·</span>
+                <span data-hf-id="hf-8nbx" class="live__crumb">Tues Mar 21st</span><span data-hf-id="hf-jbzs" class="live__sep">·</span>
+                <span data-hf-id="hf-7nvs" class="live__crumb live__crumb--on">Sarah Westfield</span>
+              </div>
+              <div data-hf-id="hf-7jsi" id="s3-t1" class="live-turn">
+                <div data-hf-id="hf-linf" class="live-turn__meta font-suisse"><span data-hf-id="hf-xbfd" class="live-turn__who">Sarah Westfield</span><span data-hf-id="hf-6jn0" class="live-turn__time">0m6s</span></div>
+                <p data-hf-id="hf-x4k9" class="live-turn__text font-inter">Hi, this is <span data-hf-id="hf-pbjw" class="live-turn__tag">Sarah</span>. I need a refill visit for my <span data-hf-id="hf-tsxo" class="live-turn__tag">Metformin</span>.</p>
+              </div>
+              <div data-hf-id="hf-3loh" id="s3-t2" class="live-turn">
+                <div data-hf-id="hf-p7rf" class="live-turn__meta font-suisse"><span data-hf-id="hf-qqlx" class="live-turn__who live-turn__who--agent">Doe Agent</span><span data-hf-id="hf-b330" class="live-turn__time">0m26s</span></div>
+                <div data-hf-id="hf-ooc1" class="live-turn__steps font-inter">
+                  <span data-hf-id="hf-suhs" class="live-turn__step">✓ Confirmed patient identity</span>
+                  <span data-hf-id="hf-u5wt" class="live-turn__step">✓ Accessed chart</span>
+                </div>
+                <p data-hf-id="hf-jcc7" class="live-turn__text font-inter">Thank you, Sarah. I've pulled up your chart.</p>
+              </div>
+            </div>
+          </div>
+          <h2 data-hf-id="hf-f7a2" id="s3-title" class="section-title font-suisse gold-text"><span data-hf-id="hf-gqfu">Automate Your</span><span data-hf-id="hf-evu5">Front Desk</span></h2>
+        </div>
+      </div>
+
+      <!-- S4 · Sarah chart 13.5–18s -->
+      <div data-hf-id="hf-k4k1" id="s4-bg" class="clip clip-layer bg-cream" data-start="13.5" data-duration="4.5" data-track-index="0"></div>
+      <div data-hf-id="hf-lx95" id="s4" class="clip clip-layer scene-shell" data-start="13.5" data-duration="4.5" data-track-index="1">
+        <div data-hf-id="hf-f2k0" class="band">
+          <div data-hf-id="hf-lfm8" id="s4-card" class="console-card">
+            <div data-hf-id="hf-t5e4" class="sarah-panel">
+              <div data-hf-id="hf-qs76" id="s4-chart" class="sarah-chart">
+                <div data-hf-id="hf-qun5" class="sarah-chart__label font-suisse">Last A1C</div>
+                <svg data-hf-id="hf-86ib" viewBox="0 0 640 130" fill="none">
+                  <line data-hf-id="hf-iqie" x1="40" y1="105" x2="600" y2="105" stroke="rgba(38,32,28,0.12)" stroke-width="1" />
+                  <polyline data-hf-id="hf-acm6" id="s4-line" points="40,68 130,54 220,38 310,52 400,64 490,58 580,44" stroke="#d4a574" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-dasharray="620" stroke-dashoffset="620" />
+                  <circle data-hf-id="hf-8rvb" cx="580" cy="44" r="6" fill="#d4a574" />
+                </svg>
+              </div>
+              <div data-hf-id="hf-cv6o" id="s4-name" class="sarah-name">
+                <div data-hf-id="hf-3pdj" class="sarah-name__lines font-dm">Sarah<br data-hf-id="hf-x5px">Westfield</div>
+                <div data-hf-id="hf-v18o" class="sarah-name__meta font-inter">
+                  <div data-hf-id="hf-epkx"><div data-hf-id="hf-wkeg" class="sarah-name__val font-dm">Mar 14, 1988</div>DOB</div>
+                  <div data-hf-id="hf-mn0s"><div data-hf-id="hf-4oyy" class="sarah-name__val font-dm">Blue Cross PPO</div>Insurance</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <h2 data-hf-id="hf-7egl" id="s4-title" class="section-title font-suisse gold-text"><span data-hf-id="hf-8p2w">Prepares your</span><span data-hf-id="hf-q58v">appointments</span></h2>
+        </div>
+      </div>
+
+      <!-- S5 · Agents 18–22.5s -->
+      <div data-hf-id="hf-g8fj" id="s5-bg" class="clip clip-layer bg-console" data-start="18" data-duration="4.5" data-track-index="0"></div>
+      <div data-hf-id="hf-7j24" id="s5" class="clip clip-layer scene-shell" data-start="18" data-duration="4.5" data-track-index="1">
+        <div data-hf-id="hf-eo8z" class="band">
+          <div data-hf-id="hf-r5vn" id="s5-card" class="console-card">
+            <div data-hf-id="hf-wdx9" class="orbit-wrap">
+              <div data-hf-id="hf-6f1c" class="orbit">
+                <div data-hf-id="hf-tuhr" class="orbit__hub">
+                  <div data-hf-id="hf-ohgs" class="orbit__hub-label font-suisse">Active</div>
+                  <div data-hf-id="hf-bss2" class="orbit__hub-num font-dm">7</div>
+                </div>
+                <div data-hf-id="hf-pxd4" id="s5-n1" class="orbit-node font-suisse" style="left:50%;top:0;transform:translate(-50%,0)">Voice<br data-hf-id="hf-rsrt">Agent</div>
+                <div data-hf-id="hf-wq6x" id="s5-n2" class="orbit-node font-suisse" style="right:6%;top:20%">Scheduling<br data-hf-id="hf-szow">Agent</div>
+                <div data-hf-id="hf-6urb" id="s5-n3" class="orbit-node font-suisse" style="right:0;top:50%;transform:translateY(-50%)">Billing<br data-hf-id="hf-sldv">Agent</div>
+                <div data-hf-id="hf-nfox" id="s5-n4" class="orbit-node font-suisse" style="right:6%;bottom:20%">Inbox<br data-hf-id="hf-qluq">Agent</div>
+                <div data-hf-id="hf-9xhe" id="s5-n5" class="orbit-node font-suisse" style="left:50%;bottom:0;transform:translate(-50%,0)">Referrals<br data-hf-id="hf-q7jp">Agent</div>
+                <div data-hf-id="hf-o2oz" id="s5-n6" class="orbit-node font-suisse" style="left:6%;bottom:20%">Prior<br data-hf-id="hf-regs">Auth</div>
+                <div data-hf-id="hf-p1fc" id="s5-n7" class="orbit-node font-suisse" style="left:0;top:50%;transform:translateY(-50%)">Research<br data-hf-id="hf-r05r">Agent</div>
+              </div>
+            </div>
+          </div>
+          <h2 data-hf-id="hf-1c8s" id="s5-title" class="section-title font-suisse gold-text"><span data-hf-id="hf-imc4">Agents for</span><span data-hf-id="hf-jjvh">every workflow</span></h2>
+        </div>
+      </div>
+
+      <!-- S6 · Outro 22.5–26s -->
+      <div data-hf-id="hf-zvj4" id="s6-bg" class="clip clip-layer bg-cream" data-start="22.5" data-duration="3.5" data-track-index="0"></div>
+      <div data-hf-id="hf-s3sy" id="s6" class="clip clip-layer scene-shell" data-start="22.5" data-duration="3.5" data-track-index="1">
+        <div data-hf-id="hf-e0lx" class="outro">
+          <div data-hf-id="hf-uo4x" id="s6-logo" class="outro__wordmark font-lora">Doe</div>
+          <div data-hf-id="hf-kzvd" id="s6-url" class="outro__url font-dm">doe.care</div>
+          <div data-hf-id="hf-m9v1" id="s6-tag" class="outro__line font-suisse">Built by doctors, for doctors.</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const snap = "power4.out";
+      const whip = "back.out(1.7)";
+
+      function sceneEnter(sel, t) {
+        tl.fromTo(sel, { y: 56, scale: 1.04, opacity: 0 }, { y: 0, scale: 1, opacity: 1, duration: 0.42, ease: snap }, t);
+      }
+
+      function sceneExit(sel, t) {
+        tl.to(sel, { y: -28, scale: 0.96, opacity: 0, duration: 0.28, ease: "power3.in" }, t);
+      }
+
+      // S1 · Logo sting
+      tl.fromTo(
+        "#s1-logo",
+        { scale: 0.28, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 1.05, ease: "power4.out" },
+        0.12,
+      );
+      tl.to("#s1-logo", { scale: 1.06, duration: 0.55, ease: "power2.inOut" }, 1.35);
+      tl.to("#s1-logo", { scale: 1, duration: 0.35, ease: "power2.out" }, 2.05);
+      sceneExit("#s1", 4.1);
+
+      // S2 Day summary
+      tl.to("#flash", { opacity: 0.35, duration: 0.08, ease: "power2.out" }, 4.45);
+      tl.to("#flash", { opacity: 0, duration: 0.18, ease: "power2.in" }, 4.58);
+      sceneEnter("#s2", 4.5);
+      tl.from("#s2-eyebrow", { x: -20, opacity: 0, duration: 0.24, ease: snap }, 4.62);
+      tl.from("#s2-card", { y: 40, rotate: -1.2, opacity: 0, duration: 0.38, ease: snap }, 4.68);
+      tl.from(["#s2-gl", "#s2-gn"], { y: 18, opacity: 0, duration: 0.28, stagger: 0.05, ease: snap }, 4.82);
+      tl.from("#s2-total", { scale: 0.82, opacity: 0, duration: 0.32, ease: whip }, 4.95);
+      tl.from("#s2-bars .volume-bar", { scaleY: 0, transformOrigin: "50% 100%", duration: 0.32, stagger: 0.025, ease: snap }, 5.02);
+      tl.from(["#s2-t1", "#s2-t2", "#s2-t3"], { y: 16, opacity: 0, duration: 0.24, stagger: 0.05, ease: snap }, 5.18);
+      tl.from("#s2-title span", { yPercent: 105, duration: 0.34, stagger: 0.06, ease: snap }, 5.32);
+      sceneExit("#s2", 8.65);
+
+      // S3 Live call
+      tl.to("#flash", { opacity: 0.28, duration: 0.06 }, 8.92);
+      tl.to("#flash", { opacity: 0, duration: 0.16 }, 9.05);
+      sceneEnter("#s3", 9);
+      tl.from("#s3-card", { x: -48, opacity: 0, duration: 0.36, ease: snap }, 9.1);
+      tl.from("#s3-crumb", { opacity: 0, duration: 0.22, ease: snap }, 9.18);
+      tl.from(["#s3-t1", "#s3-t2"], { x: -32, opacity: 0, duration: 0.28, stagger: 0.1, ease: snap }, 9.28);
+      tl.from("#s3-title span", { yPercent: 110, duration: 0.3, stagger: 0.05, ease: snap }, 9.55);
+      sceneExit("#s3", 13.15);
+
+      // S4 Sarah
+      tl.to("#flash", { opacity: 0.25, duration: 0.06 }, 13.42);
+      tl.to("#flash", { opacity: 0, duration: 0.14 }, 13.54);
+      sceneEnter("#s4", 13.5);
+      tl.from("#s4-card", { scale: 0.94, opacity: 0, duration: 0.34, ease: snap }, 13.58);
+      tl.from("#s4-chart", { y: 24, opacity: 0, duration: 0.32, ease: snap }, 13.72);
+      tl.from("#s4-line", { strokeDashoffset: 620, duration: 0.48, ease: snap }, 13.85);
+      tl.from("#s4-name", { x: 36, opacity: 0, duration: 0.32, ease: snap }, 13.9);
+      tl.from("#s4-title span", { yPercent: 108, duration: 0.3, stagger: 0.05, ease: snap }, 14.05);
+      sceneExit("#s4", 17.65);
+
+      // S5 Agents
+      tl.to("#flash", { opacity: 0.25, duration: 0.06 }, 17.92);
+      tl.to("#flash", { opacity: 0, duration: 0.14 }, 18.04);
+      sceneEnter("#s5", 18);
+      tl.from("#s5-card", { y: 36, opacity: 0, duration: 0.32, ease: snap }, 18.06);
+      tl.from(["#s5-n1", "#s5-n2", "#s5-n3", "#s5-n4", "#s5-n5", "#s5-n6", "#s5-n7"], {
+        scale: 0.72,
+        opacity: 0,
+        duration: 0.28,
+        stagger: { each: 0.04, from: "center" },
+        ease: whip,
+      }, 18.18);
+      tl.from("#s5-title span", { yPercent: 110, duration: 0.28, stagger: 0.05, ease: snap }, 18.48);
+      sceneExit("#s5", 22.15);
+
+      // S6 Outro
+      tl.to("#flash", { opacity: 0.4, duration: 0.07 }, 22.4);
+      tl.to("#flash", { opacity: 0, duration: 0.2 }, 22.52);
+      sceneEnter("#s6", 22.5);
+      tl.from("#s6-logo", { scale: 0.78, opacity: 0, duration: 0.42, ease: whip }, 22.58);
+      tl.from("#s6-url", { y: 14, opacity: 0, duration: 0.28, ease: snap }, 22.82);
+      tl.from("#s6-tag", { y: 10, opacity: 0, duration: 0.26, ease: snap }, 22.95);
+
+      window.__timelines.main = tl;
+    </script>
+  </body>
+</html>
