@@ -8,6 +8,7 @@ import {
   MOTION_TEST_DURATION_FRAMES,
   MOTION_TEST_FPS,
   MOTION_TEST_HEIGHT,
+  MOTION_TEST_TITLE_FONT_SIZE,
   MOTION_TEST_TITLE_FRAMES,
   MOTION_TEST_WIDTH,
 } from "./constants";
@@ -24,7 +25,14 @@ export {
 /** Motion test — title card hold, then room for more beats. */
 export function MotionTestComposition() {
   return (
-    <AbsoluteFill className={`motion-test-remotion-root ${dmSans.className} ${lora.className}`}>
+    <AbsoluteFill
+      className={`motion-test-remotion-root ${dmSans.className} ${lora.className}`}
+      style={
+        {
+          "--motion-test-title-font-size": `${MOTION_TEST_TITLE_FONT_SIZE}px`,
+        } as React.CSSProperties
+      }
+    >
       <MotionTestBackgroundMusic />
       <Sequence from={0} durationInFrames={MOTION_TEST_TITLE_FRAMES}>
         <TitleFrameScene />

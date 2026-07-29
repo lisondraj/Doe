@@ -1,6 +1,7 @@
 import { Easing, interpolate } from "remotion";
 
 import {
+  MOTION_TEST_FINALE_GRADIENT_RESOLVE_START_FRAME,
   MOTION_TEST_FINALE_INTELLIGENCE_FLIPPED_START_FRAME,
   MOTION_TEST_FINALE_INTELLIGENCE_FLIPPED_TEXT_CHAR_WIDTH_RATIO,
   MOTION_TEST_FINALE_INTELLIGENCE_FLIPPED_TEXT_CIRCLE_INSET_PX,
@@ -13,7 +14,11 @@ import {
 
 const ZOOM_EASE = Easing.inOut(Easing.cubic);
 
-export type MotionTestFinaleIntelligenceFlippedPhase = "hold" | "zoom" | "after";
+export type MotionTestFinaleIntelligenceFlippedPhase = "hold" | "zoom" | "after" | "resolve";
+
+export function isMotionTestFinaleGradientResolve(frame: number): boolean {
+  return frame >= MOTION_TEST_FINALE_GRADIENT_RESOLVE_START_FRAME;
+}
 
 /** Square diameter — fits frame width so circle sides aren’t flat-clipped. */
 export function getMotionTestFinaleIntelligenceFlippedPortalSize(): number {
@@ -23,6 +28,10 @@ export function getMotionTestFinaleIntelligenceFlippedPortalSize(): number {
 export function getMotionTestFinaleIntelligenceFlippedPhase(
   frame: number,
 ): MotionTestFinaleIntelligenceFlippedPhase {
+  if (isMotionTestFinaleGradientResolve(frame)) {
+    return "resolve";
+  }
+
   if (frame < MOTION_TEST_FINALE_INTELLIGENCE_FLIPPED_START_FRAME) {
     return "hold";
   }

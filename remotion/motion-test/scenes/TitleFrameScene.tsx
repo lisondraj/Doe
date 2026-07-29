@@ -1,10 +1,11 @@
-import { AbsoluteFill, useCurrentFrame } from "remotion";
+import { AbsoluteFill } from "remotion";
 
 import { dmSans } from "@/remotion/fonts";
 
 import {
   MOTION_TEST_DOE_STACK_INVERT_START_FRAME,
   MOTION_TEST_FINALE_INTELLIGENCE_FLIPPED_START_FRAME,
+  MOTION_TEST_FINALE_OUTRO_START_FRAME,
   MOTION_TEST_FINALE_TYPE_START_FRAME,
   MOTION_TEST_OPPOSITE_COLOR_FLASH_START_FRAME,
   MOTION_TEST_STACK_HIDE_FRAME,
@@ -14,7 +15,9 @@ import {
 import { getMotionTestGradientY } from "../gradient-motion";
 import { getMotionTestFinaleIntelligenceFlippedPhase } from "../finale-intelligence-flipped-zoom-motion";
 import { getMotionTestGradientTextStyle } from "../gradient-text-style";
+import { useMotionTestFrame } from "../motion-test-frame";
 import { BigDoeStack } from "./BigDoeStack";
+import { FinaleOutro } from "./FinaleOutro";
 import { VeryBigTypewriter } from "./VeryBigTypewriter";
 import { VeryBigWhiteDoe } from "./VeryBigWhiteDoe";
 import {
@@ -25,7 +28,7 @@ import {
 } from "./title-text-motion";
 
 export function TitleFrameScene() {
-  const frame = useCurrentFrame();
+  const frame = useMotionTestFrame();
   const { gradientY, layerHeight, whiteOverlayOpacity, gradientScale, gradientOriginX, gradientOriginY } =
     getMotionTestGradientY(frame);
 
@@ -53,7 +56,9 @@ export function TitleFrameScene() {
 
   let foreground: React.ReactNode = null;
 
-  if (frame >= MOTION_TEST_FINALE_TYPE_START_FRAME) {
+  if (frame >= MOTION_TEST_FINALE_OUTRO_START_FRAME) {
+    foreground = <FinaleOutro />;
+  } else if (frame >= MOTION_TEST_FINALE_TYPE_START_FRAME) {
     foreground = <VeryBigTypewriter />;
   } else if (showVeryBigInverted) {
     foreground = (
@@ -102,14 +107,15 @@ export function TitleFrameScene() {
     ? getMotionTestFinaleIntelligenceFlippedPhase(frame)
     : null;
   const isFlippedHold = flippedPortalPhase === "hold";
+  const isFlippedResolve = flippedPortalPhase === "resolve";
   const isFlippedZoom =
-    flippedPortalPhase === "zoom" || flippedPortalPhase === "after";
+    (flippedPortalPhase === "zoom" || flippedPortalPhase === "after") && !isFlippedResolve;
   const showMainGradient =
     frame < MOTION_TEST_FINALE_INTELLIGENCE_FLIPPED_START_FRAME || isFlippedHold;
 
   return (
     <AbsoluteFill
-      className={`motion-test-scene motion-test-title ${isFlippedHold ? "motion-test-title--portal-hold" : ""} ${isFlippedZoom ? "motion-test-title--portal-zoom" : ""} ${dmSans.className}`}
+      className={`motion-test-scene motion-test-title ${isFlippedHold ? "motion-test-title--portal-hold" : ""} ${isFlippedResolve ? "motion-test-title--portal-resolve" : ""} ${isFlippedZoom ? "motion-test-title--portal-zoom" : ""} ${dmSans.className}`}
     >
       {showMainGradient ? (
         <AbsoluteFill className="motion-test-title__gradient-wrap">

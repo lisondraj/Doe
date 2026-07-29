@@ -79,7 +79,7 @@ html[data-motion-test-page] body {
   margin: 0;
   color: #ffffff;
   font-family: "DM Sans", system-ui, -apple-system, sans-serif;
-  font-size: 128px;
+  font-size: var(--motion-test-title-font-size, 128px);
   font-weight: 400;
   line-height: 1;
   letter-spacing: -0.035em;
@@ -373,8 +373,70 @@ html[data-motion-test-page] body {
   background: #ffffff;
 }
 
+.motion-test-title--portal-resolve {
+  overflow: hidden;
+  background: #1a1208;
+}
+
 .motion-test-finale-type--portal-zoom {
   overflow: visible;
+}
+
+.motion-test-finale-type--portal-resolve {
+  overflow: hidden;
+}
+
+.motion-test-intelligence-flipped-portal--resolve {
+  z-index: 1;
+  overflow: hidden;
+  background: transparent;
+}
+
+.motion-test-intelligence-flipped-portal--camera-jump {
+  overflow: hidden;
+}
+
+.motion-test-intelligence-flipped-portal--resolve.motion-test-intelligence-flipped-portal--launch-card {
+  overflow: visible;
+}
+
+.motion-test-finale-camera-rig {
+  inset: 0;
+  overflow: visible;
+}
+
+.motion-test-intelligence-flipped-portal--resolve .motion-test-intelligence-flipped-portal__text {
+  z-index: 1;
+}
+
+.motion-test-intelligence-flipped-resolve__stack {
+  display: inline-grid;
+  vertical-align: baseline;
+  overflow: visible;
+}
+
+.motion-test-intelligence-flipped-resolve__sizer,
+.motion-test-intelligence-flipped-resolve__layer {
+  grid-area: 1 / 1;
+  white-space: nowrap;
+}
+
+.motion-test-intelligence-flipped-resolve__sizer {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.motion-test-intelligence-flipped-resolve__layer {
+  width: 0;
+  min-width: 100%;
+  display: inline-block;
+  overflow: visible;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.motion-test-intelligence-flipped-resolve__word {
+  display: inline;
 }
 
 .motion-test-intelligence-flipped-portal--hold {
@@ -418,4 +480,214 @@ html[data-motion-test-page] body {
 
 .motion-test-finale-type__cursor--hidden {
   visibility: hidden;
+}
+
+.motion-test-audience-carousel {
+  z-index: 3;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.motion-test-audience-carousel__word {
+  position: absolute;
+  margin: 0;
+  white-space: nowrap;
+  letter-spacing: -0.04em;
+  font-weight: 400;
+  transform-origin: left center;
+  overflow: visible;
+  line-height: 1.14;
+  padding-block: 0.12em 0.2em;
+  padding-inline: 0.02em 0.1em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.motion-test-discipline-carousel {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1.14;
+  vertical-align: top;
+  overflow: visible;
+}
+
+.motion-test-discipline-carousel__mask {
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  height: 1.14em;
+  mask-image: linear-gradient(
+    90deg,
+    #000 0%,
+    #000 68%,
+    rgb(0 0 0 / 55%) 82%,
+    transparent 100%
+  );
+}
+
+.motion-test-discipline-carousel__item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 1.14em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.18em;
+  margin: 0;
+  white-space: nowrap;
+  letter-spacing: -0.04em;
+  font-weight: 400;
+  line-height: 1.14;
+  padding: 0;
+  transform-origin: left center;
+  will-change: transform, opacity;
+}
+
+.motion-test-discipline-carousel__item--active {
+  z-index: 1;
+}
+
+.motion-test-discipline-carousel__icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 0.9em;
+  height: 0.9em;
+  color: #c2563d;
+  transform: translateY(0.11em);
+}
+
+.motion-test-discipline-carousel__icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.motion-test-discipline-carousel__label {
+  display: inline;
+  line-height: 1.14;
+  padding: 0;
+}
+
+.motion-test-discipline-carousel__label.motion-test-title__label--gradient {
+  display: inline;
+  padding: 0;
+  line-height: 1.14;
+  vertical-align: baseline;
+}
+
+.motion-test-finale-corner-lines {
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.motion-test-finale-corner-lines__stroke {
+  position: absolute;
+  border-radius: 999px;
+}
+
+.motion-test-finale-corner-lines__stroke--horizontal-left {
+  left: 0;
+}
+
+.motion-test-finale-corner-lines__stroke--horizontal-top-right {
+  right: 0;
+}
+
+.motion-test-finale-corner-lines__stroke--vertical-right {
+  top: 0;
+}
+
+.motion-test-finale-corner-lines__stroke--vertical-left {
+  top: 0;
+}
+
+.motion-test-finale-agent-builder {
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.motion-test-finale-agent-builder__title {
+  margin: 0;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+  transform-origin: center center;
+  will-change: transform, opacity;
+}
+
+.motion-test-finale-launch-card {
+  z-index: 3;
+  overflow: visible;
+}
+
+.motion-test-finale-launch-card__title-row {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  transform-origin: center center;
+  will-change: transform, opacity;
+  overflow: visible;
+  padding-block: 0.12em;
+}
+
+.motion-test-finale-launch-card__doe,
+.motion-test-finale-launch-card__path,
+.motion-test-finale-launch-card__launching {
+  margin: 0;
+  letter-spacing: -0.04em;
+  line-height: 1.08;
+}
+
+.motion-test-finale-launch-card__suffix {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  overflow: visible;
+  line-height: 1;
+}
+
+.motion-test-finale-launch-card__cursor {
+  flex-shrink: 0;
+  align-self: center;
+  display: block;
+  margin-inline-start: 0.08em;
+}
+
+.motion-test-finale-launch-card__cursor--ghost {
+  opacity: 0;
+}
+
+.motion-test-finale-outro {
+  z-index: 4;
+  overflow: hidden;
+}
+
+.motion-test-finale-outro__lockup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.motion-test-finale-outro__logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: 0;
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+  white-space: nowrap;
+  letter-spacing: -0.04em;
+  text-align: center;
+  transform-origin: center center;
+  will-change: transform;
 }

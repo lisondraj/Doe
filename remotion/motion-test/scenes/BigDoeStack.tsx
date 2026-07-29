@@ -1,4 +1,4 @@
-import { AbsoluteFill, useCurrentFrame } from "remotion";
+import { AbsoluteFill } from "remotion";
 
 import {
   MOTION_TEST_DOE_STACK_LINE_HEIGHT,
@@ -8,6 +8,7 @@ import {
   MOTION_TEST_DOE_STACK_START_FRAME,
 } from "../constants";
 import { getMotionTestGradientTextStyle } from "../gradient-text-style";
+import { useMotionTestFrame } from "../motion-test-frame";
 
 type BigDoeStackVariant = "gradient-on-white" | "white-on-gradient";
 
@@ -24,7 +25,7 @@ export function BigDoeStack({
   gradientTextStyle,
   variant = "gradient-on-white",
 }: BigDoeStackProps) {
-  const frame = useCurrentFrame();
+  const frame = useMotionTestFrame();
   const showColumn = frame >= MOTION_TEST_DOE_STACK_START_FRAME;
   const lineStep = fontSize * MOTION_TEST_DOE_STACK_LINE_HEIGHT;
   const isWhiteOnGradient = variant === "white-on-gradient";

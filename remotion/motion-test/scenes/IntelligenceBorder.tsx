@@ -1,11 +1,12 @@
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Easing, interpolate, useCurrentFrame } from "remotion";
+import { Easing, interpolate } from "remotion";
 
 import {
   MOTION_TEST_FINALE_INTELLIGENCE_BORDER_COLOR,
   MOTION_TEST_FINALE_INTELLIGENCE_BORDER_DRAW_FRAMES,
   MOTION_TEST_FINALE_INTELLIGENCE_ISOLATE_START_FRAME,
 } from "../constants";
+import { useMotionTestFrame } from "../motion-test-frame";
 
 /** Thin light-grey stroke around “intelligence”. */
 const BORDER_STROKE_EM = 0.022;
@@ -69,7 +70,7 @@ type IntelligenceBorderProps = {
 };
 
 export function IntelligenceBorder({ fontSize }: IntelligenceBorderProps) {
-  const frame = useCurrentFrame();
+  const frame = useMotionTestFrame();
   const progress = getMotionTestIntelligenceBorderProgress(frame);
   const strokeWidth = fontSize * BORDER_STROKE_EM;
   const pad = fontSize * BORDER_PAD_EM;

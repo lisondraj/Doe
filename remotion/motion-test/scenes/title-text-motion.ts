@@ -13,6 +13,7 @@ import {
   MOTION_TEST_OPPOSITE_COLOR_FLASH_START_FRAME,
   MOTION_TEST_TEXT_SCALE_END,
   MOTION_TEST_TEXT_SCALE_START,
+  MOTION_TEST_TITLE_FONT_SIZE,
   MOTION_TEST_VERY_BIG_WHITE_FLASH_START_FRAME,
 } from "../constants";
 
@@ -88,7 +89,7 @@ export function getMotionTestTextStyle(frame: number): {
     return {
       opacity: 1,
       transform: `translateY(2%) scale(${scale})`,
-      fontSize: 128,
+      fontSize: MOTION_TEST_TITLE_FONT_SIZE,
       isBigDoe: false,
       doeBeat: "none",
     };
@@ -103,7 +104,7 @@ export function getMotionTestTextStyle(frame: number): {
       return {
         opacity: 1,
         transform: `translateY(${translateY}%) scale(${MOTION_TEST_TEXT_SCALE_END})`,
-        fontSize: 128,
+        fontSize: MOTION_TEST_TITLE_FONT_SIZE,
         isBigDoe: false,
         doeBeat: "small",
       };
@@ -121,7 +122,7 @@ export function getMotionTestTextStyle(frame: number): {
   return {
     opacity: 1,
     transform: `translateY(2%) scale(${MOTION_TEST_TEXT_SCALE_END})`,
-    fontSize: 128,
+    fontSize: MOTION_TEST_TITLE_FONT_SIZE,
     isBigDoe: false,
     doeBeat: "none",
   };

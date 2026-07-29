@@ -1,4 +1,4 @@
-import { AbsoluteFill, useCurrentFrame } from "remotion";
+import { AbsoluteFill } from "remotion";
 
 import {
   MOTION_TEST_FINALE_BUILDING_TYPE_FRAMES,
@@ -35,6 +35,7 @@ import {
 import {
   getMotionTestFinaleIntelligenceFlippedPhase,
   getMotionTestFinaleIntelligenceFlippedZoom,
+  isMotionTestFinaleGradientResolve,
 } from "../finale-intelligence-flipped-zoom-motion";
 import { getMotionTestGradientY } from "../gradient-motion";
 import {
@@ -44,6 +45,21 @@ import {
 } from "../finale-phrase-motion";
 import { getMotionTestFinaleTypewriterScale } from "../finale-typewriter-motion";
 import { getMotionTestGradientTextStyle, getMotionTestGradientTextVisualStyle } from "../gradient-text-style";
+import { isMotionTestFinaleResolvePanPhase } from "../finale-resolve-three-line-motion";
+import { isMotionTestFinaleProductTitleColorsInverted } from "../finale-agent-builder-motion";
+import {
+  areMotionTestFinaleCornerLinesVisibleInCamera,
+  getMotionTestFinaleCameraJumpMotion,
+  shouldMotionTestFinaleForceGradientBackground,
+} from "../finale-camera-jump-motion";
+import { isMotionTestFinaleVerticalLineVisible } from "../finale-vertical-line-motion";
+import { IntelligenceAudienceCarousel } from "./IntelligenceAudienceCarousel";
+import { FinaleAgentBuilderTitle } from "./FinaleAgentBuilderTitle";
+import { FinaleLaunchCard } from "./FinaleLaunchCard";
+import { FinaleVerticalGradientLine } from "./FinaleVerticalGradientLine";
+import { isMotionTestFinaleLaunchCardVisible } from "../finale-launch-card-motion";
+import { useMotionTestFrame } from "../motion-test-frame";
+import { IntelligenceResolveBlock } from "./IntelligenceResolveBlock";
 
 function FinalePhraseDualColorText({
   showInverted,
@@ -230,7 +246,7 @@ function IntelligenceTypewriterRow({
 }
 
 function FullPhraseBlock() {
-  const frame = useCurrentFrame();
+  const frame = useMotionTestFrame();
   const { scale, line1TranslateY, line2TranslateY, line2Opacity, fontSize } =
     getMotionTestFinalePhraseMotion(frame);
   const useInvertedColors = frame >= MOTION_TEST_FINALE_SECOND_LINE_COLOR_SWITCH_FRAME;
@@ -274,7 +290,7 @@ function FullPhraseBlock() {
 }
 
 function IntelligenceStackBlock() {
-  const frame = useCurrentFrame();
+  const frame = useMotionTestFrame();
   const { scale } = getMotionTestFinalePhraseMotion(frame);
   const { line1TranslateY, fontSize } = getMotionTestFinaleIntelligenceIsolateMotion();
   const gradientTextStyle = getMotionTestGradientTextVisualStyle();
@@ -332,7 +348,7 @@ function IntelligenceStackBlock() {
 }
 
 function IntelligenceFlippedBlock() {
-  const frame = useCurrentFrame();
+  const frame = useMotionTestFrame();
   const { fontSize: baseFontSize } = getMotionTestFinaleIntelligenceFlippedMotion();
   const { circleRadius, textOffsetX, textFontSize, phase } =
     getMotionTestFinaleIntelligenceFlippedZoom(frame, baseFontSize);
@@ -340,6 +356,7 @@ function IntelligenceFlippedBlock() {
   const echoOffsets = getMotionTestFinaleIntelligenceStackEchoOffsets(lineStep, 1);
   const stackPanY = getMotionTestFinaleIntelligenceFlippedStackPanY(frame);
   const circleClip = `circle(${circleRadius}px at 0px 50%)`;
+  const isResolve = phase === "resolve";
 
   const stackRow = (
     <div
@@ -390,6 +407,67 @@ function IntelligenceFlippedBlock() {
 
   const { gradientY, layerHeight } = getMotionTestGradientY(frame);
 
+  if (isResolve) {
+    const isPanPhase = isMotionTestFinaleResolvePanPhase(frame);
+    const useInvertedProductColors = isMotionTestFinaleProductTitleColorsInverted(frame);
+    const forceGradientBackground = shouldMotionTestFinaleForceGradientBackground(frame);
+    const showGradientBg = !isPanPhase || useInvertedProductColors || forceGradientBackground;
+    const { scale: cameraScale, originXPx, originYPx, active: cameraActive, linesVisible } =
+      getMotionTestFinaleCameraJumpMotion(frame);
+
+    return (
+      <AbsoluteFill
+        className={`motion-test-intelligence-flipped-portal motion-test-intelligence-flipped-portal--resolve motion-test-intelligence-flipped-portal--camera-jump${
+          isMotionTestFinaleLaunchCardVisible(frame)
+            ? " motion-test-intelligence-flipped-portal--launch-card"
+            : ""
+        }`}
+      >
+        <AbsoluteFill
+          className="motion-test-finale-camera-rig"
+          style={{
+            transform: `scale(${cameraScale})`,
+            transformOrigin: `${originXPx}px ${originYPx}px`,
+          }}
+        >
+        {showGradientBg ? (
+          <AbsoluteFill className="motion-test-title__gradient-wrap">
+            <div
+              className="motion-test-title__gradient motion-test-intelligence-flipped-portal__gradient"
+              style={{
+                height: layerHeight,
+                background: MOTION_TEST_TITLE_GRADIENT,
+                transform: `translateY(${gradientY}px)`,
+              }}
+            />
+          </AbsoluteFill>
+        ) : (
+          <AbsoluteFill
+            className="motion-test-intelligence-flipped-portal__white-fill"
+            style={{ background: "#ffffff" }}
+          />
+        )}
+
+        {isPanPhase &&
+        isMotionTestFinaleVerticalLineVisible(frame) &&
+        areMotionTestFinaleCornerLinesVisibleInCamera(frame) ? (
+          <FinaleVerticalGradientLine />
+        ) : null}
+
+        <AbsoluteFill className="motion-test-intelligence-flipped-portal__text">
+          <IntelligenceResolveBlock />
+        </AbsoluteFill>
+
+        {isPanPhase && (!cameraActive || linesVisible) ? (
+          <FinaleAgentBuilderTitle />
+        ) : null}
+        </AbsoluteFill>
+
+        {isMotionTestFinaleLaunchCardVisible(frame) ? <FinaleLaunchCard /> : null}
+      </AbsoluteFill>
+    );
+  }
+
   return (
     <AbsoluteFill className="motion-test-intelligence-flipped-portal">
       <AbsoluteFill
@@ -414,6 +492,8 @@ function IntelligenceFlippedBlock() {
           <div className="motion-test-finale-type__lines">{stackRow}</div>
         </div>
       </AbsoluteFill>
+
+      {!isMotionTestFinaleGradientResolve(frame) ? <IntelligenceAudienceCarousel /> : null}
     </AbsoluteFill>
   );
 }
@@ -441,7 +521,7 @@ function getFinaleDisplayPhase(
 }
 
 export function VeryBigTypewriter() {
-  const frame = useCurrentFrame();
+  const frame = useMotionTestFrame();
   const displayPhase = getFinaleDisplayPhase(frame);
 
   if (displayPhase === "intelligence-flipped") {
@@ -449,7 +529,13 @@ export function VeryBigTypewriter() {
 
     return (
       <AbsoluteFill
-        className={`motion-test-finale-type${phase === "hold" ? "" : " motion-test-finale-type--portal-zoom"}`}
+        className={`motion-test-finale-type${
+          phase === "hold"
+            ? ""
+            : phase === "resolve"
+              ? " motion-test-finale-type--portal-resolve"
+              : " motion-test-finale-type--portal-zoom"
+        }`}
       >
         <IntelligenceFlippedBlock />
       </AbsoluteFill>
