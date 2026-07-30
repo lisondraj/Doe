@@ -14,7 +14,7 @@ export function ResolveDisciplineCarousel({ fontSize }: { fontSize: number }) {
   const frame = useMotionTestFrame();
   const items = getMotionTestFinaleDisciplineCarouselItems(frame, fontSize);
   const maskWidthPx = getMotionTestFinaleDisciplineCarouselMaskWidthPx(fontSize);
-  const maskImage = getMotionTestFinaleDisciplineCarouselMaskImage();
+  const maskImage = getMotionTestFinaleDisciplineCarouselMaskImage(frame, fontSize);
 
   return (
     <span className={`motion-test-discipline-carousel ${sfPro.className}`} style={{ fontSize }}>
@@ -34,6 +34,10 @@ export function ResolveDisciplineCarousel({ fontSize }: { fontSize: number }) {
             }`}
             style={{
               transform: `translateX(${item.translateXPx}px)`,
+              visibility:
+                item.iconOpacity <= 0.04 && item.labelOpacity <= 0.04
+                  ? "hidden"
+                  : "visible",
             }}
             aria-hidden={!item.isActive}
           >

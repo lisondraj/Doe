@@ -2,8 +2,11 @@ import { Easing, interpolate } from "remotion";
 
 import {
   MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_ITEMS,
+  MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_PAN_ITEM_COUNT,
+  MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_PEEK_INDEX,
   MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_STACK_ALIGN_OFFSET,
   MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_START_FRAME,
+  MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_FONT_SCALE,
   MOTION_TEST_FINALE_GRADIENT_RESOLVE_START_FRAME,
   MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_WHITE_GAP_PX,
   MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_WORD_FRAMES,
@@ -43,7 +46,7 @@ function clamp(value: number, min: number, max: number): number {
 }
 
 function getCarouselSlot(carouselFrame: number): number {
-  const maxSlot = MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_ITEMS.length - 1;
+  const maxSlot = MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_PAN_ITEM_COUNT - 1;
   const slotFrames = MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_WORD_FRAMES;
   const holdFrames = MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_WORD_HOLD_FRAMES;
   const transitionFrames = MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_WORD_TRANSITION_FRAMES;
@@ -87,20 +90,20 @@ function getCarouselWordOpacity(relativeSlot: number): number {
   }
 
   if (relativeSlot < 0) {
-    return interpolate(relativeSlot, [-1.15, -0.12, 0], [0, 0.18, 1], {
+    return interpolate(relativeSlot, [-1.15, -1, 0], [0, 0.44, 1], {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
     });
   }
 
   if (relativeSlot <= 1) {
-    return interpolate(relativeSlot, [0, 0.75, 1], [1, 0.5, 0.32], {
+    return interpolate(relativeSlot, [0, 0.75, 1], [1, 0.58, 0.44], {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
     });
   }
 
-  return interpolate(relativeSlot, [1, 1.5], [0.32, 0], {
+  return interpolate(relativeSlot, [1, 1.5], [0.44, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
@@ -126,20 +129,23 @@ export function getMotionTestFinaleAudienceCarouselLayout(frame: number): {
     frame,
     baseFontSize,
   );
-  const lineStepPx = textFontSize * MOTION_TEST_FINALE_INTELLIGENCE_STACK_LINE_HEIGHT;
+  const portalLineStepPx =
+    textFontSize * MOTION_TEST_FINALE_INTELLIGENCE_STACK_LINE_HEIGHT;
+  const fontSize = Math.round(textFontSize * MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_FONT_SCALE);
+  const lineStepPx = fontSize * MOTION_TEST_FINALE_INTELLIGENCE_STACK_LINE_HEIGHT;
   const stackPanY = getMotionTestFinaleIntelligenceFlippedStackPanY(frame);
   const alignOffset = MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_STACK_ALIGN_OFFSET;
   const alignDrift = getMotionTestFinaleIntelligenceFlippedStackEchoDrift(
     frame,
-    lineStepPx,
+    portalLineStepPx,
     alignOffset,
   );
   const circleCenterY = MOTION_TEST_HEIGHT / 2;
   const alignY =
-    circleCenterY + stackPanY + alignOffset * lineStepPx + alignDrift;
+    circleCenterY + stackPanY + alignOffset * portalLineStepPx + alignDrift;
   const whiteGapPx = Math.max(
     MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_WHITE_GAP_PX,
-    textFontSize * 0.12,
+    fontSize * 0.12,
   );
 
   return {
@@ -147,7 +153,7 @@ export function getMotionTestFinaleAudienceCarouselLayout(frame: number): {
     circleRadius,
     alignY,
     lineStepPx,
-    fontSize: textFontSize,
+    fontSize,
     viewportHeightPx: lineStepPx * 2.35,
     whiteGapPx,
   };
@@ -189,15 +195,20 @@ export function getMotionTestFinaleAudienceCarouselWords(
 
   const carouselFrame = frame - MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_START_FRAME;
   const slot = getCarouselSlot(carouselFrame);
+  const maxPanSlot = MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_PAN_ITEM_COUNT - 1;
   const slotFloor = Math.floor(slot);
   const slotCeil = Math.ceil(slot);
   const indices = new Set<number>();
   const layout = getMotionTestFinaleAudienceCarouselLayout(frame);
 
   for (let index = slotFloor - 1; index <= slotCeil + 1; index++) {
-    if (index >= 0 && index < MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_ITEMS.length) {
+    if (index >= 0 && index <= maxPanSlot) {
       indices.add(index);
     }
+  }
+
+  if (slot >= maxPanSlot) {
+    indices.add(MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_PEEK_INDEX);
   }
 
   return Array.from(indices).map((index) => {

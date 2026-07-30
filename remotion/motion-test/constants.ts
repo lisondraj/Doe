@@ -274,7 +274,12 @@ export const MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_ITEMS = [
   "patients",
   "insurers",
   "trainees",
+  "doctors",
 ] as const;
+/** Items the carousel pans through — excludes the trailing peek-only repeat. */
+export const MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_PAN_ITEM_COUNT = 6;
+export const MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_PEEK_INDEX =
+  MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_ITEMS.length - 1;
 /** Second resolve row — audience word, then “at every stage” appended in place. */
 export const MOTION_TEST_FINALE_RESOLVE_LINE2_WORDS = [
   MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_ITEMS[0],
@@ -331,16 +336,18 @@ export const MOTION_TEST_FINALE_RESOLVE_LINE2_WORD =
 export const MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_STACK_ALIGN_OFFSET = 0;
 /** Gap between portal edge and carousel text in the white panel. */
 export const MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_WHITE_GAP_PX = motionTestPx(36);
+/** Scale audience words vs the portal “intelligence for” size. */
+export const MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_FONT_SCALE = 1.22;
 export const MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_WORD_HOLD_FRAMES = 22;
 export const MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_WORD_TRANSITION_FRAMES = 8;
 export const MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_WORD_FRAMES =
   MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_WORD_HOLD_FRAMES +
   MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_WORD_TRANSITION_FRAMES;
 export const MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_FRAMES =
-  MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_ITEMS.length *
+  MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_PAN_ITEM_COUNT *
   MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_WORD_FRAMES;
 export const MOTION_TEST_FINALE_TRAINEES_CAROUSEL_INDEX =
-  MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_ITEMS.length - 1;
+  MOTION_TEST_FINALE_AUDIENCE_CAROUSEL_PAN_ITEM_COUNT - 1;
 /** Brief beat on “trainees” before built-by resolve — not the full word slot. */
 export const MOTION_TEST_FINALE_TRAINEES_HOLD_BEFORE_RESOLVE_FRAMES = 8;
 /** Right after “trainees” lands — swap suffix + fill gradient. */

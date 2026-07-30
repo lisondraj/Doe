@@ -57,24 +57,50 @@ export type MotionTestFinaleDisciplineCarouselItemPose = {
   label: string;
   icon: (typeof MOTION_TEST_FINALE_DISCIPLINE_CAROUSEL_ITEMS)[number]["icon"];
   translateXPx: number;
+  relativeSlot: number;
   iconOpacity: number;
   labelOpacity: number;
   isActive: boolean;
 };
 
-function getMotionTestFinaleDisciplineCarouselItemOpacities(relativeSlot: number): {
+export function isMotionTestFinaleDisciplineCarouselSliding(frame: number): boolean {
+  const carouselFrame = frame - MOTION_TEST_FINALE_RESOLVE_THREE_LINE_PAN_START_FRAME;
+
+  if (carouselFrame <= MOTION_TEST_FINALE_DISCIPLINE_CAROUSEL_INTRO_FRAMES) {
+    return false;
+  }
+
+  const slot = getMotionTestFinaleDisciplineCarouselSlot(frame);
+  const slideProgress = slot - Math.floor(slot);
+
+  return slideProgress > 0.03 && slideProgress < 0.97;
+}
+
+function getMotionTestFinaleDisciplineCarouselItemOpacities(
+  relativeSlot: number,
+  translateXPx: number,
+  stepPx: number,
+): {
   iconOpacity: number;
   labelOpacity: number;
 } {
   if (relativeSlot < 0) {
-    const exitT = Math.abs(relativeSlot);
+    if (relativeSlot <= -0.82 || translateXPx <= -stepPx * 0.72) {
+      return { iconOpacity: 0, labelOpacity: 0 };
+    }
+
+    if (translateXPx >= 0) {
+      return { iconOpacity: 1, labelOpacity: 1 };
+    }
+
+    const offLeftT = Math.min(1, Math.abs(translateXPx) / (stepPx * 0.48));
 
     return {
-      iconOpacity: interpolate(exitT, [0, 0.4, 1], [1, 0.12, 0], {
+      iconOpacity: interpolate(offLeftT, [0, 0.28, 1], [1, 0.08, 0], {
         extrapolateLeft: "clamp",
         extrapolateRight: "clamp",
       }),
-      labelOpacity: interpolate(exitT, [0, 0.85, 1], [1, 0.55, 0], {
+      labelOpacity: interpolate(offLeftT, [0, 0.55, 1], [1, 0.22, 0], {
         extrapolateLeft: "clamp",
         extrapolateRight: "clamp",
       }),
@@ -113,7 +139,11 @@ export function getMotionTestFinaleDisciplineCarouselItems(
     const translateXPx = relativeSlot * stepPx;
     const distance = Math.abs(relativeSlot);
     const { iconOpacity, labelOpacity } =
-      getMotionTestFinaleDisciplineCarouselItemOpacities(relativeSlot);
+      getMotionTestFinaleDisciplineCarouselItemOpacities(
+        relativeSlot,
+        translateXPx,
+        stepPx,
+      );
     const item = MOTION_TEST_FINALE_DISCIPLINE_CAROUSEL_ITEMS[index];
 
     return {
@@ -121,6 +151,7 @@ export function getMotionTestFinaleDisciplineCarouselItems(
       label: item.label,
       icon: item.icon,
       translateXPx,
+      relativeSlot,
       iconOpacity,
       labelOpacity,
       isActive: distance < 0.12,
@@ -134,6 +165,47 @@ export function getMotionTestFinaleDisciplineCarouselMaskWidthPx(
   return estimateMotionTestFinaleDisciplineCarouselStepPx(fontSize) * 2.35;
 }
 
-export function getMotionTestFinaleDisciplineCarouselMaskImage(): string {
-  return "linear-gradient(90deg, #000 0%, #000 68%, rgb(0 0 0 / 55%) 82%, transparent 100%)";
+const DISCIPLINE_CAROUSEL_MASK_RIGHT_PEEK =
+  "68%, rgb(0 0 0 / 55%) 82%, transparent 100%)";
+
+export function getMotionTestFinaleDisciplineCarouselMaskImage(
+  frame: number,
+  fontSize: number,
+): string {
+  const solidLeft = `linear-gradient(90deg, #000 0%, #000 ${DISCIPLINE_CAROUSEL_MASK_RIGHT_PEEK}`;
+
+  if (!isMotionTestFinaleDisciplineCarouselSliding(frame)) {
+    return solidLeft;
+  }
+
+  const items = getMotionTestFinaleDisciplineCarouselItems(frame, fontSize);
+  const exitingItems = items.filter((item) => item.relativeSlot < 0);
+
+  if (exitingItems.length === 0) {
+    return solidLeft;
+  }
+
+  const minTranslateXPx = Math.min(...exitingItems.map((item) => item.translateXPx));
+
+  if (minTranslateXPx >= -2) {
+    return solidLeft;
+  }
+
+  const incomingItem = items.find(
+    (item) => item.relativeSlot > 0 && item.relativeSlot <= 1,
+  );
+  const maskWidthPx = getMotionTestFinaleDisciplineCarouselMaskWidthPx(fontSize);
+  const offLeftPx = Math.abs(minTranslateXPx);
+  const fadeWidthPx = Math.min(
+    maskWidthPx * 0.16,
+    offLeftPx * 0.72 + fontSize * 0.14,
+  );
+  const fadePercent = Math.min(18, (fadeWidthPx / maskWidthPx) * 100);
+  const fadeSoftPercent = fadePercent * 0.42;
+
+  if (incomingItem && incomingItem.translateXPx <= fadeWidthPx * 1.05) {
+    return solidLeft;
+  }
+
+  return `linear-gradient(90deg, transparent 0%, transparent ${Math.max(1.5, fadeSoftPercent * 0.35)}%, rgb(0 0 0 / 35%) ${fadeSoftPercent}%, #000 ${fadePercent}%, #000 ${DISCIPLINE_CAROUSEL_MASK_RIGHT_PEEK}`;
 }
