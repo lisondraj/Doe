@@ -57,9 +57,40 @@ export type MotionTestFinaleDisciplineCarouselItemPose = {
   label: string;
   icon: (typeof MOTION_TEST_FINALE_DISCIPLINE_CAROUSEL_ITEMS)[number]["icon"];
   translateXPx: number;
-  opacity: number;
+  iconOpacity: number;
+  labelOpacity: number;
   isActive: boolean;
 };
+
+function getMotionTestFinaleDisciplineCarouselItemOpacities(relativeSlot: number): {
+  iconOpacity: number;
+  labelOpacity: number;
+} {
+  if (relativeSlot < 0) {
+    const exitT = Math.abs(relativeSlot);
+
+    return {
+      iconOpacity: interpolate(exitT, [0, 0.4, 1], [1, 0.12, 0], {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+      }),
+      labelOpacity: interpolate(exitT, [0, 0.85, 1], [1, 0.55, 0], {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+      }),
+    };
+  }
+
+  const peekOpacity = interpolate(relativeSlot, [0, 0.75, 1.35], [1, 0.42, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+
+  return {
+    iconOpacity: peekOpacity,
+    labelOpacity: peekOpacity,
+  };
+}
 
 export function getMotionTestFinaleDisciplineCarouselItems(
   frame: number,
@@ -81,10 +112,8 @@ export function getMotionTestFinaleDisciplineCarouselItems(
     const relativeSlot = index - slot;
     const translateXPx = relativeSlot * stepPx;
     const distance = Math.abs(relativeSlot);
-    const opacity = interpolate(distance, [0, 0.75, 1.35], [1, 0.42, 0], {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-    });
+    const { iconOpacity, labelOpacity } =
+      getMotionTestFinaleDisciplineCarouselItemOpacities(relativeSlot);
     const item = MOTION_TEST_FINALE_DISCIPLINE_CAROUSEL_ITEMS[index];
 
     return {
@@ -92,7 +121,8 @@ export function getMotionTestFinaleDisciplineCarouselItems(
       label: item.label,
       icon: item.icon,
       translateXPx,
-      opacity,
+      iconOpacity,
+      labelOpacity,
       isActive: distance < 0.12,
     };
   });
@@ -102,4 +132,8 @@ export function getMotionTestFinaleDisciplineCarouselMaskWidthPx(
   fontSize: number,
 ): number {
   return estimateMotionTestFinaleDisciplineCarouselStepPx(fontSize) * 2.35;
+}
+
+export function getMotionTestFinaleDisciplineCarouselMaskImage(): string {
+  return "linear-gradient(90deg, #000 0%, #000 68%, rgb(0 0 0 / 55%) 82%, transparent 100%)";
 }

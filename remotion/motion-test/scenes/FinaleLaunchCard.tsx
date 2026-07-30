@@ -1,6 +1,6 @@
 import { AbsoluteFill } from "remotion";
 
-import { dmSans } from "@/remotion/fonts";
+import { sfPro } from "@/remotion/fonts";
 
 import {
   MOTION_TEST_FINALE_INVERTED_TEXT_COLOR,
@@ -10,11 +10,15 @@ import {
   MOTION_TEST_FINALE_LAUNCH_CARD_PATH_CURSOR_WIDTH_EM,
   MOTION_TEST_FINALE_LAUNCH_CARD_PATH_FONT_SIZE,
   MOTION_TEST_FINALE_TYPE_COLOR,
+  MOTION_TEST_GOLD_GRADIENT,
   MOTION_TEST_TITLE_GRADIENT,
 } from "../constants";
 import { getMotionTestFinaleLaunchCardMotion } from "../finale-launch-card-motion";
 import { getMotionTestGradientY } from "../gradient-motion";
-import { getMotionTestGradientTextStyle } from "../gradient-text-style";
+import {
+  MOTION_TEST_GRADIENT_TEXT_BROWN_CLASS,
+  MOTION_TEST_GRADIENT_TEXT_GOLD_CLASS,
+} from "../gradient-text-style";
 import { useMotionTestFrame } from "../motion-test-frame";
 
 export function FinaleLaunchCard() {
@@ -32,13 +36,9 @@ export function FinaleLaunchCard() {
     useInvertedColors,
   } = getMotionTestFinaleLaunchCardMotion(frame);
   const { gradientY, layerHeight } = getMotionTestGradientY(frame);
-  const gradientTextStyle = getMotionTestGradientTextStyle();
-  const invertedTextStyle = useInvertedColors
-    ? gradientTextStyle
-    : {
-        color: MOTION_TEST_FINALE_INVERTED_TEXT_COLOR,
-        WebkitTextFillColor: MOTION_TEST_FINALE_INVERTED_TEXT_COLOR,
-      };
+  const invertedTextClass = useInvertedColors
+    ? MOTION_TEST_GRADIENT_TEXT_BROWN_CLASS
+    : MOTION_TEST_GRADIENT_TEXT_GOLD_CLASS;
 
   const pathCursorStyle = useInvertedColors
     ? {
@@ -62,7 +62,7 @@ export function FinaleLaunchCard() {
       {useInvertedColors ? (
         <AbsoluteFill
           className="motion-test-finale-launch-card__white-fill"
-          style={{ background: "#ffffff" }}
+          style={{ background: MOTION_TEST_GOLD_GRADIENT }}
         />
       ) : (
         <AbsoluteFill className="motion-test-title__gradient-wrap">
@@ -87,12 +87,9 @@ export function FinaleLaunchCard() {
         {showDoeCare ? (
           <>
             <span
-              className={`motion-test-finale-launch-card__doe${
-                useInvertedColors ? " motion-test-title__label--gradient" : ""
-              } ${dmSans.className}`}
+              className={`motion-test-finale-launch-card__doe ${invertedTextClass} ${sfPro.className}`}
               style={{
                 fontSize: MOTION_TEST_FINALE_LAUNCH_CARD_LINE2_FONT_SIZE,
-                ...invertedTextStyle,
               }}
             >
               {launchingText}
@@ -104,20 +101,14 @@ export function FinaleLaunchCard() {
               >
                 {slashText ? (
                   <span
-                    className={`motion-test-finale-launch-card__path${
-                      useInvertedColors ? " motion-test-title__label--gradient" : ""
-                    } ${dmSans.className}`}
-                    style={invertedTextStyle}
+                    className={`motion-test-finale-launch-card__path ${invertedTextClass} ${sfPro.className}`}
                   >
                     {slashText}
                   </span>
                 ) : null}
                 {pathText ? (
                   <span
-                    className={`motion-test-finale-launch-card__path${
-                      useInvertedColors ? " motion-test-title__label--gradient" : ""
-                    } ${dmSans.className}`}
-                    style={invertedTextStyle}
+                    className={`motion-test-finale-launch-card__path ${invertedTextClass} ${sfPro.className}`}
                   >
                     {pathText}
                   </span>
@@ -144,10 +135,9 @@ export function FinaleLaunchCard() {
           </>
         ) : (
           <span
-            className={`motion-test-finale-launch-card__launching ${dmSans.className}`}
+            className={`motion-test-finale-launch-card__launching ${invertedTextClass} ${sfPro.className}`}
             style={{
               fontSize: MOTION_TEST_FINALE_LAUNCH_CARD_LINE1_FONT_SIZE,
-              ...invertedTextStyle,
             }}
           >
             {launchingText}

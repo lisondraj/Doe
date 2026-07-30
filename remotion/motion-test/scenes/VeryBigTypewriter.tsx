@@ -5,6 +5,7 @@ import {
   MOTION_TEST_FINALE_BUILDING_VISIBLE_SUFFIX,
   MOTION_TEST_FINALE_BUILDING_WORD,
   MOTION_TEST_FINALE_CURSOR_BLINK_FRAMES,
+  MOTION_TEST_BROWN_MID,
   MOTION_TEST_FINALE_FULL_PHRASE_START_FRAME,
   MOTION_TEST_FINALE_FULL_PHRASE_BEFORE_INTELLIGENCE,
   MOTION_TEST_FINALE_FULL_PHRASE_AFTER_INTELLIGENCE,
@@ -16,6 +17,7 @@ import {
   MOTION_TEST_FINALE_INTELLIGENCE_FLIPPED_WORD,
   MOTION_TEST_FINALE_INTELLIGENCE_WORD,
   MOTION_TEST_FINALE_INVERTED_TEXT_COLOR,
+  MOTION_TEST_GOLD_GRADIENT,
   MOTION_TEST_TITLE_GRADIENT,
   MOTION_TEST_FINALE_SECOND_LINE_COLOR_SWITCH_FRAME,
   MOTION_TEST_FINALE_SECOND_LINE_WORD,
@@ -44,7 +46,10 @@ import {
   getMotionTestFinalePhraseMotion,
 } from "../finale-phrase-motion";
 import { getMotionTestFinaleTypewriterScale } from "../finale-typewriter-motion";
-import { getMotionTestGradientTextStyle, getMotionTestGradientTextVisualStyle } from "../gradient-text-style";
+import {
+  MOTION_TEST_GRADIENT_TEXT_BROWN_CLASS,
+  MOTION_TEST_GRADIENT_TEXT_GOLD_CLASS,
+} from "../gradient-text-style";
 import { isMotionTestFinaleResolvePanPhase } from "../finale-resolve-three-line-motion";
 import { isMotionTestFinaleProductTitleColorsInverted } from "../finale-agent-builder-motion";
 import {
@@ -56,6 +61,7 @@ import { isMotionTestFinaleVerticalLineVisible } from "../finale-vertical-line-m
 import { IntelligenceAudienceCarousel } from "./IntelligenceAudienceCarousel";
 import { FinaleAgentBuilderTitle } from "./FinaleAgentBuilderTitle";
 import { FinaleLaunchCard } from "./FinaleLaunchCard";
+import { FinaleTypewriterBottomLine } from "./FinaleTypewriterBottomLine";
 import { FinaleVerticalGradientLine } from "./FinaleVerticalGradientLine";
 import { isMotionTestFinaleLaunchCardVisible } from "../finale-launch-card-motion";
 import { useMotionTestFrame } from "../motion-test-frame";
@@ -79,27 +85,17 @@ function FinalePhraseDualColorText({
       >
         {children}
       </span>
-      <span
-        className={`${layerBaseClass} motion-test-finale-type__full-phrase-layer--gradient`}
-        style={{
-          ...getMotionTestGradientTextVisualStyle(),
-          opacity: showInverted ? 0 : 1,
-        }}
-        aria-hidden={showInverted}
-      >
-        {children}
-      </span>
-      <span
-        className={layerBaseClass}
-        style={{
-          color: MOTION_TEST_FINALE_INVERTED_TEXT_COLOR,
-          WebkitTextFillColor: MOTION_TEST_FINALE_INVERTED_TEXT_COLOR,
-          opacity: showInverted ? 1 : 0,
-        }}
-        aria-hidden={!showInverted}
-      >
-        {children}
-      </span>
+      {showInverted ? (
+        <span className={`${layerBaseClass} ${MOTION_TEST_GRADIENT_TEXT_GOLD_CLASS}`}>
+          {children}
+        </span>
+      ) : (
+        <span
+          className={`${layerBaseClass} motion-test-finale-type__full-phrase-layer--gradient ${MOTION_TEST_GRADIENT_TEXT_BROWN_CLASS}`}
+        >
+          {children}
+        </span>
+      )}
     </span>
   );
 }
@@ -131,10 +127,8 @@ function TypewriterGradientText({
   children: React.ReactNode;
   className?: string;
 }) {
-  const gradientTextStyle = getMotionTestGradientTextStyle();
-
   return (
-    <span className={className} style={gradientTextStyle}>
+    <span className={`${className ?? ""} ${MOTION_TEST_GRADIENT_TEXT_BROWN_CLASS}`.trim()}>
       {children}
     </span>
   );
@@ -163,12 +157,12 @@ function TypewriterRow({ text, typeFrame, typeFrames, fontSize, scale }: Typewri
         }}
         aria-hidden
       >
-        <TypewriterGradientText className="motion-test-finale-type__gradient-text motion-test-title__label--gradient">
+        <TypewriterGradientText className="motion-test-finale-type__gradient-text">
           {visibleText}
         </TypewriterGradientText>
         <span
           className={`motion-test-finale-type__cursor motion-test-finale-type__cursor--gradient${cursorOn ? "" : " motion-test-finale-type__cursor--ghost"}`}
-          style={getMotionTestGradientTextStyle()}
+          style={{ color: MOTION_TEST_BROWN_MID }}
           aria-hidden
         >
           |
@@ -178,7 +172,7 @@ function TypewriterRow({ text, typeFrame, typeFrames, fontSize, scale }: Typewri
   );
 }
 
-function TypewriterWhiteText({
+function TypewriterGoldText({
   children,
   className,
 }: {
@@ -186,7 +180,7 @@ function TypewriterWhiteText({
   className?: string;
 }) {
   return (
-    <span className={className} style={{ color: MOTION_TEST_FINALE_INVERTED_TEXT_COLOR }}>
+    <span className={`${className ?? ""} ${MOTION_TEST_GRADIENT_TEXT_GOLD_CLASS}`.trim()}>
       {children}
     </span>
   );
@@ -226,12 +220,12 @@ function IntelligenceTypewriterRow({
         aria-hidden
       >
         <span className="motion-test-finale-type__intelligence-type-wrap">
-          <TypewriterWhiteText className="motion-test-finale-type__building-prefix">
+          <TypewriterGoldText className="motion-test-finale-type__building-prefix">
             {MOTION_TEST_FINALE_BUILDING_VISIBLE_SUFFIX}
-          </TypewriterWhiteText>
-          <TypewriterWhiteText className="motion-test-finale-type__gradient-text">
+          </TypewriterGoldText>
+          <TypewriterGoldText className="motion-test-finale-type__gradient-text">
             {visibleText}
-          </TypewriterWhiteText>
+          </TypewriterGoldText>
           <span
             className={`motion-test-finale-type__cursor${cursorOn ? "" : " motion-test-finale-type__cursor--ghost"}`}
             style={{ color: MOTION_TEST_FINALE_INVERTED_TEXT_COLOR }}
@@ -293,7 +287,6 @@ function IntelligenceStackBlock() {
   const frame = useMotionTestFrame();
   const { scale } = getMotionTestFinalePhraseMotion(frame);
   const { line1TranslateY, fontSize } = getMotionTestFinaleIntelligenceIsolateMotion();
-  const gradientTextStyle = getMotionTestGradientTextVisualStyle();
   const lineStep = fontSize * MOTION_TEST_FINALE_INTELLIGENCE_STACK_LINE_HEIGHT;
   const echoOffsets = getMotionTestFinaleIntelligenceStackEchoOffsets(lineStep, scale);
   const stackPanY = getMotionTestFinaleIntelligenceStackPanY(frame);
@@ -320,11 +313,10 @@ function IntelligenceStackBlock() {
             {echoOffsets.map((offset) => (
               <span
                 key={offset}
-                className="motion-test-intelligence-stack__layer motion-test-finale-type__phrase-word--isolate motion-test-title__label--gradient"
+                className={`motion-test-intelligence-stack__layer motion-test-finale-type__phrase-word--isolate ${MOTION_TEST_GRADIENT_TEXT_BROWN_CLASS}`}
                 style={{
                   opacity: getMotionTestFinaleIntelligenceStackLayerOpacity(offset),
                   transform: `translate(-50%, calc(-50% + ${offset * lineStep + getMotionTestFinaleIntelligenceStackEchoDrift(frame, lineStep, offset)}px))`,
-                  ...gradientTextStyle,
                 }}
                 aria-hidden
               >
@@ -332,8 +324,7 @@ function IntelligenceStackBlock() {
               </span>
             ))}
             <span
-              className="motion-test-intelligence-stack__center motion-test-finale-type__phrase-word motion-test-finale-type__phrase-word--isolate motion-test-title__label--gradient"
-              style={gradientTextStyle}
+              className={`motion-test-intelligence-stack__center motion-test-finale-type__phrase-word motion-test-finale-type__phrase-word--isolate ${MOTION_TEST_GRADIENT_TEXT_BROWN_CLASS}`}
             >
               {MOTION_TEST_FINALE_INTELLIGENCE_WORD}
             </span>
@@ -370,11 +361,10 @@ function IntelligenceFlippedBlock() {
         {echoOffsets.map((offset) => (
           <span
             key={offset}
-            className="motion-test-intelligence-stack__layer motion-test-finale-type__phrase-word--isolate motion-test-finale-type__phrase-word--flipped"
+            className={`motion-test-intelligence-stack__layer motion-test-finale-type__phrase-word--isolate motion-test-finale-type__phrase-word--flipped ${MOTION_TEST_GRADIENT_TEXT_GOLD_CLASS}`}
             style={{
               opacity: getMotionTestFinaleIntelligenceStackLayerOpacity(offset),
               transform: `translate(-50%, calc(-50% + ${offset * lineStep + getMotionTestFinaleIntelligenceFlippedStackEchoDrift(frame, lineStep, offset)}px))`,
-              color: MOTION_TEST_FINALE_INVERTED_TEXT_COLOR,
               fontSize: textFontSize,
             }}
             aria-hidden
@@ -383,9 +373,8 @@ function IntelligenceFlippedBlock() {
           </span>
         ))}
         <span
-          className="motion-test-intelligence-stack__center motion-test-finale-type__phrase-word motion-test-finale-type__phrase-word--isolate motion-test-finale-type__phrase-word--flipped"
+          className={`motion-test-intelligence-stack__center motion-test-finale-type__phrase-word motion-test-finale-type__phrase-word--isolate motion-test-finale-type__phrase-word--flipped ${MOTION_TEST_GRADIENT_TEXT_GOLD_CLASS}`}
           style={{
-            color: MOTION_TEST_FINALE_INVERTED_TEXT_COLOR,
             fontSize: textFontSize,
           }}
         >
@@ -444,7 +433,7 @@ function IntelligenceFlippedBlock() {
         ) : (
           <AbsoluteFill
             className="motion-test-intelligence-flipped-portal__white-fill"
-            style={{ background: "#ffffff" }}
+            style={{ background: MOTION_TEST_GOLD_GRADIENT }}
           />
         )}
 
@@ -561,6 +550,7 @@ export function VeryBigTypewriter() {
   if (frame >= MOTION_TEST_FINALE_INTELLIGENCE_START_FRAME) {
     return (
       <AbsoluteFill className="motion-test-finale-type">
+        <FinaleTypewriterBottomLine />
         <IntelligenceTypewriterRow
           typeFrame={frame - MOTION_TEST_FINALE_INTELLIGENCE_START_FRAME}
           typeFrames={MOTION_TEST_FINALE_INTELLIGENCE_TYPE_FRAMES}
@@ -577,6 +567,7 @@ export function VeryBigTypewriter() {
 
   return (
     <AbsoluteFill className="motion-test-finale-type">
+      <FinaleTypewriterBottomLine />
       <TypewriterRow
         text={MOTION_TEST_FINALE_BUILDING_WORD}
         typeFrame={frame - MOTION_TEST_FINALE_TYPE_START_FRAME}

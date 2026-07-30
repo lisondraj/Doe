@@ -10,6 +10,8 @@ import {
   MOTION_TEST_FINALE_PRODUCT_TITLE_SLOT_FRAMES,
   MOTION_TEST_FINALE_PRODUCT_TITLES,
   MOTION_TEST_FINALE_RESOLVE_SWIPE_START_FRAME,
+  MOTION_TEST_FINALE_SMART_APPOINTMENTS_FONT_SCALE,
+  MOTION_TEST_FINALE_SMART_APPOINTMENTS_INDEX,
   MOTION_TEST_WIDTH,
 } from "./constants";
 
@@ -17,6 +19,14 @@ const SWIPE_EASE = Easing.in(Easing.cubic);
 const SCALE_UP_EASE = Easing.out(Easing.cubic);
 const SCALE_DOWN_EASE = Easing.in(Easing.cubic);
 const CROSSFADE_EASE = Easing.inOut(Easing.cubic);
+
+export function getMotionTestFinaleProductTitleFontScale(productTitleIndex: number): number {
+  if (productTitleIndex === MOTION_TEST_FINALE_SMART_APPOINTMENTS_INDEX) {
+    return MOTION_TEST_FINALE_SMART_APPOINTMENTS_FONT_SCALE;
+  }
+
+  return 1;
+}
 
 export function isMotionTestFinaleAgentBuilderPhase(frame: number): boolean {
   return frame >= MOTION_TEST_FINALE_AGENT_BUILDER_START_FRAME;
@@ -60,6 +70,7 @@ function getProductTitleMotion(sequenceFrame: number): {
   title: string;
   titleOpacity: number;
   titleScale: number;
+  titleFontScale: number;
   productTitleIndex: number;
   useInvertedProductColors: boolean;
 } {
@@ -72,6 +83,7 @@ function getProductTitleMotion(sequenceFrame: number): {
     sequenceFrame - slotIndex * MOTION_TEST_FINALE_PRODUCT_TITLE_SLOT_FRAMES;
   const titleScale = getProductTitlePulseScale(slotLocalFrame);
   const title = MOTION_TEST_FINALE_PRODUCT_TITLES[slotIndex];
+  const titleFontScale = getMotionTestFinaleProductTitleFontScale(slotIndex);
   const useInvertedProductColors = slotIndex % 2 === 1;
 
   if (slotIndex === 0) {
@@ -90,6 +102,7 @@ function getProductTitleMotion(sequenceFrame: number): {
       title,
       titleOpacity,
       titleScale,
+      titleFontScale,
       productTitleIndex: slotIndex,
       useInvertedProductColors,
     };
@@ -99,6 +112,7 @@ function getProductTitleMotion(sequenceFrame: number): {
     title,
     titleOpacity: 1,
     titleScale,
+    titleFontScale,
     productTitleIndex: slotIndex,
     useInvertedProductColors,
   };
@@ -120,6 +134,7 @@ export function getMotionTestFinaleAgentBuilderMotion(frame: number): {
   title: string;
   titleOpacity: number;
   titleScale: number;
+  titleFontScale: number;
   productTitleIndex: number;
   useInvertedProductColors: boolean;
 } {
@@ -127,6 +142,7 @@ export function getMotionTestFinaleAgentBuilderMotion(frame: number): {
     title: MOTION_TEST_FINALE_PRODUCT_TITLES[0],
     titleOpacity: 0,
     titleScale: MOTION_TEST_FINALE_AGENT_BUILDER_SCALE_START,
+    titleFontScale: 1,
     productTitleIndex: 0,
     useInvertedProductColors: false,
   };

@@ -1,24 +1,43 @@
-import { DOE_HOME_HERO_DUSK_PALETTE } from "@/lib/proto/proto-shader-backdrop-colors";
+import {
+  DOE_LAUNCH_BROWN_BG,
+  DOE_LAUNCH_GOLD_GRADIENT,
+} from "@/remotion/constants";
 
-/** Same dusk structure as hero — pushed saturation/chroma. */
+/** Motion4 launch palette — gold + brown only. */
+export const MOTION_TEST_GOLD_GRADIENT = DOE_LAUNCH_GOLD_GRADIENT;
+export const MOTION_TEST_BROWN_BG_GRADIENT = DOE_LAUNCH_BROWN_BG;
+export const MOTION_TEST_BROWN_TEXT_GRADIENT =
+  "linear-gradient(180deg, #241c14 0%, #1a1208 52%, rgba(26, 18, 8, 0.72) 100%)";
+export const MOTION_TEST_GOLD_LINE_STROKE_GRADIENT_HORIZONTAL =
+  "linear-gradient(to right, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%)";
+export const MOTION_TEST_GOLD_LINE_STROKE_GRADIENT = MOTION_TEST_GOLD_GRADIENT;
+export const MOTION_TEST_BROWN_LINE_STROKE_GRADIENT_HORIZONTAL =
+  "linear-gradient(to right, #241c14 0%, #1a1208 52%, rgba(26, 18, 8, 0.72) 100%)";
+
+export const MOTION_TEST_GOLD_MID = "#d4a574";
+export const MOTION_TEST_GOLD_LIGHT = "#e8c08e";
+export const MOTION_TEST_BROWN_MID = "#1a1208";
+export const MOTION_TEST_BROWN_DEEP = "#241c14";
+
+/** @deprecated Use MOTION_TEST_GOLD_MID / MOTION_TEST_BROWN_MID — kept for solid-accent call sites. */
 export const MOTION_TEST_GRADIENT_PALETTE = {
-  sand: "#FFE4A8",
-  horizon: "#FF9428",
-  clay: "#EE4428",
-  mid: "#CC6838",
-  umber: "#944828",
-  deep: "#5C3018",
-  back: DOE_HOME_HERO_DUSK_PALETTE.back,
+  sand: MOTION_TEST_GOLD_MID,
+  horizon: MOTION_TEST_GOLD_MID,
+  clay: MOTION_TEST_BROWN_MID,
+  mid: MOTION_TEST_GOLD_MID,
+  umber: MOTION_TEST_BROWN_MID,
+  deep: MOTION_TEST_BROWN_MID,
+  back: MOTION_TEST_BROWN_MID,
 } as const;
 
-/** Text-local clip gradient — radial orange spotlight, red at edges/baseline. */
+/** Brown gradient text stops — same 180deg direction as motion4 gold. */
 export const MOTION_TEST_GRADIENT_TEXT_PALETTE = {
-  orange: "#FF9428",
-  copper: "#FF9020",
-  warm: "#FF8828",
-  amber: "#F07838",
-  clay: "#EE4428",
-  red: "#E03830",
+  orange: MOTION_TEST_BROWN_MID,
+  copper: MOTION_TEST_BROWN_MID,
+  warm: MOTION_TEST_BROWN_MID,
+  amber: MOTION_TEST_BROWN_MID,
+  clay: MOTION_TEST_BROWN_MID,
+  red: MOTION_TEST_BROWN_MID,
 } as const;
 
 export const MOTION_TEST_FPS = 60;
@@ -66,6 +85,12 @@ export const MOTION_TEST_DOE_STACK_START_FRAME =
 export const MOTION_TEST_DOE_STACK_HOLD_FRAMES = 18;
 export const MOTION_TEST_DOE_STACK_INVERT_START_FRAME =
   MOTION_TEST_DOE_STACK_START_FRAME + MOTION_TEST_DOE_STACK_HOLD_FRAMES;
+/** One frame — opening peach-orange gradient clipped inside stack text at invert. */
+export const MOTION_TEST_DOE_STACK_OPENING_GRADIENT_TEXT_FRAME =
+  MOTION_TEST_DOE_STACK_INVERT_START_FRAME;
+/** Reversed stack hold — dark brown bed behind white Doe column. */
+export const MOTION_TEST_DOE_STACK_REVERSED_BACKGROUND_START_FRAME =
+  MOTION_TEST_DOE_STACK_INVERT_START_FRAME + 1;
 /** @deprecated Use MOTION_TEST_DOE_STACK_INVERT_START_FRAME */
 export const MOTION_TEST_DOE_COLLAPSE_START_FRAME = MOTION_TEST_DOE_STACK_INVERT_START_FRAME;
 export const MOTION_TEST_INVERT_GRADIENT_WHITE_OUT_FRAMES = 1;
@@ -279,6 +304,8 @@ export const MOTION_TEST_FINALE_DISCIPLINE_CAROUSEL_ITEMS = [
   { label: "distribution", icon: "distribution" },
   { label: "growth", icon: "growth" },
 ] as const satisfies readonly MotionTestFinaleDisciplineCarouselItem[];
+/** Nudge line-3 carousel right vs lines 1–2 anchor. */
+export const MOTION_TEST_FINALE_DISCIPLINE_CAROUSEL_OFFSET_X_EM = 0;
 export const MOTION_TEST_FINALE_DISCIPLINE_CAROUSEL_HOLD_FRAMES = 22;
 export const MOTION_TEST_FINALE_DISCIPLINE_CAROUSEL_TRANSITION_FRAMES = 10;
 export const MOTION_TEST_FINALE_DISCIPLINE_CAROUSEL_SLOT_FRAMES =
@@ -337,6 +364,23 @@ export const MOTION_TEST_FINALE_RESOLVE_THREE_LINE_END_FRAME =
 export const MOTION_TEST_FINALE_DISCIPLINE_GROWTH_START_FRAME =
   MOTION_TEST_FINALE_RESOLVE_THREE_LINE_END_FRAME;
 export const MOTION_TEST_FINALE_VERTICAL_LINE_WIDTH_PX = motionTestPx(3);
+/** Typewriter beat — bottom horizontal only; thicker + faster sweep than corner rig. */
+export const MOTION_TEST_FINALE_TYPEWRITER_BOTTOM_LINE_WIDTH_PX = motionTestPx(18);
+/** Already on screen from the left when the first "W" frame lands. */
+export const MOTION_TEST_FINALE_TYPEWRITER_BOTTOM_LINE_INITIAL_VISIBLE_FRACTION = 1 / 12;
+/** Pre-roll before typing — line is already sliding when the beat becomes visible. */
+export const MOTION_TEST_FINALE_TYPEWRITER_BOTTOM_LINE_PRE_ROLL_FRAMES = 12;
+/** Same frame as the building typewriter cut — first letter "W". */
+export const MOTION_TEST_FINALE_TYPEWRITER_BOTTOM_LINE_START_FRAME =
+  MOTION_TEST_FINALE_TYPE_START_FRAME;
+/** Motion clock starts early so the sweep has velocity at the first typing frame. */
+export const MOTION_TEST_FINALE_TYPEWRITER_BOTTOM_LINE_ANIMATION_START_FRAME =
+  MOTION_TEST_FINALE_TYPEWRITER_BOTTOM_LINE_START_FRAME -
+  MOTION_TEST_FINALE_TYPEWRITER_BOTTOM_LINE_PRE_ROLL_FRAMES;
+/** Sweeps through intelligence typing — right edge lands on last intelligence frame. */
+export const MOTION_TEST_FINALE_TYPEWRITER_BOTTOM_LINE_DRAW_FRAMES =
+  MOTION_TEST_FINALE_FULL_PHRASE_START_FRAME -
+  MOTION_TEST_FINALE_TYPEWRITER_BOTTOM_LINE_START_FRAME;
 /** Shared inset from right (vertical) and bottom (horizontal). */
 export const MOTION_TEST_FINALE_CORNER_LINE_EDGE_INSET_PX =
   MOTION_TEST_WIDTH / 4 - motionTestPx(192);
@@ -409,6 +453,10 @@ export const MOTION_TEST_FINALE_AGENT_BUILDER_CROSSFADE_FRAMES =
 export const MOTION_TEST_FINALE_AGENT_BUILDER_SCALE_FRAMES =
   MOTION_TEST_FINALE_PRODUCT_TITLE_SCALE_UP_FRAMES;
 export const MOTION_TEST_FINALE_AGENT_BUILDER_FONT_SIZE = motionTestPx(152);
+/** Longest product title — scaled down so it matches the visual weight of the others. */
+export const MOTION_TEST_FINALE_SMART_APPOINTMENTS_FONT_SCALE = 0.84;
+export const MOTION_TEST_FINALE_SMART_APPOINTMENTS_INDEX =
+  MOTION_TEST_FINALE_PRODUCT_TITLES.indexOf("Smart Appointments");
 export const MOTION_TEST_FINALE_PRODUCT_TITLE_SEQUENCE_FRAMES =
   MOTION_TEST_FINALE_PRODUCT_TITLES.length *
   MOTION_TEST_FINALE_PRODUCT_TITLE_SLOT_FRAMES;
@@ -568,7 +616,7 @@ export const MOTION_TEST_FINALE_LAUNCH_CARD_LINE2_SCALE_UP_FRAMES =
 export const MOTION_TEST_FINALE_LAUNCH_CARD_LINE1_FONT_SIZE = motionTestPx(96);
 export const MOTION_TEST_FINALE_LAUNCH_CARD_LINE2_FONT_SIZE = motionTestPx(132);
 export const MOTION_TEST_FINALE_LAUNCH_CARD_PATH_FONT_SIZE = motionTestPx(132);
-/** Bar width as a fraction of path font size — matches DM Sans stroke weight. */
+/** Bar width as a fraction of path font size — matches SF Pro Display stroke weight. */
 export const MOTION_TEST_FINALE_LAUNCH_CARD_PATH_CURSOR_WIDTH_EM = 0.072;
 export const MOTION_TEST_FINALE_LAUNCH_CARD_PATH_CURSOR_HEIGHT_EM = 0.92;
 /** @deprecated Use MOTION_TEST_FINALE_LAUNCH_CARD_PATH_FONT_SIZE */
@@ -687,16 +735,26 @@ export const MOTION_TEST_PULL_FRAMES = MOTION_TEST_GRADIENT_PULL_FRAMES;
 export const MOTION_TEST_PULL_SEC =
   MOTION_TEST_GRADIENT_PULL_FRAMES / MOTION_TEST_DESIGN_FPS;
 
-/** Full-frame radial — same orange → red mix as clip-text, scaled for scene bg. */
-export const MOTION_TEST_TITLE_GRADIENT = `radial-gradient(ellipse 140% 102% at 50% 0%, ${MOTION_TEST_GRADIENT_TEXT_PALETTE.orange} 0%, ${MOTION_TEST_GRADIENT_TEXT_PALETTE.copper} 10%, ${MOTION_TEST_GRADIENT_TEXT_PALETTE.warm} 22%, ${MOTION_TEST_GRADIENT_TEXT_PALETTE.amber} 36%, ${MOTION_TEST_GRADIENT_TEXT_PALETTE.clay} 52%, ${MOTION_TEST_GRADIENT_TEXT_PALETTE.red} 68%, ${MOTION_TEST_GRADIENT_PALETTE.back} 86%, ${MOTION_TEST_GRADIENT_PALETTE.back} 100%)`;
+/** Opening pull + all brown-scene beds — motion4 brown stack. */
+export const MOTION_TEST_OPENING_FRAME_GRADIENT = MOTION_TEST_BROWN_BG_GRADIENT;
 
-export const MOTION_TEST_GRADIENT_TEXT_GRADIENT = `radial-gradient(ellipse 130% 125% at 50% 12%, ${MOTION_TEST_GRADIENT_TEXT_PALETTE.orange} 0%, ${MOTION_TEST_GRADIENT_TEXT_PALETTE.copper} 16%, ${MOTION_TEST_GRADIENT_TEXT_PALETTE.warm} 32%, ${MOTION_TEST_GRADIENT_TEXT_PALETTE.amber} 48%, ${MOTION_TEST_GRADIENT_TEXT_PALETTE.clay} 66%, ${MOTION_TEST_GRADIENT_TEXT_PALETTE.red} 82%, ${MOTION_TEST_GRADIENT_TEXT_PALETTE.red} 100%)`;
+/** Stack column text — brown gradient clipped inside each Doe line. */
+export const MOTION_TEST_DOE_STACK_FLOW_GRADIENT = MOTION_TEST_BROWN_TEXT_GRADIENT;
 
-/** Vertical stroke — same palette as clip-text, top → bottom. */
-export const MOTION_TEST_GRADIENT_LINE_STROKE_GRADIENT = `linear-gradient(to bottom, ${MOTION_TEST_GRADIENT_TEXT_PALETTE.orange} 0%, ${MOTION_TEST_GRADIENT_TEXT_PALETTE.copper} 14%, ${MOTION_TEST_GRADIENT_TEXT_PALETTE.warm} 28%, ${MOTION_TEST_GRADIENT_TEXT_PALETTE.amber} 44%, ${MOTION_TEST_GRADIENT_TEXT_PALETTE.clay} 62%, ${MOTION_TEST_GRADIENT_TEXT_PALETTE.red} 82%, ${MOTION_TEST_GRADIENT_TEXT_PALETTE.red} 100%)`;
+/** Reversed stack hold — brown gradient bed behind gold Doe column. */
+export const MOTION_TEST_DOE_STACK_REVERSED_BACKGROUND_GRADIENT = MOTION_TEST_BROWN_BG_GRADIENT;
 
-/** Horizontal stroke — same palette, left → right. */
-export const MOTION_TEST_GRADIENT_LINE_STROKE_GRADIENT_HORIZONTAL = `linear-gradient(to right, ${MOTION_TEST_GRADIENT_TEXT_PALETTE.orange} 0%, ${MOTION_TEST_GRADIENT_TEXT_PALETTE.copper} 14%, ${MOTION_TEST_GRADIENT_TEXT_PALETTE.warm} 28%, ${MOTION_TEST_GRADIENT_TEXT_PALETTE.amber} 44%, ${MOTION_TEST_GRADIENT_TEXT_PALETTE.clay} 62%, ${MOTION_TEST_GRADIENT_TEXT_PALETTE.red} 82%, ${MOTION_TEST_GRADIENT_TEXT_PALETTE.red} 100%)`;
+/** Full-frame brown bed — white/gold text phases. */
+export const MOTION_TEST_TITLE_GRADIENT = MOTION_TEST_BROWN_BG_GRADIENT;
+
+export const MOTION_TEST_GRADIENT_TEXT_GRADIENT = MOTION_TEST_BROWN_TEXT_GRADIENT;
+
+/** Vertical stroke — brown gradient, top → bottom (motion4 gold direction). */
+export const MOTION_TEST_GRADIENT_LINE_STROKE_GRADIENT = MOTION_TEST_BROWN_TEXT_GRADIENT;
+
+/** Horizontal stroke — brown gradient, left → right. */
+export const MOTION_TEST_GRADIENT_LINE_STROKE_GRADIENT_HORIZONTAL =
+  MOTION_TEST_BROWN_LINE_STROKE_GRADIENT_HORIZONTAL;
 
 export const MOTION_TEST_GRADIENT_LAYER_HEIGHT_RATIO = 2.75;
 export const MOTION_TEST_PULL_START_Y_RATIO = -0.24;
@@ -724,11 +782,12 @@ export const MOTION_TEST_VERY_BIG_DOE_FONT_SIZE = Math.round(MOTION_TEST_HEIGHT 
 export const MOTION_TEST_VERY_BIG_DOE_LINE_HEIGHT = 0.92;
 export const MOTION_TEST_FINALE_OUTRO_DOE_FONT_SIZE = Math.round(MOTION_TEST_HEIGHT * 0.19);
 export const MOTION_TEST_FINALE_OUTRO_DOE_LINE_HEIGHT = 1;
-export const MOTION_TEST_VERY_BIG_DOE_ON_WHITE_COLOR = MOTION_TEST_GRADIENT_PALETTE.clay;
+export const MOTION_TEST_VERY_BIG_DOE_ON_WHITE_COLOR = MOTION_TEST_BROWN_MID;
 
-/** Finale — DM Sans, solid clay red, very large. */
-export const MOTION_TEST_FINALE_TYPE_COLOR = MOTION_TEST_GRADIENT_PALETTE.clay;
-export const MOTION_TEST_FINALE_INVERTED_TEXT_COLOR = "#ffffff";
+/** Finale — solid brown accent on gold panels. */
+export const MOTION_TEST_FINALE_TYPE_COLOR = MOTION_TEST_BROWN_MID;
+/** Gold text on brown gradient scenes — use getMotionTestGoldTextStyle() for clipped type. */
+export const MOTION_TEST_FINALE_INVERTED_TEXT_COLOR = MOTION_TEST_GOLD_MID;
 export const MOTION_TEST_FINALE_INTELLIGENCE_BORDER_COLOR = "rgba(0, 0, 0, 0.14)";
 export const MOTION_TEST_FINALE_TYPE_FONT_SIZE = motionTestPx(340);
 /** Scaled so full phrase fits dead center — proportional to building beat width. */

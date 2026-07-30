@@ -9,6 +9,7 @@ import {
 } from "../constants";
 import { getMotionTestGradientY } from "../gradient-motion";
 import { getMotionTestFinaleOutroLogoScale } from "../finale-outro-motion";
+import { MOTION_TEST_GRADIENT_TEXT_GOLD_CLASS } from "../gradient-text-style";
 import { useMotionTestFrame } from "../motion-test-frame";
 
 export function FinaleOutro() {
@@ -31,7 +32,7 @@ export function FinaleOutro() {
 
       <AbsoluteFill className="motion-test-finale-outro__lockup">
         <span
-          className={`motion-test-finale-outro__logo motion-test-title__label--doe ${lora.className}`}
+          className={`motion-test-finale-outro__logo motion-test-title__label--doe ${MOTION_TEST_GRADIENT_TEXT_GOLD_CLASS} ${lora.className}`}
           style={{
             fontSize: MOTION_TEST_FINALE_OUTRO_DOE_FONT_SIZE,
             lineHeight: MOTION_TEST_FINALE_OUTRO_DOE_LINE_HEIGHT,

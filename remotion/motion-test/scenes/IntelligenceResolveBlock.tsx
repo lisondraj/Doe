@@ -22,7 +22,8 @@ import {
 } from "../finale-resolve-three-line-motion";
 import { getMotionTestFinaleAgentBuilderMotion } from "../finale-agent-builder-motion";
 import {
-  getMotionTestGradientTextVisualStyle,
+  MOTION_TEST_GRADIENT_TEXT_BROWN_CLASS,
+  MOTION_TEST_GRADIENT_TEXT_GOLD_CLASS,
 } from "../gradient-text-style";
 import { ResolveDisciplineCarousel } from "./ResolveDisciplineCarousel";
 
@@ -40,6 +41,9 @@ function ResolveDualColorText({
 }) {
   const layerBaseClass =
     "motion-test-finale-type__full-phrase-text motion-test-finale-type__full-phrase-layer";
+  const gradientClass = showInverted
+    ? MOTION_TEST_GRADIENT_TEXT_GOLD_CLASS
+    : MOTION_TEST_GRADIENT_TEXT_BROWN_CLASS;
 
   return (
     <span className="motion-test-finale-type__full-phrase-stack">
@@ -50,23 +54,7 @@ function ResolveDualColorText({
         {MOTION_TEST_FINALE_INTELLIGENCE_FLIPPED_WORD}
       </span>
       <span
-        className={`${layerBaseClass} motion-test-finale-type__full-phrase-layer--gradient`}
-        style={{
-          ...getMotionTestGradientTextVisualStyle(),
-          opacity: showInverted ? 0 : 1,
-        }}
-        aria-hidden={showInverted}
-      >
-        {text}
-      </span>
-      <span
-        className={layerBaseClass}
-        style={{
-          color: MOTION_TEST_FINALE_INVERTED_TEXT_COLOR,
-          WebkitTextFillColor: MOTION_TEST_FINALE_INVERTED_TEXT_COLOR,
-          opacity: showInverted ? 1 : 0,
-        }}
-        aria-hidden={!showInverted}
+        className={`${layerBaseClass} motion-test-finale-type__full-phrase-layer--gradient ${gradientClass}`}
       >
         {text}
       </span>

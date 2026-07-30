@@ -1,20 +1,19 @@
 import { AbsoluteFill } from "remotion";
 
-import { dmSans } from "@/remotion/fonts";
+import { sfPro } from "@/remotion/fonts";
 
 import {
   MOTION_TEST_DOE_STACK_INVERT_START_FRAME,
   MOTION_TEST_FINALE_INTELLIGENCE_FLIPPED_START_FRAME,
   MOTION_TEST_FINALE_OUTRO_START_FRAME,
   MOTION_TEST_FINALE_TYPE_START_FRAME,
+  MOTION_TEST_GOLD_GRADIENT,
   MOTION_TEST_OPPOSITE_COLOR_FLASH_START_FRAME,
   MOTION_TEST_STACK_HIDE_FRAME,
-  MOTION_TEST_TITLE_GRADIENT,
   MOTION_TEST_VERY_BIG_WHITE_FLASH_START_FRAME,
 } from "../constants";
-import { getMotionTestGradientY } from "../gradient-motion";
+import { getMotionTestGradientY, getMotionTestTitleBackgroundGradient } from "../gradient-motion";
 import { getMotionTestFinaleIntelligenceFlippedPhase } from "../finale-intelligence-flipped-zoom-motion";
-import { getMotionTestGradientTextStyle } from "../gradient-text-style";
 import { useMotionTestFrame } from "../motion-test-frame";
 import { BigDoeStack } from "./BigDoeStack";
 import { FinaleOutro } from "./FinaleOutro";
@@ -36,7 +35,6 @@ export function TitleFrameScene() {
   const textStyle = getMotionTestTextStyle(frame);
   const text = getMotionTestTextContent(frame);
   const veryBigWhiteDoeStyle = getMotionTestVeryBigWhiteDoeStyle(frame);
-  const gradientTextStyle = getMotionTestGradientTextStyle();
 
   const isStackOnWhite =
     phase === "doe" &&
@@ -73,7 +71,6 @@ export function TitleFrameScene() {
       <BigDoeStack
         fontSize={textStyle.fontSize}
         transform={textStyle.transform}
-        gradientTextStyle={gradientTextStyle}
         variant="white-on-gradient"
       />
     );
@@ -82,7 +79,6 @@ export function TitleFrameScene() {
       <BigDoeStack
         fontSize={textStyle.fontSize}
         transform={textStyle.transform}
-        gradientTextStyle={gradientTextStyle}
         variant="gradient-on-white"
       />
     );
@@ -115,7 +111,7 @@ export function TitleFrameScene() {
 
   return (
     <AbsoluteFill
-      className={`motion-test-scene motion-test-title ${isFlippedHold ? "motion-test-title--portal-hold" : ""} ${isFlippedResolve ? "motion-test-title--portal-resolve" : ""} ${isFlippedZoom ? "motion-test-title--portal-zoom" : ""} ${dmSans.className}`}
+      className={`motion-test-scene motion-test-title ${isFlippedHold ? "motion-test-title--portal-hold" : ""} ${isFlippedResolve ? "motion-test-title--portal-resolve" : ""} ${isFlippedZoom ? "motion-test-title--portal-zoom" : ""} ${sfPro.className}`}
     >
       {showMainGradient ? (
         <AbsoluteFill className="motion-test-title__gradient-wrap">
@@ -123,7 +119,7 @@ export function TitleFrameScene() {
             className="motion-test-title__gradient"
             style={{
               height: layerHeight,
-              background: MOTION_TEST_TITLE_GRADIENT,
+              background: getMotionTestTitleBackgroundGradient(frame),
               transform: `translateY(${gradientY}px) scale(${gradientScale})`,
               transformOrigin: `${gradientOriginX}px ${gradientOriginY}px`,
             }}
@@ -133,7 +129,7 @@ export function TitleFrameScene() {
 
       <AbsoluteFill
         className="motion-test-title__white-overlay"
-        style={{ opacity: whiteOverlayOpacity }}
+        style={{ opacity: whiteOverlayOpacity, background: MOTION_TEST_GOLD_GRADIENT }}
       />
 
       {foreground}

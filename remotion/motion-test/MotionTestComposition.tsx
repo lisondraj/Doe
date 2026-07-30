@@ -2,7 +2,7 @@
 
 import { AbsoluteFill, Sequence } from "remotion";
 
-import { dmSans, lora } from "@/remotion/fonts";
+import { sfPro, lora } from "@/remotion/fonts";
 
 import {
   MOTION_TEST_DURATION_FRAMES,
@@ -26,7 +26,7 @@ export {
 export function MotionTestComposition() {
   return (
     <AbsoluteFill
-      className={`motion-test-remotion-root ${dmSans.className} ${lora.className}`}
+      className={`motion-test-remotion-root ${sfPro.className} ${lora.className}`}
       style={
         {
           "--motion-test-title-font-size": `${MOTION_TEST_TITLE_FONT_SIZE}px`,

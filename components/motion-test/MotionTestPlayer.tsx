@@ -4,7 +4,8 @@ import dynamic from "next/dynamic";
 import { useEffect } from "react";
 import { prefetch, staticFile } from "remotion";
 
-import { dmSans, lora } from "@/lib/home/fonts";
+import { lora } from "@/lib/home/fonts";
+import { sfPro } from "@/remotion/fonts";
 import { MOTION_TEST_BG_MUSIC_SRC } from "@/remotion/motion-test/constants";
 import {
   MOTION_TEST_DURATION_FRAMES,
@@ -43,7 +44,7 @@ export function MotionTestPlayer() {
   }, []);
 
   return (
-    <div className={`motion-test-viewport ${dmSans.className} ${lora.className}`}>
+    <div className={`motion-test-viewport ${sfPro.className} ${lora.className}`}>
       <div className="motion-test-player-wrap">
         <Player
           component={MotionTestComposition}

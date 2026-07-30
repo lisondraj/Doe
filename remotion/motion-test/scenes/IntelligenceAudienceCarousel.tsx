@@ -1,6 +1,6 @@
 import { AbsoluteFill } from "remotion";
 
-import { dmSans } from "@/remotion/fonts";
+import { sfPro } from "@/remotion/fonts";
 
 import { getMotionTestFinaleAudienceCarouselRowTiltDeg } from "../finale-audience-carousel-arc";
 import {
@@ -8,7 +8,7 @@ import {
   getMotionTestFinaleAudienceCarouselLayout,
   getMotionTestFinaleAudienceCarouselWords,
 } from "../finale-audience-carousel-motion";
-import { getMotionTestGradientTextStyle } from "../gradient-text-style";
+import { MOTION_TEST_GRADIENT_TEXT_BROWN_CLASS } from "../gradient-text-style";
 import { useMotionTestFrame } from "../motion-test-frame";
 
 function CarouselWord({
@@ -30,7 +30,6 @@ function CarouselWord({
   circleRadius: number;
   circleCenterY: number;
 }) {
-  const gradientTextStyle = getMotionTestGradientTextStyle();
   const rowTiltDeg = getMotionTestFinaleAudienceCarouselRowTiltDeg(
     yPx,
     circleRadius,
@@ -39,9 +38,8 @@ function CarouselWord({
 
   return (
     <span
-      className={`motion-test-audience-carousel__word motion-test-finale-type__phrase-word--isolate motion-test-title__label--gradient ${dmSans.className}`}
+      className={`motion-test-audience-carousel__word motion-test-finale-type__phrase-word--isolate ${MOTION_TEST_GRADIENT_TEXT_BROWN_CLASS} ${sfPro.className}`}
       style={{
-        ...gradientTextStyle,
         fontSize,
         left: xPx,
         top: yPx,

@@ -1,5 +1,49 @@
 /* /motion-test — Remotion player shell + title card */
 
+@font-face {
+  font-family: "SF Pro Display";
+  src: url("../../fonts/sf-pro/SF-Pro-Display-Light.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SF Pro Display";
+  src: url("../../fonts/sf-pro/SF-Pro-Display-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SF Pro Display";
+  src: url("../../fonts/sf-pro/SF-Pro-Display-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SF Pro Display";
+  src: url("../../fonts/sf-pro/SF-Pro-Display-Semibold.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SF Pro Display";
+  src: url("../../fonts/sf-pro/SF-Pro-Display-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+.motion-test-remotion-font-sf-pro {
+  font-family: "SF Pro Display", system-ui, -apple-system, sans-serif;
+}
+
 html[data-motion-test-page],
 html[data-motion-test-page] body {
   min-height: 100%;
@@ -25,7 +69,7 @@ html[data-motion-test-page] body {
 }
 
 .motion-test-remotion-root {
-  font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+  font-family: "SF Pro Display", system-ui, -apple-system, sans-serif;
   font-synthesis: none;
   -webkit-font-smoothing: antialiased;
   isolation: isolate;
@@ -52,7 +96,7 @@ html[data-motion-test-page] body {
 
 .motion-test-title__white-overlay {
   z-index: 0;
-  background: #ffffff;
+  background: linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%);
   pointer-events: none;
 }
 
@@ -77,8 +121,8 @@ html[data-motion-test-page] body {
   position: relative;
   z-index: 1;
   margin: 0;
-  color: #ffffff;
-  font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+  color: #d4a574;
+  font-family: "SF Pro Display", system-ui, -apple-system, sans-serif;
   font-size: var(--motion-test-title-font-size, 128px);
   font-weight: 400;
   line-height: 1;
@@ -94,16 +138,97 @@ html[data-motion-test-page] body {
 }
 
 .motion-test-title__label--gradient {
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  -webkit-background-clip: text;
-  background-clip: text;
+  /* Clip + background live on variant classes — see motion-test-gradient-text--* */
+}
+
+.motion-test-gradient-text--brown,
+.motion-test-title__label.motion-test-gradient-text--brown,
+.motion-test-title__label--gradient.motion-test-gradient-text--brown {
   display: inline-block;
   overflow: visible;
   line-height: 1.14;
   padding-block: 0.12em;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
+  padding-inline: 0.02em 0.1em;
+  background: linear-gradient(180deg, #241c14 0%, #1a1208 52%, rgba(26, 18, 8, 0.72) 100%);
+  background-size: 100% 140%;
+  background-position: 50% 68%;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.motion-test-gradient-text--gold,
+.motion-test-title__label.motion-test-gradient-text--gold,
+.motion-test-title__label--gradient.motion-test-gradient-text--gold {
+  display: inline-block;
+  overflow: visible;
+  line-height: 1.14;
+  padding-block: 0.12em;
+  padding-inline: 0.02em 0.1em;
+  background: linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%);
+  background-size: 100% 140%;
+  background-position: 50% 32%;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.motion-test-gradient-text--gold-carousel,
+.motion-test-title__label.motion-test-gradient-text--gold-carousel,
+.motion-test-title__label--gradient.motion-test-gradient-text--gold-carousel {
+  display: inline-block;
+  overflow: visible;
+  line-height: 1.14;
+  padding-block: 0.12em;
+  padding-inline: 0.02em 0.1em;
+  background: linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%);
+  background-size: 100% 140%;
+  background-position: 50% 18%;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.motion-test-gradient-text--discipline-carousel,
+.motion-test-discipline-carousel__label.motion-test-gradient-text--discipline-carousel {
+  display: inline;
+  overflow: visible;
+  line-height: 1.14;
+  padding: 0;
+  vertical-align: baseline;
+  /* Lighter umber — offset from lines 1–2 deep cool brown. */
+  background: linear-gradient(180deg, #5c4530 0%, #3d2e1c 48%, #2a2014 100%);
+  background-size: 100% 150%;
+  background-position: 50% 28%;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.motion-test-gradient-text--doe-stack,
+.motion-test-title__label.motion-test-gradient-text--doe-stack,
+.motion-test-title__label--gradient.motion-test-gradient-text--doe-stack {
+  display: inline-block;
+  overflow: visible;
+  line-height: 1.14;
+  padding-block: 0.12em;
+  padding-inline: 0.02em 0.1em;
+  background: linear-gradient(180deg, #241c14 0%, #1a1208 52%, rgba(26, 18, 8, 0.72) 100%);
+  background-size: 100% 100%;
+  background-position: 50% var(--motion-test-stack-gradient-y, 50%);
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .motion-test-doe-stack {
@@ -158,13 +283,15 @@ html[data-motion-test-page] body {
   justify-content: center;
   margin: 0;
   padding: 0;
-  font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+  font-family: "SF Pro Display", system-ui, -apple-system, sans-serif;
   font-weight: 400;
   letter-spacing: -0.05em;
   white-space: nowrap;
 }
 
 .motion-test-finale-type__typewriter-scale {
+  position: relative;
+  z-index: 1;
   transform-origin: center center;
 }
 
@@ -252,12 +379,7 @@ html[data-motion-test-page] body {
 }
 
 .motion-test-finale-type__full-phrase-layer--gradient {
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
+  /* Variant class supplies clip + background */
 }
 
 .motion-test-finale-type__row--full-phrase {
@@ -352,7 +474,7 @@ html[data-motion-test-page] body {
   margin: 0;
   white-space: nowrap;
   transform-origin: center center;
-  font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+  font-family: "SF Pro Display", system-ui, -apple-system, sans-serif;
   font-weight: 400;
   letter-spacing: -0.04em;
 }
@@ -370,7 +492,7 @@ html[data-motion-test-page] body {
 
 .motion-test-title--portal-zoom {
   overflow: visible;
-  background: #ffffff;
+  background: linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%);
 }
 
 .motion-test-title--portal-resolve {
@@ -503,12 +625,19 @@ html[data-motion-test-page] body {
   box-decoration-break: clone;
 }
 
+.motion-test-intelligence-flipped-resolve__row-inner {
+  display: inline-block;
+  white-space: nowrap;
+  overflow: visible;
+}
+
 .motion-test-discipline-carousel {
   display: inline-flex;
   align-items: center;
   line-height: 1.14;
   vertical-align: top;
-  overflow: visible;
+  overflow: hidden;
+  transform-origin: left center;
 }
 
 .motion-test-discipline-carousel__mask {
@@ -517,13 +646,7 @@ html[data-motion-test-page] body {
   align-items: center;
   overflow: hidden;
   height: 1.14em;
-  mask-image: linear-gradient(
-    90deg,
-    #000 0%,
-    #000 68%,
-    rgb(0 0 0 / 55%) 82%,
-    transparent 100%
-  );
+  /* Fade driven per-frame — see getMotionTestFinaleDisciplineCarouselMaskImage */
 }
 
 .motion-test-discipline-carousel__item {
@@ -533,7 +656,7 @@ html[data-motion-test-page] body {
   height: 1.14em;
   display: inline-flex;
   align-items: center;
-  gap: 0.18em;
+  gap: 0.21em;
   margin: 0;
   white-space: nowrap;
   letter-spacing: -0.04em;
@@ -555,8 +678,13 @@ html[data-motion-test-page] body {
   justify-content: center;
   width: 0.9em;
   height: 0.9em;
-  color: #c2563d;
+  color: #241c14;
   transform: translateY(0.11em);
+}
+
+.motion-test-discipline-carousel__icon--offset {
+  color: #6b5238;
+  opacity: 0.94;
 }
 
 .motion-test-discipline-carousel__icon svg {
@@ -571,17 +699,30 @@ html[data-motion-test-page] body {
   padding: 0;
 }
 
-.motion-test-discipline-carousel__label.motion-test-title__label--gradient {
+.motion-test-discipline-carousel__label.motion-test-gradient-text--brown {
   display: inline;
   padding: 0;
   line-height: 1.14;
   vertical-align: baseline;
+  overflow: visible;
+}
+
+.motion-test-discipline-carousel__label.motion-test-gradient-text--discipline-carousel {
+  display: inline;
+  padding: 0;
+  line-height: 1.14;
+  vertical-align: baseline;
+  overflow: visible;
 }
 
 .motion-test-finale-corner-lines {
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
+}
+
+.motion-test-finale-typewriter-bottom-line {
+  z-index: 0;
 }
 
 .motion-test-finale-corner-lines__stroke {
@@ -618,7 +759,6 @@ html[data-motion-test-page] body {
   letter-spacing: -0.04em;
   white-space: nowrap;
   transform-origin: center center;
-  will-change: transform, opacity;
 }
 
 .motion-test-finale-launch-card {
@@ -683,8 +823,6 @@ html[data-motion-test-page] body {
   top: 50%;
   left: 50%;
   margin: 0;
-  color: #ffffff;
-  -webkit-text-fill-color: #ffffff;
   white-space: nowrap;
   letter-spacing: -0.04em;
   text-align: center;

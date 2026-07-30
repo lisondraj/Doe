@@ -1,8 +1,9 @@
 import { Easing, interpolate } from "remotion";
 
 import {
-  MOTION_TEST_DOE_STACK_INVERT_START_FRAME,
   MOTION_TEST_DOE_JUMP_FRAME,
+  MOTION_TEST_DOE_STACK_INVERT_START_FRAME,
+  MOTION_TEST_DOE_STACK_REVERSED_BACKGROUND_START_FRAME,
   MOTION_TEST_FINALE_INTELLIGENCE_ISOLATE_START_FRAME,
   MOTION_TEST_FINALE_INTELLIGENCE_FLIPPED_START_FRAME,
   MOTION_TEST_FINALE_INTELLIGENCE_STACK_START_FRAME,
@@ -15,14 +16,36 @@ import {
   MOTION_TEST_GRADIENT_PULL_FRAMES,
   MOTION_TEST_HEIGHT,
   MOTION_TEST_OPPOSITE_COLOR_FLASH_START_FRAME,
+  MOTION_TEST_OPENING_FRAME_GRADIENT,
   MOTION_TEST_PULL_END_Y_RATIO,
   MOTION_TEST_PULL_START_Y_RATIO,
+  MOTION_TEST_DOE_STACK_REVERSED_BACKGROUND_GRADIENT,
+  MOTION_TEST_STACK_HIDE_FRAME,
   MOTION_TEST_TITLE_GRADIENT,
   MOTION_TEST_WHITE_OVERLAY_FADE_FRAMES,
   MOTION_TEST_WIDTH,
 } from "./constants";
 
 const PULL_EASE = Easing.inOut(Easing.cubic);
+
+function usesMotionTestDoeStackReversedBackground(frame: number): boolean {
+  return (
+    frame >= MOTION_TEST_DOE_STACK_REVERSED_BACKGROUND_START_FRAME &&
+    frame < MOTION_TEST_STACK_HIDE_FRAME
+  );
+}
+
+export function getMotionTestTitleBackgroundGradient(frame: number): string {
+  if (frame < MOTION_TEST_DOE_JUMP_FRAME) {
+    return MOTION_TEST_OPENING_FRAME_GRADIENT;
+  }
+
+  if (usesMotionTestDoeStackReversedBackground(frame)) {
+    return MOTION_TEST_DOE_STACK_REVERSED_BACKGROUND_GRADIENT;
+  }
+
+  return MOTION_TEST_TITLE_GRADIENT;
+}
 
 export function getMotionTestOpeningGradientY(layerHeight: number): number {
   return layerHeight * MOTION_TEST_PULL_START_Y_RATIO;
@@ -39,7 +62,7 @@ export function getMotionTestFullScreenGradientLayerStyle(): {
   return {
     layerHeight,
     gradientY: getMotionTestOpeningGradientY(layerHeight),
-    background: MOTION_TEST_TITLE_GRADIENT,
+    background: MOTION_TEST_OPENING_FRAME_GRADIENT,
   };
 }
 
@@ -66,13 +89,18 @@ export function getMotionTestGradientY(frame: number): {
 } {
   const layerHeight = MOTION_TEST_HEIGHT * MOTION_TEST_GRADIENT_LAYER_HEIGHT_RATIO;
   const openingGradientY = getMotionTestOpeningGradientY(layerHeight);
+  const isReversedStackBackground = usesMotionTestDoeStackReversedBackground(frame);
 
   // Snap gradient before the white overlay clears so the reveal never jumps.
   const usesOpeningGradient = frame >= MOTION_TEST_DOE_STACK_INVERT_START_FRAME;
 
-  const gradientY = usesOpeningGradient
-    ? openingGradientY
-    : getMotionTestLiveGradientY(frame, layerHeight);
+  const gradientY = isReversedStackBackground
+    ? 0
+    : usesOpeningGradient
+      ? openingGradientY
+      : getMotionTestLiveGradientY(frame, layerHeight);
+
+  const resolvedLayerHeight = isReversedStackBackground ? MOTION_TEST_HEIGHT : layerHeight;
 
   const pullProgress = interpolate(frame, [0, MOTION_TEST_GRADIENT_PULL_FRAMES], [0, 1], {
     extrapolateLeft: "clamp",
@@ -121,7 +149,7 @@ export function getMotionTestGradientY(frame: number): {
 
   return {
     gradientY,
-    layerHeight,
+    layerHeight: resolvedLayerHeight,
     pullProgress,
     whiteOverlayOpacity,
     usesOpeningGradient,
