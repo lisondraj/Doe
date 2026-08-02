@@ -46,5 +46,12 @@ export const BROADER_DOE_VISION_THESIS_POINTS = [
 export const BROADER_DOE_VISION_CLOSING =
   "These three points form the thesis of our organization and will guide Doe through our early-stages, and in the years to come.";
 
+export const BROADER_DOE_VISION_FINAL_PARAGRAPH =
+  "If this vision resonates with you — whether you're a provider, administrator, or investor — I'd welcome the chance to connect.";
+
+export const BROADER_DOE_VISION_EMAIL_INVITE_HEADLINE = "We'd love to chat.";
+
+export const BROADER_DOE_VISION_EMAIL_INVITE_LABEL = "Email James";
+
 /** Paragraph index in BROADER_DOE_VISION_BODY_PARAGRAPHS that ends with the contact CTA. */
 export const BROADER_DOE_VISION_CONTACT_PARAGRAPH_INDEX = 1;

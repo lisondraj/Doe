@@ -1,4 +1,5 @@
 import { AboutStyleContactLink } from "@/components/blog/AboutStyleContactLink";
+import { BroaderDoeVisionEmailInvite } from "@/components/blog/BroaderDoeVisionEmailInvite";
 import { BroaderDoeVisionProposalQuote } from "@/components/blog/BroaderDoeVisionProposalQuote";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import {
@@ -24,6 +25,7 @@ import {
   BROADER_DOE_VISION_CLOSING,
   BROADER_DOE_VISION_CONTACT_PARAGRAPH_INDEX,
   BROADER_DOE_VISION_DATE,
+  BROADER_DOE_VISION_FINAL_PARAGRAPH,
   BROADER_DOE_VISION_HERO_BACKDROP,
   BROADER_DOE_VISION_PROPOSAL_CLOSING,
   BROADER_DOE_VISION_OPENING_LEDE,
@@ -95,6 +97,10 @@ export function BroaderDoeVisionPageContent() {
           </ol>
 
           <p className={BROADER_DOE_VISION_BODY_TW}>{BROADER_DOE_VISION_CLOSING}</p>
+
+          <p className={BROADER_DOE_VISION_BODY_TW}>{BROADER_DOE_VISION_FINAL_PARAGRAPH}</p>
+
+          <BroaderDoeVisionEmailInvite />
         </div>
       </div>
     </div>
