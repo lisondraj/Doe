@@ -26,6 +26,18 @@ export const BROADER_DOE_VISION_BODY_PARAGRAPHS = [
   "Yet, these nuances are often unstructured and driven by human intent and emotion, not as easily understood by a generalist playbook.",
 ] as const;
 
+/** Body paragraph index — AI playbook section with inline bold emphasis. */
+export const BROADER_DOE_VISION_AI_PLAYBOOK_PARAGRAPH_INDEX = 2;
+
+export const BROADER_DOE_VISION_AI_PLAYBOOK_PARAGRAPH = {
+  before:
+    "Current AI tools in healthcare promise to automate various touchpoints of a patient's care journey. However, a majority of those tools appear to pull from the same playbook: ",
+  bold:
+    "give large language models access to sensitive patient data and rely on a generalist model's ability to provide a sufficient response",
+  after:
+    ". That response is dependent on what data that model was fed, and whether that model is hosted on compute large enough to handle the complexity of the task.",
+} as const;
+
 export const BROADER_DOE_VISION_PROPOSAL_HIGHLIGHT_LEAD =
   "We propose that in the years to come, every provider, every clinic, every hospital and even deeper, every specialty, every small action in healthcare, will be powered by their own intelligence stack.";
 

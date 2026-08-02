@@ -20,6 +20,8 @@ import {
   BROADER_DOE_VISION_THESIS_ITEM_TW,
 } from "@/lib/blog/broader-doe-vision-layout-styles";
 import {
+  BROADER_DOE_VISION_AI_PLAYBOOK_PARAGRAPH,
+  BROADER_DOE_VISION_AI_PLAYBOOK_PARAGRAPH_INDEX,
   BROADER_DOE_VISION_BODY_PARAGRAPHS,
   BROADER_DOE_VISION_BYLINE,
   BROADER_DOE_VISION_CLOSING,
@@ -68,7 +70,15 @@ export function BroaderDoeVisionPageContent() {
 
           {BROADER_DOE_VISION_BODY_PARAGRAPHS.map((paragraph, index) => (
             <p key={paragraph} className={BROADER_DOE_VISION_BODY_TW}>
-              {paragraph}
+              {index === BROADER_DOE_VISION_AI_PLAYBOOK_PARAGRAPH_INDEX ? (
+                <>
+                  {BROADER_DOE_VISION_AI_PLAYBOOK_PARAGRAPH.before}
+                  <span className="font-semibold">{BROADER_DOE_VISION_AI_PLAYBOOK_PARAGRAPH.bold}</span>
+                  {BROADER_DOE_VISION_AI_PLAYBOOK_PARAGRAPH.after}
+                </>
+              ) : (
+                paragraph
+              )}
               {index === BROADER_DOE_VISION_CONTACT_PARAGRAPH_INDEX ? (
                 <>
                   {" "}
