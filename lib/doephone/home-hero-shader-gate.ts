@@ -25,3 +25,5 @@ export function subscribeHomeHeroBackgroundReady(listener: Listener) {
 }
 
 export const DOEPHONE_HOME_HERO_SHADER_SLOT = "doephone:home-hero-background";
+
+export const DOEPHONE_ABOUT_HERO_SHADER_SLOT = "doephone:about-hero-background";

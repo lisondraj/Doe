@@ -19,6 +19,7 @@ import {
   SHADER_WEBGL_SLOT_PRIORITY,
 } from "@/lib/doephone/shader-webgl-budget";
 import {
+  DOEPHONE_ABOUT_HERO_SHADER_SLOT,
   DOEPHONE_HOME_HERO_SHADER_SLOT,
   setHomeHeroBackgroundReady,
 } from "@/lib/doephone/home-hero-shader-gate";
@@ -32,6 +33,11 @@ function isHeroVariant(variant: ProtoGrainGradientVariant) {
     variant === "build-hero" ||
     variant === "about-hero"
   );
+}
+
+function isAboutStylePage() {
+  if (typeof document === "undefined") return false;
+  return document.documentElement.getAttribute("data-about-page") === "true";
 }
 
 function isPhoneLayout() {
@@ -79,7 +85,13 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   const phone = isPhoneLayout();
   const reactSlotId = useId();
   const homeHeroBackground = hero && phone && variant === "home-hero";
-  const slotId = homeHeroBackground ? DOEPHONE_HOME_HERO_SHADER_SLOT : reactSlotId;
+  const aboutHeroBackground = hero && phone && variant === "about-hero" && isAboutStylePage();
+  const dedicatedHeroBackground = homeHeroBackground || aboutHeroBackground;
+  const slotId = homeHeroBackground
+    ? DOEPHONE_HOME_HERO_SHADER_SLOT
+    : aboutHeroBackground
+      ? DOEPHONE_ABOUT_HERO_SHADER_SLOT
+      : reactSlotId;
   const hasMountedRef = useRef(hero);
   const [hasMounted, setHasMounted] = useState(hero);
   const [containerReady, setContainerReady] = useState(hero);
@@ -98,11 +110,11 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     setHasMounted(false);
     setBudgetGranted(false);
     releaseShaderWebGLSlot(slotId);
-    if (slotId === DOEPHONE_HOME_HERO_SHADER_SLOT) {
+    if (dedicatedHeroBackground) {
       setHomeHeroBackgroundReady(false);
     }
     setShaderGeneration((current) => current + 1);
-  }, [slotId]);
+  }, [dedicatedHeroBackground, slotId]);
 
   /** Budget eviction — drop the slot but keep mount intent so we can re-acquire in viewport. */
   const evictShader = useCallback(() => {
@@ -144,13 +156,13 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
         releaseShaderWebGLSlot(slotId);
         setBudgetGranted(false);
       }
-      if (homeHeroBackground) {
+      if (dedicatedHeroBackground) {
         setHomeHeroBackgroundReady(false);
       }
       return;
     }
 
-    if (!homeHeroBackground && !inViewport) {
+    if (!dedicatedHeroBackground && !inViewport) {
       if (budgetGranted) {
         releaseShaderWebGLSlot(slotId);
         setBudgetGranted(false);
@@ -160,22 +172,22 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
 
     const granted = acquireShaderWebGLSlot(slotId, shaderPriority, evictShader);
     setBudgetGranted(granted);
-    if (homeHeroBackground) {
+    if (dedicatedHeroBackground) {
       setHomeHeroBackgroundReady(granted);
     }
 
     return () => {
       releaseShaderWebGLSlot(slotId);
       setBudgetGranted(false);
-      if (homeHeroBackground) {
+      if (dedicatedHeroBackground) {
         setHomeHeroBackgroundReady(false);
       }
     };
   }, [
     containerReady,
+    dedicatedHeroBackground,
     evictShader,
     hasMounted,
-    homeHeroBackground,
     inViewport,
     shaderPriority,
     slotId,

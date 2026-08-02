@@ -60,6 +60,19 @@ export function doeHomeHeroDuskShaderSurface(): ProtoGrainGradientSurface {
   };
 }
 
+/** /about + about-style blog — dusk hero with dedicated about-hero flow preset. */
+export function doeAboutHeroDuskShaderSurface(): ProtoGrainGradientSurface {
+  return {
+    variant: "about-hero",
+    colors: [
+      DOE_HOME_HERO_DUSK_PALETTE.horizon,
+      DOE_HOME_HERO_DUSK_PALETTE.clay,
+      DOE_HOME_HERO_DUSK_PALETTE.sand,
+    ],
+    colorBack: DOE_HOME_HERO_DUSK_PALETTE.back,
+  };
+}
+
 /** iPhone home dusk — footer shader (warm pool on umber). */
 export function doeHomeDuskFooterShaderSurface(): ProtoGrainGradientSurface {
   return {

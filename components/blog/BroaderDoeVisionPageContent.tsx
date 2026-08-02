@@ -13,7 +13,7 @@ import {
   ABOUT_PAGE_HERO_HEADLINE_PT,
   ABOUT_PAGE_MOBILE_BYLINE_GAP,
   ABOUT_PAGE_MOBILE_BYLINE_TW,
-  ABOUT_PAGE_SUBHEADING_TW,
+  ABOUT_PAGE_DESCRIPTION_TW,
   ABOUT_PAGE_TITLE_TW,
 } from "@/lib/about/about-layout-styles";
 import {
@@ -38,7 +38,7 @@ export function BroaderDoeVisionPageContent() {
       <div className={`${ABOUT_HERO_HEADLINE_WRAP} ${ABOUT_PAGE_HERO_HEADLINE_PT}`}>
         <h1 className={ABOUT_PAGE_TITLE_TW}>{BROADER_DOE_VISION_TITLE}</h1>
 
-        <p className={`${ABOUT_PAGE_SUBHEADING_TW} max-w-[36ch]`}>{BROADER_DOE_VISION_SUBHEADING}</p>
+        <p className={`${ABOUT_PAGE_DESCRIPTION_TW} max-w-[36ch]`}>{BROADER_DOE_VISION_SUBHEADING}</p>
       </div>
 
       <p className={`${ABOUT_PAGE_MOBILE_BYLINE_TW} ${ABOUT_PAGE_MOBILE_BYLINE_GAP}`}>
@@ -55,7 +55,7 @@ export function BroaderDoeVisionPageContent() {
           variant="hero"
           boxClassName={ABOUT_PAGE_HERO_BOX_TW}
           gapClassName=""
-          useHomeHeroDuskShader
+          useAboutHeroDuskShader
         />
       </div>
 

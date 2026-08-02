@@ -10,7 +10,7 @@ import {
   ABOUT_DESKTOP_SCROLL_HERO_BOX_TW,
   ABOUT_DESKTOP_SCROLL_SECTION_GAP,
   ABOUT_DESKTOP_SCROLL_SECTION_HEADLINE_TW,
-  ABOUT_DESKTOP_SCROLL_SUBHEADING_TW,
+  ABOUT_DESKTOP_DESCRIPTION_TW,
   ABOUT_DESKTOP_SCROLL_TITLE_TW,
   ABOUT_HERO_HEADLINE_WRAP,
   ABOUT_MOBILE_BODY_TW,
@@ -24,8 +24,8 @@ import {
   ABOUT_PAGE_HERO_HEADLINE_PT,
   ABOUT_PAGE_MOBILE_BYLINE_GAP,
   ABOUT_PAGE_MOBILE_BYLINE_TW,
+  ABOUT_PAGE_DESCRIPTION_TW,
   ABOUT_PAGE_SUBHEADING,
-  ABOUT_PAGE_SUBHEADING_TW,
   ABOUT_PAGE_TITLE_TW,
 } from "@/lib/about/about-layout-styles";
 import {
@@ -51,7 +51,7 @@ export function AboutPageContent({ layout = "mobile" }: AboutPageContentProps) {
   const [foundersOne, foundersTwo] = ABOUT_DESKTOP_FOUNDERS_PARAGRAPHS;
 
   const titleTw = isDesktop ? ABOUT_DESKTOP_SCROLL_TITLE_TW : ABOUT_PAGE_TITLE_TW;
-  const subheadingTw = isDesktop ? ABOUT_DESKTOP_SCROLL_SUBHEADING_TW : ABOUT_PAGE_SUBHEADING_TW;
+  const descriptionTw = isDesktop ? ABOUT_DESKTOP_DESCRIPTION_TW : ABOUT_PAGE_DESCRIPTION_TW;
   const sectionHeadlineTw = isDesktop ? ABOUT_DESKTOP_SCROLL_SECTION_HEADLINE_TW : ABOUT_MOBILE_SECTION_HEADLINE_TW;
   const bodyTw = isDesktop ? ABOUT_DESKTOP_SCROLL_BODY_TW : ABOUT_MOBILE_BODY_TW;
   const sectionGap = isDesktop ? ABOUT_DESKTOP_SCROLL_SECTION_GAP : ABOUT_MOBILE_SECTION_GAP;
@@ -65,7 +65,7 @@ export function AboutPageContent({ layout = "mobile" }: AboutPageContentProps) {
           <span className="block">to redefine healthcare.</span>
         </h1>
 
-        <p className={`${subheadingTw} max-w-[36ch]`}>{ABOUT_PAGE_SUBHEADING}</p>
+        <p className={`${descriptionTw} max-w-[36ch]`}>{ABOUT_PAGE_SUBHEADING}</p>
       </div>
 
       <p className={`${ABOUT_PAGE_MOBILE_BYLINE_TW} ${ABOUT_PAGE_MOBILE_BYLINE_GAP}`}>
@@ -82,7 +82,7 @@ export function AboutPageContent({ layout = "mobile" }: AboutPageContentProps) {
           variant="hero"
           boxClassName={heroBoxTw}
           gapClassName=""
-          useHomeHeroDuskShader
+          useAboutHeroDuskShader
         />
       </div>
 

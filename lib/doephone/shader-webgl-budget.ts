@@ -1,6 +1,7 @@
 /** iPhone WebGL context budget — avoids black shader loss when the page exceeds GPU limits. */
 
 import {
+  DOEPHONE_ABOUT_HERO_SHADER_SLOT,
   DOEPHONE_HOME_HERO_SHADER_SLOT,
   setHomeHeroBackgroundReady,
 } from "@/lib/doephone/home-hero-shader-gate";
@@ -48,6 +49,15 @@ function isHomePhoneRoute() {
   return document.documentElement.getAttribute("data-home-page") === "true";
 }
 
+function isAboutStyleRoute() {
+  if (typeof document === "undefined") return false;
+  return document.documentElement.getAttribute("data-about-page") === "true";
+}
+
+function hasAboutHeroBackgroundSlot() {
+  return slots.has(DOEPHONE_ABOUT_HERO_SHADER_SLOT);
+}
+
 function isHeroClassPriority(priority: number) {
   return priority >= HERO_CLASS_PRIORITY;
 }
@@ -85,7 +95,11 @@ function findLowestSlot(filter?: (priority: number) => boolean) {
 
 function maxNonHeroSlots() {
   const heroCount = countHeroClassSlots();
-  const reserveForHero = isHomePhoneRoute() && !hasHomeHeroBackgroundSlot() ? 1 : 0;
+  const reserveForHero =
+    (isHomePhoneRoute() && !hasHomeHeroBackgroundSlot()) ||
+    (isAboutStyleRoute() && !hasAboutHeroBackgroundSlot())
+      ? 1
+      : 0;
   return Math.max(0, maxWebGLSlots() - heroCount - reserveForHero);
 }
 
@@ -126,6 +140,10 @@ export function acquireShaderWebGLSlot(
     return false;
   }
 
+  if (isDoePhoneWebGLBudgetActive() && isAboutStyleRoute() && !hasAboutHeroBackgroundSlot()) {
+    return false;
+  }
+
   if (countNonHeroClassSlots() >= maxNonHeroSlots()) {
     if (!tryEvictForSlot(priority, true)) {
       return false;
@@ -162,7 +180,7 @@ export function acquireHomeHeroBackgroundSlot(evict: () => void): boolean {
 }
 
 export function releaseShaderWebGLSlot(id: string) {
-  if (id === DOEPHONE_HOME_HERO_SHADER_SLOT) {
+  if (id === DOEPHONE_HOME_HERO_SHADER_SLOT || id === DOEPHONE_ABOUT_HERO_SHADER_SLOT) {
     setHomeHeroBackgroundReady(false);
   }
   slots.delete(id);

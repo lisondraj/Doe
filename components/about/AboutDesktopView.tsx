@@ -36,7 +36,7 @@ import {
   ABOUT_DESKTOP_SECTION_1_LAYOUT,
   ABOUT_DESKTOP_HERO_HEADLINE_TOP,
   ABOUT_DESKTOP_SECTION_2_CONTENT_GAP,
-  ABOUT_DESKTOP_SUBHEADING_TW,
+  ABOUT_DESKTOP_DESCRIPTION_TW,
   ABOUT_DESKTOP_TITLE_TW,
   ABOUT_PAGE_SUBHEADING,
 } from "@/lib/about/about-layout-styles";
@@ -78,7 +78,7 @@ export function AboutDesktopView() {
                 <span className="block">to redefine healthcare.</span>
               </h1>
 
-              <p className={`${ABOUT_DESKTOP_SUBHEADING_TW} max-w-[min(100%,48rem)]`}>{ABOUT_PAGE_SUBHEADING}</p>
+              <p className={`${ABOUT_DESKTOP_DESCRIPTION_TW} max-w-[min(100%,48rem)]`}>{ABOUT_PAGE_SUBHEADING}</p>
 
               <p
                 className={`${ABOUT_DESKTOP_HERO_BYLINE_OUTSIDE_TW} ${ABOUT_DESKTOP_HERO_BYLINE_OUTSIDE_GAP}`}
@@ -99,7 +99,7 @@ export function AboutDesktopView() {
                 variant="hero"
                 boxClassName={ABOUT_DESKTOP_HERO_BOX_TW}
                 gapClassName=""
-                useHomeHeroDuskShader
+                useAboutHeroDuskShader
               />
             </div>
           </div>

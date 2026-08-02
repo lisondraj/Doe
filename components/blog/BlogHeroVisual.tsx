@@ -6,6 +6,7 @@ import type { WorkflowCarouselDesignBackdrop as WorkflowCarouselDesignBackdropTy
 import {
   DOE_HOME_HERO_DUSK_PALETTE,
   DOE_HOME_ORANGE_PALETTE,
+  doeAboutHeroDuskShaderSurface,
   doeHomeHeroDuskShaderSurface,
   doeHomeHeroShaderSurface,
 } from "@/lib/proto/proto-shader-backdrop-colors";
@@ -13,6 +14,7 @@ import { BLOG_FEATURE_BOX_TW, BLOG_TITLE_VISUAL_GAP } from "@/lib/blog/blog-layo
 
 const HOME_HERO_SHADER = doeHomeHeroShaderSurface();
 const HOME_HERO_DUSK_SHADER = doeHomeHeroDuskShaderSurface();
+const ABOUT_HERO_DUSK_SHADER = doeAboutHeroDuskShaderSurface();
 
 export function BlogHeroVisual({
   backdrop,
@@ -22,6 +24,7 @@ export function BlogHeroVisual({
   patternScale,
   useHomeHeroShader = false,
   useHomeHeroDuskShader = false,
+  useAboutHeroDuskShader = false,
   children,
 }: {
   backdrop: WorkflowCarouselDesignBackdropType;
@@ -31,25 +34,32 @@ export function BlogHeroVisual({
   patternScale?: number;
   /** Main-page hero palette + Paper shader flow (colour/grain from home hero). */
   useHomeHeroShader?: boolean;
-  /** iPhone home/about dusk — desert dusk hero shader palette. */
+  /** iPhone home dusk — desert dusk hero shader palette. */
   useHomeHeroDuskShader?: boolean;
+  /** /about + about-style blog — dedicated about-hero dusk shader preset. */
+  useAboutHeroDuskShader?: boolean;
   children?: React.ReactNode;
 }) {
   const gap = gapClassName ?? (variant === "hero" ? BLOG_TITLE_VISUAL_GAP : "");
-  const heroShader = useHomeHeroDuskShader ? HOME_HERO_DUSK_SHADER : HOME_HERO_SHADER;
-  const heroBack = useHomeHeroDuskShader
+  const heroShader = useAboutHeroDuskShader
+    ? ABOUT_HERO_DUSK_SHADER
+    : useHomeHeroDuskShader
+      ? HOME_HERO_DUSK_SHADER
+      : HOME_HERO_SHADER;
+  const heroBack = useAboutHeroDuskShader || useHomeHeroDuskShader
     ? DOE_HOME_HERO_DUSK_PALETTE.back
     : useHomeHeroShader
       ? DOE_HOME_ORANGE_PALETTE.back
       : undefined;
+  const usesHeroShader = useHomeHeroShader || useHomeHeroDuskShader || useAboutHeroDuskShader;
 
   return (
     <div
       className={`about-hero-visual relative w-full overflow-hidden ${boxClassName ?? BLOG_FEATURE_BOX_TW} ${gap}`.trim()}
-      style={useHomeHeroShader || useHomeHeroDuskShader ? { backgroundColor: heroBack } : undefined}
+      style={usesHeroShader ? { backgroundColor: heroBack } : undefined}
       aria-hidden={children ? undefined : true}
     >
-      {useHomeHeroShader || useHomeHeroDuskShader ? (
+      {usesHeroShader ? (
         <ProtoGrainGradient
           variant={heroShader.variant}
           colors={heroShader.colors}

@@ -279,8 +279,13 @@ html[data-about-page]:has(.doephone-mobile-root--doehealth) main [class*="text-[
 }
 
 html[data-about-page]:has(.doephone-mobile-root--doehealth) main p.about-page-byline,
+html[data-about-page]:has(.doephone-mobile-root--doehealth) main p.about-page-description,
 html[data-about-page]:has(.doephone-mobile-root--doehealth) main [class*="text-[#E8C08E]"] {
   color: #e8c08e !important;
+}
+
+html[data-about-page]:has(.doephone-mobile-root--doehealth) main p.about-page-description {
+  color: #f2e8da !important;
 }
 
 html[data-about-page]:has(.doephone-mobile-root--doehealth) main figcaption {
@@ -640,8 +645,13 @@ html[data-about-page][data-layout="desktop"] .about-desktop-main [class*="text-[
 }
 
 html[data-about-page][data-layout="desktop"] .about-desktop-main p.about-page-byline,
+html[data-about-page][data-layout="desktop"] .about-desktop-main p.about-page-description,
 html[data-about-page][data-layout="desktop"] .about-desktop-main [class*="text-[#E8C08E]"] {
   color: #e8c08e !important;
+}
+
+html[data-about-page][data-layout="desktop"] .about-desktop-main p.about-page-description {
+  color: #f2e8da !important;
 }
 
 html[data-about-page][data-layout="desktop"] .about-desktop-main figcaption {
