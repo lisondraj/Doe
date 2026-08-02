@@ -94,12 +94,13 @@ export function BroaderDoeVisionPageContent() {
           <BroaderDoeVisionProposalQuote />
 
           <p className={BROADER_DOE_VISION_BODY_TW}>{BROADER_DOE_VISION_PROPOSAL_CLOSING}</p>
-        </div>
 
-        <h2 className={BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_TW}>{BROADER_DOE_VISION_THESIS_SECTION_HEADLINE}</h2>
-
-        <div className={ABOUT_MOBILE_CONTENT_GAP}>
-          <p className={BROADER_DOE_VISION_BODY_TW}>{BROADER_DOE_VISION_THESIS_INTRO}</p>
+          <figure className="m-0">
+            <figcaption className={BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_TW}>
+              {BROADER_DOE_VISION_THESIS_SECTION_HEADLINE}
+            </figcaption>
+            <p className={`${BROADER_DOE_VISION_BODY_TW} !mt-0`}>{BROADER_DOE_VISION_THESIS_INTRO}</p>
+          </figure>
 
           <ol className={`broader-doe-thesis-gradient ${ABOUT_MOBILE_LIST_GAP} list-none pl-[1.35em]`}>
             {BROADER_DOE_VISION_THESIS_POINTS.map((point, index) => (

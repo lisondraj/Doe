@@ -247,6 +247,9 @@ export const ABOUT_MOBILE_FAQ_ANSWER_BODY_TW = BLOG_ARTICLE_BODY_TW;
 /** iPhone /about — section headlines (below main mission title). */
 export const ABOUT_MOBILE_SECTION_HEADLINE_TW = `text-left font-light leading-[1.02] tracking-[-0.03em] text-[clamp(2.65rem,9.5vw,4.35rem)] iphone-page:text-[clamp(2.5rem,9vw,4.05rem)] text-[#1E343A] ${suisseIntl.className}`;
 
+/** iPhone /about — chart figcaption (e.g. Clinic-hour time allocation). */
+export const ABOUT_MOBILE_CHART_FIGCAPTION_TW = `mb-5 font-medium leading-snug tracking-[-0.01em] text-[#F2E8DA] iphone-page:mb-6 text-[clamp(1.08rem,0.92rem+0.72vmin,1.32rem)] iphone-page:text-[clamp(1.22rem,1.02rem+0.95vmin,1.48rem)] ${dmSans.className}`;
+
 /** iPhone /about — enlarged pie chart title. */
 export const ABOUT_MOBILE_PIE_CHART_TITLE_TW =
   "text-[clamp(1.32rem,1.12rem+0.95vmin,1.62rem)] iphone-page:text-[clamp(1.55rem,1.28rem+1.22vmin,1.92rem)]";
