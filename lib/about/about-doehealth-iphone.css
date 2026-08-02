@@ -326,7 +326,7 @@ html[data-about-page]:has(.doephone-mobile-root--doehealth) main .about-page-quo
 
 /* Broader Doe Vision — muted cream DM Sans body copy. */
 html[data-about-page]:has(.doephone-mobile-root--doehealth) main .broader-doe-body {
-  color: rgba(242, 232, 218, 0.85) !important;
+  color: rgba(242, 232, 218, 0.92) !important;
 }
 
 /* Broader Doe Vision — one shared gold gradient across thesis points 1–3 (numbers included). */
