@@ -19,5 +19,5 @@ export const ABOUT_STYLE_PHONE_SHELL_PROPS = {
 export const ABOUT_STYLE_TOP_BANNER = {
   message: ABOUT_TOP_BANNER_MESSAGE,
   linkLabel: ABOUT_TOP_BANNER_LINK_LABEL,
-  linkHref: `mailto:${ABOUT_CONTACT_EMAIL}?subject=Contact%20Us`,
+  linkHref: ABOUT_CONTACT_MAILTO_SUBJECT,
 };

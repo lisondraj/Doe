@@ -1,6 +1,6 @@
-import Link from "next/link";
-
-import { ABOUT_CONTACT_EMAIL } from "@/lib/about/about-contact";
+import {
+  ABOUT_CONTACT_MAILTO_SUBJECT,
+} from "@/lib/about/about-contact";
 import { dmSans } from "@/lib/home/fonts";
 
 function ContactArrow() {
@@ -24,12 +24,12 @@ function ContactArrow() {
 
 export function AboutStyleContactLink() {
   return (
-    <Link
-      href={`mailto:${ABOUT_CONTACT_EMAIL}?subject=Contact%20Us`}
+    <a
+      href={ABOUT_CONTACT_MAILTO_SUBJECT}
       className={`inline-flex items-center font-medium text-[#E8C08E] underline decoration-[#E8C08E]/35 underline-offset-[0.28em] transition-colors hover:decoration-[#E8C08E]/70 ${dmSans.className}`}
     >
       Contact us
       <ContactArrow />
-    </Link>
+    </a>
   );
 }

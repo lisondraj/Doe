@@ -1,7 +1,5 @@
-import Link from "next/link";
-
 import { AboutContactRingsGraphic } from "@/components/about/AboutContactRingsGraphic";
-import { ABOUT_CONTACT_EMAIL } from "@/lib/about/about-contact";
+import { ABOUT_CONTACT_EMAIL, ABOUT_CONTACT_MAILTO } from "@/lib/about/about-contact";
 import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
 import {
   BROADER_DOE_VISION_EMAIL_INVITE_HEADLINE,
@@ -27,18 +25,19 @@ export function BroaderDoeVisionEmailInvite() {
           {BROADER_DOE_VISION_EMAIL_INVITE_HEADLINE}
         </p>
 
-        <p
-          className={`font-medium tracking-[-0.02em] text-[#E8C08E] text-[clamp(1.18rem,1rem+0.82vmin,1.42rem)] iphone-page:text-[clamp(1.28rem,1.08rem+0.95vmin,1.55rem)] ${inter.className}`}
+        <a
+          href={ABOUT_CONTACT_MAILTO}
+          className={`font-medium tracking-[-0.02em] text-[#E8C08E] underline decoration-[#E8C08E]/35 underline-offset-[0.22em] transition-colors hover:decoration-[#E8C08E]/70 text-[clamp(1.18rem,1rem+0.82vmin,1.42rem)] iphone-page:text-[clamp(1.28rem,1.08rem+0.95vmin,1.55rem)] ${inter.className}`}
         >
           {ABOUT_CONTACT_EMAIL}
-        </p>
+        </a>
 
-        <Link
-          href={`mailto:${ABOUT_CONTACT_EMAIL}?subject=The%20Broader%20Doe%20Vision`}
+        <a
+          href={ABOUT_CONTACT_MAILTO}
           className={`inline-flex items-center gap-2.5 rounded-xl border border-[rgba(212,165,116,0.28)] bg-[rgba(39,31,23,0.72)] px-5 py-3 font-medium leading-tight tracking-[-0.01em] text-[#F2E8DA] transition-colors hover:border-[rgba(232,192,142,0.45)] hover:text-white text-[clamp(1.05rem,0.92rem+0.55vmin,1.22rem)] iphone-page:px-6 iphone-page:py-3.5 iphone-page:text-[clamp(1.12rem,0.98rem+0.62vmin,1.28rem)] ${dmSans.className}`}
         >
           {BROADER_DOE_VISION_EMAIL_INVITE_LABEL}
-        </Link>
+        </a>
       </div>
     </aside>
   );
