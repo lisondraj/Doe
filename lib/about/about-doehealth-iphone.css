@@ -329,8 +329,29 @@ html[data-about-page]:has(.doephone-mobile-root--doehealth) main .about-page-quo
 }
 
 /* Broader Doe Vision — muted cream DM Sans body copy. */
-html[data-about-page]:has(.doephone-mobile-root--doehealth) main .broader-doe-body {
+html[data-about-page]:has(.doephone-mobile-root--doehealth) main .broader-doe-body,
+html[data-about-page][data-layout="desktop"] .about-desktop-main .broader-doe-body {
   color: rgba(242, 232, 218, 0.92) !important;
+}
+
+/* Broader Doe Vision iPhone — nav clearance only; band gap on hero intro + visual. */
+html[data-about-page]:has(.doephone-mobile-root--doehealth) main:has(.broader-doe-hero-intro) {
+  padding-top: var(--proto-about-nav-clearance) !important;
+}
+
+html[data-about-page]:has(.doephone-mobile-root--doehealth) .broader-doe-hero-intro,
+html[data-about-page]:has(.doephone-mobile-root--doehealth) .broader-doe-hero-visual {
+  margin-top: clamp(2.75rem, 2.2rem + 2.4vmin, 3.25rem);
+}
+
+html[data-about-page]:has(.doephone-mobile-root--doehealth) main p.broader-doe-hero-description {
+  font-size: clamp(1.82rem, 1.48rem + 1.55vmin, 2.32rem) !important;
+  line-height: 1.32 !important;
+}
+
+html[data-about-page]:has(.doephone-mobile-root--doehealth) main p.broader-doe-hero-byline {
+  font-size: clamp(1.2rem, 1.02rem + 0.78vmin, 1.44rem) !important;
+  line-height: 1.35 !important;
 }
 
 /* Broader Doe Vision — shared gold gradient text (contact paragraph + thesis points). */
@@ -680,6 +701,10 @@ html[data-about-page][data-layout="desktop"] .broader-doe-hero-title {
 
 html[data-about-page][data-layout="desktop"] .broader-doe-hero-description {
   font-size: clamp(1.32rem, 1.2vw, 1.55rem);
+}
+
+html[data-about-page][data-layout="desktop"] .about-desktop-main p.broader-doe-body {
+  color: rgba(242, 232, 218, 0.92) !important;
 }
 
 html[data-about-page][data-layout="desktop"] .broader-doe-hero-byline {
