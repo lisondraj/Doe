@@ -355,7 +355,8 @@ html[data-about-page]:has(.doephone-mobile-root--doehealth) main p.broader-doe-h
 }
 
 /* Broader Doe Vision — shared gold gradient text (contact paragraph + thesis points). */
-html[data-about-page]:has(.doephone-mobile-root--doehealth) main .broader-doe-thesis-text {
+html[data-about-page]:has(.doephone-mobile-root--doehealth) main .broader-doe-thesis-text,
+html[data-about-page][data-layout="desktop"] .about-desktop-main .broader-doe-thesis-text {
   background-image: var(
     --doehealth-gold-text-gradient,
     linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%)
@@ -689,6 +690,10 @@ html[data-about-page] .broader-doe-hero-description {
   -webkit-text-fill-color: transparent !important;
 }
 
+html[data-about-page] .broader-doe-hero-title {
+  font-weight: 375;
+}
+
 html[data-about-page] .broader-doe-hero-byline {
   color: #e8c08e !important;
 }
@@ -700,7 +705,7 @@ html[data-about-page][data-layout="desktop"] .broader-doe-hero-title {
 }
 
 html[data-about-page][data-layout="desktop"] .broader-doe-hero-description {
-  font-size: clamp(1.32rem, 1.2vw, 1.55rem);
+  font-size: clamp(1.55rem, 1.35vw, 1.82rem);
 }
 
 html[data-about-page][data-layout="desktop"] .about-desktop-main p.broader-doe-body {
@@ -708,7 +713,34 @@ html[data-about-page][data-layout="desktop"] .about-desktop-main p.broader-doe-b
 }
 
 html[data-about-page][data-layout="desktop"] .broader-doe-hero-byline {
-  font-size: clamp(0.92rem, 0.85vw, 1.06rem);
+  font-size: clamp(1.12rem, 1vw, 1.32rem);
+}
+
+/* Broader Doe Vision desktop — indented gold pull quote (match iPhone width + scale up). */
+html[data-about-page][data-layout="desktop"] .broader-doe-proposal-quote {
+  margin-left: clamp(1.35rem, 1.05rem + 1.35vmin, 2.15rem);
+  max-width: min(38ch, calc(100% - clamp(1.35rem, 1.05rem + 1.35vmin, 2.15rem)));
+}
+
+html[data-about-page][data-layout="desktop"] .broader-doe-proposal-quote blockquote.about-page-quote {
+  font-size: clamp(1.55rem, 1.35vw, 1.95rem) !important;
+  line-height: 1.32 !important;
+  letter-spacing: -0.02em !important;
+}
+
+/* Broader Doe Vision desktop — numbered thesis list (match iPhone indent + grid). */
+html[data-about-page][data-layout="desktop"] .about-desktop-main ol.broader-doe-thesis-gradient {
+  list-style: none;
+  padding-left: 1.35em;
+}
+
+html[data-about-page][data-layout="desktop"] .about-desktop-main ol.broader-doe-thesis-gradient .broader-doe-thesis-item {
+  display: grid;
+  grid-template-columns: 1.35em minmax(0, 1fr);
+  column-gap: 0;
+  font-size: clamp(1.32rem, 1.05vw, 1.58rem);
+  line-height: 1.48;
+  letter-spacing: -0.01em;
 }
 
 html[data-about-page][data-layout="desktop"] .broader-doe-hero-headlines {

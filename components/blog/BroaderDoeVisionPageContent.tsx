@@ -16,6 +16,7 @@ import {
   BROADER_DOE_VISION_HERO_WRAP,
   BROADER_DOE_VISION_SUBHEADING_TW,
   BROADER_DOE_VISION_THESIS_ITEM_TW,
+  BROADER_DOE_VISION_THESIS_LIST_TW,
   BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_TW,
   BROADER_DOE_VISION_TITLE_TW,
 } from "@/lib/blog/broader-doe-vision-layout-styles";
@@ -105,7 +106,7 @@ export function BroaderDoeVisionPageContent() {
             <p className={`${BROADER_DOE_VISION_BODY_TW} !mt-0`}>{BROADER_DOE_VISION_THESIS_INTRO}</p>
           </figure>
 
-          <ol className={`broader-doe-thesis-gradient ${ABOUT_MOBILE_LIST_GAP} list-none pl-[1.35em]`}>
+          <ol className={`${BROADER_DOE_VISION_THESIS_LIST_TW} ${ABOUT_MOBILE_LIST_GAP}`}>
             {BROADER_DOE_VISION_THESIS_POINTS.map((point, index) => (
               <li
                 key={point}
