@@ -292,6 +292,10 @@ html[data-about-page]:has(.doephone-mobile-root--doehealth) main figcaption {
   color: #d4a574 !important;
 }
 
+html[data-about-page]:has(.doephone-mobile-root--doehealth) main figcaption.about-chart-figcaption {
+  color: #f2e8da !important;
+}
+
 /* FAQ borders + open state. */
 html[data-about-page]:has(.doephone-mobile-root--doehealth) main [class*="border-[#1E343A]"] {
   border-color: rgba(232, 192, 142, 0.55) !important;
