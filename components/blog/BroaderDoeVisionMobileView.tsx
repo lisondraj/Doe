@@ -7,7 +7,7 @@ import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
 import { DoeHealthTopBanner } from "@/components/doehealth/DoeHealthTopBanner";
 import { ABOUT_STYLE_PHONE_SHELL_PROPS, ABOUT_STYLE_TOP_BANNER } from "@/lib/about/about-style-phone-shell-props";
 import "@/lib/about/about-doehealth-iphone.css";
-import { BLOG_CONTENT_PT } from "@/lib/blog/blog-layout-styles";
+import { BROADER_DOE_VISION_CONTENT_PT } from "@/lib/blog/broader-doe-vision-layout-styles";
 import "@/lib/doehealth/doehealth-landing.css";
 import { applyPhoneOverflowChrome } from "@/lib/doephone/phone-layout-viewport";
 import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-viewport";
@@ -34,7 +34,7 @@ export function BroaderDoeVisionMobileView() {
       {...ABOUT_STYLE_PHONE_SHELL_PROPS}
       topBanner={<DoeHealthTopBanner {...ABOUT_STYLE_TOP_BANNER} />}
     >
-      <main className={`w-full ${BLOG_CONTENT_PT}`}>
+      <main className={`w-full ${BROADER_DOE_VISION_CONTENT_PT}`}>
         <BroaderDoeVisionPageContent />
       </main>
     </BlogMobileShell>

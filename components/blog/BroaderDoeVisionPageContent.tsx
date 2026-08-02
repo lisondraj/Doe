@@ -3,22 +3,21 @@ import { BroaderDoeVisionEmailInvite } from "@/components/blog/BroaderDoeVisionE
 import { BroaderDoeVisionProposalQuote } from "@/components/blog/BroaderDoeVisionProposalQuote";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import {
-  ABOUT_HERO_HEADLINE_WRAP,
   ABOUT_MOBILE_CONTENT_GAP,
   ABOUT_MOBILE_LIST_GAP,
   ABOUT_MOBILE_SECTION_GAP,
   ABOUT_PAGE_HERO_BOX_TW,
-  ABOUT_PAGE_HERO_HEADLINE_PT,
-  ABOUT_PAGE_MOBILE_BYLINE_GAP,
-  ABOUT_PAGE_MOBILE_BYLINE_TW,
-  ABOUT_PAGE_TITLE_TW,
 } from "@/lib/about/about-layout-styles";
 import {
   BROADER_DOE_VISION_BODY_TW,
+  BROADER_DOE_VISION_BYLINE_TW,
+  BROADER_DOE_VISION_HERO_HEADLINES_WRAP,
+  BROADER_DOE_VISION_HERO_INTRO_WRAP,
   BROADER_DOE_VISION_HERO_WRAP,
   BROADER_DOE_VISION_SUBHEADING_TW,
   BROADER_DOE_VISION_THESIS_ITEM_TW,
   BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_TW,
+  BROADER_DOE_VISION_TITLE_TW,
 } from "@/lib/blog/broader-doe-vision-layout-styles";
 import {
   BROADER_DOE_VISION_AI_PLAYBOOK_PARAGRAPH,
@@ -42,19 +41,23 @@ import {
 export function BroaderDoeVisionPageContent() {
   return (
     <div className="about-page-content">
-      <div className={`${ABOUT_HERO_HEADLINE_WRAP} ${ABOUT_PAGE_HERO_HEADLINE_PT}`}>
-        <h1 className={ABOUT_PAGE_TITLE_TW}>{BROADER_DOE_VISION_TITLE}</h1>
+      <header className={BROADER_DOE_VISION_HERO_INTRO_WRAP}>
+        <div className={BROADER_DOE_VISION_HERO_HEADLINES_WRAP}>
+          <h1 className={BROADER_DOE_VISION_TITLE_TW}>{BROADER_DOE_VISION_TITLE}</h1>
 
-        <p className={`${BROADER_DOE_VISION_SUBHEADING_TW} max-w-[36ch]`}>{BROADER_DOE_VISION_SUBHEADING}</p>
-      </div>
+          <p className={`${BROADER_DOE_VISION_SUBHEADING_TW} mx-auto max-w-[36ch]`}>
+            {BROADER_DOE_VISION_SUBHEADING}
+          </p>
 
-      <p className={`${ABOUT_PAGE_MOBILE_BYLINE_TW} ${ABOUT_PAGE_MOBILE_BYLINE_GAP}`}>
-        {BROADER_DOE_VISION_BYLINE}
-        <span className="mx-2" aria-hidden>
-          ·
-        </span>
-        {BROADER_DOE_VISION_DATE}
-      </p>
+          <p className={BROADER_DOE_VISION_BYLINE_TW}>
+            {BROADER_DOE_VISION_BYLINE}
+            <span className="mx-2" aria-hidden>
+              ·
+            </span>
+            {BROADER_DOE_VISION_DATE}
+          </p>
+        </div>
+      </header>
 
       <div className={BROADER_DOE_VISION_HERO_WRAP}>
         <BlogHeroVisual

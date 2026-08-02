@@ -648,6 +648,59 @@ html[data-about-page][data-layout="desktop"] .broader-doe-desktop-content {
   margin-right: auto;
 }
 
+/* Broader Doe Vision hero intro — centered gold title + description, spaced lines. */
+html[data-about-page] .broader-doe-hero-headlines {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.15rem, 0.9rem + 1.15vmin, 1.65rem);
+}
+
+html[data-about-page] .broader-doe-hero-title,
+html[data-about-page] .broader-doe-hero-description {
+  background: var(
+    --doehealth-gold-text-gradient,
+    linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%)
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+html[data-about-page] .broader-doe-hero-byline {
+  color: #e8c08e !important;
+}
+
+html[data-about-page][data-layout="desktop"] .broader-doe-hero-title {
+  font-size: clamp(2.65rem, 3.75vw, 3.95rem);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+}
+
+html[data-about-page][data-layout="desktop"] .broader-doe-hero-description {
+  font-size: clamp(1.32rem, 1.2vw, 1.55rem);
+}
+
+html[data-about-page][data-layout="desktop"] .broader-doe-hero-byline {
+  font-size: clamp(0.92rem, 0.85vw, 1.06rem);
+}
+
+html[data-about-page][data-layout="desktop"] .broader-doe-hero-headlines {
+  gap: clamp(1.25rem, 1vw, 1.75rem);
+}
+
+html[data-about-page][data-layout="desktop"] .broader-doe-hero-visual {
+  margin-top: clamp(2.75rem, 3.2vw, 3.75rem);
+}
+
+html[data-about-page][data-layout="desktop"] .about-desktop-main:has(.broader-doe-hero-intro) {
+  padding-top: calc(
+    var(--doe-home-top-banner-height, 0px) + var(--desktop-nav-height, 6.25rem) +
+      clamp(2rem, 2.8vw, 3rem)
+  );
+}
+
 html[data-about-page][data-layout="desktop"] .about-page-content .about-hero-visual,
 html[data-about-page][data-layout="desktop"] .about-page-content [class*="blog-hero"] {
   width: 100%;
