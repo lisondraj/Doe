@@ -11,4 +11,4 @@ export const BROADER_DOE_VISION_SUBHEADING_TW = `about-page-description mt-[clam
 export const BROADER_DOE_VISION_BODY_TW = `broader-doe-body text-[clamp(1.32rem,1.12rem+0.9vmin,1.58rem)] iphone-page:text-[clamp(1.55rem,1.28rem+1.22vmin,1.95rem)] font-normal leading-[1.48] tracking-[-0.01em] text-[rgba(242,232,218,0.92)] ${dmSans.className}`;
 
 /** Broader Doe Vision thesis list items — bold, same scale as body, gradient applied in CSS. */
-export const BROADER_DOE_VISION_THESIS_ITEM_TW = `text-[clamp(1.32rem,1.12rem+0.9vmin,1.58rem)] iphone-page:text-[clamp(1.55rem,1.28rem+1.22vmin,1.95rem)] font-semibold leading-[1.48] tracking-[-0.01em] ${dmSans.className}`;
+export const BROADER_DOE_VISION_THESIS_ITEM_TW = `text-[clamp(1.32rem,1.12rem+0.9vmin,1.58rem)] iphone-page:text-[clamp(1.55rem,1.28rem+1.22vmin,1.95rem)] font-normal leading-[1.48] tracking-[-0.01em] ${dmSans.className}`;
