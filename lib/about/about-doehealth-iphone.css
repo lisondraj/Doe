@@ -344,13 +344,21 @@ html[data-about-page]:has(.doephone-mobile-root--doehealth) .broader-doe-hero-vi
   margin-top: clamp(2.75rem, 2.2rem + 2.4vmin, 3.25rem);
 }
 
-html[data-about-page]:has(.doephone-mobile-root--doehealth) main p.broader-doe-hero-description {
-  font-size: clamp(1.82rem, 1.48rem + 1.55vmin, 2.32rem) !important;
+/* Broader Doe Vision — shared hero typography (desktop sizes on all breakpoints). */
+html[data-about-page] .broader-doe-hero-title {
+  font-size: clamp(2.65rem, 3.75vw, 3.95rem) !important;
+  line-height: 1.02 !important;
+  letter-spacing: -0.035em !important;
+  font-weight: 375 !important;
+}
+
+html[data-about-page] .broader-doe-hero-description {
+  font-size: clamp(1.55rem, 1.35vw, 1.82rem) !important;
   line-height: 1.32 !important;
 }
 
-html[data-about-page]:has(.doephone-mobile-root--doehealth) main p.broader-doe-hero-byline {
-  font-size: clamp(1.2rem, 1.02rem + 0.78vmin, 1.44rem) !important;
+html[data-about-page] .broader-doe-hero-byline {
+  font-size: clamp(1.12rem, 1vw, 1.32rem) !important;
   line-height: 1.35 !important;
 }
 
@@ -690,36 +698,22 @@ html[data-about-page] .broader-doe-hero-description {
   -webkit-text-fill-color: transparent !important;
 }
 
-html[data-about-page] .broader-doe-hero-title {
-  font-weight: 375;
-}
-
 html[data-about-page] .broader-doe-hero-byline {
   color: #e8c08e !important;
-}
-
-html[data-about-page][data-layout="desktop"] .broader-doe-hero-title {
-  font-size: clamp(2.65rem, 3.75vw, 3.95rem);
-  line-height: 1.02;
-  letter-spacing: -0.035em;
-}
-
-html[data-about-page][data-layout="desktop"] .broader-doe-hero-description {
-  font-size: clamp(1.55rem, 1.35vw, 1.82rem);
 }
 
 html[data-about-page][data-layout="desktop"] .about-desktop-main p.broader-doe-body {
   color: rgba(242, 232, 218, 0.92) !important;
 }
 
-html[data-about-page][data-layout="desktop"] .broader-doe-hero-byline {
-  font-size: clamp(1.12rem, 1vw, 1.32rem);
-}
-
-/* Broader Doe Vision desktop — indented gold pull quote (match iPhone width + scale up). */
+/* Broader Doe Vision desktop — gold pull quote: 1/8 inset each side, left-aligned in center band. */
 html[data-about-page][data-layout="desktop"] .broader-doe-proposal-quote {
-  margin-left: clamp(1.35rem, 1.05rem + 1.35vmin, 2.15rem);
-  max-width: min(38ch, calc(100% - clamp(1.35rem, 1.05rem + 1.35vmin, 2.15rem)));
+  box-sizing: border-box;
+  width: 75% !important;
+  max-width: none !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  text-align: left;
 }
 
 html[data-about-page][data-layout="desktop"] .broader-doe-proposal-quote blockquote.about-page-quote {
