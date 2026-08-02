@@ -6,8 +6,6 @@ import {
   ABOUT_MOBILE_CONTENT_GAP,
   ABOUT_MOBILE_LIST_GAP,
   ABOUT_MOBILE_SECTION_GAP,
-  ABOUT_PAGE_HERO_AFTER_BYLINE,
-  ABOUT_PAGE_HERO_BEFORE_ARTICLE,
   ABOUT_PAGE_HERO_BOX_TW,
   ABOUT_PAGE_HERO_HEADLINE_PT,
   ABOUT_PAGE_MOBILE_BYLINE_GAP,
@@ -16,6 +14,7 @@ import {
 } from "@/lib/about/about-layout-styles";
 import {
   BROADER_DOE_VISION_BODY_TW,
+  BROADER_DOE_VISION_HERO_WRAP,
   BROADER_DOE_VISION_SUBHEADING_TW,
   BROADER_DOE_VISION_THESIS_ITEM_TW,
 } from "@/lib/blog/broader-doe-vision-layout-styles";
@@ -51,7 +50,7 @@ export function BroaderDoeVisionPageContent() {
         {BROADER_DOE_VISION_DATE}
       </p>
 
-      <div className={`${ABOUT_PAGE_HERO_AFTER_BYLINE} ${ABOUT_PAGE_HERO_BEFORE_ARTICLE}`}>
+      <div className={BROADER_DOE_VISION_HERO_WRAP}>
         <BlogHeroVisual
           backdrop={BROADER_DOE_VISION_HERO_BACKDROP}
           variant="hero"
