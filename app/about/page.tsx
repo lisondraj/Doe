@@ -1,18 +1,25 @@
 import type { Metadata } from "next";
 
-import { AboutRouter } from "@/components/about/AboutRouter";
-import { aboutPageUrl } from "@/lib/site-domains";
+import { BroaderDoeVisionMobileView } from "@/components/blog/BroaderDoeVisionMobileView";
+import {
+  BROADER_DOE_VISION_OPENING_LEDE,
+  BROADER_DOE_VISION_PATH,
+  BROADER_DOE_VISION_TITLE,
+} from "@/lib/blog/broader-doe-vision-article";
+import { primarySiteOrigin } from "@/lib/site-domains";
 
 export const dynamic = "force-dynamic";
 
+const pageTitle = `${BROADER_DOE_VISION_TITLE} · Doe`;
+
 export const metadata: Metadata = {
-  title: "About · Doe",
-  description: "Doe is on a mission to redefine healthcare.",
+  title: pageTitle,
+  description: BROADER_DOE_VISION_OPENING_LEDE,
   alternates: {
-    canonical: aboutPageUrl(),
+    canonical: `${primarySiteOrigin()}${BROADER_DOE_VISION_PATH}`,
   },
 };
 
 export default function AboutPage() {
-  return <AboutRouter />;
+  return <BroaderDoeVisionMobileView />;
 }

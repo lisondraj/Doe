@@ -1,8 +1,10 @@
 import { ABOUT_PAGE_HERO_BACKDROP } from "@/lib/about/about-page-article";
+import { ABOUT_PATH } from "@/lib/site-domains";
 
 export const BROADER_DOE_VISION_SLUG = "the-broader-doe-vision";
 
-export const BROADER_DOE_VISION_PATH = `/blog/${BROADER_DOE_VISION_SLUG}`;
+/** Primary route — Broader Doe Vision lives at /about. */
+export const BROADER_DOE_VISION_PATH = ABOUT_PATH;
 
 export const BROADER_DOE_VISION_TITLE = "The Broader Doe Vision";
 

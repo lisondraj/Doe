@@ -18,6 +18,14 @@ import {
 } from "@/lib/blog/blog-layout-styles";
 import { dmSans } from "@/lib/home/fonts";
 import { BLOG_ARTICLES } from "@/lib/blog/articles";
+import {
+  DOE_MISSION_BYLINE,
+  DOE_MISSION_DATE,
+  DOE_MISSION_EXCERPT,
+  DOE_MISSION_HERO_BACKDROP,
+  DOE_MISSION_PATH,
+  DOE_MISSION_TITLE,
+} from "@/lib/blog/doe-mission-article";
 
 function BlogReadMoreArrow() {
   return (
@@ -45,13 +53,38 @@ export function BlogIndexMobileView() {
         <BlogLandingHero />
 
         <ul className="mt-12 iphone-page:mt-[clamp(2.5rem,2rem+2.5vmin,4rem)] flex w-full flex-col">
+          <li>
+            <Link href={DOE_MISSION_PATH} className="group block no-underline">
+              <div className={BLOG_CARD_STACK}>
+                <BlogHeroVisual backdrop={DOE_MISSION_HERO_BACKDROP} variant="list" />
+                <div>
+                  <h2
+                    className={`${BLOG_LANDING_CARD_TITLE_TW} transition-colors group-hover:text-[#1E343A]`}
+                  >
+                    {DOE_MISSION_TITLE}
+                  </h2>
+                  <p className={`${BLOG_META_TW} ${BLOG_LANDING_TITLE_META_GAP}`}>
+                    {DOE_MISSION_BYLINE.replace(/^By /, "")}
+                    <span className="mx-2 text-[#9CA3AF]" aria-hidden>
+                      ·
+                    </span>
+                    {DOE_MISSION_DATE}
+                  </p>
+                  <p className={`${BLOG_LANDING_EXCERPT_TW} !mt-3 line-clamp-2`}>{DOE_MISSION_EXCERPT}</p>
+                  <span className={`${BLOG_READ_MORE_TW} mt-2.5`}>
+                    Read more
+                    <BlogReadMoreArrow />
+                  </span>
+                </div>
+              </div>
+            </Link>
+          </li>
+
           {BLOG_ARTICLES.slice(0, 3).map((article, index) => (
             <li key={article.slug}>
-              {index > 0 ? (
-                <div className={BLOG_LIST_DIVIDER_WRAP} aria-hidden>
-                  <div className={BLOG_LIST_DIVIDER_LINE} />
-                </div>
-              ) : null}
+              <div className={BLOG_LIST_DIVIDER_WRAP} aria-hidden>
+                <div className={BLOG_LIST_DIVIDER_LINE} />
+              </div>
               <Link href={`/blog/${article.slug}`} className="group block no-underline">
                 <div className={BLOG_CARD_STACK}>
                   <BlogHeroVisual backdrop={article.backdrop} variant="list" />

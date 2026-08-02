@@ -1,4 +1,4 @@
-import { ABOUT_CONTACT_EMAIL, ABOUT_TOP_BANNER_LINK_LABEL, ABOUT_TOP_BANNER_MESSAGE } from "@/lib/about/about-contact";
+import { ABOUT_CONTACT_MAILTO_SUBJECT, ABOUT_TOP_BANNER_LINK_LABEL, ABOUT_TOP_BANNER_MESSAGE } from "@/lib/about/about-contact";
 
 /** Shared BlogMobileShell props for iPhone /about-style pages. */
 export const ABOUT_STYLE_PHONE_SHELL_PROPS = {

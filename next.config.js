@@ -4,6 +4,15 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ["@supabase/supabase-js", "resend"],
   },
+  async redirects() {
+    return [
+      {
+        source: "/blog/the-broader-doe-vision",
+        destination: "/about",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

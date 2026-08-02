@@ -9,7 +9,7 @@ import { useAboutStylePhonePageChrome } from "@/lib/about/use-about-style-phone-
 import { BLOG_CONTENT_PT } from "@/lib/blog/blog-layout-styles";
 import "@/lib/doehealth/doehealth-landing.css";
 
-/** iPhone blog entry — mirrors /about shell and typography. */
+/** iPhone /about — Broader Doe Vision article layout. */
 export function BroaderDoeVisionMobileView() {
   useAboutStylePhonePageChrome();
 

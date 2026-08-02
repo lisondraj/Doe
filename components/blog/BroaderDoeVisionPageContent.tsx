@@ -38,7 +38,7 @@ import {
   BROADER_DOE_VISION_THESIS_POINTS,
   BROADER_DOE_VISION_TITLE,
 } from "@/lib/blog/broader-doe-vision-article";
-/** iPhone /blog/the-broader-doe-vision — same scroll structure as /about. */
+/** iPhone /about — Broader Doe Vision scroll structure. */
 export function BroaderDoeVisionPageContent() {
   return (
     <div className="about-page-content">
