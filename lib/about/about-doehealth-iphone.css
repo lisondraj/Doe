@@ -723,6 +723,10 @@ html[data-about-page][data-layout="desktop"] .broader-doe-proposal-quote blockqu
 }
 
 /* Broader Doe Vision desktop — numbered thesis list (match iPhone indent + grid). */
+html[data-about-page][data-layout="desktop"] .about-desktop-main .broader-doe-thesis-headline {
+  font-size: clamp(1.48rem, 1.22vw, 1.82rem) !important;
+}
+
 html[data-about-page][data-layout="desktop"] .about-desktop-main ol.broader-doe-thesis-gradient {
   list-style: none;
   padding-left: 1.35em;
