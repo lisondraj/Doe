@@ -72,7 +72,14 @@ export function BroaderDoeVisionPageContent() {
 
           {BROADER_DOE_VISION_BODY_PARAGRAPHS.map((paragraph, index) => (
             <p key={paragraph} className={BROADER_DOE_VISION_BODY_TW}>
-              {index === BROADER_DOE_VISION_AI_PLAYBOOK_PARAGRAPH_INDEX ? (
+              {index === BROADER_DOE_VISION_CONTACT_PARAGRAPH_INDEX ? (
+                <>
+                  <span className="broader-doe-thesis-text">{paragraph}</span>
+                  <span className="inline-block pl-1 align-baseline">
+                    <AboutStyleContactLink />
+                  </span>
+                </>
+              ) : index === BROADER_DOE_VISION_AI_PLAYBOOK_PARAGRAPH_INDEX ? (
                 <>
                   {BROADER_DOE_VISION_AI_PLAYBOOK_PARAGRAPH.before}
                   <span className="font-semibold">{BROADER_DOE_VISION_AI_PLAYBOOK_PARAGRAPH.bold}</span>
@@ -81,12 +88,6 @@ export function BroaderDoeVisionPageContent() {
               ) : (
                 paragraph
               )}
-              {index === BROADER_DOE_VISION_CONTACT_PARAGRAPH_INDEX ? (
-                <>
-                  {" "}
-                  <AboutStyleContactLink />
-                </>
-              ) : null}
             </p>
           ))}
 
