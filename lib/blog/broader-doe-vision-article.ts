@@ -6,7 +6,8 @@ export const BROADER_DOE_VISION_PATH = `/blog/${BROADER_DOE_VISION_SLUG}`;
 
 export const BROADER_DOE_VISION_TITLE = "The Broader Doe Vision";
 
-export const BROADER_DOE_VISION_SUBHEADING = "We want providers to build their own intelligent tools.";
+export const BROADER_DOE_VISION_SUBHEADING =
+  "We believe intelligent tools in healthcare should be built by the providers themselves.";
 
 export const BROADER_DOE_VISION_OPENING_LEDE =
   "I strongly believe that within the next few years, intelligence in medicine will undergo a rapid transformation, completely detached from today's landscape.";
