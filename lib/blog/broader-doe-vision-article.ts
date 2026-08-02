@@ -24,8 +24,11 @@ export const BROADER_DOE_VISION_BODY_PARAGRAPHS = [
   "There exist multiple nuances in the delivery of care, whether between providers, clinics and hospitals, or even horizontally between specialties and more niche provider workflows. These nuances are largely divided geographically, often influenced by local and institutional regulation, and years of cultivating a workplace culture that only it's workers understand. Yet, these nuances are often unstructured and driven by human intent and emotion, not as easily understood by a generalist playbook.",
 ] as const;
 
-export const BROADER_DOE_VISION_PROPOSAL_HIGHLIGHT =
-  "We propose that in the years to come, every provider, every clinic, every hospital and even deeper, every specialty, every small action in healthcare, will be powered by their own intelligence stack, built on top of open-weight models, fortified by frontier tools, and hosted on private cloud compute.";
+export const BROADER_DOE_VISION_PROPOSAL_HIGHLIGHT_LEAD =
+  "We propose that in the years to come, every provider, every clinic, every hospital and even deeper, every specialty, every small action in healthcare, will be powered by their own intelligence stack.";
+
+export const BROADER_DOE_VISION_PROPOSAL_HIGHLIGHT_CONTINUATION =
+  "This stack will be built on top of open-weight models, fortified by frontier tools, and hosted on private cloud compute.";
 
 export const BROADER_DOE_VISION_PROPOSAL_CLOSING =
   "This blend of intelligence is the only path to guaranteeing AI can effectively meet the challenges of a healthcare industry being rapidly redefined by technology every second.";
