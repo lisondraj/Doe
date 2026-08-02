@@ -49,6 +49,8 @@ export type DoeHomeHeroHeadline = {
   line2?: string;
   className?: string;
   fitToContainer?: boolean;
+  readMoreHref?: string;
+  readMoreLabel?: string;
 };
 
 export function DoePhoneMobileView({
@@ -178,6 +180,8 @@ export function DoePhoneMobileView({
         heroLine2={heroHeadline?.line2}
         heroHeadlineClassName={heroHeadline?.className}
         heroHeadlineFitToContainer={heroHeadline?.fitToContainer}
+        heroReadMoreHref={heroHeadline?.readMoreHref}
+        heroReadMoreLabel={heroHeadline?.readMoreLabel}
         disableHeroOrbInteractions={disableCarouselInteractions}
         heroOrbSchemes={isDoeHealthLanding ? DOEHEALTH_HERO_DIAL_ORBS : undefined}
       />

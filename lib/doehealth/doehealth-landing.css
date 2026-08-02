@@ -143,6 +143,46 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth) .doehealth-top-banner
   letter-spacing: -0.035em;
 }
 
+/* Hero read-more — smaller gold link under headline (phone + desktop). */
+.doephone-mobile-root--doehealth .doehealth-hero-read-more,
+.doe-desktop-root--doehealth .doehealth-hero-read-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  margin-top: clamp(0.85rem, 0.62rem + 1.05vmin, 1.2rem);
+  font-size: clamp(0.75rem, 2.05vmin, 0.875rem);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  color: #e8c08e;
+  text-decoration: underline;
+  text-decoration-color: rgba(232, 192, 142, 0.52);
+  text-underline-offset: 0.18em;
+  transition: color 180ms ease, text-decoration-color 180ms ease, opacity 180ms ease;
+}
+
+.doephone-mobile-root--doehealth .doehealth-hero-read-more:hover,
+.doe-desktop-root--doehealth .doehealth-hero-read-more:hover {
+  opacity: 0.88;
+  color: #f2e0c6;
+  text-decoration-color: rgba(232, 192, 142, 0.82);
+}
+
+.doephone-mobile-root--doehealth .doehealth-hero-read-more__arrow,
+.doe-desktop-root--doehealth .doehealth-hero-read-more__arrow {
+  flex-shrink: 0;
+  width: 11px;
+  height: 11px;
+  margin-top: 0.02em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doephone-mobile-root--doehealth .doehealth-hero-read-more,
+  .doe-desktop-root--doehealth .doehealth-hero-read-more {
+    transition: none;
+  }
+}
+
 /* Doe logo — mobile /doehealth always uses page gold */
 html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav.proto-nav-scroll-frost .proto-nav-chrome-logo,
 html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav.proto-nav-scroll-frost .proto-nav-chrome-logo a,

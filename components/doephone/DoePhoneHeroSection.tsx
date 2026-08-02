@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { DoePhoneHeroGradientCircles } from "@/components/doephone/DoePhoneHeroGradientCircles";
 import { DoePhoneHeroHeadline } from "@/components/doephone/DoePhoneHeroHeadline";
 import { DoePhoneHomeHeroGrainShader } from "@/components/doephone/DoePhoneHomeHeroGrainShader";
@@ -23,7 +25,29 @@ import {
   doeHomeHeroDuskShaderSurface,
 } from "@/lib/proto/proto-shader-backdrop-colors";
 import type { HeroDialOrbScheme } from "@/lib/doephone/hero-dial-orbs";
+import { inter } from "@/lib/home/fonts";
 import { useEffect, useState, type CSSProperties } from "react";
+
+function HeroReadMoreArrow() {
+  return (
+    <svg
+      className="doehealth-hero-read-more__arrow"
+      width="12"
+      height="12"
+      viewBox="0 0 12 12"
+      fill="none"
+      aria-hidden
+    >
+      <path
+        d="M2.5 6h7M6.75 3.25 9.5 6 6.75 8.75"
+        stroke="currentColor"
+        strokeWidth="1.35"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
 /** Hero — slightly below full viewport so Safari bottom bar does not clip; section 2 stays full height. */
 export const DOEPHONE_HERO_HEIGHT =
@@ -39,6 +63,8 @@ export function DoePhoneHeroSection({
   heroLine2,
   heroHeadlineClassName,
   heroHeadlineFitToContainer,
+  heroReadMoreHref,
+  heroReadMoreLabel = "Read more",
   disableHeroOrbInteractions,
   heroOrbSchemes,
 }: {
@@ -52,6 +78,8 @@ export function DoePhoneHeroSection({
   heroLine2?: string;
   heroHeadlineClassName?: string;
   heroHeadlineFitToContainer?: boolean;
+  heroReadMoreHref?: string;
+  heroReadMoreLabel?: string;
   disableHeroOrbInteractions?: boolean;
   /** Optional hero dial orb palette (e.g. /doehealth gold schemes). */
   heroOrbSchemes?: readonly HeroDialOrbScheme[];
@@ -161,6 +189,15 @@ export function DoePhoneHeroSection({
             className={heroHeadlineClassName}
             fitToContainer={heroHeadlineFitToContainer}
           />
+          {heroReadMoreHref ? (
+            <Link
+              href={heroReadMoreHref}
+              className={`doehealth-hero-read-more pointer-events-auto ${inter.className}`}
+            >
+              {heroReadMoreLabel}
+              <HeroReadMoreArrow />
+            </Link>
+          ) : null}
         </div>
       </div>
     </section>
