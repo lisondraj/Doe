@@ -640,10 +640,10 @@ html[data-about-page][data-layout="desktop"] .about-desktop-content {
   box-sizing: border-box;
 }
 
-/* Desktop /about — center third column with 1/3 side margins. */
+/* Desktop /about — center column; side margins narrowed by 1/3 each (content 5/9). */
 html[data-about-page][data-layout="desktop"] .broader-doe-desktop-content {
-  width: 33.333%;
-  max-width: 33.333%;
+  width: 55.556%;
+  max-width: 55.556%;
   margin-left: auto;
   margin-right: auto;
 }
