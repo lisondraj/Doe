@@ -47,7 +47,7 @@ export const BROADER_DOE_VISION_CLOSING =
   "These three points form the thesis of our organization and will guide Doe through our early-stages, and in the years to come.";
 
 export const BROADER_DOE_VISION_FINAL_PARAGRAPH =
-  "If this vision resonates with you — whether you're a provider, administrator, or investor — I'd welcome the chance to connect.";
+  "If this vision resonates with you, whether you are a provider, investor, or patient, I'd welcome the chance to connect.";
 
 export const BROADER_DOE_VISION_EMAIL_INVITE_HEADLINE = "We'd love to chat.";
 

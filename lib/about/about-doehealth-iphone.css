@@ -342,6 +342,23 @@ html[data-about-page]:has(.doephone-mobile-root--doehealth) main .broader-doe-th
   -webkit-text-fill-color: transparent !important;
 }
 
+/* Broader Doe Vision — email invite panel (rings flush to bottom edge). */
+html[data-about-page]:has(.doephone-mobile-root--doehealth) .broader-doe-email-invite {
+  border-color: rgba(212, 165, 116, 0.28) !important;
+  background-color: #271f17 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 245, 230, 0.06),
+    0 18px 40px rgba(0, 0, 0, 0.28);
+}
+
+html[data-about-page]:has(.doephone-mobile-root--doehealth) .broader-doe-email-invite__rings svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: none !important;
+  transform-origin: bottom center !important;
+}
+
 /* Gold gradient bar / TAM fills. */
 html[data-about-page]:has(.doephone-mobile-root--doehealth) .about-chart-bar-fill--gold,
 html[data-about-page]:has(.doephone-mobile-root--doehealth) .about-stat-charts .about-chart-bar-fill,

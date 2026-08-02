@@ -16,7 +16,7 @@ export function BroaderDoeVisionEmailInvite() {
       className={`broader-doe-email-invite relative flex min-h-[clamp(13.5rem,38vw,17.5rem)] w-full items-center justify-center overflow-hidden border border-[rgba(212,165,116,0.28)] bg-[#271F17] ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
       aria-label="Contact James Lisondra"
     >
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-[min(88%,14rem)]" aria-hidden>
+      <div className="broader-doe-email-invite__rings pointer-events-none absolute inset-x-0 bottom-0 z-0 h-[min(92%,15rem)]" aria-hidden>
         <AboutContactRingsGraphic />
       </div>
 
