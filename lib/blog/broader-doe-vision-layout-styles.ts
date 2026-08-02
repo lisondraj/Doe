@@ -1,11 +1,11 @@
 import { dmSans } from "@/lib/home/fonts";
-import { ABOUT_MOBILE_CHART_FIGCAPTION_TW, ABOUT_PAGE_HERO_AFTER_BYLINE } from "@/lib/about/about-layout-styles";
+import { ABOUT_PAGE_HERO_AFTER_BYLINE } from "@/lib/about/about-layout-styles";
 
 /** Hero shader band — symmetric spacing above and below the gradient box. */
 export const BROADER_DOE_VISION_HERO_WRAP = `${ABOUT_PAGE_HERO_AFTER_BYLINE} mb-4 iphone-page:mb-5`;
 
-/** Broader Doe Vision thesis section — matches doe-mission chart figcaption exactly. */
-export const BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_TW = ABOUT_MOBILE_CHART_FIGCAPTION_TW;
+/** Broader Doe Vision thesis section — chart-style caption, scaled up. */
+export const BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_TW = `about-chart-figcaption mb-5 font-medium leading-snug tracking-[-0.01em] text-[#F2E8DA] iphone-page:mb-6 text-[clamp(1.32rem,1.12rem+0.95vmin,1.62rem)] iphone-page:text-[clamp(1.55rem,1.28rem+1.22vmin,1.92rem)] ${dmSans.className}`;
 
 /** Broader Doe Vision subheading — larger than default about-style description. */
 export const BROADER_DOE_VISION_SUBHEADING_TW = `about-page-description mt-[clamp(0.55rem,0.42rem+0.55vmin,0.85rem)] font-medium leading-snug tracking-[-0.01em] text-[#F2E8DA] text-[clamp(1.42rem,1.22rem+0.95vmin,1.78rem)] iphone-page:text-[clamp(1.68rem,1.38rem+1.35vmin,2.12rem)] ${dmSans.className}`;
