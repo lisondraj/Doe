@@ -84,7 +84,7 @@ export function BroaderDoeVisionPageContent() {
 
           <ol className={`${ABOUT_MOBILE_LIST_GAP} list-decimal pl-[1.35em] marker:font-medium marker:text-[#E8C08E]`}>
             {BROADER_DOE_VISION_THESIS_POINTS.map((point) => (
-              <li key={point} className={`${ABOUT_MOBILE_BODY_TW} pl-1`}>
+              <li key={point} className={`${ABOUT_MOBILE_BODY_TW} pl-1 text-[#E8C08E]`}>
                 {point}
               </li>
             ))}
