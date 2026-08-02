@@ -324,12 +324,12 @@ html[data-about-page]:has(.doephone-mobile-root--doehealth) main .about-page-quo
   color: #e8c08e !important;
 }
 
-/* Broader Doe Vision — soft cream-white DM Sans body copy. */
+/* Broader Doe Vision — muted cream DM Sans body copy. */
 html[data-about-page]:has(.doephone-mobile-root--doehealth) main .broader-doe-body {
-  color: #f2e8da !important;
+  color: rgba(242, 232, 218, 0.72) !important;
 }
 
-/* Broader Doe Vision — one shared gold gradient across thesis points 1–3. */
+/* Broader Doe Vision — one shared gold gradient across thesis points 1–3 (numbers included). */
 html[data-about-page]:has(.doephone-mobile-root--doehealth) main .broader-doe-thesis-gradient .broader-doe-thesis-text {
   background-image: var(
     --doehealth-gold-text-gradient,
@@ -340,11 +340,6 @@ html[data-about-page]:has(.doephone-mobile-root--doehealth) main .broader-doe-th
   -webkit-background-clip: text;
   color: transparent !important;
   -webkit-text-fill-color: transparent !important;
-}
-
-html[data-about-page]:has(.doephone-mobile-root--doehealth) main .broader-doe-thesis-gradient li::marker {
-  color: #e8c08e !important;
-  font-weight: 500;
 }
 
 /* Gold gradient bar / TAM fills. */
