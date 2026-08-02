@@ -108,7 +108,7 @@ export function BroaderDoeVisionPageContent() {
 
           <p className={BROADER_DOE_VISION_BODY_TW}>{BROADER_DOE_VISION_CLOSING}</p>
 
-          <p className={BROADER_DOE_VISION_BODY_TW}>{BROADER_DOE_VISION_FINAL_PARAGRAPH}</p>
+          <p className={`${BROADER_DOE_VISION_BODY_TW} font-semibold`}>{BROADER_DOE_VISION_FINAL_PARAGRAPH}</p>
 
           <BroaderDoeVisionEmailInvite />
         </div>
