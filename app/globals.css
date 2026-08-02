@@ -4013,6 +4013,10 @@ html[data-about-page]:has(.blog-mobile-root) .about-mobile-beige-panel svg {
   transform: scale(0.84);
   transform-origin: center center;
 }
+html[data-about-page]:has(.blog-mobile-root) .broader-doe-email-invite svg {
+  transform: none;
+  transform-origin: bottom center;
+}
 /* /blog/[slug] iPhone — match home/about 80% scale and tighter article layout. */
 html[data-blog-article-page]:has(.blog-mobile-root) {
   font-size: 80%;
