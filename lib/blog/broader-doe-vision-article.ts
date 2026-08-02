@@ -47,6 +47,8 @@ export const BROADER_DOE_VISION_PROPOSAL_HIGHLIGHT_CONTINUATION =
 export const BROADER_DOE_VISION_PROPOSAL_CLOSING =
   "This blend of intelligence is the only path to guaranteeing AI can effectively meet the challenges of a healthcare industry being rapidly redefined by technology every second.";
 
+export const BROADER_DOE_VISION_THESIS_SECTION_HEADLINE = "Doe's Guiding Beliefs";
+
 export const BROADER_DOE_VISION_THESIS_INTRO =
   "Within my broader vision for Doe exists my even more robust enthusiasm in the progression of vertical AI within the next few years:";
 
