@@ -83,9 +83,9 @@ export function BroaderDoeVisionPageContent() {
 
           <p className={BROADER_DOE_VISION_BODY_TW}>{BROADER_DOE_VISION_THESIS_INTRO}</p>
 
-          <ol className={`broader-doe-thesis-gradient ${ABOUT_MOBILE_LIST_GAP} list-none pl-0`}>
+          <ol className={`broader-doe-thesis-gradient ${ABOUT_MOBILE_LIST_GAP} list-none`}>
             {BROADER_DOE_VISION_THESIS_POINTS.map((point, index) => (
-              <li key={point} className={BROADER_DOE_VISION_THESIS_ITEM_TW}>
+              <li key={point} className={`${BROADER_DOE_VISION_THESIS_ITEM_TW} pl-1`}>
                 <span className="broader-doe-thesis-text">
                   {index + 1}. {point}
                 </span>

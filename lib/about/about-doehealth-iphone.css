@@ -331,6 +331,9 @@ html[data-about-page]:has(.doephone-mobile-root--doehealth) main .broader-doe-bo
 
 /* Broader Doe Vision — one shared gold gradient across thesis points 1–3 (numbers included). */
 html[data-about-page]:has(.doephone-mobile-root--doehealth) main .broader-doe-thesis-gradient .broader-doe-thesis-text {
+  display: block;
+  padding-left: 1.35em;
+  text-indent: -1.35em;
   background-image: var(
     --doehealth-gold-text-gradient,
     linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%)
