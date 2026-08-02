@@ -4,9 +4,11 @@ export const BROADER_DOE_VISION_SLUG = "the-broader-doe-vision";
 
 export const BROADER_DOE_VISION_PATH = `/blog/${BROADER_DOE_VISION_SLUG}`;
 
-export const BROADER_DOE_VISION_TITLE_LINES = ["The Broader", "Doe Vision"] as const;
+export const BROADER_DOE_VISION_TITLE = "The Broader Doe Vision";
 
-export const BROADER_DOE_VISION_SUBHEADING =
+export const BROADER_DOE_VISION_SUBHEADING = "When providers lead the design of intelligent tools.";
+
+export const BROADER_DOE_VISION_OPENING_LEDE =
   "I strongly believe that within the next few years, intelligence in medicine will undergo a rapid transformation, completely detached from today's landscape.";
 
 export const BROADER_DOE_VISION_BYLINE = "By James Lisondra";

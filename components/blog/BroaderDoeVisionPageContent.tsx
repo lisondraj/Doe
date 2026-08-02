@@ -24,21 +24,19 @@ import {
   BROADER_DOE_VISION_DATE,
   BROADER_DOE_VISION_HERO_BACKDROP,
   BROADER_DOE_VISION_PROPOSAL_CLOSING,
+  BROADER_DOE_VISION_OPENING_LEDE,
   BROADER_DOE_VISION_PROPOSAL_HIGHLIGHT,
   BROADER_DOE_VISION_SUBHEADING,
   BROADER_DOE_VISION_THESIS_INTRO,
   BROADER_DOE_VISION_THESIS_POINTS,
-  BROADER_DOE_VISION_TITLE_LINES,
+  BROADER_DOE_VISION_TITLE,
 } from "@/lib/blog/broader-doe-vision-article";
 /** iPhone /blog/the-broader-doe-vision — same scroll structure as /about. */
 export function BroaderDoeVisionPageContent() {
   return (
     <div className="about-page-content">
       <div className={`${ABOUT_HERO_HEADLINE_WRAP} ${ABOUT_PAGE_HERO_HEADLINE_PT}`}>
-        <h1 className={ABOUT_PAGE_TITLE_TW}>
-          <span className="block">{BROADER_DOE_VISION_TITLE_LINES[0]}</span>
-          <span className="block">{BROADER_DOE_VISION_TITLE_LINES[1]}</span>
-        </h1>
+        <h1 className={ABOUT_PAGE_TITLE_TW}>{BROADER_DOE_VISION_TITLE}</h1>
 
         <p className={`${ABOUT_PAGE_SUBHEADING_TW} max-w-[36ch]`}>{BROADER_DOE_VISION_SUBHEADING}</p>
       </div>
@@ -63,6 +61,10 @@ export function BroaderDoeVisionPageContent() {
 
       <div className={ABOUT_MOBILE_SECTION_GAP}>
         <div className={ABOUT_MOBILE_CONTENT_GAP}>
+          <p className={`${ABOUT_MOBILE_BODY_TW} font-semibold text-[#1E343A]`}>
+            {BROADER_DOE_VISION_OPENING_LEDE}
+          </p>
+
           {BROADER_DOE_VISION_BODY_PARAGRAPHS.map((paragraph, index) => (
             <p key={paragraph} className={ABOUT_MOBILE_BODY_TW}>
               {paragraph}
