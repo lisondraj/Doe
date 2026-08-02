@@ -1,5 +1,5 @@
-import { AboutMobileQuote } from "@/components/about/AboutMobileQuote";
 import { AboutStyleContactLink } from "@/components/blog/AboutStyleContactLink";
+import { BroaderDoeVisionProposalQuote } from "@/components/blog/BroaderDoeVisionProposalQuote";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import {
   ABOUT_HERO_HEADLINE_WRAP,
@@ -25,7 +25,6 @@ import {
   BROADER_DOE_VISION_HERO_BACKDROP,
   BROADER_DOE_VISION_PROPOSAL_CLOSING,
   BROADER_DOE_VISION_OPENING_LEDE,
-  BROADER_DOE_VISION_PROPOSAL_HIGHLIGHT,
   BROADER_DOE_VISION_SUBHEADING,
   BROADER_DOE_VISION_THESIS_INTRO,
   BROADER_DOE_VISION_THESIS_POINTS,
@@ -77,7 +76,7 @@ export function BroaderDoeVisionPageContent() {
             </p>
           ))}
 
-          <AboutMobileQuote text={BROADER_DOE_VISION_PROPOSAL_HIGHLIGHT} />
+          <BroaderDoeVisionProposalQuote />
 
           <p className={ABOUT_MOBILE_BODY_TW}>{BROADER_DOE_VISION_PROPOSAL_CLOSING}</p>
 
