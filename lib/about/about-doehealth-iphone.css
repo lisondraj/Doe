@@ -362,6 +362,15 @@ html[data-about-page] .broader-doe-hero-byline {
   line-height: 1.35 !important;
 }
 
+/* Broader Doe Vision iPhone — slightly larger subheading + byline than desktop. */
+html[data-about-page]:has(.doephone-mobile-root--doehealth) main p.broader-doe-hero-description {
+  font-size: clamp(1.68rem, 1.45rem + 1.25vmin, 1.98rem) !important;
+}
+
+html[data-about-page]:has(.doephone-mobile-root--doehealth) main p.broader-doe-hero-byline {
+  font-size: clamp(1.22rem, 1.05rem + 0.7vmin, 1.44rem) !important;
+}
+
 /* Broader Doe Vision — shared gold gradient text (contact paragraph + thesis points). */
 html[data-about-page]:has(.doephone-mobile-root--doehealth) main .broader-doe-thesis-text,
 html[data-about-page][data-layout="desktop"] .about-desktop-main .broader-doe-thesis-text {
