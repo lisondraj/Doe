@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { BroaderDoeVisionMobileView } from "@/components/blog/BroaderDoeVisionMobileView";
+import { BroaderDoeVisionRouter } from "@/components/blog/BroaderDoeVisionRouter";
 import {
   BROADER_DOE_VISION_OPENING_LEDE,
   BROADER_DOE_VISION_PATH,
@@ -21,5 +21,5 @@ export const metadata: Metadata = {
 };
 
 export default function AboutPage() {
-  return <BroaderDoeVisionMobileView />;
+  return <BroaderDoeVisionRouter />;
 }

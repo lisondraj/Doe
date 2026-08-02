@@ -1,17 +1,33 @@
 "use client";
 
+import { useLayoutEffect } from "react";
+
 import { BroaderDoeVisionPageContent } from "@/components/blog/BroaderDoeVisionPageContent";
 import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
 import { DoeHealthTopBanner } from "@/components/doehealth/DoeHealthTopBanner";
 import { ABOUT_STYLE_PHONE_SHELL_PROPS, ABOUT_STYLE_TOP_BANNER } from "@/lib/about/about-style-phone-shell-props";
 import "@/lib/about/about-doehealth-iphone.css";
-import { useAboutStylePhonePageChrome } from "@/lib/about/use-about-style-phone-page-chrome";
 import { BLOG_CONTENT_PT } from "@/lib/blog/blog-layout-styles";
 import "@/lib/doehealth/doehealth-landing.css";
+import { applyPhoneOverflowChrome } from "@/lib/doephone/phone-layout-viewport";
+import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-viewport";
+import { ABOUT_BROWN_OVERFLOW_SURFACE } from "@/lib/home/doe-page-colors";
+import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 
 /** iPhone /about — Broader Doe Vision article layout. */
 export function BroaderDoeVisionMobileView() {
-  useAboutStylePhonePageChrome();
+  useDoePhoneLayoutViewport();
+  useDoePhoneStableViewport(true);
+
+  useLayoutEffect(() => {
+    applyPhoneOverflowChrome(ABOUT_BROWN_OVERFLOW_SURFACE);
+
+    try {
+      sessionStorage.removeItem(`doephone-app-viewport-lock:${location.hostname}`);
+    } catch {
+      /* ignore */
+    }
+  }, []);
 
   return (
     <BlogMobileShell
