@@ -4,7 +4,7 @@ import {
   BROADER_DOE_VISION_PROPOSAL_HIGHLIGHT_LEAD,
 } from "@/lib/blog/broader-doe-vision-article";
 
-/** Indented pull quote — smaller Lora, closes after intelligence stack. */
+/** Indented pull quote — opens before lead, closes after continuation. */
 export function BroaderDoeVisionProposalQuote() {
   const lead = BROADER_DOE_VISION_PROPOSAL_HIGHLIGHT_LEAD.endsWith(".")
     ? BROADER_DOE_VISION_PROPOSAL_HIGHLIGHT_LEAD.slice(0, -1)
@@ -15,8 +15,10 @@ export function BroaderDoeVisionProposalQuote() {
       <blockquote
         className={`about-page-quote text-left font-normal leading-[1.32] tracking-[-0.02em] text-[clamp(1.28rem,1.08rem+0.95vmin,1.55rem)] iphone-page:text-[clamp(1.42rem,1.18rem+1.1vmin,1.72rem)] ${lora.className}`}
       >
-        <span className="block">&ldquo;{lead}.&rdquo;</span>
-        <span className="block mt-3 iphone-page:mt-3.5">{BROADER_DOE_VISION_PROPOSAL_HIGHLIGHT_CONTINUATION}</span>
+        <span className="block">&ldquo;{lead}.</span>
+        <span className="block mt-3 iphone-page:mt-3.5">
+          {BROADER_DOE_VISION_PROPOSAL_HIGHLIGHT_CONTINUATION}&rdquo;
+        </span>
       </blockquote>
     </figure>
   );
