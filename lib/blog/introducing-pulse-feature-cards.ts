@@ -49,7 +49,7 @@ export const INTRODUCING_PULSE_FEATURE_CARDS = [
   {
     id: "pulse-quiet-hours",
     shaderVariant: v6,
-    subheading: "Quiet Hours",
+    subheading: "Remembers every call for every patient, ever.",
     description:
       "Practices set when signals may interrupt and when they should queue, protecting after-hours teams without losing overnight urgency.",
   },
