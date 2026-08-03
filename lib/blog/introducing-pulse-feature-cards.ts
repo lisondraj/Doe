@@ -13,7 +13,7 @@ export const INTRODUCING_PULSE_FEATURE_CARDS = [
   {
     id: "pulse-signal-routing",
     shaderVariant: v1,
-    subheading: "Instantly calls patients with future appointments to replace no-shows",
+    subheading: "Instantly calls patients with future appointments to replace no-shows.",
     description:
       "Each alert arrives with chart context and a suggested owner, so the right nurse, MA, or physician sees the work without a manual handoff.",
   },
@@ -21,7 +21,7 @@ export const INTRODUCING_PULSE_FEATURE_CARDS = [
     id: "pulse-escalation-paths",
     shaderVariant: v2,
     subheading:
-      "Waits on hold with insurers to set up prior authorization, handles all follow-up calls and updates the patient",
+      "Waits on hold with insurers to set up prior authorization, handles all follow-up calls and updates the patient.",
     description:
       "When a signal persists or worsens, Pulse escalates along paths your practice defines — with timestamps, notes, and accountability built in.",
   },
