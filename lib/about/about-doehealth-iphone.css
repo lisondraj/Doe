@@ -1003,3 +1003,53 @@ html[data-about-page][data-layout="desktop"]
   padding-right: var(--desktop-page-inset-x) !important;
   margin-bottom: clamp(2.75rem, 4vw, 3.75rem) !important;
 }
+
+/* /blog landing — card list in about-style gold chrome. */
+html[data-about-page] .blog-landing-card-title {
+  font-size: clamp(1.85rem, 1.55rem + 1.1vmin, 2.35rem) !important;
+  background: var(
+    --doehealth-gold-text-gradient,
+    linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%)
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+html[data-about-page] .blog-landing-card-subheading {
+  font-size: clamp(1.22rem, 1.05rem + 0.72vmin, 1.48rem) !important;
+  color: rgba(242, 232, 218, 0.88) !important;
+}
+
+html[data-about-page] .blog-landing-card-meta {
+  font-size: clamp(1.02rem, 0.92rem + 0.45vmin, 1.18rem) !important;
+  color: #e8c08e !important;
+}
+
+html[data-about-page] .blog-landing-card-excerpt {
+  font-size: clamp(1.18rem, 1.02rem + 0.72vmin, 1.42rem) !important;
+  color: rgba(242, 232, 218, 0.78) !important;
+}
+
+html[data-about-page] .blog-landing-read-more {
+  font-size: clamp(1.08rem, 0.95rem + 0.55vmin, 1.22rem) !important;
+  color: #e8c08e !important;
+}
+
+html[data-about-page] .blog-landing-list-divider-line {
+  background: rgba(232, 192, 142, 0.28);
+}
+
+html[data-about-page][data-layout="desktop"] .blog-landing-card-title {
+  font-size: clamp(2rem, 1.65vw, 2.45rem) !important;
+}
+
+html[data-about-page][data-layout="desktop"] .blog-landing-card-subheading {
+  font-size: clamp(1.28rem, 1.05vw, 1.52rem) !important;
+}
+
+html[data-about-page][data-layout="desktop"] .blog-landing-card-excerpt {
+  font-size: clamp(1.22rem, 0.95vw, 1.48rem) !important;
+}
+

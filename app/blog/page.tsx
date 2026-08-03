@@ -1,19 +1,25 @@
-import { headers } from "next/headers";
+import type { Metadata } from "next";
 
-import { BlogIndexMobileView } from "@/components/blog/BlogIndexMobileView";
-import { BlogRouter } from "@/components/blog/BlogRouter";
+import { BlogLandingRouter } from "@/components/blog/BlogLandingRouter";
+import {
+  BLOG_LANDING_PATH,
+  BLOG_LANDING_SUBHEADING,
+  BLOG_LANDING_TITLE,
+} from "@/lib/blog/blog-landing-posts";
+import { primarySiteOrigin } from "@/lib/site-domains";
 
 export const dynamic = "force-dynamic";
 
-const MOBILE_UA =
-  /iPhone|iPod|Android.*Mobile|webOS|BlackBerry|IEMobile|Opera Mini/i;
+const pageTitle = `${BLOG_LANDING_TITLE} · Doe`;
+
+export const metadata: Metadata = {
+  title: pageTitle,
+  description: BLOG_LANDING_SUBHEADING,
+  alternates: {
+    canonical: `${primarySiteOrigin()}${BLOG_LANDING_PATH}`,
+  },
+};
 
 export default function BlogPage() {
-  const ua = headers().get("user-agent") ?? "";
-  const initialVariant = MOBILE_UA.test(ua) ? "phone" : "desktop";
-  return (
-    <BlogRouter initialVariant={initialVariant}>
-      <BlogIndexMobileView />
-    </BlogRouter>
-  );
+  return <BlogLandingRouter />;
 }
