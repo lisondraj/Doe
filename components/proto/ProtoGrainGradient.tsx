@@ -187,6 +187,7 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
       }
     };
   }, [
+    aboutHeroBackground,
     containerReady,
     dedicatedHeroBackground,
     evictShader,
