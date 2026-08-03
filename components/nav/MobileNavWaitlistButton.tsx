@@ -26,7 +26,7 @@ export function MobileNavWaitlistButton({
     >
       <Link
         href={WAITLIST_PATH}
-        className={`${MOBILE_NAV_ACTION_CTA_LAYOUT} proto-nav-cta-label rounded-md px-5 font-medium text-[0.9375rem] no-underline iphone-page:px-[clamp(1.05rem,0.82rem+1.05vmin,1.35rem)] iphone-page:text-[clamp(1.02rem,0.92rem+0.62vmin,1.18rem)] ${inter.className}`}
+        className={`${MOBILE_NAV_ACTION_CTA_LAYOUT} proto-nav-cta-label rounded-md px-6 font-medium text-[0.9375rem] no-underline iphone-page:px-[clamp(1.2rem,0.95rem+1.15vmin,1.5rem)] iphone-page:text-[clamp(1.02rem,0.92rem+0.62vmin,1.18rem)] ${inter.className}`}
       >
         Waitlist
       </Link>
