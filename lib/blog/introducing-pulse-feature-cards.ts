@@ -28,7 +28,7 @@ export const INTRODUCING_PULSE_FEATURE_CARDS = [
   {
     id: "pulse-change-detection",
     shaderVariant: v3,
-    subheading: "Change Detection",
+    subheading: "Prepares everything you need for a seamless appointment.",
     description:
       "Labs, vitals, messages, and orders are compared against recent baselines so teams catch drift early instead of at the next visit.",
   },
