@@ -927,8 +927,9 @@ html[data-about-page][data-layout="desktop"] .broader-doe-hero-intro {
 html[data-about-page][data-layout="desktop"]
   .about-style-product-intro-page
   .broader-doe-hero-title.broader-doe-hero-title--product-intro {
-  line-height: 1.04 !important;
-  padding-bottom: 0 !important;
+  line-height: 1.08 !important;
+  padding-bottom: 0.08em !important;
+  overflow: visible;
 }
 
 html[data-about-page][data-layout="desktop"] .about-page-content .about-hero-visual,
