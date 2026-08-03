@@ -42,7 +42,7 @@ export const INTRODUCING_PULSE_FEATURE_CARDS = [
   {
     id: "pulse-chart-linked-alerts",
     shaderVariant: v5,
-    subheading: "Chart-Linked Alerts",
+    subheading: "Security tools so patient information never leaves your electronic medical record.",
     description:
       "Every Pulse item opens directly into the relevant chart section, thread, or task so staff never reconstruct context from a push notification alone.",
   },
