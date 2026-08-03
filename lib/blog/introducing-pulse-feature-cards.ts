@@ -71,7 +71,7 @@ export const INTRODUCING_PULSE_FEATURE_CARDS = [
   {
     id: "pulse-closed-loop",
     shaderVariant: v0,
-    subheading: "Closed-Loop Actions",
+    subheading: "Extensive call history tools to track and log every agentic action.",
     description:
       "Signals can resolve into tasks, messages, or documentation updates inside Doe so awareness turns into completed work, not another open tab.",
   },
