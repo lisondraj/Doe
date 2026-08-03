@@ -1,5 +1,6 @@
 /** iPhone WebGL context budget — avoids black shader loss when the page exceeds GPU limits. */
 
+import { isAboutStyleBlankPagePath } from "@/lib/about/about-style-blank-pages";
 import {
   DOEPHONE_ABOUT_HERO_SHADER_SLOT,
   DOEPHONE_HOME_HERO_SHADER_SLOT,
@@ -54,6 +55,12 @@ function isAboutStyleRoute() {
   return document.documentElement.getAttribute("data-about-page") === "true";
 }
 
+/** /waitlist, /hiring, /pitchdeck — no hero shader; don't block the footer band. */
+function aboutRouteReservesHeroShaderSlot() {
+  if (typeof window === "undefined") return isAboutStyleRoute();
+  return isAboutStyleRoute() && !isAboutStyleBlankPagePath(window.location.pathname);
+}
+
 function hasAboutHeroBackgroundSlot() {
   return slots.has(DOEPHONE_ABOUT_HERO_SHADER_SLOT);
 }
@@ -97,7 +104,7 @@ function maxNonHeroSlots() {
   const heroCount = countHeroClassSlots();
   const reserveForHero =
     (isHomePhoneRoute() && !hasHomeHeroBackgroundSlot()) ||
-    (isAboutStyleRoute() && !hasAboutHeroBackgroundSlot())
+    (aboutRouteReservesHeroShaderSlot() && !hasAboutHeroBackgroundSlot())
       ? 1
       : 0;
   return Math.max(0, maxWebGLSlots() - heroCount - reserveForHero);
@@ -140,7 +147,7 @@ export function acquireShaderWebGLSlot(
     return false;
   }
 
-  if (isDoePhoneWebGLBudgetActive() && isAboutStyleRoute() && !hasAboutHeroBackgroundSlot()) {
+  if (isDoePhoneWebGLBudgetActive() && aboutRouteReservesHeroShaderSlot() && !hasAboutHeroBackgroundSlot()) {
     return false;
   }
 
