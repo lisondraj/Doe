@@ -349,7 +349,7 @@ html[data-about-page] .broader-doe-hero-title {
   font-size: clamp(2.65rem, 3.75vw, 3.95rem) !important;
   line-height: 1.02 !important;
   letter-spacing: -0.035em !important;
-  font-weight: 400 !important;
+  font-weight: 375 !important;
 }
 
 /* Introducing Pulse / Canvas — descender clearance on product intro titles. */
