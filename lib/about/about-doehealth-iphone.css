@@ -914,6 +914,14 @@ html[data-about-page][data-layout="desktop"]
   line-height: 1.14 !important;
 }
 
+/* Pulse / Canvas desktop — halve big square feature-card shader tile height. */
+html[data-about-page][data-layout="desktop"]
+  .about-style-product-intro-page
+  .about-style-feature-card__shader {
+  aspect-ratio: 2 / 1 !important;
+  height: auto !important;
+}
+
 html[data-about-page][data-layout="desktop"] .broader-doe-hero-headlines {
   gap: clamp(1rem, 0.85vw, 1.35rem);
 }
