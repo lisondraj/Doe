@@ -235,13 +235,14 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     if (!node) return;
 
     const inHomeFeatureCard = node.closest(".home-feature-card-section__card") != null;
+    const inAboutFeatureCard = node.closest(".about-style-feature-card__shader") != null;
 
     const syncReady = () => {
       if (!hasRenderableSize(node)) return false;
       setContainerReady(true);
 
       const mountMargin = phone ? 2 : hero ? 0.5 : 0.85;
-      if (hero || inHomeFeatureCard || isNearViewport(node, mountMargin)) {
+      if (hero || inHomeFeatureCard || inAboutFeatureCard || isNearViewport(node, mountMargin)) {
         requestMount();
       }
       return true;
@@ -279,7 +280,8 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
       if (!node || !hasRenderableSize(node)) return;
       setContainerReady(true);
       const inHomeFeatureCard = node.closest(".home-feature-card-section__card") != null;
-      if (hero || inHomeFeatureCard || isNearViewport(node, 2.5)) requestMount();
+      const inAboutFeatureCard = node.closest(".about-style-feature-card__shader") != null;
+      if (hero || inHomeFeatureCard || inAboutFeatureCard || isNearViewport(node, 2.5)) requestMount();
     };
 
     const t = window.setTimeout(retry, 320);
@@ -308,6 +310,7 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     const mountMargin = phone ? "120% 0px" : hero ? "40% 0px" : "85% 0px";
 
     const inHomeFeatureCard = node.closest(".home-feature-card-section__card") != null;
+    const inAboutFeatureCard = node.closest(".about-style-feature-card__shader") != null;
 
     const mountObserver = new IntersectionObserver(
       ([entry]) => {
@@ -325,7 +328,7 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     animateObserver.observe(node);
 
     const raf = requestAnimationFrame(() => {
-      if (hero || inHomeFeatureCard || isNearViewport(node, phone ? 2 : hero ? 0.5 : 0.85)) {
+      if (hero || inHomeFeatureCard || inAboutFeatureCard || isNearViewport(node, phone ? 2 : hero ? 0.5 : 0.85)) {
         requestMount();
       }
     });

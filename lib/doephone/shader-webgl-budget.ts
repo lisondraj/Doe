@@ -54,6 +54,11 @@ function isAboutStyleRoute() {
   return document.documentElement.getAttribute("data-about-page") === "true";
 }
 
+function isAboutProductIntroPage() {
+  if (typeof document === "undefined") return false;
+  return document.documentElement.getAttribute("data-about-product-intro") === "true";
+}
+
 function hasAboutHeroBackgroundSlot() {
   return slots.has(DOEPHONE_ABOUT_HERO_SHADER_SLOT);
 }
@@ -96,8 +101,9 @@ function findLowestSlot(filter?: (priority: number) => boolean) {
 function maxNonHeroSlots() {
   const heroCount = countHeroClassSlots();
   const reserveForHero =
-    (isHomePhoneRoute() && !hasHomeHeroBackgroundSlot()) ||
-    (isAboutStyleRoute() && !hasAboutHeroBackgroundSlot())
+    !isAboutProductIntroPage() &&
+    ((isHomePhoneRoute() && !hasHomeHeroBackgroundSlot()) ||
+      (isAboutStyleRoute() && !hasAboutHeroBackgroundSlot()))
       ? 1
       : 0;
   return Math.max(0, maxWebGLSlots() - heroCount - reserveForHero);
@@ -140,7 +146,12 @@ export function acquireShaderWebGLSlot(
     return false;
   }
 
-  if (isDoePhoneWebGLBudgetActive() && isAboutStyleRoute() && !hasAboutHeroBackgroundSlot()) {
+  if (
+    isDoePhoneWebGLBudgetActive() &&
+    isAboutStyleRoute() &&
+    !isAboutProductIntroPage() &&
+    !hasAboutHeroBackgroundSlot()
+  ) {
     return false;
   }
 
