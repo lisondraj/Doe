@@ -12,8 +12,7 @@ export const INTRODUCING_CANVAS_ARTICLE = {
   title: "Introducing Canvas",
   excerpt:
     "Canvas lets clinical teams design the workflows they actually run — visually, in plain language, and without waiting on a vendor roadmap.",
-  subheading:
-    "Doe voice agents that help teams shape workflow paths in plain spoken language.",
+  subheading: "Design your own clinical intelligence.",
   openingLede:
     "Today we are introducing Canvas, Doe's visual workflow studio for teams that need software to match how care is really delivered.",
   byline: "By James Lisondra",
