@@ -358,8 +358,10 @@ html[data-about-page] .broader-doe-hero-title.broader-doe-hero-title--product-in
   padding-bottom: 0.08em !important;
 }
 
-/* /about — Guiding Beliefs headline gold gradient (size unchanged). */
-html[data-about-page] .broader-doe-thesis-headline-gold {
+/* /about — Guiding Beliefs + feature card subheadings gold gradient (size unchanged). */
+html[data-about-page] .broader-doe-thesis-headline-gold,
+html[data-about-page]:has(.doephone-mobile-root--doehealth) main figcaption.broader-doe-thesis-headline-gold,
+html[data-about-page][data-layout="desktop"] .about-desktop-main figcaption.broader-doe-thesis-headline-gold {
   background: var(
     --doehealth-gold-text-gradient,
     linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%)

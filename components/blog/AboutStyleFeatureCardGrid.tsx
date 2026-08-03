@@ -7,6 +7,7 @@ import {
 } from "@/lib/blog/about-style-feature-card";
 import {
   BROADER_DOE_VISION_BODY_TW,
+  BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_GOLD_TW,
   BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_TW,
 } from "@/lib/blog/broader-doe-vision-layout-styles";
 import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
@@ -39,7 +40,9 @@ export function AboutStyleFeatureCardGrid({ cards }: AboutStyleFeatureCardGridPr
             </div>
 
             <figure className="about-style-feature-card__copy m-0">
-              <figcaption className={`${BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_TW} mt-5 iphone-page:mt-6 mb-0`}>
+              <figcaption
+                className={`${BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_TW} ${BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_GOLD_TW} mt-5 iphone-page:mt-6 mb-0`}
+              >
                 {card.subheading}
               </figcaption>
 
