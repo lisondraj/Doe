@@ -1,3 +1,4 @@
+import { ABOUT_STYLE_BLANK_PAGE_PATHS } from "@/lib/about/about-style-blank-pages";
 import { BLOG_LANDING_PATH } from "@/lib/blog/blog-landing-posts";
 import { INTRODUCING_CANVAS_PATH } from "@/lib/blog/introducing-canvas-article";
 import { INTRODUCING_PULSE_PATH } from "@/lib/blog/introducing-pulse-article";
@@ -11,6 +12,7 @@ export const ABOUT_STYLE_PAGE_PATHS = [
   DOE_MISSION_PATH,
   INTRODUCING_PULSE_PATH,
   INTRODUCING_CANVAS_PATH,
+  ...ABOUT_STYLE_BLANK_PAGE_PATHS,
 ] as const;
 
 export function isAboutStylePagePath(pathname: string): boolean {

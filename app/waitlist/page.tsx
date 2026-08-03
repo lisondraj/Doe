@@ -1,25 +1,21 @@
 import type { Metadata } from "next";
-import { headers } from "next/headers";
 
-import { WaitlistRouter } from "@/components/waitlist/WaitlistRouter";
-import { waitlistPageUrl } from "@/lib/site-domains";
+import { AboutStyleBlankPageRouter } from "@/components/about/AboutStyleBlankPageRouter";
+import { ABOUT_STYLE_BLANK_PAGE_LABELS } from "@/lib/about/about-style-blank-pages";
+import { primarySiteOrigin, WAITLIST_PATH } from "@/lib/site-domains";
 
 export const dynamic = "force-dynamic";
 
-const MOBILE_UA =
-  /iPhone|iPod|Android.*Mobile|webOS|BlackBerry|IEMobile|Opera Mini/i;
+const pageTitle = `${ABOUT_STYLE_BLANK_PAGE_LABELS[WAITLIST_PATH]} · Doe`;
 
 export const metadata: Metadata = {
-  title: "Join the waitlist · Doe",
+  title: pageTitle,
   description: "Join the Doe waitlist.",
   alternates: {
-    canonical: waitlistPageUrl(),
+    canonical: `${primarySiteOrigin()}${WAITLIST_PATH}`,
   },
 };
 
 export default function WaitlistPage() {
-  const ua = headers().get("user-agent") ?? "";
-  const initialVariant = MOBILE_UA.test(ua) ? "phone" : "desktop";
-
-  return <WaitlistRouter initialVariant={initialVariant} />;
+  return <AboutStyleBlankPageRouter ariaLabel={ABOUT_STYLE_BLANK_PAGE_LABELS[WAITLIST_PATH]} />;
 }

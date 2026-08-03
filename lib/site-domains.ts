@@ -11,6 +11,8 @@ export const JOIN_SITE_HOST = DESIGNERS_SITE_HOST;
 
 export const JOIN_PATH = "/join";
 export const WAITLIST_PATH = "/waitlist";
+export const HIRING_PATH = "/hiring";
+export const PITCHDECK_PATH = "/pitchdeck";
 export const ABOUT_PATH = "/about";
 export const PROTO_INVEST_PATH = "/proto-invest";
 export const DESIGNERS_PATH = "/designers";

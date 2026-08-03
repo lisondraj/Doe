@@ -1129,3 +1129,20 @@ html[data-about-page][data-layout="desktop"] .blog-landing-card-excerpt {
   font-size: clamp(1.22rem, 0.95vw, 1.48rem) !important;
 }
 
+/* /waitlist, /hiring, /pitchdeck — blank center stage between nav and footer. */
+html[data-about-page] .about-style-blank-page__stage {
+  display: block;
+  width: 100%;
+  min-height: calc(
+    var(--app-vh, 100svh) - var(--proto-about-nav-clearance, 6rem) -
+      var(--doe-home-top-banner-height, 0px) - clamp(10rem, 28svh, 16rem)
+  );
+}
+
+html[data-about-page][data-layout="desktop"] .about-style-blank-page__stage {
+  min-height: calc(
+    100dvh - var(--doe-home-top-banner-height, 0px) - var(--desktop-nav-height, 6.25rem) -
+      clamp(14rem, 24vh, 20rem)
+  );
+}
+
