@@ -63,7 +63,8 @@ export const INTRODUCING_PULSE_FEATURE_CARDS = [
   {
     id: "pulse-audit-trail",
     shaderVariant: v8,
-    subheading: "Audit Trail",
+    subheading:
+      "Calls specialists to book referrals, and surfaces results in the patient's chart after their visit.",
     description:
       "Who saw a signal, who acted, and what changed is logged automatically for compliance, handoffs, and quality review.",
   },
