@@ -22,7 +22,7 @@ export function MobileNavWaitlistButton({
       style={{ boxShadow: shadow }}
     >
       <span
-        className={`${MOBILE_NAV_ACTION_CTA_LAYOUT} proto-nav-cta-label rounded-md px-6 font-medium text-[0.9375rem] iphone-page:px-[clamp(1.2rem,0.95rem+1.15vmin,1.5rem)] iphone-page:text-[clamp(1.02rem,0.92rem+0.62vmin,1.18rem)] ${inter.className}`}
+        className={`${MOBILE_NAV_ACTION_CTA_LAYOUT} proto-nav-cta-label rounded-md px-7 font-semibold text-[1rem] iphone-page:px-[clamp(1.28rem,1rem+1.2vmin,1.58rem)] iphone-page:text-[clamp(1.06rem,0.96rem+0.65vmin,1.22rem)] ${inter.className}`}
       >
         Waitlist
       </span>

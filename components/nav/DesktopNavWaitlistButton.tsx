@@ -25,7 +25,7 @@ export function DesktopNavWaitlistButton({
       style={{ boxShadow: shadow }}
     >
       <span
-        className={`inline-flex ${DESKTOP_NAV_ACTION_HEIGHT_TW} items-center justify-center ${radius} px-5 text-[0.9375rem] font-medium leading-none transition-[opacity,background-color,color,box-shadow] duration-300 hover:opacity-90 proto-nav-cta-label ${inter.className}`}
+        className={`inline-flex ${DESKTOP_NAV_ACTION_HEIGHT_TW} items-center justify-center ${radius} px-6 text-[1rem] font-semibold leading-none transition-[opacity,background-color,color,box-shadow] duration-300 hover:opacity-90 proto-nav-cta-label ${inter.className}`}
       >
         Waitlist
       </span>

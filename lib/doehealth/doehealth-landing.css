@@ -130,33 +130,83 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth) .doehealth-top-banner
   }
 }
 
-/* /doehealth — rotating top banner slide transition. */
-.doehealth-top-banner--carousel .doehealth-top-banner__text {
+/* /doehealth — rotating top banner crossfade. */
+.doehealth-top-banner--carousel .doehealth-top-banner__viewport {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.doehealth-top-banner--carousel .doehealth-top-banner__slide {
+  margin: 0;
   transition:
-    opacity 380ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 520ms cubic-bezier(0.22, 1, 0.36, 1);
   will-change: opacity, transform;
 }
 
-.doehealth-top-banner--carousel .doehealth-top-banner__text--visible {
+.doehealth-top-banner--carousel .doehealth-top-banner__slide--current {
+  position: relative;
   opacity: 1;
   transform: translate3d(0, 0, 0);
+  filter: blur(0);
 }
 
-.doehealth-top-banner--carousel .doehealth-top-banner__text--hidden {
+.doehealth-top-banner--carousel .doehealth-top-banner__slide--out,
+.doehealth-top-banner--carousel .doehealth-top-banner__slide--in {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+}
+
+.doehealth-top-banner--carousel .doehealth-top-banner__slide--out {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  filter: blur(0);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.doehealth-top-banner--carousel .doehealth-top-banner__slide--in {
   opacity: 0;
-  transform: translate3d(0, 0.28em, 0);
+  transform: translate3d(0, 0.42em, 0);
+  filter: blur(3px);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.doehealth-top-banner--carousel.doehealth-top-banner--crossfading .doehealth-top-banner__slide--out {
+  opacity: 0;
+  transform: translate3d(0, -0.38em, 0);
+  filter: blur(3px);
+}
+
+.doehealth-top-banner--carousel.doehealth-top-banner--crossfading .doehealth-top-banner__slide--in {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  filter: blur(0);
+  pointer-events: auto;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .doehealth-top-banner--carousel .doehealth-top-banner__text {
+  .doehealth-top-banner--carousel .doehealth-top-banner__slide {
     transition: none;
     will-change: auto;
+    filter: none !important;
   }
 
-  .doehealth-top-banner--carousel .doehealth-top-banner__text--hidden {
+  .doehealth-top-banner--carousel .doehealth-top-banner__slide--out {
+    display: none;
+  }
+
+  .doehealth-top-banner--carousel .doehealth-top-banner__slide--in {
+    position: relative;
     opacity: 1;
     transform: none;
+    pointer-events: auto;
   }
 }
 
@@ -416,8 +466,11 @@ html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav.prot
 }
 
 html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav .proto-nav-chrome-actions .doehealth-nav-waitlist-shell > a,
+html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav .proto-nav-chrome-actions .doehealth-nav-waitlist-shell > span,
 html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav.proto-nav-scroll-frost .proto-nav-chrome-actions .doehealth-nav-waitlist-shell > a,
-html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav.proto-nav-scroll-frost.proto-nav--scrolled .proto-nav-chrome-actions .doehealth-nav-waitlist-shell > a {
+html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav.proto-nav-scroll-frost .proto-nav-chrome-actions .doehealth-nav-waitlist-shell > span,
+html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav.proto-nav-scroll-frost.proto-nav--scrolled .proto-nav-chrome-actions .doehealth-nav-waitlist-shell > a,
+html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav.proto-nav-scroll-frost.proto-nav--scrolled .proto-nav-chrome-actions .doehealth-nav-waitlist-shell > span {
   background-color: transparent !important;
   background-image: var(--doehealth-gold-fill-gradient) !important;
   color: #1a1208 !important;
@@ -548,7 +601,13 @@ html[data-layout="desktop"]
   nav.desktop-punched-nav
   .proto-nav-chrome-actions
   .doehealth-nav-waitlist-shell
-  > a {
+  > a,
+html[data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  nav.desktop-punched-nav
+  .proto-nav-chrome-actions
+  .doehealth-nav-waitlist-shell
+  > span {
   border-radius: 9999px !important;
   background-image: var(--doehealth-gold-fill-gradient) !important;
   color: #1a1208 !important;

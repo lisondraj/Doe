@@ -248,7 +248,25 @@ html[data-about-page]
   > a,
 html[data-about-page]
   .doephone-mobile-root--doehealth
+  nav.doephone-site-nav
+  .proto-nav-chrome-actions
+  .doehealth-nav-waitlist-shell
+  > span,
+html[data-about-page]
+  .doephone-mobile-root--doehealth
   nav.doephone-site-nav.proto-nav-scroll-frost
+  .proto-nav-chrome-actions
+  .doehealth-nav-waitlist-shell
+  > a,
+html[data-about-page]
+  .doephone-mobile-root--doehealth
+  nav.doephone-site-nav.proto-nav-scroll-frost
+  .proto-nav-chrome-actions
+  .doehealth-nav-waitlist-shell
+  > span,
+html[data-about-page]
+  .doephone-mobile-root--doehealth
+  nav.doephone-site-nav.proto-nav-scroll-frost.proto-nav--scrolled
   .proto-nav-chrome-actions
   .doehealth-nav-waitlist-shell
   > a,
@@ -257,7 +275,7 @@ html[data-about-page]
   nav.doephone-site-nav.proto-nav-scroll-frost.proto-nav--scrolled
   .proto-nav-chrome-actions
   .doehealth-nav-waitlist-shell
-  > a {
+  > span {
   background-color: transparent !important;
   background-image: var(--doehealth-gold-fill-gradient) !important;
   color: #1a1208 !important;
@@ -734,7 +752,13 @@ html[data-about-page][data-layout="desktop"]
   nav.desktop-punched-nav
   .proto-nav-chrome-actions
   .doehealth-nav-waitlist-shell
-  > a {
+  > a,
+html[data-about-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  nav.desktop-punched-nav
+  .proto-nav-chrome-actions
+  .doehealth-nav-waitlist-shell
+  > span {
   border-radius: 9999px !important;
   background-image: var(--doehealth-gold-fill-gradient) !important;
   color: #1a1208 !important;
