@@ -6,7 +6,7 @@ export const INTRODUCING_PULSE_FEATURE_CARDS = [
   {
     id: "pulse-panel-awareness",
     shaderVariant: v9,
-    subheading: "Live Panel Awareness",
+    subheading: "Schedules appointments, asks pre-visit questions, and prepares your visit.",
     description:
       "Pulse watches every patient on your panel and surfaces meaningful shifts — not every tick, only the changes that deserve a clinician's attention.",
   },
