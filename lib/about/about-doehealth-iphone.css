@@ -910,8 +910,8 @@ html[data-about-page][data-layout="desktop"]
   .about-style-product-intro-page
   .about-style-feature-card
   figcaption.broader-doe-thesis-headline {
-  font-size: clamp(1.65rem, 1.38vw, 2.05rem) !important;
-  line-height: 1.14 !important;
+  font-size: clamp(2.1rem, 2.75vw, 3.1rem) !important;
+  line-height: 1.12 !important;
 }
 
 /* Pulse / Canvas desktop — halve big square feature-card shader tile height. */
