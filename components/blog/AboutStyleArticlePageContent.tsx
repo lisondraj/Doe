@@ -73,6 +73,11 @@ export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageC
               {article.openingLedeContinuation}
             </p>
           ) : null}
+          {article.openingLedeContinuation2 ? (
+            <p className={`${BROADER_DOE_VISION_BODY_TW} about-style-product-intro-body`}>
+              {article.openingLedeContinuation2}
+            </p>
+          ) : null}
         </div>
 
         {article.featureCards && article.featureCards.length > 0 ? (

@@ -11,6 +11,8 @@ export type AboutStyleLongformArticle = {
   openingLede: string;
   /** Product intro pages — body copy after the bold opening sentence. */
   openingLedeContinuation?: string;
+  /** Product intro pages — optional third intro paragraph after continuation. */
+  openingLedeContinuation2?: string;
   byline: string;
   date: string;
   heroBackdrop: WorkflowCarouselDesignBackdrop;
