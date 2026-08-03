@@ -130,72 +130,82 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth) .doehealth-top-banner
   }
 }
 
-/* /doehealth — rotating top banner crossfade. */
+/* /doehealth — rotating top banner crossfade (compositor-only: opacity + transform). */
+@keyframes doehealth-banner-out {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate3d(0, -0.28em, 0);
+  }
+}
+
+@keyframes doehealth-banner-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 0.28em, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
 .doehealth-top-banner--carousel .doehealth-top-banner__viewport {
-  position: relative;
+  display: grid;
+  place-items: center;
   width: 100%;
-  display: flex;
-  justify-content: center;
+  contain: layout style;
 }
 
 .doehealth-top-banner--carousel .doehealth-top-banner__slide {
+  grid-area: 1 / 1;
   margin: 0;
-  transition:
-    opacity 520ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 520ms cubic-bezier(0.22, 1, 0.36, 1),
-    filter 520ms cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: opacity, transform;
+  width: max-content;
+  max-width: 100%;
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
 }
 
 .doehealth-top-banner--carousel .doehealth-top-banner__slide--current {
-  position: relative;
   opacity: 1;
-  transform: translate3d(0, 0, 0);
-  filter: blur(0);
+  z-index: 1;
+  pointer-events: auto;
 }
 
 .doehealth-top-banner--carousel .doehealth-top-banner__slide--out,
 .doehealth-top-banner--carousel .doehealth-top-banner__slide--in {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
+  pointer-events: none;
 }
 
 .doehealth-top-banner--carousel .doehealth-top-banner__slide--out {
   opacity: 1;
-  transform: translate3d(0, 0, 0);
-  filter: blur(0);
   z-index: 1;
-  pointer-events: none;
 }
 
 .doehealth-top-banner--carousel .doehealth-top-banner__slide--in {
   opacity: 0;
-  transform: translate3d(0, 0.42em, 0);
-  filter: blur(3px);
   z-index: 2;
-  pointer-events: none;
 }
 
-.doehealth-top-banner--carousel.doehealth-top-banner--crossfading .doehealth-top-banner__slide--out {
-  opacity: 0;
-  transform: translate3d(0, -0.38em, 0);
-  filter: blur(3px);
+.doehealth-top-banner--carousel .doehealth-top-banner__slide--out.doehealth-top-banner__slide--animate {
+  animation: doehealth-banner-out var(--doehealth-banner-crossfade-ms, 480ms)
+    cubic-bezier(0.33, 1, 0.68, 1) both;
 }
 
-.doehealth-top-banner--carousel.doehealth-top-banner--crossfading .doehealth-top-banner__slide--in {
-  opacity: 1;
-  transform: translate3d(0, 0, 0);
-  filter: blur(0);
+.doehealth-top-banner--carousel .doehealth-top-banner__slide--in.doehealth-top-banner__slide--animate {
+  animation: doehealth-banner-in var(--doehealth-banner-crossfade-ms, 480ms)
+    cubic-bezier(0.33, 1, 0.68, 1) both;
   pointer-events: auto;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .doehealth-top-banner--carousel .doehealth-top-banner__slide {
-    transition: none;
-    will-change: auto;
-    filter: none !important;
+    animation: none !important;
   }
 
   .doehealth-top-banner--carousel .doehealth-top-banner__slide--out {
@@ -203,7 +213,6 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth) .doehealth-top-banner
   }
 
   .doehealth-top-banner--carousel .doehealth-top-banner__slide--in {
-    position: relative;
     opacity: 1;
     transform: none;
     pointer-events: auto;

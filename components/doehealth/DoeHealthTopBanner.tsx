@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { inter } from "@/lib/home/fonts";
 import type { DoeHealthTopBannerSlide } from "@/lib/doehealth/doehealth-top-banner-slides";
@@ -35,13 +35,28 @@ function BannerArrow() {
 function BannerSlideText({
   slide,
   phase,
+  animate = false,
+  onEnterComplete,
 }: {
   slide: DoeHealthTopBannerSlide;
   phase: "current" | "out" | "in";
+  animate?: boolean;
+  onEnterComplete?: () => void;
 }) {
+  const handleAnimationEnd = useCallback(
+    (event: React.AnimationEvent<HTMLParagraphElement>) => {
+      if (phase !== "in" || !animate) return;
+      if (event.currentTarget !== event.target) return;
+      if (event.animationName !== "doehealth-banner-in") return;
+      onEnterComplete?.();
+    },
+    [animate, onEnterComplete, phase],
+  );
+
   return (
     <p
-      className={`doe-home-top-banner__text doehealth-top-banner__text doehealth-top-banner__slide doehealth-top-banner__slide--${phase} ${inter.className}`}
+      className={`doe-home-top-banner__text doehealth-top-banner__text doehealth-top-banner__slide doehealth-top-banner__slide--${phase}${animate ? " doehealth-top-banner__slide--animate" : ""} ${inter.className}`}
+      onAnimationEnd={handleAnimationEnd}
     >
       <span>{slide.message}</span>
       <Link href={slide.linkHref} className="doe-home-top-banner__link">
@@ -73,10 +88,11 @@ export function DoeHealthTopBanner({
   const [dismissed, setDismissed] = useState(false);
   const carouselSlides = slides && slides.length > 0 ? slides : null;
   const [activeIndex, setActiveIndex] = useState(0);
-  const [incomingIndex, setIncomingIndex] = useState<number | null>(null);
-  const [isCrossfading, setIsCrossfading] = useState(false);
+  const [transition, setTransition] = useState<{ from: number; to: number } | null>(null);
   const [reduceMotion, setReduceMotion] = useState(false);
   const activeIndexRef = useRef(activeIndex);
+  const isTransitioningRef = useRef(false);
+  const transitionRef = useRef<{ from: number; to: number } | null>(null);
 
   const staticSlide = carouselSlides ? null : { message, linkLabel, linkHref };
   const activeSlide = carouselSlides ? carouselSlides[activeIndex] : staticSlide!;
@@ -124,66 +140,68 @@ export function DoeHealthTopBanner({
     return () => media.removeEventListener("change", sync);
   }, []);
 
+  const completeTransition = useCallback(() => {
+    const current = transitionRef.current;
+    if (!current) return;
+
+    transitionRef.current = null;
+    activeIndexRef.current = current.to;
+    setActiveIndex(current.to);
+    setTransition(null);
+    isTransitioningRef.current = false;
+  }, []);
+
   useEffect(() => {
     if (!carouselSlides || carouselSlides.length <= 1) return undefined;
 
     const interval = window.setInterval(() => {
+      if (isTransitioningRef.current) return;
+
       const nextIndex = (activeIndexRef.current + 1) % carouselSlides.length;
 
       if (reduceMotion) {
         setActiveIndex(nextIndex);
-        setIncomingIndex(null);
-        setIsCrossfading(false);
+        activeIndexRef.current = nextIndex;
         return;
       }
 
-      setIncomingIndex(nextIndex);
+      isTransitioningRef.current = true;
+      const nextTransition = { from: activeIndexRef.current, to: nextIndex };
+      transitionRef.current = nextTransition;
+      setTransition(nextTransition);
     }, rotateIntervalMs);
 
     return () => window.clearInterval(interval);
   }, [carouselSlides, reduceMotion, rotateIntervalMs]);
 
-  useLayoutEffect(() => {
-    if (incomingIndex === null || reduceMotion) return undefined;
+  useEffect(() => {
+    if (!transition || reduceMotion) return undefined;
 
-    setIsCrossfading(false);
-
-    let finishTimeout = 0;
-    let startRaf = 0;
-
-    startRaf = requestAnimationFrame(() => {
-      startRaf = requestAnimationFrame(() => {
-        setIsCrossfading(true);
-        finishTimeout = window.setTimeout(() => {
-          setActiveIndex(incomingIndex);
-          setIncomingIndex(null);
-          setIsCrossfading(false);
-        }, DOEHEALTH_TOP_BANNER_CROSSFADE_MS);
-      });
-    });
-
-    return () => {
-      cancelAnimationFrame(startRaf);
-      window.clearTimeout(finishTimeout);
-    };
-  }, [incomingIndex, reduceMotion]);
+    const fallback = window.setTimeout(completeTransition, DOEHEALTH_TOP_BANNER_CROSSFADE_MS + 80);
+    return () => window.clearTimeout(fallback);
+  }, [completeTransition, reduceMotion, transition]);
 
   return (
     <div
-      className={`doe-home-top-banner doehealth-top-banner${dismissed ? " doe-home-top-banner--dismissed" : ""}${carouselSlides ? " doehealth-top-banner--carousel" : ""}${isCrossfading ? " doehealth-top-banner--crossfading" : ""}`}
+      className={`doe-home-top-banner doehealth-top-banner${dismissed ? " doe-home-top-banner--dismissed" : ""}${carouselSlides ? " doehealth-top-banner--carousel" : ""}`}
       role="region"
       aria-live={carouselSlides ? "polite" : undefined}
       aria-label={`${activeSlide.message} ${activeSlide.linkLabel}`}
     >
       {carouselSlides ? (
         <div className="doehealth-top-banner__viewport">
-          {incomingIndex === null ? (
-            <BannerSlideText slide={carouselSlides[activeIndex]} phase="current" />
-          ) : (
+          {transition ? (
             <>
-              <BannerSlideText slide={carouselSlides[activeIndex]} phase="out" />
-              <BannerSlideText slide={carouselSlides[incomingIndex]} phase="in" />
+              <BannerSlideText slide={carouselSlides[transition.from]} phase="out" animate />
+              <BannerSlideText
+                slide={carouselSlides[transition.to]}
+                phase="in"
+                animate
+                onEnterComplete={completeTransition}
+              />
             </>
+          ) : (
+            <BannerSlideText slide={carouselSlides[activeIndex]} phase="current" />
           )}
         </div>
       ) : (
