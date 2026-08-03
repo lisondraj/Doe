@@ -248,7 +248,7 @@ html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doepho
   flex-wrap: wrap;
   align-items: center;
   gap: 0.45rem 0.9rem;
-  margin-top: clamp(1rem, 0.72rem + 1.2vmin, 1.45rem);
+  margin-top: clamp(0.72rem, 0.52rem + 0.85vmin, 1.05rem);
 }
 
 .doehealth-hero-read-more__prefix {
@@ -293,7 +293,16 @@ html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doepho
 
 html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-hero-read-more-row {
   gap: 0.5rem 1rem;
-  margin-top: clamp(1.05rem, 0.9vw, 1.5rem);
+  margin-top: clamp(0.82rem, 0.72vw, 1.15rem);
+}
+
+/* Tighter hero copy stack — less space under title + Introducing row. */
+html[data-home-page]:has(.doephone-mobile-root--doehealth) .doephone-hero-section > .absolute.left-0.right-0 {
+  bottom: clamp(2.35rem, 7.75vmin, 3.75rem) !important;
+}
+
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doephone-hero-section > .absolute.left-0.right-0 {
+  bottom: clamp(4.35rem, 14vh, 8.75rem) !important;
 }
 
 html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-hero-read-more__prefix,
