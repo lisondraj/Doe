@@ -14,7 +14,7 @@ export const ABOUT_PAGE_TITLE_TW = `${DOEPHONE_SECTION_COPY_TW} text-[#1E343A] $
 
 /** About page subheading — under the mission title (desktop + iPhone). */
 export const ABOUT_PAGE_SUBHEADING =
-  "We believe intelligent tools can be used to reshape a patients access to care.";
+  "We want to empower doctors, clinics and hospitals to own their intelligence.";
 
 /** @deprecated Prefer ABOUT_PAGE_SUBHEADING — kept for any two-line call sites. */
 export const ABOUT_PAGE_SUBHEADING_LINES = [
@@ -26,7 +26,7 @@ export const ABOUT_PAGE_SUBHEADING_LINES = [
 export const ABOUT_PAGE_SUBHEADING_TW = `mt-[clamp(0.55rem,0.42rem+0.55vmin,0.85rem)] text-[clamp(1.42rem,1.22rem+0.95vmin,1.78rem)] iphone-page:text-[clamp(1.68rem,1.38rem+1.35vmin,2.12rem)] font-normal leading-[1.44] tracking-[-0.01em] text-[#1E343A]/72 ${inter.className}`;
 
 /** Hero description — clinic-hour chart title styling (dmSans), slightly smaller. */
-export const ABOUT_PAGE_DESCRIPTION_TW = `about-page-description mt-[clamp(0.55rem,0.42rem+0.55vmin,0.85rem)] font-medium leading-snug tracking-[-0.01em] text-[#F2E8DA] text-[clamp(1.18rem,1rem+0.82vmin,1.45rem)] iphone-page:text-[clamp(1.32rem,1.1rem+1.05vmin,1.72rem)] ${dmSans.className}`;
+export const ABOUT_PAGE_DESCRIPTION_TW = `about-page-description mt-[clamp(0.55rem,0.42rem+0.55vmin,0.85rem)] font-medium leading-snug tracking-[-0.01em] text-[#F2E8DA] text-[clamp(1.18rem,1rem+0.82vmin,1.45rem)] iphone-page:text-[clamp(1.3rem,1.02rem+0.78vmin,1.42rem)] ${dmSans.className}`;
 
 /** Mission headline block — subheading wraps to the title column width. */
 export const ABOUT_HERO_HEADLINE_WRAP = "w-fit max-w-full";
