@@ -1,0 +1,35 @@
+"use client";
+
+import Link from "next/link";
+
+import { useDoeHealthLandingNavContext } from "@/lib/doehealth/doehealth-nav-chrome";
+import { inter } from "@/lib/home/fonts";
+import {
+  MOBILE_NAV_ACTION_CTA_LAYOUT,
+  MOBILE_NAV_SPLIT_SHELL_TW,
+} from "@/lib/subpage/mobile-nav-styles";
+import { WAITLIST_PATH } from "@/lib/site-domains";
+
+/** iPhone gold nav — pill Waitlist CTA beside the mail button. */
+export function MobileNavWaitlistButton({
+  shadow = "none",
+}: {
+  shadow?: string;
+} = {}) {
+  const show = useDoeHealthLandingNavContext();
+  if (!show) return null;
+
+  return (
+    <div
+      className={`${MOBILE_NAV_SPLIT_SHELL_TW} proto-nav-cta-shell doehealth-nav-waitlist-shell`}
+      style={{ boxShadow: shadow }}
+    >
+      <Link
+        href={WAITLIST_PATH}
+        className={`${MOBILE_NAV_ACTION_CTA_LAYOUT} proto-nav-cta-label rounded-md px-5 font-medium text-[0.9375rem] no-underline iphone-page:px-[clamp(1.05rem,0.82rem+1.05vmin,1.35rem)] iphone-page:text-[clamp(1.02rem,0.92rem+0.62vmin,1.18rem)] ${inter.className}`}
+      >
+        Waitlist
+      </Link>
+    </div>
+  );
+}

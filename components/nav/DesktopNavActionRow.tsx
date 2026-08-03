@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ABOUT_CONTACT_EMAIL } from "@/lib/about/about-contact";
 import { DesktopMainNavCta } from "@/components/home/DesktopMainNavCta";
 import { DesktopNavEmailButton } from "@/components/nav/DesktopNavEmailButton";
+import { DesktopNavWaitlistButton } from "@/components/nav/DesktopNavWaitlistButton";
 import { NavEmailCopyDropdown } from "@/components/nav/NavEmailCopyDropdown";
 import {
   NAV_EMAIL_DROPDOWN_ATTACH_RIGHT_TW,
@@ -106,6 +107,8 @@ export function DesktopNavActionRow({
           onToggle={handleMailToggle}
         />
       ) : null}
+
+      <DesktopNavWaitlistButton shadow={shadow} punched={punched} />
 
       {showInvestorsCta ? (
         <DesktopMainNavCta

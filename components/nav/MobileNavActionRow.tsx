@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ABOUT_CONTACT_EMAIL } from "@/lib/about/about-contact";
 import { MobileMainNavCta } from "@/components/nav/MobileMainNavCta";
 import { MobileNavEmailButton } from "@/components/nav/MobileNavEmailButton";
+import { MobileNavWaitlistButton } from "@/components/nav/MobileNavWaitlistButton";
 import { NavEmailCopyDropdown } from "@/components/nav/NavEmailCopyDropdown";
 import {
   NAV_EMAIL_DROPDOWN_ATTACH_RIGHT_TW,
@@ -106,6 +107,7 @@ export function MobileNavActionRow({
       {showMailIcon ? (
         <MobileNavEmailButton {...chrome} open={open} onToggle={handleMailToggle} />
       ) : null}
+      <MobileNavWaitlistButton shadow={shadow} />
       {showInvestorsCta ? (
         <MobileMainNavCta
           {...chrome}
