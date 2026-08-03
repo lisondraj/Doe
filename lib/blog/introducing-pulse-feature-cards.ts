@@ -13,7 +13,7 @@ export const INTRODUCING_PULSE_FEATURE_CARDS = [
   {
     id: "pulse-signal-routing",
     shaderVariant: v1,
-    subheading: "Signal Routing",
+    subheading: "Instantly calls patients with future appointments to replace no-shows",
     description:
       "Each alert arrives with chart context and a suggested owner, so the right nurse, MA, or physician sees the work without a manual handoff.",
   },
