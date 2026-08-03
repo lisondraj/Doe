@@ -38,11 +38,13 @@ export function AboutStyleFeatureCardGrid({ cards }: AboutStyleFeatureCardGridPr
               />
             </div>
 
-            <h2 className={`${BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_TW} mt-5 iphone-page:mt-6 mb-0`}>
-              {card.subheading}
-            </h2>
+            <figure className="about-style-feature-card__copy m-0">
+              <figcaption className={`${BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_TW} mt-5 iphone-page:mt-6 mb-0`}>
+                {card.subheading}
+              </figcaption>
 
-            <p className={`${BROADER_DOE_VISION_BODY_TW} mt-3 iphone-page:mt-4`}>{card.description}</p>
+              <p className={`${BROADER_DOE_VISION_BODY_TW} mt-3 iphone-page:mt-4`}>{card.description}</p>
+            </figure>
           </article>
         );
       })}

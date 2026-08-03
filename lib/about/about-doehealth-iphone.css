@@ -731,9 +731,16 @@ html[data-about-page][data-layout="desktop"] .broader-doe-proposal-quote blockqu
   letter-spacing: -0.02em !important;
 }
 
-/* Broader Doe Vision desktop — numbered thesis list (match iPhone indent + grid). */
-html[data-about-page][data-layout="desktop"] .about-desktop-main .broader-doe-thesis-headline {
+/* Broader Doe Vision desktop — thesis-style section headlines (Guiding Beliefs + feature cards). */
+html[data-about-page][data-layout="desktop"] .about-desktop-main .broader-doe-thesis-headline,
+html[data-about-page][data-layout="desktop"] .about-desktop-main .about-style-feature-card figcaption.broader-doe-thesis-headline {
   font-size: clamp(1.48rem, 1.22vw, 1.82rem) !important;
+  line-height: 1.15 !important;
+}
+
+html[data-about-page]:has(.doephone-mobile-root--doehealth) .about-style-feature-card figcaption.broader-doe-thesis-headline {
+  font-size: clamp(1.55rem, 1.28rem + 1.22vmin, 1.92rem) !important;
+  line-height: 1.15 !important;
 }
 
 html[data-about-page][data-layout="desktop"] .about-desktop-main ol.broader-doe-thesis-gradient {
@@ -761,7 +768,7 @@ html[data-about-page][data-layout="desktop"] .about-style-feature-cards {
   gap: clamp(2.75rem, 3vw, 3.5rem);
 }
 
-html[data-about-page][data-layout="desktop"] .about-style-feature-card h2.broader-doe-thesis-headline {
+html[data-about-page][data-layout="desktop"] .about-style-feature-card figcaption.broader-doe-thesis-headline {
   margin-top: clamp(1.35rem, 1.2vw, 1.75rem);
 }
 
