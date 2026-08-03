@@ -8,69 +8,69 @@ export const INTRODUCING_CANVAS_FEATURE_CARDS = [
     shaderVariant: v9,
     subheading: "An agent design canvas built for doctors so you can deliver clinic-ready agents.",
     description:
-      "Design voice agents on a visual canvas made for clinical workflows, then deploy them to your clinic without engineering.",
+      "Drag steps, branches, and handoffs instead of filing IT tickets. What you sketch Friday can be live for a pilot panel by Monday.",
   },
   {
     id: "canvas-step-ownership",
     shaderVariant: v1,
     subheading: "Customize your voice agent's voice, tone, and personality.",
     description:
-      "Choose how your agent sounds and speaks so it matches your practice brand and how your team talks to patients.",
+      "Warm and conversational for pediatrics, crisp and direct for surgical follow-up. Patients hear a voice that feels like it belongs to your practice.",
   },
   {
     id: "canvas-trigger-logic",
     shaderVariant: v2,
     subheading: "Connect over 50+ commonly used clinic software.",
     description:
-      "Link scheduling, billing, messaging, and records tools your staff already use so agents can act inside real workflows.",
+      "Scheduling, e-prescribing, billing, and messaging tools wire together so agents can book, document, and bill inside systems staff already trust.",
   },
   {
     id: "canvas-safe-previews",
     shaderVariant: v3,
     subheading: "Integrate your clinic's documents, templates, and policies.",
     description:
-      "Upload the forms, scripts, and rules your team follows so every agent answer reflects how your clinic actually operates.",
+      "Your after-visit summaries, consent language, and triage rules become the source of truth. Agents cite what your compliance team already approved.",
   },
   {
     id: "canvas-template-library",
     shaderVariant: v4,
     subheading: "Download designs from a global community of physician builders.",
     description:
-      "Browse agent templates published by other doctors and adapt them to your specialty and site in minutes.",
+      "A colorectal surgeon in Texas shares a pre-op intake flow you adapt for your own pre-op clinic. Start from peer-tested work instead of a blank canvas.",
   },
   {
     id: "canvas-version-history",
     shaderVariant: v5,
     subheading: "Share agent components with your team to build faster.",
     description:
-      "Reuse prompts, steps, and logic blocks across agents so everyone builds from the same clinic-approved parts.",
+      "One physician builds a prior-auth block; three others drop it into their agents. Shared libraries cut duplicate work across sites and specialties.",
   },
   {
     id: "canvas-role-guardrails",
     shaderVariant: v6,
     subheading: "Test conversations instantly with a built-in simulator",
     description:
-      "Run sample patient calls before go-live to hear how the agent handles real questions and edge cases.",
+      "Hear how the agent handles an angry parent, a confused senior, or a rushed new patient before a single real call goes live. Fix gaps in private.",
   },
   {
     id: "canvas-chart-context",
     shaderVariant: v7,
     subheading: "Use prompts, voice, or images to design agents for your clinic's needs.",
     description:
-      "Describe what you want in plain language, record examples, or drop in reference images to shape agent behavior.",
+      "Dictate a script, upload a screenshot of your intake form, or paste a policy PDF. Canvas turns clinical intent into executable logic.",
   },
   {
     id: "canvas-branching-paths",
     shaderVariant: v8,
     subheading: "Route agent actions to a specific team member.",
     description:
-      "Send completed tasks, messages, and handoffs to the right nurse, MA, or physician based on your clinic rules.",
+      "Urgent results go to the covering physician; routine refills land with the MA pool. Ownership rules mirror how your clinic already divides work.",
   },
   {
     id: "canvas-launch-controls",
     shaderVariant: v0,
     subheading: "Determine what should be escalated to a human.",
     description:
-      "Set clear thresholds for when the agent stops and your staff takes over so patients always reach a person when it matters.",
+      "High-acuity symptoms, upset callers, and out-of-scope requests transfer with full context attached. Staff step in only where judgment is required.",
   },
 ] as const satisfies readonly AboutStyleFeatureCard[];
