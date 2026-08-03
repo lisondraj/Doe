@@ -492,13 +492,6 @@ html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav.prot
     inset 0 -1px 0 rgba(140, 96, 58, 0.24) !important;
 }
 
-/* Desktop home hero — hide Waitlist until punched nav (non-hero bar). */
-html[data-layout="desktop"]
-  nav.desktop-punched-nav:not(.proto-nav--scrolled):not(.proto-nav-always-punched)
-  .doehealth-nav-waitlist-shell {
-  display: none !important;
-}
-
 /*
  * Desktop /doehealth + /about mail — hero: square brown box + gold icon only.
  * Morphs to circular gold shell/fill with punched nav (--proto-nav-frost-shell-progress).

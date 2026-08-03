@@ -6,7 +6,7 @@ import {
   DESKTOP_NAV_ACTION_HEIGHT_TW,
 } from "@/lib/subpage/desktop-nav-styles";
 
-/** Desktop gold nav — pill Waitlist CTA beside the mail button (non-hero punched bar only). */
+/** Desktop gold nav — pill Waitlist CTA beside the mail button. */
 export function DesktopNavWaitlistButton({
   shadow = "none",
   punched = false,
