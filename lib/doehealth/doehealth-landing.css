@@ -130,6 +130,36 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth) .doehealth-top-banner
   }
 }
 
+/* /doehealth — rotating top banner slide transition. */
+.doehealth-top-banner--carousel .doehealth-top-banner__text {
+  transition:
+    opacity 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+.doehealth-top-banner--carousel .doehealth-top-banner__text--visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.doehealth-top-banner--carousel .doehealth-top-banner__text--hidden {
+  opacity: 0;
+  transform: translate3d(0, 0.28em, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doehealth-top-banner--carousel .doehealth-top-banner__text {
+    transition: none;
+    will-change: auto;
+  }
+
+  .doehealth-top-banner--carousel .doehealth-top-banner__text--hidden {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 .doephone-mobile-root--doehealth .doehealth-hero-headline,
 .doe-desktop-root--doehealth .doehealth-hero-headline,
 .doephone-mobile-root--doehealth .doehealth-hero-headline .doephone-hero-headline-line,

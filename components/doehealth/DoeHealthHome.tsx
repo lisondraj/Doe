@@ -1,6 +1,6 @@
 import { DoeHealthBrownBandStack } from "@/components/doehealth/DoeHealthBrownBandStack";
+import { DoeHealthHomeTopBanner } from "@/components/doehealth/DoeHealthTopBanner";
 import { DoePhoneRouter } from "@/components/doephone/DoePhoneRouter";
-import { DoeHealthTopBanner } from "@/components/doehealth/DoeHealthTopBanner";
 import { DesignersPhoneCanvas } from "@/lib/designers/DesignersPhoneCanvas";
 import { DOEHEALTH_DISABLE_CAROUSEL_INTERACTIONS, DOEHEALTH_HIDE_SECTIONS_BELOW_INTRO, DOEHEALTH_HOME_FEATURE_SLIDES } from "@/lib/doehealth/doehealth-feature-stack";
 import { DOEHEALTH_HERO_HEADLINE } from "@/lib/doehealth/doehealth-hero-copy";
@@ -14,7 +14,7 @@ export function DoeHealthHome() {
   return (
     <DesignersPhoneCanvas>
       <DoePhoneRouter
-        TopBanner={DoeHealthTopBanner}
+        TopBanner={DoeHealthHomeTopBanner}
         heroHeadline={DOEHEALTH_HERO_HEADLINE}
         afterHero={<DoeHealthBrownBandStack />}
         hideSectionsBelowIntro={DOEHEALTH_HIDE_SECTIONS_BELOW_INTRO}
