@@ -20,7 +20,8 @@ export const INTRODUCING_PULSE_FEATURE_CARDS = [
   {
     id: "pulse-escalation-paths",
     shaderVariant: v2,
-    subheading: "Escalation Paths",
+    subheading:
+      "Waits on hold with insurers to set up prior authorization, handles all follow-up calls and updates the patient",
     description:
       "When a signal persists or worsens, Pulse escalates along paths your practice defines — with timestamps, notes, and accountability built in.",
   },
