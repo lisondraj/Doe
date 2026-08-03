@@ -1,6 +1,6 @@
 import { ABOUT_STYLE_FEATURE_SHADER_VARIANTS, type AboutStyleFeatureCard } from "@/lib/blog/about-style-feature-card";
 
-const [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9] = ABOUT_STYLE_FEATURE_SHADER_VARIANTS;
+const [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11] = ABOUT_STYLE_FEATURE_SHADER_VARIANTS;
 
 export const INTRODUCING_PULSE_FEATURE_CARDS = [
   {
@@ -74,5 +74,19 @@ export const INTRODUCING_PULSE_FEATURE_CARDS = [
     subheading: "Extensive call history tools to track and log every agentic action.",
     description:
       "Signals can resolve into tasks, messages, or documentation updates inside Doe so awareness turns into completed work, not another open tab.",
+  },
+  {
+    id: "pulse-multilingual",
+    shaderVariant: v10,
+    subheading: "Supports over 30+ languages, listens and analyzes at the same time.",
+    description:
+      "Pulse handles multilingual conversations in real time — understanding and responding without making patients wait for translation.",
+  },
+  {
+    id: "pulse-existing-stack",
+    shaderVariant: v11,
+    subheading: "Uses your existing clinic phone number and software.",
+    description:
+      "No new numbers or rip-and-replace — Pulse plugs into the phone line and tools your clinic already runs.",
   },
 ] as const satisfies readonly AboutStyleFeatureCard[];

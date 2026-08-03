@@ -13,6 +13,8 @@ export const ABOUT_STYLE_FEATURE_SHADER_VARIANTS = [
   "looking-ahead",
   "prototype",
   "meet-proto-stack-1",
+  "active-agents-band",
+  "integrate",
 ] as const satisfies readonly ProtoGrainGradientVariant[];
 
 export type AboutStyleFeatureShaderVariant = (typeof ABOUT_STYLE_FEATURE_SHADER_VARIANTS)[number];
