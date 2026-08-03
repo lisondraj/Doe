@@ -1,4 +1,5 @@
 import type { AboutStyleLongformArticle } from "@/lib/blog/about-style-longform-article";
+import { INTRODUCING_CANVAS_FEATURE_CARDS } from "@/lib/blog/introducing-canvas-feature-cards";
 import { DESIGN3_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 
 export const INTRODUCING_CANVAS_SLUG = "introducing-canvas";
@@ -18,6 +19,7 @@ export const INTRODUCING_CANVAS_ARTICLE = {
   byline: "By James Lisondra",
   date: "August 2, 2026",
   heroBackdrop: DESIGN3_BACKDROP,
+  featureCards: INTRODUCING_CANVAS_FEATURE_CARDS,
   bodyParagraphs: [
     "Every specialty, every site, and every team develops its own rhythm for intake, follow-up, escalation, and closure. Most EHRs treat that rhythm as customization. In practice it becomes a backlog of requests, workarounds, and sticky notes on monitors.",
     "Canvas gives clinical and operational leaders a direct way to compose those rhythms inside Doe. You lay out steps, assign owners, define triggers, and preview how work moves before anything goes live for staff.",

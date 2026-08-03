@@ -1,6 +1,7 @@
 import { AboutStyleContactLink } from "@/components/blog/AboutStyleContactLink";
 import { AboutStyleArticleEmailInvite } from "@/components/blog/AboutStyleArticleEmailInvite";
 import { AboutStyleArticleProposalQuote } from "@/components/blog/AboutStyleArticleProposalQuote";
+import { AboutStyleFeatureCardGrid } from "@/components/blog/AboutStyleFeatureCardGrid";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import {
   ABOUT_MOBILE_CONTENT_GAP,
@@ -55,6 +56,12 @@ export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageC
           useAboutHeroDuskShader
         />
       </div>
+
+      {article.featureCards && article.featureCards.length > 0 ? (
+        <div className="mt-10 mb-14 iphone-page:mt-12 iphone-page:mb-16">
+          <AboutStyleFeatureCardGrid cards={article.featureCards} />
+        </div>
+      ) : null}
 
       <div className={ABOUT_MOBILE_SECTION_GAP}>
         <div className={ABOUT_MOBILE_CONTENT_GAP}>

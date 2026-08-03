@@ -1,3 +1,4 @@
+import type { AboutStyleFeatureCard } from "@/lib/blog/about-style-feature-card";
 import type { WorkflowCarouselDesignBackdrop } from "@/lib/workflow-carousel-design-backdrops";
 
 /** Shared longform layout used by /about-style blog pages (Broader Doe Vision shell). */
@@ -11,6 +12,8 @@ export type AboutStyleLongformArticle = {
   byline: string;
   date: string;
   heroBackdrop: WorkflowCarouselDesignBackdrop;
+  /** Square shader tiles beneath the hero band — optional per page. */
+  featureCards?: readonly AboutStyleFeatureCard[];
   bodyParagraphs: readonly string[];
   contactParagraphIndex?: number;
   aiPlaybookParagraphIndex?: number;

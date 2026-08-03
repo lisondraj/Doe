@@ -1,4 +1,5 @@
 import type { AboutStyleLongformArticle } from "@/lib/blog/about-style-longform-article";
+import { INTRODUCING_PULSE_FEATURE_CARDS } from "@/lib/blog/introducing-pulse-feature-cards";
 import { HEY_CAROUSEL_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 
 export const INTRODUCING_PULSE_SLUG = "introducing-pulse";
@@ -18,6 +19,7 @@ export const INTRODUCING_PULSE_ARTICLE = {
   byline: "By James Lisondra",
   date: "August 2, 2026",
   heroBackdrop: HEY_CAROUSEL_BACKDROP,
+  featureCards: INTRODUCING_PULSE_FEATURE_CARDS,
   bodyParagraphs: [
     "Most clinics already generate more signal than any one team can watch. Vitals update, labs return, messages arrive, and orders cross departments — often in systems that never talk to each other on the way in.",
     "Pulse sits on top of the workflows you already run in Doe. It watches the streams that matter to your practice, surfaces only the shifts that need a human, and routes each one to the right role with the chart context attached.",

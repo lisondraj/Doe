@@ -750,6 +750,21 @@ html[data-about-page][data-layout="desktop"] .about-desktop-main ol.broader-doe-
   letter-spacing: -0.01em;
 }
 
+/* About-style feature cards — square shader tiles beneath hero band. */
+html[data-about-page] .about-style-feature-card__shader {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 245, 230, 0.06),
+    0 18px 40px rgba(0, 0, 0, 0.22);
+}
+
+html[data-about-page][data-layout="desktop"] .about-style-feature-cards {
+  gap: clamp(2.75rem, 3vw, 3.5rem);
+}
+
+html[data-about-page][data-layout="desktop"] .about-style-feature-card h2.broader-doe-thesis-headline {
+  margin-top: clamp(1.35rem, 1.2vw, 1.75rem);
+}
+
 html[data-about-page][data-layout="desktop"] .broader-doe-hero-headlines {
   gap: clamp(1.25rem, 1vw, 1.75rem);
 }
