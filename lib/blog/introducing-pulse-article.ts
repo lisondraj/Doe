@@ -15,7 +15,7 @@ export const INTRODUCING_PULSE_ARTICLE = {
   subheading: "Voice that goes beyond the front desk.",
   openingLede: "Today, we're excited to introduce Doe's first two flagship products, Pulse and Canvas.",
   openingLedeContinuation:
-    "Pulse is our suite of AI-native voice agents built to automate every aspect of your clinic's workflow. Our agents can schedule appointments, handle calls with insurers, prepare you for your appointments, handle clinical management issues, and so much more.",
+    "Pulse is our suite of AI-native voice agents built to automate every aspect of your clinic's workflow. Our agents can schedule appointments, handle calls with insurers, prepare you for your appointments, handle clinical management issues, and so much more. Pulse integrates with your clinic phone number and existing software to pick-up, respond to, and resolve any kind of request that reaches your front desk.",
   byline: "By James Lisondra",
   date: "August 2, 2026",
   heroBackdrop: HEY_CAROUSEL_BACKDROP,
