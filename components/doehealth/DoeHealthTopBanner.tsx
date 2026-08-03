@@ -142,6 +142,6 @@ export function DoeHealthTopBanner({
 }
 
 /** /doehealth home — rotating vision + product intro slides. */
-export function DoeHealthHomeTopBanner({ dismissPastHero = false }: { dismissPastHero?: boolean }) {
+export function DoeHealthHomeTopBanner({ dismissPastHero = false }: { dismissPastHero?: boolean } = {}) {
   return <DoeHealthTopBanner dismissPastHero={dismissPastHero} slides={DOEHEALTH_TOP_BANNER_SLIDES} />;
 }
