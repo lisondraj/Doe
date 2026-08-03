@@ -364,7 +364,7 @@ html[data-about-page] .broader-doe-hero-byline {
 
 /* Broader Doe Vision iPhone — slightly larger subheading + byline than desktop. */
 html[data-about-page]:has(.doephone-mobile-root--doehealth) main p.broader-doe-hero-description {
-  font-size: clamp(1.68rem, 1.45rem + 1.25vmin, 1.98rem) !important;
+  font-size: clamp(1.48rem, 1.22rem + 0.72vmin, 1.58rem) !important;
 }
 
 html[data-about-page]:has(.doephone-mobile-root--doehealth) main p.broader-doe-hero-byline {

@@ -1,4 +1,5 @@
 import { ABOUT_PAGE_HERO_BACKDROP } from "@/lib/about/about-page-article";
+import { ABOUT_PAGE_SUBHEADING } from "@/lib/about/about-layout-styles";
 import { ABOUT_PATH } from "@/lib/site-domains";
 
 export const BROADER_DOE_VISION_SLUG = "the-broader-doe-vision";
@@ -8,8 +9,8 @@ export const BROADER_DOE_VISION_PATH = ABOUT_PATH;
 
 export const BROADER_DOE_VISION_TITLE = "The Broader Doe Vision";
 
-export const BROADER_DOE_VISION_SUBHEADING =
-  "We believe intelligent tools in healthcare should be built by the providers themselves.";
+/** Hero subheading — shared with /about mission copy. */
+export const BROADER_DOE_VISION_SUBHEADING = ABOUT_PAGE_SUBHEADING;
 
 export const BROADER_DOE_VISION_OPENING_LEDE =
   "I strongly believe that within the next few years, intelligence in medicine will undergo a rapid transformation, completely detached from today's landscape.";
