@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { inter } from "@/lib/home/fonts";
 import type { DoeHealthTopBannerSlide } from "@/lib/doehealth/doehealth-top-banner-slides";
 import {
+  DOEHEALTH_TOP_BANNER_CROSSFADE_MS,
   DOEHEALTH_TOP_BANNER_ROTATE_MS,
   DOEHEALTH_TOP_BANNER_SLIDES,
 } from "@/lib/doehealth/doehealth-top-banner-slides";
@@ -31,6 +32,26 @@ function BannerArrow() {
   );
 }
 
+function BannerSlideText({
+  slide,
+  phase,
+}: {
+  slide: DoeHealthTopBannerSlide;
+  phase: "current" | "out" | "in";
+}) {
+  return (
+    <p
+      className={`doe-home-top-banner__text doehealth-top-banner__text doehealth-top-banner__slide doehealth-top-banner__slide--${phase} ${inter.className}`}
+    >
+      <span>{slide.message}</span>
+      <Link href={slide.linkHref} className="doe-home-top-banner__link">
+        {slide.linkLabel}
+        <BannerArrow />
+      </Link>
+    </p>
+  );
+}
+
 type DoeHealthTopBannerProps = {
   dismissPastHero?: boolean;
   message?: string;
@@ -52,11 +73,17 @@ export function DoeHealthTopBanner({
   const [dismissed, setDismissed] = useState(false);
   const carouselSlides = slides && slides.length > 0 ? slides : null;
   const [activeIndex, setActiveIndex] = useState(0);
-  const [slideVisible, setSlideVisible] = useState(true);
+  const [incomingIndex, setIncomingIndex] = useState<number | null>(null);
+  const [isCrossfading, setIsCrossfading] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
+  const activeIndexRef = useRef(activeIndex);
 
   const staticSlide = carouselSlides ? null : { message, linkLabel, linkHref };
   const activeSlide = carouselSlides ? carouselSlides[activeIndex] : staticSlide!;
+
+  useLayoutEffect(() => {
+    activeIndexRef.current = activeIndex;
+  }, [activeIndex]);
 
   useLayoutEffect(() => {
     if (!dismissPastHero) return undefined;
@@ -100,43 +127,74 @@ export function DoeHealthTopBanner({
   useEffect(() => {
     if (!carouselSlides || carouselSlides.length <= 1) return undefined;
 
-    let fadeTimeout = 0;
-
     const interval = window.setInterval(() => {
+      const nextIndex = (activeIndexRef.current + 1) % carouselSlides.length;
+
       if (reduceMotion) {
-        setActiveIndex((current) => (current + 1) % carouselSlides.length);
+        setActiveIndex(nextIndex);
+        setIncomingIndex(null);
+        setIsCrossfading(false);
         return;
       }
 
-      setSlideVisible(false);
-      fadeTimeout = window.setTimeout(() => {
-        setActiveIndex((current) => (current + 1) % carouselSlides.length);
-        setSlideVisible(true);
-      }, 320);
+      setIncomingIndex(nextIndex);
     }, rotateIntervalMs);
 
-    return () => {
-      window.clearInterval(interval);
-      window.clearTimeout(fadeTimeout);
-    };
+    return () => window.clearInterval(interval);
   }, [carouselSlides, reduceMotion, rotateIntervalMs]);
+
+  useLayoutEffect(() => {
+    if (incomingIndex === null || reduceMotion) return undefined;
+
+    setIsCrossfading(false);
+
+    let finishTimeout = 0;
+    let startRaf = 0;
+
+    startRaf = requestAnimationFrame(() => {
+      startRaf = requestAnimationFrame(() => {
+        setIsCrossfading(true);
+        finishTimeout = window.setTimeout(() => {
+          setActiveIndex(incomingIndex);
+          setIncomingIndex(null);
+          setIsCrossfading(false);
+        }, DOEHEALTH_TOP_BANNER_CROSSFADE_MS);
+      });
+    });
+
+    return () => {
+      cancelAnimationFrame(startRaf);
+      window.clearTimeout(finishTimeout);
+    };
+  }, [incomingIndex, reduceMotion]);
 
   return (
     <div
-      className={`doe-home-top-banner doehealth-top-banner${dismissed ? " doe-home-top-banner--dismissed" : ""}${carouselSlides ? " doehealth-top-banner--carousel" : ""}`}
+      className={`doe-home-top-banner doehealth-top-banner${dismissed ? " doe-home-top-banner--dismissed" : ""}${carouselSlides ? " doehealth-top-banner--carousel" : ""}${isCrossfading ? " doehealth-top-banner--crossfading" : ""}`}
       role="region"
       aria-live={carouselSlides ? "polite" : undefined}
       aria-label={`${activeSlide.message} ${activeSlide.linkLabel}`}
     >
-      <p
-        className={`doe-home-top-banner__text doehealth-top-banner__text ${inter.className}${carouselSlides && !slideVisible ? " doehealth-top-banner__text--hidden" : ""}${carouselSlides && slideVisible ? " doehealth-top-banner__text--visible" : ""}`}
-      >
-        <span>{activeSlide.message}</span>
-        <Link href={activeSlide.linkHref} className="doe-home-top-banner__link">
-          {activeSlide.linkLabel}
-          <BannerArrow />
-        </Link>
-      </p>
+      {carouselSlides ? (
+        <div className="doehealth-top-banner__viewport">
+          {incomingIndex === null ? (
+            <BannerSlideText slide={carouselSlides[activeIndex]} phase="current" />
+          ) : (
+            <>
+              <BannerSlideText slide={carouselSlides[activeIndex]} phase="out" />
+              <BannerSlideText slide={carouselSlides[incomingIndex]} phase="in" />
+            </>
+          )}
+        </div>
+      ) : (
+        <p className={`doe-home-top-banner__text doehealth-top-banner__text ${inter.className}`}>
+          <span>{activeSlide.message}</span>
+          <Link href={activeSlide.linkHref} className="doe-home-top-banner__link">
+            {activeSlide.linkLabel}
+            <BannerArrow />
+          </Link>
+        </p>
+      )}
     </div>
   );
 }

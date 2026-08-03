@@ -9,6 +9,9 @@ export type DoeHealthTopBannerSlide = {
 
 export const DOEHEALTH_TOP_BANNER_ROTATE_MS = 10_000;
 
+/** Crossfade duration — keep in sync with `.doehealth-top-banner--carousel` CSS. */
+export const DOEHEALTH_TOP_BANNER_CROSSFADE_MS = 520;
+
 export const DOEHEALTH_TOP_BANNER_SLIDES = [
   {
     message: "Learn more about Doe's vision",
