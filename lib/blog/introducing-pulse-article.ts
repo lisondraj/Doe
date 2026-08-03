@@ -12,7 +12,7 @@ export const INTRODUCING_PULSE_ARTICLE = {
   title: "Introducing Pulse",
   excerpt:
     "Pulse brings live clinical signals into one stream so care teams can see what changed, who needs attention, and what to do next.",
-  subheading: "We're building voice agents that go beyond the front desk.",
+  subheading: "Voice agents that go beyond the front desk.",
   openingLede: "Today, we're excited to introduce Doe's first two flagship products, Pulse and Canvas.",
   openingLedeContinuation:
     "Pulse is our suite of AI-native voice agents built to automate every aspect of your clinic's workflow. Our agents can schedule appointments, handle calls with insurers, prepare you for your appointments, handle clinic management issues. Pulse integrates with your clinic phone number and existing software to pick-up, respond to, and resolve any kind of request that reaches your front desk.",
