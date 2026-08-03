@@ -905,6 +905,15 @@ html[data-about-page][data-layout="desktop"] .about-style-feature-card figcaptio
   margin-top: clamp(1.35rem, 1.2vw, 1.75rem);
 }
 
+/* Pulse / Canvas desktop — feature card subheadings step above body copy. */
+html[data-about-page][data-layout="desktop"]
+  .about-style-product-intro-page
+  .about-style-feature-card
+  figcaption.broader-doe-thesis-headline {
+  font-size: clamp(1.65rem, 1.38vw, 2.05rem) !important;
+  line-height: 1.14 !important;
+}
+
 html[data-about-page][data-layout="desktop"] .broader-doe-hero-headlines {
   gap: clamp(1rem, 0.85vw, 1.35rem);
 }
