@@ -8,69 +8,69 @@ export const INTRODUCING_CANVAS_FEATURE_CARDS = [
     shaderVariant: v9,
     subheading: "An agent design canvas built for doctors so you can deliver clinic-ready agents.",
     description:
-      "Canvas lets teams lay out steps, branches, and handoffs on a canvas that mirrors how work actually moves through the clinic.",
+      "Design voice agents on a visual canvas made for clinical workflows, then deploy them to your clinic without engineering.",
   },
   {
     id: "canvas-step-ownership",
     shaderVariant: v1,
     subheading: "Customize your voice agent's voice, tone, and personality.",
     description:
-      "Every node assigns a role or team so accountability is clear before a workflow goes live for staff.",
+      "Choose how your agent sounds and speaks so it matches your practice brand and how your team talks to patients.",
   },
   {
     id: "canvas-trigger-logic",
     shaderVariant: v2,
     subheading: "Connect over 50+ commonly used clinic software.",
     description:
-      "Define what starts a workflow — a new referral, a lab result, a message type — without writing code or opening a ticket.",
+      "Link scheduling, billing, messaging, and records tools your staff already use so agents can act inside real workflows.",
   },
   {
     id: "canvas-safe-previews",
     shaderVariant: v3,
     subheading: "Integrate your clinic's documents, templates, and policies.",
     description:
-      "Run simulations against sample cases to see how work routes before enabling a path for the whole practice.",
+      "Upload the forms, scripts, and rules your team follows so every agent answer reflects how your clinic actually operates.",
   },
   {
     id: "canvas-template-library",
     shaderVariant: v4,
     subheading: "Download designs from a global community of physician builders.",
     description:
-      "Start from proven patterns for intake, prior auth, follow-up, and referral management, then customize to your site.",
+      "Browse agent templates published by other doctors and adapt them to your specialty and site in minutes.",
   },
   {
     id: "canvas-version-history",
     shaderVariant: v5,
     subheading: "Share agent components with your team to build faster.",
     description:
-      "Every edit is versioned so teams can compare changes, roll back safely, and understand who modified a live workflow.",
+      "Reuse prompts, steps, and logic blocks across agents so everyone builds from the same clinic-approved parts.",
   },
   {
     id: "canvas-role-guardrails",
     shaderVariant: v6,
     subheading: "Test conversations instantly with a built-in simulator",
     description:
-      "Canvas enforces license and scope boundaries at design time so workflows cannot assign clinical work to the wrong role.",
+      "Run sample patient calls before go-live to hear how the agent handles real questions and edge cases.",
   },
   {
     id: "canvas-chart-context",
     shaderVariant: v7,
     subheading: "Use prompts, voice, or images to design agents for your clinic's needs.",
     description:
-      "Steps stay tethered to patient records, messages, and tasks — context travels with the workflow instead of splitting across tools.",
+      "Describe what you want in plain language, record examples, or drop in reference images to shape agent behavior.",
   },
   {
     id: "canvas-branching-paths",
     shaderVariant: v8,
     subheading: "Route agent actions to a specific team member.",
     description:
-      "Model conditional routes for payer rules, urgency, or specialty so one template covers the variations your team already handles manually.",
+      "Send completed tasks, messages, and handoffs to the right nurse, MA, or physician based on your clinic rules.",
   },
   {
     id: "canvas-launch-controls",
     shaderVariant: v0,
     subheading: "Determine what should be escalated to a human.",
     description:
-      "Publish to a pilot group, schedule activation, or pause a path instantly when operations need to adjust mid-week.",
+      "Set clear thresholds for when the agent stops and your staff takes over so patients always reach a person when it matters.",
   },
 ] as const satisfies readonly AboutStyleFeatureCard[];

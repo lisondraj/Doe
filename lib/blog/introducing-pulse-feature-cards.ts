@@ -8,14 +8,14 @@ export const INTRODUCING_PULSE_FEATURE_CARDS = [
     shaderVariant: v9,
     subheading: "Schedules appointments, asks pre-visit questions, and prepares your visit.",
     description:
-      "Pulse watches every patient on your panel and surfaces meaningful shifts — not every tick, only the changes that deserve a clinician's attention.",
+      "Pulse books the visit, collects what the patient needs to know before they arrive, and makes sure your team walks in ready.",
   },
   {
     id: "pulse-signal-routing",
     shaderVariant: v1,
     subheading: "Instantly calls patients with future appointments to replace no-shows.",
     description:
-      "Each alert arrives with chart context and a suggested owner, so the right nurse, MA, or physician sees the work without a manual handoff.",
+      "When a slot opens, Pulse reaches out to patients on your waitlist and fills the opening before it becomes lost revenue.",
   },
   {
     id: "pulse-escalation-paths",
@@ -23,42 +23,42 @@ export const INTRODUCING_PULSE_FEATURE_CARDS = [
     subheading:
       "Waits on hold with insurers to set up prior authorization, handles all follow-up calls and updates the patient.",
     description:
-      "When a signal persists or worsens, Pulse escalates along paths your practice defines — with timestamps, notes, and accountability built in.",
+      "Pulse stays on the line with payers, tracks every callback, and keeps the patient informed until authorization is complete.",
   },
   {
     id: "pulse-change-detection",
     shaderVariant: v3,
     subheading: "Prepares everything you need for a seamless appointment.",
     description:
-      "Labs, vitals, messages, and orders are compared against recent baselines so teams catch drift early instead of at the next visit.",
+      "Chart summaries, intake answers, and open tasks are gathered ahead of time so the visit starts on time and on track.",
   },
   {
     id: "pulse-role-triage",
     shaderVariant: v4,
     subheading: "Handles all clinic management calls so you can focus on patient care.",
     description:
-      "Routing respects scope of practice and shift coverage, keeping front-desk noise out of clinical queues and vice versa.",
+      "Scheduling changes, billing questions, and front-desk requests go to Pulse so clinical staff can stay with patients.",
   },
   {
     id: "pulse-chart-linked-alerts",
     shaderVariant: v5,
     subheading: "Security tools so patient information never leaves your electronic medical record.",
     description:
-      "Every Pulse item opens directly into the relevant chart section, thread, or task so staff never reconstruct context from a push notification alone.",
+      "Pulse reads and writes through your EMR so protected health information stays inside the systems you already trust.",
   },
   {
     id: "pulse-quiet-hours",
     shaderVariant: v6,
     subheading: "Remembers every call for every patient, ever.",
     description:
-      "Practices set when signals may interrupt and when they should queue, protecting after-hours teams without losing overnight urgency.",
+      "Full conversation history lives on the chart so any team member can pick up where the last call left off.",
   },
   {
     id: "pulse-specialty-filters",
     shaderVariant: v7,
     subheading: "Responds to all requests from your voicemail.",
     description:
-      "Cardiology, primary care, and behavioral health teams each define which streams matter to them — Pulse adapts per specialty and site.",
+      "Every message is returned, triaged, and resolved or routed without waiting for staff to replay the inbox.",
   },
   {
     id: "pulse-audit-trail",
@@ -66,27 +66,27 @@ export const INTRODUCING_PULSE_FEATURE_CARDS = [
     subheading:
       "Calls specialists to book referrals, and surfaces results in the patient's chart after their visit.",
     description:
-      "Who saw a signal, who acted, and what changed is logged automatically for compliance, handoffs, and quality review.",
+      "Pulse coordinates outbound referral calls and logs outcomes in the record once the visit is done.",
   },
   {
     id: "pulse-closed-loop",
     shaderVariant: v0,
     subheading: "Extensive call history tools to track and log every agentic action.",
     description:
-      "Signals can resolve into tasks, messages, or documentation updates inside Doe so awareness turns into completed work, not another open tab.",
+      "Searchable logs show who Pulse called, what it did, and what changed in the chart for audit and follow-up.",
   },
   {
     id: "pulse-multilingual",
     shaderVariant: v10,
     subheading: "Supports over 30+ languages, listens and analyzes at the same time.",
     description:
-      "Pulse handles multilingual conversations in real time — understanding and responding without making patients wait for translation.",
+      "Patients can speak in their preferred language while Pulse understands and responds without a separate translation step.",
   },
   {
     id: "pulse-existing-stack",
     shaderVariant: v11,
     subheading: "Uses your existing clinic phone number and software.",
     description:
-      "No new numbers or rip-and-replace — Pulse plugs into the phone line and tools your clinic already runs.",
+      "Keep the number patients already know and connect Pulse to the EMR and tools your clinic runs today.",
   },
 ] as const satisfies readonly AboutStyleFeatureCard[];
