@@ -65,6 +65,8 @@ export function DoePhoneHeroSection({
   heroHeadlineFitToContainer,
   heroReadMoreHref,
   heroReadMoreLabel = "Read more",
+  heroReadMorePrefix,
+  heroReadMoreLinks,
   disableHeroOrbInteractions,
   heroOrbSchemes,
 }: {
@@ -80,6 +82,8 @@ export function DoePhoneHeroSection({
   heroHeadlineFitToContainer?: boolean;
   heroReadMoreHref?: string;
   heroReadMoreLabel?: string;
+  heroReadMorePrefix?: string;
+  heroReadMoreLinks?: readonly { label: string; href: string }[];
   disableHeroOrbInteractions?: boolean;
   /** Optional hero dial orb palette (e.g. /doehealth gold schemes). */
   heroOrbSchemes?: readonly HeroDialOrbScheme[];
@@ -189,7 +193,19 @@ export function DoePhoneHeroSection({
             className={heroHeadlineClassName}
             fitToContainer={heroHeadlineFitToContainer}
           />
-          {heroReadMoreHref ? (
+          {heroReadMoreLinks && heroReadMoreLinks.length > 0 ? (
+            <div className={`doehealth-hero-read-more-row pointer-events-auto ${inter.className}`}>
+              {heroReadMorePrefix ? (
+                <span className="doehealth-hero-read-more__prefix">{heroReadMorePrefix}</span>
+              ) : null}
+              {heroReadMoreLinks.map((link) => (
+                <Link key={link.href} href={link.href} className="doehealth-hero-read-more">
+                  {link.label}
+                  <HeroReadMoreArrow />
+                </Link>
+              ))}
+            </div>
+          ) : heroReadMoreHref ? (
             <Link
               href={heroReadMoreHref}
               className={`doehealth-hero-read-more pointer-events-auto ${inter.className}`}

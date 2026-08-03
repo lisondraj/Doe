@@ -174,12 +174,28 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth) .doehealth-top-banner
 }
 
 /* Hero read-more — gold link under headline (phone + desktop). */
+.doehealth-hero-read-more-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.9rem;
+  margin-top: clamp(1rem, 0.72rem + 1.2vmin, 1.45rem);
+}
+
+.doehealth-hero-read-more__prefix {
+  font-size: clamp(1.12rem, 3.45vmin, 1.48rem);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  color: rgba(245, 230, 208, 0.72);
+}
+
 .doephone-mobile-root--doehealth .doehealth-hero-read-more,
 .doe-desktop-root--doehealth .doehealth-hero-read-more {
   display: inline-flex;
   align-items: center;
   gap: 0.42rem;
-  margin-top: clamp(1rem, 0.72rem + 1.2vmin, 1.45rem);
+  margin-top: 0;
   font-size: clamp(1.12rem, 3.45vmin, 1.48rem);
   font-weight: 500;
   letter-spacing: -0.01em;
@@ -206,8 +222,17 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth) .doehealth-top-banner
   margin-top: 0.02em;
 }
 
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-hero-read-more-row {
+  gap: 0.5rem 1rem;
+  margin-top: clamp(1.05rem, 0.9vw, 1.5rem);
+}
+
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-hero-read-more__prefix,
 html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-hero-read-more {
   font-size: clamp(1.18rem, 1.05vw, 1.55rem);
+}
+
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-hero-read-more {
   gap: 0.48rem;
 }
 
