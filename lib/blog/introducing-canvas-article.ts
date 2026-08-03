@@ -13,8 +13,9 @@ export const INTRODUCING_CANVAS_ARTICLE = {
   excerpt:
     "Canvas lets clinical teams design the workflows they actually run — visually, in plain language, and without waiting on a vendor roadmap.",
   subheading: "Design your own clinical intelligence.",
-  openingLede:
-    "Today, we're excited to introduce Doe's first two flagship products, Pulse and Canvas. Doe Canvas is a visual-first no-code agent builder that empowers doctors and their clinics to design their own voice agents. We aim to bring intelligence closer to the providers they will benefit the most, by allowing them to customize agents to fit their own clinic logic, workflows, and policies.",
+  openingLede: "Today, we're excited to introduce Doe's first two flagship products, Pulse and Canvas.",
+  openingLedeContinuation:
+    "Doe Canvas is a visual-first no-code agent builder that empowers doctors and their clinics to design their own voice agents. We aim to bring intelligence closer to the providers they will benefit the most, by allowing them to customize agents to fit their own clinic logic, workflows, and policies.",
   byline: "By James Lisondra",
   date: "August 2, 2026",
   heroBackdrop: DESIGN3_BACKDROP,

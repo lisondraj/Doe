@@ -52,9 +52,18 @@ export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageC
               {article.date}
             </p>
 
-            <p className={`${BROADER_DOE_VISION_BODY_TW} about-style-product-intro-body mt-8 text-left iphone-page:mt-9`}>
-              {article.openingLede}
-            </p>
+            <div className={`${ABOUT_MOBILE_CONTENT_GAP} mt-8 text-left iphone-page:mt-9`}>
+              <p
+                className={`${BROADER_DOE_VISION_BODY_TW} about-style-product-intro-body font-semibold`}
+              >
+                {article.openingLede}
+              </p>
+              {article.openingLedeContinuation ? (
+                <p className={`${BROADER_DOE_VISION_BODY_TW} about-style-product-intro-body`}>
+                  {article.openingLedeContinuation}
+                </p>
+              ) : null}
+            </div>
           </div>
         </header>
 

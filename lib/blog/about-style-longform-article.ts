@@ -9,6 +9,8 @@ export type AboutStyleLongformArticle = {
   excerpt: string;
   subheading: string;
   openingLede: string;
+  /** Product intro pages — body copy after the bold opening sentence. */
+  openingLedeContinuation?: string;
   byline: string;
   date: string;
   heroBackdrop: WorkflowCarouselDesignBackdrop;
