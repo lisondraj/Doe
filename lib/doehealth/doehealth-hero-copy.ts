@@ -3,8 +3,8 @@ import { INTRODUCING_PULSE_PATH } from "@/lib/blog/introducing-pulse-article";
 
 /** Hero headline copy for the doehealth.care landing (/doehealth). */
 export const DOEHEALTH_HERO_HEADLINE = {
-  line1: "The future of",
-  line2: "healthcare is here.",
+  line1: "Design your own",
+  line2: "clinical intelligence.",
   className: "doehealth-hero-headline",
   readMorePrefix: "Introducing",
   readMoreLinks: [
