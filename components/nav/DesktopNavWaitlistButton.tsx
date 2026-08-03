@@ -24,11 +24,12 @@ export function DesktopNavWaitlistButton({
       className={`relative flex shrink-0 items-stretch overflow-visible ${radius} proto-nav-cta-shell doehealth-nav-waitlist-shell`}
       style={{ boxShadow: shadow }}
     >
-      <span
-        className={`inline-flex ${DESKTOP_NAV_ACTION_HEIGHT_TW} items-center justify-center ${radius} px-6 text-[1rem] font-semibold leading-none transition-[opacity,background-color,color,box-shadow] duration-300 hover:opacity-90 proto-nav-cta-label ${inter.className}`}
+      <button
+        type="button"
+        className={`inline-flex ${DESKTOP_NAV_ACTION_HEIGHT_TW} cursor-pointer appearance-none border-0 bg-transparent items-center justify-center ${radius} px-[1.35rem] text-[0.96875rem] font-semibold leading-none transition-[opacity,background-color,color,box-shadow] duration-300 hover:opacity-90 proto-nav-cta-label doehealth-nav-waitlist-label ${inter.className}`}
       >
         Waitlist
-      </span>
+      </button>
     </div>
   );
 }

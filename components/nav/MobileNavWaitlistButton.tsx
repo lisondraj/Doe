@@ -21,11 +21,12 @@ export function MobileNavWaitlistButton({
       className={`${MOBILE_NAV_SPLIT_SHELL_TW} proto-nav-cta-shell doehealth-nav-waitlist-shell`}
       style={{ boxShadow: shadow }}
     >
-      <span
-        className={`${MOBILE_NAV_ACTION_CTA_LAYOUT} proto-nav-cta-label rounded-md px-7 font-semibold text-[1rem] iphone-page:px-[clamp(1.28rem,1rem+1.2vmin,1.58rem)] iphone-page:text-[clamp(1.06rem,0.96rem+0.65vmin,1.22rem)] ${inter.className}`}
+      <button
+        type="button"
+        className={`${MOBILE_NAV_ACTION_CTA_LAYOUT} proto-nav-cta-label doehealth-nav-waitlist-label cursor-pointer appearance-none border-0 bg-transparent rounded-md px-[1.35rem] font-semibold text-[0.96875rem] iphone-page:px-[clamp(1.28rem,1rem+1.2vmin,1.58rem)] iphone-page:text-[clamp(1.06rem,0.95rem+0.65vmin,1.22rem)] ${inter.className}`}
       >
         Waitlist
-      </span>
+      </button>
     </div>
   );
 }

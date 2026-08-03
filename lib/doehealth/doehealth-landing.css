@@ -466,11 +466,14 @@ html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav.prot
 }
 
 html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav .proto-nav-chrome-actions .doehealth-nav-waitlist-shell > a,
-html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav .proto-nav-chrome-actions .doehealth-nav-waitlist-shell > span,
+html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav .proto-nav-chrome-actions .doehealth-nav-waitlist-shell > button,
 html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav.proto-nav-scroll-frost .proto-nav-chrome-actions .doehealth-nav-waitlist-shell > a,
-html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav.proto-nav-scroll-frost .proto-nav-chrome-actions .doehealth-nav-waitlist-shell > span,
+html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav.proto-nav-scroll-frost .proto-nav-chrome-actions .doehealth-nav-waitlist-shell > button,
 html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav.proto-nav-scroll-frost.proto-nav--scrolled .proto-nav-chrome-actions .doehealth-nav-waitlist-shell > a,
-html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav.proto-nav-scroll-frost.proto-nav--scrolled .proto-nav-chrome-actions .doehealth-nav-waitlist-shell > span {
+html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav.proto-nav-scroll-frost.proto-nav--scrolled .proto-nav-chrome-actions .doehealth-nav-waitlist-shell > button,
+html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav .proto-nav-chrome-actions .doehealth-nav-waitlist-shell .doehealth-nav-waitlist-label,
+html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav.proto-nav-scroll-frost .proto-nav-chrome-actions .doehealth-nav-waitlist-shell .doehealth-nav-waitlist-label,
+html[data-home-page] .doephone-mobile-root--doehealth nav.doephone-site-nav.proto-nav-scroll-frost.proto-nav--scrolled .proto-nav-chrome-actions .doehealth-nav-waitlist-shell .doehealth-nav-waitlist-label {
   background-color: transparent !important;
   background-image: var(--doehealth-gold-fill-gradient) !important;
   color: #1a1208 !important;
@@ -607,7 +610,13 @@ html[data-layout="desktop"]
   nav.desktop-punched-nav
   .proto-nav-chrome-actions
   .doehealth-nav-waitlist-shell
-  > span {
+  > button,
+html[data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  nav.desktop-punched-nav
+  .proto-nav-chrome-actions
+  .doehealth-nav-waitlist-shell
+  .doehealth-nav-waitlist-label {
   border-radius: 9999px !important;
   background-image: var(--doehealth-gold-fill-gradient) !important;
   color: #1a1208 !important;
