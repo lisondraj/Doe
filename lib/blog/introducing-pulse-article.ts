@@ -13,7 +13,7 @@ export const INTRODUCING_PULSE_ARTICLE = {
   excerpt:
     "Pulse brings live clinical signals into one stream so care teams can see what changed, who needs attention, and what to do next.",
   subheading:
-    "Real-time awareness for every patient on your panel — without another dashboard to babysit.",
+    "Doe voice agents that watch clinical change and bring the right update to the right role.",
   openingLede:
     "Today we are introducing Pulse, Doe's live clinical signal layer for practices that cannot afford to miss a change in status.",
   byline: "By James Lisondra",

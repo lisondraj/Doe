@@ -352,6 +352,13 @@ html[data-about-page] .broader-doe-hero-title {
   font-weight: 375 !important;
 }
 
+/* Introducing Pulse / Canvas — descender clearance + slightly heavier title. */
+html[data-about-page] .broader-doe-hero-title.broader-doe-hero-title--product-intro {
+  line-height: 1.08 !important;
+  padding-bottom: 0.08em !important;
+  font-weight: 400 !important;
+}
+
 html[data-about-page] .broader-doe-hero-description {
   font-size: clamp(1.55rem, 1.35vw, 1.82rem) !important;
   line-height: 1.32 !important;

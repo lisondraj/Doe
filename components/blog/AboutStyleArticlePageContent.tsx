@@ -21,6 +21,8 @@ import {
   BROADER_DOE_VISION_THESIS_LIST_TW,
   BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_TW,
   BROADER_DOE_VISION_TITLE_TW,
+  ABOUT_STYLE_PRODUCT_INTRO_TITLE_TW,
+  isAboutStyleProductIntro,
 } from "@/lib/blog/broader-doe-vision-layout-styles";
 
 type AboutStyleArticlePageContentProps = {
@@ -33,7 +35,11 @@ export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageC
     <div className="about-page-content">
       <header className={BROADER_DOE_VISION_HERO_INTRO_WRAP}>
         <div className={BROADER_DOE_VISION_HERO_HEADLINES_WRAP}>
-          <h1 className={BROADER_DOE_VISION_TITLE_TW}>{article.title}</h1>
+          <h1
+            className={`${BROADER_DOE_VISION_TITLE_TW}${isAboutStyleProductIntro(article.slug) ? ` ${ABOUT_STYLE_PRODUCT_INTRO_TITLE_TW}` : ""}`}
+          >
+            {article.title}
+          </h1>
 
           <p className={`${BROADER_DOE_VISION_SUBHEADING_TW} mx-auto max-w-[36ch]`}>{article.subheading}</p>
 

@@ -11,8 +11,18 @@ export const BROADER_DOE_VISION_HERO_INTRO_WRAP = `broader-doe-hero-intro text-c
 
 export const BROADER_DOE_VISION_HERO_HEADLINES_WRAP = "broader-doe-hero-headlines mx-auto w-full max-w-[min(100%,42rem)]";
 
+/** Product intro blog pages — extra title class for descender clearance + weight. */
+export const ABOUT_STYLE_PRODUCT_INTRO_SLUGS = ["introducing-pulse", "introducing-canvas"] as const;
+
+export function isAboutStyleProductIntro(slug: string) {
+  return (ABOUT_STYLE_PRODUCT_INTRO_SLUGS as readonly string[]).includes(slug);
+}
+
 /** Broader Doe Vision title — gold gradient + size in CSS. */
 export const BROADER_DOE_VISION_TITLE_TW = `broader-doe-hero-title text-center font-[375] leading-[1.02] tracking-[-0.035em] ${suisseIntl.className}`;
+
+/** Product intro titles — room for descenders (g, y) under gradient clip. */
+export const ABOUT_STYLE_PRODUCT_INTRO_TITLE_TW = "broader-doe-hero-title--product-intro";
 
 /** Hero shader band — space above the gradient box matches nav→title band gap. */
 export const BROADER_DOE_VISION_HERO_WRAP = `broader-doe-hero-visual ${BROADER_DOE_VISION_HERO_BAND_GAP} mb-4 iphone-page:mb-5`;
