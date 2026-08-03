@@ -307,11 +307,11 @@ html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doepho
 
 html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-hero-read-more__prefix,
 html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-hero-read-more {
-  font-size: clamp(1.18rem, 1.05vw, 1.55rem);
+  font-size: clamp(1.32rem, 1.18vw, 1.72rem);
 }
 
 html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-hero-read-more {
-  gap: 0.48rem;
+  gap: 0.52rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
