@@ -5,7 +5,7 @@ const [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9] = ABOUT_STYLE_FEATURE_SHADER_VARI
 export const INTRODUCING_PULSE_FEATURE_CARDS = [
   {
     id: "pulse-panel-awareness",
-    shaderVariant: v0,
+    shaderVariant: v9,
     subheading: "Live Panel Awareness",
     description:
       "Pulse watches every patient on your panel and surfaces meaningful shifts — not every tick, only the changes that deserve a clinician's attention.",
@@ -68,7 +68,7 @@ export const INTRODUCING_PULSE_FEATURE_CARDS = [
   },
   {
     id: "pulse-closed-loop",
-    shaderVariant: v9,
+    shaderVariant: v0,
     subheading: "Closed-Loop Actions",
     description:
       "Signals can resolve into tasks, messages, or documentation updates inside Doe so awareness turns into completed work, not another open tab.",

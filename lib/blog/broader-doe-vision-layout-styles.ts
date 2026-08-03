@@ -30,6 +30,9 @@ export const BROADER_DOE_VISION_HERO_WRAP = `broader-doe-hero-visual ${BROADER_D
 /** Broader Doe Vision thesis section — chart-style caption, scaled up. */
 export const BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_TW = `broader-doe-thesis-headline about-chart-figcaption mb-5 font-medium leading-snug tracking-[-0.01em] text-[#F2E8DA] iphone-page:mb-6 text-[clamp(1.32rem,1.12rem+0.95vmin,1.62rem)] iphone-page:text-[clamp(1.55rem,1.28rem+1.22vmin,1.92rem)] ${dmSans.className}`;
 
+/** /about — gold gradient on Guiding Beliefs headline only (size unchanged). */
+export const BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_GOLD_TW = "broader-doe-thesis-headline-gold";
+
 /** Broader Doe Vision subheading — gold gradient + size in CSS. */
 export const BROADER_DOE_VISION_SUBHEADING_TW = `broader-doe-hero-description about-page-description m-0 font-medium leading-snug tracking-[-0.01em] ${dmSans.className}`;
 

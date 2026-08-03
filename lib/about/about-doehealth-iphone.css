@@ -349,14 +349,25 @@ html[data-about-page] .broader-doe-hero-title {
   font-size: clamp(2.65rem, 3.75vw, 3.95rem) !important;
   line-height: 1.02 !important;
   letter-spacing: -0.035em !important;
-  font-weight: 375 !important;
+  font-weight: 400 !important;
 }
 
-/* Introducing Pulse / Canvas — descender clearance + slightly heavier title. */
+/* Introducing Pulse / Canvas — descender clearance on product intro titles. */
 html[data-about-page] .broader-doe-hero-title.broader-doe-hero-title--product-intro {
   line-height: 1.08 !important;
   padding-bottom: 0.08em !important;
-  font-weight: 400 !important;
+}
+
+/* /about — Guiding Beliefs headline gold gradient (size unchanged). */
+html[data-about-page] .broader-doe-thesis-headline-gold {
+  background: var(
+    --doehealth-gold-text-gradient,
+    linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%)
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
 }
 
 html[data-about-page] .broader-doe-hero-description {

@@ -5,7 +5,7 @@ const [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9] = ABOUT_STYLE_FEATURE_SHADER_VARI
 export const INTRODUCING_CANVAS_FEATURE_CARDS = [
   {
     id: "canvas-visual-builder",
-    shaderVariant: v0,
+    shaderVariant: v9,
     subheading: "Visual Workflow Builder",
     description:
       "Canvas lets teams lay out steps, branches, and handoffs on a canvas that mirrors how work actually moves through the clinic.",
@@ -68,7 +68,7 @@ export const INTRODUCING_CANVAS_FEATURE_CARDS = [
   },
   {
     id: "canvas-launch-controls",
-    shaderVariant: v9,
+    shaderVariant: v0,
     subheading: "Launch Controls",
     description:
       "Publish to a pilot group, schedule activation, or pause a path instantly when operations need to adjust mid-week.",
