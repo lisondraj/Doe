@@ -56,7 +56,7 @@ export const INTRODUCING_PULSE_FEATURE_CARDS = [
   {
     id: "pulse-specialty-filters",
     shaderVariant: v7,
-    subheading: "Specialty Filters",
+    subheading: "Responds to all requests from your voicemail.",
     description:
       "Cardiology, primary care, and behavioral health teams each define which streams matter to them — Pulse adapts per specialty and site.",
   },
