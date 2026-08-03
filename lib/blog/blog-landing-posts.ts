@@ -66,5 +66,4 @@ export const BLOG_LANDING_PATH = "/blog";
 
 export const BLOG_LANDING_TITLE = "Blog";
 
-export const BLOG_LANDING_SUBHEADING =
-  "Product launches, vision, and updates from Doe.";
+export const BLOG_LANDING_SUBHEADING = "August 2026 / Doe Fall Launch";

@@ -1080,8 +1080,15 @@ html[data-about-page][data-layout="desktop"]
 }
 
 /* /blog landing — card list in about-style gold chrome. */
+html[data-about-page] .blog-landing-page .blog-landing-hero-title {
+  line-height: 1.06 !important;
+  padding-bottom: 0.08em !important;
+}
+
 html[data-about-page] .blog-landing-card-title {
   font-size: clamp(1.85rem, 1.55rem + 1.1vmin, 2.35rem) !important;
+  line-height: 1.08 !important;
+  padding-bottom: 0.06em !important;
   background: var(
     --doehealth-gold-text-gradient,
     linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%)
