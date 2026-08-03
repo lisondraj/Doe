@@ -35,7 +35,7 @@ export const INTRODUCING_PULSE_FEATURE_CARDS = [
   {
     id: "pulse-role-triage",
     shaderVariant: v4,
-    subheading: "Role-Aware Triage",
+    subheading: "Handles all clinic management calls so you can focus on patient care.",
     description:
       "Routing respects scope of practice and shift coverage, keeping front-desk noise out of clinical queues and vice versa.",
   },
