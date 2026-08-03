@@ -14,7 +14,7 @@ export const INTRODUCING_PULSE_ARTICLE = {
     "Pulse brings live clinical signals into one stream so care teams can see what changed, who needs attention, and what to do next.",
   subheading: "We're building voice agents that go beyond the front desk.",
   openingLede:
-    "Today we are introducing Pulse, Doe's live clinical signal layer for practices that cannot afford to miss a change in status.",
+    "Today, we're excited to introduce Doe's first two flagship products, Pulse and Canvas. Pulse is our suite of AI-native voice agents built to automate every aspect of your clinic's workflow. Our agents can schedule appointments, handle calls with insurers, prepare you for your appointments, respond to.",
   byline: "By James Lisondra",
   date: "August 2, 2026",
   heroBackdrop: HEY_CAROUSEL_BACKDROP,
