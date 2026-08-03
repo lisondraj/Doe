@@ -14,6 +14,7 @@ import {
   type ProtoGrainGradientVariant,
 } from "@/lib/proto/proto-grain-gradient";
 import {
+  acquireAboutHeroBackgroundSlot,
   acquireShaderWebGLSlot,
   releaseShaderWebGLSlot,
   SHADER_WEBGL_SLOT_PRIORITY,
@@ -170,7 +171,9 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
       return;
     }
 
-    const granted = acquireShaderWebGLSlot(slotId, shaderPriority, evictShader);
+    const granted = aboutHeroBackground
+      ? acquireAboutHeroBackgroundSlot(evictShader)
+      : acquireShaderWebGLSlot(slotId, shaderPriority, evictShader);
     setBudgetGranted(granted);
     if (dedicatedHeroBackground) {
       setHomeHeroBackgroundReady(granted);

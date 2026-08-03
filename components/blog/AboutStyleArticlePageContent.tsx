@@ -51,21 +51,29 @@ export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageC
               </span>
               {article.date}
             </p>
-
-            <div className={`${ABOUT_MOBILE_CONTENT_GAP} mt-8 text-left iphone-page:mt-9`}>
-              <p
-                className={`${BROADER_DOE_VISION_BODY_TW} about-style-product-intro-body font-semibold`}
-              >
-                {article.openingLede}
-              </p>
-              {article.openingLedeContinuation ? (
-                <p className={`${BROADER_DOE_VISION_BODY_TW} about-style-product-intro-body`}>
-                  {article.openingLedeContinuation}
-                </p>
-              ) : null}
-            </div>
           </div>
         </header>
+
+        <div className={BROADER_DOE_VISION_HERO_WRAP}>
+          <BlogHeroVisual
+            backdrop={article.heroBackdrop}
+            variant="hero"
+            boxClassName={ABOUT_PAGE_HERO_BOX_TW}
+            gapClassName=""
+            useAboutHeroDuskShader
+          />
+        </div>
+
+        <div className={`${ABOUT_MOBILE_CONTENT_GAP} mt-8 text-left iphone-page:mt-9`}>
+          <p className={`${BROADER_DOE_VISION_BODY_TW} about-style-product-intro-body font-semibold`}>
+            {article.openingLede}
+          </p>
+          {article.openingLedeContinuation ? (
+            <p className={`${BROADER_DOE_VISION_BODY_TW} about-style-product-intro-body`}>
+              {article.openingLedeContinuation}
+            </p>
+          ) : null}
+        </div>
 
         {article.featureCards && article.featureCards.length > 0 ? (
           <div className="mt-10 iphone-page:mt-12">

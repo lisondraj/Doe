@@ -54,11 +54,6 @@ function isAboutStyleRoute() {
   return document.documentElement.getAttribute("data-about-page") === "true";
 }
 
-function isAboutProductIntroPage() {
-  if (typeof document === "undefined") return false;
-  return document.documentElement.getAttribute("data-about-product-intro") === "true";
-}
-
 function hasAboutHeroBackgroundSlot() {
   return slots.has(DOEPHONE_ABOUT_HERO_SHADER_SLOT);
 }
@@ -101,9 +96,8 @@ function findLowestSlot(filter?: (priority: number) => boolean) {
 function maxNonHeroSlots() {
   const heroCount = countHeroClassSlots();
   const reserveForHero =
-    !isAboutProductIntroPage() &&
-    ((isHomePhoneRoute() && !hasHomeHeroBackgroundSlot()) ||
-      (isAboutStyleRoute() && !hasAboutHeroBackgroundSlot()))
+    (isHomePhoneRoute() && !hasHomeHeroBackgroundSlot()) ||
+    (isAboutStyleRoute() && !hasAboutHeroBackgroundSlot())
       ? 1
       : 0;
   return Math.max(0, maxWebGLSlots() - heroCount - reserveForHero);
@@ -146,12 +140,7 @@ export function acquireShaderWebGLSlot(
     return false;
   }
 
-  if (
-    isDoePhoneWebGLBudgetActive() &&
-    isAboutStyleRoute() &&
-    !isAboutProductIntroPage() &&
-    !hasAboutHeroBackgroundSlot()
-  ) {
+  if (isDoePhoneWebGLBudgetActive() && isAboutStyleRoute() && !hasAboutHeroBackgroundSlot()) {
     return false;
   }
 
@@ -166,6 +155,27 @@ export function acquireShaderWebGLSlot(
   }
 
   slots.set(id, { priority, evict });
+  return true;
+}
+
+/** Reserve the about hero background slot — evicts lower-priority holders when needed. */
+export function acquireAboutHeroBackgroundSlot(evict: () => void): boolean {
+  if (!isDoePhoneWebGLBudgetActive()) {
+    return true;
+  }
+
+  const priority = SHADER_WEBGL_SLOT_PRIORITY.HERO_BACKGROUND;
+  const existing = slots.get(DOEPHONE_ABOUT_HERO_SHADER_SLOT);
+  if (existing) {
+    slots.set(DOEPHONE_ABOUT_HERO_SHADER_SLOT, { priority, evict });
+    return true;
+  }
+
+  while (slots.size >= maxWebGLSlots() && !tryEvictForSlot(priority, false)) {
+    return false;
+  }
+
+  slots.set(DOEPHONE_ABOUT_HERO_SHADER_SLOT, { priority, evict });
   return true;
 }
 
