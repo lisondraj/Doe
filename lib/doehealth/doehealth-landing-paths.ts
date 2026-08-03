@@ -2,7 +2,7 @@ import { DOEHEALTH_PATH, DESIGNERS_PATH } from "@/lib/site-domains";
 
 export { DOEHEALTH_PATH, DESIGNERS_PATH };
 
-/** Editable doehealth.care landing route — preview at doe.care/doehealth. */
+/** Editable doehealth landing route — also served at doe.care and doehealth.care `/`. */
 export function isDoeHealthLandingPath(path: string): boolean {
   return path === DOEHEALTH_PATH || path.startsWith(`${DOEHEALTH_PATH}/`);
 }

@@ -14,8 +14,11 @@ export const WAITLIST_PATH = "/waitlist";
 export const ABOUT_PATH = "/about";
 export const PROTO_INVEST_PATH = "/proto-invest";
 export const DESIGNERS_PATH = "/designers";
-/** Editable landing served at doehealth.care root via middleware rewrite. */
+/** Editable landing served at doe.care and doehealth.care root via middleware rewrite. */
 export const DOEHEALTH_PATH = "/doehealth";
+
+/** Former primary home — Voice Agents hero (preview at /legacymain). */
+export const LEGACY_MAIN_PATH = "/legacymain";
 
 const LOCAL_DEV_HOSTS = new Set(["localhost", "127.0.0.1"]);
 
@@ -64,6 +67,14 @@ export function isJoinHost(host: string | null | undefined): boolean {
 
 export function isPrimaryHost(host: string | null | undefined): boolean {
   return normalizeHost(host) === normalizeHost(PRIMARY_SITE_HOST);
+}
+
+/** doe.care or doehealth.care site root — URL stays `/`, content from /doehealth. */
+export function isMarketingLandingRoot(
+  host: string | null | undefined,
+  pathname: string,
+): boolean {
+  return pathname === "/" && (isPrimaryHost(host) || isDesignersHost(host));
 }
 
 /** Skip cross-domain redirects on localhost and Vercel preview URLs. */

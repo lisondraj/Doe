@@ -7,8 +7,8 @@ import { DOEHEALTH_HERO_HEADLINE } from "@/lib/doehealth/doehealth-hero-copy";
 import "@/lib/doehealth/doehealth-landing.css";
 
 /**
- * doehealth.care landing — fork of the primary home.
- * Edit this file (and app/doehealth/*) without changing doe.care/.
+ * doe.care and doehealth.care landing — fork of the primary home.
+ * Edit this file (and app/doehealth/*) without changing /legacymain.
  */
 export function DoeHealthHome() {
   return (

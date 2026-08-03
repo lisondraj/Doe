@@ -1,11 +1,16 @@
-import { isDesignersHost } from "@/lib/site-domains";
+import { isDesignersHost, isMarketingLandingRoot } from "@/lib/site-domains";
 import { isDoeHealthLandingRoute } from "@/lib/doehealth/doehealth-landing-paths";
 
-/** doehealth.care root (rewrite), /doehealth, or legacy /designers preview. */
+/** doe.care or doehealth.care `/`, /doehealth, or legacy /designers preview. */
 export function isDesignersPageContext(): boolean {
   if (typeof window === "undefined") return false;
   const path = window.location.pathname;
-  return isDesignersHost(window.location.hostname) || isDoeHealthLandingRoute(path);
+  const host = window.location.hostname;
+  return (
+    isDesignersHost(host) ||
+    isDoeHealthLandingRoute(path) ||
+    isMarketingLandingRoot(host, path)
+  );
 }
 
 export function isTouchPrimaryDevice(): boolean {

@@ -3,11 +3,12 @@ import { NextResponse, type NextRequest } from "next/server";
 import {
   DOEHEALTH_PATH,
   isDesignersHost,
+  isMarketingLandingRoot,
   requestHostFromHeaders,
   shouldEnforceDomainRouting,
 } from "@/lib/site-domains";
 
-function applyDesignersSiteHeaders(response: NextResponse) {
+function applyLandingSiteHeaders(response: NextResponse) {
   /** Bust edge/browser caches of the old permanent redirect to /join. */
   response.headers.set(
     "Cache-Control",
@@ -21,26 +22,33 @@ function applyDesignersSiteHeaders(response: NextResponse) {
 export function middleware(request: NextRequest) {
   const host = requestHostFromHeaders(request.headers);
 
-  if (!shouldEnforceDomainRouting(host) || !isDesignersHost(host)) {
+  if (!shouldEnforceDomainRouting(host)) {
     return NextResponse.next();
   }
 
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("x-doe-designers-site", "1");
-
   const { pathname } = request.nextUrl;
 
-  if (pathname === "/") {
+  if (isMarketingLandingRoot(host, pathname)) {
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set("x-doe-designers-site", "1");
+
     const rewriteUrl = request.nextUrl.clone();
     rewriteUrl.pathname = DOEHEALTH_PATH;
-    return applyDesignersSiteHeaders(
+    return applyLandingSiteHeaders(
       NextResponse.rewrite(rewriteUrl, {
         request: { headers: requestHeaders },
       }),
     );
   }
 
-  return applyDesignersSiteHeaders(
+  if (!isDesignersHost(host)) {
+    return NextResponse.next();
+  }
+
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-doe-designers-site", "1");
+
+  return applyLandingSiteHeaders(
     NextResponse.next({
       request: { headers: requestHeaders },
     }),

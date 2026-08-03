@@ -1,12 +1,13 @@
-import { DoePhoneRouter } from "@/components/doephone/DoePhoneRouter";
+import { redirect } from "next/navigation";
+
+import { DOEHEALTH_PATH } from "@/lib/site-domains";
 
 export const dynamic = "force-dynamic";
 
-const HOME_HERO_HEADLINE = {
-  line1: "Voice Agents.",
-  line2: "for Healthcare....",
-};
-
+/**
+ * Production `/` on doe.care and doehealth.care is rewritten to /doehealth in middleware.
+ * Localhost and preview hosts fall through here — send them to the landing route.
+ */
 export default function HomePage() {
-  return <DoePhoneRouter heroHeadline={HOME_HERO_HEADLINE} />;
+  redirect(DOEHEALTH_PATH);
 }
