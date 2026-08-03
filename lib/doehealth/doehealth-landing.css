@@ -173,6 +173,25 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth) .doehealth-top-banner
   letter-spacing: -0.035em;
 }
 
+/* Doehealth hero — descender clearance on line 2 + slightly smaller type. */
+html[data-home-page]:has(.doephone-mobile-root--doehealth) .doephone-hero-section .doehealth-hero-headline {
+  font-size: clamp(2.08rem, 1.1rem + 6.15vmin, 3.48rem) !important;
+  line-height: 1.07 !important;
+  overflow: visible;
+}
+
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doephone-hero-section .doehealth-hero-headline {
+  font-size: clamp(2.55rem, 9.15cqi, 5.68rem) !important;
+  line-height: 1.07 !important;
+  overflow: visible;
+}
+
+.doephone-mobile-root--doehealth .doehealth-hero-headline .doephone-hero-headline-line--second,
+.doe-desktop-root--doehealth .doehealth-hero-headline .doephone-hero-headline-line--second {
+  padding-bottom: 0.1em;
+  overflow: visible;
+}
+
 /* Hero read-more — gold link under headline (phone + desktop). */
 .doehealth-hero-read-more-row {
   display: flex;
