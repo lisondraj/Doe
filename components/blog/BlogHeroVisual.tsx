@@ -25,6 +25,7 @@ export function BlogHeroVisual({
   useHomeHeroShader = false,
   useHomeHeroDuskShader = false,
   useAboutHeroDuskShader = false,
+  staticShader = false,
   children,
 }: {
   backdrop: WorkflowCarouselDesignBackdropType;
@@ -38,6 +39,8 @@ export function BlogHeroVisual({
   useHomeHeroDuskShader?: boolean;
   /** /about + about-style blog — dedicated about-hero dusk shader preset. */
   useAboutHeroDuskShader?: boolean;
+  /** Freeze shader motion — keep flow appearance without animation. */
+  staticShader?: boolean;
   children?: React.ReactNode;
 }) {
   const gap = gapClassName ?? (variant === "hero" ? BLOG_TITLE_VISUAL_GAP : "");
@@ -61,6 +64,7 @@ export function BlogHeroVisual({
     >
       {usesHeroShader ? (
         <ProtoGrainGradient
+          static={staticShader}
           variant={heroShader.variant}
           colors={heroShader.colors}
           colorBack={heroShader.colorBack}

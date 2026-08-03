@@ -72,6 +72,8 @@ export function BlogLandingPageContent() {
                     variant="list"
                     boxClassName="absolute inset-0 h-full w-full rounded-[inherit]"
                     gapClassName=""
+                    useAboutHeroDuskShader
+                    staticShader
                   />
                 </div>
 

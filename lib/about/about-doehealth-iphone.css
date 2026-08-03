@@ -906,29 +906,21 @@ html[data-about-page][data-layout="desktop"] .about-style-feature-card figcaptio
 }
 
 html[data-about-page][data-layout="desktop"] .broader-doe-hero-headlines {
-  gap: clamp(1.25rem, 1vw, 1.75rem);
+  gap: clamp(1rem, 0.85vw, 1.35rem);
 }
 
 html[data-about-page][data-layout="desktop"] .broader-doe-hero-visual {
-  margin-top: clamp(2.75rem, 3.2vw, 3.75rem);
+  margin-top: clamp(2rem, 2.5vw, 2.75rem);
 }
 
 html[data-about-page][data-layout="desktop"] .about-desktop-main:has(.broader-doe-hero-intro) {
-  padding-top: calc(
-    var(--doe-home-top-banner-height, 0px) + var(--desktop-nav-height, 6.25rem) +
-      clamp(2rem, 2.8vw, 3rem)
-  );
-}
-
-/* Pulse / Canvas desktop — nav clearance lives in main padding only (no stacked mt-12). */
-html[data-about-page][data-layout="desktop"] .about-desktop-main:has(.about-style-product-intro-page) {
   padding-top: calc(
     var(--doe-home-top-banner-height, 0px) + var(--desktop-nav-height, 6.25rem) +
       clamp(1.35rem, 1.85vw, 2.15rem)
   );
 }
 
-html[data-about-page][data-layout="desktop"] .about-style-product-intro-page .broader-doe-hero-intro {
+html[data-about-page][data-layout="desktop"] .broader-doe-hero-intro {
   margin-top: 0 !important;
 }
 
@@ -937,14 +929,6 @@ html[data-about-page][data-layout="desktop"]
   .broader-doe-hero-title.broader-doe-hero-title--product-intro {
   line-height: 1.04 !important;
   padding-bottom: 0 !important;
-}
-
-html[data-about-page][data-layout="desktop"] .about-style-product-intro-page .broader-doe-hero-headlines {
-  gap: clamp(1rem, 0.85vw, 1.35rem);
-}
-
-html[data-about-page][data-layout="desktop"] .about-style-product-intro-page .broader-doe-hero-visual {
-  margin-top: clamp(2rem, 2.5vw, 2.75rem);
 }
 
 html[data-about-page][data-layout="desktop"] .about-page-content .about-hero-visual,
