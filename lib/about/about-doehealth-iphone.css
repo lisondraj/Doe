@@ -947,6 +947,21 @@ html[data-about-page][data-layout="desktop"] .about-page-content [class*="blog-h
   max-width: 100%;
 }
 
+/* Desktop blog pages (/about + /blog/doe-mission) — halve square visual box heights. */
+html[data-about-page][data-layout="desktop"] .about-page-content .about-hero-visual {
+  min-height: clamp(11rem, 29vmin, 16rem) !important;
+  height: clamp(11rem, 29vmin, 16rem) !important;
+}
+
+html[data-about-page][data-layout="desktop"] .broader-doe-email-invite {
+  min-height: clamp(6.75rem, 19vw, 8.75rem) !important;
+}
+
+html[data-about-page][data-layout="desktop"] .about-desktop-beige-panel {
+  width: 50% !important;
+  max-width: 50% !important;
+}
+
 html[data-about-page][data-layout="desktop"] .about-stat-charts [class*="border-t"],
 html[data-about-page][data-layout="desktop"] .about-stat-chart [class*="border-t"] {
   border-color: rgba(232, 192, 142, 0.14) !important;
