@@ -31,15 +31,47 @@ type AboutStyleArticlePageContentProps = {
 
 /** /about-style longform article — hero, shader band, body, quote, thesis list, email invite. */
 export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageContentProps) {
+  const productIntro = isAboutStyleProductIntro(article.slug);
+
+  if (productIntro) {
+    return (
+      <div className="about-page-content">
+        <header className={BROADER_DOE_VISION_HERO_INTRO_WRAP}>
+          <div className={BROADER_DOE_VISION_HERO_HEADLINES_WRAP}>
+            <h1 className={`${BROADER_DOE_VISION_TITLE_TW} ${ABOUT_STYLE_PRODUCT_INTRO_TITLE_TW}`}>
+              {article.title}
+            </h1>
+
+            <p className={`${BROADER_DOE_VISION_SUBHEADING_TW} mx-auto max-w-[36ch]`}>{article.subheading}</p>
+
+            <p className={BROADER_DOE_VISION_BYLINE_TW}>
+              {article.byline}
+              <span className="mx-2" aria-hidden>
+                ·
+              </span>
+              {article.date}
+            </p>
+
+            <p className={`${BROADER_DOE_VISION_BODY_TW} about-style-product-intro-body mt-8 text-left iphone-page:mt-9`}>
+              {article.openingLede}
+            </p>
+          </div>
+        </header>
+
+        {article.featureCards && article.featureCards.length > 0 ? (
+          <div className="mt-10 iphone-page:mt-12">
+            <AboutStyleFeatureCardGrid cards={article.featureCards} />
+          </div>
+        ) : null}
+      </div>
+    );
+  }
+
   return (
     <div className="about-page-content">
       <header className={BROADER_DOE_VISION_HERO_INTRO_WRAP}>
         <div className={BROADER_DOE_VISION_HERO_HEADLINES_WRAP}>
-          <h1
-            className={`${BROADER_DOE_VISION_TITLE_TW}${isAboutStyleProductIntro(article.slug) ? ` ${ABOUT_STYLE_PRODUCT_INTRO_TITLE_TW}` : ""}`}
-          >
-            {article.title}
-          </h1>
+          <h1 className={BROADER_DOE_VISION_TITLE_TW}>{article.title}</h1>
 
           <p className={`${BROADER_DOE_VISION_SUBHEADING_TW} mx-auto max-w-[36ch]`}>{article.subheading}</p>
 

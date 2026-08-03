@@ -715,6 +715,15 @@ html[data-about-page] .broader-doe-hero-headlines {
   gap: clamp(1.15rem, 0.9rem + 1.15vmin, 1.65rem);
 }
 
+html[data-about-page] .about-style-product-intro-body {
+  max-width: none;
+  text-align: left;
+}
+
+html[data-about-page] .broader-doe-hero-headlines .about-style-product-intro-body {
+  width: 100%;
+}
+
 html[data-about-page] .broader-doe-hero-title,
 html[data-about-page] .broader-doe-hero-description {
   background: var(
