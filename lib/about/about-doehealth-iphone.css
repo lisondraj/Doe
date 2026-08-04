@@ -3113,8 +3113,8 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-joined .about-style-article-floating-chrome__transport-btn--primary,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio-joined .about-style-article-floating-chrome__transport-btn--primary {
-  width: clamp(3.15rem, 2.78rem + 1.35vmin, 3.62rem);
-  height: clamp(3.15rem, 2.78rem + 1.35vmin, 3.62rem);
+  width: clamp(3.62rem, 3.18rem + 1.62vmin, 4.12rem);
+  height: clamp(3.62rem, 3.18rem + 1.62vmin, 4.12rem);
   min-width: 0;
   min-height: 0;
   padding: 0;
@@ -3122,8 +3122,8 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-joined .about-style-article-floating-chrome__transport-btn--primary svg,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio-joined .about-style-article-floating-chrome__transport-btn--primary svg {
-  width: clamp(1.85rem, 1.65rem + 0.78vmin, 2.12rem);
-  height: clamp(1.85rem, 1.65rem + 0.78vmin, 2.12rem);
+  width: clamp(2.18rem, 1.92rem + 0.98vmin, 2.52rem);
+  height: clamp(2.18rem, 1.92rem + 0.98vmin, 2.52rem);
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-joined .about-style-article-floating-chrome__progress,

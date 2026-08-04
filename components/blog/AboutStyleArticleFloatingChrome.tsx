@@ -529,7 +529,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
                   aria-label={isPlaying ? "Pause" : "Play"}
                   onClick={togglePlay}
                 >
-                  {isPlaying ? <PauseIcon size={40} /> : <PlayIcon size={40} />}
+                  {isPlaying ? <PauseIcon size={48} /> : <PlayIcon size={48} />}
                 </button>
                 <button
                   type="button"
