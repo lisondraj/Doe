@@ -17,7 +17,7 @@ export const PULSE_AMBIENT_ARTICLE = {
   title: "Pulse: Ambient",
   excerpt:
     "Ambient prepares every scheduled visit after an agent call, briefs physicians on the week ahead, and runs an in-room session that surfaces answers from the chart, call history, and the web while you stay with the patient.",
-  subheading: "Everything you need for a seamless appointment.",
+  subheading: "Preparing you for your appointments.",
   openingLede:
     "Today, we're introducing two new sub-features under Pulse, Call History and Ambient, built with doctors in mind.",
   openingLedeContinuation:
