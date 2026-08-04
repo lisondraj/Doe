@@ -4,7 +4,7 @@ export const dynamic = "force-dynamic";
 
 const LEGACY_HOME_HERO_HEADLINE = {
   line1: "Voice Agents.",
-  line2: "for Healthcare....",
+  line2: "for Healthcare.",
 };
 
 /** Former doe.care `/` home — kept for internal preview. */
