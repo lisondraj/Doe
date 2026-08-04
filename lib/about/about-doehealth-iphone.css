@@ -2676,7 +2676,6 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   background-color: transparent;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
-  transform: none;
   animation: about-audio-pill-unsettle var(--about-audio-leave-ms, 880ms)
     var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)) both;
   transition:
@@ -2780,6 +2779,8 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   min-width: var(--about-floating-toc-closed-size) !important;
   height: var(--about-floating-toc-closed-size);
   align-self: center;
+  opacity: 1;
+  pointer-events: auto;
   z-index: 2;
   transition:
     width var(--about-audio-leave-ms, 880ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
@@ -2788,6 +2789,8 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__cap-trigger,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__cap-trigger {
+  opacity: 1;
+  visibility: visible;
   height: var(--about-floating-toc-closed-size);
   padding: var(--about-floating-toc-frost-pad);
   border: 1px solid rgba(212, 165, 116, calc(var(--proto-nav-frost-progress) * 0.28));
@@ -2810,6 +2813,7 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__cap-trigger .about-style-article-floating-chrome__icon,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__cap-trigger .about-style-article-floating-chrome__icon {
+  opacity: 1;
   width: clamp(1.45rem, 1.28rem + 0.62vmin, 1.625rem);
   height: clamp(1.45rem, 1.28rem + 0.62vmin, 1.625rem);
   animation: about-audio-cap-icon-grow var(--about-audio-leave-ms, 880ms)
