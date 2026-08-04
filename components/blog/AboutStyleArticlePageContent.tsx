@@ -3,6 +3,7 @@ import { AboutStyleArticleEmailInvite } from "@/components/blog/AboutStyleArticl
 import { AboutStyleArticleProposalQuote } from "@/components/blog/AboutStyleArticleProposalQuote";
 import { AboutStyleFeatureCardGrid } from "@/components/blog/AboutStyleFeatureCardGrid";
 import { BlogArticleCarouselDivider } from "@/components/blog/BlogArticleCarouselDivider";
+import { BlogArticleCategory } from "@/components/blog/BlogArticleCategory";
 import { BlogArticleRelatedCarousel } from "@/components/blog/BlogArticleRelatedCarousel";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import {
@@ -26,6 +27,7 @@ import {
   ABOUT_STYLE_PRODUCT_INTRO_TITLE_TW,
   isAboutStyleProductIntro,
 } from "@/lib/blog/broader-doe-vision-layout-styles";
+import { blogPostCategory } from "@/lib/blog/blog-post-categories";
 
 type AboutStyleArticlePageContentProps = {
   article: AboutStyleLongformArticle;
@@ -34,12 +36,14 @@ type AboutStyleArticlePageContentProps = {
 /** /about-style longform article — hero, shader band, body, quote, thesis list, email invite. */
 export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageContentProps) {
   const productIntro = isAboutStyleProductIntro(article.slug);
+  const category = blogPostCategory(article.slug);
 
   if (productIntro) {
     return (
       <div className="about-page-content about-style-product-intro-page">
         <header className={BROADER_DOE_VISION_HERO_INTRO_WRAP}>
           <div className={BROADER_DOE_VISION_HERO_HEADLINES_WRAP}>
+            {category ? <BlogArticleCategory category={category} /> : null}
             <h1 className={`${BROADER_DOE_VISION_TITLE_TW} ${ABOUT_STYLE_PRODUCT_INTRO_TITLE_TW}`}>
               {article.title}
             </h1>
@@ -109,6 +113,7 @@ export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageC
     <div className="about-page-content">
       <header className={BROADER_DOE_VISION_HERO_INTRO_WRAP}>
         <div className={BROADER_DOE_VISION_HERO_HEADLINES_WRAP}>
+          {category ? <BlogArticleCategory category={category} /> : null}
           <h1 className={BROADER_DOE_VISION_TITLE_TW}>{article.title}</h1>
 
           <p className={`${BROADER_DOE_VISION_SUBHEADING_TW} mx-auto max-w-[36ch]`}>{article.subheading}</p>

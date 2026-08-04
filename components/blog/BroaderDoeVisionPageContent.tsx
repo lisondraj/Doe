@@ -1,5 +1,6 @@
 import { AboutStyleContactLink } from "@/components/blog/AboutStyleContactLink";
 import { BlogArticleCarouselDivider } from "@/components/blog/BlogArticleCarouselDivider";
+import { BlogArticleCategory } from "@/components/blog/BlogArticleCategory";
 import { BlogArticleRelatedCarousel } from "@/components/blog/BlogArticleRelatedCarousel";
 import { BroaderDoeVisionEmailInvite } from "@/components/blog/BroaderDoeVisionEmailInvite";
 import { BroaderDoeVisionProposalQuote } from "@/components/blog/BroaderDoeVisionProposalQuote";
@@ -41,12 +42,16 @@ import {
   BROADER_DOE_VISION_THESIS_POINTS,
   BROADER_DOE_VISION_TITLE,
 } from "@/lib/blog/broader-doe-vision-article";
+import { blogPostCategory } from "@/lib/blog/blog-post-categories";
 /** iPhone /about — Broader Doe Vision scroll structure. */
 export function BroaderDoeVisionPageContent() {
+  const category = blogPostCategory("the-broader-doe-vision");
+
   return (
     <div className="about-page-content">
       <header className={BROADER_DOE_VISION_HERO_INTRO_WRAP}>
         <div className={BROADER_DOE_VISION_HERO_HEADLINES_WRAP}>
+          {category ? <BlogArticleCategory category={category} /> : null}
           <h1 className={BROADER_DOE_VISION_TITLE_TW}>{BROADER_DOE_VISION_TITLE}</h1>
 
           <p className={`${BROADER_DOE_VISION_SUBHEADING_TW} mx-auto max-w-[36ch]`}>

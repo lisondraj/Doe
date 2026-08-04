@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
+import { BlogArticleCategory } from "@/components/blog/BlogArticleCategory";
 import { aboutStyleFeatureShaderSurface } from "@/lib/blog/about-style-feature-card";
 import { blogPreviewShaderSurface } from "@/lib/blog/blog-preview-shader-surface";
 import {
@@ -72,6 +73,7 @@ export function BlogLandingPostCard({
       </div>
 
       <div className="blog-landing-card-copy mt-5 iphone-page:mt-6">
+        <BlogArticleCategory category={post.category} variant="preview" />
         <h2 className={BLOG_LANDING_CARD_TITLE_TW}>{post.title}</h2>
         <p className={BLOG_LANDING_CARD_SUBHEADING_TW}>{subheading}</p>
         <p className={BLOG_LANDING_CARD_BYLINE_TW}>

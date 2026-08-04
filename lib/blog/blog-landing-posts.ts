@@ -24,6 +24,7 @@ import {
 } from "@/lib/blog/pulse-call-history-article";
 import { blogLandingPreviewShader, BLOG_PREVIEW_BROADER_DOE_VISION_SUBHEADING } from "@/lib/blog/blog-landing-preview-shaders";
 import { blogCarouselPreviewShader } from "@/lib/blog/blog-carousel-preview-shaders";
+import { blogPostCategory, type BlogPostCategory } from "@/lib/blog/blog-post-categories";
 import type { AboutStyleFeatureShaderVariant } from "@/lib/blog/about-style-feature-card";
 import type { ProtoGrainGradientVariant } from "@/lib/proto/proto-grain-gradient";
 
@@ -31,6 +32,7 @@ export type BlogLandingPost = {
   slug: string;
   path: string;
   title: string;
+  category: BlogPostCategory;
   subheading: string;
   /** Override subheading on /blog list + related carousel previews only. */
   previewSubheading?: string;
@@ -47,6 +49,7 @@ export const BLOG_LANDING_POSTS: readonly BlogLandingPost[] = [
     slug: PULSE_CALL_HISTORY_ARTICLE.slug,
     path: PULSE_CALL_HISTORY_PATH,
     title: PULSE_CALL_HISTORY_ARTICLE.title,
+    category: blogPostCategory(PULSE_CALL_HISTORY_ARTICLE.slug)!,
     subheading: PULSE_CALL_HISTORY_ARTICLE.subheading,
     excerpt: PULSE_CALL_HISTORY_ARTICLE.excerpt,
     byline: PULSE_CALL_HISTORY_ARTICLE.byline,
@@ -58,6 +61,7 @@ export const BLOG_LANDING_POSTS: readonly BlogLandingPost[] = [
     slug: PULSE_AMBIENT_ARTICLE.slug,
     path: PULSE_AMBIENT_PATH,
     title: PULSE_AMBIENT_ARTICLE.title,
+    category: blogPostCategory(PULSE_AMBIENT_ARTICLE.slug)!,
     subheading: PULSE_AMBIENT_ARTICLE.subheading,
     excerpt: PULSE_AMBIENT_ARTICLE.excerpt,
     byline: PULSE_AMBIENT_ARTICLE.byline,
@@ -69,6 +73,7 @@ export const BLOG_LANDING_POSTS: readonly BlogLandingPost[] = [
     slug: INTRODUCING_PULSE_ARTICLE.slug,
     path: INTRODUCING_PULSE_PATH,
     title: INTRODUCING_PULSE_ARTICLE.title,
+    category: blogPostCategory(INTRODUCING_PULSE_ARTICLE.slug)!,
     subheading: INTRODUCING_PULSE_ARTICLE.subheading,
     excerpt: INTRODUCING_PULSE_ARTICLE.excerpt,
     byline: INTRODUCING_PULSE_ARTICLE.byline,
@@ -80,6 +85,7 @@ export const BLOG_LANDING_POSTS: readonly BlogLandingPost[] = [
     slug: INTRODUCING_FABRIC_ARTICLE.slug,
     path: INTRODUCING_FABRIC_PATH,
     title: INTRODUCING_FABRIC_ARTICLE.title,
+    category: blogPostCategory(INTRODUCING_FABRIC_ARTICLE.slug)!,
     subheading: INTRODUCING_FABRIC_ARTICLE.subheading,
     excerpt: INTRODUCING_FABRIC_ARTICLE.excerpt,
     byline: INTRODUCING_FABRIC_ARTICLE.byline,
@@ -91,6 +97,7 @@ export const BLOG_LANDING_POSTS: readonly BlogLandingPost[] = [
     slug: "the-broader-doe-vision",
     path: BROADER_DOE_VISION_PATH,
     title: BROADER_DOE_VISION_TITLE,
+    category: blogPostCategory("the-broader-doe-vision")!,
     subheading: BROADER_DOE_VISION_SUBHEADING,
     previewSubheading: BLOG_PREVIEW_BROADER_DOE_VISION_SUBHEADING,
     excerpt: BROADER_DOE_VISION_OPENING_LEDE,
