@@ -148,7 +148,7 @@ export function DoePhoneHomeHeroGrainShader({
 
   useLayoutEffect(() => {
     const node = containerRef.current;
-    if (!node || !noiseTexture || !containerReady || !heroInViewport) return;
+    if (!node || !noiseTexture || !containerReady) return;
 
     if (isShaderWebGLBudgetActive() && !acquireHomeHeroBackgroundSlot(resetShader)) {
       setHomeHeroBackgroundReady(false);
@@ -199,7 +199,6 @@ export function DoePhoneHomeHeroGrainShader({
   }, [
     colorStopsKey,
     containerReady,
-    heroInViewport,
     noiseTexture,
     presetFlowKey,
     resetShader,

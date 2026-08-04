@@ -63,10 +63,6 @@ function isHomePhoneRoute() {
   return document.documentElement.getAttribute("data-home-page") === "true";
 }
 
-function isHomeRoute() {
-  return isHomePhoneRoute() || isDesktopHomeRoute();
-}
-
 function isAboutStyleRoute() {
   if (typeof document === "undefined") return false;
   return document.documentElement.getAttribute("data-about-page") === "true";
@@ -122,7 +118,7 @@ function findLowestSlot(filter?: (priority: number) => boolean) {
 function maxNonHeroSlots() {
   const heroCount = countHeroClassSlots();
   const reserveForHero =
-    (isHomeRoute() && !hasHomeHeroBackgroundSlot()) ||
+    (isHomePhoneRoute() && !hasHomeHeroBackgroundSlot()) ||
     (aboutRouteReservesHeroShaderSlot() && !hasAboutHeroBackgroundSlot())
       ? 1
       : 0;
@@ -162,7 +158,7 @@ export function acquireShaderWebGLSlot(
     return true;
   }
 
-  if (isShaderWebGLBudgetActive() && isHomeRoute() && !hasHomeHeroBackgroundSlot()) {
+  if (isDoePhoneWebGLBudgetActive() && isHomePhoneRoute() && !hasHomeHeroBackgroundSlot()) {
     return false;
   }
 

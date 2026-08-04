@@ -24,6 +24,7 @@ import {
   DOEPHONE_ABOUT_HERO_SHADER_SLOT,
   DOEPHONE_HOME_HERO_SHADER_SLOT,
   setHomeHeroBackgroundReady,
+  subscribeHomeHeroBackgroundReady,
 } from "@/lib/doephone/home-hero-shader-gate";
 import { useShaderContextRecovery } from "@/lib/doephone/use-shader-context-recovery";
 import { useShaderViewportGate } from "@/lib/doephone/use-shader-viewport-gate";
@@ -114,6 +115,7 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   const [shaderGeneration, setShaderGeneration] = useState(0);
   const [inCarouselRange, setInCarouselRange] = useState(true);
   const [inBlogCarouselCard, setInBlogCarouselCard] = useState(false);
+  const [homeHeroGateEpoch, setHomeHeroGateEpoch] = useState(0);
   const inViewport = useShaderViewportGate(containerRef, hero ? "120% 0px" : "75% 0px");
   const shaderPriority = hero
     ? SHADER_WEBGL_SLOT_PRIORITY.HERO_BACKGROUND
@@ -167,6 +169,16 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     releaseMount();
   }, [effectiveInViewport, hero, releaseMount]);
 
+  useEffect(() => {
+    if (!isShaderWebGLBudgetActive()) return;
+    if (typeof document === "undefined") return;
+    if (document.documentElement.getAttribute("data-home-page") !== "true") return;
+
+    return subscribeHomeHeroBackgroundReady(() => {
+      setHomeHeroGateEpoch((current) => current + 1);
+    });
+  }, []);
+
   useLayoutEffect(() => {
     if (!hasMounted || !containerReady) {
       if (budgetGranted) {
@@ -190,7 +202,9 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     const granted = aboutHeroBackground
       ? acquireAboutHeroBackgroundSlot(evictShader)
       : acquireShaderWebGLSlot(slotId, shaderPriority, evictShader);
-    setBudgetGranted(granted);
+    if (granted) {
+      setBudgetGranted(true);
+    }
     if (dedicatedHeroBackground) {
       setHomeHeroBackgroundReady(granted);
     }
@@ -209,6 +223,7 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     effectiveInViewport,
     evictShader,
     hasMounted,
+    homeHeroGateEpoch,
     shaderPriority,
     slotId,
   ]);
@@ -245,6 +260,7 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     evictShader,
     hasMounted,
     hero,
+    homeHeroGateEpoch,
     shaderPriority,
     slotId,
   ]);
