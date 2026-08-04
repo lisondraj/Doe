@@ -62,3 +62,16 @@ export const BROADER_DOE_VISION_PROPOSAL_QUOTE_TW = `about-page-quote text-left 
 
 /** Broader Doe Vision thesis list items — same scale as body, gradient applied in CSS. */
 export const BROADER_DOE_VISION_THESIS_ITEM_TW = `broader-doe-thesis-item text-[clamp(1.32rem,1.12rem+0.9vmin,1.58rem)] iphone-page:text-[clamp(1.55rem,1.28rem+1.22vmin,1.95rem)] font-normal leading-[1.48] tracking-[-0.01em] ${dmSans.className}`;
+
+/** Doe Labs longform — indented glossary, one term per line with a gold rule on the left. */
+export const ABOUT_STYLE_GLOSSARY_WRAP_TW =
+  "about-style-glossary border-l border-[rgba(232,192,142,0.35)] pl-5 iphone-page:pl-6 ml-[clamp(0.4rem,0.25rem+0.6vmin,0.75rem)] space-y-5 iphone-page:space-y-6";
+
+export const ABOUT_STYLE_GLOSSARY_TERM_TW = `about-style-glossary-term block font-medium tracking-[-0.01em] text-[#E8C08E] text-[clamp(1.08rem,0.94rem+0.55vmin,1.28rem)] iphone-page:text-[clamp(1.16rem,1rem+0.6vmin,1.38rem)] ${dmSans.className}`;
+
+export const ABOUT_STYLE_GLOSSARY_DEFINITION_TW = `about-style-glossary-definition block mt-1.5 font-normal leading-[1.48] tracking-[-0.008em] text-[rgba(242,232,218,0.8)] text-[clamp(1.08rem,0.94rem+0.6vmin,1.32rem)] iphone-page:text-[clamp(1.2rem,1.02rem+0.68vmin,1.48rem)] ${dmSans.className}`;
+
+/** Doe Labs longform — plain bulleted list at body scale with a small gold marker. */
+export const ABOUT_STYLE_BULLET_LIST_TW = "about-style-bullet-list list-none pl-0 space-y-3 iphone-page:space-y-3.5";
+
+export const ABOUT_STYLE_BULLET_ITEM_TW = `about-style-bullet-item relative pl-6 iphone-page:pl-7 text-[clamp(1.32rem,1.12rem+0.9vmin,1.58rem)] iphone-page:text-[clamp(1.55rem,1.28rem+1.22vmin,1.95rem)] font-normal leading-[1.48] tracking-[-0.01em] text-[rgba(242,232,218,0.92)] ${dmSans.className}`;

@@ -4,6 +4,11 @@ import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import { aboutStyleFeatureShaderSurface } from "@/lib/blog/about-style-feature-card";
 import type { AboutStyleArticleContentBlock } from "@/lib/blog/about-style-article-content-blocks";
 import {
+  ABOUT_STYLE_BULLET_ITEM_TW,
+  ABOUT_STYLE_BULLET_LIST_TW,
+  ABOUT_STYLE_GLOSSARY_DEFINITION_TW,
+  ABOUT_STYLE_GLOSSARY_TERM_TW,
+  ABOUT_STYLE_GLOSSARY_WRAP_TW,
   ABOUT_STYLE_SHADER_CAPTION_TW,
   BROADER_DOE_VISION_BODY_TW,
   BROADER_DOE_VISION_PROPOSAL_QUOTE_TW,
@@ -30,7 +35,7 @@ function renderBoldSegments(text: string) {
   );
 }
 
-/** Longform blocks — paragraphs, section subheadings, shader figures with small captions. */
+/** Longform blocks — paragraphs, gold paragraphs, glossary, bullets, pull quotes, subheadings, shader figures. */
 export function AboutStyleArticleContentBlocks({ blocks }: AboutStyleArticleContentBlocksProps) {
   return (
     <div className="about-style-article-blocks space-y-8 iphone-page:space-y-9">
@@ -38,8 +43,45 @@ export function AboutStyleArticleContentBlocks({ blocks }: AboutStyleArticleCont
         if (block.type === "paragraph") {
           return (
             <p key={block.text} className={BROADER_DOE_VISION_BODY_TW}>
-              {block.text}
+              {renderBoldSegments(block.text)}
             </p>
+          );
+        }
+
+        if (block.type === "goldParagraph") {
+          return (
+            <p key={block.text} className={BROADER_DOE_VISION_BODY_TW}>
+              <span className="broader-doe-thesis-text">{block.text}</span>
+            </p>
+          );
+        }
+
+        if (block.type === "glossary") {
+          return (
+            <dl key={block.id} className={ABOUT_STYLE_GLOSSARY_WRAP_TW}>
+              {block.entries.map((entry) => (
+                <div key={entry.term}>
+                  <dt className={ABOUT_STYLE_GLOSSARY_TERM_TW}>{entry.term}</dt>
+                  <dd className={ABOUT_STYLE_GLOSSARY_DEFINITION_TW}>{entry.definition}</dd>
+                </div>
+              ))}
+            </dl>
+          );
+        }
+
+        if (block.type === "bullets") {
+          return (
+            <ul key={block.id} className={ABOUT_STYLE_BULLET_LIST_TW}>
+              {block.items.map((item) => (
+                <li key={item} className={ABOUT_STYLE_BULLET_ITEM_TW}>
+                  <span
+                    className="absolute left-0 top-[0.62em] h-[6px] w-[6px] rounded-full bg-[#E8C08E]"
+                    aria-hidden
+                  />
+                  {renderBoldSegments(item)}
+                </li>
+              ))}
+            </ul>
           );
         }
 

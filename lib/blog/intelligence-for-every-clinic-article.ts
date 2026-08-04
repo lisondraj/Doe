@@ -33,15 +33,42 @@ export const INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE = {
   contentBlocks: [
     {
       type: "paragraph",
-      text: "Most healthcare software works the same way today. Your team's information gets sent out to one large, general-purpose AI model, and you hope the answer holds up. We are building toward something more useful: an intelligence system built specifically around your clinic, running on computers your clinic trusts, that keeps getting sharper the more your team uses it.",
+      text: "Most healthcare software works the same way today. Your team's information gets sent out to one large, general-purpose AI model, and you hope the answer holds up. We are building toward something more useful: **an intelligence system built specifically around your clinic**, running on computers your clinic trusts, that keeps getting sharper the more your team uses it.",
     },
     {
       type: "paragraph",
       text: "Before we go further, we think it helps to first introduce a few of the terms this article leans on, in plain language rather than jargon.",
     },
     {
-      type: "paragraph",
-      text: "Reinforcement learning is a training method that rewards a system for good outcomes and corrects it for bad ones, the same way a new team member gets sharper from feedback on real cases rather than a written test. Open-weight models are AI models you can actually install and run on servers you control, instead of a closed system you can only reach through someone else's website. Frontier models are today's largest, most capable general-purpose AI systems, usually reached only through an outside company's service. Protected health information, often shortened to PHI, is any patient detail covered by HIPAA, from a name and birth date to a diagnosis or clinical note. And Blended Intelligence is our name for using an open-weight model and a frontier model together, sending each piece of a task to whichever one is right for the job.",
+      type: "glossary",
+      id: "doe-labs-glossary",
+      entries: [
+        {
+          term: "Reinforcement learning",
+          definition:
+            "A training method that rewards a system for good outcomes and corrects it for bad ones, the same way a new team member gets sharper from feedback on real cases rather than a written test.",
+        },
+        {
+          term: "Open-weight models",
+          definition:
+            "AI models you can actually install and run on servers you control, instead of a closed system you can only reach through someone else's website.",
+        },
+        {
+          term: "Frontier models",
+          definition:
+            "Today's largest, most capable general-purpose AI systems, usually reached only through an outside company's service.",
+        },
+        {
+          term: "PHI",
+          definition:
+            "Short for protected health information, any patient detail covered by HIPAA, from a name and birth date to a diagnosis or clinical note.",
+        },
+        {
+          term: "Blended Intelligence",
+          definition:
+            "Our name for using an open-weight model and a frontier model together, sending each piece of a task to whichever one is right for the job.",
+        },
+      ],
     },
     {
       type: "subheading",
@@ -49,11 +76,25 @@ export const INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE = {
     },
     {
       type: "paragraph",
-      text: "Think of reinforcement learning as on-the-job training for software. Rather than judging the system against one canned test, we let it learn from outcomes your staff already track: whether a prior authorization got approved, whether a patient confirmed a visit, whether a note passed review, whether a call ended without a human needing to step in. Each of those outcomes becomes a small lesson the system uses to improve.",
+      text: "Think of reinforcement learning as on-the-job training for software. Rather than judging the system against one canned test, we let it learn from outcomes your staff already track, such as:",
+    },
+    {
+      type: "bullets",
+      id: "doe-labs-rl-outcomes",
+      items: [
+        "Whether a prior authorization got approved",
+        "Whether a patient confirmed a visit",
+        "Whether a note passed review",
+        "Whether a call ended without a human needing to step in",
+      ],
     },
     {
       type: "paragraph",
-      text: "That kind of feedback is specific and sensitive to your clinic, so it needs to stay on infrastructure your clinic controls rather than being pooled with everyone else's data. We are building the pipelines to capture that daily feedback safely, so the system keeps improving without a single patient chart ever having to leave your walls to make it happen.",
+      text: "Each of those outcomes becomes a small lesson the system uses to improve.",
+    },
+    {
+      type: "paragraph",
+      text: "That kind of feedback is specific and sensitive to your clinic, so it needs to stay on infrastructure your clinic controls rather than being pooled with everyone else's data. We are building the pipelines to capture that daily feedback safely, so the system keeps improving **without a single patient chart ever having to leave your walls** to make it happen.",
     },
     {
       type: "shader",
@@ -70,7 +111,7 @@ export const INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE = {
       text: "An open-weight model is one we can actually see inside of and run ourselves, instead of a closed system we can only send requests to. That matters for two reasons. First, we can tune it to a specialty's vocabulary and a clinic's local policy without waiting on an outside company's release schedule. Second, and more important for healthcare, we can host it entirely on cloud servers your clinic controls.",
     },
     {
-      type: "paragraph",
+      type: "goldParagraph",
       text: "That means patient information never has to leave infrastructure you trust just to get a useful answer. The model, the agents that use it, and the audit trail your compliance team reviews all live inside the same secure environment, instead of being scattered across a handful of outside vendor APIs.",
     },
     {
@@ -84,7 +125,7 @@ export const INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE = {
       text: "Blended Intelligence: the right model for the right part of the job",
     },
     {
-      type: "paragraph",
+      type: "goldParagraph",
       text: "Not every task needs the same tool. A frontier model is excellent at broad reasoning, comparing guidelines, or working through a long and complicated plan, but it typically lives outside your walls. An open-weight model may not be quite as broadly capable, but it can safely handle anything that touches a real patient record, because it never has to leave your own infrastructure.",
     },
     {
@@ -114,7 +155,20 @@ export const INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE = {
     },
     {
       type: "paragraph",
-      text: "In practice, that means data is encrypted both while it moves and while it sits in storage, access to models and logs is limited to the roles that actually need it, and any model version can be paused or rolled back without taking your clinic offline. Every agent, chart, and billing workflow shares one security boundary instead of trusting a dozen separate outside vendors.",
+      text: "In practice, that looks like:",
+    },
+    {
+      type: "bullets",
+      id: "doe-labs-security-measures",
+      items: [
+        "Data encrypted both while it moves and while it sits in storage",
+        "Access to models and logs limited to the roles that actually need it",
+        "The ability to pause or roll back a model version without taking your clinic offline",
+      ],
+    },
+    {
+      type: "paragraph",
+      text: "Every agent, chart, and billing workflow shares one security boundary instead of trusting a dozen separate outside vendors.",
     },
     {
       type: "quote",
