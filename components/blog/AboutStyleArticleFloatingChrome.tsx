@@ -111,7 +111,6 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
   const [audioJoined, setAudioJoined] = useState(false);
   const [audioClosing, setAudioClosing] = useState(false);
   const audioPlayingMinimized = isPlaying && !isPlayerOpen && !audioClosing;
-  const leftCapShowsPlaying = isPlaying && !blogOpen && !blogCollapsing && (!isPlayerOpen || audioClosing);
   const audioCapActive = isPlayerOpen || audioClosing;
   const anyWidgetOpen = blogOpen || tocOpen || audioCapActive || audioPlayingMinimized;
   const chromeVisible = scrollRevealed || anyWidgetOpen;
@@ -648,6 +647,12 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
 
   const progressPct = progress * 100;
 
+  const showLeftCapTriggers = (!blogOpen && !blogCollapsing) || blogCollapsing;
+  const showLeftPlayingCap = isPlaying && showLeftCapTriggers && (!isPlayerOpen || audioClosing);
+  const showLeftBlogCap = showLeftCapTriggers && (!isPlaying || isPlayerOpen);
+  const leftCapCrossfade = isPlaying && audioClosing && isPlayerOpen;
+  const showTocCapTrigger = (!tocOpen && !tocCollapsing) || tocCollapsing;
+
   if (!mounted) {
     return null;
   }
@@ -719,36 +724,44 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
             </div>
           ) : null}
 
-          {!blogOpen && !blogCollapsing ? (
-            leftCapShowsPlaying ? (
-              <button
-                type="button"
-                className="about-style-article-floating-chrome__cap-trigger about-style-article-floating-chrome__cap-trigger--playing"
-                aria-label="Open audio playback"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  openPlayingPill();
-                }}
-                tabIndex={chromeVisible ? 0 : -1}
-              >
-                <PlayingCapRing progress={progress} />
-                <PauseIcon size={22} />
-              </button>
-            ) : (
-              <button
-                type="button"
-                className="about-style-article-floating-chrome__cap-trigger"
-                aria-label="Open blog posts"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  if (audioCapActive) openBlog();
-                  else toggleBlog();
-                }}
-                tabIndex={chromeVisible ? 0 : -1}
-              >
-                <BlogNavIcon className="about-style-article-floating-chrome__icon" />
-              </button>
-            )
+          {showLeftCapTriggers ? (
+            <div
+              className={`about-style-article-floating-chrome__cap-trigger-stack${leftCapCrossfade ? " is-crossfading" : ""}`}
+            >
+              {showLeftPlayingCap ? (
+                <button
+                  type="button"
+                  className={`about-style-article-floating-chrome__cap-trigger about-style-article-floating-chrome__cap-trigger--playing${isPlayerOpen && !audioClosing ? " is-stack-hidden" : ""}${leftCapCrossfade ? " is-emerging" : ""}`}
+                  aria-label="Open audio playback"
+                  aria-hidden={isPlayerOpen && !audioClosing ? true : undefined}
+                  tabIndex={isPlayerOpen && !audioClosing ? -1 : chromeVisible ? 0 : -1}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    openPlayingPill();
+                  }}
+                >
+                  <PlayingCapRing progress={progress} />
+                  <PauseIcon size={22} />
+                </button>
+              ) : null}
+
+              {showLeftBlogCap ? (
+                <button
+                  type="button"
+                  className={`about-style-article-floating-chrome__cap-trigger${leftCapCrossfade ? " is-stack-fading" : ""}`}
+                  aria-label="Open blog posts"
+                  aria-hidden={leftCapCrossfade ? true : undefined}
+                  tabIndex={leftCapCrossfade ? -1 : chromeVisible ? 0 : -1}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    if (audioCapActive) openBlog();
+                    else toggleBlog();
+                  }}
+                >
+                  <BlogNavIcon className="about-style-article-floating-chrome__icon" />
+                </button>
+              ) : null}
+            </div>
           ) : null}
         </div>
 
@@ -830,7 +843,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
               </div>
             ) : null}
 
-            {!tocOpen && !tocCollapsing ? (
+            {showTocCapTrigger ? (
               <button
                 type="button"
                 className="about-style-article-floating-chrome__cap-trigger"
