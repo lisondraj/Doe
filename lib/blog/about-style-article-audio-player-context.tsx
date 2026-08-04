@@ -59,7 +59,20 @@ export function AboutStyleArticleAudioPlayerProvider({
 
   const openPlayer = useCallback(() => {
     setIsPlayerOpen(true);
-  }, []);
+    const audio = audioRef.current;
+    if (audioSrc && audio) {
+      setCurrentTime(audio.currentTime);
+      if (Number.isFinite(audio.duration) && audio.duration > 0) {
+        setDuration(audio.duration);
+      }
+      setIsPlaying(!audio.paused);
+      if (!audio.paused) {
+        void audio.play().catch(() => {
+          /* autoplay policy may block redundant play() */
+        });
+      }
+    }
+  }, [audioSrc]);
 
   const hidePlayer = useCallback(() => {
     setIsPlayerOpen(false);

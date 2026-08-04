@@ -40,7 +40,9 @@ function formatTime(seconds: number) {
   return `${mins}:${String(secs).padStart(2, "0")}`;
 }
 
-const PLAYING_CAP_RING_R = 46;
+const PLAYING_CAP_RING_VIEW = 100;
+const PLAYING_CAP_RING_STROKE = 3.4;
+const PLAYING_CAP_RING_R = PLAYING_CAP_RING_VIEW / 2 - PLAYING_CAP_RING_STROKE / 2;
 
 function PlayingCapRing({ progress }: { progress: number }) {
   const circumference = 2 * Math.PI * PLAYING_CAP_RING_R;
@@ -48,13 +50,24 @@ function PlayingCapRing({ progress }: { progress: number }) {
   const dashOffset = circumference * (1 - clamped);
 
   return (
-    <svg className="about-style-article-floating-chrome__cap-ring" viewBox="0 0 100 100" aria-hidden>
-      <circle className="about-style-article-floating-chrome__cap-ring-track" cx="50" cy="50" r={PLAYING_CAP_RING_R} />
+    <svg
+      className="about-style-article-floating-chrome__cap-ring"
+      viewBox={`0 0 ${PLAYING_CAP_RING_VIEW} ${PLAYING_CAP_RING_VIEW}`}
+      aria-hidden
+    >
+      <circle
+        className="about-style-article-floating-chrome__cap-ring-track"
+        cx="50"
+        cy="50"
+        r={PLAYING_CAP_RING_R}
+        strokeWidth={PLAYING_CAP_RING_STROKE}
+      />
       <circle
         className="about-style-article-floating-chrome__cap-ring-progress"
         cx="50"
         cy="50"
         r={PLAYING_CAP_RING_R}
+        strokeWidth={PLAYING_CAP_RING_STROKE}
         strokeDasharray={circumference}
         strokeDashoffset={dashOffset}
         transform="rotate(-90 50 50)"
