@@ -1,7 +1,6 @@
 import {
   BROADER_DOE_VISION_BYLINE,
   BROADER_DOE_VISION_DATE,
-  BROADER_DOE_VISION_HERO_BACKDROP,
   BROADER_DOE_VISION_OPENING_LEDE,
   BROADER_DOE_VISION_PATH,
   BROADER_DOE_VISION_SUBHEADING,
@@ -23,7 +22,8 @@ import {
   PULSE_CALL_HISTORY_ARTICLE,
   PULSE_CALL_HISTORY_PATH,
 } from "@/lib/blog/pulse-call-history-article";
-import type { WorkflowCarouselDesignBackdrop } from "@/lib/workflow-carousel-design-backdrops";
+import { blogLandingPreviewShader } from "@/lib/blog/blog-landing-preview-shaders";
+import type { AboutStyleFeatureShaderVariant } from "@/lib/blog/about-style-feature-card";
 
 export type BlogLandingPost = {
   slug: string;
@@ -33,7 +33,7 @@ export type BlogLandingPost = {
   excerpt: string;
   byline: string;
   date: string;
-  heroBackdrop: WorkflowCarouselDesignBackdrop;
+  previewShaderVariant: AboutStyleFeatureShaderVariant;
 };
 
 /** Featured posts on /blog — Pulse sub-features, flagship launches, and Broader Doe Vision. */
@@ -46,7 +46,7 @@ export const BLOG_LANDING_POSTS: readonly BlogLandingPost[] = [
     excerpt: PULSE_CALL_HISTORY_ARTICLE.excerpt,
     byline: PULSE_CALL_HISTORY_ARTICLE.byline,
     date: PULSE_CALL_HISTORY_ARTICLE.date,
-    heroBackdrop: PULSE_CALL_HISTORY_ARTICLE.heroBackdrop,
+    previewShaderVariant: blogLandingPreviewShader(PULSE_CALL_HISTORY_ARTICLE.slug),
   },
   {
     slug: PULSE_AMBIENT_ARTICLE.slug,
@@ -56,7 +56,7 @@ export const BLOG_LANDING_POSTS: readonly BlogLandingPost[] = [
     excerpt: PULSE_AMBIENT_ARTICLE.excerpt,
     byline: PULSE_AMBIENT_ARTICLE.byline,
     date: PULSE_AMBIENT_ARTICLE.date,
-    heroBackdrop: PULSE_AMBIENT_ARTICLE.heroBackdrop,
+    previewShaderVariant: blogLandingPreviewShader(PULSE_AMBIENT_ARTICLE.slug),
   },
   {
     slug: INTRODUCING_PULSE_ARTICLE.slug,
@@ -66,7 +66,7 @@ export const BLOG_LANDING_POSTS: readonly BlogLandingPost[] = [
     excerpt: INTRODUCING_PULSE_ARTICLE.excerpt,
     byline: INTRODUCING_PULSE_ARTICLE.byline,
     date: INTRODUCING_PULSE_ARTICLE.date,
-    heroBackdrop: INTRODUCING_PULSE_ARTICLE.heroBackdrop,
+    previewShaderVariant: blogLandingPreviewShader(INTRODUCING_PULSE_ARTICLE.slug),
   },
   {
     slug: INTRODUCING_FABRIC_ARTICLE.slug,
@@ -76,7 +76,7 @@ export const BLOG_LANDING_POSTS: readonly BlogLandingPost[] = [
     excerpt: INTRODUCING_FABRIC_ARTICLE.excerpt,
     byline: INTRODUCING_FABRIC_ARTICLE.byline,
     date: INTRODUCING_FABRIC_ARTICLE.date,
-    heroBackdrop: INTRODUCING_FABRIC_ARTICLE.heroBackdrop,
+    previewShaderVariant: blogLandingPreviewShader(INTRODUCING_FABRIC_ARTICLE.slug),
   },
   {
     slug: "the-broader-doe-vision",
@@ -86,7 +86,7 @@ export const BLOG_LANDING_POSTS: readonly BlogLandingPost[] = [
     excerpt: BROADER_DOE_VISION_OPENING_LEDE,
     byline: BROADER_DOE_VISION_BYLINE,
     date: BROADER_DOE_VISION_DATE,
-    heroBackdrop: BROADER_DOE_VISION_HERO_BACKDROP,
+    previewShaderVariant: blogLandingPreviewShader("the-broader-doe-vision"),
   },
 ] as const;
 

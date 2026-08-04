@@ -4,6 +4,10 @@ import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import type { WorkflowCarouselDesignBackdrop as WorkflowCarouselDesignBackdropType } from "@/lib/workflow-carousel-design-backdrops";
 import {
+  aboutStyleFeatureShaderSurface,
+  type AboutStyleFeatureShaderVariant,
+} from "@/lib/blog/about-style-feature-card";
+import {
   DOE_HOME_HERO_DUSK_PALETTE,
   DOE_HOME_ORANGE_PALETTE,
   doeAboutHeroDuskShaderSurface,
@@ -25,10 +29,11 @@ export function BlogHeroVisual({
   useHomeHeroShader = false,
   useHomeHeroDuskShader = false,
   useAboutHeroDuskShader = false,
+  previewShaderVariant,
   staticShader = false,
   children,
 }: {
-  backdrop: WorkflowCarouselDesignBackdropType;
+  backdrop?: WorkflowCarouselDesignBackdropType;
   variant?: "hero" | "list";
   boxClassName?: string;
   gapClassName?: string;
@@ -39,22 +44,30 @@ export function BlogHeroVisual({
   useHomeHeroDuskShader?: boolean;
   /** /about + about-style blog — dedicated about-hero dusk shader preset. */
   useAboutHeroDuskShader?: boolean;
+  /** Landing list / related carousel — per-post static shader (not workflow carousel art). */
+  previewShaderVariant?: AboutStyleFeatureShaderVariant;
   /** Freeze shader motion — keep flow appearance without animation. */
   staticShader?: boolean;
   children?: React.ReactNode;
 }) {
   const gap = gapClassName ?? (variant === "hero" ? BLOG_TITLE_VISUAL_GAP : "");
+  const previewShader = previewShaderVariant
+    ? aboutStyleFeatureShaderSurface(previewShaderVariant)
+    : null;
   const heroShader = useAboutHeroDuskShader
     ? ABOUT_HERO_DUSK_SHADER
     : useHomeHeroDuskShader
       ? HOME_HERO_DUSK_SHADER
       : HOME_HERO_SHADER;
-  const heroBack = useAboutHeroDuskShader || useHomeHeroDuskShader
-    ? DOE_HOME_HERO_DUSK_PALETTE.back
-    : useHomeHeroShader
-      ? DOE_HOME_ORANGE_PALETTE.back
-      : undefined;
-  const usesHeroShader = useHomeHeroShader || useHomeHeroDuskShader || useAboutHeroDuskShader;
+  const heroBack = previewShader
+    ? previewShader.colorBack
+    : useAboutHeroDuskShader || useHomeHeroDuskShader
+      ? DOE_HOME_HERO_DUSK_PALETTE.back
+      : useHomeHeroShader
+        ? DOE_HOME_ORANGE_PALETTE.back
+        : undefined;
+  const usesHeroShader =
+    previewShader !== null || useHomeHeroShader || useHomeHeroDuskShader || useAboutHeroDuskShader;
 
   return (
     <div
@@ -64,20 +77,20 @@ export function BlogHeroVisual({
     >
       {usesHeroShader ? (
         <ProtoGrainGradient
-          static={staticShader}
-          variant={heroShader.variant}
-          colors={heroShader.colors}
-          colorBack={heroShader.colorBack}
+          static={staticShader || previewShader !== null}
+          variant={previewShader ? previewShader.variant : heroShader.variant}
+          colors={previewShader ? previewShader.colors : heroShader.colors}
+          colorBack={previewShader ? previewShader.colorBack : heroShader.colorBack}
           className="absolute inset-0 h-full w-full"
         />
-      ) : (
+      ) : backdrop ? (
         <WorkflowCarouselDesignBackdrop
           backdrop={backdrop}
           embedded
           className="absolute inset-0 h-full w-full"
           patternScale={patternScale}
         />
-      )}
+      ) : null}
       {children}
     </div>
   );

@@ -1152,6 +1152,51 @@ html[data-about-page][data-layout="desktop"] .blog-landing-card-excerpt {
   font-size: clamp(1.22rem, 0.95vw, 1.48rem) !important;
 }
 
+/* Blog landing previews — thumbnail shader fills the aspect-ratio box (not article hero height). */
+html[data-about-page] .blog-landing-card-visual {
+  flex: 0 0 auto;
+}
+
+html[data-about-page] .blog-landing-card-visual .about-hero-visual {
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+}
+
+html[data-about-page] .blog-landing-card-stack {
+  height: 100%;
+}
+
+html[data-about-page] .blog-landing-card-copy {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+}
+
+html[data-about-page] .blog-landing-card-excerpt {
+  flex: 1 1 auto;
+}
+
+html[data-about-page] .blog-landing-read-more {
+  flex: 0 0 auto;
+  margin-top: auto;
+  padding-top: 0.75rem;
+}
+
+/* iPhone — equal card copy blocks; only excerpt line count adjusts. */
+html[data-about-page]:not([data-layout="desktop"]) .blog-landing-card-copy {
+  min-height: clamp(13.5rem, 42vw, 15.75rem);
+}
+
+html[data-about-page]:not([data-layout="desktop"]) .blog-landing-card-excerpt {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  overflow: hidden;
+  font-size: clamp(1.08rem, 0.94rem + 0.55vmin, 1.28rem) !important;
+  line-height: 1.42 !important;
+}
+
 /* Article footer — horizontal related-post carousel (/blog card design). */
 html[data-about-page] .blog-article-related-carousel {
   --blog-related-carousel-inset-x: max(
@@ -1192,7 +1237,7 @@ html[data-about-page] .blog-article-related-carousel__scroll::-webkit-scrollbar 
 
 html[data-about-page] .blog-article-related-carousel__track {
   display: flex;
-  align-items: stretch;
+  align-items: flex-start;
   gap: var(--blog-related-carousel-gap);
   width: max-content;
   padding-inline: var(--blog-related-carousel-inset-x);
@@ -1202,6 +1247,29 @@ html[data-about-page] .blog-article-related-carousel__slide {
   flex: 0 0 auto;
   width: var(--blog-related-carousel-slide-width);
   scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+}
+
+html[data-about-page] .blog-article-related-carousel__slide > a {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  height: 100%;
+}
+
+html[data-about-page]:not([data-layout="desktop"]) .blog-article-related-carousel__track {
+  align-items: stretch;
+}
+
+html[data-about-page][data-layout="desktop"] .blog-article-related-carousel__slide .blog-landing-card-visual {
+  aspect-ratio: auto;
+  width: 100%;
+  height: clamp(14rem, 20vw, 18.5rem);
+}
+
+html[data-about-page][data-layout="desktop"] .blog-article-related-carousel__slide .blog-landing-card-copy {
+  margin-top: clamp(1.15rem, 1.4vw, 1.45rem) !important;
 }
 
 html[data-about-page] .blog-article-related-carousel__slide .blog-landing-card-visual {

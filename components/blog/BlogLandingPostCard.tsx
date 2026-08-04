@@ -43,11 +43,10 @@ export function BlogLandingPostCard({ post, linked = true }: BlogLandingPostCard
     <article className={BLOG_LANDING_CARD_STACK}>
       <div className={BLOG_LANDING_CARD_VISUAL_TW}>
         <BlogHeroVisual
-          backdrop={post.heroBackdrop}
+          previewShaderVariant={post.previewShaderVariant}
           variant="list"
           boxClassName="absolute inset-0 h-full w-full rounded-[inherit]"
           gapClassName=""
-          useAboutHeroDuskShader
           staticShader
         />
       </div>
