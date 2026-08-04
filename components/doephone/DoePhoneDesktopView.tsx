@@ -14,6 +14,7 @@ export function DoePhoneDesktopView({
   TopBanner = DoeHomeTopBanner,
   heroHeadline,
   afterHero,
+  beforeFooter,
   shaderBeforeCardSlideIds,
   disableCarouselInteractions,
   hideActiveAgentsVisual,
@@ -32,6 +33,7 @@ export function DoePhoneDesktopView({
   TopBanner?: DoeHomeTopBannerComponent;
   heroHeadline?: DoeHomeHeroHeadline;
   afterHero?: ReactNode;
+  beforeFooter?: ReactNode;
   shaderBeforeCardSlideIds?: readonly string[];
   disableCarouselInteractions?: boolean;
   hideActiveAgentsVisual?: boolean;
@@ -59,6 +61,7 @@ export function DoePhoneDesktopView({
         navShowMailIcon={isDoeHealthNav}
         heroHeadline={heroHeadline}
         afterHero={afterHero}
+        beforeFooter={beforeFooter}
         shaderBeforeCardSlideIds={shaderBeforeCardSlideIds}
         disableCarouselInteractions={disableCarouselInteractions}
         hideActiveAgentsVisual={hideActiveAgentsVisual}

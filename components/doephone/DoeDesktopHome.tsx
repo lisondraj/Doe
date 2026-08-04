@@ -20,6 +20,7 @@ export function DoeDesktopHome({
   navShowInvestorsCta = true,
   heroHeadline,
   afterHero,
+  beforeFooter,
   shaderBeforeCardSlideIds,
   disableCarouselInteractions,
   hideActiveAgentsVisual,
@@ -41,6 +42,7 @@ export function DoeDesktopHome({
   navShowInvestorsCta?: boolean;
   heroHeadline?: DoeHomeHeroHeadline;
   afterHero?: ReactNode;
+  beforeFooter?: ReactNode;
   shaderBeforeCardSlideIds?: readonly string[];
   disableCarouselInteractions?: boolean;
   hideActiveAgentsVisual?: boolean;
@@ -114,6 +116,8 @@ export function DoeDesktopHome({
             <DoePhoneClosingSection disableCarouselInteractions={disableCarouselInteractions} />
           </section>
         )}
+
+        {beforeFooter}
 
         <HomeFooter linksDisabled shaderTheme="dusk" />
       </div>

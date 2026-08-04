@@ -69,6 +69,7 @@ export function DoePhoneRouter({
   TopBanner = DoeHomeTopBanner,
   heroHeadline,
   afterHero,
+  beforeFooter,
   shaderBeforeCardSlideIds,
   disableCarouselInteractions,
   hideActiveAgentsVisual,
@@ -87,6 +88,7 @@ export function DoePhoneRouter({
   TopBanner?: DoeHomeTopBannerComponent;
   heroHeadline?: DoeHomeHeroHeadline;
   afterHero?: ReactNode;
+  beforeFooter?: ReactNode;
   shaderBeforeCardSlideIds?: readonly string[];
   disableCarouselInteractions?: boolean;
   hideActiveAgentsVisual?: boolean;
@@ -174,6 +176,7 @@ export function DoePhoneRouter({
         TopBanner={TopBanner}
         heroHeadline={heroHeadline}
         afterHero={afterHero}
+        beforeFooter={beforeFooter}
         shaderBeforeCardSlideIds={shaderBeforeCardSlideIds}
         disableCarouselInteractions={disableCarouselInteractions}
         hideActiveAgentsVisual={hideActiveAgentsVisual}
@@ -198,6 +201,7 @@ export function DoePhoneRouter({
       <DoePhoneMobileView
         heroHeadline={heroHeadline}
         afterHero={afterHero}
+        beforeFooter={beforeFooter}
         shaderBeforeCardSlideIds={shaderBeforeCardSlideIds}
         disableCarouselInteractions={disableCarouselInteractions}
         hideActiveAgentsVisual={hideActiveAgentsVisual}

@@ -59,6 +59,7 @@ export function DoePhoneMobileView({
   variant = "home",
   heroHeadline,
   afterHero,
+  beforeFooter,
   shaderBeforeCardSlideIds,
   disableCarouselInteractions,
   hideActiveAgentsVisual,
@@ -77,6 +78,7 @@ export function DoePhoneMobileView({
   variant?: "home" | "proto";
   heroHeadline?: DoeHomeHeroHeadline;
   afterHero?: ReactNode;
+  beforeFooter?: ReactNode;
   shaderBeforeCardSlideIds?: readonly string[];
   disableCarouselInteractions?: boolean;
   hideActiveAgentsVisual?: boolean;
@@ -216,12 +218,17 @@ export function DoePhoneMobileView({
       {isProto ? (
         <ProtoFooter />
       ) : hideSectionsBelowIntro ? (
-        <HomeFooter linksDisabled shaderTheme="dusk" />
+        <>
+          {beforeFooter}
+          <HomeFooter linksDisabled shaderTheme="dusk" />
+        </>
       ) : (
         <>
           <section id="doe-vision" className={DOEPHONE_BEIGE_SECTION} aria-label="Closing">
             <DoePhoneClosingSection disableCarouselInteractions={disableCarouselInteractions} />
           </section>
+
+          {beforeFooter}
 
           <HomeFooter linksDisabled shaderTheme="dusk" />
         </>
