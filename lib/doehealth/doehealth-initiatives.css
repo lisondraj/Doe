@@ -3902,7 +3902,7 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="des
   display: block;
   width: 100%;
   max-width: 100%;
-  max-height: min(42vh, 24rem);
+  max-height: min(50vh, 28rem);
   aspect-ratio: 16 / 9;
   overflow: hidden;
   line-height: 0;
@@ -3930,7 +3930,7 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="des
 html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
   .doehealth-intro-band--intro-video
   .doehealth-intro-video__player-wrap {
-  max-height: min(44vh, 26rem);
+  max-height: min(51vh, 30rem);
 }
 
 html[data-home-page][data-layout="desktop"]
@@ -3959,15 +3959,15 @@ html[data-home-page][data-layout="desktop"]
     calc(100vw - 2 * var(--doehealth-rail-viewport-trim-x, 2.5rem))
   );
   padding-inline: 0;
-  padding-bottom: clamp(1.25rem, 2.4vh, 2rem);
+  padding-bottom: clamp(1.5rem, 3vh, 2.5rem);
 }
 
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-intro-band--intro-video
   .doehealth-intro-video__player-wrap {
-  max-height: min(46vh, 28rem);
-  max-width: min(100%, 52rem);
+  max-height: min(52vh, 32rem);
+  max-width: min(100%, 55rem);
 }
 
 html[data-home-page][data-layout="desktop"]
@@ -3976,8 +3976,8 @@ html[data-home-page][data-layout="desktop"]
   > .doehealth-intro-band--intro-video {
   min-height: auto !important;
   height: auto !important;
-  padding-top: clamp(2rem, 3vw, 3rem) !important;
-  padding-bottom: clamp(1.25rem, 2vw, 1.75rem) !important;
+  padding-top: clamp(2.5rem, 3.5vw, 3.75rem) !important;
+  padding-bottom: clamp(1.5rem, 2.5vw, 2.25rem) !important;
 }
 
 html[data-home-page]:not([data-layout="desktop"])
