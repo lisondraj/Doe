@@ -70,7 +70,7 @@ function HeroCopyBlock({
     <>
       <DoePhoneHeroHeadline
         line1={entry.line1}
-        line2={entry.line2}
+        line2={entry.line2 ?? ""}
         fontClass={fontClass}
         className={[className, entry.headlineClassName].filter(Boolean).join(" ")}
         fitToContainer={fitToContainer || entry.headlineClassName === "doehealth-hero-headline--single-line"}
