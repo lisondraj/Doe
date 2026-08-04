@@ -25,7 +25,7 @@ const PANEL_COLLAPSE_MS = 520;
 const SCROLL_REVEAL_PX = 280;
 const AUDIO_JOIN_MS = 920;
 const AUDIO_JOIN_SETTLE_MS = 320;
-const AUDIO_LEAVE_MS = 720;
+const AUDIO_LEAVE_MS = 880;
 
 type AboutStyleArticleFloatingChromeProps = {
   tocItems: readonly AboutStyleArticleTocItem[];

@@ -2638,24 +2638,45 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__shell,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__shell {
-  align-items: flex-end;
-  height: auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0;
+  padding-inline: 0;
+  height: var(--about-floating-toc-closed-size);
   min-height: var(--about-floating-toc-closed-size);
-  max-height: none;
-  overflow: visible;
+  max-height: var(--about-floating-toc-closed-size);
+  overflow: hidden;
   border-color: transparent;
   border-radius: 0;
   background-color: transparent;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   transform: none;
-  animation: none;
+  animation: about-audio-pill-unsettle var(--about-audio-leave-ms, 880ms)
+    var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)) both;
   transition:
-    background-color var(--about-audio-leave-ms, 720ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
-    border-radius var(--about-audio-leave-ms, 720ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
-    border-color var(--about-audio-leave-ms, 720ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
-    height var(--about-audio-leave-ms, 720ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
-    padding var(--about-audio-leave-ms, 720ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1));
+    gap var(--about-audio-leave-ms, 880ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
+    padding var(--about-audio-leave-ms, 880ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
+    background-color 460ms var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)) 240ms,
+    border-radius 520ms var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)) 200ms,
+    border-color 460ms var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)) 240ms,
+    backdrop-filter 460ms var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)) 240ms,
+    -webkit-backdrop-filter 460ms var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)) 240ms,
+    height var(--about-audio-leave-ms, 880ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1));
+}
+
+@keyframes about-audio-pill-unsettle {
+  0% {
+    transform: scale(1);
+  }
+
+  38% {
+    transform: scale(0.984);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 @keyframes about-audio-pill-settle {
@@ -2714,14 +2735,30 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   }
 }
 
+@keyframes about-audio-cap-icon-grow {
+  0% {
+    transform: scale(0.94);
+  }
+
+  48% {
+    transform: scale(1.08);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__cap,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__cap {
   width: var(--about-floating-toc-closed-size) !important;
   min-width: var(--about-floating-toc-closed-size) !important;
   height: var(--about-floating-toc-closed-size);
+  align-self: center;
+  z-index: 2;
   transition:
-    width var(--about-audio-leave-ms, 720ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
-    height var(--about-audio-leave-ms, 720ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1));
+    width var(--about-audio-leave-ms, 880ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
+    height var(--about-audio-leave-ms, 880ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1));
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__cap-trigger,
@@ -2737,23 +2774,24 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
     saturate(calc(1 + var(--proto-nav-frost-progress) * 0.12));
   box-shadow: inset 0 1px 0 rgba(255, 245, 230, calc(var(--proto-nav-frost-progress) * 0.06));
   transition:
-    border-color var(--about-audio-leave-ms, 720ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
-    background-color var(--about-audio-leave-ms, 720ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
-    box-shadow var(--about-audio-leave-ms, 720ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
-    height var(--about-audio-leave-ms, 720ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
-    padding var(--about-audio-leave-ms, 720ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1));
+    border-color 520ms var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)) 140ms,
+    background-color 520ms var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)) 140ms,
+    box-shadow 520ms var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)) 140ms,
+    backdrop-filter 520ms var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)) 140ms,
+    -webkit-backdrop-filter 520ms var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)) 140ms,
+    height var(--about-audio-leave-ms, 880ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
+    padding var(--about-audio-leave-ms, 880ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1));
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__cap-trigger .about-style-article-floating-chrome__icon,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__cap-trigger .about-style-article-floating-chrome__icon {
   width: clamp(1.45rem, 1.28rem + 0.62vmin, 1.625rem);
   height: clamp(1.45rem, 1.28rem + 0.62vmin, 1.625rem);
-  animation: none;
-  transform: scale(1);
+  animation: about-audio-cap-icon-grow var(--about-audio-leave-ms, 880ms)
+    var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)) both;
   transition:
-    width var(--about-audio-leave-ms, 720ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
-    height var(--about-audio-leave-ms, 720ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
-    transform var(--about-audio-leave-ms, 720ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1));
+    width var(--about-audio-leave-ms, 880ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
+    height var(--about-audio-leave-ms, 880ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1));
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-joined .about-style-article-floating-chrome__cap-trigger,
@@ -2947,11 +2985,13 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   opacity: 0;
   pointer-events: none;
   padding: 0;
+  margin: 0;
   transition:
-    flex var(--about-audio-leave-ms, 720ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
-    width var(--about-audio-leave-ms, 720ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
-    max-width var(--about-audio-leave-ms, 720ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
-    opacity 280ms var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1));
+    opacity 200ms var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
+    flex var(--about-audio-leave-ms, 880ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
+    width var(--about-audio-leave-ms, 880ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
+    max-width var(--about-audio-leave-ms, 880ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
+    padding 360ms var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1));
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__audio-stack,
@@ -2994,10 +3034,10 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__audio-controls,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__audio-controls {
   opacity: 0;
-  transform: translateY(4px) scale(0.98);
+  transform: translateY(6px) scale(0.96);
   transition:
-    opacity 240ms var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
-    transform 320ms var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1));
+    opacity 220ms var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
+    transform 300ms var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1));
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__audio-transport,
