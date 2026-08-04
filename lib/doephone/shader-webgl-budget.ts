@@ -19,8 +19,6 @@ export const SHADER_WEBGL_SLOT_PRIORITY = {
 } as const;
 
 const PHONE_MAX_WEBGL_SLOTS = 8;
-/** Desktop home — cap simultaneous WebGL contexts (hero + visible bands/carousel/footer). */
-const DESKTOP_HOME_MAX_WEBGL_SLOTS = 6;
 
 /** Hero-class shaders always keep headroom — carousel orbs cannot consume the last slot. */
 const HERO_CLASS_PRIORITY = SHADER_WEBGL_SLOT_PRIORITY.HERO_BACKGROUND;
@@ -40,21 +38,17 @@ export function isDoePhoneWebGLBudgetActive() {
   );
 }
 
-function isDesktopHomeRoute() {
-  if (typeof document === "undefined") return false;
-  return (
-    document.documentElement.getAttribute("data-home-page") === "true" &&
-    document.documentElement.getAttribute("data-layout") === "desktop"
-  );
-}
-
-/** Phone routes and desktop home share a WebGL slot budget. */
+/**
+ * Only phone routes enforce a hard WebGL context cap (real GPU context limits on iOS
+ * Safari). Desktop never evicts a shader that wants to be visible — GPU/memory savings
+ * there come from unmounting off-screen shaders entirely (see ProtoGrainGradient) and
+ * pausing animation when off-screen, not from capping concurrent contexts.
+ */
 export function isShaderWebGLBudgetActive() {
-  return isDoePhoneWebGLBudgetActive() || isDesktopHomeRoute();
+  return isDoePhoneWebGLBudgetActive();
 }
 
 function maxWebGLSlots() {
-  if (isDesktopHomeRoute()) return DESKTOP_HOME_MAX_WEBGL_SLOTS;
   return PHONE_MAX_WEBGL_SLOTS;
 }
 
