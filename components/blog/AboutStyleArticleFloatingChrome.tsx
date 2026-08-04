@@ -19,13 +19,14 @@ import {
 } from "@/lib/blog/about-style-article-audio-player-context";
 import type { AboutStyleArticleTocItem } from "@/lib/blog/about-style-article-toc";
 
-const PANEL_REVEAL_MS = 520;
+const PANEL_REVEAL_MS = 560;
 const PANEL_HIDE_MS = 0;
-const PANEL_COLLAPSE_MS = 400;
+const PANEL_COLLAPSE_MS = 440;
 const SCROLL_REVEAL_PX = 280;
-const AUDIO_JOIN_MS = 920;
-const AUDIO_JOIN_SETTLE_MS = 320;
-const AUDIO_LEAVE_MS = 680;
+const AUDIO_JOIN_MS = 780;
+const AUDIO_JOIN_SETTLE_MS = 300;
+const AUDIO_LEAVE_MS = 620;
+const WIDGET_DISMISS_ARM_MS = 480;
 
 type AboutStyleArticleFloatingChromeProps = {
   tocItems: readonly AboutStyleArticleTocItem[];
@@ -185,7 +186,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
   }, []);
 
   const markWidgetOpened = useCallback(() => {
-    ignoreBackdropDismissUntilRef.current = performance.now() + 420;
+    ignoreBackdropDismissUntilRef.current = performance.now() + WIDGET_DISMISS_ARM_MS;
   }, []);
 
   const closeBlog = useCallback(() => {
@@ -305,7 +306,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
     };
 
     if (needsPanelClose) {
-      audioOpenDelayTimerRef.current = window.setTimeout(startPlayback, PANEL_COLLAPSE_MS + 48);
+      audioOpenDelayTimerRef.current = window.setTimeout(startPlayback, PANEL_COLLAPSE_MS + 36);
       return;
     }
 
