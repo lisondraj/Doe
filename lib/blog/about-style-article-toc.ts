@@ -64,7 +64,7 @@ export function buildAboutStyleArticleTocItems(article: AboutStyleLongformArticl
   const items: AboutStyleArticleTocItem[] = [{ id: ABOUT_STYLE_ARTICLE_TOC_IDS.intro, label: "Introduction" }];
 
   if (article.featureCards?.length) {
-    items.push({ id: ABOUT_STYLE_ARTICLE_TOC_IDS.features, label: "Product highlights" });
+    items.push({ id: ABOUT_STYLE_ARTICLE_TOC_IDS.features, label: "Product Highlights" });
   }
 
   if (article.thesisSectionHeadline) {
