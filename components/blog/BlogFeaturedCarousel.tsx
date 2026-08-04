@@ -4,11 +4,17 @@ import { BlogLandingPostCard } from "@/components/blog/BlogLandingPostCard";
 import { BLOG_LANDING_POSTS } from "@/lib/blog/blog-landing-posts";
 
 /** Horizontal swipe carousel of all featured blog posts — /blog card design. */
-export function BlogFeaturedCarousel({ oldestFirst = false }: { oldestFirst?: boolean } = {}) {
+export function BlogFeaturedCarousel({
+  oldestFirst = false,
+  homeFeatured = false,
+}: { oldestFirst?: boolean; homeFeatured?: boolean } = {}) {
   const posts = oldestFirst ? [...BLOG_LANDING_POSTS].reverse() : BLOG_LANDING_POSTS;
 
   return (
-    <section className="blog-article-related-carousel" aria-label="From the blog">
+    <section
+      className={`blog-article-related-carousel${homeFeatured ? " blog-article-related-carousel--home-featured" : ""}`}
+      aria-label="From the blog"
+    >
       <div className="blog-article-related-carousel__scroll">
         <ul className="blog-article-related-carousel__track m-0 list-none p-0">
           {posts.map((post) => (

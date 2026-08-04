@@ -7,7 +7,7 @@ export function HomeBlogFeaturedCarouselSection() {
   return (
     <section className="home-blog-featured-carousel home-blog-featured-carousel--below-hero" aria-label="Blog">
       <div className="home-blog-featured-carousel__shell about-page-content">
-        <BlogFeaturedCarousel oldestFirst />
+        <BlogFeaturedCarousel oldestFirst homeFeatured />
       </div>
     </section>
   );
