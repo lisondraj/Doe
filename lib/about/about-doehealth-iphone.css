@@ -978,6 +978,7 @@ html[data-about-page] .about-style-article-toc__section-label {
 html[data-about-page] .about-style-article-toc__children {
   --about-toc-sub-rail-pad: clamp(0.95rem, 0.78rem + 0.85vmin, 1.45rem);
   --about-toc-sub-text-inset: calc(var(--about-toc-sub-rail-pad) + 1px);
+  --about-toc-sub-chevron-inset: clamp(1.35rem, 1.12rem + 0.82vmin, 1.72rem);
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -1025,6 +1026,7 @@ html[data-about-page] .about-style-article-toc__sublist-rail a {
   width: 100%;
   max-width: 100%;
   gap: clamp(0.28rem, 0.22rem + 0.22vmin, 0.38rem);
+  padding-right: var(--about-toc-sub-chevron-inset);
 }
 
 html[data-about-page] .about-style-article-toc__children .about-style-article-toc__subitem-text {
@@ -1078,7 +1080,7 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-t
   width: 100%;
   max-width: 100%;
   gap: clamp(0.28rem, 0.22rem + 0.22vmin, 0.38rem);
-  padding: 0.38rem 0;
+  padding: 0.38rem var(--about-toc-sub-chevron-inset, clamp(1.35rem, 1.12rem + 0.82vmin, 1.72rem)) 0.38rem 0;
   border-radius: 0.45rem;
   color: rgba(232, 192, 142, 0.88) !important;
   font-size: clamp(0.88rem, 0.8rem + 0.32vmin, 0.98rem);
