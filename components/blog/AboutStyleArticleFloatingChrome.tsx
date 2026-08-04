@@ -250,7 +250,8 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
       raf = requestAnimationFrame(() => {
         const revealed = window.scrollY > SCROLL_REVEAL_PX;
         setScrollRevealed(revealed);
-        if (!revealed) {
+        const anyWidgetOpen = blogOpen || tocOpen || isPlayerOpen;
+        if (!revealed && !anyWidgetOpen) {
           setBlogPanelRevealed(false);
           setTocPanelRevealed(false);
           setBlogOpen(false);
@@ -276,7 +277,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
       window.removeEventListener("resize", sync);
       window.removeEventListener("orientationchange", sync);
     };
-  }, [clearBlogCollapseStyles, clearTocCollapseStyles, closePlayer]);
+  }, [blogOpen, clearBlogCollapseStyles, clearTocCollapseStyles, closePlayer, isPlayerOpen, tocOpen]);
 
   useEffect(() => {
     if (!isPlayerOpen) {
@@ -349,16 +350,36 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
     };
   }, [audioRef, audioSrc, setCurrentTime, setDuration, setIsPlaying]);
 
-  useEffect(() => {
-    if (!blogOpen && !tocOpen && !isPlayerOpen) return;
+  const anyWidgetOpen = blogOpen || tocOpen || isPlayerOpen;
 
-    const onPointerDown = (event: MouseEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) {
-        if (blogOpen) closeBlog();
-        if (tocOpen) closeToc();
-        if (isPlayerOpen) beginAudioClose();
-      }
+  useEffect(() => {
+    if (!anyWidgetOpen) return;
+
+    const scrollY = window.scrollY;
+    const prevHtmlOverflow = document.documentElement.style.overflow;
+    const prevBodyOverflow = document.body.style.overflow;
+    const prevBodyPosition = document.body.style.position;
+    const prevBodyTop = document.body.style.top;
+    const prevBodyWidth = document.body.style.width;
+
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
+
+    return () => {
+      document.documentElement.style.overflow = prevHtmlOverflow;
+      document.body.style.overflow = prevBodyOverflow;
+      document.body.style.position = prevBodyPosition;
+      document.body.style.top = prevBodyTop;
+      document.body.style.width = prevBodyWidth;
+      window.scrollTo(0, scrollY);
     };
+  }, [anyWidgetOpen]);
+
+  useEffect(() => {
+    if (!anyWidgetOpen) return;
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -368,12 +389,16 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
       }
     };
 
-    document.addEventListener("mousedown", onPointerDown);
     document.addEventListener("keydown", onKeyDown);
     return () => {
-      document.removeEventListener("mousedown", onPointerDown);
       document.removeEventListener("keydown", onKeyDown);
     };
+  }, [anyWidgetOpen, beginAudioClose, blogOpen, closeBlog, closeToc, isPlayerOpen, tocOpen]);
+
+  const dismissOpenWidgets = useCallback(() => {
+    if (blogOpen) closeBlog();
+    if (tocOpen) closeToc();
+    if (isPlayerOpen) beginAudioClose();
   }, [beginAudioClose, blogOpen, closeBlog, closeToc, isPlayerOpen, tocOpen]);
 
   useEffect(() => {
@@ -425,7 +450,18 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
     .join(" ");
 
   return createPortal(
-    <div ref={rootRef} className={rootClass} aria-live="polite" aria-hidden={!scrollRevealed}>
+    <>
+      {anyWidgetOpen ? (
+        <button
+          type="button"
+          className="about-style-article-floating-chrome__backdrop"
+          aria-label="Close menu"
+          tabIndex={-1}
+          onClick={dismissOpenWidgets}
+        />
+      ) : null}
+
+      <div ref={rootRef} className={rootClass} aria-live="polite" aria-hidden={!scrollRevealed}>
       <div
         className={shellClass}
         style={{
@@ -571,7 +607,8 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
       {audioSrc ? (
         <audio ref={audioRef as React.Ref<HTMLAudioElement>} src={audioSrc} preload="metadata" className="hidden" />
       ) : null}
-    </div>,
+    </div>
+    </>,
     document.body,
   );
 }

@@ -3218,6 +3218,19 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   color: rgba(198, 168, 132, 0.62);
 }
 
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__backdrop,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 179;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: default;
+  -webkit-tap-highlight-color: transparent;
+}
+
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__panel,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__panel {
   display: flex;
@@ -3228,21 +3241,62 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   overflow: hidden;
 }
 
-html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__cap.is-open .about-style-article-floating-chrome__cap-trigger,
-html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__cap.is-open .about-style-article-floating-chrome__cap-trigger,
-html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__cap.is-closing .about-style-article-floating-chrome__cap-trigger,
-html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__cap.is-closing .about-style-article-floating-chrome__cap-trigger {
-  display: none;
-}
-
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__cap.is-open,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__cap.is-open {
+  display: flex;
+  flex-direction: column;
+  max-height: min(24rem, calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 5.5rem));
   border: 1px solid rgba(212, 165, 116, 0.28);
   border-radius: clamp(0.95rem, 0.78rem + 0.72vmin, 1.18rem);
   background-color: rgba(39, 31, 23, 0.88);
   backdrop-filter: blur(56px) saturate(1.12);
   -webkit-backdrop-filter: blur(56px) saturate(1.12);
   padding: clamp(0.3rem, 0.2rem + 0.45vmin, 0.4rem);
+  overflow: hidden;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__cap.is-open .about-style-article-floating-chrome__panel,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__cap.is-open .about-style-article-floating-chrome__panel {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__cap.is-open .about-style-article-floating-blog-nav__list-wrap,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__cap.is-open .about-style-article-floating-blog-nav__list-wrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__cap.is-open .about-style-article-floating-toc__list-wrap,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__cap.is-open .about-style-article-floating-toc__list-wrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__cap.is-open .about-style-article-floating-toc__scroll,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__cap.is-open .about-style-article-floating-toc__scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__cap.is-open .about-style-article-floating-chrome__cap-trigger,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__cap.is-open .about-style-article-floating-chrome__cap-trigger,
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__cap.is-closing .about-style-article-floating-chrome__cap-trigger,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__cap.is-closing .about-style-article-floating-chrome__cap-trigger {
+  display: none;
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__panel-label,
