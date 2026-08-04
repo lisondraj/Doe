@@ -6,7 +6,9 @@ import { INTELLIGENCE_FOR_EVERY_CLINIC_PATH } from "@/lib/blog/intelligence-for-
 
 export type DoeHomeHeroHeadlineEntry = {
   line1: string;
-  line2: string;
+  line2?: string;
+  /** Extra headline class — e.g. single-line product intro sizing. */
+  headlineClassName?: string;
   readMorePrefix?: string;
   readMoreLinks: readonly { label: string; href: string }[];
 };
@@ -34,8 +36,8 @@ export const DOEHEALTH_HERO_HEADLINE_ENTRIES: readonly DoeHomeHeroHeadlineEntry[
     readMoreLinks: [{ label: "The Broader Doe Vision", href: BROADER_DOE_VISION_PATH }],
   },
   {
-    line1: "Introducing",
-    line2: "Float",
+    line1: "Introducing Float",
+    headlineClassName: "doehealth-hero-headline--single-line",
     readMoreLinks: [{ label: "Read more", href: INTRODUCING_FLOAT_PATH }],
   },
   {

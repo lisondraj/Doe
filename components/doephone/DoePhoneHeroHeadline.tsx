@@ -120,7 +120,9 @@ export function DoePhoneHeroHeadline({
       className={`doephone-hero-headline flex w-full min-w-0 max-w-full flex-col items-start ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] text-white ${fontClass ?? suisseIntl.className}${className ? ` ${className}` : ""}`}
     >
       <span className="doephone-hero-headline-line block">{line1}</span>
-      <span className="doephone-hero-headline-line doephone-hero-headline-line--second block">{line2}</span>
+      {line2 ? (
+        <span className="doephone-hero-headline-line doephone-hero-headline-line--second block">{line2}</span>
+      ) : null}
     </h1>
   );
 }

@@ -72,8 +72,8 @@ function HeroCopyBlock({
         line1={entry.line1}
         line2={entry.line2}
         fontClass={fontClass}
-        className={className}
-        fitToContainer={fitToContainer}
+        className={[className, entry.headlineClassName].filter(Boolean).join(" ")}
+        fitToContainer={fitToContainer || entry.headlineClassName === "doehealth-hero-headline--single-line"}
       />
       {entry.readMoreLinks.length > 0 ? (
         <div className={`doehealth-hero-read-more-row pointer-events-auto ${inter.className}`}>
