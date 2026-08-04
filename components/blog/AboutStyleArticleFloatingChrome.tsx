@@ -83,7 +83,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
   const audioJoinTimerRef = useRef<number | null>(null);
   const fakeTickRef = useRef<number | null>(null);
   const ignoreBackdropDismissUntilRef = useRef(0);
-  const [backdropArmed, setBackdropArmed] = useState(false);
+  const wasPlayerOpenRef = useRef(false);
 
   const clearBlogCollapseStyles = useCallback(() => {
     const cap = blogCapRef.current;
@@ -293,6 +293,13 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
   }, [audioCapActive, blogOpen, clearBlogCollapseStyles, clearTocCollapseStyles, closePlayer, tocOpen]);
 
   useEffect(() => {
+    if (isPlayerOpen && !wasPlayerOpenRef.current) {
+      markWidgetOpened();
+    }
+    wasPlayerOpenRef.current = isPlayerOpen;
+  }, [isPlayerOpen, markWidgetOpened]);
+
+  useEffect(() => {
     if (!isPlayerOpen) {
       if (!audioClosing) {
         setAudioJoined(false);
@@ -364,22 +371,6 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
   }, [audioRef, audioSrc, setCurrentTime, setDuration, setIsPlaying]);
 
   const anyWidgetOpen = blogOpen || tocOpen || audioCapActive;
-
-  useEffect(() => {
-    if (!anyWidgetOpen) {
-      setBackdropArmed(false);
-      return;
-    }
-
-    setBackdropArmed(false);
-    const armTimer = window.setTimeout(() => {
-      setBackdropArmed(true);
-    }, 420);
-
-    return () => {
-      window.clearTimeout(armTimer);
-    };
-  }, [anyWidgetOpen, blogOpen, audioCapActive, tocOpen]);
 
   useEffect(() => {
     if (!anyWidgetOpen) return;
@@ -474,10 +465,13 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
       {anyWidgetOpen ? (
         <button
           type="button"
-          className={`about-style-article-floating-chrome__backdrop${backdropArmed ? " is-armed" : ""}`}
+          className="about-style-article-floating-chrome__backdrop"
           aria-label="Close menu"
           tabIndex={-1}
-          onClick={dismissOpenWidgets}
+          onPointerDown={(event) => {
+            if (event.pointerType === "mouse" && event.button !== 0) return;
+            dismissOpenWidgets();
+          }}
         />
       ) : null}
 

@@ -3324,13 +3324,9 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   border: none;
   background: transparent;
   cursor: default;
-  pointer-events: none;
-  -webkit-tap-highlight-color: transparent;
-}
-
-html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__backdrop.is-armed,
-html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__backdrop.is-armed {
   pointer-events: auto;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__panel,
