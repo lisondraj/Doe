@@ -976,17 +976,19 @@ html[data-about-page] .about-style-article-toc__section-label {
 }
 
 html[data-about-page] .about-style-article-toc__children {
-  --about-toc-sub-rail-pad: clamp(1.1rem, 0.88rem + 1vmin, 1.65rem);
+  --about-toc-sub-rail-pad: clamp(0.95rem, 0.78rem + 0.85vmin, 1.45rem);
   --about-toc-sub-text-inset: calc(var(--about-toc-sub-rail-pad) + 1px);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   margin-top: 0.35rem;
-  margin-left: clamp(1.35rem, 1.05rem + 1.35vmin, 2.15rem);
+  margin-left: clamp(1.15rem, 0.92rem + 1.15vmin, 1.9rem);
+  max-width: calc(100% - 0.25rem);
 }
 
 html[data-about-page] .about-style-article-toc__sublist-rail {
-  width: 100%;
+  width: fit-content;
+  max-width: 100%;
   padding-left: var(--about-toc-sub-rail-pad);
   border-left: 1px solid rgba(232, 192, 142, 0.42);
 }
@@ -999,10 +1001,16 @@ html[data-about-page] .about-style-article-toc__sublist {
 
 html[data-about-page] .about-style-article-toc__subitem-text {
   min-width: 0;
-  flex: 1;
+  flex: 0 1 auto;
   font-size: clamp(0.88rem, 0.8rem + 0.32vmin, 0.98rem);
   line-height: 1.35;
   letter-spacing: -0.008em;
+}
+
+html[data-about-page] .about-style-article-toc__sublist-rail a {
+  width: fit-content;
+  max-width: 100%;
+  gap: clamp(0.28rem, 0.22rem + 0.22vmin, 0.38rem);
 }
 
 html[data-about-page] .about-style-article-toc__children .about-style-article-toc__subitem-text {
@@ -1047,7 +1055,9 @@ html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-toc__
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-toc__sublink {
   display: flex;
   align-items: flex-start;
-  gap: 0.45rem;
+  width: fit-content;
+  max-width: 100%;
+  gap: clamp(0.28rem, 0.22rem + 0.22vmin, 0.38rem);
   padding: 0.38rem 0;
   border-radius: 0.45rem;
   color: rgba(232, 192, 142, 0.88) !important;

@@ -15,7 +15,7 @@ export const ABOUT_STYLE_ARTICLE_TOC_INDEX_TW = `w-[1.4rem] shrink-0 font-normal
 
 export const ABOUT_STYLE_ARTICLE_TOC_TEXT_TW = `min-w-0 flex-1 font-normal leading-snug tracking-[-0.01em] text-[clamp(1rem,0.88rem+0.55vmin,1.14rem)] iphone-page:text-[clamp(0.94rem,0.84rem+0.45vmin,1.06rem)]`;
 
-export const ABOUT_STYLE_ARTICLE_TOC_SUBLINK_TW = `group flex w-full items-start gap-2 rounded-[0.45rem] py-1.5 px-0 text-left text-[rgba(232,192,142,0.88)] transition-colors duration-200 ease-out active:bg-[rgba(232,192,142,0.08)] active:text-[#F2E8DA] iphone-page:py-1 ${dmSans.className}`;
+export const ABOUT_STYLE_ARTICLE_TOC_SUBLINK_TW = `group flex w-auto max-w-full items-start gap-1.5 rounded-[0.45rem] py-1.5 px-0 text-left text-[rgba(232,192,142,0.88)] transition-colors duration-200 ease-out active:bg-[rgba(232,192,142,0.08)] active:text-[#F2E8DA] iphone-page:gap-1.5 iphone-page:py-1 ${dmSans.className}`;
 
 export const ABOUT_STYLE_ARTICLE_DESKTOP_TOC_LABEL_TW = `mb-3 font-medium uppercase tracking-[0.16em] text-[rgba(198,168,132,0.72)] text-[0.68rem] ${dmSans.className}`;
 
@@ -25,7 +25,7 @@ export const ABOUT_STYLE_ARTICLE_DESKTOP_TOC_INDEX_TW = `w-[1.35rem] shrink-0 fo
 
 export const ABOUT_STYLE_ARTICLE_DESKTOP_TOC_TEXT_TW = `min-w-0 flex-1 font-normal leading-snug tracking-[-0.01em] text-[clamp(0.92rem,0.82rem+0.35vmin,1.02rem)]`;
 
-export const ABOUT_STYLE_ARTICLE_DESKTOP_TOC_SUBLINK_TW = `group flex w-full items-start gap-2 rounded-[0.45rem] py-1 text-left text-[rgba(232,192,142,0.88)] transition-colors duration-200 ease-out hover:text-[#F2E8DA] text-[clamp(0.84rem,0.78rem+0.28vmin,0.94rem)] leading-snug ${dmSans.className}`;
+export const ABOUT_STYLE_ARTICLE_DESKTOP_TOC_SUBLINK_TW = `group flex w-auto max-w-full items-start gap-1.5 rounded-[0.45rem] py-1 text-left text-[rgba(232,192,142,0.88)] transition-colors duration-200 ease-out hover:text-[#F2E8DA] text-[clamp(0.84rem,0.78rem+0.28vmin,0.94rem)] leading-snug ${dmSans.className}`;
 
 export const ABOUT_STYLE_ARTICLE_TOC_AUDIO_DIVIDER_TW =
   "mt-3 border-t border-[rgba(212,165,116,0.22)] pt-3 iphone-page:mt-2.5 iphone-page:pt-2.5";
