@@ -70,6 +70,8 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
   const [audioJoined, setAudioJoined] = useState(false);
   const [audioClosing, setAudioClosing] = useState(false);
   const audioCapActive = isPlayerOpen || audioClosing;
+  const anyWidgetOpen = blogOpen || tocOpen || audioCapActive;
+  const chromeVisible = scrollRevealed || anyWidgetOpen;
 
   const rootRef = useRef<HTMLDivElement>(null);
   const blogCapRef = useRef<HTMLDivElement>(null);
@@ -370,8 +372,6 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
     };
   }, [audioRef, audioSrc, setCurrentTime, setDuration, setIsPlaying]);
 
-  const anyWidgetOpen = blogOpen || tocOpen || audioCapActive;
-
   useEffect(() => {
     if (!anyWidgetOpen) return;
 
@@ -448,7 +448,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
 
   const rootClass = [
     "about-style-article-floating-chrome",
-    scrollRevealed ? "is-visible" : "",
+    chromeVisible ? "is-visible" : "",
     audioCapActive ? "is-audio" : "",
     audioJoined ? "is-audio-joined" : "",
     audioClosing ? "is-audio-closing" : "",
@@ -475,7 +475,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
         />
       ) : null}
 
-      <div ref={rootRef} className={rootClass} aria-live="polite" aria-hidden={!scrollRevealed}>
+      <div ref={rootRef} className={rootClass} aria-live="polite" aria-hidden={!chromeVisible}>
       <div
         className={shellClass}
         style={{
@@ -504,7 +504,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
                 if (audioCapActive) openBlog();
                 else toggleBlog();
               }}
-              tabIndex={scrollRevealed ? 0 : -1}
+              tabIndex={chromeVisible ? 0 : -1}
             >
               <BlogNavIcon className="about-style-article-floating-chrome__icon" />
             </button>
@@ -593,7 +593,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
                   if (audioCapActive) openToc();
                   else toggleToc();
                 }}
-                tabIndex={scrollRevealed ? 0 : -1}
+                tabIndex={chromeVisible ? 0 : -1}
               >
                 <TocIcon className="about-style-article-floating-chrome__icon" />
               </button>
