@@ -8,7 +8,7 @@ export const INTRODUCING_FLOAT_FEATURE_CARDS = [
     shaderVariant: v0,
     subheading: "One ledger for claims, collections, and clinic cash flow.",
     description:
-      "Float surfaces open AR, pending denials, and expected reimbursements in a single view — so billing leads know where money is stuck before the month closes.",
+      "Float surfaces open AR, pending denials, and expected reimbursements in a single view, so billing leads know where money is stuck before the month closes.",
   },
   {
     id: "float-payer-voice-agents",
@@ -22,7 +22,7 @@ export const INTRODUCING_FLOAT_FEATURE_CARDS = [
     shaderVariant: v2,
     subheading: "Charge suggestions pulled from the visit, not a Friday spreadsheet.",
     description:
-      "Float reads documentation, orders, and procedure context to propose codes, modifiers, and units before claims leave the building — with confidence cues when a human should confirm.",
+      "Float reads documentation, orders, and procedure context to propose codes, modifiers, and units before claims leave the building, with confidence cues when a human should confirm.",
   },
   {
     id: "float-denial-autopilot",
@@ -36,7 +36,7 @@ export const INTRODUCING_FLOAT_FEATURE_CARDS = [
     shaderVariant: v4,
     subheading: "Patient balance outreach that sounds like your front desk.",
     description:
-      "Voice and text agents explain statements, offer payment plans, and capture card-on-file consent — escalating to staff only when tone or policy requires a human.",
+      "Voice and text agents explain statements, offer payment plans, and capture card-on-file consent, escalating to staff only when tone or policy requires a human.",
   },
   {
     id: "float-eligibility-engine",
@@ -55,7 +55,7 @@ export const INTRODUCING_FLOAT_FEATURE_CARDS = [
   {
     id: "float-fabric-billing-flows",
     shaderVariant: v7,
-    subheading: "Design billing agents in Fabric — deploy them through Float.",
+    subheading: "Design billing agents in Fabric, then deploy them through Float.",
     description:
       "Clinic ops teams compose collection scripts, escalation paths, and payer-specific playbooks in the agent builder, then publish them as live billing workflows without a vendor ticket.",
   },
@@ -64,13 +64,13 @@ export const INTRODUCING_FLOAT_FEATURE_CARDS = [
     shaderVariant: v8,
     subheading: "Management fees allocated fairly across sites and service lines.",
     description:
-      "Overhead, shared staffing, and corporate assessments distribute automatically using rules your finance team defines — with drill-down by provider, location, and specialty.",
+      "Overhead, shared staffing, and corporate assessments distribute automatically using rules your finance team defines, with drill-down by provider, location, and specialty.",
   },
   {
     id: "float-audit-ledger",
     shaderVariant: v9,
-    subheading: "Every AI touch tied to a claim, patient, and staff member.",
+    subheading: "Every automated touch tied to a claim, patient, and staff member.",
     description:
-      "Calls, code suggestions, appeal drafts, and balance outreach write to an immutable audit trail linked to chart context — so compliance reviews take hours, not weeks.",
+      "Calls, code suggestions, appeal drafts, and balance outreach write to an immutable audit trail linked to chart context, so compliance reviews take hours, not weeks.",
   },
 ] as const satisfies readonly AboutStyleFeatureCard[];
