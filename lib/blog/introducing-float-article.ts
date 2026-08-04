@@ -17,7 +17,7 @@ export const INTRODUCING_FLOAT_ARTICLE = {
   title: "Introducing Float",
   excerpt:
     "Float is Doe's AI-native finance layer for clinics — insurance, billing, collections, and management fees in one system, powered by voice agents and the Fabric agent builder.",
-  subheading: "Financial operations that stay in sync with care.",
+  subheading: "A new way to manage clinic finances.",
   openingLede:
     "Today we're introducing Float — Doe's AI product for everything that happens after the visit: claims, collections, payer calls, and the overhead math that keeps multi-site groups honest.",
   openingLedeContinuation:
