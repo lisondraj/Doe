@@ -337,20 +337,20 @@ html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doepho
   overflow: visible;
 }
 
-/* Float hero slide — one line, larger type. */
+/* Float hero slide — one line, slightly above default hero size. */
 html[data-home-page]:has(.doephone-mobile-root--doehealth)
   .doephone-hero-section
   .doehealth-hero-headline.doehealth-hero-headline--single-line {
-  font-size: clamp(2.85rem, 1.35rem + 8.75vmin, 4.95rem) !important;
-  line-height: 1.04 !important;
+  font-size: clamp(2.45rem, 1.15rem + 6.5vmin, 3.75rem) !important;
+  line-height: 1.05 !important;
 }
 
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doephone-hero-section
   .doehealth-hero-headline.doehealth-hero-headline--single-line {
-  font-size: clamp(3.65rem, 12.5cqi, 7.45rem) !important;
-  line-height: 1.04 !important;
+  font-size: clamp(2.95rem, 9.8cqi, 6.15rem) !important;
+  line-height: 1.05 !important;
 }
 
 .doephone-mobile-root--doehealth .doehealth-hero-headline.doehealth-hero-headline--single-line .doephone-hero-headline-line,
