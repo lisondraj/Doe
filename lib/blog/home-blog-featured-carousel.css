@@ -1,9 +1,0 @@
-/* Home main page — clip horizontal carousel bleed on page roots. */
-
-html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth:has(.home-blog-featured-carousel) {
-  overflow-x: clip;
-}
-
-html[data-home-page]:not([data-layout="desktop"]) .doephone-mobile-root--doehealth:has(.home-blog-featured-carousel) {
-  overflow-x: clip;
-}

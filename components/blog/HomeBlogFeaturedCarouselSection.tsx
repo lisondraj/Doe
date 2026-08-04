@@ -1,15 +1,15 @@
-import { BlogArticleCarouselDivider } from "@/components/blog/BlogArticleCarouselDivider";
+import { BlogArticleFooterCarouselBand } from "@/components/blog/BlogArticleFooterCarouselBand";
 import { BlogFeaturedCarousel } from "@/components/blog/BlogFeaturedCarousel";
 
 import "@/lib/about/about-doehealth-iphone.css";
-import "@/lib/blog/home-blog-featured-carousel.css";
 
-/** Blog preview carousel + rule — same chrome as article-page footer carousel band. */
+/** Home main page — same footer carousel band as blog articles (inherits brown stack bg). */
 export function HomeBlogFeaturedCarouselSection() {
   return (
     <section className="home-blog-featured-carousel" aria-label="Blog">
-      <BlogArticleCarouselDivider />
-      <BlogFeaturedCarousel />
+      <BlogArticleFooterCarouselBand>
+        <BlogFeaturedCarousel />
+      </BlogArticleFooterCarouselBand>
     </section>
   );
 }

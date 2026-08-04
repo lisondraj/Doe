@@ -892,7 +892,8 @@ html[data-about-page][data-layout="desktop"] .about-desktop-main ol.broader-doe-
 
 /* About-style feature cards — square shader tiles beneath hero band. */
 html[data-about-page] .about-style-feature-card__shader,
-html[data-about-page] .blog-landing-card-visual__shader {
+html[data-about-page] .blog-landing-card-visual__shader,
+html[data-home-page] .blog-article-footer-carousel-band .blog-landing-card-visual__shader {
   box-shadow:
     inset 0 1px 0 rgba(255, 245, 230, 0.06),
     0 18px 40px rgba(0, 0, 0, 0.22);
@@ -1114,19 +1115,22 @@ html[data-about-page][data-layout="desktop"] .blog-article-category {
   margin-bottom: clamp(0.85rem, 1vw, 1.1rem) !important;
 }
 
-html[data-about-page] .blog-landing-card-category {
+html[data-about-page] .blog-landing-card-category,
+html[data-home-page] .blog-article-footer-carousel-band .blog-landing-card-category {
   font-size: clamp(0.52rem, 0.44rem + 0.22vmin, 0.58rem) !important;
   line-height: 1.3 !important;
   color: rgba(232, 192, 142, 0.68) !important;
   text-align: left !important;
 }
 
-html[data-about-page][data-layout="desktop"] .blog-landing-card-category {
+html[data-about-page][data-layout="desktop"] .blog-landing-card-category,
+html[data-home-page][data-layout="desktop"] .blog-article-footer-carousel-band .blog-landing-card-category {
   font-size: clamp(0.52rem, 0.42vw, 0.6rem) !important;
   letter-spacing: 0.12em !important;
 }
 
-html[data-about-page] .blog-landing-card-title {
+html[data-about-page] .blog-landing-card-title,
+html[data-home-page] .blog-article-footer-carousel-band .blog-landing-card-title {
   font-size: clamp(1.85rem, 1.55rem + 1.1vmin, 2.35rem) !important;
   line-height: 1.08 !important;
   padding-bottom: 0.06em !important;
@@ -1140,12 +1144,14 @@ html[data-about-page] .blog-landing-card-title {
   -webkit-text-fill-color: transparent !important;
 }
 
-html[data-about-page] .blog-landing-card-excerpt {
+html[data-about-page] .blog-landing-card-excerpt,
+html[data-home-page] .blog-article-footer-carousel-band .blog-landing-card-excerpt {
   font-size: clamp(1.18rem, 1.02rem + 0.72vmin, 1.42rem) !important;
   color: rgba(242, 232, 218, 0.78) !important;
 }
 
-html[data-about-page] .blog-landing-read-more {
+html[data-about-page] .blog-landing-read-more,
+html[data-home-page] .blog-article-footer-carousel-band .blog-landing-read-more {
   font-size: clamp(1.08rem, 0.95rem + 0.55vmin, 1.22rem) !important;
   color: #e8c08e !important;
 }
@@ -1154,12 +1160,14 @@ html[data-about-page] .blog-landing-list-divider-line {
   background: rgba(232, 192, 142, 0.28);
 }
 
-html[data-about-page][data-layout="desktop"] .blog-landing-card-title {
+html[data-about-page][data-layout="desktop"] .blog-landing-card-title,
+html[data-home-page][data-layout="desktop"] .blog-article-footer-carousel-band .blog-landing-card-title {
   font-size: clamp(2rem, 1.65vw, 2.45rem) !important;
 }
 
 /* Broader Doe Vision — carousel only; nudge down slightly so the title stays on one line. */
-html[data-about-page] .blog-article-related-carousel .blog-landing-card--broader-doe-vision .blog-landing-card-title {
+html[data-about-page] .blog-article-related-carousel .blog-landing-card--broader-doe-vision .blog-landing-card-title,
+html[data-home-page] .blog-article-related-carousel .blog-landing-card--broader-doe-vision .blog-landing-card-title {
   font-size: clamp(1.74rem, 1.48rem + 1.02vmin, 2.18rem) !important;
   letter-spacing: -0.032em !important;
 }
@@ -1167,20 +1175,27 @@ html[data-about-page] .blog-article-related-carousel .blog-landing-card--broader
 html[data-about-page][data-layout="desktop"]
   .blog-article-related-carousel
   .blog-landing-card--broader-doe-vision
+  .blog-landing-card-title,
+html[data-home-page][data-layout="desktop"]
+  .blog-article-related-carousel
+  .blog-landing-card--broader-doe-vision
   .blog-landing-card-title {
   font-size: clamp(1.9rem, 1.56vw, 2.3rem) !important;
 }
 
-html[data-about-page][data-layout="desktop"] .blog-landing-card-excerpt {
+html[data-about-page][data-layout="desktop"] .blog-landing-card-excerpt,
+html[data-home-page][data-layout="desktop"] .blog-article-footer-carousel-band .blog-landing-card-excerpt {
   font-size: clamp(1.22rem, 0.95vw, 1.48rem) !important;
 }
 
 /* Blog landing previews — thumbnail shader fills the aspect-ratio box (not article hero height). */
-html[data-about-page] .blog-landing-card-visual__shader {
+html[data-about-page] .blog-landing-card-visual__shader,
+html[data-home-page] .blog-article-footer-carousel-band .blog-landing-card-visual__shader {
   flex: 0 0 auto;
 }
 
-html[data-about-page] .blog-landing-card-visual__shader .proto-shader-surface {
+html[data-about-page] .blog-landing-card-visual__shader .proto-shader-surface,
+html[data-home-page] .blog-article-footer-carousel-band .blog-landing-card-visual__shader .proto-shader-surface {
   height: 100% !important;
   min-height: 0 !important;
   max-height: none !important;
@@ -1194,32 +1209,38 @@ html[data-about-page][data-layout="desktop"] .about-page-content .about-hero-vis
   max-height: none !important;
 }
 
-html[data-about-page] .blog-landing-card-stack {
+html[data-about-page] .blog-landing-card-stack,
+html[data-home-page] .blog-article-footer-carousel-band .blog-landing-card-stack {
   height: 100%;
 }
 
-html[data-about-page] .blog-landing-card-copy {
+html[data-about-page] .blog-landing-card-copy,
+html[data-home-page] .blog-article-footer-carousel-band .blog-landing-card-copy {
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
 }
 
-html[data-about-page] .blog-landing-card-excerpt {
+html[data-about-page] .blog-landing-card-excerpt,
+html[data-home-page] .blog-article-footer-carousel-band .blog-landing-card-excerpt {
   flex: 1 1 auto;
 }
 
-html[data-about-page] .blog-landing-read-more {
+html[data-about-page] .blog-landing-read-more,
+html[data-home-page] .blog-article-footer-carousel-band .blog-landing-read-more {
   flex: 0 0 auto;
   margin-top: auto;
   padding-top: 0.75rem;
 }
 
 /* iPhone — equal card copy blocks; only excerpt line count adjusts. */
-html[data-about-page]:not([data-layout="desktop"]) .blog-landing-card-copy {
+html[data-about-page]:not([data-layout="desktop"]) .blog-landing-card-copy,
+html[data-home-page]:not([data-layout="desktop"]) .blog-article-footer-carousel-band .blog-landing-card-copy {
   min-height: clamp(13.5rem, 42vw, 15.75rem);
 }
 
-html[data-about-page]:not([data-layout="desktop"]) .blog-landing-card-excerpt {
+html[data-about-page]:not([data-layout="desktop"]) .blog-landing-card-excerpt,
+html[data-home-page]:not([data-layout="desktop"]) .blog-article-footer-carousel-band .blog-landing-card-excerpt {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 4;
@@ -1233,7 +1254,7 @@ html[data-about-page] .about-page-content .broader-doe-email-invite {
   margin-top: clamp(2rem, 2.6vw, 2.65rem);
 }
 
-html[data-about-page] .blog-article-related-carousel {
+:is(html[data-about-page], html[data-home-page]) .blog-article-related-carousel {
   --blog-related-carousel-inset-x: max(
     1.65rem,
     calc(env(safe-area-inset-left, 0px) + 3.8vmin)
@@ -1251,23 +1272,23 @@ html[data-about-page] .blog-article-related-carousel {
   margin-right: calc(50% - 50vw);
 }
 
-html[data-about-page] .blog-article-carousel-divider {
+:is(html[data-about-page], html[data-home-page]) .blog-article-carousel-divider {
   width: 100%;
   padding-top: clamp(2.25rem, 3vw, 3rem);
   padding-bottom: clamp(2.25rem, 3vw, 3rem);
 }
 
-html[data-about-page] .blog-article-carousel-divider .blog-landing-list-divider-line {
+:is(html[data-about-page], html[data-home-page]) .blog-article-carousel-divider .blog-landing-list-divider-line {
   background: rgba(232, 192, 142, 0.28);
 }
 
-html[data-about-page][data-layout="desktop"] .blog-article-related-carousel {
+:is(html[data-about-page], html[data-home-page])[data-layout="desktop"] .blog-article-related-carousel {
   --blog-related-carousel-inset-x: 22.222vw;
   --blog-related-carousel-slide-width: 55.556vw;
   --blog-related-carousel-gap: clamp(1.15rem, 1.5vw, 1.65rem);
 }
 
-html[data-about-page] .blog-article-related-carousel__scroll {
+:is(html[data-about-page], html[data-home-page]) .blog-article-related-carousel__scroll {
   overflow-x: auto;
   overflow-y: hidden;
   overscroll-behavior-x: contain;
@@ -1277,11 +1298,11 @@ html[data-about-page] .blog-article-related-carousel__scroll {
   scrollbar-width: none;
 }
 
-html[data-about-page] .blog-article-related-carousel__scroll::-webkit-scrollbar {
+:is(html[data-about-page], html[data-home-page]) .blog-article-related-carousel__scroll::-webkit-scrollbar {
   display: none;
 }
 
-html[data-about-page] .blog-article-related-carousel__track {
+:is(html[data-about-page], html[data-home-page]) .blog-article-related-carousel__track {
   display: flex;
   align-items: flex-start;
   gap: var(--blog-related-carousel-gap);
@@ -1289,7 +1310,7 @@ html[data-about-page] .blog-article-related-carousel__track {
   padding-inline: var(--blog-related-carousel-inset-x);
 }
 
-html[data-about-page] .blog-article-related-carousel__slide {
+:is(html[data-about-page], html[data-home-page]) .blog-article-related-carousel__slide {
   flex: 0 0 auto;
   width: var(--blog-related-carousel-slide-width);
   scroll-snap-align: start;
@@ -1297,28 +1318,28 @@ html[data-about-page] .blog-article-related-carousel__slide {
   flex-direction: column;
 }
 
-html[data-about-page] .blog-article-related-carousel__slide > a {
+:is(html[data-about-page], html[data-home-page]) .blog-article-related-carousel__slide > a {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
   height: 100%;
 }
 
-html[data-about-page]:not([data-layout="desktop"]) .blog-article-related-carousel__track {
+:is(html[data-about-page], html[data-home-page]):not([data-layout="desktop"]) .blog-article-related-carousel__track {
   align-items: stretch;
 }
 
-html[data-about-page][data-layout="desktop"] .blog-article-related-carousel__slide .blog-landing-card-visual {
+:is(html[data-about-page], html[data-home-page])[data-layout="desktop"] .blog-article-related-carousel__slide .blog-landing-card-visual {
   aspect-ratio: auto;
   width: 100%;
   height: clamp(14rem, 20vw, 18.5rem);
 }
 
-html[data-about-page][data-layout="desktop"] .blog-article-related-carousel__slide .blog-landing-card-copy {
+:is(html[data-about-page], html[data-home-page])[data-layout="desktop"] .blog-article-related-carousel__slide .blog-landing-card-copy {
   margin-top: clamp(1.15rem, 1.4vw, 1.45rem) !important;
 }
 
-html[data-about-page] .blog-article-related-carousel__slide .blog-landing-card-visual {
+:is(html[data-about-page], html[data-home-page]) .blog-article-related-carousel__slide .blog-landing-card-visual {
   aspect-ratio: 16 / 10;
 }
 
@@ -1339,7 +1360,15 @@ html[data-about-page]:not([data-layout="desktop"])
   overflow-x: clip;
 }
 
-/* /doehealth home — blog carousel band matches article footer carousel (inherits brown stack bg). */
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth:has(.blog-article-related-carousel) {
+  overflow-x: clip;
+}
+
+html[data-home-page]:not([data-layout="desktop"]) .doephone-mobile-root--doehealth:has(.blog-article-related-carousel) {
+  overflow-x: clip;
+}
+
+/* /doehealth home — featured carousel band (inherits brown stack bg). */
 html[data-home-page] .home-blog-featured-carousel {
   position: relative;
   z-index: 10;
@@ -1347,145 +1376,15 @@ html[data-home-page] .home-blog-featured-carousel {
   overflow-x: clip;
 }
 
-html[data-home-page] .home-blog-featured-carousel .blog-article-carousel-divider {
-  width: 100%;
-  padding-top: clamp(2.25rem, 3vw, 3rem);
-  padding-bottom: clamp(2.25rem, 3vw, 3rem);
+html[data-home-page] .blog-article-footer-carousel-band {
+  padding-bottom: max(3.5rem, calc(env(safe-area-inset-bottom, 0px) + 2.75rem));
 }
 
-html[data-home-page] .home-blog-featured-carousel .blog-article-carousel-divider .blog-landing-list-divider-line {
-  background: rgba(232, 192, 142, 0.28);
+html[data-home-page][data-layout="desktop"] .blog-article-footer-carousel-band {
+  padding-bottom: clamp(2rem, 3.5vw, 3.5rem);
 }
 
-html[data-home-page] .home-blog-featured-carousel .blog-article-related-carousel {
-  --blog-related-carousel-inset-x: max(
-    1.65rem,
-    calc(env(safe-area-inset-left, 0px) + 3.8vmin)
-  );
-  --blog-related-carousel-slide-width: calc(
-    100vw - 2 * var(--blog-related-carousel-inset-x)
-  );
-  --blog-related-carousel-gap: clamp(1rem, 2.4vw, 1.35rem);
-  box-sizing: border-box;
-  width: 100vw;
-  max-width: 100vw;
-  margin-top: 0;
-  margin-bottom: 0;
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-}
-
-html[data-home-page] .home-blog-featured-carousel .blog-article-related-carousel__scroll {
-  overflow-x: auto;
-  overflow-y: hidden;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
-  scroll-padding-inline: var(--blog-related-carousel-inset-x);
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-
-html[data-home-page] .home-blog-featured-carousel .blog-article-related-carousel__scroll::-webkit-scrollbar {
-  display: none;
-}
-
-html[data-home-page] .home-blog-featured-carousel .blog-article-related-carousel__track {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--blog-related-carousel-gap);
-  width: max-content;
-  padding-inline: var(--blog-related-carousel-inset-x);
-}
-
-html[data-home-page] .home-blog-featured-carousel .blog-article-related-carousel__slide {
-  flex: 0 0 auto;
-  width: var(--blog-related-carousel-slide-width);
-  scroll-snap-align: start;
-  display: flex;
-  flex-direction: column;
-}
-
-html[data-home-page] .home-blog-featured-carousel .blog-article-related-carousel__slide > a {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  height: 100%;
-}
-
-html[data-home-page] .home-blog-featured-carousel .blog-landing-card-visual__shader,
-html[data-home-page] .home-blog-featured-carousel .about-style-feature-card__shader {
-  box-shadow:
-    inset 0 1px 0 rgba(255, 245, 230, 0.06),
-    0 18px 40px rgba(0, 0, 0, 0.22);
-}
-
-html[data-home-page] .home-blog-featured-carousel .blog-landing-card-visual__shader {
-  flex: 0 0 auto;
-}
-
-html[data-home-page] .home-blog-featured-carousel .blog-landing-card-visual__shader .proto-shader-surface {
-  height: 100% !important;
-  min-height: 0 !important;
-  max-height: none !important;
-}
-
-html[data-home-page] .home-blog-featured-carousel .blog-landing-card-stack {
-  height: 100%;
-}
-
-html[data-home-page] .home-blog-featured-carousel .blog-landing-card-copy {
-  display: flex;
-  flex-direction: column;
-  flex: 1 1 auto;
-}
-
-html[data-home-page] .home-blog-featured-carousel .blog-landing-card-excerpt {
-  flex: 1 1 auto;
-}
-
-html[data-home-page] .home-blog-featured-carousel .blog-landing-read-more {
-  flex: 0 0 auto;
-  margin-top: auto;
-  padding-top: 0.75rem;
-}
-
-html[data-home-page] .home-blog-featured-carousel .blog-landing-card-category {
-  font-size: clamp(0.52rem, 0.44rem + 0.22vmin, 0.58rem) !important;
-  line-height: 1.3 !important;
-  color: rgba(232, 192, 142, 0.68) !important;
-  text-align: left !important;
-}
-
-html[data-home-page] .home-blog-featured-carousel .blog-landing-card-title {
-  font-size: clamp(1.85rem, 1.55rem + 1.1vmin, 2.35rem) !important;
-  line-height: 1.08 !important;
-  padding-bottom: 0.06em !important;
-  background: var(
-    --doehealth-gold-text-gradient,
-    linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%)
-  );
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent !important;
-  -webkit-text-fill-color: transparent !important;
-}
-
-html[data-home-page] .home-blog-featured-carousel .blog-article-related-carousel .blog-landing-card--broader-doe-vision .blog-landing-card-title {
-  font-size: clamp(1.74rem, 1.48rem + 1.02vmin, 2.18rem) !important;
-  letter-spacing: -0.032em !important;
-}
-
-html[data-home-page] .home-blog-featured-carousel .blog-landing-card-excerpt {
-  font-size: clamp(1.18rem, 1.02rem + 0.72vmin, 1.42rem) !important;
-  color: rgba(242, 232, 218, 0.78) !important;
-}
-
-html[data-home-page] .home-blog-featured-carousel .blog-landing-read-more {
-  font-size: clamp(1.08rem, 0.95rem + 0.55vmin, 1.22rem) !important;
-  color: #e8c08e !important;
-}
-
-html[data-home-page] .home-blog-featured-carousel .broader-doe-hero-description {
+html[data-home-page] .blog-article-footer-carousel-band .broader-doe-hero-description {
   font-size: clamp(1.48rem, 1.22rem + 0.72vmin, 1.58rem) !important;
   line-height: 1.32 !important;
   background: var(
@@ -1498,76 +1397,18 @@ html[data-home-page] .home-blog-featured-carousel .broader-doe-hero-description 
   -webkit-text-fill-color: transparent !important;
 }
 
-html[data-home-page] .home-blog-featured-carousel .broader-doe-hero-byline {
+html[data-home-page] .blog-article-footer-carousel-band .broader-doe-hero-byline {
   font-size: clamp(1.22rem, 1.05rem + 0.7vmin, 1.44rem) !important;
   line-height: 1.35 !important;
   color: #e8c08e !important;
 }
 
-html[data-home-page]:not([data-layout="desktop"]) .home-blog-featured-carousel .blog-landing-card-copy {
-  min-height: clamp(13.5rem, 42vw, 15.75rem);
-}
-
-html[data-home-page]:not([data-layout="desktop"]) .home-blog-featured-carousel .blog-landing-card-excerpt {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 4;
-  overflow: hidden;
-  font-size: clamp(1.08rem, 0.94rem + 0.55vmin, 1.28rem) !important;
-  line-height: 1.42 !important;
-}
-
-html[data-home-page]:not([data-layout="desktop"]) .home-blog-featured-carousel .blog-article-related-carousel__track {
-  align-items: stretch;
-}
-
-html[data-home-page]:not([data-layout="desktop"]) .home-blog-featured-carousel .blog-article-related-carousel__slide .blog-landing-card-visual {
-  aspect-ratio: 16 / 10;
-}
-
-html[data-home-page][data-layout="desktop"] .home-blog-featured-carousel .blog-article-related-carousel {
-  --blog-related-carousel-inset-x: 22.222vw;
-  --blog-related-carousel-slide-width: 55.556vw;
-  --blog-related-carousel-gap: clamp(1.15rem, 1.5vw, 1.65rem);
-}
-
-html[data-home-page][data-layout="desktop"] .home-blog-featured-carousel .blog-landing-card-category {
-  font-size: clamp(0.52rem, 0.42vw, 0.6rem) !important;
-  letter-spacing: 0.12em !important;
-}
-
-html[data-home-page][data-layout="desktop"] .home-blog-featured-carousel .blog-landing-card-title {
-  font-size: clamp(2rem, 1.65vw, 2.45rem) !important;
-}
-
-html[data-home-page][data-layout="desktop"]
-  .home-blog-featured-carousel
-  .blog-article-related-carousel
-  .blog-landing-card--broader-doe-vision
-  .blog-landing-card-title {
-  font-size: clamp(1.9rem, 1.56vw, 2.3rem) !important;
-}
-
-html[data-home-page][data-layout="desktop"] .home-blog-featured-carousel .blog-landing-card-excerpt {
-  font-size: clamp(1.22rem, 0.95vw, 1.48rem) !important;
-}
-
-html[data-home-page][data-layout="desktop"] .home-blog-featured-carousel .broader-doe-hero-description {
+html[data-home-page][data-layout="desktop"] .blog-article-footer-carousel-band .broader-doe-hero-description {
   font-size: clamp(1.55rem, 1.35vw, 1.82rem) !important;
 }
 
-html[data-home-page][data-layout="desktop"] .home-blog-featured-carousel .broader-doe-hero-byline {
+html[data-home-page][data-layout="desktop"] .blog-article-footer-carousel-band .broader-doe-hero-byline {
   font-size: clamp(1.12rem, 1vw, 1.32rem) !important;
-}
-
-html[data-home-page][data-layout="desktop"] .home-blog-featured-carousel .blog-article-related-carousel__slide .blog-landing-card-visual {
-  aspect-ratio: auto;
-  width: 100%;
-  height: clamp(14rem, 20vw, 18.5rem);
-}
-
-html[data-home-page][data-layout="desktop"] .home-blog-featured-carousel .blog-article-related-carousel__slide .blog-landing-card-copy {
-  margin-top: clamp(1.15rem, 1.4vw, 1.45rem) !important;
 }
 
 /* /waitlist, /hiring, /pitchdeck — blank center stage between nav and footer. */

@@ -2,7 +2,7 @@ import { AboutStyleContactLink } from "@/components/blog/AboutStyleContactLink";
 import { AboutStyleArticleEmailInvite } from "@/components/blog/AboutStyleArticleEmailInvite";
 import { AboutStyleArticleProposalQuote } from "@/components/blog/AboutStyleArticleProposalQuote";
 import { AboutStyleFeatureCardGrid } from "@/components/blog/AboutStyleFeatureCardGrid";
-import { BlogArticleCarouselDivider } from "@/components/blog/BlogArticleCarouselDivider";
+import { BlogArticleFooterCarouselBand } from "@/components/blog/BlogArticleFooterCarouselBand";
 import { BlogArticleCategory } from "@/components/blog/BlogArticleCategory";
 import { BlogArticleRelatedCarousel } from "@/components/blog/BlogArticleRelatedCarousel";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
@@ -100,9 +100,9 @@ export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageC
 
             <AboutStyleArticleEmailInvite headline={article.emailInviteHeadline} label={article.emailInviteLabel} />
 
-            <BlogArticleCarouselDivider />
-
-            <BlogArticleRelatedCarousel currentSlug={article.slug} />
+            <BlogArticleFooterCarouselBand>
+              <BlogArticleRelatedCarousel currentSlug={article.slug} />
+            </BlogArticleFooterCarouselBand>
           </div>
         </div>
       </div>
@@ -201,9 +201,9 @@ export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageC
 
           <AboutStyleArticleEmailInvite headline={article.emailInviteHeadline} label={article.emailInviteLabel} />
 
-          <BlogArticleCarouselDivider />
-
-          <BlogArticleRelatedCarousel currentSlug={article.slug} />
+          <BlogArticleFooterCarouselBand>
+            <BlogArticleRelatedCarousel currentSlug={article.slug} />
+          </BlogArticleFooterCarouselBand>
         </div>
       </div>
     </div>
