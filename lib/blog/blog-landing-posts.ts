@@ -22,18 +22,23 @@ import {
   PULSE_CALL_HISTORY_ARTICLE,
   PULSE_CALL_HISTORY_PATH,
 } from "@/lib/blog/pulse-call-history-article";
-import { blogLandingPreviewShader } from "@/lib/blog/blog-landing-preview-shaders";
+import { blogLandingPreviewShader, BLOG_PREVIEW_BROADER_DOE_VISION_SUBHEADING } from "@/lib/blog/blog-landing-preview-shaders";
+import { blogCarouselPreviewShader } from "@/lib/blog/blog-carousel-preview-shaders";
 import type { AboutStyleFeatureShaderVariant } from "@/lib/blog/about-style-feature-card";
+import type { ProtoGrainGradientVariant } from "@/lib/proto/proto-grain-gradient";
 
 export type BlogLandingPost = {
   slug: string;
   path: string;
   title: string;
   subheading: string;
+  /** Override subheading on /blog list + related carousel previews only. */
+  previewSubheading?: string;
   excerpt: string;
   byline: string;
   date: string;
   previewShaderVariant: AboutStyleFeatureShaderVariant;
+  carouselShaderVariant: ProtoGrainGradientVariant;
 };
 
 /** Featured posts on /blog — Pulse sub-features, flagship launches, and Broader Doe Vision. */
@@ -47,6 +52,7 @@ export const BLOG_LANDING_POSTS: readonly BlogLandingPost[] = [
     byline: PULSE_CALL_HISTORY_ARTICLE.byline,
     date: PULSE_CALL_HISTORY_ARTICLE.date,
     previewShaderVariant: blogLandingPreviewShader(PULSE_CALL_HISTORY_ARTICLE.slug),
+    carouselShaderVariant: blogCarouselPreviewShader(PULSE_CALL_HISTORY_ARTICLE.slug),
   },
   {
     slug: PULSE_AMBIENT_ARTICLE.slug,
@@ -57,6 +63,7 @@ export const BLOG_LANDING_POSTS: readonly BlogLandingPost[] = [
     byline: PULSE_AMBIENT_ARTICLE.byline,
     date: PULSE_AMBIENT_ARTICLE.date,
     previewShaderVariant: blogLandingPreviewShader(PULSE_AMBIENT_ARTICLE.slug),
+    carouselShaderVariant: blogCarouselPreviewShader(PULSE_AMBIENT_ARTICLE.slug),
   },
   {
     slug: INTRODUCING_PULSE_ARTICLE.slug,
@@ -67,6 +74,7 @@ export const BLOG_LANDING_POSTS: readonly BlogLandingPost[] = [
     byline: INTRODUCING_PULSE_ARTICLE.byline,
     date: INTRODUCING_PULSE_ARTICLE.date,
     previewShaderVariant: blogLandingPreviewShader(INTRODUCING_PULSE_ARTICLE.slug),
+    carouselShaderVariant: blogCarouselPreviewShader(INTRODUCING_PULSE_ARTICLE.slug),
   },
   {
     slug: INTRODUCING_FABRIC_ARTICLE.slug,
@@ -77,16 +85,19 @@ export const BLOG_LANDING_POSTS: readonly BlogLandingPost[] = [
     byline: INTRODUCING_FABRIC_ARTICLE.byline,
     date: INTRODUCING_FABRIC_ARTICLE.date,
     previewShaderVariant: blogLandingPreviewShader(INTRODUCING_FABRIC_ARTICLE.slug),
+    carouselShaderVariant: blogCarouselPreviewShader(INTRODUCING_FABRIC_ARTICLE.slug),
   },
   {
     slug: "the-broader-doe-vision",
     path: BROADER_DOE_VISION_PATH,
     title: BROADER_DOE_VISION_TITLE,
     subheading: BROADER_DOE_VISION_SUBHEADING,
+    previewSubheading: BLOG_PREVIEW_BROADER_DOE_VISION_SUBHEADING,
     excerpt: BROADER_DOE_VISION_OPENING_LEDE,
     byline: BROADER_DOE_VISION_BYLINE,
     date: BROADER_DOE_VISION_DATE,
     previewShaderVariant: blogLandingPreviewShader("the-broader-doe-vision"),
+    carouselShaderVariant: blogCarouselPreviewShader("the-broader-doe-vision"),
   },
 ] as const;
 

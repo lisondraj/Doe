@@ -36,6 +36,6 @@ export const PULSE_CALL_HISTORY_FEATURE_CARDS = [
     shaderVariant: v4,
     subheading: "Analyze call patterns with natural-language prompts.",
     description:
-      "Ask questions across your entire call history — common denial reasons, no-show recovery rates, or phrases that precede escalations — and get answers grounded in your clinic's data.",
+      "Ask questions across your entire call history: common denial reasons, no-show recovery rates, or phrases that precede escalations. Get answers grounded in your clinic's data.",
   },
 ] as const satisfies readonly AboutStyleFeatureCard[];

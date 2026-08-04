@@ -16,12 +16,12 @@ export const PULSE_AMBIENT_ARTICLE = {
   path: PULSE_AMBIENT_PATH,
   title: "Pulse: Ambient",
   excerpt:
-    "Ambient turns Pulse conversations into structured chart notes — passively captured, clinician-reviewed, and written back to your EMR.",
+    "Ambient turns Pulse conversations into structured chart notes, passively captured, clinician-reviewed, and written back to your EMR.",
   subheading: "Documentation that listens with you.",
   openingLede:
-    "Today, we're introducing two new sub-features under Pulse — Call History and Ambient — built with doctors in mind.",
+    "Today, we're introducing two new sub-features under Pulse, Call History and Ambient, built with doctors in mind.",
   openingLedeContinuation:
-    "Ambient brings passive documentation into every Pulse interaction. Conversations become structured chart notes your team can review, edit, and sign off — without adding another step to the visit.",
+    "Ambient brings passive documentation into every Pulse interaction. Conversations become structured chart notes your team can review, edit, and sign off, without adding another step to the visit.",
   byline: "By James Lisondra",
   date: "August 4, 2026",
   heroBackdrop: DESIGN5_BACKDROP,

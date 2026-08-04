@@ -22,7 +22,7 @@ export function BlogArticleRelatedCarousel({ currentSlug }: BlogArticleRelatedCa
           {posts.map((post) => (
             <li key={post.slug} className="blog-article-related-carousel__slide">
               <Link href={post.path} className="group block h-full no-underline">
-                <BlogLandingPostCard post={post} linked={false} />
+                <BlogLandingPostCard post={post} linked={false} previewContext="carousel" />
               </Link>
             </li>
           ))}

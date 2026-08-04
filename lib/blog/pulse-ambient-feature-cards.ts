@@ -8,7 +8,7 @@ export const PULSE_AMBIENT_FEATURE_CARDS = [
     shaderVariant: v5,
     subheading: "Documentation starts passively during calls and visits.",
     description:
-      "Doctors stay present with patients while Ambient listens in the background. No dictation buttons, no post-visit typing marathons — the conversation itself becomes the source of truth.",
+      "Doctors stay present with patients while Ambient listens in the background. No dictation buttons, no post-visit typing marathons. The conversation itself becomes the source of truth.",
   },
   {
     id: "pulse-ambient-transcription",
@@ -22,7 +22,7 @@ export const PULSE_AMBIENT_FEATURE_CARDS = [
     shaderVariant: v7,
     subheading: "Conversations become structured chart-ready note drafts.",
     description:
-      "Ambient maps what was said into your note sections — history, assessment, plan — using templates your practice already trusts. Drafts arrive formatted, not as a wall of raw text.",
+      "Ambient maps what was said into your note sections, history, assessment, and plan, using templates your practice already trusts. Drafts arrive formatted, not as a wall of raw text.",
   },
   {
     id: "pulse-ambient-clinician-review",

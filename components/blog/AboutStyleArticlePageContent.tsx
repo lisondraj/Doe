@@ -2,6 +2,7 @@ import { AboutStyleContactLink } from "@/components/blog/AboutStyleContactLink";
 import { AboutStyleArticleEmailInvite } from "@/components/blog/AboutStyleArticleEmailInvite";
 import { AboutStyleArticleProposalQuote } from "@/components/blog/AboutStyleArticleProposalQuote";
 import { AboutStyleFeatureCardGrid } from "@/components/blog/AboutStyleFeatureCardGrid";
+import { BlogArticleCarouselDivider } from "@/components/blog/BlogArticleCarouselDivider";
 import { BlogArticleRelatedCarousel } from "@/components/blog/BlogArticleRelatedCarousel";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import {
@@ -93,9 +94,11 @@ export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageC
               {article.finalParagraph}
             </p>
 
-            <AboutStyleArticleEmailInvite headline={article.emailInviteHeadline} label={article.emailInviteLabel} />
-
             <BlogArticleRelatedCarousel currentSlug={article.slug} />
+
+            <BlogArticleCarouselDivider />
+
+            <AboutStyleArticleEmailInvite headline={article.emailInviteHeadline} label={article.emailInviteLabel} />
           </div>
         </div>
       </div>
@@ -191,9 +194,11 @@ export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageC
 
           <p className={`${BROADER_DOE_VISION_BODY_TW} font-semibold`}>{article.finalParagraph}</p>
 
-          <AboutStyleArticleEmailInvite headline={article.emailInviteHeadline} label={article.emailInviteLabel} />
-
           <BlogArticleRelatedCarousel currentSlug={article.slug} />
+
+          <BlogArticleCarouselDivider />
+
+          <AboutStyleArticleEmailInvite headline={article.emailInviteHeadline} label={article.emailInviteLabel} />
         </div>
       </div>
     </div>

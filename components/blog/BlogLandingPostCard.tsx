@@ -35,25 +35,33 @@ type BlogLandingPostCardProps = {
   post: BlogLandingPost;
   /** When false, render card markup only (carousel wraps with its own link). */
   linked?: boolean;
+  /** List previews on /blog use static shaders; carousel uses animated flows. */
+  previewContext?: "list" | "carousel";
 };
 
 /** /blog landing card — shader thumbnail, title, subheading, meta, excerpt, read more. */
-export function BlogLandingPostCard({ post, linked = true }: BlogLandingPostCardProps) {
+export function BlogLandingPostCard({
+  post,
+  linked = true,
+  previewContext = "list",
+}: BlogLandingPostCardProps) {
+  const subheading = post.previewSubheading ?? post.subheading;
   const card = (
     <article className={BLOG_LANDING_CARD_STACK}>
       <div className={BLOG_LANDING_CARD_VISUAL_TW}>
         <BlogHeroVisual
-          previewShaderVariant={post.previewShaderVariant}
+          previewShaderVariant={previewContext === "list" ? post.previewShaderVariant : undefined}
+          carouselShaderVariant={previewContext === "carousel" ? post.carouselShaderVariant : undefined}
           variant="list"
           boxClassName="absolute inset-0 h-full w-full rounded-[inherit]"
           gapClassName=""
-          staticShader
+          staticShader={previewContext === "list"}
         />
       </div>
 
       <div className="blog-landing-card-copy mt-5 iphone-page:mt-6">
         <h2 className={BLOG_LANDING_CARD_TITLE_TW}>{post.title}</h2>
-        <p className={BLOG_LANDING_CARD_SUBHEADING_TW}>{post.subheading}</p>
+        <p className={BLOG_LANDING_CARD_SUBHEADING_TW}>{subheading}</p>
         <p className={BLOG_LANDING_CARD_BYLINE_TW}>
           {post.byline}
           <span className="mx-2" aria-hidden>

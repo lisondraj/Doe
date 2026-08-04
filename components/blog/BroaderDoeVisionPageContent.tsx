@@ -1,4 +1,5 @@
 import { AboutStyleContactLink } from "@/components/blog/AboutStyleContactLink";
+import { BlogArticleCarouselDivider } from "@/components/blog/BlogArticleCarouselDivider";
 import { BlogArticleRelatedCarousel } from "@/components/blog/BlogArticleRelatedCarousel";
 import { BroaderDoeVisionEmailInvite } from "@/components/blog/BroaderDoeVisionEmailInvite";
 import { BroaderDoeVisionProposalQuote } from "@/components/blog/BroaderDoeVisionProposalQuote";
@@ -126,9 +127,11 @@ export function BroaderDoeVisionPageContent() {
 
           <p className={`${BROADER_DOE_VISION_BODY_TW} font-semibold`}>{BROADER_DOE_VISION_FINAL_PARAGRAPH}</p>
 
-          <BroaderDoeVisionEmailInvite />
-
           <BlogArticleRelatedCarousel currentSlug="the-broader-doe-vision" />
+
+          <BlogArticleCarouselDivider />
+
+          <BroaderDoeVisionEmailInvite />
         </div>
       </div>
     </div>

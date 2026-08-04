@@ -16,10 +16,10 @@ export const PULSE_CALL_HISTORY_ARTICLE = {
   path: PULSE_CALL_HISTORY_PATH,
   title: "Pulse: Call History",
   excerpt:
-    "Call History gives clinics one place to review every Pulse agent call — with action logs, audio playback, callbacks, and prompt-based analysis.",
+    "Call History gives clinics one place to review every Pulse agent call, with action logs, audio playback, callbacks, and prompt-based analysis.",
   subheading: "Every agent call, logged and reviewable.",
   openingLede:
-    "Today, we're introducing two new sub-features under Pulse — Call History and Ambient — built with doctors in mind.",
+    "Today, we're introducing two new sub-features under Pulse, Call History and Ambient, built with doctors in mind.",
   openingLedeContinuation:
     "We've reimagined how clinics review every call handled by Pulse agents. From a single workspace, your team can replay conversations, inspect what agents did, and dig into patterns across your entire call history.",
   byline: "By James Lisondra",

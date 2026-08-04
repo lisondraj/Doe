@@ -7,6 +7,8 @@ import {
   aboutStyleFeatureShaderSurface,
   type AboutStyleFeatureShaderVariant,
 } from "@/lib/blog/about-style-feature-card";
+import { blogPreviewShaderSurface } from "@/lib/blog/blog-preview-shader-surface";
+import type { ProtoGrainGradientVariant } from "@/lib/proto/proto-grain-gradient";
 import {
   DOE_HOME_HERO_DUSK_PALETTE,
   DOE_HOME_ORANGE_PALETTE,
@@ -30,6 +32,7 @@ export function BlogHeroVisual({
   useHomeHeroDuskShader = false,
   useAboutHeroDuskShader = false,
   previewShaderVariant,
+  carouselShaderVariant,
   staticShader = false,
   children,
 }: {
@@ -44,30 +47,34 @@ export function BlogHeroVisual({
   useHomeHeroDuskShader?: boolean;
   /** /about + about-style blog — dedicated about-hero dusk shader preset. */
   useAboutHeroDuskShader?: boolean;
-  /** Landing list / related carousel — per-post static shader (not workflow carousel art). */
+  /** /blog list previews — per-post static shader tile. */
   previewShaderVariant?: AboutStyleFeatureShaderVariant;
+  /** Related carousel — animated flow preset. */
+  carouselShaderVariant?: ProtoGrainGradientVariant;
   /** Freeze shader motion — keep flow appearance without animation. */
   staticShader?: boolean;
   children?: React.ReactNode;
 }) {
   const gap = gapClassName ?? (variant === "hero" ? BLOG_TITLE_VISUAL_GAP : "");
+  const carouselShader = carouselShaderVariant ? blogPreviewShaderSurface(carouselShaderVariant) : null;
   const previewShader = previewShaderVariant
     ? aboutStyleFeatureShaderSurface(previewShaderVariant)
     : null;
+  const activePreviewShader = carouselShader ?? previewShader;
   const heroShader = useAboutHeroDuskShader
     ? ABOUT_HERO_DUSK_SHADER
     : useHomeHeroDuskShader
       ? HOME_HERO_DUSK_SHADER
       : HOME_HERO_SHADER;
-  const heroBack = previewShader
-    ? previewShader.colorBack
+  const heroBack = activePreviewShader
+    ? activePreviewShader.colorBack
     : useAboutHeroDuskShader || useHomeHeroDuskShader
       ? DOE_HOME_HERO_DUSK_PALETTE.back
       : useHomeHeroShader
         ? DOE_HOME_ORANGE_PALETTE.back
         : undefined;
   const usesHeroShader =
-    previewShader !== null || useHomeHeroShader || useHomeHeroDuskShader || useAboutHeroDuskShader;
+    activePreviewShader !== null || useHomeHeroShader || useHomeHeroDuskShader || useAboutHeroDuskShader;
 
   return (
     <div
@@ -77,10 +84,10 @@ export function BlogHeroVisual({
     >
       {usesHeroShader ? (
         <ProtoGrainGradient
-          static={staticShader || previewShader !== null}
-          variant={previewShader ? previewShader.variant : heroShader.variant}
-          colors={previewShader ? previewShader.colors : heroShader.colors}
-          colorBack={previewShader ? previewShader.colorBack : heroShader.colorBack}
+          static={carouselShader ? false : staticShader || previewShader !== null}
+          variant={activePreviewShader ? activePreviewShader.variant : heroShader.variant}
+          colors={activePreviewShader ? activePreviewShader.colors : heroShader.colors}
+          colorBack={activePreviewShader ? activePreviewShader.colorBack : heroShader.colorBack}
           className="absolute inset-0 h-full w-full"
         />
       ) : backdrop ? (
