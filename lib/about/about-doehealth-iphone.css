@@ -2913,6 +2913,12 @@ html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrom
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__cap.is-closing {
   width: var(--about-floating-toc-closed-size) !important;
   height: var(--about-floating-toc-closed-size) !important;
+  overflow: hidden;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__cap.is-closing .about-style-article-floating-chrome__panel,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__cap.is-closing .about-style-article-floating-chrome__panel {
+  display: none;
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__cap-trigger,
@@ -3011,16 +3017,24 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   flex: 0 0 0;
   width: 0;
   max-width: 0;
+  min-height: 0;
   opacity: 0;
   pointer-events: none;
   padding: 0;
   margin: 0;
+  overflow: hidden;
+  clip-path: inset(0);
   transition:
-    opacity 200ms var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
+    opacity 80ms var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
     flex var(--about-audio-leave-ms, 880ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
     width var(--about-audio-leave-ms, 880ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
     max-width var(--about-audio-leave-ms, 880ms) var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
     padding 360ms var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1));
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__audio-stack,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__audio-stack {
+  display: none;
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__audio-stack,
@@ -3051,22 +3065,29 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
     transform 520ms var(--about-audio-join-ease, cubic-bezier(0.22, 1, 0.36, 1));
 }
 
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__audio-controls,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__audio-controls {
+  opacity: 0;
+  visibility: hidden;
+  max-height: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transform: translateY(6px) scale(0.96);
+  transition:
+    opacity 80ms var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
+    transform 120ms var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
+    visibility 0s linear 80ms,
+    max-height 0s linear 80ms;
+}
+
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-joined .about-style-article-floating-chrome__audio-controls,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio-joined .about-style-article-floating-chrome__audio-controls {
+  gap: clamp(0.06rem, 0.03rem + 0.14vmin, 0.1rem);
   opacity: 1;
   transform: translateY(0) scale(1);
   transition:
     opacity 480ms var(--about-audio-join-ease, cubic-bezier(0.22, 1, 0.36, 1)) 120ms,
     transform 560ms var(--about-audio-join-ease, cubic-bezier(0.22, 1, 0.36, 1)) 120ms;
-}
-
-html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__audio-controls,
-html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__audio-controls {
-  opacity: 0;
-  transform: translateY(6px) scale(0.96);
-  transition:
-    opacity 220ms var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1)),
-    transform 300ms var(--about-audio-leave-ease, cubic-bezier(0.32, 0.94, 0.38, 1));
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__audio-transport,
