@@ -1,3 +1,4 @@
+import { AboutStyleArticleContentBlocks } from "@/components/blog/AboutStyleArticleContentBlocks";
 import { AboutStyleContactLink } from "@/components/blog/AboutStyleContactLink";
 import { AboutStyleArticleEmailInvite } from "@/components/blog/AboutStyleArticleEmailInvite";
 import { AboutStyleArticleProposalQuote } from "@/components/blog/AboutStyleArticleProposalQuote";
@@ -36,7 +37,78 @@ type AboutStyleArticlePageContentProps = {
 /** /about-style longform article — hero, shader band, body, quote, thesis list, email invite. */
 export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageContentProps) {
   const productIntro = isAboutStyleProductIntro(article.slug);
+  const labsProposal = article.contentBlocks != null && article.contentBlocks.length > 0;
   const category = blogPostCategory(article.slug);
+
+  const titleContent = article.titleLine2 ? (
+    <>
+      <span className="broader-doe-hero-title-line block">{article.title}</span>
+      <span className="broader-doe-hero-title-line block">{article.titleLine2}</span>
+    </>
+  ) : (
+    article.title
+  );
+
+  if (labsProposal) {
+    return (
+      <div className="about-page-content about-style-labs-proposal-page">
+        <header className={BROADER_DOE_VISION_HERO_INTRO_WRAP}>
+          <div className={BROADER_DOE_VISION_HERO_HEADLINES_WRAP}>
+            {category ? <BlogArticleCategory category={category} /> : null}
+            <h1 className={BROADER_DOE_VISION_TITLE_TW}>{titleContent}</h1>
+
+            <p className={`${BROADER_DOE_VISION_SUBHEADING_TW} mx-auto max-w-[36ch]`}>{article.subheading}</p>
+
+            <p className={BROADER_DOE_VISION_BYLINE_TW}>
+              {article.byline}
+              <span className="mx-2" aria-hidden>
+                ·
+              </span>
+              {article.date}
+            </p>
+          </div>
+        </header>
+
+        <div className={BROADER_DOE_VISION_HERO_WRAP}>
+          <BlogHeroVisual
+            backdrop={article.heroBackdrop}
+            variant="hero"
+            boxClassName={ABOUT_PAGE_HERO_BOX_TW}
+            gapClassName=""
+            useAboutHeroDuskShader
+          />
+        </div>
+
+        <div className={`${ABOUT_MOBILE_CONTENT_GAP} mt-8 text-left iphone-page:mt-9`}>
+          <p className={`${BROADER_DOE_VISION_BODY_TW} font-semibold`}>{article.openingLede}</p>
+          {article.openingLedeContinuation ? (
+            <p className={BROADER_DOE_VISION_BODY_TW}>{article.openingLedeContinuation}</p>
+          ) : null}
+          {article.openingLedeContinuation2 ? (
+            <p className={BROADER_DOE_VISION_BODY_TW}>{article.openingLedeContinuation2}</p>
+          ) : null}
+        </div>
+
+        {article.contentBlocks ? (
+          <div className={`${ABOUT_MOBILE_SECTION_GAP} mt-10 iphone-page:mt-12`}>
+            <AboutStyleArticleContentBlocks blocks={article.contentBlocks} />
+          </div>
+        ) : null}
+
+        <div className={`${ABOUT_MOBILE_SECTION_GAP} mt-10 iphone-page:mt-12`}>
+          <div className={ABOUT_MOBILE_CONTENT_GAP}>
+            <p className={`${BROADER_DOE_VISION_BODY_TW} font-semibold`}>{article.finalParagraph}</p>
+
+            <AboutStyleArticleEmailInvite headline={article.emailInviteHeadline} label={article.emailInviteLabel} />
+
+            <BlogArticleFooterCarouselBand>
+              <BlogArticleRelatedCarousel currentSlug={article.slug} />
+            </BlogArticleFooterCarouselBand>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (productIntro) {
     return (
@@ -45,7 +117,7 @@ export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageC
           <div className={BROADER_DOE_VISION_HERO_HEADLINES_WRAP}>
             {category ? <BlogArticleCategory category={category} /> : null}
             <h1 className={`${BROADER_DOE_VISION_TITLE_TW} ${ABOUT_STYLE_PRODUCT_INTRO_TITLE_TW}`}>
-              {article.title}
+              {titleContent}
             </h1>
 
             <p className={`${BROADER_DOE_VISION_SUBHEADING_TW} mx-auto max-w-[36ch]`}>{article.subheading}</p>
@@ -114,7 +186,7 @@ export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageC
       <header className={BROADER_DOE_VISION_HERO_INTRO_WRAP}>
         <div className={BROADER_DOE_VISION_HERO_HEADLINES_WRAP}>
           {category ? <BlogArticleCategory category={category} /> : null}
-          <h1 className={BROADER_DOE_VISION_TITLE_TW}>{article.title}</h1>
+          <h1 className={BROADER_DOE_VISION_TITLE_TW}>{titleContent}</h1>
 
           <p className={`${BROADER_DOE_VISION_SUBHEADING_TW} mx-auto max-w-[36ch]`}>{article.subheading}</p>
 

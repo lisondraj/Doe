@@ -7,6 +7,7 @@ export const BLOG_LANDING_PREVIEW_SHADERS: Record<string, AboutStyleFeatureShade
   "introducing-pulse": "front-desk-band",
   "introducing-fabric": "customize-agents-band",
   "introducing-float": "active-agents-band",
+  "intelligence-for-every-clinic": "prototype",
   "the-broader-doe-vision": "looking-ahead",
 };
 

@@ -7,6 +7,7 @@ export const BLOG_CAROUSEL_PREVIEW_SHADERS: Record<string, ProtoGrainGradientVar
   "introducing-pulse": "looking-ahead",
   "introducing-fabric": "meet-proto",
   "introducing-float": "prototype",
+  "intelligence-for-every-clinic": "meet-proto-stack-1",
   "the-broader-doe-vision": "build-hero",
 };
 

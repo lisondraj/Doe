@@ -15,6 +15,10 @@ import {
   INTRODUCING_FLOAT_PATH,
 } from "@/lib/blog/introducing-float-article";
 import {
+  INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE,
+  INTELLIGENCE_FOR_EVERY_CLINIC_PATH,
+} from "@/lib/blog/intelligence-for-every-clinic-article";
+import {
   INTRODUCING_PULSE_ARTICLE,
   INTRODUCING_PULSE_PATH,
 } from "@/lib/blog/introducing-pulse-article";
@@ -49,6 +53,18 @@ export type BlogLandingPost = {
 
 /** Featured posts on /blog — Pulse sub-features, flagship launches, and Broader Doe Vision. */
 export const BLOG_LANDING_POSTS: readonly BlogLandingPost[] = [
+  {
+    slug: INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE.slug,
+    path: INTELLIGENCE_FOR_EVERY_CLINIC_PATH,
+    title: `${INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE.title} ${INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE.titleLine2}`,
+    category: blogPostCategory(INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE.slug)!,
+    subheading: INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE.subheading,
+    excerpt: INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE.excerpt,
+    byline: INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE.byline,
+    date: INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE.date,
+    previewShaderVariant: blogLandingPreviewShader(INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE.slug),
+    carouselShaderVariant: blogCarouselPreviewShader(INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE.slug),
+  },
   {
     slug: INTRODUCING_FLOAT_ARTICLE.slug,
     path: INTRODUCING_FLOAT_PATH,

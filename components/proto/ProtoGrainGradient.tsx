@@ -405,6 +405,10 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
       setInCarouselRange(rect.right > rootRect.left - rootRect.width * 0.75 && rect.left < rootRect.right + rootRect.width * 0.75);
     };
 
+    const onCarouselScroll = () => {
+      syncCarouselRange();
+    };
+
     const observer = new IntersectionObserver(
       ([entry]) => syncCarouselRange(entry),
       { root: carouselScrollRoot, rootMargin: "75% 0px", threshold: 0 },
@@ -412,13 +416,13 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     observer.observe(node);
     syncCarouselRange();
 
-    carouselScrollRoot.addEventListener("scroll", syncCarouselRange, { passive: true });
-    window.addEventListener("resize", syncCarouselRange);
+    carouselScrollRoot.addEventListener("scroll", onCarouselScroll, { passive: true });
+    window.addEventListener("resize", onCarouselScroll);
 
     return () => {
       observer.disconnect();
-      carouselScrollRoot.removeEventListener("scroll", syncCarouselRange);
-      window.removeEventListener("resize", syncCarouselRange);
+      carouselScrollRoot.removeEventListener("scroll", onCarouselScroll);
+      window.removeEventListener("resize", onCarouselScroll);
     };
   }, []);
 

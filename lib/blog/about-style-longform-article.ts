@@ -1,3 +1,4 @@
+import type { AboutStyleArticleContentBlock } from "@/lib/blog/about-style-article-content-blocks";
 import type { AboutStyleFeatureCard } from "@/lib/blog/about-style-feature-card";
 import type { WorkflowCarouselDesignBackdrop } from "@/lib/workflow-carousel-design-backdrops";
 
@@ -6,6 +7,8 @@ export type AboutStyleLongformArticle = {
   slug: string;
   path: string;
   title: string;
+  /** Optional second title line rendered beneath `title` in the hero. */
+  titleLine2?: string;
   excerpt: string;
   subheading: string;
   openingLede: string;
@@ -18,6 +21,8 @@ export type AboutStyleLongformArticle = {
   heroBackdrop: WorkflowCarouselDesignBackdrop;
   /** Square shader tiles beneath the hero band — optional per page. */
   featureCards?: readonly AboutStyleFeatureCard[];
+  /** Interleaved body copy with optional shader figures — Doe Labs proposal articles. */
+  contentBlocks?: readonly AboutStyleArticleContentBlock[];
   bodyParagraphs: readonly string[];
   contactParagraphIndex?: number;
   aiPlaybookParagraphIndex?: number;
