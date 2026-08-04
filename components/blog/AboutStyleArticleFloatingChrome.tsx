@@ -87,6 +87,8 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
   const fakeTickRef = useRef<number | null>(null);
   const ignoreBackdropDismissUntilRef = useRef(0);
   const wasPlayerOpenRef = useRef(false);
+  const audioOpenDelayTimerRef = useRef<number | null>(null);
+  const audioDismissPointerRef = useRef<{ id: number; x: number; y: number } | null>(null);
 
   const clearBlogCollapseStyles = useCallback(() => {
     const cap = blogCapRef.current;
@@ -252,15 +254,34 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
 
   const openAudioFromFloatingToc = useCallback(() => {
     markWidgetOpened();
+    if (audioOpenDelayTimerRef.current !== null) {
+      window.clearTimeout(audioOpenDelayTimerRef.current);
+      audioOpenDelayTimerRef.current = null;
+    }
+
+    const needsPanelClose = (tocOpen && !tocCollapsing) || (blogOpen && !blogCollapsing);
     if (blogOpen && !blogCollapsing) fastCloseBlogForAudio();
     if (tocOpen && !tocCollapsing) fastCloseTocForAudio();
-    requestAnimationFrame(() => {
+
+    const startPlayback = () => {
       openPlayer();
-    });
+      audioOpenDelayTimerRef.current = null;
+    };
+
+    if (needsPanelClose) {
+      audioOpenDelayTimerRef.current = window.setTimeout(startPlayback, PANEL_COLLAPSE_MS + 48);
+      return;
+    }
+
+    startPlayback();
   }, [blogCollapsing, blogOpen, fastCloseBlogForAudio, fastCloseTocForAudio, markWidgetOpened, openPlayer, tocCollapsing, tocOpen]);
 
   const beginAudioClose = useCallback(() => {
     if (!isPlayerOpen || audioClosing) return;
+    if (audioOpenDelayTimerRef.current !== null) {
+      window.clearTimeout(audioOpenDelayTimerRef.current);
+      audioOpenDelayTimerRef.current = null;
+    }
     setAudioJoined(false);
     setAudioClosing(true);
     if (audioJoinTimerRef.current !== null) {
@@ -343,8 +364,8 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
       raf = requestAnimationFrame(() => {
         const revealed = window.scrollY > SCROLL_REVEAL_PX;
         setScrollRevealed(revealed);
-        const anyWidgetOpen = blogOpen || tocOpen || audioCapActive;
-        if (!revealed && !anyWidgetOpen) {
+        const widgetsOpen = blogOpen || tocOpen || audioCapActive;
+        if (!revealed && !widgetsOpen) {
           setBlogPanelRevealed(false);
           setTocPanelRevealed(false);
           setBlogOpen(false);
@@ -451,19 +472,49 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
   }, [audioRef, audioSrc, setCurrentTime, setDuration, setIsPlaying]);
 
   useEffect(() => {
-    if (!audioCapActive) return;
+    if (!isPlayerOpen || blogOpen || tocOpen || blogCollapsing || tocCollapsing) return;
 
-    const prevHtmlOverflow = document.documentElement.style.overflow;
-    const prevBodyOverflow = document.body.style.overflow;
+    const tapSlopPx = 12;
 
-    document.documentElement.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.documentElement.style.overflow = prevHtmlOverflow;
-      document.body.style.overflow = prevBodyOverflow;
+    const onPointerDown = (event: PointerEvent) => {
+      if (performance.now() < ignoreBackdropDismissUntilRef.current) return;
+      const target = event.target;
+      if (!(target instanceof Node) || rootRef.current?.contains(target)) return;
+      audioDismissPointerRef.current = {
+        id: event.pointerId,
+        x: event.clientX,
+        y: event.clientY,
+      };
     };
-  }, [audioCapActive]);
+
+    const onPointerUp = (event: PointerEvent) => {
+      const start = audioDismissPointerRef.current;
+      if (!start || event.pointerId !== start.id) return;
+      audioDismissPointerRef.current = null;
+      if (performance.now() < ignoreBackdropDismissUntilRef.current) return;
+      const target = event.target;
+      if (!(target instanceof Node) || rootRef.current?.contains(target)) return;
+      if (Math.abs(event.clientX - start.x) > tapSlopPx || Math.abs(event.clientY - start.y) > tapSlopPx) return;
+      beginAudioClose();
+    };
+
+    const onPointerCancel = (event: PointerEvent) => {
+      const start = audioDismissPointerRef.current;
+      if (start && event.pointerId === start.id) {
+        audioDismissPointerRef.current = null;
+      }
+    };
+
+    document.addEventListener("pointerdown", onPointerDown, true);
+    document.addEventListener("pointerup", onPointerUp, true);
+    document.addEventListener("pointercancel", onPointerCancel, true);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown, true);
+      document.removeEventListener("pointerup", onPointerUp, true);
+      document.removeEventListener("pointercancel", onPointerCancel, true);
+      audioDismissPointerRef.current = null;
+    };
+  }, [beginAudioClose, blogCollapsing, blogOpen, isPlayerOpen, tocCollapsing, tocOpen]);
 
   useEffect(() => {
     if (!anyWidgetOpen) return;
@@ -497,8 +548,11 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
         },
       );
       if (fakeTickRef.current !== null) window.clearInterval(fakeTickRef.current);
+      if (audioOpenDelayTimerRef.current !== null) window.clearTimeout(audioOpenDelayTimerRef.current);
     };
   }, []);
+
+  const panelBackdropActive = blogOpen || tocOpen || blogCollapsing || tocCollapsing;
 
   const onProgressPointer = (event: React.PointerEvent<HTMLDivElement>) => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -540,7 +594,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
 
   return createPortal(
     <>
-      {anyWidgetOpen ? (
+      {panelBackdropActive ? (
         <button
           type="button"
           className="about-style-article-floating-chrome__backdrop"
