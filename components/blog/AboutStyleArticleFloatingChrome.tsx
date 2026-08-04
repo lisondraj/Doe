@@ -451,7 +451,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
   }, [audioRef, audioSrc, setCurrentTime, setDuration, setIsPlaying]);
 
   useEffect(() => {
-    if (!anyWidgetOpen) return;
+    if (!audioCapActive) return;
 
     const prevHtmlOverflow = document.documentElement.style.overflow;
     const prevBodyOverflow = document.body.style.overflow;
@@ -463,7 +463,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
       document.documentElement.style.overflow = prevHtmlOverflow;
       document.body.style.overflow = prevBodyOverflow;
     };
-  }, [anyWidgetOpen]);
+  }, [audioCapActive]);
 
   useEffect(() => {
     if (!anyWidgetOpen) return;
