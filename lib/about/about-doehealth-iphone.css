@@ -904,6 +904,19 @@ html[data-about-page][data-layout="desktop"] .about-desktop-main ol.broader-doe-
   letter-spacing: -0.01em;
 }
 
+html[data-about-page][data-layout="desktop"] .about-desktop-main ul.about-style-bullet-list {
+  list-style: none;
+  padding-left: 1.35em;
+}
+
+html[data-about-page][data-layout="desktop"] .about-desktop-main .about-style-bullet-item {
+  font-size: clamp(1.14rem, 0.96rem + 0.75vmin, 1.34rem) !important;
+  line-height: 1.48 !important;
+  letter-spacing: -0.01em !important;
+  color: rgba(242, 232, 218, 0.92) !important;
+  padding-left: 1.35em !important;
+}
+
 /* About-style feature cards — square shader tiles beneath hero band. */
 html[data-about-page] .about-style-feature-card__shader,
 html[data-about-page] .blog-landing-card-visual__shader,
