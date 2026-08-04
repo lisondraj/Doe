@@ -49,7 +49,7 @@ export function BlogHeroVisual({
   useAboutHeroDuskShader?: boolean;
   /** /blog list previews — per-post static shader tile. */
   previewShaderVariant?: AboutStyleFeatureShaderVariant;
-  /** Related carousel — animated flow preset. */
+  /** Related carousel — frozen flow preset (same appearance, no animation). */
   carouselShaderVariant?: ProtoGrainGradientVariant;
   /** Freeze shader motion — keep flow appearance without animation. */
   staticShader?: boolean;

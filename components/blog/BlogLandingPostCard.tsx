@@ -40,7 +40,7 @@ type BlogLandingPostCardProps = {
   post: BlogLandingPost;
   /** When false, render card markup only (carousel wraps with its own link). */
   linked?: boolean;
-  /** List previews on /blog use static shaders; carousel uses animated flows. */
+  /** List previews on /blog use list shader variants; carousel uses distinct frozen flow presets. */
   previewContext?: "list" | "carousel";
 };
 
@@ -64,7 +64,7 @@ export function BlogLandingPostCard({
         aria-hidden
       >
         <ProtoGrainGradient
-          static={previewContext === "list"}
+          static
           variant={shader.variant}
           colors={shader.colors}
           colorBack={shader.colorBack}

@@ -1,6 +1,6 @@
 import type { ProtoGrainGradientVariant } from "@/lib/proto/proto-grain-gradient";
 
-/** Animated shader flows for the related-post carousel — all unique, no truchet (worm). */
+/** Frozen shader flows for the related-post carousel — all unique, no truchet (worm). */
 export const BLOG_CAROUSEL_PREVIEW_SHADERS: Record<string, ProtoGrainGradientVariant> = {
   "pulse-call-history": "integrate",
   "pulse-ambient": "validate",
