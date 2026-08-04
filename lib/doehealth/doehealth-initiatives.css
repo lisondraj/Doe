@@ -2912,20 +2912,20 @@ html[data-home-page][data-layout="desktop"]
 }
 
 /* First brown band — Sarah call card UI at original height/position (unscaled). */
-.doehealth-brown-band-stack > .doehealth-intro-band:first-child .doehealth-intro-call-sequence {
+.doehealth-brown-band-stack > .doehealth-intro-band:has(.doehealth-intro-call-sequence) .doehealth-intro-call-sequence {
   --dhi-intro-summary-overlap-y: clamp(2.35rem, 8.5vw, 3.65rem);
   padding-bottom: calc(var(--dhi-intro-summary-overlap-y) + 0.7rem);
 }
 
-.doehealth-brown-band-stack > .doehealth-intro-band:first-child .doehealth-intro-call-sequence__summary-card {
+.doehealth-brown-band-stack > .doehealth-intro-band:has(.doehealth-intro-call-sequence) .doehealth-intro-call-sequence__summary-card {
   bottom: calc(var(--dhi-intro-summary-overlap-y) * 0.34);
 }
 
-.doehealth-brown-band-stack > .doehealth-intro-band:first-child .doehealth-initiatives__call-history-scroll {
+.doehealth-brown-band-stack > .doehealth-intro-band:has(.doehealth-intro-call-sequence) .doehealth-initiatives__call-history-scroll {
   --dhi-call-history-scroll-max: clamp(18rem, 48vw, 22rem);
 }
 
-.doehealth-brown-band-stack > .doehealth-intro-band:first-child .doehealth-intro-call-sequence__a1c {
+.doehealth-brown-band-stack > .doehealth-intro-band:has(.doehealth-intro-call-sequence) .doehealth-intro-call-sequence__a1c {
   --pb-chart-height: clamp(6.75rem, 9vh, 8.5rem);
 }
 
@@ -3130,7 +3130,7 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-brown-band-stack
-  > .doehealth-intro-band:first-child
+  > .doehealth-intro-band:has(.doehealth-intro-call-sequence)
   .doehealth-intro-band__cluster {
   gap: clamp(0.5rem, 1vw, 0.75rem);
 }
@@ -3138,7 +3138,7 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-brown-band-stack
-  > .doehealth-intro-band:first-child
+  > .doehealth-intro-band:has(.doehealth-intro-call-sequence)
   .doehealth-intro-stage {
   align-items: center;
 }
@@ -3146,7 +3146,7 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-brown-band-stack
-  > .doehealth-intro-band:first-child
+  > .doehealth-intro-band:has(.doehealth-intro-call-sequence)
   .doehealth-intro-call-sequence.doehealth-content-rail {
   width: min(
     var(--doehealth-desktop-content-max, 92rem),
@@ -3164,7 +3164,7 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-brown-band-stack
-  > .doehealth-intro-band:first-child
+  > .doehealth-intro-band:has(.doehealth-intro-call-sequence)
   .doehealth-intro-band__section-title {
   box-sizing: border-box;
   width: min(
@@ -3187,7 +3187,7 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-brown-band-stack
-  > .doehealth-intro-band:first-child
+  > .doehealth-intro-band:has(.doehealth-intro-call-sequence)
   .doehealth-intro-call-sequence {
   --dhi-intro-call-card-width: clamp(50rem, 60vw, 66rem);
   --dhi-intro-summary-card-width: clamp(20rem, 18.5vw, 23.5rem);
@@ -3203,7 +3203,7 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-brown-band-stack
-  > .doehealth-intro-band:first-child
+  > .doehealth-intro-band:has(.doehealth-intro-call-sequence)
   .doehealth-intro-call-sequence__stage {
   width: min(100%, var(--dhi-intro-call-card-width));
   max-width: min(var(--dhi-intro-call-card-width), 100%);
@@ -3237,7 +3237,7 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-brown-band-stack
-  > .doehealth-intro-band:first-child
+  > .doehealth-intro-band:has(.doehealth-intro-call-sequence)
   .doehealth-intro-call-sequence__call-card {
   align-self: center;
   width: 100%;
@@ -3247,7 +3247,7 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-brown-band-stack
-  > .doehealth-intro-band:first-child
+  > .doehealth-intro-band:has(.doehealth-intro-call-sequence)
   .doehealth-intro-call-sequence__call-card
   .doehealth-initiatives__card {
   padding: clamp(1.28rem, 1.05rem + 0.55vw, 1.55rem) clamp(1.28rem, 1.08rem + 0.45vw, 1.5rem)
@@ -3257,7 +3257,7 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-brown-band-stack
-  > .doehealth-intro-band:first-child
+  > .doehealth-intro-band:has(.doehealth-intro-call-sequence)
   .doehealth-intro-call-sequence__call-card
   .doehealth-initiatives__hero {
   font-size: clamp(2.25rem, 1.55rem + 1.25vw, 3.05rem);
@@ -3266,7 +3266,7 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-brown-band-stack
-  > .doehealth-intro-band:first-child
+  > .doehealth-intro-band:has(.doehealth-intro-call-sequence)
   .doehealth-intro-call-sequence__call-card
   .doehealth-initiatives__hero-duration {
   font-size: clamp(1.05rem, 0.92rem + 0.38vw, 1.28rem);
@@ -3275,7 +3275,7 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-brown-band-stack
-  > .doehealth-intro-band:first-child
+  > .doehealth-intro-band:has(.doehealth-intro-call-sequence)
   .doehealth-intro-call-sequence__call-card
   .doehealth-initiatives__called-line {
   font-size: 12px;
@@ -3284,7 +3284,7 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-brown-band-stack
-  > .doehealth-intro-band:first-child
+  > .doehealth-intro-band:has(.doehealth-intro-call-sequence)
   .doehealth-intro-call-sequence__call-card
   .doehealth-initiatives__called-number {
   font-size: 12px;
@@ -3293,7 +3293,7 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-brown-band-stack
-  > .doehealth-intro-band:first-child
+  > .doehealth-intro-band:has(.doehealth-intro-call-sequence)
   .doehealth-intro-call-sequence__call-card
   .doehealth-initiatives__call-history.product-call-history-rail__thread
   .product-landing-live-quote__text {
@@ -3303,7 +3303,7 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-brown-band-stack
-  > .doehealth-intro-band:first-child
+  > .doehealth-intro-band:has(.doehealth-intro-call-sequence)
   .doehealth-intro-call-sequence__call-card
   .doehealth-initiatives__call-history.product-call-history-rail__thread
   .product-landing-live-quote__caller {
@@ -3313,7 +3313,7 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-brown-band-stack
-  > .doehealth-intro-band:first-child
+  > .doehealth-intro-band:has(.doehealth-intro-call-sequence)
   .doehealth-intro-call-sequence__call-card
   .doehealth-initiatives__call-history.product-call-history-rail__thread
   .product-landing-live-quote__step {
@@ -3323,7 +3323,7 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-brown-band-stack
-  > .doehealth-intro-band:first-child
+  > .doehealth-intro-band:has(.doehealth-intro-call-sequence)
   .doehealth-intro-call-sequence__call-card
   .doehealth-initiatives__call-history.product-call-history-rail__thread
   .product-landing-live-quote__step-check {
@@ -3334,7 +3334,7 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-brown-band-stack
-  > .doehealth-intro-band:first-child
+  > .doehealth-intro-band:has(.doehealth-intro-call-sequence)
   .doehealth-intro-call-sequence__summary-card {
   right: calc(50% - var(--dhi-intro-call-card-width) / 2 + var(--dhi-intro-summary-overlap-x));
   left: auto;
@@ -3369,7 +3369,7 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-brown-band-stack
-  > .doehealth-intro-band:first-child
+  > .doehealth-intro-band:has(.doehealth-intro-call-sequence)
   .doehealth-intro-call-sequence__summary-card.doehealth-call-summary.doehealth-initiatives__card {
   padding: clamp(1.05rem, 0.9rem + 0.42vw, 1.22rem) clamp(1.08rem, 0.92rem + 0.4vw, 1.24rem)
     clamp(1.08rem, 0.92rem + 0.42vw, 1.26rem);
@@ -3378,7 +3378,7 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-brown-band-stack
-  > .doehealth-intro-band:first-child
+  > .doehealth-intro-band:has(.doehealth-intro-call-sequence)
   .doehealth-intro-call-sequence__summary-card
   .doehealth-call-summary__title {
   font-size: clamp(1.78rem, 1.22rem + 1.15vw, 2.35rem);
@@ -3387,7 +3387,7 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-brown-band-stack
-  > .doehealth-intro-band:first-child
+  > .doehealth-intro-band:has(.doehealth-intro-call-sequence)
   .doehealth-intro-call-sequence__summary-card
   .doehealth-call-summary__agent {
   font-size: clamp(0.82rem, 0.76rem + 0.16vw, 0.92rem);
@@ -3396,7 +3396,7 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-brown-band-stack
-  > .doehealth-intro-band:first-child
+  > .doehealth-intro-band:has(.doehealth-intro-call-sequence)
   .doehealth-intro-call-sequence__summary-card
   .doehealth-call-summary__point {
   font-size: clamp(0.88rem, 0.8rem + 0.2vw, 0.98rem);
@@ -3405,7 +3405,7 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-brown-band-stack
-  > .doehealth-intro-band:first-child
+  > .doehealth-intro-band:has(.doehealth-intro-call-sequence)
   .doehealth-initiatives__call-history-scroll {
   --dhi-call-history-scroll-max: clamp(24rem, 44vh, 31rem);
   --dhi-call-history-fade-size: clamp(0.85rem, 1.2vw, 1.15rem);

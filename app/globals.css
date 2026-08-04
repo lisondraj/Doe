@@ -5006,7 +5006,7 @@ html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"]) .ho
 /* iPhone — /doehealth intro band (Suisse sans, left-aligned). */
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .doehealth-brown-band-stack
-  > .doehealth-intro-band:first-child {
+  > .doehealth-intro-band:has(.doehealth-intro-call-sequence) {
   min-height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.95) !important;
   height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.95) !important;
   max-height: calc(var(--doe-section-band-vh, var(--app-vh, 100lvh)) * 0.95) !important;
@@ -11844,7 +11844,7 @@ html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth {
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-brown-band-stack
-  > .doehealth-intro-band:first-child {
+  > .doehealth-intro-band:has(.doehealth-intro-call-sequence) {
   min-height: 100dvh !important;
   height: auto !important;
   max-height: none !important;
