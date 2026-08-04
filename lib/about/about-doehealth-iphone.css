@@ -879,9 +879,9 @@ html[data-about-page][data-layout="desktop"] .about-desktop-main .broader-doe-th
   line-height: 1.15 !important;
 }
 
-/* Feature-card subheadings under shader tiles — unchanged from body-adjacent scale. */
+/* Feature-card subheadings under shader tiles — nudged down, still above body copy. */
 html[data-about-page][data-layout="desktop"] .about-desktop-main .about-style-feature-card figcaption.broader-doe-thesis-headline {
-  font-size: clamp(1.36rem, 1.14rem + 0.95vmin, 1.62rem) !important;
+  font-size: clamp(1.28rem, 1.06rem + 0.85vmin, 1.5rem) !important;
   line-height: 1.15 !important;
 }
 
@@ -938,7 +938,7 @@ html[data-about-page][data-layout="desktop"]
   .about-style-product-intro-page
   .about-style-feature-card
   figcaption.broader-doe-thesis-headline {
-  font-size: clamp(1.58rem, 1.88vw, 2.15rem) !important;
+  font-size: clamp(1.46rem, 1.7vw, 1.92rem) !important;
   line-height: 1.12 !important;
 }
 
@@ -950,12 +950,15 @@ html[data-about-page][data-layout="desktop"]
   height: auto !important;
 }
 
-/* Intelligence for every clinic desktop — halve interleaved shader tile height. */
+/* Intelligence for every clinic desktop — square interleaved tiles at the same height as
+   other articles' 2:1 full-width tiles (half-column width keeps the height matched). */
 html[data-about-page][data-layout="desktop"]
   .about-style-labs-proposal-page
   .about-style-shader-figure__shader {
-  aspect-ratio: 2 / 1 !important;
+  aspect-ratio: 1 / 1 !important;
+  width: 50% !important;
   height: auto !important;
+  margin-inline: auto !important;
 }
 
 html[data-about-page][data-layout="desktop"] .broader-doe-hero-headlines {
