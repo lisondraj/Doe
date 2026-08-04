@@ -7,8 +7,10 @@ import {
   useMemo,
   useRef,
   useState,
+  type Dispatch,
   type ReactNode,
   type RefObject,
+  type SetStateAction,
 } from "react";
 
 import { ABOUT_STYLE_ARTICLE_AUDIO } from "@/lib/blog/about-style-article-toc";
@@ -29,9 +31,9 @@ type AboutStyleArticleAudioPlayerContextValue = {
   togglePlay: () => void;
   seekBy: (deltaSeconds: number) => void;
   seekToProgress: (progress01: number) => void;
-  setCurrentTime: (time: number) => void;
-  setDuration: (duration: number) => void;
-  setIsPlaying: (playing: boolean) => void;
+  setCurrentTime: Dispatch<SetStateAction<number>>;
+  setDuration: Dispatch<SetStateAction<number>>;
+  setIsPlaying: Dispatch<SetStateAction<boolean>>;
 };
 
 const AboutStyleArticleAudioPlayerContext = createContext<AboutStyleArticleAudioPlayerContextValue | null>(null);

@@ -568,7 +568,9 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
         ) : null}
       </div>
 
-      {audioSrc ? <audio ref={audioRef} src={audioSrc} preload="metadata" className="hidden" /> : null}
+      {audioSrc ? (
+        <audio ref={audioRef as React.Ref<HTMLAudioElement>} src={audioSrc} preload="metadata" className="hidden" />
+      ) : null}
     </div>,
     document.body,
   );
