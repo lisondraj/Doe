@@ -2660,12 +2660,16 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   gap: 0;
   width: 100%;
   min-height: var(--about-floating-toc-closed-size);
+  border: none;
+  box-shadow: none;
+  transform: none;
   transition:
     background-color var(--about-floating-chrome-open-duration) var(--about-chrome-ease-out),
     border-radius var(--about-floating-chrome-open-duration) var(--about-chrome-ease-out),
     box-shadow var(--about-floating-chrome-open-duration) var(--about-chrome-ease-out),
     padding var(--about-floating-chrome-open-duration) var(--about-chrome-ease-out),
-    gap var(--about-floating-chrome-open-duration) var(--about-chrome-ease-out);
+    gap var(--about-floating-chrome-open-duration) var(--about-chrome-ease-out),
+    transform 0ms linear;
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio .about-style-article-floating-chrome__shell,
@@ -2678,18 +2682,18 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   min-height: var(--about-floating-toc-closed-size);
   max-height: var(--about-floating-toc-closed-size);
   overflow: hidden;
-  border: 1px solid rgba(212, 165, 116, calc(var(--proto-nav-frost-progress) * 0.28));
+  border: none;
   border-radius: calc(var(--about-floating-toc-closed-size) / 2);
   background-color: rgba(39, 31, 23, calc(var(--proto-nav-frost-progress) * 0.92));
   backdrop-filter: blur(calc(var(--proto-nav-frost-progress) * 56px))
     saturate(calc(1 + var(--proto-nav-frost-progress) * 0.12));
   -webkit-backdrop-filter: blur(calc(var(--proto-nav-frost-progress) * 56px))
     saturate(calc(1 + var(--proto-nav-frost-progress) * 0.12));
-  box-shadow: none;
+  box-shadow: inset 0 0 0 1px rgba(212, 165, 116, calc(var(--proto-nav-frost-progress) * 0.28));
   transition:
     background-color var(--about-audio-join-ms) var(--about-audio-join-ease),
     border-radius var(--about-audio-join-ms) var(--about-audio-join-ease),
-    border-color var(--about-audio-join-ms) var(--about-audio-join-ease),
+    box-shadow var(--about-audio-join-ms) var(--about-audio-join-ease),
     height var(--about-audio-join-ms) var(--about-audio-join-ease),
     padding var(--about-audio-join-ms) var(--about-audio-join-ease),
     gap var(--about-audio-join-ms) var(--about-audio-join-ease),
@@ -2704,7 +2708,7 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__shell,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__shell {
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   gap: 0;
   padding-inline: 0;
@@ -2712,22 +2716,25 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   min-height: var(--about-floating-toc-closed-size);
   max-height: var(--about-floating-toc-closed-size);
   overflow: hidden;
-  border-color: transparent;
+  border: none;
   border-radius: calc(var(--about-floating-toc-closed-size) / 2);
   background-color: transparent;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   box-shadow: none;
   animation: none;
+  transform: none;
   transition:
     gap var(--about-audio-leave-ms) var(--about-audio-leave-ease),
     padding var(--about-audio-leave-ms) var(--about-audio-leave-ease),
     background-color var(--about-audio-leave-shell-fade) var(--about-audio-leave-ease) 24ms,
-    border-color var(--about-audio-leave-shell-fade) var(--about-audio-leave-ease) 24ms,
+    box-shadow var(--about-audio-leave-shell-fade) var(--about-audio-leave-ease) 24ms,
     border-radius var(--about-audio-leave-shell-fade) var(--about-audio-leave-ease) 24ms,
     backdrop-filter var(--about-audio-leave-shell-fade) var(--about-audio-leave-ease) 24ms,
     -webkit-backdrop-filter var(--about-audio-leave-shell-fade) var(--about-audio-leave-ease) 24ms,
-    height var(--about-audio-leave-ms) var(--about-audio-leave-ease);
+    height 0ms linear var(--about-audio-leave-ms),
+    max-height 0ms linear var(--about-audio-leave-ms),
+    transform 0ms linear;
 }
 
 @keyframes about-audio-pill-unsettle {
@@ -2763,6 +2770,7 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   position: relative;
   width: var(--about-floating-toc-closed-size);
   flex-shrink: 0;
+  align-self: flex-end;
   overflow: hidden;
   z-index: 2;
   border-radius: 9999px;
@@ -2838,14 +2846,16 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   width: var(--about-floating-toc-closed-size) !important;
   min-width: var(--about-floating-toc-closed-size) !important;
   height: var(--about-floating-toc-closed-size);
-  align-self: center;
+  align-self: flex-end;
   opacity: 1;
   pointer-events: auto;
   z-index: 2;
+  transform: none;
   transition:
     width var(--about-audio-leave-ms) var(--about-audio-leave-ease) var(--about-audio-leave-cap-delay),
     height var(--about-audio-leave-ms) var(--about-audio-leave-ease) var(--about-audio-leave-cap-delay),
-    min-width var(--about-audio-leave-ms) var(--about-audio-leave-ease) var(--about-audio-leave-cap-delay);
+    min-width var(--about-audio-leave-ms) var(--about-audio-leave-ease) var(--about-audio-leave-cap-delay),
+    transform 0ms linear;
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__cap-trigger,
@@ -2882,6 +2892,19 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   transition:
     width var(--about-audio-leave-ms) var(--about-audio-leave-ease) var(--about-audio-leave-cap-delay),
     height var(--about-audio-leave-ms) var(--about-audio-leave-ease) var(--about-audio-leave-cap-delay);
+}
+
+html[data-about-page]:has(.blog-mobile-root)
+  .about-style-article-floating-chrome:not(.is-audio-closing)
+  .about-style-article-floating-chrome__cap-trigger
+  .about-style-article-floating-chrome__icon,
+html[data-about-page]:has(.doephone-mobile-root)
+  .about-style-article-floating-chrome:not(.is-audio-closing)
+  .about-style-article-floating-chrome__cap-trigger
+  .about-style-article-floating-chrome__icon {
+  animation: none;
+  opacity: 1;
+  transform: none;
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-joined .about-style-article-floating-chrome__cap-trigger,

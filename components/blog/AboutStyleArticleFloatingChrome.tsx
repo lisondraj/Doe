@@ -26,6 +26,8 @@ const SCROLL_REVEAL_PX = 280;
 const AUDIO_JOIN_MS = 780;
 const AUDIO_JOIN_SETTLE_MS = 300;
 const AUDIO_LEAVE_MS = 620;
+const AUDIO_LEAVE_CAP_DELAY_MS = 72;
+const AUDIO_LEAVE_SETTLE_MS = 32;
 const WIDGET_DISMISS_ARM_MS = 480;
 
 type AboutStyleArticleFloatingChromeProps = {
@@ -334,10 +336,10 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
         closePlayer();
       }
       audioCloseWhilePlayingRef.current = false;
-      window.setTimeout(() => {
+      audioJoinTimerRef.current = window.setTimeout(() => {
         setAudioClosing(false);
         audioJoinTimerRef.current = null;
-      }, 64);
+      }, AUDIO_LEAVE_CAP_DELAY_MS + AUDIO_LEAVE_SETTLE_MS);
     }, AUDIO_LEAVE_MS);
   }, [audioClosing, closePlayer, hidePlayer, isPlayerOpen, isPlaying]);
 
