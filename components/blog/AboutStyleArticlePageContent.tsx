@@ -2,6 +2,7 @@ import { AboutStyleContactLink } from "@/components/blog/AboutStyleContactLink";
 import { AboutStyleArticleEmailInvite } from "@/components/blog/AboutStyleArticleEmailInvite";
 import { AboutStyleArticleProposalQuote } from "@/components/blog/AboutStyleArticleProposalQuote";
 import { AboutStyleFeatureCardGrid } from "@/components/blog/AboutStyleFeatureCardGrid";
+import { BlogArticleRelatedCarousel } from "@/components/blog/BlogArticleRelatedCarousel";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import {
   ABOUT_MOBILE_CONTENT_GAP,
@@ -93,6 +94,8 @@ export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageC
             </p>
 
             <AboutStyleArticleEmailInvite headline={article.emailInviteHeadline} label={article.emailInviteLabel} />
+
+            <BlogArticleRelatedCarousel currentSlug={article.slug} />
           </div>
         </div>
       </div>
@@ -189,6 +192,8 @@ export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageC
           <p className={`${BROADER_DOE_VISION_BODY_TW} font-semibold`}>{article.finalParagraph}</p>
 
           <AboutStyleArticleEmailInvite headline={article.emailInviteHeadline} label={article.emailInviteLabel} />
+
+          <BlogArticleRelatedCarousel currentSlug={article.slug} />
         </div>
       </div>
     </div>

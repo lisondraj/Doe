@@ -67,3 +67,16 @@ export const BLOG_LANDING_PATH = "/blog";
 export const BLOG_LANDING_TITLE = "Blog";
 
 export const BLOG_LANDING_SUBHEADING = "August 2026 / Doe Fall Launch";
+
+/** Other featured posts in landing order, starting after the current article. */
+export function getOtherBlogLandingPosts(currentSlug: string): BlogLandingPost[] {
+  const currentIndex = BLOG_LANDING_POSTS.findIndex((post) => post.slug === currentSlug);
+  if (currentIndex === -1) {
+    return [...BLOG_LANDING_POSTS];
+  }
+
+  return [
+    ...BLOG_LANDING_POSTS.slice(currentIndex + 1),
+    ...BLOG_LANDING_POSTS.slice(0, currentIndex),
+  ];
+}
