@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
 
-import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
+import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
+import { aboutStyleFeatureShaderSurface } from "@/lib/blog/about-style-feature-card";
+import { blogPreviewShaderSurface } from "@/lib/blog/blog-preview-shader-surface";
 import {
   BLOG_LANDING_CARD_BYLINE_TW,
   BLOG_LANDING_CARD_EXCERPT_TW,
@@ -46,16 +50,24 @@ export function BlogLandingPostCard({
   previewContext = "list",
 }: BlogLandingPostCardProps) {
   const subheading = post.previewSubheading ?? post.subheading;
+  const shader =
+    previewContext === "carousel"
+      ? blogPreviewShaderSurface(post.carouselShaderVariant)
+      : aboutStyleFeatureShaderSurface(post.previewShaderVariant);
+
   const card = (
     <article className={BLOG_LANDING_CARD_STACK}>
-      <div className={BLOG_LANDING_CARD_VISUAL_TW}>
-        <BlogHeroVisual
-          previewShaderVariant={previewContext === "list" ? post.previewShaderVariant : undefined}
-          carouselShaderVariant={previewContext === "carousel" ? post.carouselShaderVariant : undefined}
-          variant="list"
-          boxClassName="absolute inset-0 h-full w-full rounded-[inherit]"
-          gapClassName=""
-          staticShader={previewContext === "list"}
+      <div
+        className={`${BLOG_LANDING_CARD_VISUAL_TW} blog-landing-card-visual__shader`}
+        style={{ backgroundColor: shader.colorBack }}
+        aria-hidden
+      >
+        <ProtoGrainGradient
+          static={previewContext === "list"}
+          variant={shader.variant}
+          colors={shader.colors}
+          colorBack={shader.colorBack}
+          className="absolute inset-0 h-full w-full"
         />
       </div>
 
