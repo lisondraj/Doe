@@ -1901,6 +1901,8 @@ html[data-about-page]:has(.doephone-mobile-root) {
   );
   --about-floating-chrome-audio-cap-size: clamp(4.05rem, 3.65rem + 1.35vmin, 4.85rem);
   --about-floating-chrome-audio-cap-icon: clamp(1.42rem, 1.28rem + 0.55vmin, 1.6rem);
+  --about-floating-chrome-open-duration: 520ms;
+  --about-floating-chrome-close-duration: 400ms;
   --about-audio-join-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --about-audio-leave-ease: cubic-bezier(0.32, 0.94, 0.38, 1);
 }
@@ -2732,8 +2734,12 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   overflow: hidden;
   z-index: 2;
   transition:
-    width var(--about-floating-toc-duration) var(--about-floating-toc-ease),
-    height var(--about-floating-toc-close-duration) var(--about-floating-toc-close-ease),
+    width var(--about-floating-chrome-open-duration) var(--about-floating-toc-ease),
+    height var(--about-floating-chrome-close-duration) var(--about-floating-toc-close-ease),
+    min-height var(--about-floating-chrome-open-duration) var(--about-floating-toc-ease),
+    max-height var(--about-floating-chrome-open-duration) var(--about-floating-toc-ease),
+    border-radius var(--about-floating-chrome-open-duration) var(--about-floating-toc-ease),
+    padding var(--about-floating-chrome-open-duration) var(--about-floating-toc-ease),
     opacity 360ms var(--about-floating-toc-ease),
     transform 520ms var(--about-floating-toc-ease);
 }
@@ -2920,12 +2926,31 @@ html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrom
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__cap.is-closing {
   width: var(--about-floating-toc-closed-size) !important;
   height: var(--about-floating-toc-closed-size) !important;
+  min-height: var(--about-floating-toc-closed-size) !important;
+  max-height: var(--about-floating-toc-closed-size) !important;
+  border-radius: 9999px;
+  padding: var(--about-floating-toc-frost-pad);
   overflow: hidden;
+  transition:
+    width var(--about-floating-chrome-close-duration) var(--about-floating-toc-close-ease),
+    height var(--about-floating-chrome-close-duration) var(--about-floating-toc-close-ease),
+    min-height var(--about-floating-chrome-close-duration) var(--about-floating-toc-close-ease),
+    max-height var(--about-floating-chrome-close-duration) var(--about-floating-toc-close-ease),
+    border-radius var(--about-floating-chrome-close-duration) var(--about-floating-toc-close-ease),
+    padding var(--about-floating-chrome-close-duration) var(--about-floating-toc-close-ease);
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__cap.is-closing .about-style-article-floating-chrome__panel,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__cap.is-closing .about-style-article-floating-chrome__panel {
-  display: none;
+  opacity: 0;
+  visibility: hidden;
+  max-height: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition:
+    opacity 80ms ease,
+    max-height 0s linear 80ms,
+    visibility 0s linear 80ms;
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio .about-style-article-floating-chrome__cap.is-closing,
@@ -3366,15 +3391,25 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   flex-direction: column;
   width: 100%;
   min-height: 0;
-  max-height: 24rem;
+  max-height: 0;
+  opacity: 0;
+  visibility: hidden;
   overflow: hidden;
+  pointer-events: none;
+  transition:
+    opacity 240ms ease,
+    max-height var(--about-floating-chrome-open-duration) var(--about-floating-toc-ease),
+    visibility 0s linear 240ms;
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__cap.is-open,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__cap.is-open {
   display: flex;
   flex-direction: column;
-  min-height: 0;
+  align-items: stretch;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  min-height: var(--about-floating-toc-closed-size);
   max-height: min(24rem, calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 5.5rem));
   border: 1px solid rgba(212, 165, 116, 0.28);
   border-radius: clamp(0.95rem, 0.78rem + 0.72vmin, 1.18rem);
@@ -3383,16 +3418,51 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   -webkit-backdrop-filter: blur(56px) saturate(1.12);
   padding: clamp(0.3rem, 0.2rem + 0.45vmin, 0.4rem);
   overflow: hidden;
+  transition:
+    width var(--about-floating-chrome-open-duration) var(--about-floating-toc-ease),
+    height var(--about-floating-chrome-open-duration) var(--about-floating-toc-ease),
+    min-height var(--about-floating-chrome-open-duration) var(--about-floating-toc-ease),
+    max-height var(--about-floating-chrome-open-duration) var(--about-floating-toc-ease),
+    border-radius var(--about-floating-chrome-open-duration) var(--about-floating-toc-ease),
+    padding var(--about-floating-chrome-open-duration) var(--about-floating-toc-ease);
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__cap.is-open:not(.is-revealed):not(.is-closing),
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__cap.is-open:not(.is-revealed):not(.is-closing) {
+  height: var(--about-floating-toc-closed-size);
+  min-height: var(--about-floating-toc-closed-size);
+  max-height: var(--about-floating-toc-closed-size);
+  border-radius: 9999px;
+  padding: var(--about-floating-toc-frost-pad);
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__cap.is-open.is-revealed,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__cap.is-open.is-revealed {
+  height: auto;
+  min-height: 0;
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__cap.is-open .about-style-article-floating-chrome__panel,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__cap.is-open .about-style-article-floating-chrome__panel {
   display: flex;
-  flex: 1 1 auto;
+  flex: 0 0 auto;
   flex-direction: column;
   min-height: 0;
-  max-height: 100%;
+  max-height: 0;
   overflow: hidden;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__cap.is-open.is-revealed .about-style-article-floating-chrome__panel,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__cap.is-open.is-revealed .about-style-article-floating-chrome__panel {
+  flex: 1 1 auto;
+  max-height: 100%;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    opacity 280ms ease 40ms,
+    max-height var(--about-floating-chrome-open-duration) var(--about-floating-toc-ease),
+    visibility 0s;
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__cap.is-open .about-style-article-floating-blog-nav__list-wrap,

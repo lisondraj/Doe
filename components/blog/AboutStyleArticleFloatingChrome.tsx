@@ -19,9 +19,9 @@ import {
 } from "@/lib/blog/about-style-article-audio-player-context";
 import type { AboutStyleArticleTocItem } from "@/lib/blog/about-style-article-toc";
 
-const PANEL_REVEAL_MS = 780;
-const PANEL_HIDE_MS = 180;
-const PANEL_COLLAPSE_MS = 520;
+const PANEL_REVEAL_MS = 520;
+const PANEL_HIDE_MS = 0;
+const PANEL_COLLAPSE_MS = 400;
 const SCROLL_REVEAL_PX = 280;
 const AUDIO_JOIN_MS = 920;
 const AUDIO_JOIN_SETTLE_MS = 320;
@@ -111,9 +111,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
       cap.style.width = `${width}px`;
       cap.style.height = `${height}px`;
     }
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => setBlogCollapsing(true));
-    });
+    setBlogCollapsing(true);
   }, []);
 
   const beginTocCollapse = useCallback(() => {
@@ -123,9 +121,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
       cap.style.width = `${width}px`;
       cap.style.height = `${height}px`;
     }
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => setTocCollapsing(true));
-    });
+    setTocCollapsing(true);
   }, []);
 
   const beginTocCollapseForAudio = useCallback(() => {
@@ -618,7 +614,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
       >
         <div
           ref={blogCapRef}
-          className={`about-style-article-floating-chrome__cap about-style-article-floating-chrome__cap--left${blogOpen && !audioCapActive ? " is-open" : ""}${blogCollapsing ? " is-closing" : ""}`}
+          className={`about-style-article-floating-chrome__cap about-style-article-floating-chrome__cap--left${blogOpen && !audioCapActive ? " is-open" : ""}${blogPanelRevealed ? " is-revealed" : ""}${blogCollapsing ? " is-closing" : ""}`}
         >
           {blogOpen && !audioCapActive ? (
             <div className="about-style-article-floating-chrome__panel" aria-hidden={!blogPanelRevealed}>
@@ -707,7 +703,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
         {showTocCap ? (
           <div
             ref={tocCapRef}
-            className={`about-style-article-floating-chrome__cap about-style-article-floating-chrome__cap--right${tocOpen && !audioCapActive ? " is-open" : ""}${tocCollapsing ? " is-closing" : ""}`}
+            className={`about-style-article-floating-chrome__cap about-style-article-floating-chrome__cap--right${tocOpen && !audioCapActive ? " is-open" : ""}${tocPanelRevealed ? " is-revealed" : ""}${tocCollapsing ? " is-closing" : ""}`}
           >
             {tocOpen && !audioCapActive ? (
               <div className="about-style-article-floating-chrome__panel" aria-hidden={!tocPanelRevealed}>
