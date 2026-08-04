@@ -1173,6 +1173,14 @@ html[data-about-page] .blog-landing-card-visual__shader .proto-shader-surface {
   max-height: none !important;
 }
 
+/* Product intro feature tiles + hero band — WebGL surface fills the layout box on desktop. */
+html[data-about-page] .about-style-feature-card__shader .proto-shader-surface,
+html[data-about-page][data-layout="desktop"] .about-page-content .about-hero-visual .proto-shader-surface {
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+}
+
 html[data-about-page] .blog-landing-card-stack {
   height: 100%;
 }
