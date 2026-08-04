@@ -770,7 +770,12 @@ html[data-home-page][data-layout="desktop"]
  * Last band above the footer — mirror the stage's top breathing room below the title
  * so space under the section matches space above the UI.
  */
+.doehealth-brown-band-stack > .doehealth-intro-band--intro-video .doehealth-intro-band__cluster,
 .doehealth-brown-band-stack > .doehealth-intro-band:last-child .doehealth-intro-band__cluster,
+html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
+  .doehealth-brown-band-stack
+  > .doehealth-intro-band--intro-video
+  .doehealth-intro-band__cluster,
 html[data-home-page]:has(.doephone-mobile-root):not([data-layout="desktop"])
   .doehealth-brown-band-stack
   > .doehealth-intro-band:last-child
@@ -3668,6 +3673,10 @@ html[data-home-page][data-layout="desktop"]
 }
 
 /* Last band — match desktop bottom pad to top (nav clearance + section pad) before footer. */
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-brown-band-stack
+  > .doehealth-intro-band--intro-video,
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-brown-band-stack

@@ -4,6 +4,7 @@ import { DoeHealthBlankViewportBand } from "@/components/doehealth/DoeHealthBlan
 import { DoeHealthDaySummaryBand } from "@/components/doehealth/DoeHealthDaySummaryBand";
 import { DoeHealthRoutedCallsBand } from "@/components/doehealth/DoeHealthRoutedCallsBand";
 import { DoeHealthRoutedCallsLeft2Band } from "@/components/doehealth/DoeHealthRoutedCallsLeft2Band";
+import { HomeBlogFeaturedCarouselSection } from "@/components/blog/HomeBlogFeaturedCarouselSection";
 import { DoeHealthIntroVideoBand } from "@/components/doehealth/DoeHealthIntroVideoBand";
 import { DoeHealthPatientChartBand } from "@/components/doehealth/DoeHealthPatientChartBand";
 import { DoeHealthRoutedCallsRightBand } from "@/components/doehealth/DoeHealthRoutedCallsRightBand";
@@ -22,6 +23,7 @@ export function DoeHealthBrownBandStack() {
       <DoeHealthPatientChartBand />
       <DoeHealthAgentsAnywhereBand />
       <DoeHealthIntroVideoBand />
+      <HomeBlogFeaturedCarouselSection />
     </div>
   );
 }
