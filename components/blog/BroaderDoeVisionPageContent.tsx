@@ -1,3 +1,4 @@
+import { AboutStyleArticleTableOfContents } from "@/components/blog/AboutStyleArticleTableOfContents";
 import { AboutStyleContactLink } from "@/components/blog/AboutStyleContactLink";
 import { BlogArticleFooterCarouselBand } from "@/components/blog/BlogArticleFooterCarouselBand";
 import { BlogArticleCategory } from "@/components/blog/BlogArticleCategory";
@@ -43,8 +44,18 @@ import {
   BROADER_DOE_VISION_TITLE,
 } from "@/lib/blog/broader-doe-vision-article";
 import { blogPostCategory } from "@/lib/blog/blog-post-categories";
+import {
+  ABOUT_STYLE_ARTICLE_SECTION_ANCHOR,
+  ABOUT_STYLE_ARTICLE_TOC_IDS,
+  tocIdFromLabel,
+  type AboutStyleArticleTocItem,
+} from "@/lib/blog/about-style-article-toc";
 /** iPhone /about — Broader Doe Vision scroll structure. */
-export function BroaderDoeVisionPageContent() {
+export function BroaderDoeVisionPageContent({
+  tocItems,
+}: {
+  tocItems: readonly AboutStyleArticleTocItem[];
+}) {
   const category = blogPostCategory("the-broader-doe-vision");
 
   return (
@@ -78,9 +89,13 @@ export function BroaderDoeVisionPageContent() {
         />
       </div>
 
+      <AboutStyleArticleTableOfContents items={tocItems} />
+
       <div className={ABOUT_MOBILE_SECTION_GAP}>
         <div className={ABOUT_MOBILE_CONTENT_GAP}>
-          <p className={`${BROADER_DOE_VISION_BODY_TW} font-semibold`}>{BROADER_DOE_VISION_OPENING_LEDE}</p>
+          <div id={ABOUT_STYLE_ARTICLE_TOC_IDS.intro} className={ABOUT_STYLE_ARTICLE_SECTION_ANCHOR}>
+            <p className={`${BROADER_DOE_VISION_BODY_TW} font-semibold`}>{BROADER_DOE_VISION_OPENING_LEDE}</p>
+          </div>
 
           {BROADER_DOE_VISION_BODY_PARAGRAPHS.map((paragraph, index) => (
             <p key={paragraph} className={BROADER_DOE_VISION_BODY_TW}>
@@ -103,11 +118,16 @@ export function BroaderDoeVisionPageContent() {
             </p>
           ))}
 
-          <BroaderDoeVisionProposalQuote />
+          <div id={ABOUT_STYLE_ARTICLE_TOC_IDS.proposal} className={ABOUT_STYLE_ARTICLE_SECTION_ANCHOR}>
+            <BroaderDoeVisionProposalQuote />
+          </div>
 
           <p className={BROADER_DOE_VISION_BODY_TW}>{BROADER_DOE_VISION_PROPOSAL_CLOSING}</p>
 
-          <figure className="m-0">
+          <figure
+            id={tocIdFromLabel(BROADER_DOE_VISION_THESIS_SECTION_HEADLINE)}
+            className={`m-0 ${ABOUT_STYLE_ARTICLE_SECTION_ANCHOR}`}
+          >
             <figcaption
               className={`${BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_TW} ${BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_GOLD_TW}`}
             >
@@ -132,7 +152,9 @@ export function BroaderDoeVisionPageContent() {
 
           <p className={`${BROADER_DOE_VISION_BODY_TW} font-semibold`}>{BROADER_DOE_VISION_FINAL_PARAGRAPH}</p>
 
-          <BroaderDoeVisionEmailInvite />
+          <div id={ABOUT_STYLE_ARTICLE_TOC_IDS.contact} className={ABOUT_STYLE_ARTICLE_SECTION_ANCHOR}>
+            <BroaderDoeVisionEmailInvite />
+          </div>
 
           <BlogArticleFooterCarouselBand>
             <BlogArticleRelatedCarousel currentSlug="the-broader-doe-vision" />

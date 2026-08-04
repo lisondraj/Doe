@@ -2,6 +2,7 @@ import { AboutStyleArticleContentBlocks } from "@/components/blog/AboutStyleArti
 import { AboutStyleContactLink } from "@/components/blog/AboutStyleContactLink";
 import { AboutStyleArticleEmailInvite } from "@/components/blog/AboutStyleArticleEmailInvite";
 import { AboutStyleArticleProposalQuote } from "@/components/blog/AboutStyleArticleProposalQuote";
+import { AboutStyleArticleTableOfContents } from "@/components/blog/AboutStyleArticleTableOfContents";
 import { AboutStyleFeatureCardGrid } from "@/components/blog/AboutStyleFeatureCardGrid";
 import { BlogArticleFooterCarouselBand } from "@/components/blog/BlogArticleFooterCarouselBand";
 import { BlogArticleCategory } from "@/components/blog/BlogArticleCategory";
@@ -29,13 +30,19 @@ import {
   isAboutStyleProductIntro,
 } from "@/lib/blog/broader-doe-vision-layout-styles";
 import { blogPostCategory } from "@/lib/blog/blog-post-categories";
+import {
+  ABOUT_STYLE_ARTICLE_SECTION_ANCHOR,
+  ABOUT_STYLE_ARTICLE_TOC_IDS,
+  type AboutStyleArticleTocItem,
+} from "@/lib/blog/about-style-article-toc";
 
 type AboutStyleArticlePageContentProps = {
   article: AboutStyleLongformArticle;
+  tocItems: readonly AboutStyleArticleTocItem[];
 };
 
 /** /about-style longform article — hero, shader band, body, quote, thesis list, email invite. */
-export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageContentProps) {
+export function AboutStyleArticlePageContent({ article, tocItems }: AboutStyleArticlePageContentProps) {
   const productIntro = isAboutStyleProductIntro(article.slug);
   const labsProposal = article.contentBlocks != null && article.contentBlocks.length > 0;
   const category = blogPostCategory(article.slug);
@@ -79,7 +86,9 @@ export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageC
           />
         </div>
 
-        <div className={`${ABOUT_MOBILE_CONTENT_GAP} mt-8 text-left iphone-page:mt-9`}>
+        <AboutStyleArticleTableOfContents items={tocItems} />
+
+        <div id={ABOUT_STYLE_ARTICLE_TOC_IDS.intro} className={`${ABOUT_MOBILE_CONTENT_GAP} mt-8 text-left iphone-page:mt-9 ${ABOUT_STYLE_ARTICLE_SECTION_ANCHOR}`}>
           <p className={`${BROADER_DOE_VISION_BODY_TW} font-semibold`}>{article.openingLede}</p>
           {article.openingLedeContinuation ? (
             <p className={BROADER_DOE_VISION_BODY_TW}>{article.openingLedeContinuation}</p>
@@ -99,7 +108,9 @@ export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageC
           <div className={ABOUT_MOBILE_CONTENT_GAP}>
             <p className={`${BROADER_DOE_VISION_BODY_TW} font-semibold`}>{article.finalParagraph}</p>
 
-            <AboutStyleArticleEmailInvite headline={article.emailInviteHeadline} label={article.emailInviteLabel} />
+            <div id={ABOUT_STYLE_ARTICLE_TOC_IDS.contact} className={ABOUT_STYLE_ARTICLE_SECTION_ANCHOR}>
+              <AboutStyleArticleEmailInvite headline={article.emailInviteHeadline} label={article.emailInviteLabel} />
+            </div>
 
             <BlogArticleFooterCarouselBand>
               <BlogArticleRelatedCarousel currentSlug={article.slug} />
@@ -142,7 +153,9 @@ export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageC
           />
         </div>
 
-        <div className={`${ABOUT_MOBILE_CONTENT_GAP} mt-8 text-left iphone-page:mt-9`}>
+        <AboutStyleArticleTableOfContents items={tocItems} />
+
+        <div id={ABOUT_STYLE_ARTICLE_TOC_IDS.intro} className={`${ABOUT_MOBILE_CONTENT_GAP} mt-8 text-left iphone-page:mt-9 ${ABOUT_STYLE_ARTICLE_SECTION_ANCHOR}`}>
           <p className={`${BROADER_DOE_VISION_BODY_TW} about-style-product-intro-body font-semibold`}>
             {article.openingLede}
           </p>
@@ -159,7 +172,7 @@ export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageC
         </div>
 
         {article.featureCards && article.featureCards.length > 0 ? (
-          <div className="mt-10 iphone-page:mt-12">
+          <div id={ABOUT_STYLE_ARTICLE_TOC_IDS.features} className={`mt-10 iphone-page:mt-12 ${ABOUT_STYLE_ARTICLE_SECTION_ANCHOR}`}>
             <AboutStyleFeatureCardGrid cards={article.featureCards} />
           </div>
         ) : null}
@@ -170,7 +183,9 @@ export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageC
               {article.finalParagraph}
             </p>
 
-            <AboutStyleArticleEmailInvite headline={article.emailInviteHeadline} label={article.emailInviteLabel} />
+            <div id={ABOUT_STYLE_ARTICLE_TOC_IDS.contact} className={ABOUT_STYLE_ARTICLE_SECTION_ANCHOR}>
+              <AboutStyleArticleEmailInvite headline={article.emailInviteHeadline} label={article.emailInviteLabel} />
+            </div>
 
             <BlogArticleFooterCarouselBand>
               <BlogArticleRelatedCarousel currentSlug={article.slug} />
@@ -210,15 +225,19 @@ export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageC
         />
       </div>
 
+      <AboutStyleArticleTableOfContents items={tocItems} />
+
       {article.featureCards && article.featureCards.length > 0 ? (
-        <div className="mt-10 mb-14 iphone-page:mt-12 iphone-page:mb-16">
+        <div id={ABOUT_STYLE_ARTICLE_TOC_IDS.features} className={`mt-10 mb-14 iphone-page:mt-12 iphone-page:mb-16 ${ABOUT_STYLE_ARTICLE_SECTION_ANCHOR}`}>
           <AboutStyleFeatureCardGrid cards={article.featureCards} />
         </div>
       ) : null}
 
       <div className={ABOUT_MOBILE_SECTION_GAP}>
         <div className={ABOUT_MOBILE_CONTENT_GAP}>
-          <p className={`${BROADER_DOE_VISION_BODY_TW} font-semibold`}>{article.openingLede}</p>
+          <div id={ABOUT_STYLE_ARTICLE_TOC_IDS.intro} className={ABOUT_STYLE_ARTICLE_SECTION_ANCHOR}>
+            <p className={`${BROADER_DOE_VISION_BODY_TW} font-semibold`}>{article.openingLede}</p>
+          </div>
 
           {article.bodyParagraphs.map((paragraph, index) => (
             <p key={paragraph} className={BROADER_DOE_VISION_BODY_TW}>
@@ -248,7 +267,7 @@ export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageC
 
           <p className={BROADER_DOE_VISION_BODY_TW}>{article.proposalClosing}</p>
 
-          <figure className="m-0">
+          <figure id={ABOUT_STYLE_ARTICLE_TOC_IDS.thesis} className={`m-0 ${ABOUT_STYLE_ARTICLE_SECTION_ANCHOR}`}>
             <figcaption className={BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_TW}>
               {article.thesisSectionHeadline}
             </figcaption>
@@ -271,7 +290,9 @@ export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageC
 
           <p className={`${BROADER_DOE_VISION_BODY_TW} font-semibold`}>{article.finalParagraph}</p>
 
-          <AboutStyleArticleEmailInvite headline={article.emailInviteHeadline} label={article.emailInviteLabel} />
+          <div id={ABOUT_STYLE_ARTICLE_TOC_IDS.contact} className={ABOUT_STYLE_ARTICLE_SECTION_ANCHOR}>
+            <AboutStyleArticleEmailInvite headline={article.emailInviteHeadline} label={article.emailInviteLabel} />
+          </div>
 
           <BlogArticleFooterCarouselBand>
             <BlogArticleRelatedCarousel currentSlug={article.slug} />

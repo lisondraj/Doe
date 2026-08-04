@@ -4,6 +4,10 @@ import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import { aboutStyleFeatureShaderSurface } from "@/lib/blog/about-style-feature-card";
 import type { AboutStyleArticleContentBlock } from "@/lib/blog/about-style-article-content-blocks";
 import {
+  ABOUT_STYLE_ARTICLE_SECTION_ANCHOR,
+  tocIdFromLabel,
+} from "@/lib/blog/about-style-article-toc";
+import {
   ABOUT_STYLE_BULLET_ITEM_TW,
   ABOUT_STYLE_BULLET_LIST_TW,
   ABOUT_STYLE_GLOSSARY_DEFINITION_TW,
@@ -87,7 +91,11 @@ export function AboutStyleArticleContentBlocks({ blocks }: AboutStyleArticleCont
 
         if (block.type === "subheading") {
           return (
-            <figure key={block.text} className="m-0">
+            <figure
+              key={block.text}
+              id={tocIdFromLabel(block.text)}
+              className={`m-0 ${ABOUT_STYLE_ARTICLE_SECTION_ANCHOR}`}
+            >
               <figcaption
                 className={`${BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_TW} ${BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_GOLD_TW}`}
               >
