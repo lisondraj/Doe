@@ -854,6 +854,7 @@ html[data-home-page] .broader-doe-hero-byline {
 
 html[data-about-page][data-layout="desktop"] .about-desktop-main p.broader-doe-body {
   color: rgba(242, 232, 218, 0.92) !important;
+  font-size: clamp(1.22rem, 1.02rem + 0.85vmin, 1.46rem) !important;
 }
 
 /* Broader Doe Vision desktop — gold pull quote: 1/8 inset each side, left-aligned in center band. */
@@ -875,7 +876,7 @@ html[data-about-page][data-layout="desktop"] .broader-doe-proposal-quote blockqu
 /* Broader Doe Vision desktop — thesis-style section headlines (Guiding Beliefs + feature cards). */
 html[data-about-page][data-layout="desktop"] .about-desktop-main .broader-doe-thesis-headline,
 html[data-about-page][data-layout="desktop"] .about-desktop-main .about-style-feature-card figcaption.broader-doe-thesis-headline {
-  font-size: clamp(1.48rem, 1.22vw, 1.82rem) !important;
+  font-size: clamp(1.36rem, 1.14rem + 0.95vmin, 1.62rem) !important;
   line-height: 1.15 !important;
 }
 
@@ -893,7 +894,7 @@ html[data-about-page][data-layout="desktop"] .about-desktop-main ol.broader-doe-
   display: grid;
   grid-template-columns: 1.35em minmax(0, 1fr);
   column-gap: 0;
-  font-size: clamp(1.32rem, 1.05vw, 1.58rem);
+  font-size: clamp(1.22rem, 1.02rem + 0.85vmin, 1.46rem);
   line-height: 1.48;
   letter-spacing: -0.01em;
 }
