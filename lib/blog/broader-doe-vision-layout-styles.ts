@@ -15,6 +15,7 @@ export const BROADER_DOE_VISION_HERO_HEADLINES_WRAP = "broader-doe-hero-headline
 export const ABOUT_STYLE_PRODUCT_INTRO_SLUGS = [
   "introducing-pulse",
   "introducing-fabric",
+  "introducing-float",
   "pulse-call-history",
   "pulse-ambient",
 ] as const;

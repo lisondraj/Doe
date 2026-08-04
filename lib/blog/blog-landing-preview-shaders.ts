@@ -6,6 +6,7 @@ export const BLOG_LANDING_PREVIEW_SHADERS: Record<string, AboutStyleFeatureShade
   "pulse-ambient": "ambient-band",
   "introducing-pulse": "front-desk-band",
   "introducing-fabric": "customize-agents-band",
+  "introducing-float": "active-agents-band",
   "the-broader-doe-vision": "looking-ahead",
 };
 

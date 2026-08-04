@@ -6,6 +6,7 @@ export const BLOG_CAROUSEL_PREVIEW_SHADERS: Record<string, ProtoGrainGradientVar
   "pulse-ambient": "validate",
   "introducing-pulse": "looking-ahead",
   "introducing-fabric": "meet-proto",
+  "introducing-float": "prototype",
   "the-broader-doe-vision": "build-hero",
 };
 

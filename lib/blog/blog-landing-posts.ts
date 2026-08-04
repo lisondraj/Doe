@@ -11,6 +11,10 @@ import {
   INTRODUCING_FABRIC_PATH,
 } from "@/lib/blog/introducing-fabric-article";
 import {
+  INTRODUCING_FLOAT_ARTICLE,
+  INTRODUCING_FLOAT_PATH,
+} from "@/lib/blog/introducing-float-article";
+import {
   INTRODUCING_PULSE_ARTICLE,
   INTRODUCING_PULSE_PATH,
 } from "@/lib/blog/introducing-pulse-article";
@@ -45,6 +49,18 @@ export type BlogLandingPost = {
 
 /** Featured posts on /blog — Pulse sub-features, flagship launches, and Broader Doe Vision. */
 export const BLOG_LANDING_POSTS: readonly BlogLandingPost[] = [
+  {
+    slug: INTRODUCING_FLOAT_ARTICLE.slug,
+    path: INTRODUCING_FLOAT_PATH,
+    title: INTRODUCING_FLOAT_ARTICLE.title,
+    category: blogPostCategory(INTRODUCING_FLOAT_ARTICLE.slug)!,
+    subheading: INTRODUCING_FLOAT_ARTICLE.subheading,
+    excerpt: INTRODUCING_FLOAT_ARTICLE.excerpt,
+    byline: INTRODUCING_FLOAT_ARTICLE.byline,
+    date: INTRODUCING_FLOAT_ARTICLE.date,
+    previewShaderVariant: blogLandingPreviewShader(INTRODUCING_FLOAT_ARTICLE.slug),
+    carouselShaderVariant: blogCarouselPreviewShader(INTRODUCING_FLOAT_ARTICLE.slug),
+  },
   {
     slug: PULSE_CALL_HISTORY_ARTICLE.slug,
     path: PULSE_CALL_HISTORY_PATH,
