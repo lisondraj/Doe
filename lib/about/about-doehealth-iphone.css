@@ -2608,8 +2608,15 @@ html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrom
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-visible {
   opacity: 1;
   visibility: visible;
-  pointer-events: auto;
+  pointer-events: none;
   transform: translateY(0) scale(1);
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-visible .about-style-article-floating-chrome__cap,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-visible .about-style-article-floating-chrome__cap,
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-visible .about-style-article-floating-chrome__bridge,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-visible .about-style-article-floating-chrome__bridge {
+  pointer-events: auto;
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__shell,
