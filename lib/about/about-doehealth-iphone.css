@@ -2453,6 +2453,21 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-b
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-blog-nav.is-revealed .about-style-article-floating-blog-nav__list-wrap,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-blog-nav.is-revealed .about-style-article-floating-blog-nav__list-wrap {
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-blog-nav__scroll,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-blog-nav__scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-blog-nav__label,
@@ -3301,6 +3316,7 @@ html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrom
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__cap.is-open {
   display: flex;
   flex-direction: column;
+  min-height: 0;
   max-height: min(24rem, calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 5.5rem));
   border: 1px solid rgba(212, 165, 116, 0.28);
   border-radius: clamp(0.95rem, 0.78rem + 0.72vmin, 1.18rem);
@@ -3313,12 +3329,25 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__cap.is-open .about-style-article-floating-chrome__panel,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__cap.is-open .about-style-article-floating-chrome__panel {
+  display: flex;
   flex: 1 1 auto;
+  flex-direction: column;
   min-height: 0;
+  max-height: 100%;
+  overflow: hidden;
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__cap.is-open .about-style-article-floating-blog-nav__list-wrap,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__cap.is-open .about-style-article-floating-blog-nav__list-wrap {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__cap.is-open .about-style-article-floating-blog-nav__scroll,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__cap.is-open .about-style-article-floating-blog-nav__scroll {
   flex: 1 1 auto;
   min-height: 0;
   overflow-x: hidden;
@@ -3326,6 +3355,11 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__cap.is-open .about-style-article-floating-blog-nav__list,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__cap.is-open .about-style-article-floating-blog-nav__list {
+  padding-bottom: 0.55rem;
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__cap.is-open .about-style-article-floating-toc__list-wrap,
