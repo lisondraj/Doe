@@ -92,8 +92,11 @@ export const INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE = {
       text: "Blended Intelligence is how we use both without asking a clinic to choose. A request gets split as it comes in. The pieces that can safely leave the sensitive boundary, like reviewing published research or comparing policy language, go to a frontier model. Anything touching a patient's identity, medications, visit details, or billing stays with the open-weight model running on your own compute. An orchestration layer, essentially a traffic controller for the request, stitches both responses back together and logs exactly which model handled which piece.",
     },
     {
-      type: "paragraph",
-      text: "The clinician sees one clear answer. The compliance team sees one clean record of how it was produced. And the result is better than either model would manage alone: frontier-level reasoning paired with the privacy patient care demands.",
+      type: "quote",
+      id: "doe-labs-blended-intelligence-quote",
+      lead: "The clinician sees one clear answer, and the compliance team sees one clean record of how it was produced",
+      continuation:
+        "The result reads better than either model manages alone, **frontier-level reasoning paired with the privacy patient care demands**.",
     },
     {
       type: "shader",
@@ -114,8 +117,11 @@ export const INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE = {
       text: "In practice, that means data is encrypted both while it moves and while it sits in storage, access to models and logs is limited to the roles that actually need it, and any model version can be paused or rolled back without taking your clinic offline. Every agent, chart, and billing workflow shares one security boundary instead of trusting a dozen separate outside vendors.",
     },
     {
-      type: "paragraph",
-      text: "This is the standard Doe intends to guarantee for healthcare: intelligence that performs like the frontier, protects information like your own chart room, and stays accountable to the clinicians who still make the final call.",
+      type: "quote",
+      id: "doe-labs-security-quote",
+      lead: "This is the standard Doe intends to guarantee for healthcare",
+      continuation:
+        "Intelligence that performs like the frontier, protects information like **your own chart room**, and stays accountable to the clinicians who still make the final call.",
     },
     {
       type: "shader",

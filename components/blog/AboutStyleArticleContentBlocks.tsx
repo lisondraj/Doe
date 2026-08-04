@@ -6,6 +6,8 @@ import type { AboutStyleArticleContentBlock } from "@/lib/blog/about-style-artic
 import {
   ABOUT_STYLE_SHADER_CAPTION_TW,
   BROADER_DOE_VISION_BODY_TW,
+  BROADER_DOE_VISION_PROPOSAL_QUOTE_TW,
+  BROADER_DOE_VISION_PROPOSAL_QUOTE_WRAP,
   BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_GOLD_TW,
   BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_TW,
 } from "@/lib/blog/broader-doe-vision-layout-styles";
@@ -14,6 +16,19 @@ import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles"
 type AboutStyleArticleContentBlocksProps = {
   blocks: readonly AboutStyleArticleContentBlock[];
 };
+
+/** Splits `**bold**` markers out of quote copy into bold spans. */
+function renderBoldSegments(text: string) {
+  return text.split(/\*\*(.+?)\*\*/g).map((segment, index) =>
+    index % 2 === 1 ? (
+      <strong key={index} className="font-semibold">
+        {segment}
+      </strong>
+    ) : (
+      segment
+    ),
+  );
+}
 
 /** Longform blocks — paragraphs, section subheadings, shader figures with small captions. */
 export function AboutStyleArticleContentBlocks({ blocks }: AboutStyleArticleContentBlocksProps) {
@@ -36,6 +51,20 @@ export function AboutStyleArticleContentBlocks({ blocks }: AboutStyleArticleCont
               >
                 {block.text}
               </figcaption>
+            </figure>
+          );
+        }
+
+        if (block.type === "quote") {
+          const trimmedLead = block.lead.endsWith(".") ? block.lead.slice(0, -1) : block.lead;
+          return (
+            <figure key={block.id} className={BROADER_DOE_VISION_PROPOSAL_QUOTE_WRAP}>
+              <blockquote className={BROADER_DOE_VISION_PROPOSAL_QUOTE_TW}>
+                <span className="block">&ldquo;{renderBoldSegments(trimmedLead)}.</span>
+                <span className="block mt-3 iphone-page:mt-3.5">
+                  {renderBoldSegments(block.continuation)}&rdquo;
+                </span>
+              </blockquote>
             </figure>
           );
         }
