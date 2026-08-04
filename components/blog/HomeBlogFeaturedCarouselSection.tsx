@@ -12,7 +12,6 @@ export function HomeBlogFeaturedCarouselSection() {
           <BlogFeaturedCarousel oldestFirst homeFeatured />
         </BlogArticleFooterCarouselBand>
       </div>
-      <div className="home-blog-featured-carousel__hairline" aria-hidden />
     </section>
   );
 }

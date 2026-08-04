@@ -1,3 +1,4 @@
+import { HomeBlogFeaturedCarouselSection } from "@/components/blog/HomeBlogFeaturedCarouselSection";
 import { DoeHealthActiveAgentsBand } from "@/components/doehealth/DoeHealthActiveAgentsBand";
 import { DoeHealthAgentsAnywhereBand } from "@/components/doehealth/DoeHealthAgentsAnywhereBand";
 import { DoeHealthBlankViewportBand } from "@/components/doehealth/DoeHealthBlankViewportBand";
@@ -9,10 +10,11 @@ import { DoeHealthPatientChartBand } from "@/components/doehealth/DoeHealthPatie
 import { DoeHealthRoutedCallsRightBand } from "@/components/doehealth/DoeHealthRoutedCallsRightBand";
 import "@/lib/doehealth/doehealth-initiatives.css";
 
-/** Intro + routed calls + day summary + right bleed + active agents + left-2 + patient chart + agents anywhere (right) + intro video. */
+/** Blog carousel + intro + routed calls + day summary + right bleed + active agents + left-2 + patient chart + agents anywhere (right) + intro video. */
 export function DoeHealthBrownBandStack() {
   return (
     <div className="doehealth-brown-band-stack">
+      <HomeBlogFeaturedCarouselSection />
       <DoeHealthBlankViewportBand />
       <DoeHealthRoutedCallsBand />
       <DoeHealthDaySummaryBand />
