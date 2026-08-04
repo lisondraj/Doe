@@ -1,3 +1,4 @@
+import { HomeBlogFeaturedCarouselSection } from "@/components/blog/HomeBlogFeaturedCarouselSection";
 import { DoeHealthBrownBandStack } from "@/components/doehealth/DoeHealthBrownBandStack";
 import { DoeHealthHomeTopBanner } from "@/components/doehealth/DoeHealthTopBanner";
 import { DoePhoneRouter } from "@/components/doephone/DoePhoneRouter";
@@ -16,7 +17,12 @@ export function DoeHealthHome() {
       <DoePhoneRouter
         TopBanner={DoeHealthHomeTopBanner}
         heroHeadline={DOEHEALTH_HERO_HEADLINE}
-        afterHero={<DoeHealthBrownBandStack />}
+        afterHero={
+          <>
+            <HomeBlogFeaturedCarouselSection />
+            <DoeHealthBrownBandStack />
+          </>
+        }
         hideSectionsBelowIntro={DOEHEALTH_HIDE_SECTIONS_BELOW_INTRO}
         featureSlidesPhone={DOEHEALTH_HOME_FEATURE_SLIDES}
         disableCarouselInteractions={DOEHEALTH_DISABLE_CAROUSEL_INTERACTIONS}

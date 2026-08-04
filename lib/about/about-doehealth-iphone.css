@@ -1534,6 +1534,26 @@ html[data-home-page] .home-blog-featured-carousel {
   overflow-x: clip;
 }
 
+html[data-home-page] .home-blog-featured-carousel--below-hero {
+  --doehealth-brown-top: #271f17;
+  background-color: var(--doehealth-brown-top);
+  background-image: radial-gradient(
+    ellipse 130% 55% at 50% -8%,
+    rgba(245, 230, 208, 0.11) 0%,
+    transparent 58%
+  );
+  padding-top: clamp(2rem, 4vw, 3.25rem);
+}
+
+html[data-home-page] .home-blog-featured-carousel--below-hero .blog-article-footer-carousel-band {
+  padding-bottom: 0;
+}
+
+html[data-home-page] .home-blog-featured-carousel--below-hero .blog-article-carousel-divider:last-child {
+  padding-top: clamp(1.75rem, 2.5vw, 2.5rem);
+  padding-bottom: clamp(2rem, 3vw, 2.75rem);
+}
+
 html[data-home-page][data-layout="desktop"] .home-blog-featured-carousel__shell {
   box-sizing: border-box;
   width: 55.556%;
