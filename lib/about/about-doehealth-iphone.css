@@ -980,14 +980,14 @@ html[data-about-page] .about-style-article-toc__children {
   --about-toc-sub-text-inset: calc(var(--about-toc-sub-rail-pad) + 1px);
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: stretch;
   margin-top: 0.35rem;
   margin-left: clamp(1.15rem, 0.92rem + 1.15vmin, 1.9rem);
   max-width: calc(100% - 0.25rem);
 }
 
 html[data-about-page] .about-style-article-toc__sublist-rail {
-  width: fit-content;
+  width: 100%;
   max-width: 100%;
   padding-left: var(--about-toc-sub-rail-pad);
   border-left: 1px solid rgba(232, 192, 142, 0.42);
@@ -997,18 +997,32 @@ html[data-about-page] .about-style-article-toc__sublist {
   margin: 0;
   padding: 0;
   list-style: none;
+  width: 100%;
+}
+
+html[data-about-page] .about-style-article-toc__sublist > li {
+  width: 100%;
 }
 
 html[data-about-page] .about-style-article-toc__subitem-text {
   min-width: 0;
-  flex: 0 1 auto;
+  flex: 1 1 auto;
   font-size: clamp(0.88rem, 0.8rem + 0.32vmin, 0.98rem);
   line-height: 1.35;
   letter-spacing: -0.008em;
 }
 
+html[data-about-page] .about-style-article-toc__subitem-chevron {
+  flex: 0 0 12px;
+  width: 12px;
+  align-self: flex-start;
+  margin-top: 0.2em;
+}
+
 html[data-about-page] .about-style-article-toc__sublist-rail a {
-  width: fit-content;
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
   max-width: 100%;
   gap: clamp(0.28rem, 0.22rem + 0.22vmin, 0.38rem);
 }
@@ -1049,13 +1063,19 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-t
   margin: 0;
   padding: 0;
   list-style: none;
+  width: 100%;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-toc__sublist > li,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-toc__sublist > li {
+  width: 100%;
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-toc__sublink,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-toc__sublink {
   display: flex;
   align-items: flex-start;
-  width: fit-content;
+  width: 100%;
   max-width: 100%;
   gap: clamp(0.28rem, 0.22rem + 0.22vmin, 0.38rem);
   padding: 0.38rem 0;

@@ -28,7 +28,7 @@ import {
   ABOUT_STYLE_ARTICLE_TOC_TEXT_TW,
 } from "@/lib/blog/about-style-article-toc-layout-styles";
 
-function ChevronIcon() {
+function ChevronIcon({ className }: { className?: string }) {
   return (
     <svg
       width="12"
@@ -36,7 +36,7 @@ function ChevronIcon() {
       viewBox="0 0 12 12"
       fill="none"
       aria-hidden
-      className="shrink-0 text-[rgba(198,168,132,0.55)] transition-colors duration-200 group-active:text-[rgba(232,192,142,0.82)] group-hover:text-[rgba(232,192,142,0.82)]"
+      className={`shrink-0 text-[rgba(198,168,132,0.55)] transition-colors duration-200 group-active:text-[rgba(232,192,142,0.82)] group-hover:text-[rgba(232,192,142,0.82)]${className ? ` ${className}` : ""}`}
     >
       <path
         d="M4.25 2.5 7.75 6l-3.5 3.5"
@@ -201,7 +201,7 @@ function TocSublist({ items, variant, isDesktop, onItemClick }: TocSublistProps)
         <li key={item.id}>
           <a href={`#${item.id}`} className={sublinkClass} onClick={onItemClick}>
             <span className="about-style-article-toc__subitem-text">{item.label}</span>
-            {!isDesktop ? <ChevronIcon /> : null}
+            {!isDesktop ? <ChevronIcon className="about-style-article-toc__subitem-chevron" /> : null}
           </a>
         </li>
       ))}
