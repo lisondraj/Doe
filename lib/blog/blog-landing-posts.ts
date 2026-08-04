@@ -15,6 +15,14 @@ import {
   INTRODUCING_PULSE_ARTICLE,
   INTRODUCING_PULSE_PATH,
 } from "@/lib/blog/introducing-pulse-article";
+import {
+  PULSE_AMBIENT_ARTICLE,
+  PULSE_AMBIENT_PATH,
+} from "@/lib/blog/pulse-ambient-article";
+import {
+  PULSE_CALL_HISTORY_ARTICLE,
+  PULSE_CALL_HISTORY_PATH,
+} from "@/lib/blog/pulse-call-history-article";
 import type { WorkflowCarouselDesignBackdrop } from "@/lib/workflow-carousel-design-backdrops";
 
 export type BlogLandingPost = {
@@ -28,8 +36,28 @@ export type BlogLandingPost = {
   heroBackdrop: WorkflowCarouselDesignBackdrop;
 };
 
-/** Featured posts on /blog — Pulse, Fabric, and Broader Doe Vision. */
+/** Featured posts on /blog — Pulse sub-features, flagship launches, and Broader Doe Vision. */
 export const BLOG_LANDING_POSTS: readonly BlogLandingPost[] = [
+  {
+    slug: PULSE_CALL_HISTORY_ARTICLE.slug,
+    path: PULSE_CALL_HISTORY_PATH,
+    title: PULSE_CALL_HISTORY_ARTICLE.title,
+    subheading: PULSE_CALL_HISTORY_ARTICLE.subheading,
+    excerpt: PULSE_CALL_HISTORY_ARTICLE.excerpt,
+    byline: PULSE_CALL_HISTORY_ARTICLE.byline,
+    date: PULSE_CALL_HISTORY_ARTICLE.date,
+    heroBackdrop: PULSE_CALL_HISTORY_ARTICLE.heroBackdrop,
+  },
+  {
+    slug: PULSE_AMBIENT_ARTICLE.slug,
+    path: PULSE_AMBIENT_PATH,
+    title: PULSE_AMBIENT_ARTICLE.title,
+    subheading: PULSE_AMBIENT_ARTICLE.subheading,
+    excerpt: PULSE_AMBIENT_ARTICLE.excerpt,
+    byline: PULSE_AMBIENT_ARTICLE.byline,
+    date: PULSE_AMBIENT_ARTICLE.date,
+    heroBackdrop: PULSE_AMBIENT_ARTICLE.heroBackdrop,
+  },
   {
     slug: INTRODUCING_PULSE_ARTICLE.slug,
     path: INTRODUCING_PULSE_PATH,
