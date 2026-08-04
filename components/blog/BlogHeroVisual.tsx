@@ -15,12 +15,14 @@ import {
   doeAboutHeroDuskShaderSurface,
   doeHomeHeroDuskShaderSurface,
   doeHomeHeroShaderSurface,
+  doeLabsGreyHeroShaderSurface,
 } from "@/lib/proto/proto-shader-backdrop-colors";
 import { BLOG_FEATURE_BOX_TW, BLOG_TITLE_VISUAL_GAP } from "@/lib/blog/blog-layout-styles";
 
 const HOME_HERO_SHADER = doeHomeHeroShaderSurface();
 const HOME_HERO_DUSK_SHADER = doeHomeHeroDuskShaderSurface();
 const ABOUT_HERO_DUSK_SHADER = doeAboutHeroDuskShaderSurface();
+const LABS_GREY_HERO_SHADER = doeLabsGreyHeroShaderSurface();
 
 export function BlogHeroVisual({
   backdrop,
@@ -31,6 +33,7 @@ export function BlogHeroVisual({
   useHomeHeroShader = false,
   useHomeHeroDuskShader = false,
   useAboutHeroDuskShader = false,
+  useLabsGreyShader = false,
   previewShaderVariant,
   carouselShaderVariant,
   staticShader = false,
@@ -47,6 +50,8 @@ export function BlogHeroVisual({
   useHomeHeroDuskShader?: boolean;
   /** /about + about-style blog — dedicated about-hero dusk shader preset. */
   useAboutHeroDuskShader?: boolean;
+  /** Doe Labs longform — muted grey hero shader preset. */
+  useLabsGreyShader?: boolean;
   /** /blog list previews — per-post static shader tile. */
   previewShaderVariant?: AboutStyleFeatureShaderVariant;
   /** Related carousel — frozen flow preset (same appearance, no animation). */
@@ -61,20 +66,28 @@ export function BlogHeroVisual({
     ? aboutStyleFeatureShaderSurface(previewShaderVariant)
     : null;
   const activePreviewShader = carouselShader ?? previewShader;
-  const heroShader = useAboutHeroDuskShader
-    ? ABOUT_HERO_DUSK_SHADER
-    : useHomeHeroDuskShader
-      ? HOME_HERO_DUSK_SHADER
-      : HOME_HERO_SHADER;
+  const heroShader = useLabsGreyShader
+    ? LABS_GREY_HERO_SHADER
+    : useAboutHeroDuskShader
+      ? ABOUT_HERO_DUSK_SHADER
+      : useHomeHeroDuskShader
+        ? HOME_HERO_DUSK_SHADER
+        : HOME_HERO_SHADER;
   const heroBack = activePreviewShader
     ? activePreviewShader.colorBack
-    : useAboutHeroDuskShader || useHomeHeroDuskShader
-      ? DOE_HOME_HERO_DUSK_PALETTE.back
-      : useHomeHeroShader
-        ? DOE_HOME_ORANGE_PALETTE.back
-        : undefined;
+    : useLabsGreyShader
+      ? LABS_GREY_HERO_SHADER.colorBack
+      : useAboutHeroDuskShader || useHomeHeroDuskShader
+        ? DOE_HOME_HERO_DUSK_PALETTE.back
+        : useHomeHeroShader
+          ? DOE_HOME_ORANGE_PALETTE.back
+          : undefined;
   const usesHeroShader =
-    activePreviewShader !== null || useHomeHeroShader || useHomeHeroDuskShader || useAboutHeroDuskShader;
+    activePreviewShader !== null ||
+    useHomeHeroShader ||
+    useHomeHeroDuskShader ||
+    useAboutHeroDuskShader ||
+    useLabsGreyShader;
 
   return (
     <div

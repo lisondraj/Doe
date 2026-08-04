@@ -75,7 +75,7 @@ export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageC
             variant="hero"
             boxClassName={ABOUT_PAGE_HERO_BOX_TW}
             gapClassName=""
-            useAboutHeroDuskShader
+            useLabsGreyShader
           />
         </div>
 
@@ -91,7 +91,7 @@ export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageC
 
         {article.contentBlocks ? (
           <div className={`${ABOUT_MOBILE_SECTION_GAP} mt-10 iphone-page:mt-12`}>
-            <AboutStyleArticleContentBlocks blocks={article.contentBlocks} />
+            <AboutStyleArticleContentBlocks blocks={article.contentBlocks} labsGreyShaders />
           </div>
         ) : null}
 

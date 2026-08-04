@@ -913,7 +913,6 @@ html[data-about-page][data-layout="desktop"] .about-desktop-main .about-style-bu
   font-size: clamp(1.14rem, 0.96rem + 0.75vmin, 1.34rem) !important;
   line-height: 1.48 !important;
   letter-spacing: -0.01em !important;
-  color: rgba(242, 232, 218, 0.92) !important;
   padding-left: 1.35em !important;
 }
 
@@ -947,6 +946,14 @@ html[data-about-page][data-layout="desktop"]
 html[data-about-page][data-layout="desktop"]
   .about-style-product-intro-page
   .about-style-feature-card__shader {
+  aspect-ratio: 2 / 1 !important;
+  height: auto !important;
+}
+
+/* Intelligence for every clinic desktop — halve interleaved shader tile height. */
+html[data-about-page][data-layout="desktop"]
+  .about-style-labs-proposal-page
+  .about-style-shader-figure__shader {
   aspect-ratio: 2 / 1 !important;
   height: auto !important;
 }
@@ -1254,6 +1261,7 @@ html[data-home-page] .blog-landing-card-visual__shader .proto-shader-surface {
 
 /* Product intro feature tiles + hero band — WebGL surface fills the layout box on desktop. */
 html[data-about-page] .about-style-feature-card__shader .proto-shader-surface,
+html[data-about-page] .about-style-shader-figure__shader .proto-shader-surface,
 html[data-about-page][data-layout="desktop"] .about-page-content .about-hero-visual .proto-shader-surface {
   height: 100% !important;
   min-height: 0 !important;

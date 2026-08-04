@@ -1,7 +1,7 @@
 "use client";
 
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
-import { aboutStyleFeatureShaderSurface } from "@/lib/blog/about-style-feature-card";
+import { aboutStyleFeatureShaderSurface, aboutStyleLabsGreyShaderSurface } from "@/lib/blog/about-style-feature-card";
 import type { AboutStyleArticleContentBlock } from "@/lib/blog/about-style-article-content-blocks";
 import {
   ABOUT_STYLE_BULLET_ITEM_TW,
@@ -20,6 +20,7 @@ import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles"
 
 type AboutStyleArticleContentBlocksProps = {
   blocks: readonly AboutStyleArticleContentBlock[];
+  labsGreyShaders?: boolean;
 };
 
 /** Splits `**bold**` markers out of quote copy into bold spans. */
@@ -36,7 +37,10 @@ function renderBoldSegments(text: string) {
 }
 
 /** Longform blocks — paragraphs, gold paragraphs, glossary, bullets, pull quotes, subheadings, shader figures. */
-export function AboutStyleArticleContentBlocks({ blocks }: AboutStyleArticleContentBlocksProps) {
+export function AboutStyleArticleContentBlocks({
+  blocks,
+  labsGreyShaders = false,
+}: AboutStyleArticleContentBlocksProps) {
   return (
     <div className="about-style-article-blocks space-y-8 iphone-page:space-y-9">
       {blocks.map((block) => {
@@ -111,7 +115,10 @@ export function AboutStyleArticleContentBlocks({ blocks }: AboutStyleArticleCont
           );
         }
 
-        const shader = aboutStyleFeatureShaderSurface(block.shaderVariant);
+        const shaderSurface = labsGreyShaders
+          ? aboutStyleLabsGreyShaderSurface(block.shaderVariant)
+          : aboutStyleFeatureShaderSurface(block.shaderVariant);
+        const shader = shaderSurface;
 
         return (
           <figure key={block.id} className="about-style-shader-figure m-0">

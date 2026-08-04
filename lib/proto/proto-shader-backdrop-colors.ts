@@ -73,6 +73,28 @@ export function doeAboutHeroDuskShaderSurface(): ProtoGrainGradientSurface {
   };
 }
 
+/** Doe Labs longform — muted grey shader tiles on brown article pages. */
+export const DOE_LABS_GREY_PALETTE = {
+  back: "#2A2E32",
+  steel: "#5C6670",
+  fog: "#8E98A4",
+  silver: "#B8C0C8",
+} as const;
+
+export function doeLabsGreyShaderSurface(
+  variant: ProtoGrainGradientSurface["variant"],
+): ProtoGrainGradientSurface {
+  return {
+    variant,
+    colors: [DOE_LABS_GREY_PALETTE.steel, DOE_LABS_GREY_PALETTE.fog, DOE_LABS_GREY_PALETTE.silver],
+    colorBack: DOE_LABS_GREY_PALETTE.back,
+  };
+}
+
+export function doeLabsGreyHeroShaderSurface(): ProtoGrainGradientSurface {
+  return doeLabsGreyShaderSurface("about-hero");
+}
+
 /** iPhone home dusk — footer shader (warm pool on umber). */
 export function doeHomeDuskFooterShaderSurface(): ProtoGrainGradientSurface {
   return {
