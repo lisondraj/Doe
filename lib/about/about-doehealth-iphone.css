@@ -1542,16 +1542,8 @@ html[data-home-page] .home-blog-featured-carousel--below-hero {
     rgba(245, 230, 208, 0.11) 0%,
     transparent 58%
   );
-  padding-top: clamp(2rem, 4vw, 3.25rem);
-}
-
-html[data-home-page] .home-blog-featured-carousel--below-hero .blog-article-footer-carousel-band {
-  padding-bottom: 0;
-}
-
-html[data-home-page] .home-blog-featured-carousel--below-hero .blog-article-carousel-divider:last-child {
-  padding-top: clamp(1.75rem, 2.5vw, 2.5rem);
-  padding-bottom: clamp(2rem, 3vw, 2.75rem);
+  padding-top: clamp(3.25rem, 6.5vw, 5rem);
+  padding-bottom: clamp(3.25rem, 6.5vw, 5rem);
 }
 
 html[data-home-page][data-layout="desktop"] .home-blog-featured-carousel__shell {
@@ -1568,14 +1560,6 @@ html[data-home-page]:not([data-layout="desktop"]) .home-blog-featured-carousel__
 
 html[data-home-page] .home-blog-featured-carousel__shell:has(.blog-article-related-carousel) {
   overflow-x: visible !important;
-}
-
-html[data-home-page] .blog-article-footer-carousel-band {
-  padding-bottom: max(3.5rem, calc(env(safe-area-inset-bottom, 0px) + 2.75rem));
-}
-
-html[data-home-page][data-layout="desktop"] .blog-article-footer-carousel-band {
-  padding-bottom: clamp(2rem, 3.5vw, 3.5rem);
 }
 
 /* /waitlist, /hiring, /pitchdeck — blank center stage between nav and footer. */
