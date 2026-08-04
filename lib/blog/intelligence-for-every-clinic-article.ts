@@ -37,7 +37,11 @@ export const INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE = {
     },
     {
       type: "paragraph",
-      text: "Before going further, a quick note on the handful of terms this article leans on. Reinforcement learning is a training method that rewards a system for good outcomes and corrects it for bad ones, the same way a new team member gets sharper from feedback on real cases rather than a written test. Open-weight models are AI models you can actually install and run on servers you control, instead of a closed system you can only reach through someone else's website. Frontier models are today's largest, most capable general-purpose AI systems, usually reached only through an outside company's service. Protected health information, often shortened to PHI, is any patient detail covered by HIPAA, from a name and birth date to a diagnosis or clinical note. And Blended Intelligence is our name for using an open-weight model and a frontier model together, sending each piece of a task to whichever one is right for the job.",
+      text: "Before we go further, we think it helps to first introduce a few of the terms this article leans on, in plain language rather than jargon.",
+    },
+    {
+      type: "paragraph",
+      text: "Reinforcement learning is a training method that rewards a system for good outcomes and corrects it for bad ones, the same way a new team member gets sharper from feedback on real cases rather than a written test. Open-weight models are AI models you can actually install and run on servers you control, instead of a closed system you can only reach through someone else's website. Frontier models are today's largest, most capable general-purpose AI systems, usually reached only through an outside company's service. Protected health information, often shortened to PHI, is any patient detail covered by HIPAA, from a name and birth date to a diagnosis or clinical note. And Blended Intelligence is our name for using an open-weight model and a frontier model together, sending each piece of a task to whichever one is right for the job.",
     },
     {
       type: "subheading",
