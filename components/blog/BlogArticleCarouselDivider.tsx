@@ -1,6 +1,6 @@
 import { BLOG_LANDING_LIST_DIVIDER_LINE } from "@/lib/blog/blog-landing-layout-styles";
 
-/** Rule between the related-post carousel and the email invite panel. */
+/** Rule between the email invite panel and the related-post carousel. */
 export function BlogArticleCarouselDivider() {
   return (
     <div className="blog-article-carousel-divider" aria-hidden>

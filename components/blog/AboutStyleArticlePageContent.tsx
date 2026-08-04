@@ -98,11 +98,11 @@ export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageC
               {article.finalParagraph}
             </p>
 
-            <BlogArticleRelatedCarousel currentSlug={article.slug} />
+            <AboutStyleArticleEmailInvite headline={article.emailInviteHeadline} label={article.emailInviteLabel} />
 
             <BlogArticleCarouselDivider />
 
-            <AboutStyleArticleEmailInvite headline={article.emailInviteHeadline} label={article.emailInviteLabel} />
+            <BlogArticleRelatedCarousel currentSlug={article.slug} />
           </div>
         </div>
       </div>
@@ -199,11 +199,11 @@ export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageC
 
           <p className={`${BROADER_DOE_VISION_BODY_TW} font-semibold`}>{article.finalParagraph}</p>
 
-          <BlogArticleRelatedCarousel currentSlug={article.slug} />
+          <AboutStyleArticleEmailInvite headline={article.emailInviteHeadline} label={article.emailInviteLabel} />
 
           <BlogArticleCarouselDivider />
 
-          <AboutStyleArticleEmailInvite headline={article.emailInviteHeadline} label={article.emailInviteLabel} />
+          <BlogArticleRelatedCarousel currentSlug={article.slug} />
         </div>
       </div>
     </div>

@@ -132,11 +132,11 @@ export function BroaderDoeVisionPageContent() {
 
           <p className={`${BROADER_DOE_VISION_BODY_TW} font-semibold`}>{BROADER_DOE_VISION_FINAL_PARAGRAPH}</p>
 
-          <BlogArticleRelatedCarousel currentSlug="the-broader-doe-vision" />
+          <BroaderDoeVisionEmailInvite />
 
           <BlogArticleCarouselDivider />
 
-          <BroaderDoeVisionEmailInvite />
+          <BlogArticleRelatedCarousel currentSlug="the-broader-doe-vision" />
         </div>
       </div>
     </div>
