@@ -435,22 +435,26 @@ html[data-about-page][data-layout="desktop"] .about-desktop-main figcaption.broa
   -webkit-text-fill-color: transparent !important;
 }
 
-html[data-about-page] .broader-doe-hero-description {
+html[data-about-page] .broader-doe-hero-description,
+html[data-home-page] .blog-article-footer-carousel-band .broader-doe-hero-description {
   font-size: clamp(1.55rem, 1.35vw, 1.82rem) !important;
   line-height: 1.32 !important;
 }
 
-html[data-about-page] .broader-doe-hero-byline {
+html[data-about-page] .broader-doe-hero-byline,
+html[data-home-page] .blog-article-footer-carousel-band .broader-doe-hero-byline {
   font-size: clamp(1.12rem, 1vw, 1.32rem) !important;
   line-height: 1.35 !important;
 }
 
 /* Broader Doe Vision iPhone — slightly larger subheading + byline than desktop. */
-html[data-about-page]:has(.doephone-mobile-root--doehealth) main p.broader-doe-hero-description {
+html[data-about-page]:has(.doephone-mobile-root--doehealth) main p.broader-doe-hero-description,
+html[data-home-page]:not([data-layout="desktop"]) .blog-article-footer-carousel-band p.broader-doe-hero-description {
   font-size: clamp(1.48rem, 1.22rem + 0.72vmin, 1.58rem) !important;
 }
 
-html[data-about-page]:has(.doephone-mobile-root--doehealth) main p.broader-doe-hero-byline {
+html[data-about-page]:has(.doephone-mobile-root--doehealth) main p.broader-doe-hero-byline,
+html[data-home-page]:not([data-layout="desktop"]) .blog-article-footer-carousel-band p.broader-doe-hero-byline {
   font-size: clamp(1.22rem, 1.05rem + 0.7vmin, 1.44rem) !important;
 }
 
@@ -829,7 +833,8 @@ html[data-about-page] .broader-doe-hero-headlines .about-style-product-intro-bod
 }
 
 html[data-about-page] .broader-doe-hero-title,
-html[data-about-page] .broader-doe-hero-description {
+html[data-about-page] .broader-doe-hero-description,
+html[data-home-page] .blog-article-footer-carousel-band .broader-doe-hero-description {
   background: var(
     --doehealth-gold-text-gradient,
     linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%)
@@ -840,7 +845,8 @@ html[data-about-page] .broader-doe-hero-description {
   -webkit-text-fill-color: transparent !important;
 }
 
-html[data-about-page] .broader-doe-hero-byline {
+html[data-about-page] .broader-doe-hero-byline,
+html[data-home-page] .blog-article-footer-carousel-band .broader-doe-hero-byline {
   color: #e8c08e !important;
 }
 
@@ -1249,6 +1255,14 @@ html[data-home-page]:not([data-layout="desktop"]) .blog-article-footer-carousel-
   line-height: 1.42 !important;
 }
 
+html[data-about-page] .blog-landing-card--pulse-ambient .blog-landing-card-excerpt,
+html[data-home-page] .blog-landing-card--pulse-ambient .blog-landing-card-excerpt {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
 /* Article footer — horizontal related-post carousel (/blog card design). */
 html[data-about-page] .about-page-content .broader-doe-email-invite {
   margin-top: clamp(2rem, 2.6vw, 2.65rem);
@@ -1376,39 +1390,24 @@ html[data-home-page] .home-blog-featured-carousel {
   overflow-x: clip;
 }
 
+html[data-home-page][data-layout="desktop"] .home-blog-featured-carousel__shell {
+  box-sizing: border-box;
+  width: 55.556%;
+  max-width: 55.556%;
+  margin-inline: auto;
+}
+
+html[data-home-page]:not([data-layout="desktop"]) .home-blog-featured-carousel__shell {
+  box-sizing: border-box;
+  padding-inline: max(1.65rem, calc(env(safe-area-inset-left, 0px) + 3.8vmin));
+}
+
 html[data-home-page] .blog-article-footer-carousel-band {
   padding-bottom: max(3.5rem, calc(env(safe-area-inset-bottom, 0px) + 2.75rem));
 }
 
 html[data-home-page][data-layout="desktop"] .blog-article-footer-carousel-band {
   padding-bottom: clamp(2rem, 3.5vw, 3.5rem);
-}
-
-html[data-home-page] .blog-article-footer-carousel-band .broader-doe-hero-description {
-  font-size: clamp(1.48rem, 1.22rem + 0.72vmin, 1.58rem) !important;
-  line-height: 1.32 !important;
-  background: var(
-    --doehealth-gold-text-gradient,
-    linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%)
-  );
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent !important;
-  -webkit-text-fill-color: transparent !important;
-}
-
-html[data-home-page] .blog-article-footer-carousel-band .broader-doe-hero-byline {
-  font-size: clamp(1.22rem, 1.05rem + 0.7vmin, 1.44rem) !important;
-  line-height: 1.35 !important;
-  color: #e8c08e !important;
-}
-
-html[data-home-page][data-layout="desktop"] .blog-article-footer-carousel-band .broader-doe-hero-description {
-  font-size: clamp(1.55rem, 1.35vw, 1.82rem) !important;
-}
-
-html[data-home-page][data-layout="desktop"] .blog-article-footer-carousel-band .broader-doe-hero-byline {
-  font-size: clamp(1.12rem, 1vw, 1.32rem) !important;
 }
 
 /* /waitlist, /hiring, /pitchdeck — blank center stage between nav and footer. */

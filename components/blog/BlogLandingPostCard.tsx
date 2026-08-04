@@ -17,6 +17,7 @@ import {
 } from "@/lib/blog/blog-landing-layout-styles";
 import type { BlogLandingPost } from "@/lib/blog/blog-landing-posts";
 import { BROADER_DOE_VISION_SLUG } from "@/lib/blog/broader-doe-vision-article";
+import { PULSE_AMBIENT_SLUG } from "@/lib/blog/pulse-ambient-article";
 
 function BlogLandingReadMoreArrow() {
   return (
@@ -59,7 +60,7 @@ export function BlogLandingPostCard({
 
   const card = (
     <article
-      className={`${BLOG_LANDING_CARD_STACK}${post.slug === BROADER_DOE_VISION_SLUG ? " blog-landing-card--broader-doe-vision" : ""}`}
+      className={`${BLOG_LANDING_CARD_STACK}${post.slug === BROADER_DOE_VISION_SLUG ? " blog-landing-card--broader-doe-vision" : ""}${post.slug === PULSE_AMBIENT_SLUG ? " blog-landing-card--pulse-ambient" : ""}`}
     >
       <div
         className={`${BLOG_LANDING_CARD_VISUAL_TW} blog-landing-card-visual__shader`}

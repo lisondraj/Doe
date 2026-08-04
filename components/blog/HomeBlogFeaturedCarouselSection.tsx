@@ -7,9 +7,11 @@ import "@/lib/about/about-doehealth-iphone.css";
 export function HomeBlogFeaturedCarouselSection() {
   return (
     <section className="home-blog-featured-carousel" aria-label="Blog">
-      <BlogArticleFooterCarouselBand>
-        <BlogFeaturedCarousel />
-      </BlogArticleFooterCarouselBand>
+      <div className="home-blog-featured-carousel__shell about-page-content">
+        <BlogArticleFooterCarouselBand>
+          <BlogFeaturedCarousel />
+        </BlogArticleFooterCarouselBand>
+      </div>
     </section>
   );
 }

@@ -3676,10 +3676,6 @@ html[data-home-page][data-layout="desktop"]
 html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-brown-band-stack
-  > .doehealth-intro-band--intro-video,
-html[data-home-page][data-layout="desktop"]
-  .doe-desktop-root--doehealth
-  .doehealth-brown-band-stack
   > .doehealth-intro-band:last-child {
   padding-bottom: calc(var(--desktop-nav-height) + var(--desktop-section-pad-y)) !important;
 }
@@ -3906,7 +3902,7 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="des
   display: block;
   width: 100%;
   max-width: 100%;
-  max-height: min(56vh, 32rem);
+  max-height: min(42vh, 24rem);
   aspect-ratio: 16 / 9;
   overflow: hidden;
   line-height: 0;
@@ -3934,7 +3930,7 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="des
 html[data-home-page]:has(.doephone-mobile-root--doehealth):not([data-layout="desktop"])
   .doehealth-intro-band--intro-video
   .doehealth-intro-video__player-wrap {
-  max-height: min(58vh, 34rem);
+  max-height: min(44vh, 26rem);
 }
 
 html[data-home-page][data-layout="desktop"]
@@ -3970,7 +3966,25 @@ html[data-home-page][data-layout="desktop"]
   .doe-desktop-root--doehealth
   .doehealth-intro-band--intro-video
   .doehealth-intro-video__player-wrap {
-  max-height: min(58vh, 36rem);
-  max-width: min(100%, 58rem);
+  max-height: min(46vh, 28rem);
+  max-width: min(100%, 52rem);
+}
+
+html[data-home-page][data-layout="desktop"]
+  .doe-desktop-root--doehealth
+  .doehealth-brown-band-stack
+  > .doehealth-intro-band--intro-video {
+  min-height: auto !important;
+  height: auto !important;
+  padding-top: clamp(2rem, 3vw, 3rem) !important;
+  padding-bottom: clamp(1.25rem, 2vw, 1.75rem) !important;
+}
+
+html[data-home-page]:not([data-layout="desktop"])
+  .doehealth-brown-band-stack
+  > .doehealth-intro-band--intro-video {
+  min-height: auto !important;
+  height: auto !important;
+  max-height: none !important;
 }
 
