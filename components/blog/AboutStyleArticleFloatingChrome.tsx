@@ -665,6 +665,9 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
           ["--proto-nav-frost-progress" as string]: 1,
           ["--about-audio-join-ms" as string]: `${AUDIO_JOIN_MS}ms`,
           ["--about-audio-leave-ms" as string]: `${AUDIO_LEAVE_MS}ms`,
+          ["--about-floating-chrome-open-duration" as string]: `${PANEL_REVEAL_MS}ms`,
+          ["--about-floating-chrome-close-duration" as string]: `${PANEL_COLLAPSE_MS}ms`,
+          ["--about-audio-join-settle-ms" as string]: `${AUDIO_JOIN_SETTLE_MS}ms`,
         }}
       >
         <div
