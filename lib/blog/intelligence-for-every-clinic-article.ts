@@ -3,10 +3,15 @@ import {
   BROADER_DOE_VISION_EMAIL_INVITE_HEADLINE,
   BROADER_DOE_VISION_EMAIL_INVITE_LABEL,
   BROADER_DOE_VISION_FINAL_PARAGRAPH,
-  BROADER_DOE_VISION_PROPOSAL_HIGHLIGHT_CONTINUATION,
-  BROADER_DOE_VISION_PROPOSAL_HIGHLIGHT_LEAD,
 } from "@/lib/blog/broader-doe-vision-article";
 import { DESIGN5_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
+
+/** Reiterates the Broader Doe Vision thesis in this article's own words, not a copy. */
+const INTELLIGENCE_FOR_EVERY_CLINIC_OPENING_LEDE =
+  "We think every provider, every clinic, and eventually every small workflow in healthcare will run on an intelligence stack it owns, not a general one rented from a single vendor.";
+
+const INTELLIGENCE_FOR_EVERY_CLINIC_OPENING_CONTINUATION =
+  "We expect that stack to be built on open-weight models, sharpened by frontier reasoning, and run entirely on private cloud compute the clinic controls.";
 
 export const INTELLIGENCE_FOR_EVERY_CLINIC_SLUG = "intelligence-for-every-clinic";
 
@@ -20,57 +25,55 @@ export const INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE = {
   excerpt:
     "A Doe Labs proposal for reinforcement learning, open-weight models on secure cloud compute, and Blended Intelligence: the stack we believe every clinic will run.",
   subheading: "What we're building towards.",
-  openingLede: BROADER_DOE_VISION_PROPOSAL_HIGHLIGHT_LEAD,
-  openingLedeContinuation: BROADER_DOE_VISION_PROPOSAL_HIGHLIGHT_CONTINUATION,
-  openingLedeContinuation2:
-    "That blend of clinic-owned intelligence is the thesis behind Doe. This article outlines the technological advances we are building toward in Doe Labs, and the security standard we intend to guarantee for healthcare.",
+  openingLede: INTELLIGENCE_FOR_EVERY_CLINIC_OPENING_LEDE,
+  openingLedeContinuation: INTELLIGENCE_FOR_EVERY_CLINIC_OPENING_CONTINUATION,
   byline: "By James Lisondra",
   date: "August 4, 2026",
   heroBackdrop: DESIGN5_BACKDROP,
   contentBlocks: [
     {
       type: "paragraph",
-      text: "I strongly believe that within the next few years, intelligence in medicine will undergo a rapid transformation, completely detached from today's landscape. When providers lead the design of their own intelligent tools, AI can redefine care without asking clinics to surrender how they practice.",
+      text: "Medicine is about to go through a shift most clinics have not felt yet. It will not arrive as one giant model that tries to do everything. It will arrive as intelligence that clinicians and engineers build around how a specific practice actually runs, tuned to a specialty instead of asking the specialty to adapt to it.",
     },
     {
       type: "paragraph",
-      text: "Most tools on the market still follow one playbook: connect a generalist frontier model to sensitive patient data and hope the response is sufficient. Doe Labs is building toward the opposite. Every clinic should run an intelligence stack it owns, tuned to local nuance, hosted on infrastructure it trusts, and improved by the work happening inside its walls.",
+      text: "Most software on the market still follows one script: send patient data to a large, general-purpose model and hope the answer holds up. Doe Labs is building toward something different. Every clinic should run an intelligence stack it owns, tuned to local nuance, hosted on infrastructure it trusts, and sharpened by the work happening inside its own walls every day.",
     },
     {
       type: "subheading",
-      text: "Reinforcement learning on real clinic workflows",
+      text: "Reinforcement learning, trained on real clinic work",
     },
     {
       type: "paragraph",
-      text: "Reinforcement learning is how an intelligence stack learns what good looks like inside a specific clinic. Instead of treating every task as a one-shot prompt, the model receives reward signals from outcomes your team already measures: was the prior auth approved, did the patient confirm, did the note pass review, did the call resolve without escalation.",
+      text: "Reinforcement learning is how an intelligence stack learns what good actually looks like inside your clinic. Instead of grading every task as a one-shot prompt, the model gets a reward signal from outcomes your team already tracks: did the prior authorization get approved, did the patient confirm the appointment, did the note pass review, did the call resolve without an escalation.",
     },
     {
       type: "paragraph",
-      text: "Those signals are noisy in healthcare, which is exactly why they must be collected on clinic-owned compute. Doe Labs is designing pipelines that turn daily workflow feedback into durable improvements without exporting raw chart content to a shared training pool.",
+      text: "Those signals are messy in healthcare, which is exactly why they need to stay on infrastructure the clinic controls. Doe Labs is building pipelines that turn ordinary daily feedback, the kind every front desk and care team already generates, into lasting improvements, without ever exporting raw chart data into a shared training pool.",
     },
     {
       type: "shader",
       id: "doe-labs-rl-workflow",
       shaderVariant: "validate",
-      caption: "Reward signals drawn from live workflow outcomes, not synthetic benchmarks.",
+      caption: "Reward signals pulled from real outcomes on the floor, not a synthetic benchmark.",
     },
     {
       type: "subheading",
-      text: "Open-weight models on secure cloud compute",
+      text: "Open-weight models on infrastructure you control",
     },
     {
       type: "paragraph",
-      text: "Open-weight models give clinics something frontier APIs cannot: inspectable weights, predictable behavior, and the ability to adapt a model to specialty vocabulary, payer rules, and local policy without waiting on a vendor roadmap.",
+      text: "Open-weight models give clinics something a closed frontier API cannot: weights you can inspect, behavior you can predict, and the freedom to adapt the model to specialty vocabulary, payer rules, and local policy without waiting on someone else's roadmap.",
     },
     {
       type: "paragraph",
-      text: "Hosting those models on secure cloud compute means the clinic keeps control of where patient information lives, who can access it, and how it moves between services. The model runs close to the chart, close to the agents, and close to the audit trail your compliance team expects.",
+      text: "Hosting those models on secure, clinic-controlled cloud compute means you keep the final say over where patient information lives, who can reach it, and how it moves between services. The model runs close to the chart, close to the agents doing the work, and close to the audit trail your compliance team already expects.",
     },
     {
       type: "shader",
       id: "doe-labs-open-weight",
       shaderVariant: "looking-ahead",
-      caption: "Open weights on private infrastructure, not a shared frontier black box.",
+      caption: "Open weights running on private infrastructure, never a shared black box.",
     },
     {
       type: "subheading",
@@ -78,43 +81,43 @@ export const INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE = {
     },
     {
       type: "paragraph",
-      text: "Blended Intelligence is Doe Labs' name for combining the best of both worlds. Frontier models handle complex reasoning when a task can leave the sensitive boundary: literature review, policy comparison, long-horizon planning, and synthesis across public guidance.",
+      text: "Blended Intelligence is our name for combining the strengths of both approaches instead of picking one. A frontier model takes on the reasoning heavy work that can safely leave the sensitive boundary: literature review, policy comparison, long horizon planning, and synthesis across public guidance.",
     },
     {
       type: "paragraph",
-      text: "Open-weight models handle what must stay inside the clinic: patient identifiers, visit transcripts, medication lists, billing context, and any inference that touches protected health information. The orchestration layer routes each request to the right model, merges the result, and records which path was taken.",
+      text: "An open-weight model handles everything that has to stay inside the clinic: patient identifiers, visit transcripts, medication lists, billing context, and any step that touches protected health information. An orchestration layer decides which model gets which piece of a task, merges the results, and records exactly which path was used.",
     },
     {
       type: "paragraph",
-      text: "The output is better than either model alone. Frontier depth where the task allows it. Local fidelity where privacy demands it. One answer to the clinician, one audit entry for compliance, one stack the clinic can actually own.",
+      text: "The result reads better than either model working alone. Frontier level depth where the task allows it, local fidelity where privacy demands it. One answer for the clinician, one audit trail for compliance, one stack the clinic can genuinely call its own.",
     },
     {
       type: "shader",
       id: "doe-labs-blended-intelligence",
       shaderVariant: "integrate",
-      caption: "Frontier reasoning and open-weight privacy composed into one clinic-owned answer.",
+      caption: "Frontier reasoning and open-weight privacy, merged into a single answer.",
     },
     {
       type: "subheading",
-      text: "The security standard we are building toward",
+      text: "The security standard we're building toward",
     },
     {
       type: "paragraph",
-      text: "Healthcare cannot treat security as a checkbox on a SOC 2 slide. Doe Labs is building toward a standard where sensitive patient information never leaves clinic-controlled compute for inference, where every model call is logged with provenance, and where blended routes are explicit enough for a compliance review without reverse engineering a black box.",
+      text: "Security in healthcare cannot be a line item on a compliance slide. Doe Labs is building toward a standard where sensitive patient information never has to leave clinic-controlled compute to get an answer, where every model call carries a provenance log, and where a blended route is clear enough for a compliance review without anyone reverse engineering a black box.",
     },
     {
       type: "paragraph",
-      text: "That means encrypted transit and at-rest storage by default, role-scoped access to weights and logs, and the ability to pause or roll back a model version without taking the clinic offline. It means agents, charts, and billing workflows share one security boundary instead of scattering trust across a dozen vendor APIs.",
+      text: "In practice that means encryption in transit and at rest by default, role-scoped access to both weights and logs, and the ability to pause or roll back a model version without taking the clinic offline. Agents, charts, and billing workflows share one security boundary instead of scattering trust across a dozen separate vendor APIs.",
     },
     {
       type: "paragraph",
-      text: "This is the level of security Doe wants to guarantee for healthcare: intelligence that feels as capable as the frontier, as private as the chart room, and as accountable as the professionals who still make the final call.",
+      text: "This is the standard of security Doe intends to guarantee for healthcare: intelligence that feels as capable as the frontier, as private as the chart room, and as accountable as the clinicians who still make the final call.",
     },
     {
       type: "shader",
       id: "doe-labs-security",
       shaderVariant: "ambient-band",
-      caption: "Clinic-controlled compute, explicit model routing, audit-ready by design.",
+      caption: "Clinic-controlled compute, explicit routing, audit-ready from day one.",
     },
   ],
   bodyParagraphs: [],

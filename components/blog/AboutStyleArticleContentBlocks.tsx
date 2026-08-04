@@ -4,9 +4,10 @@ import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import { aboutStyleFeatureShaderSurface } from "@/lib/blog/about-style-feature-card";
 import type { AboutStyleArticleContentBlock } from "@/lib/blog/about-style-article-content-blocks";
 import {
-  ABOUT_STYLE_ARTICLE_SUBHEADING_TW,
   ABOUT_STYLE_SHADER_CAPTION_TW,
   BROADER_DOE_VISION_BODY_TW,
+  BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_GOLD_TW,
+  BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_TW,
 } from "@/lib/blog/broader-doe-vision-layout-styles";
 import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
 
@@ -29,9 +30,13 @@ export function AboutStyleArticleContentBlocks({ blocks }: AboutStyleArticleCont
 
         if (block.type === "subheading") {
           return (
-            <h2 key={block.text} className={ABOUT_STYLE_ARTICLE_SUBHEADING_TW}>
-              {block.text}
-            </h2>
+            <figure key={block.text} className="m-0">
+              <figcaption
+                className={`${BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_TW} ${BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_GOLD_TW}`}
+              >
+                {block.text}
+              </figcaption>
+            </figure>
           );
         }
 

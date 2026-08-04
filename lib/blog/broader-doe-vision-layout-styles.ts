@@ -48,9 +48,6 @@ export const BROADER_DOE_VISION_BYLINE_TW = `broader-doe-hero-byline about-page-
 /** Broader Doe Vision article body — muted cream DM Sans at existing article scale. */
 export const BROADER_DOE_VISION_BODY_TW = `broader-doe-body text-[clamp(1.32rem,1.12rem+0.9vmin,1.58rem)] iphone-page:text-[clamp(1.55rem,1.28rem+1.22vmin,1.95rem)] font-normal leading-[1.48] tracking-[-0.01em] text-[rgba(242,232,218,0.92)] ${dmSans.className}`;
 
-/** Doe Labs longform — section subheadings between body paragraphs. */
-export const ABOUT_STYLE_ARTICLE_SUBHEADING_TW = `about-style-article-subheading m-0 font-medium leading-[1.22] tracking-[-0.02em] text-[#F2E8DA] text-[clamp(1.42rem,1.18rem+0.95vmin,1.72rem)] iphone-page:text-[clamp(1.55rem,1.28rem+1.05vmin,1.88rem)] ${dmSans.className}`;
-
 /** Small caption beneath interleaved shader figures — not a gold feature subheading. */
 export const ABOUT_STYLE_SHADER_CAPTION_TW = `about-style-shader-caption font-normal leading-[1.38] tracking-[-0.008em] text-[rgba(242,232,218,0.62)] text-[clamp(0.98rem,0.86rem+0.45vmin,1.12rem)] iphone-page:text-[clamp(1.02rem,0.9rem+0.48vmin,1.16rem)] ${dmSans.className}`;
 
