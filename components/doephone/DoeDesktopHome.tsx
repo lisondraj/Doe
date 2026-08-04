@@ -76,6 +76,7 @@ export function DoeDesktopHome({
           heroReadMoreLabel={heroHeadline?.readMoreLabel}
           heroReadMorePrefix={heroHeadline?.readMorePrefix}
           heroReadMoreLinks={heroHeadline?.readMoreLinks}
+          heroEntries={heroHeadline?.entries}
           disableHeroOrbInteractions={disableCarouselInteractions}
           heroOrbSchemes={isDoeHealthLanding ? DOEHEALTH_HERO_DIAL_ORBS : undefined}
         />

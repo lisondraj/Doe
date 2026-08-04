@@ -19,6 +19,7 @@ import {
   DOE_HOME_DUSK_OVERFLOW_SURFACE,
 } from "@/lib/home/doe-page-colors";
 import type { DoePhoneCommunicationSlide } from "@/lib/doephone/communication-carousel";
+import type { DoeHomeHeroHeadlineEntry } from "@/lib/doehealth/doehealth-hero-carousel";
 import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-viewport";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 import { useDesignersStaticNav } from "@/lib/designers/use-designers-static-nav";
@@ -53,6 +54,8 @@ export type DoeHomeHeroHeadline = {
   readMoreLabel?: string;
   readMorePrefix?: string;
   readMoreLinks?: readonly { label: string; href: string }[];
+  /** Rotating hero headline carousel — when present (2+ entries), cycles instead of the static copy above. */
+  entries?: readonly DoeHomeHeroHeadlineEntry[];
 };
 
 export function DoePhoneMobileView({
@@ -188,6 +191,7 @@ export function DoePhoneMobileView({
         heroReadMoreLabel={heroHeadline?.readMoreLabel}
         heroReadMorePrefix={heroHeadline?.readMorePrefix}
         heroReadMoreLinks={heroHeadline?.readMoreLinks}
+        heroEntries={heroHeadline?.entries}
         disableHeroOrbInteractions={disableCarouselInteractions}
         heroOrbSchemes={isDoeHealthLanding ? DOEHEALTH_HERO_DIAL_ORBS : undefined}
       />

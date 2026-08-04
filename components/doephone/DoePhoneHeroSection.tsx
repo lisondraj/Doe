@@ -25,8 +25,13 @@ import {
   doeHomeHeroDuskShaderSurface,
 } from "@/lib/proto/proto-shader-backdrop-colors";
 import type { HeroDialOrbScheme } from "@/lib/doephone/hero-dial-orbs";
+import type { DoeHomeHeroHeadlineEntry } from "@/lib/doehealth/doehealth-hero-carousel";
+import {
+  DOEHEALTH_HERO_HEADLINE_CROSSFADE_MS,
+  DOEHEALTH_HERO_HEADLINE_ROTATE_MS,
+} from "@/lib/doehealth/doehealth-hero-carousel";
 import { inter } from "@/lib/home/fonts";
-import { useEffect, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 
 function HeroReadMoreArrow() {
   return (
@@ -49,6 +54,167 @@ function HeroReadMoreArrow() {
   );
 }
 
+/** Headline + "introducing" style link row for one hero carousel entry. */
+function HeroCopyBlock({
+  entry,
+  fontClass,
+  className,
+  fitToContainer,
+}: {
+  entry: DoeHomeHeroHeadlineEntry;
+  fontClass?: string;
+  className?: string;
+  fitToContainer?: boolean;
+}) {
+  return (
+    <>
+      <DoePhoneHeroHeadline
+        line1={entry.line1}
+        line2={entry.line2}
+        fontClass={fontClass}
+        className={className}
+        fitToContainer={fitToContainer}
+      />
+      {entry.readMoreLinks.length > 0 ? (
+        <div className={`doehealth-hero-read-more-row pointer-events-auto ${inter.className}`}>
+          {entry.readMorePrefix ? (
+            <span className="doehealth-hero-read-more__prefix">{entry.readMorePrefix}</span>
+          ) : null}
+          {entry.readMoreLinks.map((link) => (
+            <Link key={link.href} href={link.href} className="doehealth-hero-read-more">
+              {link.label}
+              <HeroReadMoreArrow />
+            </Link>
+          ))}
+        </div>
+      ) : null}
+    </>
+  );
+}
+
+type HeroCopyTransition = { from: number; to: number };
+
+/** Rotates the hero headline + link through several entries with a gold crossfade. */
+function HeroCopyCarousel({
+  entries,
+  fontClass,
+  className,
+  fitToContainer,
+}: {
+  entries: readonly DoeHomeHeroHeadlineEntry[];
+  fontClass?: string;
+  className?: string;
+  fitToContainer?: boolean;
+}) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [transition, setTransition] = useState<HeroCopyTransition | null>(null);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const activeIndexRef = useRef(0);
+  const isTransitioningRef = useRef(false);
+  const transitionRef = useRef<HeroCopyTransition | null>(null);
+
+  useLayoutEffect(() => {
+    activeIndexRef.current = activeIndex;
+  }, [activeIndex]);
+
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sync = () => setReducedMotion(media.matches);
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, []);
+
+  const completeTransition = useCallback(() => {
+    const current = transitionRef.current;
+    if (!current) return;
+
+    transitionRef.current = null;
+    activeIndexRef.current = current.to;
+    setActiveIndex(current.to);
+    setTransition(null);
+    isTransitioningRef.current = false;
+  }, []);
+
+  useEffect(() => {
+    let tabVisible = document.visibilityState === "visible";
+    const onVisibility = () => {
+      tabVisible = document.visibilityState === "visible";
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
+    const interval = window.setInterval(() => {
+      if (!tabVisible || isTransitioningRef.current) return;
+
+      const nextIndex = (activeIndexRef.current + 1) % entries.length;
+
+      if (reducedMotion) {
+        activeIndexRef.current = nextIndex;
+        setActiveIndex(nextIndex);
+        return;
+      }
+
+      isTransitioningRef.current = true;
+      const nextTransition = { from: activeIndexRef.current, to: nextIndex };
+      transitionRef.current = nextTransition;
+      setTransition(nextTransition);
+    }, DOEHEALTH_HERO_HEADLINE_ROTATE_MS);
+
+    return () => {
+      window.clearInterval(interval);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [entries.length, reducedMotion]);
+
+  useEffect(() => {
+    if (!transition || reducedMotion) return undefined;
+
+    const fallback = window.setTimeout(completeTransition, DOEHEALTH_HERO_HEADLINE_CROSSFADE_MS + 80);
+    return () => window.clearTimeout(fallback);
+  }, [completeTransition, reducedMotion, transition]);
+
+  return (
+    <div className="doehealth-hero-copy-carousel">
+      {transition ? (
+        <>
+          <div className="doehealth-hero-copy-carousel__slide doehealth-hero-copy-carousel__slide--out doehealth-hero-copy-carousel__slide--animate">
+            <HeroCopyBlock
+              entry={entries[transition.from]}
+              fontClass={fontClass}
+              className={className}
+              fitToContainer={fitToContainer}
+            />
+          </div>
+          <div
+            className="doehealth-hero-copy-carousel__slide doehealth-hero-copy-carousel__slide--in doehealth-hero-copy-carousel__slide--animate"
+            onAnimationEnd={(event) => {
+              if (event.currentTarget !== event.target) return;
+              if (event.animationName !== "doehealth-hero-copy-in") return;
+              completeTransition();
+            }}
+          >
+            <HeroCopyBlock
+              entry={entries[transition.to]}
+              fontClass={fontClass}
+              className={className}
+              fitToContainer={fitToContainer}
+            />
+          </div>
+        </>
+      ) : (
+        <div className="doehealth-hero-copy-carousel__slide doehealth-hero-copy-carousel__slide--current">
+          <HeroCopyBlock
+            entry={entries[activeIndex]}
+            fontClass={fontClass}
+            className={className}
+            fitToContainer={fitToContainer}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
 /** Hero — slightly below full viewport so Safari bottom bar does not clip; section 2 stays full height. */
 export const DOEPHONE_HERO_HEIGHT =
   "calc(var(--app-vh,100lvh)*0.88 + max(8rem, calc(env(safe-area-inset-top, 0px) + 3.5rem)))";
@@ -67,6 +233,7 @@ export function DoePhoneHeroSection({
   heroReadMoreLabel = "Read more",
   heroReadMorePrefix,
   heroReadMoreLinks,
+  heroEntries,
   disableHeroOrbInteractions,
   heroOrbSchemes,
 }: {
@@ -84,6 +251,8 @@ export function DoePhoneHeroSection({
   heroReadMoreLabel?: string;
   heroReadMorePrefix?: string;
   heroReadMoreLinks?: readonly { label: string; href: string }[];
+  /** Rotating hero headline carousel — when 2+ entries, cycles with a crossfade instead of static copy. */
+  heroEntries?: readonly DoeHomeHeroHeadlineEntry[];
   disableHeroOrbInteractions?: boolean;
   /** Optional hero dial orb palette (e.g. /doehealth gold schemes). */
   heroOrbSchemes?: readonly HeroDialOrbScheme[];
@@ -186,34 +355,45 @@ export function DoePhoneHeroSection({
         className={`pointer-events-none absolute left-0 right-0 z-[3] ${copyInset} ${copyBottom}`}
       >
         <div className="doephone-hero-copy w-full min-w-0">
-          <DoePhoneHeroHeadline
-            line1={isProto ? "Recruiting for the" : heroLine1 ?? "Voice Agents."}
-            line2={isProto ? "intelligence era." : heroLine2 ?? "for Healthcare..."}
-            fontClass={isProto ? PROTO_FONT_CLASS : undefined}
-            className={heroHeadlineClassName}
-            fitToContainer={heroHeadlineFitToContainer}
-          />
-          {heroReadMoreLinks && heroReadMoreLinks.length > 0 ? (
-            <div className={`doehealth-hero-read-more-row pointer-events-auto ${inter.className}`}>
-              {heroReadMorePrefix ? (
-                <span className="doehealth-hero-read-more__prefix">{heroReadMorePrefix}</span>
-              ) : null}
-              {heroReadMoreLinks.map((link) => (
-                <Link key={link.href} href={link.href} className="doehealth-hero-read-more">
-                  {link.label}
+          {heroEntries && heroEntries.length > 1 ? (
+            <HeroCopyCarousel
+              entries={heroEntries}
+              fontClass={isProto ? PROTO_FONT_CLASS : undefined}
+              className={heroHeadlineClassName}
+              fitToContainer={heroHeadlineFitToContainer}
+            />
+          ) : (
+            <>
+              <DoePhoneHeroHeadline
+                line1={isProto ? "Recruiting for the" : heroLine1 ?? "Voice Agents."}
+                line2={isProto ? "intelligence era." : heroLine2 ?? "for Healthcare..."}
+                fontClass={isProto ? PROTO_FONT_CLASS : undefined}
+                className={heroHeadlineClassName}
+                fitToContainer={heroHeadlineFitToContainer}
+              />
+              {heroReadMoreLinks && heroReadMoreLinks.length > 0 ? (
+                <div className={`doehealth-hero-read-more-row pointer-events-auto ${inter.className}`}>
+                  {heroReadMorePrefix ? (
+                    <span className="doehealth-hero-read-more__prefix">{heroReadMorePrefix}</span>
+                  ) : null}
+                  {heroReadMoreLinks.map((link) => (
+                    <Link key={link.href} href={link.href} className="doehealth-hero-read-more">
+                      {link.label}
+                      <HeroReadMoreArrow />
+                    </Link>
+                  ))}
+                </div>
+              ) : heroReadMoreHref ? (
+                <Link
+                  href={heroReadMoreHref}
+                  className={`doehealth-hero-read-more pointer-events-auto ${inter.className}`}
+                >
+                  {heroReadMoreLabel}
                   <HeroReadMoreArrow />
                 </Link>
-              ))}
-            </div>
-          ) : heroReadMoreHref ? (
-            <Link
-              href={heroReadMoreHref}
-              className={`doehealth-hero-read-more pointer-events-auto ${inter.className}`}
-            >
-              {heroReadMoreLabel}
-              <HeroReadMoreArrow />
-            </Link>
-          ) : null}
+              ) : null}
+            </>
+          )}
         </div>
       </div>
     </section>
