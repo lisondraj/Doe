@@ -415,7 +415,7 @@ html[data-about-page] .broader-doe-hero-title {
   font-weight: 375 !important;
 }
 
-/* Introducing Pulse / Canvas — descender clearance on product intro titles. */
+/* Introducing Pulse / Fabric — descender clearance on product intro titles. */
 html[data-about-page] .broader-doe-hero-title.broader-doe-hero-title--product-intro {
   line-height: 1.08 !important;
   padding-bottom: 0.08em !important;
@@ -905,7 +905,7 @@ html[data-about-page][data-layout="desktop"] .about-style-feature-card figcaptio
   margin-top: clamp(1.35rem, 1.2vw, 1.75rem);
 }
 
-/* Pulse / Canvas desktop — feature card subheadings step above body copy. */
+/* Pulse / Fabric desktop — feature card subheadings step above body copy. */
 html[data-about-page][data-layout="desktop"]
   .about-style-product-intro-page
   .about-style-feature-card
@@ -914,7 +914,7 @@ html[data-about-page][data-layout="desktop"]
   line-height: 1.12 !important;
 }
 
-/* Pulse / Canvas desktop — halve big square feature-card shader tile height. */
+/* Pulse / Fabric desktop — halve big square feature-card shader tile height. */
 html[data-about-page][data-layout="desktop"]
   .about-style-product-intro-page
   .about-style-feature-card__shader {

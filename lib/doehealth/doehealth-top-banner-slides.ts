@@ -1,4 +1,4 @@
-import { INTRODUCING_CANVAS_PATH } from "@/lib/blog/introducing-canvas-article";
+import { INTRODUCING_FABRIC_PATH } from "@/lib/blog/introducing-fabric-article";
 import { INTRODUCING_PULSE_PATH } from "@/lib/blog/introducing-pulse-article";
 
 export type DoeHealthTopBannerSlide = {
@@ -24,8 +24,8 @@ export const DOEHEALTH_TOP_BANNER_SLIDES = [
     linkHref: INTRODUCING_PULSE_PATH,
   },
   {
-    message: "Introducing Our Agentic Design Canvas",
+    message: "Introducing Our Agentic Design Fabric",
     linkLabel: "Learn more",
-    linkHref: INTRODUCING_CANVAS_PATH,
+    linkHref: INTRODUCING_FABRIC_PATH,
   },
 ] as const satisfies readonly DoeHealthTopBannerSlide[];

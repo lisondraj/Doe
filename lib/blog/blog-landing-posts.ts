@@ -8,9 +8,9 @@ import {
   BROADER_DOE_VISION_TITLE,
 } from "@/lib/blog/broader-doe-vision-article";
 import {
-  INTRODUCING_CANVAS_ARTICLE,
-  INTRODUCING_CANVAS_PATH,
-} from "@/lib/blog/introducing-canvas-article";
+  INTRODUCING_FABRIC_ARTICLE,
+  INTRODUCING_FABRIC_PATH,
+} from "@/lib/blog/introducing-fabric-article";
 import {
   INTRODUCING_PULSE_ARTICLE,
   INTRODUCING_PULSE_PATH,
@@ -28,7 +28,7 @@ export type BlogLandingPost = {
   heroBackdrop: WorkflowCarouselDesignBackdrop;
 };
 
-/** Featured posts on /blog — Pulse, Canvas, and Broader Doe Vision. */
+/** Featured posts on /blog — Pulse, Fabric, and Broader Doe Vision. */
 export const BLOG_LANDING_POSTS: readonly BlogLandingPost[] = [
   {
     slug: INTRODUCING_PULSE_ARTICLE.slug,
@@ -41,14 +41,14 @@ export const BLOG_LANDING_POSTS: readonly BlogLandingPost[] = [
     heroBackdrop: INTRODUCING_PULSE_ARTICLE.heroBackdrop,
   },
   {
-    slug: INTRODUCING_CANVAS_ARTICLE.slug,
-    path: INTRODUCING_CANVAS_PATH,
-    title: INTRODUCING_CANVAS_ARTICLE.title,
-    subheading: INTRODUCING_CANVAS_ARTICLE.subheading,
-    excerpt: INTRODUCING_CANVAS_ARTICLE.excerpt,
-    byline: INTRODUCING_CANVAS_ARTICLE.byline,
-    date: INTRODUCING_CANVAS_ARTICLE.date,
-    heroBackdrop: INTRODUCING_CANVAS_ARTICLE.heroBackdrop,
+    slug: INTRODUCING_FABRIC_ARTICLE.slug,
+    path: INTRODUCING_FABRIC_PATH,
+    title: INTRODUCING_FABRIC_ARTICLE.title,
+    subheading: INTRODUCING_FABRIC_ARTICLE.subheading,
+    excerpt: INTRODUCING_FABRIC_ARTICLE.excerpt,
+    byline: INTRODUCING_FABRIC_ARTICLE.byline,
+    date: INTRODUCING_FABRIC_ARTICLE.date,
+    heroBackdrop: INTRODUCING_FABRIC_ARTICLE.heroBackdrop,
   },
   {
     slug: "the-broader-doe-vision",

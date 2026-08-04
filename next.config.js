@@ -11,6 +11,11 @@ const nextConfig = {
         destination: "/about",
         permanent: true,
       },
+      {
+        source: "/blog/introducing-canvas",
+        destination: "/blog/introducing-fabric",
+        permanent: true,
+      },
     ];
   },
 };

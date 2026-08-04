@@ -12,7 +12,7 @@ export const BROADER_DOE_VISION_HERO_INTRO_WRAP = `broader-doe-hero-intro text-c
 export const BROADER_DOE_VISION_HERO_HEADLINES_WRAP = "broader-doe-hero-headlines mx-auto w-full max-w-[min(100%,42rem)]";
 
 /** Product intro blog pages — extra title class for descender clearance + weight. */
-export const ABOUT_STYLE_PRODUCT_INTRO_SLUGS = ["introducing-pulse", "introducing-canvas"] as const;
+export const ABOUT_STYLE_PRODUCT_INTRO_SLUGS = ["introducing-pulse", "introducing-fabric"] as const;
 
 export function isAboutStyleProductIntro(slug: string) {
   return (ABOUT_STYLE_PRODUCT_INTRO_SLUGS as readonly string[]).includes(slug);
