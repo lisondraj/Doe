@@ -1,4 +1,9 @@
 import type { AboutStyleLongformArticle } from "@/lib/blog/about-style-longform-article";
+import {
+  BROADER_DOE_VISION_EMAIL_INVITE_HEADLINE,
+  BROADER_DOE_VISION_EMAIL_INVITE_LABEL,
+  BROADER_DOE_VISION_FINAL_PARAGRAPH,
+} from "@/lib/blog/broader-doe-vision-article";
 import { INTRODUCING_PULSE_FEATURE_CARDS } from "@/lib/blog/introducing-pulse-feature-cards";
 import { HEY_CAROUSEL_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 
@@ -45,10 +50,9 @@ export const INTRODUCING_PULSE_ARTICLE = {
   ],
   closing:
     "These principles define how Pulse will grow inside Doe and how we will partner with early clinics on the rollout.",
-  finalParagraph:
-    "If live clinical awareness matters to your practice, we would welcome the chance to connect.",
-  emailInviteHeadline: "We'd love to chat.",
-  emailInviteLabel: "Email James",
+  finalParagraph: BROADER_DOE_VISION_FINAL_PARAGRAPH,
+  emailInviteHeadline: BROADER_DOE_VISION_EMAIL_INVITE_HEADLINE,
+  emailInviteLabel: BROADER_DOE_VISION_EMAIL_INVITE_LABEL,
 } satisfies AboutStyleLongformArticle;
 
 export const INTRODUCING_PULSE_TITLE = INTRODUCING_PULSE_ARTICLE.title;

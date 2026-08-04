@@ -1,4 +1,9 @@
 import type { AboutStyleLongformArticle } from "@/lib/blog/about-style-longform-article";
+import {
+  BROADER_DOE_VISION_EMAIL_INVITE_HEADLINE,
+  BROADER_DOE_VISION_EMAIL_INVITE_LABEL,
+  BROADER_DOE_VISION_FINAL_PARAGRAPH,
+} from "@/lib/blog/broader-doe-vision-article";
 import { INTRODUCING_CANVAS_FEATURE_CARDS } from "@/lib/blog/introducing-canvas-feature-cards";
 import { DESIGN3_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 
@@ -43,10 +48,9 @@ export const INTRODUCING_CANVAS_ARTICLE = {
   ],
   closing:
     "These commitments will guide Canvas as we expand from beta into the broader Doe platform.",
-  finalParagraph:
-    "If your team has workflows that deserve better software, we would welcome the chance to connect.",
-  emailInviteHeadline: "We'd love to chat.",
-  emailInviteLabel: "Email James",
+  finalParagraph: BROADER_DOE_VISION_FINAL_PARAGRAPH,
+  emailInviteHeadline: BROADER_DOE_VISION_EMAIL_INVITE_HEADLINE,
+  emailInviteLabel: BROADER_DOE_VISION_EMAIL_INVITE_LABEL,
 } satisfies AboutStyleLongformArticle;
 
 export const INTRODUCING_CANVAS_TITLE = INTRODUCING_CANVAS_ARTICLE.title;

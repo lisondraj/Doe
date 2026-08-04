@@ -85,6 +85,16 @@ export function AboutStyleArticlePageContent({ article }: AboutStyleArticlePageC
             <AboutStyleFeatureCardGrid cards={article.featureCards} />
           </div>
         ) : null}
+
+        <div className={`${ABOUT_MOBILE_SECTION_GAP} mt-10 iphone-page:mt-12`}>
+          <div className={ABOUT_MOBILE_CONTENT_GAP}>
+            <p className={`${BROADER_DOE_VISION_BODY_TW} about-style-product-intro-body font-semibold`}>
+              {article.finalParagraph}
+            </p>
+
+            <AboutStyleArticleEmailInvite headline={article.emailInviteHeadline} label={article.emailInviteLabel} />
+          </div>
+        </div>
       </div>
     );
   }
