@@ -938,7 +938,7 @@ html[data-about-page][data-layout="desktop"]
   .about-style-product-intro-page
   .about-style-feature-card
   figcaption.broader-doe-thesis-headline {
-  font-size: clamp(1.72rem, 2.05vw, 2.35rem) !important;
+  font-size: clamp(1.58rem, 1.88vw, 2.15rem) !important;
   line-height: 1.12 !important;
 }
 
