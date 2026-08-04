@@ -16,4 +16,4 @@ export function blogLandingPreviewShader(slug: string): AboutStyleFeatureShaderV
 }
 
 /** Broader Doe Vision subheading on /blog + related carousel previews only. */
-export const BLOG_PREVIEW_BROADER_DOE_VISION_SUBHEADING = "Own your clinical intelligence.";
+export const BLOG_PREVIEW_BROADER_DOE_VISION_SUBHEADING = "Design your clinical intelligence.";
