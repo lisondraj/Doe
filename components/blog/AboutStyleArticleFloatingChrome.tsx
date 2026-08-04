@@ -81,6 +81,8 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
   const tocCollapseTimerRef = useRef<number | null>(null);
   const audioJoinTimerRef = useRef<number | null>(null);
   const fakeTickRef = useRef<number | null>(null);
+  const ignoreBackdropDismissUntilRef = useRef(0);
+  const [backdropArmed, setBackdropArmed] = useState(false);
 
   const clearBlogCollapseStyles = useCallback(() => {
     const cap = blogCapRef.current;
@@ -120,7 +122,12 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
     });
   }, []);
 
+  const markWidgetOpened = useCallback(() => {
+    ignoreBackdropDismissUntilRef.current = performance.now() + 420;
+  }, []);
+
   const closeBlog = useCallback(() => {
+    if (!blogOpen && !blogCollapsing) return;
     if (blogRevealTimerRef.current !== null) {
       window.clearTimeout(blogRevealTimerRef.current);
       blogRevealTimerRef.current = null;
@@ -143,9 +150,10 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
         blogCollapseTimerRef.current = null;
       }, PANEL_COLLAPSE_MS);
     }, PANEL_HIDE_MS);
-  }, [beginBlogCollapse, clearBlogCollapseStyles]);
+  }, [beginBlogCollapse, blogCollapsing, blogOpen, clearBlogCollapseStyles]);
 
   const closeToc = useCallback(() => {
+    if (!tocOpen && !tocCollapsing) return;
     if (tocRevealTimerRef.current !== null) {
       window.clearTimeout(tocRevealTimerRef.current);
       tocRevealTimerRef.current = null;
@@ -168,7 +176,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
         tocCollapseTimerRef.current = null;
       }, PANEL_COLLAPSE_MS);
     }, PANEL_HIDE_MS);
-  }, [beginTocCollapse, clearTocCollapseStyles]);
+  }, [beginTocCollapse, clearTocCollapseStyles, tocCollapsing, tocOpen]);
 
   const beginAudioClose = useCallback(() => {
     if (!isPlayerOpen || audioClosing) return;
@@ -185,6 +193,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
   }, [audioClosing, closePlayer, isPlayerOpen]);
 
   const openBlog = useCallback(() => {
+    markWidgetOpened();
     beginAudioClose();
     closeToc();
     if (blogRevealTimerRef.current !== null) window.clearTimeout(blogRevealTimerRef.current);
@@ -204,9 +213,10 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
       setBlogPanelRevealed(true);
       blogRevealTimerRef.current = null;
     }, PANEL_REVEAL_MS);
-  }, [beginAudioClose, clearBlogCollapseStyles, closeToc]);
+  }, [beginAudioClose, clearBlogCollapseStyles, closeToc, markWidgetOpened]);
 
   const openToc = useCallback(() => {
+    markWidgetOpened();
     beginAudioClose();
     closeBlog();
     if (tocRevealTimerRef.current !== null) window.clearTimeout(tocRevealTimerRef.current);
@@ -226,7 +236,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
       setTocPanelRevealed(true);
       tocRevealTimerRef.current = null;
     }, PANEL_REVEAL_MS);
-  }, [beginAudioClose, clearTocCollapseStyles, closeBlog]);
+  }, [beginAudioClose, clearTocCollapseStyles, closeBlog, markWidgetOpened]);
 
   const toggleBlog = useCallback(() => {
     if (blogOpen) closeBlog();
@@ -353,6 +363,22 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
   const anyWidgetOpen = blogOpen || tocOpen || isPlayerOpen;
 
   useEffect(() => {
+    if (!anyWidgetOpen) {
+      setBackdropArmed(false);
+      return;
+    }
+
+    setBackdropArmed(false);
+    const armTimer = window.setTimeout(() => {
+      setBackdropArmed(true);
+    }, 420);
+
+    return () => {
+      window.clearTimeout(armTimer);
+    };
+  }, [anyWidgetOpen, blogOpen, isPlayerOpen, tocOpen]);
+
+  useEffect(() => {
     if (!anyWidgetOpen) return;
 
     const prevHtmlOverflow = document.documentElement.style.overflow;
@@ -385,6 +411,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
   }, [anyWidgetOpen, beginAudioClose, blogOpen, closeBlog, closeToc, isPlayerOpen, tocOpen]);
 
   const dismissOpenWidgets = useCallback(() => {
+    if (performance.now() < ignoreBackdropDismissUntilRef.current) return;
     if (blogOpen) closeBlog();
     if (tocOpen) closeToc();
     if (isPlayerOpen) beginAudioClose();
@@ -443,7 +470,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
       {anyWidgetOpen ? (
         <button
           type="button"
-          className="about-style-article-floating-chrome__backdrop"
+          className={`about-style-article-floating-chrome__backdrop${backdropArmed ? " is-armed" : ""}`}
           aria-label="Close menu"
           tabIndex={-1}
           onClick={dismissOpenWidgets}
@@ -474,7 +501,10 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
               type="button"
               className="about-style-article-floating-chrome__cap-trigger"
               aria-label="Open blog posts"
-              onClick={toggleBlog}
+              onClick={(event) => {
+                event.stopPropagation();
+                toggleBlog();
+              }}
               tabIndex={scrollRevealed ? 0 : -1}
             >
               <BlogNavIcon className="about-style-article-floating-chrome__icon" />
@@ -486,7 +516,10 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
               type="button"
               className="about-style-article-floating-chrome__cap-trigger"
               aria-label="Open blog posts"
-              onClick={openBlog}
+              onClick={(event) => {
+                event.stopPropagation();
+                openBlog();
+              }}
               tabIndex={scrollRevealed ? 0 : -1}
             >
               <BlogNavIcon className="about-style-article-floating-chrome__icon" />
@@ -571,7 +604,10 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
                 type="button"
                 className="about-style-article-floating-chrome__cap-trigger"
                 aria-label="Open table of contents"
-                onClick={toggleToc}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  toggleToc();
+                }}
                 tabIndex={scrollRevealed ? 0 : -1}
               >
                 <TocIcon className="about-style-article-floating-chrome__icon" />
@@ -583,7 +619,10 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
                 type="button"
                 className="about-style-article-floating-chrome__cap-trigger"
                 aria-label="Open table of contents"
-                onClick={openToc}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  openToc();
+                }}
                 tabIndex={scrollRevealed ? 0 : -1}
               >
                 <TocIcon className="about-style-article-floating-chrome__icon" />
