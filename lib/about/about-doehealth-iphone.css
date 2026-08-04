@@ -1116,16 +1116,6 @@ html[data-about-page] .blog-landing-card-title {
   -webkit-text-fill-color: transparent !important;
 }
 
-html[data-about-page] .blog-landing-card-subheading {
-  font-size: clamp(1.22rem, 1.05rem + 0.72vmin, 1.48rem) !important;
-  color: rgba(242, 232, 218, 0.88) !important;
-}
-
-html[data-about-page] .blog-landing-card-meta {
-  font-size: clamp(1.02rem, 0.92rem + 0.45vmin, 1.18rem) !important;
-  color: #e8c08e !important;
-}
-
 html[data-about-page] .blog-landing-card-excerpt {
   font-size: clamp(1.18rem, 1.02rem + 0.72vmin, 1.42rem) !important;
   color: rgba(242, 232, 218, 0.78) !important;
@@ -1142,10 +1132,6 @@ html[data-about-page] .blog-landing-list-divider-line {
 
 html[data-about-page][data-layout="desktop"] .blog-landing-card-title {
   font-size: clamp(2rem, 1.65vw, 2.45rem) !important;
-}
-
-html[data-about-page][data-layout="desktop"] .blog-landing-card-subheading {
-  font-size: clamp(1.28rem, 1.05vw, 1.52rem) !important;
 }
 
 html[data-about-page][data-layout="desktop"] .blog-landing-card-excerpt {

@@ -2,8 +2,8 @@ import Link from "next/link";
 
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import {
+  BLOG_LANDING_CARD_BYLINE_TW,
   BLOG_LANDING_CARD_EXCERPT_TW,
-  BLOG_LANDING_CARD_META_TW,
   BLOG_LANDING_CARD_STACK,
   BLOG_LANDING_CARD_SUBHEADING_TW,
   BLOG_LANDING_CARD_TITLE_TW,
@@ -54,9 +54,9 @@ export function BlogLandingPostCard({ post, linked = true }: BlogLandingPostCard
       <div className="blog-landing-card-copy mt-5 iphone-page:mt-6">
         <h2 className={BLOG_LANDING_CARD_TITLE_TW}>{post.title}</h2>
         <p className={BLOG_LANDING_CARD_SUBHEADING_TW}>{post.subheading}</p>
-        <p className={BLOG_LANDING_CARD_META_TW}>
-          {post.byline.replace(/^By /, "")}
-          <span className="mx-2 opacity-60" aria-hidden>
+        <p className={BLOG_LANDING_CARD_BYLINE_TW}>
+          {post.byline}
+          <span className="mx-2" aria-hidden>
             ·
           </span>
           {post.date}

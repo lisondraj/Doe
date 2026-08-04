@@ -28,14 +28,14 @@ export const BLOG_LANDING_CARD_VISUAL_TW = `blog-landing-card-visual relative as
 /** Post title on landing cards — gold gradient, smaller than page hero. */
 export const BLOG_LANDING_CARD_TITLE_TW = `blog-landing-card-title font-[375] leading-[1.06] tracking-[-0.03em] ${suisseIntl.className}`;
 
-/** Post subheading on landing cards. */
-export const BLOG_LANDING_CARD_SUBHEADING_TW = `blog-landing-card-subheading mt-2 font-medium leading-snug tracking-[-0.01em] ${dmSans.className}`;
+/** Post subheading on landing cards — matches article hero subheading. */
+export const BLOG_LANDING_CARD_SUBHEADING_TW = `${BROADER_DOE_VISION_SUBHEADING_TW} blog-landing-card-subheading mt-2`;
+
+/** Card byline — matches article hero byline. */
+export const BLOG_LANDING_CARD_BYLINE_TW = `${BROADER_DOE_VISION_BYLINE_TW} blog-landing-card-byline mt-2`;
 
 /** Card excerpt — muted cream body copy. */
 export const BLOG_LANDING_CARD_EXCERPT_TW = `blog-landing-card-excerpt mt-3 font-normal leading-[1.44] tracking-[-0.01em] ${dmSans.className}`;
-
-/** Card meta — byline and date. */
-export const BLOG_LANDING_CARD_META_TW = `blog-landing-card-meta mt-2 font-medium ${dmSans.className}`;
 
 /** Read-more link on landing cards. */
 export const BLOG_LANDING_READ_MORE_TW = `blog-landing-read-more mt-3 inline-flex items-center gap-2 font-medium transition-opacity group-hover:opacity-80 ${dmSans.className}`;
