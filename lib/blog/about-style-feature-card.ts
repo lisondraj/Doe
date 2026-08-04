@@ -1,8 +1,5 @@
 import type { ProtoGrainGradientVariant } from "@/lib/proto/proto-grain-gradient";
-import {
-  doeAboutHeroDuskShaderSurface,
-  doeLabsGreyShaderSurface,
-} from "@/lib/proto/proto-shader-backdrop-colors";
+import { doeAboutHeroDuskShaderSurface } from "@/lib/proto/proto-shader-backdrop-colors";
 
 /** Motionless about-style feature tile flows — excludes truchet (worm-like) presets. */
 export const ABOUT_STYLE_FEATURE_SHADER_VARIANTS = [
@@ -36,8 +33,4 @@ export function aboutStyleFeatureShaderSurface(variant: AboutStyleFeatureShaderV
     colors: hero.colors,
     colorBack: hero.colorBack,
   };
-}
-
-export function aboutStyleLabsGreyShaderSurface(variant: AboutStyleFeatureShaderVariant) {
-  return doeLabsGreyShaderSurface(variant);
 }
