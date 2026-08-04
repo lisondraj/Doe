@@ -16,6 +16,7 @@ import {
   BLOG_LANDING_READ_MORE_TW,
 } from "@/lib/blog/blog-landing-layout-styles";
 import type { BlogLandingPost } from "@/lib/blog/blog-landing-posts";
+import { BROADER_DOE_VISION_SLUG } from "@/lib/blog/broader-doe-vision-article";
 
 function BlogLandingReadMoreArrow() {
   return (
@@ -57,7 +58,9 @@ export function BlogLandingPostCard({
       : aboutStyleFeatureShaderSurface(post.previewShaderVariant);
 
   const card = (
-    <article className={BLOG_LANDING_CARD_STACK}>
+    <article
+      className={`${BLOG_LANDING_CARD_STACK}${post.slug === BROADER_DOE_VISION_SLUG ? " blog-landing-card--broader-doe-vision" : ""}`}
+    >
       <div
         className={`${BLOG_LANDING_CARD_VISUAL_TW} blog-landing-card-visual__shader`}
         style={{ backgroundColor: shader.colorBack }}

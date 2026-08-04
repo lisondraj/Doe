@@ -1158,6 +1158,16 @@ html[data-about-page][data-layout="desktop"] .blog-landing-card-title {
   font-size: clamp(2rem, 1.65vw, 2.45rem) !important;
 }
 
+/* Broader Doe Vision — long title; keep preview cards on one line (/blog + carousel). */
+html[data-about-page] .blog-landing-card--broader-doe-vision .blog-landing-card-title {
+  font-size: clamp(1.58rem, 1.34rem + 0.88vmin, 1.92rem) !important;
+  letter-spacing: -0.035em !important;
+}
+
+html[data-about-page][data-layout="desktop"] .blog-landing-card--broader-doe-vision .blog-landing-card-title {
+  font-size: clamp(1.68rem, 1.38vw, 2.02rem) !important;
+}
+
 html[data-about-page][data-layout="desktop"] .blog-landing-card-excerpt {
   font-size: clamp(1.22rem, 0.95vw, 1.48rem) !important;
 }
