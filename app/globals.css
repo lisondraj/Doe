@@ -3964,7 +3964,7 @@ html[data-about-page]:has(.blog-mobile-root) main p.blog-landing-card-category,
 html[data-about-page]:has(.doephone-mobile-root--doehealth) main p.blog-landing-card-category,
 html[data-home-page] main p.blog-landing-card-category,
 html[data-home-page] .blog-article-related-carousel p.blog-landing-card-category {
-  font-size: clamp(0.57rem, 0.49rem + 0.26vmin, 0.64rem) !important;
+  font-size: clamp(1.14rem, 0.98rem + 0.52vmin, 1.28rem) !important;
   line-height: 1.3 !important;
   color: rgba(232, 192, 142, 0.68) !important;
   text-align: left !important;
@@ -3972,7 +3972,7 @@ html[data-home-page] .blog-article-related-carousel p.blog-landing-card-category
 html[data-about-page]:has(.blog-mobile-root) main p.blog-article-category,
 html[data-about-page]:has(.doephone-mobile-root--doehealth) main p.blog-article-category,
 html[data-home-page] main p.blog-article-category {
-  font-size: clamp(0.72rem, 0.64rem + 0.36vmin, 0.86rem) !important;
+  font-size: clamp(1.44rem, 1.28rem + 0.72vmin, 1.72rem) !important;
   line-height: 1.35 !important;
   color: rgba(232, 192, 142, 0.76) !important;
 }
