@@ -51,6 +51,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
     duration,
     progress,
     closePlayer,
+    openPlayer,
     togglePlay,
     seekBy,
     seekToProgress,
@@ -125,6 +126,26 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
     });
   }, []);
 
+  const beginTocCollapseForAudio = useCallback(() => {
+    const cap = tocCapRef.current;
+    if (cap) {
+      const { width, height } = cap.getBoundingClientRect();
+      cap.style.width = `${width}px`;
+      cap.style.height = `${height}px`;
+    }
+    setTocCollapsing(true);
+  }, []);
+
+  const beginBlogCollapseForAudio = useCallback(() => {
+    const cap = blogCapRef.current;
+    if (cap) {
+      const { width, height } = cap.getBoundingClientRect();
+      cap.style.width = `${width}px`;
+      cap.style.height = `${height}px`;
+    }
+    setBlogCollapsing(true);
+  }, []);
+
   const markWidgetOpened = useCallback(() => {
     ignoreBackdropDismissUntilRef.current = performance.now() + 420;
   }, []);
@@ -180,6 +201,63 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
       }, PANEL_COLLAPSE_MS);
     }, PANEL_HIDE_MS);
   }, [beginTocCollapse, clearTocCollapseStyles, tocCollapsing, tocOpen]);
+
+  const fastCloseTocForAudio = useCallback(() => {
+    if (!tocOpen && !tocCollapsing) return;
+    if (tocRevealTimerRef.current !== null) {
+      window.clearTimeout(tocRevealTimerRef.current);
+      tocRevealTimerRef.current = null;
+    }
+    if (tocHideTimerRef.current !== null) {
+      window.clearTimeout(tocHideTimerRef.current);
+      tocHideTimerRef.current = null;
+    }
+    if (tocCollapseTimerRef.current !== null) {
+      window.clearTimeout(tocCollapseTimerRef.current);
+      tocCollapseTimerRef.current = null;
+    }
+    setTocPanelRevealed(false);
+    beginTocCollapseForAudio();
+    tocCollapseTimerRef.current = window.setTimeout(() => {
+      setTocOpen(false);
+      setTocCollapsing(false);
+      clearTocCollapseStyles();
+      tocCollapseTimerRef.current = null;
+    }, PANEL_COLLAPSE_MS);
+  }, [beginTocCollapseForAudio, clearTocCollapseStyles, tocCollapsing, tocOpen]);
+
+  const fastCloseBlogForAudio = useCallback(() => {
+    if (!blogOpen && !blogCollapsing) return;
+    if (blogRevealTimerRef.current !== null) {
+      window.clearTimeout(blogRevealTimerRef.current);
+      blogRevealTimerRef.current = null;
+    }
+    if (blogHideTimerRef.current !== null) {
+      window.clearTimeout(blogHideTimerRef.current);
+      blogHideTimerRef.current = null;
+    }
+    if (blogCollapseTimerRef.current !== null) {
+      window.clearTimeout(blogCollapseTimerRef.current);
+      blogCollapseTimerRef.current = null;
+    }
+    setBlogPanelRevealed(false);
+    beginBlogCollapseForAudio();
+    blogCollapseTimerRef.current = window.setTimeout(() => {
+      setBlogOpen(false);
+      setBlogCollapsing(false);
+      clearBlogCollapseStyles();
+      blogCollapseTimerRef.current = null;
+    }, PANEL_COLLAPSE_MS);
+  }, [beginBlogCollapseForAudio, blogCollapsing, blogOpen, clearBlogCollapseStyles]);
+
+  const openAudioFromFloatingToc = useCallback(() => {
+    markWidgetOpened();
+    if (blogOpen && !blogCollapsing) fastCloseBlogForAudio();
+    if (tocOpen && !tocCollapsing) fastCloseTocForAudio();
+    requestAnimationFrame(() => {
+      openPlayer();
+    });
+  }, [blogCollapsing, blogOpen, fastCloseBlogForAudio, fastCloseTocForAudio, markWidgetOpened, openPlayer, tocCollapsing, tocOpen]);
 
   const beginAudioClose = useCallback(() => {
     if (!isPlayerOpen || audioClosing) return;
@@ -312,8 +390,8 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
 
     if (audioClosing) return;
 
-    if (blogOpen) closeBlog();
-    if (tocOpen) closeToc();
+    if (blogOpen && !blogCollapsing) closeBlog();
+    if (tocOpen && !tocCollapsing) closeToc();
 
     setAudioJoined(false);
     if (audioJoinTimerRef.current !== null) window.clearTimeout(audioJoinTimerRef.current);
@@ -579,7 +657,12 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
           >
             {tocOpen && !audioCapActive ? (
               <div className="about-style-article-floating-chrome__panel" aria-hidden={!tocPanelRevealed}>
-                <AboutStyleArticleTocPanel items={tocItems} variant="nav" onItemClick={closeToc} />
+                <AboutStyleArticleTocPanel
+                  items={tocItems}
+                  variant="nav"
+                  onItemClick={closeToc}
+                  onListenClick={openAudioFromFloatingToc}
+                />
               </div>
             ) : null}
 

@@ -101,10 +101,12 @@ function ArticleAudioRow({
   audioSrc,
   variant,
   onAfterOpen,
+  onListenClick,
 }: {
   audioSrc?: string;
   variant: "inline" | "nav" | "desktop";
   onAfterOpen?: () => void;
+  onListenClick?: () => void;
 }) {
   const audioPlayer = useAboutStyleArticleAudioPlayerOptional();
   const fallbackAudioRef = useRef<HTMLAudioElement>(null);
@@ -127,6 +129,11 @@ function ArticleAudioRow({
         : ABOUT_STYLE_ARTICLE_TOC_AUDIO_TW;
 
   const openVoicePlayer = () => {
+    if (onListenClick) {
+      onListenClick();
+      return;
+    }
+
     if (audioPlayer) {
       audioPlayer.openPlayer();
       onAfterOpen?.();
@@ -279,6 +286,7 @@ type AboutStyleArticleTocPanelProps = {
   variant?: TocPanelVariant;
   omitLabel?: boolean;
   onItemClick?: () => void;
+  onListenClick?: () => void;
   audioSrc?: string;
 };
 
@@ -288,6 +296,7 @@ export function AboutStyleArticleTocPanel({
   variant = "inline",
   omitLabel = false,
   onItemClick,
+  onListenClick,
   audioSrc = ABOUT_STYLE_ARTICLE_AUDIO.src,
 }: AboutStyleArticleTocPanelProps) {
   const isNav = variant === "nav";
@@ -353,7 +362,7 @@ export function AboutStyleArticleTocPanel({
       </ol>
 
       <div className={audioDividerClass}>
-        <ArticleAudioRow audioSrc={audioSrc} variant={variant} onAfterOpen={onItemClick} />
+        <ArticleAudioRow audioSrc={audioSrc} variant={variant} onAfterOpen={onItemClick} onListenClick={onListenClick} />
       </div>
     </>
   );
@@ -383,7 +392,7 @@ export function AboutStyleArticleTocPanel({
         </div>
 
         <div className={`${audioDividerClass} about-style-article-floating-toc__audio-bar`}>
-          <ArticleAudioRow audioSrc={audioSrc} variant={variant} onAfterOpen={onItemClick} />
+          <ArticleAudioRow audioSrc={audioSrc} variant={variant} onAfterOpen={onItemClick} onListenClick={onListenClick} />
         </div>
       </div>
     );

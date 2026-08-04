@@ -2921,6 +2921,13 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   display: none;
 }
 
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio .about-style-article-floating-chrome__cap.is-closing,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio .about-style-article-floating-chrome__cap.is-closing {
+  transition:
+    width var(--about-audio-join-ms, 920ms) var(--about-audio-join-ease, cubic-bezier(0.22, 1, 0.36, 1)),
+    height var(--about-audio-join-ms, 920ms) var(--about-audio-join-ease, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__cap-trigger,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__cap-trigger {
   display: grid;
