@@ -1105,19 +1105,19 @@ html[data-about-page] .blog-landing-page .blog-landing-hero-title {
 }
 
 html[data-about-page] .blog-article-category {
-  font-size: clamp(0.68rem, 0.6rem + 0.32vmin, 0.82rem) !important;
+  font-size: clamp(0.58rem, 0.5rem + 0.26vmin, 0.7rem) !important;
   line-height: 1.35 !important;
   color: rgba(232, 192, 142, 0.76) !important;
 }
 
 html[data-about-page][data-layout="desktop"] .blog-article-category {
-  font-size: clamp(0.72rem, 0.58vw, 0.84rem) !important;
+  font-size: clamp(0.62rem, 0.48vw, 0.72rem) !important;
   margin-bottom: clamp(0.85rem, 1vw, 1.1rem) !important;
 }
 
 html[data-about-page] .blog-landing-card-category,
 html[data-home-page] .blog-article-footer-carousel-band .blog-landing-card-category {
-  font-size: clamp(0.52rem, 0.44rem + 0.22vmin, 0.58rem) !important;
+  font-size: clamp(0.46rem, 0.38rem + 0.18vmin, 0.52rem) !important;
   line-height: 1.3 !important;
   color: rgba(232, 192, 142, 0.68) !important;
   text-align: left !important;
@@ -1125,7 +1125,7 @@ html[data-home-page] .blog-article-footer-carousel-band .blog-landing-card-categ
 
 html[data-about-page][data-layout="desktop"] .blog-landing-card-category,
 html[data-home-page][data-layout="desktop"] .blog-article-footer-carousel-band .blog-landing-card-category {
-  font-size: clamp(0.52rem, 0.42vw, 0.6rem) !important;
+  font-size: clamp(0.46rem, 0.36vw, 0.52rem) !important;
   letter-spacing: 0.12em !important;
 }
 
