@@ -3,11 +3,12 @@
 import type { ReactNode } from "react";
 import { useLayoutEffect } from "react";
 
-import { AboutStyleArticleFloatingToc } from "@/components/blog/AboutStyleArticleFloatingToc";
+import { AboutStyleArticleFloatingChrome } from "@/components/blog/AboutStyleArticleFloatingChrome";
 import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
 import { DoeHealthTopBanner } from "@/components/doehealth/DoeHealthTopBanner";
 import { ABOUT_STYLE_PHONE_SHELL_PROPS, ABOUT_STYLE_TOP_BANNER } from "@/lib/about/about-style-phone-shell-props";
 import "@/lib/about/about-doehealth-iphone.css";
+import { AboutStyleArticleAudioPlayerProvider } from "@/lib/blog/about-style-article-audio-player-context";
 import { BROADER_DOE_VISION_CONTENT_PT } from "@/lib/blog/broader-doe-vision-layout-styles";
 import type { AboutStyleArticleTocItem } from "@/lib/blog/about-style-article-toc";
 import "@/lib/doehealth/doehealth-landing.css";
@@ -19,10 +20,15 @@ import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-v
 type AboutStyleArticleMobileViewProps = {
   children: ReactNode;
   tocItems?: readonly AboutStyleArticleTocItem[];
+  currentSlug?: string;
 };
 
 /** iPhone /about-style longform article shell. */
-export function AboutStyleArticleMobileView({ children, tocItems = [] }: AboutStyleArticleMobileViewProps) {
+export function AboutStyleArticleMobileView({
+  children,
+  tocItems = [],
+  currentSlug,
+}: AboutStyleArticleMobileViewProps) {
   useDoePhoneLayoutViewport();
   useDoePhoneStableViewport(true);
 
@@ -37,14 +43,14 @@ export function AboutStyleArticleMobileView({ children, tocItems = [] }: AboutSt
   }, []);
 
   return (
-    <>
+    <AboutStyleArticleAudioPlayerProvider>
       <BlogMobileShell
         {...ABOUT_STYLE_PHONE_SHELL_PROPS}
         topBanner={<DoeHealthTopBanner {...ABOUT_STYLE_TOP_BANNER} />}
       >
         <main className={`w-full ${BROADER_DOE_VISION_CONTENT_PT}`}>{children}</main>
       </BlogMobileShell>
-      <AboutStyleArticleFloatingToc items={tocItems} />
-    </>
+      <AboutStyleArticleFloatingChrome tocItems={tocItems} currentSlug={currentSlug} />
+    </AboutStyleArticleAudioPlayerProvider>
   );
 }

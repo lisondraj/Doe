@@ -2,12 +2,13 @@
 
 import { useLayoutEffect } from "react";
 
-import { AboutStyleArticleFloatingToc } from "@/components/blog/AboutStyleArticleFloatingToc";
+import { AboutStyleArticleFloatingChrome } from "@/components/blog/AboutStyleArticleFloatingChrome";
 import { BroaderDoeVisionPageContent } from "@/components/blog/BroaderDoeVisionPageContent";
 import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
 import { DoeHealthTopBanner } from "@/components/doehealth/DoeHealthTopBanner";
 import { ABOUT_STYLE_PHONE_SHELL_PROPS, ABOUT_STYLE_TOP_BANNER } from "@/lib/about/about-style-phone-shell-props";
 import "@/lib/about/about-doehealth-iphone.css";
+import { AboutStyleArticleAudioPlayerProvider } from "@/lib/blog/about-style-article-audio-player-context";
 import { BROADER_DOE_VISION_CONTENT_PT } from "@/lib/blog/broader-doe-vision-layout-styles";
 import type { AboutStyleArticleTocItem } from "@/lib/blog/about-style-article-toc";
 import "@/lib/doehealth/doehealth-landing.css";
@@ -36,7 +37,7 @@ export function BroaderDoeVisionMobileView({ tocItems }: BroaderDoeVisionMobileV
   }, []);
 
   return (
-    <>
+    <AboutStyleArticleAudioPlayerProvider>
       <BlogMobileShell
         {...ABOUT_STYLE_PHONE_SHELL_PROPS}
         topBanner={<DoeHealthTopBanner {...ABOUT_STYLE_TOP_BANNER} />}
@@ -45,7 +46,7 @@ export function BroaderDoeVisionMobileView({ tocItems }: BroaderDoeVisionMobileV
           <BroaderDoeVisionPageContent tocItems={tocItems} />
         </main>
       </BlogMobileShell>
-      <AboutStyleArticleFloatingToc items={tocItems} />
-    </>
+      <AboutStyleArticleFloatingChrome tocItems={tocItems} currentSlug="the-broader-doe-vision" />
+    </AboutStyleArticleAudioPlayerProvider>
   );
 }

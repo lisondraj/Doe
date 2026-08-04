@@ -1,5 +1,6 @@
 import type { AboutStyleArticleContentBlock } from "@/lib/blog/about-style-article-content-blocks";
 import type { AboutStyleLongformArticle } from "@/lib/blog/about-style-longform-article";
+import { isAboutStyleProductIntro } from "@/lib/blog/broader-doe-vision-layout-styles";
 import {
   BROADER_DOE_VISION_THESIS_SECTION_HEADLINE,
 } from "@/lib/blog/broader-doe-vision-article";
@@ -7,9 +8,13 @@ import {
 export type AboutStyleArticleTocItem = {
   id: string;
   label: string;
+  children?: readonly AboutStyleArticleTocItem[];
 };
 
 export const ABOUT_STYLE_ARTICLE_TOC_LABEL = "Contents" as const;
+
+/** TOC panels — show this many entries before the see-more control. */
+export const ABOUT_STYLE_ARTICLE_TOC_INITIAL_VISIBLE = 5;
 
 export const ABOUT_STYLE_ARTICLE_AUDIO = {
   label: "Listen to the voice recording of the article",
@@ -42,6 +47,11 @@ export function tocIdFromLabel(label: string) {
     .replace(/^-+|-+$/g, "");
 }
 
+/** In-page anchor for a product highlight feature card. */
+export function aboutStyleFeatureCardTocId(cardId: string) {
+  return `feature-${cardId}`;
+}
+
 function tocItemsFromContentBlocks(blocks: readonly AboutStyleArticleContentBlock[]) {
   const items: AboutStyleArticleTocItem[] = [{ id: ABOUT_STYLE_ARTICLE_TOC_IDS.intro, label: "Introduction" }];
 
@@ -64,10 +74,21 @@ export function buildAboutStyleArticleTocItems(article: AboutStyleLongformArticl
   const items: AboutStyleArticleTocItem[] = [{ id: ABOUT_STYLE_ARTICLE_TOC_IDS.intro, label: "Introduction" }];
 
   if (article.featureCards?.length) {
-    items.push({ id: ABOUT_STYLE_ARTICLE_TOC_IDS.features, label: "Product Highlights" });
+    if (isAboutStyleProductIntro(article.slug)) {
+      items.push({
+        id: ABOUT_STYLE_ARTICLE_TOC_IDS.features,
+        label: "Product Highlights",
+        children: article.featureCards.map((card) => ({
+          id: aboutStyleFeatureCardTocId(card.id),
+          label: card.subheading,
+        })),
+      });
+    } else {
+      items.push({ id: ABOUT_STYLE_ARTICLE_TOC_IDS.features, label: "Product Highlights" });
+    }
   }
 
-  if (article.thesisSectionHeadline) {
+  if (article.thesisSectionHeadline && !isAboutStyleProductIntro(article.slug)) {
     items.push({
       id: ABOUT_STYLE_ARTICLE_TOC_IDS.thesis,
       label: article.thesisSectionHeadline,

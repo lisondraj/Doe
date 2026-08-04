@@ -3,15 +3,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { AboutStyleArticleTocPanel } from "@/components/blog/AboutStyleArticleTocPanel";
-import type { AboutStyleArticleTocItem } from "@/lib/blog/about-style-article-toc";
+import { AboutStyleArticleFloatingBlogPanel } from "@/components/blog/AboutStyleArticleFloatingBlogPanel";
 
 const PANEL_REVEAL_MS = 780;
 const PANEL_HIDE_MS = 180;
 const PANEL_COLLAPSE_MS = 520;
 const SCROLL_REVEAL_PX = 280;
 
-function TocIcon() {
+function BlogNavIcon() {
   return (
     <svg
       width="26"
@@ -19,27 +18,22 @@ function TocIcon() {
       viewBox="0 0 20 20"
       fill="none"
       aria-hidden
-      className="about-style-article-floating-toc__icon"
+      className="about-style-article-floating-blog-nav__icon"
     >
-      <path
-        d="M6.75 6.25h9.5M6.75 10h9.5M6.75 13.75H13"
-        stroke="currentColor"
-        strokeWidth="1.45"
-        strokeLinecap="round"
-      />
-      <circle cx="4.65" cy="6.25" r="0.85" fill="currentColor" />
-      <circle cx="4.65" cy="10" r="0.85" fill="currentColor" />
-      <circle cx="4.65" cy="13.75" r="0.85" fill="currentColor" />
+      <rect x="3.25" y="4.25" width="5.1" height="5.1" rx="1.05" stroke="currentColor" strokeWidth="1.35" />
+      <rect x="11.65" y="4.25" width="5.1" height="5.1" rx="1.05" stroke="currentColor" strokeWidth="1.35" />
+      <rect x="3.25" y="11.65" width="5.1" height="5.1" rx="1.05" stroke="currentColor" strokeWidth="1.35" />
+      <rect x="11.65" y="11.65" width="5.1" height="5.1" rx="1.05" stroke="currentColor" strokeWidth="1.35" />
     </svg>
   );
 }
 
-type AboutStyleArticleFloatingTocProps = {
-  items: readonly AboutStyleArticleTocItem[];
+type AboutStyleArticleFloatingBlogNavProps = {
+  currentSlug?: string;
 };
 
-/** Frosted TOC circle fixed bottom-right; appears after scrolling past the hero. */
-export function AboutStyleArticleFloatingToc({ items }: AboutStyleArticleFloatingTocProps) {
+/** Frosted blog index circle fixed bottom-left; appears after scrolling past the hero. */
+export function AboutStyleArticleFloatingBlogNav({ currentSlug }: AboutStyleArticleFloatingBlogNavProps) {
   const [mounted, setMounted] = useState(false);
   const [scrollRevealed, setScrollRevealed] = useState(false);
   const [open, setOpen] = useState(false);
@@ -132,7 +126,7 @@ export function AboutStyleArticleFloatingToc({ items }: AboutStyleArticleFloatin
     }, PANEL_HIDE_MS);
   }, [beginCollapse, clearCollapseStyles]);
 
-  const openToc = useCallback(() => {
+  const openPanel = useCallback(() => {
     if (revealTimerRef.current !== null) {
       window.clearTimeout(revealTimerRef.current);
     }
@@ -154,13 +148,13 @@ export function AboutStyleArticleFloatingToc({ items }: AboutStyleArticleFloatin
     }, PANEL_REVEAL_MS);
   }, [clearCollapseStyles]);
 
-  const toggleToc = useCallback(() => {
+  const togglePanel = useCallback(() => {
     if (open) {
       close();
     } else {
-      openToc();
+      openPanel();
     }
-  }, [close, open, openToc]);
+  }, [close, open, openPanel]);
 
   useEffect(() => {
     if (!open) return;
@@ -199,37 +193,37 @@ export function AboutStyleArticleFloatingToc({ items }: AboutStyleArticleFloatin
     };
   }, []);
 
-  if (!mounted || items.length === 0) {
+  if (!mounted) {
     return null;
   }
 
   return createPortal(
     <div
       ref={rootRef}
-      className={`about-style-article-floating-toc${scrollRevealed ? " is-visible" : ""}${open && !collapsing ? " is-open" : ""}${panelRevealed ? " is-revealed" : ""}${collapsing ? " is-closing" : ""}`}
+      className={`about-style-article-floating-blog-nav${scrollRevealed ? " is-visible" : ""}${open && !collapsing ? " is-open" : ""}${panelRevealed ? " is-revealed" : ""}${collapsing ? " is-closing" : ""}`}
       aria-live="polite"
       aria-hidden={!scrollRevealed}
     >
       <div
-        className="about-style-article-floating-toc__frost proto-nav-frost-shell"
+        className="about-style-article-floating-blog-nav__frost proto-nav-frost-shell"
         style={{ ["--proto-nav-frost-progress" as string]: 1 }}
       >
         {open ? (
-          <div className="about-style-article-floating-toc__panel" aria-hidden={!panelRevealed}>
-            <AboutStyleArticleTocPanel items={items} variant="nav" onItemClick={close} />
+          <div className="about-style-article-floating-blog-nav__panel" aria-hidden={!panelRevealed}>
+            <AboutStyleArticleFloatingBlogPanel currentSlug={currentSlug} onItemClick={close} />
           </div>
         ) : null}
 
         {!open && !collapsing ? (
           <button
             type="button"
-            className="about-style-article-floating-toc__trigger"
+            className="about-style-article-floating-blog-nav__trigger"
             aria-expanded={open}
-            aria-label="Open table of contents"
-            onClick={toggleToc}
+            aria-label="Open blog posts"
+            onClick={togglePanel}
             tabIndex={scrollRevealed ? 0 : -1}
           >
-            <TocIcon />
+            <BlogNavIcon />
           </button>
         ) : null}
       </div>

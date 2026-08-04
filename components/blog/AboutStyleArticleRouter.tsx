@@ -20,6 +20,8 @@ export function AboutStyleArticleRouter({ article }: AboutStyleArticleRouterProp
   return variant === "desktop" ? (
     <AboutStyleArticleDesktopView tocItems={tocItems}>{content}</AboutStyleArticleDesktopView>
   ) : (
-    <AboutStyleArticleMobileView tocItems={tocItems}>{content}</AboutStyleArticleMobileView>
+    <AboutStyleArticleMobileView tocItems={tocItems} currentSlug={article.slug}>
+      {content}
+    </AboutStyleArticleMobileView>
   );
 }

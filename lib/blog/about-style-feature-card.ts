@@ -26,11 +26,6 @@ export type AboutStyleFeatureCard = {
   description: string;
 };
 
-/** Product intro pages — show this many feature cards before expand. */
-export const ABOUT_STYLE_FEATURE_CARDS_INITIAL_VISIBLE = 3;
-
-export const ABOUT_STYLE_FEATURE_CARDS_SECTION_LABEL = "Product Highlights" as const;
-
 export function aboutStyleFeatureShaderSurface(variant: AboutStyleFeatureShaderVariant) {
   const hero = doeAboutHeroDuskShaderSurface();
   return {
