@@ -1,3 +1,4 @@
+import { BlogArticleFooterCarouselBand } from "@/components/blog/BlogArticleFooterCarouselBand";
 import { BlogFeaturedCarousel } from "@/components/blog/BlogFeaturedCarousel";
 
 import "@/lib/about/about-doehealth-iphone.css";
@@ -7,8 +8,11 @@ export function HomeBlogFeaturedCarouselSection() {
   return (
     <section className="home-blog-featured-carousel home-blog-featured-carousel--below-hero" aria-label="Blog">
       <div className="home-blog-featured-carousel__shell about-page-content">
-        <BlogFeaturedCarousel oldestFirst homeFeatured />
+        <BlogArticleFooterCarouselBand dividerPosition="below">
+          <BlogFeaturedCarousel oldestFirst homeFeatured />
+        </BlogArticleFooterCarouselBand>
       </div>
+      <div className="home-blog-featured-carousel__hairline" aria-hidden />
     </section>
   );
 }

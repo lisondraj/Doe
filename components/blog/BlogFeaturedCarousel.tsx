@@ -20,7 +20,11 @@ export function BlogFeaturedCarousel({
           {posts.map((post) => (
             <li key={post.slug} className="blog-article-related-carousel__slide">
               <Link href={post.path} className="group block h-full no-underline">
-                <BlogLandingPostCard post={post} linked={false} previewContext="carousel" />
+                <BlogLandingPostCard
+                  post={post}
+                  linked={false}
+                  previewContext={homeFeatured ? "home-carousel" : "carousel"}
+                />
               </Link>
             </li>
           ))}

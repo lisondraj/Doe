@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import { BlogArticleCategory } from "@/components/blog/BlogArticleCategory";
 import { aboutStyleFeatureShaderSurface } from "@/lib/blog/about-style-feature-card";
+import { blogHomeCarouselPreviewShader } from "@/lib/blog/blog-home-carousel-preview-shaders";
 import { blogPreviewShaderSurface } from "@/lib/blog/blog-preview-shader-surface";
 import {
   BLOG_LANDING_CARD_BYLINE_TW,
@@ -44,7 +45,7 @@ type BlogLandingPostCardProps = {
   /** When false, render card markup only (carousel wraps with its own link). */
   linked?: boolean;
   /** List previews on /blog use list shader variants; carousel uses distinct frozen flow presets. */
-  previewContext?: "list" | "carousel";
+  previewContext?: "list" | "carousel" | "home-carousel";
 };
 
 /** /blog landing card — shader thumbnail, title, subheading, meta, excerpt, read more. */
@@ -55,9 +56,11 @@ export function BlogLandingPostCard({
 }: BlogLandingPostCardProps) {
   const subheading = post.previewSubheading ?? post.subheading;
   const shader =
-    previewContext === "carousel"
-      ? blogPreviewShaderSurface(post.carouselShaderVariant)
-      : aboutStyleFeatureShaderSurface(post.previewShaderVariant);
+    previewContext === "home-carousel"
+      ? blogPreviewShaderSurface(blogHomeCarouselPreviewShader(post.slug))
+      : previewContext === "carousel"
+        ? blogPreviewShaderSurface(post.carouselShaderVariant)
+        : aboutStyleFeatureShaderSurface(post.previewShaderVariant);
 
   const card = (
     <article
