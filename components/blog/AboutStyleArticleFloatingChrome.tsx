@@ -479,7 +479,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
                   aria-label="Back 10 seconds"
                   onClick={() => seekBy(-10)}
                 >
-                  <SkipBack10Icon size={18} />
+                  <SkipBack10Icon size={20} />
                 </button>
                 <button
                   type="button"
@@ -487,7 +487,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
                   aria-label={isPlaying ? "Pause" : "Play"}
                   onClick={togglePlay}
                 >
-                  {isPlaying ? <PauseIcon size={34} /> : <PlayIcon size={34} />}
+                  {isPlaying ? <PauseIcon size={40} /> : <PlayIcon size={40} />}
                 </button>
                 <button
                   type="button"
@@ -495,7 +495,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
                   aria-label="Forward 10 seconds"
                   onClick={() => seekBy(10)}
                 >
-                  <SkipForward10Icon size={18} />
+                  <SkipForward10Icon size={20} />
                 </button>
               </div>
 

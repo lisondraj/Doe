@@ -1889,8 +1889,8 @@ html[data-about-page]:has(.doephone-mobile-root) {
     19.5rem,
     calc(100vw - var(--proto-phone-gutter-left, 2rem) - var(--proto-phone-gutter-right, 2rem))
   );
-  --about-floating-chrome-audio-cap-size: clamp(3.2rem, 2.88rem + 1.35vmin, 3.95rem);
-  --about-floating-chrome-audio-cap-icon: clamp(1.28rem, 1.14rem + 0.55vmin, 1.48rem);
+  --about-floating-chrome-audio-cap-size: clamp(4.05rem, 3.65rem + 1.35vmin, 4.85rem);
+  --about-floating-chrome-audio-cap-icon: clamp(1.42rem, 1.28rem + 0.55vmin, 1.6rem);
   --about-audio-join-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --about-audio-leave-ease: cubic-bezier(0.32, 0.94, 0.38, 1);
 }
@@ -2607,7 +2607,8 @@ html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrom
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio .about-style-article-floating-chrome__shell {
   align-items: center;
   justify-content: space-between;
-  gap: 0;
+  gap: clamp(0.22rem, 0.14rem + 0.32vmin, 0.38rem);
+  padding-inline: clamp(0.32rem, 0.22rem + 0.42vmin, 0.52rem);
   height: var(--about-floating-toc-closed-size);
   min-height: var(--about-floating-toc-closed-size);
   max-height: var(--about-floating-toc-closed-size);
@@ -2620,7 +2621,6 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   -webkit-backdrop-filter: blur(calc(var(--proto-nav-frost-progress) * 56px))
     saturate(calc(1 + var(--proto-nav-frost-progress) * 0.12));
   box-shadow: none;
-  padding: 0;
   transition:
     background-color var(--about-audio-join-ms, 920ms) var(--about-audio-join-ease, cubic-bezier(0.22, 1, 0.36, 1)),
     border-radius var(--about-audio-join-ms, 920ms) var(--about-audio-join-ease, cubic-bezier(0.22, 1, 0.36, 1)),
@@ -2706,7 +2706,7 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   }
 
   42% {
-    transform: scale(0.9);
+    transform: scale(0.97);
   }
 
   100% {
@@ -2804,13 +2804,15 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio:not(.is-audio-joined):not(.is-audio-closing) .about-style-article-floating-chrome__cap,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio:not(.is-audio-joined):not(.is-audio-closing) .about-style-article-floating-chrome__cap {
-  width: var(--about-floating-toc-closed-size) !important;
-  min-width: var(--about-floating-toc-closed-size) !important;
-  height: var(--about-floating-toc-closed-size);
+  width: var(--about-floating-chrome-audio-cap-size) !important;
+  min-width: var(--about-floating-chrome-audio-cap-size) !important;
+  height: var(--about-floating-chrome-audio-cap-size);
+  align-self: center;
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio:not(.is-audio-joined):not(.is-audio-closing) .about-style-article-floating-chrome__cap-trigger,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio:not(.is-audio-joined):not(.is-audio-closing) .about-style-article-floating-chrome__cap-trigger {
+  height: var(--about-floating-chrome-audio-cap-size);
   border-color: transparent;
   background-color: transparent !important;
   backdrop-filter: none;
@@ -2822,6 +2824,12 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
     box-shadow 420ms var(--about-audio-join-ease, cubic-bezier(0.22, 1, 0.36, 1)),
     height var(--about-audio-join-ms, 920ms) var(--about-audio-join-ease, cubic-bezier(0.22, 1, 0.36, 1)),
     padding var(--about-audio-join-ms, 920ms) var(--about-audio-join-ease, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio:not(.is-audio-joined):not(.is-audio-closing) .about-style-article-floating-chrome__cap-trigger .about-style-article-floating-chrome__icon,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio:not(.is-audio-joined):not(.is-audio-closing) .about-style-article-floating-chrome__cap-trigger .about-style-article-floating-chrome__icon {
+  width: var(--about-floating-chrome-audio-cap-icon);
+  height: var(--about-floating-chrome-audio-cap-icon);
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__cap--left.is-open,
@@ -2999,19 +3007,24 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   justify-content: center;
   gap: clamp(0.62rem, 0.48rem + 0.62vmin, 0.92rem);
   width: 100%;
+  min-height: clamp(2.95rem, 2.62rem + 1.25vmin, 3.35rem);
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-joined .about-style-article-floating-chrome__transport-btn,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio-joined .about-style-article-floating-chrome__transport-btn {
-  width: clamp(1.38rem, 1.22rem + 0.62vmin, 1.56rem);
-  height: clamp(1.38rem, 1.22rem + 0.62vmin, 1.56rem);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  width: clamp(1.65rem, 1.48rem + 0.62vmin, 1.85rem);
+  height: clamp(1.65rem, 1.48rem + 0.62vmin, 1.85rem);
   flex-shrink: 0;
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-joined .about-style-article-floating-chrome__transport-btn--primary,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio-joined .about-style-article-floating-chrome__transport-btn--primary {
-  width: clamp(2.75rem, 2.42rem + 1.25vmin, 3.15rem);
-  height: clamp(2.75rem, 2.42rem + 1.25vmin, 3.15rem);
+  width: clamp(3.15rem, 2.78rem + 1.35vmin, 3.62rem);
+  height: clamp(3.15rem, 2.78rem + 1.35vmin, 3.62rem);
   min-width: 0;
   min-height: 0;
   padding: 0;
@@ -3043,7 +3056,7 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-joined .about-style-article-floating-chrome__progress-duration,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio-joined .about-style-article-floating-chrome__progress-duration {
   flex: 0 0 auto;
-  font-size: clamp(0.62rem, 0.56rem + 0.22vmin, 0.7rem);
+  font-size: clamp(0.78rem, 0.7rem + 0.28vmin, 0.88rem);
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
   line-height: 1;
