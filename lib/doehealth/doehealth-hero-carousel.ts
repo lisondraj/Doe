@@ -22,8 +22,8 @@ export const DOEHEALTH_HERO_HEADLINE_CROSSFADE_MS = 550;
 /** /doehealth hero — rotates the title + "introducing" style link beneath it. */
 export const DOEHEALTH_HERO_HEADLINE_ENTRIES: readonly DoeHomeHeroHeadlineEntry[] = [
   {
-    line1: "Design your own",
-    line2: "clinical intelligence.",
+    line1: "Design your",
+    line2: "clinical intelligence",
     readMorePrefix: "Introducing",
     readMoreLinks: [
       { label: "Pulse", href: INTRODUCING_PULSE_PATH },
