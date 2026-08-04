@@ -436,25 +436,25 @@ html[data-about-page][data-layout="desktop"] .about-desktop-main figcaption.broa
 }
 
 html[data-about-page] .broader-doe-hero-description,
-html[data-home-page] .blog-article-footer-carousel-band .broader-doe-hero-description {
+html[data-home-page] .broader-doe-hero-description {
   font-size: clamp(1.55rem, 1.35vw, 1.82rem) !important;
   line-height: 1.32 !important;
 }
 
 html[data-about-page] .broader-doe-hero-byline,
-html[data-home-page] .blog-article-footer-carousel-band .broader-doe-hero-byline {
+html[data-home-page] .broader-doe-hero-byline {
   font-size: clamp(1.12rem, 1vw, 1.32rem) !important;
   line-height: 1.35 !important;
 }
 
 /* Broader Doe Vision iPhone — slightly larger subheading + byline than desktop. */
 html[data-about-page]:has(.doephone-mobile-root--doehealth) main p.broader-doe-hero-description,
-html[data-home-page]:not([data-layout="desktop"]) .blog-article-footer-carousel-band p.broader-doe-hero-description {
+html[data-home-page]:not([data-layout="desktop"]) p.broader-doe-hero-description {
   font-size: clamp(1.48rem, 1.22rem + 0.72vmin, 1.58rem) !important;
 }
 
 html[data-about-page]:has(.doephone-mobile-root--doehealth) main p.broader-doe-hero-byline,
-html[data-home-page]:not([data-layout="desktop"]) .blog-article-footer-carousel-band p.broader-doe-hero-byline {
+html[data-home-page]:not([data-layout="desktop"]) p.broader-doe-hero-byline {
   font-size: clamp(1.22rem, 1.05rem + 0.7vmin, 1.44rem) !important;
 }
 
@@ -834,7 +834,7 @@ html[data-about-page] .broader-doe-hero-headlines .about-style-product-intro-bod
 
 html[data-about-page] .broader-doe-hero-title,
 html[data-about-page] .broader-doe-hero-description,
-html[data-home-page] .blog-article-footer-carousel-band .broader-doe-hero-description {
+html[data-home-page] .broader-doe-hero-description {
   background: var(
     --doehealth-gold-text-gradient,
     linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%)
@@ -846,7 +846,7 @@ html[data-home-page] .blog-article-footer-carousel-band .broader-doe-hero-descri
 }
 
 html[data-about-page] .broader-doe-hero-byline,
-html[data-home-page] .blog-article-footer-carousel-band .broader-doe-hero-byline {
+html[data-home-page] .broader-doe-hero-byline {
   color: #e8c08e !important;
 }
 
@@ -899,7 +899,7 @@ html[data-about-page][data-layout="desktop"] .about-desktop-main ol.broader-doe-
 /* About-style feature cards — square shader tiles beneath hero band. */
 html[data-about-page] .about-style-feature-card__shader,
 html[data-about-page] .blog-landing-card-visual__shader,
-html[data-home-page] .blog-article-footer-carousel-band .blog-landing-card-visual__shader {
+html[data-home-page] .blog-landing-card-visual__shader {
   box-shadow:
     inset 0 1px 0 rgba(255, 245, 230, 0.06),
     0 18px 40px rgba(0, 0, 0, 0.22);
@@ -1138,7 +1138,7 @@ html[data-home-page][data-layout="desktop"] .blog-landing-card-category {
 }
 
 html[data-about-page] .blog-landing-card-title,
-html[data-home-page] .blog-article-footer-carousel-band .blog-landing-card-title {
+html[data-home-page] .blog-landing-card-title {
   font-size: clamp(1.85rem, 1.55rem + 1.1vmin, 2.35rem) !important;
   line-height: 1.08 !important;
   padding-bottom: 0.06em !important;
@@ -1153,13 +1153,13 @@ html[data-home-page] .blog-article-footer-carousel-band .blog-landing-card-title
 }
 
 html[data-about-page] .blog-landing-card-excerpt,
-html[data-home-page] .blog-article-footer-carousel-band .blog-landing-card-excerpt {
+html[data-home-page] .blog-landing-card-excerpt {
   font-size: clamp(1.18rem, 1.02rem + 0.72vmin, 1.42rem) !important;
   color: rgba(242, 232, 218, 0.78) !important;
 }
 
 html[data-about-page] .blog-landing-read-more,
-html[data-home-page] .blog-article-footer-carousel-band .blog-landing-read-more {
+html[data-home-page] .blog-landing-read-more {
   font-size: clamp(1.08rem, 0.95rem + 0.55vmin, 1.22rem) !important;
   color: #e8c08e !important;
 }
@@ -1169,7 +1169,7 @@ html[data-about-page] .blog-landing-list-divider-line {
 }
 
 html[data-about-page][data-layout="desktop"] .blog-landing-card-title,
-html[data-home-page][data-layout="desktop"] .blog-article-footer-carousel-band .blog-landing-card-title {
+html[data-home-page][data-layout="desktop"] .blog-landing-card-title {
   font-size: clamp(2rem, 1.65vw, 2.45rem) !important;
 }
 
@@ -1192,18 +1192,18 @@ html[data-home-page][data-layout="desktop"]
 }
 
 html[data-about-page][data-layout="desktop"] .blog-landing-card-excerpt,
-html[data-home-page][data-layout="desktop"] .blog-article-footer-carousel-band .blog-landing-card-excerpt {
+html[data-home-page][data-layout="desktop"] .blog-landing-card-excerpt {
   font-size: clamp(1.22rem, 0.95vw, 1.48rem) !important;
 }
 
 /* Blog landing previews — thumbnail shader fills the aspect-ratio box (not article hero height). */
 html[data-about-page] .blog-landing-card-visual__shader,
-html[data-home-page] .blog-article-footer-carousel-band .blog-landing-card-visual__shader {
+html[data-home-page] .blog-landing-card-visual__shader {
   flex: 0 0 auto;
 }
 
 html[data-about-page] .blog-landing-card-visual__shader .proto-shader-surface,
-html[data-home-page] .blog-article-footer-carousel-band .blog-landing-card-visual__shader .proto-shader-surface {
+html[data-home-page] .blog-landing-card-visual__shader .proto-shader-surface {
   height: 100% !important;
   min-height: 0 !important;
   max-height: none !important;
@@ -1218,24 +1218,24 @@ html[data-about-page][data-layout="desktop"] .about-page-content .about-hero-vis
 }
 
 html[data-about-page] .blog-landing-card-stack,
-html[data-home-page] .blog-article-footer-carousel-band .blog-landing-card-stack {
+html[data-home-page] .blog-landing-card-stack {
   height: 100%;
 }
 
 html[data-about-page] .blog-landing-card-copy,
-html[data-home-page] .blog-article-footer-carousel-band .blog-landing-card-copy {
+html[data-home-page] .blog-landing-card-copy {
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
 }
 
 html[data-about-page] .blog-landing-card-excerpt,
-html[data-home-page] .blog-article-footer-carousel-band .blog-landing-card-excerpt {
+html[data-home-page] .blog-landing-card-excerpt {
   flex: 1 1 auto;
 }
 
 html[data-about-page] .blog-landing-read-more,
-html[data-home-page] .blog-article-footer-carousel-band .blog-landing-read-more {
+html[data-home-page] .blog-landing-read-more {
   flex: 0 0 auto;
   margin-top: auto;
   padding-top: 0.75rem;
@@ -1243,12 +1243,12 @@ html[data-home-page] .blog-article-footer-carousel-band .blog-landing-read-more 
 
 /* iPhone — equal card copy blocks; only excerpt line count adjusts. */
 html[data-about-page]:not([data-layout="desktop"]) .blog-landing-card-copy,
-html[data-home-page]:not([data-layout="desktop"]) .blog-article-footer-carousel-band .blog-landing-card-copy {
+html[data-home-page]:not([data-layout="desktop"]) .blog-landing-card-copy {
   min-height: clamp(13.5rem, 42vw, 15.75rem);
 }
 
 html[data-about-page]:not([data-layout="desktop"]) .blog-landing-card-excerpt,
-html[data-home-page]:not([data-layout="desktop"]) .blog-article-footer-carousel-band .blog-landing-card-excerpt {
+html[data-home-page]:not([data-layout="desktop"]) .blog-landing-card-excerpt {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 4;
@@ -1402,6 +1402,10 @@ html[data-home-page][data-layout="desktop"] .home-blog-featured-carousel__shell 
 html[data-home-page]:not([data-layout="desktop"]) .home-blog-featured-carousel__shell {
   box-sizing: border-box;
   padding-inline: max(1.65rem, calc(env(safe-area-inset-left, 0px) + 3.8vmin));
+}
+
+html[data-home-page] .home-blog-featured-carousel__shell:has(.blog-article-related-carousel) {
+  overflow-x: visible !important;
 }
 
 html[data-home-page] .blog-article-footer-carousel-band {
