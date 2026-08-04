@@ -1198,12 +1198,12 @@ html[data-home-page][data-layout="desktop"]
   letter-spacing: -0.042em !important;
 }
 
-/* Intelligence for every clinic — carousel title scales down to stay on one line. */
+/* Intelligence for every clinic — carousel title: match peers, nudge smaller for length. */
 :is(html[data-about-page], html[data-home-page])
   .blog-article-related-carousel
   .blog-landing-card--intelligence-for-every-clinic
   .blog-landing-card-title {
-  font-size: clamp(1.82rem, 1.52rem + 1.05vmin, 2.22rem) !important;
+  font-size: clamp(1.83rem, 1.54rem + 1.08vmin, 2.3rem) !important;
   letter-spacing: -0.038em !important;
 }
 
@@ -1211,7 +1211,7 @@ html[data-home-page][data-layout="desktop"]
   .blog-article-related-carousel
   .blog-landing-card--intelligence-for-every-clinic
   .blog-landing-card-title {
-  font-size: clamp(1.95rem, 1.58vw, 2.34rem) !important;
+  font-size: clamp(1.97rem, 1.62vw, 2.4rem) !important;
   letter-spacing: -0.038em !important;
 }
 
