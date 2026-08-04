@@ -129,6 +129,8 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
   const wasPlayerOpenRef = useRef(false);
   const audioOpenDelayTimerRef = useRef<number | null>(null);
   const audioDismissPointerRef = useRef<{ id: number; x: number; y: number } | null>(null);
+  const progressTrackRef = useRef<HTMLDivElement>(null);
+  const [isScrubbing, setIsScrubbing] = useState(false);
   const audioCloseWhilePlayingRef = useRef(false);
 
   const clearBlogCollapseStyles = useCallback(() => {
@@ -603,11 +605,46 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
 
   const panelBackdropActive = blogOpen || tocOpen || blogCollapsing || tocCollapsing;
 
-  const onProgressPointer = (event: React.PointerEvent<HTMLDivElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    const ratio = (event.clientX - rect.left) / rect.width;
-    seekToProgress(ratio);
-  };
+  const seekFromClientX = useCallback(
+    (clientX: number) => {
+      const track = progressTrackRef.current;
+      if (!track) return;
+      const rect = track.getBoundingClientRect();
+      if (rect.width <= 0) return;
+      seekToProgress((clientX - rect.left) / rect.width);
+    },
+    [seekToProgress],
+  );
+
+  const onProgressTrackPointerDown = useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      if (event.pointerType === "mouse" && event.button !== 0) return;
+      event.preventDefault();
+      event.stopPropagation();
+      setIsScrubbing(true);
+      event.currentTarget.setPointerCapture(event.pointerId);
+      seekFromClientX(event.clientX);
+    },
+    [seekFromClientX],
+  );
+
+  const onProgressTrackPointerMove = useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      if (!event.currentTarget.hasPointerCapture(event.pointerId)) return;
+      event.preventDefault();
+      event.stopPropagation();
+      seekFromClientX(event.clientX);
+    },
+    [seekFromClientX],
+  );
+
+  const onProgressTrackPointerEnd = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
+    if (!event.currentTarget.hasPointerCapture(event.pointerId)) return;
+    event.currentTarget.releasePointerCapture(event.pointerId);
+    setIsScrubbing(false);
+  }, []);
+
+  const progressPct = progress * 100;
 
   if (!mounted) {
     return null;
@@ -744,24 +781,25 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
               </div>
 
               <div
-                className="about-style-article-floating-chrome__progress"
+                className={`about-style-article-floating-chrome__progress${isScrubbing ? " is-scrubbing" : ""}`}
                 role="slider"
                 aria-valuemin={0}
                 aria-valuemax={duration}
                 aria-valuenow={currentTime}
                 aria-label="Playback position"
-                onPointerDown={onProgressPointer}
               >
                 <div className="about-style-article-floating-chrome__progress-row">
-                  <div className="about-style-article-floating-chrome__progress-track">
-                    <div
-                      className="about-style-article-floating-chrome__progress-fill"
-                      style={{ width: `${progress * 100}%` }}
-                    />
-                    <div
-                      className="about-style-article-floating-chrome__progress-thumb"
-                      style={{ left: `${progress * 100}%` }}
-                    />
+                  <div
+                    ref={progressTrackRef}
+                    className="about-style-article-floating-chrome__progress-track"
+                    style={{ ["--progress-pct" as string]: progressPct }}
+                    onPointerDown={onProgressTrackPointerDown}
+                    onPointerMove={onProgressTrackPointerMove}
+                    onPointerUp={onProgressTrackPointerEnd}
+                    onPointerCancel={onProgressTrackPointerEnd}
+                  >
+                    <div className="about-style-article-floating-chrome__progress-fill" aria-hidden />
+                    <div className="about-style-article-floating-chrome__progress-thumb" aria-hidden />
                   </div>
                   <span className="about-style-article-floating-chrome__progress-duration">{formatTime(duration)}</span>
                 </div>

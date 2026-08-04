@@ -3389,12 +3389,36 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   border-radius: 9999px;
   background: rgba(198, 168, 132, 0.22);
   overflow: visible;
+  touch-action: none;
+  cursor: pointer;
+  isolation: isolate;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__progress-track::before,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__progress-track::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  z-index: 0;
+  height: 2.25rem;
+  transform: translateY(-50%);
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-scrubbing .about-style-article-floating-chrome__progress-track,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-scrubbing .about-style-article-floating-chrome__progress-track,
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__progress.is-scrubbing .about-style-article-floating-chrome__progress-track,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__progress.is-scrubbing .about-style-article-floating-chrome__progress-track {
+  cursor: grabbing;
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__progress-fill,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__progress-fill {
   position: absolute;
   inset: 0 auto 0 0;
+  z-index: 1;
+  width: calc(var(--progress-pct, 0) * 1%);
   border-radius: inherit;
   background: linear-gradient(90deg, rgba(232, 192, 142, 0.95), rgba(212, 165, 116, 0.88));
   pointer-events: none;
@@ -3404,6 +3428,8 @@ html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrom
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__progress-thumb {
   position: absolute;
   top: 50%;
+  z-index: 2;
+  left: calc(var(--progress-pct, 0) * 1%);
   width: 0.62rem;
   height: 0.62rem;
   border-radius: 9999px;
@@ -3411,7 +3437,6 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   box-shadow: 0 0 0 2px rgba(39, 31, 23, 0.55);
   transform: translate(-50%, -50%);
   pointer-events: none;
-  transition: left 120ms var(--about-chrome-ease-out);
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__progress-times,

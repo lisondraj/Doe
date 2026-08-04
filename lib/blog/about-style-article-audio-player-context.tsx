@@ -118,7 +118,8 @@ export function AboutStyleArticleAudioPlayerProvider({
 
   const seekToProgress = useCallback(
     (progress01: number) => {
-      const next = Math.min(duration, Math.max(0, progress01 * duration));
+      const clamped = Math.min(1, Math.max(0, progress01));
+      const next = clamped * duration;
       setCurrentTime(next);
       const audio = audioRef.current;
       if (audioSrc && audio) {
