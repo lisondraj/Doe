@@ -3080,6 +3080,12 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   padding: 0;
 }
 
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-joined .about-style-article-floating-chrome__transport-btn--primary svg,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio-joined .about-style-article-floating-chrome__transport-btn--primary svg {
+  width: clamp(1.85rem, 1.65rem + 0.78vmin, 2.12rem);
+  height: clamp(1.85rem, 1.65rem + 0.78vmin, 2.12rem);
+}
+
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-joined .about-style-article-floating-chrome__progress,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio-joined .about-style-article-floating-chrome__progress {
   flex: 0 0 auto;

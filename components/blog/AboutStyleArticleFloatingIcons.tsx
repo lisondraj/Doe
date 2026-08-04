@@ -43,20 +43,31 @@ export function TocIcon({ className }: { className?: string }) {
 
 export function PlayIcon({ size = 14 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" aria-hidden>
-      <path
-        d="M11.5 8.25c0-.85.95-.42 1.55-.08l7.35 4.15c.6.34.6 1.2 0 1.54l-7.35 4.15c-.6.34-1.55-.1-1.55-.95V8.25Z"
-        fill="currentColor"
-      />
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 32 32"
+      fill="none"
+      aria-hidden
+      className="block shrink-0"
+    >
+      <path d="M9.75 7.5 22.75 16 9.75 24.5Z" fill="currentColor" />
     </svg>
   );
 }
 
 export function PauseIcon({ size = 14 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" aria-hidden>
-      <rect x="10" y="7.5" width="3.5" height="17" rx="0.85" fill="currentColor" />
-      <rect x="18.5" y="7.5" width="3.5" height="17" rx="0.85" fill="currentColor" />
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 32 32"
+      fill="none"
+      aria-hidden
+      className="block shrink-0"
+    >
+      <rect x="9.75" y="7.5" width="4" height="17" rx="0.85" fill="currentColor" />
+      <rect x="18.25" y="7.5" width="4" height="17" rx="0.85" fill="currentColor" />
     </svg>
   );
 }
