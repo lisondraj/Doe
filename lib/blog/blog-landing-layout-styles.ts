@@ -28,8 +28,8 @@ export const BLOG_LANDING_CARD_VISUAL_TW = `blog-landing-card-visual relative as
 /** Post category on landing cards — all caps, top-left above title. */
 export const BLOG_LANDING_CARD_CATEGORY_TW = `blog-landing-card-category mb-2 font-medium uppercase tracking-[0.1em] ${dmSans.className}`;
 
-/** Post category on article heroes — small centered label above title. */
-export const BLOG_ARTICLE_CATEGORY_TW = `blog-article-category mb-3 text-center font-medium tracking-[0.06em] iphone-page:mb-3.5 ${dmSans.className}`;
+/** Post category on article heroes — all caps, centered label above title. */
+export const BLOG_ARTICLE_CATEGORY_TW = `blog-article-category mb-3 text-center font-medium uppercase tracking-[0.1em] iphone-page:mb-3.5 ${dmSans.className}`;
 
 /** Post title on landing cards — gold gradient, smaller than page hero. */
 export const BLOG_LANDING_CARD_TITLE_TW = `blog-landing-card-title font-[375] leading-[1.06] tracking-[-0.03em] ${suisseIntl.className}`;
