@@ -27,6 +27,8 @@ type AboutStyleArticleAudioPlayerContextValue = {
   duration: number;
   progress: number;
   openPlayer: () => void;
+  /** Dismiss the pill UI while playback continues. */
+  hidePlayer: () => void;
   closePlayer: () => void;
   togglePlay: () => void;
   seekBy: (deltaSeconds: number) => void;
@@ -57,7 +59,10 @@ export function AboutStyleArticleAudioPlayerProvider({
 
   const openPlayer = useCallback(() => {
     setIsPlayerOpen(true);
-    setIsPlaying(false);
+  }, []);
+
+  const hidePlayer = useCallback(() => {
+    setIsPlayerOpen(false);
   }, []);
 
   const closePlayer = useCallback(() => {
@@ -120,6 +125,7 @@ export function AboutStyleArticleAudioPlayerProvider({
       duration,
       progress,
       openPlayer,
+      hidePlayer,
       closePlayer,
       togglePlay,
       seekBy,
@@ -136,6 +142,7 @@ export function AboutStyleArticleAudioPlayerProvider({
       duration,
       progress,
       openPlayer,
+      hidePlayer,
       closePlayer,
       togglePlay,
       seekBy,

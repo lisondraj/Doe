@@ -40,6 +40,29 @@ function formatTime(seconds: number) {
   return `${mins}:${String(secs).padStart(2, "0")}`;
 }
 
+const PLAYING_CAP_RING_R = 46;
+
+function PlayingCapRing({ progress }: { progress: number }) {
+  const circumference = 2 * Math.PI * PLAYING_CAP_RING_R;
+  const clamped = Math.min(1, Math.max(0, progress));
+  const dashOffset = circumference * (1 - clamped);
+
+  return (
+    <svg className="about-style-article-floating-chrome__cap-ring" viewBox="0 0 100 100" aria-hidden>
+      <circle className="about-style-article-floating-chrome__cap-ring-track" cx="50" cy="50" r={PLAYING_CAP_RING_R} />
+      <circle
+        className="about-style-article-floating-chrome__cap-ring-progress"
+        cx="50"
+        cy="50"
+        r={PLAYING_CAP_RING_R}
+        strokeDasharray={circumference}
+        strokeDashoffset={dashOffset}
+        transform="rotate(-90 50 50)"
+      />
+    </svg>
+  );
+}
+
 /** Unified bottom chrome — blog + TOC circles merge into an audio pill on voice play. */
 export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: AboutStyleArticleFloatingChromeProps) {
   const {
@@ -51,6 +74,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
     duration,
     progress,
     closePlayer,
+    hidePlayer,
     openPlayer,
     togglePlay,
     seekBy,
@@ -70,8 +94,10 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
   const [tocCollapsing, setTocCollapsing] = useState(false);
   const [audioJoined, setAudioJoined] = useState(false);
   const [audioClosing, setAudioClosing] = useState(false);
+  const audioPlayingMinimized = isPlaying && !isPlayerOpen && !audioClosing;
+  const leftCapShowsPlaying = isPlaying && !blogOpen && !blogCollapsing && (!isPlayerOpen || audioClosing);
   const audioCapActive = isPlayerOpen || audioClosing;
-  const anyWidgetOpen = blogOpen || tocOpen || audioCapActive;
+  const anyWidgetOpen = blogOpen || tocOpen || audioCapActive || audioPlayingMinimized;
   const chromeVisible = scrollRevealed || anyWidgetOpen;
 
   const rootRef = useRef<HTMLDivElement>(null);
@@ -89,6 +115,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
   const wasPlayerOpenRef = useRef(false);
   const audioOpenDelayTimerRef = useRef<number | null>(null);
   const audioDismissPointerRef = useRef<{ id: number; x: number; y: number } | null>(null);
+  const audioCloseWhilePlayingRef = useRef(false);
 
   const clearBlogCollapseStyles = useCallback(() => {
     const cap = blogCapRef.current;
@@ -278,19 +305,31 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
       window.clearTimeout(audioOpenDelayTimerRef.current);
       audioOpenDelayTimerRef.current = null;
     }
+    audioCloseWhilePlayingRef.current = isPlaying;
     setAudioJoined(false);
     setAudioClosing(true);
     if (audioJoinTimerRef.current !== null) {
       window.clearTimeout(audioJoinTimerRef.current);
     }
     audioJoinTimerRef.current = window.setTimeout(() => {
-      closePlayer();
+      if (audioCloseWhilePlayingRef.current) {
+        hidePlayer();
+      } else {
+        closePlayer();
+      }
+      audioCloseWhilePlayingRef.current = false;
       window.setTimeout(() => {
         setAudioClosing(false);
         audioJoinTimerRef.current = null;
       }, 64);
     }, AUDIO_LEAVE_MS);
-  }, [audioClosing, closePlayer, isPlayerOpen]);
+  }, [audioClosing, closePlayer, hidePlayer, isPlayerOpen, isPlaying]);
+
+  const openPlayingPill = useCallback(() => {
+    if (audioClosing) return;
+    markWidgetOpened();
+    openPlayer();
+  }, [audioClosing, markWidgetOpened, openPlayer]);
 
   const openBlog = useCallback(() => {
     markWidgetOpened();
@@ -360,7 +399,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
       raf = requestAnimationFrame(() => {
         const revealed = window.scrollY > SCROLL_REVEAL_PX;
         setScrollRevealed(revealed);
-        const widgetsOpen = blogOpen || tocOpen || audioCapActive;
+        const widgetsOpen = blogOpen || tocOpen || audioCapActive || (isPlaying && !isPlayerOpen && !audioClosing);
         if (!revealed && !widgetsOpen) {
           setBlogPanelRevealed(false);
           setTocPanelRevealed(false);
@@ -387,7 +426,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
       window.removeEventListener("resize", sync);
       window.removeEventListener("orientationchange", sync);
     };
-  }, [audioCapActive, blogOpen, clearBlogCollapseStyles, clearTocCollapseStyles, closePlayer, tocOpen]);
+  }, [audioCapActive, blogOpen, clearBlogCollapseStyles, clearTocCollapseStyles, closePlayer, isPlaying, isPlayerOpen, audioClosing, tocOpen]);
 
   useEffect(() => {
     if (isPlayerOpen && !wasPlayerOpenRef.current) {
@@ -419,7 +458,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
   }, [audioClosing, blogOpen, closeBlog, closeToc, isPlayerOpen, tocOpen]);
 
   useEffect(() => {
-    if (!isPlayerOpen || !isPlaying || audioSrc) return;
+    if (!isPlaying || audioSrc) return;
 
     fakeTickRef.current = window.setInterval(() => {
       setCurrentTime((time) => {
@@ -438,7 +477,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
         fakeTickRef.current = null;
       }
     };
-  }, [audioSrc, isPlayerOpen, isPlaying, setCurrentTime, setIsPlaying]);
+  }, [audioSrc, isPlaying, setCurrentTime, setIsPlaying]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -580,6 +619,8 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
     audioCapActive ? "is-audio" : "",
     audioJoined ? "is-audio-joined" : "",
     audioClosing ? "is-audio-closing" : "",
+    audioPlayingMinimized ? "is-audio-minimized" : "",
+    audioClosing && isPlaying ? "is-audio-closing-while-playing" : "",
     blogOpen && !audioCapActive ? "is-blog" : "",
     tocOpen && !audioCapActive ? "is-toc" : "",
     blogCollapsing ? "is-blog-closing" : "",
@@ -623,19 +664,35 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
           ) : null}
 
           {!blogOpen && !blogCollapsing ? (
-            <button
-              type="button"
-              className="about-style-article-floating-chrome__cap-trigger"
-              aria-label="Open blog posts"
-              onClick={(event) => {
-                event.stopPropagation();
-                if (audioCapActive) openBlog();
-                else toggleBlog();
-              }}
-              tabIndex={chromeVisible ? 0 : -1}
-            >
-              <BlogNavIcon className="about-style-article-floating-chrome__icon" />
-            </button>
+            leftCapShowsPlaying ? (
+              <button
+                type="button"
+                className="about-style-article-floating-chrome__cap-trigger about-style-article-floating-chrome__cap-trigger--playing"
+                aria-label="Open audio playback"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  openPlayingPill();
+                }}
+                tabIndex={chromeVisible ? 0 : -1}
+              >
+                <PlayingCapRing progress={progress} />
+                <PauseIcon size={22} />
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="about-style-article-floating-chrome__cap-trigger"
+                aria-label="Open blog posts"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  if (audioCapActive) openBlog();
+                  else toggleBlog();
+                }}
+                tabIndex={chromeVisible ? 0 : -1}
+              >
+                <BlogNavIcon className="about-style-article-floating-chrome__icon" />
+              </button>
+            )
           ) : null}
         </div>
 

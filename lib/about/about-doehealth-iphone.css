@@ -3542,3 +3542,85 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   color: rgba(198, 168, 132, 0.72);
 }
 
+/* Minimized playback — left cap pause icon + inner gold progress ring */
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__cap-trigger--playing,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__cap-trigger--playing {
+  position: relative;
+  isolation: isolate;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__cap-ring,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__cap-ring {
+  position: absolute;
+  inset: calc(var(--about-floating-toc-frost-pad) + 0.5px);
+  width: auto;
+  height: auto;
+  pointer-events: none;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__cap-ring-track,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__cap-ring-track {
+  fill: none;
+  stroke: rgba(212, 165, 116, 0.16);
+  stroke-width: 2.15;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__cap-ring-progress,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__cap-ring-progress {
+  fill: none;
+  stroke: rgba(232, 192, 142, 0.96);
+  stroke-width: 2.15;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 140ms linear;
+}
+
+html[data-about-page]:has(.blog-mobile-root)
+  .about-style-article-floating-chrome__cap-trigger--playing
+  > svg:not(.about-style-article-floating-chrome__cap-ring),
+html[data-about-page]:has(.doephone-mobile-root)
+  .about-style-article-floating-chrome__cap-trigger--playing
+  > svg:not(.about-style-article-floating-chrome__cap-ring) {
+  position: relative;
+  z-index: 1;
+  color: rgba(242, 232, 218, 0.94);
+}
+
+html[data-about-page]:has(.blog-mobile-root)
+  .about-style-article-floating-chrome.is-audio-closing-while-playing
+  .about-style-article-floating-chrome__cap--left
+  .about-style-article-floating-chrome__cap-trigger--playing,
+html[data-about-page]:has(.doephone-mobile-root)
+  .about-style-article-floating-chrome.is-audio-closing-while-playing
+  .about-style-article-floating-chrome__cap--left
+  .about-style-article-floating-chrome__cap-trigger--playing {
+  opacity: 1;
+  visibility: visible;
+}
+
+html[data-about-page]:has(.blog-mobile-root)
+  .about-style-article-floating-chrome.is-audio-closing-while-playing
+  .about-style-article-floating-chrome__cap--left
+  .about-style-article-floating-chrome__cap-trigger--playing
+  > svg,
+html[data-about-page]:has(.doephone-mobile-root)
+  .about-style-article-floating-chrome.is-audio-closing-while-playing
+  .about-style-article-floating-chrome__cap--left
+  .about-style-article-floating-chrome__cap-trigger--playing
+  > svg {
+  opacity: 1;
+  animation: none;
+}
+
+html[data-about-page]:has(.blog-mobile-root)
+  .about-style-article-floating-chrome.is-audio-closing-while-playing
+  .about-style-article-floating-chrome__cap--left
+  .about-style-article-floating-chrome__cap-trigger--playing
+  .about-style-article-floating-chrome__cap-ring-progress,
+html[data-about-page]:has(.doephone-mobile-root)
+  .about-style-article-floating-chrome.is-audio-closing-while-playing
+  .about-style-article-floating-chrome__cap--left
+  .about-style-article-floating-chrome__cap-trigger--playing
+  .about-style-article-floating-chrome__cap-ring-progress {
+  transition: none;
+}
+
