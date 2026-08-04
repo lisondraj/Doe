@@ -3948,12 +3948,12 @@ html[data-about-page]:has(.doephone-mobile-root) main h1:first-of-type {
   line-height: 1.02 !important;
 }
 html[data-about-page]:has(.blog-mobile-root) main h1,
-html[data-about-page]:has(.blog-mobile-root) main h2,
+html[data-about-page]:has(.blog-mobile-root) main h2:not(.blog-landing-card-title),
 html[data-about-page]:has(.doephone-mobile-root) main h1,
-html[data-about-page]:has(.doephone-mobile-root) main h2 {
+html[data-about-page]:has(.doephone-mobile-root) main h2:not(.blog-landing-card-title) {
   color: var(--doe-page-ink) !important;
 }
-html[data-about-page]:has(.blog-mobile-root) main h2 {
+html[data-about-page]:has(.blog-mobile-root) main h2:not(.blog-landing-card-title) {
   font-size: clamp(2.15rem, 1.12rem + 5.85vmin, 3.35rem) !important;
 }
 html[data-about-page]:has(.blog-mobile-root) main p:not(.blog-landing-card-category):not(.blog-article-category):not(.blog-landing-card-excerpt):not(.blog-landing-card-subheading):not(.blog-landing-card-byline):not(.broader-doe-hero-description):not(.broader-doe-hero-byline) {
@@ -3962,7 +3962,8 @@ html[data-about-page]:has(.blog-mobile-root) main p:not(.blog-landing-card-categ
 }
 html[data-about-page]:has(.blog-mobile-root) main p.blog-landing-card-category,
 html[data-about-page]:has(.doephone-mobile-root--doehealth) main p.blog-landing-card-category,
-html[data-home-page] main p.blog-landing-card-category {
+html[data-home-page] main p.blog-landing-card-category,
+html[data-home-page] .blog-article-related-carousel p.blog-landing-card-category {
   font-size: clamp(0.54rem, 0.46rem + 0.24vmin, 0.6rem) !important;
   line-height: 1.3 !important;
   color: rgba(232, 192, 142, 0.68) !important;
@@ -3988,9 +3989,9 @@ html[data-about-page]:has(.blog-mobile-root) .about-mobile-beige-panel {
   background-color: #271f17 !important;
 }
 html[data-about-page]:has(.blog-mobile-root) main h1,
-html[data-about-page]:has(.blog-mobile-root) main h2,
+html[data-about-page]:has(.blog-mobile-root) main h2:not(.blog-landing-card-title),
 html[data-about-page]:has(.doephone-mobile-root) main h1,
-html[data-about-page]:has(.doephone-mobile-root) main h2 {
+html[data-about-page]:has(.doephone-mobile-root) main h2:not(.blog-landing-card-title) {
   color: var(--doe-page-ink) !important;
 }
 html[data-about-page]:has(.blog-mobile-root) main p,
