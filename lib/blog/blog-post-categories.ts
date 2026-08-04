@@ -2,7 +2,7 @@ export const BLOG_POST_CATEGORY_FOUNDERS_MEMO = "Founder's Memo" as const;
 
 export const BLOG_POST_CATEGORY_NEW_RELEASES = "New Releases" as const;
 
-export const BLOG_POST_CATEGORY_PULSE_PRODUCT_DESIGN = "Pulse: Product Design" as const;
+export const BLOG_POST_CATEGORY_PULSE_PRODUCT_DESIGN = "Product Design" as const;
 
 export const BLOG_POST_CATEGORY_FEATURES = "Features" as const;
 
