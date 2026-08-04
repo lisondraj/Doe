@@ -416,9 +416,11 @@ html[data-about-page] .broader-doe-hero-title {
 }
 
 /* Introducing Pulse / Fabric — descender clearance on product intro titles. */
-html[data-about-page] .broader-doe-hero-title.broader-doe-hero-title--product-intro {
+html[data-about-page] .broader-doe-hero-title.broader-doe-hero-title--product-intro,
+html[data-home-page] .broader-doe-hero-title.broader-doe-hero-title--product-intro {
   line-height: 1.08 !important;
   padding-bottom: 0.08em !important;
+  overflow: visible;
 }
 
 /* /about — Guiding Beliefs + feature card subheadings gold gradient (size unchanged). */
@@ -951,6 +953,12 @@ html[data-about-page][data-layout="desktop"] .broader-doe-hero-intro {
 
 html[data-about-page][data-layout="desktop"]
   .about-style-product-intro-page
+  .broader-doe-hero-title.broader-doe-hero-title--product-intro,
+html[data-about-page][data-layout="desktop"]
+  .about-style-labs-proposal-page
+  .broader-doe-hero-title.broader-doe-hero-title--product-intro,
+html[data-home-page][data-layout="desktop"]
+  .about-style-labs-proposal-page
   .broader-doe-hero-title.broader-doe-hero-title--product-intro {
   line-height: 1.08 !important;
   padding-bottom: 0.08em !important;

@@ -19,7 +19,7 @@ export const INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE = {
   titleLine2: "every clinic",
   excerpt:
     "A Doe Labs proposal for reinforcement learning, open-weight models on secure cloud compute, and Blended Intelligence: the stack we believe every clinic will run.",
-  subheading: "A research proposal on the intelligence stack clinics will own.",
+  subheading: "What we're building towards.",
   openingLede: BROADER_DOE_VISION_PROPOSAL_HIGHLIGHT_LEAD,
   openingLedeContinuation: BROADER_DOE_VISION_PROPOSAL_HIGHLIGHT_CONTINUATION,
   openingLedeContinuation2:
