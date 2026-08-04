@@ -1176,7 +1176,7 @@ html[data-home-page][data-layout="desktop"] .blog-landing-card-title {
 /* Broader Doe Vision — carousel; tighter tracking so the long title stays on one line. */
 html[data-about-page] .blog-article-related-carousel .blog-landing-card--broader-doe-vision .blog-landing-card-title,
 html[data-home-page] .blog-article-related-carousel .blog-landing-card--broader-doe-vision .blog-landing-card-title {
-  letter-spacing: -0.038em !important;
+  letter-spacing: -0.042em !important;
 }
 
 html[data-about-page][data-layout="desktop"]
@@ -1187,7 +1187,7 @@ html[data-home-page][data-layout="desktop"]
   .blog-article-related-carousel
   .blog-landing-card--broader-doe-vision
   .blog-landing-card-title {
-  letter-spacing: -0.038em !important;
+  letter-spacing: -0.042em !important;
 }
 
 html[data-about-page][data-layout="desktop"] .blog-landing-card-excerpt,
@@ -1280,7 +1280,7 @@ html[data-home-page] .blog-landing-card--pulse-ambient .blog-landing-card-excerp
 }
 
 :is(html[data-about-page], html[data-home-page]) .blog-article-related-carousel .blog-landing-card-title {
-  font-size: clamp(1.88rem, 1.57rem + 1.12vmin, 2.34rem) !important;
+  font-size: clamp(2.12rem, 1.78rem + 1.35vmin, 2.68rem) !important;
   line-height: 1.08 !important;
   padding-bottom: 0.06em !important;
   background: var(
@@ -1296,7 +1296,7 @@ html[data-home-page] .blog-landing-card--pulse-ambient .blog-landing-card-excerp
 :is(html[data-about-page], html[data-home-page])[data-layout="desktop"]
   .blog-article-related-carousel
   .blog-landing-card-title {
-  font-size: clamp(2.02rem, 1.66vw, 2.44rem) !important;
+  font-size: clamp(2.28rem, 1.92vw, 2.78rem) !important;
 }
 
 :is(html[data-about-page], html[data-home-page]) .blog-article-related-carousel .blog-landing-card-excerpt {
