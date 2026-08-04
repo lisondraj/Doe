@@ -41,8 +41,8 @@ export const DOEHEALTH_HERO_HEADLINE_ENTRIES: readonly DoeHomeHeroHeadlineEntry[
     readMoreLinks: [{ label: "Read more", href: INTRODUCING_FLOAT_PATH }],
   },
   {
-    line1: "Safe deployment of",
-    line2: "AI in healthcare",
+    line1: "We propose",
+    line2: "blended intelligence",
     readMoreLinks: [{ label: "Read our proposal", href: INTELLIGENCE_FOR_EVERY_CLINIC_PATH }],
   },
 ] as const satisfies readonly DoeHomeHeroHeadlineEntry[];
