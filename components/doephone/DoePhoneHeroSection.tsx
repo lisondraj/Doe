@@ -94,6 +94,10 @@ function HeroCopyBlock({
 
 type HeroCopyTransition = { from: number; to: number };
 
+function isSingleLineHeroEntry(entry: DoeHomeHeroHeadlineEntry) {
+  return entry.headlineClassName === "doehealth-hero-headline--single-line";
+}
+
 /** Rotates the hero headline + link through several entries with a gold crossfade. */
 function HeroCopyCarousel({
   entries,
@@ -173,8 +177,23 @@ function HeroCopyCarousel({
     return () => window.clearTimeout(fallback);
   }, [completeTransition, reducedMotion, transition]);
 
+  const sizerEntry = entries.find((entry) => entry.line2) ?? entries[0];
+  const singleLineTransition =
+    transition != null &&
+    (isSingleLineHeroEntry(entries[transition.from]) || isSingleLineHeroEntry(entries[transition.to]));
+
   return (
-    <div className="doehealth-hero-copy-carousel">
+    <div
+      className={`doehealth-hero-copy-carousel${singleLineTransition ? " doehealth-hero-copy-carousel--single-line-transition" : ""}`}
+    >
+      <div className="doehealth-hero-copy-carousel__sizer" aria-hidden="true">
+        <HeroCopyBlock
+          entry={sizerEntry}
+          fontClass={fontClass}
+          className={className}
+          fitToContainer={fitToContainer}
+        />
+      </div>
       {transition ? (
         <>
           <div className="doehealth-hero-copy-carousel__slide doehealth-hero-copy-carousel__slide--out doehealth-hero-copy-carousel__slide--animate">
@@ -189,7 +208,12 @@ function HeroCopyCarousel({
             className="doehealth-hero-copy-carousel__slide doehealth-hero-copy-carousel__slide--in doehealth-hero-copy-carousel__slide--animate"
             onAnimationEnd={(event) => {
               if (event.currentTarget !== event.target) return;
-              if (event.animationName !== "doehealth-hero-copy-in") return;
+              if (
+                event.animationName !== "doehealth-hero-copy-in" &&
+                event.animationName !== "doehealth-hero-copy-in-fade"
+              ) {
+                return;
+              }
               completeTransition();
             }}
           >

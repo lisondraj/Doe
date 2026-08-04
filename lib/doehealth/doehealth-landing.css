@@ -247,14 +247,24 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth) .doehealth-top-banner
 .doehealth-hero-copy-carousel {
   display: grid;
   width: 100%;
+  overflow: visible;
 }
 
+.doehealth-hero-copy-carousel__sizer,
 .doehealth-hero-copy-carousel__slide {
   grid-area: 1 / 1;
   min-width: 0;
   max-width: 100%;
+  align-self: end;
   backface-visibility: hidden;
   transform: translate3d(0, 0, 0);
+}
+
+.doehealth-hero-copy-carousel__sizer {
+  visibility: hidden;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
 }
 
 .doehealth-hero-copy-carousel__slide--current {
@@ -283,10 +293,42 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth) .doehealth-top-banner
     cubic-bezier(0.33, 1, 0.68, 1) both;
 }
 
+@keyframes doehealth-hero-copy-in-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes doehealth-hero-copy-out-fade {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
 .doehealth-hero-copy-carousel__slide--in.doehealth-hero-copy-carousel__slide--animate {
   animation: doehealth-hero-copy-in var(--doehealth-hero-copy-crossfade-ms, 550ms)
     cubic-bezier(0.33, 1, 0.68, 1) both;
   pointer-events: auto;
+}
+
+.doehealth-hero-copy-carousel--single-line-transition
+  .doehealth-hero-copy-carousel__slide--out.doehealth-hero-copy-carousel__slide--animate {
+  animation: doehealth-hero-copy-out-fade var(--doehealth-hero-copy-crossfade-ms, 550ms)
+    cubic-bezier(0.33, 1, 0.68, 1) both;
+}
+
+.doehealth-hero-copy-carousel--single-line-transition
+  .doehealth-hero-copy-carousel__slide--in.doehealth-hero-copy-carousel__slide--animate {
+  animation: doehealth-hero-copy-in-fade var(--doehealth-hero-copy-crossfade-ms, 550ms)
+    cubic-bezier(0.33, 1, 0.68, 1) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -357,6 +399,12 @@ html[data-home-page][data-layout="desktop"]
 .doe-desktop-root--doehealth .doehealth-hero-headline.doehealth-hero-headline--single-line .doephone-hero-headline-line {
   white-space: nowrap;
   letter-spacing: -0.04em;
+  padding-bottom: 0.12em;
+  overflow: visible;
+}
+
+html[data-home-page] .doephone-hero-section .doephone-hero-copy:has(.doehealth-hero-copy-carousel) {
+  overflow: visible;
 }
 
 /* Hero read-more — gold link under headline (phone + desktop). */
