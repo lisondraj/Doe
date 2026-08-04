@@ -3964,7 +3964,7 @@ html[data-about-page]:has(.blog-mobile-root) main p.blog-landing-card-category,
 html[data-about-page]:has(.doephone-mobile-root--doehealth) main p.blog-landing-card-category,
 html[data-home-page] main p.blog-landing-card-category,
 html[data-home-page] .blog-article-related-carousel p.blog-landing-card-category {
-  font-size: clamp(0.54rem, 0.46rem + 0.24vmin, 0.6rem) !important;
+  font-size: clamp(0.57rem, 0.49rem + 0.26vmin, 0.64rem) !important;
   line-height: 1.3 !important;
   color: rgba(232, 192, 142, 0.68) !important;
   text-align: left !important;
