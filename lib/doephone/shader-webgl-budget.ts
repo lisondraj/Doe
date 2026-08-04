@@ -19,6 +19,8 @@ export const SHADER_WEBGL_SLOT_PRIORITY = {
 } as const;
 
 const PHONE_MAX_WEBGL_SLOTS = 8;
+/** Desktop home — cap simultaneous WebGL contexts (hero + visible bands/carousel/footer). */
+const DESKTOP_HOME_MAX_WEBGL_SLOTS = 6;
 
 /** Hero-class shaders always keep headroom — carousel orbs cannot consume the last slot. */
 const HERO_CLASS_PRIORITY = SHADER_WEBGL_SLOT_PRIORITY.HERO_BACKGROUND;
@@ -38,17 +40,31 @@ export function isDoePhoneWebGLBudgetActive() {
   );
 }
 
-function isShaderWebGLBudgetActive() {
-  return isDoePhoneWebGLBudgetActive();
+function isDesktopHomeRoute() {
+  if (typeof document === "undefined") return false;
+  return (
+    document.documentElement.getAttribute("data-home-page") === "true" &&
+    document.documentElement.getAttribute("data-layout") === "desktop"
+  );
+}
+
+/** Phone routes and desktop home share a WebGL slot budget. */
+export function isShaderWebGLBudgetActive() {
+  return isDoePhoneWebGLBudgetActive() || isDesktopHomeRoute();
 }
 
 function maxWebGLSlots() {
+  if (isDesktopHomeRoute()) return DESKTOP_HOME_MAX_WEBGL_SLOTS;
   return PHONE_MAX_WEBGL_SLOTS;
 }
 
 function isHomePhoneRoute() {
   if (typeof document === "undefined") return false;
   return document.documentElement.getAttribute("data-home-page") === "true";
+}
+
+function isHomeRoute() {
+  return isHomePhoneRoute() || isDesktopHomeRoute();
 }
 
 function isAboutStyleRoute() {
@@ -106,7 +122,7 @@ function findLowestSlot(filter?: (priority: number) => boolean) {
 function maxNonHeroSlots() {
   const heroCount = countHeroClassSlots();
   const reserveForHero =
-    (isHomePhoneRoute() && !hasHomeHeroBackgroundSlot()) ||
+    (isHomeRoute() && !hasHomeHeroBackgroundSlot()) ||
     (aboutRouteReservesHeroShaderSlot() && !hasAboutHeroBackgroundSlot())
       ? 1
       : 0;
@@ -146,7 +162,7 @@ export function acquireShaderWebGLSlot(
     return true;
   }
 
-  if (isDoePhoneWebGLBudgetActive() && isHomePhoneRoute() && !hasHomeHeroBackgroundSlot()) {
+  if (isShaderWebGLBudgetActive() && isHomeRoute() && !hasHomeHeroBackgroundSlot()) {
     return false;
   }
 
@@ -170,7 +186,7 @@ export function acquireShaderWebGLSlot(
 
 /** Reserve the about hero background slot — evicts lower-priority holders when needed. */
 export function acquireAboutHeroBackgroundSlot(evict: () => void): boolean {
-  if (!isDoePhoneWebGLBudgetActive()) {
+  if (!isShaderWebGLBudgetActive()) {
     return true;
   }
 
@@ -191,7 +207,7 @@ export function acquireAboutHeroBackgroundSlot(evict: () => void): boolean {
 
 /** Reserve the home hero background slot — evicts lower-priority holders when needed. */
 export function acquireHomeHeroBackgroundSlot(evict: () => void): boolean {
-  if (!isDoePhoneWebGLBudgetActive()) {
+  if (!isShaderWebGLBudgetActive()) {
     return true;
   }
 

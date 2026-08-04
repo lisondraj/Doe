@@ -2267,6 +2267,10 @@ html[data-home-page][data-layout="desktop"]
   animation: doehealth-active-agents-orbit-spin 96s linear infinite;
 }
 
+.doehealth-active-agents--orbit-paused .product-landing-workspace__orbit-ring {
+  animation-play-state: paused;
+}
+
 .doehealth-active-agents__orbit .product-landing-workspace__orbit-center {
   width: max(var(--orbit-inner), calc(var(--orbit-size) * 0.72));
   height: max(var(--orbit-inner), calc(var(--orbit-size) * 0.72));

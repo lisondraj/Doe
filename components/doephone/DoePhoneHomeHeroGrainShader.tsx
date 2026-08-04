@@ -16,7 +16,7 @@ import {
 } from "@/lib/doephone/home-hero-shader-gate";
 import {
   acquireHomeHeroBackgroundSlot,
-  isDoePhoneWebGLBudgetActive,
+  isShaderWebGLBudgetActive,
   releaseShaderWebGLSlot,
 } from "@/lib/doephone/shader-webgl-budget";
 import { useShaderContextRecovery } from "@/lib/doephone/use-shader-context-recovery";
@@ -107,14 +107,14 @@ export function DoePhoneHomeHeroGrainShader({
   const mountRef = useRef<ShaderMount | null>(null);
   const [shaderGeneration, setShaderGeneration] = useState(0);
   const [containerReady, setContainerReady] = useState(false);
-  const [isVisible, setIsVisible] = useState(forceVisible);
+  const [heroInViewport, setHeroInViewport] = useState(forceVisible);
   const [tabVisible, setTabVisible] = useState(true);
   const [reducedMotion, setReducedMotion] = useState(false);
 
   const targetSpeed = preset.speed ?? PROTO_GRAIN_GRADIENT_SPEED;
   const remotionDriven = remotionFrameMs != null;
   const shouldAnimate =
-    !remotionDriven && animate && !reducedMotion && targetSpeed > 0 && isVisible && tabVisible;
+    !remotionDriven && animate && !reducedMotion && targetSpeed > 0 && heroInViewport && tabVisible;
 
   const resetShader = useCallback(() => {
     mountRef.current?.dispose();
@@ -148,9 +148,9 @@ export function DoePhoneHomeHeroGrainShader({
 
   useLayoutEffect(() => {
     const node = containerRef.current;
-    if (!node || !noiseTexture || !containerReady) return;
+    if (!node || !noiseTexture || !containerReady || !heroInViewport) return;
 
-    if (isDoePhoneWebGLBudgetActive() && !acquireHomeHeroBackgroundSlot(resetShader)) {
+    if (isShaderWebGLBudgetActive() && !acquireHomeHeroBackgroundSlot(resetShader)) {
       setHomeHeroBackgroundReady(false);
       return;
     }
@@ -199,6 +199,7 @@ export function DoePhoneHomeHeroGrainShader({
   }, [
     colorStopsKey,
     containerReady,
+    heroInViewport,
     noiseTexture,
     presetFlowKey,
     resetShader,
@@ -249,7 +250,7 @@ export function DoePhoneHomeHeroGrainShader({
 
   useEffect(() => {
     if (forceVisible) {
-      setIsVisible(true);
+      setHeroInViewport(true);
       return undefined;
     }
 
@@ -257,8 +258,8 @@ export function DoePhoneHomeHeroGrainShader({
     if (!node) return;
 
     const observer = new IntersectionObserver(
-      ([entry]) => setIsVisible(entry.isIntersecting),
-      { rootMargin: "20% 0px", threshold: 0 },
+      ([entry]) => setHeroInViewport(entry.isIntersecting),
+      { rootMargin: "15% 0px", threshold: 0 },
     );
 
     observer.observe(node);

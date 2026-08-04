@@ -251,6 +251,7 @@ export function DoePhoneHeroGradientCircles({
   const nodeRefs = useRef<Array<HTMLDivElement | null>>([]);
   const reducedMotionRef = useRef(false);
   const tabVisibleRef = useRef(true);
+  const heroVisibleRef = useRef(true);
   const rootRef = useRef<HTMLDivElement>(null);
   const playCloseTimerRef = useRef<number | undefined>(undefined);
   const expandCloseTimerRef = useRef<number | undefined>(undefined);
@@ -427,7 +428,7 @@ export function DoePhoneHeroGradientCircles({
   }, [applyDialLayoutToDom]);
 
   const advanceDial = useCallback(() => {
-    if (switchingRef.current || !tabVisibleRef.current) return;
+    if (switchingRef.current || !tabVisibleRef.current || !heroVisibleRef.current) return;
     switchingRef.current = true;
     setPillVisible(false);
 
@@ -448,8 +449,21 @@ export function DoePhoneHeroGradientCircles({
     onVisibility();
     document.addEventListener("visibilitychange", onVisibility);
 
+    const node = rootRef.current;
+    let observer: IntersectionObserver | undefined;
+    if (node) {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          heroVisibleRef.current = entry.isIntersecting;
+        },
+        { rootMargin: "8% 0px", threshold: 0 },
+      );
+      observer.observe(node);
+    }
+
     return () => {
       document.removeEventListener("visibilitychange", onVisibility);
+      observer?.disconnect();
       if (switchRafRef.current !== undefined) cancelAnimationFrame(switchRafRef.current);
       if (playCloseTimerRef.current !== undefined) window.clearTimeout(playCloseTimerRef.current);
       if (expandCloseTimerRef.current !== undefined) window.clearTimeout(expandCloseTimerRef.current);

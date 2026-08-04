@@ -16,6 +16,7 @@ import {
 import {
   acquireAboutHeroBackgroundSlot,
   acquireShaderWebGLSlot,
+  isShaderWebGLBudgetActive,
   releaseShaderWebGLSlot,
   SHADER_WEBGL_SLOT_PRIORITY,
 } from "@/lib/doephone/shader-webgl-budget";
@@ -65,6 +66,16 @@ function isNearViewport(node: HTMLElement, marginRatio = 0.75) {
   return rect.bottom > -vh * marginRatio && rect.top < vh * (1 + marginRatio);
 }
 
+function findBlogCarouselScrollRoot(node: HTMLElement) {
+  const carousel = node.closest(".blog-article-related-carousel");
+  if (!carousel) return null;
+  return carousel.querySelector(".blog-article-related-carousel__scroll");
+}
+
+function isInBlogLandingCarousel(node: HTMLElement) {
+  return findBlogCarouselScrollRoot(node) != null;
+}
+
 /** /proto — sticky mount near viewport; animates when visible, pauses off-screen (no unmount). */
 export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   variant,
@@ -101,10 +112,15 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   const [reducedMotion, setReducedMotion] = useState(false);
   const [budgetGranted, setBudgetGranted] = useState(false);
   const [shaderGeneration, setShaderGeneration] = useState(0);
+  const [inCarouselRange, setInCarouselRange] = useState(true);
+  const [inBlogCarouselCard, setInBlogCarouselCard] = useState(false);
   const inViewport = useShaderViewportGate(containerRef, hero ? "120% 0px" : "75% 0px");
   const shaderPriority = hero
     ? SHADER_WEBGL_SLOT_PRIORITY.HERO_BACKGROUND
-    : SHADER_WEBGL_SLOT_PRIORITY.SECTION_BAND;
+    : inBlogCarouselCard
+      ? SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_ADJACENT
+      : SHADER_WEBGL_SLOT_PRIORITY.SECTION_BAND;
+  const effectiveInViewport = inCarouselRange && inViewport;
 
   const resetShader = useCallback(() => {
     hasMountedRef.current = false;
@@ -144,12 +160,12 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
 
   useEffect(() => {
     if (hero) return;
-    if (inViewport) {
+    if (effectiveInViewport) {
       requestMount();
       return;
     }
     releaseMount();
-  }, [hero, inViewport, releaseMount]);
+  }, [effectiveInViewport, hero, releaseMount]);
 
   useLayoutEffect(() => {
     if (!hasMounted || !containerReady) {
@@ -163,7 +179,7 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
       return;
     }
 
-    if (!dedicatedHeroBackground && !inViewport) {
+    if (!dedicatedHeroBackground && !effectiveInViewport) {
       if (budgetGranted) {
         releaseShaderWebGLSlot(slotId);
         setBudgetGranted(false);
@@ -190,19 +206,20 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     aboutHeroBackground,
     containerReady,
     dedicatedHeroBackground,
+    effectiveInViewport,
     evictShader,
     hasMounted,
-    inViewport,
     shaderPriority,
     slotId,
   ]);
 
   useEffect(() => {
-    if (!phone || hero) return;
-    if (!hasMounted || !containerReady || !inViewport || budgetGranted) return;
+    if (!isShaderWebGLBudgetActive() || hero) return;
+    if (!hasMounted || !containerReady || !effectiveInViewport || budgetGranted) return;
 
     let cancelled = false;
-    let retryFrame = 0;
+    let retryTimer = 0;
+    let retryDelayMs = 32;
 
     const tryAcquire = () => {
       if (cancelled) return;
@@ -211,23 +228,23 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
         setBudgetGranted(true);
         return;
       }
-      retryFrame = window.requestAnimationFrame(tryAcquire);
+      retryDelayMs = Math.min(retryDelayMs * 2, 2000);
+      retryTimer = window.setTimeout(tryAcquire, retryDelayMs);
     };
 
-    retryFrame = window.requestAnimationFrame(tryAcquire);
+    tryAcquire();
 
     return () => {
       cancelled = true;
-      window.cancelAnimationFrame(retryFrame);
+      window.clearTimeout(retryTimer);
     };
   }, [
     budgetGranted,
     containerReady,
+    effectiveInViewport,
     evictShader,
     hasMounted,
     hero,
-    inViewport,
-    phone,
     shaderPriority,
     slotId,
   ]);
@@ -240,14 +257,19 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
 
     const inHomeFeatureCard = node.closest(".home-feature-card-section__card") != null;
     const inAboutFeatureCard = node.closest(".about-style-feature-card__shader") != null;
-    const inBlogLandingCard = node.closest(".blog-landing-card-visual__shader") != null;
+    const inBlogCarousel = isInBlogLandingCarousel(node);
 
     const syncReady = () => {
       if (!hasRenderableSize(node)) return false;
       setContainerReady(true);
 
       const mountMargin = phone ? 2 : hero ? 0.5 : 0.85;
-      if (hero || inHomeFeatureCard || inAboutFeatureCard || inBlogLandingCard || isNearViewport(node, mountMargin)) {
+      if (
+        hero ||
+        inHomeFeatureCard ||
+        inAboutFeatureCard ||
+        (!inBlogCarousel && isNearViewport(node, mountMargin))
+      ) {
         requestMount();
       }
       return true;
@@ -286,8 +308,15 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
       setContainerReady(true);
       const inHomeFeatureCard = node.closest(".home-feature-card-section__card") != null;
       const inAboutFeatureCard = node.closest(".about-style-feature-card__shader") != null;
-      const inBlogLandingCard = node.closest(".blog-landing-card-visual__shader") != null;
-      if (hero || inHomeFeatureCard || inAboutFeatureCard || inBlogLandingCard || isNearViewport(node, 2.5)) requestMount();
+      const inBlogCarousel = isInBlogLandingCarousel(node);
+      if (
+        hero ||
+        inHomeFeatureCard ||
+        inAboutFeatureCard ||
+        (!inBlogCarousel && isNearViewport(node, 2.5))
+      ) {
+        requestMount();
+      }
     };
 
     const t = window.setTimeout(retry, 320);
@@ -317,13 +346,16 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
 
     const inHomeFeatureCard = node.closest(".home-feature-card-section__card") != null;
     const inAboutFeatureCard = node.closest(".about-style-feature-card__shader") != null;
-    const inBlogLandingCard = node.closest(".blog-landing-card-visual__shader") != null;
+    const inBlogCarousel = isInBlogLandingCarousel(node);
+    const carouselScrollRoot = findBlogCarouselScrollRoot(node);
 
     const mountObserver = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) requestMount();
       },
-      { rootMargin: mountMargin, threshold: 0 },
+      carouselScrollRoot
+        ? { root: carouselScrollRoot, rootMargin: "75% 0px", threshold: 0 }
+        : { rootMargin: mountMargin, threshold: 0 },
     );
 
     const animateObserver = new IntersectionObserver(
@@ -335,7 +367,12 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     animateObserver.observe(node);
 
     const raf = requestAnimationFrame(() => {
-      if (hero || inHomeFeatureCard || inAboutFeatureCard || inBlogLandingCard || isNearViewport(node, phone ? 2 : hero ? 0.5 : 0.85)) {
+      if (
+        hero ||
+        inHomeFeatureCard ||
+        inAboutFeatureCard ||
+        (!inBlogCarousel && isNearViewport(node, phone ? 2 : hero ? 0.5 : 0.85))
+      ) {
         requestMount();
       }
     });
@@ -347,10 +384,48 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     };
   }, [hero, phone]);
 
+  useEffect(() => {
+    const node = containerRef.current;
+    if (!node) return;
+
+    const carouselScrollRoot = findBlogCarouselScrollRoot(node);
+    setInBlogCarouselCard(carouselScrollRoot != null);
+    if (!carouselScrollRoot) {
+      setInCarouselRange(true);
+      return;
+    }
+
+    const syncCarouselRange = (entry?: IntersectionObserverEntry) => {
+      if (entry) {
+        setInCarouselRange(entry.isIntersecting);
+        return;
+      }
+      const rect = node.getBoundingClientRect();
+      const rootRect = carouselScrollRoot.getBoundingClientRect();
+      setInCarouselRange(rect.right > rootRect.left - rootRect.width * 0.75 && rect.left < rootRect.right + rootRect.width * 0.75);
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => syncCarouselRange(entry),
+      { root: carouselScrollRoot, rootMargin: "75% 0px", threshold: 0 },
+    );
+    observer.observe(node);
+    syncCarouselRange();
+
+    carouselScrollRoot.addEventListener("scroll", syncCarouselRange, { passive: true });
+    window.addEventListener("resize", syncCarouselRange);
+
+    return () => {
+      observer.disconnect();
+      carouselScrollRoot.removeEventListener("scroll", syncCarouselRange);
+      window.removeEventListener("resize", syncCarouselRange);
+    };
+  }, []);
+
   const targetSpeed = preset.speed ?? PROTO_GRAIN_GRADIENT_SPEED;
   const shouldAnimate =
     !staticShader && !reducedMotion && targetSpeed > 0 && isVisible && tabVisible && hasMounted;
-  const showGradient = hasMounted && containerReady && inViewport && budgetGranted;
+  const showGradient = hasMounted && containerReady && effectiveInViewport && budgetGranted;
 
   return (
     <div

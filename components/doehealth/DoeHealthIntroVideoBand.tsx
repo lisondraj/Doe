@@ -47,6 +47,7 @@ function SectionTitleArrow({ gradientId }: { gradientId: string }) {
 export function DoeHealthIntroVideoBand() {
   const { line1, line2 } = DOEHEALTH_INTRO_COPY.introVideoSectionTitle;
   const videoRef = useRef<HTMLVideoElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const hasStartedRef = useRef(false);
   const arrowGradientId = useId().replace(/:/g, "");
 
@@ -88,8 +89,50 @@ export function DoeHealthIntroVideoBand() {
     };
   }, []);
 
+  useEffect(() => {
+    const section = sectionRef.current;
+    const video = videoRef.current;
+    if (!section || !video) return;
+
+    const sync = () => {
+      const rect = section.getBoundingClientRect();
+      const nearViewport = rect.bottom > -window.innerHeight * 0.35 && rect.top < window.innerHeight * 1.35;
+
+      if (nearViewport) {
+        if (video.preload === "none") {
+          video.preload = "metadata";
+        }
+        return;
+      }
+
+      video.pause();
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          if (video.preload === "none") {
+            video.preload = "metadata";
+          }
+          return;
+        }
+        video.pause();
+      },
+      { rootMargin: "35% 0px", threshold: 0 },
+    );
+    observer.observe(section);
+    sync();
+    document.addEventListener("visibilitychange", sync);
+
+    return () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", sync);
+    };
+  }, []);
+
   return (
     <section
+      ref={sectionRef}
       className={`doehealth-intro-band doehealth-intro-band--initiatives doehealth-intro-band--intro-video relative z-10 flex w-full shrink-0 flex-col ${suisseIntl.className} ${inter.className} ${lora.className}`}
       aria-label={`${line1} ${line2}, Doe intro video`}
     >
@@ -107,7 +150,7 @@ export function DoeHealthIntroVideoBand() {
                       controls
                       playsInline
                       loop
-                      preload="metadata"
+                      preload="none"
                       aria-label={`${line1} ${line2}, Doe intro video`}
                     />
                   </div>
