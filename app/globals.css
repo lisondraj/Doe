@@ -8161,7 +8161,16 @@ body.proto-route {
 html[data-about-page][data-layout="desktop"],
 html[data-about-page][data-layout="desktop"] body {
   overflow-y: auto !important;
+}
+
+html[data-about-page][data-layout="desktop"]:not(:has(.about-desktop-root--article-toc)),
+html[data-about-page][data-layout="desktop"]:not(:has(.about-desktop-root--article-toc)) body {
   overflow-x: clip !important;
+}
+
+html[data-about-page][data-layout="desktop"]:has(.about-desktop-root--article-toc),
+html[data-about-page][data-layout="desktop"]:has(.about-desktop-root--article-toc) body {
+  overflow-x: visible !important;
 }
 .doeforvc-iphone-root {
   /* Prevent horizontal bleed from scaled fixed-width sections */

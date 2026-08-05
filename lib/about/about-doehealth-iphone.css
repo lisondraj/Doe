@@ -569,6 +569,9 @@ html[data-about-page][data-layout="desktop"] {
 html[data-about-page][data-layout="desktop"] body {
   background-color: #1b1410 !important;
   overflow-y: auto !important;
+}
+
+html[data-about-page][data-layout="desktop"]:not(:has(.about-desktop-root--article-toc)) body {
   overflow-x: clip !important;
 }
 
@@ -1719,7 +1722,7 @@ html[data-about-page] .blog-page-root:has(.blog-article-related-carousel) {
 }
 
 html[data-about-page][data-layout="desktop"]
-  .about-desktop-root:has(.blog-article-related-carousel) {
+  .about-desktop-root:has(.blog-article-related-carousel):not(.about-desktop-root--article-toc) {
   overflow-x: clip;
 }
 
@@ -1849,10 +1852,10 @@ html[data-about-page][data-layout="desktop"] {
 }
 
 html[data-about-page][data-layout="desktop"] .about-desktop-article-layout {
-  --about-desktop-article-toc-gap: clamp(1.25rem, 2.2vw, 2.5rem);
-  --about-desktop-article-column-half: 27.778%;
-  display: block;
-  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 55.556% minmax(0, 1fr);
+  gap: clamp(1.25rem, 2.2vw, 2.5rem);
+  align-items: stretch;
   box-sizing: border-box;
   width: 100%;
   margin-inline: auto;
@@ -1860,12 +1863,18 @@ html[data-about-page][data-layout="desktop"] .about-desktop-article-layout {
   overflow: visible;
 }
 
+html[data-about-page][data-layout="desktop"] .about-desktop-article-layout--no-toc {
+  display: block;
+  grid-template-columns: minmax(0, 1fr);
+}
+
 html[data-about-page][data-layout="desktop"]
-  .about-desktop-article-layout:has(.about-style-article-desktop-toc-rail-host)
+  .about-desktop-article-layout:not(.about-desktop-article-layout--no-toc)
   .broader-doe-desktop-content {
-  width: 55.556%;
-  max-width: 55.556%;
-  margin-inline: auto;
+  grid-column: 2;
+  width: 100%;
+  max-width: 100%;
+  margin-inline: 0;
 }
 
 html[data-about-page][data-layout="desktop"] .about-desktop-root--article-toc,
@@ -1874,15 +1883,17 @@ html[data-about-page][data-layout="desktop"] .about-desktop-root--article-toc .a
   overflow: visible !important;
 }
 
+html[data-about-page][data-layout="desktop"]:has(.about-desktop-root--article-toc),
+html[data-about-page][data-layout="desktop"]:has(.about-desktop-root--article-toc) body {
+  overflow-x: visible !important;
+}
+
 html[data-about-page][data-layout="desktop"] .about-style-article-desktop-toc-rail-host {
-  position: absolute;
-  top: 0;
-  right: calc(50% + var(--about-desktop-article-column-half) + var(--about-desktop-article-toc-gap));
-  width: min(
-    14.5rem,
-    max(0px, calc(var(--about-desktop-article-column-half) - var(--about-desktop-article-toc-gap)))
-  );
-  height: 100%;
+  grid-column: 1;
+  justify-self: end;
+  align-self: stretch;
+  width: min(100%, 14.5rem);
+  min-height: 0;
   display: flex;
   justify-content: flex-end;
   pointer-events: none;
