@@ -2,68 +2,92 @@
 
 import { useEffect, useLayoutEffect, useState } from "react";
 
-import { shouldLockAboutTouchPhoneLayout } from "@/lib/about/about-page-context";
-import { applyPhoneLayoutViewportMeta } from "@/lib/doephone/phone-layout-viewport";
-import { DOEPHONE_DESKTOP_MEDIA_QUERY } from "@/lib/doephone/resolve-doe-phone-variant";
+import { isTouchPrimaryDevice, shouldLockAboutTouchPhoneLayout } from "@/lib/about/about-page-context";
+import { applyPhoneLayoutViewportMeta, phoneLayoutViewportContent } from "@/lib/doephone/phone-layout-viewport";
+import {
+  DOEPHONE_DESKTOP_MEDIA_QUERY,
+  readBootstrappedDoePhoneVariant,
+} from "@/lib/doephone/resolve-doe-phone-variant";
 
 export type AboutPageVariant = "phone" | "desktop";
 
 export function resolveAboutPageVariant(): AboutPageVariant {
   if (typeof window === "undefined") return "phone";
   if (shouldLockAboutTouchPhoneLayout()) return "phone";
+  if (isTouchPrimaryDevice()) return "phone";
   if (window.matchMedia(DOEPHONE_DESKTOP_MEDIA_QUERY).matches) return "desktop";
   return "phone";
 }
 
-/** /about — always boot phone on SSR/first paint, then resolve before paint on client. */
-export function useAboutPageVariant() {
-  const [variant, setVariant] = useState<AboutPageVariant>("phone");
+function applyAboutPhoneDocumentAttrs() {
+  const html = document.documentElement;
+  const body = document.body;
+  html.setAttribute("data-about-page", "true");
+  html.removeAttribute("data-home-page");
+  html.setAttribute("data-doeforvc-always-phone", "true");
+  html.removeAttribute("data-layout");
+  body.classList.remove("desktop-route");
+}
+
+function applyAboutDesktopDocumentAttrs() {
+  const html = document.documentElement;
+  const body = document.body;
+  html.setAttribute("data-about-page", "true");
+  html.removeAttribute("data-home-page");
+  html.removeAttribute("data-doeforvc-always-phone");
+  html.removeAttribute("data-doephone-pinching");
+  html.setAttribute("data-layout", "desktop");
+  body.classList.add("desktop-route");
+}
+
+/** /about-style pages — read bootstrap before paint, then keep document attrs in sync. */
+export function useAboutPageVariant(): AboutPageVariant | null {
+  const [variant, setVariant] = useState<AboutPageVariant | null>(null);
 
   useLayoutEffect(() => {
-    const html = document.documentElement;
-    html.setAttribute("data-about-page", "true");
-    html.removeAttribute("data-home-page");
-    setVariant(resolveAboutPageVariant());
-    return () => html.removeAttribute("data-about-page");
+    setVariant(readBootstrappedDoePhoneVariant());
+    return () => document.documentElement.removeAttribute("data-about-page");
   }, []);
 
   useEffect(() => {
+    if (variant === null) return;
+
     const sync = () => setVariant(resolveAboutPageVariant());
     sync();
-    if (shouldLockAboutTouchPhoneLayout()) return;
+
+    if (shouldLockAboutTouchPhoneLayout() || isTouchPrimaryDevice()) return;
+
     const mq = window.matchMedia(DOEPHONE_DESKTOP_MEDIA_QUERY);
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
-  }, []);
+  }, [variant]);
 
   useLayoutEffect(() => {
-    const html = document.documentElement;
-    const body = document.body;
+    if (variant === null) return;
 
     if (variant === "desktop") {
-      html.removeAttribute("data-doeforvc-always-phone");
-      html.setAttribute("data-layout", "desktop");
-      body.classList.add("desktop-route");
+      applyAboutDesktopDocumentAttrs();
       return;
     }
 
-    html.setAttribute("data-doeforvc-always-phone", "true");
-    html.removeAttribute("data-layout");
-    body.classList.remove("desktop-route");
+    applyAboutPhoneDocumentAttrs();
     applyPhoneLayoutViewportMeta();
   }, [variant]);
 
   useEffect(() => {
-    if (variant !== "phone") return;
+    if (variant !== "desktop") return;
+    applyAboutDesktopDocumentAttrs();
+  }, [variant]);
+
+  useEffect(() => {
+    if (variant !== "phone") return undefined;
 
     const html = document.documentElement;
     const meta = document.querySelector('meta[name="viewport"]');
     const prevViewport = meta?.getAttribute("content") ?? "";
-    const pinchViewport =
-      "width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover";
 
     html.setAttribute("data-doephone-pinching", "true");
-    meta?.setAttribute("content", pinchViewport);
+    meta?.setAttribute("content", phoneLayoutViewportContent());
 
     return () => {
       html.removeAttribute("data-doephone-pinching");

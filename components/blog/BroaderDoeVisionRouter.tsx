@@ -9,6 +9,10 @@ export function BroaderDoeVisionRouter() {
   const variant = useAboutPageVariant();
   const tocItems = BROADER_DOE_VISION_TOC_ITEMS;
 
+  if (variant === null) {
+    return null;
+  }
+
   return variant === "desktop" ? (
     <BroaderDoeVisionDesktopView tocItems={tocItems} />
   ) : (

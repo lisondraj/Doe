@@ -17,6 +17,10 @@ export function AboutStyleArticleRouter({ article }: AboutStyleArticleRouterProp
   const tocItems = buildAboutStyleArticleTocItems(article);
   const content = <AboutStyleArticlePageContent article={article} tocItems={tocItems} />;
 
+  if (variant === null) {
+    return null;
+  }
+
   return variant === "desktop" ? (
     <AboutStyleArticleDesktopView tocItems={tocItems}>{content}</AboutStyleArticleDesktopView>
   ) : (

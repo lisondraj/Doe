@@ -12355,3 +12355,104 @@ html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehea
     --home-agents-orb-size: clamp(24rem, 36vmin, 38rem);
   }
 }
+
+/*
+ * Desktop /about + /blog article shell — class-scoped layout.
+ * Does not depend on html[data-*] attrs (bootstrap + React keep those in sync separately).
+ */
+.about-desktop-root[data-doeforvc-view="desktop"] {
+  --about-desktop-nav-clearance: calc(
+    var(--doe-home-top-banner-height, 0px) + var(--desktop-nav-height, 6.25rem)
+  );
+  --about-desktop-viewport-body: calc(100dvh - var(--about-desktop-nav-clearance));
+}
+
+.about-desktop-root[data-doeforvc-view="desktop"] .broader-doe-desktop-content {
+  box-sizing: border-box;
+  width: 55.556%;
+  max-width: 55.556%;
+  margin-inline: auto;
+}
+
+.about-desktop-root[data-doeforvc-view="desktop"] .about-desktop-article-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 55.556% minmax(0, 1fr);
+  gap: clamp(1.25rem, 2.2vw, 2.5rem);
+  align-items: stretch;
+  box-sizing: border-box;
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: var(--desktop-page-inset-x, 2.5rem);
+  overflow: visible;
+}
+
+.about-desktop-root[data-doeforvc-view="desktop"] .about-desktop-article-layout--no-toc {
+  display: block;
+}
+
+.about-desktop-root[data-doeforvc-view="desktop"]
+  .about-desktop-article-layout:not(.about-desktop-article-layout--no-toc)
+  .broader-doe-desktop-content {
+  grid-column: 2;
+  width: 100%;
+  max-width: 100%;
+  margin-inline: 0;
+}
+
+.about-desktop-root--article-toc,
+.about-desktop-root--article-toc .about-desktop-main,
+.about-desktop-root--article-toc .about-desktop-article-layout {
+  overflow: visible !important;
+}
+
+body.desktop-route:has(.about-desktop-root[data-doeforvc-view="desktop"]),
+html:has(.about-desktop-root[data-doeforvc-view="desktop"]) body.desktop-route {
+  overflow: auto !important;
+}
+
+body.desktop-route:has(.about-desktop-root--article-toc),
+html:has(.about-desktop-root--article-toc) body.desktop-route {
+  overflow-x: visible !important;
+}
+
+.about-desktop-root[data-doeforvc-view="desktop"] .about-style-article-desktop-toc-rail-host {
+  grid-column: 1;
+  justify-self: end;
+  align-self: stretch;
+  width: min(100%, 14.5rem);
+  min-height: 0;
+  display: flex;
+  justify-content: flex-end;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.about-desktop-root[data-doeforvc-view="desktop"] .about-style-article-desktop-toc-rail {
+  position: sticky;
+  top: var(--about-desktop-nav-clearance);
+  z-index: 2;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  height: var(--about-desktop-viewport-body);
+  max-height: var(--about-desktop-viewport-body);
+  pointer-events: none;
+}
+
+.about-desktop-root[data-doeforvc-view="desktop"]
+  .about-style-article-desktop-toc-rail
+  > .about-style-article-desktop-toc {
+  position: relative;
+  width: 100%;
+  max-height: calc(var(--about-desktop-viewport-body) - clamp(2rem, 3vw, 3rem));
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  pointer-events: auto;
+}
+
+.about-desktop-root[data-doeforvc-view="desktop"] .about-style-article-inline-toc {
+  display: none;
+}
