@@ -24,10 +24,11 @@ const PANEL_HIDE_MS = 0;
 const PANEL_COLLAPSE_MS = 440;
 const SCROLL_REVEAL_PX = 280;
 const AUDIO_JOIN_MS = 780;
-const AUDIO_JOIN_SETTLE_MS = 300;
+const AUDIO_JOIN_SETTLE_MS = 420;
 const AUDIO_LEAVE_MS = 620;
-const AUDIO_LEAVE_CAP_DELAY_MS = 72;
-const AUDIO_LEAVE_SETTLE_MS = 32;
+const AUDIO_LEAVE_CAP_DELAY_MS = 48;
+const AUDIO_LEAVE_SETTLE_MS = 48;
+const PANEL_HANDOFF_REVEAL_MS = 280;
 const WIDGET_DISMISS_ARM_MS = 480;
 
 type AboutStyleArticleFloatingChromeProps = {
@@ -350,7 +351,8 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
 
   const openBlog = useCallback(() => {
     markWidgetOpened();
-    beginAudioClose();
+    const handoffFromAudio = isPlayerOpen && !audioClosing;
+    if (handoffFromAudio) beginAudioClose();
     closeToc();
     if (blogRevealTimerRef.current !== null) window.clearTimeout(blogRevealTimerRef.current);
     if (blogHideTimerRef.current !== null) {
@@ -365,15 +367,17 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
     clearBlogCollapseStyles();
     setBlogOpen(true);
     setBlogPanelRevealed(false);
+    const revealDelay = handoffFromAudio ? PANEL_HANDOFF_REVEAL_MS : PANEL_REVEAL_MS;
     blogRevealTimerRef.current = window.setTimeout(() => {
       setBlogPanelRevealed(true);
       blogRevealTimerRef.current = null;
-    }, PANEL_REVEAL_MS);
-  }, [beginAudioClose, clearBlogCollapseStyles, closeToc, markWidgetOpened]);
+    }, revealDelay);
+  }, [audioClosing, beginAudioClose, clearBlogCollapseStyles, closeToc, isPlayerOpen, markWidgetOpened]);
 
   const openToc = useCallback(() => {
     markWidgetOpened();
-    beginAudioClose();
+    const handoffFromAudio = isPlayerOpen && !audioClosing;
+    if (handoffFromAudio) beginAudioClose();
     closeBlog();
     if (tocRevealTimerRef.current !== null) window.clearTimeout(tocRevealTimerRef.current);
     if (tocHideTimerRef.current !== null) {
@@ -388,11 +392,12 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
     clearTocCollapseStyles();
     setTocOpen(true);
     setTocPanelRevealed(false);
+    const revealDelay = handoffFromAudio ? PANEL_HANDOFF_REVEAL_MS : PANEL_REVEAL_MS;
     tocRevealTimerRef.current = window.setTimeout(() => {
       setTocPanelRevealed(true);
       tocRevealTimerRef.current = null;
-    }, PANEL_REVEAL_MS);
-  }, [beginAudioClose, clearTocCollapseStyles, closeBlog, markWidgetOpened]);
+    }, revealDelay);
+  }, [audioClosing, beginAudioClose, clearTocCollapseStyles, closeBlog, isPlayerOpen, markWidgetOpened]);
 
   const toggleBlog = useCallback(() => {
     if (blogOpen) closeBlog();
@@ -652,6 +657,11 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
   const showLeftBlogCap = showLeftCapTriggers && (!isPlaying || isPlayerOpen);
   const leftCapCrossfade = isPlaying && audioClosing && isPlayerOpen;
   const showTocCapTrigger = (!tocOpen && !tocCollapsing) || tocCollapsing;
+  const blogCapExpanded = blogOpen && (!audioCapActive || audioClosing);
+  const tocCapExpanded = tocOpen && (!audioCapActive || audioClosing);
+  const panelHandoffBlog = blogOpen && audioClosing;
+  const panelHandoffToc = tocOpen && audioClosing;
+  const panelCrossfade = (blogOpen && tocCollapsing) || (tocOpen && blogCollapsing);
 
   if (!mounted) {
     return null;
@@ -679,6 +689,9 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
     audioClosing ? "is-audio-closing" : "",
     audioPlayingMinimized ? "is-audio-minimized" : "",
     audioClosing && isPlaying ? "is-audio-closing-while-playing" : "",
+    panelHandoffBlog ? "is-handoff-blog" : "",
+    panelHandoffToc ? "is-handoff-toc" : "",
+    panelCrossfade ? "is-panel-crossfade" : "",
     blogOpen && !audioCapActive ? "is-blog" : "",
     tocOpen && !audioCapActive ? "is-toc" : "",
     blogCollapsing ? "is-blog-closing" : "",
@@ -712,13 +725,14 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
           ["--about-floating-chrome-open-duration" as string]: `${PANEL_REVEAL_MS}ms`,
           ["--about-floating-chrome-close-duration" as string]: `${PANEL_COLLAPSE_MS}ms`,
           ["--about-audio-join-settle-ms" as string]: `${AUDIO_JOIN_SETTLE_MS}ms`,
+          ["--about-floating-chrome-handoff-duration" as string]: `${PANEL_HANDOFF_REVEAL_MS}ms`,
         }}
       >
         <div
           ref={blogCapRef}
-          className={`about-style-article-floating-chrome__cap about-style-article-floating-chrome__cap--left${blogOpen && !audioCapActive ? " is-open" : ""}${blogPanelRevealed ? " is-revealed" : ""}${blogCollapsing ? " is-closing" : ""}`}
+          className={`about-style-article-floating-chrome__cap about-style-article-floating-chrome__cap--left${blogCapExpanded ? " is-open" : ""}${blogPanelRevealed ? " is-revealed" : ""}${blogCollapsing ? " is-closing" : ""}${panelHandoffBlog ? " is-handoff" : ""}${panelCrossfade && blogCollapsing ? " is-sliding-out" : ""}${panelCrossfade && blogOpen && !blogCollapsing ? " is-sliding-in" : ""}`}
         >
-          {blogOpen && !audioCapActive ? (
+          {blogCapExpanded ? (
             <div className="about-style-article-floating-chrome__panel" aria-hidden={!blogPanelRevealed}>
               <AboutStyleArticleFloatingBlogPanel currentSlug={currentSlug} onItemClick={closeBlog} />
             </div>
@@ -766,73 +780,73 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
         </div>
 
         <div className="about-style-article-floating-chrome__bridge" aria-hidden={!audioCapActive}>
-          <div className="about-style-article-floating-chrome__audio-stack">
-            <div className="about-style-article-floating-chrome__audio-controls">
-              <div className="about-style-article-floating-chrome__audio-transport">
-                <button
-                  type="button"
-                  className="about-style-article-floating-chrome__transport-btn"
-                  aria-label="Back 10 seconds"
-                  onClick={() => seekBy(-10)}
-                >
-                  <SkipBack10Icon size={20} />
-                </button>
-                <button
-                  type="button"
-                  className="about-style-article-floating-chrome__transport-btn about-style-article-floating-chrome__transport-btn--primary"
-                  aria-label={isPlaying ? "Pause" : "Play"}
-                  onClick={togglePlay}
-                >
-                  {isPlaying ? <PauseIcon size={48} /> : <PlayIcon size={48} />}
-                </button>
-                <button
-                  type="button"
-                  className="about-style-article-floating-chrome__transport-btn"
-                  aria-label="Forward 10 seconds"
-                  onClick={() => seekBy(10)}
-                >
-                  <SkipForward10Icon size={20} />
-                </button>
-              </div>
-
-              <div
-                className={`about-style-article-floating-chrome__progress${isScrubbing ? " is-scrubbing" : ""}`}
-                role="slider"
-                aria-valuemin={0}
-                aria-valuemax={duration}
-                aria-valuenow={currentTime}
-                aria-label="Playback position"
-              >
-                <div className="about-style-article-floating-chrome__progress-row">
-                  <div
-                    ref={progressTrackRef}
-                    className="about-style-article-floating-chrome__progress-track"
-                    style={{ ["--progress-pct" as string]: progressPct }}
-                    onPointerDown={onProgressTrackPointerDown}
-                    onPointerMove={onProgressTrackPointerMove}
-                    onPointerUp={onProgressTrackPointerEnd}
-                    onPointerCancel={onProgressTrackPointerEnd}
+            <div className="about-style-article-floating-chrome__audio-stack">
+              <div className="about-style-article-floating-chrome__audio-playback-unit">
+                <div className="about-style-article-floating-chrome__audio-transport">
+                  <button
+                    type="button"
+                    className="about-style-article-floating-chrome__transport-btn"
+                    aria-label="Back 10 seconds"
+                    onClick={() => seekBy(-10)}
                   >
-                    <div className="about-style-article-floating-chrome__progress-fill" aria-hidden />
-                    <div className="about-style-article-floating-chrome__progress-thumb" aria-hidden />
-                  </div>
-                  <span className="about-style-article-floating-chrome__progress-duration">{formatTime(duration)}</span>
+                    <SkipBack10Icon size={20} />
+                  </button>
+                  <button
+                    type="button"
+                    className="about-style-article-floating-chrome__transport-btn about-style-article-floating-chrome__transport-btn--primary"
+                    aria-label={isPlaying ? "Pause" : "Play"}
+                    onClick={togglePlay}
+                  >
+                    {isPlaying ? <PauseIcon size={48} /> : <PlayIcon size={48} />}
+                  </button>
+                  <button
+                    type="button"
+                    className="about-style-article-floating-chrome__transport-btn"
+                    aria-label="Forward 10 seconds"
+                    onClick={() => seekBy(10)}
+                  >
+                    <SkipForward10Icon size={20} />
+                  </button>
                 </div>
-                <div className="about-style-article-floating-chrome__progress-times">
-                  <span>{formatTime(currentTime)}</span>
-                  <span>{formatTime(duration)}</span>
+
+                <div
+                  className={`about-style-article-floating-chrome__progress${isScrubbing ? " is-scrubbing" : ""}`}
+                  role="slider"
+                  aria-valuemin={0}
+                  aria-valuemax={duration}
+                  aria-valuenow={currentTime}
+                  aria-label="Playback position"
+                >
+                  <div className="about-style-article-floating-chrome__progress-row">
+                    <div
+                      ref={progressTrackRef}
+                      className="about-style-article-floating-chrome__progress-track"
+                      style={{ ["--progress-pct" as string]: progressPct }}
+                      onPointerDown={onProgressTrackPointerDown}
+                      onPointerMove={onProgressTrackPointerMove}
+                      onPointerUp={onProgressTrackPointerEnd}
+                      onPointerCancel={onProgressTrackPointerEnd}
+                    >
+                      <div className="about-style-article-floating-chrome__progress-fill" aria-hidden />
+                      <div className="about-style-article-floating-chrome__progress-thumb" aria-hidden />
+                    </div>
+                    <span className="about-style-article-floating-chrome__progress-duration">{formatTime(duration)}</span>
+                  </div>
+                  <div className="about-style-article-floating-chrome__progress-times">
+                    <span>{formatTime(currentTime)}</span>
+                    <span>{formatTime(duration)}</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
         </div>
 
         {showTocCap ? (
           <div
             ref={tocCapRef}
-            className={`about-style-article-floating-chrome__cap about-style-article-floating-chrome__cap--right${tocOpen && !audioCapActive ? " is-open" : ""}${tocPanelRevealed ? " is-revealed" : ""}${tocCollapsing ? " is-closing" : ""}`}
+            className={`about-style-article-floating-chrome__cap about-style-article-floating-chrome__cap--right${tocCapExpanded ? " is-open" : ""}${tocPanelRevealed ? " is-revealed" : ""}${tocCollapsing ? " is-closing" : ""}${panelHandoffToc ? " is-handoff" : ""}${panelCrossfade && tocCollapsing ? " is-sliding-out" : ""}${panelCrossfade && tocOpen && !tocCollapsing ? " is-sliding-in" : ""}`}
           >
-            {tocOpen && !audioCapActive ? (
+            {tocCapExpanded ? (
               <div className="about-style-article-floating-chrome__panel" aria-hidden={!tocPanelRevealed}>
                 <AboutStyleArticleTocPanel
                   items={tocItems}

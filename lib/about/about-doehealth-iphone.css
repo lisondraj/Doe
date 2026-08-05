@@ -1938,22 +1938,23 @@ html[data-about-page]:has(.doephone-mobile-root) {
   );
   --about-audio-join-ms: 780ms;
   --about-audio-leave-ms: 620ms;
-  --about-audio-leave-cap-delay: 72ms;
-  --about-audio-leave-bridge-delay: 48ms;
-  --about-audio-leave-shell-fade: 360ms;
-  --about-audio-leave-frost-delay: 340ms;
-  --about-audio-leave-frost-duration: 300ms;
-  --about-audio-leave-icon-delay: 320ms;
+  --about-audio-leave-cap-delay: 48ms;
+  --about-audio-leave-bridge-delay: 32ms;
+  --about-audio-leave-shell-fade: 320ms;
+  --about-audio-leave-frost-delay: 300ms;
+  --about-audio-leave-frost-duration: 280ms;
+  --about-audio-leave-icon-delay: 280ms;
   --about-audio-join-ease: var(--about-chrome-ease-out);
   --about-audio-leave-ease: var(--about-chrome-ease-in);
   --about-audio-join-border-fade: 420ms;
   --about-audio-pill-settle-ms: 520ms;
-  --about-audio-bridge-opacity-in: 400ms;
-  --about-audio-bridge-opacity-delay: 72ms;
-  --about-audio-controls-in-ms: 480ms;
-  --about-audio-controls-in-delay: 100ms;
+  --about-audio-bridge-opacity-in: 360ms;
+  --about-audio-bridge-opacity-delay: 120ms;
+  --about-audio-controls-in-ms: 360ms;
+  --about-audio-controls-in-delay: 420ms;
   --about-audio-controls-out-ms: 220ms;
   --about-audio-bridge-out-opacity: 160ms;
+  --about-audio-split-gap: calc(100% - 2 * var(--about-floating-toc-closed-size));
   --about-chrome-reveal-ms: 520ms;
   --about-chrome-press-duration: 280ms;
   --about-cap-opacity-ms: 360ms;
@@ -2725,15 +2726,15 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-joined .about-style-article-floating-chrome__shell,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio-joined .about-style-article-floating-chrome__shell {
-  transform: scale(1);
-  animation: about-audio-pill-settle var(--about-audio-pill-settle-ms) var(--about-audio-join-ease) both;
+  transform: none;
+  animation: none;
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__shell,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__shell {
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
-  gap: 0;
+  gap: var(--about-audio-split-gap);
   padding-inline: 0;
   height: var(--about-floating-toc-closed-size);
   min-height: var(--about-floating-toc-closed-size);
@@ -2758,6 +2759,17 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
     height 0ms linear var(--about-audio-leave-ms),
     max-height 0ms linear var(--about-audio-leave-ms),
     transform 0ms linear;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-handoff-blog.is-audio-closing .about-style-article-floating-chrome__shell,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-handoff-blog.is-audio-closing .about-style-article-floating-chrome__shell,
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-handoff-toc.is-audio-closing .about-style-article-floating-chrome__shell,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-handoff-toc.is-audio-closing .about-style-article-floating-chrome__shell {
+  gap: clamp(0.22rem, 0.14rem + 0.32vmin, 0.38rem);
+  background-color: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 @keyframes about-audio-pill-unsettle {
@@ -2869,15 +2881,15 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   width: var(--about-floating-toc-closed-size) !important;
   min-width: var(--about-floating-toc-closed-size) !important;
   height: var(--about-floating-toc-closed-size);
-  align-self: flex-end;
+  align-self: center;
   opacity: 1;
   pointer-events: auto;
   z-index: 2;
   transform: none;
   transition:
-    width var(--about-audio-leave-ms) var(--about-audio-leave-ease) var(--about-audio-leave-cap-delay),
-    height var(--about-audio-leave-ms) var(--about-audio-leave-ease) var(--about-audio-leave-cap-delay),
-    min-width var(--about-audio-leave-ms) var(--about-audio-leave-ease) var(--about-audio-leave-cap-delay),
+    width var(--about-audio-leave-ms) var(--about-audio-leave-ease),
+    height var(--about-audio-leave-ms) var(--about-audio-leave-ease),
+    min-width var(--about-audio-leave-ms) var(--about-audio-leave-ease),
     transform 0ms linear;
 }
 
@@ -3155,17 +3167,27 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   background: transparent;
   opacity: 0;
   pointer-events: none;
+  transform: scaleX(0.35);
+  transform-origin: center center;
+  transition:
+    flex var(--about-audio-join-ms) var(--about-audio-join-ease),
+    width var(--about-audio-join-ms) var(--about-audio-join-ease),
+    max-width var(--about-audio-join-ms) var(--about-audio-join-ease),
+    opacity var(--about-cap-opacity-ms) var(--about-audio-join-ease),
+    transform var(--about-audio-join-ms) var(--about-audio-join-ease);
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-joined .about-style-article-floating-chrome__bridge,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio-joined .about-style-article-floating-chrome__bridge {
   opacity: 1;
   pointer-events: auto;
+  transform: scaleX(1);
   transition:
     flex var(--about-audio-join-ms) var(--about-audio-join-ease),
     width var(--about-audio-join-ms) var(--about-audio-join-ease),
     max-width var(--about-audio-join-ms) var(--about-audio-join-ease),
-    opacity var(--about-audio-bridge-opacity-in) var(--about-audio-join-ease) var(--about-audio-bridge-opacity-delay);
+    opacity var(--about-audio-bridge-opacity-in) var(--about-audio-join-ease) var(--about-audio-bridge-opacity-delay),
+    transform var(--about-audio-join-ms) var(--about-audio-join-ease);
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__bridge,
@@ -3179,13 +3201,17 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   padding: 0;
   margin: 0;
   overflow: hidden;
-  clip-path: inset(0);
+  transform: scaleX(0);
+  transform-origin: center center;
+  clip-path: inset(0 50% 0 50%);
   transition:
     opacity var(--about-audio-bridge-out-opacity) var(--about-audio-leave-ease),
-    flex var(--about-audio-leave-ms) var(--about-audio-leave-ease) var(--about-audio-leave-bridge-delay),
-    width var(--about-audio-leave-ms) var(--about-audio-leave-ease) var(--about-audio-leave-bridge-delay),
-    max-width var(--about-audio-leave-ms) var(--about-audio-leave-ease) var(--about-audio-leave-bridge-delay),
-    padding var(--about-audio-leave-frost-duration) var(--about-audio-leave-ease) var(--about-audio-leave-bridge-delay);
+    transform var(--about-audio-leave-ms) var(--about-audio-leave-ease),
+    clip-path var(--about-audio-leave-ms) var(--about-audio-leave-ease),
+    flex var(--about-audio-leave-ms) var(--about-audio-leave-ease),
+    width var(--about-audio-leave-ms) var(--about-audio-leave-ease),
+    max-width var(--about-audio-leave-ms) var(--about-audio-leave-ease),
+    padding var(--about-audio-leave-frost-duration) var(--about-audio-leave-ease);
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__audio-stack,
@@ -3207,51 +3233,115 @@ html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-c
   padding: 0 clamp(0.12rem, 0.06rem + 0.28vmin, 0.22rem);
 }
 
-html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__audio-controls,
-html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__audio-controls {
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__audio-playback-unit,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome__audio-playback-unit {
   display: flex;
   flex-direction: column;
   align-items: stretch;
   justify-content: center;
-  gap: clamp(0.18rem, 0.12rem + 0.28vmin, 0.26rem);
+  gap: clamp(0.06rem, 0.03rem + 0.14vmin, 0.1rem);
   width: 100%;
   min-width: 0;
+  min-height: clamp(3.05rem, 2.72rem + 1.15vmin, 3.45rem);
   opacity: 0;
-  transform: translateY(5px) scale(0.97);
-  transition:
-    opacity var(--about-audio-controls-in-ms) var(--about-audio-join-ease),
-    transform calc(var(--about-audio-controls-in-ms) + 40ms) var(--about-audio-join-ease);
+  transform: none;
+  transition: opacity var(--about-audio-controls-in-ms) var(--about-audio-join-ease);
 }
 
-html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__audio-controls,
-html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__audio-controls {
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__audio-playback-unit,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio-closing .about-style-article-floating-chrome__audio-playback-unit {
   opacity: 0;
   visibility: hidden;
-  max-height: 0;
-  overflow: hidden;
   pointer-events: none;
-  transform: translateY(6px) scale(0.96);
   transition:
     opacity var(--about-audio-bridge-out-opacity) var(--about-audio-leave-ease),
-    transform var(--about-audio-controls-out-ms) var(--about-audio-leave-ease),
-    visibility 0s linear var(--about-audio-bridge-out-opacity),
-    max-height 0s linear var(--about-audio-bridge-out-opacity);
+    visibility 0s linear var(--about-audio-bridge-out-opacity);
 }
 
-html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-joined .about-style-article-floating-chrome__audio-controls,
-html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio-joined .about-style-article-floating-chrome__audio-controls {
-  gap: clamp(0.06rem, 0.03rem + 0.14vmin, 0.1rem);
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-joined .about-style-article-floating-chrome__audio-playback-unit,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio-joined .about-style-article-floating-chrome__audio-playback-unit {
   opacity: 1;
-  transform: translateY(0) scale(1);
   transition:
-    opacity calc(var(--about-audio-controls-in-ms) - 60ms) var(--about-audio-join-ease) var(--about-audio-controls-in-delay),
-    transform var(--about-audio-controls-in-ms) var(--about-audio-join-ease) var(--about-audio-controls-in-delay);
+    opacity calc(var(--about-audio-controls-in-ms) - 40ms) var(--about-audio-join-ease) var(--about-audio-controls-in-delay);
 }
 
-html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-joined .about-style-article-floating-chrome__audio-transport,
-html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio-joined .about-style-article-floating-chrome__audio-transport {
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio:not(.is-audio-closing) .about-style-article-floating-chrome__audio-transport,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio:not(.is-audio-closing) .about-style-article-floating-chrome__audio-transport {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   gap: clamp(0.34rem, 0.24rem + 0.38vmin, 0.52rem);
+  width: 100%;
   min-height: clamp(2.35rem, 2.08rem + 0.95vmin, 2.65rem);
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio:not(.is-audio-closing) .about-style-article-floating-chrome__transport-btn,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio:not(.is-audio-closing) .about-style-article-floating-chrome__transport-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  width: clamp(1.65rem, 1.48rem + 0.62vmin, 1.85rem);
+  height: clamp(1.65rem, 1.48rem + 0.62vmin, 1.85rem);
+  flex-shrink: 0;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio:not(.is-audio-closing) .about-style-article-floating-chrome__transport-btn--primary,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio:not(.is-audio-closing) .about-style-article-floating-chrome__transport-btn--primary {
+  width: auto;
+  height: auto;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  line-height: 0;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio:not(.is-audio-closing) .about-style-article-floating-chrome__transport-btn--primary svg,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio:not(.is-audio-closing) .about-style-article-floating-chrome__transport-btn--primary svg {
+  display: block;
+  width: clamp(2.18rem, 1.92rem + 0.98vmin, 2.52rem);
+  height: clamp(2.18rem, 1.92rem + 0.98vmin, 2.52rem);
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio:not(.is-audio-closing) .about-style-article-floating-chrome__progress-row,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio:not(.is-audio-closing) .about-style-article-floating-chrome__progress-row {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.42rem, 0.32rem + 0.42vmin, 0.58rem);
+  width: 100%;
+  min-width: 0;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio:not(.is-audio-closing) .about-style-article-floating-chrome__progress-row .about-style-article-floating-chrome__progress-track,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio:not(.is-audio-closing) .about-style-article-floating-chrome__progress-row .about-style-article-floating-chrome__progress-track {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 0.22rem;
+  border: none;
+  box-shadow: none;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio:not(.is-audio-closing) .about-style-article-floating-chrome__progress-duration,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio:not(.is-audio-closing) .about-style-article-floating-chrome__progress-duration {
+  display: block;
+  flex: 0 0 auto;
+  font-size: clamp(0.78rem, 0.7rem + 0.28vmin, 0.88rem);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: rgba(198, 168, 132, 0.72);
+  white-space: nowrap;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio:not(.is-audio-closing) .about-style-article-floating-chrome__progress-times,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio:not(.is-audio-closing) .about-style-article-floating-chrome__progress-times {
+  display: none;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio:not(.is-audio-closing) .about-style-article-floating-chrome__progress-thumb,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio:not(.is-audio-closing) .about-style-article-floating-chrome__progress-thumb {
+  width: 0.5rem;
+  height: 0.5rem;
 }
 
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome__audio-transport,
@@ -3971,5 +4061,86 @@ html[data-about-page]:has(.doephone-mobile-root)
   .about-style-article-floating-chrome__cap-trigger--playing
   .about-style-article-floating-chrome__cap-ring-progress {
   transition: stroke-dashoffset 180ms var(--about-chrome-ease-out);
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-handoff-blog.is-audio-closing .about-style-article-floating-chrome__cap--left.is-open,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-handoff-blog.is-audio-closing .about-style-article-floating-chrome__cap--left.is-open {
+  width: var(--about-floating-blog-open-w) !important;
+  min-width: var(--about-floating-blog-open-w) !important;
+  align-self: flex-end;
+  z-index: 3;
+  transition:
+    width var(--about-audio-leave-ms) var(--about-audio-leave-ease),
+    height var(--about-floating-chrome-open-duration) var(--about-chrome-ease-out),
+    min-height var(--about-floating-chrome-open-duration) var(--about-chrome-ease-out),
+    max-height var(--about-floating-chrome-height-duration) var(--about-chrome-ease-out);
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-handoff-toc.is-audio-closing .about-style-article-floating-chrome__cap--right.is-open,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-handoff-toc.is-audio-closing .about-style-article-floating-chrome__cap--right.is-open {
+  width: var(--about-floating-toc-open-w) !important;
+  min-width: var(--about-floating-toc-open-w) !important;
+  align-self: flex-end;
+  z-index: 3;
+  transition:
+    width var(--about-audio-leave-ms) var(--about-audio-leave-ease),
+    height var(--about-floating-chrome-open-duration) var(--about-chrome-ease-out),
+    min-height var(--about-floating-chrome-open-duration) var(--about-chrome-ease-out),
+    max-height var(--about-floating-chrome-height-duration) var(--about-chrome-ease-out);
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-panel-crossfade .about-style-article-floating-chrome__cap.is-sliding-out,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-panel-crossfade .about-style-article-floating-chrome__cap.is-sliding-out {
+  opacity: 0.55;
+  transition:
+    width var(--about-floating-chrome-close-duration) var(--about-floating-chrome-close-ease),
+    height var(--about-floating-chrome-close-duration) var(--about-floating-chrome-close-ease),
+    min-height var(--about-floating-chrome-close-duration) var(--about-floating-chrome-close-ease),
+    max-height var(--about-floating-chrome-close-duration) var(--about-floating-chrome-close-ease),
+    opacity calc(var(--about-floating-chrome-close-duration) * 0.72) var(--about-floating-chrome-close-ease),
+    transform var(--about-floating-chrome-close-duration) var(--about-floating-chrome-close-ease);
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-panel-crossfade .about-style-article-floating-chrome__cap--left.is-sliding-out,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-panel-crossfade .about-style-article-floating-chrome__cap--left.is-sliding-out {
+  transform: translateX(-12%);
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-panel-crossfade .about-style-article-floating-chrome__cap--right.is-sliding-out,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-panel-crossfade .about-style-article-floating-chrome__cap--right.is-sliding-out {
+  transform: translateX(12%);
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-panel-crossfade .about-style-article-floating-chrome__cap.is-sliding-in,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-panel-crossfade .about-style-article-floating-chrome__cap.is-sliding-in {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-panel-crossfade .about-style-article-floating-chrome__cap--left.is-sliding-in,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-panel-crossfade .about-style-article-floating-chrome__cap--left.is-sliding-in {
+  transform: translateX(0);
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-panel-crossfade .about-style-article-floating-chrome__cap--right.is-sliding-in,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-panel-crossfade .about-style-article-floating-chrome__cap--right.is-sliding-in {
+  transform: translateX(0);
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-closing:not(.is-handoff-blog):not(.is-handoff-toc) .about-style-article-floating-chrome__cap-trigger,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio-closing:not(.is-handoff-blog):not(.is-handoff-toc) .about-style-article-floating-chrome__cap-trigger {
+  transition:
+    border-color var(--about-audio-leave-frost-duration) var(--about-audio-leave-ease) calc(var(--about-audio-leave-ms) * 0.42),
+    background-color var(--about-audio-leave-frost-duration) var(--about-audio-leave-ease) calc(var(--about-audio-leave-ms) * 0.42),
+    box-shadow var(--about-audio-leave-frost-duration) var(--about-audio-leave-ease) calc(var(--about-audio-leave-ms) * 0.42),
+    backdrop-filter var(--about-audio-leave-frost-duration) var(--about-audio-leave-ease) calc(var(--about-audio-leave-ms) * 0.42),
+    -webkit-backdrop-filter var(--about-audio-leave-frost-duration) var(--about-audio-leave-ease) calc(var(--about-audio-leave-ms) * 0.42),
+    height var(--about-audio-leave-ms) var(--about-audio-leave-ease),
+    padding var(--about-audio-leave-ms) var(--about-audio-leave-ease);
+}
+
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-floating-chrome.is-audio-closing:not(.is-handoff-blog):not(.is-handoff-toc) .about-style-article-floating-chrome__cap-trigger .about-style-article-floating-chrome__icon,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-floating-chrome.is-audio-closing:not(.is-handoff-blog):not(.is-handoff-toc) .about-style-article-floating-chrome__cap-trigger .about-style-article-floating-chrome__icon {
+  animation: about-audio-cap-icon-reveal var(--about-audio-leave-frost-duration) var(--about-audio-leave-ease) calc(var(--about-audio-leave-ms) * 0.46) both;
 }
 
