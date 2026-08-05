@@ -12368,14 +12368,14 @@ html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehea
 
 .about-desktop-root[data-doeforvc-view="desktop"] .broader-doe-desktop-content {
   box-sizing: border-box;
-  width: 55.556%;
-  max-width: 55.556%;
+  width: 66.667%;
+  max-width: 66.667%;
   margin-inline: auto;
 }
 
 .about-desktop-root[data-doeforvc-view="desktop"] .about-desktop-article-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 55.556% minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) 66.667% minmax(0, 1fr);
   gap: clamp(1.25rem, 2.2vw, 2.5rem);
   align-items: stretch;
   box-sizing: border-box;
