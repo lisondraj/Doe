@@ -1835,13 +1835,16 @@ html[data-about-page][data-layout="desktop"] .about-style-article-section-anchor
 }
 
 html[data-about-page][data-layout="desktop"] .about-desktop-article-layout {
+  --about-desktop-nav-clearance: calc(
+    var(--doe-home-top-banner-height, 0px) + var(--desktop-nav-height, 6.25rem)
+  );
+  --about-desktop-viewport-body: calc(100dvh - var(--about-desktop-nav-clearance));
   display: grid;
-  grid-template-columns: minmax(0, 1fr) min(55.556%, 42rem) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) 55.556% minmax(0, 1fr);
   gap: clamp(1.25rem, 2.2vw, 2.5rem);
   align-items: start;
   box-sizing: border-box;
   width: 100%;
-  max-width: min(96rem, 100%);
   margin-inline: auto;
   padding-inline: var(--desktop-page-inset-x, 2.5rem);
 }
@@ -1862,16 +1865,12 @@ html[data-about-page][data-layout="desktop"]
 html[data-about-page][data-layout="desktop"] .about-style-article-desktop-toc {
   grid-column: 1;
   justify-self: end;
+  align-self: start;
   width: min(100%, 14.5rem);
   position: sticky;
-  top: calc(
-    var(--doe-home-top-banner-height, 0px) + var(--desktop-nav-height, 6.25rem) +
-      clamp(1rem, 1.6vw, 1.75rem)
-  );
-  max-height: calc(
-    100dvh - var(--doe-home-top-banner-height, 0px) - var(--desktop-nav-height, 6.25rem) -
-      clamp(2rem, 3vw, 3rem)
-  );
+  top: calc(var(--about-desktop-nav-clearance, calc(var(--doe-home-top-banner-height, 0px) + var(--desktop-nav-height, 6.25rem))) + var(--about-desktop-viewport-body, calc(100dvh - var(--doe-home-top-banner-height, 0px) - var(--desktop-nav-height, 6.25rem))) / 2);
+  transform: translateY(-50%);
+  max-height: calc(var(--about-desktop-viewport-body, calc(100dvh - var(--doe-home-top-banner-height, 0px) - var(--desktop-nav-height, 6.25rem))) - clamp(2rem, 3vw, 3rem));
   overflow-y: auto;
   overscroll-behavior: contain;
 }
