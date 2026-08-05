@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import "../lib/about/about-doehealth-iphone.css";
+
 /*
  * Visible viewport vars — overridden from JS (`vbAppViewportPx`) using `visualViewport`
  * so hero height + sections align across iPhone Safari toolbar states.
@@ -8154,6 +8156,12 @@ body.mainpage-route,
 body.proto-route {
   overflow: auto;
   overscroll-behavior: auto;
+}
+
+html[data-about-page][data-layout="desktop"],
+html[data-about-page][data-layout="desktop"] body {
+  overflow-y: auto !important;
+  overflow-x: clip !important;
 }
 .doeforvc-iphone-root {
   /* Prevent horizontal bleed from scaled fixed-width sections */
