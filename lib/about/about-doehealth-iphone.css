@@ -566,13 +566,16 @@ html[data-about-page][data-layout="desktop"] {
   overflow-y: auto !important;
 }
 
+/*
+ * Body must stay overflow: visible on both axes — html (documentElement) is the
+ * real scrolling element. Giving body its own non-visible overflow turns it into a
+ * second, dead scroll container that breaks position: sticky for every descendant
+ * (e.g. the article TOC rail), since sticky elements compute their offset against
+ * the nearest scroll container, not necessarily the viewport.
+ */
 html[data-about-page][data-layout="desktop"] body {
   background-color: #1b1410 !important;
-  overflow-y: auto !important;
-}
-
-html[data-about-page][data-layout="desktop"]:not(:has(.about-desktop-root--article-toc)) body {
-  overflow-x: clip !important;
+  overflow: visible !important;
 }
 
 html[data-about-page][data-layout="desktop"] .about-desktop-root {
@@ -1881,11 +1884,6 @@ html[data-about-page][data-layout="desktop"] .about-desktop-root--article-toc,
 html[data-about-page][data-layout="desktop"] .about-desktop-root--article-toc .about-desktop-main,
 html[data-about-page][data-layout="desktop"] .about-desktop-root--article-toc .about-desktop-article-layout {
   overflow: visible !important;
-}
-
-html[data-about-page][data-layout="desktop"]:has(.about-desktop-root--article-toc),
-html[data-about-page][data-layout="desktop"]:has(.about-desktop-root--article-toc) body {
-  overflow-x: visible !important;
 }
 
 html[data-about-page][data-layout="desktop"] .about-style-article-desktop-toc-rail-host {

@@ -8158,19 +8158,18 @@ body.proto-route {
   overscroll-behavior: auto;
 }
 
-html[data-about-page][data-layout="desktop"],
-html[data-about-page][data-layout="desktop"] body {
+html[data-about-page][data-layout="desktop"] {
   overflow-y: auto !important;
 }
 
-html[data-about-page][data-layout="desktop"]:not(:has(.about-desktop-root--article-toc)),
-html[data-about-page][data-layout="desktop"]:not(:has(.about-desktop-root--article-toc)) body {
-  overflow-x: clip !important;
-}
-
-html[data-about-page][data-layout="desktop"]:has(.about-desktop-root--article-toc),
-html[data-about-page][data-layout="desktop"]:has(.about-desktop-root--article-toc) body {
-  overflow-x: visible !important;
+/*
+ * Body stays overflow: visible on both axes always — see about-doehealth-iphone.css
+ * for why a non-visible body overflow breaks position: sticky (e.g. the article TOC).
+ * Horizontal bleed is instead clipped on `.about-desktop-root` itself (see
+ * AboutStyleArticleDesktopView / BroaderDoeVisionDesktopView `overflow-x-hidden`).
+ */
+html[data-about-page][data-layout="desktop"] body {
+  overflow: visible !important;
 }
 .doeforvc-iphone-root {
   /* Prevent horizontal bleed from scaled fixed-width sections */
@@ -12405,14 +12404,14 @@ html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehea
   overflow: visible !important;
 }
 
+/*
+ * Body stays overflow: visible (never auto/clip/hidden) — html is the real scroller,
+ * and a non-visible body overflow creates a second dead scroll container that breaks
+ * position: sticky for descendants like the article TOC rail.
+ */
 body.desktop-route:has(.about-desktop-root[data-doeforvc-view="desktop"]),
 html:has(.about-desktop-root[data-doeforvc-view="desktop"]) body.desktop-route {
-  overflow: auto !important;
-}
-
-body.desktop-route:has(.about-desktop-root--article-toc),
-html:has(.about-desktop-root--article-toc) body.desktop-route {
-  overflow-x: visible !important;
+  overflow: visible !important;
 }
 
 .about-desktop-root[data-doeforvc-view="desktop"] .about-style-article-desktop-toc-rail-host {
