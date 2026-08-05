@@ -811,7 +811,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
                 <div className="about-style-article-floating-chrome__audio-transport">
                   <button
                     type="button"
-                    className="about-style-article-floating-chrome__transport-btn"
+                    className="about-style-article-floating-chrome__transport-btn about-style-article-floating-chrome__transport-btn--skip-back"
                     aria-label="Back 10 seconds"
                     onClick={() => seekBy(-10)}
                   >
@@ -827,7 +827,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
                   </button>
                   <button
                     type="button"
-                    className="about-style-article-floating-chrome__transport-btn"
+                    className="about-style-article-floating-chrome__transport-btn about-style-article-floating-chrome__transport-btn--skip-forward"
                     aria-label="Forward 10 seconds"
                     onClick={() => seekBy(10)}
                   >
