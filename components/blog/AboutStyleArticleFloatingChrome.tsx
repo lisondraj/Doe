@@ -157,6 +157,10 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
       const { width, height } = cap.getBoundingClientRect();
       cap.style.width = `${width}px`;
       cap.style.height = `${height}px`;
+      // See beginTocCollapse — forces the pinned pixel height to commit as its own
+      // frame before the .is-closing class swap, so height can animate instead of
+      // snapping straight from the un-pinned `auto` value.
+      void cap.offsetHeight;
     }
     setBlogCollapsing(true);
   }, []);
@@ -167,6 +171,12 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
       const { width, height } = cap.getBoundingClientRect();
       cap.style.width = `${width}px`;
       cap.style.height = `${height}px`;
+      // Force a synchronous style/layout flush so the browser commits this pinned
+      // pixel size as the "before" value. Without it, the pin and the .is-closing
+      // class swap (triggered by the setState right below) can land in the same
+      // paint — the engine then transitions straight from the un-pinned `auto`
+      // height, which can't be interpolated, so it snaps instead of animating.
+      void cap.offsetHeight;
     }
     setTocCollapsing(true);
   }, []);
@@ -177,6 +187,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
       const { width, height } = cap.getBoundingClientRect();
       cap.style.width = `${width}px`;
       cap.style.height = `${height}px`;
+      void cap.offsetHeight;
     }
     setTocCollapsing(true);
   }, []);
@@ -187,6 +198,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
       const { width, height } = cap.getBoundingClientRect();
       cap.style.width = `${width}px`;
       cap.style.height = `${height}px`;
+      void cap.offsetHeight;
     }
     setBlogCollapsing(true);
   }, []);
@@ -203,22 +215,26 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
     }
     if (blogHideTimerRef.current !== null) {
       window.clearTimeout(blogHideTimerRef.current);
+      blogHideTimerRef.current = null;
     }
     if (blogCollapseTimerRef.current !== null) {
       window.clearTimeout(blogCollapseTimerRef.current);
       blogCollapseTimerRef.current = null;
     }
+    // Reveal-off and collapse must land in the same render: the panel's height is
+    // `auto` while revealed, and browsers can't smoothly interpolate a height change
+    // that starts from `auto` — it just snaps. Measuring + pinning the box's current
+    // pixel size (inside beginBlogCollapse) before that render commits keeps the
+    // start value a definite px, so the whole shrink (width *and* height) animates
+    // together instead of the height instantly collapsing out from under it.
     setBlogPanelRevealed(false);
-    blogHideTimerRef.current = window.setTimeout(() => {
-      beginBlogCollapse();
-      blogHideTimerRef.current = null;
-      blogCollapseTimerRef.current = window.setTimeout(() => {
-        setBlogOpen(false);
-        setBlogCollapsing(false);
-        clearBlogCollapseStyles();
-        blogCollapseTimerRef.current = null;
-      }, PANEL_COLLAPSE_MS);
-    }, PANEL_HIDE_MS);
+    beginBlogCollapse();
+    blogCollapseTimerRef.current = window.setTimeout(() => {
+      setBlogOpen(false);
+      setBlogCollapsing(false);
+      clearBlogCollapseStyles();
+      blogCollapseTimerRef.current = null;
+    }, PANEL_COLLAPSE_MS);
   }, [beginBlogCollapse, blogCollapsing, blogOpen, clearBlogCollapseStyles]);
 
   const closeToc = useCallback(() => {
@@ -229,22 +245,21 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
     }
     if (tocHideTimerRef.current !== null) {
       window.clearTimeout(tocHideTimerRef.current);
+      tocHideTimerRef.current = null;
     }
     if (tocCollapseTimerRef.current !== null) {
       window.clearTimeout(tocCollapseTimerRef.current);
       tocCollapseTimerRef.current = null;
     }
+    // See closeBlog — same "pin before the auto-height render commits" fix.
     setTocPanelRevealed(false);
-    tocHideTimerRef.current = window.setTimeout(() => {
-      beginTocCollapse();
-      tocHideTimerRef.current = null;
-      tocCollapseTimerRef.current = window.setTimeout(() => {
-        setTocOpen(false);
-        setTocCollapsing(false);
-        clearTocCollapseStyles();
-        tocCollapseTimerRef.current = null;
-      }, PANEL_COLLAPSE_MS);
-    }, PANEL_HIDE_MS);
+    beginTocCollapse();
+    tocCollapseTimerRef.current = window.setTimeout(() => {
+      setTocOpen(false);
+      setTocCollapsing(false);
+      clearTocCollapseStyles();
+      tocCollapseTimerRef.current = null;
+    }, PANEL_COLLAPSE_MS);
   }, [beginTocCollapse, clearTocCollapseStyles, tocCollapsing, tocOpen]);
 
   const fastCloseTocForAudio = useCallback(() => {
