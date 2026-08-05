@@ -24,7 +24,8 @@ const PANEL_HIDE_MS = 0;
 const PANEL_COLLAPSE_MS = 440;
 const SCROLL_REVEAL_PX = 280;
 const AUDIO_JOIN_MS = 560;
-const AUDIO_JOIN_SETTLE_MS = 220;
+const AUDIO_JOIN_SETTLE_MS = 72;
+const AUDIO_CONTROLS_IN_DELAY_MS = 48;
 const AUDIO_LEAVE_MS = 480;
 const AUDIO_LEAVE_SPLIT_MS = 130;
 const AUDIO_LEAVE_SETTLE_MS = 64;
@@ -301,21 +302,9 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
       audioOpenDelayTimerRef.current = null;
     }
 
-    const needsPanelClose = (tocOpen && !tocCollapsing) || (blogOpen && !blogCollapsing);
     if (blogOpen && !blogCollapsing) fastCloseBlogForAudio();
     if (tocOpen && !tocCollapsing) fastCloseTocForAudio();
-
-    const startPlayback = () => {
-      openPlayer();
-      audioOpenDelayTimerRef.current = null;
-    };
-
-    if (needsPanelClose) {
-      audioOpenDelayTimerRef.current = window.setTimeout(startPlayback, PANEL_COLLAPSE_MS + 36);
-      return;
-    }
-
-    startPlayback();
+    openPlayer();
   }, [blogCollapsing, blogOpen, fastCloseBlogForAudio, fastCloseTocForAudio, markWidgetOpened, openPlayer, tocCollapsing, tocOpen]);
 
   const beginAudioClose = useCallback(() => {
@@ -663,8 +652,8 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
 
   const audioJoining = isPlayerOpen && !audioJoined && !audioClosing;
   const showLeftCapTriggers = (!blogOpen && !blogCollapsing) || blogCollapsing;
-  const showLeftPlayingCap = isPlaying && showLeftCapTriggers && (!isPlayerOpen || audioClosing);
-  const showLeftBlogCap = showLeftCapTriggers && (!isPlaying || isPlayerOpen);
+  const showLeftPlayingCap = isPlaying && showLeftCapTriggers && (!isPlayerOpen || audioClosing || audioJoining);
+  const showLeftBlogCap = showLeftCapTriggers && !showLeftPlayingCap && (!isPlayerOpen || audioClosing);
   const leftCapCrossfade = isPlaying && audioClosing && isPlayerOpen && audioJoined;
   const showTocCapTrigger = (!tocOpen && !tocCollapsing) || tocCollapsing;
   const blogCapExpanded = blogOpen && (!audioCapActive || audioClosing);
@@ -736,6 +725,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
           ["--about-floating-chrome-open-duration" as string]: `${PANEL_REVEAL_MS}ms`,
           ["--about-floating-chrome-close-duration" as string]: `${PANEL_COLLAPSE_MS}ms`,
           ["--about-audio-join-settle-ms" as string]: `${AUDIO_JOIN_SETTLE_MS}ms`,
+          ["--about-audio-controls-in-delay" as string]: `${AUDIO_CONTROLS_IN_DELAY_MS}ms`,
           ["--about-audio-leave-split-ms" as string]: `${AUDIO_LEAVE_SPLIT_MS}ms`,
           ["--about-floating-chrome-handoff-duration" as string]: `${PANEL_HANDOFF_REVEAL_MS}ms`,
         }}
@@ -757,10 +747,10 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
               {showLeftPlayingCap ? (
                 <button
                   type="button"
-                  className={`about-style-article-floating-chrome__cap-trigger about-style-article-floating-chrome__cap-trigger--playing${isPlayerOpen && !audioClosing ? " is-stack-hidden" : ""}${leftCapCrossfade ? " is-emerging" : ""}`}
+                  className={`about-style-article-floating-chrome__cap-trigger about-style-article-floating-chrome__cap-trigger--playing${isPlayerOpen && !audioClosing && !audioJoining ? " is-stack-hidden" : ""}${leftCapCrossfade ? " is-emerging" : ""}`}
                   aria-label="Open audio playback"
-                  aria-hidden={isPlayerOpen && !audioClosing ? true : undefined}
-                  tabIndex={isPlayerOpen && !audioClosing ? -1 : chromeVisible ? 0 : -1}
+                  aria-hidden={isPlayerOpen && !audioClosing && !audioJoining ? true : undefined}
+                  tabIndex={isPlayerOpen && !audioClosing && !audioJoining ? -1 : chromeVisible ? 0 : -1}
                   onClick={(event) => {
                     event.stopPropagation();
                     openPlayingPill();
