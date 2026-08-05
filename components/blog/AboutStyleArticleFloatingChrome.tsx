@@ -23,11 +23,11 @@ const PANEL_REVEAL_MS = 560;
 const PANEL_HIDE_MS = 0;
 const PANEL_COLLAPSE_MS = 440;
 const SCROLL_REVEAL_PX = 280;
-const AUDIO_JOIN_MS = 780;
-const AUDIO_JOIN_SETTLE_MS = 380;
-const AUDIO_LEAVE_MS = 620;
-const AUDIO_LEAVE_SETTLE_MS = 96;
-const AUDIO_CAPS_REFORM_RATIO = 0.58;
+const AUDIO_JOIN_MS = 560;
+const AUDIO_JOIN_SETTLE_MS = 220;
+const AUDIO_LEAVE_MS = 480;
+const AUDIO_LEAVE_SPLIT_MS = 130;
+const AUDIO_LEAVE_SETTLE_MS = 64;
 const PANEL_HANDOFF_REVEAL_MS = 280;
 const WIDGET_DISMISS_ARM_MS = 480;
 
@@ -111,7 +111,6 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
   const [tocCollapsing, setTocCollapsing] = useState(false);
   const [audioJoined, setAudioJoined] = useState(false);
   const [audioClosing, setAudioClosing] = useState(false);
-  const [audioCapsReforming, setAudioCapsReforming] = useState(false);
   const audioPlayingMinimized = isPlaying && !isPlayerOpen && !audioClosing;
   const audioCapActive = isPlayerOpen || audioClosing;
   const anyWidgetOpen = blogOpen || tocOpen || audioCapActive || audioPlayingMinimized;
@@ -127,7 +126,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
   const tocHideTimerRef = useRef<number | null>(null);
   const tocCollapseTimerRef = useRef<number | null>(null);
   const audioJoinTimerRef = useRef<number | null>(null);
-  const audioReformTimerRef = useRef<number | null>(null);
+  const audioUnjoinTimerRef = useRef<number | null>(null);
   const fakeTickRef = useRef<number | null>(null);
   const ignoreBackdropDismissUntilRef = useRef(0);
   const wasPlayerOpenRef = useRef(false);
@@ -326,20 +325,19 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
       audioOpenDelayTimerRef.current = null;
     }
     audioCloseWhilePlayingRef.current = isPlaying;
-    setAudioJoined(false);
-    setAudioCapsReforming(false);
     setAudioClosing(true);
     if (audioJoinTimerRef.current !== null) {
       window.clearTimeout(audioJoinTimerRef.current);
+      audioJoinTimerRef.current = null;
     }
-    if (audioReformTimerRef.current !== null) {
-      window.clearTimeout(audioReformTimerRef.current);
+    if (audioUnjoinTimerRef.current !== null) {
+      window.clearTimeout(audioUnjoinTimerRef.current);
+      audioUnjoinTimerRef.current = null;
     }
-    const reformAtMs = Math.round(AUDIO_LEAVE_MS * AUDIO_CAPS_REFORM_RATIO);
-    audioReformTimerRef.current = window.setTimeout(() => {
-      setAudioCapsReforming(true);
-      audioReformTimerRef.current = null;
-    }, reformAtMs);
+    audioUnjoinTimerRef.current = window.setTimeout(() => {
+      setAudioJoined(false);
+      audioUnjoinTimerRef.current = null;
+    }, AUDIO_LEAVE_SPLIT_MS);
     audioJoinTimerRef.current = window.setTimeout(() => {
       if (audioCloseWhilePlayingRef.current) {
         hidePlayer();
@@ -349,7 +347,6 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
       audioCloseWhilePlayingRef.current = false;
       audioJoinTimerRef.current = window.setTimeout(() => {
         setAudioClosing(false);
-        setAudioCapsReforming(false);
         audioJoinTimerRef.current = null;
       }, AUDIO_LEAVE_SETTLE_MS);
     }, AUDIO_LEAVE_MS);
@@ -443,7 +440,6 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
           setTocCollapsing(false);
           setAudioJoined(false);
           setAudioClosing(false);
-          setAudioCapsReforming(false);
           closePlayer();
           clearBlogCollapseStyles();
           clearTocCollapseStyles();
@@ -612,7 +608,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
 
   useEffect(() => {
     return () => {
-      [blogRevealTimerRef, blogHideTimerRef, blogCollapseTimerRef, tocRevealTimerRef, tocHideTimerRef, tocCollapseTimerRef, audioJoinTimerRef, audioReformTimerRef].forEach(
+      [blogRevealTimerRef, blogHideTimerRef, blogCollapseTimerRef, tocRevealTimerRef, tocHideTimerRef, tocCollapseTimerRef, audioJoinTimerRef, audioUnjoinTimerRef].forEach(
         (ref) => {
           if (ref.current !== null) window.clearTimeout(ref.current);
         },
@@ -665,13 +661,12 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
 
   const progressPct = progress * 100;
 
-  const showLeftCapTriggers =
-    ((!blogOpen && !blogCollapsing) || blogCollapsing) && (!audioClosing || audioCapsReforming);
+  const audioJoining = isPlayerOpen && !audioJoined && !audioClosing;
+  const showLeftCapTriggers = (!blogOpen && !blogCollapsing) || blogCollapsing;
   const showLeftPlayingCap = isPlaying && showLeftCapTriggers && (!isPlayerOpen || audioClosing);
   const showLeftBlogCap = showLeftCapTriggers && (!isPlaying || isPlayerOpen);
-  const leftCapCrossfade = isPlaying && audioClosing && isPlayerOpen && !audioCapsReforming;
-  const showTocCapTrigger =
-    ((!tocOpen && !tocCollapsing) || tocCollapsing) && (!audioClosing || audioCapsReforming);
+  const leftCapCrossfade = isPlaying && audioClosing && isPlayerOpen && audioJoined;
+  const showTocCapTrigger = (!tocOpen && !tocCollapsing) || tocCollapsing;
   const blogCapExpanded = blogOpen && (!audioCapActive || audioClosing);
   const tocCapExpanded = tocOpen && (!audioCapActive || audioClosing);
   const panelHandoffBlog = blogOpen && audioClosing;
@@ -700,9 +695,9 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
     "about-style-article-floating-chrome",
     chromeVisible ? "is-visible" : "",
     audioCapActive ? "is-audio" : "",
+    audioJoining ? "is-audio-joining" : "",
     audioJoined ? "is-audio-joined" : "",
     audioClosing ? "is-audio-closing" : "",
-    audioCapsReforming ? "is-caps-reforming" : "",
     audioPlayingMinimized ? "is-audio-minimized" : "",
     audioClosing && isPlaying ? "is-audio-closing-while-playing" : "",
     panelHandoffBlog ? "is-handoff-blog" : "",
@@ -741,6 +736,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
           ["--about-floating-chrome-open-duration" as string]: `${PANEL_REVEAL_MS}ms`,
           ["--about-floating-chrome-close-duration" as string]: `${PANEL_COLLAPSE_MS}ms`,
           ["--about-audio-join-settle-ms" as string]: `${AUDIO_JOIN_SETTLE_MS}ms`,
+          ["--about-audio-leave-split-ms" as string]: `${AUDIO_LEAVE_SPLIT_MS}ms`,
           ["--about-floating-chrome-handoff-duration" as string]: `${PANEL_HANDOFF_REVEAL_MS}ms`,
         }}
       >
