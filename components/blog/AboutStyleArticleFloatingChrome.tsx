@@ -651,10 +651,14 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
   const progressPct = progress * 100;
 
   const audioJoining = isPlayerOpen && !audioJoined && !audioClosing;
-  const showLeftCapTriggers = (!blogOpen && !blogCollapsing) || blogCollapsing;
-  const showLeftPlayingCap = isPlaying && showLeftCapTriggers && (!isPlayerOpen || audioClosing || audioJoining);
-  const showLeftBlogCap = showLeftCapTriggers && !showLeftPlayingCap && (!isPlayerOpen || audioClosing);
   const leftCapCrossfade = isPlaying && audioClosing && isPlayerOpen && audioJoined;
+  const showLeftCapTriggers = (!blogOpen && !blogCollapsing) || blogCollapsing;
+  const audioPillAnchored = isPlayerOpen && audioJoined && !audioClosing;
+  const showLeftPlayingCap =
+    isPlaying &&
+    showLeftCapTriggers &&
+    (leftCapCrossfade || (!audioPillAnchored && (!isPlayerOpen || audioClosing || audioJoining)));
+  const showLeftBlogCap = showLeftCapTriggers && !showLeftPlayingCap && !leftCapCrossfade;
   const showTocCapTrigger = (!tocOpen && !tocCollapsing) || tocCollapsing;
   const blogCapExpanded = blogOpen && (!audioCapActive || audioClosing);
   const tocCapExpanded = tocOpen && (!audioCapActive || audioClosing);
