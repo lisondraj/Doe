@@ -18,9 +18,11 @@ type BroaderDoeVisionDesktopViewProps = {
 
 /** Desktop /about — Broader Doe Vision scroll column with side margins. */
 export function BroaderDoeVisionDesktopView({ tocItems }: BroaderDoeVisionDesktopViewProps) {
+  const hasDesktopToc = tocItems.length > 0;
+
   return (
     <div
-      className="about-desktop-root doe-desktop-root doe-desktop-root--doehealth relative overflow-x-hidden bg-[#1b1410]"
+      className={`about-desktop-root doe-desktop-root doe-desktop-root--doehealth relative bg-[#1b1410]${hasDesktopToc ? " about-desktop-root--article-toc" : " overflow-x-hidden"}`}
       data-doeforvc-view="desktop"
     >
       <DoeHealthTopBanner {...ABOUT_STYLE_TOP_BANNER} />

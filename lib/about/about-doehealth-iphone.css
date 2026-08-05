@@ -1846,15 +1846,17 @@ html[data-about-page][data-layout="desktop"] .about-desktop-article-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 55.556% minmax(0, 1fr);
   gap: clamp(1.25rem, 2.2vw, 2.5rem);
-  align-items: start;
+  align-items: stretch;
   box-sizing: border-box;
   width: 100%;
   margin-inline: auto;
   padding-inline: var(--desktop-page-inset-x, 2.5rem);
+  overflow: visible;
 }
 
 html[data-about-page][data-layout="desktop"] .about-desktop-article-layout--no-toc {
   grid-template-columns: minmax(0, 1fr);
+  align-items: start;
 }
 
 html[data-about-page][data-layout="desktop"]
@@ -1866,37 +1868,46 @@ html[data-about-page][data-layout="desktop"]
   margin-inline: 0;
 }
 
-html[data-about-page][data-layout="desktop"]
-  .about-desktop-root:has(.about-style-article-desktop-toc-rail) {
-  overflow-x: visible;
+html[data-about-page][data-layout="desktop"] .about-desktop-root--article-toc,
+html[data-about-page][data-layout="desktop"] .about-desktop-root--article-toc .about-desktop-main,
+html[data-about-page][data-layout="desktop"] .about-desktop-root--article-toc .about-desktop-article-layout {
+  overflow: visible !important;
+}
+
+html[data-about-page][data-layout="desktop"] .about-style-article-desktop-toc-rail-host {
+  grid-column: 1;
+  justify-self: end;
+  align-self: stretch;
+  width: min(100%, 14.5rem);
+  min-height: 0;
+  display: flex;
+  justify-content: flex-end;
+  pointer-events: none;
 }
 
 html[data-about-page][data-layout="desktop"] .about-style-article-desktop-toc-rail {
-  grid-column: 1;
-  justify-self: end;
-  align-self: start;
   position: sticky;
-  top: var(--about-desktop-nav-clearance);
+  top: calc(
+    var(--about-desktop-nav-clearance) + var(--about-desktop-viewport-body) * 0.5 -
+      var(--about-desktop-toc-rail-inset)
+  );
   z-index: 2;
   box-sizing: border-box;
-  width: min(100%, 14.5rem);
-  height: var(--about-desktop-viewport-body);
-  margin-top: calc(-1 * var(--about-desktop-toc-rail-inset));
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  width: 100%;
+  height: max-content;
+  max-height: calc(var(--about-desktop-viewport-body) - clamp(2rem, 3vw, 3rem));
+  transform: translateY(-50%);
   pointer-events: none;
 }
 
 html[data-about-page][data-layout="desktop"] .about-style-article-desktop-toc-rail > .about-style-article-desktop-toc {
   position: relative;
   width: 100%;
-  max-height: calc(var(--about-desktop-viewport-body) - clamp(2rem, 3vw, 3rem));
+  max-height: inherit;
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
   pointer-events: auto;
-  transform: none;
 }
 
 html[data-about-page][data-layout="desktop"] .about-style-article-desktop-toc {
@@ -1911,6 +1922,8 @@ html[data-about-page][data-layout="desktop"] .about-style-article-inline-toc {
   display: none;
 }
 
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-desktop-toc-rail-host,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-desktop-toc-rail-host,
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-desktop-toc-rail,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-desktop-toc-rail,
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-desktop-toc,
