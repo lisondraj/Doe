@@ -24,10 +24,10 @@ const PANEL_HIDE_MS = 0;
 const PANEL_COLLAPSE_MS = 440;
 const SCROLL_REVEAL_PX = 280;
 const AUDIO_JOIN_MS = 780;
-const AUDIO_JOIN_SETTLE_MS = 420;
+const AUDIO_JOIN_SETTLE_MS = 380;
 const AUDIO_LEAVE_MS = 620;
-const AUDIO_LEAVE_CAP_DELAY_MS = 48;
-const AUDIO_LEAVE_SETTLE_MS = 48;
+const AUDIO_LEAVE_SETTLE_MS = 96;
+const AUDIO_CAPS_REFORM_RATIO = 0.58;
 const PANEL_HANDOFF_REVEAL_MS = 280;
 const WIDGET_DISMISS_ARM_MS = 480;
 
@@ -111,6 +111,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
   const [tocCollapsing, setTocCollapsing] = useState(false);
   const [audioJoined, setAudioJoined] = useState(false);
   const [audioClosing, setAudioClosing] = useState(false);
+  const [audioCapsReforming, setAudioCapsReforming] = useState(false);
   const audioPlayingMinimized = isPlaying && !isPlayerOpen && !audioClosing;
   const audioCapActive = isPlayerOpen || audioClosing;
   const anyWidgetOpen = blogOpen || tocOpen || audioCapActive || audioPlayingMinimized;
@@ -126,6 +127,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
   const tocHideTimerRef = useRef<number | null>(null);
   const tocCollapseTimerRef = useRef<number | null>(null);
   const audioJoinTimerRef = useRef<number | null>(null);
+  const audioReformTimerRef = useRef<number | null>(null);
   const fakeTickRef = useRef<number | null>(null);
   const ignoreBackdropDismissUntilRef = useRef(0);
   const wasPlayerOpenRef = useRef(false);
@@ -325,10 +327,19 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
     }
     audioCloseWhilePlayingRef.current = isPlaying;
     setAudioJoined(false);
+    setAudioCapsReforming(false);
     setAudioClosing(true);
     if (audioJoinTimerRef.current !== null) {
       window.clearTimeout(audioJoinTimerRef.current);
     }
+    if (audioReformTimerRef.current !== null) {
+      window.clearTimeout(audioReformTimerRef.current);
+    }
+    const reformAtMs = Math.round(AUDIO_LEAVE_MS * AUDIO_CAPS_REFORM_RATIO);
+    audioReformTimerRef.current = window.setTimeout(() => {
+      setAudioCapsReforming(true);
+      audioReformTimerRef.current = null;
+    }, reformAtMs);
     audioJoinTimerRef.current = window.setTimeout(() => {
       if (audioCloseWhilePlayingRef.current) {
         hidePlayer();
@@ -338,8 +349,9 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
       audioCloseWhilePlayingRef.current = false;
       audioJoinTimerRef.current = window.setTimeout(() => {
         setAudioClosing(false);
+        setAudioCapsReforming(false);
         audioJoinTimerRef.current = null;
-      }, AUDIO_LEAVE_CAP_DELAY_MS + AUDIO_LEAVE_SETTLE_MS);
+      }, AUDIO_LEAVE_SETTLE_MS);
     }, AUDIO_LEAVE_MS);
   }, [audioClosing, closePlayer, hidePlayer, isPlayerOpen, isPlaying]);
 
@@ -431,6 +443,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
           setTocCollapsing(false);
           setAudioJoined(false);
           setAudioClosing(false);
+          setAudioCapsReforming(false);
           closePlayer();
           clearBlogCollapseStyles();
           clearTocCollapseStyles();
@@ -599,7 +612,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
 
   useEffect(() => {
     return () => {
-      [blogRevealTimerRef, blogHideTimerRef, blogCollapseTimerRef, tocRevealTimerRef, tocHideTimerRef, tocCollapseTimerRef, audioJoinTimerRef].forEach(
+      [blogRevealTimerRef, blogHideTimerRef, blogCollapseTimerRef, tocRevealTimerRef, tocHideTimerRef, tocCollapseTimerRef, audioJoinTimerRef, audioReformTimerRef].forEach(
         (ref) => {
           if (ref.current !== null) window.clearTimeout(ref.current);
         },
@@ -652,11 +665,13 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
 
   const progressPct = progress * 100;
 
-  const showLeftCapTriggers = (!blogOpen && !blogCollapsing) || blogCollapsing;
+  const showLeftCapTriggers =
+    ((!blogOpen && !blogCollapsing) || blogCollapsing) && (!audioClosing || audioCapsReforming);
   const showLeftPlayingCap = isPlaying && showLeftCapTriggers && (!isPlayerOpen || audioClosing);
   const showLeftBlogCap = showLeftCapTriggers && (!isPlaying || isPlayerOpen);
-  const leftCapCrossfade = isPlaying && audioClosing && isPlayerOpen;
-  const showTocCapTrigger = (!tocOpen && !tocCollapsing) || tocCollapsing;
+  const leftCapCrossfade = isPlaying && audioClosing && isPlayerOpen && !audioCapsReforming;
+  const showTocCapTrigger =
+    ((!tocOpen && !tocCollapsing) || tocCollapsing) && (!audioClosing || audioCapsReforming);
   const blogCapExpanded = blogOpen && (!audioCapActive || audioClosing);
   const tocCapExpanded = tocOpen && (!audioCapActive || audioClosing);
   const panelHandoffBlog = blogOpen && audioClosing;
@@ -687,6 +702,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
     audioCapActive ? "is-audio" : "",
     audioJoined ? "is-audio-joined" : "",
     audioClosing ? "is-audio-closing" : "",
+    audioCapsReforming ? "is-caps-reforming" : "",
     audioPlayingMinimized ? "is-audio-minimized" : "",
     audioClosing && isPlaying ? "is-audio-closing-while-playing" : "",
     panelHandoffBlog ? "is-handoff-blog" : "",
