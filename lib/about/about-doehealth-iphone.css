@@ -1834,11 +1834,15 @@ html[data-about-page][data-layout="desktop"] .about-style-article-section-anchor
   );
 }
 
-html[data-about-page][data-layout="desktop"] .about-desktop-article-layout {
+html[data-about-page][data-layout="desktop"] {
   --about-desktop-nav-clearance: calc(
     var(--doe-home-top-banner-height, 0px) + var(--desktop-nav-height, 6.25rem)
   );
   --about-desktop-viewport-body: calc(100dvh - var(--about-desktop-nav-clearance));
+  --about-desktop-toc-rail-inset: clamp(1rem, 1.6vw, 1.75rem);
+}
+
+html[data-about-page][data-layout="desktop"] .about-desktop-article-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 55.556% minmax(0, 1fr);
   gap: clamp(1.25rem, 2.2vw, 2.5rem);
@@ -1862,17 +1866,41 @@ html[data-about-page][data-layout="desktop"]
   margin-inline: 0;
 }
 
-html[data-about-page][data-layout="desktop"] .about-style-article-desktop-toc {
+html[data-about-page][data-layout="desktop"]
+  .about-desktop-root:has(.about-style-article-desktop-toc-rail) {
+  overflow-x: visible;
+}
+
+html[data-about-page][data-layout="desktop"] .about-style-article-desktop-toc-rail {
   grid-column: 1;
   justify-self: end;
   align-self: start;
-  width: min(100%, 14.5rem);
   position: sticky;
-  top: calc(var(--about-desktop-nav-clearance, calc(var(--doe-home-top-banner-height, 0px) + var(--desktop-nav-height, 6.25rem))) + var(--about-desktop-viewport-body, calc(100dvh - var(--doe-home-top-banner-height, 0px) - var(--desktop-nav-height, 6.25rem))) / 2);
-  transform: translateY(-50%);
-  max-height: calc(var(--about-desktop-viewport-body, calc(100dvh - var(--doe-home-top-banner-height, 0px) - var(--desktop-nav-height, 6.25rem))) - clamp(2rem, 3vw, 3rem));
+  top: var(--about-desktop-nav-clearance);
+  z-index: 2;
+  box-sizing: border-box;
+  width: min(100%, 14.5rem);
+  height: var(--about-desktop-viewport-body);
+  margin-top: calc(-1 * var(--about-desktop-toc-rail-inset));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  pointer-events: none;
+}
+
+html[data-about-page][data-layout="desktop"] .about-style-article-desktop-toc-rail > .about-style-article-desktop-toc {
+  position: relative;
+  width: 100%;
+  max-height: calc(var(--about-desktop-viewport-body) - clamp(2rem, 3vw, 3rem));
+  overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
+  pointer-events: auto;
+  transform: none;
+}
+
+html[data-about-page][data-layout="desktop"] .about-style-article-desktop-toc {
+  width: 100%;
 }
 
 html[data-about-page][data-layout="desktop"] .about-style-article-desktop-toc__panel {
@@ -1883,6 +1911,8 @@ html[data-about-page][data-layout="desktop"] .about-style-article-inline-toc {
   display: none;
 }
 
+html[data-about-page]:has(.blog-mobile-root) .about-style-article-desktop-toc-rail,
+html[data-about-page]:has(.doephone-mobile-root) .about-style-article-desktop-toc-rail,
 html[data-about-page]:has(.blog-mobile-root) .about-style-article-desktop-toc,
 html[data-about-page]:has(.doephone-mobile-root) .about-style-article-desktop-toc {
   display: none !important;

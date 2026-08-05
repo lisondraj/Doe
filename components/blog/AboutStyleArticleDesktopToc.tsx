@@ -14,8 +14,10 @@ export function AboutStyleArticleDesktopToc({ items }: AboutStyleArticleDesktopT
   }
 
   return (
-    <nav aria-label="Table of contents" className="about-desktop-content-panel about-style-article-desktop-toc">
-      <AboutStyleArticleTocPanel items={items} variant="desktop" />
-    </nav>
+    <div className="about-style-article-desktop-toc-rail">
+      <nav aria-label="Table of contents" className="about-desktop-content-panel about-style-article-desktop-toc">
+        <AboutStyleArticleTocPanel items={items} variant="desktop" />
+      </nav>
+    </div>
   );
 }
