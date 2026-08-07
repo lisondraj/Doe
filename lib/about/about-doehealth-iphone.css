@@ -1244,6 +1244,17 @@ html[data-about-page][data-layout="desktop"]
   margin-inline: auto !important;
 }
 
+/* Introducing Genome desktop — match proposal-article shader width for interleaved tiles. */
+html[data-about-page][data-layout="desktop"]
+  .about-style-product-intro-page
+  .about-style-article-blocks
+  .about-style-shader-figure__shader {
+  aspect-ratio: 1 / 1 !important;
+  width: 50% !important;
+  height: auto !important;
+  margin-inline: auto !important;
+}
+
 html[data-about-page][data-layout="desktop"] .broader-doe-hero-headlines {
   gap: clamp(1rem, 0.85vw, 1.35rem);
 }

@@ -27,14 +27,6 @@ export const INTRODUCING_GENOME_ARTICLE = {
       text: "Genome is built around a straightforward principle: a clinic’s intelligence should reflect its own standards of care, operational decisions, and clinical context—not an average drawn from everyone else’s.",
     },
     {
-      type: "photo",
-      id: "genome-care-team",
-      src: "/images/genome-clinic-care-team.png",
-      alt: "A care team reviewing their clinical workflow together in an outpatient clinic.",
-      caption:
-        "The best operational knowledge in a clinic is often held by the people coordinating care. Genome is designed to make that knowledge usable without abstracting it away.",
-    },
-    {
       type: "shader",
       id: "genome-clinic-workflow",
       shaderVariant: "validate",
@@ -67,11 +59,11 @@ export const INTRODUCING_GENOME_ARTICLE = {
     },
     {
       type: "paragraph",
-      text: "Genome gives each clinic a distinct model configuration built on a capable open-weight foundation. In practical terms, this means Doe can adapt the model to the workflows, language, policies, and patterns that are specific to your organization without asking your team to start from a generic baseline every time. The foundation supplies broad capability; the clinic-specific adaptation gives the model the operational context that makes that capability useful in your practice.",
+      text: "Genome gives each clinic a distinct model configuration built on a capable open-weight foundation. In practical terms, this means Doe can adapt the model to the workflows, language, policies, and patterns that are specific to your organization without asking your team to start from a generic baseline every time.",
     },
     {
       type: "paragraph",
-      text: "The model is deployed in private cloud compute dedicated to your clinic. Patient information is processed inside that approved environment, rather than being sent out to a general-purpose model for routine clinical or operational work. In other words, the model runs where your clinic authorizes it to run; information does not need to travel out to a distant AI service just to receive an answer. This architecture is designed to support HIPAA-compliant deployments with the access controls, auditability, and safeguards healthcare organizations require.",
+      text: "The model is deployed in private cloud compute dedicated to your clinic. Patient information is processed inside that approved environment, rather than being sent out to a general-purpose model for routine clinical or operational work. This architecture is designed to support HIPAA-compliant deployments with the access controls, auditability, and safeguards healthcare organizations require.",
     },
     {
       type: "subheading",
@@ -91,14 +83,6 @@ export const INTRODUCING_GENOME_ARTICLE = {
         "**Lower operating costs over time:** A dedicated open-weight deployment can reduce dependence on repeated third-party model calls as more work is handled within the clinic environment.",
         "**Governed data handling:** Patient information remains within the clinic’s dedicated infrastructure for the workflows Genome supports.",
       ],
-    },
-    {
-      type: "photo",
-      id: "genome-private-infrastructure",
-      src: "/images/genome-private-infrastructure.png",
-      alt: "A clinician reviewing a secure clinical operations display in a private care environment.",
-      caption:
-        "Genome keeps the model and the approved clinical context in the same dedicated environment, rather than moving sensitive work to and from a general-purpose AI service.",
     },
     {
       type: "shader",
