@@ -42,8 +42,9 @@ export const DOEHEALTH_HERO_HEADLINE_ENTRIES: readonly DoeHomeHeroHeadlineEntry[
     readMoreLinks: [{ label: "Read more", href: INTRODUCING_FLOAT_PATH }],
   },
   {
-    line1: "Blended Intelligence",
-    headlineClassName: "doehealth-hero-headline--single-line",
+    line1: "Blended",
+    line2: "Intelligence",
+    headlineClassName: "doehealth-hero-headline--single-line-desktop",
     readMoreLinks: [{ label: "Read our proposal", href: INTELLIGENCE_FOR_EVERY_CLINIC_PATH }],
   },
   {

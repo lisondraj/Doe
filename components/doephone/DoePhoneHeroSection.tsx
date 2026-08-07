@@ -37,16 +37,16 @@ function HeroReadMoreArrow() {
   return (
     <svg
       className="doehealth-hero-read-more__arrow"
-      width="12"
-      height="12"
+      width="16"
+      height="16"
       viewBox="0 0 12 12"
       fill="none"
       aria-hidden
     >
       <path
-        d="M4.25 2.75 8.75 6 4.25 9.25"
+        d="M2.5 6h7M6.75 3.25 9.5 6 6.75 8.75"
         stroke="currentColor"
-        strokeWidth="1.45"
+        strokeWidth="1.35"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -124,7 +124,10 @@ function HeroCopyBlock({
 type HeroCopyTransition = { from: number; to: number };
 
 function isSingleLineHeroEntry(entry: DoeHomeHeroHeadlineEntry) {
-  return entry.headlineClassName === "doehealth-hero-headline--single-line";
+  return (
+    entry.headlineClassName === "doehealth-hero-headline--single-line" ||
+    entry.headlineClassName === "doehealth-hero-headline--single-line-desktop"
+  );
 }
 
 /** Rotates the hero headline + link through several entries with a gold crossfade. */
@@ -251,86 +254,88 @@ function HeroCopyCarousel({
 
   return (
     <div className="doehealth-hero-copy-carousel-wrap">
-      <button
-        type="button"
-        className="doehealth-hero-copy-carousel__nav doehealth-hero-copy-carousel__nav--prev pointer-events-auto"
-        aria-label="Previous hero headline"
-        onClick={() => handleManualNav("prev")}
-      >
-        <HeroCarouselNavChevron direction="prev" />
-      </button>
+      <div className="doehealth-hero-copy-carousel__headline-row">
+        <button
+          type="button"
+          className="doehealth-hero-copy-carousel__nav doehealth-hero-copy-carousel__nav--prev pointer-events-auto"
+          aria-label="Previous hero headline"
+          onClick={() => handleManualNav("prev")}
+        >
+          <HeroCarouselNavChevron direction="prev" />
+        </button>
 
-      <div
-        className={`doehealth-hero-copy-carousel${singleLineTransition ? " doehealth-hero-copy-carousel--single-line-transition" : ""}`}
-        style={
-          {
-            ["--doehealth-hero-copy-crossfade-ms" as string]: `${DOEHEALTH_HERO_HEADLINE_CROSSFADE_MS}ms`,
-          } as CSSProperties
-        }
-      >
-        <div className="doehealth-hero-copy-carousel__sizer" aria-hidden="true">
-          <HeroCopyBlock
-            entry={sizerEntry}
-            fontClass={fontClass}
-            className={className}
-            fitToContainer={fitToContainer}
-            showReadMore={false}
-          />
-        </div>
-        {transition ? (
-          <>
-            <div className="doehealth-hero-copy-carousel__slide doehealth-hero-copy-carousel__slide--out doehealth-hero-copy-carousel__slide--animate">
-              <HeroCopyBlock
-                entry={entries[transition.from]}
-                fontClass={fontClass}
-                className={className}
-                fitToContainer={fitToContainer}
-                showReadMore={false}
-              />
-            </div>
-            <div
-              className="doehealth-hero-copy-carousel__slide doehealth-hero-copy-carousel__slide--in doehealth-hero-copy-carousel__slide--animate"
-              onAnimationEnd={(event) => {
-                if (event.currentTarget !== event.target) return;
-                if (
-                  event.animationName !== "doehealth-hero-copy-in" &&
-                  event.animationName !== "doehealth-hero-copy-in-fade"
-                ) {
-                  return;
-                }
-                completeTransition();
-              }}
-            >
-              <HeroCopyBlock
-                entry={entries[transition.to]}
-                fontClass={fontClass}
-                className={className}
-                fitToContainer={fitToContainer}
-                showReadMore={false}
-              />
-            </div>
-          </>
-        ) : (
-          <div className="doehealth-hero-copy-carousel__slide doehealth-hero-copy-carousel__slide--current">
+        <div
+          className={`doehealth-hero-copy-carousel${singleLineTransition ? " doehealth-hero-copy-carousel--single-line-transition" : ""}`}
+          style={
+            {
+              ["--doehealth-hero-copy-crossfade-ms" as string]: `${DOEHEALTH_HERO_HEADLINE_CROSSFADE_MS}ms`,
+            } as CSSProperties
+          }
+        >
+          <div className="doehealth-hero-copy-carousel__sizer" aria-hidden="true">
             <HeroCopyBlock
-              entry={entries[activeIndex]}
+              entry={sizerEntry}
               fontClass={fontClass}
               className={className}
               fitToContainer={fitToContainer}
               showReadMore={false}
             />
           </div>
-        )}
-      </div>
+          {transition ? (
+            <>
+              <div className="doehealth-hero-copy-carousel__slide doehealth-hero-copy-carousel__slide--out doehealth-hero-copy-carousel__slide--animate">
+                <HeroCopyBlock
+                  entry={entries[transition.from]}
+                  fontClass={fontClass}
+                  className={className}
+                  fitToContainer={fitToContainer}
+                  showReadMore={false}
+                />
+              </div>
+              <div
+                className="doehealth-hero-copy-carousel__slide doehealth-hero-copy-carousel__slide--in doehealth-hero-copy-carousel__slide--animate"
+                onAnimationEnd={(event) => {
+                  if (event.currentTarget !== event.target) return;
+                  if (
+                    event.animationName !== "doehealth-hero-copy-in" &&
+                    event.animationName !== "doehealth-hero-copy-in-fade"
+                  ) {
+                    return;
+                  }
+                  completeTransition();
+                }}
+              >
+                <HeroCopyBlock
+                  entry={entries[transition.to]}
+                  fontClass={fontClass}
+                  className={className}
+                  fitToContainer={fitToContainer}
+                  showReadMore={false}
+                />
+              </div>
+            </>
+          ) : (
+            <div className="doehealth-hero-copy-carousel__slide doehealth-hero-copy-carousel__slide--current">
+              <HeroCopyBlock
+                entry={entries[activeIndex]}
+                fontClass={fontClass}
+                className={className}
+                fitToContainer={fitToContainer}
+                showReadMore={false}
+              />
+            </div>
+          )}
+        </div>
 
-      <button
-        type="button"
-        className="doehealth-hero-copy-carousel__nav doehealth-hero-copy-carousel__nav--next pointer-events-auto"
-        aria-label="Next hero headline"
-        onClick={() => handleManualNav("next")}
-      >
-        <HeroCarouselNavChevron direction="next" />
-      </button>
+        <button
+          type="button"
+          className="doehealth-hero-copy-carousel__nav doehealth-hero-copy-carousel__nav--next pointer-events-auto"
+          aria-label="Next hero headline"
+          onClick={() => handleManualNav("next")}
+        >
+          <HeroCarouselNavChevron direction="next" />
+        </button>
+      </div>
 
       <HeroReadMoreRow entry={entries[readMoreIndex]} />
     </div>
