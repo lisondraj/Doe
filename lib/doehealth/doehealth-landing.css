@@ -336,9 +336,11 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth) .doehealth-top-banner
 
 .doehealth-hero-copy-carousel--overlay {
   display: grid;
+  flex: 0 0 auto;
+  overflow: visible;
 }
 
-.doehealth-hero-copy-carousel--overlay > .doehealth-hero-copy-carousel__sizer--in-flow,
+.doehealth-hero-copy-carousel--overlay > .doehealth-hero-copy-carousel__sizer--measure,
 .doehealth-hero-copy-carousel--overlay > .doehealth-hero-copy-carousel__slide {
   grid-area: 1 / 1;
 }
@@ -351,9 +353,15 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth) .doehealth-top-banner
   width: 100%;
 }
 
-.doehealth-hero-copy-carousel__sizer--in-flow {
+.doehealth-hero-copy-carousel--overlay.doehealth-hero-copy-carousel--transitioning > .doehealth-hero-copy-carousel__slide {
+  align-items: flex-start;
+}
+
+.doehealth-hero-copy-carousel__sizer--measure {
   visibility: hidden;
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
   display: grid;
   width: max-content;
   max-width: 100%;
