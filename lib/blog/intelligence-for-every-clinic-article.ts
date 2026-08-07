@@ -1,17 +1,12 @@
 import type { AboutStyleLongformArticle } from "@/lib/blog/about-style-longform-article";
-import {
-  BROADER_DOE_VISION_EMAIL_INVITE_HEADLINE,
-  BROADER_DOE_VISION_EMAIL_INVITE_LABEL,
-  BROADER_DOE_VISION_FINAL_PARAGRAPH,
-} from "@/lib/blog/broader-doe-vision-article";
 import { DESIGN5_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 
 /** Reiterates the Broader Doe Vision thesis in this article's own words, not a copy. */
 const INTELLIGENCE_FOR_EVERY_CLINIC_OPENING_LEDE =
-  "We think the future of medicine runs on intelligence every clinic owns outright, not one borrowed from a single outside vendor.";
+  "The next generation of clinical intelligence should be governed by the organizations responsible for patient care, rather than depend entirely on a single external vendor.";
 
 const INTELLIGENCE_FOR_EVERY_CLINIC_OPENING_CONTINUATION =
-  "This article walks through how we plan to build that: how the system learns from your clinic's own work, why sensitive models stay on infrastructure you control, and the security bar we hold ourselves to.";
+  "This article describes the architecture we are building toward: systems that learn from a clinic’s operational feedback, keep sensitive workloads within clinic-authorized infrastructure, and produce an auditable record of each decision.";
 
 export const INTELLIGENCE_FOR_EVERY_CLINIC_SLUG = "intelligence-for-every-clinic";
 
@@ -23,8 +18,8 @@ export const INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE = {
   title: "Intelligence for",
   titleLine2: "every clinic",
   excerpt:
-    "A Doe Labs proposal for reinforcement learning, open-weight models on secure cloud compute, and Blended Intelligence: the stack we believe every clinic will run.",
-  subheading: "What we're building towards.",
+    "A Doe Labs proposal for reinforcement learning, open-weight models on secure cloud compute, and Blended Intelligence: an approach designed for clinical operations.",
+  subheading: "The architecture we are building toward.",
   openingLede: INTELLIGENCE_FOR_EVERY_CLINIC_OPENING_LEDE,
   openingLedeContinuation: INTELLIGENCE_FOR_EVERY_CLINIC_OPENING_CONTINUATION,
   byline: "By James Lisondra",
@@ -33,11 +28,11 @@ export const INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE = {
   contentBlocks: [
     {
       type: "paragraph",
-      text: "Most healthcare software works the same way today. Your team's information gets sent out to one large, general-purpose AI model, and you hope the answer holds up. We are building toward something more useful: **an intelligence system built specifically around your clinic**, running on computers your clinic trusts, that keeps getting sharper the more your team uses it.",
+      text: "Much of today’s healthcare software routes clinical and operational context to a large, general-purpose AI service, with limited visibility into how that service is adapted to a practice’s needs. We are building toward a more appropriate model: **an intelligence system configured for an individual clinic**, deployed within infrastructure the clinic authorizes, and improved through carefully governed feedback from its workflows.",
     },
     {
       type: "paragraph",
-      text: "Before we go further, we think it helps to first introduce a few of the terms this article leans on, in plain language rather than jargon.",
+      text: "The following terms are used throughout this article. Each is defined in practical terms for clinical and operational leaders.",
     },
     {
       type: "glossary",
@@ -46,27 +41,27 @@ export const INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE = {
         {
           term: "Reinforcement learning",
           definition:
-            "A training method that rewards a system for good outcomes and corrects it for bad ones, the same way a new team member gets sharper from feedback on real cases rather than a written test.",
+            "A training approach in which a system receives feedback on the quality of its actions and uses that feedback to improve future decisions. In a clinic, the signals may come from documented workflow outcomes rather than from a static test set.",
         },
         {
           term: "Open-weight models",
           definition:
-            "AI models you can actually install and run on servers you control, instead of a closed system you can only reach through someone else's website.",
+            "AI models whose parameters can be deployed and operated within an organization’s approved computing environment, rather than accessed only through an external provider’s hosted service.",
         },
         {
           term: "Frontier models",
           definition:
-            "Today's largest, most capable general-purpose AI systems, usually reached only through an outside company's service.",
+            "Highly capable general-purpose AI systems that are typically provided through a third-party service and are well suited to broad reasoning and synthesis.",
         },
         {
           term: "PHI",
           definition:
-            "Short for protected health information, any patient detail covered by HIPAA, from a name and birth date to a diagnosis or clinical note.",
+            "Protected health information: identifiable patient information regulated under HIPAA, including demographic data, diagnoses, medications, and clinical documentation.",
         },
         {
           term: "Blended Intelligence",
           definition:
-            "Our name for using an open-weight model and a frontier model together, sending each piece of a task to whichever one is right for the job.",
+            "Our approach to coordinating an open-weight model with a frontier model, assigning each portion of a request to the environment best suited to handle it.",
         },
       ],
     },
@@ -76,31 +71,31 @@ export const INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE = {
     },
     {
       type: "paragraph",
-      text: "Think of reinforcement learning as on-the-job training for software. Rather than judging the system against one canned test, we let it learn from outcomes your staff already track, such as:",
+      text: "Reinforcement learning allows software to learn from observed workflow outcomes rather than relying solely on a fixed benchmark. Relevant signals may include:",
     },
     {
       type: "bullets",
       id: "doe-labs-rl-outcomes",
       items: [
-        "Whether a prior authorization got approved",
-        "Whether a patient confirmed a visit",
-        "Whether a note passed review",
-        "Whether a call ended without a human needing to step in",
+        "Prior authorization approval status",
+        "Appointment confirmation status",
+        "Completion of documentation review",
+        "Resolution of a call without staff intervention",
       ],
     },
     {
       type: "paragraph",
-      text: "Each of those outcomes becomes a small lesson the system uses to improve.",
+      text: "Each outcome can serve as a training signal, allowing the system to refine how it prioritizes, drafts, routes, or escalates similar work.",
     },
     {
       type: "paragraph",
-      text: "That kind of feedback is specific and sensitive to your clinic, so it needs to stay on infrastructure your clinic controls rather than being pooled with everyone else's data. We are building the pipelines to capture that daily feedback safely, so the system keeps improving **without a single patient chart ever having to leave your walls** to make it happen.",
+      text: "These signals are both clinic-specific and potentially sensitive. They should remain within the clinic’s approved security boundary, rather than be combined indiscriminately with data from unrelated organizations. We are building data and training pipelines that support continuous improvement **without requiring patient charts to be exported from the clinic-authorized environment**.",
     },
     {
       type: "shader",
       id: "doe-labs-rl-workflow",
       shaderVariant: "validate",
-      caption: "Every approval, confirmation, and resolved call becomes a small lesson for the system.",
+      caption: "Workflow outcomes provide structured feedback for improving future performance.",
     },
     {
       type: "subheading",
@@ -108,17 +103,17 @@ export const INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE = {
     },
     {
       type: "paragraph",
-      text: "An open-weight model is one we can actually see inside of and run ourselves, instead of a closed system we can only send requests to. That matters for two reasons. First, we can tune it to a specialty's vocabulary and a clinic's local policy without waiting on an outside company's release schedule. Second, and more important for healthcare, we can host it entirely on cloud servers your clinic controls.",
+      text: "An open-weight model can be deployed and operated within a clinic-authorized environment rather than accessed only through a closed external service. This provides two important capabilities: the model can be adapted to specialty terminology and local policies without depending on a vendor’s release cycle, and sensitive workloads can remain on approved cloud infrastructure.",
     },
     {
       type: "goldParagraph",
-      text: "That means patient information never has to leave infrastructure you trust just to get a useful answer. The model, the agents that use it, and the audit trail your compliance team reviews all live inside the same secure environment, instead of being scattered across a handful of outside vendor APIs.",
+      text: "This design keeps patient information within an approved environment when it is needed to produce an answer. The model, the workflow agents that use it, and the audit evidence reviewed by compliance teams can operate within the same security boundary, rather than across a collection of disconnected external APIs.",
     },
     {
       type: "shader",
       id: "doe-labs-open-weight",
       shaderVariant: "looking-ahead",
-      caption: "The model, the data, and the audit trail live behind the same locked door.",
+      caption: "The model, sensitive data, and audit evidence operate within one governed security boundary.",
     },
     {
       type: "subheading",
@@ -126,24 +121,24 @@ export const INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE = {
     },
     {
       type: "goldParagraph",
-      text: "Not every task needs the same tool. A frontier model is excellent at broad reasoning, comparing guidelines, or working through a long and complicated plan, but it typically lives outside your walls. An open-weight model may not be quite as broadly capable, but it can safely handle anything that touches a real patient record, because it never has to leave your own infrastructure.",
+      text: "Clinical operations do not require a single model for every task. A frontier model may be useful for broad reasoning, comparing publicly available guidance, or synthesizing a complex plan, but it is commonly hosted outside the clinic’s environment. An open-weight model can handle tasks involving patient records within the approved security boundary, even where its general-purpose capability differs from that of a frontier model.",
     },
     {
       type: "paragraph",
-      text: "Blended Intelligence is how we use both without asking a clinic to choose. A request gets split as it comes in. The pieces that can safely leave the sensitive boundary, like reviewing published research or comparing policy language, go to a frontier model. Anything touching a patient's identity, medications, visit details, or billing stays with the open-weight model running on your own compute. An orchestration layer, essentially a traffic controller for the request, stitches both responses back together and logs exactly which model handled which piece.",
+      text: "Blended Intelligence uses both capabilities without asking a clinic to make an all-or-nothing choice. A request is assessed and divided at intake. Work that can be performed outside the sensitive boundary, such as reviewing published research or comparing policy language, may be directed to a frontier model. Work involving patient identity, medications, visit details, or billing remains with the open-weight model deployed on approved compute. An orchestration layer routes the request, combines the permitted outputs, and records which model handled each component.",
     },
     {
       type: "quote",
       id: "doe-labs-blended-intelligence-quote",
-      lead: "The clinician sees one clear answer, and the compliance team sees one clean record of how it was produced",
+      lead: "Clinicians receive a clear response, and compliance teams receive a traceable record of how it was produced",
       continuation:
-        "The result reads better than either model manages alone, **frontier-level reasoning paired with the privacy patient care demands**.",
+        "The objective is to pair capable general reasoning with **the privacy and accountability required for patient care**.",
     },
     {
       type: "shader",
       id: "doe-labs-blended-intelligence",
       shaderVariant: "integrate",
-      caption: "One request, two models, one traceable answer.",
+      caption: "One request can use two models while maintaining a traceable decision record.",
     },
     {
       type: "subheading",
@@ -151,37 +146,37 @@ export const INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE = {
     },
     {
       type: "paragraph",
-      text: "In healthcare, security cannot be an afterthought bolted onto a finished product. We are building toward a standard where sensitive patient information never has to leave clinic-controlled compute to get an answer, where every model call is logged with a clear record of what happened, and where a blended request can be explained to an auditor in plain terms instead of treated as an unexplainable black box.",
+      text: "In healthcare, security and governance must be designed into the system from the outset. We are building toward a standard in which sensitive patient information can remain within clinic-authorized compute, each model interaction is logged with sufficient context for review, and a blended request can be explained clearly to an auditor rather than treated as an opaque process.",
     },
     {
       type: "paragraph",
-      text: "In practice, that looks like:",
+      text: "In practice, this includes:",
     },
     {
       type: "bullets",
       id: "doe-labs-security-measures",
       items: [
-        "Data encrypted both while it moves and while it sits in storage",
-        "Access to models and logs limited to the roles that actually need it",
-        "The ability to pause or roll back a model version without taking your clinic offline",
+        "Encryption for data in transit and at rest",
+        "Role-based access to models, data, and audit logs",
+        "The ability to pause or roll back a model version without disrupting clinic operations",
       ],
     },
     {
       type: "paragraph",
-      text: "Every agent, chart, and billing workflow shares one security boundary instead of trusting a dozen separate outside vendors.",
+      text: "Agents, charts, and billing workflows can share a common security boundary instead of relying on a growing number of independently governed external services.",
     },
     {
       type: "quote",
       id: "doe-labs-security-quote",
-      lead: "This is the standard Doe intends to guarantee for healthcare",
+      lead: "This is the standard Doe is designing for healthcare",
       continuation:
-        "Intelligence that performs like the frontier, protects information like **your own chart room**, and stays accountable to the clinicians who still make the final call.",
+        "Intelligence that combines advanced capability with **appropriate safeguards** and remains accountable to the clinicians responsible for the final decision.",
     },
     {
       type: "shader",
       id: "doe-labs-security",
       shaderVariant: "ambient-band",
-      caption: "One security boundary, one audit trail, one standard we hold ourselves to.",
+      caption: "A shared security boundary and audit trail support consistent operational governance.",
     },
   ],
   bodyParagraphs: [],
@@ -192,9 +187,10 @@ export const INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE = {
   thesisIntro: "",
   thesisPoints: [],
   closing: "",
-  finalParagraph: BROADER_DOE_VISION_FINAL_PARAGRAPH,
-  emailInviteHeadline: BROADER_DOE_VISION_EMAIL_INVITE_HEADLINE,
-  emailInviteLabel: BROADER_DOE_VISION_EMAIL_INVITE_LABEL,
+  finalParagraph:
+    "We welcome discussion with provider organizations evaluating how clinical intelligence can be deployed with appropriate governance, privacy, and accountability.",
+  emailInviteHeadline: "Continue the conversation.",
+  emailInviteLabel: "Contact James",
 } satisfies AboutStyleLongformArticle;
 
 export const INTELLIGENCE_FOR_EVERY_CLINIC_TITLE = `${INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE.title} ${INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE.titleLine2}`;
