@@ -37,16 +37,16 @@ function HeroReadMoreArrow() {
   return (
     <svg
       className="doehealth-hero-read-more__arrow"
-      width="16"
-      height="16"
+      width="12"
+      height="12"
       viewBox="0 0 12 12"
       fill="none"
       aria-hidden
     >
       <path
-        d="M2.5 6h7M6.75 3.25 9.5 6 6.75 8.75"
+        d="M4.25 2.75 8.75 6 4.25 9.25"
         stroke="currentColor"
-        strokeWidth="1.35"
+        strokeWidth="1.45"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
