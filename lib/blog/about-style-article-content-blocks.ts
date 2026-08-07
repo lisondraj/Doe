@@ -8,6 +8,15 @@ export type AboutStyleArticleGlossaryEntry = {
 export type AboutStyleArticleContentBlock =
   /** Wrap a phrase in `**text**` to bold it inline. */
   | { type: "paragraph"; text: string }
+  | {
+      /** Paragraph with one internal article link. */
+      type: "linkedParagraph";
+      id: string;
+      before: string;
+      linkLabel: string;
+      href: string;
+      after: string;
+    }
   | { type: "subheading"; text: string }
   | {
       /** Broader Doe Vision–style gold pull quote. Wrap a phrase in `**text**` to bold it. */

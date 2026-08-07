@@ -35,15 +35,15 @@ export const BLENDED_INTELLIGENCE_ARTICLE = {
     },
     {
       type: "subheading",
-      text: "Two models, different responsibilities",
+      text: "Open-weight and frontier models",
     },
     {
       type: "paragraph",
-      text: "Most clinical operations do not need a frontier model for every step. They need a reliable system that understands the clinic's patients, workflows, staff roles, templates, policies, and escalation rules. A self-hosted open-weight model is well suited to this work because it can run within a dedicated environment and remain close to the information it uses.",
+      text: "An open-weight model is a model that Doe can deploy and operate directly in the clinic's dedicated environment. This allows the clinic's intelligence layer to stay self-hosted, governed by its own permissions and policies, and connected to its approved operational context. It is the right foundation for daily work that depends on local information and reliable controls.",
     },
     {
       type: "paragraph",
-      text: "Some requests are different. They may require deeper synthesis across a complicated set of facts, a more capable reasoning process, or a carefully structured explanation for a high-effort workflow. For those tasks, a frontier model can add value. Blended Intelligence assigns each task to the model that is appropriate for it, rather than treating one model as the answer to every problem.",
+      text: "A frontier model is a larger, externally hosted model built for difficult general reasoning. It can be useful when a task requires deeper synthesis across complex facts or a more capable explanation. Blended Intelligence uses it selectively, with only the minimum approved information for that specific task, then returns the result to the clinic's self-hosted workflow for review.",
     },
     {
       type: "quote",
@@ -128,8 +128,14 @@ export const BLENDED_INTELLIGENCE_ARTICLE = {
       text: "A single platform with a secure intelligence layer",
     },
     {
-      type: "paragraph",
-      text: "Doe products share one intelligence layer rather than creating isolated tools. Pulse supports patient communication, Float supports financial operations, Fabric shapes the workflows, and Genome provides the clinic-specific model and private infrastructure. Blended Intelligence connects these products to the same self-hosted context and the same governed path to frontier reasoning when it is needed.",
+      type: "linkedParagraph",
+      id: "blended-intelligence-genome-link",
+      before:
+        "Doe products share one intelligence layer rather than creating isolated tools. Pulse supports patient communication, Float supports financial operations, Fabric shapes the workflows, and ",
+      linkLabel: "Genome",
+      href: "/blog/introducing-genome",
+      after:
+        " delivers the clinic-specific model and private infrastructure that makes this approach available to providers. Blended Intelligence connects these products to the same self-hosted context and the same governed path to frontier reasoning when it is needed.",
     },
     {
       type: "goldParagraph",

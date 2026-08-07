@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import { aboutStyleFeatureShaderSurface } from "@/lib/blog/about-style-feature-card";
 import type { AboutStyleArticleContentBlock } from "@/lib/blog/about-style-article-content-blocks";
@@ -48,6 +50,21 @@ export function AboutStyleArticleContentBlocks({ blocks }: AboutStyleArticleCont
           return (
             <p key={block.text} className={BROADER_DOE_VISION_BODY_TW}>
               {renderBoldSegments(block.text)}
+            </p>
+          );
+        }
+
+        if (block.type === "linkedParagraph") {
+          return (
+            <p key={block.id} className={BROADER_DOE_VISION_BODY_TW}>
+              {block.before}
+              <Link
+                href={block.href}
+                className="broader-doe-thesis-text underline decoration-[rgba(232,192,142,0.55)] underline-offset-4 transition-colors hover:decoration-[#E8C08E]"
+              >
+                {block.linkLabel}
+              </Link>
+              {block.after}
             </p>
           );
         }
