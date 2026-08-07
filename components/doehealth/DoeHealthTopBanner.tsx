@@ -22,9 +22,9 @@ function BannerArrow() {
       aria-hidden
     >
       <path
-        d="M4.25 2.75 8.75 6 4.25 9.25"
+        d="M2.5 6h7M6.75 3.25 9.5 6 6.75 8.75"
         stroke="currentColor"
-        strokeWidth="1.45"
+        strokeWidth="1.35"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -60,7 +60,7 @@ function BannerSlideText({
     >
       <span>{slide.message}</span>
       <Link href={slide.linkHref} className="doe-home-top-banner__link">
-        <span className="doe-home-top-banner__link-label">{slide.linkLabel}</span>
+        {slide.linkLabel}
         <BannerArrow />
       </Link>
     </p>
@@ -208,7 +208,7 @@ export function DoeHealthTopBanner({
         <p className={`doe-home-top-banner__text doehealth-top-banner__text ${inter.className}`}>
           <span>{activeSlide.message}</span>
           <Link href={activeSlide.linkHref} className="doe-home-top-banner__link">
-            <span className="doe-home-top-banner__link-label">{activeSlide.linkLabel}</span>
+            {activeSlide.linkLabel}
             <BannerArrow />
           </Link>
         </p>

@@ -247,16 +247,10 @@ function HeroCopyCarousel({
   const singleLineTransition =
     transition != null &&
     (isSingleLineHeroEntry(entries[transition.from]) || isSingleLineHeroEntry(entries[transition.to]));
+  const readMoreIndex = transition?.to ?? activeIndex;
 
   return (
-    <div
-      className="doehealth-hero-copy-carousel-wrap"
-      style={
-        {
-          ["--doehealth-hero-copy-crossfade-ms" as string]: `${DOEHEALTH_HERO_HEADLINE_CROSSFADE_MS}ms`,
-        } as CSSProperties
-      }
-    >
+    <div className="doehealth-hero-copy-carousel-wrap">
       <button
         type="button"
         className="doehealth-hero-copy-carousel__nav doehealth-hero-copy-carousel__nav--prev pointer-events-auto"
@@ -268,6 +262,11 @@ function HeroCopyCarousel({
 
       <div
         className={`doehealth-hero-copy-carousel${singleLineTransition ? " doehealth-hero-copy-carousel--single-line-transition" : ""}`}
+        style={
+          {
+            ["--doehealth-hero-copy-crossfade-ms" as string]: `${DOEHEALTH_HERO_HEADLINE_CROSSFADE_MS}ms`,
+          } as CSSProperties
+        }
       >
         <div className="doehealth-hero-copy-carousel__sizer" aria-hidden="true">
           <HeroCopyBlock
@@ -333,22 +332,7 @@ function HeroCopyCarousel({
         <HeroCarouselNavChevron direction="next" />
       </button>
 
-      <div className="doehealth-hero-copy-carousel__read-more">
-        {transition && !reducedMotion ? (
-          <>
-            <div className="doehealth-hero-copy-carousel__read-more-slide doehealth-hero-copy-carousel__read-more-slide--out doehealth-hero-copy-carousel__read-more-slide--animate">
-              <HeroReadMoreRow entry={entries[transition.from]} />
-            </div>
-            <div className="doehealth-hero-copy-carousel__read-more-slide doehealth-hero-copy-carousel__read-more-slide--in doehealth-hero-copy-carousel__read-more-slide--animate">
-              <HeroReadMoreRow entry={entries[transition.to]} />
-            </div>
-          </>
-        ) : (
-          <div className="doehealth-hero-copy-carousel__read-more-slide doehealth-hero-copy-carousel__read-more-slide--current">
-            <HeroReadMoreRow entry={entries[activeIndex]} />
-          </div>
-        )}
-      </div>
+      <HeroReadMoreRow entry={entries[readMoreIndex]} />
     </div>
   );
 }
