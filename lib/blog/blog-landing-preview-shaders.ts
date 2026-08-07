@@ -8,6 +8,8 @@ export const BLOG_LANDING_PREVIEW_SHADERS: Record<string, AboutStyleFeatureShade
   "introducing-fabric": "customize-agents-band",
   "introducing-float": "active-agents-band",
   "intelligence-for-every-clinic": "prototype",
+  "introducing-genome": "looking-ahead",
+  "genome-is-built-for-you": "front-desk",
   "the-broader-doe-vision": "looking-ahead",
 };
 

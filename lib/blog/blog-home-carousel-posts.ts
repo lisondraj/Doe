@@ -3,6 +3,8 @@ import { BLOG_LANDING_POSTS, type BlogLandingPost } from "@/lib/blog/blog-landin
 
 /** Desktop /doehealth home carousel — Broader Doe Vision second so one card peeks left. */
 const BLOG_HOME_DESKTOP_CAROUSEL_SLUG_ORDER = [
+  "genome-is-built-for-you",
+  "introducing-genome",
   "introducing-fabric",
   BROADER_DOE_VISION_SLUG,
   "introducing-pulse",

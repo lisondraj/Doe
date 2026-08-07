@@ -1,6 +1,7 @@
 import { BROADER_DOE_VISION_PATH } from "@/lib/blog/broader-doe-vision-article";
 import { INTRODUCING_FABRIC_PATH } from "@/lib/blog/introducing-fabric-article";
 import { INTRODUCING_FLOAT_PATH } from "@/lib/blog/introducing-float-article";
+import { INTRODUCING_GENOME_PATH } from "@/lib/blog/introducing-genome-article";
 import { INTRODUCING_PULSE_PATH } from "@/lib/blog/introducing-pulse-article";
 import { INTELLIGENCE_FOR_EVERY_CLINIC_PATH } from "@/lib/blog/intelligence-for-every-clinic-article";
 
@@ -31,6 +32,11 @@ export const DOEHEALTH_HERO_HEADLINE_ENTRIES: readonly DoeHomeHeroHeadlineEntry[
     ],
   },
   {
+    line1: "Building intelligence",
+    line2: "for every clinic",
+    readMoreLinks: [{ label: "Meet Genome", href: INTRODUCING_GENOME_PATH }],
+  },
+  {
     line1: "Read the",
     line2: "Founder's Memo",
     readMoreLinks: [{ label: "The Broader Doe Vision", href: BROADER_DOE_VISION_PATH }],
@@ -44,5 +50,10 @@ export const DOEHEALTH_HERO_HEADLINE_ENTRIES: readonly DoeHomeHeroHeadlineEntry[
     line1: "Blended Intelligence",
     headlineClassName: "doehealth-hero-headline--single-line",
     readMoreLinks: [{ label: "Read our proposal", href: INTELLIGENCE_FOR_EVERY_CLINIC_PATH }],
+  },
+  {
+    line1: "Introducing Genome",
+    headlineClassName: "doehealth-hero-headline--single-line",
+    readMoreLinks: [{ label: "Read more", href: INTRODUCING_GENOME_PATH }],
   },
 ] as const satisfies readonly DoeHomeHeroHeadlineEntry[];

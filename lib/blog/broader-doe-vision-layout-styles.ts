@@ -16,6 +16,7 @@ export const ABOUT_STYLE_PRODUCT_INTRO_SLUGS = [
   "introducing-pulse",
   "introducing-fabric",
   "introducing-float",
+  "genome-is-built-for-you",
   "pulse-call-history",
   "pulse-ambient",
 ] as const;
