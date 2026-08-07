@@ -11,6 +11,7 @@ export const BLOG_HOME_CAROUSEL_PREVIEW_SHADERS: Record<string, ProtoGrainGradie
   "intelligence-for-every-clinic": "meet-proto-stack-2",
   "introducing-genome": "billing",
   "genome-is-built-for-you": "sandbox-build",
+  "blended-intelligence": "looking-ahead",
 };
 
 export function blogHomeCarouselPreviewShader(slug: string): ProtoGrainGradientVariant {
