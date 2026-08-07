@@ -69,4 +69,4 @@ export const BROADER_DOE_VISION_EARLY_STAGE_LINKS = [
     description:
       "A visual agent builder that lets clinical teams design the workflows they actually run—in plain language, without waiting on a vendor roadmap.",
   },
-] as const satisfies readonly BroaderDoeVisionEarlyStageLink[];
+] satisfies readonly BroaderDoeVisionEarlyStageLink[];
