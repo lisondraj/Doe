@@ -885,6 +885,26 @@ html[data-about-page][data-layout="desktop"] .broader-doe-proposal-quote blockqu
   letter-spacing: -0.02em !important;
 }
 
+html[data-about-page] .broader-doe-early-stage-links__label,
+html[data-home-page] .broader-doe-early-stage-links__label {
+  font-weight: 600;
+  color: #e8c08e;
+  text-decoration: underline;
+  text-decoration-color: rgba(232, 192, 142, 0.35);
+  text-underline-offset: 0.28em;
+  transition: text-decoration-color 0.15s ease;
+}
+
+html[data-about-page] .broader-doe-early-stage-links__label:hover,
+html[data-home-page] .broader-doe-early-stage-links__label:hover {
+  text-decoration-color: rgba(232, 192, 142, 0.7);
+}
+
+html[data-about-page] .broader-doe-early-stage-links__item--indent,
+html[data-home-page] .broader-doe-early-stage-links__item--indent {
+  padding-left: clamp(1.35rem, 1.05rem + 1.35vmin, 2.15rem);
+}
+
 /* Broader Doe Vision desktop — in-article section subheadings (Guiding Beliefs, content blocks). */
 html[data-about-page][data-layout="desktop"] .about-desktop-main .broader-doe-thesis-headline {
   font-size: clamp(1.48rem, 1.24rem + 1vmin, 1.78rem) !important;
