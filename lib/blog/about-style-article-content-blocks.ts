@@ -38,4 +38,12 @@ export type AboutStyleArticleContentBlock =
       id: string;
       shaderVariant: AboutStyleFeatureShaderVariant;
       caption: string;
+    }
+  | {
+      /** Editorial photograph rendered with an accessible caption. */
+      type: "photo";
+      id: string;
+      src: string;
+      alt: string;
+      caption: string;
     };
