@@ -54,20 +54,16 @@ function BannerSlideText({
   );
 
   return (
-    <div
-      className={`doehealth-top-banner__slide-wrap doehealth-top-banner__slide-wrap--${phase}${animate ? " doehealth-top-banner__slide-wrap--animate" : ""}`}
+    <p
+      className={`doe-home-top-banner__text doehealth-top-banner__text doehealth-top-banner__slide doehealth-top-banner__slide--${phase}${animate ? " doehealth-top-banner__slide--animate" : ""} ${inter.className}`}
+      onAnimationEnd={handleAnimationEnd}
     >
-      <p
-        className={`doe-home-top-banner__text doehealth-top-banner__text doehealth-top-banner__slide doehealth-top-banner__slide--${phase}${animate ? " doehealth-top-banner__slide--animate" : ""} ${inter.className}`}
-        onAnimationEnd={handleAnimationEnd}
-      >
-        <span>{slide.message}</span>
-        <Link href={slide.linkHref} className="doe-home-top-banner__link">
-          <span className="doe-home-top-banner__link-label">{slide.linkLabel}</span>
-          <BannerArrow />
-        </Link>
-      </p>
-    </div>
+      <span>{slide.message}</span>
+      <Link href={slide.linkHref} className="doe-home-top-banner__link">
+        {slide.linkLabel}
+        <BannerArrow />
+      </Link>
+    </p>
   );
 }
 
@@ -212,7 +208,7 @@ export function DoeHealthTopBanner({
         <p className={`doe-home-top-banner__text doehealth-top-banner__text ${inter.className}`}>
           <span>{activeSlide.message}</span>
           <Link href={activeSlide.linkHref} className="doe-home-top-banner__link">
-            <span className="doe-home-top-banner__link-label">{activeSlide.linkLabel}</span>
+            {activeSlide.linkLabel}
             <BannerArrow />
           </Link>
         </p>
