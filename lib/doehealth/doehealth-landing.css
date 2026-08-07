@@ -245,22 +245,41 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth) .doehealth-top-banner
 }
 
 .doehealth-hero-copy-carousel-wrap {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: var(--doehealth-hero-copy-nav-size) minmax(0, 1fr) var(--doehealth-hero-copy-nav-size);
+  grid-template-rows: auto auto;
+  column-gap: var(--doehealth-hero-copy-nav-gap);
+  row-gap: 0;
   width: 100%;
   min-width: 0;
   overflow: visible;
-}
-
-.doehealth-hero-copy-carousel__headline-row {
-  display: grid;
-  grid-template-columns: var(--doehealth-hero-copy-nav-size) minmax(0, 1fr) var(--doehealth-hero-copy-nav-size);
-  align-items: center;
-  column-gap: var(--doehealth-hero-copy-nav-gap);
-  width: 100%;
-  min-width: 0;
   --doehealth-hero-copy-nav-size: clamp(1.65rem, 1.35rem + 0.95vmin, 2rem);
   --doehealth-hero-copy-nav-gap: clamp(0.45rem, 0.28rem + 0.72vmin, 0.82rem);
+}
+
+.doehealth-hero-copy-carousel-wrap > .doehealth-hero-copy-carousel {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.doehealth-hero-copy-carousel-wrap > .doehealth-hero-copy-carousel__nav--prev {
+  grid-column: 1;
+  grid-row: 1;
+  align-self: center;
+}
+
+.doehealth-hero-copy-carousel-wrap > .doehealth-hero-copy-carousel__nav--next {
+  grid-column: 3;
+  grid-row: 1;
+  align-self: center;
+}
+
+.doehealth-hero-copy-carousel-wrap > .doehealth-hero-read-more-row {
+  grid-column: 2;
+  grid-row: 2;
+  justify-self: start;
+  width: 100%;
+  max-width: 100%;
 }
 
 .doehealth-hero-copy-carousel__nav {
@@ -464,7 +483,8 @@ html[data-home-page] .doephone-hero-section .doephone-hero-copy:has(.doehealth-h
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.45rem 0.9rem;
+  justify-content: flex-start;
+  gap: 0.45rem 0.75rem;
   margin-top: clamp(0.72rem, 0.52rem + 0.85vmin, 1.05rem);
 }
 
@@ -480,32 +500,42 @@ html[data-home-page] .doephone-hero-section .doephone-hero-copy:has(.doehealth-h
 .doe-desktop-root--doehealth .doehealth-hero-read-more {
   display: inline-flex;
   align-items: center;
-  gap: 0.42rem;
+  gap: 0.14rem;
   margin-top: 0;
   font-size: clamp(1.12rem, 3.45vmin, 1.48rem);
   font-weight: 500;
   letter-spacing: -0.01em;
   line-height: 1.2;
   color: #e8c08e;
+  text-decoration: none;
+  transition: color 180ms ease, opacity 180ms ease;
+}
+
+.doephone-mobile-root--doehealth .doehealth-hero-read-more__label,
+.doe-desktop-root--doehealth .doehealth-hero-read-more__label {
   text-decoration: underline;
   text-decoration-color: rgba(232, 192, 142, 0.52);
   text-underline-offset: 0.18em;
-  transition: color 180ms ease, text-decoration-color 180ms ease, opacity 180ms ease;
+  transition: color 180ms ease, text-decoration-color 180ms ease;
 }
 
 .doephone-mobile-root--doehealth .doehealth-hero-read-more:hover,
 .doe-desktop-root--doehealth .doehealth-hero-read-more:hover {
   opacity: 0.88;
   color: #f2e0c6;
+}
+
+.doephone-mobile-root--doehealth .doehealth-hero-read-more:hover .doehealth-hero-read-more__label,
+.doe-desktop-root--doehealth .doehealth-hero-read-more:hover .doehealth-hero-read-more__label {
   text-decoration-color: rgba(232, 192, 142, 0.82);
 }
 
 .doephone-mobile-root--doehealth .doehealth-hero-read-more__arrow,
 .doe-desktop-root--doehealth .doehealth-hero-read-more__arrow {
   flex-shrink: 0;
-  width: 1.05em;
-  height: 1.05em;
-  margin-top: 0.02em;
+  width: 0.92em;
+  height: 0.92em;
+  margin-top: 0.04em;
 }
 
 html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-hero-read-more-row {
@@ -528,7 +558,7 @@ html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehea
 }
 
 html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-hero-read-more {
-  gap: 0.52rem;
+  gap: 0.16rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
