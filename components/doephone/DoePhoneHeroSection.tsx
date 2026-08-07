@@ -240,6 +240,18 @@ function HeroCopyCarousel({
   }, [completeTransition, reducedMotion, transition]);
 
   const readMoreIndex = transition?.to ?? activeIndex;
+  const layoutEntry = entries[transition?.to ?? activeIndex];
+
+  const renderHeadlineSizer = (entry: DoeHomeHeroHeadlineEntry, key: string) => (
+    <HeroCopyBlock
+      key={key}
+      entry={entry}
+      fontClass={fontClass}
+      className={className}
+      fitToContainer={fitToContainer}
+      showReadMore={false}
+    />
+  );
 
   return (
     <div className="doehealth-hero-copy-carousel-wrap">
@@ -265,32 +277,19 @@ function HeroCopyCarousel({
             className="doehealth-hero-copy-carousel__sizer doehealth-hero-copy-carousel__sizer--in-flow"
             aria-hidden="true"
           >
-            {transition ? (
-              <>
-                <HeroCopyBlock
-                  entry={entries[transition.from]}
-                  fontClass={fontClass}
-                  className={className}
-                  fitToContainer={fitToContainer}
-                  showReadMore={false}
-                />
-                <HeroCopyBlock
-                  entry={entries[transition.to]}
-                  fontClass={fontClass}
-                  className={className}
-                  fitToContainer={fitToContainer}
-                  showReadMore={false}
-                />
-              </>
-            ) : (
-              <HeroCopyBlock
-                entry={entries[activeIndex]}
-                fontClass={fontClass}
-                className={className}
-                fitToContainer={fitToContainer}
-                showReadMore={false}
-              />
-            )}
+            <div className="doehealth-hero-copy-carousel__sizer-width">
+              {transition ? (
+                <>
+                  {renderHeadlineSizer(entries[transition.from], "sizer-width-from")}
+                  {renderHeadlineSizer(entries[transition.to], "sizer-width-to")}
+                </>
+              ) : (
+                renderHeadlineSizer(entries[activeIndex], "sizer-width-active")
+              )}
+            </div>
+            <div className="doehealth-hero-copy-carousel__sizer-height">
+              {renderHeadlineSizer(layoutEntry, "sizer-height-layout")}
+            </div>
           </div>
           {transition ? (
             <>

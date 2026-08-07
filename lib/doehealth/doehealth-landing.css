@@ -257,7 +257,7 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth) .doehealth-top-banner
 
 .doehealth-hero-copy-carousel__headline-row {
   display: inline-flex;
-  align-items: flex-end;
+  align-items: center;
   gap: var(--doehealth-hero-copy-nav-gap);
   max-width: 100%;
   min-width: 0;
@@ -329,7 +329,7 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth) .doehealth-top-banner
   grid-area: 1 / 1;
   min-width: 0;
   max-width: 100%;
-  align-self: end;
+  align-self: center;
   backface-visibility: hidden;
   transform: translate3d(0, 0, 0);
 }
@@ -345,7 +345,9 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth) .doehealth-top-banner
 
 .doehealth-hero-copy-carousel--overlay > .doehealth-hero-copy-carousel__slide {
   position: absolute;
-  inset: auto auto 0 0;
+  inset: 0;
+  display: flex;
+  align-items: center;
   width: 100%;
 }
 
@@ -353,7 +355,6 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth) .doehealth-top-banner
   visibility: hidden;
   position: relative;
   display: grid;
-  align-items: end;
   width: max-content;
   max-width: 100%;
   pointer-events: none;
@@ -361,11 +362,30 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth) .doehealth-top-banner
   z-index: 0;
 }
 
-.doehealth-hero-copy-carousel__sizer--in-flow > * {
+.doehealth-hero-copy-carousel__sizer-width,
+.doehealth-hero-copy-carousel__sizer-height {
   grid-area: 1 / 1;
+}
+
+.doehealth-hero-copy-carousel__sizer-width {
+  display: grid;
+  height: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.doehealth-hero-copy-carousel__sizer-width > * {
+  grid-area: 1 / 1;
+  align-self: end;
   min-width: 0;
   max-width: 100%;
-  align-self: end;
+}
+
+.doehealth-hero-copy-carousel__sizer-height {
+  align-self: center;
+  justify-self: start;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .doehealth-hero-copy-carousel__slide--current {
