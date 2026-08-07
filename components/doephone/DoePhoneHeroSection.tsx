@@ -254,34 +254,44 @@ function HeroCopyCarousel({
         </button>
 
         <div
-          className={`doehealth-hero-copy-carousel${transition ? " doehealth-hero-copy-carousel--transitioning" : ""}`}
+          className="doehealth-hero-copy-carousel doehealth-hero-copy-carousel--overlay"
           style={
             {
               ["--doehealth-hero-copy-crossfade-ms" as string]: `${DOEHEALTH_HERO_HEADLINE_CROSSFADE_MS}ms`,
             } as CSSProperties
           }
         >
-          {transition ? (
-            <div
-              className="doehealth-hero-copy-carousel__sizer doehealth-hero-copy-carousel__sizer--in-flow"
-              aria-hidden="true"
-            >
+          <div
+            className="doehealth-hero-copy-carousel__sizer doehealth-hero-copy-carousel__sizer--in-flow"
+            aria-hidden="true"
+          >
+            {transition ? (
+              <>
+                <HeroCopyBlock
+                  entry={entries[transition.from]}
+                  fontClass={fontClass}
+                  className={className}
+                  fitToContainer={fitToContainer}
+                  showReadMore={false}
+                />
+                <HeroCopyBlock
+                  entry={entries[transition.to]}
+                  fontClass={fontClass}
+                  className={className}
+                  fitToContainer={fitToContainer}
+                  showReadMore={false}
+                />
+              </>
+            ) : (
               <HeroCopyBlock
-                entry={entries[transition.from]}
+                entry={entries[activeIndex]}
                 fontClass={fontClass}
                 className={className}
                 fitToContainer={fitToContainer}
                 showReadMore={false}
               />
-              <HeroCopyBlock
-                entry={entries[transition.to]}
-                fontClass={fontClass}
-                className={className}
-                fitToContainer={fitToContainer}
-                showReadMore={false}
-              />
-            </div>
-          ) : null}
+            )}
+          </div>
           {transition ? (
             <>
               <div className="doehealth-hero-copy-carousel__slide doehealth-hero-copy-carousel__slide--out doehealth-hero-copy-carousel__slide--animate">
