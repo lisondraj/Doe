@@ -15,23 +15,23 @@ export const DOEHEALTH_TOP_BANNER_CROSSFADE_MS = 480;
 
 export const DOEHEALTH_TOP_BANNER_SLIDES = [
   {
-    message: "Learn more about Doe's vision",
-    linkLabel: "Read more",
+    message: "Learn More About Doe's Vision",
+    linkLabel: "Read More",
     linkHref: "/about",
   },
   {
-    message: "Personal intelligence for every clinic",
+    message: "Personal Intelligence For Every Clinic",
     linkLabel: "Genome",
     linkHref: INTRODUCING_GENOME_PATH,
   },
   {
     message: "Introducing Front-Desk Voice Agents",
-    linkLabel: "Learn more",
+    linkLabel: "Learn More",
     linkHref: INTRODUCING_PULSE_PATH,
   },
   {
-    message: "Introducing Our Agentic Design Fabric",
-    linkLabel: "Learn more",
+    message: "Meet our agentic design canvas",
+    linkLabel: "Learn More",
     linkHref: INTRODUCING_FABRIC_PATH,
   },
 ] as const satisfies readonly DoeHealthTopBannerSlide[];
